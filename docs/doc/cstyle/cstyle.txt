@@ -1,0 +1,871 @@
+
+
+
+
+
+
+Source Code Style 
+Guidelines
+
+
+
+
+SciTech Software, Inc.
+
+Version 1.1
+
+
+
+
+
+
+
+
+
+
+
+SciTech Software, Inc.
+180 E 4th St, Suite 300
+Chico, CA 95928 
+Main: (530) 894-8400
+FAX: (530) 894-9069
+www.scitechsoft.com
+
+
+
+Contents
+Introduction	1
+Indentation and Tab Width	2
+Source Code Width	3
+C/C++ Source Code Formatting	4
+Source File Layout	4
+Function Body	4
+Flow Control Statements	7
+If-Else Statements	7
+While Statements	8
+Do While Statements	8
+For Statements	8
+Switch Statements	8
+Expressions	9
+Variable Declarations	9
+Global Variables Within a Module	9
+Comments and Commenting Style	10
+C Header File Formatting	11
+Header File Layout	11
+Enumerations	12
+Structures and Unions	13
+Function Prototypes	13
+Global Variables	14
+C++ Header File Formatting	15
+Header File Layout	15
+C++ Class Definitions	16
+C++ Inline Member Functions	18
+Naming Conventions	19
+Type Definitions	19
+Enumerations	19
+Structures and Unions	19
+C++ Classes	20
+Global Variables	20
+Functions	20
+
+
+
+Introduction
+All SciTech Software products are usually written in C, C++ and Assembler. This 
+document describes the style conventions used by SciTech Software for the 
+development of all software products, and is intended to be used as a guideline if you 
+are going to be modifying the source code in any way. Any contributed code that is to 
+be included in a SciTech Software product MUST follows these style guidelines. By 
+following these style guidelines, all the source code for SciTech Software products will 
+be in a consistent format, which will ease the burden of finding ones way around the 
+source code.
+It is important to have all source code formatted in a similar manner as this helps to 
+give the entire product a cohesive image, and makes finding your way around inside 
+the source code much easier. Because C and C++ are entirely free-form, there are 
+many different ways that the source code can be formatted. Every programmer tends 
+to have their own preferred formatting style, just as every writer tends to have their 
+own personal writing style. However just as when multiple authors work on a single 
+book, multiple programmers working on a common software product should adhere 
+to the same formatting and style conventions. 
+It is also important that any public functions, structures, enumerations and classes 
+follow the guidelines for commented documentation. SciTech Software uses 
+automated tools (DocJet from http://www.talltree.com) to extract printed 
+documentation directly from the source code.  Specific formatting styles for 
+documentation included in the source code must be followed so that the printed 
+documentation is correctly formatted. These specific formatting styles are spelled out 
+in detail in this document.
+This document is intended to serve as a guide to the style guidelines used by SciTech 
+Software. If however something is not clearly documented here, the best reference to 
+the style guidelines is to look at some official SciTech Software source code.
+Indentation and Tab Width
+All source code should be formatted to use 4 space tabs, and all indentation should be 
+in multiples of 4 spaces (one indentation level). The source code should be formatted 
+using only real spaces and never hard tabs, so you will need to configure your editor 
+to use 4 space tabs and to insert spaces only into the source code. Do NOT use 8 space 
+hard tabs in your source code!
+If you MUST work with 8 space hard tabs, please run the resulting source code 
+through tab expansion program (like TRANS developed by SciTech Software) to 
+convert all the hard tabs to 8 spaces. Note that this also includes ASSEMBLY code!
+Source Code Width
+All source code should try to use only a maximum of 80 characters per line. Some 
+editors can only display 80 characters maximum on a line, and using more can cause 
+them to exhibit line wrap. This is only a guide, and if more than 80 characters will 
+enhance the legibility of the code (such as with Windows based code) then use more 
+than 80 characters, but not too many more.
+C/C++ Source Code Formatting
+This section describes the conventions used for formatting C and C++ source code 
+modules, and the conventions that you should follow if you modify or extend any of 
+the source code. All C source code should be contained in text files with the .c 
+extension, and all C++ source code should be contained in text files with the .cpp 
+extension.
+Source File Layout
+The overall layout for source code is important to help developers quickly find their 
+way around unfamiliar source code for the first time. All C and C++ source code 
+modules should be formatted in the following manner (for private source code 
+substitute the appropriate internal disclaimer for the public one listed below):
+/****************************************************************************
+*
+*                       SciTech MGL Graphics Library
+*
+*               Copyright (C) 1991-1998 SciTech Software, Inc.
+*                            All rights reserved.
+*
+*  ======================================================================
+*       This library is free software; you can use it and/or
+*       modify it under the terms of the SciTech MGL Software License.
+*
+*       This library is distributed in the hope that it will be useful,
+*       but WITHOUT ANY WARRANTY; without even the implied warranty of
+*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*       SciTech MGL Software License for more details.
+*  ======================================================================
+*
+* Language:     ANSI C or ANSI C++ (describe the language in use)
+* Environment:  Any (describe any environment restrictions, ie: DOS, Win32)
+*
+* Description:  Description of the code module. This should describe the
+*               purpose of the code in this module.
+*
+****************************************************************************/
+
+#include "myhdr.h"      /* Include any necessary headers */
+
+/*--------------------------- Global Variables ----------------------------*/
+
+/* Global variable declarations and static globals local to module */
+
+/*------------------------- Implementation --------------------------------*/
+
+/* All functions implemented in this module. Where possible static or
+ * private functions should be located before functions that use them to
+ * avoid the need for superfluous function prototypes. However all functions
+ * *MUST* have a prototype, so if necessary add local prototypes to the top
+ * of the file before the regular functions begin.
+ */
+
+Function Body
+The body of a C or C++ function should be written with the open brace that starts the 
+body of the function in column zero, and the closing brace also in column zero. All 
+source code statements contained within the function body should start at the first 
+indentation level (4 spaces in). The name of the function and an opening brace should 
+be on the first line, with the return type preceeding the function name. Between the 
+return type and the function name should be a macro definition for the function type 
+modifier, which should be evaluate to _cdecl for functions implemented in assembler 
+and an empty macro for functions implemented in C.  Using a macro for this modifier 
+also allows it to be changed to suit new operating environments, such as _pascal and 
+_stdcall for Windows environments by only changing a single macro definition.
+Each argument to the function should be listed one per line, with a single indentation 
+level (4 spaces) before the argument type. There should be only a single space between 
+the argument type and the argument name for each line, followed by a comma. The 
+last argument should be ended with the ')' character instead of a comma (this must 
+not be placed on the following line!). 
+The described layout for the function prototype is very important because SciTech 
+Software uses automated tools to extract function reference documentation directly 
+from the source code, and the prototype will be included verbatim in the reference 
+documentation. This formatting style ensures that the prototype will be formatted 
+correctly in the printed documentation and will not wrap at the right edge of the 
+page.
+If the function is static or private, it may be left without any preceeding documenation 
+provided the function is short. However any function that contains more than about 5 
+lines of source code and all public functions should be preceeded with a source code 
+comment of the format as defined below. An example of a properly formatted 
+function with documentation header is as follows:
+/****************************************************************************
+DESCRIPTION:
+Short description for the function. Should be no longer than a single line.
+
+HEADER:
+mgraph.h  <- defines the header file that the function prototype is found in
+
+PARAMETERS:
+arg1 - Describes argument 1. May be multiples lines if necessary, and
+       this case the subsequent lines should be indented like so.
+arg2 - Describes argument 2. There should be a line for each argument.
+
+RETURNS:
+Describes the return value from the function. If the function does not return
+a value, this field should be removed completely.
+
+REMARKS:
+Long description of the function. This should describe in detail what the 
+function does, especially for public functions. If the function is private
+a simpler description may be used, and the DESCRIPTION field above may be 
+removed completely. This remarks section can also contain *bold text* and
+/italic text/ using the asterisk and slash formatting characters (printed
+documentation will be bolded or italicised). This section can also contain
+formatted tables like the following:
+
+Table	- Description (heading for table column two)
+item1	- Description of item 1
+item2	- Description of item 2
+
+The above describes a table of values and will be formatted in the resulting 
+printed documentation as a real table of values. The first line becomes the
+header for that table, and subsequent lines contain the body of the table. 
+Note that column 1 of the table must always be formatted as a single word
+(multiple words with a space do not get formatted by the documenation 
+software correctly). You can also include notes and todo's as follows:
+
+Note:  This is a note to be included in the text. You can make notes span
+       more than a single line like the so. Note text is handled specially 
+       by the formatting program and will be formatted with the note in 
+       italics for clarity and be indented with a hanging indent similar 
+       to the above text. 
+
+TODO:  You can also include todo items as well. In the resulting 
+       documentation it will come out similar to a note, but the text will
+       be printed in red ink.
+
+SEE ALSO:
+myFunctionExt <- lists all public functions related to this function. If 
+                 there are no related functions, this field should be 
+                 removed completely.
+****************************************************************************/
+bool MYAPI myFunction(
+    int arg1, 
+    int arg2)
+{
+    // function body goes here.
+}
+
+Note also that if a function does not have any arguments, it should be formatted on a 
+single line as follows:
+
+void myFunction(void)
+{
+    // function body goes here.
+}
+
+instead of:
+
+void myFunction(
+    void)
+{
+    // function body goes here.
+}
+
+Flow Control Statements
+All the flow control statements should have the open brace placed on the same line as 
+the start of the flow control statements, and all statements that are part of the body of 
+the flow control statement should be indented by one level (4 spaces). The closing 
+brace should also be indented by one level to be at the same indention level as the 
+body of the statement. This helps to parition the statement into the declaration section 
+and the body section of the statement. Note also that the flow control statements 
+should be formatted with a single space before the open parentheses and open brace 
+for legibility. For example:
+if (condition) {
+    }
+
+rather than the less legible
+if(condition){
+    }
+
+The following shows the templates to use for formatting each of the flow control 
+structures in C and C++.
+If-Else Statements
+if (x < foo) {
+    // do something;
+    }
+else {
+    // do something else;
+    }
+
+If you wish to use multiple If-Else statements strung together, do so like this:
+if (x < foo) {
+    // do something;
+    }
+else if (x < blah) {
+    // do something else;
+    }
+else {
+    // default case;
+    }
+
+When you have an If-Else statement nested in another If-Else statement, put braces 
+around the nested If-Else. For example:
+if (foo) {
+    if (bar)
+        win();
+    else
+        lose();
+    } 
+
+rather than the less legible:
+if (foo)
+    if (bar)
+        win();
+    else
+        lose();
+
+While Statements
+while (x > 1) {
+    // do something;
+    }
+Do While Statements
+do {
+    // do something;
+    } while (x > 1);
+For Statements
+for (i = 0; i < 10; i++) {
+    // do something;
+    }
+
+Note that with the For statement, there is no space before the semi-colons, and there is 
+always a single space AFTER the semicolon. For example avoid formatting your 
+statements like this:
+for(i=0;i<10;i++){
+    }
+
+If you wish to include multiple definitions in the initialisation section of the for 
+statement, or multiple operations in the counter section of the for statement then use 
+the comma operator. However ensure that a space ALWAYS follows the comma:
+for (i = 0, j = 0; i < 10; i++, j += 10) {
+    }
+Switch Statements
+switch (x) {
+    case 1:
+        // code for case 3
+        break;
+    case 2:
+        // code for case 2
+        break;
+    default:
+        // default case
+    }
+
+If the code for the cases in the switch statement is exceptionally short, you can format 
+the entire case statement on a single line, such as the following:
+switch (x) {
+    case 1: // tiny code;   break;
+    case 2: // more code;   break;
+    }
+
+If you wish to create a nested code block for a case statement (for example to declare 
+some local variables in some C code), do so like the following:
+switch (x) {
+    case 1: {
+        int localVar;
+        // code for case 1
+        } break;
+    ...
+    }
+
+It is advisable to include a default action for a switch statement, but this can be left out 
+for efficiency's sake.
+Expressions
+When formatting expressions, try to use spaces and parentheses to enhance the 
+readability of the expression - splitting it over multiple lines if necessary to make it 
+more readable. Do not format expressions without any spaces between the operators 
+and the operands. Judicisouly group together sections of the expression without using 
+spaces. For example:
+    x = (y+10) - 240*(20 / (t += myFunc()));
+
+rather than
+    x=(y+10)-240*(20/(t+=myFunc()));
+
+Variable Declarations
+Don't declare multiple variables in one declaration that spans lines. Instead start a 
+new declaration on each line.  For example, instead of this:
+    int foo,
+        bar;
+
+write either this:
+    int foo, bar;
+
+or this:
+    int foo;
+    int bar;
+
+Global Variables Within a Module
+Any global variables and external global variables must be declared at the start of the 
+source file in the 'global variables' section. Globals variables that are private to the 
+source module should be declared with the static type modifier. External global 
+variables will always be declared in a separate header file, and the definition of the 
+variable will be located in one source module without the static modifier.  When 
+formatting global variables, try to format them such that the names of the variables all 
+line up, for instance:
+int        myVar1;
+ulong      myVar2;
+myStructue myStructure = {...};
+
+Comments and Commenting Style
+Commenting code is extremely important. Comments serve as an aid to the human 
+readers of our programs; they are a form of engineering ettiquette. Comments should 
+always be used to clarify otherwise obscure code, however do not comment too 
+liberally. If the code itself describes concisely  what is happening, do NOT provide a 
+comment explaining the obvious! Comments should always be neat and readable - 
+haphazardly placed comments are almost as bad as haphazardly formatted source 
+code.
+Comments should also be used to document the purpose of obscure or non-trivial 
+functions (a non-trivial function is one that is more than a few lines long) and what 
+inputs and outputs the function deals with. Please refer to the section on Function 
+Bodies for detailed information on the layout and formatting for function headers.
+The following shows examples for commented source code, and how the comments 
+should be laid out:
+void myFunc(void)
+{
+    int x1 = 10;    /* Comment describing X1's purpose if necessary */
+    
+    /* Open up the file and write the value X1 to it */
+    ...
+
+    /* Now do some stuff that is complicated, so we have a large block
+     * comment that spans multiple lines. These should be formatted as
+     * follows for C and C++ code.
+     */
+    ...
+
+    // Optionally C++ code may use single line comments like this
+    ...
+
+    // And multiple line comments like the following. These comment
+    // types are more efficient code wise than C style comments so should
+    // be used in preference for C++ code. However although most C 
+    // compilers allow C++ style comments, some C compilers do not so 
+    // C++ comments style should not be used in portable C code.
+    ...
+}
+
+C Header File Formatting
+This section describes the conventions used for formatting C header files, and the 
+conventions that you should follow if you modify or extend any of the source code. All 
+C header files should be contained in a text file with the .h extension.
+Header File Layout
+The overall layout for header files is important to help developers quickly find their 
+way around unfamiliar source code for the first time. All C header files should be 
+formatted in the following manner (for private header files substitute the appropriate 
+internal disclaimer for the public one listed below):
+/****************************************************************************
+*
+*                       SciTech MGL Graphics Library
+*
+*               Copyright (C) 1991-1998 SciTech Software, Inc.
+*                            All rights reserved.
+*
+*  ======================================================================
+*       This library is free software; you can use it and/or
+*       modify it under the terms of the SciTech MGL Software License.
+*
+*       This library is distributed in the hope that it will be useful,
+*       but WITHOUT ANY WARRANTY; without even the implied warranty of
+*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*       SciTech MGL Software License for more details.
+*  ======================================================================
+*
+* Language:     ANSI C (describe the language in use)
+* Environment:  Any (describe any environment restrictions, ie: DOS, Win32)
+*
+* Description:  Description of the header file. This should describe the
+*               purpose of this header file.
+*
+****************************************************************************/
+
+#ifndef __HEADER_H      /* Mandatory include guard. The #define name must */
+#define __HEADER_H      /* be the same as the header (ie: header.h here). */
+
+#include <stdio.h>      /* Include any dependant include files */
+
+/*---------------------- Macros and type definitions ----------------------*/
+
+/* This should always be included, and set the packing value to the value
+ * that should be used by the header file.
+ */
+#pragma pack(1)
+
+/* Macros, enumerations, type definitions, structures and unions should be
+ * defined in this section for both C and C++ code.
+ */
+
+/* Restore the compile default packing value */
+#pragma pack()
+
+/*------------------------- Function Prototypes ---------------------------*/
+
+#ifdef  __cplusplus
+extern "C" {            /* Use "C" linkage when in C++ mode */
+#endif
+
+/* Include C function prototypes in here */
+
+#ifdef  __cplusplus
+}                       /* End of "C" linkage for C++   */
+#endif
+
+#endif  /* __HEADER_H */
+
+Enumerations
+Enumerations should be defined for all numerical constants used in header files, 
+rather than using a macro #define or a set of constants. The reason for this is that it 
+provides a logical grouping for related constants, and allows those constants to be 
+documented in printed documentation as a logical grouping. The format for defining 
+an enumeration is as follows:
+/****************************************************************************
+REMARKS:
+Long description of the enumeration. This should describe in detail what the
+constants in the enumeration are used for. This remarks section can also
+contain formatting as defined for the remarks section for function bodies.
+
+HEADER:
+mgraph.h  <- defines the header file that the enumeration is found in
+
+MEMBERS:
+grDETECT    - Describes each member of the enumeration
+grNONE      - Next member
+grVGA       - Next member
+****************************************************************************/
+typedef enum {
+    grDETECT        = -1,
+    grNONE          = 0,
+    grVGA,
+    } MGL_driverType;
+
+Structures and Unions
+Always declare structures and unions using a typedef, so that the structure can be 
+used without requiring the 'struct' or 'union' keyword. For example:
+typedef struct {
+    ...
+    } MyStrucure;
+
+typedef union {
+    ...
+    } MyUnion;
+
+rather than:
+struct MyStructure {
+    };
+
+union MyUnion {
+    };
+
+For C++ code however, you should declare your structures and unions without using 
+the typedef keyword, since the language has been extended in this area. The format 
+for defining both structures and unions with documentation is as follows:
+/****************************************************************************
+REMARKS:
+Long description of the structure. This should describe in detail what the
+members in the structure are used for. This remarks section can also
+contain formatting as defined for the remarks section for function bodies.
+
+HEADER:
+mgraph.h  <- defines the header file that the enumeration is found in
+
+MEMBERS:
+x   - X coordinate for the point
+y   - Y coordinate for the point
+****************************************************************************/
+typedef struct {
+    int x,y;
+    } MGL_point;
+
+Function Prototypes
+All public functions must be declared in only one header file, in the 'function 
+prototypes' section of the header file. For C callable functions (even if implemented in 
+C++) the function prototypes must be bracketed with the extern "C" statement as 
+shown in the sample header file above. This is to ensure that all global functions will 
+be callable from both C and C++ code. Each public function must be declared on a 
+single line. This is different to how the prototypes for the function are declered in the 
+source modules, where each argument is defined in a separate line. The function 
+prototype must also be indendted such that the function modifier value (MYAPI in 
+this case) is lined up for all functions, inserting as many necessary spaces to get all 
+functions to line up.
+Although it may seem strange to format functions prototypes in this manner, the 
+C/C++ compiler will do the necessary job of checking that the parameters in the 
+prototype are correct with respect to the function body, and having a single function 
+per line makes it easy to browse header files to find a specific function prototype. Note 
+also that this is one case where you must violate the 80 characters per line guideline 
+and never break the function prototype across multiple lines, no matter how many 
+parameters it takes. For instance a couple of prototypes might be implemented as 
+follows:
+bool         MYAPI myFunction(int arg1,int arg2);
+myStructure *MYAPI myFunction2(int arg1,int arg2,int arg3);
+                
+Global Variables
+Any public global variables must be declared in the header file in the 'global variables' 
+section. When formatting global variables declarations, try to format them such that 
+the names of the variables all line up, for instance:
+extern int        myVar1;
+extern ulong      myVar2;
+extern myStructue myStructure;
+
+C++ Header File Formatting
+This section describes the conventions used for formatting C++ header files, and the 
+conventions that you should follow if you modify or extend any of the source code. All 
+C++ header files should be contained in a text file with the .hpp extension. Where a 
+header file is designed to be used for both C and C++, it should end in a .h extension 
+and include C++ specific definitions with a #ifdef cplusplus conditional compilation 
+block.
+For the most part formatting and documentation of enumerations, structures,  unions, 
+function prototypes and external variables is identical to C header files, so refer to the 
+sections above for information on this.
+Header File Layout
+The overall layout for header files is important to help developers quickly find their 
+way around unfamiliar source code for the first time. All C++ header files should be 
+formatted in the following manner (for private header files substitute the appropriate 
+internal disclaimer for the public one listed below):
+/****************************************************************************
+*
+*                       SciTech MGL Graphics Library
+*
+*               Copyright (C) 1991-1998 SciTech Software, Inc.
+*                            All rights reserved.
+*
+*  ======================================================================
+*       This library is free software; you can use it and/or
+*       modify it under the terms of the SciTech MGL Software License.
+*
+*       This library is distributed in the hope that it will be useful,
+*       but WITHOUT ANY WARRANTY; without even the implied warranty of
+*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*       SciTech MGL Software License for more details.
+*  ======================================================================
+*
+* Language:     ANSI C++ (describe the language in use)
+* Environment:  Any (describe any environment restrictions, ie: DOS, Win32)
+*
+* Description:  Description of the header file. This should describe the
+*               purpose of this header file.
+*
+****************************************************************************/
+
+#ifndef __HEADER_HPP      // Mandatory include guard. The #define name must 
+#define __HEADER_HPP      // be the same as the header (ie: header.h here). 
+
+#include <iostream.h>     // Include any dependant include files 
+
+/*---------------------- Macros and type definitions ----------------------*/
+
+// This should always be included, and set the packing value to the value
+// that should be used by the header file.
+#pragma pack(1)
+
+// Macros, enumerations, type definitions, structures and unions should be
+// defined in this section for both C and C++ code.
+
+// Restore the compile default packing value 
+#pragma pack()
+
+/*--------------------------- Class Definitions ---------------------------*/
+
+// Any C++ class definitions should be defined in this section. 
+
+/*------------------------- Inline member functions -----------------------*/
+
+// Any large C++ inline member functions that are not defined in the
+// class definition itself should be defined in this section. 
+
+/*------------------------- Function Prototypes ---------------------------*/
+
+// Include C++ only callable function prototypes in here
+
+#ifdef  __cplusplus
+extern "C" {            // Use "C" linkage when in C++ mode
+#endif
+
+// Include C callable function prototypes in here. If none of the functions
+// are callable from C, this section can be removed (with the extern "C"
+// sections).
+
+#ifdef  __cplusplus
+}                       // End of "C" linkage for C++   
+#endif
+
+#endif  // __HEADER_HPP 
+
+C++ Class Definitions
+When declaring C++ classes, you should structure them with the private and 
+protected variable definitions first, following by protected functions and then public 
+functions. By declaring things in this order you can immediately use variables in inline 
+functions in the class definition. You should also indent the member function 
+declarations by three indentation levels (12 spaces) in order to leave room for the 
+'virtual', 'static' and 'friend' modifiers. This way all the function declarations line up 
+neatly within the class.
+Please document each member function of the class unless it is entirely obvious what 
+the member is intended to do, by placing a C++ style comment (//) on the line before 
+the member function declaration, and with an indentation of three levels (to line up 
+with the start of the function declaration). Also please provide a small descriptive 
+comment for all member variables describing the purpose of the variable. For small 
+inline functions, place the function body within the class declaration. For inline 
+functions that are more than about 2 lines long, please place the body of the function 
+after the class definition in the same header file.
+Generally try to place a single class definition into a single header file, however it may 
+be more convenient in some instances to place multiple class definitions into a single 
+header file (for small, logically related classes such as a node class and the list class 
+that uses the nodes).
+The following is a template for how a C++ class definition should be formatted:
+class MyClass {
+protected:
+    int myVar;              // Describe what this is for
+
+            // Comment for the function
+    virtual void myProtectedFunction();
+
+public:
+            // Constructor
+            MyClass();
+  
+            // Destructor
+            ~MyClass();
+
+            // Always document virtual functions
+    virtual void myPublicVirtual();
+    friend  void myPublicFriend();
+
+            // How to format inline functions...
+    inline  void smallInlineFunction() { // function body; };
+
+    inline void mediumInlineFunction()
+            { // function body; };
+
+    inline  void largeInlineFunction()
+            {
+                // First line of function
+                // Second line of function
+            };
+
+    inline  void reallLargeInlineFunction();
+    };
+
+NOTE: At this stage the format for documenting C++ classes and member functions is 
+not completed finished, so the above will likely change when the documentation 
+system for C++ classes is finalised.
+C++ Inline Member Functions
+For C++ classes that have inline member functions that are larger than will easily fit 
+within the class definition (ie: more than say 2 lines of code), they should be declared 
+separately in the 'inline member functions' section of the header file. A typical 
+declaration would be as follows:
+inline void MyClass::reallyLargeInlineFunction()
+{
+    // function body
+}
+
+NOTE: At this stage the format for documenting C++ classes and member functions is 
+not completed finished, so the above will likely change when the documentation 
+system for C++ classes is finalised.
+Naming Conventions
+This section describes the naming conventions used for both C and C++ code. Naming 
+conventions are important so that programmers can tell by looking at a name what 
+type of syntactic element that name is referring to (function, structure, variable etc).
+Type Definitions
+All public type definition names should always begin with an uppercase prefix and 
+underscore of at least two characters in length. The prefix should be unique to the 
+library or product that the function is located in, such as MGL_ for the SciTech MGL 
+graphics library and FX_ for the fixed point math library. The first character after the 
+underscore should always be lowercase, and the remainder of the name should be a 
+combination of uppercase and lowercase to break up the words in the name (do not 
+use underscores for this). For instance:
+typedef ulong MGL_color;
+
+The only exception to this rule is global type definitions for common types defined in 
+the SCITECH.H header file, such as ulong, ushort and uchar etc.
+Enumerations
+All enumeration names should end with a 'Type' postfix. Public enumerations should 
+always begin with an uppercase prefix and underscore of at least two characters in 
+length. The prefix should be unique to the library or product that the function is 
+located in, such as MGL_ for the SciTech MGL graphics library and FX_ for the fixed 
+point math library. The first character after the underscore should always be 
+lowercase, and the remainder of the name should be a combination of uppercase and 
+lowercase to break up the words in the name (do not use underscores for this). For 
+instance:
+typedef enum {
+    MGL_NO_DEACTIVATE   = 0,
+    MGL_SUSPEND_APP     = 1,
+    MGL_NO_SUSPEND_APP  = 2, 
+    } MGL_suspendAppCodesType;
+
+Structures and Unions
+All public structure and union names should always begin with an uppercase prefix 
+and underscore of at least two characters in length. The prefix should be unique to the 
+library or product that the function is located in, such as MGL_ for the SciTech MGL 
+graphics library and FX_ for the fixed point math library. The first character after the 
+underscore should always be lowercase, and the remainder of the name should be a 
+combination of uppercase and lowercase to break up the words in the name (do not 
+use underscores for this). For instance:
+typedef struct {
+    int x,y;
+    } MGL_point;
+
+C++ Classes
+All public C++ class names should always begin with an uppercase prefix without 
+any underscore of at least two characters in length. The prefix should be unique to the 
+library or product that the function is located in, such as TCL for the Techniques Class 
+Library and MGL for the SciTech MGL C++ bindings. The first character after the 
+prefix should always be uppercase, and the remainder of the name should be a 
+combination of uppercase and lowercase to break up the words in the name (do not 
+use underscores for this). For instance:
+class TCLGenList {
+    ...
+    };
+
+Global Variables
+All static global variable names should begin with a lowercase character first, and use 
+a combination of uppercase and lowercase characters to break up the words in the 
+name. For instance:
+static int  myStaticGlobal;
+
+All public global variable names should always begin with an uppercase prefix and 
+underscore of at least two characters in length. The prefix should be unique to the 
+library or product that the function is located in, such as MGL_ for the SciTech MGL 
+graphics library and FX_ for the fixed point math library. The first character after the 
+underscore should always be lowercase, and the remainder of the name should be a 
+combination of uppercase and lowercase to break up the words in the name (do not 
+use underscores for this). For instance:
+int MGL_fontTypeGlobal;
+
+Generally public global variables should be avoided if at all possible within a library, to 
+allow that library to work well with in shared dynamic library environments. If 
+however the global variable is required to be global, but is not generally called or 
+accessed by user programs (for instance if it is not a public function in a library), then 
+the public name should be prepended with an underscore to avoid global namespace 
+conflicts, but still include the standard library prefix. For example:
+int _MGL_myInternalGlobal;
+
+Functions
+All function names should be started with a lowercase character, and use a 
+combination of lower case and upper case in the identifiers to break up individual 
+words in the identifier. For example, use names like the following:
+void myLongFunctionName(void);
+
+All public function names should always begin with an uppercase prefix and 
+underscore of at least two characters in length. The prefix should be unique to the 
+library or product that the function is located in, such as MGL_ for the SciTech MGL 
+graphics library and FX_ for the fixed point math library. The first character after the 
+underscore should always be lowercase, and the remainder of the name should be a 
+combination of uppercase and lowercase to break up the words in the name (do not 
+use underscores for this). For instance:
+void MGL_fillRect(void);
+
+If the function is required to be global, but is not generally called or accessed by user 
+programs (for instance if it is not a public function in a library), then the public name 
+should be prepended with an underscore to avoid global namespace conflicts, but still 
+include the standard library prefix. For example:
+void _MGL_myInternalFunction(void);
+
+
+
+10
+	SciTech Software Source Code Style Guidelines
+i
+Contents
+
+9
+C/C++ Source Code Formatting
