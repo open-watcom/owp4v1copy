@@ -50,7 +50,7 @@ typedef struct section_data {
 
 #define MEM_INCREMENT   10240
 
-int CreateBrowseFile(file_handle   browseFile,   /*target file */
+int CreateBrowseFile(FILE         *browseFile,   /*target file */
                      section_data *abbrevFile,   /*.debug_abbrev section*/
                      section_data *debugFile,    /*.debug_info section*/
                      section_data *referenceFile,/*.WATCOM_reference section */

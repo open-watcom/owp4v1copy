@@ -54,6 +54,12 @@ extern  void            SetFUBit(void);
 #endif
 
 
+static void    MulIOFlow ( intstar4 *arg1, intstar4 *arg2 ) {
+//===========================================================
+
+    MulIOFlo(arg1, arg2);
+}
+
 //--------------------------------------------- integer arithmetic
 
 
@@ -164,14 +170,13 @@ void    SubD( ftn_type *opnd1, ftn_type *opnd2 ) {
 }
 
 
-bool    MulD( ftn_type *opnd1, ftn_type *opnd2 ) {
+void    MulD( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
 #if _TARGET == _VAX
     SetFUBit();
 #endif
     opnd1->dble = opnd1->dble * opnd2->dble;
-    return( FALSE );
 }
 
 
@@ -208,14 +213,13 @@ void    SubE( ftn_type *opnd1, ftn_type *opnd2 ) {
 }
 
 
-bool    MulE( ftn_type *opnd1, ftn_type *opnd2 ) {
+void    MulE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
 #if _TARGET == _VAX
     SetFUBit();
 #endif
     opnd1->extended = opnd1->extended * opnd2->extended;
-    return( FALSE );
 }
 
 
@@ -260,7 +264,7 @@ void    SubC( complex *x, complex *y ) {
 }
 
 
-bool    MulC( complex *x, complex *y ) {
+void    MulC( complex *x, complex *y ) {
 //======================================
 
     complex     result;
@@ -271,7 +275,6 @@ bool    MulC( complex *x, complex *y ) {
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
-    return( FALSE );
 }
 
 
@@ -324,7 +327,7 @@ void    SubQ( dcomplex *x, dcomplex *y ) {
 }
 
 
-bool    MulQ( dcomplex *x, dcomplex *y ) {
+void    MulQ( dcomplex *x, dcomplex *y ) {
 //========================================
 
     dcomplex    result;
@@ -335,7 +338,6 @@ bool    MulQ( dcomplex *x, dcomplex *y ) {
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
-    return( FALSE );
 }
 
 
@@ -388,7 +390,7 @@ void    SubX( xcomplex *x, xcomplex *y ) {
 }
 
 
-bool    MulX( xcomplex *x, xcomplex *y ) {
+void    MulX( xcomplex *x, xcomplex *y ) {
 //========================================
 
     xcomplex    result;
@@ -399,7 +401,6 @@ bool    MulX( xcomplex *x, xcomplex *y ) {
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
-    return( FALSE );
 }
 
 
@@ -829,8 +830,8 @@ static  bool    ZeroBase( byte typ, ftn_type *base ) {
 }
 
 
-static  void            (* const __FAR Mul[])() =
-                                    { &MulIOFlo, &MulIOFlo, &MulIOFlo,
+static  void            (* const __FAR Mul[])( ftn_type *, ftn_type * ) =
+                                    { &MulIOFlow, &MulIOFlow, &MulIOFlow,
                                       &MulR, &MulD, &MulE,
                                       &MulC, &MulQ, &MulX };
 static  void            (* const __FAR Div[])() =
