@@ -18,10 +18,6 @@ src\grdemo.c
 src\grdemo.cpp
 src\hello.c
 src\hello.cpp
-src\inc\cmacros.inc
-src\inc\mmsystem.inc
-src\inc\toolhelp.inc
-src\inc\windows.inc
 src\_matherr.c
 src\memos.c
 src\memos.def
@@ -48,7 +44,6 @@ src\startup\386\cstrt386.asm
 src\startup\386\cstrto32.asm
 src\startup\386\cstrtw32.asm
 src\startup\386\cstrtwnt.asm
-src\startup\386\cstrtwwt.asm
 src\startup\386\cstrtx32.asm
 src\startup\386\dmaino32.c
 src\startup\386\dmainwnt.c
@@ -65,18 +60,15 @@ src\startup\dos\cmain086.c
 src\startup\dos\cstrt086.asm
 src\startup\dos\dos16m.asm
 src\startup\dos\hpgrw086.c
-src\startup\dos\mdef.inc
 src\startup\os2\cmain086.c
 src\startup\os2\cstrto16.asm
 src\startup\os2\dmaino16.c
 src\startup\os2\initfini.h
 src\startup\os2\libmno16.c
 src\startup\os2\maino16.c
-src\startup\os2\mdef.inc
 src\startup\os2\wos2.h
 src\startup\wildargv.c
 src\startup\win\cstrtw16.asm
 src\startup\win\libentry.asm
-src\startup\win\mdef.inc
 src\winhello.c
 src\wstub.c
