@@ -35,6 +35,6 @@ set PROJDIR=<CWD>
 #===============================
     cdsay <PROJDIR>/linux386
     wmake -h
-    <CPCMD> wasm.exe <RELROOT>/bld/build/binl/
-    <CPCMD> wasm.sym <RELROOT>/bld/build/binl/
+    <CPCMD> wasm.exe <RELROOT>/bld/build/binl/wasm
+    <CPCMD> wasm.sym <RELROOT>/bld/build/binl/wasm.sym
     cdsay <PROJDIR>
