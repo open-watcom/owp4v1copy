@@ -49,8 +49,6 @@ resources = $(wheapwlk_dir)\10hw.ico $(wheapwlk_dir)\heapwlk.dlg $(sdk_dir)\misc
             $(wheapwlk_dir)\code.dlg $(wheapwlk_dir)\config.dlg $(sdk_dir)\misc\about.dlg
 
 $(name).exe : $(msgh) $(objs) $(disasm) $(lnk) $(name).res
-       @if exist $(sdk_dir)\misc\ctl3d.lib del $(sdk_dir)\misc\ctl3d.lib
-	   wlib $(sdk_dir)\misc\ctl3d.lib +$(sdk_dir)\misc\ctl3d.dll
 	wlink @$(lnk)
         $(RC) -k $(name).res
 
@@ -68,7 +66,7 @@ $(lnk) : makefile
         @%append $(lnk) library toolhelp.lib
         @%append $(lnk) library commdlg.lib
         @%append $(lnk) library stress.lib
-        @%append $(lnk) library $(sdk_dir)\misc\ctl3d.lib
+        @%append $(lnk) library $(misc_dir)\ctl3d.lib
         @%append $(lnk) option map
         @%append $(lnk) option stack=7k
         @%append $(lnk) option heapsize=2k

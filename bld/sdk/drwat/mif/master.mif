@@ -45,7 +45,7 @@ extra_l_flags = option map,quiet name $(exc_name)
 
 #extra_l_flags_nt_axp = op start=WinMainCRTStartup ref WinMainCRTStartup lib { user32 kernel32 gdi32 comdlg32 advapi32}
 
-extra_l_flags_win = lib toolhelp.lib,commdlg.lib,ctl3d.lib
+extra_l_flags_win = lib toolhelp.lib,commdlg.lib,$(misc_dir)\ctl3d.lib
 
 !include cproj.mif
 
