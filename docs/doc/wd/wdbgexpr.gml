@@ -583,9 +583,9 @@ special variables.
 .us dbg$32, dbg$bottom, dbg$bp, dbg$code,
 .us dbg$cpu, dbg$ctid, dbg$data, dbg$etid,
 .us dbg$fpu, dbg$ip, dbg$left, dbg$monitor,
-.us dbg$os, dbg$pid, dbg$psp, dbg$radix,
-.us dbg$remote, dbg$right, dbg$sp, dbg$top,
-.us dbg$nil, dbg$src, dbg$loaded
+.us dbg$ntid, dbg$os, dbg$pid, dbg$psp,
+.us dbg$radix, dbg$remote, dbg$right, dbg$sp,
+.us dbg$top, dbg$nil, dbg$src, dbg$loaded
 .endnote
 .np
 The debugger permits the manipulation of register contents and special

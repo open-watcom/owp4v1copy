@@ -321,9 +321,9 @@ Intel Pentium processor
 .mnote dbg$ctid
 This debugger symbol represents the identification number of the
 current execution thread.
-Under DOS and QNX, the current thread ID is always 1.
-The current execution thread can be selected using the Thread window
-or the Thread command.
+Under environments which do not support threading, the current thread
+ID is always 1. The current execution thread can be selected using the
+Thread window or the Thread command.
 .ix 'predefined symbol' 'dbg$data'
 .mnote dbg$data
 This debugger symbol represents the current data location under
@@ -334,7 +334,8 @@ on whether you were last looking at code or data.
 .mnote dbg$etid
 This debugger symbol represents the identification number of the
 thread that was executing when the debugger was entered.
-Under DOS and QNX, the executing thread ID is always 1.
+Under environments which do not support threading, the executing thread
+ID is always 1.
 ..do end
 .ix 'predefined symbol' 'dbg$fpu'
 .mnote dbg$fpu
@@ -381,6 +382,30 @@ IBM Enhanced Graphics Adapter (EGA)
 IBM Video Graphics Array (VGA)
 .endnote
 ..do end
+
+.ix 'predefined symbol' 'dbg$ntid'
+.mnote dbg$ntid
+This debugger symbol represents the identification number of the
+next execution thread. To iterate through all of the threads in a process,
+you can execute
+.id thread dbg$ntid
+repetitively until you are back to the original thread.
+Under environments which do not support threading, the next thread
+ID is always 1. To show the execution stack for all threads (in the Log window),
+you can execute the following commands:
+.exam begin
+/orig_tid = dbg$ctid
+/curr_tid = dbg$ctid
+while curr_tid != 0 {
+    print {----- Next Thread %x -----} curr_tid;
+    show calls;
+    /curr_tid = dbg$ntid;
+    thread curr_tid;
+    if( curr_tid == orig_tid ) {
+        /curr_tid = 0;
+    };
+}
+.exam end
 .ix 'predefined symbol' 'dbg$os'
 .mnote dbg$os
 This debugger symbol represents the operating system that is currently
