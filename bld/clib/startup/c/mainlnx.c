@@ -45,7 +45,7 @@ int *__threadid( void )
     return( (int *) &(__THREADDATAPTR->thread_id) );
 }
 
-static void *__SingleThread()
+static struct thread_data *__SingleThread()
 {
     return( __FirstThreadData );
 }
@@ -55,17 +55,17 @@ static void __NullAccIOBRtn(void) {}
 static void __NullAccHeapRtn(void) {}
 static void __NullAccTDListRtn(void) {}
 
-void    *(*__GetThreadPtr)()     = &__SingleThread;
-void    (*_AccessFileH)(int)     = &__NullAccessRtn;
-void    (*_ReleaseFileH)(int)    = &__NullAccessRtn;
-void    (*_AccessIOB)(void)      = &__NullAccIOBRtn;
-void    (*_ReleaseIOB)(void)     = &__NullAccIOBRtn;
-void    (*_AccessNHeap)(void)    = &__NullAccHeapRtn;
-void    (*_AccessFHeap)(void)    = &__NullAccHeapRtn;
-void    (*_ReleaseNHeap)(void)   = &__NullAccHeapRtn;
-void    (*_ReleaseFHeap)(void)   = &__NullAccHeapRtn;
-void    (*_AccessTDList)(void)   = &__NullAccTDListRtn;
-void    (*_ReleaseTDList)(void)  = &__NullAccTDListRtn;
+struct thread_data*     (*__GetThreadPtr)()     = &__SingleThread;
+void                    (*_AccessFileH)(int)     = &__NullAccessRtn;
+void                    (*_ReleaseFileH)(int)    = &__NullAccessRtn;
+void                    (*_AccessIOB)(void)      = &__NullAccIOBRtn;
+void                    (*_ReleaseIOB)(void)     = &__NullAccIOBRtn;
+void                    (*_AccessNHeap)(void)    = &__NullAccHeapRtn;
+void                    (*_AccessFHeap)(void)    = &__NullAccHeapRtn;
+void                    (*_ReleaseNHeap)(void)   = &__NullAccHeapRtn;
+void                    (*_ReleaseFHeap)(void)   = &__NullAccHeapRtn;
+void                    (*_AccessTDList)(void)   = &__NullAccTDListRtn;
+void                    (*_ReleaseTDList)(void)  = &__NullAccTDListRtn;
 
 void __LinuxInit( void *ptr )
 /*************************/

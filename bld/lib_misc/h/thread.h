@@ -178,7 +178,7 @@ typedef struct thread_data {
     // prototype for thread data init function
     int __initthread( void *p );
 
-    #define __THREADDATAPTR     ((thread_data *)(*__GetThreadPtr)())
+    #define __THREADDATAPTR     ((*__GetThreadPtr)())
     #if defined(__OS2__) || defined(_NETWARE_CLIB)
         typedef struct thread_data_vector {
             thread_data *data;
@@ -200,7 +200,7 @@ typedef struct thread_data {
     extern int _WCFAR *_threadid;
     extern thread_data **__ThreadData;
     extern struct thread_data * __MultipleThread();
-    #define __THREADDATAPTR     ((thread_data *)__MultipleThread())
+    #define __THREADDATAPTR     (__MultipleThread())
 #endif
 
 extern  unsigned        __GetMaxThreads(void);
