@@ -33,7 +33,17 @@
 #include <windows.h>
 #define VPDLL_VERSION           1
 
-#define DLL_EXPORT    __export __pascal
+
+#if defined( __NT__ )
+     #define DLL_EXPORT __export __stdcall
+//    #define DLL_EXPORT __export WINAPI
+#elif defined( __WINDOWS__ )
+//    #error windows
+    #define DLL_EXPORT  __export __pascal
+#else
+    #error Unsupported OS
+    #define RCSAPI
+#endif
 
 // Messages for the Callback Function
 

@@ -8,9 +8,9 @@ sys_dll = 1
 !include deftarg.mif
 !include defrule.mif
 
-.c: ..
+.c: ..\c
 
-inc_dirs = ..;..\..
+inc_dirs = ..\h;..\..
 
 .before:
         set INCLUDE=$(inc_path)
@@ -24,8 +24,12 @@ lflags_nt_386 += initinstance terminstance
 lflags_win_i86 += initinstance memory
 
 extra_l_flags = op map, verbose, static, heapsize=8k
-extra_l_flags_win = op stack=8k lib windows, ddeml libfile libentry
+extra_l_flags_win = op stack=8k lib windows, ddeml
 extra_l_flags_nt = op stack=40k
 
 $(name).dll : $(name).obj
-        $(linker) $(lflags) name $(name) file $(name) @export.mif
+!ifeq host_OS nt
+        $(linker) $(lflags) name $(name) file $(name) @..\export.mif
+!else
+        $(linker) $(lflags) name $(name) file $(name)
+!endif

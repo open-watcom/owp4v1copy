@@ -39,8 +39,8 @@ cdsay .
     <CPCMD> viper\nt\idex.cfg <relroot>\rel2\binnt\idex.cfg
 #    <CPCMD> viper\axp\ide.exe <relroot>\rel2\axpnt\ide.exe
 #    <CPCMD> viper\axp\idex.cfg <relroot>\rel2\axpnt\idex.cfg
-    <CPCMD> vpdll\dll\vpdll.dll <relroot>\rel2\binw\vpdll.dll
-    <CPCMD> vpdll\dll.nt\vpdll.dll <relroot>\rel2\binnt\vpdll.dll
+    <CPCMD> vpdll\wini86\vpdll.dll <relroot>\rel2\binw\vpdll.dll
+    <CPCMD> vpdll\nt386\vpdll.dll <relroot>\rel2\binnt\vpdll.dll
 
 [ BLOCK <1> clean ]
 #==================

@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include "vpdll.h"
 
-#define WAIT_TIMEOUT            60000
+#define VPDLL_WAIT_TIMEOUT            60000
 #define DDE_TOPIC               "project"
 #define DDE_SERVICE             "wat_winmakerdll"
 #define VP_FILE_EXT             ".VPD"
@@ -106,10 +106,15 @@ HDDEDATA __export CALLBACK DdeProc( UINT type, UINT fmt, HCONV conv,
     case XTYP_CONNECT:
         if( hsz1 == topicHsz && hsz2 == serviceHsz ) {
 //          MessageBox( NULL, "connection established", "vpdll", MB_OK );
+#ifdef __NT__
+        }
+        return( NULL );
+#else
             return( TRUE );
         } else {
             return( FALSE );
         }
+#endif
     case XTYP_REQUEST:
         len = DdeQueryString( ddeInst, hsz2, NULL, 0, CP_WINANSI );
         if( len != 0 ) {
@@ -257,7 +262,7 @@ BOOL DLL_EXPORT VPDLL_BeginFileList( void ) {
     if( dllInUse ) {
         buf = alloca( strlen( curTarget ) + 4 );
         sprintf( buf, "fb%s", curTarget );
-        return( sendRequest( buf, WAIT_TIMEOUT ) );
+        return( sendRequest( buf, VPDLL_WAIT_TIMEOUT ) );
     }
     return( TRUE );
 }
@@ -268,7 +273,7 @@ BOOL DLL_EXPORT VPDLL_AddFile( char *fname ) {
     if( dllInUse ) {
         buf = alloca( strlen( fname )  + strlen( curTarget ) + 4 );
         sprintf( buf, "fa%s %s", curTarget, fname );
-        return( sendRequest( buf, WAIT_TIMEOUT ) );
+        return( sendRequest( buf, VPDLL_WAIT_TIMEOUT ) );
     }
     return( TRUE );
 }
@@ -279,7 +284,7 @@ BOOL DLL_EXPORT VPDLL_EndFileList( void ) {
     if( dllInUse ) {
         buf = alloca( strlen( curTarget ) + 4 );
         sprintf( buf, "fe%s", curTarget );
-        return( sendRequest( buf, WAIT_TIMEOUT ) );
+        return( sendRequest( buf, VPDLL_WAIT_TIMEOUT ) );
     }
     return( TRUE );
 }
