@@ -71,7 +71,7 @@ void TestRot( void )
 {
     unsigned long       lmask = 0x12345678;
 #if defined(M_I86)
-    unsigned int        imask = 0x4567;
+    unsigned int        imask = 0x7654;
 #else
     unsigned int        imask = 0x76543210;
 #endif
@@ -85,12 +85,18 @@ void TestRot( void )
     VERIFY( lmask == 0x12345678 );
 
 #if defined(M_I86)
+    imask = _rotl( imask, 4 );
+    VERIFY( imask == 0x6547 );
+    imask = _rotr( imask, 8 );
+    VERIFY( imask == 0x4765 );
+    imask = _rotl( imask, 4 );
+    VERIFY( imask == 0x7654 );
 #else
-    imask = _lrotl( imask, 4 );
+    imask = _rotl( imask, 4 );
     VERIFY( imask == 0x65432107 );
-    imask = _lrotr( imask, 8 );
+    imask = _rotr( imask, 8 );
     VERIFY( imask == 0x07654321 );
-    imask = _lrotl( imask, 4 );
+    imask = _rotl( imask, 4 );
     VERIFY( imask == 0x76543210 );
 #endif
 }
