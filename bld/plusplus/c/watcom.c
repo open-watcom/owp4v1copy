@@ -37,8 +37,8 @@
 
 #define __puts( x )     MsgDisplayBanner( x )
 
-#undef _BANEXTRA
-#define _BANEXTRA       " "
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
 
 
 #if _CPU == 386

@@ -42,6 +42,8 @@
 #include <conio.h>
 
 #include "banner.h"
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
 
 #if defined(__OS2) || defined(__NT)
 #define MAX_CMD 10240
