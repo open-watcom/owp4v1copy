@@ -304,7 +304,7 @@ doscalls=$(build_root)\watcom\lib\doscalls.lib
 apilib=$(build_root)\watcom\lib\api.lib
 
 # Select OS/2 Libs based on use_os2tk_stuff
-!ifdef use_os2tk_stuff
+!ifdef %use_os2tk_stuff
 os2386=$(os2_toolkit)\lib\os2386.lib
 os2286=$(os2_ddk)\base\lib\os2286.lib
 !else
