@@ -41,7 +41,7 @@
 #else
 #include "tinyio.h"
 #endif
-#include "netbios.h"
+#include "wnetbios.h"
 #include "trperr.h"
 #include "packet.h"
 
