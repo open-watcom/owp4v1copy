@@ -228,7 +228,7 @@ void RegionXorAnd( COLORREF xorcolour, COLORREF andcolour, BOOL fFillRgn,
  * FillXorAnd - Fills the area in the Xor and the AND bitmaps (with a call
  *              to Fill).
  */
-void FillXorAnd( COLORREF brushcolour, WPI_POINT *pt, int colourtype )
+void FillXorAnd( COLORREF brushcolour, WPI_POINT *pt, wie_clrtype colourtype )
 {
     fill_info_struct    fillinfo;
 

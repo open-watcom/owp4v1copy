@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines to handle the mouse interactions.
 *
 ****************************************************************************/
 
-
-/* MOUSE.C - routines to handle the mouse interactions */
 
 #include "limits.h"
 #define STRICT
@@ -275,7 +272,7 @@ static void CreateBegin( POINT pt, OBJPTR parent )
   }
 
 
-static void MovePendingBegin( WORD keystate, OBJPTR object )
+static void MovePendingBegin( BOOL keystate, OBJPTR object )
 /**********************************************************/
 
 /* begin a move operation */
@@ -742,7 +739,7 @@ extern void ProcessMouseMove( POINT point )
     }
   }
 
-static void BeginPaste( POINT pt, WORD keystate, void * d )
+static void BeginPaste( POINT pt, BOOL keystate, void * d )
 /*********************************************************/
 
 /* begin a paste operation */

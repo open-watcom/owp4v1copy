@@ -262,7 +262,7 @@ extern AliasHdl         TaskAlias;
 extern char             *AppName;
 
 /* ddeproc.c */
-BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, WORD msg, WORD wparam,
+BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, UINT msg, WPARAM wparam,
                                     DWORD lparam );
 void SetMainWndDefault( void );
 
@@ -282,7 +282,7 @@ void ResizeListBox( WORD width, WORD height, ListBoxInfo *info );
 /* ddetrack.c */
 void InitTrackWind( HWND hwnd );
 BOOL CreateTrackWind( void );
-BOOL __export FAR PASCAL DDETrackingWndProc( HWND hwnd, WORD msg, WORD wparam,
+BOOL __export FAR PASCAL DDETrackingWndProc( HWND hwnd, UINT msg, WPARAM wparam,
                                     DWORD lparam );
 void DisplayTracking( WPARAM wparam );
 void TrackStringMsg( MONHSZSTRUCT *info );

@@ -88,7 +88,7 @@ static DWORD Disp_Types[] = {
 };
 
 /* forward declaration */
-BOOL __export FAR PASCAL MemDisplayProc( HWND, WORD, WORD, DWORD );
+BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, DWORD );
 
 typedef enum {
     MT_FREE,

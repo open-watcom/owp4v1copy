@@ -54,6 +54,6 @@ extern Bool             WInsertStringEntry      ( WStringEditInfo * );
 extern Bool             WAddEditWinLBoxBlock    ( WStringEditInfo *,
                                                   WStringBlock *, int );
 extern Bool             WAddEditWinLBoxEntry    ( WStringEditInfo *,
-                                                  WStringBlock *, int, int );
+                                                  WStringBlock *, uint_16, int );
 
 #endif

@@ -46,7 +46,7 @@ typedef struct disasmrtns {
                                     DWORD addr );
     char                *(*JmpLabel)( unsigned long addr, DWORD off );
     char                *(*ToBrStr)( unsigned long value, DWORD addr );
-    char                *(*ToIndex)( long value, unsigned long addr );
+    char                *(*ToIndex)( unsigned long value, unsigned long addr );
     char                *(*ToSegStr)( DWORD value, WORD seg, DWORD addr );
     char                *(*GetWtkInsName)( unsigned ins );
 } DisAsmRtns;

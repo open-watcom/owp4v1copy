@@ -116,7 +116,7 @@ char *ToBrStr( unsigned long value, DWORD addr ) {
     return( CurRtns->ToBrStr( value, addr ) );
 }
 
-char *ToIndex( long value, unsigned long addr ) {
+char *ToIndex( unsigned long value, unsigned long addr ) {
     return( CurRtns->ToIndex( value, addr ) );
 }
 
