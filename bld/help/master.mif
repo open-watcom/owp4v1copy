@@ -18,7 +18,11 @@ extra_c_flags += -dTRMEM
 objs +=  trmemcvr.obj trmem.obj
 !endif
 
+!ifeq host_OS linux
+libs = $(ui_dir)/unix/$(host_OS)$(host_CPU)/ui.lib $(ncurses_dir)/$(host_OS)$(host_CPU)/ncurses.lib
+!else
 libs = $(ui_dir)/$(host_OS)/$(host_OS)$(host_CPU)/ui.lib
+!endif
 extra_l_flags = op map l { $(libs) }
 
 $(proj_name).exe : $(objs) $(libs)

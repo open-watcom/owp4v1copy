@@ -31,7 +31,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __UNIX__
+#include <dirent.h>
+#else
 #include <direct.h>
+#endif
 #include <string.h>
 #include "uidef.h"
 #include "help.h"
