@@ -1,4 +1,4 @@
-#pmake: build trap remote dos 16 32 nov nec
+#pmake: all build trap remote os_dos cpu_i86 cpu_386 nov nec
 
 machine = NEC
 

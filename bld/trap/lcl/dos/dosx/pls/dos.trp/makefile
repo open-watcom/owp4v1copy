@@ -1,4 +1,4 @@
-#pmake: build trap lcl dos dsx 32 x86
+#pmake: all build trap lcl os_dos dsx cpu_386 x86
 
 os = dos
 srv = pls

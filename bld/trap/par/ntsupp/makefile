@@ -1,4 +1,4 @@
-#pmake: build remote nt 32 par
+#pmake: all build remote os_nt cpu_386 par
 
 all: dbginst.exe .SYMBOLIC
 

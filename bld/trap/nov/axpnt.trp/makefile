@@ -1,4 +1,4 @@
-#pmake: trap remote nt 32 nov axp
+#pmake: trap remote os_nt cpu_386 nov axp
 
 os = nt
 srv = nov

@@ -1,4 +1,4 @@
-#pmake: all serv remote qnx 16 32 ser x86
+#pmake: all serv remote os_qnx cpu_i86 cpu_386 ser x86
 
 os = qnx
 srv = ser

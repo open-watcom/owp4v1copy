@@ -1,4 +1,4 @@
-#pmake: build lcl win 16 32 support x86
+#pmake: all build lcl os_win cpu_i86 cpu_386 support x86
 
 !ifndef bin_root
 !ifdef bin_root_wv

@@ -1,4 +1,4 @@
-#pmake: build serv remote nt 32 par
+#pmake: all build serv remote os_nt cpu_386 par
 
 gui = 1
 os = nt

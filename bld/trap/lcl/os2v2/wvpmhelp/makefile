@@ -1,4 +1,4 @@
-#pmake: build os_os2 lcl 32bit support x86
+#pmake: all build os_os2 lcl 32bit support x86
 #
 # Builds WDPMHELP.EXE, WDPMHOOK.DLL
 #

@@ -1,4 +1,4 @@
-#pmake: trap remote nt 32 tcp axp
+#pmake: trap remote os_nt cpu_386 tcp axp
 
 os = nt
 srv = tcp

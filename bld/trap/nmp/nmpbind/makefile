@@ -1,4 +1,4 @@
-#pmake: build remote support nmp os2 dos nt win 16 32 x86
+#pmake: all build remote support nmp os_os2 os_dos os_nt os_win cpu_i86 cpu_386 x86
 
 !ifndef bin_root
 !ifdef bin_root_wv

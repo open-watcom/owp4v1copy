@@ -1,4 +1,4 @@
-#pmake: build trap remote os2 16 32 par x86
+#pmake: all build trap remote os_os2 cpu_i86 cpu_386 par x86
 
 # This is a quick and dirty project because it is OS/2 specific and
 # intended to be temporary; Yes, I know it breaks all known rules. Once

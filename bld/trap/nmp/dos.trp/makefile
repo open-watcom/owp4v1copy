@@ -1,4 +1,4 @@
-#pmake: build trap remote dos 16 32 nmp x86
+#pmake: all build trap remote os_dos cpu_i86 cpu_386 nmp x86
 
 os = dos
 srv = nmp

@@ -1,4 +1,4 @@
-#pmake: lcl nt 32 trap axp
+#pmake: lcl os_nt cpu_386 trap axp
 #
 # Create the NT STD.DLL for Alpha
 #

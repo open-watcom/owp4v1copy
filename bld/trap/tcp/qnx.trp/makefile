@@ -1,4 +1,4 @@
-#pmake: all trap remote qnx 16 32 tcp x86
+#pmake: all trap remote os_qnx cpu_i86 cpu_386 tcp x86
 
 os = qnx
 srv = tcp

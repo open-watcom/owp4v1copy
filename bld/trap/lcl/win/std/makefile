@@ -1,4 +1,4 @@
-#pmake: build lcl win 16 32 trap x86
+#pmake: all build lcl os_win cpu_i86 cpu_386 trap x86
 #
 # Create the Windows 3.x STD.DLL
 #

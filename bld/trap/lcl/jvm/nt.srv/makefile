@@ -1,4 +1,4 @@
-#pmake: serv lcl dos dsx 32 x86
+#pmake: serv lcl os_dos dsx cpu_386 x86
 
 !include $(build_dir)\mif\bhost.mif
 

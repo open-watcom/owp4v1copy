@@ -1,4 +1,4 @@
-#pmake: build lcl dos 16 trap nec
+#pmake: all build lcl os_dos cpu_i86 trap nec
 
 machine = NEC
 

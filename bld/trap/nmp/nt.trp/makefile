@@ -1,4 +1,4 @@
-#pmake: trap remote nt 16 32 nmp
+#pmake: trap remote os_nt cpu_i86 cpu_386 nmp
 
 os = nt
 srv = nmp

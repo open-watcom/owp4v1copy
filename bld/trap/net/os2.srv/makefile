@@ -1,4 +1,4 @@
-#pmake: build serv remote os2 16 32 net x86
+#pmake: all build serv remote os_os2 cpu_i86 cpu_386 net x86
 
 os = os2
 srv = net

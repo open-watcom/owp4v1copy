@@ -1,4 +1,4 @@
-#pmake: build trap remote win 16 32 par x86
+#pmake: all build trap remote os_win cpu_i86 cpu_386 par x86
 
 os = win
 srv = par

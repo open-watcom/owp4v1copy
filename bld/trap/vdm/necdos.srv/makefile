@@ -1,4 +1,4 @@
-#pmake: build serv remote dos 16 32 vdm nec
+#pmake: all build serv remote os_dos cpu_i86 cpu_386 vdm nec
 
 machine = NEC
 

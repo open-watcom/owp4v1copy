@@ -1,4 +1,4 @@
-#pmake: build serv remote dos 16 32 ser x86
+#pmake: all build serv remote os_dos cpu_i86 cpu_386 ser x86
 
 os = dos
 srv = ser

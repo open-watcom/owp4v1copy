@@ -1,4 +1,4 @@
-#pmake: serv remote nt 32 nov axp
+#pmake: serv remote os_nt cpu_386 nov axp
 
 gui = 1
 os = nt

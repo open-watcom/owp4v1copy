@@ -1,4 +1,4 @@
-#pmake: serv remote dos 16 32 winl fmr
+#pmake: serv remote os_dos cpu_i86 cpu_386 winl fmr
 
 machine = FMR
 

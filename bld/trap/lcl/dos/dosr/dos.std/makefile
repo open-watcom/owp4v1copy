@@ -1,4 +1,4 @@
-#pmake: build lcl dos 16 trap x86
+#pmake: all build lcl os_dos cpu_i86 trap x86
 
 os      = dos
 srv     = lcl

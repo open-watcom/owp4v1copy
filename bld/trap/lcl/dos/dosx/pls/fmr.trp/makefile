@@ -1,4 +1,4 @@
-#pmake: trap lcl dos dsx 32 fmr
+#pmake: trap lcl os_dos dsx cpu_386 fmr
 
 machine = FMR
 

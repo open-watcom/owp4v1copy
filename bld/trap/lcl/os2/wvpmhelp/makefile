@@ -1,4 +1,4 @@
-#pmake: all build os_os2 lcl 32 386 support x86
+#pmake: all all build os_os2 lcl cpu_386 cpu_386 support x86
 #
 # Create WDPMHELP.EXE, WDPMHOOK.DLL
 #

@@ -1,4 +1,4 @@
-#pmake: build trap remote os2 16 32 tcp x86
+#pmake: all build trap remote os_os2 cpu_i86 cpu_386 tcp x86
 
 os = os2
 srv = tcp
