@@ -51,13 +51,13 @@ extern void pascal      _CoRep();
 extern void pascal      _CoXor();
 extern void pascal      _CoAnd();
 extern void pascal      _CoOr();
-extern void pascal      _Get1Dot();
+extern short pascal     _Get1Dot();
 extern void pascal      _Pix1Zap();
 extern void pascal      _Pix1Fill();
 extern void pascal      _Pix1Copy();
 extern void pascal      _Pix1Read();
-extern void pascal      _CGAScanLeft();
-extern void pascal      _CGAScan1Right();
+extern short pascal     _CGAScanLeft();
+extern short pascal     _CGAScan1Right();
 
 
 /*  Table of values for CRT registers. Use 0x57 for the two 0x58 in the

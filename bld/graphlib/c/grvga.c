@@ -50,12 +50,12 @@ extern void pascal      _CoXor();
 extern void pascal      _CoAnd();
 extern void pascal      _CoOr();
 extern void pascal      _EGARep();
-extern void pascal      _Get1Dot();
-extern void pascal      _GetDot19();
+extern short pascal     _Get1Dot();
+extern short pascal     _GetDot19();
 extern void             _EGASet();
 extern void             _EGAReset();
 extern void             _EGASetup80();
-extern void pascal      _EGAGetDot();
+extern short pascal     _EGAGetDot();
 extern void pascal      _Rep19();
 extern void pascal      _And19();
 extern void pascal      _Pix1Zap();
@@ -70,12 +70,12 @@ extern void pascal      _PixCopy19();
 extern void pascal      _Pix1Read();
 extern void pascal      _EGAReadRow();
 extern void pascal      _PixRead19();
-extern void pascal      _CGAScanLeft();
-extern void pascal      _EGAScanLeft();
-extern void pascal      _ScanLeft19();
-extern void pascal      _CGAScan1Right();
-extern void pascal      _EGAScanRight();
-extern void pascal      _ScanRight19();
+extern short pascal     _CGAScanLeft();
+extern short pascal     _EGAScanLeft();
+extern short pascal     _ScanLeft19();
+extern short pascal     _CGAScan1Right();
+extern short pascal     _EGAScanRight();
+extern short pascal     _ScanRight19();
 
 
 static short _VGAInit( short mode )
