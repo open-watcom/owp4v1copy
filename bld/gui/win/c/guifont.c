@@ -106,7 +106,7 @@ bool GUIChooseFont( HFONT font, LOGFONT *lf, HWND hwnd )
         FreeAlias16( lfAlias );
     }
 #else
-    ret = ((BOOL(*)(LPCHOOSEFONT))func)( &cf );
+    ret = ((BOOL(WINAPI *)(LPCHOOSEFONT))func)( &cf );
 #endif
 #if !(defined(__NT__) || defined(WILLOWS))
     FreeLibrary( h );
