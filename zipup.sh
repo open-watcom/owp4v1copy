@@ -6,7 +6,7 @@ P4OPT=-f
 P4PORT=-pp4.scitechsoft.com:3488
 ARCHIVES=/archives
 cd $ARCHIVES
-rm -f *.bz2
+rm -f $PREFIX-src.tar.bz2
 
 #############################################################################
 # Archive all Open Watcom source files
