@@ -107,7 +107,7 @@ char *CMangler( struct asm_sym *sym, char *buffer )
         }
     }
     if( sym->state == SYM_PROC ) {
-        info = ((dir_node*)sym)->e.procinfo;
+        info = ((dir_node *)sym)->e.procinfo;
         if( info->langtype == LANG_C || info->langtype == LANG_STDCALL ) {
             changes |= USCORE_BACK;
         } else if( info->langtype >= LANG_BASIC && info->langtype <= LANG_PASCAL ) {

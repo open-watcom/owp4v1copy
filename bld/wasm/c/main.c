@@ -347,7 +347,7 @@ static void SetMemoryModel(void)
         break;
     default:
         strcpy( buffer, "/m" );
-        strcat( buffer, (char*)&OptValue );
+        strcat( buffer, (char *)&OptValue );
         MsgPrintf1( MSG_UNKNOWN_OPTION, buffer );
         exit( 1 );
     }

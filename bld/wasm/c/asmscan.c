@@ -147,7 +147,7 @@ done_scanning_float:
     (*output)++;
     *input = ptr;
 
-    *((float*)(&buf->value)) = atof(buf->string_ptr);
+    *((float *)(&buf->value)) = atof(buf->string_ptr);
     return( NOT_ERROR );
 }
 
