@@ -379,6 +379,15 @@ This warning is initially disabled. It must be explicitly enabled with
 .us #pragma enable_message(130).
 It can be disabled later by using
 .us #pragma disable_message(130).
+:MSGSYM. ERR_ASSUMED_IMPORT
+:MSGTXT. No prototype found for function '%s'
+:MSGJTXT. '%s'のプロトタイプがありません
+:WARNING. 1
+.np
+A reference for a function appears in your program, but you do not
+have a prototype for that function defined. Implicit prototype will
+be used, but this will cause problems if the assumed prototype does
+not match actual function definition.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
@@ -443,13 +452,11 @@ Nested comments are not allowed in ANSI C.
 You may be missing the
 .id */
 for the previous comment.
-:MSGSYM. ERR_ASSUMED_IMPORT
-:MSGTXT. No prototype found for '%s'
-:MSGJTXT. '%s'のプロトタイプがありません
-:WARNING. 3
-.np
-A reference for a function appears in your program, but you do not
-have a prototype for that function defined.
+:MSGSYM. ERR_UNUSED_2
+:MSGTXT. not used
+:MSGJTXT. このメッセージは使用されません
+:WARNING. 2
+unused message
 :MSGSYM. ERR_USEFUL_SIDE_EFFECT
 :MSGTXT. Expression is only useful for its side effects
 :MSGJTXT. この式は副作用のみを起こします
@@ -1003,7 +1010,7 @@ Do not
 .id #include
 header files that are not required.
 .np
-For the 16-bit WATCOM C compiler,
+For the 16-bit C compiler,
 the "/d2" switch causes the compiler to use more memory.
 Try compiling with the "/d1" switch instead.
 :MSGSYM. ERR_INV_CHAR_CONSTANT
@@ -1436,10 +1443,10 @@ The type of error is displayed in the message.
 :MSGTXT. Internal compiler error %d
 :MSGJTXT. コンパイラ内部エラー%d
 .np
-A bug has been encountered in the WATCOM C compiler.
+A bug has been encountered in the C compiler.
 Please report the specified internal compiler error number and any other
-helpful details about the program being compiled to WATCOM so that we
-can fix the problem.
+helpful details about the program being compiled to compiler developers
+so that we can fix the problem.
 :MSGSYM. ERR_BAD_PARM_REGISTER
 :MSGTXT. Parameter number %d - invalid register in #pragma
 :MSGJTXT. パラメータ番号 %d - #pragmaの中の不適切なレジスタ
@@ -1455,11 +1462,11 @@ returned by the function.
 :MSGTXT. Illegal register modified by '%s' #pragma
 :MSGJTXT. 違法なレジスタが'%s'#pragmaによって修正されました
 .np
-.us For the 16-bit WATCOM C compiler:
+.us For the 16-bit C compiler:
 The BP, CS, DS, and SS registers cannot be modified in small data models.
 The BP, CS, and SS registers cannot be modified in large data models.
 .np
-.us For the 32-bit WATCOM C compiler:
+.us For the 32-bit C compiler:
 The EBP, CS, DS, ES, and SS registers cannot be modified in flat
 memory models.
 The EBP, CS, DS, and SS registers cannot be modified in small data
@@ -1672,8 +1679,8 @@ to the __segname() directive.
 The compiler could not recognize one of the allowable forms of __based
 declarations.
 See the
-.us WATCOM C Language Reference
-for description of all the allowable forms of __based declarations.
+.us C Language Reference
+document for description of all the allowable forms of __based declarations.
 :MSGSYM. ERR_SYM_MUST_BE_TYPE_SEGMENT
 :MSGTXT. Variable for __based declaration must be of type __segment or pointer
 :MSGJTXT. __based宣言に対する変数は型__segmentでなければなりません
