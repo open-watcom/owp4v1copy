@@ -1,11 +1,12 @@
-#pmake: build small 32bit stack inline iX86 static os_nov cpu_386
-processor=387
-model=ms
-subdir=ms_s
-system=netware
+#pmake: flat 32bit register calls linux iX86 static os_linux cpu_386
+processor=386
+model=mf
+subdir=mf_r
+system=linux
+convention=register
 linkage=static
-convention=stack
 !include $(mathlib_dir)/objects.mif
 !include $(mathlib_dir)/master.mif
 !include $(mathlib_dir)/mklib.mif
 !include $(mathlib_dir)/deps.mif
+

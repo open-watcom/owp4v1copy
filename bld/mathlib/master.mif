@@ -18,7 +18,6 @@ clib_host_os_qnx     =qnx
 clib_host_os_windows =win
 clib_host_os_winnt   =nt
 clib_host_os_linux   =linux
-clib_host_os_netware =netware
 host_os = $(clib_host_os_$(system))
 
 !include cproj.mif
