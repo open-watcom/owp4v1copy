@@ -166,10 +166,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;
                 the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size+=no_of_bytes;
-                    the_struct->first_length++;
-                }
+                the_struct->first_size+=no_of_bytes;
+                the_struct->first_length++;
             }
             
             if( sym && Parse_Pass == PASS_1 ) {
