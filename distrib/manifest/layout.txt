@@ -1,15 +1,15 @@
-           Overview of all Open Watcom C/C++/FORTRAN ZIP archives			
+           Overview of all Open Watcom C/C++/FORTRAN ZIP archives                       
            ======================================================
 
 Files common to both Open Watcom C/C++ and FORTRAN 77
 =====================================================
 
-cm_core_all	    - Core binaries (All hosts)
-cm_core_dos	    - Core binaries (DOS host)
-cm_core_doswin	    - Core binaries (DOS & Win hosts)
-cm_core_nt	    - Core binaries (NT host)
-cm_core_os2	    - Core binaries (OS2 host)
-cm_core_win	    - Core binaries (Win16 host)
+cm_core_all         - Core binaries (All hosts)
+cm_core_dos         - Core binaries (DOS host)
+cm_core_doswin      - Core binaries (DOS & Win hosts)
+cm_core_nt          - Core binaries (NT host)
+cm_core_os2         - Core binaries (OS2 host)
+cm_core_win         - Core binaries (Win16 host)
 
 cm_clib_hdr         - C runtime library header files
 
@@ -36,14 +36,14 @@ cm_dbg_win          - Debugger, profiler & sampler (Win16 host)
 cm_dbg_doswin       - Debugger                     (DOS & Win16 hosts)
 cm_dbg_dosos2       - Debugger                     (DOS & OS/2 hosts)
 cm_dbg_os2nt        - Debugger                     (OS/2 & NT hosts)
-cm_dbg_misc1	    - Debugger			 (DOS host or target)
-cm_dbg_misc2	    - Debugger			 (Win16, 95, 98 or ME hosts)
-cm_dbg_net	    - Debugger servers & sampler   (Netware host)
+cm_dbg_misc1        - Debugger                   (DOS host or target)
+cm_dbg_misc2        - Debugger                   (Win16, 95, 98 or ME hosts)
+cm_dbg_net          - Debugger servers & sampler   (Netware host)
 
-cm_hlp_dos	    - Help files (Dos host)
-cm_hlp_win	    - Help files (Win16 host)
-cm_hlp_os2	    - Help files (OS/2 host)
-cm_hlp_nt	    - Help files (NT host)
+cm_hlp_dos          - Help files (Dos host)
+cm_hlp_win          - Help files (Win16 host)
+cm_hlp_os2          - Help files (OS/2 host)
+cm_hlp_nt           - Help files (NT host)
 
 cm_ide_all          - IDE (All hosts)
 cm_ide_dos          - IDE (DOS host)
@@ -59,14 +59,14 @@ misc_src            - Misc source files and sample programs
 Files used by Open Watcom C/C++ only
 ====================================
 
-core_all	    - Core binaries (All hosts)
-core_nt		    - Core binaries (NT host)
-core_os2	    - Core binaries (OS/2 host)
-core_doswin	    - Core binaries (Dos & Win16 hosts)
+core_all            - Core binaries (All hosts)
+core_nt             - Core binaries (NT host)
+core_os2            - Core binaries (OS/2 host)
+core_doswin         - Core binaries (Dos & Win16 hosts)
 
 c_doswin            - C compiler (DOS & Win16 hosts)
 c_os2               - C compiler (OS/2 host)
-c_nt 	            - C compiler (NT host)
+c_nt                - C compiler (NT host)
 
 clib_a16            - C runtime libraries (16-bit, All targets)
 clib_d16            - C runtime libraries (16-bit DOS target)
