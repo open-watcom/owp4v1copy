@@ -91,3 +91,8 @@ bvi             = $(bld_bin)\bvi
 !endif
 bvi += -q -d -i
 
+!ifdef __LINUX__
+blib            = *$(bld_bin)/bwlib
+!else
+blib            = *$(bld_bin)\bwlib
+!endif

@@ -149,10 +149,10 @@ libs = $($(proj_name)_libs)
         $(vi) -s ../../def2lbc.vi -p"$[@ $*"
 
 .lbc.lib:
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
+        $(blib) -b -c -p=16 -n -io -ii $@ @$<
 
 .obj.lib:
-        $(librarian) -b -c -p=16 -n $@ $<
+        $(blib) -b -c -p=16 -n $@ $<
 
 .c.obj:
         $(cc) $(cflags) -zld -fo=.obj $(inc_path) $<
@@ -182,7 +182,7 @@ all: $(libs) .SYMBOLIC
         $(vi) -s ../../fix/fix_h.vi
 
 kernel32.lib: kernel32.lbc
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
+        $(blib) -b -c -p=16 -n -io -ii $@ @$<
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
@@ -190,28 +190,28 @@ dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
 dinput8.lib: dinput8.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ @tmp.lbc
+        $(blib) -b -c -p=16 -n -io -ii $@ @$[@
+        $(blib) -b -c -p=16 $@ @tmp.lbc
 
 dinput.lib: dinput.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ @tmp.lbc
+        $(blib) -b -c -p=16 -n -io -ii $@ @$[@
+        $(blib) -b -c -p=16 $@ @tmp.lbc
 
 dxerr8.lib: dxerr8.obj dxerr8w.obj
-        $(librarian) -b -c -p=16 -n $@ +$[@ +$]@
+        $(blib) -b -c -p=16 -n $@ +$[@ +$]@
 
 dxerr9.lib: dxerr9.obj dxerr9w.obj
-        $(librarian) -b -c -p=16 -n $@ +$[@ +$]@
+        $(blib) -b -c -p=16 -n $@ +$[@ +$]@
 
 ksuser.lib: ksuser.lbc ksuser.obj
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ +$]@
+        $(blib) -b -c -p=16 -n -io -ii $@ @$[@
+        $(blib) -b -c -p=16 $@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ +$]@
+        $(blib) -b -c -p=16 -n -io -ii $@ @$[@
+        $(blib) -b -c -p=16 $@ +$]@
 
 vfw32.lbc : $(vfw32_libs)
         @%create $@

@@ -33,6 +33,8 @@ echo Bootstrapping compiler using GNU tools...
 #
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
+#        Prebuild new WLIB for build process
+[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #

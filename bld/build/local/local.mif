@@ -12,6 +12,7 @@ bcl        += -zq
 bld_cc     += -zq
 bld_link   += op q
 bas        += -q
+blib       += -q -zld
 
 # redirect standard tools to pre-build versions
 as = $(bas)

@@ -68,7 +68,7 @@
 
 #include "exeelf.h"
 #include "convert.h"
-#include "util.h"
+#include "wlibutil.h"
 #include "libwalk.h"
 #include "liblist.h"
 #include "cmdline.h"
@@ -92,3 +92,4 @@
 #include "exepe.h"
 #include "exenov.h"
 #include "main.h"
+#include "wresset2.h"

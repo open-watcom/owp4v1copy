@@ -9,10 +9,14 @@ wlib_trmem = 1
 
 suppress_bd = 1
 
-!ifeq sys_dll 1
-targ_name = wlibd.dll
-!else ifdef bootstrap
+!ifeq bootstrap 1
 targ_name = wlib
+!else ifeq prebuild 1
+targ_name = wlib.exe
+!undef sys_dll
+wlib_trmem = 0
+!else ifeq sys_dll 1
+targ_name = wlibd.dll
 !else
 targ_name = wlib.exe
 !endif
@@ -20,11 +24,6 @@ targ_name = wlib.exe
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
-
-!include $(orl_dir)/client.mif
-!include wres.mif
-
-!include trmem.mif
 
 ##########
 # objects
@@ -36,7 +35,7 @@ wlib_objs = &
         symomf.obj &
         writelib.obj &
         convert.obj &
-        util.obj &
+        wlibutil.obj &
         libwalk.obj &
         symlist.obj &
         proclib.obj &
@@ -54,6 +53,76 @@ wlib_objs = &
         idemsgpr.obj &
         idedll.obj
 
+!ifeq prebuild 1
+
+orl_objs = &
+    orlentry.obj &
+    orlflhnd.obj &
+    orlhash.obj &
+    omfload.obj &
+    omfmunge.obj &
+    omfentr.obj &
+    omfflhn.obj &
+    omfdrctv.obj &
+    elfentr.obj &
+    elflwlv.obj &
+    elfflhn.obj &
+    elfload.obj &
+    coffentr.obj &
+    cofflwlv.obj &
+    coffflhn.obj &
+    coffload.obj &
+    coffimpl.obj
+
+wres_objs = &
+    loadstr.obj &
+    wriidfn.obj &
+    wrfindrs.obj &
+    wrgetli.obj &
+    ropenfro.obj &
+    wrinitdi.obj &
+    wrreaddi.obj &
+    wrfreedi.obj &
+    rclosef.obj &
+    wridcmp.obj &
+    wrerror.obj &
+    ralliae.obj &
+    wrrfrr.obj &
+    wridexby.obj &
+    wrrewrid.obj &
+    wrrftr.obj &
+    wrrhr.obj &
+    mrrdrh.obj &
+    wrfree.obj &
+    wridfnoo.obj &
+    wraddres.obj &
+    wriswrf.obj &
+    wridnacm.obj &
+    resseek.obj &
+    rduint32.obj &
+    rrnamoor.obj &
+    rduint16.obj &
+    wridfrst.obj &
+    wridfrnu.obj &
+    wrfirres.obj &
+    rduint8.obj &
+    rrdstr.obj &
+    varstr.obj
+
+wlib_objs += $(orl_objs)
+wlib_objs += $(wres_objs)
+
+!else
+
+!include $(orl_dir)/client.mif
+!include wres.mif
+
+!endif
+
+!include trmem.mif
+
+wlib_objs += $(trmem_objs)
+
 stub_objs = libdlldr.obj idedrv.obj idemsgfm.obj idemsgpr.obj
 
 !ifneq sys_dll 1
@@ -63,7 +132,6 @@ wlib_objs += ntdll.obj
 !else ifeq host_OS os2
 wlib_objs += os2dll.obj
 !endif
-wlib_objs += $(trmem_objs)
 
 #########
 # cflags
@@ -110,15 +178,27 @@ extra_rc_flags_qnx = -D__UNIX__
 extra_rc_flags_linux = -D__UNIX__
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
-inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
-
 !ifeq bootstrap 1
-inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
-defines = -DIDE_PGM -D__stdcall=
-!endif
 
+inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
 .h: ../h;$(watcom_dir)/h
+defines = -DIDE_PGM -D__stdcall=
+
+!else ifeq prebuild 1
+
+inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(wres_dir)/h" &
+  -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
+.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c;$(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c;$(wres_dir)/c;
+.h: ../h;$(watcom_dir)/h;$(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;
+
+!else
+
+inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
+.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
+.h: ../h;$(watcom_dir)/h
+
+!endif
 
 wlib_libs = $(orl_lib) $(wres_lib)
 !ifeq bootstrap 1
@@ -141,6 +221,8 @@ $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
     $(linker) $(lflags) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
     $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
     erase wlib.rex
+!else ifeq prebuild 1
+    $(linker) $(lflags) name $^@ file { $(wlib_objs) }
 !else
     $(linker) $(lflags) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
 !endif
