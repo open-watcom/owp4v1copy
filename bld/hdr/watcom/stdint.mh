@@ -50,21 +50,25 @@ typedef unsigned long      uint_least32_t;
 typedef unsigned long long uint_least64_t;
 
 /* Fastest minimum-width types. */
-typedef signed   int       int_fast8_t;  /* Is int really faster? */
-typedef signed   int       int_fast16_t; /* Is int really faster? */
+typedef signed   int       int_fast8_t;
+typedef signed   int       int_fast16_t;
 typedef signed   long      int_fast32_t;
 typedef signed   long long int_fast64_t;
 
-typedef unsigned int       uint_fast8_t;  /* See above. */
-typedef unsigned int       uint_fast16_t; /* See above. */
+typedef unsigned int       uint_fast8_t;
+typedef unsigned int       uint_fast16_t;
 typedef unsigned long      uint_fast32_t;
 typedef unsigned long long uint_fast64_t;
 
-/* Integer types able to hold object pointers. */
-/* FIXME: Deal with 32 bit memory models. */
+/* Integer types able to hold *object* pointers. */
 #if defined(__386__) || defined(__AXP__) || defined (__PPC__)
+#if defined(__COMPACT__) || defined(__LARGE__)
+typedef long long intptr_t;
+typedef unsigned long long uintptr_t;
+#else
 typedef long intptr_t;
 typedef unsigned long uintptr_t;
+#endif
 #else /* 16 bit */
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
 typedef long intptr_t;
@@ -81,8 +85,7 @@ typedef unsigned long long uintmax_t;
 
 /* Limit macros. According to C99 these are only visible in C++ programs
    if __STDC_LIMIT_MACROS is defined. */
-#if !defined(__cplusplus) || \
-    (defined(__cplusplus) && defined(__STDC_LIMIT_MACROS))
+#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
 
 /* Exact-width types. */
 #define INT8_MIN   (-128)
@@ -150,11 +153,16 @@ typedef unsigned long long uintmax_t;
 #define UINT_FAST64_MAX  18446744073709551615ULL
 
 /* Integer types able to hold object pointers. */
-/* FIXME: Deal with 32 bit memory models. */
 #if defined(__386__) || defined(__AXP__) || defined (__PPC__)
+#if defined(__COMPACT__) || defined(__LARGE__)
+#define INTPTR_MIN   (-9223372036854775807LL-1)
+#define INTPTR_MAX   9223372036854775807LL
+#define UINTPTR_MAX  18446744073709551615ULL
+#else
 #define INTPTR_MIN   (-2147483647L-1)
 #define INTPTR_MAX   2147483647L
 #define UINTPTR_MAX  4294967295UL
+#endif
 #else /* 16 bit */
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
 #define INTPTR_MIN   (-2147483647L-1)
@@ -173,8 +181,6 @@ typedef unsigned long long uintmax_t;
 #define UINTMAX_MAX  18446744073709551615ULL
 
 /* Limits of other integer types. */
-/* FIXME: Deal with 32 bit memory models. */
-/* Question: Why isn't size_t unsigned long for __HUGE__ model? */
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 #define PTRDIFF_MIN     (-2147483647-1)
 #define PTRDIFF_MAX     2147483647
@@ -206,8 +212,7 @@ typedef unsigned long long uintmax_t;
 
 /* Constant macros. According to C99 these are only visible in C++ programs
    if __STDC_CONSTANT_MACROS is defined. */
-#if !defined(__cplusplus) || \
-    (defined(__cplusplus) && defined(__STDC_CONSTANT_MACROS))
+#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
 
 #define INT8_C(x)    (x)
 #define INT16_C(x)   (x)
