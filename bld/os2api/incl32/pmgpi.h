@@ -355,9 +355,20 @@ BOOL   APIENTRY GpiQueryFontMetrics(HPS,LONG,PFONTMETRICS);
 #define LCOLOPT_REALIZED 1
 #define LCOLOPT_INDEX    2
 
-#define PC_RESERVED   0x01
-#define PC_EXPLICIT   0x02
-#define PC_NOCOLLAPSE 0x04
+#define PC_RESERVED   1
+#define PC_EXPLICIT   2
+#define PC_NOCOLLAPSE 4
+
+#define QCD_LCT_FORMAT  0
+#define QCD_LCT_LOINDEX 1
+#define QCD_LCT_HIINDEX 2
+#define QCD_LCT_OPTIONS 3
+
+#define QLCT_ERROR     (-1)
+#define QLCT_RGB       (-2)
+#define QLCT_NOTLOADED (-1)
+
+#define PAL_ERROR (-1)
 
 LONG   APIENTRY GpiAnimatePalette(HPAL,ULONG,ULONG,ULONG,PULONG);
 BOOL   APIENTRY GpiCreateLogColorTable(HPS,ULONG,LONG,LONG,LONG,PLONG);

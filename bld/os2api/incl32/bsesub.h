@@ -193,6 +193,13 @@ USHORT APIENTRY16 KbdXlate(PKBDTRANS XlateRecord, HKBD KbdHandle);
 #define MOUSE_MOTION_WITH_BN3_DOWN 0x0020
 #define MOUSE_BN3_DOWN             0x0040
 
+#define MOUSE_QUEUEBUSY        0x0001
+#define MOUSE_BLOCKREAD        0x0002
+#define MOUSE_FLUSH            0x0004
+#define MOUSE_UNSUPPORTED_MODE 0x0008
+#define MOUSE_DISABLED         0x0100
+#define MOUSE_MICKEYS          0x0200
+
 typedef SHANDLE  HMOU;
 typedef HMOU     *PHMOU;
 

@@ -1146,5 +1146,10 @@ APIRET APIENTRY DosTmrQueryTime(PQWORD pqwTmrTime);
 
 #endif
 
+#ifdef INCL_BDCALLS
+
+#include <bdcalls.h>
+
 #endif
-
+
+#endif

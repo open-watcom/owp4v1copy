@@ -90,6 +90,9 @@ typedef SHORT    *PSHORT;
 typedef INT      *PINT;
 typedef LONG     *PLONG;
 
+typedef CHAR     * _Seg16 PCHAR16;
+typedef UCHAR    * _Seg16 PUCHAR16;
+
 typedef VOID     *PVOID;
 typedef PVOID    *PPVOID;
 
