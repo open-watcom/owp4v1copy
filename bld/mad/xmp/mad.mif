@@ -30,6 +30,6 @@ mad = xmp
 # Set 'extra_gbls' to the names of any extra global compilation time stamp
 # files are located
 #
-# extra_gbls = $(disasm_dir)\core\compile.gbl
+# extra_gbls = $(disasm_dir)/core/compile.gbl
 
 !include ../../master.mif

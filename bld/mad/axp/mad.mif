@@ -14,6 +14,6 @@ mad = axp
 
 extra_incs = $(dis_includes)
 extra_srcs = $(dis_srcs)
-extra_gbls = $(disasm_dir)\core\compile.gbl
+extra_gbls = $(disasm_dir)/core/compile.gbl
 
 !include ../../master.mif

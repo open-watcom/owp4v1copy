@@ -35,7 +35,7 @@ mad_nt_axp  = $(bin_root)/axpnt/$(name).dll
 
 # cflags stuff
 ###############
-extra_c_flags = -DMD_$(mad)
+extra_c_flags = -DMD_$(mad) -s
 extra_c_flags_i86 = -fpc -zu
 extra_c_flags_386 = -fpc
 extra_c_flags_win = -zc
