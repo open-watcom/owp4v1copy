@@ -131,7 +131,6 @@ static void unsupported_opts( const OPT_STORAGE *cmdOpts )
     if( cmdOpts->order       )  append_unsupported( opts, "ORDER"       );
     if( cmdOpts->pdb         )  append_unsupported( opts, "PDB"         );
     if( cmdOpts->profile     )  append_unsupported( opts, "PROFILE"     );
-    if( cmdOpts->release     )  append_unsupported( opts, "RELEASE"     );
     if( cmdOpts->section     )  append_unsupported( opts, "SECTION"     );
     if( cmdOpts->verbose     )  append_unsupported( opts, "VERBOSE"     );
     if( cmdOpts->vxd         )  append_unsupported( opts, "VXD"         );
@@ -554,8 +553,12 @@ static void linker_opts( struct XlatStatus *status,
 
     if( cmdOpts->incremental ) {
         if( !stricmp( cmdOpts->incremental_value->data, "yes" ) ) {
-            if( !cmdOpts->_10x ) {
-                AppendCmdLine( cmdLine, LINK_OPTS_SECTION, "OPTION incremental" );
+            if( cmdOpts->release ) {
+                Warning( "Ignoring /INCREMENTAL due to /RELEASE" );
+            } else {
+                if( !cmdOpts->_10x ) {
+                    AppendCmdLine( cmdLine, LINK_OPTS_SECTION, "OPTION incremental" );
+                }
             }
         }
     }
@@ -713,6 +716,10 @@ static void linker_opts( struct XlatStatus *status,
     if( cmdOpts->out ) {
         newstr = PathConvert( cmdOpts->out_value->data, '\'' );
         AppendFmtCmdLine( cmdLine, LINK_OPTS_SECTION, "NAME %s", newstr );
+    }
+
+    if( cmdOpts->release ) {
+        AppendCmdLine( cmdLine, LINK_OPTS_SECTION, "OPTION checksum" );
     }
 
     if( cmdOpts->stack ) {
