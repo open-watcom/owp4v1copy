@@ -27,7 +27,8 @@ Command line options:
 -d6		internal debug output
 -fi		included files
 -fo		output file
--fe,-fr		error file
+-fe		error file
+-fr		error file
 -fpi	
 -fpi87	
 -fpc	

@@ -35,114 +35,114 @@ ends		yes
 eq		yes
 equ		yes
 equ2		yes
-.err
-.errb
-.errdef
-.errdif
-.errdifi
-.erre
-.erridn
-.erridni
-.errnb
-.errndef
-.errnz
-error
-even
-.exit
-export
-extern
-externdef
-extrn
-.fardata
-.fardata?
-farstack
-flat
-for
-forc
-fortran
-ge
-global
-group
-gt
-high
-highword
-huge
-if
-if1
-if2
-ifb
-ifdef
-ifdif
-ifdifi
-ife
-ifidn
-ifidni
-ifnb
-ifndef
-ignore
-include
-includelib
-invoke
-irp
-label
-large
-le
-length
-lengthof
-.lfcond
-.list
-.listall
-.listif
-.listmacro
-.listmacroall
-local
-low
-lowword
-lroffset
-lt
-macro
-mask
-medium
-memory
-mod
-.model
-name
-ne
-nearstack
-.nocref
-.nolist
-nothing
-opattr
-option
-org
-os_dos
-os_os2
-page
-para
-pascal
-popcontext
-private
-proc
-proto
-public
-purge
-pushcontext
-.radix
-readonly
-record
-.repeat
-.sall
-sbyte
-sdword
-segment
-.seq
-.sfcond
-size
-sizeof
-small
-.stack
-.startup
-stdcall
+.err		yes
+.errb		yes
+.errdef		yes
+.errdif		yes
+.errdifi	yes
+.erre		yes
+.erridn		yes
+.erridni	yes
+.errnb		yes
+.errndef	yes
+.errnz		yes
+error		?
+even		yes
+.exit		no
+export		?
+extern		yes
+externdef	yes
+extrn		yes
+.fardata	yes
+.fardata?	yes
+farstack	?
+flat		?
+for		yes
+forc		yes
+fortran		?
+ge		yes
+global		yes
+group		yes
+gt		yes
+high		no
+highword	no
+huge		?
+if		yes
+if1		yes
+if2		yes
+ifb		yes
+ifdef		yes
+ifdif		yes
+ifdifi		yes
+ife		yes
+ifidn		yes
+ifidni		yes
+ifnb		yes
+ifndef		yes
+ignore		?
+include		yes
+includelib	yes
+invoke		no
+irp		yes
+label		yes
+large		?
+le		yes
+length		yes
+lengthof	yes
+.lfcond		ignore
+.list		ignore
+.listall	ignore
+.listif		ignore
+.listmacro	ignore
+.listmacroall	ignore
+local		yes
+low		no
+lowword		no
+lroffset	no
+lt		yes
+macro		yes
+mask		no
+medium		?
+memory		?
+mod		yes
+.model		yes
+name		yes
+ne		yes
+nearstack	?
+.nocref		ignore
+.nolist		ignore
+nothing		?
+opattr		no
+option		no
+org		yes
+os_dos		?
+os_os2		?
+page		ignore
+para		?
+pascal		?
+popcontext	no
+private		?
+proc		yes
+proto		no
+public		yes
+purge		?
+pushcontext	no
+.radix		no
+readonly	?
+record		no
+.repeat		no
+.sall		ignore
+sbyte		yes
+sdword		yes
+segment		yes
+.seq		ignore
+.sfcond		ignore
+size		yes
+sizeof		yes
+small		?
+.stack		yes
+.startup	no
+stdcall		?
 struc
 struct
 subtitle
