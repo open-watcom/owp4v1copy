@@ -55,8 +55,6 @@
 #include "srcfile.h"
 #include "pragdefn.h"
 
-#define MANGLED_MAX_LEN 256
-
 typedef enum {                  // type mangling control
     TM_INCLUDE_FIRST_DIM= 0x01, // - include first dimension in array type mangling
     TM_NO_INITIAL_MOD   = 0x02, // - don't include initial mods

@@ -128,5 +128,3 @@
 
 #define IN_REFER        'r'
 #define IN_MEMBER       'm'
-
-#define MANGLED_HASH_LEN        4
