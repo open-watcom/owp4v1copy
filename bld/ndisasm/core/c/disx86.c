@@ -1585,10 +1585,10 @@ dis_handler_return X86ImmImm_8( dis_handle *h, void *d, dis_dec_ins * ins)
 {
     ins->num_ops = 2;
     ins->size   += 1;
-    ins->op[0].value = GetSShort( d,ins->size );
+    ins->op[0].value = GetUShort( d,ins->size );
     ins->op[0].type = DO_IMMED;
     ins->size   += 2;
-    ins->op[1].value = GetSByte( d,ins->size );
+    ins->op[1].value = GetUByte( d,ins->size );
     ins->op[1].type = DO_IMMED;
     ins->size   += 1;
     return( DHR_DONE );
