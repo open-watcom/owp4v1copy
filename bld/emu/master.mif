@@ -30,14 +30,14 @@ as_flags = -zq -i$(mathlib_dir)\h -bt=$(host_OS) $[@
 
 !ifeq host_OS dos
 
-extra_as_flags = /dOFFSET32 /d_OS=_PLDT
+extra_as_flags = /d_OS=_PLDT
 
 emu387.lib: emu387.obj 386inite.obj
     $(librarian) /q /s /t /n /b $@ +emu387.obj +386inite.obj
 
 !else ifeq host_OS qnx
 
-extra_as_flags = /dOFFSET32=OFFSET /d_OS=_QNX
+extra_as_flags = /d_OS=_QNX
 
 .c.obj:
     $(libcomp386) -r-fpr $[* $(cflags) -i$(new_qnx_h) -DQNX32 -bt=qnx

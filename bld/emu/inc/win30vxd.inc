@@ -29,25 +29,6 @@
 ;*
 ;*****************************************************************************
 
-ifdef __WASM__
-
-OFFSET32 EQU OFFSET
-
-else
-ifdef MASM6
-
-    option oldmacros
-    option oldstructs
-    option noscoped
-    option segment:flat
-    option offset:flat
-    option proc:private
-
-OFFSET32 EQU <OFFSET FLAT:>
-
-endif
-endif
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; VMM definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,7 +202,7 @@ DDB_Req_Device_Number    DW    UNDEFINED_DEVICE_ID
 DDB_Dev_Major_Version    DB    0
 DDB_Dev_Minor_Version    DB    0
 DDB_Flags                DW    0
-DDB_Name                 DB    "        "
+DDB_Name                 DB    '        '
 DDB_Init_Order           DD    080000000H
 
 DDB_Control_Proc         DD    ?
@@ -232,12 +213,16 @@ DDB_PM_API_CSIP          DD    0
 DDB_Reference_Data       DD    ?
 DDB_Service_Table_Ptr    DD    0
 DDB_Service_Table_Size   DD    0
+;********************
+; Windows 9x, Me
+;********************
 DDB_Win32_Service_Table  DD    0
-DDB_Prev                 DD    'Prev'
+DDB_Prev                 DD    0
 DDB_Size                 DD    SIZE(VxD_Desc_Block)
-DDB_Reserved1            DD    'Rsv1'
-DDB_Reserved2            DD    'Rsv2'
-DDB_Reserved3            DD    'Rsv3'
+DDB_Reserved1            DD    0
+DDB_Reserved2            DD    0
+DDB_Reserved3            DD    0
+;********************
 VxD_Desc_Block    ENDS
 
 
@@ -334,7 +319,7 @@ endm
 Declare_Virtual_Device macro Name, Major_Ver, Minor_Ver, Ctrl_Proc, Device_Num, Init_Order, V86_Proc, PM_Proc, Reference_Data
   VxD_LOCKED_DATA_SEG
   PUBLIC Name&_DDB
-  Name&_DDB VxD_Desc_Block <,,Device_Num,Major_Ver,Minor_Ver,,"&Name",Init_Order, OFFSET32 Ctrl_Proc, 0, 0,,, 0, 0, 0>
+  Name&_DDB VxD_Desc_Block <,,Device_Num,Major_Ver,Minor_Ver,,"&Name",Init_Order, OFFSET Ctrl_Proc, 0, 0,,, 0, 0, 0>
   VxD_LOCKED_DATA_ENDS
 endm
 
@@ -353,7 +338,7 @@ VxDcall3 macro P, Param1, Param2, Param3
 endm
 
 VxDcall3a macro P, Param1, Param2, Param3
-  push OFFSET32 Param3
+  push OFFSET Param3
   push Param2
   push Param1
   int 20h
