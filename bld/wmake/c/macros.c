@@ -337,9 +337,7 @@ STATIC const char *GetMacroValueProcess( const char *name )
     makeMacroName( macro, name );
 
     if( *macro == ENVVAR ) {
-        Glob.disable_TZ_kludge = TRUE;
         env = getenv( macro + 1 );
-        Glob.disable_TZ_kludge = FALSE;
         if( env != NULL ) {
             return( env );
         }

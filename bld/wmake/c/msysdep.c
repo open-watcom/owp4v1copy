@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include "make.h"
 #include "mcache.h"
 #include "mmemory.h"
@@ -502,7 +503,6 @@ void CheckForBreak( void ) {
     }
 }
 
-#ifndef NEC_98_BUG
 static void passOnBreak( void ) {
 #ifdef DLLS_IMPLEMENTED
     DLL_CMD* n;
@@ -516,15 +516,12 @@ static void breakHandler (int  sig_number) {
     sig_count = 1;
     passOnBreak();
 }
-#endif
 
 extern void InitSignals( void ) {
     sig_count = 0;
     DoingUpdate= FALSE;
-#ifndef NEC_98_BUG
 #ifndef __UNIX__
     signal ( SIGBREAK, breakHandler);
 #endif
     signal ( SIGINT, breakHandler);
-#endif
 }

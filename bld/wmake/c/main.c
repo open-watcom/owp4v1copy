@@ -636,31 +636,3 @@ int wmake_main( int argc, char * const *argv )
     ParseFini();
     return( ExitSafe( EXIT_OK ) );
 }
-
-#if 0
-#ifdef __NT__
-// remove when mktime is faster
-char *getenv( const char *name )
-    {
-        register char **envp;
-        register char *p;
-        register int len;
-
-        envp = environ;
-        if( envp != NULL  &&  name != NULL ) {
-            len = strlen( name );
-            for( ; p = *envp; ++envp ) {
-                if( strnicmp( p, name, len ) == 0 ) {
-                    if( p[ len ] == '=' ) return( &p[ len+1 ] );
-                }
-            }
-            // after search in case user sets TZ
-            if( ! Glob.disable_TZ_kludge && strnicmp( name, "TZ", len ) == 0 ) {
-                return( "EST5DST" );
-            }
-        }
-        return( NULL );                 /* not found */
-    }
-#endif
-#endif
-

@@ -42,11 +42,6 @@ echo    = echo
 # Compiler Flags
 
 extra_c_flags_win = -zW
-!ifeq memory_model_i86 l
-!ifdef NEC_98_BUG
-extra_c_flags_dos += -DNEC_98_BUG
-!endif
-!endif
 
 extra_c_flags_i86 = -zt32
 
