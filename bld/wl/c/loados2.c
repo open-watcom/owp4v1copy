@@ -646,9 +646,12 @@ extern void ChkOS2Exports( void )
     symbol *        symptr;
     entry_export *  exp;
     group_entry *   group;
+    unsigned        num_entries;
 
     SetGroupFlags();            // NOTE: there is a continue in this loop!
+    num_entries = 0;
     for( exp = FmtData.u.os2.exports; exp != NULL; exp = exp->next ) {
+        num_entries++;
         symptr = exp->sym;
         if( IS_SYM_ALIAS( symptr ) ) {
             symptr = UnaliasSym( ST_FIND, symptr );
@@ -686,6 +689,9 @@ extern void ChkOS2Exports( void )
         }
     }   // NOTE: there is a continue in this loop!
     AssignOrdinals();    /* make sure all exports have ordinals */
+    if(( FmtData.type & MK_WIN_VXD ) && ( num_entries != 1 )) {
+        LnkMsg( FTL+MSG_VXD_INCORRECT_EXPORT, NULL );
+    }
 }
 
 extern void PhoneyStack( void )

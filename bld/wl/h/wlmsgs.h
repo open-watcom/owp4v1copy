@@ -200,7 +200,7 @@
 #define    MSG_RESOURCE_TOO_BIG                 165 + MSG_BASE
 #define    MSG_MULT_START_ADDRS_BY              166 + MSG_BASE
 #define    MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE 167 + MSG_BASE
-#define    MSG_TOO_MANY_EXPORTS                 168 + MSG_BASE
+#define    MSG_VXD_INCORRECT_EXPORT             168 + MSG_BASE
 #define    MSG_MAX_ERR_MSG_NUM                  168 + MSG_BASE
 
 #define    MSG_FILE_REC_NAME_0                  227 + MSG_BASE

@@ -408,15 +408,16 @@ void SetHeaderVxDInfo(os2_flat_header *exe_head)
 /**********************************************/
 /* setup VxD specific info in the header */
 {
-    symbol       *sym;
+    entry_export *exp;
     vxd_ddb      *ddb;
 
-    sym = FmtData.u.os2.exports->sym;
-    if( sym != NULL ) {
-        ddb = (vxd_ddb*)((sym->p.seg)->data);
+    exp = FmtData.u.os2.exports;
+    if(( exp != NULL ) && ( exp->sym != NULL )) {
+        ddb = (vxd_ddb*)((exp->sym->p.seg)->data);
         exe_head->r.vxd.device_ID = ddb->req_device_number;
         exe_head->r.vxd.DDK_version = ddb->SDK_version;
     }
+
 }    
 
 extern void FiniOS2FlatLoadFile( void )
