@@ -88,9 +88,9 @@ cdsay .
     <CPCMD> library\winnt.386\ms_s\clibs.lib <relroot>\rel2\lib386\nt\clib3s.lib
     <CPCMD> startup\library\winnt.386\ms_r\binmode.obj <relroot>\rel2\lib386\nt\binmode.obj
     <CPCMD> startup\library\winnt.386\ms_r\commode.obj <relroot>\rel2\lib386\nt\commode.obj
-    <CPCMD> library\winnt.axp\_s\clib.lib <relroot>\rel2\libaxp\nt\clib.lib
-    <CPCMD> startup\library\winnt.axp\_s\binmode.obj <relroot>\rel2\libaxp\nt\binmode.obj
-    <CPCMD> startup\library\winnt.axp\_s\commode.obj <relroot>\rel2\libaxp\nt\commode.obj
+#    <CPCMD> library\winnt.axp\_s\clib.lib <relroot>\rel2\libaxp\nt\clib.lib
+#    <CPCMD> startup\library\winnt.axp\_s\binmode.obj <relroot>\rel2\libaxp\nt\binmode.obj
+#    <CPCMD> startup\library\winnt.axp\_s\commode.obj <relroot>\rel2\libaxp\nt\commode.obj
     <CPCMD> library\linux.386\ms_r\clibs.lib <relroot>\rel2\lib386\linux\clib3r.lib
     <CPCMD> library\linux.386\ms_s\clibs.lib <relroot>\rel2\lib386\linux\clib3s.lib
     <CPCMD> startup\library\linux.386\ms_r\commode.obj <relroot>\rel2\lib386\linux\commode.obj
