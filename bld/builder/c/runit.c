@@ -48,7 +48,7 @@ static void LogDir( char *dir )
     char        tbuff[BSIZE];
     int         equals;
     int         bufflen;
-    char        *eq;
+    const char  *eq;
     struct tm   *tm;
     time_t      ttime;
 
