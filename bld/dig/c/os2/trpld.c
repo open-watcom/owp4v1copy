@@ -36,6 +36,7 @@
 #include <os2.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 #include "trpimp.h"
 #include "tcerr.h"
 
