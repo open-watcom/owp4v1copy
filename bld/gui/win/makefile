@@ -57,7 +57,6 @@ sysobjs = guixscal.obj &
           guigsysh.obj &
           guiwinlp.obj &
           wstatus.obj  &
-          fontstr.obj  &
           guixutil.obj &
           guimouse.obj &
           guixhook.obj &
@@ -100,6 +99,7 @@ sysobjs = guixscal.obj &
 
 !ifneq os pm
 sysobjs +=             &
+          fontstr.obj  &
           windlg.obj
 !else
 sysobjs +=             &
