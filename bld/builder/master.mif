@@ -8,7 +8,7 @@ name = builder
 !include cproj.mif
 !include defrule.mif
 
-all: $(name).exe cdsay.exe
+all: $(name).exe cdsay.exe sweep.exe wsplice.exe
 
 extra_c_flags = -i..\..\pmake
 
@@ -16,12 +16,20 @@ extra_c_flags = -i..\..\pmake
 
 OBJS  = builder.obj utils.obj runit.obj sys$(host_OS).obj # pmake.obj pmkcmd.obj
 COBJS = cdsay.obj
+SOBJS = sweep.obj
+WOBJS = wsplice.obj
 
 $(name).exe : $(OBJS)
         wlink $(lflags) name $^@ op map file {$(OBJS)}
 
 cdsay.exe : $(COBJS)
         wlink $(lflags) name $^@ op map file {$(COBJS)}
+
+sweep.exe : $(SOBJS)
+        wlink $(lflags) name $^@ op map file {$(SOBJS)}
+
+wsplice.exe : $(WOBJS)
+        wlink $(lflags) name $^@ op map file {$(WOBJS)}
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj
