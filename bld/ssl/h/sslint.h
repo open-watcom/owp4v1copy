@@ -45,7 +45,7 @@ extern void             WantColon(void);
 extern void             Scan(void);
 extern symbol           *NewSym( class );
 extern symbol           *Lookup( class );
-extern void             NewAlias( void * );
+extern void             NewAlias( symbol * );
 extern unsigned short   GetNum(void);
 extern void             Error( char *, ... );
 extern void             WantColon(void);
