@@ -57,6 +57,8 @@
 typedef SHANDLE HKBD;
 typedef HKBD    *PHKBD;
 
+#pragma pack(2)
+
 typedef struct _KBDKEYINFO {
     UCHAR  chChar;
     UCHAR  chScan;
@@ -65,6 +67,21 @@ typedef struct _KBDKEYINFO {
     USHORT fsState;
     ULONG  time;
 }KBDKEYINFO, *PKBDKEYINFO;
+
+typedef struct _KBDTRANS {
+    UCHAR  chChar;
+    UCHAR  chScan;
+    UCHAR  fbStatus;
+    UCHAR  bNlsShift;
+    USHORT fsState;
+    ULONG  time;
+    USHORT fsDD;
+    USHORT fsXlate;
+    USHORT fsShift;
+    USHORT sZero;
+} KBDTRANS, *PKBDTRANS;
+
+#pragma pack()
 
 typedef struct _KBDHWID {
     USHORT length;
@@ -85,19 +102,6 @@ typedef struct _STRINGINBUF {
     USHORT cb;
     USHORT cchIn;
 } STRINGINBUF, *PSTRINGINBUF;
-
-typedef struct _KBDTRANS {
-    UCHAR  chChar;
-    UCHAR  chScan;
-    UCHAR  fbStatus;
-    UCHAR  bNlsShift;
-    USHORT fsState;
-    ULONG  time;
-    USHORT fsDD;
-    USHORT fsXlate;
-    USHORT fsShift;
-    USHORT sZero;
-} KBDTRANS, *PKBDTRANS;
 
 USHORT APIENTRY16 KbdCharIn(PKBDKEYINFO CharData, USHORT IOWait, HKBD KbdHandle);
 USHORT APIENTRY16 KbdClose(HKBD KbdHandle);
@@ -215,7 +219,7 @@ typedef struct _SCALEFACT {
     USHORT colScale;
 } SCALEFACT, *PSCALEFACT;
 
-typedef struct _MOUEVENTINFO {
+typedef _Packed struct _MOUEVENTINFO {
     USHORT fs;
     ULONG  time;
     USHORT row;
@@ -372,7 +376,7 @@ USHORT APIENTRY16 MouSynch(USHORT IOWait);
 typedef SHANDLE  HVIO;
 typedef HVIO     *PHVIO;
 
-typedef struct _VIOCONFIGINFO {
+typedef _Packed struct _VIOCONFIGINFO {
     USHORT  cb;
     USHORT  adapter;
     USHORT  display;
@@ -403,7 +407,7 @@ typedef struct _VIOFONTINFO {
     USHORT  cbData;
 } VIOFONTINFO, *PVIOFONTINFO;
 
-typedef struct _VIOMODEINFO {
+typedef _Packed struct _VIOMODEINFO {
     USHORT cb;
     UCHAR  fbType;
     UCHAR  color;
@@ -521,4 +525,3 @@ USHORT APIENTRY16 VioWrtNChar(PBYTE Cell, USHORT Times, USHORT Row, USHORT Colum
 USHORT APIENTRY16 VioWrtTTY(PCH CharStr, USHORT Length, HVIO VioHandle);
 
 #endif
-
