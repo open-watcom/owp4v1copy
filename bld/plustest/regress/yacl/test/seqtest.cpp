@@ -105,7 +105,7 @@ main ()
     delete b;
 
     long i;
-    for (long i = 0; i < a2.Size(); i++) {
+    for (i = 0; i < a2.Size(); i++) {
         printf ("'%s'\n", ((CL_String*) a2[i])->AsPtr());
     }
     pStrg = (CL_String*) a2.ExtractLeftmost();
