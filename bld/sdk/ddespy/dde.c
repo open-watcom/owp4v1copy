@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DDE Spy main module.
 *
 ****************************************************************************/
 
@@ -107,7 +106,7 @@ static BOOL EveryInstInit( int cmdshow ) {
     return( TRUE );
 }
 
-int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     MSG         msg;
 

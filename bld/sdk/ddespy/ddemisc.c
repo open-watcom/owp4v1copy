@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous DDE helper functions.
 *
 ****************************************************************************/
 
@@ -63,8 +62,9 @@ void LogHeader( int f ) {
     write( f, "\r\n", 2 );
 }
 
-void DumpHeader( FILE *fptr ) {
+void DumpHeader( void *_f ) {
 
+    FILE        *fptr = _f;
     time_t      tm;
     char        *str;
 

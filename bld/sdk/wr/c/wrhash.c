@@ -154,8 +154,11 @@ static WRHashEntry *WRFindHashEntryFromName( WRHashTable *table, char *name )
     return( NULL );
 }
 
-static int WRCompareHashEntry( WRHashEntry * const *e1, WRHashEntry * const *e2 )
+static int WRCompareHashEntry( void const *_e1, void const *_e2 )
 {
+    WRHashEntry * const *e1 = _e1;
+    WRHashEntry * const *e2 = _e2;
+
     if( e1 && e2 && *e1 && *e2 ) {
         if( (*e1)->value < (*e2)->value ) {
             return( -1 );

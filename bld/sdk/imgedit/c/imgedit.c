@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Image Editor mainline.
 *
 ****************************************************************************/
 
@@ -361,7 +360,7 @@ static void imgEditFini( void )
 /*
  * WinMain - main entry point
  */
-int WINMAINENTRY WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
+int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     MSG         msg;
     extern char **_argv;

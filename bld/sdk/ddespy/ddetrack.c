@@ -203,13 +203,19 @@ static void **GetNextPos( DDETrackInfo *listinfo )
  *              SERVER TRACKING STUFF
  * #########################################################################*/
 
-static int SortServerByServer( ServerInfo **str1, ServerInfo **str2 ) {
+static int SortServerByServer( const void *_str1, const void *_str2 ) {
+    ServerInfo * const *str1 = _str1;
+    ServerInfo * const *str2 = _str2;
+
     if( *str1 == NULL ) return( 1 );
     if( *str2 == NULL ) return( -1 );
     return( stricmp( (*str1)->server, (*str2)->server ) );
 }
 
-static int SortServerByInst( ServerInfo **str1, ServerInfo **str2 ) {
+static int SortServerByInst( const void *_str1, const void *_str2 ) {
+    ServerInfo * const *str1 = _str1;
+    ServerInfo * const *str2 = _str2;
+
     if( *str1 == NULL ) return( 1 );
     if( *str2 == NULL ) return( -1 );
     return( stricmp( (*str1)->instname, (*str2)->instname ) );
@@ -236,7 +242,7 @@ static DisplayServers( DDETrackInfo *info ) {
     char        buf[80];
     ServerInfo  **servers;
     ServerInfo  *cur;
-    void        (*fn)();
+    int         (*fn)(const void *, const void *);
 
     switch( info->sorttype ) {
     case PUSH_SERVER:
@@ -386,19 +392,28 @@ static StringInfo **GetStringInfo( HSZ hsz, DDETrackInfo *info ) {
     return( NULL );
 }
 
-static int SortStrByText( StringInfo **str1, StringInfo **str2 ) {
+static int SortStrByText( const void *_str1, const void *_str2 ) {
+    StringInfo * const *str1 = _str1;
+    StringInfo * const *str2 = _str2;
+
     if( *str1 == NULL ) return( 1 );
     if( *str2 == NULL ) return( -1 );
     return( stricmp( (*str1)->str, (*str2)->str ) );
 }
 
-static int SortStrByCnt( StringInfo **str1, StringInfo **str2 ) {
+static int SortStrByCnt( const void *_str1, const void *_str2 ) {
+    StringInfo * const *str1 = _str1;
+    StringInfo * const *str2 = _str2;
+
     if( *str1 == NULL ) return( 1 );
     if( *str2 == NULL ) return( -1 );
     return( (*str1)->cnt - (*str2)->cnt  );
 }
 
-static int SortStrByHSZ( StringInfo **str1, StringInfo **str2 ) {
+static int SortStrByHSZ( const void *_str1, const void *_str2 ) {
+    StringInfo * const *str1 = _str1;
+    StringInfo * const *str2 = _str2;
+
     if( *str1 == NULL ) return( 1 );
     if( *str2 == NULL ) return( -1 );
     return( (char *)( (*str1)->hsz ) - (char *)( (*str2)->hsz ) );
@@ -410,7 +425,7 @@ static int SortStrByHSZ( StringInfo **str1, StringInfo **str2 ) {
  */
 static void RedispStrTrk( DDETrackInfo *info ) {
 
-    void        (*fn)();
+    int         (*fn)(const void *, const void *);
     StringInfo  **items;
     unsigned    i;
     char        buf[80];
