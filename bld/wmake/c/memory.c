@@ -68,16 +68,19 @@ STATIC struct scarce {
 
     STATIC _trmem_hdl Handle;
 
-    STATIC int trkfile;     /* file handle we'll write() to */
-
-    STATIC int purge_flag;
+    STATIC int trkfile = -1;     /* file handle we'll write() to */
 
     STATIC void printLine( int *h, const char *buf, unsigned size )
     {
         h = h;
-        write( trkfile, buf, size );
-        write( trkfile, "\n", 1 );
-        purge_flag = 0;
+        if( trkfile == -1 ) {
+            trkfile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC,
+                   S_IREAD | S_IWRITE );
+        }
+        if( trkfile != -1 ) {
+            write( trkfile, buf, size );
+            write( trkfile, "\n", 1 );
+        }
         if (!(trmemCode & TRMEM_DO_NOT_PRINT)) {
              write( STDOUT_FILENO, buf, size );
              write( STDOUT_FILENO, "\n", 1 );
@@ -209,9 +212,9 @@ extern void MemFini( void )
 
     _trmem_close( Handle );
     MemCheck();
-    close( trkfile );
-    if( purge_flag ) {
-        unlink( "mem.trk" );
+    if( trkfile != -1 ) {
+        close( trkfile );
+        trkfile = -1;
     }
 #endif
 #endif
@@ -247,9 +250,6 @@ extern void MemInit( void )
                         , printLine
                         , _TRMEM_CLOSE_CHECK_FREE );
     if( Handle == NULL ) PrtMsg( FTL| UNABLE_TO_TRACK );
-    trkfile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC,
-                   S_IREAD | S_IWRITE );
-    purge_flag = 1;
 #endif
 }
 
