@@ -221,15 +221,15 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
  * of some features in microsoft compatability
  */
 {
-    char    select;     /* - or swchar (*argv)[0]                   */
-    char    option;     /* the option (*argv)[1]                    */
+    char    select = '\0';     /* - or swchar (*argv)[0]                   */
+    char    option = '\0';     /* the option (*argv)[1]                    */
     const char *p;      /* working pointer to *argv                 */
     NODE    *new;       /* for adding a new file                    */
     int      options[256 + 1] = { 0 };
 
     if( ( p = argv[1] ) != NULL ) {
         if( strcmp( p, "?" ) == 0 
-        || ( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0 ) {
+        || (( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0) ) {
             Usage();
         }
     }
@@ -614,7 +614,7 @@ int wmake_main( int argc, char * const *argv )
 {
     assert( argv[argc] == NULL );       /* part of ANSI standard */
 #ifndef __WATCOMC__
-    _argv = argv;
+    _argv = (char**) argv;
 #endif
     InitSignals();
     InitHardErr();
