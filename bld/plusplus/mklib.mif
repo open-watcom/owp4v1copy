@@ -242,7 +242,8 @@ update : .symbolic $(target_lib)
 
 .asm.obj :
     #$(comp_cpp) $(comp_flags) -p $[@ > $[&.pp
-    $(asm_a) $(asm_flags) $[@
+#    $(asm_a) $(asm_flags) $[@
+    $(as) $(asm_flags) $[@
     #rm -f $[&.pp
 
 !include $(plusplus_dir)/clean.mif
