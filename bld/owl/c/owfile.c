@@ -199,3 +199,88 @@ static void resolveLabelNames( owl_file_handle file ) {
 }
 
 static int comdefSection( owl_section_handle section ) {
+//******************************************************
+
+    if( section->type & OWL_SEC_ATTR_COMDAT ) {
+        if( section->type & OWL_SEC_ATTR_BSS ) {
+            return( TRUE );
+        }
+        if( section->size == 0 && section->comdat_sym == NULL ) {
+            // hack to nuke empty sections created by front end
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+static void redoSectionIndices( owl_file_handle file ) {
+//******************************************************
+
+    owl_section_handle  curr;
+    int                 index;
+
+    index = 0;
+    for( curr = file->sections; curr != NULL; curr = curr->next ) {
+        curr->index = index++;
+    }
+    file->next_index = index;
+}
+
+static void resolveComdefSymbols( owl_file_handle file ) {
+//********************************************************
+// Want to run through the list of sections and turn any unitialized
+// section with only one label at location 0 (and no relocs within it)
+// into a comdef symbol.  This is a bit of a space-saver for normal
+// code but vital for FORTRAN COMMON blocks which are unitialized.
+// For now, we only do this is the comdat attr is set, but we should
+// relax this in the future.
+
+    owl_section_handle  curr;
+    owl_section_handle  next;
+    owl_symbol_handle   sym;
+    owl_offset          size;
+
+    curr = file->sections;
+    while( curr != NULL ) {
+        next = curr->next;
+        if( comdefSection( curr ) ) {
+            sym = curr->comdat_sym;
+            size = curr->size;
+            curr->sym->flags |= OWL_SYM_DEAD;           // section sym no longer needed
+            OWLSectionFree( curr );
+            // if sym was null then client made section which shouldn't exist...
+            // this is a bit of a hack, but compilers do this because of i86obj cruft
+            if( sym != NULL ) {
+                sym->section = NULL;
+                sym->offset = size;
+                sym->flags |= OWL_SYM_COMDEF;
+            }
+        }
+        curr = next;
+    }
+    redoSectionIndices( file );
+}
+
+void OWLENTRY OWLFileFini( owl_file_handle file ) {
+//*************************************************
+
+    owl_section_handle  curr;
+    owl_section_handle  next;
+
+    resolveRelativeRelocs( file );
+    resolveLabelNames( file );
+    resolveComdefSymbols( file );
+    if( file->format == OWL_FORMAT_COFF ) {
+        COFFFileEmit( file );
+    } else {
+        ELFFileEmit( file );
+    }
+    for( curr = file->sections; curr != NULL; curr = next ) {
+        next = curr->next;
+        OWLSectionFree( curr );
+    }
+    OWLSymbolTableFini( file->symbol_table );
+    OWLStringFini( file->string_table );
+    deleteFile( file->info, file );
+    _ClientFree( file, file );
+}

@@ -156,3 +156,46 @@ static unsigned alphaMasks[] = {
 };
 
 unsigned OWLENTRY OWLRelocBitMask( owl_file_handle file, owl_reloc_info *reloc ) {
+//********************************************************************************
+
+    unsigned    *mask_array;
+
+    assert( reloc != NULL );
+    switch( file->info->cpu ) {
+    case OWL_CPU_PPC:
+        mask_array = &ppcMasks;
+        break;
+    case OWL_CPU_ALPHA:
+        mask_array = &alphaMasks;
+        break;
+    case OWL_CPU_MIPS:
+        assert( 0 );
+    }
+    return( mask_array[ reloc->type ] );
+}
+
+owl_offset OWLENTRY OWLRelocTargetDisp( owl_section_handle section, owl_offset from, owl_offset to ) {
+//****************************************************************************************************
+
+    owl_offset  ret;
+    owl_cpu     cpu;
+
+    cpu = section->file->info->cpu;
+    if( cpu == OWL_CPU_ALPHA ) {
+        from += 4;  // Alpha uses updated PC
+    } // PPC & MIPS uses current PC
+    assert( ( to % 4 ) == 0 );
+    assert( ( from % 4 ) == 0 );
+    ret = to - from;
+    if( cpu == OWL_CPU_PPC ) {
+        return( ret );
+    }
+    return( ret >> 2 );
+}
+
+uint_8 OWLENTRY OWLRelocIsRelative( owl_file_handle file, owl_reloc_info *reloc ) {
+//*********************************************************************************
+
+    file = file;
+    return( reloc->type == OWL_RELOC_BRANCH_REL || reloc->type == OWL_RELOC_JUMP_REL );
+}

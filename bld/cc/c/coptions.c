@@ -744,7 +744,7 @@ void SetBrowserInfo()   { CompFlags.emit_browser_info = 1; }
 #if _MACHINE == _ALPHA
 void Set_AS()
 {
-    TargetSwitches |= ALIGNED_SHORTS;
+    TargetSwitches |= ALIGNED_SHORT;
 }
 #endif
 

@@ -45,3 +45,215 @@ static char     **ppDefines = NULL;
 static int      maxNumPredefines;
 
 static bool optionsPredefine( const char *str ) {
+//***********************************************
+// Sets up an array of define strings for PP_Define later on when it's init'ed.
+
+    static unsigned     idx;
+    unsigned            i;
+    size_t              length;
+    const char          *s;
+    bool                got_equal, got_macro;
+
+    if( !*str ) return( FALSE );
+    if( ppDefines == NULL ) {
+        length = maxNumPredefines * sizeof( char * );
+        ppDefines = MemAlloc( length );
+        memset( ppDefines, NULL, length );
+        idx = 0;
+    } else {
+        ++idx;
+    }
+    ppDefines[idx] = MemAlloc( strlen( str ) + 1 );
+    got_equal = FALSE;
+    got_macro = FALSE;
+    s = str;
+    i = 0;
+    for( ;; ) {
+        if( *s == '=' ) {
+            if( got_equal || !got_macro ) return( FALSE );
+            got_equal = TRUE;
+            ppDefines[idx][i] = ' ';
+        } else {
+            got_macro = TRUE;
+            ppDefines[idx][i] = *s;
+            if( *s == '\0' ) break;
+        }
+        ++i;
+        ++s;
+    }
+    return( TRUE );
+}
+
+extern void OptionsPPDefine( void ) {
+//***********************************
+
+    unsigned    idx = 0;
+    char        *str;
+
+    if( !ppDefines ) return;
+    str = ppDefines[idx++];
+    while( str ) {
+        PP_Define( str );
+        str = ppDefines[idx++];
+    }
+}
+
+extern void OptionsFini( void ) {
+//*******************************
+
+    unsigned    idx = 0;
+    char        *str;
+
+    if( ppDefines ) {
+        str = ppDefines[idx++];
+        while( str ) {
+            MemFree( str );
+            str = ppDefines[idx++];
+        }
+        MemFree( ppDefines );
+    }
+
+    if( AsIncPath ) MemFree( AsIncPath );
+}
+
+extern bool OptionsInit( int argc, char **argv ) {
+//************************************************
+
+    char        *s;
+
+    maxNumPredefines = argc + 1; // An extra null at the end
+    while( *argv ) {
+        if( argv[0][0] == '-' || argv[0][0] == '/' ) {
+            switch( argv[0][1] ) {
+            case 'b':
+            case 'B':
+                // ignore the -bt=NT crap
+                break;
+            case 'd':
+            case 'D':
+                if( !optionsPredefine( &argv[0][2] ) ) goto errInvalid;
+                break;
+            case 'e':
+                if( !argv[0][2] ) goto errInvalid;
+                ErrorLimit = strtoul( &argv[0][2], &s, 10 );
+                if( *s ) goto errInvalid;
+                break;
+            case 'f':
+            case 'F':
+                s = &argv[0][2];
+                switch( *s ) {
+                case 'o':
+                    ++s;
+                    if( *s == '=' ) ++s;
+                    if( *s == '\0' ) goto errInvalid;
+                    ObjSetObjFile( s );
+                    break;
+                default:
+                    goto errInvalid;
+                }
+                break;
+            case 'h':
+            case '?':
+                _SetOption( PRINT_HELP );
+                break;
+            case 'i':
+                s = &argv[0][2];
+                if( *s == '=' ) {
+                    ++s;
+                }
+                if( *s == '\0' ) break;
+                if( AsIncPath ) { // Additional /i switch
+                    AsIncPath = MemRealloc( AsIncPath, strlen( AsIncPath ) +
+                        strlen( s ) + 2 );      // for ';' and EOL
+                    strcat( AsIncPath, ";" );
+                    strcat( AsIncPath, s );
+                } else { // First /i switch
+                    AsIncPath = MemAlloc( strlen( s ) + 1 );
+                    strcpy( AsIncPath, s );
+                }
+                break;
+            case 'o':
+                s = &argv[0][2];
+                switch( *s ) {
+                case 'c':
+                    _SetOption( OBJ_COFF );
+                    break;
+                case 'e': // ELF
+                    _UnsetOption( OBJ_COFF );
+                    break;
+                default:
+                    goto errInvalid;
+                }
+                if( *++s != '\0' ) goto errInvalid;
+                break;
+            case 'q':
+                _SetOption( BE_QUIET );
+                break;
+            case 'w':
+                s = &argv[0][2];
+                switch( *s ) {
+                case 'e':
+                    _SetOption( WARNING_ERROR );
+                    break;
+                default:
+                    goto errInvalid;
+                }
+                break;
+            case 'z':
+                s = &argv[0][2];
+                switch( *s ) {
+                case 'q':
+                    _SetOption( BE_QUIET );
+                    break;
+                default:
+                    goto errInvalid;
+                }
+                break;
+#ifndef NDEBUG
+            case 'v':
+                s = &argv[0][2];
+                while( *s ) {
+                    switch( *s ) {
+                    case 'p':
+                        _SetOption( DUMP_PARSE_TREE );
+                        break;
+                    case 't':
+                        _SetOption( DUMP_INS_TABLE );
+                        break;
+                    case 'i':
+                        _SetOption( DUMP_INSTRUCTIONS );
+                        break;
+                    case 's':
+                        _SetOption( DUMP_SYMBOL_TABLE );
+                        break;
+                    case 'l':
+                        _SetOption( DUMP_LEXER_BUFFER );
+                        break;
+                    case 'd':
+                        _SetOption( DUMP_DEBUG_MSGS );
+                        break;
+                    default:
+                        goto errInvalid;
+                    }
+                    s++;
+                }
+                break;
+#endif
+            default:
+            errInvalid:
+                Banner();
+                AsOutMessage( stderr, AS_MSG_ERROR );
+                AsOutMessage( stderr, INVALID_OPTION, *argv );
+                fputc( '\n', stderr );
+                return( FALSE );
+                break;
+            }
+            memcpy( argv, argv+1, sizeof( *argv ) * argc );
+        } else {
+            argv++;
+        }
+        argc--;
+        maxNumPredefines--;
+    }
+    return( TRUE );
+}

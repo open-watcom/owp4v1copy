@@ -49,3 +49,65 @@ jmp_buf         AsmParse;
 int             ExitStatus = EXIT_SUCCESS;
 
 void main( int argc, char **argv ) {
+//**********************************
+
+    static char *fname;
+
+    MemInit();
+    if( !AsMsgInit() ) {
+        exit( EXIT_FAILURE );
+    }
+    if( argc == 1 ) {
+        Banner();
+        Usage();
+    } else if( OptionsInit( --argc, ++argv ) ) {
+        Banner();
+        if( _IsOption( PRINT_HELP ) ) {
+            Usage();
+            *argv = NULL;
+        } else if( !*argv ) {
+            AsOutMessage( stderr, AS_MSG_ERROR );
+            AsOutMessage( stderr, NO_FILENAME_SPECIFIED );
+            fputc( '\n', stderr );
+        }
+        while( *argv ) {
+            fname = MakeAsmFilename( *argv );
+            if( PP_Init( fname, PPFLAG_ASM_COMMENT, AsIncPath ) != 0 ) {
+                AsOutMessage( stderr, UNABLE_TO_OPEN, fname );
+                fputc( '\n', stderr );
+            } else {
+                OptionsPPDefine();
+                SymInit();
+                InsInit();
+                DirInit();
+                if( ObjInit( fname ) ) {
+                    if( setjmp( AsmParse ) == 0 ) {
+                        ErrorCountsReset();
+                        DoReport = TRUE;
+                        if( !asyyparse() ) {
+                            CurrLineno--;    // This is the total # of lines
+                            ObjRelocsFini(); // Must be done before ErrorReport
+                                             // and other finis
+                        } else {
+                            DoReport = FALSE;
+                        }
+                    } else { // AbortParse() was invoked
+                        DoReport = FALSE;
+                    }
+                    ErrorReport();
+                    AsLexerFini();
+                    ObjFini();
+                }
+                DirFini();
+                InsFini();
+                SymFini();
+            }
+            PP_Fini();
+            ++argv;
+        }
+    }
+    OptionsFini();
+    AsMsgFini();
+    MemFini();
+    exit( ExitStatus );
+}
