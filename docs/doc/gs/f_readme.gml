@@ -53,10 +53,10 @@
 :include file='install'
 :include file='tutorial'
 :include file='docson'
-:include file='redist'
+:cmt.:include file='redist'
 :include file='diffs'
-:cmt. :include file='lic'
-:cmt. :include file='tshoot'
+:include file='lic'
+:include file='tshoot'
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.

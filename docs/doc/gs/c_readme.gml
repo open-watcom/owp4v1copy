@@ -44,13 +44,11 @@
 :include file='install'
 :include file='tutorial'
 :include file='docson'
-:cmt.:include file='c10mfc'
-:cmt.:include file='som'
 :include file='bench'
 :cmt.:include file='redist'
 :include file='diffs'
-:cmt. :include file='lic'
-:cmt. :include file='tshoot'
+:include file='lic'
+:include file='tshoot'
 .if &e'&dohelp eq 0 .do begin
 :BACKM.
 .cd set 2

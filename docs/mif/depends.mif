@@ -481,7 +481,6 @@ bmroot_gs = $(docsrc_dir)\gs
 incs_gs = $(docsrc_dir)\gs
 objs_gs = &
 $(docsrc_dir)\gs\bench.gml &
-$(docsrc_dir)\gs\c10mfc.gml &
 $(docsrc_dir)\gs\c_readme.gml &
 $(docsrc_dir)\gs\cbooks.bmp &
 $(docsrc_dir)\gs\cbooks.cnt &
@@ -541,7 +540,6 @@ $(docsrc_dir)\gs\intro.gml &
 $(docsrc_dir)\gs\lic.gml &
 $(docsrc_dir)\gs\light2.bmp &
 $(docsrc_dir)\gs\redist.gml &
-$(docsrc_dir)\gs\som.gml &
 $(docsrc_dir)\gs\tshoot.gml &
 $(docsrc_dir)\gs\tutorial.gml
 

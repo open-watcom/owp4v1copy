@@ -2,7 +2,6 @@
 .*
 .np
 The following manuals comprise the &product documentation set.
-Printed copies of this documentation can be ordered from &company..
 .if '&lang' eq 'C/C++' .do begin
 When you install the software, portions of the documentation set are
 provided as on-line help files.
@@ -115,46 +114,19 @@ techniques.
 .*
 .point &lnkname User's Guide
 This manual describes how to use the &lnkname to generate executables
-for target systems such as extended DOS, Windows 3.x, Windows 95,
-Windows NT, OS/2, and Novell NLMs.
-.*
-.if '&lang' eq 'C/C++' .do begin
-.point Visual Programmer User's Guide
-This manual describes how to use Blue Sky's Visual Programmer, an easy
-to use Prototyper and C/C++ Code Generator for Windows, Win32 and
-Windows NT.
-.*
-.point MFC Switch-It Module User's Guide
-Blue Sky's MFC Switch-It Module (SIM) allows you to generate Microsoft
-Foundation Classes (MFC) C++ code for your application design(s). You
-prototype and test your application using Visual Programmer, then
-generate the code using the MFC SIM.
-.do end
+for target systems such as extended DOS, Windows 3.x, Windows 95/98/Me,
+Windows NT/2000/XP, OS/2, and Novell NLMs.
 .*
 :cmt..point Comprehensive Index
 :cmt.Comprehensive Index for entire package
 .*
 .endpoint
-.if '&lang' eq 'C/C++' .do begin
-.np
-The following book is included in the printed documentation set.
-It is not available as an on-line document.
-.begpoint $break
-.*
-.point The C++ Programming Language by Bjarne Stroustrup
-This book is an industry recognized authoritative standard on C++
-programming. This manual begins with a tutorial to introduce the C++
-concepts. The second section consists of an in-depth C++ reference
-guide.
-.*
-.endpoint
-.do end
 .*
 .section Accessing On-line Documentation
 .*
 .np
 The following sections describe how to access the on-line help that is
-available for DOS, Windows 3.x, Windows 95, Windows NT and OS/2.
+available for DOS, Windows and OS/2.
 .*
 .beglevel
 .*
@@ -206,8 +178,6 @@ as separate help files)
 .book &product Master Index
 .note CPPLIB
 .book &cmppname Class Library Reference
-.note ISVCPP
-.book &product &ver..&rev Add-In Tools Guide
 .do end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .note FMIX
@@ -224,8 +194,6 @@ as a separate help file)
 .book &product Language Reference
 .note F77GRAPH
 .book &product Graphics Library Reference
-.note ISVFOR
-.book &product &ver..&rev Add-In Tools Guide
 .do end
 .note LGUIDE
 .book &lnkname User's Guide
@@ -242,7 +210,7 @@ as a separate help file)
 .book &product Getting Started manual
 .do end
 .note RESCOMP
-Documentation for the &wrcname for Windows
+Documentation for the &wrcname
 (excerpt from the
 .book &company Graphical Tools User's Guide
 .ct )
@@ -263,9 +231,6 @@ Documentation for the &cmpcname Diagnostic Messages
 (excerpt from the
 .book &product User's Guide
 .ct ).
-:cmt. This file was inadvertantly omitted from the CD-ROM but can be
-:cmt. down-loaded from the &company BBS, CompuServe or FTP'ed from the
-:cmt. &company FTP site.
 .do end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .note WFCERRS
@@ -280,19 +245,16 @@ Documentation for the &cmppname Diagnostic Messages
 (excerpt from the
 .book &product User's Guide
 .ct ).
-:cmt. This file was inadvertantly omitted from the CD-ROM but can be
-:cmt. down-loaded from the &company BBS, CompuServe or FTP'ed from the
-:cmt. &company FTP site.
 .do end
 .endnote
 .*
-.section On-line Documentation under Windows 3.x, 95 and NT
+.section On-line Documentation under Windows
 .*
 .np
 On-line documentation is presented in the form of Windows Help
 files (".HLP" files).
-When the software is installed under Windows 3.x, Windows 95 or
-Windows NT, a number of program groups are created.
+When the software is installed under Windows 3.x, Windows 95/98/Me
+or Windows NT/2000/XP, a number of program groups are created.
 You can access the on-line document by opening a program group and
 double-clicking on a help icon.
 .begnote $setptnt 15
@@ -427,12 +389,6 @@ Documentation for the String Editor
 (excludes C and C++ Diagnostic Messages appendices which are available
 as separate help files)
 .do end
-.if '&lang' eq 'C/C++' .do begin
-.note Visual Programmer Help
-.book Visual Programmer User's Guide
-.note Visual Programmer MFC Help
-.book MFC Switch-it Module User's Guide
-.do end
 .note Zoom Help
 Documentation for the Zoom utility
 (excerpt from the
@@ -440,26 +396,6 @@ Documentation for the Zoom utility
 .ct )
 .endnote
 .np
-The second set of help files, listed below, forms part of the
-Microsoft Windows SDK.
-.begnote $setptnt 15
-.notehd1 &product Additional Help Group
-.notehd2 ~b
-.note Add-In Tools Guide
-A guide to third-party software tools/libraries
-.note Hotspot Editor Help
-.note MCI Command Strings
-.note &mfc32 Library Help
-.note &mfc32 Sample Program Help
-.note &mfc32 Technical Notes
-.note &mfc16 Library Help
-.note &mfc16 Sample Program Help
-.note &mfc16 Technical Notes
-.note Multimedia Reference
-.note Pen API Reference
-.note Win32 API Help
-.note Windows API Reference
-.endnote
 .*
 .section On-line Documentation under OS/2
 .*
@@ -493,8 +429,6 @@ Documentation for the C++ Diagnostic Messages
 .note &lang Master Index
 The master index for all of the &product on-line help
 .do end
-.note CP Reference
-OS/2 Control Program Reference
 .note Debugger Help
 .book &dbgname User's Guide
 .if '&lang' eq 'FORTRAN 77' .do begin
@@ -513,12 +447,6 @@ Documentation for the Interactive Development Environment
 (excerpt from the
 .book &company Graphical Tools User's Guide
 .ct )
-.note IPFC Reference
-OS/2 IPF Compiler Reference
-.note Linker Guide
-.book &lnkname User's Guide
-.note PM Reference
-OS/2 Presentation Manager Reference
 .note Profiler Help
 Documentation for the &smpname and &prfname
 (excerpt from the
@@ -526,12 +454,6 @@ Documentation for the &smpname and &prfname
 .ct )
 .note Programmer's Guide
 .book &product Programmer's Guide
-.note REXX Reference
-OS/2 REXX Reference
-.if '&lang' eq 'C/C++' .do begin
-.note SOM Reference
-OS/2 System Object Model Reference
-.do end
 .if '&lang' eq 'C/C++' .do begin
 .note Source Browser Help
 Documentation for the &brname
@@ -541,8 +463,6 @@ Documentation for the &brname
 .do end
 .note Tools Guide
 .book &product Tools User's Guide
-.note Tools Reference
-OS/2 Toolkit Reference
 .note User's Guide
 .book &product User's Guide
 .if '&lang' eq 'C/C++' .do begin

@@ -43,11 +43,6 @@ Microsoft Windows NT version 3.1 or higher
 IBM OS/2 2.1 or higher
 .endbull
 .np
-.ix 'CD-ROM'
-You must install the software from a CD-ROM drive.
-Unlike earlier releases, it is now no longer possible to copy the
-installation files to diskettes and install the software from your
-diskette drive.
 .*
 .section The README File
 .*
@@ -80,8 +75,7 @@ product.
 The &watc and &watf products are compatible at the same version
 number.
 However, the &watc and &watf products are usually NOT compatible
-across different version numbers (e.g., version 9.5 of &watf is not
-compatible with version 10.5 of &watc and vice versa).
+across different version numbers.
 If this is the case, care must be exercised when switching between
 use of the two products.
 Environment variables such as
@@ -136,7 +130,6 @@ SET PATH=...;D:\WATCOM\BINP;D:\WATCOM\BINW;...
 SET HELP=...;D:\WATCOM\BINP\HELP;...
 SET BOOKSHELF=...;D:\WATCOM\BINP\HELP;...
 SET INCLUDE=...;D:\WATCOM\H\OS2;D:\WATCOM\H;
-SET IPFC=D:\WATCOM\TOOLKT2X\IPFC
 SET WATCOM=D:\WATCOM
 SET EDPATH=D:\WATCOM\EDDAT
 RUN=D:\WATCOM\BINP\NMPBIND.EXE
@@ -176,15 +169,15 @@ Enter the following command:
 .millust begin
 x:\setup
 .millust end
-.note Windows 95
-.ix 'installing &product' 'Windows 95'
+.note Windows 95/98/Me
+.ix 'installing &product' 'Windows 95/98/Me'
 Choose Run from the Start menu and enter the following command:
 .ix 'SETUP'
 .millust begin
 x:\setup
 .millust end
-.note Windows NT
-.ix 'installing &product' 'Windows NT'
+.note Windows NT/2000/XP
+.ix 'installing &product' 'Windows NT/2000/XP'
 Log on to an account that is a member of the "Administrator" group so
 that you have sufficient rights to modify the system environment.
 Choose Run from the File menu of the Program Manager.
@@ -237,13 +230,13 @@ have been placed in the root of the installation directory:
 .note CONFIG.NEW
 Changes required for
 .fi CONFIG.SYS
-(DOS, Windows, Windows 95, OS/2)
+(DOS, Windows, Windows 95/98/Me, OS/2)
 .note AUTOEXEC.NEW
 Changes required for
 .fi AUTOEXEC.BAT
-(DOS, Windows, Windows 95, OS/2)
+(DOS, Windows, Windows 95/98/Me, OS/2)
 .note CHANGES.ENV
-Changes required for the Windows NT environment
+Changes required for the Windows NT/2000/XP environment
 .endnote
 .*
 .section Installation Notes for Windows 3.x
@@ -361,6 +354,6 @@ If you plan to use the Named Pipe Remote Debugging support of the
 program must be running. It may be started during OS/2 initialization via
 a "RUN=" statement in your
 .fi CONFIG.SYS
-file or manually at a later time through the DETACH command.
+file or manually as needed through the DETACH command.
 .endnote
 

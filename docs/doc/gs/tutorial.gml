@@ -1,9 +1,9 @@
 .chap *refid=cptutor Hands-on Introduction to &product
 .*
 .np
-Let's get started and introduce some of the new tools that are in
-version &ver.. The purpose of this chapter is to briefly test out the
-new graphical tools in version &ver using an existing application.
+Let's get started and introduce some of the tools that are in
+&product.. The purpose of this chapter is to briefly test out the
+new graphical tools in &product using an existing application.
 .np
 In this tutorial, we will take an existing set of
 .if '&lang' eq 'C/C++' .do begin
@@ -144,7 +144,7 @@ for an example of 32-bit Windows 3.x application development
 when using Windows 3.x under DOS as a host development system,
 .note WIN32
 for an example of 32-bit Win32 application development
-when using Windows NT or Windows 95 as a host development system, and
+when using Windows NT/2000/XP or Windows 95/98/Me as a host development system, and
 .note OS2
 for an example of 32-bit OS/2 application development
 when using 32-bit OS/2 as a host development system.

@@ -56,7 +56,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 .*
 :set symbol="powerpp"   value="Power++".
 .*
-.* WATCOM Debugger Specific
+.* Open Watcom Debugger Specific
 .*
 :set symbol="dbgname"   value="&company Debugger".
 .if '&target' eq 'QNX' .do begin
@@ -76,7 +76,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="dbgsuffup" value="DBG".
 .do end
 .*
-.* WATCOM Linker/Librarian/Strip Specific
+.* Open Watcom Linker/Librarian/Strip Specific
 .*
 :set symbol="lnkname"   value="&company Linker".
 :set symbol="lnkcmd"    value="wlink".
@@ -109,7 +109,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="libvarup"  value="LIB".
 :set symbol="pathvarup" value="WATCOM".
 .*
-.* WATCOM Assembler Specific
+.* Open Watcom Assembler Specific
 .*
 :set symbol="asmname"   value="&company Assembler".
 :set symbol="asmcmd"    value="wasm".
@@ -128,7 +128,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="wascmdup"  value="WASAXP".
 .do end
 .*
-.* WATCOM Disassembler Specific
+.* Open Watcom Disassembler Specific
 .*
 :set symbol="disname"   value="&company Disassembler".
 :set symbol="discmd"    value="wdis".
@@ -139,7 +139,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="discmdup"  value="WDIS".
 .do end
 .*
-.* WATCOM Patch Utility Specific
+.* Open Watcom Patch Utility Specific
 .*
 :set symbol="patchname" value="&company Patch Utility".
 :set symbol="patchcmd"  value="bpatch".
@@ -150,7 +150,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="patchcmdup" value="BPATCH".
 .do end
 .*
-.* WATCOM Make and Touch Specific
+.* Open Watcom Make and Touch Specific
 .*
 :set symbol="makname"   value="&company Make".
 :set symbol="maksname"  value="Make".
@@ -160,7 +160,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="tchcmd"    value="wtouch".
 :set symbol="tchcmdup"  value="WTOUCH".
 .*
-.* WATCOM Profiler Specific
+.* Open Watcom Profiler Specific
 .*
 :set symbol="prfname"   value="&company Execution Profiler".
 :set symbol="prfcmd"    value="wprof".
@@ -175,7 +175,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="smpcmdup"  value="WSAMPLE".
 .do end
 .*
-.* WATCOM Windows Resource Compiler Specific
+.* Open Watcom Resource Compiler Specific
 .*
 :set symbol="wrcname"   value="&company Resource Compiler".
 :set symbol="wrccmd"    value="wrc".
@@ -183,9 +183,9 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 .*
 .* GUI Tools
 .*
-:set symbol="drwc"      value="Dr. &company".
-:set symbol="dr95"      value="Dr. &company".
-:set symbol="drnt"      value="Dr. &company".
+:set symbol="drwc"      value="Dr. Watcom".
+:set symbol="dr95"      value="Dr. Watcom".
+:set symbol="drnt"      value="Dr. Watcom".
 :set symbol="spy"       value="Spy".
 :set symbol="dde"       value="DDE Spy".
 :set symbol="edname"    value="&company Editor".

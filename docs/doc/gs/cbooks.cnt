@@ -4,7 +4,6 @@
 :Index Watcom C Diagnostic Messages Help=wccerrs.hlp
 :Index Watcom C Language Reference Help=clr.hlp
 :Index Watcom C Library Reference Help=clib.hlp
-:Index Watcom C/C++ 11.0 Add-In Tools Guide Help=isvcpp.hlp
 :Index Watcom C/C++ Getting Started Help=c_readme.hlp
 :Index Watcom C/C++ Programmer's Guide Help=pguide.hlp
 :Index Watcom C/C++ Tools Guide Help=tools.hlp
@@ -62,4 +61,3 @@
 
 :include lguide.cnt
 :include wd.cnt
-:include isvcpp.cnt

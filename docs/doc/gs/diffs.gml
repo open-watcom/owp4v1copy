@@ -11,6 +11,27 @@ recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
 .*
+
+.*
+.section Differences from Version 11.0
+.*
+.np
+&product 1.0 is not substantially different from Watcom &lang
+version 11.0. There are however several changes that may require you
+to change your source and/or makefiles or project files.
+.begbull
+.bull
+The C compiler now implements stricter function prototype processing. This
+may result in new warning or error messages on code that was previously
+compiling cleanly but contained mismatches between function prototypes
+and actual definitions. The C++ compiler did not have this problem.
+.bull
+The linker now defaults to case sensitive symbol resolution. In most
+cases this is not a problem and may in fact avoid certain problems.
+If your project relies on case insensitive linking, please add
+.kw OPTION NOCASEEX
+to your linker directives.
+.endbull
 .if &version ge 110 .do begin
 .*
 .section Changes in 11.0 that may Require Recompilation
@@ -47,7 +68,7 @@ with new libraries.
 .*
 .np
 The following sections summarize the major differences from the
-previous release of &product..
+previous release.
 .begbull
 .bull
 In general, we have improved Microsoft compatibility in our compilers
