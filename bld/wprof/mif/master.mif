@@ -116,9 +116,12 @@ wprofgui.res : ../h/wprofgui.rc
 !endif
 
         @set include=$(%oinc)
+!else ifeq host_OS nt
+wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
+        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_nt)" $]@ -fo=$^@
 !else
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(lang_root)/h/win" $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $]@ -fo=$^@
 !endif
 
 msg.obj : msg.c msg.h
@@ -126,7 +129,7 @@ msg.obj : msg.c msg.h
 msgstr.obj : msgstr.c msg.h
 
 wprofui.res : ../h/wprofui.rc .AUTODEPEND
-        $(rc_aui) -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc_aui) -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $[@ -fo=$^@
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
         $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@

@@ -99,12 +99,3 @@
 
 // the following are special identifiers for DDE mode
 #define IMGED_DDE_UPDATE_PRJ    2080
-
-/* Following is special defines for including XP XML file in .rc */
-#if defined __NT__
-#if RC_INVOKED
-#undef RT_MANIFEST
-#define RT_MANIFEST  24
-#endif
-#define IDR_MANIFEST  1
-#endif

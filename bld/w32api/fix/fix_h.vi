@@ -7,7 +7,7 @@ set nomagic
 #        GetCurrentFiber(), GetFiberData()
 #
 assign %fix1beg = "#if defined( _X86_ ) /* Open Watcom fix */"
-assign %fix1end = "#endif /* Open Watcom fix */"
+assign %fix1end = "#endif               /* Open Watcom fix */"
 edit include/winnt.h
 /Open Watcom fix
 if lastrc != ERR_NO_ERR
@@ -19,6 +19,33 @@ insert
 /endif
 insert 
 %(fix1end)
+.
+endif
+endif
+x
+#
+# fix2 - temporary fix for manifest data
+#        it should be removed, as soon as winuser.h will be fixed
+#
+assign %fix2l1 = "#if defined( RC_INVOKED )                     /* Open Watcom temporary fix */"
+assign %fix2l2 = "#undef RT_MANIFEST                            /* Open Watcom temporary fix */"
+assign %fix2l3 = "#define RT_MANIFEST 24                        /* Open Watcom temporary fix */"
+assign %fix2l4 = "#define CREATEPROCESS_MANIFEST_RESOURCE_ID  1 /* Open Watcom temporary fix */"
+assign %fix2l5 = "#endif                                        /* Open Watcom temporary fix */"
+assign %fix2l6 = ""
+edit include/winuser.h
+/Open Watcom temporary fix
+if lastrc != ERR_NO_ERR
+/#ifdef __cplusplus
+/#ifdef __cplusplus
+if lastrc == ERR_NO_ERR
+insert 
+%(fix2l1)
+%(fix2l2)
+%(fix2l3)
+%(fix2l4)
+%(fix2l5)
+%(fix2l6)
 .
 endif
 endif

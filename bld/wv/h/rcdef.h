@@ -29,14 +29,9 @@
 *
 ****************************************************************************/
 
-/* Following is special defines for including XP XML file in .rc */
-#if defined __NT__
-#if RC_INVOKED
-#undef RT_MANIFEST
-#define RT_MANIFEST  24
-#endif
+/* Following is special define for including XP XML file in .rc */
+
 #define IDR_MANIFEST  1
-#endif
 
 #define BITMAP_SPLASH           1001
 #define BITMAP_CLOSEBMP         1002

@@ -3,7 +3,7 @@
 #include "banner.h"
 
 #ifdef __NT__
-IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 #endif
 
 APPLICON   ICON   10spy.ico
