@@ -34,7 +34,7 @@ extern  void    FiniModMap( imp_image_handle *ii );
 extern  im_idx  Dwarf2ModIdx( imp_image_handle *ii, dr_handle mod_handle );
 extern  im_idx  DwarfModIdx( imp_image_handle *ii, dr_handle mod_handle );
 extern  im_idx  CuTag2ModIdx( imp_image_handle *ii, dr_handle cu_handle );
-extern unsigned NameCopy( char *to, char *from, int max );
+extern unsigned NameCopy( char *to, char *from, unsigned max );
 typedef walk_result (*MY_MOD_WKR)( imp_image_handle *, im_idx, void * );
 extern walk_result DFWalkModList( imp_image_handle *ii,
                         MY_MOD_WKR wk, void *d );

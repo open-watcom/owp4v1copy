@@ -605,23 +605,29 @@ dip_status      DIPENTRY DIPImpModDefault( imp_image_handle *ii,
     return( DS_OK );
 }
 
-extern unsigned NameCopy( char *to, char *from, int max )
-/*******************************************************/
+extern unsigned NameCopy( char *to, char *from, unsigned max )
+/************************************************************/
 {
-    int     len;
+    unsigned    len;
 
     len = strlen( from );
-    if( max > 0 ){
-        if( len < max ){
+    if( max > 0 ) {
+        if( len < max ) {
             max = len;
-        }else{
+        } else {
             max = max-1;
         }
-        do{
+        if( max == 0 ) {    // Special case to prevent underflow
             *to = *from;
             ++to;
-            ++from;
-        }while( --max > 0 );
+        }
+        else {
+            do {
+                *to = *from;
+                ++to;
+                ++from;
+            } while( --max > 0 );
+        }
         *to = '\0';
     }
     return( len );
