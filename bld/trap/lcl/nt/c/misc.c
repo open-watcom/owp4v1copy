@@ -36,14 +36,21 @@
 #undef GetThreadContext
 #undef SetThreadContext
 
+#if defined( MD_x86 )
+#define VDMCONTEXT_TO_USE VDMCONTEXT_CONTROL | VDMCONTEXT_INTEGER | \
+                           VDMCONTEXT_SEGMENTS | VDMCONTEXT_DEBUG_REGISTERS | \
+                           VDMCONTEXT_FLOATING_POINT | VDMCONTEXT_EXTENDED_REGISTERS
+#elif defined( MD_axp ) | defined( MD_ppc )
 #define VDMCONTEXT_TO_USE VDMCONTEXT_CONTROL | VDMCONTEXT_INTEGER | \
                            VDMCONTEXT_SEGMENTS | VDMCONTEXT_DEBUG_REGISTERS | \
                            VDMCONTEXT_FLOATING_POINT
+#else
+    #error VDMCONTEXT_TO_USE not configured
+#endif
 
 #if defined( MD_x86 )
-    #define CONTEXT_TO_USE CONTEXT_CONTROL | CONTEXT_INTEGER | \
-                       CONTEXT_SEGMENTS | CONTEXT_DEBUG_REGISTERS | \
-                       CONTEXT_FLOATING_POINT
+    #define CONTEXT_TO_USE CONTEXT_FULL | CONTEXT_FLOATING_POINT \
+                          | CONTEXT_DEBUG_REGISTERS | CONTEXT_EXTENDED_REGISTERS
 #elif defined( MD_axp ) | defined( MD_ppc )
     #define CONTEXT_TO_USE CONTEXT_FULL
 #else

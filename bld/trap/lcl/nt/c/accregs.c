@@ -37,6 +37,11 @@
 #include "stdnt.h"
 #include "madregs.h"
 
+// position in Windows CONTEXT, 
+// it is offset in FXSAVE/FXRSTOR memory structure
+#define CONTEXT_MXCSR    24
+#define CONTEXT_XMM      10*16 
+
 #if defined( MD_x86 )
 static void ReadCPU( struct x86_cpu *r, CONTEXT *con )
 {
@@ -183,6 +188,9 @@ unsigned ReqRead_regs( void )
 #if defined( MD_x86 )
         ReadCPU( &mr->x86.cpu, &con );
         memcpy( &mr->x86.fpu, &con.FloatSave, sizeof( mr->x86.fpu ) );
+        memcpy( &mr->x86.xmm.xmm,
+                &con.ExtendedRegisters[ CONTEXT_XMM ], sizeof( mr->x86.xmm.xmm ) );
+        mr->x86.xmm.mxcsr = con.ExtendedRegisters[ CONTEXT_MXCSR ];
 #elif defined( MD_axp )
         memcpy( &mr->axp.r, &con, sizeof( mr->axp.r ) );
         mr->axp.pal.nt.fir      = *( unsigned_64 * ) & con.Fir;
@@ -262,6 +270,9 @@ unsigned ReqWrite_regs( void )
 #if defined( MD_x86 )
     WriteCPU( &mr->x86.cpu, &con );
     memcpy( &con.FloatSave, &mr->x86.fpu, sizeof( mr->x86.fpu ) );
+    memcpy( &con.ExtendedRegisters[ CONTEXT_XMM ], 
+            &mr->x86.xmm.xmm, sizeof( mr->x86.xmm.xmm ) );
+    con.ExtendedRegisters[ CONTEXT_MXCSR ] = mr->x86.xmm.mxcsr;
 #elif defined( MD_axp )
     memcpy( &con, &mr->axp.r, sizeof( mr->axp.r ) );
     *( unsigned_64 * ) & con.Fir            = mr->axp.pal.nt.fir;

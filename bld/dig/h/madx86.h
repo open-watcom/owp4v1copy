@@ -138,6 +138,7 @@ typedef struct {
 
 struct x86_xmm {
     xmm_reg             xmm[8];
+    unsigned_32         mxcsr;
 };
 
 struct x86_mad_registers {
