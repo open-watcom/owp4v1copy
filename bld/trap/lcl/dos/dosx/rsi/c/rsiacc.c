@@ -89,7 +89,7 @@ typedef struct watch {
     dword               value;
     dword               linear;
     short               dregs;
-    short               len;
+    unsigned short      len;
     dpmi_watch_handle   handle;
     dpmi_watch_handle   handle2;
 } watch;
@@ -119,9 +119,9 @@ extern unsigned short GetMSW(void);
 extern void SetUsrTask() {}
 extern void SetDbgTask() {}
 
-static int ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char*,int), addr48_ptr *addr, byte far *data, int req ) {
+static unsigned ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char*,unsigned), addr48_ptr *addr, byte far *data, unsigned req ) {
 
-    int         len;
+    unsigned    len;
 
     _DBG(("checking %4.4x:%8.8lx for 0x%x bytes -- ",
             addr->segment, addr->offset, req ));
@@ -144,15 +144,19 @@ static int ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char*,int), addr48_ptr *add
     return( len );
 }
 
-
-static int ReadMemory( addr48_ptr *addr, byte far *data, int len )
+static unsigned ReadMemory( addr48_ptr *addr, byte far *data, unsigned len )
 {
     return( ReadWrite( D32DebugRead, addr, data, len ) );
 }
 
-static int WriteMemory( addr48_ptr *addr, byte far *data, int len )
+/*
+ * Note - DOS4GW D32DebugWrite function in dbglib.c file has
+ *     4-th parameter as int, but it should be unsigned int
+ *     possible problem for memory blocks > 32767, it is not very probable
+ */
+static unsigned WriteMemory( addr48_ptr *addr, byte far *data, unsigned len )
 {
-    return( ReadWrite( D32DebugWrite, addr, data, len ) );
+    return( ReadWrite( (int (*)(OFFSET32,SELECTOR,int,char*,unsigned)) D32DebugWrite, addr, data, len ) );
 }
 
 
@@ -265,9 +269,9 @@ unsigned ReqMachine_data()
 
 unsigned ReqChecksum_mem()
 {
-    int            len;
-    int            i;
-    int            read;
+    unsigned            len;
+    int                 i;
+    unsigned            read;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
@@ -343,7 +347,7 @@ unsigned ReqRead_io()
 
 unsigned ReqWrite_io()
 {
-    int              len;
+    unsigned            len;
     write_io_req        *acc;
     write_io_ret        *ret;
     void                *data;
@@ -543,12 +547,12 @@ static void GetObjectInfo( char *name )
 
 unsigned ReqProg_load()
 {
-    char        *src;
-    char        *dst;
-    char        *name;
-    char        ch;
-    prog_load_ret       *ret;
-    unsigned            len;
+    char            *src;
+    char            *dst;
+    char            *name;
+    char            ch;
+    prog_load_ret   *ret;
+    unsigned        len;
 
     _DBG1(( "AccLoadProg\r\n" ));
     AtEnd = FALSE;
@@ -607,10 +611,11 @@ unsigned ReqProg_kill()
 
 unsigned ReqSet_watch()
 {
-    watch       *curr;
-    set_watch_req       *acc;
-    set_watch_ret       *ret;
-    int         i,needed;
+    watch           *curr;
+    set_watch_req   *acc;
+    set_watch_ret   *ret;
+    int             i;
+    int             needed;
 
     _DBG1(( "AccSetWatch\n" ));
 
@@ -933,7 +938,7 @@ unsigned ReqGet_err_text()
 
 unsigned ReqGet_lib_name()
 {
-    char *ch;
+    char                *ch;
     get_lib_name_ret    *ret;
 
     ret = GetOutPtr( 0 );
