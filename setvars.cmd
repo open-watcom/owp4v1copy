@@ -2,7 +2,7 @@
 REM NOTE: Do not use this batch file directly, but copy it and
 REM       modify it as necessary for your own use!!
 
-REM: Set up default path information variable
+REM Set up default path information variable
 set DEFPATH=%PATH%;
 set DOS4G=quiet
 
@@ -19,6 +19,9 @@ set owdrive=d:
 REM Change this to point to your Watcom 11.0c directory
 set watcom=c:\c\wc11
 
+REM Change this to point to your OS/2 Toolkit directory
+set os2tkroot=c:\Toolkit
+
 REM Unset this variable to get more debug info
 set on_build_machine=1
 
@@ -32,7 +35,7 @@ mode 80,50
 cls
 echo OpenWatcom compiler build environment
 
-rem Stuff from Watcom for the build environment
+REM Stuff for the Open Watcom build environment
 set rsidir=d:\rsi
 set batdir=%owdrive%
 set bld_ver=110
@@ -69,7 +72,7 @@ set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
 set beginlibpath=%watcom%\binp\dll
 
-rem Documentation variables
+REM Documentation related variables
 set doc_root=%owroot%\docs
 set whelp=%doc_root%\doc\whelp
 set gml_root=%doc_root%\gml\os2
@@ -77,6 +80,7 @@ set gmllib=%doc_root%\gml\syslib
 set whpcvt=%doc_root%\cmds\whpcvto2
 set hcdos=%doc_root%\cmds\hcdosos2
 set hlpdir=%devdir%\online\hlp
+set ipfc=%os2tkroot%\ipfc
 
 %devdr%
 cd %devdir%
