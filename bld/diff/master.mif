@@ -19,18 +19,16 @@ cflags += /d2
         @set include=$(inc_path)
         $(cc) $[@ $(cflags)
 
-lflags_dos_386 = sys pharlap debug all
-
 extra_l_flags_os2_i86 = op stub=$(diff_dir)\o\diff.exe libpath $(watcom_dir)\lib
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_CPU))
 
 $(name).exe : $(name).obj
         wlink $(lflags) file $[@ name $^&
-!ifeq host_OS dos
-! ifeq host_CPU 386
-        !$(pharlap)bind386 $(pharlap)\run386b diff.exp
-! endif
-!endif
+#!ifeq host_OS dos
+#! ifeq host_CPU 386
+#        !$(pharlap)bind386 $(pharlap)\run386b diff.exp
+#! endif
+#!endif
 
 clean : .SYMBOLIC .EXPLICIT
         @if exist *.obj del *.obj
