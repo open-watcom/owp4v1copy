@@ -118,6 +118,10 @@ int main( unsigned argc, char *argv[] )
             printf( "\nCONNECT\n" );
             for( ;; ) {
                 len = RemoteGet( &Data, sizeof( Data ) );
+		if( len == -1 ) {
+		    printf( "\nlink broken\n" );
+		    break;
+		}
                 if( Data[0] == TEST_OVER ) break;
                 if( Data[0] == TEST_STRING ) {
                     printf( "'%s' - %d bytes\n", &Data[1], len );
