@@ -1822,6 +1822,28 @@ Each nested procedures adds an additional level.
 A null string should be returned if the symbol has no name.
 NULL should never be returned.
 :eDL.
+.section char *FEExtName( cg_sym_handle sym, int request )
+:I1.FEExtName
+:DL.
+:DT.Returns
+:DD.A various kind in dependency on request parameter.
+:DTHD.Request parameter
+:DDHD.Returns
+:DT.EXTN_BASENAME
+:DD.NULL terminated character string which is the name of sym.
+A null string should be returned if the symbol has no name.
+NULL should never be returned.
+:DT.EXTN_PATTERN
+:DD.NULL terminated character string which is the pattern for symbol name decoration.
+'*' is replaced by symbol name.
+'^' is replaced by its upper case equivalent.
+'!' is replaced by its lower case equivalent.
+'#' is replaced by '@nnn' where nnn is decimal number representing total size of all
+function parameters.
+If an '\' is present, the character following is used literally.
+:DT.EXTN_PRMSIZE
+:DD.Returns int value which represent size of all parameters when symbol is function.
+:eDL.
 .section cg_type FEParmType( cg_type type )
 :I1.FEParmType
 :DL.
@@ -2098,12 +2120,6 @@ unrolled that many times (there will be (count + 1) copies of the body).
 :DDHD.Return value
 :DT.( NULL, CODE_GROUP )
 :DD.char * - The name of the code group.
-:DT.( cg_sym_handle, OBJECT_NAME )
-:DD.char * - The object file name of a symbol.
-'*' is replaced by FEName( cg_sym_handle ).
-'^' is replaced by its upper case equivalent.
-'!' is replaced by its lower case equivalent.
-If an '\' is present, the character following is used literally.
 :DT.( aux_handle, STRETURN_REG )
 :DD.hw_reg_set * - The register which points to a structure return
 value.
@@ -2113,6 +2129,12 @@ Only called if the routine has the SPECIAL_STRUCT_RETURN attribute.
 generate a reference to in the object file.
 :DT.( void*, IMPORT_NAME )
 :DD.char * - The EXTDEF name to generate given a handle
+:DT.( void *, NEXT_IMPORT_S )
+:DD.void * (See notes at end) - A handle for the next symbol to
+generate a reference to in the object file.
+:DT.( void*, IMPORT_NAME_S )
+:DD.Returns a cg_sym_handle. The EXTDEF name symbol reference to generate given
+a handle.
 :DT.( void*, NEXT_LIBRARY )
 :DD.void * (See notes at end) - Handle for the next library required
 :DT.( void*, LIBRARY_NAME )
@@ -2222,7 +2244,7 @@ the segment or if it will have to load one.
 FEGenProc will be called for code sequence when required.
 :eDL.
 :DL tsize='2i' break.
-:DTHD.386 Call Class
+:DTHD.x86 Call Class
 :DDHD.Meaning
 :DT.FAR
 :DD.Does routine require a far call/return.
@@ -2650,7 +2672,7 @@ I use the terms function, routine, procedure interchangeably, as well
 as index, subscript - select, switch - parameter, argument - etc.
 I come from a multiple language background and will always be
 hopelessly confused.
-:P.The NEXT_IMPORT/NEXT_LIBRARY are used as follows.
+:P.The NEXT_IMPORT/NEXT_IMPORT_S/NEXT_LIBRARY are used as follows.
 :XMP.
 handle = NULL;
 for( ;; ) {
