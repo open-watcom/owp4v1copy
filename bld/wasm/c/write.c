@@ -1077,7 +1077,9 @@ static void reset_seg_len( void )
             AsmError( SEG_NOT_DEFINED );
             continue;
         }
-        curr->e.seginfo->segrec->d.segdef.seg_length = 0;
+        if( curr->e.seginfo->segrec->d.segdef.combine != COMB_STACK ) {
+            curr->e.seginfo->segrec->d.segdef.seg_length = 0;
+        }
         curr->e.seginfo->start_loc = 0; // fixme ?
         curr->e.seginfo->current_loc = 0;
     }
