@@ -11804,3 +11804,19 @@ struct A {
     static int i = 0;
 };
 :eerrbad.
+
+:MSGSYM. ERR_IMPLICIT_CAST_ILLEGAL
+:MSGTXT. cannot convert expression to target type
+:MSGJTXT.
+The implicit cast is trying to convert an expression to a completely
+unrelated type.  There is no way the compiler can provide any meaning
+for the intended cast.
+:errbad.
+struct T {
+};
+
+void fn()
+{
+    bool b = T;
+}
+:eerrbad.

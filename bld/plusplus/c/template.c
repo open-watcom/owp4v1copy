@@ -1078,14 +1078,19 @@ static PTREE processIndividualParm( TYPE arg_type, PTREE parm )
 
 static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 {
+    SCOPE save_scope;
+    SCOPE parm_scope;
     PTREE list;
     PTREE parm;
     TYPE arg_type;
     unsigned num_parms;
     unsigned i;
     boolean something_went_wrong;
-    TOKEN_LOCN  start_locn;
+    boolean inside_decl_scope;
+    TOKEN_LOCN start_locn;
 
+    inside_decl_scope = ScopeAccessType( SCOPE_TEMPLATE_DECL );
+    save_scope = GetCurrScope();
     parms = NodeReverseArgs( &num_parms, parms );
     something_went_wrong = FALSE;
 
@@ -1097,9 +1102,10 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
         CErr1( ERR_TOO_MANY_TEMPLATE_PARAMETERS );
         something_went_wrong = TRUE;
     } else if( ! something_went_wrong ) {
-        boolean inside_decl_scope = ScopeAccessType( SCOPE_TEMPLATE_DECL );
-        SCOPE decl_scope = ScopeBegin( SCOPE_TEMPLATE_INST );
-
+        if( ! inside_decl_scope ) {
+            parm_scope = ScopeCreate( SCOPE_TEMPLATE_PARM );
+            ScopeSetEnclosing( parm_scope, SymScope( tinfo->sym ) );
+        }
         SrcFileGetTokenLocn( &start_locn );
 
         list = parms;
@@ -1113,12 +1119,11 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 
             parm = list->u.subtree[1];
             if( parm == NULL ) {
+                if( ! inside_decl_scope ) {
+                    SetCurrScope( parm_scope );
+                }
+
                 if( tinfo->defarg_list[i] == NULL ) {
-#ifndef NDEBUG
-                    if( PragDbgToggle.dump_parse ){
-                        printf(__FILE__ " %d tinfo->defarg_list[i] == NULL\n", __LINE__);
-                    }
-#endif
                     /* the rewrite stuff would have killed our location so approximate */
                     SetErrLoc(&start_locn);
                     CErr1( ERR_TOO_FEW_TEMPLATE_PARAMETERS );
@@ -1162,6 +1167,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
                         parm = NodeZero();
                     } else {
                         parm = processIndividualParm( arg_type, parm );
+
                         if( parm->op == PT_ERROR ) {
                             something_went_wrong = TRUE;
                         }
@@ -1178,12 +1184,15 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
                     something_went_wrong = TRUE;
                 }
             }
+            list->u.subtree[1] = parm;
 
+            SetCurrScope( save_scope );
             if( something_went_wrong )
                 break;
 
-            injectTemplateParm( decl_scope, parm, tinfo->arg_names[i] );
-            list->u.subtree[1] = parm;
+            if( ! inside_decl_scope ) {
+                injectTemplateParm( parm_scope, parm, tinfo->arg_names[i] );
+            }
 
             ++i;
             if( i >= tinfo->num_args )
@@ -1195,7 +1204,13 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
             }
         }
 
-        decl_scope = ScopeEnd( SCOPE_TEMPLATE_INST );
+        SetCurrScope( save_scope );
+
+        if( ! inside_decl_scope ) {
+            /* we don't need the parm_scope any more */
+            ScopeSetEnclosing( parm_scope, NULL );
+            ScopeBurn( parm_scope );
+        }
     }
     if( something_went_wrong ) {
         NodeFreeDupedExpr( parms );
@@ -1535,7 +1550,7 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
         if( left->u.subtree[1] != NULL ) {
             scope = left->u.subtree[1]->u.id.scope;
         } else {
-            scope = left->u.subtree[1]->u.id.scope;
+            scope = ScopeNearestFile( GetCurrScope() );
         }
 
         class_template = ScopeYYMember( scope, template_name )->name_type;

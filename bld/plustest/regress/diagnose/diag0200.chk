@@ -552,11 +552,9 @@ File: source\diag0218.c
   current declaration has type 'int __declspec(dllimport)' 
 (87,37): Error! E042: symbol 'x85' already defined 
   definition: 'int __export x85' 
-(89,27): Error! E416: data members cannot be initialized inside a class definition 
-(90,27): Error! E416: data members cannot be initialized inside a class definition 
-(91,19): Error! E417: only virtual functions may be declared pure 
+(91,16): Error! E417: only virtual functions may be declared pure 
+(92,16): Error! E417: only virtual functions may be declared pure 
 (92,19): Error! E137: pure member function constant must be '0' 
-(92,19): Error! E417: only virtual functions may be declared pure 
 (94,27): Error! E137: pure member function constant must be '0' 
 (103,10): Error! E186: attempt to modify a constant value 
 (104,10): Error! E186: attempt to modify a constant value 
@@ -667,8 +665,8 @@ File: source\diag0223.c
 (50,13): Error! E258: cannot declare both a function and variable of the same name ('a') 
 (54,24): Error! E254: 'S4::new_member' has not been declared as a member 
   definition: 'int S4::new_member( int )' 
-(59,17): Error! E416: data members cannot be initialized inside a class definition 
-(60,23): Error! E416: data members cannot be initialized inside a class definition 
+(59,12): Error! E898: in-class initialization is only allowed for const static integral members 
+(60,18): Error! E898: in-class initialization is only allowed for const static integral members 
 (61,16): Error! E118: nameless declaration is not allowed 
 (61,16): Error! E006: syntax error; probable cause: missing ';' 
 (62,26): Error! E177: invalid storage class in file scope 
@@ -721,11 +719,9 @@ File: source\diag0223.c
 (167,36): Error! E204: 'this' pointer is not defined 
 (177,35): Error! E254: 'S16::b' has not been declared as a member 
   definition: 'float __far * S16::b[17]' 
-(183,22): Error! E416: data members cannot be initialized inside a class definition 
-(184,28): Error! E416: data members cannot be initialized inside a class definition 
-(185,21): Error! E498: syntax error before 'sqrt'; probable cause: incorrectly spelled type name 
-(186,27): Error! E029: symbol 'sqrt' has not been declared 
-(187,2): Error! E121: syntax error 
+(183,19): Error! E898: in-class initialization is only allowed for const static integral members 
+(185,19): Error! E898: in-class initialization is only allowed for const static integral members 
+(185,21): Error! E029: symbol 'sqrt' has not been declared 
 (197,20): Error! E110: union cannot be used as a base class 
 (199,1): Warning! W011: all members are private 
 (205,20): Error! E111: union cannot have a base class 
@@ -1150,8 +1146,9 @@ File: source\diag0225.c
   expression type is 'long (lvalue)' 
 (216,27): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'float (lvalue)' 
-(217,10): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'complex' defined at: (10,7) 
+(217,10): Error! E899: cannot convert expression to target type 
+  source conversion type is 'complex (lvalue)' 
+  target conversion type is 'bool' 
 (224,9): Error! E186: attempt to modify a constant value 
 (225,9): Error! E186: attempt to modify a constant value 
 (226,9): Error! E186: attempt to modify a constant value 
@@ -1389,8 +1386,9 @@ File: source\diag0227.c
 (47,5): Warning! W203: declaration statement follows a switch statement 
 (47,5): Warning! W014: no reference to symbol 'j' 
   definition: 'int j' in 'void main( void )' 
-(47,9): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
+(47,9): Error! E899: cannot convert expression to target type 
+  source conversion type is 'test_class (lvalue)' 
+  target conversion type is 'bool' 
 (50,13): Error! E071: expression must be integral 
   operand type is 'float (lvalue)' 
 (51,13): Error! E071: expression must be integral 
@@ -1411,22 +1409,21 @@ File: source\diag0227.c
 (100,5): Warning! W205: declaration statement cannot follow a while statement 
 (100,5): Warning! W014: no reference to symbol 'j' 
   definition: 'int j' in 'void main( void )' 
-(100,12): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
+(100,12): Error! E899: cannot convert expression to target type 
+  source conversion type is 'test_class (lvalue)' 
+  target conversion type is 'bool' 
 (101,12): Warning! W687: expression for 'while' is always true 
 (104,16): Warning! W687: expression for 'while' is always true 
-(105,16): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
+(105,16): Error! E899: cannot convert expression to target type 
+  source conversion type is 'test_class (lvalue)' 
+  target conversion type is 'bool' 
 (108,12): Warning! W688: testing expression for 'for' is always true 
-(109,12): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
+(109,12): Error! E899: cannot convert expression to target type 
+  source conversion type is 'test_class (lvalue)' 
+  target conversion type is 'bool' 
 (114,7): Warning! W013: unreachable code 
 (114,9): Error! E029: symbol 'j1' has not been declared 
-(115,17): Error! E042: symbol 'j1' already defined 
-  definition: '<error> j1' in 'void main( void )' 
 (118,10): Warning! W013: unreachable code 
-(118,17): Error! E042: symbol 'j1' already defined 
-  definition: '<error> j1' in 'void main( void )' 
 (123,5): Warning! W013: unreachable code 
 (123,5): Error! E019: 'break' may only appear in a for, do, while, or switch statement 
 (125,9): Error! E019: 'break' may only appear in a for, do, while, or switch statement 
@@ -2804,8 +2801,16 @@ File: source\diag0251.c
 (15,12): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: int S::goo( int (S::* )( int )) defined at: (11,9) 
   ambiguous function: int S::goo( int (* )( double )) defined at: (12,9) 
-(26,25): Error! E121: syntax error 
-(28,2): Error! E121: syntax error 
+(26,23): Error! E898: in-class initialization is only allowed for const static integral members 
+(26,25): Error! E058: expression must be a constant 
+(26,32): Error! E537: operand is not a valid pointer to class member 
+  source conversion type is 'int' 
+  target conversion type is 'int (T::* )( int )' 
+(27,24): Error! E898: in-class initialization is only allowed for const static integral members 
+(27,26): Error! E058: expression must be a constant 
+(27,33): Error! E537: operand is not a valid pointer to class member 
+  source conversion type is 'int' 
+  target conversion type is 'int (T::* )( int )' 
 (30,28): Error! E511: item is neither a non-static member function nor data member 
   source conversion type is 'int (S::* )( int )' 
   target conversion type is 'int (S::* )( double )' 
@@ -3456,6 +3461,8 @@ File: source\diag0292.c
 (70,1): Error! E003: missing return value 
 (70,1): Warning! W726: no reference to formal parameter 'x' 
   definition: 'int x' in 'x60::s x60::ack( int )' 
+(84,10): Error! E562: cannot take address of non-static member function 
+  definition: 'int x67::Q::foo( void ) const' 
 (94,6): Error! E536: cannot use '.*' nor '->*' with pointer to class member with zero value 
 (114,10): Error! E303: constructor is ambiguous for operands used 
   source conversion type is 'void (x84::S::* )( void )' 

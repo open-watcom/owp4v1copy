@@ -43,7 +43,7 @@ File: source\diag0006.c
 (28,9): Error! E121: syntax error 
 (37,1): Warning! W205: declaration statement cannot follow a while statement 
 (37,1): Warning! W014: no reference to symbol 'a' 
-  definition: 'int a' in 'void bi_expr( void )'
+  definition: 'int a' in 'void bi_expr( void )' 
 (48,22): Error! E171: exception declaration is too complicated 
 (51,1): Error! E624: catch block does not immediately follow try block 
 (60,22): Error! E184: statement is too complicated 
@@ -55,11 +55,11 @@ File: source\diag0008.c
 (5,2): Error! E080: fill in test after MJC has scanner working 
 File: source\diag0009.c 
 (22,12): Error! E584: constructor for variable 'a' cannot be bypassed 
-  definition: 'S a' in 'void test2( void )'
+  definition: 'S a' in 'void test2( void )' 
 (76,10): Error! E584: constructor for variable 'a' cannot be bypassed 
-  definition: 'S a' in 'void test5( void )'
+  definition: 'S a' in 'void test5( void )' 
 (96,12): Error! E584: constructor for variable 'a' cannot be bypassed 
-  definition: 'S a' in 'void test7( void )'
+  definition: 'S a' in 'void test7( void )' 
 File: source\diag0010.c 
 (12,18): Error! E085: maximum class size has been exceeded 
 File: source\diag0011.c 
@@ -68,17 +68,17 @@ File: source\diag0011.c
 (4,8): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (5,1): Warning! W594: construct resolved as a declaration/type 
 (5,1): Warning! W014: no reference to symbol 'fp' 
-  definition: 'void (* fp)( int, int )' in 'void foo( void )'
+  definition: 'void (* fp)( int, int )' in 'void foo( void )' 
 (5,1): Warning! W014: no reference to symbol 'a' 
-  definition: 'int a' in 'void foo( void )'
+  definition: 'int a' in 'void foo( void )' 
 (11,9): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'a' 
-  definition: 'int a'
+  definition: 'int a' 
 (15,9): Warning! W628: expression is not meaningful 
 (15,24): Warning! W387: expression is useful only for its side effects 
 (20,12): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'a' 
-  definition: 'int a' in 'void decl( void )'
+  definition: 'int a' in 'void decl( void )' 
 (20,12): Warning! W750: function prototype in block scope missing 'extern' 
   function prototype is 'int ( int )' 
 (20,27): Error! E195: 'sizeof' is not allowed for a function 
@@ -797,8 +797,8 @@ File: source\diag0049.c
 (36,39): Error! E414: type cannot be defined in an argument 
 (36,45): Error! E415: type cannot be defined in return type 
   semicolon (';') may be missing after class/enum definition 
-(42,14): Error! E416: data members cannot be initialized inside a class definition 
-(43,21): Error! E417: only virtual functions may be declared pure 
+(42,11): Error! E898: in-class initialization is only allowed for const static integral members 
+(43,18): Error! E417: only virtual functions may be declared pure 
 (48,15): Error! E336: declaration specifiers are required to declare 'not_a_function' 
 (48,15): Error! E121: syntax error 
 (51,19): Error! E336: declaration specifiers are required to declare 'not_a_function' 
@@ -1512,10 +1512,6 @@ File: source\diag0075.c
   definition: 'P1' 
 (51,21): Error! E125: invalid redefinition of the typedef name 'P2' 
   definition: 'P2' 
-(60,15): Warning! W128: initializer for variable 'i' cannot be bypassed 
-  definition: 'int i' in 'void foo( int )' 
-(66,13): Warning! W128: initializer for variable 'j' cannot be bypassed 
-  definition: 'int j' in 'void foo( int )' 
 (73,10): Error! E126: class 'S' has already been defined 
 (76,1): Error! E585: syntax error; missing start of function body after constructor initializer 
   constructor initializer started at: (75,17) 
@@ -1673,13 +1669,13 @@ File: source\diag0079.c
   definition: 'int y' 
 (16,11): Error! E118: nameless declaration is not allowed 
 (20,9): Error! E127: 'sizeof' is not allowed for an undefined type 
-(23,21): Error! E416: data members cannot be initialized inside a class definition 
+(23,18): Error! E898: in-class initialization is only allowed for const static integral members 
 (24,26): Error! E137: pure member function constant must be '0' 
 (33,23): Error! E093: must use 'va_start' macro inside function with variable arguments 
 (54,5): Error! E580: cannot find a constructor for given initializer argument list 
-(65,22): Warning! W004: base class 'VB' does not have a virtual destructor 
-(65,22): Warning! W004: base class 'VQ' does not have a virtual destructor 
-(65,22): Warning! W621: pure virtual destructors must have a definition 
+(65,19): Warning! W004: base class 'VB' does not have a virtual destructor 
+(65,19): Warning! W004: base class 'VQ' does not have a virtual destructor 
+(65,19): Warning! W621: pure virtual destructors must have a definition 
 End of file 
 Warning! W018: no reference to anonymous union member 'b' 
   definition: 'int b' 
@@ -1735,8 +1731,6 @@ File: source\diag0082.c
   definition: 'priv_dtor::~priv_dtor( void )' 
 File: source\diag0083.c 
 (6,17): Warning! W066: 'delete' expression size is not allowed 
-(8,24): Error! E121: syntax error 
-(9,24): Error! E162: template type argument cannot have a default argument 
 (10,11): Error! E016: template argument list cannot be empty 
 (11,40): Error! E084: function templates can only have type arguments 
 (21,8): Error! E241: class or namespace 'T' has not been declared 
@@ -1749,7 +1743,6 @@ File: source\diag0083.c
 (33,2): Error! E121: syntax error 
 File: source\diag0084.c 
 (1,30): Error! E180: template arguments must be named 
-(1,28): Error! E162: template type argument cannot have a default argument 
 (3,16): Error! E179: declaration cannot be in the same scope as class template 'TC1' 
   definition: '<class template> TC1' 
 (5,8): Error! E179: declaration cannot be in the same scope as class template 'TC2' 
@@ -1827,26 +1820,23 @@ File: source\diag0086.c
   source conversion type is 'int const volatile (lvalue)' 
   target conversion type is 'int (lvalue)' 
 File: source\diag0087.c 
-(2,6): Error! E213: class template requires more parameters for instantiation 
-(3,14): Error! E214: class template requires fewer parameters for instantiation 
-(4,3): Error! E350: non-type parameter supplied for a type argument 
-(4,7): Error! E494: template argument is not an external linkage symbol 
-(4,9): Error! E494: template argument is not an external linkage symbol 
-(5,3): Error! E350: non-type parameter supplied for a type argument 
-(5,16): Error! E351: type parameter supplied for a non-type argument 
-(5,16): Error! E351: type parameter supplied for a non-type argument 
-(5,16): Error! E351: type parameter supplied for a non-type argument 
-(10,13): Error! E198: expression cannot be used as a class template parameter 
-(10,13): Error! E493: template argument is not a constant expression 
-(10,19): Error! E198: expression cannot be used as a class template parameter 
-(10,19): Error! E494: template argument is not an external linkage symbol 
-(11,13): Error! E198: expression cannot be used as a class template parameter 
-(11,13): Error! E494: template argument is not an external linkage symbol 
-(11,26): Error! E042: symbol 'ok1' already defined 
+(6,6): Error! E213: class template requires more parameters for instantiation 
+(7,14): Error! E214: class template requires fewer parameters for instantiation 
+(8,3): Error! E350: non-type parameter supplied for a type argument 
+(9,9): Error! E494: template argument is not an external linkage symbol 
+(10,11): Error! E494: template argument is not an external linkage symbol 
+(11,16): Error! E351: type parameter supplied for a non-type argument 
+(12,16): Error! E351: type parameter supplied for a non-type argument 
+(13,14): Error! E351: type parameter supplied for a non-type argument 
+(14,13): Error! E198: expression cannot be used as a class template parameter 
+(14,13): Error! E493: template argument is not a constant expression 
+(15,13): Error! E198: expression cannot be used as a class template parameter 
+(15,13): Error! E494: template argument is not an external linkage symbol 
+(16,23): Error! E042: symbol 'ok1' already defined 
   definition: '<error> * ok1' 
-(22,1): Warning! W017: label 'unrefd' has not been referenced by a goto 
-  label defined at: (20,11) 
-(22,1): Warning! W726: no reference to formal parameter 'b' 
+(27,1): Warning! W017: label 'unrefd' has not been referenced by a goto 
+  label defined at: (25,11) 
+(27,1): Warning! W726: no reference to formal parameter 'b' 
   definition: 'int b' in 'void foo( int, int, int, int )' 
 File: source\diag0088.c 
 (5,14): Error! E040: expression for '.' must be a class, struct or union 

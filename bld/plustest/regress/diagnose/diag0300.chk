@@ -4,14 +4,14 @@ File: source\diag0301.c
 (4,18): Warning! W895: ignoring whitespace after line splice 
 (9,10): Warning! W896: empty member declaration 
 (10,11): Warning! W896: empty member declaration 
-(15,39): Error! E417: only virtual functions may be declared pure 
-(16,39): Error! E417: only virtual functions may be declared pure 
-(17,49): Error! E376: virtual function must be a non-static member function 
-(17,49): Error! E417: only virtual functions may be declared pure 
-(18,49): Error! E376: virtual function must be a non-static member function 
-(18,49): Error! E417: only virtual functions may be declared pure 
-(19,19): Error! E417: only virtual functions may be declared pure 
-(21,13): Error! E417: only virtual functions may be declared pure 
+(15,36): Error! E417: only virtual functions may be declared pure 
+(16,36): Error! E417: only virtual functions may be declared pure 
+(17,46): Error! E376: virtual function must be a non-static member function 
+(17,46): Error! E417: only virtual functions may be declared pure 
+(18,46): Error! E376: virtual function must be a non-static member function 
+(18,46): Error! E417: only virtual functions may be declared pure 
+(19,16): Error! E417: only virtual functions may be declared pure 
+(21,10): Error! E417: only virtual functions may be declared pure 
 File: source\diag0302.c 
 (8,5): Warning! W014: no reference to symbol 'b' 
   definition: 'B b' in 'ABC::ABC( void )' 

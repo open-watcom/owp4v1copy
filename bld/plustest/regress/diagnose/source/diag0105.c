@@ -178,7 +178,8 @@ struct x119 {
 #endif text
 void x124()
 {
-    for( unsigned i = 10; 0; --i ) {
+    unsigned i;
+    for( i = 10; 0; --i ) {
     }
     if( i < 0 ) {
     }

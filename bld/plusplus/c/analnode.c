@@ -477,6 +477,13 @@ PTREE NodeCompareToZero(        // MAKE A COMPARE-TO-ZERO NODE, IF REQ'D
     return expr;
 }
 
+static CNV_DIAG diagConvertToBool = // DIAGNOSIS FOR CONVERT-TO-BOOL NODE
+{   ERR_IMPLICIT_CAST_ILLEGAL   // - impossible
+,   ERR_CALL_WATCOM             // - ambiguous
+,   ERR_CALL_WATCOM
+,   ERR_CALL_WATCOM             // - protected violation
+,   ERR_CALL_WATCOM             // - private violation
+};
 
 PTREE NodeConvertToBool(        // MAKE A CONVERT-TO-BOOL NODE, IF REQ'D
     PTREE expr )
@@ -497,7 +504,7 @@ PTREE NodeConvertToBool(        // MAKE A CONVERT-TO-BOOL NODE, IF REQ'D
         PTreeErrorExpr( expr, ERR_EXPR_IS_VOID );
     } else if( type->id == TYP_CLASS ) {
         TYPE bool_type = GetBasicType( TYP_BOOL );
-        expr = CastImplicit( expr, bool_type, CNV_EXPR, NULL );
+        expr = CastImplicit( expr, bool_type, CNV_EXPR, &diagConvertToBool );
     } else {
         operand = expr;
         zero = NodeIntegralConstant( 0, GetBasicType( TYP_SINT ) );
