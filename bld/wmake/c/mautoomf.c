@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF autodependency records access routines.
 *
 ****************************************************************************/
+
 
 #include "make.h"
 #include "mcache.h"
@@ -53,7 +53,7 @@ typedef struct {
 static omf_info fileHandle;
 static char     nameBuffer[ _MAX_PATH2 + 1 ];
 
-#pragma pack( push,1 );
+#pragma pack( push, 1 )
 typedef struct {
     uint_8              bits;
     uint_8              type;
@@ -61,7 +61,7 @@ typedef struct {
     uint_16             dos_date;
     uint_8              name_len;
 } obj_comment;
-#pragma pack( pop );
+#pragma pack( pop )
 
 static BOOLEAN verifyObjFile( int fh )
 /************************************/
