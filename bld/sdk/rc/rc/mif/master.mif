@@ -112,7 +112,7 @@ bindit : .PROCEDURE
         @%null
 !else ifeq host_OS dos
         # Decide on which standard extender to use first...
-!error NYI
+#!error NYI
         @%null
 !else
         @%null
@@ -132,15 +132,19 @@ ytab.c ytab.gh : rc.y $(wrc_dir)\y\yydriver.c rcmem.h
         @del ytab.h
         @del ytab.c
 
-weights1.gh keyword1.gh : rc1.key $(wrc_dir)\hash\findhash.exe
-        $(wrc_dir)\hash\findhash $[@ >nul
+weights1.gh keyword1.gh : rc1.key
+        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
+        findhash $[@ >nul
+        del findhash.*
         copy keywords.gh $(wrc_dir)\h\keyword1.gh
         copy weights.gh $(wrc_dir)\h\weights1.gh
         @del keywords.gh
         @del weights.gh
 
-weights2.gh keyword2.gh : rc2.key $(wrc_dir)\hash\findhash.exe
-        $(wrc_dir)\hash\findhash $[@ >nul
+weights2.gh keyword2.gh : rc2.key
+        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
+        findhash $[@ >nul
+        del findhash.*
         copy keywords.gh $(wrc_dir)\h\keyword2.gh
         copy weights.gh $(wrc_dir)\h\weights2.gh
         @del keywords.gh
