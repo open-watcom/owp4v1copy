@@ -15,4 +15,4 @@ objs =                  &
         process.obj
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(linker) option quiet, map $(lflags) name $^. file { $< }
