@@ -95,6 +95,11 @@ typedef enum {
     REG_DR3 = 0x3,
     REG_DR6 = 0x6,
     REG_DR7 = 0x7,
+    REG_TR3 = 0x3,
+    REG_TR4 = 0x4,
+    REG_TR5 = 0x5,
+    REG_TR6 = 0x6,
+    REG_TR7 = 0x7,
     REG_ES  = 0x0,
     REG_CS  = 0x1,
     REG_SS  = 0x2,
@@ -482,6 +487,21 @@ dis_register X86GetDRegister( WBIT w, RM reg, dis_dec_ins *ins )
     case REG_DR3: return( DR_X86_dr3 );
     case REG_DR6: return( DR_X86_dr6 );
     case REG_DR7: return( DR_X86_dr7 );
+    default     : return( DR_NONE );
+    }
+}
+
+dis_register X86GetTRegister( WBIT w, RM reg, dis_dec_ins *ins )
+/**********************************************************************
+ *  Get Test Register 80486
+ */
+{
+    switch( reg ) {
+    case REG_TR3: return( DR_X86_tr3 );
+    case REG_TR4: return( DR_X86_tr4 );
+    case REG_TR5: return( DR_X86_tr5 );
+    case REG_TR6: return( DR_X86_tr6 );
+    case REG_TR7: return( DR_X86_tr7 );
     default     : return( DR_NONE );
     }
 }
@@ -2195,6 +2215,34 @@ dis_handler_return X86DRegReg_24( dis_handle *h, void * d, dis_dec_ins *ins )
         ins->op[0].base = X86GetRegister_D( W_DEFAULT, code.type2.rm, ins );
         ins->op[1].type = DO_REG;
         ins->op[1].base = X86GetDRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[1].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X86TRegReg_24( dis_handle *h, void * d, dis_dec_ins *ins )
+/**********************************************************************/
+{
+    code_24 code;
+
+    code.full     = ins->opcode;
+    ins->size    += 3;
+    ins->num_ops = 2;
+    if( code.type2.dir ) {
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X86GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X86GetTRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[0].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    } else {
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X86GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X86GetTRegister( W_DEFAULT, code.type2.reg, ins );
         if( ins->op[1].base == DR_NONE ) {
             return( DHR_INVALID );
         }

@@ -205,6 +205,7 @@ inspick( mov4,          "mov",          0x000000a0,     0x000000fc,     X86MemAb
 inspick( mov5,          "mov",          0x0000200f,     0x0000fdff,     X86CRegReg_24)
 inspick( mov6,          "mov",          0x0000210f,     0x0000fdff,     X86DRegReg_24)
 inspick( mov7,          "mov",          0x0000008c,     0x000000fd,     X86SRegModRM_16)
+inspick( mov8,          "mov",          0x0000240f,     0x0000fdff,     X86TRegReg_24)
 inspick( movs,          "movs",         0x000000a4,     0x000000fe,     X86String_8)
 inspick( movsx,         "movsx",        0x0000be0f,     0x0000feff,     X86RegModRM_24C)
 inspick( movzx,         "movzx",        0x0000b60f,     0x0000feff,     X86RegModRM_24C)
