@@ -30,6 +30,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "dmpobj.h"
 
@@ -49,6 +50,198 @@ bool        IsMS386;
 bool        IsIntel;
 bool        DumpRaw;
 jmp_buf     BailOutJmp;
+byte        rec_type;
+
+const char *RecNumberToName( byte code )
+{
+    switch( code & ~1 ) {
+    case CMD_RHEADR:
+        return( "RHEADR" );
+    case CMD_REGINT:
+        return( "REGINT" );
+    case CMD_REDATA:
+        return( "REDATA" );
+    case CMD_RIDATA:
+        return( "RIDATA" );
+    case CMD_OVLDEF:
+        return( "OVLDEF" );
+    case CMD_ENDREC:
+        return( "ENDREC" );
+    case CMD_BLKDEF:
+        return( "BLKDEF" );
+    case CMD_BLKEND:
+        return( "BLKEND" );
+    case CMD_DEBSYM:
+        return( "DEBSYM" );
+    case CMD_THEADR:
+        return( "THEADR" );
+    case CMD_LHEADR:
+        return( "LHEADR" );
+    case CMD_PEDATA:
+        return( "PEDATA" );
+    case CMD_PIDATA:
+        return( "PIDATA" );
+    case CMD_COMENT:
+        return( "COMENT" );
+    case CMD_MODEND:
+        return( "MODEND" );
+    case CMD_EXTDEF:
+        return( "EXTDEF" );
+    case CMD_TYPDEF:
+        return( "TYPDEF" );
+    case CMD_PUBDEF:
+        return( "PUBDEF" );
+    case CMD_LOCSYM:
+        return( "LOCSYM" );
+    case CMD_LINNUM:
+        return( "LINNUM" );
+    case CMD_LNAMES:
+        return( "LNAMES" );
+    case CMD_SEGDEF:
+        return( "SEGDEF" );
+    case CMD_GRPDEF:
+        return( "GRPDEF" );
+    case CMD_FIXUP:
+         return( "FIXUPP" );
+    case CMD_LEDATA:
+        return( "LEDATA" );
+    case CMD_LIDATA:
+        return( "LIDATA" );
+    case CMD_LIBHED:
+        return( "LIBHED" );
+    case CMD_LIBNAM:
+        return( "LIBNAM" );
+    case CMD_LIBLOC:
+        return( "LIBLOC" );
+    case CMD_LIBDIC:
+        return( "LIBDIC" );
+    case CMD_COMDEF:
+        return( "COMDEF" );
+    case CMD_STATIC_EXTDEF:
+        return( "static EXTDEF" );
+    case CMD_STATIC_PUBDEF:
+        return( "static PUBDEF" );
+    case CMD_STATIC_COMDEF:
+        return( "static COMDEF" );
+    case CMD_BAKPAT:
+        return( "BAKPAT" );
+    case CMD_CEXTDF:
+        return( "CEXTDF" );
+    case CMD_COMDAT:
+        return( "COMDAT" );
+    case CMD_LINSYM:
+        return( "LINSYM" );
+    case CMD_ALIAS:
+        return( "ALIAS" );
+    case CMD_NBKPAT:
+        return( "NBKPAT" );
+    case CMD_LLNAME:
+        return( "LLNAME" );
+    case LIB_HEADER_REC:
+        /* this is the oddball in the MS386 format */
+        if( IsMS386 ) {
+            IsMS386 = FALSE;
+            return( "LIBTAIL" );
+        } else {
+            return( "LIBHEAD" );
+        }
+    default:
+        return( "**??**" );
+    }
+}
+
+byte RecNameToNumber( char *name )
+{
+    if( strnicmp( name, "RHEADR", 6 ) == 0 ) {
+        return( CMD_RHEADR );
+    } else if( strnicmp( name, "REGINT", 6 ) == 0 ) {
+        return( CMD_REGINT );
+    } else if( strnicmp( name, "REDATA", 6 ) == 0 ) {
+        return( CMD_REDATA );
+    } else if( strnicmp( name, "RIDATA", 6 ) == 0 ) {
+        return( CMD_RIDATA );
+    } else if( strnicmp( name, "OVLDEF", 6 ) == 0 ) {
+        return( CMD_OVLDEF );
+    } else if( strnicmp( name, "ENDREC", 6 ) == 0 ) {
+        return( CMD_ENDREC );
+    } else if( strnicmp( name, "BLKDEF", 6 ) == 0 ) {
+        return( CMD_BLKDEF );
+    } else if( strnicmp( name, "BLKEND", 6 ) == 0 ) {
+        return( CMD_BLKEND );
+    } else if( strnicmp( name, "DEBSYM", 6 ) == 0 ) {
+        return( CMD_DEBSYM );
+    } else if( strnicmp( name, "THEADR", 6 ) == 0 ) {
+        return( CMD_THEADR );
+    } else if( strnicmp( name, "LHEADR", 6 ) == 0 ) {
+        return( CMD_LHEADR );
+    } else if( strnicmp( name, "PEDATA", 6 ) == 0 ) {
+        return( CMD_PEDATA );
+    } else if( strnicmp( name, "PIDATA", 6 ) == 0 ) {
+        return( CMD_PIDATA );
+    } else if( strnicmp( name, "COMENT", 6 ) == 0 ) {
+        return( CMD_COMENT );
+    } else if( strnicmp( name, "MODEND", 6 ) == 0 ) {
+        return( CMD_MODEND );
+    } else if( strnicmp( name, "EXTDEF", 6 ) == 0 ) {
+        return( CMD_EXTDEF );
+    } else if( strnicmp( name, "TYPDEF", 6 ) == 0 ) {
+        return( CMD_TYPDEF );
+    } else if( strnicmp( name, "PUBDEF", 6 ) == 0 ) {
+        return( CMD_PUBDEF );
+    } else if( strnicmp( name, "LOCSYM", 6 ) == 0 ) {
+        return( CMD_LOCSYM );
+    } else if( strnicmp( name, "LINNUM", 6 ) == 0 ) {
+        return( CMD_LINNUM );
+    } else if( strnicmp( name, "LNAMES", 6 ) == 0 ) {
+        return( CMD_LNAMES );
+    } else if( strnicmp( name, "SEGDEF", 6 ) == 0 ) {
+        return( CMD_SEGDEF );
+    } else if( strnicmp( name, "GRPDEF", 6 ) == 0 ) {
+        return( CMD_GRPDEF );
+    } else if( strnicmp( name, "FIXUPP", 6 ) == 0 ) {
+        return( CMD_FIXUP );
+    } else if( strnicmp( name, "LEDATA", 6 ) == 0 ) {
+        return( CMD_LEDATA );
+    } else if( strnicmp( name, "LIDATA", 6 ) == 0 ) {
+        return( CMD_LIDATA );
+    } else if( strnicmp( name, "LIBHED", 6 ) == 0 ) {
+        return( CMD_LIBHED );
+    } else if( strnicmp( name, "LIBNAM", 6 ) == 0 ) {
+        return( CMD_LIBNAM );
+    } else if( strnicmp( name, "LIBLOC", 6 ) == 0 ) {
+        return( CMD_LIBLOC );
+    } else if( strnicmp( name, "LIBDIC", 6 ) == 0 ) {
+        return( CMD_LIBDIC );
+    } else if( strnicmp( name, "COMDEF", 6 ) == 0 ) {
+        return( CMD_COMDEF );
+    } else if( strnicmp( name, "BAKPAT", 6 ) == 0 ) {
+        return( CMD_BAKPAT );
+    } else if( strnicmp( name, "CEXTDF", 6 ) == 0 ) {
+        return( CMD_CEXTDF );
+    } else if( strnicmp( name, "COMDAT", 6 ) == 0 ) {
+        return( CMD_COMDAT );
+    } else if( strnicmp( name, "LINSYM", 6 ) == 0 ) {
+        return( CMD_LINSYM );
+    } else if( strnicmp( name, "ALIAS", 5 ) == 0 ) {
+        return( CMD_ALIAS );
+    } else if( strnicmp( name, "NBKPAT", 6 ) == 0 ) {
+        return( CMD_NBKPAT );
+    } else if( strnicmp( name, "LLNAME", 6 ) == 0 ) {
+        return( CMD_LLNAME );
+    } else if( strnicmp( name, "STATIC_EXTDEF", 13 ) == 0 ) {
+        return( CMD_STATIC_EXTDEF );
+    } else if( strnicmp( name, "STATIC_PUBDEF", 13 ) == 0 ) {
+        return( CMD_STATIC_PUBDEF );
+    } else if( strnicmp( name, "STATIC_COMDEF", 13 ) == 0 ) {
+        return( CMD_STATIC_COMDEF );
+    } else if( strnicmp( name, "LIBTAIL", 7 ) == 0 ) {
+        return( LIB_HEADER_REC );
+    } else if( strnicmp( name, "LIBHEAD", 7 ) == 0 ) {
+        return( LIB_HEADER_REC );
+    } else {
+        return( 0 );
+    }
+}
 
 bool EndRec( void )
 /*****************/
@@ -250,7 +443,7 @@ void ProcFile( FILE *fp, bool is_intel )
     byte        hdr[ 3 ];
     unsigned_16 page_len;
     unsigned_32 offset;
-    char        *recname;
+    const char  *recname;
     unsigned_32 total_padding;
     int         raw_dump;
 
@@ -280,59 +473,8 @@ void ProcFile( FILE *fp, bool is_intel )
         if( IsMS386 ) {
             IsIntel = FALSE;
         }
-        switch( hdr[ 0 ] & ~1 ) {
-        case CMD_RHEADR:        recname = "RHEADR";             break;
-        case CMD_REGINT:        recname = "REGINT";             break;
-        case CMD_REDATA:        recname = "REDATA";             break;
-        case CMD_RIDATA:        recname = "RIDATA";             break;
-        case CMD_OVLDEF:        recname = "OVLDEF";             break;
-        case CMD_ENDREC:        recname = "ENDREC";             break;
-        case CMD_BLKDEF:        recname = "BLKDEF";             break;
-        case CMD_BLKEND:        recname = "BLKEND";             break;
-        case CMD_DEBSYM:        recname = "DEBSYM";             break;
-        case CMD_THEADR:        recname = "THEADR";             break;
-        case CMD_LHEADR:        recname = "LHEADR";             break;
-        case CMD_PEDATA:        recname = "PEDATA";             break;
-        case CMD_PIDATA:        recname = "PIDATA";             break;
-        case CMD_COMENT:        recname = "COMENT";             break;
-        case CMD_MODEND:        recname = "MODEND";             break;
-        case CMD_EXTDEF:        recname = "EXTDEF";             break;
-        case CMD_TYPDEF:        recname = "TYPDEF";             break;
-        case CMD_PUBDEF:        recname = "PUBDEF";             break;
-        case CMD_LOCSYM:        recname = "LOCSYM";             break;
-        case CMD_LINNUM:        recname = "LINNUM";             break;
-        case CMD_LNAMES:        recname = "LNAMES";             break;
-        case CMD_SEGDEF:        recname = "SEGDEF";             break;
-        case CMD_GRPDEF:        recname = "GRPDEF";             break;
-        case CMD_FIXUP:         recname = "FIXUPP";             break;
-        case CMD_LEDATA:        recname = "LEDATA";             break;
-        case CMD_LIDATA:        recname = "LIDATA";             break;
-        case CMD_LIBHED:        recname = "LIBHED";             break;
-        case CMD_LIBNAM:        recname = "LIBNAM";             break;
-        case CMD_LIBLOC:        recname = "LIBLOC";             break;
-        case CMD_LIBDIC:        recname = "LIBDIC";             break;
-        case CMD_COMDEF:        recname = "COMDEF";             break;
-        case CMD_STATIC_EXTDEF: recname = "static EXTDEF";      break;
-        case CMD_STATIC_PUBDEF: recname = "static PUBDEF";      break;
-        case CMD_STATIC_COMDEF: recname = "static COMDEF";      break;
-        case CMD_BAKPAT:        recname = "BAKPAT";             break;
-        case CMD_CEXTDF:        recname = "CEXTDF";             break;
-        case CMD_COMDAT:        recname = "COMDAT";             break;
-        case CMD_LINSYM:        recname = "LINSYM";             break;
-        case CMD_ALIAS:         recname = "ALIAS";              break;
-        case CMD_NBKPAT:        recname = "NBKPAT";             break;
-        case CMD_LLNAME:        recname = "LLNAME";             break;
-        case LIB_HEADER_REC:
-                /* this is the oddball in the MS386 format */
-            if( IsMS386 ) {
-                IsMS386 = 0;
-                recname = "LIBTAIL";
-            } else {
-                recname = "LIBHEAD";
-            }
-            break;
-        default:                recname = "**??**";             break;
-        }
+        if( rec_type && ( rec_type != ( hdr[ 0 ] & ~1 ))) continue;
+        recname = RecNumberToName( hdr[ 0 ] );
         cksum = -( cksum - RecBuff[ RecLen - 1 ] );
         Output( CRLF "%s%s(%2) recnum:%u, offset:%X, len:%x, chksum:%b(%2)" CRLF,
             recname, IsMS386 ? "386" : "", hdr[ 0 ], ++RecNum, offset,

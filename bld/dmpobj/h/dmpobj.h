@@ -83,6 +83,7 @@ extern  jmp_buf         BailOutJmp;
 extern  char            ProvideRawTypes[];
 extern  char            OmitTypes[];
 extern  bool            IgnoreOutput;
+extern  byte            rec_type;
 
 extern  bool            EndRec( void );
 extern  unsigned_16     RecOffset( void );
@@ -96,6 +97,8 @@ extern  unsigned_16     GetIndex( void );
 extern  unsigned_32     GetVariable( void );
 extern  void            ResizeBuff( unsigned_16 reqd_len );
 extern  void            ProcFile( FILE *fp, bool );
+extern  byte            RecNameToNumber( char *name );
+extern  const char      *RecNumberToName( byte code );
 
 /*
     Record processing routines

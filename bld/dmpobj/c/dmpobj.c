@@ -31,12 +31,14 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #include "banner.h"
 
 #include "dmpobj.h"
 
 bool Descriptions;
 bool InterpretComent;
+bool quiet;
 
 void leave( int rc )
 {
@@ -47,14 +49,29 @@ void leave( int rc )
 
 static void usage( void )
 {
+    ShowProductInfo();
+
     Output( "Usage: dmpobj [options] objfile[" OBJSUFFIX "]..." CRLF );
     Output( "Options:" CRLF );
-    Output( "-l\tProduce listing file" CRLF );
-    Output( "-d\tPrint descriptive titles for some output" CRLF );
-    Output( "-c\tDump COMENT records without interpretation" CRLF );
-    Output( "-i\tOriginal Intel OMF-86 format" CRLF );
-    Output( "-r\tProvide raw dump of records as well" CRLF );
+    Output( "-l\t\tProduce listing file" CRLF );
+    Output( "-d\t\tPrint descriptive titles for some output" CRLF );
+    Output( "-c\t\tDump COMENT records without interpretation" CRLF );
+    Output( "-i\t\tOriginal Intel OMF-86 format" CRLF );
+    Output( "-q\t\tQuiet, don't show product info" CRLF );
+    Output( "-r\t\tProvide raw dump of records as well" CRLF );
+    Output( "-rec=xxx\tProvide dump of selected record type" CRLF );
+    Output( "\t\t  (by number or by symbolic name)" CRLF );
     leave( 1 );
+}
+
+void ShowProductInfo( void )
+{
+    if( quiet == FALSE ) {
+        Output( banner1w( "OMF Dump Utility", BAN_VER_STR ) CRLF );
+        Output( banner2a() CRLF );
+        Output( banner3 CRLF );
+        Output( banner3a CRLF );
+    }
 }
 
 void main( int argc, char **argv )
@@ -75,15 +92,12 @@ void main( int argc, char **argv )
     OutputInit();
     OutputSetFH( stdout );
 
-    Output( banner1w( "OMF Dump Utility", BAN_VER_STR ) CRLF );
-    Output( banner2a() CRLF );
-    Output( banner3 CRLF );
-    Output( banner3a CRLF );
-
     Descriptions = FALSE;
     InterpretComent = TRUE;
     list_file = FALSE;
     is_intel = FALSE;
+    quiet = FALSE;
+    rec_type = 0;
     for( i = 1; i < argc; ++i ) {
         if( argv[i][0] == '-' ) {
             switch( tolower( argv[i][1] ) ) {
@@ -97,10 +111,21 @@ void main( int argc, char **argv )
                 InterpretComent = FALSE;
                 break;
             case 'r':
-                DumpRaw = TRUE;
+                if( strnicmp( argv[i] + 1, "rec=", 4 ) == 0 ) {
+                    if( isdigit( argv[i][5] ) ) {
+                        rec_type = atoi( argv[i] + 5 );
+                    } else {
+                        rec_type = RecNameToNumber( argv[i] + 5 );
+                    }
+                } else {
+                    DumpRaw = TRUE;
+                }
                 break;
             case 'i':
                 is_intel = FALSE;
+                break;
+            case 'q':
+                quiet = TRUE;
                 break;
             default:
                 usage();
@@ -113,6 +138,7 @@ void main( int argc, char **argv )
         usage();
     }
 
+    ShowProductInfo();
     for( ; i < argc; ++i ) {
         _splitpath( argv[i], drive, dir, fname, ext );
         if( ext[0] == 0 ) {
