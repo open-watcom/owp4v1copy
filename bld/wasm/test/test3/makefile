@@ -29,6 +29,7 @@ testequ &
 tst1
 
 dev_objs = &
+indirect &
 irpexitm
 
 !include ../test.mif
