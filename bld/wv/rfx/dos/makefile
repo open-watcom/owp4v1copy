@@ -3,4 +3,5 @@ os      = dos
 bin     = bin
 form    = dos
 
+!include deftarg.mif
 !include ..\makefile

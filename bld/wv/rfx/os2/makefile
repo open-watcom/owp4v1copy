@@ -3,4 +3,5 @@ os      = os2
 bin     = binp
 form    = os2 pmc
 
+!include deftarg.mif
 !include ..\makefile

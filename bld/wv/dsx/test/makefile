@@ -1,4 +1,7 @@
 #pmake: os_dos cpu_i86 i86 intel
+
+!include deftarg.mif
+
 .EXTENSIONS:
 .EXTENSIONS: .exe .exp .obj .3bj .c .asm
 
