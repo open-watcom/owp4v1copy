@@ -94,7 +94,7 @@ extra_l_flags_dos = OPTION stack=32k
 extra_l_flags = OPTION map, caseexact, quiet
 
 # options for single source utility compilations
-wcl_util_opts = -zq-ox
+wcl_util_opts = -zq-ox -fe=$@
 
 # final executable extensions for the various hosts
 final_exe_dos   = exe
@@ -225,8 +225,8 @@ $(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc
 !endif
         $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
-        $(bld_cl) $(fe_misc_dir)/c/genverrc.c $(wcl_util_opts) -D_VERSION=$(bld_ver)
-        ./genverrc ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $^@ $(patch_level)
+        $(bld_cl) $(fe_misc_dir)\c\genverrc.c -ox -fe=genverrc -D_VERSION=$(bld_ver)
+        genverrc ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $^@ $(patch_level)
         rm -f genverrc genverrc.*
         $(rc) -q -bt=$(build_rc_$(host_os)_$(host_cpu)) cc.rc $^@
 !endif
@@ -266,7 +266,7 @@ linkfile: .procedure
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 $(cc_dir)/h/codei86.gh : ../a/codei86.asm ../a/mkcode.c
-        wasm -i=$(watcom_dir)/h $[@
+        $(as_i86) -i="$(watcom_dir)/h" $[@
         wcc -zq -ox $]@ @ipaths
 !ifdef __OS2__
         wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
@@ -279,7 +279,7 @@ $(cc_dir)/h/codei86.gh : ../a/codei86.asm ../a/mkcode.c
         rm -f codei86.obj
 
 $(cc_dir)/h/code386.gh : ../a/code386.asm ../a/mkcode.c
-        wasm -I"$(watcom_dir)/h" $[@
+        $(as_386) -i"$(watcom_dir)/h" $[@
         wcc386 -zq $(popt) -ox $]@ @ipaths
         wcl386 mkcode.obj code386.obj -fe=mkcode -zq
         mkcode
@@ -298,8 +298,6 @@ usage.gh: ../usage.sp
 
 wcc.u: ../usage.sp msgencod.exe intlbin.exe
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) -u -t8 ../usage.sp wcc.u
-
-wcl_util_opts += -fe=$@
 
 ./usageenc.exe: $(fe_misc_dir)/c/usageenc.c ../jusage.sp
         $(bld_cl) $[@ $(wcl_util_opts)
