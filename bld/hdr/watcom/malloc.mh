@@ -129,10 +129,20 @@ _WCRTLINK extern size_t _fmsize( void _WCFAR *__ptr );
 
 _WCRTLINK extern size_t _memavl( void );
 _WCRTLINK extern size_t _memmax( void );
+#ifdef __cplusplus
+namespace std {
+#endif
 _WCRTLINK extern void * calloc( size_t __n, size_t __size );
 _WCRTLINK extern void free( void *__ptr );
 _WCRTLINK extern void * malloc( size_t __size );
 _WCRTLINK extern void * realloc( void *__ptr, size_t __size );
+#ifdef __cplusplus
+}
+using std::calloc;
+using std::free;
+using std::malloc;
+using std::realloc;
+#endif
 
 :segment DOS
 #if defined(_M_IX86)
