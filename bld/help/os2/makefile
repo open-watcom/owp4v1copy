@@ -1,8 +1,6 @@
-cflags = -bt=OS2 -mf-fpc-oxt-zq-w4 -i=$(uidir)\h;$(trmem_dir) -fo=$[& /of+
+#pmake all build os_os2 cpu_386
+
+host_OS = os2
+host_CPU = 386
 
 !include ..\main.mif
-
-linkit : .PROCEDURE
-        @%append $(lnk) system os2v2
-        @%append $(lnk) name $(name).exe
-        @%append $(lnk) lib $(uidir)\os2\uilibf.lib

@@ -1,8 +1,7 @@
-cflags = -bt=DOS -mf-fpc-oxt-zq-w4 -i=$(uidir)\h;$(trmem_dir) -fo=$[& /of+
+#pmake all os_dos cpu_386
+
+host_OS = dos
+host_CPU = 386
 
 !include ..\main.mif
 
-linkit : .PROCEDURE
-        @%append $(lnk) system dos4g
-        @%append $(lnk) name $(name).exe
-        @%append $(lnk) lib $(uidir)\dos\uilibf.lib

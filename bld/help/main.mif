@@ -1,5 +1,12 @@
+proj_name = whelp
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+extra_c_flags = -mf-fpc -i=$(uidir)\h;$(trmem_dir) -fo=$[& -of+
+
 !ifndef on_build_machine
-cflags += -d2 -dTRMEM
+extra_c_flags += -d2 -dTRMEM
 !endif
 
 name = whelp
@@ -22,7 +29,7 @@ objs +=  trmemcvr.obj trmem.obj
 !endif
 
 $(name).exe : $(objs) $(lnk)
-        wlink @$(lnk)
+        $(linker) $(lflags) @$(lnk)
 
 $(lnk) : $(__makefiles__)
         %create $(lnk)
@@ -39,3 +46,10 @@ $(lnk) : $(__makefiles__)
 
 .c.obj :
         $(ccomp) $[* $(cflags)
+
+linkit : .PROCEDURE
+        @%append $(lnk) name $(name).exe
+        @%append $(lnk) lib $(uidir)\$(host_OS)\uilibf.lib
+
+
+

@@ -1,8 +1,13 @@
+proj_name = help
 name = help
 objdir = obj
 help_objext = obj
 
-DO_PHARLAP= 1
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+DO_RSI = 1
 
 lnk = $(name).lnk
 ccomp = $(comp386)
