@@ -8,7 +8,7 @@ int _tolower( int c );
 .ixfunc2 '&CharTest' &_func
 .ixfunc2 '&Conversion' &_func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wchar.h>
+#include <wctype.h>
 wint_t towlower( wint_t c );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Conversion' &wfunc
@@ -56,8 +56,7 @@ The result of &_func is undefined if
 is not an uppercase letter.
 .return end
 .see begin
-.seelist &function. isalnum isalpha iscntrl isdigit isgraph islower isprint
-.seelist &function. ispunct isspace isupper iswctype isxdigit
+.im seeis &function.
 .seelist &function. strlwr strupr tolower toupper
 .see end
 .exmp begin
@@ -74,14 +73,14 @@ char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( char )
 .exmp break
 void main()
-  {
+{
     int   i;
 .exmp break
     for( i = 0; i < SIZE; i++ ) {
         printf( "%c ", tolower( chars[ i ] ) );
     }
     printf( "\n" );
-  }
+}
 .exmp output
 a 5 $ z
 .exmp end

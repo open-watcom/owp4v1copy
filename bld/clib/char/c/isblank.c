@@ -30,8 +30,12 @@
 
 
 #include "variety.h"
-#include <ctype.h>
 #include "widechar.h"
+#include <ctype.h>
+#ifdef __WIDECHAR__
+ #include <wctype.h>
+#endif
+#include "istable.h"
 #undef  isblank
 
 _WCRTLINK int __F_NAME(isblank,iswblank)( INTCHAR_TYPE c )

@@ -11,8 +11,7 @@ A non-zero value is returned when the character is a letter,
 underscore or digit; otherwise, zero is returned.
 .return end
 .see begin
-.seelist &function. isalpha isalnum iscntrl isdigit isgraph islower isprint
-.seelist &function. ispunct isspace isupper isxdigit tolower toupper
+.im seeis &function.
 .see end
 .exmp begin
 #include <stdio.h>
@@ -29,15 +28,15 @@ char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( char )
 .exmp break
 void main()
-  {
+{
     int   i;
 .exmp break
     for( i = 0; i < SIZE; i++ ) {
-      printf( "Char %c is %sa C symbol character\n",
-            chars[i],
-            ( __iscsym( chars[i] ) ) ? "" : "not " );
+        printf( "Char %c is %sa C symbol character\n",
+                chars[i],
+                ( __iscsym( chars[i] ) ) ? "" : "not " );
     }
-  }
+}
 .exmp output
 Char A is a C symbol character
 Char   is not a C symbol character

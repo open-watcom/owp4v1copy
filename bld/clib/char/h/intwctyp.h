@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Identifiers for use by iswctype() and wctype().
+* Description:  Identifiers for internal use by iswctype() and wctype().
 *
 ****************************************************************************/
 
 
-#ifndef WCTYPE_H_clib
-#define WCTYPE_H_clib
+#ifndef INTWCTYP_H
+#define INTWCTYP_H
 
 #define WCTYPE_ALNUM            1
 #define WCTYPE_ALPHA            2

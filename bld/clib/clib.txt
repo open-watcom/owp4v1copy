@@ -10,7 +10,7 @@ notes on the estimated effort required to bring them to C99 conformance:
 
     assert.h    - C99 conforming
     complex.h   - Completely new; requires compiler changes (new types)
-    ctype.h     - Needs review, no changes expected
+    ctype.h     - C99 conforming
     errno.h     - C99 conforming
     fenv.h      - Completely new; requires compiler changes (new #pragma)
     float.h     - Needs review, no significant changes expected

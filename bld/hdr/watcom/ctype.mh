@@ -41,31 +41,6 @@ using std::isxdigit;
 using std::tolower;
 using std::toupper;
 
-:: Now the extensions section.
-:include ext.sp
-:segment !NO_WIDECHAR
-// C99 functions that are not specified for ctype.h
-using std::iswalnum;
-using std::iswalpha;
-using std::iswblank;
-using std::iswcntrl;
-using std::iswdigit;
-using std::iswgraph;
-using std::iswlower;
-using std::iswprint;
-using std::iswpunct;
-using std::iswspace;
-using std::iswupper;
-using std::iswxdigit;
-
-using std::iswctype;
-using std::wctype;
-
-using std::towlower;
-using std::towupper;
-:endsegment
-#endif
-
 #else /* __cplusplus not defined */
 :: End of segment that is only in ctype.h
 :endsegment
@@ -77,10 +52,6 @@ using std::towupper;
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
-
-:include wchar_t.sp
-
-:include wctypet.sp
 
 #define _LOWER  0x80
 #define _UPPER  0x40
@@ -118,34 +89,6 @@ _WCRTLINK extern int    _tolower(int);
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
-:endsegment
-
-:segment !NO_WIDECHAR
-:segment CNAME
-namespace std {
-:endsegment
-_WCRTLINK extern int    iswalnum(wint_t);
-_WCRTLINK extern int    iswalpha(wint_t);
-_WCRTLINK extern int    iswascii(wint_t);
-_WCRTLINK extern int    iswblank(wint_t);
-_WCRTLINK extern int    iswcntrl(wint_t);
-_WCRTLINK extern int    iswdigit(wint_t);
-_WCRTLINK extern int    iswgraph(wint_t);
-_WCRTLINK extern int    iswlower(wint_t);
-_WCRTLINK extern int    iswprint(wint_t);
-_WCRTLINK extern int    iswpunct(wint_t);
-_WCRTLINK extern int    iswspace(wint_t);
-_WCRTLINK extern int    iswupper(wint_t);
-_WCRTLINK extern int    iswxdigit(wint_t);
-
-_WCRTLINK extern wctype_t wctype(const char *);
-_WCRTLINK extern int    iswctype(wint_t,wctype_t);
-
-_WCRTLINK extern wint_t towlower(wint_t);
-_WCRTLINK extern wint_t towupper(wint_t);
-:segment CNAME
-}
-:endsegment
 :endsegment
 
 :include ext.sp

@@ -30,9 +30,8 @@
 
 
 #include "variety.h"
-#include <ctype.h>
-#include <wchar.h>
-#include "wctype.h"
+#include <wctype.h>
+#include "intwctyp.h"
 
 /* Determine if the given character is of the specified type. */
 _WCRTLINK int iswctype( wint_t wc, wctype_t desc )

@@ -31,8 +31,8 @@
 
 #include "variety.h"
 #include <string.h>
-#include <wchar.h>
-#include "wctype.h"
+#include <wctype.h>
+#include "intwctyp.h"
 
 /* Return a type ID usable by iswctype on success, or zero on error. */
 _WCRTLINK wctype_t wctype( const char *property )

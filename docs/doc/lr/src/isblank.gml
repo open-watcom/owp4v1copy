@@ -4,7 +4,7 @@
 int isblank( int c );
 .ixfunc2 '&CharTest' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wchar.h>
+#include <wctype.h>
 int iswblank( wint_t c );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Wide' &wfunc
