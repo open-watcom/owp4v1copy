@@ -3,7 +3,7 @@
 if [ "$1" = "" ]; then
 echo Usage: zipup.sh [RELEASE]
 echo
-echo Where RELEASE is the public release number (ie: 1.3.0).
+echo Where RELEASE is the public release number \(ie: 1.3.0\).
 exit
 fi
 
