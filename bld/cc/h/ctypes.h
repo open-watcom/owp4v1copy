@@ -513,6 +513,7 @@ typedef enum {
     DECL_STATE_NONE    = 0x00,
     DECL_STATE_NOTYPE  = 0x01,
     DECL_STATE_ISPARM  = 0x02,
+    DECL_STATE_NOSTWRN = 0x04,
 } decl_state;
 
 #include <stddef.h>

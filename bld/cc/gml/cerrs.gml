@@ -388,6 +388,30 @@ A reference for a function appears in your program, but you do not
 have a prototype for that function defined. Implicit prototype will
 be used, but this will cause problems if the assumed prototype does
 not match actual function definition.
+:MSGSYM. ERR_NO_STG_OR_TYPE
+:MSGTXT. No storage class or type specified 
+:MSGJTXT.
+:WARNING. 1
+.np
+When declaring a data object, either storage class or data type must be
+given. If no type is specified, 
+.kw int 
+is assumed. If no storage class is specified, the default depends on 
+scope (see the
+.us C Language Reference
+for details). For instance
+.exam begin
+auto i;
+.exam end
+is a valid declaration, as is
+.exam begin
+short i;
+.exam end
+However,
+.exam begin
+i;
+.exam end
+is not a correctly formed declaration.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
@@ -483,6 +507,30 @@ This warning is initially disabled. It must be specifically enabled with
 .us #pragma enable_message(303).
 It can be disabled later by using
 .us #pragma disable_message(303).
+:MSGSYM. ERR_NO_RET_TYPE_GIVEN
+:MSGTXT. Return type 'int' assumed for function '%s'
+:MSGJTXT.
+:WARNING. 3
+.np
+If a function is declared without specifying return type, such as
+.exam begin
+foo( void );
+.exam end
+then its return type will be assumed to be
+.kw int
+.
+:MSGSYM. ERR_NO_DATA_TYPE_GIVEN
+:MSGTXT. Type 'int' assumed in declaration of '%s'
+:MSGJTXT.
+:WARNING. 3
+.np
+If an object is declared without specifying its type, such as
+.exam begin
+register count;
+.exam end
+then its type will be assumed to be 
+.kw int
+.
 :eMSGGRP. Warn3
 :cmt -------------------------------------------------------------------
 :MSGGRP. Errs

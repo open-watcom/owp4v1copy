@@ -154,7 +154,7 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
     ChkCompatibleFunction(type_new, type_old, 1);
 }
 
-local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class )
+local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
 {
     SYM_HANDLE  sym_handle;
     SYM_HANDLE  old_sym_handle;
@@ -167,6 +167,10 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class )
     int         sym_len;
 
     PrevProtoType = NULL;                               /* 12-may-91 */
+    // Warn if assuming 'int' return type - should be an error in strict C99 mode
+    if( *state & DECL_STATE_NOTYPE ) {
+        CWarn( WARN_NO_RET_TYPE_GIVEN, ERR_NO_RET_TYPE_GIVEN, sym->name );
+    }
     sym->rent = FALSE;   //Assume not override aka re-entrant
     if( CompFlags.rent && (sym->declspec == DECLSPEC_DLLIMPORT) ){
         sym->rent = TRUE;
@@ -273,7 +277,7 @@ TYPEPTR SkipDummyTypedef( TYPEPTR typ )                 /* 25-nov-94 */
 
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 #define ATTRIB_MASK     (~(FLAG_INLINE | FLAG_LOADDS | FLAG_EXPORT | FLAG_LANGUAGES))
-local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
+local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
 {
     int         which;
     TYPEPTR     typ;
@@ -282,12 +286,23 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
     SYM_ENTRY   old_sym;
     SYM_ENTRY   sym2;
 
-    if( CompFlags.rent ){
+    // Warn if neither type nor storage class were given; this should probably be
+    // an error in strict C89 (and naturally C99) mode
+    if( (stg_class == SC_NULL) && (*state & DECL_STATE_NOTYPE) && !(*state & DECL_STATE_NOSTWRN) ) {
+        CWarn( WARN_NO_STG_OR_TYPE, ERR_NO_STG_OR_TYPE );
+        *state |= DECL_STATE_NOSTWRN;   // Only warn once for each declarator list
+    }
+
+    // Additionally warn if assuming 'int' type - should be an error in strict C99 mode
+    if( *state & DECL_STATE_NOTYPE ) {
+        CWarn( WARN_NO_DATA_TYPE_GIVEN, ERR_NO_DATA_TYPE_GIVEN, sym->name );
+    }
+    if( CompFlags.rent ) {
         sym->rent = TRUE; //Assume instance data
-    }else{
+    } else {
         sym->rent = FALSE;//Assume non instance data
     }
-    if( sym->naked ){          /* 25-jul-95 */
+    if( sym->naked ) {         /* 25-jul-95 */
         CErr1( ERR_INVALID_DECLSPEC );
     }
 
@@ -481,9 +496,9 @@ new_var:
     return( sym_handle );
 }
 
-SYM_HANDLE InitDeclarator( SYMPTR sym,
-                           decl_info const * const info,
-                           decl_state state )
+static SYM_HANDLE InitDeclarator( SYMPTR sym,
+                                  decl_info const * const info,
+                                  decl_state *state )
 {
     SYM_HANDLE  sym_handle;
     SYM_HANDLE  old_sym_handle;
@@ -505,7 +520,7 @@ SYM_HANDLE InitDeclarator( SYMPTR sym,
     if( info->decl == DECLSPEC_DLLEXPORT ){
         flags |= FLAG_EXPORT; //need to get rid of this
     }
-    Declarator( sym, flags, info->typ, state );
+    Declarator( sym, flags, info->typ, *state );
     if( sym->name[0] == '\0' ) {
         InvDecl();
         return( 0 );
@@ -543,9 +558,9 @@ SYM_HANDLE InitDeclarator( SYMPTR sym,
             }
         }
         if( typ->decl_type == TYPE_FUNCTION ) {
-            sym_handle = FuncDecl( sym, info->stg );
+            sym_handle = FuncDecl( sym, info->stg, state );
         } else {
-            sym_handle = VarDecl( sym, info->stg );
+            sym_handle = VarDecl( sym, info->stg, state );
         }
     }
     return( sym_handle );
@@ -635,7 +650,7 @@ int DeclList( SYM_HANDLE *sym_head )
                 }
             }
             for( ;; ) {
-                sym_handle = InitDeclarator( &sym, &info, state );
+                sym_handle = InitDeclarator( &sym, &info, &state );
                 /* NULL is returned if sym already exists in symbol table */
                 if( sym_handle != 0 ) {
                     sym.handle = 0;
