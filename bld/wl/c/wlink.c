@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for Open Watcom linker.
 *
 ****************************************************************************/
 
-
-/*
-   WLINK  : mainline for WATCOM linker
-
-*/
 
 #include <stdio.h>
 #include <signal.h>
@@ -357,7 +351,7 @@ static void ResetMisc( void )
 /***************************/
 /* Linker support initialization. */
 {
-    LinkFlags = REDEFS_OK;
+    LinkFlags = REDEFS_OK | CASE_FLAG;
     LinkState = MAKE_RELOCS;
     AbsGroups = NULL;
     DataGroup = NULL;
