@@ -82,6 +82,7 @@ cppflags_ppc = -D__PPC__
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_linux =
+inc_dirs_lang_osi =
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
 -D__SMALL__ -DUNIX -DLINUX -D__FLAT__ $(cppflags_$(host_cpu)) &

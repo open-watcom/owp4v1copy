@@ -34,9 +34,6 @@ inc_dirs = -I. -I"../h"
 
 !ifeq bootstrap 1
 
-dwtjbflags = -c $(cflags)
-dwmakeabflags = dwmakeab.obj -o $^@
-
 # to be fixed: wlib -fa produces a library that gnu ld can't read
 # can be a bug in wlib or in gnu ld, I don't know right now...
 dw.lib : dwabenum.gh $(objs)
@@ -44,8 +41,6 @@ dw.lib : dwabenum.gh $(objs)
 
 !else
 
-dwtjbflags = -d1 -fo=$@
-dwmakeabflags = op quiet,map debug all file dwmakeab.obj n $^@
 extra_c_flags = -s
 
 dw.lib : dwabenum.gh $(objs)
@@ -55,14 +50,11 @@ dw.lib : dwabenum.gh $(objs)
 
 !endif
 
-./dwmakeab.exe : dwmakeab.obj
-        $(bld_link) $(dwmakeabflags)
+./dwmakeab.exe : dwmakeab.c
+    $(bld_cl) $(wcl_util_opts) $[@
 
 dwabenum.gh dwabinfo.gh : ./dwmakeab.exe
         $[@
-
-dwmakeab.obj : dwmakeab.c dwutils.c
-        $(bld_cc) $(dwtjbflags) $(inc_path) $[@
 
 dwabbrev.obj : dwabbrev.c dwabinfo.gh
 
