@@ -10,14 +10,15 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay osi
-    wmake /h
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wic\osi\wic.exe <relroot>\rel2\binw\wic.exe
+    <CPCMD> <devdir>\wic\os2386\wic.exe <relroot>\rel2\binp\wic.exe
+    <CPCMD> <devdir>\wic\dos386\wic.exe <relroot>\rel2\binw\wic.exe
+    <CPCMD> <devdir>\wic\nt386\wic.exe <relroot>\rel2\binnt\wic.exe
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
