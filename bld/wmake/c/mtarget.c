@@ -864,11 +864,11 @@ extern void TargetInit( void )
 
 #ifndef NDEBUG
 #pragma off(unreferenced);
-STATIC BOOLEAN walkFree( TARGET *targ, void *ptr )
+STATIC BOOLEAN walkFree( void *targ, void *ptr )
 #pragma on (unreferenced);
 /************************************************/
 {
-    freeTarget( targ );
+    freeTarget( (TARGET*)targ );
     return( FALSE );
 }
 #endif
