@@ -307,7 +307,7 @@ beginb  S_strchr
 endb    S_strchr
 
 defsb   BD_strchr
-        db    "/* ds:esi strchr( ds:esi, cl ) zaps dx,esi,eax */",0
+        db    "/* dx:esi strchr( ds:esi, cl ) zaps dx,esi,eax */",0
         db    "#define BD_strchr_ret   HW_D_2( HW_DX, HW_ESI )",0
         db    "#define BD_strchr_parms P_DSESI_CL",0
         db    "#define BD_strchr_saves HW_NotD_3( HW_DX, HW_ESI, HW_EAX )",0
