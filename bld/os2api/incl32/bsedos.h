@@ -30,6 +30,16 @@
 
 #if (defined(INCL_DOSPROCESS) || !defined(INCL_NOCOMMON))
 
+#define EXIT_THREAD      0
+#define EXIT_PROCESS     1
+
+APIRET APIENTRY DosBeep(ULONG,ULONG);
+VOID   APIENTRY DosExit(ULONG,ULONG);
+
+#endif
+
+#if defined(INCL_DOSPROCESS)
+
 #define DosCwait          DosWaitChild
 #define DosSetPrty        DosSetPriority
 
@@ -53,9 +63,6 @@
 
 #define PRTYD_MINIMUM     (-31)
 #define PRTYD_MAXIMUM     31
-
-#define EXIT_THREAD      0
-#define EXIT_PROCESS     1
 
 #define EXLST_ADD        1
 #define EXLST_REMOVE     2
@@ -143,22 +150,169 @@ typedef struct _TIB {
     ULONG tib_ordinal;
 } TIB, *PTIB;
 
+
+#if !defined(DBG_INCL_DOSDEBUG)
+
+#define DBG_INCL_DOSDEBUG
+
+#define DBG_C_Null            0
+#define DBG_C_ReadMem         1
+#define DBG_C_ReadMem_I       1
+#define DBG_C_ReadMem_D       2
+#define DBG_C_ReadReg         3
+#define DBG_C_WriteMem        4
+#define DBG_C_WriteMem_I      4
+#define DBG_C_WriteMem_D      5
+#define DBG_C_WriteReg        6
+#define DBG_C_Go              7
+#define DBG_C_Term            8
+#define DBG_C_SStep           9
+#define DBG_C_Stop            10
+#define DBG_C_Freeze          11
+#define DBG_C_Resume          12
+#define DBG_C_NumToAddr       13
+#define DBG_C_ReadCoRegs      14
+#define DBG_C_WriteCoRegs     15
+#define DBG_C_ThrdStat        17
+#define DBG_C_MapROAlias      18
+#define DBG_C_MapRWAlias      19
+#define DBG_C_UnMapAlias      20
+#define DBG_C_Connect         21
+#define DBG_C_ReadMemBuf      22
+#define DBG_C_WriteMemBuf     23
+#define DBG_C_SetWatch        24
+#define DBG_C_ClearWatch      25
+#define DBG_C_RangeStep       26
+#define DBG_C_Continue        27
+#define DBG_C_AddrToObject    28
+#define DBG_C_XchgOpcode      29
+#define DBG_C_LinToSel        30
+#define DBG_C_SelToLin        31
+#define DBG_C_RegisterSemList 32
+#define DBG_C_Attach          33
+#define DBG_C_Detach          34
+#define DBG_C_RegDebug        35
+#define DBG_C_QueryDebug      36
+
+#define JIT_REG_INHERIT   0x00010000
+#define JIT_REG_NOINHERIT 0x00020000
+#define JIT_REG_DETACH    0x00030000
+#define JIT_REG_FG        0x00040000
+#define DBGQ_JIT_GLOBAL   0x10000000
+#define DBGQ_JIT_PERPROC  0x20000000
+
+#define DBG_N_Success      0
+#define DBG_N_Error        (-1L)
+#define DBG_N_ProcTerm     (-6L)
+#define DBG_N_Exception    (-7L)
+#define DBG_N_ModuleLoad   (-8L)
+#define DBG_N_CoError      (-9L)
+#define DBG_N_ThreadTerm   (-10L)
+#define DBG_N_AsyncStop    (-11L)
+#define DBG_N_NewProc      (-12L)
+#define DBG_N_AliasFree    (-13L)
+#define DBG_N_Watchpoint   (-14L)
+#define DBG_N_ThreadCreate (-15L)
+#define DBG_N_ModuleFree   (-16L)
+#define DBG_N_RangeStep    (-17L)
+
+#define DBG_CO_387      1
+#define DBG_D_Thawed    0
+#define DBG_D_Frozen    1
+#define DBG_L_386       1
+#define DBG_LEN_387     108
+#define DBG_T_Runnable  0
+#define DBG_T_Suspended 1
+#define DBG_T_Blocked   2
+#define DBG_T_CritSec   3
+#define DBG_W_Global    1
+#define DBG_W_Local     2
+#define DBG_W_Execute   0x00010000
+#define DBG_W_Write     0x00020000
+#define DBG_W_ReadWrite 0x00030000
+#define DBG_O_OBJMTE    0x10000000
+
+#define DBG_X_PRE_FIRST_CHANCE 0
+#define DBG_X_FIRST_CHANCE     1
+#define DBG_X_LAST_CHANCE      2
+#define DBG_X_STACK_INVALID    3
+
+typedef struct _uDB {
+    unsigned long  Pid;
+    unsigned long  Tid;
+    long           Cmd;
+    long           Value;
+    unsigned long  Addr;
+    unsigned long  Buffer;
+    unsigned long  Len;
+    unsigned long  Index;
+    unsigned long  MTE;
+    unsigned long  EAX;
+    unsigned long  ECX;
+    unsigned long  EDX;
+    unsigned long  EBX;
+    unsigned long  ESP;
+    unsigned long  EBP;
+    unsigned long  ESI;
+    unsigned long  EDI;
+    unsigned long  EFlags;
+    unsigned long  EIP;
+    unsigned long  CSLim;
+    unsigned long  CSBase;
+    unsigned char  CSAcc;
+    unsigned char  CSAtr;
+    unsigned short CS;
+    unsigned long  DSLim;
+    unsigned long  DSBase;
+    unsigned char  DSAcc;
+    unsigned char  DSAtr;
+    unsigned short DS;
+    unsigned long  ESLim;
+    unsigned long  ESBase;
+    unsigned char  ESAcc;
+    unsigned char  ESAtr;
+    unsigned short ES;
+    unsigned long  FSLim;
+    unsigned long  FSBase;
+    unsigned char  FSAcc;
+    unsigned char  FSAtr;
+    unsigned short FS;
+    unsigned long  GSLim;
+    unsigned long  GSBase;
+    unsigned char  GSAcc;
+    unsigned char  GSAtr;
+    unsigned short GS;
+    unsigned long  SSLim;
+    unsigned long  SSBase;
+    unsigned char  SSAcc;
+    unsigned char  SSAtr;
+    unsigned short SS;
+} uDB_t;
+
+typedef struct _TStat {
+    unsigned char  DbgState;
+    unsigned char  TState;
+    unsigned short TPriority;
+} TStat_t;
+
+#endif
+
 APIRET APIENTRY DosAllocThreadLocalMemory(ULONG,PULONG*);
-APIRET APIENTRY DosBeep(ULONG,ULONG);
 APIRET APIENTRY DosCreateThread(PTID,PFNTHREAD,ULONG,ULONG,ULONG);
 APIRET APIENTRY DosCreateThread2(PTHREADCREATE);
 APIRET APIENTRY DosDebug(PVOID);
 APIRET APIENTRY DosEnterCritSec(VOID);
 APIRET APIENTRY DosExecPgm(PCHAR,LONG,ULONG,PCSZ,PCSZ,PRESULTCODES,PCSZ);
-VOID   APIENTRY DosExit(ULONG,ULONG);
 APIRET APIENTRY DosExitCritSec(VOID);
 APIRET APIENTRY DosExitList(ULONG,PFNEXITLIST);
 APIRET APIENTRY DosFreeThreadLocalMemory(PULONG);
 APIRET APIENTRY DosGetInfoBlocks(PTIB*,PPIB*);
 APIRET APIENTRY DosKillProcess(ULONG,PID);
 APIRET APIENTRY DosKillThread(TID);
+APIRET APIENTRY DosQueryThreadAffinity(ULONG,PMPAFFINITY);
 APIRET APIENTRY DosResumeThread(TID);
 APIRET APIENTRY DosSetPriority(ULONG,ULONG,LONG,ULONG);
+APIRET APIENTRY DosSetThreadAffinity(PMPAFFINITY);
 APIRET APIENTRY DosSleep(ULONG);
 APIRET APIENTRY DosSuspendThread(TID);
 APIRET APIENTRY DosWaitChild(ULONG,ULONG,PRESULTCODES,PPID,PID);
