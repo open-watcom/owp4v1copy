@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  lseek wrapper with positive -> extend file check
+* Description:  low level lseek without file extend for DOS and Windows
 *
 ****************************************************************************/
 
@@ -32,26 +32,46 @@
 #include "variety.h"
 #include <stdio.h>
 #include <unistd.h>
-#ifdef __NT__
-#include <windows.h>
-#endif
 #include "iomode.h"
+#include "tinyio.h"
 #include "rtcheck.h"
 #include "seterrno.h"
 
-extern _WCRTLINK long __lseek( int handle, long offset, int origin );
+#ifdef __WINDOWS_386__
+#include <dos.h>
+#endif
 
-_WCRTLINK long lseek( int handle, long offset, int origin )
+
+_WCRTLINK long __lseek( int handle, long offset, int origin )
 {
-    unsigned            iomode_flags;
+    uint_32             pos;
 
-    __handle_check( handle, -1 );
+    #ifdef __WINDOWS_386__
+        union REGS regs;
 
-    /*** Set the _FILEEXT iomode_flags bit if positive offset ***/
-    iomode_flags = __GetIOMode( handle );
+        __handle_check( handle, -1 );
 
-    if( offset > 0 && !(iomode_flags & _APPEND) )
-        __SetIOMode( handle, iomode_flags | _FILEEXT );
+        regs.h.ah = DOS_LSEEK;
+        regs.h.al = origin;
+        regs.w.bx = handle;
+        regs.w.cx = (offset >> 16) & 0xffff;
+        regs.w.dx = offset & 0xffff;
+        intdos( &regs, &regs );
+        pos = (regs.w.dx << 16) | regs.w.ax;
+        if( regs.w.cflag ) {
+            __set_errno_dos( regs.w.ax );
+            return( -1L );
+        }
+    #else
+        unsigned short rc;
 
-    return( __lseek( handle, offset, origin ) );
+        __handle_check( handle, -1 );
+
+        rc = TinyLSeek( handle, offset, origin, (void _WCNEAR *) &pos );
+        if( TINY_ERROR(rc) ) {
+            __set_errno_dos( TINY_INFO(rc) );
+            return( -1L );
+        }
+    #endif
+    return( pos );
 }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  low level lseek without file extend for OS/2
 *
 ****************************************************************************/
 
@@ -35,23 +34,16 @@
 #include <unistd.h>
 #include "fileacc.h"
 #include <wos2.h>
-#include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
 
 
-_WCRTLINK long lseek( int handle, long offset, int origin )
+_WCRTLINK long __lseek( int handle, long offset, int origin )
 {
     APIRET          rc;
-    unsigned        _iomode;
     long            out_offset;
 
     __handle_check( handle, -1 );
-
-    /*** Set the _FILEEXT _iomode bit if positive offset ***/
-    _iomode = __GetIOMode( handle );
-    if( offset > 0 && !(_iomode & _APPEND) )
-        __SetIOMode( handle, _iomode | _FILEEXT );
 
     rc = DosChgFilePtr( handle, offset, origin, (PULONG)&out_offset );
     if( rc != 0 ) {

@@ -43,7 +43,8 @@
 !inject lockqnx.obj                                                 q16 q32
 !inject locklnx.obj                                                                     l32
 !inject lockwnt.obj                      nt nta ntp
-!inject lseek.obj    d16 d32                                                w16 w32 osi
+!inject lseek.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
+!inject lseekdos.obj d16 d32                                                w16 w32 osi
 !inject lseekos2.obj                                        o16 o32
 !inject lseeksnp.obj                                                                        snp drv
 !inject lseekwnt.obj                     nt nta ntp

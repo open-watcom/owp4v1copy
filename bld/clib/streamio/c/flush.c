@@ -42,6 +42,12 @@
 
 #if !defined(__NETWARE__) && !defined (_THIN_LIB)
 
+#if defined(__DOS__) || defined(__OS2__) || defined(__NT__)
+extern  long    __lseek( int handle, long offset, int origin );
+#else
+#define __lseek lseek
+#endif
+
 _WCRTLINK int __flush( FILE *fp )
 {
     int         len;
@@ -80,7 +86,7 @@ _WCRTLINK int __flush( FILE *fp )
         if( !(fp->_flag & _ISTTY) ) {
             offset = fp->_cnt;
             if( offset != 0 ) { /* 10-aug-89 JD */
-                offset = lseek( fileno( fp ), -offset, SEEK_CUR );
+                offset = __lseek( fileno( fp ), -offset, SEEK_CUR );
             }
             if( offset == -1 ) {
                 fp->_flag |= _SFERR;

@@ -20,12 +20,10 @@
 *    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
 *    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
 *    NON-INFRINGEMENT. Please see the License for the specific language
-*    governing rights and limitations under the License.
-*
+*    governing rights and limitations under the License.*
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  low level lseek without file extend for Windows NT
 *
 ****************************************************************************/
 
@@ -53,37 +51,18 @@
 #endif
 
 #ifdef __INT64__
- _WCRTLINK __int64 _lseeki64( int hid, __int64 _offset, int origin )
-#else
- _WCRTLINK long lseek( int hid, long offset, int origin )
-#endif
+
+ _WCRTLINK __int64 __lseeki64( int hid, __int64 _offset, int origin )
 {
     DWORD               rc;
-    unsigned            iomode_flags;
-#ifdef __INT64__
     LONG                loworder, highorder;
     INT_TYPE            offset = GET_INT64(_offset);
     INT_TYPE            minusone;
     INT_TYPE            retval;
     int                 error;
-#endif
 
     __handle_check( hid, -1 );
 
-    /*** Set the _FILEEXT iomode_flags bit if positive offset ***/
-    iomode_flags = __GetIOMode( hid );
-
-#ifdef __INT64__
-    if( _clib_I64Positive(offset)  &&  !( iomode_flags & _APPEND ) ) {
-        __SetIOMode( hid, iomode_flags | _FILEEXT );
-    }
-#else
-    if( offset > 0  &&  !( iomode_flags & _APPEND ) ) {
-        __SetIOMode( hid, iomode_flags | _FILEEXT );
-    }
-#endif
-
-#ifdef __INT64__
     HIGHWORD(highorder,offset);
     LOWWORD(loworder,offset);
     rc = SetFilePointer( __getOSHandle( hid ), loworder, &highorder, origin );
@@ -97,11 +76,36 @@
     }
     MAKE_INT64(retval,highorder,rc);
     RETURN_INT64(retval);
+}
+
+ _WCRTLINK __int64 _lseeki64( int hid, __int64 offset, int origin )
+{
+    unsigned            iomode_flags;
+
+    __handle_check( hid, -1 );
+
+    /*** Set the _FILEEXT iomode_flags bit if positive offset ***/
+    iomode_flags = __GetIOMode( hid );
+
+    if( _clib_I64Positive(offset)  &&  !( iomode_flags & _APPEND ) ) {
+        __SetIOMode( hid, iomode_flags | _FILEEXT );
+    }
+    return( __lseeki64( hid, offset, origin ) );
+}
+
 #else
+
+ _WCRTLINK long __lseek( int hid, long offset, int origin )
+{
+    DWORD               rc;
+
+    __handle_check( hid, -1 );
+
     rc = SetFilePointer( __getOSHandle( hid ), offset, 0, origin );
     if( rc == INVALID_SET_FILE_POINTER ) {
         return( __set_errno_nt() );
     }
     return( rc );
-#endif
 }
+
+#endif

@@ -46,6 +46,12 @@ extern  int     __close( int );
 void    (*__RmTmpFileFn)( FILE *fp );
 #endif
 
+#if defined(__DOS__) || defined(__OS2__) || defined(__NT__)
+extern  long    __lseek( int handle, long offset, int origin );
+#else
+#define __lseek lseek
+#endif
+
 _WCRTLINK int fclose( FILE *fp )
 {
     __stream_link *     link;
@@ -92,7 +98,7 @@ int __doclose( FILE *fp, int close_handle )
  *                dirty (because of the flush), so only a "get" applies
  */
     if( fp->_cnt != 0 ) {                   /* if something in buffer */
-        lseek( fileno( fp ), -fp->_cnt, SEEK_CUR );
+        __lseek( fileno( fp ), -fp->_cnt, SEEK_CUR );
     }
 
     if( close_handle ) {
