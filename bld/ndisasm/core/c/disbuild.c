@@ -651,7 +651,6 @@ int main( void )
     ins_decode_data **decode;
     unsigned        *num_ins;
     int             *listl;
-    int             line_no;
 
     fp = fopen( "distbls.gh", "w" );
     if( fp == NULL ) {
