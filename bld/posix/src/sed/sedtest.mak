@@ -482,10 +482,10 @@ gettext: .symbolic listto.exe
     > afore echo hello
     > scrip $(here)listto.exe $(q)a\\\n    world\n$q
     > xpect echo hello
-    >>xpect echo world
+    >>xpect echo     world
     $(sed) -f scrip $(axdiff)
     > scrip $(here)listto.exe $(q)a\\\n     w\\or \\\\ ld\\\nuniverse\n$q
-    > xpect $(here)listto.exe $(q)hello\nwor \\ ld\nuniverse\n$q
+    > xpect $(here)listto.exe $(q)hello\n     wor \\ ld\nuniverse\n$q
     $(sed) -f scrip $(axdiff)
 
 resolve: .symbolic

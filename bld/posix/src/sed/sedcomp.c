@@ -16,7 +16,8 @@ resolves references at the end.
 
 #include <assert.h>
 #include <ctype.h>                      /* isdigit(), isspace() */
-#include <io.h>                         /* isatty() */
+//#include <io.h>                         /* isatty() */
+#include <unistd.h>                         /* isatty() */
 #include <stdio.h>                      /* uses getc, fprintf, fopen, fclose */
 #include <stdlib.h>                     /* uses exit */
 #include <string.h>                     /* imported string functions */
@@ -141,7 +142,7 @@ static char     *rhscomp( register char *rhsp, register char delim );
 static char     *recomp( char *expbuf, char redelim );
 static int      cmdline( register char *cbuf );
 static char     *getaddress( register char *expbuf );
-static void     gettext( void );
+static void     gettext( int accept_whitespace );
 static label    *search( void );
 static void     resolve( void );
 static char     *ycomp( register char *ep, char delim );
@@ -241,9 +242,11 @@ int main( int argc, char *argv[] )
 
     lablst->link = cmdp;        /* set up header of label linked list */
     resolve();                  /* resolve label table indirections */
-    if( eargc <= 0 )            /* if there are no files specified */
+    (void)setvbuf( stdout, NULL, _IOLBF, 0 ); /* Improve reactivity in a pipe */
+    if( eargc <= 0 ) {           /* if there are no files specified */
+        (void)setvbuf( stdin, NULL, _IOLBF, 0 ); /* Improve reactivity in a pipe */
         execute( NULL );        /*   execute commands on stdin only */
-    else while( --eargc >= 0 )  /* else do commands on each file specified */
+    } else while( --eargc >= 0 )  /* else do commands on each file specified */
         execute( *eargv++ );
     return( 0 );                /* everything was O.K. if we got here */
 }
@@ -381,7 +384,7 @@ static int cmdcomp( register char cchar ) /* character name of command */
         if( cmdp->addr1 )
             ABORT( AD1NG );             /* no addresses allowed */
         curlab->name = fp;
-        gettext();                      /* get the label name */
+        gettext( 0 );                   /* get the label name */
         if( ( lpt = search() ) != 0 ) { /* does it have a double? */
             if( lpt->link )
                 ABORT( DLABL );         /* yes, abort */
@@ -409,7 +412,7 @@ static int cmdcomp( register char cchar ) /* character name of command */
             break;
         }
         curlab->name = fp;
-        gettext();                      /* get the label name */
+        gettext( 0 );                   /* get the label name */
         if( ( lpt = search() ) != 0 ) { /* enter branch to it */
             if( lpt->link )
                 cmdp->u.link = lpt->link - 1;
@@ -439,7 +442,7 @@ static int cmdcomp( register char cchar ) /* character name of command */
         if( *cp == '\\' && *++cp == '\n' )
             cp++;
         cmdp->u.lhs = fp;
-        gettext();
+        gettext( 1 );
         break;
 
     case 'D':                           /* delete current line in pattern space */
@@ -485,7 +488,7 @@ static int cmdcomp( register char cchar ) /* character name of command */
         fout[0] = stdout;               /* Not initialized to humor lint */
         fname[0] = "";                  /* Set so strcmp( x, fname[0] ) OK */
         fname[nwfiles] = (const char*)fp; /* filename is in pool */
-        gettext();
+        gettext( 0 );
         for( i = nwfiles - 1; i >= 0; i-- ) /* match it in table */
             if( strcmp( fname[nwfiles], fname[i] ) == 0 ) {
                 cmdp->fout = fout[i];
@@ -935,12 +938,16 @@ static char *getaddress( register char *expbuf ) /* uses cp, linenum */
     return( NULL );                     /* no legal address was found */
 }
 
-/* accept multiline input from *cp... to *fp... , skipping leading whitespace */
-static void gettext( void )
+/*
+ * accept multiline input from *cp... to *fp... ,
+ * optionally skipping leading whitespace
+ */
+static void gettext( int accept_whitespace )
 {
     char                c;
 
-    SKIPWS( cp );                       /* discard whitespace */
+    if( !accept_whitespace )
+        SKIPWS( cp );                   /* discard whitespace */
     while( fp < poolend && ( c = *fp++ = *cp++ ) != 0 ) {
         switch( c )
         {
@@ -991,7 +998,7 @@ static char *ycomp(
     register char       *ep,            /* where to compile to */
     char                delim )         /* end delimiter to look for */
 {
-    register char       c;
+    register int        c;
     register char       *tp;
     register char const *sp;
 
