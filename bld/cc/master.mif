@@ -44,7 +44,7 @@ extra_opts_cscan = $(opts_cscan_$(host_cpu)) -oaxt
 extra_opts_cgen386 = -dBY_C_FRONT_END
 extra_opts_idedll  = -bd
 extra_opts_intlload = -d__header="fesupp.h"
-extra_opts_cmsg = -d__target_cpu=$(intname)
+extra_opts_cmsg = -d__target_CPU=$(intname)
 
 # WASM stuff
 !ifeq target_cpu axp
