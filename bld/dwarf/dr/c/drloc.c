@@ -258,23 +258,24 @@ static void DoLocExpr( char             *p,
             break;
         case DW_OP_fbreg: {
             dr_handle   abbrev;
-//            dr_handle   var;
+            int         ret;
 
-            /* Earlier versions of Watcom did not emit DW_AT_frame_base attribute
-             * and used a complex heuristic instead. This is against the DWARF
-             * spec which clearly states that DW_OP_fbreg refers to DW_AT_frame_base.
-             * We look for DW_AT_frame_base first and only if not present, fall back
-             * to the old mechanism for compatibility with old debug info.
+            /* Earlier versions of Watcom did not emit DW_AT_frame_base attribute.
+             * this is against the DWARF spec which clearly states that DW_OP_fbreg
+             * refers to DW_AT_frame_base. We look for DW_AT_frame_base first but
+             * fall back to the old mechanism for compatibility with old debug info.
              */
+            Push( top );
             abbrev = DWRGetAbbrev( &var );
             if( DWRScanForAttrib( &abbrev, &var, DW_AT_frame_base ) != 0 ) {
-                top[0] = DWRLocExpr( sym, abbrev, var, callbck, d );
-            } else {
-                Push( top );
+                ret = DWRLocExpr( sym, abbrev, var, callbck, top );
+            } //else {
+            // TODO: This isn't working right yet - the 'frame' callback does extra
+            // stuff that we need to replicate!
                 if( !callbck->frame( d, top ) ) {
                     return;
                 }
-            }
+//            }
             top[0] += op1;
             break;
             }
@@ -552,8 +553,8 @@ exit:
 extern int DRLocBasedAT( dr_handle       var,
                          dr_loc_callbck *callbck,
                          void           *d  ){
-    uint_16     tag;
-    uint_16     at;
+    dw_tagnum   tag;
+    dw_atnum    at;
     dr_handle   abbrev;
     dr_handle   sym = var;
     int         ret;
@@ -585,8 +586,8 @@ extern int DRLocBasedAT( dr_handle       var,
 extern int DRLocationAT( dr_handle       var,
                          dr_loc_callbck *callbck,
                          void           *d  ){
-    uint_16     tag;
-    uint_16     at;
+    dw_tagnum   tag;
+    dw_atnum    at;
     dr_handle   abbrev;
     dr_handle   sym = var;
     int         ret;
@@ -619,7 +620,7 @@ extern int DRLocationAT( dr_handle       var,
 extern int DRParmEntryAT( dr_handle       var,
                           dr_loc_callbck *callbck,
                           void           *d  ){
-    uint_16     tag;
+    dw_tagnum   tag;
     dr_handle   abbrev;
     dr_handle   sym = var;
     int         ret;
