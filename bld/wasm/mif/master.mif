@@ -35,6 +35,7 @@ extra_c_flags_386 = -fpc -of
 extra_c_flags =-d_WASM_
 extra_c_flags_386 = -fpc
 !endif
+
 #lflags stuff
 #########
 extra_l_flags = option map,symfile,stack=12k
@@ -82,8 +83,44 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     asmdata.obj         &
     insthash.obj        &
     asmjump.obj         &
-    finger.obj          &
-    loadstr.obj
+    finger.obj
+
+wres_obj =              &
+    loadstr.obj         &
+    wriidfn.obj         &
+    wrfindrs.obj        &
+    wrgetli.obj         &
+    ropenfro.obj        &
+    wrinitdi.obj        &
+    wrreaddi.obj        &
+    wrfreedi.obj        &
+    rclosef.obj         &
+    wridcmp.obj         &
+    wrerror.obj         &
+    ralliae.obj         &
+    wrrfrr.obj          &
+    wridexby.obj        &
+    wrrewrid.obj        &
+    wrrftr.obj          &
+    wrrhr.obj           &
+    mrrdrh.obj          &
+    wrfree.obj          &
+    wridfnoo.obj        &
+    wraddres.obj        &
+    wriswrf.obj         &
+    wridnacm.obj        &
+    resseek.obj         &
+    rduint32.obj        &
+    rrnamoor.obj        &
+    rduint16.obj        &
+    wridfrst.obj        &
+    wridfrnu.obj        &
+    wrfirres.obj        &
+    rduint8.obj         &
+    rrdstr.obj          &
+    varstr.obj          
+
+proj_obj += $(wres_obj)
 
 !ifeq release 0
 proj_obj += trmem.obj trmemcvr.obj
