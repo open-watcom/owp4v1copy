@@ -1,4 +1,4 @@
-#pmake: build1 debug flat register 32bit os2 threading dll startup iX86 dynamic os_os2 cpu_386
+#pmake: build debug flat register 32bit os2 threading dll startup iX86 dynamic os_os2 cpu_386
 
 processor  = 386
 convention = register

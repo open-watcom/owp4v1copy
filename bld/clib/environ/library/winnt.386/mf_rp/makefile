@@ -1,4 +1,4 @@
-#pmake: build1 flat register 32bit winnt threading dll environ iX86 dynamic os_nt cpu_386 profile
+#pmake: build flat register 32bit winnt threading dll environ iX86 dynamic os_nt cpu_386 profile
 processor=386
 model=mf
 system=winnt

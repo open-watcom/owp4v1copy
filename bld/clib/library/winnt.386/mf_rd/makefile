@@ -1,4 +1,4 @@
-#pmake: build1 debug flat register 32bit winnt merge iX86 dynamic os_nt cpu_386
+#pmake: build debug flat register 32bit winnt merge iX86 dynamic os_nt cpu_386
 
 processor  = 386
 convention = register

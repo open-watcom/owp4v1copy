@@ -8,7 +8,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
 #=======================
-    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
@@ -54,14 +54,9 @@ set PROJDIR=<CWD>
     <CPCMD> startup/library/os2.286/ms/binmode.obj          <RELROOT>/rel2/lib286/os2/binmode.obj
     <CPCMD> startup/library/os2.286/ms/commode.obj          <RELROOT>/rel2/lib286/os2/commode.obj
 
-#    <CPCMD> library/os2.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
-#    <CPCMD> library/os2.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
-#    <CPCMD> library/os2.386/ms_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
     <CPCMD> library/os2.386/mf_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
     <CPCMD> library/os2.386/mf_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
     <CPCMD> library/os2.386/mf_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
-#    <CPCMD> startup/library/os2.386/ms_r/binmode.obj        <RELROOT>/rel2/lib386/os2/binmode.obj
-#    <CPCMD> startup/library/os2.386/ms_r/commode.obj        <RELROOT>/rel2/lib386/os2/commode.obj
     <CPCMD> startup/library/os2.386/mf_r/binmode.obj        <RELROOT>/rel2/lib386/os2/binmode.obj
     <CPCMD> startup/library/os2.386/mf_r/commode.obj        <RELROOT>/rel2/lib386/os2/commode.obj
 
@@ -80,25 +75,17 @@ set PROJDIR=<CWD>
     <CPCMD> startup/library/windows.386/mf_r/commode.obj    <RELROOT>/rel2/lib386/win/commode.obj
 
   [ IFDEF (os_nt "") <2*> ]
-#    <CPCMD> library/winnt.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
-#    <CPCMD> library/winnt.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
-#    <CPCMD> library/winnt.386/ms_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
     <CPCMD> library/winnt.386/mf_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
     <CPCMD> library/winnt.386/mf_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
     <CPCMD> library/winnt.386/mf_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
 
-#    <CPCMD> startup/library/winnt.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
-#    <CPCMD> startup/library/winnt.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
     <CPCMD> startup/library/winnt.386/mf_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
     <CPCMD> startup/library/winnt.386/mf_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
 
   [ IFDEF (os_linux "") <2*> ]
-#    <CPCMD> library/linux.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/linux/clib3r.lib
-#    <CPCMD> library/linux.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/linux/clib3s.lib
     <CPCMD> library/linux.386/mf_r/clib3r.lib               <RELROOT>/rel2/lib386/linux/clib3r.lib
     <CPCMD> library/linux.386/mf_s/clib3s.lib               <RELROOT>/rel2/lib386/linux/clib3s.lib
 
-#    <CPCMD> startup/library/linux.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/linux/commode.obj
     <CPCMD> startup/library/linux.386/mf_r/commode.obj      <RELROOT>/rel2/lib386/linux/commode.obj
 
   [ IFDEF (os_nov "") <2*> ]
@@ -145,7 +132,7 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     cd alias/library
-    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cd ../..
-    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cd <PROJDIR>

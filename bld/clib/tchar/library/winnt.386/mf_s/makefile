@@ -1,4 +1,4 @@
-#pmake: build1 flat stack 32bit winnt threading dll tchar iX86 dynamic os_nt cpu_386
+#pmake: build flat stack 32bit winnt threading dll tchar iX86 dynamic os_nt cpu_386
 processor=386
 model=mf
 system=winnt
