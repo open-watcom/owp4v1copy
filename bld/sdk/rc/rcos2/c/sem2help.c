@@ -126,7 +126,7 @@ static void SemOS2FreeHelpTable( FullHelpTableOS2 * helptable )
     RcMemFree( helptable );
 }
 
-static SemOS2WriteHelpTableEntries( FullHelpTableOS2 * helptable,
+static int SemOS2WriteHelpTableEntries( FullHelpTableOS2 * helptable,
                                         WResFileID handle )
 /*********************************************************************/
 {
@@ -261,9 +261,9 @@ static int SemOS2WriteHelpData( DataElemList *list, WResFileID handle, int count
     return( error );
 }
 
-static SemOS2WriteHelpSubTableEntries( FullHelpSubTableOS2 * helptable,
-                                       WResFileID handle )
-/*********************************************************************/
+static int SemOS2WriteHelpSubTableEntries( FullHelpSubTableOS2 * helptable,
+                                           WResFileID handle )
+/*************************************************************************/
 {
     FullHelpSubEntryOS2     *currentry;
     int                     error = 0;
