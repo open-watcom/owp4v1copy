@@ -65,8 +65,8 @@ static void LogDir( char *dir )
     strcat( tbuff, " " );
     strcat( tbuff, dir );
     equals = ( SCREEN - ( bufflen = strlen( tbuff ) ) ) / 2 - 2;
-    if( equals < 0 )
-        equals = 0;
+    if( equals < 1 )
+        equals = 1;
     eq = &Equals[ ( sizeof( Equals ) - 1 ) - equals];
     printf( "%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
 }
