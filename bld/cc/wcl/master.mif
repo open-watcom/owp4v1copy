@@ -17,6 +17,7 @@ extra_c_flags = -s
 
 !ifeq target_cpu i86
 name = wcl.exe
+extra_c_flags += -DWCLI86
 !else ifeq target_cpu 386
 name = wcl386.exe
 extra_c_flags += -DWCL386
