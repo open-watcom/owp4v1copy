@@ -77,6 +77,8 @@ typedef struct {
 } import_sym;
 
 
+#pragma pack ( push, 1 )
+
 //IMPORT_DESCRIPT optional header
 
 static char CoffImportAxpText[] = {
@@ -96,8 +98,6 @@ static char CoffImportPpcPdata[] = {
 static char CoffImportX86Text[] = {
  0xFF,0x25,0x00,0x00,0x00,0x00
 };
-
-
 
 static void InitCoffFile( coff_lib_file *c_file )
 {
@@ -528,6 +528,8 @@ int convert_import_library(coff_file_handle coff_file_hnd)
     sym.type = i_hdr->name_type;
     return CoffCreateImport( coff_file_hnd, &sym);
 }
+
+#pragma pack ( pop )
 
 orl_funcs ImportLibData = {ImportLibRead, ImportLibSeek, NULL, NULL};
 
