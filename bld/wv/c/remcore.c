@@ -365,6 +365,8 @@ unsigned DoLoad( char *args, unsigned long *phandle )
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     ret.flags = 0;      /* in case of error */
+    ret.mod_handle = 0;
+    ret.task_id = 0;
     RestoreHandlers();
     FiniSuppServices();
     OnAnotherThread( TrapAccess, 2, &in, 1, &out );
