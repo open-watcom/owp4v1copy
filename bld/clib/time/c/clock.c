@@ -71,7 +71,7 @@ static void get_clock_time( time_t *secs, clock_t *milliseconds )
     struct tm t;
 
     *milliseconds = ( clock_t ) __getctime( &t );
-    *secs = mktime( &t );
+    *secs = __local_mktime( &t, NULL, NULL );
 #endif
 } /* get_clock_time() */
 
@@ -108,11 +108,6 @@ static void __clock_init( void )
     get_clock_time( &init_seconds, &init_milliseconds );
 }
 
-/* Note: __clock_init() ends up calling tzset() which ends up querying the
- * TZ envirnment variable. Because getenv() access has also
- * INIT_PRIORITY_LIBRARY, we must make sure __clock_init() can't be executed
- * before the environment access is initialised!!   MN
- */
-AXI( __clock_init, INIT_PRIORITY_LIBRARY + 1 )
+AXI( __clock_init, INIT_PRIORITY_LIBRARY )
 
 #endif

@@ -43,6 +43,7 @@ extern struct tm        __end_dst;   /* end of daylight savings */
 #define DAYS_FROM_1900_TO_1970          ( ( long ) ( SECONDS_FROM_1900_TO_1970 / SECONDS_PER_DAY ) )
 
 extern struct tm        *__brktime( unsigned long, time_t, long, struct tm * );
+extern time_t           __local_mktime( const struct tm *, long *, long * );
 extern int              __leapyear( unsigned );
 extern int              __isindst( struct tm * );
 extern int              __getctime( struct tm * );

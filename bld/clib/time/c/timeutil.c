@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  time utility functions
 *
 ****************************************************************************/
 
@@ -34,50 +33,7 @@
 #include "rtdata.h"
 #include "timedata.h"
 
-short const __based(__segname("_CONST")) __diyr[] = { /* days in normal year array */
-    0,                                                          /* Jan */
-    31,                                                         /* Feb */
-    31 + 28,                                                    /* Mar */
-    31 + 28 + 31,                                               /* Apr */
-    31 + 28 + 31 + 30,                                          /* May */
-    31 + 28 + 31 + 30 + 31,                                     /* Jun */
-    31 + 28 + 31 + 30 + 31 + 30,                                /* Jul */
-    31 + 28 + 31 + 30 + 31 + 30 + 31,                           /* Aug */
-    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31,                      /* Sep */
-    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30,                 /* Oct */
-    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,            /* Nov */
-    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,       /* Dec */
-    31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31   /* Jan, next year */
-};
-
-short const __based(__segname("_CONST")) __dilyr[] = { /* days in leap year array */
-    0,                                                          /* Jan */
-    31,                                                         /* Feb */
-    31 + 29,                                                    /* Mar */
-    31 + 29 + 31,                                               /* Apr */
-    31 + 29 + 31 + 30,                                          /* May */
-    31 + 29 + 31 + 30 + 31,                                     /* Jun */
-    31 + 29 + 31 + 30 + 31 + 30,                                /* Jul */
-    31 + 29 + 31 + 30 + 31 + 30 + 31,                           /* Aug */
-    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31,                      /* Sep */
-    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30,                 /* Oct */
-    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,            /* Nov */
-    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30,       /* Dec */
-    31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31   /* Jan, next year */
-};
-
 static int time_less( const struct tm *t1, const struct tm *t2 );
-
-int __leapyear( unsigned year )
-{
-    if( year & 3 )
-        return( 0 );
-    if( ( year % 100 ) != 0 )
-        return( 1 );
-    if( ( year % 400 ) == 0 )
-        return( 1 );
-    return( 0 );
-}
 
 static int calc_yday( const struct tm *timetm, int year )
 {
