@@ -284,3 +284,12 @@ _WCRTLINK int pipe( int __fildes[2] )
     u_long res = sys_call1(SYS_pipe, (u_long)__fildes);
     __syscall_return(int,res);
 }
+
+_WCRTLINK int rename( const char *__old, const char *__new )
+{
+    int res = sys_call2(SYS_rename, (u_long)__old, (u_long)__new);
+    __syscall_return(int,res);
+}
+    
+                        
+        

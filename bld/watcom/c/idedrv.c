@@ -41,7 +41,7 @@
 
 
 #ifndef USE_RUNYOURSELF_ARGV
-# if defined(__QNX__)
+# if defined(__UNIX__)
 #  define USE_RUNYOURSELF_ARGV
 # endif
 #endif
@@ -425,9 +425,9 @@ static void initInterrupt( void )
 #else
 #ifndef NO_CTRL_HANDLERS
     signal( SIGINT, intHandler );
-#ifndef __QNX__
+#ifndef __UNIX__
     signal( SIGBREAK, intHandler );
-#endif // __QNX__
+#endif // __UNIX__
 #endif // NO_CTRL_HANDLERS
 #endif // USE_NT_CTRL_HANDLERS
 }
@@ -439,9 +439,9 @@ static void finiInterrupt( void )
 #else
 #ifndef NO_CTRL_HANDLERS
     signal( SIGINT, SIG_DFL );
-#ifndef __QNX__
+#ifndef __UNIX__
     signal( SIGBREAK, SIG_DFL );
-#endif // __QNX__
+#endif // __UNIX__
 #endif // NO_CTRL_HANDLERS
 #endif // USE_NT_CTRL_HANDLERS
 }
@@ -639,7 +639,7 @@ int IdeDrvExecDLL               // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
 }
 #endif
 
-#ifdef __QNX__
+#ifdef __UNIX__
 
 int IdeDrvExecDLLArgv           // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
     ( IDEDRV* inf               // - driver control information
