@@ -38,6 +38,9 @@ extern dip_status InfoRead(section_info *, unsigned long ,unsigned int ,void *);
 extern mod_info *ModPointer( imp_image_handle *, imp_mod_handle );
 extern section_info *FindInfo(imp_image_handle *, imp_mod_handle );
 
+/* WD looks for this symbol to determine module bitness */
+int __nullarea;
+#pragma aux __nullarea "*";
 
 typedef struct demand_ctrl {
         struct demand_ctrl      *link;
