@@ -1350,7 +1350,7 @@ local TREEPTR GetExpr()
                 break;
             case TC_PARM_LIST:          /* do func call */
                 {
-                SYM_ENTRY   sym;
+                SYMPTR      sym;
                 int         n;
                 TREEPTR     functree;
 
@@ -1360,8 +1360,9 @@ local TREEPTR GetExpr()
                     --n;
                 }
                 functree = ValueStack[ n ];
-                SymGet( &sym, functree->op.sym_handle );
-                SetDiagSymbol( &sym, functree->op.sym_handle );
+                sym = SymGetPtr( functree->op.sym_handle );
+                if( !(sym->flags & SYM_TEMP) )
+                    SetDiagSymbol( sym, functree->op.sym_handle );
                 tree = GenNextParm( tree, &plist );
                 tree = GenFuncCall( tree );
                 if( plist != NULL ){  // function has prototype
@@ -1371,7 +1372,8 @@ local TREEPTR GetExpr()
                 } else {
                     AddCallNode( tree );
                 }
-                SetDiagPop();
+                if( !(sym->flags & SYM_TEMP) )
+                    SetDiagPop();
                 PopNestedParms( &plist );
                 curclass = TokenClass[ CurToken ] & 0x7F;
                 CompFlags.meaningless_stmt = 0;
