@@ -45,7 +45,6 @@
 
 #include <string.h>
 #include <ctype.h>
-#include <direct.h>
 #include <errno.h>
 #if defined( __IS_WINDOWED__ )
   #ifndef __SW_BW
@@ -218,14 +217,14 @@ static  void    SysIOInfo( ftnfile *fcb ) {
             fcb->device |= INFO_DEV;
             // devices always exist
             fcb->flags |= FTN_FSEXIST;
-#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX )
+#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
         } else {
             fcb->device |= INFO_VALID_DRIVE;
 #endif
         }
     }
     if( ( fcb->flags & FTN_FSEXIST ) && !IsDevice( fcb ) ) {
-#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX )
+#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
         // Assume the two most significant bits contain no useful information
         fcb->device = INFO_DRIVE & info.st_dev; // save drive letter
 #endif
@@ -515,7 +514,7 @@ bool    SameFile( char *fn1, char *fn2 ) {
 
 // Determine if file specifications are for the same file.
 
-#if _OPSYS == _QNX
+#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
     return( strcmp( fn1, fn2 ) == 0 );
 #else
     return( stricmp( fn1, fn2 ) == 0 );

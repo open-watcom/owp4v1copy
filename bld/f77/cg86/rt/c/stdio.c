@@ -45,11 +45,10 @@
   #define INCL_WINDIALOGS
   #include <os2.h>
 #elif defined( __WINDOWS__ ) || defined( __NT__ )
-  #define STRICT
   #include <windows.h>
 #endif
 
-#if (_OPSYS == _QNX) || (_OPSYS == _PENPOINT)
+#if (_OPSYS == _QNX) || ( _OPSYS == _LINUX ) || (_OPSYS == _PENPOINT)
 static  char            NLSequence[] = { "\n" };
 #else
 static  char            NLSequence[] = { "\r\n" };
@@ -121,7 +120,7 @@ void    StdWrite( char *buff, int len ) {
 #endif
         } else {
 #endif
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _PENPOINT )
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX ) && ( _OPSYS != _PENPOINT )
             setmode( fileno( stdout ), O_BINARY );
 #endif
             rc = write( fileno( stdout ), buff, len );

@@ -85,7 +85,8 @@ static  unsigned long   CBRealSave;
 #endif
 
 #if !defined( __WINDOWS_386__ ) && !defined( __OS220__ ) && \
-    !defined( __NT__ ) && ( _OPSYS != _PENPOINT ) && !defined( __NETWARE__ )
+    !defined( __NT__ ) && ( _OPSYS != _PENPOINT ) && ( _OPSYS != _LINUX ) \
+     && !defined( __NETWARE__ )
   static        void            (_handler *ISave)();
   static        void            (_handler *ZSave)();
 #endif
@@ -99,9 +100,9 @@ static  unsigned long   CBRealSave;
     extern      unsigned_32             _STACKLOW;
     void _movestack( unsigned_32 );
     #pragma aux _movestack = \
-        0x1e                    /* push ds */ \
-        0x17                    /* pop ss */ \
-        0x8b 0xe0               /* mov esp,eax */ \
+        "push ds"            \
+        "pop  ss"             \
+        "mov  esp,eax"        \
         parm [eax] modify [esp];
 
     extern      unsigned long   _dos_getrealvect(int);
@@ -163,7 +164,7 @@ static  void    _handler BreakHandler() {
 
 #if !defined( __WINDOWS_386__ )
 
-#if (_OPSYS != _PENPOINT) && !defined( __NETWARE__ )
+#if (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    ProcessIDivZ() {
 //==============================
@@ -184,7 +185,7 @@ static  void    _sig_handler IDivZSignal( int sig ) {
 }
 
 
-#elif (_OPSYS != _PENPOINT) && !defined( __NETWARE__ )
+#elif ( _OPSYS != _PENPOINT ) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    _handler IDivZHandler() {
 //=======================================
@@ -211,7 +212,7 @@ static  void    _handler IDivZHandler() {
 #endif
 
 
-#if (_OPSYS != _PENPOINT) && !defined( __NETWARE__ )
+#if (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    ProcessIOvFl() {
 //==============================
@@ -244,7 +245,7 @@ static  void    _sig_handler IOvFlSignal( int sig ) {
 }
 
 
-#elif (_OPSYS != _PENPOINT) && !defined( __NETWARE__ )
+#elif (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    _handler IOvFlHandler() {
 //=======================================

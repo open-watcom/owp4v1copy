@@ -42,6 +42,7 @@
     #define _8087               _OFF
   #endif
 #elif defined( __AXP__ )
+#elif defined( __PPC__ )
 #else
   #error Unknown platform
 #endif
@@ -54,6 +55,10 @@
   #define _OPSYS        _PENPOINT
 #elif defined( __NETWARE__ )
   #define _OPSYS        _NETWARE
+#elif defined( __LINUX__ )
+  #define _OPSYS        _LINUX
+#elif defined( __QNX__ )
+  #define _OPSYS        _QNX
 #else
   #define _OPSYS        _PCDOS
 #endif
@@ -63,9 +68,11 @@
 #elif defined( M_I86 )
   #define _TARGET       _8086
 #elif defined( __AXP__ )
- #define _TARGET        _AXP
+  #define _TARGET       _AXP
+#elif defined( __PPC__ )
+  #define _TARGET       _PPC
 #else
- #error unknown platform
+  #error unknown platform
 #endif
 
 #define __INCL_ERRMSGS__        // include error messages

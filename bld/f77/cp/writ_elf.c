@@ -44,11 +44,7 @@
 #include "global.h"
 #include "brow2elf.h"
 
-#if defined(__QNX__)
- #include <unistd.h>
-#else
- #include <direct.h>
-#endif
+#include <unistd.h>
 
 extern  void            *FMemAlloc(int);
 extern  void            FMemFree( void *p );

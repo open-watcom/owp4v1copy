@@ -49,7 +49,6 @@
 #if !defined( __AXP__ ) && !defined( __PPC__ )
   #include <i86.h>
   #if defined( __WINDOWS_386__ )
-    #define STRICT
     #include <win386.h>
   #endif
 #endif

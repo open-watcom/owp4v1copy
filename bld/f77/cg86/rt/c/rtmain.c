@@ -84,7 +84,6 @@ U32     CDECL main( S32 argc, CHAR* argv[], U32 instance ) {
 
 #include "fapptype.h"
 
-#define STRICT
 #include <win386.h>
 
 extern  int     PASCAL  DefaultWinMain(HINSTANCE,HINSTANCE,LPSTR,int,int(*)(int,char**));

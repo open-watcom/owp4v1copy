@@ -90,7 +90,7 @@ extern  char            FFCtrlSeq[];
 extern  char            SkipCtrlSeq[];
 extern  char            NormalCtrlSeq[];
 extern  char            SDTermOut[];
-#if _OPSYS != _QNX
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
 extern  char            SDPrtName[];
 #endif
 extern  char            ForExtn[];
@@ -887,7 +887,7 @@ void    GetLstName( char *buffer ) {
 
     if( Options & OPT_TYPE ) {
         strcpy( buffer, SDTermOut );
-#if ( _TARGET != _VAX ) && ( _OPSYS != _QNX )
+#if ( _TARGET != _VAX ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
     // On the VAX, /PRINT means to generate a disk file "xxx.LIS"
     //             and set the spooling bit
     // On QNX, there is no /PRINT option

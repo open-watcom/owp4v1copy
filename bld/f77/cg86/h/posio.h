@@ -30,11 +30,7 @@
 ****************************************************************************/
 
 
-#if ( _OPSYS == _PENPOINT ) || ( _OPSYS == _QNX )
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -46,7 +46,7 @@ char    *SDFName( char *fn ) {
     char        *start;
     char        chr;
 
-#if _OPSYS != _QNX
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
     if( fn[ 1 ] == ':' ) {
         fn += 2;
     }
@@ -57,7 +57,7 @@ char    *SDFName( char *fn ) {
             chr = *fn;
             if( chr == NULLCHAR ) return( start );
             fn++;
-#if _OPSYS != _QNX
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
             if( chr == '\\' ) break;
 #endif
             if( chr == '/' ) break;

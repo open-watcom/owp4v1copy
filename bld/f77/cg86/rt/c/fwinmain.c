@@ -48,7 +48,6 @@ extern  void            RTSysInit(void);        // see comments in RTMAIN.C
 
 
 #ifdef __WINDOWS__
-  #define STRICT
   #include <win386.h>
 #elif defined( __NT__ )
   // The mechanism used for mangling the runtime library conflicts with the

@@ -40,7 +40,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <direct.h>
+#ifndef __UNIX__
+  #include <direct.h>
+#endif
 #include <process.h>
 #include <malloc.h>
 #include <stdarg.h>
@@ -581,29 +583,40 @@ static  char    *MakePath( char *path ) {
 static  char    *GetName( char *path ) {
 //======================================
 
-    static  DIR     *dirp;
-    struct  dirent  *direntp;
+#ifndef __UNIX__
+    static      DIR     *dirp;
+    struct      dirent  *direntp;
 
-    if( path != NULL ) {            // if given a filespec to open,
-        if( *path == NULLCHAR ) {   //   but filespec is empty, then
-            closedir( dirp );       //   close directory and return
-            return( NULL );         //   (for clean up after error)
+    if( path != NULL ) {                /* if given a filespec to open,  */
+        if( *path == NULLCHAR ) {       /*   but filespec is empty, then */
+            closedir( dirp );           /*   close directory and return  */
+            return( NULL );             /*   (for clean up after error)  */
         }
-        dirp = opendir( path );     // try to find matching filenames
+        dirp = opendir( path );         /* try to find matching filenames */
         if( dirp == NULL ) {
             PrintMsg( CL_UNABLE_TO_OPEN, path );
             return( NULL );
         }
     }
-    for(;;) {
-        direntp = readdir( dirp );
-        if( direntp == NULL ) break;
-        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    // valid file?
+
+    while( ( direntp = readdir( dirp ) ) != NULL ) {
+        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    /* valid file? */
             return( direntp->d_name );
         }
     }
     closedir( dirp );
     return( NULL );
+#else
+    char *name;
+    if ( path == NULL )
+            return NULL;
+    name = strrchr(path, '/');
+    if ( name == NULL )
+        name = path;
+    else
+        name++;
+    return ( strdup(name) );
+#endif
 }
 
 

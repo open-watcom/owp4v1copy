@@ -35,7 +35,6 @@
 //
 
 #if defined( __WINDOWS__ ) && !defined( __386__ )
-#define STRICT
 #include <windows.h>
 #else
 #include <setjmp.h>

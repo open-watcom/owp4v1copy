@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  for error messages in resource files
 *
 ****************************************************************************/
 
-
-//
-// ERRRSRC      :  for error messages in resource files
-//
 
 #include "ftnstd.h"
 #include "cioconst.h"
@@ -40,6 +35,7 @@
 
 #include <stdarg.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <malloc.h>
 
 extern  void            Substitute(char *,char *,va_list args);

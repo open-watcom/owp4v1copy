@@ -55,7 +55,7 @@ COSTACK_SIZE = 4096
 F77_STACK_SIZE = 4096
 
 STACK   SEGMENT STACK BYTE 'STACK'
-ifdef _OS2_
+ifdef __OS2__
 other_stack_low label   word
 endif
         db      F77_STACK_SIZE dup(?)
@@ -69,10 +69,10 @@ RetAddr dw      2 dup(?)
 SaveReg dw      6 dup(?)
 SaveSeg dw      2 dup(?)
 IORtn   dw      2 dup(?)
-ifdef _OS2_
+ifdef __OS2__
 InitStackLow dw 0
 endif
-ifdef _WINDOWS_
+ifdef __WINDOWS__
 SaveAX  dw      ?
 BPLink  dw      ?
 endif
@@ -81,7 +81,7 @@ endif
 
 
         defp    Switch                  ; switch back to generated code
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         inc     BP                      ; set up Windows BP-chain
         push    BP                      ; ...
         mov     BP,SP                   ; ...
@@ -109,7 +109,7 @@ endif
         pop     DX                      ; ...
         pop     CX                      ; ...
         pop     BX                      ; ...
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         mov     SaveAX,AX               ; save return value
         inc     BP                      ; fix up Windows BP-chain
         mov     AX,BP                   ; ...
@@ -133,7 +133,7 @@ endif
         endproc Switch
 
 
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         xdefp   IOSwitch                ; switch back to i/o system
         defp    IOSwitch
         inc     BP                      ; set up Windows BP-chain
@@ -194,7 +194,7 @@ FRAME_SIZE      = (8*2+4)       ; define stack frame to discard when restoring
         push    ES                      ; save ES
         mov     AX,DGROUP               ; get segment address of DGROUP
         mov     ES,AX                   ; ...
-ifdef _OS2_
+ifdef __OS2__
         cmp     es:InitStackLow,0       ; check to see if we need to adjust _STACKLOW
         _if     e                       ; if already done then no needto do so again
           mov   ax,offset DGROUP:other_stack_low        ; compare our low stack offset to _STACKLOW
@@ -226,7 +226,7 @@ endif
         pop     ES                      ; restore ES
         pop     BP                      ; restore BP
         add     SP,4                    ; remove address of i/o routine
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         mov     BPLink,BP               ; set up Windows BP-chain
         inc     BP                      ; ...
         push    BP                      ; ...
@@ -289,7 +289,7 @@ endif
         pop     DX                      ; ...
         pop     CX                      ; ...
         pop     BX                      ; ...
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         pop     BP                      ; ...
         dec     BP                      ; ...
 else

@@ -42,7 +42,7 @@ char    NormalCtrlSeq[] = { " " };
 #if _OPSYS == _PENPOINT
 char    SDTermIn[] = { "console" };
 char    SDTermOut[] = { "console" };
-#elif _OPSYS == _QNX
+#elif ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
 char    SDTermIn[] = { "/dev/tty" };
 char    SDTermOut[] = { "/dev/tty" };
 #else

@@ -1,4 +1,4 @@
-#pmake: os_qnx cpu_386 target_386
+#pmake: nobuild os_qnx cpu_386 target_386
 
 host_OS         = qnx
 host_CPU        = 386

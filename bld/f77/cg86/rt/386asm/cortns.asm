@@ -50,17 +50,17 @@ include xinit.inc
         xred    __ASTACKSIZ,      dword
         xred    __ASTACKPTR,      dword
 
-ifdef _MT_
+ifdef __MT__
         xred    __SwitchStkLow,   dword
 endif
 
 ALT_STACK_SIZE = 8*1024
 NORMAL_STACK_SIZE = 4*1024
 
-ifndef _NT_
+ifndef __NT__
 STACK   SEGMENT STACK BYTE 'STACK'
         db      ALT_STACK_SIZE dup(?)
-ifdef _WINDOWS_
+ifdef __WINDOWS__
         db      NORMAL_STACK_SIZE dup(?) ; "wstart" doesn't define a stack
 endif
         db      NORMAL_STACK_SIZE dup(?)
@@ -99,7 +99,7 @@ FRAME_SIZE      = (6+1)*4       ; define stack frame to discard when restoring
         pop     EDX                     ; ...
         pop     ECX                     ; ...
         pop     EBX                     ; ...
-ifdef _MT_
+ifdef __MT__
         push    EAX                     ; switch stack low pointer
         call    dword ptr __SwitchStkLow; ...
         pop     EAX                     ; ...
@@ -119,7 +119,7 @@ endif
         mov     SaveESP,ESP             ; ...
         mov     ESP,EBP                 ; ...
         pop     EBP                     ; only ebp saved
-ifdef _MT_
+ifdef __MT__
         push    EAX                     ; switch stack low pointer
         call    dword ptr __SwitchStkLow; ...
         pop     EAX                     ; ...
@@ -138,7 +138,7 @@ endif
         mov     SaveReg+16,ESI          ; ...
         mov     SaveReg+20,EBP          ; ...
         push    EAX                     ; save address of i/o routine
-ifdef _MT_
+ifdef __MT__
         call    dword ptr __SwitchStkLow; switch stack low pointer
 endif
         mov     EAX,4[ESP]              ; ...
@@ -176,7 +176,7 @@ endif
           push  RetAddr                 ; setup return to generated code
         _endif
         push    EAX                     ; save EAX
-ifdef _MT_
+ifdef __MT__
         call    dword ptr __SwitchStkLow; switch stack low pointer
 endif
         call    __ReleaseIOSys          ; release i/o system
@@ -197,7 +197,7 @@ endif
         pop     EDX                     ; ...
         pop     ECX                     ; ...
         pop     EBX                     ; ...
-ifdef _MT_
+ifdef __MT__
         call    dword ptr __SwitchStkLow; switch stack low pointer
 endif
         sub     EAX,EAX                 ; indicate i/o operation succeeded
