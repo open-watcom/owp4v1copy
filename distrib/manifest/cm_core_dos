@@ -1,3 +1,4 @@
 # Manifest file for common core binaries (Watcom C/C++/Fortran, DOS host)
 
 binw\whelp.exe
+binw\wrc.exe

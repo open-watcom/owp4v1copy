@@ -14,5 +14,6 @@ binp\wlib.exe
 binp\wlink.exe
 binp\wlink.lnk
 binp\wmake.exe
+binp\wrc.exe
 binp\wstrip.exe
 binp\wtouch.exe

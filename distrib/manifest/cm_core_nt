@@ -20,6 +20,7 @@ binnt\wlink.dll
 binnt\wlink.exe
 binnt\wlink.lnk
 binnt\wmake.exe
+binnt\wrc.exe
 binnt\wspy.exe
 binnt\wstrip.exe
 binnt\wtouch.exe
