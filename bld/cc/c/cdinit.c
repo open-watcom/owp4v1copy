@@ -69,17 +69,21 @@ local unsigned long BitMask[] = {
         0xFFFFFFFF
  };
 
+/* use a double-linked list of dataquads to facilitate insertions */
+typedef struct data_quad_list {
+    DATA_QUAD dq;
+    struct data_quad_list *prev, *next;
+} DATA_QUAD_LIST;
 
-#define DATA_QUAD_SEG_SIZE      (16*1024)
-#define DATA_QUADS_PER_SEG      (DATA_QUAD_SEG_SIZE/sizeof(DATA_QUAD))
+#define DATA_QUAD_SEG_SIZE      (32*1024)
+#define DATA_QUADS_PER_SEG      (DATA_QUAD_SEG_SIZE/sizeof(DATA_QUAD_LIST))
 
 #define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
 
-static DATA_QUAD       *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
-static int             LastDataQuadSegIndex;
-static DATA_QUAD       *DataQuadPtr;
+static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
+static DATA_QUAD_LIST  *DataQuadPtr;
+static DATA_QUAD_LIST  *LastDataQuad;
 static int             DataQuadIndex;
-static int             LastDataQuadIndex;
 
 local int CharArray( TYPEPTR typ );
 local int WCharArray( TYPEPTR typ );
@@ -92,7 +96,7 @@ void InitDataQuads()
 {
     DataQuadIndex = DATA_QUADS_PER_SEG;
     DataQuadSegIndex = -1;
-    memset( DataQuadSegs, 0, MAX_DATA_QUAD_SEGS * sizeof(DATA_QUAD *) );
+    memset( DataQuadSegs, 0, sizeof( DataQuadSegs ) );
 }
 
 void FreeDataQuads()
@@ -121,19 +125,17 @@ DATA_QUAD *NextDataQuad()
 {
     DATA_QUAD   *dq_ptr;
 
-    if( DataQuadIndex >= (DATA_QUADS_PER_SEG-1) ) {
-        ++DataQuadSegIndex;
-        DataQuadIndex = 0;
-        DataQuadPtr = DataQuadSegs[ DataQuadSegIndex ];
-    }
-    ++DataQuadIndex;
-    dq_ptr = DataQuadPtr;
-    ++DataQuadPtr;
+    if( DataQuadPtr == NULL )
+        return NULL;
+    dq_ptr = &DataQuadPtr->dq;
+    DataQuadPtr = DataQuadPtr->next;
     return( dq_ptr );
 }
 
-void GenDataQuad( DATA_QUAD *dq )
+local DATA_QUAD_LIST *NewDataQuad( void )
 {
+    DATA_QUAD_LIST *dql;
+
     if( DataQuadIndex >= (DATA_QUADS_PER_SEG-1) ) {
         if( DataQuadSegIndex == MAX_DATA_QUAD_SEGS ) {
             CErr1( ERR_INTERNAL_LIMIT_EXCEEDED );
@@ -141,15 +143,25 @@ void GenDataQuad( DATA_QUAD *dq )
         }
         ++DataQuadSegIndex;
         DataQuadIndex = 0;
-        DataQuadPtr = (DATA_QUAD *)FEmalloc( DATA_QUAD_SEG_SIZE );
+        DataQuadPtr = FEmalloc( DATA_QUAD_SEG_SIZE );
         DataQuadSegs[ DataQuadSegIndex ] = DataQuadPtr;
     }
-    memcpy( DataQuadPtr, dq, sizeof(DATA_QUAD) );
+    dql = DataQuadPtr;
     ++DataQuadIndex;
     ++DataQuadPtr;
-    DataQuadPtr->opr = T_EOF;
+    return dql;
 }
 
+local void GenDataQuad( DATA_QUAD *dq )
+{
+    DATA_QUAD_LIST *dql = NewDataQuad();
+    memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
+    if (LastDataQuad != NULL)
+        LastDataQuad->next = dql;
+    dql->prev = LastDataQuad;
+    dql->next = NULL;
+    LastDataQuad = dql;
+}
 
 local void ZeroBytes( long n )
 {
@@ -184,15 +196,16 @@ local void ChkConstant( unsigned long value, unsigned long max_value )
 
 local void StoreIValue( TOKEN int_type, unsigned long value )
 {
+    static DATA_QUAD_LIST *PrevLastDataQuad;
+
     DATA_QUAD           *dq_ptr;
     auto DATA_QUAD      dq;
 
     dq.flags = 0;
     dq.opr = 0;
     dq_ptr = &dq;
-    if( LastDataQuadIndex == DataQuadIndex  &&
-        LastDataQuadSegIndex == DataQuadSegIndex ) {
-        dq_ptr = DataQuadPtr - 1;
+    if( PrevLastDataQuad == LastDataQuad ) {
+        dq_ptr = &LastDataQuad->dq;
     }
     if( dq_ptr->opr == int_type  &&             /* 06-apr-92 */
         dq_ptr->flags == (Q_DATA | Q_REPEATED_DATA)  &&
@@ -212,8 +225,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value )
         dq.u.long_values[0] = value;
         if( value != 0 ) CompFlags.non_zero_data = 1;
         GenDataQuad( &dq );
-        LastDataQuadIndex = DataQuadIndex;
-        LastDataQuadSegIndex = DataQuadSegIndex;
+        PrevLastDataQuad = LastDataQuad;
     }
 }
 
