@@ -468,6 +468,18 @@ typedef struct tag_entry {
 #define TAG_HASH_SIZE   SYM_HASH_SIZE
 extern  void WalkTagList( void (*func)(TAGPTR) );
 
+/* flags for QUAD.flags field */
+
+enum quad_flags {           /* code data */
+    Q_2_INTS_IN_ONE = 0x02, /*       Y02   two integral values */
+    Q_DATA          = 0x04, /*  Y04  Y04   DATA_QUAD */
+    Q_NEAR_POINTER  = 0x08, /*       Y08   near T_ID */
+    Q_FAR_POINTER   = 0x10, /*       Y10   far T_ID */
+    Q_CODE_POINTER  = 0x20, /*       Y20   function name */
+    Q_REPEATED_DATA = 0x80, /*       Y80   repeated data item */
+    Q_NULL          = 0x00
+};
+
 typedef struct {
     union   {
         long        long_values[2];
@@ -482,24 +494,11 @@ typedef struct {
     } u;
 #if _HOST == 386
     byte    opr;            /* contains T_xxxx token value */
-    byte    flags;
 #else
     int     opr;            /* contains T_xxxx token value */
-    int     flags;
 #endif
+    enum quad_flags    flags;
 } DATA_QUAD;
-
-/* flags for QUAD.flags field */
-
-enum quad_flags {           /* code data */
-    Q_2_INTS_IN_ONE = 0x02, /*       Y02   two integral values */
-    Q_DATA          = 0x04, /*  Y04  Y04   DATA_QUAD */
-    Q_NEAR_POINTER  = 0x08, /*       Y08   near T_ID */
-    Q_FAR_POINTER   = 0x10, /*       Y10   far T_ID */
-    Q_CODE_POINTER  = 0x20, /*       Y20   function name */
-    Q_REPEATED_DATA = 0x80, /*       Y80   repeated data item */
-    Q_NULL          = 0x00
-};
 
 typedef struct {
     TYPEPTR              typ;       // type seen
