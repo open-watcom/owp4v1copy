@@ -38,8 +38,8 @@
 #include <clibext.h>
 #else
 #include <dos.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 #include "wpack.h"
 #include "txttable.h"
@@ -556,7 +556,7 @@ static int FileExists( char *name, file_info *info )            /* 26-may-90 */
     return( 0 );    /* file does not exist, or it has different date or size */
 }
 
-extern void Decode( arccmd *cmd )
+extern int Decode( arccmd *cmd )
 /*******************************/
 {
     file_info **    currfile;
@@ -570,14 +570,14 @@ extern void Decode( arccmd *cmd )
     if( filedata == NULL ) {
         msg = LookupText( NULL, TXT_ARC_NOT_EXIST );
         Error( TXT_ARC_NOT_EXIST, msg );
-        return; //FALSE;
+        return FALSE;
     }
     if( cmd->files == NULL  ||  cmd->files->filename == NULL ) {
 //      BufSeek( sizeof( arc_header ) );    // skip header.
         for( currfile = filedata; *currfile != NULL; currfile++ ) {
             if( BufSeek( (*currfile)->disk_addr ) != -1 ) {
                 if( !DecodeFile( *currfile, cmd ) ) {
-                    return; //FALSE;
+                    return FALSE;
                 }
             }
         }
@@ -589,7 +589,7 @@ extern void Decode( arccmd *cmd )
                     memicmp(currname->filename, (*currfile)->name, namelen) == 0 ) {
                     if( BufSeek( (*currfile)->disk_addr ) != -1 ) {
                         if( !DecodeFile( *currfile, cmd ) ) {
-                            return; //FALSE;
+                            return FALSE;
                         }
                     }
                     break;
@@ -605,5 +605,5 @@ extern void Decode( arccmd *cmd )
     } // end if
     QClose( infile );       // close the archive file.
     FreeHeader( filedata );
-    return; // TRUE;
+    return TRUE;
 }

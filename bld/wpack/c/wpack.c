@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Open Watcom file compression utility.
 *
 ****************************************************************************/
 
@@ -35,8 +34,6 @@
  * LZSS coded by Haruhiko OKUMURA
  * Adaptive Huffman Coding coded by Haruyasu YOSHIZAKI
  * Edited and translated to English by Kenji RIKITAKE
- *
- *  WPACK.C : WATCOM file compression utility.
  *
  */
 
@@ -528,7 +525,7 @@ static void DeleteEntry( arccmd *cmd )
 static void (*CmdJumpTable[])() = {
     HandleError,
     Encode,
-    Decode,
+    (void (*)(arccmd *))Decode,
     DisplayArchive,
     DeleteEntry
 };
