@@ -1,5 +1,6 @@
 #pmake: cpu_axp os_nt
 
-host_CPU        = axp
-host_OS         = nt
+host_OS = osi
+host_CPU = axp
+
 !include ../master.mif

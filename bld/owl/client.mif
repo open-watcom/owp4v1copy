@@ -1,10 +1,12 @@
 #
 # owl library
 #
-owl_lib_386     = $(owl_dir)\o.386\owl.lib
-owl_lib_axp     = $(owl_dir)\o.axp\owl.lib
-owl_lib_386_dll = $(owl_dir)\o_rtdll.386\owl.lib
-owl_lib_axp_dll = $(owl_dir)\o_rtdll.dll\owl.lib
+owl_lib_386     = $(owl_dir)\osi386\owl.lib
+owl_lib_axp     = $(owl_dir)\osiaxp\owl.lib
+owl_lib_nt_386_dll = $(owl_dir)\nt386.dll\owl.lib
+owl_lib_nt_axp_dll = $(owl_dir)\ntaxp.dll\owl.lib
+owl_lib_386_dll = $(owl_lib_$(host_os)_386_dll)
+owl_lib_axp_dll = $(owl_lib_$(host_os)_axp_dll)
 
 #
 # owl dependencies

@@ -22,6 +22,7 @@ name = $(proj_name)
 !include cproj.mif
 !include defrule.mif
 
+!include owl.mif
 !include wres.mif
 
 obj             = .obj
@@ -49,7 +50,7 @@ splice_opts     += -k_STANDALONE_
 
 exe_deps_osi = $(bld_bin)\os2ldr.exe
 
-libs = $(owl_dir)/o.$(host_cpu)/owl.lib $(wres_lib)
+libs = $(owl_lib) $(wres_lib)
 
 extra_defines           = -d$(as_cpu)
 !ifndef inline_as
