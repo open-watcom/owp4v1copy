@@ -87,7 +87,7 @@ int directive( int i, long direct )
     case T_DOT_8087:
     case T_DOT_287:
     case T_DOT_387:
-    case T_NO87:
+    case T_DOT_NO87:
         ret = cpu_directive(direct);
         if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
         return( ret );

@@ -526,7 +526,7 @@ static char * set_processor_type(char *input)
     case 'f':       // fp#
         switch( *(input+2) ) {
         case 'c':
-            token = T_NO87;
+            token = T_DOT_NO87;
             break;
         case '0':
             token = T_DOT_8087;

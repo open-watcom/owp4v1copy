@@ -974,7 +974,7 @@ static int comp_opt( uint direct )
          uint_16        direct;
          signed char    value;
     }    processor[] = {
-                        T_NO87, P_NO87,
+                        T_DOT_NO87, P_NO87,
                         T_DOT_8086, P_86,
                         T_DOT_8087, P_87,
                         T_DOT_186,  P_186,

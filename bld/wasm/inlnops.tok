@@ -14,6 +14,7 @@
 .387
 .686
 .686p
+.no87
 aaa
 aad
 aam
@@ -348,7 +349,6 @@ movzx
 mul
 near
 neg
-no87
 nop
 not
 offset
