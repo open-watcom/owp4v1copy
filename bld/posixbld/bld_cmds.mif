@@ -28,7 +28,7 @@ COMMANDS = &
 #    paste &
 #    ps &
 #    pwd &
-#    rev &
+    rev &
 #    split &
 #    strings &
 #    tail &
