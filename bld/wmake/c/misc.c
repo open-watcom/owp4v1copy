@@ -82,8 +82,9 @@ extern char *FindNextWS( char *str )
                 if( string_open ) {
                     str++;
                 } else {
-                    if( isws( *str ) )
+                    if( isws( *str ) ) {
                         break;
+                    }
                     str++;
                 }
             }
@@ -113,8 +114,9 @@ extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
     while( pos < ( maxlen - 1 ) ) {
         t = *src++;
 
-        if( t == NULLCHAR )
+        if( t == NULLCHAR ) {
             break;
+        }
 
         if( t == BACKSLASH ) {
             t = *src++;
@@ -169,15 +171,18 @@ extern char *FixName( char *name )
     ptr = name;
     hold = *ptr;
     for( ;; ) {
-        if( hold == NULLCHAR )
+        if( hold == NULLCHAR ) {
             break;
+        }
         if( hold == '/' ) {
             *ptr = '\\';
         } else if( ( hold -= 'A' ) < 26 ) {     /* SIDE EFFECT!!! */
             *ptr = hold + 'a';
         }
         hold = *++ptr;
-        if( hold == NULLCHAR ) break;
+        if( hold == NULLCHAR ) {
+            break;
+        }
         if( hold == '/' ) {
             *ptr = '\\';
         } else if( ( hold -= 'A' ) < 26 ) {     /* SIDE EFFECT!!! */
@@ -226,12 +231,16 @@ extern char *FixName( char *name )
     ptr = name;
     hold = *ptr;
     for( ;; ) {
-        if( hold == NULLCHAR ) break;
+        if( hold == NULLCHAR ) {
+            break;
+        }
         if( hold == '/' ) {
             *ptr = '\\';
         }
         hold = *++ptr;
-        if( hold == NULLCHAR ) break;
+        if( hold == NULLCHAR ) {
+            break;
+        }
         if( hold == '/' ) {
             *ptr = '\\';
         }
@@ -313,8 +322,9 @@ int __fnmatch( char *pattern, char *string )
     star_char = 0;
     while( IS_WILDCARD_CHAR( pattern ) ) {
         if( *pattern == '?' ) {
-            if( *string == 0 )
+            if( *string == 0 ) {
                 return( 0 );
+            }
             string++;
         } else {
             star_char = 1;
@@ -336,12 +346,14 @@ int __fnmatch( char *pattern, char *string )
     len = 0;
     do {
         if( star_char ) {
-            if( string[len] == 0 )
+            if( string[len] == 0 ) {
                 return( 0 );
+            }
             len++;
         } else {
-            if( FNameCmpChr( *pattern, *string ) != 0 )
+            if( FNameCmpChr( *pattern, *string ) != 0 ) {
                 return( 0 );
+            }
             string++;
         }
         pattern++;

@@ -120,28 +120,32 @@ static BOOLEAN getOMFCommentRecord( omf_info *info )
 
     hdl = info->handle;
     for( ;; ) {
-        if( read( hdl, &header, sizeof( header ) ) != sizeof( header ) )
+        if( read( hdl, &header, sizeof( header ) ) != sizeof( header ) ) {
             break;
+        }
         if( header.command != CMD_COMENT ) {
             // first LNAMES record means objfile has no dependency info
-            if( header.command == CMD_LNAMES )
+            if( header.command == CMD_LNAMES ) {
                 break;
+            }
             lseek( hdl, header.length, SEEK_CUR );
             continue;
         }
-        if( read( hdl, &comment, sizeof( comment ) ) != sizeof( comment ) )
+        if( read( hdl, &comment, sizeof( comment ) ) != sizeof( comment ) ) {
             break;
-        if( comment.type != CMT_DEPENDENCY ) {
+        } if( comment.type != CMT_DEPENDENCY ) {
             lseek( hdl, header.length - sizeof( comment ), SEEK_CUR );
             continue;
         }
         // NULL dependency means end of dependency info
-        if( header.length < sizeof( comment ) )
+        if( header.length < sizeof( comment ) ) {
             break;
+        }
         // we have a dependency comment! hooray!
         len = comment.name_len + 1;
-        if( read( hdl, &nameBuffer, len ) != len )
+        if( read( hdl, &nameBuffer, len ) != len ) {
             break;  // darn, it's broke
+        }
         nameBuffer[len - 1] = '\0';
         info->time_stamp = _DOSStampToTime( comment.dos_date, comment.dos_time );
         info->name = &nameBuffer[0];

@@ -108,7 +108,7 @@ extern void GetModifier( void )
 }
 
 STATIC char *CatModifier( char *inString, BOOLEAN destroy )
-/***********************&**********************************
+/**********************************************************
  *  Get the modifier
  *  if it is modify the value inInString to the specs of the modifier
  *  it then returns the modified string with the right format
@@ -181,21 +181,25 @@ extern TOKEN_T LexMSDollar( STRM_T t )
 
     } else {
         switch( t ) {
-        case '<': CurAttr.num = FORM_FULL;
-                  return( MAC_INF_DEP );
-        case '*': t = PreGetCH();
-                  if( t == '*' ) {
-                      CurAttr.num = FORM_FULL;
-                      return( MAC_ALL_DEP );
-                  } else {
-                      CurAttr.num = FORM_NOEXT;
-                      UnGetCH( t );
-                      return( MAC_CUR );
-                  }
-        case '?': CurAttr.num = FORM_FULL;
-                  return( MAC_YOUNG_DEP );
-        case '@': CurAttr.num = FORM_FULL;
-                  return( MAC_CUR );
+        case '<':
+            CurAttr.num = FORM_FULL;
+            return( MAC_INF_DEP );
+        case '*':
+            t = PreGetCH();
+            if( t == '*' ) {
+                CurAttr.num = FORM_FULL;
+                return( MAC_ALL_DEP );
+            } else {
+                CurAttr.num = FORM_NOEXT;
+                UnGetCH( t );
+                return( MAC_CUR );
+            }
+        case '?':
+            CurAttr.num = FORM_FULL;
+            return( MAC_YOUNG_DEP );
+        case '@':
+            CurAttr.num = FORM_FULL;
+            return( MAC_CUR );
 
         default:
             UnGetCH( t );
@@ -222,18 +226,18 @@ STATIC TOKEN_T lexDollar( void )
         return( t );
     }
     switch( t ) {
-    case DOLLAR:    return( MAC_DOLLAR );
-    case COMMENT:   return( MAC_COMMENT );
-    case '(':   return( MAC_OPEN );
-    case '+':   return( MAC_EXPAND_ON );
-    case '-':   return( MAC_EXPAND_OFF );
-    case '^':   return( lexFormQualifier( MAC_CUR ) );
-    case '[':   return( lexFormQualifier( MAC_FIRST ) );
-    case ']':   return( lexFormQualifier( MAC_LAST ) );
-    case '@':   CurAttr.num = FORM_FULL;   return( MAC_CUR );   /* UNIX */
-    case '*':   CurAttr.num = FORM_NOEXT;  return( MAC_CUR );   /* UNIX */
-    case '<':   CurAttr.num = FORM_FULL;   return( MAC_ALL_DEP );  /* UNIX */
-    case '?':   CurAttr.num = FORM_FULL;   return( MAC_YOUNG_DEP );/* UNIX */
+    case DOLLAR:                        return( MAC_DOLLAR );
+    case COMMENT:                       return( MAC_COMMENT );
+    case '(':                           return( MAC_OPEN );
+    case '+':                           return( MAC_EXPAND_ON );
+    case '-':                           return( MAC_EXPAND_OFF );
+    case '^':                           return( lexFormQualifier( MAC_CUR ) );
+    case '[':                           return( lexFormQualifier( MAC_FIRST ) );
+    case ']':                           return( lexFormQualifier( MAC_LAST ) );
+    case '@': CurAttr.num = FORM_FULL;  return( MAC_CUR );       /* UNIX */
+    case '*': CurAttr.num = FORM_NOEXT; return( MAC_CUR );       /* UNIX */
+    case '<': CurAttr.num = FORM_FULL;  return( MAC_ALL_DEP );   /* UNIX */
+    case '?': CurAttr.num = FORM_FULL;  return( MAC_YOUNG_DEP ); /* UNIX */
     default:
         UnGetCH( t );
         return( MAC_START );
@@ -248,7 +252,7 @@ STATIC TOKEN_T lexSubString( TOKEN_T t )
 /**************************************/
 {
     char        text[MAX_TOK_SIZE];     /* temporary storage                */
-    unsigned    pos;                    /* position in text                */
+    unsigned    pos;                    /* position in text                 */
     TOKEN_T     state;                  /* what are we collecting           */
     BOOLEAN     done;                   /* are we done collecting ?         */
     VECSTR      vec;                    /* build string here                */
@@ -311,13 +315,16 @@ extern TOKEN_T LexMacSubst( TOKEN_T t )
 {
     switch( t ) {
     case SPECIAL_TMP_DOL_C:
-    case DOLLAR:    return( lexDollar() );
-    case ')':       return( MAC_CLOSE );
+    case DOLLAR:
+        return( lexDollar() );
+    case ')':
+        return( MAC_CLOSE );
     case EOL:
     case STRM_END:
     case STRM_MAGIC:
-                    return( t );
-    default:        return( lexSubString( t ) );
+        return( t );
+    default:
+        return( lexSubString( t ) );
     }
 }
 

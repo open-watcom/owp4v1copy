@@ -50,9 +50,8 @@
 
 #if defined( __DOS__ )
 
-int __far critical_error_handler( unsigned deverr,
-                                  unsigned errcode,
-                                  unsigned far *devhdr )
+int __far critical_error_handler( unsigned deverr, unsigned errcode,
+    unsigned far *devhdr )
 {
     deverr = deverr; errcode = errcode; devhdr = devhdr;
     return( _HARDERR_FAIL );
@@ -257,7 +256,9 @@ DLL_CMD *OSFindDLL( char const *cmd_name )
     DLL_CMD     *n;
 
     for( n = dllCommandList; n != NULL; n = n->next ) {
-        if( 0 == stricmp( cmd_name, n->cmd_name ) ) break;
+        if( 0 == stricmp( cmd_name, n->cmd_name ) ) {
+            break;
+        }
     }
     return( n );
 }

@@ -333,18 +333,16 @@ STATIC char *createTmpFileName( void )
             TouchFile( result );
             FreeSafe( tmpPath );
             return( result );
-
         } else {
             FreeSafe( result );
         }
         tmpFileNumber = (UINT16)((tmpFileNumber + time( NULL )) % 100000);
     }
-
 }
 
 
-STATIC RET_T processInlineFile( int handle, const char *body, const char *fileName,
-                                BOOLEAN writeToFile )
+STATIC RET_T processInlineFile( int handle, const char *body,
+    const char *fileName, BOOLEAN writeToFile )
 {
     int         index;
     RET_T       ret;
@@ -437,13 +435,11 @@ STATIC char* RemoveBackSlash( const char* inString )
     buffer[pos] = NULLCHAR;
 
     return( StrDupSafe( buffer ) );
-
 }
 
 
 STATIC RET_T VerbosePrintTempFile( const FLIST *head )
 {
-
     FLIST const         *current;
     RET_T               ret = RET_SUCCESS; // success if list empty
 
@@ -502,7 +498,6 @@ STATIC RET_T createFile( const FLIST *head )
                 PrtMsg( ERR | ERROR_CLOSING_FILE, tmpFileName );
                 ret = RET_ERROR;
             }
-
         } else {
             PrtMsg( ERR | ERROR_OPENING_FILE, tmpFileName );
             ret = RET_ERROR;
@@ -538,10 +533,8 @@ STATIC RET_T writeInlineFiles( FLIST *head, char **commandIn )
     start      = index;
     current    = head;
 
-    while( current        != NULL        &&
-           ret            == RET_SUCCESS &&
+    while( current != NULL && ret == RET_SUCCESS &&
            cmdText[index] != NULLCHAR ) {
-
         // if the filename is the inline symbol then we need change
         // the filename into a temp filename
         if( strcmp( current->fileName, INLINE_SYMBOL ) == 0 ) {
@@ -557,7 +550,6 @@ STATIC RET_T writeInlineFiles( FLIST *head, char **commandIn )
                     break;
                 }
                 ++index;
-
             }
             if( ret == RET_ERROR ) {
                 break;
@@ -608,8 +600,9 @@ STATIC int findInternal( const char *cmd )
     for( ;; ) {
         key = bsearch( &cmd, dosInternals, CNUM, sizeof( char * ),
               (int (*)( const void *, const void * ))KWCompare );
-        if( key != NULL )
+        if( key != NULL ) {
             break;
+        }
         len = strlen( cmd );
         if( len > 1 && len < COM_MAX_LEN ) {
             if( cmd[len - 1] == '.' ) {
@@ -645,13 +638,15 @@ STATIC RET_T percentMake( char *arg )
     start = arg;
     for( ;; ) {
         start = SkipWS( start );
-        if( *start == NULLCHAR )
+        if( *start == NULLCHAR ) {
             break;
+        }
         more_targets = FALSE;
         finish = start;
         for( ;; ) {
-            if( *finish == NULLCHAR )
+            if( *finish == NULLCHAR ) {
                 break;
+            }
             if( isws( *finish ) ) {
                 more_targets = TRUE;
                 *finish = NULLCHAR;
@@ -721,7 +716,9 @@ STATIC RET_T percentWrite( const char *arg, enum write_type type )
     fn = p;
 
     if( *p != DOUBLEQUOTE ) {
-        while( isfilec( *p ) ) ++p;
+        while( isfilec( *p ) ) {
+            ++p;
+        }
     } else {
         ++p;    // Skip the first quote
         ++fn;
@@ -803,7 +800,7 @@ STATIC RET_T percentWrite( const char *arg, enum write_type type )
 
 
 STATIC RET_T percentErase( char *arg )
-/****************************************************************/
+/************************************/
 {
     if( 0 == unlink( FixName( arg ) ) ) {
         return( RET_SUCCESS );
@@ -888,8 +885,9 @@ STATIC int intSystem( const char *cmd )
     pid_t   pid = fork();
     int     status;
 
-    if( pid == -1 )
+    if( pid == -1 ) {
         return( -1 );
+    }
     if( pid == 0 ) {
         execl( "/bin/sh", "sh", "-c", cmd, NULL );
         exit( 127 );
@@ -1058,8 +1056,9 @@ STATIC RET_T handleIf( const char *cmd )
     }
 
     tmp1 = p;                   /* find first word after IF */
-    while( !isws( *p ) && *p != NULLCHAR && *p != '=' )
+    while( !isws( *p ) && *p != NULLCHAR && *p != '=' ) {
         ++p;
+    }
     if( *p == NULLCHAR ) {
         PrtMsg( ERR | SYNTAX_ERROR_IN, dosInternals[COM_IF] );
         return( RET_ERROR );
@@ -1072,8 +1071,9 @@ STATIC RET_T handleIf( const char *cmd )
 
     if( not ) {             /* discard the "NOT" get next word */
         tmp1 = p = SkipWS( p );
-        while( !isws( *p ) && *p != NULLCHAR && *p != '=' )
+        while( !isws( *p ) && *p != NULLCHAR && *p != '=' ) {
             ++p;
+        }
         if( *p == NULLCHAR ) {
             PrtMsg( ERR | SYNTAX_ERROR_IN, dosInternals[COM_IF] );
             return( RET_ERROR );
@@ -1116,19 +1116,23 @@ STATIC RET_T handleIf( const char *cmd )
         *end1 = save;
         p = end1;           /* back up to end of 1st token */
         for( ;; ) {
-            while( ( *p != NULLCHAR ) && ( *p != '=' ) )
+            while( ( *p != NULLCHAR ) && ( *p != '=' ) ) {
                 ++p;
+            }
             if( *p == NULLCHAR ) {
                 PrtMsg( ERR | SYNTAX_ERROR_IN, dosInternals[COM_IF] );
                 return( RET_ERROR );
             }
-            if( p[1] == '=' ) break;
+            if( p[1] == '=' ) {
+                break;
+            }
             ++p;
         }
                             /* we have found "==", get <str2> */
         tmp2 = p = SkipWS( p + 2 );
-        while( !isws( *p ) && *p != NULLCHAR )
+        while( !isws( *p ) && *p != NULLCHAR ) {
             ++p;
+        }
         if( *p == NULLCHAR ) {
             PrtMsg( ERR | SYNTAX_ERROR_IN, dosInternals[COM_IF] );
             return( RET_ERROR );
@@ -1182,8 +1186,9 @@ STATIC RET_T getForArgs( const char *line, const char **pvar, char **pset,
     *pvar = (const char *)p;
 
                             /* move to end of <var> */
-    while( isalpha( *p ) || *p == '%' )
+    while( isalpha( *p ) || *p == '%' ) {
         ++p;
+    }
 
     if( *p == NULLCHAR ) {  /* premature eol? */
         return( handleForSyntaxError() );
@@ -1205,8 +1210,9 @@ STATIC RET_T getForArgs( const char *line, const char **pvar, char **pset,
     ++p;
     *pset = p;/* beginning of set */
 
-    while( *p != NULLCHAR && *p != ')' )
+    while( *p != NULLCHAR && *p != ')' ) {
         ++p;
+    }
     if( *p == NULLCHAR ) {
         return( handleForSyntaxError() );
     }
@@ -1348,7 +1354,6 @@ STATIC RET_T handleFor( const char *line )
 
         subst = DoWildCard( subst );
         while( subst != NULL ) {
-
             newlen = numsubst * strlen( subst ) + cmdlen;
             if( newlen > lastlen ) {
                 FreeSafe( exec );
@@ -1394,8 +1399,9 @@ STATIC RET_T handleCD( char *cmd )
 
     closeCurrentFile();
     p = cmd;
-    while( isalpha( *p ) )
+    while( isalpha( *p ) ) {
         ++p;     /* advance past command name */
+    }
 
     p = SkipWS( p );
     if( *p == NULLCHAR ) {          /* no args - just print the cd */
@@ -1490,10 +1496,12 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
     if( p && *p ) {
         *pfile = p;
         p = FindNextWS(p);
-        if( *p == NULLCHAR )
+        if( *p == NULLCHAR ) {
             p = NULL;
-        else
+        }
+        else {
             *p++ = NULLCHAR;
+        }
 
     } else {
         return( RET_WARN );
@@ -1517,12 +1525,15 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
             rv = unlink( file );
         }
     }
-    if( flags->bForce && ENOENT == errno )
+    if( flags->bForce && ENOENT == errno ) {
         rv = 0;
-    if( 0 != rv )
+    }
+    if( 0 != rv ) {
         PrtMsg( ERR| SYSERR_DELETING_FILE, file );
-    else if( flags->bVerbose && ENOENT != errno )
+    }
+    else if( flags->bVerbose && ENOENT != errno ) {
         PrtMsg( INF| DELETING_FILE, file );
+    }
 
     CacheRelease();     /* so that the cache is updated */
 
@@ -1569,8 +1580,9 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
         rt = getRMArgs( NULL, NULL, &pfname );
     }
 
-    if( RET_WARN == rt )
+    if( RET_WARN == rt ) {
         rt = RET_SUCCESS;
+    }
 
     return( rt );
 }
@@ -1641,8 +1653,9 @@ STATIC UINT16 makeTmpEnv( char *arg )
     tmp = 1;
     for( ;; ) {
         FmtStr( buf, "WMAKE%d", tmp );
-        if( getenv( buf ) == NULL )
+        if( getenv( buf ) == NULL ) {
             break;
+        }
         ++tmp;
     }
     len = strlen( arg );
@@ -1663,8 +1676,9 @@ STATIC void killTmpEnv( UINT16 tmp )
 {
     ENV_TRACKER *env;
 
-    if( tmp == 0 )
+    if( tmp == 0 ) {
         return;
+    }
     env = MallocSafe( sizeof( ENV_TRACKER ) + 20 );
     FmtStr( env->value, "WMAKE%d=", tmp );
     PutEnvSafe( env );
@@ -1700,8 +1714,9 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     quote = 0;                              /* no quotes yet */
     while( !((isws( *arg ) || *arg == Glob.swchar || *arg == '+' ||
         *arg == '=' ) && !quote) && *arg != NULLCHAR ) {
-        if( *arg == '\"' )
+        if( *arg == '\"' ) {
             quote = !quote;  /* found a quote */
+        }
         ++arg;
     }
     if( arg - cmd >= _MAX_PATH ) {
@@ -1718,18 +1733,16 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     cmdname[arg - cmd] = NULLCHAR;      /* null terminate it */
 
     /* skip whitespace between the command and the argument */
-    for( ; isws( *arg ); arg++ )
-        ;
+    for( ; isws( *arg ); arg++ ) {
+    }
 
 #if defined( __DOS__ )
     _splitpath( cmdname, NULL, NULL, NULL, ext );
     if( ext[0] == '.' ) {
         FixName( ext );
         /* if the extension is specified let the shell handle it (26-apr-91) */
-        if( FNameCmp( ext, ".exe" ) != 0 &&
-            FNameCmp( ext, ".com" ) != 0 ) {
-            /* .bat and .cmd need the shell anyway */
-            flags |= FLAG_SHELL;
+        if( FNameCmp( ext, ".exe" ) != 0 && FNameCmp( ext, ".com" ) != 0 ) {
+            flags |= FLAG_SHELL; /* .bat and .cmd need the shell anyway */
         }
     }
 #endif
@@ -1746,8 +1759,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         return( percentCmd( cmdname, arg ) );
     }
     if( hasMetas( cmd ) && comnum != COM_FOR ) {
-        /* pass to shell because of '>','<' or '|' */
-        flags |= FLAG_SHELL;
+        flags |= FLAG_SHELL; /* pass to shell because of '>','<' or '|' */
     }
     if( ( flags & FLAG_ENV_ARGS ) != 0 && ( flags & FLAG_SHELL ) == 0 ) {
         tmp_env = makeTmpEnv( arg );
@@ -1814,7 +1826,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
                     PrtMsg( ERR | DLL_BAD_RETURN_STATUS, dll_cmd->inf.dll_name );
                     retcode = 4;
                 } else if( retcode == IDEDRV_ERR_LOAD ||
-                            retcode == IDEDRV_ERR_UNLOAD ) {
+                           retcode == IDEDRV_ERR_UNLOAD ) {
                     PrtMsg( ERR | UNABLE_TO_LOAD_DLL, dll_cmd->inf.dll_name );
                     retcode = 4;
                 } else {
@@ -1864,8 +1876,9 @@ STATIC RET_T execLine( char *line )
         p = SkipWS( p );
 
         if( *p == '@' ) {
-            if( !Glob.silentno )
+            if( !Glob.silentno ) {
                 flags |= FLAG_SILENT;
+            }
         } else if( *p == '*' ) {
             flags |= FLAG_ENV_ARGS;
         } else if( *p == '!' ) {

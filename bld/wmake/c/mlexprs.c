@@ -121,10 +121,8 @@ extern TOKEN_T LexPath( STRM_T t )
 
         if( t == STRM_MAGIC ) {
             InsString( DeMacro( EOL ), TRUE );
-
         } else if( !isfilec( t ) && t != PATH_SPLIT && t != ';' && t != '\"' && !isws( t ) ) {
             PrtMsg( ERR | LOC | EXPECTING_M, M_PATH );
-
         } else if( !isws( t ) ) {
             break;
         }
@@ -197,8 +195,9 @@ extern TOKEN_T LexPath( STRM_T t )
         path[pos] = NULLCHAR;
         WriteVec( vec, path );
 
-        if( t != PATH_SPLIT && t != ';' )
+        if( t != PATH_SPLIT && t != ';' ) {
             break;
+        }
 
         pos = 0;
         path[pos++] = PATH_SPLIT;
@@ -606,7 +605,7 @@ extern TOKEN_T LexParser( TOKEN_T t )
     static BOOLEAN  atstart = TRUE;
     char            *p;
 
-    for( ; ;) {
+    for( ;; ) {
 
         if( atstart ) {
                 /* atstart == TRUE if either of these succeed */

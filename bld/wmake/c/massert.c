@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Local assertion failed function
 *
 ****************************************************************************/
 
@@ -37,6 +36,6 @@
 extern int MyAssert( const char *expr, const char *file, int line )
 /*****************************************************************/
 {
-    PrtMsg( FTL| ASSERTION_FAILED, expr, file, line );
-    return(1);
+    PrtMsg( FTL | ASSERTION_FAILED, expr, file, line );
+    return( 1 ); // Never gets here!
 }

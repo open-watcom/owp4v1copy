@@ -255,7 +255,6 @@ STATIC void cpyTxt( OURPTR vec, const char FAR *text, size_t len )
             _fmemcpy( fptr, text, len );
             tail->len += len;
             return;
-
         } else if( tail->len < MIN_TEXT ) { /* partially empty buffer */
             clen = MIN_TEXT - tail->len;    /* room remaining */
             _fmemcpy( fptr, text, clen );

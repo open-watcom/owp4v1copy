@@ -129,7 +129,9 @@ extern void MsgGetTail( int resourceid, char *buffer )
     MsgGet( resourceid, msg );
     p = strchr( msg, '%' );
     while( p != NULL ) {
-        if( *(++p) == 'L' ) break;
+        if( *(++p) == 'L' ) {
+            break;
+        }
         p = strchr( ++p, '%' );
     }
     if( p != NULL ) {
@@ -153,7 +155,9 @@ static char *msgInTable( int resourceid )
         if( resourceid == PARA_TABLE[i].msgid ) {
             return( PARA_TABLE[i].msgtype );
         }
-        if( resourceid < PARA_TABLE[i].msgid ) break;
+        if( resourceid < PARA_TABLE[i].msgid ) {
+            break;
+        }
     }
     return( NULL );
 }

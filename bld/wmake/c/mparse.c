@@ -329,8 +329,7 @@ STATIC void checkFirstTarget( void )
 
     head = firstTarget;
     if( head != NULL ) {
-        /* Go through all the targets to see check if all targets are
-            still okay */
+        /* Go through all the targets to see check if still OK */
         current = head;
         while( current != NULL ) {
             if( !current->target->attr.explicit &&
@@ -429,7 +428,7 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
         attr.symb = TRUE;
     }
 
-        /* now we attach this depend into each target */
+        /* now we attach this depend to each target */
     linkDepend( *btlist, dep, attr );
     setFirstTarget( *btlist );
 }
@@ -446,8 +445,9 @@ STATIC void parseExtensions( void )
 
     for( ;; ) {
         t = LexToken( LEX_PARSER );
-        if( t == EOL || t == STRM_END || t == TOK_SCOLON )
+        if( t == EOL || t == STRM_END || t == TOK_SCOLON ) {
             break;
+        }
         PrtMsg( ERR | LOC | EXPECTING_M, M_SCOLON );
         LexMaybeFree( t );
     }
@@ -458,7 +458,9 @@ STATIC void parseExtensions( void )
     any = FALSE;
     for( ;; ) {
         t = LexToken( LEX_PARSER );
-        if( t == EOL || t == STRM_END ) break;
+        if( t == EOL || t == STRM_END ) {
+            break;
+        }
         if( t == TOK_SUF ) {
             if( !SufExists( CurAttr.ptr ) ) {
                 AddSuffix( CurAttr.ptr );   /* we lose CurAttr.ptr */
@@ -514,7 +516,9 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
         }
         for( ;; ) {
             t = LexToken( LEX_PARSER );
-            if( t == EOL || t == STRM_END ) return;
+            if( t == EOL || t == STRM_END ) {
+                return;
+            }
             if( t != TOK_DOTNAME ) {
                 ignoring( t, TRUE );
             }
@@ -525,8 +529,7 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
 
 /* links the clist to the sufsuf target */
 STATIC void linkClistSufsuf( const TARGET *curtarg, const CLIST *clist,
-                             const char *cur_target_path,
-                             const char *cur_depend_path )
+    const char *cur_target_path, const char *cur_depend_path )
 {
     DEPEND  *walk;
     SLIST   *slist;
@@ -553,7 +556,6 @@ STATIC void linkClistSufsuf( const TARGET *curtarg, const CLIST *clist,
         walk->clist = DupCList( clist );
 
     } else {
-
         if( walk->slist == NULL ) {
             walk->slist = NewSList ();
             walk->slist->targ_path = StrDupSafe( cur_target_path );
@@ -571,8 +573,8 @@ STATIC void linkClistSufsuf( const TARGET *curtarg, const CLIST *clist,
     }
 }
 
-STATIC void linkCList( TLIST *btlist, CLIST *bclist,
-                       const char  *cur_target_path, const char *cur_depend_path)
+STATIC void linkCList( TLIST *btlist, CLIST *bclist, const char *cur_target_path,
+    const char *cur_depend_path)
 /********************************************************************************
  * attach bclist to each target in btlist
  */
@@ -627,11 +629,8 @@ STATIC void linkCList( TLIST *btlist, CLIST *bclist,
             }
         } else if( curtarg->sufsuf ) {
             /* special processing is needed for sufsuf */
-            linkClistSufsuf(curtarg,
-                            clisthead,
-                            cur_target_path,
-                            cur_depend_path);
-
+            linkClistSufsuf( curtarg, clisthead, cur_target_path,
+                cur_depend_path );
         } else {
             /* we walk the dependents to find the last one */
             while( (*walk)->next != NULL ) {
@@ -682,8 +681,9 @@ STATIC void parseSuf( void )
     t = TOK_SUF;
 
     for( ;; ) {
-        if( t == EOL || t == STRM_END || t == TOK_SCOLON )
+        if( t == EOL || t == STRM_END || t == TOK_SCOLON ) {
             break;
+        }
         if( t == TOK_SUF ) {
             if( !SufExists( CurAttr.ptr ) ) {
                 PrtMsg( ERR | LOC | SUFFIX_DOESNT_EXIST, CurAttr.ptr );
@@ -715,8 +715,9 @@ STATIC void parseSuf( void )
     }
 
     for( ;; ) {
-        if( t == STRM_END || t == EOL )
+        if( t == STRM_END || t == EOL ) {
             break;
+        }
         ignoring( t, TRUE );
         t = LexToken( LEX_PATH );
     }
@@ -795,7 +796,6 @@ STATIC char *getFileName( const char* intext, int *offset )
         }
         ret = FinishVec( tempStr );
         return( ret );
-
     } else {
         // if we need a temporary file then give back << as a filename
         tempStr = StartVec();
@@ -920,7 +920,6 @@ STATIC FLIST *GetInlineFile( char **commandIn )
     while( cmdText[index] != NULLCHAR ) {
         if( cmdText[index] == LESSTHAN ) {
             if( cmdText[index + 1] == LESSTHAN ) {
-
                 // Add the current vector into the new command
                 WriteNVec( newCommand, cmdText + start, index - start );
 
@@ -950,7 +949,6 @@ STATIC FLIST *GetInlineFile( char **commandIn )
                 current->next = NULL;
                 index = index + offset;
                 start = index + 2;
-
             }
             ++index;
         }
@@ -1065,8 +1063,9 @@ TLIST *Parse( void )
             clist_warning_given = FALSE;
         }
 
-        if( t == STRM_END )
+        if( t == STRM_END ) {
             break;
+        }
 
         switch( t ) {
         case EOL:
@@ -1094,7 +1093,8 @@ TLIST *Parse( void )
                      *       rule we must deMacro the text the same
                      *       way as wmake does for microsoft option
                      */
-                    ImplicitDeMacro = (Glob.microsoft | Glob.unix) && btlist->target->sufsuf;
+                    ImplicitDeMacro = (Glob.microsoft | Glob.unix) &&
+                        btlist->target->sufsuf;
                     newclist->inlineHead = GetInlineFile( &(newclist->text) );
                     ImplicitDeMacro = FALSE;
                     bclist = newclist;

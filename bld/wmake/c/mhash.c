@@ -60,8 +60,9 @@ extern HASH_T Hash( const char *s, HASH_T prime )
 
         w = *p;
         ++p;
-        if( (UINT8)(w & 0xff) == NULLCHAR )
+        if( (UINT8)(w & 0xff) == NULLCHAR ) {
             break;
+        }
         w |= ' ';           /* convert to upper case */
         h = ( h << 2 ) + (UINT8)( w & 0xff );
         g = h & 0xf000;
@@ -69,8 +70,9 @@ extern HASH_T Hash( const char *s, HASH_T prime )
             h ^= g;
             h ^= g >> 12;
         }
-        if( (UINT8)(w >> 8) == NULLCHAR )
+        if( (UINT8)(w >> 8) == NULLCHAR ) {
             break;
+        }
         w |= (' ' << 8);    /* convert to upper case */
         h = (h << 2) + (UINT8)(w >> 8);
         g = h & 0xf000;
@@ -87,11 +89,13 @@ extern HASH_T Hash( const char *s, HASH_T prime )
         w = ((w & 0xff) << 8) + (w >> 8);
 #endif
         ++p;
-        if( (w & 0xff) == NULLCHAR )
+        if( (w & 0xff) == NULLCHAR ) {
             break;
+        }
         h += w | ( (' '<< 8) | ' ');    /* convert to upper case */
-        if( (UINT8)(w >> 8) == NULLCHAR )
+        if( (UINT8)(w >> 8) == NULLCHAR ) {
             break;
+        }
     }
 #endif
     return( h % prime );
@@ -212,11 +216,13 @@ extern HASHNODE *RemHashNode( HASHTAB *tab, const char *name,
     cur = &(tab->nodes[h]);
     while( *cur != NULL ) {
         if( caseSensitive ) {
-            if( strcmp( (*cur)->name, name ) == 0 )
+            if( strcmp( (*cur)->name, name ) == 0 ) {
                 break;
+            }
         } else {
-            if( stricmp( (*cur)->name, name ) == 0 )
+            if( stricmp( (*cur)->name, name ) == 0 ) {
                 break;
+            }
         }
         cur = &(*cur)->next;
     }

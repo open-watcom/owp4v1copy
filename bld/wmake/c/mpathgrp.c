@@ -54,14 +54,14 @@ extern PGROUP *SplitPath( const char *path )
     pg = MallocSafe( sizeof( PGROUP ) );
     _splitpath2( path, pg->buffer, &pg->drive, &pg->dir, &pg->fname, &pg->ext );
     /*
-        I don't really want to make the assumption that _splitpath2 will
-        fill in the buffer like so:
-
-            drive \0 dir \0 fname \0 ext \0
-
-        but it would be incredibly slow to assume otherwise.
-
-    */
+     *  I don't really want to make the assumption that _splitpath2 will
+     *  fill in the buffer like so:
+     *
+     *      drive \0 dir \0 fname \0 ext \0
+     *
+     *  but it would be incredibly slow to assume otherwise.
+     *
+     */
 #if 1
     len = ( pg->ext + strlen( pg->ext ) + 1 ) - pg->buffer;
 #else

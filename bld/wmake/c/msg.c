@@ -296,8 +296,9 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
     dest = buff;
     for( ;; ) {
         ch = *src++;
-        if( ch == NULLCHAR )
+        if( ch == NULLCHAR ) {
             break;
+        }
         if( ch != '%' ) {
             *dest++ = ch;
         } else {
@@ -539,8 +540,9 @@ extern void Usage( void )
 
     for( i = USAGE_BASE;; i++ ) {
         MsgGet( i, msgbuff );
-        if( ( msgbuff[0] == '.' ) && ( msgbuff[1] == 0 ) )
+        if( ( msgbuff[0] == '.' ) && ( msgbuff[1] == 0 ) ) {
             break;
+        }
         PrtMsg( INF | PRNTSTR, msgbuff );
     }
     exit( ExitSafe( EXIT_OK ) );
@@ -579,10 +581,10 @@ extern void LogInit( const char *name )
 {
     logName = name;
     logFH = -1;
-    if( name == NULL )
-        return;
-    logFH = open( logName, O_WRONLY | O_APPEND | O_CREAT | O_TEXT,
+    if( name != NULL ) {
+        logFH = open( logName, O_WRONLY | O_APPEND | O_CREAT | O_TEXT,
                   S_IWRITE | S_IREAD );
+    }
     return;
 }
 

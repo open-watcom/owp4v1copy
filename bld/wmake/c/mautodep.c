@@ -65,14 +65,17 @@ void AutoDepInit( void )
     }
 }
 
-BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), time_t *pmax_time )
-/************************************************************************************************/
+BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t),
+    time_t *pmax_time )
+/****************************************************************************/
 {
     const auto_dep_info *curr;
     const auto_dep_info * const *pcurr;
     char                *dep_name;
-    time_t              dep_time;       /* time stamp for dependant file buried in auto-depends info */
-    time_t              curr_dep_time;  /* current date on dependant file (if it exists) */
+    time_t              dep_time;       /* time stamp for dependant file
+                                         * buried in auto-depends info */
+    time_t              curr_dep_time;  /* current date on dependent file
+                                         * (if it exists) */
     time_t              max_time;
     void                *hdl;
     void                *dep_hdl;
@@ -134,8 +137,9 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), t
                     PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
                 }
                 /* may not need to calculate real max time */
-                if( flag.out_of_date && !Glob.rcs_make )
+                if( flag.out_of_date && !Glob.rcs_make ) {
                     break;
+                }
                 dep_hdl = curr->next_dep( dep_hdl );
             }
             curr->fini_file( hdl );

@@ -83,8 +83,9 @@ STATIC void doBuiltIns( const char *makeopts )
         list = Parse();
         FreeTList( list );
         strcpy(cpy, "MAKE=" );
-        if( _cmdname( cpy + sizeof "MAKE=" - 1 ) == NULL )
+        if( _cmdname( cpy + sizeof "MAKE=" - 1 ) == NULL ) {
             strcat( cpy, "wmake" );
+        }
         InsString( cpy, FALSE );
         list = Parse();
         FreeTList( list );
@@ -125,8 +126,9 @@ static void setFirstTarget( TLIST *potential_first )
 /**************************************************/
 {
     if( firstTargFound != NULL || potential_first == NULL ) {
-        if( potential_first )
+        if( potential_first ) {
             FreeTList( potential_first );
+        }
         return;
     }
     /*  Note all first targets must not have attribute explicit */
@@ -193,8 +195,7 @@ STATIC void handleTarg( const char *buf )
 {
     assert( buf != NULL );
 
-    /* if it is not a valid target name, it won't be able to be
-       made by Update() */
+    /* if it is not a valid target name, Update() won't be able to make it */
     WildTList( &mustTargs, buf, FALSE, TRUE );
 }
 
@@ -374,7 +375,7 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
 
 
 STATIC const char *procLogName( const char * const *argv )
-/*****************************************************************
+/*********************************************************
  Find log file name
  */
 {
@@ -382,8 +383,10 @@ STATIC const char *procLogName( const char * const *argv )
 
     while( *++argv != NULL ) {
         p = *argv;
-        if( ((p[0] == '-') || (p[0] == Glob.swchar)) && (tolower( p[1] ) == 'l') && (p[2] == NULLCHAR) ) {
-            return( ((p = *++argv) == NULL || (p[0] == '-') || (p[0] == Glob.swchar)) ? NULL : p );
+        if( ((p[0] == '-') || (p[0] == Glob.swchar)) &&
+                (tolower( p[1] ) == 'l') && (p[2] == NULLCHAR) ) {
+            return( ((p = *++argv) == NULL || (p[0] == '-')
+                || (p[0] == Glob.swchar)) ? NULL : p );
         }
     }
     return( NULL );
@@ -524,8 +527,9 @@ STATIC void init( char const * const *argv )
     LogInit( NULL );
     globInit();
     MemInit();          /* memory handlers          */
-    if( !MsgInit() )
+    if( !MsgInit() ) {
         exit( EXIT_FAILURE );
+    }
     VecInit();          /* vector strings           */
     CacheInit();        /* directory cacheing       */
     MacroInit();        /* initialize macros        */

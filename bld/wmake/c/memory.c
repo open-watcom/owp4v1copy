@@ -118,9 +118,9 @@ STATIC void MemCheck( void )
         case _HEAPEMPTY:
             break;
         case _HEAPBADBEGIN:
-            PrtMsg( FTL| HEAP_IS_DAMAGED, "FAR" );
+            PrtMsg( FTL | HEAP_IS_DAMAGED, "FAR" );
         case _HEAPBADNODE:
-            PrtMsg( FTL| BAD_NODE_IN_HEAP, "FAR" );
+            PrtMsg( FTL | BAD_NODE_IN_HEAP, "FAR" );
         }
 #else
         switch( _heapchk() ) {
@@ -128,9 +128,9 @@ STATIC void MemCheck( void )
         case _HEAPEMPTY:
             break;
         case _HEAPBADBEGIN:
-            PrtMsg( FTL| HEAP_IS_DAMAGED, "" );
+            PrtMsg( FTL | HEAP_IS_DAMAGED, "" );
         case _HEAPBADNODE:
-            PrtMsg( FTL| BAD_NODE_IN_HEAP, "" );
+            PrtMsg( FTL | BAD_NODE_IN_HEAP, "" );
         }
 #endif
         busy = FALSE;
@@ -255,8 +255,9 @@ extern void MemInit( void )
 #ifdef TRACK
     Handle = _trmem_open( malloc, free, _TRMEM_NO_REALLOC, _expand,
                           NULL, printLine, _TRMEM_CLOSE_CHECK_FREE );
-    if( Handle == NULL )
+    if( Handle == NULL ) {
         PrtMsg( FTL | UNABLE_TO_TRACK );
+    }
 #endif
 }
 
@@ -282,10 +283,12 @@ STATIC void *doAlloc( size_t size )
 #else
         ptr = malloc( size );
 #endif
-        if( ptr != NULL )
+        if( ptr != NULL ) {
             break;
-        if( tryScarce() != RET_SUCCESS )
+        }
+        if( tryScarce() != RET_SUCCESS ) {
             break;
+        }
     }
 
 #else

@@ -182,7 +182,6 @@ extern void PreProcInit( void )
     atStartOfLine = EOL;
     doingPreProc = FALSE;
 
-
     curNest.skip2endif = FALSE;
     curNest.skip = FALSE;
     curNest.elseFound = FALSE;
@@ -208,8 +207,9 @@ STATIC STRM_T eatWhite( void )
     STRM_T  t;
 
     t = PreGetCH();
-    while( isws( t ) )
+    while( isws( t ) ) {
         t = PreGetCH();
+    }
 
     return( t );
 }
@@ -225,8 +225,9 @@ STATIC STRM_T eatToEOL( void )
     STRM_T  t;
 
     t = PreGetCH();
-    while( t != EOL && t != STRM_END )
+    while( t != EOL && t != STRM_END ) {
         t = PreGetCH();
+    }
 
     return( t );
 }
@@ -713,8 +714,9 @@ STATIC void bangDefine( void )
 static char *skipWhileWS( char *p )
 {
     for( ; *p != '\0'; ++p ) {
-        if( !isws( *p ) )
+        if( !isws( *p ) ) {
             break;
+        }
     }
     return( p );
 }
@@ -722,8 +724,9 @@ static char *skipWhileWS( char *p )
 static char *skipUntilWS( char *p )
 {
     for( ; *p != '\0'; ++p ) {
-        if( isws( *p ) )
+        if( isws( *p ) ) {
             break;
+        }
     }
     return( p );
 }
@@ -1058,8 +1061,7 @@ STATIC void handleBang( void )
                 break;
             }
         } else {
-            /* otherwise, we just eat it up */
-            (void)eatToEOL();
+            (void)eatToEOL(); /* otherwise, we just eat it up */
         }
     }
 }
@@ -1176,13 +1178,15 @@ extern STRM_T PreGetCH( void )
                 t = GetCHR();
                 if( t != EOL ) {
                     lastChar = UNIX_LINECONT;
-                    if( skip )
+                    if( skip ) {
                         continue;       /* already have next char */
+                    }
                     UnGetCH( t );
                     return( UNIX_LINECONT );
                 } else {
-                    if( skip )
+                    if( skip ) {
                         continue;       /* already have next char */
+                    }
                     UnGetCH( TMP_EOL );
                 }
             } else {
@@ -1191,13 +1195,15 @@ extern STRM_T PreGetCH( void )
                     lastChar == '[' || lastChar == ']' ) {
                            /* nope... restore state */
                     lastChar = LINECONT;
-                    if( skip )
+                    if( skip ) {
                         continue;       /* already have next char */
+                    }
                     UnGetCH( t );
                     return( LINECONT );
                 } else {
-                    if( skip )
+                    if( skip ) {
                         continue;       /* already have next char */
+                    }
                     UnGetCH( TMP_EOL );
                 }
             }
@@ -1219,7 +1225,7 @@ STATIC char *removeWhiteSP( char *inString )
 }
 
 
-STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index)
+STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index )
 {
     switch( type ) {
         case OP_COMPLEMENT:
@@ -1258,7 +1264,7 @@ STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index)
 }
 
 
-STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index)
+STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
 {
     int_32      value;
     char        *currentChar;
@@ -1274,7 +1280,7 @@ STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index)
         c = currentChar[0];
         if( c == 'x'  ||  c == 'X' ) {          // hex number
             ++currentChar;
-            value = makeHexNumber(currentChar,&hexLength);
+            value = makeHexNumber( currentChar, &hexLength );
             currentChar += hexLength;
         } else {                                // octal number
             while( c >= '0'  &&  c <= '7' ) {
@@ -1351,7 +1357,6 @@ STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
                 break;
             default:
             current->data.string[currentIndex] = inString[inIndex];
-
         }
 
         if( current->type == OP_ERROR ) {
@@ -1406,92 +1411,115 @@ STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength)
         currentString[index] != NULLCHAR ||
         currentString[index] != COMMENT ) {
         switch( currentString[index] ) {
-            case COMPLEMENT:     makeToken( OP_COMPLEMENT, current, &index );
-                                 break;
-            case ADD:            makeToken( OP_ADD, current, &index );
-                                 break;
-            case SUBTRACT:       makeToken( OP_SUBTRACT, current, &index );
-                                 break;
-            case MULTIPLY:       makeToken( OP_MULTIPLY, current, &index );
-                                 break;
-            case DIVIDE:         makeToken( OP_DIVIDE, current, &index );
-                                 break;
-            case MODULUS:        makeToken( OP_MODULUS, current, &index );
-                                 break;
-            case BIT_XOR:        makeToken( OP_BIT_XOR, current, &index );
-                                 break;
-            case PAREN_LEFT:     makeToken( OP_PAREN_LEFT, current, &index );
-                                 break;
-            case PAREN_RIGHT:    makeToken( OP_PAREN_RIGHT, current, &index );
-                                 break;
-            case LOG_NEGATION:
-                switch( currentString[index + 1] ) {
-                   case EQUAL:   makeToken( OP_INEQU, current, &index );
-                                 break;
-                   default:      makeToken( OP_LOG_NEGATION, current, &index );
-                                 break;
-                }
-                break;
-            case BIT_AND:
-                switch( currentString[index + 1] ) {
-                   case BIT_AND: makeToken( OP_LOG_AND, current, &index );
-                                 break;
-                   default:      makeToken( OP_BIT_AND, current, &index );
-                                 break;
-                }
-                break;
-            case BIT_OR:
-                switch( currentString[index + 1] ) {
-                   case BIT_OR:  makeToken( OP_LOG_OR, current, &index );
-                                 break;
-                   default:      makeToken( OP_BIT_OR, current, &index );
-                                 break;
-                }
-                break;
-            case LESSTHAN:
-                switch( currentString[index + 1] ) {
-                   case LESSTHAN: makeToken( OP_SHIFT_LEFT, current, &index );
-                                  break;
-                   case EQUAL:    makeToken( OP_LESSEQU, current, &index );
-                                  break;
-                   default:       makeToken( OP_LESSTHAN, current, &index );
-                                  break;
-                }
-                break;
-            case GREATERTHAN:
-                switch( currentString[index + 1] ) {
-                   case GREATERTHAN: makeToken( OP_SHIFT_RIGHT, current, &index );
-                                     break;
-                   case EQUAL:       makeToken( OP_GREATEREQU, current, &index );
-                                     break;
-                   default:          makeToken( OP_GREATERTHAN, current, &index );
-                                     break;
-                }
-                break;
+        case COMPLEMENT:
+            makeToken( OP_COMPLEMENT, current, &index );
+            break;
+        case ADD:
+            makeToken( OP_ADD, current, &index );
+            break;
+        case SUBTRACT:
+            makeToken( OP_SUBTRACT, current, &index );
+            break;
+        case MULTIPLY:
+            makeToken( OP_MULTIPLY, current, &index );
+            break;
+        case DIVIDE:
+            makeToken( OP_DIVIDE, current, &index );
+            break;
+        case MODULUS:
+            makeToken( OP_MODULUS, current, &index );
+            break;
+        case BIT_XOR:
+            makeToken( OP_BIT_XOR, current, &index );
+            break;
+        case PAREN_LEFT:
+            makeToken( OP_PAREN_LEFT, current, &index );
+            break;
+        case PAREN_RIGHT:
+            makeToken( OP_PAREN_RIGHT, current, &index );
+            break;
+        case LOG_NEGATION:
+            switch( currentString[index + 1] ) {
             case EQUAL:
-                switch( currentString[index + 1] ) {
-                    case EQUAL: makeToken( OP_EQUAL, current, &index );
-                                break;
-                    default:
-                         makeToken( OP_ERROR, current, &index );
-                         break;
-
-                }
-                break;
-            case DOUBLEQUOTE: makeStringToken( currentString, current, &index );
+                makeToken( OP_INEQU, current, &index );
                 break;
             default:
-                if( currentString[index] >= '0' && currentString[index] <= '9') {
-                    makeNumberToken( currentString, current, &index );
-                } else {
-                    // parses only to get alphanumeric characters for
-                    // purpose of getting special functions ie. EXIST,
-                    // defined
-                    // if special characters are needed
-                    // enclose in quotes
-                    makeAlphaToken( currentString, current, &index );
-                }
+                makeToken( OP_LOG_NEGATION, current, &index );
                 break;
+            }
+            break;
+        case BIT_AND:
+            switch( currentString[index + 1] ) {
+            case BIT_AND:
+                makeToken( OP_LOG_AND, current, &index );
+                break;
+            default:
+                makeToken( OP_BIT_AND, current, &index );
+                break;
+            }
+            break;
+        case BIT_OR:
+            switch( currentString[index + 1] ) {
+            case BIT_OR:
+                makeToken( OP_LOG_OR, current, &index );
+                break;
+            default:
+                makeToken( OP_BIT_OR, current, &index );
+                break;
+            }
+            break;
+        case LESSTHAN:
+            switch( currentString[index + 1] ) {
+            case LESSTHAN:
+                makeToken( OP_SHIFT_LEFT, current, &index );
+                break;
+            case EQUAL:
+                makeToken( OP_LESSEQU, current, &index );
+                break;
+            default:
+                makeToken( OP_LESSTHAN, current, &index );
+                break;
+            }
+            break;
+        case GREATERTHAN:
+            switch( currentString[index + 1] ) {
+            case GREATERTHAN:
+                makeToken( OP_SHIFT_RIGHT, current, &index );
+                break;
+            case EQUAL:
+                makeToken( OP_GREATEREQU, current, &index );
+                break;
+            default:
+                makeToken( OP_GREATERTHAN, current, &index );
+                break;
+            }
+            break;
+        case EQUAL:
+            switch( currentString[index + 1] ) {
+            case EQUAL:
+                makeToken( OP_EQUAL, current, &index );
+                break;
+            default:
+                makeToken( OP_ERROR, current, &index );
+                break;
+
+            }
+            break;
+        case DOUBLEQUOTE:
+            makeStringToken( currentString, current, &index );
+            break;
+        default:
+            if( currentString[index] >= '0' && currentString[index] <= '9') {
+                makeNumberToken( currentString, current, &index );
+            } else {
+                // parses only to get alphanumeric characters for
+                // purpose of getting special functions ie. EXIST,
+                // defined
+                // if special characters are needed
+                // enclose in quotes
+                makeAlphaToken( currentString, current, &index );
+            }
+            break;
         }
     } else {
         makeToken( OP_ENDOFSTRING, current, &index );
@@ -1667,12 +1695,12 @@ STATIC void equalExpr( DATAVALUE *leftVal )
             if( leftVal->type == rightVal.type ) {
                 switch( leftVal->type ) {
                 case OP_INTEGER:
-                    leftVal->data.number = (leftVal->data.number ==
-                                           rightVal.data.number);
+                    leftVal->data.number =
+                        (leftVal->data.number == rightVal.data.number);
                     break;
                 case OP_STRING:
-                    leftVal->data.number = (strcmp( leftVal->data.string,
-                                             rightVal.data.string ) == 0);
+                    leftVal->data.number =
+                        !strcmp( leftVal->data.string, rightVal.data.string );
                     leftVal->type = OP_INTEGER;
                     break;
                 default:
@@ -1688,12 +1716,12 @@ STATIC void equalExpr( DATAVALUE *leftVal )
             if( leftVal->type == rightVal.type ) {
                 switch( leftVal->type ) {
                 case OP_INTEGER:
-                    leftVal->data.number = (leftVal->data.number !=
-                                           rightVal.data.number);
+                    leftVal->data.number =
+                        (leftVal->data.number != rightVal.data.number);
                     break;
                 case OP_STRING:
-                    leftVal->data.number = (strcmp( leftVal->data.string,
-                                             rightVal.data.string ) != 0);
+                    leftVal->data.number =
+                        !!strcmp( leftVal->data.string, rightVal.data.string );
                     leftVal->type = OP_INTEGER;
                     break;
                 default:
@@ -1790,7 +1818,6 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
             } else {
                 leftValue->type = OP_ERROR;
             }
-
         } else if( currentToken.type == OP_SHIFT_RIGHT ) {
             nextToken();
             addExpr( &rightValue );

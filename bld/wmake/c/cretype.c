@@ -101,16 +101,34 @@ void main( void )
             printf( ",\n/*   0x%02x   */  ", i );
         }
 
-        if( isws( i ) )     BAR( IS_WS    );
-        if( isprt( i ) )    BAR( IS_PRINT );
-        if( isalpha( i ) )  BAR( IS_ALPHA );
-        if( isextc( i ) )   BAR( IS_EXTC  );
-        if( isdirc( i ) )   BAR( IS_DIRC  );
-        if( isfilec( i ) )  BAR( IS_FILEC );
-        if( ismacc( i ) )   BAR( IS_MACC );
-        if( isbarf( i ) )   BAR( IS_BARF );
+        if( isws( i ) ) {
+            BAR( IS_WS    );
+        }
+        if( isprt( i ) ) {
+            BAR( IS_PRINT );
+        }
+        if( isalpha( i ) ) {
+            BAR( IS_ALPHA );
+        }
+        if( isextc( i ) ) {
+            BAR( IS_EXTC  );
+        }
+        if( isdirc( i ) ) {
+            BAR( IS_DIRC  );
+        }
+        if( isfilec( i ) ) {
+            BAR( IS_FILEC );
+        }
+        if( ismacc( i ) ) {
+            BAR( IS_MACC );
+        }
+        if( isbarf( i ) ) {
+            BAR( IS_BARF );
+        }
 
-        if( noneyet )   printf( "0" );
+        if( noneyet ) {
+            printf( "0" );
+        }
     }
 
     /*printf("\n};\n");*/

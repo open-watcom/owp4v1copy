@@ -132,8 +132,8 @@ static long int orlSeek( void *handle, long int offset, int mode )
 }
 
 
-void AutoORLInit()
-/****************/
+void AutoORLInit( void )
+/**********************/
 {
     static orl_funcs    funcs = { orlRead, orlSeek, MallocSafe, FreeSafe };
 

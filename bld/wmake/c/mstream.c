@@ -204,8 +204,9 @@ STATIC BOOLEAN fillBuffer( void )
 
     tmp = headSent;
 
-    if( tmp->data.file.nestLevel == -1 )
+    if( tmp->data.file.nestLevel == -1 ) {
         tmp->data.file.nestLevel = GetNestLevel();
+    }
 
     tmp->data.file.cur = tmp->data.file.buf;
 
@@ -355,10 +356,11 @@ extern STRM_T GetCHR( void )
             result = *(head->data.file.cur++);
             if( isbarf( result ) ) {
                 /* ignore \r in \r\n */
-                if( result == '\r' && head->data.file.cur[0] == EOL )
+                if( result == '\r' && head->data.file.cur[0] == EOL ) {
                     result = *(head->data.file.cur++);
-                else
+                } else {
                     PrtMsg( FTL | LOC | BARF_CHARACTER, result );
+                }
             }
             if( result == '\f' ) {
                 result = EOL;
@@ -443,13 +445,15 @@ extern RET_T GetFileLine( const char **pname, UINT16 *pline )
 
     cur = headSent;
     while( cur != NULL ) {
-        if( cur->type == SENT_FILE )
+        if( cur->type == SENT_FILE ) {
             break;
+        }
         cur = cur->next;
     }
 
-    if( cur == NULL )
+    if( cur == NULL ) {
         return( RET_ERROR );
+    }
 
     /*
      * Because we do a line++ when we return a {nl}, we have to check if

@@ -71,7 +71,6 @@ STATIC handle RESInitFile( const char *name )
 STATIC dep_handle RESFirstDep( dep_handle file )
 /**********************************************/
 {
-
     return( file );
 }
 
@@ -104,9 +103,8 @@ STATIC handle RESNextDep( dep_handle f )
 
 
 STATIC void RESFiniFile( handle file )
-/***************************************/
+/************************************/
 {
-
     WResFreeAutoDep( ((res_info *)file)->first );
 }
 

@@ -470,11 +470,13 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate)
  */
 {
     getDate( targ );
-    if( targ->existing && targ->attr.existsonly )
+    if( targ->existing && targ->attr.existsonly ) {
         return( RET_SUCCESS );
+    }
     getDate( deptarg );
-    if( targ->existing && deptarg->existing && deptarg->attr.existsonly )
+    if( targ->existing && deptarg->existing && deptarg->attr.existsonly ) {
         return( RET_SUCCESS );
+    }
     if( dateCmp( targ->date, deptarg->date ) < 0 ) {
         *outofdate = TRUE;
         if( Glob.show_offenders ) {
@@ -562,8 +564,8 @@ STATIC RET_T implyMaybePerform( TARGET *targ, TARGET *imptarg,
 
 
 STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
-                    const char *fname, const char *ext, BOOLEAN must )
-/*********************************************************************
+    const char *fname, const char *ext, BOOLEAN must )
+/********************************************************************
  * targ     is the target to be implied
  * drive    is the drive of the target
  * dir      is the path of the target
@@ -721,11 +723,8 @@ STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
          */
         if( targExists( imptarg ) ) {
             /* it exists - now we perform the implicit cmd list, and return */
-            ret = implyMaybePerform( targ,
-                                     imptarg,
-                                     cur->cretarg,
-                                     must,
-                                     slistCmd );
+            ret = implyMaybePerform( targ, imptarg, cur->cretarg, must,
+                slistCmd );
             if( newtarg && !Glob.noexec ) {
                 /* destroy the implied target, because the info in the target
                  * structure is nicely stored on disk (unless Glob.noexec)
@@ -767,7 +766,7 @@ STATIC RET_T tryImply( TARGET *targ, BOOLEAN must )
 
 
 STATIC void ExpandWildCards ( TARGET* targ, DEPEND *depend )
-/************************************************************
+/***********************************************************
  * Expand the wild cards now
  * also deMacroSpecial macros
  */
@@ -784,8 +783,7 @@ STATIC void ExpandWildCards ( TARGET* targ, DEPEND *depend )
    currentEnd = outTList = NULL;
    while( tlist != NULL ) {
        temp = NULL;
-       // In Microsoft it is possible to have macros in the
-       // dependency.
+       // In Microsoft it is possible to have macros in the dependency.
        if( Glob.microsoft ) {
            exPush( targ, NULL, NULL );
            NodeName = DeMacroSpecial( tlist->target->node.name );

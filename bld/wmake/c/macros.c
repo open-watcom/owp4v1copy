@@ -85,7 +85,7 @@ STATIC char     *dirBuf;
  * in ms nmake at which it deMacros the macros latter on in time
  */
 
-BOOLEAN     ImplicitDeMacro;
+BOOLEAN         ImplicitDeMacro;
 
 
 /*
@@ -93,9 +93,9 @@ BOOLEAN     ImplicitDeMacro;
  *   everything except for special DeMacro characters
  *
  */
-BOOLEAN     IsPartDeMacro;
+BOOLEAN         IsPartDeMacro;
 
-BOOLEAN     DoingBuiltIn;   /* Are we parsing builtin macros            */
+BOOLEAN         DoingBuiltIn;   /* Are we parsing builtin macros            */
 
 #ifdef CLEAN_ENVIRONMENT_VAR
 /* This contains the old environment values before wmake actually */
@@ -269,10 +269,9 @@ STATIC char *findEqual( const char *inString )
     return( ret );
 }
 
-STATIC RET_T getOldNewString( const char * inString,
-                              char **oldString,
-                              char **newString )
-/**************************************************/
+STATIC RET_T getOldNewString( const char * inString, char **oldString,
+    char **newString )
+/********************************************************************/
 {
     char    *equal;
 
@@ -289,7 +288,7 @@ STATIC RET_T getOldNewString( const char * inString,
 }
 
 STATIC char *doStringSubstitute( const char *name, const char *oldString,
-                                 const char *newString)
+    const char *newString )
 /************************************************************************
  *   $(macroname:oldstr=newstr)
  *   substitute any occurence of oldstr with new str
@@ -533,7 +532,7 @@ extern BOOLEAN IsMacroName( const char *inName )
  * an error message
  */
 {
-    char    buffer[MAX_MAC_NAME + 1];   // contains the macro name with the string
+    char    buffer[MAX_MAC_NAME + 1];   // contains the macro name and string
                                         // substitution character ":" removed
     char    *name;
     char    *current;
@@ -706,8 +705,7 @@ extern char *DeMacroSpecial( char* InString)
 STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 );
 
 
-STATIC char *ProcessToken( int depth, TOKEN_T end1,
-                           TOKEN_T end2, TOKEN_T t )
+STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
 /***************************************************
  * Processes the tokens returned from lexToken in deMacroToEnd
  */
@@ -1088,8 +1086,8 @@ STATIC char *PartDeMacroProcess( void )
 {
     VECSTR  vec   = NULL;      /* vector for macro defn                */
     VECSTR  wsvec = NULL;      /* vector to hold ws                    */
-    BOOLEAN holdws;     /* holding ws from last time through    */
-    BOOLEAN leadingws;  /* still trimming leading ws            */
+    BOOLEAN holdws;            /* holding ws from last time through    */
+    BOOLEAN leadingws;         /* still trimming leading ws            */
     TOKEN_T t;
 
     vec = StartVec();
@@ -1156,8 +1154,8 @@ extern BOOLEAN ForceDeMacro ( void )
     return( Glob.microsoft && !ImplicitDeMacro );
 }
 
-extern char *PartDeMacro( BOOLEAN ForceDeMacro)
-/**********************************************
+extern char *PartDeMacro( BOOLEAN ForceDeMacro )
+/***********************************************
  * the addition of microsoft option needs this option
  * since MACROS are always fully expanded sequentially
  * ForceDeMacro if set true will force full Demacro
@@ -1189,9 +1187,8 @@ extern char *PartDeMacro( BOOLEAN ForceDeMacro)
 }
 
 
-STATIC int CompareNMacroName (const char *name1,
-                              const char *name2,
-                              size_t len)
+STATIC int CompareNMacroName( const char *name1, const char *name2, size_t len )
+/******************************************************************************/
 {
     if( Glob.microsoft ) {
         return( strncmp( name1, name2, len ) );
@@ -1395,7 +1392,9 @@ extern void PrintMacros( void )
 }
 
 #ifdef CLEAN_ENVIRONMENT_VAR
-STATIC void restoreEnvironment( void ) {
+STATIC void restoreEnvironment( void )
+/************************************/
+{
     ELIST   *current;
     VECSTR  EnvString;
 
