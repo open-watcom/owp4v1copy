@@ -4,7 +4,7 @@
 
 all: wcl.exe wcl386.exe wclaxp.exe
 
-dependents = ..\wcl.c ..\wclhelp.h ..\wclmsg.h
+dependents = ../wcl.c ../wclhelp.h ../wclmsg.h
 c_flags = $(cflags_$(host_os)) -i"$(inc_path)" -d1
 
 !ifeq host_os dos
@@ -39,6 +39,6 @@ wcl386.obj : $(dependents)
 wclaxp.obj : $(dependents)
         $(cc) $[@ -fo=$^@ $(c_flags) -dWCLAXP
 
-swchar.obj: ..\..\c\swchar.c
-        $(cc) $[@ $(c_flags) -i..\..\h
+swchar.obj: ../../c/swchar.c
+        $(cc) $[@ $(c_flags) -i"../../h"
 
