@@ -94,5 +94,6 @@ extern void SemanticInitStatics( void );
 #include "semver.h"
 #include "semtbar.h"
 #include "semresfl.h"
+#include "semhelp.h"
 
 #endif

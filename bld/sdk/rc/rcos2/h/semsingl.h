@@ -100,7 +100,8 @@ typedef struct BitmapFileHeader {
 } BitmapFileHeader;
 #pragma pack()
 
-#define BITMAP_MAGIC    0x4d42      /* this is letters BM */
+#define BITMAP_MAGIC    0x4d42      /* the letters BM */
+#define BMARRAY_MAGIC   0x4142      /* the letters BA */
 
 typedef struct FullFontDirEntry {
     struct FullFontDirEntry *   Next;
@@ -123,5 +124,8 @@ extern void ReportCopyError( RcStatus status, int read_msg, char *filename,
 extern void SemAddMessageTable( WResID *name, ScanString *filename );
 extern RcStatus CopyData( uint_32 offset, uint_32 length, int handle,
                           void *buff, int buffsize, int *err_code );
+
+extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
+                       FullMemFlags * fullflags, char * filename );
 
 #endif

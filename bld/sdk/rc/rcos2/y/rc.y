@@ -153,8 +153,19 @@
 %type <fullmemflags>    resource-options
 %type <token>           resource-option
 %type <string>          file-name
+%type <acceltable>      acc-section
+%type <accevent>        acc-event
+%type <integral>        acc-cmd
 %type <accflags>        acc-item-option
 %type <accflags>        acc-item-options
+%type <accelfullentry>  acc-item
+%type <acceltable>      acc-items
+%type <helptable>       help-table-section
+%type <helptable>       help-items
+%type <helpfullentry>   help-item
+%type <helpsubtable>    help-subitems
+%type <helpsubtable>    help-subtable-section
+%type <dataelem>        help-subitem
 %type <menuflags>       menu-item-options
 %type <token>           menu-item-option
 %type <menuptr>         menu-section
@@ -205,7 +216,7 @@
 %type <diagctrl>        valueset-stmt
 %type <diagctrl>        icon-stmt
 %type <diagctrl>        control-stmt
-%type <nameorord>       icon-name
+%type <nameorord>       control-name
 %type <diagctrlopts>    icon-parms
 %type <integral>        cntl-id
 %type <resid>           cntl-text
@@ -216,10 +227,12 @@
 %type <strtable>        string-items
 %type <strtable>        string-section
 %type <rawitem>         raw-data-item
+%type <rawitem>         raw-numeric-data-item
 %type <resloc>          user-defined-data
 %type <token>           resource-type
 %type <dataelem>        raw-data-section
 %type <dataelem>        raw-data-items
+%type <dataelem>        raw-numeric-data-items
 %type <integral>        menu-id
 %type <integral>        menuitem-style
 %type <integral>        menuitem-attrib
@@ -241,6 +254,7 @@ resources
 resource
     : normal-resource
     | string-table-resource
+    | message-table-resource
     | pragma-statment
     ;
 
@@ -249,8 +263,10 @@ normal-resource
     | rcdata-resource
     | user-defined-resource
     | menu-resource
+    | accel-table-resource
+    | help-table-resource
+    | help-subtable-resource
     | dlg-template
-    | message-table-resource
     | dlginclude-resource
     ;
 
@@ -560,6 +576,20 @@ raw-data-item
         { $$.IsString = FALSE; $$.Item.Num = $1.Value; }
     ;
 
+raw-numeric-data-items
+    : raw-numeric-data-item
+        { $$ = SemNewDataElemList( $1 ); }
+    | raw-numeric-data-items raw-numeric-data-item
+        { $$ = SemAppendDataElem( $1, $2 ); }
+    | raw-numeric-data-items Y_COMMA
+        { $$ = $1; }
+    ;
+
+raw-numeric-data-item
+    : constant-expression
+        { $$.IsString = FALSE; $$.Item.Num = $1.Value; }
+    ;
+
 rcdata-resource
     : Y_RCDATA name-id user-defined-data
         {
@@ -577,21 +607,28 @@ rcdata-resource
 string-table-resource
     : Y_STRINGTABLE string-section
         {
-            SemMergeStrTable( $2,
+            SemOS2MergeStrTable( $2,
                 MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE );
         }
     | Y_STRINGTABLE resource-options string-section
         {
             SemCheckMemFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemMergeStrTable( $3, $2.flags );
+            SemOS2MergeStrTable( $3, $2.flags );
         }
     ;
 
 message-table-resource
-    : name-id Y_MESSAGETABLE file-name
+    : Y_MESSAGETABLE string-section
         {
-            SemAddMessageTable( $1, &$3 );
+            SemOS2MergeMsgTable( $2,
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE );
+        }
+    | Y_MESSAGETABLE resource-options string-section
+        {
+            SemCheckMemFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+                            MEMFLAG_PURE );
+            SemOS2MergeMsgTable( $3, $2.flags );
         }
     ;
 
@@ -605,13 +642,13 @@ string-section
 string-items
     : string-item
         {
-            $$ = SemNewStringTable();
-            SemAddStrToStringTable( $$, $1.ItemID, $1.String );
+            $$ = SemOS2NewStringTable();
+            SemOS2AddStrToStringTable( $$, $1.ItemID, $1.String );
             RcMemFree( $1.String );
         }
     | string-items string-item
         {
-            SemAddStrToStringTable( $1, $2.ItemID, $2.String );
+            SemOS2AddStrToStringTable( $1, $2.ItemID, $2.String );
             $$ = $1;
             RcMemFree( $2.String );
         }
@@ -632,17 +669,74 @@ id-value
         { $$ = $1.Value; }
     ;
 
+help-table-resource
+    : Y_HELPTABLE name-id help-table-section
+        {
+            SemOS2WriteHelpTable( $2,
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $3 );
+        }
+    ;
+
+help-table-section
+    : Y_BEGIN help-items Y_END
+        { $$ = $2; }
+    | Y_LBRACE help-items Y_RBRACE
+        { $$ = $2; }
+    ;
+
+help-items
+    : help-item
+        { $$ = SemOS2NewHelpTable( $1 ); }
+    | help-items help-item
+        { $$ = SemOS2AddHelpItem( $2, $1 ); }
+    ;
+
+help-item
+    : Y_HELPITEM id-value comma-opt id-value comma-opt id-value comma-opt
+        { $$ = SemOS2MakeHelpItem( $2, $4, $6 ); }
+    ;
+
+help-subtable-resource
+    : Y_HELPSUBTABLE name-id help-subtable-section
+        {
+            SemOS2WriteHelpSubTable( $2, 2,
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $3 );
+        }
+    | Y_HELPSUBTABLE name-id Y_SUBITEMSIZE constant-expression help-subtable-section
+        {
+            SemOS2WriteHelpSubTable( $2, $4.Value,
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $5 );
+        }
+    ;
+
+help-subtable-section
+    : Y_BEGIN help-subitems Y_END
+        { $$ = $2; }
+    | Y_LBRACE help-subitems Y_RBRACE
+        { $$ = $2; }
+    ;
+
+help-subitems
+    : help-subitem
+        { $$ = SemOS2NewHelpSubTable( $1 ); }
+    | help-subitems help-subitem
+        { $$ = SemOS2AddHelpSubItem( $2, $1 ); }
+    ;
+
+help-subitem
+    : Y_HELPSUBITEM raw-numeric-data-items
+        { $$ = $2; }
+    ;
+
 accel-table-resource
     : Y_ACCELTABLE name-id acc-section
         {
-/* TODO           SemMergeAccTable( $2, $3,
-                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE ); */
+            SemOS2WriteAccelTable( $2, MEMFLAG_PURE | MEMFLAG_MOVEABLE, $3 );
         }
     | Y_ACCELTABLE name-id resource-options acc-section
         {
-            SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
-                            MEMFLAG_PURE );
-/* TODO           SemMergeAccTable( $2, $4, $3.flags );*/
+            SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
+            SemOS2WriteAccelTable( $2, $3.flags, $4 );
         }
     ;
 
@@ -655,40 +749,43 @@ acc-section
 
 acc-items
     : acc-item
-        {
-/*            $$ = SemNewAccelTable();
-            SemAddStrToAccelTable( $$, $1.ItemID, $1.String );
-            RcMemFree( $1.String ); */
-        }
+        { $$ = SemOS2NewAccelTable( $1 ); }
     | acc-items acc-item
-        {
-/*
-            SemAddStrToAccelTable( $1, $2.ItemID, $2.String );
-            $$ = $1;
-            RcMemFree( $2.String );*/
-        }
+        { $$ = SemOS2AddAccelEntry( $2, $1 ); }
     ;
 
 acc-item
-    : acc-key Y_COMMA acc-cmd Y_COMMA acc-item-options
-        { $$ = $1; }    /* TODO */
+    : acc-event comma-opt acc-cmd
+        { $$ = SemOS2MakeAccItem( $1, $3, DefaultAccelFlagsOS2 ); }
+    | acc-event comma-opt acc-cmd comma-opt acc-item-options
+        { $$ = SemOS2MakeAccItem( $1, $3, $5 ); }
     ;
 
-acc-key
-    : constant-expression
-        { /* TODO $$ = $1.Value;*/ }
+acc-event
+    : string-constant
+        {
+            $$.event = SemStrToAccelEvent( $1.string );
+            $$.strevent = TRUE;
+            RcMemFree( $1.string );
+        }
+    | constant-expression
+        {
+            $$.event = $1.Value;
+            $$.strevent = FALSE;
+        }
     ;
+
 acc-cmd
     : constant-expression
-        { /* TODO $$ = $1.Value; */ }
+        { $$ = $1.Value; }
     ;
 
 acc-item-options
     : acc-item-option
     | acc-item-options comma-opt acc-item-option
         {
-            if ($3.flags == ACCEL_ASCII) {
-                $$.flags = $1.flags & ~ACCEL_VIRTKEY;
+            if ($3.flags == OS2_ACCEL_CHAR) {
+                $$.flags = $1.flags & ~OS2_ACCEL_VIRTUALKEY;
             } else {
                 $$.flags = $1.flags | $3.flags;
             }
@@ -696,26 +793,25 @@ acc-item-options
         }
     ;
 
-/* TODO!!! */
 acc-item-option
     : Y_ALT
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_ALT;  $$.typegiven = FALSE; }
     | Y_CHAR
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_CHAR; $$.typegiven = FALSE; }
     | Y_CONTROL
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_CTRL; $$.typegiven = FALSE; }
     | Y_HELP
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_HELP; $$.typegiven = FALSE; }
     | Y_LONEKEY
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_LONEKEY; $$.typegiven = FALSE; }
     | Y_SCANCODE
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_SCANCODE; $$.typegiven = FALSE; }
     | Y_SHIFT
-        { $$.flags = ACCEL_SHIFT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_SHIFT; $$.typegiven = FALSE; }
     | Y_SYSCOMMAND
-        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
+        { $$.flags = OS2_ACCEL_SYSCOMMAND; $$.typegiven = FALSE; }
     | Y_VIRTUALKEY
-        { $$.flags = ACCEL_ALT; $$.typegiven = TRUE; }
+        { $$.flags = OS2_ACCEL_VIRTUALKEY; $$.typegiven = TRUE; }
     ;
 
 menu-resource
@@ -937,9 +1033,9 @@ ctl-class-name
         { $$ = ResNumToNameOrOrd( $1.Value | 0x80 ); }
     /* A little hack - OS/2 standard window classes are defined like this:
        #define WC_BUTTON ((PSZ)0xffff0003L)
-       Since PSZ doesn't mean anything to RC, it won't recognize the
+       Since PSZ doesn't mean anything to wrc, it won't recognize the
        constant. So we add a special case to get rid of the PSZ. Not very
-       clean but works.
+       clean but does the job.
      */
     | Y_LPAREN Y_LPAREN Y_PSZ Y_RPAREN constant-expression Y_RPAREN
         { $$ = ResNumToNameOrOrd( $5.Value | 0x80 ); }
@@ -1140,11 +1236,11 @@ valueset-stmt
     ;
 
 icon-stmt
-    : Y_ICON icon-name comma-opt cntl-id comma-opt icon-parms
+    : Y_ICON control-name comma-opt cntl-id comma-opt icon-parms
         { $6.Text = $2; $6.ID = $4; $$ = SemOS2NewDiagCtrl( Y_ICON, $6 ); }
     ;
 
-icon-name
+control-name
     : name-id
         { $$ = WResIDToNameOrOrd( $1 ); RcMemFree( $1 ); }
     ;
@@ -1177,20 +1273,16 @@ icon-parms
     ;
 
 control-stmt
-    : Y_CONTROL string-constant comma-opt cntl-id comma-opt size-info comma-opt
+    : Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
                 ctl-class-name
         {
             IntMask mask = {0};
-            $$ = SemOS2SetControlData( ResStrToNameOrOrd( $2.string ),
-                                       $4, $6, $8, mask, NULL );
-            RcMemFree( $2.string );
+            $$ = SemOS2SetControlData( $2, $4, $6, $8, mask, NULL );
         }
-    | Y_CONTROL string-constant comma-opt cntl-id comma-opt size-info comma-opt
+    | Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
                 ctl-class-name comma-opt cntl-style
         {
-            $$ = SemOS2SetControlData( ResStrToNameOrOrd( $2.string ),
-                                       $4, $6, $8, $10, NULL );
-            RcMemFree( $2.string );
+            $$ = SemOS2SetControlData( $2, $4, $6, $8, $10, NULL );
         }
     ;
 

@@ -181,7 +181,9 @@ static void copyMSFormatRes( WResID * name, WResID * type, ResMemFlags flags,
     ms_head.DataVersion = 0L;
     ms_head.Characteristics = 0L; /* Currently Unsupported */
 
-    if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN16 ) {
+    /* OS/2 resource header happens to be identical to Win16 */
+    if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN16 ||
+        CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
         error = MResWriteResourceHeader( &ms_head, CurrResFile.handle, FALSE );
     } else {
         error = MResWriteResourceHeader( &ms_head, CurrResFile.handle, TRUE );
@@ -466,131 +468,173 @@ extern char *SemTokenToString( uint_8 token )
     case Y_COMMA:
         return( "," );
         break;
+    case Y_ACCELTABLE:
+        return( "ACCELTABLE" );
+        break;
     case Y_ALT:
-        return( "alt" );
+        return( "ALT" );
         break;
     case Y_AUTOCHECKBOX:
-        return( "autocheckbox" );
+        return( "AUTOCHECKBOX" );
         break;
     case Y_AUTORADIOBUTTON:
-        return( "autoradiobutton" );
+        return( "AUTORADIOBUTTON" );
         break;
     case Y_BEGIN:
-        return( "begin" );
+        return( "BEGIN" );
         break;
     case Y_BITMAP:
-        return( "bitmap" );
+        return( "BITMAP" );
         break;
     case Y_CHECKBOX:
-        return( "checkbox" );
+        return( "CHECKBOX" );
         break;
     case Y_CODEPAGE:
-        return( "code_page" );
+        return( "CODEPAGE" );
         break;
     case Y_COMBOBOX:
-        return( "combobox" );
+        return( "COMBOBOX" );
+        break;
+    case Y_CONTAINER:
+        return( "CONTAINER" );
         break;
     case Y_CONTROL:
-        return( "control" );
+        return( "CONTROL" );
         break;
     case Y_CTEXT:
-        return( "ctext" );
+        return( "CTEXT" );
+        break;
+    case Y_CTLDATA:
+        return( "CTLDATA" );
         break;
     case Y_CURSOR:
-        return( "cursor" );
+        return( "CURSOR" );
         break;
     case Y_DEFPUSHBUTTON:
-        return( "defpushbutton" );
+        return( "DEFPUSHBUTTON" );
         break;
     case Y_DIALOG:
-        return( "dialog" );
+        return( "DIALOG" );
         break;
     case Y_DISCARDABLE:
-        return( "discardable" );
+        return( "DISCARDABLE" );
         break;
     case Y_EDITTEXT:
-        return( "edittext" );
+        return( "EDITTEXT" );
         break;
     case Y_END:
-        return( "end" );
+       return( "END" );
+        break;
+    case Y_ENTRYFIELD:
+       return( "ENTRYFIELD" );
         break;
     case Y_FIXED:
-        return( "fixed" );
+        return( "FIXED" );
         break;
     case Y_FONT:
-        return( "font" );
+        return( "FONT" );
         break;
     case Y_GROUPBOX:
-        return( "groupbox" );
+        return( "GROUPBOX" );
         break;
     case Y_HELP:
-        return( "help" );
+        return( "HELP" );
+        break;
+    case Y_HELPITEM:
+        return( "HELPITEM" );
+        break;
+    case Y_HELPTABLE:
+        return( "HELPTABLE" );
+        break;
+    case Y_HELPSUBITEM:
+        return( "HELPSUBITEM" );
+        break;
+    case Y_HELPSUBTABLE:
+        return( "HELPSUBTABLE" );
         break;
     case Y_ICON:
-        return( "icon" );
+        return( "ICON" );
         break;
     case Y_IMPURE:
-        return( "impure" );
+        return( "IMPURE" );
         break;
     case Y_LISTBOX:
-        return( "listbox" );
+        return( "LISTBOX" );
         break;
     case Y_LOADONCALL:
-        return( "loadoncall" );
+        return( "LOADONCALL" );
+        break;
+    case Y_LONEKEY:
+        return( "LONEKEY" );
         break;
     case Y_LTEXT:
-        return( "ltext" );
+        return( "LTEXT" );
         break;
     case Y_MENU:
-        return( "menu" );
+        return( "MENU" );
         break;
     case Y_MENUITEM:
-        return( "menuitem" );
+        return( "MENUITEM" );
         break;
     case Y_MESSAGETABLE:
-        return( "messagetable" );
+        return( "MESSAGETABLE" );
+        break;
+    case Y_MLE:
+        return( "MLE" );
         break;
     case Y_MOVEABLE:
-        return( "moveable" );
+        return( "MOVEABLE" );
+        break;
+    case Y_NOT_KEYWORD:
+        return( "NOT" );
+        break;
+    case Y_NOTEBOOK:
+        return( "NOTEBOOK" );
         break;
     case Y_POUND_PRAGMA:
         return( "#pragma" );
         break;
     case Y_PRELOAD:
-        return( "preload" );
+        return( "PRELOAD" );
         break;
     case Y_PURE:
-        return( "pure" );
+        return( "PURE" );
         break;
     case Y_PUSHBUTTON:
-        return( "pushbutton" );
+        return( "PUSHBUTTON" );
         break;
     case Y_RADIOBUTTON:
-        return( "radiobutton" );
+        return( "RADIOBUTTON" );
         break;
     case Y_RCDATA:
-        return( "rcdata" );
+        return( "RCDATA" );
         break;
     case Y_RCINCLUDE:
-        return( "rcinclude" );
+        return( "RCINCLUDE" );
         break;
     case Y_RTEXT:
-        return( "rtext" );
+        return( "RTEXT" );
         break;
     case Y_SEPARATOR:
-        return( "separator" );
+        return( "SEPARATOR" );
         break;
     case Y_SHIFT:
-        return( "shift" );
+        return( "SHIFT" );
+        break;
+    case Y_SLIDER:
+        return( "SLIDER" );
+        break;
+    case Y_SPINBUTTON:
+        return( "SPINBUTTON" );
         break;
     case Y_STRINGTABLE:
-        return( "stringtable" );
+        return( "STRINGTABLE" );
         break;
     case Y_VALUESET:
-        return( "valueset" );
+        return( "VALUESET" );
         break;
     case Y_VIRTUALKEY:
-        return( "virtualkey" );
+        return( "VIRTUALKEY" );
         break;
     case 0:
         return( "end of file" );

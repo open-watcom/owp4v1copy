@@ -58,9 +58,13 @@ typedef union {
     IntMask                     maskint;
     ScanString                  string;
     WResID *                    resid;
-    FullAccelEntry              accelfullentry;
-    FullAccelFlags              accflags;
+    FullAccelEntryOS2           accelfullentry;
+    FullAccelFlagsOS2           accflags;
+    FullAccelTableOS2 *         acceltable;
     AccelEvent                  accevent;
+    FullHelpTableOS2 *          helptable;
+    FullHelpEntryOS2            helpfullentry;
+    FullHelpSubTableOS2 *       helpsubtable;
     ResLocation                 resloc;
     FullMemFlags                fullmemflags;
     MenuFlags                   menuflags;

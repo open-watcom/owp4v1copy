@@ -146,18 +146,20 @@ static void SemCheckMenuItemPopup( FullMenuItem *item, uint_16 tokentype )
 static void SemCheckMenuItemNormal( FullMenuItem *item, uint_16 tokentype )
 /*************************************************************************/
 {
+#if 0
     if( tokentype == Y_MENU ) {
-//        if( item->item.normal.type == MT_MENUEX ) {
-//            RcError( ERR_MENUEX_NORMAL_OPTIONS );
-//        } else if( item->item.normal.type == MT_MENUEX_NO_ID ) {
+        if( item->item.normal.type == MT_MENUEX ) {
+            RcError( ERR_MENUEX_NORMAL_OPTIONS );
+        } else if( item->item.normal.type == MT_MENUEX_NO_ID ) {
             RcError( ERR_MISSING_MENUITEM_ID );
-//        }
+        }
 
-//    } else if ( tokentype == Y_MENU_EX ) {
-//        if( item->item.normal.type == MT_MENU ) {
-//            RcError( ERR_MENU_NORMAL_OPTIONS );
-//        }
+    } else if ( tokentype == Y_MENU_EX ) {
+        if( item->item.normal.type == MT_MENU ) {
+            RcError( ERR_MENU_NORMAL_OPTIONS );
+        }
     }
+#endif
 }
 
 static int SemWriteMenuItem( FullMenuItem *item, int islastitem,

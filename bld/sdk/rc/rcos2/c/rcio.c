@@ -120,8 +120,10 @@ static int Pass1InitRes( void )
 
     if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN16 ) {
         WResSetTargetOS( CurrResFile.dir, WRES_OS_WIN16 );
-    } else {
+    } else if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
         WResSetTargetOS( CurrResFile.dir, WRES_OS_WIN32 );
+    } else {
+        WResSetTargetOS( CurrResFile.dir, WRES_OS_OS2 );
     }
 
     /* open the tempory file */
@@ -256,6 +258,9 @@ static int PreprocessInputFile( void )
     } else if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
         strcpy( rcdefine, "__NT__" );
         PP_Define( rcdefine );
+    } else if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
+        strcpy( rcdefine, "__OS2__" );
+        PP_Define( rcdefine );
     }
     cppargs = CmdLineParms.CPPArgs;
     if( cppargs != NULL ) {
@@ -293,6 +298,8 @@ extern int RcPass1IoInit( void )
             includepath = RcGetEnv( "WINDOWS_INCLUDE" );
         } else if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
             includepath = RcGetEnv( "NT_INCLUDE" );
+        } else if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
+            includepath = RcGetEnv( "OS2_INCLUDE" );
         }
     }
     if( includepath != NULL ) {
@@ -383,6 +390,22 @@ static void WriteTables( void )
     }
 }
 
+static void WriteOS2Tables( void )
+/********************************/
+{
+    if( CurrResFile.StringTable != NULL ) {
+        SemOS2WriteStringTable( CurrResFile.StringTable,
+                    WResIDFromNum( OS2_RT_STRING ) );
+    }
+    if( CurrResFile.ErrorTable != NULL ) {
+        SemOS2WriteStringTable( CurrResFile.ErrorTable,
+                    WResIDFromNum( OS2_RT_MESSAGE ) );
+    }
+    if( CurrResFile.FontDir != NULL ) {
+        SemWriteFontDir();
+    }
+}
+
 static void Pass1ResFileShutdown( void )
 /**************************************/
 {
@@ -390,7 +413,10 @@ static void Pass1ResFileShutdown( void )
 
     error = FALSE;
     if( CurrResFile.IsOpen ) {
-        WriteTables();
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            WriteOS2Tables();
+        else
+            WriteTables();
         if( ErrorHasOccured ) {
             ResCloseFile( CurrResFile.handle );
             CurrResFile.IsOpen = false;
@@ -661,7 +687,7 @@ extern void RcPass2IoShutdown( int noerror )
 } /* RcPass2IoShutdown */
 
 static const char * BannerText =
-    banner1w( "OS/2 Resource Compiler", _WRC_VERSION_ )"\n"
+    banner1w( "Windows and OS/2 Resource Compiler", _WRC_VERSION_ )"\n"
     banner2("1993") "\n"
     banner3         "\n"
     banner3a        "\n"

@@ -67,4 +67,11 @@ extern void SemAddStrToStringTable( FullStringTable * currtable,
 extern void SemFreeStringTable( FullStringTable * oldtable );
 extern FullStringTable * SemNewStringTable( void );
 
+extern void SemOS2WriteStringTable( FullStringTable *, WResID * type );
+extern void SemOS2AddStrToStringTable( FullStringTable * currtable,
+                            uint_16 stringid, char * string );
+extern void SemOS2MergeStrTable( FullStringTable *, ResMemFlags newflags );
+extern void SemOS2MergeMsgTable( FullStringTable *, ResMemFlags newflags );
+extern FullStringTable * SemOS2NewStringTable( void );
+
 #endif

@@ -27,14 +27,16 @@ WRC_USE_TRMEM = 1
 splice_opts = -kDEBUG
 
 objs =  ytab.obj &
-        errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj &
-        exeseg.obj exeutil.obj global.obj hash1.obj hash2.obj &
-        keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj &
-        rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj &
-        semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj&
-        semraw.obj semsingl.obj semstr.obj swchar.obj dbtable.obj &
-        preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj &
-        ldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
+        errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
+        exeseg.obj exeutil.obj global.obj hash1.obj hash2.obj           &
+        keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj      &
+        rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj           &
+        semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj     &
+        sem2diag.obj sem2menu.obj sem2sngl.obj sem2str.obj              &
+        sem2accl.obj sem2help.obj                                       &
+        semraw.obj semsingl.obj semstr.obj swchar.obj dbtable.obj       &
+        preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj       &
+        ldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj   &
         leadbyte.obj
 
 !ifeq sys_dll 1
@@ -148,27 +150,6 @@ usage.rc : $(wrc2_dir)/usage.sp
 usagej.rc : $(wrc2_dir)/usage.sp
         $(bld_bin)\wsplice -kJAPANESE -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
-rcmem.obj : rcmem.c rcmem.h
-rcalloc1.obj : rcalloc1.c rcalloc1.h
-rcalloc0.obj : rcalloc0.c rcalloc0.h
-errors.obj : errors.c $(wrc2_dir)\h\errors.lst errors.h rcio.h
-hash1.obj : hash1.c weights1.gh
-hash2.obj : hash2.c weights2.gh
-keyword.obj : keyword.c keyword1.gh keyword2.gh ytab.gh scan.h
-scan.obj : scan.c rcio.h rcmem.h errors.h ytab.gh keyword.h param.h ytab.gh
-rc.obj : rc.c errors.h rcio.h yydriver.h param.h rcmem.h
-param.obj : param.c errors.h swchar.h
-global.obj : global.c global.h rcio.h param.h pass2.h
-rcio.obj : rcio.c rcio.h global.h param.h
-exeutil.obj : exeutil.c exeutil.h global.h
-pass2.obj : pass2.c pass2.h param.h
-semver.obj : semver.c semver.h ytab.gh
-semaccel.obj : semaccel.c semaccel.h ytab.gh
-semdiag.obj : semdiag.c semdiag.h ytab.gh
-semantic.obj : semantic.c semantic.h ytab.gh
-semsingl.obj : semsingl.c semsingl.h ytab.gh
-semmenu.obj : semmenu.c semmenu.h ytab.gh
-
 clean: .SYMBOLIC .EXPLICIT
 !ifeq sys_dll 1
         @if exist $(NAME).dll @del $(NAME).dll
@@ -188,6 +169,9 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist all.osz @del all.osz
         @if exist rcmsg.h @del rcmsg.h
         @if exist $(wrc2_dir)\h\rcmsg.h @del $(wrc2_dir)\h\rcmsg.h
+
+hash1.obj : hash1.c weights1.gh
+hash2.obj : hash2.c weights2.gh
 
 # implicit rules
 .c.obj: .AUTODEPEND

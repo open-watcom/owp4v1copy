@@ -10,13 +10,22 @@ Options: (/option is also accepted)
 :segment osi
 -bt=windows    - build a WIN16 resource file
 -bt=nt         - build a WIN32 resource file
+-bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment nt
 -bt=windows    - build a WIN16 resource file
 -bt=nt         - build a WIN32 resource file (default)
+-bt=os2        - build an OS/2 resource file
+:elsesegment
+:segment os2
+-bt=os2        - build an OS/2 resource file (default)
+-bt=windows    - build a WIN16 resource file
+-bt=nt         - build a WIN32 resource file
 :elsesegment
 -bt=windows    - build a WIN16 resource file (default)
 -bt=nt         - build a WIN32 resource file
+-bt=os2        - build an OS/2 resource file
+:endsegment
 :endsegment
 :endsegment
 -c=name        - set code page conversion file
@@ -49,7 +58,7 @@ Options: (/option is also accepted)
                  1: Chinese (Traditional, CP 950)
                  2: Korean (Wansung, CP 949)
                  3: Chinese (Simplified, CP 936)
--zm            - output Microsoft format .RES files
+-zm            - output Microsoft/IBM format .RES files
 -zn            - don't preprocess the file
 :endsegment
 :segment JAPANESE
@@ -64,13 +73,22 @@ Options: (/option is also accepted)
 :segment osi
 -bt=windows    - build a WIN16 resource file
 -bt=nt         - build a WIN32 resource file
+-bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment nt
 -bt=windows    - build a WIN16 resource file
 -bt=nt         - build a WIN32 resource file (default)
+-bt=os2        - build an OS/2 resource file
+:elsesegment
+:segment os2
+-bt=os2        - build an OS/2 resource file (default)
+-bt=windows    - build a WIN16 resource file
+-bt=nt         - build a WIN32 resource file
 :elsesegment
 -bt=windows    - build a WIN16 resource file (default)
 -bt=nt         - build a WIN32 resource file
+-bt=os2        - build an OS/2 resource file
+:endsegment
 :endsegment
 :endsegment
 -e             - for a DLL, global memory above EMS line
@@ -100,7 +118,7 @@ Options: (/option is also accepted)
                  1: Chinese (Traditional, CP 950)
                  2: Korean (Wansung, CP 949)
                  3: Chinese (Simplified, CP 936)
--zm            - output Microsoft format .RES files
+-zm            - output Microsoft/IBM format .RES files
 -zn            - don't preprocess the file
 :endsegment
 .

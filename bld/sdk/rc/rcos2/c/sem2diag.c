@@ -160,7 +160,7 @@ extern FullDiagCtrlListOS2 * SemOS2NewDiagCtrlList( FullDialogBoxControlOS2 * ct
 
 extern FullDiagCtrlListOS2 * SemOS2AddDiagCtrlList( FullDiagCtrlListOS2 * list,
                     FullDialogBoxControlOS2 * ctrl, DataElemList * dataList )
-/********************************************************************/
+/*****************************************************************************/
 {
     if( ctrl != NULL ) {
         ctrl->dataListHead = dataList;
@@ -342,6 +342,8 @@ static void SemOS2FreeDiagCtrlList( FullDiagCtrlListOS2 * list )
         if( ctrl->children != NULL )
             SemOS2FreeDiagCtrlList( ctrl->children );
 
+        SemFreeDataElemList( ctrl->dataListHead );
+
         ctrl = ctrl->next;
 
         RcMemFree( oldctrl );
@@ -350,9 +352,8 @@ static void SemOS2FreeDiagCtrlList( FullDiagCtrlListOS2 * list )
     RcMemFree( list );
 } /* SemOS2FreeDiagCtrlList */
 
-#if 0
-static uint_16 SemCountBytes( DataElemList *list )
-/************************************************/
+static uint_16 SemOS2CountBytes( DataElemList *list )
+/***************************************************/
 {
     DataElemList     *travptr;
     uint_16           bytes = 0;
@@ -361,7 +362,7 @@ static uint_16 SemCountBytes( DataElemList *list )
     for( travptr = list; travptr != NULL; travptr = travptr->next ) {
         for( i = 0; i < travptr->count; i++ ) {
             if( travptr->data[i].IsString ) {
-                bytes += travptr->data[i].StrLen;
+                bytes += travptr->data[i].StrLen + 1;
             } else {
                 bytes += 2;
             }
@@ -370,7 +371,34 @@ static uint_16 SemCountBytes( DataElemList *list )
 
     return( bytes );
 }
-#endif
+
+static uint_16 SemOS2DumpCtlData( char *ptr, DataElemList *list )
+/***************************************************************/
+{
+    DataElemList     *travptr;
+    uint_16           bytes = 0;
+    uint_16           *data;
+    uint_16           len;
+    int               i;
+
+    for( travptr = list; travptr != NULL; travptr = travptr->next ) {
+        for( i = 0; i < travptr->count; i++ ) {
+            if( travptr->data[i].IsString ) {
+                len = travptr->data[i].StrLen + 1;
+                strncpy( ptr, travptr->data[i].Item.String, len );
+                bytes += len;
+                ptr   += len;
+            } else {
+                data   = (uint_16*)ptr;
+                *data  = (uint_16)travptr->data[i].Item.Num;
+                bytes += 2;
+                ptr   += 2;
+            }
+        }
+    }
+
+    return( bytes );
+}
 
 static int SemOS2CalcControlSize( FullDiagCtrlListOS2 *ctrls )
 /***************************************************************/
@@ -385,11 +413,18 @@ static int SemOS2CalcControlSize( FullDiagCtrlListOS2 *ctrls )
         if( !(control->ClassID->Class & 0x80) )  // Class name length if provided
             size += strlen( control->ClassID->ClassName ) + 1;
         if( control->Text != NULL )             // Conrol text if provided
-            size += strlen( control->Text->name );
-        size += 1;
+            if( control->Text->ord.fFlag == 0xFF )          // We have ID
+                size += 3;
+            else
+                size += strlen( control->Text->name ) + 1;  // We have name
+        else
+            size += 1;
 
-        // TODO: PRESPARAMS and class specific data
+        // TODO: PRESPARAMS
+
         size += control->ExtraBytes;
+        size += SemOS2CountBytes( ctrl->dataListHead );
+
         if( ctrl->children != NULL )        // Add size of all children
             size += SemOS2CalcControlSize( ctrl->children );
     }
@@ -431,17 +466,15 @@ static char *SemOS2BuildTemplateArray( char *ptr, FullDiagCtrlListOS2 *ctrls )
         }
 
         if( control->Text != NULL ) {
-            tmpl->cchText = strlen( control->Text->name );
-            // Another RC oddity: for ICON controls, text length includes
-            // NULL terminator.
-            if( ( control->ClassID->Class == OS2_WC_STATIC | 0x80 ) &&
-                ( ( tmpl->flStyle & 0xF) == OS2_SS_ICON ) )
-                tmpl->cchText++;
+            if( control->Text->ord.fFlag == 0xFF )
+                tmpl->cchText = 3;
+            else
+                tmpl->cchText = strlen( control->Text->name );
         }
         else
             tmpl->cchText = 0;
 
-        // TODO: PRESPARAMS and class specific data
+        // TODO: PRESPARAMS
 
         ctrl->tmpl = tmpl;  // Save the pointer to DLGTITEM so we can update it later
 
@@ -482,27 +515,39 @@ static char *SemOS2DumpTemplateData( char *base, char *ptr,
         }
 
         // IBM's RC always stores at least one character of text
-        // even if no text is provided; it could be a bug but we'll
+        // even if no text is provided; it could be a buglet but we'll
         // do the same for compatibility.
         tmpl->offText = ptr - base;
         if( control->Text != NULL ) {
-            strcpy( ptr, control->Text->name );
-            ptr += tmpl->cchText + 1;
-            // For ICON resources we need to get rid of the NULL we added before
-            if( ( control->ClassID->Class == OS2_WC_STATIC | 0x80 ) &&
-                ( ( tmpl->flStyle & 0xF) == OS2_SS_ICON ) )
-                ptr--;
+            if( control->Text->ord.fFlag == 0xFF ) {
+                memcpy( ptr, control->Text->name, 3 );
+                ptr += 3;
+            }
+            else {
+                strcpy( ptr, control->Text->name );
+                ptr += tmpl->cchText + 1;
+            }
         }
         else {
             *ptr = '\0';
             ptr++;
         }
 
-        // TODO: PRESPARAMS and class specific data
+        // TODO: PRESPARAMS
+
+        // Write out class data if provided
         if( control->ExtraBytes ) {
             memcpy( ptr, &ctrl->framectl, sizeof( uint_32 ) );
             tmpl->offCtlData = ptr - base;
             ptr += control->ExtraBytes;
+            // Write out class data if provided
+            ptr += SemOS2DumpCtlData( ptr, ctrl->dataListHead );
+        }
+        else {
+            if( ctrl->dataListHead ) {
+                tmpl->offCtlData = ptr - base;
+                ptr += SemOS2DumpCtlData( ptr, ctrl->dataListHead );
+            }
         }
 
         if( ctrl->children != NULL )    // Process all children
@@ -527,7 +572,6 @@ extern void SemOS2WriteDialogTemplate( WResID * name, ResMemFlags flags,
     int                      err_code;
     int                      error;
     int                      size;
-//    FullDialogBoxControlOS2  *travptr;
     DialogHeaderOS2          *head = NULL;
     char                     *tmpl;
     char                     *ptr;

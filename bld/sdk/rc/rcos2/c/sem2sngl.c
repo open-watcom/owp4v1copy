@@ -104,8 +104,10 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
             flags = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE | MEMFLAG_PURE;
         }
 
-        /* Duplicate the first icon encountered as the default icon */
-        if (firstIcon) {
+        /* Duplicate the first icon encountered as the default icon IFF it
+           has resource ID equal to 1
+        */
+        if (firstIcon && !name->IsName && (name->ID.Num == 999 || name->ID.Num == 1)) {
             WResID      *id;
 
             id = (WResID*)RcMemMalloc( sizeof( WResID ) );
