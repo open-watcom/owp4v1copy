@@ -25,7 +25,6 @@ os_source_dir =  $(guidir)\$(type)\c;$(sys_dep_dir)
 gui_msg_file = ..\..\h\_guimsgs.h
 
 inc_dirs_lang_qnx = $(lang_root)\qh
-inc_dirs_lang_netware = $(lang_root)\novh
 
 !ifdef inc_dirs_lang_$(host_OS)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_OS))

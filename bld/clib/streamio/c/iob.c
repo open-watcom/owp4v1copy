@@ -38,6 +38,14 @@
 #include "rtinit.h"
 #include "tmpfname.h"
 
+/*
+//	The following shows what was the underlying NetWare FILE structure (struct __iobuf). We are now using the OpenWatcom stdio
+//	declaration rather than an external derivation. Still I believe that all macros and direct access to the FILE structure
+//	should be curtailed so we can abstract as much as possible!
+//
+//	As I say, the following definitions are now meaningless!
+*/
+
 // *
 // * NetWare FILE struct
 // *
@@ -65,19 +73,13 @@
 //} FILE;
 
 
-#if defined(__NETWARE__)
-#define         NW_TMPFL        ,0
-#else
-#define         NW_TMPFL
-#endif
-
 _WCRTLINK FILE _WCNEAR __iob[_NFILES] = {
-    { NULL, 0, NULL, _READ  ,       0, 0, 0 NW_TMPFL }  /* stdin */
-   ,{ NULL, 0, NULL, _WRITE ,       1, 0, 0 NW_TMPFL }  /* stdout */
-   ,{ NULL, 0, NULL, _WRITE ,       2, 0, 0 NW_TMPFL }  /* stderr */
+    { NULL, 0, NULL, _READ  ,       0, 0, 0  }  /* stdin */
+   ,{ NULL, 0, NULL, _WRITE ,       1, 0, 0  }  /* stdout */
+   ,{ NULL, 0, NULL, _WRITE ,       2, 0, 0  }  /* stderr */
   #if !defined(__QNX__) && !defined(__NETWARE__) && !defined(__NT__)
-   ,{ NULL, 0, NULL, _READ|_WRITE , 3, 0, 0 NW_TMPFL }  /* stdaux */
-   ,{ NULL, 0, NULL, _WRITE ,       4, 0, 0 NW_TMPFL }  /* stdprn */
+   ,{ NULL, 0, NULL, _READ|_WRITE , 3, 0, 0  }  /* stdaux */
+   ,{ NULL, 0, NULL, _WRITE ,       4, 0, 0  }  /* stdprn */
   #endif
 };
 

@@ -51,7 +51,7 @@ FILE **__get_stdin( void )
 {
     static FILE         *stdin_ptr;
 
-    stdin_ptr = __get_std_stream( STDIN_HANDLE );
+    stdin_ptr = __get_std_stream( STDIN_FILENO );
     return( &stdin_ptr );
 }
 
@@ -59,7 +59,7 @@ FILE **__get_stdout( void )
 {
     static FILE         *stdout_ptr;
 
-    stdout_ptr = __get_std_stream( STDOUT_HANDLE );
+    stdout_ptr = __get_std_stream( STDOUT_FILENO );
     return( &stdout_ptr );
 }
 
@@ -67,7 +67,7 @@ FILE **__get_stderr( void )
 {
     static FILE         *stderr_ptr;
 
-    stderr_ptr = __get_std_stream( STDERR_HANDLE );
+    stderr_ptr = __get_std_stream( STDERR_FILENO );
     return( &stderr_ptr );
 }
 

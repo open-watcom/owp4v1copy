@@ -45,6 +45,8 @@
 #include "wmsg.h"
 #include "os.h"
 
+#include <ownwthread.h>
+
 extern void StartTimer();
 extern void StopTimer();
 extern void REPORT_TYPE report();
@@ -53,11 +55,13 @@ extern void WriteAddrMap( seg map_start,  seg load_start, off load_offset );
 extern int SampWrite( void FAR_PTR *buff, unsigned len );
 extern void StopAndSave(void);
 extern void SetTimerRate( char ** );
+extern void SetRestoreRate( char **);
 extern void fatal( void );
 extern void Output( char FAR_PTR * );
 extern void mfree( void FAR_PTR *chunk );
 extern void FAR_PTR * alloc( int size );
 extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
+extern void ResolveRateDifferences(void);
 
 /* NETWARE HOOKS */
 
@@ -67,12 +71,15 @@ extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 #include "aesproc.h"
 #include "event.h"
 
+extern void * ImportSymbol(unsigned long /* handle */, const char * /* symbol_name */);
+
 int                             SamplerThread;
 struct LoadDefinitionStructure  *SampledNLM;
 struct AESProcessStructure      AES;
 struct ResourceTagStructure     *AESTag;
 struct ResourceTagStructure     *AllocTag;
 struct ResourceTagStructure     *EventTag;
+struct ResourceTagStructure     *SwitchModeTag;
 int                             Suspended;
 int                             Resumed;
 
@@ -93,9 +100,14 @@ code_load *LoadedNLMs;
 
 void SysInit()
 {
-    AllocTag = AllocateResourceTag( (void *)GetNLMHandle(),
-                                    "WATCOM Execution Sampler Work Area",
-                                     AllocSignature );
+    AllocTag = AllocateResourceTag( 
+        (void *)GetNLMHandle(),
+        "OpenWatcom Sampler Work Area",
+        AllocSignature );
+    SwitchModeTag = AllocateResourceTag( 
+        (void*) GetNLMHandle(),
+        "OpenWatcom Sampler ModeSwitchMon",
+        EventSignature);
 }
 
 StopProg()
@@ -146,43 +158,69 @@ void WriteRecordedLoads()
     }
 }
 
+static volatile unsigned nModeSwitched = 0;
+void ModeSwitched()
+{
+    nModeSwitched++;
+}
 
 void WakeMeUp()
 {
     static int Already = FALSE;
     struct LoadDefinitionStructure *loaded;
 
-    if( Already ) return;
+    if( Already ) 
+        return;
+
     for( loaded = LoadedList; loaded != NULL; loaded = loaded->LDLink ) {
         RecordCodeLoad( loaded, Already ? SAMP_CODE_LOAD : SAMP_MAIN_LOAD );
         Already = TRUE;
     }
     Already = TRUE;
     Resumed = TRUE;
-    if( Suspended ) ResumeThread( SamplerThread );
+    if( Suspended ) 
+        ResumeThread( SamplerThread );
 }
 
 
 StartProg( char *cmd, char *prog, char *args )
 {
     LONG        events;
-    AESTag = AllocateResourceTag( (void *)GetNLMHandle(),
-                                  "WATCOM Execution Sampler Flush Process",
-                                     AESProcessSignature );
+    
+    AESTag = AllocateResourceTag( 
+        (void *)GetNLMHandle(),
+        "OpenWatcom Execution Sampler Flush Process",
+        AESProcessSignature );
+
     prog = prog;
     args = args;
     SampleIndex = 0;
     Suspended = FALSE;
     Resumed = FALSE;
     CurrTick  = 0L;
-    EventTag = AllocateResourceTag( (void *)GetNLMHandle(),
-                                  "WATCOM Execution Sampler Events",
-                                     EventSignature );
-    events = RegisterForEventNotification( EventTag, EVENT_MODULE_UNLOAD,
-                                  EVENT_PRIORITY_APPLICATION, NULL,
-                                  WakeMeUp );
+
+    EventTag = AllocateResourceTag(
+        (void *)GetNLMHandle(),
+        "WATCOM Execution Sampler Events",
+        EventSignature );
+
+    events = RegisterForEventNotification( 
+        EventTag, 
+        EVENT_MODULE_UNLOAD,
+        EVENT_PRIORITY_APPLICATION, 
+        NULL,
+        WakeMeUp );
+
+    /*
+    //  Resolve rate differences will use the restore value to calculate
+    //  a new timer if we're running slower than the system runs normally
+    */
+    ResolveRateDifferences();
+
     StartTimer();
-    if( LoadModule( systemConsoleScreen, cmd, 0 ) != 0 ) {
+
+    if( LoadModule( systemConsoleScreen, cmd, 0 ) != 0 ) 
+    {
         StopTimer();
         cputs( MsgArray[MSG_SAMPLE_1-ERR_FIRST_MESSAGE] );
         cputs( cmd );
@@ -191,15 +229,20 @@ StartProg( char *cmd, char *prog, char *args )
     }
     SamplerThread = GetThreadID();
     Suspended = TRUE;
-    if( !Resumed ) {
+    if( !Resumed ) 
+    {
         Suspended = TRUE;
         SuspendThread( SamplerThread );
     }
     WriteRecordedLoads();
+
     StopTimer();
+
     UnRegisterEventNotification( events );
     report();
-    if( Samples != NULL ) mfree( Samples );
+
+    if( Samples != NULL ) 
+        mfree( Samples );
 }
 
 
@@ -215,8 +258,10 @@ void RecordSample( union INTPACK FAR_PTR *r ) {
     Samples->d.sample.sample[ SampleIndex ].offset = r->x.eip;
     Samples->d.sample.sample[ SampleIndex ].segment = r->x.cs;
     ++SampleIndex;
-    if( SampleIndex > Margin ) {
-        if( AES.AProcessToCall == NULL ) {
+    if( SampleIndex > Margin ) 
+    {
+        if( AES.AProcessToCall == NULL ) 
+        {
             AES.AProcessToCall = SaveOutSamples;
             AES.AWakeUpDelayAmount = 0;
             AES.AWakeUpTime = 0;
@@ -285,12 +330,111 @@ void SysDefaultOptions( void )
 {
 }
 
+extern unsigned long count_pit0(void);
+extern unsigned long cpuspeed(void);
+
+static unsigned long RoundSpeed(unsigned long speed)
+{
+    unsigned long   modulo = speed % 10;
+    if(modulo == 9)
+        speed++;
+    return speed;
+}
+
+static unsigned long volatile * pRealModeTimerFlag = NULL;
+
+/*static */void EstimateRate(void)
+{
+    char            EstRate[16];
+    unsigned long   currCount;
+    unsigned long   hadSwitch;
+    unsigned long   modeSwitch;
+    unsigned long   i;
+
+    Output("Calculating...\r");
+
+    modeSwitch = RegisterForEventNotification( 
+        SwitchModeTag, 
+        5,  /* EVENT_CHANGE_TO_REAL_MODE */
+        EVENT_PRIORITY_APPLICATION, 
+        NULL,
+        ModeSwitched );
+
+    if(NULL == pRealModeTimerFlag)
+    {
+        pRealModeTimerFlag = (unsigned long *)ImportSymbol(GetNLMHandle(), "RealModeTimerFlag");
+    }
+
+    if(pRealModeTimerFlag)
+        while(0 != *pRealModeTimerFlag)
+            delay(100);
+
+    while(1)
+    {
+        nModeSwitched = 0;
+        hadSwitch = nModeSwitched;
+
+        currCount = RoundSpeed(cpuspeed());
+
+        if(hadSwitch == nModeSwitched)
+            break;
+        else
+            Output("Mode switched\n");
+    }
+
+    ultoa(currCount, EstRate, 10);
+    Output("CPU Speed   - ");
+    Output(EstRate);
+    Output(" Mhz\n");
+    
+    Output("Calculating...\r");
+    if(pRealModeTimerFlag)
+        while(0 != *pRealModeTimerFlag)
+            delay(100);
+
+    currCount = 0;
+    for(i = 0; i < 4; i++)
+    {
+        unsigned long x = count_pit0();
+        if(x > currCount)
+            currCount = x;
+    }
+    /*
+    //  Don't know if this is really true but I have been informed that there is absolutely NO
+    //  way to read from the PIT when at initial count. The best we can do is count-2 so add 2
+    //  anyway.
+    */
+    currCount += 2;
+    if(currCount > 0x0000FFFF)      /* count is 16 bit - default is 0 (count of 0x10000) */
+        currCount = 0;
+    ultoa(currCount, EstRate, 10);
+    Output("PIT Count   - ");
+    Output(EstRate);
+    Output("\n");
+
+    UnRegisterEventNotification( modeSwitch );
+}
 
 void SysParseOptions( char c, char **cmd )
 {
     char        buff[2];
 
-    if( c != 'r' ) {
+    switch(c)
+    {
+    case 'r':
+        SetTimerRate( cmd );
+    break;
+
+    case 'o':
+        SetRestoreRate( cmd );
+    break;
+
+    case 'e':
+        EstimateRate();
+        fatal();
+    break;
+
+    default:
         Output( MsgArray[MSG_INVALID_OPTION-ERR_FIRST_MESSAGE] );
         buff[0] = c;
         buff[1] = '\0';
@@ -298,5 +442,4 @@ void SysParseOptions( char c, char **cmd )
         Output( "\r\n" );
         fatal();
     }
-    SetTimerRate( cmd );
 }

@@ -28,8 +28,6 @@ md %relroot%\%defrel%\qh\sys
 md %relroot%\%defrel%\lib286
 md %relroot%\%defrel%\lib386
 md %relroot%\%defrel%\nlm
-md %relroot%\%defrel%\novh
-md %relroot%\%defrel%\novi
 md %relroot%\%defrel%\samples
 md %relroot%\%defrel%\src
 md %relroot%\%defrel%\vp
@@ -51,9 +49,6 @@ md %relroot%\%defrel%\lib386\win
 md %relroot%\%defrel%\lib386\qnx
 md %relroot%\%defrel%\libaxp
 md %relroot%\%defrel%\libaxp\nt
-md %relroot%\%defrel%\novh\arpa
-md %relroot%\%defrel%\novh\netinet
-md %relroot%\%defrel%\novh\sys
 md %relroot%\%defrel%\samples\clibexam
 md %relroot%\%defrel%\samples\cplbexam
 md %relroot%\%defrel%\samples\dll

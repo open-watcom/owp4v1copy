@@ -109,9 +109,12 @@ typedef	unsigned int	UINT32;
 //	Miscellaneous #defines that should be somewhere else
 */
 
-#define PrimaryDataStream			0			/* from nlm\nwfattr.h */
-#define NOCHECK						0
-#define CHECK						0xFF
+#define PrimaryDataStream			0			/*	from nlm\nwfattr.h	*/
+
+#define NOCHECK						0			/*	bindery stuff		*/
+#define CHECK						0xFF		/*	bindery stuff		*/
+
+#define _MAX_VOLUME					16			/*	max len of volume	*/
 
 #include <nw_sigs.h>	/* NetWare resource signatures */
 

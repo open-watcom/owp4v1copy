@@ -134,24 +134,33 @@ void INTR far timer_handler( union INTPACK r )
      * TimerMult > 1 means that samples are taken at some multiple
      * of 10 msec.
      */
-    if( --TimerMod == 0 ) {
+    if( --TimerMod == 0 ) 
+    {
         TimerMod = TimerMult;
 #else
-    if( --TimerMod == 0 ) {
+    
+    if( --TimerMod == 0 ) 
+    {
         TimerMod = TimerMult;
         _CHAIN_TO( old_timer_handler );
-    } else {
+    } 
+    else 
+    {
         /* end of interrupt (expected by 8259 before you do RETI) */
         outp( INT_CTRL, EOI );
     }
 #endif
 
-    if( ! SamplerOff ) {
-        if( InsiderTime == 0 ) {
+    if( ! SamplerOff ) 
+    {
+        if( InsiderTime == 0 ) 
+        {
             ++InsiderTime;
-            if( SampleIndex == 0 ) {
+            if( SampleIndex == 0 ) 
+            {
                 Samples->pref.tick = CurrTick;
-                if( CallGraphMode ) {
+                if( CallGraphMode ) 
+                {
                     CallGraph->pref.tick = CurrTick;
                 }
             }
@@ -162,24 +171,33 @@ void INTR far timer_handler( union INTPACK r )
             #else
                 RecordSample( &r );
             #endif
-            if( SampleIndex >= Margin ) {
-                if( InDOS() ) {
+            if( SampleIndex >= Margin ) 
+            {
+                if( InDOS() ) 
+                {
                     Save_Request = TRUE;
-                } else {
+                } 
+                else 
+                {
                     /*
                         We are not in DOS so we can suspend things for a while
                         and save our block of samples
                     */
-                    if( Save_Request ) {
+                    if( Save_Request ) 
+                    {
                         Save_Request = 0;
                     }
                     StopAndSave();
                 }
-                if( SampleIndex >= Ceiling ) {
-                    if( CallGraphMode ) {
+                if( SampleIndex >= Ceiling ) 
+                {
+                    if( CallGraphMode ) 
+                    {
                         --SampleCount;
                         SampleIndex = LastSampleIndex;
-                    } else {
+                    } 
+                    else 
+                    {
                         --SampleIndex;
                     }
                     LostData = TRUE;
@@ -222,8 +240,15 @@ void StartTimer()
     R.w.es = FP_SEG( dummy_rtn );
     intr( 0x1c, &R );
   #else
-    outp( TIMER0, DIVISOR & 0xff );
-    outp( TIMER0, DIVISOR >> 8 );
+
+    /*
+    //  Only access the clock if we have overridden the default
+    */
+    if(DEF_MULT != TimerMult)
+    {
+        outp( TIMER0, DIVISOR & 0xff );
+        outp( TIMER0, DIVISOR >> 8 );
+    }
   #endif
 #endif
 }
@@ -251,8 +276,12 @@ void StopTimer()    /* undo */
     intr( 0x1c, &R );
     HookTimer( old_timer_handler );
 #else
-    outp( TIMER0, 0 );
-    outp( TIMER0, 0 );
+    /*
+    //  Bit worried that NetWare 5 or 6 could interrupt here when switching to 
+    //  real mode and the timer could get screwed. CLI?
+    */
+    outp( TIMER0, TimerRestoreValue & 0xFF );
+    outp( TIMER0, (TimerRestoreValue >> 8) & 0xFF );
     HookTimer( old_timer_handler );
 #endif
 }

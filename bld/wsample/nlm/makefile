@@ -1,13 +1,15 @@
 #pmake: all build os_nov cpu_386
-objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
-          io.obj sysio.obj settime.obj wmsg.obj
 
-cflags = /bt=netware/3s/mf/d1/oax/w3 /dREPORT_TYPE= /dFAR_PTR= /dNETWARE /fiwatcom.h /zq
+!include cproj.mif
+
+objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
+          io.obj sysio.obj settime.obj wmsg.obj pitstuff.obj cpuspeed.obj
+
+cflags = /bt=netware/3s/mf/d1/oax/w3 /dREPORT_TYPE= /dFAR_PTR= /dNETWARE /fiwatcom.h /zq /zp1
 
 .BEFORE
 #        set include=$(nwdir);$(nwsrc);$(dig_dir)\h;$(%include)
-#use nw4 by default as we don't really care about stkframes and such in this code
-        set include=$(ow_nwoss_root)\common\h;$(ow_nwoss_root)\nw4\h;$(nlang_root)\novh;$(nwsrc);$(dig_dir)\h;$(%include)
+        set include=$(ow_nwoss_root)\common\h;$(ow_nwoss_root)\nw4\h;$(nwsrc);$(dig_dir)\h;$(%include)
 
 imports = &
     FileServerMajorVersionNumber &
@@ -25,43 +27,54 @@ imports = &
     LoadModule  &
     LoadedList &
     Alloc &
+    delay &
+    GetCurrentTime &
+    ImportSymbol &
     Free
 
 xname = wsample
 
 ..\bin\$(xname).nlm : $(xname).res  $objects makefile
     @%write $(%debug) tmp.lnk name ..\bin\$(xname)
-    @%append tmp.lnk system novell nlm 'WATCOM Execution Sampler Version 1.0'
-#    @%append tmp.lnk module CLIB
-#    @%append tmp.lnk debug novell
+    @%append tmp.lnk option osname='Novell NLM'
+    @%append tmp.lnk format novell nlm 'OpenWatcom Execution Sampler Version 1.0'
+    @%append tmp.lnk debug novell
+    @%append tmp.lnk debug all
     @%append tmp.lnk option map
     @%append tmp.lnk option caseexact
     @%append tmp.lnk option quiet
-#    @%append tmp.lnk option case
     @%append tmp.lnk option stack=10k
-#    @%append tmp.lnk file $(nwdir)\prelude
-#    @%append tmp.lnk import @$(nwdir)\clib.imp
-#    @%append tmp.lnk import @$(nwdir)\mathlib.imp
-    @%append tmp.lnk lib $(watcom_dir)\lib\wresfs
-    @for %i in ($(imports)) do @%append tmp.lnk import %i
+    @%append tmp.lnk option nodefault
     @for %i in ($objects) do @%append tmp.lnk file %i
-#!include ..\setsize.mif
+    @for %i in ($(imports)) do @%append tmp.lnk import %i
+    @%append tmp.lnk import @$(ow_nwoss_root)\common\imp\owclib.imp
+    @%append tmp.lnk lib $(watcom_dir)\lib\wresfs
+    @%append tmp.lnk lib $(%devdir)\clib\library\netware.386\ms_s\clibs.lib
+    @%append tmp.lnk module clib
+
     wlink @tmp.lnk
     wstrip /q /a /r ..\bin\$(xname).nlm . $(xname).res
 
-#!include ..\objsize.mif
-
 .c: .;..\c
 
-.c.obj :
+.asm: .
+
+.c.obj : .AUTODEPEND
     $(comp386) $[* $cflags
 
-.asm.obj:
-    $(asm386) $^& -nolist -twocase -errorlist $^&.err -include \dev\h\
-    erase $^&.err
+.asm.obj: .AUTODEPEND
+    $(as_i86) $[@ -5 -e -mf -we -fr=$^&.err
+#    erase $^&.err
 
-$(xname).res : ..\h\wsample.rc ..\h\wmsg.h
-        wrc /zk0 /r /dNLM /fo=$^. ..\h\wsample.rc
+#
+#   zk0         - double-byte char support:   0: (default) Japanese (Kanji, CP 932)
+#   r           - only build the RES file
+#   bt=windows  - produce MBCS encoded res file (not bt=nt; produces Unicode)
+#   ad          - add autodepends information for wmake
+#
+
+$(xname).res : ..\h\wsample.rc ..\h\wmsg.h .AUTODEPEND
+        wrc /zk0 /r /dNLM /bt=windows /ad /fo=$^. ..\h\wsample.rc
 
 clean : .symbolic
     @rm -f *.obj *.res *.lnk *.map *.err

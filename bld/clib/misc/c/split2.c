@@ -45,14 +45,6 @@
   #define ALT_PC '/'
 #endif
 
-// include <sys/types.h>
-// include <limits.h>
-
-#if defined(__NETWARE__)
-// this should be in novh\stdlib.h
-#define _MAX_PATH2 (_MAX_PATH+3)
-#endif
-
 /* split full QNX path name into its components */
 
 /* Under QNX we will map drive to node, dir to dir, and
@@ -69,7 +61,8 @@ static CHAR_TYPE *pcopy( CHAR_TYPE **pdst, CHAR_TYPE *dst, const CHAR_TYPE *b_sr
     if( pdst == NULL ) return( dst );
     *pdst = dst;
     len = e_src - b_src;
-    if( len >= _MAX_PATH2 ) {
+    if( len >= _MAX_PATH2 ) 
+    {
         len = _MAX_PATH2 - 1;
     }
     #ifdef __WIDECHAR__
@@ -117,13 +110,18 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     #endif
     {
         inp += 2;
-        for( ;; ) {
-            if( *inp == NULLCHAR ) break;
-            if( *inp == PC ) break;
+        for( ;; ) 
+        {
+            if( *inp == NULLCHAR ) 
+                break;
+            if( *inp == PC ) 
+                break;
             #ifndef __QNX__
-                if( *inp == ALT_PC ) break;
+                if( *inp == ALT_PC ) 
+                    break;
             #endif
-            if( *inp == '.' ) break;
+            if( *inp == '.' ) 
+                break;
             #ifdef __WIDECHAR__
                 ++inp;
             #else
@@ -136,9 +134,12 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
         }
         outp = pcopy( drive, outp, startp, inp );
 #if !defined(__QNX__)
-    /* processs drive specification */
-    } else if( inp[0] != NULLCHAR && inp[1] == ':' ) {
-        if( drive != NULL ) {
+    /* process drive specification */
+    } 
+    else if( inp[0] != NULLCHAR && inp[1] == ':' ) 
+    {
+        if( drive != NULL ) 
+        {
             *drive = outp;
             outp[0] = inp[0];
             outp[1] = ':';
@@ -147,7 +148,9 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
         }
         inp += 2;
 #endif
-    } else if( drive != NULL ) {
+    } 
+    else if( drive != NULL ) 
+    {
         *drive = outp;
         *outp = NULLCHAR;
         ++outp;
@@ -160,7 +163,8 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     fnamep = inp;
     startp = inp;
 
-    for(;;) {
+    for(;;) 
+    {
         #ifdef __WIDECHAR__
             ch = *inp;
         #else
@@ -170,8 +174,10 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
                 ch = _mbsnextc( inp );
             #endif
         #endif
-        if( ch == 0 ) break;
-        if( ch == '.' ) {
+        if( ch == 0 ) 
+            break;
+        if( ch == '.' ) 
+        {
             dotp = inp;
             ++inp;
             continue;
@@ -186,18 +192,22 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
             #endif
         #endif
 #if defined(__QNX__)
-        if( ch == PC ) {
+        if( ch == PC ) 
+        {
 #else /* DOS, OS/2, Windows */
-        if( ch == PC  ||  ch == ALT_PC ) {
+        if( ch == PC  ||  ch == ALT_PC ) 
+        {
 #endif
             fnamep = inp;
             dotp = NULL;
         }
     }
     outp = pcopy( path, outp, startp, fnamep );
-    if( dotp == NULL ) dotp = inp;
+    if( dotp == NULL ) 
+        dotp = inp;
 #if defined(__QNX__)
-    if( ext == NULL )  dotp = inp;
+    if( ext == NULL )  
+        dotp = inp;
 #endif
     outp = pcopy( fn, outp, fnamep, dotp );
     outp = pcopy( ext, outp, dotp, inp );

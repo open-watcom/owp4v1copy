@@ -30,13 +30,21 @@ pick( MSG_USAGE_LN_1,	    "g—p•û–@: wsample [options] program [program argument
 pick( MSG_USAGE_LN_2,	    "ƒIƒvƒVƒ‡ƒ“:\n",
 			    "Options:\n" )
 #ifndef WIN
-pick( MSG_USAGE_LN_3,	    "    /b=<size> ƒTƒ“ƒvƒŠƒ“ƒO—pƒoƒbƒtƒ@ƒTƒCƒY (ÃŞÌ«ÙÄ: 63)\n",
-			    "    /b=<size> specify the buffer size for samples (default: 63)\n" )
+pick( MSG_USAGE_LN_3,	    "    /b=<size> ƒTƒ“ƒvƒŠƒ“ƒO—pƒoƒbƒtƒ@ƒTƒCƒY (ÃŞÌ«ÙÄ: 63KB)\n",
+			    "    /b=<size> specify the buffer size for samples (default: 63KB)\n" )
 #endif
 pick( MSG_USAGE_LN_4,	    "    /c        ƒR[ƒ‹ƒOƒ‰ƒtî•ñ‚ğƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚ÉŠÜ‚ß‚Ü‚·\n",
 			    "    /c        callgraph information is to be included in the sample file\n" )
 pick( MSG_USAGE_LN_5,	    "    /f=<file> ƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚Ìƒtƒ@ƒCƒ‹–¼\n",
 			    "    /f=<file> specify the output filename for the sample file\n" )
+#if defined(NLM)
+pick( MSG_USAGE_LN_6,	    
+	"    /o=<tmct> Specify a count to be used to reset the timer at unload\n",
+	"    /o=<tmct> Specify a count to be used to reset the timer at unload\n" )
+pick( MSG_USAGE_LN_7,	    
+	"    /e        Estimate the timer terminal count for /o= (see above)\n",
+	"    /e        Estimate the timer terminal count for /o= (see above)\n" )
+#endif
 
 pick( MSG_OPTIONS_1,	    "    /r=<rate> ƒTƒ“ƒvƒŠƒ“ƒOŠÔŠu\n",
 			    "    /r=<rate> specify the sampling rate\n" )
@@ -53,8 +61,8 @@ pick( MSG_OPTIONS_2,	    "    /s        V‚µ‚¢ƒZƒbƒVƒ‡ƒ“‚Å‚ÌƒvƒƒOƒ‰ƒ€‚ÌŠJn\n",
 #endif
 
 #ifndef WIN
-pick( MSG_USAGE_LN_6,	    "\n    <size>    ‚Í 1 ‚©‚ç 63 ‚Ü‚Å‚Ì”ÍˆÍ‚Å‚· (ÃŞÌ«ÙÄ: 63 kb)\n",
-			    "\n    <size>    is a number in the range 1 to 63 (default: 63 kb)\n" )
+pick( MSG_USAGE_LN_8,	    "\n    <size>    ‚Í 1 ‚©‚ç 63 ‚Ü‚Å‚Ì”ÍˆÍ‚Å‚· (ÃŞÌ«ÙÄ: 63 KB)\n",
+			    "\n    <size>    is a number in the range 1 to 63 (default: 63 KB)\n" )
 #endif
 
 #ifdef DOS      /* messages in sampdos */
@@ -84,13 +92,15 @@ pick( MSG_EXPLAIN_2,	    "              w’è‚·‚é”’l (”ÍˆÍ:27 ‚©‚ç 1000‚Ü‚Å) ‚Å‚
 #if defined(PLS) || defined(NLM)      /* messages in samppls and sampnlm */
 pick( MSG_EXPLAIN_1,	    "    <rate>    ‚ÍƒTƒ“ƒvƒŠƒ“ƒOŠÔ‚Ì‚¨‚æ‚»‚ÌŠÔŠÔŠu (’PˆÊ:ĞØ•b) ‚ğ\n",
 			    "    <rate>    is a number (range 1 to 55) specifying the approximate\n" )
-pick( MSG_EXPLAIN_2,	    "              w’è‚·‚é”’l (”ÍˆÍ:1 ‚©‚ç 55‚Ü‚Å) ‚Å‚· (ÃŞÌ«ÙÄ: 55)\n",
+pick( MSG_EXPLAIN_2,	    "    <rate>    ‚ÍƒTƒ“ƒvƒŠƒ“ƒOŠÔ‚Ì‚¨‚æ‚»‚ÌŠÔŠÔŠu (’PˆÊ:ĞØ•b) ‚ğ\n",
+			    "    <rate>    is a number (range 1 to 55) specifying the approximate\n" )
+pick( MSG_EXPLAIN_3,	    "              w’è‚·‚é”’l (”ÍˆÍ:1 ‚©‚ç 55‚Ü‚Å) ‚Å‚· (ÃŞÌ«ÙÄ: 55)\n",
 			    "              time interval (in milliseconds) between samples (default: 55)\n" )
-pick( MSG_EXPLAIN_3,	    "              ’ˆÓ: ‚±‚ÌƒXƒCƒbƒ`‚Ìg—p‚É‚Í’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢.ƒvƒƒOƒ‰ƒ€Às’†‚Ì\n",
+pick( MSG_EXPLAIN_4,	    "              ’ˆÓ: ‚±‚ÌƒXƒCƒbƒ`‚Ìg—p‚É‚Í’ˆÓ‚µ‚Ä‚­‚¾‚³‚¢.ƒvƒƒOƒ‰ƒ€Às’†‚Ì\n",
 			    "              NB: use this switch with caution. It will cause the time\n" )
-pick( MSG_EXPLAIN_4,	    "                  ŠÔ‚ª³‚µ‚­‚È‚­‚È‚è‚Ü‚·.‚Ü‚½A’l‚ª¬‚³‚·‚¬‚é‚ÆA’x‚¢ƒVƒXƒeƒ€\n",
+pick( MSG_EXPLAIN_5,	    "                  ŠÔ‚ª³‚µ‚­‚È‚­‚È‚è‚Ü‚·.‚Ü‚½A’l‚ª¬‚³‚·‚¬‚é‚ÆA’x‚¢ƒVƒXƒeƒ€\n",
 			    "                  to be incorrect during program execution. Also, rates\n" )
-pick( MSG_EXPLAIN_5,	    "                  ‚Ìê‡AƒNƒ‰ƒbƒVƒ…‚·‚é‰Â”\«‚ª‚ ‚è‚Ü‚·.\n",
+pick( MSG_EXPLAIN_6,	    "                  ‚Ìê‡AƒNƒ‰ƒbƒVƒ…‚·‚é‰Â”\«‚ª‚ ‚è‚Ü‚·.\n",
 			    "                  which are too small, may crash slower systems.\n" )
 #endif
 
@@ -108,8 +118,9 @@ pick( MSG_EXPLAIN_2,	    "              w’è‚·‚é”’l (”ÍˆÍ:1 ‚©‚ç 1000‚Ü‚Å) ‚Å‚·
 			    "              time interval (in milliseconds) between samples (default: 55)\n" )
 #endif
 
-pick( MSG_USAGE_LN_7,	    "\n   ƒIƒvƒVƒ‡ƒ“‚Ì’†‚Å‚Í '=' ‚Ì‘ã‚è‚É '#' ‚ğg‚Á‚Ä‚­‚¾‚³‚¢ (—á /b#10)\n",
-			    "\n   '#' may be used instead of '=' in options (eg. /b#10)\n" )
+pick( MSG_USAGE_LN_9,	    
+	"\n   ƒIƒvƒVƒ‡ƒ“‚Ì’†‚Å‚Í '=' ‚Ì‘ã‚è‚É '#' ‚ğg‚Á‚Ä‚­‚¾‚³‚¢ (—á /b#10)\n",
+	"\n   '#' may be used instead of '=' in options (eg. /b#10)\n" )
  
 #ifdef DOS      /* messages in sampdos */
 pick( MSG_SAMPLE_1,	    "ƒvƒƒOƒ‰ƒ€‚Ì’†‚ÌƒZƒNƒVƒ‡ƒ“‚ª‘½‚·‚¬‚Ü‚·",

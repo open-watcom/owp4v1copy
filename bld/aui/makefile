@@ -1,6 +1,4 @@
 inc_dirs_lang_qnx = $(lang_root)\qh
-inc_dirs_lang_netware = $(lang_root)\novh
-
 !ifdef inc_dirs_lang_$(host_OS)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_OS))
 !else

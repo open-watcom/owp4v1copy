@@ -33,8 +33,10 @@
 #ifdef DEFVARS
     #define extern
 #endif
-extern unsigned                        TimerMult;
-extern unsigned                        TimerMod;
+extern unsigned                 TimerMult;
+extern unsigned                 TimerMod;
+extern unsigned                 TimerRestoreValue;
+
 #ifdef DEFVARS
     #undef extern
 #endif

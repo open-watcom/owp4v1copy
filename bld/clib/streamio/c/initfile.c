@@ -38,9 +38,6 @@
 #include "rtdata.h"
 #include "exitwmsg.h"
 
-#if defined(__NETWARE__)
-extern void __ioalloc( FILE* );
-#endif
 
 void __InitFiles()
 {
@@ -55,32 +52,33 @@ void __InitFiles()
     #endif
     stderr->_flag &= ~( _IONBF | _IOLBF | _IOFBF );
     stderr->_flag |= _IONBF;
-    for( fp = _RWD_iob; fp->_flag != 0; ++fp ) {
+    for( fp = _RWD_iob; fp->_flag != 0; ++fp ) 
+    {
         #ifdef __NETWARE__
             ptr = lib_malloc( sizeof( __stream_link ) );
         #else
             ptr = lib_nmalloc( sizeof( __stream_link ) );
         #endif
-        if( ptr == NULL ) {
+        if( ptr == NULL ) 
+        {
             link = lib_malloc( sizeof( __stream_link ) );
-            if( link == NULL ) {
+            if( link == NULL ) 
+            {
                 __fatal_runtime_error(
                     "Not enough memory to allocate file structures\r\n", 1 );
             }
-        } else {
+        } 
+        else 
+        {
             link = ptr;
         }
         link->stream = fp;
         link->next = _RWD_ostream;
         _RWD_ostream = link;
-        #if defined(__NETWARE__)
-            __ioalloc( fp );    // allocates a buffer
-        #else
             fp->_link = link;
             fp->_link->_base = NULL;
             fp->_link->_tmpfchar = 0;
             fp->_link->_orientation = _NOT_ORIENTED;
-        #endif
     }
     _RWD_cstream = NULL;
 }

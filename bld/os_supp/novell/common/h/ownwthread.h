@@ -1,8 +1,11 @@
+#ifndef _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8
+#define _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8
 /****************************************************************************
 *
 *                            Open Watcom Project
 *
 *    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*    Portions Copyright (c) 1989-2002 Novell, Inc.  All Rights Reserved.                      
 *
 *  ========================================================================
 *
@@ -24,29 +27,45 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+*   This header file was generated for the OpenWatcom project by Carl Young
+*       carl.young@keycomm.co.uk
+*   Any problems or updates required, please either contact the author or
+*   the OpenWatcom contributors forums. 
+*       http://www.openwatcom.com/
+*
+* Description:  Dummy file.
 *
 ****************************************************************************/
 
+#include <ownwsupp.h>
 
-#include "variety.h"
-#include <string.h>
-#include <io.h>
-#include "exitwmsg.h"
-
-extern void             ExitThread( int,int );
-
-_WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
+#ifdef __cplusplus
+extern "C"
 {
-    write( STDOUT_FILENO, msg, strlen( msg ) );
-    ExitThread( 0, retcode );
-}
+#endif
 
-_WCRTLINK void __fatal_runtime_error( char *msg, unsigned retcode )
-{
-    if( !__EnterWVIDEO( msg ) ) 
-    {
-        __exit_with_msg( msg, retcode );
-    }
+unsigned int	GetNLMHandle
+(
+	void
+);
+
+int	SuspendThread
+(
+	int			/*	nThreadID	*/
+);
+
+int	ResumeThread
+(
+	int			/*	nThreadID	*/
+);
+
+int	GetThreadID
+(
+	void
+);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8 */

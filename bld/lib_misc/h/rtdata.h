@@ -53,27 +53,24 @@
 typedef struct __stream_link {
     struct __stream_link *  next;
     struct __iobuf *        stream;
-#ifndef __NETWARE__
     unsigned char *         _base;          /* location of buffer */
     int                     _orientation;   /* wide/byte/not oriented */
     int                     _extflags;      /* extended flags */
     unsigned char           _tmpfchar;      /* tmpfile number */
     unsigned char           _filler[sizeof(int)-1];/* explicit padding */
-#endif
 #if defined(__NT__) || defined(__OS2__)
     struct __pipe_info      pipeInfo;       /* pipe-related fields */
 #endif
 } __stream_link;
 
+#define _FP_BASE(__fp)          ((__fp)->_link->_base)
 #ifndef __NETWARE__
-    #define _FP_BASE(__fp)          ((__fp)->_link->_base)
     #define _FP_ORIENTATION(__fp)   ((__fp)->_link->_orientation)
     #define _FP_EXTFLAGS(__fp)      ((__fp)->_link->_extflags)
+#endif
     #define _FP_TMPFCHAR(__fp)      ((__fp)->_link->_tmpfchar)
+#ifndef __NETWARE__
     #define _FP_PIPEDATA(__fp)      ((__fp)->_link->pipeInfo)
-#else
-    #define _FP_BASE(__fp)          ((__fp)->_base)
-    #define _FP_TMPFCHAR(__fp)      ((__fp)->_tmpfchar)
 #endif
 
 extern __stream_link        *__OpenStreams;

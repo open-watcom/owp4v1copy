@@ -378,7 +378,7 @@ NL );
     MsgPrintfUsage( MSG_USAGE_LN_1, MSG_USAGE_LN_3 );
 //  MSG_USAGE_4 is the option for call graph support
 //  (undocumented for now)
-    MsgPrintfUsage( MSG_USAGE_LN_5, MSG_USAGE_LN_7 );
+    MsgPrintfUsage( MSG_USAGE_LN_5, MSG_USAGE_LN_9 );
 #ifndef __WINDOWS__
     fatal();
 #endif

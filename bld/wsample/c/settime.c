@@ -55,6 +55,7 @@ extern void             fatal(void);
 void InitTimerRate()
 {
     TimerMult = DEF_MULT;
+    TimerRestoreValue = 0;
 }
 
 void SetTimerRate( char **cmd )
@@ -76,6 +77,38 @@ void SetTimerRate( char **cmd )
 #endif
     TimerMod = TimerMult;
 }
+
+#ifdef __NETWARE__
+extern void SetRestoreRate( char ** cmd)
+{
+    /*
+    //  If someone codes a value of 1 then they are in HUGE trouble!
+    //  Just set to 0, which is DOS default!
+    */
+    TimerRestoreValue = GetNumber( 0, 0xFFFF, cmd, 10 );
+    if(1 == TimerRestoreValue)
+        TimerRestoreValue = 0;
+}
+
+extern void ResolveRateDifferences(void)
+{
+    /*
+    //  On NetWare 5 and 6, the default interrupt will be at approx 145 Hz. We
+    //  should calculate this but it is quicker to just use the restore rate if
+    //  specified. We need to overhaul the sampler full stop.
+    //  It's not as if it's much use anyway. The sampling granularity, even at
+    //  the maximum of 1mS, is not enough to see what the process is doing
+    //  except at a very high level. Also you end up with loads of junk reported
+    //  when you're not even the primary application!!!!!
+    //
+    //  here we need to resolve and differences between expected operation
+    //  (18.2 ints/sec) and what we are really using as default (144/s on NW5+)
+    //  for now, I haven't decided how to do this so I'll just ignore the 
+    //  problems    :)
+    */
+}
+
+#endif
 
 unsigned long TimerRate()
 {
