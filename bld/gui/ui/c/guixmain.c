@@ -46,10 +46,8 @@
 #include "guizlist.h"
 #include "guideath.h"
 #include "guidead.h"
-#ifdef __UNIX__
-    #ifndef __WATCOMC__
-        #include "clibext.h"
-    #endif
+#ifndef __WATCOMC__
+    #include "clibext.h"
     #include <termio.h>
 #elif defined( UNIX )
     #include "clibext.h"
