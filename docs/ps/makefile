@@ -6,14 +6,14 @@ dotarget=ps
 
 !include books.mif
 
-all : .SYMBOLIC
 !ifdef hbook
-        @wmake -h -f ..\mif\master.mif hbook=$(hbook) dotarget=$(dotarget)
-!else
-        @for %b in ($(books)) do @wmake -h -f ..\mif\master.mif hbook=%b dotarget=$(dotarget)
+books=$(hbook)
 !endif
 
-devguide : .SYMBOLIC
-        @wmake -h -f ..\mif\master.mif hbook=devguide dotarget=$(dotarget)
+all: .SYMBOLIC $(books)
+    @%null
+
+$(books) : .SYMBOLIC
+    @wmake -h -f ..\mif\master.mif hbook=$@ dotarget=$(dotarget)
 
 !include clean.mif

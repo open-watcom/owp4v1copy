@@ -61,11 +61,11 @@ OS2_TK=dummy
 # project configuration files
 #
 proj_objs= &
-    ..\lang.ctl &
-    ..\mif\depends.mif &
-    ..\mif\books.mif &
-    ..\mif\master.mif &
-    makefile
+    ..\mif\depends.mif 
+#    ..\mif\books.mif &
+#    ..\mif\master.mif &
+#    ..\lang.ctl &
+#    makefile
 
 gml_drivers= &
     whelp.cop &
@@ -291,7 +291,7 @@ all : $(hbook).ps .SYMBOLIC
 
 $(hbook).ps : $(book_objs) $(proj_objs)
     @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-    -$(%gml_path)\wgml $(book_src) ($(wgml_opts)
+    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
 
 
 !else ifeq dotarget os2
