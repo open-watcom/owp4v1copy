@@ -32,6 +32,7 @@
 
 #include "wfilenam.hpp"
 #include "wobjfile.hpp"
+#include "diskos.h"
 
 extern "C" {
     #include <stdio.h>
@@ -107,8 +108,8 @@ static void splitref( FullName& s, const char* f )
 //        for( int i=0; i<icount; i++ ) {
 //            cwd[i] = (char)tolower( cwd[i] );
 //        }
-        if( cwd[ icount-1 ] != '\\' ) {
-            strcat( cwd, "\\" );
+        if( cwd[ icount-1 ] != SYS_DIR_SEP_CHAR ) {
+            strcat( cwd, SYS_DIR_SEP_STR );
         }
         _splitpath( cwd, s.drive, s.dir, s.fname, s.ext );
     }
@@ -170,27 +171,27 @@ void WEXPORT WFileName::relativeTo( const char* f )
     int     i;
 
     _splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
-    if( _x.dir[0] == '\\' ) {
+    if( _x.dir[0] == SYS_DIR_SEP_CHAR ) {
         FullName        s;
         splitref( s, f );
-        if( s.dir[0] == '\\' && strieq( s.drive, _x.drive ) ) {
+        if( s.dir[0] == SYS_DIR_SEP_CHAR && strieq( s.drive, _x.drive ) ) {
             _x.drive[0] = '\0';
             int b = 0;
             for( i=1; _x.dir[i] != '\0' && s.dir[i] != '\0'; i++ ) {
                 if( tolower( _x.dir[i] ) != tolower( s.dir[i] ) ) break;
-                if( s.dir[i] == '\\' ) b = i;
+                if( s.dir[i] == SYS_DIR_SEP_CHAR ) b = i;
             }
             if( b == 0 ) {
                 strcpy( s.dir, _x.dir );
             } else {
                 int n = 0;
                 for( ; s.dir[i] != '\0'; i++ ) {
-                    if( s.dir[i] == '\\' )  n++;
+                    if( s.dir[i] == SYS_DIR_SEP_CHAR )  n++;
                 }
                 s.dir[0] = '\0';
                 if( n > 0 ) {
                     for( int j=0; j<n; j++ ) {
-                        strcpy( &s.dir[3*j], "..\\" );
+                        strcpy( &s.dir[3*j], ".." SYS_DIR_SEP_STR );
                     }
                 }
                 strcpy( &s.dir[3*n], &_x.dir[ b+1 ] );
@@ -220,21 +221,21 @@ void WEXPORT WFileName::absoluteTo( const char* f )
     if( _x.drive[0] == '\0' ) {
         strcpy( _x.drive, s.drive );
     }
-    if( _x.dir[0] == '\\' ) {
+    if( _x.dir[0] == SYS_DIR_SEP_CHAR ) {
         strcpy( s.dir, _x.dir );
     } else if( _x.dir[0] == '.' ) {
-        for( i=0; strnicmp( &_x.dir[i], "..\\", 3 )==0; i += 3 );
+        for( i=0; strnicmp( &_x.dir[i], ".." SYS_DIR_SEP_STR, 3 )==0; i += 3 );
         int slen = strlen( s.dir );
-        if( slen > 0 && s.dir[ slen-1 ] == '\\' ) {
+        if( slen > 0 && s.dir[ slen-1 ] == SYS_DIR_SEP_CHAR ) {
             s.dir[ slen-1 ] = '\0';
         }
         for( j=0; j < i; j += 3 ) {
             for( k=strlen( s.dir ); k>0; k-- ) {
-                if( s.dir[k] == '\\' ) break;
+                if( s.dir[k] == SYS_DIR_SEP_CHAR ) break;
             }
             s.dir[k] = '\0';
         }
-        strcat( s.dir, "\\" );
+        strcat( s.dir, SYS_DIR_SEP_STR );
         strcat( s.dir, &_x.dir[i] );
     } else {
         strcat( s.dir, _x.dir );
@@ -281,7 +282,7 @@ void WEXPORT WFileName::getCWD( bool slash )
 //        _x.path[i] = (char)tolower( _x.path[i] );
 //    }
     if( slash ) {
-        strcat( _x.path, "\\" );
+        strcat( _x.path, SYS_DIR_SEP_STR );
     }
     *this = _x.path;
 }
