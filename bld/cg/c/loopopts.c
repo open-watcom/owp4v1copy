@@ -2554,7 +2554,6 @@ static  bool    DangerousTypeChange( induction *var, induction *other ) {
 
     invariant   *invar;
 
-    if( var->type_class == other->type_class ) return( FALSE );
     if( PointerOk( other->name ) ) return( FALSE );
     invar = other->invar;
     while( invar != NULL ) {
