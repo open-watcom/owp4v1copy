@@ -16,6 +16,7 @@ rem if ["%1"] == ["C"] set gmlinc=cl;gml;whelp
 if ["%1"] == ["c"] set gmllib=cl\syslib
 if ["%1"] == ["C"] set gmllib=cl\syslib
 :NOINC
+if ["%1"] == ["devguide"] set gmlinc=devguide;cmn;gml;whelp
 if ["%1"] == ["cguide"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if ["%1"] == ["CGUIDE"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if ["%1"] == ["cguideq"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp
