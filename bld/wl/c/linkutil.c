@@ -233,10 +233,10 @@ extern void WalkMods( void (*rtn)( mod_entry * ) )
 /************************************************/
 {
     CurrSect = Root;
-    WalkList( (node *) Root->mods, rtn );
+    WalkList( (node *) Root->mods, (void (*)(void *))rtn );
     ParmWalkOvl( WalkModList, rtn );
     CurrSect = Root;
-    WalkList( (node *) LibModules, rtn );
+    WalkList( (node *) LibModules, (void (*)(void *))rtn );
 }
 
 static void WalkClass( class_entry *class, void (*rtn)(seg_leader *) )
