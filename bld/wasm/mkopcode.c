@@ -29,7 +29,7 @@ int str_compare( const void *p1, const void *p2 )
                     ((const struct words *)p2)->word ) );
 }
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     FILE        *in;
     FILE        *out;
@@ -166,5 +166,5 @@ main( int argc, char *argv[] )
     fprintf( out, "asm_op( T_NULL,\t\t\t0,\t0\t)\n" );
     fprintf( out, "};\n" );
     fclose( out );
-    exit( 0 );
+    return( 0 );
 }
