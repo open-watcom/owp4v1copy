@@ -401,8 +401,14 @@ bool GUIWndInit( unsigned DClickInterval, gui_window_styles style )
     Style = style;
     GUISysInit( 0 );
     _wpi_setdoubleclicktime( DClickInterval );
+#ifdef __NT__
+    /* I do not think this fix is specific for NT. Should apply to all users */
+    /* With high resolution displays, on WIN, OS/2 or X11... RR              */
+    GUISetScreen( 0, 0, 640, 480 );
+#else
     GUISetScreen( 0, 0, _wpi_getsystemmetrics( SM_CXSCREEN ),
-                  _wpi_getsystemmetrics( SM_CYSCREEN ) );
+                        _wpi_getsystemmetrics( SM_CYSCREEN ) );
+#endif
     GUIInitDialog();
     return( TRUE );
 }
