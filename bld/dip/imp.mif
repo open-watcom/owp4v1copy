@@ -53,8 +53,8 @@ clib_os2_386    = clib3r
 clib_qnx_i86    = clibl
 clib_qnx_386    = clib3r
 !ifdef __LINUX__
-clib_linux_386  = $(clib_dir)/library/linux.386/ms_r/clib3r.lib &
-$(mathlib_dir)/library/msdos.386/ms_r/math3r.lib
+clib_linux_386  = $(clib_dir)/library/linux.386/mf_r/clib3r.lib &
+$(mathlib_dir)/library/msdos.386/mf_r/math3r.lib
 !else
 clib_linux_386  = clib3r
 !endif
