@@ -1354,37 +1354,32 @@ static boolean cantHaveDefaultArgGaps( DECL_INFO *dinfo )
 }
 
 /*
-//  cantHaveDefaultArgGapsEx
-//
-//  checks the DECL_INFO ring that there are no gaps in default arguments
-//      called from:
-//          FreeArgsDefaultsOK  (only called from template.c)
-*/
-static boolean cantHaveDefaultArgGapsEx( DECL_INFO *dinfo )
+ * see 14.1 p11:
+ * If a template-parameter has a default template-argument, all
+ * subsequent template-parameters shall have a default
+ * template-argument supplied.
+ *
+ * only called from: FreeArgsDefaultsOK  (only called from template.c)
+ */
+static boolean checkForMissingDefaultArgs( DECL_INFO *dinfo )
 {
-    boolean transition_detected;
-    DECL_INFO *prev_init;
+    boolean prev_defarg;
     DECL_INFO *curr;
 
-    transition_detected = FALSE;
-    prev_init = NULL;
+    prev_defarg = FALSE;
     RingIterBeg( dinfo, curr ) {
         if( curr->has_defarg ) {
-            if( prev_init == NULL ) {
-                if( transition_detected ) {
-                    SetErrLoc( &curr->generic_sym->locn->tl);
-                    CErr1( ERR_DEFAULT_ARGS_MISSING );
-                    return( TRUE );
-                }
-                transition_detected = TRUE;
-            }
-            prev_init = curr;
-        } else {
-            if( prev_init != NULL ){
+            prev_defarg = ( curr != NULL );
+        } else if( prev_defarg ) {
+            /* previous parameter had a default argument, but this one
+             * hasn't => error */
+            if( curr->generic_sym ) {
                 SetErrLoc( &curr->generic_sym->locn->tl);
-                CErr1( ERR_DEFAULT_ARGS_MISSING );
-                return( TRUE );
+            } else {
+                SetErrLoc( &curr->sym->locn->tl);
             }
+            CErr1( ERR_DEFAULT_ARGS_MISSING );
+            return( TRUE );
         }
     } RingIterEnd( curr )
     return( FALSE );
@@ -1404,8 +1399,7 @@ void ForceNoDefaultArgs( DECL_INFO *dinfo, int err_msg )
 
 void FreeArgsDefaultsOK( DECL_INFO * dinfo)
 {
-    if(!cantHaveDefaultArgGaps( dinfo ))
-        cantHaveDefaultArgGapsEx( dinfo );
+    checkForMissingDefaultArgs( dinfo );
     freeDeclList( &dinfo );
 }
 
