@@ -1,5 +1,6 @@
 # Manifest file for common help files (Watcom C/C++/Fortran, OS/2 host)
 
+binp\help\clib.inf
 binp\help\ide.hlp
 binp\help\ide.inf
 binp\help\lguide.inf
