@@ -55,14 +55,11 @@ long sys_exit(int error_code)
     return sys_call1(SYS_exit,error_code);
 }
 
-    // TODO!
-#if 0
-sys_open
-_WCRTLINK int open( const char *__path, int __oflag, ... )
+long sys_open(const char * filename, int flags, int mode)
 {
-    return 0;
+    u_long res = sys_call3(SYS_open, (u_long)filename, flags, mode);
+    __syscall_return(ssize_t,res);
 }
-#endif
 
 _WCRTLINK int fstat( int __fildes, struct stat * __buf )
 {

@@ -49,6 +49,7 @@
 !inject open.obj     d16 d32                                                w16 w32 osi
 !inject openos2.obj                                         o16 o32
 !inject openwnt.obj                      nt nta ntp
+!inject openlnx.obj                                                                     l32
 !inject oshdl.obj    d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 !inject pipe.obj                         nt nta ntp         o16 o32
 !inject plusfsta.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
@@ -83,6 +84,7 @@
 !inject uopen.obj    d16 d32                                                w16 w32
 !inject uopenos2.obj                                        o16 o32
 !inject uopenwnt.obj                     nt nta ntp
+!inject uopenlnx.obj                                                                    l32
 !inject uunln.obj    d16 d32                                                w16 w32
 !inject uunlnos2.obj                                        o16 o32
 !inject uunlnwnt.obj                     nt nta ntp

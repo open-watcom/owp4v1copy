@@ -33,7 +33,6 @@ include struct.inc
 include exitwmsg.inc
 
         extrn   "C",_STACKLOW : dword
-        extrn   "C",__linux_exit: near
 
         modstart        stk
 
@@ -137,8 +136,8 @@ else
         mov     edx,1
 endif
         call    __fatal_runtime_error
-        jmp     __linux_exit
-
+        mov     eax,1
+        int     0x80            ; call SYS_exit system call
 
 _putw proc near
         mov     edx,ebx         ; save value

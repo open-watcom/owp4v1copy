@@ -51,10 +51,6 @@ _DATA   segment dword public 'DATA'
 
 ifndef __NETWARE__
 _dynend      dd 0               ; top of dynamic data area
-ifdef __LINUX__
-                                ; Under Linux _STACKLOW is actually _curbrk as the stack and
-_STACKLOW:                      ; the heap grow towards each other (stack is above the heap)
-endif
 _curbrk      dd 0               ; top of usable memory
 endif
 ifndef __QNX__
@@ -81,9 +77,7 @@ __x386_stacklow label   dword
 endif
 endif
 endif
-ifndef __LINUX__
 _STACKLOW  dd 0                 ; lowest address in stack
-endif
 _STACKTOP  dd 0                 ; highest address in stack
 __ASTACKSIZ dd 0                ; alternate stack size
 __ASTACKPTR dd 0                ; alternate stack pointer

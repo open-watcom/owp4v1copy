@@ -16,18 +16,7 @@
  #include <sys/types.h>
 #endif
 
-:include pshpackl.sp
-
-#ifndef _XTNT_T_DEFINED_
-typedef short unsigned  _nxtnt_t;
-typedef unsigned char   _ftype_t;
-
-typedef struct _xtnt_entry {
-    long    xtnt_blk,
-            xtnt_size;
-} _xtnt_t;
-#define _XTNT_T_DEFINED_
-#endif
+:include lnxkpack.sp
 
 /* Versions of the `struct stat' data structure.  */
 #define _STAT_VER_LINUX_OLD 1

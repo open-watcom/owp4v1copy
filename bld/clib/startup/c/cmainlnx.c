@@ -60,11 +60,12 @@ void __cdecl _LinuxMain(int argc, char **argv, char **arge)
     // Initialise the heap. To do this we call sys_brk() with
     // a value of 0, which will return the current top of the
     // process address space which is where we start the heap.
-    //
-    // Note also that _STACKLOW under Linux is actually an alias
-    // to _curbrk, since the stack will grow down automatically
-    // until it hits the top of the heap.
     _curbrk             = sys_brk(0);
+
+    // TODO: Need to find the end of the stack from the kernel! For now
+    //       we make it big enough to cover the heap. This will work, but
+    //       stack checking will not.
+    _STACKLOW           = _curbrk;
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
