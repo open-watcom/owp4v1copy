@@ -17,7 +17,6 @@ cdsay .
     cdsay ..\nt386
     wmake /h /k
     wmake /h /k reference
-    checkall .
 
 [ BLOCK <1> referenceos2 ]
     cdsay <PROJDIR>\c
@@ -27,7 +26,6 @@ cdsay .
     cdsay ..\os2386
     wmake /h /k
     wmake /h /k reference
-    checkall .
 
 [ BLOCK <1> build rel2 ]
     cdsay <PROJDIR>\c
