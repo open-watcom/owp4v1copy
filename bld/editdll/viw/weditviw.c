@@ -283,7 +283,7 @@ int EDITAPI EDITQueryThisFile( const char *filename )
 
 #ifdef __NT__
 
-int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res )
+int WINAPI LibMain( HINSTANCE hDll, DWORD reason, LPVOID res )
 {
     res = res;
     reason = reason;
@@ -295,7 +295,7 @@ int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res )
 
 #else
 
-int WINAPI LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
+int WINAPI LibMain( HINSTANCE hInst, WORD wDataSeg, WORD wHeapSize,
                         LPSTR lpszCmdLine )
 {
     wDataSeg = wDataSeg;
