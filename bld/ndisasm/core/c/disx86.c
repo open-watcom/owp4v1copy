@@ -1265,6 +1265,23 @@ static void X86GetMMRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref
     }
 }
 
+static void X86GetMMRegModRM_R(DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins )
+/**********************************************************************/
+//    dir                   1                 0
+//   Destination           Reg              MODRM
+//   Source               MODRM              Reg
+{
+
+    if( dir ) {
+        X86GetReg(w, reg, ins ) ;
+        X86GetMM( rm, ins );
+    } else {
+        X86GetMM( reg, ins );
+        X86GetReg(w, rm, ins ) ;
+    }
+}
+
 static void X86GetMMRegModRMMixed( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
                      void * d, dis_dec_ins *ins )
 /*************************************************************************************************/
@@ -1291,6 +1308,16 @@ static void X86GetMMRegModRM_B( MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
 {
     X86GetMM( reg, ins );
     X86GetMMModRM(W_DEFAULT, mod, rm, d, ins, ref_type);
+}
+
+static void X86GetMMRegModRM_BX( MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins)
+/**********************************************************************/
+//   Destination           MODRM
+//   Source               Reg
+{
+    X86GetMMModRM(W_DEFAULT, mod, rm, d, ins, ref_type);
+    X86GetMM( reg, ins );
 }
 
 static void X86GetXMMRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
@@ -3014,9 +3041,26 @@ dis_handler_return X86MMRegModRM64( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return X86MMRegModRM64_R( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  Multi-Media 64-Bit RegModRM
+ *  e.g. pmovmskb reg32, mmreg
+ */
+{
+    mm code;
+
+    code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetMMRegModRM_R(1, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins) ;
+    return( DHR_DONE );
+}
+
 dis_handler_return X86MMRegModRM64_B( dis_handle *h, void *d, dis_dec_ins *ins )
 /**********************************************************************
  *  Multi-Media 64-Bit RegModRM - Destination only mm
+ *  e.g. packsswb mmreg, mmreg/mem64
  */
 {
     mm code;
@@ -3026,6 +3070,73 @@ dis_handler_return X86MMRegModRM64_B( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->size += 3;
 
     X86GetMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
+    return( DHR_DONE );
+}
+
+dis_handler_return X86MMRegModRM64_BX( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  Multi-Media 64-Bit RegModRM - Source only mm
+ *  e.g. movntq mem64, mmreg
+ */
+{
+    mm code;
+
+    code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetMMRegModRM_BX( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
+    return( DHR_DONE );
+}
+
+dis_handler_return X86MMRegModRM64_BImm( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM, imm8 - Destination only mm
+ *  e.g. pshufw mmreg, mmreg/mem64, imm8
+ */
+{
+    mm code;
+
+    code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
+    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    return( DHR_DONE );
+}
+
+dis_handler_return X86MMRegModRM64_BImm_R( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM, imm8 - Destination only mm
+ *  e.g. pextrw reg32, mmreg/mem64, imm8
+ */
+{
+    mm code;
+
+    code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetMMRegModRM_R(1, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins) ;
+    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    return( DHR_DONE );
+}
+
+dis_handler_return X86MMRegModRM64_BImm_RX( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM, imm8 - Destination only mm
+ *  e.g. pinsrw mmreg, reg16/reg32/m16, imm8
+ */
+{
+    mm code;
+
+    code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetMMRegModRM_R(0, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins) ;
+    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
     return( DHR_DONE );
 }
 

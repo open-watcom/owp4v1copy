@@ -321,6 +321,9 @@ inspick( xor3,          "xor",          0x00003080,     0x000038fc,     X86ModRM
 // Part of xchg
 inspick( nop,           "nop",          0x00000090,     0x00000000,     NULL)
 
+inspick( prefetch,   "prefetch",  0x00000d0f,     0x0018ffff,     X86ModRM_24)
+inspick( prefetchw,    "prefetchw",   0x00080d0f,     0x0018ffff,     X86ModRM_24)
+
 // Floating Point Instructions
 
 inspick( f2xm1,         "f2xm1",        0x0000f0d9,     0x0000ffff,     X86FType4)
@@ -576,10 +579,34 @@ inspick( punpcklwd,     "punpcklwd",    0x0000610f,     0x0000ffff,     X86MMReg
 inspick( punpckldq,     "punpckldq",    0x0000620f,     0x0000ffff,     X86MMRegModRM64_B)
 inspick( pxor,          "pxor",         0x0000ef0f,     0x0000ffff,     X86MMRegModRM64_B)
 
+// SSE/MMX extended instruction
+
+inspick( fxrstor,       "fxrstor",      0x0008ae0f,     0x0038ffff,     X86ModRM_24)
+inspick( fxsave,        "fxsave",       0x0000ae0f,     0x0038ffff,     X86ModRM_24)
+inspick( maskmovq,      "maskmovq",     0x0000f70f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( movntq,        "movntq",       0x0000e70f,     0x0000ffff,     X86MMRegModRM64_BX)
+inspick( pavgb,         "pavgb",        0x0000e00f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pavgw,         "pavgw",        0x0000e30f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pextrw,        "pextrw",       0x0000c50f,     0x0000ffff,     X86MMRegModRM64_BImm_R)
+inspick( pinsrw,        "pinsrw",       0x0000c40f,     0x0000ffff,     X86MMRegModRM64_BImm_RX)
+inspick( pmaxsw,        "pmaxsw",       0x0000ee0f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pmaxub,        "pmaxub",       0x0000de0f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pminsw,        "pminsw",       0x0000ea0f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pminub,        "pminub",       0x0000da0f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pmovmskb,      "pmovmskb",     0x0000d70f,     0x0000ffff,     X86MMRegModRM64_R)
+inspick( pmulhuw,       "pmulhuw",      0x0000e40f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pmsadbw,       "psadbw",       0x0000f60f,     0x0000ffff,     X86MMRegModRM64_B)
+inspick( pshufw,        "pshufw",       0x0000700f,     0x0000ffff,     X86MMRegModRM64_BImm)
+inspick( prefetchnta,   "prefetchnta",  0x0000180f,     0x0018ffff,     X86ModRM_24)
+inspick( prefetcht0,    "prefetcht0",   0x0008180f,     0x0018ffff,     X86ModRM_24)
+inspick( prefetcht1,    "prefetcht1",   0x0010180f,     0x0018ffff,     X86ModRM_24)
+inspick( prefetcht2,    "prefetcht2",   0x0018180f,     0x0018ffff,     X86ModRM_24)
+inspick( sfence,        "sfence",       0x00f8ae0f,     0x00ffffff,     X86XMMNoOp)
+
 // SSE Instructions
 
 inspick( addps,         "addps",        0x0000580f,     0x0000ffff,     X86XMMRegModRM64_B)
-inspick( addss,         "addss",        0x00580ff3,     0x00ffffff,     X86XMMRegModRM64_B)
+//repne conflict: inspick( addsd,         "addsd",        0x00580ff2,     0x00ffffff,     X86XMMRegModRM64_B)
 inspick( andnps,        "andnps",       0x0000550f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( andps,         "andps",        0x0000540f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( cmpps,         "cmpps",        0x0000c20f,     0x0000ffff,     X86XMMRegModRM64_BImm)
@@ -587,6 +614,7 @@ inspick( cmpss,         "cmpss",        0x00c20ff3,     0x00ffffff,     X86XMMRe
 inspick( comiss,        "comiss",       0x00002f0f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( cvtpi2ps,      "cvtpi2ps",     0x00002a0f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( cvtps2pi,      "cvtps2pi",     0x00002d0f,     0x0000ffff,     X86XMMRegModRM64_B)
+//repne conflict: inspick( cvtsd2ss,    "cvtsd2ss",       0x005a0ff2,     0x00ffffff,     X86XMMRegModRM64_B)
 inspick( cvtsi2ss,      "cvtsi2ss",     0x002a0ff3,     0x00ffffff,     X86XMMRegModRM64_B)
 inspick( cvtss2si,      "cvtss2si",     0x002d0ff3,     0x00ffffff,     X86XMMRegModRM64)
 inspick( cvttps2pi,     "cvttps2pi",    0x00002c0f,     0x0000ffff,     X86XMMRegModRM64_B)
@@ -627,25 +655,9 @@ inspick( ucomiss,       "ucomiss",      0x00002e0f,     0x0000ffff,     X86XMMRe
 inspick( unpckhps,      "unpckhps",     0x0000150f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( unpcklps,      "unpcklps",     0x0000140f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( xorps,         "xorps",        0x0000570f,     0x0000ffff,     X86XMMRegModRM64_B)
-inspick( pavgb,         "pavgb",        0x0000e00f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pavgw,         "pavgw",        0x0000e30f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pextrw,        "pextrw",       0x0000c50f,     0x0000ffff,     X86XMMRegModRM64_BImm)
-inspick( pinsrw,        "pinsrw",       0x0000c40f,     0x0000ffff,     X86XMMRegModRM64_BImm)
-inspick( pmaxsw,        "pmaxsw",       0x0000ee0f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pmaxub,        "pmaxub",       0x0000de0f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pminsw,        "pminsw",       0x0000ea0f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pminub,        "pminub",       0x0000da0f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pmovmskb,      "pmovmskb",     0x0000d70f,     0x0000ffff,     X86XMMRegModRM64)
-inspick( pmulhuw,       "pmulhuw",      0x0000e40f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pmsadbw,       "psadbw",       0x0000f60f,     0x0000ffff,     X86MMRegModRM64_B)
-inspick( pshufw,        "pshufw",       0x0000700f,     0x0000ffff,     X86XMMRegModRM64_BImm)
-inspick( maskmovq,      "maskmovq",     0x0000f70f,     0x0000ffff,     X86XMMRegModRM64_B)
 inspick( movntps,       "movntps",      0x00002b0f,     0x0000ffff,     X86XMMRegModRM64_B)
-inspick( movntq,        "movntq",       0x0000e70f,     0x0000ffff,     X86XMMRegModRM64_B)
-inspick( prefetcht0,    "prefetcht0",   0x0040180f,     0x00c0ffff,     X86ModRM_24)
-inspick( prefetcht1,    "prefetcht1",   0x0080180f,     0x00c0ffff,     X86ModRM_24)
-inspick( prefetcht2,    "prefetcht2",   0x00c0180f,     0x00c0ffff,     X86ModRM_24)
-inspick( prefetchnta,   "prefetchnta",  0x0000180f,     0x00c0ffff,     X86ModRM_24)
-inspick( fxrstor,       "fxrstor",      0x0008ae0f,     0x0038ffff,     X86ModRM_24)
-inspick( fxsave,        "fxsave",       0x0000ae0f,     0x0038ffff,     X86ModRM_24)
-inspick( sfence,        "sfence",       0x00f8ae0f,     0x00ffffff,     X86XMMNoOp)
+
+// SSE2 Instructions
+
+inspick( addss,         "addss",        0x00580ff3,     0x00ffffff,     X86XMMRegModRM64_B)
+//inspick( cvttsd2si,     "cvttsd2si",    0x002c0ff2,     0x00ffffff,     X86XMMRegModRM64)
