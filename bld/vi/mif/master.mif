@@ -1,5 +1,9 @@
 proj_name = vi
 
+!ifndef vi_autodepends
+vi_autodepends = .AUTODEPEND
+!endif
+
 .EXTENSIONS: .ch .dh
 .EXTENSIONS: .ctl .dyn
 .EXTENSIONS: .vi
