@@ -1,3 +1,5 @@
+#pmake: all build os_win cpu_386
+!include deftarg.mif
 LNK = wdebug.lnk
 LNKEMU = wemu387.lnk
 
@@ -38,4 +40,4 @@ $(LNKEMU) : makefile
 .obj : $(OBJ)
 
 .asm.obj :
-        masm5 -p -w2 -Mx $(DEBUG) $[*;
+        wasm -w2  $(DEBUG) $[*

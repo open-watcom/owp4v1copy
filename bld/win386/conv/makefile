@@ -1,3 +1,5 @@
+#pmake: all build os_win cpu_i86 cpu_386
+!include deftarg.mif
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .obj

@@ -10,17 +10,8 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay conv
-    wmake /h /i
-    cdsay ..\ext
-    wmake /h /i
-    cdsay ..\dll
-    wmake /h /i
-    cdsay ..\wbind
-    wmake /h /i
-    cdsay ..\vxd
-    wmake /h /i
-    cdsay ..
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -29,9 +20,11 @@ cdsay .
     <CPCMD> conv\win386.lib <relroot>\rel2\lib386\win\win386.lib
     <CPCMD> vxd\wdebug.386 <relroot>\rel2\binw\wdebug.386
     <CPCMD> vxd\wemu387.386 <relroot>\rel2\binw\wemu387.386
-    <CPCMD> wbind\wbind.exe <relroot>\rel2\binw\wbind.exe
-    <CPCMD> wbind\wbindnt.exe <relroot>\rel2\binnt\wbind.exe
+    <CPCMD> wbind\dosi86\wbind.exe <relroot>\rel2\binw\wbind.exe
+    <CPCMD> wbind\os2i86\wbind.exe <relroot>\rel2\binp\wbind.exe
+    <CPCMD> wbind\nt386\wbind.exe <relroot>\rel2\binnt\wbind.exe
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    @rm -f obj\*.?bj

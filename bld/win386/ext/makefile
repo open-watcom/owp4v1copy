@@ -1,3 +1,5 @@
+#pmake: all build os_win cpu_i86
+
 EXTNAME = win386
 
 OBJS = begin.obj  &
