@@ -918,7 +918,11 @@ extern void DefineComdat( segdata *sdata, symbol *sym, offset value,
         SetComdatSym( sym, sdata );
         sym->addr.off += value;
         sdata->data = AllocStg( sdata->length );
-        PutInfo( sdata->data, data, sdata->length );
+        
+        if(NULL == data)
+            PutNulls(sdata->data, sdata->length);
+        else
+            PutInfo( sdata->data, data, sdata->length );
     }
 }
 
