@@ -1868,13 +1868,33 @@ about reproducing the exact same object code when the same source file
 is compiled on a different machine.
 You may not be able to reproduce the exact same object code from one
 compile to the next unless the available memory is exactly the same.
-:MSGSYM. INFO_SYMBOL_DECLARED_IN
-:MSGTXT. '%s' declared in: %s(%u)
+:MSGSYM. INFO_SYMBOL_DECLARATION
+:MSGTXT. '%s' defined in: %s(%u)
 :MSGJTXT.
 :INFO.
-.np
-Gives additional information about inital declaration (source file and line)
-of the symbol, referenced in previous message.
+This informational message indicates where the symbol in question was defined.
+The message is displayed following an error or warning diagnostic for the
+symbol in question.
+:errbad.
+static int a = 9;
+int b = 89;
+:eerrbad.
+The variable 'a' is not referenced in the preceding example and so will
+cause a warning to be generated.
+Following the warning, the informational message indicates the line at
+which 'a' was declared.
+:MSGSYM. INFO_SRC_CNV_TYPE
+:MSGTXT. source conversion type is '%s'
+:MSGJTXT. 変換ソースの型は、'%s'です
+:INFO.
+This informational message indicates the type of the source operand, for the
+preceding conversion diagnostic.
+:MSGSYM. INFO_TGT_CNV_TYPE
+:MSGTXT. target conversion type is '%s'
+:MSGJTXT. 変換ターゲットの型は、'%s'です
+:INFO.
+This informational message indicates the target type of the conversion,
+for the preceding conversion diagnostic.
 :eMSGGRP. Info
 :cmt -------------------------------------------------------------------
 :MSGGRP. PCHDR

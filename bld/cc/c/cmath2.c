@@ -1198,7 +1198,7 @@ TREEPTR InitAsgn( TYPEPTR typ,  TREEPTR op2 )
     }
     op2 = RValue( op2 );
     if( !CompFlags.no_check_inits ){ // else fuck em
-        AsgnCheck( typ, op2 );
+        ParmAsgnCheck( typ, op2, 0 );
     }
     return( op2 );
 }
@@ -1252,7 +1252,7 @@ TREEPTR AsgnOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         typ = TypeOf( op1 );
         op2 = RValue( op2 );
         op2 = BaseConv( typ, op2 );
-        AsgnCheck( typ, op2 );
+        ParmAsgnCheck( typ, op2, 0 );
         if( opr == T_ASSIGN_LAST ) opr = T_EQUAL;
         op1_class = ExprTypeClass( typ );
         op2_class = ExprTypeClass( op2->expr_type );

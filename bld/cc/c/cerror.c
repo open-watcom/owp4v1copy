@@ -367,35 +367,101 @@ void DumpAllMsg( void ){
 }
 #endif
 
+/*
+ * Types of post-processing messages (informational notes)
+ */
+
+typedef enum {
+    POSTLIST_SYMBOL,     /* location of previously defined symbol */
+    POSTLIST_TWOTYPES    /* type mismatch between two types - print them */
+} postlist_type;
+
 struct ErrPostList
 {
-    char *name;
-    char *file;
-    int  line;
+    struct ErrPostList *next;
+    postlist_type       type;
+
+    union
+    {
+        struct               /* POSTLIST_SYMBOL */
+        {
+            char *sym_name;
+            char *sym_file;
+            int  sym_line;
+        };
+        TYPEPTR  types[2];  /* POSTLIST_TWOTYPES */
+    };
 };
 
-static struct ErrPostList PostList;
+static struct ErrPostList *PostList;
 
-void SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle)
+static struct ErrPostList *NewPostList(postlist_type type)
 {
-    PostList.name = SymName(sym, handle);
-    PostList.file = FileIndexToCorrectName( sym->defn_file_index );
-    PostList.line = sym->d.defn_line;
+    struct ErrPostList *np;
+
+    np = CMemAlloc( sizeof( *np ) );
+    np->next = PostList;
+    np->type = type;
+    PostList = np;
+    return np;
+}
+
+void SetDiagSymbol( SYMPTR sym, SYM_HANDLE handle )
+{
+    struct ErrPostList *np;
+
+    np = NewPostList(POSTLIST_SYMBOL);
+    np->sym_name = SymName( sym, handle );
+    if (np->sym_name == NULL)
+        np->sym_name = "???";
+    np->sym_file = FileIndexToCorrectName( sym->defn_file_index );
+    np->sym_line = sym->d.defn_line;
+}
+
+void SetDiagType2( TYPEPTR typ_source, TYPEPTR typ_target )
+{
+    struct ErrPostList *np;
+
+    np = NewPostList(POSTLIST_TWOTYPES);
+    np->types[0] = typ_source;
+    np->types[1] = typ_target;
 }
 
 void SetDiagPop(void)
 {
-    PostList.file = NULL;
+    struct ErrPostList *np;
+
+    np = PostList;
+    if (np)
+    {
+        PostList = np->next;
+        CMemFree(np);
+    }
+}
+
+static void PrintType( int msg, TYPEPTR typ )
+{
+    char *text;
+
+    text = DiagGetTypeName( typ );
+    CInfoMsg( msg, text );
+    CMemFree( text );
 }
 
 static void PrintPostNotes(void)
 {
-    while (PostList.file)
+    while ( PostList )
     {
-        if (PostList.name == NULL)
-            PostList.name = "???";
-
-        CInfoMsg(INFO_SYMBOL_DECLARED_IN, PostList.name, PostList.file, PostList.line);
-        PostList.file = NULL;
+        switch ( PostList->type )
+        {
+        case POSTLIST_SYMBOL:
+            CInfoMsg( INFO_SYMBOL_DECLARATION, PostList->sym_name, PostList->sym_file, PostList->sym_line );
+            break;
+        case POSTLIST_TWOTYPES:
+            PrintType( INFO_SRC_CNV_TYPE, PostList->types[0] );
+            PrintType( INFO_TGT_CNV_TYPE, PostList->types[1] );
+            break;
+        }
+        SetDiagPop();
     }
 }

@@ -511,7 +511,6 @@ extern  struct aux_entry *AuxLookup(char *);    /* caux.c */
 extern  void    PragmaFini(void);               /* caux.c */
 
 extern  int     ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck ); /*ccheck*/
-extern  void    AsgnCheck(TYPEPTR,TREEPTR);     /* ccheck */
 extern  void    TernChk( TYPEPTR typ1, TYPEPTR typ2 ); /*check */
 extern  void    ChkCallParms(void);             /* ccheck */
 extern  void    ChkRetType(TREEPTR);            /* ccheck */
@@ -520,7 +519,7 @@ extern  void    CompatiblePtrType(TYPEPTR,TYPEPTR); /* ccheck */
 extern  int     IdenticalType(TYPEPTR,TYPEPTR); /* ccheck */
 extern  int     VerifyType(TYPEPTR,TYPEPTR,SYMPTR);/* ccheck */
 extern  TYPEPTR SkipTypeFluff( TYPEPTR typ );      /* ccheck */
-extern   void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num );
+extern  void    ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num ); /* ccheck */
 //ccmain.c
 extern  void    FrontEndInit( bool reuse );
 extern  int     FrontEnd(char **);
@@ -579,6 +578,7 @@ extern  void    VarDeclEquals(SYMPTR,SYM_HANDLE);/* cdinit */
 
 extern  void    DumpFuncDefn(void);             /* cdump */
 extern  void    SymDump(void);                  /* cdump */
+extern  char *  DiagGetTypeName(TYPEPTR typ);   /* cdump */
 
 extern  SEGADDR_T AccessSegment(struct seg_info *);     /* cems */
 extern  SEGADDR_T AllocSegment(struct seg_info *);      /* cems */
@@ -604,6 +604,7 @@ extern  void    CSuicide(void);
 extern  void    OpenErrFile(void);
 extern  void    FmtCMsg( char *buff, cmsg_info *info );
 extern  void    SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle);
+extern  void    SetDiagType2(TYPEPTR typ_source, TYPEPTR typ_target);
 extern  void    SetDiagPop(void);
 
 //  cexpr2.c
