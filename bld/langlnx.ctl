@@ -38,14 +38,19 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
 [ INCLUDE <DEVDIR>/cg/lang.ctl ]
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
-<CPCMD> <DEVDIR>/cc/linux386.386/wcc386c.elf <DEVDIR>/build/binl/wcc386
-<CPCMD> <DEVDIR>/cc/linux386.i86/wcci86c.elf <DEVDIR>/build/binl/wcc
-<CPCMD> <DEVDIR>/cc/wcl/linux386.386/wcl386.exe <DEVDIR>/build/binl/wcl386
-<CPCMD> <DEVDIR>/cc/wcl/linux386.i86/wcl.exe <DEVDIR>/build/binl/wcl
 [ INCLUDE <DEVDIR>/plusplus/lang.ctl ]
-<CPCMD> <DEVDIR>/plusplus/linux386.386/wcpp386.elf <DEVDIR>/build/binl/wpp386
-<CPCMD> <DEVDIR>/plusplus/linux386.i86/wcppi86.elf <DEVDIR>/build/binl/wpp
 [ INCLUDE <DEVDIR>/plusplus/cpplib/lang.ctl ]
+[ INCLUDE <DEVDIR>/cc/wcl/lang.ctl ]
+
+[ BLOCK <1> build cprel2 ]
+    <CPCMD> <DEVDIR>/cc/wcl/linux386.386/wcl386.exe <DEVDIR>/build/binl/wcl386
+    <CPCMD> <DEVDIR>/cc/wcl/linux386.i86/wcl.exe <DEVDIR>/build/binl/wcl
+    <CPCMD> <DEVDIR>/cc/linux386.386/wcc386c.elf <DEVDIR>/build/binl/wcc386
+    <CPCMD> <DEVDIR>/cc/linux386.i86/wcci86c.elf <DEVDIR>/build/binl/wcc
+    <CPCMD> <DEVDIR>/plusplus/linux386.386/wcpp386.elf <DEVDIR>/build/binl/wpp386
+    <CPCMD> <DEVDIR>/plusplus/linux386.i86/wcppi86.elf <DEVDIR>/build/binl/wpp
+
+[ BLOCK . . ]
 set OWLINUXBUILD=normal
 
 # all is ready to do everything else now

@@ -27,8 +27,8 @@
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
-    cdsay <PROJDIR>/../linux.i86
+    cdsay <PROJDIR>/../linux386.i86
     wmake -h -k clean refcomp=1
-    cdsay ../linux.386
+    cdsay ../linux386.386
     wmake -h -k clean refcomp=1
     cdsay <PROJDIR>

@@ -11,9 +11,15 @@ suppress_bd = 1
 
 !ifeq bootstrap 1
 targ_name = wlib
+!ifdef sys_dll
+!undef sys_dll
+!endif
+wlib_trmem = 0
 !else ifeq prebuild 1
 targ_name = wlib.exe
+!ifdef sys_dll
 !undef sys_dll
+!endif
 wlib_trmem = 0
 !else ifeq sys_dll 1
 targ_name = wlibd.dll

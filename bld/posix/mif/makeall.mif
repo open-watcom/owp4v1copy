@@ -1,3 +1,11 @@
+!ifdef __LINUX__
+all : .symbolic
+
+clean : .symbolic
+
+clean_build : .symbolic
+
+!else
 
 !ifdef prebuild
 !include $(posix_dir)/mif/bld_cmds.mif
@@ -41,3 +49,4 @@ clean : .symbolic
 
 clean_build : .symbolic
         @for %i in ($(commands)) do @rm -f $(build_path)%i.exe
+!endif

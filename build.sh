@@ -19,5 +19,5 @@ $MAKE -f gnumake
 cp $OBJDIR/builder ../build/binl
 cd ..
 export BUILDMODE=bootstrap
-builder build os_linux
+builder rel2 os_linux
 unset BUILDMODE

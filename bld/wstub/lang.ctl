@@ -10,11 +10,7 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-
-[ BLOCK <BUILD_PLATFORM> linux386 ]
-#===============================
-    <CPCMD> wstub.exe <DEVDIR>/build/binl/wstub.exe
+    [ INCLUDE prereq.ctl ]
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================

@@ -8,10 +8,11 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
-set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+    set BUILD_PLATFORM=<BUILD_PLATFORM>boot
 
 [ BLOCK <1> clean ]
 #==================
+    echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
     wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=wlink
     set BUILD_PLATFORM=
