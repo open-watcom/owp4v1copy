@@ -381,7 +381,7 @@ void *check_alloc(
 
     p = malloc( size );
 
-    if( p == NULL ) {
+    if( p == NULL && size != 0) {
         error( ERR_NO_MEMORY, FALSE );
     }
 
