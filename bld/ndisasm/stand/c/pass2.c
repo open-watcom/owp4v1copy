@@ -276,8 +276,10 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             referenceString( *r_entry, sec_size, "", "", "", buff, flags );
             break;
         case ORL_RELOC_TYPE_SEGMENT:
-            if( ( (*r_entry)->label->type != LTYP_GROUP ) &&
-              ( flags & RFLAG_IS_IMMED ) && IsMasmOutput() ) {
+            if( ( (*r_entry)->label->type != LTYP_GROUP )
+                && ( (*r_entry)->label->type != LTYP_SECTION )
+                && ( flags & RFLAG_IS_IMMED )
+                && IsMasmOutput() ) {
                 referenceString( *r_entry, sec_size, "seg ", "seg ", "",
                                  buff, flags );
             } else {

@@ -197,8 +197,9 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                     r_entry = r_entry->next;
                 }
                 if( r_entry && ( r_entry->offset == op_pos ) ) {
-                    if( is_intel && r_entry->label->shnd &&
-                        ( r_entry->label->type == LTYP_SECTION ) ) {
+                    if( is_intel && r_entry->label->shnd
+                        && ( r_entry->type != ORL_RELOC_TYPE_SEGMENT )
+                        && ( r_entry->label->type == LTYP_SECTION ) ) {
                         /* For section offsets under intel we MUST generate a
                          * local label because the offset might change when the
                          * code is re-assembled
