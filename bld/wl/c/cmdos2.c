@@ -34,6 +34,7 @@
 #include "linkstd.h"
 #include "alloc.h"
 #include "command.h"
+#include "cmdos2.h"
 #include "exeos2.h"
 #include "exepe.h"
 #include "loados2.h"
@@ -46,6 +47,7 @@
 #include "impexp.h"
 #include "objpass1.h"
 
+static void             ParseVersion( void );
 static bool             GetWlibImports( void );
 static bool             getimport( void );
 static bool             getexport( void );

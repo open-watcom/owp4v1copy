@@ -123,6 +123,8 @@ static module_import *  PEImpList;
 static unsigned         NumMods;
 static segdata *        XFerSegData;
 
+static void             RegisterImport( dll_sym_info *sym );
+
 static struct {
     offset      ilt_off;
     offset      eof_ilt_off;

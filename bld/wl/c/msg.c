@@ -56,6 +56,9 @@ static  MSG_ARG_LIST    MsgArgInfo;
 static  char *          CurrSymName;
 
 static unsigned         MakeExeName( char *, unsigned );
+static void             IncremIndex( void );
+static void             FileOrder( char rc_buff[], int which_file );
+static int              UseArgInfo( void );
 
 #define MSG_ARRAY_SIZE ((MSG_MAX_ERR_MSG_NUM / 8) + 1)
 
@@ -327,14 +330,14 @@ static unsigned MakeExeName( char * buff, unsigned max )
     return( len );
 }
 
-static int UseArgInfo()
-/*********************/
+static int UseArgInfo( void )
+/***************************/
 {
     return( MsgArgInfo.index >= 0 );
 }
 
-static void IncremIndex()
-/***********************/
+static void IncremIndex( void )
+/*****************************/
 {
     MsgArgInfo.index++;
 }

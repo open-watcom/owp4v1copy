@@ -60,7 +60,19 @@ static char *   IgnoreNames[] = { "FJCRQQ", "FJSRQQ", "FJARQQ" };
 static unsigned long NumMapSyms;
 
 static seg_leader *     FindASeg( class_entry *, char * );
+static void             SortSegments( void );
+static void             ReOrderClasses( section *sec );
 static void             AllocSeg( void * );
+static void             AllocFileSegs( void );
+static void             ReallocFileSegs( void );
+static void             FindUninitDataStart( void );
+static void             CalcGrpAddr( group_entry *currgrp );
+static void             DefinePublics( void );
+static void             WriteSymArray( symbol ** symarray, unsigned num );
+static void             FillClassFlags( char *name, unsigned_16 flags );
+static void             FillTypeFlags( unsigned_16 flags, segflag_type type );
+static void             FindFloatSyms( void );
+static void             CheckClassUninitialized( class_entry * currcl );
 
 extern void CheckClassOrder( void )
 /*********************************/

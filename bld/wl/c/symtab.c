@@ -72,6 +72,7 @@ static symbol **    StaticSymPtrs;
 
 static unsigned GlobalHashFn( char *, int );
 static unsigned StaticHashFn( char *, int );
+static void     SetSymAlias( symbol * sym, char *target, int targetlen );
 
 static const unsigned ScatterTable[] = {
 #ifdef __386__
@@ -1077,7 +1078,7 @@ static unsigned StaticHashFn( char *name, int len )
     modval >>= 8;
     value = value ^ ScatterTable[modval & 0xff];
     while( len > 0 ) {
-        value = (value << 1) ^ ScatterTable[*name];
+        value = (value << 1) ^ ScatterTable[(unsigned char)*name];
         ++name;
         len--;
     }
