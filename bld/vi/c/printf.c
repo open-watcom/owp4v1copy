@@ -218,7 +218,8 @@ void MyPrintf( const char *str, ... )
     cFile = NULL;
     cStr = tmp;
     basePrintf( str, al );
-    MessageBox( (HWND) NULL, tmp, EditorName, MB_OK | MB_TASKMODAL );
+    // MB_TOPMOST to overlay MB_TOPMOST window already on screen. (else hangs)
+    MessageBox( NULL, tmp, EditorName, MB_OK | MB_TASKMODAL | MB_TOPMOST );
 #else
     va_start( al, str );
     cFile = stdout;

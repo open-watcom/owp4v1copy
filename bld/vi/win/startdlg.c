@@ -40,6 +40,12 @@
  */
 BOOL WINEXP StartupProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 {
+    lparam = lparam;
+    wparam = wparam;
+    hwnd = hwnd;
+    switch( msg ) {
+    // Allow Easy Flash Screen suppression. W.Briscoe 20041112
+#if 1
     RECT    r;
     int     maxx,maxy;
     int     width;
@@ -47,10 +53,6 @@ BOOL WINEXP StartupProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     int     newx,newy;
     static char    vers[] = banner1p2( _VI_VERSION_ );
 
-    lparam = lparam;
-    wparam = wparam;
-    hwnd = hwnd;
-    switch( msg ) {
     case WM_INITDIALOG:
     GetWindowRect( hwnd, &r );
     maxx = GetSystemMetrics( SM_CXSCREEN );
@@ -59,10 +61,10 @@ BOOL WINEXP StartupProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     height = r.bottom - r.top;
     newx = (maxx - width)/2;
     newy = (maxy - height)/2;
-    SetWindowPos( hwnd, HWND_TOPMOST,newx,newy,0,0,
-                SWP_NOSIZE );
+    SetWindowPos( hwnd, HWND_TOPMOST,newx,newy,0,0, SWP_NOSIZE );
     SetDlgItemText( hwnd, STARTUP_VERSION, vers);
         SetDlgItemText( hwnd, STARTUP_EDITORNAME, WATCOM_ABOUT_EDITOR );
+#endif
     return( TRUE );
     }
     return( FALSE );
