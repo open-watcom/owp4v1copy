@@ -3,6 +3,7 @@ objs = &
 3dnow &
 addrmode &
 allign &
+commdef &
 callimpl &
 datamix1 &
 datamix2 &

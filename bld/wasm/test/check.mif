@@ -18,7 +18,6 @@ log_file=testasm.log
     @set EMP_CHECK2=-@diff -i -b $(name).lst $(name).emp
 
 all: $(name).out $(name).chk $(name).obj $(name).esm $(name).emp .symbolic
-    @%append $(log_file) $(name) ================================================================
     @SET TESTASM=Test OK
     $(%CHK_CHECK) >>$(log_file)
     @if errorlevel 1 @SET TESTASM=!!! Test unsuccessful !!!

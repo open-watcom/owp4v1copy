@@ -1,0 +1,174 @@
+.CONTINUE
+.IGNORE
+
+objs = &
+3dnow &
+486 &
+adc &
+add &
+admodes &
+admodes1 &
+admodes2 &
+admodes3 &
+admodes4 &
+admodes5 &
+admodes6 &
+amodes &
+amodes1 &
+amodes2 &
+amodes3 &
+amodes4 &
+amodes5 &
+amodes6 &
+and &
+bt &
+bug &
+calljmp &
+cc2 &
+cmp &
+cmpx &
+dec &
+div &
+disasm &
+dmodes1 &
+dmodes2 &
+dmodes3 &
+dmodes4 &
+dmodes5 &
+dmodes6 &
+enter &
+fadd &
+fcom &
+fdiv &
+fld &
+fmul &
+fp &
+fpmisc &
+fpmisc2 &
+fsub &
+fubar &
+fucom &
+idiv &
+imul &
+in &
+inc &
+lea &
+lod &
+lxs &
+misc &
+misc2 &
+mmx &
+modes &
+modes1 &
+modes2 &
+modes3 &
+modes4 &
+modes5 &
+modes6 &
+mov &
+mov2 &
+movs &
+movx &
+mul &
+neg &
+not &
+or &
+out &
+outs &
+pop &
+pword &
+rcl &
+sal &
+sbb &
+scas &
+setcc &
+shld &
+sse &
+sse2 &
+sse3 &
+sub &
+test &
+try &
+xadd &
+xchg &
+xor &
+asmbug1 &
+asmbug2 &
+asmbug3 &
+asmbug4 &
+asmbug5 &
+asmbug6 &
+asmbug7 &
+asmbug8 &
+asmbug9 &
+asmbug10 &
+asmbug11 &
+asmbug12 &
+asmbug13
+
+dev_objs = &
+
+init_3dnow = K3D
+init_mmx = MMX
+init_sse = XMM
+init_sse2 = XMM2
+init_sse3 = XMM3
+
+.exe : ..
+.c : ..
+
+!ifndef testcomp
+testcomp=wcc386
+!endif 
+
+!ifdef nulldevice
+!else ifdef __UNIX__
+nulldevice=/dev/null
+!else
+nulldevice=nul
+!endif
+
+!ifndef log_file
+log_file=testcomp.log
+!endif
+
+.BEFORE
+#    @%create $(log_file)
+
+all : clean $(objs) $(dev_objs) .SYMBOLIC
+
+!ifdef objs
+!ifneq objs
+$(objs) : .SYMBOLIC
+    @echo ==============================================================
+    @echo $(testcomp) $^@.asm
+    @echo ==============================================================
+    @rm -f $@.c
+    @%append $(log_file) === $(testcomp) $^@ ===
+    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
+    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
+    @wdis -a -l $@.obj >$(nulldevice)
+    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
+    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
+!endif
+!endif
+
+!ifdef dev_objs
+!ifneq dev_objs
+$(dev_objs) : .SYMBOLIC
+    @echo .
+    @echo ==============================================================
+    @echo DEVELOPMENT - $(testcomp) $^@.asm
+    @echo ==============================================================
+    @rm -f $@.c
+    @%append $(log_file) === $(testcomp) $^@ ===
+    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
+    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
+    @wdis -a -l $@.obj >$(nulldevice)
+    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
+    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
+!endif
+!endif
+
+clean : .SYMBOLIC
+    @rm -f *.obj *.lst *.c *.err mem.trk

@@ -5,22 +5,28 @@
 testcomp=wcc386
 !endif 
 
-!ifdef __UNIX__
+!ifdef nulldevice
+!else ifdef __UNIX__
 nulldevice=/dev/null
 !else
 nulldevice=nul
 !endif
 
+!ifndef log_file
 log_file=testcomp.log
+!endif
 
 .BEFORE
-    @%create $(log_file)
+#    @%create $(log_file)
 
 all : clean $(objs) $(dev_objs) .SYMBOLIC
 
 !ifneq objs
 $(objs) : .SYMBOLIC
-    @echo @$(testcomp) $^@ ============================================================
+    @echo ==============================================================
+    @echo $(testcomp) $^@.asm 
+    @echo ==============================================================
+    @%append $(log_file) === $(testcomp) $^@ ===
     @$(testcomp) $@.c -s -os -zq -fo=.obj $(c_flags_$^@) >$(nulldevice)
     @wmake -h -f ../check.mif name=$@ log_file=$(log_file) fix_wdis_lst=1
 !endif
@@ -29,8 +35,9 @@ $(objs) : .SYMBOLIC
 $(dev_objs) : .SYMBOLIC
     @echo .
     @echo ==============================================================
-    @echo DEVELOPMENT - @$(testcomp) $^@.asm 
+    @echo DEVELOPMENT - $(testcomp) $^@.asm 
     @echo ==============================================================
+    @%append $(log_file) === $(testcomp) $^@ ===
     @$(testcomp) $@.c -s -os -zq -fo=.obj $(c_flags_$^@) >$(nulldevice)
     @wmake -h -f ../check.mif name=$@ log_file=$(log_file) fix_wdis_lst=1
     @echo .

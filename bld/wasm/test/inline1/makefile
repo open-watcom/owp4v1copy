@@ -1,13 +1,14 @@
 
-objs = &
-bug31 &
-extprocf &
-extprocn &
-tokens
+log_file=testcomp.log
 
-dev_objs = &
+.BEFORE
+    @%create $(log_file)
 
-c_flags_extprocf = -ms
-c_flags_extprocn = -ml
+all : .SYMBOLIC
+    @wmake -h -f inline1.mif testcomp=wcc log_file=$(log_file)
+    @wmake -h -f inline1.mif testcomp=wcc386 log_file=$(log_file)
+    @wmake -h -f inline1.mif testcomp=wpp log_file=$(log_file)
+    @wmake -h -f inline1.mif testcomp=wpp386 log_file=$(log_file)
 
-!include ../testi.mif
+clean : .SYMBOLIC
+    @wmake -h -f inline1.mif clean

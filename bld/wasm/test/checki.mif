@@ -7,7 +7,6 @@ log_file=testcomp.log
     @set CHK_CHECK=-@diff -i -b $(name).lst $(name).chk
 
 all: $(name).chk .symbolic
-    @%append $(log_file) $(name) ================================================================
     @SET TESTCOMP=Test OK
     $(%CHK_CHECK) >>$(log_file)
     @if errorlevel 1 @SET TESTCOMP=!!! Test unsuccessful !!!
