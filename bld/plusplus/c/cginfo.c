@@ -128,7 +128,7 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
       case MSG_INFO_PROC:
         if( CompFlags.ide_console_output ) {
             if( ! CompFlags.quiet_mode ) {
-                MsgDisplayLine( "" );
+                MsgDisplayLine( parm );
             }
         }
         break;
