@@ -380,6 +380,24 @@ PE_MODULE * PE_loadLibrary(
     return hMod;
 }
 
+/* same as above for a handle */
+PE_MODULE * PE_loadLibrary_handle(
+    int fd)
+{
+    PE_MODULE   *hMod;
+    FILE        *f;
+    u_long      size;
+
+    /* Attempt to open the file on disk */
+    if ((f = fdopen(fd,"rb")) == NULL) {
+        result = PE_fileNotFound;
+        return NULL;
+        }
+    hMod = PE_loadLibraryExt(f,0,&size);
+    fclose(f);
+    return hMod;
+}
+
 /****************************************************************************
 DESCRIPTION:
 Gets a function address from a Portable Binary DLL

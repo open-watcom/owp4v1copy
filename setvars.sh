@@ -34,6 +34,7 @@ export LANG_BLD=$OWROOT/bat
 export PATH=$OWROOT/bin:$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
 export RELROOT=$OWROOT
 export doc_root=$OWROOT/docs
+export WD_PATH=$WATCOM/binl
 
 # Setup environment variables for Perforce
 export P4PORT=perforce.scitechsoft.com:3488

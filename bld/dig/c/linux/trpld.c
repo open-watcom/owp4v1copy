@@ -42,6 +42,9 @@ static void (TRAPENTRY *FiniFunc)();
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx_entry * );
 
+extern  int      PathOpen(char *,unsigned, char *);
+extern  int      GetSystemHandle(int);
+
 void KillTrap()
 {
     ReqFunc = NULL;
@@ -54,41 +57,19 @@ void KillTrap()
 
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 {
-    char                trpfile[256];
-    char                trpfullname[_MAX_PATH];
+    char                init_error[256];
+    int                 filehndl;
     char                *ptr;
     char                *parm;
-    char                *dst;
-    char                have_ext;
-    char                chr;
 
     if( trapbuff == NULL ) trapbuff = "std";
-    have_ext = FALSE;
-    ptr = trapbuff;
-    dst = (char *)trpfile;
-    for( ;; ) {
-        chr = *ptr;
-        if( chr == '\0' || chr == ';' ) break;
-        switch( chr ) {
-        case '/':
-            have_ext = 0;
-            break;
-        case '.':
-            have_ext = 1;
-            break;
-        }
-        *dst++ = chr;
-        ++ptr;
-    }
-    *dst = '\0';
-    if( !have_ext )
-        strcat( trpfile, ".trp" );
-
-    _searchenv( trpfile, "PATH", trpfullname );
+    for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr ) ;
+    parm = (*ptr != '\0') ? ptr + 1 : ptr;
+    filehndl = PathOpen( trapbuff, ptr - trapbuff, "trp" );
 
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
-    TrapFile = PE_loadLibrary( trpfullname );
+    TrapFile = PE_loadLibrary_handle( GetSystemHandle( filehndl ) );
     if( TrapFile == NULL ) {
         TrapFile = 0;
         strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
@@ -102,10 +83,10 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         KillTrap();
         return( buff );
     }
-    *trap_ver = InitFunc( parm, trpfile, trap_ver->remote );
-    if( trpfile[0] != '\0' ) {
+    *trap_ver = InitFunc( parm, init_error, trap_ver->remote );
+    if( init_error[0] != '\0' ) {
         KillTrap();
-        strcpy( buff, (char *)trpfile );
+        strcpy( buff, init_error );
         return( buff );
     }
     if( !TrapVersionOK( *trap_ver ) ) {
