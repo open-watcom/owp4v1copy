@@ -68,11 +68,11 @@
 :internal.
 :usage. use 10.x options
 
-:option. C
+:option. \C
 :target. any
 :usage. preserve comments
 
-:option. c
+:option. \c
 :target. any
 :usage. compile only
 
@@ -95,28 +95,28 @@
 :immediate. handle_F
 :usage. set stack size
 
-:option. Fa
+:option. F\a
 :target. any
 :path.
 :internal.
 :usage. specify listing output file
 
-:option. FA
+:option. F\A
 :target. any
 :internal.
 :usage. generate assembly listing
 
-:option. FAc
+:option. F\Ac
 :target. any
 :internal.
 :usage. generate assembly and machine code listing
 
-:option. FAcs
+:option. F\Acs
 :target. any
 :internal.
 :usage. generate assembly, source, and machine code listing
 
-:option. FAs
+:option. F\As
 :target. any
 :internal.
 :usage. generate assembly and source listing
@@ -201,11 +201,11 @@
 :immediate. handle_stack_probes
 :usage. activate stack probes for all functions
 
-:option. Gf
+:option. G\f
 :target. any
 :usage. merge duplicate strings
 
-:option. GF
+:option. G\F
 :target. any
 :usage. merge duplicate read-only strings
 
@@ -420,12 +420,12 @@
 :special. parse_Tp <file>
 :usage. force compilation of <file> as C++
 
-:option. U
+:option. \U
 :target. any
 :special. parse_U <macro>
 :usage. undefine macro name
 
-:option. u
+:option. \u
 :target. any
 :internal.
 :usage. undefine all predefined macros
@@ -471,14 +471,14 @@
 :internal.
 :usage. embed string in object file
 
-:option. W
+:option. \W
 :target. any
 :immediate. handle_warn_level
 :enumerate. warn_level
 :number. check_warn_level
 :usage. set warning level number
 
-:option. w
+:option. \w
 :target. any
 :immediate. handle_warn_level
 :enumerate. warn_level

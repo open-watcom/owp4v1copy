@@ -981,6 +981,16 @@ static int OPT_GET_LOWER( void )
 
 
 /*
+ * If the next character is ch, it is consumed and a non-zero value
+ * is returned; otherwise, it is not consumed and zero is returned.
+ */
+static int OPT_RECOG( int ch )
+/**********************************/
+{
+    return( CmdScanRecogCharExact( ch ) );
+}
+
+/*
  * If the next character is ch (in either uppercase or lowercase form), it
  * is consumed and a non-zero value is returned; otherwise, it is not
  * consumed and zero is returned.
