@@ -693,6 +693,9 @@ static int write_autodep( void )
 
     if( !Options.emit_dependencies ) return NOT_ERROR;
 
+    // add source file to autodependency list
+    AddFlist( AsmFiles.fname[ASM] );
+
     for( curr = FNames; curr != NULL; ) {
         objr = ObjNewRec( CMD_COMENT );
         objr->d.coment.attr = 0x80;

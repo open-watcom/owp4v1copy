@@ -1,5 +1,9 @@
 proj_name = wasm
 
+!ifndef wasm_autodepends
+wasm_autodepends = .AUTODEPEND
+!endif
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif

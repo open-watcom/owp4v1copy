@@ -584,3 +584,4 @@ cg_autodepends = .AUTODEPEND
 cc_version = tree
 
 wlink_autodepends = .AUTODEPEND
+wasm_autodepends = .AUTODEPEND
