@@ -1,12 +1,16 @@
-bld_ver      = $(%bld_ver)
+bld_ver      = $(%BLD_VER)
 patch_level  = 0
-lang_root    = $(%lang)
-build_dir    = $(%devdir)\build
-dev_dir      = $(%devdir)
-mif_path     = $(build_dir)\local;$(build_dir)\mif
-guitools_dir = $(%devdir)\online\hlp
-#librarian    = $(lang_root)\binnt\wlib
+lang_root    = $(%WATCOM)
+dev_dir      = $(%DEVDIR)
+mif_path     = $(build_dir)/local;$(build_dir)/mif
+!ifdef __LINUX__
+build_dir    = $(%DEVDIR)/build
+guitools_dir = $(%DEVDIR)/online/hlp
+!else
+build_dir    = $(%DEVDIR)\build
+guitools_dir = $(%DEVDIR)\online\hlp
+!endif
 
 .mif: $(mif_path)
 !include cdirs.mif
-!include $(%BATDIR)\bat\makecomm
+!include $(%BATDIR)/bat/makecomm
