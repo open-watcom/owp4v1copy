@@ -3,7 +3,7 @@ host_OS = dos
 !include cproj.mif
 .erase
 
-!include ..\tools.mif
+!include ../tools.mif
 
 objs = wrdencod.obj msgencio.obj
 

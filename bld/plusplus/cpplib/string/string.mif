@@ -71,9 +71,9 @@ objs_cpp +=     allocrep.$(obj_ext) &
 
 objs_c += strsrch.$(obj_ext)
 
-!include $(plusplus_cpplib_dir)\plibname.mif
+!include $(plusplus_cpplib_dir)/plibname.mif
 
 prefix = $(strg_n)
 prefix_x = $(strg_x)
 
-!include $(plusplus_dir)\mklibtgt.mif
+!include $(plusplus_dir)/mklibtgt.mif

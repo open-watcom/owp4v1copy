@@ -8,4 +8,4 @@ target_cpu = 386
 cmdline_cflags = -mf
 also_include = $(lang_root)\qh
 
-!include ..\master.mif
+!include ../master.mif

@@ -5,4 +5,4 @@ host_CG = nt
 target_CPU = 386
 plusplus_rtdll = 1
 cg_rtdll = 1
-!include ..\master.mif
+!include ../master.mif

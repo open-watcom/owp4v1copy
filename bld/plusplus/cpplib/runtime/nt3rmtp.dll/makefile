@@ -9,7 +9,7 @@ profile = 1
 target_system = nt
 target_lib = $(prefix)$(suffix).lib
 production_lib = lib386
-define_library_include = $(plusplus_runtime_dir)\plib.mif
-define_target_include = $(plusplus_dir)\lib$(suffix).mif
+define_library_include = $(plusplus_runtime_dir)/plib.mif
+define_target_include = $(plusplus_dir)/lib$(suffix).mif
 text = -D__USE_FS
-!include $(plusplus_dir)\mklib.mif
+!include $(plusplus_dir)/mklib.mif

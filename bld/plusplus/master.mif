@@ -24,13 +24,13 @@ proj_name = plusplus
 
 !include cproj.mif
 
-!include $(cg_dir)\mif\fe.mif
-!include $(cg_dir)\mif\hostos.mif
+!include $(cg_dir)/mif/fe.mif
+!include $(cg_dir)/mif/hostos.mif
 
-!include $(dwarf_dir)\dw\client.mif
+!include $(dwarf_dir)/dw/client.mif
 
-!include ..\verify.mif
-!include ..\ppobjs.mif
+!include ../verify.mif
+!include ../ppobjs.mif
 
 inc_dirs =.;
 !ifdef plusplus_include
@@ -403,7 +403,7 @@ $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
 !endif
 
 
-!include ..\deps.mif
+!include ../deps.mif
 
 # conventions:
 #
@@ -607,34 +607,10 @@ global.chk : ..\compile.gbl
     wtouch -f $[@ $^@
 
 clean global : .symbolic
-    @if exist *.?bj @del *.?bj
-    @if exist *.lib @del *.lib
-    @if exist *.pch @del *.pch
-    @if exist *.lst @del *.lst
-    @if exist *.gh @del *.gh
-    @if exist *.rc @del *.rc
-    @if exist *.int @del *.int
-    @if exist *.res @del *.res
-    @if exist *.err @del *.err
-    @if exist *.tmp @del *.tmp
-    @if exist *.cod @del *.cod
-    @if exist *.asm @del *.asm
-    @if exist *.dmp @del *.dmp
-    @if exist *.lnk @del *.lnk
-    @if exist *.bak @del *.bak
-    @if exist *.dll @del *.dll
-    @if exist *.pdb @del *.pdb
-    @if exist errmsgs.c @del errmsgs.c
-    @if exist y.out @del y.out
-    @if exist ytab.* @del ytab.*
-    @if exist cmdlnprs.* @del cmdlnprs.*
-    @if exist usage.u @del usage.u
-    @if exist global.chk @del global.chk
-    @if exist $(exe_dbg_name).* @del $(exe_dbg_name).*
-    @if exist $(exe_bld_name).* @del $(exe_bld_name).*
-    @if exist $(exe_ref_name).* @del $(exe_ref_name).*
-    @if exist ..\bin\$(exe_ref_name).* @del ..\bin\$(exe_ref_name).*
-    @if exist $(dll_bld_name).* @del $(dll_bld_name).*
-    @if exist $(dll_dbg_name).* @del $(dll_dbg_name).*
-    @if exist mkopcode.* @del mkopcode.*
+    @rm -f *.?bj *.lib *.pch *.lst *.gh *.rc *.int *.res *.err *.tmp
+    @rm -f *.cod *.asm *.dmp *.lnk *.bak *.dll *.pdb errmsgs.c y.out ytab.*
+    @rm -f cmdlnprs.* usage.u global.chk 
+    @rm -f usage.u @del usage.u $(exe_dbg_name).* $(exe_bld_name).*
+    @rm -f $(exe_ref_name).* ../bin/$(exe_ref_name).* $(dll_bld_name).*
+    @rm -f $(dll_dbg_name).* mkopcode.*
 

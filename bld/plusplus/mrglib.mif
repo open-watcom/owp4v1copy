@@ -1,5 +1,5 @@
-!include $(plusplus_dir)\ppdirs.mif
-!include $(plusplus_dir)\tools.mif
+!include $(plusplus_dir)/ppdirs.mif
+!include $(plusplus_dir)/tools.mif
 !include $(define_library_include)
 !include cproj.mif
 
@@ -80,4 +80,4 @@ update : .symbolic $(target_lib)
 .EXTENSIONS:
 .EXTENSIONS: .lib
 
-!include $(plusplus_dir)\clean.mif
+!include $(plusplus_dir)/clean.mif

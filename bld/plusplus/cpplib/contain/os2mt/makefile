@@ -5,6 +5,6 @@
 suffix = mtl
 target_system = os2
 production_lib = lib286\os2
-define_library_include = $(plusplus_contain_dir)\contain.mif
-define_target_include = $(plusplus_dir)\lib16$(suffix).mif
-!include $(plusplus_dir)\mklib.mif
+define_library_include = $(plusplus_contain_dir)/contain.mif
+define_target_include = $(plusplus_dir)/lib16$(suffix).mif
+!include $(plusplus_dir)/mklib.mif

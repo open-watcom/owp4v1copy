@@ -3,4 +3,4 @@ host_CPU = axp
 host_OS = nt
 host_CG = axp
 target_CPU = 386
-!include ..\master.mif
+!include ../master.mif

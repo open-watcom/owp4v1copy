@@ -3,4 +3,4 @@ host_CPU = 386
 host_OS = osi
 host_CG = osi
 target_CPU = axp
-!include ..\master.mif
+!include ../master.mif

@@ -7,7 +7,7 @@ target_system = nt
 text = -d__USE_FS
 suffix = 3r
 production_lib = lib386
-define_library_include = $(plusplus_string_dir)\string.mif
-define_deps_include = $(plusplus_string_dir)\deps.mif
-define_target_include = $(plusplus_dir)\lib32$(suffix).mif
-!include $(plusplus_dir)\mklib.mif
+define_library_include = $(plusplus_string_dir)/string.mif
+define_deps_include = $(plusplus_string_dir)/deps.mif
+define_target_include = $(plusplus_dir)/lib32$(suffix).mif
+!include $(plusplus_dir)/mklib.mif

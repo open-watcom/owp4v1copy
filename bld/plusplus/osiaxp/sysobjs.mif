@@ -1,4 +1,4 @@
 # system-dependent files (OSI)
 
-!include ..\ppobjaxp.mif
+!include ../ppobjaxp.mif
 

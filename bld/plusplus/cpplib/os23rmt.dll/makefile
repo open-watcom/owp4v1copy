@@ -6,5 +6,5 @@ subdir = 3rmt.dll
 linkage = dynamic
 target_lib = $(prefix)$(suffix).lib
 production_lib = lib386
-define_library_include = $(plusplus_cpplib_dir)\plib.mif
-!include $(plusplus_dir)\mrglib.mif
+define_library_include = $(plusplus_cpplib_dir)/plib.mif
+!include $(plusplus_dir)/mrglib.mif

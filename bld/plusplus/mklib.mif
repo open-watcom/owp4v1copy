@@ -3,9 +3,9 @@
 # it doesn't seem to provide any clear benefits.
 uncompressed=1
 
-!include $(plusplus_dir)\dirmacs.mif
+!include $(plusplus_dir)/dirmacs.mif
 
-!include $(plusplus_dir)\tools.mif
+!include $(plusplus_dir)/tools.mif
 !include $(define_library_include)
 !include $(define_target_include)
 !include cproj.mif
@@ -247,7 +247,7 @@ update : .symbolic $(target_lib)
     $(asm_a) $(asm_flags) $[@
     #@del $[&.pp
 
-!include $(plusplus_dir)\clean.mif
+!include $(plusplus_dir)/clean.mif
 
 !ifndef on_build_machine
 !ifdef define_deps_include
