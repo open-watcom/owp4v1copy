@@ -21,7 +21,7 @@ lib_osi_axp     = $(watcom_dir)/lib/draxp.lib
 
 copts = -s-wx-we-zq        #default warning, warnings are errors, quiet
 !ifdef dbg
-copts += -$(dbg)-hw #use a debug option
+copts += -$(dbg)  #use a debug option
 !else
 copts += -oaxt-d1 #optimize
 !endif

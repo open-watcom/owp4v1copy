@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump the contents of DWARF debug sections.
 *
 ****************************************************************************/
 
@@ -231,7 +230,9 @@ static char *sectionNames[] = {
 };
 
 
-static int compareTable( readable_name *a, readable_name *b ) {
+static int compareTable( const void *_a, const void *_b ) {
+    readable_name *a = (readable_name *)_a;
+    readable_name *b = (readable_name *)_b;
 
     if( a->value > b->value ) {
         return( 1 );
@@ -555,7 +556,7 @@ extern void dumpAbbrevs( const char *input, uint length ) {
         if( p >= input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "\t%s\n", getTAG( tmp ) );
-        if( *p == DW_children_yes ) {
+        if( *p == DW_CHILDREN_yes ) {
             printf( "has children\n" );
         } else {
             printf( "childless\n" );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump the contents of DWARF debug sections.
 *
 ****************************************************************************/
 
@@ -232,7 +231,9 @@ static char *sectionNames[] = {
 };
 
 
-static int compareTable( readable_name *a, readable_name *b ) {
+static int compareTable( const void *_a, const void *_b ) {
+    const readable_name *a = (readable_name *)_a;
+    const readable_name *b = (readable_name *)_b;
 
     if( a->value > b->value ) {
         return( 1 );
@@ -455,73 +456,73 @@ static void dumpInfo( const char *input, uint length ) {
                 printf( "\t%-20s", getAT( attr ) );
     decode_form:
                 switch( form ) {
-                case FORM_ADDR:
+                case DW_FORM_addr:
                     tmp = *(uint_32 *)p;
                     p += sizeof( uint_32 );
                     tmp_seg = *(uint_16 *)p;
                     p += sizeof( uint_16 );
                     printf( "\t%04lx:%08lx\n", tmp_seg, tmp );
                     break;
-                case FORM_BLOCK:
+                case DW_FORM_block:
                     p = DecodeULEB128( p, &len );
                     printf( "\n" );
                     dumpHex( p, len );
                     p += len;
                     break;
-                case FORM_BLOCK1:
+                case DW_FORM_block1:
                     len = *p++;
                     printf( "\n" );
                     dumpHex( p, len );
                     p += len;
                     break;
-                case FORM_BLOCK2:
+                case DW_FORM_block2:
                     len = *(uint_16 *)p;
                     p += sizeof( uint_16 );
                     printf( "\n" );
                     dumpHex( p, len );
                     p += len;
                     break;
-                case FORM_BLOCK4:
+                case DW_FORM_block4:
                     len = *(uint_32 *)p;
                     p += sizeof( uint_32 );
                     printf( "\n" );
                     dumpHex( p, len );
                     p += len;
                     break;
-                case FORM_DATA1:
+                case DW_FORM_data1:
                     printf( "\t%02x\n", *p++ );
                     break;
-                case FORM_DATA2:
+                case DW_FORM_data2:
                     printf( "\t%04x\n", *(uint_16 *)p );
                     p += sizeof( uint_16 );
                     break;
-                case FORM_DATA4:
+                case DW_FORM_data4:
                     printf( "\t%08lx\n", *(uint_32 *)p );
                     p += sizeof( uint_32 );
                     break;
-                case FORM_FLAG:
+                case DW_FORM_flag:
                     printf( "\t%s\n", *p++ ? "True" : "False" );
                     break;
-                case FORM_INDIRECT:
+                case DW_FORM_indirect:
                     p = DecodeULEB128( p, &form );
                     printf( "\t(%s)", getFORM( form ) );
                     goto decode_form;
-                case FORM_SDATA:
+                case DW_FORM_sdata:
                     p = DecodeLEB128( p, &stmp );
                     printf( "\t%08lx\n", stmp );
                     break;
-                case FORM_STRING:
+                case DW_FORM_string:
                     printf( "\t\"%s\"\n", p );
                     p += strlen( p ) + 1;
                     break;
-                case FORM_STRP:
+                case DW_FORM_strp:
                     abort();
                     break;
-                case FORM_UDATA:
+                case DW_FORM_udata:
                     p = DecodeULEB128( p, &tmp );
                     printf( "\t%08lx\n", tmp );
                     break;
-                case FORM_REF:  //KLUDGE! should really check addr_size field
+                case DW_FORM_ref_addr:  //KLUDGE! should really check addr_size field
                     printf( "\t%08lx\n", *((uint_32 *)p) );
                     p += sizeof(uint_32);
                     break;
@@ -549,7 +550,7 @@ static void dumpAbbrevs( const char *input, uint length ) {
         if( p >= input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "\t%s\n", getTAG( tmp ) );
-        if( *p == DW_children_yes ) {
+        if( *p == DW_CHILDREN_yes ) {
             printf( "has children\n" );
         } else {
             printf( "childless\n" );
