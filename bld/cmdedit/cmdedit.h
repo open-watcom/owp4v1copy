@@ -142,27 +142,27 @@ typedef struct _WIN32_FIND_DATA {
     #define DosQCurDisk( n, m ) DDosQCurDisk( n )
     #define DosChDir( b, z ) DDosChDir( b )
     #define DosAllocSeg( a,b,f ) DDosAllocSeg( a,b )
-    extern DosFreeEnv();
-    pasrtn DosRead( int, char far *, int, int PASPTR *);
-    pasrtn DosWrite( int, char far *, int, int PASPTR *);
-    extern DDosAllocSeg( unsigned, int PASPTR * );
-    pasrtn DosGetEnv( unsigned PASPTR *, unsigned PASPTR * );
-    extern DVioReadCellStr();
-    extern DDosOpen();
-    extern DVioWrtCharStr();
-    extern DVioSetCurType();
-    extern DVioSetCurPos();
-    extern DVioGetCurPos();
-    extern DosClose();
-    extern DKbdCharIn();
-    extern DVioGetCurType();
-    extern DDosFindFirst();
-    extern DVioReadCharStr();
-    extern DVioWrtNChar();
-    extern DosChgFilePtr();
-    extern DDosFindNext();
-    extern DVioWrtCellStr();
-    extern DKbdGetStatus();
+    extern int DosFreeEnv();
+    pasrtn     DosRead( int, char far *, int, int PASPTR *);
+    pasrtn     DosWrite( int, char far *, int, int PASPTR *);
+    extern int DDosAllocSeg( unsigned, int PASPTR * );
+    pasrtn     DosGetEnv( unsigned PASPTR *, unsigned PASPTR * );
+    extern int DVioReadCellStr();
+    extern int DDosOpen();
+    extern int DVioWrtCharStr();
+    extern int DVioSetCurType();
+    extern int DVioSetCurPos();
+    extern int DVioGetCurPos();
+    extern int DosClose();
+    extern int DKbdCharIn();
+    extern int DVioGetCurType();
+    extern int DDosFindFirst();
+    extern int DVioReadCharStr();
+    extern int DVioWrtNChar();
+    extern int DosChgFilePtr();
+    extern int DDosFindNext();
+    extern int DVioWrtCellStr();
+    extern int DKbdGetStatus();
     extern pasrtn DDosChDir( char PASPTR *);
     extern pasrtn DosQCurDir( int, char PASPTR *, int PASPTR * );
     extern pasrtn DosSelectDisk( int );

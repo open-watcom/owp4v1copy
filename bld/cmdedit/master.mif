@@ -38,9 +38,9 @@ os2cmdshellobjs = $+ $(cmdfiles) $-
 dopt=d1
 !endif
 
-extra_a_flags = -d_MODEL=_SMALL -fo=$^@
-extra_a_flags_dos = -d_OS=_DOS
-extra_a_flags_os2 = -d_OS=_OS2
+extra_a_flags = -D_MODEL=_SMALL -fo=$^@
+extra_a_flags_dos = -D_OS=_DOS
+extra_a_flags_os2 = -D_OS=_OS2
 
 .asm: ..
 .c: ..
@@ -49,17 +49,14 @@ extra_a_flags_os2 = -d_OS=_OS2
         $(comp286) $< -w3 -oxs -d1 -fo=.ubj -zu -zq #
 
 .c.cbj:
-        $(comp286) $< -w3 -oxs -d1 -fo=.cbj -zq -d__CMDSHELL__ #
-
-.before:
-        set include=$(inc_dirs_sys)
+        $(comp286) $< -w3 -oxs -d1 -fo=.cbj -zq -D__CMDSHELL__ #
 
 lnk = tmp.lnk
 
-!ifeq host_OS dos
+!ifeq host_os dos
 
 .c.obj:
-        $(comp286) $< -w3 -dDOS -oas -s -$(dopt) -zq -fo=.obj #
+        $(comp286) $< -w3 -DDOS -oas -s -$(dopt) -zq -fo=.obj #
 
 #
 # CMDEDIT.EXE
@@ -83,10 +80,10 @@ dcmdedit.exe: $(tstobjs) makefile
 
 !endif
 
-!ifeq host_OS os2
+!ifeq host_os os2
 
 .c.obj:
-        $(comp286) $< -w3 -oxs -d1 -fo=.obj -zq #
+        $(comp286) $< -w3 -oxs -d1 -fo=.obj -zq $(inc_dirs_sys) #
 
 all: os2edit.dll os2edit.exe os22edit.exe
 
@@ -130,12 +127,12 @@ cmdshell.exe: $(cmdshellobjs) makefile
 #
 
 os2edit.exe:    os2edit.c
-        $(comp286) $< -ox -d1 -zq
+        $(comp286) $< -ox -d1 -zq $(inc_dirs_sys)
         $(linker) debug all op symfile sys os2 f os2edit
 #
 # OS22EDIT.EXE
 #
 os22edit.exe:    os22edit.c
-        $(comp286) $< -ox -d1 -zq
+        $(comp286) $< -ox -d1 -zq $(inc_dirs_sys) 
         $(linker) debug all op symfile sys os2 f os22edit
 !endif
