@@ -666,7 +666,8 @@ static cg_name IndexOperator( cg_name op1, OPNODE *node, cg_name op2 )
         index_type = T_INTEGER;
         #if _CPU == 8086
             if(( node->flags & OPFLAG_HUGEPTR) || 
-               ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA)) {
+               ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA &&
+                (node->flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR))==0)) {
                 index_type = T_INT_4;
             }
         #endif

@@ -1684,7 +1684,8 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         #if _CPU == 8086
             if( DataTypeOf( TypeOf(index_expr)->decl_type ) == TYPE_UINT ) {
                 if(( tree_flags & OPFLAG_HUGEPTR ) ||
-                   ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA)) {
+                   ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA &&
+                    (tree_flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR))==0)) {
                     index_expr = CnvOp( index_expr, GetType( TYPE_LONG ), 0 );
                 }
             }
