@@ -44,7 +44,7 @@
 #include <stdarg.h>
 #include "pmake.h"
 
-#if defined(__OS2__) || defined(__NT__)
+#if defined(__OS2__)
     #define TMPBAT "tmp.cmd"
 #else
     #define TMPBAT "tmp.bat"
