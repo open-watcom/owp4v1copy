@@ -1171,9 +1171,13 @@ void WriteObjModule( void )
         PrepAnonLabels();
 
         curr_total = OnePass( string );
+        // remove all remaining lines and deallocate corresponding memory
+        while( ScanLine( string, MAX_LINE_LEN ) != NULL ) {
+        }
         while( PopLineQueue() ) {
         }
-        if( !PhaseError && prev_total == curr_total ) break;
+        if( !PhaseError && prev_total == curr_total )
+            break;
         ObjWriteClose( pobjState.file_out );
         /* This remove works around an NT networking bug */
         remove( AsmFiles.fname[OBJ] );
