@@ -55,6 +55,8 @@ extern int              AsmParse();
 extern void             AsmInit();
 extern void             AddFlist( char const *filename );
 
+char *curr_src_line = NULL;
+
 char *ScanLine( char *, int );
 
 #ifdef _WASM_
@@ -642,6 +644,7 @@ void AsmLine( char *string )
         int             count;
     #endif
 
+    curr_src_line = string;
     // Token_Count is the number of tokens scanned
     Token_Count = AsmScan( string, StringBuf );
 #ifdef _WASM_

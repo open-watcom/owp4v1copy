@@ -630,7 +630,7 @@ int main()
 #ifndef __UNIX__
     free( buff );
 #endif
-    return( (int)Options.error_count ); /* zero if no errors */
+    return( Options.error_count ); /* zero if no errors */
     }
 
 static void usage_msg( void )
