@@ -605,9 +605,10 @@ dip_status      DIPENTRY DIPImpModDefault( imp_image_handle *ii,
     return( DS_OK );
 }
 
-extern unsigned NameCopy( char *to, char *from, unsigned max ){
-/**********************************************************/
-    unsigned  len;
+extern unsigned NameCopy( char *to, char *from, int max )
+/*******************************************************/
+{
+    int     len;
 
     len = strlen( from );
     if( max > 0 ){
