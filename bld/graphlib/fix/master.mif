@@ -134,7 +134,7 @@ fixlib : .procedure
 !ifeq host_OS os2
 
 graphp.2bj : ..\..\c\seginit.c
-    $(compiler) $[* @gr_extra $(cflags) /dDOSX286 /fo=graphp.2bj -bt=dos
+    $(compiler) $[* @gr_extra $(cflags) /fo=graphp.2bj -bt=dos
 
 !endif
 
