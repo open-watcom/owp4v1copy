@@ -239,9 +239,20 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                         decoded.op[i].index == DR_NONE ) {
                         // create an LTYP_UNNAMED label
                         CreateUnnamedLabel( shnd, decoded.op[i].value, &rs );
-                        if( rs.error != OKAY ) return( rs.error );
-                        error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos );
-                        if( error != OKAY ) return( error );
+                        if( rs.error != OKAY )
+                            return( rs.error );
+                        switch( decoded.op[i].type & DO_MASK ) {
+                        case DO_MEMORY_REL:
+                        case DO_MEMORY_ABS:
+                            error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos, ORL_RELOC_TYPE_MAX + 1 );
+                            break;
+                        default:
+                            error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos, ORL_RELOC_TYPE_JUMP );
+                            break;
+                        }
+                        if( error != OKAY ) {
+                            return( error );
+                        }
                     }
                 }
                 break;

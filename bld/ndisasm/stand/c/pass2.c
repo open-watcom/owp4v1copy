@@ -119,6 +119,7 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     label_entry         l_entry;
     char                *sep = ":";
     char                *frame;
+    char                temp[15];
 
     frame = r_entry->frame;
     if( !frame || ( flags & RFLAG_NO_FRAME ) ) {
@@ -130,6 +131,14 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     if( Options & METAWARE_COMPATIBLE || (ext_pref[0]==0 && int_pref[0]==0) ) {
         switch( l_entry->type ) {
             case LTYP_UNNAMED:
+                if( r_entry->type == ORL_RELOC_TYPE_MAX + 1 ) {
+                    FmtHexNum( temp, 0, l_entry->offset );
+                    if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                        frame = "ds:";
+                    sprintf( buff, "%s%s[%s]", frame, sep, temp);
+                    break;
+                }
+                // fall through
                 sprintf( buff, "%s%s%c$%d%s", frame, sep, LabelChar,
                          l_entry->label.number, post );
                 break;
@@ -150,6 +159,16 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                 sprintf( buff, "%s%s%s%s", int_pref, frame, sep,
                          l_entry->label.name );
                 break;
+
+            case LTYP_UNNAMED:
+                if( r_entry->type == ORL_RELOC_TYPE_MAX + 1 ) {
+                    FmtHexNum( temp, 0, l_entry->offset );
+                    if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                        frame = "ds:";
+                    sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
+                    break;
+                }
+                // fall through
             default:
                 sprintf( buff, "%s%s%s%c$%d", int_pref, frame, sep,
                          LabelChar, l_entry->label.number );
@@ -181,6 +200,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             nvalue = 0;
         }
         switch( (*r_entry)->type ) {
+        case ORL_RELOC_TYPE_MAX + 1:
         case ORL_RELOC_TYPE_JUMP:
         case ORL_RELOC_TYPE_REL_21_SH:
             error = referenceString( *r_entry, sec_size, "j^", "", "",
