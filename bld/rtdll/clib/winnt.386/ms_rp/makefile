@@ -1,4 +1,4 @@
-#pmake/25:all small register 32bit winnt iX86 rtdll build os_nt cpu_386 profile
+#pmake/25:all small register 32bit winnt iX86 rtdll os_nt cpu_386 profile
 component=clib
 processor=386
 model=ms
