@@ -636,5 +636,5 @@ clean global : .symbolic
     @if exist ..\bin\$(exe_ref_name).* @del ..\bin\$(exe_ref_name).*
     @if exist $(dll_bld_name).* @del $(dll_bld_name).*
     @if exist $(dll_dbg_name).* @del $(dll_dbg_name).*
-    @if exist mkopcode.* @del mkopcode.@
+    @if exist mkopcode.* @del mkopcode.*
 
