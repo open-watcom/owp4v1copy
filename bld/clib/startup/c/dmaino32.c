@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 32-bit DLL startup code.
 *
 ****************************************************************************/
 
@@ -148,6 +147,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         PTIB        pptib;
         PPIB        pppib;
         unsigned    i;
+		
         DosGetInfoBlocks( &pptib, &pppib );
         _Envptr = pppib->pib_pchenv;
         _LpCmdLine = pppib->pib_pchcmd;
