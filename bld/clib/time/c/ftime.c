@@ -37,12 +37,12 @@
 #include "timedata.h"
 
 _WCRTLINK int ftime( struct timeb *timeptr )
-    {
-        auto struct tm t;
+{
+    auto struct tm t;
 
-        timeptr->millitm  = __getctime( &t );
-        timeptr->time     = mktime( &t );
-        timeptr->dstflag  = t.tm_isdst;
-        timeptr->timezone = _RWD_timezone / 60L;
-        return( 1 );
-    }
+    timeptr->millitm  = __getctime( &t );
+    timeptr->time     = mktime( &t );
+    timeptr->dstflag  = t.tm_isdst;
+    timeptr->timezone = _RWD_timezone / 60L;
+    return( 1 );
+}

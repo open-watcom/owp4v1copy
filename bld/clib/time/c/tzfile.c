@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include "variety.h"
 #include <time.h>
 #include "rtdata.h"
@@ -42,7 +41,7 @@
 
 static long pntohl( unsigned char *p )
 {
-    return (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+    return( p[0] << 24 ) | ( p[1] << 16 ) | ( p[2] << 8 ) | p[3];
 }
 
 static unsigned char *tzfile = NULL;
@@ -55,12 +54,12 @@ void __check_tzfile( time_t t, struct tm *timep )
     long        tzh_timecnt;
     long        tzh_typecnt;
     long        tzh_charcnt;
-    char       *dstname;
+    char        *dstname;
     long        timidx;
     long        stdzon;
     long        dstzon;
     long        i;
-    char       *tzp;
+    char        *tzp;
     int         isdst;
 
     if( tzfile == NULL )
@@ -68,14 +67,14 @@ void __check_tzfile( time_t t, struct tm *timep )
     tzp = tzfile + 16 + 4;
     tzh_ttisgmtcnt = pntohl( tzp );
     tzh_ttisstdcnt = pntohl( tzp + 4 );
-    tzh_leapcnt = pntohl( tzp + 8 );
-    tzh_timecnt = pntohl( tzp + 12 );
-    tzh_typecnt = pntohl( tzp + 16 );
-    tzh_charcnt = pntohl( tzp + 20 );
+    tzh_leapcnt    = pntohl( tzp + 8 );
+    tzh_timecnt    = pntohl( tzp + 12 );
+    tzh_typecnt    = pntohl( tzp + 16 );
+    tzh_charcnt    = pntohl( tzp + 20 );
     tzp += 24;
     timidx = 0;
     for( i = 0; i < tzh_timecnt; i++ ) {
-        if (t >= pntohl( tzp )) {
+        if( t >= pntohl( tzp ) ) {
             timidx = i;
         }
         tzp += 4;
@@ -87,15 +86,17 @@ void __check_tzfile( time_t t, struct tm *timep )
     }
     dstname = "\0";
     dstzon = stdzon;
-    if ( timidx > 0 ) {
-        if ( isdst ) {
+    if( timidx > 0 ) {
+        if( isdst ) {
             stdzon = tzh_timecnt + tzp[timidx - 1] * 6;
-        } else {
+        } 
+        else {
             dstzon = tzh_timecnt + tzp[timidx - 1] * 6;
         }
         dstname = &tzp[tzp[dstzon + 5] + tzh_timecnt + tzh_typecnt * 6];
         _RWD_dst_adjust = pntohl( &tzp[dstzon] ) - pntohl( &tzp[stdzon] );
-    } else {
+    } 
+    else {
         _RWD_daylight = 0;  // daylight savings not supported
         _RWD_dst_adjust = 0;
     }
@@ -117,21 +118,21 @@ void __check_tzfile( time_t t, struct tm *timep )
 
 int __read_tzfile( char *tz )
 {
-    long fsize;
-    int fd;
-    char *filename = "/etc/localtime";
+    long        fsize;
+    int         fd;
+    char        *filename = "/etc/localtime";
 
     if( tz != NULL ) {
-        filename = alloca( 21 + strlen( tz ) + 1);
+        filename = alloca( 21 + strlen( tz ) + 1 );
         strcpy( filename, "/usr/share/zoneinfo/" );
         strcat( filename, tz );
     }
 
     fd = open( filename, O_RDONLY );
     fsize = lseek( fd, 0, SEEK_END );
-    if (fsize == -1)
+    if( fsize == -1 )
         return( 0 );
-    if ( tzfile != NULL )
+    if( tzfile != NULL )
         free( tzfile );
     tzfile = malloc( fsize );
     lseek( fd, 0, SEEK_SET );

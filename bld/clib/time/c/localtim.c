@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  _localtime() converts time_t to struct tm
 *
 ****************************************************************************/
-
-
-/*
- *      Convert time_t into struct tm
- */
 
 #include "variety.h"
 #include <time.h>

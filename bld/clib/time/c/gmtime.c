@@ -40,10 +40,10 @@
 #include "thetime.h"
 #include "timedata.h"
 
-#define DAYS_IN_4_YRS   (365+365+365+366)
-#define DAYS_IN_400_YRS ((100*DAYS_IN_4_YRS)-3)
+// #define DAYS_IN_4_YRS   ( 365 + 365 + 365 + 366 )
+// #define DAYS_IN_400_YRS ( ( 100 * DAYS_IN_4_YRS ) - 3 )
 
-//  #define SECONDS_PER_DAY (24*60*60)
+//  #define SECONDS_PER_DAY ( 24 * 60 * 60 )
 //  extern  short   __diyr[], __dilyr[];
 
 /*
@@ -58,7 +58,7 @@
 static unsigned long __DaysToJan1( unsigned year )
 {
     unsigned    years = 1900 + year - 1;
-    unsigned    leap_days = years/4 - years/100 + years/400 - 460;
+    unsigned    leap_days = years / 4 - years / 100 + years / 400 - 460;
 
     return( year * 365UL + leap_days );
 }
@@ -84,7 +84,7 @@ struct tm *__brktime( unsigned long days,
         erroneously reported as "Sun Feb 6 01:28:16 2106 (EST)"
         since (clock - timezone) wraps (i.e., clock < timezone).
     */
-    if( (clock < 12*60*60UL) && (timezone > 0 ) ) {
+    if( ( clock < 12 * 60 * 60UL ) && ( timezone > 0 ) ) {
         clock += SECONDS_PER_DAY;
         clock -= timezone;
         days += clock / SECONDS_PER_DAY;
@@ -93,53 +93,55 @@ struct tm *__brktime( unsigned long days,
             clock is now ahead one day but this doesn't
             affect the time-of-day calculation
         */
-    } else {
+    } 
+    else {
         clock -= timezone;
         days += clock / SECONDS_PER_DAY;
     }
-    secs = clock % SECONDS_PER_DAY;
+    secs       = clock % SECONDS_PER_DAY;
     t->tm_hour = secs / 3600;
-    secs = secs % 3600;
-    t->tm_min = secs / 60;
-    t->tm_sec = secs % 60;
+    secs       = secs % 3600;
+    t->tm_min  = secs / 60;
+    t->tm_sec  = secs % 60;
 
-
-// The following two lines are not needed in the current implementation
-// because the range of values for days does not exceed DAYS_IN_400_YRS.
-// Even if it did, the algorithm still computes the correct values.
-//
-//    unsigned  year400s;
-//
-//    year400s = (days / DAYS_IN_400_YRS) * 400;
-//    days %= DAYS_IN_400_YRS;
-//
-// It is OK to reduce days to a value less than DAYS_IN_400_YRS, because
-// DAYS_IN_400_YRS is exactly divisible by 7. If it wasn't divisible by 7,
-// then the following line which appears at the bottom, should be computed
-// before the value of days is range reduced.
-//    t->tm_wday = (days + 1) % 7;                /* 24-sep-92 */
-//
+    // The following two lines are not needed in the current implementation
+    // because the range of values for days does not exceed DAYS_IN_400_YRS.
+    // Even if it did, the algorithm still computes the correct values.
+    //
+    //    unsigned  year400s;
+    //
+    //    year400s = (days / DAYS_IN_400_YRS) * 400;
+    //    days %= DAYS_IN_400_YRS;
+    //
+    // It is OK to reduce days to a value less than DAYS_IN_400_YRS, because
+    // DAYS_IN_400_YRS is exactly divisible by 7. If it wasn't divisible by 7,
+    // then the following line which appears at the bottom, should be computed
+    // before the value of days is range reduced.
+    //    t->tm_wday = (days + 1) % 7;                /* 24-sep-92 */
+    //
     year = days / 365;
     day_of_year = days - __DaysToJan1( year );
     while( day_of_year < 0 ) {
         --year;
         day_of_year += __leapyear( year + 1900 ) + 365;
     }
-//    year += year400s;
+    // year += year400s;
 
     t->tm_yday = day_of_year;
     t->tm_year = year;
     month_start = __diyr;
-    if( __leapyear( year + 1900 ) )  month_start = __dilyr;
+    if( __leapyear( year + 1900 ) )
+        month_start = __dilyr;
     month = day_of_year / 31;               /* approximate month */
-    if( day_of_year >= month_start[ month + 1 ] ) ++month;
+    if( day_of_year >= month_start[month + 1] )
+        ++month;
     t->tm_mon  = month;
-    t->tm_mday = day_of_year - month_start[ month ] + 1;
+    t->tm_mday = day_of_year - month_start[month] + 1;
 
-/*  Calculate the day of the week */
-/*   Jan 1,1900 is a Monday */
+    /*  Calculate the day of the week */
+    /*   Jan 1,1900 is a Monday */
 
-    t->tm_wday = (days + 1) % 7;                /* 24-sep-92 */
+    t->tm_wday = ( days + 1 ) % 7;                /* 24-sep-92 */
     return( t );
 }
 

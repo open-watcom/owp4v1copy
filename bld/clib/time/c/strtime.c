@@ -29,22 +29,20 @@
 *
 ****************************************************************************/
 
-
 #include "variety.h"
 #include "widechar.h"
 #include <time.h>
 
-
-_WCRTLINK CHAR_TYPE *__F_NAME(_strtime,_wstrtime)( CHAR_TYPE *buf ) {
+_WCRTLINK CHAR_TYPE *__F_NAME( _strtime, _wstrtime ) ( CHAR_TYPE *buf ) {
     time_t time_of_day;
     struct tm now;
 
     time_of_day = time( NULL );
     _localtime( &time_of_day, &now );
     #ifdef __WIDECHAR__
-        wcsftime( buf, 9, L"%T", &now );
+    wcsftime( buf, 9, L"%T", &now );
     #else
-        strftime( buf, 9, "%T", &now );
+    strftime( buf, 9, "%T", &now );
     #endif
     return( buf );
 }

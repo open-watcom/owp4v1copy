@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macros causing function calls on initialization, etc.
 *
 ****************************************************************************/
-
 
 #ifndef __RTINIT_H__
 #define __RTINIT_H__
@@ -40,79 +38,71 @@
 // 95/12/01     -- Greg Bentz       -- categorize shutdown sequencing
 
 #include "langenvd.h"
-#if defined(__PPC__)
+#if defined( __PPC__ )
   #define   __TGT_SYS   __TGT_SYS_AXP_PPC
-  typedef unsigned      __type_rtp;
-  typedef unsigned      __type_pad;
-  typedef void          (*__type_rtn)( void );
-#elif defined(__AXP__)
+typedef unsigned        __type_rtp;
+typedef unsigned        __type_pad;
+typedef void(           *__type_rtn ) ( void );
+#elif defined( __AXP__ )
   #define   __TGT_SYS   __TGT_SYS_AXP_NT
-  typedef unsigned      __type_rtp;
-  typedef unsigned      __type_pad;
-  typedef void          (*__type_rtn)( void );
+typedef unsigned        __type_rtp;
+typedef unsigned        __type_pad;
+typedef void(           *__type_rtn ) ( void );
 #else
   #define   __TGT_SYS   __TGT_SYS_X86
-  typedef unsigned char __type_rtp;
-  typedef unsigned short __type_pad;
-  #if defined(__386__)
-    typedef void __near (* __type_rtn )( void );
+typedef unsigned char   __type_rtp;
+typedef unsigned short  __type_pad;
+  #if defined( __386__ )
+typedef void __near(    *__type_rtn ) ( void );
   #else
-    typedef void        (* __type_rtn )( void );
+typedef void(           *__type_rtn ) ( void );
   #endif
 #endif
 #include "langenv.h"
 
-#if defined(__MEDIUM__) || defined(__LARGE__) || defined(__HUGE__)
+#if defined( __MEDIUM__ ) || defined( __LARGE__ ) || defined( __HUGE__ )
   #define __LARGE_CODE__
 #endif
-
 
 // initialization progresses from highest priority to lowest
 // finalization progresses from lowest to highest
 #pragma pack(1);
-struct rt_init                  // structure placed in XI/YI segment
+struct rt_init // structure placed in XI/YI segment
 {
-    __type_rtp rtn_type;        // - near=0/far=1 routine indication
-                                //   also used when walking table to flag
-                                //   completed entries
-    __type_rtp priority;        // - priority (0-highest 255-lowest)
-    __type_rtn rtn;             // - routine
-#if ! ( defined(__LARGE_CODE__) || defined(__386__) ) || defined( COMP_CFG_COFF )
-    __type_pad padding;         // - padding, when small code ptr
-                                //   or when risc cpu
+    __type_rtp  rtn_type; // - near=0/far=1 routine indication
+                          //   also used when walking table to flag
+                          //   completed entries
+    __type_rtp  priority; // - priority (0-highest 255-lowest)
+    __type_rtn  rtn;      // - routine
+#if !( defined( __LARGE_CODE__ ) || defined( __386__ ) ) || defined( COMP_CFG_COFF )
+    __type_pad  padding;  // - padding, when small code ptr
+                          //   or when risc cpu
 #endif
 };
 #pragma pack();
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
   #define YIXI( seg, label, routine, priority )             \
     struct rt_init __based( __segname( seg ) ) label =      \
     { 0, priority, routine };
-
-#elif defined(__LARGE_CODE__)
-
+#elif defined( __LARGE_CODE__ )
   #define YIXI( seg, label, routine, priority )             \
     struct rt_init __based( __segname( seg ) ) label =      \
     { 1, priority, routine };
-
-
 #else
-
   #define YIXI( seg, label, routine, priority )             \
     struct rt_init __based( __segname( seg ) ) label =      \
     { 0, priority, routine, 0 };
-
 #endif
 
 /*
-        Use these when you want a global label for the XI/YI structure
+    Use these when you want a global label for the XI/YI structure
 */
 #define XI( label, routine, priority ) YIXI( TS_SEG_XI, label, &routine, priority )
 #define YI( label, routine, priority ) YIXI( TS_SEG_YI, label, &routine, priority )
 
 /*
-        Use these when you don't care about the label on the XI/YI structure
+    Use these when you don't care about the label on the XI/YI structure
 */
 #define __ANON( x )     __anon ## x
 #define ANON( x )       __ANON( x )

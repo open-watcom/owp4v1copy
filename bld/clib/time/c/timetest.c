@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <errno.h>
 #include <locale.h>
 #include <stdio.h>
@@ -53,30 +52,29 @@ char ProgramName[128];                          /* executable filename */
 int NumErrors = 0;                              /* number of errors */
 
 
-
 /****
 ***** Program entry point.
 ****/
 
 int main( int argc, char *argv[] )
 {
-    clock_t	clocktime = clock();
-    time_t	tt1, tt2;
+    clock_t     clocktime = clock();
+    time_t      tt1, tt2;
     double      dtime;
-    struct tm	tm1, tm2, *gmt;
-    char	*datestr = "Wed Aug 14 17:23:31 2002\n";
-    char	buf[64];
-    
+    struct tm   tm1, tm2, *gmt;
+    char        *datestr = "Wed Aug 14 17:23:31 2002\n";
+    char        buf[64];
+
     #ifdef __SW_BW
-        FILE *my_stdout;
-        my_stdout = freopen( "tmp.log", "a", stdout );
-        if( my_stdout == NULL ) {
-            fprintf( stderr, "Unable to redirect stdout\n" );
-            exit( -1 );
-        }
+    FILE *my_stdout;
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        exit( -1 );
+    }
     #endif
     /*** Initialize ***/
-    strcpy( ProgramName, strlwr(argv[0]) );     /* store filename */
+    strcpy( ProgramName, strlwr( argv[0] ) );     /* store filename */
 
     /*** Test various functions ***/
     tt1 = time( &tt2 );
@@ -84,8 +82,8 @@ int main( int argc, char *argv[] )
      * is being returned correctly. So let's just see if time() behaves
      * consistently.
      */
-    VERIFY( tt1 == tt2 )
- 
+    VERIFY( tt1 == tt2 );
+
     tm1.tm_sec   = 31;
     tm1.tm_min   = 23;
     tm1.tm_hour  = 17;
@@ -97,7 +95,7 @@ int main( int argc, char *argv[] )
     /* See if mktime() works properly */
     VERIFY( tm1.tm_wday == 3 );
     VERIFY( tm1.tm_yday == 225 );
-    
+
     tm1.tm_sec++;
     tt2 = mktime( &tm1 );
     /* Test difftime() */
@@ -105,7 +103,6 @@ int main( int argc, char *argv[] )
     VERIFY( dtime == -1.0 );
     /* Test localtime() and asctime() */
     VERIFY( strcmp( asctime( localtime( &tt1 ) ), datestr ) == 0 );
-
 
     /* Test gmtime() and strtime() */
     gmt = gmtime( &tt2 );
@@ -116,9 +113,9 @@ int main( int argc, char *argv[] )
 
     /* Make sure clock() isn't going backwards */
     VERIFY( clocktime <= clock() );
-    
+
     /*** Print a pass/fail message and quit ***/
-    if( NumErrors!=0 ) {
+    if( NumErrors != 0 ) {
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
         return( EXIT_FAILURE );
     }
