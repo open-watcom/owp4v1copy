@@ -56,7 +56,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
         $(cc) $(cflags) version.c -fo=.ybj
         -$(linker) $(lflags) name $^& file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq ED vi386
-        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
+#        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
 !endif
 !ifeq ED viwp
         wbind $(name) -s $(lang_root)\binw\win386.ext -R viwp.res

@@ -1,6 +1,4 @@
-!ifdef vroomed
 rcsdll_dos_i86 = obj286
-!endif
 rcsdll_dos_386 = obj386
 
 rcsdll_os2_i86 = objdos

@@ -45,7 +45,7 @@ extra_c_flags_i86 = $(extra_c_flags_i86_$(host_OS))
 !ifdef curses
 extra_c_flags_386_dos = -D__PHAR__ -D__CURSES__
 !else
-extra_c_flags_386_dos = -D__PHAR__
+extra_c_flags_386_dos = -zff -D__4G__
 !endif
 
 !ifdef sys_windowed

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  interrupt vector save and restore for VI
 *
 ****************************************************************************/
 
@@ -37,12 +36,14 @@
 #include <setjmp.h>
 #include "vi.h"
 #include "win.h"
-#include "pragmas.h"
 #if defined( __4G__ )
 #define _FAR_   far
+#undef _FAR
+#define _FAR    far
 #else
 #define _FAR_
 #endif
+#include "pragmas.h"
 
 #if !defined( __386__ ) || defined( __4G__ )
 static void (interrupt _FAR_ *oldInt1c)();
@@ -65,7 +66,7 @@ static int_vect_32      old24;
 static char tSec1,tSec2,tMin1,tMin2,tHour1,tHour2;
 static char cTick1=18,cTick2=5;
 
-extern void HandleInt24( void );
+extern void interrupt _FAR_ HandleInt24( void );
 
 
 /*

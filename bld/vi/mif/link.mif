@@ -35,8 +35,8 @@ extra_l_flags_dos_i86 = op dynamic,stack=1k,area=50k
 extra_l_flags_dos_i86 = op stack=1k
 !endif
 
-lflags_dos_386 = sys pharlap
-extra_l_flags_dos_386 = runtime maxreal=640k runtime unpriv op offset=4k,stack=10k
+# lflags_dos_386 = sys pharlap
+# extra_l_flags_dos_386 = runtime maxreal=640k runtime unpriv op offset=4k,stack=10k
 # lflags_dos_386 = sys dos4g
 # extra_l_flags_dos_386 =
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  screen/keyboard/color helper routines for VI
 *
 ****************************************************************************/
 
@@ -115,7 +114,7 @@ bool KeyboardHit( void )
     rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
 #if !defined(__QNX__) && !defined(__OS2__) && !defined(__NT__)
     if( !rc ) {
-        #ifdef __386__
+        #if defined(__386__)  && !defined(__4G__)
             extern void UpdateDOSClock( void );
             UpdateDOSClock();
         #endif
@@ -144,7 +143,7 @@ int GetKeyboard( int *scan )
 
 } /* GetKeyboard */
 
-#if defined( __386__ ) && !defined( __4G__ )
+#if defined( __386__ ) /* && !defined( __4G__ ) */
 static char     colorPalette[MAX_COLOR_REGISTERS+1] = {0,1,2,3,4,5,0x14,7,
                         0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f,0x00 };
 #else
@@ -182,7 +181,7 @@ static void setColorRegister( int reg, rgb *c )
  */
 static void getColorPalette( char *p )
 {
-#if !defined( __386__ ) || defined( __4G__ ) || defined( __OS2__ )
+#if !defined( __386__ ) || defined( __OS2__ ) /* || defined( __4G__ ) */
     BIOSGetColorPalette( p );
 #else
     p = p;

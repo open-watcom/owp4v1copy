@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  low-level helper pragma's for VI
 *
 ****************************************************************************/
 
@@ -43,8 +42,8 @@ extern void Out43( char );
 extern void Out42( char );
 extern U_INT DosMaxAlloc( void );
 extern long DosGetFullPath( char *, char * );
-extern void _FAR *DosGetVect( char );
-extern void DosSetVect( char, void _FAR * );
+extern void (interrupt _FAR *DosGetVect())( char );
+extern void DosSetVect( char, void (interrupt _FAR *)());
 extern void BIOSSetColorRegister( short, char, char, char );
 extern void BIOSGetColorPalette( void _FAR * );
 extern void BIOSSetBlinkAttr( void );
@@ -250,7 +249,7 @@ extern char HasShareDOS( void );
         0xcd 0x21       /* int    21h */ \
         value [ebx] modify [eax];
 
-extern void DosSetVect( char, void _FAR * );
+extern void DosSetVect( char, void (interrupt _FAR *)() );
 #pragma aux DosSetVect = \
         0x1e            /* push ds */ \
         0x0f 0xa0       /* push fs */ \
@@ -280,9 +279,12 @@ extern void DosSetVect( char, void _FAR * );
         parm [bx] [dh] [ch] [cl] modify[ax];
 
 #pragma aux BIOSGetColorPalette = \
+        0x06          /* push   es */ \
+        0x8e 0xc0     /* mov    es,ax */ \
         0x66 0xB8 0x09 0x10     /* mov     ax,01009h */ \
         0xCD 0x10          /* int     010h */ \
-        parm [es dx] modify[ax];
+        0x07          /* pop    es */ \
+        parm [ax dx] modify [ax];
 
 #pragma aux BIOSSetBlinkAttr = \
         0x66 0xB8 0x03 0x10    /* mov ax,01003h */ \

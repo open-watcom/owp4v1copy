@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  determine the flavour of VI
 *
 ****************************************************************************/
 
@@ -45,7 +44,7 @@ char TITLE[] = "vi/ntwin";
 #else
 char TITLE[] = "vi/nt";
 #endif
-#elif defined(__PHAR__)
+#elif defined(__PHAR__) || defined(__4G__)
 char TITLE[] = "vi/386";
 #elif defined(__QNX__)
 char TITLE[] = "vi/qnx";

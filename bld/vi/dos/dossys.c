@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  General DOS system helper routines for VI
 *
 ****************************************************************************/
 
@@ -349,7 +348,9 @@ int ChangeDrive( int drive )
 
 }/* ChangeDrive */
 
-#if defined( __386__ ) && !defined( __4G__ )
+#if defined( __4G__ )
+#define KEY_PTR (char *) 0x00000417;
+#elif defined( __386__ )
 #define KEY_PTR MK_FP( PHAR_SCRN_SEL, 0x417 );
 #else
 #define KEY_PTR (char *) 0x00400017;
