@@ -250,6 +250,19 @@ static void doEmitReloc( owl_offset offset, void *target, owl_reloc_type type, b
     }
 }
 
+static void doStackLabel( sym_handle sym ) {
+//******************************************
+
+    label_list          new_label;
+
+    new_label = MemAlloc( sizeof( struct asm_label ) );
+    new_label->sym = sym;
+    new_label->next = labelList;
+    new_label->is_numeric = 0;
+    new_label->label_num = 0;
+    labelList = new_label;
+}
+
 extern void ObjInit( void ) {
 //***************************
 
@@ -319,19 +332,6 @@ extern bool ObjLabelDefined( sym_handle sym ) {
     // Still need to check the labelList
     if( findLabel( labelList, sym_name ) ) return( TRUE );
     return( FALSE );
-}
-
-static void doStackLabel( sym_handle sym ) {
-//******************************************
-
-    label_list          new_label;
-
-    new_label = MemAlloc( sizeof( struct asm_label ) );
-    new_label->sym = sym;
-    new_label->next = labelList;
-    new_label->is_numeric = 0;
-    new_label->label_num = 0;
-    labelList = new_label;
 }
 
 static void doStackNumericLabel( uint_32 label_num ) {

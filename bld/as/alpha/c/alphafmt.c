@@ -378,6 +378,54 @@ static unsigned forceLoadAddressComplete( uint_8 d_reg, uint_8 s_reg, ins_operan
 }
 #endif
 
+
+static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand *op1, domov_option m_opt ) {
+//***********************************************************************************************************
+
+    op_const        val;
+
+    if( m_opt == DOMOV_ABS ) {
+        val = abs( op0->constant );
+    } else {
+        val = op0->constant;
+    }
+    return( ldaConst32( buffer, RegIndex( op1->reg ), ZERO_REG_IDX,
+                        op0, val, NULL, FALSE ) );
+}
+
+static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt ) {
+//*********************************************************************************
+
+    ins_operand     *op0, *op1;
+    uint_32         extra;
+    uint_32         abs_val;
+    bool            ready = TRUE;
+
+    op0 = operands[0];
+    op1 = operands[1];
+    if( op0->type == OP_GPR ) {
+        extra = _Rb( RegIndex( op0->reg ) );
+    } else if( ( op0->constant & 0xff ) == op0->constant ) { // OP_IMMED implied
+        extra = _LIT( op0->constant ); // this lit is between 0..255
+        (void)ensureOpAbsolute( op0, 0 );
+    } else if( m_opt == DOMOV_ABS &&
+               ( ( ( abs_val = abs( op0->constant ) ) & 0xff ) == abs_val ) ) {
+        extra = _LIT( abs_val ); // this lit is between 0..255
+        // ensureOpAbsolute( op0, 0 );  should be done before calling doMov
+    } else {
+        ready = FALSE;
+    }
+    if( ready ) {
+        doOpcodeFcRaRc( buffer, OPCODE_BIS, FUNCCODE_BIS,
+                        ZERO_REG_IDX, RegIndex( op1->reg ), extra );
+        return;
+    }
+    // Otherwise it's OP_IMMED with a greater than 8-bit literal.
+    // We'll then use multiple LDA, LDAH instructions to load the literal.
+    if( !ensureOpAbsolute( op0, 0 ) ) return;
+    numExtendedIns += load32BitLiteral( buffer, op0, op1, m_opt ) - 1;
+}
+
 static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
 //**************************************************************************************************
 
@@ -514,6 +562,20 @@ static void doMemJump( uint_32 *buffer, ins_table *table, uint_8 ra, uint_8 rb, 
     doOpcodeRaRb( buffer, table->opcode, ra, rb,
                   (table->funccode << 14) | _FourteenBits(hint) );
     doReloc( reloc, addr_op, OWL_RELOC_JUMP_REL, buffer );
+}
+
+static void opError( instruction *ins, op_type actual, op_type wanted, int i ) {
+//******************************************************************************
+// Stuff out an error message.
+
+    ins = ins;
+    actual = actual;
+    wanted = wanted;    // it's a set of flags
+    if( ( wanted & OP_NOTHING ) != OP_NOTHING ) {
+        Error( OPERAND_INCORRECT, i );
+    } else {
+        Error( OPERAND_UNEXPECTED, i );
+    }
 }
 
 static bool opValidate( ot_array *verify, instruction *ins, ins_opcount num_op, unsigned num_var ) {
@@ -867,53 +929,6 @@ static void ITPseudoFclr( ins_table *table, instruction *ins, uint_32 *buffer, a
               RegIndex( ins->operands[0]->reg ), table->funccode );
 }
 
-static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand *op1, domov_option m_opt ) {
-//***********************************************************************************************************
-
-    op_const        val;
-
-    if( m_opt == DOMOV_ABS ) {
-        val = abs( op0->constant );
-    } else {
-        val = op0->constant;
-    }
-    return( ldaConst32( buffer, RegIndex( op1->reg ), ZERO_REG_IDX,
-                        op0, val, NULL, FALSE ) );
-}
-
-static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt ) {
-//*********************************************************************************
-
-    ins_operand     *op0, *op1;
-    uint_32         extra;
-    uint_32         abs_val;
-    bool            ready = TRUE;
-
-    op0 = operands[0];
-    op1 = operands[1];
-    if( op0->type == OP_GPR ) {
-        extra = _Rb( RegIndex( op0->reg ) );
-    } else if( ( op0->constant & 0xff ) == op0->constant ) { // OP_IMMED implied
-        extra = _LIT( op0->constant ); // this lit is between 0..255
-        (void)ensureOpAbsolute( op0, 0 );
-    } else if( m_opt == DOMOV_ABS &&
-               ( ( ( abs_val = abs( op0->constant ) ) & 0xff ) == abs_val ) ) {
-        extra = _LIT( abs_val ); // this lit is between 0..255
-        // ensureOpAbsolute( op0, 0 );  should be done before calling doMov
-    } else {
-        ready = FALSE;
-    }
-    if( ready ) {
-        doOpcodeFcRaRc( buffer, OPCODE_BIS, FUNCCODE_BIS,
-                        ZERO_REG_IDX, RegIndex( op1->reg ), extra );
-        return;
-    }
-    // Otherwise it's OP_IMMED with a greater than 8-bit literal.
-    // We'll then use multiple LDA, LDAH instructions to load the literal.
-    if( !ensureOpAbsolute( op0, 0 ) ) return;
-    numExtendedIns += load32BitLiteral( buffer, op0, op1, m_opt ) - 1;
-}
-
 static void ITPseudoMov( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
 //************************************************************************************************
 
@@ -1069,20 +1084,6 @@ alpha_format AlphaFormatTable[] = {
     #include "alphafmt.inc"
     #undef PICK
 };
-
-static void opError( instruction *ins, op_type actual, op_type wanted, int i ) {
-//******************************************************************************
-// Stuff out an error message.
-
-    ins = ins;
-    actual = actual;
-    wanted = wanted;    // it's a set of flags
-    if( ( wanted & OP_NOTHING ) != OP_NOTHING ) {
-        Error( OPERAND_INCORRECT, i );
-    } else {
-        Error( OPERAND_UNEXPECTED, i );
-    }
-}
 
 bool AlphaValidate( instruction *ins ) {
 //**************************************
