@@ -44,6 +44,11 @@
 #include <stdio.h>
 #endif
 
+#ifdef __NT__
+#include "windows.h"
+extern system_config    SysConfig;
+#endif
+
 extern trap_shandle GetSuppId( char * );
 extern handle           LclStringToFullName( char *name, unsigned len, char *full );
 
@@ -165,6 +170,26 @@ unsigned RemoteStringToFullName( bool executable, char *name, char *res,
         FileClose( h );
         return( strlen( res ) );
     }
+#ifdef __NT__
+    // check whether short filename is necessary
+    switch( SysConfig.os ) {
+    case OS_AUTOCAD:
+    case OS_DOS:
+    case OS_RATIONAL:
+    case OS_PHARLAP:
+    case OS_WINDOWS:
+        // convert long file name to short "DOS" compatible form
+        {
+            char short_filename[MAX_PATH + 1] = "";
+
+            GetShortPathNameA( name, short_filename, MAX_PATH );
+            if( strlen( short_filename ) != 0 ) {
+                strcpy( name, short_filename );
+            }
+        }
+        break;
+    }
+#endif
     SUPP_FILE_SERVICE( acc, REQ_FILE_STRING_TO_FULLPATH );
     acc.file_type = ( executable ? TF_TYPE_EXE : TF_TYPE_PRS );
     in[0].ptr = &acc;
