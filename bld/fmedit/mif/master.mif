@@ -58,6 +58,8 @@ extra_c_flags_fmedit = -bd
 rc_flags += -30
 !endif
 
+extra_l_flags_win = op rwr
+
 #
 # Dependencies
 #

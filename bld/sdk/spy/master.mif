@@ -60,7 +60,7 @@ dll_debug_all           = debug all
 dll_debug_axp           = debug codeview
 !endif
 
-extra_l_flags_win = option stack=9k option heapsize=2k lib $(dllname).lib
+extra_l_flags_win = option stack=9k, heapsize=2k lib $(dllname).lib
 
 extra_l_flags_nt  = option stack=64k option heapsize=2k &
                     lib $(dllname).lib
@@ -79,7 +79,7 @@ wspy_dll_lflags_wini86 = $(dll_debug_$(host_cpu)) &
                          system windows_dll font mem name $(dllname).dll &
                          $(wspy_non_release_option) &
                          lib windows.lib &
-                         option map &
+                         option map, rwr &
                          segment CLASS 'CODE' PRELOAD FIXED &
                          export WEP RESIDENT &
                          file { $(dllobjs) }

@@ -56,7 +56,7 @@ extra_c_flags_win = -zW
 
 extra_l_flags = option map
 !ifeq sys_dll 1
-extra_l_flags_win = export WEP RESIDENT
+extra_l_flags_win = op rwr export WEP RESIDENT
 !endif
 
 $(xname) : sruparse.gh ytab.gh $(objs) $(__MAKEFILES__)
