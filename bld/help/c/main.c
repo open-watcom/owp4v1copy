@@ -46,8 +46,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define DEF_EXTENSION   ".IHP"
-#define FIRST_SRCH_PATH ".\\"
+#define DEF_EXTENSION   ".ihp"
+#define FIRST_SRCH_PATH "./"
 
 static HelpSrchPathItem searchList[] = {
     SRCHTYPE_PATH,      FIRST_SRCH_PATH,// this may be changed when a cross
