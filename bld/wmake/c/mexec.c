@@ -897,7 +897,7 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
 }
 
 #ifdef __LINUX__
-STATIC RET_T intSystem( char *cmd )
+STATIC RET_T intSystem( const char *cmd )
 /* interruptable "system" (so that ctrl-c works) */
 {
     pid_t pid = fork();
