@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utility program used during wmake regression tests.
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 void main(int argc, char* argv[])
 {
     char buffer[PATH_MAX+1];
-    int  size;
+    int  size = sizeof(buffer);
 
     if (argc >= 2) {
         getcwd(buffer,size);
@@ -44,5 +43,4 @@ void main(int argc, char* argv[])
     } else{
         printf("Error: %s <argument>\n",argv[0]);
     }
-
 }

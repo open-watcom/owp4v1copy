@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro preprocessor for wmake (handles !ifdef and the like).
 *
 ****************************************************************************/
 
@@ -837,7 +836,7 @@ STATIC void bangUnDef( void )
 
     value = GetMacroValue( name );
     if( value == NULL ) {
-        PrtMsg( DBG|WRN|LOC| TRYING_UNDEF_UNDEF, directives[ D_UNDEF ] );
+        PrtMsg( WRN|LOC| TRYING_UNDEF_UNDEF, directives[ D_UNDEF ] );
         FreeSafe( name );
         return;
     }
