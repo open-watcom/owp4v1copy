@@ -6,6 +6,8 @@ clean : .SYMBOLIC
  @if exist *.hlp erase *.hlp
  @if exist *.cnt erase *.cnt
  @if exist *.h erase *.h
+ @if exist *.ipf erase *.ipf
+ @if exist *.inf erase *.inf
 
  @if exist *.ib erase *.ib
  @if exist *.blt erase *.blt
@@ -15,7 +17,7 @@ clean : .SYMBOLIC
  @if exist *.ph erase *.ph
  @if exist *.hh erase *.hh
  @if exist *.err erase *.err
- @if exist *.whp erase *.whp
+ @if exist *.ptf erase *.ptf
  @if exist *.idx erase *.idx
  @if exist *.tbl erase *.tbl
  @if exist *.kw erase *.kw
@@ -23,6 +25,7 @@ clean : .SYMBOLIC
  @if exist *.cn1 erase *.cn1
  @if exist *.gml erase *.gml
  @if exist *.lay erase *.lay
+ @if exist *.tim erase *.tim
 
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
