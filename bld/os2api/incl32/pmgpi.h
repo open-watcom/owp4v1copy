@@ -304,6 +304,7 @@ LONG   APIENTRY GpiQueryStopDraw(HPS);
 BOOL   APIENTRY GpiResetPS(HPS,ULONG);
 BOOL   APIENTRY GpiSetDrawControl(HPS,LONG,LONG);
 BOOL   APIENTRY GpiSetDrawingMode(HPS,LONG);
+BOOL   APIENTRY GpiSetPS(HPS,PSIZEL,ULONG);
 BOOL   APIENTRY GpiSetStopDraw(HPS,LONG);
 
 #endif
@@ -325,12 +326,11 @@ BOOL   APIENTRY GpiSetStopDraw(HPS,LONG);
 #define LCIDT_BITMAP   7
 #define LCID_ALL     (-1)
 
-LONG   APIENTRY GpiCreateLogFont(HPS hps, PSTR8 pName, LONG lLcid, PFATTRS pfatAttrs);
-BOOL   APIENTRY GpiDeleteSetId(HPS hps, LONG lLcid);
-ULONG  APIENTRY GpiQueryCp(HPS hps);
-LONG   APIENTRY GpiQueryFonts(HPS hps, ULONG flOptions, PCSZ pszFacename, PLONG plReqFonts,
-                   LONG lMetricsLength, PFONTMETRICS afmMetrics);
-BOOL   APIENTRY GpiQueryFontMetrics(HPS hps, LONG lMetricsLength, PFONTMETRICS pfmMetrics);
+LONG   APIENTRY GpiCreateLogFont(HPS,PSTR8,LONG,PFATTRS);
+BOOL   APIENTRY GpiDeleteSetId(HPS,LONG);
+ULONG  APIENTRY GpiQueryCp(HPS);
+LONG   APIENTRY GpiQueryFonts(HPS,ULONG,PCSZ,PLONG,LONG,PFONTMETRICS);
+BOOL   APIENTRY GpiQueryFontMetrics(HPS,LONG,PFONTMETRICS);
 
 #endif
 
@@ -355,29 +355,22 @@ BOOL   APIENTRY GpiQueryFontMetrics(HPS hps, LONG lMetricsLength, PFONTMETRICS p
 #define PC_EXPLICIT   0x02
 #define PC_NOCOLLAPSE 0x04
 
-LONG   APIENTRY GpiAnimatePalette(HPAL hpal, ULONG ulFormat, ULONG ulStart, ULONG ulCount,
-                   PULONG aulTable);
-BOOL   APIENTRY GpiCreateLogColorTable(HPS hps, ULONG flOptions, LONG lFormat,
-                   LONG lStart, LONG lCount, PLONG alTable);
-HPAL   APIENTRY GpiCreatePalette(HAB hab, ULONG flOptions, ULONG ulFormat,
-                   ULONG ulCount, PULONG aulTable);
-BOOL   APIENTRY GpiDeletePalette(HPAL hpal);
-BOOL   APIENTRY GpiQueryColorData(HPS hps, LONG lCount, PLONG alArray);
-LONG   APIENTRY GpiQueryColorIndex(HPS hps, ULONG flOptions, LONG lRgbColor);
-LONG   APIENTRY GpiQueryLogColorTable(HPS hps, ULONG flOptions, LONG lStart,
-                   LONG lCount, PLONG alArray);
-LONG   APIENTRY GpiQueryNearestColor(HPS hps, ULONG flOptions, LONG lRgbIn);
-LONG   APIENTRY GpiQueryNearestPaletteIndex(HPAL hpal, ULONG color);
-HPAL   APIENTRY GpiQueryPalette(HPS hps);
-LONG   APIENTRY GpiQueryPaletteInfo(HPAL hpal, HPS hps, ULONG flOptions, ULONG ulStart,
-                   ULONG ulCount, PULONG aulArray);
-LONG   APIENTRY GpiQueryRealColors(HPS hps, ULONG flOptions, LONG lStart,
-                   LONG lCount, PLONG alColors);
-LONG   APIENTRY GpiQueryRGBColor(HPS hps, ULONG flOptions, LONG lColorIndex);
-HPAL   APIENTRY GpiSelectPalette(HPS hps, HPAL hpal);
-BOOL   APIENTRY GpiSetPaletteEntries(HPAL hpal, ULONG ulFormat, ULONG ulStart,
-                   ULONG ulCount, PULONG aulTable);
-ULONG  APIENTRY GpiResizePalette(HPAL hpal, ULONG newsize);
+LONG   APIENTRY GpiAnimatePalette(HPAL,ULONG,ULONG,ULONG,PULONG);
+BOOL   APIENTRY GpiCreateLogColorTable(HPS,ULONG,LONG,LONG,LONG,PLONG);
+HPAL   APIENTRY GpiCreatePalette(HAB,ULONG,ULONG,ULONG,PULONG);
+BOOL   APIENTRY GpiDeletePalette(HPAL);
+BOOL   APIENTRY GpiQueryColorData(HPS,LONG,PLONG);
+LONG   APIENTRY GpiQueryColorIndex(HPS,ULONG,LONG);
+LONG   APIENTRY GpiQueryLogColorTable(HPS,ULONG,LONG,LONG,PLONG);
+LONG   APIENTRY GpiQueryNearestColor(HPS,ULONG,LONG);
+LONG   APIENTRY GpiQueryNearestPaletteIndex(HPAL,ULONG);
+HPAL   APIENTRY GpiQueryPalette(HPS);
+LONG   APIENTRY GpiQueryPaletteInfo(HPAL,HPS,ULONG,ULONG,ULONG,PULONG);
+LONG   APIENTRY GpiQueryRealColors(HPS,ULONG,LONG,LONG,PLONG);
+LONG   APIENTRY GpiQueryRGBColor(HPS,ULONG,LONG);
+HPAL   APIENTRY GpiSelectPalette(HPS,HPAL);
+BOOL   APIENTRY GpiSetPaletteEntries(HPAL,ULONG,ULONG,ULONG,PULONG);
+ULONG  APIENTRY GpiResizePalette(HPAL,ULONG);
 
 #endif
 
@@ -397,15 +390,15 @@ ULONG  APIENTRY GpiResizePalette(HPAL hpal, ULONG newsize);
 #define SCP_INCL      0
 #define SCP_EXCL      8
 
-BOOL   APIENTRY GpiBeginPath(HPS hps, LONG lPath);
-BOOL   APIENTRY GpiCloseFigure(HPS hps);
-BOOL   APIENTRY GpiEndPath(HPS hps);
-LONG   APIENTRY GpiFillPath(HPS hps, LONG lPath, LONG lOptions);
-BOOL   APIENTRY GpiModifyPath(HPS hps, LONG lPath, LONG lMode);
-LONG   APIENTRY GpiOutlinePath(HPS hps, LONG lPath, LONG lOptions);
-HRGN   APIENTRY GpiPathToRegion(HPS GpiH, LONG lPath, LONG lOptions);
-BOOL   APIENTRY GpiSetClipPath(HPS hps, LONG lPath, LONG lOptions);
-LONG   APIENTRY GpiStrokePath(HPS hps, LONG lPath, ULONG flOptions);
+BOOL   APIENTRY GpiBeginPath(HPS,LONG);
+BOOL   APIENTRY GpiCloseFigure(HPS);
+BOOL   APIENTRY GpiEndPath(HPS);
+LONG   APIENTRY GpiFillPath(HPS,LONG,LONG);
+BOOL   APIENTRY GpiModifyPath(HPS,LONG,LONG);
+LONG   APIENTRY GpiOutlinePath(HPS,LONG,LONG);
+HRGN   APIENTRY GpiPathToRegion(HPS,LONG,LONG);
+BOOL   APIENTRY GpiSetClipPath(HPS,LONG,LONG);
+LONG   APIENTRY GpiStrokePath(HPS,LONG,ULONG);
 
 #endif
 
@@ -771,6 +764,9 @@ BOOL   APIENTRY GpiComment(HPS,LONG,PBYTE);
 LONG   APIENTRY GpiFullArc(HPS,LONG,FIXED);
 LONG   APIENTRY GpiImage(HPS,LONG,PSIZEL,LONG,PBYTE);
 LONG   APIENTRY GpiPartialArc(HPS,PPOINTL,FIXED,FIXED,FIXED);
+LONG   APIENTRY GpiPolyFillet(HPS,LONG,PPOINTL);
+LONG   APIENTRY GpiPolyFilletSharp(HPS,LONG,PPOINTL,PFIXED);
+LONG   APIENTRY GpiPolySpline(HPS,LONG,PPOINTL);
 BOOL   APIENTRY GpiPop(HPS,LONG);
 LONG   APIENTRY GpiQueryAttrMode(HPS);
 LONG   APIENTRY GpiQueryAttrs(HPS,LONG,ULONG,PBUNDLE);

@@ -662,9 +662,9 @@ typedef struct _CREATESTRUCT {
     HWND  hwndParent;
 } CREATESTRUCT, *PCREATESTRUCT;
 
-HWND    APIENTRY WinQueryActiveWindow(HWND hwndParent);
-BOOL    APIENTRY WinQueryClassInfo(HAB hab, PCSZ PSZClassName, PCLASSINFO PclsiClassInfo);
-LONG    APIENTRY WinQueryClassName(HWND hwnd, LONG lLength, PCH PCHBuffer);
+HWND    APIENTRY WinQueryActiveWindow(HWND);
+BOOL    APIENTRY WinQueryClassInfo(HAB,PCSZ,PCLASSINFO);
+LONG    APIENTRY WinQueryClassName(HWND,LONG,PCH);
 
 #endif
 
@@ -749,23 +749,19 @@ typedef struct _QMSG {
     ULONG  reserved;
 } QMSG, *PQMSG;
 
-HMQ     APIENTRY WinCreateMsgQueue(HAB hab, LONG lQueuesize);
-
-BOOL    APIENTRY WinDestroyMsgQueue(HMQ hmq);
-
-MRESULT APIENTRY WinDispatchMsg(HAB hab, PQMSG pqmsgMsg);
-
-BOOL    APIENTRY WinGetMsg(HAB hab, PQMSG pqmsgmsg, HWND hwndFltr, ULONG ulFirst, ULONG ulLast);
-
-BOOL    APIENTRY WinPeekMsg(HAB hab, PQMSG pqmsg, HWND hwndFilter, ULONG ulFirst,
-                   ULONG ulLast, ULONG flOptions);
-BOOL    APIENTRY WinPostMsg(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+HMQ     APIENTRY WinCreateMsgQueue(HAB,LONG);
+BOOL    APIENTRY WinDestroyMsgQueue(HMQ);
+MRESULT APIENTRY WinDispatchMsg(HAB,PQMSG);
+BOOL    APIENTRY WinGetMsg(HAB,PQMSG,HWND,ULONG,ULONG);
+BOOL    APIENTRY WinPeekMsg(HAB,PQMSG,HWND,ULONG,ULONG,ULONG);
+BOOL    APIENTRY WinPostMsg(HWND,ULONG,MPARAM,MPARAM);
 
 #endif
 
 #if defined(INCL_WINMESSAGEMGR)
 
 BOOL    APIENTRY WinBroadcastMsg(HWND,ULONG,MPARAM,MPARAM,ULONG);
+BOOL    APIENTRY WinCancelShutdown(HMQ,BOOL);
 APIRET  APIENTRY WinRequestMutexSem(HMTX,ULONG);
 APIRET  APIENTRY WinWaitEventSem(HEV,ULONG);
 BOOL    APIENTRY WinWaitMsg(HAB,ULONG,ULONG);
@@ -861,12 +857,9 @@ typedef struct _DDEINIT {
     ULONG offConvContext;
 } DDEINIT, *PDDEINIT;
 
-BOOL    APIENTRY WinDdeInitiate(HWND hwndClient, PCSZ pszAppName,
-                   PCSZ pszTopicName, PCONVCONTEXT pContext);
-BOOL    APIENTRY WinDdePostMsg(HWND hwndTo, HWND hwndFrom, ULONG usMsgId,
-                   PDDESTRUCT pData, ULONG ulOptions);
-MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
-                   PCSZ pszAppName, PCSZ pszTopicName, PCONVCONTEXT pContext);
+BOOL    APIENTRY WinDdeInitiate(HWND,PCSZ,PCSZ,PCONVCONTEXT);
+BOOL    APIENTRY WinDdePostMsg(HWND,HWND,ULONG,PDDESTRUCT,ULONG);
+MRESULT APIENTRY WinDdeRespond(HWND,HWND,PCSZ,PCSZ,PCONVCONTEXT);
 
 #endif
 
@@ -936,20 +929,17 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 #define WinIsControlEnabled(hwndDlg, id) \
     ((BOOL)WinIsWindowEnabled(WinWindowFromID(hwndDlg, id)))
 
-BOOL    APIENTRY WinAlarm(HWND hwndDesktop, ULONG rgfType);
-MRESULT APIENTRY WinDefDlgProc(HWND hwndDlg, ULONG msg, MPARAM mp1, MPARAM mp2);
-USHORT  APIENTRY WinMessageBox(HWND hwndParent, HWND hwndOwner, PSZ pszText, PSZ pszTitle,
-                    USHORT usWindow, USHORT fsStyle);
-BOOL    APIENTRY WinDismissDlg(HWND hwndDlg, ULONG usResult);
-ULONG   APIENTRY WinDlgBox(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc, HMODULE hmod,
-                    ULONG idDlg, PVOID pCreateParams);
-HWND    APIENTRY WinLoadDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
-                    HMODULE hmod, ULONG idDlg, PVOID pCreateParams);
-BOOL    APIENTRY WinQueryDlgItemShort(HWND hwndDlg, ULONG idItem, PSHORT psResult, BOOL fSigned);
-ULONG   APIENTRY WinQueryDlgItemText(HWND hwndDlg, ULONG idItem, LONG lMaxText, PSZ pszText);
-LONG    APIENTRY WinQueryDlgItemTextLength(HWND hwndDlg, ULONG idItem);
-BOOL    APIENTRY WinSetDlgItemShort(HWND hwndDlg, ULONG idItem, USHORT usValue, BOOL fSigned);
-BOOL    APIENTRY WinSetDlgItemText(HWND hwndDlg, ULONG idItem, PCSZ pszText);
+BOOL    APIENTRY WinAlarm(HWND,ULONG);
+MRESULT APIENTRY WinDefDlgProc(HWND,ULONG,MPARAM,MPARAM);
+USHORT  APIENTRY WinMessageBox(HWND,HWND,PSZ,PSZ,USHORT,USHORT);
+BOOL    APIENTRY WinDismissDlg(HWND,ULONG);
+ULONG   APIENTRY WinDlgBox(HWND,HWND,PFNWP,HMODULE,ULONG,PVOID);
+HWND    APIENTRY WinLoadDlg(HWND,HWND,PFNWP,HMODULE,ULONG,PVOID);
+BOOL    APIENTRY WinQueryDlgItemShort(HWND,ULONG,PSHORT,BOOL);
+ULONG   APIENTRY WinQueryDlgItemText(HWND,ULONG,LONG,PSZ);
+LONG    APIENTRY WinQueryDlgItemTextLength(HWND,ULONG);
+BOOL    APIENTRY WinSetDlgItemShort(HWND,ULONG,USHORT,BOOL);
+BOOL    APIENTRY WinSetDlgItemText(HWND,ULONG,PCSZ);
 
 #endif
 
@@ -987,13 +977,12 @@ typedef struct _DLGTEMPLATE {
 
 #pragma pack()
 
-HWND    APIENTRY WinCreateDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
-                   PDLGTEMPLATE pdlgt, PVOID pCreateParams);
-HWND    APIENTRY WinEnumDlgItem(HWND hwndDlg, HWND hwnd, ULONG code);
-BOOL    APIENTRY WinMapDlgPoints(HWND hwndDlg, PPOINTL prgwptl, ULONG cwpt, BOOL fCalcWinCoords);
-ULONG   APIENTRY WinProcessDlg(HWND hwndDlg);
-MRESULT APIENTRY WinSendDlgItemMsg(HWND hwndDlg, ULONG idItem, ULONG msg, MPARAM mp1, MPARAM mp2);
-LONG    APIENTRY WinSubstituteStrings(HWND hwnd, PCSZ pszSrc, LONG cchDstMax, PCSZ pszDst);
+HWND    APIENTRY WinCreateDlg(HWND,HWND,PFNWP,PDLGTEMPLATE,PVOID);
+HWND    APIENTRY WinEnumDlgItem(HWND,HWND,ULONG);
+BOOL    APIENTRY WinMapDlgPoints(HWND,PPOINTL,ULONG,BOOL);
+ULONG   APIENTRY WinProcessDlg(HWND);
+MRESULT APIENTRY WinSendDlgItemMsg(HWND,ULONG,ULONG,MPARAM,MPARAM);
+LONG    APIENTRY WinSubstituteStrings(HWND,PCSZ,LONG,PCSZ);
 
 
 #endif
