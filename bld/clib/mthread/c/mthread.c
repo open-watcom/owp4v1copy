@@ -363,7 +363,7 @@ void    __ReleaseFList()
 #endif
 #endif
 
-_WCRTLINK void *__MultipleThread()
+_WCRTLINK struct thread_data *__MultipleThread()
 {
     #if defined( __NT__ )
         /*
