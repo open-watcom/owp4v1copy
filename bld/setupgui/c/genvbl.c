@@ -58,9 +58,9 @@ typedef struct  a_variable {
     char    *name;
     unsigned    id : 14;
     unsigned    has_value : 1;
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
     unsigned    script_file : 1;  // whether to put variable in MSBackoffice install script
-    #endif
+#endif
     char        *strval;    /* value */
     char    *autoset;
     char    restriction;
@@ -324,95 +324,95 @@ extern void SetDefaultGlobalVarList( void )
 /*****************************************/
 {
     char    szBuf[_MAX_PATH];
-    #if defined( __NT__ )
-        char *  last_slash;
-    #endif
+#if defined( __NT__ )
+    char *  last_slash;
+#endif
 
     // create global variables for each default system
     SetVariableByName( "true", "1" );
     SetVariableByName( "false", "0" );
-    #if !defined( __AXP__ ) && !defined( __OS2__ )
-    #ifdef NECCHECK
-#if 0
+#if !defined( __AXP__ ) && !defined( __OS2__ )
+  #ifdef NECCHECK
     SetVariableByName( "IsNEC", __nonIBM() ? "1" : "0" );
+  #else
+    SetVariableByName( "IsNEC", "0" );
+  #endif
 #else
     SetVariableByName( "IsNEC", "0" );
 #endif
-    #endif
-    #endif
-    #if defined( __DOS__ )
+#if defined( __DOS__ )
     SetVariableByName( "IsDos", "1" );
     SetVariableByName( "IsOS2DosBox", _osmajor >= 10 ? "1" : "0" );
-    #else
+#else
     SetVariableByName( "IsDos", "0" );
-    #endif
+#endif
 
-    #if defined( __WINDOWS__ )
-        SetVariableByName( "IsWin", "1" );
+#if defined( __WINDOWS__ )
+    SetVariableByName( "IsWin", "1" );
     SetVariableByName( "IsOS2DosBox", _osmajor >= 10 ? "1" : "0" );
-    #else
+#else
     SetVariableByName( "IsWin", "0" );
-    #endif
+#endif
 
-    #if defined( __OS2__ )
-        SetVariableByName( "IsOS2", "1" );
-    #else
+#if defined( __OS2__ )
+    SetVariableByName( "IsOS2", "1" );
+#else
     SetVariableByName( "IsOS2", "0" );
-    #endif
+#endif
 
-    #if defined( __NT__ )
+#if defined( __NT__ )
     {
-    DWORD   version = GetVersion();
-    if( version < 0x80000000 ) {
-        SetVariableByName( "IsWinNT", "1" );
-        SetVariableByName( "IsWin32", "1" );
-        if( LOBYTE( LOWORD( version ) ) == 4 ) {
-        SetVariableByName( "IsWinNT40", "1" );
+        DWORD   version = GetVersion();
+        if( version < 0x80000000 ) {
+            SetVariableByName( "IsWinNT", "1" );
+            SetVariableByName( "IsWin32", "1" );
+            if( LOBYTE( LOWORD( version ) ) == 4 ) {
+                SetVariableByName( "IsWinNT40", "1" );
+            } else {
+                SetVariableByName( "IsWinNT40", "0" );
+            }
+        } else if( LOBYTE( LOWORD( version ) ) < 4 ) {
+            SetVariableByName( "IsWin32s", "1" );
         } else {
-        SetVariableByName( "IsWinNT40", "0" );
+            SetVariableByName( "IsWin95", "1" );
+            SetVariableByName( "IsWin32", "1" );
         }
-    } else if( LOBYTE( LOWORD( version ) ) < 4 ) {
-        SetVariableByName( "IsWin32s", "1" );
-    } else {
-        SetVariableByName( "IsWin95", "1" );
-        SetVariableByName( "IsWin32", "1" );
     }
-    }
-    #else
+#else
     SetVariableByName( "IsWinNT", "0" );
     SetVariableByName( "IsWin95", "0" );
-    #endif
-    #if defined( __WINDOWS__ ) || defined( __NT__ )
+#endif
+#if defined( __WINDOWS__ ) || defined( __NT__ )
     GetSystemDirectory( szBuf, sizeof( szBuf ) );
-    #else
+#else
     if( GetVariableIntVal( "IsNEC" ) == 1 ) {
         strcpy( szBuf, "A:\\WINDOWS\\SYSTEM" );
     } else {
         strcpy( szBuf, "C:\\WINDOWS\\SYSTEM" );
     }
-    #endif
+#endif
     SetVariableByName( "WinSystemDir", szBuf );
-    #if defined( __NT__ )
+#if defined( __NT__ )
     last_slash = strrchr( szBuf, '\\' );
     strcpy( last_slash, "\\SYSTEM" );
-    #endif
+#endif
     SetVariableByName( "WinSystem16Dir", szBuf );
-    #if defined( __WINDOWS__ ) || defined( __NT__ )
+#if defined( __WINDOWS__ ) || defined( __NT__ )
     GetWindowsDirectory( szBuf, sizeof( szBuf ) );
-    #else
+#else
     if( GetVariableIntVal( "IsNEC" ) == 1 ) {
         strcpy( szBuf, "A:\\WINDOWS" );
     } else {
         strcpy( szBuf, "C:\\WINDOWS" );
     }
-    #endif
+#endif
     SetVariableByName( "WinDir", szBuf );
 
-    #if defined( __AXP__ )
+#if defined( __AXP__ )
     SetVariableByName( "IsAlpha", "1" );
-    #else
+#else
     SetVariableByName( "IsAlpha", "0" );
-    #endif
+#endif
 }
 
 

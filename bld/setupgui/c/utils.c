@@ -2512,24 +2512,24 @@ extern bool MakeDisks( void )
 
 #if 0
     if( GetVariableIntVal( "FormatDisks" ) ) {
-    sprintf( buff, GetVariableStrVal( "IDS_FORMAT_OK" ), dst_path[0] );
-    if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
-    sprintf( buff, GetVariableStrVal( "IDS_FORMAT_ARE_YOU_SURE" ), dst_path[0] );
-    if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
+        sprintf( buff, GetVariableStrVal( "IDS_FORMAT_OK" ), dst_path[0] );
+        if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
+        sprintf( buff, GetVariableStrVal( "IDS_FORMAT_ARE_YOU_SURE" ), dst_path[0] );
+        if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
     } else {
-    sprintf( buff, GetVariableStrVal( "IDS_ERASE_OK" ), dst_path[0] );
-    if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
-    sprintf( buff, GetVariableStrVal( "IDS_ERASE_ARE_YOU_SURE" ), dst_path[0] );
-    if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
+        sprintf( buff, GetVariableStrVal( "IDS_ERASE_OK" ), dst_path[0] );
+        if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
+        sprintf( buff, GetVariableStrVal( "IDS_ERASE_ARE_YOU_SURE" ), dst_path[0] );
+        if( GUIDisplayMessage( MainWnd, buff, GetInstallName(), GUI_YES_NO ) != GUI_RET_YES ) return( FALSE );
     }
 #endif
 
     while( info = readdir( d ) ) {
-    if( info->d_attr & _A_SUBDIR ) continue;
-    strcpy( path_end+1, info->d_name );
-    strcpy( end_dst_path, info->d_name );
-    state = DLG_START;
-    #ifdef NECCHECK
+        if( info->d_attr & _A_SUBDIR ) continue;
+        strcpy( path_end+1, info->d_name );
+        strcpy( end_dst_path, info->d_name );
+        state = DLG_START;
+#ifdef NECCHECK
         /*
            We don't have enough room on the install diskettes for
            both DOSSETUP.EXE & 98SETUP.EXE. So, if we're on a NEC-98,
@@ -2537,20 +2537,20 @@ extern bool MakeDisks( void )
            clone, don't put 98SETUP.EXE on.
         */
         if( GetVariableIntVal( "IsNEC" ) ) {
-        if( stricmp( info->d_name, "DOSSETUP.EXE" ) == 0 ) {
-            state = DLG_SKIP;
-        }
+            if( stricmp( info->d_name, "DOSSETUP.EXE" ) == 0 ) {
+                state = DLG_SKIP;
+            }
         } else {
-        if( stricmp( info->d_name, "98SETUP.EXE" ) == 0 ) {
-            state = DLG_SKIP;
+            if( stricmp( info->d_name, "98SETUP.EXE" ) == 0 ) {
+                state = DLG_SKIP;
+            }
         }
+#endif
+        if( state != DLG_SKIP ) {
+            state = CopyToDisk( 0, src_path, dst_path );
+            if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );
+            if( state == DLG_SKIP ) break;
         }
-    #endif
-    if( state != DLG_SKIP ) {
-        state = CopyToDisk( 0, src_path, dst_path );
-        if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );
-        if( state == DLG_SKIP ) break;
-    }
     }
     num_installed = 0;
     StatusAmount( num_installed, num_total_install );
@@ -2559,24 +2559,24 @@ extern bool MakeDisks( void )
     if( !WriteAutoSetValues( dst_path ) ) return( FALSE );
 
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    disk_num = SimFileDiskNum( filenum );
-    if( disk_num == 0 ) continue;
-    if( used[ disk_num ] ) {
-        if( disk_num != DiskNum ) {
-        // round up to size of full disk
-        num_installed += DisketteSize;
-        StatusAmount( num_installed, num_total_install );
+        disk_num = SimFileDiskNum( filenum );
+        if( disk_num == 0 ) continue;
+        if( used[ disk_num ] ) {
+            if( disk_num != DiskNum ) {
+                // round up to size of full disk
+                num_installed += DisketteSize;
+                StatusAmount( num_installed, num_total_install );
+            }
+            SimGetFileName( filenum, buff );
+            GetSrcPath( src_path, buff, disk_num );
+            strcpy( end_dst_path, buff );
+            state = CopyToDisk( disk_num, src_path, dst_path );
+            if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );
+            if( state == DLG_SKIP ) {
+                used[ disk_num ] = FALSE;
+                continue;
+            }
         }
-        SimGetFileName( filenum, buff );
-        GetSrcPath( src_path, buff, disk_num );
-        strcpy( end_dst_path, buff );
-        state = CopyToDisk( disk_num, src_path, dst_path );
-        if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );
-        if( state == DLG_SKIP ) {
-        used[ disk_num ] = FALSE;
-        continue;
-        }
-    }
     }
     StatusAmount( num_installed, num_total_install );
     GUIFree( used );
@@ -2599,48 +2599,48 @@ void DeleteObsoleteFiles()
     max_deletes = SimNumDeletes();
     group = 0;
     for( i = 0; i < max_deletes; ++i ) {
-    if( SimDeleteIsDialog( i ) ) ++group;
+        if( SimDeleteIsDialog( i ) ) ++group;
     }
     found = GUIAlloc( sizeof( bool ) * group );
     memset( found, FALSE, sizeof( bool ) * group );
     found_any = FALSE;
     group = -1;
     for( i = 0; i < max_deletes; ++i ) {
-    if( SimDeleteIsDialog( i ) ) {
-        ++group;
-    } else {
-        ReplaceVars( buff, SimDeleteName( i ) );
-        if( access( buff, F_OK ) == 0 ) {
-        found[group] = TRUE;
-        found_any = TRUE;
+        if( SimDeleteIsDialog( i ) ) {
+            ++group;
+        } else {
+            ReplaceVars( buff, SimDeleteName( i ) );
+            if( access( buff, F_OK ) == 0 ) {
+                found[group] = TRUE;
+                found_any = TRUE;
+            }
         }
-    }
     }
     group = -1;
     if( found_any ) {
-    StatusShow( TRUE );
-    StatusLines( STAT_REMOVING, "" );
-    StatusAmount( 0, 1 );
-    for( i = 0; i < max_deletes; ++i ) {
-        if( SimDeleteIsDialog( i ) ) {
-        ++group;
-        }
-        if( found[group] ) {
-        ReplaceVars( buff, SimDeleteName( i ) );
-        if( SimDeleteIsDialog( i ) ) {
-            state = DoDialog( buff );
-        } else if( state == DLG_NEXT ) {
-            if( SimDeleteIsDir( i ) ) {
-            NukePath( buff, STAT_REMOVING );
-            rmdir( buff );
-            } else {
-            StatusLines( STAT_REMOVING, buff );
-            remove( buff );
+        StatusShow( TRUE );
+        StatusLines( STAT_REMOVING, "" );
+        StatusAmount( 0, 1 );
+        for( i = 0; i < max_deletes; ++i ) {
+            if( SimDeleteIsDialog( i ) ) {
+                ++group;
+            }
+            if( found[group] ) {
+                ReplaceVars( buff, SimDeleteName( i ) );
+                if( SimDeleteIsDialog( i ) ) {
+                    state = DoDialog( buff );
+                } else if( state == DLG_NEXT ) {
+                    if( SimDeleteIsDir( i ) ) {
+                        NukePath( buff, STAT_REMOVING );
+                        rmdir( buff );
+                    } else {
+                        StatusLines( STAT_REMOVING, buff );
+                        remove( buff );
+                    }
+                }
             }
         }
-        }
-    }
-    StatusShow( FALSE );
+        StatusShow( FALSE );
     }
 }
 
@@ -2651,9 +2651,9 @@ extern char *GetInstallName()
     char        **argv;
 
     if( name[0] == '\0' ) {
-    GUIGetArgs( &argv, &argc );
-    _splitpath( argv[0], NULL, NULL, name, NULL );
-    strupr( name );
+        GUIGetArgs( &argv, &argc );
+        _splitpath( argv[0], NULL, NULL, name, NULL );
+        strupr( name );
     }
     return( name );
 }
@@ -2671,26 +2671,26 @@ char *AddInstallName( char *text, bool dorealloc )
     inst_name = GetInstallName();
     inst_len = strlen( inst_name );
     for( ;; ) {
-    // p = strchr( text, '@' ); no good for dbcs!!!
-    p = text;
-    for( ;; ) {
-        if( *p == '\0' ) {
-        p = NULL;
-        break;
+        // p = strchr( text, '@' ); no good for dbcs!!!
+        p = text;
+        for( ;; ) {
+            if( *p == '\0' ) {
+                p = NULL;
+                break;
+            }
+            if( *p == '@' ) break;
+            p += GUICharLen( *p );
         }
-        if( *p == '@' ) break;
-        p += GUICharLen( *p );
-    }
-    if( p == NULL ) break;
-    offset = p - text;
-    if( dorealloc ) {
-        text = GUIRealloc( text, len + inst_len );
-        p = text + offset;
-    }
-    memmove( p + inst_len, p+1, len - (p+1 - text) );
-    memcpy( p, inst_name, inst_len );
-    p += inst_len;
-    len += inst_len;
+        if( p == NULL ) break;
+        offset = p - text;
+        if( dorealloc ) {
+            text = GUIRealloc( text, len + inst_len );
+            p = text + offset;
+        }
+        memmove( p + inst_len, p+1, len - (p+1 - text) );
+        memcpy( p, inst_name, inst_len );
+        p += inst_len;
+        len += inst_len;
     }
     return( text );
 }
@@ -2707,18 +2707,18 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
     int                 msg_index;
 
     if( stricmp( messageid, "IDS_NOSETUPINFOFILE" ) == 0 ) {
-    // If the message is "can't find the setup.inf file", then
-    // don't look up the string, because it is in the file we can't find
-    errormessage = "The file %s cannot be found.";
+        // If the message is "can't find the setup.inf file", then
+        // don't look up the string, because it is in the file we can't find
+        errormessage = "The file %s cannot be found.";
     } else {
-    errormessage = GetVariableStrVal( messageid );
+        errormessage = GetVariableStrVal( messageid );
     }
     if( errormessage == NULL ) {
-    strcpy( buff, GetVariableStrVal( "IDS_UNKNOWNERROR" ) );
+        strcpy( buff, GetVariableStrVal( "IDS_UNKNOWNERROR" ) );
     } else {
-    va_start( arglist, wType );
-    vsprintf( buff, errormessage, arglist );
-    va_end( arglist );
+        va_start( arglist, wType );
+        vsprintf( buff, errormessage, arglist );
+        va_end( arglist );
     }
     AddInstallName( buff, FALSE );
 
@@ -2727,11 +2727,11 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
     }
 
     if( GUIIsGUI() ){
-    if( wType & GUI_YES_NO ) {
-        wType |= GUI_QUESTION;
-    } else {
-        wType |= GUI_INFORMATION;
-    }
+        if( wType & GUI_YES_NO ) {
+            wType |= GUI_QUESTION;
+        } else {
+            wType |= GUI_INFORMATION;
+        }
     }
 
 //  following code removed - causes infinite loop (and buff will never be NULL)
@@ -2741,88 +2741,88 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
 
     msg_index = 0;
     for( i = 0; i < strlen( buff ); i++ ) {
-    if( buff[ i ] == '&' ) {   // Terminate string at '&' char if MSBackOffice
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        if( MSBackOffice ) {
-            msg[ 127 ] = '\0';  // Cut off the string at the 128'th char.
-            break;
-        } else {               // else, skip the '&' character.
-            continue;
+        if( buff[ i ] == '&' ) {   // Terminate string at '&' char if MSBackOffice
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+            if( MSBackOffice ) {
+                msg[ 127 ] = '\0';  // Cut off the string at the 128'th char.
+                break;
+            } else {               // else, skip the '&' character.
+                continue;
+            }
+#else
+            continue;              // skip the '& character.
+#endif
         }
-        #else
-        continue;              // skip the '& character.
-        #endif
-    }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
         if( buff[ i ] == '\n' && MSBackOffice ) {  // replace \n's with spaces
-        buff[ i ] = ' ';
+            buff[ i ] = ' ';
         }
-    #endif
-    msg[ msg_index ] = buff [ i ];
-    msg_index++;
+#endif
+        msg[ msg_index ] = buff [ i ];
+        msg_index++;
     }
     msg[ msg_index ] = '\0';
 
     if( SkipDialogs ) {
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    // force answers to certain messages
-    // - this makes sure that a Microsoft Backoffice install doesn't treat these
-    // messages as errors and report FAILED in the .mif file
-    if( stricmp( messageid, "IDS_REMOVE_ODBC" ) == 0
-    || stricmp( messageid, "IDS_REMOVE_DLL" ) == 0 ) {
-        result = GUI_RET_NO;
-    } else if( stricmp( messageid, "IDS_LOGFILE_EXISTS" ) == 0
-           || stricmp( messageid, "IDS_INCONSISTENT" ) == 0 ) {
-        result = GUI_RET_YES;
-    } else if( strstr( messageid, "REBOOT" ) != NULL
-           || stricmp( messageid, "IDS_UNSETUPCOMPLETE" ) == 0
-           || stricmp( messageid, "IDS_COMPLETE" ) == 0 ) {
-        result = GUI_RET_OK;
-        if( MSBackOffice ) {
-        WriteMIFforMSBackOffice( TRUE, msg );
-        }
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+        // force answers to certain messages
+        // - this makes sure that a Microsoft Backoffice install doesn't treat these
+        // messages as errors and report FAILED in the .mif file
+        if( stricmp( messageid, "IDS_REMOVE_ODBC" ) == 0
+            || stricmp( messageid, "IDS_REMOVE_DLL" ) == 0 ) {
+            result = GUI_RET_NO;
+        } else if( stricmp( messageid, "IDS_LOGFILE_EXISTS" ) == 0
+            || stricmp( messageid, "IDS_INCONSISTENT" ) == 0 ) {
+            result = GUI_RET_YES;
+        } else if( strstr( messageid, "REBOOT" ) != NULL
+            || stricmp( messageid, "IDS_UNSETUPCOMPLETE" ) == 0
+            || stricmp( messageid, "IDS_COMPLETE" ) == 0 ) {
+            result = GUI_RET_OK;
+            if( MSBackOffice ) {
+                WriteMIFforMSBackOffice( TRUE, msg );
+            }
+        } else {
+#endif
+            switch( wType ) {
+            case GUI_ABORT_RETRY_IGNORE:
+                result = GUI_RET_ABORT;
+                break;
+            case GUI_RETRY_CANCEL:
+                result = GUI_RET_CANCEL;
+                break;
+            case GUI_YES_NO:
+            case GUI_YES_NO + GUI_QUESTION:
+            case GUI_YES_NO + GUI_INFORMATION:
+                result = GUI_RET_NO;
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+                if( MSBackOffice ) {
+                    WriteMIFforMSBackOffice( FALSE, msg );
+                }
+#endif
+                break;
+            case GUI_YES_NO_CANCEL:
+            case GUI_YES_NO_CANCEL + GUI_QUESTION:
+            case GUI_YES_NO_CANCEL + GUI_INFORMATION:
+                result = GUI_RET_CANCEL;
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+                if( MSBackOffice ) {
+                    WriteMIFforMSBackOffice( FALSE, msg );
+                }
+#endif
+                break;
+            default:
+                result = GUI_RET_OK;
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+                if( MSBackOffice ) {
+                    WriteMIFforMSBackOffice( FALSE, msg );
+                }
+#endif
+            }
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+        }  // goes with  "} else {" above
+#endif
     } else {
-    #endif
-        switch( wType ) {
-        case GUI_ABORT_RETRY_IGNORE:
-        result = GUI_RET_ABORT;
-        break;
-        case GUI_RETRY_CANCEL:
-        result = GUI_RET_CANCEL;
-        break;
-        case GUI_YES_NO:
-        case GUI_YES_NO + GUI_QUESTION:
-        case GUI_YES_NO + GUI_INFORMATION:
-        result = GUI_RET_NO;
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-            if( MSBackOffice ) {
-            WriteMIFforMSBackOffice( FALSE, msg );
-            }
-        #endif
-        break;
-        case GUI_YES_NO_CANCEL:
-        case GUI_YES_NO_CANCEL + GUI_QUESTION:
-        case GUI_YES_NO_CANCEL + GUI_INFORMATION:
-        result = GUI_RET_CANCEL;
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-            if( MSBackOffice ) {
-            WriteMIFforMSBackOffice( FALSE, msg );
-            }
-        #endif
-        break;
-        default:
-        result = GUI_RET_OK;
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-            if( MSBackOffice ) {
-            WriteMIFforMSBackOffice( FALSE, msg );
-            }
-        #endif
-        }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    }  // goes with  "} else {" above
-    #endif
-    } else {
-    result = GUIDisplayMessage( gui == NULL ? MainWnd : gui, msg, GetInstallName(), wType );
+        result = GUIDisplayMessage( gui == NULL ? MainWnd : gui, msg, GetInstallName(), wType );
     }
     return( result );
 }
@@ -2855,11 +2855,11 @@ extern int PerformDecode( char *src, char *dst, unsigned_32 internal )
     cmd.internal = internal;
     DecodeError = CFE_NOERROR;
     if( setjmp( PackFailed ) == 0 ) {
-    if( !Decode( &cmd ) ) {
-        DecodeError = CFE_ERROR;
-    }
+        if( !Decode( &cmd ) ) {
+            DecodeError = CFE_ERROR;
+        }
     } else {
-    // we longjmp'd to here
+        // we longjmp'd to here
     }
     return( DecodeError );
 }
@@ -2867,7 +2867,7 @@ extern int PerformDecode( char *src, char *dst, unsigned_32 internal )
 void QueryCancel()
 {
     if( StatusCancelled() ) {
-    PackExit();
+        PackExit();
     }
 }
 
@@ -2882,7 +2882,7 @@ extern void *MemAlloc( int size )
 
     stg = GUIAlloc( size );
     if( stg == NULL ) {
-    SetupError( "IDS_NOMEMORY" );
+        SetupError( "IDS_NOMEMORY" );
     }
     return( stg );
 }
@@ -2917,22 +2917,22 @@ extern void Error( int code, char *msg )
 
     switch( code ) {
     case TXT_INC_CRC:
-    PackExitWithCode( CFE_BAD_CRC );
-    break;
+        PackExitWithCode( CFE_BAD_CRC );
+        break;
     case TXT_ARC_NOT_EXIST:
-    PackExitWithCode( CFE_CANTOPENSRC );
-    break;
+        PackExitWithCode( CFE_CANTOPENSRC );
+        break;
     case TXT_NOT_OPEN:
-    SetVariableByName( "OpenError", msg );
-    return_state = DoDialog( "CantOpen" );
-    if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-        PackExit();
-    }
-    break;
+        SetVariableByName( "OpenError", msg );
+        return_state = DoDialog( "CantOpen" );
+        if( return_state == DLG_CAN || return_state == DLG_DONE ) {
+            PackExit();
+        }
+        break;
     default:
-    MsgBox( NULL, "IDS_ERROR", GUI_OK, msg );
-    PackExit();
-    break;
+        MsgBox( NULL, "IDS_ERROR", GUI_OK, msg );
+        PackExit();
+        break;
     }
 }
 
@@ -2946,14 +2946,14 @@ extern int PromptUser( char *name, char *dlg, char *skip,
 
     // don't display the dialog if the user selected the "Skip dialog" option
     if( GetVariableIntVal( skip ) == 0 ) {
-    for( ;; ) {
-        return_state = DoDialog( dlg );
-        if( return_state != DLG_DONE && return_state != DLG_CAN ) break;
-        if( MsgBox( NULL, "IDS_QUERYABORT", GUI_YES_NO ) == GUI_RET_YES ) {
-        CancelSetup = TRUE;
-        return( FALSE );
+        for( ;; ) {
+            return_state = DoDialog( dlg );
+            if( return_state != DLG_DONE && return_state != DLG_CAN ) break;
+            if( MsgBox( NULL, "IDS_QUERYABORT", GUI_YES_NO ) == GUI_RET_YES ) {
+                CancelSetup = TRUE;
+                return( FALSE );
+            }
         }
-    }
     }
 
     *value = ( GetVariableIntVal( replace ) == 1 );
@@ -2970,21 +2970,21 @@ int UnPackHook( char *name )
 
     _splitpath( name, drive, dir, fname, ext );
     if( stricmp( ext, ".NLM" ) == 0 ) {
-    NewFileToCheck( name, FALSE );
+        NewFileToCheck( name, FALSE );
 #ifndef PATCH
-    _makepath( name, drive, dir, fname, "._N_" );
+        _makepath( name, drive, dir, fname, "._N_" );
 #endif
-    return( 1 );
+        return( 1 );
     } else if( stricmp( ext, ".DLL" ) == 0 ) {
-    NewFileToCheck( name, TRUE );
+        NewFileToCheck( name, TRUE );
 #ifdef PATCH
-    if( !IsPatch ) {
+        if( !IsPatch ) {
 #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-    _makepath( name, drive, dir, fname, "._D_" );
+            _makepath( name, drive, dir, fname, "._D_" );
 #endif
-    }
+        }
 #endif
-    return( 1 );
+        return( 1 );
     }
     return( 0 );
 }
@@ -3029,13 +3029,13 @@ static void AddDefine( char *def )
 
     p = strchr( def, '=' );
     if( p != NULL ) {
-    *p = '\0';
-    ++p;
-    var = GUIAlloc( sizeof( DEF_VAR ) );
-    var->variable = strdup( def );
-    var->value = strdup( p );
-    var->link = ExtraVariables;
-    ExtraVariables = var;
+        *p = '\0';
+        ++p;
+        var = GUIAlloc( sizeof( DEF_VAR ) );
+        var->variable = strdup( def );
+        var->value = strdup( p );
+        var->link = ExtraVariables;
+        ExtraVariables = var;
     }
 }
 
@@ -3046,7 +3046,7 @@ static void DefineVars()
     DEF_VAR             *var;
 
     for( var = ExtraVariables; var != NULL; var = var->link ) {
-    SetVariableByName( var->variable, var->value );
+        SetVariableByName( var->variable, var->value );
     }
 }
 
@@ -3063,13 +3063,13 @@ extern bool GetDirParams( int                   argc,
 
     *inf_name = GUIAlloc( _MAX_PATH );
     if( *inf_name == NULL ) {
-    return FALSE;
+        return FALSE;
     }
 
     *tmp_path = GUIAlloc( _MAX_PATH );
     if( *tmp_path == NULL ) {
-    GUIFree( *inf_name );
-    return FALSE;
+        GUIFree( *inf_name );
+        return FALSE;
     }
 
 
@@ -3083,63 +3083,63 @@ extern bool GetDirParams( int                   argc,
     i                   = 1;
 
     while( i < argc ) {
-    if( argv[ i ][ 0 ] == '-'
-    || argv[ i ][ 0 ] == '/' ) {
-        switch( argv[ i ][ 1 ] ) {
-        #if defined( WINNT ) && defined( WSQL )
-        case 'w':
-        case 'W':
-            JustDoNIDSetup = TRUE;
+        if( argv[ i ][ 0 ] == '-'
+            || argv[ i ][ 0 ] == '/' ) {
+            switch( argv[ i ][ 1 ] ) {
+#if defined( WINNT ) && defined( WSQL )
+            case 'w':
+            case 'W':
+                JustDoNIDSetup = TRUE;
+                break;
+#endif
+            case 'f': // Process "script" file to override variables in setup.inf
+            case 'F':
+                if( argv[ i ][ 2 ] == '='
+                    && argv[ i ][ 3 ] != '\0'
+                    && access( &argv[ i ][ 3 ], R_OK ) == 0 ) {
+                    VariablesFile = strdup( &argv[ i ][ 3 ] );
+                }
+                break;
+            case 'd':
+            case 'D':
+                AddDefine( &argv[ i ][ 2 ] );
+                break;
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+            case 'b': // Do an unattended install for Microsoft BackOffice
+            case 'B':
+                MSBackOffice = TRUE;
+                // falling through!!!
+#endif
+            case 'i': // No screen output (requires SkipDialogs below aas well)
+            case 'I':
+                Invisible = TRUE;
+                // falling through!!!
+
+            case 's': // Skip dialogs
+            case 'S':
+                SkipDialogs = TRUE;
+                break;
+            }
+
+            i++;
+        } else {
             break;
-        #endif
-        case 'f': // Process "script" file to override variables in setup.inf
-        case 'F':
-        if( argv[ i ][ 2 ] == '='
-        && argv[ i ][ 3 ] != '\0'
-        && access( &argv[ i ][ 3 ], R_OK ) == 0 ) {
-            VariablesFile = strdup( &argv[ i ][ 3 ] );
         }
-        break;
-        case 'd':
-        case 'D':
-        AddDefine( &argv[ i ][ 2 ] );
-        break;
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        case 'b': // Do an unattended install for Microsoft BackOffice
-        case 'B':
-            MSBackOffice = TRUE;
-            // falling through!!!
-        #endif
-        case 'i': // No screen output (requires SkipDialogs below aas well)
-        case 'I':
-        Invisible = TRUE;
-        // falling through!!!
-
-        case 's': // Skip dialogs
-        case 'S':
-        SkipDialogs = TRUE;
-        break;
-        }
-
+    }
+    if( i < argc ) {
+        strcpy( *inf_name, argv[ i ] );
         i++;
     } else {
-        break;
-    }
-    }
-    if( i < argc ) {
-    strcpy( *inf_name, argv[ i ] );
-    i++;
-    } else {
-    _splitpath( argv[ 0 ], drive, dir, NULL, NULL );
-    _makepath( buff, drive, dir, "setup", "inf" );
-    _fullpath( *inf_name, buff, _MAX_PATH );
+        _splitpath( argv[ 0 ], drive, dir, NULL, NULL );
+        _makepath( buff, drive, dir, "setup", "inf" );
+        _fullpath( *inf_name, buff, _MAX_PATH );
     }
 
     if( i < argc ) {
-    strcpy( *tmp_path, argv[ i ] );
+        strcpy( *tmp_path, argv[ i ] );
     } else {
-    _splitpath( *inf_name, drive, dir, NULL, NULL );
-    _makepath( *tmp_path, drive, dir, NULL, NULL );
+        _splitpath( *inf_name, drive, dir, NULL, NULL );
+        _makepath( *tmp_path, drive, dir, NULL, NULL );
     }
 
     return TRUE;
@@ -3171,47 +3171,47 @@ extern void ReadVariablesFile( char * name )
 
     fp = fopen( VariablesFile, "rt" );
     if( fp == NULL ) {
-    return;
+        return;
     }
 
     while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
-    line = buf;
-    while( isspace( *line ) != 0 ) {
-        line++;
-    }
-    if( *line == '#' ) {
-        continue;
-    }
-    while( strlen( line ) > 0
-    && isspace( line[ strlen( line ) - 1 ] ) != 0 ) {
-        line[ strlen( line ) - 1 ] = '\0';
-    }
-    variable = strtok( line, " =\t" );
-    value = strtok( NULL, "=\t\0" );
-    if( value != NULL ) {
-        while( isspace( *value ) != 0 ) {
-        value++;
+        line = buf;
+        while( isspace( *line ) != 0 ) {
+            line++;
         }
-
-        while( strlen( value ) > 0
-        && isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
-        value[ strlen( value ) - 1 ] = '\0';
+        if( *line == '#' ) {
+            continue;
         }
-        if( variable != NULL ) {
-        if( name == NULL
-        || ( name != NULL
-             && stricmp( name, variable ) == 0 ) ) {
+        while( strlen( line ) > 0
+            && isspace( line[ strlen( line ) - 1 ] ) != 0 ) {
+            line[ strlen( line ) - 1 ] = '\0';
+        }
+        variable = strtok( line, " =\t" );
+        value = strtok( NULL, "=\t\0" );
+        if( value != NULL ) {
+            while( isspace( *value ) != 0 ) {
+                value++;
+            }
 
-            if( stricmp( value, "true" ) == 0 ) {
-            SetVariableByName( variable, "1" );
-            } else if( stricmp( value, "false" ) == 0 ) {
-            SetVariableByName( variable, "0" );
-            } else {
-            SetVariableByName( variable, value );
+            while( strlen( value ) > 0
+                && isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
+                value[ strlen( value ) - 1 ] = '\0';
+            }    
+            if( variable != NULL ) {
+                if( name == NULL
+                    || ( name != NULL
+                         && stricmp( name, variable ) == 0 ) ) {
+
+                    if( stricmp( value, "true" ) == 0 ) {
+                        SetVariableByName( variable, "1" );
+                    } else if( stricmp( value, "false" ) == 0 ) {
+                        SetVariableByName( variable, "0" );
+                    } else {
+                        SetVariableByName( variable, value );
+                    }
+                }
             }
         }
-        }
-    }
     }
     fclose( fp );
 }
@@ -3229,7 +3229,7 @@ extern bool InitInfo( char * inf_name, char * tmp_path )
     DetermineSrcState( tmp_path );
     len = strlen( tmp_path );
     if( len > 0 && tmp_path[len-1] == '\\' ) {
-    tmp_path[len-1] = '\0';
+        tmp_path[len-1] = '\0';
     }
     SetVariableByName( "SrcDir2", tmp_path );
     _splitpath( inf_name, drive, dir, NULL, NULL );
@@ -3237,16 +3237,16 @@ extern bool InitInfo( char * inf_name, char * tmp_path )
 
     ret = SimInit( inf_name, tmp_path );
     if( ret == SIM_INIT_NOERROR ) {
-    DefineVars();
-    if( VariablesFile != NULL ) {
-        ReadVariablesFile( NULL );
-    }
-    return( TRUE );
+        DefineVars();
+        if( VariablesFile != NULL ) {
+            ReadVariablesFile( NULL );
+        }
+        return( TRUE );
     }
     if( ret == SIM_INIT_NOMEM ) {
-    MsgBox( NULL, "IDS_NOMEMORY", GUI_OK, inf_name );
+        MsgBox( NULL, "IDS_NOMEMORY", GUI_OK, inf_name );
     } else { // SIM_INIT_NOFILE
-    MsgBox( NULL, "IDS_NOSETUPINFOFILE", GUI_OK, inf_name );
+        MsgBox( NULL, "IDS_NOSETUPINFOFILE", GUI_OK, inf_name );
     }
     return( FALSE );
 }
@@ -3255,39 +3255,39 @@ extern void CloseDownMessage( bool installed_ok )
 /***********************************************/
 {
 
-    #if defined( WINNT ) && defined( WSQL )
+#if defined( WINNT ) && defined( WSQL )
     if( JustDoNIDSetup ) {
         return;
     }
-    #endif
+#endif
     if( installed_ok ) {
-    if( VarGetIntVal( UnInstall ) != 0 ) {
-        MsgBox( NULL, "IDS_UNSETUPCOMPLETE", GUI_OK );
-    } else {
-        if( ConfigModified ) {
-        #if defined(__NT__)
-            MsgBox( NULL, "IDS_NT_REBOOT", GUI_OK );
-        #elif defined(__OS2__)
-            MsgBox( NULL, "IDS_OS2_REBOOT", GUI_OK );
-        #elif defined(__DOS__)
-            MsgBox( NULL, "IDS_DOS_REBOOT", GUI_OK );
-        #elif defined(__WINDOWS__)
-            MsgBox( NULL, "IDS_WINDOWS_REBOOT", GUI_OK );
-        #endif
+        if( VarGetIntVal( UnInstall ) != 0 ) {
+            MsgBox( NULL, "IDS_UNSETUPCOMPLETE", GUI_OK );
         } else {
-        MsgBox( NULL, "IDS_COMPLETE", GUI_OK );
+            if( ConfigModified ) {
+#if defined(__NT__)
+                MsgBox( NULL, "IDS_NT_REBOOT", GUI_OK );
+#elif defined(__OS2__)
+                MsgBox( NULL, "IDS_OS2_REBOOT", GUI_OK );
+#elif defined(__DOS__)
+                MsgBox( NULL, "IDS_DOS_REBOOT", GUI_OK );
+#elif defined(__WINDOWS__)
+                MsgBox( NULL, "IDS_WINDOWS_REBOOT", GUI_OK );
+#endif
+            } else {
+                MsgBox( NULL, "IDS_COMPLETE", GUI_OK );
+            }
         }
-    }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
     } else if( !CancelSetup && !MSBackOffice ) { // Don't want another error message.
-    #else
+#else
     } else if( !CancelSetup ) {
-    #endif
-    if( VarGetIntVal( UnInstall ) != 0 ) {
-        MsgBox( NULL, "IDS_UNSETUPNOGOOD", GUI_OK );
-    } else {
-        MsgBox( NULL, "IDS_SETUPNOGOOD", GUI_OK );
-    }
+#endif
+        if( VarGetIntVal( UnInstall ) != 0 ) {
+            MsgBox( NULL, "IDS_UNSETUPNOGOOD", GUI_OK );
+        } else {
+            MsgBox( NULL, "IDS_SETUPNOGOOD", GUI_OK );
+        }
     }
 }
 
@@ -3306,23 +3306,23 @@ extern void CheckHeap( void )
 {
     switch( _heapchk() ) {
     case _HEAPOK:
-    SetupError( "IDS_HEAPOK" );
-    break;
+        SetupError( "IDS_HEAPOK" );
+        break;
     case _HEAPEND:
-    SetupError( "IDS_HEAPEND" );
-    break;
+        SetupError( "IDS_HEAPEND" );
+        break;
     case _HEAPEMPTY:
-    SetupError( "IDS_HEAPEMPTY" );
-    break;
+        SetupError( "IDS_HEAPEMPTY" );
+        break;
     case _HEAPBADBEGIN:
-    SetupError( "IDS_HEAPDAMAGE" );
-    break;
+        SetupError( "IDS_HEAPDAMAGE" );
+        break;
     case _HEAPBADPTR:
-    SetupError( "IDS_HEAPBADPOINTER" );
-    break;
+        SetupError( "IDS_HEAPBADPOINTER" );
+        break;
     case _HEAPBADNODE:
-    SetupError( "IDS_HEAPBADNODE" );
-    break;
+        SetupError( "IDS_HEAPBADNODE" );
+        break;
     }
 }
 #endif
@@ -3334,9 +3334,9 @@ char *stristr( char *str, char *substr )
     str_len = strlen( str );
     substr_len = strlen( substr );
     while( str_len >= substr_len ) {
-    if( strnicmp( str, substr, substr_len ) == 0 ) return( str );
-    ++str;
-    --str_len;
+        if( strnicmp( str, substr, substr_len ) == 0 ) return( str );
+        ++str;
+        --str_len;
     }
     return( NULL );
 }

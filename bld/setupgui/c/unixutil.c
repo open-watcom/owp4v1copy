@@ -74,6 +74,11 @@ bool            ConfigModified = FALSE;
 bool            RemoveODBC;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
 
+int             SkipDialogs;
+char            *VariablesFile;
+//DEF_VAR         *ExtraVariables;
+int             Invisible;
+
 #ifdef PATCH
     extern int  IsPatch;
 #endif
@@ -1122,7 +1127,7 @@ static bool DoCopyFiles()
             }
             if( SimFileLastSplit( filenum ) ) {
                 bool append;
-                char    drive;
+                unsigned drive;
 
                 copy_error = CFE_NOERROR;
                 drive = *SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
@@ -2030,6 +2035,62 @@ extern bool FreeDirParams( char **              inf_name,
     return TRUE;
 }
 
+
+extern void ReadVariablesFile( char * name )
+/******************************************/
+{
+    FILE   *fp;
+    char   buf[ 256 ];
+    char   *line;
+    char   *variable;
+    char   *value;
+
+    fp = fopen( VariablesFile, "rt" );
+    if( fp == NULL ) {
+    return;
+    }
+
+    while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
+    line = buf;
+    while( isspace( *line ) != 0 ) {
+        line++;
+    }
+    if( *line == '#' ) {
+        continue;
+    }
+    while( strlen( line ) > 0
+    && isspace( line[ strlen( line ) - 1 ] ) != 0 ) {
+        line[ strlen( line ) - 1 ] = '\0';
+    }
+    variable = strtok( line, " =\t" );
+    value = strtok( NULL, "=\t\0" );
+    if( value != NULL ) {
+        while( isspace( *value ) != 0 ) {
+        value++;
+        }
+
+        while( strlen( value ) > 0
+        && isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
+        value[ strlen( value ) - 1 ] = '\0';
+        }
+        if( variable != NULL ) {
+        if( name == NULL
+        || ( name != NULL
+             && stricmp( name, variable ) == 0 ) ) {
+
+            if( stricmp( value, "true" ) == 0 ) {
+            SetVariableByName( variable, "1" );
+            } else if( stricmp( value, "false" ) == 0 ) {
+            SetVariableByName( variable, "0" );
+            } else {
+            SetVariableByName( variable, value );
+            }
+        }
+        }
+    }
+    }
+    fclose( fp );
+}
 
 extern bool InitInfo( char * inf_name, char * tmp_path )
 /******************************************************/

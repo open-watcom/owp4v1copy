@@ -32,17 +32,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-#if defined( UNIX )
 #include <sys/types.h>
 #include <sys/stat.h>
+#if defined( UNIX )
 #include <clibext.h>
 #elif defined( __UNIX__ )
-#include <sys/types.h>
-#include <sys/stat.h>
 #else
 #include <dos.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #endif
 #include "wpack.h"
 #include "txttable.h"

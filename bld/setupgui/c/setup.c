@@ -288,7 +288,7 @@ static bool CheckWin95Uninstall( int argc, char **argv )
 bool CheckValidDisketteDrive( char *dst_str )
 /***********************************/
 {
-#if defined( UNIX )
+#if defined( UNIX ) || defined( __UNIX__ )
     return( TRUE );
 #else
     if( !IsDiskette( dst_str[0] ) ) return( FALSE );

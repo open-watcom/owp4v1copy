@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include <conio.h>
 #endif
 #include "gui.h"
@@ -74,7 +74,7 @@ bool                    CancelSetup = FALSE;
     extern void         BkOfficePercent( int );
 #endif
 
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
 #include "stdui.h"
 #elif defined( _UI )
 #include <stdui.h>

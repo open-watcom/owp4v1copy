@@ -33,8 +33,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <io.h>
-#if !defined( UNIX )
+#include <unistd.h>
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include <dos.h>
 #endif
 #include <ctype.h>
