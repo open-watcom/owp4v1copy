@@ -17,7 +17,7 @@ hdir   = $(wv_dir)\h
 common_h= $(lang_root)\h;$(watcom_dir)\h
 os2inc  = $(common_h)
 dosinc  = $(common_h)
-ntinc   = $(watcom_dir)\nt_h;$(common_h)
+ntinc   = $(watcom_nt_h);$(common_h)
 wininc  = $(lang_root)\h\win;$(common_h)
 qnxinc  = $(lang_root)\qh;$(watcom_dir)\h
 
