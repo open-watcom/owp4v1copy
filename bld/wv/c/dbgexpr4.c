@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger expression handling, Part IV (Arithmetic).
 *
 ****************************************************************************/
 
@@ -453,9 +452,9 @@ void DoShift()
         if( shift >= 0 ) {
             U64ShiftL( &left->v.uint, shift, &left->v.uint );
         } else if( (left->info.modifier & TM_MOD_MASK) == TM_UNSIGNED ) {
-            U64ShiftR( &left->v.uint, shift, &left->v.uint );
+            U64ShiftR( &left->v.uint, -shift, &left->v.uint );
         } else {
-            I64ShiftR( &left->v.sint, shift, &left->v.sint );
+            I64ShiftR( &left->v.sint, -shift, &left->v.sint );
         }
         break;
     default:
