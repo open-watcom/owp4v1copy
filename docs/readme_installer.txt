@@ -1,7 +1,7 @@
-Open Watcom C/C++ Version 1.0
+Open Watcom C/C++/FORTRAN Version 1.0
 =============================
 
-Welcome to the Open Watcom C/C++ version 1.0 release! This file contains information about the software package you are about to install. Please read this readme information throughly before installing this software package.
+Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.0 release! This file contains information about the software package you are about to install. Please read this readme information throughly before installing this software package.
 
 =============================================
 Minimal Windows and OS/2 SDK support
@@ -15,7 +15,7 @@ Note also that the compiler can support building programs using the latest Micro
 No Microsoft MFC support
 =============================================
 
-Since Microsoft owns the Microsoft Foundation Class components that were originally included in the Watcom C/C++ 11.0 compiler, we are unable to include any MFC components with this compiler. If you do wish to develop MFC applications with Open Watcom, you will have to use the version that shipped with your original Watcom C/C++ 11.0 compiler (if you do not have an official copy of Watcom C/C++ 11.0, you are out of luck).
+Since Microsoft owns the Microsoft Foundation Class components that were originally included in the Watcom C/C++ compiler, we are unable to include any MFC components with this compiler. If you do wish to develop MFC applications with Open Watcom, you will have to use the version that shipped with your original Watcom C/C++ 11.0 compiler (if you do not have an official copy of Watcom C/C++ 11.0, you are out of luck).
 
 =============================================
 DOS/4GW extender included!
