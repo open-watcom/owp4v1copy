@@ -66,7 +66,7 @@ static void ClearInMemFlags( ovltab_entry *loaded_ovl )
                     or else we must unload this section. */
                 anc = ovl;
                 for( ;; ) {
-                    anc_num = anc->flags_anc & FLAG_ANC_MASK;
+                    anc_num = anc->flags_anc & OVE_FLAG_ANC_MASK;
                     if( anc_num == 0 ) break;
                     anc = &__OVLTAB__.entries[ anc_num - 1 ];
                     if( (anc->flags_anc & FLAG_INMEM) == 0 ) {
@@ -118,7 +118,7 @@ int near LOADOVERLAY( unsigned int ovl_num )
             __OvlMsg__( OVL_RESIDENT );
 #endif
         }
-        ovl_num = ovl->flags_anc & FLAG_ANC_MASK;
+        ovl_num = ovl->flags_anc & OVE_FLAG_ANC_MASK;
     }
     return( loaded_something );
 }
@@ -149,8 +149,8 @@ static void MungeVectors( int ovl_num )
                 vect->u.v.ldr_addr = FP_OFF( NAME( CHPOVLLDR ) )
                                              - FP_OFF(&vect->u.v.ldr_addr) - 2;
             } else {
-                vect->u.m.big_nop = MOV_AX_AX;
-                vect->u.m.test_op = TEST_OPCODE;
+                vect->u.m.big_nop = OVV_MOV_AX_AX;
+                vect->u.m.test_op = OVV_TEST_OPCODE;
 #endif
             }
         }
@@ -207,7 +207,7 @@ dos_addr near NAME( OVLTINIT )( void )
     ovl = __OVLTAB__.entries;
     while( ovl->flags_anc != OVLTAB_TERMINATOR ) {
         ovl->code_handle = ovl->start_para + __OVLTAB__.prolog.delta;
-        if( ovl->flags_anc & FLAG_PRELOAD ) {
+        if( ovl->flags_anc & OVE_FLAG_PRELOAD ) {
             LOADOVERLAY( ovl_num );
         }
         ovl_num++;

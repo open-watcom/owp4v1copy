@@ -189,8 +189,8 @@ extern tiny_ret_t near __OpenOvl__( unsigned int offset )
     } else {
         __CloseOvl__();
         __OVLFILEPREV__ = offset;
-        isexe = offset & EXE_FILENAME;
-        offset &= ~EXE_FILENAME;
+        isexe = offset & OVE_EXE_FILENAME;
+        offset &= ~OVE_EXE_FILENAME;
         fname = (( char * )(&__OVLTAB__)) + offset;
         // strip drive/directory from fname
         for( fnstart = fname; *fnstart != 0; ++fnstart ) {

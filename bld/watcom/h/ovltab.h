@@ -50,10 +50,10 @@ typedef struct ovltab_entry {
 } ovltab_entry;
 
 // flags_anc
-#define FLAG_PRELOAD    0x8000  /* load overlay at init time */
-#define FLAG_ANC_MASK   0x07ff  /* mask to get ancestor */
+#define OVE_FLAG_PRELOAD    0x8000  /* load overlay at init time */
+#define OVE_FLAG_ANC_MASK   0x07ff  /* mask to get ancestor */
 // fname
-#define EXE_FILENAME    0x8000  /* flag indicating the .EXE file. */
+#define OVE_EXE_FILENAME    0x8000  /* flag indicating the .EXE file. */
 
 typedef struct ovltab_prolog {
     unsigned_8      major;      // version numbers
@@ -91,9 +91,9 @@ typedef struct {
 } mungedvector;
 
 // big_nop
-#define MOV_AX_AX   0xC089          /* opcode for MOV AX,AX */
+#define OVV_MOV_AX_AX   0xC089          /* opcode for MOV AX,AX */
 // test_op
-#define TEST_OPCODE 0xA9            /* opcode for TEST AX,word */
+#define OVV_TEST_OPCODE 0xA9            /* opcode for TEST AX,word */
                                     /* used for hiding the section number */
 typedef struct {
     unsigned_8  call_op;
@@ -108,9 +108,9 @@ typedef struct {
 } incvector;
 
 // cs_over
-#define CS_OVERRIDE 0x2E
+#define OVV_CS_OVERRIDE 0x2E
 // inc_op
-#define INC_OPCODE 0x6FE
+#define OVV_INC_OPCODE 0x6FE
 
 typedef struct lvector {            /* long overlay vector */
     union {

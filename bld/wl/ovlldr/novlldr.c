@@ -220,7 +220,7 @@ static void near DeMungeVectors( unsigned tab_off, unsigned sec_num,
     vect = &__OVLSTARTVEC__;
     loader = FP_OFF(__NOVLLDR__) - FP_OFF(&vect->u.v.ldr_addr) - 2;
     while( vect < &__OVLENDVEC__ ) {
-        if( vect->u.i.cs_over == CS_OVERRIDE && vect->u.i.tab_addr == tab_off ){
+        if( vect->u.i.cs_over == OVV_CS_OVERRIDE && vect->u.i.tab_addr == tab_off ){
             vect->u.v.call_op = CALL_INSTRUCTION;
             vect->u.v.ldr_addr = loader;
             vect->u.v.sec_num = sec_num;
@@ -406,7 +406,7 @@ static void near MoveSection( unsigned destseg, ovltab_entry_ptr ovl )
     /* modify the vectors */
     vect = &__OVLSTARTVEC__;
     while( vect < &__OVLENDVEC__ ) {
-        if( vect->u.i.cs_over == CS_OVERRIDE &&
+        if( vect->u.i.cs_over == OVV_CS_OVERRIDE &&
                                 vect->u.i.tab_addr == FP_OFF( ovl ) ) {
             vect->target.seg = destseg;
         }
@@ -688,8 +688,8 @@ unsigned near __WOVLLDR__( lvector_ptr vect )
     retval = __LoadNewOverlay__( ovl_num );     // load the overlay
     vect->target.seg += retval;                 // now munge the vector.
     vect->u.i.tab_addr = FP_OFF( &__OVLTAB__.entries[ ovl_num - 1] );
-    vect->u.i.cs_over = CS_OVERRIDE;
-    vect->u.i.inc_op = INC_OPCODE;
+    vect->u.i.cs_over = OVV_CS_OVERRIDE;
+    vect->u.i.inc_op = OVV_INC_OPCODE;
     __NDBG_HOOK__( ovl_num, 0, __OVLCAUSE__ );
     return( retval );
 }
@@ -745,7 +745,7 @@ dos_addr near __NOVLTINIT__( void )
     __OVLROVER__ = 1;
 
     while( FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ) ) {
-        if( ovl->flags_anc & FLAG_PRELOAD ) {
+        if( ovl->flags_anc & OVE_FLAG_PRELOAD ) {
             ovl->code_handle = ovl->start_para + __OVLTAB__.prolog.delta;
 #ifdef OVL_DEBUG
             __OvlMsg__( OVL_SECTION );
@@ -887,7 +887,7 @@ extern void far __NOVLDUMP__( void )
         }
         cprintf( CRLF "  relocs=%04xh, start_para=%04xh, code_handle=%04xh"CRLF,
             ovl->relocs, ovl->start_para, ovl->code_handle );
-        fn_off = ovl->fname & ~EXE_FILENAME;
+        fn_off = ovl->fname & ~OVE_EXE_FILENAME;
         cprintf( "  num_paras=%04xh, fname=%04xh(%s), disk_addr=%08lxh" CRLF,
             ovl->num_paras, ovl->fname, (char far *)&__OVLTAB__ + fn_off,
             ovl->disk_addr );
