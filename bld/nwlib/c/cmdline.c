@@ -241,7 +241,10 @@ static bool ParseOption( char **pc, char *buff )
             Options.explode = 1;
             break;
         case 'z':
-            if( Options.strip_expdef ) {
+            if( (*c == 'l') && (*(c + 1) == 'd') ) {
+                c += 2;
+                Options.strip_dependency = 1; //(strip dependency info)
+            } else if( Options.strip_expdef ) {
                 DuplicateOption( start );
             }
             Options.strip_expdef = 1;       // JBS 99/07/09

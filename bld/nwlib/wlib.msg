@@ -80,94 +80,96 @@ pick( USAGE_WLIB_09,        "                | -p = <record_size>       (set OMF
                 "                | -p = <record_size>       (set OMF library page size)" )
 pick( USAGE_WLIB_10,        "                | -q                       (don't print header)" ,
                 "                | -q                       (起動メッセージを表示しません)" )
-pick( USAGE_WLIB_11,        "                | -s                       (trim line number debug info)" ,
-                "                | -s                       (trim line number debug info)" )
+pick( USAGE_WLIB_11,        "                | -s                       (strip line number debug info)" ,
+                "                | -s                       (strip line number debug info)" )
 pick( USAGE_WLIB_12,        "                | -t                       (trim THEADR pathnames)" ,
                 "                | -t                       (THEADR パス名を削除します)" )
 pick( USAGE_WLIB_13,        "                | -v                       (print header)" ,
                 "                | -v                       (print header)" )
 pick( USAGE_WLIB_14,        "                | -x                       (explode all objects in library)" ,
                 "                | -x                       (ライブラリからすべてのオブジェクトを取り出します)" )
-pick( USAGE_WLIB_15,        "                | -h                       (display this screen)" ,
+pick( USAGE_WLIB_15,        "                | -z                       (strip file dependency info)" ,
+                "                | -z                       (strip file dependency info)" )
+pick( USAGE_WLIB_16,        "                | -h                       (display this screen)" ,
                 "                | -h                       (この画面を表示します)" )
-pick( USAGE_WLIB_16,        "                | -?                       (display this screen)" ,
+pick( USAGE_WLIB_17,        "                | -?                       (display this screen)" ,
                 "                | -?                       (この画面を表示します)" )
-pick( USAGE_WLIB_17,        "" ,
+pick( USAGE_WLIB_18,        "" ,
                 "" )
-pick( USAGE_WLIB_18,        "                | -fa                      (output AR format library)" ,
+pick( USAGE_WLIB_19,        "                | -fa                      (output AR format library)" ,
                 "                | -fa                      (AR形式ﾗｲﾌﾞﾗﾘを出力します)" )
-pick( USAGE_WLIB_19,        "                | -fm                      (output MLIB format library)" ,
+pick( USAGE_WLIB_20,        "                | -fm                      (output MLIB format library)" ,
                 "                | -fm                      (MLIB形式ライブラリを出力します)" )
-pick( USAGE_WLIB_20,        "                | -fo                      (output OMF format library)" ,
+pick( USAGE_WLIB_21,        "                | -fo                      (output OMF format library)" ,
                 "                | -fo                      (OMF形式ライブラリを出力します)" )
-pick( USAGE_WLIB_21,        "                | -i<r|n><o|n>      (resident|non-resident table)(ordinal|name)" ,
+pick( USAGE_WLIB_22,        "                | -i<r|n><o|n>      (resident|non-resident table)(ordinal|name)" ,
                 "                | -i<r|n><o|n>      (r:ﾚｼﾞﾃﾞﾝﾄ|n:非ﾚｼﾞﾃﾞﾝﾄﾃｰﾌﾞﾙ)(o:序数|n:名前)" )
-pick( USAGE_WLIB_22,        "                | -ia                      (generate AXP import records)" ,
+pick( USAGE_WLIB_23,        "                | -ia                      (generate AXP import records)" ,
                 "                | -ia                      (AXPｲﾝﾎﾟｰﾄ･ﾚｺｰﾄﾞを生成します)" )
-pick( USAGE_WLIB_23,        "                | -ii                      (generate X86 import records)" ,
+pick( USAGE_WLIB_24,        "                | -ii                      (generate X86 import records)" ,
                 "                | -ii                      (X86インポート･レコードを生成します)" )
-pick( USAGE_WLIB_24,        "                | -ip                      (generate PPC import records)" ,
+pick( USAGE_WLIB_25,        "                | -ip                      (generate PPC import records)" ,
                 "                | -ip                      (PPCインポート･レコードを生成します)" )
-pick( USAGE_WLIB_25,        "                | -ie                      (generate ELF import records)" ,
+pick( USAGE_WLIB_26,        "                | -ie                      (generate ELF import records)" ,
                 "                | -ie                      (ELFインポート･レコードを生成します)" )
-pick( USAGE_WLIB_26,        "                | -ic                      (generate COFF import records)" ,
+pick( USAGE_WLIB_27,        "                | -ic                      (generate COFF import records)" ,
                 "                | -ic                      (COFFｲﾝﾎﾟｰﾄ･ﾚｺｰﾄﾞを生成します)" )
-pick( USAGE_WLIB_27,        "                | -io                      (generate OMF import records)" ,
+pick( USAGE_WLIB_28,        "                | -io                      (generate OMF import records)" ,
                 "                | -io                      (OMFインポート･レコードを生成します)" )
-pick( USAGE_WLIB_28,        "" ,
+pick( USAGE_WLIB_29,        "" ,
                 "" )
-pick( USAGE_WLIB_29,        "  <commands>  ::= <cmd> <commands>" ,
+pick( USAGE_WLIB_30,        "  <commands>  ::= <cmd> <commands>" ,
                 "  <commands>  ::= <cmd> <commands>" )
-pick( USAGE_WLIB_30,        "                | @<env_var> <commands>" ,
+pick( USAGE_WLIB_31,        "                | @<env_var> <commands>" ,
                 "                | @<環境変数> <commands>" )
-pick( USAGE_WLIB_31,        "                | @<cmd_file> <commands>" ,
+pick( USAGE_WLIB_32,        "                | @<cmd_file> <commands>" ,
                 "                | @<cmd_file> <commands>" )
-pick( USAGE_WLIB_32,        "" ,
+pick( USAGE_WLIB_33,        "" ,
                 "" )
-pick( USAGE_WLIB_33,        "  <cmd_file>  ::= file which contains { <cmd> }" ,
+pick( USAGE_WLIB_34,        "  <cmd_file>  ::= file which contains { <cmd> }" ,
                 "  <cmd_file>  ::= { <cmd> }を含むファイル" )
-pick( USAGE_WLIB_34,        "" ,
+pick( USAGE_WLIB_35,        "" ,
                 "" )
-pick( USAGE_WLIB_35,        "  <cmd>       ::= +<object_file_name>      (add file)" ,
+pick( USAGE_WLIB_36,        "  <cmd>       ::= +<object_file_name>      (add file)" ,
                 "  <cmd>       ::= +<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>       (ファイルの追加)" )
-pick( USAGE_WLIB_36,        "                | +<library_file_name>.lib (add library)" ,
+pick( USAGE_WLIB_37,        "                | +<library_file_name>.lib (add library)" ,
                 "                | +<ﾗｲﾌﾞﾗﾘ･ﾌｧｲﾙ名>.lib     (ライブラリの追加)" )
-pick( USAGE_WLIB_37,        "                | ++<symbol_name>.<DLL_name>[.<export_name>][.<ordinal>]",
+pick( USAGE_WLIB_38,        "                | ++<symbol_name>.<DLL_name>[.<export_name>][.<ordinal>]",
                 "                | ++<シンボル名>.<DLL名>[.<エクスポート名>][.<序数>]" )
-pick( USAGE_WLIB_38,        "                | -<module_name>           (delete)" ,
+pick( USAGE_WLIB_39,        "                | -<module_name>           (delete)" ,
                 "                | -<モジュール名>          (削除)" )
-pick( USAGE_WLIB_39,        "                | -+<object_file_name>     (replace)" ,
+pick( USAGE_WLIB_40,        "                | -+<object_file_name>     (replace)" ,
                 "                | -+<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (入れ替え)" )
-pick( USAGE_WLIB_40,        "                | +-<object_file_name>     (replace)" ,
+pick( USAGE_WLIB_41,        "                | +-<object_file_name>     (replace)" ,
                 "                | +-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (入れ替え)" )
 #ifdef __UNIX__
-pick( USAGE_WLIB_41,        "                | :<object_file_name>      (extract)" ,
+pick( USAGE_WLIB_42,        "                | :<object_file_name>      (extract)" ,
                 "                | *<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>       (取り出し)" )
 #else
-pick( USAGE_WLIB_41,        "                | *<object_file_name>      (extract)" ,
+pick( USAGE_WLIB_42,        "                | *<object_file_name>      (extract)" ,
                 "                | *<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>       (取り出し)" )
 #endif
 #ifdef __UNIX__
-pick( USAGE_WLIB_42,        "                | -:<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_43,        "                | -:<object_file_name>     (extract and delete)" ,
                 "                | -*<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #else
-pick( USAGE_WLIB_42,        "                | -*<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_43,        "                | -*<object_file_name>     (extract and delete)" ,
                 "                | -*<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #endif
 #ifdef __UNIX__
-pick( USAGE_WLIB_43,        "                | :-<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_44,        "                | :-<object_file_name>     (extract and delete)" ,
                 "                | *-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #else
-pick( USAGE_WLIB_43,        "                | *-<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_44,        "                | *-<object_file_name>     (extract and delete)" ,
                 "                | *-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #endif
-pick( USAGE_WLIB_44,        "" ,
+pick( USAGE_WLIB_45,        "" ,
                 "" )
 #ifdef __UNIX__
-pick( USAGE_WLIB_45,        "The default filename extensions are lib, bak, lst, o and lbc." ,
+pick( USAGE_WLIB_46,        "The default filename extensions are lib, bak, lst, o and lbc." ,
                 "デフォルトのファイル拡張子は、lib, bak, lst, obj, lbcです。" )
 #else
-pick( USAGE_WLIB_45,        "The default filename extensions are lib, bak, lst, obj and lbc." ,
+pick( USAGE_WLIB_46,        "The default filename extensions are lib, bak, lst, obj and lbc." ,
                 "デフォルトのファイル拡張子は、lib, bak, lst, obj, lbcです。" )
 #endif
 pick( USAGE_WLIB_LAST,      "Enclose a file name with quotes, i.e. 'filename', if it contains '-' or '@'.",

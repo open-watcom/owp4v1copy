@@ -121,6 +121,9 @@ remove path information from module name specified in THEADR records
 do not suppress identification banner
 .note x
 extract all object modules from library
+.note zld
+strip file dependency info from object files
+(supported for "OMF" library format only)
 .endnote
 .np
 The following sections describe the operations that can be performed on

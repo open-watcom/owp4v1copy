@@ -437,6 +437,10 @@ void WriteOmfFile( sym_file *file )
                         }
                     }
                     break;
+                case CMT_DEPENDENCY:
+                    if( Options.strip_dependency )
+                        continue;
+                    break;
                 }
                 break;
             case CMD_MODEND:
