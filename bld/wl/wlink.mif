@@ -150,10 +150,6 @@ extra_objs += trmem.obj
 
 # now get all of the c flags set properly
 
-!ifeq release 0
-cflags_axp = -hc
-!endif
-
 force_include = -fi
 !ifeq bootstrap 1
 force_include = -include
