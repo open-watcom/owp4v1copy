@@ -123,7 +123,7 @@ etp_flags=-d1-hd-etp
 pch_flags = -fhq
 !endif
 
-comp_flags += -"i$(lib_misc_dir)/h;$(inc_dirs);$(bld_h);$(watcom_dir)/h;$(comp_cfg_dir)/h"
+comp_flags += -i"$(lib_misc_dir)/h;$(inc_dirs);$(bld_h);$(watcom_dir)/h;$(comp_cfg_dir)/h"
 
 !ifndef runtime_library_source
 
