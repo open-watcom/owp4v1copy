@@ -31,6 +31,8 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #define INCL_DOSEXCEPTIONS
 #define INCL_DOSPROCESS
 #define INCL_DOSMISC
@@ -54,6 +56,7 @@
 
 uDB_t                   Buff;
 static BOOL             stopOnSecond;
+static BOOL             isAttached;
 USHORT                  TaskFS;
 
 extern VOID             InitDebugThread( VOID );
@@ -975,7 +978,6 @@ static bool FindLinearStartAddress( ULONG *pLin, char *name )
     }
     DosClose( hdl );
     return( rc );
-
 } /* FindLinearStartAddress */
 
 static BOOL ExecuteUntilLinearAddressHit( ULONG lin )
@@ -1014,36 +1016,15 @@ void DebugSession()
         DosSelectSession( 0 );
 }
 
-unsigned ReqProg_load( void )
+static unsigned StartProcess( const char *exe_name, char *parms )
 {
-    NEWSTARTDATA        start;
-    char                *parms;
-    char                *end;
-    char                *prog;
-    char                exe_name[CCHMAXPATH];
-    char                appname[CCHMAXPATH];
-    ULONG               startLinear;
-    prog_load_ret       *ret;
-    PTIB                ptib;
-    PPIB                ppib;
+    STARTDATA       start;
+    PTIB            ptib;
+    PPIB            ppib;
+    char            appname[CCHMAXPATH];
+    unsigned        rc;
 
-    LastMTE   = 0;
-    ExceptNum = -1;
-    ret       = GetOutPtr(0);
-    AtEnd     = FALSE;
-    TaskFS    = 0;
-    prog      = GetInPtr( sizeof( prog_load_req ) );
-    if( FindFilePath( prog, exe_name, OS2ExtList ) != 0 ) {
-        exe_name[0] = '\0';
-    }
-    parms = AddDriveAndPath( exe_name, UtilBuff );
-    while( *prog != '\0' )
-        ++prog;
-    ++prog;
-    end = (char *)GetInPtr( GetTotalSize() - 1 ) + 1;
-    MergeArgvArray( prog, parms, end - prog );
-
-    start.Length = offsetof( NEWSTARTDATA, IconFile ); /* default for the rest */
+    start.Length = offsetof( STARTDATA, IconFile ); /* default for the rest */
     start.Related = 1;
     start.FgBg = !Remote;
     start.TraceOpt = 1;
@@ -1059,26 +1040,99 @@ unsigned ReqProg_load( void )
     /* We want debugger's (debugger's parent really) environment */
     DosGetInfoBlocks( &ptib, &ppib );
     start.Environment = ppib->pib_pchenv;
-    ret->err = 0;
+    rc = 0;
     if( GetEXEFlags( UtilBuff ) == EXE_IS_PM ) {
         if( TypeProcess == SSF_TYPE_WINDOWABLEVIO ) {
-            ret->err = ERROR_NOT_IN_WINDOW;
+            rc = ERROR_NOT_IN_WINDOW;
         } else {
             start.SessionType = SSF_TYPE_PM;
             if( !IsPMDebugger() )
                 StartPMHelp();
         }
-    } else if( TypeProcess == _PT_WINDOWABLEVIO || TypeProcess == _PT_PM ) {
+    } else if( TypeProcess == PT_WINDOWABLEVIO || TypeProcess == PT_PM ) {
         start.SessionType = SSF_TYPE_WINDOWABLEVIO;
-    } else if( TypeProcess == _PT_FULLSCREEN ) {
+    } else if( TypeProcess == PT_FULLSCREEN ) {
         start.SessionType = SSF_TYPE_FULLSCREEN;
     }
-    if( ret->err == 0 ) {
-        ret->err = DosStartSession( (void *)&start, &SID, &Pid );
+    if( rc == 0 ) {
+        rc = DosStartSession( (void *)&start, &SID, &Pid );
     }
-    if( ret->err == ERROR_SMG_START_IN_BACKGROUND ) {
-        ret->err = 0;
+    if( rc == ERROR_SMG_START_IN_BACKGROUND ) {
+        rc = 0;
     }
+    return( rc );
+}
+
+unsigned ReqProg_load( void )
+{
+    char            *parms;
+    char            *end;
+    char            *src;
+    char            *prog;
+    char            *endsrc;
+    char            exe_name[CCHMAXPATH];
+    ULONG           startLinear;
+    prog_load_ret   *ret;
+    int             attach_pid;
+
+    LastMTE    = 0;
+    ExceptNum  = -1;
+    ret        = GetOutPtr(0);
+    AtEnd      = FALSE;
+    TaskFS     = 0;
+    attach_pid = -1;
+    src = prog = GetInPtr( sizeof( prog_load_req ) );
+
+    // See if a PID was specified; if so, we will be attaching to
+    // an existing process, not loading a new one. The PID may
+    // be specified either as "#<hex pid>" or "<decimal pid>".
+    if( *src == '#' ) {
+        src++;
+        attach_pid = strtoul( src, &endsrc, 16 );
+        if( attach_pid == 0 )
+            attach_pid = -1;
+//        strcpy( buff, endsrc );
+    } else {
+        while( *src ) {
+            if( !isdigit( *src ) ) {
+                break;
+            }
+            src++;
+        }
+        if( *src == 0 && src != prog ) {
+            attach_pid = atoi( prog );
+        }
+    }
+
+    /* If PID was not specified, start the debuggee process */
+    if( attach_pid == -1 ) {
+        isAttached = FALSE;
+        if( FindFilePath( prog, exe_name, OS2ExtList ) != 0 ) {
+            exe_name[0] = '\0';
+        }
+        parms = AddDriveAndPath( exe_name, UtilBuff );
+        while( *prog != '\0' )
+            ++prog;
+        ++prog;
+        end = (char *)GetInPtr( GetTotalSize() - 1 ) + 1;
+        MergeArgvArray( prog, parms, end - prog );
+        ret->err = StartProcess( exe_name, parms );
+    } else {
+        isAttached = TRUE;
+        Buff.Addr  = 0; // Sever connection
+        Buff.Pid   = attach_pid;
+        Buff.Tid   = 0;
+        Buff.Cmd   = DBG_C_Attach;
+        Buff.Value = DBG_L_386;
+        CallDosDebug( &Buff );
+        if( Buff.Cmd == DBG_N_Success ) {
+            Pid = attach_pid;
+            ret->err = 0;
+        } else {
+            ret->err = Buff.Value;
+        }
+    }
+
     if( ret->err != 0 ) {
         Pid = 0;
         /* may need to do this
@@ -1089,29 +1143,40 @@ unsigned ReqProg_load( void )
     } else {
         ret->task_id = Pid;
         ret->flags = LD_FLAG_IS_PROT;
-        Buff.Pid   = Pid;
-        Buff.Tid   = 0;
-        Buff.Cmd   = DBG_C_Connect;
-        Buff.Value = DBG_L_386;
-        CallDosDebug( &Buff );
+
+        if( !isAttached ) {
+            Buff.Pid   = Pid;
+            Buff.Tid   = 0;
+            Buff.Cmd   = DBG_C_Connect;
+            Buff.Value = DBG_L_386;
+            CallDosDebug( &Buff );
+        }
+        else {
+            ret->flags |= LD_FLAG_IS_STARTED;
+            // TODO: figure out if 32-bit process
+            Is32Bit = TRUE;
+        }
 
         Buff.Pid = Pid;
         Buff.Tid = 1;
-        DebugExecute( &Buff, DBG_C_Stop, FALSE );
-        if( Buff.Cmd != DBG_N_Success ) {
-            ret->err = 14; /* can't load */
-            return( sizeof( *ret ) );
-        }
-        ReadRegs( &Buff );
-        CanExecTask = FALSE;
-        if( FindLinearStartAddress( &startLinear, UtilBuff ) ) {
-            if( Is32Bit ) {
-                ret->flags |= LD_FLAG_IS_32;
+        if( !isAttached ) {
+            DebugExecute( &Buff, DBG_C_Stop, FALSE );
+            if( Buff.Cmd != DBG_N_Success ) {
+                ret->err = 14; /* can't load */
+                return( sizeof( *ret ) );
             }
-            CanExecTask = ExecuteUntilLinearAddressHit( startLinear );
-            ReadRegs( &Buff );
         }
 
+        ReadRegs( &Buff );
+        CanExecTask = FALSE;
+
+        if( isAttached ) {
+        } else {
+            if( FindLinearStartAddress( &startLinear, UtilBuff ) ) {
+                CanExecTask = ExecuteUntilLinearAddressHit( startLinear );
+                ReadRegs( &Buff );
+            }
+        }
         /* Splice our helper DLL into debuggee's context */
         if( CanExecTask ) {
             uDB_t       save;
@@ -1129,6 +1194,10 @@ unsigned ReqProg_load( void )
         ReadRegs( &Buff );
         TaskFS = Buff.FS;
     }
+
+    if( Is32Bit ) {
+        ret->flags |= LD_FLAG_IS_32;
+    }
     ret->flags |= LD_FLAG_HAVE_RUNTIME_DLLS;
     ret->mod_handle = 0;
     CurrModHandle = 1;
@@ -1143,7 +1212,10 @@ unsigned ReqProg_kill( void )
     SaveStdIn  = NIL_DOS_HANDLE;
     SaveStdOut = NIL_DOS_HANDLE;
     if( Pid != 0 ) {
-        Buff.Cmd = DBG_C_Term;
+        if( isAttached )
+            Buff.Cmd = DBG_C_Detach;
+        else
+            Buff.Cmd = DBG_C_Term;
         Buff.Pid = Pid;
         CallDosDebug( &Buff );
     }
@@ -1151,7 +1223,7 @@ unsigned ReqProg_kill( void )
     CurrModHandle = 1;
     Pid = 0;
     ret->err = 0;
-    DosSleep( 500 ); // Without this, it seems that restarts happen too fast
+    DosSleep( 100 ); // Without this, it seems that restarts happen too fast
                      // and we end up running a 2nd instance of a dead task
                      // or some such sillyness.  I don't really know, but
                      // this DosSleep avoids problems when restarting a PM app
