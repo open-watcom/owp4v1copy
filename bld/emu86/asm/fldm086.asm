@@ -194,9 +194,10 @@ endif
 ;         if CX = 8000h, then op1 is a power of 2, just return op2 with
 ;         appropriate sign and exponent
           cmp   CX,8000h        ; - if op1 is a power of 2
-pow2_hop: je    mul_by_pow2     ; - then do special calc.
+          jne   l1
+pow2_hop: jmp   mul_by_pow2     ; - then do special calc.
 
-          or    CX,CX           ; - test high order word
+l1:       or    CX,CX           ; - test high order word
           _quif ne              ; - quit if op1 is not 0
           _shl  AX,1            ; - place sign in carry
           _if   e               ; - if operand one is 0

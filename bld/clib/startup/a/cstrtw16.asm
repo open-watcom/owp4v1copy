@@ -221,8 +221,9 @@ endif
 
 around: call    INITTASK                ; initialize
         or      ax,ax                   ; if not OK
-        je      _error                  ; then error
-        mov     _psp,es                 ; save ES
+        jne     l1
+        jmp     _error                  ; then error
+l1:     mov     _psp,es                 ; save ES
         push    di                      ; push parms for WINMAIN (hInstance)
         push    si                      ; ... (hPrevInstance)
         push    es                      ; ... (lpCmdLine)

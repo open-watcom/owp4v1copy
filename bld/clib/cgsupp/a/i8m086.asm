@@ -130,8 +130,9 @@ odx     equ     -8
         push    cx              ; ocx[bp]
         push    dx              ; odx[bp]
         or      ax,ss:6[si]
-        jne     u8mu8
-        or      bx,ss:4[si]
+        je      l1
+        jmp     u8mu8
+l1:     or      bx,ss:4[si]
         jne     u6mu6
         or      cx,ss:2[si]
         jne     u4mu4
