@@ -52,7 +52,7 @@
 #include "fixup.h"
 #include "queue.h"
 
-#include "expand.h"
+#include "asmexpnd.h"
 #include "directiv.h"
 
 extern dir_node         *CurrProc;
