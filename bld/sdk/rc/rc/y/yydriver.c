@@ -93,7 +93,7 @@ typedef union {
 #ifdef _I86FAR
 #define YYFAR           _I86FAR
 #else
-#ifdef __386__
+#if defined( __386__ ) || defined( __PPC__ ) || defined( __AXP__ )
 #define YYFAR
 #else
 #define YYFAR           __far
