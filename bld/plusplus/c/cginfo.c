@@ -1082,7 +1082,7 @@ void *FEAuxInfo(                // REQUEST AUXILLIARY INFORMATION
         aux_class request )     // - request
 {
     AUX_INFO *inf;              // - auxilary info
-    void *retn;                 // - return value
+    void *retn = NULL;          // - return value
     static char *buf = NULL;    // - temporary buffer
     static SYMBOL dtor_sym;     // - symbol to be DTOR'ed
     static EXTRF res_info;      // - external-symbol resolution information
@@ -1323,6 +1323,7 @@ void *FEAuxInfo(                // REQUEST AUXILLIARY INFORMATION
         retn = (void*)TEMP_LOC_YES;
         break;
       case TEMP_LOC_TELL :
+        DbgNotSym();
         DbgNotRetn();
         CgBackDtorAutoOffset( dtor_sym, (unsigned)sym );
         break;
@@ -1434,7 +1435,7 @@ void *FEAuxInfo(                // REQUEST AUXILLIARY INFORMATION
 #ifndef NDEBUG
     if( PragDbgToggle.auxinfo ) {
         printf( "FeAuxInfo( %x, %x ) -> %x\n", sym, request, retn );
-        if( isSym && NULL != sym ) {
+        if( isSym && ( NULL != sym )) {
             printf( "  sym = %s\n", objectName( sym ) );
         }
         if( isRetn && NULL != retn ) {
