@@ -426,7 +426,7 @@ static int do_default( void )
                 }
             }
 	}
-	ti_char_map[ code ] = cmap & 0x7f;
+	ti_char_map[ code ] = cmap;
     }
     for( i = 0; i < sizeof( alt_keys ); i++ ) {
         if ( alt_keys[i] ) {
