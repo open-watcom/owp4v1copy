@@ -47,10 +47,10 @@ $(lnk) : ..\mif\master.mif makefile
         @for %i in ($(objs)) do @@%append $(lnk) file %i
 
 .c.obj:
-        $(compiler) $(ccopt) $[* /fo=$^@
+        *$(compiler) $(ccopt) $[* /fo=$^@
 
 .c.pp:
-        $(compiler) $(ccopt) $[* /fo=.pp /plc
+        *$(compiler) $(ccopt) $[* /fo=.pp /plc
 
 .y.c:
         wtouch $^@

@@ -44,7 +44,7 @@ copts   += /d1
 copts   += /d2
 !endif
 
-compile = $(CC) $[* $(copts)
+compile = *$(CC) $[* $(copts)
 wtouch  = $(build_root)\wtouch\
 proj = wpack
 os2proj = os2pack
@@ -91,4 +91,4 @@ bound : .PROCEDURE
         del $(os2proj).exe
 
 dtparse.$(ext) :
-        $(CC) $(wtouch)dtparse $(copts) /i=$(wtouch) /i=$(wtouch)nt.386 /u__OS2__ /u__NT__ /u__DOS__
+        *$(CC) $(wtouch)dtparse $(copts) /i=$(wtouch) /i=$(wtouch)nt.386 /u__OS2__ /u__NT__ /u__DOS__
