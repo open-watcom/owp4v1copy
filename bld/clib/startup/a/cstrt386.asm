@@ -28,6 +28,8 @@
 ;*
 ;*****************************************************************************
 
+; Note: This module must contain the string 'WATCOM' (all caps) for DOS/4GW
+;       to recognize a 'Watcom' executable.
 
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrt386 -bt=DOS -ms -3r
@@ -194,7 +196,7 @@ _cstart_ proc near
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Open WATCOM C/C++32 Run-Time system. "
         db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
         align   4
         dd      ___begtext      ; make sure dead code elimination
