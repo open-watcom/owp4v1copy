@@ -687,6 +687,7 @@ local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
                 MustRecog( T_COMMA );
             }
         }
+        if( CurToken == T_RIGHT_BRACE ) break;
     }
     RelSeekBytes( (unsigned)n - offset );
 }
