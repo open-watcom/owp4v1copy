@@ -1,4 +1,4 @@
-                                                Old             NEW
+                                                Old             New
 
 lib286\math87c.lib                              CLIB_A16        CLIB_A16
 lib286\math87h.lib                              CLIB_A16        CLIB_A16
@@ -166,7 +166,6 @@ lib386\nt\mthsdll.lib                           CLIB_W32        CLIB_W32
 binw\1252.uni                                   CORE_ALL        CM_CORE_ALL
 binw\batchbox.pif                               CORE_ALL        CM_CORE_DOSWIN  (Dos/Win)
 binw\bpatch.exe                                 CORE_ALL        CM_CORE_ALL
-binw\cfig386.exe                                CORE_ALL        CM_CORE_DOSWIN  (Dos/Win)
 binw\cmdedit.exe                                CORE_ALL        CM_CORE_DOSWIN  (Dos/Win)
 binw\cmdedit.txt                                CORE_ALL        CM_CORE_ALL
 binw\d4grun.exe                                 CORE_ALL        CM_CORE_DOSWIN  (Dos/Win)
@@ -300,8 +299,6 @@ binnt\spy.cnt                                   CORE_HLP_NT     CM_HLP_NT
 binnt\spy.hlp                                   CORE_HLP_NT     CM_HLP_NT
 binnt\tools.cnt                                 CORE_HLP_NT     HLP_NT
 binnt\tools.hlp                                 CORE_HLP_NT     HLP_NT
-binnt\wlnkerrs.cnt                              CORE_HLP_NT     (Do not distribute, Power++ 2.5)
-binnt\wlnkerrs.hlp                              CORE_HLP_NT     (Do not distribute, Power++ 2.5)
 binnt\zoom.cnt                                  CORE_HLP_NT     CM_HLP_NT
 binnt\zoom.hlp                                  CORE_HLP_NT     CM_HLP_NT
 
@@ -309,7 +306,6 @@ binp\help\cguide.inf                            CORE_HLP_OS2    HLP_OS2
 binp\help\lguide.inf                            CORE_HLP_OS2    CM_HLP_OS2
 binp\help\pguide.inf                            CORE_HLP_OS2    HLP_OS2
 binp\help\tools.inf                             CORE_HLP_OS2    HLP_OS2
-binp\help\wlnkerrs.hlp                          CORE_HLP_OS2    (Do not distribute, Power++ 2.5)
 
 binw\ddespy.hlp                                 CORE_HLP_WIN    CM_HLP_WIN
 binw\drwatcom.hlp                               CORE_HLP_WIN    CM_HLP_WIN
@@ -318,7 +314,6 @@ binw\lguide.hlp                                 CORE_HLP_WIN    CM_HLP_WIN
 binw\pguide.hlp                                 CORE_HLP_WIN    HLP_WIN
 binw\spy.hlp                                    CORE_HLP_WIN    CM_HLP_WIN
 binw\tools.hlp                                  CORE_HLP_WIN    HLP_WIN
-binw\wlnkerrs.hlp                               CORE_HLP_WIN    (Do not distribute, Power++ 2.5)
 binw\zoom.hlp                                   CORE_HLP_WIN    CM_HLP_WIN
 
 lib286\cplx7c.lib                               CPPLIB_A16      PLIB_A16
@@ -641,7 +636,7 @@ binw\wdebug.386                                 DBG_BINW        CM_DBG_MISC2
 binw\wd.pif                                     DBG_BINW        CM_DBG_WIN
 binw\wdw.exe                                    DBG_BINW        CM_DBG_WIN
 binw\winserv.exe                                DBG_BINW        CM_DBG_DOS
-binw\winservw.exe                               -               CM_DBG_OS2 (Not yet approved)
+binw\winservw.exe                               -               CM_DBG_OS2
 binw\win.trp                                    DBG_BINW        CM_DBG_DOS
 binw\wprof.exe                                  DBG_BINW        CM_DBG_DOS
 binw\wprofw.exe                                 DBG_BINW        CM_DBG_WIN
@@ -1050,135 +1045,137 @@ src\fortran\win\wintask.fi                      FSAMPLES        FLIB_HDR_WIN
 src\fortran\win\wintext.fi                      FSAMPLES        FLIB_HDR_WIN
 src\fortran\win\winutil.fi                      FSAMPLES        FLIB_HDR_WIN
 
-binw\ide.cfg                                    IDE_ALL
-binw\idedos32.cfg                               IDE_ALL
-binw\idedos.cfg                                 IDE_ALL
-binw\idemfc16.cfg                               IDE_ALL
-binw\idemfc32.cfg                               IDE_ALL
-binw\idenlm.cfg                                 IDE_ALL
-binw\ideos232.cfg                               IDE_ALL
-binw\ideos2.cfg                                 IDE_ALL
-binw\idew32.cfg                                 IDE_ALL
-binw\idew386.cfg                                IDE_ALL
-binw\idewin.cfg                                 IDE_ALL
-binw\idex.cfg                                   IDE_ALL
-eddat\bindvi.bat                                IDE_ALL
-eddat\bindvi.cmd                                IDE_ALL
-eddat\c.dat                                     IDE_ALL
-eddat\chkout.vi                                 IDE_ALL
-eddat\clibhelp.vi                               IDE_ALL
-eddat\cmd.hlp                                   IDE_ALL
-eddat\cmdme.vi                                  IDE_ALL
-eddat\cpp.dat                                   IDE_ALL
-eddat\ddecb.vi                                  IDE_ALL
-eddat\ddesinit.vi                               IDE_ALL
-eddat\dde.vi                                    IDE_ALL
-eddat\debug.cfg                                 IDE_ALL
-eddat\edbind.dat                                IDE_ALL
-eddat\ed.cfg                                    IDE_ALL
-eddat\errmsg.dat                                IDE_ALL
-eddat\error.dat                                 IDE_ALL
-eddat\err.vi                                    IDE_ALL
-eddat\fin.vi                                    IDE_ALL
-eddat\forceout.vi                               IDE_ALL
-eddat\fortran.dat                               IDE_ALL
-eddat\ideact.vi                                 IDE_ALL
-eddat\key.hlp                                   IDE_ALL
-eddat\keys.dat                                  IDE_ALL
-eddat\lnum.vi                                   IDE_ALL
-eddat\mcsel.vi                                  IDE_ALL
-eddat\mcselw.vi                                 IDE_ALL
-eddat\menu.vi                                   IDE_ALL
-eddat\menuwin.vi                                IDE_ALL
-eddat\mfchelp.vi                                IDE_ALL
-eddat\mlsel.vi                                  IDE_ALL
-eddat\mlselw.vi                                 IDE_ALL
-eddat\proc.vi                                   IDE_ALL
-eddat\qall.vi                                   IDE_ALL
-eddat\qh2.vi                                    IDE_ALL
-eddat\qh.vi                                     IDE_ALL
-eddat\rcs.vi                                    IDE_ALL
-eddat\rdme.vi                                   IDE_ALL
-eddat\rdmewin.vi                                IDE_ALL
-eddat\regexp.hlp                                IDE_ALL
-eddat\script.hlp                                IDE_ALL
-eddat\set.hlp                                   IDE_ALL
-eddat\skel.dat                                  IDE_ALL
-eddat\start.hlp                                 IDE_ALL
-eddat\toggle.vi                                 IDE_ALL
-eddat\tryme.vi                                  IDE_ALL
-eddat\unlock.vi                                 IDE_ALL
-eddat\untitled.vi                               IDE_ALL
-eddat\user.vi                                   IDE_ALL
-eddat\weditor.ini                               IDE_ALL
-eddat\winbind.dat                               IDE_ALL
-eddat\winkeys.dat                               IDE_ALL
-eddat\wqh2.vi                                   IDE_ALL
-eddat\wqh.vi                                    IDE_ALL
-eddat\writeall.vi                               IDE_ALL
-eddat\writewin.vi                               IDE_ALL
-eddat\wrme.vi                                   IDE_ALL
+binw\ide.cfg                                    IDE_ALL         CM_IDE_ALL
+binw\idedos32.cfg                               IDE_ALL         CM_IDE_ALL
+binw\idedos.cfg                                 IDE_ALL         CM_IDE_ALL
+binw\idemfc16.cfg                               IDE_ALL         CM_IDE_ALL
+binw\idemfc32.cfg                               IDE_ALL         CM_IDE_ALL
+binw\idenlm.cfg                                 IDE_ALL         CM_IDE_ALL
+binw\ideos232.cfg                               IDE_ALL         CM_IDE_ALL
+binw\ideos2.cfg                                 IDE_ALL         CM_IDE_ALL
+binw\idew32.cfg                                 IDE_ALL         CM_IDE_ALL
+binw\idew386.cfg                                IDE_ALL         CM_IDE_ALL
+binw\idewin.cfg                                 IDE_ALL         CM_IDE_ALL
+binw\idex.cfg                                   IDE_ALL         CM_IDE_ALL
+eddat\bindvi.bat                                IDE_ALL         CM_IDE_ALL
+eddat\bindvi.cmd                                IDE_ALL         CM_IDE_ALL
+eddat\c.dat                                     IDE_ALL         CM_IDE_ALL
+eddat\chkout.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\clibhelp.vi                               IDE_ALL         CM_IDE_ALL
+eddat\cmd.hlp                                   IDE_ALL         CM_IDE_ALL
+eddat\cmdme.vi                                  IDE_ALL         CM_IDE_ALL
+eddat\cpp.dat                                   IDE_ALL         CM_IDE_ALL
+eddat\ddecb.vi                                  IDE_ALL         CM_IDE_ALL
+eddat\ddesinit.vi                               IDE_ALL         CM_IDE_ALL
+eddat\dde.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\debug.cfg                                 IDE_ALL         CM_IDE_ALL
+eddat\edbind.dat                                IDE_ALL         CM_IDE_ALL
+eddat\ed.cfg                                    IDE_ALL         CM_IDE_ALL
+eddat\errmsg.dat                                IDE_ALL         CM_IDE_ALL
+eddat\error.dat                                 IDE_ALL         CM_IDE_ALL
+eddat\err.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\fin.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\forceout.vi                               IDE_ALL         CM_IDE_ALL
+eddat\fortran.dat                               IDE_ALL         CM_IDE_ALL
+eddat\ideact.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\key.hlp                                   IDE_ALL         CM_IDE_ALL
+eddat\keys.dat                                  IDE_ALL         CM_IDE_ALL
+eddat\lnum.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\mcsel.vi                                  IDE_ALL         CM_IDE_ALL
+eddat\mcselw.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\menu.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\menuwin.vi                                IDE_ALL         CM_IDE_ALL
+eddat\mfchelp.vi                                IDE_ALL         CM_IDE_ALL
+eddat\mlsel.vi                                  IDE_ALL         CM_IDE_ALL
+eddat\mlselw.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\proc.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\qall.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\qh2.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\qh.vi                                     IDE_ALL         CM_IDE_ALL
+eddat\rcs.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\rdme.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\rdmewin.vi                                IDE_ALL         CM_IDE_ALL
+eddat\regexp.hlp                                IDE_ALL         CM_IDE_ALL
+eddat\script.hlp                                IDE_ALL         CM_IDE_ALL
+eddat\set.hlp                                   IDE_ALL         CM_IDE_ALL
+eddat\skel.dat                                  IDE_ALL         CM_IDE_ALL
+eddat\start.hlp                                 IDE_ALL         CM_IDE_ALL
+eddat\toggle.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\tryme.vi                                  IDE_ALL         CM_IDE_ALL
+eddat\unlock.vi                                 IDE_ALL         CM_IDE_ALL
+eddat\untitled.vi                               IDE_ALL         CM_IDE_ALL
+eddat\user.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\weditor.ini                               IDE_ALL         CM_IDE_ALL
+eddat\winbind.dat                               IDE_ALL         CM_IDE_ALL
+eddat\winkeys.dat                               IDE_ALL         CM_IDE_ALL
+eddat\wqh2.vi                                   IDE_ALL         CM_IDE_ALL
+eddat\wqh.vi                                    IDE_ALL         CM_IDE_ALL
+eddat\writeall.vi                               IDE_ALL         CM_IDE_ALL
+eddat\writewin.vi                               IDE_ALL         CM_IDE_ALL
+eddat\wrme.vi                                   IDE_ALL         CM_IDE_ALL
 
-binnt\batserv.exe                               IDE_BINNT
-binnt\fmedit.dll                                IDE_BINNT
-binnt\ide.exe                                   IDE_BINNT
-binnt\idex.cfg                                  IDE_BINNT
-binnt\rc.exe                                    IDE_BINNT
-binnt\rcsdll.dll                                IDE_BINNT
-binnt\vi.exe                                    IDE_BINNT
-binnt\viw.exe                                   IDE_BINNT
-binnt\wbrg.exe                                  IDE_BINNT
-binnt\wbrw.exe                                  IDE_BINNT
-binnt\wde.exe                                   IDE_BINNT
-binnt\weditcw.dll                               IDE_BINNT
-binnt\weditviw.dll                              IDE_BINNT
-binnt\wimgedit.exe                              IDE_BINNT
-binnt\wmenu.dll                                 IDE_BINNT
-binnt\wrc.exe                                   IDE_BINNT
-binnt\wr.dll                                    IDE_BINNT
-binnt\wre.exe                                   IDE_BINNT
-binnt\wstring.dll                               IDE_BINNT
+binnt\batserv.exe                               IDE_BINNT       CM_IDE_NT
+binnt\fmedit.dll                                IDE_BINNT       CM_IDE_NT
+binnt\ide.exe                                   IDE_BINNT       CM_IDE_NT
+binnt\idex.cfg                                  IDE_BINNT       CM_IDE_NT
+binnt\rc.exe                                    IDE_BINNT       CM_IDE_NT
+binnt\rcsdll.dll                                IDE_BINNT       CM_IDE_NT
+binnt\vi.exe                                    IDE_BINNT       CM_IDE_NT
+binnt\viw.exe                                   IDE_BINNT       CM_IDE_NT
+binnt\wbrg.exe                                  IDE_BINNT       CM_IDE_NT
+binnt\wbrw.exe                                  IDE_BINNT       CM_IDE_NT
+binnt\wde.exe                                   IDE_BINNT       CM_IDE_NT
+binnt\weditcw.dll                               IDE_BINNT       CM_IDE_NT
+binnt\weditviw.dll                              IDE_BINNT       CM_IDE_NT
+binnt\wimgedit.exe                              IDE_BINNT       CM_IDE_NT
+binnt\wmenu.dll                                 IDE_BINNT       CM_IDE_NT
+binnt\wrc.exe                                   IDE_BINNT       CM_IDE_NT
+binnt\wr.dll                                    IDE_BINNT       CM_IDE_NT
+binnt\wre.exe                                   IDE_BINNT       CM_IDE_NT
+binnt\wstring.dll                               IDE_BINNT       CM_IDE_NT
 
-binp\batserv.exe                                IDE_BINP
-binp\gen_ci.cmd                                 IDE_BINP
-binp\gen_co.cmd                                 IDE_BINP
-binp\dll\epmlink.dll                            IDE_BINP
-binp\dll\os2edit.dll                            IDE_BINP
-binp\dll\rcsdll.dll                             IDE_BINP
-binp\ide.exe                                    IDE_BINP
-binp\idex.cfg                                   IDE_BINP
-binp\mks_ci.cmd                                 IDE_BINP
-binp\mks_co.cmd                                 IDE_BINP
-binp\os22edit.exe                               IDE_BINP
-binp\os2edit.exe                                IDE_BINP
-binp\vi.exe                                     IDE_BINP
-binp\pvcs_ci.cmd                                IDE_BINP
-binp\pvcs_co.cmd                                IDE_BINP
-binp\wbrw.exe                                   IDE_BINP
+binp\batserv.exe                                IDE_BINP        CM_IDE_OS2
+binp\gen_ci.cmd                                 IDE_BINP        CM_IDE_OS2
+binp\gen_co.cmd                                 IDE_BINP        CM_IDE_OS2
+binp\dll\epmlink.dll                            IDE_BINP        CM_IDE_OS2
+binp\dll\os2edit.dll                            IDE_BINP        CM_IDE_OS2
+binp\dll\rcsdll.dll                             IDE_BINP        CM_IDE_OS2
+binp\ide.exe                                    IDE_BINP        CM_IDE_OS2
+binp\idex.cfg                                   IDE_BINP        CM_IDE_OS2
+binp\mks_ci.cmd                                 IDE_BINP        CM_IDE_OS2
+binp\mks_co.cmd                                 IDE_BINP        CM_IDE_OS2
+binp\os22edit.exe                               IDE_BINP        CM_IDE_OS2
+binp\os2edit.exe                                IDE_BINP        CM_IDE_OS2
+binp\vi.exe                                     IDE_BINP        CM_IDE_OS2
+binp\pvcs_ci.cmd                                IDE_BINP        CM_IDE_OS2
+binp\pvcs_co.cmd                                IDE_BINP        CM_IDE_OS2
+binp\wbrw.exe                                   IDE_BINP        CM_IDE_OS2
+binp\wrc.exe                                    IDE_BINP        CM_IDE_OS2
 
-binw\edbind.exe                                 IDE_BINW
-binw\fmedit.dll                                 IDE_BINW
-binw\gen_ci.bat                                 IDE_BINW
-binw\gen_co.bat                                 IDE_BINW
-binw\ide.exe                                    IDE_BINW
-binw\mks_ci.bat                                 IDE_BINW
-binw\mks_co.bat                                 IDE_BINW
-binw\pvcs_ci.bat                                IDE_BINW
-binw\pvcs_co.bat                                IDE_BINW
-binw\rcsdll.dll                                 IDE_BINW
-binw\vi.exe                                     IDE_BINW
-binw\viw.exe                                    IDE_BINW
-binw\wbrg.exe                                   IDE_BINW
-binw\wbrw.exe                                   IDE_BINW
-binw\wde.exe                                    IDE_BINW
-binw\weditcw.dll                                IDE_BINW
-binw\weditviw.dll                               IDE_BINW
-binw\wimgedit.exe                               IDE_BINW
-binw\wrc.exe                                    IDE_BINW
-binw\wr.dll                                     IDE_BINW
-binw\wre.exe                                    IDE_BINW
-binw\wmenu.dll                                  IDE_BINW
-binw\wstring.dll                                IDE_BINW
+binw\edbind.exe                                 IDE_BINW        CM_IDE_DOS
+binw\gen_ci.bat                                 IDE_BINW        CM_IDE_DOS
+binw\gen_co.bat                                 IDE_BINW        CM_IDE_DOS
+binw\mks_ci.bat                                 IDE_BINW        CM_IDE_DOS
+binw\mks_co.bat                                 IDE_BINW        CM_IDE_DOS
+binw\pvcs_ci.bat                                IDE_BINW        CM_IDE_DOS
+binw\pvcs_co.bat                                IDE_BINW        CM_IDE_DOS
+binw\rcsdll.dll                                 IDE_BINW        CM_IDE_DOS
+binw\vi.exe                                     IDE_BINW        CM_IDE_DOS
+binw\wrc.exe                                    IDE_BINW        CM_IDE_DOS
+
+binw\fmedit.dll                                 IDE_BINW        CM_IDE_WIN
+binw\ide.exe                                    IDE_BINW        CM_IDE_WIN
+binw\viw.exe                                    IDE_BINW        CM_IDE_WIN
+binw\wbrg.exe                                   IDE_BINW        CM_IDE_WIN
+binw\wbrw.exe                                   IDE_BINW        CM_IDE_WIN
+binw\wde.exe                                    IDE_BINW        CM_IDE_WIN
+binw\weditcw.dll                                IDE_BINW        CM_IDE_WIN
+binw\weditviw.dll                               IDE_BINW        CM_IDE_WIN
+binw\wimgedit.exe                               IDE_BINW        CM_IDE_WIN
+binw\wr.dll                                     IDE_BINW        CM_IDE_WIN
+binw\wre.exe                                    IDE_BINW        CM_IDE_WIN
+binw\wmenu.dll                                  IDE_BINW        CM_IDE_WIN
+binw\wstring.dll                                IDE_BINW        CM_IDE_WIN
 
 binw\rescomp.ihp                                IDE_HLP_DOS     CM_HLP_DOS
 
@@ -1202,8 +1199,6 @@ binnt\resstr.cnt                                IDE_HLP_NT      CM_HLP_NT
 binnt\resstr.hlp                                IDE_HLP_NT      CM_HLP_NT
 binnt\wbrw.cnt                                  IDE_HLP_NT      HLP_NT
 binnt\wbrw.hlp                                  IDE_HLP_NT      HLP_NT
-binnt\wrcerrs.cnt                               IDE_HLP_NT      (Do not distribute, Power++ 2.5)
-binnt\wrcerrs.hlp                               IDE_HLP_NT      (Do not distribute, Power++ 2.5)
 
 binp\help\ide.hlp                               IDE_HLP_OS2     CM_HLP_OS2
 binp\help\ide.inf                               IDE_HLP_OS2     CM_HLP_OS2
@@ -1594,11 +1589,6 @@ samples\clibexam\system.c                       SAMPLES
 samples\clibexam\tan.c                          SAMPLES
 samples\clibexam\tanh.c                         SAMPLES
 samples\clibexam\tell.c                         SAMPLES
-samples\clibexam\test\cl.bat                    SAMPLES         Do not distribute
-samples\clibexam\test\clr.bat                   SAMPLES         Do not distribute
-samples\clibexam\test\file.sav                  SAMPLES         Do not distribute
-samples\clibexam\test\jpn.bat                   SAMPLES         Do not distribute
-samples\clibexam\test\program.asm               SAMPLES         Do not distribute
 samples\clibexam\time.c                         SAMPLES
 samples\clibexam\tmpfile.c                      SAMPLES
 samples\clibexam\tmpnam.c                       SAMPLES

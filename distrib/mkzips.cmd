@@ -34,6 +34,11 @@ call zipit cm_dbg_nt
 call zipit cm_dbg_os2
 call zipit cm_dbg_os2nt
 call zipit cm_dbg_win
+call zipit cm_ide_all
+call zipit cm_ide_nt
+call zipit cm_ide_os2
+call zipit cm_ide_dos
+call zipit cm_ide_win
 call zipit cm_hlp_dos
 call zipit cm_hlp_nt
 call zipit cm_hlp_os2
