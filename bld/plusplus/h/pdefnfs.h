@@ -36,7 +36,7 @@
 
 
 #define fs_push_ret     HW_D( HW_EMPTY )
-#define fs_push_parms   P_AX
+#define fs_push_parms   P_EAX
 #define fs_push_saves   HW_NotD( HW_EMPTY )
 static byte_seq fs_push[] =
 {   15
@@ -47,7 +47,7 @@ static byte_seq fs_push[] =
 
 
 #define fs_pop_ret      HW_D( HW_EMPTY )
-#define fs_pop_parms    P_AX
+#define fs_pop_parms    P_EAX
 #define fs_pop_saves    HW_NotD( HW_EAX )
 static byte_seq fs_pop[] =
 {   6
