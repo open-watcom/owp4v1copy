@@ -2,10 +2,6 @@ proj_name = w16api
 
 !include cproj.mif
 
-lib = wlib
-cc = wcc386
-as = wasm
-
 .EXTENSIONS : .lbc .def
 
 libs =               &
@@ -39,7 +35,7 @@ winlibs =            &
         vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def16lbc.vi $*\n"
 
 .lbc.lib:
-        $(lib) -b -q -n -p=16 -io -ii $@ @$<
+        $(librarian) -b -n -p=16 -io -ii $@ @$<
 
 $(libs):
 
@@ -48,7 +44,7 @@ windows.lbc : $(winlibs)
         @for %i in ($(winlibs)) do @type %i >>$^@
 
 windows.lib: windows.lbc profc.obj
-        $(lib) -b -q -n -p=16 -io -ii $@ @$<
+        $(librarian) -b -n -p=16 -io -ii $@ @$<
 
 
 clean: .SYMBOLIC .EXPLICIT
