@@ -1,3 +1,183 @@
+2003-04-30  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (DC_PEN, DC_BRUSH): Add defines.
+	(SetDCPenColor, SetDCBrushColor): Add prototypes.
+	* lib/gdi32.def (SetDCPenColor, SetDCBrushColor): Add stubs.
+
+2003-04-26  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* include/winioctl.h (DEVICE_TYPE_FROM_CTL_CODE): Add macro.
+
+2003-04-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/oaidl.h (ITypeMarshal): Add interface.
+
+2003-04-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winioctl.h: Clean up formatting.
+	(RETRIEVAL_POINTERS_BUFFER): Add fields to Extents[1] struct.
+	(CREATE_DISK): Add _ANONYMOUS_UNION macro.
+	(DISK_CACHE_INFORMATION): Likewise.
+	(DISK_DETECTION_INFO): Likewise.
+	(DISK_PARTITION_INFO): Likewise.
+	(PARTITION_INFORMATION_EX): Likewise.
+	(DRIVE_LAYOUT_INFORMATION_EX): Likewise.
+
+2003-04-26  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/winbase.h (DeleteVolumeMountPoint[AW],
+	FindFirstVolumeMountPoint[AW], FindNextVolumeMountPoint[AW],
+	FindVolumeMountPointClose, GetVolumeNameForVolumeMountPoint[AW],
+	GetVolumePathName[AW], GetVolumePathNamesForVolumeName[AW],
+	SetVolumeMountPoint[AW]): Add prototypes.
+	* include/winioctl.h (IOCTL_DISK_GET_PARTITION_INFO_EX,
+	IOCTL_DISK_SET_PARTITION_INFO_EX,
+	IOCTL_DISK_GET_DRIVE_LAYOUT_EX,
+	IOCTL_DISK_SET_DRIVE_LAYOUT_EX, IOCTL_DISK_CREATE_DISK,
+	IOCTL_DISK_GET_LENGTH_INFO, IOCTL_DISK_PERFORMANCE_OFF,
+	IOCTL_DISK_GET_DRIVE_GEOMETRY_EX, IOCTL_DISK_GROW_PARTITION,
+	IOCTL_DISK_GET_CACHE_INFORMATION,
+	IOCTL_DISK_SET_CACHE_INFORMATION,
+	IOCTL_DISK_DELETE_DRIVE_LAYOUT, IOCTL_DISK_UPDATE_PROPERTIES,
+	FSCTL_GET_VOLUME_BITMAP, FSCTL_GET_RETRIEVAL_POINTERS,
+	FSCTL_MOVE_FILE): Define.
+	(CREATE_DISK_GPT, CREATE_DISK_MBR, CREATE_DISK,
+	DISK_CACHE_INFORMATION,
+	DETECTION_TYPE, DISK_INT13_INFO, DISK_EX_INT13_INFO,
+	DISK_DETECTION_INFO, DISK_GEOMETRY_EX, DISK_GROW_PARTITION,
+	DISK_PARTITION_INFO, DISKQUOTA_USER_INFORMATION,
+	GET_LENGTH_INFORMATION, DISK_EXTENT, VOLUME_DISK_EXTENTS,
+	DRIVE_LAYOUT_INFORMATION_GPT, DRIVE_LAYOUT_INFORMATION_MBR,
+	PARTITION_INFORMATION_MBR, PARTITION_INFORMATION_GPT,
+	PARTITION_INFORMATION_EX, DRIVE_LAYOUT_INFORMATION_EX,
+	MOVE_FILE_DATA,
+	RETRIEVAL_POINTERS_BUFFER, STARTING_LCN_INPUT_BUFFER,
+	STARTING_VCN_INPUT_BUFFER, VOLUME_BITMAP_BUFFER): Add structs.
+	(PARTITION_STYLE, DISK_CACHE_RETENTION_PRIORITY): Add enums.
+	(MEDIA_TYPE): Add F3_120M_512, F3_640_512, F5_640_512,
+	F5_720_512, F3_1Pt2_512, F3_1Pt23_1024, F5_1Pt23_1024,
+	F3_128Mb_512, F3_230Mb_512, F8_256_128, F3_200Mb_512,
+	F3_240M_512, and F3_32M_512.
+	* lib/kernel32.def (GetVolumePathNamesForVolumeName[AW]): Add
+	stubs.
+
+2003-04-16  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/wingdi.h (DM_SPECVERSION): Define.
+	Thanks to Sinitsyn Valentime <valentine.sinitsyn@usu.ru>
+	* include/rpcdce.h (UuidCreateSequential): Properly guard with
+	appropriate _WIN32_WINNT values.
+
+2003-04-15  Chris January <chris@atomice.net>
+
+	* include/rpcdce.h: Add declaration for UuidCreateSequential.
+	* lib/rpcrt4.def: Add entry for UuidCreateSequential.
+
+2003-04-14  Phil Krylov  <likewolf@users.sourceforge.net>
+
+	* include/winuser.h (VK_*): Add missing defines.
+
+2003-04-14  Vincent Béron  <papineau@users.sourceforge.net>
+
+	* include/commctrl.h (NMUPDOWN, LPNMUPDOWN): Use currently
+	documented typedefs for struct _NM_UPDOWN.
+	Add defines for backward comapatibility.
+	* include/commdlg.h (OFN_ENABLESIZING): Add define.
+	* include/wininet.h (IRF_*): Add missing defines.
+
+2003-04-14  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* lib/ntdll.def (Csr*, Dbg*, Ki*, Ldr*, Rtl*): Add W2K exports.
+
+2003-04-11  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/sspi.h: Add comment for FreeCredentialsHandle.
+
+2003-04-07  Marcel Telka <telka@users.sourceforge.net>
+
+	* include/ddk/winddk.h (KIRQL): Typedef as UCHAR, not ULONG.
+
+2003-03-30  Hans E. Molin  <kvasi@users.sourceforge.net>
+
+	* include/olectl.h (OleLoadPicturePath): Correct prototype.
+
+2003-03-30  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/uuid.c (IID_IHTML*): Move definitions to...
+	* lib/mshtml-uuid.c: New file.
+	* lib/Makefile.in: Add mshtml-uuid.o to libuuid.a
+
+2003-03-30  Michael Sazonov  <traip@comset.net>
+
+	* lib/uuid.c (IID_IHTML*): Add new GUID definitions.
+	* include/mshtml.h (IHTMLElementCollection, IHTMLLinkElement,
+	IHTMLImgElement): Add intetface definitions.
+
+2003-03-29  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (ANIMATE_CLASS,HOTKEY_CLASS,PROGRESS_CLASS,
+	STATUSCLASSNAME,TOOLBARCLASSNAME,TOOLTIPS_CLASS,TRACKBAR_CLASS,
+	UPDOWN_CLASS,WC_COMBOBOXEX,WC_HEADER,WC_IPADDRESS,WC_LISTVIEW,
+	WC_TABCONTROL,WC_TREEVIEW): Move UNICODE mappings out of
+	RC_INVOKED guard. 
+ 	(WC_PAGESCROLLER,WC_NATIVEFONTCTL,WC_BUTTON,WC_STATIC,WC_EDIT,
+	WC_LISTBOX,WC_COMBOBOX,WC_SCROLLBAR): Add defines.
+
+2003-03-28  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* include/winnt.h (WAITORTIMERCALLBACKFUNC): Add typedef.
+
+2003-03-27  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/secext.h (GetComputerObjectName[AW],GetUserNameEx[AW],
+	TranslateName[AW]): Add prototypes.
+	* lib/sec32.def (GetComputerObjectName[AW],GetUserNameEx[AW],
+	TranslateName[AW]): Add stubs.
+	* lib/test.c: Include secext.h.
+
+2003-03-27  Vladimir Michl  <michlv@users.sourceforge.net>
+
+	* include/ddk/ndis.h (NdisAllocateSpinLock,NdisFreeSpinLock,
+	NdisAcquireSpinLock,NdisReleaseSpinLock,NdisDprAcquireSpinLock,
+	NdisDprReleaseSpinLock): Change macro argument from SpinLock to
+	_SpinLock.
+
+2003-03-26  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/w32api.h: Increment version to 2.4.
+	* Makefile.in: Ditto.
+
+2003-03-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/batclass.h (BATTERY_REPORTING_SCALE)
+	Move structure from here...
+	* include/winnt.h (BATTERY_REPORTING_SCALE): To here.
+
+	* include/ddk/ntapi.h (JOBOBJECT_*):
+	Remove structures and enums definitions.
+  	(JOB_OBJECT*): Move defines from here...
+	* include/winnt.h (JOB_OBJECT* ): To here.
+
+	* include/ddk/ntpoapi.h (LATENCY_TIME, POWER_ACTION_POLICY,
+	SYSTEM_POWER_LEVEL, SYSTEM_POWER_POLICY,
+	PROCESSOR_POWER_POLICY_INFO, PROCESSOR_POWER_POLICY,
+	ADMINISTRATOR_POWER_POLICY, SYSTEM_POWER_INFORMATION,
+	PROCESSOR_POWER_INFORMATION, SYSTEM_BATTERY_STATE,
+	SYSTEM_POWER_CAPABILITIES): Move enums, structures
+	and associated defines from here ...
+	* include/winnt.h: (LATENCY_TIME, POWER_ACTION_POLICY,
+	SYSTEM_POWER_LEVEL, SYSTEM_POWER_POLICY,
+	PROCESSOR_POWER_POLICY_INFO, PROCESSOR_POWER_POLICY,
+	ADMINISTRATOR_POWER_POLICY, SYSTEM_POWER_INFORMATION,
+	PROCESSOR_POWER_INFORMATION, SYSTEM_BATTERY_STATE,
+	SYSTEM_POWER_CAPABILITIES):To here.
+
+	* include/ddk/winddk.h (DEVICE_POWER_STATE,
+	SYSTEM_POWER_STATE, POWER_ACTION): Move enums
+	from here...
+	* include/winnt.h (DEVICE_POWER_STATE,
+	SYSTEM_POWER_STATE, POWER_ACTION): To here.
+
 2003-03-19  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	*lib/ndis.def (NdisAllocateMemory): Correct stdcall suffix.

@@ -117,6 +117,8 @@ shell32.lib: shell32.lbc shell32.obj
         $(lib) -b -c -q -n -io -ii $@ @$*
         $(lib) -b -c -q  $@ +$*
 
+uuid.lib: uuid.obj mshtml-u.obj
+
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.lbc @del *.lbc
         @if exist *.lib @del *.lib
