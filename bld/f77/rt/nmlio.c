@@ -573,11 +573,7 @@ static  void    NmlIn() {
             Suicide();
         }
     }
-#if _OPT_CG == _ON
     IOTypeRtn = &IOType;
-#else
-    IOTypeRtn = &FC_IOType;
-#endif
 }
 
 

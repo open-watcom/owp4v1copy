@@ -96,18 +96,7 @@ extern  sym_id          STFnShadow(sym_id);
 extern  void            BIStartRBorEP( sym_id );
 extern  void            BIStartBlockData( sym_id );
 extern  void            BIStartSubroutine( void );
-#if _OPT_CG == _OFF
-extern  void            GISNCall(void);
-extern  warp_label      GBegSList(void);
-extern  void            GEndSList(sym_id);
-extern  bool            SetLst(bool);
-extern  void            PrtLst(char *);
-extern  void            MsgPrtLstNL(uint,...);
-extern  char            *MkNodeStr(itnode *);
-extern  void            FrNodeStr(char *);
-#else
 extern  void            GSetSrcLine(void);
-#endif
 
 
 void    CpProgram() {
@@ -115,13 +104,7 @@ void    CpProgram() {
 
     CkSubEnd();
     if( ReqName( NAME_PROGRAM ) ) {
-        #if _OPT_CG == _OFF
-            SubProgId = LkSym();
-            SubProgId->ns.flags = SY_USAGE  | SY_SUBPROGRAM | SY_PROGRAM |
-                                  SY_PENTRY | SY_REFERENCED;
-        #else
-            SubProgId = LkProgram();    // use default name
-        #endif
+        SubProgId = LkProgram();    // use default name
     } else {
         SubProgId = LkProgram();        // use default name
     }
@@ -193,21 +176,12 @@ static  entry_pt        *SubProgName( byte typ, unsigned_16 flags,
     itnode      *next_node;
     sym_id      sym_ptr;
     uint        size;
-#if _OPT_CG == _OFF
-    char        *str;
-    bool        old_lst;
-#endif
-
     sym_ptr = LkSym();
     SubProgId = sym_ptr;
     GSegLabel();    // must be before DumpStatement() so that ISN code for
-#if _OPT_CG == _OFF // entry point is aligned even.
-    DumpStatement( sym_ptr );
-#else
     if( Options & OPT_TRACE ) {
         GSetSrcLine();
     }
-#endif
     name_node = CITNode;
     sym_ptr->ns.flags = flags;
     name_node->flags = flags;
@@ -220,18 +194,6 @@ static  entry_pt        *SubProgName( byte typ, unsigned_16 flags,
         }
         next_node = CITNode;
     }
-#if _OPT_CG == _OFF
-    if( ProgSw & PS_LIBRARY_PROCESS ) {
-        old_lst = SetLst( TRUE );
-        if( !old_lst ) {
-            PrtLst( "    " );
-            str = MkNodeStr( name_node );
-            MsgPrtLstNL( MS_DEF_SPROG, str, ISNNumber );
-            FrNodeStr( str );
-            SetLst( old_lst );
-        }
-    }
-#endif
     sym_ptr->ns.xt.size = size;
     name_node->size = size;
     typ = MapTypes( typ, size );
@@ -321,9 +283,6 @@ void    CpEntry() {
     entry_pt    *entry;
     bool        in_subr;
     sym_id      sym;
-#if _OPT_CG == _OFF
-    label_id    skip_label;
-#endif
 
     if( ( ProgSw & PS_IN_SUBPROGRAM ) == 0 ) {
         StmtErr( SR_ILL_IN_PROG );
@@ -350,17 +309,9 @@ void    CpEntry() {
             STFnShadow( sym );
             entry = AddEntryPt( sym );
             AdvanceITPtr();
-#if _OPT_CG == _OFF
-            skip_label = NextLabel();
-            GBranch( skip_label );
-            DumpStatement( sym );
-            GLabel( skip_label );
-            FreeLabel( skip_label );
-#else
             if( Options & OPT_TRACE ) {
                 GSetSrcLine();
             }
-#endif
             if( RecOpenParen() ) {
                 ParmList( in_subr, entry );
                 ReqCloseParen();
@@ -466,14 +417,6 @@ static  parameter       *NameParm( entry_pt *entry ) {
                     return( NULL );
                 }
             }
-#if _OPT_CG == _OFF
-            if( ( flags & SY_SUB_PARM ) == 0 ) {
-                if( dim_ptr->l.init_label == 0 ) {
-                    dim_ptr->l.init_label = GBegSList();
-                    GEndSList( sym );
-                }
-            }
-#endif
         }
     } else if( class == SY_PARAMETER ) {
         IllName( sym );
@@ -549,22 +492,6 @@ static  void    ParmList( bool star_ok, entry_pt *entry ) {
 }
 
 
-#if _OPT_CG == _OFF
-
-static  void    DumpStatement( sym_id sym_ptr ) {
-//===============================================
-
-// Dump the ISN for the SUBROUTINE/FUNCTION/ENTRY statement.
-
-    sym_ptr->ns.si.sp.isn.entry = NextLabel();
-    GLabel( sym_ptr->ns.si.sp.isn.entry );
-    GISNCall();
-    sym_ptr->ns.si.sp.isn.exit = NextLabel();
-    GBranch( sym_ptr->ns.si.sp.isn.exit );
-}
-
-#endif
-
 
 void    Prologue() {
 //==================
@@ -594,15 +521,6 @@ void    Prologue() {
 static  void    InitParms() {
 //===========================
 
-#if _OPT_CG == _OFF
-    sym_id      sym_ptr;
-
-    sym_ptr = ArgList->id;
-    GBranch( sym_ptr->ns.si.sp.isn.entry );
-    GLabel( sym_ptr->ns.si.sp.isn.exit );
-    FreeLabel( sym_ptr->ns.si.sp.isn.entry );
-    FreeLabel( sym_ptr->ns.si.sp.isn.exit );
-#endif
     DoWarps();
 }
 
@@ -620,9 +538,7 @@ static  void    DoWarps() {
         sym = parm->id;
         if( ( sym->ns.flags & SY_CLASS ) != SY_VARIABLE ) continue;
         if( ( sym->ns.flags & SY_SUBSCRIPTED ) == 0 ) continue;
-#if _OPT_CG == _ON
         if( _AdvRequired( sym->ns.si.va.dim_ext ) == 0 ) continue;
-#endif
         GWarp( sym );
     }
 }

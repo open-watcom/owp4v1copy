@@ -29,6 +29,13 @@
 *
 ****************************************************************************/
 
+/**************** IMPORTANT NOTE ************************
+
+  data in files:  ptypes.inc, ptypes.h and  parmtype.h
+  
+  must corespond each to other
+
+********************************************************/
 
 //
 // Run and compile-time consts indicating parameter type and attributes
@@ -59,9 +66,7 @@ enum {
 };                      // so that the i/o list may be flushed in halt when an
                         // error occurs
 
-#if _OPT_CG == _ON
-  #define       PC_PROC_FAR16   0x80
-#endif
+#define       PC_PROC_FAR16   0x80
 
 enum {
   PC_CONST,             //  Non-modifiable argument. Passed by value.

@@ -57,12 +57,8 @@ extern  double          DEXP(double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDEXP( double *arg ) {
 //===========================
 
     return( DEXP( *arg ) );
 }
-
-#endif

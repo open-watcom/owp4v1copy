@@ -57,12 +57,8 @@ extern  extended                QCOSH(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQCOSH( extended *arg ) {
 //============================
 
     return( QCOSH( *arg ) );
 }
-
-#endif

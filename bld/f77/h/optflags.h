@@ -34,11 +34,7 @@
 #define SRC     0x02    // option allowed in source stream
 #define CTG     0x04    // identifies a category of options
 #define VAL     0x08    // option requires a value
-#if _OPT_CG == _ON
 #define CG      0x10    // option is for code generator
 #define CPU     0x40    // option is a CPU target
 #define OZ      0x80    // option is an optimization
-#else
-#define MTH     0x10    // option is a math bit
-#endif
 #define NEG     0x20    // option turns off bits

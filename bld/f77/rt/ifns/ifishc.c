@@ -145,12 +145,8 @@ intstar4        ISHC( unsigned_32 arg1, intstar4 arg2 ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XISHC( unsigned_32 *arg1, intstar4 *arg2 ) {
 //==========================================================
 
     return( ISHC( *arg1, *arg2 ) );
 }
-
-#endif

@@ -31,5 +31,4 @@
 
 
 #define _TARGET         _AXP    // target machine?
-#define _OPT_CG         _ON     // optimizing code generator used?
 #define _OBJECT         _OFF    // generate object files?

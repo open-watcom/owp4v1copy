@@ -110,9 +110,6 @@ sym_id  STFree( sym_id sym ) {
 // Free a symbol table entry and return its link field (must not be a
 // common block).
 
-#if ( _OPT_CG == _OFF ) && ( _TARGET != _8086 ) && ( _TARGET != _80386 )
-    FreeChain( &sym->ns.reloc_chain );
-#endif
     return( FreeLink( sym ) );
 }
 
@@ -141,34 +138,3 @@ void    CkSymDeclared( sym_id sym ) {
         }
     }
 }
-
-#if _OPT_CG == _OFF
-#include "objutil.h"
-#include "rcb.h"
-#include "structio.h"
-#include "parmtype.h"
-#include "tdreloc.h"
-#include "nmlinfo.h"
-
-void    FreeLabel( sym_id label ) {
-//=================================
-
-// Free specified label since it will no longer be referenced.
-
-#if (_TARGET == _8086) || (_TARGET == _80386)
-    sym_id      *owner;
-    sym_id      curr;
-
-    // label will be null in cases where some errors occur
-    if( label == NULL ) return;
-    owner = &MList;
-    for(;;) {
-        curr = *owner;
-        if( curr == label ) break;
-        owner = &curr->ns.link;
-    }
-    CodeReloc( curr, curr->ns.address.la );
-    *owner = STFree( curr );
-#endif
-}
-#endif

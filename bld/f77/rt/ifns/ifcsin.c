@@ -54,12 +54,8 @@ complex CSIN( single rp, single ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 complex XCSIN( complex *arg ) {
 //=============================
 
     return( CSIN( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -44,12 +44,8 @@ intstar4        RSHIFT( intstar4 arg1, unsigned_32 arg2 ) {
     return( arg1 >> arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XRSHIFT( intstar4 *arg1, unsigned_32 *arg2 ) {
 //============================================================
 
     return( RSHIFT( *arg1, *arg2 ) );
 }
-
-#endif

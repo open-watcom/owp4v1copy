@@ -48,7 +48,7 @@
 //
 //    0x40 <= chr <= 0xfc, chr != 0x7f
 
-#if !defined( __RT__ ) || ( _OPT_CG == _OFF )
+#if !defined( __RT__ )
 
 static const byte __FAR CharSet[] = {
 
@@ -214,7 +214,7 @@ void    __UseJapaneseCharSet() {
     CharSetInfo.is_double_byte_char = &IsDoubleByteChar;
     CharSetInfo.character_width = &CharacterWidth;
     CharSetInfo.is_foreign = &IsForeign;
-#if !defined( __RT__ ) || ( _OPT_CG == _OFF )
+#if !defined( __RT__ )
     CharSetInfo.character_set = &CharSet;
     CharSetInfo.initializer = "__init_japanese";
 #endif

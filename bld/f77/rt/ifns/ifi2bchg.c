@@ -48,12 +48,8 @@ intstar2        I2BCHNG( intstar2 arg1, intstar2 arg2 ) {
     return( arg1 ^ bit );
 }
 
-#if _OPT_CG == _ON
-
 intstar2        XI2BCHNG( intstar2 *arg1, intstar2 *arg2 ) {
 //=========================================================
 
     return( I2BCHNG( *arg1, *arg2 ) );
 }
-
-#endif

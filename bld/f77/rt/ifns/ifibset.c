@@ -48,12 +48,8 @@ intstar4        IBSET( intstar4 arg1, intstar4 arg2 ) {
     return( arg1 | bit );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XIBSET( intstar4 *arg1, intstar4 *arg2 ) {
 //========================================================
 
     return( IBSET( *arg1, *arg2 ) );
 }
-
-#endif

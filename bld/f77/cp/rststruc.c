@@ -52,9 +52,6 @@ static  sym_id  AddStruct( char *name, int length ) {
     sym_id      sym;
 
     sym = FMemAlloc( sizeof( fstruct ) + AllocName( length ) );
-#if _OPT_CG == _OFF
-    sym->sd.reloc_chain = 0;
-#endif
     sym->sd.dbh = 0;
     sym->sd.name_len = length;
     memcpy( &sym->sd.name, name, length );
@@ -387,9 +384,6 @@ void    STMap() {
     //                        INTEGER I
     if( field == NULL ) return;
     md = FMemAlloc( sizeof( fmap ) );
-#if _OPT_CG == _OFF
-    md->sd.reloc_chain = NULL;
-#endif
     md->sd.link = NULL;
     md->sd.fl.fields = NULL;
     md->sd.size = 0;

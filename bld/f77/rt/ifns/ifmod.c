@@ -51,12 +51,8 @@ intstar4 MOD( intstar4 arg1, intstar4 arg2 ) {
     return( arg1 % arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar4 XMOD( intstar4 *arg1, intstar4 *arg2 ) {
 //===============================================
 
     return( MOD( *arg1, *arg2 ) );
 }
-
-#endif

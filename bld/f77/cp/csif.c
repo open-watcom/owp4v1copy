@@ -58,9 +58,6 @@ extern  bool            RecNextOpr(byte);
 extern  bool            ReqEOS(void);
 extern  bool            RecKeyWord(char *);
 extern  void            FreeLabel(label_id);
-#if _OPT_CG == _OFF
-extern  void            GISNCall(void);
-#endif
 
 
 void    CpLogIf() {
@@ -97,9 +94,6 @@ void    CpElseIf() {
         GBranch( CSHead->bottom );
         GLabel( CSHead->branch );
         FreeLabel( CSHead->branch );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
         CSHead->typ = CS_ELSEIF;
         CSHead->branch = NextLabel();
         CSHead->block = ++BlockNum;
@@ -127,9 +121,6 @@ void    CpElse() {
         GBranch( CSHead->bottom );
         GLabel( CSHead->branch );
         FreeLabel( CSHead->branch );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
         CSHead->typ = CS_ELSE;
         CSHead->block = ++BlockNum;
     } else if( CSHead->typ == CS_ELSE ) {
@@ -151,15 +142,9 @@ void    CpEndif() {
         FreeLabel( CSHead->branch );
         GLabel( CSHead->bottom );
         FreeLabel( CSHead->bottom );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
     } else if( CSHead->typ == CS_ELSE ) {
         GLabel( CSHead->bottom );
         FreeLabel( CSHead->bottom );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
     } else {
         Match();
     }

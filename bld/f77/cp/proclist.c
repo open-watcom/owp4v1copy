@@ -214,11 +214,7 @@ static  void    PrSubList( itnode *array_node ) {
     } else {
         if( array_node->opn & OPN_FLD ) {
             if( array_node->sym_ptr->fd.typ == TY_CHAR ) {
-#if _OPT_CG == _ON
                 if( !(StmtSw & SS_DATA_INIT) )
-#else
-                if( array_node->value.st.tmp_id == NULL )
-#endif
                     GFieldSCB( array_node->sym_ptr->fd.xt.size );
             }
         }

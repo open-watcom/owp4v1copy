@@ -30,9 +30,6 @@
 
 
 #include "ftnstd.h"
-#if _OPT_CG == _OFF
-#include "bglobal.h"
-#endif
 
 extern  void            *_SysMemAlloc(size_t);
 extern  void            _SysMemFree(void *);
@@ -43,11 +40,6 @@ void            *RMemAlloc( int size ) {
     pointer     ptr;
 
     ptr = _SysMemAlloc( size );
-#if _OPT_CG == _OFF
-    if( ptr != NULL ) {
-        UnFreeMem++;
-    }
-#endif
     return( ptr );
 }
 
@@ -56,7 +48,4 @@ void            RMemFree( pointer ptr ) {
 //=======================================
 
     _SysMemFree( ptr );
-#if _OPT_CG == _OFF
-    UnFreeMem--;
-#endif
 }

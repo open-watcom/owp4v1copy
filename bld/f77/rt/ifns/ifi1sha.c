@@ -48,12 +48,8 @@ intstar1        I1SHA( intstar1 arg1, intstar1 arg2 ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 intstar1        XI1SHA( intstar1 *arg1, intstar1 *arg2 ) {
 //=======================================================
 
     return( I1SHA( *arg1, *arg2 ) );
 }
-
-#endif

@@ -48,12 +48,8 @@ intstar2        I2SHFT( unsigned_16 arg1, intstar2 arg2 ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 intstar2        XI2SHFT( unsigned_16 *arg1, intstar2 *arg2 ) {
 //=============================================================
 
     return( I2SHFT( *arg1, *arg2 ) );
 }
-
-#endif

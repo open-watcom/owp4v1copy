@@ -47,12 +47,8 @@ intstar2        I2ABS( intstar2 arg ) {
     return( arg );
 }
 
-#if _OPT_CG == _ON
-
 intstar2        XI2ABS( intstar2 *arg ) {
 //======================================
 
     return( I2ABS( *arg ) );
 }
-
-#endif

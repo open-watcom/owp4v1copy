@@ -80,16 +80,10 @@ typedef struct com_eq {                 //  common/equivalence extension
 typedef struct dim_list {
     union {
         warp_label      init_label;     // initialization label for arrays
-#if _OPT_CG == _ON
         unsigned short  cg_typ;         // cg-type for local arrays on stack
-#else
-        obj_ptr         reloc_chain;    // for arrays inside structures
-#endif
     } l;
     unsigned_16 dim_flags;      //  dimension flags
-#if _OPT_CG == _ON
     pointer     adv;            //  address of ADV
-#endif
     unsigned_32 num_elts;       //  number of elements
 } dim_list;
 
@@ -97,14 +91,9 @@ typedef struct act_dim_list {
     union {
         warp_label      init_label;     // initialization label for arrays
         unsigned short  cg_typ;         // cg-type for local arrays on stack
-#if _OPT_CG == _OFF
-        obj_ptr         reloc_chain;    // for arrays inside structures
-#endif
     } l;
     unsigned_16 dim_flags;      //  dimension flags
-#if _OPT_CG == _ON
     pointer     adv;            //  address of ADV
-#endif
     unsigned_32 num_elts;       //  number of elements
     intstar4    subs_1_lo;      //  low bound of 1st dimension
     intstar4    subs_1_hi;      //  high bound of 1st dimension

@@ -56,10 +56,6 @@ extern  bool            ReqComma(void);
 extern  bool            RecKeyWord(char *);
 extern  void            GCheckEOF(label_id);
 extern  void            FreeLabel(label_id);
-#if _OPT_CG == _OFF
-extern  void            GISNCall(void);
-extern  void            GDbugInfo(void);
-#endif
 
 
 void    CpAtEnd() {
@@ -83,9 +79,6 @@ void    CpAtEnd() {
         CtrlFlgs |= CF_BAD_DO_ENDING;
         GLabel( code );
         FreeLabel( code );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
     } else {
         AdvanceITPtr();
         ReqComma();
@@ -94,9 +87,6 @@ void    CpAtEnd() {
             StmtSw |= SS_EQUALS_FOUND;
         }
         GLabel( code );
-#if _OPT_CG == _OFF
-        GISNCall();
-#endif
         Recurse();
         GLabel( skip );
         FreeLabel( code );
@@ -112,9 +102,6 @@ void    CpEndAtEnd() {
 
     if( CSHead->typ == CS_ATEND ) {
         GLabel( CSHead->bottom );
-#if _OPT_CG == _OFF
-        GDbugInfo();
-#endif
         FreeLabel( CSHead->bottom );
     } else {
         Match();

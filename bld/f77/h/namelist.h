@@ -31,13 +31,8 @@
 
 typedef struct name_list {
     sym_id              link;                   // next name list definition
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;            // head of relocation chain
-    struct grp_entry    *group_list;            // entries in namelist
-#else
     struct grp_entry    *group_list;            // entries in namelist
     obj_addr            address;                // address of namelist data
-#endif
     db_handle           dbh;                    // dwarf handle
     byte                name_len;               // length of namelist name
     char                name[STD_SYMLEN];       // namelist name

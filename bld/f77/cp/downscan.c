@@ -467,10 +467,6 @@ void    GetIntConst() {
 void    DownScan() {
 //==================
 
-#if _OPT_CG == _OFF
-    itnode      *last_field;
-#endif
-
     AError = FALSE;
     BkLink = NULL;
     FieldNode = NULL;
@@ -482,13 +478,4 @@ void    DownScan() {
         MoveDown();
         if( RecTrmOpr() ) break;
     }
-#if _OPT_CG == _OFF
-    while( FieldNode != NULL ) {
-        // we must place a NULL in FieldNode->value.st.tmp_id
-        // since it conflicts with value.sc.struct_chain
-        last_field = FieldNode;
-        FieldNode = FieldNode->value.sc.struct_chain;
-        last_field->value.st.tmp_id = NULL;
-    }
-#endif
 }

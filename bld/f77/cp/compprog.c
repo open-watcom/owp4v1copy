@@ -79,13 +79,6 @@ extern  void            Epilogue(void);
 extern  void            GReturn(void);
 extern  bool            TBreak(void);
 extern  void            GEndBlockData(void);
-#if _OPT_CG == _OFF
-extern  lib_handle      Srch4Undef(void);
-extern  void            ProcObjFile(lib_handle);
-extern  void            IFDump(void);
-extern  void            LibInit(void);
-extern  bool            LibFini(bool);
-#endif
 
 
 static  bool    CompSProg( ) {
@@ -102,12 +95,10 @@ static  bool    CompSProg( ) {
                 ProcInclude();
                 ComRead();
             } else if( CurrFile->flags & CONC_PENDING ) {
-#if _OPT_CG == _ON
                 if( ( ProgSw & PS_DONT_GENERATE ) &&
                     ( ( Options & OPT_SYNTAX ) == 0 ) &&
                     ( ( ProgSw & PS_ERROR ) == 0 ) &&
                     ( CurrFile->link == NULL ) ) break;
-#endif
                 Conclude();
                 if( CurrFile == NULL ) break;
                 ComRead();
@@ -175,68 +166,11 @@ static  void    FiniProgram() {
 
     TrapFini();
     Options = NewOptions;
-#if _OPT_CG == _OFF
-    IFDump();
-#endif
     TDProgFini();
     CSPurge();
     BIEnd(); // Close down the Browse generator and create the .MBR file
 }
 
-
-#if _OPT_CG == _OFF
-
-static  bool    ResolveUndefined( bool tbreak ) {
-//===============================================
-
-    lib_handle  lp;
-
-#if _OBJECT == _ON
-    if( Options & OPT_OBJECT ) return( tbreak );
-#endif
-    // search library only if we are not generating object files - /link
-    // generates object files but we still want to search library
-    ProgSw |= PS_LIBRARY_PROCESS;
-    LibInit();
-    for(;;) {
-        if( ProgSw & PS_ERROR ) break;
-        if( tbreak ) break;
-        ProgSw &= ~( PS_LIB_OBJECT );
-        lp = Srch4Undef();
-        if( lp == NULL ) break;
-        if( ProgSw & PS_LIB_OBJECT ) {
-            ProcObjFile( lp );
-#if _TARGET == _370
-            ProgSw &= ~PS_LOADING_IF;
-#endif
-            tbreak = TBreak();
-        } else {
-            ProgSw &= ~PS_SOURCE_EOF;
-            // SrcInclude( LibMember ) is now done in LIBSUPP
-            CurrFile->fileptr = lp;
-            CurrFile->flags |= INC_LIB_MEMBER;
-            ComRead();
-            tbreak = CompFile();
-        }
-    }
-    tbreak = LibFini( tbreak );
-    ProgSw &= ~PS_LIBRARY_PROCESS;
-    return( tbreak );
-}
-
-
-static  void            CheckForProgram( bool tbreak ) {
-//======================================================
-
-    if( tbreak ) return;
-    if( ProgSw & PS_PROGRAM_DONE ) return;
-#if _OBJECT == _ON
-    if( Options & OPT_OBJECT ) return;
-#endif
-    Error( SR_NO_PROG );
-}
-
-#endif
 
 
 void    CompProg() {
@@ -246,16 +180,10 @@ void    CompProg() {
 
     InitProgram();
     tbreak = CompFile();
-#if _OPT_CG == _OFF
-    tbreak = ResolveUndefined( tbreak );
-#endif
     if( tbreak ) {
         Error( KO_INTERRUPT );
     }
     FiniProgram();
-#if _OPT_CG == _OFF
-    CheckForProgram( tbreak );
-#endif
 }
 
 
@@ -269,15 +197,6 @@ void    InitSubProg() {
     Entries      = NULL;
     EquivSets    = NULL;
     SubProgId    = NULL;
-#if _OPT_CG == _OFF
-#if _TARGET != _8086 && _TARGET != _80386
-    PrevLine     = NULL;
-    FirstISN     = NULL;
-#endif
-    MaxTempIndex = 0; // <-------+
-    TempBase     = 0; //         | Must come before TDSubInit().
-    TempIndex    = 0; //         |
-#endif
     STInit();         // <-------+
     TDSubInit();      // Must come before InitStNumbers().
     InitStNumbers();

@@ -59,9 +59,6 @@ extern  bool            ReqNextOpr(byte,int);
 extern  bool            RecName(void);
 extern  bool            ReqName(int);
 extern  void            SFPrologue(void);
-#if _OPT_CG == _OFF
-extern  void            GSetSrcLine(void);
-#endif
 
 #define SF_MASK (SY_SUB_PARM|SY_IN_EC|SY_DATA_INIT|SY_SAVED)
 
@@ -115,9 +112,6 @@ void    CpStmtFunc() {
         ( ( flags & SF_MASK ) == 0 ) ) {
         ASType = AST_EOK | AST_ASF;
         SFPrologue();
-#if _OPT_CG == _OFF
-        GSetSrcLine();
-#endif
         Arith();
     } else {
         IllName( CITNode->sym_ptr );

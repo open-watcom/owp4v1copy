@@ -53,12 +53,8 @@ intstar2 I2MOD( intstar2 arg1, intstar2 arg2 ) {
     return( arg1 % arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar2 XI2MOD( intstar2 *arg1, intstar2 *arg2 ) {
 //===============================================
 
     return( I2MOD( *arg1, *arg2 ) );
 }
-
-#endif

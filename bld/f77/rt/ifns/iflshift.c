@@ -44,12 +44,8 @@ intstar4        LSHIFT( intstar4 arg1, unsigned_32 arg2 ) {
     return( arg1 << arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XLSHIFT( intstar4 *arg1, unsigned_32 *arg2 ) {
 //============================================================
 
     return( LSHIFT( *arg1, *arg2 ) );
 }
-
-#endif

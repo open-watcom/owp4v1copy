@@ -57,12 +57,8 @@ extern  single          SQRT(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XSQRT( single *arg ) {
 //===========================
 
     return( SQRT( *arg ) );
 }
-
-#endif

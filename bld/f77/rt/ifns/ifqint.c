@@ -49,12 +49,8 @@ extended QINT( extended arg ) {
     return( floor( arg ) );
 }
 
-#if _OPT_CG == _ON
-
 extended XQINT( extended *arg ) {
 //===========================
 
     return( QINT( *arg ) );
 }
-
-#endif

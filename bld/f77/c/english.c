@@ -43,7 +43,7 @@
 // 92/12/18     G. Coschi       initial implementation
 // 93/12/14     Alex Brodsky    Added Q as legal exponent character
 
-#if !defined( __RT__ ) || ( _OPT_CG == _OFF )
+#if !defined( __RT__ )
 
 #if _CSET == _EBCDIC
 
@@ -291,7 +291,7 @@ void    __UseEnglishCharSet() {
     CharSetInfo.is_double_byte_char = &IsDoubleByteChar;
     CharSetInfo.character_width = &CharacterWidth;
     CharSetInfo.is_foreign = &IsForeign;
-#if !defined( __RT__ ) || ( _OPT_CG == _OFF )
+#if !defined( __RT__ )
     CharSetInfo.character_set = &CharSet;
     CharSetInfo.initializer = "__init_english";
 #endif

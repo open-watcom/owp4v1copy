@@ -57,12 +57,8 @@ extern  double          DCOS(double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDCOS( double *arg ) {
 //===========================
 
     return( DCOS( *arg ) );
 }
-
-#endif

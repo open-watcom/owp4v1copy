@@ -33,7 +33,6 @@
 #include "symflgs.h"
 #include "symacc.h"
 
-#if _OPT_CG == _ON
 #define WF77_NULLSEGID  0       // NULL segment id
 #if _TARGET == _8086 || _TARGET == _80386
   #define WF77_LDATA    1       // local data segment for initialized data
@@ -56,7 +55,6 @@
 #define ALIGN_DWORD     4       // align segment on double word boundary
 #define ALIGN_QWORD     8       // align segment on quad word boundary
 #define ALIGN_SEGMENT   16      // align segment on segment boundary
-#endif
 
 #define HASH_PRIME 211
 
@@ -65,15 +63,7 @@ typedef struct hash_entry {
     sym_id      h_tail;
 } hash_entry;
 
-#if _OPT_CG == _OFF
-
-#include "reloc.h"
-
-#else
-
 typedef void            *obj_addr;              // back handle
-
-#endif
 
 typedef unsigned_32     db_handle;
 
@@ -85,11 +75,9 @@ typedef unsigned_32     db_handle;
 
 typedef union vi {
     struct com_eq       *ec_ext;        // common/equivalence extension
-#if _OPT_CG == _ON                      // segment id for arrays/character
     int                 seg_id;         //   variables not in common/equivalence
     void                *alt_scb;       // SCB for character arguments
     unsigned short      cg_typ;         // cg-type for local character
-#endif                                  //   variables on the stack
 } vi;
 
 typedef struct var {
@@ -105,9 +93,7 @@ typedef struct var {
 
 typedef struct common_block {
     sym_id      first;                  // first symbol in common list
-#if _OPT_CG == _ON
     int         seg_id;                 // segment id of common block
-#endif
 } common_block;
 
 // symbol table information for parameter constants:
@@ -120,23 +106,12 @@ typedef struct p_constant {
 // symbol table information for subprograms:
 // =========================================
 
-#if _OPT_CG == _OFF
-typedef struct isn {
-    label_id            entry;          // ISN code entry point
-    label_id            exit;           // ISN code return
-} isn;
-#endif
-
 typedef struct subprog {
-#if _OPT_CG == _OFF
-    struct isn          isn;            // ISN information
-#else
     union {
         label_id        entry;          // entry label
         signed          imp_segid;      // segment id for external subprograms
     };
     void                *alt_scb;       // SCB for character*(*) functions
-#endif                                  // when d2-level debugging used
 } subprog;
 
 // symbol table information for intrinsic functions:
@@ -156,34 +131,23 @@ typedef struct i_function {
 typedef struct sf_header {
     int                 ref_count;      // reference count
     struct sf_parm      *parm_list;     // pointer to argument list
-#if _OPT_CG == _ON
     sym_id              link;           // chain of statement functions
-#endif
 } sf_header;
 
 typedef struct st_function {
     struct sf_header    *header;        // pointer to header
-#if _OPT_CG == _ON
     union {
         label_id        location;       // entry label
         obj_ptr         sequence;       // F-Code sequence
     };
-#else
-    db_handle           dbh;            // browser info handle
-#endif
 } st_function;
 
 // symbol table information for remote blocks:
 // ===========================================
 
 typedef struct remote_block {
-#if _OPT_CG == _ON
     int                 ref_count;      // reference count
     label_id            entry;          // entry label
-#else
-    obj_ptr             entry;
-    db_handle           dbh;            // browser info handle
-#endif
 } remote_block;
 
 // symbol table information for magic symbols:
@@ -233,14 +197,10 @@ typedef union tmp_info {
 
 typedef struct m_sym {
     sym_id              sym;            // shadowed symbol
-#if _OPT_CG == _ON
     union {
         intstar4        *value;         // value of implied-DO variables
         unsigned short  cg_typ;         // cg-type for character temporaries
     };                                  //   and equivalence sets allocated
-#else                                   //   on the stack
-    union tmp_info      tmp_info;       // index into temporary area
-#endif
 } m_sym;
 
 // symbol table structure for constants:
@@ -248,11 +208,7 @@ typedef struct m_sym {
 
 typedef struct constant {
     sym_id              link;           // pointer to next constant in chain
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;    // head of relocation chain
-#else
     void                *address;       // back handle
-#endif
     byte                typ;            // type of constant
     byte                size;           // size of constant
     ftn_type            value;          // value of constant
@@ -263,16 +219,9 @@ typedef struct constant {
 
 typedef struct literal {
     sym_id              link;           // pointer to next literal in chain
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;    // head of relocation chain
-    obj_ptr             address;        // pointer to string
-#else
     void                *address;       // back handle
-#endif
     uint                length;         // length of literal
-#if ( _OPT_CG == _ON ) || ( _TARGET == _370 )
     unsigned_8          flags;          // constant appeared in DATA statement
-#endif
     byte                value;          // value of literal
 } literal;
 
@@ -286,18 +235,10 @@ typedef struct literal {
 
 typedef struct stmtno {
     sym_id              link;           // link to next statement # entry
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;    // relocation chain
-#else
     uint                ref_count;      // reference count
-#endif
     unsigned_16         block;          // block # statement # appeared in
     unsigned_16         flags;          // statement # flags
-#if _OPT_CG == _OFF
-    obj_ptr             address;        // address of statement #
-#else
     label_id            address;        // label of statement #
-#endif
     int                 line;           // source line statement # appeared in
     unsigned_16         number;         // statement #
 } stmtno;
@@ -317,9 +258,6 @@ typedef struct stmtno {
 
 typedef struct named_symbol {
     sym_id              link;           // link to next symbol in chain
-#if _OPT_CG == _OFF
-    reloc_head          reloc_chain;    // head of relocation chain
-#endif
     unsigned_16         flags;          // symbol flags
     union {
       struct {

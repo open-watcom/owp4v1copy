@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  System dependent file name processor.
 *
 ****************************************************************************/
 
-
-//
-// SDFILE  : System dependent file name processor.
-//
 
 #include "ftnstd.h"
 

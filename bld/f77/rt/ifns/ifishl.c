@@ -48,12 +48,8 @@ intstar4        ISHL( unsigned_32 arg1, intstar4 arg2 ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XISHL( unsigned_32 *arg1, intstar4 *arg2 ) {
 //==========================================================
 
     return( ISHL( *arg1, *arg2 ) );
 }
-
-#endif

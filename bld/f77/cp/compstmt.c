@@ -79,11 +79,7 @@ extern  bool            RecNextOpr(byte);
 extern  bool            SubStrung(void);
 extern  void            GSetSrcLine(void);
 extern  void            TDStmtInit(void);
-#if _OPT_CG == _ON
 extern  void            TDStmtFini(void);
-#else
-extern  void            STTmpFree(void);
-#endif
 
 extern  char                    *StmtKeywords[];
 extern  void                    (* const __FAR ProcTable[])();
@@ -166,24 +162,12 @@ void    CompStatement() {
         }
     }
     if( !scan_error ) {
-#if _OPT_CG == _OFF
-        if( Options & OPT_DEBUG ) {
-            if( CtrlFlgOn( CF_DBUG_BEFORE_LINE ) ) {
-                GSetDbugLine();
-            }
-        } else {
-            if( CtrlFlgOn( CF_NEED_SET_LINE ) ) {
-                GSetSrcLine();
-            }
-        }
-#else
         if( CurrFile->link == NULL ) {  // no line numbering information for
             GSetDbugLine();             // include files
         }
         if( CtrlFlgOn( CF_NEED_SET_LINE ) && ( Options & OPT_TRACE ) ) {
             GSetSrcLine();
         }
-#endif
         CheckOrder();
         if( ( ProgSw & PS_BLOCK_DATA ) && !CtrlFlgOn( CF_BLOCK_DATA ) ) {
             // if statement wasn't decodeable, don't issue an error
@@ -198,14 +182,12 @@ void    CompStatement() {
             ProcStmt();
         }
     }
-#if _OPT_CG == _ON
     // Must come before CheckDoEnd(). Consider:
     //           DO I=1,10
     //   10      M = M + 1
     // We must terminate the statement containing the DO label before we
     // terminate the DO-loop.
     TDStmtFini();
-#endif
     if( StmtNo != 0 ) {
         Update( StmtNo );
         CheckDoEnd();
@@ -255,9 +237,7 @@ void    Recurse() {
     } else {
         ProcStmt();
         ClearRem();
-#if _OPT_CG == _ON
         TDStmtFini();
-#endif
         if( CtrlFlgOn( CF_NOT_SIMPLE_STMT | CF_NOT_EXECUTABLE ) ) {
             StmtPtrErr( ST_NOT_ALLOWED, StmtKeywords[ proc - 1 ] );
         }
@@ -572,9 +552,6 @@ void    RemKeyword( itnode *itptr, int remove_len ) {
 static  void    FiniStatement() {
 //===============================
 
-#if _OPT_CG == _OFF
-    STTmpFree();
-#endif
     FreeITNodes( ITHead );
     ITHead = NULL;
 }

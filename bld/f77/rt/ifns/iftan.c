@@ -57,12 +57,8 @@ extern  single          TAN(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XTAN( single *arg ) {
 //==========================
 
     return( TAN( *arg ) );
 }
-
-#endif

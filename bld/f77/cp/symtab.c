@@ -51,24 +51,12 @@ extern  sym_id          FindNameList(char *,uint);
 extern  void            StructErr(uint,sym_id);
 extern  uint            MapTypes(uint,int);
 
-#if _OPT_CG == _OFF
-#define PROG_LEN        12
-char    ProgName[ PROG_LEN+1 ] = { 'M','A','I','N',' ',
-                                   'P','R','O','G','R','A','M',
-                                   NULLCHAR };
-#define BLKDAT_LEN      18
-char    BlkData[ BLKDAT_LEN+1 ] = { 'U','N','N','A','M','E','D',' ',
-                                    'B','L','O','C','K',' ',
-                                    'D','A','T','A',
-                                    NULLCHAR };
-#else
 #define PROG_LEN        5
 char    ProgName[ PROG_LEN+1 ] = { 'F','M','A','I','N',
                                    NULLCHAR };
 #define BLKDAT_LEN      10
 char    BlkData[ BLKDAT_LEN+1 ] = { '@','B','L','O','C','K','D','A','T','A',
                                     NULLCHAR };
-#endif
 #define CBLANK_LEN      6
 char    CBlank[ CBLANK_LEN+1 ] = { '@','B','L','A','N','K',NULLCHAR };
 

@@ -38,7 +38,7 @@ typedef struct character_set {
     int         (* character_width)(char PGM *);
     bool        (* is_foreign)(char);
     bool        (* is_double_byte_char)(char);
-#if !defined( __RT__ ) || ( _OPT_CG == _OFF )
+#if !defined( __RT__ )
     byte        const __FAR *character_set;
     char        *initializer;
 #endif

@@ -53,12 +53,8 @@ complex CEXP( single rp, single ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 complex XCEXP( complex *arg ) {
 //=============================
 
     return( CEXP( arg->realpart, arg->imagpart ) );
 }
-
-#endif

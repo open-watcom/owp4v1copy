@@ -45,9 +45,7 @@ extern  void            FlushStdUnit(void);
 extern  void            WaitForEnter(void);
 extern  void            StdBuffer(void);
 extern  void            StdFlush(void);
-#if _OPT_CG == _ON
 extern  void            RTSysInit(void);
-#endif
 
 // this is used by the load and go debugger in _SA_LIBRARY
 
@@ -60,9 +58,7 @@ void    Pause( string PGM *ptr ) {
 
 // Process a PAUSE statement.
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     if( ptr != NULL ) {
         _AccessFIO();
         // Before writing the error message, flush standard output files so that

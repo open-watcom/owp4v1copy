@@ -58,12 +58,8 @@ extended  CQABS( extended rp, extended ip ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 extended        XCQABS( xcomplex *arg ) {
 //===============================
 
     return( CQABS( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -57,12 +57,8 @@ extern  single          SIN(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XSIN( single *arg ) {
 //==========================
 
     return( SIN( *arg ) );
 }
-
-#endif

@@ -100,12 +100,8 @@ complex CSQRT( single rp, single ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 complex XCSQRT( complex *arg ) {
 //==============================
 
     return( CSQRT( arg->realpart, arg->imagpart ) );
 }
-
-#endif

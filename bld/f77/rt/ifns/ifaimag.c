@@ -48,12 +48,8 @@ single  AIMAG( single rp, single ip ) {
     return( ip );
 }
 
-#if _OPT_CG == _ON
-
 single XAIMAG( complex *arg ) {
 //=============================
 
     return( AIMAG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

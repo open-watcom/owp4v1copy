@@ -55,13 +55,11 @@ sym_id  STLit( byte *string, int len ) {
     while( sym != NULL ) {
         if( sym->lt.length == len ) {
             if( memcmp( string, &sym->lt.value, len ) == 0 ) {
-#if ( _OPT_CG == _ON ) || ( _TARGET == _370 )
                 if( StmtSw & SS_DATA_INIT ) {
                     sym->lt.flags |= LT_DATA_STMT;
                 } else {
                     sym->lt.flags |= LT_EXEC_STMT;
                 }
-#endif
                 return( sym );
             }
         }
@@ -70,18 +68,12 @@ sym_id  STLit( byte *string, int len ) {
     sym = FMemAlloc( sizeof( literal ) - 1 + len );
     memcpy( &sym->lt.value, string, len );
     sym->lt.length = len;
-#if ( _OPT_CG == _ON ) || ( _TARGET == _370 )
     if( StmtSw & SS_DATA_INIT ) {
         sym->lt.flags = LT_DATA_STMT;
     } else {
         sym->lt.flags = LT_EXEC_STMT;
     }
-#endif
-#if _OPT_CG == _OFF
-    sym->lt.reloc_chain = NULL;
-#else
     sym->lt.address = NULL;
-#endif
     sym->lt.link = LList;
     LList = sym;
     return( sym );

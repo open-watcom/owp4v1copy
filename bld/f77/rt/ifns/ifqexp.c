@@ -57,12 +57,8 @@ extern  extended                QEXP(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQEXP( extended *arg ) {
 //===========================
 
     return( QEXP( *arg ) );
 }
-
-#endif

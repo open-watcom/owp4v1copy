@@ -49,12 +49,8 @@ logstar4        I1BTEST( intstar1 arg1, intstar1 arg2 ) {
     return( _LogValue( FALSE ) );
 }
 
-#if _OPT_CG == _ON
-
 logstar4        XI1BTEST( intstar1 *arg1, intstar1 *arg2 ) {
 //========================================================
 
     return( I1BTEST( *arg1, *arg2 ) );
 }
-
-#endif

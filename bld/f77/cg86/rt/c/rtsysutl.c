@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  system dependent I/O support.
 *
 ****************************************************************************/
 
-
-//
-// RTSYSUTL  : system dependent I/O support.
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -105,12 +100,6 @@ void    GetSysIOInfo( ftnfile *fcb ) {
     if( fcb->cctrl == CC_YES ) {
         ((a_file *)(fcb->fileptr))->attrs |= CARRIAGE_CONTROL;
     }
-#if _OPT_CG == _OFF
-    // for listing file preconnected to unit 6
-    if( ((a_file *)(fcb->fileptr))->attrs & CARRIAGE_CONTROL ) {
-        fcb->cctrl = CC_YES;
-    }
-#endif
 }
 
 
@@ -378,9 +367,6 @@ void    CloseFile( ftnfile *fcb ) {
         return;
     }
     if( fcb->fileptr == FStdErr ) return;
-#if _OPT_CG == _OFF
-    if( fcb->fileptr == RListFile ) return;
-#endif
     Closef( fcb->fileptr );
     // save file handle
     fh = fcb->fileptr;

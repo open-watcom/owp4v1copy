@@ -44,12 +44,8 @@ intstar4       IAND( intstar4 arg1, intstar4 arg2 ) {
     return( arg1 & arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar4       XIAND( intstar4 *arg1, intstar4 *arg2 ) {
 //======================================================
 
     return( IAND( *arg1, *arg2 ) );
 }
-
-#endif

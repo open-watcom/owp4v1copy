@@ -58,9 +58,7 @@ typedef struct case_entry {
     union cs_label      label;
     intstar4            low;
     intstar4            high;
-#if _OPT_CG == _ON
     sym_id              sel_expr;
-#endif
     byte                sel_type;
     bool                multi_case;
 } case_entry;
@@ -68,14 +66,9 @@ typedef struct case_entry {
 typedef struct do_entry {
     sym_id              do_parm;
     unsigned_32         do_term;
-#if _OPT_CG == _OFF
-    sym_id              do_cb;
-    byte                do_type;
-#else
     sym_id              increment;
     sym_id              iteration;
     intstar4            incr_value;
-#endif
 } do_entry;
 
 enum {

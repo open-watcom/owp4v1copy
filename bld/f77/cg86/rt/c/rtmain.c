@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FORTRAN 77 run-time mainline
 *
 ****************************************************************************/
 
-
-//
-// RTMAIN       : FORTRAN 77 run-time mainline
-//
 
 #include "ftnstd.h"
 #include "rtenv.h"

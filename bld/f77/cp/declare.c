@@ -608,9 +608,6 @@ void    ArrayDecl( sym_id sym ) {
         } else {
             dim_list.num_elts = num_elts;
             if( sym->ns.flags & SY_SUB_PARM ) {
-#if _OPT_CG == _OFF
-                GEndSList( sym );
-#else
                 // we don't want an ADV generated in the following case:
                 //      SUBROUTINE SAM( A )
                 //      DIMENSION A(10)
@@ -618,7 +615,6 @@ void    ArrayDecl( sym_id sym ) {
                 //      END
                 FreeWarpLabel( dim_list.l.init_label );
                 dim_list.l.init_label = 0;
-#endif
             } else if( dim_list.l.init_label != 0 ) {
                 FreeWarpLabel( dim_list.l.init_label );
                 dim_list.l.init_label = 0;

@@ -46,12 +46,8 @@ single ERFC( single arg ) {
     return( DERFC( arg ) );
 }
 
-#if _OPT_CG == _ON
-
 single XERFC( single *arg ) {
 //===========================
 
     return( ERFC( *arg ) );
 }
-
-#endif

@@ -33,7 +33,6 @@
 #define _DEVELOPMENT    _OFF    // are we developing?
 #define _MEMTRACK       _OFF    // memory tracking during development?
 #define _CSET           _ASCII  // character set?
-#define _OPT_CG         _ON     // optimizing code generator used?
 
 #if defined( __386__ ) || defined( M_I86 )
   #if defined( __FPI__ )                // 8087 present?

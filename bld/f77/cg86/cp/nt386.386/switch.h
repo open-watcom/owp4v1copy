@@ -38,7 +38,6 @@
 #define _CSET           _ASCII  // character set?
 #define _TARGET         _80386  // target machine?
 #define _OPSYS          _NT     // operating system?
-#define _OPT_CG         _ON     // optimizing code generator used?
 #define BY_FORTRAN_FRONT_END    // identify yourself
 
 #define _SysMemAlloc    malloc  // define system memory manager

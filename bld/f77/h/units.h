@@ -41,15 +41,6 @@
 #define STANDARD_INPUT  -2
 #define STANDARD_OUTPUT -3
 
-#if _OPT_CG == _OFF
-
-// Unit specifiers used by debugger
-// --------------------------------
-
-#define DB_STD_INPUT    -5
-#define DB_STD_OUTPUT   -6
-
-#endif
 
 // Units 5 and 6 are preconnected to standard input and output devices
 // -------------------------------------------------------------------

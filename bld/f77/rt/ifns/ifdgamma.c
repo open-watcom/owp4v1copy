@@ -61,12 +61,8 @@ double  DGAMMA( double arg ) {
     return( __gamma( arg, &xinf ) );
 }
 
-#if _OPT_CG == _ON
-
 double XDGAMMA( double *arg ) {
 //=============================
 
     return( DGAMMA( *arg ) );
 }
-
-#endif

@@ -54,9 +54,7 @@ void            __ReleaseIOSys() {
 
     IOCB->flags &= ~IOF_ACTIVE;
     _ReleaseFIO();
-#if ( _OPT_CG == _ON ) || defined( _SA_LIBRARY )
     IOTypeRtn = &IOType;
-#endif
 }
 
 
@@ -82,11 +80,9 @@ int     IOMain( void (*io_rtn)() ) {
             DiscoFile( IOCB->fileinfo );
         }
     }
-#if ( _OPT_CG == _ON ) || defined( _SA_LIBRARY )
     if( __XcptFlags & XF_IO_INTERRUPTED ) {
         RTErr( KO_INTERRUPT );
     }
-#endif
     if( __XcptFlags & XF_FATAL_ERROR ) {
         __ReleaseIOSys(); // so other threads can continue
         Suicide();

@@ -174,12 +174,6 @@
   #pragma aux (rt_rtn) ADVFillHiLo1;
 
   #pragma aux (rt_rtn) lg_rtn "LG@*";
-  #if _OPT_CG == _OFF
-      #pragma aux (rt_rtn) SetIOFlags;
-      #pragma aux (rt_rtn) IOData;
-      #pragma aux (lg_rtn) Alloc;
-      #pragma aux (lg_rtn) DeAlloc;
-  #endif
   #pragma aux (lg_rtn) STOP_HOOK;
   #pragma aux (lg_rtn) PAUSE_HOOK;
   #pragma aux (lg_rtn) ERR_HOOK;

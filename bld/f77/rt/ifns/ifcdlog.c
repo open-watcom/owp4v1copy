@@ -64,12 +64,8 @@ extern  dcomplex        CDLOG(double,double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 dcomplex XCDLOG( dcomplex *arg ) {
 //================================
 
     return( CDLOG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -72,9 +72,7 @@ void    OpenSymTab() {
 
 // Initialize the symbol table.
 
-#if _OPT_CG == _ON
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-#endif
     GList = NULL;
     InitHashTable( GHashTable, HASH_PRIME + 1 );
 }
@@ -120,7 +118,6 @@ sym_id  FindShadow( sym_id sym ) {
 }
 
 
-#if _OPT_CG ==_ON
 
 sym_id    STAdvShadow( sym_id sym ) {
 //===================================
@@ -218,8 +215,6 @@ sym_id  FindEqSetShadow( sym_id sym ) {
     return( shadow );
 }
 
-#endif
-
 
 sym_id    STFnShadow( sym_id sym ) {
 //==================================
@@ -298,11 +293,7 @@ sym_id  STName( char *name, int length ) {
     if( sym == NULL ) {
         sym = STAdd( name, length );
         sym->ns.si.va.vi.ec_ext = NULL;
-#if _OPT_CG == _OFF
-        sym->ns.reloc_chain.lr = NULL;
-#else
         sym->ns.address = NULL;
-#endif
         HashInsert( HashTable, HashValue, &NList, sym );
     } else if( ( ( sym->ns.flags & SY_CLASS ) == SY_VARIABLE ) &&
                ( sym->ns.flags & SY_SPECIAL_PARM ) ) {
@@ -327,11 +318,7 @@ sym_id  STCommon( char *name, int length ) {
         sym_ptr = STAdd( name, length );
         sym_ptr->ns.link = BList;
         sym_ptr->ns.si.cb.first = NULL;    // indicate an empty common block
-#if _OPT_CG == _ON
         sym_ptr->ns.address = NULL;
-#else
-        sym_ptr->ns.reloc_chain.cr = NULL;
-#endif
         BList = sym_ptr;
     }
     return( sym_ptr );

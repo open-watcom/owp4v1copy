@@ -38,26 +38,11 @@
 #include "rundat.h"
 #include "xfflags.h"
 
-#if _OPT_CG == _ON
-
 #include <stdlib.h>
-
-#else
-
-#include "rtenv.h"
-
-extern  void            Stop(string PGM *);
-
-#endif
 
 
 void    fortran FEXIT( intstar4 *rc ) {
 //=====================================
 
-#if _OPT_CG == _ON
     exit( *rc );
-#else
-    __RetCode = *rc;
-    Stop( NULL );
-#endif
 }

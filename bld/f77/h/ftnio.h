@@ -52,18 +52,14 @@
     #define _BadRec( x )        ( x <= 0 )
 
 // In order to avoid hitting every runtime file we do this before prototyping
-#if !defined( SetIOCB ) && _OPT_CG == _ON
+#if !defined( SetIOCB )
   #if !defined( __386__ ) && !defined( M_I86 ) && defined( __RT__ )
     #define SetIOCB     __RT_SetIOCB
   #endif
 #endif
 
 extern  void            SetIOCB();
-#if _OPT_CG == _ON
-  #define _SetIOCB()    SetIOCB();
-#else
-  #define _SetIOCB()
-#endif
+#define _SetIOCB()    SetIOCB();
 
 // UNCOMMENT_TOKEN
 // When extended stuff is implemented change EXTENDED_IO_WINDOW and

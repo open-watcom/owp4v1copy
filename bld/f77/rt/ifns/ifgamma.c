@@ -62,12 +62,8 @@ single GAMMA( single arg ) {
     return( __gamma( arg, &xinf ) );
 }
 
-#if _OPT_CG == _ON
-
 single XGAMMA( single *arg ) {
 //============================
 
     return( GAMMA( *arg ) );
 }
-
-#endif

@@ -72,9 +72,7 @@ void    Extension( int code, ... ) {
 
     va_list     args;
 
-#if _OPT_CG == _ON
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-#endif
     if( ( Options & OPT_EXT ) != 0 ) {
         va_start( args, code );
         ErrHandler( "*EXT*", code, args );
@@ -100,9 +98,7 @@ void    Warning( int code, ... ) {
 
     va_list     args;
 
-#if _OPT_CG == _ON
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-#endif
     if( ( Options & OPT_WARN ) != 0 ) {
         va_start( args, code );
         ErrHandler( "*WRN*", code, args );
@@ -270,15 +266,6 @@ static  void    ErrHandler( char *err_type, int error, va_list args ) {
             }
         }
     }
-#if _OPT_CG == _OFF
-    if( ProgSw & PS_LIBRARY_PROCESS ) {
-        // If we get an error during the "library process" initialization
-        // (i.e. dynamic memory exhausted), "LibMember" won't yet be set.
-        if( LibMember != NULL ) {
-            MsgPrintErr( MS_LIB_MEMBER, LibMember );
-        }
-    }
-#endif
     __BldErrMsg( error, buffer, args );
     PrintErr( buffer );
     PrtErrNL();

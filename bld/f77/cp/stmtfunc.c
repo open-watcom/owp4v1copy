@@ -57,9 +57,6 @@ extern  bool            RecComma(void);
 extern  bool            ReqName(int);
 extern  void            Error(int,...);
 extern  void            *FMemAlloc(uint);
-#if _OPT_CG == _OFF
-extern  void            GSaveTemps(void);
-#endif
 
 
 void    SFPrologue() {
@@ -73,9 +70,6 @@ void    SFPrologue() {
     sf_parm     **parm;
 
     StmtSw |= SS_SF_REFERENCED;
-#if _OPT_CG == _OFF
-    GSaveTemps();
-#endif
     CkTypeDeclared();
     SFSymId = CITNode->sym_ptr;
     if( ( SFSymId->ns.typ == TY_CHAR ) && ( SFSymId->ns.xt.size == 0 ) ) {
@@ -140,9 +134,6 @@ void    SFEpilogue() {
 
     sf_parm     *parm;
 
-#if _OPT_CG == _OFF
-    GSaveTemps();
-#endif
     GEndSF();
     parm = SFSymId->ns.si.sf.header->parm_list;
     while( parm != NULL ) {

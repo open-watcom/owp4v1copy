@@ -66,9 +66,7 @@ static  void    TraceInfo( char *buff ) {
 void            SetLine( uint src_line ) {
 //========================================
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     ExCurr->line = src_line;
 }
 
@@ -76,9 +74,7 @@ void            SetLine( uint src_line ) {
 void            SetModule( traceback *tb ) {
 //==========================================
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     // if TraceRoutine is not NULL the first time SetModule() is called,
     // we can assume we have linked with WATFOR-77 and will use its method
     // of printing traceback information

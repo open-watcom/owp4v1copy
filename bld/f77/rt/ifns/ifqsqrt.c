@@ -57,12 +57,8 @@ extern  extended                QSQRT(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQSQRT( extended *arg ) {
 //============================
 
     return( QSQRT( *arg ) );
 }
-
-#endif

@@ -136,9 +136,7 @@ sym_id  LkUpStmtNo() {
 
     sym_ptr = LookUp( GetStmtNo() );
     if( sym_ptr != NULL ) {
-#if _OPT_CG == _ON
         sym_ptr->st.ref_count++;
-#endif
         flags = sym_ptr->st.flags;
         if( GetStmtNum( sym_ptr ) == StmtNo ) {
             Warning( ST_TO_SELF );     // this is only a warning
@@ -231,9 +229,7 @@ sym_id  LkUpAssign() {
 
     sym_ptr = LookUp( GetStmtNo() );
     if( sym_ptr != NULL ) {
-#if _OPT_CG == _ON
         sym_ptr->st.ref_count++;
-#endif
         sym_ptr->st.flags |= SN_ASSIGNED;
         if( ( sym_ptr->st.flags & SN_DEFINED ) &&
             ( ( sym_ptr->st.flags & SN_FORMAT ) == 0 ) &&
@@ -293,9 +289,7 @@ void    DefStmtNo( unsigned_32 num ) {
     sym_id      sym_ptr;
 
     sym_ptr = LookUp( num );
-#if _OPT_CG == _ON
     sym_ptr->st.ref_count++;
-#endif
     if( ( sym_ptr->st.flags & SN_DEFINED ) != 0 ) {
         Err( ST_ALREADY, sym_ptr );
     } else {
@@ -375,7 +369,4 @@ void    InitStNumbers() {
     StNumbers.var_format = FALSE;
     StNumbers.in_remote  = FALSE;
     StNumbers.branches   = NextLabel();
-#if _OPT_CG == _OFF
-    StNumbers.formats    = NextLabel();
-#endif
 }

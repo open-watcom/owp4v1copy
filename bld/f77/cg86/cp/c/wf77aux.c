@@ -41,24 +41,20 @@
 #include "errcod.h"
 #include "cpopt.h"
 #include "progsw.h"
-#if _OPT_CG == _ON
-  #include "fio.h"
-  #include "sdfile.h"
-  #if ( _TARGET == _8086 || _TARGET == _80386 )
-    #include "asminlin.h"
-  #elif ( _TARGET == _AXP || _TARGET == _PPC )
-    #include "asinline.h"
-  #else
-    #error Unknow Target
-  #endif
+#include "fio.h"
+#include "sdfile.h"
+#if ( _TARGET == _8086 || _TARGET == _80386 )
+  #include "asminlin.h"
+#elif ( _TARGET == _AXP || _TARGET == _PPC )
+  #include "asinline.h"
+#else
+  #error Unknow Target
 #endif
 
 #include <string.h>
 #include <ctype.h>
-#if _OPT_CG == _ON
 #include <sys/types.h>
 #include <sys/stat.h>
-#endif
 
 extern  void            *FMemAlloc(int);
 extern  void            FMemFree(void *);
@@ -79,8 +75,6 @@ static  char            *TokEnd;
 static  aux_info        *AliasInfo;
 static  char            SymName[MAX_SYMLEN];
 static  int             SymLen;
-
-#if _OPT_CG == _ON
 
 #if ( _TARGET == _8086 || _TARGET == _80386 )
 static  arr_info        *ArrayInfo;
@@ -214,58 +208,8 @@ static  char            _wresppc[] = { "wresppc" };
   #error Unknown Target
 #endif
 
-#else
-
-#if _8087 == _ON
-  #define _WFLIB                6
-  static  char            _wflib[] = { "wflib7" };
-  #if _TARGET == _80386
-    #define _FLIB                       5
-    static  char            _flib[] = { "flib7" };
-    #define _MATH               8
-    static  char            _math[] = { "math387r" };
-    #define _NOEMU              8
-    static  char            _noemu[] = { "noemu387" };
-  #else
-    #define _FLIB                       6
-    static  char            _flib[] = { "flib7l" };
-    #define _MATH               7
-    static  char            _math[] = { "math87l" };
-    #define _NOEMU              7
-    static  char            _noemu[] = { "noemu87" };
-  #endif
-#else
-  #define _WFLIB                5
-  static  char            _wflib[] = { "wflib" };
-  #if _TARGET == _80386
-    #define _FLIB                       4
-    static  char            _flib[] = { "flib" };
-    #define _MATH               6
-    static  char            _math[] = { "math3r" };
-  #else
-    #define _FLIB                       5
-    static  char            _flib[] = { "flibl" };
-    #define _MATH               5
-    static  char            _math[] = { "mathl" };
-  #endif
-#endif
 
 #if _TARGET == _80386
-  #define _CLIB         6
-  static  char            _clib[] = { "clib3r" };
-  #define _WRES         5
-  static  char            _wres[] = { "wresf" };
-#else
-  #define _CLIB         5
-  static  char            _clib[] = { "clibl" };
-  #define _WRES         5
-  static  char            _wres[] = { "wresl" };
-#endif
-
-#endif
-
-#if _OPT_CG == _ON
-  #if _TARGET == _80386
     static      char    __Syscall[] = { "aux __syscall \"*\""
                                     "parm caller []"
                                     "value struct struct caller []"
@@ -282,7 +226,7 @@ static  char            _wresppc[] = { "wresppc" };
                                     "parm routine []"
                                     "value struct []"
                                     "modify [eax ecx edx]" };
-  #elif _TARGET == _8086
+#elif _TARGET == _8086
     static      char    __Pascal[] =  { "aux __pascal \"^\""
                                     "parm routine reverse []"
                                     "value struct float struct caller []"
@@ -291,15 +235,6 @@ static  char            _wresppc[] = { "wresppc" };
                                     "parm caller []"
                                     "value struct float struct routine [ax]"
                                     "modify [ax bx cx dx]" };
-  #endif
-#else
-  #if _TARGET == _80386
-    #if _OPSYS == _OS2
-      static    char    __Syscall[] = { "aux __syscall \"*\"" };
-    #endif
-  #endif
-  static        char    __Cdecl[] =   { "aux __cdecl \"_*\"" };
-  static        char    __Pascal[] =  { "aux __pascal \"^\"" };
 #endif
 
 extern  aux_info        DefaultInfo;
@@ -308,15 +243,12 @@ default_lib             *DefaultLibs;
 aux_info                *AuxInfo;
 aux_info                FortranInfo;
 aux_info                ProgramInfo;
-#if _OPT_CG == _ON
 dep_info                *DependencyInfo;
-#endif
 
 
 void            InitAuxInfo() {
 //=============================
 
-#if ( _OPT_CG == _ON )
 #if ( _TARGET == _8086 || _TARGET == _80386 )
     int         cpu;
     int         fpu;
@@ -344,11 +276,9 @@ void            InitAuxInfo() {
 #else
     #error Unknown Target
 #endif
-#endif
 
     DefaultLibs = NULL;
     AuxInfo = NULL;
-#if _OPT_CG == _ON
     DependencyInfo = NULL;
 #if _TARGET == _8086 || _TARGET == _80386
 
@@ -432,32 +362,16 @@ void            InitAuxInfo() {
         IFXInfo.parm_info = WinParms;
     }
 #endif
-#endif
+
     FortranInfo = DefaultInfo;
     ProgramInfo = DefaultInfo;
-#if _OPT_CG == _ON
-  #if _TARGET == _80386
+#if _TARGET == _80386
     DoPragma( __Syscall );
     DoPragma( __Stdcall );
-  #endif
+#endif
 #if _TARGET == _8086 || _TARGET == _80386
     DoPragma( __Pascal );
     DoPragma( __Cdecl );
-#endif
-#else
-  #if _TARGET == _80386
-    #if _OPSYS == _OS2
-      DoPragma( __Syscall );
-      CurrAux->call_info &= ~AUX_CALL_MASK;
-      CurrAux->call_info = AUX_SYSCALL;
-    #endif
-  #endif
-    DoPragma( __Cdecl );
-    CurrAux->call_info &= ~AUX_CALL_MASK;
-    CurrAux->call_info |= AUX_CDECL;
-    DoPragma( __Pascal );
-    CurrAux->call_info &= ~AUX_CALL_MASK;
-    CurrAux->call_info |= AUX_PASCAL;
 #endif
 }
 
@@ -476,17 +390,13 @@ void            FiniAuxInfo() {
     FreeChain( &DefaultLibs );
     // in case of fatal error, FiniAuxInfo() is called
     // from TDPurge()
-#if _OPT_CG == _ON
 #if ( _TARGET == _8086 || _TARGET == _80386 )
     FreeChain( &ArrayInfo );
 #endif
     FreeChain( &DependencyInfo );
     AsmSymFini();
-#endif
 }
 
-
-#if _OPT_CG == _ON
 
 void    SubAuxInit() {
 //====================
@@ -569,8 +479,6 @@ void    AddDependencyInfo( source *fi ) {
     }
 }
 
-#endif
-
 
 static  void    AddDefaultLib( char *lib_ptr, int lib_len, char priority ) {
 //==========================================================================
@@ -578,9 +486,7 @@ static  void    AddDefaultLib( char *lib_ptr, int lib_len, char priority ) {
     default_lib         **lib;
     default_lib         *new_lib;
 
-#if _OPT_CG == _ON
     if( !( Options & OPT_DFLT_LIB ) ) return;
-#endif
     for( lib = &DefaultLibs; *lib != NULL; lib = &(*lib)->link ) {
         if( strlen( &(*lib)->lib[1] ) != lib_len ) continue;
         if( memcmp( &(*lib)->lib[1], lib_ptr, lib_len ) == 0 ) return;
@@ -597,7 +503,6 @@ static  void    AddDefaultLib( char *lib_ptr, int lib_len, char priority ) {
 void    DefaultLibInfo() {
 //========================
 
-#if _OPT_CG == _ON
 #if _TARGET == _80386
     if( CGOpts & CGOPT_STK_ARGS ) {
         if( CPUOpts & CPUOPT_FPC ) {
@@ -677,18 +582,6 @@ void    DefaultLibInfo() {
 #else
   #error Unknown Platform
 #endif
-#else
-    AddDefaultLib( _wflib, _WFLIB, '1' );
-    AddDefaultLib( _flib, _FLIB, '1' );
-    AddDefaultLib( _math, _MATH, '1' );
-    AddDefaultLib( _clib, _CLIB, '1' );
-    if( Options & OPT_RESOURCES ) {
-        AddDefaultLib( _wres, _WRES, '1' );
-    }
-    #if _8087 == _ON
-        AddDefaultLib( _noemu, _NOEMU, '1' );
-    #endif
-#endif
 }
 
 
@@ -704,7 +597,6 @@ static  void    FreeAuxElements( aux_info *aux ) {
 //================================================
 
     FreeArgList( aux );
-#if _OPT_CG == _ON
     if( aux->parm_info != DefaultInfo.parm_info ) {
         FMemFree( aux->parm_info );
         aux->parm_info = DefaultInfo.parm_info;
@@ -713,7 +605,6 @@ static  void    FreeAuxElements( aux_info *aux ) {
         FMemFree( aux->call_bytes );
         aux->call_bytes = DefaultInfo.call_bytes;
     }
-#endif
     if( aux->object_name != DefaultInfo.object_name ) {
         FMemFree( aux->object_name );
         aux->object_name = DefaultInfo.object_name;
@@ -738,10 +629,8 @@ aux_info        *NewAuxEntry( char *name, int name_len ) {
     memcpy( aux->sym_name, name, name_len );
     aux->sym_name[ name_len ] = NULLCHAR;
     aux->link = AuxInfo;
-#if _OPT_CG == _ON
     aux->parm_info = DefaultInfo.parm_info;
     aux->call_bytes = DefaultInfo.call_bytes;
-#endif
     aux->object_name = DefaultInfo.object_name;
     aux->arg_info = NULL;
     AuxInfo = aux;
@@ -782,7 +671,7 @@ void            Pragma() {
 
 // Process a pragma.
 
-#if (_OPT_CG == _ON) && ( _TARGET == _8086 || _TARGET == _80386 )
+#if ( _TARGET == _8086 || _TARGET == _80386 )
     char        *arr;
     uint        arr_len;
 #endif
@@ -806,7 +695,7 @@ void            Pragma() {
                 ScanToken();
             }
         }
-#if (_OPT_CG == _ON) && ( _TARGET == _8086 || _TARGET == _80386 )
+#if ( _TARGET == _8086 || _TARGET == _80386 )
     } else if( RecToken( "ARRAY" ) ) {
         SymbolId();
         TokUpper();
@@ -850,19 +739,16 @@ void            Pragma() {
             ProcessAlias();
             ObjectName();
 
-#if (_OPT_CG == _ON)
             have.f_far    = 0;
             have.f_loadds = 0;
             have.f_export = 0;
             have.f_value  = 0;
             have.f_modify = 0;
-#endif
             have.f_parm   = 0;
             for( ;; ) {
                 if( !have.f_parm && RecToken( "PARM" ) ) {
                     GetParmInfo();
                     have.f_parm = 1;
-#if _OPT_CG == _ON
                 } else if( !have.f_far && RecToken( "=" ) ) {
                     GetByteSeq();
 #if ( _TARGET == _8086 || _TARGET == _80386 )
@@ -898,7 +784,6 @@ void            Pragma() {
                     GetSaveInfo();
                     have.f_modify = 1;
 #endif
-#endif
                 } else {
                     break;
                 }
@@ -922,9 +807,7 @@ void    DoPragma( char *ptr ) {
             if( ProgSw & PS_FATAL_ERROR ) {
                 Suicide();
             }
-#if _OPT_CG == _ON
             AsmSymFini();
-#endif
             break;
         }
         if( RecToken( "\0" ) ) break;
@@ -935,10 +818,8 @@ void    DoPragma( char *ptr ) {
 void    ProcPragma( char *ptr ) {
 //===============================
 
-#if _OPT_CG == _ON
     // don't process auxiliary pragma's until pass 2
     if( ProgSw & PS_DONT_GENERATE ) return;
-#endif
     DoPragma( ptr );
 }
 
@@ -1013,7 +894,7 @@ static  void    ScanToken() {
 }
 
 
-#if ((_OPT_CG == _ON ) && ( _TARGET == _8086 || _TARGET == _80386))
+#if (( _TARGET == _8086 || _TARGET == _80386))
 static  void    TokUpper() {
 //==========================
 
@@ -1095,7 +976,6 @@ void            CopyAuxInfo( aux_info *dst, aux_info *src ) {
 
     if( dst != src ) {
         dst->call_info = src->call_info;
-#if _OPT_CG == _ON
         dst->save_info = src->save_info;
         dst->return_info = src->return_info;
         dst->struct_info = src->struct_info;
@@ -1105,7 +985,6 @@ void            CopyAuxInfo( aux_info *dst, aux_info *src ) {
         if( src->call_bytes != DefaultInfo.call_bytes ) {
             DupCallBytes( dst, src );
         }
-#endif
         if( src->object_name != DefaultInfo.object_name ) {
             DupObjectName( dst, src );
         }
@@ -1113,8 +992,6 @@ void            CopyAuxInfo( aux_info *dst, aux_info *src ) {
     }
 }
 
-
-#if _OPT_CG == _ON
 
 static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
 //============================================================
@@ -1179,8 +1056,6 @@ static  void    DupParmInfo( aux_info *dst, aux_info *src ) {
     memcpy( new_reg_set, reg_set, size * sizeof( hw_reg_set ) );
     dst->parm_info = new_reg_set;
 }
-
-#endif
 
 
 static  void    DupObjectName( aux_info *dst, aux_info *src ) {
@@ -1255,8 +1130,6 @@ static  void            ObjectName() {
     ScanToken();
 }
 
-
-#if _OPT_CG == _ON
 
 enum    sym_state       AsmQueryExternal( char *name ) {
 //======================================================
@@ -1528,8 +1401,6 @@ static  hw_reg_set      *RegSets() {
 }
 #endif
 
-#endif
-
 
 static  void            GetParmInfo() {
 //=====================================
@@ -1559,7 +1430,7 @@ static  void            GetParmInfo() {
         if( !have.f_args && RecToken( "(" ) ) {
             GetArgList();
             have.f_args = 1;
-#if _OPT_CG == _ON && ( _TARGET == _8086 || _TARGET == _80386 )
+#if ( _TARGET == _8086 || _TARGET == _80386 )
         } else if( !have.f_pop && RecToken( "CALLER" ) ) {
             CurrAux->call_info |= CALLER_POPS;
             have.f_pop = 1;
@@ -1682,8 +1553,6 @@ static  void    GetArgList() {
 }
 
 
-#if _OPT_CG == _ON
-
 #if ( _TARGET == _8086 || _TARGET == _80386 )
 static  void            GetRetInfo() {
 //====================================
@@ -1800,5 +1669,4 @@ static  void            GetSaveInfo() {
         HW_TurnOff( CurrAux->save_info, modlist );
     }
 }
-#endif
 #endif

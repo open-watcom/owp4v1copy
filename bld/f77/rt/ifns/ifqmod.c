@@ -62,12 +62,8 @@ extern  extended                QMOD(extended,extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQMOD( extended *arg1, extended *arg2 ) {
 //================================================
 
     return( QMOD( *arg1, *arg2 ) );
 }
-
-#endif

@@ -29,6 +29,13 @@
 *
 ****************************************************************************/
 
+/**************** IMPORTANT NOTE ************************
+
+  data in files:  ptypes.inc, ptypes.h and  parmtype.h
+  
+  must corespond each to other
+
+********************************************************/
 
 #ifndef WF77_PTYPES_INCLUDED
 #define WF77_PTYPES_INCLUDED

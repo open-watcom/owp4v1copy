@@ -167,12 +167,8 @@ extended  QGAMMA( extended arg ) {
     return( __gamma( arg, &xinf ) );
 }
 
-#if _OPT_CG == _ON
-
 extended XQGAMMA( extended *arg ) {
 //=============================
 
     return( QGAMMA( *arg ) );
 }
-
-#endif

@@ -50,21 +50,6 @@ extern  void            GetIOErrMsg(ftnfile *,char *);
 extern  int             ErrCodOrg(uint);
 
 
-#if _OPT_CG == _OFF
-
-static  void    IOWriteErr( int errcode, ... ) {
-//==============================================
-
-    va_list     args;
-
-    va_start( args, errcode );
-    WriteErr( errcode, args );
-    va_end( args );
-}
-
-#endif
-
-
 static  void    SysIOErr( int errcode, ... ) {
 //============================================
 
@@ -85,9 +70,6 @@ void    IOErr( int errcode, ... ) {
     va_list     args;
 
     va_start( args, errcode );
-#if _OPT_CG == _OFF
-    if( RTFlags & IO_INITIALIZED ) {
-#endif
         if( ( IOCB->set_flags & (SET_IOSPTR|SET_ERRSTMT) ) == 0 ) {
             if( errcode == IO_FILE_PROBLEM ) {
                 GetIOErrMsg( IOCB->fileinfo, errbuff );
@@ -103,14 +85,5 @@ void    IOErr( int errcode, ... ) {
             IOCB->status = errcode;
         }
         Suicide();
-#if _OPT_CG == _OFF
-    } else {
-        if( errcode == IO_FILE_PROBLEM ) {
-            GetIOErrMsg( NULL, errbuff );
-        }
-        IOWriteErr( errcode, errbuff );
-        __XcptFlags |= XF_FATAL_ERROR;
-    }
-#endif
     va_end( args );
 }

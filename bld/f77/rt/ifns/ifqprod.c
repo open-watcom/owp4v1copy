@@ -46,12 +46,8 @@ extended QPROD( double arg1, double arg2 ) {
     return( arg1 * arg2 );
 }
 
-#if _OPT_CG == _ON
-
 extended XQPROD( double *arg1, double *arg2 ) {
 //===========================================
 
     return( *arg1 * *arg2 );
 }
-
-#endif

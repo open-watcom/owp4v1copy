@@ -51,12 +51,8 @@ intstar1 I1SIGN( intstar1 arg1, intstar1 arg2 ) {
     return( -arg1 );
 }
 
-#if _OPT_CG == _ON
-
 intstar1 XI1SIGN( intstar1 *arg1, intstar1 *arg2 ) {
 //=================================================
 
     return( I1SIGN( *arg1, *arg2 ) );
 }
-
-#endif

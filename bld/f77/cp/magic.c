@@ -129,20 +129,6 @@ sym_id  TmpAlloc( int size ) {
 }
 
 
-#if _OPT_CG == _OFF
-
-sym_id  TmpOffset( sym_id ml, int offset ) {
-//==========================================
-
-// Point into the middle of an allocated temporary
-
-    return( FindTempIndex( offset + ml->ns.si.ms.tmp_info.tmp_index,
-                           ml->ns.typ ) );
-}
-
-#endif
-
-
 void    GSaveTemps() {
 //====================
 

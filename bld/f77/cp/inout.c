@@ -108,26 +108,17 @@ extern  character_set   CharSetInfo;
 
 #define _Copyright "1984"
 
-#if _OPT_CG == _ON
-    #define       VERSION _WFC_VERSION_
-    #if _TARGET == _8086
-        #define _Banner "FORTRAN 77/16 Optimizing Compiler"
-    #elif _TARGET == _80386
-        #define _Banner "FORTRAN 77/32 Optimizing Compiler"
-    #elif _TARGET == _AXP
-        #define _Banner "FORTRAN 77 Alpha AXP Optimizing Compiler"
-    #elif _TARGET == _PPC
-        #define _Banner "FORTRAN 77 PowerPC Optimizing Compiler"
-    #else
-        #error Unknown System
-    #endif
+#define       VERSION _WFC_VERSION_
+#if _TARGET == _8086
+    #define _Banner "FORTRAN 77/16 Optimizing Compiler"
+#elif _TARGET == _80386
+    #define _Banner "FORTRAN 77/32 Optimizing Compiler"
+#elif _TARGET == _AXP
+    #define _Banner "FORTRAN 77 Alpha AXP Optimizing Compiler"
+#elif _TARGET == _PPC
+    #define _Banner "FORTRAN 77 PowerPC Optimizing Compiler"
 #else
-    #define VERSION _WATFOR77_VERSION_
-    #if _TARGET == _8086
-        #define _Banner "WATFOR-77/16"
-    #else
-        #define _Banner "WATFOR-77/32"
-    #endif
+    #error Unknown System
 #endif
 
 
@@ -326,33 +317,6 @@ void    ReadSrc() {
 }
 
 
-#if _OPT_CG == _OFF
-
-file_handle SrcPointer() {
-//========================
-
-    file_handle data;
-
-    data = NULL;
-    if( CurrFile != NULL ) {
-        data = CurrFile->fileptr;
-        FMemFree( CurrFile->name );
-        FMemFree( CurrFile );
-        CurrFile = NULL;
-    }
-    return( data );
-}
-
-
-int     GetSrcName( char *buffer ) {
-//==================================
-
-    return( MakeName( SrcName, SrcExtn, buffer ) );
-}
-
-#endif
-
-
 static  bool    AlreadyOpen( char *name ) {
 //=========================================
 
@@ -419,13 +383,11 @@ void    Include( char *inc_name ) {
     // clear RetCode so that we don't get "file not found" returned
     // because we could not open include file
     RetCode = _SUCCESSFUL;
-#if _OPT_CG == _ON
     {
         extern  void    AddDependencyInfo(source *);
 
         AddDependencyInfo( CurrFile );
     }
-#endif
 }
 
 
@@ -469,33 +431,6 @@ void    SrcInclude( char *name ) {
         BISetSrcFile();
     }
 }
-
-
-#if _OPT_CG == _OFF
-
-void    RestData() {
-//==================
-
-#if _OBJECT == _ON
-    if( _GenObjectFile() ) {
-        InfoError( CO_DATA_WITH_OBJ );
-    }
-#endif
-    if( !(ProgSw & PS_LIBRARY_PROCESS) && (CurrFile->link == NULL) ) {
-        ProgSw |= PS_SOURCE_EOF;
-        CurrFile->flags |= INC_DATA_OPTION;
-#if _EDITOR == _ON
-        if( SDIsInternal( CurrFile->fileptr ) ) {
-            InfoError( CO_DATA_IN_BAD_FILE );
-        }
-#endif
-    } else {
-        InfoError( CO_DATA_IN_BAD_FILE );
-        Conclude();
-    }
-}
-
-#endif
 
 
 void    Conclude() {
@@ -710,16 +645,10 @@ static  void    OpenListingFile( bool reopen ) {
     char        errmsg[81];
     char        name[MAX_FILE+1];
 
-#if _OPT_CG == _ON
     reopen = reopen;
-#endif
     if( ( Options & OPT_LIST ) == 0 ) {
         // no listing file
         // ignore other listing file options
-#if _OPT_CG == _OFF
-        Options    |= OPT_XTYPE;
-        NewOptions |= OPT_XTYPE;
-#endif
     } else {
         GetLstName( name );
         if( Options & OPT_TYPE ) {
@@ -733,16 +662,6 @@ static  void    OpenListingFile( bool reopen ) {
         } else { // DISK file
             SDSetAttr( DskAttr );
         }
-#if _OPT_CG == _OFF
-        if( Options & OPT_DEBUG ) { // debugger gets source from listing file
-            if( reopen ) {
-                ListFile = SDOpen( &name, APPEND_FILE );
-            } else {
-                Erase( LstExtn );
-                ListFile = SDOpen( &name, UPDATE_FILE );
-            }
-        } else
-#endif
         ListFile = SDOpen( name, WRITE_FILE );
         if( SDError( ListFile, errmsg ) ) {
             InfoError( SM_OPENING_FILE, name, errmsg );
@@ -863,23 +782,6 @@ void    PrtBanner() {
     PrtOptions();
     LFSkip();
 }
-
-
-#if _OPT_CG == _OFF
-
-file_handle LstPointer() {
-//========================
-
-    file_handle lf;
-
-    lf = ListFile;
-    if( Options & OPT_XTYPE ) {
-        lf = NULL;
-    }
-    return( lf );
-}
-
-#endif
 
 
 void    GetLstName( char *buffer ) {

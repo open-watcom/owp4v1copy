@@ -51,9 +51,7 @@ gbl_defn bool           CpError;        // compile error flag
 gbl_defn bool           AError;         // error in expr (downscan, upscan)
 gbl_defn sym_id         InitVar;        // S.T. entry being initialized (DATA)
 gbl_defn sym_id         SFSymId;        // pointer to symbol table for stmt func
-#if _OPT_CG == _ON
 gbl_defn label_id       SFEndLabel;     // end of the current statement function
-#endif
 gbl_defn entry_pt       *ArgList;       // pointer to current entry point list
 gbl_defn entry_pt       *Entries;       // pointer to head of entry point lists
 gbl_defn act_eq_entry   *EquivSets;     // pointer to equivalent sets
@@ -67,9 +65,7 @@ gbl_defn byte           ResultType;     // result type of operation in upscan
 gbl_defn unsigned_16    StmtSw;         // statement switches
 gbl_defn rememb         Remember;       // info about the last executable stmt
 gbl_defn char           *SrcName;       // name of source file
-#if _OPT_CG == _ON
 gbl_defn char           *ObjName;       // name of object output file
-#endif
 gbl_defn source         *CurrFile;      // linked list of open FOR77 files
 gbl_defn char           *IncludePath;   // path for INCLUDE files
 
@@ -91,15 +87,6 @@ gbl_defn byte           StmtType;       // type of statement line
 gbl_defn byte           ContType;       // type of continuation char
 
 gbl_defn char           *LibMember;     // name of library member
-#if _OPT_CG == _OFF
-gbl_defn uint           TimeLimit;      // time allowed for execution (sec)
-#if (_OPSYS == _QNX) || (_TARGET == _VAX) || (_TARGET == _80386) || (_TARGET == _8086)
-gbl_defn unsigned_32    ObjLimit;       // amount of object memory to allocate
-#endif
-gbl_defn unsigned_32    MaxStLim;       // maximum StmtLimit
-gbl_defn uint           MaxPageLim;     // maximum PageLimit
-gbl_defn uint           MaxTimeLim;     // maximum TimeLimit
-#endif
 gbl_defn unsigned_16    ISNNumber;      // ISN # only for FORTRAN statements;
 gbl_defn byte           *CmdPtr;        // pointer to command line
 gbl_defn uint           NumExtens;      // number of extens. during compilation
@@ -107,11 +94,6 @@ gbl_defn uint           NumWarns;       // number of warnings during compilation
 gbl_defn byte           *SrcExtn;       // pointer to source file extension
 gbl_defn int            RetCode;        // return code for Main()
 
-#if _OPT_CG == _OFF
-gbl_defn unsigned_16    MaxTempIndex;   // maximum offset into temp storage
-gbl_defn unsigned_16    TempBase;       // start of temp storage
-gbl_defn unsigned_16    TempIndex;      // offset into temp storage
-#endif
 
 gbl_defn sym_id         NList;          // start of name list
 gbl_defn sym_id         CList;          // start of constant list
@@ -127,10 +109,8 @@ gbl_defn sym_id         CurrStruct;     // sym_id of structure being defined
 gbl_defn itnode         *FieldNode;     // I.T. node of current field
 
 gbl_defn pointer        ITPool;         // head of free list of I.T. nodes
-#if _OPT_CG == _ON
 gbl_defn unsigned_32    CGOpts;         // code generator options
 gbl_defn unsigned_32    CPUOpts;        // code generator options (CPU target)
 gbl_defn unsigned_32    OZOpts;         // code generator options (optimizations)
-#endif
 gbl_defn char           SymBuff[MAX_SYMLEN+1]; // buffer for symbol names
 gbl_defn bool           StmtNoFound;    // statement number found?

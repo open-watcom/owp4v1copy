@@ -87,9 +87,7 @@ enum {
     RT_OUT_DBCX,
     RT_OUT_XTCX,
     RT_OUT_CHAR,
-#if _OPT_CG == _ON
     RT_OUT_STR,
-#endif
     RT_INP_LOG1,
     RT_INP_LOG4,
     RT_INP_INT1,
@@ -102,9 +100,7 @@ enum {
     RT_INP_DBCX,
     RT_INP_XTCX,
     RT_INP_CHAR,
-#if _OPT_CG == _ON
     RT_INP_STR,
-#endif
     RT_ENDIO,
     RT_ALLOCATE,
     RT_DEALLOCATE,
@@ -113,21 +109,11 @@ enum {
     RT_CAT,
     RT_SUBSTRING,
     RT_SUBSCRIPT,
-#if _OPT_CG == _OFF
-    RT_CHAR_SUBSCR,
-#endif
     RT_PROLOGUE,
     RT_EPILOGUE,
-#if _OPT_CG == _OFF
-    RT_ADV_CONST,
-    RT_ADV_VAR,
-    RT_ADV_ASSUME,
-#endif
     RT_FMT_ASSIGN,
     RT_SET_LINE,
-#if _OPT_CG == _ON
     RT_SET_MODULE,
-#endif
     RT_RTN_COUNT,
     RT_LAST_FORTRAN       = RT_RTN_COUNT - 1
 };

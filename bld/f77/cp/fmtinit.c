@@ -47,15 +47,8 @@ extern  void            GFEmNum(int);
 extern  void            FmtError(int);
 extern  void            GStmtLabel(sym_id);
 extern  void            R_FDoSpec(void);
-#if _OPT_CG == _ON
 extern  void            StartFmt(cs_label);
 extern  void            EndFmt(void);
-#else
-extern  void            GLabel(label_id);
-extern  void            GBranch(label_id);
-extern  label_id        NextLabel(void);
-extern  void            FreeLabel(label_id);
-#endif
 
 extern  void            (* const __FAR CFmtTab[])();
 
@@ -65,31 +58,13 @@ void    FScan( int fmt_length, char *fmt_string, cs_label fmt_label ) {
 
 // FORMAT statement parsing (only compile-time).
 
-#if _OPT_CG == _OFF
-    label_id    end_label;
-#endif
 
     FInit( fmt_length, fmt_string );
-#if _OPT_CG == _OFF
-    end_label = NextLabel();
-    GBranch( end_label );
-    if( StmtProc == PR_FMT ) {    // if FORMAT statement
-        GStmtLabel( fmt_label.st_label );
-    } else {
-        GLabel( fmt_label.g_label );
-    }
-#else
     StartFmt( fmt_label );
-#endif
     R_FDoSpec();
     FFinish();
     GFEmEnd();
-#if _OPT_CG == _OFF
-    GLabel( end_label );
-    FreeLabel( end_label );
-#else
     EndFmt();
-#endif
 }
 
 

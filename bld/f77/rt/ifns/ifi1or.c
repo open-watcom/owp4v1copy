@@ -44,12 +44,8 @@ intstar1       I1OR( intstar1 arg1, intstar1 arg2 ) {
     return( arg1 | arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar1       XI1OR( intstar1 *arg1, intstar1 *arg2 ) {
 //=====================================================
 
     return( I1OR( *arg1, *arg2 ) );
 }
-
-#endif

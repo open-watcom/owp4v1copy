@@ -48,11 +48,9 @@
 extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
 
-#if _OPT_CG == _ON
 extern  void            (* __ErrorInit)(char *);
 extern  void            (* __ErrorFini)(void);
 extern  char            *_LpPgmName;
-#endif
 
 #if defined( __WINDOWS__ )
   #if defined( __386__ )
@@ -110,9 +108,7 @@ void    RTSysFini() {
 
     _ExceptionFini();
     // WATFOR-77 calls __ErrorFini() when it terminates
-#if _OPT_CG == _ON
     __ErrorFini();
-#endif
 }
 
 
@@ -149,18 +145,14 @@ unsigned        RTSysInit() {
     }
 #endif
     // WATFOR-77 calls __ErrorInit() when it starts
-#if _OPT_CG == _ON
     __ErrorInit( _LpPgmName );
-#endif
     RTSysInitialized = 1;
     __InitRTData(); // for main thread
     _ExceptionInit();
     // call to RTSysFini() is done in LGSysFini() for load'n go
     // (i.e. we must call RTSysFini() after each time we execute, not when
     // WATFOR-77 exits in case we are operating in batch mode)
-#if _OPT_CG == _ON
     atexit( &RTSysFini );
-#endif
     return( 0 );
 }
 

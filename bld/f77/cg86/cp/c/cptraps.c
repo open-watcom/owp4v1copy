@@ -24,20 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compile-time exception handling
 *
 ****************************************************************************/
 
 
-//
-// CPTRAPS      : compile-time exception handling
-//
-
 #include "ftnstd.h"
 #include "errcod.h"
 #include "xfflags.h"
-#include "_handler.h"
 
 #include <stddef.h>
 #include <signal.h>
@@ -70,41 +64,8 @@ static  void    FPEHandler( int sig_num, int fpe_type ) {
 
     // reset the signal so we can get subsequent signals
     signal( SIGFPE, (void (*)(int))&FPEHandler );
-#if ( _OPT_CG == _OFF ) && ( _8087 == _ON )
-    // we do the _control87 so that we can be sure we get the signals we want
-    _control87( 0, EM_ZERODIVIDE | EM_OVERFLOW | EM_UNDERFLOW );
-#endif
     sig_num = sig_num;
     _FPEHandler( fpe_type );
-}
-
-#endif
-
-#if _OPT_CG == _OFF
-
-static volatile bool BreakFlag;
-
-
-static  void    CtrlBreak() {
-//===========================
-
-// Compile-time Ctrl/Break handler.
-
-    signal( SIGINT, CtrlBreak );
-    BreakFlag = TRUE;
-}
-
-
-bool    TBreak() {
-//================
-
-// Check if Ctrl/Break has been hit.
-
-    bool        break_flag;
-
-    break_flag = BreakFlag;
-    BreakFlag = FALSE;
-    return( break_flag );
 }
 
 #endif
@@ -117,14 +78,7 @@ void    TrapInit() {
 #if _OPSYS == _OSI
     __FPE_handler = &_FPEHandler;
 #else
-  #if _OPT_CG == _OFF
-    signal( SIGINT, CtrlBreak );
-  #endif
     signal( SIGFPE, (void (*)(int))&FPEHandler );
-  #if ( _OPT_CG == _OFF ) && ( _8087 == _ON )
-    // we do the _control87 so that we can be sure we get the signals we want
-    _control87( 0, EM_ZERODIVIDE | EM_OVERFLOW | EM_UNDERFLOW );
-  #endif
 #endif
 }
 

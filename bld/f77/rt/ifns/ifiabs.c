@@ -47,12 +47,8 @@ intstar4        IABS( intstar4 arg ) {
     return( arg );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XIABS( intstar4 *arg ) {
 //======================================
 
     return( IABS( *arg ) );
 }
-
-#endif

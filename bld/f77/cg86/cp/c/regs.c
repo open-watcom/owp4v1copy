@@ -37,7 +37,6 @@
 #include "ftnstd.h"
 #include "wf77aux.h"
 
-#if _OPT_CG == _ON
 hw_reg_set              StackParms[] = { HW_D( HW_EMPTY ) };
 
 #if _TARGET == _8086 || _TARGET == _80386
@@ -54,11 +53,8 @@ hw_reg_set              StackParms[] = { HW_D( HW_EMPTY ) };
 
 static  pass_by         IFArgValue = { NULL, PASS_BY_VALUE };
 static  pass_by         IFArgDescriptor = { NULL, PASS_BY_DESCRIPTOR };
-#endif
 
 #if _TARGET == _8086
-
-#if _OPT_CG == _ON
 
 char    *RegNames[] = {
            "8087",
@@ -231,27 +227,19 @@ aux_info                IFVarInfo = {
         &IFArgValue,
         0 };
 
-#endif
-
 aux_info                DefaultInfo = {
         NULL,
-#if _OPT_CG == _OFF
-        0,
-#else
         FAR | REVERSE_PARMS,
         HW_D( HW_FULL ),
         HW_D( HW_EMPTY ),
         &FortranParms,
         NULL,
         HW_D( HW_SI ),
-#endif
         "^",
         NULL,
         0 };
 
 #elif   _TARGET == _80386
-
-#if _OPT_CG == _ON
 
 char    *RegNames[] = {
             "8087",
@@ -441,27 +429,19 @@ aux_info                IFVarInfo = {
         &IFArgValue,
         0 };
 
-#endif
-
 aux_info                DefaultInfo = {
         NULL,
-#if _OPT_CG == _OFF
-        0,
-#else
         REVERSE_PARMS,
         HW_D( HW_FULL ),
         HW_D( HW_EMPTY ),
         &FortranParms,
         NULL,
         HW_D( HW_ESI ),
-#endif
         "^",
         NULL,
         0 };
 
 #elif _TARGET == _AXP || _TARGET == _PPC
-
-#if _OPT_CG == _ON
 
 static  hw_reg_set      RtRtnParms[] =
     { HW_D( HW_EMPTY )};
@@ -580,20 +560,14 @@ aux_info                IFVarInfo = {
         &IFArgValue,
         0 };
 
-#endif
-
 aux_info                DefaultInfo = {
         NULL,
-#if _OPT_CG == _OFF
-        0,
-#else
         REVERSE_PARMS,
         HW_D( HW_FULL ),
         HW_D( HW_EMPTY ),
         &FortranParms,
         NULL,
         HW_D( HW_EMPTY ),
-#endif
         "^",
         NULL,
         0 };

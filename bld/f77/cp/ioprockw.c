@@ -413,9 +413,6 @@ void    FormatIdd() {
                 FScan( CITNode->sym_ptr->lt.length,
                        &CITNode->sym_ptr->lt.value, fmt_label );
                 GPassLabel( fmt_label.g_label, RT_SET_FMT );
-#if _OPT_CG == _OFF
-                FreeLabel( fmt_label.g_label );
-#endif
             } else {
                 GFmtExprSet();
             }

@@ -57,15 +57,11 @@ extern  const unsigned_16 __FAR IFFlags[];
 extern  const byte __FAR IFSelect[];
 
 
-#if _OPT_CG == _ON
-
 int     IFIndex( char *name ) {
 //=============================
 
     return( KwLookUp( IFNames, IF_MAX_NAME, name, strlen( name ), TRUE ) - 1 );
 }
-
-#endif
 
 
 int     IFLookUp( ) {
@@ -91,11 +87,7 @@ static  sym_id  IFSymLookup( char *name, uint len ) {
     sym = STSearch( name, len, IFList );
     if( sym == NULL ) {
         sym = STAdd( name, len );
-#if _OPT_CG == _ON
         sym->ns.address = NULL;
-#else
-        sym->ns.reloc_chain.lr = NULL;
-#endif
         sym->ns.link = IFList;
         IFList = sym;
     }
@@ -178,9 +170,6 @@ byte    IFSpecific( byte typ ) {
 }
 
 
-#if _OPT_CG == _ON
-
-
 bool    IsIFMax( int ifn ) {
 //==========================
 
@@ -201,8 +190,6 @@ bool    IsIFMin( int ifn ) {
             (ifn == IF_QMIN1) || (ifn == IF_I1MIN0) || (ifn == IF_I2MIN0) ||
             (ifn == IF_MIN0) || (ifn == IF_MIN1) );
 }
-
-#endif
 
 
 bool    IsIntrinsic( unsigned_16 flags ) {

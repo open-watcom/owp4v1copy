@@ -120,9 +120,7 @@ void    DetSubList() {
     int         count;
     byte        no_subs;
     itnode      *save_cit;
-#if _OPT_CG == _ON
     uint        ch_size;
-#endif
 
     if( CITNode->opn & OPN_FLD ) {
         no_subs = _DimCount( CITNode->sym_ptr->fd.dim_ext->dim_flags );
@@ -159,7 +157,6 @@ void    DetSubList() {
     if( count != no_subs ) {
         Error( SV_INV_SSCR );
     }
-#if _OPT_CG == _ON
     // we must make sure the array isn't substrung before we can set OPN_SS1
     if( !( cit->opn & OPN_FLD ) && ( cit->sym_ptr->ns.typ == TY_CHAR ) ) {
         ch_size = cit->sym_ptr->ns.xt.size;
@@ -168,7 +165,6 @@ void    DetSubList() {
             cit->value.st.ss_size = ch_size;
         }
     }
-#endif
     Detach( cit );
 }
 
@@ -195,12 +191,10 @@ static  void    SubStrArgs( itnode *cit ) {
     }
     count = 1;
     for(;;) {
-#if _OPT_CG == _ON
         if( CITNode->opn & OPN_SS1 ) {
             cit->opn |= OPN_SS1;
             cit->value.st.ss_size = CITNode->value.st.ss_size;
         }
-#endif
         CkScrStr();
         AdvanceITPtr();
         if( !RecColon() ) break;

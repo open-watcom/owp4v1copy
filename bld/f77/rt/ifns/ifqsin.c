@@ -57,12 +57,8 @@ extern  extended                QSIN(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQSIN( extended *arg ) {
 //===========================
 
     return( QSIN( *arg ) );
 }
-
-#endif

@@ -37,16 +37,13 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "wf77aux.h"
-#if _OPT_CG == _ON
 #include "ifnames.h"
 #include "ifargs.h"
 #include "rtentry.h"
 #include "cpopt.h"
-#endif
 
 #include <string.h>
 
-#if _OPT_CG == _ON
 extern  void            CopyAuxInfo(aux_info *,aux_info *);
 extern  aux_info        *NewAuxEntry(char *,int);
 extern  byte            IFArgType(int);
@@ -59,7 +56,6 @@ extern  aux_info        IFCharInfo;
 extern  aux_info        IFChar2Info;
 extern  aux_info        IFXInfo;
 extern  aux_info        IFInfo;
-#endif
 extern  aux_info        FortranInfo;
 extern  aux_info        ProgramInfo;
 extern  aux_info        *AuxInfo;
@@ -81,8 +77,6 @@ aux_info    *AuxLookupName( char *name, int name_len ) {
     return( aux );
 }
 
-
-#if _OPT_CG == _ON
 
 aux_info    *AuxLookupAdd( char *name, int name_len ) {
 //=====================================================
@@ -112,15 +106,12 @@ aux_info        *RTAuxInfo( sym_id rtn ) {
     return( rt_entry->aux );
 }
 
-#endif
-
 
 aux_info    *AuxLookup( sym_id sym ) {
 //====================================
 
     aux_info    *info;
 
-#if _OPT_CG == _ON
     if( sym == NULL ) return( &FortranInfo );
     if( ( sym->ns.flags & SY_CLASS ) == SY_SUBPROGRAM ) {
         if( sym->ns.flags & SY_INTRINSIC ) {
@@ -150,9 +141,7 @@ aux_info    *AuxLookup( sym_id sym ) {
             if( info == NULL ) return( &FortranInfo );
             return( info );
         }
-    } else
-#endif
-    {
+    } else {
         info = AuxLookupName( sym->ns.name, sym->ns.name_len );
         if( info == NULL ) return( &FortranInfo );
         return( info );

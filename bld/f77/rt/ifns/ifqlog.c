@@ -57,12 +57,8 @@ extern  extended                QLOG(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQLOG( extended *arg ) {
 //===============================
 
     return( QLOG( *arg ) );
 }
-
-#endif

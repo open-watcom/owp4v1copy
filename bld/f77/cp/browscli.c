@@ -109,11 +109,7 @@ static void CLIWrite( dw_sectnum sect, const void *block, dw_size_t size ) {
         chkIOErr( cur_sec->fp, SM_IO_WRITE_ERR, "temporary file" );
         break;
     default:
-#if _OPT_CG == _OFF
-        Error( CP_TERMINATE );
-#else
         Error( CP_FATAL_ERROR, "Internal browse generator error" );
-#endif
         Suicide();
     };
     cur_sec->cur_offset += size;

@@ -48,12 +48,8 @@ intstar4        IBCLR( intstar4 arg1, intstar4 arg2 ) {
     return( arg1 & ~bit );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XIBCLR( intstar4 *arg1, intstar4 *arg2 ) {
 //========================================================
 
     return( IBCLR( *arg1, *arg2 ) );
 }
-
-#endif

@@ -44,12 +44,8 @@ intstar4        IEOR( intstar4 arg1, intstar4 arg2 ) {
     return( arg1 ^ arg2 );
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XIEOR( intstar4 *arg1, intstar4 *arg2 ) {
 //=======================================================
 
     return( IEOR( *arg1, *arg2 ) );
 }
-
-#endif

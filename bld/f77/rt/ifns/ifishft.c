@@ -48,12 +48,8 @@ intstar4        ISHFT( unsigned_32 arg1, intstar4 arg2 ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 intstar4        XISHFT( unsigned_32 *arg1, intstar4 *arg2 ) {
 //===========================================================
 
     return( ISHFT( *arg1, *arg2 ) );
 }
-
-#endif

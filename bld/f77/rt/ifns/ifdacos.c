@@ -57,12 +57,8 @@ extern  double          DACOS(double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDACOS( double *arg ) {
 //============================
 
     return( DACOS( *arg ) );
 }
-
-#endif

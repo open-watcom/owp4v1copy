@@ -54,11 +54,7 @@ static  sym_id  AddNameList( char *name, int length ) {
 
     sym = FMemAlloc( sizeof( name_list ) + AllocName( length ) );
     sym->nl.name_len = length;
-#if _OPT_CG == _OFF
-    sym->nl.reloc_chain = NULL;
-#else
     sym->nl.address = NULL;
-#endif
     sym->nl.dbh = 0;
     memcpy( &sym->nl.name, name, length );
     return( sym );

@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#if _OPT_CG == _ON
 #include "cgaux.h"
-#endif
 
 // The following describes argument information:
 
@@ -61,26 +59,10 @@ typedef struct pass_by {
     unsigned_16         info;
 } pass_by;
 
-#if _OPT_CG == _ON
-  #define BYTE_SEQ( len ) struct { byte_seq_len length; byte data[ len ]; }
-#else
-  // These defines must be the same as in wfcall.c in lg86\rt\c
-  #define AUX_SYS_DEF   0x0000
-  #define AUX_SYSCALL   0x0001
-  #define AUX_STDCALL   0x0002
-  #define AUX_CDECL     0x0003
-  #define AUX_PASCAL    0x0004
-  #define AUX_CALL_MASK 0x0007
-
-  #define _IsCall( aux, call )  ((aux->call_info & AUX_CALL_MASK) == call)
-  #define _GetCall( aux )  (aux->call_info & AUX_CALL_MASK)
-#endif
+#define BYTE_SEQ( len ) struct { byte_seq_len length; byte data[ len ]; }
 
 typedef struct aux_info {
     struct aux_info     *link;
-#if _OPT_CG == _OFF
-    unsigned_16         call_info;
-#else
     call_class          call_info;
     hw_reg_set          save_info;
     hw_reg_set          return_info;
@@ -93,7 +75,6 @@ typedef struct aux_info {
   #error Unknown Target
 #endif
     hw_reg_set          struct_info;
-#endif
     char                *object_name;
     pass_by             *arg_info;
     byte                sym_len;
@@ -104,8 +85,6 @@ typedef struct default_lib {
     struct default_lib  *link;
     char                lib[2]; // 1 for priority and 1 for NULLCHAR
 } default_lib;
-
-#if _OPT_CG == _ON
 
 typedef struct arr_info {
     struct arr_info     *link;
@@ -120,4 +99,3 @@ typedef struct dep_info {
     char                fn[1];
 } dep_info;
 
-#endif

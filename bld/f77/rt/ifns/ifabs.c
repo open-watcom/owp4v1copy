@@ -57,12 +57,8 @@ extern  single          ABS(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XABS( single *arg ) {
 //==========================
 
     return( ABS( *arg ) );
 }
-
-#endif

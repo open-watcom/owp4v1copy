@@ -53,9 +53,7 @@
 // =============
 
 #define OPN_SS1         0x80    // chr(i:i)
-#if _OPT_CG == _ON
 #define OPN_ASY         0x40    // symbol table entry is alternate
-#endif
 #define OPN_FLD         0x08    // field name of structure
 
 #define WHAT_SHIFT      0       // bits to shift to make OPN_WHAT origin 0
@@ -69,15 +67,7 @@
 #define OPN_SSR         0x07    // - high bound in a(n:)
 
 #define WHERE_SHIFT     4       // bits to shift to make OPN_WHERE origin 0
-#if _OPT_CG == _OFF
-#define OPN_WHERE       0x70    // where is the operand?
-#else
 #define OPN_WHERE       0x30    // where is the operand?
-#endif
 #define OPN_SAFE        0x10    // - value in a register
 #define OPN_TMP         0x20    // - value in a temporary
 #define OPN_VAL         0x30    // - static temporary SCB
-#if _OPT_CG == _OFF
-#define OPN_ADR         0x40    // - address in a register
-#define OPN_ATMP        0x50    // - address in temporary
-#endif

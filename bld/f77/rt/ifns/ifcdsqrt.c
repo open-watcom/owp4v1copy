@@ -109,12 +109,8 @@ extern  dcomplex        CDSQRT(double,double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 dcomplex        XCDSQRT( dcomplex *arg ) {
 //========================================
 
     return( CDSQRT( arg->realpart, arg->imagpart ) );
 }
-
-#endif

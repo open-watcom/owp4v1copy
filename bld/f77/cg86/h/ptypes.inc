@@ -29,6 +29,14 @@
 ;*
 ;*****************************************************************************
 
+;/**************** IMPORTANT NOTE ************************
+;
+;  data in files:  ptypes.inc, ptypes.h and  parmtype.h
+;  
+;  must corespond each to other
+;
+;********************************************************/
+
 
 PT_NOTYPE       equ 0            ; no type
 PT_LOG_1        equ 1            ; logical*1

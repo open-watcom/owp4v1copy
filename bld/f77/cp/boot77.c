@@ -150,26 +150,10 @@ void    Compile( char *buffer ) {
 }
 
 
-#if _OPT_CG == _ON
-  #if _TARGET == _8086
-    #define _CmpName "wfc"
-  #else
-    #define _CmpName "wfc386"
-  #endif
+#if _TARGET == _8086
+  #define _CmpName "wfc"
 #else
-  #if _TARGET == _8086
-    #if _8087 == _ON
-      #define _CmpName "watfor87"
-    #else
-      #define _CmpName "watfor77"
-    #endif
-  #else
-    #if _8087 == _ON
-      #define _CmpName "wf387"
-    #else
-      #define _CmpName "wf386"
-    #endif
-  #endif
+  #define _CmpName "wfc386"
 #endif
 
 
@@ -207,11 +191,7 @@ char    *SkipBlanks( char *ptr ) {
 static  void    InitComVars() {
 //=============================
 
-#if _OPT_CG == _ON
     ProgSw    = PS_DONT_GENERATE; // so we get command line errors
-#else
-    ProgSw    = 0;
-#endif
     NumErrors = 0;
     NumWarns  = 0;
     NumExtens = 0;

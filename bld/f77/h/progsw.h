@@ -39,9 +39,7 @@
   #define PS_ERROR              0x0040
   #define PS_LIBRARY_PROCESS    0x0080  // processing undefined subprograms
   #define PS_ERR_OPEN_TRIED     0x0100
-#if _OPT_CG == _ON
   #define PS_DONT_GENERATE      0x0200  // don't generate any code
-#endif
   #define PS_SKIP_SOURCE        0x0400  // skip source line because of macro
   #define PS_FATAL_ERROR        0x0800
   #define PS_INC_EOF            0x1000

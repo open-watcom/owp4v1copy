@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  thread initialization
 *
 ****************************************************************************/
 
-
-//
-// FTHRDINI     : thread initialization
-//
 
 #include "ftnstd.h"
 #include "fthread.h"
@@ -60,6 +55,10 @@ extern  void            __InitFThreadData(fthread_data *);
 
 HANDLE                  __fio_sem;
 
+#elif defined( __LINUX__ )
+
+// TODO: semaphore support for Linux!
+
 #endif
 
 extern  void            (*_AccessFIO)(void);
@@ -80,8 +79,10 @@ unsigned        __InitFThreadProcessing() {
     DosCreateMutexSem( NULL, &__fio_sem, 0, FALSE );
 #elif defined( __NETWARE__ )
     __fio_sem = OpenLocalSemaphore( 1 );
-#else   // __NT__
+#elif defined( __NT__ )
     __fio_sem = CreateMutex( NULL, FALSE, NULL );
+#elif defined( __LINUX__ )
+// TODO: semaphore support for Linux!
 #endif
     _AccessFIO  = &__AccessFIO;
     _ReleaseFIO = &__ReleaseFIO;
@@ -98,7 +99,9 @@ void            __FiniFThreadProcessing() {
     DosCloseMutexSem( __fio_sem );
 #elif defined( __NETWARE__ )
     CloseLocalSemaphore( __fio_sem );
-#else // __NT__
+#elif defined( __NT__ )
     CloseHandle( __fio_sem );
+#elif defined( __LINUX__ )
+// TODO: semaphore support for Linux!
 #endif
 }

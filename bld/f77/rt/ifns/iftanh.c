@@ -57,12 +57,8 @@ extern  single          TANH(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XTANH( single *arg ) {
 //===========================
 
     return( TANH( *arg ) );
 }
-
-#endif

@@ -70,9 +70,6 @@ extern  void            InitSelect(void);
 extern  void            GBranch(label_id);
 extern  void            FreeLabel(label_id);
 extern  intstar4        ITIntValue(itnode *);
-#if _OPT_CG == _OFF
-extern  void            GDbugInfo(void);
-#endif
 
 
 case_entry      *NewCase() {
@@ -203,9 +200,6 @@ static  void    CaseHandler() {
     CSHead->typ = CS_CASE;
     label = NextLabel();
     GLabel( label );
-#if _OPT_CG == _OFF
-    GDbugInfo();
-#endif
     if( ReqNOpn() ) { // consider: CASE 10
         AdvanceITPtr();
     }
@@ -296,9 +290,6 @@ void    CpOtherwise() {
         CSHead->cs_info.cases->label.g_label = NextLabel();
         CSHead->cs_info.cases->multi_case = FALSE;
         GLabel( CSHead->cs_info.cases->label.g_label );
-#if _OPT_CG == _OFF
-        GDbugInfo();
-#endif
         CSHead->block = ++BlockNum;
     } else if( CSHead->typ == CS_OTHERWISE ) {
         Error( SP_OTHERWISE_LAST );
@@ -332,8 +323,5 @@ void    CpEndSelect() {
         FreeLabel( CSHead->bottom );
     }
     FreeLabel( CSHead->branch );
-#if _OPT_CG == _OFF
-    GDbugInfo();
-#endif
     DelCSNode();
 }

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  control access to FORTRAN i/o system
 *
 ****************************************************************************/
 
-
-//
-// FIOSEM       : control access to FORTRAN i/o system
-//
 
 #include "ftnstd.h"
 
@@ -60,16 +55,27 @@
   extern int    WaitOnLocalSemaphore( long );
   extern int    SignalLocalSemaphore( long );
 
-#else
+#elif defined( __NT__ )
 
-  #define STRICT
   #include <windows.h>
 
-  #define       _FTID           DWORD
   #define       _FSEM           HANDLE
+  #define       _FTID           DWORD
 
   #define       _FRequestMutexSem       WaitForSingleObject
   #define       _FReleaseMutexSem       ReleaseMutex
+
+  #define       SEM_INDEFINITE_WAIT     -1
+
+#elif defined( __LINUX__ )
+
+// TODO: semaphore support for Linux !
+
+  #define       _FSEM           long
+  #define       _FTID           int
+
+  #define       _FRequestMutexSem( sem, x )
+  #define       _FReleaseMutexSem( sem )
 
   #define       SEM_INDEFINITE_WAIT     -1
 

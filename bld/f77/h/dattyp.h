@@ -103,21 +103,11 @@ typedef union ftn_type {
     } sc;
     struct {
         sym_id          field_id;       // structure name of fields
-#if _OPT_CG == _OFF
-        sym_id          tmp_id;         // temporary containing struct offset
-        sym_id          sp_id;          // sym_id for called subprogram
-#else
         sym_id          ss_id;          // substrung symbol
         uint            ss_size;        // length of substrung/subscripted
                                         // character string
-#endif
     } st;
 } ftn_type;
 
-#if _OPT_CG == _ON
     typedef     unsigned int    label_id;
     typedef     obj_ptr         warp_label;
-#else
-    typedef     sym_id          label_id;
-    typedef     label_id        warp_label;
-#endif

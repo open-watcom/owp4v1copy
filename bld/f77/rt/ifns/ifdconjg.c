@@ -50,12 +50,8 @@ dcomplex        DCONJG( double rp, double ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 dcomplex XDCONJG( dcomplex *arg ) {
 //=================================
 
     return( DCONJG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

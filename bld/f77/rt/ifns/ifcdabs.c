@@ -67,12 +67,8 @@ extern  double          CDABS(double,double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double  XCDABS( dcomplex *arg ) {
 //===============================
 
     return( CDABS( arg->realpart, arg->imagpart ) );
 }
-
-#endif

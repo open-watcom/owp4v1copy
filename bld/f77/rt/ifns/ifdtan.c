@@ -57,12 +57,8 @@ extern  double          DTAN(double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDTAN( double *arg ) {
 //===========================
 
     return( DTAN( *arg ) );
 }
-
-#endif

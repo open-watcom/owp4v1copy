@@ -57,12 +57,8 @@ extern  single          ATAN2(single,single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XATAN2( single *arg1, single *arg2 ) {
 //===========================================
 
     return( ATAN2( *arg1, *arg2 ) );
 }
-
-#endif

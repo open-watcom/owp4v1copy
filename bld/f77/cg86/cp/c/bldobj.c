@@ -37,22 +37,18 @@
 #include "ftnstd.h"
 #include "symbol.h"
 #include "intcnv.h"
-#if _OPT_CG == _ON
 #include "wf77defs.h"
-#endif
 #include "wf77aux.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#if _OPT_CG == _ON
 //=================== Back End Code Generation Routines ====================
 
 extern  unsigned long           BETypeLength(cg_type);
 
 //=========================================================================
-#endif
 
 extern  aux_info                *AuxLookupName(char *,uint);
 extern  aux_info                *AuxLookup(sym_id);
@@ -122,11 +118,7 @@ static uint BldObjString( aux_info *aux, char *name, uint len,
                 } else if( arg->info & ARG_SIZE_16 ) {
                     args_size += 16;
                 } else if( arg->info & PASS_BY_REFERENCE ) {
-#if _OPT_CG == _ON
                     args_size += BETypeLength( T_POINTER );
-#else
-                    args_size += sizeof( targ_addr );
-#endif
                 }
             }
             utoa( args_size, ibuff, 10 );

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX level i/o support
 *
 ****************************************************************************/
 
-
-//
-// POSPUT      : POSIX level i/o support
-//
 
 #include "ftnstd.h"
 #include "fio.h"

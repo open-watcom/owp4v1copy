@@ -180,16 +180,6 @@ static  sym_id    STFreeMSTE( sym_id sym_ptr ) {
 
 // Free a "magic" symbol table entry.
 
-#if _OPT_CG == _OFF
-    sym_id        static_off;
-
-    if( _MgcClass( sym_ptr ) == MAGIC_STATIC ) {
-        static_off = sym_ptr->ns.si.ms.tmp_info.stat_off;
-        while( static_off != NULL ) {
-            static_off = STFree( static_off );
-        }
-    }
-#endif
     sym_ptr = STFree( sym_ptr );
     return( sym_ptr );
 }
@@ -212,9 +202,6 @@ sym_id        STFreeName( sym_id sym_ptr ) {
 // Free a symbol name.
 
     if( ( sym_ptr->ns.flags & SY_CLASS ) == SY_COMMON ) {
-#if _OPT_CG == _OFF
-        FreeChain( &sym_ptr->ns.reloc_chain.cr );
-#endif
         sym_ptr = FreeLink( sym_ptr );
     } else {
         if( ( sym_ptr->ns.flags & SY_CLASS ) == SY_VARIABLE ) {

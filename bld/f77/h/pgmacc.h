@@ -30,20 +30,6 @@
 ****************************************************************************/
 
 
-#if ( _OPT_CG == _OFF ) && ( _TARGET == _8086 )
-
-#include <string.h>
-#define pgm_memget      _fmemcpy
-#define pgm_memput      _fmemcpy
-#define pgm_memcpy      _fmemcpy
-#define pgm_memset      _fmemset
-#define pgm_strlen      _fstrlen
-#define pgm_memicmp     _fmemicmp
-#define pgm_strget(d,s) (char *)_fstrcpy(d,s)
-extern  void            pgm_BToHS(char PGM *,uint,char *);
-
-#else
-
 #include <string.h>
 
 #define pgm_memget      memcpy
@@ -53,5 +39,3 @@ extern  void            pgm_BToHS(char PGM *,uint,char *);
 #define pgm_BToHS       BToHS
 #define pgm_memicmp     memicmp
 #define pgm_strlen      strlen
-
-#endif

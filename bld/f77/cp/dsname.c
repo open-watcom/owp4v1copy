@@ -97,18 +97,12 @@ void    DSName() {
 // Downscan a name.
 
     sym_id      sym_ptr;
-#if _OPT_CG == _OFF
-    itnode      *last_field;
-#endif
 
     CITNode->opn = OPN_NNL;
     if( RecNextOpr( OPR_LBR ) ) {
         CITNode->link->opr = OPR_FBR;
         CITNode->opn = OPN_NWL;
     }
-#if _OPT_CG == _OFF
-    CITNode->value.st.tmp_id = NULL;
-#endif
     if( ( FieldNode != NULL ) &&
         ( ( CITNode->opr == OPR_FLD ) || ( CITNode->opr == OPR_DPT ) ) ) {
         if( FieldNode->opn & OPN_FLD ) {
@@ -151,17 +145,10 @@ void    DSName() {
                 // can compute offset of "K" (see ChkStructName())
                 //
                 // we must go back as many as necessary, i.e. a(b.c.d.e).f
-#if _OPT_CG == _ON
                 while( (FieldNode->opr==OPR_DPT) || (FieldNode->opr==OPR_FLD) ){
                         FieldNode = FieldNode->value.sc.struct_chain;
                 }
                 FieldNode = FieldNode->value.sc.struct_chain;
-#else
-                // we must place a NULL in FieldNode->value.st.tmp_id
-                last_field = FieldNode;
-                FieldNode = FieldNode->value.sc.struct_chain;
-                last_field->value.st.tmp_id = NULL;
-#endif
             }
         }
         return;
@@ -239,13 +226,11 @@ void    DSName() {
             CITNode->opn = OPN_CON;
             CITNode->sym_ptr = sym_ptr->ns.si.pc.value;
             if( CITNode->typ == TY_CHAR ) {
-#if ( _OPT_CG == _ON ) || ( _TARGET == _370 )
                 if( StmtSw & SY_DATA_INIT ) {
                     CITNode->sym_ptr->lt.flags |= LT_DATA_STMT;
                 } else {
                     CITNode->sym_ptr->lt.flags |= LT_EXEC_STMT;
                 }
-#endif
                 CITNode->value.cstring.strptr = &CITNode->sym_ptr->lt.value;
                 CITNode->value.cstring.len = CITNode->sym_ptr->lt.length;
             } else {

@@ -52,12 +52,8 @@ intstar1 I1DIM( intstar1 arg1, intstar1 arg2 ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 intstar1 XI1DIM( intstar1 *arg1, intstar1 *arg2 ) {
 //================================================
 
     return( I1DIM( *arg1, *arg2 ) );
 }
-
-#endif

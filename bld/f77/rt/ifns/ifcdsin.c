@@ -64,12 +64,8 @@ extern  dcomplex        CDSIN(double,double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 dcomplex XCDSIN( dcomplex *arg ) {
 //================================
 
     return( CDSIN( arg->realpart, arg->imagpart ) );
 }
-
-#endif

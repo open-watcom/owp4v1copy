@@ -85,7 +85,6 @@
   // Define the following if the C library contains alternate definitions
   // of certain intrinsic functions.
 
-  #if _OPT_CG == _ON
   #define __alternate_if__
   #define ALOG  LOG
   #define ALOG10        LOG10
@@ -97,7 +96,6 @@
   #pragma aux (flt_if_rtn) FMOD;        // support routine called IF@FMOD, not IF@AMOD
   #pragma aux (flt_if_rtn) DFMOD;       // support routine called IF@DFMOD, not IF@DMOD
   #pragma aux (flt_if_rtn) QFMOD;       // support routine called IF@QFMOD, not IF@QMOD
-  #endif
 
   // UNCOMMENT_TOKEN
   // this can be removed once long double is properly supported

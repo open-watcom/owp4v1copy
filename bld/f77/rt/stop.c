@@ -48,9 +48,7 @@ extern  void            FlushStdUnit(void);
 extern  void            StdBuffer(void);
 extern  void            StdFlush(void);
 extern  bool            __DevicesCC();
-#if _OPT_CG == _ON
 extern  void            RTSysInit(void);
-#endif
 
 // this is used by the load and go debugger in _SA_LIBRARY
 
@@ -63,9 +61,7 @@ void    Stop( string PGM *ptr ) {
 
 // Process a STOP statement.
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     if( ptr != NULL ) {
         _AccessFIO();
         // Before writing the error message, flush standard output files so that

@@ -36,18 +36,8 @@
 
     #define OPT_XLINE           1
     #define OPT_DEFINE          2
-#if _OPT_CG == _OFF
-    #define OPT_ST_LIM          3
-    #define OPT_PG_LIM          4
-    #define OPT_TM_LIM          5
-  #if _TARGET != _370
-    #define OPT_MM_LIM          6
-    #define OPT_PAGE_SIZE       7
-  #endif
-#else
     #define CGOPT_DATA_THRESH   3
     #define CGOPT_OBJ_NAME      4
-#endif
     #define OPT_INCPATH         8
 
 typedef unsigned_32     comp_options;
@@ -74,17 +64,6 @@ typedef unsigned_32     comp_options;
     #define OPT_QUIET           0x00100000L
     #define OPT_BROWSE          0x00200000L
     #define OPT_EXTEND_REAL     0x00400000L
-#if _OPT_CG == _OFF
-    #define OPT_DEBUG           0x00800000L
-    #define OPT_LINK            0x01000000L
-    #define OPT_RUN             0x02000000L
-    #define OPT_OBJECT          0x04000000L
-    #define OPT_XTYPE           0x08000000L
-    #define OPT_CHECK           0x10000000L
-    #define OPT_ARRCHECK        0x20000000L
-    #define OPT_EDIT            0x40000000L
-    #define OPT_LOG_IO          0x80000000L
-#else
     #define OPT_DEPENDENCY      0x00020000L
     #define OPT_COMMA_SEP       0x00800000L
     #define OPT_PROMOTE         0x01000000L
@@ -96,9 +75,7 @@ typedef unsigned_32     comp_options;
     #define OPT_SAVE            0x20000000L
     #define OPT_DFLT_LIB        0x40000000L
     #define OPT_SYNTAX          0x80000000L
-#endif
 
-#if _OPT_CG == _ON
 
     #define     CGOPT_DB_LINE       0x00000001L
     #define     CGOPT_DB_LOCALS     0x00000002L
@@ -302,7 +279,6 @@ typedef unsigned_32     comp_options;
   #error Unknown Platform
 #endif
 
-#endif
 
 #define OPT_NO_NO       (OPT_TYPE|OPT_PRINT|OPT_CHINESE|OPT_JAPANESE| \
                          OPT_KOREAN)

@@ -96,7 +96,6 @@ extern  void            ParenCat(void);
 extern  intstar4        ITIntValue(itnode *);
 extern  void            PushOpn(itnode *);
 extern  void            ProcList(itnode *);
-#if _OPT_CG == _ON
 extern  bool            IsIFMax(uint);
 extern  bool            IsIFMin(uint);
 extern  void            GIChar(void);
@@ -136,7 +135,6 @@ extern  void            GTanh(void);
 extern  void            GSqrt(void);
 extern  void            GExp(void);
 extern  void            GParenExpr(void);
-#endif
 extern  void            GVolatile(void);
 extern  void            GLoc(void);
 extern  void            GAllocated(void);
@@ -277,7 +275,6 @@ NONE,  NONE, NONE, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
 };
 
 
-#if _OPT_CG == _ON
 
 static  bool    SimpleScript( itnode *op ) {
 //==========================================
@@ -324,8 +321,6 @@ bool    OptimalChSize( uint size ) {
     return( ( size == 1 ) || ( size == 2 ) || ( size == 4 ) );
 }
 
-#endif
-
 
 static  void    EvalOpn() {
 //=========================
@@ -347,7 +342,6 @@ static  void    ParenExpr() {
     // don't evaluate constants enclosed in parentheses
     // so that they can be folded. Consider: (3+4)+5
     if( CITNode->opn != OPN_CON ) {
-#if _OPT_CG == _ON
         // Consider: CHARACTER A
         //           IF( ('9') .NE. (A) ) CONTINUE
         // make sure that we can optimize the character operation
@@ -362,11 +356,8 @@ static  void    ParenExpr() {
                 }
             }
         }
-#endif
         PushOpn( CITNode );
-#if _OPT_CG == _ON
         GParenExpr();
-#endif
     }
     BackTrack();
 }
@@ -476,7 +467,6 @@ static  void    HighColon() {
         CITNode->opn = OPN_SSR;
         CITNode->typ = TY_INTEGER;
         CITNode->size = TypeSize( TY_INTEGER );
-#if _OPT_CG == _ON
     } else if( SimpleScript( CITNode ) &&
                ( (BkLink->opr == OPR_FBR) || (BkLink->opr == OPR_LBR) ) ) {
         int     ch_size;
@@ -486,7 +476,6 @@ static  void    HighColon() {
             CITNode->value.st.ss_size = ch_size;
             CITNode->opn |= OPN_SS1;
         }
-#endif
     }
     PrepArg();
 }
@@ -582,15 +571,13 @@ sym_id    CkAssignOk() {
                 return( NULL );
             }
             sym = CITNode->sym_ptr;
-            #if _OPT_CG == _ON
-                // Consider: READ *, CH(I:J)
-                // GFiniSS() sets the symbol table entry in the I.T. node
-                // to the temporary SCB so we need to get the actual symbol
-                // we are substringing elsewhere
-                if( CITNode->opn & OPN_ASY ) {
-                    sym = CITNode->value.st.ss_id;
-                }
-            #endif
+            // Consider: READ *, CH(I:J)
+            // GFiniSS() sets the symbol table entry in the I.T. node
+            // to the temporary SCB so we need to get the actual symbol
+            // we are substringing elsewhere
+            if( CITNode->opn & OPN_ASY ) {
+                sym = CITNode->value.st.ss_id;
+            }
             sym->ns.xflags |= SY_DEFINED;
             return( sym );
         } else {
@@ -670,14 +657,12 @@ static  bool    DoGenerate( int typ1, int typ2, uint *res_size ) {
             *res_size = TypeSize( typ2 );
         } else {
             ResultType = typ1;
-#if _OPT_CG == _ON
             if( _IsTypeInteger( ResultType ) ) {
                 *res_size = CITNode->size;
                 if( *res_size < CITNode->link->size ) {
                     *res_size = CITNode->link->size;
                 }
             } else
-#endif
                 *res_size = TypeSize( typ1 );
         }
         return( TRUE );
@@ -708,11 +693,9 @@ static  void    FixFldNode( void ) {
     if( CITNode->opn & OPN_FLD ) { // sub-field
         CITNode->sym_ptr = next->sym_ptr;
         CITNode->opn = next->opn;
-#if _OPT_CG == _ON
         if( next->opn & OPN_SS1 ) {
             CITNode->value.st.ss_size = next->value.st.ss_size;
         }
-#endif
     } else {
         if( ( next->opn & OPN_WHAT ) == OPN_ARR ) {
             CITNode->opn &= ~OPN_WHAT;
@@ -729,12 +712,10 @@ static  void    FixFldNode( void ) {
             // want to display is for Y, not X.
             CITNode->value.st.field_id = next->sym_ptr;
         }
-#if _OPT_CG == _ON
         if( next->opn & OPN_SS1 ) {
             CITNode->opn |= OPN_SS1;
             CITNode->value.st.ss_size = next->value.st.ss_size;
         }
-#endif
         // so we can tell the difference between an array of
         // structures and a field of a structure that is an
         // array
@@ -864,11 +845,9 @@ static  byte    IFPromote( byte typ ) {
 // if the promote switch is activated we promote certain integer intrinsics
 // arguments
 
-#if _OPT_CG == _ON
     if( ( Options & OPT_PROMOTE ) && _IsTypeInteger( typ ) ) {
         typ = TY_INTEGER;
     }
-#endif
     return( typ );
 }
 
@@ -881,9 +860,7 @@ static  void    Call() {
 //                           (3) detaching a substring expression
 //
 
-#if _OPT_CG == _ON
     int         ifunc;
-#endif
 
     if( Subscripted() ) {
         DetSubList();
@@ -895,13 +872,11 @@ static  void    Call() {
                     DetCallList();
                     IFPrmChk();     // must do before InLineCnvt and ...
                                     // ... after IFSpecific, DetCallList
-#if _OPT_CG == _ON
                     ifunc = CITNode->sym_ptr->ns.si.fi.index;
                     if( ( IsIFMax( ifunc ) || IsIFMin( ifunc ) ) &&
                         ( CITNode->sym_ptr->ns.si.fi.num_args > 2 ) )
                         EvalList();
                     else
-#endif
                         InlineCnvt();
                 } else {
                     DetCallList();
@@ -925,14 +900,12 @@ static  void    Call() {
 static  void    EvalList() {
 //==========================
 
-#if _OPT_CG == _ON
     if( !AError ) {
         if( RecNextOpr( OPR_EQU ) && !( CITNode->opn & OPN_FLD ) ) {
             SetDefinedStatus();
         }
         ProcList( CITNode );
     }
-#endif
 }
 
 
@@ -1008,7 +981,6 @@ static  void    IFPrmChk() {
                     //          PRINT *, MOD( I, 3 )
                     // I is INTEGER*2 and 3 is INTEGER*4
                     CnvTo( CITNode, typ, TypeSize( typ ) );
-#if _OPT_CG == _ON
                 } else if( ( Options & OPT_PROMOTE ) && ( typ == TY_INTEGER ) &&
                            TypeIs( typ ) ) {
                     // check if we should allow
@@ -1017,7 +989,6 @@ static  void    IFPrmChk() {
                     //  PRINT *, IABS( I )
                     // if the users turns on the switch we allow it
                     break;
-#endif
                 } else {
                     switch( ifn ) {
                     case IF_INT:
@@ -1100,9 +1071,7 @@ static  void    PrepArg() {
                 Error( LI_NOT_PARM );
             } else {
                 MarkIFUsed( if_index );
-#if _OPT_CG == _ON
                 CITNode->sym_ptr->ns.flags |= SY_IF_ARGUMENT;
-#endif
             }
         }
     }
@@ -1115,9 +1084,7 @@ static  void    PrepArg() {
             if( CITNode->opn == OPN_CON ) {
                 AddConst( CITNode );
             }
-#if _OPT_CG == _ON
             if( ( CITNode->opn & OPN_SS1 ) == 0 )
-#endif
             GArg();
         }
     }
@@ -1229,7 +1196,6 @@ static  void    InlineCnvt() {
         case IF_HFIX:
             GILCnvTo( func_type, sizeof( intstar2 ) );
             break;
-#if _OPT_CG == _ON
         case IF_I1MOD:
         case IF_I2MOD:
         case IF_MOD:            GModulus();     break;
@@ -1346,7 +1312,6 @@ static  void    InlineCnvt() {
         case IF_I2MIN0:
         case IF_MIN0:
         case IF_MIN1:           GMin( func_type );      break;
-#endif
         case IF_REAL:           // Make sure that D<-REAL(Z) && X<-REAL(Q)
             switch( typ ) {
             case( TY_DCOMPLEX ):
@@ -1363,12 +1328,10 @@ static  void    InlineCnvt() {
         }
     } else if( IFIsGeneric( ifn ) ) {
         TypeErr( LI_EXP_CNV_TYPE, typ );      // typ is what we got
-#if _OPT_CG == _ON
     } else if( ifn == IF_LEN ) {
         GCharLen();
     } else { // ichar
         GIChar();
-#endif
     }
     AdvanceITPtr();
     ReqCloseParen();

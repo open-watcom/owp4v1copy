@@ -142,13 +142,6 @@ void    UnFmtOut() {
         } else {
             ptr = (byte *)&IORslt;
             len = SizeVars[ typ ];
-#if ( _OPT_CG == _OFF ) && ( ( _TARGET == _370 ) || ( _TARGET == _VAX ) )
-            // INTEGER*1 and INTEGER*2 are promoted to INTEGER*4
-            // when stored in IORslt
-            if( ( typ == PT_INT_1 ) || ( typ == PT_INT_2 ) ) {
-                ptr += sizeof( intstar4 ) - len
-            }
-#endif
             if( IsFixed() ) {
                 OutChkRecPos( fcb, len );
             } else {

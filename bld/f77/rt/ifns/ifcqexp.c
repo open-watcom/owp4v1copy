@@ -54,12 +54,8 @@ xcomplex        CQEXP( extended rp, extended ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 xcomplex        XCQEXP( xcomplex *arg ) {
 //=======================================
 
     return( CQEXP( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -78,11 +78,7 @@ sym_id  STConst( ftn_type *c_ptr, int typ, int size ) {
     memcpy( &head->cn.value, c_ptr, size );
     head->cn.typ = typ;
     head->cn.size = size;
-#if _OPT_CG == _OFF
-    head->cn.reloc_chain = NULL;
-#else
     head->cn.address = NULL;
-#endif
     HashInsert( ConstHashTable, hash_value, &CList, head );
     return( head );
 }

@@ -49,9 +49,6 @@ extern  void            SysEOF(void);
 extern  void            ChkIOErr(ftnfile *);
 extern  void            NextIFBuff(char *,int,unsigned_32,string PGM *);
 extern  void            UpdateRecNum(ftnfile *);
-#if _OPT_CG == _OFF
-extern  void            LogFile(ftnfile *);
-#endif
 
 
 void    NextRec() {
@@ -74,9 +71,6 @@ void    NextRec() {
             UpdateRecNum( fcb );
             FGetBuff( fcb );
             ChkIOErr( fcb );
-#if _OPT_CG == _OFF
-            LogFile( fcb );
-#endif
             if( ( IOCB->set_flags & SET_FMTPTR ) &&
                 ( ( IOCB->flags & NML_DIRECTED ) == 0 ) ) {
                 memset( fcb->buffer + fcb->len, ' ', fcb->bufflen - fcb->len  );

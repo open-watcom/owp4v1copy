@@ -43,14 +43,7 @@
 #include "bglobal.h"
 #include "intcnv.h"
 #include "csetinfo.h"
-#if (_OPT_CG == _OFF) && ((_TARGET == _8086) || (_TARGET == _80386))
-#include "mathopt.h"
-#include "fcboth.h"
-#include "fcgbls.h"
-#endif
-#if _OPT_CG == _ON
 #include "compcfg.h"
-#endif
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -79,18 +72,10 @@ extern  void            ProcPragma(char *);
 extern  void            __UseChineseCharSet(void);
 extern  void            __UseJapaneseCharSet(void);
 extern  void            __UseKoreanCharSet(void);
-#if _OPT_CG == _OFF
-extern  void            RestData(void);
-#endif
 
 extern  character_set   CharSetInfo;
 
-#if _OPT_CG == _ON
 extern  uint            DataThreshold;
-#endif
-#if (_OPSYS == _PCDOS) && (_OPT_CG == _OFF) && (_EDITOR == _ON)
-extern  bool            CmdLineOption;
-#endif
 
 // Compiler directives
 
@@ -105,9 +90,6 @@ extern  bool            CmdLineOption;
 #define CD_ELIFNDEF     9
 #define CD_DEFINE       10
 #define CD_UNDEFINE     11
-#if _OPT_CG == _OFF
-#define CD_DATA         12
-#endif
 
 static const char __FAR * const __FAR CompDrctvs[] = {
     "INCLUDE",
@@ -121,9 +103,6 @@ static const char __FAR * const __FAR CompDrctvs[] = {
     "ELSEIFNDEF",
     "DEFINE",
     "UNDEFINE",
-#if _OPT_CG == _OFF
-    "DATA",
-#endif
     NULL
 };
 
@@ -152,11 +131,6 @@ static  bool    GetValue( opt_entry *optn, char *ptr, char **val ) {
 // Get pointer to option value.
 
     *val = SkipBlanks( ptr );
-#if ( _OPT_CG == _OFF )
-  #if (_TARGET == _80386) || (_TARGET == _8086)
-    if( optn->value == OPT_LINK ) return( TRUE );
-  #endif
-#endif
     if( ( **val != '=' ) && ( **val != '#' ) ) {
         Warning( CO_NEED_EQUALS, optn->option );
         return( FALSE );
@@ -175,26 +149,7 @@ static  void    BitOption( opt_entry *optn, bool negated ) {
     ftnoption   opt_bit;
 
     opt_bit = optn->value;
-#if ( _OPSYS == _PCDOS ) && ( _OPT_CG == _OFF ) && ( _EDITOR == _ON )
-    if( ( opt_bit & OPT_EDIT ) && !CmdLineOption ) {
-        Warning( CO_NOT_RECOG, optn->option );
-        return;
-    }
-#endif
     if( !negated ) {
-#if _OPT_CG == _OFF
-    #if (_TARGET != _80386) && (_TARGET != _8086)
-        // OBJECT turns off DEBUG and vice-versa
-        if( opt_bit & ( OPT_OBJECT | OPT_DEBUG ) ) {
-            NewOptions &= ~( OPT_OBJECT | OPT_DEBUG );
-        }
-    #endif
-        // DEBUG turns on LIST
-        if( opt_bit & OPT_DEBUG ) {
-            NewOptions &= ~DISK_MASK; // force listing file to disk
-            NewOptions |= OPT_LIST;
-        }
-#endif
         // TYPE turns off PRINT and vice-versa
         if( opt_bit & DISK_MASK ) {
             NewOptions &= ~DISK_MASK;
@@ -203,12 +158,10 @@ static  void    BitOption( opt_entry *optn, bool negated ) {
         if( opt_bit & OPT_LIST ) {
             SetLst( TRUE );
         }
-#if _OPT_CG == _ON
         // SAVE turns off AUTOMATIC and vice-versa
         if( opt_bit & ( OPT_SAVE | OPT_AUTOMATIC ) ) {
             NewOptions &= ~( OPT_SAVE | OPT_AUTOMATIC );
         }
-#endif
         NewOptions |= opt_bit;
     } else if( opt_bit & OPT_NO_NO ) {
         Warning( CO_BAD_NO, optn->option );
@@ -316,8 +269,6 @@ static  unsigned_32     OptV( opt_entry *optn, char *ptr ) {
     return( number );
 }
 
-
-#if _OPT_CG == _ON
 
 
 #define _Excl( excl_bits )  if( opt_bit & ( excl_bits ) ) {       \
@@ -429,147 +380,6 @@ static  void    FOOption( opt_entry *optn, char *ptr ) {
     optn = optn;
     ObjName = ptr;
 }
-
-
-#else
-
-
-static  bool    TooBig( unsigned_32 *number, unsigned_32 max ) {
-//==============================================================
-
-// Check to see if value has exceeded maximum allowable value.
-
-    bool        too_big;
-
-    if( ( max != 0 ) && ( *number > max ) ) {
-        too_big = TRUE;
-    } else {
-        too_big = FALSE;
-        if( *number == 0 ) {
-            *number = max;
-        }
-    }
-    return( too_big );
-}
-
-
-static  void    StaOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-// Process "STATEMENTS=" option.
-
-    unsigned_32 number;
-
-    number = OptV( optn, ptr );
-    if( TooBig( &number, MaxStLim ) ) {
-        Warning( CO_LIMIT_TOO_BIG, optn->option );
-    } else {
-        StmtLimit = number;
-    }
-}
-
-
-static  void    PagOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-// Process "PAGES=" option.
-
-    unsigned_32 number;
-
-    number = OptV( optn, ptr );
-    if( TooBig( &number, MaxPageLim ) ) {
-        Warning( CO_LIMIT_TOO_BIG, optn->option );
-    } else {
-        PageLimit = number;
-    }
-}
-
-
-static  void    TimOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-// Process "TIME=" option.
-
-    unsigned_32 number;
-
-    number = OptV( optn, ptr );
-    if( TooBig( &number, MaxTimeLim ) ) {
-        Warning( CO_LIMIT_TOO_BIG, optn->option );
-    } else {
-        TimeLimit = number;
-    }
-}
-
-
-#if (_TARGET == _VAX) || (_OPSYS == _QNX) || (_TARGET == _80386) || (_TARGET == _8086)
-
-
-static  void    CodOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-// Process "CODESIZE=" option.
-
-    unsigned_32 number;
-
-    number = OptV( optn, ptr );
-    ptr = SkipToken( ptr ) - sizeof( char );
-    if( toupper( *ptr ) == 'K' ) {
-        number *= 1024;
-    }
-    ObjLimit = number;
-}
-
-
-#endif
-
-
-static  void    PSzOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-// Process "PAGESIZE=" option
-
-    unsigned_32 number;
-
-    number = OptV( optn, ptr );
-    ptr = SkipToken( ptr ) - sizeof( char );
-    LinesPerPage = number;
-}
-
-
-static  void    MthOption( opt_entry *optn, bool negated ) {
-//==========================================================
-
-// Process an option that has a bit value for MathOptions.
-
-    byte        opt_bit;
-
-    opt_bit = optn->value;
-    if( !negated ) {
-        MathOptions |= opt_bit;
-    } else {
-        MathOptions &= ~opt_bit;
-    }
-}
-
-
-#if ( _TARGET == _80386 ) || (_TARGET == _8086 )
-
-static  void    LnkOption( opt_entry *optn, char *ptr ) {
-//=======================================================
-
-    optn = optn;
-    NewOptions |= OPT_LINK;
-    if( *ptr == '=' || *ptr == '#' ) {
-        LinkFile = SkipBlanks( ptr + sizeof( char ) );
-    } else {
-        LinkFile = NULL;
-    }
-}
-
-#endif
-
-
-#endif
 
 
 static  void    NegOption( opt_entry *optn, bool negated ) {
@@ -716,12 +526,6 @@ void    SrcOption() {
     } else if( directive == CD_EJECT ) {
         if( ProgSw & PS_SKIP_SOURCE ) return;
         LFNewPage();
-#if _OPT_CG == _OFF
-    } else if( directive == CD_DATA ) {
-        if( ProgSw & PS_SKIP_SOURCE ) return;
-        ComPrint();
-        RestData();
-#endif
     } else if( directive == CD_PRAGMA ) {
         if( ProgSw & PS_SKIP_SOURCE ) return;
         ComPrint();
@@ -877,33 +681,9 @@ void    PrtOptions() {
             // the following check will only work if
             // OPT_DEFINE is a "VAL" option
             if( optn->value == OPT_DEFINE ) continue;
-#if _OPT_CG == _OFF
-            switch( optn->value ) {
-            case OPT_ST_LIM:
-                number = StmtLimit;
-                break;
-            case OPT_PG_LIM:
-                number = PageLimit;
-                break;
-            case OPT_TM_LIM:
-                number = TimeLimit;
-                break;
-#if (_OPSYS == _QNX) || (_TARGET == _VAX) || (_TARGET == _80386) || (_TARGET == _8086)
-            case OPT_MM_LIM:
-                number = ObjLimit;
-                break;
-#endif
-#if (_TARGET == _80386) || (_TARGET == _8086)
-            case OPT_PAGE_SIZE:
-                number = LinesPerPage;
-                break;
-#endif
-            }
-#else
             if( optn->value == CGOPT_DATA_THRESH ) {
                 number = DataThreshold;
             }
-#endif
             buff = GetOptName( buffer, optn->option );
             *buff = '=';
             ++buff;
@@ -915,7 +695,6 @@ void    PrtOptions() {
                 buffer[ 0 ] = ',';
                 continue;
             }
-#if _OPT_CG == _ON
             if( optn->value == CGOPT_OBJ_NAME ) {
                 if( ObjName == NULL ) continue;
                 *buff = NULLCHAR;
@@ -924,35 +703,12 @@ void    PrtOptions() {
                 buffer[ 0 ] = ',';
                 continue;
             }
-#elif (_TARGET == _80386) || (_TARGET == _8086)
-            if( optn->value == OPT_LINK ) {
-                if( ( Options & OPT_LINK ) == 0 ) continue;
-                if( LinkFile == NULL ) {
-                    --buff;             // remove '='
-                }
-                *buff = NULLCHAR;
-                PrtLst( buffer );
-                if( LinkFile != NULL ) {
-                    PrtLst( LinkFile );
-                }
-                buffer[ 0 ] = ',';
-                continue;
-            }
-#endif
             ltoa( number, buff, 10 );
             buff += strlen( buff );
             *buff = NULLCHAR;
             PrtLst( buffer );
             buffer[ 0 ] = ',';
-#if (_OPT_CG == _OFF) && ((_TARGET == _80386) || (_TARGET == _8086))
-        } else if( optn->flags & MTH ) {
-            if( ( MathOptions & optn->value ) == 0 ) continue;
-            GetOptName( buffer, optn->option );
-            PrtLst( buffer );
-            buffer[ 0 ] = ',';
-#endif
         } else {
-#if _OPT_CG == _ON
             if( optn->flags & CG ) {
                 if( optn->flags & NEG ) {
                     if( CGOpts & optn->value ) continue;
@@ -972,7 +728,6 @@ void    PrtOptions() {
                     if( !_BitsMatched( OZOpts, optn->value ) ) continue;
                 }
             } else
-#endif
             if( optn->value == OPT_XLINE ) {
                 if( LastColumn == LAST_COL ) continue;
             } else {

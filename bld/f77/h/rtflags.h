@@ -31,13 +31,3 @@
 
 
 // Run-Time Flags
-
-#if _OPT_CG == _OFF
-
-#define LF_IS_TERMINAL  0x0001  // listing file is terminal device
-#define DB_USED         0x0002  // debugger used
-#define DB_ERROR        0x0004  // error occurred
-#define DB_INSIDE       0x0008  // debugger is active
-#define IO_INITIALIZED  0x0010  // i/o system initialized
-
-#endif

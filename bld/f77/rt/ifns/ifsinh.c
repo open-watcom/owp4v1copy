@@ -57,12 +57,8 @@ extern  single          SINH(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XSINH( single *arg ) {
 //===========================
 
     return( SINH( *arg ) );
 }
-
-#endif

@@ -99,9 +99,7 @@
 // ========
 
 #define SY_DO_PARM       0x0100U        // DO parameter
-#if _OPT_CG == _ON
 #define SY_VALUE_PARM    0x0100U        // dummy argument is passed by value
-#endif
 #define SY_IN_EC         0x00C0U        // equivalenced and/or in common block
 #define SY_IN_COMMON     0x0080U        // - occurs in COMMON block list
 #define SY_IN_EQUIV      0x0040U        // - occurs in EQUIVALENCE list
@@ -118,11 +116,7 @@
 #define SY_PS_ENTRY      0x0c00U        // primary or secondary entry point
 #define SY_PENTRY        0x0800U        // - primary entry point
 #define SY_SENTRY        0x0400U        // - secondary entry point
-#if _OPT_CG == _OFF
-#define SY_MACLIB        0x0100U        // searched for in library
-#else
 #define SY_RT_ROUTINE    0x0100U        // subprogram is a run-time routine
-#endif
 #define SY_INTRINSIC     0x0080U        // subprogram was INTRINSIC'ed
 #define SY_EXTERNAL      0x0040U        // subprogram was EXTERNAL'ed
 #define SY_SUBPROG_IDX   3              // shift SY_SUBPROG_TYPE bits by this
@@ -137,9 +131,7 @@
 #define SY_FN_OR_SUB     0x0000U        // - function or subroutine (000)
 #define SY_RB_DEFINED    0x0004U        // remote block defined
 #define SY_RELAX_EXTERN  0x0004U        // don't force an external reference
-#if _OPT_CG == _ON
 #define SY_IF_ARGUMENT   0x0004U        // intrinsic function used as argument
-#endif
 #if _TARGET == _370
 #define SY_INTERNAL      0x0004U        // internal subprogram (i.f)
 #endif

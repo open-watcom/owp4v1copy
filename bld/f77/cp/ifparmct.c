@@ -71,22 +71,8 @@ void    IFCntPrms( uint func, byte actual_cnt ) {
 }
 
 
-#if _OPT_CG == _ON
-
 bool    IFGenInLine( uint func ) {
 //================================
 
     return( ( IFArgCt[ func ] & IF_IN_LINE ) != 0 );
 }
-
-
-#else
-
-bool    IFGenInLine( uint func ) {
-//================================
-
-    func = func;
-    return( FALSE );
-}
-
-#endif

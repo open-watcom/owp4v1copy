@@ -43,9 +43,6 @@
 #include "rtflags.h"
 #include "parmtype.h"
 #include "csetinfo.h"
-#if _OPT_CG == _OFF
-#include "units.h"
-#endif
 
 extern  void            IOErr(int,...);
 extern  bool            NoEOF(ftnfile *);
@@ -55,19 +52,9 @@ extern  bool            IsCarriage(void);
 extern  bool            IsFixed(void);
 extern  void            SendIFBuff(char *,int,unsigned_32,string PGM *);
 extern  void            UpdateRecNum(ftnfile *);
-#if _OPT_CG == _OFF
-extern  void            CheckPageLimit(void);
-extern  void            LFIOStart(void);
-extern  void            LFIOEnd(void);
-extern  void            LFWrite(char *,int);
-extern  void            LogFile(ftnfile *);
-#endif
 
 extern  char            NormalCtrlSeq[];
 extern  character_set   CharSetInfo;
-#if _OPT_CG == _OFF
-extern  void            (*DbOutRoutine)(ftnfile *);
-#endif
 
 
 void    F_SendData( char *str, uint width ) {
@@ -182,13 +169,6 @@ void    SendEOR() {
     bool        ifile;
 
     fcb = IOCB->fileinfo;
-#if _OPT_CG == _OFF
-    if( RTFlags & DB_INSIDE ) {
-        (*DbOutRoutine)( fcb );
-        fcb->col = 0;
-        return;
-    }
-#endif
     ifile = fcb->internal != NULL;
     if( ifile ) {
         if( fcb->flags & FTN_EOF ) {
@@ -208,9 +188,6 @@ void    SendEOR() {
         if( fcb->fileptr != NULL ) {
             FPutBuff( fcb );
             ChkIOErr( fcb );
-#if _OPT_CG == _OFF
-            LogFile( fcb );
-#endif
         }
     }
     // Write to the listing file after we've written to DB_STD_OUTPUT so
@@ -221,13 +198,6 @@ void    SendEOR() {
     // will go at the beginning of the buffer.
     len = fcb->col;
     fcb->col = 0;
-#if _OPT_CG == _OFF
-    if( IOCB->unitid == STANDARD_OUTPUT ) {
-        CheckPageLimit();
-    } else if( IOCB->unitid == DB_STD_OUTPUT ) {
-        WrtListFile( fcb->buffer, len );
-    }
-#endif
     if( ( IOCB->flags & IOF_NOCR ) == 0 ) {
         UpdateRecNum( fcb );
         // eofrecnum used to be updated in ExWrite().
@@ -290,22 +260,3 @@ void    IOItemResult( char PGM *src, int typ ) {
         break;
     }
 }
-
-
-#if _OPT_CG == _OFF
-
-void    WrtListFile( char *buffer, int len ) {
-//============================================
-
-    if( ( RTFlags & LF_IS_TERMINAL ) == 0 ) {
-        if( RTFlags & DB_USED ) {
-            LFIOStart();
-            LFWrite( buffer, len );
-            LFIOEnd();
-        } else {
-            LFWrite( buffer, len );
-        }
-    }
-}
-
-#endif

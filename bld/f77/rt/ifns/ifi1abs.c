@@ -47,12 +47,8 @@ intstar1        I1ABS( intstar1 arg ) {
     return( arg );
 }
 
-#if _OPT_CG == _ON
-
 intstar1        XI1ABS( intstar1 *arg ) {
 //======================================
 
     return( I1ABS( *arg ) );
 }
-
-#endif

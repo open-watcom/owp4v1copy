@@ -45,8 +45,6 @@
 
 extern  void            RTErr(int,...);
 
-#if _OPT_CG == _ON
-
 extern  void            IOSysInit(void);
 extern  void            RTSysInit(void);
 
@@ -60,20 +58,14 @@ void            __SetIOCB() {
     SetIOCB();
 }
 
-#endif
-
 
 void            SetIOCB() {
 //=========================
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     _AccessFIO();
     __XcptFlags |= XF_IO_INTERRUPTABLE;
-#if _OPT_CG == _ON
     IOSysInit();
-#endif
     if( IOCB->flags & IOF_SETIOCB ) {
         _PartialReleaseFIO();
         return;

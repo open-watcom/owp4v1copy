@@ -127,12 +127,8 @@ extended  QERFC( extended arg ) {
     return( res );
 }
 
-#if _OPT_CG == _ON
-
 extended XQERFC( extended *arg ) {
 //============================
 
     return( QERFC( *arg ) );
 }
-
-#endif

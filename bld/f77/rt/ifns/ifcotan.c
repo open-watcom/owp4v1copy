@@ -66,12 +66,8 @@ extern  single          COTAN(single);
 #endif
 
 
-#if _OPT_CG == _ON
-
 single XCOTAN( single *arg ) {
 //============================
 
     return( COTAN( *arg ) );
 }
-
-#endif

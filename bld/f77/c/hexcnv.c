@@ -86,11 +86,7 @@ uint    HSToB( char *src, uint src_len, byte *dst ) {
 }
 
 
-#if _OPT_CG == _OFF
-char    *pgm_BToHS( byte PGM *mem, int length, char *fmt_buf ) {
-#else
 char    *BToHS( byte *mem, int length, char *fmt_buf ) {
-#endif
 //==============================================================
 
     byte        data;
@@ -108,14 +104,3 @@ char    *BToHS( byte *mem, int length, char *fmt_buf ) {
     *fmt_buf = NULLCHAR;
     return( fmt_buf );
 }
-
-
-#if _OPT_CG == _OFF
-
-char    *BToHS( byte *mem, int length, char *fmt_buf ) {
-//======================================================
-
-    return( pgm_BToHS( mem, length, fmt_buf ) );
-}
-
-#endif

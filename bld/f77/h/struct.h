@@ -31,18 +31,13 @@
 
 typedef struct fstruct {
     sym_id              link;                   // next structure definition
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;            // head of relocation chain
-#endif
     union {
         struct field    *fields;                // fields of structure
         sym_id          sym_fields;             // sym_id type pointer
     } fl;
     intstar4            size;                   // size of structure
-#if _OPT_CG == _ON
     unsigned short      cg_typ;                 // type for code generator
     unsigned short      dbi;                    // for debugging information
-#endif
     unsigned_32         dbh;                    // browsing info handle
     byte                name_len;               // length of structure name
     char                name[STD_SYMLEN];       // structure name
@@ -52,9 +47,6 @@ typedef struct fstruct {
 
 typedef struct fmap {
     sym_id              link;                   // next map definition
-#if _OPT_CG == _OFF
-    obj_ptr             reloc_chain;            // head of relocation chain
-#endif
     struct field        *fields;                // fields of map
     intstar4            size;                   // size of map
 } fmap;

@@ -52,9 +52,7 @@ extern  int             FlushBuffer(file_handle);
 extern  void            StdBuffer(void);
 extern  void            StdFlush(void);
 extern  int             __EnterWVIDEO(char far *);
-#if _OPT_CG == _ON
 extern  void            RTSysInit(void);
-#endif
 
 extern  void            (* __BldErrMsg)(unsigned int ,char *,va_list args);
 extern  file_handle     FStdOut;
@@ -86,9 +84,7 @@ void    RTErr( int errcode, ... ) {
 
     va_list     args;
 
-#if _OPT_CG == _ON
     RTSysInit();
-#endif
     va_start( args, errcode );
     ErrHandler( errcode, args );
     va_end( args );

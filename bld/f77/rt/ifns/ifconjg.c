@@ -50,12 +50,8 @@ complex CONJG( single rp, single ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 complex XCONJG( complex *arg ) {
 //==============================
 
     return( CONJG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

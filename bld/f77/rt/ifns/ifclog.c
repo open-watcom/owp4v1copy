@@ -55,12 +55,8 @@ complex CLOG( single rp, single ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 complex XCLOG( complex *arg ) {
 //=============================
 
     return( CLOG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -54,12 +54,8 @@ xcomplex        CQCOS( extended rp, extended ip ) {
     return( result );
 }
 
-#if _OPT_CG == _ON
-
 xcomplex XCQCOS( xcomplex *arg ) {
 //================================
 
     return( CQCOS( arg->realpart, arg->imagpart ) );
 }
-
-#endif

@@ -59,10 +59,6 @@ extern  void            FScan(int,char *,cs_label);
 extern  sym_id          FmtPointer(void);
 extern  void            LFSkip(void);
 extern  void            BadStmt(void);
-#if _OPT_CG == _OFF
-extern  char            *MkNodeStr(itnode *);
-extern  void            FrNodeStr(char *);
-#endif
 
 extern  char            *StmtKeywords[];
 
@@ -109,20 +105,10 @@ static  void    NumOrLit( int routine ) {
 static  void    BreakOpn( int routine ) {
 //=======================================
 
-#if _OPT_CG == _OFF
-    char        *str;
-
-    str = MkNodeStr( CITNode );
-    CITNode->opnd = str;
-    CITNode->opnd_size++;    // include NULLCHAR
-#endif
     CITNode->opn = OPN_LIT;
     GetConst();
     AddConst( CITNode );
     GBreak( routine );
-#if _OPT_CG == _OFF
-    FrNodeStr( str );
-#endif
     AdvanceITPtr();
     if( !RecEOS() ) {
         Error( SX_NUM_OR_LIT );

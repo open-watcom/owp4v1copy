@@ -43,15 +43,11 @@
 #include "cpopt.h"
 
 extern  void            FmtError(int);
-#if _OPT_CG == _ON
 extern  void            OutByte(byte);
 extern  void            AlignEven(int);
 extern  unsigned_16     ObjOffset(obj_ptr);
 extern  obj_ptr         ObjTell(void);
 extern  void            OutInt(inttarg);
-#else
-#include "objutil.h"
-#endif
 
 
 void    GFEmEnd() {

@@ -46,12 +46,8 @@ single ERF( single arg ) {
     return( DERF( arg ) );
 }
 
-#if _OPT_CG == _ON
-
 single XERF( single *arg ) {
 //==========================
 
     return( ERF( *arg ) );
 }
-
-#endif

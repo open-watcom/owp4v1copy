@@ -48,12 +48,8 @@ extended        QIMAG( extended rp, extended ip ) {
     return( ip );
 }
 
-#if _OPT_CG == _ON
-
 extended XQIMAG( xcomplex *arg ) {
 //==============================
 
     return( QIMAG( arg->realpart, arg->imagpart ) );
 }
-
-#endif

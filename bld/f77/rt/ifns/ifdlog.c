@@ -57,12 +57,8 @@ extern  double          DLOG(double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDLOG( double *arg ) {
 //===========================
 
     return( DLOG( *arg ) );
 }
-
-#endif

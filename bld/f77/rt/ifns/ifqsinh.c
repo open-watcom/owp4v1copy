@@ -57,12 +57,8 @@ extern  extended                QSINH(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQSINH( extended *arg ) {
 //============================
 
     return( QSINH( *arg ) );
 }
-
-#endif

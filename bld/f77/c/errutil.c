@@ -66,7 +66,7 @@ void    BldErrCode( unsigned int error_num, char *buffer ) {
 }
 
 
-#if ( _OPT_CG == _OFF ) || !defined( __RT__ )
+#if !defined( __RT__ )
 
 extern  char            __FAR CaretTable[];
 char                    __FAR *PCaretTable = CaretTable;

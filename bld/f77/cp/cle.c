@@ -66,19 +66,11 @@ extern  void            FiniMacros(void);
 extern  void            FiniMacroProcessor(void);
 extern  void            InitAuxInfo(void);
 extern  void            FiniAuxInfo(void);
-#if _OPT_CG == _OFF
-extern  void            SetRunVars(void);
-extern  void            DoExecute(void);
-#else
 extern  void            InitGlobalSegs(void);
 extern  void            FreeGlobalSegs(void);
 extern  void            SDRewind(file_handle);
-#endif
 
 unsigned_32     CompTime;
-#if _OPT_CG == _OFF
-unsigned_32     ExecTime;
-#endif
 
 
 void            CLE() {
@@ -94,17 +86,6 @@ void            CLE() {
         Compile();
         CompTime = difftime( time( NULL ), start );
         FiniCompile();
-#if _OPT_CG == _OFF
-        if( (Options & OPT_RUN) && !(ProgSw & PS_ERROR) ) {
-            if( (Options & OPT_LINK) || !(Options & OPT_OBJECT) ) {
-                StartExecute();
-                start = time( NULL );
-                Execute();
-                ExecTime = difftime( time( NULL ), start );
-                FiniExecute();
-            }
-        }
-#endif
         Conclusion();
     } else {
         // Consider: wfc /who what
@@ -121,41 +102,6 @@ static  void    StartCompile() {
 }
 
 
-#if _OPT_CG == _OFF
-
-static  void    Compile() {
-//=========================
-
-    InitAuxInfo();      // must be done before ComRead()
-    InitMacros();
-    ComRead(); // pre-read must occur here in case of null program
-    DoCompile();
-    FiniMacros();
-    FiniAuxInfo();
-}
-
-
-static  void    StartExecute() {
-//==============================
-
-    SetRunVars();
-}
-
-
-static  void    Execute() {
-//=========================
-
-    DoExecute();
-}
-
-
-static  void    FiniExecute() {
-//=============================
-
-}
-
-
-#else
 
 static  void    Compile() {
 //=========================
@@ -191,8 +137,6 @@ void            InvokeCompile() {
     }
     FiniMacros();
 }
-
-#endif
 
 
 static  void    FiniCompile() {

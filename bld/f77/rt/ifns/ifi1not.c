@@ -44,12 +44,8 @@ intstar1       I1NOT( intstar1 arg1 ) {
     return( ~arg1 );
 }
 
-#if _OPT_CG == _ON
-
 intstar1       XI1NOT( intstar1 *arg1 ) {
 //=====================================
 
     return( I1NOT( *arg1 ) );
 }
-
-#endif

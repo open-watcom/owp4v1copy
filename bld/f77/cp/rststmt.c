@@ -38,9 +38,7 @@
 #include "global.h"
 
 extern  void                    *FMemAlloc(int);
-#if _OPT_CG == _ON
 extern  label_id                NextLabel(void);
-#endif
 
 
 unsigned_32     GetStmtNum( sym_id sn ) {
@@ -83,12 +81,8 @@ sym_id  STStmtNo( unsigned_32 stmnt_no ) {
         ste_ptr->st.flags |= SN_ADD_65535;
     }
     ste_ptr->st.number = stmnt_no;
-#if _OPT_CG == _OFF
-    ste_ptr->st.reloc_chain = NULL;
-#else
     ste_ptr->st.address = NextLabel();
     ste_ptr->st.ref_count = 0;
-#endif
     ste_ptr->st.link = SList;
     SList = ste_ptr;
     return( ste_ptr );

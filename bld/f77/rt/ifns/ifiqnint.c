@@ -49,12 +49,8 @@ intstar4 IQNINT( extended arg ) {
     return( floor( arg + .5 ) );
 }
 
-#if _OPT_CG == _ON
-
 intstar4 XIQNINT( extended *arg ) {
 //===============================
 
     return( IQNINT( *arg ) );
 }
-
-#endif

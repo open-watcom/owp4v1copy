@@ -49,12 +49,8 @@ extended QSIGN( extended arg1, extended arg2 ) {
     return( -fabs( arg1 ) );
 }
 
-#if _OPT_CG == _ON
-
 extended XQSIGN( extended *arg1, extended *arg2 ) {
 //===========================================
 
     return( QSIGN( *arg1, *arg2 ) );
 }
-
-#endif

@@ -96,20 +96,12 @@ ftnfile *_SetStd( int unit, int mode, char *term_name, file_handle fp ) {
 ftnfile *_InitStandardInput() {
 //=============================
 
-#if _OPT_CG == _ON
     return( _SetStd( STANDARD_INPUT, ACTION_READ, SDTermIn, FStdIn ) );
-#else
-    return( NULL );
-#endif
 }
 
 
 ftnfile *_InitStandardOutput() {
 //==============================
 
-#if _OPT_CG == _ON
     return( _SetStd( STANDARD_OUTPUT, ACTION_WRITE, SDTermOut, FStdOut ) );
-#else
-    return( NULL );
-#endif
 }

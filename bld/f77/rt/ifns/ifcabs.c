@@ -58,12 +58,8 @@ single  CABS( single rp, single ip ) {
     }
 }
 
-#if _OPT_CG == _ON
-
 single  XCABS( complex *arg ) {
 //=============================
 
     return( CABS( arg->realpart, arg->imagpart ) );
 }
-
-#endif

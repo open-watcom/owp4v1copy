@@ -48,9 +48,6 @@ extern  void            GLabel(label_id);
 extern  void            GBranch(label_id);
 extern  label_id        NextLabel(void);
 extern  void            FreeLabel(label_id);
-#if _OPT_CG == _OFF
-extern  void            GDbugInfo(void);
-#endif
 
 
 void    CpGuess() {
@@ -75,9 +72,6 @@ void    CpAdmit() {
         GBranch( CSHead->bottom );
         GLabel( CSHead->branch );
         FreeLabel( CSHead->branch );
-#if _OPT_CG == _OFF
-        GDbugInfo();
-#endif
         CSHead->typ = CS_ADMIT;
         CSHead->branch = NextLabel();
         CSHead->block = ++BlockNum;
@@ -98,9 +92,6 @@ void    CpEndGuess() {
         GLabel( CSHead->bottom );
         FreeLabel( CSHead->branch );
         FreeLabel( CSHead->bottom );
-#if _OPT_CG == _OFF
-        GDbugInfo();
-#endif
     } else {
         Match();
     }

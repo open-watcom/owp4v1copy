@@ -58,43 +58,25 @@ opt( "DIsk",       DISK_MASK,        CMD|NEG,     &NegOption, MS_OPT_DISK ),
 opt( "INCList",    OPT_INCLIST,      CMD,         &BitOption, MS_OPT_INCLIST ),
 opt( "ERrorfile",  OPT_ERRFILE,      CMD,         &BitOption, MS_OPT_ERRFILE ),
 opt( "INCPath",    OPT_INCPATH,      CMD|VAL,     &PathOption,MS_OPT_INCPATH ),
-#if _OPT_CG == _ON
 opt( "FO",         CGOPT_OBJ_NAME,   CMD|VAL|CG,  &FOOption,  MS_CGOPT_OBJ_NAME ),
-#endif
-#if _OPT_CG == _OFF
-opt( "Object",     OPT_OBJECT,       CMD,         &BitOption, MS_OPT_OBJECT ),
-opt( "LInk",       OPT_LINK,         CMD|VAL,     &LnkOption, MS_OPT_LINK ),
-#endif
 //                      Diagnostic Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_DIAGNOSTIC ),
 opt( "EXtensions", OPT_EXT,          CMD|SRC,     &BitOption, MS_OPT_EXT ),
 opt( "Reference",  OPT_REFERENCE,    CMD|SRC,     &BitOption, MS_OPT_REFERENCE ),
 opt( "WArnings",   OPT_WARN,         CMD|SRC,     &BitOption, MS_OPT_WARN ),
 opt( "EXPlicit",   OPT_EXPLICIT,     CMD,         &BitOption, MS_OPT_EXPLICIT ),
-#if _OPT_CG == _OFF
-opt( "CHeck",      OPT_CHECK,        CMD|SRC,     &BitOption, MS_OPT_CHECK ),
-opt( "ARraycheck", OPT_ARRCHECK,     CMD|SRC,     &BitOption, MS_OPT_ARRCHECK ),
-#endif
-#if _OPT_CG == _ON
 opt( "DEBug",      OPT_DEBUG,        CMD,         &BitOption, MS_OPT_DEBUG ),
 opt( "TRace",      OPT_TRACE,        CMD,         &BitOption, MS_OPT_TRACE ),
 opt( "BOunds",     OPT_BOUNDS,       CMD,         &BitOption, MS_OPT_BOUNDS ),
 opt( "STack",      CGOPT_STACK_CHK,  CMD|CG,      &CGOption,  MS_CGOPT_STACK_CHK ),
-#endif
 //                      Debugging Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_DEBUGGING ),
-#if _OPT_CG == _ON
 opt( "D1",         CGOPT_DB_LINE,    CMD|CG,      &CGOption,  MS_CGOPT_DB_LINE ),
 opt( "D2",         CGOPT_DB_LOCALS,  CMD|CG,      &CGOption,  MS_CGOPT_DB_LOCALS ),
 opt( "HC",         CGOPT_DI_CV,      CMD|CG,      &CGOption,  MS_CGOPT_DI_CV ),
 opt( "HD",         CGOPT_DI_DWARF,   CMD|CG,      &CGOption,  MS_CGOPT_DI_DWARF ),
 opt( "HW",         CGOPT_DI_WATCOM,  CMD|CG,      &CGOption,  MS_CGOPT_DI_WATCOM ),
-#endif
-#if _OPT_CG == _OFF
-opt( "DEBug",      OPT_DEBUG,        CMD,         &BitOption, MS_OPT_DEBUG ),
-#endif
 //opt( "DB",       OPT_BROWSE,       CMD,         &BitOption, MS_OPT_BROWSE ),
-#if _OPT_CG == _ON
 #if _TARGET== _8086 || _TARGET== _80386
 //                      Floating-Point Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_FPUOPTS ),
@@ -176,7 +158,6 @@ opt( "BD",         CGOPT_BD,         CMD|CG,      &CGOption,  MS_CGOPT_BD ),
 #if _TARGET == _80386 || _TARGET == _8086
 opt( "WINdows",    CGOPT_WINDOWS,    CMD|CG,      &CGOption,  MS_CGOPT_WINDOWS ),
 #endif
-#endif
 //                      Character Set Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_DBCS ),
 opt( "CHInese",    OPT_CHINESE,      CMD,         &ChiOption, MS_OPT_CHINESE ),
@@ -195,27 +176,6 @@ opt( "Quiet",      OPT_QUIET,        CMD,         &BitOption, MS_OPT_QUIET ),
 opt( "RESources",  OPT_RESOURCES,    CMD,         &BitOption, MS_OPT_RESOURCES ),
 opt( "CC",         OPT_UNIT_6_CC,    CMD,         &BitOption, MS_OPT_UNIT_6_CC ),
 opt( "LFwithff",   OPT_LF_WITH_FF,   CMD,         &BitOption, MS_OPT_LF_WITH_FF ),
-#if _OPT_CG == _OFF
-#if _EDITOR == _ON
-opt( "EDit",       OPT_EDIT,         CMD,         &BitOption, MS_OPT_EDIT ),
-#endif
-opt( "RUN",        OPT_RUN,          CMD,         &BitOption, MS_OPT_RUN ),
-opt( "LOgio",      OPT_LOG_IO,       CMD,         &BitOption, MS_OPT_LOG_IO ),
-opt( "XType",      OPT_XTYPE,        CMD,         &BitOption, MS_OPT_XTYPE ),
-opt( "Statements", OPT_ST_LIM,       CMD|SRC|VAL, &StaOption, MS_OPT_ST_LIM ),
-opt( "Pages",      OPT_PG_LIM,       CMD|SRC|VAL, &PagOption, MS_OPT_PG_LIM ),
-opt( "TIme",       OPT_TM_LIM,       CMD|SRC|VAL, &TimOption, MS_OPT_TM_LIM ),
-#if (_OPSYS == _QNX) || (_TARGET == _VAX) || (_TARGET == _80386) || (_TARGET == _8086)
-opt( "COdesize",   OPT_MM_LIM,       CMD|VAL,     &CodOption, MS_OPT_MM_LIM ),
-#endif
-#if (_TARGET == _8086) || (_TARGET == _80386)
-opt( "PAGESIze",   OPT_PAGE_SIZE,    CMD|VAL,     &PSzOption, MS_OPT_PAGE_SIZE ),
-opt( "IOVer",      MATH_INT_OVER,    CMD|MTH,     &MthOption, MS_OPT_MATH_INT_OVER ),
-opt( "FOVer",      MATH_FLT_OVER,    CMD|MTH,     &MthOption, MS_OPT_MATH_FLT_OVER ),
-opt( "FUNder",     MATH_FLT_UNDER,   CMD|MTH,     &MthOption, MS_OPT_MATH_FLT_UNDER ),
-#endif
-#endif
-#if _OPT_CG == _ON
 opt( "DEPendency", OPT_DEPENDENCY,   CMD,         &BitOption, MS_OPT_DEPENDENCY ),
 #if _TARGET == _8086 || _TARGET == _80386
 opt( "SR",         CGOPT_SEG_REGS,   CMD|CG,      &CGOption,  MS_CGOPT_SEG_REGS ),
@@ -248,5 +208,4 @@ opt( "LGA",        CGOPT_GENASM,      CMD|CG,      &CGOption,  0 ),
 opt( "LGO",        CGOPT_LOGOWL,      CMD|CG,      &CGOption,  0 ),
 #endif
 opt( "LGC",        CGOPT_ECHOAPI,     CMD|CG,      &CGOption,  0 ),
-#endif
 opt( NULL,         0,                0,           NULL,       0 ) };

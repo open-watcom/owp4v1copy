@@ -62,12 +62,8 @@ extern  double          DMOD(double,double);
 #endif
 
 
-#if _OPT_CG == _ON
-
 double XDMOD( double *arg1, double *arg2 ) {
 //==========================================
 
     return( DMOD( *arg1, *arg2 ) );
 }
-
-#endif

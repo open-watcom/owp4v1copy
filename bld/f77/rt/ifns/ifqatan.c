@@ -57,12 +57,8 @@ extern  extended                QATAN(extended);
 #endif
 
 
-#if _OPT_CG == _ON
-
 extended XQATAN( extended *arg ) {
 //============================
 
     return( QATAN( *arg ) );
 }
-
-#endif
