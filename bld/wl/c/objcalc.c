@@ -836,7 +836,7 @@ static bool DefPubSym( void *_pub, void *_info )
     if( IS_SYM_ALIAS(pub) ) return FALSE;
     if( IS_SYM_IMPORTED(pub) ) return FALSE;
     seg = pub->p.seg;
-    if( seg != NULL ) {
+    if( seg != NULL && !seg->isdead ) {
         leader = seg->u.leader;
         /* address in symbol table is actually signed_32 offset
            from segdata zero */

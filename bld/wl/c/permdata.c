@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  PERMDATA:  routines for making some linker data permanent
+* Description:  Routines for making some linker data permanent.
 *
 ****************************************************************************/
 
@@ -51,7 +51,7 @@
 #include "permdata.h"
 
 stringtable             PermStrings;
-stringtable				PrefixStrings;	/* these are NetWare prefix strings of which there could possibly be several */
+stringtable             PrefixStrings;  /* these are NetWare prefix strings of which there could possibly be several */
 carve_t                 CarveLeader;
 carve_t                 CarveModEntry;
 carve_t                 CarveSymbol;
@@ -740,7 +740,13 @@ static void RebuildSegData( void *_sdata, void *info )
     if( !sdata->isdead || sdata->iscdat ) {
         sdata->u.name = MapString( sdata->u.name );
         sdata->o.clname = MapString( sdata->o.clname );
+    } else {
+        // the pointers won't be valid, just clear them; no one should be
+        // touching them!
+        sdata->u.name = NULL;
+        sdata->o.clname = NULL;
     }
+
 }
 
 static void RebuildSymbol( void *_sym, void *info )
@@ -781,7 +787,7 @@ static void RebuildSymbol( void *_sym, void *info )
 static void ReadBlockInfo( carve_t cv, void *blk, void *info )
 /************************************************************/
 {
-    QRead( ((perm_read_info *)info)->incfhdl, CarveBlockData(blk), 
+    QRead( ((perm_read_info *)info)->incfhdl, CarveBlockData(blk),
            CarveBlockSize(cv), IncFileName);
 }
 
@@ -1067,7 +1073,7 @@ extern void CleanPermData( void )
     CarveDestroy( CarveSegData );
     CarveDestroy( CarveClass );
     CarveDestroy( CarveGroup );
-	FiniStringTable( &PrefixStrings);
+    FiniStringTable( &PrefixStrings);
     FiniStringTable( &PermStrings );
     FiniStringTable( &StoredRelocs );
     _LnkFree( IncFileName );
