@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 implementation of directory functions.
 *
 ****************************************************************************/
 
@@ -37,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mbstring.h>
-#include <sys\types.h>
+#include <sys/types.h>
 #include <direct.h>
 #include <dos.h>
 #define INCL_ERRORS

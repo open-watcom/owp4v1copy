@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of stat().
 *
 ****************************************************************************/
 
@@ -37,8 +36,8 @@
 #include "widechar.h"
 #undef __INLINE_FUNCTIONS__
 #include <stddef.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <io.h>
 #include <fcntl.h>
 #include <errno.h>

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 implementation of utime().
 *
 ****************************************************************************/
 
@@ -33,14 +32,14 @@
 #include "variety.h"
 #include "widechar.h"
 #include <stddef.h>
-#include <sys\types.h>
+#include <sys/types.h>
 #include <time.h>
 #include <dos.h>
 #include <wos2.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <errno.h>
 #include <direct.h>
-#include <sys\utime.h>
+#include <sys/utime.h>
 #include "openmode.h"
 #include "rtdata.h"
 #include "seterrno.h"

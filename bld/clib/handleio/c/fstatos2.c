@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 implementation of fstat().
 *
 ****************************************************************************/
 
@@ -35,8 +34,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <io.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <errno.h>
 #include <direct.h>
 #include <wos2.h>

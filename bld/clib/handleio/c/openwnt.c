@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <io.h>
 #include <fcntl.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <share.h>
 #include <windows.h>
 #include "iomode.h"
