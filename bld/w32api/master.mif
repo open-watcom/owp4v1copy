@@ -1,0 +1,98 @@
+proj_name = w32api
+
+!include cproj.mif
+!include defrule.mif
+
+.EXTENSIONS :
+.EXTENSIONS : .lib .wlc .def
+
+libs =  	     &
+        advapi32.lib &
+        cap.lib &
+        comctl32.lib &
+        comdlg32.lib &
+        crypt32.lib &
+        ctl3d32.lib &
+        d3dim.lib &
+        d3drm.lib &
+        d3dxof.lib &
+        ddraw.lib &
+        dinput.lib &
+        dlcapi.lib &
+        dplayx.lib &
+        dsetup.lib &
+        dsound.lib &
+        gdi32.lib &
+        glaux.lib &
+        glu32.lib &
+        glut.lib &
+        glut32.lib &
+        imagehlp.lib &
+        imm32.lib &
+        iphlpapi.lib &
+        kernel32.lib &
+        lz32.lib &
+        mapi32.lib &
+        mfcuia32.lib &
+        mgmtapi.lib &
+        mpr.lib &
+        msacm32.lib &
+        msvcp60.lib &
+        mswsock.lib &
+        nddeapi.lib &
+        netapi32.lib &
+        odbc32.lib &
+        odbccp32.lib &
+        ole32.lib &
+        oleaut32.lib &
+        olecli32.lib &
+        oledlg.lib &
+        olepro32.lib &
+        olesvr32.lib &
+        opengl32.lib &
+        penwin32.lib &
+        pkpd32.lib &
+        psapi.lib &
+        rapi.lib &
+        rasapi32.lib &
+        rpcdce4.lib &
+        rpcns4.lib &
+        rpcrt4.lib &
+        secur32.lib &
+        setupapi.lib &
+        shell32.lib &
+        svrapi.lib &
+        tapi32.lib &
+        th32.lib &
+        thunk32.lib &
+        url.lib &
+        user32.lib &
+        userenv.lib &
+        vdmdbg.lib &
+        version.lib &
+        vfw32.lib &
+        win32spl.lib &
+        wininet.lib &
+        winmm.lib &
+        winspool.lib &
+        winstrm.lib &
+        wow32.lib &
+        ws2_32.lib &
+        wsock32.lib &
+        wst.lib
+
+.def: ..\lib
+
+.def.wlc:
+        vi -i -q "-k :source ..\\\\def2wlc.vi $*\n" $<
+
+.wlc.lib:
+        $(lib) -q -n -io -ii $@ @$<
+
+$(libs):
+
+clean: .SYMBOLIC .EXPLICIT
+        @if exist *.wlc @del *.wlc
+        @if exist *.lib @del *.lib
+        @if exist *.bak @del *.bak
+
