@@ -1,4 +1,4 @@
-#pmake: all flat cpu_386 target_i86 os_os2
+#pmake: all build flat cpu_386 target_i86 os_os2
 host_CPU = 386
 host_OS = os2
 host_CG = os220

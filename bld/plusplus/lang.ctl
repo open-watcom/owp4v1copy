@@ -126,23 +126,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    cdsay <PROJDIR>\c
-    cdsay ..\nti86
-    wmake /h /k clean
-    cdsay ..\nt386
-    wmake /h /k clean
-    cdsay ..\nt386dll
-    wmake /h /k clean
-    cdsay ..\osii86
-    wmake /h /k clean
-    cdsay ..\osi386
-    wmake /h /k clean
-    cdsay ..\os2i86
-    wmake /h /k clean
-    cdsay ..\os2386
-    wmake /h /k clean
-    cdsay ..\qnxi86
-    wmake /h /k clean
-    cdsay ..\qnx386
-    wmake /h /k clean
-    cd ..
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+
