@@ -1,0 +1,18 @@
+proj_name = symdump
+
+symdump_autodepends = .autodepend
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+.c: ..
+.h: ..
+
+obj             = .obj
+exe             = .exe
+
+objs       =   symdump$(obj)
+
+symdump$(exe) : $(objs)
+        $(cl) $(clflags) $(objs) $(cl_libs)
