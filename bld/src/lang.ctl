@@ -150,6 +150,16 @@ cdsay .
     <CPCMD> <DEVDIR>/src/win/watzee/win386/*.*  <RELROOT>/rel2/samples/win/watzee/win386/
 #    <CPCMD> <DEVDIR>/src/win/watzee/winaxp/*.* <RELROOT>/rel2/samples/win/watzee/winaxp/
 
+    <CPCMD> <DEVDIR>/src/directx/c/direct3d/*.*       <RELROOT>/rel2/samples/directx/c/direct3d/
+    <CPCMD> <DEVDIR>/src/directx/c/directinput/*.*    <RELROOT>/rel2/samples/directx/c/directinput/
+    <CPCMD> <DEVDIR>/src/directx/c/directshow/*.*     <RELROOT>/rel2/samples/directx/c/directshow/
+    <CPCMD> <DEVDIR>/src/directx/c/directsound/*.*    <RELROOT>/rel2/samples/directx/c/directsound/
+    <CPCMD> <DEVDIR>/src/directx/cpp/direct3d/*.*     <RELROOT>/rel2/samples/directx/cpp/direct3d/
+    <CPCMD> <DEVDIR>/src/directx/cpp/directinput/*.*  <RELROOT>/rel2/samples/directx/cpp/directinput/
+    <CPCMD> <DEVDIR>/src/directx/cpp/directshow/*.*   <RELROOT>/rel2/samples/directx/cpp/directshow/
+    <CPCMD> <DEVDIR>/src/directx/cpp/directsound/*.*  <RELROOT>/rel2/samples/directx/cpp/directsound/
+    <CPCMD> <DEVDIR>/src/directx/*.*                  <RELROOT>/rel2/samples/directx/
+
 [ BLOCK <1> clean ]
 #==================
     sweep killobjs
