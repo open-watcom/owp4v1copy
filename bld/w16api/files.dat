@@ -1,0 +1,30 @@
+#
+# Win16 headers
+#
+[ DEFAULT type="s" dir="h/win" where="c jc f77 jf77 ac" cond="wintarg" ]
+usr="cderr.h"
+usr="commdlg.h"
+usr="custcntl.h"
+usr="dde.h"
+usr="ddeml.h"
+usr="dlgs.h"
+usr="drivinit.h"
+usr="mmsystem.h"
+usr="shellapi.h"
+usr="stress.h"
+usr="toolhelp.h"
+usr="winsock.h"
+
+#
+# Win16 libraries
+#
+[ DEFAULT type="l" dir="lib286/win" where="c jc f77 jf77 ac" cond="wintarg" ]
+usr="commdlg.lib"
+usr="ctl3d.lib"
+usr="ctl3dv2.lib"
+usr="ddeml.lib"
+usr="shell.lib"
+usr="stress.lib"
+usr="toolhelp.lib"
+usr="windows.lib"
+usr="winsock.lib"

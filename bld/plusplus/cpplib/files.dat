@@ -1,4 +1,4 @@
-# ---------- dos libraries -----------
+# ---------- DOS libraries -----------
 type="l"	dir="lib286"		usr="plibs.lib"		cond="tools16 ms cplusplus "		where="c jc"
 type="l"	dir="lib286"		usr="plibc.lib"		cond="tools16 mc cplusplus "		where="c jc"
 type="l"	dir="lib286"		usr="plibm.lib"		cond="tools16 mm cplusplus "		where="c jc"
@@ -24,7 +24,7 @@ type="l"	dir="lib286"		usr="cplx7h.lib"	cond="tools16 mh cplusplus "		where="c j
 type="l"	dir="lib286/os2"	usr="plibmtl.lib"	cond="tools16 os2targ ml cplusplus "	where="c jc"
 type="l"	dir="lib286/os2"	usr="plbxmtl.lib"	cond="tools16 os2targ ml cplusplus "	where="c jc"
 
-# ---------- windows libraries -----------
+# ---------- Windows libraries -----------
 type="l"	dir="lib286/win"	usr="plibs.lib"		cond="tools16 wintarg ms cplusplus "	where="c jc"
 type="l"	dir="lib286/win"	usr="plibc.lib"		cond="tools16 wintarg mc cplusplus "	where="c jc"
 type="l"	dir="lib286/win"	usr="plibm.lib"		cond="tools16 wintarg mm cplusplus "	where="c jc"
@@ -51,19 +51,20 @@ type="l"	dir="lib386/nt"		usr="plbx3r.lib"	cond="wnttarg 3r cplusplus "		where="
 type="l"	dir="lib386/nt"		usr="plbx3s.lib"	cond="wnttarg 3s cplusplus "		where="c jc ac"
 type="l"	dir="lib386/nt"		usr="plbxmt3r.lib"	cond="wnttarg 3r cplusplus "		where="c jc ac"
 type="l"	dir="lib386/nt"		usr="plbxmt3s.lib"	cond="wnttarg 3s cplusplus "		where="c jc ac"
+
 # ---------- OS independent libraries -----------
-type="l"	dir="lib386"		usr="cplx3r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="cplx3s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="cplx73r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="cplx73s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plib3r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac f77 jf77"
-type="l"	dir="lib386"		usr="plib3s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plibmt3r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plibmt3s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plbx3r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plbx3s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plbxmt3r.lib"	cond="dostarg nlmtarg | wintarg | 3r cplusplus"		where="c jc ac"
-type="l"	dir="lib386"		usr="plbxmt3s.lib"	cond="dostarg nlmtarg | wintarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="cplx3r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="cplx3s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="cplx73r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="cplx73s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plib3r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac f77 jf77"
+type="l"	dir="lib386"		usr="plib3s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plibmt3r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plibmt3s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plbx3r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plbx3s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plbxmt3r.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3r cplusplus"		where="c jc ac"
+type="l"	dir="lib386"		usr="plbxmt3s.lib"	cond="dostarg nlmtarg | wintarg | lnxtarg | 3s cplusplus"		where="c jc ac"
 
 # ---------- 32 bit OS/2 libraries -----------
 type="l"	dir="lib386/os2"	usr="plib3r.lib"	cond="os2targ 3r cplusplus "		where="c jc f77 jf77"

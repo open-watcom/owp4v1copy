@@ -40,6 +40,8 @@ os2targ             - OS/2 2.x target
 doshost             - DOS host
 dostarg             - DOS target
 nlmtarg             - Netware target
+lnxhost             - Linux host
+lnxtarg             - Linux target
 tools16             - 16-bit development tools
 cplusplus           - C++ compiler and libs
 ms                  - 16-bit small memory model

@@ -50,6 +50,9 @@
 [ INCLUDE <DEVDIR>/cmdedit/files.dat ]
 [ INCLUDE <DEVDIR>/graphlib/files.dat ]
 [ INCLUDE <DEVDIR>/rtdll/files.dat ]
+[ INCLUDE <DEVDIR>/os2api/files.dat ]
+[ INCLUDE <DEVDIR>/w16api/files.dat ]
+[ INCLUDE <DEVDIR>/w32api/files.dat ]
 [ INCLUDE readme.dat ]
 
 # Currently Missing:

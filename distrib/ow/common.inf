@@ -27,14 +27,16 @@ autoset=os2host=IsOS2
 autoset=dostarg=IsDOS
 autoset=os2targ=IsOS2
 autoset=nlmtarg=false
-autoset=nechost=IsNEC
-autoset=nectarg=IsNEC
-autoset=tools16=IsDos IsOS2 IsWin | |
-autoset=samples=true
+autoset=lnxhost=false
+autoset=lnxtarg=false
 autoset=winhost=IsWin
 autoset=wnthost=IsWin32
 autoset=wintarg=IsWin
 autoset=wnttarg=IsWin32
+autoset=nechost=IsNEC
+autoset=nectarg=IsNEC
+autoset=tools16=IsDos IsOS2 IsWin | |
+autoset=samples=true
 autoset=helpfiles=true
 autoset=win16_helpfiles=helpfiles winhost
 autoset=win32_helpfiles=helpfiles wnthost
