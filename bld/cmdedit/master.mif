@@ -1,0 +1,142 @@
+proj_name = cmdedit
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+cmdfiles = &
+    cmdalias.$(ext) &
+    cmddata.$(ext) &
+    cmddir.$(ext) &
+    cmdedit.$(ext) &
+    cmdfile.$(ext) &
+    cmdio.$(ext) &
+    cmdmain.$(ext) &
+    cmdsave.$(ext) &
+    cmdscrn.$(ext) &
+    cmdstub.$(ext) &
+    cmdutil.$(ext)
+
+ext = obj
+dosobjs = $+ $(cmdfiles) $-
+os2objs = $+ $(cmdfiles) $-
+
+ext = ubj
+os2zuobjs = $+ $(cmdfiles) $-
+
+ext = cbj
+os2cmdshellobjs = $+ $(cmdfiles) $-
+
+!ifndef dopt
+dopt=d1
+!endif
+
+.EXTENSIONS:
+.EXTENSIONS: .exe .ubj .obj .cbj .c .h .asm
+
+.asm: ..
+.c: ..
+
+.c.ubj:
+        $(comp286) $< /w3 /oxs /d1 /fo=.ubj /zu /zq #
+
+.c.cbj:
+        $(comp286) $< /w3 /oxs /d1 /fo=.cbj /zq /d__CMDSHELL__ #
+
+.asm.cbj:
+        $(as) -zq -d_MODEL=_SMALL -d_OS=_OS2 -fo=$^&.cbj $<
+
+.before:
+        set include=$(lang_root)\h;$(watcom_dir)\h;$(lang_root)\h\os21x
+
+lnk = tmp.lnk
+dolink = $(linker)
+
+!ifeq host_OS dos
+
+.asm.obj:
+        $(as) -zq -d_MODEL=_SMALL -d_OS=_DOS $<
+
+.c.obj:
+        $(comp286) $< /w3 /dDOS /oas /s /$(dopt) /zq #
+
+#
+# CMDEDIT.EXE
+#
+cmdobjs = dosstart.obj $(dosobjs)
+cmdedit.exe: $(cmdobjs) makefile
+            @%write $(lnk) debug all system dos name cmdedit option quiet,dosseg lib clibs
+            @%append $(lnk) op map,verbose,symfile=cmdedit.sym
+            @for %i in ($(cmdobjs)) do @%append $(lnk) file %i
+            $(dolink) @$(lnk)
+
+#
+# DCMDEDIT.EXE (debugging version)
+#
+tstobjs = dcmdedit.obj $(dosobjs)
+
+dcmdedit.exe: $(tstobjs) makefile
+            @%write $(lnk) op map system dos debug all name dcmdedit option quiet,dosseg
+            @for %i in ($(tstobjs)) do @%append $(lnk) file %i
+            $(dolink) @$(lnk)
+
+!endif
+
+!ifeq host_OS os2
+
+.asm.obj:
+        $(as) -zq -d_MODEL=_SMALL -d_OS=_OS2 $<
+
+.c.obj:
+        $(comp286) $< /w3 /oxs /d1 /fo=.obj /zq #
+
+all: os2edit.dll os2edit.exe os22edit.exe
+
+#
+# OS2EDIT.DLL
+#
+cmd2objs = cmdstart.obj $(os2zuobjs)
+
+os2edit.dll: $(cmd2objs) makefile
+            @%write $(lnk) option quiet,dosseg name os2edit lib os2, clibs
+            @%append $(lnk) system os2 dll initinstance option manyautodata
+            @%append $(lnk) option newfiles op map
+            @%append $(lnk) export OS2EDIT_
+            @for %i in ($(cmd2objs)) do @%append $(lnk) file %i
+            $(dolink) @$(lnk)
+
+#
+# DOS2EDIT.EXE  (debugging version)
+#
+ts2objs = dcmdedit.obj ftos.obj $(os2objs)
+
+dos2edit.exe: $(ts2objs) makefile
+            @%write $(lnk) debug all name dos2edit system os2 pmc option quiet,dosseg
+            @%append $(lnk) lib os2 option newfiles
+            @for %i in ($(ts2objs)) do @%append $(lnk) file %i
+            $(dolink) @$(lnk)
+
+#
+# CMDSHELL.EXE  (feed commands to CMD.EXE)
+#
+cmdshellobjs = cmdshell.cbj ftos.cbj $(os2cmdshellobjs)
+
+cmdshell.exe: $(cmdshellobjs) makefile
+            @%write $(lnk) debug all name cmdshell system os2 pmc option quiet,dosseg
+            @%append $(lnk) lib os2
+            @for %i in ($(cmdshellobjs)) do @%append $(lnk) file %i
+            $(dolink) @$(lnk)
+
+#
+# OS2EDIT.EXE
+#
+
+os2edit.exe:    os2edit.c
+        $(comp286) $< /ox /d1 /zq
+        $(dolink) debug all op symfile,quiet sys os2 f os2edit
+#
+# OS22EDIT.EXE
+#
+os22edit.exe:    os22edit.c
+        $(comp286) $< /ox /d1 /zq
+        $(dolink) debug all op symfile,quiet sys os2 f os22edit
+!endif

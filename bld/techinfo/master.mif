@@ -1,0 +1,35 @@
+proj_name = techinfo
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+.CONTINUE
+.ERASE
+
+.EXTENSIONS
+.EXTENSIONS : .exe .obj .c .asm
+
+cflags_dos = -bt=dos -zq -os -s -d1 -w3
+cflags_os2 = -bt=os2 -zq -os -s -d1 -w3 -d__OS2__ -i$(lang_root)\h\os21x
+
+.c:..
+.asm:..
+
+.c.obj:
+    $(cc) $(cflags_$(host_OS)) $<
+
+.asm.obj:
+    $(as) -zq -fo=$^@ $[@
+
+os2objs = techinfo.obj ptype.obj pbus.obj pprefix.obj ndptype.obj
+dosobjs = $(os2objs) monint.obj
+
+lflags_os2 = system os2 pmc op newfile
+
+techinfo.exe : $($(host_OS)objs)
+    @%create $*.lnk
+    @%append $*.lnk name $^@
+    @%append $*.lnk option quiet
+    @for %i in ($($(host_OS)objs)) do @%append $*.lnk file %i
+    @%append $*.lnk libpath $(watcom_dir)\lib
+    $(linker) $(lflags) @$*.lnk
