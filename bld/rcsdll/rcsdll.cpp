@@ -264,7 +264,7 @@ virtual int rcsSystem::checkout( userData *d, rcsstring name,
 virtual int rcsSystem::checkin( userData *d, rcsstring name,
                                 rcsstring pj, rcsstring tgt )
 {
-    char MsgBuf[BUFLEN] = "\0";
+    char MsgBuf[BUFLEN];
     char Buffer[BUFLEN];
     char path[_MAX_PATH];
     char drive[_MAX_DRIVE];
@@ -272,6 +272,7 @@ virtual int rcsSystem::checkin( userData *d, rcsstring name,
     int i=0;
     FILE *fp;
 
+    *MsgBuf = '\0';
     if( d == NULL ) return( 0 );
     if( d->msgBox ) {
         sprintf( Buffer, "Checkin %s", name );
