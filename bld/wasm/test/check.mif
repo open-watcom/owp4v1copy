@@ -10,6 +10,8 @@ log_file=testasm.log
     @set ESM_CHECK1=-@wdis -l=$(name).dis -a $(name).obj
 !ifdef fix_wdis_lst
     @set ESM_CHECK2=-@vi -d -q -i -k ":so fixlst.vi\nZZ" $(name).dis
+!else
+    @set ESM_CHECK2=@%null
 !endif
     @set ESM_CHECK3=-@diff -i -b $(name).dis $(name).esm
     @set EMP_CHECK1=-@dmpobj -q -l -rec=FIXUPP $(name).obj
