@@ -656,6 +656,7 @@ static void dumpLines(
     uint                        u;
     uint                        file_index;
     const uint_8 *              name;
+    uint_32                     dir_index;
     uint_32                     mod_time;
     uint_32                     file_length;
     uint_32                     directory;
@@ -678,45 +679,46 @@ static void dumpLines(
         p += sizeof( uint_32 );
         unit_base = p;
 
-        printf( "total_length: %08lx\n", unit_length );
+        printf( "total_length: 0x%08lx (%u)\n", unit_length, unit_length );
 
-        printf( "version: %04x\n", *(uint_16 *)p );
+        printf( "version: 0x%04x\n", *(uint_16 *)p );
         p += sizeof( uint_16 );
 
-        printf( "prologue_length: %08lx\n", *(uint_32 *)p );
+        printf( "prologue_length: 0x%08lx (%u)\n", *(uint_32 *)p, *(uint_32 *)p );
         p += sizeof( uint_32 );
 
         min_instr = *p;
-        printf( "minimum_instruction_length: %02x\n", min_instr );
+        printf( "minimum_instruction_length: 0x%02x (%u)\n", min_instr, min_instr );
         p += 1;
 
         default_is_stmt = *p;
-        printf( "default_is_stmt: %02x\n", default_is_stmt );
+        printf( "default_is_stmt: 0x%02x (%u)\n", default_is_stmt, default_is_stmt );
         p += 1;
 
         line_base = *(int_8 *)p;
-        printf( "line_base: %02x\n", line_base );
+        printf( "line_base: 0x%02x (%d)\n", (unsigned char)line_base, line_base );
         p += 1;
 
         line_range = *(uint_8 *)p;
-        printf( "line_range: %02x\n", line_range );
+        printf( "line_range: 0x%02x (%u)\n", line_range, line_range );
         p += 1;
 
         opcode_base = *p;
-        printf( "opcode_base: %02x\n", opcode_base );
+        printf( "opcode_base: 0x%02x (%u)\n", opcode_base, opcode_base );
         p += 1;
         opcode_lengths = alloca( sizeof( uint ) * opcode_base );
         printf( "standard_opcode_lengths:\n" );
         for( u = 0; u < opcode_base - 1; ++u ) {
             opcode_lengths[ u ] = *p;
             ++p;
-            printf( "%4u: %u\n", u, opcode_lengths[ u ] );
+            printf( "%4u: %u\n", u + 1, opcode_lengths[ u ] );
         }
 
         printf( "-- current_offset = %08lx\n", p - input );
 
         if( p - input >= length ) return;
 
+        printf( "-- start include paths --\n");
         file_index = 0;
         while( *p != 0 ) {
             ++file_index;
@@ -725,18 +727,22 @@ static void dumpLines(
             printf( "path %u: '%s'\n", file_index, name );
             if( p - input >= length ) return;
         }
+        printf( "-- end include paths --\n");
         p++;
+        printf( "-- start files --\n");
         file_index = 0;
         while( *p != 0 ) {
             ++file_index;
             name = p;
             p += strlen( p ) + 1;
+            p = DecodeULEB128( p, &dir_index );
             p = DecodeULEB128( p, &mod_time );
             p = DecodeULEB128( p, &file_length );
-            printf( "file %u: '%s' mod_time %08lx length %08lx\n",
-                file_index, name, mod_time, file_length );
+            printf( "file %u: '%s' dir_index %08lx mod_time %08lx length %08lx\n",
+                file_index, name, dir_index, mod_time, file_length );
             if( p - input >= length ) return;
         }
+        printf( "-- end files --\n");
         p++;
         initState( &state, default_is_stmt );
 
@@ -744,6 +750,7 @@ static void dumpLines(
             op_code = *p;
             ++p;
             if( op_code == 0 ) {
+                printf( "EXTENDED 0x%02x: ", op_code );
                 /* extended op_code */
                 op_len = *p;
                 ++p;
@@ -760,9 +767,14 @@ static void dumpLines(
                 case DW_LNE_set_address:
                     tmp = *(uint_32 *)p;
                     p += sizeof( uint_32 );
+                    #if 0   /* Why did they choose 6 byte here?  */
                     tmp_seg = *(uint_16 *)p;
                     p += sizeof( uint_16 );
                     printf( "SET_ADDRESS %04x:%08lx\n", tmp_seg, tmp );
+                    #else
+                    tmp_seg = 0;    /* stop warning */
+                    printf( "SET_ADDRESS %08lx\n", tmp );
+                    #endif
                     break;
                 case DW_LNE_define_file:
                     ++file_index;
@@ -832,7 +844,7 @@ static void dumpLines(
                     printf( "\n" );
                 }
             } else {
-                printf( "SPECIAL %02x:", op_code );
+                printf( "SPECIAL 0x%02x:", op_code );
                 op_code -= opcode_base;
                 printf( " addr incr: %d  line incr: %d\n",
                     op_code / line_range,
