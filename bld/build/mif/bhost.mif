@@ -31,9 +31,9 @@ nlang_bin       = $(nlang_root)\binnt
 lang_dll        = $(lang_root)\binnt
 nlang_dll       = $(nlang_root)\binnt
 !else ifdef __LINUX__
-bld_sys         = linux
+bld_sys         = bld_linux
 bld_bin         = $(build_dir)/binl
-bld_incs        = $(bld_extra_incs);$(lang_root)/lh
+bld_incs        = $(bld_extra_incs);$(hdr_dir)/linux
 lang_bin        = $(lang_root)/binnt
 nlang_bin       = $(nlang_root)/binnt
 lang_dll        = $(lang_root)/binnt

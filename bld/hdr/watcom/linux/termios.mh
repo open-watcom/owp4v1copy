@@ -125,6 +125,7 @@ struct termios {
 #define  B3000000   0010015
 #define  B3500000   0010016
 #define  B4000000   0010017
+#define CBAUD       0010017
 
 /*
  * Local Modes (c_lflag)

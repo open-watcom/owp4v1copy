@@ -246,7 +246,7 @@ _WCRTLINK extern int  sigaddset( sigset_t *__set, int __signo );
 _WCRTLINK extern int  sigdelset( sigset_t *__set, int __signo );
 _WCRTLINK extern int  sigemptyset( sigset_t *__set );
 _WCRTLINK extern int  sigfillset( sigset_t *__set );
-_WCRTLINK extern int  sigismember( sigset_t *__set, int __signo );
+_WCRTLINK extern int  sigismember( const sigset_t *__set, int __signo );
 _WCRTLINK extern int  sigpending( sigset_t *__set );
 _WCRTLINK extern int  sigprocmask( int __how, const sigset_t *__set, sigset_t *__oset );
 _WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
