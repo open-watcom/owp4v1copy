@@ -202,6 +202,16 @@ _WCRTLINK extern int    umount( const char *__special );
 :segment LINUX
 _WCRTLINK extern int    truncate( const char *__path, off_t __length );
 _WCRTLINK extern int    ftruncate( int __fd, off_t __length );
+
+/* the following are also in process.h, but they are expected to be here */
+_WCRTLINK extern int    execl( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int    execle( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int    execlp( const char *__file, const char *__arg0, ... );
+_WCRTLINK extern int    execv( const char *__path, const char *const __argv[] );
+_WCRTLINK extern int    execve( const char *__path, const char *const __argv[],
+                            const char *const __envp[] );
+_WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] );
+
 :endsegment
 
 :include ext.sp
