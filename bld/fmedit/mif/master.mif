@@ -16,20 +16,7 @@ suppress_bd = 1
 
 .extensions: .res .dlg .rc .cur .ico
 
-.CONTINUE
 .ERASE
-
-!define copy_dll @%null
-
-!ifeq build_target NT
-!   ifdef %DLL_DIR_NT
-!      define copy_dll cp $^@ $(%DLL_DIR_NT)/$^.
-!   endif
-!else
-!   ifdef %DLL_DIR
-!      define copy_dll cp $^@ $(%DLL_DIR)/$^.
-!   endif
-!endif
 
 object =                &
         align.obj       &
@@ -65,7 +52,7 @@ extra_c_flags = -fpc -s
 extra_c_flags_win = -zu -zw
 extra_c_flags_fmedit = -bd
 
-!ifeq host_OS win
+!ifeq host_os win
 rc_flags += -30
 !endif
 
@@ -73,12 +60,11 @@ rc_flags += -30
 # Dependencies
 #
 $(name).lib: $(name).dll
-            $(librarian) -n -b $^@ +$(name).dll +verimp.obj
+    $(librarian) -n -b $^@ +$(name).dll +verimp.obj
 
 $(name).dll: $(object) verimp.obj $(library_files) $(name).res
-            $(linker) $(lflags) name $^@ file {$(object) verimp.obj}
-            $(rc) $(rc_flags) -k $(name).res $(name).dll
-            $(copy_dll)
+    $(linker) $(lflags) name $^@ file {$(object) verimp.obj}
+    $(rc) $(rc_flags) -k $(name).res $(name).dll
 
 $(name).res: fmedit.rc .AUTODEPEND
-            $(rc) $(rc_flags) -r $[@ -fo=$^@
+    $(rc) $(rc_flags) -I="$(inc_path)" -r $[@ -fo=$^@

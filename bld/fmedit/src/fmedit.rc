@@ -2,7 +2,7 @@
 #include "fmdlgs.h"
 #include "constant.def"
 
-FMEDIT ICON FMEDIT.ICO
+FMEDIT ICON "fmedit.ico"
 
 SetupMenu MENU
 BEGIN
@@ -34,11 +34,11 @@ BEGIN
   VK_DELETE, IDM_DELETEOBJECT, VIRTKEY
 END
 
-LEFT    BITMAP LEFT.BMP
-HCENTRE BITMAP HCENTRE.BMP
-RIGHT   BITMAP RIGHT.BMP
-TOP     BITMAP TOP.BMP
-VCENTRE BITMAP VCENTRE.BMP
-BOTTOM  BITMAP BOTTOM.BMP
+LEFT    BITMAP "left.bmp"
+HCENTRE BITMAP "hcentre.bmp"
+RIGHT   BITMAP "right.bmp"
+TOP     BITMAP "top.bmp"
+VCENTRE BITMAP "vcentre.bmp"
+BOTTOM  BITMAP "bottom.bmp"
 
 #include "fmdlgs.dlg"
