@@ -169,6 +169,50 @@ static unsigned FindFilePath( char *name, char *result )
     return( TryOnePath( "/usr/watcom/wd", &tmp, name, result ) );
 }
 
+unsigned FullPathOpen( char const *name, char *ext, char *result, unsigned max_result )
+{
+    bool                has_ext;
+    bool                has_path;
+    const char          *ptr;
+    const char          *endptr;
+    char                trpfile[256];
+    unsigned            filehndl;
+    int                 name_len = strlen(name);
+
+    has_ext = FALSE;
+    has_path = FALSE;
+    endptr = name + name_len;
+    for( ptr = name; ptr != endptr; ++ptr ) {
+        switch( *ptr ) {
+        case '.':
+            has_ext = TRUE;
+            break;
+        case '/':
+            has_ext = FALSE;
+            has_path = TRUE;
+            /* fall through */
+            break;
+        }
+    }
+    memcpy( trpfile, name, name_len );
+    if( has_ext ) {
+        trpfile[name_len] = '\0';
+    } else {
+        trpfile[ name_len++ ] = '.';
+        memcpy( (char near *)&trpfile[ name_len ], ext, strlen( ext ) + 1 );
+    }
+    if( has_path ) {
+        filehndl = open( trpfile, O_RDONLY );
+    } else {
+        if( FindFilePath( trpfile, result ) == 0 ) {
+            filehndl = -1;
+        } else {
+            filehndl = open( result, O_RDONLY );
+        }
+    }
+    return( filehndl );
+}
+
 unsigned PathOpen( char *name, unsigned name_len, char *exts )
 {
     bool                has_ext;

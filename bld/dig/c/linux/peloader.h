@@ -67,6 +67,7 @@ typedef struct {
     u_long  importBase;     /* Offset of import section in image        */
     u_long  exportBase;     /* Offset of export section in image        */
     u_long  exportDir;      /* Offset of export directory               */
+    char    *modname;       /* Filename of the image                    */
     } PE_MODULE;
 
 /****************************************************************************
@@ -102,7 +103,7 @@ extern "C" {            /* Use "C" linkage when in C++ mode */
 u_long      PE_getFileSize(FILE *f,u_long startOffset);
 PE_MODULE * PE_loadLibraryExt(FILE *f,u_long offset,u_long *size);
 PE_MODULE * PE_loadLibrary(const char *szDLLName);
-PE_MODULE * PE_loadLibrary_handle(int fd);
+PE_MODULE * PE_loadLibraryHandle(int fd,const char *szDLLName);
 void *      PE_getProcAddress(PE_MODULE *hModule,const char *szProcName);
 void        PE_freeLibrary(PE_MODULE *hModule);
 int         PE_getError(void);

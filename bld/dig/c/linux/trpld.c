@@ -44,7 +44,7 @@ static void (TRAPENTRY *FiniFunc)();
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx_entry * );
 
-extern  int      PathOpen(char *,unsigned, char *);
+extern  int      FullPathOpen( char const *name, char *ext, char *result, unsigned max_result );
 extern  int      GetSystemHandle(int);
 
 const static trap_callbacks TrapCallbacks = {
@@ -69,6 +69,16 @@ void KillTrap()
     TrapFile = 0;
 }
 
+int PathOpenTrap( char const *name, unsigned len, char *ext, char *trap_name, int trap_name_len )
+{
+    char    path[_MAX_PATH];
+
+    len = min(len,sizeof(path)); 
+    memcpy( path, name, len );
+    path[ len ] = '\0';
+    return( FullPathOpen( path, ext, trap_name, trap_name_len ) );
+}
+
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 {
     char                init_error[256];
@@ -76,15 +86,16 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     char                *ptr;
     char                *parm;
     const trap_requests *(*ld_func)( const trap_callbacks * );
+    char                trap_name[_MAX_PATH];
 
     if( trapbuff == NULL ) trapbuff = "std";
     for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr ) ;
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
-    filehndl = PathOpen( trapbuff, ptr - trapbuff, "trp" );
-
+    filehndl = PathOpenTrap( trapbuff, ptr - trapbuff, "trp", trap_name, sizeof(trap_name) );
+    
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
-    TrapFile = PE_loadLibrary_handle( GetSystemHandle( filehndl ) );
+    TrapFile = PE_loadLibraryHandle( GetSystemHandle( filehndl ), trap_name );
     if( TrapFile == NULL ) {
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );

@@ -49,6 +49,69 @@ static int          result = PE_ok;
 
 /*------------------------- Implementation --------------------------------*/
 
+#if defined(__WATCOMC__) && defined(__386__)
+
+#define WATCOM_DEBUG_SYMBOLS
+
+/* Variable used to determine if the debugger is present */
+
+extern char volatile __WD_Present;
+
+/* Macro to enter the debugger and pass a message */
+
+void EnterDebuggerWithMessage( const char __far * );
+#pragma aux EnterDebuggerWithMessage parm caller [] = \
+        "int 3" \
+        "jmp short L1" \
+        'W' 'V' 'I' 'D' 'E' 'O' \
+        "L1:"
+
+/* Inline assembler to get DS selector */
+
+u_short GetCS(void);
+#pragma aux GetCS parm caller [] = \
+        "mov ax,cs"
+
+/* Messages to load debug symbols */
+
+#define DEBUGGER_LOADMODULE_COMMAND "!LOADMODULE "
+#define DEBUGGER_LOADMODULE_FORMAT DEBUGGER_LOADMODULE_COMMAND "0x%4.4x:0x%8.8x,%s"
+
+/* Messages to unload debug symbols */
+
+#define DEBUGGER_UNLOADMODULE_COMMAND "!UNLOADMODULE "
+#define DEBUGGER_UNLOADMODULE_FORMAT DEBUGGER_UNLOADMODULE_COMMAND "%s"
+
+/****************************************************************************
+DESCRIPTION:
+Notify the Open Watcom debugger of module load events. WD will attempt
+to load symbolic debugging information for the module much like it would for
+OS loaded DLLs.
+****************************************************************************/
+static void NotifyWDLoad(
+    char *modname,
+    unsigned long offset)
+{
+    char buf[_MAX_PATH + sizeof(DEBUGGER_LOADMODULE_COMMAND) + 2+4+1+8+1+1];
+    sprintf(buf, DEBUGGER_LOADMODULE_FORMAT, GetCS(), offset, modname );
+    if (__WD_Present)
+        EnterDebuggerWithMessage(buf);
+}
+
+/****************************************************************************
+DESCRIPTION:
+Notify the Open Watcom debugger of module unload events.
+****************************************************************************/
+static void NotifyWDUnload(
+    char *modname)
+{
+    char buf[_MAX_PATH + sizeof(DEBUGGER_UNLOADMODULE_COMMAND) + 1];
+    sprintf(buf, DEBUGGER_UNLOADMODULE_FORMAT, modname);
+    if (__WD_Present)
+        EnterDebuggerWithMessage(buf);
+}
+#endif
+
 /****************************************************************************
 PARAMETERS:
 f           - Handle to open file to read driver from
@@ -307,6 +370,7 @@ PE_MODULE * PE_loadLibraryExt(
     hMod->importBase = import_base;
     hMod->exportBase = export_base;
     hMod->exportDir = opthdr.DataDirectory[0].RelVirtualAddress - export_base;
+    hMod->modname = NULL;
 
     /* Now read the section images from disk */
     result = PE_invalidDLLImage;
@@ -422,12 +486,52 @@ PE_MODULE * PE_loadLibrary(
         }
     hMod = PE_loadLibraryExt(f,0,&size);
     fclose(f);
+
+    /* Notify the Watcom Debugger of module load and let it load symbolic info */
+#ifdef WATCOM_DEBUG_SYMBOLS
+    if (hMod) {
+        u_long   size;
+        char    *modname;
+
+        /* Store the file name in the hMod structure; this must be the real
+         * file name where the debugger will try to load symbolic info from
+         */
+        size = strlen(szDLLName) + 1;
+        modname = malloc(size);
+        if (modname) {
+            if (szDLLName[1] == ':')
+                strcpy(modname, szDLLName+2);
+            else
+                strcpy(modname, szDLLName);
+            hMod->modname = modname;
+            NotifyWDLoad(hMod->modname, (u_long)hMod->pbase);
+            }
+        }
+#endif
     return hMod;
 }
 
-/* same as above for a handle */
-PE_MODULE * PE_loadLibrary_handle(
-    int fd)
+/****************************************************************************
+DESCRIPTION:
+Loads a Portable Binary DLL into memory
+
+HEADER:
+peloader.h
+
+PARAMETERS:
+fd          - File descriptor to load PE module from
+szDLLName   - Name of the PE DLL library to load (for debug symbols)
+
+RETURNS:
+Handle to loaded PE DLL, or NULL on failure.
+
+REMARKS:
+Same as above but for an open file handle. szDLLName must be correct in
+order to load debug symbols under the debugger.
+****************************************************************************/
+PE_MODULE * PE_loadLibraryHandle(
+    int fd,
+    const char *szDLLName)
 {
     PE_MODULE   *hMod;
     FILE        *f;
@@ -440,6 +544,28 @@ PE_MODULE * PE_loadLibrary_handle(
         }
     hMod = PE_loadLibraryExt(f,0,&size);
     fclose(f);
+    
+    /* Notify the Watcom Debugger of module load and let it load symbolic info */
+#ifdef WATCOM_DEBUG_SYMBOLS
+    if (hMod) {
+        u_long   size;
+        char    *modname;
+
+        /* Store the file name in the hMod structure; this must be the real
+         * file name where the debugger will try to load symbolic info from
+         */
+        size = strlen(szDLLName) + 1;
+        modname = malloc(size);
+        if (modname) {
+            if (szDLLName[1] == ':')
+                strcpy(modname, szDLLName+2);
+            else
+                strcpy(modname, szDLLName);
+            hMod->modname = modname;
+            NotifyWDLoad(hMod->modname, (u_long)hMod->pbase);
+            }
+        }
+#endif
     return hMod;
 }
 
@@ -518,8 +644,16 @@ PE_getProcAddress, PE_loadLibrary
 void PE_freeLibrary(
     PE_MODULE *hModule)
 {
-    if (hModule)
+    if (hModule) {
+        /* Notify the Watcom Debugger of module load and let it remove symbolic info */
+#ifdef WATCOM_DEBUG_SYMBOLS
+        if (hModule->modname) {
+            NotifyWDUnload(hModule->modname);
+            free(hModule->modname);
+            }
+#endif
         free(hModule);
+        }
 }
 
 /****************************************************************************
