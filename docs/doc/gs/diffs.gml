@@ -15,8 +15,8 @@ recompile your application.
 .section Differences from Open Watcom Version 1.1
 .*
 .np
-Following is a list of changes made in &product 1.2.
-:cmt Reflects main Perforce devel branch as of 2003/11/16
+Following is a list of changes made in &product 1.2:
+:cmt Reflects main Perforce branch as of 2003/12/1
 .begbull
 .bull
 The C compiler now performs stricter checking on function prototypes
@@ -43,6 +43,9 @@ C and C++ compilers. LL, ULL and LLU suffixes are recognized for constants.
 .bull
 Added C99 style *LLONG_MIN/MAX defines to limits.h.
 .bull
+The C++ compiler has been fixed to properly accept source files where
+a template was the last item in a namespace or an external linkage.
+.bull
 Several new -adxx options have been added to the C and C++ compilers
 to support automatic generation of 'make' style dependency files.
 .bull
@@ -51,6 +54,9 @@ assignments.
 .bull
 The C compiler now issues warnings on operations involving pointers
 to different but compatible unions.
+.bull
+The C and C++ compilers now ensure word alignment of wide character
+string literals to satisfy Win32 API restrictions.
 .bull
 The __UNIX__ macro is now supported in C and C++ compilers, wmake and
 wasm. It is currently defined for QNX and Linux targets.
