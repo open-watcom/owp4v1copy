@@ -50,11 +50,6 @@ objsize = xmem.obj fcbswap.obj clset.obj hist.obj samefile.obj &
         wingen.obj printf.obj getspcmd.obj &
         selrgn.obj cstatus.obj help.obj &
         readstr.obj tab_e_c.obj gencfg.obj fts.obj
-!ifeq release 0
-!ifeq vi_trmem 1
-extraobjs += trmem.obj trmemcvr.obj
-!endif
-!endif
 
 !ifdef sys_windowed
 !ifeq host_os os2
@@ -66,9 +61,13 @@ extraobjs += trmem.obj trmemcvr.obj
 !ifeq host_os linux
 !include $(vi_dir)/unix/unix.mif
 !else
-!include $(vi_dir)/$(host_OS)/$(host_OS).mif
+!include $(vi_dir)/$(host_os)/$(host_os).mif
 !endif
 !include $(vi_dir)/ui/ui.mif
+!endif
+
+!ifeq vi_trmem 1
+extraobjs += trmem.obj trmemcvr.obj
 !endif
 
 objs = $(objsize) $(objtime) $(extraobjs) $(xtraobjs) $(uiobjs)
