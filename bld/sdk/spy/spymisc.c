@@ -37,6 +37,14 @@
 #include "spy.h"
 #include <commdlg.h>
 
+/* missing in MS WIN32 header files */
+#ifndef CS_KEYCVTWINDOW
+#define CS_KEYCVTWINDOW 0x0004
+#endif
+#ifndef CS_NOKEYCVT
+#define CS_NOKEYCVT 0x0100
+#endif
+
 /*
  * GetHexStr - convert a number to a hex string, padded out with 0's
  */
