@@ -38,6 +38,8 @@
 #include <libc/xfile.h>
 #include <libc/init.h>
 
+#include "initfini.h"
+
 /*--------------------------- Global variables ----------------------------*/
 
 long            _VARAPI ___drv_os_type;
@@ -71,6 +73,10 @@ int _CEXPORT InitLibC( LIBC_imports *imports, long os_type )
     /* Now copy all imported functions */
     memcpy( &___imports, imports, min(sizeof( ___imports ), imports->dwSize ) );
     ___drv_os_type = os_type;
+
+    /* Run the clib initializers */
+    __InitRtns( 255 );
+
     return 1;
 }
 
