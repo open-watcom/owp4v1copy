@@ -206,7 +206,7 @@ extern void MemFini( void )
     PutEnvFini();
 #endif
 #ifdef TRACK
-    if( ! Glob.erroryet ) {
+    if( !Glob.erroryet ) { /* No error diagnostics yet? */
         trmemCodeStr = getenv( TRMEM_ENV_VAR );
         if( trmemCodeStr == NULL ) {
             trmemCode = 0;
@@ -221,7 +221,7 @@ extern void MemFini( void )
             }
         }
 
-        _trmem_close( Handle );
+        _trmem_close( Handle ); /* Report any memory errors. */
     }
     MemCheck();
     if( trkfile != -1 ) {

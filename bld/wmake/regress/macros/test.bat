@@ -9,7 +9,7 @@ echo # ---------------------------
 echo #   Macro Test 1
 echo # ---------------------------
 
-%1 -ms -m -h -f MACRO01 2>&1 | bvi -q -d -i -s ..\notrack.bvi -- > tmp.out
+%1 -ms -m -h -f MACRO01 > tmp.out 2>&1
 diff -b MACRO01.CMP tmp.out
 if errorlevel 1 goto err1
     @echo # MACRO01 successful
@@ -38,7 +38,7 @@ echo # ---------------------------
 echo #   Macro Test 2B
 echo # ---------------------------
 
-%1 -h -ms -m -f MACRO02 2>&1 | bvi -q -d -i -s ..\notrack.bvi -- > tmp.out
+%1 -h -ms -m -f MACRO02 > tmp.out 2>&1
 diff -b MACRO02B.CMP tmp.out
 if errorlevel 1 goto err2b
     @echo # MACRO02B successful
@@ -53,7 +53,7 @@ echo # ---------------------------
 echo #   Macro Test 3A
 echo # ---------------------------
 set TRMEM_CODE=3
-%1 -h -f MACRO03 2>&1 | bvi -q -d -i -s ..\notrack.bvi -- > tmp.out
+%1 -h -f MACRO03 > tmp.out 2>&1
 diff -b MACRO03A.CMP tmp.out
 if errorlevel 1 goto err3a
     @echo # MACRO03A successful
@@ -68,7 +68,7 @@ echo # ---------------------------
 echo #   Macro Test 3B
 echo # ---------------------------
 
-%1 -h -ms -m -f MACRO03 2>&1 | bvi -q -d -i -s ..\notrack.bvi -- > tmp.out
+%1 -h -ms -m -f MACRO03 > tmp.out 2>&1
 diff -b MACRO03B.CMP tmp.out
 if errorlevel 1 goto err3b
     @echo # MACRO03B successful
@@ -97,7 +97,7 @@ echo # ---------------------------
 echo #   Macro Test 4B
 echo # ---------------------------
 
-%1 -h -ms -m -f MACRO04 2>&1 | bvi -q -d -i -s ..\notrack.bvi -- > tmp.out
+%1 -h -ms -m -f MACRO04 > tmp.out 2>&1
 diff -b MACRO04B.CMP tmp.out
 if errorlevel 1 goto err4b
     @echo # MACRO0r4B successful

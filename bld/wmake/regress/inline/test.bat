@@ -46,7 +46,6 @@ echo #   Inline File Test 3
 echo # ---------------------------
 set TRMEM_CODE=3
 %1 -h -f INLINE03 > tmp.out 2>&1
-bvi -q -d -i -s ..\notrack.bvi tmp.out
 diff INLINE03.CMP tmp.out
 if errorlevel 1 goto err3
     @echo # INLINE03 successful
