@@ -267,7 +267,7 @@ typedef struct dbgheader {
 #define WAT_RES_SIG     0x8302
 
 /* The following define for LEVEL was borrowed from definition in BPATCH */
-#define LEVEL           "WATCOM patch level .xxx"
+#define LEVEL           "Open Watcom patch level .xxx"
 #define LEVEL_HEAD_SIZE (sizeof(LEVEL)-5)       /* w/o ".xxx\0" */
 
 long                    FileShift;

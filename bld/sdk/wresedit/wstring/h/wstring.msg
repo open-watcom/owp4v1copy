@@ -125,8 +125,8 @@ pick(	W_NORESOLVEDUPS,
 
 // WMAIN.C
 pick(	W_STRINGAPPTITLE,
-	"WATCOM String Editor",
-	"WATCOM String Editor" )
+	"Open Watcom String Editor",
+	"Open Watcom String Editor" )
 pick(	W_CHANGESTRINGMEMFLAGS,
 	"Changing Memory Flags",
 	"Changing Memory Flags" )

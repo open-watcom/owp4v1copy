@@ -13,7 +13,7 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "CompanyName", "WATCOM INTERNATIONAL\0"
+      VALUE "CompanyName", "Open Watcom\0"
       VALUE "FileDescription", "Dummy Process for Dr NT\0"
       VALUE "LegalCopyright", "Copyright WATCOM International 1993\0"
     END

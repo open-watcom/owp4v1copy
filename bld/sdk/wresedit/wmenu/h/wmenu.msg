@@ -152,8 +152,8 @@ pick(	W_CHANGEMODIFIEDMENUITEM,
 
 // WMAIN.C
 pick(	W_MENUAPPTITLE,
-	"WATCOM Menu Editor",
-	"WATCOM Menu Editor" )
+	"Open Watcom Menu Editor",
+	"Open Watcom Menu Editor" )
 pick(	W_CHANGEMENUMEMFLAGS,
 	"Changing Memory Flags",
 	"Changing Memory Flags" )

@@ -11,8 +11,8 @@ pick( STR_END_OF_FILE,
 	"Unexpected end of file",
 	"ファイルの終わりを検出しました" )
 pick( STR_APP_NAME,
-	"WATCOM Windows Resource Compiler Version 1.0\n",
-	"WATCOM ウィンドウズ リソ－ス コンパイラ バ－ジョン 1.0\n" )
+	"Open Watcom Windows Resource Compiler Version 1.0\n",
+	"Open Watcom ウィンドウズ リソ－ス コンパイラ バ－ジョン 1.0\n" )
 pick( ERR_CANT_OPEN_FILE,
 	"Unable to open file \"%s\": %s.",
 	"ファイルをオ－プン出来ません \"%s\": %s." )

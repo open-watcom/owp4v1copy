@@ -147,8 +147,8 @@ pick(	W_RESDUPNAMEINFILE,
 
 // WMAIN.C
 pick(	W_ACCELAPPTITLE,
-	"WATCOM Accelerator Editor",
-	"WATCOM Accelerator Editor" )
+	"Open Watcom Accelerator Editor",
+	"Open Watcom Accelerator Editor" )
 pick(	W_GETTINGKEYS,
 	"Getting Keys",
 	"Getting Keys" )

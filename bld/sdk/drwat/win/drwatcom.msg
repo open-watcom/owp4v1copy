@@ -35,8 +35,8 @@ pick( STR_ERASE_LOG,
 	"Erase Log File: %s",
 	"Erase Log File: %s" )
 pick( STR_ABOUT_NAME,
-	"Dr. WATCOM for Windows",
-	"Dr. WATCOM for Windows" )
+	"Dr. Open Watcom for Windows",
+	"Dr. Open Watcom for Windows" )
 pick( STR_ABOUT_VERSION,	//NOT USED
 	"",
 	"" )
@@ -44,8 +44,8 @@ pick( STR_ABOUT_COPYRIGHT_YEAR,
 	"1993",
 	"1993" )
 pick( STR_ABOUT_TITLE,
-	"About Dr. WATCOM",
-	"About Dr. WATCOM" )
+	"About Dr. Open Watcom",
+	"About Dr. Open Watcom" )
 pick( STR_CANT_CLOSE_DURING_FAULT,
 	"Cannot close while fault being handled",
 	"Cannot close while fault being handled" )
@@ -338,8 +338,8 @@ pick( STR_NO_DIPS_LOADED,
 	"No debugging information processors were found.",
 	"No debugging information processors were found." )
 pick( STR_APP_NAME,
-	"Dr. WATCOM",
-	"Dr. WATCOM" )
+	"Dr. Open Watcom",
+	"Dr. Open Watcom" )
 pick( STR_ALL_FILE_FILTER,
 	"All Files",
 	"All Files" )

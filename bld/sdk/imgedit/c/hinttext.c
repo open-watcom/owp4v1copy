@@ -197,7 +197,7 @@ static a_hint_text_line         hintText[ MAX_HINT ] = {
                         IMGED_SAVE,     "Saves current image",
                         IMGED_SAVE_AS,  "Saves current image",
                         IMGED_EXIT,     "Exits the image editor",
-                        IMGED_ABOUT,    "Describes the WATCOM Image Editor",
+                        IMGED_ABOUT,    "Describes the Open Watcom Image Editor",
                         IMGED_REST,     "Restores image to opened form",
                         IMGED_LCOLOUR,  "Loads a colour palette",
                         IMGED_SCOLOUR,  "Saves the current colour palette",
@@ -262,7 +262,7 @@ static a_hint_text_line         hintText[ MAX_HINT ] = {
                         IMGED_ELLIPSE,  "Ellipse drawing tool",
                         IMGED_RECTANGLE,"Rectangle drawing tool",
                         IMGED_WINDOWS,  "Perform Window operations",
-                        IMGED_HELP,     "Provides help for WATCOM image editor" };
+                        IMGED_HELP,     "Provides help for Open Watcom image editor" };
 
 /*
  * ShowHintText - given a tool id, display the hint text that goes with it.

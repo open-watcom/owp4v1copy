@@ -45,7 +45,7 @@ static void PrintUsageMesage( char * progpath )
     strlwr( progname );
 
     printf( "Usage: %s {options} file1 [file2]\n", progname );
-    puts( "Converts a Microsoft .RES file to a WATCOM .RES "
+    puts( "Converts a Microsoft .RES file to a Open Watcom .RES "
                 "file or vice versa." );
     puts( "valid options:   (-option also accepted)" );
     puts( "/q  - operate quietly" );
