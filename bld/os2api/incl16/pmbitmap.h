@@ -3,6 +3,10 @@
     for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BFT_ICON          0x4349
 #define BFT_BMAP          0x4d42
 #define BFT_POINTER       0x5450
@@ -28,4 +32,7 @@ typedef struct _BITMAPARRAYFILEHEADER {
     BITMAPFILEHEADER bfh;
 } BITMAPARRAYFILEHEADER, FAR *PBITMAPARRAYFILEHEADER;
 
+#ifdef __cplusplus
+}
+#endif
 

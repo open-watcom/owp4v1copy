@@ -3,6 +3,9 @@
     for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define INCL_WININCLUDED
 
@@ -1598,4 +1601,8 @@ BOOL     APIENTRY WinFreeErrorInfo(PERRINFO);
 PERRINFO APIENTRY WinGetErrorInfo(HAB);
 ERRORID  APIENTRY WinGetLastError(HAB);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

@@ -3,6 +3,9 @@
     for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define MAXNAMEL 60
 
@@ -222,6 +225,10 @@ BOOL   APIENTRY PrfReset(HAB,PPRFPROFILE);
 BOOL   APIENTRY PrfWriteProfileData(HINI,PSZ,PSZ,PVOID,ULONG);
 BOOL   APIENTRY PrfWriteProfileString(HINI,PSZ,PSZ,PSZ);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #ifdef INCL_SHLERRORS

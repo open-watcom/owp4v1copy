@@ -2,6 +2,10 @@
     OS/2 Base DOS include file for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef INCL_DOS
     #define INCL_DOSDATETIME
     #define INCL_DOSDEVICES
@@ -700,3 +704,6 @@ USHORT APIENTRY DosR2StackRealloc(USHORT NewSize);
 
 #endif
 
+#ifdef __cplusplus
+}
+#endif

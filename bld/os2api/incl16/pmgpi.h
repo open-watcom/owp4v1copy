@@ -3,6 +3,10 @@
     for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef INCL_GPI
     #define INCL_GPICONTROL
     #define INCL_GPICORRELATION
@@ -926,6 +930,10 @@ BOOL  APIENTRY GpiSetDefAttrs(HPS,LONG,ULONG,PBUNDLE);
 BOOL  APIENTRY GpiSetDefTag(HPS,LONG);
 BOOL  APIENTRY GpiSetDefViewingLimits(HPS,PRECTL);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #ifdef INCL_GPIERRORS

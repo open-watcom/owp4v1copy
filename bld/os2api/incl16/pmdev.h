@@ -2,6 +2,10 @@
     OS/2 Presentation Manager device support include file for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef INCL_ERRORS
     #define INCL_DEVERRORS
 #endif
@@ -196,3 +200,6 @@ LONG  APIENTRY DevQueryHardcopyCaps(HDC,LONG,LONG,PHCINFO);
 
 #endif
 
+#ifdef __cplusplus
+}
+#endif

@@ -2,6 +2,9 @@
     OS/2 typedefs and constants for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #if (defined(M_I86SM) || defined(M_I86MM))
 #define NULL   0
@@ -246,4 +249,7 @@ typedef struct _FONTMETRICS {
     LONG   lMatch;
 } FONTMETRICS, FAR *PFONTMETRICS;
 
+#ifdef __cplusplus
+}
+#endif
 

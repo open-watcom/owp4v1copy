@@ -2,6 +2,9 @@
     OS/2 Base subsystems include file for 16-bit development.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef INCL_SUB
     #define INCL_KBD
@@ -408,4 +411,8 @@ USHORT APIENTRY VioWrtNCell(PBYTE Cell, USHORT Times, USHORT Row, USHORT Column,
 USHORT APIENTRY VioWrtNChar(PBYTE Cell, USHORT Times, USHORT Row, USHORT Column, HVIO VioHandle);
 USHORT APIENTRY VioWrtTTY(PCH CharStr, USHORT Length, HVIO VioHandle);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
