@@ -35,7 +35,7 @@ echo Languages Build <1>
 #        Next build online docs. This will create required header files
 #        as a by-product.
 #
-[ INCLUDE <doc_root>/lang.ctl ]
+[ INCLUDE <DOC_ROOT>/lang.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #
