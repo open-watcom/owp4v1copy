@@ -4,19 +4,8 @@ inc_dirs = $(watcom_dir)\h;$(dev_dir)\$(proj_name)\hpp
 
 extra_c_flags = -xs
 extra_l_flags = name $(exe_file) op map #option eliminate
-!ifneq release_$(proj_name) 1
-extra_c_flags = -xs -hd
-extra_l_flags = option symfile=$(proj_name).sym name $(exe_file)
-!endif
-
-ldebug_386 = debug dwarf
-ldebug_i86 = debug dwarf
 
 !include cproj.mif
-
-!ifneq release_$(proj_name) 1
-lflags = debug dwarf sys nt $(extra_l_flags)
-!endif
 
 .BEFORE
     set include=$(inc_path)
@@ -50,4 +39,4 @@ $(exe_file) : $(object_files) $(makefile)
 .cpp : $(cpp_dir)
 .hpp : $(h_dir)
 .cpp.obj : .AUTODEPEND
-    $(cpp) $(cflags) $[*
+    $(cpp) $(cflags) $(extra_c_flags_$[&) $[@

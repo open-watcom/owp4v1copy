@@ -1,5 +1,6 @@
 #pmake:os_nt cpu_axp
-host_OS=nt
-host_CPU=axp
-release_cvpack=1
+
+host_OS  = nt
+host_CPU = axp
+
 !include ..\master.mif
