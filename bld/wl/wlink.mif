@@ -210,9 +210,9 @@ execomp = $(cc)
 
 compile = $(cc) $(cflags) $[@
 
-!ifeq host_OS qnx
-extra_rc_flags = /d_QNX
-!endif
+extra_rc_flags_qnx = -D_UNIX
+extra_rc_flags_linux = -D_UNIX
+extra_rc_flags = $(extra_rc_flags_$(host_OS))
 
 .extensions:
 .extensions: .exe .obj .c .mif
