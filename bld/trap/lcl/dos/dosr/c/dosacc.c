@@ -1041,7 +1041,7 @@ out( "    checking environment:\r\n" );
     if( parm[0] == 'D' || parm[0] == 'd' ) {
         Flags.DRsOn = FALSE;
         ++parm;
-    } else if( out0( "    CPU type\r\n" ) || X86CPUType() < X86_386 ) {
+    } else if( out0( "    CPU type\r\n" ) || ( X86CPUType() & X86_CPU_MASK ) < X86_386 ) {
         Flags.DRsOn = FALSE;
     } else if( out0( "    WinEnh\r\n" ) || ( EnhancedWinCheck() & 0x7f ) ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */
