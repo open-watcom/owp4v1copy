@@ -267,7 +267,10 @@ dis_handler_return X86PrefixOpnd( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= (DIF_X86_OPND_LONG | DIF_X86_OPND_SIZE);
+    if(( ins->flags & DIF_X86_OPND_SIZE ) == 0 ) {
+        ins->flags ^= DIF_X86_OPND_LONG;
+        ins->flags |= DIF_X86_OPND_SIZE;
+    }
     return( DHR_CONTINUE );
 }
 
@@ -277,7 +280,10 @@ dis_handler_return X86PrefixAddr( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= (DIF_X86_ADDR_LONG | DIF_X86_ADDR_SIZE);
+    if(( ins->flags & DIF_X86_ADDR_SIZE ) == 0 ) {
+        ins->flags ^= DIF_X86_ADDR_LONG;
+        ins->flags |= DIF_X86_ADDR_SIZE;
+    }
     return( DHR_CONTINUE );
 }
 
@@ -287,7 +293,7 @@ dis_handler_return X86PrefixRepe( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_REPE;
+    ins->flags |= DIF_X86_REPE;
     return( DHR_CONTINUE );
 }
 
@@ -297,7 +303,7 @@ dis_handler_return X86PrefixRepne( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_REPNE;
+    ins->flags |= DIF_X86_REPNE;
     return( DHR_CONTINUE );
 }
 
@@ -307,7 +313,7 @@ dis_handler_return X86PrefixLock( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_LOCK;
+    ins->flags |= DIF_X86_LOCK;
     return( DHR_CONTINUE );
 }
 
@@ -317,7 +323,7 @@ dis_handler_return X86PrefixCS( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_CS;
+    ins->flags |= DIF_X86_CS;
     return( DHR_CONTINUE );
 }
 
@@ -327,7 +333,7 @@ dis_handler_return X86PrefixSS( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_SS;
+    ins->flags |= DIF_X86_SS;
     return( DHR_CONTINUE );
 }
 
@@ -337,7 +343,7 @@ dis_handler_return X86PrefixDS( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_DS;
+    ins->flags |= DIF_X86_DS;
     return( DHR_CONTINUE );
 }
 
@@ -347,7 +353,7 @@ dis_handler_return X86PrefixES( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_ES;
+    ins->flags |= DIF_X86_ES;
     return( DHR_CONTINUE );
 }
 
@@ -357,7 +363,7 @@ dis_handler_return X86PrefixFS( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_FS;
+    ins->flags |= DIF_X86_FS;
     return( DHR_CONTINUE );
 }
 
@@ -367,7 +373,7 @@ dis_handler_return X86PrefixGS( dis_handle *h, void *d , dis_dec_ins *ins )
  */
 {
     ins->size += 1;
-    ins->flags ^= DIF_X86_GS;
+    ins->flags |= DIF_X86_GS;
     return( DHR_CONTINUE );
 }
 
@@ -1029,7 +1035,7 @@ static void X86GetAbsVal( void *d, dis_dec_ins *ins )
     ins->op[oper].op_position = ins->size;
     ins->op[oper].type = DO_ABSOLUTE;
     ++ins->num_ops;
-    if( ins->flags & DIF_X86_ADDR_LONG ) {
+    if( ins->flags & DIF_X86_OPND_LONG ) {
         ins->op[oper].value = GetULong(d,ins->size);
         ins->size += 4;
     } else {
@@ -1610,10 +1616,6 @@ dis_handler_return X86MemAbsAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
 dis_handler_return X86Abs_8( dis_handle *h, void *d, dis_dec_ins *ins)
 /**********************************************************************/
 {
-    if( ins->size == 1 ) {
-        ins->flags ^= (DIF_X86_OPND_LONG | DIF_X86_OPND_SIZE);
-        ins->flags ^= (DIF_X86_ADDR_LONG | DIF_X86_ADDR_SIZE);
-    }
     ins->size   += 1;
     ins->num_ops = 0;
     X86GetAbsVal(d, ins);
