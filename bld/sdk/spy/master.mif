@@ -92,7 +92,6 @@ wspy_dll_lflags_wini86 = $(dll_debug_$(host_CPU)) &
                          system windows_dll font mem name $(dllname).dll &
                          $(wspy_non_release_option) &
                          lib windows.lib &
-                         exp WEP.1 resident &
                          option map &
                          segment CLASS 'CODE' PRELOAD FIXED &
                          file { $(dllobjs) }

@@ -34,7 +34,9 @@
 #include <windows.h>
 #include "rcdll.h"
 
-BOOL IDEDLL_EXPORT LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
+#ifdef __NT__
+
+BOOL WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
 /*********************************************************************/
 {
     inst = inst;
@@ -48,7 +50,24 @@ BOOL IDEDLL_EXPORT LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
     return( TRUE );
 }
 
-int FAR PASCAL WEP( int res )
+#else
+
+int WINAPI LibMain( HANDLE inst, WORD wDataSeg, WORD wHeapSize,
+                        LPSTR lpszCmdLine )
+{
+    wDataSeg = wDataSeg;
+    wHeapSize = wHeapSize;
+    lpszCmdLine = lpszCmdLine;
+    inst = inst;
+
+    if( ImageName[0] == '\0' ) {
+        GetModuleFileName( inst, ImageName, sizeof( ImageName ) );
+    }
+
+    return( 1 );
+}
+
+int __export WINAPI WEP( int res )
 /***************************/
 {
     res = res;
@@ -56,3 +75,4 @@ int FAR PASCAL WEP( int res )
     return( 1 );
 }
 
+#endif

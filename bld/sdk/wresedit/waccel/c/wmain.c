@@ -126,7 +126,8 @@ extern int appHeight;
 WResSetRtns(open,close,read,write,lseek,tell,WMemAlloc,WMemFree);
 
 #ifdef __NT__
-int WINEXPORT LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
+
+int WINAPI LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 {
     int ret;
 
@@ -152,14 +153,7 @@ int WINEXPORT LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 
 #else
 
-int WINEXPORT WEP ( int parm )
-{
-    _wtouch(parm);
-
-    return( TRUE );
-}
-
-int WINEXPORT LibMain ( HANDLE inst, WORD dataseg,
+int WINAPI LibMain ( HANDLE inst, WORD dataseg,
                         WORD heapsize, LPSTR cmdline )
 {
     _wtouch(dataseg);
@@ -172,6 +166,13 @@ int WINEXPORT LibMain ( HANDLE inst, WORD dataseg,
     WSetEditInstance( inst );
 
     return ( TRUE );
+}
+
+int __export WINAPI WEP ( int parm )
+{
+    _wtouch(parm);
+
+    return( TRUE );
 }
 #endif
 

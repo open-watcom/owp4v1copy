@@ -200,7 +200,8 @@ int RCSAPI RCSRegisterMessageBoxCallback( rcsdata data,
 }
 
 #ifdef __NT__
-int FAR PASCAL LibMain( HANDLE hDll, DWORD reason, LPVOID res )
+
+int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res )
 {
     res = res;
     reason = reason;
@@ -208,9 +209,11 @@ int FAR PASCAL LibMain( HANDLE hDll, DWORD reason, LPVOID res )
     hInstance = (HINSTANCE) hDll;
     return( 1 );
 }
+
 #else
 #ifdef __WINDOWS__
-int FAR PASCAL LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
+
+int WINAPI LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
                         LPSTR lpszCmdLine )
 {
     wDataSeg = wDataSeg;
@@ -222,16 +225,18 @@ int FAR PASCAL LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
     return( 1 );
 }
 
-int WEP( int q ){
-    q=q;
+int __export WINAPI WEP( int q )
+{
+    q = q;
     return( 1);
 }
+
 #else   // OS/2
+
 int     __dll_initialize( void )
 {
     return( 1 );
 }
-
 
 int     __dll_terminate( void )
 {

@@ -42,7 +42,7 @@
 #pragma library("ole32")
 
 #pragma off (unreferenced);
-int PASCAL LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
+int WINAPI LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
 {
     return( 1 );
 }

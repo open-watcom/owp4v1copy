@@ -31,9 +31,5 @@
 
 
 #define WINEXP  __export PASCAL
-#ifdef __NT__
 #define WINIEXP __export PASCAL
-#else
-#define WINIEXP __export FAR PASCAL
-#endif
 

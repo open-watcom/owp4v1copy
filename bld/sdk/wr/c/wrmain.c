@@ -100,7 +100,8 @@ static int              ref_count = 0;
 WResSetRtns(open,close,read,write,lseek,tell,WRWResMemAlloc,WRWResMemFree);
 
 #ifdef __NT__
-int WR_EXPORT LibMain( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
+
+int WINAPI LibMain( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 {
     _wtouch(lpReserved);
 
@@ -123,14 +124,7 @@ int WR_EXPORT LibMain( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 
 #else
 
-int WR_EXPORT WEP( int parm )
-{
-    _wtouch(parm);
-
-    return( TRUE );
-}
-
-int WR_EXPORT LibMain( HANDLE inst, WORD dataseg,
+int WINAPI LibMain( HANDLE inst, WORD dataseg,
                        WORD heapsize, LPSTR cmdline )
 {
     _wtouch(dataseg);
@@ -144,6 +138,13 @@ int WR_EXPORT LibMain( HANDLE inst, WORD dataseg,
     WRInitRcGlobal( inst );
 
     ref_count           = 0;
+
+    return( TRUE );
+}
+
+int __export WINAPI WEP( int parm )
+{
+    _wtouch(parm);
 
     return( TRUE );
 }

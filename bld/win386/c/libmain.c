@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C/C++ Windows 386 Supervisor LibMain startup code (16-bit).
 *
 ****************************************************************************/
 
@@ -37,7 +36,7 @@ extern DWORD ReturnCode;
 extern int PASCAL StartDLL32( void );
 
 #pragma off(unreferenced);
-int PASCAL LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 #pragma on(unreferenced);
 {
 

@@ -51,7 +51,15 @@ static char     *curTarget;
 static HSZ      topicHsz;
 static HSZ      serviceHsz;
 
-int DLL_EXPORT LibMain( HINSTANCE hinst, WORD dataseg, WORD heapsize, LPSTR cmdline ) {
+#ifdef __NT__
+int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res ) {
+    res = res;
+    reason = reason;
+    hDll = hDll;
+    return( 1 );
+}
+#else
+int WINAPI LibMain( HINSTANCE hinst, WORD dataseg, WORD heapsize, LPSTR cmdline ) {
     hinst = hinst;
     dataseg = dataseg;
     heapsize = heapsize;
@@ -59,11 +67,12 @@ int DLL_EXPORT LibMain( HINSTANCE hinst, WORD dataseg, WORD heapsize, LPSTR cmdl
     return( 1 );
 }
 
-int DLL_EXPORT WEP( int res )
+int __export WINAPI WEP( int res )
 {
     res = res;
     return( 1 );
 }
+#endif
 
 DWORD DLL_EXPORT VPDLL_GetVersion( void ) {
     return( VPDLL_VERSION );

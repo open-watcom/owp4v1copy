@@ -6,31 +6,32 @@
  */
 #ifndef ___WIN386_INCLUDED__
 #define ___WIN386_INCLUDED__
+
 :include readonly.sp
 :include cpluspro.sp
 
 #ifndef RC_INVOKED
 #include <stddef.h>
-#endif
+#endif /* RC_INVOKED */
 
 #ifdef __WINDOWS_386__
+
 #ifndef NOAUTOPROCS
 typedef void __far *REALFARPROC;
-#endif
+#endif /* NOAUTOPROCS */
 #define int short
 #define __huge
 #define __far
 #define __export
-
 #define NOMINMAX
 #include <win16.h>
 #ifndef NOCOVERSENDS
 #define SendMessage _Cover_SendMessage
 #define SendDlgItemMessage _Cover_SendDlgItemMessage
-#endif
+#endif /* NOCOVERSENDS */
 #ifndef NOCOVERRC
 #define RegisterClass _Cover_RegisterClass
-#endif
+#endif /* NOCOVERRC */
 #ifndef NOAUTOPROCS
 #define CreateDialog                    _Cover_CreateDialog
 #define CreateDialogIndirect            _Cover_CreateDialogIndirect
@@ -62,12 +63,15 @@ typedef void __far *REALFARPROC;
 #define SetWindowsHook                  _Cover_SetWindowsHook
 #define SetWindowsHookEx                _Cover_SetWindowsHookEx
 #define SetWindowLong                   _Cover_SetWindowLong
-#endif
-#else
-#include <win16.h>
-#endif
-#define API WINAPI
+#endif /* NOAUTOPROCS */
 
+#else /* __WINDOWS_386__ */
+
+#include <win16.h>
+
+#endif /* __WINDOWS_386__ */
+
+#define API WINAPI
 #ifndef NOKERNEL
 FARPROC API _16MakeProcInstance(FARPROC, HANDLE);
 #if !defined(NOAUTOPROCS) && defined(__WINDOWS_386__)
@@ -125,7 +129,6 @@ int   API _16ToAscii(WORD wVirtKey, WORD wScanCode, LPSTR lpKeyState, LPVOID lpC
 VOID API _16GlobalNotify(FARPROC);
 VOID API _Cover_GlobalNotify(FARPROC);
 #endif /* NOMEMMGR */
-
 #endif /* NOKERNEL */
 
 #ifndef NOGDI
@@ -218,7 +221,7 @@ WORD API _16GetSystemPaletteEntries(HDC,WORD,WORD,LPPALETTEENTRY);
 #define lstrcat strcat
 #define lstrlen strlen
 #endif /* NOLSTRING */
-#endif
+#endif /* __WINDOWS_386__ */
 #ifndef NOWINMESSAGES
 WORD API _16RegisterWindowMessage(LPSTR);
 #endif /* NOWINMESSAGES */
@@ -384,11 +387,10 @@ int  API _16BuildCommDCB(LPSTR, DCB *);
 BOOL API _16TranslateMDISysAccel(HWND,LPMSG);
 #endif /* NOMSG */
 #endif /* NOMDI */
-
 #ifndef NOLFILEIO
 WORD API _16_lread( int, LPSTR, int );
 WORD API _16_lwrite( int, LPSTR, int );
-#endif
+#endif /* NOLFILEIO */
 #endif /* NOUSER */
 #ifndef NOHELP
 BOOL API _16WinHelp(HWND hwndMain, LPSTR lpszHelp, WORD usCommand, DWORD ulData);
@@ -396,18 +398,18 @@ BOOL API _16WinHelp(HWND hwndMain, LPSTR lpszHelp, WORD usCommand, DWORD ulData)
 
 #ifdef INCLUDE_DRIVINIT_H
 #include <drivinit.h>
-#endif
+#endif /* INCLUDE_DRIVINIT_H */
 #ifdef INCLUDE_PRINT_H
 #include <print.h>
-#endif
+#endif /* INCLUDE_PRINT_H */
 #ifdef INCLUDE_DDE_H
 #define unsigned unsigned short
 #include <dde.h>
 #undef unsigned
-#endif
+#endif /* INCLUDE_DDE_H */
 #ifdef INCLUDE_CUSTCNTL_H
 #include <custcntl.h>
-#endif
+#endif /* INCLUDE_CUSTCNTL_H */
 #ifdef INCLUDE_COMMDLG_H
 #include <commdlg.h>
 BOOL WINAPI _16ChooseColor(LPCHOOSECOLOR);
@@ -434,8 +436,7 @@ BOOL WINAPI _CoverGetSaveFileName(LPOPENFILENAME);
 BOOL WINAPI _CoverPrintDlg(LPPRINTDLG);
 HWND WINAPI _CoverReplaceText(LPFINDREPLACE);
 #endif
-
-#endif
+#endif /* INCLUDE_COMMDLG_H */
 #ifdef INCLUDE_OLE_H
 #include <ole.h>
 OLESTATUS   WINAPI  _16OleActivate(LPOLEOBJECT, UINT, BOOL, BOOL, HWND, const RECT FAR*);
@@ -492,7 +493,7 @@ OLESTATUS   WINAPI  _16OleRegisterServerDoc(LHSERVER, LPCSTR, LPOLESERVERDOC, LH
 OLESTATUS   WINAPI  _16OleRenameServerDoc(LHSERVERDOC, LPCSTR);
 OLESTATUS   WINAPI  _16OleRevokeObject(LPOLECLIENT);
 OLESTATUS   WINAPI  _16OleUnblockServer(LHSERVER, BOOL FAR*);
-#endif
+#endif /* INCLUDE_OLE_H */
 #ifdef INCLUDE_DDEML_H
 #include <ddeml.h>
 HCONVLIST EXPENTRY _16DdeConnectList(DWORD idInst, HSZ hszService, HSZ hszTopic,
@@ -521,19 +522,19 @@ HDDEDATA EXPENTRY _Cover_DdeClientTransaction(LPBYTE pData, DWORD cbData,
         HCONV hConv, HSZ hszItem, WORD wFmt, WORD wType, DWORD dwTimeout,
         LPDWORD pdwResult);
 #endif
-#endif
+#endif /* INCLUDE_DDEML_H */
 #ifdef INCLUDE_SHELLAPI_H
 #include <shellapi.h>
-#endif
+#endif /* INCLUDE_SHELLAPI_H */
 #ifdef INCLUDE_VER_H
 #include <ver.h>
-#endif
+#endif /* INCLUDE_VER_H */
 #ifdef INCLUDE_LZEXPAND_H
 #include <lzexpand.h>
-#endif
+#endif /* INCLUDE_LZEXPAND_H */
 #ifdef INCLUDE_STRESS_H
 #include <stress.h>
-#endif
+#endif /* INCLUDE_STRESS_H */
 #ifdef INCLUDE_PENWIN_H
 #include <penwin.h>
 #if !defined(NOAUTOPROCS) && defined(__WINDOWS_386__)
@@ -554,10 +555,10 @@ BOOL WINAPI _Cover_DictionarySearch( LPRC lprc, LPSYE lpsye, int i1, LPSYV lpsyv
 BOOL WINAPI _Cover_SetPenHook(HKP hkpop, LPFNRAWHOOK lpfn );
 UINT WINAPI _Cover_EnumSymbols(LPSYG, WORD, ENUMPROC, LPVOID);
 #endif
-#endif
+#endif /* INCLUDE_PENWIN_H */
 #ifdef INCLUDE_PENWOEM_H
 #include <penwoem.h>
-#endif
+#endif /* INCLUDE_PENWOEM_H */
 #ifdef INCLUDE_MMSYSTEM_H
 #include <mmsystem.h>
 #if !defined(NOAUTOPROCS) && defined(__WINDOWS_386__)
@@ -569,7 +570,7 @@ BOOL WINAPI _Cover_mciSetYieldProc(UINT uDeviceID, YIELDPROC fpYieldProc, DWORD 
 UINT WINAPI _16waveOutPrepareHeader(HWAVEOUT hWaveOut,DWORD,UINT uSize);
 UINT WINAPI _16waveOutUnprepareHeader(HWAVEOUT hWaveOut,DWORD,UINT uSize);
 UINT WINAPI _16waveOutWrite(HWAVEOUT hWaveOut, DWORD,UINT uSize);
-#endif
+#endif /* INCLUDE_MMSYSTEM_H */
 
 #ifdef INCLUDE_TOOLHELP_H
 #include <toolhelp.h>
@@ -577,7 +578,7 @@ UINT WINAPI _16waveOutWrite(HWAVEOUT hWaveOut, DWORD,UINT uSize);
 BOOL WINAPI _Cover_NotifyRegister(HTASK hTask, LPFNNOTIFYCALLBACK lpfn, WORD wFlags);
 #define NotifyRegister _Cover_NotifyRegister
 #endif
-#endif
+#endif /* INCLUDE_TOOLHELP_H */
 
 #ifdef __WINDOWS_386__
 
@@ -749,7 +750,8 @@ extern WORD LocalPtr;
 
 #pragma library (WIN386);
 
-#else
+#else /* __WINDOWS_386__ */
+
 typedef void __far * PROCPTR;
 typedef void __far * CALLBACKPTR;
 typedef void * HINDIR;
@@ -1048,8 +1050,10 @@ typedef void * HINDIR;
 #define _16DdeInitialize DdeInitialize
 #endif
 #ifdef INCLUDE_PENWIN_H
-#endif
-#endif
+#endif /* INCLUDE_PENWIN_H */
+
+#endif /* __WINDOWS_386__ */
 
 :include cplusepi.sp
-#endif
+
+#endif /* ___WIN386_INCLUDED__ */

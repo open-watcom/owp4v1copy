@@ -321,16 +321,28 @@ int extern __export FAR PASCAL EDITDisconnect( void )
 
     return( TRUE );
 }
-
-int FAR PASCAL LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
+#ifdef __NT__
+int WINAPI LibMain( HANDLE hInst, DWORD reason, LPVOID res )
+{
+    res = res;
+    reason = reason;
+    hInstance = hInst;
+    return( 1 );
+}
+#else
+int WINAPI LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
                         LPSTR lpszCmdLine )
 {
     wDataSeg = wDataSeg;
     wHeapSize = wHeapSize;
     lpszCmdLine = lpszCmdLine;
-
     hInstance = hInst;
-
     return( 1 );
 }
 
+int __export WINAPI WEP( int q )
+{
+    q = q;
+    return( 1);
+}
+#endif

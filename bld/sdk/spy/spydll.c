@@ -51,7 +51,7 @@ static BOOL             isFiltering = FALSE;
 static HANDLE           dllInstance;
 
 #ifndef __NT__
- void (FAR PASCAL *HandleMessage)( LPMSG pmsg );
+ void (WINAPI *HandleMessage)( LPMSG pmsg );
 #else
  static HWND            spyHwnd;
  static HWND            spyLBHwnd;
@@ -81,7 +81,7 @@ static void HandleMessage( MSG *data ) {
     }
 }
 
-BOOL __export WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
+BOOL WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
 {
     reason = reason;
     ptr = ptr;
@@ -92,8 +92,10 @@ BOOL __export WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
     }
     return( TRUE );
 }
+
 #else
-int PASCAL LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+
+int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 {
     dataseg = dataseg;
     heap = heap;
@@ -102,14 +104,15 @@ int PASCAL LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
     dllInstance = hmod;
     return( 1 );
 }
-#endif
 
-int FAR PASCAL WEP( int res )
+int __export WINAPI WEP( int res )
 {
     res = res;
 
     return( 1 );
 }
+#endif
+
 /*
  * CallWndProcFilter - hook for calls to wndprocs
  */

@@ -276,9 +276,9 @@ BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
   }
 
 #ifdef __NT__
-int PASCAL LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
-/* Initializes window data and registers window class */
 
+int WINAPI LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
+/* Initializes window data and registers window class */
   {
     lpReserved = lpReserved;     /* avoid warning */
 
@@ -301,13 +301,12 @@ int PASCAL LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
     return ( 1 );
   }
 
-/*************************************************/
 #else
-int FAR PASCAL LibMain( HANDLE inst, WORD dataseg,
+
+int WINAPI LibMain( HANDLE inst, WORD dataseg,
                      WORD heapsize, LPSTR cmdline )
 /*************************************************/
 /* Initializes window data and registers window class */
-
   {
     dataseg = dataseg;              /* ref'd to avoid warnings */
     heapsize = heapsize;            /* ref'd to avoid warnings */
@@ -324,19 +323,15 @@ int FAR PASCAL LibMain( HANDLE inst, WORD dataseg,
     return( TRUE );
   }
 
-int WINIEXP WEP( int parm )
+int __export WINAPI WEP( int parm )
 /************************/
-
 /* terminate the DLL */
-
   {
     parm = parm;
     return( 1 );
   }
 
 #endif
-
-
 
 static void OffsetPoint( POINT * point )
 /**************************************/
