@@ -22,7 +22,8 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
     #<CPCMD> <devdir>\wmake\o\wmk.exe <relroot>\rel2\binw\wmake.exe
-    <CPCMD> <devdir>\wmake\ol\wmk.exe <relroot>\rel2\binw\wmake.exe
+    <CPCMD> <devdir>\wmake\ol\wmk.exe <relroot>\rel2\binw\wmaker.exe
+    <CPCMD> <devdir>\wmake\dos386\wmk.exe <relroot>\rel2\binw\wmake.exe
     #<CPCMD> <devdir>\wmake\onec\wmk.exe <relroot>\rel2\n98bw\wmake.exe
     <CPCMD> <devdir>\wmake\os2\wmk.exe <relroot>\rel2\binp\wmake.exe
     <CPCMD> <devdir>\wmake\nt\wmk.exe <relroot>\rel2\binnt\wmake.exe
