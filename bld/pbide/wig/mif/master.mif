@@ -1,5 +1,4 @@
 !include cproj.mif
-!include deftarg.mif
 
 .extensions:
 .extensions: .pp .obj .c .h .y
@@ -16,8 +15,6 @@ ccopt += -w4 -oaxt -zq -fpc /bt=$(os)
 !ifndef ext
 ext = exe
 !endif
-
-yacc = yacc
 
 objs += &
     sruparse.obj &
@@ -63,3 +60,13 @@ $(lnk) : ..\mif\master.mif makefile
 
 .before
         set include = ..\h;$(trmem_dir);$(%include)
+
+clean: .symbolic
+        @if exist *.dll del *.dll
+        @if exist *.err del *.err
+        @if exist *.lnk del *.lnk
+        @if exist *.map del *.map
+        @if exist *.obj del *.obj
+        @if exist *.sym del *.sym
+        @if exist ytab.* del ytab.*
+        @if exist sruparse.c del sruparse.c
