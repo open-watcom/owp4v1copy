@@ -646,6 +646,11 @@ unsigned ReqSet_break( void )
     ret->old = opcode;
     opcode = BRK_POINT;
     WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
+    Out( "ReqSet_break at " );
+    OutNum( acc->break_addr.offset );
+    Out( " (was " );
+    OutNum( ret->old );
+    Out( ")\n" );
     return( sizeof( *ret ) );
 }
 
@@ -657,6 +662,11 @@ unsigned ReqClear_break( void )
     acc = GetInPtr( 0 );
     opcode = acc->old;
     WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
+    Out( "ReqClear_break at " );
+    OutNum( acc->break_addr.offset );
+    Out( " (setting to " );
+    OutNum( opcode );
+    Out( ")\n" );
     return( 0 );
 }
 
