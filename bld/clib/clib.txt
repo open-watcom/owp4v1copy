@@ -14,7 +14,7 @@ notes on the estimated effort required to bring them to C99 conformance:
     errno.h     - C99 conforming
     fenv.h      - Completely new; requires compiler changes (new #pragma)
     float.h     - Needs review, no significant changes expected
-    inttypes.h  - Completely new; only several new functions added
+    inttypes.h  - Macros finished, still needs the new functions
     iso646.h    - C99 conforming
     limits.h    - Needs review, no significant changes expected
     locale.h    - Needs review, no significant changes expected
@@ -22,9 +22,9 @@ notes on the estimated effort required to bring them to C99 conformance:
     setjmp.h    - Needs review, no changes expected
     signal.h    - Needs review, no changes expected
     stdarg.h    - Needs review, no significant changes expected
-    stdbool.h   - Completely new; requires _Bool type, otherwise trivial
+    stdbool.h   - Currently uses char for bool. Update when _Bool available
     stddef.h    - Needs review, no changes expected
-    stdint.h    - Completely new; defines no functions
+    stdint.h    - C99 conforming
     stdio.h     - Needs thorough review, but significant changes not expected
     stdlib.h    - Most new C99 functions already added, more may be needed
     string.h    - Needs review, no significant changes expected
