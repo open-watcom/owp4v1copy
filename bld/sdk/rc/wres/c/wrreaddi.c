@@ -317,7 +317,7 @@ static int readMResDir( WResFileID handle, WResDir currdir, int *dup_discarded,
     }
     /* assume that a NULL head is the EOF which is the only way of detecting */
     /* the end of a MS .RES file */
-    while( head != NULL && head32 != NULL && !error ) {
+    while( head != NULL && !( iswin32 && head32 == NULL ) && !error ) {
         name = WResIDFromNameOrOrd( head->Name );
         type = WResIDFromNameOrOrd( head->Type );
         error = (name == NULL || type == NULL);
