@@ -41,6 +41,13 @@
 #include <unistd.h>
 #include <process.h>
 
+#if defined (__NETWARE__)
+/*
+// process.h exists for netware !!!
+*/
+_WCRTLINK extern char *_cmdname( char *__name );
+#endif
+
 #include "wmsg.h"
 #include "wreslang.h"
 #if defined(__WINDOWS__)

@@ -220,7 +220,7 @@ void RecordSample( union INTPACK FAR_PTR *r ) {
             AES.AProcessToCall = SaveOutSamples;
             AES.AWakeUpDelayAmount = 0;
             AES.AWakeUpTime = 0;
-            AES.ARTag = AESTag;
+            AES.ARTag = (LONG)AESTag;
             ScheduleSleepAESProcessEvent( &AES );
         }
     }
