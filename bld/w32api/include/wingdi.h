@@ -335,9 +335,6 @@ extern "C" {
 #define JOHAB_CHARSET	130
 #define VIETNAMESE_CHARSET	163
 #define MAC_CHARSET 77
-#define BALTIC_CHARSET 186
-#define JOHAB_CHARSET 130
-#define VIETNAMESE_CHARSET 163
 #define OUT_DEFAULT_PRECIS	0
 #define OUT_STRING_PRECIS	1
 #define OUT_CHARACTER_PRECIS	2
@@ -1366,9 +1363,9 @@ typedef struct tagDIBSECTION {
 } DIBSECTION;
 typedef struct _DOCINFOA {
 	int cbSize;
-	LPCTSTR lpszDocName;
-	LPCTSTR lpszOutput;
-	LPCTSTR lpszDatatype;
+	LPCSTR lpszDocName;
+	LPCSTR lpszOutput;
+	LPCSTR lpszDatatype;
 	DWORD fwType;
 } DOCINFOA,*LPDOCINFOA;
 typedef struct _DOCINFOW {
@@ -2725,7 +2722,7 @@ BOOL WINAPI wglDeleteContext(HGLRC);
 BOOL WINAPI wglDescribeLayerPlane(HDC,int,int,UINT,LPLAYERPLANEDESCRIPTOR);
 HGLRC WINAPI wglGetCurrentContext(void);
 HDC WINAPI wglGetCurrentDC(void);
-int WINAPI wglGetLayerPaletteEntries(HDC,int,int,int,CONST COLORREF*);
+int WINAPI wglGetLayerPaletteEntries(HDC,int,int,int,COLORREF*);
 PROC WINAPI wglGetProcAddress(LPCSTR);
 BOOL WINAPI wglMakeCurrent(HDC,HGLRC);
 BOOL WINAPI wglRealizeLayerPalette(HDC,int,BOOL);
