@@ -70,7 +70,7 @@ pick( INVALID_USE_OF_SHORT_NEAR_FAR_OPERATOR,
 pick( NO_MEMORY,
                                 "No memory" ,
                                 "メモリがありません" )
-pick( CANNOT_USE_386_SEGMEMT_REGISTER_WITH_CURRENT_CPU_SETTING,
+pick( CANNOT_USE_386_SEGMENT_REGISTER_WITH_CURRENT_CPU_SETTING,
                                 "Cannot use 386 segment register with current CPU setting" ,
                                 "現在のCPUの設定では386セグメントレジスタは使用できません" )
 pick( POP_CS_IS_NOT_ALLOWED,

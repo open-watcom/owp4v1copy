@@ -1366,7 +1366,7 @@ static int reg( int i )
     case OP_SR3:                        // 386 segment register
         if( (Code->info.cpu&(P_CPU_MASK|P_PM)) <= P_286p ) {
             // 8086 ins cannot use 80386 segment register
-            AsmError( CANNOT_USE_386_SEGMEMT_REGISTER_WITH_CURRENT_CPU_SETTING );
+            AsmError( CANNOT_USE_386_SEGMENT_REGISTER_WITH_CURRENT_CPU_SETTING );
             return( ERROR );
         }
     case OP_SR:                                 // any seg reg
