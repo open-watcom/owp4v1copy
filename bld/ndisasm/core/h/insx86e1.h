@@ -120,7 +120,7 @@ inspick( pextrw_1,      "pextrw",       0x00c0c50f,     0x00c0ffff,     X86RegMo
 inspick( pinsrw00_1,    "pinsrw",       0x0000c40f,     0x00c0ffff,     X86MMRegModRMMixedImm )  // sse  
 inspick( pinsrw01_1,    "pinsrw",       0x0040c40f,     0x00c0ffff,     X86MMRegModRMMixedImm )  // sse  
 inspick( pinsrw10_1,    "pinsrw",       0x0080c40f,     0x00c0ffff,     X86MMRegModRMMixedImm )  // sse  
-inspick( pinsrw11_1,    "pinsrw11",     0x00c0c40f,     0x00c0ffff,     X86MMRegModRMMixedImm )  // sse  
+inspick( pinsrw11_1,    "pinsrw",       0x00c0c40f,     0x00c0ffff,     X86MMRegModRMMixedImm )  // sse  
 inspick( pmaddwd_1,     "pmaddwd",      0x0000f50f,     0x0000ffff,     X86MMRegModRM )          // mmx  
 inspick( pmaxsw_1,      "pmaxsw",       0x0000ee0f,     0x0000ffff,     X86MMRegModRM )          // sse  
 inspick( pmaxub_1,      "pmaxub",       0x0000de0f,     0x0000ffff,     X86MMRegModRM )          // sse  
