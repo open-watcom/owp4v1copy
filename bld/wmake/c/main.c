@@ -178,7 +178,7 @@ STATIC void handleMacroDefn( const char *buf )
         /* Approximately so. we cater for foo meaning FOO but not FoO W.Briscoe 20031114 */
         /* This is no problem! In make, foo=bar only sets foo and FOO W.Briscoe 20041014 */
         while( --p >= q ) {
-            *p = (char)toupper( *p );
+            *p = toupper( *p );
         }
 
         InsString( q, FALSE );     /* put arg into stream */
@@ -203,13 +203,15 @@ STATIC void handleTarg( const char *buf )
 STATIC void checkCtrl( const char *p )
 /************************************/
 {
-    // p != NULL is checked by caller
-    while( *p ) {          /* scan for control characters */
-        if( !isprint( *p ) ) {
-            PrtMsg( FTL | CTRL_CHAR_IN_CMD, *p );
+    assert( p != NULL );
+
+    if( p )
+        while( *p ) {          /* scan for control characters */
+            if( !isprint( *p ) ) {
+                PrtMsg( FTL | CTRL_CHAR_IN_CMD, *p );
+            }
+            ++p;
         }
-        ++p;
-    }
 }
 
 
@@ -277,9 +279,9 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
                     }
                     checkCtrl( p );
                     if( option == 'f' ) {
-                        if( p[0] == '-' && p[1] == NULLCHAR ) {
+                        if( (p[0] == '-') && (p[1] == NULLCHAR) ) {
                             // stdin
-                        } else if( p[0] == '-' || p[0] == Glob.swchar ) {
+                        } else if( (p[0] == '-') || (p[0] == Glob.swchar) ) {
                             PrtMsg( ERR | INVALID_FILE_OPTION, select, option );
                             Usage();
                         }

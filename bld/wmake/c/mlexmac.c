@@ -114,6 +114,7 @@ STATIC char *CatModifier( char *inString, BOOLEAN destroy )
  *  it then returns the modified string with the right format
  */
 {
+    int     modifier;
     STRM_T  t;
     VECSTR  output;
     char    buffer[2];
@@ -121,10 +122,11 @@ STATIC char *CatModifier( char *inString, BOOLEAN destroy )
 
     assert( inString != NULL );
 
+    modifier = 0;
     t = PreGetCH();
 
     if( ismsmodifier( t ) ) {
-        buffer[0] = (char)t;
+        buffer[0] = t;
         buffer[1] = NULLCHAR;
         output = StartVec();
         WriteVec( output, "" );
@@ -160,11 +162,11 @@ extern TOKEN_T LexMSDollar( STRM_T t )
            from kicking in because recursion occurs when there are
            still dollars remaining */
         temp[0] = SPECIAL_TMP_DOL_C;
-        temp[1] = (char)t;
+        temp[1] = t;
         if( t == '*' ) {
             t  = PreGetCH();
             if( t == '*' ) {
-                temp[2] = (char)t;
+                temp[2] = t;
                 temp[3] = NULLCHAR;
             } else {
                 UnGetCH( t );
@@ -270,7 +272,7 @@ STATIC TOKEN_T lexSubString( TOKEN_T t )
     pos = 0;
     done = FALSE;
     while( !done ) {
-        text[pos++] = (char)t;
+        text[pos++] = t;
         if( pos == MAX_TOK_SIZE - 1 ) {
             text[pos] = NULLCHAR;
             WriteVec( vec, text );
@@ -360,7 +362,7 @@ extern TOKEN_T LexMacDef( TOKEN_T t )
     onlyws = isws( t );
 
     while( cur - text < MAX_TOK_SIZE - 1 ) {
-        *cur++ = (char)t;
+        *cur++ = t;
 
         t = PreGetCH();
 

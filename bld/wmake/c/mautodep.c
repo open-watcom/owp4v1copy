@@ -40,9 +40,9 @@
 #include <malloc.h>
 #include <assert.h>
 
-extern auto_dep_info const OMFAutoDepInfo;
-extern auto_dep_info const ORLAutoDepInfo;
-extern auto_dep_info const RESAutoDepInfo;
+extern auto_dep_info OMFAutoDepInfo;
+extern auto_dep_info ORLAutoDepInfo;
+extern auto_dep_info RESAutoDepInfo;
 
 static const auto_dep_info *AutoDepTypes[] = {
     &OMFAutoDepInfo,
@@ -65,15 +65,15 @@ void AutoDepInit( void )
     }
 }
 
-BOOLEAN AutoDepCheck( char const *name, time_t stamp,
-    BOOLEAN (*chk)( time_t, time_t ), time_t *pmax_time )
-/*******************************************************/
+BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t),
+    time_t *pmax_time )
+/****************************************************************************/
 {
-    const auto_dep_info         *curr;
+    const auto_dep_info *curr;
     const auto_dep_info * const *pcurr;
-    char                        *dep_name;
-    time_t                      dep_time;       /* time stamp for dependent file
-                                                 * buried in auto-depend info */
+    char                *dep_name;
+    time_t              dep_time;       /* time stamp for dependant file
+                                         * buried in auto-depends info */
     time_t              curr_dep_time;  /* current date on dependent file
                                          * (if it exists) */
     time_t              max_time;
@@ -116,8 +116,8 @@ BOOLEAN AutoDepCheck( char const *name, time_t stamp,
                     }
                 }
                 if( Glob.debug ) {
-                    char            time_buff[32];  /* large enough for date + flag */
-                    struct tm const *tm;
+                    char        time_buff[32];  /* large enough for date + flag */
+                    struct tm   *tm;
 
                     if( !flag.exists ) {
                         time_buff[0] = '?';
@@ -131,7 +131,7 @@ BOOLEAN AutoDepCheck( char const *name, time_t stamp,
                             );
                     }
                     if( flag.this_caused_it ) {
-                        unsigned const  len = strlen( time_buff );
+                        unsigned    len = strlen( time_buff );
                         time_buff[len - 1] = '*';
                     }
                     PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );

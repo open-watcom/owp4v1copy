@@ -30,7 +30,7 @@
 
 
 #if !defined( __UNIX__ )
-    #include <direct.h> // NAME_MAX clashes with that in UNIX <limits.h>
+    #include <direct.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -62,7 +62,7 @@
 /*
  * macros are stored in a hash table
  */
-#define HASH_PRIME_MAC  37
+#define HASH_PRIME  37
 
 typedef struct Macro {
     HASHNODE    node;       /* name is at name.node */
@@ -116,7 +116,7 @@ STATIC char *getDirBuf( void )
 static void massageDollarOctothorpe( char *p )
 /********************************************/
 {
-    assert( p != NULL );
+    assert (p != NULL);
     for( ; *p; ++p ) {
         switch( *p ) {
         case '$':
@@ -222,18 +222,14 @@ STATIC void makeMacroName( char *buffer, const char *name )
 {
     assert( IsMacroName( name ) );
 
-    if( Glob.microsoft ) {
-        while( *name != NULLCHAR ) {
+    while( *name != NULLCHAR ) {
+        if( Glob.microsoft ) {
             *buffer = *name;
-            ++name;
-            ++buffer;
+        } else {
+            *buffer = toupper( *name );
         }
-    } else {
-        while( *name != NULLCHAR ) {
-            *buffer = (char)toupper( *name );
-            ++name;
-            ++buffer;
-        }
+        ++name;
+        ++buffer;
     }
     *buffer = NULLCHAR;
 }
@@ -258,8 +254,8 @@ STATIC MACRO *getMacroNode( const char *name )
 }
 
 
-STATIC char *findEqual( char *inString )
-/***************************************
+STATIC char *findEqual( const char *inString )
+/*********************************************
  * returns" pointer to equals sign if found
  */
 {
@@ -273,18 +269,18 @@ STATIC char *findEqual( char *inString )
     return( ret );
 }
 
-STATIC RET_T getOldNewString( char *inString, char **oldString,
+STATIC RET_T getOldNewString( const char * inString, char **oldString,
     char **newString )
-/*************************************************************/
+/********************************************************************/
 {
     char    *equal;
 
-    equal = findEqual( inString );
+    equal = findEqual(inString);
 
     if( equal == NULL ) {
         return( RET_ERROR );
     } else {
-        *oldString = inString;
+        *oldString = (char *)inString;
         *equal     = NULLCHAR;
         *newString = equal + 1;
         return( RET_SUCCESS );
@@ -298,22 +294,30 @@ STATIC char *doStringSubstitute( const char *name, const char *oldString,
  *   substitute any occurence of oldstr with new str
  */
 {
-    VECSTR      output;
-    char const  *current;
-    char const  *start;
+    VECSTR  output;
+    char    *current;
+    char    *start;
+
+    current = (char*)name;
+    start   = (char*)name;
 
     output = StartVec();
     WriteVec( output, "" );
 
+
     assert( name != NULL && oldString != NULL && newString != NULL );
 
-    for( start = current = name; *current != NULLCHAR; current++ ) {
+    for( ;; ) {
+        if( *current == NULLCHAR ) {
+            break;
+        }
         if( strncmp( current, oldString, strlen( oldString ) ) == 0 ) {
-            CatNStrToVec( output, start, (size_t)( current - start ) );
+            CatNStrToVec( output, start, current - start );
             CatStrToVec( output, newString );
             start   = current + strlen( oldString );
             current = start - 1;
         }
+        current ++;
     }
     CatStrToVec( output, start );
 
@@ -329,15 +333,17 @@ STATIC const char *GetMacroValueProcess( const char *name )
  * returns: pointer to text of macro (incl. environment vars)
  */
 {
-    char        macro[MAX_MAC_NAME];
-    MACRO const *cur;
-    char const  *env;
-    BOOLEAN     cdrive;
-    BOOLEAN     cwd;
-    char        *p;
-    int         pos;
+    char    macro[MAX_MAC_NAME];
+    MACRO   *cur;
+    char    *env;
+    BOOLEAN cdrive;
+    BOOLEAN cwd;
+    char    *p;
+    int     pos;
 
-    makeMacroName( macro, name ); // Does assert( IsMacroName( name ) );
+    assert( IsMacroName( name ) );
+
+    makeMacroName( macro, name );
 
     if( *macro == ENVVAR ) {
         env = getenv( macro + 1 );
@@ -459,9 +465,9 @@ extern char *GetMacroValue( const char *name )
 STATIC char *trimMacroValue( char *v )
 /************************************/
 {
-    int         space;
-    char        *t;
-    char const  *p;
+    int     space;
+    char    *t;
+    char    *p;
 
     space = 0;
     t = v;
@@ -494,10 +500,10 @@ STATIC void addMacro( const char *name, char *value )
     char    macro[MAX_MAC_NAME];
     MACRO   *new;
 
-    assert( *name != ENVVAR );
+    assert( IsMacroName( name ) && *name != ENVVAR );
 
     value = trimMacroValue( value );
-    makeMacroName( macro, name ); // Does assert( IsMacroName( name ) );
+    makeMacroName( macro, name );
 
     new = getMacroNode( macro );     /* check if redefinition */
 
@@ -526,15 +532,16 @@ extern BOOLEAN IsMacroName( const char *inName )
  * an error message
  */
 {
-    char        buffer[MAX_MAC_NAME + 1];   // contains the macro name and string
-                                            // substitution character ":" removed
-    char        *name;
-    char const  *current;
+    char    buffer[MAX_MAC_NAME + 1];   // contains the macro name and string
+                                        // substitution character ":" removed
+    char    *name;
+    char    *current;
 
     assert( inName != NULL );
 
     current = (char *)inName;
     name    = buffer;
+
 
     while( *current          != NULLCHAR     &&
            *current          != COLON        &&
@@ -574,8 +581,11 @@ extern void UnDefMacro( const char *name )
 {
     char    macro[MAX_MAC_NAME];
     MACRO   *dead;
+    BOOLEAN caseSensitive;
 
-    makeMacroName( macro, name ); // Does assert( IsMacroName( name ) );
+    assert( IsMacroName( name ) );
+
+    makeMacroName( macro, name );
 
     if( *macro == ENVVAR ) {
         ENV_TRACKER     *env;
@@ -586,6 +596,11 @@ extern void UnDefMacro( const char *name )
         return;
     }
 
+    if( Glob.microsoft ) {
+        caseSensitive = TRUE;
+    } else {
+        caseSensitive = FALSE;
+    }
     dead = (MACRO *)RemHashNode( macTab, macro, TRUE );
 
     assert( dead != NULL );
@@ -615,18 +630,18 @@ extern char *WrnGetMacroValue( const char *name )
     /* note we return NULL if it was undefined! */
 }
 
-extern char *DeMacroSpecial( char const *InString )
-/**************************************************
+extern char *DeMacroSpecial( char* InString)
+/*******************************************
  * This function is to specially handle the special macros
  * in the dependencies
  */
 {
-    char const  *old;
-    char const  *current;
-    VECSTR      outString;
-    char        *tempString;
-    char        buffer[6];
-    int         pos;
+    char    *old;
+    char    *current;
+    VECSTR  outString;
+    char    *tempString;
+    char    buffer[6];
+    int     pos;
 
     assert( InString != NULL);
     current = InString;
@@ -636,7 +651,7 @@ extern char *DeMacroSpecial( char const *InString )
 
     while( *current != NULLCHAR ) {
         if( *current == SPECIAL_TMP_DOL_C ) {
-            CatNStrToVec( outString, old, (size_t)( current - old ) );
+            CatNStrToVec( outString, old, current - old );
             pos = 0;
             UnGetCH( STRM_MAGIC );
             buffer[pos++] = *(current++);
@@ -659,7 +674,7 @@ extern char *DeMacroSpecial( char const *InString )
         }
         ++current;
     }
-    CatNStrToVec( outString, old, (size_t)( current - old + 1 ) );
+    CatNStrToVec( outString, old, current - old + 1 );
     return( FinishVec( outString ) );
 }
 
@@ -691,7 +706,7 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 );
 
 
 STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
-/****************************************************************************
+/***************************************************
  * Processes the tokens returned from lexToken in deMacroToEnd
  */
 {
@@ -717,7 +732,7 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
             temp = PreGetCH ();
             if( ismacc( temp ) ) {
                 temp_str[1] = NULLCHAR;
-                temp_str[0] = (char)temp;
+                temp_str[0] = temp;
                 p = StrDupSafe( temp_str );
             } else {
                 p = StrDupSafe( "" );
@@ -737,9 +752,11 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
 
     case MAC_DOLLAR:
         return( StrDupSafe( TMP_DOL_S ) );      /* write a place holder */
+        break;
 
     case MAC_COMMENT:
         return( StrDupSafe( TMP_COMMENT_S ) );  /* write a place holder */
+        break;
 
     case MAC_OPEN:                      /* recurse, get macro name */
         if( !Glob.microsoft ) {
@@ -780,7 +797,7 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
                         break;
                     }
                     if( pos < MAX_TOK_SIZE -1 ) {
-                        macname[pos++] = (char)temp;
+                        macname[pos++] = temp;
                     }
                     temp = PreGetCH();
                 }
@@ -986,27 +1003,27 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
     return( result );
 }
 
-extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
+extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForceDeMacro )
 /************************************************************************
  * This is the same as deMacro however if the string has leading and trailing
  * ws then leave it in.
  * Boolean = TRUE when you want partDeMacro
  */
 {
-    VECSTR      DeMacroText;
-    VECSTR      temp;
-    char        text        [MAX_COMMANDLINE];
-    char        leadingSpace[MAX_COMMANDLINE];
-    char const  *TrailSpace;
-    char        *DeMacroStr;
-    char        *current;
-    TOKEN_T     t;
+    VECSTR  DeMacroText;
+    VECSTR  temp;
+    char    text        [MAX_COMMANDLINE];
+    char    leadingSpace[MAX_COMMANDLINE];
+    char    *TrailSpace;
+    char    *DeMacroStr;
+    char    *current;
+    TOKEN_T t;
 
 
     t = PreGetCH();
     current = leadingSpace;
     while( isws( t ) && current - leadingSpace < MAX_COMMANDLINE -1 ) {
-        *current = (char)t;
+        *current = t;
         ++current;
         t = PreGetCH();
     }
@@ -1022,7 +1039,7 @@ extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
         } else if( !isws( t ) ) {
             TrailSpace = current + 1;
         }
-        *current = (char)t;
+        *current = t;
         t = PreGetCH();
         ++current;
     }
@@ -1030,13 +1047,13 @@ extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
     UnGetCH( t );
 
     DeMacroText = StartVec();
-    WriteNVec( DeMacroText, text, (size_t)(TrailSpace - text) );
+    WriteNVec( DeMacroText, text, TrailSpace - text );
     InsString( FinishVec( DeMacroText ), TRUE );
 
     if( !partDeMacro ) {
         DeMacroStr = DeMacro( EOL );
     } else {
-        DeMacroStr = PartDeMacro( ForcedDeMacro );
+        DeMacroStr = PartDeMacro( ForceDeMacro);
     }
 
     DeMacroText = StartVec();
@@ -1067,23 +1084,30 @@ STATIC char *PartDeMacroProcess( void )
  * $+$- delimited sequences.  Removes leading and trailing ws.
  */
 {
-    VECSTR  vec = StartVec();   /* vector for macro defn                */
-    VECSTR  wsvec = NULL;       /* vector to hold ws                    */
-    BOOLEAN leadingws = TRUE;   /* still trimming leading ws            */
+    VECSTR  vec   = NULL;      /* vector for macro defn                */
+    VECSTR  wsvec = NULL;      /* vector to hold ws                    */
+    BOOLEAN holdws;            /* holding ws from last time through    */
+    BOOLEAN leadingws;         /* still trimming leading ws            */
     TOKEN_T t;
-    char    *text;
 
-    while( (t = LexToken( LEX_MAC_DEF )) != STRM_END && t != EOL ) {
+    vec = StartVec();
+
+    leadingws = TRUE;
+    holdws = FALSE;
+
+    t = LexToken( LEX_MAC_DEF );
+    while( t != STRM_END && t != EOL ) {
+
         switch( t ) {
         case STRM_MAGIC:        /* we ignore these */
             break;
         case MAC_EXPAND_ON:
-            text = deMacroText( 0, EOL, MAC_EXPAND_OFF );
-            InsString( text, TRUE );
+            InsString( deMacroText( 0, EOL, MAC_EXPAND_OFF ), TRUE );
             break;
         case MAC_WS:
             if( !leadingws ) {
-                if( wsvec == NULL ) {
+                if( !holdws ) {
+                    holdws = TRUE;
                     wsvec = StartVec();
                 }
                 WriteVec( wsvec, CurAttr.ptr );
@@ -1091,9 +1115,9 @@ STATIC char *PartDeMacroProcess( void )
             FreeSafe( CurAttr.ptr );
             break;
         case MAC_TEXT:
-            if( !leadingws && wsvec != NULL ) {
+            if( holdws && !leadingws ) {
                 CatVec( vec, wsvec );
-                wsvec = NULL;
+                holdws = FALSE;
             }
             leadingws = FALSE;
             WriteVec( vec, CurAttr.ptr );
@@ -1106,14 +1130,15 @@ STATIC char *PartDeMacroProcess( void )
             PrtMsg( WRN | LOC | IGNORE_OUT_OF_PLACE_M, M_UNKNOWN_TOKEN );
 #endif
         }
+
+        t = LexToken( LEX_MAC_DEF );
     }
 
-    if( wsvec != NULL ) {       /* trim trailing ws */
+    if( holdws ) {          /* trim trailing ws */
         FreeVec( wsvec );
     }
 
-    text = FinishVec( vec );
-    return( text );
+    return( FinishVec( vec ) );
 }
 
 
@@ -1129,11 +1154,11 @@ extern BOOLEAN ForceDeMacro ( void )
     return( Glob.microsoft && !ImplicitDeMacro );
 }
 
-extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
-/************************************************
+extern char *PartDeMacro( BOOLEAN ForceDeMacro )
+/***********************************************
  * the addition of microsoft option needs this option
  * since MACROS are always fully expanded sequentially
- * ForcedDeMacro if set true will force full Demacro
+ * ForceDeMacro if set true will force full Demacro
  */
 {
     STRM_T  t;
@@ -1142,7 +1167,7 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
     if( Glob.microsoft ) {
         IsPartDeMacro = TRUE;
     }
-    if( ForcedDeMacro ) {
+    if( ForceDeMacro ) {
         //remove white spaces at the beginning
         while( isws( t = PreGetCH() ) )
             ;
@@ -1190,7 +1215,7 @@ STATIC char *DeMacroName( char *text, const char *name )
     char    *macronameStr;
     VECSTR  outtext;
     VECSTR  macroname;
-    size_t  lengthToClose;
+    int     lengthToClose;
 
     assert( name != NULL && text != NULL );
 
@@ -1214,8 +1239,7 @@ STATIC char *DeMacroName( char *text, const char *name )
                                strlen( name ) + lengthToClose) != ')' ) {
                             ++lengthToClose;
                         }
-                        CatNStrToVec( outtext, oldptr,
-                            (size_t)(current - 2 - oldptr) );
+                        CatNStrToVec( outtext, oldptr, current - 2 - oldptr );
                         macroname = StartVec();
                         CatNStrToVec( macroname, current,
                                       strlen( name ) + lengthToClose );
@@ -1237,9 +1261,8 @@ STATIC char *DeMacroName( char *text, const char *name )
             // Microsoft name without parenthesis is only of length 1
             if( text <= current - 1 && strlen( name ) == 1 ) {
                 // Checks if the MacroName is preceded by just a dollar sign
-                if( *(current - 1) == DOLLAR ) {
-                    CatNStrToVec( outtext, oldptr,
-                        (size_t)(current - 1 - oldptr) );
+                if( *(current -1 ) == DOLLAR ) {
+                    CatNStrToVec( outtext, oldptr, current - 1 - oldptr );
                     if( IsMacroName( name ) ) {
                         temp = GetMacroValue( name );
                         if( temp != NULL ) {
@@ -1296,7 +1319,6 @@ extern void DefMacro( const char *name )
             /* remember strlen( name ) is one byte larger than we want
              * because *name == ENVVAR, and we'll ignore that byte
              */
-        assert( EnvVarValue != NULL );
         env = MallocSafe( sizeof( ENV_TRACKER )
                 + strlen( name ) + strlen( EnvVarValue ) + 1 );
         FmtStr( env->value, "%s=%s", name + 1, EnvVarValue );
@@ -1331,14 +1353,13 @@ extern void DefMacro( const char *name )
 }
 
 
-static BOOLEAN printMac( const void *node, const void *ptr )
-/**********************************************************/
+BOOLEAN printMac( const void *node, const void *ptr )
+/***************************************************/
 {
-    MACRO const * const mac = (void *)node;
-    char                buff1[MAX_RESOURCE_SIZE];
-    char                buff2[MAX_RESOURCE_SIZE];
+    MACRO   *mac = (void *)node;
+    char    buff1[MAX_RESOURCE_SIZE];
+    char    buff2[MAX_RESOURCE_SIZE];
 
-    (void)ptr; // Unused
     /* mac->node.name is used as a parameter twice in this module because
      * it may substitute before or after the long string depending on the
      * way the message is translated */
@@ -1380,7 +1401,7 @@ STATIC void restoreEnvironment( void )
 extern void MacroInit( void )
 /***************************/
 {
-    macTab = NewHashTab( HASH_PRIME_MAC );
+    macTab = NewHashTab( HASH_PRIME );
     dirBuf = NULL;
 #ifdef CLEAN_ENVIRONMENT_VAR
     OldEnvValues = NULL;
@@ -1394,7 +1415,6 @@ extern void MacroInit( void )
 STATIC BOOLEAN freeMacro( MACRO *mac, const void *ptr )
 /*****************************************************/
 {
-    (void)ptr; // Unused
     FreeSafe( mac->node.name );
     FreeSafe( (char *)(mac->value) );
     FreeSafe( mac );

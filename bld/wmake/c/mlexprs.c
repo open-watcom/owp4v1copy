@@ -31,6 +31,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "macros.h"
 #include "make.h"
@@ -66,16 +67,16 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
     /* \" is considered a double quote character                         */
     /* and if a double quote is found again then we break out as the end */
     /* of the filename                                                   */
-    while( pos < _MAX_PATH - 1 && t != DOUBLEQUOTE && t != EOL && t != STRM_END ) {
-        file[pos++] = (char)t;
+    while( pos < _MAX_PATH ) {
+        if( t == DOUBLEQUOTE || t == EOL || t == STRM_END ) {
+            break;
+        }
+        file[pos++] = t;
         t = PreGetCH();
         if( t == BACKSLASH ) {
-            if( pos >= _MAX_PATH ) {
-                break;
-            }
             t = PreGetCH();
             if( t == DOUBLEQUOTE ) {
-                file[pos++] = (char)t;
+                file[pos++] = t;
                 t = PreGetCH();
             } else {
                 file[pos++] = BACKSLASH;
@@ -83,9 +84,8 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
         }
     }
 
-    if( pos >= _MAX_PATH ) {
+    if( pos == _MAX_PATH ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-        return( 0 );    // not reached
     }
     file[pos] = NULLCHAR;
 
@@ -161,7 +161,7 @@ extern TOKEN_T LexPath( STRM_T t )
 
                     // make sure we don't cross boundaries
                     if( pos < _MAX_PATH ) {
-                        path[pos++] = (char)t;
+                        path[pos++] = t;
                     }
                 }
             } else {
@@ -169,11 +169,12 @@ extern TOKEN_T LexPath( STRM_T t )
                     string_open = !string_open;
                 } else {
                     if( string_open ) {
-                        path[pos++] = (char)t;
+                        path[pos++] = t;
                     } else if( isfilec( t ) ) {
-                        path[pos++] = (char)t;
+                        path[pos++] = t;
                     } else {
-                        break; // not valid path character, break out.
+                        // not valid path character, break out.
+                        break;
                     }
                 }
             }
@@ -186,10 +187,9 @@ extern TOKEN_T LexPath( STRM_T t )
             PrtMsg( FTL | LOC | ERROR_STRING_OPEN );
         }
 
-        if( pos >= _MAX_PATH ) {
+        if( pos == _MAX_PATH ) {
             FreeSafe( FinishVec( vec ) );
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-            return( 0 );    // not reached
         }
 
         path[pos] = NULLCHAR;
@@ -236,12 +236,11 @@ STATIC TOKEN_T lexFileName( STRM_T t )
     pos = 0;
     while( pos < _MAX_PATH && (isfilec( t )
         || t == SPECIAL_TMP_DOL_C && Glob.microsoft) ) {
-        file[pos++] = (char)t;
+        file[pos++] = t;
         t = PreGetCH();
     }
-    if( pos >= _MAX_PATH ) {
+    if( pos == _MAX_PATH ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-        return( 0 );    // not reached
     }
     file[pos] = NULLCHAR;
     UnGetCH( t );
@@ -277,8 +276,8 @@ STATIC BOOLEAN checkDotName( const char *str )
  * return FALSE.
  */
 {
-    char * const    *key;
-    char const      *ptr;
+    char        **key;
+    const char  *ptr;
 
     assert( str[0] == DOT );
 
@@ -290,7 +289,7 @@ STATIC BOOLEAN checkDotName( const char *str )
         return( FALSE );
     }
 
-    CurAttr.num = (INT16)((const char **)key - DotNames);
+    CurAttr.num = (const char **)key - DotNames;
 
     assert( DOT_MIN < CurAttr.num && CurAttr.num < DOT_MAX );
 
@@ -311,15 +310,15 @@ STATIC char *getCurlPath( void )
     if( t == L_CURL_PAREN ) {
         t = PreGetCH();
         while( t != R_CURL_PAREN && t != EOL && pos < _MAX_PATH ) {
-            path[pos++] = (char)t;
+            path[pos++] = t;
             t = PreGetCH();
         }
         path[pos] = NULLCHAR;
         if( t == EOL ) {
             UnGetCH( EOL );
             PrtMsg( ERR | LOC | NON_MATCHING_CURL_PAREN);
-        } else if( pos >= _MAX_PATH ) {
-            PrtMsg( WRN | LOC | PATH_TOO_LONG );
+        } else if( pos == _MAX_PATH ) {
+            PrtMsg( WRN | LOC| PATH_TOO_LONG );
         }
         return( StrDupSafe( path ) );
 
@@ -360,7 +359,6 @@ STATIC TOKEN_T lexDotName( void )
     t = PreGetCH();
     if( t != DOT ) {
         PrtMsg( ERR | LOC | INVALID_SUFSUF );
-        return( t ); // Seems unreasonable to continue after error
     } else {
         ext[pos++] = DOT;
         t = PreGetCH();
@@ -386,12 +384,11 @@ STATIC TOKEN_T lexDotName( void )
         }
     } else {    /* get string {extc}+ */
         while( pos < MAX_SUFFIX && isextc( t ) && t != L_CURL_PAREN ) {
-            ext[pos++] = (char)t;
+            ext[pos++] = t;
             t = PreGetCH();
         }
-        if( pos >= MAX_SUFFIX ) {
+        if( pos == MAX_SUFFIX ) {
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 );
-            return( 0 );    // not reached
         }
         ext[pos] = NULLCHAR;
     }
@@ -406,19 +403,18 @@ STATIC TOKEN_T lexDotName( void )
         ext[pos++] = DOT;
         t = PreGetCH();     /* next char */
         while( pos < MAX_SUFFIX && isextc( t ) ) {
-            ext[pos++] = (char)t;
+            ext[pos++] = t;
             t = PreGetCH();
         }
-        if( pos >= MAX_SUFFIX ) {
+        if( pos == MAX_SUFFIX ) {
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 );
-            return( 0 );    // not reached
         }
         ext[pos] = NULLCHAR;
 
         ret = TOK_SUFSUF;
     } else {
         if( targ_path != NULL && dep_path != NULL ) {
-            PrtMsg( ERR | LOC | INVALID_SUFSUF );
+            PrtMsg( ERR | LOC | INVALID_SUFSUF);
         }
         ret = TOK_SUF;
     }
@@ -466,12 +462,11 @@ STATIC BOOLEAN checkMacro( TOKEN_T t )
 
     pos = 0;
     while( pos < MAX_MAC_NAME && ismacc( t ) ) {
-        mac[pos++] = (char)t;
+        mac[pos++] = t;
         t = PreGetCH();
     }
-    if( pos >= MAX_MAC_NAME ) {
+    if( pos == MAX_MAC_NAME ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_MAC_NAME - 1 );
-        return( 0 );    // not reached
     }
     mac[pos] = NULLCHAR;
     ws = isws( t );
@@ -535,15 +530,9 @@ STATIC char *DeMacroDoubleQuote( BOOLEAN IsDoubleQuote )
         t = PreGetCH();
         while( t != STRM_MAGIC && pos < _MAX_PATH ) {
             assert( t!= EOL || t != STRM_END );
-            buffer[pos++] = (char)t;
+            buffer[pos++] = t;
             t = PreGetCH();
         }
-
-        if( pos >= _MAX_PATH ) {
-            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-            return( 0 );    // not reached
-        }
-
         buffer[pos] = NULLCHAR;
         p = StrDupSafe( buffer );
     } else {
@@ -591,7 +580,7 @@ STATIC char *DeMacroDoubleQuote( BOOLEAN IsDoubleQuote )
     pos = 0;
     t = PreGetCH();
     while( isws( t ) ) {
-        buffer[pos++] = (char)t;
+        buffer[pos++] = t;
         t = PreGetCH();
     }
     buffer[pos] = NULLCHAR;

@@ -120,6 +120,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "RMDIR",
     "SET",
 #define COM_SET     26  /* index of the set keyword */
+#define LEN_SET     3   /* strlen( "SET" ) */
     "TIME",
     "TYPE",
     "VER",
@@ -216,6 +217,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "RMDIR",
     "SET",
 #define COM_SET     30
+#define LEN_SET     3
     "SETLOCAL",
     "SHIFT",
     "START",
@@ -364,12 +366,11 @@ STATIC RET_T processInlineFile( int handle, const char *body,
             DeMacroBody = ignoreWSDeMacro( FALSE, ForceDeMacro() );
             currentSent = index + 1;
             if( writeToFile ) {
-                size_t const bytes = strlen( DeMacroBody );
-
-                if( bytes != (size_t)write( handle, DeMacroBody, bytes ) ) {
+                if( strlen( DeMacroBody ) !=
+                        write( handle, DeMacroBody, strlen( DeMacroBody ) ) ) {
                     ret = RET_ERROR;
                 }
-                if( 1 != write( handle, "\n", 1 ) ) {
+                if( write( handle, "\n", 1 ) != 1 ) {
                     ret = RET_ERROR;
                 }
             } else {
@@ -379,7 +380,7 @@ STATIC RET_T processInlineFile( int handle, const char *body,
                 outText = StartVec();
                 WriteVec( outText, "echo." );
                 if( DeMacroBody != NULL ) {
-                    if( *DeMacroBody != 0 ) {
+                    if( strlen( DeMacroBody ) > 0 ) {
                         WriteVec( outText, DeMacroBody );
                     }
                     FreeSafe( DeMacroBody );
@@ -439,8 +440,8 @@ STATIC char* RemoveBackSlash( const char* inString )
 
 STATIC RET_T VerbosePrintTempFile( const FLIST *head )
 {
-    FLIST const *current;
-    RET_T       ret = RET_SUCCESS; // success if list empty
+    FLIST const         *current;
+    RET_T               ret = RET_SUCCESS; // success if list empty
 
     current = head;
     while( current != NULL ) {
@@ -518,8 +519,8 @@ STATIC RET_T writeInlineFiles( FLIST *head, char **commandIn )
     FLIST   *current;
     RET_T   ret;
     VECSTR  newCommand;
-    size_t  start;  // start of cmdText to be copied into newCommand;
-    size_t  index;  // current index of cmdText
+    int     start;  // start of cmdText to be copied into newCommand;
+    int     index;  // current index of cmdText
     NKLIST  *temp;
 
     assert( *commandIn != NULL );
@@ -626,8 +627,7 @@ STATIC RET_T percentMake( char *arg )
     TARGET      *calltarg;
     RET_T       ret;
     char        *buf;
-    char        *start;
-    char        *finish;
+    char        *start, *finish;
     BOOLEAN     newtarg;
     BOOLEAN     more_targets;
 
@@ -696,8 +696,8 @@ STATIC void closeCurrentFile( void )
 }
 
 
-STATIC RET_T percentWrite( char *arg, enum write_type type )
-/**********************************************************/
+STATIC RET_T percentWrite( const char *arg, enum write_type type )
+/****************************************************************/
 {
     char        *p;
     char const  *text;
@@ -785,8 +785,8 @@ STATIC RET_T percentWrite( char *arg, enum write_type type )
 
     if( type != WR_CREATE ) {
         *p = '\n';          /* replace null terminator with newline */
-        len = (size_t)(p - text) + 1;
-        if( (size_t)write( currentFileHandle, text, len ) != len ) {
+        len = (p - text) + 1;
+        if( write( currentFileHandle, text, len ) != len ) {
             PrtMsg( ERR | DOING_THE_WRITE );
             closeCurrentFile();
             return( RET_ERROR );
@@ -871,7 +871,8 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
         return( percentWrite( arg, WR_WRITE ) );
 
     default:
-        abort();
+        assert( FALSE );
+        break;
     };
 
     return( RET_SUCCESS );
@@ -881,8 +882,8 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
 STATIC int intSystem( const char *cmd )
 /* interruptable "system" (so that ctrl-c works) */
 {
-    pid_t const pid = fork();
-    int         status;
+    pid_t   pid = fork();
+    int     status;
 
     if( pid == -1 ) {
         return( -1 );
@@ -940,8 +941,8 @@ STATIC RET_T mySystem( const char *cmdname, const char *cmd )
 }
 
 
-STATIC RET_T handleSet( char *cmd )
-/**********************************
+STATIC RET_T handleSet( const char *cmd )
+/****************************************
  * "SET" {ws}* <name> {ws}* "="[<value>]
  */
 {
@@ -986,7 +987,7 @@ STATIC RET_T handleSet( char *cmd )
     ++p;                        /* advance to character after '=' */
 
                         /* +1 for '=' (already +1 for '\0' in ENV_TRACKER) */
-    env = MallocSafe( sizeof *env + 1 + (size_t)(endname - name) + strlen( p ) );
+    env = MallocSafe( sizeof( ENV_TRACKER )+ 1 +( endname - name ) + strlen( p ) );
     FmtStr( env->value, "%s=%s", name, p );
     retcode = PutEnvSafe( env );
     if( retcode != 0 ) {
@@ -1021,8 +1022,8 @@ STATIC RET_T handleEcho( const char *cmd )
     return( RET_SUCCESS );
 }
 
-STATIC RET_T handleIf( char *cmd )
-/*********************************
+STATIC RET_T handleIf( const char *cmd )
+/***************************************
  *          { ERRORLEVEL <number> }
  * IF [NOT] { <str1> == <str2>    } <command>
  *          { EXIST <file>        }
@@ -1162,9 +1163,9 @@ STATIC RET_T handleForSyntaxError( void )
 }
 
 
-STATIC RET_T getForArgs( char *line, const char **pvar, char **pset,
+STATIC RET_T getForArgs( const char *line, const char **pvar, char **pset,
     const char **pcmd )
-/******************************************************************/
+/************************************************************************/
 {
     char    *p;
 
@@ -1289,8 +1290,8 @@ STATIC void doForSubst( const char *var, size_t varlen,
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-STATIC RET_T handleFor( char *line )
-/***********************************
+STATIC RET_T handleFor( const char *line )
+/*****************************************
  * "FOR" {ws}* "%"["%"]<var> {ws}+ "IN" {ws}+ "("<set>")" {ws}+ "DO" {ws}+ <cmd>
  */
 {
@@ -1345,6 +1346,7 @@ STATIC RET_T handleFor( char *line )
     while( hold != NULLCHAR ) {
         subst = set;        /* remember start of subst string */
 
+        //while( *set != NULLCHAR && !isws( *set ) ) ++set;
         set = FindNextWS( set );
 
         hold = *set;
@@ -1395,10 +1397,6 @@ STATIC RET_T handleCD( char *cmd )
     char        *p;     /* pointer to walk with */
     char const  *s;
 
-#ifdef DEVELOPMENT
-    PrtMsg( DBG | INF | INTERPRETING, dosInternals[COM_CD] );
-#endif
-
     closeCurrentFile();
     p = cmd;
     while( isalpha( *p ) ) {
@@ -1433,11 +1431,7 @@ STATIC RET_T handleChangeDrive( const char *cmd )
     unsigned    total;
     unsigned    curr_drive;
 
-#ifdef DEVELOPMENT
-    PrtMsg( DBG | INF | INTERPRETING, dosInternals[CNUM] );
-#endif
-
-    drive_index = (unsigned)(toupper( *cmd ) - 'A' + 1);
+    drive_index = ( toupper( *cmd ) - 'A' ) + 1;
     if( drive_index == 0 || drive_index > 26 ) {
         return( RET_ERROR );
     }
@@ -1465,8 +1459,8 @@ typedef struct {
     BIT bVerbose : 1;
 } rm_flags;
 
-STATIC RET_T getRMArgs( char *line, rm_flags *flags, const char **pfile )
-/************************************************************************
+STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
+/******************************************************************************
  * returns RET_WARN when there are no more arguments
  */
 {
@@ -1535,10 +1529,10 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
         rv = 0;
     }
     if( 0 != rv ) {
-        PrtMsg( ERR | SYSERR_DELETING_FILE, file );
+        PrtMsg( ERR| SYSERR_DELETING_FILE, file );
     }
     else if( flags->bVerbose && ENOENT != errno ) {
-        PrtMsg( INF | DELETING_FILE, file );
+        PrtMsg( INF| DELETING_FILE, file );
     }
 
     CacheRelease();     /* so that the cache is updated */
@@ -1546,8 +1540,8 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
     return( 0 == rv );
 }
 
-STATIC RET_T handleRM( char *cmd )
-/*********************************
+STATIC RET_T handleRM( const char *cmdname, const char *cmd )
+/************************************************************
  * RM [-f -v] <file> ...
  *
  * -f   Force deletion of read-only files.
@@ -1558,10 +1552,6 @@ STATIC RET_T handleRM( char *cmd )
     rm_flags    flags;
     RET_T       rt;
     const char  *pfname;
-
-#ifdef DEVELOPMENT
-    PrtMsg( DBG | INF | INTERPRETING, dosInternals[COM_RM] );
-#endif
 
     rt = getRMArgs( cmd, &flags, &pfname );
 
@@ -1629,7 +1619,7 @@ static void dumpCommand( char *cmd )
     char    *p;
     char    *z;
 
-    // trim trailing white space before printing
+    // trim trailing white space before executing
     z = cmd;
     for( p = cmd; *p; ++p ) {
         if( !isws( *p ) ) {
@@ -1694,16 +1684,8 @@ STATIC void killTmpEnv( UINT16 tmp )
     PutEnvSafe( env );
 }
 #else
-STATIC UINT16 makeTmpEnv( const char *cmd )
-{
-    (void)cmd; // Unused
-    return( 0 );
-}
-
-STATIC void killTmpEnv( UINT16 tmp )
-{
-    (void)tmp; // Unused
-}
+STATIC UINT16 makeTmpEnv( const char *cmd ) { return( 0 ); }
+STATIC void killTmpEnv( UINT16 tmp ) {}
 #endif
 
 #ifdef __WATCOMC__
@@ -1714,6 +1696,9 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     BOOLEAN percent_cmd;/* is this a percent cmd? */
     int     comnum;     /* index into dosInternals */
     char    cmdname[_MAX_PATH];
+#if defined( __DOS__ )
+    char    ext[_MAX_EXT];
+#endif
     char    *arg;
     char const *argv[3];/* for spawnvp */
     int     retcode;    /* from spawnvp */
@@ -1744,25 +1729,20 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         return( RET_ERROR );
     }
 
-    memcpy( cmdname, cmd, (size_t)(arg - cmd) );  /* copy command */
+    memcpy( cmdname, cmd, arg - cmd );  /* copy command */
     cmdname[arg - cmd] = NULLCHAR;      /* null terminate it */
 
     /* skip whitespace between the command and the argument */
-    while( isws( *arg ) ) {
-        arg++;
+    for( ; isws( *arg ); arg++ ) {
     }
 
 #if defined( __DOS__ )
-    {
-        char    ext[_MAX_EXT];
-
-        _splitpath( cmdname, NULL, NULL, NULL, ext );
-        if( ext[0] == '.' ) {
-            FixName( ext );
-            /* if extension specified let the shell handle it (26-apr-91) */
-            if( FNameCmp( ext, ".exe" ) != 0 && FNameCmp( ext, ".com" ) != 0 ) {
-                flags |= FLAG_SHELL; /* .bat and .cmd need the shell anyway */
-            }
+    _splitpath( cmdname, NULL, NULL, NULL, ext );
+    if( ext[0] == '.' ) {
+        FixName( ext );
+        /* if the extension is specified let the shell handle it (26-apr-91) */
+        if( FNameCmp( ext, ".exe" ) != 0 && FNameCmp( ext, ".com" ) != 0 ) {
+            flags |= FLAG_SHELL; /* .bat and .cmd need the shell anyway */
         }
     }
 #endif
@@ -1798,7 +1778,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
 #if !defined( __UNIX__ )
-        case COM_RM:    my_ret = handleRM( cmd );           break;
+        case COM_RM:    my_ret = handleRM( cmdname, cmd );  break;
 #endif
 #if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
@@ -1884,7 +1864,6 @@ STATIC RET_T execLine( char *line )
     int     flags;
     RET_T   rc;
 
-    assert( line != NULL );
 
     CheckForBreak();
     /* make a copy of global flags */

@@ -30,8 +30,12 @@
 
 
 #include <unistd.h>
+#include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef __UNIX__
+#include <direct.h>
+#endif
 
 #include "macros.h"
 #include "massert.h"
@@ -116,8 +120,12 @@ STATIC BOOLEAN  doingPreProc;   /* are we doing some preprocessing? */
 /*
  * MS Compatability extension to add the if (expression) functionality
  */
+ // directory separators
+#define isdir(_c) ((_c) == '/' || (_c) == BACKSLASH || (_c) == COLON)
 
 
+
+STATIC int_32 makeHexNumber ( char* inString, int*  stringLength );
 STATIC void doElIf( BOOLEAN (*logical)(void), enum directiveTok tok );
 
 // local functions
@@ -236,11 +244,11 @@ STATIC int getPreTok( void )
  *          otherwise the D_ number of the token
  */
 {
-    TOKEN_T         t;
-    char            tok[MAX_PRE_TOK];
-    int             pos;
-    char * const    *key;
-    char const      *tmp;               /* to pass tok buf to bsearch */
+    TOKEN_T t;
+    char    tok[MAX_PRE_TOK];
+    int     pos;
+    char    **key;
+    char    *tmp;               /* to pass tok buf to bsearch */
 
     t = eatWhite();
 
@@ -251,7 +259,7 @@ STATIC int getPreTok( void )
 
     pos = 0;
     while( isalpha( t ) && ( pos < MAX_PRE_TOK - 1 ) ) {
-        tok[pos++] = (char)t;
+        tok[pos++] = t;
         t = PreGetCH();
         // MS Compatability ELSE IFEQ can also be defined as ELSEIFEQ
         // similar for other types of if preprocessor directives
@@ -333,17 +341,24 @@ STATIC void chopTrailWS( char *str )
  */
 {
     char    *p;
+    char    *last;  /* last non-whitespace char */
 
-    for( p = str + strlen( str ) - 1; p >= str && isws( *p ); --p ) {
-        *p = NULLCHAR;
+    last = NULL;
+    p = str;
+    while( *p ) {
+        if( !isws( *p ) ) {
+            last = p;
+        }
+        ++p;
+    }
+    if( last != NULL ) {
+        last[1] = NULLCHAR;
     }
 }
 
 
+// process the operands found in %f
 STATIC BOOLEAN ifOpProcess( void )
-/*********************************
- * process the operands found in %f
- */
 {
     char        *test;
     DATAVALUE   temp;
@@ -360,11 +375,10 @@ STATIC BOOLEAN ifOpProcess( void )
 }
 
 
-STATIC BOOLEAN ifOp( void )
-/*********************************
- * MS Compatability  -
+/* MS Compatability  -
  * Allows for NMAKE compatability in binary and string operators
  */
+STATIC BOOLEAN ifOp( void )
 {
     return( ifOpProcess() );
 }
@@ -379,7 +393,7 @@ STATIC void ifEqProcess( char const **v1, char **v2 )
 {
     char        *name;
     char        *test;
-    char const  *value;
+    char        *value;
     char        *beg;
 
     assert( !curNest.skip2endif );
@@ -698,35 +712,39 @@ STATIC void bangDefine( void )
 
 
 static char *skipWhileWS( char *p )
-/*********************************/
 {
-    for( ; *p != '\0' && isws( *p ); ++p ) {
+    for( ; *p != '\0'; ++p ) {
+        if( !isws( *p ) ) {
+            break;
+        }
     }
     return( p );
 }
 
 static char *skipUntilWS( char *p )
-/*********************************/
 {
-    for( ; *p != '\0' && !isws( *p ); ++p ) {
+    for( ; *p != '\0'; ++p ) {
+        if( isws( *p ) ) {
+            break;
+        }
     }
     return( p );
 }
 
 
+// !inject <text> <mac-name1> <mac-name2> ... <mac-nameN>
 STATIC void bangInject( void )
 /*****************************
- * !inject <text> <mac-name1> <mac-name2> ... <mac-nameN>
  * post:    atStartOfLine == EOL
  * errors:  none
  */
 {
-    char        *text;
-    char        *contents;
-    char        *end_contents;
-    char        *curr;
-    char const  *mac_name;
-    char const  *value;
+    char    *text;
+    char    *contents;
+    char    *end_contents;
+    char    *curr;
+    char    *mac_name;
+    char    *value;
 
     assert( !curNest.skip );
     text = DeMacro( EOL );
@@ -768,9 +786,9 @@ STATIC void bangInject( void )
 }
 
 
+// !loaddll <cmd-name> <dll-name> [<entry-pt>]
 STATIC void bangLoadDLL( void )
 /******************************
- * !loaddll <cmd-name> <dll-name> [<entry-pt>]
  * post:    atStartOfLine == EOL
  * errors:  none
  */
@@ -859,11 +877,10 @@ STATIC void bangUnDef( void )
 }
 
 STATIC char *formatLongFileName( char *text )
-/*******************************************/
 {
-    char        *ret;
-    char        *currentRet;
-    char const  *currentTxt;
+    char    *ret;
+    char    *currentRet;
+    char    *currentTxt;
 
     assert( text != NULL );
     ret = StrDupSafe( text );
@@ -1089,7 +1106,7 @@ extern STRM_T PreGetCH( void )
 
         /* now we have a character of input */
 
-        atStartOfLine = (char)t;
+        atStartOfLine = t;
         temp          = t;
 
         skip = curNest.skip && !doingPreProc;
@@ -1099,9 +1116,7 @@ extern STRM_T PreGetCH( void )
         }
         if( t == COMMENT && lastChar != DOLLAR ) {
             t = GetCHR();
-            while( t != EOL && t != STRM_END ) {
-                t = GetCHR();
-            }
+            while( t != EOL && t != STRM_END ) t = GetCHR();
             if( temp == TMP_EOL ) {
                 t = TMP_EOL;
             }
@@ -1198,10 +1213,8 @@ extern STRM_T PreGetCH( void )
 }
 
 
+// Finds the next character that has no white space
 STATIC char *removeWhiteSP( char *inString )
-/*******************************************
- * Finds the next character that has no white space
- */
 {
     int     index = 0;
 
@@ -1212,8 +1225,7 @@ STATIC char *removeWhiteSP( char *inString )
 }
 
 
-STATIC void makeToken( TOKEN_TYPE *current, int *index, enum Tokens type )
-/************************************************************************/
+STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index )
 {
     switch( type ) {
         case OP_COMPLEMENT:
@@ -1252,20 +1264,73 @@ STATIC void makeToken( TOKEN_TYPE *current, int *index, enum Tokens type )
 }
 
 
-STATIC void makeNumberToken( TOKEN_TYPE *current, int *index, char const *inString )
-/**********************************************************************************/
+STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
 {
-    char    *currentChar;
+    int_32      value;
+    char        *currentChar;
+    char        c;
+    int         hexLength;
 
-    current->data.number = strtol( inString, &currentChar, 0 );
-    current->type = OP_INTEGER;
+    currentChar = inString;
+    value       = 0;
+    *index      = 0;
+    c = currentChar[0];
+    if( c == '0' ) {                            // octal or hex number
+        ++currentChar;
+        c = currentChar[0];
+        if( c == 'x'  ||  c == 'X' ) {          // hex number
+            ++currentChar;
+            value = makeHexNumber( currentChar, &hexLength );
+            currentChar += hexLength;
+        } else {                                // octal number
+            while( c >= '0'  &&  c <= '7' ) {
+                value = value * 8 + c - '0';
+                ++currentChar;
+                c = currentChar[0];
+            }
+        }
+    } else {                                    // decimal number
+        while( c >= '0'  &&  c <= '9' ) {
+            value = value * 10 + c - '0';
+            ++currentChar;
+            c = currentChar[0];
+        }
+    }
+    current->data.number= value;
+    current->type= OP_INTEGER;
 
     *index = currentChar - inString;
 }
 
 
-STATIC void makeStringToken( TOKEN_TYPE *current, int *index, char const *inString )
-/**********************************************************************************/
+STATIC int_32 makeHexNumber( char *inString, int *stringLength )
+{
+    int_32      value;
+    char        c;
+    char        *currentChar;
+
+    value = 0;
+    currentChar = inString;
+    for( ;; ) {
+        c = currentChar[0];
+        if( c >= '0' && c <= '9' ) {
+            c = c - '0';
+        } else if( c >= 'a' && c <= 'f' ) {
+            c = c - 'a' + 10;
+        } else if( c >= 'A' && c <= 'F' ) {
+            c = c - 'A' + 10;
+        } else {
+            break;
+        }
+        value = value * 16 + c;
+        ++currentChar;
+    }
+    *stringLength = currentChar - inString;
+    return( value );
+}
+
+
+STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
 {
     int     inIndex;
     int     currentIndex;
@@ -1291,7 +1356,7 @@ STATIC void makeStringToken( TOKEN_TYPE *current, int *index, char const *inStri
                 current->type = OP_ERROR;
                 break;
             default:
-                current->data.string[currentIndex] = inString[inIndex];
+            current->data.string[currentIndex] = inString[inIndex];
         }
 
         if( current->type == OP_ERROR ) {
@@ -1305,164 +1370,167 @@ STATIC void makeStringToken( TOKEN_TYPE *current, int *index, char const *inStri
     *index = inIndex;
 }
 
-STATIC void makeAlphaToken( TOKEN_TYPE *current, int *index, char const *inString )
-/*********************************************************************************/
+STATIC void makeAlphaToken(char *inString, TOKEN_TYPE *current, int *index)
 {
-    char const  *pread;
-    char        *pwrite;
-    char const  *pwritelast;
+    int     inIndex;
+    int     currentIndex;
 
-    pread = inString;
-    pwrite = current->data.string;
-    pwritelast = pwrite + sizeof current->data.string - 1; 
-    current->type = OP_STRING;
+    inIndex      = 0;
+    currentIndex = 0;
+    current->type= OP_STRING;
 
-    // Note that in this case we are looking at a string that has no quotations
-    while( *pread != PAREN_RIGHT && *pread != PAREN_LEFT && !isws( *pread ) ) {
-        if( pwrite >= pwritelast ) {
-            current->type = OP_ENDOFSTRING; // This quietly truncates.
+    // Note that in this case we are looking at a string that has no
+    // quotations
+    while( inString[inIndex]!= PAREN_RIGHT &&
+           inString[inIndex]!= PAREN_LEFT  &&
+           !isws(inString[inIndex]) ) {
+
+        if( currentIndex >= MAX_STRING ) {
+            current->type = OP_ENDOFSTRING;
             break;
         }
-        *pwrite++ = *pread++;
+        current->data.string[currentIndex] = inString[inIndex];
+
+        ++inIndex;
+        ++currentIndex;
     }
 
-    *pwrite = NULLCHAR;
-    *index = pread - inString;
+    current->data.string[currentIndex] = NULLCHAR;
+    *index = inIndex;
 }
 
 
-STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
-/****************************************************************************/
+STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength)
 {
-    char const  *curStr;
-    int         index = 0;
+    char    *currentString;
+    int     index = 0;
 
-    curStr = removeWhiteSP( inString );
+    currentString = removeWhiteSP( inString );
 
-    if( *curStr == EOL || *curStr == NULLCHAR || *curStr == COMMENT ) {
-        makeToken( current, &index, OP_ENDOFSTRING );
-    } else {
-        switch( *curStr ) {
+    if( currentString[index] != EOL ||
+        currentString[index] != NULLCHAR ||
+        currentString[index] != COMMENT ) {
+        switch( currentString[index] ) {
         case COMPLEMENT:
-            makeToken( current, &index, OP_COMPLEMENT );
+            makeToken( OP_COMPLEMENT, current, &index );
             break;
         case ADD:
-            makeToken( current, &index, OP_ADD );
+            makeToken( OP_ADD, current, &index );
             break;
         case SUBTRACT:
-            makeToken( current, &index, OP_SUBTRACT );
+            makeToken( OP_SUBTRACT, current, &index );
             break;
         case MULTIPLY:
-            makeToken( current, &index, OP_MULTIPLY );
+            makeToken( OP_MULTIPLY, current, &index );
             break;
         case DIVIDE:
-            makeToken( current, &index, OP_DIVIDE );
+            makeToken( OP_DIVIDE, current, &index );
             break;
         case MODULUS:
-            makeToken( current, &index, OP_MODULUS );
+            makeToken( OP_MODULUS, current, &index );
             break;
         case BIT_XOR:
-            makeToken( current, &index, OP_BIT_XOR );
+            makeToken( OP_BIT_XOR, current, &index );
             break;
         case PAREN_LEFT:
-            makeToken( current, &index, OP_PAREN_LEFT );
+            makeToken( OP_PAREN_LEFT, current, &index );
             break;
         case PAREN_RIGHT:
-            makeToken( current, &index, OP_PAREN_RIGHT );
+            makeToken( OP_PAREN_RIGHT, current, &index );
             break;
         case LOG_NEGATION:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case EQUAL:
-                makeToken( current, &index, OP_INEQU );
+                makeToken( OP_INEQU, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_LOG_NEGATION );
+                makeToken( OP_LOG_NEGATION, current, &index );
                 break;
             }
             break;
         case BIT_AND:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case BIT_AND:
-                makeToken( current, &index, OP_LOG_AND );
+                makeToken( OP_LOG_AND, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_BIT_AND );
+                makeToken( OP_BIT_AND, current, &index );
                 break;
             }
             break;
         case BIT_OR:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case BIT_OR:
-                makeToken( current, &index, OP_LOG_OR );
+                makeToken( OP_LOG_OR, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_BIT_OR );
+                makeToken( OP_BIT_OR, current, &index );
                 break;
             }
             break;
         case LESSTHAN:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case LESSTHAN:
-                makeToken( current, &index, OP_SHIFT_LEFT );
+                makeToken( OP_SHIFT_LEFT, current, &index );
                 break;
             case EQUAL:
-                makeToken( current, &index, OP_LESSEQU );
+                makeToken( OP_LESSEQU, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_LESSTHAN );
+                makeToken( OP_LESSTHAN, current, &index );
                 break;
             }
             break;
         case GREATERTHAN:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case GREATERTHAN:
-                makeToken( current, &index, OP_SHIFT_RIGHT );
+                makeToken( OP_SHIFT_RIGHT, current, &index );
                 break;
             case EQUAL:
-                makeToken( current, &index, OP_GREATEREQU );
+                makeToken( OP_GREATEREQU, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_GREATERTHAN );
+                makeToken( OP_GREATERTHAN, current, &index );
                 break;
             }
             break;
         case EQUAL:
-            switch( curStr[1] ) {
+            switch( currentString[index + 1] ) {
             case EQUAL:
-                makeToken( current, &index, OP_EQUAL );
+                makeToken( OP_EQUAL, current, &index );
                 break;
             default:
-                makeToken( current, &index, OP_ERROR );
+                makeToken( OP_ERROR, current, &index );
                 break;
 
             }
             break;
         case DOUBLEQUOTE:
-            makeStringToken( current, &index, curStr );
+            makeStringToken( currentString, current, &index );
             break;
         default:
-            if( *curStr >= '0' && *curStr <= '9') {
-                makeNumberToken( current, &index, curStr );
+            if( currentString[index] >= '0' && currentString[index] <= '9') {
+                makeNumberToken( currentString, current, &index );
             } else {
                 // parses only to get alphanumeric characters for
                 // purpose of getting special functions ie. EXIST,
                 // defined
                 // if special characters are needed
                 // enclose in quotes
-                makeAlphaToken( current, &index, curStr );
+                makeAlphaToken( currentString, current, &index );
             }
             break;
         }
+    } else {
+        makeToken( OP_ENDOFSTRING, current, &index );
     }
 
-    *tokenLength = index + (curStr - inString);
+    *tokenLength = index + (currentString - inString);
 }
 
 
-STATIC void nextToken( void )
-/****************************
- * Get the next token
- */
+// Get the next token
+STATIC void nextToken()
 {
     int     tokenLength;
 
@@ -1478,29 +1546,27 @@ STATIC void nextToken( void )
 }
 
 
+// Taking a peek at the next token
 STATIC enum Tokens preToken( void )
-/**********************************
- * Taking a peek at the next token
- */
 {
     int         tokenLength;
-    DATAVALUE   next_token;
+    DATAVALUE   nextToken;
 
     if( *currentPtr != NULLCHAR ) {
-        ScanToken( currentPtr, &next_token, &tokenLength );
+        ScanToken( currentPtr, &nextToken, &tokenLength );
     } else {
-        next_token.type = OP_ERROR;  // no more tokens
+        nextToken.type = OP_ERROR;  // no more tokens
     }
-    return( next_token.type );
+    return( nextToken.type );
 }
 
 
-STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
-/**********************************************************
+/*
  * Calls functions that parses and evaluates the given expression
  * contained in global variables currentPtr (pointer to the string to be
  * parsed)
  */
+STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
 {
     assert( inString != NULL && leftVal != NULL );
     currentPtr = inString;
@@ -1513,7 +1579,6 @@ STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
 
 
 STATIC void logorExpr( DATAVALUE *leftVal )
-/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1535,7 +1600,6 @@ STATIC void logorExpr( DATAVALUE *leftVal )
 
 
 STATIC void logandExpr( DATAVALUE *leftVal )
-/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1557,7 +1621,6 @@ STATIC void logandExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitorExpr( DATAVALUE *leftVal )
-/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1579,7 +1642,6 @@ STATIC void bitorExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitxorExpr( DATAVALUE *leftVal )
-/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1601,7 +1663,6 @@ STATIC void bitxorExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitandExpr( DATAVALUE *leftVal )
-/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1623,7 +1684,6 @@ STATIC void bitandExpr( DATAVALUE *leftVal )
 
 
 STATIC void equalExpr( DATAVALUE *leftVal )
-/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1679,7 +1739,6 @@ STATIC void equalExpr( DATAVALUE *leftVal )
 
 
 STATIC void relateExpr( DATAVALUE *leftVal )
-/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1742,12 +1801,8 @@ STATIC void relateExpr( DATAVALUE *leftVal )
 
 
 STATIC void shiftExpr( DATAVALUE *leftValue )
-/*******************************************/
 {
     DATAVALUE   rightValue;
-
-    // signed -> unsigned to humour lint
-    unsigned_32 * const leftNumber = (void *)&leftValue->data.number;
 
     addExpr( leftValue );
     while( leftValue->type != OP_ERROR && leftValue->type != OP_STRING ) {
@@ -1759,7 +1814,7 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
             nextToken();
             addExpr( &rightValue );
             if( rightValue.type == OP_INTEGER ) {
-                *leftNumber <<= rightValue.data.number;
+                leftValue->data.number <<= rightValue.data.number;
             } else {
                 leftValue->type = OP_ERROR;
             }
@@ -1767,7 +1822,7 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
             nextToken();
             addExpr( &rightValue );
             if( rightValue.type == OP_INTEGER ) {
-                *leftNumber >>= rightValue.data.number;
+                leftValue->data.number >>= rightValue.data.number;
             } else {
                 leftValue->type = OP_ERROR;
             }
@@ -1779,7 +1834,6 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
 
 
 STATIC void addExpr( DATAVALUE *leftValue )
-/*****************************************/
 {
     DATAVALUE   rightValue;
 
@@ -1814,7 +1868,6 @@ STATIC void addExpr( DATAVALUE *leftValue )
 
 
 STATIC void multExpr( DATAVALUE *leftValue )
-/******************************************/
 {
     DATAVALUE   rightValue;
 
@@ -1856,11 +1909,9 @@ STATIC void multExpr( DATAVALUE *leftValue )
 }
 
 
-extern BOOLEAN existFile( char const *inPath )
-/*********************************************
- * This function is to determine whether or not a particular
- * filename / directory exists  (for use with EXIST())
- */
+// This function is to determine whether or not a particular
+// filename / directory exists  (for use with EXIST())
+extern BOOLEAN existFile( char *inPath )
 {
      if( access( inPath, F_OK ) == 0 ) {
          return( TRUE );
@@ -1869,11 +1920,9 @@ extern BOOLEAN existFile( char const *inPath )
 }
 
 
+// handles the unary expressions, strings and numbers
+// identifies the logical functions EXIST and DEFINED
 STATIC void unaryExpr( DATAVALUE *leftValue )
-/********************************************
- * handles the unary expressions, strings and numbers
- * identifies the logical functions EXIST and DEFINED
- */
 {
     enum Tokens     type;
     char            *value;
@@ -1908,10 +1957,7 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
         nextToken();
         unaryExpr( leftValue );
         if( leftValue->type == OP_INTEGER ) {
-            // signed -> unsigned to humour lint
-            unsigned_32 * const leftNumber = (void *)&leftValue->data.number;
-
-            *leftNumber = ~*leftNumber;
+            leftValue->data.number = ~(leftValue->data.number);
         } else {
             leftValue->type = OP_ERROR;
         }
@@ -1999,7 +2045,6 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
 
 
 size_t GetNestLevel( void )
-/*************************/
 {
     return( nestLevel );
 }

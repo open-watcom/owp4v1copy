@@ -41,7 +41,7 @@ extern BOOLEAN      DoingUpdate;
 extern void         UpdateInit( void );
 extern void         UpdateFini( void );
 extern RET_T        Update( TARGET *targ );
-extern RET_T        MakeList( TLIST const *list );
+extern RET_T        MakeList( TLIST *list );
 
 /* called by macro.c */
 extern char         *GetCurDeps( BOOLEAN younger, BOOLEAN IsMacInf );

@@ -36,7 +36,7 @@
 extern void     PreProcInit( void );
 extern void     PreProcFini( void );
 extern STRM_T   PreGetCH( void );
-extern BOOLEAN  existFile( char const *inPath );
+extern BOOLEAN  existFile (char *inPath);
 extern size_t   GetNestLevel( void );
 
 #endif /* !_MPREPROC_H */

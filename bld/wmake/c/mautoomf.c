@@ -40,6 +40,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 #include "pcobj.h"
 
@@ -54,18 +55,18 @@ static char     nameBuffer[_MAX_PATH2 + 1];
 
 #pragma pack( push, 1 )
 typedef struct {
-    uint_8      bits;
-    uint_8      type;
-    uint_16     dos_time;
-    uint_16     dos_date;
-    uint_8      name_len;
+    uint_8              bits;
+    uint_8              type;
+    uint_16             dos_time;
+    uint_16             dos_date;
+    uint_8              name_len;
 } obj_comment;
 #pragma pack( pop )
 
 static BOOLEAN verifyObjFile( int fh )
 /************************************/
 {
-    struct {
+    auto struct {
         obj_record      header;
         obj_name        name;
     } theadr;
@@ -73,7 +74,7 @@ static BOOLEAN verifyObjFile( int fh )
     if( lseek( fh, 0, SEEK_SET ) < 0 ) {
         return( FALSE );
     }
-    if( (size_t)read( fh, &theadr, sizeof theadr ) != sizeof theadr ) {
+    if( read( fh, &theadr, sizeof( theadr ) ) != sizeof( theadr ) ) {
         return( FALSE );
     }
     if( theadr.header.command != CMD_THEADR ) {
@@ -96,7 +97,7 @@ STATIC handle OMFInitFile( const char *name )
     handle      ret_val;
 
     ret_val = NULL;
-    handl = open( name, O_RDONLY | O_BINARY );
+    handl = open( name, O_RDONLY|O_BINARY );
     if( handl != -1 ) {
         fileHandle.handle = handl;
         if( verifyObjFile( handl ) ) {
@@ -112,12 +113,16 @@ STATIC handle OMFInitFile( const char *name )
 static BOOLEAN getOMFCommentRecord( omf_info *info )
 /**************************************************/
 {
-    obj_record  header;
-    obj_comment comment;
-    unsigned    len;
-    int const   hdl = info->handle;
+    obj_record          header;
+    obj_comment         comment;
+    int                 hdl;
+    unsigned            len;
 
-    while( (size_t)read( hdl, &header, sizeof header ) == sizeof header ) {
+    hdl = info->handle;
+    for( ;; ) {
+        if( read( hdl, &header, sizeof( header ) ) != sizeof( header ) ) {
+            break;
+        }
         if( header.command != CMD_COMENT ) {
             // first LNAMES record means objfile has no dependency info
             if( header.command == CMD_LNAMES ) {
@@ -126,20 +131,19 @@ static BOOLEAN getOMFCommentRecord( omf_info *info )
             lseek( hdl, header.length, SEEK_CUR );
             continue;
         }
-        if( (size_t)read( hdl, &comment, sizeof comment ) != sizeof comment ) {
+        if( read( hdl, &comment, sizeof( comment ) ) != sizeof( comment ) ) {
             break;
-        }
-        if( comment.type != CMT_DEPENDENCY ) {
-            lseek( hdl, header.length - sizeof comment, SEEK_CUR );
+        } if( comment.type != CMT_DEPENDENCY ) {
+            lseek( hdl, header.length - sizeof( comment ), SEEK_CUR );
             continue;
         }
         // NULL dependency means end of dependency info
-        if( header.length < sizeof comment ) {
+        if( header.length < sizeof( comment ) ) {
             break;
         }
         // we have a dependency comment! hooray!
         len = comment.name_len + 1;
-        if( (size_t)read( hdl, nameBuffer, len ) != len ) {
+        if( read( hdl, &nameBuffer, len ) != len ) {
             break;  // darn, it's broke
         }
         nameBuffer[len - 1] = '\0';
@@ -159,15 +163,15 @@ STATIC dep_handle OMFNextDep( dep_handle info ) {
     return( NULL );
 }
 
-STATIC void OMFTransDep( cdep_handle info, char **name, time_t *stamp )
-/*********************************************************************/
+STATIC void OMFTransDep( dep_handle info, char **name, time_t *stamp )
+/********************************************************************/
 {
     *name  = ((omf_info *)info)->name;
     *stamp = ((omf_info *)info)->time_stamp;
 }
 
 
-STATIC void OMFFiniFile( chandle info )
+STATIC void OMFFiniFile( handle info )
 /************************************/
 {
     close( ((omf_info *)info)->handle );

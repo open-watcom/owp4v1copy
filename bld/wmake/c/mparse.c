@@ -735,8 +735,8 @@ STATIC void parseSuf( void )
 }
 
 
-STATIC char *getFileName( const char* intext, size_t *offset )
-/*************************************************************
+STATIC char *getFileName( const char* intext, int *offset )
+/**********************************************************
  * get the filename from the given text
  * if there is no file name then get the text body
  * offset - how long after the << is the file name
@@ -888,12 +888,12 @@ STATIC void getBody( FLIST *head )
  */
 STATIC FLIST *GetInlineFile( char **commandIn )
 {
-    size_t  offset;
-    size_t  index;
+    int     offset;
+    int     index;
     FLIST   *head;
     FLIST   *current;
     char    *cmdText;
-    size_t  start;       // start of cmdText to copy into newCommand
+    int     start;       // start of cmdText to copy into newCommand
     VECSTR  newCommand;  // stores the new command built by replacing << with
                          // the actual file name
 

@@ -32,7 +32,7 @@
 #ifndef _MVECSTR_H
 #define _MVECSTR_H  1
 
-typedef union vecHead   *VECSTR, const  *cVECSTR;
+typedef union vecHead   *VECSTR;
 
 extern void     VecInit( void );
 extern void     VecFini( void );

@@ -131,11 +131,11 @@
 # error Must define system dependent macros
 #endif
 
-#define MAX_MAC_NAME    130                   /* Maximum macro name length   */
-#define MAX_MAC_NEST    16                    /* Maximum macro nesting depth */
+#define MAX_MAC_NAME    130     /* Maximum macro name length                */
+#define MAX_MAC_NEST    16      /* Maximum depth of macro nesting           */
 
-#define OLDEST_DATE     0L                    /* time_t oldest possible      */
-#define YOUNGEST_DATE   ((time_t)ULONG_MAX)   /* time_t youngest possible    */
+#define OLDEST_DATE     0L          /* time_t oldest possible               */
+#define YOUNGEST_DATE   ULONG_MAX   /* time_t youngest possible             */
 
 #define MAKEFILE_NAME   "makefile"
 #define MAKEINIT_NAME   "makeinit"
@@ -187,15 +187,16 @@ struct dll_cmd {
 extern int              SwitchChar( void );
 extern int              OSCorrupted( void );
 extern RET_T            TouchFile( const char *name );
+extern autodep_ret_t    SysOBJAutoDep( char *, time_t,
+    BOOLEAN (*)(time_t,time_t), time_t* );
 extern BOOLEAN          IdenticalAutoDepTimes( time_t, time_t );
 extern void             InitHardErr( void );
 extern DLL_CMD          *OSFindDLL( char const *cmd_name );
-extern void             OSLoadDLL( char const *cmd, char const *dll_name,
-    char const *ent_name );
+extern void             OSLoadDLL( char *cmd, char *dll_name, char *ent_name );
 extern DLL_CMD          *OSFindDLL( char const *cmd_name );
-extern int              OSExecDLL( DLL_CMD *dll, char const *cmd_args );
-extern void             CheckForBreak( void );
+extern int              OSExecDLL( DLL_CMD* dll, char const* cmd_args );
+extern void             CheckForBreak ( void );
 extern void             InitSignals( void );
-extern void             DLLFini( void );
+extern void             DLLFini ( void );
 
 #endif

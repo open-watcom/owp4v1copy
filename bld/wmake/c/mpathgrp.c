@@ -63,7 +63,7 @@ extern PGROUP *SplitPath( const char *path )
      *
      */
 #if 1
-    len = (size_t)(( pg->ext + strlen( pg->ext ) + 1 ) - pg->buffer);
+    len = ( pg->ext + strlen( pg->ext ) + 1 ) - pg->buffer;
 #else
     p = pg->ext;
     if( p < pg->drive ) {
