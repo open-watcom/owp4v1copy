@@ -81,10 +81,8 @@ void PragmaInit()
     default:    fpu = 1; break;
     }
 
-    if( GlobalCompFlags.cc_first_use ){
-    // The inline asm has a table that is not reusable calling once seems to fix
-        AsmInit( cpu, fpu, use32 );
-    }
+    AsmInit( cpu, fpu, use32 );
+
     PragInit();
 
     HeadLibs = NULL;

@@ -2478,14 +2478,58 @@ void AsmInit( int cpu, int fpu, int use32 )
     int         size = sizeof( AsmOpTable ) / sizeof( AsmOpTable[0] );
     int         count;
 
+#ifndef NDEBUG
     printf("AsmInit: %X, %X, %X\n", cpu, fpu, use32);
+#endif
     for( count = 0; count < MAX_TOKEN; count ++ ) {
         AsmBuffer[count] = &tokens[count];
     }
 
+    if( use32 < 0 ) use32 = 0;
+    if( cpu < 0 ) cpu = 0;
+    if( fpu < 0 ) fpu = 0;
+    switch( use32 ) {
+    case 0:
+        Code->use32 = 0;
+        break;
+    case 1:
+        Code->use32 = 1;
+        break;
+    }
+    switch( cpu ) {
+    case 0:
+        Code->info.cpu |= P_86;
+        if( fpu ) Code->info.cpu |= P_87;
+        break;
+    case 1:
+        Code->info.cpu |= P_186;
+        if( fpu ) Code->info.cpu |= P_87;
+        break;
+    case 2:
+        Code->info.cpu |= P_286p;
+        if( fpu ) Code->info.cpu |= P_287;
+        break;
+    case 3:
+        Code->info.cpu |= P_386p;
+        if( fpu ) Code->info.cpu |= P_387;
+        break;
+    case 4:
+        Code->info.cpu |= P_486p;
+        if( fpu ) Code->info.cpu |= P_387;
+        break;
+    case 5:
+        Code->info.cpu |= P_586p;
+        if( fpu ) Code->info.cpu |= P_387;
+        break;
+    case 6:
+        Code->info.cpu |= P_686p;
+        if( fpu ) Code->info.cpu |= P_387;
+        break;
+    }
+
     // initialize AsmOpcode table to point to entry in AsmOpTable
     // token has its own value, e.g. T_AAA is 0, T_ADD is 1, etc.
-
+    
     if( AsmOpcode[1].position == 0 ) {  // if not initialized
         while( AsmOpcode[token_value].len != 0 ) {
             do {
@@ -2498,47 +2542,6 @@ void AsmInit( int cpu, int fpu, int use32 )
             AsmOpcode[token_value].position = pos;
             token_value++;
         }
-        if( use32 < 0 ) use32 = 0;
-        if( cpu < 0 ) cpu = 0;
-        if( fpu < 0 ) fpu = 0;
-        switch( use32 ) {
-        case 0:
-            Code->use32 = 0;
-            break;
-        case 1:
-            Code->use32 = 1;
-            break;
-        }
-        switch( cpu ) {
-        case 0:
-            Code->info.cpu |= P_86;
-            if( fpu ) Code->info.cpu |= P_87;
-            break;
-        case 1:
-            Code->info.cpu |= P_186;
-            if( fpu ) Code->info.cpu |= P_87;
-            break;
-        case 2:
-            Code->info.cpu |= P_286p;
-            if( fpu ) Code->info.cpu |= P_287;
-            break;
-        case 3:
-            Code->info.cpu |= P_386p;
-            if( fpu ) Code->info.cpu |= P_387;
-            break;
-        case 4:
-            Code->info.cpu |= P_486p;
-            if( fpu ) Code->info.cpu |= P_387;
-            break;
-        case 5:
-            Code->info.cpu |= P_586p;
-            if( fpu ) Code->info.cpu |= P_387;
-            break;
-        case 6:
-            Code->info.cpu |= P_686p;
-            if( fpu ) Code->info.cpu |= P_387;
-            break;
-        }
+        make_inst_hash_table();
     }
-    make_inst_hash_table();
 }
