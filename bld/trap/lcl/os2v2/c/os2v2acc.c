@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 2.x specific debug core.
 *
 ****************************************************************************/
 
@@ -1047,6 +1046,8 @@ unsigned ReqProg_load( void )
     char                appname[CCHMAXPATH];
     ULONG               startLinear;
     prog_load_ret       *ret;
+    PTIB                ptib;
+    PPIB                ppib;
 
     LastMTE = 0;
     ExceptNum = -1;
@@ -1075,8 +1076,11 @@ unsigned ReqProg_load( void )
     start.PgmName = UtilBuff;
     start.PgmInputs = parms;
     start.TermQ = 0;
-    start.Environment = NULL;
-    start.InheritOpt = 1;
+    /* We really do NOT want inherit debugger's file handles */
+    start.InheritOpt = SSF_INHERTOPT_SHELL;
+    /* But we DO want debugger's (debugger's parent really) environment */
+    DosGetInfoBlocks(&ptib, &ppib);
+    start.Environment = ppib->pib_pchenv;
     ret->err = 0;
     if (GetEXEFlags(UtilBuff) == EXE_IS_PM) {
         if (TypeProcess == SSF_TYPE_WINDOWABLEVIO) {
