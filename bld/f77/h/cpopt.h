@@ -276,7 +276,7 @@ typedef unsigned_32     comp_options;
                          OZOPT_O_INLINE|OZOPT_O_NUMERIC| \
                          OZOPT_O_UNROLL|OZOPT_O_FASTDO| \
                          OZOPT_O_FLOW_REG_SAVES|OZOPT_O_BRANCH_PREDICTION| \
-                         OZOPT_O_SUPER_OPTIMAL|OZOPT_LOOP_INVAR)
+                         OZOPT_O_SUPER_OPTIMAL|OZOPT_O_LOOP_INVAR)
 #define CPUOPT_NO_NO     0x00000000L
 #define OZOPT_O_X       (OZOPT_O_LOOP | OZOPT_O_MATH | OZOPT_O_TIME | \
                          OZOPT_O_INSSCHED | OZOPT_O_INLINE | \
@@ -292,7 +292,7 @@ typedef unsigned_32     comp_options;
                          OZOPT_O_INLINE|OZOPT_O_NUMERIC| \
                          OZOPT_O_UNROLL|OZOPT_O_FASTDO| \
                          OZOPT_O_FLOW_REG_SAVES|OZOPT_O_BRANCH_PREDICTION| \
-                         OZOPT_O_SUPER_OPTIMAL|OZOPT_LOOP_INVAR)
+                         OZOPT_O_SUPER_OPTIMAL|OZOPT_O_LOOP_INVAR)
 #define CPUOPT_NO_NO     0x00000000L
 #define OZOPT_O_X       (OZOPT_O_LOOP | OZOPT_O_MATH | OZOPT_O_TIME | \
                          OZOPT_O_INSSCHED | OZOPT_O_INLINE | \
