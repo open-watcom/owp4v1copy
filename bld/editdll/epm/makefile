@@ -1,3 +1,6 @@
+#pmake: all build os_os2 cpu_386
+!include deftarg.mif
+
 lnk = tmp.lnk
 
 c_opts = /zq /w4 /bt=OS2 /i$(lang_root)\h\os2
