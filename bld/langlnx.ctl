@@ -42,7 +42,6 @@ set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/cc/lang.ctl ]
 <CPCMD> <devdir>/cc/linux386/wcc386c.elf <devdir>/build/binl/wcc386
 <CPCMD> <devdir>/cc/linuxi86/wcci86c.elf <devdir>/build/binl/wcc
-[ INCLUDE <devdir>/viper/bviper/lang.ctl ]
 
 # all is ready to do everything else now
 

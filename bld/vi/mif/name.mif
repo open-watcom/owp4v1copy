@@ -24,9 +24,13 @@ name_nt_axp = viaxp
 name_qnx_i86 = viq
 name_linux_386 = vil
 
+!ifdef bname
+lnk = $(bname).lnk
+ED = $(bname)
+!else
 lnk = $(name_$(host_OS)_$(host_CPU)).lnk
-
 ED = $(name_$(host_OS)_$(host_CPU))
+!endif
 
 name = $(ED).exe
 !ifeq host_OS qnx
