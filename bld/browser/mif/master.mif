@@ -35,8 +35,8 @@ OBJECTS += mem.obj
 ext = mbr
 mbr_files = $+$(template)$-
 !endif
-    
-inc_dirs_nt     = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
+
+inc_dirs_nt     = $(wclass_dir)/win/hpp;$(guitools_dir)/win95;
 inc_dirs_win    = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
 inc_dirs_dos    = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
 inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
@@ -138,7 +138,7 @@ cppflags    = $(cflags) $(extra_cpp_flags)
 .cpp.obj:
     @set include=$(inc_path)
     $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
-    
+
 .gpp.obj:
     @set include=$(inc_path)
     $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
