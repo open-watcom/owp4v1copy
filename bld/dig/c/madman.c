@@ -1761,10 +1761,6 @@ static unsigned DIGREGISTER DummyCallUpStackSize( void )
 
 unsigned                MADCallUpStackSize( void )
 {
-    //NYI: this can be removed once all the MAD's are updated
-    if( Active->rtns->sizeof_struct <= offsetof( mad_imp_routines, MICallUpStackSize ) ) {
-        return( 1 );
-    }
     return( Active->rtns->MICallUpStackSize() );
 }
 
@@ -1777,10 +1773,6 @@ static mad_status DIGREGISTER DummyCallUpStackInit( mad_call_up_data *cud, const
 
 mad_status              MADCallUpStackInit( mad_call_up_data *cud, const mad_registers *mr )
 {
-    //NYI: this can be removed once all the MAD's are updated
-    if( Active->rtns->sizeof_struct <= offsetof( mad_imp_routines, MICallUpStackInit ) ) {
-        return( MS_OK );
-    }
     return( Active->rtns->MICallUpStackInit( cud, mr ) );
 }
 
@@ -1800,11 +1792,6 @@ static mad_status DIGREGISTER DummyCallUpStackLevel( mad_call_up_data *cud, addr
 
 mad_status              MADCallUpStackLevel( mad_call_up_data *cud, address const *start, unsigned rtn_characteristics, long return_disp, const mad_registers *in, address *execution, address *frame, address *stack, mad_registers **out )
 {
-    //NYI: this can be removed once all the MAD's are updated
-    if( Active->rtns->sizeof_struct <= offsetof( mad_imp_routines, MICallUpStackLevel ) ) {
-        return( Active->rtns->old_MICallUpStackLevel( start, rtn_characteristics,
-                    return_disp, in, execution, frame, stack, out ) );
-    }
     return( Active->rtns->MICallUpStackLevel( cud, start, rtn_characteristics,
                 return_disp, in, execution, frame, stack, out ) );
 }
@@ -1911,10 +1898,6 @@ static mad_status DIGREGISTER DummyDisasmInsNext( mad_disasm_data *dd, const mad
 
 mad_status              MADDisasmInsNext( mad_disasm_data *dd, const mad_registers *mr, address *a )
 {
-    //NYI: this can be removed once all the MAD's are updated
-    if( Active->rtns->sizeof_struct <= offsetof( mad_imp_routines, MIDisasmInsNext ) ) {
-        return( MS_ERR | MS_UNSUPPORTED );
-    }
     return( Active->rtns->MIDisasmInsNext( dd, mr, a ) );
 }
 

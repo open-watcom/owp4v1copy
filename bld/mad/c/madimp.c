@@ -35,16 +35,6 @@
 
 mad_client_routines     *MadClient;
 
-//NYI: can be removed once all the clients are updated
-mad_status      DIGENTRY old_MICallUpStackLevel( const address *startp,
-                                unsigned rtn_characteristics,
-                                long return_disp,
-                                const mad_registers *in,
-                                address *execution,
-                                address *frame,
-                                address *stack,
-                                mad_registers **out );
-
 mad_imp_routines        MadImpInterface = {
     MAD_MAJOR,
     MAD_MINOR,
@@ -99,7 +89,7 @@ mad_imp_routines        MadImpInterface = {
     MICallBuildFrame,
     MICallReturnReg,
     MICallParmRegList,
-    old_MICallUpStackLevel,
+    NULL,
 
     MIDisasmDataSize,
     MIDisasmNameMax,
@@ -339,19 +329,4 @@ mad_status      MCTypeToString( unsigned radix, const mad_type_info *mti, const 
 void            MCStatus( mad_status ms )
 {
     MCNotify( MNT_ERROR, &ms );
-}
-
-//NYI: can be removed once all the clients are updated
-mad_status      DIGENTRY old_MICallUpStackLevel( const address *startp,
-                                unsigned rtn_characteristics,
-                                long return_disp,
-                                const mad_registers *in,
-                                address *execution,
-                                address *frame,
-                                address *stack,
-                                mad_registers **out )
-{
-    return( MadImpInterface.MICallUpStackLevel( NULL, startp,
-                rtn_characteristics, return_disp, in,
-                execution, frame, stack, out ) );
 }
