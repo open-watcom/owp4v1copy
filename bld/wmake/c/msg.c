@@ -336,10 +336,10 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 dest = fStrApp( dest, msgbuff );
                 break;
             case 'Z' :
-#ifdef __UNIX__
-                strcpy( msgbuff, strerror( errno ) );
-#else
+#if defined( __DOS__ )
                 MsgGet( SYS_ERR_0+errno , msgbuff );
+#else
+                strcpy( msgbuff, strerror( errno ) );
 #endif
                 dest = strApp( dest, msgbuff );
                 break;
