@@ -124,7 +124,7 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
             memset( &abbrevs[oldsize], 0,
                         (sizealloc - oldsize) * sizeof(dr_handle) );
         }
-        if( abbrevs[code] == 0 ){
+        if( abbrevs[code] == 0 ) {
             abbrevs[code] = start;
         }
         DWRVMSkipLEB128( &start );              // skip tag
@@ -142,8 +142,9 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
     dbg->abbrevs = abbrevs;
 }
 
-static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes ){
-/**********************************************************************/
+static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
+/*********************************************************************/
+{
     dr_dbg_handle       dbg;
     int                 i;
 
@@ -157,7 +158,7 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes ){
     dbg->last_ccu = &dbg->compunit;
     for( i = 0; i < DR_DEBUG_NUM_SECTS; i++ ) {
         dbg->sections[i].size = *sizes;
-        if( *sizes != 0 ){
+        if( *sizes != 0 ) {
             dbg->sections[i].base = DWRVMAlloc( *sizes, i );
             if( dbg->sections[i].base == NULL )goto error;
         }else{
@@ -170,8 +171,9 @@ error:
     return( NULL );
 }
 
-extern int  DRDbgClear( dr_dbg_handle dbg ){
-/*******************************************/
+extern int  DRDbgClear( dr_dbg_handle dbg )
+/*****************************************/
+{
     int                 ret;
     int                 i;
 
@@ -182,8 +184,9 @@ extern int  DRDbgClear( dr_dbg_handle dbg ){
     return( ret );
 }
 
-extern void DRDbgDone( dr_dbg_handle dbg ){
-/*******************************************/
+extern void DRDbgDone( dr_dbg_handle dbg )
+/****************************************/
+{
     int                 i;
 
     for( i = 0; i < DR_DEBUG_NUM_SECTS; i++ ) {
@@ -193,8 +196,9 @@ extern void DRDbgDone( dr_dbg_handle dbg ){
     }
 }
 
-extern void DRDbgOldVersion( dr_dbg_handle dbg ){
-/*******************************************/
+extern void DRDbgOldVersion( dr_dbg_handle dbg )
+/**********************************************/
+{
     dbg->old_version = 1; // remove when pat 10.5
 }
 
@@ -221,7 +225,7 @@ static void ReadFileTable( void )
         version = DWRVMReadWord( start + sizeof(unsigned_32) );
         if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         curr_addr_size = DWRVMReadByte( start + 10 );
-        if( curr_addr_size != addr_size ){
+        if( curr_addr_size != addr_size ) {
             addr_size = 0;
         }
         DWRInitFileTable( &compunit->filetab );
@@ -241,7 +245,7 @@ dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
     dr_dbg_handle       dbg;
 
     dbg = InitDbgHandle( file, sizes );
-    if( dbg != NULL ){
+    if( dbg != NULL ) {
         ReadAbbrevTable( dbg );
         ReadFileTable();
     }
@@ -274,7 +278,7 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
         if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         abbrev_offset = DWRVMReadDWord( start + sizeof(unsigned_32) + sizeof(unsigned_16) );
         curr_addr_size = DWRVMReadByte( start + 10 );
-        if( curr_addr_size != addr_size ){
+        if( curr_addr_size != addr_size ) {
             addr_size = 0;
         }
         compunit->filetab.len  = 0;
@@ -292,12 +296,12 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
 }
 
 dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes )
-/***********************************************************/
+/**************************************************************/
 {
     dr_dbg_handle       dbg;
 
     dbg = InitDbgHandle( file, sizes );
-    if( dbg != NULL ){
+    if( dbg != NULL ) {
         ReadCompUnits( dbg );
     }
     return dbg;
@@ -316,21 +320,21 @@ void DRDbgFini( dr_dbg_handle dbg )
     while( compunit != NULL ) {
         next = compunit->next;
         DWRFiniFileTable( &compunit->filetab, FALSE );
-        if( compunit->abbrevs != NULL ){
+        if( compunit->abbrevs != NULL ) {
             DWRFREE( compunit->abbrevs );
         }
         DWRFREE( compunit );
         compunit = next;
     }
     DWRFiniFileTable( &dbg->compunit.filetab, FALSE );
-    if( dbg->abbrevs != NULL ){
+    if( dbg->abbrevs != NULL ) {
         DWRFREE( dbg->abbrevs );
     }
     DWRFREE( dbg );
 }
 
 dr_dbg_handle  DRSetDebug( dr_dbg_handle dbg )
-/**********************************/
+/********************************************/
 {
     dr_dbg_handle  old;
     old = DWRCurrNode;
