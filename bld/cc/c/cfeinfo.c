@@ -686,9 +686,11 @@ static VOIDPTR NextImport( int index, aux_class request )
         }else{
             name = "__DLLstart_";
         }
+        if( CompFlags.bd_switch_used )
+            break;
         if( CompFlags.has_libmain ){
-            if( CompFlags.bd_switch_used )break;
-            if( !(CompFlags.bc_switch_used || CompFlags.bg_switch_used ) )break;
+            if( !(CompFlags.bc_switch_used || CompFlags.bg_switch_used ) )
+                break;
         }
         if( CompFlags.has_wchar_entry ){
             name = "_wstartw_";
@@ -995,9 +997,8 @@ static VOIDPTR NextImport( int index, aux_class request )
         }else{
             name = "__DLLstart_";
         }
-        if( CompFlags.bd_switch_used ){
-            if( CompFlags.has_libmain )     break;
-        }
+        if( CompFlags.has_libmain || CompFlags.bd_switch_used )
+            break;
         if( CompFlags.has_wchar_entry ){
             name = "_wstartw_";
         }else{

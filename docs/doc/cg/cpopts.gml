@@ -1162,11 +1162,13 @@ This option does not apply to QNX.
 .ix 'options' 'bd'
 .ix 'dynamic link library'
 .ix 'DLL'
+.ix '__DLLstart_'
 (OS/2, Win16/32 only)
 This option causes the compiler to emit into the object file
-references to the run-time DLL startup code and, if required, special
-versions of the run-time libraries that support DLLs.
-The presence of
+references to the run-time DLL startup code (reference to the
+.id __DLLstart_
+symbol) and, if required, special
+versions of the run-time libraries that support DLLs. The presence of
 .id main/wmain
 or
 .id WinMain/wWinMain
@@ -1177,6 +1179,9 @@ and
 .id DLLMain
 are significant
 :optref refid='SWbc'..
+If you are building a DLL with statically linked C runtime (the default),
+it is recommended that you compile at least one of its object files with
+the "bd" switch to ensure that the DLL's C runtime is properly initialized.
 .ix 'predefined macros' 'see macros'
 .ix 'macros' '__SW_BD'
 The macro
