@@ -286,6 +286,8 @@ unsigned short dos_get_code_page( void )
         "push bp"       \
         "mov bp,sp"     \
         "sub sp,8"      \
+        "xor ax,ax"     \
+        "mov ds,ax"     \
         "mov ax,6501h"  /* get international info */ \
         "mov bx,0ffffh" /* global code page */ \
         "mov cx,0007h"  /* buffer size */ \
@@ -293,8 +295,6 @@ unsigned short dos_get_code_page( void )
         "lea di,[bp-8]" /* buffer offset */ \
         "push ss"       \
         "pop es"        /* buffer segment */ \
-        "xor ax,ax"     \
-        "mov ds,ax"     \
         "int 21h"       /* call DOS */ \
         "mov ax,[bp-8+5]" /* code page */ \
         "jnc NoError"   \
