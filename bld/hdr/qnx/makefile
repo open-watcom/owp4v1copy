@@ -1,4 +1,4 @@
-#pmake:build os_qnx
+#pmake: all build os_qnx
 path=..;..\quantum;..\watcom
 options=-t8 -u
 system=QNX
