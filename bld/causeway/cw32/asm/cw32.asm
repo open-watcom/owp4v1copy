@@ -557,14 +557,6 @@ cw2_6:  jmp     cw2_RealMode
 ;
 cw2_DPMI:
 
-        ; try the get/set PSP trick to make the idiotic NTVDM for NT/2000/XP
-        ; not munch selectors for child DPMI programs.
-;       mov     ah,51h  ; get PSP
-;       int     21h
-        xor     bx,bx
-        mov     ah,50h  ; set PSP
-        int     21h
-
         assume ds:nothing
         mov     ds,cs:DataSegment
         assume ds:_cwMain
@@ -662,14 +654,6 @@ cw2_NoError:
         jnz     cw2_Exit
         mov     ax,ErrorLevel
 cw2_Exit:
-
-;       ; try the get/set PSP trick to make the idiotic NTVDM for NT/2000/XP
-;       ; not munch selectors for child DPMI programs.
-;       mov     ah,51h  ; get PSP
-;       int     21h
-;       xor     bx,bx
-;       mov     ah,50h  ; set PSP
-;       int     21h
 
         mov     ah,4ch
         int     21h
