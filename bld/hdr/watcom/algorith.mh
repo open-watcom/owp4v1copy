@@ -15,30 +15,456 @@
 #error The header algorithm requires C++
 #endif
 
-:: This header is little more than a placeholder right now.
-:: Feel free to elaborate on it! :-)
-::
+#include <iterator>
+
+#define typename
+
 namespace std {
 
+  // Non-modifying sequence operations
+  // =================================
+
+  // for_each( InputIterator, InputIterator, Function )
+  // **************************************************
+  template< class InputIterator, class Function >
+  Function for_each( InputIterator first, InputIterator last, Function f )
+  {
+    while( first != last ) {
+      f( *first );
+      ++first;
+    }
+    return( f );
+  }
+
+  // find( InputIterator, InputIterator, const Type & )
+  // **************************************************
+  template< class InputIterator, class Type >
+  InputIterator find( InputIterator first,
+                      InputIterator last,
+                      const Type &value )
+  {
+    while( first != last ) {
+      if( *first == value ) return first;
+      ++first;
+    }
+    return( first );
+  }
+
+  // find_if( InputIterator, InputIterator, Predicate )
+  // **************************************************
+  template< class InputIterator, class Predicate >
+  InputIterator find_if( InputIterator first,
+                         InputIterator last,
+                         Predicate pred )
+  {
+    while( first != last ) {
+      if( pred( *first ) != false ) return first;
+      ++first;
+    }
+    return( first );
+  }
+
+  // count( InputIterator, InputIterator, const Type & )
+  // ***************************************************
+  template< class InputIterator, class Type >
+  typename iterator_traits< InputIterator >::difference_type
+    count( InputIterator first,
+           InputIterator last,
+           const Type &value )
+  {
+    typename iterator_traits< InputIterator >::difference_type number(0);
+    while( first != last ) {
+      if( *first == value ) ++number;
+      ++first;
+    }
+    return( number );
+  }
+
+  // count_if( InputIterator, InputIterator, Predicate )
+  // ***************************************************
+  template< class InputIterator, class Predicate >
+  typename iterator_traits< InputIterator >::difference_type
+    count_if( InputIterator first,
+              InputIterator last,
+              Predicate pred )
+  {
+    typename iterator_traits< InputIterator >::difference_type number(0);
+    while( first != last ) {
+      if( pred( *first ) != false ) ++number;
+      ++first;
+    }
+    return( number );
+  }
+
+
+  // equal( InputIterator1, InputIterator1, InputIterator2 )
+  // *******************************************************
+  template< class InputIterator1, class InputIterator2 >
+  bool equal( InputIterator1 first1,
+              InputIterator1 last1,
+              InputIterator2 first2)
+  {
+    while( first1 != last1 ) {
+      if( *first1 != *first2 ) return false;
+      ++first1; ++first2;
+    }
+    return( true );
+  }
+
+  // equal( InputIterator1, InputIterator1, InputIterator2, BinaryPredicate )
+  // ************************************************************************
+  template< class InputIterator1, class InputIterator2, BinaryPredicate >
+  bool equal( InputIterator1 first1,
+              InputIterator1 last1,
+              InputIterator2 first2,
+              BinaryPredicate pred)
+  {
+    while( first1 != last1 ) {
+      if( pred( *first1, *first2 ) == false ) return false;
+      ++first1; ++first2;
+    }
+    return( true );
+  }
+
+
+  // Mutating Sequence Operations
+  // ============================
+
+  // copy( InputIterator, InputIterator, OutputIterator )
+  // ****************************************************
+  template< class InputIterator, class OutputIterator >
+  OutputIterator copy( InputIterator first,
+                       InputIterator last,
+                       OutputIterator result )
+  {
+    while( first != last ) {
+      *result = *first;
+      ++first;
+      ++result;
+    }
+    return( result );
+  }
+
+  // copy_backwards( Bidirectional1, Bidirectional1, Bidirectional2 )
+  // ****************************************************************
+  template< class Bidirectional1, class Bidirectional2 >
+  Bidirectional2 copy_backwards( Bidirectional1 first,
+                                 Bidirectional1 last,
+                                 Bidirectional2 result )
+  {
+    if( first == last ) return( result );
+    while( --last != first ) {
+      *result = *last;
+      --result;
+    }
+    *result = *last;
+    return( --result );
+  }
+
+  // swap( Type &, Type & )
+  // **********************
+  template< class Type >
+  inline void swap( Type &x, Type &y )
+    { Type tmp(x); x = y; y = tmp; }
+
+
+  // swap_ranges( ForwardIterator1, ForwardIterator1, ForwardIterator2 )
+  // *******************************************************************
+  template< class ForwardIterator1, class ForwardIterator2 >
+  ForwardIterator2 swap_ranges( ForwardIterator1 first1,
+                                ForwardIterator1 last1,
+                                ForwardIterator2 first2 )
+  {
+    while( first1 != last1 ) {
+      swap( *first1, *first2 ); // iter_swap? See 25.2.2p3
+      ++first1;
+      ++first2;
+    }
+    return( first2 );
+  }
+
+  // iter_swap( ForwardIterator1, ForwardIterator2 )
+  // ***********************************************
+  template< class ForwardIterator1, class ForwardIterator2 >
+  inline void iter_swap( ForwardIterator1 x, ForwardIterator2 y )
+  {
+    iterator_traits< ForwardIterator1 >::value_type tmp(*x);
+    *x = *y;
+    *y = tmp;
+  }
+
+  // transform( InputIterator, InputIterator, OutputIterator, UnaryOperation )
+  // *************************************************************************
+  template< class InputIterator, class OutputIterator, class UnaryOperation >
+  OutputIterator transform( InputIterator first,
+                            InputIterator last,
+                            OutputIterator result,
+                            UnaryOperation op )
+  {
+    while( first != last ) {
+      *result = op( *first );
+      ++first;
+      ++result;
+    }
+    return( result );
+  }
+
+  // transform( Input1, Input1, Input2, Output, BinaryOperation )
+  // ************************************************************
+  template< class InputIterator1,
+            class InputIterator2,
+            class OutputIterator,
+            class BinaryOperation >
+  OutputIterator transform( InputIterator1 first1,
+                            InputIterator1 last1,
+                            InputIterator2 first2,
+                            OutputIterator result;
+                            BinaryOperation bop )
+  {
+    while( first1 != last1 ) {
+      *result = bop( *first1, *first2 );
+      ++first1;
+      ++first2;
+      ++result;
+    }
+    return( result );
+  }
+
+  // replace( ForwardIterator, ForwardIterator, const Type &, const Type & )
+  // ***********************************************************************
+  template< class ForwardIterator, class Type >
+  void replace( ForwardIterator first,
+                ForwardIterator last,
+                const Type &old_value,
+                const Type &new_value )
+  {
+    while( first != last ) {
+      if( *first == old_value ) *first = new_value;
+      ++first;
+    }
+  }
+
+  // replace( ForwardIterator, ForwardIterator, Predicate, const Type & )
+  // ********************************************************************
+  template< class ForwardIterator, class Predicate, class Type >
+  void replace_if( ForwardIterator first,
+                   ForwardIterator last,
+                   Predicate pred,
+                   const Type &new_value )
+  {
+    while( first != last ) {
+      if ( pred( *first ) != false ) *first = new_value;
+      ++first;
+    }
+  }
+
+  // replace_copy( Input, Input, Output, const Type &, const Type & )
+  // ****************************************************************
+  template< class InputIterator, class OutputIterator, class Type >
+  OutputIterator replace_copy( InputIterator first,
+                               InputIterator last,
+                               OutputIterator result,
+                               const Type &old_value,
+                               const Type &new_value )
+  {
+    while( first != last ) {
+      *result = ( *first == old_value ) ? new_value : *first;
+      ++first;
+      ++result;
+    }
+    return( result );
+  }
+
+  // replace_copy_if( Input, Input, Output, Predicate, const Type & )
+  // ****************************************************************
+  template< class InputIterator,
+            class OutputIterator,
+            class Predicate,
+            class Type >
+  OutputIterator replace_copy_if( InputIterator first,
+                                  InputIterator last,
+                                  OutputIterator result,
+                                  Predicate pred,
+                                  const Type &new_value )
+  {
+    while( first != last ) {
+      *result = ( pred( *first ) ) ? new_value : *first;
+      ++first;
+      ++result;
+    }
+    return( result );
+  }
+
+  // fill( ForwardIterator, ForwardIterator, const Type & )
+  // ******************************************************
+  template< class ForwardIterator, class Type >
+  void fill( ForwardIterator first, ForwardIterator last, const Type &value )
+  {
+    while( first != last ) {
+      *first = value;
+      ++first;
+    }
+  }
+
+  // fill_n( OutputIterator, Size, const Type & )
+  // ********************************************
+  template< class OutputIterator, class Size class Type >
+  void fill_n( OutputIterator first, Size n, const Type &value )
+  {
+    unsigned long long i = 0ULL, max(n);
+    while( i < max ) {
+      *first = value;
+      ++first;
+      ++i;
+    }
+  }
+
+  // generate( ForwardIterator, ForwardIterator, Generator )
+  // *******************************************************
+  template< class ForwardIterator, class Generator >
+  void generate( ForwardIterator first, ForwardIterator last, Generator gen )
+  {
+    while( first != last ) {
+      *first = gen( );
+      ++first;
+    }
+  }
+
+  // generate_n( OutputIterator, Size, Generator )
+  // *********************************************
+  template< class OutputIterator, class Size class Generator >
+  void generate_n( OutputIterator first, Size n, Generator gen )
+  {
+    unsigned long long i = 0ULL, max(n);
+    while( i < max ) {
+      *first = gen( );
+      ++first;
+      ++i;
+    }
+  }
+
+  // reverse( Bidirectional, Bidirectional )
+  // ***************************************
+  template< class Bidirectional >
+  void reverse( Bidirectional first, Bidirectional last )
+  {
+    if( first == last ) return;
+    --last;
+    while( first != last ) {
+      swap( *first, *last );
+      ++first;
+      if( first == last ) break;
+      --last;
+    }
+  }
+
+  // reverse_copy( Bidirectional, Bidirectional, OutputIterator )
+  // ************************************************************
+  template< class Bidirectional, class OutputIterator >
+  OutputIterator reverse_copy( Bidirectional first,
+                               Bidirectional last,
+                               OutputIterator result )
+  {
+    if( first == last ) return( result );
+    while( --last != first ) {
+      *result = *last;
+      ++result;
+    }
+    *result = *last;
+    return( ++result );
+  }
+
+
+  // Sorting and related operations
+  // ==============================
+
+  // min( const Type &, const Type & )
+  // *********************************
   template< class Type >
   inline const Type &min( const Type &x, const Type &y )
     { return( (y < x) ? y : x ); }
 
+  // max( const Type &, const Type & )
+  // *********************************
   template< class Type >
   inline const Type &max( const Type &x, const Type &y )
     { return( (x < y) ? y : x ); }
 
+  // min( const Type &, const Type &, Compare )
+  // ******************************************
   template< class Type, class Compare >
   inline const Type &min( const Type &x, const Type &y, Compare comp )
     { return( comp( y, x ) ? y : x ); }
 
+  // max( const Type &, const Type &, Compare )
+  // ******************************************
   template< class Type, class Compare >
   inline const Type &max( const Type &x, const Type &y, Compare comp )
     { return( comp( x, y ) ? y : x ); }
 
-  template< class Type >
-  inline void swap( Type &x, Type &y )
-    { Type tmp(x); x = y; y = tmp; }
+  // min_element( ForwardIterator, ForwardIterator )
+  // ***********************************************
+  template< class ForwardIterator >
+  ForwardIterator min_element( ForwardIterator first, ForwardIterator last )
+  {
+    if( first == last ) return( last );
+    ForwardIterator tmp( first );
+    ++first;
+    while( first != last ) {
+      if( *first < *tmp ) tmp = first;
+      ++first;
+    }
+    return( tmp );
+  }
+
+  // min_element( ForwardIterator, ForwardIterator, Compare )
+  // ********************************************************
+  template< class ForwardIterator, class Compare >
+  ForwardIterator min_element( ForwardIterator first,
+                               ForwardIterator last,
+                               Compare comp )
+  {
+    if( first == last ) return( last );
+    ForwardIterator tmp( first );
+    ++first;
+    while( first != last ) {
+      if( comp( *first, *tmp ) ) tmp = first;
+      ++first;
+    }
+    return( tmp );
+  }
+
+  // max_element( ForwardIterator, ForwardIterator )
+  // ***********************************************
+  template< class ForwardIterator >
+  ForwardIterator max_element( ForwardIterator first, ForwardIterator last )
+  {
+    if( first == last ) return( last );
+    ForwardIterator tmp( first );
+    ++first;
+    while( first != last ) {
+      if( *tmp < *first ) tmp = first;
+      ++first;
+    }
+    return( tmp );
+  }
+
+  // max_element( ForwardIterator, ForwardIterator, Compare )
+  // ********************************************************
+  template< class ForwardIterator, class Compare >
+  ForwardIterator max_element( ForwardIterator first,
+                               ForwardIterator last,
+                               Compare comp )
+  {
+    if( first == last ) return( last );
+    ForwardIterator tmp( first );
+    ++first;
+    while( first != last ) {
+      if( comp( *tmp, *first ) ) tmp = first;
+      ++first;
+    }
+    return( tmp );
+  }
 
 } // namespace std
 
