@@ -76,7 +76,6 @@ int __shutdown_stream( FILE *fp, int close_handle )
 int __doclose( FILE *fp, int close_handle )
 {
     int                 ret;
-    long int            offset;
 
     if( fp->_flag == 0 ) {
         return( -1 );                       /* file already closed */
@@ -89,10 +88,11 @@ int __doclose( FILE *fp, int close_handle )
 /*
  *      02-nov-92 G.Turcotte  Syncronize buffer pointer with the file pointer
  *                        IEEE Std 1003.1-1988 B.8.2.3.2
+ *      03-nov-03 B.Oldeman Inlined ftell; we already know the buffer isn't
+ *                dirty (because of the flush), so only a "get" applies
  */
-    if ((offset = ftell(fp)) != -1L) {
-        /* match position with file descriptors */
-        lseek(fileno(fp), offset, SEEK_SET);
+    if( fp->_cnt != 0 ) {                   /* if something in buffer */
+        lseek( fileno( fp ), -fp->_cnt, SEEK_CUR );
     }
 
     if( close_handle ) {
