@@ -16,18 +16,24 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
 #dos stuff
+    <CPCMD> dos386\wcc386c.exe <relroot>\rel2\binw\wcc386.exe
+    <CPCMD> dos386\wcc386c.sym <relroot>\rel2\binw\wcc386.sym
+    <CPCMD> dos386\wcc38601.int <relroot>\rel2\binw\wcc38601.int
+    <CPCMD> dosi86\wcci86c.exe <relroot>\rel2\binw\wcc.exe
+    <CPCMD> dosi86\wcci86c.sym <relroot>\rel2\binw\wcc.sym
+    <CPCMD> dosi86\wcci8601.int <relroot>\rel2\binw\wcci8601.int
 #    <CPCMD> dos386\wccaxpe.exe <relroot>\rel2\binnt\wccaxp.exe
 #    <CPCMD> dosi86\wccaxpe.exe <relroot>\rel2\binnt\wccaxp.exe
 #    <CPCMD> osippc\wccppcc.exe <relroot>\rel2\binw\wccppc.exe
 #    <CPCMD> osiaxp\wccaxpc.exe <relroot>\rel2\binw\wccaxp.exe
 
 #osi stuff
-    <CPCMD> osi386\wcc386c.exe <relroot>\rel2\binw\wcc386.exe
-    <CPCMD> osi386\wcc386c.sym <relroot>\rel2\binw\wcc386.sym
-    <CPCMD> osi386\wcc38601.int <relroot>\rel2\binw\wcc38601.int
-    <CPCMD> osii86\wcci86c.exe <relroot>\rel2\binw\wcc.exe
-    <CPCMD> osii86\wcci86c.sym <relroot>\rel2\binw\wcc.sym
-    <CPCMD> osii86\wcci8601.int <relroot>\rel2\binw\wcci8601.int
+#    <CPCMD> osi386\wcc386c.exe <relroot>\rel2\binw\wcc386.exe
+#    <CPCMD> osi386\wcc386c.sym <relroot>\rel2\binw\wcc386.sym
+#    <CPCMD> osi386\wcc38601.int <relroot>\rel2\binw\wcc38601.int
+#    <CPCMD> osii86\wcci86c.exe <relroot>\rel2\binw\wcc.exe
+#    <CPCMD> osii86\wcci86c.sym <relroot>\rel2\binw\wcc.sym
+#    <CPCMD> osii86\wcci8601.int <relroot>\rel2\binw\wcci8601.int
 
 #AXP target
     <CPCMD> ntaxp\wccaxpe.exe <relroot>\rel2\binnt\wccaxp.exe
