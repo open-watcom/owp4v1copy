@@ -36,7 +36,9 @@
 ;***                                                                      ***
 ;****************************************************************************
 
-no87        ; no87 to turn off emulation fixups
+;no87        ; no87 to turn off emulation fixups
+; correct use is /fpi87 switch on  command line, .no87 directive is used for
+; temporary coprocessor instructions switch off
 
 .386p
 .387

@@ -32,8 +32,10 @@
 
                 NAME    NPXType
 
+;no87    ; to get the floating point emulator bit turned off
+; correct use is /fpi87 switch on  command line, .no87 directive is used for
+; temporary coprocessor instructions switch off
 
-no87    ; to get the floating point emulator bit turned off
 .8087
 
 _text segment byte public 'CODE'

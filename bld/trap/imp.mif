@@ -269,7 +269,7 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
 
 .asm.obj:
         @set IPATHS=-i$(whole_inc_path)
-        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_flags_$[&) $[@
+        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_aflags_$[&) $[@
 
 .rc: ..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(extra_srcs)
 

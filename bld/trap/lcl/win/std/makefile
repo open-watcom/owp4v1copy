@@ -56,5 +56,7 @@ extra_linker = &
 extra_srcs = $(trap_dir)\lcl\dos\c;$(sdk_dir)\misc
 extra_incs = $(trap_dir)\lcl\dos\h;$(sdk_dir)\misc
 
+extra_aflags_misc = -fpi87
+
 !include $(trap_dir)\lcl\lcl.mif
 !include $(trap_dir)\trap.mif
