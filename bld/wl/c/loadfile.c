@@ -606,17 +606,18 @@ static void SetupImpLib( void )
             ImpLib.handle = QOpenRW( ImpLib.fname );
         } else {
             ImpLib.handle = OpenTempFile( &ImpLib.fname );
-        }
+		  }
+		  /* RemovePath results in the filename only   *
+         * it trims both the path, and the extension */
         fname = RemovePath( Root->outfile->fname, &namelen );
         ImpLib.dlllen = namelen;
-        if( !(FmtData.type & MK_OS2) ) {
-            ImpLib.dlllen += 4;
+		  if( !(FmtData.type & MK_OS2) ) {
+			  /* increase length to restore full extension if not OS2    *
+			   * sometimes the extension of the output name is important */
+            ImpLib.dlllen += strlen( fname + namelen );
         }
         _ChkAlloc( ImpLib.dllname, ImpLib.dlllen );
-        memcpy( ImpLib.dllname, fname, namelen );
-        if( !(FmtData.type & MK_OS2) ) {
-            memcpy( ImpLib.dllname + namelen, ".dll", 4 );
-        }
+		  memcpy( ImpLib.dllname, fname, ImpLib.dlllen );
     }
 }
 
