@@ -40,13 +40,15 @@ extra_c_flags += -d__NEC__
 asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
 asm_opts  = -w3 -d1 -zq -fp$(fp_model) $(asm_incs) -fo=.obj
 
-!ifdef is_stack
-asm_opts += -3s -3_
-!endif
-
 !ifeq host_CPU 386
 
 asm_opts += -mf
+
+!ifdef is_stack
+asm_opts += -3s -3_
+!else
+asm_opts += -3
+!endif
 
 !ifdef is_MT
 asm_opts += -d_MT_
