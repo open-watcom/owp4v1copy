@@ -89,7 +89,7 @@ void LoadUnicodeTable( long codePage )
     int         handle;
     char        filename[8+1+3+1];
 
-    sprintf( filename, "unicode.%3.3d", codePage );
+    sprintf( filename, "unicode.%3.3ld", codePage );
     handle = OpenUnicodeFile( filename );
     if( handle != -1 ) {
         ReadUnicodeFile( handle );
