@@ -51,6 +51,6 @@ _WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *p, unsigne
             value = value * 10 + *p - '0';
             ++p;
         }
-        if( sign == '-' ) value -= value;
+        if( sign == '-' ) value = -value;
         *pv = value;
     }
