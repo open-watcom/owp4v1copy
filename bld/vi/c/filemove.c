@@ -49,7 +49,7 @@
 int NextFileDammit( void )
 {
     info        *cinfo,*tinfo;
-    ushort      lastid;
+    u_short     lastid;
     int         dont_exit_this_time = 0;
 
     RemoveFromAutoSaveList();
