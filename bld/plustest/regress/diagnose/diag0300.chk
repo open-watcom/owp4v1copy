@@ -1,0 +1,21 @@
+File: source\diag0300.c 
+(6,2): Error! E080: one error 
+File: source\diag0301.c 
+(4,18): Warning! W895: ignoring whitespace after line splice 
+(9,10): Warning! W896: empty member declaration 
+(10,11): Warning! W896: empty member declaration 
+(15,39): Error! E417: only virtual functions may be declared pure 
+(16,39): Error! E417: only virtual functions may be declared pure 
+(17,49): Error! E376: virtual function must be a non-static member function 
+(17,49): Error! E417: only virtual functions may be declared pure 
+(18,49): Error! E376: virtual function must be a non-static member function 
+(18,49): Error! E417: only virtual functions may be declared pure 
+(19,19): Error! E417: only virtual functions may be declared pure 
+(21,13): Error! E417: only virtual functions may be declared pure 
+File: source\diag0302.c 
+(8,5): Warning! W014: no reference to symbol 'b' 
+  'B b' in 'ABC::ABC( void )' defined at: (7,11) 
+(5,22): Error! E499: object (or object pointer) required to access non-static member function 
+  'void ABC::meth2( void )' defined at: (9,10) 
+(16,10): Warning! W894: unexpected character (22) in source file 
+(16,10): Error! E121: syntax error 
