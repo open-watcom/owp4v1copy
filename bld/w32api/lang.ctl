@@ -16,7 +16,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 
 #NT stuff
-    <CPCMD> READ*.* <relroot>/rel2/
+    <CPCMD> READ*.* <relroot>/rel2/readme.w32
     <CPCMD> include/*.h <relroot>/rel2/h/nt/
     <CPCMD> include/GL/*.h <relroot>/rel2/h/nt/GL/
     <CPCMD> nt386/*.lib <relroot>/rel2/lib386/nt/

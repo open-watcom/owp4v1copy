@@ -1,6 +1,6 @@
 # Win32 include files and import libraries
 
-README.w32api
+README.w32
 h\nt\accctrl.h
 h\nt\aclapi.h
 h\nt\basetsd.h
@@ -68,6 +68,7 @@ h\nt\nddeapi.h
 h\nt\nspapi.h
 h\nt\ntdef.h
 h\nt\ntdll.h
+h\nt\ntldap.h
 h\nt\ntsecapi.h
 h\nt\ntsecpkg.h
 h\nt\oaidl.h
@@ -87,6 +88,7 @@ h\nt\oledlg.h
 h\nt\oleidl.h
 h\nt\pbt.h
 h\nt\poppack.h
+h\nt\powrprof.h
 h\nt\prsht.h
 h\nt\psapi.h
 h\nt\pshpack1.h
@@ -133,6 +135,7 @@ h\nt\userenv.h
 h\nt\w32api.h
 h\nt\winable.h
 h\nt\winbase.h
+h\nt\winber.h
 h\nt\wincon.h
 h\nt\wincrypt.h
 h\nt\windef.h
@@ -142,6 +145,7 @@ h\nt\winerror.h
 h\nt\wingdi.h
 h\nt\wininet.h
 h\nt\winioctl.h
+h\nt\winldap.h
 h\nt\winnetwk.h
 h\nt\winnls.h
 h\nt\winnt.h
@@ -214,6 +218,7 @@ lib386\nt\olesvr32.lib
 lib386\nt\opengl32.lib
 lib386\nt\penwin32.lib
 lib386\nt\pkpd32.lib
+lib386\nt\powrprof.lib
 lib386\nt\psapi.lib
 lib386\nt\rapi.lib
 lib386\nt\rasapi32.lib
@@ -243,6 +248,7 @@ lib386\nt\wininet.lib
 lib386\nt\winmm.lib
 lib386\nt\winspool.lib
 lib386\nt\winstrm.lib
+lib386\nt\wldap32.lib
 lib386\nt\wow32.lib
 lib386\nt\ws2_32.lib
 lib386\nt\wsock32.lib
