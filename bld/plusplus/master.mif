@@ -188,7 +188,7 @@ extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 # WLINK .DLL options for the various hosts
 wlink_dll_os2_386 = OPTION manyautodata
 
-extra_l_flags = OPTION map, caseexact, quiet
+extra_l_flags = OPTION map
 wlink_opt_common_exe = OPTION symfile
 wlink_opt_common_drv = OPTION symfile
 !ifndef plusplus_release
@@ -396,6 +396,10 @@ lflags_dll = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) dll initinstance te
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
 
+!ifdef build_rc_$(host_os)_$(host_cpu)
+rc_objs = plusplus.rc
+!endif
+
 build : .symbolic $(exe_bld_name).exe #$(dll_bld_name).dll
     @%null
 
@@ -405,12 +409,9 @@ $(exe_bld_name).exe : $(depends_drv) pdrvbld.lnk $(dll_bld_name).lib
 $(dll_bld_name).lib : $(dll_bld_name).dll
     $(librarian) -b-q-n $^@ +$[@
 
-$(dll_bld_name).dll : $(depends_dll) pdllbld.lnk
+$(dll_bld_name).dll : $(rc_objs) $(depends_dll) pdllbld.lnk
     $(linker) $(lflags_dll) NAME $^* @pdllbld
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(bld_cl) $(fe_misc_dir)/c/genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
-    genverrc ..\rc\r_$(host_os)$(host_cpu).rc plusplus.rc $$ $^@ $(patch_level)
-    del genverrc.*
     $(rc) -q -bt=$(build_rc_$(host_os)_$(host_cpu)) plusplus.rc $^@
 !endif
 
@@ -422,6 +423,12 @@ $(dll_dbg_name).lib : $(dll_dbg_name).dll
 
 $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
     $(linker) $(lflags_dll) NAME $^* @pdlldbg
+
+./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
+        $[@ $]@ $^@ $$ $(dll_bld_name).dll $(patch_level)
 
 !endif
 
