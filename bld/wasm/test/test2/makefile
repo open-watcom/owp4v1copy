@@ -88,6 +88,27 @@ test : .SYMBOLIC
 	@%write $(cmd_file) @echo off
 	@%write $(cmd_file) @echo %1.asm ======================================================
 	@%write $(cmd_file) @wasm %1.asm -q
+	@%write $(cmd_file) @if not exist %1.err goto next1
+	@%write $(cmd_file) @if not exist %1.chk goto next2
+        @%write $(cmd_file) @diff -b %1.err %1.chk
+	@%write $(cmd_file) goto next1
+	@%write $(cmd_file) :next2
+	@%write $(cmd_file) type %1.err
+	@%write $(cmd_file) :next1
+	@for %x in ($(objs)) do @call $(cmd_file) %x
+
+debug : .SYMBOLIC
+	@%create $(cmd_file)
+	@%write $(cmd_file) @echo off
+	@%write $(cmd_file) @echo %1.asm ======================================================
+	@%write $(cmd_file) @wasm %1.asm -q -d6
+	@%write $(cmd_file) @if not exist %1.err goto next1
+	@%write $(cmd_file) @if not exist %1.chk goto next2
+        @%write $(cmd_file) @diff -b %1.err %1.chk
+	@%write $(cmd_file) goto next1
+	@%write $(cmd_file) :next2
+	@%write $(cmd_file) type %1.err
+	@%write $(cmd_file) :next1
 	@for %x in ($(objs)) do @call $(cmd_file) %x
 
 clean : .SYMBOLIC
