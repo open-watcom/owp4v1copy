@@ -221,7 +221,7 @@ The debugger provides the following remote link capabilities:
 .begnote
 .note NOV
 This link uses Novell's SPX layer for communication.
-Supported under DOS, OS/2, Windows 3.x, Windows NT and NetWare.
+Supported under DOS, OS/2, Windows 3.x, Windows NT/2K/XP and NetWare.
 .note NET
 This link uses NetBIOS to communicate. If your network software
 supports NetBIOS, you can use this link.
@@ -230,18 +230,18 @@ Supported under DOS, OS/2, Windows 3.x, and NetWare.
 This link supports communication using the parallel or printer port.
 Several different cable configurations are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 3.x, NetWare and QNX.
+Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2K/XP, NetWare and QNX.
 .note SER
 This link uses a serial port to communicate. Rates of up to 115K
 BAUD are supported.
 .refalso vidwire
-Supported under DOS, OS/2 and QNX.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2K/XP and QNX.
 :cmt..note DQV
 :cmt.This link will communicate between two DESQView DOS boxes.
 :cmt.Supported under DOS running DESQView.
 .note WIN
 This link will communicate between two Windows DOS boxes.
-Supported under Windows 3.x and Windows 95 (for DOS applications
+Supported under Windows 3.x and Windows 9x (for DOS applications
 only).
 .note NMP
 This link will use Named Pipes to communicate internally between OS/2
@@ -260,7 +260,7 @@ applications).
 .note TCP
 This link will use TCP/IP to communicate internally or over a network
 between sessions.
-Supported under OS/2, Windows NT, Windows 95 and QNX.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2K/XP and QNX.
 .endnote
 .np
 Communication parameters may be passed to the remote trap file and the
@@ -752,6 +752,9 @@ You can also debug remotely between OS/2 and Windows NT/95 machines
 if you have installed TCP/IP support on these machines.
 See your network documentation for details on installing TCP/IP
 support.
+
+To use TCP/IP support under DOS, you need to configure the WATTCP
+client and install a packet driver for your network card.
 .np
 .ix 'TCPSERV'
 In order to use TCP/IP to remotely debug a program, you must start the
