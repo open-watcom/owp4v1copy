@@ -40,7 +40,7 @@ COMMANDS = &
     uniq &
 #    uuencode &
 #    uudecode &
-#    wc &
+    wc &
 #    who
 
 !ifeq           targos  qnx
