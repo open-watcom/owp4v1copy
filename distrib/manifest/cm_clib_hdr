@@ -15,6 +15,7 @@ h\env.h
 h\errno.h
 h\excpt.h
 h\fcntl.h
+h\fenv.h
 h\float.h
 h\graph.h
 h\i86.h
