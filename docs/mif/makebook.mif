@@ -115,16 +115,16 @@ wgml_opts+= pass 2
 # output format
 #
 !ifeq hbook pguide
-wgml_opts+= outp (t:100)$(hbook).ps
+wgml_opts+= out (t:100)$(hbook)
 !else ifeq hbook fpguide
-wgml_opts+= outp (t:100)$(hbook).ps
+wgml_opts+= out (t:100)$(hbook)
 !else
-wgml_opts+= outp (t:80)$(hbook).ps
+wgml_opts+= out (t:80)$(hbook)
 !endif
 #
 # common setting
 #
-wgml_opts+= cpi 10 index set dotarget $(dotarget)
+wgml_opts+= cpi 10 ind set dotarget $(dotarget)
 
 !else
 
@@ -134,7 +134,7 @@ wgml_opts+= cpi 10 index set dotarget $(dotarget)
 #
 # common setting
 #
-wgml_opts=file whelp pass 2 set dohelp 1 outp (t:2200)$(hbook).whp set dotarget $(dotarget) set book $(hbook)
+wgml_opts=file whelp pass 2 set dohelp 1 out (t:2200)$(hbook) set dotarget $(dotarget) set book $(hbook)
 !endif
 
 !ifeq hbook cpplib
@@ -358,7 +358,7 @@ compile_gml_to_xxx : .PROCEDURE
     @set GMLLIB=.\;$(whelp_incs);$(%GMLLIB)
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
     -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
-    whpcvt $(whpcvt_opts) $*
+    whpcvt $(whpcvt_opts) $*.ptf
     @%create sysusr02.gml
     -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
     @if exist $*.cn1 @erase $*.cn1
@@ -367,7 +367,7 @@ compile_gml_to_xxx : .PROCEDURE
     @ren sysusr02.gml $*.h
     @if exist $*.mix @erase $*.mix
     @ren sysusr01.gml $*.mix
-    whpcvt $(whpcvt_opts) -h $*
+    whpcvt $(whpcvt_opts) -h $*.ptf
 
 ####################################################
 compile_hpj_win : .PROCEDURE
@@ -384,7 +384,7 @@ compile_hpj_win : .PROCEDURE
 !else
     @%append $^@ BMROOT=$(book_incs)
 !endif
-    @%append $^@ OLDKEYPHRASE=YES
+    @%append $^@ OLDKEYPHRASE=NO
     @%append $^@ ROOT=.
     @%append $^@ [Config]
     @%append $^@ BrowseButtons()
