@@ -8,10 +8,12 @@ struct words {
         int     index;
 };
 
-int len_compare( const struct words *p1, const struct words *p2 )
+int len_compare( const void *pv1, const void *pv2 )
 {
     int         len1;
     int         len2;
+    const struct words *p1 = pv1;
+    const struct words *p2 = pv2;
 
     len1 = strlen( p1->word );
     len2 = strlen( p2->word );
@@ -20,9 +22,10 @@ int len_compare( const struct words *p1, const struct words *p2 )
     return( strcmp( p1->word, p2->word ) );
 }
 
-int str_compare( const struct words *p1, const struct words *p2 )
+int str_compare( const void *p1, const void *p2 )
 {
-    return( strcmp( p1->word, p2->word ) );
+    return( strcmp( ((const struct words *)p1)->word, 
+                    ((const struct words *)p2)->word ) );
 }
 
 main( int argc, char *argv[] )
