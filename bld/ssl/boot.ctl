@@ -1,5 +1,5 @@
-# wlib Builder Control file
-# =========================
+# ssl Builder Control file
+# ========================
 
 set PROJDIR=<CWD>
 
@@ -13,10 +13,9 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> boot ]
 #=================
-    echo Building the wlib bootstrap
+    echo Building the ssl bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
-    <CPCMD> wlib <DEVDIR>/build/bin/bwlib
-    <CPCMD> wlib <DEVDIR>/build/bin/wlib
+    <CPCMD> ssl.exe <DEVDIR>/build/bin/ssl
     cdsay <PROJDIR>

@@ -286,6 +286,7 @@ static unsigned ReadSection( handle filehndl, unsigned off )
     if( ReadStream( filehndl, &len, sizeof( len ) ) != sizeof( len ) ) {
         return( 0 );
     }
+    CONV_LE_16( len );
     last = off + len;
     if( last > ParseTableSize ) {
         new = ParseTable;

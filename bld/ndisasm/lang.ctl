@@ -32,15 +32,14 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/ntaxp/wdis.sym    <RELROOT>/rel2/axpnt/
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> <PROJDIR>/qnx386/wdis.qnx   <RELROOT>/rel2/qnx/binq/wdis
+    <CPCMD> <PROJDIR>/qnx386/wdis.exe   <RELROOT>/rel2/qnx/binq/wdis
     <CPCMD> <PROJDIR>/qnx386/wdis.sym   <RELROOT>/rel2/qnx/sym/
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <PROJDIR>/linux386/wdis.elf <RELROOT>/rel2/binl/wdis
+    <CPCMD> <PROJDIR>/linux386/wdis.exe <RELROOT>/rel2/binl/wdis
     <CPCMD> <PROJDIR>/linux386/wdis.sym <RELROOT>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cdsay <PROJDIR>
-

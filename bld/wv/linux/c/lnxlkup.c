@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <process.h>
+
 
 extern char     *StrCopy( char *, char * );
 

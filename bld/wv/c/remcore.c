@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Remote access core - trap file interface. 
 *
 ****************************************************************************/
 
@@ -412,6 +411,7 @@ bool KillProgOvlay()
     RestoreHandlers();
     FiniSuppServices();
     OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_32( ret.err );
     InitSuppServices();
     _SwitchOff( SW_HAVE_TASK );
     GrabHandlers();
@@ -432,6 +432,11 @@ unsigned MakeProgRun( bool single )
     RestoreHandlers();
     DUIExitCriticalSection();
     OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_32( ret.stack_pointer.offset );
+    CONV_LE_16( ret.stack_pointer.segment );
+    CONV_LE_32( ret.program_counter.offset );
+    CONV_LE_16( ret.program_counter.segment );
+    CONV_LE_16( ret.conditions );
     DUIEnterCriticalSection();
     GrabHandlers();
     if( ret.conditions & COND_CONFIG ) {
@@ -479,7 +484,14 @@ void RemoteMapAddr( addr_ptr *addr, addr_off *lo_bound,
     acc.req = REQ_MAP_ADDR;
     acc.in_addr = *addr;
     acc.handle = handle;
+    CONV_LE_32( acc.in_addr.offset );
+    CONV_LE_16( acc.in_addr.segment );
+    CONV_LE_32( acc.handle );
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_32( ret.out_addr.offset );
+    CONV_LE_16( ret.out_addr.segment );
+    CONV_LE_32( ret.lo_bound );
+    CONV_LE_32( ret.hi_bound );
     *addr = ret.out_addr;
     *lo_bound = ret.lo_bound;
     *hi_bound = ret.hi_bound;
@@ -508,6 +520,7 @@ unsigned RemoteReadUserKey( unsigned wait )
 
     acc.req = REQ_READ_USER_KEYBOARD;
     acc.wait = wait;
+    CONV_LE_16( acc.wait );
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
     return( ret.key );
 }
@@ -528,7 +541,9 @@ unsigned long RemoteGetLibName( unsigned long lib_hdl, void *ptr, unsigned buff_
     out[1].ptr = ptr;
     out[1].len = buff_len;
     ret.handle = 0;
+    CONV_LE_32( acc.handle );
     TrapAccess( 1, &in, 2, &out );
+    CONV_LE_32( ret.handle );
     return( ret.handle );
 }
 
@@ -606,6 +621,8 @@ dword RemoteSetBreak( address addr )
     acc.req = REQ_SET_BREAK;
     AddrFix( &addr );
     acc.break_addr = addr.mach;
+    CONV_LE_32( acc.break_addr.offset );
+    CONV_LE_16( acc.break_addr.segment );
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
     return( ret.old );
 }
@@ -618,6 +635,8 @@ void RemoteRestoreBreak( address addr, dword value )
     AddrFix( &addr );
     acc.break_addr = addr.mach;
     acc.old = value;
+    CONV_LE_32( acc.break_addr.offset );
+    CONV_LE_16( acc.break_addr.segment );
     TrapSimpAccess( sizeof( acc ), &acc, 0, NULL );
 }
 
@@ -661,6 +680,8 @@ void RemoteSplitCmd( char *cmd, char **end, char **parm )
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     TrapAccess( 2, &in, 1, &out );
+    CONV_LE_16( ret.cmd_end );
+    CONV_LE_16( ret.parm_start );
     *end = &cmd[ ret.cmd_end ];
     *parm = &cmd[ ret.parm_start ];
 }
@@ -688,6 +709,7 @@ void GetSysConfig()
 
     acc.req = REQ_GET_SYS_CONFIG;
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( SysConfig ), &SysConfig );
+    CONV_LE_16( SysConfig.mad );
 }
 
 bool InitCoreSupp()

@@ -24,12 +24,14 @@ sys_axp_nt    = sys ntaxp
 targ_x86_os2   = $(name)cli1.exe
 targ_x86_os2v2 = $(name)cli.exe
 targ_x86_qnx   = $(name)cli.qnx
-targ_x86_linux = $(name)cli.elf
+targ_x86_linux = $(name)cli.exe
 targ_x86_win   = $(name)cliw.exe
 targ_x86_dos   = $(name)cli.exe
 targ_x86_nt    = $(name)cli.exe
 
 targ_axp_nt    = $(name)cli.exe
+
+targ_ppc_linux = $(name)cli.exe
 
 TRAP_objs     = testcli.obj
 TRAP_remote_objs =
@@ -112,6 +114,8 @@ targ_x86_nt     = $(name).dll
 targ_axp_nt     = $(name).dll
 
 targ_ppc_nt     = $(name).dll
+
+targ_ppc_linux  = $(name).so
 
 TRAP_objs   = $(os)strt.obj
 TRAP_remote_objs = remote.obj

@@ -29,6 +29,8 @@
 ****************************************************************************/
 
 
+#include "curses.h"
+#define BOOL_DEFINED    // curses.h typedefs 'bool'
 #include "dbgdefn.h"
 #include "dbgio.h"
 #include "dbgmem.h"
@@ -49,7 +51,6 @@
 #include <signal.h>
 #include <ctype.h>
 #include <errno.h>
-#include "curses.h"
 #include "term.h"
 #include "stdui.h"
 #include "../unix/h/ctkeyb.h"
@@ -331,6 +332,8 @@ bool UsrScrnMode()
     switch( ConMode ) {
     case C_TTY:
         return( TRUE );
+    default:
+        break;
     }
     return( FALSE );
 }
@@ -369,6 +372,8 @@ bool DebugScreen()
         ioctl( 0, VT_ACTIVATE, DbgConsole );
         ioctl( 0, VT_WAITACTIVE, DbgConsole );
         break;
+    default:
+        break;
     }
     return( FALSE );
 }
@@ -394,6 +399,8 @@ bool UserScreen()
     case C_VC:
         ioctl( 0, VT_ACTIVATE, PrevConsole );
         ioctl( 0, VT_WAITACTIVE, PrevConsole );
+        break;
+    default:
         break;
     }
     return( FALSE );
@@ -421,6 +428,8 @@ void FiniScreen()
     case C_XWIN:
         signal( SIGHUP, SIG_IGN );
         kill( XTermPid, SIGTERM );
+        break;
+    default:
         break;
     }
 }

@@ -29,10 +29,14 @@
 ****************************************************************************/
 
 
+#ifndef __WATCOMC__
+    #include "clibext.h"
+#endif
+
 extern void             Error( char *, ... );
 extern void             Dump( char *, ... );
 extern void             OutStartSect( char *, unsigned short );
-extern void             OutByte( char );
+extern void             OutByte( unsigned char );
 extern void             OutWord( unsigned short );
 extern void             OutEndSect( void );
 extern unsigned short   SrcLine( void );

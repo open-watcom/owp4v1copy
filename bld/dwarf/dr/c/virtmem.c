@@ -71,10 +71,18 @@ to allocate < 64k hunks of memory.
 */
 
 // this structure is used for picking the high order word off a long
+
+#ifdef __BIG_ENDIAN__
+typedef struct wordpick {
+    unsigned_16 high;
+    unsigned_16 low;
+} wordpick;
+#else
 typedef struct wordpick {
     unsigned_16 low;
     unsigned_16 high;
 } wordpick;
+#endif
 
 // this is used instead of the virt_mem type inside this module, since it is
 // desirable to be able to get the high order word without having to do a

@@ -8,13 +8,7 @@ wdis_trmem = 1
 
 .EXTENSIONS: .rc .msg
 
-!ifeq host_os linux
-exe_name = $(proj_name).elf
-!else ifeq host_os qnx
-exe_name = $(proj_name).qnx
-!else
 exe_name = $(proj_name).exe
-!endif
 
 all: $(exe_name) .SYMBOLIC
 

@@ -242,7 +242,11 @@ exe_name = wv.$(EXE)
 #########
 extra_c_flags_at = -D_AT_PC
 
-extra_c_flags += -s $(extra_c_flags_$(all_machine))
+extra_c_flags += $(extra_c_flags_$(all_machine))
+
+!ifndef bootstrap
+extra_c_flags += -s
+!endif
 
 !ifeq sys_windowed 1
 extra_c_flags += -D__GUI__
@@ -251,7 +255,7 @@ extra_c_flags += -D__CHAR__
 !endif
 
 !ifeq release 0
-extra_c_flags += -dAUI_DBG -dDBG_DBG
+extra_c_flags += -DAUI_DBG -DDBG_DBG
 !endif
 
 extra_c_flags_win += -zW -zc
@@ -261,7 +265,7 @@ extra_c_flags_os2_i86 = -zc -zu
 extra_c_flags_os2_i86 = -zc
 !endif
 extra_c_flags_os2 += $(extra_c_flags_os2_$(host_cpu))
-extra_c_flags_dos_i86 = -wo -of -d_OVERLAYED_
+extra_c_flags_dos_i86 = -wo -of -D_OVERLAYED_
 extra_c_flags_dos += $(extra_c_flags_dos_$(host_cpu))
 
 extra_c_flags_trmem = $(trmem_cflags)
@@ -271,12 +275,9 @@ extra_c_flags_regexp = -fi=wndregx.h
 
 # inc_dirs
 ###########
-inc_dirs = -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
+inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
 !ifndef dll
-inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h"
-!endif
-inc_dirs += -I"$($(host_os)inc)"
-!ifndef dll
+inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h" -I"$(posix_dir)/h"
 inc_dirs += -I"$(posix_dir)/h" -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
 !endif
 !ifeq host_os linux
@@ -307,7 +308,11 @@ libs_linux_386      = $(aui_dir)/linux386/aui.lib $(gui_dir)/ui/linux386/gui.lib
 libs_nt_axp         = $(aui_dir)/ntaxp/aui.lib $(gui_dir)/ui/ntaxp/gui.lib $(ui_dir)/nt/ntaxp/ui.lib
 !endif
 
+!ifdef bootstrap
+libs = $(aui_dir)/$(%OBJDIR)/aui.lib $(gui_dir)/ui/$(%OBJDIR)/gui.lib $(ui_dir)/unix/$(%OBJDIR)/ui.lib $(ncurses_dir)/$(%OBJDIR)/ncurses.lib $(wres_lib)
+!else
 libs = $(libs_$(host_os)_$(host_cpu)) $(wres_lib)
+!endif
 
 !ifdef ovl_dos
 endsect=end
@@ -358,6 +363,11 @@ resname=$+$(resname)$-dll
 !endif
 resfile = $(resname).res
 
+!ifdef bootstrap
+$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs)
+        $(cl) $(clflags) fingmsg.obj $(objs) $(sysobjs) $(libs) $(cl_libs)
+        wstrip -q -a -r $^@ . $(resfile)
+!else
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
@@ -379,6 +389,7 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         copy $^&.map $(lnk2)
         vi -d -q -s ..\mapfix.vi $(lnk2)
         $(linker) $(lflags) name $^@ @$(lnk) @$(lnk2) $(endsect)
+!endif
 !endif
 !endif
 
@@ -648,19 +659,19 @@ japhis.dlg : $(hdir)/japhis.dlg
 
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@
+        $(bld_cl) -I"$(aui_dir)/h" $(wcl_util_opts) $]@
 
 auistr.gh : ./auimkstr.exe $(aui_dir)/h/aui.msg
         $[@ $^@
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
 ./mkstr.exe : $(cdir)/mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
-        $(bld_cl) -i"$(hdir);$(dig_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I$(hdir) -I"$(dig_dir)/h" $(wcl_util_opts) $[@
 
 litdef.gh : ./mkstr.exe
         $[@ $^@

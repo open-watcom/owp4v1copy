@@ -1,5 +1,5 @@
-# wlib Builder Control file
-# =========================
+# dmpobj Builder Control file
+# ===========================
 
 set PROJDIR=<CWD>
 
@@ -17,6 +17,5 @@ set PROJDIR=<CWD>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
-    <CPCMD> wlib <DEVDIR>/build/bin/bwlib
-    <CPCMD> wlib <DEVDIR>/build/bin/wlib
+    <CPCMD> dmpobj.exe <DEVDIR>/build/bin/dmpobj
     cdsay <PROJDIR>

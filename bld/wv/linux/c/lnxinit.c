@@ -53,6 +53,10 @@ extern int      DbgConHandle; /* Debugger console file handle */
 extern char     **_argv;
 extern int      _argc;
 
+#ifndef __WATCOMC__
+extern char     **environ;
+#endif
+
 static char             *CmdStart;
 static volatile bool    BrkPending;
 static unsigned         NumArgs;

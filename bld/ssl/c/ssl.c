@@ -48,7 +48,7 @@
 
 
 token           CurrToken;
-char            TokenBuff[ MAX_TOKEN_LEN ];
+char            TokenBuff[MAX_TOKEN_LEN];
 unsigned        TokenLen;
 FILE            *TblFile;
 FILE            *PrsFile;
@@ -133,7 +133,7 @@ void Error( char *fmt, ... )
 
 static void Usage(void)
 {
-    Error( "Usage: SSL {/(v|c)} filename[.ssl] [out_file]" );
+    Error( "Usage: ssl {-(v|c)} filename[.ssl] [out_file]" );
 }
 
 void UngetChar( int c )
@@ -349,7 +349,7 @@ int main( int argc, char *argv[] )
     for( ;; ) {
         file = *++argv;
         if( file == 0 ) Usage();
-        if( file[0] != '/' ) break;
+        if( file[0] != '-' ) break;
         switch( file[1] ) {
         case 'v':
             verbose = 1;

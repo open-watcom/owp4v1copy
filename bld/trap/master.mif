@@ -75,7 +75,10 @@ additional_cleanup = *.d32 *.trp
 
 # cflags stuff
 ###############
-extra_c_flags += -D$(which) -DMD_$(cpu) -s $(extra_cflags)
+extra_c_flags += -D$(which) -DMD_$(cpu) $(extra_cflags)
+!ifndef bootstrap
+extra_c_flags += -s
+!endif
 
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES

@@ -24,118 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Linux module to load debugger trap files.
+* Description:  Debugger trap file module loader.
 *
 ****************************************************************************/
 
 
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <signal.h>
-#include "trpimp.h"
-#include "tcerr.h"
-#include "peloader.h"
-#include "trpqimp.h"
+#ifdef __WATCOMC__
 
-#if defined( BUILTIN_TRAP_FILE )
-extern const trap_requests *TrapLoad( const trap_callbacks *client );
-#endif
+/* At this point Linux is using trap files which are PE DLLs. This is
+ * not the final solution (should be real ELF shared lib).
+ */
+#include "trpld_pe.c"
 
-#ifndef __WATCOMC__
-extern char **environ;
-#endif
-
-static const trap_requests      *TrapFuncs;
-static PE_MODULE *TrapFile;
-static void (TRAPENTRY *FiniFunc)();
-extern trap_version     TrapVer;
-extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx_entry * );
-
-extern  int      FullPathOpen( char const *name, char *ext, char *result, unsigned max_result );
-extern  int      GetSystemHandle(int);
-
-const static trap_callbacks TrapCallbacks = {
-    sizeof( trap_callbacks ),
-
-    &environ,
-    NULL,
-
-    malloc,
-    realloc,
-    free,
-    getenv,
-    signal,
-};
-
-void KillTrap()
-{
-    ReqFunc = NULL;
-    if( FiniFunc != NULL ) FiniFunc();
-    FiniFunc = NULL;
-    if( TrapFile != 0 ) PE_freeLibrary( TrapFile );
-    TrapFile = 0;
-}
-
-int PathOpenTrap( char const *name, unsigned len, char *ext, char *trap_name, int trap_name_len )
-{
-    char    path[_MAX_PATH];
-
-    len = min(len,sizeof(path));
-    memcpy( path, name, len );
-    path[ len ] = '\0';
-    return( FullPathOpen( path, ext, trap_name, trap_name_len ) );
-}
-
-char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
-{
-    char                init_error[256];
-    int                 filehndl;
-    char                *ptr;
-    char                *parm;
-    const trap_requests *(*ld_func)( const trap_callbacks * );
-    char                trap_name[_MAX_PATH];
-
-    if( trapbuff == NULL ) trapbuff = "std";
-    for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr ) ;
-    parm = (*ptr != '\0') ? ptr + 1 : ptr;
-    filehndl = PathOpenTrap( trapbuff, ptr - trapbuff, "trp", trap_name, sizeof(trap_name) );
-
-    parm = (*ptr != '\0') ? ptr + 1 : ptr;
-
-#if !defined( BUILTIN_TRAP_FILE )
-    TrapFile = PE_loadLibraryHandle( GetSystemHandle( filehndl ), trap_name );
-    if( TrapFile == NULL ) {
-        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
-        return( buff );
-    }
-    ld_func = PE_getProcAddress( TrapFile, "TrapLoad_" );
 #else
-    ld_func = TrapLoad;
-#endif
-    strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
-    if( ld_func == NULL ) {
-        KillTrap();
-        return( buff );
-    }
-    TrapFuncs = ld_func( &TrapCallbacks );
-    if( TrapFuncs == NULL ) {
-        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
-        return( buff );
-    }
-    *trap_ver = TrapFuncs->init_func( parm, init_error, trap_ver->remote );
-    FiniFunc = TrapFuncs->fini_func;
-    if( init_error[0] != '\0' ) {
-        KillTrap();
-        strcpy( buff, init_error );
-        return( buff );
-    }
-    if( !TrapVersionOK( *trap_ver ) ) {
-        KillTrap();
-        return( buff );
-    }
-    TrapVer = *trap_ver;
-    ReqFunc = TrapFuncs->req_func;
-    return( NULL );
-}
 
+/* Use real shared libs when building with GCC */
+#include "trpld_so.c"
+
+#endif

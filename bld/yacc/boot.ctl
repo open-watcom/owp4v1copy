@@ -1,4 +1,4 @@
-# wlib Builder Control file
+# yacc Builder Control file
 # =========================
 
 set PROJDIR=<CWD>
@@ -13,10 +13,9 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> boot ]
 #=================
-    echo Building the wlib bootstrap
+    echo Building the yacc bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
-    <CPCMD> wlib <DEVDIR>/build/bin/bwlib
-    <CPCMD> wlib <DEVDIR>/build/bin/wlib
+    <CPCMD> yacc.exe <DEVDIR>/build/bin/wyacc
     cdsay <PROJDIR>

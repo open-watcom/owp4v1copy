@@ -198,15 +198,15 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
 
     return( 0 );
 }
-#elif defined(M_I86)
+#elif defined( M_I86 )
 #pragma aux MADLOAD "*" loadds
-#elif defined(__AXP__)
+#elif defined( __AXP__ ) || defined( __PPC__ )
   /* nothing to do */
 #else
-#error MADIMP.C not configured for system
+#error madimp.c not configured for system
 #endif
 
-#if defined(__DOS__) || defined(__UNIX__)
+#if defined( __DOS__ ) || defined( __UNIX__ )
     const char __based( __segname( "_CODE" ) ) Signature[4] = "MAD";
 #endif
 
