@@ -485,7 +485,7 @@ static void doTouch( void )
                 if( !( ndir->d_attr & ( _A_VOLID | _A_SUBDIR ) ) ) {
             #endif
                     number_of_successful_touches +=
-                        doTouchFile( item, ndir, &stamp );
+                        doTouchFile( full_name, ndir, &stamp );
                 }
             }
             if( closedir( dirpt ) != 0 ) {
