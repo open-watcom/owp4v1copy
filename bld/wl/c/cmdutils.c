@@ -47,7 +47,7 @@
 #include "wlnkmsg.h"
 #include "fileio.h"
 #include "cmdline.h"
-#if _OS != _QNX
+#if _OS != _QNX && _OS != _LINUX
 #include <direct.h>
 #endif
 
@@ -59,7 +59,7 @@ static  char            *DefExt[] = {           /* see LINK.H */
     ".lnk",
     ".map",
     ".lib",
-#if _OS == _QNX
+#if _OS == _QNX || _OS == _LINUX
     ".o",
 #else
     ".obj",
@@ -77,14 +77,14 @@ static  char            *DefExt[] = {           /* see LINK.H */
 	".cdm",	/* custom device module		*/
     ".com",
     ".rex",
-#if _OS == _QNX
+#if _OS == _QNX || _OS == _LINUX
     "",
 #else
     ".qnx",
 #endif
     ".sym",
     ".lbc",
-#if _OS == _QNX
+#if _OS == _QNX || _OS == _LINUX
     "",
 #else
     ".elf",
@@ -98,7 +98,7 @@ static bool     MakeToken( tokcontrol, sep_type );
 static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
 /**********************************************************/
 {
-#if _OS == _QNX         //opendir - readdir wildcarding not supported here.
+#if _OS == _QNX || _OS == _LINUX    //opendir - readdir wildcarding not supported here.
     ctrl = ctrl;
     return rtn();
 #else
