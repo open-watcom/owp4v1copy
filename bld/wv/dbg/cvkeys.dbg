@@ -45,7 +45,8 @@ set macro source CTRL-\ {accel main {&Search} {&Next}}
 set macro all ALT-/ {accel main {&Search} {&Next}}
 rem macro all CTRL-R {accel main {&Search} {&Next}}
 
-set macro watch CTRL-Y {accel {&Delete}}
+set macro watch DELETE {accel {&Delete}}
+set macro watch INSERT {accel {&New}}
 
 rem set macro all CTRL-W {accel {&Watch}} // already done
 rem not quite - CV has delete watch dialog
