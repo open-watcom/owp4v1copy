@@ -28,10 +28,11 @@
 *
 ****************************************************************************/
 
+#include "_defwin.h"
 
-unsigned long (*_WindowsIsWindowedHandle)() = { 0 };
+LPWDATA (*_WindowsIsWindowedHandle)() = { 0 };
 void (*_WindowsRemoveWindowedHandle)() = { 0 };
-int (*_WindowsNewWindow)() = { 0 };
+unsigned (*_WindowsNewWindow)() = { 0 };
 int (*_WindowsCloseWindow)() = { 0 };
 int (*_WindowsSetAbout)() = { 0 };
 int (*_WindowsSetAppTitle)() = { 0 };

@@ -28,12 +28,14 @@
 *
 ****************************************************************************/
 
+#include "_defwin.h"
+
 #pragma aux __init_default_win "*";
 char __init_default_win;
 
-unsigned long (*_WindowsIsWindowedHandle)() = { 0 };
+LPWDATA (*_WindowsIsWindowedHandle)() = { 0 };
 void (*_WindowsRemoveWindowedHandle)() = { 0 };
-int (*_WindowsNewWindow)() = { 0 };
+unsigned (*_WindowsNewWindow)() = { 0 };
 int (*_WindowsCloseWindow)() = { 0 };
 int (*_WindowsSetAbout)() = { 0 };
 int (*_WindowsSetAppTitle)() = { 0 };
@@ -48,3 +50,42 @@ unsigned (*_WindowsGetch)() = { 0 };
 unsigned (*_WindowsGetche)() = { 0 };
 void (*_WindowsPutch)() = { 0 };
 void (*_WindowsExitRtn)() = { 0 };
+
+#if ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) ) || defined(__NT__) || \
+    defined(__WINDOWS_386__) || defined(__WINDOWS__)
+
+#define __SW_BW
+#include "variety.h"
+#include <wdefwin.h>
+
+_WCRTLINK int   _dwDeleteOnClose( int handle ) {
+    handle = handle;
+    return( 0 );
+}
+
+_WCRTLINK int   _dwSetAboutDlg( const char *title, const char *text ) {
+    text = text;
+    title = title;
+    return( 0 );
+}
+
+_WCRTLINK int   _dwSetAppTitle( const char *title ) {
+    title = title;
+    return( 0 );
+}
+
+_WCRTLINK int   _dwSetConTitle( int handle, const char *title ) {
+    handle = handle;
+    title = title;
+    return( 0 );
+}
+
+_WCRTLINK int   _dwYield( void ) {
+    return( 0 );
+}
+
+_WCRTLINK int   _dwShutDown( void ) {
+    return( 0 );
+}
+
+#endif

@@ -34,7 +34,11 @@ dll_objs = $+ &
 !endif
 
 static_objs = $+ &
+!ifdef default_windowing
     $(pfx__)\defwin$(__ifx__)dinitwin.obj &
+!else
+    $(pfx__)\defwin$(__ifx__)nodefwin.obj &
+!endif
     $(pfx__)\fpu$(__ifx__)old87.obj &
     $(pfx__)\intel$(__ifx__)dp5prof.obj &
     $(pfx__)\intel$(__ifx__)dp5prof2.obj &
