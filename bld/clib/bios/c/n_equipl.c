@@ -50,6 +50,7 @@ int chk_87( unsigned short int *ndp_wk );
         "mov ecx,000AH" \
         "L1: loop L1" \
         "pop ecx" \
+        "fwait" \
         "and word ptr [ebx],0f3fH" \
         "cmp word ptr [ebx],033fH" \
         "jne L3" \
@@ -58,6 +59,7 @@ int chk_87( unsigned short int *ndp_wk );
         "mov ecx,0005H" \
         "L2: loop L2" \
         "pop ecx" \
+        "fwait" \
         "test word ptr [ebx],0b8bfH" \
         "jne L3" \
         "or dx,0002H" \
@@ -77,6 +79,7 @@ int chk_87( unsigned short );
         "mov cx,000AH" \
         "L1: loop L1" \
         "pop cx" \
+        "fwait" \
         "and word ptr ss:[bx],0f3fH" \
         "cmp word ptr ss:[bx],033fH" \
         "jne L3" \
@@ -85,6 +88,7 @@ int chk_87( unsigned short );
         "mov cx,0005H" \
         "L2: loop L2" \
         "pop cx" \
+        "fwait" \
         "test word ptr ss:[bx],0b8bfH" \
         "jne L3" \
         "or dx,0002H" \

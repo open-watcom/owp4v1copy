@@ -44,6 +44,7 @@ NPXType_ proc    near
         mov     bp,sp                   ; point to control word
         finit                           ; initialize math coprocessor
         fstcw   0[bp]                   ; store control word in memory
+        fwait
         mov     al,0                    ; assume no coprocessor present
         mov     ah,1[bp]                ; upper byte is 03h if
         cmp     ah,03h                  ;   coprocessor is present
@@ -53,6 +54,7 @@ NPXType_ proc    near
         fldcw   0[bp]                   ; load control word
         fdisi                           ; disable interrupts (IEM=1)
         fstcw   0[bp]                   ; store control word
+        fwait
         test    word ptr 0[bp], 0080h   ; if IEM=1, then 8087
         jnz     exit                    ;
         finit                           ; use default infinity mode
