@@ -129,7 +129,7 @@ void main( int argc, char **argv )
         /* dump specific record data */
         switch( data->pref.kind ) {
         case SAMP_INFO:
-            printf( "  timer rate %ldms\n", data->d.info.timer_rate );
+            printf( "  timer rate %ld ms\n", data->d.info.timer_rate / 1000 );
             l = data->pref.length;
             if( head.major_ver == 2 && head.minor_ver <= 1 ) {
                 count = &data->d.old_info.count[0];
