@@ -1,4 +1,17 @@
 @echo off
+
+rem *************************************************************
+rem A few notes: when running some of these tests, wmake may
+rem exit before the command line is fully processed. Hence the
+rem -l switch may not work and we should use stdout/stderr
+rem redirection to capture output. This is a sensible thing to
+rem do anyway because that way we know processing of the -l
+rem switch will not interfere with the tests in any way.
+rem Also note that -l only logs errors (stderr), not normal
+rem output (stdout). If a test needs to capture both, it has to
+rem use redirection.
+rem *************************************************************
+
 echo # =============================
 echo # Start ERROR
 echo # =============================
@@ -8,15 +21,15 @@ if .%2 == . goto usage
 echo # -----------------------------
 echo # ERROR 03:  Invalid Option
 echo # -----------------------------
-del tmp.out
-%1 "-." > tmp.out 2>&1
+rm tmp.out
+%1 "-." 2> tmp.out
 egrep Error tmp.out > tmpfile.out
 diff tmpfile.out err03a.cmp
 if errorlevel 1 goto err03
     echo # Test 03a successful
 
-del tmp.out
-%1 "\"- \"" > tmp.out 2>&1
+rm tmp.out
+%1 "- " 2> tmp.out
 egrep Error tmp.out > tmpfile.out
 diff -b tmpfile.out err03b.cmp
 if errorlevel 1 goto err03
@@ -31,8 +44,8 @@ if errorlevel 1 goto err03
 echo # -----------------------------------------
 echo # ERROR 04: -f must be followed by a filename
 echo # -----------------------------------------
-del tmp.out
-%1 -f > tmp.out 2>&1
+rm tmp.out
+%1 -f 2>tmp.out
 egrep Error tmp.out > tmpfile.out
 diff tmpfile.out err04.cmp
 if errorlevel 1 goto err04
@@ -48,10 +61,10 @@ echo # ------------------------------------------------
 echo # ERROR 13: No Control Characeters valid in Option
 echo # ------------------------------------------------
 
-del tmp.out
-%1 -h "-" -l tmp.out
-%1 -h - -l tmp.out
-%1 -h "-\" -l tmp.out
+rm tmp.out
+%1 -h "-" 2> tmp.out
+%1 -h - 2>> tmp.out
+%1 -h "-\" 2>> tmp.out
 diff tmp.out err13.cmp
 if errorlevel 1 goto err13
     echo # Test 13 successful
@@ -66,7 +79,7 @@ if errorlevel 1 goto err13
 echo # ------------------------------
 echo # ERROR 17: Token Too Long
 echo # ------------------------------
-del tmp.out
+rm tmp.out
 %1 -h -f ERR17a -l tmp.out
 %1 -h -f ERR17b -l tmp.out
 %1 -h -f ERR17c -l tmp.out
@@ -85,7 +98,7 @@ if errorlevel 1 goto err17
 echo # ------------------------------
 echo # ERROR 36: Illegal attempt to update special target
 echo # ------------------------------
-del tmp.out
+rm tmp.out
 %1 -h -f ERR36 .c.obj -l tmp.out
 diff tmp.out err36.cmp
 if errorlevel 1 goto err36
@@ -100,8 +113,8 @@ echo # ------------------------------
 echo # ERROR 39: Target not mentioned in any makefile
 echo # ------------------------------
 wtouch ditty.c
-del tmp.out
-%1 -h -f ERR39 ditty.obj -l tmp.out
+rm tmp.out
+%1 -h -f ERR39 ditty.obj > tmp.out 2>&1
 diff tmp.out err39.cmp
 if errorlevel 1 goto err39
     echo # Test 39 successful
@@ -111,16 +124,16 @@ if errorlevel 1 goto err39
     echo # !!! Test 39 unsuccessful !!! |tee -a %2
 
 :test40
-@del ditty.*
+rm ditty.*
 echo # ------------------------------
 echo # ERROR 40: Could not touch target
 echo # ------------------------------
-del tmp.out
+rm tmp.out
 wtouch err40.tst >tmp.out
-errout attrib +r err40.tst >>tmp.out
+chmod +r err40.tst >>tmp.out
 %1 -h -a -t -f ERR40 -l tmp.out
-attrib -r err40.tst
-del err40.tst
+chmod -r err40.tst
+rm err40.tst
 diff tmp.out ERR40.CMP
 if errorlevel 1 goto err40
     echo # Test 40 successful
@@ -138,5 +151,5 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-del *.out
-del *.tmp
+rm *.out
+rm *.tmp
