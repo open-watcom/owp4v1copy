@@ -1,5 +1,4 @@
 :segment ENGLISH
-Watcom Interface Converter.
 Usage: wic [options] filename [[options] [filename] ...]
 
 Options must be preceeded by '-' or '/'.  They may be specified in any order
@@ -30,7 +29,7 @@ but in case of conflict, the rightmost takes precedence. Available options are:
                    h      - Huge pointer (example: -Ph48)
   -s+ (-s-)      Prefix (do not prefix) every field in a structure with
                  structure name.  If -s- is specified, '-F' is also issued
-		 [DEFAULT: -as- for fortran, -as+ for assembler]
+         [DEFAULT: -as- for fortran, -as+ for assembler]
   -s0, -s        Display all error messages
   -s1            Supress conversion error messages  [DEFAULT]
   -s2            Supress conversion and reading error messages

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom Interface Converter main module.
 *
 ****************************************************************************/
 
@@ -42,11 +41,20 @@
 #include <fcntl.h>
 #include "wic.h"
 #include "wressetr.h"
+#include "banner.h"
 #ifdef TRMEM
     #include "trmem.h"
 #endif
 
 static int _fileNum = 0;
+
+const char *FingerMsg[] = {
+    banner1w( "Interface Converter", _WIC_VERSION_ ),
+    banner2( "1993" ),
+    banner3,
+    banner3a,
+    0
+};
 
 /*--------------------- Resources --------------------------------*/
 
@@ -373,11 +381,16 @@ void checkMemory(void) {
 
 void printUsageAndExit(void) {
     int i = USAGE_MSG_BASE;
+    int j = 0;
     char resStr[MAX_RESOURCE_SIZE];
 
     if (!getResStr(i, resStr)) {
         reportError(FATAL_INTERNAL, "Can't get usage resource");
     }
+
+    while (FingerMsg[j])
+        printf("%s\n", FingerMsg[j++]);
+
     while (strcmp(resStr, "END") != 0) {
         printf("%s\n", resStr);
         ++i;
