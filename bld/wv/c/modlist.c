@@ -87,6 +87,7 @@ int ModCompare( mod_handle const *a, mod_handle const *b )
 
     namea = TxtBuff;
     nameb = TxtBuff + TXT_LEN / 2;
+    namea[0] = nameb[0] = '\0';
     ModName( *a, namea, TXT_LEN/2 );
     ModName( *b, nameb, TXT_LEN/2 );
     return( stricmp( namea, nameb ) );
