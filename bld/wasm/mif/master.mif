@@ -2,25 +2,27 @@ proj_name = wasm
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
-mkopcode_opts = -fe=$^@
-
-!ifeq host_OS qnx
-exc_name = $(proj_name).qnx
-!else ifneq host_OS linux
-exc_name = $(proj_name).exe
-!else ifdef bootstrap
+!ifdef bootstrap
 exc_name = $(proj_name)
-cc = cc
-cflags = -funsigned-char -c -D_WASM_ -DUNIX -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I$(proj_path)/h -I$(womp_dir)/h -I$(watcom_dir)/h -I$(wres_dir)/h -I$(trmem_dir) -o $@
-force_include = -include
-bld_cl = cc
-mkopcode_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
-LIBS = -L$(clib_dir)/$(%OBJDIR) -lwatcom
+!else ifeq host_OS qnx
+exc_name = $(proj_name).qnx
 !else
 exc_name = $(proj_name).exe
 !endif
 link_name = $(proj_name).lnk
+
+!ifdef bootstrap
+cc = cc
+bld_cl = cc
+cflags = -funsigned-char -c -D_WASM_ -DUNIX -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I$(proj_path)/h -I$(womp_dir)/h -I$(watcom_dir)/h -I$(wres_dir)/h -I$(trmem_dir) -o $@
+force_include = -include
+LIBS = -L$(clib_dir)/$(%OBJDIR) -lwatcom
+wcl_util_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
+!else
+wcl_util_opts = -fe=$^@
+!endif
 
 .OPTIMIZE
 
@@ -128,7 +130,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : fullops.h inlnops.h wmpmsg.h $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(proj_name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -189,13 +191,13 @@ wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 
 ###################################################################
 
-inlnops.h: $(proj_path)/inlnops.tok ./mkopcode.exe
+inlnops.gh: $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/inlnops.tok $^@
 
-fullops.h: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
+fullops.gh: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
 
-wmpmsg.h : $(womp_dir)/womp.msg
+wmpmsg.gh : $(womp_dir)/womp.msg
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
@@ -203,8 +205,4 @@ wmpmsg.h : $(womp_dir)/womp.msg
 !endif
 
 ./mkopcode.exe: $(proj_path)/mkopcode.c
-        $(bld_cl) $[@ $(mkopcode_opts)
-
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.lib *.rc *.res *.lst *.err *.pch *.map *.sym
-        rm -f *.tmp *.ilk *.gh *.h
+        $(bld_cl) $[@ $(wcl_util_opts)

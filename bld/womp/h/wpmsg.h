@@ -35,7 +35,7 @@
 #define MSG_RC_BASE 16
 #define MSG_USE_BASE 200
 
-#include "wmpmsg.h"
+#include "wmpmsg.gh"
 
 #define MAX_RESOURCE_SIZE       128
 

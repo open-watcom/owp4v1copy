@@ -10,8 +10,8 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay h
-    wmake -h -i
+#    cdsay h
+#    wmake -h -i
 #   cdsay ..\release
 #   wmake /h /i
 
@@ -22,5 +22,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-     rm -f h/wmpmsg.h
+#     rm -f h/wmpmsg.gh
 #    sweep killobjs

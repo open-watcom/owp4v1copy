@@ -57,7 +57,7 @@ womp.$(exe) wompj.$(exe) : womp.res wompj.res womp.lnk $(objs)
     wstrip /a /r /q womp.$(exe) . womp.res
     wstrip /a /r /q wompj.$(exe) . wompj.res
 #
-# We may have to copy ../h/wmpmsg.h up to the root.
+# We may have to copy ../h/wmpmsg.gh up to the root.
 # Depends on where WASM and WATFOR expect it....
 #    copy msg.h ..
 
@@ -85,10 +85,10 @@ womp.lnk : objfiles.mif master.mif
     @%append $^@ OPTION quiet,map,stack=16k
     @for %i in ($(objs)) do @%append $^@ FILE %i
 
-womp.res : ../h/womp.rc ../womp.msg usage.rc wpmsg.h ../h/wmpmsg.h
+womp.res : ../h/womp.rc ../womp.msg usage.rc wpmsg.h ../h/wmpmsg.gh
     $(wrce) -r -q /dENGLISH -fo=$^@ $[@
 
-wompj.res : ../h/womp.rc ../womp.msg usagej.rc wpmsg.h ../h/wmpmsg.h
+wompj.res : ../h/womp.rc ../womp.msg usagej.rc wpmsg.h ../h/wmpmsg.gh
     $(wrck) -r -q /dJAPANESE -fo=$^@ $[@
 
 usage.rc : ../usage.sp
@@ -101,7 +101,7 @@ usagej.rc : ../usage.sp
 #    wsplice -kENGLISH -f "%+$#define MSG_USAGE_LN_%$# (MSG_USE_BASE+%$#-1)"$[@ $@
 #    wsplice -f "%s%+"$@ -o "$#define MSG_USAGE_LAST (MSG_USE_BASE+%$#+10)" $@
 
-../h/wmpmsg.h : ../womp.msg
+../h/wmpmsg.gh : ../womp.msg
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
