@@ -106,6 +106,15 @@ trappick( TRP_EXC_floating_point_underflow,
 trappick( TRP_EXC_access_violation,
     "access violation",
     "jaccess violation" )
+trappick( TRP_EXC_process_terminate,
+    "process termination",
+    "jprocess termination" )
+trappick( TRP_EXC_async_process_terminate,
+    "asynchronous process termination",
+    "jasynchronous process termination" )
+trappick( TRP_EXC_signal,
+    "asynchronous signal",
+    "jasynchronous signal" )
 trappick( TRP_ERR_invalid_function_number,
     "invalid function number",
     "jinvalid function number" )

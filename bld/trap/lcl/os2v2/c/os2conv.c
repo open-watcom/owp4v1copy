@@ -115,7 +115,7 @@ char *GetExceptionText(void)
             str = TRP_EXC_data_type_misalignment;
             break;
         case XCPT_ACCESS_VIOLATION:
-            str = TRP_EXC_general_protection_fault;
+            str = TRP_EXC_access_violation;
             break;
         case XCPT_ILLEGAL_INSTRUCTION:
             str = TRP_EXC_illegal_instruction;
@@ -149,6 +149,15 @@ char *GetExceptionText(void)
             break;
         case XCPT_FLOAT_UNDERFLOW:
             str = TRP_EXC_floating_point_underflow;
+            break;
+        case XCPT_PROCESS_TERMINATE:
+            str = TRP_EXC_process_terminate;
+            break;
+        case XCPT_ASYNC_PROCESS_TERMINATE:
+            str = TRP_EXC_async_process_terminate;
+            break;
+        case XCPT_SIGNAL:
+            str = TRP_EXC_signal;
             break;
         default:
             str = TRP_EXC_unknown;
