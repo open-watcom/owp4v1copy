@@ -91,7 +91,7 @@ libs =               &
 .c: ..\lib
 
 .def.lbc:
-        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
+        vi -i -q -k ":set norc\n:source ../getmodn.vi ../lib/$[.\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
 
 .lbc.lib:
         $(lib) -b -c -q -n -io -ii $@ @$<
@@ -104,9 +104,6 @@ libs =               &
 
 $(libs):
 
-winspool.lbc: winspool.def
-        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
-        vi -i -q winspool.lbc -k ":set norc\n:%s/WINSPOOL.DLL/WINSPOOL.DRV/g\n:wq!\n"
 
 kernel32.lib: kernel32.lbc
         $(lib) -b -c -q -n -io -ii $@ @$<
@@ -125,3 +122,4 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.bak @del *.bak
         @if exist *.obj @del *.obj
 
+
