@@ -1,0 +1,36 @@
+/*
+ *  netinet/in.h      IP related definitions
+ *
+:include crwat.sp
+ */
+#ifndef _NETINET_IN_H_INCLUDED
+#define _NETINET_IN_H_INCLUDED
+#include <sys/types.h>
+:include readonly.sp
+:include cpluspro.sp
+:include lnxkpack.sp
+
+/* Internet address. */
+struct in_addr {
+    uint32_t       s_addr;     /* address in network byte order */
+};
+
+struct sockaddr_in {
+    sa_family_t    sin_family; /* address family: AF_INET */
+    uint16_t       sin_port;   /* port in network byte order */
+    struct in_addr sin_addr;   /* internet address */
+};
+
+#define INADDR_ANY              0x00000000UL
+#define INADDR_BROADCAST        0xffffffffUL
+#define INADDR_NONE             0xffffffffUL
+
+unsigned long int htonl(unsigned long int hostlong);
+unsigned short int htons(unsigned short int hostshort);
+unsigned long int ntohl(unsigned long int netlong);
+unsigned short int ntohs(unsigned short int netshort);
+
+:include poppack.sp
+:include cplusepi.sp
+#endif /* !_NETINET_IN_H_INCLUDED */
+

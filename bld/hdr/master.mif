@@ -204,6 +204,7 @@ QNX_files = &
 LINUX_files = &
       $(common) &
         dirent.h &
+        netdb.h &
         unistd.h &
         utime.h &
         termios.h &
@@ -212,7 +213,10 @@ LINUX_files = &
         sys/ioctl.h &
         sys/ptrace.h &
         sys/wait.h &
-        sys/socket.h
+        sys/socket.h &
+        netinet/in.h &
+        netinet/tcp.h &
+        arpa/inet.h
 
 all : $($(system)_files) .symbolic
     @%null

@@ -12,5 +12,7 @@
 !inject opendir.obj                                                                     l32
 !inject readdir.obj                                                                     l32
 !inject closedir.obj                                                                    l32
+!inject bind.obj                                                                        l32
+!inject socket.obj                                                                      l32
 
 !include ../../../../objlist.mif
