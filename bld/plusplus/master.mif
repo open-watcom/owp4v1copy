@@ -182,7 +182,7 @@ extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 wlink_dll_os2_386 = OPTION manyautodata
 
 #######################################
-# workaround for OW 1.0 WLINK problem 
+# workaround for OW 1.0 WLINK problem
 #######################################
 linker+= op caseex
 #######################################
@@ -453,7 +453,7 @@ pexe.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dbgfmt)
     @%append $^@ $(wlink_opt_common_exe)
     @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
-    @%append $^@ library $(xlibs)
+    @%append $^@ library { $(xlibs) }
 
 #
 # -- production version
@@ -505,7 +505,7 @@ pdll.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dll_$(host_os)_$(host_cpu))
     @%append $^@ $(wlink_opt_common_dll)
     @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
-    @%append $^@ library $(xlibs)
+    @%append $^@ library { $(xlibs) }
     @%append $^@ reference __DLLstart_
 
 #

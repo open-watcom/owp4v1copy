@@ -48,7 +48,9 @@ object =                &
 
 inc_dirs = ../src;../dev
 
-extra_c_flags = -fpc -s
+extra_c_flags = -s
+extra_c_flags_i86= -fpc
+extra_c_flags_386= -fpc
 extra_c_flags_win = -zu -zw
 extra_c_flags_fmedit = -bd
 
