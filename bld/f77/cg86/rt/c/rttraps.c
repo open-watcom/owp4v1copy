@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time exception handling.
 *
 ****************************************************************************/
 
-
-//
-// RTTRAPS      : run-time exception handling
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -333,8 +328,8 @@ void    R_TrapInit() {
     }
 #elif _OPSYS == _OS2
     signal( SIGBREAK, BreakSignal );
-    DosSetVec( IntOverFlow, IOvFlHandler, (PFN FAR *)&ISave );
-    DosSetVec( IntDivBy0, IDivZHandler, (PFN FAR *)&ZSave );
+    DosSetVec( IntOverFlow, (PFN)IOvFlHandler, (PFN FAR *)&ISave );
+    DosSetVec( IntDivBy0, (PFN)IDivZHandler, (PFN FAR *)&ZSave );
 #endif
     FPTrapInit();
 }
@@ -358,8 +353,8 @@ void    R_TrapFini() {
     #endif
 #elif _OPSYS == _OS2
     #if !defined( __386__ )
-        DosSetVec( IntOverFlow, ISave, (PFN FAR *)&ISave );
-        DosSetVec( IntDivBy0, ZSave, (PFN FAR *)&ZSave );
+        DosSetVec( IntOverFlow, (PFN)ISave, (PFN FAR *)&ISave );
+        DosSetVec( IntDivBy0, (PFN)ZSave, (PFN FAR *)&ZSave );
     #endif
 #endif
     FPTrapFini();
