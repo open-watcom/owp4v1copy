@@ -66,6 +66,7 @@
 #define F_HEX_4     "(%x)"
 #define F_S64       "(%i64d)"
 #define F_STRING    "(" F_NAME ")"
+#define F_QSTRING   "('" F_NAME "')"
 #define F_EOL       "\n"
 #define F_NL        "\n    "
 #define F_TGT_OFFSET F_HEX_2
@@ -481,7 +482,7 @@ void DumpSymbol(                // DUMP SYMBOL ENTRY
                 " flag2"        F_HEX_1
                 " segid"        F_HEX_2
                 F_NL
-                " symbol-name=" F_STRING
+                " symbol-name=" F_QSTRING
                 F_EOL
               , sym
               , sym->next
@@ -1097,6 +1098,7 @@ static void dumpPtreeFlags      // DUMP FLAGS IN PTREE NODE
     char const * end = &line[ sizeof( line ) ];
     char * cur = line;
     unsigned ctr;
+    stpcpy( cur, "" );
     for( ctr = 0; ; ++ ctr ) {
         unsigned flag = flag_value[ ctr ];
         if( 0 == flag ) break;
