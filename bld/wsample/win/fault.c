@@ -39,7 +39,7 @@
 /*
  * FaultHandler - C handler for a fault
  */
-WORD __cdecl FAR FaultHandler( volatile fault_frame ff )
+WORD __cdecl FAR FaultHandler( fault_frame ff )
 {
     BOOL        fault32;
     DWORD       offset;
