@@ -89,7 +89,7 @@ static bool CmdEvent( gui_window * gui, gui_event gui_ev, void * param )
             if( text != NULL ) {
                 if( text[0] != '\0' )
                     WndSaveToHistory( CmdHistory, text );
-                DoCmd( text );
+                DoCmd( DupStr( text ) );
                 GUIMemFree( text );
             }
             break;
