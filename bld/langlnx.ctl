@@ -33,6 +33,10 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/emu/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
 <CPCMD> <devdir>/cc/wcl/linux386/wcl386.exe <devdir>/build/binl/wcl386
+[ INCLUDE <devdir>/cfloat/lang.ctl ]
+[ INCLUDE <devdir>/owl/lang.ctl ]
+[ INCLUDE <devdir>/dwarf/lang.ctl ]
+[ INCLUDE <devdir>/cg/lang.ctl ]
 [ INCLUDE <devdir>/cc/lang.ctl ]
 <CPCMD> <devdir>/cc/linux386/wcc386c.elf <devdir>/build/binl/wcc386
 <CPCMD> <devdir>/cc/linuxi86/wcci86c.elf <devdir>/build/binl/wcc
