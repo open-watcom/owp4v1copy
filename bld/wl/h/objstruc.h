@@ -121,25 +121,25 @@ typedef struct infilelist {
 } infilelist;
 
 enum file_status {
-    DBI_LINE        = 0x00000001,    /*  values for DBIFlag */
-    DBI_TYPE        = 0x00000002,
-    DBI_LOCAL       = 0x00000004,
-    DBI_EXPORTS     = 0x00000008,
-    DBI_STATICS     = 0x00000010,
-    DBI_ALL         = (DBI_LINE | DBI_TYPE | DBI_LOCAL | DBI_STATICS),
-    DBI_MASK        = (DBI_ALL | DBI_EXPORTS),
-    STAT_HAS_CHANGED= 0x00000040,
-    STAT_OMF_LIB    = 0x00000080,
-    STAT_AR_LIB     = 0x00000100,
-    STAT_IS_LIB     = (STAT_AR_LIB | STAT_OMF_LIB),
-    STAT_LAST_SEG   = 0x00000200,    // set by newsegment option
-    STAT_TRACE_SYMS = 0x00000400,
-    STAT_LIB_FIXED  = 0x00000800,
-    STAT_OLD_LIB    = 0x00001000,
-    STAT_LIB_USED   = 0x00002000,
-    STAT_SEEN_LIB   = 0x00004000,
-    STAT_HAS_MEMBER = 0x00008000,
-    STAT_USER_SPECD = 0x00010000
+    DBI_LINE            = 0x00000001,    /*  values for DBIFlag */
+    DBI_TYPE            = 0x00000002,
+    DBI_LOCAL           = 0x00000004,
+    DBI_ONLY_EXPORTS    = 0x00000008,
+    DBI_STATICS         = 0x00000010,
+    DBI_ALL             = ( DBI_LINE | DBI_TYPE | DBI_LOCAL | DBI_STATICS ),
+    DBI_MASK            = ( DBI_ALL | DBI_ONLY_EXPORTS ),
+    STAT_HAS_CHANGED    = 0x00000040,
+    STAT_OMF_LIB        = 0x00000080,
+    STAT_AR_LIB         = 0x00000100,
+    STAT_IS_LIB         = ( STAT_AR_LIB | STAT_OMF_LIB ),
+    STAT_LAST_SEG       = 0x00000200,    // set by newsegment option
+    STAT_TRACE_SYMS     = 0x00000400,
+    STAT_LIB_FIXED      = 0x00000800,
+    STAT_OLD_LIB        = 0x00001000,
+    STAT_LIB_USED       = 0x00002000,
+    STAT_SEEN_LIB       = 0x00004000,
+    STAT_HAS_MEMBER     = 0x00008000,
+    STAT_USER_SPECD     = 0x00010000
 };
 
 typedef struct file_list {

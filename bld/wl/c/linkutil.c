@@ -234,7 +234,6 @@ static void WalkModList( section *sect, void *rtn )
 extern void WalkMods( void (*rtn)( mod_entry * ) )
 /************************************************/
 {
-    CurrSect = Root;
     ParmWalkAllSects( WalkModList, rtn );
     CurrSect = Root;
     WalkList( (node *)LibModules, (void (*)(void *))rtn );

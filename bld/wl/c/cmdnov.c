@@ -694,7 +694,7 @@ extern bool ProcNovDBI( void )
 extern bool ProcExportsDBI( void )
 /********************************/
 {
-    DBIFlag |= DBI_EXPORTS;
+    DBIFlag |= DBI_ONLY_EXPORTS;
     FmtData.u.nov.flags |= DO_WATCOM_EXPORTS;
     return( TRUE );
 }

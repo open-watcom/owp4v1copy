@@ -55,6 +55,8 @@
 #define ADDR_INFO_LIMIT ( 63 * 1024U / sizeof( addrinfo ) )
 #define DEMAND_INFO_SPLIT ( 16 * 1024 )
 
+#define NON_SECT_INFO 0x8000
+
 typedef struct {
     unsigned_32 offset;
     unsigned_16 num;
@@ -210,7 +212,7 @@ static void DoAddLocal( dbi_section * dbi, offset length )
 extern void ODBIAddLocal( unsigned_16 info, offset length )
 /*********************************************************/
 {
-    debug_info *        dinfo;
+    debug_info          *dinfo;
 
     dinfo = CurrSect->dbg_info;
     if( dinfo == NULL )
@@ -227,7 +229,7 @@ extern void ODBIAddLocal( unsigned_16 info, offset length )
 extern void ODBIP1ModuleScanned( void )
 /*************************************/
 {
-    debug_info *        dinfo;
+    debug_info          *dinfo;
 
     dinfo = CurrSect->dbg_info;
     if( dinfo == NULL )
@@ -264,8 +266,8 @@ static void DoGenLocal( dbi_section *dsect, dbi_section * dlink,
 extern void ODBIGenLocal( segdata *sdata )
 /****************************************/
 {
-    debug_info *        dinfo;
-    odbimodinfo *       minfo;
+    debug_info          *dinfo;
+    odbimodinfo         *minfo;
 
     dinfo = CurrSect->dbg_info;
     if( dinfo == NULL )
@@ -290,7 +292,7 @@ static void ODBIAddLines( segdata * seg, void *lines, unsigned size,
 {
     unsigned            lineqty;
     unsigned_32         linesize;
-    debug_info *        dinfo;
+    debug_info          *dinfo;
 
     lines = lines;
     seg = seg;
@@ -304,7 +306,7 @@ static void ODBIAddLines( segdata * seg, void *lines, unsigned size,
 extern void ODBIP1ModuleFinished( mod_entry *obj )
 /************************************************/
 {
-    debug_info *        dinfo;
+    debug_info          *dinfo;
 
     dinfo = CurrSect->dbg_info;
     if( ( dinfo == NULL ) || !( obj->modinfo & DBI_ALL ) )
@@ -340,18 +342,19 @@ extern void ODBIDefClass( class_entry *cl, unsigned_32 size )
 static int ODBISymIsForGlobalDebugging( symbol *sym, mod_entry *currMod )
 /***********************************************************************/
 {
-    return( !( sym->info & SYM_EXPORTED ) && !( sym->info & SYM_STATIC )
-        || ( currMod->modinfo & DBI_EXPORTS ) && ( sym->info & SYM_EXPORTED )
-        || ( currMod->modinfo & DBI_STATICS ) && ( sym->info & SYM_STATIC ) );
+    return( !( CurrMod->modinfo & DBI_ONLY_EXPORTS )
+        && ( ( CurrMod->modinfo & DBI_STATICS ) || !( sym->info & SYM_STATIC ) ) );
 }
 
 extern void ODBIAddGlobal( symbol *sym )
 /**************************************/
 {
-    debug_info *    dinfo;
+    debug_info      *dinfo;
     unsigned        add;
 
     dinfo = CurrSect->dbg_info;
+    if( dinfo == NULL )
+        return;
     if( ODBISymIsForGlobalDebugging( sym, CurrMod ) ) {
         add = strlen( sym->name );
         if( add > 255 ) {
@@ -365,7 +368,7 @@ extern void ODBIAddGlobal( symbol *sym )
 extern void ODBIAddrSectStart( section *sect )
 /********************************************/
 {
-    debug_info *    dptr;
+    debug_info      *dptr;
 
     dptr = sect->dbg_info;
     if( dptr == NULL )
@@ -451,9 +454,9 @@ extern void ODBIGenGlobal( symbol * sym, section *sect )
 {
     int         len;
     int         entrylen;
-    gblinfo *   data;
-    char *      name;
-    debug_info *dptr;
+    gblinfo     *data;
+    char        *name;
+    debug_info  *dptr;
 
     dptr = sect->dbg_info;
     if( dptr == NULL )
@@ -489,7 +492,7 @@ extern void ODBIGenGlobal( symbol * sym, section *sect )
 extern void ODBIAddModule( mod_entry *obj, section *sect )
 /********************************************************/
 {
-    debug_info *        dptr;
+    debug_info          *dptr;
 
     dptr = sect->dbg_info;
     if( ( dptr == NULL ) || !( obj->modinfo & DBI_ALL ) )
@@ -510,9 +513,13 @@ extern void ODBIP2Start( section * sect )
 /* initialize pointers for pass 2 processing */
 
 {
-    debug_info *        dptr;
+    debug_info          *dptr;
 
-    dptr = sect->dbg_info;
+    if( sect == NonSect ) {
+        dptr = Root->dbg_info;
+    } else {
+        dptr = sect->dbg_info;
+    }
     if( dptr != NULL ) {
         dptr->DBIWrite = dptr->addr.curr;
         SectWalkClass( sect, ODBIGenAddrInfo );
@@ -555,9 +562,9 @@ extern void ODBIGenLines( segdata * seg, void *lines, unsigned size,
     ln_off_386          tmp_ln;
     unsigned_32         temp;
     unsigned            lineqty;
-    debug_info *        dinfo;
+    debug_info          *dinfo;
     lineseg             lseg;
-    segdata *           firstseg;
+    segdata             *firstseg;
     unsigned_32         prevoff;
     offset              adjust;
     bool                needsort;
@@ -633,78 +640,95 @@ static void ODBIAddAddrInit( segdata *sdata, void *cookie )
 }
 
 static void ODBIAddAddrAdd( segdata *sdata, offset delta, offset size,
-                            void *cookie, bool isnewmod )
+                            void *_dinfo, bool isnewmod )
 /*******************************************************/
 {
-    cookie = cookie;
     delta = delta;
     size = size;
     if( !isnewmod )
         return;
-    ((debug_info *)CurrSect->dbg_info)->addr.size += sizeof( addrinfo );
+    ((debug_info *)_dinfo)->addr.size += sizeof( addrinfo );
     sdata->u.leader->num++;
 }
 
 extern void ODBIAddAddrInfo( seg_leader *seg )
 /********************************************/
 {
-    if( CurrSect->dbg_info == NULL )
+    debug_info *dptr;
+
+    if( CurrSect == NonSect ) {
+        dptr = Root->dbg_info;
+    } else {
+        dptr = CurrSect->dbg_info;
+    }
+    if( dptr == NULL )
         return;
-    DBIAddrInfoScan( seg, ODBIAddAddrInit, ODBIAddAddrAdd, NULL );
+    DBIAddrInfoScan( seg, ODBIAddAddrInit, ODBIAddAddrAdd, dptr );
     if( seg->num > 0 ) {
-        ((debug_info *)CurrSect->dbg_info)->addr.size += sizeof( segheader );
+        dptr->addr.size += sizeof( segheader );
     }
 }
 
-static void ODBIGenAddrInit( segdata *sdata, void *_prevaddroff )
-/***************************************************************/
+static void ODBIGenAddrInit( segdata *sdata, void *_dinfo )
+/********************************************************/
 {
     segheader   seghdr;
-    seg_leader *seg;
-    unsigned_32 *prevaddroff = (unsigned_32*)_prevaddroff;
+    seg_leader  *seg;
+    debug_info  *dptr = _dinfo;
 
     seg = sdata->u.leader;
-    seghdr.off = seg->seg_addr.off;
-    seghdr.seg = seg->seg_addr.seg;
+    if( seg->group == NULL ) {
+        seghdr.off = seg->seg_addr.off;
+        seghdr.seg = seg->seg_addr.seg;
+    } else {
+        seghdr.off = seg->group->grp_addr.off 
+                     + SUB_ADDR( seg->seg_addr, seg->group->grp_addr );
+        seghdr.seg = seg->group->grp_addr.seg;
+    }
     seghdr.num = seg->num;
-    DumpInfo( CurrSect->dbg_info, &seghdr, sizeof( segheader ) );
-    *prevaddroff = ((debug_info *)CurrSect->dbg_info)->DBIWrite;
+    if( CurrSect == NonSect )
+        seghdr.num |= NON_SECT_INFO;
+    DumpInfo( dptr, &seghdr, sizeof( segheader ) );
+    dptr->addr.curr += sizeof( segheader );
 }
 
 static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
-                            void *_prevaddroff, bool isnewmod )
-/*************************************************************/
+                            void *_dinfo, bool isnewmod )
+/********************************************************************/
 {
     addrinfo    addr;
-    debug_info *dptr;
-    unsigned_32 *prevaddroff = (unsigned_32*)_prevaddroff;
+    debug_info  *dptr = _dinfo;
 
     delta = delta;
-    dptr = CurrSect->dbg_info;
     if( isnewmod ) {
         addr.size = size;
         addr.mod_idx = sdata->o.mod->d.o->modnum;
         DumpInfo( dptr, &addr, sizeof( addrinfo ) );
+        sdata->o.addrinfo = dptr->addr.curr - dptr->addr.init;
+        dptr->addr.curr += sizeof( addrinfo );
     }
-    sdata->o.addrinfo = *prevaddroff - dptr->addr.init;
-    *prevaddroff = dptr->DBIWrite;
 }
 
 static void ODBIGenAddrInfo( seg_leader *seg )
 /********************************************/
 {
-    unsigned_32 prevaddroff;
+    debug_info  *dptr;
 
-    if( ( CurrSect->dbg_info == NULL ) || ( seg->num == 0 ) )
+    if( CurrSect == NonSect ) {
+        dptr = Root->dbg_info;
+    } else {
+        dptr = CurrSect->dbg_info;
+    }
+    if( ( dptr == NULL ) || ( seg->num == 0 ) )
         return;
-    DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, &prevaddroff );
+    DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
 extern void ODBIFini( section *sect )
 /***********************************/
 // write out the final links in the link tables.
 {
-    debug_info *        dptr;
+    debug_info          *dptr;
     unsigned_32         spot;
 
     if( sect == NonSect ) {
@@ -725,11 +749,11 @@ extern void ODBIFini( section *sect )
 extern void ODBIGenModule( void )
 /*******************************/
 {
-    odbimodinfo *       rec;
-    modinfo *           info;
+    odbimodinfo         *rec;
+    modinfo             *info;
     int                 len;
-    char *              name;
-    debug_info *        dptr;
+    char                *name;
+    debug_info          *dptr;
 
     dptr = CurrSect->dbg_info;
     if( ( dptr == NULL ) || !( CurrMod->modinfo & DBI_ALL ) )
@@ -840,7 +864,7 @@ extern void OWriteDBI( void )
 extern void WriteDBISecs( section *sec )
 /**************************************/
 {
-    debug_info *    dptr;
+    debug_info      *dptr;
     sectheader      header;
     unsigned long   pos;
 
