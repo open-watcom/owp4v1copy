@@ -103,7 +103,7 @@ $(OBJDIR)/weights1.gh $(OBJDIR)/keyword1.gh	: hash/rc1.key
 $(OBJDIR)/weights2.gh $(OBJDIR)/keyword2.gh	: hash/rc2.key
 	$(CC) ../../../fe_misc/c/findhash.c -o $(OBJDIR)/findhash
 	@rm -f $(OBJDIR)/weights2.gh $(OBJDIR)/keyword2.gh
-	cd $(OBJDIR);findhash ../hash/rc2.key >/dev/null; mv weights.gh weights2.gh; mv keywords.gh keyword2.gh
+	cd $(OBJDIR);./findhash ../hash/rc2.key >/dev/null; mv weights.gh weights2.gh; mv keywords.gh keyword2.gh
 	@rm $(OBJDIR)/findhash
 
 clean	:

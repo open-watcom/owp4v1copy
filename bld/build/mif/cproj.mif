@@ -208,7 +208,7 @@ inc_dirs_lang   = $(lang_root)/h;
 inc_dirs_sys    = $(inc_dirs_lang)$(inc_dirs_sys_$(host_os))
 inc_path        = $(inc_dirs);$(inc_dirs_$(host_os))$(inc_dirs_sys)$(watcom_dir)/h
 
-yacc            = $(bld_bin)/yacc
+yacc            = $(bld_bin)/wyacc
 re2c            = $(bld_bin)/re2c
 
 !else

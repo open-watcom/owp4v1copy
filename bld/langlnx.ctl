@@ -40,6 +40,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/wl/lang.ctl ]
 [ INCLUDE <devdir>/wmake/lang.ctl ]
 [ INCLUDE <devdir>/wasm/lang.ctl ]
+[ INCLUDE <devdir>/ndisasm/lang.ctl ]
 
 [ BLOCK <1> clean ]
     rm -rf <devdir>/clib/<OBJDIR>

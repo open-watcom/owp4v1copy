@@ -125,11 +125,7 @@ ytab.obj : ytab.c param.h ytab.gh
 #!endif
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
-!ifdef __LINUX__
-        wacc -d -b $[@ $[:yydriver.c  >nul
-!else
         $(yacc) -d -b $[@ $[:yydriver.c  >nul
-!endif
         @cp ytab.c $(wrc_dir)/c
         @cp ytab.h $(wrc_dir)/h/ytab.gh
         @rm -f ytab.h

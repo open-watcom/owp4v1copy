@@ -1129,7 +1129,7 @@ void Set_ZK3()
     CompFlags.use_unicode = 0;          /* 24-mar-00 */
     SetDBChar( 3 );                     /* set double-byte char type */
 }
-#if _OS != __LINUX__
+#if _OS != _LINUX
 void Set_ZKL()
 {
     CompFlags.use_unicode = 0;          /* 05-jun-91 */
@@ -1460,7 +1460,7 @@ struct option const CFE_Options[] = {
     { "zk1",    0,              Set_ZK1 },
     { "zk2",    0,              Set_ZK2 },
     { "zk3",    0,              Set_ZK3 },
-#if _OS != __LINUX__
+#if _OS != _LINUX
     { "zkl",    0,              Set_ZKL },
 #endif
     { "zku*",   0,              Set_ZKU },

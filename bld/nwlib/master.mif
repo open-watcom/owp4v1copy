@@ -116,7 +116,7 @@ $(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !else
         $(LINKER) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
 !endif
-        wstrip /q /a /r $^@ . wlib.res
+        wstrip -q -a -r $^@ . wlib.res
 
 
 error.obj : ../h/msg.gh error.c
