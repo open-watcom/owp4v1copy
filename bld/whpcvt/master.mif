@@ -1,63 +1,24 @@
 #
-# WHPVCT Makefile
-# ===============
-# This makefile builds the WATCOM Help converter.
+# Watcom Help converter (WHPVCT) Makefile
+# =======================================
+#
 
-!ifndef %STD_INCLUDE
-!   define %STD_INCLUDE $+ $(%INCLUDE) $-
-!endif
+proj_name = whpcvt
 
-.before
-    set INCLUDE=$(%STD_INCLUDE)
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
-CFLAGS=/zc/mf/ox/zq/w4/fpc
+inc_dirs = $(whpcvt_dir)\h
 
-!ifndef %MAKE_DEBUG
-CFLAGS +=/d2
-!else
-CFLAGS +=/$(%MAKE_DEBUG)
-!endif
-# to debug ptf2rtf (DOS only, not OS/2): wvideo /tr=pls whpcvt -i -k ...
+.c: ..\c
 
-.c   : ..\c
+objs =              &
+        whpcvt.obj  &
+        rtf.obj     &
+        ipf.obj     &
+        ib.obj      &
+        html.obj
 
-objs = &
-    whpcvt.obj &
-    rtf.obj &
-    ipf.obj &
-    ib.obj &
-    html.obj
-
-
-whpcvt.exe : $(objs) whpcvt.lnk
-    wlink @whpcvt
-!ifeq version pharlap
-    $(%PHARLAP)\bind386 $(%PHARLAP)\run386b.exe $*.exp -exe $*.exe
-!endif
-
-whpcvt.lnk : makefile ..\master.mif
-    @%create $^@
-!ifeq version fred
-    @%append $^@ format pharlap rex
-    @%append $^@ library clib3r.lib
-!else
-    @%append $^@ debug all
-!ifeq version pharlap
-    @%append $^@ system pharlap
-    @%append $^@ RUNTIME MAXREAL=0xffff0
-    @%append $^@ name $^&
-!else ifeq version win32
-    @%append $^@ system nt
-!else
-    @%append $^@ system os2v2
-!endif
-!endif
-    @%append $^@ option map
-    @for %i in ($(objs)) do @%append $^@ file %i
-
-.c.obj :
-    wcc386 $(CFLAGS) $[*
-
-clean : .symbolic
-    rm whpcvt.*
-    rm -f *.obj
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }

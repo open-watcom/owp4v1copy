@@ -229,6 +229,9 @@ wdisasm_dir     = $(dev_dir)\wdisasm
 !ifndef yacc_dir
 yacc_dir        = $(dev_dir)\yacc
 !endif
+!ifndef whpcvt_dir
+whpcvt_dir        = $(dev_dir)\whpcvt
+!endif
 !ifndef aui_dir
 aui_dir         = $(dev_dir)\aui
 !endif

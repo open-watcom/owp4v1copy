@@ -11,6 +11,7 @@ echo Languages Build <1>
 
 #       First of all build prerequisite utilities
 [ INCLUDE <devdir>\yacc\lang.ctl ]
+[ INCLUDE <devdir>\whpcvt\lang.ctl ]
 [ INCLUDE <devdir>\ssl\lang.ctl ]
 #
 #       Before building anything for real, create up-to-date header files
