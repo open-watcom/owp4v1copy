@@ -110,6 +110,7 @@ extern void             InputQueueLine( char * );
 static char *Check4Mangler( int *i );
 void         find_use32( void );
 static int   token_cmp( char **token, int start, int end );
+static void  ModelAssumeInit( void );
 
 extern  char            write_to_file;  // write if there is no error
 extern  uint_32         BufSize;
