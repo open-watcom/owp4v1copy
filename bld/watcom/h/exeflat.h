@@ -32,7 +32,7 @@
 
 #ifndef _EXEFLAT_H
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 #define OSF_FLAT_RESERVED 20
 
@@ -304,7 +304,7 @@ typedef struct flat_res_table {
 #define OSF_OBJ_ORD         0x40
 #define OSF_ORD_FLAG        0x80
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #define _EXEFLAT_H
 #endif

@@ -38,7 +38,7 @@ extern "C" {
 
 #include <watcom.h>
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 // elf scalar data types
 
@@ -639,7 +639,7 @@ typedef struct {
     Elf32_Word  lib_name;
 } Elf32_Library;
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #ifdef __cplusplus
 };

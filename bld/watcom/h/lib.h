@@ -34,7 +34,7 @@
 
 #define LIB_H
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 #define LIBMAG          "!<mlib>\n"
 #define LIBMAG_LEN      8
@@ -87,6 +87,6 @@ typedef struct
 #define LIB_LONG_NAME_END_STRING        "/\n"
 #define LIB_LONG_NAME_END_STRING_LEN    2
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #endif

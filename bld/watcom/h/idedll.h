@@ -60,6 +60,7 @@ typedef unsigned short  IDEBool;
 typedef unsigned long   IDEDllHdl;
 typedef unsigned long   IDECBHdl;
 
+struct IDEMsgInfo;
 typedef void (*BatchFilter)( void *cookie, const char *msg );
 typedef void (*BatchDllFilter)( void *cookie, struct IDEMsgInfo *errinfo );
 

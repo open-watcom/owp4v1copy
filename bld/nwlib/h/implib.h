@@ -82,7 +82,7 @@ extern char ElfOSInfo[];
 #define ElfBase_SIZE            0x122
 #define ElfOSInfo_SIZE          0x28
 
-#pragma pack (push, 1);
+#pragma pack (push, 1)
 
 typedef struct {
     unsigned_32         flags;
@@ -106,4 +106,4 @@ typedef unsigned_16 Coff32_EOrd;
 #define ELF_IMPORT_SYM_INFO             0x10
 #define ELF_IMPORT_NAMED_SYM_INFO       0x15
 
-#pragma pack (pop);
+#pragma pack (pop)

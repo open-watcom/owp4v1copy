@@ -72,7 +72,7 @@ typedef struct{
     unsigned_8  fflag;
     unsigned_8  name[ BLOCK_NAME_LEN ];
 } OmfLibBlock;
-#pragma pack
+#pragma pack()
 
 void InitOmfUtil();
 void PadOmf( bool force );
