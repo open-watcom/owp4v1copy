@@ -1,10 +1,10 @@
 :: OpenWatcom only defines clock_t in time.h/ctime. However, the legacy
-:: OW declaration was protected by an inclusion gaurd that defined the
+:: OW declaration was protected by an inclusion guard that defined the
 :: symbol _CLOCK_T_DEFINED. This was done for compatibility with MS
 :: Visual C. When I upgraded time.mh to support the generation of ctime,
 :: I created this file. This complexity is technically unnecessary for
 :: OpenWatcom, but this is the correct way to handle types defined with
-:: inclusion gaurds. For consistency with size_t, time_t, and other similar
+:: inclusion guards. For consistency with size_t, time_t, and other similar
 :: types, I felt it appropriate to configure clock_t in this way as well.
 ::
 ::Peter C. Chapin
