@@ -44,7 +44,7 @@
 #define _BETA_                  _BANEXTRA
 #endif
 
-#define CURR_YEAR       "2002"
+#define CURR_YEAR       "2003"
 
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
@@ -83,6 +83,8 @@
     #define BAN_VER_STR "1.0" _BETA_
 #elif _BANVER == 1210
     #define BAN_VER_STR "1.1" _BETA_
+#elif _BANVER == 1220
+    #define BAN_VER_STR "1.2" _BETA_
 #else
     #error **** Specified Banner version not supported ****
     #define BAN_VER_STR "12.0" _BETA_
