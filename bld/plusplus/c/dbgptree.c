@@ -551,7 +551,7 @@ static void printNode(          // PRINT A NODE
 
 
 static void printSubtree(       // PRINT A SUBTREE
-    SUBTREE *subtree )          // - subtree to be printed
+    void *_subtree )          // - subtree to be printed
 {
     char buffer[ 256 ];         // - buffer
     char *bptr;                 // - buffer ptr
@@ -559,6 +559,8 @@ static void printSubtree(       // PRINT A SUBTREE
     NODE *node;                 // - current node
     TOKEN_LOCN locn;            // - subtree location
     boolean print_locn;         // - TRUE ==> print location
+
+    SUBTREE *subtree = _subtree;
 
     begLine();
     if( subtree->next == subtrees ) {
@@ -621,7 +623,7 @@ void DbgPrintPTREE(             // PRINT A PARSE-TREE BEAUTIFULLY
     subtrees = NULL;
     decoration = NULL;
     buildSubtree( root );
-    RingWalk( subtrees, (void(*)(void*))&printSubtree );
+    RingWalk( subtrees, &printSubtree );
     printDecoration();
     CarveDestroy( carveNode );
     CarveDestroy( carveLine );
