@@ -279,6 +279,27 @@ void MakeConstantUnderscored( int token )
     createconstant( buffer, TRUE, 0, TRUE, FALSE );
 }
 
+static void FreeConstData( const_info *constinfo )
+{
+    if( constinfo->data != NULL ) {
+
+        int i;
+        
+        for( i=0; i < constinfo->count; i++ ) {
+#ifdef DEBUG_OUT
+            if( constinfo->data[i].token == T_NUM ) {
+                DebugMsg(( "%d ", constinfo->data[i].value ));
+            } else {
+                DebugMsg(( "%s ", constinfo->data[i].string_ptr ));
+            }
+#endif
+            AsmFree( constinfo->data[i].string_ptr );
+        }
+        DebugMsg(( "\n" ));
+        AsmFree( constinfo->data );
+    }
+}
+
 static int createconstant( char *name, bool value, int start, bool redefine, bool expand_early )
 /**********************************************************************************************/
 {
@@ -287,6 +308,8 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
     struct asm_sym      *sym;
     int                 i;
     int                 count;
+    int                 counta;
+    bool                can_be_redefine;
 
     sym = AsmGetSymbol( name );
 
@@ -305,7 +328,6 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             dir_change( dir, TAB_CONST );
             dir->e.constinfo->redefine = redefine;
             dir->e.constinfo->expand_early = expand_early;
-            sym->grpidx = sym->segidx = sym->offset = 0;
         } else if(( sym->state != SYM_CONST )
             || (( dir->e.constinfo->redefine == FALSE ) && ( Parse_Pass == PASS_1 ))) {
             /* error */
@@ -321,50 +343,48 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         new[0].token = T_NUM;
         new[0].value = 1;
         new[0].string_ptr = NULL;
-
-        if( dir->e.constinfo->data != NULL ) {
-            dir_change( dir, TAB_CONST );
-            dir->e.constinfo->redefine = redefine;
-            dir->e.constinfo->expand_early = expand_early;
-        }
+        FreeConstData( dir->e.constinfo );
         dir->e.constinfo->count = 1;
         dir->e.constinfo->data = new;
         return( NOT_ERROR );
     }
 
     /* expand any constants */
-    if( ExpandTheWorld( start, FALSE, TRUE ) == ERROR ) return( ERROR );
+    if( ExpandTheWorld( start, FALSE, TRUE ) == ERROR )
+        return( ERROR );
 
-    for( i=start; AsmBuffer[i]->token != T_FINAL; i++ );
-    count = i-start;
+    for( counta = 0, i = start; AsmBuffer[i]->token != T_FINAL; i++ ) {
+        if( ( AsmBuffer[i]->token != T_STRING ) 
+            || ( AsmBuffer[i]->value != 0 ) ) {
+            counta++;
+        }
+    }
+    count = i - start;
 
-    new = AsmAlloc( count * sizeof( struct asm_tok ) );
+    if( counta == 0 ) {
+        new = NULL;
+        count = 0;
+        can_be_redefine = TRUE;
+    } else {
+        new = AsmAlloc( counta * sizeof( struct asm_tok ) );
+        can_be_redefine = ( counta > 1 ) ? TRUE : FALSE;
+    }
     for( i=0; i < count; i++ ) {
         switch( AsmBuffer[start+i]->token ) {
         case T_STRING:
             if( AsmBuffer[start+i]->value == 0 ) {
                 i--;
                 count--;
+                start++;
                 continue;
             }
+            can_be_redefine = TRUE;
             break;
-#if 0   // ?? I think it has no sense
-        case T_ID:
-            if( IS_SYM_COUNTER( AsmBuffer[start+i]->string_ptr ) ) {
-                char            buff[40];
-                /*
-                    We want a '$' symbol to have the value at it's
-                    point of definition, not point of expansion.
-                */
-                sprintf( buff, ".$%x/%lx", GetCurrSeg(), (unsigned long)GetCurrAddr() );
-                AsmBuffer[start+i]->string_ptr = buff;
-                sym = AsmGetSymbol( buff );
-                if( sym == NULL ) {
-                    MakeLabel( buff, T_NEAR );
-                }
-            }
+        case T_NUM:
             break;
-#endif
+        default:
+            can_be_redefine = TRUE;
+            break;
         }
         new[i].token = AsmBuffer[start + i]->token;
         memcpy( new[i].bytes, AsmBuffer[start + i]->bytes, sizeof( new[i].bytes ) );
@@ -375,11 +395,9 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             strcpy( new[i].string_ptr, AsmBuffer[start+i]->string_ptr );
         }
     }
-    if( dir->e.constinfo->data != NULL ) {
-        dir_change( dir, TAB_CONST );
-        dir->e.constinfo->redefine = redefine;
-        dir->e.constinfo->expand_early = expand_early;
-    }
+    if( ( sym == NULL ) && can_be_redefine )
+        dir->e.constinfo->redefine = TRUE;
+    FreeConstData( dir->e.constinfo );
     dir->e.constinfo->count = count;
     dir->e.constinfo->data = new;
     return( NOT_ERROR );
