@@ -48,7 +48,7 @@ COMMANDS = &
 !else
 COMMANDS += &
 #    chmod &
-#    cp &
+    cp &
 #    df &
 #    du &
     egrep &
