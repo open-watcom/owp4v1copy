@@ -57,7 +57,8 @@ libfile LibOpen( char *name, int access )
     int io;
     libfile lio;
     if( access & O_CREAT ){
-        io = open( name, access, S_IREAD | S_IWRITE | S_IEXEC);
+        io = open( name, access, S_IRUSR | S_IRGRP | S_IROTH |
+                                 S_IWUSR | S_IWGRP | S_IWOTH );
     } else {
         io = open( name, access );
     }
@@ -66,7 +67,8 @@ libfile LibOpen( char *name, int access )
     if( io == -1 && errno == EMFILE ) {
         CloseOneInputLib();
         if( access & O_CREAT ){
-            io = open( name, access, S_IREAD | S_IWRITE | S_IEXEC);
+            io = open( name, access, S_IRUSR | S_IRGRP | S_IROTH | 
+                                     S_IWUSR | S_IWGRP | S_IWOTH );
         } else {
             io = open( name, access );
         }
