@@ -305,51 +305,45 @@ linkfile: .procedure
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 
-codei86.s: ../a/codei86.asm ../asm2s.sed
-        sed -f ../asm2s.sed $[@ > $@
-
-./mkcodi86.exe: ../a/codei86.asm ../a/mkcode.c
-        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
-        wcc -zq -ox $]@ @ipaths -fo=.obj
-!ifdef __OS2__
-        $(linker) -l=os2 f { mkcode.obj codei86.obj } -fe=$@ -zq
-!else
-        $(linker) f { mkcode.obj codei86.obj } -fe=$@ -zq
-!endif
-
-!ifdef bootstrap
-codei86.gh : codei86.s ../a/mkcode.c
-        $(CC) -D__i86__ $(INCLUDE) ../a/mkcode.c codei86.s -o mkcode
-        ./mkcode $^@
-	rm -f mkcode
-!else
-codei86.gh : ./mkcodi86.exe
-        $[@ $^@
-!endif
-
-code386.s: ../a/code386.asm ../asm2s.sed
-        sed -f ../asm2s.sed $[@ > $@
-
-./mkcod386.exe: ../a/code386.asm ../a/mkcode.c
-        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
-        wcc386 -zq $(popt) -ox $]@ @ipaths -fo=.obj
-        $(linker) $(lflags) f { mkcode.obj code386.obj } n $@
-
-!ifdef bootstrap
-code386.gh : code386.s ../a/mkcode.c
-        $(CC) -D__386__ $(INCLUDE) ../a/mkcode.c code386.s -o mkcode
-        ./mkcode $^@
-	rm -f mkcode
-!else
-code386.gh : ./mkcod386.exe
-        $[@ $^@
-!endif
+!ifeq target_cpu axp
 
 codeaxp.gh :
         echo // Dummy file > $@
 
+!else ifeq target_cpu ppc
+
 codeppc.gh :
         echo // Dummy file > $@
+
+!else  # Intel i86 or 386
+
+!ifdef bootstrap
+code$(target_cpu).gh : code$(target_cpu).s ../a/mkcode.c
+        $(CC) -D__$(target_cpu)__ $(INCLUDE) ../a/mkcode.c code$(target_cpu).s -o mkcode
+        ./mkcode $^@
+	rm -f mkcode
+!else
+code$(target_cpu).gh : ./mkcod$(target_cpu).exe
+        $[@ $^@
+!endif
+
+code$(target_cpu).s: ../a/code$(target_cpu).asm ../asm2s.sed
+        sed -f ../asm2s.sed $[@ > $@
+
+./mkcod$(target_cpu).exe: ../a/code$(target_cpu).asm ../a/mkcode.c
+        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
+!ifeq target_cpu i86
+        wcc -zq -ox $]@ @ipaths -fo=.obj
+!ifdef __OS2__
+        $(linker) sys os2 f { mkcode.obj code$(target_cpu).obj } n $@
+!else
+        $(linker) sys dos f { mkcode.obj code$(target_cpu).obj } n $@
+!endif
+!else
+        wcc386 -zq $(popt) -ox $]@ @ipaths -fo=.obj
+        $(bld_link) f { mkcode.obj code$(target_cpu).obj } n $@
+!endif
+!endif
 
 usage.gh: ../usage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os)  "-f\"%s\0\"" ../usage.sp usage.gh
