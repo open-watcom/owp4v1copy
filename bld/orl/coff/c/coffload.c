@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Load COFF Object into memory structures for next processing
-*               
+*
 *
 ****************************************************************************/
 
@@ -425,7 +425,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     if (determine_file_specs( coff_file_hnd, f_hdr )) {
         // we have identified an import_object_header
         // convert short import library structures to long import
-        // library structures, change _ClientRead and _ClientSeek 
+        // library structures, change _ClientRead and _ClientSeek
         // macros to read from converted metadata
         error = convert_import_library( coff_file_hnd );
         if ( error != ORL_OKAY ) {
@@ -448,7 +448,6 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     }
     coff_file_hnd->initial_size = sizeof( coff_file_header ) + f_hdr->opt_hdr_size + PEoffset;
     switch( coff_file_hnd->machine_type ) {
-    case ORL_MACHINE_TYPE_NONE:
     case ORL_MACHINE_TYPE_UNKNOWN:
         return( ORL_ERROR );
     default:
