@@ -41,7 +41,7 @@
 #include "wmsg.h"
 #include "winst.h"
 #include "wclip.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

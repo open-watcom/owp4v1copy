@@ -32,7 +32,7 @@
 #define USAGE_MSG_BASE  500
 
 #ifdef WR_COMPILED
-#include "wrcmsg.h"
+#include "wrcmsg.gh"
 #else
 #define MSG_LANG_SPACING        1000
 

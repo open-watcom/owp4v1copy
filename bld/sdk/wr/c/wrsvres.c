@@ -41,7 +41,7 @@
 #include "wrsvres.h"
 #include "wrmem.h"
 #include "wrmsg.h"
-#include "wrcmsg.h"
+#include "wrcmsg.gh"
 #include "wridfile.h"
 #include "wrtmpfil.h"
 #include "wrdatai.h"

@@ -55,7 +55,7 @@
 #include "wrestr.h"
 #include "wredlg.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wreimage.h"
 #include "wreimg.h"
 #include "jdlg.h"

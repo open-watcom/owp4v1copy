@@ -42,7 +42,7 @@
 #include "wvk2str.h"
 #include "wnewitem.h"
 #include "sys_rc.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

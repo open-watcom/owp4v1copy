@@ -50,7 +50,7 @@
 #include "wsetedit.h"
 #include "wclip.h"
 #include "sys_rc.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "jdlg.h"
 
 /****************************************************************************/

@@ -14,13 +14,28 @@
 
 name = wmenu
 
-sys_object =    wmain.sbj w_menu.sbj winfo.sbj whndl.sbj &
-                whints.sbj wstat.sbj  &
-                wtoolbar.sbj wribbon.sbj wedit.sbj &
-                wdel.sbj wnewitem.sbj &
-                wsvobj.sbj wprev.sbj wmen2rc.sbj
+sys_object =    wmain.obj w_menu.obj winfo.obj whndl.obj &
+                whints.obj wstat.obj  &
+                wtoolbar.obj wribbon.obj wedit.obj &
+                wdel.obj wnewitem.obj &
+                wsvobj.obj wprev.obj wmen2rc.obj
+
+extra_c_flags_wmain = -fhq
+extra_c_flags_w_menu = -fhq
+extra_c_flags_winfo = -fhq
+extra_c_flags_whndl = -fhq
+extra_c_flags_whints = -fhq
+extra_c_flags_wstat = -fhq
+extra_c_flags_wtoolbar = -fhq
+extra_c_flags_wribbon = -fhq
+extra_c_flags_wedit = -fhq
+extra_c_flags_wdel = -fhq
+extra_c_flags_wnewitem = -fhq
+extra_c_flags_wsvobj = -fhq
+extra_c_flags_wprev = -fhq
+extra_c_flags_wmen2rc = -fhq
 
 !include ../../mif/master.mif
 
-$(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.h &
+$(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.gh &
              wmenu.men menabout.dlg menedit.dlg

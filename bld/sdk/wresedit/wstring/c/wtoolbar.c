@@ -39,7 +39,7 @@
 #include "wmain.h"
 #include "wmem.h"
 #include "wmsg.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "whints.h"
 #include "wlist.h"
 #include "wtoolbar.h"

@@ -38,7 +38,7 @@
 #include "sys_rc.h"
 #include "wedit.h"
 #include "wmsg.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "w_menu.h"
 
 /****************************************************************************/

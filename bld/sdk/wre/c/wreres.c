@@ -47,7 +47,7 @@
 #include "wremain.h"
 #include "wrewait.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wremem.h"
 #include "wreselft.h"
 #include "wrenames.h"

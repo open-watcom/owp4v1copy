@@ -42,7 +42,7 @@
 #include "wre_wres.h"
 #include "wremem.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wreres.h"
 #include "wrestrdp.h"
 #include "wregcres.h"

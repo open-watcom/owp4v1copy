@@ -40,7 +40,7 @@
 #include "wregcres.h"
 #include "wre_wres.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wremem.h"
 #include "wredel.h"
 #include "wrenames.h"

@@ -15,7 +15,7 @@
 #include <windows.h>
 #include "banner.h"
 #include "wre_rc.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 
 #undef pick
 #undef sp

@@ -47,7 +47,7 @@
 #include "wrelist.h"
 #include "wrenew.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wredel.h"
 #include "wrestat.h"
 #include "wreres.h"

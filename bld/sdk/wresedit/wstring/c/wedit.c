@@ -46,7 +46,7 @@
 #include "wctl3d.h"
 #include "wsetedit.h"
 #include "wmsg.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "wstrdup.h"
 #include "widn2str.h"
 #include "wclip.h"

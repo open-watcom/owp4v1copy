@@ -14,13 +14,29 @@
 
 name = wacc
 
-sys_object =    wmain.sbj winfo.sbj wacc.sbj whndl.sbj &
-                whints.sbj wstat.sbj &
-                wtoolbar.sbj wribbon.sbj wedit.sbj &
-                wvk2str.sbj wdel.sbj wnewitem.sbj &
-                wkey.sbj wsvobj.sbj wacc2rc.sbj
+sys_object =    wmain.obj winfo.obj wacc.obj whndl.obj &
+                whints.obj wstat.obj &
+                wtoolbar.obj wribbon.obj wedit.obj &
+                wvk2str.obj wdel.obj wnewitem.obj &
+                wkey.obj wsvobj.obj wacc2rc.obj
+
+extra_c_flags_wmain = -fhq
+extra_c_flags_winfo = -fhq
+extra_c_flags_wacc = -fhq
+extra_c_flags_whndl = -fhq
+extra_c_flags_whints = -fhq
+extra_c_flags_wstat = -fhq
+extra_c_flags_wtoolbar = -fhq
+extra_c_flags_wribbon = -fhq
+extra_c_flags_wedit = -fhq
+extra_c_flags_wvk2str = -fhq
+extra_c_flags_wdel = -fhq
+extra_c_flags_wnewitem = -fhq
+extra_c_flags_wkey = -fhq
+extra_c_flags_wsvobj = -fhq
+extra_c_flags_wacc2rc = -fhq
 
 !include ../../mif/master.mif
 
-$(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.h &
+$(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.gh &
              accedit.dlg accabout.dlg acckey.dlg wacc.men

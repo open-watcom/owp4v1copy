@@ -42,7 +42,7 @@
 #include "wprev.h"
 #include "sys_rc.h"
 #include "wribbon.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

@@ -42,7 +42,7 @@
 #include "wcopystr.h"
 #include "wresall.h"
 #include "wmsg.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "wrutil.h"
 #include "w_menu.h"
 

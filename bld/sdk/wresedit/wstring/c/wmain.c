@@ -60,7 +60,7 @@
 #include "wsvobj.h"
 #include "wsetedit.h"
 #include "wmain.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "wstr2rc.h"
 #include "weditsym.h"
 #include "wstrdup.h"

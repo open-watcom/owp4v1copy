@@ -38,7 +38,7 @@
 #include "wreglbl.h"
 #include "wremem.h"
 #include "wremsg.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 #include "wremain.h"
 #include "wrenames.h"
 #include "wregcres.h"

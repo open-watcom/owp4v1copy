@@ -61,7 +61,7 @@
 #include "wrdmsgi.h"
 #include "bitmap.h"
 #include "wricon.h"
-#include "wrcmsg.h"
+#include "wrcmsg.gh"
 #include "wrctl3d.h"
 #include "jdlg.h"
 

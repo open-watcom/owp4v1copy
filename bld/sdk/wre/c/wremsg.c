@@ -37,7 +37,7 @@
 #include "wremain.h"
 #include "wremsg.h"
 #include "ldstr.h"
-#include "wremsgs.h"
+#include "wremsgs.gh"
 
 /* routine to create a message box */
 void WREDisplayMsg( const char *msg )

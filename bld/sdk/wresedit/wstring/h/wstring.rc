@@ -14,7 +14,7 @@
 
 #include <windows.h>
 #include "sys_rc.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "banner.h"
 #include "w.rc"
 

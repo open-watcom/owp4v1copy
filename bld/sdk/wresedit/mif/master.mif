@@ -14,18 +14,21 @@
 
 proj_name = wresedit
 
-CPPFILE=pp
+!ifndef wresedit_autodepends
+wresedit_autodepends = .AUTODEPEND
+!endif
 
-.extensions:
-.extensions: .dll .cbj .sbj .mbj .obj .lib
-.extensions: .$(CPPFILE) .c .res .rc
-.extensions: .dlg .men .h .msg
-.extensions: .mif
-
-.mif: $(mif_path)
 sys_dll = 1
+suppress_bd = 1
+
+.EXTENSIONS: .res .rc .dlg .men .msg
+
+memory_model_i86 = l
+
 !include cproj.mif
-MODEL = l
+!include deftarg.mif
+!include defrule.mif
+
 WINDOWS = 1
 !include wres.mif
 
@@ -34,17 +37,47 @@ object +=       wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
                 winst.obj wsetedit.obj wmsg.obj wopts.obj wstrdup.obj &
                 wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
                 widn2str.obj wclip.obj wisedit.obj weditsym.obj &
-                preproc.cbj ppexpr.cbj ppmacro.cbj &
-                toolbr.mbj mstatwnd.mbj ldstr.mbj wwinhelp.mbj jdlg.mbj
+                preproc.obj ppexpr.obj ppmacro.obj &
+                toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
 
+extra_c_flags           = -DWIN_GUI
 extra_c_flags_i86       = -zu-zw-zc
 extra_c_flags_386       = -fpc
-extra_c_flags           = -DWIN_GUI
 
-!ifeq host_OS nt
-# -we balks on a lot of NT instance calls with "meaningless use of expression"
-cflags_all = -zq -w4
-!endif
+# main dll object
+extra_c_flags_wmain += -bd
+
+# sys objects sdk\wresedit\c
+extra_c_flags_wmem = -fhq
+extra_c_flags_wctl3d = -fhq
+extra_c_flags_wgetfn = -fhq
+extra_c_flags_wlist = -fhq
+extra_c_flags_winst = -fhq
+extra_c_flags_wsetedit = -fhq
+extra_c_flags_wmsg = -fhq
+extra_c_flags_wopts = -fhq
+extra_c_flags_wstrdup = -fhq
+extra_c_flags_wselft = -fhq
+extra_c_flags_wrename = -fhq
+extra_c_flags_wwait = -fhq
+extra_c_flags_wmemf = -fhq
+extra_c_flags_wcopystr = -fhq
+extra_c_flags_widn2str = -fhq
+extra_c_flags_wclip = -fhq
+extra_c_flags_wisedit = -fhq
+extra_c_flags_weditsym = -fhq
+
+# preprocessor objects cpp
+extra_c_flags_preproc = -zm
+extra_c_flags_ppexpr = -zm
+extra_c_flags_ppmacro = -zm
+
+# misc objects sdk\misc
+extra_c_flags_toolbr =
+extra_c_flags_mstatwnd =
+extra_c_flags_ldstr =
+extra_c_flags_wwinhelp =
+extra_c_flags_jdlg =
 
 !ifdef on_build_machine
 NODEBUG=1
@@ -64,18 +97,16 @@ wr_lib_win_i86 = win16
 wr_lib_nt_386 = nt
 wr_lib_nt_axp = axp
 
-wr_lib = $(wr_dir)\$(wr_lib_$(host_OS)_$(host_CPU))\wr.lib
+wr_lib = $(wr_dir)/$(wr_lib_$(host_OS)_$(host_CPU))/wr.lib
 
-.c:     c;..\c;..\..\c;$(trmem_dir);$(wrc_dir)\c;$(cpp_dir);$(misc_dir)
-.h:     h;..\h;..\..\h;$(trmem_dir);$(wrc_dir)\h;$(cpp_dir);$(wr_dir)\h;$(misc_dir)
-.dlg:   h;..\h;..\..\h
-.msg:   ..\h;..\..\h
-.men:   ..\h
-.rc :   ..\h
+.c:     .;../c;../../c;$(misc_dir);$(cpp_dir)
+.h:     .;../h;../../h;
+.dlg:   ../h;../../h
+.msg:   ../h;../../h
+.men:   ../h
+.rc :   ../h
 
-inc_dirs = ..\h;..\..\h;$(watcom_dir)\h;$(misc_dir);$(trmem_dir);$(wr_dir)\h;$(wres_dir)\h;$(cpp_dir)
-inc_dirs_nt = $(watcom_dir)\nt_h;
-
+inc_dirs = ../h;../../h;$(misc_dir);$(wr_dir)/h;$(wres_dir)/h;$(cpp_dir)
 extra_l_flags = name $(name) lib $(wres_lib),$(wr_lib)
 extra_l_flags_nt = op map,v,static
 extra_l_flags_nt += op stack=16k,heap=16k commit heap=8k
@@ -88,13 +119,13 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
                     export WEP RESIDENT
 
 .BEFORE
-        set INCLUDE=$(inc_path)
+        set INCLUDE="$(inc_path)"
 
-$(name).lib: wmsgfile.h $(name).dll
+$(name).lib: wmsgfile.gh $(name).dll
         $(librarian) -b-q-n $(name) +$(name).dll
 
 $(name).dll: $(object) $(wres_lib) $(name).res $(wr_lib)
-        *$(linker) $(lflags) file {$(object)}
+        $(linker) $(lflags) file {$(object)}
         $(rc) $(rc_opts) -k $(name).res $(name).dll
 !ifdef TOOLS_10_0
 !ifeq host_OS nt
@@ -104,44 +135,11 @@ $(name).dll: $(object) $(wres_lib) $(name).res $(wr_lib)
 !endif
 !endif
 
-.c.sbj: .AUTODEPEND
-        $(cc) $(cflags) -fhq ..\c\$^& -fo=$^&.sbj
-
-.c.obj: .AUTODEPEND
-        $(cc) $(cflags) -fhq ..\..\c\$^&
-
-.c.cbj: .AUTODEPEND
-        $(cc) $(cflags) -zm $(cpp_dir)\$^& -fo=$^&.cbj
-
-.c.mbj: .AUTODEPEND
-        $(cc) $(cflags) $(misc_dir)\$^& -fo=$^&.mbj
-
 .rc.res:
-        $(rc) $(rc_opts) -r -fo=.\$^&.res ..\h\$^&.rc
+        $(rc) $(rc_opts) -r -fo=./$^&.res ../h/$^&.rc
 
-wmsgfile.h: msgtemp.h
-        vi -q -i -s $(misc_dir)\msgtoh.vi -p"wmsgfile.h" msgtemp.h
+wmsgfile.gh: msgtemp.gh
+        vi -q -i -s $(misc_dir)/msgtoh.vi -p"$^@" $[@
 
-.c.$(CPPFILE):
-        $(wcc) $(wcc_opts) -p ..\c\$^& > $^&.$(CPPFILE)
-
-!ifeq host_OS nt
-wmain.sbj: .AUTODEPEND
-        $(cc) -bd$(cflags) ..\c\$^& -fo=$^&.sbj
-!endif
-
-msgtemp.h: ..\h\master.msg w.msg $(name).msg
-        $(cc) $(cflags) -p ..\h\master.msg > msgtemp.h
-
-clean : .SYMBOLIC
-        @-if exist *.?bj @rm *.?bj
-        @-if exist *.lib @rm *.lib
-        @-if exist *.dll @rm *.dll
-        @-if exist *.map @rm *.map
-        @-if exist *.lnk @rm *.lnk
-        @-if exist *.res @rm *.res
-        @-if exist *.err @rm *.err
-        @-if exist *.pp  @rm *.pp
-        @-if exist *.h   @rm *.h
-        @-if exist *.pch @rm *.pch
-        @-if exist *.sym @rm *.sym
+msgtemp.gh: ../h/master.msg w.msg $(name).msg
+        $(cc) $(cflags) -p $[@ -fo=$^@

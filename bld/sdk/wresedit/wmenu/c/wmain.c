@@ -62,7 +62,7 @@
 #include "wmen2rc.h"
 #include "wsetedit.h"
 #include "wmain.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "weditsym.h"
 #include "wstrdup.h"
 #include "wrdll.h"

@@ -36,7 +36,7 @@
 #include <stdarg.h>
 #include "wrmaini.h"
 #include "wrmsg.h"
-#include "wrcmsg.h"
+#include "wrcmsg.gh"
 #include "errprt.h"
 
 #define ERRPRT_BUFFER 512

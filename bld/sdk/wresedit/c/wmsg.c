@@ -35,7 +35,7 @@
 
 #include "wmsg.h"
 #include "ldstr.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 
 /* routine to create a message box */
 void WDisplayMsg( const char *msg )

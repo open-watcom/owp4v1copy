@@ -45,7 +45,7 @@
 #include "wgetfn.h"
 #include "wmem.h"
 #include "wmsg.h"
-#include "wmsgfile.h"
+#include "wmsgfile.gh"
 #include "weditsym.h"
 #include "wstrdup.h"
 #include "preproc.h"

@@ -8,15 +8,18 @@
 proj_name = wre
 name = wre
 
-.EXTENSIONS:
-.EXTENSIONS: .pp .exe .exp .lib .rex .obj .tbj .rbj .cbj .mbj .sbj &
-             .asm .c .res .rc .dlg .men .h .msg .fi .mif .lnk .ico .lst
-
-.mif: $(mif_path)
-
 sys_windowed = 1
 
 !include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+#.EXTENSIONS:
+#.EXTENSIONS: .pp .exe .exp .lib .rex .obj .tbj .rbj .cbj .mbj .sbj &
+#             .asm .c .res .rc .dlg .men .h .msg .fi .mif .lnk .ico .lst
+.EXTENSIONS: .pp .res .rc .dlg .men .msg .ico .lst
+
+#.mif: $(mif_path)
 
 MODEL = l
 WINDOWS = 1
@@ -48,6 +51,54 @@ extra_c_flags           = -s -DWIN_GUI
 extra_c_flags_i86       = -fpc-zu-zw-zc
 extra_c_flags_386       = -fpc
 
+extra_c_flags_wremain = -fhq
+extra_c_flags_wremem = -fhq
+extra_c_flags_wremsg = -fhq
+extra_c_flags_wreresin = -fhq
+extra_c_flags_wrestat = -fhq
+extra_c_flags_wregetfn = -fhq
+extra_c_flags_wrestrdp = -fhq
+extra_c_flags_wreselft = -fhq
+extra_c_flags_wreres = -fhq
+extra_c_flags_wrehints = -fhq
+extra_c_flags_wrelist = -fhq
+extra_c_flags_wrenames = -fhq
+extra_c_flags_wreopts = -fhq
+extra_c_flags_wretoolb = -fhq
+extra_c_flags_wreribbn = -fhq
+extra_c_flags_wreseted = -fhq
+extra_c_flags_wreftype = -fhq
+extra_c_flags_wregcres = -fhq
+extra_c_flags_wrerenam = -fhq
+extra_c_flags_wrefres = -fhq
+extra_c_flags_wrememf = -fhq
+extra_c_flags_wredel = -fhq
+extra_c_flags_wrewait = -fhq
+extra_c_flags_wresvobj = -fhq
+extra_c_flags_wrectl3d = -fhq
+extra_c_flags_wreaccel = -fhq
+extra_c_flags_wremenu = -fhq
+extra_c_flags_wrestr = -fhq
+extra_c_flags_wrenew = -fhq
+extra_c_flags_wre_wres = -fhq
+extra_c_flags_wredlg = -fhq
+extra_c_flags_wreimg = -fhq
+extra_c_flags_wredde = -fhq
+extra_c_flags_wresvmlt = -fhq
+extra_c_flags_wreimage = -fhq
+extra_c_flags_wreclip = -fhq
+extra_c_flags_wresym = -fhq
+
+extra_c_flags_preproc = -zm
+extra_c_flags_ppexpr = -zm
+extra_c_flags_ppmacro = -zm
+
+#extra_c_flags_toolbr = 
+#extra_c_flags_statwnd = 
+#extra_c_flags_ldstr = 
+#extra_c_flags_wwinhelp = 
+#extra_c_flags_jdlg = 
+
 OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wregetfn.obj wrestrdp.obj wreselft.obj wreres.obj wrehints.obj &
         wrelist.obj wrenames.obj wreopts.obj wretoolb.obj wreribbn.obj &
@@ -56,8 +107,10 @@ OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wreaccel.obj wremenu.obj wrestr.obj wrenew.obj wre_wres.obj &
         wredlg.obj wreimg.obj wredde.obj wresvmlt.obj wreimage.obj &
         wreclip.obj wresym.obj &
-        preproc.cbj ppexpr.cbj ppmacro.cbj &
-        toolbr.mbj statwnd.mbj ldstr.mbj wwinhelp.mbj jdlg.mbj
+#        preproc.cbj ppexpr.cbj ppmacro.cbj &
+#        toolbr.mbj statwnd.mbj ldstr.mbj wwinhelp.mbj jdlg.mbj
+        preproc.obj ppexpr.obj ppmacro.obj &
+        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
 
 !ifeq wre_trmem 1
 OBJS += trmem.tbj trmemcvr.tbj
@@ -98,7 +151,7 @@ extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
 # explicit rules
 
-$(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
+$(name).exe: wremsgs.gh $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
         $(linker) $(lflags) file {$(OBJS)}
         $(rc) $(rc_opts) -k $(name).res $(name).exe
 !ifdef TOOLS_10_0
@@ -109,43 +162,43 @@ $(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
 !endif
 !endif
 
-$(name).res: $(name).rc $(name).men wremsgs.h wre.msg &
+$(name).res: $(name).rc $(name).men wremsgs.gh wre.msg &
              about.dlg del.dlg paste.dlg renam.dlg res.dlg
 
-clean : .SYMBOLIC
-        @-if exist *.?bj @rm *.?bj
-        @-if exist *.res @rm *.res
-        @-if exist *.err @rm *.err
-        @-if exist *.sym @rm *.sym
-        @-if exist *.map @rm *.map
-        @-if exist *.lnk @rm *.lnk
-        @-if exist *.exe @rm *.exe
-        @-if exist *.pch @rm *.pch
-        @-if exist *.h   @rm *.h
+#clean : .SYMBOLIC
+#        @-if exist *.?bj @rm *.?bj
+#        @-if exist *.res @rm *.res
+#        @-if exist *.err @rm *.err
+#        @-if exist *.sym @rm *.sym
+#        @-if exist *.map @rm *.map
+#        @-if exist *.lnk @rm *.lnk
+#        @-if exist *.exe @rm *.exe
+#        @-if exist *.pch @rm *.pch
+#        @-if exist *.h   @rm *.h
 
 # implicit rules
 
-.c.cbj: .AUTODEPEND
-        $(cc) $(cflags) -zm $(cpp_dir)\$^& -fo=$^&.cbj
+#.c.cbj: .AUTODEPEND
+#        $(cc) $(cflags) -zm $(cpp_dir)\$^& -fo=$^&.cbj
 
-.c.tbj: .AUTODEPEND
-        $(cc) $(cflags) $(TRMEM) $(trmem_dir)\$^& -fo=$^&.tbj
+#.c.tbj: .AUTODEPEND
+#        $(cc) $(cflags) $(TRMEM) $(trmem_dir)\$^& -fo=$^&.tbj
 
-.c.mbj: .AUTODEPEND
-        $(cc) $(cflags) $(misc_dir)\$^& -fo=$^&.mbj
+#.c.mbj: .AUTODEPEND
+#        $(cc) $(cflags) $(misc_dir)\$^& -fo=$^&.mbj
 
-.c.obj: .AUTODEPEND
-        $(cc) $(cflags) -fhq ..\c\$^&
+#.c.obj: .AUTODEPEND
+#        $(cc) $(cflags) -fhq ..\c\$^&
 
-.c.pp:
-        $(cc) -p$(cflags) ..\c\$^& -fo=$^&.pp
+#.c.pp:
+#        $(cc) -p$(cflags) ..\c\$^& -fo=$^&.pp
 
 .rc.res:
         $(rc) $(rc_opts) -r -fo=./$^&.res ../h/$^&.rc
 
-wremsgs.h: wretemp.h
+wremsgs.gh: wretemp.gh
         vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
-wretemp.h: ../h/wre.msg
+wretemp.gh: ../h/wre.msg
         $(cc) $(cflags) -p $[@ -fo=$^@
 

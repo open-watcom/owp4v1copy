@@ -75,14 +75,14 @@ rc_opts         += -d__NT__
 .rc : $(wr_dir)\h
 .dlg : $(wr_dir)\h
 
-inc_dirs = h;$(wr_dir)\h;$(misc_dir);$(wrc_dir)\h;$(trmem_dir);$(wres_dir)\h;
+inc_dirs = .;h;$(wr_dir)\h;$(misc_dir);$(wrc_dir)\h;$(trmem_dir);$(wres_dir)\h;
 inc_dirs += $(cpp_dir);$(watcom_dir)\h
 
 .BEFORE
         set INCLUDE=$(inc_path)
 
 #------------- LIB
-$(name).lib: wrcmsg.h $(name).dll
+$(name).lib: wrcmsg.gh $(name).dll
         $(librarian) -b-q-n $(name) +$]@
 
 #------------- LINK
@@ -97,7 +97,7 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 #extra_l_flags_win += segment  CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
 #extra_l_flags_win += segment  CLASS 'CODE' PRELOAD
 
-$(name).dll: $(wrc_dir)/h/ytab.gh $(object) $(wres_lib) $(name).res
+$(name).dll: ytab.gh $(object) $(wres_lib) $(name).res
         *$(linker)  d a $(lflags) name $(name).dll lib $(wres_lib) file {$(object)}
         $(rc) $(rc_opts) -k $(name).res $(name).dll
 
@@ -115,7 +115,7 @@ test.exe: $(name).lib $(TESTLNK) test.obj
 
 test.obj: test.c
 
-$(name).res: $(name).rc wrcmsg.h &
+$(name).res: $(name).rc wrcmsg.gh &
              addsym.dlg editsym.dlg selft.dlg selimage.dlg memflags.dlg &
              addsym.h editsym.h selft.h selimage.h memflags.h
 
@@ -143,18 +143,16 @@ ldstr.mbj: .AUTODEPEND
 .rc.res:
         $(rc) $(rc_opts) -DWR_COMPILED -DFoO -r -fo=.\$^&.res ..\h\$^&.rc
 
-wrcmsg.h: wrtemp.h
-        vi -d -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"wrcmsg.h" wrtemp.h
+wrcmsg.gh: wrtemp.gh
+        vi -d -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
 
-wrtemp.h: ..\h\master.msg rc.msg wr.msg
-        $(cc) $(cflags) -p ..\h\master.msg > wrtemp.h
+wrtemp.gh: ..\h\master.msg rc.msg wr.msg
+        $(cc) $(cflags) -p ..\h\master.msg -fo=$^@
 
-$(wrc_dir)/h/ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
+ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         $(yacc) -d -b $[@ $(wrc_dir)/y/yydriver.c >nul
-        @cp ytab.c $(wrc_dir)/c
-        @cp ytab.h $(wrc_dir)/h/ytab.gh
+        @cp ytab.h ytab.gh
         @rm -f ytab.h
-        @rm -f ytab.c
 
 .c.$(CPPFILE):
         $(cc) $(cflags) -pc ..\c\$^& > $^&.$(CPPFILE)
