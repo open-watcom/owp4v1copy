@@ -3,21 +3,21 @@
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <projdir>\dos386
+    cdsay <PROJDIR>\dos386
     wmake -h
     <CPCMD> re2c.exe <owroot>\bld\build\bin\re2c.exe
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <projdir>\os2386
+    cdsay <PROJDIR>\os2386
     wmake -h
     <CPCMD> re2c.exe <owroot>\bld\build\binp\re2c.exe
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <projdir>\nt386
+    cdsay <PROJDIR>\nt386
     wmake -h
     <CPCMD> re2c.exe <owroot>\bld\build\binnt\re2c.exe
-    cdsay <projdir>
+    cdsay <PROJDIR>

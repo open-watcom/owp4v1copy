@@ -9,7 +9,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -29,4 +29,4 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay <projdir>
+    cdsay <PROJDIR>

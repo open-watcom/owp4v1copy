@@ -3,21 +3,21 @@
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <projdir>\dos386
+    cdsay <PROJDIR>\dos386
     wmake -h
     <CPCMD> *.exe <owroot>\bld\build\bin\
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <projdir>\os2386
+    cdsay <PROJDIR>\os2386
     wmake -h
     <CPCMD> *.exe <owroot>\bld\build\binp\
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <projdir>\nt386
+    cdsay <PROJDIR>\nt386
     wmake -h
     <CPCMD> *.exe <owroot>\bld\build\binnt\
-    cdsay <projdir>
+    cdsay <PROJDIR>

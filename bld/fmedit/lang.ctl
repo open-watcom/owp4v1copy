@@ -15,8 +15,8 @@ cdsay .
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 cprel2 ]
-<CPCMD> <projdir>/obj/fmedit.dll <relroot>/rel2/binw/
-<CPCMD> <projdir>/nt/fmedit.dll <relroot>/rel2/binnt/
+<CPCMD> <PROJDIR>/obj/fmedit.dll <relroot>/rel2/binw/
+<CPCMD> <PROJDIR>/nt/fmedit.dll <relroot>/rel2/binnt/
 
 [ BLOCK <1> clean ]
 #==================
