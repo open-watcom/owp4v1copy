@@ -402,7 +402,7 @@ math += &
     powc8.obj &
     divc20.obj &
     divc16.obj &
-    divc8.obj &
+    divc8.obj
 
 !ifeq fp_model c
 math += &
