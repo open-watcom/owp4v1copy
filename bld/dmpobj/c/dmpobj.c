@@ -49,11 +49,11 @@ static void usage( void )
 {
     Output( "Usage: dmpobj [options] objfile[" OBJSUFFIX "]..." CRLF );
     Output( "Options:" CRLF );
-    Output( "/l\tProduce listing file" CRLF );
-    Output( "/d\tPrint descriptive titles for some output" CRLF );
-    Output( "/c\tDump COMENT records without interpretation" CRLF );
-    Output( "/i\tOriginal Intel OMF-86 format" CRLF );
-    Output( "/r\tProvide raw dump of records as well" CRLF );
+    Output( "-l\tProduce listing file" CRLF );
+    Output( "-d\tPrint descriptive titles for some output" CRLF );
+    Output( "-c\tDump COMENT records without interpretation" CRLF );
+    Output( "-i\tOriginal Intel OMF-86 format" CRLF );
+    Output( "-r\tProvide raw dump of records as well" CRLF );
     leave( 1 );
 }
 
@@ -85,7 +85,7 @@ void main( int argc, char **argv )
     list_file = FALSE;
     is_intel = FALSE;
     for( i = 1; i < argc; ++i ) {
-        if( argv[i][0] == '/' ) {
+        if( argv[i][0] == '-' ) {
             switch( tolower( argv[i][1] ) ) {
             case 'l':
                 list_file = TRUE;
