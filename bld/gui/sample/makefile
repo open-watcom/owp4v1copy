@@ -184,7 +184,8 @@ samp2.$(ext) : samp2.obj $(guilib) $(uilib) $(LNK)
 $(rcname).res : ..\$(rcname).rc ..\$(rcname).dlg
 !ifeq os pm
         @set oinc=$(%include)
-        set include=$(watcom_dir)\os220_h;$(%include)
+        #set include=$(watcom_dir)\os220_h;$(%include)
+        set include=$(watcom_os220_h);$(%include)
         copy $(sdk_dir)\misc\closebmp.bmp
         wcc -p -i..;..\h;$(guidir)\$(type) ..\$(rcname).rc -fo=tmp.rc
         @%write $(rcname).rc $#include <os2.h>
@@ -192,7 +193,8 @@ $(rcname).res : ..\$(rcname).rc ..\$(rcname).dlg
         del tmp.rc
         set opath=$(%path)
         set path=$(lang_root)\binp
-        @$(lang_root)\binp\rc -r $(rcname).rc
+        #@$(lang_root)\binp\rc -r $(rcname).rc
+        rc -r $(rcname).rc
         del $(rcname).rc
         set path=$(%opath)
         @set include=$(%oinc)
