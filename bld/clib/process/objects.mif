@@ -1,4 +1,4 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject cenvarg.obj  d16 d32             nt nta ntp           o16 o32
 !inject cwaitos2.obj                                          o16 o32
@@ -44,7 +44,7 @@
 !inject sigsy.obj    d16 d32                                                  w16
 !inject sigsyo16.obj                                          o16
 !inject _slashc.obj  d16 d32             nt nta ntp           o16 o32
-!inject sleep.obj    d16 d32                        nv_c nv_l                 w16 w32
+!inject sleep.obj    d16 d32                        nvc nvl                 w16 w32
 !inject sleepos2.obj                                          o16 o32
 !inject sleepwnt.obj                     nt nta ntp
 !inject spawn086.obj d16
@@ -88,11 +88,11 @@
 !inject usystem.obj  d16 d32             nt nta ntp           o16 o32         w16 w32
 !inject waitos2.obj                                           o16 o32
 !inject waitwnt.obj                      nt nta ntp
-!inject _raise.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32
+!inject _raise.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32
 
 !include ..\..\..\..\objlist.mif
 
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject ergospwn.obj     d32
 

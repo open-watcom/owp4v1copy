@@ -1,6 +1,6 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
-!inject asctime.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject clock.obj    d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32
 !inject dyltptr.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject ftime.obj    d16 d32             nt nta ntp           o16 o32         w16 w32 osi
@@ -12,7 +12,7 @@
 !inject localtim.obj d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject mktime.obj   d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject strdate.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
-!inject strftime.obj d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject strftime.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject strtime.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject time.obj     d16 d32             nt nta ntp           o16 o32         w16 w32 osi
 !inject timeutil.obj d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi

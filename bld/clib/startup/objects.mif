@@ -1,24 +1,24 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
-!inject 8087cw.obj   d16 d32             nt         nv_c nv_l o16 o32 q16 q32 w16 w32
+!inject 8087cw.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32
 !inject _8087086.obj d16                                      o16     q16     w16
-!inject _8087386.obj     d32             nt         nv_c nv_l     o32     q32     w32
+!inject _8087386.obj     d32             nt         nvc nvl     o32     q32     w32
 !inject _8087osi.obj                                                                  osi
-!inject abort.obj    d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject abort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject argcv.obj    d16 d32             nt nta ntp           o16 o32         w16 w32 osi
 !inject atexit.obj   d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
-!inject chk.obj                                     nv_c nv_l
-!inject chk8087.obj  d16 d32 dpm         nt         nv_c nv_l o16 o32 q16 q32 w16 w32
-!inject cinit.obj        d32             nt nta ntp nv_c nv_l     o32             w32 osi
+!inject chk.obj                                     nvc nvl
+!inject chk8087.obj  d16 d32 dpm         nt         nvc nvl o16 o32 q16 q32 w16 w32
+!inject cinit.obj        d32             nt nta ntp nvc nvl     o32             w32 osi
 !inject cmain086.obj d16                                      o16             w16
 !inject cmain386.obj     d32             nt nta ntp               o32             w32 osi
 !inject cmainqnx.obj                                                  q16 q32
-!inject cmdname.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32 osi
+!inject cmdname.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject cmnw386.obj                      nt nta ntp               o32
-!inject cmodel.obj   d16 d32             nt         nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject cmodel.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject crtinit.obj                      nt nta ntp
 !inject crwd086.obj  d16                                              q16
-!inject crwd386.obj      d32             nt         nv_c nv_l     o32     q32
+!inject crwd386.obj      d32             nt         nvc nvl     o32     q32
 !inject crwdaxp.obj                         nta ntp
 !inject cstrt086.obj d16
 !inject cstrt386.obj     d32
@@ -36,7 +36,7 @@
 !inject cstrwwna.obj                        nta ntp
 !inject cstrwwnt.obj                     nt
 !inject cstrwaxp.obj                        nta ntp
-!inject cvtbuf.obj   d16 d32 dpm         nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject cvtbuf.obj   d16 d32 dpm         nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject ddgrpo32.obj                                              o32
 !inject ddgrpwnt.obj                     nt nta ntp
 !inject detosinf.obj                                                  q16 q32
@@ -52,12 +52,12 @@
 !inject dstrt386.obj                     nt                       o32
 !inject dstrtaxp.obj                        nta
 !inject dstrtwna.obj                        nta ntp
-!inject enterdb.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject enterdb.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject errno.obj    d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject errnovar.obj                                                      q32
 !inject exit.obj     d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
-!inject fltused.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
-!inject fpexcept.obj d16 d32 dpm         nt         nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject fltused.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
+!inject fpexcept.obj d16 d32 dpm         nt         nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject _getds.obj                                            o16
 !inject getds.obj                                                     q16 q32
 !inject getdsint.obj                     nt                       o32
@@ -66,22 +66,22 @@
 !inject hk87o16.obj                                           o16
 !inject hook387.obj      d32
 !inject hookfpe.obj                                           o16
-!inject imthread.obj                     nt nta ntp nv_c nv_l o16 o32     q32
+!inject imthread.obj                     nt nta ntp nvc nvl o16 o32     q32
 !inject inirmsel.obj     d32                                                      w32
-!inject initrtns.obj d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
-!inject initargv.obj d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32 osi
+!inject initrtns.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
+!inject initargv.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject initerrn.obj                                                      q32
 !inject initwarg.obj                     nt nta ntp               o32
-!inject ioexit.obj   d16 d32 dpm         nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject ioexit.obj   d16 d32 dpm         nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject itsto32.obj                                               o32
 !inject kererr.obj                                                        q32
 !inject lgjmpaxp.obj                        nta
 !inject lgjpxaxp.obj                        nta
-!inject liballoc.obj d16 d32 dpm         nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject liballoc.obj d16 d32 dpm         nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject libmno16.obj                                          o16
 !inject libmno32.obj                                              o32
 !inject libterm.obj                                               o32
-!inject ljmphdl.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject ljmphdl.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject main2o32.obj                                              o32
 !inject main4o32.obj                                              o32
 !inject main2wnt.obj                     nt nta ntp
@@ -91,10 +91,10 @@
 !inject maino32.obj                                               o32
 !inject mainwnt.obj                      nt nta ntp
 !inject mtype.obj    d16 d32             nt nta ntp           o16 o32         w16 w32
-!inject nomem.obj        d32             nt nta ntp nv_c nv_l     o32         w16 w32 osi
+!inject nomem.obj        d32             nt nta ntp nvc nvl     o32         w16 w32 osi
 !inject nonibm.obj   d16 d32             nt                   o16 o32         w16 w32
-!inject nullargv.obj d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32 osi
-!inject onexit.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject nullargv.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
+!inject onexit.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject osbdptr.obj                      nt
 !inject osinf086.obj                                                  q16
 !inject osinf386.obj                                                      q32
@@ -102,7 +102,7 @@
 !inject osmjptr.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject osmnptr.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject osvrptr.obj                      nt
-!inject prelude.obj                                 nv_c
+!inject prelude.obj                                 nvc
 !inject pspptr.obj   d16 d32                                                  w16     osi
 !inject rdllmwnt.obj                     nt nta ntp
 !inject seg086.obj   d16                                      o16             w16
@@ -113,13 +113,13 @@
 !inject segq32.obj                                                        q32
 !inject seh386.obj                       nt                       o32
 !inject seh386v2.obj                     nt                       o32
-!inject seterrno.obj d16 d32 dpm         nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject seterrno.obj d16 d32 dpm         nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject stack086.obj d16                                      o16     q16     w16
 !inject stack386.obj     d32                                      o32     q32     w32 osi
 !inject stackwnt.obj                     nt nta ntp
 !inject stjmpaxp.obj                        nta
 !inject stjmp086.obj d16                                      o16     q16     w16
-!inject stjmp386.obj     d32             nt         nv_c nv_l     o32     q32     w32 osi
+!inject stjmp386.obj     d32             nt         nvc nvl     o32     q32     w32 osi
 !inject stjpxaxp.obj                        nta
 !inject stk086.obj   d16                                                      w16
 !inject stk386.obj       d32                                                      w32 osi
@@ -145,9 +145,9 @@
 !inject wstrwaxp.obj                        nta
 !inject wstrwwna.obj                        nta ntp
 !inject wstrwwnt.obj                     nt
-!inject xiyi.obj     d16 d32                        nv_c nv_l o16     q16 q32 w16 w32 osi
+!inject xiyi.obj     d16 d32                        nvc nvl o16     q16 q32 w16 w32 osi
 !inject xmsg.obj     d16 d32
-!inject xmsgnov.obj                                 nv_c nv_l
+!inject xmsgnov.obj                                 nvc nvl
 !inject xmsgo16.obj                                           o16
 !inject xmsgo32.obj                                           o32
 !inject xmsgosi.obj                                                                   osi
@@ -159,12 +159,12 @@
 
 !include ..\..\..\..\objlist.mif
 
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject adiestrt.obj     d32
 !inject adifstrt.obj     d32
 !inject adsstart.obj     d32
-!inject binmode.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32 osi
+!inject binmode.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject clibdo32.obj                                              o32
 !inject clibdwnt.obj                     nt nta ntp
 !inject commode.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32

@@ -1,4 +1,4 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject allocos2.obj                                   o16 o32
 !inject allocwnt.obj                     nt nta ntp

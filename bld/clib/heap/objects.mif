@@ -1,4 +1,4 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject allocseg.obj d16                                      o16     q16     w16
 !inject ambsptr.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
@@ -15,7 +15,7 @@
 !inject bmalloc.obj  d16                                      o16     q16     w16
 !inject bmsize.obj   d16                                      o16     q16     w16
 !inject brealloc.obj d16                                      o16     q16     w16
-!inject calloc.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject calloc.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject fcalloc.obj  d16                                      o16     q16     w16
 !inject fexpand.obj  d16                                      o16     q16     w16
 !inject ffree.obj    d16                                      o16     q16     w16
@@ -73,9 +73,9 @@
 axp_ac_opts=
 mem_opts = -ol+t $($(processor)_ac_opts)
 
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
-!inject chksize.obj  d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject chksize.obj  d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 
 objsuffix=files
 !include ..\..\..\..\objlist.mif

@@ -1,6 +1,6 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
-!inject dbcsnov.obj                                 nv_c nv_l
+!inject dbcsnov.obj                                 nvc nvl
 !inject fmbccmp.obj  d16 d32             nt                   o16 o32         w16 w32 osi
 !inject fmbccpy.obj  d16 d32             nt                   o16 o32         w16 w32 osi
 !inject fmbcicmp.obj d16 d32             nt                   o16 o32         w16 w32 osi
@@ -151,6 +151,6 @@
 !inject wcstombs.obj d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject wctob.obj    d16 d32             nt nta ntp           o16 o32         w16 w32 osi
 !inject wctomb.obj   d16 d32             nt nta ntp           o16 o32         w16 w32 osi
-!inject wrlang.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject wrlang.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 
 !include ..\..\..\..\objlist.mif

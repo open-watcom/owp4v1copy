@@ -1,4 +1,4 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 #=================================================================================
 !inject 64lseek.obj  d16 d32                                  o16 o32 q16 q32 w16 w32 osi
 !inject 64lskwnt.obj                     nt nta ntp
@@ -15,7 +15,7 @@
 !inject _clse.obj    d16 d32                                           w16 w32 osi
 !inject _clseos2.obj                                          o16 o32
 !inject _clsewnt.obj                     nt nta ntp
-!inject creat.obj    d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32 osi
+!inject creat.obj    d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject d2ttime.obj  d16 d32             nt nta ntp           o16 o32         w16 w32 osi
 !inject dofilstr.obj                     nt nta ntp
 !inject dup.obj      d16 d32                                                  w16 w32 osi
@@ -24,17 +24,17 @@
 !inject dup2wnt.obj                      nt nta ntp
 !inject dupos2.obj                                            o16 o32
 !inject dupwnt.obj                       nt nta ntp
-!inject eof.obj      d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject eof.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject finfoptr.obj                     nt nta ntp
 !inject fileinfo.obj                     nt nta ntp
-!inject filelen.obj  d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
-!inject fileno.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32 osi
+!inject filelen.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
+!inject fileno.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi
 !inject fstat.obj    d16 d32                                                  w16 w32 osi
 !inject fstatos2.obj                                          o16 o32
 !inject fstatwnt.obj                     nt nta ntp
-!inject fsync.obj    d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32
+!inject fsync.obj    d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 !inject hdlman.obj   d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32
-!inject hdopen.obj   d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32
+!inject hdopen.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32
 !inject iomode.obj   d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32 osi
 !inject lock.obj     d16 d32                                  o16 o32         w16 w32
 !inject locking.obj  d16 d32             nt nta ntp           o16 o32 q16 q32 w16 w32
@@ -47,10 +47,10 @@
 !inject open.obj     d16 d32                                                  w16 w32 osi
 !inject openos2.obj                                           o16 o32
 !inject openwnt.obj                      nt nta ntp
-!inject oshdl.obj    d16 d32             nt nta ntp nv_c nv_l o16 o32         w16 w32
+!inject oshdl.obj    d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 !inject pipe.obj                         nt nta ntp           o16 o32
-!inject plusfsta.obj d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32
-!inject plusopen.obj d16 d32             nt nta ntp nv_c nv_l o16 o32 q16 q32 w16 w32
+!inject plusfsta.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32
+!inject plusopen.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32
 !inject qread.obj    d16 d32             nt nta ntp           o16 o32         w16 w32 osi
 !inject qreadqnx.obj                                                  q16 q32
 !inject qwrit.obj    d16 d32             nt nta ntp           o16 o32         w16 w32 osi
