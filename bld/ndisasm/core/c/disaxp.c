@@ -568,8 +568,13 @@ static unsigned AXPOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     return( 0 );
 }
 
+static dis_handler_return AXPDecodeTableCheck( int page, dis_dec_ins *ins )
+{
+    return( DHR_DONE );
+}
+
 const dis_cpu_data AXPData = {
-    AXPRangeTable, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
+    AXPRangeTable, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
 };
 #else
 

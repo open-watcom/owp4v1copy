@@ -535,3 +535,37 @@ inspick( fcomi,         "fcomi",        0x0000f0db,     0x0000f8ff,     X86FType
 inspick( fcomip,        "fcomip",       0x0000f0df,     0x0000f8ff,     X86FType3C)
 inspick( fucomi,        "fucomi",       0x0000e8db,     0x0000f8ff,     X86FType3C)
 inspick( fucomip,       "fucomip",      0x0000e8df,     0x0000f8ff,     X86FType3C)
+
+// AMD 3DNow! Instructions
+
+inspick( femms,         "femms",        0x00000e0f,     0x0000ffff,     X86NoOp_16)
+inspick( prefetch,      "prefetch",     0x00000d0f,     0x0018ffff,     X86ModRM_24)
+inspick( prefetchw,     "prefetchw",    0x00080d0f,     0x0018ffff,     X86ModRM_24)
+
+// AMD 3DNow! Instructions with suffix
+
+inspick( prefix3dnow,   "3dnow",        0x00000f0f,     0x0000ffff,     X86_3DNow)
+inspick( pavgusb,       "pavgusb",      0x000000bf,     0x00000000,     NULL)
+inspick( pf2id,         "pf2id",        0x0000001d,     0x00000000,     NULL)
+inspick( pf2iw,         "pf2iw",        0x0000001c,     0x00000000,     NULL)
+inspick( pfacc,         "pfacc",        0x000000ae,     0x00000000,     NULL)
+inspick( pfadd,         "pfadd",        0x0000009e,     0x00000000,     NULL)
+inspick( pfcmpeq,       "pfcmpeq",      0x000000b0,     0x00000000,     NULL)
+inspick( pfcmpge,       "pfcmpge",      0x00000090,     0x00000000,     NULL)
+inspick( pfcmpgt,       "pfcmpgt",      0x000000a0,     0x00000000,     NULL)
+inspick( pfmax,         "pfmax",        0x000000a4,     0x00000000,     NULL)
+inspick( pfmin,         "pfmin",        0x00000094,     0x00000000,     NULL)
+inspick( pfmul,         "pfmul",        0x000000b4,     0x00000000,     NULL)
+inspick( pfnacc,        "pfnacc",       0x0000008a,     0x00000000,     NULL)
+inspick( pfpnacc,       "pfpnacc",      0x0000008e,     0x00000000,     NULL)
+inspick( pfrcp,         "pfrcp",        0x00000096,     0x00000000,     NULL)
+inspick( pfrcpit1,      "pfrcpit1",     0x000000a6,     0x00000000,     NULL)
+inspick( pfrcpit2,      "pfrcpit2",     0x000000b6,     0x00000000,     NULL)
+inspick( pfrsqit1,      "pfrsqit1",     0x000000a7,     0x00000000,     NULL)
+inspick( pfrsqrt,       "pfrsqrt",      0x00000097,     0x00000000,     NULL)
+inspick( pfsub,         "pfsub",        0x0000009a,     0x00000000,     NULL)
+inspick( pfsubr,        "pfsubr",       0x000000aa,     0x00000000,     NULL)
+inspick( pi2fd,         "pi2fd",        0x0000000d,     0x00000000,     NULL)
+inspick( pi2fw,         "pi2fw",        0x0000000c,     0x00000000,     NULL)
+inspick( pmulhrw,       "pmulhrw",      0x000000b7,     0x00000000,     NULL)
+inspick( pswapd,        "pswapd",       0x000000bb,     0x00000000,     NULL)

@@ -53,6 +53,8 @@ typedef struct {
     char                *handler;
 } ins_decode_data;
 
+typedef char ins_decode_check;
+
 #if DISCPU & DISCPU_axp
 
 ins_decode_data AXPDecodeTable1[] = {
@@ -144,25 +146,61 @@ string_data *PPCInsTable[] = {
 ins_decode_data X86DecodeTable1[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X86_##idx, #idx, #handler },
-    #include "insx86e.h"
+    #include "insx86.h"
 };
 
 string_data X86InsTable1[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
-    #include "insx86e.h"
+    #include "insx86.h"
 };
 
 ins_decode_data X86DecodeTable2[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X86_##idx, #idx, #handler },
-    #include "insx86.h"
+    #include "insx86e1.h"
 };
 
 string_data X86InsTable2[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
-    #include "insx86.h"
+    #include "insx86e1.h"
+};
+
+ins_decode_data X86DecodeTable3[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X86_##idx, #idx, #handler },
+    #include "insx86e2.h"
+};
+
+string_data X86InsTable3[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
+    #include "insx86e2.h"
+};
+
+ins_decode_data X86DecodeTable4[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X86_##idx, #idx, #handler },
+    #include "insx86e3.h"
+};
+
+string_data X86InsTable4[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
+    #include "insx86e3.h"
+};
+
+ins_decode_data X86DecodeTable5[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X86_##idx, #idx, #handler },
+    #include "insx86e4.h"
+};
+
+string_data X86InsTable5[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
+    #include "insx86e4.h"
 };
 
 string_data X86RegTable[] = {
@@ -180,18 +218,27 @@ string_data X86RefTable[] = {
 unsigned X86InsNum[] = {
     NUM_ELTS( X86DecodeTable1 ),
     NUM_ELTS( X86DecodeTable2 ),
+    NUM_ELTS( X86DecodeTable3 ),
+    NUM_ELTS( X86DecodeTable4 ),
+    NUM_ELTS( X86DecodeTable5 ),
     0
 };
 
 ins_decode_data *X86DecodeTable[] = {
     X86DecodeTable1, 
     X86DecodeTable2,
+    X86DecodeTable3,
+    X86DecodeTable4,
+    X86DecodeTable5,
     NULL
 };
 
 string_data *X86InsTable[] = {
     X86InsTable1,
     X86InsTable2,
+    X86InsTable3,
+    X86InsTable4,
+    X86InsTable5,
     NULL
 };
 

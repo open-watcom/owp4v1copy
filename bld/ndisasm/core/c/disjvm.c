@@ -265,8 +265,13 @@ static unsigned JVMOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     return( 0 );
 }
 
+static dis_handler_return JVMDecodeTableCheck( int page, dis_dec_ins *ins )
+{
+    return( DHR_DONE );
+}
+
 const dis_cpu_data JVMData = {
-    JVMRangeTable, JVMInsHook, JVMFlagHook, JVMOpHook, &JVMMaxInsName, 1
+    JVMRangeTable, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, &JVMMaxInsName, 1
 };
 #else
 

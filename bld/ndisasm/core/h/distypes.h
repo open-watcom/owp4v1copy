@@ -54,9 +54,9 @@ struct dis_range {
 
 typedef signed_16       dis_selector;
 
-
 struct dis_cpu_data {
     const dis_range     **range;
+    dis_handler_return  (*decode_check)( int, dis_dec_ins * );
     unsigned            (*ins_hook)( dis_handle *, void *, dis_dec_ins *, dis_format_flags, char *ins );
     unsigned            (*flag_hook)( dis_handle *, void *, dis_dec_ins *, dis_format_flags, char *ins );
     unsigned            (*op_hook)( dis_handle *, void *, dis_dec_ins *, dis_format_flags, unsigned op, char *op_buff );

@@ -148,12 +148,16 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
     unsigned                    idx;
     unsigned                    start;
     dis_handler_return          hr;
+    int                         page;
 
     start = 0;
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
         if( dr != DR_OK ) return( dr );
-        for( curr_table = h->d->range ; *curr_table != NULL ; ++curr_table ) {
+        page = 0;
+        for( curr_table = h->d->range ; *curr_table != NULL ; ++curr_table, ++page ) {
+            if( h->d->decode_check( page, ins ) != DHR_DONE )
+                continue;
             table = *curr_table;
             curr = 0;
             for( ;; ) {

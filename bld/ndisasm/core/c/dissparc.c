@@ -330,8 +330,13 @@ static unsigned SPARCOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     return( 0 );
 }
 
+static dis_handler_return SPARCDecodeTableCheck( int page, dis_dec_ins *ins )
+{
+    return( DHR_DONE );
+}
+
 const dis_cpu_data SPARCData = {
-    SPARCRangeTable, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
+    SPARCRangeTable, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
 };
 #else
 

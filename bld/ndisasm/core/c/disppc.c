@@ -1290,8 +1290,13 @@ static unsigned PPCOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     return( p-op_buff );
 }
 
+static dis_handler_return PPCDecodeTableCheck( int page, dis_dec_ins *ins )
+{
+    return( DHR_DONE );
+}
+
 const dis_cpu_data PPCData = {
-    PPCRangeTable, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
+    PPCRangeTable, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
 };
 #else
 
