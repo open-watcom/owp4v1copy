@@ -47,6 +47,8 @@ typedef enum {
     TT_END_OF_LINE
 } TextType;
 
+#pragma pack(push, 1)
+
 typedef struct {
     TextType    type;
     char        *str;
@@ -66,5 +68,7 @@ typedef struct {
     char                *hfname;
     unsigned            hfname_len;
 } HyperLinkInfo;
+
+#pragma pack(pop)
 
 bool ScanLine( char *line, void (*cb)(), void *info );

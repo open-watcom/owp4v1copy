@@ -64,6 +64,8 @@ typedef enum {
     SRCHTYPE_EOL
 } HelpSrchItemType;
 
+#pragma pack(push, 1)
+
 typedef struct helpsrch {
     HelpSrchItemType    type;
     char                *info;
@@ -74,6 +76,8 @@ typedef struct help_file {
     HelpFp              f;
     HelpHdl             searchhdl;
 }help_file;
+
+#pragma pack(pop)
 
 #define MAX_HELP_FILES  10
 extern help_file HelpFiles[];

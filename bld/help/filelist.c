@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<direct.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <direct.h>
+#include <string.h>
 #include "uidef.h"
 #include "help.h"
 #include "helpmem.h"
@@ -143,7 +143,9 @@ static void printFileList( FileList *list ) {
     }
 }
 
-static int compareStr( FileInfo **str1, FileInfo **str2 ) {
+static int compareStr( const void *arg1, const void *arg2 ) {
+    FileInfo **str1 = (FileInfo**) arg1;
+    FileInfo **str2 = (FileInfo**) arg2;
     return( strcmp( ( *str1 )->fname, ( *str2 )->fname ) );
 }
 
@@ -183,7 +185,7 @@ static void scanDirectory( char *buf, FileList *list ) {
     closedir( dirhdl );
 }
 
-static doFillFileList( char *cur, const FileList *list ) {
+static doFillFileList( char *cur, FileList *list ) {
 
     char                done;
     char                *path;

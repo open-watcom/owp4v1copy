@@ -78,6 +78,8 @@
 #define HELP_MAJ_VER            2
 #define HELP_MIN_VER            0
 
+#pragma pack(push, 1)
+
 typedef struct {
     uint_32     sig[2];
     uint_16     ver_maj;
@@ -120,6 +122,8 @@ typedef struct {
     uint_16     name_offset;
     uint_32     entry_offset;
 } PageIndexEntry;
+
+#pragma pack(pop)
 
 // this is a temporary kludge
 #if !defined( bool )
