@@ -42,7 +42,7 @@
 #include "rcalloc1.h"
 
 #ifdef RC_USE_TRMEM
-    #include <io.h>
+    #include <unistd.h>
     #include "trmem.h"
     _trmem_hdl RcMemHandle = NULL;
 
