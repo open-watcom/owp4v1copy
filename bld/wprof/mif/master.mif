@@ -29,7 +29,7 @@ exe = exe
 !endif
 
 inc_dirs = ..\h;$(wsample_dir)\h;$(aui_dir)\h;$(gui_dir)\h;$(trmem_dir);$(dig_dir)\h
-inc_dirs_os2 = $(lang_root)\h\os21x
+inc_dirs_os2 = $(lang_root)\h\os2
 inc_dirs_nt = $(watcom_dir)\nt_h
 
 .BEFORE:
@@ -53,9 +53,9 @@ extra_c_flags_axp       = -d_OS=_OS_NT
 extra_c_flags_386_nt    = -d_OS=_OS_NT
 extra_c_flags_386_dos   = -d_OS=_OS_DOS
 extra_c_flags_386_qnx   = -ms -D_OS=_OS_QNX
-extra_c_flags_i86_os2   = -d_OS=_OS_OS2
+extra_c_flags_386_os2   = -d_OS=_OS_OS2
 !ifeq PM 1
-extra_c_flags_i86_os2   += -dOS2_PM=1
+extra_c_flags_386_os2   += -dOS2_PM=1
 !endif
 extra_c_flags_i86_qnx   = -d_OS=_OS_QNX -zt32
 extra_c_flags_i86_win   = -d_OS=_OS_WIN -zW
@@ -74,7 +74,7 @@ cflags_all             += -dNDEBUG
 !endif
 
 extra_l_flags_nt        = op stack=30k
-extra_l_flags_os2       = op newfiles, stack=20k, align=16, heap=8k
+extra_l_flags_os2       = op stack=32k
 extra_l_flags_qnx       = op stack=32k, offset=36k, priv=3, res=wprof.u
 extra_l_flags_dos       = op map,stack=20k export DOS4GOPTIONS=_DOS4GOPTIONS
 
@@ -122,7 +122,7 @@ eraseall.obj : ..\compile.gbl
 !ifeq host_OS os2
 wprof.res : wprof.rc
         @set oinc=$(%include)
-        set include=$(watcom_dir)\os220_h;$(rcinclude);$(%include)
+        set include=$(lang_root)\h\os2;$(rcinclude);$(%include)
         wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wprof.i wprof.rc
 #       wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
