@@ -1014,7 +1014,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
         ParseDeclPart2( &sym->sym_type, typ );
         typ = sym->sym_type;
         // Transfer function attributes to type; TODO: figure out a better way
-        if( typ->decl_type == TYPE_FUNCTION )
+        if( typ && typ->decl_type == TYPE_FUNCTION )
             typ->type_flags = sym->attrib;
     } else {
         if( CurToken == T_ID  ||  CurToken == T_SAVED_ID ) {
