@@ -162,11 +162,11 @@ TraceTrap386:
         db      00FH,021H,0F0H                          ; mov eax,dr6
         test    ax,04000H                               ; if trace trap
         je      w386_1                                  ; then
-        mov     al,TRACE_TRAP                           ; - indicate trace trap
+        mov     al,TRAP_TRACE_POINT                     ; - indicate trace trap
         jmp     short w386_e                            ; -
 w386_1: test    ax,0Fh                                  ; else if watch trap
         je      w386_2                                  ; - then
-        mov     al,WATCH_POINT_TRAP                     ; - indicate watch point
+        mov     al,TRAP_WATCH_POINT                     ; - indicate watch point
         jmp     short w386_e                            ; -
 w386_2:
         pop     ax
