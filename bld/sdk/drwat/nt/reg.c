@@ -46,7 +46,7 @@
 #define COSTLY_WRITE_SEM_NAME   "dr_nt_costly_reg_write_mutex"
 
 #define INIT_BUF_SIZE   0x10000
-#define BUF_SIZE_INCR   1024
+#define BUF_SIZE_INCR   0x10000
 
 #define N_IMAGE                 "Image"
 #define N_THREAD                "Thread"
@@ -219,8 +219,12 @@ static DWORD getData( char *name, PERF_DATA_BLOCK **data ) {
     WORD        i;
     LONG        rc;
 
-    for( i=1; ; i++ ) {
-        datasize = INIT_BUF_SIZE + i * BUF_SIZE_INCR;
+    /* NB: The RegQueryEx call is VERY expensive. The loop must be constructed
+     * such that it finds the buffer size after minimal number of iterations -
+     * even if we waste a few kilobytes of memory.
+     */
+    for( i=0; ; i++ ) {
+        datasize = INIT_BUF_SIZE + (BUF_SIZE_INCR << i);
         *data = MemAlloc( datasize );
         if( *data == NULL ) {
             rc = ERROR_OUTOFMEMORY;

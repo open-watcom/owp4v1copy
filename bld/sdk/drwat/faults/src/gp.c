@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Test program to trigger general protection exception.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #define STRICT
 #include "windows.h"
 
-int PASCAL WinMain( HANDLE inst, HANDLE prev, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int cmdshow)
 {
     char far *a= (char far *) 0L;
 /*
