@@ -199,6 +199,15 @@ static struct {
     } tail;
 } gpm_buf;
 
+#define GPM_DRAG     2
+#define GPM_DOWN     4
+#define GPM_UP       8
+#define GPM_HARD   256
+
+#define GPM_B_LEFT   4
+#define GPM_B_MIDDLE 2
+#define GPM_B_RIGHT  1
+
 /* Parse a GPM mouse event. */
 static void GPM_parse( void )
 /***************************/
@@ -209,26 +218,26 @@ static void GPM_parse( void )
     last_row = gpm_buf.y - 1;
     type = gpm_buf.tail.gpm_w1.type & 0xf;
     if(variety == 0) {
-        if( type == 2 || type == 4 || type == 8 )
+        if( type == GPM_DRAG || type == GPM_DOWN || type == GPM_UP )
             variety = 1;
         else
             variety = 2;
     }
     if (variety == 2)
         type = gpm_buf.tail.gpm_w2.type & 0xf;
-    if (type == 4) { /* down */
-        if( gpm_buf.button & 4 )
+    if (type == GPM_DOWN) {
+        if( gpm_buf.button & GPM_B_LEFT )
             last_status |= MOUSE_PRESS;
-        if( gpm_buf.button & 2 )
+        if( gpm_buf.button & GPM_B_MIDDLE )
             last_status |= MOUSE_PRESS_MIDDLE;
-        if( gpm_buf.button & 1 )
+        if( gpm_buf.button & GPM_B_RIGHT )
             last_status |= MOUSE_PRESS_RIGHT;
-    } else if (type == 8) { /* up */
-        if( gpm_buf.button & 4 )
+    } else if (type == GPM_UP) {
+        if( gpm_buf.button & GPM_B_LEFT )
             last_status &= ~MOUSE_PRESS;
-        if( gpm_buf.button & 2 )
+        if( gpm_buf.button & GPM_B_MIDDLE )
             last_status &= ~MOUSE_PRESS_MIDDLE;
-        if( gpm_buf.button & 1 )
+        if( gpm_buf.button & GPM_B_RIGHT )
             last_status &= ~MOUSE_PRESS_RIGHT;
     }
 }
@@ -256,8 +265,8 @@ static int gpm_tm_init( void )
     strcpy( sau.sun_path, "/dev/gpmctl" );
     if( connect( UIMouseHandle, (struct sockaddr *)&sau, sizeof sau ) < 0 )
         goto out;
-    gpm_conn.eventMask = 2|4|8; /* DRAG, UP, DOWN */
-    gpm_conn.defaultMask = ~gpm_conn.eventMask;
+    gpm_conn.eventMask = GPM_DRAG | GPM_UP | GPM_DOWN;
+    gpm_conn.defaultMask = ~GPM_HARD;
     gpm_conn.pid = getpid();
     gpm_conn.vc = gpm_conn.minMod = gpm_conn.maxMod = 0;
     sprintf( procname, "/proc/self/fd/%d", UIConHandle );
