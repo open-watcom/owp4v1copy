@@ -87,7 +87,23 @@ common = &
         sys/stat.h &
         sys/timeb.h &
         sys/types.h &
-        cstdio
+        cassert &
+        cctype &
+        cerrno &
+        cfloat &
+        ciso646 &
+        climits &
+        clocale &
+        cmath &
+        csetjmp &
+        csignal &
+        cstdarg &
+        cstddef &
+        cstdio &
+        cstdlib &
+        cstring &
+        ctime &
+        cwchar
 
 DOS_files = &
       $(common) &
@@ -310,12 +326,66 @@ sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../p
 
 !include ../deps.mif
 
-#
 # Handle cname style headers as special cases. Implicit rules for
-# extensionless files seem awkward (especially for Linux?).
+# extensionless files seem awkward (especially for Linux?). Another
+# approach would be to define a temporary extension for these files and
+# change their names when they are copied to the release tree.
 #
+cassert : $(assert_deps)
+        $(csplice)
+
+cctype  : $(ctype_deps)
+        $(csplice)
+
+cerrno  : $(errno_deps)
+        $(csplice)
+
+cfloat  : $(float_deps)
+        $(csplice)
+
+ciso646 : $(iso646_deps)
+        $(csplice)
+
+climits : $(limits_deps)
+        $(csplice)
+
+clocale : $(locale_deps)
+        $(csplice)
+
+cmath   : $(math_deps)
+        $(csplice)
+
+csetjmp : $(setjmp_deps)
+        $(csplice)
+
+csignal : $(signal_deps)
+        $(csplice)
+
+cstdarg : $(stdarg_deps)
+        $(csplice)
+
+cstddef : $(stddef_deps)
+        $(csplice)
+
 cstdio  : $(stdio_deps)
         $(csplice)
+
+cstdlib : $(stdlib_deps)
+        $(csplice)
+
+cstring : $(string_deps)
+        $(csplice)
+
+ctime   : $(time_deps)
+        $(csplice)
+
+cwchar  : $(wchar_deps)
+        $(csplice)
+
+# OpenWatcom does not currently support <wctype.h>
+#cwctype : $(wctype_deps)
+#        $(csplice)
+
 
 clean: .SYMBOLIC
       rm -f *.h sys/*.h *.hpp common.cnv
