@@ -45,6 +45,8 @@
 #include "smpstuff.h"
 #include "wmsg.h"
 
+#include "ovldbg.h"
+
 char FAR_PTR    *CommonAddr = NULL;
 extern bool     FirstSample;
 
@@ -62,30 +64,10 @@ typedef struct pblock {
     seg_offset  startcsip;
 } pblock;
 
-struct ovl_header {
-    unsigned char   jmp;
-    unsigned char   disp;
-    unsigned short  signature;
-    void            (FAR_PTR *hook)();
-    unsigned short  handler_offset;
-};
-
 typedef struct {
     void far    *addr;
     uint_16     sect;
 } ovl_addr;
-
-enum ovl_req {
-    GET_STATE_SIZE,
-    GET_OVERLAY_STATE,
-    SET_OVERLAY_STATE,
-    TRANSLATE_VECTOR_ADDR,
-    TRANSLATE_RETURN_ADDR,
-    GET_OVL_TBL_ADDR,
-    GET_CHANGED_SECTIONS
-};
-
-#define OVL_SIGNATURE   0x2112
 
 extern seg_offset far SysCallerAddr;
 extern unsigned char far SysCaught;
@@ -94,7 +76,7 @@ extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
 unsigned OvlSize;
 void FAR_PTR *OvlStruct;
-int     (FAR_PTR *OvlHandler)( unsigned req, void FAR_PTR *data );
+int     (far *OvlHandler)( unsigned req, void far *data );
 
 
 
@@ -119,7 +101,7 @@ extern void RecordCGraph( void );
 extern seg      GetPSP(void);
 extern void     DOSLoadProg( char *, pblock near *, void REPORT_TYPE (*)() );
 extern void     DOSRunProg( seg_offset * );
-extern void     FAR_PTR ovl_handler( short );
+extern void     far ovl_handler( short );
 
 void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
 {
@@ -153,7 +135,7 @@ void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
     ovl->ovl.addr.offset = offset-1;
     Info.d.count[ SAMP_OVL_LOAD ].size += size;
     Info.d.count[ SAMP_OVL_LOAD ].number += 1;
-    OvlHandler( GET_OVERLAY_STATE, ovl->ovl.ovl_map );
+    OvlHandler( OVLDBG_READ_STATE, ovl->ovl.ovl_map );
     SampWrite( ovl, ovl->pref.length );
     /* find out what overlays moved */
     remap_blk.pref.tick = CurrTick;
@@ -161,7 +143,8 @@ void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
     remap_blk.pref.kind = SAMP_REMAP_SECTION;
     xlat_addr.sect = 0;
     for(;;) {
-        if( ! OvlHandler( GET_CHANGED_SECTIONS, &xlat_addr ) ) break;
+        if( !OvlHandler( OVLDBG_GET_REMAP_ENTRY, &xlat_addr ) )
+            break;
         remap_blk.remap.data[ 0 ].section = xlat_addr.sect;
         remap_blk.remap.data[ 0 ].segment = FP_SEG( xlat_addr.addr );
         Info.d.count[ SAMP_REMAP_SECTION ].size += remap_blk.pref.length;
@@ -181,7 +164,7 @@ void StartProg( char *cmd, char *prog, char *args )
 {
     struct  SREGS       segs;
     seg_offset          ovl_tbl;
-    struct ovl_header   FAR_PTR *ovl;
+    struct ovl_header   far *ovl;
     pblock              parms;
     void REPORT_TYPE    (*fn)();
     void                *ovl_struct;
@@ -209,7 +192,7 @@ void StartProg( char *cmd, char *prog, char *args )
     ovl = MK_FP( parms.startcsip.segment, parms.startcsip.offset );
     if( ovl->signature == OVL_SIGNATURE ) {
         OvlHandler = MK_FP( parms.startcsip.segment, ovl->handler_offset );
-        OvlSize = OvlHandler( GET_STATE_SIZE, NULL );
+        OvlSize = OvlHandler( OVLDBG_GET_STATE_SIZE, NULL );
         ovl_struct = alloca( ( sizeof( overlay_record_t ) - 1 ) + OvlSize );
         if( ovl_struct == NULL ) {
             Output( MsgArray[MSG_SAMPLE_1-ERR_FIRST_MESSAGE] );
@@ -217,7 +200,7 @@ void StartProg( char *cmd, char *prog, char *args )
             fatal();
         }
         OvlStruct = ovl_struct;
-        OvlHandler( GET_OVL_TBL_ADDR, &ovl_tbl );
+        OvlHandler( OVLDBG_GET_OVL_TABLE, &ovl_tbl );
         ovl->hook = &ovl_handler;
         SamplerOff++;   /* don't time overlay initialization */
     }
@@ -314,7 +297,7 @@ void SetInterruptWatch( char **cmd )
     unsigned intr_num;
 
     intr_num = GetNumber( 0x20, 0xff, cmd, 16 );
-    if(( intr_num >= 0x34 ) && ( intr_num <= 0x3d )) {
+    if( ( intr_num >= 0x34 ) && ( intr_num <= 0x3d ) ) {
         Output( MsgArray[MSG_SAMPLE_2-ERR_FIRST_MESSAGE] );
         Output( "\r\n" );
         fatal();

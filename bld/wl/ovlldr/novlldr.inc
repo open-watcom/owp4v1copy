@@ -87,3 +87,5 @@ AREA_LIST STRUC
     al_size             dw      ?
     al_free_paras       dw      ?
 AREA_LIST ENDS
+
+OVL_SIGNATURE   equ     2112h

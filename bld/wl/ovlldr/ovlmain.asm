@@ -28,6 +28,7 @@
 ;*
 ;*****************************************************************************
 
+        include novlldr.inc
 
 ifdef OVL_SMALL
         name    sovlmain
@@ -86,7 +87,8 @@ else
 __LOVLINIT__ proc far
 endif
         jmp     short around
-                dw 2112H
+
+                dw OVL_SIGNATURE
 ifdef OVL_SMALL
 __SDBG_HOOK__   dd NullHook
                 dw __SDBG_HANDLER__
@@ -94,6 +96,7 @@ else
 __LDBG_HOOK__   dd NullHook
                 dw __LDBG_HANDLER__
 endif
+
 around:
         mov     word ptr __OVLPSP__,ES      ; save segment address of PSP
         mov     word ptr SaveSS,SS          ; save actual SS:SP

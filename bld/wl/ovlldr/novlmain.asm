@@ -126,7 +126,7 @@ __NOVLINIT__ proc far
 
         jmp     short around
 
-                dw 2112H        ; the overlay manager's signature.
+                dw OVL_SIGNATURE; the overlay manager's signature.
 __NDBG_HOOK__   dd NullHook     ; the debugger's "hook" into the ovl mgr
                 dw __NDBG_HANDLER__
 BPChain         dw      0       ; set by __NOVLLDR__ and __OVLRETTRAP__

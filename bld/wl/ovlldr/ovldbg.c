@@ -39,6 +39,8 @@
 #include "ovlstd.h"
 #endif
 
+#include "ovldbg.h"
+
 #ifndef FALSE
 #define FALSE       0
 #define TRUE        (!FALSE)
@@ -72,16 +74,6 @@ typedef struct {
 extern ovl_dbg_info far __OVLDBGINFO__;
 #endif
 
-enum {
-    GET_SIZE_OVERLAYS,
-    SAVE_OVL_STATE,
-    RESTORE_OVL_STATE,
-    CHK_VEC_ADDR,
-    CHK_RET_ADDR,
-    GET_OVL_TBL_ADDR,
-    GET_CHANGED_SECTIONS,
-    GET_SECTION_DATA
-};
 
 static int GetSizeOverlays( void )
 /********************************/
@@ -93,7 +85,7 @@ static int GetSizeOverlays( void )
 #ifdef OVL_WHOOSH
     __OVLDBGINFO__.bitsize = ( number + 7 ) / 8;
 #endif
-    return( ( ( number + 7 ) / 8) + sizeof( unsigned ) + 1 );
+    return( ( ( number + 7 ) / 8 ) + sizeof( unsigned ) + 1 );
 }
 
 static int GetSectionData( ovl_addr far * data )
@@ -311,7 +303,8 @@ static int GetChangedSections( ovl_addr far *data )
     ovltab_entry *  ovl;
     unsigned        ovl_num;
 
-     if( ( __OVLFLAGS__ & DBGAREA_LOADED ) && ( __OVLFLAGS__ & DBGAREA_VALID ) ) {
+     if( ( __OVLFLAGS__ & DBGAREA_LOADED )
+         && ( __OVLFLAGS__ & DBGAREA_VALID ) ) {
         ovl_num = __OVLDBGINFO__.section;
         if( ovl_num == data->sect ) {
             __OVLFLAGS__ &= ~DBGAREA_LOADED;
@@ -376,34 +369,34 @@ int far NAME( DBG_HANDLER )( int service, void far *data )
 
     ret = FALSE;
     switch( service ) {
-    case SAVE_OVL_STATE:
+    case OVLDBG_READ_STATE:
         ret = SaveOvlState( data );
         break;
-    case RESTORE_OVL_STATE:
+    case OVLDBG_WRITE_STATE:
         ret = RestoreOvlState( data );
         break;
-    case CHK_VEC_ADDR:
+    case OVLDBG_TRANSLATE_VECTOR_ADDR:
         ret = CheckVecAddr( data );
         break;
-    case GET_SIZE_OVERLAYS:
+    case OVLDBG_GET_STATE_SIZE:
         ret = GetSizeOverlays();
         break;
-    case CHK_RET_ADDR:
+    case OVLDBG_TRANSLATE_RETURN_ADDR:
 #ifndef OVL_WHOOSH
         ret = NAME( CheckRetAddr )( data );
 #else
         ret = __NCheckRetAddr__( data );
 #endif
         break;
-    case GET_OVL_TBL_ADDR:
+    case OVLDBG_GET_OVL_TABLE:
         *(void far *far *)data = &__OVLTAB__;
         break;
 #ifdef OVL_WHOOSH
-    case GET_CHANGED_SECTIONS:
+    case OVLDBG_GET_REMAP_ENTRY:
         ret = GetChangedSections( data );
         break;
 #endif
-    case GET_SECTION_DATA:
+    case OVLDBG_GET_SECTION_DATA:
         ret = GetSectionData( data );
         break;
     }
