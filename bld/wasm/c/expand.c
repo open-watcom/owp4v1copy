@@ -336,6 +336,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
     if( value ) {
         /* just define it to be 1 and get out */
         new = AsmAlloc( sizeof( struct asm_tok ) );
+        memset( new[0].bytes, 0, sizeof( new[0].bytes ) );
         new[0].token = T_NUM;
         new[0].value = 1;
         new[0].string_ptr = NULL;
