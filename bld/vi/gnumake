@@ -194,6 +194,8 @@ LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
 
 LIBS = -lwatcom
 
+CFLAGS += -D__ISVI__
+
 $(OBJDIR)/wvi	: $(OBJDIR) $(OBJECTS)
 	echo lpth $(LIBDIRS)	
 	$(CC) -o $@ $(CFLAGS) -L$(LIBDIRS) $(OBJECTS) $(LIBS) 
