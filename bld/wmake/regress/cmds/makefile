@@ -1,18 +1,19 @@
-.extensions:
-.extensions: . .exe .obj .c
+proj_name = wmake_regress_cmds
 
-.c.obj :
-    $(comp286) $[* -d1 -oailt -s -zq -w4
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
-.obj.exe :
-!ifdef __OS2__
-    $(linker) sys os2 debug all file $[* op q
-!else
-    $(linker) sys dos debug all file $[* op q
-!endif
+targets = mkerr.exe envarg.exe ifeq.exe
 
-.exe. : .symbolic
-    @%null
+all: $(targets) .SYMBOLIC
+	@%null
+	
+mkerr.exe: mkerr.c
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
 
-all :   ifeq mkerr envarg .symbolic
-    @%null
+envarg.exe: envarg.c
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
+
+ifeq.exe: ifeq.c
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
