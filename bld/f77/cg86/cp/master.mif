@@ -86,12 +86,12 @@ f77_cg_libs = $(cg_debug_libs)
 $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(wres_lib) $(dw_lib) $(cg_deps) $(inline_asm_lib)
     @%create $(exe).lnk
     @for %i in ($(fobjs)) do @%append $(exe).lnk file %i
-    $(linker) name $(target_exe) $(lflags) @$(exe) $(f77_cg_libs) op map lib $(wres_lib), $(dw_lib), $(inline_asm_lib)
+    $(linker) name $^@ $(lflags) @$(exe) $(f77_cg_libs) op map lib $(wres_lib), $(dw_lib), $(inline_asm_lib)
 !ifeq host_OS osi
-    $(binder)\w32bind $(target_exe).rex $(target_exe).exe $(binder)\os2ldr.exe
+    $(binder)\w32bind $(target_exe).rex $^@ $(binder)\os2ldr.exe
     erase $(target_exe).rex
 !endif
-    wstrip -q -a -r $(target_exe) . errmsg.res
+    wstrip -q -a -r $^@ . errmsg.res
 
 option.obj : option.c optinfo.h
 

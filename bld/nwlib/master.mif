@@ -95,12 +95,12 @@ $(exe_name): $(stub_objs) $(proj_name).lib
     $(linker) $(exe_lflags_$(host_OS)_$(host_CPU)) $(common_lflags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
 
 $(proj_name).lib: $(targ_name)
-    @if exist $(exe_name) del $(exe_name)
+    @rm -f $(exe_name)
     $(librarian) -b-n $^@ +$(targ_name)
 !endif
 
 !ifeq bootstrap 1
-inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h 
+inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h
 defines = -DIDE_PGM -D__stdcall=
 wlib_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a &
 $(wres_dir)/$(%OBJDIR)/libwres.a $(orl_dir)/$(%OBJDIR)/liborl.a

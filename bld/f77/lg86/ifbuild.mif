@@ -13,34 +13,34 @@ ifbuild_form = 286
 !endif
 
 !ifdef __386__
-ifbuild = $(f77_dir)\lg86\utils\ifbuild3.exe
+ifbuild = $(f77_dir)/lg86/utils/ifbuild3.exe
 ifbuild_extn = 3bj
 !else
-ifbuild = $(f77_dir)\lg86\utils\ifbuild2.exe
+ifbuild = $(f77_dir)/lg86/utils/ifbuild2.exe
 ifbuild_extn = 2bj
 !endif
 run_ifbuild = $(ifbuild)
 
 ifbuild_objs = &
-$(f77_dir)\lg86\utils\ifbuild.$(ifbuild_extn) &
-$(f77_dir)\lg86\utils\ifnames.$(ifbuild_extn) &
-$(f77_dir)\lg86\utils\ifargtyp.$(ifbuild_extn) &
-$(f77_dir)\lg86\utils\ifflags.$(ifbuild_extn) &
-$(f77_dir)\lg86\utils\ifargct.$(ifbuild_extn) &
-$(f77_dir)\lg86\utils\ifselect.$(ifbuild_extn)
+$(f77_dir)/lg86/utils/ifbuild.$(ifbuild_extn) &
+$(f77_dir)/lg86/utils/ifnames.$(ifbuild_extn) &
+$(f77_dir)/lg86/utils/ifargtyp.$(ifbuild_extn) &
+$(f77_dir)/lg86/utils/ifflags.$(ifbuild_extn) &
+$(f77_dir)/lg86/utils/ifargct.$(ifbuild_extn) &
+$(f77_dir)/lg86/utils/ifselect.$(ifbuild_extn)
 
 $(ifbuild) : $(ifbuild_objs)
         @%create tmp.lnk
         @for %i in ($(ifbuild_objs)) do @%append tmp.lnk file %i
         wlink d a name $^@ sys $(ifbuild_form) @tmp.lnk
-        @del tmp.lnk
+        @rm -f tmp.lnk
 
 fciftbl.asm : $(ifbuild)
 !ifdef __386__
-        $(run_ifbuild) t3 $^@
+        $[@ t3 $^@
 !else
-        $(run_ifbuild) t2 $^@
+        $[@ t2 $^@
 !endif
 
 fciftbl.lnk : $(ifbuild)
-        $(run_ifbuild) v $^@
+        $[@ v $^@

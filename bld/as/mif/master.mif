@@ -210,7 +210,7 @@ $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
         wsplice $(splice_opts) $[@ $^@
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
-        $(yacc) $(yacc_flags) $[@ $(as_dir)\y\yydriver.c > $(nulldevice)
+        $(yacc) $(yacc_flags) $[@ $(as_dir)/y/yydriver.c > $(nulldevice)
         $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
         $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
         # $(yacc) $(yacc_flags) $[@

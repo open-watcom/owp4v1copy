@@ -2,25 +2,25 @@
 # Set ifns directory
 #
 !ifdef __386__
-if_lib = ..\ifns\if386.lib
+if_lib = ../ifns/if386.lib
 !else
-if_lib = ..\ifns\if.lib
+if_lib = ../ifns/if.lib
 !endif
 
-share_objs = ..\ifns\
+share_objs = ../ifns/
 !include $(f77_dir)/lg86/comp.mif
-.asm: ..\ifns
-.c: ..\ifns
+.asm: ../ifns
+.c: ../ifns
 
 !include ../ifns/ifns.mif
-$(if_lib) : $(obj_ifns) ..\ifns\if.lbc
+$(if_lib) : $(obj_ifns) ../ifns/if.lbc
         wlib /b/n/q $^@ @$]@
-        del ..\ifns\*.obj
-        del ..\ifns\if.lbc
+        rm -f ../ifns/*.obj
+        rm -f ../ifns/if.lbc
 
 fcmds=@%append $^@ +%i
 
-..\ifns\if.lbc : ..\ifns\ifns.mif
+../ifns/if.lbc : ../ifns/ifns.mif
         @echo Creating $^@
         @%create $^@
         @for %i in ($(obj_ifns)) do $(fcmds)

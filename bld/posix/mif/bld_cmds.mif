@@ -35,7 +35,7 @@ COMMANDS = &
     tee &
 #    tr &
 #    true &
-#    trunc &
+    trunc &
 #    unexpand &
     uniq &
 #    uuencode &
@@ -59,6 +59,6 @@ COMMANDS += &
 #    od &
     rm &
 #    rmdir &
-    sleep 
+    sleep
 #    which
 !endif

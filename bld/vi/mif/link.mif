@@ -15,7 +15,11 @@ extra_l_flags_win = $(extra_l_flags_win_$(host_CPU))
 !ifdef sys_windowed
 ! ifeq host_CPU 386
 extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k
+!ifdef __LINUX__
+extra_l_flags_nt += alias "_WinMain='_WinMain@16'"
+!else
 extra_l_flags_nt += alias _WinMain='_WinMain@16'
+!endif
 ! else
 extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k
 ! endif

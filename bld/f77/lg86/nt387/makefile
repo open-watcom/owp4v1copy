@@ -7,6 +7,6 @@ fp_model        = i87
 exe             = wf387
 form            = nt
 __386__         =
-share_objs      = ..\obj387\
+share_objs      = ../obj387/
 
 !include        ../makego.mif

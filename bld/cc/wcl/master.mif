@@ -15,6 +15,8 @@ objs = swchar.obj
 extra_c_flags = -s
 extra_c_flags_swchar = -i"../../h"
 
+extra_l_flags = op map
+
 .c: ..;../../c
 
 all: wcl.exe wcl386.exe wclaxp.exe

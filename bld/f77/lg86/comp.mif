@@ -108,7 +108,7 @@ compile = $(comp) $(c_opts) $[*
 !ifdef share_objs
     $(compile) -fo=$(share_objs).obj
 !else
-    $(compile)
+    $(compile) -fo=.obj
 !endif
 .c.xbj:
 !ifdef japan_objs

@@ -1,5 +1,4 @@
 !include $(plusplus_dir)/ppdirs.mif
-!include $(plusplus_dir)/tools.mif
 !include $(define_library_include)
 !include cproj.mif
 

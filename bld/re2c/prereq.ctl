@@ -21,3 +21,10 @@
     wmake -h
     <CPCMD> re2c.exe <owroot>\bld\build\binnt\re2c.exe
     cdsay <PROJDIR>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#===============================
+    cdsay <PROJDIR>/linux386
+    wmake -h
+    <CPCMD> re2c.exe <owroot>/bld/build/binl/re2c
+    cdsay <PROJDIR>

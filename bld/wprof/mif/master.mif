@@ -95,7 +95,7 @@ rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)
 # exlicit rules
 ################
 $(fname).$(exe) : eraseall.obj _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
-    @if exist finger.obj del finger.obj
+    @rm -f finger.obj
     @%make finger.obj
     $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifdef resfile
@@ -111,7 +111,7 @@ $(fname).$(exe) : eraseall.obj _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_o
 !endif
 
 eraseall.obj : ../compile.gbl
-    @if exist *.obj del *.obj
+    @rm -f *.obj
     wtouch eraseall.obj
 
 !ifeq host_OS os2

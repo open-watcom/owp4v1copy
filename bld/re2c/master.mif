@@ -4,13 +4,13 @@ proj_name = re2c
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(re2c_dir)\h
+inc_dirs = $(re2c_dir)/h
 
-.cpp: ..\cpp
+.cpp: ../cpp
 
 .cpp.obj: $($(proj_name)_autodepends)
         set include=$(inc_path)
-        $(cpp) -ox-zq-mf-zc $(extra_c_flags_$[&) $[@
+        $(cpp) -ox-zq-mf-zc -fo=.obj $(extra_c_flags_$[&) $[@
 
 objs =                  &
        actions.obj      &
@@ -23,4 +23,4 @@ objs =                  &
        translat.obj
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet op stack=8k $(lflags) name $^. file { $< }
+        $(linker) option quiet op stack=8k $(lflags) name $^@ file { $< }

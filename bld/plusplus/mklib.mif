@@ -5,7 +5,6 @@ uncompressed=1
 
 !include $(plusplus_dir)/dirmacs.mif
 
-!include $(plusplus_dir)/tools.mif
 !include $(define_library_include)
 !include $(define_target_include)
 !include cproj.mif
@@ -59,11 +58,11 @@ $(target_lib) : $(target_objs)
     rm -f $(lbcfile)
 !else
     @set obj_list=$(target_objs)
-    $(concatenate) @obj_list >__wrk__.obj
+    cat @obj_list >__wrk__.obj
     @set obj_list=
     $(librarian) $(lib_flags) $^@ -+__wrk__.obj
     @rm -f __wrk__.obj
-    @*$(truncate) -q $(target_objs)
+    @*trunc -q $(target_objs)
 !endif
     wtouch compile.tim
 
@@ -76,11 +75,11 @@ $(target_lib_x) : $(target_xbjs)
     rm -f $(lbcfile)
 !else
     @set obj_list=$(target_xbjs)
-    $(concatenate) @obj_list >__wrk__.obj
+    cat @obj_list >__wrk__.obj
     @set obj_list=
     $(librarian) $(lib_flags) $^@ -+__wrk__.obj
     @rm -f __wrk__.obj
-    @*$(truncate) -q $(target_xbjs)
+    @*trunc -q $(target_xbjs)
     wtouch compile.tim
 !endif
 !endif

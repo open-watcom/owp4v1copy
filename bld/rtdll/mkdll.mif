@@ -34,7 +34,7 @@ $(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) tmp.def
 !endif
     sort < $(dllname).lbc > $(dllname).tmp
     uniq $(dllname).tmp > $(dllname).lbc
-    @rm - $(dllname).tmp
+    @rm -f $(dllname).tmp
 
 tmp.def : $(dll_def) $(__MAKEFILES__)
     %create $^@

@@ -4,6 +4,6 @@ __386__         =
 form            = pharlap       # this is for ifbuild
 oshdrs          = $(watcomdir)os220_h
 __mt__          =
-# share_objs    = ..\387\
+# share_objs    = ../387/
 
 !include        ../makert.mif

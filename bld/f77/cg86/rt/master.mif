@@ -38,7 +38,7 @@ extra_c_flags += -d__NEC__
 #------------------------ assembler options
 
 asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
-asm_opts  = -w3 -d1 -zq -fp$(fp_model) $(asm_incs)
+asm_opts  = -w3 -d1 -zq -fp$(fp_model) $(asm_incs) -fo=.obj
 
 !ifdef is_stack
 asm_opts += -3s -3_
@@ -730,9 +730,10 @@ all: $(lib_name).lib .symbolic
 
 $(lib_name).lib : $(files)
     @%create $(lbc_file)
-    @for %%f in (*.?bj) do @%append $(lbc_file) +%%f
+#    @for %%f in (*.?bj) do @%append $(lbc_file) +%%f
+    @for %%f in ($(files)) do @%append $(lbc_file) +%%f
     $(w_lib) -n -b $(lib_name) @$(lbc_file)
-    @del $(lbc_file)
+    @rm -f $(lbc_file)
 
 #../errmsg.res : ../c/errmsg.rc ../h/errcod.h
 #    $(rc_aui) -zk0 -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@ -fo=$^@

@@ -40,8 +40,8 @@ set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/dwarf/lang.ctl ]
 [ INCLUDE <devdir>/cg/lang.ctl ]
 [ INCLUDE <devdir>/cc/lang.ctl ]
-<CPCMD> <devdir>/cc/linux386/wcc386c.elf <devdir>/build/binl/wcc386
-<CPCMD> <devdir>/cc/linuxi86/wcci86c.elf <devdir>/build/binl/wcc
+<CPCMD> <devdir>/cc/linux386.386/wcc386c.elf <devdir>/build/binl/wcc386
+<CPCMD> <devdir>/cc/linux386.i86/wcci86c.elf <devdir>/build/binl/wcc
 
 # all is ready to do everything else now
 

@@ -51,11 +51,17 @@ cdsay .
 #    <CPCMD> <devdir>/bin/qnx/dv.sym <relroot>/rel2/qnx/sym/wd.sym
 #    <CPCMD> <devdir>/bin/qnx/dv.qnx <relroot>/rel2/qnx/binq/wd
 
+    <CPCMD> <devdir>/bin/linux/dv.sym <relroot>/rel2/binl/wd.sym
+    <CPCMD> <devdir>/bin/linux/dv.exe <relroot>/rel2/binl/wd
+
     <CPCMD> <devdir>/wv/dbg/*.dbg <relroot>/rel2/binw/
     <CPCMD> <devdir>/wv/ssl/*.prs <relroot>/rel2/binw/
 
     <CPCMD> <devdir>/wv/dbg/*.dbg <relroot>/rel2/qnx/watcom/wd/
     <CPCMD> <devdir>/wv/ssl/*.prs <relroot>/rel2/qnx/watcom/wd/
+
+    <CPCMD> <devdir>/wv/dbg/*.dbg <relroot>/rel2/binl/
+    <CPCMD> <devdir>/wv/ssl/*.prs <relroot>/rel2/binl/
 
 
 [ BLOCK <1> clean ]

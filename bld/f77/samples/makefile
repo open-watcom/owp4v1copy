@@ -5,5 +5,5 @@ all: .SYMBOLIC
         @wmake -h -i cover16.obj
 
 clean : .SYMBOLIC
-        @rm -f windll\cover16.obj
+        @rm -f windll/cover16.obj
 
