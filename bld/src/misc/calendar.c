@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stddef.h>
+#include <string.h>
 #include <time.h>
 #ifdef __OS2__
  #define INCL_SUB
