@@ -73,6 +73,8 @@
 .*
 .chap *refid=&calref. &calttl.
 .*
+.ix 'calling conventions'
+.*
 .if &e'&dohelp eq 0 .do begin
 .section Introduction
 .do end
@@ -86,7 +88,6 @@
 .do end
 .*
 .np
-.ix 'calling conventions'
 This chapter will deal with the following topics.
 .autonote
 .note

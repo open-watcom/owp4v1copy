@@ -195,6 +195,8 @@
 .*
 .chap *refid=&pragref. &pragttl.
 .*
+.im pragstx
+.*
 .if &e'&dohelp eq 1 .do begin
 .   .if '&machine' eq '8086' .do begin
 .   .   .helppref 16-bit:
@@ -203,8 +205,6 @@
 .   .   .helppref 32-bit:
 .   .do end
 .do end
-.*
-.im pragstx
 .*
 .pc
 The following classes of pragmas are supported.
