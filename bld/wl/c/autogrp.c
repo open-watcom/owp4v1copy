@@ -97,6 +97,8 @@ static offset SetSegType( seg_leader * seg )
     if( seg == NULL ) return 0xFFFF;
     if( seg->info & SEG_CODE ) {
         if( LinkFlags & PACKCODE_FLAG ) return PackCodeLimit;
+        /* By default, do NOT pack code segments in DOS executables */
+        if( FmtData.type & MK_REAL_MODE ) return 0;
     } else {
         if( LinkFlags & PACKDATA_FLAG ) return PackDataLimit;
     }
@@ -208,7 +210,9 @@ static void PackSegs( seg_leader * seg, unsigned num_segs, offset size,
     bool                fakegroup;
 
     if( num_segs == 0 ) return;
-    fakegroup = size == 0 && CurrGroup != NULL;
+    /* Do not pack empty segments in DOS executables; some code relies on
+     * this behaviour and we have little to gain by packing anyway */
+    fakegroup = (size == 0 && !(FmtData.type & MK_REAL_MODE)) && CurrGroup != NULL;
     if( fakegroup ) {
         group = CurrGroup;
     } else {
