@@ -159,7 +159,7 @@ enum Tokens {
     OP_PAREN_LEFT,                 /* "("                */
     OP_PAREN_RIGHT,                /* ")"                */
     OP_DEFINED,                    /* DEFINED(MACRONAME) */
-    OP_EXIST,                      /* EXIST(FILEPATH)    */
+    OP_EXIST,                      /* EXIST[S](FILEPATH) */
     OP_ENDOFSTRING,                /* End of string Character */
     OP_ERROR,                      /* Token returned has error */
 
@@ -187,6 +187,7 @@ enum Tokens {
 #define BACKSLASH       '\\'
 #define MAX_STRING      256
 #define EXIST           "EXIST"
+#define EXISTS          "EXISTS"
 #define DEFINED         "DEFINED"
 
 // Node Definition for the tokens

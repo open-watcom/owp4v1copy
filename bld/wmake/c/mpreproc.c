@@ -1977,7 +1977,8 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
         if( preToken() == OP_PAREN_LEFT ) {
             if( strcmpi( currentToken.data.string, DEFINED ) == 0 ) {
                 type = OP_DEFINED;
-            } else if( strcmpi( currentToken.data.string, EXIST ) == 0 ) {
+            } else if (strcmpi(currentToken.data.string, EXIST) == 0
+            ||         strcmpi(currentToken.data.string, EXISTS) == 0) {
                 type = OP_EXIST;
             } else {
                 leftValue->type = OP_ERROR;
