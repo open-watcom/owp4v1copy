@@ -124,11 +124,6 @@ wr_lib          = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
 extra_l_flags = op map, v library {$(wres_lib) $(resedit_libs) $(wr_lib)}
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
-!ifndef TOOLS_10_0
-!ifeq host_CPU 386
-extra_l_flags_nt += runtime windows=4.0
-!endif
-!endif
 extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
 # explicit rules

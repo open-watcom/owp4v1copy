@@ -140,7 +140,7 @@ extra_l_flags_win = libpath $(watcom_dir)/lib &
 extra_l_flags_nt  = libpath $(watcom_dir)/lib &
                     lib $(wpi_dir)/lib/wpi_nt.lib &
                     lib $(wr_dir)/nt386/wr.lib &
-                    option stack=32k runtime windows=4.0
+                    option stack=32k
 !ifdef __LINUX__
 extra_l_flags_nt += alias "'_WinMain'='_WinMain@16'"
 !else

@@ -147,8 +147,7 @@ $(name).lib: $(__MAKEFILES__) $(name).dll
 extra_l_flags = libpath $(misc_dir) op map,v,static
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
 !ifeq host_cpu 386
-#extra_l_flags_nt += runtime windows=4.0 option offset=69900000
-extra_l_flags_nt += runtime windows=4.0
+#extra_l_flags_nt += option offset=69900000
 !endif
 extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 #extra_l_flags_win += segment  _TEXT PRELOAD FIXED
