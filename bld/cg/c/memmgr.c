@@ -61,6 +61,7 @@ essentially no worst case performance scenario.
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "standard.h"
 #include "ptrint.h"
@@ -485,6 +486,10 @@ extern void     MemFree( char *block )
         blk_hdr     *header;
         mem_blk     *blk;
 
+#ifndef NDEBUG
+        // Must zero the memory for later checks in GetFromBlk
+        memset( block + TAG_SIZE, 0, length );
+#endif
         header = (blk_hdr*)(block - sizeof( blk_hdr ) + TAG_SIZE);
         blk    = header->block;
         blk->free += header->size + sizeof( blk_hdr );
