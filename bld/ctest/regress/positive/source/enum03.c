@@ -89,14 +89,18 @@ int main( int argc, char **argv )
     __int64	j2 = -1 << 15;
     __int64	k2 = 1I64 << 31;
 
-#ifndef __SW_EI
-    if( sizeof( enum_s81 ) != 1 ) fail(__LINE__);
-    if( sizeof( enum_u82 ) != 1 ) fail(__LINE__);
-#endif
-#if !defined( __SW_EI ) || defined( __I86__ )
-    if( sizeof( enum_s161 ) != 2 ) fail(__LINE__);
-    if( sizeof( enum_s162 ) != 2 ) fail(__LINE__);
-    if( sizeof( enum_u163 ) != 2 ) fail(__LINE__);
+#ifdef __SW_EI
+    if( sizeof( enum_s81 ) != sizeof(int) ) fail(__LINE__);
+    if( sizeof( enum_u82 ) != sizeof(int) ) fail(__LINE__);
+    if( sizeof( enum_s161 ) != sizeof(int) ) fail(__LINE__);
+    if( sizeof( enum_s162 ) != sizeof(int) ) fail(__LINE__);
+    if( sizeof( enum_u163 ) != sizeof(int) ) fail(__LINE__);
+#else
+    if( sizeof( enum_s81 ) != sizeof(char) ) fail(__LINE__);
+    if( sizeof( enum_u82 ) != sizeof(char) ) fail(__LINE__);
+    if( sizeof( enum_s161 ) != sizeof(short) ) fail(__LINE__);
+    if( sizeof( enum_s162 ) != sizeof(short) ) fail(__LINE__);
+    if( sizeof( enum_u163 ) != sizeof(short) ) fail(__LINE__);
 #endif
     if( sizeof( enum_s321 ) != 4 ) fail(__LINE__);
     if( sizeof( enum_s322 ) != 4 ) fail(__LINE__);
