@@ -1,14 +1,12 @@
 /*================================================================\
 |                                                                 |
 |      OS/2 Physical Device Driver Demonstration Code             |
-|                  for Watcom C/C++ 10.x                          |
+|                     for Open Watcom C/C++                       |
 |                                                                 |
 |  TIMER.C Time execution of program                              |
 |                                                                 |
 |  This program uses the high-resolution timer Physical Device    |
 |  Driver (PDD) for OS/2                                          |
-|                                                                 |
-|  Adapted for Watcom C/C++ 10.x by WATCOM International Corp.    |
 |                                                                 |
 \================================================================*/
 
@@ -89,7 +87,7 @@ void main( int argc, char **argv )
         exit( EXIT_SUCCESS );
     }
     init();
-    rc = spawnvp( P_WAIT, argv[1], &argv[1] );
+    rc = spawnvp( P_WAIT, argv[1], (const char**)&argv[1] );
     fini( &time );
     printf( "%s: %dms, %dns\n", argv[1], time.millisecs, time.nanosecs );
     exit( rc );
