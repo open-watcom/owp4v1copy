@@ -1,6 +1,7 @@
-#pmake: all build cpu_386 os_qnx
-host_CPU = 386
-host_OS = qnx
+#pmake: os_qnx cpu_386
+
+host_os  = qnx
+host_cpu = 386
 
 MODEL = S
 !ifdef comp386

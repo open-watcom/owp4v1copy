@@ -1,11 +1,12 @@
-#pmake: all build cpu_i86 os_qnx
-host_CPU = i86
-host_OS = qnx
+#pmake: os_qnx cpu_i86
+
+host_os  = qnx
+host_cpu = i86
 
 os = qnx
 build_target = qnx
 compiler = comp286
-model=l
+model = l
 track =
 sysinclude=$(lang_root)\qh;
 

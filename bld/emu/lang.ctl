@@ -15,7 +15,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\emu\dos386\emu387.lib <relroot>\rel2\lib386\dos\emu387.lib
+    <CPCMD> <devdir>\emu\dos386\emu387.lib  <relroot>\rel2\lib386\dos\emu387.lib
     <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\netware\emu387.lib
     <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\os2\emu387.lib
 #    <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\osi\emu387.lib
@@ -23,7 +23,7 @@ cdsay .
     <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\qnx\emu387.lib
     <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\nt\emu387.lib
     <CPCMD> <devdir>\emu\stub386\emu387.lib <relroot>\rel2\lib386\noemu387.lib
-    <CPCMD> <devdir>\emu\qnx386\emu387 <relroot>\rel2\qnx\binq\emu387
+#    <CPCMD> <devdir>\emu\qnx386\emu387      <relroot>\rel2\qnx\binq\emu387
 
 [ BLOCK <1> clean ]
 #==================
