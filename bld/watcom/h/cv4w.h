@@ -35,7 +35,7 @@
 /* include fixed field defn */
 #include "cv4f.h"
 
-#pragma pack( 1 );         /* written out directly so we need packing */
+#pragma pack( 1 )         /* written out directly so we need packing */
 
 typedef struct lf_common {
     u2          code;
@@ -578,4 +578,4 @@ typedef union {
     s_entrythis         entrythis;
 } s_all;
 
-#pragma pack();
+#pragma pack()

@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#pragma pack( 1 );
+#pragma pack( 1 )
 enum cv_ptype {
         CV_SPECIAL      =0x00,
         CV_SIGNED       =0x01,
@@ -835,4 +835,4 @@ typedef struct {
     u4          offset;
     u2          module;
 } cs_procref, cs_dataref;
-#pragma pack();
+#pragma pack()

@@ -33,7 +33,7 @@
 #ifndef PCOBJ_H
 #include <watcom.h>
 
-#pragma pack(1);
+#pragma pack(1)
 /*
  * Library stuff
  */
@@ -425,7 +425,7 @@ enum {
     EASY_EXEC_READ      = 0x02, /* exec-read                            */
     EASY_READ_WRITE     = 0x03  /* read-write                           */
 };
-#pragma pack();
+#pragma pack()
 
 #define PCOBJ_H 1
 #endif

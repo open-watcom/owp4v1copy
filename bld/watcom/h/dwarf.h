@@ -33,7 +33,11 @@
 #ifndef _DWARF_H_INCLUDED_
 #define _DWARF_H_INCLUDED_
 
-#pragma pack(push, 1);
+#pragma pack(push, 1)
+
+#ifndef __WATCOMC__
+#define _WCUNALIGNED
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -331,5 +335,5 @@ typedef struct {
 #ifdef __cplusplus
 };
 #endif
-#pragma pack (pop);
+#pragma pack (pop)
 #endif

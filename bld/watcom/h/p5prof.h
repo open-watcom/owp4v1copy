@@ -79,17 +79,19 @@ typedef struct block_count_info {
 #define PROFILE_FLAG_BLOCK      'b'
 #define PROFILE_LONG_FORMAT_LEN 20
 
-_WCRTLINK extern void __ProfInit();
-_WCRTLINK extern void __ProfExitCriticalSection();
-_WCRTLINK extern void __ProfEnterCriticalSection();
-_WCRTLINK extern void __ProfEnable();
-_WCRTLINK extern void __ProfDisable();
-_WCRTLINK extern __int64 __P5_overhead();
+_WCRTLINK extern void __ProfInit( void );
+_WCRTLINK extern void __ProfExitCriticalSection( void );
+_WCRTLINK extern void __ProfEnterCriticalSection( void );
+_WCRTLINK extern void __ProfEnable( void );
+_WCRTLINK extern void __ProfDisable( void );
+_WCRTLINK extern __int64 __P5_overhead( void );
 
-extern char *__ProfAlloc();
+extern char *__ProfAlloc( void );
 
+#ifdef __WATCOMC__
 #pragma aux __ProfProlog "__PON" parm routine [] modify []
 _WCRTLINK extern void __ProfProlog( new_P5_timing_info *block );
 
 #pragma aux __ProfEpilog "__POFF" parm routine [] modify []
 _WCRTLINK extern void __ProfEpilog( new_P5_timing_info *block );
+#endif

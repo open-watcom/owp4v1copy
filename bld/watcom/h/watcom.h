@@ -34,7 +34,7 @@
 
 #include <errno.h>
 
-#if !defined(__sun__) && !defined(sun) && !defined(__sgi) && !defined(__hppa) && !defined(_AIX) && !defined(__alpha) && !defined(linux) && !defined(_TYPES_H_)
+#if !defined(__sun__) && !defined(sun) && !defined(__sgi) && !defined(__hppa) && !defined(_AIX) && !defined(__alpha) && !defined(_TYPES_H_) && !defined(_SYS_TYPES_H)
     typedef unsigned        uint;
 #endif
 
