@@ -16,6 +16,7 @@
 #endif
 
 #include <iterator>
+#include <stdexcept>
 
 #define typename
 
@@ -376,6 +377,141 @@ namespace std {
 
   // Sorting and related operations
   // ==============================
+
+  #ifdef _WATCOM_UNSUPPORTED
+:: A compiler bug appears to prevent this heap support from compiling.
+:: See the file bug02.cpp in the owstl regression tests.
+
+  template< class Int >
+  inline Int _heap_parent( Int index )
+    { return ( ( index - 1 )/2 ); }
+
+  template< class Int >
+  inline Int _heap_left( Int index )
+    { return ( 2*index + 1 ); }
+
+  template< class Int >
+  inline Int _heap_right( Int index )
+    { return ( 2*index + 2 ); }
+
+  template< class RandomAccess >
+  void _heapify(
+    RandomAccess first,
+    RandomAccess last,
+    typename iterator_traits< RandomAccess >::difference_type index)
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+    using std::swap;
+
+    Int size = last - first;
+    Int L    = _heap_left( index );  // Index of left child.
+    Int R    = _heap_right( index ); // Index of right child.
+    Int largest = index;             // Index of largest child.
+
+    // Compare the left child (if there is one) with the item at index.
+    if( L < size && first[largest] < first[L] )
+      largest = L;
+
+    // Compare the right child (if there is one) with the largest from above.
+    if( R < size && first[largest] < first[R] )
+      largest = R;
+
+    // If the largest was a child, swap it and then process that child.
+    if( largest != index ) {
+      swap( first[index], first[largest] );
+      _heapify( first, last, largest );
+    }
+  }
+
+  // push_heap( RandomAccess, RandomAccess )
+  // ***************************************
+  template< class RandomAccess >
+  void push_heap( RandomAccess first, RandomAccess last )
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+    using std::swap;
+
+    // If there is no heap, calling this function is illogical.
+    if( first == last )
+      throw std::domain_error( "heap underflow" );
+
+    // Walk up the heap, swapping the index node with its parent as necessary.
+    Int index = (last - first) - 1;
+    while( index > 0 && first[_heap_parent( index )] < first[index] ) {
+      swap( first[_heap_parent( index )], first[index] );
+      index = _heap_parent( index );
+    }
+  }
+
+  // pop_heap( RandomAccess, RandomAccess )
+  // **************************************
+  template< class RandomAccess >
+  void pop_heap( RandomAccess first, RandomAccess last )
+  {
+    using std::swap;
+
+    // If there is no heap, calling this function is illogical.
+    if( first == last )
+      throw std::domain_error( "heap underflow" );
+
+    // Back last up so that it is on the sequence. Swap max item with last.
+    --last;
+    if( first != last ) {
+      swap( *first, *last );
+      _heapify( first, last, 0 );
+    }
+  }
+
+  // make_heap( RandomAccess, RandomAccess )
+  // ***************************************
+  template< class RandomAccess >
+  void make_heap( RandomAccess first, RandomAccess last )
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+
+    Int size = last - first;
+    Int index;
+
+    // Handle a sequence of one item (or zero items) as a special case.
+    if( size <= 1 ) return;
+
+    // Only half the items need to be heapified. The rest are leaves.
+    for( index = size/2 - 1; index >= 0; --index ) {
+      _heapify( first, last, index );
+    }
+  }
+
+  // sort_heap( RandomAccess, RandomAccess )
+  // ***************************************
+  template< class RandomAccess >
+  void sort_heap( RandomAccess first, RandomAccess last )
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+    using std::swap;
+
+    Int size = last - first;
+    Int index;
+
+    // Handle a sequence of one item (or zero items) as a special case.
+    if( size <= 1 ) return;
+
+    for( index = size - 1; index > 0; --index ) {
+      swap( first[0], first[index] );
+      --last;
+      _heapify( first, last, 0 );
+    }
+  }
+
+  // sort( RandomAccess, RandomAccess )
+  // **********************************
+  template< class RandomAccess >
+  void sort( RandomAccess first, RandomAccess last )
+  {
+    make_heap( first, last );
+    sort_heap( first, last );
+  }
+
+  #endif
 
   // min( const Type &, const Type & )
   // *********************************

@@ -33,6 +33,7 @@ cflags_axp += -zq
 
 tests = &
 	alg01.$(exe)    &
+	alg02.$(exe)    &
         fun01.$(exe)    &
         lim01.$(exe)    &
         string01.$(exe) &
@@ -51,14 +52,16 @@ test : .symbolic test.lnk $(tests)
 # way is more transparent than keeping trailing blanks in the check file.
     @echo -------alg01--------->> test.out
     $(run) alg01 >> test.out
+    @echo -------alg02--------->> test.out
+    $(run) alg02 >> test.out
     @echo -------fun01--------->> test.out
-    $(run) fun01 >>test.out
+    $(run) fun01 >> test.out
     @echo -------lim01--------->> test.out
-    $(run) lim01 >>test.out
+    $(run) lim01 >> test.out
     @echo -------string01----------->> test.out
-    $(run) string01 >>test.out
+    $(run) string01 >> test.out
     @echo -------util01---------->> test.out
-    $(run) util01 >>test.out
+    $(run) util01 >> test.out
     diff test.out test.chk
     %make global
     %append $(log_file) PASS $(%__CWD__)
