@@ -71,11 +71,11 @@ void WPProcHelp( gui_help_actions action )
 /****************************************/
 {
     char        help_name[_MAX_PATH2];
-#if _OS != _OS_WIN && _OS != _OS_NT && !defined(_OS2_PM)
+#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2_PM__ )
     char *      filename;
 #endif
 
-#if _OS == _OS_WIN || _OS == _OS_NT || defined(_OS2_PM)
+#if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2_PM__ )
     strcpy( help_name, HELPNAME );
 #else
     filename = FindFile( help_name, "wprof.ihp", HelpPathList );

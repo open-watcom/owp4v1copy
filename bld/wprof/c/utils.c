@@ -38,18 +38,18 @@
 #include <sys/stat.h>
 #include "common.h"
 
-#if _OS == _OS_WIN || _OS == _OS_NT
+#if defined( __WINDOWS__ ) || defined( __NT__ )
 #include <windows.h>
 #endif
-#if _OS == _OS_DOS || _OS == _OS_WIN || _OS == _OS_NT
+#if defined( __DOS__ ) || defined( __WINDOWS__ ) || defined( __NT__ )
 #   include "tinyio.h"
-#elif _OS == _OS_OS2
+#elif defined( __OS2__ )
 #   define INCL_DOS
 #   include "os2.h"
-#elif _OS == _OS_QNX || _OS == _OS_LINUX
+#elif defined( __QNX__ ) || defined( __LINUX__ )
 #   include "unistd.h"
 #else
-#   error _OS not supported
+#   error OS not supported
 #endif
 
 #include "aui.h"
@@ -137,7 +137,7 @@ extern char * FindFile( char * path, char * name, path_list * path_tail )
 
 
 
-#if _OS == _OS_QNX || _OS == _LINUX || _OS == _OS_DOS
+#if defined( __QNX__ ) || defined( __LINUX__ ) || defined( __DOS__ )
 extern dig_fhandle FullPathOpen( char const *name, char *ext,
                                  char *result, unsigned max_res )
 /***************************************************************/
@@ -257,7 +257,7 @@ extern void AddPath( pointer * path_var, char * path_data )
 
 
 
-#if _OS == _OS_QNX
+#if defined( __QNX__ )
 /*
     QNX only allows 32K-1 bytes to be read/written at any one time, so bust
     up any I/O larger than that.
@@ -304,7 +304,7 @@ extern unsigned BigRead( int fh, void * buff, unsigned size )
 
 
 
-#if _OS == _OS_DOS
+#if defined( __DOS__ )
 extern void DoRingBell( void );
 #pragma aux DoRingBell =                                \
         " push   ebp            ",                      \
@@ -319,13 +319,13 @@ extern void DoRingBell( void );
 extern void Ring( void )
 /**********************/
 {
-#if _OS == _OS_DOS
+#if defined( __DOS__ )
     DoRingBell();
-#elif _OS == _OS_WIN || _OS == _OS_NT
+#elif defined( __WINDOWS__ ) || defined( __NT__ )
     MessageBeep( 0 );
-#elif _OS == _OS_QNX || _OS == _OS_LINUX
+#elif defined( __QNX__ ) || defined( __LINUX__ )
     write( STDOUT_FILENO, "\a", 1 );
-#elif _OS == _OS_OS2
+#elif defined( __OS2__ )
     DosBeep( 1000, 250 );
 #endif
 }

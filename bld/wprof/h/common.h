@@ -34,7 +34,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "watcom.h"
-#include "targetos.h"
 #include "bool.h"
 
 #define STATIC          static

@@ -34,12 +34,12 @@
 #include <sys/stat.h>
 
 #include "common.h"
-#if _OS == _OS_WIN || _OS == _OS_NT
+#if defined( __WINDOWS__ ) || defined( __NT__ )
 #include <windows.h>
 #endif
 #include "aui.h"
 #include "wpaui.h"
-#if defined(_OS2_PM)
+#if defined( __OS2_PM__ )
 #include "rcdef.h"
 #endif
 
@@ -60,7 +60,7 @@ extern int              WndNumColours;
 extern a_window *       WndMain;
 extern char             SamplePath[];
 
-#if defined(_OS2_PM)
+#if defined( __OS2_PM__ )
 STATIC gui_resource     MainIcon = { WPROF_ICON, NULL };
 #endif
 
@@ -70,7 +70,7 @@ extern void GUImain( void )
     WPInit();
     WndCreateStatusWindow( &WndColours[ WPA_STATUS_LINE ] );
     WndStatusText( "" );
-#if defined(_OS2_PM)
+#if defined( __OS2_PM__ )
     WndSetIcon( WndMain, &MainIcon );
 #endif
     WPInitHelp();
