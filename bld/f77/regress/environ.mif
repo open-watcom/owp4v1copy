@@ -244,22 +244,22 @@ lnk_axp = $(targ_lnk_$(targ_env_axp)) $(lnk_any)
 
 #
 # targ_ldb      linker debug directive (e.g., DEBUG all)
-targ_ldb_pls386 = debug all
-targ_ldb_d4g386 = debug all
-targ_ldb_tnt386 = debug all
-targ_ldb_os2386 = debug all
-targ_ldb_wnt386 = debug all
-targ_ldb_lnx386 = debug all
-targ_ldb_wnti86 = debug all
-targ_ldb_dosi86 = debug all
-targ_ldb_os2i86 = debug all
-targ_ldb_wntaxp = debug codeview
-targ_ldb_dosaxp = debug codeview
-targ_ldb_os2axp = debug codeview
+targ_ldebug_pls386 = debug all
+targ_ldebug_d4g386 = debug all
+targ_ldebug_tnt386 = debug all
+targ_ldebug_os2386 = debug all
+targ_ldebug_wnt386 = debug all
+targ_ldebug_lnx386 = debug all
+targ_ldebug_wnti86 = debug all
+targ_ldebug_dosi86 = debug all
+targ_ldebug_os2i86 = debug all
+targ_ldebug_wntaxp = debug codeview
+targ_ldebug_dosaxp = debug codeview
+targ_ldebug_os2axp = debug codeview
 
-ldb_386 = $(targ_ldb_$(targ_env_386))
-ldb_i86 = $(targ_ldb_$(targ_env_i86))
-ldb_axp = $(targ_ldb_$(targ_env_axp))
+ldebug_386 = $(targ_ldebug_$(targ_env_386))
+ldebug_i86 = $(targ_ldebug_$(targ_env_i86))
+ldebug_axp = $(targ_ldebug_$(targ_env_axp))
 
 #
 # targ_bld      build options (e.g., something like -bt=dos)

@@ -1,7 +1,0 @@
-#include "macro.h"
-#include "errmsgw.rc"
-
-#if _TARGET == _8086
-  #define MSG_BASE      20000
-  #include "wlink.rc"
-#endif
