@@ -326,9 +326,7 @@ extern bool ModifyAutoExec( void )
                 if( !ModOS2Config( newcfg, OrigConfig ) ) {
                     return( FALSE );
                 }
-                #ifndef WSQL
-                    MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
-                #endif
+                MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
             }
         #endif
     } else {
@@ -847,7 +845,6 @@ void ReplaceVars( char *dst, char *src )
 */
 
 static char *AdditionalPaths[] = { "drive:\\directory\\",
-                                   "c:\\wsql\\nt\\",
                                    /* insert paths here */
                                    NULL };
 

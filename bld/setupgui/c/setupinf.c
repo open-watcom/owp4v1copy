@@ -63,15 +63,6 @@
 #if !defined( __UNIX__ )
     #include "bdiff.h"
 #endif
-#if defined( WSQL )
-    #include <sys/stat.h>
-    #include <sys/utime.h>
-    #include "wsqldef.h"
-    #include "standard.h"
-    #include "license.h"
-    #include "dbparms.h"
-    #include "wsql.h"
-#endif
 
 extern char             *TrimQuote(char*);
 extern int              SkipDialogs;
@@ -230,7 +221,6 @@ static struct file_info {
     unsigned            add : 1;
     unsigned            remove : 1;
     unsigned            supplimental : 1;
-    unsigned            is_odbc : 1;
     unsigned            core_component : 1;
 } *FileInfo = NULL;
 
@@ -325,7 +315,6 @@ static bool             NeedGetDiskSizes = FALSE;
 static bool             NeedInitAutoSetValues = TRUE;
 static char             *ReadBuf;
 static size_t           ReadBufSize;
-extern bool             RemoveODBC;
 extern gui_coord        GUIScale;
 static int              MaxWidthChars;
 static int              CharWidth;
@@ -920,60 +909,11 @@ static char *find_break( char *text, DIALOG_INFO *dlg, int *chwidth )
     return( br );
 }
 
-#if defined( WSQL )
-
-static bool word_wrap( char *text, DIALOG_INFO *dlg, char *vis_condition )
-/************************************************************************/
-{
-    int                 len;
-    int                 i;
-    bool                rc = TRUE;
-    char                savechar;
-    char                *next;
-    int                 chwidth;
-    vhandle             var_handle;
-    char                dummy_var[ DUMMY_VAR_SIZE ];
-
-    for( i = 0 ;; i++ ) {
-        while( *text == ' '  ||  *text == '\t' ) {
-            ++text;
-        }
-        next = find_break( text, dlg, &chwidth );
-        savechar = *next;
-        *next = '\0';
-        len = next - text;
-        if( vis_condition != NULL ) {
-            // condition for visibility (dynamic)
-            GUIStrDup( vis_condition,
-                       &dlg->curr_dialog->pVisibilityConds[ dlg->curr_dialog->num_controls + i ] );
-        }
-        MakeDummyVar( dummy_var );
-        // dummy_var allows control to have an id - used by dynamic visibility feature
-        var_handle = AddVariable( dummy_var );
-        set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
-                             text, var_handle, dlg->col_num, dlg->row_num, dlg->col_num + chwidth );
-        *next = savechar;
-        if( savechar == '\0' ) {
-            break;
-        }
-        text = next;
-        dlg->col_num = C0;
-        dlg->row_num += 1;
-        BumpArray( &dlg->array );
-    }
-    return( rc );
-}
-
-
-#endif
-
 static bool dialog_static( char *next, DIALOG_INFO *dlg )
 /*******************************************************/
 {
     char                *line;
-#ifndef WSQL
     int                 len;
-#endif
     char                *text;
     bool                rc = TRUE;
     char                dummy_var[ DUMMY_VAR_SIZE ];
@@ -996,15 +936,10 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
         var_handle = AddVariable( dummy_var );
         if( text != NULL ) {
             text = AddInstallName( text, TRUE );
-#ifdef WSQL
-            text = ReplaceVarsInplace( text, TRUE );
-            word_wrap( text, dlg, line );
-#else
             len = strlen( text );
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
                                  text, var_handle, dlg->col_num, dlg->row_num, dlg->col_num + len );
             dlg->max_width = max( dlg->max_width, dlg->col_num + len );
-#endif
         } else {
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
                                  "", var_handle, dlg->col_num, dlg->row_num, dlg->col_num + 0 );
@@ -1918,7 +1853,6 @@ static bool ProcLine( char *line, pass_type pass )
                 return( NULL );
         }
         FileInfo[num].supplimental = FALSE;
-        FileInfo[num].is_odbc = FALSE;
         FileInfo[num].core_component = FALSE;
         FileInfo[ num ].num_files = tmp;
         while( --tmp >= 0 ) {
@@ -1947,9 +1881,7 @@ static bool ProcLine( char *line, pass_type pass )
             }
             line = p; p = NextToken( line, '!' );
             if( p != NULL ) {
-                if( *p == 'o' ) {
-                    FileInfo[ num ].is_odbc = TRUE;
-                } else if( *p == 's' ) {
+                if( *p == 's' ) {
                     FileInfo[ num ].supplimental = TRUE;
                 } else if( *p == 'k' ) {
                     FileInfo[ num ].core_component = TRUE;
@@ -2328,13 +2260,6 @@ static bool GetDiskSizes()
     StatusLines( STAT_CHECKING, "" );
     SetVariableByHandle( PreviousInstall, "0" );
     zeroed = FALSE;
-#if defined( WSQL )
-    // if we're doing an install (instead of reinstall), don't want
-    // to initialize all of autoset variables to zero
-    if( GetVariableIntVal( "Install" ) != 0 ) {
-        zeroed = TRUE;
-    }
-#endif
     status_curr = 0;
     InitAutoSetValues();
     for( i = 0; i < SetupInfo.files.num; ++i ) {
@@ -2926,8 +2851,7 @@ extern bool SimFileAdd( int parm )
 extern bool SimFileRemove( int parm )
 /***********************************/
 {
-    return( FileInfo[ parm ].remove ||
-            ( FileInfo[ parm ].is_odbc && RemoveODBC ) );
+    return( FileInfo[ parm ].remove );
 }
 
 /*
@@ -3357,16 +3281,7 @@ extern void SimCalcAddRemove()
             DirInfo[ dir_index ].num_files += FileInfo[i].num_files;
         }
         TargetInfo[ targ_index ].num_files += FileInfo[i].num_files;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-        if( *TargetInfo[ targ_index ].temp_disk == '\\' &&
-            *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
-            cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
-        } else {
-            cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-        }
-#else
         cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-#endif
         FileInfo[ i ].remove = remove;
         FileInfo[ i ].add = add;
         for( k = 0; k < FileInfo[i].num_files; ++k ) {
@@ -3380,9 +3295,9 @@ extern void SimCalcAddRemove()
             }
 
 #if defined( __NT__ )
-            // if ( supplimental is_odbc ! is_dll & & ) then we want to
+            // if ( supplimental is_dll & ) then we want to
             // keep a usage count of this dll.  Store its full path for later.
-            if( !( FileInfo[ i ].is_odbc ) && FileInfo[ i ].supplimental ) {
+            if( FileInfo[ i ].supplimental ) {
                 _splitpath( file->name, NULL, NULL, NULL, ext );
                 if( stricmp( ext, ".DLL" ) == 0 ) {
                     char                file_desc[ MAXBUF ], dir[ _MAX_PATH ], disk_desc[ MAXBUF ];
@@ -3429,16 +3344,7 @@ extern void SimCalcAddRemove()
     /* estimate space used for directories. Be generous. */
     if( !uninstall ) {
         for( i = 0; i < SetupInfo.target.num; ++i ) {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-            if( *TargetInfo[ targ_index ].temp_disk  == '\\' &&
-                *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
-                cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
-            } else {
-                cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-            }
-#else
             cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-#endif
             for( j = 0; j < SetupInfo.dirs.num; ++j ) {
                 if( DirInfo[j].target != i )
                     continue;
@@ -4539,138 +4445,6 @@ static void CompileCondition( char *str, char **to )
     GUIMemFree( str2 );
     GUIStrDup( buff, to );
 }
-
-
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-
-// Create an embedded version:
-//   Special copy of SQL Anywhere where each executable is renamed
-//   to start with a two-letter prefix. This is so that two versions
-//   can run at the same time without sharing DLLs and EXEs.
-
-#define PREFIX_LEN      2
-
-extern char             *ZapFile( char *, char * );
-
-static void ZapIconIni( char *name, char *prefix )
-{
-    char                *str;
-    int                 i;
-    int                 name_len;
-    int                 str_len;
-
-    // fix up icons - look for name in icon's filename field
-    name_len = strlen( name );
-    for( i = 0; i < SetupInfo.pm_files.num; ++i ) {
-        str = PMInfo[ i ].filename;
-        str_len = strlen( str );
-        while( str_len >= name_len ) {
-            if( memicmp( str, name, name_len ) == 0 ) {
-                memcpy( str, prefix, PREFIX_LEN );
-                break;
-            }
-            ++str;
-            --str_len;
-        }
-    }
-
-    // fix up registry and ini file items - look for name in reg's value field
-    for( i = 0; i < SetupInfo.profile.num; ++i ) {
-        str = ProfileInfo[ i ].value;
-        str_len = strlen( str );
-        while( str_len >= name_len ) {
-            if( memicmp( str, name, name_len ) == 0 ) {
-                memcpy( str, prefix, PREFIX_LEN );
-                break;
-            }
-            ++str;
-            --str_len;
-        }
-    }
-
-    // if we zap the name of the server executable, we
-    // won't be able to license the server, so fix up LicenseExe
-    str = GetVariableStrVal( "LicenseExe" );
-    if( str != NULL ) {
-        str_len = strlen( str );
-        while( str_len >= name_len ) {
-            if( memicmp( str, name, name_len ) == 0 ) {
-                memcpy( str, prefix, PREFIX_LEN );
-                break;
-            }
-            ++str;
-            --str_len;
-        }
-    }
-}
-
-static void DoZapFiles( int dir_index, char *prefix )
-{
-    int                 i;
-    int                 j;
-    char                *name;
-    char                *err;
-    char                ext[ _MAX_EXT ];
-    char                fullpath[ _MAX_PATH ];
-
-    for( i = 0; i < SetupInfo.files.num; ++i ) {
-        if( FileInfo[ i ].dir_index == dir_index && FileInfo[ i ].add ) {
-            for( j = 0; j < FileInfo[ i ].num_files; ++j ) {
-                name = FileInfo[ i ].files[ j ].name;
-                _splitpath( name, NULL, NULL, NULL, ext );
-                if( stricmp( ext, ".dll" ) == 0
-                    || stricmp( ext, ".exe" ) == 0 ) {
-                    //char      buf[ 80 ];
-                    //sprintf( buf, "going to zap %s", name );
-                    //MsgBox( NULL, "IDS_ERROR", GUI_OK, buf );
-                    StatusLines( STAT_EMBEDDED, name );
-                    SimGetDir( dir_index, fullpath );
-                    strcat( fullpath, name );
-                    err = ZapFile( fullpath, prefix );
-                    if( err != NULL ) {
-                        MsgBox( NULL, "IDS_ERROR", GUI_OK, err );
-                        // return; - user requested we continue
-                    }
-                    ZapIconIni( name, prefix );
-                }
-            }
-        }
-    }
-}
-
-void MakeEmbedded()
-{
-    char                *prefix;
-    int                 i;
-    int                 win_index;
-    int                 win32_index;
-
-    prefix = GetVariableStrVal( "EmbeddedPrefix" );
-    if( prefix == NULL || strlen( prefix ) != PREFIX_LEN ) {
-        return;
-    }
-
-    // find win and win32 subdirectories
-    win_index = -1;
-    win32_index = -1;
-    for( i = 0; i < SetupInfo.dirs.num; ++i ) {
-        if( win_index == -1 && stricmp( DirInfo[ i ].desc, "win" ) == 0 ) {
-            win_index = i;
-        } else if( win32_index == -1 && stricmp( DirInfo[ i ].desc, "win32" ) == 0 ) {
-            win32_index = i;
-        }
-    }
-    StatusAmount( 0, 1 );
-    StatusLines( STAT_EMBEDDED, "" );
-    if( GetVariableIntVal( "EmbedWin" ) == 1 && win_index != -1 ) {
-        DoZapFiles( win_index, prefix );
-    }
-    if( GetVariableIntVal( "EmbedWin32" ) == 1 && win32_index != -1 ) {
-        DoZapFiles( win32_index, prefix );
-    }
-    StatusAmount( 1, 1 );
-}
-#endif
 
 char *MakeDummyVar( char *buff )
 /******************************/

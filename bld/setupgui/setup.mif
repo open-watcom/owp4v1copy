@@ -49,8 +49,7 @@ objs += &
 objs += &
     utils.obj       &
     winutil.obj     &
-    winddeml.obj    &
-    ntservic.obj
+    winddeml.obj
 !else ifeq host_os os2
 objs += &
     utils.obj       &

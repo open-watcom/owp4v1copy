@@ -931,7 +931,6 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
             fprintf( fp, "%s", csize->dst_var );
         }
         if( csize->redist != ' ' ) {
-            // 'o' for ODBC file
             // 's' for supplimental file (not deleted)
             fprintf( fp, "!%c", tolower( csize->redist ) );
         }

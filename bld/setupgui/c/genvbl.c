@@ -58,9 +58,6 @@ typedef struct  a_variable {
     char        *name;
     unsigned    id : 14;
     unsigned    has_value : 1;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    unsigned    script_file : 1;  // whether to put variable in MSBackoffice install script
-#endif
     char        *strval;    /* value */
     char        *autoset;
     char        restriction;
@@ -134,27 +131,6 @@ char *VarGetAutoSetCond( vhandle var_handle )
         return( "false" );
     return( GlobalVarList[ var_handle ].autoset );
 }
-
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-
-extern void SetVariableNeedsToBeInScriptFile( vhandle var_handle )
-/*****************************************************************/
-{
-    if( var_handle != NO_VAR ) {
-        GlobalVarList[ var_handle ].script_file = TRUE;
-    }
-}
-
-extern bool VariableNeedsToBeInScriptFile( vhandle var_handle )
-/**************************************************************/
-{
-    if( var_handle == NO_VAR ) {
-        return FALSE;
-    }
-    return( GlobalVarList[ var_handle ].script_file );
-}
-
-#endif
 
 extern vhandle GetVariableByName( const char *vbl_name )
 /**********************************************************/
@@ -261,9 +237,6 @@ static vhandle NewVariable( char *vbl_name )
     GUIStrDup( vbl_name, &tmp_variable->name );
     tmp_variable->id = var_handle;
     tmp_variable->has_value = FALSE;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    tmp_variable->script_file = FALSE;
-#endif
     tmp_variable->autoset = NULL;
     tmp_variable->restriction = 0;
     tmp_variable->hook = NULL;

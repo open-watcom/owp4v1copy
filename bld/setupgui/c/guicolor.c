@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Installer color theme configuration
 *
 ****************************************************************************/
 
@@ -101,13 +100,10 @@ gui_colour_set MainColours[] = {
     { GUI_GREY,         GUI_BLACK },            /* GUI_MENU_GRAYED */
     { GUI_BRIGHT_YELLOW,GUI_BLACK },            /* GUI_MENU_ACTIVE */
     { GUI_BRIGHT_YELLOW,GUI_BRIGHT_WHITE },     /* GUI_MENU_ACTIVE_STANDOUT */
-    #if defined( WSQL )
-    { GUI_BRIGHT_WHITE, GUI_BRIGHT_WHITE },
-    #else
-    { GUI_BRIGHT_BLUE, GUI_BRIGHT_BLUE  },
-    #endif
+    { GUI_BRIGHT_BLUE,  GUI_BRIGHT_BLUE },      /* GUI_BACKGROUND */
     { GUI_BRIGHT_WHITE, GUI_BLUE },             /* GUI_MENU_FRAME    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_TITLE_INACTIVE    */
+
     { GUI_BLUE,         GUI_CYAN },             /* GUI_FRAME_ACTIVE    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_FRAME_INACTIVE    */
     { GUI_BRIGHT_WHITE, GUI_RED },              /* GUI_ICON    */
@@ -134,6 +130,7 @@ gui_colour_set StatusColours[] = {
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* GUI_BACKGROUND */
     { GUI_BRIGHT_WHITE, GUI_BLUE },             /* GUI_MENU_FRAME    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_TITLE_INACTIVE    */
+
     { GUI_BLUE,         GUI_CYAN },             /* GUI_FRAME_ACTIVE    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_FRAME_INACTIVE    */
     { GUI_BRIGHT_WHITE, GUI_RED },              /* GUI_ICON    */

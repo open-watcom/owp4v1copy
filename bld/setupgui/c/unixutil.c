@@ -70,7 +70,6 @@ static char *   GetInstallName();
 static long     DisketteSize;
 static int      DecodeError;
 bool            ConfigModified = FALSE;
-bool            RemoveODBC;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
 
 int             SkipDialogs;
@@ -1012,14 +1011,6 @@ static bool DoCopyFiles()
                                      &value ) ) return( FALSE );
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
-                        #if defined( WSQL )
-                            // if read-only file is sademo.db, erase sademo.log also
-                            if( stricmp( file_desc, "sademo.db" ) == 0 ) {
-                                _makepath( tmp_path, NULL, dir, "sademo.log", NULL );
-                                chmod( tmp_path, S_IWRITE );
-                                remove( tmp_path );
-                            }
-                        #endif
                     }
                 }
                 if( SimSubFileNewer( filenum, subfilenum ) ) {
@@ -1051,14 +1042,6 @@ static bool DoCopyFiles()
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
                         num_total_install += OVERHEAD_SIZE;
-                        #if defined( WSQL )
-                            // if read-only file is sademo.db, erase sademo.log also
-                            if( stricmp( file_desc, "sademo.db" ) == 0 ) {
-                                _makepath( tmp_path, NULL, dir, "sademo.log", NULL );
-                                chmod( tmp_path, S_IWRITE );
-                                remove( tmp_path );
-                            }
-                        #endif
                     }
                 } else {
                     num_total_install += OVERHEAD_SIZE;
@@ -1296,20 +1279,6 @@ extern  void DetermineSrcState( char *src_dir )
     src_dir[ len ] = '\0';
 }
 
-static void CheckRemoveODBC()
-/***************************/
-{
-    RemoveODBC = FALSE;
-}
-
-static void AdjustODBCUsage()
-/***************************/
-{
-    long                odbc_usage;
-
-    odbc_usage = odbc_usage;
-}
-
 extern bool CopyAllFiles( void )
 /******************************/
 {
@@ -1317,10 +1286,8 @@ extern bool CopyAllFiles( void )
     FileCheckThisPack = NULL;
 
     if( !CreateDirectoryTree() ) return( FALSE );
-    CheckRemoveODBC();
     if( !RelocateFiles() ) return( FALSE );
     if( !DoCopyFiles() ) return( FALSE );
-    AdjustODBCUsage();
     RemoveExtraFiles();
     RemoveUnusedDirs();
     StatusCancelled(); /* make sure display gets updated */

@@ -76,14 +76,9 @@ extern void     BumpStatus( long );
 
 extern int      ReadInternal( char * );
 
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
-extern void     WriteMIFforMSBackOffice( bool success, char *message );
-#endif
-
 static long     DisketteSize;
 static int      DecodeError;
 bool            ConfigModified = FALSE;
-bool            RemoveODBC;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
 
 extern bool     CancelSetup;
@@ -93,12 +88,6 @@ int             SkipDialogs;
 char            *VariablesFile;
 DEF_VAR         *ExtraVariables;
 int             Invisible;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
-int             MSBackOffice;
-#endif
-#if defined( WINNT ) && defined( WSQL )
-bool            JustDoNIDSetup;
-#endif
 
 #ifdef PATCH
 extern int      IsPatch;
@@ -134,7 +123,7 @@ extern bool ModifyStartup( bool uninstall )
 {
     bool                ret;
 
-#if !defined( WSQL ) && !defined( _UI )
+#if !defined( _UI )
     WriteProfileStrings( uninstall );  // will write to the win.ini file.
 #endif
 
@@ -912,18 +901,12 @@ extern bool CreateDstDir( int i, char *dst_dir )
     char                drive[_MAX_DRIVE];
     char                path[_MAX_PATH];
 
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    if( GetVariableIntVal( "MakePackage" ) == 0 ) {
-#endif
     parent = SimDirParent( i );
     if( parent != -1 ) {
         ok = CreateDstDir( parent, dst_dir );
         if( !ok ) return( FALSE );
     }
     SimDirNoSlash( i, dst_dir );
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    }
-#endif
     if( access( dst_dir, F_OK ) == 0 ) return( TRUE );          // check for existance
         MakeParentDir( dst_dir, drive, path );
     if( mkdir( dst_dir ) == 0 ) return( TRUE );
@@ -1053,9 +1036,6 @@ extern bool CheckDrive( bool issue_message )
 /******************************************/
 //check if there is enough disk space
 {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-    char                UNC_root[ _MAX_PATH ];
-#endif
     bool                ret;
     unsigned long       free_disk_space;
     long                disk_space_needed;
@@ -1108,12 +1088,6 @@ extern bool CheckDrive( bool issue_message )
             disk_space_needed = SimTargetSpaceNeeded( i );
             max_tmp_file = SimMaxTmpFile( i );
             for( j = i + 1; j < max_targs; ++j ) {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-                GetRootFromPath( root[ 0 ], disks[ i ] );
-                GetRootFromPath( root[ 1 ], disks[ j ] );
-                // identical drives are combined, and so are UNC paths pointing to the same share
-                // BUT:  drives and UNC paths that happen to be the same are NOT combined. (I am lazy)
-#endif
                 if( ( tolower( *disks[ j ] ) == tolower( *disks[ i ] )
                     && isalpha( *disks[ i ] ) )
                     || stricmp( root[ 0 ], root[ 1 ] ) == 0 ) {
@@ -1125,27 +1099,7 @@ extern bool CheckDrive( bool issue_message )
                     disk_counted[ j ] = TRUE;
                 }
             }
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-            if( *disks[ i ] == '\\' &&
-                *( disks[ i ] + 1 ) == '\\' ) {
-                if( !IsDriveWritable( disks[i] ) ) {
-                    if( issue_message ) {
-                        GetRootFromPath( UNC_root, disks[i] );
-                        if( access( UNC_root, F_OK ) == 0 ) {
-                            MsgBox( NULL, "IDS_UNCPATH_NOTWRITABLE", GUI_OK, UNC_root );
-                        } else {
-                            MsgBox( NULL, "IDS_UNCPATH_NOTEXIST", GUI_OK, UNC_root );
-                        }
-                        return( FALSE );
-                    }
-                }
-                free_disk_space = FreeSpace( disks[i] );
-            } else {
-                free_disk_space = GetFreeDiskSpace( *disks[i], FALSE );
-            }
-#else
             free_disk_space = GetFreeDiskSpace( *disks[i], FALSE );
-#endif
             if( free_disk_space == (unsigned long)-1 )
                 free_disk_space = 0;
             space[i].drive = disks[i];
@@ -1176,24 +1130,8 @@ extern bool CheckDrive( bool issue_message )
             }
             if( issue_message ) {
                 if( disk_space_needed > 0 && free_disk_space < disk_space_needed ) {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-                    if( *disks[ i ] == '\\' && *(disks[ i ] + 1) == '\\' ) {
-                        if( DriveInfoIsAvailable( disks[ i ] ) ) {
-                            reply = MsgBox( NULL, "IDS_NODISKSPACE_UNC", GUI_YES_NO,
-                                    disks[ i ], free_disk_space/1000, disk_space_needed/1000 );
-                        } else {
-                            GetRootFromPath( root, disks[ i ] );
-                            reply = MsgBox( NULL, "IDS_ASSUME_ENOUGHSPACE",
-                                    GUI_YES_NO, root );
-                        }
-                    } else {
-                        reply = MsgBox( NULL, "IDS_NODISKSPACE", GUI_YES_NO,
-                            *disks[ i ], free_disk_space/1000, disk_space_needed/1000 );
-                    }
-#else
                     reply = MsgBox( NULL, "IDS_NODISKSPACE", GUI_YES_NO,
                             *disks[ i ], free_disk_space/1000, disk_space_needed/1000 );
-#endif
                     if( reply == GUI_RET_NO ) {
                         return( FALSE );
                     }
@@ -1210,16 +1148,7 @@ extern bool CheckDrive( bool issue_message )
                 sprintf( buff, GetVariableStrVal( "IDS_DISKETTES_NEEDED" ), CountDisks( NULL ) );
             }
         } else if( *space[i].drive != 0 && SimTargetNeedsUpdate( i ) ) {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-            if( space[ i ].drive[ 0 ] == '\\' && space[ i ].drive[ 1 ] == '\\' ) {
-                GetRootFromPath( UNC_root, space[ i ].drive );
-                sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC_UNC" ), UNC_root );
-            } else {
-                sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC" ), toupper( *(space[i].drive) ) );
-            }
-#else
             sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC" ), toupper( *(space[i].drive) ) );
-#endif
             if( space[i].needed < 0 ) {
                 catnum( buff, -space[i].needed );
                 strcat( buff, GetVariableStrVal( "IDS_DRIVE_FREED" ) );
@@ -1233,13 +1162,6 @@ extern bool CheckDrive( bool issue_message )
             buff[0] = '\0';
         }
         drive[ strlen( drive ) - 1 ] = i + 1 + '0';
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-        if( space[ i ].drive[ 0 ] == '\\' && space[ i ].drive[ 1 ] == '\\'
-        && ( !DriveInfoIsAvailable( space[ i ].drive )
-             || !IsDriveWritable( space[ i ].drive ) ) ) {
-            strcpy( buff, "" );
-        }
-#endif
         SetVariableByName( drive, buff );
     }
     return( ret );
@@ -1583,9 +1505,6 @@ static bool DoCopyFiles()
     char                file_name[ _MAX_FNAME + _MAX_EXT ];
     char                file_desc[ MAXBUF ], dir[ _MAX_PATH ], disk_desc[ MAXBUF ];
     char                old_dir[ _MAX_PATH ];
-#if defined( WSQL )
-    char                file_ext[ _MAX_EXT ];
-#endif
     long                num_total_install;
     long                num_installed;
     unsigned            i;
@@ -1619,15 +1538,6 @@ static bool DoCopyFiles()
                              &value ) ) return( FALSE );
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
-#if defined( WSQL )
-                        // if read-only file is .db file, erase .log file also
-                        _splitpath( file_desc, NULL, NULL, file_name, file_ext );
-                        if( stricmp( file_ext, ".db" ) == 0 ) {
-                            _makepath( tmp_path, NULL, dir, file_name, "log" );
-                            chmod( tmp_path, S_IWRITE );
-                            remove( tmp_path );
-                        }
-#endif
                     }
                 }
                 if( SimSubFileNewer( filenum, subfilenum ) ) {
@@ -1659,15 +1569,6 @@ static bool DoCopyFiles()
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
                         num_total_install += OVERHEAD_SIZE;
-#if defined( WSQL )
-                        // if read-only file is .db file, erase .log file also
-                        _splitpath( file_desc, NULL, NULL, file_name, file_ext );
-                        if( stricmp( file_ext, ".db" ) == 0 ) {
-                            _makepath( tmp_path, NULL, dir, file_name, "log" );
-                            chmod( tmp_path, S_IWRITE );
-                            remove( tmp_path );
-                        }
-#endif
                     }
                 } else {
                     num_total_install += OVERHEAD_SIZE;
@@ -1983,10 +1884,6 @@ static void RemoveExtraFiles()
         strcat( dst_path, "\\CONFIG.DOS" );
         remove( dst_path );
 #endif
-#if defined( WSQL )
-        LicenseFileName( dst_path );
-        remove( dst_path );
-#endif
     }
 }
 
@@ -2014,49 +1911,6 @@ extern  void DetermineSrcState( char *src_dir )
     src_dir[ len ] = '\0';
 }
 
-static void CheckRemoveODBC()
-/***************************/
-{
-    RemoveODBC = FALSE;
-#if defined( WSQL ) && defined( __NT__ )
-    CheckDLLCount( GetInstallName() );
-    // check for installing ODBC Core files
-    if( GetVariableIntVal( "DoODBCInstall" ) == 1 ) {
-    // New Logo spec says never remove ODBC components
-    // if( VarGetIntVal( UnInstall ) && GetODBCUsage() == 1 ) {
-    //    RemoveODBC = MsgBox( NULL, "IDS_REMOVE_ODBC", GUI_YES_NO ) == GUI_RET_YES;
-    // }
-    }
-#endif
-}
-
-static void AdjustODBCUsage()
-/***************************/
-{
-    long                odbc_usage;
-
-#if defined( WSQL ) && defined( __NT__ )
-    // check for installing ODBC Core files
-    if( GetVariableIntVal( "DoODBCInstall" ) == 1 ) {
-    odbc_usage = GetODBCUsage();
-//      sprintf( buf, "odbc usage before %d", odbc_usage );
-//      MsgBox( NULL, "IDS_ERROR", GUI_OK, buf );
-    if( VarGetIntVal( UnInstall ) ) {
-        if( odbc_usage > 0 ) {
-        --odbc_usage;
-        }
-    } else {
-        if( !VarGetIntVal( PreviousInstall ) ) {
-        ++odbc_usage;
-        }
-    }
-    SetODBCUsage( odbc_usage );
-    }
-#else
-    odbc_usage = odbc_usage;
-#endif
-}
-
 extern bool CopyAllFiles( void )
 /******************************/
 {
@@ -2064,14 +1918,12 @@ extern bool CopyAllFiles( void )
     FileCheckThisPack = NULL;
 
     if( !CreateDirectoryTree() ) return( FALSE );
-    CheckRemoveODBC();
     if( !RelocateFiles() ) return( FALSE );
 #if defined( __OS2__ ) && !defined( _UI )
     LabelDirs();    // add labels (long names) to directories
 #endif
     if( !DoCopyFiles() ) return( FALSE );
     CopySetupInfFile();
-    AdjustODBCUsage();
     RemoveExtraFiles();
     RemoveUnusedDirs();
     StatusCancelled(); /* make sure display gets updated */
@@ -2635,86 +2487,35 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
 
     msg_index = 0;
     for( i = 0; i < strlen( buff ); i++ ) {
-        if( buff[ i ] == '&' ) {   // Terminate string at '&' char if MSBackOffice
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-            if( MSBackOffice ) {
-                msg[ 127 ] = '\0';  // Cut off the string at the 128'th char.
-                break;
-            } else {               // else, skip the '&' character.
-                continue;
-            }
-#else
+        if( buff[ i ] == '&' ) {
             continue;              // skip the '& character.
-#endif
         }
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        if( buff[ i ] == '\n' && MSBackOffice ) {  // replace \n's with spaces
-            buff[ i ] = ' ';
-        }
-#endif
         msg[ msg_index ] = buff [ i ];
         msg_index++;
     }
     msg[ msg_index ] = '\0';
 
     if( SkipDialogs ) {
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        // force answers to certain messages
-        // - this makes sure that a Microsoft Backoffice install doesn't treat these
-        // messages as errors and report FAILED in the .mif file
-        if( stricmp( messageid, "IDS_REMOVE_ODBC" ) == 0
-            || stricmp( messageid, "IDS_REMOVE_DLL" ) == 0 ) {
+        switch( wType ) {
+        case GUI_ABORT_RETRY_IGNORE:
+            result = GUI_RET_ABORT;
+            break;
+        case GUI_RETRY_CANCEL:
+            result = GUI_RET_CANCEL;
+            break;
+        case GUI_YES_NO:
+        case GUI_YES_NO + GUI_QUESTION:
+        case GUI_YES_NO + GUI_INFORMATION:
             result = GUI_RET_NO;
-        } else if( stricmp( messageid, "IDS_LOGFILE_EXISTS" ) == 0
-            || stricmp( messageid, "IDS_INCONSISTENT" ) == 0 ) {
-            result = GUI_RET_YES;
-        } else if( strstr( messageid, "REBOOT" ) != NULL
-            || stricmp( messageid, "IDS_UNSETUPCOMPLETE" ) == 0
-            || stricmp( messageid, "IDS_COMPLETE" ) == 0 ) {
+            break;
+        case GUI_YES_NO_CANCEL:
+        case GUI_YES_NO_CANCEL + GUI_QUESTION:
+        case GUI_YES_NO_CANCEL + GUI_INFORMATION:
+            result = GUI_RET_CANCEL;
+            break;
+        default:
             result = GUI_RET_OK;
-            if( MSBackOffice ) {
-                WriteMIFforMSBackOffice( TRUE, msg );
-            }
-        } else {
-#endif
-            switch( wType ) {
-            case GUI_ABORT_RETRY_IGNORE:
-                result = GUI_RET_ABORT;
-                break;
-            case GUI_RETRY_CANCEL:
-                result = GUI_RET_CANCEL;
-                break;
-            case GUI_YES_NO:
-            case GUI_YES_NO + GUI_QUESTION:
-            case GUI_YES_NO + GUI_INFORMATION:
-                result = GUI_RET_NO;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                if( MSBackOffice ) {
-                    WriteMIFforMSBackOffice( FALSE, msg );
-                }
-#endif
-                break;
-            case GUI_YES_NO_CANCEL:
-            case GUI_YES_NO_CANCEL + GUI_QUESTION:
-            case GUI_YES_NO_CANCEL + GUI_INFORMATION:
-                result = GUI_RET_CANCEL;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                if( MSBackOffice ) {
-                    WriteMIFforMSBackOffice( FALSE, msg );
-                }
-#endif
-                break;
-            default:
-                result = GUI_RET_OK;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                if( MSBackOffice ) {
-                    WriteMIFforMSBackOffice( FALSE, msg );
-                }
-#endif
-            }
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        }  // goes with  "} else {" above
-#endif
+        }
     } else {
         result = GUIDisplayMessage( gui == NULL ? MainWnd : gui, msg, GetInstallName(), wType );
     }
@@ -2946,9 +2747,6 @@ extern bool GetDirParams( int                   argc,
     }
 
 
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    MSBackOffice        = FALSE;
-#endif
     Invisible           = FALSE;
     SkipDialogs         = FALSE;
     VariablesFile       = NULL;
@@ -2959,12 +2757,6 @@ extern bool GetDirParams( int                   argc,
         if( argv[ i ][ 0 ] == '-'
             || argv[ i ][ 0 ] == '/' ) {
             switch( argv[ i ][ 1 ] ) {
-#if defined( WINNT ) && defined( WSQL )
-            case 'w':
-            case 'W':
-                JustDoNIDSetup = TRUE;
-                break;
-#endif
             case 'f': // Process "script" file to override variables in setup.inf
             case 'F':
                 if( argv[ i ][ 2 ] == '='
@@ -2977,12 +2769,6 @@ extern bool GetDirParams( int                   argc,
             case 'D':
                 AddDefine( &argv[ i ][ 2 ] );
                 break;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-            case 'b': // Do an unattended install for Microsoft BackOffice
-            case 'B':
-                MSBackOffice = TRUE;
-                // falling through!!!
-#endif
             case 'i': // No screen output (requires SkipDialogs below as well)
             case 'I':
                 Invisible = TRUE;
@@ -3127,11 +2913,6 @@ extern void CloseDownMessage( bool installed_ok )
 /***********************************************/
 {
 
-#if defined( WINNT ) && defined( WSQL )
-    if( JustDoNIDSetup ) {
-        return;
-    }
-#endif
     if( installed_ok ) {
         if( VarGetIntVal( UnInstall ) != 0 ) {
             MsgBox( NULL, "IDS_UNSETUPCOMPLETE", GUI_OK );
@@ -3150,11 +2931,7 @@ extern void CloseDownMessage( bool installed_ok )
                 MsgBox( NULL, "IDS_COMPLETE", GUI_OK );
             }
         }
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
-    } else if( !CancelSetup && !MSBackOffice ) { // Don't want another error message.
-#else
     } else if( !CancelSetup ) {
-#endif
         if( VarGetIntVal( UnInstall ) != 0 ) {
             MsgBox( NULL, "IDS_UNSETUPNOGOOD", GUI_OK );
         } else {

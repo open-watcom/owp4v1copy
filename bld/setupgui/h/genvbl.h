@@ -58,7 +58,3 @@ extern char *VarGetAutoSetCond( vhandle var_handle );
 extern void VarSetAutoSetRestriction( vhandle var_handle, char *val );
 extern int VarIsRestrictedFalse( vhandle var_handle );
 extern int VarIsRestrictedTrue( vhandle var_handle );
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-extern void SetVariableNeedsToBeInScriptFile( vhandle var_handle );
-extern bool VariableNeedsToBeInScriptFile( vhandle var_handle );
-#endif

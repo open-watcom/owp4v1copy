@@ -65,10 +65,6 @@ bool                    CancelSetup = FALSE;
 #ifdef PATCH
 extern int              IsPatch;
 #endif
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-extern int              MSBackOffice;
-extern void             BkOfficePercent( int );
-#endif
 
 #if defined( __UNIX__ )
   #include "stdui.h"
@@ -189,12 +185,6 @@ extern void StatusAmount( long parts_complete, long parts_injob )
         Percent = old_percent;
         return;
     }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )  // Microsoft BackOffice
-        if( MSBackOffice ) {
-            // for communication with Optima or Powerbuilder installs
-            BkOfficePercent( Percent );
-        }
-    #endif
     if( StatusWnd == NULL ) return;
     #ifdef _UI
         GUIWndDirty( StatusWnd );

@@ -177,36 +177,12 @@ dlg_state DoDialogWithParent( void *parent, char *name )
 {
     a_dialog_header     *dlg;
     dlg_state           return_state;
-#if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    int                     i;
-    int                     var_handle;
-#endif
 
     dlg = FindDialogByName( name );
     if( dlg == NULL ) {
         return( DLG_CAN );
     }
     return_state = DoDialogByPointer( parent, dlg );
-#if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    // Put variables set in dialogs into the install script file
-    // for MSBackOffice packages (with the noted exceptions below)
-    if( GetVariableIntVal( "MakePackage" ) == 1 ) {
-        for( i = 0; dlg->pVariables[ i ] != NO_VAR; i++ ) {
-            var_handle = dlg->pVariables[ i ];
-            // Exceptions: The values the following variables get in dialogs
-            // do not apply to the package being created, so they are not tagged:
-            if( stricmp( VarGetName( var_handle ), "Install" ) == 0
-                || stricmp( VarGetName( var_handle ), "UnInstall" ) == 0
-                || stricmp( VarGetName( var_handle ), "MakeDisks" ) == 0
-                || stricmp( VarGetName( var_handle ), "MakePackage" )  == 0
-                || stricmp( VarGetName( var_handle ), "PackageDir" ) == 0
-                || stricmp( VarGetName( var_handle ), "ApplyLicense" ) == 0 ) {
-                continue;
-            }
-            SetVariableNeedsToBeInScriptFile( dlg->pVariables[ i ] );
-        }
-    }
-#endif
     if( return_state == DLG_CAN ) {
         // This block is a kludgy hack which allows a dialog to
         // return DLG_DONE when the ESC key is pressed, if it has a

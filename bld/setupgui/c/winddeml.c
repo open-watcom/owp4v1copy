@@ -128,13 +128,12 @@ static bool UseDDE( bool uninstall )
         }
         goto cleanup;   // I can't believe I'm doing this
     } else {
-        #if !defined( WSQL )
-            // Delete the PM Group box to get rid of stale icons
-            // (Don't do this for SQL install, since user may install
-            // the server, and then install the client)
-            sprintf( buff, "[DeleteGroup(%s)]", t1 );
-            ok = SendCommand( ddeinst, hconv, buff );
-        #endif
+        // Delete the PM Group box to get rid of stale icons
+        // (Don't do this for SQL install, since user may install
+        // the server, and then install the client)
+        sprintf( buff, "[DeleteGroup(%s)]", t1 );
+        ok = SendCommand( ddeinst, hconv, buff );
+
         // re-Create the PM Group box.
         SimGetPMGroupFileName( t2 );
         if( t2[ 0 ] == '\0' ) {
@@ -167,11 +166,10 @@ static bool UseDDE( bool uninstall )
         SimGetPMDesc( i, prog_desc );
         dir_index = SimGetPMProgName( i, prog_name );
         if( strcmp( prog_name, "GROUP" ) == 0 ) {
-            #if !defined( WSQL )
-                // Delete the PM Group box to get rid of stale icons
-                sprintf( buff, "[DeleteGroup(%s)]", prog_desc );
-                ok = SendCommand( ddeinst, hconv, buff );
-            #endif
+            // Delete the PM Group box to get rid of stale icons
+            sprintf( buff, "[DeleteGroup(%s)]", prog_desc );
+            ok = SendCommand( ddeinst, hconv, buff );
+
             /* creating a new group */
             SimGetPMParms( i, t1 );
             if( t1[ 0 ] == '\0' ) {

@@ -306,8 +306,8 @@ Sections
    this field is empty, the date from the .inf file is used. The fourth
    (optional) value (string) is a variable name which will be created if
    needed and associated with the file. The fifth (optional) value (character)
-   is an additional indicator, a single letter: If 'o', file is ODBC; if 's',
-   it is supplemental; if 'k', it is a core component.
+   is an additional indicator, a single letter: If 's', it is supplemental; 
+   if 'k', it is a core component.
 
    Following is the trailing part of an archive entry. Example:
 

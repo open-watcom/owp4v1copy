@@ -55,16 +55,6 @@ extern void StampEvalFiles();
 extern void SelfRegisterDynamo();
 extern void MakeEmbedded();
 
-#if defined( WINNT ) && defined( WSQL )
-    extern bool NIDSetup( void );
-#endif
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    extern bool MakePackageDir();
-    extern int MSBackOffice;
-#endif
-#if defined( WINNT ) && defined( WSQL )
-    extern bool JustDoNIDSetup;
-#endif
 #ifdef PATCH
     int IsPatch = 0;
 #endif
@@ -84,16 +74,6 @@ static bool SetupOperations()
     bool                uninstall;
 
     ok = ok;
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        if( GetVariableIntVal( "MakePackage" ) == 1 ) {
-
-            if( MakePackageDir() ) {
-                return( TRUE );
-            } else {
-                return( FALSE );
-            }
-        }
-    #endif
     if( GetVariableIntVal( "MakeDisks" ) == 1 ) {
         if( MakeDisks() ) {
             return( TRUE );
@@ -126,11 +106,6 @@ static bool SetupOperations()
             return( FALSE );
         }
     }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-        if( GetVariableIntVal( "DoEmbedded" ) == 1 ) {
-            MakeEmbedded();
-        }
-    #endif
     DoSpawn( WHEN_AFTER );
 
     // Modify AUTOEXEC.BAT and CONFIG.SYS
@@ -139,12 +114,6 @@ static bool SetupOperations()
             return( FALSE );
         }
     }
-    #if defined( WSQL ) && !defined( _UI )
-    // Modify Registry and INI file settings
-    if( GetVariableIntVal( "DoProfile" ) == 1 ) {
-        WriteProfileStrings( uninstall );  // will write to the win.ini file.
-    }
-    #endif
     // Create program group (folder)
     if( GetVariableIntVal( "DoCreateIcons" ) == 1 ||
         GetVariableIntVal( "DoCreateHelpIcons" ) == 1 ) {
@@ -153,50 +122,6 @@ static bool SetupOperations()
         }
     }
     DoSpawn( WHEN_END );
-    #ifdef WSQL
-        #if defined( __WINDOWS__ ) || defined( __NT__ )
-        // Convert ODBC data sources
-        if( !uninstall && GetVariableIntVal( "DoODBCConvert" ) == 1 ) {
-            if( !UpdateODBC() ) {
-                return( FALSE );
-            }
-            #if defined( __NT__ )
-            if( !RegUpdateODBC() ) {
-                return( FALSE );
-            }
-            #endif
-        }
-        #endif
-
-        // Apply the license
-        if( !uninstall && GetVariableIntVal( "DoLicense" ) == 1 ) {
-            StatusLines( STAT_APPLYLICENSE, "" );
-            ok = ApplyLicense();
-            StatusLines( STAT_BLANK, "" );
-            StatusAmount( 0, 1 );
-            if( !ok ) {
-                return( FALSE );
-            }
-        }
-
-        // Create evaluation version
-        if( !uninstall && GetVariableIntVal( "IsEval" ) == 1 ) {
-            StampEvalFiles();
-        }
-
-        #if defined( WINNT )
-            // Self-register any dll
-            if( !uninstall && GetVariableIntVal( "SelfRegisterDynamo" ) == 1 ) {
-                SelfRegisterDynamo();
-            }
-
-            if( !uninstall && GetVariableIntVal( "DoDynamoConfig" ) ) {
-                if( !NIDSetup() ) {
-                    return( FALSE );
-                }
-            }
-        #endif
-    #endif
 
     return( TRUE );
 }
@@ -373,16 +298,6 @@ extern bool DoMainLoop( dlg_state * state )
     diag_list[i+1] = NULL;
     /* process installation dialogs */
 
-    #if defined( WINNT ) && defined( WSQL )
-        if( JustDoNIDSetup ) {
-            if( !GetVariableIntVal( "HasDynamo" ) ) {
-                JustDoNIDSetup = FALSE;
-            } else {
-                return( NIDSetup() );
-            }
-        }
-    #endif
-
     i = 0;
     for( ;; ) {
         if( i < 0 ) break;
@@ -391,29 +306,12 @@ extern bool DoMainLoop( dlg_state * state )
                 char *dst_str = GetVariableStrVal( "MakeDiskDrive" );
                 if( !CheckValidDisketteDrive( dst_str ) ) {
                     MsgBox( NULL, "IDS_INVALID_DISKETTE_SPEC", GUI_OK, dst_str );
-                    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                        // If an error occured, do not proceed further with the install
-                        if( MSBackOffice ) {
-                            break;
-                        }
-                    #endif
                     i = 0;
                 }
             } else if( GetVariableIntVal( "DoCopyFiles" ) == 1 ) {
-                #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                    if( GetVariableIntVal( "MakePackage" ) != 1  // don't check drive if making a package
-                        && !CheckDrive( TRUE ) ) {
-                            // If an error occured, do not proceed further with the install
-                            if( MSBackOffice ) {
-                                break;
-                            }
-                        i = 0;
-                    }
-                #else
                 if( !CheckDrive( TRUE ) ) {
                     i = 0;
                 }
-                #endif
             }
             if( GetVariableByName( "SetupPath" ) != NO_VAR ) {
                 ret = TRUE;
@@ -447,17 +345,7 @@ extern bool DoMainLoop( dlg_state * state )
                 ResetDiskInfo();
                 got_disk_sizes = TRUE;
 
-                #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-                    //Don't delete when making a package
-                    DeleteObsoleteFiles();
-                #endif
             }
-        #if defined( WSQL )
-        } else if( stricmp( diag_list[i], "EvalRegNumber" ) == 0 ) {
-            if( *state == DLG_NEXT ) {
-                EvalRegNumber();
-            }
-        #endif
         } else {
             *state = DoDialog( diag_list[i] );
             GUIWndDirty( NULL );
@@ -473,19 +361,9 @@ extern bool DoMainLoop( dlg_state * state )
             break;
         }
         if( GetVariableIntVal( "MakeDisks" ) != 0 ) {
-            #if defined( WSQL )
-                // Kludge - set FullInstall=true when making disks so that all
-                //          conditions are true, and all files get copied to disk
-                SetVariableByName( "FullInstall", "1" );
-            #endif
             itoa( CountDisks( NULL ), buff, 10 );
             SetVariableByName( "NumDisksNeeded", buff );
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        } else if( got_disk_sizes
-               && GetVariableIntVal( "MakePackage" ) != 1 ) { // no need to check drv w/Bkoff
-        #else
         } else if( got_disk_sizes ) {
-        #endif
             if( !CheckDrive( FALSE ) ) {
                 break;
             }

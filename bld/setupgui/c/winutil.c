@@ -127,19 +127,7 @@ void CreateRegEntry( char *hive_key, char *app_name, char *key_name,
             }
         }
     } else {
-        #if defined( WSQL )
-            if( strnicmp( app_name, "ODBC ", 5 ) == 0 ) {
-                // don't delete [ODBC Drivers] and similar entries,
-                // just delete the values
-                rc = RegCreateKeyEx( key, buf, 0, NULL, REG_OPTION_NON_VOLATILE,
-                             KEY_WRITE, NULL, &hkey1, &disposition );
-                rc = RegDeleteValue( hkey1, key_name );
-            } else {
-                rc = RegDeleteKey( key, buf );
-            }
-        #else
-            rc = RegDeleteKey( key, buf );
-        #endif
+        rc = RegDeleteKey( key, buf );
     }
 }
 
@@ -163,43 +151,6 @@ bool GetRegString( HKEY hive, char *section, char *value,
     }
     return( ret );
 }
-
-
-long GetODBCUsage( void )
-{
-    long                odbc_usage;
-
-    if( GetRegString( HKEY_LOCAL_MACHINE,
-                      "SOFTWARE\\ODBC\\ODBCINST.INI\\ODBC Core",
-                      "UsageCount", (LPBYTE) &odbc_usage, sizeof( long ) ) ) {
-        return( odbc_usage );
-    }
-//  sprintf( buf, "GetODBCUsage failed %d", rc );
-//  MsgBox( NULL, "IDS_ERROR", GUI_OK, buf );
-    return( 0 );
-}
-
-void SetODBCUsage( long new_usage )
-{
-    long                rc;
-    HKEY                hkey;
-    DWORD               disposition;
-
-    rc = RegCreateKeyEx( HKEY_LOCAL_MACHINE,
-                        "SOFTWARE\\ODBC\\ODBCINST.INI\\ODBC Core",
-                        0, NULL, REG_OPTION_NON_VOLATILE,
-                        KEY_WRITE, NULL, &hkey, &disposition );
-    if( rc == ERROR_SUCCESS ) {
-        rc = RegSetValueEx( hkey, "UsageCount", 0,
-                        REG_DWORD, (LPBYTE) &new_usage, sizeof( long ) );
-        if( rc == ERROR_SUCCESS ) {
-            return;
-        }
-    }
-//  sprintf( buf, "SetODBCUsage failed %d", rc );
-//  MsgBox( NULL, "IDS_ERROR", GUI_OK, buf );
-}
-
 
 DWORD ConvertDataToDWORD( BYTE *data, DWORD num_bytes, DWORD type )
 /*****************************************************************/
@@ -346,17 +297,7 @@ void WindowsWriteProfile( char *app_name, char *key_name, char *buf,
         } else {
             // if file doesn't exist, Windows creates 0-length file
             if( access( file_name, F_OK ) == 0 ) {
-                #if defined( WSQL )
-                    if( strnicmp( app_name, "ODBC ", 5 ) == 0 ) {
-                        // don't delete [ODBC Drivers] and similar entries,
-                        // just delete the values
-                        WritePrivateProfileString( app_name, key, NULL, file_name );
-                    } else {
-                        WritePrivateProfileString( app_name, NULL, NULL, file_name );
-                    }
-                #else
-                    WritePrivateProfileString( app_name, key, NULL, file_name );
-                #endif
+                WritePrivateProfileString( app_name, key, NULL, file_name );
             }
         }
         break;

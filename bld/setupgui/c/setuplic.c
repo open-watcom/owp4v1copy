@@ -62,9 +62,6 @@ extern char     *VariablesFile;
 extern void     ReadVariablesFile( char * );
 extern a_bool   ReadBlock( char *, char *, void *, long );
 extern a_bool   WriteBlock( char *, char *, void *, long );
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-extern int      MSBackOffice;
-#endif
 
 static bool is_null_name( char *str )
 /***********************************/
@@ -122,23 +119,8 @@ extern bool ApplyLicense(void)
     struct stat         stat_buf;
     bool                alreadylicensed;
     dlg_state           return_state;
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    char                sms_ini[ _MAX_PATH ];
-    char                name[ 80 ];
-    char                company[ 80 ];
-#endif
 
 
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    if( GetVariableIntVal( "ApplyLicense" ) != 1
-    && GetVariableIntVal( "$IsLicConCur" ) == 1
-    && MSBackOffice ) {
-        return( TRUE );
-    }
-    if( GetVariableIntVal( "ApplyLicense" ) == 1 && MSBackOffice ) {
-        SetVariableByName( "$IsLicConCur", "1" );
-    }
-#endif
     alreadylicensed = FALSE;
     p = GetVariableStrVal("LicenseExe");
     if( p == NULL ) {
@@ -199,132 +181,6 @@ extern bool ApplyLicense(void)
     if( licname != NULL ) {
         alreadylicensed = TRUE;
     }
-#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        // For MSBackOffice, with per-seat licensing, get the user name
-        // and company name from c:\SMS.ini.  If that fails, do not license.
-
-        if( !alreadylicensed ) {
-            if( MSBackOffice ) {
-                strcpy( sms_ini, "c:\\sms.ini" );
-                GetPrivateProfileString( "Local", "UserName", "",
-                                         name, sizeof( name ), sms_ini );
-                GetPrivateProfileString( "Local", "CompanyName", "",
-                                         company, sizeof( company ), sms_ini );
-                if( *name == '\0' || *company == '\0' ) {
-                    MsgBox( NULL, "IDS_NO_LICENSEINFO", GUI_OK );
-                    return( FALSE );
-                }
-                licname = name;
-                liccompname = company;
-            } else {
-#if defined( WINNT )
-                HKEY    key_handle;
-                long    result;
-                DWORD   size;
-                DWORD   size_copy;
-                char    *reg_name;
-                char    *reg_company;
-                result = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-                                       "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-                                       0L,
-                                       KEY_READ,
-                                       &key_handle );
-                for( ;; ) {
-                    if( result != ERROR_SUCCESS ) {
-                        break;
-                    }
-
-                    // Get longest string length for values in key
-                    result = RegQueryInfoKey( key_handle,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              &size,
-                                              NULL,
-                                              NULL );
-
-                    size_copy = size;
-                    if( result != ERROR_SUCCESS ) {
-                        RegCloseKey( key_handle );
-                        break;
-                    }
-                    reg_name = malloc( size + 1 );
-                    reg_company = malloc( size + 1 );
-                    if( reg_name == NULL || reg_company == NULL ) {
-                        RegCloseKey( key_handle );
-                        break;
-                    }
-                    result = RegQueryValueEx( key_handle,
-                                              "RegisteredOwner",
-                                              NULL,
-                                              NULL,
-                                              reg_name,
-                                              &size );
-
-                    if( result != ERROR_SUCCESS ) {
-                        RegCloseKey( key_handle );
-                        break;
-                    }
-                    result = RegQueryValueEx( key_handle,
-                                              "RegisteredOrganization",
-                                              NULL,
-                                              NULL,
-                                              reg_company,
-                                              &size_copy );
-                    if( result != ERROR_SUCCESS ) {
-                        RegCloseKey( key_handle );
-                        break;
-                    }
-                    if( licname != NULL ) {
-                        GUIMemFree( licname );
-                    }
-                    if( liccompname != NULL ) {
-                        GUIMemFree( liccompname );
-                    }
-                    licname = reg_name;
-                    liccompname = reg_company;
-                    RegCloseKey( key_handle );
-                    break;
-                }
-
-#elif defined( WIN )
-                #define STRING_SIZE 256
-                char    ini_name[ STRING_SIZE ];
-                char    ini_company[ STRING_SIZE ];
-                GetPrivateProfileString( "mswindows",
-                                         "username",
-                                         "",
-                                         ini_name,
-                                         STRING_SIZE,
-                                         "serialno.ini" );
-
-                GetPrivateProfileString( "mswindows",
-                                         "company",
-                                         "",
-                                         ini_company,
-                                         STRING_SIZE,
-                                         "serialno.ini" );
-
-                if( ini_name[ 0 ] != '\0' && ini_company[ 0 ] != '\0' ) {
-                    if( licname != NULL ) {
-                        GUIMemFree( licname );
-                    }
-                    if( liccompname != NULL ) {
-                        GUIMemFree( liccompname );
-                    }
-                    licname = ini_name;
-                    liccompname = ini_company;
-                }
-#endif
-            }
-        }
-
-#endif
 
     SetVariableByName( "LicenseName", licname );
     SetVariableByName( "LicenseCompanyName", liccompname );
