@@ -54,6 +54,16 @@ typedef enum {
     S_PUBDEF
 } sym_type;
 
+static void procsegdef (void);
+static void getpubdef (void);
+static void GetComent (sym_file *sfile);
+static void getcomdef (void);
+static void getcomdat (void);
+static void getlname (int local);
+static void FreeCommonBlk (void);
+static void FreeLNames (void);
+static int IsCommonRef (void);
+
 static struct lname     *LName_Head;
 static struct lname     **LName_Owner;
 static char             Typ;
@@ -221,7 +231,7 @@ static void AddOMFSymbol( sym_type type )
     }
 }
 
-static unsigned short GetIndex()
+static unsigned short GetIndex(void)
 /******************************/
 {
     unsigned short index;
@@ -235,7 +245,7 @@ static unsigned short GetIndex()
 }
 
 
-static void GetOffset()
+static void GetOffset(void)
 /*********************/
 {
     RecPtr += 2;
@@ -259,7 +269,7 @@ static void GetIdx()
     }
 }
 
-int IsCommonRef()       /* dedicated routine for FORTRAN 77 common block */
+static int IsCommonRef(void)       /* dedicated routine for FORTRAN 77 common block */
 /***************/
 {
     common_blk * tmpblk = CurrCommonBlk;
@@ -273,8 +283,7 @@ int IsCommonRef()       /* dedicated routine for FORTRAN 77 common block */
     return( FALSE );
 }
 
-
-void FreeCommonBlk() /* dedicated routine for FORTRAN 77 common block */
+static void FreeCommonBlk(void) /* dedicated routine for FORTRAN 77 common block */
 /******************/
 {
     common_blk *    tmpblk;
@@ -286,7 +295,7 @@ void FreeCommonBlk() /* dedicated routine for FORTRAN 77 common block */
     }
 }
 
-static void procsegdef()  /* dedicated routine for FORTRAN 77 common block */
+static void procsegdef(void)  /* dedicated routine for FORTRAN 77 common block */
 /***********************/
 {
     common_blk   *      cmn;
@@ -315,11 +324,11 @@ static void procsegdef()  /* dedicated routine for FORTRAN 77 common block */
 /*
  * from infl, get a intel name: length and name
  */
-void GetName()
+void GetName(void)
 {
-    char        num_char;
+    int        num_char;
 
-    num_char = *RecPtr++;
+    num_char = (int) *RecPtr++;
     memcpy( NameBuff, RecPtr, num_char );
     RecPtr += num_char;
     NameBuff[ num_char ] = '\0';
@@ -341,6 +350,7 @@ static void getpubdef()
 /*
  * get the public definition out of the coment record
  */
+
 static void GetComent( sym_file *sfile )
 {
     RecPtr++;   // skip attribute byte of comment rec
@@ -360,7 +370,7 @@ static void GetComent( sym_file *sfile )
     }
 }
 
-static void GetComLen()
+static void GetComLen(void)
 {
     switch( *RecPtr++ ) {
     case COMDEF_LEAF_4:
@@ -380,7 +390,7 @@ static void GetComLen()
 /*
  * process a COMDEF record
  */
-static void getcomdef()
+static void getcomdef(void)
 {
     while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
         GetName();
@@ -400,7 +410,7 @@ static void getcomdef()
 /*
  * process a COMDAT record
  */
-static void getcomdat()
+static void getcomdat(void)
 {
     unsigned            alloc;
     unsigned            idx;
@@ -421,7 +431,7 @@ static void getcomdat()
     }
     if( ln->local ) return;
     memcpy( NameBuff, ln->name, ln->len );
-    NameBuff[ ln->len ] = '\0';
+    NameBuff[ (int)ln->len ] = '\0';
     AddOMFSymbol( S_COMDAT );
 }
 
@@ -443,8 +453,7 @@ static void     getlname( int local )
     }
 }
 
-
-static void FreeLNames()
+static void FreeLNames(void)
 {
     struct lname        *next;
 

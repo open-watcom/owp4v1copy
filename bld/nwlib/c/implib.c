@@ -34,6 +34,8 @@
 // must correspond to defines in implib.h
 char *procname[5] = {"", "AXP", "PPC", "X86",""};
 
+static void coffAddImportOverhead( arch_header *arch, char *DLLName, short processor );
+
 long charToLong( char *in )
 {
     return( (in[0]) | (in[1] << 8) | (in[2] << 16) | (in[3] << 24) );
@@ -117,7 +119,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     Elf32_Sym       *sym_table;
     orl_sec_size    export_size, sym_size;
     char        *strings;
-    long        processor;
+    long        processor = 0;
     char        *oldname;
     char        *DLLname;
     Elf32_Word      ElfMagic;
@@ -332,7 +334,7 @@ static void peAddImport( arch_header *arch, libfile io )
     Coff32_EOrd     *ord_table;
     int         i;
     long        ordinal_base;
-    short       processor;
+    short       processor = 0;
     importType      type;
     bool        coff_obj;
     long        adjust;
@@ -777,6 +779,8 @@ int ElfImportSize( import_sym *import )
         len++;
         }
         break;
+    default:
+        break;
     }
     return len;
 }
@@ -891,6 +895,8 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
             break;
         }
         return ret;
+    default:
+        break;
     }
     return 0;
 }
@@ -902,7 +908,7 @@ void ElfWriteImport( libfile io, sym_file *file )
     elf_import_sym  *temp;
     import_sym      *import;
     long        strtabsize;
-    long        numsyms;
+    long        numsyms = 0;
     long        parity;
     long        offset;
     long        more;
@@ -926,6 +932,8 @@ void ElfWriteImport( libfile io, sym_file *file )
         break;
     case ELFRENAMED:
         numsyms = 1;
+        break;
+    default:
         break;
     }
     fillInLong( 0x10 * (numsyms + 1), &(ElfBase[0xc4]) );
@@ -984,6 +992,8 @@ void ElfWriteImport( libfile io, sym_file *file )
         LibWrite( io, &more, 4 );
         more = 0;
         LibWrite( io, &more, 4 );
+        break;
+    default:
         break;
     }
 }

@@ -32,6 +32,8 @@
 
 #include <wlib.h>
 
+static void GetARValue( char *element, ar_len len, char delimiter, char *buffer );
+
 static unsigned long GetARNumeric( char *str, int max, int base )
 /***************************************************************/
 // get a numeric value from an ar_header
