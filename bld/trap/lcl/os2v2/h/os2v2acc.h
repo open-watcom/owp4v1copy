@@ -121,7 +121,7 @@ extern USHORT           FlatCS,FlatDS;
     }
 
 bool CausePgmToLoadHelperDLL(ULONG startLinear);
-long TaskExecute(long (*rtn)());
+long TaskExecute(void (*rtn)());
 bool TaskReadWord(USHORT seg, ULONG off, USHORT *data);
 bool TaskWriteWord(USHORT seg, ULONG off, USHORT data);
 void TaskPrint(char *data, unsigned len);

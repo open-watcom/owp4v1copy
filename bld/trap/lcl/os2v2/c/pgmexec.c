@@ -152,7 +152,7 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
     return rc;
 }
 
-long TaskExecute(long (*rtn)())
+long TaskExecute(void (*rtn)())
 {
     long        retval;
 
@@ -292,3 +292,4 @@ void TaskPrint(char *ptr, unsigned len)
     TaskExecute(DoWritePgmScrn);
     WriteRegs(&save);
 }
+

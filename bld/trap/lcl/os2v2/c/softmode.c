@@ -87,7 +87,7 @@ void APIENTRY SoftModeThread( thread_data *thread )
 
     rc = WinThreadAssocQueue( HabDebugger, thread->hmq );
     PSetHmqDebugee( thread->hmq, HwndDummy );
-    rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     while( WinQuerySendMsg( HabDebugger, NULL, thread->hmq, &qmsg ) ) {
         WinReplyMsg( HabDebugger, NULL, thread->hmq, (MRESULT)0 );
     }
@@ -103,7 +103,7 @@ void APIENTRY SoftModeThread( thread_data *thread )
                 WinDefWindowProc( qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2 );
         }
     }
-    WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     PSetHmqDebugee( thread->hmq, NULL );
     WinThreadAssocQueue( HabDebugger, NULL );
     WinPostMsg( HwndDebugger, WM_QUIT, 0, 0 ); // tell debugger we're done
@@ -312,6 +312,6 @@ VOID InitSoftDebug(VOID)
     // Create the thread creation event sem and load the queue hook DLL
     DosCreateEventSem( NULL, &BeginThreadSem, 0, FALSE );
     DosLoadModule( NULL, 0, HOOKER, &HookDLL );
-    DosQueryProcAddr( HookDLL, 0, "SENDMSGHOOKPROC", &PSendMsgHookProc );
-    DosQueryProcAddr( HookDLL, 0, "SETHMQDEBUGEE", &PSetHmqDebugee );
+    DosQueryProcAddr( HookDLL, 0, "SENDMSGHOOKPROC", (PFN*)&PSendMsgHookProc );
+    DosQueryProcAddr( HookDLL, 0, "SETHMQDEBUGEE", (PFN*)&PSetHmqDebugee );
 }

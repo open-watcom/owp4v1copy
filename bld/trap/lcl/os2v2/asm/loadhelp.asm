@@ -32,7 +32,7 @@
 
 .386p
 
-extrn           Dos32LoadModule : near
+extrn           DosLoadModule : near
 
 public          LoadHelperDLL_
 public          EndLoadHelperDLL_
@@ -48,7 +48,7 @@ assume cs:_TEXT
 ; address is guaranteed to be same in both (all) processes due to the way
 ; DLLs are implemented on OS/2.
 LoadHelperDLL_  proc    near
-        mov     eax, offset Dos32LoadModule    ; get DosLoadModule address
+        mov     eax, offset DosLoadModule      ; get DosLoadModule address
         call    eax                            ; load WDSPLICE.DLL
         int     3                              ; breakpoint to get control back
 EndLoadHelperDLL_ label byte

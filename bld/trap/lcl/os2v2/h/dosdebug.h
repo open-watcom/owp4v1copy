@@ -184,6 +184,6 @@ typedef struct  {
 
 #endif
 
-extern ULONG CallDosDebug( PVOID );
+extern ULONG CallDosDebug( dos_debug *buff );
 extern ULONG MakeFlatPointer( PVOID ptr );
 int IsFlatSeg( int seg );
