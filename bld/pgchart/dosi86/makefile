@@ -2,15 +2,9 @@
 #
 # WATCOM Presentation Graphics (PGCHART.LIB)
 #
+host_os = dos
+host_cpu = i86
 
-host_CPU = i86
-host_OS = dos
-
-libname =       charts
-model =         -ms
-module =        $[&
-cdecl =         _loadds
-fard =
-_386 =
+libname = charts
 
 !include ../pgchart.mif

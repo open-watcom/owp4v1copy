@@ -2,15 +2,10 @@
 #
 # WATCOM Presentation Graphics (PGCHART.LIB)
 #
+host_os = dos
+host_cpu = 386
 
-host_CPU = 386
-host_OS = dos
-
-libname =       chart3s
-model =         -ms -3s
-module =        $[&s
-cdecl =
-fard =
-_386 =          386
+libname    = chart3s
+convention = stack
 
 !include ../pgchart.mif

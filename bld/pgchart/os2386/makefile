@@ -2,15 +2,9 @@
 #
 # WATCOM Presentation Graphics (PGCHART.LIB)
 #
+host_os = os2
+host_cpu = 386
 
-host_CPU = 386
-host_OS = os2
-
-libname =       charto
-model =         -3r -mf -bt=OS2
-module =        $[&
-cdecl =
-fard =
-_386 =          386
+libname = charto
 
 !include ../pgchart.mif
