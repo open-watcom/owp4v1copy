@@ -84,7 +84,7 @@ struct asm_code {
 #define NO_PREFIX   0x00
 #define LOCK        0x01
 #define REPxx       0x02
-#define FWAIT       0x03
+#define NO_FWAIT    0x03
 
 #define PREFIX_ES       0x26
 #define PREFIX_CS       0x2E

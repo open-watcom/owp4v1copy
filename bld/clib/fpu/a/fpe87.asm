@@ -194,8 +194,7 @@ __FPEHandler proc far
         _if     ne                      ; if we have an emulator
         fstenv [BP]                     ; - get 80x87 environment
         _else                           ; else
-      ; fnstenv [BP]                    ; - get 80x87 environment
-        db      0d9H,76H,00H            ; - (please forgive us, we know not ...)
+        fnstenv [BP]                    ; - get 80x87 environment
         _endif                          ; endif
         fwait                           ; wait for 80x87
 ifndef  __OS2__

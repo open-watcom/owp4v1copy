@@ -83,9 +83,10 @@ static int output( int i )
         AddLinnumData();
     }
 
-    if( Options.floating_point == DO_FP_EMULATION &&
-        ( !rCode->use32 ) &&
-        ( ins->allowed_prefix == FWAIT  || (ins->cpu&P_FPU_MASK) != P_NO87) ) {
+    if(( Options.floating_point == DO_FP_EMULATION )
+        && ( !rCode->use32 )
+        && ( ins->allowed_prefix != NO_FWAIT )
+        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
             if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
                 return( ERROR );
             }
@@ -125,29 +126,32 @@ static int output( int i )
         AsmCodeByte( AsmOpTable[AsmOpcode[rCode->prefix].position].opcode );
     }
 
-    if( ins->token == T_FWAIT &&
-        ((rCode->info.cpu&P_CPU_MASK) < P_386  && (ins->cpu&P_FPU_MASK) == P_87) ) {
-        #ifdef _WASM_
+    if(( ins->token == T_FWAIT )
+        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
+        && ( (ins->cpu&P_FPU_MASK) == P_87 )) {
+#ifdef _WASM_
         if( Options.floating_point == DO_FP_EMULATION ) {
-        #endif
             AsmCodeByte( OP_NOP );
-        #ifdef _WASM_
         }
-        #endif
-    } else if( ins->allowed_prefix == FWAIT  ||
-        ((rCode->info.cpu&P_CPU_MASK) < P_386  && (ins->cpu&P_FPU_MASK) != P_NO87) ) {
+#else
+        AsmCodeByte( OP_NOP );
+#endif
+    } else if(( ins->allowed_prefix != NO_FWAIT )
+        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
+        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
         AsmCodeByte( OP_WAIT );
     }
 
-    #ifdef _WASM_
-    if( Options.floating_point == DO_FP_EMULATION &&
-        ( ins->allowed_prefix == FWAIT  ||
-          ((rCode->info.cpu&P_CPU_MASK) < P_386  && (ins->cpu&P_FPU_MASK) != P_NO87) ) ) {
+#ifdef _WASM_
+    if(( Options.floating_point == DO_FP_EMULATION )
+        && ( ins->allowed_prefix != NO_FWAIT )
+        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
+        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
             if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
                 return( ERROR );
             }
     }
-    #endif
+#endif
     if( rCode->adrsiz != EMPTY ) {
         AsmCodeByte( ADRSIZ );
     }
