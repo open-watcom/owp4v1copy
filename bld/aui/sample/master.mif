@@ -49,7 +49,7 @@ resfile = appui.res
 
 aui_prereq = auistr.gh _guimsgs.gh
 
-rcinc   = $(inc_dirs_sys_win)$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_dirs)
+rcinc   = $(inc_dirs_sys_win);$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_dirs)
 
 app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfile)
         $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(wres_lib)
