@@ -32,16 +32,7 @@
 
 #ifndef _WATCOM_H_INCLUDED_
 
-/*
-   This next set of lines is a temp fix until the 11.0 headers are
-   in universal usage.
-*/
-#if ( !defined( _WCUNALIGNED ) && ( __WATCOMC__ < 1100 ) )
-    #include <errno.h>
-    #ifndef _WCUNALIGNED
-        #define _WCUNALIGNED
-    #endif
-#endif
+#include <errno.h>
 
 #if !defined(__sun__) && !defined(sun) && !defined(__sgi) && !defined(__hppa) && !defined(_AIX) && !defined( __alpha ) && !defined( linux )
     typedef unsigned        uint;
