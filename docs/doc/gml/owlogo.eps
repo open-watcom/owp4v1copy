@@ -240,9 +240,12 @@ neg/$SCA xd/$SCF xd}if}bd/@D{3 copy @ss/$dsp xd
 /@sep{/ColorSeparationMode where{pop}{/ColorSeparationMode 0 def
 /CurrentInkName (Composite) def}ifelse ColorSeparationMode 0 eq
 {/CurrentInkName (Composite) def}if/CurrentInkName where{pop}{
-/CurrentInkName (Composite) def}ifelse CurrentInkName (Composite)   eq{/$ink -1 def}
-{CurrentInkName (Cyan)   eq{/$ink 0 def} {CurrentInkName (Magenta) eq{/$ink 1 def}
-{CurrentInkName (Yellow) eq{/$ink 2 def} {CurrentInkName (Black) eq{/$ink 3 def}
+/CurrentInkName (Composite) def}ifelse CurrentInkName (Composite)
+eq{/$ink -1 def}
+{CurrentInkName (Cyan)   eq{/$ink 0 def} {CurrentInkName (Magenta)
+eq{/$ink 1 def}
+{CurrentInkName (Yellow) eq{/$ink 2 def} {CurrentInkName (Black)
+eq{/$ink 3 def}
 {/$ink 4 def}ifelse}ifelse}ifelse}ifelse}ifelse}bd
 @sep/@whi{@gs -72000 dup moveto -72000 72000 lineto
 72000 dup lineto 72000 -72000 lineto closepath 1 setgray fill
