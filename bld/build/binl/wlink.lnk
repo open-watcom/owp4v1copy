@@ -18,11 +18,14 @@ system begin 386
 end
 system begin bld_linux
     option osname='Linux x86'
-    op nodefault
     debug all
-    library %DEVDIR%/clib/library/linux.386/ms_r/clibs.lib
-    library %DEVDIR%/mathlib/library/msdos.387/ms_r/maths.lib
-    library %DEVDIR%/emu/stub386/emu387.lib
+    libpath %DEVDIR%/clib/library/linux.386/ms_r
+    libpath %DEVDIR%/clib/library/linux.386/ms_s
+    libpath %DEVDIR%/mathlib/library/msdos.387/ms_r
+    libpath %DEVDIR%/mathlib/library/msdos.387/ms_s
+    libpath %DEVDIR%/mathlib/library/msdos.386/ms_r
+    libpath %DEVDIR%/mathlib/library/msdos.386/ms_s
+    libpath %DEVDIR%/emu/stub386
     format elf
     op exportall
     op caseexact

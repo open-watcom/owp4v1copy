@@ -29,11 +29,7 @@ sw_c_stack    = -5s
 sw_c_bigcode  = -nt=_TEXT
 sw_c_bigdata  = -zu
 
-!ifeq host_OS linux
-sw_c_intel    = -fpr-fpi87
-!else
 sw_c_intel    = -fpr-fpc
-!endif
 
 sw_c_086 = $(sw_c_intel)-0
 sw_c_286 = $(sw_c_intel)-2

@@ -1,12 +1,20 @@
 # libname_(model)
-libname_ms =clibs
-libname_mm =clibm
-libname_mc =clibc
-libname_ml =clibl
-libname_mh =clibh
-libname_mf =clibf
+libname_086_ms =s
+libname_286_ms =s
+libname_086_mm =m
+libname_286_ms =m
+libname_086_mc =c
+libname_286_mc =c
+libname_086_ml =l
+libname_286_ml =l
+libname_086_mh =h
+libname_286_mh =h
+libname_register =3r
+libname_stack    =3s
+libname_386_ms =$(libname_$(convention))
+libname_386_mf =$(libname_$(convention))
 libname_   =clib
-libname =$(libname_$(model))
+libname =clib$(libname_$(processor)_$(model))
 
 lib_flags     =-b -c 
 !ifdef on_build_machine

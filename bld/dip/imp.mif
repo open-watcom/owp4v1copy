@@ -59,8 +59,8 @@ clib_os2_386    = clib3r
 clib_qnx_i86    = clibl
 clib_qnx_386    = clib3r
 !ifdef __LINUX__
-clib_linux_386  = $(clib_dir)/library/linux.386/ms_r/clibs.lib &
-$(mathlib_dir)/library/msdos.387/ms_r/maths.lib
+clib_linux_386  = $(clib_dir)/library/linux.386/ms_r/clib3r.lib &
+$(mathlib_dir)/library/msdos.386/ms_r/math3r.lib
 !else
 clib_linux_386  = clib3r
 !endif
@@ -79,11 +79,7 @@ targ = $(host_OS)
 comp_opts_i86 = -ml -fpc -zc -zu
 comp_opts_386 = -zc
 comp_opts_axp =
-!ifeq host_OS linux
-comp_opts_386 += -fpi87
-!else
 comp_opts_386 += -fpc
-!endif
 
 comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -i"../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h"
 

@@ -4,7 +4,7 @@ model=ms
 subdir=ms_r
 system=linux
 linkage=static
-convention=stack
+convention=register
 !include $(clib_dir)/master.mif
 !include ../libs.mif
 !include $(clib_dir)/mrglib.mif

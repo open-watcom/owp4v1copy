@@ -30,8 +30,8 @@ cdsay .
     <CPCMD> library/msdos.286/ml/clibl.lib <relroot>/rel2/lib286/os2/dospml.lib
     <CPCMD> library/msdos.286/mm/clibm.lib <relroot>/rel2/lib286/os2/dospmm.lib
     <CPCMD> library/msdos.286/ms/clibs.lib <relroot>/rel2/lib286/os2/dospms.lib
-    <CPCMD> library/msdos.386/ms_r/clibs.lib <relroot>/rel2/lib386/dos/clib3r.lib
-    <CPCMD> library/msdos.386/ms_s/clibs.lib <relroot>/rel2/lib386/dos/clib3s.lib
+    <CPCMD> library/msdos.386/ms_r/clib3r.lib <relroot>/rel2/lib386/dos/clib3r.lib
+    <CPCMD> library/msdos.386/ms_s/clib3s.lib <relroot>/rel2/lib386/dos/clib3s.lib
     <CPCMD> startup/library/msdos.386/ms_r/binmode.obj <relroot>/rel2/lib386/dos/binmode.obj
     <CPCMD> startup/library/msdos.386/ms_r/commode.obj <relroot>/rel2/lib386/dos/commode.obj
     <CPCMD> startup/library/msdos.386/ms_r/cstrtx32.obj <relroot>/rel2/lib386/dos/cstrtx3r.obj
@@ -39,10 +39,10 @@ cdsay .
     <CPCMD> startup/library/msdos.386/ms_s/adsstart.obj <relroot>/rel2/lib386/dos/adsstart.obj
     <CPCMD> startup/library/msdos.386/ms_s/adiestrt.obj <relroot>/rel2/lib386/dos/adiestrt.obj
     <CPCMD> startup/library/msdos.386/ms_s/adifstrt.obj <relroot>/rel2/lib386/dos/adifstrt.obj
-    <CPCMD> library/nw_libc.386/ms_s/clibs.lib <relroot>/rel2/lib386/netware/libc3s.lib
-    <CPCMD> library/nw_libcl.386/ms_s/clibs.lib <relroot>/rel2/lib386/netware/libc3sl.lib
-    <CPCMD> library/nw_clib.386/ms_s/clibs.lib <relroot>/rel2/lib386/netware/clib3s.lib
-    <CPCMD> library/nw_clibl.386/ms_s/clibs.lib <relroot>/rel2/lib386/netware/clib3sl.lib
+    <CPCMD> library/nw_libc.386/ms_s/clib3s.lib <relroot>/rel2/lib386/netware/libc3s.lib
+    <CPCMD> library/nw_libcl.386/ms_s/clib3s.lib <relroot>/rel2/lib386/netware/libc3sl.lib
+    <CPCMD> library/nw_clib.386/ms_s/clib3s.lib <relroot>/rel2/lib386/netware/clib3s.lib
+    <CPCMD> library/nw_clibl.386/ms_s/clib3s.lib <relroot>/rel2/lib386/netware/clib3sl.lib
 #
 # Note binmode applies to both LIBC and CLIB libraries but only needs to be built once from the
 # fat CLIB source code.
@@ -57,8 +57,8 @@ cdsay .
     <CPCMD> library/os2.286/ms/clibs.lib <relroot>/rel2/lib286/os2/clibs.lib
     <CPCMD> startup/library/os2.286/ms/binmode.obj <relroot>/rel2/lib286/os2/binmode.obj
     <CPCMD> startup/library/os2.286/ms/commode.obj <relroot>/rel2/lib286/os2/commode.obj
-    <CPCMD> library/os2.386/ms_r/clibs.lib <relroot>/rel2/lib386/os2/clib3r.lib
-    <CPCMD> library/os2.386/ms_s/clibs.lib <relroot>/rel2/lib386/os2/clib3s.lib
+    <CPCMD> library/os2.386/ms_r/clib3r.lib <relroot>/rel2/lib386/os2/clib3r.lib
+    <CPCMD> library/os2.386/ms_s/clib3s.lib <relroot>/rel2/lib386/os2/clib3s.lib
     <CPCMD> startup/library/os2.386/ms_r/binmode.obj <relroot>/rel2/lib386/os2/binmode.obj
     <CPCMD> startup/library/os2.386/ms_r/commode.obj <relroot>/rel2/lib386/os2/commode.obj
 #    <CPCMD> library/osi.386/ms_r/clibs.lib <relroot>/rel2/lib386/osi/clib3r.lib
@@ -70,8 +70,8 @@ cdsay .
 #    <CPCMD> library/qnx.286/mm/clibm.lib <relroot>/rel2/lib286/qnx/clibm.lib
 #    <CPCMD> library/qnx.286/ms/clibs.lib <relroot>/rel2/lib286/qnx/clibs.lib
 #    <CPCMD> startup/library/qnx.286/ms/commode.obj <relroot>/rel2/lib286/qnx/commode.obj
-#    <CPCMD> library/qnx.386/ms_r/clibs.lib <relroot>/rel2/lib386/qnx/clib3r.lib
-#    <CPCMD> library/qnx.386/ms_s/clibs.lib <relroot>/rel2/lib386/qnx/clib3s.lib
+#    <CPCMD> library/qnx.386/ms_r/clib3r.lib <relroot>/rel2/lib386/qnx/clib3r.lib
+#    <CPCMD> library/qnx.386/ms_s/clib3s.lib <relroot>/rel2/lib386/qnx/clib3s.lib
 #    <CPCMD> startup/library/qnx.386/ms_r/commode.obj <relroot>/rel2/lib386/qnx/commode.obj
     <CPCMD> library/windows.086/mc/clibc.lib <relroot>/rel2/lib286/win/clibc.lib
     <CPCMD> library/windows.086/ml/clibl.lib <relroot>/rel2/lib286/win/clibl.lib
@@ -84,15 +84,15 @@ cdsay .
     <CPCMD> library/windows.386/mf_s/clibf.lib <relroot>/rel2/lib386/win/clib3s.lib
     <CPCMD> startup/library/windows.386/mf_r/binmode.obj <relroot>/rel2/lib386/win/binmode.obj
     <CPCMD> startup/library/windows.386/mf_r/commode.obj <relroot>/rel2/lib386/win/commode.obj
-    <CPCMD> library/winnt.386/ms_r/clibs.lib <relroot>/rel2/lib386/nt/clib3r.lib
-    <CPCMD> library/winnt.386/ms_s/clibs.lib <relroot>/rel2/lib386/nt/clib3s.lib
+    <CPCMD> library/winnt.386/ms_r/clib3r.lib <relroot>/rel2/lib386/nt/clib3r.lib
+    <CPCMD> library/winnt.386/ms_s/clib3s.lib <relroot>/rel2/lib386/nt/clib3s.lib
     <CPCMD> startup/library/winnt.386/ms_r/binmode.obj <relroot>/rel2/lib386/nt/binmode.obj
     <CPCMD> startup/library/winnt.386/ms_r/commode.obj <relroot>/rel2/lib386/nt/commode.obj
 #    <CPCMD> library/winnt.axp/_s/clib.lib <relroot>/rel2/libaxp/nt/clib.lib
 #    <CPCMD> startup/library/winnt.axp/_s/binmode.obj <relroot>/rel2/libaxp/nt/binmode.obj
 #    <CPCMD> startup/library/winnt.axp/_s/commode.obj <relroot>/rel2/libaxp/nt/commode.obj
-    <CPCMD> library/linux.386/ms_r/clibs.lib <relroot>/rel2/lib386/linux/clib3r.lib
-    <CPCMD> library/linux.386/ms_s/clibs.lib <relroot>/rel2/lib386/linux/clib3s.lib
+    <CPCMD> library/linux.386/ms_r/clib3r.lib <relroot>/rel2/lib386/linux/clib3r.lib
+    <CPCMD> library/linux.386/ms_s/clib3s.lib <relroot>/rel2/lib386/linux/clib3s.lib
     <CPCMD> startup/library/linux.386/ms_r/commode.obj <relroot>/rel2/lib386/linux/commode.obj
 
 [ BLOCK <1> clibqa ]
