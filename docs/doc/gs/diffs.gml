@@ -16,8 +16,22 @@ recompile your application.
 .*
 .np
 Following is a list of changes made in &product 1.3:
-:cmt Reflects main Perforce branch as of 2004/05/23
+:cmt Reflects main Perforce branch as of 2004/06/25
+:cmt Good way to get list of changes since certain date:
+:cmt p4 changes -l @yyyy/mm/dd,#head
 .begbull
+.bull
+The C++ compiler now restricts the scope of variables declared in a for
+loop to the scope of that loop in accordance with ISO C++, not extending
+the scope beyond the loop (ARM compliant behaviour). Code relying on the
+pre-standard behaviour must either be changed or compiled with new -zf
+switch which reverts to old scoping rules.
+.bull
+Support for default template arguments has been added to the C++ compiler.
+.bull
+Support for alternative tokens (and, xor etc.) has been added to the C++
+compiler. It is enabled by default, can be turned off with the new -zat
+switch.
 .bull
 The C runtime library has been made significantly more C99 compliant. A number
 of new headers have been added (inttypes.h, stdbool.h, stdint.h, wctype.h) and
@@ -27,10 +41,14 @@ added to stdarg.h.
 .bull
 Added 'cname' style C++ headers.
 .bull
-Support for SSE, SSE2, SSE3 and 3DNow! instruction sets has been added. Affected tools
-are the assembler (wasm), as well as all x86 compilers, disassembler and debugger.
-The debugger now also supports MMX registers formatted as floats (for 3DNow!)
-as well as a new XMM register window for SSE.
+Support for SSE, SSE2, SSE3 and 3DNow! instruction sets has been added. Affected
+tools are the assembler (wasm), as well as all x86 compilers, disassembler and
+debugger. The debugger now also supports MMX registers formatted as floats
+(for 3DNow!) as well as a new XMM register window for SSE.
+.bull
+Inline assembler directives .MMX, .K3D, .XMM, .XMM2 and .XMM3 are now supported in
+the _asm as well as #pragma aux style inline assembler interface. Note: .MMX
+directive is now required (in addition to .586) to use MMX instructions.
 .bull
 C compiler performance has been significantly improved (up to 5-10 times speedup)
 when compiling large and complex source files.
@@ -57,21 +75,36 @@ The internal C compiler limit on complex expressions has been increased
 and if it is still insufficient, the compiler now reports an error instead of
 crashing.
 .bull
-C++ compiler diagnostic messages have been made more consistent and slightly more
-detailed.
-.bull
 The C compiler now issues a warning on the default warning level if a function
 with no prototype is referenced. This was previously warning W301 (level 3), now
 it is warning W131 (level 1).
 .bull
+Warning "W132: No storage class or type specified" has been added to the C compiler.
+This warning is issued if a variable is declared without specifying either storage
+class or type. This is not allowed in C89.
+.bull
+Warning "W304: Return type 'int' assumed for function 'foo'" has been added.
+This warning is issued if a function is declared without specifying return type.
+This is allowed in C89 but not in C99.
+.bull
+Warning "W305: Type 'int' assumed in declaration of 'foo'" has been added to the
+C compiler. This warning is issued if a variable is declared without specifying
+its type. This is allowed in C89 but not in C99. Note that if warning W132 is
+issued, W305 applies as well.
+.bull
+The C compiler now properly warns if a function with implied 'int' return type
+fails to return a value. This potential error was previously undetected.
+.bull
+C++ compiler diagnostic messages have been made more consistent and slightly more
+detailed.
+.bull
 Linker for Win32 targets can now create file checksums. These are primarily used
-for DLL's and device drivers but can be applied to all Win32 PECOFF images
-if required.
+for DLLs and device drivers, but can be applied to all Win32 PE images if required.
 .bull
 Linker for Win32 targets can now set operating system version requirements into
 the PECOFF optional header (Microsoft extended header).
 .bull
-Linker for Win32 targets can now set the linker version number into the PECOFF
+Linker for Win32 targets can now set the linker version number into the PE
 optional header (Microsoft extended header).
 .bull
 The linker will now eliminate zero-sized segments from NE format (16-bit OS/2
@@ -80,6 +113,9 @@ to load an executable with zero sized segment. This could happen especially
 with C++ programs where some segments may have ended up empty after eliminating
 unused functions.
 .bull
+The linker now (again) produces correct Watcom style debugging information. This
+was a regression introduced in previous version.
+.bull
 Command line parsing for wccxxx, wppxxx and cl has been changed such that a
 double backslash inside a quoted string is collapsed to a single backslash,
 and hence "foo\\" now translates to 'foo\' and not 'foo\"'.
@@ -87,12 +123,24 @@ and hence "foo\\" now translates to 'foo\' and not 'foo\"'.
 The IDE and other graphical tools no longer leak system resources (a bug introduced
 in version 1.2).
 .bull
+The Image Editor limit on bitmap size has been changed from 512x512 pixels to
+2048x2048 pixels.
+.bull
 The source browser now correctly decodes array information; Version 11.0c of
 Watcom C/C++ started emitting array browse information in a new format and the
 browser hadn't been updated accordingly.
 .bull
+The NT debugger trap file has been changed so an exception generated during a
+step operation is handled correctly. Previously, the single step flag was not being
+cleared and when the exception was being offered to the debuggee's own exception
+handlers, a single step exception occurred in NT's exception handler rather than
+the exception being passed back to our handler.
+.bull
 The OS/2 debuggers now dynamically allocate buffer for the command line,
 preventing crashes when the command line was over approx. 260 bytes long.
+.bull
+The NetWare 5 debugger NLM has been changed to use kernel primitives. Previous
+version were using legacy semaphores.
 .bull
 The make program (wmake) has been sped up very slightly. Also the 'echo' command
 is now internal and no longer spawns the system command interpreter.
@@ -132,7 +180,8 @@ instructions.
 The disassembler now correctly processes absolute memory references. All memory
 references without fixup are now disassembled as ds:[...] or sreg:[...].
 .bull
-Several DirectX Win32 programming samples have been added.
+Several DirectX Win32 programming samples have been added. Note that a separate
+DirectX SDK (available from Microsoft) is required to build these sample programs.
 .endbull
 .*
 .*
