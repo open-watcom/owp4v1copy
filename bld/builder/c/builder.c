@@ -270,6 +270,7 @@ static char *SubstOne( const char **inp, char *out )
 {
     const char  *in;
     char        *p;
+    char        *starpos;
     char        *rep;
     unsigned    parm;
 
@@ -282,8 +283,8 @@ static char *SubstOne( const char **inp, char *out )
             // If the parameter is a number (n) followed by an asterisk,
             // copy from parameter n to the end to out. E.g. <2*>
             parm = 1;
-            if( sscanf(out, "%u*", &parm) == 1
-             || stricmp( out, "*" ) == 0 ) {
+            for (starpos = out; isdigit( *starpos ); starpos++ );
+            if (stricmp( starpos, "*" ) == 0 ) {
                 rep = NULL;
                 p = out;
                 for( ; parm <= ParmCount; ++parm ) {
