@@ -41,8 +41,9 @@
 #include "dbgstk.h"
 #include "mad.h"
 
-extern void             DlgNewWithMod(char*,char*,int);
-extern void             DlgNewWithSym(char*,char*,int);
+/* to be moved to header files ! */
+extern bool             DlgNewWithMod(char*,char*,int);
+extern bool             DlgNewWithSym(char*,char*,int);
 extern char             *ReScan(char*);
 extern void             ChkExpr(void);
 extern void             ReqMemAddr(memory_expr , address *);
@@ -117,7 +118,7 @@ extern void DlgSetLong( gui_window *gui, unsigned id, long value )
 
 static bool     DlgGetItemWithRtn( char *new, unsigned max_len, char *title,
                                    void *value, bool (*rtn)(char*,void*),
-                                   void (*dlg)(char*,char*,int) )
+                                   bool (*dlg)(char*,char*,int) )
 {
     bool        rc;
 
