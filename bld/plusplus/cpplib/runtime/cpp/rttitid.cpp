@@ -45,7 +45,7 @@
 static void foundNoTypeid( void )
 {
 #ifdef RT_EXC_ENABLED
-    throw bad_typeid( "typeid" );
+    throw bad_typeid( );
 #endif
 }
 

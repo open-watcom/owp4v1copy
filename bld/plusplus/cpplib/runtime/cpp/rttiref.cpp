@@ -45,7 +45,7 @@
 static void referenceBadCast( void )
 {
 #ifdef RT_EXC_ENABLED
-    throw bad_cast( "dynamic_cast" );
+    throw bad_cast( );
 #endif
 }
 
