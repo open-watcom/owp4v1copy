@@ -1,7 +1,5 @@
 proj_name = cc
-
-.continue
-.erase
+cc_autodepends = .autodepend
 
 .extensions: .gh
 
