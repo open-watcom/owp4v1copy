@@ -56,13 +56,18 @@ release = $(release_$(proj_name))
 
 ldebug_i86      = debug all
 ldebug_386      = debug all
-ldebug_axp      = debug dwarf
+ldebug_axp      = debug codeview
 ldebug_ppc      = debug dwarf
+
+cdebug_i86 =
+cdebug_386 =
+cdebug_axp = -hc
+cdebug_ppc = -hc
 
 mode_cflags_r   = -oaxt -d1-dNDEBUG
 mode_lflags_r   = $(ldebug_$(host_cpu))
 mode_aflags_r   = -dNDEBUG
-mode_cflags_d   = -od -d2
+mode_cflags_d   = -od -d2 $(cdebug_$(host_cpu))
 mode_lflags_d   = $(ldebug_$(host_cpu))
 mode_aflags_d   = -d1
 !ifeq release 1
