@@ -157,11 +157,12 @@ void print_banner( void )
 void addccopt( int option , char *opt )
 {
     char op[10];
-    op[0] = '-';
-    op[1] = option;
-    op[2] = '\0';
+    op[0] = ' ';
+    op[1] = '-';
+    op[2] = option;
+    op[3] = '\0';
     if (opt)
-	strcpy(op + 2, opt);
+        strcpy(op + 3, opt);
     strcat(CC_Opts, op);
 }
 
@@ -242,267 +243,267 @@ static  int  Parse( int argc, char **argv )
 
     AltOptChar = '-';
     while ((c = GetOpt( &argc, argv, 
-			"0123::456a::b:c::Dd::Ee:f:Gg::h:I:i:jk:L:l:Mm:N:n:"
-			"O::o:P::p::Qr::Sst:UvW:w:Xx::yz:",
-			usage)) != -1) {
+                        "0123::456a::b:c::D:d:Ee:f:Gg::h:I:i:jk:L:l:Mm:N:n:"
+                        "O::o:P::p::Qr::Sst:UvW:w:Xx::yz:",
+                        usage)) != -1) {
 
-	char *Word = "";
-	if (OptArg) {
-	    Word = malloc(strlen(OptArg) + 6);
-	    strcpy(Word, OptArg);
-	}
+        char *Word = "";
+        if (OptArg) {
+            Word = malloc(strlen(OptArg) + 6);
+            strcpy(Word, OptArg);
+        }
 
-	wcc_option = 1;
+        wcc_option = 1;
 
-	switch (c) {
-	    
-	case 'f':               /* files option */
-	    switch( Word[0] ) {
-	    case 'd':           /* name of linker directive file */
-		Link_Name = "__WCL__.LNK";
-		if( Word[1] == '='  ||  Word[1] == '#' ) {
-		    MakeName( Word, ".lnk" );    /* add extension */
-		    Link_Name = strdup( Word + 2 );
-		}
-		wcc_option = 0;
-		break;
-	    case 'e':           /* name of exe file */
-		if( Word[1] == '='  ||  Word[1] == '#' ) {
-		    strcpy( Exe_Name, Word + 2 );
-		}
-		wcc_option = 0;
-		break;
-	    case 'm':           /* name of map file */
-		Flags.map_wanted = TRUE;
-		if( Word[1] == '='  ||  Word[1] == '#' ) {
-		    Map_Name = strdup( Word + 2 );
-		}
-		wcc_option = 0;
-		break;
-	    case 'o':           /* name of object file */
-		/* parse off argument, so we get right filename
-		   in linker command file */
-		p = &Word[1];
-		if( Word[1] == '='  ||  Word[1] == '#' ) ++p;
-		Obj_Name = strdup( p );         /* 08-mar-90 */
-		break;
-	    case 'p':           /* floating-point option */
-		if( Word[1] == 'c' ) {
-		    Flags.math_8087 = 0;
-		}
-		break;
-	    default:
-		break;
-	    }
-	    break;
-	case 'k':               /* stack size option */
-	    if( Word[0] != '\0' ) {
-		StackSize = strdup( Word );
-	    }
-	    wcc_option = 0;
-	    break;
-	case 'x':
-	    if( Word[0] == '\0' ) {
-		Flags.two_case = TRUE;
-		wcc_option = 0;
-	    }
-	    break;
-	case '@':
-	    if( Word[0] != '\0' ) {
-		MakeName( Word, ".lnk" );
-		if( ( atfp = fopen( Word, "r" ) ) == NULL ) {
-		    PrintMsg( WclMsgs[UNABLE_TO_OPEN_DIRECTIVE_FILE], Word );
-		    return( 1 );
-		}
-		while( fgets( buffer, sizeof(buffer), atfp ) != NULL ) {
-		    if( strnicmp( buffer, "file ", 5 ) == 0 ) {
+        switch (c) {
+            
+        case 'f':               /* files option */
+            switch( Word[0] ) {
+            case 'd':           /* name of linker directive file */
+                Link_Name = "__WCL__.LNK";
+                if( Word[1] == '='  ||  Word[1] == '#' ) {
+                    MakeName( Word, ".lnk" );    /* add extension */
+                    Link_Name = strdup( Word + 2 );
+                }
+                wcc_option = 0;
+                break;
+            case 'e':           /* name of exe file */
+                if( Word[1] == '='  ||  Word[1] == '#' ) {
+                    strcpy( Exe_Name, Word + 2 );
+                }
+                wcc_option = 0;
+                break;
+            case 'm':           /* name of map file */
+                Flags.map_wanted = TRUE;
+                if( Word[1] == '='  ||  Word[1] == '#' ) {
+                    Map_Name = strdup( Word + 2 );
+                }
+                wcc_option = 0;
+                break;
+            case 'o':           /* name of object file */
+                /* parse off argument, so we get right filename
+                   in linker command file */
+                p = &Word[1];
+                if( Word[1] == '='  ||  Word[1] == '#' ) ++p;
+                Obj_Name = strdup( p );         /* 08-mar-90 */
+                break;
+            case 'p':           /* floating-point option */
+                if( Word[1] == 'c' ) {
+                    Flags.math_8087 = 0;
+                }
+                break;
+            default:
+                break;
+            }
+            break;
+        case 'k':               /* stack size option */
+            if( Word[0] != '\0' ) {
+                StackSize = strdup( Word );
+            }
+            wcc_option = 0;
+            break;
+        case 'x':
+            if( Word[0] == '\0' ) {
+                Flags.two_case = TRUE;
+                wcc_option = 0;
+            }
+            break;
+        case '@':
+            if( Word[0] != '\0' ) {
+                MakeName( Word, ".lnk" );
+                if( ( atfp = fopen( Word, "r" ) ) == NULL ) {
+                    PrintMsg( WclMsgs[UNABLE_TO_OPEN_DIRECTIVE_FILE], Word );
+                    return( 1 );
+                }
+                while( fgets( buffer, sizeof(buffer), atfp ) != NULL ) {
+                    if( strnicmp( buffer, "file ", 5 ) == 0 ) {
 
-			/* look for names separated by ','s */
+                        /* look for names separated by ','s */
 
-			p = strchr( buffer, '\n' );
-			if( p )  *p = NULLCHAR;
-			AddName( &buffer[5], Fp );
-			Flags.do_link = TRUE;
-		    } else {
-			fputs( buffer, Fp );
-		    }
-		}
-		fclose( atfp );
-	    }
-	    wcc_option = 0;
-	    break;
-		    
-	    /* compiler options that affect the linker */
-	case '3':
-	case '4':
-	case '5':                           /* 22-sep-92 */
-	    Conventions = tolower( Word[0] );
-	    break;
-	case 'd':
-	parse_d:
-	    if( DebugFlag == 0 ){ /* not set by -h yet */
-		if( strcmp( Word, "1" ) == 0 ) {
-		    DebugFlag = 1;
-		} else if( strcmp( Word, "1+" ) == 0 ) { /* 02-mar-91 */
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "2" ) == 0 ) {
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "2i" ) == 0 ) {
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "2s" ) == 0 ) {
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "3" ) == 0 ) {
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "3i" ) == 0 ) {
-		    DebugFlag = 2;
-		} else if( strcmp( Word, "3s" ) == 0 ) {
-		    DebugFlag = 2;
-		}
-	    }
-	    break;
-	case 'h':
-	parse_h:
-	    if( strcmp( Word, "w" ) == 0 ) {
-		DebugFlag = 3;
-	    } else if( strcmp( Word, "c" ) == 0 ) { /* 02-mar-91 */
-		Flags.do_cvpack = 1;
-		DebugFlag = 4;
-	    } else if( strcmp( Word, "d" ) == 0 ) {
-		DebugFlag = 5;
-	    }
-	    break;
-	case 'c':           /* compile only */
-	    if( strcmp( Word, "c" ) == 0 ) {
-		Flags.force_c = TRUE;
-	    } else if( strcmp( Word, "c++" ) == 0 ) {
-		Flags.force_c_plus = TRUE;
-	    } else {
-		Flags.no_link = TRUE;
-	    }
-	    /* fall through */
-	case 'y':
-	    wcc_option = 0;
-	    break;
-	case 'm':           /* memory model */
-	    if( Cmd[1] == 't' || Cmd[1] == 'T' ) { /* tiny model*/
-		Word[0] = 's';              /* change to small */
-		Flags.tiny_model = TRUE;
-	    }
-	    break;
-	case 'p':
-	    Flags.no_link = TRUE;
-	    break;      /* this is a preprocessor option */
-	case 'z':                   /* 12-jan-89 */
-	    switch( tolower( Cmd[1] ) ) {
-	    case 's':
-		Flags.no_link = TRUE;
-		break;
-	    case 'q':
-		Flags.be_quiet = TRUE;
-		break;
-	    case 'w':
-		Flags.windows = TRUE;
-	    }
-	    break;
-	case 'E':
-	    Flags.no_link = TRUE;
-	    c = 'p';
-	    Word = "l";
-	    break;
-	case 'O':
-	    if (!OptArg)
-		Word = "il";
-	    else if (isdigit(OptArg[0])) {
-		int d = OptArg[0] - '0';
-		if (d == 0)
-		    OptArg = "d";
-		else if (d == 1)
-		    OptArg = "il";
-		else if (d == 2)
-		    OptArg = "natx";
-		else if (d == 3)
-		    OptArg = "natxl+";
-		else
-		    break;
-		strcpy(Word, OptArg);
-	    } else
-		break;
-	    break;
-	case 'o':
-	    O_Name = strdup(OptArg);
-	    wcc_option = 0;
-	    break;
-	case 'g':
-	    if ( !OptArg )
-		Word = "2";
-	    else if ( !isdigit( OptArg[0] ) ) {
-		c = 'h';
-		goto parse_h;
-	    }
-	    c = 'd';
-	    goto parse_d;
-	case 'S':
-	    Flags.do_disas = TRUE;
-	    Flags.no_link = TRUE;
-	    if ( DebugFlag == 0 ) {
-		c = 'd';
-		Word = "1";
-		goto parse_d;
-	    }
-	    break;
-	case 'v':
-	    Flags.be_quiet = 0;
-	    wcc_option = 0;
-	    break;
-	case 'W':
-	    if ( OptArg ) {
-		if( strcmp( OptArg, "all" ) == 0 ) {
-		    c = 'w';
-		    strcpy( Word, "x" );
-		}
-		else if( strncmp( OptArg, "l,", 2 ) == 0 ) {
-		    AddDirective( OptArg + 2 );
-		    wcc_option = 0;
-		}
-		else if( strncmp( OptArg, "c,", 2 ) == 0 &&
-			 strlen( OptArg ) >= 4 ) {
-		    c = OptArg[3];
-		    strcpy( Word, OptArg + 4 );
-		}
-	    }
-	    break;
-	}
-	/* don't add linker-specific options */
-	/* to compiler command line:     */
-	
-	if( wcc_option ) {
-	    addccopt( c, Word );
-	}
-	if (OptArg)
-	    free(Word);
+                        p = strchr( buffer, '\n' );
+                        if( p )  *p = NULLCHAR;
+                        AddName( &buffer[5], Fp );
+                        Flags.do_link = TRUE;
+                    } else {
+                        fputs( buffer, Fp );
+                    }
+                }
+                fclose( atfp );
+            }
+            wcc_option = 0;
+            break;
+                    
+            /* compiler options that affect the linker */
+        case '3':
+        case '4':
+        case '5':                           /* 22-sep-92 */
+            Conventions = tolower( Word[0] );
+            break;
+        case 'd':
+        parse_d:
+            if( DebugFlag == 0 ){ /* not set by -h yet */
+                if( strcmp( Word, "1" ) == 0 ) {
+                    DebugFlag = 1;
+                } else if( strcmp( Word, "1+" ) == 0 ) { /* 02-mar-91 */
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "2" ) == 0 ) {
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "2i" ) == 0 ) {
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "2s" ) == 0 ) {
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "3" ) == 0 ) {
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "3i" ) == 0 ) {
+                    DebugFlag = 2;
+                } else if( strcmp( Word, "3s" ) == 0 ) {
+                    DebugFlag = 2;
+                }
+            }
+            break;
+        case 'h':
+        parse_h:
+            if( strcmp( Word, "w" ) == 0 ) {
+                DebugFlag = 3;
+            } else if( strcmp( Word, "c" ) == 0 ) { /* 02-mar-91 */
+                Flags.do_cvpack = 1;
+                DebugFlag = 4;
+            } else if( strcmp( Word, "d" ) == 0 ) {
+                DebugFlag = 5;
+            }
+            break;
+        case 'c':           /* compile only */
+            if( strcmp( Word, "c" ) == 0 ) {
+                Flags.force_c = TRUE;
+            } else if( strcmp( Word, "c++" ) == 0 ) {
+                Flags.force_c_plus = TRUE;
+            } else {
+                Flags.no_link = TRUE;
+            }
+            /* fall through */
+        case 'y':
+            wcc_option = 0;
+            break;
+        case 'm':           /* memory model */
+            if( Cmd[1] == 't' || Cmd[1] == 'T' ) { /* tiny model*/
+                Word[0] = 's';              /* change to small */
+                Flags.tiny_model = TRUE;
+            }
+            break;
+        case 'p':
+            Flags.no_link = TRUE;
+            break;      /* this is a preprocessor option */
+        case 'z':                   /* 12-jan-89 */
+            switch( tolower( Cmd[1] ) ) {
+            case 's':
+                Flags.no_link = TRUE;
+                break;
+            case 'q':
+                Flags.be_quiet = TRUE;
+                break;
+            case 'w':
+                Flags.windows = TRUE;
+            }
+            break;
+        case 'E':
+            Flags.no_link = TRUE;
+            c = 'p';
+            Word = "l";
+            break;
+        case 'O':
+            if (!OptArg)
+                Word = "il";
+            else if (isdigit(OptArg[0])) {
+                int d = OptArg[0] - '0';
+                if (d == 0)
+                    OptArg = "d";
+                else if (d == 1)
+                    OptArg = "il";
+                else if (d == 2)
+                    OptArg = "natx";
+                else if (d == 3)
+                    OptArg = "natxl+";
+                else
+                    break;
+                strcpy(Word, OptArg);
+            } else
+                break;
+            break;
+        case 'o':
+            O_Name = strdup(OptArg);
+            wcc_option = 0;
+            break;
+        case 'g':
+            if ( !OptArg )
+                Word = "2";
+            else if ( !isdigit( OptArg[0] ) ) {
+                c = 'h';
+                goto parse_h;
+            }
+            c = 'd';
+            goto parse_d;
+        case 'S':
+            Flags.do_disas = TRUE;
+            Flags.no_link = TRUE;
+            if ( DebugFlag == 0 ) {
+                c = 'd';
+                Word = "1";
+                goto parse_d;
+            }
+            break;
+        case 'v':
+            Flags.be_quiet = 0;
+            wcc_option = 0;
+            break;
+        case 'W':
+            if ( OptArg ) {
+                if( strcmp( OptArg, "all" ) == 0 ) {
+                    c = 'w';
+                    strcpy( Word, "x" );
+                }
+                else if( strncmp( OptArg, "l,", 2 ) == 0 ) {
+                    AddDirective( OptArg + 2 );
+                    wcc_option = 0;
+                }
+                else if( strncmp( OptArg, "c,", 2 ) == 0 &&
+                         strlen( OptArg ) >= 4 ) {
+                    c = OptArg[3];
+                    strcpy( Word, OptArg + 4 );
+                }
+            }
+            break;
+        }
+        /* don't add linker-specific options */
+        /* to compiler command line:     */
+        
+        if( wcc_option ) {
+            addccopt( c, Word );
+        }
+        if (OptArg)
+            free(Word);
     }
     if (Flags.be_quiet)
-	addccopt('z', "q");
+        addccopt('z', "q");
     if ( O_Name ) {
-	if (Flags.no_link && !Flags.do_disas) {
-	    free(Obj_Name);
-	    Obj_Name = O_Name;
-	    strcat( CC_Opts, "-fo=" );
-	    strcat( CC_Opts, O_Name );
-	} else {
-	    strcpy( Exe_Name, O_Name );
-	}
-	O_Name = NULL;
+        if (Flags.no_link && !Flags.do_disas) {
+            free(Obj_Name);
+            Obj_Name = O_Name;
+            strcat( CC_Opts, " -fo=" );
+            strcat( CC_Opts, O_Name );
+        } else {
+            strcpy( Exe_Name, O_Name );
+        }
+        O_Name = NULL;
     }
     for ( i = 1; i < argc ; i++ ) {
-	Word = argv[i];
-	if( FileExtension( Word, ".lib" ) ) {
-	    strcat( Libs, Libs[0] != '\0' ? "," : " " );
-	    strcat( Libs, Word );
-	} else {
-	    strcat( Files, Word );
-	    strcat( Files, " " );
-	}
+        Word = argv[i];
+        if( FileExtension( Word, ".lib" ) ) {
+            strcat( Libs, Libs[0] != '\0' ? "," : " " );
+            strcat( Libs, Word );
+        } else {
+            strcat( Files, Word );
+            strcat( Files, " " );
+        }
     }
     return( 0 );
 }
@@ -552,7 +553,7 @@ static char *SrcName( char *name )
 
     p = strrchr( name, '.' );
     if ( p == NULL || strpbrk( p, PATH_SEP_STR ) )
-	p = name + strlen( name );
+        p = name + strlen( name );
     if( strfcmp( p, ".asm" ) == 0 || stricmp( p, ".s" ) == 0 ) {
         exename = "wasm" EXE_EXT;
         cc_name = "wasm";
@@ -666,24 +667,24 @@ static  int  CompLink( void )
                 strcpy( Word, file );
             }
             AddName( Word, Fp );
-	    if( Obj_List != NULL && Flags.do_disas ) {
-		char *sfile;
-		char *ofile = file;
-		if (Exe_Name[0])
-		    sfile = Exe_Name;
-		else {
-		    if( FileExtension( Word, OBJ_EXT ) ) { // if not .obj, compile
-			p = strrchr( file, '.' );
-			if( p != NULL )  *p = NULLCHAR;
-			strcpy( Word, file );
-		    }
-		    sfile = Word;
-		    strcat( Word, ".s" );
-		}
-		memmove(sfile + 3, sfile, strlen(sfile) + 1);
-		sfile[0] = '-';
-		sfile[1] = 'l';
-		sfile[2] = '=';
+            if( Obj_List != NULL && Flags.do_disas ) {
+                char *sfile;
+                char *ofile = file;
+                if (Exe_Name[0])
+                    sfile = Exe_Name;
+                else {
+                    if( FileExtension( Word, OBJ_EXT ) ) { // if not .obj, compile
+                        p = strrchr( file, '.' );
+                        if( p != NULL )  *p = NULLCHAR;
+                        strcpy( Word, file );
+                    }
+                    sfile = Word;
+                    strcat( Word, ".s" );
+                }
+                memmove(sfile + 3, sfile, strlen(sfile) + 1);
+                sfile[0] = '-';
+                sfile[1] = 'l';
+                sfile[2] = '=';
                 if( ! Flags.be_quiet ) {
                     PrintMsg( "       %s -s -a %s %s\n", DIS, ofile, sfile );
                     fflush( stdout );
@@ -696,11 +697,11 @@ static  int  CompLink( void )
                         PrintMsg( WclMsgs[ COMPILER_RETURNED_A_BAD_STATUS ],
                                     Word );
                     }
-		}
-	    }
+                }
+            }
             if( Exe_Name[0] == '\0' ) {
 #ifdef __UNIX__
-		strcpy( Exe_Name, OUTPUTFILE );
+                strcpy( Exe_Name, OUTPUTFILE );
 #else
                 p = strrchr( Word, '.' );
                 if( p != NULL )  *p = NULLCHAR;
@@ -712,8 +713,8 @@ static  int  CompLink( void )
         p = end;        /* get next filespec */
     }
     if( errors_found ) {
-	puts( "" );
-	return( 1 );            /* 21-jan-92 */
+        puts( "" );
+        return( 1 );            /* 21-jan-92 */
     }
     BuildLinkFile();
 
@@ -730,7 +731,7 @@ static  int  CompLink( void )
             } else {
                 PrintMsg( WclMsgs[ LINKER_RETURNED_A_BAD_STATUS ] );
             }
-	    puts( "" );
+            puts( "" );
             return( 2 );        /* return 2 to show Temp_File already closed */
         }
         if( Flags.do_cvpack ){
