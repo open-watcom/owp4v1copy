@@ -923,7 +923,7 @@ extern void FreeOutFiles( void )
     }
 }
 
-static void * SetToZero( char *dest, const char *dummy, unsigned size )
+static void * SetToZero( void *dest, const void *dummy, unsigned size )
 /*********************************************************************/
 {
     memset( dest, 0, size );
@@ -959,7 +959,7 @@ extern void WriteLoad( void *buff, unsigned long size )
     }
 }
 
-static void * NullBuffFunc( char *dest, const char *dummy, unsigned size )
+static void * NullBuffFunc( void *dest, const void *dummy, unsigned size )
 /************************************************************************/
 {
     dummy = dummy;
@@ -1053,7 +1053,7 @@ extern void CloseBuffFile( outfilelist *outfile )
 }
 
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
-                         void * (*rtn)(char *, const char *, unsigned) )
+                         void * (*rtn)(void *, const void *, unsigned) )
 /***************************************************************************/
 {
     unsigned modpos;
