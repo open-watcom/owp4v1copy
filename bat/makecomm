@@ -31,6 +31,7 @@ on_build_machine = $(%on_build_machine)
 tools_root  = $(%TOOLDR)\tools
 tnt_dir  = $(tools_root)\tnt6
 os2_tools_root  = $(tools_root)\os2tools
+os2_toolkit = $(%os2tkroot)
 nlang_root  = $(%dwatcom)
 build_root  = $(%devdir)
 rsi_root    = $(%rsidir)
@@ -294,7 +295,7 @@ penpoint_path=$(tools_root)\penpoint
 binder=$(tools_root)
 bindcalls=$(build_root)\watcom\lib\doscalls.lib
 doscalls=$(build_root)\watcom\lib\doscalls.lib
-os2386=$(build_root)\watcom\lib\os2386.lib
+os2386=$(os2_toolkit)\lib\os2386.lib
 apilib=$(build_root)\watcom\lib\api.lib
 
 #
