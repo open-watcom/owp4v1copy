@@ -1,5 +1,5 @@
 proj_name = mviper
-name = mviper
+name      = mviper
 
 .mif : $(mif_path)
 .cpp : ..
@@ -47,5 +47,5 @@ objects =       contfile.obj &
 $(name).lib : $(objects)
         $(librarian) -b -n $^@ $(objects)
 
-.cpp.obj :
+.cpp.obj : .autodepend
         $(cpp) $(cflags) $[@ -fo=$^@
