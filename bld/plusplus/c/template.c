@@ -409,7 +409,6 @@ static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
 
         list->u.subtree[1] = arg;
     }
-    DumpPTree( tspec->spec_args );
 
     getArgList( args, tspec->type_list, tspec->arg_names, NULL );
     return( tspec );
