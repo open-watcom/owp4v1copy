@@ -29,10 +29,10 @@ include_c_winnt    =;$(%watcom)\h\nt;$(%watcom)\h
 include_c_path =$(include_default)$(include_c_$(system))$(include_watcom)
 
 # include_a_(processor)
-include_a_286 =;$(emu286);$(emu386)
+include_a_286 =;$(emu286)\inc;$(emu286)\asm;$(emu386)\inc;$(emu386)\asm
 include_a_287 =
-include_a_386 =;$(emu386)
-include_a_387 =;$(emu386)
+include_a_386 =;$(emu386)\inc;$(emu386)\asm
+include_a_387 =;$(emu386)\inc;$(emu386)\asm
 include_a_axp =
 include_a_ppc =
 
