@@ -38,12 +38,12 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
 
-inc_dirs_nt     = $(wclass_dir)/win/hpp;$(guitools_dir)/win95;
-inc_dirs_win    = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
-inc_dirs_dos    = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
-inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
+inc_dirs_nt  = $(wclass_dir)/win/hpp;$(guitools_dir)/win95;
+inc_dirs_win = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
+inc_dirs_dos = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
+inc_dirs_os2 = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
 
-inc_dirs    = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;../contain/h;$(editdll_dir)
+inc_dirs = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;$(editdll_dir)
 
 .before:
     @set include=$(inc_path)
@@ -90,7 +90,7 @@ rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win    = $(gui_dir)/win/wini86/gui.lib $(wclass_dir)/win/obj/wclass.lib $(misc_dir)/ctl3d.lib
+LIBS_win    = $(gui_dir)/win/wini86/gui.lib $(wclass_dir)/win/obj/wclass.lib
 LIBS_nt_axp = $(gui_dir)/win/ntaxp/gui.lib $(wclass_dir)/win/axp/wclass.lib
 LIBS_nt_386 = $(gui_dir)/win/nt386/gui.lib $(wclass_dir)/win/nt/wclass.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
@@ -100,19 +100,19 @@ LIBS_dos    = $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 LIBS    = $(LIBS_$(host_OS)) $(dwarf_dr_lib)
 
 lflags_win_i86  = sys windows font mem
-extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 lflags_dos_386  = sys pharlap
+
+extra_l_flags   = op stack=16k,map
+!ifndef quick_link
+extra_l_flags   += op show,art,static
+!endif
+
 extra_l_flags_dos = op stub=$(pharlap)stub386.exe
+extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
 extra_l_flags_nt = $(extra_l_flags_nt_$(host_CPU))
 extra_l_flags_os2 =
-
-extra_l_flags   = op stack=16k
-
-!ifndef quick_link
-extra_l_flags   += op map=wbr,show,art,static
-!endif
 
 exe_ext_osi = .rex
 !ifdef exe_ext_$(host_OS)

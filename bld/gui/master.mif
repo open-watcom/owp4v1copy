@@ -123,13 +123,12 @@ extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
 
 
-$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_lib) $(ctl3d_lib)
+$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_lib)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         @for %i in ($(extra_objs)) do @%append tmp.lbc +%i
         @for %i in ($(sysobjs)) do @%append tmp.lbc +%i
         @for %i in ($(wpi_lib)) do @%append tmp.lbc +%i
-        @for %i in ($(ctl3d_lib)) do @%append tmp.lbc +%i
         $(librarian) $(wlib_opt) -n -b $^@ @tmp.lbc
 
 ./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg

@@ -37,6 +37,9 @@
 
 #ifndef NOUSE3D
 #include "ctl3d.h"
+#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
+#pragma library("ctl3d.lib")
+#endif
 #endif
 
 static void             (*WriteFn)(char *);

@@ -55,7 +55,7 @@
     #include <windows.h>
     #if !defined(__NT__)  &&  !defined(__WINDOWS_386__) && !defined(WILLOWS)
         #include <commdlg.h>
-        #pragma library( "commdlg" );
+        #pragma library( "commdlg.lib" );
     #endif
 #endif
 #include "guiwind.h"

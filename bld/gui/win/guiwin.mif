@@ -79,14 +79,15 @@ sysobjs = guixscal.obj &
           guiximdi.obj &
           guixmdi.obj  &
           guixbar.obj  &
-          guildstr.obj  &
+          guildstr.obj &
           guirdlg.obj  &
-          guirmenu.obj  &
-          guiclass.obj  &
+          guirmenu.obj &
+          guiclass.obj &
           guif1hk.obj  &
           wmdisim.obj  &
           wptoolbr.obj &
-          guiclen.obj
+          guiclen.obj  &
+          ctl3d32.obj
 
 !ifeq host_OS os2
 sysobjs +=             &
@@ -96,12 +97,6 @@ sysobjs +=             &
 sysobjs +=             &
           fontstr.obj  &
           windlg.obj
-!endif
-
-!ifeq host_OS win
-!ifeq host_CPU 386
-sysobjs += ctl3d32.obj
-!endif
 !endif
 
 inc_dirs += $(sdk_dir)/misc;$(wpi_dir)/h;

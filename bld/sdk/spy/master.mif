@@ -60,11 +60,10 @@ dll_debug_all           = debug all
 dll_debug_axp           = debug codeview
 !endif
 
-extra_l_flags_win = option stack=9k option heapsize=2k &
-                    lib windows.lib lib commdlg.lib lib toolhelp.lib &
-                    lib $(dllname).lib lib $(misc_dir)/ctl3d.lib
+extra_l_flags_win = option stack=9k option heapsize=2k lib $(dllname).lib
+
 extra_l_flags_nt  = option stack=64k option heapsize=2k &
-                    lib $(dllname).lib lib ctl3d32.lib
+                    lib $(dllname).lib
 
 extra_l_flags     = option map
 !ifeq host_CPU  386
