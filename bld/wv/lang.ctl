@@ -12,18 +12,11 @@ cdsay .
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <projdir>
-#    ECHO.
-#    ECHO RFX make suppressed - Literal string problems
-#    ECHO.
-#    #CDSAY ..\rfx\dos
-#    #wmake /h /i w
-#    #CDSAY ..\os2
-#    #wmake /h /i w
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 ##    <CPCMD> <devdir>\bin\bin\rfx.exe <relroot>\rel2\binw\rfx.exe
-##    <CPCMD> <devdir>\bin\binp\rfx.exe <relroot>\rel2\binp\rfx.exe
+    <CPCMD> <devdir>\wv\rfx\os2386\rfx.exe <relroot>\rel2\binp\rfx.exe
 
     <CPCMD> <devdir>\bin\bin.nec\dv.exe <relroot>\rel2\n98bw\wd.exe
 
