@@ -30,7 +30,7 @@ extra_c_flags_dos = -D__PHAR__
 extra_c_flags_win = -zw-zu
 
 !ifdef sys_dll
-extra_l_flags_win = op rwr
+extra_l_flags_win = op rwr,map
 !endif
 extra_l_flags_os2 = initinstance terminstance pm op manyautodata
 
