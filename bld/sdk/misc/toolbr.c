@@ -247,7 +247,7 @@ toolbar *ToolBarInit( HWND parent )
     instance = GET_HINSTANCE( parent );
 
     if( !GetClassInfo( instance, className, &wc ) ) {
-        wc.style = CS_DBLCLKS;
+        wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
         wc.lpfnWndProc = (WNDPROC)ToolBarWndProc;
         wc.lpszMenuName = NULL;
         wc.cbClsExtra = 0;

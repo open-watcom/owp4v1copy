@@ -78,7 +78,7 @@ BOOL RegPushWin( HANDLE instance ) {
 
     WNDCLASS    wc;
 
-    wc.style = 0L;
+    wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = (LPVOID) PushWinProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 4;
