@@ -252,9 +252,9 @@ static  int  Parse( int argc, char **argv )
     Conventions = 'r';
 
     AltOptChar = '-';
-    while ((c = GetOpt( &argc, argv, 
+    while ((c = GetOpt( &argc, argv,
                         "0123::456a::b:c::D:d:Ee:f:Gg::h:I:i:jk:L:l:Mm:N:n:"
-                        "O::o:P::p::Qr::Sst:UvW:w:Xx::yz:",
+                        "O::o:P::p::Qr::Sst:U:vW:w:Xx::yz:",
                         usage)) != -1) {
 
         char *Word = "";
@@ -266,7 +266,7 @@ static  int  Parse( int argc, char **argv )
         wcc_option = 1;
 
         switch (c) {
-            
+
         case 'f':               /* files option */
             switch( Word[0] ) {
             case 'd':           /* name of linker directive file */
@@ -342,7 +342,7 @@ static  int  Parse( int argc, char **argv )
             }
             wcc_option = 0;
             break;
-                    
+
             /* compiler options that affect the linker */
         case '3':
         case '4':
@@ -490,7 +490,7 @@ static  int  Parse( int argc, char **argv )
         }
         /* don't add linker-specific options */
         /* to compiler command line:     */
-        
+
         if( wcc_option ) {
             addccopt( c, Word );
         }
