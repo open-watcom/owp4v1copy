@@ -17,7 +17,7 @@ sysobjs = &
         qnxfilio.obj &
         qnxscrn.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys qnx386 flat

@@ -16,7 +16,7 @@ sysobjs =   &
     winlkup.obj &
     wguiscrn.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) system windows memory font

@@ -22,7 +22,7 @@ sysobjs =   &
     $(sysodir)\dosalloc.obj &
     $(sysodir)\dostrap.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys dos op dyn,area=0k,stack=3k

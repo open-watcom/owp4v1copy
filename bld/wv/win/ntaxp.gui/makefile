@@ -16,7 +16,7 @@ sysobjs =   &
     winchk.obj &
     winlkup.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) system ntaxp_win

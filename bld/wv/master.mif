@@ -448,9 +448,9 @@ post_process :.PROCEDURE
 !ifeq display char
         wstrip -q -a -r  $(bdir)/$(%NAME).$(EXE) . $(%RESFILE)
 !else ifeq host_OS win
-        *wrc -k -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
+        $(rc) -k -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS nt
-        *wrc -k -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
+        $(rc) -k -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS os2
         $(rc_os2) -p -x $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !endif
@@ -469,7 +469,7 @@ srcmgt.obj : $(watcom_dir)/c/srcmgt.c $(hdir)/srcmgt.h  .autodepend
         $(compile)
 
 finger_msg  :.PROCEDURE
-       @set DGINFO=
+        @set DGINFO=
         @$(compiler_$(host_CPU)) "../../c/fingmsg" $(cflags) $(%DGINFO)
 
 bitmaps = &
@@ -617,16 +617,16 @@ $(litdef) : ./mkstr.exe wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
         $[@ $^@
 
 wvui.res : $(hdir)/wvui.rc auistr.gh $(rcfiles) .autodepend
-        *wrc -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc .autodepend
-        *wrc -r -q -bt=nt -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@x
+        $(rc) -r -q -bt=nt -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@x
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
-        *wrc -k -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=^@
+        $(rc) -k -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvnt.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
-        *wrc -k -r -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
+        $(rc) -k -r -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
 
 wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
@@ -657,7 +657,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
         @set include=$(%oinc)
 
 .CONTINUE
-# .ERASE
+.ERASE
 
 .EXTENSIONS
 .EXTENSIONS : .exe .def .cpp .obj .i .h .c .asm .dlg .str
@@ -679,6 +679,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
 
 
 .asm: $(sysadir)
+
 .asm.obj:
         $(assemble)
 

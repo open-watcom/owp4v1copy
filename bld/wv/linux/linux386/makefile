@@ -10,7 +10,7 @@ display = char
 
 sysobjs = linuxcmd.obj linuxio.obj lnxinit.obj lnxscrn.obj lnxlkup.obj lnxchk.obj peloader.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys bld_linux

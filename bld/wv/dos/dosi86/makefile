@@ -23,7 +23,7 @@ sysobjs =   &
     dostrap.obj &
     dosscrn.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys dos

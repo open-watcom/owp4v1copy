@@ -3,4 +3,4 @@
 # WATCOM Debugger makefile for OS/2
 #
 on_build_machine = 1
-!include ../obj/makefile
+!include ../os2i86/makefile

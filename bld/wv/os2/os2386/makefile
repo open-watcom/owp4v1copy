@@ -19,7 +19,7 @@ sysobjs =            &
         os22flio.obj &
         os2scrn.obj
 
-!include ../../makefile
+!include ../../master.mif
 
 syslnk : .PROCEDURE
     @%append $(lnk) system os2v2
