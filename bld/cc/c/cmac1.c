@@ -292,6 +292,7 @@ local char *ExpandMacroToken( void )
     char        *buf;
 
     len = 0;
+    i = 0;
     switch( *MacroPtr ) {
     case T_CONSTANT:
     case T_PPNUMBER:
@@ -300,7 +301,6 @@ local char *ExpandMacroToken( void )
     case T_SAVED_ID:
     case T_BAD_TOKEN:                                   /* 07-apr-91 */
         ++MacroPtr;
-        i = 0;
         buf = CMemAlloc( strlen( MacroPtr ) + 1 );
         while( (buf[i] = *MacroPtr++) )  ++i;
         break;
@@ -310,7 +310,6 @@ local char *ExpandMacroToken( void )
         ++MacroPtr;
         len += strlen( MacroPtr ) + 3;
         buf = CMemAlloc( len );
-        i = 0;
         if ( MacroPtr[-1] == T_LSTRING )
             buf[i++] = 'L';
         buf[i++] = '"';
@@ -546,7 +545,7 @@ static MACRO_ARG *CollectParms(void)
            || ( !(mentry->macro_flags & MACRO_VAR_ARGS ) &&
                  ( parm_cnt < mentry->parm_count - 1 ) ) ) {
             CErr( ERR_TOO_FEW_MACRO_PARMS, mentry->macro_name );
-        } else if( !(mentry->macro_flags & MACRO_VAR_ARGS ) && 
+        } else if( !(mentry->macro_flags & MACRO_VAR_ARGS ) &&
                    ( parm_cnt > mentry->parm_count - 1 ) ) {
             if( mentry->parm_count - 1 != 0 ){
                 CWarn( WARN_PARM_COUNT_MISMATCH, ERR_TOO_MANY_MACRO_PARMS, mentry->macro_name  );
@@ -992,7 +991,7 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                 {
                     if( mtok->token == T_MACRO_EMPTY_VAR_PARM )
                     {
-                        // well should never be in this state if no next - since ## cannot 
+                        // well should never be in this state if no next - since ## cannot
                         // appear at the end of a macro
                         gluebuf = GlueTokenToBuffer( next, NULL );
                     }
@@ -1043,7 +1042,7 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                         *lnk = rem;
                         mtok = head;
                     }
-                }   
+                }
                 continue;          //ready to go
             }
         }
