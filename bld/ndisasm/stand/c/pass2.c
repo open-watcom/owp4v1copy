@@ -74,42 +74,53 @@ dis_return DisCliGetData( void *d, unsigned off, unsigned size, void *buff )
     return( DR_OK );
 }
 
-static label_entry handleLabels( char *sec_name, orl_sec_offset offset, label_entry l_entry,
-                        orl_sec_size size )
-// handle any labels at this offset
+static label_entry handleLabels( char *sec_name, orl_sec_offset offset, orl_sec_offset end,
+                             label_entry l_entry, orl_sec_size size )
+// handle any labels at this offset and skip all unused non-label symbols
 {
-    for( ; l_entry != NULL
-        && ( l_entry->type == LTYP_ABSOLUTE || l_entry->offset <= offset );
-        l_entry = l_entry->next ) {
+    for( ; ( l_entry != NULL ) && ( l_entry->offset < end ); l_entry = l_entry->next ) {
         switch( l_entry->type ) {
         case LTYP_SECTION:
         case LTYP_NAMED:
             if( strcmp( l_entry->label.name, sec_name ) == 0 )
                 continue;
+            /* fall through */
+        case LTYP_UNNAMED:
+            if( l_entry->offset > offset )
+                return( l_entry );
             break;
         case LTYP_ABSOLUTE:
         case LTYP_FUNC_INFO:
+        default:
             continue;
         }
-        if( !( DFormat & DFF_ASM ) ) {
-            if( l_entry->type == LTYP_NAMED && offset != 0 &&
-                l_entry->binding == ORL_SYM_BINDING_GLOBAL ) {
-                routineSize = offset - routineBase;
-                BufferConcatNL();
-                BufferMsg( ROUTINE_SIZE );
-                BufferStore(" %d ", routineSize );
-                BufferMsg( BYTES );
-                BufferConcat(",    ");
-                BufferMsg( ROUTINE_BASE );
-                BufferStore(" %s + %04X\n\n", sec_name, routineBase );
-                routineBase = offset;
+        switch( l_entry->type ) {
+        case LTYP_NAMED:
+            if( !( DFormat & DFF_ASM ) ) {
+                if( offset != 0 && l_entry->binding == ORL_SYM_BINDING_GLOBAL ) {
+                    routineSize = offset - routineBase;
+                    BufferConcatNL();
+                    BufferMsg( ROUTINE_SIZE );
+                    BufferStore(" %d ", routineSize );
+                    BufferMsg( BYTES );
+                    BufferConcat(",    ");
+                    BufferMsg( ROUTINE_BASE );
+                    BufferStore(" %s + %04X\n\n", sec_name, routineBase );
+                    routineBase = offset;
+                }
             }
-            PrintLinePrefix( NULL, offset, size, 1, 0 );
-        }
-        if( l_entry->type == LTYP_NAMED || l_entry->type == LTYP_SECTION ) {
+        case LTYP_SECTION:
+            if( !( DFormat & DFF_ASM ) ) {
+                PrintLinePrefix( NULL, offset, size, 1, 0 );
+            }
             BufferStore( "%s:\n", l_entry->label.name );
-        } else {
+            break;
+        case LTYP_UNNAMED:
+            if( !( DFormat & DFF_ASM ) ) {
+                PrintLinePrefix( NULL, offset, size, 1, 0 );
+            }
             BufferStore( "%c$%d:\n", LabelChar, l_entry->label.number );
+            break;
         }
         BufferPrint();
     }
@@ -572,11 +583,10 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         decoded.flags |= flags;
         DisDecode( &DHnd, &contents[data.loop], &decoded );
         if( sec_label_list ) {
-            if( l_entry != NULL &&
-                l_entry->type != LTYP_ABSOLUTE &&
-                l_entry->binding != ORL_SYM_BINDING_NONE &&
-                l_entry->offset > data.loop &&
-                l_entry->offset < ( data.loop + decoded.size ) ) {
+            l_entry = handleLabels( sec->name, data.loop, data.loop + decoded.size, l_entry, size );
+            if( ( l_entry != NULL )
+                && ( l_entry->offset > data.loop )
+                && ( l_entry->offset < data.loop + decoded.size ) ) {
                 /*
                     If we have a label planted in the middle of this
                     instruction (see inline memchr for example), put
@@ -587,7 +597,6 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
                 processDataInCode( sec, contents, &data, l_entry->offset - data.loop, &l_entry );
                 continue;
             }
-            l_entry = handleLabels( sec->name, data.loop, l_entry, size );
         }
         DisFormat( &DHnd, &data, &decoded, DFormat, name, ops );
         if( !(DFormat & DFF_ASM) ) {
@@ -599,7 +608,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         BufferPrint();
     }
     if( sec_label_list ) {
-        l_entry = handleLabels( sec->name, size, l_entry, size );
+        l_entry = handleLabels( sec->name, size, -1, l_entry, size );
     }
     if( !(DFormat & DFF_ASM) ) {
         routineSize = data.loop - routineBase;
