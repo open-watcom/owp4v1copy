@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Open Watcom C/C++32 Microsoft Windows startup code.
+;* Description:  C/C++ Windows 386 16-bit console, window and DLL startup code.
 ;*
 ;*****************************************************************************
 

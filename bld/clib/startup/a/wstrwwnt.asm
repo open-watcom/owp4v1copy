@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Open Watcom C/C++32 Windows NT windowed startup code.
+;* Description:  C/C++ Windows NT 32-bit widechar window startup code.
 ;*
 ;*****************************************************************************
 

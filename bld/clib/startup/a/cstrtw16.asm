@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Open Watcom C/C++16 Microsoft Windows startup code.
+;* Description:  C/C++ Windows 16-bit console and window startup code.
 ;*
 ;*****************************************************************************
 
