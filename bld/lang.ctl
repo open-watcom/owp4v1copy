@@ -148,7 +148,6 @@ echo Languages Build <1>
 [ INCLUDE <DEVDIR>/mstools/lang.ctl ]
 [ INCLUDE <DEVDIR>/viprdemo/lang.ctl ]
 [ INCLUDE <DEVDIR>/online/lang.ctl ]
-[ INCLUDE <DEVDIR>/diff/lang.ctl ]
 [ INCLUDE <DEVDIR>/posix/lang.ctl ]
 [ INCLUDE <DEVDIR>/cpp/lang.ctl ]
 [ INCLUDE <DEVDIR>/pgchart/lang.ctl ]
