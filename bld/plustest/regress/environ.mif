@@ -378,7 +378,9 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !  endif
 !endif
 
-!undef dll_loaded
+!ifdef dll_loaded
+!  undef dll_loaded
+!endif
 !ifdef use_dll
 !  ifdef __LOADDLL__
 !    define dll_loaded
