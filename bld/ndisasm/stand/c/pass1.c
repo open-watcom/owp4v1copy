@@ -49,7 +49,8 @@ ref_entry DoPass1Relocs( char *contents, ref_entry r_entry,
     long                                value;
     unnamed_label_return_struct         rs;
 
-    if( !IsIntelx86() ) return( r_entry );
+    if( !IsIntelx86() )
+        return( r_entry );
 
     while( r_entry && ( r_entry->offset < start ) ) {
         r_entry = r_entry->next;
@@ -171,14 +172,16 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
         decoded.flags |= flags;
         dr = DisDecode( &DHnd, &contents[loop], &decoded );
         // if an invalid instruction was found, there is nothing we can do.
-        if( dr != DR_OK ) return( ERROR );
+        if( dr != DR_OK )
+            return( ERROR );
 
         for( i = 0; i < decoded.num_ops; ++i ) {
             adjusted = 0;
             op_pos = loop + decoded.op[i].op_position;
             switch( decoded.op[i].type & DO_MASK ) {
             case DO_IMMED:
-                if(!is_intel || !r_entry || (r_entry->offset != op_pos)) break;
+                if( !is_intel )
+                    break;
                 /* fall through */
             case DO_RELATIVE:
             case DO_MEMORY_REL:
@@ -229,12 +232,13 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                             }
                             CreateUnnamedLabel( r_entry->label->shnd, value, &rs );
                         }
-                        if( rs.error != OKAY ) return( rs.error );
+                        if( rs.error != OKAY )
+                            return( rs.error );
                         r_entry->label = rs.entry;
                     } else {
                         // fixme: got to handle other types of relocs here
                     }
-                } else {
+                } else if( ( decoded.op[i].type &  DO_MASK ) != DO_IMMED ) {
                     if( decoded.op[i].base == DR_NONE &&
                         decoded.op[i].index == DR_NONE ) {
                         switch( decoded.op[i].type & DO_MASK ) {
