@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows default windowing main driver and window procedure.
 *
 ****************************************************************************/
 
@@ -37,9 +36,9 @@
 #include <stdio.h>
 #include <signal.h>
 
-static char  DefaultAboutMsg[] = "   WATCOM Default Window System\n\n                Version 10.0\n\n \251 1991-1994 WATCOM Systems, Inc.";
+static char  DefaultAboutMsg[] = "   Open Watcom Default Window System\n\n                Version 1.0\n\n Portions Copyright (c) 1991-2002 Sybase, Inc.";
 static char  _WCI86FAR *AboutMsg = DefaultAboutMsg;
-static char  DefaultAboutTitle[] = "About WATCOM Default Windowing System";
+static char  DefaultAboutTitle[] = "About Open Watcom Default Windowing System";
 static char  _WCI86FAR *AboutTitle = DefaultAboutTitle;
 static long  shiftState = 0;
 
