@@ -6,7 +6,7 @@
 !inject mthread.obj                      nt nta ntp nvc ncl nvl nll o16 o32     q32             l32
 !inject mthrdini.obj                     nt nta ntp nvc ncl nvl nll     o32     q32             l32
 !inject regdata.obj                      nt nta ntp nvc ncl nvl nll     o32     q32             l32
-!inject register.obj                     nt nta ntp nvc ncl nvl         o32     q32             l32
+!inject register.obj                     nt nta ntp nvc ncl nvl nll     o32     q32             l32
 !inject registrx.obj                     nt nta ntp
 !inject semaqnx.obj                                                             q32
 !inject tdhdlwnt.obj                     nt nta ntp

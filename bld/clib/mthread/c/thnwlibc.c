@@ -88,7 +88,7 @@ BOOL __LibCThreadInit( void )
 /*************************/
 {
     int err = 0;
-    if( __NXSlotID == NO_INDEX ) 
+    if( __NXSlotID == NO_INDEX )
     {
     	err = NXKeyCreate(__LibCKeyValueDestructor, (void *) NULL, &__NXSlotID);
     }
@@ -112,17 +112,17 @@ extern void __LibCThreadFini( void )
 BOOL __LibCAddThread( thread_data *tdata )
 /**************************************/
 {
-    if( __NXSlotID == NO_INDEX ) 
+    if( __NXSlotID == NO_INDEX )
     {
         return( FALSE );
     }
 
     tdata = __AllocInitThreadData( tdata );
-    if( tdata == NULL ) 
+    if( tdata == NULL )
     {
         return( FALSE );
     }
-    if( !__AddThreadData( tdata->thread_id, tdata ) ) 
+    if( !__AddThreadData( tdata->thread_id, tdata ) )
     {
         lib_free( tdata );
         return( FALSE );
@@ -142,16 +142,16 @@ void __LibCRemoveThread( int close_handle )
 {
     thread_data *tdata = NULL;
 
-    if( __NXSlotID != NO_INDEX ) 
+    if( __NXSlotID != NO_INDEX )
     {
         int ccode = NXKeyGetValue(__NXSlotID, &tdata);
         if(0 != ccode)
             return;
         #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )
-            if( tdata == (thread_data *)2 ) 
+            if( tdata == (thread_data *)2 )
                 return;
         #else
-            if( tdata == NULL ) 
+            if( tdata == NULL )
                 return;
         #endif
         __RemoveThreadData( tdata->thread_id );
@@ -174,7 +174,7 @@ static void __ThreadExit()
 }
 #endif
 
-#if 0
+#if 1
 typedef struct {
     thread_fn           *start_addr;
     void                *arglist;
@@ -197,13 +197,13 @@ static void begin_thread_helper( void *the_arg )
 
     tdata = alloca( __ThreadDataSize );
     newtid = __GetSystemWideUniqueTID();
-    if( 0 != newtid) 
+    if( 0 != newtid)
     {
         data->tid       = newtid;
         start_addr      = data->start_addr;
         arglist         = data->arglist;
         stack_bottom    = data->stack_bottom;
-        
+
         NXSemaPost( data->semaphore );
         /* we aren't handling NX_INVALID_THREAD_ID return here !?!?! */
         memset( tdata, 0, __ThreadDataSize );
@@ -213,8 +213,8 @@ static void begin_thread_helper( void *the_arg )
         _RWD_stacklow = FP_OFF( stack_bottom );
         (*start_addr)( arglist );
         _endthread();
-    } 
-    else 
+    }
+    else
     {
         data->tid = -1;
         NXSemaPost( data->semaphore );
@@ -222,14 +222,18 @@ static void begin_thread_helper( void *the_arg )
 }
 
 extern int __CBeginThread(
-    thread_fn *     start_addr, 
+    thread_fn *     start_addr,
     void *          stack_bottom,
-    unsigned        stack_size, 
-    void *          arglist 
+    unsigned        stack_size,
+    void *          arglist
     )
 {
     begin_thread_data   data;
     int                 error;
+
+    if( __NXSlotID == NO_INDEX ){
+        __InitMultipleThread();
+    }
 
     data.start_addr     = start_addr;
     data.stack_bottom   = stack_bottom;
@@ -238,7 +242,7 @@ extern int __CBeginThread(
         return -1;
 
     /*
-    //  We create the thread as detached (non-joinable) and 
+    //  We create the thread as detached (non-joinable) and
     //  to automatically clear context
     */
 
@@ -250,8 +254,8 @@ extern int __CBeginThread(
     if(0 == error)
     {
         NXSemaWait( data.semaphore );
-    } 
-    else 
+    }
+    else
     {
         /* should we set errno here? */
         data.tid = -1;
@@ -275,7 +279,7 @@ extern void __CEndThread( void )
 extern unsigned long CurrentProcess(void);
 extern unsigned long __GetSystemWideUniqueTID(void)
 {
-    return(CurrentProcess()); 
+    return(CurrentProcess());
 }
 
 extern int __CreateFirstThreadData(void)
@@ -300,4 +304,31 @@ extern int __RegisterFirstThreadData(thread_data * tdata)
 extern int __IsFirstThreadData(thread_data * tdata)
 {
     return(__FirstThreadData == tdata);
+}
+
+/*
+//  This is all new and partially untested code to help support _beginthread() and _threadid macro
+*/
+_WCRTLINK int *__threadid( void )
+{
+//extern int *__threadid( void )
+
+    static int BadThreadId = -1L;
+    thread_data *tdata = NULL;
+
+    if( __NXSlotID != NO_INDEX ){
+        int ccode = NXKeyGetValue(__NXSlotID, &tdata);
+        if(0 != ccode)
+            return &BadThreadId;
+        #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )
+            if( tdata == (thread_data *)2 )
+                return &BadThreadId;
+        #else
+            if( tdata == NULL )
+                return &BadThreadId;
+        #endif
+
+        return ( (int *) &(tdata->thread_id) );
+    }
+    return &BadThreadId;
 }
