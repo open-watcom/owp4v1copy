@@ -40,8 +40,11 @@ include struct.inc
         name    code386
 
 _DATA   segment word public 'DATA'
-DGROUP  group   _DATA
+#DGROUP  group   _DATA
         assume  CS:_DATA
+
+module_start:
+  dw    _Functions - module_start
 
         public  _C_strcat
 _C_strcat_name: db      "C_strcat",0
@@ -476,7 +479,7 @@ E_DP_strcpy1:
 E_DP_strcpy:
 
 func    macro   name
-        dd      _&name&_defs,_&name&_name,_&name
+        dw      _&name&_defs - module_start,_&name&_name - module_start,_&name - module_start
         endm
 
         public  _Functions
@@ -496,7 +499,7 @@ _Functions:
         func    C_strchr
         func    S_strchr
         func    BD_strchr
-        dd      0,0,0
+        dw      0,0,0
 _DATA   ends
 
         end

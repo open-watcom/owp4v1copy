@@ -76,8 +76,6 @@ inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
 pre_deps_wasm = inlnops.gh
-extra_a_flags_codei86 = -i"$(watcom_dir)/h"
-extra_a_flags_code386 = -i"$(watcom_dir)/h"
 !endif
 !endif
 
@@ -315,17 +313,16 @@ codeppc.gh :
 
 !else  # Intel i86 or 386
 
-code$(target_cpu).gh : mkcod$(target_cpu)x.bin ./mkcodex.exe
+code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $^@
-
 !endif
 
-mkcod$(target_cpu)x.bin: ../a/code$(target_cpu)x.asm
+xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(as) $(aflags) $(extra_a_flags_$[&) $[@
-        $(linker) format dos com option nodefault file code$(target_cpu)x.obj name $^@
+        $(linker) format dos com option nodefault file code$(target_cpu).obj name $^@
 
-./mkcodex.exe: ../a/mkcodex.c
-        $(bld_cl) $(wcl_util_opts) $[@
+./mkcode.exe: ../a/mkcode.c
+        $(bld_cl) $[@ $(wcl_util_opts) -fo=$^@
 
 usage.gh: ../usage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os)  "-f\"%s\0\"" ../usage.sp usage.gh

@@ -196,12 +196,12 @@ prag386.obj : ..\c\prag386.c    &
               ..\h\pragdefn.h   &
               ..\h\pdefnfs.h    &
               $(cc_dir)\h\pdefn386.h &
-              ..\h\code386.gh
+              code386.gh
 
 pragdata.obj: ..\c\pragdata.c   &
               ..\h\pragdefn.h   &
               $(cc_dir)\h\pdefni86.h &
-              ..\h\codei86.gh
+              codei86.gh
 
 ptree.obj   : ..\c\ptree.c      &
               ..\h\ptreeop.h    &

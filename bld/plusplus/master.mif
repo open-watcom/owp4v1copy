@@ -39,18 +39,18 @@ inc_dirs += $+$(plusplus_include)$-;
 !ifeq plusplus_trmem 1
 inc_dirs += $(trmem_dir);
 !endif
-inc_dirs += ..\h;
+inc_dirs += ../h;
 inc_dirs += $(cg_inc_dirs);
-inc_dirs += $(wasm_dir)\h;
-inc_dirs += $(as_dir)\h;
-inc_dirs += $(dwarf_dir)\dw\h;
-inc_dirs += $(cc_dir)\h;
-inc_dirs += $(watcom_dir)\h;
+inc_dirs += $(wasm_dir)/h;
+inc_dirs += $(as_dir)/h;
+inc_dirs += $(dwarf_dir)/dw/h;
+inc_dirs += $(cc_dir)/h;
+inc_dirs += $(watcom_dir)/h;
 !ifdef comp_cfg_dir
-inc_dirs += $(comp_cfg_dir)\h;
+inc_dirs += $(comp_cfg_dir)/h;
 !endif
-inc_dirs += $(fe_misc_dir)\h;
-inc_dirs += $(brinfo_dir)\h
+inc_dirs += $(fe_misc_dir)/h;
+inc_dirs += $(brinfo_dir)/h
 
 !ifndef patch_level
 patch_level=0
@@ -227,7 +227,7 @@ external_dependencies = $(cg_deps) $(dwarf_dw_dep)
 # lbj -- in DLL
 # rbj -- in driver for DLL
 
-.c: ..\c;$(wasm_dir)\c;$(watcom_dir)\c;$(fe_misc_dir)\c;$(brinfo_dir)\c
+.c: ../c;$(wasm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c;$(brinfo_dir)/c
 
 .c.lbj:
         $(cc) $(cflags) $(dbg_cflags) -fo=.lbj -bd-dwpp_dll $[@ $(extra_opts_$[&)
@@ -303,12 +303,12 @@ plusplus_dll = 1
 # OS independent executables
 #
 
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(tools_root)\os2ldr.exe
+$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(tools_root)/os2ldr.exe
     $(linker) $(lflags) NAME $^* @pexedbg
 
-$(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(tools_root)\os2ldr.exe
+$(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(tools_root)/os2ldr.exe
     $(linker) $(lflags) NAME $^* @pexebld
-    w32bind $^&.rex $^&.exe $(tools_root)\os2ldr.exe
+    w32bind $^&.rex $^&.exe $(tools_root)/os2ldr.exe
     del $^&.rex
 
 build : .symbolic $(exe_bld_name).exe
@@ -505,7 +505,7 @@ pdlldbg.lnk : pdll.lnk
 #
 # miscellaneous build rules
 #
-wpp$(target_CPU)01.int : $(fe_misc_dir)\c\intlbin.c errors01.int usage01.int
+wpp$(target_CPU)01.int : $(fe_misc_dir)/c/intlbin.c errors01.int usage01.int
     $(bld_cl) $[@ $(wcl_util_opts)
     intlbin.exe wpp$(target_CPU)
     del intlbin.*
@@ -514,38 +514,38 @@ wpp$(target_CPU)01.int : $(fe_misc_dir)\c\intlbin.c errors01.int usage01.int
 #msgencod_opts = -w
 #!endif
 
-errmsgs.c errmsgs.gh errlevel.gh errors01.int : $(fe_misc_dir)\c\msgencod.c ..\gml\messages.gml
+errmsgs.c errmsgs.gh errlevel.gh errors01.int : $(fe_misc_dir)/c/msgencod.c ../gml/messages.gml
     $(bld_cl) $[@ $(wcl_util_opts)
     msgencod.exe $(msgencod_opts) -i -q ..\gml\messages.gml errmsgs.c errmsgs.gh errlevel.gh
     del msgencod.*
 
-keywords.gh weights.gh : ..\hash\plusplus.key ..\hash\pc.key
+keywords.gh weights.gh : ../hash/plusplus.key ../hash/pc.key
     $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
     findhash.exe -q $[@ $]@
     del findhash.*
 
-yylex.gh : ..\c\umktable.c xlat.gh
+yylex.gh : ../c/umktable.c xlat.gh
     $(bld_cl) $[@ $(wcl_util_opts)
     umktable.exe $^@
     del umktable.*
 
-xlat.gh : ..\c\mktrans.c ..\h\ctokens.h keywords.gh ytab.gh
+xlat.gh : ../c/mktrans.c ../h/ctokens.h keywords.gh ytab.gh
     $(bld_cl) $[@ $(wcl_util_opts)
     mktrans.exe $]@ $^@
     del mktrans.*
 
-ytab.c ytab.gh : ..\y\plusplus.y ..\c\yydriver.c
+ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     $(yacc) -b -d -f -t -u $[@ $]@ >y.out
     diff y.out ..\y\check.out
     if exist ytab.gh del ytab.gh >nul
     ren ytab.h ytab.gh
 
-cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : $(fe_misc_dir)\c\optencod.c ..\gml\options.gml
-    $(bld_cl) $[@ $(wcl_util_opts) -i$(fe_misc_dir)\h
+cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : $(fe_misc_dir)/c/optencod.c ../gml/options.gml
+    $(bld_cl) $[@ $(wcl_util_opts) -i"$(fe_misc_dir)/h"
     optencod.exe -i -q $(optencod_opt_$(host_OS)) $]@ cmdlnprs.gh cmdlnprs.c cmdlnusg.gh $(target_CPU) $(optencod_targ_dbg) $(optencod_targ_$(host_OS))
     del optencod.*
 
-ic_mask.gh : ..\h\ic.h ..\c\dwarf.c ..\c\cgbkcgrf.c ..\c\cgio.c ..\c\brmwrite.c
+ic_mask.gh : ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $(bld_cl) ..\c\icmask.c $(wcl_util_opts)
     icmask.exe $<
     del icmask.*
@@ -563,16 +563,15 @@ has_prag_386 = yes
 
 !ifdef has_prag_$(target_CPU)
 
-..\h\code$(target_CPU).gh : $(cc_dir)\a\code$(target_CPU).asm $(cc_dir)\a\mkcode.c
-!ifndef gen_code_burst
-    %null
-!else
-    wasm -zq $[@
-    $(wcl_$(target_CPU)) $]@ code$(target_CPU).obj $(wcl_util_opts) -bt=$(wcl_$(target_CPU)_bt) -l=$(wcl_$(target_CPU)_l) -"libpath $(watcom_dir)\lib"
-    mkcode
-    del mkcode.*
-    del code$(target_CPU).obj
-!endif
+code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
+        $]@ $[@ $^@
+
+xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
+        $(as) $(aflags) $(extra_a_flags_$[&) $[@
+        $(linker) format dos com option nodefault file code$(target_cpu).obj name $^@
+
+./mkcode.exe: $(cc_dir)/a/mkcode.c
+        $(bld_cl) $[@ $(wcl_util_opts) -fo=$^@
 
 !endif
 
@@ -602,7 +601,7 @@ project : .symbolic
 #
 # add audit trail to compile.gbl to force global recompile on refresh
 #
-global.chk : ..\compile.gbl
+global.chk : ../compile.gbl
     %make clean
     wtouch -f $[@ $^@
 
