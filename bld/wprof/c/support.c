@@ -713,8 +713,15 @@ extern void MapAddressToActual( image_info * curr_image, addr_ptr * addr )
     addr_seg            seg;
 
     map = curr_image->map_data;
-/**/myassert( map != NULL );
     count = curr_image->map_count;
+
+    if ( count == 0 ) {
+        addr->segment = 0;
+        addr->offset  = 0;
+        return;
+    }
+
+/**/myassert( map != NULL );
     index = 0;
     seg = addr->segment;
     switch( seg ) {
