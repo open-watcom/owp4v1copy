@@ -32,23 +32,41 @@
 
 #include "cvars.h"
 
+typedef struct block_entry {
+    struct block_entry  *prev_block;
+    struct block_entry  *prev_loop;
+    int         block_type;
+    int         top_label;
+    int         break_label;
+    int         continue_label;
+    int         try_index;      /* TRY: current index */
+    int         parent_index;   /* TRY: parent index */
+    TREEPTR     inc_var;        /* variable used in FOR statement */
+    SYM_HANDLE  sym_list;       /* symbols defined in this block */
+} BLOCKDEFN, *BLOCKPTR;
+
 // values for return_type
 enum return_with {
-    RETURN_WITH_NONE      =0,
-    RETURN_WITH_NO_EXPR   =1,
-    RETURN_WITH_EXPR =2,
-};
-struct  return_info {
-    enum  return_with  with;
-    bool               with_expr;
+    RETURN_WITH_NONE    = 0,
+    RETURN_WITH_NO_EXPR = 1,
+    RETURN_WITH_EXPR    = 2,
 };
 
-extern int             NodeCount;
-TREEPTR         FirstStmt;
-TREEPTR         LastStmt;
-TREEPTR         CurFuncNode;
-int             LabelIndex;
-SYM_LISTS       *SymListHeads;
+struct return_info {
+    enum return_with    with;
+    bool                with_expr;
+};
+
+extern int          NodeCount;
+TREEPTR             FirstStmt;
+TREEPTR             LastStmt;
+TREEPTR             CurFuncNode;
+int                 LabelIndex;
+SYM_LISTS           *SymListHeads;
+
+static BLOCKPTR     BlockStack;
+static BLOCKPTR     LoopStack;
+static SWITCHPTR    SwitchStack;
 
 void StmtInit( void ){
     FirstStmt = NULL;
@@ -63,6 +81,34 @@ void ChkStringLeaf( TREEPTR leaf )
     }
 }
 
+SYM_HANDLE GetBlockSymList( void )
+{
+    return( BlockStack->sym_list );
+}
+
+void InitStmt( void )
+{
+    BlockStack  = NULL;
+    LoopStack   = NULL;
+    SwitchStack = NULL;
+}
+
+void SwitchPurge()
+{
+    SWITCHPTR   sw;
+    CASEPTR     c_entry, c_tmp;
+
+    while( (sw = SwitchStack) ) {
+        SwitchStack = sw->prev_switch;
+        c_entry = sw->case_list;
+        while( c_entry != NULL ) {
+            c_tmp = c_entry->next_case;
+            CMemFree( c_entry );
+            c_entry = c_tmp;
+        }
+        CMemFree( sw );
+    }
+}
 
 void AddStmt( TREEPTR stmt )
 {
@@ -1248,19 +1294,3 @@ static void EndSwitch()
 #endif
 //    FlushScoreBoard();
 }
-
-#if 0
-
-void PurgeBlockStack()
-{
-    BLOCKPTR block;
-
-    block = BlockStack;
-    while( block != NULL ) {
-        BlockStack = block->prev_block;
-        CMemFree( block );
-        block = BlockStack;
-    }
-    LoopStack = NULL;
-}
-#endif

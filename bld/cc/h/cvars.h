@@ -214,10 +214,6 @@ global  void     *FunctionProfileBlock; /* handle for profiling data block */
 global  int      FunctionProfileSegment; /* segment for profiling data block */
 #endif
 
-global  BLOCKPTR BlockStack;
-global  BLOCKPTR LoopStack;
-global  SWITCHPTR SwitchStack;
-
 global  int     MacroDepth;
 global  byte    *MacroPtr;
 global  MEPTR   NextMacro;
@@ -906,6 +902,11 @@ extern  void    CBanner(void);                  /* watcom */
 extern  void    MyExit( int ret );              /* cintmain */
 
 extern  void    DBSetSymLoc(CGSYM_HANDLE,long); /* dbsupp */
+
+// cstmt2.c
+extern  SYM_HANDLE GetBlockSymList( void );
+extern  void    InitStmt( void );
+extern  void    SwitchPurge( void );
 
 #if _OS == _CMS || ! defined(__WATCOMC__)
     #define  __va_list  va_list

@@ -891,7 +891,7 @@ void EndBlock()
             AsgnSegs( CurFunc->u.func.locals );
 /*          DumpWeights( CurFunc->u.func.locals ); */
         } else {
-            AsgnSegs( BlockStack->sym_list );
+            AsgnSegs( GetBlockSymList() );
         }
     }
     --SymLevel;

@@ -520,30 +520,6 @@ typedef enum {
 #include "cgaux.h"
 #include "cops.h"
 
-typedef struct block_entry {
-    struct  block_entry *prev_block;
-    struct  block_entry *prev_loop;
-    int     block_type;
-    int     top_label;
-    int     break_label;
-    int     continue_label;
-    union {
-        unsigned    init_index;     /* FOR: quad # of init code */
-        int         try_index;      /* TRY: current index */
-    };
-    union {
-        unsigned    start_index;    /* quad # of start of FOR loop body */
-        int         parent_index;   /* TRY: parent index */
-    };
-    unsigned int    test_index;     /* quad # of start of test code in FOR */
-    unsigned int    inc_index;      /* quad # of increment code */
-    long            start_value;    /* initial value of array index var */
-    long            last_value;     /* last value for array index var */
-    TREEPTR         inc_var;        /* variable used in FOR statement */
-    SYM_HANDLE      sym_list;       /* symbols defined in this block */
-    int             flags;          /* for control flow analysis */
-} BLOCKDEFN, *BLOCKPTR;
-
 typedef struct label_entry {
     struct symtab_entry     *thread;
     struct label_entry      *next_label;

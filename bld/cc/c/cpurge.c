@@ -49,25 +49,6 @@ void InitPurge()
 }
 
 
-void SwitchPurge()
-/****************/
-{
-    SWITCHPTR                   sw;
-    CASEPTR                     c_entry, c_tmp;
-
-    while( (sw = SwitchStack) ) {
-        SwitchStack = sw->prev_switch;
-        c_entry = sw->case_list;
-        while( c_entry != NULL ) {
-            c_tmp = c_entry->next_case;
-            CMemFree( c_entry );
-            c_entry = c_tmp;
-        }
-        CMemFree( sw );
-    }
-}
-
-
 void SrcPurge()
 /*************/
 {
@@ -102,7 +83,6 @@ void PurgeMemory()
     FreeRDir();
     SrcPurge();
     SwitchPurge();
-//  PurgeBlockStack();
     Purge( & HFileList );
 //  Purge( &ErrSym );               /* ErrSym is in CPermArea */
     Purge( & SavedId );
