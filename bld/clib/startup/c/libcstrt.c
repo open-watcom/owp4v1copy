@@ -46,8 +46,8 @@
 /*
 //  Shouldn't do this, but I'm going to have to for now.
 */
-#include "../../mthread\h\trdlist.h"
-#include "../../mthread\h\nw_libc.h"
+#include "../../mthread/h/trdlist.h"
+#include "../../mthread/h/nw_libc.h"
 
 /*****************************************************************************
 //  TLS slot key
