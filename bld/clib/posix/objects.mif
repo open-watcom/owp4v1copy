@@ -4,6 +4,7 @@
 !inject tcsattr.obj                                                                     l32
 !inject tcflush.obj                                                                     l32
 !inject tcgtpgrp.obj                                                                     l32
+!inject tcstpgrp.obj                                                                     l32
 !inject sigadset.obj                                                                     l32
 !inject sigemset.obj                                                                     l32
 !inject sigismem.obj                                                                     l32
