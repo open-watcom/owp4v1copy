@@ -33,8 +33,8 @@
 #include "variety.h"
 #include <math.h>
 #include "mathcode.h"
-#undef  __func__
-#define __func__
+#undef  __math_func__
+#define __math_func__
 #include "mathcode.h"
 
 _WMRTLINK double __math1err( unsigned int err_info, double *arg1 )
