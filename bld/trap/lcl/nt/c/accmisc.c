@@ -38,6 +38,7 @@
 #include "stdnt.h"
 #include "trperr.h"
 #include "madregs.h"
+#include "x86cpu.h"
 
 BOOL IsBigSel( WORD sel )
 {
@@ -158,10 +159,6 @@ unsigned ReqMachine_data()
 #endif
 }
 
-#if defined( MD_x86 )
-extern unsigned     X86CPUType();
-#endif
-
 unsigned ReqGet_sys_config( void )
 {
     get_sys_config_ret  *ret;
@@ -177,7 +174,7 @@ unsigned ReqGet_sys_config( void )
     GetSystemInfo( &info );
 #if defined( MD_x86 )
     ret->sys.cpu = X86CPUType();
-    ret->sys.fpu = ret->sys.cpu;
+    ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
     if( IsWOW )
         ret->sys.os = OS_WINDOWS;
     ret->sys.mad = MAD_X86;

@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+//#define DEBUG_TRAP
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -57,6 +58,8 @@
 #include "exeos2.h"
 #include "exeflat.h"
 
+#include "x86cpu.h"
+
 TSF32   Proc;
 char    Break;
 
@@ -67,8 +70,6 @@ extern  void            Read387(void *);
 extern  void            Write387(void *);
 extern  unsigned        ExceptionText( unsigned, char * );
 extern  void            InitRedirect(void);
-extern  unsigned        X86CPUType();
-
 
 bool                    FakeBreak;
 bool                    AtEnd;
@@ -108,11 +109,6 @@ int     WatchCount;
 #define _DBG1( x )
 #define _DBG( x )
 #endif
-
-#pragma aux GetMSW = 0x0f 0x01 0xe0 value [ax];
-extern unsigned short GetMSW(void);
-
-#define HAVE_EMU (GetMSW() & 0x04)
 
 extern void SetUsrTask() {}
 extern void SetDbgTask() {}

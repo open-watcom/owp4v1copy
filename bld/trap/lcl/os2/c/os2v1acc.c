@@ -42,11 +42,11 @@
 #include "trperr.h"
 #include "os2trap.h"
 #include "madregs.h"
+#include "x86cpu.h"
 
 extern  void    FPUContract( void * );
 extern  void    FPUExpand( void * );
 extern  char    NPXType();
-extern  unsigned X86CPUType();
 extern  void    BreakPoint( ULONG );
 #pragma aux     BreakPoint = 0xCC parm [ dx ax ] aborts;
 extern  void far *Automagic( unsigned short );
@@ -284,9 +284,6 @@ static void DoWritePgmScrn( char far *buff, USHORT len )
     BreakPoint( 0 );
 }
 
-#pragma aux GetMSW = 0x0f 0x01 0xe0 value [ax];
-extern unsigned short GetMSW( void );
-
 static void DoGetMSW( void )
 {
     BreakPoint( GetMSW() );
@@ -359,7 +356,7 @@ unsigned ReqGet_sys_config()
     DosDevConfig( &npx, 3, 0 );
     if( npx ) {
         if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_486 ) {
-            ret->sys.fpu = ret->sys.cpu;
+            ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
         } else {
             ret->sys.fpu = NPXType();
         }

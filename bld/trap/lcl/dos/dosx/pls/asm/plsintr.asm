@@ -570,8 +570,8 @@ exit:   add     esp,4                   ; clear the stack
         ret                             ; return
 NPXType_ endp
 
-public          SetCR0_
-SetCR0_         proc near
+public          SetMSW_
+SetMSW_         proc near
                 push    edx             ; save regs
                 push    ecx             ; ...
                 push    ebx             ; ...
@@ -601,15 +601,7 @@ ring_0:
                 or      ecx,eax         ; merge two CR0's together
                 mov     cr0,ecx         ; retore EM, MP bits to original
                 jmp     short done
-SetCR0_         endp
-
-public          GetCR0_
-GetCR0_         proc near
-                xor     eax,eax
-                smsw    ax
-                ; only really interested in EM, MP bits
-                ret
-GetCR0_         endp
+SetMSW_         endp
 
 _text           ends
 

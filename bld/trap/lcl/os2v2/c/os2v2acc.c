@@ -53,6 +53,7 @@
 #include "exedos.h"
 #include "exeos2.h"
 #include "exeflat.h"
+#include "x86cpu.h"
 
 uDB_t                   Buff;
 static BOOL             stopOnSecond;
@@ -60,7 +61,6 @@ static BOOL             isAttached;
 USHORT                  TaskFS;
 
 extern VOID             InitDebugThread( VOID );
-extern unsigned         X86CPUType();
 
 #ifdef DEBUG_OUT
 
@@ -567,7 +567,7 @@ unsigned ReqGet_sys_config()
     ret->sys.osminor = version[1];
     ret->sys.osmajor = version[0];
     ret->sys.cpu     = X86CPUType();
-    ret->sys.fpu     = ret->sys.cpu;
+    ret->sys.fpu     = ret->sys.cpu & X86_CPU_MASK;
     WriteRegs(&Buff);
 
     buff.Cmd    = DBG_C_ReadCoRegs;

@@ -46,6 +46,7 @@
 #include "ioports.h"
 #include "winchk.h"
 #include "madregs.h"
+#include "x86cpu.h"
 
 typedef enum {
     EXE_UNKNOWN,
@@ -142,7 +143,6 @@ extern void             TrapTypeInit(void);
 extern void             ClrIntVecs(void);
 extern void             SetIntVecs(void);
 extern void             DoRemInt(trap_cpu_regs *, unsigned);
-extern unsigned         X86CPUType(void);
 extern char             NPXType(void);
 extern char             Have87Emu(void);
 extern void             Null87Emu( void );
@@ -263,7 +263,7 @@ unsigned ReqGet_sys_config()
         ret->sys.fpu = X86_EMU;
     } else if( RealNPXType != 0 ) {
         if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_486 ) {
-            ret->sys.fpu = ret->sys.cpu;
+            ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
         } else {
             ret->sys.fpu = RealNPXType;
         }

@@ -33,4 +33,5 @@ extra_linker = &
         exp TellHandles_.4,TellHardMode_.5 &
         lib os2
 
+!include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

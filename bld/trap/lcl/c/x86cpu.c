@@ -32,6 +32,7 @@
 
 #include "mad.h"
 #include "madx86.h"
+#include "x86cpu.h"
 
 #if !defined(__386__)
     #define     Is8086()        (!IsNot8086())

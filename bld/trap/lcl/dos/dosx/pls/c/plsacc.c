@@ -46,6 +46,8 @@
 #include "exepe.h"
 #include "madregs.h"
 
+#include "x86cpu.h"
+
 extern bool     GrabVects(void);
 extern void     ReleVects(void);
 
@@ -62,12 +64,9 @@ extern bool     SetPSP( USHORT );
 extern short    GetDS();
 extern short    GetCS();
 
-extern unsigned GetCR0(void);
-extern void     SetCR0(unsigned);
+extern void     SetMSW(unsigned);
 
 extern unsigned ExceptionText( unsigned, char * );
-
-extern unsigned X86CPUType();
 
 #ifdef DEBUG_TRAP
 #define _DBG( x )  cputs x
@@ -129,7 +128,7 @@ short                   InitialCS;
 
 static int              SaveStdIn;
 static int              SaveStdOut;
-static unsigned         SaveCR0;
+static unsigned         SaveMSW;
 static int              RealNPXType;
 #define BUFF_SIZE       256
 char                    UtilBuff[BUFF_SIZE];
@@ -191,7 +190,7 @@ unsigned ReqGet_sys_config()
     ret->sys.cpu = X86CPUType();
     ret->sys.huge_shift = 12;
     if( HavePSP && !AtEnd ) {
-        if( Mach.msb_cr0 & CR0_EM ) {
+        if( Mach.msb_cr0 & MSW_EM ) {
             ret->sys.fpu = X86_EMU;
         } else {
             ret->sys.fpu = RealNPXType;
@@ -491,7 +490,7 @@ static void TaskFPExec( ULONG rtn, struct x86_fpu *regs )
     long        eax,eip,efl;
     short       cs,ds;
 
-    if( RealNPXType == X86_387 || RealNPXType == X86_287 || (Mach.msb_cr0 & CR0_EM) ) {
+    if( RealNPXType == X86_387 || RealNPXType == X86_287 || (Mach.msb_cr0 & MSW_EM) ) {
         ds = Mach.msb_ds;
         eax = Mach.msb_eax;
         cs = Mach.msb_cs;
@@ -729,7 +728,7 @@ unsigned ReqProg_kill()
         Mach.msb_87ctrl = 0x37f;
         dbg_wrmsb( &Mach );
     }
-    SetCR0( SaveCR0 );
+    SetMSW( SaveMSW );
     dbg_kill();
     HavePSP = FALSE;
     ret->err = 0;
@@ -1127,7 +1126,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     //ver.is_32 = TRUE;
     SaveStdIn = NIL_DOS_HANDLE;
     SaveStdOut = NIL_DOS_HANDLE;
-    SaveCR0 = GetCR0();
+    SaveMSW = GetMSW();
     RealNPXType = NPXType();
     _8087 = 0;
     HavePSP = FALSE;

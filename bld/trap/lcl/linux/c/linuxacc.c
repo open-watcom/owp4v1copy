@@ -61,6 +61,7 @@
 #include "madregs.h"
 #include "dbg386.h"
 #include "linuxcomm.h"
+#include "x86cpu.h"
 
 static pid_t            OrigPGrp;
 
@@ -74,10 +75,6 @@ static long         orig_eax;
 static long         last_eip;
 static int          last_sig;
 static int          at_end;
-
-#if defined( MD_x86 )
-extern unsigned     X86CPUType();
-#endif
 
 #if 0
 void Out( char *str )
@@ -204,10 +201,13 @@ unsigned ReqGet_sys_config()
     // TODO: Detect OS version!
     ret->sys.osmajor = 1;
     ret->sys.osminor = 0;
-    ret->sys.cpu = X86CPUType();
 
-    // TODO: Detect if we have an FPU emulator installed (X86_EMU)
-    ret->sys.fpu = ret->sys.cpu;
+    ret->sys.cpu = X86CPUType();
+    if( HAVE_EMU ) {
+        ret->sys.fpu = X86_EMU;
+    } else {
+        ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
+    }
     ret->sys.huge_shift = 3;
     ret->sys.mad = MAD_X86;
     return( sizeof( *ret ) );

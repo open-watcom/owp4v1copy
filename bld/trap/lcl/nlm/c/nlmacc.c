@@ -57,6 +57,8 @@
 #include "nlmport.h"
 #include "nw3to4.h"
 
+#include "x86cpu.h"
+
 #define NO_DREG     ((byte)-1)
 #define NUM_DREG    4
 
@@ -158,11 +160,6 @@ extern void                     Write387(trap_fpu_regs*);
 extern word                     GetDS();
 extern word                     GetCS();
 
-#define CR0_EM                  0x00000004L
-extern dword                    GetCR0();
-
-
-extern unsigned                 X86CPUType();
 /* from NLMCLIB.C */
 
 extern struct LoadDefinitionStructure *GetNLMFromPID(pPID);
@@ -390,7 +387,7 @@ bool CheckIfBreakOKInOS( LONG eip )
 
 int NPX()
 {
-    if( ( GetCR0() & CR0_EM ) == 0 ) 
+    if( HAVE_EMU == 0 ) 
         return( RealNPXType );
 #if defined ( __NW50__ ) || defined ( __NW40__ )
     return( X86_EMU );

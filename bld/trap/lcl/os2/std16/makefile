@@ -24,4 +24,5 @@ extra_objs = &
         supp.obj &
         core.obj
 
+!include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

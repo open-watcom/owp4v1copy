@@ -41,8 +41,7 @@
 #include "wdebug.h"
 #include "trperr.h"
 #include "madx86.h"
-
-extern unsigned X86CPUType();
+#include "x86cpu.h"
 
 BOOL IsSegSize32( WORD seg )
 {
@@ -108,7 +107,7 @@ unsigned ReqGet_sys_config( void )
         fpu = X86_287;
     } else {
         ret->sys.cpu = X86CPUType();
-        fpu = ret->sys.cpu;
+        fpu = ret->sys.cpu & X86_CPU_MASK;
     }
 
     if( WindowsFlags & WF_80x87 ) {

@@ -48,6 +48,7 @@
 #include "adslib.h"
 #include "doshdl.h"
 #include "madregs.h"
+#include "x86cpu.h"
 
 trap_cpu_regs   Regs;
 int             IntNum;
@@ -72,7 +73,6 @@ extern  int             DoWriteMem(word,dword,char*);
 extern  dword           GetLinear(word,dword);
 extern  dword           SegLimit(word);
 extern  bool            WriteOk(word);
-extern  unsigned        X86CPUType(void);
 extern  unsigned        ExceptionText( unsigned, char * );
 
 bool                    FakeBreak;

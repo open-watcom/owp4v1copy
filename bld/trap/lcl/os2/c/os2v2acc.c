@@ -55,6 +55,7 @@
 #include "exedos.h"
 #include "exeos2.h"
 #include "exeflat.h"
+#include "x86cpu.h"
 
 __GINFOSEG              *GblInfo;
 dos_debug               Buff;
@@ -62,8 +63,6 @@ static BOOL             stopOnSecond;
 USHORT                  TaskFS;
 extern char             SetHardMode( char );
 extern VOID             InitDebugThread(VOID);
-
-extern unsigned         X86CPUType();
 
 #ifdef DEBUG_OUT
 
@@ -581,7 +580,7 @@ unsigned ReqGet_sys_config()
     ret->sys.osminor = version & 0xff;
     ret->sys.osmajor = (version >> 16) & 0xff;
     ret->sys.cpu = X86CPUType();
-    ret->sys.fpu = ret->sys.cpu;
+    ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
     WriteRegs( &Buff );
 
     buff.Cmd = DBG_C_ReadCoRegs;

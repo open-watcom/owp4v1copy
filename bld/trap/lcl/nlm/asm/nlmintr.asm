@@ -104,12 +104,6 @@ Write387        proc    near
                 ret
 Write387        endp
 
-public          GetCR0
-GetCR0          proc    near
-                mov     eax,cr0
-                ret
-GetCR0          endp
-
 public          GetDS
 GetDS           proc    near
                 mov     ax,ds
