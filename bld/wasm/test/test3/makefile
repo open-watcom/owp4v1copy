@@ -6,6 +6,7 @@ datamix2 &
 mseg &
 opi8u &
 plsintr &
+proccall &
 segatrep &
 shift &
 structdd &

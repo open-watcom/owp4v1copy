@@ -194,12 +194,8 @@ int jmp( int i )                // Bug: can't handle indirect jump
             sym->mem_type != MT_WORD &&
             sym->mem_type != MT_DWORD &&
             sym->mem_type != MT_FWORD &&
-#if 0
             sym->mem_type != MT_PWORD &&
             sym->mem_type != MT_FAR ) {
-#else
-            sym->mem_type != MT_PWORD ) {
-#endif
             temp = 0;
 
             #ifdef _WASM_
