@@ -256,7 +256,7 @@ static void preprocessor_opts( struct XlatStatus *status,
 
     optStr = cmdOpts->I_value;
     while( optStr != NULL ) {
-        AppendFmtCmdLine( compCmdLine, CL_C_OPTS_SECTION, "-i%s",
+        AppendFmtCmdLine( compCmdLine, CL_C_OPTS_SECTION, "-i\"%s\"",
                           optStr->data );
         optStr = optStr->next;
     }
