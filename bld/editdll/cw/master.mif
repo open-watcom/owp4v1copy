@@ -9,9 +9,9 @@ weditcw.dll : weditcw.obj
 
 wedit.dll : weditcw.obj
     @%make linkdll
-    wlib -b -n $^*.lib +$^*.dll
+    wlib -q -b -n $^*.lib +$^*.dll
 
-!ifeq host_OS win
+!ifeq host_os win
 
 # windows version
 linkdll: .PROCEDURE
@@ -19,7 +19,7 @@ linkdll: .PROCEDURE
     @%append $(lnk) system windows dll debug all
     @%append $(lnk) name $^*
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
-    @%append $(lnk) option map, elim, verbose, static
+    @%append $(lnk) option map, elim, verbose, static, quiet
     @%append $(lnk) library ddeml
     @%append $(lnk) option stack=8k, symfile
     @%append $(lnk) segment  _TEXT PRELOAD FIXED
@@ -29,9 +29,9 @@ linkdll: .PROCEDURE
     wlink @$(lnk)
 
 weditcw.obj : ../weditcw.c
-    wcc $< /i=..\..;$(%watcom)\h\win /mc /d1 /oaxt /zc /zw /zu /zq /we
+    wcc $< -i=..\..;$(%watcom)\h\win -mc -d1 -oaxt -zc -zw -zu -zq -we
 
-!else ifeq host_OS nt
+!else ifeq host_os nt
 
 # NT version
 linkdll: .PROCEDURE
@@ -39,11 +39,11 @@ linkdll: .PROCEDURE
     @%append $(lnk) system nt_dll debug all
     @%append $(lnk) name $^*
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
-    @%append $(lnk) option map, elim, verbose, static
+    @%append $(lnk) option map, elim, verbose, static, quiet
     @%append $(lnk) file weditcw.obj
     wlink @$(lnk)
 
 weditcw.obj : ../weditcw.c
-    wcc386 $< /i=..\..;$(%watcom)\h\nt -bt=nt /d1 /oaxt /we
+    wcc386 $< -i=..\..;$(%watcom)\h\nt -bt=nt -d1 -oaxt -we -zq
 
 !endif

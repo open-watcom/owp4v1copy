@@ -15,9 +15,9 @@ inc_dirs = ..;..\..
 .before:
         set INCLUDE=$(inc_path)
 
-extra_c_flags_386 = /bd
-extra_c_flags_axp = /bd
-extra_c_flags_win = /zc /zw
+extra_c_flags_386 = -bd
+extra_c_flags_axp = -bd
+extra_c_flags_win = -zc -zw
 
 lflags_nt_axp += initinstance terminstance
 lflags_nt_386 += initinstance terminstance
@@ -32,7 +32,7 @@ all: weditviw.dll wedit.dll .SYMBOLIC
 
 wedit.dll : weditviw.obj
         $(linker) $(lflags) name $^* file weditviw
-        wlib -b -n $^*.lib +$^*.dll
+        wlib -q -b -n $^*.lib +$^*.dll
 
 weditviw.dll : weditviw.obj
         $(linker) $(lflags) name $^* file weditviw
