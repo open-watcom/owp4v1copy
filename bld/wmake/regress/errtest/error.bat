@@ -1,4 +1,4 @@
-@echo off
+@echo %verbose% off
 
 rem *************************************************************
 rem A few notes: when running some of these tests, wmake may
@@ -144,12 +144,14 @@ if errorlevel 1 goto err40
 
 :test41
 
-for %%i in (05 07 10 11 12 15 16 18 19 20 21 22 23 24 25 26 28 29A 29B 29C 30 31A 31B 31C 31D 31E 31F 32 33 34A 34B 37A 37B 38 41 42 43 44A 44B 44C) DO @call work %1 %%i %2
-for %%j in (27 35) DO @call debug %1 %%j %2
+for %%i in (05 07 10 11 12 15 16 18 19 20 21 22 23 24 25 26 28 29A 29B 29C 30 31A 31B 31C 31D 31E 31F 32 33 34A 34B 37A 37B 38 41 42 43 44A 44B 44C) DO call work %1 %%i %2
+for %%j in (27 35) DO call debug %1 %%j %2
 
 goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
+if not .%verbose% == . goto end
 rm *.out
 rm *.tmp
+:end

@@ -1,4 +1,4 @@
-@echo off
+@echo %verbose% off
 echo # ===========================
 echo # Start Preprocessor Test
 echo # ===========================
@@ -26,7 +26,7 @@ echo #   PreProcess Test 2
 echo # ---------------------------
 
 rm tmp.out
-%1 -h -f PREP02 -ms > tmp.out 2>&1
+%1 -h -f PREP02 -ms -m > tmp.out 2>&1
 diff PREP02.CMP tmp.out
 if errorlevel 1 goto err2
     @echo # PREP02 successful

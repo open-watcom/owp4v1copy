@@ -1,4 +1,4 @@
-echo off
+@echo %verbose% off
 echo # ===========================
 echo # Start FORTEST
 echo # ===========================
@@ -52,11 +52,11 @@ if errorlevel 1 goto tst2cerr
 echo # ---------------------------
 echo # Test D
 echo # ---------------------------
-type FOR04a.cmp > tmpfile.tmp
-dir /b >> tmpfile.tmp
-type FOR04b.cmp >> tmpfile.tmp
-dir for?? /b >> tmpfile.tmp
-type FOR04c.cmp >> tmpfile.tmp
+type FOR04a.cmp   > tmpfile.tmp
+dir /b /-o       >> tmpfile.tmp
+type FOR04b.cmp  >> tmpfile.tmp
+dir /b /-o for?? >> tmpfile.tmp
+type FOR04c.cmp  >> tmpfile.tmp
 rm tst2.out
 %1 -h -f FOR04 > tst2.out 2>&1
 diff tst2.out tmpfile.tmp
@@ -138,6 +138,7 @@ if errorlevel 1 goto tst2herr
     echo # Error: For Loop Test H did not work
 :err
 :done
+    if not .%verbose% == . goto end
     rm tmpfile.tmp
     rm tst2.out
     rm temp.out

@@ -1,10 +1,14 @@
-@echo off
+@echo %verbose% off
 ECHO # ===================================
 ECHO # Start DOPRE
 ECHO # ===================================
 
 
 if .%2 == . goto usage
+
+cd ..\cmds
+%1 -h
+cd ..\pretest
 
 ECHO # -----------------------------
 ECHO #   Test 1

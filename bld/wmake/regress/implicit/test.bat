@@ -1,10 +1,10 @@
-@echo off
-wtouch hello.obj
-wtouch hello.cpp
+@echo %verbose% off
 echo # ===========================
 echo # Implicit Rules Test
 echo # ===========================
 if .%2 == . goto usage
+wtouch hello.obj
+wtouch hello.cpp
 
 echo # ---------------------------
 echo # IMPLICIT RULES TEST 1
@@ -60,7 +60,7 @@ echo # ---------------------------
 sleep 2
 wtouch hello.h
 rm tst1.out
-%1 -h -c -f IMP02C /ms > tst1.out
+%1 -h -c -f IMP02C /ms /m > tst1.out
 diff IMP02.CMP tst1.out
 if errorlevel 1 goto err2c
     echo # Implicit Rules Test successful
