@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory management routines for linker.
 *
 ****************************************************************************/
 
-
-/*
-  Mem : memory management routines for linker
-
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,7 +135,10 @@ void *LAlloc( unsigned size )
 #else
         p = malloc( size );
 #endif
-        if( p != NULL ) break;
+        if( p != NULL ) {
+            memset( p, 0, size );
+            break;
+        }
         if( !FreeUpMemory() ) break;
     }
 #ifdef _INT_DEBUG
@@ -168,38 +165,6 @@ extern void * ChkLAlloc( unsigned size )
     }
     return( ptr );
 }
-
-#if 0   // not used anymore
-#ifdef TRACKER
-void *TryAlloc( unsigned size )
-/*****************************/
-{
-    static void *DoTryAlloc( unsigned, void (*)() );
-    void        (*ra)();
-
-    ra = _trmem_guess_who();
-
-    return( DoTryAlloc( size, ra ) );
-}
-
-static void *DoTryAlloc( unsigned size, void (*ra)() )
-#else
-void *TryAlloc( unsigned size )
-#endif
-{
-    void    *p;
-
-#ifdef TRACKER
-    p = _trmem_alloc( size, ra, TrHdl );
-#else
-    p = malloc( size );
-#endif
-#ifdef _INT_DEBUG
-    if( p != NULL ) ++Chunks;
-#endif
-    return( p );
-}
-#endif
 
 
 extern void LFree( void *p )
