@@ -150,7 +150,7 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\cvpack\lang.ctl ]
 #[ INCLUDE <devdir>\build\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
-
+[ INCLUDE <devdir>\redist\lang.ctl ]
 
 # deal with the project which contains this file last --- the BAT directory
 # BATDIR Builder Control file
