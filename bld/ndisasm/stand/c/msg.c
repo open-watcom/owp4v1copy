@@ -24,16 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message resource access routines.
 *
 ****************************************************************************/
 
 
-#include <process.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#if defined( __WATCOMC__ )
+    #include <process.h>
+#endif
 #include "wressetr.h"
 #include "wreslang.h"
 #include "msg.h"

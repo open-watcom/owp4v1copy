@@ -37,7 +37,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <process.h>
+#if defined( __WATCOMC__ )
+    #include <process.h>
+#endif
 
 #include "dis.h"
 #include "init.h"

@@ -42,8 +42,9 @@ extra_c_flags_386 = -fpc
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
 extra_c_flags_trmem    = $(trmem_cflags)
 
-inc_dirs  = -I"$(disasm_dir)/core/h" -I"$(disasm_dir)/stand/h" -I"$(disasm_dir)/h"
-inc_dirs += -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(comp_cfg_dir)/h"
+inc_dirs  = -I. -I"$(disasm_dir)/core/h" -I"$(disasm_dir)/stand/h" 
+inc_dirs += -I"$(disasm_dir)/h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" 
+inc_dirs += -I"$(comp_cfg_dir)/h"
 
 pre_deps_osi = $(tools_root)/os2ldr.exe
 pre_deps_qnx = wdis.u
@@ -89,7 +90,7 @@ $(proj_name).res : wdis.rc msg.gh
         $(rc_aui) $[@ -fo=$^@
 
 ./mkstr.exe : $(disasm_dir)/stand/mkstr.c
-        $(bld_cl) $(wcl_util_opts) -i"$(disasm_dir)/stand" $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(disasm_dir)/stand" $[@
 
 msg.gh : ./mkstr.exe wdis.msg
         $[@ $^@

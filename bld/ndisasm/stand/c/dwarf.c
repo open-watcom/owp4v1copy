@@ -201,7 +201,7 @@ static void dump_state( state_info *state, int *numlines, uint limit )
     }
 }
 
-static int ConvertLines( const char * input, uint length, uint limit )
+static int ConvertLines( const uint_8 * input, uint length, uint limit )
 /********************************************************/
 {
     const uint_8 *              p;

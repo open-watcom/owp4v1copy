@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Standalone disassembler mainline. 
 *
 ****************************************************************************/
 
@@ -968,12 +967,20 @@ static void    doEpilogue()
     }
 }
 
+#if !defined( __WATCOMC__ )
+char    **_argv;
+#endif
+
 int main( int argc, char *argv[] )
 {
     section_ptr         sec;
     return_val          error;
     hash_data *         data_ptr;
     label_list          sec_label_list;
+
+#if !defined( __WATCOMC__ )
+    _argv = argv;
+#endif
 
     Init();
     /* build the symbol table */

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WDISASM command line handling.
+* Description:  Standalone disassembler command line processing.
 *
 ****************************************************************************/
 
@@ -101,7 +101,7 @@ static char *skipFileName( char * cmd ) {
 }
 
 static char *skipToNextArg( char * cmd ) {
-    while( !isspace( *cmd ) && *cmd != '/' && *cmd != '-' && *cmd ) {
+    while( !isspace( *cmd ) && !IS_OPT_DELIM( *cmd ) && *cmd ) {
         cmd++;
     }
     while( isspace( *cmd ) && *cmd ) {
