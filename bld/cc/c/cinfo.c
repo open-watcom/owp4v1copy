@@ -692,7 +692,7 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
         while( fn_typ->decl_type == TYPE_TYPEDEF ) fn_typ = fn_typ->object;
         parm = fn_typ->u.parms;
         if( parm != NULL ) {
-            for(; typ = *parm; ++parm ) {
+            for(; (typ = *parm); ++parm ) {
                 if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
                     total_parm_size = -1;
                     break;
@@ -788,25 +788,27 @@ void FEMessage( msg_class class, void *parm )
         break;
     case MSG_NO_SEG_REGS:
 #ifdef QNX_FLAKEY
-{
-extern unsigned long OrigModel;
-extern unsigned long Model;
-DumpString( "FE:about to issue msg: " );
-Dump8h( OrigModel );
-DumpString( " -> " );
-Dump8h( Model );
-DumpString( "\r\n" );
-if( !CompFlags.emit_dependencies ) {
-extern boom();
-#pragma aux boom = 0xf 0xff 0xff 0xff
-boom();
-}
-}
+        {
+            extern unsigned long OrigModel;
+            extern unsigned long Model;
+            DumpString( "FE:about to issue msg: " );
+            Dump8h( OrigModel );
+            DumpString( " -> " );
+            Dump8h( Model );
+            DumpString( "\r\n" );
+            if( !CompFlags.emit_dependencies ) {
+                extern boom();
+                #pragma aux boom = 0xf 0xff 0xff 0xff
+                boom();
+            }
+        }
 #endif
         CErr2p( ERR_NO_SEG_REGS, FEName( (CGSYM_HANDLE)parm ) );
         break;
     case MSG_BAD_PEG_REG:
         CErr2p( ERR_BAD_PEG_REG, FEName( (CGSYM_HANDLE)parm ) );
+        break;
+    default:
         break;
     }
 }
