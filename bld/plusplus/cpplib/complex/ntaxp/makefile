@@ -2,6 +2,8 @@
 #
 # iost -- 32-bit axp COMPLEX library
 #
+host_cpu = axp
+
 suffix = nt
 target_system = ntaxp
 target_lib = $(prefix)$(suffix).lib

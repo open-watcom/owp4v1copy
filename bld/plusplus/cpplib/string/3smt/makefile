@@ -2,6 +2,8 @@
 #
 # strgmt3s.lib -- stack based multi-thread 32-bit STRING library
 #
+host_cpu = 386
+
 suffix = mt3s
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

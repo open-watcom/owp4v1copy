@@ -2,6 +2,8 @@
 #
 # cplx73s.lib -- stack based 32-bit COMPLEX library fpi
 #
+host_cpu = 386
+
 suffix = 3s
 target_system = generic
 target_lib = $(prefix)7$(suffix).lib

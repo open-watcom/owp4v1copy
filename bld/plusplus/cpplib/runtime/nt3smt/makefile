@@ -2,6 +2,8 @@
 #
 # plib3s -- 32-bit 3s MT PLIB, PLBX
 #
+host_cpu = 386
+
 fs_registration = yes
 suffix = mt3s
 target_system = nt

@@ -2,6 +2,8 @@
 #
 # contmt3r.lib -- register based multi-thread 32-bit CONTAINER library
 #
+host_cpu = 386
+
 target_system = qnx
 suffix = mt3r
 target_lib = $(prefix)$(suffix).lib

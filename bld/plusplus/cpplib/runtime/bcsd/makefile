@@ -2,6 +2,8 @@
 #
 # plibm -- 16-bit medium memory-model PLIB
 #
+host_cpu = i86
+
 suffix = m
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # plibm -- 16-bit medium memory-model PLIB for Windows
 #
+host_cpu = i86
+
 suffix = m
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

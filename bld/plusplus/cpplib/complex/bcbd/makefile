@@ -2,6 +2,8 @@
 #
 # cplxl.lib -- large memory-model COMPLEX library fpc
 #
+host_cpu = i86
+
 suffix = l
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # iost -- 32-bit axp IOSTREAM library
 #
+host_cpu = axp
+
 suffix = nt
 target_system = ntaxp
 production_lib = libaxp

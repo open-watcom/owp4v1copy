@@ -2,6 +2,8 @@
 #
 # contl.lib -- large memory-model CONTAINER library
 #
+host_cpu = i86
+
 suffix = l
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

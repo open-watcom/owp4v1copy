@@ -2,6 +2,8 @@
 #
 # cplxc.lib -- compact memory-model COMPLEX library fpc
 #
+host_cpu = i86
+
 suffix = c
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # conts.lib -- small memory-model CONTAINER library for Windows
 #
+host_cpu = i86
+
 suffix = s
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # iostl.lib -- large memory-model IOSTREAM library
 #
+host_cpu = i86
+
 suffix = l
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

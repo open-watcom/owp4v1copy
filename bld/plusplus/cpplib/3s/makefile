@@ -1,5 +1,6 @@
 #pmake: all build flat cpu_386 os_osi os_dos os_linux
 host_CPU = 386
+
 suffix = 3s
 subdir = 3s
 production_lib = lib386

@@ -2,6 +2,8 @@
 #
 # cplx7l.lib -- large memory-model COMPLEX library fpi
 #
+host_cpu = i86
+
 suffix = l
 target_system = generic
 target_lib = $(prefix)7$(suffix).lib

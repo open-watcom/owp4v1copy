@@ -2,6 +2,8 @@
 #
 # cplx7r.lib -- register based 32-bit COMPLEX library -fpi
 #
+host_cpu = 386
+
 suffix = 3r
 target_system = generic
 target_lib = $(prefix)7$(suffix).lib

@@ -1,7 +1,6 @@
 #
 # 32-bit library support
 #
-host_CPU = 386
 
 !ifdef __LINUX__
 comp_cpp = $(plusplus_dir)/bin/rpp$(host_cpu)12

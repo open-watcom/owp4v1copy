@@ -2,6 +2,8 @@
 #
 # strgs.lib -- small memory-model STRING library
 #
+host_cpu = i86
+
 suffix = s
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # cont3r.lib -- register based 32-bit CONTAINER library
 #
+host_cpu = 386
+
 fs_registration = yes
 target_system = os2v2
 text = -d__USE_FS

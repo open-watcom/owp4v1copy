@@ -1,6 +1,9 @@
+proj_name = cpplib
+
+!include cproj.mif
+
 !include $(plusplus_dir)/ppdirs.mif
 !include $(define_library_include)
-!include cproj.mif
 
 !ifndef source_libs
 source_libs = $(libs)

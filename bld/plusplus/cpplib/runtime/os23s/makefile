@@ -2,6 +2,8 @@
 #
 # plib3s -- 32-bit 3s PLIB, PLBX
 #
+host_cpu = 386
+
 fs_registration = yes
 suffix = 3s
 target_system = os2v2

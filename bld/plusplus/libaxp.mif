@@ -2,7 +2,7 @@
 # Alpha AXP library support
 #
 uncompressed = 1
-host_CPU = axp
+
 comp_cpp = $(plusplus_dir)\bin\rpp$(host_CPU)12.exe
 !ifeq release 0
 !ifdef comp_cpp_axp

@@ -1,5 +1,6 @@
 #pmake: all build medium cpu_i86 os_win
 host_CPU = i86
+
 suffix = m
 subdir = wbcsd
 production_lib = lib286\win

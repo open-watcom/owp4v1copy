@@ -2,6 +2,8 @@
 #
 # strgmt3r.lib -- register based multi-thread 32-bit STRING library
 #
+host_cpu = 386
+
 fs_registration = yes
 target_system = nt
 text = -d__USE_FS

@@ -2,6 +2,8 @@
 #
 # cplx7l.lib -- large memory-model COMPLEX library fpi for Windows
 #
+host_cpu = i86
+
 suffix = l
 target_system = windows
 target_lib = $(prefix)7$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # iostmt.lib -- large memory-model OS/2 multi-thread IOSTREAM library
 #
+host_cpu = i86
+
 suffix = mtl
 target_lib = $(prefix)$(suffix).lib
 production_lib = lib286\os2

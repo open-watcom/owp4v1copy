@@ -1,5 +1,6 @@
 #pmake: nomodel cpu_axp os_nt
 host_CPU = axp
+
 suffix = nt
 subdir = ntaxp
 production_lib = libaxp

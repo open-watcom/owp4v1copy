@@ -1,5 +1,6 @@
 #pmake: all build compact cpu_i86 os_osi
 host_CPU = i86
+
 suffix = c
 subdir = scbd
 production_lib = lib286

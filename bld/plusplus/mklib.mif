@@ -3,11 +3,13 @@
 # it doesn't seem to provide any clear benefits.
 uncompressed=1
 
-!include $(plusplus_dir)/dirmacs.mif
+proj_name = cpplib
 
+!include cproj.mif
+
+!include $(plusplus_dir)/dirmacs.mif
 !include $(define_library_include)
 !include $(define_target_include)
-!include cproj.mif
 
 !ifndef target_objs
 target_objs = $(objs)

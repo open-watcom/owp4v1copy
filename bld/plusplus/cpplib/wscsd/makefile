@@ -1,5 +1,6 @@
 #pmake: all build small cpu_i86 os_win
 host_CPU = i86
+
 suffix = s
 subdir = wscsd
 production_lib = lib286\win

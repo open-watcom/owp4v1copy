@@ -2,6 +2,8 @@
 #
 # plib3r -- 32-bit 3r PLIB, PLBX
 #
+host_cpu = 386
+
 suffix = 3r
 target_system = generic
 production_lib = lib386

@@ -2,6 +2,8 @@
 #
 # plibs -- 16-bit small memory-model PLIB for Windows
 #
+host_cpu = i86
+
 suffix = s
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

@@ -2,6 +2,8 @@
 #
 # plibmtl -- 16-bit large memory-model PLIB multi-thread OS/2
 #
+host_cpu = i86
+
 suffix = mtl
 target_system = os2
 production_lib = lib286\os2

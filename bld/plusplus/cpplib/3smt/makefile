@@ -1,5 +1,6 @@
 #pmake: all build flat cpu_386 os_osi
 host_CPU = 386
+
 suffix = mt3s
 subdir = 3smt
 target_lib = $(prefix)$(suffix).lib

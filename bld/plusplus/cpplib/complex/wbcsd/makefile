@@ -2,6 +2,8 @@
 #
 # cplxm.lib -- medium memory-model COMPLEX library fpc for Windows
 #
+host_cpu = i86
+
 suffix = m
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

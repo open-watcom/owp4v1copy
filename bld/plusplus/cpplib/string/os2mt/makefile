@@ -2,6 +2,8 @@
 #
 # strgmtl.lib -- large memory-model multi-thread STRING library
 #
+host_cpu = i86
+
 suffix = mtl
 target_system = os2
 production_lib = lib286\os2

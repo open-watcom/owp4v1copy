@@ -2,6 +2,8 @@
 #
 # plib3r -- 32-bit 3r MT PLIB, PLBX
 #
+host_cpu = 386
+
 fs_registration = yes
 suffix = mt3r
 linkage=dynamic

@@ -2,6 +2,8 @@
 #
 # plibmt3r -- 32-bit 3r PLIB multi-thread library
 #
+host_cpu = 386
+
 suffix = mt3r
 target_system = qnx
 target_lib = $(prefix)$(suffix).lib

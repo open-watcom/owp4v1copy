@@ -2,6 +2,8 @@
 #
 # strg3s.lib -- stack based 32-bit STRING library
 #
+host_cpu = 386
+
 fs_registration = yes
 target_system = os2v2
 text = -d__USE_FS

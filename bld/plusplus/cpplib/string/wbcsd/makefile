@@ -2,6 +2,8 @@
 #
 # strgm.lib -- medium memory-model STRING library for Windows
 #
+host_cpu = i86
+
 suffix = m
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

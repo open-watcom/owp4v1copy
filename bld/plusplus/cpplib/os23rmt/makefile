@@ -1,5 +1,6 @@
 #pmake: all build flat cpu_386 os_os2
 host_CPU = 386
+
 fs_prefix = os2
 suffix = mt3r
 subdir = 3rmt

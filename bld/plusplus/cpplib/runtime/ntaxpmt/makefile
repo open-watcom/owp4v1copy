@@ -2,6 +2,8 @@
 #
 # plib3r -- 32-bit 3r PLIB, PLBX
 #
+host_cpu = axp
+
 pd_registration = yes
 suffix = mt
 target_system = ntaxp

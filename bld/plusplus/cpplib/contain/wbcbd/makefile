@@ -2,6 +2,8 @@
 #
 # contl.lib -- large memory-model CONTAINER library for Windows
 #
+host_cpu = i86
+
 suffix = l
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

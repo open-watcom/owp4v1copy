@@ -2,6 +2,8 @@
 #
 # iost -- 32-bit axp STRING library
 #
+host_cpu = axp
+
 suffix = mt
 target_system = ntaxp
 production_lib = libaxp

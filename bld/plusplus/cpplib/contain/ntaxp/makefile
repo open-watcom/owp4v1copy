@@ -2,7 +2,8 @@
 #
 # iost -- 32-bit axp CONTAINER library
 #
-host_CPU = axp
+host_cpu = axp
+
 suffix = nt
 target_system = ntaxp
 production_lib = libaxp

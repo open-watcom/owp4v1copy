@@ -1,6 +1,6 @@
 #pmake: os_qnx cpu_386 flat
-
 host_cpu  = 386
+
 fs_prefix = q
 suffix    = mt3r
 subdir    = 3rmt

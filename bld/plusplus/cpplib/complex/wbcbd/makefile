@@ -2,6 +2,8 @@
 #
 # cplxl.lib -- large memory-model COMPLEX library fpc for Windows
 #
+host_cpu = i86
+
 suffix = l
 target_system = windows
 target_lib = $(prefix)$(suffix).lib

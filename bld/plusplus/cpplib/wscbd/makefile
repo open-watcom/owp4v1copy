@@ -1,5 +1,6 @@
 #pmake: all build compact cpu_i86 os_win
 host_CPU = i86
+
 suffix = c
 subdir = wscbd
 production_lib = lib286\win

@@ -2,6 +2,8 @@
 #
 # strgl.lib -- large memory-model STRING library
 #
+host_cpu = i86
+
 suffix = l
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

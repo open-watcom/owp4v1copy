@@ -1,7 +1,6 @@
 #
 # 16-bit library support
 #
-host_cpu = i86
 
 !ifdef __LINUX__
 comp_cpp = $(plusplus_dir)/bin/rpp$(host_CPU)12

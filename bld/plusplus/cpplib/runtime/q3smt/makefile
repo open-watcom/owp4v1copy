@@ -2,6 +2,8 @@
 #
 # plibmt3s -- 32-bit 3s PLIB multi-thread
 #
+host_cpu = 386
+
 suffix = mt3s
 target_system = qnx
 target_lib = $(prefix)$(suffix).lib

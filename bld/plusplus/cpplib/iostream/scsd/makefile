@@ -2,6 +2,8 @@
 #
 # iosts.lib -- small memory-model IOSTREAM library
 #
+host_cpu = i86
+
 suffix = s
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

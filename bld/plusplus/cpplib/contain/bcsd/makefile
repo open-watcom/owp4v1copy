@@ -2,6 +2,8 @@
 #
 # contm.lib -- medium memory-model CONTAINER library
 #
+host_cpu = i86
+
 suffix = m
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

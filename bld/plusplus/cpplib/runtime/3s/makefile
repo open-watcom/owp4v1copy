@@ -2,6 +2,8 @@
 #
 # plib3s -- 32-bit 3s PLIB
 #
+host_cpu = 386
+
 suffix = 3s
 target_system = generic
 target_lib = $(prefix)$(suffix).lib

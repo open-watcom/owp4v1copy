@@ -1,5 +1,6 @@
 #pmake: all build medium cpu_i86 os_osi
 host_CPU = i86
+
 suffix = m
 subdir = bcsd
 production_lib = lib286

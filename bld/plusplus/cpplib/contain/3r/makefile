@@ -2,6 +2,8 @@
 #
 # cont3r.lib -- register based 32-bit CONTAINER library
 #
+host_cpu = 386
+
 suffix = 3r
 target_system = generic
 production_lib = lib386
