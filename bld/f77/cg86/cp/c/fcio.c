@@ -87,6 +87,9 @@ extern  cg_name         TmpVal(tmp_handle,cg_type);
 extern  void            ReverseList(void **);
 extern  cg_type         PromoteToBaseType(cg_type);
 
+static  void            StructIOArrayStruct( sym_id arr );
+static  void            StructIOItem( sym_id fd );
+
 static  sym_id          EndEqStmt;
 static  sym_id          ErrEqStmt;
 static  void            (**IORtnTable)();
@@ -106,7 +109,7 @@ static  void    StructIO( struct field *fd ) {
     while( fd != NULL ) {
         if( fd->typ == TY_STRUCTURE ) {
             if( fd->dim_ext != NULL ) {
-                StructIOArrayStruct( fd );
+                StructIOArrayStruct( (sym_id)fd );
             } else {
                 StructIO( fd->xt.record->fl.fields );
             }
@@ -122,7 +125,7 @@ static  void    StructIO( struct field *fd ) {
             }
             StructIO( big_map->sd.fl.fields );
         } else {
-            StructIOItem( fd );
+            StructIOItem( (sym_id)fd );
         }
         fd = &fd->link->fd;
     }
