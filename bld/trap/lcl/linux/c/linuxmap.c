@@ -83,7 +83,7 @@ struct link_map *FindLibInLinkMap( struct link_map *first_lmap, addr48_off dyn_b
     dbg_lmap = first_lmap;
     while( dbg_lmap != NULL ) {
         if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
-	if( (addr48_off)lmap.l_ld == dyn_base )
+        if( (addr48_off)lmap.l_ld == dyn_base )
             return( dbg_lmap );
         dbg_lmap = lmap.l_next;
     }
@@ -160,7 +160,7 @@ void DelLib( addr48_off dynsection )
             Out( "\n" );
             moduleInfo[i].newly_unloaded = TRUE;
             moduleInfo[i].offset = NULL;
-	    moduleInfo[i].dbg_dyn_sect = NULL;
+            moduleInfo[i].dbg_dyn_sect = NULL;
             moduleInfo[i].code_size = 0;
             break;
         }
@@ -306,6 +306,7 @@ unsigned ReqGet_lib_name( void )
     get_lib_name_ret    *ret;
     char                *name;
     unsigned            i;
+    unsigned            ret_len = sizeof( *ret );
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -320,13 +321,15 @@ unsigned ReqGet_lib_name( void )
             ret->handle = i;
             name[0] = '\0';
             moduleInfo[i].newly_unloaded = FALSE;
-            return( sizeof( *ret ) );
+            ret_len = sizeof( *ret );
+            break;
         } else if( moduleInfo[i].newly_loaded ) {
             Out( "(newly loaded) " );
             ret->handle = i;
             strcpy( name, moduleInfo[i].filename );
             moduleInfo[i].newly_loaded = FALSE;
-            return( sizeof( *ret ) + strlen( name ) + 1 );
+            ret_len = sizeof( *ret ) + strlen( name ) + 1;
+            break;
         }
     }
     Out( "ReqGet_lib_name: in handle " );
@@ -334,5 +337,5 @@ unsigned ReqGet_lib_name( void )
     Out( " out handle " );
     OutNum( ret->handle );
     Out( "\n" );
-    return( sizeof( *ret ) );
+    return( ret_len );
 }
