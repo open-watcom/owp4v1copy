@@ -31,6 +31,10 @@
 
 #define __LONG_LONG_SUPPORT__
 
+#if !defined(__NETWARE__) && !defined(__UNIX__) && !defined(__SNAP__)
+    #define USE_MBCS_TRANSLATION
+#endif
+
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
@@ -46,16 +50,12 @@
 #endif
 #include "farsupp.h"
 #include "myvalist.h"
-#if !defined(__NETWARE__) && defined(__WIDECHAR__)
+#if defined(__WIDECHAR__) || defined(USE_MBCS_TRANSLATION)
     #include <mbstring.h>
 #endif
 
 #define TRUE    1
 #define FALSE   0
-
-#if !defined(__NETWARE__) && !defined(__UNIX__) && !defined(__SNAP__)
-    #define USE_MBCS_TRANSLATION
-#endif
 
 #define STOP_CHR 0xFFFFFFFF
 

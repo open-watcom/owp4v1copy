@@ -31,6 +31,10 @@
 
 #define __LONG_LONG_SUPPORT__
 
+#if !defined(__NETWARE__) && !defined(__UNIX__) && !defined(__SNAP__)
+  #define USE_MBCS_TRANSLATION
+#endif
+
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
@@ -38,7 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef __WIDECHAR__
+#if defined(__WIDECHAR__) || defined(USE_MBCS_TRANSLATION)
 #include <mbstring.h>
 #endif
 #include "ftos.h"
@@ -64,9 +68,6 @@
 
   #define PASCAL_STRING           'S'             /* for Novell */
   #define WIDE_CHAR_STRING        'S'
-  #if !defined(__NETWARE__) && !defined(__UNIX__) && !defined(__SNAP__)
-    #define USE_MBCS_TRANSLATION
-  #endif
 
   #if defined(__QNX_386__)
 /* for use in QNX 32-bit shared library */
