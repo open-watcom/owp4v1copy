@@ -5,7 +5,7 @@ batserv.exe : batserv.obj
         wlink sys os2v2 file batserv op stack=16k
 
 batserv.obj : batserv.c
-        wcc386 batserv.c -oaxt -d1 -w3 -i$(watcomdir)os220_h
+        wcc386 batserv.c -oaxt -d1 -w3 -i$(lang_root)\h\os2
 
 batcli.obj : batcli.c
         wcc batcli.c -oaxt -d1 -w3
