@@ -16,7 +16,7 @@ set BUILD_PLATFORM=
 #================================
     mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../dos386.386/makefile
+    wmake -h -f ../dosi86.386/makefile
     <CPCMD> wcl386.exe <DEVDIR>/build/bin/bwcl386.exe
     cdsay <PROJDIR>
 
