@@ -238,7 +238,7 @@ void CInfoMsg( int msgnum, ... )
     CMsgInfo( &info, msgnum, args1 );
     va_end( args1 );
     ConsErrMsg( &info );
-    if( ErrFile != NULL  &&  WngLevel >= 4 ) {
+    if( ErrFile != NULL ) {
         FmtCMsg( pre, &info );
         fputs( pre, ErrFile );
         fputs( info.msgtxt, ErrFile );
