@@ -14,7 +14,7 @@ cdsay .
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> nlang ]
-    set reldir=<dwatcom>
+    set reldir=<DWATCOM>
     set CPCMD=copy
 
 [ BLOCK <1> rel2 cprel2 acprel2 nlang ]
