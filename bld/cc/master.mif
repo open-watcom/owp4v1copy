@@ -320,7 +320,7 @@ cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $[@ $(wcl_util_opts) $(cl_libs)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
