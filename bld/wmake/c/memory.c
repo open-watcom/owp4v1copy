@@ -70,7 +70,7 @@ STATIC struct scarce {
 
     STATIC int trkfile;     /* file handle we'll write() to */
 
-    STATIC void printLine( void *h, const char *buf, unsigned size )
+    STATIC void printLine( int *h, const char *buf, unsigned size )
     {
         h = h;
         write( trkfile, buf, size );
