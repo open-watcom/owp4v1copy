@@ -62,6 +62,8 @@ char    *CTypeNames[] = {
         "<wide char>"
  };
 
+static  char   do_message_output; /* Optimize output for human */
+
 typedef struct
 {
     char    *data;
@@ -177,9 +179,29 @@ void DumpTypeCounts()
 
 static TYPEPTR TrueType( TYPEPTR typ )
 {
-    if( !CompFlags.dump_prototypes && typ != NULL ) {
-        /* -zg, not -v */
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    TYPEPTR newtyp;
+
+    if ( typ == NULL )
+        return typ;
+
+    if ( do_message_output ) {
+        /* For human: smart typedef expansion. Stop before unnamed struct */
+        while ( typ->decl_type == TYPE_TYPEDEF ) {
+            newtyp = typ->object;
+            if( newtyp->decl_type == TYPE_STRUCT ||
+                newtyp->decl_type == TYPE_UNION  ||
+                newtyp->decl_type == TYPE_ENUM  ) {
+
+                if ( *newtyp->u.tag->name == '\0' )
+                    break;
+            }
+            typ = newtyp;
+        }
+    } else {
+        if( !CompFlags.dump_prototypes) {
+            /* -zg, not -v */
+            while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        }
     }
     return( typ );
 }
@@ -469,7 +491,12 @@ static void DumpParmTags( TYPEPTR *parm, FILE *fp )
 
 static void DumpTagName( char *tag_name, STRCHUNK *pch )
 {
-    if( *tag_name == '\0' )  tag_name = "_no_name_";
+    if( *tag_name == '\0' ) {
+        if (do_message_output)
+            tag_name = "{...}";
+        else
+            tag_name = "_no_name_";
+    }
     ChunkSaveStrWord( pch, tag_name );
 }
 
@@ -583,6 +610,8 @@ char *DiagGetTypeName( TYPEPTR typ )
     STRCHUNK  chunk;
 
     ChunkInit( &chunk );
+    do_message_output = 1;
     DoDumpType( typ, NULL, &chunk );
+    do_message_output = 0;
     return ChunkToStr( &chunk );
 }
