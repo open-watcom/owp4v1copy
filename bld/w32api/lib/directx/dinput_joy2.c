@@ -12,7 +12,7 @@
 
 #include "dinput_private.h"
 
-static DIOBJECTDATAFORMAT c_rgodfDIJoy2[] __attribute__ ((section(".text"))) =
+static DIOBJECTDATAFORMAT c_rgodfDIJoy2[] SECTION_TEXT =
 {
 	{&GUID_XAxis,0x0,DIDFT_ABSAXIS|DIDFT_RELAXIS|DIDFT_ANYINSTANCE|DIDFT_OPTIONAL,DIDOI_ASPECTPOSITION},
 	{&GUID_YAxis,0x4,DIDFT_ABSAXIS|DIDFT_RELAXIS|DIDFT_ANYINSTANCE|DIDFT_OPTIONAL,DIDOI_ASPECTPOSITION},
@@ -180,4 +180,4 @@ static DIOBJECTDATAFORMAT c_rgodfDIJoy2[] __attribute__ ((section(".text"))) =
 	{&GUID_Slider,0x1c,DIDFT_ABSAXIS|DIDFT_RELAXIS|DIDFT_ANYINSTANCE|DIDFT_OPTIONAL,DIDOI_ASPECTFORCE}
 };
 
-DIDATAFORMAT c_dfDIJoystick2 __attribute__ ((section(".rdata"))) = {sizeof(DIDATAFORMAT),sizeof(DIOBJECTDATAFORMAT),DIDF_ABSAXIS,272,sizeof(c_rgodfDIJoy2)/sizeof(c_rgodfDIJoy2[0]),c_rgodfDIJoy2};
+DIDATAFORMAT c_dfDIJoystick2 SECTION_RDATA = {sizeof(DIDATAFORMAT),sizeof(DIOBJECTDATAFORMAT),DIDF_ABSAXIS,272,sizeof(c_rgodfDIJoy2)/sizeof(c_rgodfDIJoy2[0]),c_rgodfDIJoy2};

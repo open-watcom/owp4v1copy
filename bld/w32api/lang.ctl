@@ -18,6 +18,7 @@ set PROJDIR=<CWD>
     <CPCMD> READ*.*         <RELROOT>/rel2/readme.w32
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt386/include/*.h     <RELROOT>/rel2/h/nt/
+    <CPCMD> nt386/include/directx/*.h     <RELROOT>/rel2/h/nt/
     <CPCMD> nt386/include/GL/*.h  <RELROOT>/rel2/h/nt/GL/
     <CPCMD> nt386/*.lib     <RELROOT>/rel2/lib386/nt/
 

@@ -4,7 +4,7 @@ proj_name = w32api
 
 .EXTENSIONS : .lbc .def
 
-libs =               &
+base_libs =        &
         advapi32.lib &
         avicap32.lib &
         avifil32.lib &
@@ -15,6 +15,7 @@ libs =               &
         ctl3d32.lib &
         dhcpcsvc.lib &
         dlcapi.lib &
+        dnsapi.lib &
         faultrep.lib &
         gdi32.lib &
         glaux.lib &
@@ -91,12 +92,40 @@ libs =               &
         wsock32.lib &
         wst.lib
 
-.def: ../lib
+directx_libs = &
+        d3d8.lib &
+        d3d9.lib &
+        d3dim.lib &
+        d3drm.lib &
+        d3dx8d.lib &
+        d3dx9d.lib &
+        d3dxof.lib &
+        ddraw.lib &
+        dinput.lib &
+        dinput8.lib &
+        dplayx.lib &
+        dpnaddr.lib &
+        dpnet.lib &
+        dpnlobby.lib &
+        dpvoice.lib &
+        dsetup.lib &
+        dsound.lib &
+        dxerr8.lib &
+        dxerr9.lib &
+        dxguid.lib &
+        ksproxy.lib &
+        ksuser.lib &
+        msdmo.lib &
+        quartz.lib
 
-.c: ../lib
+libs = $(base_libs) $(directx_libs)
+
+.def: ../lib;../lib/directx
+
+.c: ../lib;../lib/directx
 
 .def.lbc:
-        $(vi) -s ../def2lbc.vi -p"../lib/$[. $*"
+        $(vi) -s ../def2lbc.vi -p"$[@ $*"
 
 .lbc.lib:
         $(librarian) -b -c -n -io -ii $@ @$<
@@ -111,10 +140,12 @@ libs =               &
 # wmake exploits the special WATCOM readdir(wildcard) property...
 all: $(libs) .SYMBOLIC
 !ifdef __UNIX__
-        /bin/sh -c "for i in ../include/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done"
-        /bin/sh -c "for i in ../include/GL/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done"
+        /bin/sh -c 'for i in ../include/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../include/directx/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../include/GL/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
 !else
         @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+        @for %i in (../include/directx/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
         @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
 !endif
         $(vi) -s ../fix/fix_h.vi
@@ -122,9 +153,26 @@ all: $(libs) .SYMBOLIC
 kernel32.lib: kernel32.lbc
         $(librarian) -b -c -n -io -ii $@ @$<
 
-dinput.lib: dinput.lbc dinput.obj
+dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
+        dinput_mouse2.obj
+
+dinput8.lib: dinput.lbc $(dinput_objs)
+        @%create $^&.lbc
+        @for %i in ($(dinput_objs)) do @%append $^&.lbc -+%i
         $(librarian) -b -c -n -io -ii $@ @$[@
-        $(librarian) -b -c $@ +$]@
+        $(librarian) -b -c $@ @$^&.lbc
+
+dinput.lib: dinput.lbc $(dinput_objs)
+        @%create $^&.lbc
+        @for %i in ($(dinput_objs)) do @%append $^&.lbc -+%i
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ @$^&.lbc
+
+dxerr8.lib: dxerr8.obj dxerr8w.obj
+        $(librarian) -b -c -n $@ +$[@ +$]@
+
+dxerr9.lib: dxerr8.obj dxerr8w.obj
+        $(librarian) -b -c -n $@ +$[@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
