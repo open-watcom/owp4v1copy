@@ -57,13 +57,17 @@ extraobjs += trmem.ybj trmemcvr.ybj
 
 !ifdef sys_windowed
 !ifeq host_os os2
-!include $(vi_dir)\pm\pm.mif
+!include $(vi_dir)/pm/pm.mif
 !else
-!include $(vi_dir)\win\win.mif
+!include $(vi_dir)/win/win.mif
 !endif
 !else
-!include $(vi_dir)\$(host_OS)\$(host_OS).mif
-!include $(vi_dir)\ui\ui.mif
+!ifeq host_os linux
+!include $(vi_dir)/unix/unix.mif
+!else
+!include $(vi_dir)/$(host_OS)/$(host_OS).mif
+!endif
+!include $(vi_dir)/ui/ui.mif
 !endif
 
 objs = $(objsize) $(objtime) $(extraobjs) $(xtraobjs) $(uiobjs)

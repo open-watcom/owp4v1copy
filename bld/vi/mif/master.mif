@@ -15,7 +15,7 @@ msgcheckviaxpw = 1
 .EXTENSIONS: .vi
 .EXTENSIONS: .mif
 
-.mif : $(mif_path);$(vi_dir)\mif
+.mif : $(mif_path);$(vi_dir)/mif
 !include name.mif
 
 PROJECT : $(name) .symbolic
@@ -28,16 +28,16 @@ PROJECT : $(name) .symbolic
 !include special.mif
 !include link.mif
 
-.h : $(vi_dir)\h
-.ctl : $(vi_dir)\ctl
-.dyn : $(vi_dir)\ctl
+.h : $(vi_dir)/h
+.ctl : $(vi_dir)/ctl
+.dyn : $(vi_dir)/ctl
 
 .BEFORE:
         set include=$(inc_path)
 
 !ifdef bind
-.vi : $(vi_dir)\dat
-!include $(vi_dir)\dat\videps.mif
+.vi : $(vi_dir)/dat
+!include $(vi_dir)/dat/videps.mif
 !else
 videps =
 !endif
@@ -54,7 +54,7 @@ bindextra = -d$(vi_dir)\dat\winbind.dat
 
 $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mif $(mifdep)
         $(cc) $(cflags) version.c -fo=.ybj
-        -$(linker) $(lflags) name $^& file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
+        -$(linker) $(lflags) name $^@ file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq ED vi386
 #        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
 !endif
@@ -75,12 +75,14 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
 !ifdef sys_windowed
         # don't bind - it screws up everything - BBB
 !else
-        set edpath=$(vi_dir)\dat
+        set edpath=$(vi_dir)/dat
     # run the right version of edbind depending on host platform
 !ifdef __OS2__
         $(vi_dir)\bind\objos2\edbind $(bindextra) -q $(name)
 !else ifdef __MSDOS__
         $(vi_dir)\bind\obj\edbind $(bindextra) -q $(name)
+!else ifdef __LINUX__
+        $(vi_dir)/bind/objlinux/edbind.exe $(bindextra) -q $(name)
 !else
         $(vi_dir)\bind\objnt\edbind $(bindextra) -q $(name)
 !endif
@@ -97,16 +99,4 @@ tags : ..\win\tags .SYMBOLIC
 
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.dll del *.dll
-        @if exist *.res del *.res
-        @if exist *.clb del *.clb
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.sym del *.sym
-        @if exist *.dh del *.dh
-        @if exist *.ch del *.ch
-        @if exist *.h del *.h
-        @if exist *.msg del *.msg
+        @rm -f *.?bj *.lnk *.exe *.dll *.res *.clb *.err *.map *.sym *.dh *.ch *.h *.msg

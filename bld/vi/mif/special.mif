@@ -17,12 +17,12 @@ viw.res : $(vi_dir)\win\viw.rc $(rc_deps)
 
 
 !ifdef msgcheck$(ED)
-rcstr.gh : rcstrmsg.gh
-        vi -i -q -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
+$(msgh) : $(mastermsg)
+        vi -i -q -s $(sdk_dir)\misc\msgtoh.vi -p"$(msgh)" $(mastermsg)
         @if exist about.obj erase about.obj
 
-rcstrmsg.gh : $(msgfiles)
-        $(bld_cc) -p -i=$(sdk_dir)\misc -zk0 $(vi_dir)\vi.msg >$^@
+$(mastermsg) : $(msgfiles)
+        $(bld_cc) -p -i="$(sdk_dir)/misc" -zk0 "$(vi_dir)/vi.msg" >$(mastermsg)
 
 setfs.ybj : setfs.c setfs.ch setfs.dh
 setfs.ch : setfs.ctl
@@ -36,12 +36,12 @@ setscr.ybj : setscr.c setscr.ch
 setscr.ch : setscr.ctl
 !endif
 
-ideactiv.ybj : $(viper_dir)\ideact\ideactiv.c
-        $(cc) $[@ -d__ISVI__ $(cflags) -fo=ideactiv.ybj
-getopt.ybj : $(posix_dir)\misc\getopt.c
-        $(cc) $[@ -d__ISVI__ $(cflags) -fo=getopt.ybj
-regexp.obj : $(posix_dir)\misc\regexp.c
-        $(cc) $[@ -dREGEXP -fi=rxsupp.h $(cflags) -fo=regexp.obj
+ideactiv.ybj : $(viper_dir)/ideact/ideactiv.c
+        $(cc) $[@ -D__ISVI__ $(cflags) -fo=ideactiv.ybj
+getopt.ybj : $(posix_dir)/misc/getopt.c
+        $(cc) $[@ -D__ISVI__ $(cflags) -fo=getopt.ybj
+regexp.obj : $(posix_dir)/misc/regexp.c
+        $(cc) $[@ -DREGEXP -fi=rxsupp.h $(cflags) -fo=regexp.obj
 
 !ifndef on_build_machine
 !ifeq vi_trmem 1
@@ -49,7 +49,7 @@ regexp.obj : $(posix_dir)\misc\regexp.c
 extra_c_flags += -of+
 !endif
 
-trmem.ybj : $(trmem_dir)\trmem.c
-trmemcvr.ybj : $(trmem_dir)\trmemcvr.c
+trmem.ybj : $(trmem_dir)/trmem.c
+trmemcvr.ybj : $(trmem_dir)/trmemcvr.c
 !endif
 !endif

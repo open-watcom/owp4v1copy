@@ -23,7 +23,7 @@ extra_l_flags_nt = op stack=20k,caseexact,quiet
 extra_l_flags = name $(name)
 
 edbind.exe: main.obj
-        $(linker) $(lflags) file main.obj
+        $(linker) $(lflags) file main.obj name $^@
 #!ifeq host_OS os2
 #       $(binder)\bind edbind.exe $(apilib) $(doscalls)
 #!endif

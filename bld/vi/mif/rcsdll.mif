@@ -12,5 +12,5 @@ rcsdll_win_386 = objwin
 rcsdll_nt_386 = objnt
 
 !ifdef rcsdll_$(host_OS)_$(host_CPU)
-rcsdll = lib $(rcsdll_dir)\$(rcsdll_$(host_OS)_$(host_CPU))\rcsdll
+rcsdll = lib $(rcsdll_dir)/$(rcsdll_$(host_OS)_$(host_CPU))/rcsdll
 !endif
