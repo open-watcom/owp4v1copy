@@ -24,8 +24,10 @@ cdsay .
     <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mm/math87m.lib <RELROOT>/rel2/lib286/math87m.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.287/ms/math87s.lib <RELROOT>/rel2/lib286/math87s.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_r/math3r.lib <RELROOT>/rel2/lib386/math3r.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_rd/math3r.lib <RELROOT>/rel2/lib386/math3rd.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_s/math3s.lib <RELROOT>/rel2/lib386/math3s.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_r/math387r.lib <RELROOT>/rel2/lib386/math387r.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_rd/math387r.lib <RELROOT>/rel2/lib386/mth387rd.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/math387s.lib
     <CPCMD> <DEVDIR>/mathlib/library/windows.286/mc/mathc.lib <RELROOT>/rel2/lib286/win/mathc.lib
     <CPCMD> <DEVDIR>/mathlib/library/windows.286/ml/mathl.lib <RELROOT>/rel2/lib286/win/mathl.lib

@@ -28,13 +28,13 @@ $(libname).lib : $(objs) $(libs) .precious
     wtouch compile.tim
 
 .cpp.obj :
-    *$(cpp) $[@ -i"$(include_c_path)" $(build_target) $(cpp_flags)
+    *$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
 
 .c.obj :
-    *$(cc) $[@ -i"$(include_c_path)" $(build_target) $(c_flags) $($^&_flags)
+    *$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
 
 .asm.obj :
-    *$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $($^&_flags)
+    *$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $(a_dbg_flags) $($^&_flags)
 
 .c   : ../../../c
 .cpp : ../../../cpp
