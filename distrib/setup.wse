@@ -99,7 +99,7 @@ item: Get Temporary Filename
   Variable=LICENSEFILE
 end
 item: Install File
-  Source=d:\openwatcom\docs\creadme_installer.txt
+  Source=..\docs\creadme_installer.txt
   Destination=%TEMP%\%READMEFILE%
   Flags=0000000000100010
 end
@@ -3284,6 +3284,12 @@ item: Remark
 end
 item: Remark
 end
+item: Remark
+  Text=Install the Start Menu shortcuts
+end
+item: Remark
+  Text=The following two lines reset COMMON and MAINDIR to short filesnames. This is for backwards compatibility.
+end
 item: Set Variable
   Variable=COMMON
   Value=%COMMON%
@@ -3293,12 +3299,6 @@ item: Set Variable
   Variable=MAINDIR
   Value=%MAINDIR%
   Flags=00010100
-end
-item: Remark
-  Text=This IF/THEN/ELSE reads the correct registry entries for shortcut/icon placement
-end
-item: Check Configuration
-  Flags=10111011
 end
 item: Get Registry Key Value
   Variable=STARTUPDIR
@@ -3362,11 +3362,91 @@ item: Set Variable
 end
 item: Set Variable
   Variable=GROUP
-  Value=%GROUPDIR%\%GROUP%
+  Value=%CGROUPDIR%\%GROUP%
 end
-item: Else Statement
+item: Create Shortcut
+  Source=%WIN%\notepad.exe
+  Destination=%GROUP%\Read Me.lnk
+  Command Options=%MAINDIR%\readme.txt
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
 end
-item: End Block
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wprof.exe
+  Destination=%GROUP%\Profiler.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\viw.exe
+  Destination=%GROUP%\Text Editor.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wspy.exe
+  Destination=%GROUP%\Spy.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\drwatcom.exe
+  Destination=%GROUP%\Doctor WATCOM.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wd.exe
+  Destination=%GROUP%\Debugger.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wimgedit.exe
+  Destination=%GROUP%\Image Editor.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wre.exe
+  Destination=%GROUP%\Resource Editor.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\ide.exe
+  Destination=%GROUP%\IDE.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wdw.exe
+  Destination=%GROUP%\Windowed Debugger.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wddespy.exe
+  Destination=%GROUP%\DDE Spy.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wzoom.exe
+  Destination=%GROUP%\Zoom.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wde.exe
+  Destination=%GROUP%\Dialog Editor.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\wbrw.exe
+  Destination=%GROUP%\Source Browser.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\binnt\cbooks.hlp
+  Destination=%GROUP%\C and C++ Master Help Index.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Remark
 end
 item: Remark
   Text=All OCX/DLL/EXE files that are self-registered
