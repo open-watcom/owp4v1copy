@@ -197,7 +197,8 @@ trmem.obj :     $(trmem_dir)/trmem.c
            $($(compiler)) $[@ $(cflags) $(track)
 
 ./mkstr.exe: gui.msg $(guidir)/c/mkstr.c
-        wcl386 -fe=$^@ -zq $]@ -i"$(guidir)/h" -lr
+        set include=$(guidir)/h
+        $(bld_cl) -fe=$^@ $]@ -lr
 
 $(gui_msg_file): gui.msg ./mkstr.exe
         $]@ $(gui_msg_file) $(gui_msg_id_modifier)
