@@ -216,6 +216,30 @@ LINUX_files = &
         netinet/tcp.h &
         arpa/inet.h
 
+SNAPDRV_files = &
+        _comdef.h &
+        assert.h &
+        ctype.h &
+        errno.h &
+        fcntl.h &
+        float.h &
+        limits.h &
+        locale.h &
+        malloc.h &
+        math.h &
+        search.h &
+        setjmp.h &
+        share.h &
+        signal.h &
+        stdarg.h &
+        stddef.h &
+        stdio.h &
+        stdlib.h &
+        string.h &
+        time.h &
+        unistd.h &
+        sys/types.h
+
 SNAP_files = &
         _comdef.h &
         assert.h &
