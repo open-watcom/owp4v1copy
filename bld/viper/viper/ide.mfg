@@ -1,6 +1,5 @@
 rem  System abbreviations used here are five characters 'smpth' where
 rem  's' is the system
-rem     a Autocad ADS
 rem     d DOS
 rem     o OS/2
 rem     l Netware NLM
@@ -8,9 +7,6 @@ rem     n Windows NT
 rem     q QNX
 rem     w Windows 3.x
 rem  'm' modifies the system specified in 's'
-rem     ad AutoCad device interface
-rem     ae AutoCad executable
-rem     af AutoCad floating-point device interface
 rem     dc DOS .com file
 rem     df Flashtek, register based calling conventions
 rem     ds Flashtek, stack based calling conventions
@@ -172,10 +168,6 @@ Tool WDEBUG "Debugger"
     CSwitch 0, l???j, " Run", "$(%watcom)\\binw\\wdw", ON
     CSwitch 0, l???8, " Run", "$(%watcom)\\n98bw\\wdw", ON
     CSwitch 0, l????, " Run", wdw, ON
-    CSwitch 0, a???w, " Run", "$(%watcom)\\binw\wdw", ON
-    CSwitch 0, a???j, " Run", "$(%watcom)\\binw\wdw", ON
-    CSwitch 0, a???8, " Run", "$(%watcom)\\n98bw\wdw", ON
-    CSwitch 0, a????, " Run", wdw, ON
     VSwitch 0, wp6d?, "Configuration file:", /i, =, ONE, REQ, "pbwd.dbg"
     VSwitch 0, np2d?, "Configuration file:", /i, =, ONE, REQ, "pbwdnt.dbg"
     VSwitch 0, ?????, "Configuration file:", /i, =, ONE, REQ, ""
@@ -213,7 +205,6 @@ Tool WDEBUG "Debugger"
     VSwitch 1, dp2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
     VSwitch 1, dt2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
     VSwitch 1, l?2e?, "Trap file:", /tr, =, ONE, REQ, "nov;$&"
-    VSwitch 1, a?2e?, "Trap file:", /tr, =, ONE, REQ, "ads"
     VSwitch 1, ?????, "Trap file:", /tr, =, ONE, REQ, ""
 ::
 :endsegment
@@ -258,7 +249,6 @@ Tool WDEBUG "Debugger"
     CSwitch 0, np2d?, " Name",, ON
 rem For remote debugging, don't put a full path name
     CSwitch 0, l????, " Name", $., ON
-    CSwitch 0, a????, " Name", $., ON
     CSwitch 0, ?????, " Name", $@, ON
 :segment !C_FOR_PB
     VSwitch 0, ?????, "Application parameters:",,, ONE, REQ, ""
@@ -396,13 +386,10 @@ Tool WCG "Code Generator"
         RSwitch 0, ?????, "In-line Pentium instructions", -fp5, OFF
         RSwitch 0, ?????, "In-line Pentium Pro instructions", -fp6, OFF
     RGroup "Floating-point Model"
-        RSwitch 1, a????, "Compiler default", , OFF
         RSwitch 1, ?????, "Compiler default", , ON
         RSwitch 1, ?????, "In-line with emulator", -fpi, OFF
-        RSwitch 1, a????, "In-line with coprocessor", -fpi87, ON
         RSwitch 1, ?????, "In-line with coprocessor", -fpi87, OFF
         RSwitch 1, ?????, "Floating-point calls", -fpc, OFF
-    CSwitch 1, a????, "Compability with V9.0", -fpr, ON
     CSwitch 1, ?????, "Compability with V9.0", -fpr, OFF
 :segment !C_FOR_PB
   Family "Register Usage"
@@ -455,18 +442,15 @@ Tool WCG "Code Generator"
         RSwitch 0, ??6??, "Pentium", -5, OFF
         RSwitch 0, ??6??, "Pentium Pro", -6, OFF
         RSwitch 0, ??2??, "80386 Register based calling", -3r, OFF
-        RSwitch 0, a?2??, "80386 Stack based calling", -3s, ON
         RSwitch 0, ??2??, "80386 Stack based calling", -3s, OFF
         RSwitch 0, ??2??, "80486 Register based calling", -4r, OFF
         RSwitch 0, ??2??, "80486 Stack based calling", -4s, OFF
-        RSwitch 0, a?2??, "Pentium Register based calling", -5r, OFF
         RSwitch 0, ds2??, "Pentium Register based calling", -5r, OFF
         RSwitch 0, l?2??, "Pentium Register based calling", -5r, OFF
         RSwitch 0, ??2??, "Pentium Register based calling", -5r, ON
         RSwitch 0, ds2??, "Pentium Stack based calling", -5s, ON
         RSwitch 0, l?2??, "Pentium Stack based calling", -5s, ON
         RSwitch 0, ??2??, "Pentium Stack based calling", -5s, OFF
-        RSwitch 0, a?2??, "Pentium Pro Register based calling", -6r, OFF
         RSwitch 0, ds2??, "Pentium Pro Register based calling", -6r, OFF
         RSwitch 0, ??2??, "Pentium Pro Register based calling", -6r, OFF
         RSwitch 0, ds2??, "Pentium Pro Stack based calling", -6s, OFF
@@ -476,7 +460,6 @@ Tool WCG "Code Generator"
     CSwitch 0, o????, "", -bt=os2, ON
     CSwitch 0, n????, "", -bt=nt, ON
     CSwitch 0, l????, "", -bt=netware, ON
-    CSwitch 0, a????, "", -bt=ads, ON
 :segment C_FOR_PB
     CSwitch 1, n?2d?, "32bit Flat model", -mf, ON
 :endsegment
@@ -509,7 +492,6 @@ Tool WLANG "Languages"
     VSwitch 0, no???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
     VSwitch 0, nu???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
     VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt
-    VSwitch 0, a????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
     VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\novh
     VSwitch 0, ?????, "Include files:", -fi, =, MULTI, REQ, ""
     CSwitch 0, wp???, "Use precompiled headers", -fhq, ON
@@ -798,7 +780,6 @@ Tool WASM "Assembler"
     VSwitch 0, o?2??, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%toolkit)\c\os2h
     VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt
     VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
-    VSwitch 0, a????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
     VSwitch 0, ?????, "Name error file:", -fe, =, ONE, REQ, ""
   Family "Memory Model and Processor"
     RGroup "Memory Model"
@@ -934,9 +915,6 @@ Tool WLINK "Linker"
     VSwitch  1, n_ad?, "System:", SYS, " ", ONE, REQ, ntaxp_dll
     VSwitch  1, nca??, "System:", SYS, " ", ONE, REQ, ntaxp
     VSwitch  1, l?2??, "System:", SYS, " ", ONE, REQ, netware
-    VSwitch  1, ae2e?, "System:", SYS, " ", ONE, REQ, ads
-    VSwitch  1, ad2e?, "System:", SYS, " ", ONE, REQ, eadi
-    VSwitch  1, af2e?, "System:", SYS, " ", ONE, REQ, fadi
     VSwitch  1, df2??, "System:", SYS, " ", ONE, REQ, x32rv
     VSwitch  1, df2??, "System:", SYS, " ", ONE, REQ, x32r
     VSwitch  1, ds2??, "System:", SYS, " ", ONE, REQ, x32sv
@@ -971,18 +949,14 @@ Tool WLINK "Linker"
   Family "Import, Export and Library"
     CSwitch  0, ?????, "No default libraries", "op nod", OFF
     VSwitch  0, ?????, "Library directories(;):", libp, " ", MULTI, REQ, ""
-    VSwitch  0, a????, "Libraries(,):",libr, " ", MULTI, REQ, "wcads90.lib"
     VSwitch  0, wa6d?, "Libraries(,):",libr, " ", MULTI, REQ, "mfw250.lib mfwo250.lib mfwd250.lib commdlg.lib shell.lib mfcoleui.lib compobj.lib storage.lib ole2.lib ole2disp.lib", "mfw250d.lib mfwo250d.lib mfwd250d.lib commdlg.lib shell.lib mfcoleui.lib compobj.lib storage.lib ole2.lib ole2disp.lib"
     VSwitch  0, ?????, "Libraries(,):",libr, " ", MULTI, REQ, ""
     VSwitch  0, dc6e?, "Library files(,):", libf, " ", MULTI, REQ, "cstart_t"
-    VSwitch  0, ae2e?, "Library files(,):", libf, " ", MULTI, REQ, "adsstart"
-    VSwitch  0, ad2e?, "Library files(,):", libf, " ", MULTI, REQ, "adiestrt"
-    VSwitch  0, af2e?, "Library files(,):", libf, " ", MULTI, REQ, "adifstrt"
     VSwitch  0, ???e?, "Library files(,):", libf, " ", MULTI, REQ, ""
-    VSwitch  1, w????, "Import names(,):", imp, " ", MULTI, REQ, ""
-    VSwitch  1, n????, "Import names(,):", imp, " ", MULTI, REQ, ""
-    VSwitch  1, o????, "Import names(,):", imp, " ", MULTI, REQ, ""
-    VSwitch  1, l????, "Import names(,):", imp, " ", MULTI, REQ, ""
+    VSwitch  1, w????, "Import names(,):", imp, " ", ONE, REQ, ""
+    VSwitch  1, n????, "Import names(,):", imp, " ", ONE, REQ, ""
+    VSwitch  1, o????, "Import names(,):", imp, " ", ONE, REQ, ""
+    VSwitch  1, l????, "Import names(,):", imp, " ", ONE, REQ, ""
     VSwitch  1, ?????, "Export names(,):", exp, " ", MULTI, REQ, ""
   Family Advanced
     CSwitch  0, ?????, "Verbose", "op v", OFF
