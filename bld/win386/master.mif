@@ -58,17 +58,17 @@ OBJS_vxd = wdebug.obj &
 
 # cflags stuff
 ###############
-extra_c_flags = -s-ms-2-fpc
-extra_c_flags_toolhelp = -oas
+extra_c_flags = -s-2-fpc
+#extra_c_flags_toolhelp = -oas
 !ifeq fmt dll
-extra_c_flags_wininit = -dDLL32 -zu -oalrt
-extra_c_flags_libmain = -dDLL32 -zu -oalrt
-extra_c_flags_windpmi = -dDLL32 -zu -oalrt
-extra_c_flags_clib = -dDLL32 -zu -oalrt
-extra_c_flags_fints = -dDLL32 -zu -oalrt
-extra_c_flags_windata = -dDLL32 -zu -oalrt
-extra_c_flags_winstubs = -dDLL32 -zu -oalrt
-extra_c_flags_bitmap = -dDLL32 -zu -oalrt
+extra_c_flags_wininit = -dDLL32 -zu
+extra_c_flags_libmain = -dDLL32 -zu
+extra_c_flags_windpmi = -dDLL32 -zu
+extra_c_flags_clib = -dDLL32 -zu
+extra_c_flags_fints = -dDLL32 -zu
+extra_c_flags_windata = -dDLL32 -zu
+extra_c_flags_winstubs = -dDLL32 -zu
+extra_c_flags_bitmap = -dDLL32 -zu
 extra_c_flags_toolhelp += -dDLL32 -zu
 !endif
 
