@@ -366,6 +366,19 @@ directives is confined to the same source file.
 This warning may often come before an error
 and it is hoped will provide information to
 solve a preprocessing directive problem.
+:MSGSYM. ERR_LOSE_PRECISION
+:MSGTXT. Possible loss of precision
+:MSGJTXT. Possible loss of precision
+:WARNING. 1
+.np
+This warning indicates that you may be converting a argument
+of one size to another, different size. For instance, you maybe 
+losing precision by passing a long argument to a function that 
+takes a short.
+This warning is initially disabled. It must be specifically enabled with
+.us #pragma enable_message(130).
+It can be disabled later by using
+.us #pragma disable_message(130).
 
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------

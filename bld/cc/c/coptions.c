@@ -1936,6 +1936,8 @@ void GenCOptions( char **cmdline )
 {
     memset( &SwData,0, sizeof( SwData ) ); //re-useable
     EnableDisableMessage( 0, ERR_PARM_NOT_REFERENCED );
+    /* 29-oct-03 Add precision warning but disabled by default */
+    EnableDisableMessage( 0, ERR_LOSE_PRECISION );
     InitModInfo();
     InitCPUModInfo();
     #if _CPU == 386

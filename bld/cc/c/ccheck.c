@@ -351,12 +351,20 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
             }
         }else if( typ1->decl_type == TYPE_STRUCT  || typ1->decl_type == TYPE_UNION ) {
            /* 11-jul-90: allow pointers to different structs */
-            if( (typ1!=typ2) && (CompatibleStructs( typ1->u.tag, typ2->u.tag )!=OK) ) {
-                if( CompFlags.extensions_enabled && (top_level>0) ){
-                    if( ret_val != PW ){
-                        ret_val = PM;
-                    }else{
-                        ret_val = NO;
+           /* 29-oct-03: stop this for ANSI! */
+            if( (typ1!=typ2) ){
+                // Types are not the same
+                // if extensions are enabled, then we can do a compatible struct test
+                if(CompFlags.extensions_enabled){
+                    if(CompatibleStructs( typ1->u.tag, typ2->u.tag )!=OK){
+                        if( top_level>0 ){
+                            if( ret_val != PW )
+                                ret_val = PM;
+                            else
+                                ret_val = NO;
+                        }else{
+                            ret_val = NO;
+                        }
                     }
                 }else{
                     ret_val = NO;
@@ -812,9 +820,12 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
             CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
         }
         break;
-    case OK:
     case AC:
+        if(TypeSize( typ2 ) > TypeSize( typ1 ))
+            CWarn1( WARN_LOSE_PRECISION, ERR_LOSE_PRECISION);
+    case OK:
         AssRangeChk( typ1, opnd2 );
+        break;
     }
     SetDiagPop();
 }
