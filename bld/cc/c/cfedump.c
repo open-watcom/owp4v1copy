@@ -33,7 +33,6 @@
 #include "cvars.h"
 #include "cgdefs.h"
 
-
 static char *_Ops[] = {
     "+",
     "-",
@@ -149,6 +148,30 @@ static void DumpAString( STR_HANDLE str_handle )
     printf( "\"" );
 }
 
+#ifdef _LONG_DOUBLE_
+/* Dump a long_double value */
+void DumpALD( long_double *pld )
+{
+    CVT_INFO    cvt;
+    char        buf[256];
+
+    cvt.ndigits  = 20;
+    cvt.scale    = 0;
+    cvt.flags    = G_FMT | NO_TRUNC;
+    cvt.expchar  = 'e';
+    cvt.expwidth = 8;
+    __LDcvt( pld, &cvt, buf );
+    printf( "%s", buf );
+}
+
+/* Dump a long double followed by newline */
+void DumpALDNL( long_double *pld )
+{
+    DumpALD( pld );
+    printf( "\n" );
+}
+#endif
+
 void DumpOpnd( TREEPTR opnd )
 {
     SYM_ENTRY   sym;
@@ -161,7 +184,15 @@ void DumpOpnd( TREEPTR opnd )
         printf( "%ld", opnd->op.long_value );
         break;
     case OPR_PUSHFLOAT:
-        printf( "%s", opnd->op.float_value->string );
+#ifdef _LONG_DOUBLE_
+        DumpALD( &opnd->op.float_value->ld );
+#else
+        if( opnd->op.float_value->len != 0 ) {
+            printf( "%s", opnd->op.float_value->string );
+        } else {
+            printf( "%g", opnd->op.float_value->ld.value );
+        }
+#endif
         break;
     case OPR_PUSHSTRING:
         DumpAString( opnd->op.string_handle );
@@ -319,6 +350,12 @@ void DumpPostfix( TREEPTR node )
         }
         break;
     }
+}
+
+void DumpExpr( TREEPTR tree )
+{
+    WalkExprTree( tree, DumpOpnd, DumpPrefix, DumpInfix, DumpPostfix );
+    printf( "\n" );
 }
 
 void DumpStmt( TREEPTR tree )

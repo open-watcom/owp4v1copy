@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Expression tree folding (compile time math).
 *
 ****************************************************************************/
 
@@ -616,6 +615,7 @@ int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     }
     MakeBinaryFloat( op2 );
     ld2 = op2->op.float_value->ld;
+
     switch( tree->op.opr ) {
     case OPR_CMP:
         cond = FltCmp( (long_double near *)&ld1, (long_double near *)&ld2 );
@@ -864,7 +864,7 @@ void FoldQuestionTree( TREEPTR tree )
           tree->op.opr = OPR_PUSHSYM;
           ops &= ~OPFLAG_RVALUE;
         }
-	tree->op.flags = ops;
+    tree->op.flags = ops;
     }
 }
 
