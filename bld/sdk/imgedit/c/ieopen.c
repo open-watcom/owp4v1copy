@@ -105,23 +105,16 @@ static BOOL DoReadInBitmapFile( HBITMAP hbitmap, bitmap_info *bmi,
             MemFree( bmi->bm_info );
             DeleteObject( hbitmap );
             return( FALSE );
-#ifdef JAMIE
-        } else if (h->biBitCount > 4) {
-            WImgEditError( WIE_ERR_256CLR_BITMAP, filename );
-            MessageBox(HMainWindow,
-                       "The support is being added now...so it may not be perfect.",
-                       "Patience is a virtue", MB_OK|MB_ICONINFORMATION);
+        }
 
-            // MemFree( bmi->bm_info );
-            // DeleteObject( hbitmap );
-            // return( FALSE );
-#endif
-        } else if (h->biBitCount > 8) {
+/* Should not be an error...
+        else if (h->biBitCount > 8) {
             WImgEditError( WIE_ERR_TOO_MANY_COLOURS, filename );
             MemFree( bmi->bm_info );
             DeleteObject( hbitmap );
             return( FALSE );
         }
+*/
         node.imgtype = BITMAP_IMG;
         node.width = bmi->bm_info->bmiHeader.biWidth;
         node.height = bmi->bm_info->bmiHeader.biHeight;
@@ -181,7 +174,7 @@ static BOOL readInBitmapFile( char *fullname )
 
     if( hbitmap == (HBITMAP)NULL ) {
         if( bmi.bm_info != NULL &&
-            bmi.bm_info->bmiHeader.biBitCount > 8 ) {
+            bmi.bm_info->bmiHeader.biBitCount > 32 ) /* Was 8 */ {
             WImgEditError( WIE_ERR_TOO_MANY_COLOURS, fullname );
         } else {
             WImgEditError( WIE_ERR_BAD_BITMAP_FILE, fullname );

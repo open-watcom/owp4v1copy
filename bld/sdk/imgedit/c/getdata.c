@@ -78,12 +78,14 @@ static void getBitmapInfo( BITMAPINFO *bmi, img_node *node )
 
     GetBitmapInfoHeader( &bmih, node );
 
-    aRgbq = MemAlloc(RGBQ_SIZE(node->bitcount));
-    SetRGBValues(aRgbq, (1<<(node->bitcount)));
-
     memcpy( &(bmi->bmiHeader), &bmih, sizeof(BITMAPINFOHEADER) );
-    memcpy( bmi->bmiColors, aRgbq, RGBQ_SIZE(node->bitcount) );
-    MemFree(aRgbq);
+
+    if( node->bitcount < 9 ) {
+        aRgbq = MemAlloc(RGBQ_SIZE(node->bitcount));
+        SetRGBValues(aRgbq, (1<<(node->bitcount)));
+        memcpy( bmi->bmiColors, aRgbq, RGBQ_SIZE(node->bitcount) );
+        MemFree(aRgbq);
+    }
 
 } /* getBitmapInfo */
 

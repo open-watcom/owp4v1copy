@@ -38,6 +38,7 @@
 #define SEL_BITMAP                  108
 #define SEL_ICON                    109
 #define SEL_CURSOR                  110
+#define BMP_TRUECOLOUR              112
 #define BMP_256COLOUR               113
 #define BMP_16COLOUR                114
 #define BMP_2COLOUR                 115

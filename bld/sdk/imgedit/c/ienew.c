@@ -137,7 +137,9 @@ WPI_DLGRESULT CALLBACK SelBitmapProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                 return( FALSE );
             }
 
-            if (_wpi_isbuttonchecked(hwnd, BMP_256COLOUR)) {
+            if (_wpi_isbuttonchecked(hwnd, BMP_TRUECOLOUR)) {
+                bitCount = 24;
+            } else if (_wpi_isbuttonchecked(hwnd, BMP_256COLOUR)) {
                 bitCount = 8;
             } else if (_wpi_isbuttonchecked(hwnd, BMP_16COLOUR)) {
                 bitCount = 4;
@@ -162,15 +164,17 @@ WPI_DLGRESULT CALLBACK SelBitmapProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     } else {
 
         switch( msg ) {
-        case WM_INITDIALOG:
+        case WM_INITDIALOG: // WS_GROUP
             _wpi_setdlgitemshort(hwnd, BMP_HEIGHT, imgHeight, FALSE);
             _wpi_setdlgitemshort(hwnd, BMP_WIDTH, imgWidth, FALSE);
             if (bitCount == 1) {
-                _wpi_checkradiobutton(hwnd, BMP_256COLOUR, BMP_2COLOUR, BMP_2COLOUR);
+                _wpi_checkradiobutton(hwnd, BMP_TRUECOLOUR, BMP_2COLOUR, BMP_2COLOUR);
             } else if (bitCount == 4) {
-                _wpi_checkradiobutton(hwnd, BMP_256COLOUR, BMP_2COLOUR, BMP_16COLOUR);
+                _wpi_checkradiobutton(hwnd, BMP_TRUECOLOUR, BMP_2COLOUR, BMP_16COLOUR);
+            } else if (bitCount == 8) {
+                _wpi_checkradiobutton(hwnd, BMP_TRUECOLOUR, BMP_2COLOUR, BMP_256COLOUR);
             } else {
-                _wpi_checkradiobutton(hwnd, BMP_256COLOUR, BMP_2COLOUR, BMP_256COLOUR);
+                _wpi_checkradiobutton(hwnd, BMP_TRUECOLOUR, BMP_2COLOUR, BMP_TRUECOLOUR);
             }
             return( TRUE );
 
