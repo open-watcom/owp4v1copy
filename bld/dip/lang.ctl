@@ -24,7 +24,7 @@ set PROJDIR=<CWD>
         <CPCMD> <DEVDIR>/dip/watcom/dos386/watcom.dip       <RELROOT>/rel2/binw/
 #        <CPCMD> <DEVDIR>/dip/watcom/dos386/watcom.sym       <RELROOT>/rel2/binw/watcom.dsy
 
-  [ IFDEF os_win <2*> ]
+  [ IFDEF (os_win "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/wini86/dwarf.dll         <RELROOT>/rel2/binw/
 #        <CPCMD> <DEVDIR>/dip/dwarf/wini86/dwarf.sym         <RELROOT>/rel2/binw/
         <CPCMD> <DEVDIR>/dip/codeview/wini86/codeview.dll   <RELROOT>/rel2/binw/

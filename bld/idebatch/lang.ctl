@@ -21,8 +21,8 @@ set PROJDIR=<CWD>
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <DEVDIR>/idebatch/dos/int.exe      <RELROOT>/rel2/binw/dosserv.exe
 # there is no makefile in the wini86 dir
-# [ IFDEF (os_win "") <2*> ]
-#   <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/rel2/binw/batchbox.pif
+  [ IFDEF (os_win "") <2*> ]
+    <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/rel2/binw/batchbox.pif
 
 [ BLOCK <1> clean ]
 #==================
