@@ -124,7 +124,7 @@ static TRPTR    TrkBeg;
 
 #endif
 
-#if defined(__SMALL__) || defined(__COMPACT__)
+#if defined(__COMPACT__) /* no near needed for "__SMALL__" */
     #define CODE_PTR_TYPE   void near *
 #elif defined(__MEDIUM__) || defined (__LARGE__) || defined(__HUGE__)
     #define CODE_PTR_TYPE   void far *
@@ -395,7 +395,7 @@ static int ValidChunk( TRPTR entry, char *who, void (*ra)(), tracker *trk ) {
     void    *chunk;
 
     chunk = entry->mem;
-    if( *((char *)_POINTER_ADD( chunk, entry->size )) != ALLOC_BYTE ) {
+    if( *((unsigned char *)_POINTER_ADD( chunk, entry->size )) != ALLOC_BYTE ) {
         TrPrt( trk, "%W %D overrun allocation of %U bytes", who, ra,
              chunk, entry->size );
         return( FALSE );

@@ -61,7 +61,13 @@ typedef enum {
     CF_TRUE
 } cf_bool;
 
-extern  void            CFCnvTarget( cfloat *f, char *buffer, int size );
+typedef union flt {
+        float           sngl;
+        double          dble;
+        double          ldble;  // FIXME - need long double support
+} flt;
+    
+extern  void            CFCnvTarget( cfloat *f, flt *buffer, int class );
 extern  signed_64       CFGetDec64( char *bstart );
 extern  signed_32       CFGetDec32( char *bstart );
 extern  char    *       CFCnvFS( cfloat *f, char *buffer, int maxlen );

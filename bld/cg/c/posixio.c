@@ -35,7 +35,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include "standard.h"
 #include "sysmacro.h"
 #include "cg.h"
@@ -48,6 +48,9 @@
 #include "banner.h"
 #include "feprotos.h"
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 /*
  *
@@ -82,7 +85,7 @@ extern  void            FatalError(char *);
 static  unsigned_32     ObjOffset;
 static  handle          ObjFile;
 static  bool            NeedSeek;
-static  char            ObjName[_MAX_PATH2];
+static  char            ObjName[PATH_MAX+1];
 static  bool            AbortObj;
 
 
@@ -306,6 +309,7 @@ static  handle  CreateStream( char *name ) {
 
     int         retc;
 
+    printf("stream created %s\n", name);
     retc = open( name, O_CREAT+O_TRUNC+O_RDWR+O_BINARY, PMODE );
     if( retc == -1 ) {
         ObjError( errno );

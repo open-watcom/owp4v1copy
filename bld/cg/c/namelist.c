@@ -311,7 +311,7 @@ extern  constant_defn   *GetFloat( name *cons, type_class_def class ) {
     defn = AllocFrl( &ConstDefnFrl, sizeof( constant_defn ) );
     defn->const_class = class;
     defn->label = NULL;
-    CFCnvTarget( cons->c.value, (char *)&defn->value, TypeClassSize[ class ] );
+    CFCnvTarget( cons->c.value, (flt*)&defn->value, TypeClassSize[ class ] );
     defn->next_defn = cons->c.static_defn;
     cons->c.static_defn = defn;
     return( defn );

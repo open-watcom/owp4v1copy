@@ -143,7 +143,7 @@ static  mode_action     AddTable[][9] = {
  * tables so I just used this table to map CL constants onto the tables
  */
 
-static  char    Idx[] = {
+static  byte    Idx[] = {
         0,        /* CL_ADDR_GLOBAL */
         2,        /* CL_ADDR_TEMP */
         4,        /* CL_POINTER */

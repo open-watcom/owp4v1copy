@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "hostsys.h"
 
-#if defined( __AXP__ ) || defined( __NT__ )
+#if defined( __AXP__ ) || defined( __NT__ ) || !defined( __WATCOMC__ ) 
 
 pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 /*****************************************************/

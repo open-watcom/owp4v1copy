@@ -31,9 +31,9 @@
 
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <process.h>
 #include "standard.h"
 #include "cg.h"
 #include "bckdef.h"
@@ -52,7 +52,7 @@
 extern  pointer         CGAlloc(int );
 
 extern  type_def        *TypeAddress(cg_type);
-extern  void            DumpTree(pointer);
+extern  void            DumpTree(n *);
 extern  type_def        *TypeDef(cg_type,type_length);
 extern  uint            Length(char*);
 extern  void            TypeFini();

@@ -65,7 +65,6 @@ extern  void            Action(char *,... );
 extern  void            TypDbg(char *,... );
 extern  void            Code(char *,... );
 extern  char            *Name(pointer );
-extern  pointer         CGAlloc(uint );
 extern  void            Put(char *,... );
 extern  void            SymDbg(char *,... );
 extern  void            VerBack(b *);

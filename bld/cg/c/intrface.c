@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+#include <ctype.h>
 #include "standard.h"
 #include "coderep.h"
 #include "hostsys.h"
@@ -1401,7 +1402,7 @@ extern cg_name _CGAPI CGAlign( cg_name name, uint alignment ) {
 }
 
 static  cg_name CGDuplicateArray[ 2 ];
-extern  cg_name * _CGAPI CGDuplicate( cg_name name ) {
+extern  cg_name _CGAPI CGDuplicate( cg_name name ) {
 /****************************************************/
     an          addr;
 #ifndef NDEBUG
@@ -1465,7 +1466,7 @@ extern  void _CGAPI DGFEPtr( cg_sym_handle sym, cg_type tipe, signed_32 offset )
     FEPtr( sym, TypeAddress( tipe ), offset );
 }
 
-extern  void _CGAPI     DGBytes( unsigned_32 len, byte *src ) {
+extern  void _CGAPI     DGBytes( unsigned_32 len, void *src ) {
 /*************************************************************/
 
 #ifndef NDEBUG
@@ -1551,15 +1552,15 @@ extern  void _CGAPI     DGFloat( char *value, cg_type tipe ) {
 /************************************************************/
 
     pointer     cf;
-    char        buff[8];
+    flt         buff;
 
 #ifndef NDEBUG
     EchoAPI( "DGFloat( %c, %t )\n", value, tipe );
 #endif
     cf = CFCnvSF( value, value + Length( value ) );
-    CFCnvTarget( cf, &buff[ 0 ], TypeLength( tipe ) );
+    CFCnvTarget( cf, &buff, TypeLength( tipe ) );
     CFFree( cf );
-    DGBytes( TypeLength( tipe ), buff );
+    DGBytes( TypeLength( tipe ), &buff );
 }
 
 extern  void _CGAPI     DGIBytes( unsigned_32 len, byte pat ) {
@@ -1598,7 +1599,7 @@ extern  void _CGAPI     DGString( char *value, uint len ) {
         if( slen == 0 ) break;
         --slen;
         c = *s++;
-        if( c >= 0x20 && c <= 0x7f ) {
+        if( !iscntrl(c) && isascii(c)) {
             if(( d + (1+1)) >= dt ) break;
             *d++ = c;
         } else {
@@ -1712,13 +1713,13 @@ extern  unsigned_32 _CGAPI      DGBackTell( bck_info *bck ) {
 extern  void _CGAPI     DGCFloat( pointer cf, cg_type tipe ) {
 /************************************************************/
 
-    char        buff[8];
+    flt        buff;
 
 #ifndef NDEBUG
     EchoAPI( "DGCFloat( %x, %t )\n", cf, tipe );
 #endif
-    CFCnvTarget( cf, &buff[ 0 ], TypeLength( tipe ) );
-    DGBytes( TypeLength( tipe ), buff );
+    CFCnvTarget( cf, &buff, TypeLength( tipe ) );
+    DGBytes( TypeLength( tipe ), &buff );
 }
 
 extern  char    *AskName( pointer hdl, cg_class class ) {

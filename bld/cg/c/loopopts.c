@@ -1027,7 +1027,7 @@ extern  bool    Inducable( block *blk, instruction *ins ) {
 }
 
 
-static  void    CheckBasic( instruction *ins, name *name, name *cons ) {
+static  void    CheckBasic( instruction *ins, union name *name, union name *cons ) {
 /***********************************************************************
     Check if "ins" qualifies as an instruction creating a basic
     induction variable.  Add an induction variable entry if it is.
