@@ -21,12 +21,14 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/dosi86.ppc/wclppc.exe     <RELROOT>/rel2/binw/wclppc.exe
 
   [ IFDEF (os_nt "") <2*> ]
+    <CPCMD> <PROJDIR>/nt386/owcc.exe            <RELROOT>/rel2/binnt/owcc.exe
     <CPCMD> <PROJDIR>/nt386.i86/wcl.exe         <RELROOT>/rel2/binnt/wcl.exe
     <CPCMD> <PROJDIR>/nt386.386/wcl386.exe      <RELROOT>/rel2/binnt/wcl386.exe
     <CPCMD> <PROJDIR>/nt386.axp/wclaxp.exe      <RELROOT>/rel2/binnt/wclaxp.exe
     <CPCMD> <PROJDIR>/nt386.ppc/wclppc.exe      <RELROOT>/rel2/binnt/wclppc.exe
 
   [ IFDEF (os_os2 "") <2*> ]
+    <CPCMD> <PROJDIR>/os2386/owcc.exe           <RELROOT>/rel2/binp/owcc.exe
     <CPCMD> <PROJDIR>/os2386.i86/wcl.exe        <RELROOT>/rel2/binp/wcl.exe
     <CPCMD> <PROJDIR>/os2386.386/wcl386.exe     <RELROOT>/rel2/binp/wcl386.exe
     <CPCMD> <PROJDIR>/os2386.axp/wclaxp.exe     <RELROOT>/rel2/binp/wclaxp.exe
