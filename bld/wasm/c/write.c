@@ -197,7 +197,7 @@ void OutSelect( bool starts )
     } else {
         if( !Options.output_comment_data_in_code_records || !Globals.data_in_code )
             return;
-        Globals.sel_idx = CurrSeg->seg->sym.segidx;
+        Globals.sel_idx = GetSegIdx( &CurrSeg->seg->sym );
         Globals.data_in_code = FALSE;
 
         if( (Parse_Pass > PASS_1) && !PhaseError ) {
@@ -332,7 +332,7 @@ static void write_grp( void )
         for( seg = curr->e.grpinfo->seglist; seg; seg = seg->next ) {
             writeseg = TRUE;
             segminfo = (dir_node *)(seg->seg);
-            if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segidx == 0 ) ) {
+            if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segment == NULL ) ) {
                 LineNumber = curr->line;
                 AsmError( SEG_NOT_DEFINED );
                 write_to_file = FALSE;
@@ -362,10 +362,10 @@ static void write_seg( void )
 
     curr = Tables[TAB_SEG].head;
     for( seg_index = 1; seg_index <= total_segs; seg_index++ ) {
-        if( curr->sym.segidx != seg_index ) {
+        if( GetSegIdx( curr->sym.segment ) != seg_index ) {
             /* segment is not in order ... so find it */
             for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-                if( curr->sym.segidx == seg_index ) {
+                if( GetSegIdx( curr->sym.segment ) == seg_index ) {
                     break;
                 }
             }
@@ -704,7 +704,7 @@ static void write_linnum( void )
         objr->is_32 = need_32;
         objr->d.linnum.num_lines = count;
         objr->d.linnum.lines = ldata;
-        objr->d.linnum.d.base.grp_idx = GetCurrGrp(); // fixme ?
+        objr->d.linnum.d.base.grp_idx = GetGrpIdx( GetGrp( &GetCurrSeg()->sym ) ); // fixme ?
         objr->d.linnum.d.base.seg_idx = CurrSeg->seg->e.seginfo->segrec->d.segdef.idx;
         objr->d.linnum.d.base.frame = 0; // fixme ?
 
@@ -986,7 +986,7 @@ static void reset_seg_len( void )
     dir_node    *curr;
 
     for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-        if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segidx == 0 ) ) {
+        if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segment == NULL ) ) {
             AsmError( SEG_NOT_DEFINED );
             continue;
         }
@@ -1041,8 +1041,9 @@ static unsigned long OnePass( char *string )
         if( ScanLine( string, MAX_LINE_LEN ) == NULL )
             break; // EOF
         AsmLine( string );
-//        if( EndDirectiveFound )
-//            break;
+        if( EndDirectiveFound ) {
+            break;
+        }
     }
     CheckProcOpen();
     return( PassTotal );
@@ -1062,6 +1063,10 @@ void WriteObjModule( void )
     write_init();
 
     Parse_Pass = PASS_1;
+#ifdef DEBUG_OUT
+    if( Options.debug )
+        printf( "*************\npass %u\n*************\n", Parse_Pass + 1 );
+#endif
     prev_total = OnePass( string );
     if( EndDirectiveFound ) {
         if( !Options.stop_at_end ) {
@@ -1095,6 +1100,10 @@ void WriteObjModule( void )
         Globals.data_in_code = FALSE;
         PrepAnonLabels();
 
+#ifdef DEBUG_OUT
+        if( Options.debug )
+            printf( "*************\npass %u\n*************\n", Parse_Pass + 1 );
+#endif
         curr_total = OnePass( string );
         // remove all remaining lines and deallocate corresponding memory
         while( ScanLine( string, MAX_LINE_LEN ) != NULL ) {

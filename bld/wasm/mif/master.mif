@@ -34,8 +34,6 @@ libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
 #cflags stuff
 #########
 extra_c_flags =-D_WASM_
-extra_c_flags_i86 =-fpc
-extra_c_flags_386 =-fpc
 !ifeq release 0
 extra_c_flags += -DDEBUG_OUT
 !endif

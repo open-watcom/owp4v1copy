@@ -35,6 +35,7 @@
 #include "asmglob.h"
 #include <stdarg.h>
 
+#include "asmdefs.h"
 #include "asmsym.h"
 #include "directiv.h"
 
@@ -219,6 +220,9 @@ void PrintStats()
     __printf( "%u lines, ", LineNumber );
     __printf( "%u warnings, ", WngCount );
     __printf( "%u errors\n", ErrCount );
+#ifdef DEBUG_OUT
+    __printf( "%u passes\n", Parse_Pass + 1 );
+#endif
     fflush( stdout );                   /* 27-feb-90 for QNX */
 }
 #endif

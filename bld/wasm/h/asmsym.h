@@ -67,8 +67,7 @@ typedef struct asm_sym {
         char            *name;
 
 #ifdef _WASM_
-        uint            grpidx;
-        uint            segidx;
+        struct asm_sym  *segment;
         uint_32         offset;
         uint_32         first_size;   /* size of 1st initializer in bytes */
         uint_32         first_length; /* size of 1st initializer--elts. dup'd */

@@ -43,8 +43,7 @@
 
 /* prototypes */
 int ptr_operator( memtype mem_type, uint_8 fix_mem_type );
-int jmp( struct asm_sym *sym );
-int jmpx( expr_list *opndx );
+int jmp( expr_list *opndx );
 
 #ifdef _WASM_
 
@@ -193,13 +192,7 @@ static void FarCallToNear()
 }
 #endif
 
-int jmpx( expr_list *opndx )
-{
-    Code->data[Opnd_Count] = opndx->value;
-    return( jmp( opndx->sym ) );
-}
-
-int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
+int jmp( expr_list *opndx )
 /*
   determine the displacement of jmp;
 */
@@ -208,10 +201,13 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
     enum fixup_types    fixup_type;
     enum fixup_options  fixup_option;
     enum sym_state      state;
+    struct asm_sym      *sym;
 #ifdef _WASM_
-    dir_node                *seg;
+    dir_node            *seg;
 #endif
 
+    Code->data[Opnd_Count] = opndx->value;
+    sym = opndx->sym;
     if( sym == NULL ) {
         if( IS_JMPCALLN( Code->info.token ) )
             Code->info.token++;

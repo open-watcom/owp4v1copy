@@ -354,6 +354,8 @@ static void Set_ZLD(void) { Options.emit_dependencies = FALSE; }
 
 static void Set_ZQ(void) { Options.quiet = TRUE; }
 
+static void Set_ZZ(void) { Options.use_stdcall_at_number = FALSE; }
+
 static void HelpUsage(void) { usage_msg();}
 
 #ifdef DEBUG_OUT
@@ -421,39 +423,41 @@ static struct option const cmdl_options[] = {
     { "w=#",    0,        SetWarningLevel },
     { "zld",    0,        Set_ZLD },
     { "zcm",    0,        Set_ZCM },
+    { "zz",     0,        Set_ZZ },
     { "zq",     0,        Set_ZQ },
     { 0,        0,        0 }
 };
 
 global_options Options = {
-    /* sign_value       */      FALSE,
-    /* stop_at_end      */      FALSE,
-    /* quiet            */      FALSE,
-    /* banner_printed   */      FALSE,
-    /* debug_flag       */      FALSE,
-    /* naming_convention*/      ADD_USCORES,
-    /* floating_point   */      DO_FP_EMULATION,
+    /* sign_value       */          FALSE,
+    /* stop_at_end      */          FALSE,
+    /* quiet            */          FALSE,
+    /* banner_printed   */          FALSE,
+    /* debug_flag       */          FALSE,
+    /* naming_convention*/          ADD_USCORES,
+    /* floating_point   */          DO_FP_EMULATION,
     /* output_comment_data_in_code_records */   TRUE,
 
-    /* error_count      */      0,
-    /* warning_count    */      0,
-    /* error_limit      */      20,
-    /* warning_level    */      2,
-    /* warning_error    */      FALSE,
-    /* build_target     */      NULL,
+    /* error_count      */          0,
+    /* warning_count    */          0,
+    /* error_limit      */          20,
+    /* warning_level    */          2,
+    /* warning_error    */          FALSE,
+    /* build_target     */          NULL,
 
-    /* code_class       */      NULL,
-    /* data_seg         */      NULL,
-    /* test_seg         */      NULL,
-    /* module_name      */      NULL,
+    /* code_class       */          NULL,
+    /* data_seg         */          NULL,
+    /* test_seg         */          NULL,
+    /* module_name      */          NULL,
 
     #ifdef DEBUG_OUT
-    /* debug            */      FALSE,
+    /* debug            */          FALSE,
     #endif
-    /* default_name_mangler */  NULL,
-    /* allow_c_octals   */      FALSE,
-    /* emit_dependencies */     TRUE,
-    /* Watcom C name mangler */ TRUE
+    /* default_name_mangler */      NULL,
+    /* allow_c_octals   */          FALSE,
+    /* emit_dependencies */         TRUE,
+    /* Watcom C name mangler */     TRUE,
+    /* stdcall at number */         TRUE
 };
 
 static int OptionDelimiter( char c )

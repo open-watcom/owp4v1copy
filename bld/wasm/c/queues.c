@@ -109,11 +109,12 @@ uint GetPublicData(
 {
     static struct queuenode    *start;
     struct queuenode           *curr;
-    struct asm_sym      *sym;
-    dir_node            *pub;
-    uint                count;
-    uint                i;
-    struct pubdef_data  *d;
+    struct asm_sym             *sym;
+    dir_node                   *pub;
+    uint                       count;
+    uint                       i;
+    struct pubdef_data         *d;
+    struct asm_sym             *curr_seg;
 
     if( PubQueue == NULL )
         return( 0 );
@@ -129,14 +130,20 @@ uint GetPublicData(
         AsmErr( SYMBOL_S_NOT_DEFINED, sym->name );
         return( 0 );
     }
-    *seg = sym->segidx;
-    *grp = sym->grpidx;
+    curr_seg = sym->segment;
+    if( curr_seg == NULL ) {      // absolute symbol ( without segment )
+        *seg = 0;
+        *grp = 0;
+    } else {
+        *seg = GetSegIdx( curr_seg );
+        *grp = GetGrpIdx( GetGrp( curr_seg ) );
+    }
     curr = start;
     for( count = 0; curr != NULL; curr = curr->next ) {
         if( count == MAX_PUB_SIZE )  // don't let the records get too big
             break;
         sym = (asm_sym *)curr->data;
-        if( sym->segidx != *seg )
+        if( sym->segment != curr_seg )
             break;
         if( sym->state == SYM_PROC ) {
             if( ((dir_node *)sym)->e.procinfo->visibility == VIS_PRIVATE ) {
@@ -163,7 +170,7 @@ uint GetPublicData(
     
     for( curr = start, i = 0; i < count; i++, curr = curr->next ) {
         sym = (asm_sym *)curr->data;
-        if( sym->segidx != *seg )
+        if( sym->segment != curr_seg )
             break;
         if( sym->offset > 0xffffUL )
             *need32 = TRUE;

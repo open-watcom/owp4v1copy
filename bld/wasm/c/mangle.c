@@ -101,7 +101,7 @@ static char *StdUScoreMangler( struct asm_sym *sym, char *buffer )
     char        *name;
     dir_node    *dir = (dir_node *)sym;
 
-    if( sym->state == SYM_PROC ) {
+    if( Options.use_stdcall_at_number && ( sym->state == SYM_PROC ) ) {
         if( buffer == NULL ) {
             int         count;
             dir_node    *dir = (dir_node *)sym;

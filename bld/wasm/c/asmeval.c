@@ -971,11 +971,11 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( sym == NULL )
                 return( ERROR );
 
+#ifdef _WASM_
             if( AsmBuffer[token_1->label]->token == T_RES_ID ) {
                 /* Kludge for "FLAT" */
                 AsmBuffer[token_1->label]->token = T_ID;
             }
-#ifdef _WASM_
             if( sym->state == SYM_GRP || sym->state == SYM_SEG ) {
                 token_2->override = token_1->label;
                 token_2->indirect |= token_1->indirect;
@@ -1023,7 +1023,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 || ( AsmBuffer[index + 1]->value != T_PTR ) ) {
                 // Missing PTR operator
                 if( error_msg )
-                    AsmError( SYNTAX_ERROR );
+                    AsmError( MISSING_PTR_OPERATOR );
                 token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
@@ -1405,10 +1405,10 @@ static int evaluate(
                         }
                         if( cmp_token( *i, T_OP_SQ_BRACKET ) ) {
                             if( proc_flag == PROC_BRACKET ) {
-                            AsmBuffer[*i]->token = '+';
-                            op_sq_bracket_level++;
-                            next_operator = TRUE;
-                        }
+                                AsmBuffer[*i]->token = '+';
+                                op_sq_bracket_level++;
+                                next_operator = TRUE;
+                            }
                         }
                     } else if( proc_flag == PROC_BRACKET ) {
                         next_operator = TRUE;
@@ -2063,7 +2063,7 @@ static int is_expr_const( int i )
         if( i == 0 ) {
             /* It is a label */
             return( FALSE );
-    } else {
+        } else {
             return( TRUE );
         }
     case T_STRING:

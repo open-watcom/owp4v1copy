@@ -70,7 +70,7 @@ void add_frame( void )
 #endif
 
 struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enum fixup_options fixup_option )
-/*************************************************************************************************************/
+/************************************************************************************************************/
 /*
   put the correct target offset into the link list when forward reference of
   relocatable is resolved;
@@ -93,8 +93,8 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
     fixup = AsmAlloc( sizeof( struct asmfixup ) );
     if( fixup != NULL ) {
         fixup->external = 0;
-        fixup->name = sym->name;
 #ifdef _WASM_
+        fixup->sym = sym;
         fixup->offset = sym->offset;
         fixup->def_seg = (CurrSeg != NULL) ? CurrSeg->seg : NULL;
         fixup->frame = Frame;                   // this is just a guess
@@ -102,6 +102,7 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
         fixup->next = sym->fixup;
         sym->fixup = fixup;
 #else
+        fixup->name = sym->name;
         fixup->next = FixupHead;
         FixupHead = fixup;
         fixup->offset = 0;
@@ -126,6 +127,7 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
     FixupHead = fixup
 
 static void PatchCodeBuffer( struct asmfixup *fixup, unsigned size )
+/******************************************************************/
 {
     long    disp;
     char    *dst;
@@ -141,6 +143,7 @@ static void PatchCodeBuffer( struct asmfixup *fixup, unsigned size )
 #endif
 
 static int DoPatch( struct asm_sym *sym, struct asmfixup *fixup )
+/***************************************************************/
 {
     long                disp;
     long                max_disp;
@@ -269,7 +272,7 @@ int BackPatch( struct asm_sym *sym )
 }
 
 void mark_fixupp( enum operand_type determinant, int index )
-/******************************************************/
+/**********************************************************/
 /*
   this routine marks the correct target offset and data record address for
   FIXUPP record;
@@ -325,6 +328,7 @@ void mark_fixupp( enum operand_type determinant, int index )
 #ifdef _WASM_
 
 struct fixup *CreateFixupRec( int index )
+/***************************************/
 /* Create a fixup record for WOMP;
    Note that if Modend is TRUE, it means the fixup is the starting address
    for the module.
@@ -378,7 +382,7 @@ struct fixup *CreateFixupRec( int index )
         }
     }
     
-    sym = AsmLookup( fixup->name );
+    sym = fixup->sym;
     if( sym == NULL )
         return( NULL );
     
@@ -401,7 +405,7 @@ struct fixup *CreateFixupRec( int index )
         }
         
         fixnode->lr.target = TARGET_GRP;
-        fixnode->lr.target_datum = GetDirIdx( fixup->name, TAB_GRP );
+        fixnode->lr.target_datum = GetGrpIdx( sym );
         if( fixup->frame != EMPTY ) {
             fixnode->lr.frame = fixup->frame;
             fixnode->lr.frame_datum = fixup->frame_datum;
@@ -418,7 +422,7 @@ struct fixup *CreateFixupRec( int index )
         }
         
         fixnode->lr.target = TARGET_SEG;
-        fixnode->lr.target_datum = GetDirIdx( fixup->name, TAB_SEG );
+        fixnode->lr.target_datum = GetSegIdx( sym );
         if( fixup->frame != EMPTY ) {
             fixnode->lr.frame = fixup->frame;
             fixnode->lr.frame_datum = fixup->frame_datum;
@@ -452,21 +456,21 @@ struct fixup *CreateFixupRec( int index )
             } else {
                 fixnode->lr.target = TARGET_EXT;
             }
-            fixnode->lr.target_datum = GetDirIdx( fixup->name, TAB_EXT );
+            fixnode->lr.target_datum = GetExtIdx( sym );
             
             if( fixup->frame == FRAME_GRP && fixup->frame_datum == 0 ) {
                 /* set the frame to the frame of the corresponding segment */
                 fixup->frame_datum = GetGrpIdx( sym );
             }
         } else {
-            /**/myassert( sym->segidx != 0 );
+            /**/myassert( sym->segment != NULL );
             if( Modend ) {
                 fixnode->lr.target = TARGET_SEG & TARGET_WITH_DISPL;
                 fixup->frame = FRAME_TARG;
             } else {
                 fixnode->lr.target = TARGET_SEG;
             }
-            fixnode->lr.target_datum = sym->segidx;
+            fixnode->lr.target_datum = GetSegIdx( sym->segment );
         }
         
         /* HMMM .... what if fixup->frame is say -2 .... ie empty?

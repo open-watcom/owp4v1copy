@@ -113,17 +113,20 @@ extern enum sym_type            AsmQueryType( char *name );
 
 struct asmfixup {
         struct asmfixup         *next;
-        char                    *name;
         unsigned long           offset;
         unsigned                fixup_loc;
         enum fixup_types        fixup_type;
         enum fixup_options      fixup_option;
         char                    external;
+//        unsigned                line;
 
 #ifdef _WASM_
         int_8                   frame;          // frame of the fixup
         uint_16                 frame_datum;    // frame_datum of the fixup
         struct dir_node         *def_seg;       // segment fixup is in
+        struct asm_sym          *sym;
+#else
+        char                    *name;
 #endif
 
 };

@@ -41,55 +41,55 @@ typedef int     direct_idx;     // directive index, such as segment index,
                                 // group index or lname index, etc.
 
 typedef enum {
-        SIM_CODE = 0,
-        SIM_STACK,
-        SIM_DATA,
-        SIM_DATA_UN,            // .DATA?
-        SIM_FARDATA,
-        SIM_FARDATA_UN,         // .FARDATA?
-        SIM_CONST,
-        SIM_NONE,
-        SIM_LAST = SIM_NONE
+    SIM_CODE = 0,
+    SIM_STACK,
+    SIM_DATA,
+    SIM_DATA_UN,            // .DATA?
+    SIM_FARDATA,
+    SIM_FARDATA_UN,         // .FARDATA?
+    SIM_CONST,
+    SIM_NONE,
+    SIM_LAST = SIM_NONE
 } sim_seg;
 
 typedef enum {
-        MOD_NONE,
-        MOD_TINY,
-        MOD_SMALL,
-        MOD_COMPACT,
-        MOD_FLAT,
-        MOD_MEDIUM,
-        MOD_LARGE,
-        MOD_HUGE,
+    MOD_NONE,
+    MOD_TINY,
+    MOD_SMALL,
+    MOD_COMPACT,
+    MOD_FLAT,
+    MOD_MEDIUM,
+    MOD_LARGE,
+    MOD_HUGE,
 } mod_type;             // Memory model type
 
 typedef enum {
-        STACK_NONE,
-        STACK_NEAR,
-        STACK_FAR,
+    STACK_NONE,
+    STACK_NEAR,
+    STACK_FAR,
 } dist_type;            // Stack distance
 #define NUM_STACKTYPE 3
 
 typedef enum {
-        VIS_PRIVATE,
-        VIS_PUBLIC,
-        VIS_EXPORT,
+    VIS_PRIVATE,
+    VIS_PUBLIC,
+    VIS_EXPORT,
 } vis_type;             // Type of visibility for procedure
 
 typedef enum {
-        LANG_NONE,
-        LANG_BASIC,
-        LANG_FORTRAN,
-        LANG_PASCAL,
-        LANG_C,
-        LANG_WATCOM_C,
-        LANG_STDCALL,
-        LANG_SYSCALL
+    LANG_NONE,
+    LANG_BASIC,
+    LANG_FORTRAN,
+    LANG_PASCAL,
+    LANG_C,
+    LANG_WATCOM_C,
+    LANG_STDCALL,
+    LANG_SYSCALL
 } lang_type;            // Type of language specified in procedure defn
 
 typedef enum {
-        OPSYS_DOS,
-        OPSYS_OS2
+    OPSYS_DOS,
+    OPSYS_OS2
 } os_type;              // Type of operating system
 #define NUM_OS 2
 
@@ -119,9 +119,9 @@ enum {
 };                      // parms to Comment
 
 enum irp_type {
-        IRP_CHAR,
-        IRP_WORD,
-        IRP_REPEAT
+    IRP_CHAR,
+    IRP_WORD,
+    IRP_REPEAT
 };
 
 /*---------------------------------------------------------------------------*/
@@ -142,35 +142,35 @@ typedef struct seg_list {
 } seg_list;
 
 typedef struct {
-    direct_idx  idx;            // its group index
-    seg_list    *seglist;       // list of segments in the group
-    uint        numseg;         // number of segments in the group
-    direct_idx  lname_idx;
+    direct_idx          idx;            // its group index
+    seg_list            *seglist;       // list of segments in the group
+    uint                numseg;         // number of segments in the group
+    direct_idx          lname_idx;
 } grp_info;
 
 typedef struct {
-    obj_rec     *segrec;
-    direct_idx  grpidx;         // its group index
-    uint_32     start_loc;      // starting offset of current ledata or lidata
-    unsigned    readonly:1;     // if the segment is readonly
-    unsigned    ignore:1;       // ignore this if the seg is redefined
-    unsigned    iscode:1;       // segment is belonging to "*CODE" class
-    direct_idx  lname_idx;
-    uint_32     current_loc;    // current offset in current ledata or lidata
+    obj_rec             *segrec;
+    struct asm_sym      *group;         // its group
+    uint_32             start_loc;      // starting offset of current ledata or lidata
+    unsigned            readonly:1;     // if the segment is readonly
+    unsigned            ignore:1;       // ignore this if the seg is redefined
+    unsigned            iscode:1;       // segment is belonging to "*CODE" class
+    direct_idx          lname_idx;
+    uint_32             current_loc;    // current offset in current ledata or lidata
 } seg_info;
 
 typedef struct {
-    uint        idx;            // external definition index
-    unsigned    use32:1;
-    unsigned    comm:1;
+    uint                idx;            // external definition index
+    unsigned            use32:1;
+    unsigned            comm:1;
 } ext_info;
 
 typedef struct {
-    uint            idx;                // external definition index
-    unsigned        use32:1;
-    unsigned        comm:1;
-    unsigned long   size;
-    uint            distance;
+    uint                idx;            // external definition index
+    unsigned            use32:1;
+    unsigned            comm:1;
+    unsigned long       size;
+    uint                distance;
 } comm_info;
 
 typedef struct {
@@ -199,16 +199,16 @@ typedef struct label_list {
 } label_list;
 
 typedef struct {
-    regs_list   *regslist;      // list of registers to be saved
-    vis_type    visibility;     // PUBLIC, PRIVATE or EXPORT
-    lang_type   langtype;       // language type
-    label_list  *paralist;      // list of parameters
-    label_list  *locallist;     // list of local variables
-    int         parasize;       // total no. of bytes used by parameters
-    int         localsize;      // total no. of bytes used by local variables
-    memtype     mem_type;       // distance of procedure: near or far
-    unsigned    is_vararg:1;    // if it has a vararg
-    unsigned    pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
+    regs_list           *regslist;      // list of registers to be saved
+    vis_type            visibility;     // PUBLIC, PRIVATE or EXPORT
+    lang_type           langtype;       // language type
+    label_list          *paralist;      // list of parameters
+    label_list          *locallist;     // list of local variables
+    int                 parasize;       // total no. of bytes used by parameters
+    int                 localsize;      // total no. of bytes used by local variables
+    memtype             mem_type;       // distance of procedure: near or far
+    unsigned            is_vararg:1;    // if it has a vararg
+    unsigned            pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
 } proc_info;
 
 typedef struct parm_list {
@@ -226,15 +226,15 @@ typedef struct asmlines {
 } asmlines;
 
 typedef struct {
-    parm_list       *parmlist;  // list of parameters
-    asmlines        *data;      // the guts of the macro - LL of strings
-    char            *filename;
-    unsigned int    start_line;
-    char            hidden;     // if TRUE don't print error messages
+    parm_list           *parmlist;  // list of parameters
+    asmlines            *data;      // the guts of the macro - LL of strings
+    char                *filename;
+    unsigned int        start_line;
+    char                hidden;     // if TRUE don't print error messages
 } macro_info;
 
 typedef struct {
-    direct_idx      idx;                // lname index
+    direct_idx          idx;                // lname index
 } lname_info;
 
 typedef struct field_list {
@@ -244,22 +244,22 @@ typedef struct field_list {
 } field_list;
 
 typedef struct {
-    unsigned short  size;       // size in bytes ( including alignment )
-    unsigned short  alignment;
-    field_list      *head;
-    field_list      *tail;
+    unsigned short      size;       // size in bytes ( including alignment )
+    unsigned short      alignment;
+    field_list          *head;
+    field_list          *tail;
 } struct_info;
 
 union entry {
-    seg_info    *seginfo;       // info about segment definition
-    grp_info    *grpinfo;       // info about group definition
-    ext_info    *extinfo;       // info about external definition
-    const_info  *constinfo;     // info about symbolic integer constants
-    proc_info   *procinfo;
-    macro_info  *macroinfo;
-    lname_info  *lnameinfo;
-    struct_info *structinfo;
-    comm_info   *comminfo;
+    seg_info            *seginfo;       // info about segment definition
+    grp_info            *grpinfo;       // info about group definition
+    ext_info            *extinfo;       // info about external definition
+    const_info          *constinfo;     // info about symbolic integer constants
+    proc_info           *procinfo;
+    macro_info          *macroinfo;
+    lname_info          *lnameinfo;
+    struct_info         *structinfo;
+    comm_info           *comminfo;
 };
 
 typedef struct dir_node {
@@ -271,8 +271,8 @@ typedef struct dir_node {
                     // and symbolic integer constants.
 
 typedef struct {
-    dir_node *head;
-    dir_node *tail;
+    dir_node            *head;
+    dir_node            *tail;
 } symbol_queue;     // tables array - queues of symbols of 1 type ie: segments
                     // the data are actually part of the symbol table
 
@@ -281,27 +281,27 @@ typedef struct {
 /* global structure */
 
 typedef struct a_definition_struct {
-    unsigned short  struct_depth;
-    stacknode       *struct_stack;      // stack of nested structs being defined
-    dir_node        *curr_struct;
+    unsigned short      struct_depth;
+    stacknode           *struct_stack;      // stack of nested structs being defined
+    dir_node            *curr_struct;
 } a_definition_struct;
 
 extern a_definition_struct      Definition;
 extern uint                     LnamesIdx;      // Number of LNAMES definition
 
 typedef struct {
-    dist_type   distance;        // stack distance;
-    mod_type    model;           // memory model;
-    lang_type   langtype;        // language;
-    os_type     ostype;          // operating system;
-    unsigned    use32:1;         // If 32-bit segment is used
-    unsigned    init:1;
-    unsigned    cmdline:1;
-    unsigned    defUse32:1;      // default segment size 32-bit
-    unsigned    mseg:1;          // mixed segments (16/32-bit)
-    unsigned    flat_idx;        // index of FLAT group
-    char        name[_MAX_FNAME];// name of module
-} module_info;                   // Information about the module
+    dist_type           distance;        // stack distance;
+    mod_type            model;           // memory model;
+    lang_type           langtype;        // language;
+    os_type             ostype;          // operating system;
+    unsigned            use32:1;         // If 32-bit segment is used
+    unsigned            init:1;
+    unsigned            cmdline:1;
+    unsigned            defUse32:1;      // default segment size 32-bit
+    unsigned            mseg:1;          // mixed segments (16/32-bit)
+    unsigned            flat_idx;        // index of FLAT group
+    char                name[_MAX_FNAME];// name of module
+} module_info;                           // Information about the module
 
 enum assume_reg {
     ASSUME_DS=0,
@@ -336,16 +336,17 @@ extern direct_idx       GetLnameIdx( char * );
 extern direct_idx       LnameInsert( char * );  // Insert a lname
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment
 
-extern uint             GetCurrSeg( void );
-/* Get current segment index; 0 means none */
-extern uint             GetCurrGrp( void );
-/* Get current group index; 0 means none */
+extern dir_node         *GetCurrSeg( void );
+/* Get current segment; NULL means none */
 
 extern uint             GetGrpIdx( struct asm_sym * );
-/* get symbol's group, from the symbol itself or from the symbol's segment */
+/* get symbol's group index, from the symbol itself or from the symbol's segment */
 
-extern uint             GetDirIdx( char *, int );
-/* Get the index of either a segment, a group or an extrn defn */
+extern uint             GetSegIdx( struct asm_sym * );
+/* get symbol's segment index, from the symbol itself */
+
+extern uint             GetExtIdx( struct asm_sym * );
+/* Get the index of an extrn defn */
 
 extern int              GlobalDef( int );       // define an global symbol
 extern int              ExtDef( int );          // define an external symbol
@@ -379,7 +380,9 @@ extern int              ModuleEnd( int );       // handle END statement
 extern uint_32          GetCurrSegStart(void);
 /* Get offset of segment at the start of current LEDATA record */
 
-extern dir_node         *GetSeg( struct asm_sym *sym );
+#define GetSeg( x )     (dir_node *)x->segment
+
+extern struct asm_sym   *GetGrp( struct asm_sym * );
 
 extern void             AssumeInit( void );     // init all assumed-register table
 extern int              SetAssume( int );       // Assume a register

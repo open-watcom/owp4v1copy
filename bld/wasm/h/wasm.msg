@@ -212,3 +212,6 @@ pick( CALL_FAR_TO_NEAR,
 pick( MSG_CPU_OPTION_INVALID,
                                 "CPU option %s is not valid for selected CPU.\n" ,
                                 "CPU option %s is not valid for selected CPU.\n" )
+pick( SEGMENT_IN_GROUP,
+                                "Segment is in another group already" ,
+                                "Segment is in another group already" )

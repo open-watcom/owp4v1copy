@@ -1,11 +1,12 @@
 .386
 SEGMENTED=1
 .model small
-real10  struc
+
+xreal10  struc
         bytes1to4       dd      0
         bytes5to8       dd      0
         bytes9n10       dw      0
-real10  ends
+xreal10  ends
 
 mov10   macro   src_seg,src_off,dst_seg,dst_off
         mov     eax,src_seg:src_off.bytes1to4
@@ -16,8 +17,8 @@ mov10   macro   src_seg,src_off,dst_seg,dst_off
             mov dst_seg:dst_off.bytes9n10,ax
         endm
 .data
-foo real10 <>
-bar real10 <>
+foo xreal10 <>
+bar xreal10 <>
 sam db 0,1,2,3,4,5,6,7,8,9
 
 .code

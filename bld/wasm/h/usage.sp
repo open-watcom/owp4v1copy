@@ -46,8 +46,9 @@ Options:                    ( /option is also supported )
 -nt=<name>          set name of text segment
 -o                  allow C form of octal constants
 -zcm                set C name mangler to MASM compatible mode
--zq or -q           operate quietly
 -zld                suppress generation of file dependency info in object file
+-zq or -q           operate quietly
+-zz                 remove '@size' from STDCALL function names
 -? or -h            print this message
 -w<number>          set warning level number
 -we                 treat all warnings as errors

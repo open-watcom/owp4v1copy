@@ -295,3 +295,6 @@ pick( FLOAT_OPERAND,
 pick( ONLY_SHORT_AND_NEAR_DISPLACEMENT_IS_ALLOWED,
                                 "Only SHORT and NEAR displacement is allowed" ,
                                 "SHORT,NEARディスプレースメントのみ可能です" )
+pick( MISSING_PTR_OPERATOR,
+                                "Missing 'PTR' operator" ,
+                                "Missing 'PTR' operator" )

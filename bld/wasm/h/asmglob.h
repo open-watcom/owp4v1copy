@@ -177,6 +177,7 @@ typedef struct global_options {
     bool        allow_c_octals;
     bool        emit_dependencies;
     bool        watcom_c_mangler;
+    bool        use_stdcall_at_number;
 } global_options;
 
 extern global_options Options;
