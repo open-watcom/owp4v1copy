@@ -35,10 +35,11 @@
 static orl_handle       ORLHnd;
 static orl_funcs        OrlFuncs;
 
-static void * ObjRead( obj_file *file, int len )
-/************************************************/
+static void * ObjRead( void *fil, int len )
+/*****************************************/
 {
     buf_list *  buf;
+    obj_file *  file = fil;
 
     buf = MemAlloc( len + sizeof(buf_list) - 1 );
     if( LibRead( file->hdl, buf->buf, len ) != len ) {
@@ -50,9 +51,11 @@ static void * ObjRead( obj_file *file, int len )
     return( buf->buf );
 }
 
-static long ObjSeek( obj_file *file, long pos, int where )
-/***********************************************************/
+static long ObjSeek( void *fil, long pos, int where )
+/***************************************************/
 {
+    obj_file *  file = fil;
+
     switch( where ) {
     case SEEK_SET:
         where += file->offset;
