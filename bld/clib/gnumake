@@ -1,0 +1,29 @@
+all: $(OBJDIR)/libwatcom.a
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+SRCDIRS = convert/c misc/c string/c memory/c handleio/c startup/c environ/c
+
+vpath %.c $(SRCDIRS)
+
+OBJECTS =
+OBJECTS += itoa.o ltoa.o splitpat.o split2.o makepath.o fullpath.o 
+OBJECTS += strlwr.o memicmp.o tell.o rotl.o seterrno.o strupr.o 
+OBJECTS += strrev.o filelen.o eof.o cmdname.o gtcmdunx.o searchen.o
+
+OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
+
+LIBNAME=watcom
+
+CFLAGS = -D_COMDEF_H_INCLUDED -D__WATCOM_INT64__ -D__LINUX__ -D__FLAT__ -D__int64="long long" -D_RWD_errno=errno -D__386__ -Ih -I../watcom/h -I../lib_misc/h -include  ../watcom/h/clibext.h
+
+$(OBJDIR)/lib$(LIBNAME).a: $(OBJDIR) $(OBJECTS)
+	@rm -f $@
+	$(AR) crs $@ $(OBJECTS)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+clean:
+	rm -rf $(OBJDIR)

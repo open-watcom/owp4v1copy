@@ -1,0 +1,16 @@
+omf_objs = omfload.o omfmunge.o omfentr.o omfflhn.o omfdrctv.o
+elf_objs = elfentr.o elflwlv.o elfflhn.o elfload.o
+coff_objs = coffentr.o cofflwlv.o coffflhn.o coffimpl.o coffload.o
+orl_objs = orlentry.o orlflhnd.o orlhash.o $(omf_objs) $(elf_objs) $(coff_objs)
+
+vpath %.c : c elf/c coff/c omf/c
+orl_objs := $(foreach i, $(orl_objs), $(OBJDIR)/$i)
+
+$(OBJDIR)/%.o: %.c
+	gcc -I../watcom/h -Ih -Icoff/h -Ielf/h -Iomf/h -D__386__ -c $< -o $@
+
+$(OBJDIR)/liborl.a: $(OBJDIR) $(orl_objs)
+	ar r $@ $(orl_objs)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
