@@ -58,8 +58,8 @@ Dos32GetMessage:
     mov       dword ptr 4H[ebp],eax
     pop       ebp
     jmp       near ptr FLAT:DOS32TRUEGETMESSAGE
-L1:
     db        0FFh
+L1:
     dw        0
     dw        0FFFFh
 
