@@ -23,6 +23,7 @@
 
 #if defined(__LCC__) || defined(__GNUC__) || defined(__WATCOMC__)
 #include <windows.h>
+#include <objbase.h>
 #else
 #include <basetyps.h>
 #endif
