@@ -573,11 +573,9 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
                     out a couple of data bytes, and then restart decode
                     and label process from offset of actual label.
                 */
+                decoded.size = 0;
                 processDataInCode( contents, &data, l_entry->offset - data.loop, &l_entry );
-                data.loop = l_entry->offset;
-                DisDecodeInit( &DHnd, &decoded );
-                decoded.flags |= flags;
-                DisDecode( &DHnd, &contents[data.loop], &decoded );
+                continue;
             }
             l_entry = handleLabels( sec->name, data.loop, l_entry, size );
         }
