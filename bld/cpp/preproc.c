@@ -488,19 +488,32 @@ void PP_RCInclude( char *ptr )
 {
     char        *filename;
     char        *delim;
+    int         quoted = 0;
 
     while( *ptr == ' '  ||  *ptr == '\t' ) ++ptr;
+    if( *ptr == '\"' ) {
+        ptr++;
+        quoted = 1;
+    }
+
     filename = ptr;
     delim = "\"\"";
     ++ptr;
-    for(;;) {
-        if( *ptr == ' ' ) break;
-        if( *ptr == '\t' ) break;
-        if( *ptr == '\r' ) break;
-        if( *ptr == '\n' ) break;
-        if( *ptr == '\0' ) break;
-        ++ptr;
+    if( quoted ) {
+        while( *ptr != '\"' )
+            ptr++;
     }
+    else
+        for(;;) {
+            if( *ptr == ' ' ) break;
+            if( *ptr == '\t' ) break;
+            if( *ptr == '\r' ) break;
+            if( *ptr == '\n' ) break;
+            if( *ptr == '\0' ) break;
+            if( *ptr == '\"' ) break;
+            ++ptr;
+        }
+
     *ptr = '\0';
     if( PP_OpenInclude( filename, delim ) == -1 ) {
         filename = doStrDup( filename );        // want to reuse buffer
