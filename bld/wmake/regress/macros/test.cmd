@@ -9,7 +9,6 @@ echo # ---------------------------
 echo #   Macro Test 1
 echo # ---------------------------
 
-rm tmp.out
 %1 -ms -h -f MACRO01 > tmp.out 2>&1
 diff -b MACRO01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -25,7 +24,6 @@ echo # ---------------------------
 echo #   Macro Test 2A
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f MACRO02 > tmp.out 2>&1
 diff -b MACRO02A.CMP tmp.out
 if errorlevel 1 goto err2a
@@ -40,7 +38,6 @@ echo # ---------------------------
 echo #   Macro Test 2B
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -ms -f MACRO02 > tmp.out 2>&1
 diff -b MACRO02B.CMP tmp.out
 if errorlevel 1 goto err2b
@@ -55,7 +52,7 @@ if errorlevel 1 goto err2b
 echo # ---------------------------
 echo #   Macro Test 3A
 echo # ---------------------------
-REM set TRMEM_CODE=3
+:: set TRMEM_CODE=3
 rm tmp.out
 %1 -h -f MACRO03 > tmp.out 2>&1
 diff -b MACRO03A.CMP tmp.out
@@ -67,13 +64,14 @@ if errorlevel 1 goto err3a
     @echo Error: MACRO #3A unsuccessful!!! | tee -a %2
 
 :test3b
-REM set TRMEM_CODE=1
+:: set TRMEM_CODE=1
 echo # ---------------------------
 echo #   Macro Test 3B
 echo # ---------------------------
 
-rm tmp.out
+set fubar=test depends on this environment variable
 %1 -h -ms -f MACRO03 > tmp.out 2>&1
+set fubar=
 diff -b MACRO03B.CMP tmp.out
 if errorlevel 1 goto err3b
     @echo # MACRO03B successful
@@ -88,7 +86,6 @@ echo # ---------------------------
 echo #   Macro Test 4A
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f MACRO04 > tmp.out 2>&1
 diff -b MACRO04A.CMP tmp.out
 if errorlevel 1 goto err4a
@@ -103,7 +100,6 @@ echo # ---------------------------
 echo #   Macro Test 4B
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -ms -f MACRO04 > tmp.out 2>&1
 diff -b MACRO04B.CMP tmp.out
 if errorlevel 1 goto err4b
@@ -120,7 +116,6 @@ echo #   Macro Test 5
 echo # ---------------------------
 
 wtouch hello.boo hello.tmp hello.c
-rm tmp.out
 %1 -h -ms -f MACRO05 > tmp.out 2>&1
 diff -b MACRO05.CMP tmp.out
 if errorlevel 1 goto err5
@@ -139,7 +134,6 @@ echo # ---------------------------
 
 wtouch hello.obj hello2.obj
 wtouch hello.c  hello2.c
-rm tmp.out
 %1 -h -ms -f MACRO06 -a > tmp.out 2>&1
 diff -b MACRO06.CMP tmp.out
 if errorlevel 1 goto err6
