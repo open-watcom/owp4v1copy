@@ -61,8 +61,8 @@ local void      Emit1String( STR_HANDLE str_handle );
 local void      EmitLiteral( STR_HANDLE strlit );
 local void      EmitCS_Strings( void );
 local void      FreeStrings( void );
-local void      DoAutoDecl( SYM_HANDLE sym_handle );
-local void      DoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle );
+local void      CDoAutoDecl( SYM_HANDLE sym_handle );
+local void      CDoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle );
 local void      ParmReverse( SYM_HANDLE sym_handle );
 #ifdef __SEH__
 static void     GenerateTryBlock( TREEPTR tree );
@@ -856,7 +856,7 @@ local void EmitNodes( TREEPTR tree )
             break;
         case OPR_NEWBLOCK:              // start of new block { vars; }
             DBBegBlock();
-            DoAutoDecl( node->sym_handle );
+            CDoAutoDecl( node->sym_handle );
             break;
         case OPR_ENDBLOCK:              // end of new block { vars; }
             DBEndBlock();
@@ -1542,13 +1542,13 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
 
                 sym = SymGetPtr( sym_handle );
                 if( sym->sym_type->decl_type == TYPE_DOT_DOT_DOT ) break;
-                DoParmDecl( sym, sym_handle );
+                CDoParmDecl( sym, sym_handle );
                 sym_handle = sym->handle;
             }
         }
     }
     CGLastParm();
-    DoAutoDecl( CurFunc->u.func.locals );
+    CDoAutoDecl( CurFunc->u.func.locals );
 #ifdef __SEH__
     if( FuncNodePtr->func.flags & FUNC_USES_SEH ) {
         CGAutoDecl( TrySymHandle, TryRefno );
@@ -1558,7 +1558,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
     return( parms_reversed );
 }
 
-local void DoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle )
+local void CDoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle )
 {
     TYPEPTR typ;
     int     dtype;
@@ -1588,10 +1588,10 @@ local void ParmReverse( SYM_HANDLE sym_handle ) /* 22-jan-90 */
         ParmReverse( sym->handle );
         sym = SymGetPtr( sym_handle );
     }
-    DoParmDecl( sym, sym_handle );
+    CDoParmDecl( sym, sym_handle );
 }
 
-local void DoAutoDecl( SYM_HANDLE sym_handle )
+local void CDoAutoDecl( SYM_HANDLE sym_handle )
 {
     TYPEPTR             typ;
     cg_type             dtype;
