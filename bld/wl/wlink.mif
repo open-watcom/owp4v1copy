@@ -277,7 +277,7 @@ $(exe) : global.chk wlink.res $(c_objs) $(extra_objs) $(libs)
 !ifdef add_version_info
     %make version.rc
     @set include=$(inc_path)
-    $(rc) -bt=$(host_OS) ./version.rc $^@
+    $(rc) $(rc_flags) version.rc $^@
 !endif
     %make $(stubexe)
 !endif
@@ -315,7 +315,7 @@ drvmsgpr.obj : idemsgpr.c .AUTODEPEND
         $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
-        $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $]@ -I"$(wrc_dir)/h" -I"$(watcom_dir)/h"
+        $(rc_aui) -zk $(extra_rc_flags) -I"$(wrc_dir)/h" -I"$(watcom_dir)/h" $]@ -fo=$^@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__

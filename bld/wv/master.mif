@@ -618,16 +618,16 @@ $(litdef) : ./mkstr.exe wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
         $[@ $^@
 
 wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) .autodepend
-        $(rc) -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc_aui) -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc .autodepend
-        $(rc) -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) -k -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -k -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) -k -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -k -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
 
 wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)

@@ -57,18 +57,18 @@ all : $(name).exe .SYMBOLIC
 
 $(name).exe : $(OBJS) $(LNK) $(name).res
     $(linker) $(lflags) name $(name) file { $(objs) } @$(LNK)
-    $(rc) $(name).res
+    $(rc) $(name).res $^@
     @copy /b $(name).exe+$(name).sym
     @del $(name).sym
 
 $(name)e.exe : $(OBJSE) $(LNK) $(name).res
     $(linker) $(lflags) name $(name)e file { $(objse) } @$(LNK)
-    $(rc) $(name).res $(name)e.exe
-    @copy /b $(name)E.exe+$(name)E.sym
-    @del $(name)E.sym
+    $(rc) $(name).res $^@
+    @copy /b $(name)e.exe+$(name)e.sym
+    @del $(name)e.sym
 
 $(name).res : ../$(name).rc
-    $(rc) -bt=windows -r $[@
+    $(rc) $(rc_flags) -r $[@ -fo=$^@
 
 $(LNK) : makefile
     %create $(LNK)
@@ -83,6 +83,6 @@ $(LNK) : makefile
 extra_c_flags = -zW -dSERVER -zu
 
 $(name)e.obj : $(name).c
-        $(cc) $(cflags) -d__EDITOR__ $[* -fo=$(name)e.obj
+    $(cc) $(cflags) -d__EDITOR__ $[* -fo=$(name)e.obj
 
 !endif

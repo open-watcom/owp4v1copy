@@ -77,10 +77,10 @@ mem_flag = -of+
 extra_c_flags_dmem = $(mem_flag) -i="$(trmem_dir)"
 !endif
 
-rc_flags_nt = -bt=nt -K
-rc_flags_win    = -bt=windows -K
-rc_flags_os2    = -p
-rc_flags    = $(rc_flags_$(host_OS))
+rc_flags_nt  = -bt=nt -k
+rc_flags_win = -bt=windows -k
+rc_flags_os2 = -p
+rc_flags     = $(rc_flags_$(host_OS))
 
 rc_file_nt  = ../res/wbrw.rc
 rc_file_win = ../res/wbrw.rc

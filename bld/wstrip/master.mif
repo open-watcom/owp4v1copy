@@ -36,10 +36,10 @@ msg.gh : wstrip.msg
 !endif
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
-        $(rc) -r -fo=$^@ -zk0 -DDOS $[@ -bt=windows
+        $(rc_aui) -zk0 -DDOS $[@ -fo=$^@
 
 qwstrip.res : wstrip.rc wstrip.msg msg.gh qusage.rc
-        $(rc) -r -fo=$^@ -zk0 -DQNX $[@ -bt=windows
+        $(rc_aui) -zk0 -DQNX $[@ -fo=$^@
 
 ousage.rc : usage.sp
         wsplice -kIS_RC -kDOS -kENGLISH -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $[@ $^@

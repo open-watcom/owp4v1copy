@@ -284,6 +284,7 @@ linker          = $(linker_$(host_cpu))
 librarian       = $(librarian_$(host_cpu))
 as              = $(as_$(host_cpu))
 vi              = vi -q -d -i
+rc_aui          = $(rc) -bt=windows -r
 
 !include bhost.mif
 !include local.mif

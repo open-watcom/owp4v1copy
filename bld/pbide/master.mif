@@ -6,14 +6,12 @@ proj_name = pbide
 
 dlldbg.exe : dlldbg.obj dlldbg.res
          $(linker) op map $(lflags) name $^. file dlldbg.obj
-         $(rc) -k dlldbg.res
+         $(rc) -k dlldbg.res $^@
 
 .c: ..
 
 extra_c_flags =-d2
 extra_c_flags_win =-zW
-build_rc_nt_386 = nt
-build_rc_win_i86 = windows
 
 dlldbg.res : ../dlldbg.rc ../debugger.ico
-        $(rc) -bt=$(build_rc_$(host_OS)_$(host_CPU)) -r $[@ -fo=$@
+        $(rc) $(rc_flags) -r $[@ -fo=$@

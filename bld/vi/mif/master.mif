@@ -61,10 +61,10 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
         wbind $(lname) -s $(lang_root)\binw\win386.ext -R $(ED).res
         @erase $(lname)
 !else
-        $(rc) -k -zk0 -bt=windows $(ED).res
+        $(rc) $(rc_flags) -k -zk0 $(ED).res $^@
 !endif
 !else ifeq host_os nt
-        $(rc) -bt=NT -zk0 $(ED).res
+        $(rc) $(rc_flags) -zk0 $(ED).res $^@
 !endif
         # don't bind - it screws up everything - BBB
 !else

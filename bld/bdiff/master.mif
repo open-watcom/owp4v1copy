@@ -137,7 +137,7 @@ bplevel.exe : bplevel.obj
         $(linker) option quiet $(lflags) name $^@ file { $< }
 
 bpatch.res : ../bpatch.rc $(inc_dirs)/bpatch.h pusage.rc pusagej.rc
-        $(rc) -r -i.. -dBPATCH -fo=$^@ $[@
+        $(rc_aui) -i.. -dBPATCH $[@ -fo=$^@
 
 pusage.rc : ../usage.sp
         wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" $[@ $^@
@@ -149,7 +149,7 @@ dusage.rc : ../usage.sp
         wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" $[@ $^@
 
 bdiff.res : ../bpatch.rc dusage.rc $(inc_dirs)/bpatch.h
-        $(rc) -r -i.. -dBDIFF -fo=$^@ $[@
+        $(rc_aui) -i.. -dBDIFF $[@ -fo=$^@
 
 # We cannot use deftarg.mif because of the non-default extension files which are generated.
 clean : .symbolic

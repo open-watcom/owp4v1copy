@@ -134,5 +134,5 @@ rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
         $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
 .rc.res: .AUTODEPEND
-        $(RC) $(rc_flags) -r -zk0 -ad -i"$(wimgedit_dir)/res;$(sdk_dir)/misc" $[@ -fo=$^@
+        $(RC) $(rc_flags) -r -ad -zk0 -i"$(wimgedit_dir)/res;$(sdk_dir)/misc" $[@ -fo=$^@
 !endif

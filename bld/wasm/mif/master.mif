@@ -148,7 +148,7 @@ $(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(name).res $(proj_ob
         @rm -f $(name).rex
 !endif
 !endif
-        wstrip -a -r -q $@ . $(name)
+        wstrip -a -r -q $^@ . $(name).res
 
 
 $(link_name) : $(__MAKEFILES__)
@@ -164,7 +164,7 @@ $(link_name) : $(__MAKEFILES__)
 # resource stuff
 
 $(name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc msg.gh wasmmsg.gh
-        $(rc) -bt=windows -d_WASM_ -r -zk0 -fo=$^@ $[@
+        $(rc_aui) -zk0 -d_WASM_ $[@ -fo=$^@
 
 usage.rc : $(proj_path)/h/usage.sp
         wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@

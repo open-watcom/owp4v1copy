@@ -14,15 +14,15 @@ samp_obj_os2_i86        = sampos2.obj
 objects = sample.obj sampdata.obj $(samp_obj_$(host_OS)_$(host_CPU)) io.obj &
           sysio.obj sampexe.obj wmsg.obj sysinit.obj
 
-extra_c_flags           = /dFAR_PTR= /dREPORT_TYPE= /fiwatcom.h
-extra_c_flags_i86       = /2
-inc_dirs                = $(watcom_dir)\h;$(dig_dir)\h;
+extra_c_flags           = -dFAR_PTR= -dREPORT_TYPE= -fiwatcom.h
+extra_c_flags_i86       = -2
+inc_dirs                = $(watcom_dir)/h;$(dig_dir)/h;
 
-rc_flags_nt             = /dNT
-rc_flags_os2_386        = /dOS22
-rc_flags_os2_i86        = /dOS2
+rc_flags_nt             = -dNT
+rc_flags_os2_386        = -dOS22
+rc_flags_os2_i86        = -dOS2
 rc_flags_os2            = $(rc_flags_$(host_CPU))
-rc_flags                = /zk0 /r $(rc_flags_$(host_OS)) /bt=windows
+rc_flags                = -zk0 -r $(rc_flags_$(host_OS)) -bt=windows
 
 xname_nt_axp    = wsmpaxp
 xname_nt_386    = wsmpnt
@@ -31,19 +31,19 @@ xname_os2_i86   = wsampos2
 
 xname = $(xname_$(host_OS)_$(host_CPU))
 
-extra_l_flags = op symfile,map,quiet lib $(wres_lib) name ..\bin\$(xname)
+extra_l_flags = op symfile,map,quiet lib $(wres_lib) name ../bin/$(xname)
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_CPU))
 
-..\bin\$(xname).exe : $(objects) makefile $(xname).res $(wres_lib)
+../bin/$(xname).exe : $(objects) makefile $(xname).res $(wres_lib)
     $(linker) $(lflags) file {$(objects)}
-    wstrip /q /a /r ..\bin\$(xname).exe . $(xname).res
+    wstrip -q -a -r $^@ . $(xname).res
 
-.c: ..\c
+.c: ../c
 
-$(xname).res : ..\h\wsample.rc ..\h\wmsg.h
+$(xname).res : ../h/wsample.rc ../h/wmsg.h
         @set include=$(inc_path)
-        $(rc) $(rc_flags) /fo=$^. ..\h\wsample.rc
+        $(rc) $(rc_flags) $[@ -fo=$^@
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj

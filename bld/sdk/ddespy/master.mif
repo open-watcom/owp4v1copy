@@ -57,4 +57,4 @@ rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
         $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
 $(name).res : $(wddespy_dir)/$(name).rc .AUTODEPEND
-        $(RC) $(rc_flags) -r -zk0 -ad -i"$(wddespy_dir)/res" $[@ -fo=$^@
+        $(RC) $(rc_flags) -r -ad -zk0 -i"$(wddespy_dir)/res" $[@ -fo=$^@

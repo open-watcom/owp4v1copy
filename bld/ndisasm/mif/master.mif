@@ -87,7 +87,7 @@ msg.obj :: msg.c
 $(stand_objs) :: ../stand/h/msg.gh
 
 $(proj_name).res : wdis.rc ../stand/h/msg.gh
-        $(rc) -bt=windows -r $[@ -i"$(disasm_dir)/stand/h" -zk0 -fo=$^@
+        $(rc_aui) -zk0 -i"$(disasm_dir)/stand/h" $[@ -fo=$^@
 
 ./mkstr.exe : mkstr.c
         $(bld_cl) $[@ -fe=$@ -i"$(disasm_dir)/stand"

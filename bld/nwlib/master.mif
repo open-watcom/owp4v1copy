@@ -135,4 +135,4 @@ msg_rc_flags = -d__UNIX__
 !endif
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
-        $(rc) -bt=windows -r -zk0 -fo=$^@ $(msg_rc_flags) $[@ 
+        $(rc_aui) -zk0 $(msg_rc_flags) $[@ -fo=$^@

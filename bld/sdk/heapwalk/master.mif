@@ -61,4 +61,4 @@ rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
         $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
 .rc.res: .AUTODEPEND
-        $(RC) $(rc_flags) -zk0 -r -ad -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(RC) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@

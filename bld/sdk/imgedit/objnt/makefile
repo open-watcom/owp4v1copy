@@ -2,7 +2,6 @@ targflags = -mf-bt=NT
 comp = $(comp386)
 extras = wincreat.obj desknt.obj title.obj winutils.obj
 rc = $(wrce)
-resflags =-zk0 -r -d__NT__ -bt=NT -fo=../objnt/$(name).res $(resdir)$(name).rc
 wr_dir=$(sdk_dir)/wr
 wres_dir=$(sdk_dir)/rc/wres
 
@@ -14,7 +13,7 @@ wres_dir=$(sdk_dir)/rc/wres
         @set LIB=$(wr_dir)/nt;$(wpi_dir)/lib;$(sdk_dir)/rc/wres/lib;$(%LIB)
 
 $(name).res : $(rcdeps)
-    $(RC) $(resflags) -i="../res;../../misc"
+        $(RC) $(rc_flags) -r -zk0 -d__NT__ -i="../res;../../misc" $(resdir)$(name).rc -fo=$^@
 
 $(lnk) : makefile ../imgedit.mif
         %create $(lnk)

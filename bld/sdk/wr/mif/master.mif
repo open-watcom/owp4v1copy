@@ -151,4 +151,4 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         @rm -f ytab.h
 
 $(name).res: ../h/wr.rc .AUTODEPEND
-        $(rc) $(rc_flags) -DWR_COMPILED -r -ad -fo=$^@ $[@
+        $(rc) $(rc_flags) -r -ad -DWR_COMPILED $[@ -fo=$^@

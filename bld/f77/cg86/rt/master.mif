@@ -724,7 +724,8 @@ w_lib = $(librarian) -s -t
 w_lib = $(librarian)
 !endif
 
-all: $(lib_name).lib ../errmsg.res .symbolic
+all: $(lib_name).lib .symbolic
+#all: $(lib_name).lib ../errmsg.res .symbolic
     @%null
 
 $(lib_name).lib : $(files)
@@ -733,5 +734,5 @@ $(lib_name).lib : $(files)
     $(w_lib) -n -b $(lib_name) @$(lbc_file)
     @del $(lbc_file)
 
-../errmsg.res : ../c/errmsg.rc ../h/errcod.h
-    $(rc) -zk0 -r -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@
+#../errmsg.res : ../c/errmsg.rc ../h/errcod.h
+#    $(rc_aui) -zk0 -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@ -fo=$^@

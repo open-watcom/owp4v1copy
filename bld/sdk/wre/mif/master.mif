@@ -114,4 +114,4 @@ wretemp.gh: ../h/wre.msg
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -fo=$^@ $[@
+        $(rc) $(rc_flags) -r -ad $[@ -fo=$^@

@@ -20,11 +20,11 @@ objs =               &
 dependants = wtouch.res $(objs)
 
 $(proj_name).exe : $(dependants)
-        $(linker) option quiet $(lflags) name $^. file { $(objs) } lib $(wres_lib)
+        $(linker) option quiet $(lflags) name $^@ file { $(objs) } lib $(wres_lib)
         wstrip -q -a -r $(proj_name).exe . $(proj_name).res
 
 $(proj_name).res : $(proj_name).rc $(proj_name).msg usage.rc usagej.rc msg.gh
-        $(rc) -q -r -i"$(wtouch_dir)" -zk0 -fo=$^@ $[@ /bt=windows
+        $(rc_aui) -zk0 -i"$(wtouch_dir)" $[@ -fo=$^@
 
 usage.rc : usage.sp
         wsplice -kIS_RC -kENGLISH -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $[@ usage.rc

@@ -108,7 +108,7 @@ $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(__MAKEFILES__)
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
-        $(rc) -bt=windows -zk0 -q -r -fo=$^@ $[@
+        $(rc_aui) -zk0 $[@ -fo=$^@
 
 usage.rc : ../h/usage.sp
         wsplice -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc

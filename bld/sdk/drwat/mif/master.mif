@@ -107,13 +107,13 @@ $(link_name) : $(__MAKEFILES__)
 
 !ifeq host_OS win
 $(proj_name).res : ../drwatcom.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -zk -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk $[@ -fo=$^@
 !else
 $(proj_name).res : ../drnt.rc .AUTODEPEND
 !ifeq drwatcom_95 1
-        $(rc) $(rc_flags) -r -zk0 -ad -dCHICAGO $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 -dCHICAGO $[@ -fo=$^@
 !else
-        $(rc) $(rc_flags) -r -zk0 -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 $[@ -fo=$^@
 !endif
 !endif
 

@@ -100,7 +100,7 @@ $(name).dll: wmsgfile.gh $(object) $(wres_lib) $(wr_lib) $(name).res
 !endif
 
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -fo=$^@ $[@
+        $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
 
 wmsgfile.gh: msgtemp.gh
         $(vi) -s $(misc_dir)/msgtoh.vi -p"$^@" $[@

@@ -56,7 +56,7 @@ resources = thrdctl.dlg procctl.dlg notelog.dlg thrdctl.dlg &
 ###########################################################################
 $(name).exe : $(msgh) $(objs) $(lnk) $(name).res
         $(link) @$(lnk)
-        $(RC) -k $(name).res
+        $(RC) -k $(name).res $^@
 
 $(msgh) : $(mastermsg)
         $(vi) -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
@@ -66,7 +66,7 @@ $(mastermsg) : $(msgfiles)
         $(comp286) -p -i="../../misc" drnt.msg > $(mastermsg)
 
 $(name).res : $(name).rc $(resources)
-    $(RC) -r $(name).rc  -d__NT__ -fo=$(name).res -i="../../misc;.." -bt=nt
+        $(RC) $(rc_flags) -r -d__NT__ -i="../../misc;.." $(name).rc -fo=$^@
 
 $(lnk) : makefile
         %create $(lnk)

@@ -48,4 +48,4 @@ $(target_exe).exe : $(files) $(wres_lib) errmsg.res
     wstrip -q -a -r $(target_exe) . errmsg.res
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc) -zk0 -r -i="$(inc_path)" -bt=windows -fo=$^@ $[@
+    $(rc_aui) -zk0 -i="$(inc_path)" $[@ -fo=$^@

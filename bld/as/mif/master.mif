@@ -147,12 +147,12 @@ all_lib : $(asi_lib) $(asi_lib_j) .symbolic
 $(asi_lib) : $(asi_objs)
         @rm -f $^&.lbc
         @for %i in ($<) do @%append $^&.lbc -+%i
-        $(librarian) -b -q $^@ @$^&.lbc
+        $(librarian) -b $^@ @$^&.lbc
 
 $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
         cp $[@ $^@
-        $(librarian) -b -q $^@ -asmsg.obj
-        $(librarian) -b -q $^@ +asmsgj.obj
+        $(librarian) -b $^@ -asmsg.obj
+        $(librarian) -b $^@ +asmsgj.obj
 
 asmsgj$(obj): asmsg.c
         @set include=$(inc_path)
@@ -171,7 +171,7 @@ $(name)$(exe) : $(as_objs) $(libs) $(exe_deps_$(host_OS)) $(name).res
 $(as_objs) : msg.gh
 
 $(name).res : as.rc msg.gh
-        $(rc) -q -bt=windows -r $(extra_defines) $[@ -i"$(as_dir)/h" -fo=$^@
+        $(rc_aui) $(extra_defines) -i"$(as_dir)/h" $[@ -fo=$^@
 !else
 
 $(asi_objs) : msg.gh

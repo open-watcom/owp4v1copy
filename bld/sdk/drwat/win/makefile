@@ -44,7 +44,7 @@ objs =  drwatcom.obj fault.obj globals.obj &
 
 $(name).exe : $(msgh) $(objs) $(lnk) $(name).res
         wlink @$(lnk)
-        $(RC) -k $(name).res
+        $(RC) -k $(name).res $^@
 
 .ERASE
 $(msgh) : $(mastermsg)
@@ -66,7 +66,7 @@ $(name).res : $(name).rc stackt.dlg ..\common\stat.dlg ..\common\intdlg.dlg &
                 dmptask.dlg taskctl.dlg segmap.dlg &
                 $(sdk_misc)\about.dlg  dbgopt.dlg &
                 ..\common\dipload.dlg $(mastermsg)
-    $(RC) -zk -r -i=$(sdk_misc) $(name).rc
+        $(RC) -r -zk -i=$(sdk_misc) $(name).rc -fo=$^@
 
 $(lnk) : makefile $(disasm)\compile.tim
         %create $(lnk)

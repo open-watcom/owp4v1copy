@@ -1,10 +1,6 @@
 !ifdef sys_windowed
 $(ED).res : $(vi_dir)/win/viw.rc .AUTODEPEND
-!ifeq host_os win
-        $(rc) -r -ad -zk0 -bt=windows -i"$(vi_dir)/win;$(vi_dir)/ctl" $[@ -fo=$^@
-!else
-        $(rc) -r -ad -zk0 -bt=nt -i"$(vi_dir)/win;$(vi_dir)/ctl" $[@ -fo=$^@
-!endif
+        $(rc) $(rc_flags) -r -ad -zk0 -i"$(vi_dir)/win;$(vi_dir)/ctl" $[@ -fo=$^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@

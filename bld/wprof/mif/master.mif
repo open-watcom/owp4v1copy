@@ -91,16 +91,16 @@ rc                      = $(rc_os2)
 $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @if exist finger.obj del finger.obj
     @%make finger.obj
-    $(linker) name $(fname) $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
+    $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifdef resfile
 !ifeq sys_windowed 1
 !ifeq host_OS os2
-    $(rc) $(rc_flags) $(resfile) $(fname).exe
+    $(rc) $(rc_flags) $(resfile) $^@
 !else
-    $(rc) $(rc_flags) $(resfile) $(fname).exe
+    $(rc) $(rc_flags) $(resfile) $^@
 !endif
 !else
-    wstrip -q -a -r  $(fname).$(exe) . $(resfile)
+    wstrip -q -a -r  $^@ . $(resfile)
 !endif
 !endif
 
@@ -135,7 +135,7 @@ wprof.res : _guimsgs.gh auistr.gh wprof.rc
 !else
 !ifeq sys_windowed 1
 wprof.res : _guimsgs.gh auistr.gh ../h/wprof.rc
-    $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -i="$(rcinclude);$(lang_root)/h/win" $]@ -fo=$^@
 #
 #wprof.res : _guimsgs.gh auistr.gh ../h/wprof.rc
 #        $(rc) -r $(rc_flags) ../h/wprof.rc
@@ -160,12 +160,7 @@ rcfiles = &
 rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)/merge/res
 
 wprofui.res : ../h/wprofui.rc _guimsgs.gh auistr.gh $(rcfiles)
-    $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
-
-#auistr.gh : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-#        $(bld_cl) -i"$(aui_dir)/h" $]@
-#        mkstr $^@
-#        @rm -f mkstr.*
+    $(rc_aui) -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
         $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@

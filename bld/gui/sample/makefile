@@ -5,9 +5,9 @@ LNK=sample.lnk
 source_dir = $(guidir)\sample\c
 name = sample
 !ifeq type win
-rcopt += -q -i=$(guidir)\$(type);$(sdk_dir)\misc
+rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc
 !else
-rcopt += -q -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win
+rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win
 !endif
 
 .before
@@ -143,7 +143,7 @@ sample.$(ext) : $(objs) $(guilib) $(uilib) $(sysdep) $(LNK)
 !else ifeq os pm
         $(lang_root)\binp\rc -p -x $(rcname).res $(name).exe
 !else
-        $(rc) -k $(rcopt) $(sysdep)
+        $(rc) $(rcopt) -k $(sysdep)
 !endif
 !ifneq os w386
         copy /b $(name).exe+$(name).sym
@@ -153,9 +153,9 @@ sample.$(ext) : $(objs) $(guilib) $(uilib) $(sysdep) $(LNK)
         !$(pharlap)bind386 $(pharlap)run386b sample
 !endif
 !ifeq ext qnx
-        wstrip /q /a /r sample.qnx . $(rcname).res
+        wstrip -q -a -r sample.qnx . $(rcname).res
 !else
-        wstrip /q /a /r sample.exe . $(rcname).res
+        wstrip -q -a -r sample.exe . $(rcname).res
 !endif
 !endif
 
@@ -181,7 +181,7 @@ samp2.$(ext) : samp2.obj $(guilib) $(uilib) $(LNK)
 .c.pp:
         $(ppcompile)
 
-$(rcname).res : ..\$(rcname).rc ..\$(rcname).dlg
+$(rcname).res : ../$(rcname).rc ../$(rcname).dlg
 !ifeq os pm
         @set oinc=$(%include)
         #set include=$(watcom_dir)\os220_h;$(%include)
@@ -200,8 +200,8 @@ $(rcname).res : ..\$(rcname).rc ..\$(rcname).dlg
         @set include=$(%oinc)
         del closebmp.bmp
 !else
-        $(rc) -r $(rcopt)  ..\$(rcname).rc
-        copy ..\$(rcname).res
+        $(rc) $(rcopt) -r $[@ -fo=$^@
+#        copy ..\$(rcname).res
 !endif
 
 sample.obj: sample.c sample.h dlgstat.h dlgdynam.h
