@@ -34,8 +34,8 @@
 #include <string.h>
 
 #define IDE_WINDOW_CLASS        "GUIClass"
-#define IDE_WIN_CAP_LEN         10
-#define IDE_WINDOW_CAPTION      "WATCOM IDE"
+#define IDE_WIN_CAP_LEN         15
+#define IDE_WINDOW_CAPTION      "Open Watcom IDE"
 
 BOOL __export CALLBACK FindWatIDEHwnd( HWND hwnd, LPARAM lparam ) {
     char        buf[256];
