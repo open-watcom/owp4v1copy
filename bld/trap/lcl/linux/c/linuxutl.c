@@ -82,7 +82,10 @@ unsigned WriteMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
      * we want to update.
      */
     if( count ) {
-        u_long  val;
+        u_long      val;
+        unsigned_8  *src = (unsigned_8 *)data;
+        unsigned_8  *dst = (unsigned_8 *)&val;
+        int         i;
 
         errno = 0;
         if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
@@ -94,21 +97,9 @@ unsigned WriteMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
         OutNum( val );
         Out( "\n" );
 #endif
-        switch( count ) {
-        case 1:
-            val &= 0xFFFFFF00;
-            val |= (u_long)(*((unsigned_8*)data));
-            break;
-        case 2:
-            val &= 0xFFFF0000;
-            val |= (u_long)(*((unsigned_16*)data));
-            break;
-        case 3:
-            val &= 0xFF000000;
-            val |= ((u_long)(*((unsigned_8*)(data+0))) << 0) |
-                   ((u_long)(*((unsigned_8*)(data+1))) << 8) |
-                   ((u_long)(*((unsigned_8*)(data+2))) << 16);
-            break;
+        /* we have to maintain byte order here! */
+        for( i = 0; i < count; ++i ) {
+            dst[i] = src[i];
         }
 #if DEBUG_WRITEMEM
         Out( "writemem:" );
@@ -144,7 +135,10 @@ unsigned ReadMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
 
     /* Now handle last partial read if neccesary */
     if( count ) {
-        u_long  val;
+        u_long      val;
+        unsigned_8  *src = (unsigned_8 *)&val;
+        unsigned_8  *dst = (unsigned_8 *)data;
+        int         i;
 
         errno = 0;
         if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
@@ -152,19 +146,8 @@ unsigned ReadMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
                 return( size - count );
             }
         }
-        CONV_LE_32( val );
-        switch( count ) {
-        case 1:
-            *((unsigned_8*)data) = (unsigned_8)val;
-            break;
-        case 2:
-            *((unsigned_16*)data) = (unsigned_16)val;
-            break;
-        case 3:
-            *((unsigned_8*)(data+0)) = (unsigned_8)(val >> 0);
-            *((unsigned_8*)(data+1)) = (unsigned_8)(val >> 8);
-            *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
-            break;
+        for( i = 0; i < count; ++i ) {
+            dst[i] = src[i];
         }
         count = 0;
     }
