@@ -428,6 +428,7 @@ static void DeclSpecifiers( char    *plain_int,
             if( flags & FLAG_UNALIGNED )CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_UNALIGNED;
             break;
+        case T_INLINE:
         case T___INLINE:
             if( flags & FLAG_INLINE )CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_INLINE;

@@ -218,6 +218,8 @@ int KwLookup()
     /*  lookup id in keyword table */
 
     hash = KwHashValue + FIRST_KEYWORD;
+    if ( hash == T_INLINE && !CompFlags.extensions_enabled /* && !c99 */ )
+      hash = T_ID;
     keyword = Tokens[ hash ];
     if( *keyword == Buffer[0] ) {
         if( strcmp( keyword, Buffer ) == 0 )  return( hash );
