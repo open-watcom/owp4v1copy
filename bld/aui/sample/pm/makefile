@@ -11,6 +11,6 @@ app.exe appj.exe : $(objs) app.lnk $(auilib) $(guilib) apppm.res apppmj.res
         copy/b appj.exe+app.sym
 
 dlgoptn.dlg : ..\h\dlgoptn.dlg
-    $(auidir)\bin\parsedlg ..\h\dlgoptn.dlg dlgoptn.dlg
+    parsedlg ..\h\dlgoptn.dlg dlgoptn.dlg
 
 !include ..\makefile
