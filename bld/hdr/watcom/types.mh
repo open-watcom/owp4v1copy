@@ -65,12 +65,18 @@ typedef int             clockid_t;/* Used for clock IDs             */
 
 typedef char            *caddr_t;
 typedef long            daddr_t;
+
+:: The exact width integer types are shared with stdint.h
+#ifndef _EXACT_WIDTH_INTS
+#define _EXACT_WIDTH_INTS
 typedef char            int8_t;
 typedef unsigned char   uint8_t;
 typedef short           int16_t;
 typedef unsigned short  uint16_t;
 typedef int             int32_t;
 typedef unsigned int    uint32_t;
+#endif
+
 typedef unsigned char   u_char;
 typedef unsigned short  u_short;
 typedef unsigned int    u_int;
@@ -145,15 +151,31 @@ typedef unsigned short wchar_t;
 #endif
 
 typedef char _WCI86FAR *caddr_t;
+
+:: The exact width integer types are shared with stdint.h
+#ifndef _EXACT_WIDTH_INTS
+#define _EXACT_WIDTH_INTS
+typedef char            int8_t;
+typedef unsigned char   uint8_t;
+typedef short           int16_t;
+typedef unsigned short  uint16_t;
 #if defined __386__
 typedef int             int32_t;
-typedef unsigned int    u_int32_t;
 typedef unsigned int    uint32_t;
 #else
 typedef long            int32_t;
-typedef unsigned long   u_int32_t;
 typedef unsigned long   uint32_t;
 #endif
+#endif /* _EXACT_WIDTH_INTS */
+
+typedef unsigned char   u_int8_t;
+typedef unsigned short  u_int16_t;
+#if defined __386__
+typedef unsigned int    u_int32_t;
+#else
+typedef unsigned long   u_int32_t;
+#endif
+
 typedef char _WCFAR *   faddr_t;
 typedef unsigned long   paddr_t;
 typedef long            daddr_t;
@@ -161,13 +183,7 @@ typedef unsigned char   uchar_t;
 typedef unsigned short  ushort_t;
 typedef unsigned int    uint_t;
 typedef unsigned long   ulong_t;
-typedef char            int8_t;
-typedef unsigned char   u_int8_t;
-typedef unsigned char   uint8_t;
 typedef unsigned char   u_char;
-typedef short           int16_t;
-typedef unsigned short  u_int16_t;
-typedef unsigned short  uint16_t;
 typedef unsigned short  u_short;
 typedef unsigned int    u_int;
 typedef unsigned long   u_long;

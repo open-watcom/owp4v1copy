@@ -71,6 +71,7 @@ signal.h        : $(signal_deps)
 stdarg.h        : $(stdarg_deps)
 stddef.h        : $(stddef_deps)
 stdexcep.h      : ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp
+stdint.h        : ../watcom/stdint.mh ../readonly.sp ../crwat.sp
 stdio.h         : $(stdio_deps)
 stdiobuf.h      : ../watcom/stdiobuf.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 stdlib.h        : $(stdlib_deps)
