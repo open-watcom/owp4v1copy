@@ -245,7 +245,7 @@ static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
 
 // Note: this needs to be cdecl for Win32s and Windows 95
 //       Windows NT doesn't care if it is cdecl or stdcall
-int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
+int __cdecl __ExceptionFilter( PEXCEPTION_RECORD ex,
                                LPVOID establisher_frame,
                                LPCONTEXT context,
                                LPVOID dispatch_context )
