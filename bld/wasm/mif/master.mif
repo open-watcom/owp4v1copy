@@ -205,7 +205,7 @@ usagej.u : $(proj_path)/h/usage.sp
 
 msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed -e '/0$$/d' > $^@
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed -e '/0$$/d' | &
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_SHARE_RC_BASE/' > $^@
 !else
         $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_SHARE_RC_BASE" $[@
@@ -221,7 +221,7 @@ wasmmsg.gh : $(proj_path)/h/wasm.msg
 
 wmpmsg.gh : $(proj_path)/h/womp.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
+        perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' | &
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WOMP_RC_BASE/' > $^@
 !else
         $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_WOMP_RC_BASE" $[@
