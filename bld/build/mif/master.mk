@@ -19,4 +19,4 @@ CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
 DEFS = -D__386__ -D__LINUX__ -DLINUX -D__UNIX__ -DUNIX -D_WCUNALIGNED="__attribute__((packed))" -D_LINKER=_WLINK -D__FLAT__ -Uunix -DBOOTSTRAP
 
 $(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -I$(OBJDIR) -o $@ $<
