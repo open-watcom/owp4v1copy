@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default window sizes, window manipulation routines.
 *
 ****************************************************************************/
 
@@ -261,7 +260,7 @@ void SetWindowSizes( void )
     messagew_info.y1 = WindMaxHeight-1;
     messagew_info.y2 = WindMaxHeight-1;
 #endif
-    dirw_info.x2 = WindMaxWidth-14;
+    dirw_info.x2 = WindMaxWidth-12;
     dirw_info.y2 = WindMaxHeight-7;
     setw_info.y2 = WindMaxHeight-4;
     filelistw_info.x2 = WindMaxWidth-2;

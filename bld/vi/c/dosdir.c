@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOSish directory access functions.
 *
 ****************************************************************************/
 
@@ -153,8 +152,7 @@ void FormatFileEntry( direct_ent *file, char *res )
             size,
             (int)file->date.month,
             (int)file->date.day,
-            (int)file->date.year+80,
+            (int)file->date.year+1980,
             (int)file->time.hour,
             (int)file->time.min);
-
 } /* FormatFileEntry */
