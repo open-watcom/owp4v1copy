@@ -1651,7 +1651,7 @@ void VarAllNodesInvalid( var_info *i )
     }
 }
 
-var_node *VarAdd( var_info *i, void *name,
+var_node *VarAdd1( var_info *i, void *name,
                              unsigned len, bool expand,
                              bool is_sym_handle )
 {
@@ -2221,10 +2221,10 @@ static walk_result AddNewVar( sym_walk_info swi, sym_handle *sym, void *_d )
                 SymName( sym, NULL, SN_SOURCE, TxtBuff, TXT_LEN );
                 // nyi - use SymInfo when Brian implements the "this" indicator
                 if( stricmp( TxtBuff, "this" ) == 0 ) {
-                    new = VarAdd( d->i, sym, sym_SIZE, d->i->members, TRUE );
+                    new = VarAdd1( d->i, sym, sym_SIZE, d->i->members, TRUE );
                     new->bits |= VARNODE_THIS;
                 } else {
-                    new = VarAdd( d->i, sym, sym_SIZE, FALSE, TRUE );
+                    new = VarAdd1( d->i, sym, sym_SIZE, FALSE, TRUE );
                 }
             } else {
                 new = d->v;

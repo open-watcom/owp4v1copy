@@ -180,7 +180,7 @@ extern  bool    WndVarAdd( a_window *wnd, char *name,
 {
     var_node    *v;
 
-    v = VarAdd( WndVarInfo( wnd ), name, len, expand, FALSE );
+    v = VarAdd1( WndVarInfo( wnd ), name, len, expand, FALSE );
     VarRepaint( wnd );
     return( v != NULL );
 }

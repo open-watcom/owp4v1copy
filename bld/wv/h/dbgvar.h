@@ -196,7 +196,7 @@ extern  int             VarRowTotal(var_info *i);
 extern  void            VarAllNodesInvalid(var_info *i);
 extern  void            VarKillExprSPCache(var_info *i);
 extern  bool            VarErrState(void);
-extern  var_node        *VarAdd(var_info *i,void *name,unsigned int len,bool expand,bool is_sym_handle);
+extern  var_node        *VarAdd1(var_info *i,void *name,unsigned int len,bool expand,bool is_sym_handle);
 extern  unsigned int    VarNewCurrRadix(var_node *v);
 extern  int             VarFindRootRow(var_info *i,var_node *v,int row);
 extern  bool            VarExpandable(type_kind node_class);
