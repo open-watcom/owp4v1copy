@@ -43,10 +43,10 @@ bld_incs        = $(bld_extra_incs);$(lang_root)\h
 !endif
 
 !ifdef __NTAXP__
-bld_cl          = wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = wccaxp -zq -i$(bld_incs)
+bld_cl          = wclaxp -l=$(bld_sys) -i$(bld_incs)
+bld_cc          = *wccaxp -i$(bld_incs)
 !else
-bld_cl          = wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = wcc386 -zq -i$(bld_incs)
+bld_cl          = wcl386 -l=$(bld_sys) -i$(bld_incs)
+bld_cc          = *wcc386 -i$(bld_incs)
 !endif
-bld_link        = wlink op quiet sys $(bld_sys)
+bld_link        = *wlink sys $(bld_sys)

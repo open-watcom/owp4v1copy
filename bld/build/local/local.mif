@@ -8,13 +8,8 @@ lang_root = $(%dwatcom)
 #%WATCOM=$+$(lang_root)$-
 #%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
 #%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
-# this is since the path stuff above doesn't appear to work at the moment
-!ifdef __NTAXP__
-bld_cl          = wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = *wccaxp -zq -i$(bld_incs)
-!else
-bld_cl          = wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = *wcc386 -zq -i$(bld_incs)
+
+!ifndef __NTAXP__
 
 use_bld_incs    = 0
 !ifeq host_CPU axp
@@ -31,12 +26,9 @@ use_bld_incs    = 1
 use_bld_incs    = 0
 !endif
 
-!ifeq use_bld_incs 0
-cc_386          = *wcc386
-cpp_386         = *wpp386
-!else
-cc_386          = *wcc386 -i$(bld_incs)
-cpp_386         = *wpp386 -i$(bld_incs)
+!ifeq use_bld_incs 1
+cc_386          += -i$(bld_incs)
+cpp_386         += -i$(bld_incs)
 !endif
 
 !endif
@@ -73,3 +65,7 @@ linker     += op q
 librarian  += -q
 as         += -q
 rc         += -q
+
+bld_cc     += -zq
+bld_cpp    += -zq
+bld_link   += op q
