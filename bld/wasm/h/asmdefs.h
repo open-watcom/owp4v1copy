@@ -106,6 +106,7 @@ extern unsigned char    Opnd_Count;
 extern char             Modend;         // end of module is reached
 extern int_8            Use32;          // if 32-bit code is use
 extern uint             LineNumber;
+extern int              Token_Count;    // number of tokens on line
 
 extern void             add_frame( void );
 extern struct asmfixup  *AddFixup( struct asm_sym *sym, int fixup_type );

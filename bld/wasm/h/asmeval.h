@@ -58,4 +58,8 @@ typedef struct expr_list {
     uint_8      scale;          // scaling factor 1, 2, 4, or 8 - 386 code only
 } expr_list;
 
+extern int      EvalExpr( int, int, int, bool );
+extern void     AsmEvalInit( void );
+extern void     AsmEvalFini( void );
+
 #endif

@@ -47,6 +47,7 @@
 #include "directiv.h"
 #include "fatal.h"
 #include "asmerr.h"
+#include "asmdefs.h"
 
 #ifdef TRMEM
 #include "memutil.h"
@@ -64,16 +65,13 @@ extern void             WriteObjModule( void );
 extern void             ObjRecInit( void );
 extern void             DelErrFile();
 extern void             PrintStats();
-extern void             AsmInit( int, int, int );
 extern void             PrintfUsage( int first_ln );
 extern void             MsgPrintf1( int resourceid, char *token );
 extern void             InputQueueLine( char * );
 extern int              InputQueueFile( char * );
 extern void             PushLineQueue(void);
 extern void             AddStringToIncludePath( char * );
-extern int              cpu_directive( uint_16 );
 
-extern struct asm_code  *Code;          // store information for assembler
 extern const char       *FingerMsg[];
 
 File_Info               AsmFiles;       // files information

@@ -39,10 +39,8 @@
 #include "asmsym.h"
 #include "directiv.h"
 #include "myassert.h"
+#include "asmdefs.h"
 
-extern struct asm_code          *Code;
-
-extern int MakeFpFixup( struct asm_sym *sym );
 extern char *AsmMangler( struct asm_sym *sym, char *buffer );
 
 typedef enum {

@@ -17,7 +17,7 @@ L$1:
     DW	dgroup
 L$2:
     mov       ax,0ffffH
-    jmp       __qnx_exit_
+    jmp       near ptr __qnx_exit_
 L$3:
     push      bp
     mov       bp,sp

@@ -51,8 +51,6 @@
 
 
 extern int              AsmScan( char *);
-extern int              AsmParse();
-extern void             AsmInit();
 extern void             AddFlist( char const *filename );
 
 char *curr_src_line = NULL;
@@ -93,11 +91,9 @@ typedef struct input_queue {
 extern void             heap( char * );
 extern void             FlushCurrSeg( void );
 extern void             AsmError( int );
-extern int              EvalExpr( int, int, int, bool );
 extern void             OutSelect( bool );
 
 extern char             write_to_file;
-extern char             Parse_Pass;
 extern seg_list         *CurrSeg;
 extern File_Info        AsmFiles;
 extern uint_8           CheckSeg;

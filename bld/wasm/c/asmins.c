@@ -73,10 +73,8 @@ extern int              ptr_operator( int, uint_8 );
 extern int              jmp( int i );
 extern void             MakeConstantUnderscored( long );
 
-extern int              Token_Count;
-
-unsigned char   More_Array_Element = FALSE;
-unsigned char   Last_Element_Size;
+unsigned char           More_Array_Element = FALSE;
+unsigned char           Last_Element_Size;
 
 static struct asm_code  Code_Info;
 static char             ConstantOnly;           // 20-Aug-92
@@ -1003,7 +1001,7 @@ static int comp_opt( uint direct )
 }
 
 #ifdef _WASM_
-void MakeCPUConstant( long i )
+static void MakeCPUConstant( long i )
 /****************************/
 {
     MakeConstantUnderscored( i );
@@ -1031,7 +1029,7 @@ void MakeCPUConstant( long i )
 }
 #endif
 
-int cpu_directive( uint_16 i )
+int cpu_directive( int i )
 {
     int                 temp;
 
@@ -1551,7 +1549,7 @@ static int proc_check( void )
 #define IS_ANY_BRANCH( tok )    \
             ( IS_BRANCH( tok ) || ( (tok) >= T_LOOP && (tok) <= T_LOOPZW ) )
 
-int AsmParse()
+int AsmParse( void )
 /************/
 /*
 - co-ordinate the parsing process;

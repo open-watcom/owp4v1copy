@@ -49,6 +49,7 @@
 #include "fatal.h"
 #include "directiv.h"
 #include "asmdefs.h"
+#include "asmeval.h"
 
 #include "womp.h"
 #include "objio.h"
@@ -68,8 +69,6 @@ extern void             AsmError( int );
 extern void             FreeIncludePath( void );
 extern void             PrepAnonLabels( void );
 extern char             *Mangle( struct asm_sym *, char * );
-extern void             AsmEvalInit( void );
-extern void             AsmEvalFini( void );
 extern void             CheckForOpenConditionals();
 extern bool             PopLineQueue();
 extern void             set_cpu_parameters( void );
@@ -77,7 +76,6 @@ extern void             set_fpu_parameters( void );
 
 extern pobj_state       pobjState;      // for WOMP interface
 extern File_Info        AsmFiles;
-extern int              Token_Count;    // number of tokens on line
 extern pobj_filter      jumpTable[ CMD_MAX_CMD - CMD_POBJ_MIN_CMD + 1 ];
 extern seg_list         *CurrSeg;       // points to stack of opened segments
 extern symbol_queue     Tables[];       // tables of definitions

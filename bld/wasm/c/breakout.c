@@ -45,19 +45,17 @@
 #include "myassert.h"
 #include "asmerr.h"
 #include "expand.h"
+#include "asmdefs.h"
 
 /* prototypes */
 extern int              OrgDirective( int );
 extern int              AlignDirective( uint_16, int );
 extern int              LabelDirective( int );
-extern int              cpu_directive( uint_16 );
 extern int              StructDef( int );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              ForDirective( int, bool );
 
 /* global vars */
-extern char             Parse_Pass;     // phase of parsing
-extern int              Token_Count;
 extern dir_node         *CurrProc;
 extern seg_list         *CurrSeg;
 

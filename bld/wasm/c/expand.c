@@ -43,6 +43,7 @@
 #include "namemgr.h"
 #include "asmsym.h"
 #include "asmdefs.h"
+#include "asmeval.h"
 
 #include "womp.h"
 #include "pcobj.h"
@@ -53,16 +54,14 @@
 
 #include "expand.h"
 #include "directiv.h"
-extern int              Token_Count;    // number of tokens on line
+
 extern dir_node         *CurrProc;
-extern  char            Parse_Pass;     // phase of parsing
 
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 extern void             wipe_space( char *token );
 extern int              AsmScan( char * );
 extern dir_node         *dir_insert( char *name, int tab );
-extern int              EvalExpr( int, int, int, bool );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              MakeLabel( char *symbol_name, int mem_type );
 

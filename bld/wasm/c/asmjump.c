@@ -50,8 +50,6 @@ extern int_8                    PhaseError;
 int ptr_operator( int mem_type, uint_8 fix_mem_type );
 int jmp( int i );
 
-extern int              mem2code( char, int, int );
-
 #ifdef _WASM_
 
 extern seg_list         *CurrSeg;       // points to stack of opened segments
@@ -417,7 +415,7 @@ int jmp( int i )                // Bug: can't handle indirect jump
                 break;
             case EMPTY:
                 /* guess short, we will expand later if needed */
-                if( Code->mem_type == EMPTY && Code->info.token == T_JMP && state != SYM_EXTERNAL ) {
+                if( Code->mem_type == EMPTY && Code->info.token == T_JMP ) {
                     temp = FIX_RELOFF8;
                     Code->info.opnd_type[Opnd_Count] = OP_I8;
                     break;

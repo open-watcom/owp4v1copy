@@ -54,9 +54,6 @@ extern int_8                    PhaseError;
 
 #endif
 
-extern int OperandSize( unsigned long opnd );
-extern int InRange( unsigned long, unsigned );
-
 #ifdef _WASM_
 extern int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
     qdesc       *LinnumQueue = NULL;    // queue of linnum_data structs

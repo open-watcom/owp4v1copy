@@ -47,14 +47,12 @@
     #include "objrec.h"
     #include "myassert.h"
 
-    extern char                 Parse_Pass;     // phase of parsing
     extern int_8                PhaseError;
 
     extern int                  AddFieldToStruct( int );
 #endif
 
 extern void             AsmError( int );
-extern int              BackPatch( struct asm_sym * );
 
 #ifdef _WASM_
     static unsigned             AnonymousCounter = 0;

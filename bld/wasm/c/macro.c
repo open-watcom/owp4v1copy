@@ -47,6 +47,7 @@
 #include "asmsym.h"
 #include "asmerr.h"
 #include "asmdefs.h"
+#include "asmeval.h"
 
 #include "womp.h"
 #include "pcobj.h"
@@ -62,23 +63,19 @@ extern void             FlushCurrSeg( void );
 extern void             AsmError( int );
 extern int              InputQueueFile( char * );
 extern int              AsmScan( char * );
-extern struct fixup     *CreateFixupRec( int );
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 extern void             AsmTakeOut( char * );
-extern int              EvalExpr( int, int, int, bool );
 extern dir_node         *dir_insert( char *name, int tab );
 extern void             wipe_space( char *token );
 extern char             *get_curr_filename( void );
 extern void             PushMacro( char *, bool );
 
-extern  char            Parse_Pass;     // phase of parsing
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 extern dir_node         *CurrProc;
 extern File_Info        AsmFiles;
 extern char             *CurrString;    // Current Input Line
-extern int              Token_Count;    // number of tokens on line
 extern int              MacroLocalVarCounter;
 
 

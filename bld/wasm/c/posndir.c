@@ -52,7 +52,6 @@ extern bool             CheckHaveSeg( void );
 
 /* stupid global vars that we may as well use since they are there */
 extern seg_list         *CurrSeg;       // points to stack of opened segments
-extern int              Token_Count;    // number of tokens on line
 
 typedef unsigned char   byte;
 

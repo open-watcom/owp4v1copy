@@ -133,4 +133,12 @@ extern const struct asm_ins ASMFAR AsmOpTable[];
 extern struct AsmCodeName AsmOpcode[];
 extern char AsmChars[];
 
+int check_override( int *i );
+int OperandSize( unsigned long opnd );
+int InRange( unsigned long val, unsigned bytes );
+int mem2code( char ss, int index, int base );
+int cpu_directive( int i );
+int AsmParse( void );
+void AsmInit( int cpu, int fpu, int use32 );
+
 #endif

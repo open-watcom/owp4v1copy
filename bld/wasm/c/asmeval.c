@@ -53,8 +53,6 @@ static struct asm_tok   *Store;
 static unsigned         StoreNum;
 static expr_list        *ExprListCache;
 
-extern char             Parse_Pass;     // phase of parsing
-
 static void expr_free( expr_list *expr )
 {
     if( expr != NULL ) {
@@ -1341,14 +1339,14 @@ extern int EvalExpr( int count, int start_tok, int end_tok, bool flag_msg )
     return( TokCnt );
 }
 
-void AsmEvalInit()
+void AsmEvalInit( void )
 {
     ExprListCache = NULL;
     Store = NULL;
     StoreNum = 0;
 }
 
-void AsmEvalFini()
+void AsmEvalFini( void )
 {
     void        *next;
 

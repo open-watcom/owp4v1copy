@@ -53,9 +53,6 @@
 #endif
 #include "tbyte.h"
 
-extern int              Token_Count;
-extern struct asm_code  *Code;
-
 extern unsigned char    More_Array_Element;
 extern unsigned char    Last_Element_Size;
 
@@ -69,9 +66,6 @@ extern int              GetStructSize( int );
 #endif
 
 extern int dup_array( asm_sym *sym, char start_pos, char no_of_bytes );
-
-/* from asmins.c */
-extern int              check_override( int *);
 
 #ifdef _WASM_
     extern int_8                PhaseError;
