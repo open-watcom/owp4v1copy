@@ -34,7 +34,6 @@ os2_tools_root  = $(tools_root)\os2tools
 os2_toolkit     = $(%os2tkroot)
 nlang_root      = $(%dwatcom)
 build_root      = $(%devdir)
-rsi_root        = $(%rsidir)
 online_dir      = $(%devdir)\online
 utils_root      = $(build_root)
 # a good enough location for any OS specific support files that may be needed.

@@ -63,10 +63,6 @@ extra_c_flags_i86_win   = -d_OS=_OS_WIN -zW
 extra_c_flags_386       = -fpc $(extra_c_flags_386_$(host_OS))
 extra_c_flags_i86       = -fpc $(extra_c_flags_i86_$(host_OS))
 
-!ifeq host_OS dos
-extra_c_flags_finger    = -fidginfo.gh
-!endif
-
 # remove these lines when the source is fixed
 cflags_all              = -zq -w4
 !ifdef on_build_machine
@@ -100,13 +96,6 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
     @if exist finger.obj del finger.obj
     @%make finger.obj
     $(linker) name $(fname) $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
-!ifdef on_build_machine
-!ifeq host_OS dos
-#    @ren $(fname).exe x.exe
-#    $(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe x.exe $(fname).exe -V
-#    @del x.exe
-!endif
-!endif
 !ifdef resfile
 !ifeq sys_windowed 1
     $(rc) $(rc_flags) $(resfile) $(fname).exe
@@ -136,13 +125,6 @@ wprof.res : wprof.rc
 wprof.res : wprof.rc
         $(rc) -r $(rc_flags) wprof.rc
 !endif
-!endif
-
-!ifeq host_OS dos
-dbinfo.gh
-        -@$(rsi_root)\bin\dos4g $(rsi_root)\bin\dginfo >dginfo.gh
-
-finger.obj : dbinfo.gh
 !endif
 
 msg.obj : msg.c msg.h

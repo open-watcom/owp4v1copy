@@ -1,6 +1,6 @@
 @echo off
 REM *****************************************************************
-REM SETVARS - Windows NT version
+REM SETVARS.BAT - Windows NT version
 REM *****************************************************************
 REM NOTE: Do not use this batch file directly, but copy it and
 REM       modify it as necessary for your own use!!
@@ -18,7 +18,6 @@ set P4PASSWD=YourPassword
 REM Change this to point to your OpenWatcom tree
 REM Must be an 8.3 name!
 set owroot=d:\openwa~1
-set owdrive=d:
 
 REM Change this to point to your Watcom 11.0c directory
 set watcom=c:\c\wc11
@@ -38,15 +37,12 @@ echo OpenWatcom compiler build environment
 
 REM Stuff for the Open Watcom build environment
 set build_platform=nt386
-set rsidir=d:\rsi
 set batdir=%owroot%
 set bld_ver=110
 set builder.ctl=lang.ctl
 set cge=vi.exe pagedown pageup end
 set defrel=rel2
 set devdir=%owroot%\bld
-set devdir2=%owroot%\bld
-set devdr=%owdrive%
 set distroot=%owroot%\distrib
 set dwatcom=%watcom%
 set doc_root=%owroot%\docs
@@ -60,11 +56,6 @@ set path=%owroot%\bin;%devdir%\build\binnt;%owroot%\bat;%lang%\binnt;%lang%\binw
 set relroot=%owroot%
 set rm=-s
 set manifest=%owroot%\manifest
-set rootdir=%owdrive%\
-set setupdr=%owdrive%
-set tntdir=d:\tools\tnt6
-set tooldir=d:
-set tooldr=d:
 set ver=11
 set watcom=%lang%
 set edpath=%lang%\eddat

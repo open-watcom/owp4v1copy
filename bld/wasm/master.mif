@@ -14,16 +14,6 @@ inc_dirs = ..\h;$(womp_dir)\h;$(womp_dir);$(trmem_dir)
 
 .BEFORE
         @set include=$(inc_path)
-        @set DGINFO=
-!ifeq release 1
-!ifeq host_OS dos
-!ifeq tools_9_0
-        @$(rsi_root)\bin\dos4g $(rsi_root)\bin\dginfo >dginfo.gh
-        @set DGINFO=-fidginfo.gh
-
-!endif
-!endif
-!endif
 
 #cflags stuff
 #########
@@ -86,8 +76,6 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
 !ifeq release 0
 proj_obj += trmem.obj trmemcvr.obj
 !endif
-
-extra_c_flags_finger = $(%DGINFO)
 
 #implicit rules
 #####
