@@ -61,6 +61,9 @@ local   TREEPTR OrOr(TREEPTR);
 local   TREEPTR GenFuncCall(TREEPTR);
 local   TREEPTR IndexOp(TREEPTR,TREEPTR);
 local   TREEPTR SegOp(TREEPTR,TREEPTR);
+local      void PopNestedParms( TYPEPTR **plistptr );
+local      void IncSymWeight( SYMPTR sym );
+local      void AddCallNode( TREEPTR tree );
 
 #define PTR_FLAGS  (FLAG_CONST | FLAG_VOLATILE | FLAG_UNALIGNED | FLAG_MEM_MODEL|FLAG_FAR16 | FLAG_BASED )
 
@@ -435,7 +438,7 @@ TREEPTR SymLeaf()
 }
 
 
-void IncSymWeight( SYMPTR sym )
+local void IncSymWeight( SYMPTR sym )
 {
     static int LoopWeights[] = { 1, 0x10, 0x100, 0x1000 };
 
@@ -1812,7 +1815,7 @@ local TREEPTR IndexOp( TREEPTR tree, TREEPTR index_expr )
     return( tree );
 }
 
-void AddCallNode( TREEPTR tree ){
+local void AddCallNode( TREEPTR tree ){
 // if a function call has no proto type wait till end
 // to check it out
     call_list  *new;

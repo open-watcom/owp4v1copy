@@ -46,6 +46,27 @@ extern  TREEPTR GenExpressCode(TREEPTR,int,TREEPTR);
 extern  void    EmptyQueue(void);
 extern  int     StartWCG();
 
+local void      FreeExtVars( void );
+local void      FreeGblVars( SYM_HANDLE sym_handle );
+local void      FreeLocalVars( SYM_HANDLE sym_list );
+static void     FreeTrySymBackInfo( void );
+static void     FreeTryTableBackHandles( void );
+static void     FreeTrySymBackInfo( void );
+extern int      PtrType( TYPEPTR typ, int flags );
+local int       CodePtrType( int flags );
+local int       DoFuncDefn( SYM_HANDLE funcsym_handle );
+static void     CallTryFini( void );
+local void      EmitSyms( void );
+local void      Emit1String( STR_HANDLE str_handle );
+local void      EmitLiteral( STR_HANDLE strlit );
+local void      EmitCS_Strings( void );
+local void      FreeStrings( void );
+local void      DoAutoDecl( SYM_HANDLE sym_handle );
+local void      DoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle );
+local void      ParmReverse( SYM_HANDLE sym_handle );
+#ifdef __SEH__
+static void     GenerateTryBlock( TREEPTR tree );
+#endif
 
 static  struct  local_vars {
         struct local_vars       *next;
@@ -447,12 +468,12 @@ static void CallTryRtn( SYM_HANDLE try_rtn, cg_name parm )
     CGDone( CGCall( call_list ) );
 }
 
-static void CallTryInit()
+static void CallTryInit( void )
 {
     CallTryRtn( SymTryInit, CGFEName( TrySymHandle, T_POINTER ) );
 }
 
-static void CallTryFini()
+static void CallTryFini( void )
 {
     cg_name     name;
 
@@ -1383,7 +1404,7 @@ void DoCompile()
 }
 
 
-local void EmitSyms()
+local void EmitSyms( void )
 {
     SYM_HANDLE          sym_handle;
     auto SYM_ENTRY      sym;
@@ -1557,6 +1578,7 @@ local void DoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle )
         }
     }
 }
+
 local void ParmReverse( SYM_HANDLE sym_handle ) /* 22-jan-90 */
 {
     SYMPTR      sym;
@@ -1646,7 +1668,7 @@ local void FreeSymBackInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
 }
 
 #ifdef __SEH__
-static void FreeTrySymBackInfo()
+static void FreeTrySymBackInfo( void )
 {
     SYM_ENTRY   sym;
 
@@ -1654,7 +1676,7 @@ static void FreeTrySymBackInfo()
     FreeSymBackInfo( &sym, TrySymHandle );
 }
 
-static void FreeTryTableBackHandles()
+static void FreeTryTableBackHandles( void )
 {
     struct try_table_back_handles       *try_backinfo;
 
@@ -1886,7 +1908,7 @@ local void EmitLiteral( STR_HANDLE strlit )
 }
 
 
-local void FreeStrings()
+local void FreeStrings( void )
 {
     STR_HANDLE  strlit, next;
     int         i;
@@ -1920,7 +1942,7 @@ local void DumpCS_Strings( STR_HANDLE strlit )
 }
 
 
-local void EmitCS_Strings()
+local void EmitCS_Strings( void )
 {
     int         i;
 
