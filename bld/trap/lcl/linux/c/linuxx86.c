@@ -31,8 +31,9 @@
 
 #include <stddef.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "squish87.h"
@@ -51,7 +52,7 @@ static void ReadCPU( struct x86_cpu *r )
     user_regs_struct    regs;
 
     memset( r, 0, sizeof( *r ) );
-    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
         last_eip = regs.eip;
         orig_eax = regs.orig_eax;
         r->eax = regs.eax;
@@ -78,7 +79,7 @@ static void ReadFPU( struct x86_fpu *r )
     user_i387_struct    regs;
 
     memset( r, 0, sizeof( *r ) );
-    if( sys_ptrace( PTRACE_GETFPREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETFPREGS, pid, NULL, &regs ) == 0 ) {
         r->cw = regs.cwd;
         r->sw = regs.swd;
         r->tag = regs.twd;
@@ -97,7 +98,7 @@ static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
 
     memset( r, 0, sizeof( *r ) );
     memset( x, 0, sizeof( *x ) );
-    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETFPXREGS, pid, NULL, &regs ) == 0 ) {
         r->cw = regs.cwd;
         r->sw = regs.swd;
         r->tag = regs.twd;
@@ -171,7 +172,7 @@ static void WriteCPU( struct x86_cpu *r )
     regs.es = r->es;
     regs.fs = r->fs;
     regs.gs = r->gs;
-    sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+    ptrace( PTRACE_SETREGS, pid, NULL, &regs );
 }
 
 static void WriteFPU( struct x86_fpu *r )
@@ -186,7 +187,7 @@ static void WriteFPU( struct x86_fpu *r )
     regs.foo = r->op_err.p.offset;
     regs.fos = r->op_err.p.segment;
     memcpy( regs.st_space, r->reg, sizeof( r->reg ) );
-    sys_ptrace( PTRACE_SETFPREGS, pid, 0, &regs );
+    ptrace( PTRACE_SETFPREGS, pid, NULL, &regs );
 }
 
 static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
@@ -195,7 +196,7 @@ static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
     int                 i;
 
     memset( &regs, 0, sizeof( regs ) );
-    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETFPXREGS, pid, NULL, &regs ) == 0 ) {
         regs.cwd = r->cw;
         regs.swd = r->sw;
         regs.twd = r->tag;
@@ -207,7 +208,7 @@ static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
             memcpy( &regs.st_space[i], &r->reg[i], sizeof( r->reg[0] ) );
         memcpy( regs.xmm_space, x->xmm, sizeof( x->xmm ) );
         regs.mxcsr = x->mxcsr;
-        sys_ptrace( PTRACE_SETFPXREGS, pid, 0, &regs );
+        ptrace( PTRACE_SETFPXREGS, pid, NULL, &regs );
     }
 }
 
@@ -237,23 +238,23 @@ u_long GetDR6( void )
 {
     u_long  val;
 
-    sys_ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
+    ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
     return( val );
 }
 
 static void SetDR6( u_long val )
 {
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( 6 ), (void *)val );
+    ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( 6 ), (void *)val );
 }
 
 static void SetDR7( u_long val )
 {
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val );
+    ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val );
 }
 
 static u_long SetDRn( int i, u_long linear, long type )
 {
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( i ), (void *)linear );
+    ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( i ), (void *)linear );
     return( ( type << DR7_RWLSHIFT( i ) )
 //        | ( DR7_GEMASK << DR7_GLSHIFT( i ) ) | DR7_GE
           | ( DR7_LEMASK << DR7_GLSHIFT( i ) ) | DR7_LE );
@@ -432,4 +433,41 @@ unsigned ReqWrite_io( void )
         ret->len = 0;
     }
     return( sizeof( *ret ) );
+}
+
+unsigned ReqGet_sys_config( void )
+{
+    get_sys_config_ret  *ret;
+
+    ret = GetOutPtr( 0 );
+    ret->sys.os = OS_LINUX;
+
+    // TODO: Detect OS version (kernel version?)!
+    ret->sys.osmajor = 1;
+    ret->sys.osminor = 0;
+
+    ret->sys.cpu = X86CPUType();
+    if( HAVE_EMU ) {
+        ret->sys.fpu = X86_EMU;
+    } else {
+        ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
+    }
+    ret->sys.huge_shift = 3;
+    ret->sys.mad = MAD_X86;
+    return( sizeof( *ret ) );
+}
+
+unsigned ReqMachine_data( void )
+{
+    machine_data_req    *acc;
+    machine_data_ret    *ret;
+    unsigned_8          *data;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+    data = GetOutPtr( sizeof( *ret ) );
+    ret->cache_start = 0;
+    ret->cache_end = ~(addr_off)0;
+    *data = X86AC_BIG;
+    return( sizeof( *ret ) + sizeof( *data ) );
 }

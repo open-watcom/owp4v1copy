@@ -49,16 +49,13 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "mad.h"
 #include "madregs.h"
 #include "exeelf.h"
 #include "linuxcomm.h"
-#if defined(MD_x86)
-#include "x86cpu.h"
-#include "dbg386.h"
-#endif
 
 u_short                 flatCS;
 u_short                 flatDS;
@@ -110,8 +107,7 @@ unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
      * need to do for now.
      */
     for( count = size; count >= 4; count -= 4 ) {
-        if( sys_ptrace( PTRACE_POKETEXT, pid, offv,
-                       (void *)(*(unsigned_32*)data) ) != 0 )
+        if( ptrace( PTRACE_POKETEXT, pid, (void *)offv, (void *)(*(unsigned_32*)data) ) != 0 )
             return( size - count );
         data += 4;
         offv += 4;
@@ -123,7 +119,7 @@ unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
      */
     if( count ) {
         u_long  val;
-        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
+        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val ) != 0 )
             return( size - count );
 #if DEBUG_WRITEMEM
         Out( "writemem:" );
@@ -151,7 +147,7 @@ unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         OutNum( val );
         Out( "\n" );
 #endif
-        if( sys_ptrace( PTRACE_POKETEXT, pid, offv, (void *)val ) != 0 )
+        if( ptrace( PTRACE_POKETEXT, pid, (void *)offv, (void *)val ) != 0 )
             return( size - count );
     }
 
@@ -165,7 +161,7 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 
     /* Read the process memory 32-bits at a time */
     for( count = size; count >= 4; count -= 4 ) {
-        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, data ) != 0 )
+        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, data ) != 0 )
             return( size - count );
         data += 4;
         offv += 4;
@@ -175,7 +171,7 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
     if( count ) {
         u_long  val;
     
-        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
+        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val ) != 0 )
             return( size - count );
         switch( count ) {
         case 1:
@@ -316,28 +312,6 @@ int GetLinkMap( struct link_map *dbg_lmap, struct link_map *local_lmap )
     return( TRUE );
 }
 
-unsigned ReqGet_sys_config( void )
-{
-    get_sys_config_ret  *ret;
-
-    ret = GetOutPtr( 0 );
-    ret->sys.os = OS_LINUX;
-
-    // TODO: Detect OS version (kernel version?)!
-    ret->sys.osmajor = 1;
-    ret->sys.osminor = 0;
-
-    ret->sys.cpu = X86CPUType();
-    if( HAVE_EMU ) {
-        ret->sys.fpu = X86_EMU;
-    } else {
-        ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
-    }
-    ret->sys.huge_shift = 3;
-    ret->sys.mad = MAD_X86;
-    return( sizeof( *ret ) );
-}
-
 unsigned ReqChecksum_mem( void )
 {
     char                buf[256];
@@ -399,7 +373,7 @@ static int GetFlatSegs( u_short *cs, u_short *ds )
 {
     user_regs_struct    regs;
 
-    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
         *cs = regs.cs;
     *ds = regs.ds;
     return( TRUE );
@@ -550,7 +524,7 @@ unsigned ReqProg_load( void )
     args[0] = parm_start;
     attached = TRUE;
     pid = RunningProc( args[0], &name );
-    if( pid == 0 || sys_ptrace( PTRACE_ATTACH, pid, 0, 0 ) == -1 ) {
+    if( pid == 0 || ptrace( PTRACE_ATTACH, pid, NULL, NULL ) == -1 ) {
         attached = FALSE;
         args[0] = name;
         if( FindFilePath( TRUE, args[0], exe_name ) == 0 ) {
@@ -562,7 +536,7 @@ unsigned ReqProg_load( void )
         if( pid == -1 )
             return( 0 );
         if( pid == 0 ) {
-            if( (long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0 ) {
+            if( (long)ptrace( PTRACE_TRACEME, 0, NULL, NULL ) < 0 ) {
                 exit( 1 );
             }
             execve( exe_name, (const char **)args, (const char **)dbg_environ );
@@ -607,10 +581,10 @@ unsigned ReqProg_load( void )
 fail:
     if( pid != 0 && pid != -1 ) {
         if( attached ) {
-            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
+            ptrace( PTRACE_DETACH, pid, NULL, NULL );
             attached = FALSE;
         } else {
-            sys_ptrace( PTRACE_KILL, pid, 0, 0 );
+            ptrace( PTRACE_KILL, pid, NULL, NULL );
             waitpid( pid, &status, 0 );
         }
     }
@@ -624,12 +598,12 @@ unsigned ReqProg_kill( void )
 
     if( pid != 0 && !at_end ) {
         if( attached ) {
-            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
+            ptrace( PTRACE_DETACH, pid, NULL, NULL );
             attached = FALSE;
         } else {
             int status;
     
-            sys_ptrace( PTRACE_KILL, pid, 0, 0 );
+            ptrace( PTRACE_KILL, pid, NULL, NULL );
             waitpid( pid, &status, 0 );
         }
     }
@@ -702,9 +676,9 @@ static unsigned ProgRun( int step )
     do {
         old = setsig( SIGINT, SIG_IGN );
         if( step ) {
-            sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
+            ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)ptrace_sig );
         } else {
-            sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
+            ptrace( PTRACE_CONT, pid, NULL, (void *)ptrace_sig );
         }
         waitpid( pid, &status, 0 );
         setsig( SIGINT, old );
@@ -747,7 +721,7 @@ static unsigned ProgRun( int step )
             goto end;
         }
     } while( debug_continue );
-    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
+    if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
         Out( " eip " );
         OutNum( regs.eip );
         Out( "\n" );
@@ -788,9 +762,9 @@ static unsigned ProgRun( int step )
                 }
                 regs.orig_eax = -1;
                 regs.eip--;
-                sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+                ptrace( PTRACE_SETREGS, pid, NULL, &regs );
                 oldsig = setsig( SIGINT, SIG_IGN );
-                sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)psig );
+                ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)psig );
                 waitpid( pid, &status, 0 );
                 setsig( SIGINT, oldsig );
                 WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
@@ -799,7 +773,7 @@ static unsigned ProgRun( int step )
                 Out( "decrease eip(sigtrap)\n" );
                 regs.orig_eax = -1;
                 regs.eip--;
-                sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+                ptrace( PTRACE_SETREGS, pid, NULL, &regs );
             }
         }
         orig_eax = regs.orig_eax;
@@ -962,21 +936,6 @@ unsigned ReqAddr_info( void )
     ret = GetOutPtr( 0 );
     ret->is_32 = TRUE;
     return( sizeof( *ret ) );
-}
-
-unsigned ReqMachine_data( void )
-{
-    machine_data_req    *acc;
-    machine_data_ret    *ret;
-    unsigned_8          *data;
-
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    data = GetOutPtr( sizeof( *ret ) );
-    ret->cache_start = 0;
-    ret->cache_end = ~(addr_off)0;
-    *data = X86AC_BIG;
-    return( sizeof( *ret ) + sizeof( *data ) );
 }
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )

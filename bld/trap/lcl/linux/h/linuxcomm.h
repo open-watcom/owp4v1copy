@@ -39,31 +39,10 @@
 
 #pragma pack( push, 4 )
 
-/* Linux PTRACE support defines */
-
-#define PTRACE_TRACEME      0   /* Enable tracing for process */
-#define PTRACE_PEEKTEXT     1   /* Read text memory in traced process */
-#define PTRACE_PEEKDATA     2   /* Read data memory in traced process */
-#define PTRACE_PEEKUSER     3   /* Read user area structure (CPU regs etc) */
-#define PTRACE_POKETEXT     4   /* Write text memory in traced process */
-#define PTRACE_POKEDATA     5   /* Write data memory in traced process */
-#define PTRACE_POKEUSER     6   /* Write user area structure (CPU regs etc) */
-#define PTRACE_CONT         7   /* Continue the process */
-#define PTRACE_KILL         8   /* Kill the process */
-#define PTRACE_SINGLESTEP   9   /* Single step the process */
-#define PTRACE_GETREGS      12  /* Get all general purpose registers */
-#define PTRACE_SETREGS      13  /* Set all general purpose registers */
-#define PTRACE_GETFPREGS    14  /* Get all floating point registers */
-#define PTRACE_SETFPREGS    15  /* Set all floating point registers */
-#define PTRACE_ATTACH       16  /* Attached to running process */
-#define PTRACE_DETACH       17  /* Detach from running process */
-#define PTRACE_GETFPXREGS   18  /* Get all extended FPU registers */
-#define PTRACE_SETFPXREGS   19  /* Set all extended FPU registers */
-#define PTRACE_SETOPTIONS   21  /* Set special ptrace options */
-#define PTRACE_SYSCALL      24  /* Continue and stop at next syscall */
-
 /* Options set using PTRACE_SETOPTIONS */
 #define PTRACE_O_TRACESYSGOOD   0x00000001
+
+#if defined( MD_x86 )
 
 /* This defines the structure used to read and write the entire
  * set of general purpose CPU registers using sys_ptrace().
@@ -147,7 +126,7 @@ typedef struct {
 
 /* Define macros to get the offset of debug registers in user structure */
 
-#define O_DEBUGREG(r)   offsetof(user_struct,u_debugreg[r])
+#define O_DEBUGREG(r)   (void *)offsetof(user_struct,u_debugreg[r])
 
 /* Structure used internally to set hardware watch points */
 
@@ -164,6 +143,8 @@ typedef struct {
 
 #define TRACE_BIT       0x100
 #define BRK_POINT       0xCC
+
+#endif
 
 /* Rendezvous structure for communication between the dynamic linker and
  * the debugger. If executable's .dynamic section contains a DT_DEBUG element,
@@ -191,14 +172,7 @@ struct link_map {
     struct link_map     *l_prev;      /* Previous entry in chain */
 };
 
-/* ptrace system call */
-
-u_long sys_ptrace(u_long request, u_long pid, u_long addr, void *data);
-#pragma aux sys_ptrace =                        \
-    "mov    eax,26"                             \
-    "int    0x80"                               \
-    parm [ebx] [ecx] [edx] [esi]                \
-    value [eax];
+#if defined( __WATCOMC__ ) && defined( __386__ )
 
 /* Direct I/O port access functions */
 
@@ -240,6 +214,8 @@ u_long inpd(u_long port);
     parm [edx]                      \
     value [eax]                     \
     modify exact [eax];
+
+#endif
 
 /* Internal helper functions */
 

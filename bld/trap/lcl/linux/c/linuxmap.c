@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ptrace.h>
 #include "trpimp.h"
 #include "mad.h"
 #include "exeelf.h"
@@ -121,7 +122,7 @@ void AddLib( struct link_map *lmap )
     lli->newly_loaded = TRUE;
     lli->newly_unloaded = FALSE;
     lli->offset = lmap->l_addr;
-    
+
     Out( "Added library: ofs/dyn = " );
     OutNum( lmap->l_addr );
     Out( "/" );
@@ -241,7 +242,7 @@ unsigned ReqMap_addr( void )
     map_addr_ret    *ret;
     unsigned long   val;
     lib_load_info   *lli;
-    
+
     // Note: Info about the process address space is stored in the user register
     //       for GDB, so we can use that to find out what we need to convert these
     //       values in here...
@@ -249,7 +250,7 @@ unsigned ReqMap_addr( void )
     ret = GetOutPtr( 0 );
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
-    sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, start_code ), &val );
+    ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, start_code ), &val );
     ret->out_addr.offset = acc->in_addr.offset + val;
 
     if( acc->handle > ModuleTop ) {
@@ -267,7 +268,7 @@ unsigned ReqMap_addr( void )
     OutNum( acc->handle );
     if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
         acc->in_addr.segment == flatDS ) {
-        sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, u_tsize ), &val );
+        ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, u_tsize ), &val );
         ret->out_addr.offset += val;
         ret->out_addr.segment = flatDS;
     } else {
