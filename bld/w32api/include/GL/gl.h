@@ -1,4 +1,4 @@
-/* $Id: gl.h,v 1.1 2002/04/22 07:39:18 jrfonseca Exp $ */
+/* $Id: gl.h,v 1.1 2002/04/22 23:19:36 earnie Exp $ */
 
 /*
  * Mesa 3-D graphics library
@@ -26,7 +26,7 @@
 
 
 /************************************************************************
- * 2002-Apr-22, Jos‚ Fonseca:
+ * 2002-Apr-22, José Fonseca:
  *   Removed non Win32 system-specific stuff
  *
  * 2002-Apr-17, Marcus Geelnard:
