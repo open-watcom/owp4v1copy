@@ -150,7 +150,7 @@ dmem.obj : mem.cpp
 !ifdef prereq_$(host_os)
 $(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
-        @cd $(%DOC_ROOT)\$(host_os)
+        @cd $(%DOC_ROOT)/$(host_os)
         @wmake -h hbook=wbrw header=1
         @cd $(curr_dir)
 !endif
