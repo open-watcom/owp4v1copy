@@ -110,7 +110,6 @@ echo Languages Build <1>
 #[ INCLUDE <devdir>\wpack\lang.ctl ]
 [ INCLUDE <devdir>\cvpack\lang.ctl ]
 [ INCLUDE <devdir>\build\lang.ctl ]
-[ INCLUDE <devdir>\wsplice\lang.ctl ]
 [ INCLUDE <devdir>\pmake\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
 
