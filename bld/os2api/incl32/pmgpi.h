@@ -113,7 +113,7 @@ typedef struct _RGB2 {
     BYTE bGreen;
     BYTE bRed;
     BYTE fcOptions;
-} RGB2;
+} RGB2, *PRGB2;
 
 typedef struct _BITMAPINFO {
     ULONG  cbFix;

@@ -28,8 +28,8 @@ extern "C" {
   #include <mcios2.h>
   #include <mmdrvos2.h>
 #else
-  #include <mmsystem.h>
-  #include <mcidrv.h>
+//  #include <mmsystem.h>
+//  #include <mcidrv.h>
 #endif
 
 #ifdef INCL_MMIO
