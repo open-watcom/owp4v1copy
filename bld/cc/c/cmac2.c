@@ -560,7 +560,7 @@ local void CIfDef()
         IncLevel( 0 );
         return;
     }
-    mentry = MacroLookup();
+    mentry = MacroLookup( Buffer );
     if( mentry != NULL ) {
         mentry->macro_flags |= MACRO_REFERENCED;
         IncLevel( 1 );
@@ -582,7 +582,7 @@ local void CIfNDef()
         IncLevel( 0 );
         return;
     }
-    mentry = MacroLookup();
+    mentry = MacroLookup( Buffer );
     if( mentry != NULL ) {
         mentry->macro_flags |= MACRO_REFERENCED;
         IncLevel( 0 );

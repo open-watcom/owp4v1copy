@@ -700,7 +700,7 @@ extern  void    MacLkAdd( MEPTR mentry, int len, enum macro_flags flags );
 extern  void    MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags );
 extern  int     MacroCompare(MEPTR,MEPTR);
 extern  void    MacroCopy(MPTR_T,MACADDR_T,unsigned);
-extern  MEPTR   MacroLookup(void);
+extern  MEPTR   MacroLookup(const char *);
 extern  void    MacroOverflow(unsigned,unsigned);
 extern  SYM_HASHPTR SymHashAlloc(unsigned);
 
@@ -748,7 +748,7 @@ extern char const * UsageText(void);      // GET INTERNATIONAL USAGE TEXT
 extern msgtype CGetMsgType( msg_codes msgcode );
 char const *CGetMsgPrefix( msg_codes msgcode );
 
-extern  int     NameCmp(void *,void *,int);     /* cname */
+extern  int     NameCmp(const void *,const void *,int); /* cname */
 
 extern  int     EqualChar(int);                 /* coptions */
 extern  void    GenCOptions(char **);           /* coptions */
@@ -799,8 +799,8 @@ extern  void    ReScanInit(char *);             /* cscan */
 extern  int     ReScanBuffer(void);             /* cscan */
 extern  int     ReScanToken(void);              /* cscan */
 extern  char    *ReScanPos(void);               /* cscan */
-extern  int     IdLookup(void);                 /* cscan */
-extern  int     KwLookup(void);                 /* cscan */
+extern  int     IdLookup(const char *);         /* cscan */
+extern  int     KwLookup(const char *);         /* cscan */
 extern  int     NextToken(void);                /* cscan */
 extern  int     PPNextToken(void);              /* cscan */
 

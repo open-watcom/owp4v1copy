@@ -1674,7 +1674,7 @@ local int IsMacroDefined()
     if( CurToken != T_ID ) {
         ExpectIdentifier();
     } else {
-        mentry = MacroLookup();
+        mentry = MacroLookup( Buffer );
         if( mentry != NULL ) {
             mentry->macro_flags |= MACRO_REFERENCED;    /* 04-apr-94 */
             return( 1 );

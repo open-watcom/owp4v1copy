@@ -106,7 +106,7 @@ void MacroOverflow( unsigned amount_needed, unsigned amount_used )
 }
 
 
-local MEPTR *MacroLkUp( char *name, MEPTR *lnk )
+local MEPTR *MacroLkUp( const char *name, MEPTR *lnk )
 {
     int         len;
     MEPTR       mentry;
@@ -177,11 +177,11 @@ int MacroCompare( MEPTR m1, MEPTR m2 )
 }
 
 
-MEPTR MacroLookup()
+MEPTR MacroLookup( const char *buf )
 {
     MEPTR       mentry, *lnk;
 
-    lnk = MacroLkUp( Buffer, &MacHash[ MacHashValue ] );
+    lnk = MacroLkUp( buf, &MacHash[ MacHashValue ] );
     mentry = *lnk;
     return( mentry );
 }

@@ -211,7 +211,7 @@ int CalcHash( char *id, int len )
 }
 
 
-int KwLookup()
+int KwLookup( const char *buf )
 {
     int         hash;
     char        *keyword;
@@ -234,24 +234,24 @@ int KwLookup()
     }
 
     keyword = Tokens[ hash ];
-    if( *keyword == Buffer[0] ) {
-        if( strcmp( keyword, Buffer ) == 0 )  return( hash );
+    if( *keyword == buf[0] ) {
+        if( strcmp( keyword, buf ) == 0 )  return( hash );
     }
 
     /* not in keyword table, so must be just an identifier */
     return( T_ID );
 }
 
-int IdLookup()
+int IdLookup( const char *buf )
 {
     MEPTR       mentry;
 
-    mentry = MacroLookup();
+    mentry = MacroLookup( buf );
     if( mentry != NULL ) {      /* if this is a macro */
         NextMacro = mentry;     /* save pointer to it */
         return( T_MACRO );
     }
-    return( KwLookup() );
+    return( KwLookup( buf ) );
 }
 
 int doScanName()
@@ -322,7 +322,7 @@ int doScanName()
     CalcHash( Buffer, token );
     if( CompFlags.doing_macro_expansion ) return( T_ID );
     if( CompFlags.pre_processing == 2 ) return( T_ID );
-    token = IdLookup();
+    token = IdLookup( Buffer );
     if( token == T_MACRO ) {
         if( CompFlags.cpp_output ) {
             PrtChar( ' ' );     /* put white space in front */
@@ -341,7 +341,7 @@ int doScanName()
                     Buffer[TokenLen] = '\0';
                     return( T_ID );
                 }
-                return( KwLookup() );
+                return( KwLookup( Buffer ) );
             }
         }
         DoMacroExpansion();             /* start macro expansion */
