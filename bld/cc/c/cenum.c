@@ -294,7 +294,7 @@ void FreeEnums()
     int         i;
 
     for( i = 0; i < ENUM_HASH_SIZE; i++ ) {
-        for( ; esym = EnumTable[i]; ) {
+        for( ; (esym = EnumTable[i]); ) {
             if( esym->parent->level != SymLevel ) break;
             EnumTable[i] = esym->next_enum;
         }
