@@ -858,39 +858,60 @@ dis_return DisCliGetData( void *d, unsigned off, unsigned int size, void *data )
     return( DR_OK );
 }
 
-unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op, char *buff )
+unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff )
 {
     mad_disasm_data     *dd = d;
     char                *p;
-    unsigned            max;
+    unsigned            max = 40;
     mad_type_info       mti;
     address             val;
+    dis_operand         *op;
+    int                 size;
+    unsigned long       disp;
 
+    op = &ins->op[opnd];
     p = buff;
     p[0] = '\0';
     val = dd->addr;
-    switch( ins->op[op].type & DO_MASK ) {
+    switch( op->type & DO_MASK ) {
     case DO_RELATIVE:
-        val.mach.offset += ins->op[op].value;
-        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, 40, p );
+        val.mach.offset += op->value;
+        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, max, p );
         break;
     case DO_ABSOLUTE:
-        if( ins->op[op].type & DO_EXTRA ) {
-            val.mach.offset = ins->op[op].value;
-            val.mach.segment = ins->op[op].extra;
-            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, 40, p );
+        if( op->type & DO_EXTRA ) {
+            val.mach.offset = op->value;
+            val.mach.segment = op->extra;
+            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, max, p );
             break;
         }
     case DO_IMMED:
         MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_OPND_LONG) ? 4 : 2 , &mti );
-        max = 40;
-        MCTypeToString( dd->radix, &mti, &ins->op[op].value, &max, p );
+        MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         break;
     case DO_MEMORY_ABS:
-//        MCTypeInfoForHost( MTK_INTEGER, -sizeof( ins->op[op].value ), &mti );
-        MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_ADDR_LONG) ? 4 : 2 , &mti );
-        max = 40;
-        MCTypeToString( dd->radix, &mti, &ins->op[op].value, &max, p );
+    case DO_MEMORY_REL:
+        if( op->base == DR_NONE && op->index == DR_NONE ) {
+            // direct memory address
+            MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_ADDR_LONG) ? 4 : 2 , &mti );
+            MCTypeToString( dd->radix, &mti, &op->value, &max, p );
+        } else if( op->value == 0 ) {
+            // don't output zero disp in indirect memory address
+        } else {
+            // indirect memory address with displacement
+            if( op->value < 0 ) {
+                *(p++) = '-';
+                op->value = - op->value;
+            }
+            disp = op->value;
+            for( size = 4; size > 1; size-- ) {
+                if( disp & 0xFF000000 )
+                    break;
+                disp <<= 8;
+            }
+            MCTypeInfoForHost( MTK_INTEGER, size , &mti );
+            MCTypeToString( dd->radix, &mti, &op->value, &max, p );
+        }
         break;
     }
     return( strlen( buff ) );
