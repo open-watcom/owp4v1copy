@@ -145,6 +145,9 @@ int WEXPORT MCommand::expand( WString& command, WFileName* target, MTool* tool, 
                     m.concat( cmd[i+l] );
                 }
             }
+        } else if( cmd[i] == '\r' ) {
+            // skip \r
+			i++;
         } else {
             com.concat( cmd[i++ ] );
         }
