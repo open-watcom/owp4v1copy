@@ -141,3 +141,11 @@ of WLINK you can go to \bld\wl\os2386 and run wmake there (note that the
 process won't successfully finish unless several required libraries are built).
 Builder is useful for making full builds while running wmake in the right spot
 is handy during development.
+
+------------------------------
+5) Getting more information:
+
+If you have any further questions (and you will if you're serious), visit
+http://www.openwatcom.org/ and subscribe to the Open Watcom newsgroups at
+news://news.openwatcom.org/, particularly openwatcom.contributors.
+
