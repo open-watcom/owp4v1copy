@@ -73,9 +73,10 @@ set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
 
 REM Documentation related variables
+REM set appropriate variables to 0 for help compilers which you haven't installed
 set win95hc=hcrtf
-set wat31hc=whc
 set win31hc=hc31
+set os2hc=ipfc
 
 %devdr%
 cd %devdir%
