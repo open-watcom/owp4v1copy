@@ -3,17 +3,17 @@
 #include <stdarg.h>
 #include <stdio.h>
 int _vsnprintf( char *buf,
-                size_t count,
-                const char *format,
-                va_list arg );
+		size_t count,
+		const char *format,
+		va_list arg );
 .ixfunc2 '&String' &func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <stdarg.h>
 #include <wchar.h>
 int _vsnwprintf( wchar_t *buf,
-                size_t count,
-                const wchar_t *format,
-                va_list arg );
+		size_t count,
+		const wchar_t *format,
+		va_list arg );
 .ixfunc2 '&String' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
@@ -23,9 +23,12 @@ The &func function formats data under control of the
 .arg format
 control string and stores the result in
 .arg buf.
-The maximum number of characters to store, including a terminating
-null character, is specified by
+The maximum number of characters to store is specified by
 .arg count.
+A null character is placed at the end of the generated character
+string if fewer than
+.arg count
+characters were stored.
 The
 .arg format
 string is described under the description of the
@@ -45,9 +48,12 @@ The &wfunc function is identical to &func except that the argument
 specifies an array of wide characters into which the generated output
 is to be written, rather than converted to multibyte characters and
 written to a stream.
-The maximum number of wide characters to write, including a
-terminating null wide character, is specified by
+The maximum number of wide characters to write is specified by
 .arg count.
+A null wide character is placed at the end of the generated wide
+character string if fewer than
+.arg count
+wide characters were stored.
 The &wfunc function accepts a wide-character string argument for
 .arg format
 .do end
@@ -55,16 +61,16 @@ The &wfunc function accepts a wide-character string argument for
 .return begin
 The &func function returns the number of characters written into the
 array, not counting the terminating null character, or a negative
-value if
+value if more than
 .arg count
-or more characters were requested to be generated.
+characters were requested to be generated.
 An error can occur while converting a value for output.
 .if &'length(&wfunc.) ne 0 .do begin
 The &wfunc function returns the number of wide characters written into
 the array, not counting the terminating null wide character, or a
-negative value if
+negative value if more than
 .arg count
-or more wide characters were requested to be generated.
+wide characters were requested to be generated.
 .do end
 .im errnoref
 .return end
