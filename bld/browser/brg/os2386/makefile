@@ -1,6 +1,6 @@
 #pmake: build os_os2 cpu_386
-host_OS = os2
-host_CPU = 386
-quick_link = 1
+
+host_os  = os2
+host_cpu = 386
 
 !include ..\mif\master.mif
