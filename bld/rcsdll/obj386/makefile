@@ -1,4 +1,4 @@
-#pmake: all cpu_386 os_dos
+#pmake: all build cpu_386 os_dos
 CC = wpp386
 CFLAGS = -d2-w4-zq-mf-bt=DOS -D__PHAR__
 OBJS = rcsdll.obj inifile.obj
