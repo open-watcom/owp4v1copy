@@ -258,7 +258,7 @@ global  int     FarStringSegment;
 
 global  void    *Environment;   /* var for Suicide() */
 
-#define MAX_LEVEL       256
+#define MAX_LEVEL       1024
 
 /* The following 3 arrays are also used by CGEN for saving _try block info */
 global  TREEPTR ValueStack[ MAX_LEVEL ];

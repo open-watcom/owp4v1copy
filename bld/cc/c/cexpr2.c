@@ -1389,8 +1389,9 @@ local TREEPTR GetExpr()
             NextToken();
             continue;
         }
-        if( Level >= MAX_LEVEL ) {
+        if( Level >= (MAX_LEVEL - 1) ) {
             CErr1( ERR_EXPR_TOO_COMPLICATED );
+            CSuicide();
         }
         if( tree != 0 ) {
             ++Level;
