@@ -1,3 +1,9 @@
+proj_name = wasppc
+
+!ifndef wasppc_autodepends
+wasppc_autodepends = .AUTODEPEND
+!endif
+
 splice_opts = -kAS_PPC
 
 as_extra_defines = -dAS_PPC

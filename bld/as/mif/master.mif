@@ -1,9 +1,4 @@
-proj_name = was$(target_cpu)
 name = $(proj_name)
-
-!ifndef $(proj_name)_autodepends
-$(proj_name)_autodepends = .AUTODEPEND
-!endif
 
 .extensions: .rc .y .re .gh .msg
 

@@ -1,3 +1,9 @@
+proj_name = wasaxp
+
+!ifndef wasaxp_autodepends
+wasaxp_autodepends = .AUTODEPEND
+!endif
+
 splice_opts = -kAS_ALPHA
 
 as_extra_defines = -dAS_ALPHA
