@@ -14,8 +14,8 @@ File: source\diag0301.c
 (21,13): Error! E417: only virtual functions may be declared pure 
 File: source\diag0302.c 
 (8,5): Warning! W014: no reference to symbol 'b' 
-  'B b' in 'ABC::ABC( void )' defined at: (7,11) 
+  definition: 'B b' in 'ABC::ABC( void )' 
 (5,22): Error! E499: object (or object pointer) required to access non-static member function 
-  'void ABC::meth2( void )' defined at: (9,10) 
+  definition: 'void ABC::meth2( void )' 
 (16,10): Warning! W894: unexpected character (22) in source file 
 (16,10): Error! E121: syntax error 
