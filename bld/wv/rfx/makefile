@@ -1,4 +1,3 @@
-#pmake: cpu_i86 i86 intel
 #
 # WATCOM Debugger makefile (RFX)
 #

@@ -37,7 +37,6 @@
 #include <process.h>
 #include <dos.h>
 #include "fparse.h"
-#include "dta.h"
 #include "banner.h"
 
 #include "dbgdefn.h"
@@ -45,7 +44,10 @@
 #include "dbgtoggl.h"
 #include "trpcore.h"
 #include "trpfile.h"
+#include "dta.h"
 #include "trprfx.h"
+#include "dbglit.h"
+#include "tcerr.h"
 
 #include "local.h"
 
@@ -155,7 +157,7 @@ static  char            Name2[MAX_DRIVE+MAX_PATH+MAX_NAME+MAX_EXT+2];
 static  char            Name3[MAX_DRIVE+MAX_PATH+MAX_NAME+MAX_EXT+2];
 static  int             FilesCopied;
 static  int             DirectoriesMade;
-dta                     Info;
+trap_dta                Info;
 system_config           SysConfig;
 
 
@@ -1380,7 +1382,7 @@ static  void    DirClosef( dir_handle *h ) {
     DbgFree( h );
 }
 
-extern  void    Format( char *buff, dta *dir, bool wide ) {
+extern  void    Format( char *buff, trap_dta *dir, bool wide ) {
 
     char                *b;
     char                *d;
@@ -1950,3 +1952,40 @@ extern  char    *Squish( file_parse *parse, char *into ) {
     endptr = CopyStr( parse->ext, endptr );
     return( endpath );
 }
+
+char    *TrapClientString( unsigned tc )
+{
+    switch( tc ) {
+        case TC_BAD_TRAP_FILE:      return( "BAD_TRAP_FILE" );
+        case TC_CANT_LOAD_TRAP:     return( "CANT_LOAD_TRAP_FILE" );
+        case TC_WRONG_TRAP_VERSION: return( "INCORRECT_TRAP_FILE_VERSION" );
+        case TC_OUT_OF_DOS_MEMORY:  return( "OUT_OF_DOS_MEMORY" );
+    }
+    return( NULL );
+}
+
+char **DosErrMsgs[] = {
+    NULL
+#if 0
+    LITREF( Empty ),
+    LITREF( DOS_invalid_function ),
+    LITREF( DOS_file_not_found ),
+    LITREF( DOS_path_not_found ),
+    LITREF( DOS_too_many_open_files ),
+    LITREF( DOS_access_denied ),
+    LITREF( DOS_invalid_handle ),
+    LITREF( DOS_memory_control ),
+    LITREF( DOS_insufficient_memory ),
+    LITREF( DOS_invalid_address ),
+    LITREF( DOS_invalid_environment ),
+    LITREF( DOS_invalid_format ),
+    LITREF( DOS_invalid_access_code ),
+    LITREF( DOS_invalid_data ),
+    LITREF( Empty ),
+    LITREF( DOS_invalid_drive ),
+    LITREF( DOS_remove_cd ),
+    LITREF( DOS_not_same_device ),
+#endif
+};
+
+int MaxDosErrMsg = (sizeof( DosErrMsgs ) / sizeof( char * ) - 1);

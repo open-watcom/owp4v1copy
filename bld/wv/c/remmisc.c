@@ -61,6 +61,8 @@ unsigned int            MaxPacketLen;
 //NYI: We don't know the size of the incoming err msg.
 #define MAX_ERR_MSG_SIZE        (TXT_LEN/2)
 
+#if !defined( BUILD_RFX )
+
 static void TrapFailed()
 {
     StartupErr( LIT( ERR_REMOTE_LINK_BROKEN ) );
@@ -81,6 +83,8 @@ void FiniSuppServices()
     FiniCoreSupp();
 }
 
+#endif
+
 static bool InitTrapError;
 InitTrap( char *trap_file )
 {
@@ -95,15 +99,21 @@ InitTrap( char *trap_file )
 
 /* Don't use TxtBuff except for error -- it may have a Finger message in it */
 
+#if !defined( BUILD_RFX )
     TrapSetFailCallBack( TrapFailed );
+#endif
     InitTrapError = FALSE;
     RestoreHandlers();
     ver.remote = FALSE;
+#if !defined( BUILD_RFX )
     if( stricmp( trap_file, "dumb" ) == 0 ) {
         error = LoadDumbTrap( &ver );
     } else {
+#endif
         error = LoadTrap( trap_file, buff, &ver );
+#if !defined( BUILD_RFX )
     }
+#endif
     GrabHandlers();
     if( error != NULL ) {
         strcpy( buff, error );
@@ -127,9 +137,11 @@ InitTrap( char *trap_file )
         InitTrapError = TRUE;
         StartupErr( buff );
     }
+#if !defined( BUILD_RFX )
     if( !InitTrapError ) {
         InitSuppServices();
     }
+#endif
     if( ver.remote ) {
         _SwitchOn( SW_REMOTE_LINK );
     } else {
@@ -192,7 +204,9 @@ void FiniTrap()
     RestoreHandlers();
     KillTrap();
     GrabHandlers();
+#if !defined( BUILD_RFX )
     FiniSuppServices();
+#endif
 }
 
 bool ReInitTrap( char *trap_file )

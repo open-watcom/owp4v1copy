@@ -260,7 +260,9 @@ unsigned FileRemove( char const *name, open_access loc )
 
 void WriteToPgmScreen( void *buff, unsigned len )
 {
+#if !defined( BUILD_RFX )
     DUIWndUser();
+#endif
     RemoteWriteConsole( buff, len );
 }
 
@@ -523,6 +525,7 @@ handle FullPathOpen( char const *name, char *ext, char *result, unsigned max_res
     return( f );
 }
 
+#if !defined( BUILD_RFX )
 static bool IsWritable( char const *name, open_access loc )
 {
     handle      h;
@@ -572,7 +575,7 @@ bool FindWritable( char const *src, char *dst )
     MakeNameWithPath( loc, NULL, 0, name, nlen, dst );
     return( IsWritable( dst, loc ) );
 }
-
+#endif
 
 handle PathOpen( char const *name, unsigned len, char *ext )
 {
@@ -599,6 +602,7 @@ void SysFileInit()
 
 void PathInit()
 {
+#if !defined( BUILD_RFX )
     #define BSIZE 2048
     char        *buff;
 
@@ -610,13 +614,15 @@ void PathInit()
         EnvParse( &LclPath, buff );
     }
     _Free( buff );
+#endif
 }
+
+#if !defined( BUILD_RFX )
 
 void PathFini()
 {
     FreeRing( LclPath );
 }
-
 
 /*
  * EnvParse -- parse environment string into separate pieces
@@ -649,3 +655,4 @@ static void EnvParse( char_ring **owner, char *src )
         }
     }
 }
+#endif

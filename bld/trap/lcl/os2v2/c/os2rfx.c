@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 32-bit local implementation of remote file access.
 *
 ****************************************************************************/
 
@@ -181,7 +180,7 @@ unsigned ReqRfx_getfreespace()
 
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
-    DosQFSInfo(acc->drive, 1, (PBYTE)&info, sizeof(info));
+    DosQueryFSInfo(acc->drive, 1, (PBYTE)&info, sizeof(info));
     ret->size = (long)info.cbSector
                  * (long)info.cSectorUnit
                  * (long)info.cUnitAvail;
@@ -283,11 +282,11 @@ unsigned ReqRfx_getdatetime()
 {
     rfx_getdatetime_req *acc;
     rfx_getdatetime_ret *ret;
-    FILESTATUS         info;
+    FILESTATUS3         info;
 
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
-    DosQFileInfo(acc->handle, 1, (char *)&info, sizeof(info));
+    DosQueryFileInfo(acc->handle, FIL_STANDARD, (char *)&info, sizeof(info));
     ret->time = mymktime(*(USHORT *)&info.ftimeLastWrite,
                          *(USHORT *)&info.fdateLastWrite );
     return sizeof(*ret);
@@ -307,7 +306,7 @@ unsigned ReqRfx_getcwd()
     return sizeof(*ret) + len;
 }
 
-static MoveDirInfo(FILEFINDBUF *os2, trap_dta *dos)
+static MoveDirInfo(FILEFINDBUF3 *os2, trap_dta *dos)
 {
     dos->dos.dir_entry_num = *(USHORT *)&os2->fdateLastWrite;
     dos->dos.cluster = *(USHORT *)&os2->ftimeLastWrite;
@@ -315,12 +314,12 @@ static MoveDirInfo(FILEFINDBUF *os2, trap_dta *dos)
     dos->time = *(USHORT *)&os2->ftimeLastWrite;
     dos->date = *(USHORT *)&os2->fdateLastWrite;
     dos->size = os2->cbFile;
-    strcpy(dos->name, os2->achName);
+    strcpy( dos->name, os2->achName );
 }
 
 unsigned ReqRfx_findfirst()
 {
-    FILEFINDBUF          info;
+    FILEFINDBUF3         info;
     APIRET               rc;
     HDIR                 hdl = 1;
     ULONG                count = 1;
@@ -332,7 +331,7 @@ unsigned ReqRfx_findfirst()
     filename = GetInPtr(sizeof(*acc));
     ret = GetOutPtr(0);
     rc = DosFindFirst(filename, &hdl, acc->attrib, &info,
-                      sizeof(info), &count, 0);
+                      sizeof(info), &count, FIL_STANDARD);
     if (rc == 0) {
         MoveDirInfo(&info, (trap_dta *)GetOutPtr(sizeof(*ret)));
         ret->err = 0;
@@ -345,7 +344,7 @@ unsigned ReqRfx_findfirst()
 
 unsigned ReqRfx_findnext()
 {
-    FILEFINDBUF         info;
+    FILEFINDBUF3        info;
     APIRET              rc;
     ULONG               count = 1;
     rfx_findnext_ret    *ret;
