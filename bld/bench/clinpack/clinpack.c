@@ -74,13 +74,20 @@ PLEASE NOTE: You can also just 'uncomment' one of the options below.
 
 static double st[8][6];
 
-main ()
+extern void print_time(), matgen(), dgefa(), dgesl(), daxpy(), dscal(), dmxpy();
+
+void main ()
 {
    static REAL aa[200][200],a[200][201],b[200],x[200];
    REAL cray,ops,total,norma,normx;
    REAL resid,residn,eps;
    REAL epslon(),kf;
-   double t1,tm,tm2,dtime();
+#if 0
+   double t1;
+   double tm;
+#endif
+   double tm2;
+   double dtime();
    static int ipvt[200],n,i,ntimes,info,lda,ldaa,kflops;
    static user_timer second_timer;
 
@@ -339,7 +346,7 @@ printf("      ratio\n");
 }
      
 /*----------------------*/ 
-print_time (row)
+void print_time (row)
 int row;
 {
 printf("%11.2f%11.2f%11.2f%11.0f%11.2f%11.2f\n",
@@ -348,7 +355,7 @@ printf("%11.2f%11.2f%11.2f%11.0f%11.2f%11.2f\n",
 }
 	
 /*----------------------*/ 
-matgen(a,lda,n,b,norma)
+void matgen(a,lda,n,b,norma)
 REAL a[],b[],*norma;
 int lda, n;
 
@@ -378,7 +385,7 @@ function, references to a[i][j] are written a[lda*i+j].  */
 }
 
 /*----------------------*/ 
-dgefa(a,lda,n,ipvt,info)
+void dgefa(a,lda,n,ipvt,info)
 REAL a[];
 int lda,n,ipvt[],*info;
 
@@ -494,7 +501,7 @@ int idamax(),j,k,kp1,l,nm1;
 
 /*----------------------*/ 
 
-dgesl(a,lda,n,ipvt,b,job)
+void dgesl(a,lda,n,ipvt,b,job)
 int lda,n,ipvt[],job;
 REAL a[],b[];
 
@@ -620,7 +627,7 @@ function, references to a[i][j] are written a[lda*i+j].  */
 
 /*----------------------*/ 
 
-daxpy(n,da,dx,incx,dy,incy)
+void daxpy(n,da,dx,incx,dy,incy)
 /*
      constant times a vector plus a vector.
      jack dongarra, linpack, 3/11/78.
@@ -628,7 +635,15 @@ daxpy(n,da,dx,incx,dy,incy)
 REAL dx[],dy[],da;
 int incx,incy,n;
 {
-   int i,ix,iy,m,mp1;
+   int i;
+   int ix;
+   int iy;
+#ifdef UNROLL
+   int m;
+#endif
+#if 0
+   int mp1;
+#endif
 
    if(n <= 0) return;
    if (da == ZERO) return;
@@ -686,7 +701,15 @@ REAL dx[],dy[];
 int incx,incy,n;
 {
    REAL dtemp;
-   int i,ix,iy,m,mp1;
+   int i;
+   int ix;
+   int iy;
+#ifdef UNROLL
+   int m;
+#endif
+#if 0
+   int mp1;
+#endif
 
    dtemp = ZERO;
 
@@ -734,7 +757,7 @@ int incx,incy,n;
 }
 
 /*----------------------*/ 
-dscal(n,da,dx,incx)
+void dscal(n,da,dx,incx)
 
 /*     scales a vector by a constant.
 	jack dongarra, linpack, 3/11/78.
@@ -742,7 +765,14 @@ dscal(n,da,dx,incx)
 REAL da,dx[];
 int n, incx;
 {
-   int i,m,mp1,nincx;
+   int i;
+#if 0
+   int m;
+#endif
+#ifdef UNROLL
+   int mp1;
+#endif
+   int nincx;
 
    if(n <= 0)return;
    if(incx != 1) {
@@ -875,7 +905,7 @@ REAL x;
 }
  
 /*----------------------*/ 
-dmxpy (n1, y, n2, ldm, x, m)
+void dmxpy (n1, y, n2, ldm, x, m)
 REAL y[], x[], m[];
 int n1, n2, ldm;
 

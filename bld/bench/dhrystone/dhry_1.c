@@ -17,9 +17,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "dhry.h"
 #include "timer.h"
 #include "report.h"
+
+Boolean Func_2();
 
 /* Global Variables: */
 
@@ -68,9 +71,18 @@ float           Microseconds,
 
 /* end of variables for time measurement */
 
+extern void Proc_1();
+extern void Proc_2();
+extern void Proc_3();
+extern void Proc_4();
+extern void Proc_5();
+extern void Proc_6();
+extern void Proc_7();
+extern void Proc_8();
 
-main ()
-/*****/
+
+void main ()
+/**********/
 
   /* main program, corresponds to procedures        */
   /* Main and Proc_0 in the Ada version             */
@@ -267,8 +279,8 @@ main ()
 }
 
 
-Proc_1 (Ptr_Val_Par)
-/******************/
+void Proc_1 (Ptr_Val_Par)
+/***********************/
 
 REG Rec_Pointer Ptr_Val_Par;
     /* executed once */
@@ -301,8 +313,8 @@ REG Rec_Pointer Ptr_Val_Par;
 } /* Proc_1 */
 
 
-Proc_2 (Int_Par_Ref)
-/******************/
+void Proc_2 (Int_Par_Ref)
+/***********************/
     /* executed once */
     /* *Int_Par_Ref == 1, becomes 4 */
 
@@ -324,8 +336,8 @@ One_Fifty   *Int_Par_Ref;
 } /* Proc_2 */
 
 
-Proc_3 (Ptr_Ref_Par)
-/******************/
+void Proc_3 (Ptr_Ref_Par)
+/***********************/
     /* executed once */
     /* Ptr_Ref_Par becomes Ptr_Glob */
 
@@ -339,8 +351,8 @@ Rec_Pointer *Ptr_Ref_Par;
 } /* Proc_3 */
 
 
-Proc_4 () /* without parameters */
-/*******/
+void Proc_4 () /* without parameters */
+/************/
     /* executed once */
 {
   Boolean Bool_Loc;
@@ -351,8 +363,8 @@ Proc_4 () /* without parameters */
 } /* Proc_4 */
 
 
-Proc_5 () /* without parameters */
-/*******/
+void Proc_5 () /* without parameters */
+/************/
     /* executed once */
 {
   Ch_1_Glob = 'A';

@@ -87,7 +87,7 @@ void exit();
 
 double a[N][N],b[N][N],c[N][N],bt[N][N],d[N][N];
 
-main(argc,argv)
+void main(argc,argv)
   int argc;
   char *argv[];
 {
@@ -95,7 +95,7 @@ main(argc,argv)
   int parm;
   int i,j;
   double sum,row_sum;
-  double t_start=0.0,t_end=0.0,dtime();
+  /* double t_start=0.0,t_end=0.0,dtime(); */
 
 /* defaults */
   alg_choice = 'x';
@@ -541,7 +541,7 @@ int step;
 void maeno(lparm)
 int lparm;
 {
-int i,j,k,kk,i2,r,kt,it;
+int i,j,k,kk,i2 /* ,r */ ,kt,it;
 double t0,t1,t2,t3,s,t4,t5,t6,t7;
 	for(i=0;i<N;i++)
 	  for(j=0;j<N;j++) {

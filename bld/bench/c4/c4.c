@@ -57,6 +57,7 @@ int n;
 {
   extern int depth();
   extern void makemovx(),makemovo();
+  extern int haswon(void);
 
    if (error = n < 1 || n > 7 || !depth(n) || gameover)
       return;

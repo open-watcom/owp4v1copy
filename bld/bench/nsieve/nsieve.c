@@ -241,7 +241,7 @@ exit( EXIT_SUCCESS );
 /*  Sieve of Erathosthenes Program    */
 /**************************************/
 
-SIEVE(m,n,p)
+int SIEVE(m,n,p)
 long m,n,p;
 {
 

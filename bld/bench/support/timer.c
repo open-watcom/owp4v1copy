@@ -1,6 +1,9 @@
-#include <windows.h>
-#include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
+#include <stdlib.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef  WIN32_LEAN_AND_MEAN
 #include "timer.h"
 
 p5_time __declspec( naked ) ReadP5Timer( void )

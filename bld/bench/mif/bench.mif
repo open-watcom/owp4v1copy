@@ -1,3 +1,10 @@
+!ifeq compiler msvc
+! ifndef %MSVCDir
+!  error MSVC data unset - run VCVARS32.BAT
+! endif
+msvc_root=$(%MSVCDir)
+!endif
+
 !ifndef cflags_watcom
 cflags_watcom   = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -5s $(extra_w_opts)
 # cflags_watcom = -obmilertan -s -d1 -zq -w3 $(extra_w_opts)
@@ -42,15 +49,4 @@ deflink = $(msvc_root)\bin\link $(lflags_msvc) /out:$^. $(bench_dir)\support\msv
 !endif
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.lib del *.lib
-        @if exist *.res del *.res
-        @if exist *.clb del *.clb
-        @if exist *.lst del *.lst
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.sym del *.sym
-        @if exist *.tmp del *.tmp
-        @if exist *.out del *.out
+        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.lst *.err *.map *.sym *.tmp *.out

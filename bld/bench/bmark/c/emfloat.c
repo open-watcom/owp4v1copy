@@ -438,7 +438,7 @@ if (ptr->type == IFPF_IS_NORMAL ||
                 /*
                 ** Check for overflow
                 */
-                if (ptr->exp > MAX_EXP)
+                if ((unsigned)ptr->exp > MAX_EXP)
                 {
                         SetInternalFPFInfinity(ptr, ptr->sign);
                 }
@@ -1081,6 +1081,7 @@ normalize(dest);
 return;
 }
 
+#if 0
 /************************
 ** InternalFPFToString **
 *************************
@@ -1270,3 +1271,4 @@ ccount+=sprintf(dest,"%4d",expcount);
 return(ccount);
 
 }
+#endif

@@ -361,8 +361,9 @@ else
         *errorcode=0;
 
 return(fhandle);
+#else
+return(-1);
 #endif
-
 }
 
 /****************************

@@ -161,7 +161,7 @@ exit( EXIT_SUCCESS );
 /*  Heap Sort Program    */
 /*************************/
 
-HSORT(m,n,p)
+int HSORT(m,n,p)
 long m,n,p;
 {
 
