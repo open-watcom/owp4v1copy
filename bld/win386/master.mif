@@ -79,6 +79,9 @@ extra_c_flags_toolhelp += -dDLL32 -zu
 extra_a_flags_wdebug = -i"$(emu386)/inc" -mf
 extra_a_flags_winglue = -i"../h"
 extra_a_flags_wincb = -i"../h"
+extra_a_flags_call16 = -i"../../watcom/h"
+extra_a_flags_dllpatch = -i"../../watcom/h"
+extra_a_flags_int21win = -i"../../watcom/h"
 !ifeq fmt dll
 extra_a_flags_wincall = -dDLL32
 extra_a_flags_dllthunk = -dDLL32
