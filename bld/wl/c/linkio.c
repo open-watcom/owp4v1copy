@@ -84,6 +84,15 @@ extern void PrintIOError( unsigned msg, char *types, char *name )
     LnkMsg( msg, types, name, rc_buff );
 }
 
+extern void CheckBreak( void )
+/****************************/
+{
+    if( CaughtBreak == BREAK_DETECTED ) {
+        CaughtBreak = BREAK_HANDLED;
+        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
+    }
+}
+
 static tiny_ret_t DoOpen( char *name, bool create, unsigned mode )
 /****************************************************************/
 {
@@ -438,15 +447,6 @@ extern void TrapBreak( int sig_num )
     sig_num = sig_num;          // to avoid a warning, will be optimized out.
     if( CaughtBreak != BREAK_HANDLED ) {
         CaughtBreak = BREAK_DETECTED;
-    }
-}
-
-extern void CheckBreak( void )
-/****************************/
-{
-    if( CaughtBreak == BREAK_DETECTED ) {
-        CaughtBreak = BREAK_HANDLED;
-        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
     }
 }
 
