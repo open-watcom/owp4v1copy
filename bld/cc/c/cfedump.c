@@ -75,6 +75,8 @@ static char *_Ops[] = {
     "pushint",
     "pushfloat",
     "pushstring",
+    "pushseg",
+    "dupe",
     "convert_ptr",
     "nop",
     ".",
