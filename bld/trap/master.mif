@@ -23,7 +23,6 @@ suppress_zc = 1
 #                         files (required).
 #       cpu             - Name of the CPU that the server/trap is being
 #                         built for (x86,axp,ppc,etc).
-#       machine         - Machine type: IBM/FMR/NEC. Assumes IBM
 #       name            - Root name of the server/trap file. A name is
 #                         created from the "srv" macro if this is not
 #                         defined (optional).
@@ -67,7 +66,7 @@ memory_model_386 = s
 
 # cflags stuff
 ###############
-extra_c_flags += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -s
+extra_c_flags += -D$(which) -DMD_$(cpu) -s
 
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES
@@ -118,10 +117,6 @@ libs_ppc_nt             = clib
 
 !ifeq host_OS nov
 mknver_c = $(trap_dir)/c/mknver.c
-!endif
-
-!ifndef machine
-machine = IBM
 !endif
 
 !ifndef name

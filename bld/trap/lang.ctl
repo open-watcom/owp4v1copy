@@ -38,17 +38,6 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/trap/vdm/dos.srv/vdmserv.exe                   <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/win/dos.trp/win.trp                       <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/win/dos.srv/winserv.exe                   <RELROOT>/rel2/binw/
-#nec98
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosr/nec.std/std.trp              <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/rsi/nec.trp/rsi.trp          <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/rsi/nec.srv/rsihelp.exp      <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/nec.trp/pls.trp          <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/net/dosnec.trp/net.trp                    <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/net/dosnec.srv/netserv.exe                <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/nov/dosnec.trp/nov.trp                    <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/nov/dosnec.srv/novserv.exe                <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/vdm/dosnec.srv/vdmserv.exe                <RELROOT>/rel2/n98bw/
-    <CPCMD> <DEVDIR>/trap/win/dosnec.srv/winserv.exe                <RELROOT>/rel2/n98bw/
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <DEVDIR>/trap/lcl/os2v2/std/std.d32                     <RELROOT>/rel2/binp/

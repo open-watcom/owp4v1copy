@@ -881,21 +881,12 @@ unsigned ReqGet_next_alias()
 
 #if 0
 extern int GtKey();
-#ifdef _NEC_PC
-
-#pragma aux GtKey = \
-        " mov ah, 0 " \
-        " int 18h   " \
-        modify [ ax ];
-
-#else
 
 #pragma aux GtKey =                                            \
 0XB4 0X00       /* mov    ah,0                          */      \
 0XCD 0X16       /* int    16                            */      \
 modify [ ax ];
 
-#endif
 
 static unsigned_16 AccReadUserKey()
 {

@@ -64,12 +64,6 @@ sys_axp_nt      = sys ntaxp op st=16k, modname=$^&, desc $^&
 
 sys_ppc_nt      = sys ntppc op st=16k, modname=$^&, desc $^&
 
-!ifeq machine IBM
-machsuff=
-!else
-machsuff=$+$(machine)$-
-!endif
-
 targ_x86_os2    = $(name)1.exe
 targ_x86_os2v2  = $(name).exe
 targ_x86_qnx    = $(name).qnx

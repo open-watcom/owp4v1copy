@@ -101,12 +101,6 @@ sys_ppc_nt   = sys ntppc_dll initinstance &
             option description $(description) &
             op modname=$^&
 
-!ifeq machine IBM
-machsuff=
-!else
-machsuff=$+$(machine)$-
-!endif
-
 targ_x86_os2    = $(name).dll
 targ_x86_os2v2  = $(name).d32
 targ_x86_qnx    = $(name).trp

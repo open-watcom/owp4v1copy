@@ -205,20 +205,14 @@ typedef enum { FALSE, TRUE } bool;
  */
 
 #define WATCOM_VAL      0x1A
-#if !defined(_FMR)
 #define TWIDLE_ON       WATCOM_VAL
 #define TWIDLE_OFF      ( WATCOM_VAL & 0xFD )
-#endif
 
 /*
  * The Fujitsu FMR link looks like a busted WATCOM cable
  * in which RaiseCtl1()/LowerCtl1() cannot be performed
  */
 #define FMR_VAL         0x2A
-#if defined(_FMR)
-#define TWIDLE_ON       FMR_VAL
-#define TWIDLE_OFF      ( FMR_VAL & 0xFD )
-#endif
 
 /*
  * How the LAPLINK_VAL calculation works:
@@ -260,44 +254,25 @@ typedef enum { FALSE, TRUE } bool;
 /*********************** WATCOM CABLE MACROS **************************/
 #define PC_CTL1 0x08
 #define PC_CTL2 0x08
-#if defined(_FMR)
-#define Ctl1Hi()        ( ( _inp( ext->CtlPort2 ) & PC_CTL1 ) == 0 )
-#define Ctl1Lo()        ( ( _inp( ext->CtlPort2 ) & PC_CTL1 ) != 0 )
-/* on FMR we can detect Ctl1Hi/Lo but can't Raise/Lower Ctl1 as on IBM PC */
-#else
 #define Ctl1Hi()        ( ( _inp( ext->CtlPort2 ) & PC_CTL1 ) != 0 )
 #define Ctl1Lo()        ( ( _inp( ext->CtlPort2 ) & PC_CTL1 ) == 0 )
 #define RaiseCtl1()     ( _outp( ext->CtlPort2, PC_CTL1 | 0x04 ) )
 #define LowerCtl1()     ( _outp( ext->CtlPort2, 0x04 ) )
-#endif
 
 #define Ctl2Hi()        ( ( _inp( ext->CtlPort1 ) & PC_CTL2 ) != 0 )
 #define Ctl2Lo()        ( ( _inp( ext->CtlPort1 ) & PC_CTL2 ) == 0 )
 #define RaiseCtl2()     ( _outp( ext->DataPort, PC_CTL2 ) )
 #define LowerCtl2()     ( _outp( ext->DataPort, 0x00 ) )
 
-#if !defined(_FMR)
 #define ReadData()      ( ( ( _inp( ext->CtlPort1 ) ^ 0x80 ) & 0xF8 ) \
                                                 | ( ( _inp( ext->CtlPort2 ) ^ 0x03 ) & 0x07 ) )
-#endif
 #define WriteData(data) ( _outp( ext->DataPort, data ) )
 
 /*********************** WATCOM FMR CABLE MACROS **********************/
 #define FM_CTL1 0x40
 /* Can't use ext->CtlPort2 & 0x08 (line disabled) */
-#if !defined(_FMR)
 #define FM_Ctl1Hi()     ( ( _inp( ext->CtlPort1 ) & FM_CTL1 ) != 0 )
 #define FM_Ctl1Lo()     ( ( _inp( ext->CtlPort1 ) & FM_CTL1 ) == 0 )
-#else
-#define FM_RaiseCtl1()  ( _outp( ext->DataPort, FM_CTL1 ) )
-#define FM_LowerCtl1()  ( _outp( ext->DataPort, 0x00 ) )
-                        /* Note: LowerCtl2 same as FM_LowerCtl1 */
-
-#define ReadData()      ( ( ( _inp( ext->CtlPort1 ) ^ 0x20 ) & 0xF8 ) \
-                                                | ( ( _inp( ext->CtlPort2 ) ^ 0x08 ) & 0x07 ) )
-/* write the data and raise control line 1 */
-#define FM_WriteData(data) ( _outp( ext->DataPort, data | FM_CTL1 ) )
-#endif
 
 /********************** LAPLINK CABLE MACROS **************************/
 #define LL_Ctl1Hi()     ( ( _inp( ext->CtlPort1 ) & 0x80 ) == 0 )
@@ -434,22 +409,21 @@ static int DataGet(
         PDEVICE_EXTENSION ext,
         unsigned long wait )
 {
-        UCHAR                data;
+    UCHAR                data;
 
-        switch( ext->CableType ) {
-        case WATCOM_VAL:
-                RaiseCtl2();            /* Hi, I'm ready to read */
-                while( Ctl1Lo() ) {     /* wait till he's written the data */
-                        TWIDDLE_THUMBS;
-                }
-                data = ReadData();      /* bag the bits */
+    switch( ext->CableType ) {
+    case WATCOM_VAL:
+        RaiseCtl2();            /* Hi, I'm ready to read */
+        while( Ctl1Lo() ) {     /* wait till he's written the data */
+                TWIDDLE_THUMBS;
+        }
+        data = ReadData();      /* bag the bits */
         LowerCtl2();            /* Hey you! I got the bits */
         while( Ctl1Hi() ) {     /* Wait till he heard us */
             TWIDDLE_THUMBS;
         }
                 break;
-#if !defined(_FMR)
-        case FMR_VAL:
+    case FMR_VAL:
         /* We're talking to the FMR which can't RaiseCtl1/LowerCtl1 */
         /* get the low nibble */
         RaiseCtl2();                    /* ready to read */
@@ -516,8 +490,7 @@ static int DataGet(
             TWIDDLE_THUMBS;
         }
         break;
-#endif
-        }
+    }
     return( data );
 }
 
@@ -530,34 +503,8 @@ static int DataPut(
         unsigned data,
         unsigned long wait )
 {
-        switch( ext->CableType ) {
+    switch( ext->CableType ) {
     case WATCOM_VAL:
-#if defined(_FMR)
-        /* We're talking to the PC/AT but we can't RaiseCtl1/LowerCtl1 */
-        /* send low nibble */
-        while( Ctl2Lo() ) {             /* wait till he's ready to read */
-            TWIDDLE_THUMBS;
-        }
-        FM_WriteData( data & 0x0f );    /* write the data */
-        /* FM_RaiseCtl1(); */           /* and tell him the data's there */
-        while( Ctl2Hi() ) {             /* wait till he got the bits */
-                        TWIDDLE_THUMBS;
-        }
-
-/*?*/   FM_LowerCtl1();                 /* clear control line */
-        /* send high nibble */
-        while( Ctl2Lo() ) {             /* wait till he's ready to read */
-            TWIDDLE_THUMBS;
-        }
-
-        FM_WriteData( data >> 4 );      /* write the data */
-        /* FM_RaiseCtl1(); */           /* and tell him the data's there */
-        while( Ctl2Hi() ) {             /* wait till he got the bits */
-            TWIDDLE_THUMBS;
-        }
-        FM_LowerCtl1();                 /* clear control line */
-        break;
-#else
         while( Ctl2Lo() ) {             /* wait till he's ready to read */
             TWIDDLE_THUMBS;
         }
@@ -568,8 +515,6 @@ static int DataPut(
         }
         LowerCtl1();                    /* clear control line */
         break;
-#endif
-#if !defined(_FMR)
     case FMR_VAL:
         /* We're talking to the FMR which can RaiseCtl2/LowerCtl2 */
         while( Ctl2Lo() ) {             /* wait till he's ready to read */
@@ -626,7 +571,6 @@ static int DataPut(
         }
         FD_LowerCtl1();                 /* clear control line */
         break;
-#endif
     }
     return( 0 );
 }
@@ -833,14 +777,8 @@ int RemoteConnectServer(
         got_twidles = Twidle( ext, FALSE );
         switch( ext->CableType ) {
     case WATCOM_VAL:
-#if defined(_FMR)
-        FM_LowerCtl1();
-        /* LowerCtl2(); */
-#else
         LowerCtl1();
         LowerCtl2();
-#endif
-#if !defined(_FMR)
     case FMR_VAL:
         LowerCtl1();
         LowerCtl2();
@@ -850,7 +788,6 @@ int RemoteConnectServer(
     case DUTCHMAN_VAL:
         FD_LowerCtl1();
         break;
-#endif
     }
         if( !got_twidles ) {
                 time = Ticks() + SYNCH_WAIT;
@@ -875,14 +812,8 @@ int RemoteConnectClient(
                 return( FALSE );
         switch( ext->CableType ) {
     case WATCOM_VAL:
-#if defined(_FMR)
-        FM_LowerCtl1();
-        /* LowerCtl2(); */
-#else
         LowerCtl1();
         LowerCtl2();
-#endif
-#if !defined(_FMR)
     case FMR_VAL:
         LowerCtl1();
         LowerCtl2();
@@ -892,17 +823,16 @@ int RemoteConnectClient(
     case DUTCHMAN_VAL:
         FD_LowerCtl1();
         break;
-#endif
     }
-        time = Ticks() + SYNCH_WAIT;
-        for( ;; ) {
-                if( Synch(ext) ) {
-                        break;
-                } else if( time < Ticks() ) {
-                        return( 0 );
-                }
+    time = Ticks() + SYNCH_WAIT;
+    for( ;; ) {
+        if( Synch(ext) ) {
+            break;
+        } else if( time < Ticks() ) {
+            return( 0 );
         }
-        if( !LineTestClient(ext) ) return( FALSE );
+    }
+    if( !LineTestClient(ext) ) return( FALSE );
     return( TRUE );
 }
 
@@ -924,13 +854,8 @@ void RemoteLink(
         PDEVICE_EXTENSION ext)
 {
         ext->DataPort = 0;
-#if defined(_FMR)
-        ext->CtlPort1 = ext->DataPort;
-        ext->CtlPort2 = ext->CtlPort1 + 2;
-#else
         ext->CtlPort1 = ext->DataPort + 1;
         ext->CtlPort2 = ext->CtlPort1 + 1;
-#endif
         WriteData( TWIDLE_OFF );            /* initialize the control ports */
         XX_RaiseCtl1();
         ext->TwidleCount = 0;
