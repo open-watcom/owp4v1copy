@@ -164,12 +164,12 @@ static DWORD findMatchingFile( HWND hwnd, const char *fname ) {
 
     getFullFname( hwnd, fname, &fullname );
     lb = GetDlgItem( hwnd, FOD_FILELIST );
-    fullname.toLower();
+//    fullname.toLower();
     rc = SendMessage( lb, LB_FINDSTRINGEXACT, -1,
                       (LPARAM)(LPSTR)fullname.gets() );
     if( rc == LB_ERR ) {
         getRelFname( hwnd, fname, &fullname );
-        fullname.toLower();
+//        fullname.toLower();
         rc = SendMessage( lb, LB_FINDSTRINGEXACT, -1,
                           (LPARAM)(LPSTR)fullname.gets() );
     }
@@ -201,7 +201,7 @@ static void addFileToList( HWND hwnd, char *fname ) {
         } else {
             getRelFname( hwnd, fname, &fullname );
         }
-        fullname.toLower();
+//        fullname.toLower();
         if( isLong ) {
             fullname.addQuotes();
         }

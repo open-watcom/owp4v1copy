@@ -289,7 +289,7 @@ bool VMsgLog::saveLogAs()
     WFileDialog fd( this, sFilter );
     fn = fd.getOpenFileName( fn, "Save Log as", WFSaveDefault );
     if( fn.legal() ) {
-        fn.toLower();
+//        fn.toLower();
         WFile f;
         if( !f.open( fn, OStyleWrite ) ) {
             WMessageDialog::messagef( this, MsgError, MsgOk, _viperError, "Unable to save log file '%s'", (const char*)fn );

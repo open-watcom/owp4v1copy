@@ -319,7 +319,7 @@ void VCompDialog::osButton( WWindow *item )
 void VCompDialog::okButton( WWindow* )
 {
     _eName->getText( *_fn );
-    _fn->toLower();
+//    _fn->toLower();
     if( _fn->isMask() ) {
         WMessageDialog::messagef( this, MsgError, MsgOk, _viperError, "'%s' cannot be a wildcard", (const char*)*_fn );
     } else if( !_fn->legal() ) {

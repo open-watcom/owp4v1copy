@@ -190,7 +190,7 @@ void VEditDlg::okButton( WWindow* ) {
                                   "'%s' is not a valid editor name",
                                   _fn.gets() );
     }
-    _fn.toLower();
+//    _fn.toLower();
     if( _exeButton->checked() ) {
         _isDll = FALSE;
     } else {

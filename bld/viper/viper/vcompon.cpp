@@ -363,7 +363,7 @@ void VComponent::mAddItem( WMenuItem* )
         rc = (ret != 0);
 #endif
         if( !rc ) break;
-        inp.toLower();
+//        inp.toLower();
         WStringList names( inp );
         startWait();
         //someday change this to use addFromFilename() in mcompon.cpp
@@ -384,7 +384,7 @@ void VComponent::mAddItem( WMenuItem* )
                         struct dirent* ent = readdir( dir );
                         if( !ent ) break;
                         WFileName fn( ent->d_name );
-                        fn.toLower();
+//                        fn.toLower();
                         fn.absoluteTo( asearch );
                         WVList& items = _component->items();
                         MItem* mm = NULL;
@@ -448,7 +448,7 @@ void VComponent::mRenameItem( WMenuItem* )
         bool done = FALSE;
         for( ; !done ; ) {
             if( !inp.getInput( fn, "Enter new filename" ) ) break;
-            fn.toLower();
+//            fn.toLower();
             fn.removeQuotes();
             MRule* rule = _config->findMatchingRule( fn, target()->rule(), _component->mask() );
             if( rule ) {
@@ -541,7 +541,7 @@ static rtn_status captureName( time_t, char* name, void* data )
 {
     MComponent* comp = ((CapData*)data)->comp;
     WPickList* incList = ((CapData*)data)->incList;
-    WFileName fn( name ); fn.toLower();
+    WFileName fn( name ); //fn.toLower();
     MRule* rule = _config->findMatchingRule( fn, comp->target()->rule(), comp->mask() );
     if( rule ) {
         incList->add( new MItem( fn, comp, rule ) );
@@ -828,7 +828,7 @@ void VComponent::markFile( WFileName &file, unsigned owner ) {
     MItem       *cur;
     WFileName   fn;
 
-    file.toLower(); // since comparison below is actually case sensitive
+//    file.toLower(); // since comparison below is actually case sensitive
     WPickList &items = _component->items();
     cnt = items.count();
     for( i=0; ; i++ ) {

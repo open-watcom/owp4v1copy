@@ -94,9 +94,9 @@ static void splitref( FullName& s, const char* f )
         char cwd[ _MAX_PATH + 1 ];
         getcwd( cwd, sizeof( cwd ) );
         int icount = strlen( cwd );
-        for( int i=0; i<icount; i++ ) {
-            cwd[i] = (char)tolower( cwd[i] );
-        }
+//        for( int i=0; i<icount; i++ ) {
+//            cwd[i] = (char)tolower( cwd[i] );
+//        }
         if( cwd[ icount-1 ] != '\\' ) {
             strcat( cwd, "\\" );
         }
@@ -251,10 +251,10 @@ bool WEXPORT WFileName::setCWD() const
 void WEXPORT WFileName::getCWD( bool slash )
 {
     getcwd( _x.path, sizeof( _x.path ) );
-    int icount = strlen( _x.path );
-    for( int i=0; i<icount; i++ ) {
-        _x.path[i] = (char)tolower( _x.path[i] );
-    }
+//    int icount = strlen( _x.path );
+//    for( int i=0; i<icount; i++ ) {
+//        _x.path[i] = (char)tolower( _x.path[i] );
+//    }
     if( slash ) {
         strcat( _x.path, "\\" );
     }

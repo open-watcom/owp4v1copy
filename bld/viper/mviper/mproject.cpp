@@ -75,7 +75,7 @@ void WEXPORT MProject::readSelf( WObjectFile& p )
             p.readObject( &_filename );
         }
         _filename = p.filename();
-        _filename.toLower();
+//        _filename.toLower();
         setMakefile();
         if( p.version() > 26 ) {
             p.readObject( &_before );

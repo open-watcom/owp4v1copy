@@ -89,7 +89,7 @@ void WEXPORT MComponent::readSelf( WObjectFile& p )
         p.readObject( &_filename );
     }
     _filename = p.filename();
-    _filename.toLower();
+//    _filename.toLower();
     if( p.version() < 33 ) {
         p.readObject( _target );
     }
@@ -509,7 +509,7 @@ bool MComponent::addFromMask( WFileName& search, WString& err )
             WFileName newfile( ent->d_name );
             newfile.setDrive( search.drive() );
             newfile.setDir( search.dir() );
-            newfile.toLower();
+//            newfile.toLower();
             if( !addFromFilename( newfile, err ) ) {
                 ok = FALSE;
                 break;

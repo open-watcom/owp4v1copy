@@ -1061,7 +1061,7 @@ bool VpeMain::appActivate( bool activated ) {
 bool VpeMain::validateProjectName( WFileName& fn )
 {
     if( fn.size() > 0 ) {
-        fn.toLower();
+//        fn.toLower();
         if( fn.legal() ) {
             if( strlen( fn.ext() ) == 0 ) {
                 fn.setExt( ".wpj" );
@@ -1280,7 +1280,7 @@ bool VpeMain::saveProjectAs( const WFileName& def )
         WFileDialog fd( this, pFilter );
         WFileName fn( fd.getSaveFileName( def, "Save Project as", WFSaveDefault ) );
         if( fn.legal() && okToReplace( fn ) ) {
-            fn.toLower();
+//            fn.toLower();
             _project->setFilename( fn );
             addOldProject( fn );
             return( unloadProject( fn ) );
