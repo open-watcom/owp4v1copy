@@ -297,9 +297,9 @@ is implicit in every makefile and does not need to be listed explicitly
 .note build
 indicates that wmake should be run in this directory as part of the build process
 .note os_x
-for each x in the list of the valid host_os tokens
+for each x in the list of the valid host_os tokens (os_nt, os_nw, etc)
 .note cpu_x
-for each x in the list of the valid host_cpu tokens
+for each x in the list of the valid host_cpu tokens (cpu_386, cpu_ppc, etc)
 .note target_x
 for each x in the list of valid host_cpu tokens (for compilers and targetted apps)
 .note tiny, small, compact, medium, large, huge, flat, nomodel
@@ -313,6 +313,19 @@ should have a pmake line which contains, at a minimum:
 .millust begin
 #pmake: build os_nt cpu_ppc
 .millust end
+Pmake also supports the concept of priority. The priority is specified as 
+/nnn after the #pmake but before the colon (:) like so:
+.millust begin
+#pmake/50: build os_nt cpu_ppc
+.millust end
+Makefiles with lower priority are visited first. The default priority if not
+explicitly specified is 100. Pmake will visit subdirectories in depth first
+traversal order unless changed by the 
+.us -r
+ option or the 
+.us priority
+ value.
+.np
 You are free to add as many mnemonic identifiers as you want, of course,
 but anything which you feel is an abstract classification that would apply
 to other projects, please bring to our collective attention and if deemed
