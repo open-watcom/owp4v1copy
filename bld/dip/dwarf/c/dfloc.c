@@ -420,7 +420,17 @@ static int Ref( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
             break;
         case MAD_PPC:
             areg  = CLRegPPC[ offset ].ci;
+            // This should really be dynamic; anyway the registers are really
+            // stored as 64-bit values, so if we want to get at the lower 32
+            // bits only, we need to start 32 bits into the storage.
+#if defined( __BIG_ENDIAN__ )
+            if( CLRegPPC[ offset ].len == 32 )
+                start = 32;
+            else
+                start = 0;
+#else
             start = CLRegPPC[ offset ].start;
+#endif
             break;
         case MAD_NIL:
         default:
@@ -540,7 +550,15 @@ static int Reg( void *_d, uint_32 *where, uint_16 reg )
         break;
     case MAD_PPC:
         areg  = CLRegPPC[ reg ].ci;
+        /* yep, another and even worse kludge */
+#if defined( __BIG_ENDIAN__ )
+        if( CLRegPPC[ reg ].len == 32 )
+            start = 32;
+        else
+            start = 0;
+#else
         start = CLRegPPC[ reg ].start;
+#endif
         size  = CLRegPPC[ reg ].len;
         break;
     case MAD_NIL:

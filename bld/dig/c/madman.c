@@ -731,6 +731,8 @@ typedef union {
 
 /* size of decomposed int in bytes - corresponds to 'i' in decomposed_item */
 #define DI_SIZE     sizeof( unsigned_64 )
+/* size of decomposed mantissa in bytes (f.mantissa) */
+#define DF_SIZE     sizeof( unsigned_64 )
 
 /* Convert integer of specified type to native representation (64-bit) */
 // NYI: non-two's complement support
@@ -956,6 +958,7 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
     unsigned    mant_bits;
     unsigned    shifts;
     unsigned    i;
+    unsigned_8  *dst = &v->f.mantissa.u._8[0];
 
     memset( v, 0, sizeof( *v ) );
     bytes = mti->b.bits / BITS_PER_BYTE;
@@ -965,11 +968,14 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
         return( MS_OK );
     }
 
+#if defined( __BIG_ENDIAN__ )
+    dst += DF_SIZE - bytes;     /* low bytes are higher in memory */
+#endif
     if( mti->i.endian == ME_HOST ) {
-        memcpy( &v->f.mantissa, d, bytes );
+        memcpy( dst, d, bytes );
     } else {
         for( i = 0; i < bytes; i++ ) {
-            v->f.mantissa.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][DI_SIZE - bytes + i]];
+            dst[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][DF_SIZE - bytes + i]];
         }
     }
 
@@ -1332,13 +1338,20 @@ static mad_status FloatTypeToString( unsigned radix, mad_type_info const *mti,
     switch( radix ) {
     case 16:
         p = d;
+#if !defined( __BIG_ENDIAN__ )
         p += mti->b.bits / BITS_PER_BYTE;
+#endif
         for( len = 0; len < mti->b.bits / (BITS_PER_BYTE / 2); len += 2 ) {
+#if !defined( __BIG_ENDIAN__ )
             --p;
+#endif
             if( len < max ) {
                 res[len+0] = DigitTab[ *p >>   4 ];
                 res[len+1] = DigitTab[ *p &  0xf ];
             }
+#if defined( __BIG_ENDIAN__ )
+            ++p;
+#endif
         }
         if( max > 0 ) res[ min( len, max ) ] = '\0';
         *maxp = len;

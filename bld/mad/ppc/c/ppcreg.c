@@ -172,6 +172,7 @@ unsigned        DIGENTRY MIRegistersSize( void )
 
 mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
 {
+#if !defined( __BIG_ENDIAN__ )
     unsigned_32     temp;
     int             i;
 
@@ -198,11 +199,13 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
+#endif
     return( MS_OK );
 }
 
 mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
 {
+#if !defined( __BIG_ENDIAN__ )
     unsigned_32     temp;
     int             i;
 
@@ -226,6 +229,7 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
+#endif
     return( MS_OK );
 }
 
