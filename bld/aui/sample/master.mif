@@ -4,7 +4,7 @@
 !include defrule.mif
 !include deftarg.mif
 
-!ifdef sys_windowed
+!ifeq sys_windowed 1
 gui_type = win
 !else
 gui_type = ui
@@ -34,7 +34,7 @@ objs = app.obj util.obj window1.obj window2.obj window3.obj &
        window4.obj window5.obj window6.obj window7.obj window8.obj &
        menus.obj appcolor.obj dlgcmd.obj dlgoptn.obj password.obj
 
-!ifdef sys_windowed
+!ifeq sys_windowed 1
 !ifeq host_os os2
 resfile = apppm.res
 #resfile = apppmj.res
@@ -53,7 +53,7 @@ rcinc   = $(inc_dirs_sys_win)$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_d
 
 app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfile)
         $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(wres_lib)
-!ifndef sys_windowed
+!ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
 !else ifneq host_os os2
         $(rc) $(rc_flags) -k $(resfile) $^@
