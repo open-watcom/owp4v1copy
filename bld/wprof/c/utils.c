@@ -37,6 +37,7 @@
 #include <process.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include "common.h"
 
 #if _OS == _OS_WIN || _OS == _OS_NT
 #include <windows.h>
@@ -52,7 +53,6 @@
 #   error _OS not supported
 #endif
 
-#include "common.h"
 #include "aui.h"
 #include "dip.h"
 #include "wpaui.h"
