@@ -214,7 +214,8 @@ typedef struct {
     int         parasize;       // total no. of bytes used by parameters
     int         localsize;      // total no. of bytes used by local variables
     int         mem_type;       // distance of procedure: near or far
-    int         is_vararg:1;    // if it has a vararg
+    unsigned    is_vararg:1;    // if it has a vararg
+    unsigned    pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
 } proc_info;
 
 typedef struct parm_list {
