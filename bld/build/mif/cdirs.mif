@@ -73,6 +73,9 @@ wr_dir          = $(sdk_dir)\wr
 !ifndef misc_dir
 misc_dir        = $(sdk_dir)\misc
 !endif
+!ifndef wheapwlk_dir
+wheapwlk_dir        = $(sdk_dir)\heapwalk
+!endif
 !ifndef owl_dir
 owl_dir         = $(dev_dir)\owl
 !endif

@@ -33,7 +33,7 @@ resources = 10hw.ico heapwlk.dlg ..\misc\memwnd.rc &
             heapinfo.dlg memman.dlg lclinfo.dlg add.dlg config.dlg &
             freen.dlg alloc.dlg code.dlg config.dlg ..\misc\about.dlg
 
-$(name).exe : $(msgh) $(objs) $(disasm) $(lnk) $(name).res ..\misc\ctl3d.lib
+$(name).exe : $(msgh) $(objs) $(disasm) $(lnk) $(name).res
         wlink @$(lnk)
         $(RC) -k $(name).res
 
@@ -83,7 +83,7 @@ mem.obj : mem.c
 .c.obj :
         $(comp286) $[* -ml$(cflags)
 .asm.obj:
-        wasm $[* /fo=obj\$[&.obj;
+        wasm $[* /fo=obj\$[&.obj
 
 clean : .symbolic
     @rm -f *.exe *.res *.lnk *.map
