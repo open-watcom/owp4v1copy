@@ -1547,9 +1547,6 @@ static int proc_check( void )
 
 #endif
 
-#define IS_ANY_BRANCH( tok )    \
-            ( IS_BRANCH( tok ) || ( (tok) >= T_LOOP && (tok) <= T_LOOPZW ) )
-
 static memtype ConvMemType( int x )
 {
     switch( x ) {

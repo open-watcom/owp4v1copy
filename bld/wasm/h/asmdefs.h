@@ -34,6 +34,8 @@
 #define IS_JMP( inst )      ( inst >= T_JA && inst <= T_JZ )
 #define IS_BRANCH( inst )   ( IS_JMP( inst ) || IS_CALL( inst ) )
 #define IS_JUMPF( inst )    ( inst == T_CALLF || inst == T_JMPF )
+#define IS_ANY_BRANCH( tok )    \
+            ( IS_BRANCH( tok ) || ( (tok) >= T_LOOP && (tok) <= T_LOOPZW ) )
 
 #define MOD_00          0x00
 #define MOD_01          0x40
