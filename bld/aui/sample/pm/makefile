@@ -4,7 +4,7 @@ guilib = $(guidir)/win/guipml.lib
 
 app.exe appj.exe : $(objs) app.lnk $(auilib) $(guilib) apppm.res apppmj.res
         $(linker) sys os2 pm op symfile=app.sym @app lib $(guilib) lib os2
-        copy app.exe appj.exe
+        cp app.exe appj.exe
         $(lang_root)\binp\rc -p -x apppm.res app.exe
         $(lang_root)\binp\rc -p -x apppmj.res appj.exe
         copy /b app.exe+app.sym

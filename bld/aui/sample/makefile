@@ -36,11 +36,11 @@ apppm.res apppmj.res : $(rcfiles) ..\h\apppm.rc
         set opath=$(%path)
         set path=$(lang_root)\binp
         $(lang_root)\binp\rc -r app.rc
-        del apppm.i
-        copy app.res apppm.res
+        rm -f apppm.i
+        cp app.res apppm.res
         rename apppmj.i apppm.i
         $(lang_root)\binp\rc -r app.rc
-        copy app.res apppmj.res
+        cp app.res apppmj.res
         set path=$(%opath)
         @set include=$(%oinc)
 
@@ -49,7 +49,7 @@ apppm.res apppmj.res : $(rcfiles) ..\h\apppm.rc
         $(compile) $(copts) /zq /fh
 
 eraseall.obj : $(auidir)\compile.gbl
-        if exist *.obj erase *.obj
+        rm -f *.obj
         wtouch eraseall.obj
 
 objs = app.obj util.obj window1.obj window2.obj window3.obj &

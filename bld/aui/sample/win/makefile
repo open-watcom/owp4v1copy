@@ -6,7 +6,7 @@ resfile = app.res
 
 app.exe : $(objs) app.lnk $(auilib) $(guilib) $(resfile)
         $(linker) sys windows @app lib $(guilib)
-        copy app.exe appj.exe
+        cp app.exe appj.exe
 #bug    segment CLASS 'CODE' LOADONCALL DISCARDABLE
         wrc -k $(rcopt) $(resfile)
         wrc -k $(rcopt) appj.res

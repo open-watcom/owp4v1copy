@@ -12,8 +12,7 @@ app.nlm : $(objs) app.lnk $(auilib)
         @%append app.lnk libpath %WATCOM%/lib386/netware
         @%append app.lnk import  @%WATCOM%/novi/clib.imp
         @%append app.lnk import  @$(uidir)/nlm/uinlm.imp
-
         wlink debug novell @app
-        del app.lnk
+        rm -f app.lnk
 
 !include ../makefile

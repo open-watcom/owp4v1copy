@@ -15,4 +15,4 @@ app.exp : $(objs) app.lnk $(guilib) $(uilib) $(reslib) $(auilib) $(resfile)
         !$(pharlap)bind386 $(pharlap)run386b app
         wstrip -q -a -r app.exe . $(resfile)
 
-!include ..\makefile
+!include ../makefile

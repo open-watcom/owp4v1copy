@@ -22,7 +22,7 @@ $(bin_root)/binnt/wdebug.zip : JVMHelp.java
     !if not exist sun/tools/nul md sun/tools
     !if not exist sun/tools/debug/nul md sun/tools/debug
     cp jvm*.class sun/tools/debug
-    if exist $(bin_root)/binnt/wdebug.zip del $(bin_root)/binnt/wdebug.zip
+    rm -f $(bin_root)/binnt/wdebug.zip
     $(bld_bin)/zip -r -0 $(bin_root)/binnt/wdebug.zip sun/*.*
 !ifdef lexusbld
     newer $(bin_root)/binnt/wdebug.zip $(lexlib_dir)/tools/system/wdebug.zip "^copy &f $#f > nul"

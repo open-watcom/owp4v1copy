@@ -16,7 +16,7 @@ apppm.res : ../apppm.rc ../one.bmp &
         set opath=$(%path)
         set path=$(%toolkit)\os2bin
         $(%toolkit)\os2bin\rc -r ..\apppm.rc
-        copy ..\apppm.res .
+        cp ../apppm.res .
         set path=$(%opath)
         @set include=$(%oinc)
 

@@ -15,12 +15,12 @@ batcli.obj : batcli.c
         *wcc batcli.c -oaxt -d1 -w3
 
 tst.exe : tst.c batcli.obj
-        *wcl /d2 tst.c batcli.obj /l=dos
+        *wcl -d2 tst.c batcli.obj -l=dos
 
 
 !else ifeq host_OS nt
 
-.c: .;..\os2
+.c: .;../os2
 
 all : batserv.exe batcli.obj batpipe.obj tst.exe .symbolic
 
@@ -46,7 +46,7 @@ $(name).exe : $(OBJS) $(LNK)
 
 name = winint
 
-.c: .;..\dos
+.c: .;../dos
 
 objs = $(name).obj link.obj
 objse = $(name)e.obj link.obj
@@ -68,8 +68,8 @@ $(name)e.exe : $(OBJSE) $(LNK) $(name).res
     @copy /b $(name)E.exe+$(name)E.sym
     @del $(name)E.sym
 
-$(name).res : ..\$(name).rc
-    $(rc) -bt=windows -r ..\$(name).rc
+$(name).res : ../$(name).rc
+    $(rc) -bt=windows -r $[@
 
 $(LNK) : makefile
     %create $(LNK)

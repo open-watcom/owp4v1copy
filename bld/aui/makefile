@@ -53,7 +53,7 @@ all : .symbolic $(auidir)/h/auistr.h aui.lib $(dlgs)
         @%null
 
 eraseall.obj : $(auidir)/compile.gbl
-        if exist *.obj erase *.obj
+        rm -f *.obj
         wtouch eraseall.obj
 
 regexp.obj : $(posix_dir)/misc/regexp.c ../h/wndregx.h
@@ -116,10 +116,10 @@ objs =  guimain.obj &
         wndfref.obj &
         wndmsg.obj &
         wndmnsz.obj &
-        wndimain.obj &
+        wndimain.obj
 
 aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
-        @if exist tmp.lbc erase tmp.lbc
+        rm -f tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) -b -n aui @tmp.lbc
 
@@ -154,8 +154,7 @@ dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg $(auidir)\h\auis
 $(auidir)/h/auistr.h : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
         wcl386 -zq $]@
         mkstr $^@
-        del mkstr.obj
-        del mkstr.exe
+        rm -f mkstr.*
 
 clean : .SYMBOLIC
         rm -f *.obj *.pch *.lib *.rc *.lbc *.dlg

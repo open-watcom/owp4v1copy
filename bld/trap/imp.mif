@@ -238,8 +238,7 @@ $(trperr_h) $(jtrperr_h) : $(mkstr_c) $(trap_msg)
         mkstr $(jtrperr_h)
         wcl386 $(mkstr_c) -zq -i"$(trap_dir)/h"
         mkstr $(trperr_h)
-        del mkstr.obj
-        del mkstr.exe
+        rm -f mkstr.*
 
 !ifndef extra_dobjs
 extra_dobjs = $(extra_objs)
@@ -278,7 +277,7 @@ $(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) 
 !endif
 
 eraseall.obj : $(trap_dir)/compile.gbl
-        if exist *.obj erase *.obj
+        rm -f *.obj
         wtouch eraseall.obj
 
 #allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&) $[@

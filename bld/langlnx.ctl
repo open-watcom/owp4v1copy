@@ -32,6 +32,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
 [ INCLUDE <devdir>/emu/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
+[ INCLUDE <devdir>/viper/bviper/lang.ctl ]
 
 # all is ready to do everything else now
 
