@@ -34,8 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <float.h>
 #ifdef __FPI__
- #include <float.h>
  #include <signal.h>
 #endif
 
@@ -70,7 +70,7 @@ void my_handler( int sig, int fpe ) {
     signal( SIGFPE, (__sig_func)my_handler );
 }
 
-#else
+//#else
 
 volatile int my_matherrno;
 
@@ -253,7 +253,7 @@ void test_fp_and_80x87_math( void )
     VERIFY( pow( 1.0, 123456789.0 ) == 1.0 );
     VERIFY( pow( 2.0, 16.0 ) == 65536.0 );
     VERIFY( CompDbl( pow( E, log(1234.0) ), 1234.0 ) );
-    #ifndef __FPI__
+    #ifdef __FPI__
     VERIFY( sqrt( -1 ) == 1 );
     // Now my_matherrno should == DOMAIN after calling sqrt( -1 )
     // If not, matherr() fails
