@@ -47,7 +47,7 @@ endif
 
         datasegment
 
-        extrn   __FPE_handler   : dword
+        extrn   "C",__FPE_handler: dword
         extrn   "C",_STACKLOW   : dword
 
 TInf    db 00h,00h,00h,00h,00h,00h,00h,80h,0ffh,7fh

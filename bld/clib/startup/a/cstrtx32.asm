@@ -183,8 +183,7 @@ __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
 
         extrn   "C",_LpPgmName          : dword
         extrn   "C",_LpCmdLine          : dword
-        extrn   ___FPE_handler          : dword
-        extrn   __FPE_handler           : dword
+        extrn   "C",__FPE_handler       : dword
         extrn   "C",_Envseg             : word
         extrn   "C",_Envptr             : dword
         extrn   __no87                  : word

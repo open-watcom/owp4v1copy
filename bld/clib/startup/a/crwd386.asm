@@ -109,8 +109,7 @@ endif
 endif
 endif
 endif
- __FPE_handler label dword
-___FPE_handler dd __null_FPE_rtn ; FPE handler
+__FPE_handler dd __null_FPE_rtn ; FPE handler
 
 
 ifndef __QNX__
@@ -167,8 +166,7 @@ ifndef __NETWARE__
         public  "C",_Envseg
 endif
         public  __no87
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
 
 _DATA   ends
 

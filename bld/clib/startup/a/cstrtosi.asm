@@ -125,8 +125,7 @@ __Extender db 0                 ; 10 => 386 windows
 __ExtenderSubtype db 0          ;
 __OS       db 0                 ; OS Identifier
 
- __FPE_handler label dword
-___FPE_handler dd __null_FPE_rtn ; FPE handler
+__FPE_handler dd __null_FPE_rtn ; FPE handler
 
         public  __LpCmdLine
         public  __LpPgmName
@@ -148,8 +147,7 @@ ___FPE_handler dd __null_FPE_rtn ; FPE handler
         public  __Extender
         public  __ExtenderSubtype
         public  __OS
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
 
 _DATA   ends
 

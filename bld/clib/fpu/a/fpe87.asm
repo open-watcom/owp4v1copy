@@ -57,7 +57,7 @@ ifdef   __MT__
 else
         extrn   "C",_STACKLOW   : word
 endif
-        extrn   ___FPE_handler  : dword
+        extrn   "C",__FPE_handler: dword
 ifndef  __OS2__
         extrn   "C",__FPE_int   : byte  ; defined in \clib\math\c\fpeint.c
 endif
@@ -302,14 +302,14 @@ ifdef __MT__
           xchg  ax,es:[si]              ; - set new stack low, and get old one
           push  ax                      ; - save current stack low
           mov   ax,cx                   ; - set floating point status
-          call  ___FPE_handler          ; - call user's handler
+          call  __FPE_handler           ; - call user's handler
           pop   es:[si]                 ; - restore stack low
 
 else
           push  _STACKLOW               ; - save current stack low
           mov   _STACKLOW,AX            ; - set new stack low
           mov   AX,CX                   ; - set floating point status
-          call  ___FPE_handler          ; - call user's handler
+          call  __FPE_handler           ; - call user's handler
           pop   _STACKLOW               ; - restore old stack low value
 endif
           mov   SS,SaveSS               ; - restore stack pointer

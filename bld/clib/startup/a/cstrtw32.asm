@@ -171,8 +171,7 @@ public  "C",__Is_DLL
 __Is_DLL    label byte
 __inDLL db      0               ; 0 => ordinary EXE, non-zero => DLL
 
- __FPE_handler label dword
-___FPE_handler dd __null_FPE_rtn ; FPE handler
+__FPE_handler dd __null_FPE_rtn ; FPE handler
 
         public  "C",_LpCmdLine
         public  "C",_LpPgmName
@@ -186,8 +185,7 @@ ___FPE_handler dd __null_FPE_rtn ; FPE handler
         public  "C",_osminor
         public  "C",_Extender
         public  __no87
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
         public  __init_387_emulator
 
 _DATA   ends

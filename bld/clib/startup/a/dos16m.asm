@@ -226,8 +226,7 @@ __no87      dw 0                ; non-zero => "NO87" enviroment var present
 __get_ovl_stack dw 0,0          ; get overlay stack pointer
 __restore_ovl_stack dw 0,0      ; restore overlay stack pointer
 __close_ovl_file dw 0,0         ; close the overlay file handle
- __FPE_handler label dword
-___FPE_handler dw 0,0           ; FPE handler
+__FPE_handler dd 0              ; FPE handler
 _LpCmdLine dw 0,0               ; lpCmdLine (for _argc, _argv processing)
 _LpPgmName dw 0,0               ; lpPgmName (for _argc, _argv processing)
 
@@ -255,8 +254,7 @@ __ovlvec   dd 0                 ; saved contents of interrupt vector used
         public  __get_ovl_stack
         public  __restore_ovl_stack
         public  __close_ovl_file
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
         public  "C",_LpCmdLine
         public  "C",_LpPgmName
 
@@ -453,8 +451,8 @@ _is_ovl:                                ; endif
         mov     bp,sp                   ; ...
         ; DON'T MODIFY BP FROM THIS POINT ON!
         mov     ax,offset __null_FPE_rtn; initialize floating-point exception
-        mov     ___FPE_handler,ax       ; ... handler address
-        mov     ___FPE_handler+2,cs     ; ...
+        mov     word ptr __FPE_handler,ax       ; ... handler address
+        mov     word ptr __FPE_handler+2,cs     ; ...
 
         mov     ax,0ffh                 ; run all initializers
         call    __FInitRtns             ; call initializer routines

@@ -140,8 +140,7 @@ _child     dw 0                 ; non-zero => a spawned process is running
 __no87     dw 0                 ; always try to use the 8087
 __get_ovl_stack dw 0,0          ; get overlay stack pointer
 __restore_ovl_stack dw 0,0      ; restore overlay stack pointer
- __FPE_handler label dword
-___FPE_handler dw 0,0           ; FPE handler
+__FPE_handler dd 0              ; FPE handler
 _LpCmdLine dw 0,0               ; lpCmdLine (for _argc, _argv processing)
 _LpPgmName dw 0,0               ; lpPgmName (for _argc, _argv processing)
 filename        db MAX_FILE_NAME dup(0)
@@ -159,8 +158,7 @@ filename        db MAX_FILE_NAME dup(0)
         public  __HShift
         public  __get_ovl_stack
         public  __restore_ovl_stack
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
         public  "C",_LpCmdLine
         public  "C",_LpPgmName
 
@@ -275,9 +273,9 @@ endif
         mov     __osmode,al             ; protected mode!
 notprot:
         mov     ax,offset __null_FPE_rtn; initialize floating-point exception
-        mov     ___FPE_handler,ax       ; ... handler address
+        mov     word ptr __FPE_handler,ax       ; ... handler address
         mov     ax,seg __null_FPE_rtn   ; initialize floating-point exception
-        mov     ___FPE_handler+2,ax     ; ...
+        mov     word ptr __FPE_handler+2,ax     ; ...
 
         mov     ah,30h                  ; get DOS version number
         int     21h                     ; ...

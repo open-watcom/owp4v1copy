@@ -40,12 +40,12 @@ ENV_SIZE        equ     14
 include fpubits.inc
 
 ifdef __QNX__
-        extrn   ___FPE_handler  : near;
+        extrn   "C",__FPE_handler  : near;
 endif
 
 _DATA segment word public 'DATA'
 ifndef __QNX__
-        extrn   ___FPE_handler  : dword
+        extrn   "C",__FPE_handler  : dword
 my87            sarea           <>
 endif
 ifdef _DEBUG
@@ -708,7 +708,7 @@ __Exception_HNDLR proc  near
 ;         call  __GETDS                 ; - point DS to DGROUP
           mov   AL,AH                   ; - get exception code
           mov   AH,0                    ; - ...
-          call  ___FPE_handler          ; - jump to SIGFPE handler rtn
+          call  __FPE_handler           ; - jump to SIGFPE handler rtn
           mov   cx,ds                   ; - set ES=DS
           mov   es,cx                   ; - ...
           mov   cx,ss                   ; - set DS=SS

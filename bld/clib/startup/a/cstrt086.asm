@@ -68,8 +68,7 @@ endif
         extrn   "C",_cbyte              : word
         extrn   "C",_child              : word
         extrn   __no87                  : word
-        extrn   __FPE_handler           : word
-        extrn  ___FPE_handler           : word
+        extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : word
         extrn   "C",_LpPgmName          : word
         extrn   __get_ovl_stack         : word
@@ -416,8 +415,8 @@ if _MODEL and _BIG_CODE
 endif
         ; DON'T MODIFY BP FROM THIS POINT ON!
         mov     ax,offset __null_FPE_rtn; initialize floating-point exception
-        mov     ___FPE_handler,ax       ; ... handler address
-        mov     ___FPE_handler+2,cs     ; ...
+        mov     word ptr __FPE_handler,ax       ; ... handler address
+        mov     word ptr __FPE_handler+2,cs     ; ...
 
         mov     ax,0FFh                 ; run all initalizers
         call    __InitRtns              ; call initializer routines

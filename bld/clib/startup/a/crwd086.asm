@@ -68,8 +68,7 @@ __get_ovl_stack     dw 0,0      ; get overlay stack pointer
 __restore_ovl_stack dw 0,0      ; restore overlay stack pointer
 __close_ovl_file    dw 0,0      ; close the overlay file handle
 endif
- __FPE_handler label dword
-___FPE_handler dw 0,0           ; FPE handler
+__FPE_handler dd 0              ; FPE handler
 ifndef __QNX__
 _LpCmdLine dw 0,0               ; lpCmdLine (for _argc, _argv processing)
 _LpPgmName dw 0,0               ; lpPgmName (for _argc, _argv processing)
@@ -81,8 +80,7 @@ endif
         public  "C",_cbyte
         public  "C",_child
         public  __no87
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
 ifndef __QNX__
         public  "C",_psp
         public  __get_ovl_stack

@@ -158,7 +158,8 @@ __x32_zero_base_ptr             label dword
 __x386_zero_base_ptr            dd      0f0000000h
 
 ;the variables in the following list are from the module crwdata
-        public  __LpPgmName,__LpCmdLine,___FPE_handler,__FPE_handler
+        public  "C",__FPE_handler
+        public  __LpPgmName,__LpCmdLine
         public  __Envseg,__Envptr,__Extender,__no87,__cbyte2
         public  __child,__cbyte,__STACKTOP,__STACKLOW
         public  __osminor,__osmajor,__psp,__curbrk
@@ -185,7 +186,6 @@ __Envseg        dw      0
 __osmajor       db      0
 __osminor       db      0
 __X32VM         db      1
-___FPE_handler label dword
 __FPE_handler   dd      offset DGROUP:fpe_handler
 ;end of crwdata variables
 

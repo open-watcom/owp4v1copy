@@ -135,8 +135,7 @@ endif   ; ACAD
         extrn   _ExtenderSubtype: byte
         extrn   _Envptr         : dword
         extrn   _Envseg         : word
-        extrn   __FPE_handler   : dword
-        extrn  ___FPE_handler   : dword
+        extrn   "C",__FPE_handler : dword
         extrn   _LpCmdLine      : dword
         extrn   _LpPgmName      : dword
 

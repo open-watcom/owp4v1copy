@@ -72,8 +72,7 @@ endif
         extrn   "C",_ExtenderSubtype    : byte
         extrn   "C",_Envptr             : dword
         extrn   "C",_Envseg             : word
-        extrn   __FPE_handler           : dword
-        extrn  ___FPE_handler           : dword
+        extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",_LpPgmName          : dword
 

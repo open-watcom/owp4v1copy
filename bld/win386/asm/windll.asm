@@ -108,8 +108,7 @@ __osmajor  db 0                 ; major DOS version number
 __osminor  db 0                 ; minor DOS version number
 __child    dw 0                 ; non-zero => a spawned process is running
 __no87     dw 0                 ; always try to use the 8087
- __FPE_handler label dword
-___FPE_handler dw 0,0           ; FPE handler
+__FPE_handler dd 0              ; FPE handler
 __HShift   db 0                 ; Huge Shift value
 __osmode   db 1                 ; mode
 __WEPflag  db 0                 ; non-zero => WEP has been run
@@ -127,8 +126,7 @@ _InDebugger     dw 0
         public  __STACKTOP
         public  __child
         public  __no87
-        public   __FPE_handler
-        public  ___FPE_handler
+        public  "C",__FPE_handler
         public  __HShift
 
 DLLRoutine      LABEL FWORD

@@ -41,7 +41,7 @@ include fstatus.inc
         xref    "C",__set_ERANGE
 
         datasegment
-        codeptr ___FPE_handler
+        extrn   "C",__FPE_handler:dword
         xdefp   _FPStatus_
 _FPStatus_      db      0
         enddata
@@ -82,7 +82,7 @@ if (_MODEL and (_BIG_DATA or _HUGE_DATA)) and ((_MODEL and _DS_PEGGED) eq 0)
 endif
         mov     byte ptr _FPStatus_,FPS_UNDERFLOW
 ;;      mov     ax,FPE_UNDERFLOW; indicate underflow
-;;      call    ___FPE_handler  ;
+;;      call    __FPE_handler   ;
         pop     ds              ; restore DS
         sub     ax,ax           ; return a zero
         sub     dx,dx           ; . . .
@@ -93,7 +93,7 @@ endif
 
         defpe   F8InvalidOp
         mov     ax,FPE_ZERODIVIDE; indicate divide by 0
-        call    ___FPE_handler   ;
+        call    __FPE_handler    ;
         jmps    F8RetInf9       ; return infinity
         endproc F8InvalidOp
 
@@ -106,7 +106,7 @@ if (_MODEL and (_BIG_DATA or _HUGE_DATA)) and ((_MODEL and _DS_PEGGED) eq 0)
 endif
         mov     byte ptr _FPStatus_,FPS_DIVIDE_BY_0
         mov     ax,FPE_ZERODIVIDE; indicate divide by 0
-        call    ___FPE_handler  ;
+        call    __FPE_handler   ;
         pop     ds              ; restore DS
         pop     ax              ; restore AX
         jmps    F8RetInf9       ; return infinity
@@ -137,9 +137,9 @@ if (_MODEL and (_BIG_DATA or _HUGE_DATA)) and ((_MODEL and _DS_PEGGED) eq 0)
         mov     ax,DGROUP       ; get access to data segment
         mov     ds,ax           ; . . .
 endif
-        call    __set_ERANGE   ; errno = ERANGE
+        call    __set_ERANGE    ; errno = ERANGE
         mov     ax,FPE_OVERFLOW ; indicate overflow
-        call    ___FPE_handler  ;
+        call    __FPE_handler   ;
         pop     ds              ; restore DS
         pop     ax              ; restore AX
 F8RetInf9: and  ax,8000h        ; get sign
@@ -162,7 +162,7 @@ if (_MODEL and (_BIG_DATA or _HUGE_DATA)) and ((_MODEL and _DS_PEGGED) eq 0)
 endif
         mov     byte ptr _FPStatus_,FPS_DIVIDE_BY_0
         mov     ax,FPE_ZERODIVIDE; indicate divide by 0
-        call    ___FPE_handler  ;
+        call    __FPE_handler   ;
         pop     ds              ; restore DS
         pop     ax              ; restore AX
         jmps    F4RetInf9       ; return infinity
@@ -188,9 +188,9 @@ if (_MODEL and (_BIG_DATA or _HUGE_DATA)) and ((_MODEL and _DS_PEGGED) eq 0)
         mov     ax,DGROUP       ; get access to data segment
         mov     ds,ax           ; . . .
 endif
-        call    __set_ERANGE   ; errno = ERANGE
+        call    __set_ERANGE    ; errno = ERANGE
         mov     ax,FPE_OVERFLOW ; indicate overflow
-        call    ___FPE_handler  ;
+        call    __FPE_handler   ;
         pop     ds              ; restore DS
         pop     ax              ; restore sign of result
 F4RetInf9: and  ax,8000h        ; get sign

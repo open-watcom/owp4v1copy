@@ -13,3 +13,4 @@ __osminor
 __STACKLOW
 __STACKTOP
 __STKOVERFLOW_
+___FPE_handler
