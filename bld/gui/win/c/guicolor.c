@@ -288,7 +288,7 @@ bool GUIXSetColours( gui_window *wnd, gui_colour_set *colours )
 
     if( colours != NULL ) {
         size = sizeof( gui_colour_set ) * wnd->num_attrs;
-        wnd->colours = ( gui_colour_set * )GUIAlloc( size );
+        wnd->colours = ( gui_colour_set * )GUIMemAlloc( size );
         if( wnd->colours == NULL ) {
             return( FALSE );
         }

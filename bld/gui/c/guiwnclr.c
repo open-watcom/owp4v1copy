@@ -84,7 +84,7 @@ bool GUISetColours( gui_window * wnd, int num_attrs, gui_colour_set * colours )
 
 void GUIFreeColours( gui_window * wnd )
 {
-    GUIFree( wnd->colours );
+    GUIMemFree( wnd->colours );
     wnd->num_attrs = 0;
     wnd->colours = NULL;
 }
@@ -98,7 +98,7 @@ gui_colour_set * GUIGetWindowColours( gui_window * wnd )
 {
     gui_colour_set * colours;
 
-    colours = GUIAlloc( wnd->num_attrs * sizeof( gui_colour_set ) );
+    colours = GUIMemAlloc( wnd->num_attrs * sizeof( gui_colour_set ) );
     if( colours != NULL ) {
         GUIXGetWindowColours( wnd, colours );
     }

@@ -24,52 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Cover routines to access the trmem memory tracker
 *
 ****************************************************************************/
 
+#ifndef _GUIMEM_H_INCLUDED
+#define _GUIMEM_H_INCLUDED
 
-#include "guiwind.h"
-#include <malloc.h>
-#define STRICT
-#include <windows.h>
-#include "trmem.h"
-#ifdef TRMEM
-extern _trmem_hdl   TRMemHandle;
-static int          TRFileHandle;   /* stream to put output on */
+#include <stddef.h>
+
+extern void  GUIMemOpen( void );
+extern void  GUIMemClose( void );
+extern void  GUIMemRedirect( int );
+extern void  GUIMemPrtUsage( void );
+extern void *GUIMemAlloc( size_t size );
+extern void  GUIMemFree( void * ptr );
+extern void *GUIMemRealloc( void * ptr, size_t size );
+
 #endif
-
-void TRPrintLine( int * handle, const char * buff, size_t len )
-/*************************************************************/
-{
-    if( handle != NULL ) {
-        _lwrite( *handle, buff, len );
-    }
-}
-
-void TRMemOpen( char * file )
-/***************************/
-{
-#ifdef TRMEM
-    TRFileHandle = _lcreat( file, 0 );
-    TRMemHandle = _trmem_open( malloc, free, realloc, _expand,
-            &TRFileHandle, TRPrintLine,
-            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 | _TRMEM_REALLOC_NULL |
-            _TRMEM_FREE_NULL | _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
-#else
-    file = file;
-#endif
-}
-
-void TRMemClose( void )
-/*********************/
-{
-#ifdef TRMEM
-    _trmem_prt_usage( TRMemHandle );
-    if( TRFileHandle != NULL ) {
-        _lclose( TRFileHandle );
-    }
-    _trmem_close( TRMemHandle );
-#endif
-}

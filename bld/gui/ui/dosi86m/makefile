@@ -3,6 +3,5 @@ host_CPU = i86
 host_OS = dos
 
 memory_model_i86 = m
-track=
 
 !include ../guiui.mif

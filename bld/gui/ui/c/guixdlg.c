@@ -98,7 +98,7 @@ static bool InsertDialog( gui_window *wnd, a_dialog *dialog, int num_controls,
 {
     dialog_node *curr;
 
-    curr = (dialog_node *) GUIAlloc( sizeof( dialog_node ) );
+    curr = (dialog_node *) GUIMemAlloc( sizeof( dialog_node ) );
     if( curr == NULL ) {
         return( FALSE );
     }
@@ -125,7 +125,7 @@ void GUIDeleteDialog( a_dialog *dialog )
             } else {
                 MyDialog = curr->next;
             }
-            GUIFree( curr );
+            GUIMemFree( curr );
             break;
         } else {
             prev = curr;
@@ -237,7 +237,7 @@ static bool ResetFieldSize( dialog_node *dialog, int new_num )
 {
     VFIELD      *fields;
 
-    fields = (VFIELD *)GUIRealloc( dialog->dialog->fields,
+    fields = (VFIELD *)GUIMemRealloc( dialog->dialog->fields,
                                    ( new_num + 1 ) * sizeof( VFIELD ) );
     if( fields != NULL ) {
         dialog->dialog->fields = fields;
@@ -255,7 +255,7 @@ bool GUIInsertDialog( gui_window *wnd )
     if( GUIGetDlgByWnd( wnd ) != NULL ) {
         return( TRUE );
     } else {
-        dialog = (a_dialog *)GUIAlloc( sizeof( a_dialog ) );
+        dialog = (a_dialog *)GUIMemAlloc( sizeof( a_dialog ) );
         if( dialog == NULL ) {
             return( FALSE );
         }
@@ -319,9 +319,9 @@ a_list *GUIGetList( VFIELD *field )
 
 static void FreeEdit( an_edit_control *edit_control, bool free_edit )
 {
-    GUIFree( edit_control->buffer );
+    GUIMemFree( edit_control->buffer );
     if( free_edit ) {
-        GUIFree( edit_control );
+        GUIMemFree( edit_control );
     }
 }
 
@@ -344,20 +344,20 @@ bool GUIGetFocus( gui_window *wnd, unsigned *id )
 
 static void FreeRadioGroup( a_radio_group * group )
 {
-    GUIFree( group->caption );
-    GUIFree( group );
+    GUIMemFree( group->caption );
+    GUIMemFree( group );
 }
 
 static void GUIFreeRadio( a_radio * radio )
 {
-    GUIFree( radio->str );
-    GUIFree( radio );
+    GUIMemFree( radio->str );
+    GUIMemFree( radio );
 }
 
 static void GUIFreeCheck( a_check * check )
 {
-    GUIFree( check->str );
-    GUIFree( check );
+    GUIMemFree( check->str );
+    GUIMemFree( check );
 }
 
 /*
@@ -388,7 +388,7 @@ void GUIDoFreeField( VFIELD *field, a_radio_group **group )
         combo_box = (a_combo_box *)field->ptr;
         GUIFreeList( &combo_box->list, FALSE );
         FreeEdit( &combo_box->edit, FALSE );
-        GUIFree( combo_box );
+        GUIMemFree( combo_box );
         break;
     case FLD_EDIT :
     case FLD_INVISIBLE_EDIT :
@@ -402,7 +402,7 @@ void GUIDoFreeField( VFIELD *field, a_radio_group **group )
     case FLD_FRAME :
     case FLD_TEXT :
         if( field->ptr != NULL ) {
-            GUIFree( (char *)field->ptr );
+            GUIMemFree( (char *)field->ptr );
         }
         break;
     }
@@ -422,7 +422,7 @@ static void FreeFields( VFIELD *fields )
             GUIDoFreeField( &fields[i], &group );
         }
     }
-    GUIFree( fields );
+    GUIMemFree( fields );
 }
 
 static void CleanUpRadioGroups( void )
@@ -445,7 +445,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
     if( (info->style & GUI_GROUP) &&
         (info->control_class == GUI_RADIO_BUTTON) ) {
         if( !Group ) {
-            RadioGroup = (a_radio_group * )GUIAlloc( sizeof( a_radio_group ) );
+            RadioGroup = (a_radio_group * )GUIMemAlloc( sizeof( a_radio_group ) );
             if( RadioGroup == NULL ) {
                 return( FALSE );
             }
@@ -476,7 +476,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
         }
         break;
     case FLD_RADIO :
-        radio = (a_radio * )GUIAlloc( sizeof( a_radio ) );
+        radio = (a_radio * )GUIMemAlloc( sizeof( a_radio ) );
         field->ptr = radio;
         if( ( radio == NULL ) || !GUIStrDup( info->text, &radio->str ) ) {
             if( group_allocated ) {
@@ -493,7 +493,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
         }
         break;
     case FLD_CHECK :
-        check = (a_check * )GUIAlloc( sizeof( a_check ) );
+        check = (a_check * )GUIMemAlloc( sizeof( a_check ) );
         field->ptr = check;
         if( ( check == NULL ) || !GUIStrDup( info->text, &check->str ) ) {
             return( FALSE );
@@ -507,7 +507,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
         }
         break;
     case FLD_COMBOBOX :
-        combo_box = (a_combo_box * )GUIAlloc( sizeof( a_combo_box ) );
+        combo_box = (a_combo_box * )GUIMemAlloc( sizeof( a_combo_box ) );
         if( combo_box == NULL ) {
             return( FALSE );
         }
@@ -526,7 +526,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
         break;
     case FLD_EDIT :
     case FLD_INVISIBLE_EDIT :
-        edit_control = (an_edit_control * )GUIAlloc( sizeof( an_edit_control ) );
+        edit_control = (an_edit_control * )GUIMemAlloc( sizeof( an_edit_control ) );
         if( edit_control == NULL ) {
             return( FALSE );
         }
@@ -586,7 +586,7 @@ bool GUIDeleteField( gui_window *wnd, unsigned id )
     field = GUIGetField( wnd, id );
     if( GetIndexOfField( ui_dialog, field, dialog->num_controls, &index ) ) {
         GUIDoFreeField( field, NULL );
-        new_fields = (VFIELD *)GUIAlloc( sizeof( VFIELD ) * dialog->num_controls );
+        new_fields = (VFIELD *)GUIMemAlloc( sizeof( VFIELD ) * dialog->num_controls );
         for( i=0; i <= dialog->num_controls; i++ ) {
             new_index = i;
             if( i != index ) {
@@ -621,7 +621,7 @@ bool GUIDeleteField( gui_window *wnd, unsigned id )
                 }
             }
         }
-        GUIFree( ui_dialog->fields );
+        GUIMemFree( ui_dialog->fields );
         ui_dialog->fields = new_fields;
         dialog->num_controls--;
         return( TRUE );
@@ -801,7 +801,7 @@ bool GUIXCreateDialog( gui_create_info *dialog, gui_window *wnd,
                                      dialog->call_back, dialog->extra ) ) {
             return( FALSE );
         }
-        GUIFree( wnd );
+        GUIMemFree( wnd );
         return( TRUE );
     }
 
@@ -819,7 +819,7 @@ bool GUIXCreateDialog( gui_create_info *dialog, gui_window *wnd,
     }
 
     size = ( num_controls + 1 ) * sizeof( VFIELD );
-    fields = (VFIELD *)GUIAlloc( size );
+    fields = (VFIELD *)GUIMemAlloc( size );
     if( fields == NULL ) {
        return( FALSE );
     }
@@ -897,7 +897,7 @@ void GUIFreeDialog( a_dialog *dialog, VFIELD *fields, char *title,
         GUIResetDialColours();
     }
     FreeFields( fields );
-    GUIFree( title );
+    GUIMemFree( title );
 }
 
 /*

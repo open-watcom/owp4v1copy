@@ -71,7 +71,7 @@ bool GUIInitInternalStringTable( void )
 bool GUIFiniInternalStringTable( void )
 {
 #undef guipick
-#define guipick( a, b, c ) GUIFree( __LIT##a );
+#define guipick( a, b, c ) GUIMemFree( __LIT##a );
 #include "gui.msg"
 #undef guipick
     return( TRUE );

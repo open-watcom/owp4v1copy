@@ -487,7 +487,7 @@ static void PickInit( gui_window *wnd, int list_ctrl )
 
     root = GUIGetRootWindow();
     num_windows = GUIGetNumChildWindows();
-    ChildWindows = (gui_window **)GUIAlloc( sizeof( gui_window *) * num_windows );
+    ChildWindows = (gui_window **)GUIMemAlloc( sizeof( gui_window *) * num_windows );
     info.dlg_wnd = wnd;
     info.list_ctrl = list_ctrl;
     TotalWindows = 0;
@@ -507,7 +507,7 @@ void GUIMDIMoreWindows( void )
         }
         GUIBringToFront( wnd );
     }
-    GUIFree( ChildWindows );
+    GUIMemFree( ChildWindows );
     ChildWindows = NULL;
     TotalWindows = 0;
 }

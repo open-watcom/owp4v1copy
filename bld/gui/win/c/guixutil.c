@@ -394,7 +394,7 @@ void GUIFreeWindowMemory( gui_window *wnd, bool from_parent, bool dialog )
         wnd->hwnd_pinfo.normal_pres = (WPI_PRES)NULL;
     }
 #endif
-    GUIFree( wnd );
+    GUIMemFree( wnd );
 }
 
 bool GUIScrollOn( gui_window *wnd, int bar )
@@ -707,7 +707,7 @@ WPI_FONT GUIGetSystemFont( void )
     font = NULL;
     ret = _wpi_getsystemfont();
     if( ret ) {
-        font = (WPI_FONT) GUIAlloc( sizeof( *font ) );
+        font = (WPI_FONT) GUIMemAlloc( sizeof( *font ) );
         if( font ) {
             *font = *ret;
         }

@@ -1,6 +1,8 @@
 proj_name = gui
 name = gui
 
+gui_trmem = 1
+
 !ifndef gui_autodepends
 gui_autodepends = .AUTODEPEND
 !endif
@@ -13,6 +15,8 @@ gui_autodepends = .AUTODEPEND
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
+
+!include trmem.mif
 
 wv_objs = &
        guicreat.obj   &
@@ -51,13 +55,11 @@ wv_objs = &
        guiextnm.obj   &
        guifcrck.obj   &
 
-
 mem_objs = &
-       guimem.obj     &
+       guimem.obj
 
-!ifeq release 0
+!ifdef trmem_cflags
 mem_objs += &
-       trmemcvr.obj   &
        trmem.obj
 !endif
 
@@ -71,31 +73,15 @@ inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
 
 extra_c_flags += -s -fh
 
-!ifeq release 1
-track =
-!endif
-
-!ifndef track
-track=-dTRMEM
-!ifneq host_CPU axp
-!ifneq host_OS win
-track += -of+
-!endif
-!endif
-!endif
-
 extra_c_flags_axp += -ai -aq
 extra_c_flags_i86 += -fpc
 extra_c_flags_386 += -fpc
 
 extra_c_flags_nov += -4s
 
-extra_c_flags_trmem = $(track) -fh=$^&.pch
-extra_c_flags_trmemcvr = $(track) -fh=$^&.pch
-extra_c_flags_guimem = $(track)
-!ifeq release 0
-extra_c_flags_guimem += -fh=$^&.pch
-!endif
+# memory tracker cover routines
+extra_c_flags_guimem = $(trmem_cflags) -fh=$^&.pch
+extra_c_flags_trmem = $(trmem_cflags) -fh=$^&.pch
 
 extra_c_flags_guisdef += -fh=$^&.pch
 extra_c_flags_guifcrck += -fh=$^&.pch
@@ -112,7 +98,6 @@ extra_c_flags_search += -fh=gui02.pch
 extra_c_flags_guiextnm += -fh=gui03.pch
 extra_c_flags_helpopen += -fh=gui03.pch
 extra_c_flags_helpio += -fh=gui03.pch
-extra_c_flags_mem += -fh=gui03.pch
 extra_c_flags_guirdlg += -fh=gui04.pch
 extra_c_flags_guirmenu += -fh=gui04.pch
 extra_c_flags_wstatus += -fh=gui05.pch
@@ -123,7 +108,7 @@ extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
 
 
-$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_lib)
+$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         @for %i in ($(extra_objs)) do @%append tmp.lbc +%i

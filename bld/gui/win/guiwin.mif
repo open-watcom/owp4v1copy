@@ -111,6 +111,11 @@ extra_c_flags_win = -zw-zW
 !endif
 extra_c_flags_i86 = -zu
 
+# memory tracker cover routines
+extra_c_flags_mem = $(trmem_cflags) -fh=$^&.pch
+extra_c_flags_os2mem = $(trmem_cflags) -fh=$^&.pch
+extra_c_flags_wpimem = $(trmem_cflags) -fh=$^&.pch
+
 !ifeq memory_model_i86 m
 wpi_lib_win_i86 = $(wpi_dir)/wini86m/wpi.lib
 !else

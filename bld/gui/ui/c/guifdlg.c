@@ -369,11 +369,11 @@ static bool hasWild( char *txt )
  */
 static bool addToList( char ***list, int num, char *data, int len )
 {
-    *list = GUIRealloc( *list, (num+2) * sizeof( char * ) );
+    *list = GUIMemRealloc( *list, (num+2) * sizeof( char * ) );
     if( *list == NULL ) {
         return( FALSE );
     }
-    (*list)[num] = GUIAlloc( len+1 );
+    (*list)[num] = GUIMemAlloc( len+1 );
     if( (*list)[num] == NULL ) {
         return( FALSE );
     }
@@ -397,10 +397,10 @@ static void freeStringList( void *ptr )
     }
     cnt = 0;
     while( (*list)[cnt] != NULL ) {
-        GUIFree( (*list)[cnt] );
+        GUIMemFree( (*list)[cnt] );
         cnt++;
     }
-    GUIFree( *list );
+    GUIMemFree( *list );
     *list = NULL;
 
 } /* freeStringList */
@@ -834,8 +834,8 @@ static bool initDialog( gui_window *gui, char *ext, char *name )
 
     if( ext != NULL ) {
         if( hasWild( ext ) ) {
-            GUIFree( dlg->currExt );
-            dlg->currExt = GUIAlloc( strlen( ext ) +1 );
+            GUIMemFree( dlg->currExt );
+            dlg->currExt = GUIMemAlloc( strlen( ext ) +1 );
             if( dlg->currExt == NULL ) {
                 return( FALSE );
             }
@@ -887,7 +887,7 @@ static process_rc processFileName( gui_window *gui )
         return( PROCESS_FALSE );
     }
     strcpy( txt, tmp );
-    GUIFree( tmp );
+    GUIMemFree( tmp );
     splitPath( txt, drive, dir, fname, ext );
 
     has_wild = hasWild( txt );
@@ -983,7 +983,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
         case CTL_FILE_LIST :
             ptr = GUIGetText( gui, CTL_FILE_LIST );
             GUISetText( gui, CTL_EDIT, ptr );
-            GUIFree( ptr );
+            GUIMemFree( ptr );
             break;
         }
     }
@@ -1024,10 +1024,10 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
                     strcat( path, FILE_SEP );
                 }
             } else {
-                GUIFree( optr );
+                GUIMemFree( optr );
                 break;
             }
-            GUIFree( optr );
+            GUIMemFree( optr );
         }
         ptr = GUIGetListItem( gui, id, sel );
         if( ptr == NULL ) {
@@ -1038,7 +1038,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
             ptr++;
         }
         strcat( path, ptr+1 );
-        GUIFree( optr );
+        GUIMemFree( optr );
         goToDir( gui, path );
         if( !initDialog( gui, NULL, NULL ) ) {
             dlg->dialogRC = OFN_RC_RUNTIME_ERROR;
@@ -1111,7 +1111,7 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
         case CTL_FILE_LIST:
             ptr = GUIGetText( gui, id );
             GUISetText( gui, CTL_EDIT, ptr );
-            GUIFree( ptr );
+            GUIMemFree( ptr );
             break;
         case CTL_DRIVES :
             sel = GUIGetCurrSelect( gui, id );
@@ -1184,7 +1184,7 @@ int GUIGetFileName( gui_window *gui, open_file_name *ofn )
 #endif
     freeStringList( &dlgControls[FILE_TYPES_INDEX].text );
     freeStringList( &dlg.fileExtensions );
-    GUIFree( dlg.currExt );
+    GUIMemFree( dlg.currExt );
     return( dlg.dialogRC );
 
 } /* GUIGetFileName */

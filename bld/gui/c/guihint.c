@@ -167,12 +167,12 @@ bool GUIDeleteHintText( gui_window *wnd, int id )
             }
         }
         if( found ) {
-            new_menu = (gui_hint_struct *)GUIAlloc( sizeof( gui_hint_struct )
+            new_menu = (gui_hint_struct *)GUIMemAlloc( sizeof( gui_hint_struct )
                                     * ( wnd->hint.num_menu - 1 ) );
             memcpy( new_menu, wnd->hint.menu, sizeof( gui_hint_struct ) * index );
             memcpy( &new_menu[index], &wnd->hint.menu[index+1],
                     sizeof( gui_hint_struct ) * ( wnd->hint.num_menu - index - 1 ) );
-            GUIFree( wnd->hint.menu );
+            GUIMemFree( wnd->hint.menu );
             wnd->hint.menu = new_menu;
             wnd->hint.num_menu--;
         }
@@ -216,7 +216,7 @@ bool GUIAppendHintText( gui_window *wnd, gui_menu_struct *menu, hint_type type )
 
     if( GetStructNum( &wnd->hint, type, &hint, &num ) ) {
         new_num = CountMenus( menu );
-        new_hint = (gui_hint_struct *)GUIRealloc( hint,
+        new_hint = (gui_hint_struct *)GUIMemRealloc( hint,
                         ( num + new_num ) * sizeof( gui_hint_struct ) );
         if( new_hint == NULL ) {
             return( FALSE );
@@ -241,7 +241,7 @@ void GUIInitHint( gui_window *wnd, int num_menus, gui_menu_struct *menu, hint_ty
     }
     if( GetStructNum( &wnd->hint, type, &hint_struct, &num ) ) {
         if( hint_struct != NULL ) {
-            GUIFree( hint_struct );
+            GUIMemFree( hint_struct );
         }
         num = 0;
         for( i = 0; i < num_menus; i++ ) {
@@ -252,7 +252,7 @@ void GUIInitHint( gui_window *wnd, int num_menus, gui_menu_struct *menu, hint_ty
             hint_struct = NULL;
             num = 0;
         } else {
-            hint_struct = (gui_hint_struct *)GUIAlloc( size );
+            hint_struct = (gui_hint_struct *)GUIMemAlloc( size );
             index = 0;
             for( i = 0; i < num_menus; i++ ) {
                 InsertHint( &menu[i], hint_struct, &index );
@@ -272,14 +272,14 @@ void GUIInitToolbarHint( gui_window *wnd, int num_items,
 
     if( GetStructNum( &wnd->hint, TOOL_HINT, &hint_struct, &num ) ) {
         if( hint_struct != NULL ) {
-            GUIFree( hint_struct );
+            GUIMemFree( hint_struct );
         }
         size = sizeof( gui_hint_struct ) * num_items;
         if( size == 0 ) {
             hint_struct = NULL;
             num = 0;
         } else {
-            hint_struct = (gui_hint_struct *)GUIAlloc( size );
+            hint_struct = (gui_hint_struct *)GUIMemAlloc( size );
             num = num_items;
             for( i = 0; i < num_items; i++ ) {
                 hint_struct[i].id = toolbar[i].id;
