@@ -550,7 +550,7 @@ APIRET APIENTRY DosWrite(HFILE hFile, PVOID pBuffer, ULONG cbWrite, PULONG pcbAc
 
 #endif
 
-#if defined(INCL_DOSMEMMGR)
+#if defined(INCL_DOSMEMMGR) || !defined(INCL_NOCOMMON)
 
 #define PAG_READ      0x00000001
 #define PAG_WRITE     0x00000002

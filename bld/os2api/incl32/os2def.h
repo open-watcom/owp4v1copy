@@ -73,6 +73,7 @@
 #define VOID     void
 
 typedef unsigned long   APIRET;
+typedef unsigned short  APIRET16;
 
 typedef unsigned char   UCHAR,  *PUCHAR;
 typedef char            BYTE,   *PBYTE;

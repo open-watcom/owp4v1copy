@@ -10,6 +10,7 @@ components286 =      &
         kbdcalls.lbc &
         moucalls.lbc &
         msg.lbc      &
+        nampipes.lbc &
         nls.lbc      &
         pmgpi.lbc    &
         pmwin.lbc    &

@@ -66,6 +66,19 @@
 #define EXLST_REMOVE 2
 #define EXLST_EXIT   3
 
+#define PRTYS_PROCESS     0
+#define PRTYS_PROCESSTREE 1
+#define PRTYS_THREAD      2
+
+#define PRTYC_NOCHANGE         0
+#define PRTYC_IDLETIME         1
+#define PRTYC_REGULAR          2
+#define PRTYC_TIMECRITICAL     3
+#define PRTYC_FOREGROUNDSERVER 4
+
+#define PRTYD_MINIMUM (-31)
+#define PRTYD_MAXIMUM   31
+
 typedef struct _RESULTCODES {
     USHORT codeTerminate;
     USHORT codeResult;

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 Base include file for 32-bit development.
+* Description:  OS/2 Base System include file for 32-bit development.
 *
 ****************************************************************************/
 
@@ -38,3 +38,7 @@
 #include <bsedos.h>
 #include <bsesub.h>
 #include <bseerr.h>
+
+#ifdef INCL_DOSDEVIOCTL
+    #include <bsedev.h>
+#endif

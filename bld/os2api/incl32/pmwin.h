@@ -61,6 +61,26 @@
     #define INCL_WINTIMER
     #define INCL_WINTRACKRECT
     #define INCL_WINWINDOWMGR
+#else
+  #ifdef RC_INVOKED
+    #define INCL_WININPUT
+    #define INCL_WINDIALOGS
+    #define INCL_WINSTATICS
+    #define INCL_WINBUTTONS
+    #define INCL_WINENTRYFIELDS
+    #define INCL_WINLISTBOXES
+    #define INCL_WINMENUS
+    #define INCL_WINSCROLLBARS
+    #define INCL_WINFRAMEMGR
+    #define INCL_WINFRAMECTLS
+    #define INCL_WINACCELERATORS
+    #define INCL_WINPOINTERS
+    #define INCL_WINMESSAGEMGR
+    #define INCL_WINMLE
+    #define INCL_WINHELP
+    #define INCL_WINSTDDLGS
+    #define INCL_WINSYS
+  #endif
 #endif
 
 #define MPFROMP(p)          ((MPARAM)(VOID *)(p))
@@ -202,7 +222,7 @@ typedef VOID    *MRESULT, **PMRESULT;
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
 
-typedef MRESULT (APIENTRY *PFNWP)(HWND, USHORT, MPARAM, MPARAM);
+typedef MRESULT (APIENTRY *PFNWP)(HWND, ULONG, MPARAM, MPARAM);
 
 typedef struct _POINTL {
     LONG  x;
@@ -1257,6 +1277,17 @@ HWND   APIENTRY WinCreateStdWindow(HWND hwndParent, ULONG flStyle, PULONG pflCre
 #define HK_FLUSHBUF        24
 
 #define HMQ_CURRENT ((HMQ)1)
+
+#define PM_MODEL_1X 0
+#define PM_MODEL_2X 1
+
+typedef struct _SMHSTRUCT {
+    MPARAM mp2;
+    MPARAM mp1;
+    ULONG  msg;
+    HWND   hwnd;
+    ULONG  model;
+} SMHSTRUCT, *PSMHSTRUCT;
 
 BOOL   APIENTRY WinReleaseHook(HAB hab, HMQ hmq, LONG lHook, PFN pAddress, HMODULE Module);
 BOOL   APIENTRY WinSetHook(HAB hab, HMQ hmq, LONG lHookType, PFN pHookProc, HMODULE Module);

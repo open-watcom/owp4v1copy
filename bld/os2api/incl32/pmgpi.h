@@ -219,6 +219,8 @@ BOOL   APIENTRY GpiAssociate(HPS hps, HDC hdc);
 HPS    APIENTRY GpiCreatePS(HAB hab, HDC hdc, PSIZEL psizlSize, ULONG flOptions);
 BOOL   APIENTRY GpiDestroyPS(HPS hps);
 
+BOOL   APIENTRY GpiErase(HPS hps);
+
 HDC    APIENTRY GpiQueryDevice(HPS hps);
 
 BOOL   APIENTRY GpiResetPS(HPS hps, ULONG flOptions);
