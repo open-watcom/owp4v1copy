@@ -1094,8 +1094,24 @@ static unsigned ProgRun( int step )
             Out( "sigtrap\n" );
             ptrace_sig = 0;
             break;
+        case SIGCHLD:
+        case SIGIO:
+            /* Use a watch condition to ignore these signals */
+            ret->conditions = COND_WATCH;
+            ptrace_sig = 0;
+            break;
+        default:
+            /* For signals that we do not wish to handle, for now
+             * return a watch condition which will allow the debugger
+             * to continue the debuggee process.
+             */
+            Out( "unknown signal\n" );
+            ret->conditions = COND_WATCH;
+            ptrace_sig = 0;
+            break;
         }
     } else if( WIFEXITED( status ) ) {
+        Out( "WIFEXITED\n" );
         at_end = TRUE;
         ret->conditions = COND_TERMINATE;
         ptrace_sig = 0;
