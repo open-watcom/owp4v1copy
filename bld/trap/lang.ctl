@@ -29,6 +29,7 @@ cdsay .
     <CPCMD> <devdir>\bin\binp\dll\*.d32 <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\dll\*.exe <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdpmhook.dll <relroot>\rel2\binp\dll\
+    <CPCMD> <devdir>\bin\binp\dll\wdsplice.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdio.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\???serv.exe <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\???serv2.exe <relroot>\rel2\binp\
