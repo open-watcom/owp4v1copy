@@ -6,7 +6,7 @@ extra_lib=os2.lib
 compiler = comp286
 model=l
 xflags=-zu-s
-sysinclude=$(watcom_dir)\os21x_h;
+sysinclude=$(lang_root)\h\os21x;
 
 target : sample.exe .SYMBOLIC
     @%null
