@@ -483,14 +483,13 @@ STATIC RET_T VerbosePrintTempFile( const FLIST *head )
 {
 
     FLIST const        *current;
-    RET_T               ret;
+    RET_T               ret = RET_SUCCESS; // success if list empty
 
     current = head;
     while( current != NULL ) {
         assert( current->fileName != NULL );
         ret = processInlineFile( 0, current->body, current->fileName, FALSE );
         current = current->next;
-
     }
     return( ret );
 }
@@ -502,8 +501,8 @@ STATIC RET_T createFile( const FLIST *head )
 {
     NKLIST *temp;
     int    handle;
-    char   *fileName;
-    char   *tmpFileName;
+    char   *fileName = NULL;
+    char   *tmpFileName = NULL;
     RET_T  ret;
 
     assert( head != NULL );
@@ -1678,7 +1677,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     char    *arg;
     char const *argv[ 3 ]; /* for spawnvp */
     int     retcode;    /* from spawnvp */
-    UINT16  tmp_env;    /* for * commands */
+    UINT16  tmp_env = 0;    /* for * commands */
     RET_T   my_ret;     /* return code for this function */
     int     quote;      /* true if inside quotes */
 
@@ -1884,7 +1883,7 @@ RET_T ExecCList( CLIST *clist )
 /*****************************/
 {
     char               *line;
-    RET_T               ret;
+    RET_T               ret = RET_SUCCESS;
     FLIST const        *currentFlist;
 
     assert( clist != NULL );
