@@ -7,8 +7,8 @@
    and is provided without guarantee or warrantee expressed or
    implied. This program is -not- in the public domain. */
 
-#include <gl.h>
-#include <glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #ifdef __cplusplus
 extern "C" {

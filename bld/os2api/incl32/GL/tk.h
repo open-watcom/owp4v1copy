@@ -6,6 +6,12 @@
 #include <GL/pgl.h>
 #include <GL/glu.h>
 
+#if defined(__WATCOMC__)
+    #define APIENTRYP APIENTRY *
+#else
+    #define APIENTRYP * APIENTRY
+#endif
+
 #define PM_ESCAPE 0x0f
 #define PM_LEFT   0x15
 #define PM_UP     0x16
@@ -156,14 +162,14 @@ extern void APIENTRY tkQuit(void);
 extern GLenum APIENTRY tkSetWindowLevel(GLenum);
 extern void APIENTRY tkSwapBuffers(void);
 extern void APIENTRY tkExec(void);
-extern void APIENTRY tkExposeFunc(void (* APIENTRY)(int, int));
-extern void APIENTRY tkReshapeFunc(void (* APIENTRY)(int, int));
-extern void APIENTRY tkDisplayFunc(void (* APIENTRY)(void));
-extern void APIENTRY tkKeyDownFunc(GLenum (* APIENTRY)(int, GLenum));
-extern void APIENTRY tkMouseDownFunc(GLenum (* APIENTRY)(int, int, GLenum));
-extern void APIENTRY tkMouseUpFunc(GLenum (* APIENTRY)(int, int, GLenum));
-extern void APIENTRY tkMouseMoveFunc(GLenum (* APIENTRY)(int, int, GLenum));
-extern void APIENTRY tkIdleFunc(void (* APIENTRY)(void));
+extern void APIENTRY tkExposeFunc(void (APIENTRYP)(int, int));
+extern void APIENTRY tkReshapeFunc(void (APIENTRYP)(int, int));
+extern void APIENTRY tkDisplayFunc(void (APIENTRYP)(void));
+extern void APIENTRY tkKeyDownFunc(GLenum (APIENTRYP)(int, GLenum));
+extern void APIENTRY tkMouseDownFunc(GLenum (APIENTRYP)(int, int, GLenum));
+extern void APIENTRY tkMouseUpFunc(GLenum (APIENTRYP)(int, int, GLenum));
+extern void APIENTRY tkMouseMoveFunc(GLenum (APIENTRYP)(int, int, GLenum));
+extern void APIENTRY tkIdleFunc(void (APIENTRYP)(void));
 extern GLint APIENTRY tkGetColorMapSize(void);
 extern void APIENTRY tkGetMouseLoc(int *, int *);
 extern void APIENTRY tkGetSystem(GLenum, void *);
