@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <watcom.h>
+#include "bool.h"
 
 #define MAX_TOKEN               100     // there is no restriction for this number
 #define MAX_LINE_LEN            512     // there is no restriction for this number
@@ -56,9 +57,6 @@
 /* these come back from the jmp() routine */
 #define SCRAP_INSTRUCTION       3
 #define INDIRECT_JUMP           4
-
-#define TRUE                    1
-#define FALSE                   0
 
 #define NULLC                   '\0'
 #define NULLS                   "\0"
@@ -121,8 +119,6 @@ typedef struct {
 #else
 #define OBJ_EXT "obj"
 #endif
-
-typedef char bool;
 
 typedef struct queuenode {
     void *next;

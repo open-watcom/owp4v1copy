@@ -33,8 +33,6 @@
 #ifndef ASMEVAL_H
 #define ASMEVAL_H
 
-#include "bool.h"
-
 enum exprtype {
     EXPR_ADDR,          // e.g. "foo", "seg foo" and "offset foo"
     EXPR_CONST,         // A constant; note that "label1 - label2" -> constant
