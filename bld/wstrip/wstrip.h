@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define MSG_RC_BASE     1
 #define MSG_USE_BASE    100
 
 #define MSG_LANG_SPACING        1000
