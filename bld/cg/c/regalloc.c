@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Register allocator.
 *
 ****************************************************************************/
 
@@ -946,6 +945,10 @@ static  void    PutInMemory( conflict_node *conf ) {
             }
             if( ins == conf->ins_range.last ) break;
             if( ins->head.opcode == OP_BLOCK ) {
+                if( blk->next_block == NULL ) {
+                    Zoiks( ZOIKS_141 );
+                    break;
+                }
                 blk = blk->next_block;
                 ins = (instruction *)&blk->ins;
             }
@@ -1260,6 +1263,10 @@ static  void    NeighboursUse( conflict_node *conf ) {
                 _NameSetInit( no_conflict );
             } else if( ins->head.opcode == OP_BLOCK ) {
                 _LBitInit( conf->with.within_block, EMPTY );
+                if( blk->next_block == NULL ) {
+                    Zoiks( ZOIKS_141 );
+                    break;
+                }
                 blk = blk->next_block;
                 ins = (instruction *)&blk->ins;
                 _NameSetInit( no_conflict );
