@@ -133,22 +133,22 @@ $(name).exe : $(objs) $(name).res $(dllname).lib
         $(RC) $(rc_flags) $(rcopts2) $(name).res
 
 $(msgh) : $(mastermsg)
-        vi ¨-d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
 
 $(mastermsg) : $(msgfiles)
         $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wspy_dir)\spy.msg -fo=$(mastermsg)
 
-spymsgs.dlg spymsg.h: spyarray.h
-        cd $(wspy_dir)\utils
-        wmake -h
-        cd $(wspy_obj_dir)
-        $(wspy_dir)\utils\mkdlg spymsgs.dlg spymsg.h
+spymsgs.dlg spymsg.h: spyarray.h ./mkdlg.exe
+        $]@ spymsgs.dlg spymsg.h
 
-spymsgnt.dlg spymsgnt.h: spyarray.h
-        cd $(wspy_dir)\utils
-        wmake -h defines=-dNT_MSGS
-        cd $(wspy_obj_dir)
-        $(wspy_dir)\utils\mkdlg spymsgnt.dlg spymsgnt.h
+spymsgnt.dlg spymsgnt.h: spyarray.h ./mkdlgnt.exe
+        $]@ spymsgnt.dlg spymsgnt.h
+
+./mkdlg.exe : ../utils/mkdlg.c 
+        $(bld_cl) $[@ -fe=$@ -d__NOSPYMSGS__
+
+./mkdlgnt.exe : ../utils/mkdlg.c 
+        $(bld_cl) $[@ -fe=$@ -d__NOSPYMSGS__ -dNT_MSGS
 
 $(name).res : $(resources) $(resources_$(host_OS))
     $(RC) $(rc_flags) $(rcopts1) $(wspy_dir)\$(name).rc -fo=.\$^.
@@ -158,7 +158,7 @@ spydll.obj : spydll.c
         $(cc) $(cflags) $(cflags$(host_OS)dll) $[@
 
 $(dllname).lib : $(dllname).dll
-        if exist $(dllname).lib erase $(dllname).lib > NUL
+        @rm -f $(dllname).lib #> NUL
         $(librarian) $(dllname).lib +$(dllname).dll
 
 $(dllname).dll : $(dllobjs)
@@ -167,20 +167,5 @@ $(dllname).dll : $(dllobjs)
         #$(librarian) $(dllname).lib +$(dllname).dll
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj @del *.?bj
-        @if exist *.lnk @del *.lnk
-        @if exist *.exe @del *.exe
-        @if exist *.lib @del *.lib
-        @if exist *.res @del *.res
-        @if exist *.clb @del *.clb
-        @if exist *.err @del *.err
-        @if exist *.dll @del *.dll
-        @if exist *.map @del *.map
-        @if exist *.sym @del *.sym
-        @if exist $(msgh) @del $(msgh)
-        @if exist $(mastermsg) @del $(mastermsg)
-        @if exist spymsg*.dlg @del spymsg*.dlg
-        @if exist spymsg*.h @del spymsg*.h
-        @cd $(wspy_dir)\utils
-        @wmake -h clean
-        @cd $(wspy_obj_dir)
+        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.err *.dll *.map *.sym
+        rm -f $(msgh) $(mastermsg) spymsg*.dlg spymsg*.h mkdlg*.*

@@ -146,7 +146,7 @@ weights2.gh keyword2.gh : rc2.key ./findhash.exe
         @rm -f keywords.gh
         @rm -f weights.gh
 
-$(name).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
+$(name).res : ../h/rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
         $(rc) -bt=windows -r $]@ -fo=$(name).res
 
 ../h/rcmsg.h : ../h/rc.msg
