@@ -41,7 +41,14 @@ static dis_handle DH;
 
 mad_status DisasmInit()
 {
-    if( DisInit( DISCPU_axp, &DH, FALSE ) != DR_OK ) {
+    bool        swap_bytes;
+
+#ifdef __BIG_ENDIAN__
+    swap_bytes = FALSE;
+#else
+    swap_bytes = TRUE;
+#endif
+    if( DisInit( DISCPU_ppc, &DH, swap_bytes ) != DR_OK ) {
         return( MS_ERR | MS_FAIL );
     }
     return( MS_OK );

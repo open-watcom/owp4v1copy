@@ -120,6 +120,11 @@ mad_imp_routines        MadImpInterface = {
 
 #if defined(__386__)
 #pragma aux MADLOAD "*"
+
+/* WD looks for this symbol to determine module bitness */
+int __nullarea;
+#pragma aux __nullarea "*";
+
 #elif defined( __WINDOWS__)
 
 #include <stdlib.h>

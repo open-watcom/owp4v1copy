@@ -30,13 +30,19 @@ set PROJDIR=<CWD>
 #    <CPCMD> <DEVDIR>/mad/axp/os2i86/madaxp.dll   <RELROOT>/rel2/binp/dll/
 #    <CPCMD> <DEVDIR>/mad/ppc/os2i86/madppc.dll   <RELROOT>/rel2/binp/dll/
     <CPCMD> <DEVDIR>/mad/x86/os2386/madx86.d32   <RELROOT>/rel2/binp/
+    <CPCMD> <DEVDIR>/mad/x86/os2386/madx86.sym   <RELROOT>/rel2/binp/
     <CPCMD> <DEVDIR>/mad/axp/os2386/madaxp.d32   <RELROOT>/rel2/binp/
+    <CPCMD> <DEVDIR>/mad/axp/os2386/madaxp.sym   <RELROOT>/rel2/binp/
     <CPCMD> <DEVDIR>/mad/ppc/os2386/madppc.d32   <RELROOT>/rel2/binp/
+    <CPCMD> <DEVDIR>/mad/ppc/os2386/madppc.sym   <RELROOT>/rel2/binp/
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/nt386/madx86.dll    <RELROOT>/rel2/binnt/
+    <CPCMD> <DEVDIR>/mad/x86/nt386/madx86.sym    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/axp/nt386/madaxp.dll    <RELROOT>/rel2/binnt/
+    <CPCMD> <DEVDIR>/mad/axp/nt386/madaxp.sym    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/ppc/nt386/madppc.dll    <RELROOT>/rel2/binnt/
+    <CPCMD> <DEVDIR>/mad/ppc/nt386/madppc.sym    <RELROOT>/rel2/binnt/
 #    <CPCMD> <DEVDIR>/mad/x86/ntaxp/madx86.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/axp/ntaxp/madaxp.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/ppc/ntaxp/madppc.dll    <RELROOT>/rel2/axpnt/
@@ -48,8 +54,11 @@ set PROJDIR=<CWD>
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.mad <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.sym <RELROOT>/rel2/binl/
     <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.mad <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.sym <RELROOT>/rel2/binl/
     <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.mad <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.sym <RELROOT>/rel2/binl/
 
 
 [ BLOCK <1> clean ]

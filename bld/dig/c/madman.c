@@ -184,7 +184,7 @@ mad_status      MADInit( void )
     } list[] = {
         MAD_X86,        "madx86",       "Intel Architecture [80(x)86]",
         MAD_AXP,        "madaxp",       "Alpha Architecture",
-//      MAD_PPC,        "madppc",       "PowerPC Architecture",
+        MAD_PPC,        "madppc",       "PowerPC Architecture",
         MAD_MSJ,        "msj",          "Java Virtual Machine (Microsoft)"
     };
 
