@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Non-exhaustive test of the C library DOS functions.
 *
 ****************************************************************************/
 
@@ -214,6 +213,23 @@ void TestFileOperations( void )
             printf( "an existing file\n" );
         }
         _dos_close( fh[0] );
+    }
+    NowTest( "_dos_setfileattr()" ) ;
+    if( _dos_getfileattr( "tmpfile", &attribute ) != 0 ) {
+        printf( "_dos_getfileattr() failed.\n" );
+        PROG_ABORT( __LINE__ );
+    }
+    if( _dos_setfileattr( "tmpfile", attribute & ~_A_ARCH ) != 0 ) {
+        printf( "_dos_setfileattr() failed.\n" );
+        PROG_ABORT( __LINE__ );
+    }
+    if( _dos_getfileattr( "tmpfile", &attribute ) != 0 ) {
+        printf( "_dos_getfileattr() failed.\n" );
+        PROG_ABORT( __LINE__ );
+    }
+    if( ( attribute & _A_ARCH ) == _A_ARCH ) {
+        printf( "_dos_setfileattr() failed.\n" );
+        PROG_ABORT( __LINE__ );
     }
     if( verbose ) printf( "Creating %u temporary files...", MAX_OPEN );
     strcpy( str, "_tmpfile." );
