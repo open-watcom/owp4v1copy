@@ -47,8 +47,10 @@ objs = qnxemu87.obj emu387.obj fpeqnx.obj
 emu387: $(objs)
     $(linker) $(lflags) name $^@ file { $(objs) } opt priv=0,map,long,quiet,res=..\..\emu86\emu87.u
 
-#emu387w.obj: emu387.asm $(INCS)
-#    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@
+!else ifeq host_OS win
+
+emu387w.obj: emu387.asm $(INCS)
+    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc $[@
 
 !else
 

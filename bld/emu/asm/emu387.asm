@@ -68,10 +68,6 @@ defp            macro   dsym
 xref            macro   dsym
                 endm
 
-endproc         macro   dsym
-         dsym   endp
-                endm
-
 ifdef __WIN387__
 startdata       macro
 VxD_LOCKED_DATA_SEG
@@ -83,6 +79,10 @@ endmod          macro
 VxD_LOCKED_CODE_ENDS
                 endm
 else
+endproc         macro   dsym
+         dsym   endp
+                endm
+
 endmod          macro
 _TEXT           ends
                 endm

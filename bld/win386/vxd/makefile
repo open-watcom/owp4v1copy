@@ -42,4 +42,4 @@ $(LNKEMU) : makefile
 .obj : $(OBJ)
 
 .asm.obj :
-        wasm -w2  $(DEBUG) $[*
+        masm5 -p -w2 -Mx $(DEBUG) $[*;
