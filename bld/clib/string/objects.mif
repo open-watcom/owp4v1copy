@@ -126,7 +126,7 @@
 !inject uvsprint.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject vsprintf.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 usprintf_opts=-os
 usscanf_opts =-os

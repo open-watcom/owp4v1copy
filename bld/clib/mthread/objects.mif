@@ -22,7 +22,7 @@
 !inject trdalloc.obj                     nt nta ntp nvc ncl nvl nll o16 o32
 !inject trdlist.obj                      nt nta ntp         nvl nll     o32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 !ifndef on_build_machine
 mthread_opts  =-d__RUNTIME_CHECKS__

@@ -25,7 +25,7 @@
 !inject ustrftim.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrtime.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 uasctime_opts=-os
 ustrftim_opts=-os

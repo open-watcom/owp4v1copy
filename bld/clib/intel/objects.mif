@@ -34,7 +34,7 @@
 !inject sound.obj    d16 d32                                        q16 q32 w16 w32
 !inject tlsawnt.obj                      nt
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 chipbug_opts=-fpi87
 profilog_opts=-of
@@ -48,6 +48,6 @@ dp5prof2_opts=-of
 !inject dprfallo.obj                                    nt nta ntp        o32
 
 objsuffix=files
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 objsuffix=
 

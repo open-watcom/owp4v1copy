@@ -3,7 +3,7 @@ processor=286
 model=mh
 system=os2
 linkage=static
-!include ..\..\..\objects.mif
-!include $(clib_dir)\master.mif
-!include $(clib_dir)\mklib.mif
-!include ..\..\..\deps.mif
+!include ../../../objects.mif
+!include $(clib_dir)/master.mif
+!include $(clib_dir)/mklib.mif
+!include ../../../deps.mif

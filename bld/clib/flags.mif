@@ -4,6 +4,10 @@ sw_c_common = -w4-zl-zld-zq
 sw_c_common = -we-w4-zl-zld-zq
 !endif
 sw_a_common = -zq
+!ifdef __LINUX__
+sw_c_common += -fo=.obj
+sw_a_common += -fo=.obj
+!endif
 sw_l_common = option quiet,impfile,caseexact reference __DLLstart_ disable 121
 !ifndef on_build_machine
 sw_l_common += option map,mangle,artificial,verbose
@@ -25,7 +29,11 @@ sw_c_stack    = -5s
 sw_c_bigcode  = -nt=_TEXT
 sw_c_bigdata  = -zu
 
+!ifeq host_OS linux
+sw_c_intel    = -fpr-fpi87
+!else
 sw_c_intel    = -fpr-fpc
+!endif
 
 sw_c_086 = $(sw_c_intel)-0
 sw_c_286 = $(sw_c_intel)-2
@@ -217,6 +225,6 @@ c_flags += -fpi
 a_flags += -fpi
 !endif
 
-!include $(clib_dir)\bt.mif
-!include $(clib_dir)\include.mif
-!include $(clib_dir)\lib.mif
+!include $(clib_dir)/bt.mif
+!include $(clib_dir)/include.mif
+!include $(clib_dir)/lib.mif

@@ -6,4 +6,4 @@
 !inject readdir.obj                                                                     l32
 !inject closedir.obj                                                                    l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

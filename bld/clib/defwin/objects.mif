@@ -38,7 +38,7 @@
 
 !endif
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 !ifdef default_windowing
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -48,5 +48,5 @@
 !endif
 
 objsuffix=files
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 objsuffix=

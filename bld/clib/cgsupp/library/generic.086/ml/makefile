@@ -4,7 +4,7 @@ processor=086
 model=ml
 system=generic
 linkage=static
-!include ..\..\..\objects.mif
-!include $(clib_dir)\master.mif
-!include $(clib_dir)\mklib.mif
-!include ..\..\..\deps.mif
+!include ../../../objects.mif
+!include $(clib_dir)/master.mif
+!include $(clib_dir)/mklib.mif
+!include ../../../deps.mif

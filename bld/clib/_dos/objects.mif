@@ -78,4 +78,4 @@
 !inject writeos2.obj                                        o16 o32
 !inject writewnt.obj                     nt nta ntp
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

@@ -5,6 +5,6 @@ subdir=mf_s
 system=windows
 linkage=static
 convention=stack
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif

@@ -1,4 +1,4 @@
-dp5prof2.obj : ..\..\..\c\dp5prof2.c   ..\..\..\c\p5prof2.c
-profilog.obj : ..\..\..\c\profilog.c
-p5prof2.obj : ..\..\..\c\p5prof2.c
-dp5prof2.obj : ..\..\..\c\dp5prof2.c ..\..\..\c\p5prof2.c
+dp5prof2.obj : ../../../c/dp5prof2.c   ../../../c/p5prof2.c
+profilog.obj : ../../../c/profilog.c
+p5prof2.obj : ../../../c/p5prof2.c
+dp5prof2.obj : ../../../c/dp5prof2.c ../../../c/p5prof2.c

@@ -27,6 +27,6 @@
 !inject usetenv.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject wenvptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 searchen_opts=-os

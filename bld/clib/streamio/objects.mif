@@ -87,14 +87,14 @@
 !inject vfprintf.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
 !inject vprintf.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32
 #==================================================================================================
 !inject dsetefg.obj                      nt nta ntp                     o32
 
 objsuffix=files
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 objsuffix=
 
 ufgetc_opts  =-os

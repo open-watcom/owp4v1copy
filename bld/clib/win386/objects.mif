@@ -65,4 +65,4 @@
 !inject udpdat.obj                                                              w32
 !inject wincb32.obj                                                             w32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

@@ -89,7 +89,7 @@ static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 _WCRTLINK CHAR_TYPE *__F_NAME(ultoa,_ultow)( value, buffer, radix )
         unsigned long value;
         CHAR_TYPE *buffer;
-        unsigned radix;
+        int radix;
     {
         CHAR_TYPE *p = buffer;
         char *q;
@@ -99,7 +99,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ultoa,_ultow)( value, buffer, radix )
         buf[0] = '\0';
         q = &buf[1];
         do {
-            #if defined(__AXP__) || defined(__PPC__)
+            #if defined(__AXP__) || defined(__PPC__) || !defined(__WATCOMC__)
                 rem = value % radix;
                 value = value / radix;
             #else

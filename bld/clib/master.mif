@@ -27,4 +27,4 @@ host_OS=$(clib_host_os_$(system))
 
 !include cproj.mif
 
-!include $(clib_dir)\flags.mif
+!include $(clib_dir)/flags.mif

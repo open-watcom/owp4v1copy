@@ -30,12 +30,17 @@
 ****************************************************************************/
 
 
+#ifdef __WATCOMC__
 #include "variety.h"
+#else
+#define _WCRTLINK
+#endif
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <limits.h>
 
-extern  char ** _argv;  /* argument vector */
+extern char ** _argv;  /* argument vector */
 
 /*
    NOTE: This file isn't used for QNX. It's got it's own version.

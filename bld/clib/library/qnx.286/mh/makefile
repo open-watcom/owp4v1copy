@@ -5,6 +5,6 @@ system=qnx
 linkage=static
 subdir=mh
 qlib=qlibh.lib
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif

@@ -31,5 +31,5 @@
 !inject putchwnt.obj                     nt nta ntp
 !inject ungetch.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 

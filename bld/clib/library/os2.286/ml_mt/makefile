@@ -5,6 +5,6 @@ system=os2
 linkage=static
 threading16=1
 subdir=ml_mt
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif

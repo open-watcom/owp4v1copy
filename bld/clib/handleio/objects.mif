@@ -90,4 +90,4 @@
 !inject uunlnwnt.obj                     nt nta ntp
 !inject write.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

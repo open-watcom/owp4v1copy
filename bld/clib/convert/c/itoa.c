@@ -81,7 +81,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(utoa,_utow)( unsigned value, CHAR_TYPE *buffer, in
         buf[0] = '\0';
         q = &buf[1];
         do {
-            #if defined(__AXP__) || defined(__PPC__)
+            #if defined(__AXP__) || defined(__PPC__) || !defined(__WATCOMC__)
                 rem = value % radix;
                 quot = value / radix;
             #else

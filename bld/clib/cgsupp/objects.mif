@@ -76,7 +76,7 @@
 !inject U64Mul.obj               g16                                        w16
 !inject U64Shift.obj             g16                                        w16
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 086_fpi_postopts=-fpi
 286_fpi_postopts=-fpi

@@ -6,6 +6,6 @@ qlib=qlib3r.lib
 system=qnx
 linkage=static
 convention=register
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif

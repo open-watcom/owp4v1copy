@@ -40,7 +40,7 @@
 #include <stddef.h>
 #include <unistd.h>
 #ifdef __UNIX__
-#include <sys\stat.h>
+#include <sys/stat.h>
 #else
 #include <dos.h>
 #endif

@@ -30,7 +30,7 @@
 !inject uspltpat.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustlocal.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 !ifneq processor axp
 demangl_opts =-zc

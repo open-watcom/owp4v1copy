@@ -33,7 +33,7 @@
 #include "widechar.h"
 #include <stdlib.h>
 #include <string.h>
-#ifndef __WIDECHAR__
+#if !defined( __WIDECHAR__ ) && !defined( __UNIX__ )
     #include <mbstring.h>
 #endif
 

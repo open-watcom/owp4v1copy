@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Clear the environment (called at exit)
 *
 ****************************************************************************/
 
@@ -51,11 +50,10 @@ _WCRTLINK int (clearenv)( void ) {
                     *envp = NULL;
                 }
             }
-            if( _RWD_env_mask == NULL ) {
-                envp = lib_malloc( sizeof(char *) + sizeof(char) );
-            } else {
-                envp = lib_realloc( _RWD_environ, sizeof(char *) + sizeof(char) );
+            if( _RWD_env_mask != NULL ) {
+                lib_free( _RWD_environ );
             }
+            envp = lib_malloc( sizeof(char *) + sizeof(char) );
             if( envp == NULL ) return( -1 );
             _RWD_environ = envp;
             *_RWD_environ = NULL;

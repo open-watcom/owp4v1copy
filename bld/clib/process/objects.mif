@@ -95,14 +95,14 @@
 !inject waitwnt.obj                      nt nta ntp
 !inject _raise.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 #==========================================================================================
 !inject ergospwn.obj     d32
 
 objsuffix=files
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 objprefix=
 
 cenvarg_opts    =-os

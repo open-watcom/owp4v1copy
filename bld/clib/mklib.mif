@@ -23,15 +23,15 @@ $(libname).lib : $(objs) .precious
 # properly process errors etc ;-)
 
 !ifndef source_root
-.c   : ..\..\..\c
-.cpp : ..\..\..\cpp
-.asm : ..\..\..\a
+.c   : ../../../c
+.cpp : ../../../cpp
+.asm : ../../../a
 !else
-.c   : $(source_root)\c
-.cpp : $(source_root)\cpp
-.asm : $(source_root)\a
+.c   : $(source_root)/c
+.cpp : $(source_root)/cpp
+.asm : $(source_root)/a
 !endif
 
-!include $(clib_dir)\clean.mif
-!include $(clib_dir)\project.mif
+!include $(clib_dir)/clean.mif
+!include $(clib_dir)/project.mif
 

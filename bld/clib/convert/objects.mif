@@ -25,7 +25,7 @@
 !inject msfs386.obj      d32             nt         nvc nvl     o32     q32     w32     l32
 
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 !ifneq processor axp
 itoa_opts  =-zc

@@ -39,4 +39,4 @@
 !inject urmdros2.obj                                        o16 o32
 !inject urmdr.obj    d16 d32                                                w16 w32
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

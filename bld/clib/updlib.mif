@@ -66,38 +66,38 @@ libname_286_ml  =
 
 updlibname =$(libpfx_$(system))$(libsfx_$(system))$(libname_$(processor)_$(model)).lib
 
-libpath_generic_086     =lib286\dos
-libpath_generic_286     =lib286\dos
-libpath_msdos_086       =lib286\dos
-libpath_msdos_286       =lib286\dos
-libpath_necdos_086      =lib286\dos\nec
-libpath_necwin_086      =lib286\win\nec
-libpath_os2_286         =lib286\os2
-libpath_qnx_286         =lib286\qnx
-libpath_windows_086     =lib286\win
-libpath_generic_386     =lib386\dos
-libpath_kanji_386       =lib386\dos
-libpath_msdos_386       =lib386\dos
-libpath_necdos_386      =lib386\dos\nec
-libpath_necwin_386      =lib386\win\nec
-libpath_nw_clib_386     =lib386\netware
-libpath_nw_clibl_386    =lib386\netware
-libpath_nw_libc_386     =lib386\netware
-libpath_nw_libcl_386    =lib386\netware
-libpath_os2_386         =lib386\os2
-libpath_osi_386         =lib386\osi
-libpath_qnx_386         =lib386\qnx
-libpath_windows_386     =lib386\win
-libpath_winnt_386       =lib386\nt
-libpath_generic_axp     =libaxp\nt
-libpath_winnt_axp       =libaxp\nt
+libpath_generic_086     =lib286/dos
+libpath_generic_286     =lib286/dos
+libpath_msdos_086       =lib286/dos
+libpath_msdos_286       =lib286/dos
+libpath_necdos_086      =lib286/dos/nec
+libpath_necwin_086      =lib286/win/nec
+libpath_os2_286         =lib286/os2
+libpath_qnx_286         =lib286/qnx
+libpath_windows_086     =lib286/win
+libpath_generic_386     =lib386/dos
+libpath_kanji_386       =lib386/dos
+libpath_msdos_386       =lib386/dos
+libpath_necdos_386      =lib386/dos/nec
+libpath_necwin_386      =lib386/win/nec
+libpath_nw_clib_386     =lib386/netware
+libpath_nw_clibl_386    =lib386/netware
+libpath_nw_libc_386     =lib386/netware
+libpath_nw_libcl_386    =lib386/netware
+libpath_os2_386         =lib386/os2
+libpath_osi_386         =lib386/osi
+libpath_qnx_386         =lib386/qnx
+libpath_windows_386     =lib386/win
+libpath_winnt_386       =lib386/nt
+libpath_generic_axp     =libaxp/nt
+libpath_winnt_axp       =libaxp/nt
 libpath_generic_ppc     =libppc
-libpath_winnt_ppc       =libppc\nt
-libpath_os2_ppc         =libppc\os2
-libpath_linux_386       =lib386\linux
+libpath_winnt_ppc       =libppc/nt
+libpath_os2_ppc         =libppc/os2
+libpath_linux_386       =lib386/linux
 updlibpath =$(libpath_$(system)_$(processor))
 
 update : .symbolic $(libname).lib
-    if exist $(%watcom)\$(updlibpath)\$(updlibname) copy $(libname).lib $(%watcom)\$(updlibpath)\$(updlibname)
+    if exist $(%watcom)/$(updlibpath)/$(updlibname) copy $(libname).lib $(%watcom)/$(updlibpath)/$(updlibname)
 
 !endif

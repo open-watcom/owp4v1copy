@@ -5,4 +5,4 @@
 !inject fclexaxp.obj                        nta
 !inject pdreg.obj                           nta
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif

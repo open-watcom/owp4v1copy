@@ -5,6 +5,6 @@ system=os2
 linkage=static
 dll16=1
 subdir=ml_dll
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif

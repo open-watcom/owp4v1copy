@@ -6,6 +6,6 @@ linkage=dynamic
 profile=1
 clib_rtdll=1
 convention=register
-!include ..\..\..\objects.mif
-!include $(clib_dir)\master.mif
-!include $(clib_dir)\mklib.mif
+!include ../../../objects.mif
+!include $(clib_dir)/master.mif
+!include $(clib_dir)/mklib.mif

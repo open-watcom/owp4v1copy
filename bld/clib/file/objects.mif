@@ -55,7 +55,7 @@
 !inject uutimos2.obj                                        o16 o32
 !inject uutimwnt.obj                     nt nta ntp
 
-!include ..\..\..\..\objlist.mif
+!include ../../../../objlist.mif
 
 stat_opts   =-os
 statos2_opts=-os

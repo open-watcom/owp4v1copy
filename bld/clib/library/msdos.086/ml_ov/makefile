@@ -5,6 +5,6 @@ subdir=ml
 system=msdos
 linkage=static
 overlay=1
-!include $(clib_dir)\master.mif
-!include ..\libs.mif
-!include $(clib_dir)\mrglib.mif
+!include $(clib_dir)/master.mif
+!include ../libs.mif
+!include $(clib_dir)/mrglib.mif
