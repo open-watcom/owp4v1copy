@@ -7,6 +7,11 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+[ BLOCK <1> clean ]
+#==================
+set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+set BUILD_PLATFORM=
+
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
@@ -33,4 +38,6 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> clean ]
 #==================
+set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
+set TMP_BUILD_PLATFORM=
     rm -f -r <PROJDIR>/<OBJDIR>
