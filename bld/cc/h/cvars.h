@@ -544,6 +544,8 @@ extern  void    FreeFNames(void);
 extern  char    *ErrFileName(void);
 extern  char    *DepFileName(void);
 extern  char    *ObjFileName(char *);
+extern  char    *ForceSlash(char *, char );
+extern  char    *CreateFileName( char *template, char *extension, bool forceext );
 extern  FNAMEPTR AddFlist(char const *);
 extern  FNAMEPTR FileIndexToFName(unsigned);
 extern  char    *FNameFullPath( FNAMEPTR flist );

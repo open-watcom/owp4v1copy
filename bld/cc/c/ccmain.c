@@ -353,8 +353,6 @@ char *ForceSlash( char *name, char slash )
     return save;
 }
 
-static char *CreateFileName( char *template, char *extension, bool forceext );
-
 void DumpDepFile( void )
 {
     FNAMEPTR curr;
@@ -529,7 +527,7 @@ int OpenPgmFile()
 }
 
 
-static char *CreateFileName( char *template, char *extension, bool forceext )
+char *CreateFileName( char *template, char *extension, bool forceext )
 {
     #if _OS != _CMS
         char buff[ _MAX_PATH2 ];

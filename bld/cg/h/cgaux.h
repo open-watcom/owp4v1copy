@@ -65,6 +65,8 @@ typedef enum {
         __UNUSED_AUX_CLASS_18,
         __UNUSED_AUX_CLASS_19,
         #include "cgauxc.h"
+        DEPEND_FILE_NAME,
+        TARGET_FILE_NAME,
         __LAST_AUX_CLASS
 } aux_class;
 

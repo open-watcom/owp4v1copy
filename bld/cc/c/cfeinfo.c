@@ -1201,6 +1201,12 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 
     case OBJECT_FILE_NAME:
         return( (VOIDPTR)ObjFileName( OBJ_EXT ) );
+    case TARGET_FILE_NAME:
+        return( (VOIDPTR)ForceSlash( CreateFileName( DependTarget
+                                                   , OBJ_EXT, FALSE )
+                                   , DependForceSlash ) );
+    case DEPEND_FILE_NAME:
+        return( (VOIDPTR)DepFileName() );
 
     case REVISION_NUMBER:
         return( (VOIDPTR)II_REVISION );
