@@ -811,6 +811,8 @@ static void WritePEResources( pe_header *header, pe_object *object )
     int         allopen;
     int         status;
 
+    memset( &einfo, 0, sizeof(einfo) );
+
     if( FmtData.resource != NULL ) {
         DoAddResource( FmtData.resource );
         FmtData.resource = NULL;
