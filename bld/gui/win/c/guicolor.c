@@ -91,17 +91,17 @@ void InitSystemRGB()
     /* Overwrite static default colors above, with system colors */
     /* Should be able to support WM_SYSCOLORCHANGE: later.       */
     /* Done to avoid hardcoded RGB values. (looks BAD!)          */
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {  
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
        GUIColours[0]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_BLACK   / Text */
        GUIColours[1]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_BLUE    / Selected menu/list backgr */
-       GUIColours[2]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_GREEN   / */      
+       GUIColours[2]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_GREEN   / */
        GUIColours[3]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_CYAN    / Main MDI backgr. */
-       GUIColours[4]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_RED     / TEXT FG HILITE WDW */
+       GUIColours[4]  = 0x00000080;                        /* GUI_RED (could be GetSysColor(COLOR_HIGHLIGHT)) / TEXT FG HILITE WDW */
        GUIColours[5]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_MAGENTA / */
        GUIColours[6]  = GetSysColor(COLOR_HIGHLIGHTTEXT);  /* GUI_BROWN   / */
        GUIColours[7]  = GetSysColor(COLOR_BTNFACE);        /* GUI_WHITE   / Dialog items Backgr */
        GUIColours[8]  = GetSysColor(COLOR_BTNFACE);        /* GUI_GREY    / Button face  */
-       GUIColours[9]  = GetSysColor(COLOR_MENU);           /* GUI_BRIGHT_BLUE   */     
+       GUIColours[9]  = GetSysColor(COLOR_MENU);           /* GUI_BRIGHT_BLUE   */
        GUIColours[10] = GetSysColor(COLOR_MENUTEXT);       /* GUI_BRIGHT_GREEN  */
        GUIColours[11] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_CYAN / Used as text BG info on WDW splash */
        GUIColours[12] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_RED     */
