@@ -1,11 +1,11 @@
-.mif : ..;..\..
+.mif : ..;../..
 
 TARG=dos
 !ifndef FORM
 EXE = exe
 FORM = dos
-INCLUDES=;$(WATCOM_DIR)\h;$(WATCOM)\h
+INCLUDES=;$(WATCOM_DIR)/h;$(WATCOM)/h
 !endif
-EXTRA += /dCHARMAP
+EXTRA += -dCHARMAP
 
 !include ui.mif

@@ -2,6 +2,6 @@
 host_CPU = i86
 host_OS = dos
 MODEL = M
-pdir = ..\..
+pdir = ../..
 
 !include ../makefile

@@ -1,13 +1,14 @@
 proj_name = gui
-.mif: $(mif_path)
+
 !include cproj.mif
 
 type=win
-sys_dep_dir = $(sdk_dir)\misc;$(wpi_dir)\h
+
+sys_dep_dir = $(sdk_dir)/misc;$(wpi_dir)/h
 !ifeqi os nt
-plat_inc +=$(watcom_h);$(%watcom)\h\nt;
+plat_inc +=$(watcom_h);$(%watcom)/h/nt;
 !else
-plat_inc +=$(watcom_h);$(%watcom)\h\win;
+plat_inc +=$(watcom_h);$(%watcom)/h/win;
 !endif
 extra_objs = wpimem.obj
 sysobjs = guixscal.obj &
@@ -94,7 +95,7 @@ sysobjs = guixscal.obj &
           guif1hk.obj  &
           wmdisim.obj  &
           wptoolbr.obj &
-          guiclen.obj &
+          guiclen.obj
 
 
 !ifneq os pm
@@ -108,18 +109,17 @@ sysobjs +=             &
 !endif
 
 !ifeq os w386
-sysobjs +=             &
-          ctl3d32.obj
+sysobjs += ctl3d32.obj
 !endif
 
 !include ../../makefile
 
-rm_wpi :  $(wpi_dir)\h\wpicomp.h .SYMBOLIC
+rm_wpi :  $(wpi_dir)/h/wpicomp.h .SYMBOLIC
         @-rm $(sysobjs)
 
-ctl3d32.obj : $(sdk_dir)\misc\ctl3d32.c
+ctl3d32.obj : $(sdk_dir)/misc/ctl3d32.c
 
-wptoolbr.obj :  wptoolbr.c $(sdk_dir)\misc\wptoolbr.h
+wptoolbr.obj :  wptoolbr.c $(sdk_dir)/misc/wptoolbr.h
            $($(compiler)) $[* $(cflags) /dNDEBUG
 
 wstatus.obj : wstatus.c
@@ -133,8 +133,8 @@ wmdisim.obj : wmdisim.c
 
 guixdlg.obj     : guixdlg.c guistyle.h
 guicontr.obj    : guicontr.c guistyle.h
-guisetup.obj    : guisetup.c guiwind.h $(sdk_dir)\misc\wptoolbr.h
-guixwind.obj    : guixwind.c $(sdk_dir)\misc\wptoolbr.h
-guimdi.obj      : guimdi.c $(sdk_dir)\misc\mdisim.h
-mdisim.obj      : mdisim.c $(sdk_dir)\misc\mdisim.h
-guixmdi.obj     : guixmdi.c $(guidir)\h\guix.h
+guisetup.obj    : guisetup.c guiwind.h $(sdk_dir)/misc/wptoolbr.h
+guixwind.obj    : guixwind.c $(sdk_dir)/misc/wptoolbr.h
+guimdi.obj      : guimdi.c $(sdk_dir)/misc/mdisim.h
+mdisim.obj      : mdisim.c $(sdk_dir)/misc/mdisim.h
+guixmdi.obj     : guixmdi.c $(guidir)/h/guix.h

@@ -1,6 +1,6 @@
-.mif : ..;..\..
+.mif : ..;../..
 
-EXTRA = /d_NEC_PC /dCLIB_MB
+EXTRA = -d_NEC_PC -dCLIB_MB
 
 TARG=dos
 !ifndef FORM

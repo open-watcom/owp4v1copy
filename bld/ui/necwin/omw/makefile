@@ -4,6 +4,6 @@ host_OS = win
 
 MODEL = M
 SAMPLE_MODE = WIN_C_M_J
-pdir = ..\..
+pdir = ../..
 
 !include ../makefile

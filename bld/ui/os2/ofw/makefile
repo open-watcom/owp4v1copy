@@ -13,7 +13,7 @@ FORM=os2v2
 
 !include ../makefile
 
-sample2.$(EXE) : sample.obj sampdial.obj ..\$(LIBNAME).lib
+sample2.$(EXE) : sample.obj sampdial.obj ../$(LIBNAME).lib
     %create sample.lnk
     %append sample.lnk  system os2v2
     %append sample.lnk  option map
@@ -21,6 +21,6 @@ sample2.$(EXE) : sample.obj sampdial.obj ..\$(LIBNAME).lib
     %append sample.lnk  debug all
     %append sample.lnk  file sample
     %append sample.lnk  file sampdial
-    %append sample.lnk  library ..\$(LIBNAME)
+    %append sample.lnk  library ../$(LIBNAME)
     set lib=$(watcomlib);$(%lib)
     wlinkp @sample.lnk
