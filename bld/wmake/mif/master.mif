@@ -73,6 +73,7 @@ extra_c_flags += -dCACHE_STATS
 ##############################################################################
 
 ext_qnx = qnx
+ext_linux = elf
 !ifdef ext_$(host_OS)
 ext = $(ext_$(host_OS))
 !else

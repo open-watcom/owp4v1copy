@@ -54,21 +54,23 @@
 !inject spawn386.obj     d32
 !inject spl.obj      d16 d32             nt nta ntp         o16 o32
 !inject sple.obj     d16 d32             nt nta ntp         o16 o32
-!inject spleqnx.obj                                                 q16 q32
+!inject spleunx.obj                                                 q16 q32             l32
 !inject splp.obj     d16 d32             nt nta ntp         o16 o32
 !inject splpe.obj    d16 d32             nt nta ntp         o16 o32
-!inject splpeqnx.obj                                                q16 q32
-!inject splpqnx.obj                                                 q16 q32
-!inject splqnx.obj                                                  q16 q32
+!inject splpeunx.obj                                                q16 q32             l32
+!inject splpunx.obj                                                 q16 q32             l32
+!inject splunx.obj                                                  q16 q32             l32
 !inject spv.obj      d16 d32             nt nta ntp         o16 o32
 !inject spve.obj     d16 d32             nt nta ntp         o16 o32
+!inject spvelnx.obj                                                                     l32
 !inject spveqnx.obj                                                 q16 q32
 !inject spvp.obj     d16 d32             nt nta ntp         o16 o32
 !inject spvpe.obj    d16 d32             nt nta ntp         o16 o32
-!inject spvpeqnx.obj                                                q16 q32
-!inject spvpqnx.obj                                                 q16 q32
-!inject spvqnx.obj                                                  q16 q32
+!inject spvpeunx.obj                                                q16 q32             l32
+!inject spvpunx.obj                                                 q16 q32             l32
+!inject spvunx.obj                                                  q16 q32             l32
 !inject system.obj   d16 d32             nt nta ntp         o16 o32         w16 w32
+!inject systemlx.obj                                                                    l32
 !inject ucenvarg.obj                     nt nta ntp
 !inject udospwnt.obj                     nt nta ntp
 !inject uexl.obj     d16                 nt nta ntp         o16 o32

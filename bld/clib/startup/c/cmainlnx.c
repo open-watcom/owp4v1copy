@@ -41,6 +41,7 @@
 #include "syslinux.h"
 
 _WCRTLINK char ** _WCNEAR environ;  /* pointer to environment table */
+char    * _WCNEAR __env_mask;
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
 
@@ -56,6 +57,7 @@ extern int main( int, char **, char ** );
 void __cdecl _LinuxMain(int argc, char **argv, char **arge)
 {
 //    thread_data *tdata;
+    char **argep = arge;
 
     // Initialise the heap. To do this we call sys_brk() with
     // a value of 0, which will return the current top of the
@@ -69,6 +71,9 @@ void __cdecl _LinuxMain(int argc, char **argv, char **arge)
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
+    while ( *arge != NULL )
+        arge++;
+    __env_mask = *arge;
     __FPE_handler =     &__null_FPE_rtn;
     __InitRtns( 1 );
 //    tdata = __alloca( __ThreadDataSize );

@@ -250,3 +250,37 @@ _WCRTLINK int utime( const char *__path, const struct utimbuf * __times )
     __syscall_return(int,res);
 }
 
+_WCRTLINK pid_t fork( void )
+{
+    u_long res = sys_call0(SYS_fork);
+    __syscall_return(pid_t,res);
+}
+
+_WCRTLINK int execve( const char *__path, const char *const __argv[],
+                      const char *const __envp[] )
+{
+    u_long res = sys_call3(SYS_execve, (u_long)__path, (u_long)__argv,
+                           (u_long)__envp);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int sigaction(int __signum, const struct sigaction *__act,
+                            struct sigaction *__oldact)
+{
+    u_long res = sys_call3(SYS_sigaction, __signum, (u_long)__act,
+                           (u_long)__oldact);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK pid_t waitpid (pid_t __pid, int *__stat_loc, int __options)
+{
+    u_long res = sys_call3(SYS_waitpid, __pid, (u_long)__stat_loc,
+                           (u_long)__options);
+    __syscall_return(pid_t,res);
+}
+
+_WCRTLINK int pipe( int __fildes[2] )
+{
+    u_long res = sys_call1(SYS_pipe, (u_long)__fildes);
+    __syscall_return(int,res);
+}

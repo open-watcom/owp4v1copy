@@ -59,6 +59,7 @@ extern int __wputenv( const wchar_t *env_string );
 // it calls call __create_wide_environment, causing similar bad things.
 _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
 {
+#ifndef __UNIX__
 #ifdef __WIDECHAR__
     char *              otherStr;
     const size_t        charsize = sizeof(wchar_t);
@@ -70,6 +71,7 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
 #endif
     size_t              otherStrLen;
     int                 rc;
+#endif
 #ifdef __NT__
     CHAR_TYPE *         name;
     CHAR_TYPE *         value;
@@ -129,6 +131,9 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
     #ifdef __WIDECHAR__
         if( _RWD_wenviron == NULL )  __create_wide_environment();
     #endif
+    #ifdef __UNIX__
+    return __F_NAME(__putenv,__wputenv)( env_string );
+    #else
     if( __F_NAME(__putenv,__wputenv)( env_string )  !=  0 )  return( -1 );
 
     /*** Update the other environment ***/
@@ -148,6 +153,8 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
     }
     rc = __F_NAME(__wputenv,__putenv)( otherStr );
     return( rc );
+
+    #endif
 }
 
 
