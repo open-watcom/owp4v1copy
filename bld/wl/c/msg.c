@@ -293,7 +293,12 @@ static unsigned MakeExeName( char * buff, unsigned max )
         str = FmtData.osname;
     } else {
         format = FmtData.type;
-        num = 31 - blog_32( format );
+        for( ;; ) {
+            num = blog_32( format );
+            format &= ~(1 << num);
+            if( format == 0 )
+                break;
+        }
         Msg_Get( MSG_FILE_TYPES_0 + num, rc_buff );
         str = rc_buff;
     }
