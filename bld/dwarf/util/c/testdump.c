@@ -383,14 +383,14 @@ uint_8 *DecodeLEB128( const uint_8 *input, int_32 *value ) {
     return( (uint_8 *)input );
 }
 
-uint_8 *findAbbrev( uint_32 code ) {
+uint_8 *findAbbrev( uint_32 code, uint_32 start ) {
 
     uint_8      *p;
     uint_8      *stop;
     uint_32     tmp;
     uint_32     attr;
 
-    p = Sections[ DW_DEBUG_ABBREV ].data;
+    p = Sections[ DW_DEBUG_ABBREV ].data + start;
     stop = p + Sections[ DW_DEBUG_ABBREV ].max_offset;
     for(;;) {
         if( p >= stop ) return( NULL );
@@ -424,6 +424,7 @@ static void dumpInfo( const char *input, uint length ) {
 
     const uint_8 *p;
     uint_32     abbrev_code;
+    uint_32     abbrev_offset;
     uint_8 *    abbrev;
     uint_32     tag;
     uint_32     attr;
@@ -440,15 +441,16 @@ static void dumpInfo( const char *input, uint length ) {
         unit_length = *(uint_32 *)p;
         unit_base = p + sizeof( uint_32 );
         address_size = *(p+10);
+	abbrev_offset = *(uint_32 *)(p+6);
         printf( "Length: %08lx\nVersion: %04lx\nAbbrev: %08lx\nAddress Size %02lx\n",
-            unit_length, *(uint_16 *)(p+4), *(uint_32 *)(p+6), address_size );
+            unit_length, *(uint_16 *)(p+4), abbrev_offset, address_size );
         p += 11;
         while( p - unit_base < unit_length ) {
             printf( "offset %08lx: ", p - input );
             p = DecodeULEB128( p, &abbrev_code );
             printf( "Code: %08lx\n", abbrev_code );
             if( abbrev_code == 0 ) continue;
-            abbrev = findAbbrev( abbrev_code );
+            abbrev = findAbbrev( abbrev_code, abbrev_offset );
             if( abbrev == NULL ) {
                 printf( "can't find abbreviation %08lx\n", abbrev_code );
                 break;
@@ -574,6 +576,7 @@ extern void dumpAbbrevs( const char *input, uint length ) {
         if( p > input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "Code: %08lx\n", tmp );
+	if( tmp == 0 ) continue;
         if( p >= input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "\t%s\n", getTAG( tmp ) );
