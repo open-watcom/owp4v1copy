@@ -67,9 +67,10 @@ static watch_point  wpList[ MAX_WP ];
 static int          wpCount = 0;
 static pid_t        pid;
 static int          attached;
-static int          just_attached;
 static u_short      flatCS;
 static u_short      flatDS;
+static long         orig_eax;
+static long         last_eip;
 static int          last_sig;
 static int          at_end;
 
@@ -377,6 +378,8 @@ static void ReadCPU( struct x86_cpu *r )
 
     memset( r, 0, sizeof( *r ) );
     if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
+        last_eip = regs.eip;
+        orig_eax = regs.orig_eax;
         r->eax = regs.eax;
         r->ebx = regs.ebx;
         r->ecx = regs.ecx;
@@ -439,6 +442,15 @@ static void WriteCPU( struct x86_cpu *r )
 {
     user_regs_struct    regs;
 
+    /* the kernel uses an extra register orig_eax
+       If orig_eax >= 0 then it will check eax for
+       certain values to see if it needs to restart a
+       system call.
+       If it restarts a system call then it will set
+       eax=orig_eax and eip-=2.
+       If orig_eax < 0 then eax is used as is.
+    */
+
     regs.eax = r->eax;
     regs.ebx = r->ebx;
     regs.ecx = r->ecx;
@@ -448,6 +460,14 @@ static void WriteCPU( struct x86_cpu *r )
     regs.ebp = r->ebp;
     regs.esp = r->esp;
     regs.eip = r->eip;
+    if ( regs.eip != last_eip ) {
+        /* eip is actually changed! This means that
+           the orig_eax value does not make sense;
+           set it to -1 */
+        orig_eax = -1;
+        last_eip = regs.eip;
+    }
+    regs.orig_eax = orig_eax;
     regs.eflags = r->efl;
     regs.cs = r->cs;
     regs.ds = r->ds;
@@ -469,6 +489,7 @@ static void WriteFPU( struct x86_fpu *r )
     regs.fcs = r->ip_err.p.segment;
     regs.foo = r->op_err.p.offset;
     regs.fos = r->op_err.p.segment;
+    memcpy(regs.st_space,r->reg,sizeof(r->reg));
     sys_ptrace(PTRACE_SETFPREGS, pid, 0, &regs);
 }
 
@@ -626,7 +647,6 @@ unsigned ReqProg_load()
     }
     args[0] = parm_start;
     attached = TRUE;
-    just_attached = TRUE;
     pid = RunningProc( args[0], &name );
     if( pid == 0 || sys_ptrace( PTRACE_ATTACH, pid, 0, 0 ) == -1 ) {
         attached = FALSE;
@@ -654,14 +674,17 @@ unsigned ReqProg_load()
         
         ret->task_id = pid;
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
-        /* wait until it hits _start (upon execve) */
+        /* wait until it hits _start (upon execve) or
+           gives us a SIGSTOP (if attached) */
+        if ( waitpid ( pid, &status, 0 ) < 0 )
+            goto fail;
+        if ( !WIFSTOPPED( status ) )
+            goto fail;
         if( attached ) {
             ret->flags |= LD_FLAG_IS_STARTED;
+            if ( WSTOPSIG( status ) != SIGSTOP )
+                goto fail;
         } else {
-            if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
-                goto fail;
-            if ( !WIFSTOPPED( status ) )
-                goto fail;
             if ( WSTOPSIG( status ) != SIGTRAP )
                 goto fail;
         }
@@ -675,13 +698,15 @@ unsigned ReqProg_load()
 fail:
     if ( pid != 0 && pid != -1 ) {
         if ( attached ) {
-            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );    
+            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
+            attached = FALSE;
         } else {            
             sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
             waitpid( pid, &status, 0 );
         }
     }
-    
+    pid = 0;
+    return( 0 );
 }
 
 unsigned ReqProg_kill()
@@ -691,6 +716,7 @@ unsigned ReqProg_kill()
     if ( pid != 0 && !at_end ) {
         if ( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
+            attached = FALSE;
         } else {            
             int status;
             sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
@@ -698,6 +724,7 @@ unsigned ReqProg_kill()
         }
     }
     at_end = FALSE;
+    pid = 0;
     ret = GetOutPtr( 0 );
     ret->err = 0;
     return( sizeof( *ret ) );
@@ -873,17 +900,11 @@ static unsigned ProgRun( int step )
     ret = GetOutPtr( 0 );
 
     if ( at_end ) {
+        ptrace_sig = 0;
         ret->conditions = COND_TERMINATE;
         goto end;
     }
 
-    /* if we just attached, then first wait for SIGSTOP
-       doesn't work nicely if the process is stopped whilst
-       in a syscall though ... */
-    if ( attached && just_attached ) {
-        waitpid ( pid, &status, WUNTRACED );
-        just_attached = FALSE;
-    }
     /* we only want child-generated SIGINTs now */
     old = signal( SIGINT, SIG_IGN );
     if ( step ) {
@@ -891,7 +912,7 @@ static unsigned ProgRun( int step )
     } else {
         sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
     }
-    waitpid ( pid, &status, WUNTRACED );
+    waitpid ( pid, &status, 0 );
     signal( SIGINT, old );
     if ( WIFSTOPPED( status ) ) {
         switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
@@ -911,15 +932,7 @@ static unsigned ProgRun( int step )
             ptrace_sig = 0;
             break;
         case SIGTRAP:
-            if ( !step ) {
-                sys_ptrace(PTRACE_GETREGS, pid, 0, &regs);
-                Out("decrease eip(sigtrap)" );
-                regs.eip--;
-                sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
-                ret->conditions = COND_BREAK;
-            } else {
-                ret->conditions = COND_TRACE;
-            }
+            ret->conditions = step ? COND_TRACE : COND_BREAK;
             Out("sigtrap");
             ptrace_sig = 0;
             break;
@@ -927,12 +940,20 @@ static unsigned ProgRun( int step )
     } else if ( WIFEXITED( status ) ) {
         at_end = TRUE;
         ret->conditions = COND_TERMINATE;
+        ptrace_sig = 0;
         goto end;
     }    
     if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
         Out( " eip " );
         OutNum( regs.eip );
         Out( " " );
+        if ( ret->conditions == COND_BREAK ) {
+            Out("decrease eip(sigtrap)" );
+            regs.eip--;
+            sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
+        }
+        orig_eax = regs.orig_eax;
+        last_eip = regs.eip;
         ret->program_counter.offset = regs.eip;
         ret->program_counter.segment = regs.cs;
         ret->stack_pointer.offset = regs.esp;
@@ -1109,7 +1130,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;
-
     OrigPGrp = getpgrp();
 
     return( ver );
