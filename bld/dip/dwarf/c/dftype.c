@@ -915,7 +915,7 @@ static int AMem( dr_handle var, int index, void *_d ) {
 
     cont = TRUE;
     is = d->is;
-    SetSymHandle( d, is );
+    SetSymHandle( (type_wlk *)d, is );
     is->sym = var;
     switch( index ){
     case 0:
@@ -965,7 +965,7 @@ static int AInherit( dr_handle inh, int index, void *_d ) {
         }
     }
     is = d->is;
-    SetSymHandle( d, is );
+    SetSymHandle( (type_wlk *)d, is );
     is->sym = inh;
     is->sclass = SYM_MEM;     //  treat inherit like a var
     saved = DRGetDebug();
@@ -1012,7 +1012,7 @@ static int AMemLookup( dr_handle var, int index, void *_d ){
     len = strlen( name );
     if( len == d->li->name.len && d->comp(name, d->li->name.start,len)==0 ) {
         is = DCSymCreate( d->com.ii, d->com.d );
-        SetSymHandle( d, is );
+        SetSymHandle( (type_wlk *)d, is );
         is->sym = var;
         switch( index ){
         case 0:
@@ -1069,7 +1069,7 @@ static int AEnumMem( dr_handle var, int index, void *_d ) {
     index = index;
     cont = TRUE;
     is = d->is;
-    SetSymHandle( d, is );
+    SetSymHandle( (type_wlk *)d, is );
     is->sym = var;
     saved = DRGetDebug();
     d->wr = d->wk( d->com.ii, SWI_SYMBOL, is, d->com.d );
@@ -1096,7 +1096,7 @@ static int AEnumMemLookup( dr_handle var, int index, void *_d ) {
     len = strlen( name );
     if( len == d->li->name.len && d->comp(name, d->li->name.start,len)==0 ) {
         is = DCSymCreate( d->com.ii, d->com.d );
-        SetSymHandle( d, is );
+        SetSymHandle( (type_wlk *)d, is );
         is->sym = var;
         d->sr = SR_EXACT;
     }

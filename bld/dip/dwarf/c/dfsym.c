@@ -86,7 +86,7 @@ unsigned        DIPENTRY DIPImpSymName( imp_image_handle *ii,
     unsigned    len, demangled_len;
 
     lc = lc;
-//TODO: whats lc for
+//TODO: what's lc for?
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
     switch( sn ){
     case SN_SOURCE:
@@ -1350,11 +1350,11 @@ static int WalkSymSymList( blk_wlk *df, BLKLF fn, imp_sym_handle *is )
 
 static walk_result  WalkMyLDSyms( imp_image_handle *ii, im_idx imx, void *_df )
 {
-    blk_wlk_wlk *df = _df;
+    blk_wlk *df = _df;
 
-    df->com.imx = imx;
+    df->wlk.com.imx = imx;
     WalkModSymList( df, &ASym, imx );
-    return( df->wr );
+    return( df->wlk.wr );
 }
 
 static walk_result DFWalkSymList( imp_image_handle *ii,
@@ -1366,7 +1366,7 @@ static walk_result DFWalkSymList( imp_image_handle *ii,
 {
     imp_mod_handle      im;
     walk_result         wr;
-    blk_wlk_wlk         df;
+    blk_wlk             df;
     int                 cont;
 
     df.com.ii = ii;
@@ -1375,16 +1375,16 @@ static walk_result DFWalkSymList( imp_image_handle *ii,
     df.com.containing = 0;
     df.com.cont = TRUE;
     df.com.kind = WLK_WLK;
-    df.wk = wk;
-    df.is = is;
-    df.wr = WR_CONTINUE;
+    df.wlk.wk = wk;
+    df.wlk.is = is;
+    df.wlk.wr = WR_CONTINUE;
     switch( ss ) {
     case SS_TYPE: /* special case */
         wr = WalkTypeSymList( ii,  (imp_type_handle *)source, wk, is, d );
         break;
     case SS_SCOPED:
         cont = WalkScopedSymList( &df, &ASym, (address *)source );
-        wr = df.wr;
+        wr = df.wlk.wr;
         break;
     case SS_SCOPESYM:
         is = (imp_sym_handle *)source;
@@ -1393,11 +1393,11 @@ static walk_result DFWalkSymList( imp_image_handle *ii,
             df.com.containing = is->sym;
             WalkModSymList( &df, &ASymCont, is->imx );
         }
-        wr = df.wr;
+        wr = df.wlk.wr;
         break;
     case SS_BLOCK:
         WalkBlockSymList( &df, &ASym, (scope_block *)source );
-        wr = df.wr;
+        wr = df.wlk.wr;
         break;
     case SS_MODULE:
         im = *(imp_mod_handle *)source;
@@ -1405,7 +1405,7 @@ static walk_result DFWalkSymList( imp_image_handle *ii,
             wr = DFWalkModList( ii, WalkMyLDSyms, &df );
         } else {
            WalkModSymList( &df, &AModSym, IM2IMX( im ) );
-           wr = df.wr;
+           wr = df.wlk.wr;
         }
         break;
     }
@@ -1578,7 +1578,7 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
     search_result       sr;
     char                *src;
     unsigned            len;
-    blk_wlk_lookup      df;
+    blk_wlk             df;
     char                buff[256];
     int                 cont;
 
@@ -1606,15 +1606,15 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
     df.com.containing = 0;
     df.com.cont = TRUE;
     df.com.kind = WLK_LOOKUP;
-    df.comp = li->case_sensitive ? &memcmp : &memicmp;
-    df.li = li;
-    df.len =  li->name.len+1;
-    if( df.len <= sizeof( buff ) ){
-        df.buff = buff;
+    df.lookup.comp = li->case_sensitive ? &memcmp : &memicmp;
+    df.lookup.li = li;
+    df.lookup.len =  li->name.len+1;
+    if( df.lookup.len <= sizeof( buff ) ){
+        df.lookup.buff = buff;
     }else{
-        df.buff = DCAlloc( df.len );
+        df.lookup.buff = DCAlloc( df.lookup.len );
     }
-    df.sr = SR_NONE;
+    df.lookup.sr = SR_NONE;
     switch( ss ) {
     case SS_SCOPED:
         if( li->scope.len == 0 ){
@@ -1622,7 +1622,7 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
         }else{
             cont = TRUE;
         }
-        sr = df.sr;
+        sr = df.lookup.sr;
         if( cont ) {
             if( DR_SRCH_func_var == df.com.what ){
                 sr = HashSearchGbl( ii, li, d );
@@ -1637,7 +1637,7 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
             }
         } else {
            WalkModSymList( &df, &ASymLookup, IM2IMX( im ) );
-           sr = df.sr;
+           sr = df.lookup.sr;
         }
         break;
     case SS_SCOPESYM:
@@ -1645,11 +1645,11 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
         WalkSymSymList( &df, &ASymLookup, is );
         df.com.containing = is->sym;   //check for out of line defn
         WalkModSymList( &df, &ASymContLookup, is->imx );
-        sr = df.sr;
+        sr = df.lookup.sr;
         break;
     }
-    if( df.buff != buff ){
-        DCFree( df.buff );
+    if( df.lookup.buff != buff ){
+        DCFree( df.lookup.buff );
     }
     return( sr );
 }

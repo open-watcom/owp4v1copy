@@ -37,12 +37,9 @@
 #include "dfsegs.h"
 #include <enterdb.h>
 
-enum {
-    OFF_PER_BLK = 256,
-};
 typedef struct off_blk{
-    struct off_blk     *next;
-    off_info            info[OFF_PER_BLK]; /*variable*/
+    struct off_blk  *next;
+    off_info        info[OFF_PER_BLK]; /*variable*/
 }off_blk;
 
 typedef struct seg_off{
@@ -67,8 +64,10 @@ typedef union {
     seg_blk_off  off;
 }seg_blk; /* general form */
 
-static void InitSegOff(  seg_info *new ){
-/***************************************/
+static void InitSegOff( void *_new ){
+/***********************************/
+    seg_info *new = (seg_info *)_new;
+
     new->off.head = NULL;
 }
 
@@ -93,7 +92,7 @@ extern void AddMapAddr( seg_list *list, void *dcmap, off_info *new ){
     a.offset =  new->map_offset;
     DCMapAddr( &a, dcmap );
     new->offset = a.offset;
-    seg_map = AddMapSeg( list, &SegCtl, a.segment );
+    seg_map = (seg_info *)AddMapSeg( list, &SegCtl, a.segment );
     AddSortOffset( seg_map, new );
 }
 
@@ -405,7 +404,8 @@ typedef struct {
     address     seg_base;
 }wlk_seg_offsets;
 
-static int WlkSegInfos( void *_d, seg_info *curr ) {
+static int WlkSegInfos( void *_d, void *_curr ) {
+    seg_info *curr = (seg_info *)_curr;
     wlk_seg_offsets *d = _d;
     int cont;
 
@@ -474,10 +474,11 @@ extern void  InitAddrInfo( seg_list *list ){
     InitSegList( list, sizeof( seg_off ) );
 }
 
-static int FreeSegOffsets( void *d, seg_info *curr ){
-/***********************************************/
+static int FreeSegOffsets( void *d, void *_curr ){
+/************************************************/
 // Free all offset blocks for a segment
-    off_blk    *blk, *old;
+    seg_info    *curr = (seg_info *)_curr;
+    off_blk     *blk, *old;
 
     d = d;
     blk = curr->off.head;

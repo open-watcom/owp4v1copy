@@ -35,17 +35,14 @@
 #include "dfaddsym.h"
 #include "dfsegs.h"
 
-enum {
-    OFF_PER_BLK = 256,
-};
 typedef struct {
     addr_off        map_offset;
     dr_handle       sym;
 }off_info;
 
 typedef struct off_blk{
-    struct off_blk     *next;
-    off_info            info[OFF_PER_BLK]; /*variable*/
+    struct off_blk  *next;
+    off_info        info[OFF_PER_BLK]; /*variable*/
 }off_blk;
 
 typedef struct seg_off{
@@ -89,8 +86,9 @@ static off_info *AddMapOffset( seg_off *ctl, off_info *new ){
     return( next );
 }
 
-static void InitSegOff( seg_info *newseg ){
-/***************************************/
+static void InitSegOff( void *_newseg ){
+/**************************************/
+    seg_info *newseg = (seg_info *)_newseg;
 
     newseg->off.head = NULL;
 }
@@ -114,8 +112,8 @@ extern void AddAddrSym( seg_list *list, addrsym_info *new ){
 
     data.map_offset = new->map_offset;
     data.sym = new->sym;
-    seg_map = AddMapSeg( list, &SegCtl, new->map_seg );
-    AddMapOffset( seg_map, &data );
+    seg_map  = (seg_info *)AddMapSeg( list, &SegCtl, new->map_seg );
+    AddMapOffset( &seg_map->off, &data );
 }
 
 typedef struct{
@@ -158,7 +156,7 @@ static  long BlkOffSearch( off_cmp *cmp  ){
     cmp->base = curr;
     return( diff );
 }
-// This is a bit screwey  maybe I should do something like dfaddr
+// This is a bit screwy, maybe I should do something like dfaddr
 // so the blocks are in sorted order
 extern  int  FindAddrSym( seg_list     *addr_map,
                           addr_ptr     *mach,
@@ -172,7 +170,7 @@ extern  int  FindAddrSym( seg_list     *addr_map,
     long       last_find;
 
     cmp.key = mach->offset;
-    ctl = FindRealSeg( addr_map, mach->segment );
+    ctl = (seg_info *)FindRealSeg( addr_map, mach->segment );
     diff = -1;
     last_find = -1;
     if( ctl != NULL ){
@@ -224,10 +222,11 @@ static int  OffCmp( void const *_off1, void const *_off2  ){
     return( diff );
 }
 
-static int SortOffsets( void *d, seg_info *ctl ){
-/***************************************************/
+static int SortOffsets( void *d, void *_ctl ){
+/********************************************/
 //Sort a seg's offsets
-    off_blk    *blk;
+    seg_info    *ctl = (seg_info *)_ctl;
+    off_blk     *blk;
     unsigned_16 blk_count;
 
     d = d;
@@ -258,11 +257,12 @@ struct wlk_glue {
     WLKADDRSYM fn;
 };
 
-static int WalkOffsets( void *_wlk, seg_info *ctl ){
-/***************************************************/
+static int WalkOffsets( void *_wlk, void *_ctl ){
+/***********************************************/
 //Sort a seg's offsets
+    seg_info    *ctl = (seg_info *)_ctl;
     struct wlk_glue *wlk = _wlk;
-    off_blk    *blk;
+    off_blk     *blk;
     unsigned_16 blk_count;
     off_info    *next;
     addrsym_info info;
@@ -292,7 +292,7 @@ done:
 
 
 extern  int WlkAddrSyms( seg_list *ctl, WLKADDRSYM fn, void *d ){
-/********************************************/
+/***************************************************************/
     struct wlk_glue wlk;
 
     wlk.fn = fn;
@@ -307,10 +307,11 @@ extern void  InitAddrSym( seg_list *list ){
     InitSegList( list, sizeof( seg_off ) );
 }
 
-static int FreeSegOffsets( void *d, seg_info *curr ){
-/***********************************************/
+static int FreeSegOffsets( void *d, void *_curr ){
+/************************************************/
 // Free all offset blocks for a segment
-    off_blk    *blk, *old;
+    seg_info    *curr = (seg_info *)_curr;
+    off_blk     *blk, *old;
 
     d = d;
     blk = curr->off.head;
