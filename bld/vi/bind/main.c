@@ -235,7 +235,6 @@ FILE *GetFromEnvAndOpen( char *inpath )
 char tmppath[256];
 
     GetFromEnv( inpath, tmppath );
-    strlwr( tmppath );
     if( tmppath[0] != 0 ) {
         MyPrintf(" %s...",tmppath );
         return( fopen( tmppath, "r" ) );
