@@ -1,10 +1,6 @@
 proj_name = builder
 name = builder
 
-.extensions:
-.extensions: .exe .obj .h .c .mif
-
-.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
