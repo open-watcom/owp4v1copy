@@ -1,5 +1,4 @@
-#pmake: dwarf cpu_axp
-model =
-host_CPU = axp
-host_OS = nt
+#pmake: os_dos os_nt os_os2 os_linux cpu_axp dwarf
+host_cpu = axp
+host_os = osi
 !include ../dw.mif

@@ -1,6 +1,5 @@
-#pmake: build all os_dos cpu_i86
-# l means make a large memory model
-model = l
-host_OS = dos
-host_CPU = i86
+#pmake: build os_dos cpu_i86
+host_os = dos
+host_cpu = i86
+
 !include ../dw.mif

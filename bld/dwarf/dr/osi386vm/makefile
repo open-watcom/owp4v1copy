@@ -3,6 +3,6 @@
 host_os  = osi
 host_cpu = 386
 
-inline_vmem = yes
+inline_vmem = 1
 
 !include ../dr.mif

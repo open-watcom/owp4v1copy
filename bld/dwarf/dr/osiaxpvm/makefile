@@ -2,6 +2,7 @@
 
 host_os  = osi
 host_cpu = axp
-inline_vmem=yes
+
+inline_vmem = 1
 
 !include ../dr.mif
