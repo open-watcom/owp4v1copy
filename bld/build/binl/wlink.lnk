@@ -21,9 +21,10 @@ system begin bld_linux
     op nodefault
     debug all
     library %DEVDIR%/clib/library/linux.386/ms_r/clibs.lib
-    library %DEVDIR%/mathlib/library/msdos.386/ms_r/maths.lib
+    library %DEVDIR%/mathlib/library/msdos.387/ms_r/maths.lib
+    library %DEVDIR%/emu/stub386/emu387.lib
     format elf
     op exportall
-    op caseexact  
+    op caseexact
 end
 @%DEVDIR%/wl/wlsystem.lnk

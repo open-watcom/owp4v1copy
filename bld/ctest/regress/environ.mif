@@ -12,7 +12,7 @@
 #
 # configuration values:
 #
-# targ_env_386 = wnt386/d4g386/os2386 (depends on current OS)
+# targ_env_386 = wnt386/d4g386/os2386/linux386 (depends on current OS)
 # targ_env_i86 = os2i86/dosi86 (depends on current OS)
 # targ_env_axp = os2axp/ntaxp (depends on current OS)
 #
@@ -32,7 +32,7 @@
 # dll_axp = wppdaxp.dll
 # arch = 386/axp (depends on current hardware)
 # linker = wlink
-# log_file = $(ctest_dir)\$(ctest_name).log
+# log_file = $(ctest_dir)/$(ctest_name).log
 
 #
 # use ctest_* environment vars to set make variables
@@ -139,8 +139,9 @@
 # d4g386 -- DOS4G .EXE
 # tnt386 -- PharLap TNT .EXE
 # os2386 -- OS/2 2.x .EXE
-# wnt386 -- Windows NT .EXE
-# wntaxp -- Windows NT .EXE
+# lnx386 -- Linux x86 executable
+# wnt386 -- Windows NT x86 .EXE
+# wntaxp -- Windows NT Alpha AXP .EXE
 #
 
 #
@@ -154,6 +155,8 @@
 !    define targ_env_386 d4g386
 !  else ifdef __OS2__
 !    define targ_env_386 os2386
+!  else ifdef __LINUX__
+!    define targ_env_386 lnx386
 !  else ifdef __NT386__
 !    define targ_env_386 wnt386
 !  endif
@@ -186,6 +189,7 @@ targ_run_d4g386 = dos4gw
 targ_run_tnt386 = tntrun
 targ_run_os2386 =
 targ_run_wnt386 =
+targ_run_lnx386 =
 targ_run_wnti86 =
 targ_run_dosi86 =
 targ_run_os2i86 =
@@ -200,12 +204,13 @@ run_axp = $(targ_run_$(targ_env_i86))
 run = $(run_$(arch))
 
 #
-# targ_ext      extension (e.g., exp )
+# targ_ext      extension (e.g., exp ) - must have one for default rules to work
 targ_ext_pls386 = exp
 targ_ext_d4g386 = exe
 targ_ext_tnt386 = exe
 targ_ext_os2386 = exe
 targ_ext_wnt386 = exe
+targ_ext_lnx386 = exe
 targ_ext_wnti86 = exe
 targ_ext_dosi86 = exe
 targ_ext_os2i86 = exe
@@ -226,6 +231,7 @@ targ_lnk_d4g386 = system dos4g
 targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
+targ_lnk_lnx386 = system bld_linux
 targ_lnk_wnti86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_dosi86 = system dos
 targ_lnk_os2i86 = system os2 pmc libpath $(watcom_dir)\lib
@@ -246,6 +252,7 @@ targ_ldb_d4g386 = debug all
 targ_ldb_tnt386 = debug all
 targ_ldb_os2386 = debug all
 targ_ldb_wnt386 = debug all
+targ_ldb_lnx386 = debug all
 targ_ldb_wnti86 = debug all
 targ_ldb_dosi86 = debug all
 targ_ldb_os2i86 = debug all
@@ -264,6 +271,7 @@ targ_bld_d4g386 = -bt=dos
 targ_bld_tnt386 = -bt=nt
 targ_bld_os2386 = -bt=os2
 targ_bld_wnt386 = -bt=nt
+targ_bld_lnx386 = -bt=linux
 targ_bld_wnti86 = -bt=nt
 targ_bld_dosi86 = -bt=dos
 targ_bld_os2i86 = -bt=os2
@@ -293,6 +301,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !      define wpp_386 run386 $(plusplus_dir)\dos386\wcpp386d
 !    else ifdef __OS2__
 !      define wpp_386 $(plusplus_dir)\os2386\wcpp386d
+!    else ifdef __LINUX__
+!      define wpp_386 $(plusplus_dir)/linux386/wcpp386d
 !    else ifdef __NT386__
 !      define wpp_386 $(plusplus_dir)\nt386\wcpp386d
 !    else ifdef __NTAXP__
@@ -308,6 +318,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !      define wpp_i86 run386 $(plusplus_dir)\dosi86\wcppi86d
 !    else ifdef __OS2__
 !      define wpp_i86 $(plusplus_dir)\os2i86\wcppi86d
+!    else ifdef __LINUX__
+!      define wpp_i86 $(plusplus_dir)/linuxi86/wcppi86d
 !    else ifdef __NT386__
 !      define wpp_i86 $(plusplus_dir)\nti86\wcppi86d
 !    else ifdef __NTAXP__
@@ -391,13 +403,15 @@ wpp_axp += $(targ_bld_$(targ_env_axp))
 # MAKEINIT vars
 #
 proj_name = ctest
-host_CPU = $(arch)
+host_cpu = $(arch)
 !ifdef __MSDOS__
-!  define host_OS dos
+!  define host_os dos
 !else ifdef __OS2__
-!  define host_OS os2
+!  define host_os os2
 !else ifdef __NT__
-!  define host_OS nt
+!  define host_os
+!else ifdef __LINUX__
+!  define host_os linux
 !else
 !  error unknown OS
 !endif
@@ -424,9 +438,9 @@ host_CPU = $(arch)
 !  ifdef %ctest_log_file
 !    define log_file $+$(%ctest_log_file)$-
 !  else ifdef %ctest_name
-!    define log_file $(ctest_dir)\$+$(%ctest_name)$-.log
+!    define log_file $(ctest_dir)/$+$(%ctest_name)$-.log
 !  else
-!    define log_file $(ctest_dir)\$(ctest_name).log
+!    define log_file $(ctest_dir)/$(ctest_name).log
 !  endif
 !endif
 
@@ -444,19 +458,19 @@ clean : .symbolic global
     @%null
 
 common_clean : .symbolic
-    @if exist *.?bj del *.?bj
-    @if exist *.err del *.err
-    @if exist *.lnk del *.lnk
-    @if exist *.lbc del *.lbc
-    @if exist *.$(exe) del *.$(exe)
-    @if exist *.dll del *.dll
-    @if exist *.out del *.out
-    @if exist *.sym del *.sym
-    @if exist *.dmp del *.dmp
-    @if exist *.map del *.map
-    @if exist *.lst del *.lst
-    @if exist *.log del *.log
-    @if exist *.pdb del *.pdb
-    @if exist *.pch del *.pch
-    @if exist *.lib del *.lib
-    @if exist *.res del *.res
+    @if exist *.?bj rm *.?bj
+    @if exist *.err rm *.err
+    @if exist *.lnk rm *.lnk
+    @if exist *.lbc rm *.lbc
+    @if exist *.$(exe) rm *.$(exe)
+    @if exist *.dll rm *.dll
+    @if exist *.out rm *.out
+    @if exist *.sym rm *.sym
+    @if exist *.dmp rm *.dmp
+    @if exist *.map rm *.map
+    @if exist *.lst rm *.lst
+    @if exist *.log rm *.log
+    @if exist *.pdb rm *.pdb
+    @if exist *.pch rm *.pch
+    @if exist *.lib rm *.lib
+    @if exist *.res rm *.res
