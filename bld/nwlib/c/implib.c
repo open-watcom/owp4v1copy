@@ -401,9 +401,11 @@ static void peAddImport( arch_header *arch, libfile io )
     }
     coffAddImportOverhead( arch, DLLName, processor );
     }
-    buffer = MemAlloc( 256 );
     for( i=0; i<export_header->numNamePointer; i++ ) {
     currname = &(edata[name_table[i] - export_base + adjust]);
+    // allocate the space for the current symbol name and
+    // add enough room for the following strcpy/strcat pairs.
+    buffer = MemAlloc( 1+strlen( currname ) + 8 );
     if( coff_obj == TRUE) {
         CoffMKImport( arch, ORDINAL, ord_table[ i ] + ordinal_base,
         DLLName, currname, NULL, processor );
@@ -420,8 +422,8 @@ static void peAddImport( arch_header *arch, libfile io )
         strcat( buffer, currname );
         AddSym( buffer, SYM_WEAK, 0 );
     }
+    MemFree( buffer ); // dispose symbol name.
     }
-    MemFree( buffer );
     MemFree( DLLName );
 
     arch->name = oldname;

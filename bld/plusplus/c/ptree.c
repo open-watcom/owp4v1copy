@@ -935,9 +935,9 @@ msg_status_t PTreeErrorExpr(    // ISSUE ERROR MESSAGE FOR PTREE NODE
     unsigned err_code )         // - error code
 {
     msg_status_t status;
-
     PTreeSetErrLoc( expr );
     status = CErr1( err_code );
+    InfClassDecl( expr->type ); // issue the symbol name where we hit this error. (useful for template expansion errors)
     if(( status & MS_WARNING ) == 0 ) {
         PTreeErrorNode( expr );
     }
