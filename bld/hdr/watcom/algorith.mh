@@ -382,46 +382,50 @@ namespace std {
 :: A compiler bug appears to prevent this heap support from compiling.
 :: See the file bug02.cpp in the owstl regression tests.
 
-  template< class Int >
-  inline Int _heap_parent( Int index )
-    { return ( ( index - 1 )/2 ); }
+  namespace _ow {
 
-  template< class Int >
-  inline Int _heap_left( Int index )
-    { return ( 2*index + 1 ); }
+    template< class Int >
+    inline Int heap_parent( Int index )
+      { return ( ( index - 1 )/2 ); }
 
-  template< class Int >
-  inline Int _heap_right( Int index )
-    { return ( 2*index + 2 ); }
+    template< class Int >
+    inline Int heap_left( Int index )
+      { return ( 2*index + 1 ); }
 
-  template< class RandomAccess >
-  void _heapify(
-    RandomAccess first,
-    RandomAccess last,
-    typename iterator_traits< RandomAccess >::difference_type index)
-  {
-    typedef typename iterator_traits< RandomAccess >::difference_type Int;
-    using std::swap;
+    template< class Int >
+    inline Int heap_right( Int index )
+      { return ( 2*index + 2 ); }
 
-    Int size = last - first;
-    Int L    = _heap_left( index );  // Index of left child.
-    Int R    = _heap_right( index ); // Index of right child.
-    Int largest = index;             // Index of largest child.
+    template< class RandomAccess >
+    void heapify(
+      RandomAccess first,
+      RandomAccess last,
+      typename iterator_traits< RandomAccess >::difference_type index)
+    {
+      typedef typename iterator_traits< RandomAccess >::difference_type Int;
+      using std::swap;
 
-    // Compare the left child (if there is one) with the item at index.
-    if( L < size && first[largest] < first[L] )
-      largest = L;
+      Int size = last - first;
+      Int L    = heap_left( index );   // Index of left child.
+      Int R    = heap_right( index );  // Index of right child.
+      Int largest = index;             // Index of largest child.
 
-    // Compare the right child (if there is one) with the largest from above.
-    if( R < size && first[largest] < first[R] )
-      largest = R;
+      // Compare the left child (if there is one) with the item at index.
+      if( L < size && first[largest] < first[L] )
+        largest = L;
 
-    // If the largest was a child, swap it and then process that child.
-    if( largest != index ) {
-      swap( first[index], first[largest] );
-      _heapify( first, last, largest );
+      // Compare the right child (if there is one) with the largest from above.
+      if( R < size && first[largest] < first[R] )
+        largest = R;
+
+      // If the largest was a child, swap it and then process that child.
+      if( largest != index ) {
+        swap( first[index], first[largest] );
+        heapify( first, last, largest );
+      }
     }
-  }
+
+  } // namespace _ow
 
   // push_heap( RandomAccess, RandomAccess )
   // ***************************************
@@ -430,6 +434,7 @@ namespace std {
   {
     typedef typename iterator_traits< RandomAccess >::difference_type Int;
     using std::swap;
+    using _ow::heap_parent;
 
     // If there is no heap, calling this function is illogical.
     if( first == last )
@@ -437,9 +442,9 @@ namespace std {
 
     // Walk up the heap, swapping the index node with its parent as necessary.
     Int index = (last - first) - 1;
-    while( index > 0 && first[_heap_parent( index )] < first[index] ) {
-      swap( first[_heap_parent( index )], first[index] );
-      index = _heap_parent( index );
+    while( index > 0 && first[heap_parent( index )] < first[index] ) {
+      swap( first[heap_parent( index )], first[index] );
+      index = heap_parent( index );
     }
   }
 
@@ -458,7 +463,7 @@ namespace std {
     --last;
     if( first != last ) {
       swap( *first, *last );
-      _heapify( first, last, 0 );
+      _ow::heapify( first, last, 0 );
     }
   }
 
@@ -477,7 +482,7 @@ namespace std {
 
     // Only half the items need to be heapified. The rest are leaves.
     for( index = size/2 - 1; index >= 0; --index ) {
-      _heapify( first, last, index );
+      _ow::heapify( first, last, index );
     }
   }
 
@@ -498,7 +503,7 @@ namespace std {
     for( index = size - 1; index > 0; --index ) {
       swap( first[0], first[index] );
       --last;
-      _heapify( first, last, 0 );
+      _ow::heapify( first, last, 0 );
     }
   }
 
