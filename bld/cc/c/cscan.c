@@ -443,11 +443,73 @@ int doScanFloat()
     }
 }
 
+static int doScanAsmDirective( void )
+{
+    char        *scanptr;
+    char        *p;
+    int         c;
+
+    p = &Buffer[TokenLen];
+    c = NextChar();
+    for(;;) {
+        scanptr = ScanCharPtr;
+        for(;;) {
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( p >= &Buffer[BufSize - 16] ) {
+                char *oldbuf = Buffer;
+                EnlargeBuffer( BufSize * 2 );
+                p += Buffer - oldbuf;
+            }
+        }
+        ScanCharPtr = scanptr;
+        if( (CharSet[c] & C_EX) == 0 ) break;
+        c = GetCharCheck( c );
+        if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+    }
+    CurrChar = c;
+    if( p >= &Buffer[BufSize - 18] ) {
+        char *oldbuf = Buffer;
+        EnlargeBuffer( BufSize * 2 );
+        p += Buffer - oldbuf;
+    }
+    *p = '\0';
+    TokenLen = p - Buffer;
+    return( T_DOT );
+}
+
 int ScanDot()
 {
     Buffer[0] = '.';
     TokenLen = 1;
-    return( doScanFloat() );
+    if( CompFlags.inside_asm_stmt == 1 ) {
+        // inline assembler directives start with dot
+        return( doScanAsmDirective() );
+    } else {
+        return( doScanFloat() );
+    }
 }
 
 static int ScanPPNumber()

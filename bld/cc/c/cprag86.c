@@ -497,7 +497,7 @@ static enum sym_type AsmDataType[] = {
         0,              /* TYPE_UNUSED,  */
 };
 
-local int AsmType( SYM_ENTRY *sym, TYPEPTR typ )
+local int AsmType( TYPEPTR typ, int flags )
 {
     while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
     switch( typ->decl_type ) {
@@ -505,12 +505,12 @@ local int AsmType( SYM_ENTRY *sym, TYPEPTR typ )
     case TYPE_UNION:
         return( SYM_INT1 );
     case TYPE_ARRAY:
-        return( AsmType( sym, typ->object ) );
+        return( AsmType( typ->object, flags ) );
     case TYPE_FIELD:
     case TYPE_UFIELD:
         return( AsmDataType[ typ->u.f.field_type ] );
     case TYPE_FUNCTION:
-        return( CodePtrType( sym->attrib ) );
+        return( CodePtrType( flags ) );
     case TYPE_POINTER:
         return( PtrType( typ->object, typ->u.p.decl_flags ) );
     case TYPE_ENUM:
@@ -529,7 +529,7 @@ enum sym_type AsmQueryType( char *name )
     sym_handle = SymLook( CalcHash( name, strlen( name ) ), name );
     if( sym_handle == 0 ) return( SYM_INT1 );
     SymGet( &sym, sym_handle );
-    return( AsmType( &sym, sym.sym_type ) );
+    return( AsmType( sym.sym_type, sym.attrib ) );
 }
 
 static int InsertFixups( unsigned char *buff, unsigned i )

@@ -6,6 +6,10 @@ void foo()
 {
    long SrcPitch             = 0;
 
+#if __WATCOMC__ > 1220
+_asm .MMX
+#endif
+
 _asm
    {
    pushad
