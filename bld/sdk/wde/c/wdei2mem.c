@@ -558,7 +558,7 @@ WdeDialogBoxHeader *WdeMem2DialogBoxExHeader( uint_8 **data )
 
     dbh = NULL;
 
-    if (!data & !*data) {
+    if ( !(data && *data) ) {
         return(NULL);
     }
 
@@ -708,7 +708,7 @@ ResNameOrOrdinal *WdeMem2NameOrOrdinal( uint_8 **data, Bool is32bit )
     ResNameOrOrdinal    *new;
     int                 size;
 
-    if( !data || !*data ) {
+    if( !(data && *data) ) {
         return( NULL );
     }
 
@@ -735,7 +735,7 @@ ControlClass *WdeMem2ControlClass( uint_8 **data, Bool is32bit )
     int                 stringlen;
     int                 len;
 
-    if( !data || !*data ) {
+    if( !(data && *data) ) {
         return( NULL );
     }
 
@@ -786,7 +786,7 @@ char *WdeMem2String( uint_8 **data, Bool is32bit )
     char        *new;
     int         len;
 
-    if( !data || !*data ) {
+    if( !(data && *data) ) {
         return( NULL );
     }
 
