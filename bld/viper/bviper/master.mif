@@ -6,13 +6,13 @@ proj_name = bviper
 
 !include ../lib.mif
 
-inc_dirs = $(wclass_dir)\hpp;$(gui_dir)\h;$(viper_dir)\mviper
+inc_dirs = $(wclass_dir)/hpp;$(gui_dir)/h;$(viper_dir)/mviper
 
 .cpp: ..
 
 .cpp.obj: $($(proj_name)_autodepends)
-          @set include=$(inc_path)
-          $(cpp) $(cflags) $(extra_cpp_flags_$(host_CPU)) $[@
+          @set INCLUDE=$(inc_path)
+          $(cpp) $(cflags) $(extra_cpp_flags_$(host_cpu)) $[@
 
 objs = bviper.obj
 
