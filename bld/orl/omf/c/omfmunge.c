@@ -34,6 +34,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _BSD_SOURCE
+#define stricmp strcasecmp
+#endif
 
 #include "omfload.h"
 #include "omfmunge.h"
@@ -794,6 +797,12 @@ static orl_sec_flags    getSegSecFlags( omf_file_handle ofh, omf_idx name,
                      ORL_SEC_FLAG_UNINITIALIZED_DATA;
         } else {
             flags |= ORL_SEC_FLAG_READ_PERMISSION;
+            slen = OmfGetLName( ofh->lnames, name, lname );
+            if( ( slen > 3 ) &&
+                ( !strcmp( "CODE", &lname[slen - 4] ) ||
+                  !strcmp( "TEXT", &lname[slen - 4] ) ) ) {
+                flags |= ORL_SEC_FLAG_EXEC | ORL_SEC_FLAG_EXECUTE_PERMISSION;
+            }
         }
     } else {
         flags |= ORL_SEC_FLAG_READ_PERMISSION;
