@@ -685,7 +685,7 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
     #endif
     while( cur_pos + 2 < Token_Count ) {
         if(( AsmBuffer[cur_pos + 1]->token == T_RES_ID )
-            ( AsmBuffer[cur_pos + 1]->value == T_DUP )) {
+            && ( AsmBuffer[cur_pos + 1]->value == T_DUP )) {
             if( AsmBuffer[cur_pos]->token != T_NUM ) {
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
