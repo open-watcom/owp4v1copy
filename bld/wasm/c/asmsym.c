@@ -148,7 +148,9 @@ struct asm_sym *AsmLookup( char *name )
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
+#ifdef _WASM_
     char                is_current_loc = FALSE;
+#endif
 
     if( strlen( name ) > MAX_ID_LEN ) {
         AsmError( LABEL_TOO_LONG );
