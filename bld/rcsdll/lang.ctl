@@ -15,10 +15,10 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/rcsdll/objos2/rcsdll.dll <relroot>/rel2/binp/dll/rcsdll.dll
-    <CPCMD> <devdir>/rcsdll/objwin/rcsdll.dll <relroot>/rel2/binw/rcsdll.dll
-    <CPCMD> <devdir>/rcsdll/objnt/rcsdll.dll <relroot>/rel2/binnt/rcsdll.dll
-#    <CPCMD> <devdir>/rcsdll/objaxp/rcsdll.dll <relroot>/rel2/axpnt/rcsdll.dll
+    <CPCMD> <devdir>/rcsdll/os2386/rcsdll.dll <relroot>/rel2/binp/dll/rcsdll.dll
+    <CPCMD> <devdir>/rcsdll/wini86/rcsdll.dll <relroot>/rel2/binw/rcsdll.dll
+    <CPCMD> <devdir>/rcsdll/nt386/rcsdll.dll <relroot>/rel2/binnt/rcsdll.dll
+#    <CPCMD> <devdir>/rcsdll/ntaxp/rcsdll.dll <relroot>/rel2/axpnt/rcsdll.dll
     <CPCMD> <devdir>/rcsdll/bat/*.bat <relroot>/rel2/binw/
     <CPCMD> <devdir>/rcsdll/cmd/*.cmd <relroot>/rel2/binp/
 
