@@ -1,38 +1,35 @@
+proj_name = fmedit
+
 #
 #   REPORT EDITOR make include file
 #
 
-#
-# Object file information
-#
+name      = fmedit
 
-#.silent
-.erase
+sys_dll = 1
 
-CPPFILE=pp
+suppress_bd = 1
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+.extensions: .res .dlg .rc .cur .ico
+
+.CONTINUE
+.ERASE
 
 !define copy_dll @%null
 
 !ifeq build_target NT
 !   ifdef %DLL_DIR_NT
-!      define copy_dll cp $^@ $(%DLL_DIR_NT)\$^.
+!      define copy_dll cp $^@ $(%DLL_DIR_NT)/$^.
 !   endif
 !else
 !   ifdef %DLL_DIR
-!      define copy_dll cp $^@ $(%DLL_DIR)\$^.
+!      define copy_dll cp $^@ $(%DLL_DIR)/$^.
 !   endif
 !endif
-
-lib_root=$(%LIBROOT)
-lib_root_test=x$(lib_root)x
-!ifeq lib_root_test xx
-lib_root=$(build_root)
-!endif
-
-.extensions:
-.extensions: .dll .obj .lib .$(CPPFILE) .c .h .res .dlg .rc .cur .ico
-
-def_options += -we
 
 object =                &
         align.obj       &
@@ -55,85 +52,33 @@ object =                &
         keybd.obj       &
         verdll.obj
 
-
-#
-# Library info
-#
-
-library_files =  $(c_library)             &
-                 $(win_library)           &
-
 #
 # Source info
 #
 
-.c:   $(fsrc_dir)
-.h:   $(fsrc_dir)
-.dlg: $(fsrc_dir)
-.rc : $(fsrc_dir)
-.cur: $(fsrc_dir)
-.ico: $(fsrc_dir)
+.c:   ../src;$(dev_dir)/version
+.rc : ../src
 
-.BEFORE
-        @SET LIB=$(watcom_lib)$(%lib)
-        @SET INCLUDE=$(inc_dirs);$(%include)
+inc_dirs = ../src;../dev
 
+extra_c_flags = -fpc -s
+extra_c_flags_win = -zu -zw
+extra_c_flags_fmedit = -bd
+
+!ifeq host_OS win
+rc_flags += -30
+!endif
 
 #
 # Dependencies
 #
 $(name).lib: $(name).dll
-            #echo Rebuilding import library...
-            wlib /q/n/b $(name) +$(name).dll +verimp.obj
+            $(librarian) -n -b $^@ +$(name).dll +verimp.obj
 
 $(name).dll: $(object) verimp.obj $(library_files) $(name).res
-#           echo Processing DLL exports
-#           all mkexp
-!ifdef __ALPHA__
-            $(link)  d codeview @fmedit
-!else
-!ifdef on_build_machine
-            $(link)  d a @fmedit
-!else
-            $(link)  d a @fmedit
-!endif
-!endif
-            $(rc) $(rc_opts) $(name).res $(name).dll
+            $(linker) $(lflags) name $^@ file {$(object) verimp.obj}
+            $(rc) $(rc_flags) $(name).res $(name).dll
             $(copy_dll)
 
-!ifeq build_target NT
-fmedit.obj: .AUTODEPEND
-            #@echo Compiling $^&
-            $(compiler) /bd $(fsrc_dir)$^& $(def_options)
-!endif
-
-.c.obj :
-            #@echo Compiling $^&
-            $(compiler) $[@ $(def_options)
-
-.c.$(CPPFILE):
-            @echo pre-processing $^&
-            $(compiler) $[@ /p $(def_options) > $^&.$(CPPFILE)
-
-# Specific dependencies:
-
-$(name).res: fmedit.rc fmedit.ico fmdlgs.dlg
-            $(rc) -r $(rc_opts) $(fsrc_dir)fmedit.rc -fo=.\$(name).res
-
-verdll.obj:   $(lib_root)\version\verdll.c version.h
-            #@echo Compiling $^&
-            $(compiler) $[@ $(def_options)
-
-verimp.obj:   $(lib_root)\version\verimp.c version.h
-            #@echo Compiling $^&
-            $(compiler) $[@ $(def_options)
-
-clean : .SYMBOLIC
-        @-if exist *.obj erase *.obj
-        @-if exist $(name).lib erase $(name).lib
-        @-if exist $(name).dll erase $(name).dll
-        @-if exist $(name).res erase $(name).res
-        @-if exist $(name).map erase $(name).map
-
-exp :   .SYMBOLIC
-        @call mkexp
+$(name).res: fmedit.rc .AUTODEPEND
+            $(rc) -r $(rc_flags) $[@ -fo=$^@
