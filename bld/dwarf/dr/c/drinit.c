@@ -159,8 +159,8 @@ extern void DRDbgOldVersion( dr_dbg_handle dbg, int version )
     dbg->wat_version = version;
 }
 
-static void ReadFileTable( struct dr_dbg_info *dbg )
-/**************************************************/
+static void ReadCompUnits( struct dr_dbg_info *dbg, int read_ftab )
+/*****************************************************************/
 {
     compunit_info       *compunit;
     compunit_info       *next;
@@ -190,51 +190,13 @@ static void ReadFileTable( struct dr_dbg_info *dbg )
         }
         compunit->abbrev_start = abbrev_offset;
         ReadCUAbbrevTable( dbg, compunit );
-        DWRInitFileTable( &compunit->filetab );
-        DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
-
-        start += length + sizeof(unsigned_32);
-        if( start >= finish ) break;
-        next = DWRALLOC( sizeof(compunit_info) );
-        compunit->next = next;
-        compunit = next;
-    }
-    DWRCurrNode->addr_size = addr_size;
-}
-
-static void ReadCompUnits( struct dr_dbg_info *dbg )
-/**************************************************/
-{
-    compunit_info       *compunit;
-    compunit_info       *next;
-    dr_handle           start;
-    dr_handle           finish;
-    unsigned_32         length;
-    unsigned_32         abbrev_offset;
-    unsigned_16         version;
-    unsigned_8          addr_size;
-    unsigned_8          curr_addr_size;
-
-    compunit = &DWRCurrNode->compunit;
-    start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
-    finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
-    addr_size = DWRVMReadByte( start + 10 );
-    for( ;; ) {
-        compunit->next = NULL;
-        compunit->start = start;
-        length = DWRVMReadDWord( start );
-        compunit->end          = start + length + sizeof(unsigned_32);
-        version = DWRVMReadWord( start + sizeof(unsigned_32) );
-        if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
-        abbrev_offset = DWRVMReadDWord( start + sizeof(unsigned_32) + sizeof(unsigned_16) );
-        curr_addr_size = DWRVMReadByte( start + 10 );
-        if( curr_addr_size != addr_size ) {
-            addr_size = 0;
+	if( read_ftab ) {
+            DWRInitFileTable( &compunit->filetab );
+            DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
+	} else {
+            compunit->filetab.len  = 0;
+            compunit->filetab.tab  = NULL;
         }
-        compunit->filetab.len  = 0;
-        compunit->filetab.tab  = NULL;
-        compunit->abbrev_start = abbrev_offset;
-        ReadCUAbbrevTable( dbg, compunit );
 
         start += length + sizeof(unsigned_32);
         if( start >= finish ) break;
@@ -252,7 +214,7 @@ dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes, int byteswap )
 
     dbg = InitDbgHandle( file, sizes, byteswap );
     if( dbg != NULL ) {
-        ReadCompUnits( dbg );
+        ReadCompUnits( dbg, FALSE );
     }
     return( dbg );
 }
@@ -264,7 +226,7 @@ dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes, int byteswap )
 
     dbg = InitDbgHandle( file, sizes, byteswap );
     if( dbg != NULL ) {
-        ReadFileTable( dbg );
+        ReadCompUnits( dbg, TRUE );
     }
     return( dbg );
 }
