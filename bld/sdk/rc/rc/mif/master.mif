@@ -12,8 +12,8 @@ name = wrc
 .EXTENSIONS : .obj .cpp .c .h .mif .y .key .gh
 
 !ifndef on_build_machine
-!ifeq host_OS nt
-!ifneq host_CPU axp
+!ifeq host_os nt
+!ifneq host_cpu axp
 TRACK_MEM_OPTS = -dRCMEM_DEBUG
 !else   # axp: -dRCMEM_DEBUG version is NOT working! Fix me!
 !endif
@@ -47,7 +47,7 @@ objs += trmem.obj
 !endif
 
 extra_c_flags     = -dYYDEBUG -dSCANDEBUG
-!ifeq host_OS nt
+!ifeq host_os nt
 extra_c_flags    += -dNT_HOSTED
 !endif
 
@@ -89,27 +89,26 @@ inc_dirs = $(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 # explicit rules
 
 !ifeq sys_dll 1
-$(NAME).dll : $(NAME).res $(objs) $(WRES_LIB)
+$(name).dll : $(name).res $(objs) $(WRES_LIB)
 !else
-$(NAME).exe : $(NAME).res $(objs) $(WRES_LIB)
+$(name).exe : $(name).res $(objs) $(WRES_LIB)
 !endif
         $(linker) $(lflags) name $@ file { $(objs) }
-        #e:\lang\binnt\wlink $(lflags) name $(name) file { $(objs) }
         @%make bindit
 !ifeq sys_dll 1
-        wstrip -q -a -r $(NAME).dll . $(NAME).res
-        rm -f wrc.lib >nul
-        $(librarian) wrc.lib +wrc.dll
+        wstrip -q -a -r $(name).dll . $(name).res
+        rm -f $(name).lib >nul
+        $(librarian) $(name).lib +$(name).dll
 !else
-        wstrip -q -a -r $(NAME).exe . $(NAME).res
+        wstrip -q -a -r $(name).exe . $(name).res
 !endif
 
 bindit : .PROCEDURE
-!ifeq host_OS osi
-        w32bind $(NAME).rex $(NAME).exe $(tools_root)\os2ldr.exe
-        erase $(NAME).rex
+!ifeq host_os osi
+        w32bind $(name).rex $(name).exe $(tools_root)\os2ldr.exe
+        erase $(name).rex
         @%null
-!else ifeq host_OS dos
+!else ifeq host_os dos
         # Decide on which standard extender to use first...
 #!error NYI
         @%null
@@ -148,8 +147,8 @@ weights2.gh keyword2.gh : rc2.key ./findhash.exe
         @rm -f keywords.gh
         @rm -f weights.gh
 
-$(NAME).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
-        $(rc) -bt=windows -r $]@ -fo=$(NAME).res
+$(name).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
+        $(rc) -bt=windows -r $]@ -fo=$(name).res
 
 rcmsg.h : $(wrc_dir)/h/rc.msg
         cp $< rc.msg
@@ -163,38 +162,20 @@ rcmsg.h : $(wrc_dir)/h/rc.msg
         rm -f tmp.h
 
 usage.rc : $(wrc_dir)/usage.sp
-        wsplice -kENGLISH -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
+        wsplice -kENGLISH -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
 
 usagej.rc : $(wrc_dir)/usage.sp
-        wsplice -kJAPANESE -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
+        wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
-rcmem.obj : rcmem.c rcmem.h
-rcalloc1.obj : rcalloc1.c rcalloc1.h
-rcalloc0.obj : rcalloc0.c rcalloc0.h
-errors.obj : errors.c $(wrc_dir)/h/errors.lst errors.h rcio.h
 hash1.obj : hash1.c weights1.gh
 hash2.obj : hash2.c weights2.gh
-keyword.obj : keyword.c keyword1.gh keyword2.gh ytab.gh scan.h
-scan.obj : scan.c rcio.h rcmem.h errors.h ytab.gh keyword.h param.h ytab.gh
-rc.obj : rc.c errors.h rcio.h yydriver.h param.h rcmem.h
-param.obj : param.c errors.h swchar.h
-global.obj : global.c global.h rcio.h param.h pass2.h
-rcio.obj : rcio.c rcio.h global.h param.h
-exeutil.obj : exeutil.c exeutil.h global.h
-pass2.obj : pass2.c pass2.h param.h
-semver.obj : semver.c semver.h ytab.gh
-semaccel.obj : semaccel.c semaccel.h ytab.gh
-semdiag.obj : semdiag.c semdiag.h ytab.gh
-semantic.obj : semantic.c semantic.h ytab.gh
-semsingl.obj : semsingl.c semsingl.h ytab.gh
-semmenu.obj : semmenu.c semmenu.h ytab.gh
 
 clean: .SYMBOLIC .EXPLICIT
 !ifeq sys_dll 1
-        @rm -f $(NAME).dll
-        @rm -f $(NAME).lib
+        @rm -f $(name).dll
+        @rm -f $(name).lib
 !else
-        @rm -f $(NAME).exe
+        @rm -f $(name).exe
 !endif
         @rm -f $(name).map
         @rm -f usage*.rc
@@ -202,11 +183,11 @@ clean: .SYMBOLIC .EXPLICIT
         @rm -f $(wrc_dir)\h\*.gh
         @rm -f $(wrc_dir)\c\ytab.c
         @rm -f $(wrc_dir)\o\ytab.obj
-        @rm -f *.res *.err *.sym all.osz rcmsg.gh findhash.exe
+        @rm -f *.res *.err *.sym rcmsg.gh findhash.exe
         @rm -f $(wrc_dir)\h\rcmsg.h
 
 # implicit rules
-.c.obj:
+.c.obj: .autodepend
         @set include=$(inc_path)
         $(cc) $(cflags) $(extra_c_flags_$[&) $[@
 
