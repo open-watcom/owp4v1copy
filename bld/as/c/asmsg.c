@@ -31,7 +31,9 @@
 
 #include "as.h"
 #ifdef _STANDALONE_
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#endif
 #include <fcntl.h>
 #include "wressetr.h"
 #include "wreslang.h"

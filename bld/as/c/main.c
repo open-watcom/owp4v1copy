@@ -48,11 +48,18 @@ extern char     *AsIncPath;
 jmp_buf         AsmParse;
 int             ExitStatus = EXIT_SUCCESS;
 
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+
 void main( int argc, char **argv ) {
 //**********************************
 
     static char *fname;
 
+#ifndef __WATCOMC__
+    _argv = argv;
+#endif
     MemInit();
     if( !AsMsgInit() ) {
         exit( EXIT_FAILURE );

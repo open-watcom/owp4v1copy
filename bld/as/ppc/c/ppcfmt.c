@@ -442,7 +442,7 @@ static void ITCmp( ins_table *table, instruction *ins, uint_32 *buffer, asm_relo
 static void ITCmpImmed( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
 //***********************************************************************************************
 
-    ins_operand *op[4] *opRa, *opSimm;
+    ins_operand *op[4], *opRa, *opSimm;
     uint        crfIdx, L_bit, ctr;
     ins_opcount opcount;
     op_type     verify4[4] = { OP_CRF, OP_IMMED, OP_GPR, OP_IMMED };

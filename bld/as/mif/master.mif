@@ -126,9 +126,8 @@ extra_c_flags_options   = -fh
 # lflags
 #########
 
-extra_l_flags = option map
 !ifndef inline_as
-extra_l_flags += lib {$(owl_lib) $(wres_lib)}
+libs = $(owl_lib) $(wres_lib)
 !endif
 
 # splice options
@@ -160,7 +159,7 @@ asi_lib_j   = $(asi_dir)/asinlinj.lib
 asi_test_name = asinline
 
 $(asi_test_name).exe : $(asi_test_objs) $(asi_lib)
-        $(linker) $(lflags) name $@ file { $(asi_test_objs) } lib $(asi_lib)
+        $(cl) $(clflags)  $(asi_test_objs) $(asi_lib) $(cl_libs)
 
 $(asi_lib) :
 curr_dir=$+$(%cwd)$-
@@ -183,8 +182,8 @@ $(asi_lib_j) : $(asi_lib) asmsgj.obj
         $(librarian) -b $^@ +asmsgj.obj
 !endif
 
-$(name).exe : msg.gh $(as_objs) $(libs) $(name).res
-        $(linker) $(lflags) name $@ file { $(as_objs) } op symfile
+$(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res
+        $(cl) $(clflags) $(as_objs) $(libs) $(owl_lib) $(cl_libs)
 !ifeq host_os osi
         $(bld_bin)\w32bind $^&.rex $^@ $(bld_bin)\os2ldr.exe
         erase $^&.rex
@@ -193,7 +192,7 @@ $(name).exe : msg.gh $(as_objs) $(libs) $(name).res
 
 !ifndef inline_as
 $(name).res : as.rc msg.gh
-        $(rc_aui) $(as_extra_defines) $[@ -fo=$^@
+        $(rc_aui) $(as_extra_defines) -DNDEBUG $[@ -fo=$^@
 !else
 $(asi_objs) : msg.gh
 !endif
