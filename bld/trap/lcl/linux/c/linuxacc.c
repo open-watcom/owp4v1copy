@@ -34,7 +34,7 @@
 
    still to do:
    * complete watchpoints
-   * combine global into a struct (like the QNX trap file ) to make it a little
+   * combine global into a struct (like the QNX trap file) to make it a little
      clearer what is global and what not.
    * implement thread support
    * implement corefile post-mortem support
@@ -62,7 +62,7 @@
 #include "linuxcomm.h"
 #include "x86cpu.h"
 
-static pid_t            OrigPGrp;
+static pid_t        OrigPGrp;
 
 static watch_point  wpList[ MAX_WP ];
 static int          wpCount = 0;
@@ -90,7 +90,8 @@ void OutNum( unsigned long i )
     *--ptr = '\0';
     do {
         *--ptr = ( i % 16 ) + '0';
-        if (*ptr > '9') *ptr += 'A' - '9' - 1;
+        if( *ptr > '9' )
+	    *ptr += 'A' - '9' - 1;
         i /= 16;
     } while( i != 0 );
     Out( ptr );
@@ -110,49 +111,49 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
      * blocks of data from the debuggee process, but this is what we
      * need to do for now.
      */
-    for (count = size; count >= 4; count -= 4) {
-        if (sys_ptrace(PTRACE_POKETEXT, pid, offv,
-                       (void *)(*(unsigned_32*)data)) != 0)
-            return size - count;
+    for( count = size; count >= 4; count -= 4 ) {
+        if( sys_ptrace( PTRACE_POKETEXT, pid, offv,
+                       (void *)(*(unsigned_32*)data) ) != 0 )
+            return( size - count );
         data += 4;
         offv += 4;
-        }
+    }
 
     /* Now handle last partial write if neccesary. Note that we first
      * must read the full 32-bit value, then just change the section
      * we want to update.
      */
-    if (count) {
+    if( count ) {
         u_long  val;
-        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
-            return size - count;
-        Out("readmem:");
+        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
+            return( size - count );
+        Out( "writemem:" );
         OutNum( val );
-        Out(" ");
-        switch (count) {
-            case 1:
-                val &= 0xFFFFFF00;
-                val |= (u_long)(*((unsigned_8*)data));
-                break;
-            case 2:
-                val &= 0xFFFF0000;
-                val |= (u_long)(*((unsigned_16*)data));
-                break;
-            case 3:
-                val &= 0xFF000000;
-                val |= ((u_long)(*((unsigned_8*)(data+0))) << 0) |
-                       ((u_long)(*((unsigned_8*)(data+1))) << 8) |
-                       ((u_long)(*((unsigned_8*)(data+2))) << 16);
-                break;
-            }
-        Out("writemem:");
-        OutNum( val );
-        Out(" ");
-        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, (void *)val) != 0)
-            return size - count;
+        Out( " " );
+        switch( count ) {
+        case 1:
+            val &= 0xFFFFFF00;
+            val |= (u_long)(*((unsigned_8*)data));
+            break;
+        case 2:
+            val &= 0xFFFF0000;
+            val |= (u_long)(*((unsigned_16*)data));
+            break;
+        case 3:
+            val &= 0xFF000000;
+            val |= ((u_long)(*((unsigned_8*)(data+0))) << 0) |
+                   ((u_long)(*((unsigned_8*)(data+1))) << 8) |
+                   ((u_long)(*((unsigned_8*)(data+2))) << 16);
+            break;
         }
+        Out( "writemem:" );
+        OutNum( val );
+        Out( " " );
+        if( sys_ptrace( PTRACE_POKETEXT, pid, offv, (void *)val ) != 0 )
+            return( size - count );
+    }
 
-    return size;
+    return( size );
 }
 
 static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
@@ -161,40 +162,41 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
     int     count;
 
     /* Read the process memory 32-bits at a time */
-    for (count = size; count >= 4; count -= 4) {
-        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, data) != 0)
-            return size - count;
+    for( count = size; count >= 4; count -= 4 ) {
+        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, data ) != 0 )
+            return( size - count );
         data += 4;
         offv += 4;
         }
 
     /* Now handle last partial read if neccesary */
-    if (count) {
+    if( count ) {
         u_long  val;
-        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
-            return size - count;
-        switch (count) {
-            case 1:
-                *((unsigned_8*)data) = (unsigned_8)val;
-                break;
-            case 2:
-                *((unsigned_16*)data) = (unsigned_16)val;
-                break;
-            case 3:
-                *((unsigned_8*)(data+0)) = (unsigned_8)(val >> 0);
-                *((unsigned_8*)(data+1)) = (unsigned_8)(val >> 8);
-                *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
-                break;
-            }
+	
+        if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
+            return( size - count );
+        switch( count ) {
+        case 1:
+            *((unsigned_8*)data) = (unsigned_8)val;
+            break;
+        case 2:
+            *((unsigned_16*)data) = (unsigned_16)val;
+            break;
+        case 3:
+            *((unsigned_8*)(data+0)) = (unsigned_8)(val >> 0);
+            *((unsigned_8*)(data+1)) = (unsigned_8)(val >> 8);
+            *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
+            break;
         }
-    return size - count;
+    }
+    return( size - count );
 }
 
-unsigned ReqGet_sys_config()
+unsigned ReqGet_sys_config( void )
 {
     get_sys_config_ret  *ret;
 
-    ret = GetOutPtr(0);
+    ret = GetOutPtr( 0 );
     ret->sys.os = OS_LINUX;
 
     // TODO: Detect OS version!
@@ -212,11 +214,11 @@ unsigned ReqGet_sys_config()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqMap_addr()
+unsigned ReqMap_addr( void )
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
-    unsigned long    val;
+    unsigned long   val;
 
     // TODO: This appears to a segment and offset address in the
     //       process disk image address space to a real segment/offset
@@ -229,17 +231,17 @@ unsigned ReqMap_addr()
     // Note: Info about the process address space is stored in the user register
     //       for GDB, so we can use that to find out what we need to convert these
     //       values in here...
-    acc = GetInPtr(0);
-    ret = GetOutPtr(0);
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
-    sys_ptrace(PTRACE_PEEKUSER, pid, offsetof(user_struct,start_code), &val);
+    sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, start_code ), &val );
     ret->out_addr.offset = acc->in_addr.offset + val;
-    OutNum(acc->in_addr.segment);
-    OutNum(acc->handle);
-    if ( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
-         acc->in_addr.segment == flatDS ) {
-        sys_ptrace(PTRACE_PEEKUSER, pid, offsetof(user_struct,u_tsize), &val);
+    OutNum( acc->in_addr.segment );
+    OutNum( acc->handle );
+    if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
+        acc->in_addr.segment == flatDS ) {
+        sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, u_tsize ), &val );
         ret->out_addr.offset += val;
         ret->out_addr.segment = flatDS;
     } else {
@@ -248,7 +250,7 @@ unsigned ReqMap_addr()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqChecksum_mem()
+unsigned ReqChecksum_mem( void )
 {
     char                buf[256];
     addr_off            offv;
@@ -260,8 +262,8 @@ unsigned ReqChecksum_mem()
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
-    acc = GetInPtr(0);
-    ret = GetOutPtr(0);
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
     sum = 0;
     if( pid != 0 ) {
         length = acc->len;
@@ -282,44 +284,44 @@ unsigned ReqChecksum_mem()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqRead_mem()
+unsigned ReqRead_mem( void )
 {
     read_mem_req    *acc;
     unsigned        len;
 
-    acc = GetInPtr(0);
-    len = ReadMem(GetOutPtr(0),acc->mem_addr.offset,acc->len);
+    acc = GetInPtr( 0 );
+    len = ReadMem( GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
     return( acc->len );
 }
 
-unsigned ReqWrite_mem()
+unsigned ReqWrite_mem( void )
 {
     write_mem_req   *acc;
     write_mem_ret   *ret;
     unsigned        len;
 
-    acc = GetInPtr(0);
-    ret = GetOutPtr(0);
-    len = GetTotalSize() - sizeof(*acc);
-    ret->len = WriteMem( GetInPtr(sizeof(*acc)), acc->mem_addr.offset, len );
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+    len = GetTotalSize() - sizeof( *acc );
+    ret->len = WriteMem( GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
     return( sizeof( *ret ) );
 }
 
-unsigned ReqRead_io()
+unsigned ReqRead_io( void )
 {
     read_io_req *acc;
     void        *ret;
     unsigned    len;
 
     /* Perform I/O on the target machine on behalf of the debugger.
-     * Since there are no kernel API's in Linux to do this, we just
+     * Since there are no kernel APIs in Linux to do this, we just
      * enable IOPL and use regular I/O. We will bail if we can't get
      * IOPL=3, so the debugger trap file will need to be run as root
      * before it can be used for I/O access.
      */
-    acc = GetInPtr(0);
-    ret = GetOutPtr(0);
-    if (iopl(3) == 0) {
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+    if( iopl( 3 ) == 0 ) {
         len = acc->len;
         switch( len ) {
         case 1:
@@ -338,7 +340,7 @@ unsigned ReqRead_io()
     return( len );
 }
 
-unsigned ReqWrite_io()
+unsigned ReqWrite_io( void )
 {
     write_io_req    *acc;
     write_io_ret    *ret;
@@ -346,16 +348,16 @@ unsigned ReqWrite_io()
     unsigned        len;
 
     /* Perform I/O on the target machine on behalf of the debugger.
-     * Since there are no kernel API's in Linux to do this, we just
+     * Since there are no kernel APIs in Linux to do this, we just
      * enable IOPL and use regular I/O. We will bail if we can't get
      * IOPL=3, so the debugger trap file will need to be run as root
      * before it can be used for I/O access.
      */
-    acc = GetInPtr(0);
+    acc = GetInPtr( 0 );
     data = GetInPtr( sizeof( *acc ) );
     len = GetTotalSize() - sizeof( *acc );
-    ret = GetOutPtr(0);
-    if (iopl(3) == 0) {
+    ret = GetOutPtr( 0 );
+    if( iopl( 3 ) == 0 ) {
         ret->len = len;
         switch( len ) {
         case 1:
@@ -379,7 +381,7 @@ static void ReadCPU( struct x86_cpu *r )
     user_regs_struct    regs;
 
     memset( r, 0, sizeof( *r ) );
-    if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
+    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         last_eip = regs.eip;
         orig_eax = regs.orig_eax;
         r->eax = regs.eax;
@@ -406,7 +408,7 @@ static void ReadFPU( struct x86_fpu *r )
     user_i387_struct    regs;
 
     memset( r, 0, sizeof( *r ) );
-    if (sys_ptrace(PTRACE_GETFPREGS, pid, 0, &regs) == 0) {
+    if( sys_ptrace( PTRACE_GETFPREGS, pid, 0, &regs ) == 0 ) {
         r->cw = regs.cwd;
         r->sw = regs.swd;
         r->tag = regs.twd;
@@ -414,18 +416,18 @@ static void ReadFPU( struct x86_fpu *r )
         r->ip_err.p.segment = regs.fcs;
         r->op_err.p.offset = regs.foo;
         r->op_err.p.segment = regs.fos;
-        memcpy(r->reg,regs.st_space,sizeof(r->reg));
+        memcpy( r->reg, regs.st_space, sizeof( r->reg ) );
     }
 }
 
-static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x  )
+static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
 {
     user_fxsr_struct    regs;
     int                 i;
 
     memset( r, 0, sizeof( *r ) );
     memset( x, 0, sizeof( *x ) );
-    if (sys_ptrace(PTRACE_GETFPXREGS, pid, 0, &regs) == 0) {
+    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
         r->cw = regs.cwd;
         r->sw = regs.swd;
         r->tag = regs.twd;
@@ -434,19 +436,19 @@ static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x  )
         r->op_err.p.offset = regs.foo;
         r->op_err.p.segment = regs.fos;
         for( i = 0; i < 8; i++ )
-            memcpy(&r->reg[i],&regs.st_space[i],sizeof(r->reg[0]));
-        memcpy(x->xmm,regs.xmm_space,sizeof(x->xmm));
+            memcpy( &r->reg[i], &regs.st_space[i], sizeof( r->reg[0] ) );
+        memcpy( x->xmm, regs.xmm_space, sizeof( x->xmm ) );
         x->mxcsr = regs.mxcsr;
     }
 }
 
-unsigned ReqRead_cpu()
+unsigned ReqRead_cpu( void )
 {
     ReadCPU( GetOutPtr( 0 ) );
     return( sizeof( struct x86_cpu ) );
 }
 
-unsigned ReqRead_fpu()
+unsigned ReqRead_fpu( void )
 {
     ReadFPU( GetOutPtr( 0 ) );
     return( sizeof( struct x86_fpu ) );
@@ -484,7 +486,7 @@ static void WriteCPU( struct x86_cpu *r )
     regs.ebp = r->ebp;
     regs.esp = r->esp;
     regs.eip = r->eip;
-    if ( regs.eip != last_eip ) {
+    if( regs.eip != last_eip ) {
         /* eip is actually changed! This means that
            the orig_eax value does not make sense;
            set it to -1 */
@@ -499,7 +501,7 @@ static void WriteCPU( struct x86_cpu *r )
     regs.es = r->es;
     regs.fs = r->fs;
     regs.gs = r->gs;
-    sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
+    sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
 }
 
 static void WriteFPU( struct x86_fpu *r )
@@ -513,8 +515,8 @@ static void WriteFPU( struct x86_fpu *r )
     regs.fcs = r->ip_err.p.segment;
     regs.foo = r->op_err.p.offset;
     regs.fos = r->op_err.p.segment;
-    memcpy(regs.st_space,r->reg,sizeof(r->reg));
-    sys_ptrace(PTRACE_SETFPREGS, pid, 0, &regs);
+    memcpy( regs.st_space, r->reg, sizeof( r->reg ) );
+    sys_ptrace( PTRACE_SETFPREGS, pid, 0, &regs );
 }
 
 static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
@@ -523,7 +525,7 @@ static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
     int                 i;
 
     memset( &regs, 0, sizeof( regs ) );
-    if (sys_ptrace(PTRACE_GETFPXREGS, pid, 0, &regs) == 0) {
+    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
         regs.cwd = r->cw;
         regs.swd = r->sw;
         regs.twd = r->tag;
@@ -532,14 +534,14 @@ static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
         regs.foo = r->op_err.p.offset;
         regs.fos = r->op_err.p.segment;
         for( i = 0; i < 8; i++ )
-            memcpy(&regs.st_space[i],&r->reg[i],sizeof(r->reg[0]));
-        memcpy(regs.xmm_space,x->xmm,sizeof(x->xmm));
+            memcpy( &regs.st_space[i], &r->reg[i], sizeof( r->reg[0] ) );
+        memcpy( regs.xmm_space, x->xmm, sizeof( x->xmm ) );
         regs.mxcsr = x->mxcsr;
-        sys_ptrace(PTRACE_SETFPXREGS, pid, 0, &regs);
+        sys_ptrace( PTRACE_SETFPXREGS, pid, 0, &regs );
     }
 }
 
-unsigned ReqWrite_cpu()
+unsigned ReqWrite_cpu( void )
 {
     WriteCPU( GetInPtr( sizeof( write_cpu_req ) ) );
     return( 0 );
@@ -630,7 +632,7 @@ static pid_t RunningProc( char *name, char **name_ret )
     return( pidd );
 }
 
-unsigned ReqProg_load()
+unsigned ReqProg_load( void )
 {
     // TODO: Get the FlatCS and FlatDS register values from the process context
     //       of the debuggee!!
@@ -703,10 +705,10 @@ unsigned ReqProg_load()
         save_pgrp = getpgrp();
         setpgid( 0, OrigPGrp );
         pid = fork();
-        if ( pid == -1 )
+        if( pid == -1 )
             return( 0 );
-        if ( pid == 0 ) {
-            if ((long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0) {
+        if( pid == 0 ) {
+            if( (long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0 ) {
                 exit( 1 );
             }
             execve( exe_name, (const char **)args, (const char **)dbg_environ );
@@ -722,16 +724,16 @@ unsigned ReqProg_load()
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
         /* wait until it hits _start (upon execve) or
            gives us a SIGSTOP (if attached) */
-        if ( waitpid ( pid, &status, 0 ) < 0 )
+        if( waitpid ( pid, &status, 0 ) < 0 )
             goto fail;
-        if ( !WIFSTOPPED( status ) )
+        if( !WIFSTOPPED( status ) )
             goto fail;
         if( attached ) {
             ret->flags |= LD_FLAG_IS_STARTED;
-            if ( WSTOPSIG( status ) != SIGSTOP )
+            if( WSTOPSIG( status ) != SIGSTOP )
                 goto fail;
         } else {
-            if ( WSTOPSIG( status ) != SIGTRAP )
+            if( WSTOPSIG( status ) != SIGTRAP )
                 goto fail;
         }
         errno = 0;
@@ -742,8 +744,8 @@ unsigned ReqProg_load()
     }
     return( sizeof( *ret ) );
 fail:
-    if ( pid != 0 && pid != -1 ) {
-        if ( attached ) {
+    if( pid != 0 && pid != -1 ) {
+        if( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
             attached = FALSE;
         } else {
@@ -755,16 +757,17 @@ fail:
     return( 0 );
 }
 
-unsigned ReqProg_kill()
+unsigned ReqProg_kill( void )
 {
     prog_kill_ret   *ret;
 
-    if ( pid != 0 && !at_end ) {
-        if ( attached ) {
+    if( pid != 0 && !at_end ) {
+        if( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
             attached = FALSE;
         } else {
             int status;
+	    
             sys_ptrace( PTRACE_KILL, pid, 0, 0 );
             waitpid( pid, &status, 0 );
         }
@@ -784,10 +787,10 @@ unsigned ReqSet_break( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    ReadMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
+    ReadMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
     ret->old = opcode;
     opcode = BRK_POINT;
-    WriteMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
+    WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
     return( sizeof( *ret ) );
 }
 
@@ -798,33 +801,34 @@ unsigned ReqClear_break( void )
 
     acc = GetInPtr( 0 );
     opcode = acc->old;
-    WriteMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
+    WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
     return( 0 );
 }
 
 u_long GetDR6( void )
 {
     u_long  val;
-    sys_ptrace(PTRACE_PEEKUSER, pid, O_DEBUGREG(6), &val);
-    return val;
+    
+    sys_ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
+    return( val );
 }
 
 static void SetDR6( u_long val )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(6), (void *)val);
+    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( 6 ), (void *)val );
 }
 
 static void SetDR7( u_long val )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val);
+    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val );
 }
 
 static u_long SetDRn( int i, u_long linear, long type )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(i), (void *)linear);
-    return( ( type << DR7_RWLSHIFT(i) )
-//        | ( DR7_GEMASK << DR7_GLSHIFT(i) ) | DR7_GE
-          | ( DR7_LEMASK << DR7_GLSHIFT(i) ) | DR7_LE );
+    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( i ), (void *)linear );
+    return( ( type << DR7_RWLSHIFT( i ) )
+//        | ( DR7_GEMASK << DR7_GLSHIFT( i ) ) | DR7_GE
+          | ( DR7_LEMASK << DR7_GLSHIFT( i ) ) | DR7_LE );
 }
 
 void ClearDebugRegs( void )
@@ -894,7 +898,7 @@ unsigned ReqSet_watch( void )
         curr = wpList + wpCount;
         curr->loc.segment = acc->watch_addr.segment;
         curr->loc.offset = acc->watch_addr.offset;
-        ReadMem( &value, acc->watch_addr.offset, sizeof(dword) );
+        ReadMem( &value, acc->watch_addr.offset, sizeof( dword ) );
         curr->value = value;
         curr->len = acc->size;
         wpCount++;
@@ -941,11 +945,11 @@ static unsigned ProgRun( int step )
     prog_go_ret         *ret;
     void                (*old)(int);
 
-    if ( pid == 0 )
-        return 0;
+    if( pid == 0 )
+        return( 0 );
     ret = GetOutPtr( 0 );
 
-    if ( at_end ) {
+    if( at_end ) {
         ptrace_sig = 0;
         ret->conditions = COND_TERMINATE;
         goto end;
@@ -953,14 +957,14 @@ static unsigned ProgRun( int step )
 
     /* we only want child-generated SIGINTs now */
     old = signal( SIGINT, SIG_IGN );
-    if ( step ) {
+    if( step ) {
         sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
     } else {
         sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
     }
     waitpid ( pid, &status, 0 );
     signal( SIGINT, old );
-    if ( WIFSTOPPED( status ) ) {
+    if( WIFSTOPPED( status ) ) {
         switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
         case SIGSEGV:
         case SIGILL:
@@ -983,21 +987,21 @@ static unsigned ProgRun( int step )
             ptrace_sig = 0;
             break;
         }
-    } else if ( WIFEXITED( status ) ) {
+    } else if( WIFEXITED( status ) ) {
         at_end = TRUE;
         ret->conditions = COND_TERMINATE;
         ptrace_sig = 0;
         goto end;
     }
-    if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
+    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         Out( " eip " );
         OutNum( regs.eip );
         Out( " " );
-        if ( ret->conditions == COND_BREAK ) {
-            Out("decrease eip(sigtrap)" );
+        if( ret->conditions == COND_BREAK ) {
+            Out( "decrease eip(sigtrap)" );
             regs.orig_eax = -1;
             regs.eip--;
-            sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
+            sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
         }
         orig_eax = regs.orig_eax;
         last_eip = regs.eip;
@@ -1011,12 +1015,12 @@ static unsigned ProgRun( int step )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqProg_step()
+unsigned ReqProg_step( void )
 {
     return( ProgRun( TRUE ) );
 }
 
-unsigned ReqProg_go()
+unsigned ReqProg_go( void )
 {
     return( ProgRun( FALSE ) );
 }
@@ -1024,6 +1028,7 @@ unsigned ReqProg_go()
 unsigned ReqRedirect_stdin( void  )
 {
     redirect_stdin_ret *ret;
+    
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
@@ -1032,12 +1037,13 @@ unsigned ReqRedirect_stdin( void  )
 unsigned ReqRedirect_stdout( void  )
 {
     redirect_stdout_ret *ret;
+    
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_string_to_fullpath()
+unsigned ReqFile_string_to_fullpath( void )
 {
     file_string_to_fullpath_req *acc;
     file_string_to_fullpath_ret *ret;
@@ -1060,7 +1066,7 @@ unsigned ReqFile_string_to_fullpath()
     if( pidd != 0 ) {
         sprintf( procfile, "/proc/%d/exe", pidd );
         len = readlink( procfile, fullname, PATH_MAX );
-        if ( len < 0 )
+        if( len < 0 )
             len = 0;
         fullname[len] = '\0';
     } else {
@@ -1074,7 +1080,7 @@ unsigned ReqFile_string_to_fullpath()
     return( sizeof( *ret ) + len + 1 );
 }
 
-unsigned ReqGet_message_text()
+unsigned ReqGet_message_text( void )
 {
     get_message_text_ret    *ret;
     char                    *err_txt;
@@ -1115,10 +1121,10 @@ unsigned ReqGet_message_text()
     };
 
     ret = GetOutPtr( 0 );
-    err_txt = GetOutPtr( sizeof(*ret) );
+    err_txt = GetOutPtr( sizeof( *ret ) );
     if( last_sig == -1 ) {
         err_txt[0] = '\0';
-    } else if( last_sig > ( (sizeof(ExceptionMsgs) / sizeof(char *) - 1) ) ) {
+    } else if( last_sig > (sizeof( ExceptionMsgs ) / sizeof( char * ) - 1) ) {
         strcpy( err_txt, TRP_EXC_unknown );
     } else {
         strcpy( err_txt, ExceptionMsgs[ last_sig ] );
@@ -1139,7 +1145,7 @@ unsigned ReqAddr_info( void )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqMachine_data()
+unsigned ReqMachine_data( void )
 {
     machine_data_req    *acc;
     machine_data_ret    *ret;
