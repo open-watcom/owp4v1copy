@@ -201,7 +201,6 @@ void AddMessagePrefix( char *buff, int len );
 
 /* accrun.c */
 int DebugExecute( DWORD state, int *tsc, bool );
-void SetDebugeeTid( void );
 void InterruptProgram(void);
 void InterruptProgram(void);
 bool Terminate( void );

@@ -652,7 +652,7 @@ BOOL DoWaitForDebugEvent( void )
                         UseVDMStuff = TRUE;
                         done = TRUE;
                     } else {
-                        SetDebugeeTid();
+                        LastDebugEventTid = DebugEvent.dwThreadId;
                         DoContinueDebugEvent( DBG_CONTINUE );
                     }
                 /*
@@ -691,7 +691,7 @@ BOOL DoWaitForDebugEvent( void )
                             done = TRUE;
                             break;
                         }
-                        SetDebugeeTid();
+                        LastDebugEventTid = DebugEvent.dwThreadId;
                         DoContinueDebugEvent( DBG_EXCEPTION_NOT_HANDLED );
                         break;
                     }

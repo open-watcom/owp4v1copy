@@ -435,7 +435,8 @@ unsigned ReqProg_load( void )
     AddThread( DebugEvent.dwThreadId, DebugEvent.u.CreateProcessInfo.hThread,
                         DebugEvent.u.CreateProcessInfo.lpStartAddress );
     DebugeePid = DebugEvent.dwProcessId;
-    SetDebugeeTid();
+    DebugeeTid = DebugEvent.dwThreadId;
+    LastDebugEventTid = DebugEvent.dwThreadId;
 
 #ifdef WOW
     if( IsWOW ) {

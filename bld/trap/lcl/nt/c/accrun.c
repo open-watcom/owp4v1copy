@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Handles interfaces to Windows NT debugger functions
+*               to handle all debug events (single step, breakpoints etc).
 *
 ****************************************************************************/
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,15 +38,6 @@
 #include "madregs.h"
 #include "stdnt.h"
 #include "trperr.h"
-
-/*
- * SetDebugeeTid - set the current debugee TID
- */
-void SetDebugeeTid( void )
-{
-    DebugeeTid = DebugEvent.dwThreadId;
-    LastDebugEventTid = DebugEvent.dwThreadId;
-} /* SetDebugeeTid */
 
 typedef enum {
     T_OFF,
@@ -105,7 +95,7 @@ static void setATBit( thread_info *ti, set_t set )
 } /* setATBit */
 
 /*
- * setTBitInAllThreads - turn the t-bit on or off in all threads.
+ * setTBitsetTBitInAllThreads - turn the t-bit on or off in all threads.
  */
 static void setTBitInAllThreads( set_t set )
 {
@@ -389,7 +379,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
         MyContinueDebugEvent( continue_how );
         continue_how = DBG_CONTINUE;
         rc = MyWaitForDebugEvent();
-        SetDebugeeTid();
+        LastDebugEventTid = DebugEvent.dwThreadId;
         if( IsWin32s && !rc ) {
             returnCode = COND_LIBRARIES;
             goto done;
@@ -403,6 +393,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                 subcode = W1( DebugEvent.u.Exception.ExceptionRecord );
                 switch( subcode ) {
                 case DBG_TASKSTOP:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     getImageNote( &imgnote );
                     RemoveModuleFromLibList( imgnote.Module, imgnote.FileName );
                     if( !stricmp( imgnote.FileName, CurrEXEName ) ) {
@@ -424,6 +415,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     }
                     break;
                 case DBG_TASKSTART:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     ti = FindThread( DebugeeTid );
                     ti->is_wow = TRUE;
                     getImageNote( &imgnote );
@@ -444,16 +436,20 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     }
                     break;
                 case DBG_SINGLESTEP:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     returnCode = handleInt1( state );
                     goto done;
                 case DBG_BREAK:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     returnCode = handleInt3( state );
                     goto done;
                 case DBG_GPFAULT:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     LastExceptionCode = STATUS_ACCESS_VIOLATION;
                     returnCode = COND_EXCEPTION;
                     goto done;
                 default:
+                    DebugeeTid = DebugEvent.dwThreadId;
                     LastExceptionCode = STATUS_ACCESS_VIOLATION;
                     returnCode = COND_EXCEPTION;
                     goto done;
@@ -464,9 +460,11 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                 /*
                  * this never seems to happen ever never ever never
                  */
+                DebugeeTid = DebugEvent.dwThreadId;
                 continue_how = DBG_EXCEPTION_NOT_HANDLED;
                 break;
             case STATUS_SINGLE_STEP:
+                DebugeeTid = DebugEvent.dwThreadId;
                 cond = handleInt1( state );
                 if( cond != 0 ) {
                     returnCode = cond;
@@ -474,6 +472,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                 }
                 break;
             case STATUS_BREAKPOINT:
+                DebugeeTid = DebugEvent.dwThreadId;
                 if( state & STATE_WAIT_FOR_VDM_START ) {
                     break;
                 }
@@ -488,6 +487,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                  * we stop on the second notification of the exception to
                  * give the user's exception handlers a chance to run
                  */
+                DebugeeTid = DebugEvent.dwThreadId;
                 if( DebugEvent.u.Exception.dwFirstChance &&
                   ! (state & STATE_EXPECTING_FAULT ) ) {
                     char buff[20];
@@ -515,6 +515,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
             }
             break;
         case CREATE_THREAD_DEBUG_EVENT:
+            DebugeeTid = DebugEvent.dwThreadId;
             if( tsc != NULL ) {
                 *tsc = TRUE;
             }
@@ -522,6 +523,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                             DebugEvent.u.CreateThread.lpStartAddress );
             break;
         case EXIT_THREAD_DEBUG_EVENT:
+            DebugeeTid = DebugEvent.dwThreadId;
             ClearDebugRegs();
             if( tsc != NULL ) {
                 *tsc = TRUE;
@@ -529,8 +531,10 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
             DeadThread( DebugEvent.dwThreadId );
             break;
         case CREATE_PROCESS_DEBUG_EVENT:        // shouldn't ever get
+            DebugeeTid = DebugEvent.dwThreadId;
             break;
         case EXIT_PROCESS_DEBUG_EVENT:
+            DebugeeTid = DebugEvent.dwThreadId;
             ClearDebugRegs();
             DebugeeEnded = TRUE;
             DelProcess( FALSE );
