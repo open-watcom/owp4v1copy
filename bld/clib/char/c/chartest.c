@@ -74,10 +74,14 @@ struct CtypeBits WideFunctResults[TEST_ARRAY_SIZE_WIDE];
 char    ProgramName[_MAX_PATH];                 /* executable filename */
 int     NumErrors = 0;                          /* number of errors */
 
+int far far_data = 0;
+
 void TestClassifyMacro( void )
 /****************************/
 {
     int     i;
+
+    far_data++; // set ds outside DGROUP
 
     MacroResults[0].alnum  = isalnum( EOF );
     MacroResults[0].alpha  = isalpha( EOF );
@@ -119,6 +123,8 @@ void TestClassifyFunct( void )
 {
     int     i;
 
+    far_data++; // set ds outside DGROUP
+
     FunctResults[0].alnum  = (isalnum)( EOF );
     FunctResults[0].alpha  = (isalpha)( EOF );
     FunctResults[0].blank  = (isblank)( EOF );
@@ -159,6 +165,8 @@ void TestClassifyWideMacro( void )
 {
     int     i;
 
+    far_data++; // set ds outside DGROUP
+
     WideMacroResults[0].alnum  = iswalnum( WEOF );
     WideMacroResults[0].alpha  = iswalpha( WEOF );
     WideMacroResults[0].blank  = iswblank( WEOF );
@@ -198,6 +206,8 @@ void TestClassifyWideFunct( void )
 /********************************/
 {
     int i;
+
+    far_data++; // set ds outside DGROUP
 
     WideFunctResults[0].alnum  = (iswalnum)( WEOF );
     WideFunctResults[0].alpha  = (iswalpha)( WEOF );
@@ -240,6 +250,8 @@ void CheckResults( struct CtypeBits *s1, struct CtypeBits *s2, int count )
 {
     int i;
 
+    far_data++; // set ds outside DGROUP
+
     for( i = 0; i < TEST_ARRAY_SIZE; i++ ) {
         if( s1[i].alnum != WideMacroResults[i].alnum )
             printf( "Mismatch at %d (alnum)\n", i );
@@ -280,6 +292,8 @@ void TestResults( void )
     size_t  len;
     size_t  wide_len;
 
+    far_data++; // set ds outside DGROUP
+
     len = sizeof( MacroResults );
     wide_len = sizeof( WideMacroResults );
 
@@ -294,6 +308,8 @@ void TestConversion( void )
 /*************************/
 {
     int c, c1, c2;
+
+    far_data++; // set ds outside DGROUP
 
     for( c = 0; c < 256; c++ ) {
         c1 = tolower( c );
@@ -314,6 +330,8 @@ void TestWideConversion( void )
 {
     wchar_t c, c1, c2;
 
+    far_data++; // set ds outside DGROUP
+
     for( c = 0; c < 1024; c++ ) {
         c1 = towlower( c );
         c2 = towupper( c );
@@ -331,6 +349,8 @@ void TestWideConversion( void )
 int main( int argc, char *argv[] )
 /********************************/
 {
+    far_data++; // set ds outside DGROUP
+
     /*** Initialize ***/
     strcpy( ProgramName, strlwr(argv[0]) );
 
