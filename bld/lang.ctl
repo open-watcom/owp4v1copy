@@ -28,7 +28,8 @@ echo Languages Build <1>
 #        Before building anything for real, create up-to-date header files
 #
 [ INCLUDE <devdir>\hdr\lang.ctl ]
-#        Same for Win32 headers/import libs
+#        Same for OS/2 and Win32 headers/import libs
+[ INCLUDE <devdir>\os2api\lang.ctl ]
 [ INCLUDE <devdir>\w32api\lang.ctl ]
 #
 #        Next step, build libraries used by various projects

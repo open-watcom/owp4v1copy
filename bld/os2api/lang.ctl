@@ -18,7 +18,7 @@ cdsay .
     <CPCMD> incl16\*.h   <relroot>\rel2\h\os21x\
     <CPCMD> os2286\*.lib <relroot>\rel2\lib286\os2\
 #32-bit stuff
-#   <CPCMD> incl32\*.h   <relroot>\rel2\h\os2\
+    <CPCMD> incl32\*.h   <relroot>\rel2\h\os2\
     <CPCMD> os2386\*.lib <relroot>\rel2\lib386\os2\
 
 [ BLOCK <1> clean ]

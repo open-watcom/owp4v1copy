@@ -20,6 +20,7 @@ md %relroot%\%defrel%\qnx\watcom\wd
 md %relroot%\%defrel%\h\win
 md %relroot%\%defrel%\h\nt
 md %relroot%\%defrel%\h\nt\GL
+md %relroot%\%defrel%\h\os2
 md %relroot%\%defrel%\h\os21x
 md %relroot%\%defrel%\qh
 md %relroot%\%defrel%\qh\sys
