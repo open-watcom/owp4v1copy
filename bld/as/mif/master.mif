@@ -193,7 +193,7 @@ $(name).exe : msg.gh $(as_objs) $(libs) $(name).res
 
 !ifndef inline_as
 $(name).res : as.rc msg.gh
-        $(rc_aui) $(as_extra_defines) -I"$(as_dir)/h" $[@ -fo=$^@
+        $(rc_aui) $(as_extra_defines) $(inc_path) $[@ -fo=$^@
 !else
 $(asi_objs) : msg.gh
 !endif

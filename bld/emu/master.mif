@@ -26,11 +26,11 @@ INCS = &
 .psm : ../asm
 .asm : ../asm
 
-extra_a_flags = -i"$(mathlib_dir)/h;$(emu386)/inc" -fpc
-extra_a_flags_dos = -d_OS=_PLDT -dSEGMENTED
-extra_a_flags_qnx = -d_OS=_QNX -dSEGMENTED
-extra_a_flags_win = -mf -d_OS=_PLDT -d__WIN387__
-extra_c_flags_qnx = -oais-s-w3 -i"$(new_qnx_h)" -dQNX32 -fpc
+extra_a_flags = -I"$(mathlib_dir)/h" -I"$(emu386)/inc" -fpc
+extra_a_flags_dos = -D_OS=_PLDT -DSEGMENTED
+extra_a_flags_qnx = -D_OS=_QNX -DSEGMENTED
+extra_a_flags_win = -mf -D_OS=_PLDT -D__WIN387__
+extra_c_flags_qnx = -oais-s-w3 -I"$(new_qnx_h)" -DQNX32 -fpc
 
 !ifeq host_OS dos
 
@@ -54,8 +54,8 @@ emu387.lib: 386stub.obj
 !endif
 
 .psm.obj: .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $[@ -fo=$@ -mf -i"$(watcom_dir)/h/;$(comp_cfg_dir)/h"
+    $(as) $(aflags) $(extra_a_flags_$[&) $[@ -fo=$@ -mf -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
 
 emu387.obj: emu387.asm .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $[@
+    $(as) $(aflags) $(extra_a_flags_$[&) $(inc_path) $[@
     wtouch compile.tim

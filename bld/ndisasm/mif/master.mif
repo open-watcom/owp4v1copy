@@ -89,7 +89,7 @@ $(exe_name) : $(proj_name).res $(dis_prereq) $(wdisasm_objs) $(pre_deps_$(host_o
         wstrip -q -a -r $^@ . $(proj_name).res
 
 $(proj_name).res : wdis.rc msg.gh
-        $(rc_aui) $[@ -fo=$^@
+        $(rc_aui) $(inc_path) $[@ -fo=$^@
 
 ./mkstr.exe : $(disasm_dir)/stand/mkstr.c
         $(bld_cl) $(wcl_util_opts) -I"$(disasm_dir)/stand" $[@

@@ -1,5 +1,9 @@
-#pmake: all build remote os_nt cpu_386 par
+#pmake: build remote os_nt cpu_386 par
 
+host_os  = nt
+host_cpu = 386
+
+!include cproj.mif
 !include deftarg.mif
 
 all: dbginst.exe .SYMBOLIC
@@ -51,7 +55,7 @@ debug_linker=-debug:none
 # "drvinst -r DbgPort" to remove
 #
 #
-inc_path = $(lang_root)/h/nt
+inc_dirs = -I"$(lang_root)/h/nt"
+
 dbginst.exe : ../c/dbginst.c
-        set INCLUDE=$(inc_path);$(%INCLUDE)
-        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 $<
+        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 $(inc_path) $<

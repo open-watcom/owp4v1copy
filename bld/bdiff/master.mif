@@ -116,7 +116,7 @@ dusage.rc : ../usage.sp
         wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" $[@ $^@
 
 bpatch.res : ../bpatch.rc ../h/bpatch.h pusage.rc pusagej.rc
-        $(rc_aui) -i.. -DBPATCH $[@ -fo=$^@
+        $(rc_aui) -I.. $(inc_path) -DBPATCH $[@ -fo=$^@
 
 bdiff.res : ../bpatch.rc dusage.rc ../h/bpatch.h
-        $(rc_aui) -i.. -DBDIFF $[@ -fo=$^@
+        $(rc_aui) -I.. $(inc_path) -DBDIFF $[@ -fo=$^@

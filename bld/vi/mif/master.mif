@@ -59,10 +59,10 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) $(mifdep)
         wbind $(lname) -s $(lang_root)\binw\win386.ext -R -q $(ED).res
         @erase $(lname)
 !else
-        $(rc) $(rc_flags) $(inc_dirs_sys_$(host_os)) -k -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_path) -k -zk0 $(ED).res $^@
 !endif
 !else ifeq host_os nt
-        $(rc) $(rc_flags) $(inc_dirs_sys_$(host_os)) -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_path) -zk0 $(ED).res $^@
 !endif
         # don't bind - it screws up everything - BBB
 !else

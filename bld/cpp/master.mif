@@ -1,31 +1,28 @@
 proj_name = cpp
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
-extra_c_flags           =   -i..\h
+.c : ..
 
-common_objs             =   preproc.obj ppexpr.obj ppmacro.obj ppmem.obj
+inc_dir         = -I"../h"
 
-mkmk_objs               =   mkmk.obj $(common_objs)
-testpp_objs             =   testpp.obj $(common_objs)
-dumpmac_objs            =   dumpmac.obj $(common_objs)
+common_objs     = preproc.obj ppexpr.obj ppmacro.obj ppmem.obj
 
-targets                 =   mkmk.exe testpp.exe dumpmac.exe
+mkmk_objs       = mkmk.obj $(common_objs)
+testpp_objs     = testpp.obj $(common_objs)
+dumpmac_objs    = dumpmac.obj $(common_objs)
+
+targets         = mkmk.exe testpp.exe dumpmac.exe
 
 all: $(targets) .SYMBOLIC
-    @%null
 
 mkmk.exe : $(mkmk_objs)
-        $(LINKER) $(lflags) name $^@ file {$(mkmk_objs)}
+        $(cl) $(clflags) $(mkmk_objs)
 
 testpp.exe : $(testpp_objs)
-        $(LINKER) $(lflags) name $^@ file {$(testpp_objs)}
+        $(cl) $(clflags) $(testpp_objs)
 
 dumpmac.exe : $(dumpmac_objs)
-        $(LINKER) $(lflags) name $^@ file {$(dumpmac_objs)}
-
-.c:..
-
-.c.obj: .AUTODEPEND
-        $(CC) $(cflags) $[@
+        $(cl) $(clflags) $(dumpmac_objs)

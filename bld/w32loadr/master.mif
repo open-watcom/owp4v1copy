@@ -10,13 +10,13 @@ additional_cleanup = mkdginfo.bat
 .h: ..
 
 .asm.obj:
-  $(as_i86) -q -I.. -fo=.obj $<
+  $(as_i86) -q -d1 -I.. $(inc_path) -fo=.obj $<
 
 !ifdef __LINUX__
 dos_hdr_inc = -I"$(hdr_dir)/dos"
 !endif
 
-!ifeq host_OS dos
+!ifeq host_os dos
 
 all: .SYMBOLIC #d4grun.exe x32run.exe tntrun.exe
 
@@ -36,12 +36,14 @@ tntrun.exe : tntrun.obj cmain32.obj int21pl.obj
 x32run.exe : x32run.obj cmain32.obj x32start.obj
    $(linker) format os2 lx name x32run file x32start.obj,x32run.obj,cmain32.obj lib x32b option map,dosseg,internalrelocs,stack=4k libpath $(lang_root)/lib386/dos;$(lang_root)/lib386
    x32fix x32run.exe
+   
+# Probably should use default build rules?
 tntrun.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__TNT -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__TNT -fo=$@ $(inc_path)
 x32run.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__X32 -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__X32 -fo=$@ $(inc_path)
 d4grun.obj : loader.c loader.h dginfo.gh
-        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__DOS4G -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__DOS4G -fo=$@ $(inc_path)
 dginfo.gh : $(rsi_root)/bin/dos4g.exe
         @%write mkdginfo.bat $(rsi_root)\bin\dos4g $(rsi_root)\bin\dginfo >dginfo.gh
         -mkdginfo
@@ -53,12 +55,12 @@ dpmi.obj : dpmi.asm
 dos16m.obj : dos16m.asm
         $(as_i86) -q -d2 $< -fo=$@
 
-!else ifeq host_OS nt
+!else ifeq host_os nt
 
 all : w32bindnt.exe ntrunner.exe
 
 w32bindnt.exe : w32bind.c
-  $(bld_cl) $(wcl_util_opts) $[@
+  $(bld_cl) $(wcl_util_opts) $(inc_path) $[@
 
 dbgntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk debug all
@@ -83,21 +85,21 @@ ntstub.exe : ntstub.obj
   $(linker) system dos file ntstub.obj option map
 
 int21nt.obj : int21nt.c
-  $(cc) $[@ -fo=$@ -ox -d1 -bt=NT $(inc_dirs_sys_nt) $(dos_hdr_inc)
+  $(cc) $[@ -fo=$@ -ox -d1 -bt=NT $(inc_path) 
 ntrun.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -fo=ntrun.obj $(inc_dirs_sys_nt) $(dos_hdr_inc)
+  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -fo=ntrun.obj $(inc_path) 
 ntrunner.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -DW32RUN -fo=ntrunner.obj $(inc_dirs_sys_nt) $(dos_hdr_inc)
+  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -DW32RUN -fo=ntrunner.obj $(inc_path) 
 
-!else ifeq host_OS os2
+!else ifeq host_os os2
 
 all: w32bind.exe os2ldr.exe
 
 w32bind.exe : w32bind.c
 !ifdef __LINUX__
-  $(bld_cl) $(wcl_util_opts) -\"option stub=wstubq.exe\" $[*
+  $(bld_cl) $(wcl_util_opts) -\"option stub=wstubq.exe\" $(inc_path) $[*
 !else
-  $(bld_cl) $(wcl_util_opts) -"option stub=wstubq.exe" $[@
+  $(bld_cl) $(wcl_util_opts) -"option stub=wstubq.exe" $(inc_path) $[@
 !endif
 
 os2ldr.exe : cstrtos2.obj loader.obj int21.obj int21os2.obj tnk.obj os2stub.exe
@@ -107,11 +109,9 @@ os2stub.exe : loader16.obj dpmildr.obj int21win.obj
   $(linker) system dos name os2stub file loader16.obj,dpmildr.obj,int21win.obj option map
 
 loader.obj : loader.c loader.h
-        $(cc) $[@ -fo=$@ -ox -d1 -D__OS2 -D__CALL21__ $(inc_dirs_sys_os2_386) $(dos_hdr_inc)
+        $(cc) $[@ -fo=$@ -ox -d1 -D__OS2 -D__CALL21__ $(inc_path)
+	
 int21os2.obj : int21os2.c
-        $(cc) $[@ -fo=$@ -ox -d1 $(inc_dirs_sys_os2_386) $(dos_hdr_inc)
+        $(cc) $[@ -fo=$@ -ox -d1 $(inc_path)
 
 !endif
-
-int21win.obj : int21win.asm
-        $(as_i86) -q -d2 $< -fo=$@
