@@ -613,8 +613,15 @@ static int InsertFixups( unsigned char *buff, unsigned i )
                 case FIX_SEG:
                     if( name == NULL ) {
                         /* special case for floating point fixup */
-                        if( *src != 0x9b ) { /* FWAIT */
+                        if( src[0] == 0x9b ) {
+                           // FWAIT instruction as first byte
+                        } else if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
+                           // inline assembler FWAIT instruction 0x90, 0x9b
+                        } else if( ( src[0] & 0xd8 ) == 0xd8 ) {
+                           // FPU instruction, add FWAIT before it
                             *dst++ = 0x9b;
+                        } else {
+                            // FIXME - probably wrong use of float !!!!
                         }
                     } else {
                         skip = 2;
@@ -789,7 +796,9 @@ local int GetByteSeq( void )
             if( fixword == FIXWORD_NONE ) break;
             if( fixword == FIXWORD_FLOAT ) {
 #if _CPU == 8086
-                AddAFix( i, NULL, FIX_SEG, 0 );
+                if( GET_FPU_EMU( ProcRevision ) ) {
+                    AddAFix( i, NULL, FIX_SEG, 0 );
+                }
 #endif
             } else { /* seg or offset */
                 if( CurToken != T_ID ) {

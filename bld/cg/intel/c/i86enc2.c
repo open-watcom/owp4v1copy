@@ -278,7 +278,11 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
             /* floating point fixup */
             ++p;
             if( _IsEmulation() ) {
-                FPPatchType = FPP_NORMAL;
+                if( ( p[1] == 0x90 ) && ( p[2] == 0x9B ) ) { // inline FWAIT
+                    FPPatchType = FPP_WAIT;
+                } else {
+                    FPPatchType = FPP_NORMAL;
+                }
                 Used87 = TRUE;
             }
         }

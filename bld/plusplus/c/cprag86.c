@@ -924,8 +924,15 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 case FIX_SEG:
                     if( name == NULL ) {
                         /* special case for floating point fixup */
-                        if( *src != 0x9b ) { // FWAIT
-                            code_buffer->buf[ dst++ ] = 0x9b; // FWAIT
+                        if( src[0] == 0x9b ) {
+                           // FWAIT instruction as first byte
+                        } else if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
+                           // inline assembler FWAIT instruction 0x90, 0x9b
+                        } else if( ( src[0] & 0xd8 ) == 0xd8 ) {
+                           // FPU instruction, add FWAIT before it
+                            code_buffer->buf[ dst++ ] = 0x9b;
+                        } else {
+                            // FIXME - probably wrong use of float !!!!
                         }
                     } else {
                         skip = 2;
@@ -1306,9 +1313,11 @@ static int GetByteSeq(
             fixword = FixupKeyword();
             if( fixword == FIXWORD_NONE ) break;
             if( fixword == FIXWORD_FLOAT ) {
-                #if _CPU == 8086
+#if _CPU == 8086
+                if( GET_FPU_EMU( CpuSwitches ) ) {
                     AddAFix( i, NULL, FIX_SEG, 0 );
-                #endif
+                }
+#endif
             } else { /* seg or offset */
                 if( !PragIdCurToken() ) {
                     CErr1( ERR_EXPECTING_ID );
@@ -1331,25 +1340,25 @@ static int GetByteSeq(
                     }
                 }
                 switch( fixword ) {
-                  case FIXWORD_RELOFF:
-                    #if _CPU == 8086
-                        AddAFix( i, name, FIX_RELOFF16, offset );
-                        i += 2;
-                    #else
-                        AddAFix( i, name, FIX_RELOFF32, offset );
-                        i += 4;
-                    #endif
+                case FIXWORD_RELOFF:
+#if _CPU == 8086
+                    AddAFix( i, name, FIX_RELOFF16, offset );
+                    i += 2;
+#else
+                    AddAFix( i, name, FIX_RELOFF32, offset );
+                    i += 4;
+#endif
                     break;
-                  case FIXWORD_OFFSET:
-                    #if _CPU == 8086
-                        AddAFix( i, name, FIX_OFF16, offset );
-                        i += 2;
-                    #else
-                        AddAFix( i, name, FIX_OFF32, offset );
-                        i += 4;
-                    #endif
+                case FIXWORD_OFFSET:
+#if _CPU == 8086
+                    AddAFix( i, name, FIX_OFF16, offset );
+                    i += 2;
+#else
+                    AddAFix( i, name, FIX_OFF32, offset );
+                    i += 4;
+#endif
                     break;
-                  case FIXWORD_SEGMENT:
+                case FIXWORD_SEGMENT:
                     AddAFix( i, name, FIX_SEG, 0 );
                     i += 2;
                     break;
