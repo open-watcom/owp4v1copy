@@ -806,6 +806,7 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
     SCOPE scope;
     SYMBOL sym;
     SYMBOL_NAME sym_name;
+    SEARCH_RESULT *result;
 
     data = classDataStack;
     if( id == NULL ) {
@@ -816,46 +817,25 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
         return( CLNAME_NULL );
     }
 
+    scoped_id = FALSE;
+    scope = GetCurrScope();
 
     if( id->op == PT_ID ) {
+        name = id->u.id.name;
+    } else {
         boolean ClassTypeName( SYMBOL_NAME sym_name );
 
-        scoped_id = FALSE;
-        name = id->u.id.name;
         sym_name = id->sym_name;
-        if( sym_name == NULL ) {
-            scope = GetCurrScope();
-        } else if( ! ClassTypeName( sym_name ) ) {
-            SEARCH_RESULT *result;
+        DbgAssert( sym_name != NULL );
 
-            scope = sym_name->containing;
-            result = ScopeFindLexicalClassType( scope, name );
-            if( result != NULL ) {
-                sym_name = result->sym_name;
-                scope = result->scope;
-                ScopeFreeResult( result );
-            } else {
-                sym_name = NULL;
-                scope = GetCurrScope();
-            }
-        } else {
+        if( ClassTypeName( sym_name ) ) {
+            PTREE right = id->u.subtree[1];
+
+            scoped_id = TRUE;
+            name = right->u.id.name;
+
             scope = sym_name->containing;
         }
-    } else {
-        /* we are dealing with a scoped class name here */
-        PTREE right;
-
-        DbgAssert( NodeIsBinaryOp( id, CO_STORAGE ) );
-
-        scoped_id = TRUE;
-        right = id->u.subtree[1];
-        DbgAssert( ( right->op == PT_ID ) );
-
-        name = right->u.id.name;
-        sym_name = id->sym_name;
-
-        DbgAssert( sym_name != NULL );
-        scope = sym_name->containing;
     }
 
     data->name = name;
@@ -872,6 +852,18 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
         }
         if( data->class_template ) {
             return( processClassTemplate( data, scope, declaration, id ) );
+        }
+    }
+
+    if( ! scoped_id ) {
+        result = ScopeFindLexicalClassType( scope, name );
+        if( result != NULL ) {
+            sym_name = result->sym_name;
+            scope = result->scope;
+            ScopeFreeResult( result );
+        } else {
+            sym_name = NULL;
+            scope = GetCurrScope();
         }
     }
 
