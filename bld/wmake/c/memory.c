@@ -37,7 +37,6 @@
 #include "massert.h"
 #include "mtypes.h"
 #include "mmemory.h"
-#include "mmisc.h"
 #include "mrcmsg.h"
 #include "msg.h"
 
@@ -109,9 +108,9 @@ STATIC void MemCheck( void )
         case _HEAPEMPTY:
             break;
         case _HEAPBADBEGIN:
-            PrtMsg( FTL| HEAP_IS_DAMAGED, "NEAR" );
+            PrtMsg( FTL | HEAP_IS_DAMAGED, "NEAR" );
         case _HEAPBADNODE:
-            PrtMsg( FTL| BAD_NODE_IN_HEAP, "NEAR" );
+            PrtMsg( FTL | BAD_NODE_IN_HEAP, "NEAR" );
         }
         switch( _fheapchk() ) {
         case _HEAPOK:
@@ -165,8 +164,8 @@ STATIC RET_T tryScarce( void )
  * returns: TRUE if a scarce routine managed to deallocate memory.
  */
 {
-    BOOLEAN         did;
-    struct scarce   *cur;
+    BOOLEAN             did;
+    struct scarce const *cur;
 
     did = FALSE;
     cur = scarceHead;
@@ -331,12 +330,10 @@ extern void *MallocSafe( size_t size )
 #else
     ptr = doAlloc( size );
 #endif
-    if( ptr != NULL ) {
-        return( ptr );
+    if( ptr == NULL ) {
+        PrtMsg( FTL | OUT_OF_MEMORY );
     }
-
-    PrtMsg( FTL | OUT_OF_MEMORY );
-    return( NULL );
+    return( ptr );
 }
 
 

@@ -47,12 +47,12 @@ extern HASH_T   Hash( const char *name, HASH_T prime );
 
 extern HASHTAB  *NewHashTab( HASH_T prime );
 extern void     AddHashNode( HASHTAB *tab, HASHNODE *node );
-extern BOOLEAN  WalkHashTab( HASHTAB *tab,
+extern BOOLEAN  WalkHashTab( HASHTAB const *tab,
     BOOLEAN (*func)( void *node, void *ptr ), void *ptr );
 extern void     FreeHashTab( HASHTAB *tab );
-extern HASHNODE *FindHashNode( HASHTAB *tab, const char *name,
-                               BOOLEAN caseSenstive );
+extern HASHNODE *FindHashNode( HASHTAB const *tab, const char *name,
+    BOOLEAN caseSenstive );
 extern HASHNODE *RemHashNode( HASHTAB *tab, const char *name,
-                               BOOLEAN caseSenstive );
+    BOOLEAN caseSenstive );
 
 #endif

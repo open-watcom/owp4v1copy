@@ -24,18 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  lexical token support functions
 *
 ****************************************************************************/
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "make.h"
-#include "massert.h"
 #include "mmemory.h"
-#include "mmisc.h"
 #include "mlex.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"

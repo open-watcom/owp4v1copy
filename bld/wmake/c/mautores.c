@@ -33,11 +33,8 @@
 #include "mtypes.h"
 #include "mcache.h"
 #include "msysdep.h"
-#include "mrcmsg.h"
 #include "mautodep.h"
 #include "autodep.h"
-#include "wressetr.h"
-#include "wreslang.h"
 
 typedef struct res_info {
     DepInfo     *first;
@@ -51,7 +48,7 @@ STATIC handle RESInitFile( const char *name )
 {
     DepInfo     *depends;
     res_info    *ret_val;
-    extern int  FileShift;
+    extern long FileShift;
     int         old_shift;
 
     ret_val = NULL;
@@ -75,24 +72,24 @@ STATIC dep_handle RESFirstDep( dep_handle file )
 }
 
 
-STATIC void RESTransDep( dep_handle f, char **name, time_t *stamp )
-/*****************************************************************/
+STATIC void RESTransDep( cdep_handle f, char **name, time_t *stamp )
+/******************************************************************/
 {
-    res_info    *file = f;
+    DepInfo * const curr = ((res_info *)f)->curr;
 
-    *name = &file->curr->name[0];
-    *stamp = file->curr->time;
+    *name = curr->name;
+    *stamp = (time_t)curr->time;
 }
 
 
 STATIC handle RESNextDep( dep_handle f )
 /**************************************/
 {
-    DepInfo     *p;
-    res_info    *file = f;
+    DepInfo             *p;
+    res_info * const    file = f;
 
-    p = (DepInfo *)file->curr;
-    p = (DepInfo *)( (char *)p + sizeof( DepInfo ) + p->len - 1 );
+    p = (void *)file->curr;
+    p = (void *)( (char *)p + sizeof *p + p->len - 1 );
     if( p->len == 0 ) {
         file->curr = NULL;
         return( NULL );
@@ -102,8 +99,8 @@ STATIC handle RESNextDep( dep_handle f )
 }
 
 
-STATIC void RESFiniFile( handle file )
-/************************************/
+STATIC void RESFiniFile( chandle file )
+/*************************************/
 {
     WResFreeAutoDep( ((res_info *)file)->first );
 }

@@ -29,19 +29,20 @@
 ****************************************************************************/
 
 
-typedef void    *handle;
-typedef void    *dep_handle;
+typedef void    *handle,     const  *chandle;
+typedef void    *dep_handle, const  *cdep_handle;
 
 typedef struct  auto_dep_info {
     void        (*init)( void );
     handle      (*init_file)( const char *name );
     dep_handle  (*first_dep)( handle );
-    void        (*trans_dep)( dep_handle, char **name, time_t *time_stamp );
+    void        (*trans_dep)( cdep_handle, char **name, time_t *time_stamp );
     dep_handle  (*next_dep)( dep_handle );
-    void        (*fini_file)( handle );
+    void        (*fini_file)( chandle );
     void        (*fini)( void );
 } auto_dep_info;
 
 extern void     AutoDepInit( void );
-extern BOOLEAN  AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)( time_t, time_t ), time_t *pmax );
+extern BOOLEAN  AutoDepCheck( char const *name, time_t stamp,
+    BOOLEAN (*chk)( time_t, time_t ), time_t *pmax );
 extern void     AutoDepFini( void );

@@ -46,7 +46,7 @@
 #include "mtarget.h"
 
 
-#define HASH_PRIME  13
+#define HASH_PRIME_SUF  13
 #define CASESENSITIVE FALSE // Is suffix name case insensitive
 STATIC HASHTAB  *sufTab;
 STATIC UINT16   nextId;
@@ -74,12 +74,13 @@ STATIC void freePathRing( PATHRING *pring )
 
 
 STATIC BOOLEAN freeSuffix( void *node, void *ptr )
-/*************************************************/
+/************************************************/
 {
-    SUFFIX      *suf = node;
-    CREATOR     *ccur;
-    CREATOR     *cwalk;
+    SUFFIX  * const suf = node;
+    CREATOR         *ccur;
+    CREATOR         *cwalk;
 
+    (void)ptr; // Unused
     FreeSafe( suf->node.name );
     freePathRing( suf->first );
 
@@ -104,7 +105,7 @@ extern void ClearSuffixes( void )
 {
     WalkHashTab( sufTab, freeSuffix, NULL );
     FreeHashTab( sufTab );
-    sufTab = NewHashTab( HASH_PRIME );
+    sufTab = NewHashTab( HASH_PRIME_SUF );
     nextId = 32768U;
     prevId = nextId - 1;
 }
@@ -230,9 +231,9 @@ extern void AddSuffix( char *name )
  * retains use of name after call
  */
 {
-    SUFFIX  *new;
-    char    *d;
-    char    *s;
+    SUFFIX      *new;
+    char        *d;
+    char const  *s;
 
     assert( name != NULL && name[0] == DOT && !SufExists( name ) ||
             name != NULL && name[0] == DOT && SufExists( name ) &&
@@ -278,8 +279,8 @@ STATIC void ringPath( PATHRING **pring, const char *path )
             ++p;
         }
 
-        new = MallocSafe( sizeof( *new ) );     /* get a new node */
-        len = p - path;                         /* get length of sub-path */
+        new = MallocSafe( sizeof *new );        /* get a new node */
+        len = (size_t)(p - path);               /* get length of sub-path */
         new->name = MallocSafe( len + 1 );      /* make copy of sub-path */
         memcpy( new->name, path, len );
         new->name[len] = NULLCHAR;
@@ -377,16 +378,17 @@ extern void AddCreator( const char *sufsuf )
 }
 
 
-STATIC BOOLEAN printSuf( void *node, void *ptr )
-/**********************************************/
+STATIC BOOLEAN printSuf( void const *node, void *ptr )
+/****************************************************/
 {
-    SUFFIX      *suf = node;
-    CREATOR     *cur;
-    PATHRING    *pring;
-    TARGET      *targ;
-    CLIST       *cmds;
-    BOOLEAN     printed;
+    SUFFIX const * const    suf = node;
+    CREATOR const           *cur;
+    PATHRING const          *pring;
+    TARGET const            *targ;
+    CLIST const             *cmds;
+    BOOLEAN                 printed;
 
+    (void)ptr; // Unused
     PrtMsg( INF | PSUF_SUFFIX, suf->node.name );
     if( suf->pathring != NULL ) {
         pring = suf->pathring;
@@ -426,7 +428,7 @@ STATIC BOOLEAN printSuf( void *node, void *ptr )
 extern void PrintSuffixes( void )
 /*******************************/
 {
-    WalkHashTab( sufTab, printSuf, NULL );
+    WalkHashTab( sufTab, (unsigned char (*)(void *__p1,void *__p2))printSuf, NULL );
 }
 
 
@@ -484,9 +486,9 @@ STATIC RET_T tryPathRing( PATHRING **pring, char *buffer,
 }
 
 
-extern RET_T TrySufPath( char *buffer, const char *filename,
-    TARGET **chktarg, BOOLEAN tryenv )
-/***********************************************************
+extern RET_T TrySufPath( char *buffer, const char *filename, TARGET **chktarg,
+    BOOLEAN tryenv )
+/*****************************************************************************
  * it is NOT necessary that filename != buffer
  * the contents of buffer may be destroyed even if RET_ERROR is returned
  * first checks current directory, then any in suffix path
@@ -496,7 +498,7 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
 {
     PGROUP      *pg;
     SUFFIX      *suffix;
-    char        *env;
+    char const  *env;
     PATHRING    *envpath;
     RET_T       ret;
 
@@ -531,11 +533,11 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
             env = getenv( "PATH" );
         } else {
             /*
-                This is an incredible kludge so that Brian could build
-                the header project from one makefile without making
-                many changes to the makefile.   Some people are soooo
-                lazy :)  DJG
-            */
+             *  This is an incredible kludge so that Brian could build
+             *  the header project from one makefile without making
+             *  many changes to the makefile.   Some people are soooo
+             *  lazy :)  DJG
+             */
             env = getenv( "__SEARCH_PATH__" );
         }
         if( env != NULL ) {
@@ -543,15 +545,15 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
             ringPath( &envpath, env );
 
             Glob.cachedir = FALSE;      /* never cache %path */
-            ret = tryPathRing( &envpath, buffer,
-                pg->dir, pg->fname, pg->ext, chktarg );
+            ret = tryPathRing( &envpath, buffer, pg->dir, pg->fname, pg->ext,
+                chktarg );
             Glob.cachedir = TRUE;
 
             freePathRing( envpath );
         }
     } else {
-        ret = tryPathRing( &suffix->pathring, buffer,
-            pg->dir, pg->fname, pg->ext, chktarg );
+        ret = tryPathRing( &suffix->pathring, buffer, pg->dir, pg->fname,
+            pg->ext, chktarg );
     }
 
     DropPGroup( pg );
@@ -563,7 +565,7 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
 extern void SuffixInit( void )
 /****************************/
 {
-    sufTab = NewHashTab( HASH_PRIME );
+    sufTab = NewHashTab( HASH_PRIME_SUF );
     nextId = 32768U;
     prevId = nextId - 1;
 }

@@ -69,8 +69,8 @@ STATIC const char FAR * const FAR msgText[] = {
 #include "msg.h"
 
 
-STATIC void reOrder( va_list args, char *paratype )
-/*************************************************/
+STATIC void reOrder( va_list args, char const *paratype )
+/*******************************************************/
 {
     int         i;
 
@@ -110,10 +110,8 @@ STATIC void positnArg( va_list args, UINT16 size )
  * va_arg().
  */
 {
-    UINT16      i; /* to avoid a compiler warning */
-
     if( USEARGVALUE && ( size < (UINT16)sizeof(MSG_ARG) ) ) {
-        i = (UINT16)va_arg( args, unsigned );
+        (void)va_arg( args, unsigned );
     }
 }
 
@@ -129,7 +127,7 @@ STATIC char *strApp( char *dest, const char *src )
 {
     assert( dest != NULL && src != NULL );
 
-    while( (*dest = *src) ) {
+    while( (*dest = *src) != 0 ) {
         ++dest;
         ++src;
     }
@@ -152,7 +150,7 @@ STATIC char *strDec( char *dest, UINT16 num )
     do {
         ++dest;
         res = div( res.quot, 10 );
-        *--str = '0' + res.rem;
+        *--str = (char)('0' + res.rem);
     } while( res.quot != 0 );
 
     while( dest >= orig ) {
@@ -238,8 +236,8 @@ STATIC char *strDec2( char *dest, UINT16 num )
     assert( dest != NULL );
 
     res = div( num % 100, 10 );
-    *dest++ = res.quot + '0';
-    *dest++ = res.rem + '0';
+    *dest++ = (char)(res.quot + '0');
+    *dest++ = (char)(res.rem + '0');
     return( dest );
 }
 
@@ -256,7 +254,7 @@ STATIC char *strDec5( char *dest, UINT16 num )
     res.quot = num;
     while( temp >= dest ) {
         res = div( res.quot, 10 );
-        *temp = res.rem + '0';
+        *temp = (char)(res.rem + '0');
         --temp;
     }
     return( dest + 5 );
@@ -310,7 +308,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 positnArg( args, (UINT16)sizeof( UINT16 ) );
                 break;
             case 'C' :
-                ch = va_arg( args, int );
+                ch = (char)va_arg( args, int );
                 positnArg( args, (UINT16)sizeof( int ) );
                 if( isprint( ch ) ) {
                     *dest++ = ch;
@@ -330,8 +328,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 break;
             case 'L' :
                 *dest = NULLCHAR;
-                return( dest - buff );
-                break;
+                return( (size_t)(dest - buff) );
             case 'M' :
                 MsgGet( va_arg( args, int ), msgbuff );
                 positnArg( args, (UINT16)sizeof( int ) );
@@ -346,7 +343,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 dest = strApp( dest, msgbuff );
                 break;
             case 'c' :
-                *dest++ = va_arg( args, int );
+                *dest++ = (char)va_arg( args, int );
                 positnArg( args, (UINT16)sizeof( int ) );
                 break;
             case 'd' :
@@ -380,7 +377,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
         }
     }
     *dest = NULLCHAR;
-    return( dest - buff );
+    return( (size_t)(dest - buff) );
 }
 
 
@@ -417,14 +414,14 @@ extern void PrtMsg( enum MsgClass num, ... )
 {
     va_list         args;
     char            buff[1024];
-    enum MsgClass   pref = M_ERROR;
+    enum MsgClass   pref;
     unsigned        len;
     unsigned        class;
     const char      *fname;
     UINT16          fline;
     int             fh;
-    char            wefchar = 'F';    /* W, E, or F */
-    char            *str;
+    char            wefchar;    /* W, E, or F */
+    char const      *str;
     char            msgbuff[MAX_RESOURCE_SIZE];
     char            *paratype;
 
@@ -432,7 +429,10 @@ extern void PrtMsg( enum MsgClass num, ... )
         return;
     }
 
+    pref = M_ERROR;
     len = 0;
+    buff[0] = 0; // Humour lint
+    wefchar = 'F';
 
     if( (num & LOC) && GetFileLine( &fname, &fline ) == RET_SUCCESS ) {
         if( fname != NULL ) {

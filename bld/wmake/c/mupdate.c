@@ -45,10 +45,8 @@
 #include "mcache.h"
 #include "mmemory.h"
 #include "mexec.h"
-#include "mmisc.h"
 #include "mlex.h"
 #include "mpathgrp.h"
-#include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"
 #include "msuffix.h"
@@ -58,8 +56,6 @@
 #include "mvecstr.h"
 #include "mautodep.h"
 
-
-STATIC BOOLEAN checkForAutoDeps( TARGET *targ, char *name, time_t *max_time );
 
 /*
  *  exStack is used to stack the special macro pointers during ExecCList()
@@ -73,9 +69,9 @@ struct exStack {
 
 #define MAX_EXSTACK 16
 STATIC struct exStack   exStack[MAX_EXSTACK];
-STATIC UINT8            exStackP;
+STATIC UINT8            exStackP = 0;
 STATIC BOOLEAN          doneBefore;     /* executed the .BEFORE commands? */
-STATIC UINT32           cListCount;     /* number of CLISTs executed so far */
+STATIC UINT32           cListCount = 0; /* number of CLISTs executed so far */
 
 BOOLEAN DoingUpdate;
 
@@ -89,13 +85,15 @@ const char *MonthNames[] = {
 extern void exPush( TARGET *targ, DEPEND *dep, DEPEND *impDep )
 /*************************************************************/
 {
-    if( exStackP == MAX_EXSTACK ) {
-        PrtMsg( FTL| PERCENT_MAKE_DEPTH );
+    if( exStackP >= MAX_EXSTACK ) {
+        PrtMsg( FTL | PERCENT_MAKE_DEPTH );
+    } else {
+        struct exStack * const  entry = exStack + exStackP++;
+
+        entry->targ   = targ;
+        entry->dep    = dep;
+        entry->impDep = impDep;
     }
-    exStack[exStackP].targ   = targ;
-    exStack[exStackP].dep    = dep;
-    exStack[exStackP].impDep = impDep;
-    ++exStackP;
 }
 
 
@@ -183,8 +181,8 @@ STATIC void getDate( TARGET *targ )
 {
     getStats( targ );
     if( Glob.debug ) {
-        char        buf[20];    /* large enough for date */
-        struct tm   *tm;
+        char            buf[20];    /* large enough for date */
+        struct tm const *tm;
 
         if( targ->date == YOUNGEST_DATE ) {
             FmtStr( buf, "%M", M_YOUNGEST_DATE );
@@ -202,21 +200,36 @@ STATIC void getDate( TARGET *targ )
 }
 
 
+STATIC BOOLEAN autoDepCompare( time_t targ_time, time_t auto_time )
+/*****************************************************************/
+{
+    if( dateCmp( targ_time, auto_time ) < 0 ) {
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+
+STATIC BOOLEAN checkForAutoDeps( TARGET const *targ, char const *name, time_t *max_time )
+/***************************************************************************************/
+{
+    return( AutoDepCheck( name, targ->date, autoDepCompare, max_time ) );
+}
+
+
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
 STATIC RET_T carryOut( TARGET *targ, CLIST *clist, time_t max_time )
 /******************************************************************/
 {
-    CLIST               *err;
-    int                 i;
-    struct utimbuf      times;
-    char                msg[max( MAX_RESOURCE_SIZE, _MAX_PATH )];
-
     assert( targ != NULL && clist != NULL );
 
     ++cListCount;
     if( ExecCList( clist ) == RET_SUCCESS ) {
+        struct utimbuf  times;
+        char            msg[_MAX_PATH];         // TrySufPath() constrains size
+
         if( Glob.rcs_make && !Glob.noexec && !Glob.touch ) {
             if( max_time != OLDEST_DATE ) {
                 targ->date = max_time;
@@ -237,69 +250,72 @@ STATIC RET_T carryOut( TARGET *targ, CLIST *clist, time_t max_time )
         }
         targ->cmds_done = TRUE;
         return( RET_SUCCESS );
-    }
+    } else {
+        CLIST           *err;
+        int             i;
+        char            msg[MAX_RESOURCE_SIZE]; // MsgGetTail() constrains size
 
-    /*
-     * ok - here is something I don't like.  In this portion of code here,
-     * carryOut is ignoring the target passed to it, and digging the targets
-     * out of the stack.  Be careful of changes.
-     */
-    PrtMsg( ERR | NEOL | LAST_CMD_MAKING_RET_BAD );
-    for( i = exStackP - 1; i >= 0; --i ) {
-        PrtMsg( ERR | NEOL | PRNTSTR, exStack[i].targ->node.name );
-        if( i > 0 ) {
-            PrtMsg( ERR | NEOL | PRNTSTR, ";" );
+        /*
+         * ok - here is something I don't like.  In this portion of code here,
+         * carryOut is ignoring the target passed to it, and digging the targets
+         * out of the stack.  Be careful of changes.
+         */
+        PrtMsg( ERR | NEOL | LAST_CMD_MAKING_RET_BAD );
+        for( i = exStackP - 1; i >= 0; --i ) {
+            PrtMsg( ERR | NEOL | PRNTSTR, exStack[i].targ->node.name );
+            if( i > 0 ) {
+                PrtMsg( ERR | NEOL | PRNTSTR, ";" );
+            }
         }
-    }
-    MsgGetTail( LAST_CMD_MAKING_RET_BAD, msg );
-    PrtMsg( ERR | PRNTSTR, msg );
+        MsgGetTail( LAST_CMD_MAKING_RET_BAD, msg );
+        PrtMsg( ERR | PRNTSTR, msg );
 
-    err = DotCList( DOT_ERROR );
-    if( err != NULL ) {
-        ++cListCount;
-        if( ExecCList( err ) != RET_SUCCESS ) {
-            PrtMsg( FTL | S_COMMAND_RET_BAD, DotNames[DOT_ERROR] );
-        }
-    } else if( !(targ->attr.prec || targ->attr.symb) ) {
-        if( !Glob.hold && targExists( targ ) ) {
-            if( Glob.erase || GetYes( SHOULD_FILE_BE_DELETED ) ) {
-                if( unlink( targ->node.name ) != 0 ) {
-                    PrtMsg( FTL | SYSERR_DELETING_FILE, targ->node.name );
+        err = DotCList( DOT_ERROR );
+        if( err != NULL ) {
+            ++cListCount;
+            if( ExecCList( err ) != RET_SUCCESS ) {
+                PrtMsg( FTL | S_COMMAND_RET_BAD, DotNames[DOT_ERROR] );
+            }
+        } else if( !(targ->attr.prec || targ->attr.symb) ) {
+            if( !Glob.hold && targExists( targ ) ) {
+                if( Glob.erase || GetYes( SHOULD_FILE_BE_DELETED ) ) {
+                    if( unlink( targ->node.name ) != 0 ) {
+                        PrtMsg( FTL | SYSERR_DELETING_FILE, targ->node.name );
+                    }
                 }
             }
         }
-    }
-    if( Glob.cont ) {
+        if( !Glob.cont ) {
+            exit( ExitSafe( EXIT_ERROR ) );
+        }
         return( RET_WARN );
     }
-    exit( ExitSafe( EXIT_ERROR ) );
-    return( RET_ERROR );
 }
 #ifdef __WATCOMC__
 #pragma off(check_stack);
 #endif
 
 
-STATIC time_t maxDepTime( time_t max_time, DEPEND *dep )
-/******************************************************/
+STATIC time_t maxDepTime( time_t max_time, DEPEND const *dep )
+/************************************************************/
 {
-    TLIST   *targets;
+    TLIST const *targets;
+    time_t      target_date;
 
     for( targets = dep->targs; targets != NULL; targets = targets->next ) {
-        if( targets->target->date <= max_time )
-            continue;
-        if( targets->target->date == YOUNGEST_DATE )
-            continue;
-        max_time = targets->target->date;
+        target_date = targets->target->date;
+        if( target_date > max_time && target_date != YOUNGEST_DATE ) {
+            max_time = target_date;
+        }
     }
     return( max_time );
 }
 
 
-STATIC time_t findMaxTime( TARGET *targ, DEPEND *imp_dep, time_t max_time )
-/*************************************************************************/
+STATIC time_t findMaxTime( TARGET const *targ, DEPEND const *imp_dep, time_t max_time )
+/*************************************************************************************/
 {
-    DEPEND  *dep;
+    DEPEND const    *dep;
 
     max_time = maxDepTime( max_time, imp_dep );
     for( dep = targ->depend; dep != NULL; dep = dep->next ) {
@@ -317,6 +333,7 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
     RET_T   ret;
     DEPEND  *depend;
     DEPEND  *impliedDepend;
+    time_t  MaxTime;
 
     depend = NULL;
     impliedDepend = NULL;
@@ -353,13 +370,12 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
     if( clist == NULL ) {
         clist = DotCList( DOT_DEFAULT );
         if( clist == NULL ) {
-            // No commands in Microsoft mode is considered OK
-            // and executed
+            // No commands in Microsoft mode is considered OK and executed
             if( Glob.microsoft ) {
                 targ->cmds_done = TRUE;
                 return( RET_SUCCESS );
             }
-            if( targ->attr.symb != FALSE ) {    /* 13-Dec-90 DJG */
+            if( targ->attr.symb ) {
                 return( RET_SUCCESS );
             }
             if( targ->allow_nocmd ) {
@@ -367,8 +383,8 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
                 targ->attr.symb = TRUE;
                 return( RET_SUCCESS );
             }
-            PrtMsg( FTL | NO_DEF_CMDS_FOR_MAKE,
-                DotNames[DOT_DEFAULT], targ->node.name );
+            PrtMsg( FTL | NO_DEF_CMDS_FOR_MAKE, DotNames[DOT_DEFAULT],
+                targ->node.name );
         }
     }
     if( !Glob.noexec ) {
@@ -385,7 +401,8 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
         doneBefore = TRUE;
     }
     exPush( targ, depend, impliedDepend );
-    ret = carryOut( targ, clist, findMaxTime( targ, dep, max_time ) );
+    MaxTime = findMaxTime( targ, dep, max_time );
+    ret = carryOut( targ, clist, MaxTime );
     exPop();
     if( dep->slistCmd != NULL ) {
         FreeCList(clist);
@@ -394,8 +411,8 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
 }
 
 
-extern RET_T MakeList( TLIST *tlist )
-/***********************************/
+extern RET_T MakeList( TLIST const *tlist )
+/*****************************************/
 {
     RET_T   ret;
     TARGET  *targ;
@@ -435,25 +452,9 @@ STATIC void implyDebugInfo( TARGET *targ, UINT32 startcount )
     }
 }
 
-STATIC BOOLEAN autoDepCompare( time_t targ_time, time_t auto_time )
-/*****************************************************************/
-{
-    if( dateCmp( targ_time, auto_time ) < 0 ) {
-        return( TRUE );
-    }
-    return( FALSE );
-}
 
-
-STATIC BOOLEAN checkForAutoDeps( TARGET *targ, char *name, time_t *max_time )
-/***************************************************************************/
-{
-    return( AutoDepCheck( name, targ->date, autoDepCompare, max_time ) );
-}
-
-
-STATIC BOOLEAN autoOutOfDate( TARGET *targ, time_t *max_time )
-/************************************************************/
+STATIC BOOLEAN autoOutOfDate( TARGET const *targ, time_t *max_time )
+/******************************************************************/
 {
     char    buffer[_MAX_PATH];
 
@@ -498,7 +499,7 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate)
 
 
 STATIC RET_T implyMaybePerform( TARGET *targ, TARGET *imptarg,
-    TARGET *cretarg, BOOLEAN must, SLIST *slistCmd )
+    TARGET const *cretarg, BOOLEAN must, SLIST *slistCmd )
 /*************************************************************
  * perform cmds if targ is older than imptarg || must
  *
@@ -538,6 +539,7 @@ STATIC RET_T implyMaybePerform( TARGET *targ, TARGET *imptarg,
         /* construct a depend for perform */
 
         newdep           = DupDepend( cretarg->depend );
+        assert( newdep );
         newtlist         = NewTList();
         newtlist->target = imptarg;
         newdep->targs    = newtlist;
@@ -578,20 +580,20 @@ STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
  * RET_ERROR - perform failed
  */
 {
-    SUFFIX      *srcsuf;
-    CREATOR     *cur;
-    SUFFIX      *cursuf;
-    TARGET      *imptarg;
-    RET_T       ret;
-    BOOLEAN     newtarg;
-    UINT32      startcount;
-    char        *buf;
-    SLIST       *curslist;
-    SLIST       *slistCmd;  // Slist chosen for sufsuf
-    SLIST       *slistDef;  // Slist that has dependent path = ""
-    SLIST       *slistEmptyTargDepPath;
-    BOOLEAN     UseDefaultSList;
-    int         slistCount;
+    SUFFIX const    *srcsuf;
+    CREATOR const   *cur;
+    SUFFIX const    *cursuf;
+    TARGET          *imptarg = NULL;
+    RET_T           ret;
+    BOOLEAN         newtarg;
+    UINT32          startcount;
+    char            *buf;
+    SLIST           *curslist;
+    SLIST           *slistCmd;  // Slist chosen for sufsuf
+    SLIST           *slistDef;  // Slist that has dependent path = ""
+    SLIST           *slistEmptyTargDepPath;
+    BOOLEAN         UseDefaultSList;
+    int             slistCount;
 
     srcsuf = FindSuffix( ext );
     if( srcsuf == NULL || srcsuf->creator == NULL ) {
@@ -690,8 +692,8 @@ STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
                 }
                     /* file doesn't exist, assume in directory */
                     /* pointed to by the slistDef              */
-                _makepath( buf, NULL, slistCmd->dep_path,
-                           fname, cursuf->node.name );
+                _makepath( buf, NULL, slistCmd->dep_path, fname,
+                    cursuf->node.name );
 
             }
             newtarg = TRUE;
@@ -699,9 +701,9 @@ STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
             FreeSafe( buf );        /* don't need any more */
             getStats( imptarg );
             imptarg->busy = TRUE;   /* protect against recursion */
-            if( imply( imptarg, NULL, slistCmd->dep_path,
-                        fname, cursuf->node.name, FALSE ) ==
-                RET_ERROR ) {
+            assert( slistCmd != NULL ); // Humour lint
+            if( imply( imptarg, NULL, slistCmd->dep_path, fname,
+                    cursuf->node.name, FALSE ) == RET_ERROR ) {
                 imptarg->error = TRUE;
             }
             if( startcount != cListCount && (Glob.noexec || Glob.query) ) {
@@ -771,11 +773,11 @@ STATIC void ExpandWildCards ( TARGET* targ, DEPEND *depend )
  * also deMacroSpecial macros
  */
 {
-   TLIST    *tlist;
-   TLIST    *currentEnd;
-   TLIST    *outTList;
-   TLIST    *temp;
-   char     *NodeName;
+   TLIST const  *tlist;
+   TLIST        *currentEnd;
+   TLIST        *outTList;
+   TLIST        *temp;
+   char         *NodeName;
 
    assert( depend != NULL );
 
@@ -795,6 +797,7 @@ STATIC void ExpandWildCards ( TARGET* targ, DEPEND *depend )
        }
        tlist = tlist->next;
        if( outTList != NULL ) {
+           assert( currentEnd != NULL ); // Humour lint
            currentEnd->next = temp;
        } else {
            outTList = temp;
@@ -821,7 +824,7 @@ STATIC RET_T resolve( TARGET *targ, DEPEND *depend )
  * is out of date then perform the clist (or attempt to imply).
  */
 {
-    TLIST       *tlist;
+    TLIST const *tlist;
     TARGET      *curtarg;
     RET_T       tmp;
     BOOLEAN     outofdate;
@@ -919,7 +922,7 @@ extern RET_T Update( TARGET *targ )
     if( targ->busy ) {
         PrtMsg( FTL | RECURSIVE_DEFINITION, targ->node.name );
     }
-    PrtMsg( DBG|INF|NEOL| UPDATING_TARGET, targ->node.name );
+    PrtMsg( DBG | INF | NEOL | UPDATING_TARGET, targ->node.name );
     targ->busy = TRUE;
     targExists( targ );     /* find file using sufpath */
     startcount = cListCount;
@@ -961,7 +964,7 @@ extern RET_T Update( TARGET *targ )
     }
 
     if( (targ->attr.symb || Glob.noexec || Glob.query)
-        && startcount != cListCount ) {
+            && startcount != cListCount ) {
         targ->existing = TRUE;
         targ->touched = TRUE;
         targ->executed = FALSE;
@@ -1045,10 +1048,10 @@ static struct exStack exGetCurVars( void )
 extern char *GetCurDeps( BOOLEAN younger, BOOLEAN isMacInf )
 /**********************************************************/
 {
-    TLIST           *walk;
+    TLIST const     *walk;
     VECSTR          vec;
     BOOLEAN         written;
-    TARGET          *targ;
+    TARGET const    *targ;
     struct exStack  cur;
     const char      *formattedString;
     char            *ret;
@@ -1131,7 +1134,7 @@ extern const char *GetLastDep( void )
 /***********************************/
 {
     struct exStack  cur;
-    TLIST           *walk;
+    TLIST const     *walk;
 
     cur = exGetCurVars();
     if( cur.impDep != NULL ) {
@@ -1153,10 +1156,7 @@ extern void UpdateInit( void )
 {
     /* according to ANSI standard... this should be true */
 
-    assert(     doneBefore == FALSE
-            &&  cListCount == 0ul
-            &&  exStackP == 0
-    );
+    assert( doneBefore == FALSE && cListCount == 0 && exStackP == 0 );
     DoingUpdate = TRUE;
 }
 
@@ -1164,7 +1164,7 @@ extern void UpdateInit( void )
 extern void UpdateFini( void )
 /****************************/
 {
-    CLIST   *after;
+    CLIST const *after;
 
     assert( exStackP == 0 );
 

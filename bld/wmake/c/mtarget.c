@@ -44,10 +44,10 @@
 
 
 /* just for people to copy in */
-const TATTR FalseAttr = { FALSE, FALSE, FALSE, FALSE };
+const TATTR FalseAttr = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
 
-#define HASH_PRIME    211
-#define CASESENSITIVE FALSE  // Is Target Name case sensitive
+#define HASH_PRIME_TARG     211
+#define CASESENSITIVE       FALSE  // Is Target Name case sensitive
 
 STATIC HASHTAB    *targTab;
 STATIC DEPEND     *freeDepends;
@@ -488,11 +488,11 @@ void KillTarget( const char *name )
  * function that the target is not a member of some TLIST
  */
 {
-    TARGET  *kill;
+    TARGET  *mykill;
 
-    kill = (TARGET *)RemHashNode( targTab, name, CASESENSITIVE );
-    if( kill != NULL ) {
-        freeTarget( kill );
+    mykill = (TARGET *)RemHashNode( targTab, name, CASESENSITIVE );
+    if( mykill != NULL ) {
+        freeTarget( mykill );
     }
 }
 
@@ -623,13 +623,14 @@ void PrintTargFlags( const TARGET *targ )
 }
 
 
-STATIC BOOLEAN printTarg( void *node, void *ptr )
-/************************************************/
+STATIC BOOLEAN printTarg( void const *node, void const *ptr )
+/***********************************************************/
 {
     TARGET const * const    targ = node;
     DEPEND const            *curdep;
     TLIST const             *curtlist;
 
+    (void)ptr; // Unused
     if( targ->special ) {
         return( FALSE );             /* don't print special targets */
     } else {
@@ -654,7 +655,7 @@ STATIC BOOLEAN printTarg( void *node, void *ptr )
                 }
             }
             if( curdep->clist ) {
-                PrtMsg( INF| PTARG_WOULD_EXECUTE_CMDS );
+                PrtMsg( INF | PTARG_WOULD_EXECUTE_CMDS );
                 PrintCList( curdep->clist );
             }
             curdep = curdep->next;
@@ -699,7 +700,7 @@ void PrintTargets( void )
         }
     }
 
-    WalkHashTab( targTab, printTarg, NULL );
+    WalkHashTab( targTab, (unsigned char (*)(void *__p1,void *__p2))printTarg, NULL );
 }
 
 
@@ -732,6 +733,7 @@ void TargOrAttr( TARGET *targ, TATTR attr )
 STATIC BOOLEAN resetEx( void *targ, void *ptr )
 /*********************************************/
 {
+    (void)ptr; // Unused
     ((TARGET *)targ)->executed = TRUE;
     return( FALSE );
 }
@@ -818,7 +820,7 @@ void TargetInit( void )
     freeFLists  = NULL;
     freeNKLists = NULL;
     freeSLists  = NULL;
-    targTab = NewHashTab( HASH_PRIME );
+    targTab = NewHashTab( HASH_PRIME_TARG );
 #ifdef USE_SCARCE
     IfMemScarce( cleanupLeftovers );
 #endif
@@ -828,6 +830,7 @@ void TargetInit( void )
 STATIC BOOLEAN walkFree( void *targ, void *ptr )
 /**********************************************/
 {
+    (void)ptr; // Unused
     freeTarget( (TARGET*)targ );
     return( FALSE );
 }

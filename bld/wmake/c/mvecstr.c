@@ -31,18 +31,12 @@
 
 #include <string.h>
 
-#define _IN_MVECSTR
-
 #include "make.h"
 #include "massert.h"
 #include "mmemory.h"
 #include "mrcmsg.h"
 #include "msg.h"
 #include "mvecstr.h"
-
-#ifndef max
-#define max(a,b)    ( ( a ) > ( b ) ? ( a ) : ( b ) )
-#endif
 
 #define MIN_TEXT    507     /* minimum length we'll create text */
 
@@ -57,25 +51,21 @@
 #   define myFree(ptr)       FarFree(ptr)
 #endif
 
-typedef struct vecEntry FAR *ENTRYPTR;
-
-struct vecEntry {
-    ENTRYPTR next;
-    size_t   len;
-    char     text[1];   /* variable length buffer */
-};
+typedef struct vecEntry {
+    struct vecEntry FAR *next;
+    size_t              len;
+    char                text[1];   /* variable length buffer */
+} FAR *ENTRYPTR, const FAR *cENTRYPTR;
 
 
-typedef union vecHead *OURPTR;
-
-union vecHead {
-    OURPTR  next;
+typedef union vecHead {
+    union vecHead       *next;
     struct {
         ENTRYPTR        head;
         ENTRYPTR        tail;
         size_t          totlen;
     } d;
-};
+} *OURPTR;
 
 
 STATIC OURPTR freeVec;
@@ -185,12 +175,12 @@ extern void FreeVec( VECSTR vec )
 }
 
 
-STATIC char *expandVec( VECSTR vec )
-/**********************************/
+STATIC char *expandVec( cVECSTR vec )
+/***********************************/
 {
     char        *result;
     char        *d;
-    ENTRYPTR    cur;
+    cENTRYPTR   cur;
 
     assert( vec != NULL );
 
@@ -208,7 +198,7 @@ STATIC char *expandVec( VECSTR vec )
     }
     *d = NULLCHAR;
 
-    assert( d - result == ((OURPTR)vec)->d.totlen );
+    assert( (size_t)(d - result) == ((OURPTR)vec)->d.totlen );
 
     return( result );
 }
@@ -242,7 +232,7 @@ STATIC void cpyTxt( OURPTR vec, const char FAR *text, size_t len )
     clen = vec->d.totlen;             /* hold for overflow check */
     vec->d.totlen += len;
     if( clen > vec->d.totlen ) {      /* check for overflow */
-        PrtMsg( FTL|LOC| MAXIMUM_STRING_LENGTH );
+        PrtMsg( FTL | LOC | MAXIMUM_STRING_LENGTH );
     }
 
     tail = vec->d.tail;
@@ -262,18 +252,18 @@ STATIC void cpyTxt( OURPTR vec, const char FAR *text, size_t len )
                 /* setup to make a new entry with remainder of text */
             text += clen;
             len -= clen;
-/**/        assert( len > 0 );  /* the len = 0 case should be handled above */
+            assert( len > 0 );  /* the len = 0 case should be handled above */
         } /* else we'll have to make a new buffer */
     }
 
         /* allocate a new buffer, and copy text into it */
-    new = myMalloc( sizeof( *new ) + max( len, MIN_TEXT ) );
+    new = myMalloc( sizeof *new  + ((len > MIN_TEXT ) ? len : MIN_TEXT) );
     _fmemcpy( new->text, text, len );
     new->len = len;
     new->next = NULL;
 
     if( vec->d.head != NULL ) {
-        assert( tail == vec->d.tail );    /* we set this earlier */
+        assert( tail && tail == vec->d.tail );    /* we set this earlier */
         tail->next = new;
     } else {
         vec->d.head = new;

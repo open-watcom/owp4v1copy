@@ -33,25 +33,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #ifdef __WATCOMC__
     #include <process.h>
 #endif
 
-#include "watcom.h"
 #include "mtypes.h"
 #include "mcache.h"
 #include "msysdep.h"
 #include "mrcmsg.h"
-#include "autodep.h"
 #include "wressetr.h"
 #include "wreslang.h"
 
 
 #define NIL_HANDLE      ((int)-1)
-#define STDOUT_HANDLE   ((int)1)
 
 #define FORMTABLE
 static  TABLE_TYPE      PARA_TABLE[] = {
@@ -79,10 +75,10 @@ static long resSeek( int handle, long position, int where )
 
 WResSetRtns( open, close, read, write, resSeek, tell, malloc, free );
 
-extern int MsgInit()
+extern int MsgInit( void )
 {
     int         initerror;
-    char        name[_MAX_PATH];
+    static char name[_MAX_PATH]; // static because address passed outside.
 
     hInstance.handle = NIL_HANDLE;
     if( _cmdname( name ) == NULL ) {
@@ -113,8 +109,8 @@ extern int MsgInit()
 
 extern int MsgGet( int resourceid, char *buffer )
 {
-    if( LoadString( &hInstance, resourceid + MsgShift,
-        (LPSTR) buffer, MAX_RESOURCE_SIZE ) == -1 ) {
+    if( LoadString( &hInstance, (UINT)resourceid + MsgShift, (LPSTR)buffer,
+            MAX_RESOURCE_SIZE ) == -1 ) {
         buffer[0] = '\0';
         return( 0 );
     }
@@ -124,22 +120,17 @@ extern int MsgGet( int resourceid, char *buffer )
 extern void MsgGetTail( int resourceid, char *buffer )
 {
     char        msg[MAX_RESOURCE_SIZE];
-    char        *p;
+    char const  *p;
 
     MsgGet( resourceid, msg );
-    p = strchr( msg, '%' );
-    while( p != NULL ) {
-        if( *(++p) == 'L' ) {
-            break;
-        }
-        p = strchr( ++p, '%' );
+    for( p = msg; (p = strchr( p, '%' )) != NULL && *(++p) != 'L'; ++p ) {
     }
     if( p != NULL ) {
-        strcpy( buffer, (++p) );
+        strcpy( buffer, ++p );
     }
 }
 
-extern void MsgFini()
+extern void MsgFini( void )
 {
     if( hInstance.handle != NIL_HANDLE ) {
         CloseResFile( &hInstance );

@@ -38,39 +38,29 @@
 #include "mupdate.h"
 
 #include <unistd.h>
-#include <fcntl.h>
 #include <signal.h>
-#include <stdio.h>
 #if defined( __DOS__ )
     #include <dos.h>
-    #include <limits.h>
     #include "tinyio.h"
+#else
+    #include <fcntl.h>
+    #include <sys/stat.h>
+    #if defined(__UNIX__)
+        #include <utime.h>
+    #else
+        #include <sys/utime.h>
+    #endif
 #endif
-#include "pcobj.h"
 
 #if defined( __DOS__ )
 
-int __far critical_error_handler( unsigned deverr, unsigned errcode,
+static int __far critical_error_handler( unsigned deverr, unsigned errcode,
     unsigned far *devhdr )
 {
     deverr = deverr; errcode = errcode; devhdr = devhdr;
     return( _HARDERR_FAIL );
 }
 
-void InitHardErr( void )
-{
-    _harderr( critical_error_handler );
-}
-
-#else
-
-void InitHardErr( void )
-{
-}
-
-#endif
-
-#if defined( __DOS__ )
 extern char             DOSSwitchChar(void);
 #pragma aux             DOSSwitchChar = \
         "mov ax,3700h"  \
@@ -78,7 +68,28 @@ extern char             DOSSwitchChar(void);
         parm caller     [] \
         value           [dl] \
         modify          [ax dx];
+
+#if !defined ( __386__ )
+/* see page 90-91 of "Undocumented DOS" */
+
+extern void far *       _DOS_list_of_lists( void );
+#pragma aux             _DOS_list_of_lists = \
+        "mov ax,5200h"  \
+        "int 21h"       \
+        parm caller     [] \
+        value           [es bx] \
+        modify          [ax es bx];
+
 #endif
+
+#endif
+
+extern void InitHardErr( void )
+{
+#if defined( __DOS__ )
+    _harderr( critical_error_handler );
+#endif
+}
 
 extern int SwitchChar( void )
 /***************************/
@@ -93,20 +104,11 @@ extern int SwitchChar( void )
 #endif
 }
 
-#if defined( __DOS__ ) && !defined ( __386__ )
-/* see page 90-91 of "Undocumented DOS" */
-
-extern void far *       _DOS_list_of_lists( void );
-#pragma aux             _DOS_list_of_lists = \
-        "mov ax,5200h"  \
-        "int 21h"       \
-        parm caller     [] \
-        value           [es bx] \
-        modify          [ax es bx];
-
 extern int OSCorrupted( void )
 /****************************/
 {
+#if defined( __DOS__ ) && !defined ( __386__ )
+
     _Packed struct mcb {
         uint_8  id;
         uint_16 owner;
@@ -137,19 +139,15 @@ extern int OSCorrupted( void )
         chain_seg = new_chain_seg;
     }
     return( 0 );
-}
 #else
-extern int OSCorrupted( void )
-/****************************/
-{
     return( 0 );
-}
 #endif
+}
 
-#if defined( __DOS__ )
 extern RET_T TouchFile( const char *name )
 /****************************************/
 {
+#if defined( __DOS__ )
     tiny_date_t     dt;
     tiny_time_t     tm;
     tiny_ftime_t    p_hms;
@@ -159,7 +157,7 @@ extern RET_T TouchFile( const char *name )
     ret = TinyOpen( name, TIO_WRITE );
     if( TINY_OK( ret ) ) {
         dt = TinyGetDate();
-        p_ymd.year  = dt.year + (1900 - 1980);
+        p_ymd.year  = (uint_16)(int)(dt.year + (1900 - 1980));
         p_ymd.month = dt.month;
         p_ymd.day   = dt.day_of_month;
 
@@ -179,20 +177,7 @@ extern RET_T TouchFile( const char *name )
         }
     }
     return( RET_SUCCESS );
-}
 #else
-
-#include <sys/stat.h>
-#include <sys/types.h>
-#if defined(__UNIX__)
-    #include <utime.h>
-#else
-    #include <sys/utime.h>
-#endif
-
-extern RET_T TouchFile( const char *name )
-/****************************************/
-{
     int     fh;
 
     if( utime( name, 0 ) < 0 ) {
@@ -203,8 +188,8 @@ extern RET_T TouchFile( const char *name )
         close( fh );
     }
     return( RET_SUCCESS );
-}
 #endif
+}
 
 #define FUZZY_DELTA     60      /* max allowed variance from stored time-stamp */
 
@@ -236,9 +221,12 @@ BOOLEAN IdenticalAutoDepTimes( time_t in_obj, time_t stamp )
 
 static DLL_CMD  *dllCommandList;
 
-void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name )
-/**************************************************************/
+#endif
+
+void OSLoadDLL( char const *cmd_name, char const *dll_name, char const *ent_name )
+/********************************************************************************/
 {
+#ifdef DLLS_IMPLEMENTED
     DLL_CMD     *n;
 
     // we want newer !loaddlls to take precedence
@@ -248,11 +236,15 @@ void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name )
     dllCommandList = n;
     IdeDrvInit( &n->inf, StrDupSafe( dll_name ),
                 (ent_name == NULL) ? NULL : StrDupSafe( ent_name ) );
+#else
+    (void)cmd_name, (void)dll_name, (void)ent_name; // Dummy function
+#endif
 }
 
 DLL_CMD *OSFindDLL( char const *cmd_name )
 /****************************************/
 {
+#ifdef DLLS_IMPLEMENTED
     DLL_CMD     *n;
 
     for( n = dllCommandList; n != NULL; n = n->next ) {
@@ -261,47 +253,27 @@ DLL_CMD *OSFindDLL( char const *cmd_name )
         }
     }
     return( n );
+#else
+    (void)cmd_name; // Dummy function
+    return( NULL );
+#endif
 }
 
-#define DLL_PREFIX  "DLL:"
-#define DLL_PSIZE   sizeof( DLL_PREFIX ) - 1
-
-int OSExecDLL( DLL_CMD* dll, char const* cmd_args )
-/*************************************************
+int OSExecDLL( DLL_CMD *dll, char const *cmd_args )
+/**************************************************
  * Returns the error code returned by IdeDrvDLL
  */
 {
-    int     retcode = IdeDrvExecDLL( &dll->inf, cmd_args );
+#ifdef DLLS_IMPLEMENTED
+    int const   retcode = IdeDrvExecDLL( &dll->inf, cmd_args );
 
     setmode( STDOUT_FILENO, O_TEXT );
     return( retcode );
-}
 #else
-
-DLL_CMD *OSFindDLL( char const *cmd_name )
-/****************************************/
-{
-    cmd_name = cmd_name;
-    return( NULL );
-}
-
-void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name )
-/**************************************************************/
-{
-    cmd_name = cmd_name;
-    dll_name = dll_name;
-    ent_name = ent_name;
-}
-
-int OSExecDLL( DLL_CMD* dll, char const* cmd_args )
-/*************************************************/
-{
-    dll = dll;
-    cmd_args = cmd_args;
+    (void)dll, (void)cmd_args; // Dummy function
     return( -1 );
-}
-
 #endif
+}
 
 #ifndef NDEBUG
 STATIC void cleanDLLCmd( void )
@@ -337,7 +309,7 @@ extern void DLLFini( void )
 
 static sig_atomic_t     sig_count;
 
-void CheckForBreak( void )
+extern void CheckForBreak( void )
 {
     if( sig_count > 0 ) {
         sig_count = 0;
@@ -361,11 +333,13 @@ static void passOnBreak( void )
 
 static void breakHandler( int sig_number )
 {
+    (void)sig_number; // Unused
     sig_count = 1;
     passOnBreak();
 }
 
-extern void InitSignals( void ) {
+extern void InitSignals( void )
+{
     sig_count = 0;
     DoingUpdate = FALSE;
 #ifndef __UNIX__
