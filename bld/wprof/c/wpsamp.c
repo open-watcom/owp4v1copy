@@ -112,7 +112,7 @@ STATIC bint             sampleProcOverview( a_window *, int, int, wnd_line_piece
 STATIC bool             sampleEventProc( a_window *, gui_event, void * );
 STATIC image_info *     sampleGetImage( a_window *, int );
 STATIC bint             sampleSetLine( a_window *, int, int, wnd_line_piece * );
-STATIC bint             sampleGetLine( a_window *, int, int, wnd_line_piece * );
+STATIC bool             sampleGetLine( a_window *, wnd_row, int, wnd_line_piece * );
 STATIC int              simageDetailLine( a_window *, int, bint );
 STATIC int              smodDetailLine( a_window *, int, bint );
 STATIC int              sfileDetailLine( a_window *, int, bint );
@@ -381,7 +381,7 @@ STATIC bool sampleEventProc( a_window * wnd, gui_event gui_ev, void * parm )
 
 
 
-STATIC bint sampleGetLine( a_window * wnd, int row, int piece,
+STATIC bool sampleGetLine( a_window * wnd, wnd_row row, int piece,
                                         wnd_line_piece * line )
 /*************************************************************/
 {

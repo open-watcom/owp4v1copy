@@ -480,8 +480,9 @@ STATIC void typ1Complex( cantype *type ) {
     }
 }
 
-STATIC int typePass1( cantype *type, void *parm ) {
+STATIC int typePass1( void *_type, void *parm ) {
 
+    cantype *type = _type;
 /**/myassert( type != NULL );
     parm = parm;
     switch( type->class ) {
@@ -500,7 +501,7 @@ STATIC int typePass1( cantype *type, void *parm ) {
     cantypes to ms types.
 */
 
-FORWARD STATIC int typePass2( cantype *type, int *force );
+FORWARD STATIC int typePass2( void *type, void *force );
 
 STATIC idx_t resolveType( type_handle hdl ) {
 
@@ -899,8 +900,10 @@ STATIC void typ2CharBlockI( cantype *type ) {
     type->extra = voidIdx;
 }
 
-STATIC int typePass2( cantype *type, int *force ) {
+STATIC int typePass2( void *_type, void *_force ) {
 
+    cantype *type = _type;
+    int *force = _force;
 /**/myassert( type != NULL );
     if( type->extra != 0 ) {    /* already processed */
         return( 0 );

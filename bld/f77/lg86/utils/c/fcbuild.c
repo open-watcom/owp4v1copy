@@ -250,7 +250,7 @@ void buildTable( void ) {
 
     fprintf( outFile,
         "#pragma aux FC_TABLE \"LG@*\";\n"
-        "__CONST (__NEAR * __CONST __FAR FC_TABLE[])() = {\n"
+        "__CONST void (__NEAR * __CONST __FAR FC_TABLE[])(void) = {\n"
     );
     add_a_comma = 0;
     for(;;) {

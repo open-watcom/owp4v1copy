@@ -142,8 +142,9 @@ STATIC const char *scopeTxt[] = {
 #define INDENT  "    "
 #define END "\n"
 
-STATIC int doPrintType( cantype *type, void *parm ) {
+STATIC int doPrintType( void *_type, void *parm ) {
 
+    cantype        *type = _type;
     uint            tmp;
 
     parm = parm;
