@@ -224,7 +224,7 @@ _WCRTLINK int read( int handle, void *buffer, unsigned len )
         if( rc != readamt ) return( total );
 
         len -= readamt;
-        buffer += readamt;
+        (char*)buffer += readamt;
     }
     return( total );
 
