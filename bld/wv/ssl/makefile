@@ -1,4 +1,5 @@
 #pmake: build
+
 !include ../make.wv
 
 bin = bin
@@ -29,7 +30,5 @@ java.prs : java.ssl pp_c.ssl $(common)
         @copy $^@ $(bdir) >nul
 !endif
 
-lexusbld : .symbolic c.prs cpp.prs java.prs
-    @newer c.prs $(lexlib_dir)\tools\system "^copy &f $#f > nul"
-    @newer cpp.prs $(lexlib_dir)\tools\system "^copy &f $#f > nul"
-    @newer java.prs $(lexlib_dir)\tools\system "^copy &f $#f > nul"
+clean: .SYMBOLIC
+    @if exist *.prs @del *.prs

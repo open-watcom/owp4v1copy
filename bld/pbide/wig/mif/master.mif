@@ -1,3 +1,6 @@
+!include cproj.mif
+!include deftarg.mif
+
 .extensions:
 .extensions: .pp .obj .c .h .y
 

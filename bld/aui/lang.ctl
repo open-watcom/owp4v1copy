@@ -1,3 +1,5 @@
+# TODO: Use pmake and rename directories for consistency
+#
 # DUI Builder Control file
 # ========================
 
@@ -49,6 +51,8 @@ cdsay .
     wmake /h /i clean
 #    cdsay ..\pm
 #    wmake /h /i clean
+    cdsay ..\pmf
+    wmake /h /i clean
     cdsay ..\o32s
     wmake /h /i clean
     cd <PROJDIR>

@@ -8,16 +8,19 @@ killnonobj: .SYMBOLIC .EXPLICIT
         @if exist *.dll @del *.dll
         @if exist *.lib @del *.lib
         @if exist *.i   @del *.i
+        @if exist *.u   @del *.u
+        @if exist *.int @del *.int
         @if exist *.rc  @del *.rc
         @if exist *.dlg @del *.dlg
         @if exist *.res @del *.res
         @if exist *.clb @del *.clb
         @if exist *.lst @del *.lst
         @if exist *.err @del *.err
+        @if exist *.pch @del *.pch
         @if exist *.map @del *.map
         @if exist *.dmp @del *.dmp
         @if exist *.sym @del *.sym
         @if exist *.tmp @del *.tmp
         @if exist *.ilk @del *.ilk
-        @if exist *.gh @del *.gh
+        @if exist *.gh  @del *.gh
         @if exist compile.tim @del compile.tim

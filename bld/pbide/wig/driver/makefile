@@ -1,6 +1,10 @@
 #pmake: all os_win cpu_i86
+
 name = pbide
 lnk = $(name).lnk
+
+!include cproj.mif
+!include deftarg.mif
 
 cflags  = -bt=windows -zW -bd -zq -otexan -s -zq -fpc -w4 -ml -zu -fo=obj\.obj
 !ifndef on_build_machine

@@ -140,6 +140,12 @@ echo Languages Build <1>
 #[ INCLUDE <devdir>\pmake\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
 
+#
+# Include builder project itself so that we can clean it (obviously we
+# can't require builder to build builder)
+#
+[ INCLUDE <devdir>\builder\lang.ctl ]
+
 # deal with the project which contains this file last --- the BAT directory
 # BATDIR Builder Control file
 # ===========================

@@ -1114,7 +1114,8 @@ static void emitOBJECT( int modindex, char *proc, fcn far *tmpf, int index )
 
 static void startOBJECT( void )
 {
-    objFile = open( "w386lib.obj", O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0 );
+    objFile = open( "w386lib.obj", O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
+        S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
     if( objFile == - 1 ) {
         fprintf(stderr,"error opening w386lib.obj\n" );
         exit( 1 );

@@ -1,4 +1,5 @@
-#pmake: all build os_win cpu_i86
+#pmake: build os_win cpu_i86
+
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .obj
@@ -51,6 +52,5 @@ $(xname).res : $(xname).ico $(xname).rc wsampres.rc ..\h\wsample.rc ..\h\wmsg.h
         wasm -fo=obj\$[&.obj $[*
 
 clean : .symbolic
-    @rm -f *.obj *.res *.lnk *.map *.err
+    @rm -f obj\*.obj obj\*.res obj\*.lnk obj\*.map obj\*.err
     @rm -f ..\bin\$(xname).exe
-
