@@ -20,9 +20,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\idebatch\os2\batserv.exe <relroot>\rel2\binp\batserv.exe
-    <CPCMD> <devdir>\idebatch\nt\batserv.exe <relroot>\rel2\binnt\batserv.exe
-    ifarch wstrip <devdir>\idebatch\dos\int.exe <relroot>\rel2\binw\dosserv.exe
+    <CPCMD> <devdir>\idebatch\os2\batserv.exe  <relroot>\rel2\binp\batserv.exe
+    <CPCMD> <devdir>\idebatch\nt\batserv.exe   <relroot>\rel2\binnt\batserv.exe
+    <CPCMD> <devdir>\idebatch\dos\int.exe      <relroot>\rel2\binw\dosserv.exe
     <CPCMD> <devdir>\idebatch\dos\batchbox.pif <relroot>\rel2\binw\batchbox.pif
 
 [ BLOCK <1> clean ]
