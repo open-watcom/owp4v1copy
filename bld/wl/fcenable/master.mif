@@ -1,5 +1,7 @@
 proj_name = wlink
 
+memory_model_i86 = s
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -13,14 +15,8 @@ mem.obj &
 records.obj &
 wildargv.obj
 
-!ifdef on_build_machine
-copts += -zq
-!endif
-
-prj = fcenable.exe
-
 .c: ..\c;$(lang_root)\src\startup
 
-$(prj) : $(objs)
-        $(linker) $(lflags) name $(prj) op map f {$(objs)}
+fcenable.exe : $(objs)
+        $(linker) $(lflags) name $^@ op map file {$(objs)}
 

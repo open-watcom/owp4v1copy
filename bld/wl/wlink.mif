@@ -5,13 +5,25 @@
 
 proj_name = wlink
 
+!ifndef wlink_autodepends
+wlink_autodepends = .AUTODEPEND
+!endif
+
 # get rid of the -zc
 suppress_zc = 1
+suppress_bd = 1
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 !include wres.mif
+
+.ERASE
+
+inc_dirs = .;../h;
+
+.c: ../c;$(watcom_dir)/c;$(wrc_dir)/c;$(lib_misc_dir)/c
 
 !ifndef patch_level
 patch_level=0
@@ -145,6 +157,9 @@ extra_objs += amem.obj trmem.obj
 extra_objs += mem.obj
 !endif
 
+################
+# c flags stuff
+
 # now get all of the c flags set properly
 
 !ifneq release_wlink 1
@@ -152,6 +167,11 @@ cflags_axp = -hc
 !endif
 
 wcl_util_opts = -ox -zq
+
+force_include = -fi
+!ifeq bootstrap 1
+force_include = -include
+!endif
 
 extra_c_flags = -zp4
 
@@ -162,8 +182,25 @@ extra_c_flags_objorl = -I"$(orl_dir)/h"
 extra_c_flags_dbgdwarf = -I"$(dwarf_dir)/dw/h"
 extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
 extra_c_flags_loados2 = -I"$(wres_dir)/h"
+extra_c_flags_demangle = -I"$(lib_misc_dir)/h"
+extra_c_flags_idedrv = -dCHAIN_CALLBACK
+extra_c_flags_trmem = -I"$(trmem_dir)"
+extra_c_flags_dmem = -dTRACKER /fo=dmem.obj -of+ -I"$(trmem_dir)"
+extra_c_flags_dllentry = -I"$(lang_root)/h/$(host_OS)"
+extra_c_flags_msg = -I"$(lib_misc_dir)/h"
+extra_c_flags_amem = -dTRACKER /fo=amem.obj -I"$(trmem_dir)"
+extra_c_flags_rcstr = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
+extra_c_flags_exerespe = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
+extra_c_flags_sharedio = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
+extra_c_flags_stubidedrv = -dSTATIC_LINKAGE -fo=$^&.obj
+extra_c_flags_drvmsgpr = -fo=$^&.obj
+!ifdef sys_dll
+# invoke -bd switch for one module in dll
+extra_c_flags_wlink = -bd
+!endif
 
-exe_cflags = $+$(cflags)$-
+#####################
+# linker flags stuff
 
 # now get all of the linker flags set properly
 
@@ -171,10 +208,6 @@ ldebug_386 = debug dwarf  # file $(stkdepth_dir)/stkd386.lib
 
 extra_l_flags =  op map=wl,verbose,static,noredefs libpath $(watcom_dir)/lib
 extra_l_flags += l { $(libs) }
-
-#!ifdef on_build_machine
-#extra_l_flags += op quiet
-#!endif
 
 !ifdef wlink_extralnk
 extra_l_flags += $(wlink_extralnk)
@@ -202,21 +235,14 @@ extend = dll
 extend = exe
 !endif
 
-# and finally, the miscellaneous macro definitions
-
-inc_dirs = .;../h
-
-!ifndef execomp
-execomp = $(cc)
-!endif
-
-compile = $(cc) $[@ $(cflags)
+################
+# rc flags stuff
 
 extra_rc_flags_qnx = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_OS))
 
-.c: ../c
+# and finally, the miscellaneous macro definitions
 
 lnk = tmp.lnk
 
@@ -274,86 +300,33 @@ $(stubexe) : $(stub_objs)
 !endif
     $(linker) @$(slnk)
 
+#################
+# explicit rules
+
 version.rc : ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) $]@ $(wcl_util_opts) -d_VERSION=$(bld_ver)
-    genverrc $[@ version.rc $$ wlink.dll $(patch_level)
-    rm -f genverrc.*
+        $(bld_cl) $]@ $(wcl_util_opts) -d_VERSION=$(bld_ver)
+        genverrc $[@ version.rc $$ wlink.dll $(patch_level)
 
-trmem.obj : $(trmem_dir)/trmem.c
-        $(compile) -I"$(trmem_dir)"
+stubidedrv.obj : idedrv.c .AUTODEPEND
+        @set include=$(inc_path)
+        $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dmem.obj : mem.c
-        $(compile) -dTRACKER /fo=dmem.obj -of+ -I"$(trmem_dir)"
+drvmsgpr.obj : idemsgpr.c .AUTODEPEND
+        @set include=$(inc_path)
+        $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-amem.obj : mem.c
-        $(compile) -dTRACKER /fo=amem.obj -I"$(trmem_dir)"
-
-cmdutils.obj : cmdutils.c ../h/link.h
-        $(compile)
-
-mapio.obj : mapio.c ../h/msg.h
-        $(compile)
-
-msg.obj : msg.c ../h/msg.h ../h/wlnkmsg.h
-        $(compile) -I"$(lib_misc_dir)/h"
-
-dllentry.obj : dllentry.c $(watcom_dir)/h/idedll.h
-        $(compile) -I"$(lang_root)/h/$(host_OS)"
-
-stubidedrv.obj : $(watcom_dir)/c/idedrv.c $(watcom_dir)/h/idedll.h
-        $(execomp) $(exe_cflags) $[@ -dSTATIC_LINKAGE -fo=stubidedrv.obj
-
-idedrv.obj : $(watcom_dir)/c/idedrv.c $(watcom_dir)/h/idedll.h
-        $(compile) -dCHAIN_CALLBACK
-
-idemsgfm.obj : $(watcom_dir)/c/idemsgfm.c $(watcom_dir)/h/idedll.h
-        $(execomp) $(exe_cflags) $[@
-
-drvmsgpr.obj : $(watcom_dir)/c/idemsgpr.c $(watcom_dir)/h/idedll.h
-        $(execomp) $(exe_cflags) $[@ /fo=drvmsgpr.obj
-
-idemsgpr.obj : $(watcom_dir)/c/idemsgpr.c $(watcom_dir)/h/idedll.h
-        $(compile)
-
-dlldrvr.obj : dlldrvr.c  $(watcom_dir)/h/idedll.h
-        $(execomp) $(exe_cflags) $[@
-
-wlnkmsg.obj : wlnkmsg.c ../h/wlnkmsg.h
-        $(compile)
-
-global.obj : global.c ../h/globals.h ../h/specials.h
-        $(compile)
-
-cmdline.obj : cmdline.c ../h/whoami.h
-        $(compile)
-
-demangle.obj : $(lib_misc_dir)/c/demangle.c
-        $(compile) -I"$(lib_misc_dir)/h"
-
-exerespe.obj : $(wrc_dir)/c/exerespe.c
-        $(cc) $(cflags) $[@ -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
-
-sharedio.obj : $(wrc_dir)/c/sharedio.c
-        $(cc) $(cflags) $[@ -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
-
-force_include = -fi
-!ifeq bootstrap 1
-force_include = -include
-!endif
-
-rcstr.obj : $(wrc_dir)/c/rcstr.c
-        $(compile) -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
-
-wlink.res : rcmsg.h ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
+wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
         $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $]@ -I"$(wrc_dir)/h" -I"$(watcom_dir)/h"
 
-rcmsg.h : $(wrc_dir)/h/rc.msg
+rcmsg.gh : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > rcmsg.h
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > rcmsg.gh
 !else
-        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.h" $[@
-        vi -d -q -i -s ../h/rcrebase.vi rcmsg.h
+        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.gh" $[@
+        vi -d -q -i -s ../h/rcrebase.vi rcmsg.gh
 !endif
+
+#################
 
 global.chk : ../compile.gbl
     @%make clean
@@ -362,11 +335,3 @@ global.chk : ../compile.gbl
 !else
     wtouch -f $[@ $^@
 !endif
-
-.BEFORE:
-     @set INCLUDE=$(inc_path)
-
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
-        rm -f *.err *.map *.lst *.tmp *.ilk *.sym
-        rm -f ../h/rc.msg ../h/rcmsg.h rcmsg.h version.rc
