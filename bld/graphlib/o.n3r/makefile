@@ -1,4 +1,4 @@
-#pmake: all build os_dos cpu_386
+#pmake: build os_dos cpu_386
 # makefile for GRAPH3R.LIB
 
 libname =       graph3r
@@ -9,7 +9,7 @@ fard =
 _386 =          386
 _qnx =
 asm_cmd =       wasm
-asm_flags =     -3r -ms -i..\inc -d_MODEL=_SMALL -d_386 -d_NEC_PC
+asm_flags =     -zq -3r -ms -i..\inc -d_MODEL=_SMALL -d_386 -d_NEC_PC
 _NEC_PC =       1
 
 !include ..\graphics.mif

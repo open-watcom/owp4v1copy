@@ -1,4 +1,6 @@
-#pmake: all buildnext os_dos cpu_i86
-host_OS = dos
-host_CPU = i86
+#pmake: buildnext os_dos cpu_i86
+
+host_os  = dos
+host_cpu = i86
+
 !include ..\master.mif
