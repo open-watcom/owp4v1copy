@@ -114,6 +114,12 @@ for a full description of compiler options.
 .begnote $compact $setptnt 10
 :DTHD.Linker options:
 :DDHD.Description:
+.note bcl=<system name>
+.ix '&wclcmdup16 options' 'bcl=<system name>'
+.ix '&wclcmdup32 options' 'bcl=<system name>'
+Compile and link for the specified system name. See the section for link option 'l=' below and the
+linker user guide for available system names.
+This is equivalent to specifying -bt=<system name> and -l=<system name>.
 .note k<stack_size>
 .ix '&wclcmdup16 options' 'k<stack_size>'
 .ix '&wclcmdup32 options' 'k<stack_size>'

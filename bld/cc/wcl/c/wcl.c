@@ -87,6 +87,8 @@
 #define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
                                         /* mask for illegal file types     */
 static  char    *Cmd;               /* command line parameters            */
+static  char    *CmdCopy;           /* just a copy of the pointer         */
+static  size_t  CmdLen;          /* and Cmd's length so no overflow    */
 static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
 static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
@@ -213,6 +215,10 @@ void  main()
         Usage();
         exit( 1 );
     }
+
+    CmdCopy = Cmd;
+    if(CmdCopy)
+        CmdLen = strlen( CmdCopy );
 
     Temp_Link = TEMPFILE;
     if( ( Fp = fopen( &Temp_Link[ 1 ], "w" ) ) == NULL ) {
@@ -387,6 +393,28 @@ static  int  Parse( void )
                 Word[ len ] = NULLCHAR;
                 wcc_option = 1;         /* assume its a wcc option */
                 switch( tolower( *Cmd ) ) {
+
+                case 'b':               /* possibly -bcl */
+                    if( ('c' == tolower( Word[0] )) && ('l' == tolower( Word[1] )) && ('=' == tolower( Word[2] )) ){
+                        char *  temp_cmd = strdup( Cmd + 1 + len);   /* copy from bcl option */
+                        char *  sys_name = strdup( &Word[3] );
+                        if( (NULL == sys_name) || (NULL == temp_cmd)){
+                            PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
+                            exit( 1 );
+                        }
+
+                        /* Sanity check */
+                        if( (CmdLen + ( 2 * strlen(sys_name) ) + 8) > ( MAX_CMD*2 ) ){
+                            PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
+                            exit( 1 );
+                        }
+
+                        sprintf(Cmd, "bt=%s -l=%s", sys_name, sys_name);
+                        strcat(Cmd, temp_cmd);
+                        end = Cmd - 1;
+                        wcc_option = 0;
+                    }
+                    break;
 
                 case 'f':               /* files option */
                     end = ScanFName( end, len );
