@@ -63,7 +63,7 @@
 
   #define PASCAL_STRING           'S'             /* for Novell */
   #define WIDE_CHAR_STRING        'S'
-  #if !defined(__NETWARE__) && !defined(__QNX__)
+  #if !defined(__NETWARE__) && !defined(__UNIX__)
     #define USE_MBCS_TRANSLATION
   #endif
 
@@ -429,7 +429,7 @@ static int far_strlen( FAR_STRING s, int precision )
     register int len;
 
     len = 0;
-    while( *s++ != NULLCHAR  &&  len != precision )
+    while( len != precision && *s++ != NULLCHAR )
         ++len;
 
     return( len );
