@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message formatting and output for wmake.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #ifdef __WATCOMC__
@@ -54,10 +54,6 @@ STATIC int logFH;
 static void reOrder( va_list args, char *paratype );
 static void positnArg( va_list args, UINT16 size );
 static void waitForKey( void );
-
-#if defined( __WINDOWS__ )
-extern void Output( char * );
-#endif
 
 typedef union msg_arg {
     UINT16      ui16;
@@ -439,16 +435,7 @@ extern void PrtMsg( enum MsgClass num, ... )
         if( fh == STDERR ) {
             logWrite( buff, len );
         }
-#if defined( __WINDOWS__ )
-        if( fh == STDERR || fh == STDOUT ) {
-            buff[len] = 0;
-            Output( buff );
-        } else {
-            write( fh, buff, len );
-        }
-#else
         write( fh, buff, len );
-#endif
     }
 
     va_start( args, num );
@@ -458,15 +445,7 @@ extern void PrtMsg( enum MsgClass num, ... )
         if( fh == STDERR ) {
             logWrite( str, strlen( str ) );
         }
-#if defined( __WINDOWS__ )
-        if( fh == STDERR || fh == STDOUT ) {
-            Output( str );
-        } else {
-            write( fh, str, strlen( str ) );
-        }
-#else
         write( fh, str, strlen( str ) );
-#endif
         len = 0;
     } else {                    /* print a formatted string */
         if( ( num & NUM_MSK ) >= END_OF_RESOURCE_MSG ) {
@@ -487,16 +466,7 @@ extern void PrtMsg( enum MsgClass num, ... )
     if( fh == STDERR ) {
         logWrite( buff, len );
     }
-#if defined( __WINDOWS__ )
-    if( fh == STDERR || fh == STDOUT ) {
-        buff[len] = 0;
-        Output( buff );
-    } else {
-        write( fh, buff, len );
-    } /* if */
-#else
     write( fh, buff, len );
-#endif
     if ( !Glob.microsoft && ( num == ( CANNOT_NEST_FURTHER | FTL | LOC ) ||
                               num == ( IGNORE_OUT_OF_PLACE_M | ERR | LOC ))){
         PrtMsg( WRN | LOC | MICROSOFT_MAKEFILE );

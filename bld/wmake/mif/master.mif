@@ -1,7 +1,6 @@
 #
 #   The master file for creating wmake.
 #
-
 ##############################################################################
 
 proj_name   = wmake
@@ -41,8 +40,6 @@ echo    = echo
 
 # Compiler Flags
 
-extra_c_flags_win = -zW
-
 extra_c_flags_i86 = -zt32
 
 inc_dirs = $(wmake_dir)/h;$(watcom_dir)/h;$(orl_dir)/h;$(trmem_dir);
@@ -70,8 +67,6 @@ ext = exe
 extra_l_flags_os2 = option stack=96k
 extra_l_flags_nt = option stack=0x10000k commit stack=32k
 extra_l_flags_qnx = option stack=20k
-lflags_win_i86 = system windows mem font
-extra_l_flags_win = library windows,clibc export MAINDRIVER option stack=16k
 !ifdef LARGE
 extra_l_flags_dos = option stack=16k
 !else ifdef COMPACT
@@ -88,13 +83,6 @@ $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
 #
 # If the linker files were different (i.e. if we needed a QNX version),
 # the copy would be replaced by a separate link. CSK
-!ifeq host_OS win
-#    wstrip  wmk.exe . x.sym
-        rc wmk
-        rc wmkj
-#    copy /b wmk.exe+x.sym
-#    erase x.sym
-!endif
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform dependent configuration for wmake.
 *
 ****************************************************************************/
 
@@ -79,24 +78,6 @@
 # define FAR
 # define FILE_BUFFER_SIZE   4096    /* amount to read() at a time           */
 #endif
-# define DLL_CMD_ENTRY      "???"   /* entry-pt for .DLL version of command */
-
-#elif defined( __WINDOWS__ )
-# define PATH_SPLIT         ';'     /* path seperator                       */
-# define PATH_SPLIT_S       ";"     /* path seperator in string form        */
-# define SHELL_METAS        "<>|"   /* characters that force use of shell   */
-# define WILD_METAS         "*?"    /* wild card characters opendir supports*/
-                                    /* dir entries to ignore (direct.h)     */
-# define IGNORE_MASK        ( _A_VOLID )
-# define EXIT_OK            0       /* normal termination of program        */
-# define EXIT_WARN          1       /* return from aborted -q (Query) make  */
-# define EXIT_ERROR         2       /* return after errors in parsing       */
-# define EXIT_FATAL         4       /* return after fatal error             */
-# define MAX_SUFFIX         16      /* must fit dotname, or largest .ext.ext*/
-# define MAX_TOK_SIZE       130     /* Maximum token size                   */
-# define LINE_BUFF          80      /* length of one-line user input buffer */
-# define FILE_BUFFER_SIZE   512     /* amount to read() at a time           */
-# define FAR                far
 # define DLL_CMD_ENTRY      "???"   /* entry-pt for .DLL version of command */
 
 #elif defined( __OS2__ ) || defined( __NT__ )

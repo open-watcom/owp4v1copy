@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -55,10 +56,6 @@
 #include "mupdate.h"
 #include "mvecstr.h"
 #include "mautodep.h"
-#if defined( __WINDOWS__ )
-#define STRICT
-#include <windows.h>
-#endif
 
 STATIC TLIST    *mustTargs;     /* targets we must update                   */
 STATIC TLIST   *firstTargFound; /* first targets we ever found              */
@@ -604,11 +601,7 @@ char **_argv;
 #else
 #pragma off(unreferenced);
 #endif
-#if !defined( __WINDOWS__ )
 int main( int argc, char * const *argv )
-#else
-int wmake_main( int argc, char * const *argv )
-#endif
 #ifdef __WATCOMC__
 #pragma on (unreferenced);
 #endif

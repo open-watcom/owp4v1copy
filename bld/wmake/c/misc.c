@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous wmake helper functions.
 *
 ****************************************************************************/
 
 #if defined(__UNIX__)
- #include <dirent.h>
+    #include <dirent.h>
 #else
- #include <direct.h>
+    #include <direct.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -61,7 +60,7 @@ extern char *SkipWS( const char *p )
 }
 
 
-#if defined( __DOS__ ) || defined( __WINDOWS__ )
+#if defined( __DOS__ )
 
 extern char *FixName( char *name )
 /*********************************

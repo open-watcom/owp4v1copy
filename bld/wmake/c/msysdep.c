@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Platform dependent internal helper functions for WMAKE.
+* Description:  Platform dependent internal helper functions for wmake.
 *
 ****************************************************************************/
 
@@ -42,10 +42,9 @@
 #include <signal.h>
 #include <stdio.h>
 #if defined( __DOS__ )
-#include <dos.h>
-#include <limits.h>
-
-#include "tinyio.h"
+    #include <dos.h>
+    #include <limits.h>
+    #include "tinyio.h"
 #endif
 #include "pcobj.h"
 
@@ -87,8 +86,6 @@ extern int SwitchChar( void )
 {
 #if defined( __DOS__ )
     return( DOSSwitchChar() );
-#elif   defined( __WINDOWS__ )
-    return( '/' );
 #elif   defined( __OS2__ ) || defined( __NT__ )
     return( '/' );
 #elif   defined( __UNIX__ )
@@ -259,14 +256,6 @@ BOOLEAN IdenticalAutoDepTimes( time_t in_obj, time_t stamp )
             }
         }
     }
-#if 0
-    // 9.5 C/C++ Windows/NT compilers have bad fstat() functions
-    // so allow differences that may be timezone problems
-    // (assume timezones are units of 30min)
-    if((( in_obj - stamp ) % (30L*60L) ) == 0 ) {
-        return( TRUE );
-    }
-#endif
     return( FALSE );
 }
 

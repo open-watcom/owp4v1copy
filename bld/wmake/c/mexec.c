@@ -85,45 +85,7 @@ enum {
 
 STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
 
-#if defined( __WINDOWS__ )
-    "BREAK",            /* this list must be in alpha order */
-    "CALL",
-    "CD",
-    "CHDIR",
-    "CLS",
-    "COMMAND",
-    "COPY",
-    "CTTY",
-    "DATE",
-    "DEL",
-    "DIR",
-    "ECHO",
-    "ERASE",
-    "FOR",
-#define COM_FOR     13  /* index of the for keyword */
-    "IF",
-#define COM_IF      14  /* index of the if keyword  */
-    "MD",
-    "MKDIR",
-    "PATH",
-    "PAUSE",
-    "PROMPT",
-    "RD",
-    "REM",
-    "REN",
-    "RENAME",
-    "RM",
-#define COM_RM      24
-    "RMDIR",
-    "SET",
-#define COM_SET     26  /* index of the set keyword */
-#define LEN_SET     3   /* strlen( "SET" ) */
-    "TIME",
-    "TYPE",
-    "VER",
-    "VERIFY",
-    "VOL"
-#elif   defined( __DOS__ )
+#if     defined( __DOS__ )
 
     "BREAK",            /* this list must be in alpha order */
     "CALL",

@@ -385,7 +385,6 @@ __MAKEFILES__ = <list of makefiles>
 __VERSION__ = <version number>
 __LOADDLL__= defined if DLL loading supported
 __MSDOS__ =  defined if MS/DOS version
-__WINDOWS__ = defined if Windows version
 __NT__ = defined if Windows NT version
 __NT386__ = defined if x86 Windows NT version
 __OS2__ = defined if OS/2 version

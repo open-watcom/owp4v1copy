@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Directory caching routines.
 *
 ****************************************************************************/
 
+
 #if !defined(__UNIX__)
- #include <direct.h>
- #include <dos.h>
+    #include <direct.h>
+    #include <dos.h>
 #endif
 #include <unistd.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@
 #include "autodept.h"
 
 
-#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __WINDOWS__ ) || defined( __NT__ )
+#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __NT__ )
 
 /*
  * Implement a directory cache in far memory for MSDOS machines.  The
@@ -61,7 +61,7 @@
  */
 
 
-#if 1 && defined(__NT__)
+#if defined(__NT__)
 /*
     Windows NT makes us call an expensive convert GMT to local function
     for each time-stamp we want to look at!
