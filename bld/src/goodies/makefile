@@ -186,11 +186,11 @@ run_mix :   .SYMBOLIC
         -mix6.exe
 
 clean : .SYMBOLIC
-        del *.obj
-        del *.wbj
-        del *.rex
-        del *.exe
-        del *.exp
+        if exist *.obj del *.obj
+        if exist *.wbj del *.wbj
+        if exist *.rex del *.rex
+        if exist *.exe del *.exe
+        if exist *.exp del *.exp
 
 # implicit rules
 
