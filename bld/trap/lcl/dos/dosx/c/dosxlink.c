@@ -274,6 +274,10 @@ static char *SearchPath( char far *env, char *file, char *buff, char **pendname 
     #define NAME        "DOS4GW.EXE"
     #define OTHER_NAMES "4GWPRO.EXE\0DOS4G.EXE\0DOS4GX.EXE\0"
     #define HELPNAME    "RSIHELP.EXP"
+#elif defined(CAUSEWAY)
+    #define NAME        "CWSTUB.EXE"
+    #define OTHER_NAMES "\0"
+    #define HELPNAME    "CWHELP.EXE"
 #else
     #error Extender and helper names not defined
 #endif
@@ -389,7 +393,7 @@ exp:
 
 #define LINK_SIGNATURE 0xdeb0deb0L
 
-#if defined(DOS4G)
+#if defined(DOS4G) || defined(CAUSEWAY)
 #define LINK_VECTOR     0x06
 #else
 #define LINK_VECTOR     0x01
