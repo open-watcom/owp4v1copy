@@ -1,3 +1,4 @@
+#pmake: all os_dos cpu_386
 name = defgen
 lnk = $(name).lnk
 

@@ -1,3 +1,4 @@
+#pmake: all build cpu_i86 os_dos os_nt os_win os_os2
 wfscopy.exe : fscopy.obj
         wlink op map name wfscopy.exe file fscopy
 

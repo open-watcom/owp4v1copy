@@ -1,3 +1,4 @@
+#pmake: all cpu_386 os_dos
 op_sys=dos4g
 os=dos
 bind=1

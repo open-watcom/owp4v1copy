@@ -1,3 +1,4 @@
+#pmake: all cpu_i86 os_win
 op_sys=windows
 os=windows
 ccopt = -zW -ml

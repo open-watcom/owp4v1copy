@@ -1,3 +1,4 @@
+#pmake: all cpu_386 os_os2
 op_sys=os2v2
 os=os2
 name=wig

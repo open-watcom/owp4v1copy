@@ -1,3 +1,4 @@
+#pmake: all build cpu_386 os_nt
 op_sys=nt dll
 os=nt
 ccopt =-mf -bd -d__DLL__ -bt=nt -i..\h -i$(lang_root)\h\nt

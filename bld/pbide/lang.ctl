@@ -10,29 +10,20 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay <devdir>\pbide\run
-    wmake -i -h
-
-    cdsay <devdir>\pbide\dlldbg
-    wmake -i -h
-
-    cdsay <devdir>\pbide\wig\owindll
-    wmake -i -h
-
-    cdsay <devdir>\pbide\wig\ontdll
-    wmake -i -h
+    
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
     cdsay <devdir>\viper\viper
     wmake -i -h PBIDE
 
-    cdsay <devdir>\pbide\fscopy
-    wmake -i -h
+    cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\pbide\run\run.exe <relroot>\rel2\binw\watrun.exe
-    <CPCMD> <devdir>\pbide\run\runnt.exe <relroot>\rel2\binnt\watrun.exe
-    <CPCMD> <devdir>\pbide\dlldbg\dlldbg.exe <relroot>\rel2\binw\dlldbg.exe
+    <CPCMD> <devdir>\pbide\run\wini86\run.exe <relroot>\rel2\binw\watrun.exe
+    <CPCMD> <devdir>\pbide\run\nt386\runnt.exe <relroot>\rel2\binnt\watrun.exe
+    <CPCMD> <devdir>\pbide\dlldbg\wini86\dlldbg.exe <relroot>\rel2\binw\dlldbg.exe
+    <CPCMD> <devdir>\pbide\dlldbg\nt386\dlldbg.exe <relroot>\rel2\binnt\dlldbg.exe
     <CPCMD> <devdir>\pbide\dlldbg\pbend.dbg <relroot>\rel2\binw\pbend.dbg
     <CPCMD> <devdir>\pbide\dlldbg\pbstart.dbg <relroot>\rel2\binw\pbstart.dbg
     <CPCMD> <devdir>\pbide\dlldbg\pbwd.dbg <relroot>\rel2\binw\pbwd.dbg
