@@ -1,7 +1,7 @@
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
 !else
-lang_root = $(%dwatco)
+lang_root = $(%dwatcom)
 !endif
 
 # Do not fuck with the env vars, that way it's far too easy to break stuff!
