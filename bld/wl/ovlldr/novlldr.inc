@@ -28,6 +28,7 @@
 ;*
 ;*****************************************************************************
 
+;   !!!!!!!!!   must correspond to declaration in novlldr.h  !!!!!!!!!
 
         include ovltab.inc
 

@@ -28,6 +28,10 @@
 *
 ****************************************************************************/
 
+//   !!!!!!!!!   must correspond to declaration in novlldr.inc  !!!!!!!!!
+
+#ifndef _NOVLLDR_H_
+#define _NOVLLDR_H_
 
 #include <dos.h>
 #include <stddef.h>
@@ -129,6 +133,8 @@ typedef unsigned_16     desc;
 typedef desc far *      desc_ptr;
 #define BLOCK_IS_FREE 0xFFFF
 #define NULL_SEG 0
+
+#pragma pack( push, 1 )
 
 typedef struct {
     unsigned_16 next;       /* paragraph of next free block in the list */
@@ -268,3 +274,7 @@ typedef struct {
 typedef ret_trap far *ret_trap_ptr;
 
 #define CALL_FAR_INSTRUCTION    0x9a
+
+#pragma pack( pop )
+
+#endif
