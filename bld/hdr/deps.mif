@@ -16,6 +16,7 @@ stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../
 string_deps = ../watcom/string.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
+wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
 # The follow describe the dependences for the various *.h files.
 assert.h        : $(assert_deps)
@@ -169,6 +170,7 @@ wcsibase.h      : ../watcom/wcsibase.mh ../readonly.sp ../crwat.sp
 wcskip.h        : ../watcom/wcskip.mh ../readonly.sp ../crwat.sp
 wcskipit.h      : ../watcom/wcskipit.mh ../readonly.sp ../crwat.sp
 wcstack.h       : ../watcom/wcstack.mh ../readonly.sp ../crwat.sp
+wctype.h        : $(wctype_deps)
 wcvbase.h       : ../watcom/wcvbase.mh ../readonly.sp ../crwat.sp
 wcvector.h      : ../watcom/wcvector.mh ../readonly.sp ../crwat.sp
 wdefwin.h       : ../watcom/wdefwin.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp

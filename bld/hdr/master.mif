@@ -83,6 +83,7 @@ common = &
         wcskip.h &
         wcskipit.h &
         wcstack.h &
+        wctype.h &
         wcvbase.h &
         wcvector.h &
         sys/locking.h &
@@ -105,7 +106,8 @@ common = &
         cstdlib &
         cstring &
         ctime &
-        cwchar
+        cwchar &
+        cwctype
 
 DOS_files = &
       $(common) &
@@ -384,9 +386,8 @@ ctime   : $(time_deps)
 cwchar  : $(wchar_deps)
         $(csplice)
 
-# OpenWatcom does not currently support <wctype.h>
-#cwctype : $(wctype_deps)
-#        $(csplice)
+cwctype : $(wctype_deps)
+        $(csplice)
 
 
 clean: .SYMBOLIC
