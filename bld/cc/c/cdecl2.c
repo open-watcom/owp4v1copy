@@ -325,6 +325,14 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
             if( sym->declspec != DECLSPEC_NONE ) {          /* 25-jul-95 */
                 CErr1( ERR_INVALID_DECLSPEC );
             }
+            /*
+            // Local variables in stack will be far when SS != DS (/zu)
+            // (applies only to auto vars, functions params are handled
+            // NOT here but in "cexpr2.c" [OPR_PUSHADDR])
+            */
+            if( TargetSwitches & FLOATING_SS ) {
+                sym->attrib |= FLAG_FAR;
+            }
         }
         /*
         // static class variables can be thread local also

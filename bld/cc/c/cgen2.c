@@ -1811,13 +1811,6 @@ int CGenType( TYPEPTR typ )
         break;
     case TYPE_POINTER:
         flags = typ->u.p.decl_flags;
-        #if _MACHINE == _PC
-            if( typ->u.p.segment == SEG_STACK ) {   /* 05-oct-88 */
-                if( TargetSwitches & FLOATING_SS ) {
-                    flags |= FLAG_FAR;
-                }
-            }
-        #endif
         dtype = PtrType( typ->object, flags );
         break;
     case TYPE_ENUM:

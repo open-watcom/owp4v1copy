@@ -1439,12 +1439,8 @@ convert:                                /* moved here 30-aug-89 */
                     ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE ) ) {
                     if( cast_op == 0 ) {
                         if( TypeSize(typ) > TypeSize(newtyp) ) {
-                            if( typ->u.p.segment != SEG_STACK  ||
-                                /* give warning if /zu 03-jun-92 */
-                                (TargetSwitches & FLOATING_SS) ) {
-                                CWarn1( WARN_POINTER_TRUNCATION,
-                                        ERR_POINTER_TRUNCATION );
-                            }
+                            CWarn1( WARN_POINTER_TRUNCATION,
+                                    ERR_POINTER_TRUNCATION );
                         }
                         if( (typ->u.p.decl_flags & FLAG_BASED) &&
                             (newtyp->u.p.decl_flags & FLAG_FAR) ) {
