@@ -49,6 +49,7 @@ Options:                    ( /option is also supported )
 -zld                suppress generation of file dependency info in object file
 -zq or -q           operate quietly
 -zz                 remove '@size' from STDCALL function names
+-zzo                don't mangle STDCALL symbols (backward compatible)
 -? or -h            print this message
 -w<number>          set warning level number
 -we                 treat all warnings as errors

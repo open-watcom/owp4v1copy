@@ -105,7 +105,7 @@ defines "__REGISTER__"
 defines "__STACK__"
 .endnote
 .exam begin
-&sw.2      &sw.3p     &sw.4pr    &sw.5p
+-2      -3p     -4pr    -5p
 .exam end
 .note bt=<os>
 defines "__<os>__" and checks the "<os>_INCLUDE" environment variable
@@ -187,6 +187,8 @@ remove file dependency information
 operate quietly
 .note zz
 remove "@size" from STDCALL function names
+.note zzo
+don't mangle STDCALL symbols (WASM backward compatible)
 .note ?  or h
 print this message
 .note w<number>
@@ -1039,7 +1041,9 @@ C                   '*'         '*'
 C (MASM)           '_*'        '_*'    see note 1
 WATCOM_C           '*_'        '_*'
 SYSCALL             '*'         '*'
-STDCALL           '_*@nn'      '_*'    see note 2
+STDCALL           '_*@nn'      '_*'
+STDCALL            '_*'        '_*'    see note 2
+STDCALL             '*'         '*'    see note 3
 BASIC               '^'         '^'
 FORTRAN             '^'         '^'
 PASCAL              '^'         '^'
@@ -1049,7 +1053,9 @@ PASCAL              '^'         '^'
 WASM uses MASM compatible names when -zcm command line option is used.
 .note
 In STDCALL procedures name 'nn' is overall parametrs size in bytes.
-It is suppressed when -zz command line option is used (WATCOM 10.0 compatibility).
+'@nn' is suppressed when -zz command line option is used (WATCOM 10.0 compatibility).
+.note
+STDCALL symbols mangling is suppressed by -zzo command line option (WASM backward compatible).
 .endnote
 .np
 .section &company "C" name mangler

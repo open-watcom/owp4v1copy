@@ -178,6 +178,7 @@ typedef struct global_options {
     bool        emit_dependencies;
     bool        watcom_c_mangler;
     bool        use_stdcall_at_number;
+    bool        mangle_stdcall;
 } global_options;
 
 extern global_options Options;
