@@ -283,6 +283,7 @@
 .fn8 _fieeetomsbin              fieee2ms.gml    DOS QNX W WIN32
 .fnc filelength                 fileleng.gml    DOS QNX W WIN32
 .fn8 _filelengthi64             fileleng.gml    DOS       WIN32
+.fnc FILENAME_MAX               filenmax.gml    DOS QNX W WIN32
 .fnc fileno                     fileno.gml      DOS QNX W WIN32
 .fn7 _findclose                 findclos.gml    DOS       WIN32
 .fn7 _findfirst                 findfirs.gml    DOS       WIN32

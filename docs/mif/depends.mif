@@ -1328,6 +1328,7 @@ $(docsrc_dir)\lr\src\fgetpos.gml &
 $(docsrc_dir)\lr\src\fgets.gml &
 $(docsrc_dir)\lr\src\fieee2ms.gml &
 $(docsrc_dir)\lr\src\fileleng.gml &
+$(docsrc_dir)\lr\src\filenmax.gml &
 $(docsrc_dir)\lr\src\fileno.gml &
 $(docsrc_dir)\lr\src\findclos.gml &
 $(docsrc_dir)\lr\src\findfirs.gml &
