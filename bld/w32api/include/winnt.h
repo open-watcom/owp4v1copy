@@ -611,6 +611,7 @@ typedef DWORD FLONG;
 #define PF_3DNOW_INSTRUCTIONS_AVAILABLE 7
 #define PF_RDTSC_INSTRUCTION_AVAILABLE 8
 #define PF_PAE_ENABLED 9
+#define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
 #define PAGE_READONLY 2
 #define PAGE_READWRITE 4
 #define PAGE_WRITECOPY 8
@@ -1152,8 +1153,13 @@ typedef DWORD FLONG;
 #define IO_REPARSE_TAG_MOUNT_POINT 0xA0000003
 #ifndef RC_INVOKED
 typedef DWORD ACCESS_MASK, *PACCESS_MASK;
-#ifndef _GUID_DEFINED /* also defined in basetyps.h */
-#define _GUID_DEFINED
+
+#ifdef _GUID_DEFINED
+# warning _GUID_DEFINED is deprecated, use GUID_DEFINED instead
+#endif
+
+#if ! (defined _GUID_DEFINED || defined GUID_DEFINED) /* also defined in basetyps.h */
+#define GUID_DEFINED
 typedef struct _GUID {
 	unsigned long  Data1;
 	unsigned short Data2;
@@ -1161,7 +1167,7 @@ typedef struct _GUID {
 	unsigned char  Data4[8];
 } GUID, *REFGUID, *LPGUID;
 #define SYSTEM_LUID { QuadPart:999 }
-#endif /* _GUID_DEFINED */
+#endif /* GUID_DEFINED */
 typedef struct _GENERIC_MAPPING {
 	ACCESS_MASK GenericRead;
 	ACCESS_MASK GenericWrite;
@@ -2572,7 +2578,8 @@ typedef struct _IMAGE_SEPARATE_DEBUG_HEADER {
 	DWORD NumberOfSections;
 	DWORD ExportedNamesSize;
 	DWORD DebugDirectorySize;
-	DWORD Reserved[3];
+	DWORD SectionAlignment;
+	DWORD Reserved[2];
 } IMAGE_SEPARATE_DEBUG_HEADER,*PIMAGE_SEPARATE_DEBUG_HEADER;
 #pragma pack(pop)
 typedef enum _CM_SERVICE_NODE_TYPE {
@@ -2651,6 +2658,77 @@ typedef union _FILE_SEGMENT_ELEMENT {
 	ULONGLONG Alignment;
 }FILE_SEGMENT_ELEMENT, *PFILE_SEGMENT_ELEMENT;
 
+typedef enum _JOBOBJECTINFOCLASS {
+	JobObjectBasicAccountingInformation = 1,
+	JobObjectBasicLimitInformation,
+	JobObjectBasicProcessIdList,
+	JobObjectBasicUIRestrictions,
+	JobObjectSecurityLimitInformation,
+	JobObjectEndOfJobTimeInformation,
+	JobObjectAssociateCompletionPortInformation,
+	JobObjectBasicAndIoAccountingInformation,
+	JobObjectExtendedLimitInformation,
+	JobObjectJobSetInformation,
+	MaxJobObjectInfoClass
+} JOBOBJECTINFOCLASS;
+typedef struct _JOBOBJECT_BASIC_ACCOUNTING_INFORMATION {
+	LARGE_INTEGER TotalUserTime;
+	LARGE_INTEGER TotalKernelTime;
+	LARGE_INTEGER ThisPeriodTotalUserTime;
+	LARGE_INTEGER ThisPeriodTotalKernelTime;
+	DWORD TotalPageFaultCount;
+	DWORD TotalProcesses;
+	DWORD ActiveProcesses;
+	DWORD TotalTerminatedProcesses;
+} JOBOBJECT_BASIC_ACCOUNTING_INFORMATION,*PJOBOBJECT_BASIC_ACCOUNTING_INFORMATION;
+typedef struct _JOBOBJECT_BASIC_LIMIT_INFORMATION {
+	LARGE_INTEGER PerProcessUserTimeLimit;
+	LARGE_INTEGER PerJobUserTimeLimit;
+	DWORD LimitFlags;
+	SIZE_T MinimumWorkingSetSize;
+	SIZE_T MaximumWorkingSetSize;
+	DWORD ActiveProcessLimit;
+	ULONG_PTR Affinity;
+	DWORD PriorityClass;
+	DWORD SchedulingClass;
+} JOBOBJECT_BASIC_LIMIT_INFORMATION,*PJOBOBJECT_BASIC_LIMIT_INFORMATION;
+typedef struct _JOBOBJECT_BASIC_PROCESS_ID_LIST {
+	DWORD NumberOfAssignedProcesses;
+	DWORD NumberOfProcessIdsInList;
+	ULONG_PTR ProcessIdList[1];
+} JOBOBJECT_BASIC_PROCESS_ID_LIST, *PJOBOBJECT_BASIC_PROCESS_ID_LIST;
+typedef struct _JOBOBJECT_BASIC_UI_RESTRICTIONS {
+	DWORD UIRestrictionsClass;
+} JOBOBJECT_BASIC_UI_RESTRICTIONS,*PJOBOBJECT_BASIC_UI_RESTRICTIONS;
+typedef struct _JOBOBJECT_SECURITY_LIMIT_INFORMATION {
+	DWORD SecurityLimitFlags;
+	HANDLE JobToken;
+	PTOKEN_GROUPS SidsToDisable;
+	PTOKEN_PRIVILEGES PrivilegesToDelete;
+	PTOKEN_GROUPS RestrictedSids;
+} JOBOBJECT_SECURITY_LIMIT_INFORMATION,*PJOBOBJECT_SECURITY_LIMIT_INFORMATION;
+typedef struct _JOBOBJECT_END_OF_JOB_TIME_INFORMATION {
+	DWORD EndOfJobTimeAction;
+} JOBOBJECT_END_OF_JOB_TIME_INFORMATION,*PJOBOBJECT_END_OF_JOB_TIME_INFORMATION;
+typedef struct _JOBOBJECT_ASSOCIATE_COMPLETION_PORT {
+	PVOID CompletionKey;
+	HANDLE CompletionPort;
+} JOBOBJECT_ASSOCIATE_COMPLETION_PORT,*PJOBOBJECT_ASSOCIATE_COMPLETION_PORT;
+typedef struct _JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION {
+	JOBOBJECT_BASIC_ACCOUNTING_INFORMATION BasicInfo;
+	IO_COUNTERS IoInfo;
+} JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION,*PJOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION;
+typedef struct _JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
+	JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
+	IO_COUNTERS IoInfo;
+	SIZE_T ProcessMemoryLimit;
+	SIZE_T JobMemoryLimit;
+	SIZE_T PeakProcessMemoryUsed;
+	SIZE_T PeakJobMemoryUsed;
+} JOBOBJECT_EXTENDED_LIMIT_INFORMATION,*PJOBOBJECT_EXTENDED_LIMIT_INFORMATION;
+typedef struct _JOBOBJECT_JOBSET_INFORMATION {
+	DWORD MemberLevel;
+} JOBOBJECT_JOBSET_INFORMATION,*PJOBOBJECT_JOBSET_INFORMATION;
 
 #ifdef UNICODE
 typedef OSVERSIONINFOW OSVERSIONINFO,*POSVERSIONINFO,*LPOSVERSIONINFO;
