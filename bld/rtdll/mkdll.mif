@@ -14,22 +14,23 @@ patch_level=0
 $(libname).lib : $(dllname).imp $(static_objs)
     $(librarian) $(lib_flags) $(lib_flags_new) -irn $^@ @$(dllname).imp $(static_objs)
 
-$(dllname).imp : $(dllname).lbc $(rtdll_dir)\trimlbc.vi $(rtdll_dir)\add_br.vi
+$(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
     cp $(dllname).lbc $(dllname).imp
 !ifeq system os2
-    vi -q -s $(rtdll_dir)\trimlbc.vi $(dllname).imp
+    vi -q -s $(rtdll_dir)/trimlbc.vi $(dllname).imp
 !endif
 !ifeq component clib
-    vi -q -s $(rtdll_dir)\add_br.vi $(dllname).imp
+    vi -q -s $(rtdll_dir)/add_br.vi $(dllname).imp
+!endif
+
+!ifeq system winnt
+dll_objs += $(dllname).rc
 !endif
 
 $(dllname).dll $(dllname).lbc : $(dll_objs) $(dll_libs) tmp.def
     $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) }
 !ifeq system winnt
-    $(bld_cl) $(fe_misc_dir)\c\genverrc.c -d_VERSION=$(bld_ver)
-    genverrc ..\verinfo.rc $(dllname).rc $$ $(dllname).dll $(patch_level)
-    del genverrc.*
-    $(rc) -q -bt=nt -i$(%watcom)\h\nt $(dllname).rc $(dllname).dll
+    $(rc) -q -bt=nt -i$(%watcom)/h/nt $(dllname).rc $(dllname).dll
 !endif
     sort < $(dllname).lbc > $(dllname).tmp
     uniq $(dllname).tmp > $(dllname).lbc
@@ -41,3 +42,9 @@ tmp.def : $(dll_def) $(__MAKEFILES__)
 
 !include $(clib_dir)/clean.mif
 !include $(rtdll_dir)/upddll.mif
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) $[@ -d_VERSION=$(bld_ver)
+
+$(dllname).rc : ./genverrc.exe
+    $[@ ../verinfo.rc $^@ $$ $(dllname).dll $(patch_level)

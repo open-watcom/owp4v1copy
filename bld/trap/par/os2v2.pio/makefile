@@ -12,12 +12,10 @@ host_OS = os2
 !include cdirs.mif
 !include deftarg.mif
 
-target = $(%devdir)\bin\binp\dll
+target = $(%devdir)/bin/binp/dll
 
-$(target)\wdio.dll: wdio.obj
-#    wlink sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
-    $(linker) sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
+$(target)/wdio.dll: wdio.obj
+    $(linker) sys os2 dll d all op protmode name $@ f $< segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
 
 wdio.obj: wdio.c
-#    wcc -oxs -ml -bd -d2 wdio.c
-    $(cc) -oxs -ml -bd -d2 wdio.c
+    $(cc) -oxs -ml -bd -d2 $<

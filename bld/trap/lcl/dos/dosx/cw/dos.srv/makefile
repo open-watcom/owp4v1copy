@@ -11,7 +11,7 @@ name = cwhelp
 which = SERVER
 
 extra_c_flags = -DCAUSEWAY -DDOSXHELP
-inc_dirs = ..\h;
+inc_dirs = ../h;
 
 !define substitute_linker
 

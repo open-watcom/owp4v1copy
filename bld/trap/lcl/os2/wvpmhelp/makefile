@@ -18,27 +18,27 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-bdir = $(bin_root)\binp
+bdir = $(bin_root)/binp
 
-w d : $(bdir)\dll\wdpmhook.dll $(bdir)\wdpmhelp.exe .SYMBOLIC
+w d : $(bdir)/dll/wdpmhook.dll $(bdir)/wdpmhelp.exe .SYMBOLIC
         @%null
 
 tmplnk = tmp.lnk
 
-$(bdir)\dll\wdpmhook.dll: pmhook.obj loadstd.obj
-    @%write  $(tmplnk) name $(bdir)\dll\wdpmhook.dll sys os2 dll initglobal
+$(bdir)/dll/wdpmhook.dll: pmhook.obj loadstd.obj
+    @%write  $(tmplnk) name $^@ sys os2 dll initglobal
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) option dosseg,quiet
     @%append $(tmplnk) option map
     @%append $(tmplnk) file loadstd,pmhook
-    @%append $(tmplnk) library $(watcom_dir)\lib\os2.lib
+    @%append $(tmplnk) library $(watcom_dir)/lib/os2.lib
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
     @%append $(tmplnk) segment class 'DATA' shared
     @%append $(tmplnk) segment class 'BSS' shared
     $(linker) @$(tmplnk)
 
-$(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
-    @%write  $(tmplnk) name $(bdir)\wdpmhelp.exe system os2 pm
+$(bdir)/wdpmhelp.exe: pmhelp.lbj pmhelp.res
+    @%write  $(tmplnk) name $^@ system os2 pm
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) file pmhelp.lbj
     @%append $(tmplnk) library clibl.lib
@@ -54,24 +54,24 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
     $(linker) @$(tmplnk)
     $(lang_root)\binp\rc pmhelp.res $(bdir)\wdpmhelp.exe
 
-.c: ..\c
+.c: ../c
 
 .c.obj:
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i$(watcom_dir)\h;$(lang_root)\h\os21x;$(lang_root)\h\os2;$(trap_dir)\h
+        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i"$(watcom_dir)/h;$(lang_root)/h/os21x;$(lang_root)/h/os2;$(trap_dir)/h"
 
 .c.lbj
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i$(lang_root)\h\os21x;$(trap_dir)\h -fo=.lbj
+        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i"$(lang_root)/h/os21x;$(trap_dir)/h" -fo=.lbj
 
-.asm: ..\asm
+.asm: ../asm
 
 .asm.obj:
         $(as) -2 -bt=os2 $[*
 
-pmlock.obj : pmlock.c ..\h\wdpmhelp.h
+pmlock.obj : pmlock.c ../h/wdpmhelp.h
 
-pmhelp.res: ..\h\pmhelp.rc ..\h\wdpmhelp.h
+pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
         @set oinc=$(%include)
-        @set include=$(lang_root)\h\os21x;..\h;$(%include)
+        @set include=$(lang_root)/h/os21x;../h;$(%include)
         @set opath=$(%path)
         @set path=$(lang_root)\binp
         $(lang_root)\binp\rc -r ..\h\pmhelp.rc .\pmhelp.res

@@ -14,13 +14,13 @@ sys_windowed = 1
 !include cproj.mif
 !include defrule.mif
 
-.mif : ..\mif
+.mif : ../mif
 
 !include wproflib.mif
 !include wprofobj.mif
 
-.c : ..\c;$(dig_srcs);$(watcom_dir)\c
-.h : ..\h
+.c : ../c;$(dig_srcs);$(watcom_dir)/c
+.h : ../h
 
 !ifeq host_OS qnx
 exe = qnx
@@ -28,7 +28,7 @@ exe = qnx
 exe = exe
 !endif
 
-inc_dirs = ..\h;$(wsample_dir)\h;$(aui_dir)\h;$(gui_dir)\h;$(trmem_dir);$(dig_dir)\h
+inc_dirs = ../h;$(wsample_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(trmem_dir);$(dig_dir)/h
 
 .BEFORE:
         set INCLUDE=$(inc_path)
@@ -99,25 +99,25 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
     $(rc) $(rc_flags) $(resfile) $(fname).exe
 !endif
 !else
-    wstrip /q /a /r  $(fname).$(exe) . $(resfile)
+    wstrip -q -a -r  $(fname).$(exe) . $(resfile)
 !endif
 !endif
 
-eraseall.obj : ..\compile.gbl
+eraseall.obj : ../compile.gbl
     @if exist *.obj del *.obj
     wtouch eraseall.obj
 
 !ifeq host_OS os2
 wprof.res : auistr.gh wprof.rc
         @set oinc=$(%include)
-        set include=$(lang_root)\h\os2;$(rcinclude);$(%include)
-        wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wprof.i wprof.rc
-#       wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
+        set include=$(lang_root)/h/os2;$(rcinclude);$(%include)
+        wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wprof.i wprof.rc
+#       wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wprofj.i wprof.rc -dJAPANESE_MESSAGES
 
 !ifndef %use_os2tk_stuff
 
         set opath=$(%path)
-        set path=$(lang_root)\binp
+        set path=$(lang_root)/binp
 
 !endif
 
@@ -143,23 +143,23 @@ msg.obj : msg.c msg.h
 msgstr.obj : msgstr.c msg.h
 
 rcfiles = &
-    $(gui_dir)\h\gui.rc &
-    $(gui_dir)\h\gui.msg &
-    $(aui_dir)\h\aui.rc &
-    $(aui_dir)\h\dlgrx.dlg &
-    $(aui_dir)\h\dlgsrch.dlg &
-    $(aui_dir)\h\dlgsrcha.dlg &
-    $(aui_dir)\h\japrx.dlg &
-    $(aui_dir)\h\japsrch.dlg &
-    $(aui_dir)\h\japsrcha.dlg
+    $(gui_dir)/h/gui.rc &
+    $(gui_dir)/h/gui.msg &
+    $(aui_dir)/h/aui.rc &
+    $(aui_dir)/h/dlgrx.dlg &
+    $(aui_dir)/h/dlgsrch.dlg &
+    $(aui_dir)/h/dlgsrcha.dlg &
+    $(aui_dir)/h/japrx.dlg &
+    $(aui_dir)/h/japsrch.dlg &
+    $(aui_dir)/h/japsrcha.dlg
 
-rcinclude=.;..\h;$(dig_dir)\h;$(aui_dir)\h;$(gui_dir);$(gui_dir)\h;$(brinfo_dir)\merge\res
+rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)/merge/res
 
-wprofui.res : auistr.gh ..\h\wprofui.rc $(rcfiles)
-    $(rc) -r -q -bt=windows -i=$(rcinclude);$(lang_root)\h\win ..\h\wprofui.rc /fo=wprofui.res
+wprofui.res : auistr.gh ../h/wprofui.rc $(rcfiles)
+    $(rc) -r -q -bt=windows -i=$(rcinclude);$(lang_root)/h/win ../h/wprofui.rc -fo=wprofui.res
 
 auistr.gh : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)\h" $]@
+        $(bld_cl) -i"$(aui_dir)/h" $]@
         mkstr $^@
         @rm -f mkstr.*
 

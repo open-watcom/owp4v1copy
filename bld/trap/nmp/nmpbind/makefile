@@ -47,11 +47,11 @@ $(bin_root)/binp/dnmpbind.exe : _err.gh _jerr.gh $(objs)
 inc_dirs = $(trap_dir)/h
 
 _err.gh : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -i"$(trap_dir)\h"
+        $(bld_cl) $[@ -i"$(trap_dir)/h"
         mkstr $^@
         @rm -f mkstr.*
 
 _jerr.gh : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)\h"
+        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
         mkstr $^@
         @rm -f mkstr.*

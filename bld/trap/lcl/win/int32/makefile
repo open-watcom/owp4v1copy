@@ -20,7 +20,6 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-#CFLAGS = -zq -s -oas -fpc -mc -w3 -d1 -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h
 extra_c_flags = -s -fpc -zu -zw
 
 extra_l_flags_win = initinstance memory
@@ -41,12 +40,7 @@ $(bin_root)/bin/$(name).dll: $(OBJS)
        $(linker) $(lflags) name $^@
 
 .c : ../c
-#.c.obj :
-#        $(comp286) $[* $(CFLAGS) -zu -zw
-#        $(cc) $[* $(CFLAGS) -zu -zw
 
 extra_a_flags = -fpc -mc
 
 .asm : ../asm
-#.asm.obj :
-#        $(as) $[* -fpc -mc -w3 -d1 -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h
