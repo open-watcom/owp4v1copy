@@ -1027,6 +1027,7 @@ $(docsrc_dir)\lg\opcache.gml &
 $(docsrc_dir)\lg\opcaseex.gml &
 $(docsrc_dir)\lg\opcheck.gml &
 $(docsrc_dir)\lg\opcopyri.gml &
+$(docsrc_dir)\lg\opcsum.gml &
 $(docsrc_dir)\lg\opcustom.gml &
 $(docsrc_dir)\lg\opcvpack.gml &
 $(docsrc_dir)\lg\opdescri.gml &
@@ -1042,6 +1043,7 @@ $(docsrc_dir)\lg\opimplib.gml &
 $(docsrc_dir)\lg\opincrem.gml &
 $(docsrc_dir)\lg\opintern.gml &
 $(docsrc_dir)\lg\oplinear.gml &
+$(docsrc_dir)\lg\oplnkver.gml &
 $(docsrc_dir)\lg\oplongli.gml &
 $(docsrc_dir)\lg\opmangle.gml &
 $(docsrc_dir)\lg\opmanyau.gml &
@@ -1066,6 +1068,7 @@ $(docsrc_dir)\lg\opoldlib.gml &
 $(docsrc_dir)\lg\oponeaut.gml &
 $(docsrc_dir)\lg\oposdoma.gml &
 $(docsrc_dir)\lg\oposname.gml &
+$(docsrc_dir)\lg\oposver.gml &
 $(docsrc_dir)\lg\oppackco.gml &
 $(docsrc_dir)\lg\oppackda.gml &
 $(docsrc_dir)\lg\opprivil.gml &

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal data structures for various executable formats.
 *
 ****************************************************************************/
 
@@ -128,9 +127,16 @@ struct fmt_pe_data {
     unsigned            subsystem;
     unsigned_16         submajor;
     unsigned_16         subminor;
+    unsigned_16         osmajor;    /*  OS major version    */
+    unsigned_16         osminor;    /*  OS minor version    */
+    unsigned_8          linkmajor;  /*  link major version  */
+    unsigned_8          linkminor;  /*  link minor version  */
     unsigned            tnt : 1;
     unsigned            sub_specd : 1;
     unsigned            no_stdcall : 1;
+    unsigned            osv_specd : 1;      /* OS version specified? */
+    unsigned            lnk_specd : 1;      /* Link version specified */
+    unsigned            checksumfile : 1;   /* Create checksum for file? */
 };
 
 // stuff common to some file formats which have the concept of an export

@@ -60,6 +60,9 @@ is any of the following:
 .note ARTIFICIAL
 .note [NO]CACHE
 .note [NO]CASEEXACT
+.if '&exeformat' eq 'win nt' .do begin
+.note CHECKSUM
+.do end
 .if '&exeformat' ne 'win vxd' .do begin
 .note CVPACK
 .do end
@@ -74,6 +77,9 @@ is any of the following:
 .note INCREMENTAL
 .if '&exeformat' eq 'os2' .do begin
 .note INTERNALRELOCS
+.do end
+.if '&exeformat' eq 'win nt' .do begin
+.note LINKVERSION=major[.minor]
 .do end
 .note MANGLEDNAMES
 .if '&exeformat' eq 'win' or '&exeformat' eq 'os2' .do begin
@@ -105,6 +111,9 @@ is any of the following:
 .note ONEAUTODATA
 .do end
 .note OSNAME='string'
+.if '&exeformat' eq 'win nt' .do begin
+.note OSVERSION=major[.minor]
+.do end
 .if '&exeformat' ne 'win nt' and '&exeformat' ne 'win vxd' .do begin
 .note PACKCODE=n
 .note PACKDATA=n

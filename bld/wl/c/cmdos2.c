@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing of linker options for OS/2 and Windows formats.
 *
 ****************************************************************************/
 
 
 #include <string.h>
+#include <ctype.h>
 #include "linkstd.h"
 #include "alloc.h"
 #include "command.h"
@@ -78,7 +78,7 @@ extern bool ProcAnonExport( void )
     CmdFlags |= CF_ANON_EXPORT;
     retval = ProcOS2Export();
     CmdFlags &= ~CF_ANON_EXPORT;
-    return retval;
+    return( retval );
 }
 
 extern bool ProcOS2Segment( void )
@@ -237,7 +237,7 @@ static bool getexport( void )
     while( ProcOne( Exp_Keywords, SEP_NO, FALSE ) ) {}  // handle misc options
     FmtData.u.os2.exports = exp->next;       // take it off the list
     exp->iopl_words = 0;
-    if(!(FmtData.type & (MK_WINDOWS|MK_PE)) &&GetToken(SEP_NO,TOK_INCLUDE_DOT)){
+    if(!(FmtData.type & (MK_WINDOWS|MK_PE)) &&GetToken(SEP_NO,TOK_INCLUDE_DOT)) {
         if( getatoi( &value ) == ST_IS_ORDINAL ) {
             if( value > 63 ) {
                 LnkMsg( LOC+LINE+MSG_TOO_MANY_IOPL_WORDS+ ERR, NULL );
@@ -376,14 +376,14 @@ static bool AddCommit( void )
 {
     Token.thumb = REJECT;
     if( ProcOne( CommitKeywords, SEP_NO, FALSE ) == FALSE ) return( FALSE );
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcCommit( void )
 /****************************/
 // set NT stack commit and heap sizes.
 {
-    return ProcArgList( AddCommit, TOK_INCLUDE_DOT );
+    return( ProcArgList( AddCommit, TOK_INCLUDE_DOT ) );
 }
 
 extern bool ProcRWRelocCheck( void )
@@ -398,7 +398,7 @@ extern bool ProcSelfRelative( void )
 /**********************************/
 {
     FmtData.u.os2.gen_rel_relocs = TRUE;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcInternalRelocs( void )
@@ -406,7 +406,7 @@ extern bool ProcInternalRelocs( void )
 // in case someone wants internal relocs generated.
 {
     FmtData.u.os2.gen_int_relocs = TRUE;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcToggleRelocsFlag( void )
@@ -415,21 +415,21 @@ extern bool ProcToggleRelocsFlag( void )
 // flag set
 {
     FmtData.u.os2.toggle_relocs = TRUE;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcPENoRelocs( void )
 /*********************************/
 {
     LinkState &= ~MAKE_RELOCS;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcNoStdCall( void )
 /*******************************/
 {
     FmtData.u.pe.no_stdcall = TRUE;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcOS2( void )
@@ -471,6 +471,7 @@ extern bool ProcPE( void )
     FmtData.u.pe.heapcommit = 4*1024;   // arbitrary non-zero default.
     FmtData.u.pe.os2.heapsize = 8*1024; // another arbitrary non-zero default
     FmtData.u.pe.stackcommit = PE_DEF_STACK_COMMIT;
+    FmtData.u.pe.os2.segment_shift = 9;    // 512 byte arbitrary rounding
     return( TRUE );
 }
 
@@ -693,7 +694,7 @@ static bool getsegflags( void )
     FmtData.u.os2.os2_seg_flags = entry;
     ProcOne( SegDesc, SEP_NO, FALSE );          // look for an optional segdesc
     if( entry->type != SEGFLAG_CODE && entry->type != SEGFLAG_DATA ) {
-        if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ){
+        if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
             FmtData.u.os2.os2_seg_flags = entry->next;
             _LnkFree( entry );
             return( FALSE );
@@ -717,21 +718,21 @@ extern bool ProcSegType( void )
     if( !ProcOne( SegTypeDesc, SEP_NO, FALSE ) ) {
         LnkMsg( LOC+LINE+WRN+MSG_INVALID_TYPE_DESC, NULL );
     }
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcSegCode( void )
 /*****************************/
 {
     FmtData.u.os2.os2_seg_flags->type = SEGFLAG_CODE;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcSegData( void )
 /*****************************/
 {
     FmtData.u.os2.os2_seg_flags->type = SEGFLAG_DATA;
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcPreload( void )
@@ -1054,7 +1055,7 @@ extern bool ProcTNT( void )
 /*************************/
 {
     FmtData.u.pe.tnt = TRUE;
-    return TRUE;
+    return( TRUE );
 }
 
 static void ParseVersion( void )
@@ -1084,12 +1085,133 @@ static bool AddResource( void )
 /*****************************/
 {
     DoAddResource( tostring() );
-    return TRUE;
+    return( TRUE );
 }
 
 extern bool ProcResource( void )
 /******************************/
 {
-    return ProcArgList( &AddResource, TOK_INCLUDE_DOT | TOK_IS_FILENAME );
+    return( ProcArgList( &AddResource, TOK_INCLUDE_DOT | TOK_IS_FILENAME ) );
 }
 
+enum{
+    valid_result    = 0x01,
+    major_valid     = 0x02,
+    minor_valid     = 0x04,
+    revision_valid  = 0x08
+};
+
+typedef struct tagVersBlock
+{
+    unsigned_32 major;
+    unsigned_32 minor;
+    unsigned_32 revision;
+}VersBlock;
+
+static unsigned_32 ProcGenericVersion( VersBlock * pVers, unsigned_32 major_limit, unsigned_32 minor_limit, unsigned_32 revision_limit)
+{
+    unsigned_32 state = 0;
+    ord_state   retval;
+    unsigned_32 value;
+
+    if(NULL == pVers) {
+        return( state );
+    }
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( state );
+    }
+
+    retval = getatol( &value );
+    if( retval != ST_IS_ORDINAL ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    } else if( ( major_limit ) && ( value > major_limit ) ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    }
+    /*
+    //  From now on, all results are valid despite warnings
+    */
+    pVers->major = value;
+    pVers->minor = 0;
+    pVers->revision = 0;
+    state |= (valid_result | major_valid);
+
+    if( !GetToken( SEP_PERIOD, 0 ) ) {  /*if we don't get a minor number*/
+       return( state );                      /* that's OK */
+    }
+    retval = getatol( &value );
+    if( retval != ST_IS_ORDINAL ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    } else if( ( minor_limit ) && ( value > minor_limit ) ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    }
+
+    pVers->minor = value;
+    state |= minor_valid;
+
+    if( !GetToken( SEP_PERIOD, 0 ) ) {  /* if we don't get a revision*/
+        return( state );                 /* that's all right */
+    }
+
+    /*
+    //  Netware supports a revision field 0-26 (null or a-z(A-Z))
+    */
+    retval = getatol( &value );
+    if( retval == ST_NOT_ORDINAL && Token.len == 1 ) {
+        value  = tolower( *Token.this ) - 'a' + 1;
+    } else if ( retval == ST_NOT_ORDINAL ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    }
+
+    if( ( revision_limit ) && ( value > revision_limit ) ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
+        return( state );
+    }
+    pVers->revision = value;
+    state |= revision_valid;
+    return( state );
+}
+
+extern bool     ProcLinkVersion( void )
+{
+    unsigned_32 result;
+    VersBlock   vb;
+
+    result = ProcGenericVersion( &vb , 255, 255, 0);
+    if( !( result & valid_result ) ) {
+        return( FALSE );    /* error has occurred */
+    }
+
+    FmtData.u.pe.lnk_specd = 1;
+    FmtData.u.pe.linkmajor = (result & major_valid) ? vb.major : 0;
+    FmtData.u.pe.linkminor = (result & minor_valid) ? vb.minor : 0;
+
+    return( TRUE );
+}
+
+extern bool     ProcOsVersion( void )
+{
+    unsigned_32 result;
+    VersBlock   vb;
+
+    result = ProcGenericVersion( &vb , 0, 99, 0);   /* from old default of 100 max */
+    if( !( result & valid_result ) ) {
+        return( FALSE );    /* error has occurred */
+    }
+
+    FmtData.u.pe.osv_specd = 1;
+    FmtData.u.pe.osmajor = (result & major_valid) ? vb.major : 0;
+    FmtData.u.pe.osminor = (result & minor_valid) ? vb.minor : 0;
+
+    return( TRUE );
+}
+
+extern bool     ProcChecksum( void )
+{
+    FmtData.u.pe.checksumfile = 1;
+    return( TRUE );
+}

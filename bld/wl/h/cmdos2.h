@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 and Windows command processing function prototypes.
 *
 ****************************************************************************/
 
@@ -134,3 +133,10 @@ extern bool     ProcPENoRelocs( void );
 extern void     ChkBase( offset align );
 extern void     SetOS2Fmt( void );
 extern void     FreeOS2Fmt( void );
+
+/*
+//  These are PE only
+*/
+extern bool     ProcLinkVersion( void );
+extern bool     ProcOsVersion( void );
+extern bool     ProcChecksum( void );

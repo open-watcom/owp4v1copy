@@ -98,6 +98,7 @@
 .dir cache              opcache.gml     all
 .dir caseexact          opcaseex.gml    all
 .dir check              opcheck.gml     netware
+.dir checksum           opcsum.gml      win32
 .dir comment            ldcmt.gml       all
 .dir commit             ldcommit.gml    win32
 .dir copyright          opcopyri.gml    netware
@@ -131,6 +132,7 @@
 .dir libpath            ldlibpat.gml    all
 .dir library            ldlibrar.gml    all
 .dir linearrelocs       oplinear.gml    qnx
+.dir linkversion        oplnkver.gml    win32
 .dir longlived          oplongli.gml    qnx
 .dir manglednames       opmangle.gml    all
 .dir manyautodata       opmanyau.gml    os2 win16
@@ -162,14 +164,15 @@
 .dir option             ldoption.gml    all
 .dir optlib             ldoptlib.gml    all
 .dir osdomain           oposdoma.gml    netware
-.dir pseudopreemption   oppseudo.gml    netware
 .dir osname             oposname.gml    all
+.dir osversion          oposver.gml     win32
 .*   overlay            ldoverla.gml    dos
 .dir packcode           oppackco.gml    dos os2 qnx win16
 .dir packdata           oppackda.gml    dos os2 qnx win16
 .dir path               ldpath.gml      all
 .dir privilege          opprivil.gml    qnx
 .dir protmode           opprotmo.gml    os2
+.dir pseudopreemption   oppseudo.gml    netware
 .dir quiet              opquiet.gml     all
 .dir redefsok           opredefs.gml    all
 .dir reentrant          opreentr.gml    netware

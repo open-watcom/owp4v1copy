@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command parsing tables.
 *
 ****************************************************************************/
 
-
-/*
- *  CMDTABLE : command parsing tables
- *
-*/
 
 #include "linkstd.h"
 #include "command.h"
@@ -236,6 +230,9 @@ extern  parse_entry     MainOptions[] = {
     "LInearrelocs", &ProcLinearRelocs,  MK_QNX, 0,
     "EXTRASections",&ProcExtraSections, MK_ELF, 0,
     "EXPORTAll",    &ProcExportAll,     MK_ELF, 0,
+    "LINKVersion",  &ProcLinkVersion,   MK_PE,  0,
+    "OSVersion",    &ProcOsVersion,     MK_PE,  0,
+    "CHECKSUM",     &ProcChecksum,      MK_PE,  0,
     NULL
 };
 

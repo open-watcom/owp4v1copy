@@ -12,6 +12,24 @@ recompile your application.
 .if '&lang' eq 'C/C++' .do begin
 .*
 .*
+.section Differences from Open Watcom Version 1.2
+.*
+.np
+Following is a list of changes made in &product 1.3:
+:cmt Reflects main Perforce branch as of 2004/01/20 - Carl
+.begbull
+.bull
+Linker for Win32 targets can now create file checksums. These are primarily used for
+DLL's and device drivers but can be applied to all Win32 PECOFF images if required.
+.bull
+Linker for Win32 targets can now set operating system version requirements into the PECOFF 
+optional header (Microsoft extended header).
+.bull (Microsoft extended header).
+Linker for Win32 targets can now set the linker version number into the PECOFF optional
+header (Microsoft extended header).
+.endbull
+.*
+.*
 .section Differences from Open Watcom Version 1.1
 .*
 .np

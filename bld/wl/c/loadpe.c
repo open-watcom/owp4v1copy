@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities for creation of PE (Win32) executable files.
 *
 ****************************************************************************/
 
-
-/*
-   LOADPE : utilities for creation of PE (Windows NT) executable files.
-
-*/
 
 #include <string.h>
 #include <stddef.h>
@@ -75,6 +69,9 @@
 
 #define I386_TRANSFER_OP1       0xff    /* first byte of a "JMP [FOO]" */
 #define I386_TRANSFER_OP2       0x25    /* second byte of a "JMP [FOO]" */
+
+#define MINIMUM_SEG_SHIFT       2       /* Corresponds to 2^2 == 4 bytes */
+#define DEFAULT_SEG_SHIFT       9       /* Corresponds to 2^9 == 512 bytes */
 
 #pragma pack(1);
 
@@ -141,7 +138,7 @@ static struct {
         if( IS_SYM_IMPORTED(sym) && (sym)->p.import != NULL \
             /*&& !((sym)->info & SYM_DEAD)*/)
 
-static void CalcIDataSize( void )
+static offset CalcIDataSize( void )
 /*******************************/
 {
     struct module_import *      mod;
@@ -150,6 +147,9 @@ static void CalcIDataSize( void )
     unsigned_32 size;
 
     iatsize = (NumImports+NumMods) * sizeof( pe_va );
+    if( (0 == iatsize) && ( LinkFlags & STRIP_CODE ) ) {
+        return( 0 );
+    }
     IData.ilt_off = (NumMods + 1) * sizeof( pe_import_directory );
     IData.eof_ilt_off = IData.ilt_off + iatsize;
     IData.iat_off = IData.eof_ilt_off + TocSize;
@@ -170,6 +170,7 @@ static void CalcIDataSize( void )
         }
     }
     IData.total_size = size;
+    return( IData.total_size );
 }
 
 extern void ResetLoadPE( void )
@@ -185,7 +186,7 @@ extern void ResetLoadPE( void )
 static offset CalcIATAbsOffset( void )
 /************************************/
 {
-    return IDataGroup->linear + FmtData.base + IData.iat_off;
+    return( IDataGroup->linear + FmtData.base + IData.iat_off );
 }
 
 static void CalcImpOff( dll_sym_info *dll, unsigned *off )
@@ -217,10 +218,10 @@ static int GetTransferGlueSize( int lnk_state )
 /*********************************************/
 {
     switch( lnk_state & (HAVE_ALPHA_CODE|HAVE_I86_CODE|HAVE_PPC_CODE) ) {
-    case HAVE_ALPHA_CODE: return ALPHA_TRANSFER_SIZE;
-    case HAVE_I86_CODE: return I386_TRANSFER_SIZE;
-    case HAVE_PPC_CODE: return PPC_TRANSFER_SIZE;
-    default: DbgAssert( 0 ); return 0;
+    case HAVE_ALPHA_CODE:   return( ALPHA_TRANSFER_SIZE );
+    case HAVE_I86_CODE:     return( I386_TRANSFER_SIZE );
+    case HAVE_PPC_CODE:     return( PPC_TRANSFER_SIZE );
+    default:                DbgAssert( 0 ); return( 0 );
     }
 }
 
@@ -228,10 +229,10 @@ static void * GetTransferGlueCode( int lnk_state )
 /************************************************/
 {
     switch( lnk_state & (HAVE_ALPHA_CODE|HAVE_I86_CODE|HAVE_PPC_CODE) ) {
-    case HAVE_ALPHA_CODE: return &AlphaJump;
-    case HAVE_I86_CODE: return &I386Jump;
-    case HAVE_PPC_CODE: return &PPCJump;
-    default: DbgAssert( 0 ); return NULL;
+    case HAVE_ALPHA_CODE:   return( &AlphaJump );
+    case HAVE_I86_CODE:     return( &I386Jump );
+    case HAVE_PPC_CODE:     return( &PPCJump );
+    default:                DbgAssert( 0 ); return( NULL );
     }
 }
 
@@ -242,7 +243,7 @@ static offset FindIATSymAbsOff( symbol * sym )
 
     dll = sym->p.import;
     DbgAssert( IS_SYM_IMPORTED(sym) && dll != NULL );
-    return dll->iatsym->addr.off;
+    return( dll->iatsym->addr.off );
 }
 
 extern signed_32 FindSymPosInTocv( symbol * sym )
@@ -250,7 +251,7 @@ extern signed_32 FindSymPosInTocv( symbol * sym )
 {
     offset off = FindIATSymAbsOff(sym) - IDataGroup->linear - FmtData.base;
     off = off - TocShift - IData.eof_ilt_off;
-    return off;
+    return( off );
 }
 
 static void GenPETransferTable( void )
@@ -332,6 +333,12 @@ static void WriteDataPages( pe_header *header, pe_object *object )
            header->entry_rva = group->linear + StartInfo.addr.off;
         }
         object->rva = group->linear;
+
+        /*
+        //  Why weren't we filling in this field? MS do!
+        */
+        object->virtual_size = size;
+
         object->physical_size = ROUND_UP( size, header->file_align );
         object->flags = 0;
         /* segflags are in OS/2 V1.x format, we have to translate them
@@ -349,6 +356,9 @@ static void WriteDataPages( pe_header *header, pe_object *object )
             object->flags |= PE_OBJ_CODE | PE_OBJ_EXECUTABLE;
             if( !(group->segflags & SEG_READ_ONLY) ) {
                 object->flags |= PE_OBJ_READABLE;
+            }
+            if( group->segflags & SEG_NOPAGE) {
+                object->flags |= PE_OBJ_NOT_PAGABLE;
             }
             header->code_size += object->physical_size;
             if( object->rva < header->code_base ) {
@@ -710,13 +720,13 @@ void * RcMemMalloc( size_t size )
     void *      retval;
 
     _ChkAlloc( retval, size );
-    return  retval;
+    return( retval );
 }
 
 void * RcMemRealloc( void * old_ptr, size_t newsize )
 {
     _LnkReAlloc( old_ptr, old_ptr, newsize );
-    return old_ptr;
+    return( old_ptr );
 }
 
 void RcMemFree( void * ptr )
@@ -728,7 +738,7 @@ int  RcWrite( int hdl, const void *buf, size_t len )
 {
     hdl = hdl;
     WriteLoad( (void *) buf, len );
-    return len;
+    return( len );
 }
 
 long RcSeek( int hdl, long off, int pos )
@@ -746,9 +756,9 @@ long RcSeek( int hdl, long off, int pos )
         QLSeek( hdl, off, pos, "resource file" );
     }
     if( pos == SEEK_CUR ) {
-        return off + pos;
+        return( off + pos );
     } else {
-        return pos;
+        return( pos );
     }
 }
 
@@ -757,7 +767,7 @@ long RcTell( int hdl )
     DbgAssert( hdl == Root->outfile->handle );
 
     hdl = hdl;
-    return PosLoad();
+    return( PosLoad() );
 }
 
 int RcPadFile( int handle, long pad )
@@ -766,7 +776,7 @@ int RcPadFile( int handle, long pad )
 
     handle = handle;
     PadLoad( pad );
-    return FALSE;
+    return( FALSE );
 }
 
 void CheckDebugOffset( ExeFileInfo * info )
@@ -787,7 +797,7 @@ RcStatus CopyExeData( int inhandle, int outhandle, uint_32 length )
         QRead( inhandle, TokBuff, length, "resource file" );
         WriteLoad( TokBuff, length );
     }
-    return RS_OK;
+    return( RS_OK );
 }
 
 extern void DoAddResource( char *name )
@@ -881,7 +891,7 @@ static seg_leader * SetLeaderTable( char *name, pe_hdr_table_entry *entry )
         entry->rva =  leader->group->linear + GetLeaderDelta( leader );
         entry->size = leader->size;
     }
-    return leader;
+    return( leader );
 }
 
 static int CmpDesc( virt_mem a, virt_mem b )
@@ -892,7 +902,7 @@ static int CmpDesc( virt_mem a, virt_mem b )
 
     GET32INFO( *((virt_mem *)a), a32 );
     GET32INFO( *((virt_mem *)b), b32 );
-    return (signed_32)a32 - b32;
+    return( (signed_32)a32 - b32 );
 }
 
 static void SwapDesc( virt_mem a, virt_mem b )
@@ -925,7 +935,7 @@ static bool SetPDataArray( void *_sdata, void *_array )
             size -= sizeof(procedure_descriptor);
         }
     }
-    return FALSE;
+    return( FALSE );
 }
 
 static void SetMiscTableEntries( pe_header *hdr )
@@ -967,7 +977,24 @@ static unsigned FindNumObjects()
     if( LinkFlags & CV_DBI_FLAG ) ++num_objects;
     if( FmtData.u.os2.description != NULL ) ++num_objects;
     if( FmtData.resource != NULL || FmtData.u.pe.resources != NULL ) ++num_objects;
-    return num_objects;
+    return( num_objects );
+}
+
+static unsigned long CalcPEChecksum( unsigned long dwInitialCount, unsigned short * pwBuffer, unsigned long dwWordCount )
+{
+    unsigned long      __wCrc      = dwInitialCount;
+    unsigned short *   __pwBuffer  = pwBuffer;
+    unsigned long      __dwCount   = dwWordCount;
+
+    while( 0 != __dwCount-- ) {
+        __wCrc += *__pwBuffer++;
+
+        __wCrc = ( __wCrc & 0x0000FFFF ) + ( __wCrc >> 16 );
+    }
+
+    __wCrc = ( ( __wCrc >> 16 ) + __wCrc );
+
+    return( __wCrc & 0x0000FFFF );
 }
 
 extern void FiniPELoadFile( void )
@@ -1022,20 +1049,36 @@ extern void FiniPELoadFile( void )
             exe_head.dll_flags |= PE_DLL_PERTHRD_TERM;
         }
     }
-    exe_head.lnk_major = PE_LNK_MAJOR;
-    exe_head.lnk_minor = PE_LNK_MINOR;
+
+    if( FmtData.u.pe.lnk_specd ) {
+        exe_head.lnk_major = FmtData.u.pe.linkmajor;
+        exe_head.lnk_minor = FmtData.u.pe.linkminor;
+    } else {
+        exe_head.lnk_major = PE_LNK_MAJOR;
+        exe_head.lnk_minor = PE_LNK_MINOR;
+    }
     exe_head.image_base = FmtData.base;
     exe_head.object_align = FmtData.objalign;
-    if( FmtData.u.os2.segment_shift < 9 ) {
-        FmtData.u.os2.segment_shift = 9;
-    }
-    if( FmtData.u.os2.segment_shift < 9 ) {     //512 byte minimum.
+
+    /*
+     *  I have changed this to allow programmers to control this shift. MS has 0x20 byte segments
+     *  in some drivers! Who are we to argue? Never mind it's against the PE spec.
+     */
+    if( FmtData.u.os2.segment_shift < MINIMUM_SEG_SHIFT ) {
         LnkMsg( WRN+MSG_VALUE_INCORRECT, "s", "alignment" );
-        FmtData.u.os2.segment_shift = 9;
+        FmtData.u.os2.segment_shift = DEFAULT_SEG_SHIFT;
     }
+
     exe_head.file_align = 1UL << FmtData.u.os2.segment_shift;
-    exe_head.os_major = PE_OS_MAJOR;
-    exe_head.os_minor = PE_OS_MINOR + 0xb;      // KLUDGE!
+
+    if( FmtData.u.pe.osv_specd ) {
+        exe_head.os_major = FmtData.u.pe.osmajor;
+        exe_head.os_minor = FmtData.u.pe.osminor;
+    } else {
+        exe_head.os_major = PE_OS_MAJOR;
+        exe_head.os_minor = PE_OS_MINOR + 0xb;      // KLUDGE!
+    }
+
     exe_head.user_major = FmtData.major;
     exe_head.user_minor = FmtData.minor;
     if( FmtData.u.pe.sub_specd ) {
@@ -1107,8 +1150,56 @@ extern void FiniPELoadFile( void )
     exe_head.header_size = object->physical_offset;
     WriteDBI();
     SeekLoad( stub_len );
+
+    if( FmtData.u.pe.checksumfile ) {
+        exe_head.file_checksum = 0L;    /* Ensure checksum is 0 before we calculate it */
+    }
+
     WriteLoad( &exe_head, head_size );
     WriteLoad( object, num_objects * sizeof( pe_object ) );
+
+    if( FmtData.u.pe.checksumfile ) {
+        unsigned long   crc = 0L;
+        unsigned long   buffsize;
+        unsigned long   currpos = 0L;
+        unsigned long   totalsize = 0L;
+        outfilelist *   outfile;
+        char *          buffer = NULL;
+        /*
+         *  Checksum required. We have already written the EXE header with a NULL checksum
+         *  We need to calculate the checksum over all blocks
+         *  We flush the buffers by seeking back to 0, then repeatedly reading all the file back in
+         *  and checksumming it. The MS checksum is completed by adding the total file size to the
+         *  calculated CRC. We then add this to the header and rewrite the header.
+         */
+        SeekLoad( 0 ); /* Flush the buffer */
+        outfile = CurrSect->outfile;
+        DbgAssert( outfile->buffer == NULL );
+
+        totalsize = QFileSize( outfile->handle );
+
+#define CRC_BUFF_SIZE   (16*1024)
+        _ChkAlloc( buffer, CRC_BUFF_SIZE );
+
+        if( buffer ) {
+            while( currpos < totalsize ) {
+                memset( buffer, 0, CRC_BUFF_SIZE );
+                buffsize = QRead( outfile->handle, buffer, CRC_BUFF_SIZE, outfile->fname );
+                DbgAssert( ( buffsize % 2 ) != 1 ); /* check for odd length */
+                currpos += buffsize;
+
+                crc = CalcPEChecksum( crc, (unsigned short *)buffer, (buffsize / sizeof(unsigned short)) );
+            }
+
+            _LnkFree( buffer );
+            crc += totalsize;
+
+            exe_head.file_checksum = crc;
+            SeekLoad( stub_len );
+            WriteLoad( &exe_head, head_size );
+        }
+    }
+
     _LnkFree( object );
 }
 
@@ -1201,21 +1292,22 @@ static void CreateIDataSection( void )
     class_entry *class;
 
     PrepareToc();
-    CalcIDataSize();
-    IDataGroup = GetGroup( IDataGrpName );
-    class = FindClass( Root, CoffIDataSegName, 1, 0 );
-    class->flags |= CLASS_IDATA | CLASS_LXDATA_SEEN;
-    sdata = AllocSegData();
-    sdata->length = IData.total_size;
-    sdata->u.name = CoffIDataSegName;
-    sdata->align = 2;
-    sdata->combine = COMBINE_ADD;
-    sdata->is32bit = TRUE;
-    sdata->isabs = FALSE;
-    AddSegment( sdata, class );
-    sdata->data = AllocStg( sdata->length );
-    IData.sdata = sdata;
-    AddToGroup( IDataGroup, sdata->u.leader );
+    if( 0 != CalcIDataSize() ) {
+        IDataGroup = GetGroup( IDataGrpName );
+        class = FindClass( Root, CoffIDataSegName, 1, 0 );
+        class->flags |= CLASS_IDATA | CLASS_LXDATA_SEEN;
+        sdata = AllocSegData();
+        sdata->length = IData.total_size;
+        sdata->u.name = CoffIDataSegName;
+        sdata->align = 2;
+        sdata->combine = COMBINE_ADD;
+        sdata->is32bit = TRUE;
+        sdata->isabs = FALSE;
+        AddSegment( sdata, class );
+        sdata->data = AllocStg( sdata->length );
+        IData.sdata = sdata;
+        AddToGroup( IDataGroup, sdata->u.leader );
+    }
 }
 
 extern void ChkPEData( void )
@@ -1330,10 +1422,13 @@ extern void AllocPETransferTable( void )
     segment             seg;
     int                 glue_size;
 
+    /*
+     *  Moved export check here as otherwise flags don't get propagated
+     */
+    ChkOS2Exports();
     if( IDataGroup == NULL ) {
         return;
     }
-    ChkOS2Exports();
     class = Root->classlist;
     for( ;; ) {
         if( class == NULL ) {
