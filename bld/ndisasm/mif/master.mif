@@ -20,6 +20,8 @@ exe_name = $(proj_name).exe
 
 all: $(exe_name) .SYMBOLIC
 
+additional_cleanup = *.u
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif

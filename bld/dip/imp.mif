@@ -6,6 +6,8 @@ proj_name = dip
 
 dip_autodepends = .autodepend
 
+additional_cleanup = *.d32 *.dip
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif

@@ -12,8 +12,10 @@ vi_autodepends = .AUTODEPEND
 
 PROJECT : $(name) .symbolic
 
+additional_cleanup = *.dh *.ch
+
 !include cproj.mif
-#!include deftarg.mif
+!include deftarg.mif
 !include defrule.mif
 
 !ifndef prebuild
@@ -87,8 +89,3 @@ tags : ../win/tags .SYMBOLIC
     ctags @vi.tag -f$^@
 !endif
 !endif
-
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.o
-        rm -f *.lnk *.exe *.dll *.res *.lbc *.gh
-        rm -f *.err *.map *.sym *.dh *.ch *.msg *.rex

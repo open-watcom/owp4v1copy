@@ -51,6 +51,8 @@ memory_model_i86 = c
 memory_model_386 = s
 !endif
 
+additional_cleanup = *.d32 *.trp
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -63,7 +65,7 @@ memory_model_386 = s
 
 # cflags stuff
 ###############
-extra_c_flags += -D$(which) -DMD_$(cpu) -s
+extra_c_flags += -D$(which) -DMD_$(cpu) -s $(extra_cflags)
 
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES
@@ -111,6 +113,10 @@ libs_x86_nlm            = math3s
 libs_axp_nt             = clib
 
 libs_ppc_nt             = clib
+
+!ifeq host_os dos
+extra_libs += dbgstr.lib
+!endif
 
 !ifeq host_os nov
 mknver_c = $(trap_dir)/c/mknver.c

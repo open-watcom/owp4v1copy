@@ -104,6 +104,7 @@ wprofgui.res : ../h/wprofgui.rc
 !endif
 
         $(rc_os2) -i $(lang_root)/h/os2 -r ..\h\foros2pm.rc wprofgui.res
+        @rm -f wprof.i
 
 !ifndef %use_os2tk_stuff
 

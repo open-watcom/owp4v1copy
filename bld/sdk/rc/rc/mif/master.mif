@@ -11,8 +11,11 @@ xname = $(name).exe
 wrc_autodepends = .AUTODEPEND
 !endif
 
+additional_cleanup = ytab.*
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 #always use the most up to date wres library
 !include wres.mif
@@ -153,8 +156,3 @@ usagej.rc : $(wrc_dir)/usage.sp
 hash1.obj : hash1.c weights1.gh .AUTODEPEND
 
 hash2.obj : hash2.c weights2.gh .AUTODEPEND
-
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
-        rm -f *.sym *.tmp *.ilk *.lst *.err *.trk *.gh
-        rm -f ytab.*

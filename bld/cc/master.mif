@@ -3,6 +3,8 @@ cc_autodepends = .autodepend
 
 .extensions: .gh
 
+additional_cleanup = *.int *.u
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif

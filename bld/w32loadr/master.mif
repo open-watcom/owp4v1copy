@@ -1,4 +1,9 @@
+proj_name = w32loadr
+
+additional_cleanup = mkdginfo.bat
+
 !include cproj.mif
+!include deftarg.mif
 
 .asm: ..
 .c: ..
@@ -110,7 +115,3 @@ int21os2.obj : int21os2.c
 
 int21win.obj : int21win.asm
         $(as_i86) -q -d2 $< -fo=$@
-
-clean: .SYMBOLIC
-        @rm -f *.exe *.exp *.obj *.map *.gh
-        @rm -f mkdginfo.bat a*.

@@ -3,6 +3,6 @@ clean: .SYMBOLIC .EXPLICIT
         @%make killnonobj
 
 killnonobj: .SYMBOLIC .EXPLICIT
-        rm -f *.lnk *.exe *.elf *.exp *.nlm *.dll *.d32 *.trp *.dip *.mad
-        rm -f *.lib *.lbc *.i *.u *.int *.rc *.dlg *.res *.lst *.err
-        rm -f *.pch *.map *.sym *.dmp *.tmp *.ilk *.gh compile.tim
+        rm -f *.lnk *.exe *.elf *.exp *.nlm *.dll
+        rm -f *.lib *.lbc *.rc *.dlg *.res *.lst *.err
+        rm -f *.pch *.map *.sym *.tmp *.ilk *.gh compile.tim

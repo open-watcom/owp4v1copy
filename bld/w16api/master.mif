@@ -1,6 +1,7 @@
 proj_name = w16api
 
 !include cproj.mif
+!include deftarg.mif
 
 .EXTENSIONS : .lbc .def
 
@@ -44,7 +45,3 @@ windows.lbc : $(winlibs)
 
 windows.lib: windows.lbc profc.obj
         $(librarian) -b -n -p=16 -io -ii $@ @$<
-
-clean: .SYMBOLIC .EXPLICIT
-        @rm -f *.lbc *.lib *.bak *.obj *.err
-

@@ -6,7 +6,11 @@ plusplus_autodepends = .autodepend
 suppress_zc = 1
 
 # Extra files to delete on clean
-additional_cleanup = *.c y.out
+!ifdef refcomp
+additional_cleanup = *.c *.u *.int y.out ../bin/$(exe_ref_name).$(exe)
+!else
+additional_cleanup = *.c *.u *.int y.out
+!endif
 
 !include cproj.mif
 !include defrule.mif

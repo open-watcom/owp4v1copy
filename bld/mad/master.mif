@@ -26,6 +26,8 @@ exe_name = $(mad_$(host_os)_$(host_cpu))
 
 all: $(exe_name) .SYMBOLIC
 
+additional_cleanup = *.d32 *.mad
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif

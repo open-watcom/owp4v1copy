@@ -2,8 +2,11 @@ name = $(proj_name)
 
 .extensions: .rc .y .re .gh .msg
 
+additional_cleanup = *.y *.re
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 !include $(owl_dir)/client.mif
 !include wres.mif
@@ -216,7 +219,3 @@ $(lex_in) : $(lex_src)
 .ERASE
 $(lex_out_c).c $(lex_out_h) : $(lex_in)
         $(re2c) $(lex_flags) $[@ > $^.
-
-clean: .symbolic .explicit
-        rm -f *.obj *.exe *.c *.h *.y *.re *.gh
-        rm -f *.err del *.err *.map *.pch *.lib *.lbc *.res *.sym *.tmp
