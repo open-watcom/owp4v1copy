@@ -145,16 +145,16 @@ qbpatch.res : bpatch.rc bpatch.h qpusage.rc
         wrc /r /dBPATCH /dQNX /fo=$^. bpatch.rc
 
 opusage.rc : usage.sp
-    wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\""usage.sp opusage.rc
+    wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" usage.sp opusage.rc
 
 opusagej.rc : usage.sp
-    wsplice -kBPATCH -kJAPANESE -t8 -f "%+MSG_USE_J_BASE-1+%$#, \"%s\""usage.sp opusagej.rc
+    wsplice -kBPATCH -kJAPANESE -t8 -f "%+MSG_USE_J_BASE-1+%$#, \"%s\"" usage.sp opusagej.rc
 
 qpusage.rc : usage.sp
-    wsplice -kBPATCH -kENGLISH -kQNX -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\""usage.sp qpusage.rc
+    wsplice -kBPATCH -kENGLISH -kQNX -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" usage.sp qpusage.rc
 
 dusage.rc : usage.sp
-    wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\""usage.sp dusage.rc
+    wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" usage.sp dusage.rc
 
 usage.u : usage.sp
     wsplice -kBPATCH -kENGLISH -kQNX -t8 -u usage.sp usage.u
