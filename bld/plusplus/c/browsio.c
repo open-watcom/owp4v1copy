@@ -246,7 +246,7 @@ static int createBrowseFile(FILE* browseFile,       /* target file */
 }
 //---------------------------------------------------------------------------
 
-static void dw_write( uint section, const void *block, dw_size_t len )
+static void dw_write( dw_sectnum section, const void *block, dw_size_t len )
 /********************************************************************/
 {
     #ifdef __DD__
@@ -267,7 +267,7 @@ static void dw_write( uint section, const void *block, dw_size_t len )
     DwioWrite( dw_sections[section].file, (void *)block, len );
 }
 
-static long dw_tell( uint section )
+static long dw_tell( dw_sectnum section )
 /*********************************/
 {
     #ifdef __DD__
@@ -278,7 +278,7 @@ static long dw_tell( uint section )
     return dw_sections[section].offset;
 }
 
-static void dw_reloc( uint section, uint reloc_type, ... )
+static void dw_reloc( dw_sectnum section, dw_relocs reloc_type, ... )
 /********************************************************/
 {
     va_list         args;
@@ -324,7 +324,7 @@ static void dw_reloc( uint section, uint reloc_type, ... )
     va_end( args );
 }
 
-static void dw_seek( uint section, long offset, uint mode )
+static void dw_seek( dw_sectnum section, long offset, uint mode )
 /*********************************************************/
 {
     switch( mode ) {

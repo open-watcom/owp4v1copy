@@ -69,7 +69,7 @@ extern  bool            SDEof(file_handle);
 extern  void            SDScratch(char *);
 extern  void            SDSetAttr(file_attr);
 
-static void CLIWrite( uint sect, const void *block, dw_size_t size ) {
+static void CLIWrite( dw_sectnum sect, const void *block, dw_size_t size ) {
 /*********************************************************************/
 
     char                        *temp;
@@ -121,7 +121,7 @@ static void CLIWrite( uint sect, const void *block, dw_size_t size ) {
 }
 
 
-static void CLIReloc( uint sect, uint reloc_type, ... ) {
+static void CLIReloc( dw_sectnum sect, dw_relocs reloc_type, ... ) {
 /******************************************************/
     static char                 zeros[] = { 0, 0 };
     dw_sym_handle               sym;
@@ -165,7 +165,7 @@ static void CLIReloc( uint sect, uint reloc_type, ... ) {
 }
 
 
-static void CLIZeroWrite( uint sect, uint size ) {
+static void CLIZeroWrite( dw_sectnum sect, uint size ) {
 /*************************************************/
 
     char        *btmp;
@@ -176,7 +176,7 @@ static void CLIZeroWrite( uint sect, uint size ) {
     FMemFree( btmp );
 }
 
-static void CLISeek( uint sect, long offs, uint type ) {
+static void CLISeek( dw_sectnum sect, long offs, uint type ) {
 /******************************************************/
 
     section_data                *cur_sec;
@@ -227,7 +227,7 @@ static void CLISeek( uint sect, long offs, uint type ) {
     cur_sec->cur_offset = new_off;
 }
 
-static long CLITell( uint sect ) {
+static long CLITell( dw_sectnum sect ) {
 /*********************************/
 
     return( Sections[ sect ].cur_offset );

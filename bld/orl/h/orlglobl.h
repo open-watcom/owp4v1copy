@@ -76,7 +76,7 @@ typedef struct {
 #pragma pack()
 
 typedef struct {
-    void *      (*read)( void *, int );
+    void *      (*read)( void *, size_t );
     long int    (*seek)( void *, long int, int );
     void *      (*alloc)( size_t );
     void        (*free)( void * );

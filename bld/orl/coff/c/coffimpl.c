@@ -233,7 +233,7 @@ static int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
     return ORL_OKAY;
 }
 
-static void * ImportLibRead(void * _coff_file_hnd, int len)
+static void * ImportLibRead(void * _coff_file_hnd, size_t len)
 {
     coff_file_handle coff_file_hnd = _coff_file_hnd;
     IMPLIB_POS += len;
