@@ -88,8 +88,8 @@ system begin windows_dll
     option osname='Windows 16-bit'
     libpath %WATCOM%\lib286
     libpath %WATCOM%\lib286\win
-#    library windows
-    option nocaseexact
+    library windows
+#    option nocaseexact
     option stack=8k, heapsize=1k
     libfile libentry
     format windows dll ^
