@@ -1,4 +1,3 @@
-.EXTENSIONS: .psm
 
 extra_c_flags_386       = -zp4
 extra_c_flags_linux     = -fo=.obj
@@ -36,10 +35,7 @@ inc_dirs += -I. $(inc_dirs_targ) -I"$(dwarf_dir)/dw/h" $(mem_include)
 
 .c: $(src_path);$(trmem_dir)
 .h: $(include_path)
-.psm: $(asm_path)
-
-.psm.obj:
-        $(as) $(aflags) $(extra_a_flags_$[&) $[@
+.asm: $(asm_path)
 
 libfile: .PROCEDURE
         rm -f $^&.lbc

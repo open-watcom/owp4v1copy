@@ -166,3 +166,4 @@ log387__flags=-fpi87
 sin387__flags=-fpi87
 tan387__flags=-fpi87
 sqrt387__flags=-fpi87
+dosinite_flags=-D_OS=_PLDT

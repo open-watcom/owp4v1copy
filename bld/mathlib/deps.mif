@@ -1,28 +1,3 @@
-dosinite.obj : ../../../a/dosinite.asm $(emu386)/asm/dosinite.psm
-!ifndef runtime_library_source
-fdld086.obj  : $(emu286)/asm/fdld086.asm
-fdld386.obj  : $(emu386)/asm/fdld386.asm
-flda086.obj  : $(emu286)/asm/flda086.asm
-flda386.obj  : $(emu386)/asm/flda386.asm
-fldc086.obj  : $(emu286)/asm/fldc086.asm
-fldc386.obj  : $(emu386)/asm/fldc386.asm
-fldd086.obj  : $(emu286)/asm/fldd086.asm
-fldd386.obj  : $(emu386)/asm/fldd386.asm
-fldm086.obj  : $(emu286)/asm/fldm086.asm
-fldm386.obj  : $(emu386)/asm/fldm386.asm
-fsld086.obj  : $(emu286)/asm/fsld086.asm
-fsld386.obj  : $(emu386)/asm/fsld386.asm
-i4ld086.obj  : $(emu286)/asm/i4ld086.asm
-i4ld386.obj  : $(emu386)/asm/i4ld386.asm
-ldfd086.obj  : $(emu286)/asm/ldfd086.asm
-ldfd386.obj  : $(emu386)/asm/ldfd386.asm
-ldfs086.obj  : $(emu286)/asm/ldfs086.asm
-ldfs386.obj  : $(emu386)/asm/ldfs386.asm
-ldi4086.obj  : $(emu286)/asm/ldi4086.asm
-ldi4386.obj  : $(emu386)/asm/ldi4386.asm
-sqrt086.obj  : $(emu286)/asm/sqrt086.asm
-sqrt386.obj  : $(emu386)/asm/sqrt386.asm
-!endif
 _uatof.obj   : ../../../c/_uatof.c     ../../../c/atof.c
 _uefcvt.obj  : ../../../c/_uefcvt.c    ../../../c/efcvt.c
 _ugcvt.obj   : ../../../c/_ugcvt.c     ../../../c/gcvt.c

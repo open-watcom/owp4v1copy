@@ -10,12 +10,10 @@ emu_autodepends = .AUTODEPEND
 
 .ERASE
 
-.EXTENSIONS: .psm
-
 INCS = &
- 386flda.inc 386fldc.inc 386fldm.inc 386fldd.inc 386ldi4.inc &
- 386ldfs.inc 386fdld.inc 386i4ld.inc 386ldfd.inc 386fsld.inc &
- 386fprem.inc 386sqrt.inc 386log.inc 386poly.inc &
+ flda386.asm fldc386.asm fldm386.asm fldd386.asm ldi4386.asm &
+ ldfs386.asm fdld386.asm i4ld386.asm ldfd386.asm fsld386.asm &
+ sqrt386.asm 386fprem.inc 386log.inc 386poly.inc &
  386trig.inc 386sind.inc 386atan.inc &
  386f2xm1.inc 386fpemu.inc 386fxam.inc 386round.inc &
  consts.inc fpubits.inc fpucc.inc memops.inc stkops.inc &
@@ -23,13 +21,15 @@ INCS = &
 
 .inc : ../inc
 .c : ../../emu86/c
-.psm : ../asm
 .asm : ../asm
 
 extra_a_flags = -I"$(mathlib_dir)/h" -I"$(emu386)/inc" -fpc
-extra_a_flags_dos = -D_OS=_PLDT -DSEGMENTED
-extra_a_flags_qnx = -D_OS=_QNX -DSEGMENTED
+extra_a_flags_dos = -mf -D_OS=_PLDT -DSEGMENTED
+extra_a_flags_qnx = -ms -D_OS=_QNX -DSEGMENTED
 extra_a_flags_win = -mf -D_OS=_PLDT -D__WIN387__
+extra_a_flags_386inite = -I"$(comp_cfg_dir)/h"
+extra_a_flags_386stub = -ms -I"$(comp_cfg_dir)/h"
+
 extra_c_flags_qnx = -oais-s-w3 -I"$(new_qnx_h)" -DQNX32 -fpc
 
 !ifeq host_OS dos
@@ -53,9 +53,4 @@ emu387.lib: 386stub.obj
 
 !endif
 
-.psm.obj: .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $[@ -fo=$@ -mf -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
-
-emu387.obj: emu387.asm .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $(inc_path) $[@
-    wtouch compile.tim
+emu387.obj: emu387.asm $(INCS)
