@@ -55,9 +55,7 @@ unsigned PrnAddress( int printer )
 
 unsigned AccessPorts( unsigned first, unsigned last )
 {
-    int res = ioperm(first,last-first+1,1) == 0;
-    printf("ioperm(%X,%X,1) == %d\n", first, last-first+1, res);
-    return res;
+    return ioperm(first,last-first+1,1) == 0;
 }
 
 void FreePorts( unsigned first, unsigned last )
