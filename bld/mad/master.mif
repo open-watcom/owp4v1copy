@@ -23,6 +23,7 @@ host_OS = $(os)
 model_os2 = l
 model_os2v2 = f
 model_qnx = s
+model_linux = f
 model_win = l
 model_dos = f
 model_nt  = f
@@ -30,6 +31,7 @@ model_nt  = f
 comp_os2_x86 = $(comp286) -zu
 comp_os2v2_x86 = $(comp386)
 comp_qnx_x86 = $(comp386)
+comp_linux_x86 = $(comp386)
 comp_win_x86 = $(comp286) -zu
 comp_dos_x86 = $(comp386)
 comp_nt_x86  = $(comp386)
@@ -38,19 +40,21 @@ comp_nt_axp  = *wccaxp
 sys_os2_x86  = os2 dll export MADLOAD op modname=$(name)
 sys_os2v2_x86  = os2v2 dll export MADLOAD op modname=$(name)
 sys_qnx_x86  = pharlap rex disable 1023,1014
+sys_linux_x86  = pharlap rex disable 1023,1014
 sys_win_x86  = windows op modname=$(name),rwr
 sys_dos_x86  = pharlap rex disable 1023,1014
 sys_nt_x86   = nt_dll export MADLOAD op offset=0x6eb00000, modname=$(name)
 sys_nt_axp   = ntaxp_dll export MADLOAD op modname=$(name), dosseg
 
 name = mad$(mad)
-mad_os2_x86 = $(bin_root)\binp\dll\$(name).dll
-mad_os2v2_x86 = $(bin_root)\binp\dll\$(name).d32
-mad_qnx_x86 = $(bin_root)\qnx\$(name).mad
-mad_win_x86 = $(bin_root)\bin\$(name).dll
-mad_dos_x86 = $(bin_root)\bin\$(name).mad
-mad_nt_x86  = $(bin_root)\binnt\$(name).dll
-mad_nt_axp  = $(bin_root)\axpnt\$(name).dll
+mad_os2_x86 = $(bin_root)/binp/dll/$(name).dll
+mad_os2v2_x86 = $(bin_root)/binp/dll/$(name).d32
+mad_qnx_x86 = $(bin_root)/qnx/$(name).mad
+mad_linux_x86 = $(bin_root)/linux/$(name).mad
+mad_win_x86 = $(bin_root)/bin/$(name).dll
+mad_dos_x86 = $(bin_root)/bin/$(name).mad
+mad_nt_x86  = $(bin_root)/binnt/$(name).dll
+mad_nt_axp  = $(bin_root)/axpnt/$(name).dll
 
 !ifeq os win
 targ = windows
@@ -60,7 +64,7 @@ targ = $(os)
 
 comp_opts_x86 = -m$(model_$(os)) -fpc -zc
 comp_opts = $(comp_opts_$(cpu)) -DMD_$(mad) -zq -w3 -bt=$(targ)
-ipaths=-i..\h;..\..\h;$(dig_dir)\h;$(inc_dirs_lang)
+ipaths=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h
 
 !ifdef extra_incs
 ipaths+=;$(extra_incs)
@@ -75,23 +79,33 @@ dbg_opts        = d a
 comp_opts       += -dDEBUG
 !endif
 
-compile = $(comp_$(os)_$(cpu)) $(comp_opts) @ipaths $(extra_cflags) $[@
+compile = $(comp_$(os)_$(cpu)) $(comp_opts) $(extra_cflags) $[@
 
-.c: ..\c;..\..\c;$(extra_srcs)
+!ifdef __LINUX__
+extra_cflags += -fo=.obj
+!endif
+
+.c: ../c;../../c;$(extra_srcs)
 
 .c.obj: .autodepend
-        @set ipaths=$(ipaths)
+        @set include=$(ipaths)
         $(compile)
 
 .c.i:
-        set ipaths=$(ipaths)
+        @set include=$(ipaths)
         $(compile) -p -fo=.i
 
 objs = &
         madimp.obj &
         $(imp_objs)
 
-!ifeq cpu x86
+!ifeq os linux
+!ifdef __LINUX__
+clib = $(clib_dir)/library/linux.386/ms_r/clibs.lib
+!else
+clib = clib3r
+!endif
+!else ifeq cpu x86
 clib = clib$(model_$(os))
 !ifeq clib clibf
 clib = clib3r
@@ -110,5 +124,5 @@ $(mad_$(os)_$(cpu)) : eraseall.obj $(objs) $(imp_libs)
 !endif
 
 eraseall.obj : ../compile.gbl ../../compile.gbl $(extra_gbls)
-        if exist *.obj erase *.obj
+        rm -f *.obj
         wtouch eraseall.obj

@@ -12,8 +12,8 @@ imp_objs = &
 
 mad = x86
 
-extra_incs = $(wdisasm_dir)\h
-extra_srcs = $(wdisasm_dir)\c
-extra_gbls = $(wdisasm_dir)\compile.gbl
+extra_incs = $(wdisasm_dir)/h
+extra_srcs = $(wdisasm_dir)/c
+extra_gbls = $(wdisasm_dir)/compile.gbl
 
 !include ../../master.mif
