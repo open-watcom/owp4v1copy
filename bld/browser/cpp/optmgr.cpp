@@ -77,7 +77,7 @@ const RXOptions      DefaultRXOpt = {
 static const char * DefaultEditorParms = "%f";
 #if defined( __OS2__ )
     static bool DefaultEditorIsDLL = TRUE;
-    static const char * DefaultEditor = "weditepm";
+    static const char * DefaultEditor = "epmlink";
 #else
 #pragma initialize before program
     static bool DefaultEditorIsDLL = !__IsDBCS;

@@ -10,8 +10,13 @@ src\cpplib\contain\wcskip.cpp
 src\editdll\wedit.doc
 src\editdll\wedit.h
 src\editdll\nt\wedit.lib
+src\editdll\nt\cw\wedit.dll
+src\editdll\nt\viw\wedit.dll
 src\editdll\os2\wedit.lib
+src\editdll\os2\wedit.dll
 src\editdll\win\wedit.lib
+src\editdll\win\cw\wedit.dll
+src\editdll\win\viw\wedit.dll
 src\grdemo.c
 src\grdemo.cpp
 src\hello.c

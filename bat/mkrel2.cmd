@@ -140,9 +140,13 @@ md %relroot%\%defrel%\samples\win\edit\win32
 md %relroot%\%defrel%\samples\win\edit\win386
 md %relroot%\%defrel%\src\cpplib
 md %relroot%\%defrel%\src\editdll
-md %relroot%\%defrel%\src\editdll\win
 md %relroot%\%defrel%\src\editdll\nt
+md %relroot%\%defrel%\src\editdll\nt\cw
+md %relroot%\%defrel%\src\editdll\nt\viw
 md %relroot%\%defrel%\src\editdll\os2
+md %relroot%\%defrel%\src\editdll\win
+md %relroot%\%defrel%\src\editdll\win\cw
+md %relroot%\%defrel%\src\editdll\win\viw
 md %relroot%\%defrel%\src\inc
 md %relroot%\%defrel%\src\os2
 md %relroot%\%defrel%\src\startup

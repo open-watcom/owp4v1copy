@@ -13,15 +13,27 @@ c_opts = -zq -w4 -bt=OS2 -i$(inc_dirs_sys_os2)
 c_opts += -d2
 !endif
 
-wedit.dll : epmlink.obj
+all: epmlink.dll wedit.dll .SYMBOLIC
+
+epmlink.dll: epmlink.obj
     @%create $(lnk)
     @%append $(lnk) sys os2v2 dll initinstance terminstance pm debug all
     @%append $(lnk) option description 'Open Watcom Editor DLL for EPM'
     @%append $(lnk) option manyautodata, quiet, symfile, caseexact
     @%append $(lnk) libpath $(watcom_lib)
     @%append $(lnk) file epmlink.obj
-    $(linker) name wedit op modname=weditepm @$(lnk)
-    wlib /n /q /b /c wedit.lib +wedit.dll
+    $(linker) name $^& @$(lnk)
+    del $(lnk)
+
+wedit.dll: epmlink.obj
+    @%create $(lnk)
+    @%append $(lnk) sys os2v2 dll initinstance terminstance pm debug all
+    @%append $(lnk) option description 'Open Watcom Editor DLL for EPM'
+    @%append $(lnk) option manyautodata, quiet, symfile, caseexact
+    @%append $(lnk) libpath $(watcom_lib)
+    @%append $(lnk) file epmlink.obj
+    $(linker) name $^& @$(lnk)
+    wlib /n /q /b /c $^*.lib +$^*.dll
     del $(lnk)
 
 epmlink.obj : epmlink.c

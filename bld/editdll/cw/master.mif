@@ -2,13 +2,22 @@
 
 lnk = tmp.lnk
 
+all: weditcw.dll wedit.dll .SYMBOLIC
+
+weditcw.dll : weditcw.obj
+    @%make linkdll
+
+wedit.dll : weditcw.obj
+    @%make linkdll
+    wlib -b -n $^*.lib +$^*.dll
+
 !ifeq host_OS win
 
 # windows version
-wedit.dll : weditcw.obj
+linkdll: .PROCEDURE
     @%create $(lnk)
     @%append $(lnk) system windows dll debug all
-    @%append $(lnk) name wedit
+    @%append $(lnk) name $^*
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) library ddeml
@@ -18,8 +27,6 @@ wedit.dll : weditcw.obj
     @%append $(lnk) export   WEP RESIDENT
     @%append $(lnk) file %WATCOM%\lib286\win\libentry.obj, weditcw.obj
     wlink @$(lnk)
-    wlib -b -n wedit.lib +wedit.dll
-    @del $(lnk)
 
 weditcw.obj : ../weditcw.c
     wcc $< /i=..\..;$(%watcom)\h\win /mc /d1 /oaxt /zc /zw /zu /zq /we
@@ -27,16 +34,14 @@ weditcw.obj : ../weditcw.c
 !else ifeq host_OS nt
 
 # NT version
-wedit.dll : weditcw.obj
+linkdll: .PROCEDURE
     @%create $(lnk)
     @%append $(lnk) system nt_dll debug all
-    @%append $(lnk) name wedit
+    @%append $(lnk) name $^*
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) file weditcw.obj
     wlink @$(lnk)
-    wlib -b -n wedit.lib +wedit.dll
-    @del $(lnk)
 
 weditcw.obj : ../weditcw.c
     wcc386 $< /i=..\..;$(%watcom)\h\nt -bt=nt /d1 /oaxt /we
