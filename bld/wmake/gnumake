@@ -1,8 +1,13 @@
+include $(DEVDIR)/build/mif/master.mk
+
+vpath %.c c
+
 all: $(OBJDIR) $(OBJDIR)/wmake
 
-VPATH=c h
-
-CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c mcache.c memory.c mexec.c mglob.c mhash.c misc.c mlex.c mlexmac.c mlexprs.c mparse.c mpathgrp.c mpreproc.c mrcmsg.c msg.c mstream.c msuffix.c msysdep.c mtarget.c mupdate.c mvecstr.c
+CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c \
+ mcache.c memory.c mexec.c mglob.c mhash.c misc.c mlex.c mlexmac.c mlexprs.c \
+ mparse.c mpathgrp.c mpreproc.c mrcmsg.c msg.c mstream.c msuffix.c msysdep.c \
+ mtarget.c mupdate.c mvecstr.c
 
 OBJS=$(CFILES:.c=.o)
 OBJS:=$(foreach i,$(OBJS),$(OBJDIR)/$i)
@@ -13,7 +18,7 @@ $(OBJDIR)/usage.rc : h/usage.sp
 $(OBJDIR)/usagej.rc : h/usage.sp
 	wsplice -kIS_RC -kJAPANESE -f '%+(MSG_USE_J_BASE+%#-1), "%s"' $< $@
 
-$(OBJDIR)/usageend.h: $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
+$(OBJDIR)/usageend.gh: $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
 	wsplice $< -o "%n%n%n%n" $(OBJDIR)/usage.rcp
 	wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)" $@
 	rm -f $(OBJDIR)/usage.rcp
@@ -27,17 +32,12 @@ $(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 $(OBJDIR)/wmake.res : h/wmake.rc h/mrcmsg.h $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
 	wrc -i$(OBJDIR) -q -bt=windows -ih -i../watcom/h -zk0 -q -r -fo=$@ $<
 
-DEFS = -D__UNIX__ -D__LINUX__ -DINSIDE_WLINK -D__386__ -D__FLAT__ \
-       -D_WCUNALIGNED= -D_LINKER=_WLINK -Uunix
-INCLUDE = -I$(OBJDIR) -Ih -I../watcom/h -I../sdk/rc/rc/h -I../lib_misc/h -I../dwarf/dw/h -I../orl/h 
-CPPFLAGS = $(DEFS) $(INCLUDE)
-CFLAGS = -g -W -Wall 
+INCDIRS = $(OBJDIR) h $(WATCOMH) $(RC_DIR)/h $(LIB_MISC_DIR)/h $(ORL_DIR)/h
+LIBDIRS = $(ORL_DIR)/$(OBJDIR) $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lorl -lwres -lwatcom
 
-$(OBJDIR)/%.o: %.c $(OBJDIR)/usageend.h $(OBJDIR)/isarray.gh
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR)/wmake: $(OBJS) $(OBJDIR)/wmake.res
-	$(CC) -g -o wmake $(OBJS) -L../orl/$(OBJDIR) -L../sdk/rc/wres/$(OBJDIR) -L../clib/$(OBJDIR) -lorl -lwres -lwatcom -o $@
+$(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS) $(OBJDIR)/wmake.res
+	$(CC) -g -o wmake $(OBJS) $(LIBS) -o $@
 	wstrip -r -a $@ . $(OBJDIR)/wmake.res
 
 $(OBJDIR):
