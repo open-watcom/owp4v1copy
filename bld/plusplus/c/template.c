@@ -512,7 +512,7 @@ static char **getUniqueArgNames( DECL_INFO *args,
 
 static boolean templateArgSame( PTREE left, PTREE right ) {
     if( ( left->op == PT_TYPE ) && ( right->op == PT_TYPE ) ) {
-        return left->type == right->type;
+        return TypesIdentical( left->type, right->type );
     } else if( ( left->op == PT_INT_CONSTANT )
             && ( right->op == PT_INT_CONSTANT ) ) {
         return ! U64Cmp( &left->u.int64_constant, &right->u.int64_constant);
