@@ -862,8 +862,8 @@ void FoldQuestionTree( TREEPTR tree )
           tree->op.opr = OPR_PUSHSYM;
           ops &= ~OPFLAG_RVALUE;
         }
+	tree->op.flags = ops;
     }
-    tree->op.flags = ops;
 }
 
 
