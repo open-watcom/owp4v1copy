@@ -138,15 +138,19 @@ static struct
     unsigned    nd_used         : 1;
 } SwData;
 
+// local functions.
+local void SetStackConventions( void );
+
+// local variables
+static int character_encoding = 0;
+static long unicode_CP = 0;
+
 int EqualChar( int c )
 {
     return( c == '#' || c == '=' );
 }
 
-static int character_encoding = 0;
-static long unicode_CP = 0;
-
-void SetCharacterEncoding( void )
+static void SetCharacterEncoding( void )
 {
     CompFlags.jis_to_unicode = 0;
 
@@ -388,6 +392,8 @@ local void SetTargSystem()                               /* 07-aug-90 */
             case SW_FPT_EMU:
                 SwData.fpt = SW_FPT_INLINE;
                 break;
+            default:
+                break;
             }
             TargetSwitches |= WINDOWS | CHEAP_WINDOWS;
         #elif _CPU == 8086
@@ -436,6 +442,8 @@ static void SetGenSwitches()
     case SW_FPU6:
         SET_FPU_LEVEL( ProcRevision, FPU_686 );
         break;
+    default:
+        break;
     }
     switch( SwData.fpt ) {
     case SW_FPT_DEF:
@@ -476,6 +484,8 @@ static void SetGenSwitches()
         TargetSwitches |= CHEAP_POINTER;
 #endif
         TargetSwitches |= BIG_CODE | BIG_DATA;
+        break;
+    default:
         break;
     }
     if( !SwData.peg_ds_on ) TargetSwitches |= FLOATING_DS;
@@ -540,6 +550,8 @@ static void MacroDefs()
         break;
     case SW_MF:
         Define_Macro( "__SW_MF" );
+        break;
+    default:
         break;
     }
     if( TargetSwitches & FLOATING_FS ) {
@@ -726,6 +738,8 @@ static void MacroDefs()
         Define_Macro( "__SW_FPI87" );
         Define_Macro( "__FPI__" );
         break;
+    default:
+        break;
     }
     switch( GET_FPU_LEVEL( ProcRevision ) ) {
     case FPU_NONE:
@@ -831,7 +845,7 @@ static int OptionDelimiter( char c )
     return( 0 );
 }
 
-void EnsureEndOfSwitch()
+static void EnsureEndOfSwitch()
 {
     char        c;
 
@@ -2067,10 +2081,10 @@ void GenCOptions( char **cmdline )
 #if _CPU == 386
 
 hw_reg_set MetaWareParms[] = {
-        0, 0
+        {0}, {0}
 };
 
-local void SetStackConventions()
+local void SetStackConventions( void )
 {
     DefaultInfo.class &= (GENERATE_STACK_FRAME | FAR); /* 19-nov-93 */
     DefaultInfo.class |= CALLER_POPS | NO_8087_RETURNS;
