@@ -80,8 +80,8 @@ cdsay .
     <CPCMD> library/windows.086/ms/clibs.lib <relroot>/rel2/lib286/win/clibs.lib
     <CPCMD> startup/library/windows.086/ms/binmode.obj <relroot>/rel2/lib286/win/binmode.obj
     <CPCMD> startup/library/windows.086/ms/commode.obj <relroot>/rel2/lib286/win/commode.obj
-    <CPCMD> library/windows.386/mf_r/clibf.lib <relroot>/rel2/lib386/win/clib3r.lib
-    <CPCMD> library/windows.386/mf_s/clibf.lib <relroot>/rel2/lib386/win/clib3s.lib
+    <CPCMD> library/windows.386/mf_r/clib3r.lib <relroot>/rel2/lib386/win/clib3r.lib
+    <CPCMD> library/windows.386/mf_s/clib3s.lib <relroot>/rel2/lib386/win/clib3s.lib
     <CPCMD> startup/library/windows.386/mf_r/binmode.obj <relroot>/rel2/lib386/win/binmode.obj
     <CPCMD> startup/library/windows.386/mf_r/commode.obj <relroot>/rel2/lib386/win/commode.obj
     <CPCMD> library/winnt.386/ms_r/clib3r.lib <relroot>/rel2/lib386/nt/clib3r.lib
