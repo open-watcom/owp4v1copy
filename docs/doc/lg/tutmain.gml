@@ -53,9 +53,30 @@ necessary to create each specific executable file format.
 .note dos4gnz
 non-zero based 32-bit x86 DOS/4GW executable
 .note netware
-32-bit x86 NetWare Loadable Module
+32-bit x86 NetWare Loadable Module. Uses original Novell developer kit 
+(NOVH + NOVI). This is a legacy system type. It is recommended to 
+use one of the netware_clib or netware_libc system types instead.
 .note novell
-synonym for "netware"
+synonym for "netware". This is a legacy system type. It is recommended to 
+use one of the netware_clib or netware_libc system types instead.
+.note netware_libc
+32-bit x86 NetWare Loadable Module. Targetted for Novells LibC based 
+environment on NetWare 5 and later. Uses the full Open Watcom run-time 
+library for NetWare.
+.note netware_libc_lite
+32-bit x86 NetWare Loadable Module. Targetted for Novells LibC based 
+environment on NetWare 5 and later. Uses the thin Open Watcom run-time 
+library support for NetWare and consumes C library functionality from
+the server libraries.
+.note netware_clib
+32-bit x86 NetWare Loadable Module. Targetted for Novells traditional 
+CLIB based environment on NetWare 3 and later. Uses the full Open Watcom 
+run-time library for NetWare.
+.note netware_clib_lite
+32-bit x86 NetWare Loadable Module. Targetted for Novells traditional 
+CLIB based environment on NetWare 3 and later. Uses the thin Open Watcom 
+run-time library support for NetWare and consumes C library functionality 
+from the server libraries.
 .note os2
 16-bit x86 OS/2 executable
 .note os2_dll
@@ -340,14 +361,12 @@ see the chapter entitled :HDREF refid='os2chap'..
 .ix '32-bit Netware NLMs'
 To create this type of file, use the following structure.
 .millust begin
-system   netware
+system   netware_(clib|libc)[_lite]
 .im tutsteps
 module   mod_name
-import   @%WATCOM%\novi\mod_name.imp
 .millust end
-.np
-For more information,
-see the chapter entitled :HDREF refid='novchap'..
+For more information, see the chapter entitled 
+:HDREF refid='novchap'..
 .*
 .section Linking 32-bit x86 OS/2 Executable Files
 .*

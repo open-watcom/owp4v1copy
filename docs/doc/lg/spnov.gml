@@ -31,7 +31,7 @@ is any of the following:
 .note ENDLINK
 .note EXPORT entry_name {,entry_name}
 .note FILE obj_spec{,obj_spec}
-.note FORMAT NOVELL [NLM | LAN | DSK | NAM | 0-9] 'description'
+.note FORMAT NOVELL [NLM | LAN | DSK | NAM | 'number'] 'description'
 .note IMPORT external_name {,external_name}
 .note LANGUAGE lang
 .note LIBFILE obj_file{,obj_file}
@@ -176,14 +176,70 @@ Disk drivers (executable files with extension "dsk").
 Modules that define file system name spaces
 (executable files with extension "nam").
 .bull
-Custom Device modules (executable images with extension "cdm").
+Custom Device modules (executable files with extension "cdm").
 .bull
-Host Adapter modules (executable images with extension "ham").
+Host Adapter modules (executable files with extension "ham").
 .bull
-Mirrored server link modules (executable images with extension "msl").
+Mirrored server link modules (executable files with extension "msl").
+.bull
+Module types specified by number. These are the current defined values:
+.begpoint
+.point 0 
+Specifies a standard NLM (default extension .NLM)
+.point 1
+Specifies a disk driver module (default extension .DSK)
+.point 2 
+Specifies a namespace driver module (default extension .NAM)
+.point 3 
+Specifies a LAN driver module (default extension .LAN)
+.point 4
+Specifies a utility NLM (default extension .NLM)
+.point 5
+Specifies a Mirrored Server Link module (default .MSL)
+.point 6
+Specifies an Operating System module (default .NLM)
+.point 7
+Specifies a Page High OS module (default .NLM)
+.point 8
+Specifies a Host Adapter module (default .HAM)
+.point 9
+Specifies a Custom Device module (default .CDM)
+.point 10
+Reserved for Novell usage
+.point 11
+Reserved for Novell usage
+.point 12
+Specifies a Ghost module (default .NLM)
+.point 13
+Specifies an SMP driver module (default .NLM)
+.point 14
+Specifies a NIOS module (default .NLM)
+.point 15
+Specifies a CIOS CAD type module (default .NLM)
+.point 16
+Specifies a CIOS CLS type module (default .NLM)
+.point 21
+Reserved for Novell NICI usage
+.point 22
+Reserved for Novell NICI usage
+.point 23
+Reserved for Novell NICI usage
+.point 24
+Reserved for Novell NICI usage
+.point 25
+Reserved for Novell NICI usage
+.point 26
+Reserved for Novell NICI usage
+.point 27
+Reserved for Novell NICI usage
+.point 28
+Reserved for Novell NICI usage
+.endpoint
+
 .endbull
 .pc
-The &lnkname can generate all four types of NLMs.
+The &lnkname can generate all types of NLMs by utilising the numerical value
+of the module type.
 .*
 .im wlmemlay
 .im wlmem

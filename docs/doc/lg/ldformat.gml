@@ -15,7 +15,7 @@ The format of the "FORMAT" directive (short form "FORM") is as follows.
                  | WINDOWS NT [TNT] [dll_attrs]
                  | OS2 [os2_type] [dll_attrs | os2_attrs]
                  | PHARLAP [EXTENDED | REX | SEGMENTED]
-                 | NOVELL [NLM | LAN | DSK | NAM | 0-9] 'description'
+                 | NOVELL [NLM | LAN | DSK | NAM | 'number'] 'description'
                  | QNX [FLAT]
                  | ELF [DLL]
 
@@ -368,6 +368,63 @@ default file extension is "ham"
 instructs the &lnkname to generate a utility or server application.
 This is the default.
 A file extension of "nlm" is used for the name of the executable file.
+.point 'number'
+instructs the &lnkname to generate a specific type of NLM using 'number'.
+This is a 32 bit value that corresponds to Novell allocated NLM types.
+.np
+These are the current defined values:
+.begpoint
+.point 0 
+Specifies a standard NLM (default extension .NLM)
+.point 1
+Specifies a disk driver module (default extension .DSK)
+.point 2 
+Specifies a namespace driver module (default extension .NAM)
+.point 3 
+Specifies a LAN driver module (default extension .LAN)
+.point 4
+Specifies a utility NLM (default extension .NLM)
+.point 5
+Specifies a Mirrored Server Link module (default .MSL)
+.point 6
+Specifies an Operating System module (default .NLM)
+.point 7
+Specifies a Page High OS module (default .NLM)
+.point 8
+Specifies a Host Adapter module (default .HAM)
+.point 9
+Specifies a Custom Device module (default .CDM)
+.point 10
+Reserved for Novell usage
+.point 11
+Reserved for Novell usage
+.point 12
+Specifies a Ghost module (default .NLM)
+.point 13
+Specifies an SMP driver module (default .NLM)
+.point 14
+Specifies a NIOS module (default .NLM)
+.point 15
+Specifies a CIOS CAD type module (default .NLM)
+.point 16
+Specifies a CIOS CLS type module (default .NLM)
+.point 21
+Reserved for Novell NICI usage
+.point 22
+Reserved for Novell NICI usage
+.point 23
+Reserved for Novell NICI usage
+.point 24
+Reserved for Novell NICI usage
+.point 25
+Reserved for Novell NICI usage
+.point 26
+Reserved for Novell NICI usage
+.point 27
+Reserved for Novell NICI usage
+.point 28
+Reserved for Novell NICI usage
+.endpoint
 .point description
 is a textual description of the program being linked.
 .endpoint

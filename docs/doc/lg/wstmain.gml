@@ -28,7 +28,7 @@ information.
 is a file specification for the name of an executable file.
 If no file extension is specified, the &stripname will assume one of
 the following extensions: "exe", "dll", "exp", "rex", "nlm", "dsk",
-"lan", "nam", "qnx" or no file extension.
+"lan", "nam", "msl", "cdm", "ham", "qnx" or no file extension.
 Note that the order specified in the list of file extensions is the
 order in which the &stripname will select file extensions.
 .note output_file

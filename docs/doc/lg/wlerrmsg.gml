@@ -838,16 +838,8 @@ If it is issued, please report this problem.
 .errnote 2073 bad Novell file format specified
 .np
 An invalid NetWare executable file format was specified.
-Valid formats are NLM, DSK, NAM, LAN, or a numerical module type of 0
-through 9.
-0 corresponds to NLM, 1 to DSK, 2 to NAM, and 3 to LAN.
-4 specifies a utility NLM (default extension .NLM)
-5 specifies a Mirrored Server Link module (default .MSL)
-6 specifies an Operating System module (default .NLM)
-7 specifies a Page High OS module (default .NLM)
-8 specifies a Host Adapter module (default .HAM)
-9 specified a Custom Device module (default .CDM)
-Currently module types of 10 and above are reserved for future use.
+Valid formats are NLM, DSK, NAM, LAN, MSL, HAM, CDM or a numerical 
+module type.
 .if &e'&optdoc eq 1 .do begin
 .np
 This message should not be issued for a &powerpp Win32 executable.

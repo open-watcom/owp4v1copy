@@ -448,8 +448,8 @@ pick(	 MSG_NOVELL_HELP_1,	"commands valid for the Novell Netware executable form
 				"Novell Netware実行可能形式に対してのみ有効なコマンド:" )
 pick(	 MSG_NOVELL_HELP_2,	" " ,
 				" " )
-pick(	 MSG_NOVELL_HELP_3,	"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 0-9 ] 'description'" ,
-				"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 0-9 ] ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ" )
+pick(	 MSG_NOVELL_HELP_3,	"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 'number'] 'description'" ,
+				"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 'number'] ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ" )
 pick(	 MSG_NOVELL_HELP_4,	"directive ::= \"MODUle\"      module_name{\",\"module_name}" ,
                                 "directive ::= \"MODUle\"      モジュール名{\",\"モジュール名}" )
 pick(	 MSG_NOVELL_HELP_5,	"            | \"IMPort\"      import{\",\"import}" ,
