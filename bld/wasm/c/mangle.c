@@ -95,43 +95,54 @@ static char *UScoreMangler( struct asm_sym *sym, char *buffer )
     return( name );
 }
 
-static char *CMangler( struct asm_sym *sym, char *buffer )
+static char *StdUScoreMangler( struct asm_sym *sym, char *buffer )
+/*************************************************************/
+{
+    char        *name;
+    dir_node    *dir = (dir_node *)sym;
+
+    if( sym->state == SYM_PROC ) {
+        if( buffer == NULL ) {
+            int         count;
+            dir_node    *dir = (dir_node *)sym;
+            int         parasize = dir->e.procinfo->parasize;
+
+            for( count = 2; parasize > 9; count++ )
+                parasize /= 10;
+            name = AsmAlloc( strlen( sym->name ) + 2 + count );
+        } else {
+            name = buffer;
+        }
+        sprintf( name, "_%s@%d", sym->name, dir->e.procinfo->parasize );
+        return( name );
+    } else {
+        return( UScoreMangler( sym, buffer ) );
+    }
+}
+
+static char *WatcomCMangler( struct asm_sym *sym, char *buffer )
 /********************************************************/
 {
     char                *name;
     char                *ptr = sym->name;
     enum changes        changes = NORMAL;
-    uint                additional_size = 1; // for null
 
-    if( Options.naming_convention == ADD_USCORES ) {
-        if( sym->state == SYM_PROC ) {
-            changes |= USCORE_BACK;
-        } else {
-            switch( sym->mem_type ) {
-            case T_NEAR:
-            case T_FAR:
-            case EMPTY:
-                changes |= USCORE_BACK;
-                break;
-            default:
-                changes |= USCORE_FRONT;
-            }
-        }
+    if( sym->state == SYM_PROC ) {
+        changes |= USCORE_BACK;
     } else {
-        return( AsmMangler( sym, buffer ));
-    }
-
-    #define USCORE "_"
-
-    if( changes & USCORE_FRONT ) {
-        additional_size++;
-    }
-    if( changes & USCORE_BACK ) {
-        additional_size++;
+        switch( sym->mem_type ) {
+        case T_NEAR:
+        case T_FAR:
+        case EMPTY:
+            changes |= USCORE_BACK;
+            break;
+        default:
+            changes |= USCORE_FRONT;
+        }
     }
 
     if( buffer == NULL ) {
-        name = AsmAlloc( strlen( ptr ) + additional_size );
+        name = AsmAlloc( strlen( ptr ) + 2 );
     } else {
         name = buffer;
     }
@@ -146,6 +157,16 @@ static char *CMangler( struct asm_sym *sym, char *buffer )
         strcat( name, USCORE );
     }
     return( name );
+}
+
+static char *CMangler( struct asm_sym *sym, char *buffer )
+/********************************************************/
+{
+    if( Options.naming_convention == ADD_USCORES ) {
+        return( WatcomCMangler( sym, buffer ) );
+    } else {
+        return( AsmMangler( sym, buffer ) );
+    }
 }
 
 static mangle_func GetMangler( char *mangle_type )
@@ -176,7 +197,7 @@ char *Mangle( struct asm_sym *sym, char *buffer )
         mangler = AsmMangler;
         break;
     case LANG_STDCALL:
-        mangler = UScoreMangler;
+        mangler = StdUScoreMangler;
         break;
     case LANG_BASIC:
     case LANG_FORTRAN:
@@ -184,7 +205,7 @@ char *Mangle( struct asm_sym *sym, char *buffer )
         mangler = UCaseMangler;
         break;
     case LANG_WATCOM_C:          // registers passing parameters, only Open Watcom
-        mangler = CMangler;
+        mangler = WatcomCMangler;
         break;
     case LANG_C:                 // stack passing parameters
         if( Options.watcom_c_mangler ) {
