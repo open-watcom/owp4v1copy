@@ -45,13 +45,22 @@ extern unsigned DPMIVersion();
         "l1:    "                  \
         value [dx] modify [ ax bx cx dx si es di ]
 
+const char DOSEMUString[] = "$DOSEMU$";
+
 extern int DOSEMUCheck(void);
 #pragma aux DOSEMUCheck =          \
-        "       xor    ax, ax"     \
-        "       int    0e6h"       \
-        "       cmp    ax, 0aa55h" \
+        "       push   ds"         \
+        "       mov    ax, 0f000h" \
+        "       mov    es, ax"     \
+        "       mov    di, 0ffe0h" \
+        "       mov    ax, seg DOSEMUString" \
+        "       mov    ds, ax"     \
+        "       mov    si, offset DOSEMUString" \
+        "       mov    cx, 4"      \
+        "       cld"               \
+        "       repe   cmpsw"      \
         "       mov    ax, 0"      \
         "       jne    l1"         \
         "       inc    ax"         \
-        "l1:"                      \
+        "l1:    pop    ds" \
         value [ax] modify [ bx cx dx si es di ]

@@ -1040,12 +1040,9 @@ out( "    checking environment:\r\n" );
     } else if( out( "    WinEnh\r\n" ) || ( EnhancedWinCheck() & 0x7f ) ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */
         Flags.DRsOn = FALSE;
-// Bombs on DOS and OS/2 VDM!  - MN
-#if 0
     } else if( out( "    DOSEMU\r\n" ) || DOSEMUCheck() ) {
         /* no fiddling with debug regs in Linux DOSEMU either */
         Flags.DRsOn = FALSE;
-#endif
     } else {
         Flags.DRsOn = TRUE;
     }
