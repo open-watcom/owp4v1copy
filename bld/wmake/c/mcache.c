@@ -328,36 +328,6 @@ STATIC CENTRYPTR findFile( DHEADPTR dir, const char *name )
 }
 
 
-#if 0
-/*
- * Given a directory, find an 8.3 file within that directory.
- * Return NULL if file not found.
- */
-STATIC CENTRYPTR findDOSFile( DHEADPTR dir, const char *name )
-/************************************************************/
-{
-#if _MAX_FNAME == ( 8 + 1 )
-    dir = dir;
-    name = name;
-    return( NULL );
-#else
-    size_t len;
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
-    char DOSname[_MAX_PATH];
-
-    _splitpath( name, NULL, NULL, fname, ext );
-    len = strlen( fname );
-    if( len > 8 ) {
-        fname[8] = '\0';
-    }
-    _makepath( DOSname, NULL, NULL, fname, ext );
-    return( findFile( dir, DOSname ) );
-#endif
-}
-#endif
-
-
 /*
  * Called at the beginning of the program
  */
@@ -477,18 +447,7 @@ STATIC enum cacheRet maybeCache( const char *fullpath, CENTRYPTR *pc )
 
     centry = findFile( dcur, name );
     if( centry == NULL ) {
-/* I'm not sure what the idea behind this was but it caused problems when
- * two different files had the same 8.3 stem. I'll leave the old code in
- * here in case someone figures out why it was here in the first place. MN
- */
-#if 0
-        centry = findDOSFile( dcur, name );
-        if( centry == NULL ) {
-            return( CACHE_FILE_NOT_FOUND );
-        }
-#else
         return( CACHE_FILE_NOT_FOUND );
-#endif
     }
 
     if( pc != NULL ) {

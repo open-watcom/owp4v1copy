@@ -24,19 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Target update processing.
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #if defined(__UNIX__)
- #include <utime.h>
+    #include <utime.h>
 #else
- #include <sys/utime.h>
+    #include <sys/utime.h>
 #endif
 
 #include "make.h"
@@ -450,39 +450,13 @@ STATIC BOOLEAN autoDepCompare( time_t targ_time, time_t auto_time )
     return( FALSE );
 }
 
-#if 0
-STATIC BOOLEAN checkForAutoDeps( TARGET *targ, char *name, time_t *max_time )
-/***************************************************************************/
-{
-    autodep_ret_t obj_rc;
 
-    obj_rc = SysOBJAutoDep( name, targ->date, autoDepCompare, max_time );
-    if( obj_rc == SOA_BUILD_OBJ ) {
-        return( TRUE );
-    }
-    if( obj_rc == SOA_UP_TO_DATE ) {
-        // target was a .OBJ and it was up to date
-        return( FALSE );
-    }
-#if !defined( __X86__ ) || defined( __386__ )
-    obj_rc = ORLObjAutoDep( name, targ->date, autoDepCompare, max_time );
-    if( obj_rc == SOA_BUILD_OBJ ) {
-        return( TRUE );
-    }
-    if( obj_rc == SOA_UP_TO_DATE ) {
-        // target was a .OBJ and it was up to date
-        return( FALSE );
-    }
-#endif
-    return( ResAutoDep( name, targ->date, autoDepCompare, max_time ) );
-}
-#else
 STATIC BOOLEAN checkForAutoDeps( TARGET *targ, char *name, time_t *max_time )
 /***************************************************************************/
 {
     return( AutoDepCheck( name, targ->date, autoDepCompare, max_time ) );
 }
-#endif
+
 
 STATIC BOOLEAN autoOutOfDate( TARGET *targ, time_t *max_time )
 /************************************************************/
