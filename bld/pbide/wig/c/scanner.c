@@ -165,7 +165,7 @@ void FiniLex( void ) {
     yyLine = NULL;
 }
 
-int compKeywords( char *p1, keyword *p2 ) {
+int compKeywords( const char *p1, const keyword *p2 ) {
 /******************************************/
 
     return( stricmp( p1, p2->key ) );
@@ -279,11 +279,15 @@ int yylex() {
             return( ret );
         case S_STRING:
             ch = nextChar();
-            while( ch != '\"' ) {
-                if( ch == '\n' || ch == EOF ) {
+            while( ch != '\"' ) 
+            {
+                if( (ch == '\n') || (ch == (char)EOF) ) 
+                {
                     state = S_ERROR;
                     break;
-                } else if( ch == '~' ) {        //~ is the PB escape character
+                } 
+                else if( ch == '~' ) 
+                {        //~ is the PB escape character
                     addToTok( ch );
                     ch = nextChar();
                 }
@@ -311,14 +315,16 @@ int yylex() {
             break;
         case S_SLASH_SLASH:
             ch = nextChar();
-            while( ch != '\n' && ch != EOF ) ch = nextChar();
+            while( (ch != '\n') && (ch != (char)EOF) ) 
+                ch = nextChar();
             putBackChar( ch );
             return( ST_COMMENT );
             break;
         case S_SLASH_STAR:
             ch = nextChar();
-            while( ch != '*' && ch != EOF ) ch = nextChar();
-            if( ch == EOF ) {
+            while( (ch != '*') && (ch != (char)EOF) ) 
+                ch = nextChar();
+            if( ch == (char)EOF ) {
                 state = S_ERROR;
                 putBackChar( ch );
             } else {

@@ -1,6 +1,7 @@
 #pmake: all cpu_386 os_dos
 op_sys=dos4g
 os=dos
+host_CPU=386
 bind=1
 name=wig
 compiler=wcc386
