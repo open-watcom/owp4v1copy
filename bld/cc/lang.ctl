@@ -30,11 +30,17 @@ cdsay .
     <CPCMD> osii86\wcci8601.int <relroot>\rel2\binw\wcci8601.int
 
 #AXP target
-#    <CPCMD> ntaxp\wccaxpe.exe <relroot>\rel2\binnt\wccaxp.exe
-#    <CPCMD> ntaxp\wccaxpe.sym <relroot>\rel2\binnt\wccaxp.sym
-#    <CPCMD> ntaxp\wccdaxpe.dll <relroot>\rel2\binnt\wccdaxp.dll
-#    <CPCMD> ntaxp\wccdaxpe.sym <relroot>\rel2\binnt\wccdaxp.sym
+    <CPCMD> ntaxp\wccaxpe.exe <relroot>\rel2\binnt\wccaxp.exe
+    <CPCMD> ntaxp\wccaxpe.sym <relroot>\rel2\binnt\wccaxp.sym
+    <CPCMD> ntaxp\wccdaxpe.dll <relroot>\rel2\binnt\wccdaxp.dll
+    <CPCMD> ntaxp\wccdaxpe.sym <relroot>\rel2\binnt\wccdaxp.sym
 
+    <CPCMD> os2axp\wccaxpe.exe <relroot>\rel2\binp\wccaxp.exe
+    <CPCMD> os2axp\wccaxpe.sym <relroot>\rel2\binp\wccaxp.sym
+    <CPCMD> os2axp\wccdaxpe.dll <relroot>\rel2\binp\dll\wccdaxp.dll
+    <CPCMD> os2axp\wccdaxpe.sym <relroot>\rel2\binp\dll\wccdaxp.sym
+
+#NT stuff
     <CPCMD> nt386\wcc386e.exe <relroot>\rel2\binnt\wcc386.exe
     <CPCMD> nt386\wcc386e.sym <relroot>\rel2\binnt\wcc386.sym
     <CPCMD> nt386\wccd386e.dll <relroot>\rel2\binnt\wccd386.dll
@@ -46,6 +52,7 @@ cdsay .
     <CPCMD> nti86\wccdi86e.sym <relroot>\rel2\binnt\wccd.sym
     <CPCMD> nti86\wcci8601.int <relroot>\rel2\binnt\wcci8601.int
 
+#OS/2 stuff
     <CPCMD> os2386\wcc386e.exe <relroot>\rel2\binp\wcc386.exe
     <CPCMD> os2386\wcc386e.sym <relroot>\rel2\binp\wcc386.sym
     <CPCMD> os2386\wccd386e.dll <relroot>\rel2\binp\dll\wccd386.dll
@@ -63,6 +70,7 @@ cdsay .
     <CPCMD> qnx386\wcc386c.qnx <relroot>\rel2\qnx\binq\wcc386.
     <CPCMD> qnx386\wcc386c.sym <relroot>\rel2\qnx\sym\wcc.sym
 
+#AXP NT host
 #    <CPCMD> ntaxp.axp\wccaxpc.exe <relroot>\rel2\axpnt\wccaxp.exe
 #    <CPCMD> ntaxp.axp\wccaxpc.exe <relroot>\rel2\axpnt\wccaxp.sym
 #    <CPCMD> ntaxp.386\wcc386c.exe <relroot>\rel2\axpnt\wcc386.exe
