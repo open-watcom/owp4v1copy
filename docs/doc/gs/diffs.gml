@@ -16,16 +16,35 @@ recompile your application.
 .*
 .np
 Following is a list of changes made in &product 1.2.
+:cmt Reflects main Perforce devel branch as of 2003/11/16
 .begbull
 .bull
-Better C99 style support for "long long" type is now available in the
-C compiler. LL, ULL and LLU suffixes are recognized for constants.
-The C++ compiler also supports these suffixes.
+The C compiler now performs stricter checking on function prototypes
+and pointer operations. This may lead to previously undiagnosed
+warnings/errors appearing when compiling incorrect or ambiguous code.
 .bull
-Added C99 style *LLONG_MIN/MAX defines in limits.h.
+The C compiler diagnostic messages have been improved to print more
+information, making it easier to isolate the problem.
+.bull
+A new warning (W130) has been added to the C compiler to diagnose possible
+precision loss on assignment operations. This warning is never on by default
+and must be enabled through '#pragma enable_message(130)' or '-wce=130'
+switch.
+.bull
+Support for C99 style variable argument macros (and __VA_ARGS__) has
+been added to the C and C++ compilers.
 .bull
 Added support for the __func__ symbol (name of the current function)
 which is equivalent to the already existing __FUNCTION__ symbol.
+.bull
+Better C99 style support for "long long" type is now available in the
+C and C++ compilers. LL, ULL and LLU suffixes are recognized for constants.
+"long long int" is now also recognized.
+.bull
+Added C99 style *LLONG_MIN/MAX defines to limits.h.
+.bull
+Several new -adxx options have been added to the C and C++ compilers
+to support automatic generation of 'make' style dependency files.
 .bull
 The C compiler has been fixed to correctly diagnose illegal union
 assignments.
@@ -47,14 +66,14 @@ AutoCAD and MFC targets have been removed from the IDE, the -bw switch
 (default windowing) is no longer available in the IDE for OS/2 and Win32
 targets.
 .bull
-Several system definitions have been added to wlink: os2_pm (16-bit OS/2
-Presentation Manager executable), os2_dll (16-bit OS/2 DLL) and os2v2_dll
-(32-bit OS/2 DLL).
-.bull
 Manual for the CauseWay DOS extender has been added.
 .bull
 The dmpobj tool has been added. This utility dumps the contents of OMF
 object files and can be useful to developers.
+.bull
+Several system definitions have been added to wlink: os2_pm (16-bit OS/2
+Presentation Manager executable), os2_dll (16-bit OS/2 DLL) and os2v2_dll
+(32-bit OS/2 DLL).
 .bull
 The linker has been fixed to read "AR" style archives produced by third
 party tools.
@@ -62,18 +81,25 @@ party tools.
 The linker has been fixed to prevent crashes when linking with COFF files
 providing uninitialised COMDAT entries
 .bull
+Several linker crashes related to ELF object files and executables have
+been resolved.
+.bull
 Updated wlink to call wlib with the -c (case sensitive) option when
 creating import libraries. This fixes problems with DLLs that export
 symbols differring only in case.
 .bull
-Disassembly of xchg and bound instructions has been fixed in wdis
-(corrected order of operands).
+The C runtime library has been optimized to produce smaller
+executables.
 .bull
 The printf() function now supports the "ll" format specifier for
 "long long" integers.
 .bull
 The printf() function has been enhanced to support %b format specifier
 for bitfields.
+.bull
+Execution order of C library termination routines is now better
+defined to prevent instances where temporary files created through
+mktemp() could be left behind.
 .bull
 [OS/2 32-bit] To prevent crashes, termination code is not run if second
 instance of a DLL failed to load due to single DGROUP.
@@ -83,6 +109,9 @@ requested handles to existing limit instead of setting the limit to n.
 .bull
 [OS/2 32-bit] Fixed a problem with _STACKLOW in multithreaded programs
 and DLLs. This prevents crashes where Fortran DLLs would run out of stack.
+.bull
+[OS/2 16-bit] Fixed default math exception handler which wasn't popping
+the FP status word off the stack and would therefore crash on exit.
 .bull
 The Win32 Image Editor has been enhanced with drag-and-drop support.
 .bull
@@ -96,6 +125,9 @@ crashes when run from inside the Resource Editor (wre).
 .bull
 The 'Change font' option no longer crashes the GUI debugger (wdw).
 .bull
+On OS/2, wdw now intercepts the F10 key instead of passing it on
+to the system.
+.bull
 The code generator now deletes object files if it was interrupted.
 Previously zero-length invalid object files could be left behind,
 interfering with make operation.
@@ -104,6 +136,19 @@ The wasm assembler has been enhanced to generate file dependency information
 usable by wmake.
 .bull
 Numerous minor fixes have been made to wasm.
+.bull
+Compatibility with MASM 6 has been improved with wasm.
+.bull
+Support for sysenter and sysexit instructions has been added to wasm
+and wdis.
+.bull
+Disassembly of xchg and bound instructions has been fixed in wdis
+(corrected order of operands).
+.bull
+Several previously undocumented wmake directives have been documented.
+.bull
+A -sn ('noisy') option has been added to wmake to print all commands
+that wmake executes, including silent ones.
 .bull
 The w32api project has been updated to the latest version.
 .bull
@@ -489,13 +534,12 @@ We have added Multi-media Extensions (MMX) support to the &asmname
 :cmt. .bull
 :cmt. A new assembler for the DEC Alpha AXP is included in the package.
 .bull
-A new version of the &disname (&discmdup) is included.
-:cmt. A new version of the &disname (&discmdup) can disassemble Intel
-:cmt. or Alpha AXP object code files.
+A new version of the &disname (&discmdup) can disassemble Intel
+or Alpha AXP object code files.
 It can process ELF, COFF or OMF object files and ELF, COFF or PE
 format (Win32) executables.
-:cmt. The &disname looks at image file being input to determine the
-:cmt. processor-type (defaults to Intel).
+The &disname looks at image file being input to determine the
+processor-type (defaults to Intel).
 .np
 The old disassembler (WDISASM) has been retired and is not included in
 the package.
@@ -615,9 +659,7 @@ Version 2.52b of the 16-bit MFC is included in the package.
 .*
 .begbull
 .bull
-The Win32 SDK is supported for Windows 95 and Windows NT
-:cmt. (both Intel and Alpha AXP)
-platforms.
+The Win32 SDK is supported for Windows 95 and Windows NT platforms.
 .endbull
 .*
 .section Changes in Blue Sky's Visual Programmer for 11.0
