@@ -821,6 +821,11 @@ allow DS register to "float" or "peg" it to DGROUP (default is zdp)
 load DS register directly from DGROUP
 :optref refid='SWzdl'.
 .*
+.note zev&optdag.
+:CMT .ix 'options' 'zev'
+(C only, Unix extension) enable arithmetic on void derived types
+:optref refid='SWzev'
+.*
 .note zf{f,p}&optdag.
 :CMT. .ix 'options' 'zfp'
 :CMT. .ix 'options' 'zff'
@@ -881,6 +886,11 @@ file
 :CMT. .ix 'options' 'zld'
 suppress generation of file dependency information in object file
 :optref refid='SWzld'.
+.*
+.note zls&optdag.
+:CMT .ix 'options' 'zls'
+remove automatically inserted symbols (such as runtime library references)
+:optref refid='SWzls'
 .*
 .note zm
 :CMT. .ix 'options' 'zm'

@@ -521,8 +521,12 @@ remove default library information
 remove file dependency information
 :optref refid='SWzld'.
 .do end
+.if &e'&$SWzls eq 1 .do begin
+.note zls
+remove automatically generated symbols references
+:optref refid='SWzls'.
+.do end
 .endnote
-.*
 .section Code Generation
 .*
 .begnote $compact $setptnt 10
@@ -3016,6 +3020,16 @@ This option causes the compiler to not emit this information into the
 object file.
 .do end
 .*
+.if &e'&$SWzls eq 1 .do begin
+:OPT refid='SWzls' name='zls'.&optdag.
+.ix 'options' 'zls'
+The "zls" option tells the compilers to remove automatically inserted
+symbols. These symbols are usually used to force symbol references
+to be fixed up from the run-time libraries. An example would be 
+the symbol __DLLstart_, that is inserted into any object file that has 
+a DllMain() function defined within its source file.
+.do end
+.*
 :eOPTLIST.
 .*
 .section Code Generation
@@ -4534,6 +4548,15 @@ The "zdl" option causes generation of code to load the DS register
 directly from DGROUP (rather than the default run-time call).
 This option causes the generation of a segment relocation.
 This option is used with the "zdp" option but not the "zdf" option.
+.do end
+.*
+.if &e'&$SWzev eq 1 .do begin
+:OPT refid='SWzev' name='zev'.&optdag.
+.ix 'options' 'zev'
+The "zev" option is an extension to the Watcom C compiler to allow
+arithmetic operations on void derived types. This option has been added
+for compatibility with some Unix compilers and is not ANSI compliant.
+The use of this option should be avoided.
 .do end
 .*
 .if &e'&$SWzffp eq 1 .do begin
