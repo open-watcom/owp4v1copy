@@ -96,7 +96,7 @@ typedef struct ResTable {
     StringBlock Str;
 } ResTable;
 
-static unsigned_32      Write_Stub_File( void );
+extern  unsigned_32      Write_Stub_File( void );
 
 static  char            DosStub[] = {
         0x4D, 0x5A, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00,
