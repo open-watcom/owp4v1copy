@@ -14,10 +14,10 @@ suppress_zc = 1
 
 .EXTENSIONS: .dlg .rc
 
-inc_dirs = $(auidir)/h;$(guidir)/h;$(posix_dir)/h
+inc_dirs = $(aui_dir)/h;$(gui_dir)/h;$(posix_dir)/h
 
-.c: .;$(auidir)/c;$(posix_dir)/misc
-.h: .;$(auidir)/h
+.c: .;$(aui_dir)/c;$(posix_dir)/misc
+.h: .;$(aui_dir)/h
 
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
@@ -32,7 +32,7 @@ dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
 all : auistr.gh aui.lib $(dlgs) .SYMBOLIC
         @%null
 
-eraseall.obj : $(auidir)/compile.gbl
+eraseall.obj : $(aui_dir)/compile.gbl
         rm -f *.obj
         wtouch eraseall.obj
 
@@ -95,7 +95,7 @@ objs =  guimain.obj &
         wndmnsz.obj &
         wndimain.obj
 
-aui.lib : $(objs) $(__makefiles__) $(auidir)/h/aui.rc
+aui.lib : $(objs) $(__makefiles__) $(aui_dir)/h/aui.rc
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) -b -n $^@ @tmp.lbc
@@ -126,8 +126,8 @@ japsrcha.dlg : ../h/japsrcha.dlg
 
 dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg auistr.gh auistr.rc auigui.rc
 
-./mkstr.exe: $(auidir)/c/mkstr.c
+./mkstr.exe: $(aui_dir)/c/mkstr.c
         $(bld_cl) $]@ -fe=$^@
 
-auistr.gh : ./mkstr.exe $(auidir)/h/aui.msg
+auistr.gh : ./mkstr.exe $(aui_dir)/h/aui.msg
         $[@ $^@

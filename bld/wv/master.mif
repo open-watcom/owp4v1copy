@@ -665,9 +665,9 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
 
 .str: $(hdir)
 
-.h: $(syshdir);$(hdir);$(auidir)/h
+.h: $(syshdir);$(hdir);$(aui_dir)/h
 
-.c: $(syscdir);$(cdir);$(auidir)/c;$(dig_srcs)
+.c: $(syscdir);$(cdir);$(aui_dir)/c;$(dig_srcs)
 
 .c.obj: .autodepend
         $(compile)
@@ -789,8 +789,8 @@ japhis.dlg : $(hdir)/japhis.dlg
         parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
 
-./auimkstr.exe : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
-        $(bld_cl) -i"$(auidir)/h" $]@ -fe=$^@
+./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
+        $(bld_cl) -i"$(aui_dir)/h" $]@ -fe=$^@
 
-auistr.gh : $(auidir)/h/aui.msg ./auimkstr.exe
+auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
         $]@ $^@
