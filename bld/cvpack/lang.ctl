@@ -14,11 +14,16 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
+  [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/dos386/cvpack.exe    <RELROOT>/rel2/binw/cvpack.exe
+  [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386/cvpack.exe    <RELROOT>/rel2/binp/cvpack.exe
+  [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/cvpack.exe     <RELROOT>/rel2/binnt/cvpack.exe
 #    <CPCMD> <PROJDIR>/ntaxp/cvpack.exe     <RELROOT>/rel2/axpnt/cvpack.exe
-#    <CPCMD> <PROJDIR>/qnx386/cvpack.exe    <RELROOT>/rel2/qnx/binq/cvpack
+  [ IFDEF (os_qnx) <2*> ]
+    <CPCMD> <PROJDIR>/qnx386/cvpack.exe    <RELROOT>/rel2/qnx/binq/cvpack
+  [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux386/cvpack.exe  <RELROOT>/rel2/binl/cvpack
 
 [ BLOCK <1> clean ]
