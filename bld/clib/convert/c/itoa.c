@@ -33,7 +33,7 @@
 #include "widechar.h"
 #include <stdlib.h>
 
-extern const char __based(__segname("_CODE")) __Alphabet[];
+extern const char __based(__segname("_CONST")) __Alphabet[];
 
 unsigned __udiv( unsigned, unsigned _WCNEAR * );
 #if defined(__386__)

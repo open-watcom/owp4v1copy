@@ -34,7 +34,7 @@
 #include "rtdata.h"
 #include "timedata.h"
 
-short const __diyr[] = { /* days in normal year array */
+short const __based(__segname("_CONST")) __diyr[] = { /* days in normal year array */
     0,                                                          /* Jan */
     31,                                                         /* Feb */
     31 + 28,                                                    /* Mar */
@@ -50,7 +50,7 @@ short const __diyr[] = { /* days in normal year array */
     31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31   /* Jan, next year */
 };
 
-short const __dilyr[] = { /* days in leap year array */
+short const __based(__segname("_CONST")) __dilyr[] = { /* days in leap year array */
     0,                                                          /* Jan */
     31,                                                         /* Feb */
     31 + 29,                                                    /* Mar */
