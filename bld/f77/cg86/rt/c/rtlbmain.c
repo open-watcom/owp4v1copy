@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FORTRAN 77 run-time DLL entry
 *
 ****************************************************************************/
 
-
-//
-// RTLBMAIN     : FORTRAN 77 run-time DLL entry
-//
 
 #include "ftnstd.h"
 
@@ -105,18 +100,15 @@ INT     APIENTRY LibMain( HANDLE hdll, ULONG reason, LPVOID reserved ) {
 
 #if defined( __OS2__ )
 
-static int      f_dll_terminate() {
-//=================================
+static void     f_dll_terminate(void) {
+//=====================================
 
-    unsigned    rc;
-
-    rc = __fdll_terminate();
+    __fdll_terminate();
     __FTermDLL();
-    return( rc );
 }
 
-int             __dll_initialize() {
-//==================================
+int             __dll_initialize(void) {
+//======================================
 
     if( __FInitDLL() == 0 ) return( 0 );
 #if defined( __386__ )
