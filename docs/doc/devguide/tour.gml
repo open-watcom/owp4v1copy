@@ -94,16 +94,13 @@ presenting an overview of its structure and highlighting some of the more
 memorable sights.
 .np
 The Open Watcom directory structure mostly mirrors the layout used by
-the Watcom/Sybase build server but attempts to clean it up, straighten
-out and unify. The original build process partially relied on fixed
-pathnames and fixed locations in relation to the root of the build drive
-(which was more or less fixed at D:). Most of the dependencies have been
-removed and the rest should be eradicated soon.
+the Watcom/Sybase build server but ht has been cleaned up, straightened
+out and unified, although there still may be some warts.
 .np
 The root of the Open Watcom directory tree can be in the root of
 any drive (if your OS uses drive letters) or in any directory, for
 instance
-.id e:\openwatcom.
+.id e:\ow.
 .np
 The main subdirectories in the Open Watcom root are the following:
 .begnote
@@ -353,7 +350,7 @@ get a source archive first. The source archives can be found
 at the Open Watcom web site,
 .id http://www.openwatcom.org/
 along with latest information on Perforce setup. You will need
-working installation of Watcom C/C++ 11.0c or later and some
+working installation of Open Watcom C/C++ 1.0 or later and some
 free disk space (one gigabyte should do).
 .np
 The Open Watcom source tree can be located in any directory

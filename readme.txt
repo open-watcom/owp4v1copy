@@ -17,8 +17,8 @@ slightly different and many parts of the build process are broken
 currently due to removal of third-party tools, headers and libraries.
 The original Watcom/Sybase setup placed all directories in d:\. It
 is however perfectly possible to place them wherever you wish, for
-instance w:\openwatcom. Where this file refers to d:\, substitute your
-Open Watcom root location (stored in the owroot environment variable).
+instance w:\ow. Where this file refers to d:\, substitute your Open
+Watcom root location (stored in the owroot environment variable).
 
 1) Default build machine layout:
 
@@ -40,13 +40,13 @@ d:\
             of most interest are the .ctl files - scripts for the "builder"
             tool (see below)  and make init files
 
-    tools - utilities and 3rd party tools - not in OpenWatcom
+    tools - utilities and 3rd party tools - not in Open Watcom
 
     lang  - used to hold Watcom 10.6 compiler
 
     nlang - used to hold intermediate version of 11.0 compiler;
             for OpenWatcom these both point to the same place
-            where Watcom 11.0c lives
+            where Open Watcom 1.x binaries live
 
     docs  - here is all for documentation, sources and tools
 
@@ -65,8 +65,8 @@ d:\
     PATH=C:\WINNT\system32;
     C:\WINNT;
     d:\bat;
-    d:\lang\BINNT;
-    d:\lang\BINW;
+    d:\lang\binnt;
+    d:\lang\binw;
     d:\bin;
     d:\tools;
     d:\bld\build\binnt
@@ -80,25 +80,25 @@ d:\
 ------------------------------
 3) Priming the pump:
 
-Besides the Watcom C/C++ 11.0c binaries you'll need a few other executables
-used by the build process, primarily builder and pmake. Their source is in
-\bld\builder and \bld\pmake respectively. Both can be built by running wmake
-in the appropriate directory. The executables should be copied to a
-subdirectory of \bld\build appropriate to your host platform. Perhaps
-someone will automate this process. For now consider it an aptitude test.
+Besides the Open Watcom C/C++ 1.x binaries you'll need a few other executables
+used by the build process, primarily builder. The source is in \bld\builder.
+Run wmake in the directory corresponding to your host platform and if you set
+up everything properly, the executables will be built and copied to the
+right place. Perhaps someone will fully automate this process one day. For
+now please consider it an aptitude test.
 
 ------------------------------
 4) Build process:
 
-We use the Watcom C/C++ compilers and Watcom wmake to build our tools,
-but at the top level we have a tool which oversees traversing the build tree,
-deciding which projects to build for what platforms, logging the results to
-a file, and copying the finished software into the release tree (rel2),
-making fully automated builds a possibility.
+We use the Open Watcom C/C++ compilers and Open Watcom wmake to build our
+tools, but at the top level we have a tool which oversees traversing the
+build tree, deciding which projects to build for what platforms, logging
+the results to a file, and copying the finished software into the release
+tree (rel2), making fully automated builds a possibility.
 
-This tool is BUILDER.EXE
+This tool is called builder.
 
-see d:\bld\builder\builder.doc for detailed info on the tool and the source
+See d:\bld\builder\builder.doc for detailed info on the tool and the source
 if the documentation doesn't satisfy you.
 
 Here's how we use it:
@@ -159,4 +159,3 @@ is handy during development.
 If you have any further questions (and you will if you're serious), visit
 http://www.openwatcom.org/ and subscribe to the Open Watcom newsgroups at
 news://news.openwatcom.org/, particularly openwatcom.contributors.
-

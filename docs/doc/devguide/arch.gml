@@ -293,7 +293,7 @@ This provides a handy way to control selective builds and destroys. Some
 tokens which should be used by the appropriate makefiles are:
 .begnote $break
 .note all
-should be in every makefile
+is implicit in every makefile and does not need to be listed explicitly
 .note build
 indicates that wmake should be run in this directory as part of the build process
 .note os_x
@@ -311,7 +311,7 @@ whether an app uses inline 8087 stuff or fp calls
 For example, an executable which is going to run on the PPC version of NT
 should have a pmake line which contains, at a minimum:
 .millust begin
-#pmake: all build os_nt cpu_ppc
+#pmake: build os_nt cpu_ppc
 .millust end
 You are free to add as many mnemonic identifiers as you want, of course,
 but anything which you feel is an abstract classification that would apply
@@ -471,9 +471,9 @@ Use following to create libraries:
 .note
 In each object file directory, create a makefile which looks like the following:
 .millust begin
-#pmake: all build os_X cpu_Y
-host_os=X
-host_cpu=Y
+#pmake: build os_X cpu_Y
+host_os  = X
+host_cpu = Y
 !include ..\master.mif
 .millust end
 .endnote
