@@ -1,4 +1,7 @@
-disasm =    &
+dis_srcs = $(wdisasm_dir)/c
+dis_includes = $(wdisasm_dir)/h
+
+dis_objs =  &
 docode.obj  &
 formins.obj &
 fpptab.obj  &
@@ -7,4 +10,3 @@ insname.obj &
 instab.obj  &
 regname.obj &
 rwdata.obj
-

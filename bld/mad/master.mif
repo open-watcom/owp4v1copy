@@ -13,10 +13,6 @@ memory_model_386 = f
 memory_model_386 = s
 !endif
 
-!include cproj.mif
-!include deftarg.mif
-!include defrule.mif
-
 name = mad$(mad)
 mad_os2_i86   = $(name).dll
 mad_os2_386   = $(name).d32
@@ -28,6 +24,19 @@ mad_nt_386    = $(name).dll
 mad_nt_axp    = $(name).dll
 
 exe_name = $(mad_$(host_os)_$(host_cpu))
+
+all: $(exe_name) .SYMBOLIC
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!ifeq mad x86
+!include $(wdisasm_dir)/mif/disasm.mif
+!else ifeq mad xmp
+!else
+!include $(disasm_dir)/mif/dis.mif
+!endif
 
 # cflags stuff
 ###############
@@ -67,17 +76,16 @@ libs += $(imp_libs)
 
 ##################
 
-inc_dirs=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h
+inc_dirs=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h;$(dis_includes)
 !ifdef extra_incs
 inc_dirs+=;$(extra_incs)
 !endif
 
-.c: ../c;../../c;$(extra_srcs)
+.c: ../c;../../c;$(dis_srcs);$(extra_srcs)
 
-objs =  madimp.obj $(imp_objs)
+objs =  madimp.obj $(dis_objs) $(imp_objs)
 
 # explicit rules
 ##################
-$(exe_name) : $(objs)
+$(exe_name) : $(dis_prereq) $(objs)
         $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
-

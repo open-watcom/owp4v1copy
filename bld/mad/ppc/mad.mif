@@ -1,5 +1,3 @@
-!include $(disasm_dir)/mif/dis.mif
-
 imp_objs = &
         ppcaddr.obj &
         ppcctrl.obj &
@@ -7,12 +5,8 @@ imp_objs = &
         ppcreg.obj &
         ppccall.obj &
         ppcdisas.obj &
-        ppctrace.obj &
-        $(dis_objs)
+        ppctrace.obj
 
 mad = ppc
-
-extra_incs = $(dis_includes)
-extra_srcs = $(dis_srcs)
 
 !include ../../master.mif
