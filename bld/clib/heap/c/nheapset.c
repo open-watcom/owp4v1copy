@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Near heap set routines.
 *
 ****************************************************************************/
 
@@ -47,12 +46,7 @@ _WCRTLINK int _heapset( unsigned int fill )
 #endif
 
 #if defined(_M_IX86)
- #if __WATCOMC__ < 950
-  #define _fmemset(p,c,n)       _inline__fmemset(p,c,n)
-  extern void _WCFAR *_fmemset( void _WCFAR *, int, size_t );
- #else
-  #pragma intrinsic(_fmemset)
- #endif
+ #pragma intrinsic(_fmemset)
 #endif
 
 _WCRTLINK int _nheapset( unsigned int fill )
