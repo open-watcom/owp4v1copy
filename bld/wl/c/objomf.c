@@ -420,25 +420,27 @@ static void ProcImportKeyword( void )
 }
 
 
-int printf(char *, ...);
-
 static void DoMSOMF( void )
 /***********************************/
 /* Figure out debug info type and handle it accordingly later. */
 {
-    unsigned_8  version;
-    char        *dbgtype;
-
-    version = *ObjBuff++;
-    dbgtype = ObjBuff;
-    ObjBuff += 2;
-    if( strncmp( dbgtype, "CV", 2 ) == 0 ) {
-        CurrMod->omfdbg = OMF_DBG_CODEVIEW;
-    } else if( strncmp( dbgtype, "HL", 2 ) == 0 ) {
-        CurrMod->omfdbg = OMF_DBG_HLL;
-    }
+    if (ObjBuff == EOObjRec)
+        CurrMod->omfdbg = OMF_DBG_CODEVIEW;    /* Assume MS style */
     else {
-        CurrMod->omfdbg = OMF_DBG_UNKNOWN;
+        unsigned_8  version;
+        char        *dbgtype;
+
+        version = *ObjBuff++;
+        dbgtype = ObjBuff;
+        ObjBuff += 2;
+        if( strncmp( dbgtype, "CV", 2 ) == 0 ) {
+            CurrMod->omfdbg = OMF_DBG_CODEVIEW;
+        } else if( strncmp( dbgtype, "HL", 2 ) == 0 ) {
+            CurrMod->omfdbg = OMF_DBG_HLL;
+        }
+        else {
+            CurrMod->omfdbg = OMF_DBG_UNKNOWN;
+        }
     }
 }
 
