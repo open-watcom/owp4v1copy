@@ -1,3 +1,4 @@
+#pmake: all build os_dos cpu_386
 # makefile for GRAPHS.LIB
 
 libname =       graphs
@@ -10,4 +11,4 @@ _qnx =
 asm_cmd =       wasm
 asm_flags =     -ms -i..\inc -d_MODEL=_SMALL
 
-!include ..\graphics.mif
+!include $(graphics_prefix)..\graphics.mif

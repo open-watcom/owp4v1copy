@@ -1,3 +1,4 @@
+#pmake: all build os_dos cpu_386
 # makefile for GRAPH3S.LIB
 
 libname =       graph3s

@@ -14,6 +14,12 @@ libs :: graph.lib graph386.lib graph98.lib graph983.lib graphq.lib graphq3r.lib 
     @!echo all done
 !endif
 
+!ifeq host_OS dos
+
+!ifeq host_CPU i86
+
+all: graph.lib graph98.lib
+
 graph.lib : ..\o.s\graphs.lib $(build_root)\pgchart\o.s\charts.lib
     set srclib=graphs
     set targlib=graph
@@ -22,6 +28,19 @@ graph.lib : ..\o.s\graphs.lib $(build_root)\pgchart\o.s\charts.lib
     set clib=$(clibdir_s)
     set fix_seg=yes
     %make fixlib
+
+graph98.lib : ..\o.nec\graphs.lib $(build_root)\pgchart\o.s\charts.lib
+    set srclib=graphs
+    set targlib=graph98
+    set chartlib=$(build_root)\pgchart\o.s\charts.lib
+    set objdir=..\o.nec\
+    set clib=$(clibdir_s)
+    set fix_seg=yes
+    %make fixlib
+
+!else
+
+all: graph386.lib graph983.lib
 
 graph386.lib : ..\o.3s\graph3s.lib ..\o.3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
@@ -40,15 +59,6 @@ graph386.lib : ..\o.3s\graph3s.lib ..\o.3r\graph3r.lib &
     del ..\o.3r\tmp.lib
     del chart.lib
 
-graph98.lib : ..\o.nec\graphs.lib $(build_root)\pgchart\o.s\charts.lib
-    set srclib=graphs
-    set targlib=graph98
-    set chartlib=$(build_root)\pgchart\o.s\charts.lib
-    set objdir=..\o.nec\
-    set clib=$(clibdir_s)
-    set fix_seg=yes
-    %make fixlib
-
 graph983.lib : ..\o.n3s\graph3s.lib ..\o.n3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
     copy ..\o.n3s\graph3s.lib ..\o.n3r\tmp.lib
@@ -66,6 +76,12 @@ graph983.lib : ..\o.n3s\graph3s.lib ..\o.n3r\graph3r.lib &
     del ..\o.n3r\tmp.lib
     del chart.lib
 
+!endif
+
+!else ifeq host_OS qnx
+
+!ifeq host_CPU i86
+
 graphq.lib : ..\o.qs\graphs.lib $(build_root)\pgchart\o.s\charts.lib
     set srclib=graphs
     set targlib=graphq
@@ -74,6 +90,8 @@ graphq.lib : ..\o.qs\graphs.lib $(build_root)\pgchart\o.s\charts.lib
     set clib=$(clibdir_q)
     set fix_seg=yes
     %make fixlib
+
+!else
 
 graphq3r.lib : ..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3r\chart3r.lib
     copy ..\o.q3r\graph3r.lib graphq3r.lib
@@ -84,6 +102,9 @@ graphq3s.lib : ..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
     copy ..\o.q3s\graph3s.lib graphq3s.lib
     $(lib) /b /q graphq3s.lib + $(build_root)\pgchart\o.3s\chart3s.lib
 #    objstrip /n graphq3s.lib
+
+!endif
+!endif
 
 fixlib : .procedure
 # get library - add fsmath, dummy, chart library
@@ -109,7 +130,11 @@ fixlib : .procedure
 #    objnames _GR* /i=$(%targlib).stb /n $(%targlib).lib
 #    objstrip /n $(%targlib).lib
 
-!include ..\o.s\makefile
+!ifeq host_OS os2
 
 graphp.2bj : ..\c\seginit.c
     $(compiler) $[* @gr_extra $(cflags) /dDOSX286 /fo=graphp.2bj -bt=dos
+
+!endif
+
+!include ..\o.s\makefile

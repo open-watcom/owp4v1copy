@@ -1,3 +1,4 @@
+#pmake: all build os_qnx cpu_386
 # makefile for GRAPH3R.LIB
 
 libname =       graph3s

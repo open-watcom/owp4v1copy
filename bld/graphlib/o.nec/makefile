@@ -1,3 +1,4 @@
+#pmake: all build os_dos cpu_i86
 # makefile for GRAPHS.LIB
 
 libname =       graphs
