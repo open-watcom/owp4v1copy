@@ -5,11 +5,14 @@
 testasm=wasm
 !endif 
 
+.BEFORE
+        @%create testasm.log
+
 all : clean $(objs) $(dev_objs) .SYMBOLIC
 
 $(objs) : .SYMBOLIC
 	@echo $^@ ================================================================
-	@$(testasm) -q -zld $(asm_flags_$^@) $^@.asm >$^@.tmp 2>&1
+	@$(testasm) -q -zld -wx $(asm_flags_$^@) $^@.asm -fr=$^@.tmp
         @wmake -h -f ../check.mif name=$^@
 
 $(dev_objs) : .SYMBOLIC
@@ -17,9 +20,9 @@ $(dev_objs) : .SYMBOLIC
 	@echo ==============================================================
 	@echo DEVELOPMENT - $^@.asm 
 	@echo ==============================================================
-	@echo .
-	@$(testasm) -q -zld $(asm_flags_$^@) $^@.asm >$^@.tmp 2>&1
+	@$(testasm) -q -zld -wx $(asm_flags_$^@) $^@.asm -fr=$^@.tmp
         @wmake -h -f ../check.mif name=$^@
+	@echo .
 
 clean : .SYMBOLIC
 	@rm -f *.obj *.err *.dis *.lst *.tmp mem.trk
