@@ -1856,7 +1856,7 @@ L$186:
     shl         si,1
     mov         ax,seg _AsmBuffer
     mov         ds,ax
-    lds         bx,dword ptr DGROUP:_AsmBuffer+0fffffffcH[si]
+    lds         bx,dword ptr DGROUP:_AsmBuffer-4[si]
     push        word ptr 7[bx]
     push        word ptr 5[bx]
     mov         ax,cs
