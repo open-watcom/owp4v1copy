@@ -165,10 +165,10 @@ STATIC void handleMacroDefn( const char *buf )
     }
 
     if( Glob.microsoft ) {
-        Glob.macreadonly = FALSE;
         /* Insert twice because in nmake declaring a macro in the command line */
         /* is equivalent to declaring one as is and one that is all upper case */
         /* Approximately so. we cater for foo meaning FOO but not FoO W.Briscoe 20031114 */
+        /* This is no problem! In make, foo=bar only sets foo and FOO W.Briscoe 20041014 */
         while( --p >= q ) {
             *p = (char) toupper( *p );
         }
@@ -177,7 +177,6 @@ STATIC void handleMacroDefn( const char *buf )
         while( LexToken( LEX_PARSER ) != STRM_END ) {
             /* NOP - eat the characters. Needs own eater. W.Briscoe 20041014 */
         }
-        Glob.macreadonly = TRUE;
     }
     FreeSafe( q );
 }

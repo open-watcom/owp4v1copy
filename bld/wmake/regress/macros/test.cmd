@@ -55,7 +55,7 @@ if errorlevel 1 goto err2b
 echo # ---------------------------
 echo #   Macro Test 3A
 echo # ---------------------------
-set TRMEM_CODE=3
+REM set TRMEM_CODE=3
 rm tmp.out
 %1 -h -f MACRO03 > tmp.out 2>&1
 diff -b MACRO03A.CMP tmp.out
@@ -67,7 +67,7 @@ if errorlevel 1 goto err3a
     @echo Error: MACRO #3A unsuccessful!!! | tee -a %2
 
 :test3b
-set TRMEM_CODE=1
+REM set TRMEM_CODE=1
 echo # ---------------------------
 echo #   Macro Test 3B
 echo # ---------------------------
@@ -151,7 +151,24 @@ if errorlevel 1 goto err6
 
 :test7
 
-rm hello.obj hello2.obj hello.c hello2.c
+echo # ---------------------------
+echo #   Macro Test 7
+echo # ---------------------------
+
+wtouch hello.obj hello2.obj
+wtouch hello.c  hello2.c
+%1 -h -ms -m -f MACRO07 -a cc=bwcl386 > tmp.out 2>&1
+diff -b MACRO07.CMP tmp.out
+if errorlevel 1 goto err7
+    @echo # MACRO07 successful
+    goto test8
+:err7
+    @echo ## MACRO ## >> %2
+    @echo Error: MACRO #7 unsuccessful!!! | tee -a %2
+
+:test8
+
+rm hello.obj hello2.obj hello.boo hello.tmp hello.c hello2.c 
 goto done
 :usage
 echo usage: %0 prgname errorfile
