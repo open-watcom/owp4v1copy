@@ -252,6 +252,7 @@ void Define_Extensions()
     PreDefine_Macro( "cdecl=__cdecl" );
     PreDefine_Macro( "pascal=__pascal" );
     PreDefine_Macro( "fortran=__fortran" );
+    PreDefine_Macro( "inline=__inline" );
     PreDefine_Macro( "interrupt=__interrupt" );
     PreDefine_Macro( "_near=__near" );
     PreDefine_Macro( "_far=__far" );
