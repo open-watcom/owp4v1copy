@@ -491,6 +491,18 @@ try truncated (8.3) header file specification
 do not try truncated (8.3) header file specification
 :optref refid='SWfx'.
 .do end
+.if &e'&$SWfzh eq 1 .do begin
+.note fzh
+(C++ only)
+do not automatically append extensions for include files
+:optref refid='SWfzh'.
+.do end
+.if &e'&$SWfzs eq 1 .do begin
+.note fzs
+(C++ only)
+do not automatically append extensions for source files
+:optref refid='SWfzs'.
+.do end
 .if &e'&$SWi eq 1 .do begin
 .note i=<directory>
 another include directory
@@ -2910,6 +2922,34 @@ it will attempt to open a header file called
 (C++ only)
 This option can be used to disable the truncated header filename
 processing that the compiler does by default (see "ft" above).
+.do end
+.*
+.if &e'&$SWfzh eq 1 .do begin
+:OPT refid='SWfzh' name='fzh'.
+.ix 'options' 'fzh'
+(C++ only)
+This option can be used to stop the compiler from automatically adding 
+extensions to include files. The default behaviour of the compiler is to 
+search for the specified file, then to try known extensions if the file 
+specifier does not have an extension. Thus, #include <string> could be 
+matched by 'string', 'string.h' or 'string.hpp' (see "fzs" below). The 
+macro
+.kwm __SW_FZH
+will be defined when this switch is used.
+.do end
+.*
+.if &e'&$SWfzs eq 1 .do begin
+:OPT refid='SWfzs' name='fzs'.
+.ix 'options' 'fzs'
+(C++ only)
+This option can be used to stop the compiler from automatically adding 
+extensions to source files. The default behaviour of the compiler is to 
+search for the specified file, then to try known extensions if the file 
+specifier does not have an extension. Thus, 'src_file' could be matched 
+by 'src_file', 'src_file.cpp' or 'src_file.cc' (see "fzh" above). The 
+macro
+.kwm __SW_FZS
+will be defined when this switch is used.
 .do end
 .*
 .if &e'&$SWi eq 1 .do begin

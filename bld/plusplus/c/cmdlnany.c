@@ -1288,6 +1288,14 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->zls ) {
         CompFlags.emit_targimp_symbols = 0;
     }
+    if( data->fzh ) {   /* Define the switch macros for STLPort */
+        CompFlags.dont_autogen_ext_inc = 1;
+        DefSwitchMacro( "FZH" );
+    }
+    if( data->fzs ) {   /* Define the switch macros for STLPort */
+        CompFlags.dont_autogen_ext_src = 1;
+        DefSwitchMacro( "FZS" );
+    }
     if( data->zl ) {
         CompFlags.emit_library_names = 0;
     }

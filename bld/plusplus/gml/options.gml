@@ -471,6 +471,16 @@
 :usage. do not check for truncated versions of file names
 :jusage. 切り詰めたファイル名をチェックしません
 
+:option. fzh
+:target. any
+:usage. do not automatically postfix include file names
+:jusage. do not automatically postfix include file names
+
+:option. fzs
+:target. any
+:usage. do not automatically postfix source file names
+:jusage. do not automatically postfix source file names
+
 :option. 87d
 :target. i86 386
 :number. CmdX86CheckStack87 0

@@ -469,6 +469,18 @@ try truncated (8.3) header file specification
 do not try truncated (8.3) header file specification
 :optref refid='SWfx'.
 .*
+.note fzh
+:CMT. .ix 'options' 'fzh'
+(C++ only)
+do not automatically append extensions for include files
+:optref refid='SWfzh'.
+.*
+.note fzs
+:CMT. .ix 'options' 'fzs'
+(C++ only)
+do not automatically append extensions for source files
+:optref refid='SWfzs'.
+.*
 .note g=<codegroup>
 :CMT. .ix 'options' 'g'
 &x86only.

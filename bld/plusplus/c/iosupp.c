@@ -423,8 +423,13 @@ static char *openSrcExts(       // ATTEMPT TO OPEN FILE (EXT.S TO BE APPENDED)
     char *ext;                  // - current extension
 
     if( nd->ext[0] == '\0' ) {
+        int doSrc = (!(CompFlags.dont_autogen_ext_src) && (FT_SRC == typ));
+        int doInc = (!(CompFlags.dont_autogen_ext_inc) && ((FT_HEADER == typ)||(FT_LIBRARY == typ)));
+        int doExt = (doSrc || doInc);
+        
         ext = openExt( NULL, nd, typ );
-        if( ext == NULL ) {
+        
+        if(( ext == NULL ) && (doExt)) {
             for( ; ; ) {
                 ext = *exts++;
                 if( ext == NULL ) break;

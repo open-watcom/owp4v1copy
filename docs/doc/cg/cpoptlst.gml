@@ -382,6 +382,16 @@
 ~b~b~b~b~b~b
 .br
 .*
+:CMT. .note fzh
+:hotlink refid='SWfzh'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note fzs
+:hotlink refid='SWfzs'.
+~b~b~b~b~b~b
+.br
+.*
 :CMT. .note g=<codegroup>
 :hotlink refid='SWg'.
 ~b~b~b~b~b~b
