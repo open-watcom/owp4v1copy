@@ -10,29 +10,29 @@ objs = &
     svdcmp.obj
     
 !ifdef test1
-cflags_386 = -d2
-cflags_i86 = -d2
-cflags_axp = -d2
+test_cflags_386 = -d2
+test_cflags_i86 = -d2
+test_cflags_axp = -d2
 !else
-cflags_386 = -ox-d1
-cflags_i86 = -ox-d1
-cflags_axp = -ox-d1
+test_cflags_386 = -ox-d1
+test_cflags_i86 = -ox-d1
+test_cflags_axp = -ox-d1
 !endif
 
-cflags_386 += -zq -e10 -w0 -i. -d__ATT_complex__
-cflags_i86 += -zq -e10 -w0 -i. -d__ATT_complex__ -mm -zm
-cflags_axp += -zq -e10 -w0 -i. -d__ATT_complex__
+test_cflags_386 += -zq -e10 -w0 -i. -d__ATT_complex__
+test_cflags_i86 += -zq -e10 -w0 -i. -d__ATT_complex__ -mm -zm
+test_cflags_axp += -zq -e10 -w0 -i. -d__ATT_complex__
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .c.$(exe):
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
     $(linker) @test.lnk FILE $[*
     
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
     
 test : .symbolic matrix.lib test.lnk test.$(exe) tmatrix.$(exe)
     $(run) test >test.out

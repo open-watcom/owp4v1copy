@@ -2,19 +2,19 @@ plustest_name = getlong
 !include ../environ.mif
 
 !ifdef test1
-cflags = -d2
+test_cflags = -d2
 !else
-cflags = -ox-d1
+test_cflags = -ox-d1
 !endif
 
-cflags += -zq
+test_cflags += -zq
 
 stack_386=opt stack=8k
 stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .cc.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(test_cflags)
 
 objs = &
     getlongo.obj &

@@ -2,23 +2,23 @@ plustest_name = gstring
 !include ..\environ.mif
 
 !ifdef test1
-cflags = -d2
+test_cflags = -d2
 !else
-cflags = -ox-d1
+test_cflags = -ox-d1
 !endif
 
-cflags += -zq -i.
+test_cflags += -zq -i.
 
-cflags_386 = $(cflags) -mf
-cflags_i86 = $(cflags) -ml
-cflags_axp = $(cflags)
+test_cflags_386 = $(test_cflags) -mf
+test_cflags_i86 = $(test_cflags) -ml
+test_cflags_axp = $(test_cflags)
 
 stack_386=opt stack=8k
 stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
 objs = &
     string.obj &

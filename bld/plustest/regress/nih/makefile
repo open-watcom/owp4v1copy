@@ -45,21 +45,21 @@ objs =  &
     time.obj 
     
 !ifdef test1
-cflags_386 += -d2
-cflags_i86 += -d2
-cflags_axp += -d2
+test_cflags_386 += -d2
+test_cflags_i86 += -d2
+test_cflags_axp += -d2
 !else
-cflags_386 += -ox-d1
-cflags_i86 += -ox-d1
-cflags_axp += -ox-d1
+test_cflags_386 += -ox-d1
+test_cflags_i86 += -ox-d1
+test_cflags_axp += -ox-d1
 !endif
 
-cflags_386 += -zq-mf
-cflags_i86 += -zq-ml
-cflags_axp += -zq
+test_cflags_386 += -zq-mf
+test_cflags_i86 += -zq-ml
+test_cflags_axp += -zq
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch)) -i. -dNESTED_TYPES -w0
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -i. -dNESTED_TYPES -w0
     
 test : .symbolic $(objs)
     %make global

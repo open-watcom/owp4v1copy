@@ -2,33 +2,33 @@ plustest_name = field64
 !include ../environ.mif
 
 !ifdef test1
-cflags_386 = -d2-fpd
-cflags_i86 = -d2-fpd
-cflags_axp = -d2
+test_cflags_386 = -d2-fpd
+test_cflags_i86 = -d2-fpd
+test_cflags_axp = -d2
 !else ifdef test2
-cflags_386 = -os-d1-3s-xds
-cflags_i86 = -os-d1-xds
-cflags_axp = -os-d1-xds
+test_cflags_386 = -os-d1-3s-xds
+test_cflags_i86 = -os-d1-xds
+test_cflags_axp = -os-d1-xds
 !else ifdef test3
-cflags_386 = -os-d1-3s-xss-fpd
-cflags_i86 = -os-d1-xss-fpd
-cflags_axp = -os-d1-xss
+test_cflags_386 = -os-d1-3s-xss-fpd
+test_cflags_i86 = -os-d1-xss-fpd
+test_cflags_axp = -os-d1-xss
 !else
-cflags_386 = -os-d1-xst
-cflags_i86 = -os-d1-xst
-cflags_axp = -os-d1-xst
+test_cflags_386 = -os-d1-xst
+test_cflags_i86 = -os-d1-xst
+test_cflags_axp = -os-d1-xst
 !endif
 
-cflags_386 += -zq-fpi87-fp5-mf
-cflags_i86 += -zq-fpi87-fp5-ml-s
-cflags_axp += -zq
+test_cflags_386 += -zq-fpi87-fp5-mf
+test_cflags_i86 += -zq-fpi87-fp5-ml-s
+test_cflags_axp += -zq
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch)) -e1000
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000
     
 test : .symbolic test1.$(exe) test2.$(exe) test3.$(exe)
     $(run) test1 >test.out

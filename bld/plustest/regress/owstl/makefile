@@ -2,34 +2,34 @@ plustest_name = owstl
 !include ..\environ.mif
 
 !ifdef test1
-cflags_386 = -d2-fpd-xs
-cflags_i86 = -d2-fpd-xs
-cflags_axp = -d2-xs
+test_cflags_386 = -d2-fpd-xs
+test_cflags_i86 = -d2-fpd-xs
+test_cflags_axp = -d2-xs
 !else ifdef test2
-cflags_386 = -os-d1-3s-xss-br
-cflags_i86 = -os-d1-xss
-cflags_axp = -os-d1-xss
+test_cflags_386 = -os-d1-3s-xss-br
+test_cflags_i86 = -os-d1-xss
+test_cflags_axp = -os-d1-xss
 !else ifdef test3
-cflags_386 = -os-d1-3s-xss-xr
-cflags_i86 = -os-d1-xss-xr
-cflags_axp = -os-d1-xss-xr
+test_cflags_386 = -os-d1-3s-xss-xr
+test_cflags_i86 = -os-d1-xss-xr
+test_cflags_axp = -os-d1-xss-xr
 !else ifdef test4
-cflags_386 = -ot-d1-3r-fpd-xs -oe1000
-cflags_i86 = -ot-d1-fpd-xs -oe100
-cflags_axp = -ot-d1-xs -oe1000
+test_cflags_386 = -ot-d1-3r-fpd-xs -oe1000
+test_cflags_i86 = -ot-d1-fpd-xs -oe100
+test_cflags_axp = -ot-d1-xs -oe1000
 !else ifdef test5
-cflags_386 = -d2-br-xs
-cflags_i86 = -d2-xs
-cflags_axp = -d2-xs
+test_cflags_386 = -d2-br-xs
+test_cflags_i86 = -d2-xs
+test_cflags_axp = -d2-xs
 !else
-cflags_386 = -os-d1-xst
-cflags_i86 = -os-d1-xst
-cflags_axp = -os-d1-xst
+test_cflags_386 = -os-d1-xst
+test_cflags_i86 = -os-d1-xst
+test_cflags_axp = -os-d1-xst
 !endif
 
-cflags_386 += -zq-fpi87-fp5-mf
-cflags_i86 += -zq-fpi87-fp5-ml
-cflags_axp += -zq
+test_cflags_386 += -zq-fpi87-fp5-mf
+test_cflags_i86 += -zq-fpi87-fp5-ml
+test_cflags_axp += -zq
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
@@ -45,7 +45,7 @@ tests = &
         util01.$(exe)   &
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch)) -e1000
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000
 
 .obj.$(exe):
     $(linker) @test.lnk NAME $^* FILE $^*

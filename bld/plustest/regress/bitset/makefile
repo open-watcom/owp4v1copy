@@ -2,25 +2,25 @@ plustest_name = bitset
 !include ../environ.mif
 
 !ifdef test1
-cflags_386 = -d2-4r
-cflags_i86 = -d2
-cflags_axp = -d2
+test_cflags_386 = -d2-4r
+test_cflags_i86 = -d2
+test_cflags_axp = -d2
 !else
-cflags_386 = -ox-d1-4s
-cflags_i86 = -ox-d1
-cflags_axp = -ox-d1
+test_cflags_386 = -ox-d1-4s
+test_cflags_i86 = -ox-d1
+test_cflags_axp = -ox-d1
 !endif
 
-cflags_386 += -j-zq-mf-4r
-cflags_i86 += -j-zq-ml
-cflags_axp += -j-zq
+test_cflags_386 += -j-zq-mf-4r
+test_cflags_i86 += -j-zq-ml
+test_cflags_axp += -j-zq
 
 stack_386=opt stack=8k
 stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
 objs = &
     tbitset.obj &

@@ -2,23 +2,23 @@ plustest_name = format
 !include ..\environ.mif
 
 !ifdef test1
-cflags = -d2
+test_cflags = -d2
 !else
-cflags = -ox-d1
+test_cflags = -ox-d1
 !endif
 
-cflags += -zq
+test_cflags += -zq
 
-cflags_axp = $(cflags)
-cflags_386 = $(cflags) -mf
-cflags_i86 = $(cflags) -mc
+test_cflags_axp = $(test_cflags)
+test_cflags_386 = $(test_cflags) -mf
+test_cflags_i86 = $(test_cflags) -mc
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
 i_objs = iformat.obj itest.obj
 f_objs = fformat.obj ftest.obj

@@ -6,87 +6,87 @@ positive_dir = source
 !include $(positive_dir)/positive.mif
 
 !ifdef test1
-cflags_386 = -d2-xss-mf
-cflags_i86 = -d2-xss-mc-2
-cflags_axp = -d2-xss-si
+test_cflags_386 = -d2-xss-mf
+test_cflags_i86 = -d2-xss-mc-2
+test_cflags_axp = -d2-xss-si
 opt_EH_yes = -xss
 add_br_ = -br
 alt_error = 01
 !else ifdef test2
-cflags_386 = -d1-xss-mf
-cflags_i86 = -d1-xss-mm
-cflags_axp = -d1-xss-si
+test_cflags_386 = -d1-xss-mf
+test_cflags_i86 = -d1-xss-mm
+test_cflags_axp = -d1-xss-si
 opt_EH_yes = -xss
 alt_error = 02
 !else ifdef test3
-cflags_386 = -d2-xst-ms
-cflags_i86 = -d2-xst-ml
-cflags_axp = -d2-xst
+test_cflags_386 = -d2-xst-ms
+test_cflags_i86 = -d2-xst-ml
+test_cflags_axp = -d2-xst
 opt_EH_yes = -xst
 alt_error = 03
 !else ifdef test4
-cflags_386 = -d1-xst-mf
-cflags_i86 = -d1-xst-ms
-cflags_axp = -d1-xst-si
+test_cflags_386 = -d1-xst-mf
+test_cflags_i86 = -d1-xst-ms
+test_cflags_axp = -d1-xst-si
 opt_EH_yes = -xst
 alt_error = 04
 !else ifdef test5
-cflags_386 = -d1-xds-mf
-cflags_i86 = -d1-xds-mc-2
-cflags_axp = -d1-xds
+test_cflags_386 = -d1-xds-mf
+test_cflags_i86 = -d1-xds-mc-2
+test_cflags_axp = -d1-xds
 opt_EH_yes = -xss
 alt_error = 05
 !else ifdef test6
-cflags_386 = -d2-xds-mf
-cflags_i86 = -d2-xds-mm
-cflags_axp = -d2-xds
+test_cflags_386 = -d2-xds-mf
+test_cflags_i86 = -d2-xds-mm
+test_cflags_axp = -d2-xds
 opt_EH_yes = -xss
 alt_error = 06
 !else ifdef test7
-cflags_386 = -d1-xdt-ms
-cflags_i86 = -d1-xdt-ml
-cflags_axp = -d1-xdt
+test_cflags_386 = -d1-xdt-ms
+test_cflags_i86 = -d1-xdt-ml
+test_cflags_axp = -d1-xdt
 opt_EH_yes = -xst
 alt_error = 07
 !else ifdef test8
-cflags_386 = -d2-xdt-mf
-cflags_i86 = -d2-xdt-ms
-cflags_axp = -d2-xdt
+test_cflags_386 = -d2-xdt-mf
+test_cflags_i86 = -d2-xdt-ms
+test_cflags_axp = -d2-xdt
 opt_EH_yes = -xst
 alt_error = 08
 !else ifdef test9
-cflags_386 = -d1-xs-oe-mf
-cflags_i86 = -d1-xs-oe-ms
-cflags_axp = -d1-xs-oe
+test_cflags_386 = -d1-xs-oe-mf
+test_cflags_i86 = -d1-xs-oe-ms
+test_cflags_axp = -d1-xs-oe
 opt_EH_yes = -xs
 alt_error = 09
 !else ifdef test10
-cflags_386 = -d2s-xdt-mf
-cflags_i86 = -d2s-xdt-ms
-cflags_axp = -d2s-xdt
+test_cflags_386 = -d2s-xdt-mf
+test_cflags_i86 = -d2s-xdt-ms
+test_cflags_axp = -d2s-xdt
 opt_EH_yes = -xst
 alt_error = 10
 !else ifdef test11
-cflags_386 = -d2s-xs-mf
-cflags_i86 = -d2s-xs-ms
-cflags_axp = -d2s-xs
+test_cflags_386 = -d2s-xs-mf
+test_cflags_i86 = -d2s-xs-ms
+test_cflags_axp = -d2s-xs
 opt_EH_yes = -xs
 alt_error = 11
 !else
-cflags_386 = -ox-d1-xdt-ms
-cflags_i86 = -ox-d1-xdt-ms
-cflags_axp = -ox-d1-xdt
+test_cflags_386 = -ox-d1-xdt-ms
+test_cflags_i86 = -ox-d1-xdt-ms
+test_cflags_axp = -ox-d1-xdt
 opt_EH_yes = -xst
 alt_error = 00
 add_br_ = -br
 !endif
 
-cflags_386 += -we-w0-zq -i$(positive_dir)
-cflags_i86 += -we-w0-zq -i$(positive_dir)
-cflags_axp += -we-w0-zq -i$(positive_dir)
+test_cflags_386 += -we-w0-zq -i$(positive_dir)
+test_cflags_i86 += -we-w0-zq -i$(positive_dir)
+test_cflags_axp += -we-w0-zq -i$(positive_dir)
 
 !ifeq arch 386
-cflags_386 += $(add_br_$(no_br_$^*))
+test_cflags_386 += $(add_br_$(no_br_$^*))
 !endif
 
 # Some tests require more than the default stack size
@@ -98,7 +98,7 @@ lnk_i86 += op stack=8k
 .c: $(positive_dir)
 .c.obj:
     @set error_msg=failure to compile $^@
-    $(wpp_$(arch)) $[@ $(cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*))
 
 .obj.$(exe):
     @set error_msg=failure to link $^@

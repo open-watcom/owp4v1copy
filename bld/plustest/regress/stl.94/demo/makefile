@@ -4,18 +4,18 @@ plustest_name = stl94
 objs = demo.obj tempbuf.obj
 
 !ifdef test1
-cflags = -oxa-d1-hd
+test_cflags = -oxa-d1-hd
 !else ifdef test2
-cflags = -oxa-d1-xs-hd
+test_cflags = -oxa-d1-xs-hd
 !else ifdef test3
-cflags = -d2-xs-hd
+test_cflags = -d2-xs-hd
 !else
-cflags = -d2-hd
+test_cflags = -d2-hd
 !endif
 
-cflags += -w0-zq -i..
+test_cflags += -w0-zq -i..
 
-cflags_i86 = -mm -zm
+test_cflags_i86 = -mm -zm
 
 stack_386=opt stack=128k
 stack_i86=opt stack=32k
@@ -23,7 +23,7 @@ stack_axp=opt stack=128k
 
 .cpp: .;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
 
 #
 # function code overflow 16-bit segment

@@ -12,22 +12,22 @@ objs = &
    test.obj timer.obj timezone.obj value.obj vector.obj
 
 !ifdef test1
-cflags = -ot-op-d1
+test_cflags = -ot-op-d1
 !else ifdef test2
-cflags = -ot-op-d1-xds
+test_cflags = -ot-op-d1-xds
 !else ifdef test3
-cflags = -op-d2-xds
+test_cflags = -op-d2-xds
 !else
-cflags = -op-d2
+test_cflags = -op-d2
 !endif
 
-cflags += -zq -i..\.. -w0
+test_cflags += -zq -i..\.. -w0
 
-cflags_i86 = -mm -zm
+test_cflags_i86 = -mm -zm
    
 .c: ..
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 test : .symbolic ..\cool.lib
     %make global

@@ -26,28 +26,34 @@ initopts : .symbolic
 test0000 : .symbolic diag0000.out
     -diff -b diag0000.out diag0000.chk >diff0000.out
     diff -b diff0000.out diff0000.chk
+    @rm diff0000.out
 
 test0100 : .symbolic diag0100.out
     -diff -b diag0100.out diag0100.chk >diff0100.out
     diff -b diff0100.out diff0100.chk
+    @rm diff0100.out
 
 test0200 : .symbolic diag0200.out
     -diff -b diag0200.out diag0200.chk >diff0200.out
     diff -b diff0200.out diff0200.chk
+    @rm diff0200.out
 
 test0300 : .symbolic diag0300.out
     -diff -b diag0300.out diag0300.chk >diff0300.out
     diff -b diff0300.out diff0300.chk
+    @rm diff0300.out
 
 testsys : .symbolic diag$(arch).out
     -diff -b diag$(arch).out diag$(arch).chk >diff$(arch).out
     diff -b diff$(arch).out diff$(arch).chk
+    @rm diff$(arch).out
 
 test_special : .symbolic
     -$(wpp_$(arch)) $(diagnose_dir)\diag0001.c @diag $(opt_diag0001) -eq >diagspec.out
     -diff -b diagspec.out diagspec.chk >diffspec.out
     %make diag_clean
     diff -b diffspec.out diffspec.chk
+    @rm diffspec.out
 
 diag0000.out : ./catfile.exe $(diags_0099)
     $[@ -a *.err >diag0000.out
@@ -82,11 +88,12 @@ diag_clean : .procedure
     if exist *.pch del *.pch
 
 save : .symbolic
-    if exist diff0000.out cp diff0000.out s$(arch)_0000.sav
-    if exist diff0100.out cp diff0100.out s$(arch)_0100.sav
-    if exist diff0200.out cp diff0200.out s$(arch)_0200.sav
-    if exist diff0300.out cp diff0300.out s$(arch)_0300.sav
-    if exist diff$(arch).out cp diff$(arch).out s$(arch)_$(arch).sav
+    if exist diff0000.out cp diag0000.out s$(arch)0000.sav
+    if exist diff0100.out cp diag0100.out s$(arch)0100.sav
+    if exist diff0200.out cp diag0200.out s$(arch)0200.sav
+    if exist diff0300.out cp diag0300.out s$(arch)0300.sav
+    if exist diff$(arch).out cp diag$(arch).out s$(arch)_$(arch).sav
+    if exist diffspec.out cp diagspec.out s$(arch)spec.sav
 
 global : .symbolic
     %make diag_clean

@@ -9,30 +9,30 @@ ovldall.$(exe) &
 switcher.$(exe) &
 
 !ifdef test1
-cflags += -d2-xds
+test_cflags += -d2-xds
 !else ifdef test2
-cflags += -d2-xss
+test_cflags += -d2-xss
 !else ifdef test3
-cflags += -d2-xdt
+test_cflags += -d2-xdt
 !else ifdef test4
-cflags += -d2-xst
+test_cflags += -d2-xst
 !else ifdef test5
-cflags += -ox-d1-xds
+test_cflags += -ox-d1-xds
 !else ifdef test6
-cflags += -ox-d1-xss
+test_cflags += -ox-d1-xss
 !else ifdef test7
-cflags += -ox-d1-xdt
+test_cflags += -ox-d1-xdt
 !else ifdef test8
-cflags += -d2-xs
+test_cflags += -d2-xs
 add_br_ = -br
 !else ifdef test9
-cflags += -ox-d1-xs
+test_cflags += -ox-d1-xs
 add_br_ = -br
 !else
-cflags += -ox-d1-xst
+test_cflags += -ox-d1-xst
 !endif
 
-cflags += -zq-w0
+test_cflags += -zq-w0
 
 !ifdef %plustest_bad_br
 no_br_ctordtor = no
@@ -40,7 +40,7 @@ no_br_switcher = no
 !endif
 
 !ifeq arch 386
-cflags += $(add_br_$(no_br_$^*))
+test_cflags += $(add_br_$(no_br_$^*))
 !endif
 
 stack_386=opt stack=16k
@@ -48,7 +48,7 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(test_cflags)
     
 .obj.$(exe):
     wlink @test FILE $[@

@@ -2,26 +2,26 @@ plustest_name = re2c
 !include ../environ.mif
 
 !ifdef test1
-cflags = -d2
+test_cflags = -d2
 !else
-cflags = -ox-d1
+test_cflags = -ox-d1
 !endif
 
-cflags += -zq
+test_cflags += -zq
 
-cflags_386 += $(cflags) -mf-3s
-cflags_i86 += $(cflags) -ml -3
-cflags_axp += $(cflags)
+test_cflags_386 += $(test_cflags) -mf-3s
+test_cflags_i86 += $(test_cflags) -ml -3
+test_cflags_axp += $(test_cflags)
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
 .c.2bj:
-    $(wpp_i86) $[@ $(cflags_286)
+    $(wpp_i86) $[@ $(test_cflags_286)
     
 objs = &
     code.obj &

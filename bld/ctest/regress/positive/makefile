@@ -6,57 +6,57 @@ positive_dir = source
 !include $(positive_dir)/positive.mif
 
 !ifdef test1
-cflags_386 = -d2-mf
-cflags_i86 = -d2-mc-2
-cflags_axp = -d2-si
+test_cflags_386 = -d2-mf
+test_cflags_i86 = -d2-mc-2
+test_cflags_axp = -d2-si
 !ifndef __MSDOS__
 add_br_ = -br
 !endif
 alt_error = 01
 !else ifdef test2
-cflags_386 = -d1-oxtan-mf
-cflags_i86 = -d1-oxtan-mm
-cflags_axp = -d1-oxtan-si
+test_cflags_386 = -d1-oxtan-mf
+test_cflags_i86 = -d1-oxtan-mm
+test_cflags_axp = -d1-oxtan-si
 alt_error = 02
 !else ifdef test3
-cflags_386 = -d2-ms
-cflags_i86 = -d2-ml
-cflags_axp = -d2
+test_cflags_386 = -d2-ms
+test_cflags_i86 = -d2-ml
+test_cflags_axp = -d2
 alt_error = 03
 !else ifdef test4
-cflags_386 = -d1-oxs-mf
-cflags_i86 = -d1-oxs-ms
-cflags_axp = -d1-oxs-si
+test_cflags_386 = -d1-oxs-mf
+test_cflags_i86 = -d1-oxs-ms
+test_cflags_axp = -d1-oxs-si
 alt_error = 04
 !else ifdef test5
-cflags_386 = -d1-ei-mf
-cflags_i86 = -d1-ei-mc-2
-cflags_axp = -d1-ei
+test_cflags_386 = -d1-ei-mf
+test_cflags_i86 = -d1-ei-mc-2
+test_cflags_axp = -d1-ei
 alt_error = 05
 !else ifdef test6
-cflags_386 = -d2-mf
-cflags_i86 = -d2-mm
-cflags_axp = -d2
+test_cflags_386 = -d2-mf
+test_cflags_i86 = -d2-mm
+test_cflags_axp = -d2
 alt_error = 06
 !else ifdef test7
-cflags_386 = -d1-ms-6s-fp6
-cflags_i86 = -d1-ml-3-fp3
-cflags_axp = -d1
+test_cflags_386 = -d1-ms-6s-fp6
+test_cflags_i86 = -d1-ml-3-fp3
+test_cflags_axp = -d1
 alt_error = 07
 !else ifdef test8
-cflags_386 = -d2-mf-zro
-cflags_i86 = -d2-ms-zro
-cflags_axp = -d2
+test_cflags_386 = -d2-mf-zro
+test_cflags_i86 = -d2-ms-zro
+test_cflags_axp = -d2
 alt_error = 08
 !else ifdef test9
-cflags_386 = -d1-oe-zri-mf
-cflags_i86 = -d1-oe-ms
-cflags_axp = -d1-oe
+test_cflags_386 = -d1-oe-zri-mf
+test_cflags_i86 = -d1-oe-ms
+test_cflags_axp = -d1-oe
 alt_error = 09
 !else
-cflags_386 = -ox-d1-ms
-cflags_i86 = -ox-d1-ms
-cflags_axp = -ox-d1
+test_cflags_386 = -ox-d1-ms
+test_cflags_i86 = -ox-d1-ms
+test_cflags_axp = -ox-d1
 alt_error = 00
 !ifndef __MSDOS__
 !ifndef __LINUX__
@@ -75,12 +75,12 @@ exec_prefix =
 run_quietly = -zq
 !endif
 
-cflags_386 += -we-w0 -i$(positive_dir) $(run_quietly)
-cflags_i86 += -we-w0 -i$(positive_dir) $(run_quietly)
-cflags_axp += -we-w0 -i$(positive_dir) $(run_quietly)
+test_cflags_386 += -we-w0 -i$(positive_dir) $(run_quietly)
+test_cflags_i86 += -we-w0 -i$(positive_dir) $(run_quietly)
+test_cflags_axp += -we-w0 -i$(positive_dir) $(run_quietly)
 
 !ifeq arch 386
-cflags_386 += $(add_br_$(no_br_$^*))
+test_cflags_386 += $(add_br_$(no_br_$^*))
 !endif
 
 .error
@@ -89,7 +89,7 @@ cflags_386 += $(add_br_$(no_br_$^*))
 .c: $(positive_dir)
 .c.obj:
     @set error_msg=failure to compile $^@
-    $(wcc_$(arch)) $[@ $(cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -fo=.obj
+    $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -fo=.obj
 
 .obj.$(exe):
     @set error_msg=failure to link $^@

@@ -21,18 +21,18 @@ treetest.$(exe) &
 wordcnt.$(exe)
 
 !ifdef test1
-cflags = -ot-op-d1
+test_cflags = -ot-op-d1
 !else ifdef test2
-cflags = -ot-op-d1-xds
+test_cflags = -ot-op-d1-xds
 !else ifdef test3
-cflags = -op-d2-xds
+test_cflags = -op-d2-xds
 !else
-cflags = -op-d2
+test_cflags = -op-d2
 !endif
 
-cflags += -ei -zq -i.. -w0 -d__OS2__
+test_cflags += -ei -zq -i.. -w0 -d__OS2__
 
-cflags_i86 = -ml
+test_cflags_i86 = -ml
 
 stack_386=opt stack=32k
 stack_i86=opt stack=24k
@@ -42,7 +42,7 @@ stack_axp=opt stack=32k
     $(linker) @ex.lnk FILE $[@ op verbose
     
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 test : .symbolic ex.lnk $(exes)
     if exist *.dat del *.dat

@@ -45,14 +45,14 @@ idata40.$(exe) &
 idata41.$(exe) &
 idata42.$(exe)
 
-cflags += -ox-d1-zq-w0
+test_cflags += -ox-d1-zq-w0
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(test_cflags)
     
 .obj.$(exe):
     wlink @idata FILE $[@

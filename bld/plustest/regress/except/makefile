@@ -38,17 +38,17 @@ batch_lnk = except.fcl
 batch_sym = batch_build
 !endif
     
-cflags += -i..\positive\source
+test_cflags += -i..\positive\source
     
 !ifdef test1
-cflags += -d2-xst
+test_cflags += -d2-xst
 !else ifdef test2
-cflags += -d2-xss
+test_cflags += -d2-xss
 add_br_ = -br
 !else ifdef test3
-cflags += -ox-d1-xss
+test_cflags += -ox-d1-xss
 !else
-cflags += -ox-d1-xst
+test_cflags += -ox-d1-xst
 add_br_ = -br
 !endif
 
@@ -57,11 +57,11 @@ no_br_excok = no
 !endif
 
 !ifeq arch 386
-cflags_386 += $(cflags) -mf $(add_br_$(no_br_$^*))
+test_cflags_386 += $(test_cflags) -mf $(add_br_$(no_br_$^*))
 !else ifeq arch i86
-cflags_i86 += $(cflags) -mc
+test_cflags_i86 += $(test_cflags) -mc
 !else ifeq arch axp
-cflags_axp += $(cflags)
+test_cflags_axp += $(test_cflags)
 !endif
 
 stack_386=opt stack=32k
@@ -69,7 +69,7 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=32k
 
 .c.obj:
-    $(wpp_$(arch)) $[* $(cflags_$(arch)) -zq
+    $(wpp_$(arch)) $[* $(test_cflags_$(arch)) -zq
     
 .obj.$(exe):
     $(linker) @test file $[@
@@ -93,7 +93,7 @@ $(batch_cmp) : $(__MAKEFILES__)
     @for %i in ( $(srcs) ) do %append $(batch_cmp) %i
 
 batch_build : .symbolic test.lnk $(batch_lnk) $(batch_cmp)
-    $(wpp_$(arch)) -fc=$(batch_cmp) $(cflags_$(arch)) 
+    $(wpp_$(arch)) -fc=$(batch_cmp) $(test_cflags_$(arch)) 
     $(linker) @$(batch_lnk)
 !endif
     
@@ -114,5 +114,5 @@ global : .symbolic
     
 !ifdef BATCH_TEST
 .before
-    @echo cflags=$(cflags_$(arch))
+    @echo test_cflags=$(test_cflags_$(arch))
 !endif

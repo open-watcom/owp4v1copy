@@ -2,19 +2,19 @@ plustest_name = winnt
 !include ../environ.mif
 
 !ifdef test1
-cflags = -oxa-d1
+test_cflags = -oxa-d1
 !else ifdef test2
-cflags = -oxa-d1 -br
+test_cflags = -oxa-d1 -br
 !else ifdef test3
-cflags = -d2 -br
+test_cflags = -d2 -br
 !else
-cflags = -d2
+test_cflags = -d2
 !endif
 
-cflags += -w0-zq -i$(%watcom)\h\nt
+test_cflags += -w0-zq -i$(%watcom)\h\nt
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(test_cflags)
     
 test : .symbolic tomexe.exe tomdll.dll
     if exist exec.out del exec.out
@@ -30,7 +30,7 @@ tomdll.dll : tomdll.obj tomdll.lnk
     $(linker) @$]@
     
 tomdll.obj : tomdll.c
-    $(wpp_$(arch)) $[@ $(cflags) -bd
+    $(wpp_$(arch)) $[@ $(test_cflags) -bd
     
 tomexe.lnk : $(__MAKEFILES__)
     %create $^@

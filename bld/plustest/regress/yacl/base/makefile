@@ -33,21 +33,21 @@ tree.obj     &
 treewalk.obj
 
 !ifdef test1
-cflags = -ot-op-d1
+test_cflags = -ot-op-d1
 !else ifdef test2
-cflags = -ot-op-d1-xds
+test_cflags = -ot-op-d1-xds
 !else ifdef test3
-cflags = -op-d2-xds
+test_cflags = -op-d2-xds
 !else
-cflags = -op-d2
+test_cflags = -op-d2
 !endif
 
-cflags += -ei -w0 -zq -i.. -d__OS2__
+test_cflags += -ei -w0 -zq -i.. -d__OS2__
 
-cflags_i86 = -ml
+test_cflags_i86 = -ml
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 test : .symbolic ..\base.lib
     %make global

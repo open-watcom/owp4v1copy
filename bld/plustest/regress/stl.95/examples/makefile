@@ -3,33 +3,33 @@ plustest_name = stl95
 
 !ifdef test1
 alt_error = 01
-cflags = -oxa-d1
+test_cflags = -oxa-d1
 !else ifdef test2
 alt_error = 02
-cflags = -oxa-d1-xs
+test_cflags = -oxa-d1-xs
 !else ifdef test3
 alt_error = 03
-cflags = -d2-xs
+test_cflags = -d2-xs
 !else ifdef test4
 alt_error = 04
-cflags = -oxa-d1-xs
-cflags_386 = -br
-cflags_i86 =
-cflags_axp = -br
+test_cflags = -oxa-d1-xs
+test_cflags_386 = -br
+test_cflags_i86 =
+test_cflags_axp = -br
 !else ifdef test5
 alt_error = 05
-cflags = -d2-xs
-cflags_386 = -br
-cflags_i86 =
-cflags_axp = -br
+test_cflags = -d2-xs
+test_cflags_386 = -br
+test_cflags_i86 =
+test_cflags_axp = -br
 !else
 alt_error = 00
-cflags = -d2
+test_cflags = -d2
 !endif
 
-cflags += -w0-zq -i.;.. -fi=..\pch.h -fh
+test_cflags += -w0-zq -i.;.. -fi=..\pch.h -fh
 
-cflags_i86 += -mm -zm
+test_cflags_i86 += -mm -zm
 
 extra_istmit1 = <istmit1.in
 
@@ -39,7 +39,7 @@ stack_axp=opt stack=64k
 
 .cpp: ..\..\stl.94\examples;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 .obj.$(exe):
     wlink @test FILE $[@, tempbuf.obj, random.obj
