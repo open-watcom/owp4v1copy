@@ -455,22 +455,24 @@ REWRITE *RewritePackageFunction( PTREE multi )
         if( CurToken == T_EOF ) break;
         DbgAssert( depth != 0 );
         switch( CurToken ) {
-#ifndef NDEBUG
         case T_NULL:
+#ifndef NDEBUG
             DbgAssert( asm_depth != 0 );
-            break;
 #endif
+            if( depth == asm_depth ) {
+                PPState = save_pp;
+                asm_depth = 0;
+                PPStateAsm = FALSE;
+            }
+            break;
         case T___ASM:
             if( asm_depth == 0 ) {
                 PPState = PPS_EOL;
                 asm_depth = depth;
+                PPStateAsm = TRUE;
             }
             break;
         case T_SEMI_COLON:
-            if( depth == asm_depth ) {
-                PPState = save_pp;
-                asm_depth = 0;
-            }
             break;
         case T_LEFT_BRACE:
         case T_ALT_LEFT_BRACE:
@@ -482,6 +484,7 @@ REWRITE *RewritePackageFunction( PTREE multi )
             if( depth == asm_depth ) {
                 PPState = save_pp;
                 asm_depth = 0;
+                PPStateAsm = FALSE;
             }
             break;
         }
@@ -490,14 +493,7 @@ REWRITE *RewritePackageFunction( PTREE multi )
         }
         skip_first = FALSE;
         if( depth == 0 ) break;
-        if( CurToken == T_NULL ) {
-            // won't advance past EOL unless we do this
-            PPState = save_pp;
-            NextToken();
-            PPState = PPS_EOL;
-        } else {
-            NextToken();
-        }
+        NextToken();
     }
     PPState = save_pp;
     return( r );

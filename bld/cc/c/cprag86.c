@@ -1073,7 +1073,8 @@ void GetAsmLine()
             if( CurToken == T___ASM ) break;
             if( CurToken == T_RIGHT_BRACE ) break;
             strncat( buf, Buffer, 255 );
-            strncat( buf, " ", 255 );
+            if( CurToken != T_DOT )
+                strncat( buf, " ", 255 );
             NextToken();
         }
         AsmLine( buf );

@@ -55,9 +55,29 @@ PTREE AsmStmt( void )
 
 static void ensureBufferReflectsCurToken( void )
 {
-    if( !TokenUsesBuffer( CurToken ) ) {
+    if( TokenUsesBuffer( CurToken ) ) {
+        if( CurToken == T_CONSTANT ) {
+            switch( ConstType ) {
+            case TYP_UCHAR:
+            case TYP_UINT:
+            case TYP_ULONG:
+                ultoa( U32Fetch( Constant64 ), Buffer, 10 );
+                break;
+            case TYP_SCHAR:
+            case TYP_SINT:
+            case TYP_SLONG:
+                ltoa( U32Fetch( Constant64 ), Buffer, 10 );
+                break;
+            case TYP_ULONG64:
+            case TYP_SLONG64:
+                sti64cpy( Buffer, Constant64.u._64[0] );
+                break;
+            }
+        }
+    } else {
         strcpy( Buffer, Tokens[ CurToken ] );
     }
+
 }
 
 static PTREE genFnCall( char *name )
