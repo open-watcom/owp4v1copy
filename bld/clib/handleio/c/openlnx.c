@@ -36,6 +36,10 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "syslinux.h"
+#ifdef __WIDECHAR__
+    #include "mbwcconv.h"
+#endif
+
 
 /* open() and sopen() are identical under Linux, since the extra share
  * flags passed to sopen() are simply ignored. We implement sopen() because

@@ -221,7 +221,6 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     const char  *p;
     char        *q;
     size_t      len;
-    unsigned    path_drive_idx;
     char        curr_dir[_MAX_PATH];
 
     p = path;

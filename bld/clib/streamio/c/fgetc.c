@@ -33,6 +33,9 @@
 #include "widechar.h"
 #include <stdio.h>
 #include <unistd.h>
+#ifndef __UNIX__
+#include <conio.h>
+#endif
 #include "fileacc.h"
 #include <errno.h>
 #include "rtdata.h"

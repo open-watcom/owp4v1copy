@@ -45,12 +45,12 @@
 #include "mthread.h"
 #include "seterrno.h"
 
-static int begin_thread_helper( void *ptr )
-/*****************************************/
-{
-    // TODO: Implement this for Linux!
-    return( 0 );
-}
+// TODO: Implement this for Linux!
+//static int begin_thread_helper( void *ptr )
+///*****************************************/
+//{
+//    return( 0 );
+//}
 
 int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
                     unsigned stack_size, void *arglist )

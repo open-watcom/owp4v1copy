@@ -31,16 +31,11 @@
 
 #include "variety.h"
 #include "widechar.h"
-#ifndef __UNIX__
-    #include <io.h>
-#endif
 #include <errno.h>
 #include <process.h>
 #include <stdio.h>
 #include <string.h>
-#ifndef __UNIX__
-    #include <unistd.h>
-#endif
+#include <unistd.h>
 #include "rtdata.h"
 #include "fileacc.h"
 #include "exitwmsg.h"
