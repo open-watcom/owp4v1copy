@@ -31,12 +31,13 @@
 
 
 #ifdef INCL_PM
-    #define INCL_WIN
-    #define INCL_GPI
     #define INCL_DEV
     #define INCL_ERRORS
+    #define INCL_GPI
+    #define INCL_WIN
 #endif
 
 #include <pmwin.h>
-//#include <pmgpi.h>
+#include <pmgpi.h>
 //#include <pmdev.h>
+#include <pmstddlg.h>

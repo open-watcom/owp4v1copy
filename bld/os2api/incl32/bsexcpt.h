@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#ifndef __BSEXCPT_INCLUDED__
-#define __BSEXCPT_INCLUDED__
+#ifndef __BSEXCPT_H__
+#define __BSEXCPT_H__
 
 #define XCPT_CONTINUE_SEARCH    0
 #define XCPT_CONTINUE_EXECUTION (-1)
@@ -153,4 +153,3 @@ typedef struct _EXCEPTIONREGISTRATIONRECORD {
 } EXCEPTIONREGISTRATIONRECORD, *PEXCEPTIONREGISTRATIONRECORD;
 
 #endif
-

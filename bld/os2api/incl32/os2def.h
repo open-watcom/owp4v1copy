@@ -65,7 +65,7 @@
 typedef unsigned long   APIRET;
 
 typedef unsigned char   UCHAR,  *PUCHAR;
-typedef unsigned char   BYTE,   *PBYTE;
+typedef char            BYTE,   *PBYTE;
 typedef unsigned short  USHORT, *PUSHORT;
 typedef unsigned int    UINT,   *PUINT;
 typedef unsigned long   ULONG,  *PULONG;
