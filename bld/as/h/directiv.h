@@ -82,12 +82,10 @@ typedef union {
     dirop_repeat        repeat;
 } dirop_data;
 
-typedef struct dir_operand dir_operand;
-
-struct dir_operand {
-    dir_operand *next;
-    dirop_type  type;
-    dirop_data  content;
+typedef struct dir_operand {
+    struct dir_operand  *next;
+    dirop_type          type;
+    dirop_data          content;
 } dir_operand;
 
 #define NUMBER_INTEGER( x )     ((x)->content.number.integer)

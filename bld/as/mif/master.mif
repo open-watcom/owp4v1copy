@@ -89,6 +89,8 @@ as_yydebug              = -DYYDEBUG=1
 !endif
 
 extra_c_flags_asitest   = $(as_trmem)
+
+!ifndef bootstrap
 extra_c_flags_asmem     = -fh=asmem.pch $(as_trmem)
 extra_c_flags_trmemcvr  = -fh=trmemcvr.pch $(as_trmem)
 extra_c_flags_trmem     = -fh=trmem.pch $(as_trmem)
@@ -116,6 +118,7 @@ extra_c_flags_main      = -fh
 extra_c_flags_obj       = -fh
 extra_c_flags_sections  = -fh
 extra_c_flags_options   = -fh
+!endif
 
 # lflags
 #########
@@ -142,7 +145,7 @@ splice_opts += -k_STANDALONE_
 .gh: .
 .msg: $(as_dir)/h
 
-inc_dirs = $(as_incs) -I"$(owl_dir)/h" -I$(cpp_dir) -I$(trmem_dir)
+inc_dirs = -I. $(as_incs) -I"$(owl_dir)/h" -I$(cpp_dir) -I$(trmem_dir)
 
 # explicit rules
 #################
