@@ -118,10 +118,6 @@ br_flags=
 etp_flags=-d1-hd-etp
 !endif
 
-!ifndef no_precompiled_headers
-pch_flags = -fh
-!endif
-
 comp_flags += -i"$(lib_misc_dir)/h;$(inc_dirs);$(bld_h);$(watcom_dir)/h;$(comp_cfg_dir)/h"
 
 !ifndef runtime_library_source
@@ -229,10 +225,10 @@ update : .symbolic $(target_lib)
 .asm : $(asm_dirs)
 
 .cpp.obj : $(comp_cpp)
-    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.obj $(comp_flags) $[@ $($[&_opt)
+    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.obj $(comp_flags) $[@ $($[&_opt) $(extra_cpp_flags_$[&)
 
 .cpp.xbj : $(comp_cpp)
-    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -xs-zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.xbj $(comp_flags) $[@
+    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -xs-zld-nm=$[& $(pch_flags_x) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.xbj $(comp_flags) $[@ $(extra_cpp_flags_x_$[&)
 
 .c.obj :
     $(comp_c) $(etp_flags) $(comp_flags) $[@
@@ -241,10 +237,7 @@ update : .symbolic $(target_lib)
     $(comp_c) $(etp_flags) -fo=.xbj $(comp_flags) $[@
 
 .asm.obj :
-    #$(comp_cpp) $(comp_flags) -p $[@ > $[&.pp
-#    $(asm_a) $(asm_flags) $[@
     $(as) $(asm_flags) $[@
-    #rm -f $[&.pp
 
 !include $(plusplus_dir)/clean.mif
 
