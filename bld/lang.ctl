@@ -9,18 +9,21 @@ cdsay .
 
 echo Languages Build <1>
 
-#       First of all build prerequisite utilities
+#
+#        First of all build prerequisite utilities used in the build
+#
+[ INCLUDE <devdir>\builder\lang.ctl ]
 [ INCLUDE <devdir>\yacc\lang.ctl ]
 [ INCLUDE <devdir>\whpcvt\lang.ctl ]
 [ INCLUDE <devdir>\helpcomp\lang.ctl ]
 [ INCLUDE <devdir>\ssl\lang.ctl ]
 #
-#       Before building anything for real, create up-to-date header files
+#        Before building anything for real, create up-to-date header files
 #
 [ INCLUDE <devdir>\hdr\lang.ctl ]
-#       same for Win32 headers
+#        Same for Win32 headers/import libs
 [ INCLUDE <devdir>\w32api\lang.ctl ]
-#       This used to be part of HDR
+#        This used to be part of HDR
 #[ INCLUDE <devdir>\nwsdk\lang.ctl ]
 #
 #        Next step, build libraries used by various projects
@@ -140,11 +143,6 @@ echo Languages Build <1>
 #[ INCLUDE <devdir>\pmake\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
 
-#
-# Include builder project itself so that we can clean it (obviously we
-# can't require builder to build builder)
-#
-[ INCLUDE <devdir>\builder\lang.ctl ]
 
 # deal with the project which contains this file last --- the BAT directory
 # BATDIR Builder Control file
