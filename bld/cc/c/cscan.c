@@ -856,6 +856,9 @@ int ScanNum()
             break;
         case SUFF_L:
         case SUFF_LL:
+            if( ov == CNV_32 ) {
+                U32ToU64( Constant, &Const64 );
+            }
             if( Const64.u._32[I64HI32] & 0x80000000 ){
                 ConstType = TYPE_ULONG64;
             }else{
@@ -865,6 +868,9 @@ int ScanNum()
         case SUFF_U:
         case SUFF_UL:
         case SUFF_ULL:
+            if( ov == CNV_32 ) {
+                U32ToU64( Constant, &Const64 );
+            }
             ConstType = TYPE_ULONG64;
             break;
         }

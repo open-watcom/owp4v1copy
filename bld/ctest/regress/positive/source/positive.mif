@@ -118,6 +118,7 @@ positive_tests = &
     i64cnv.$(ext) &
     i64op.$(ext) &
     i6402.$(ext) &
+    i6402.$(ext) &
     i6404.$(ext) &
     i6405.$(ext) &
     i6407.$(ext) &
