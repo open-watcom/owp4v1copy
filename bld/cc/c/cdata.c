@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  InitGlobalVars() Initialises all global variables from cc;
+*        Variables are, unfortunatly, declared all over the place.
 *
 ****************************************************************************/
 
@@ -33,7 +33,7 @@
 #define global
 #include "cvars.h"
 
-extern void InitGlobalVars( void ){
+void InitGlobalVars( void ){
 PCH_Start      =NULL;     // start of precompiled memory block
 PCH_End        =NULL;     // end of precompiled memory block
 PCH_Macros     =NULL;     // macros loaded from pre-compiled header
@@ -200,7 +200,7 @@ MsgFlags=NULL;      /* Bit mask of disabled messages */
 MacSegList=NULL;     /* pointer to list of macro segments */
 LoopDepth =0;      /* current nesting of loop constructs */
 HeadLibs =0;
-CurFuncHandle =NULL;/* sym_handle for current function */
+CurFuncHandle = 0;/* sym_handle for current function */
 LastFuncOutOfMem =0; /* cinfo: */
 HashFreeList= NULL;/* list of available hash entries */
 PageHandle=0;    /* handle for temp page file */

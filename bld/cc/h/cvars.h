@@ -481,7 +481,9 @@ extern  int     IdenticalType(TYPEPTR,TYPEPTR); /* ccheck */
 extern  int     VerifyType(TYPEPTR,TYPEPTR,SYMPTR);/* ccheck */
 extern  TYPEPTR SkipTypeFluff( TYPEPTR typ );      /* ccheck */
 extern  void    ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num ); /* ccheck */
+
 //ccmain.c
+extern  void    FreeRDir( void );
 extern  void    FrontEndInit( bool reuse );
 extern  int     FrontEnd(char **);
 extern  void    FrontEndFini( void );
@@ -519,18 +521,27 @@ extern  void    GetNextToken(void);
 extern  void    EmitLine(unsigned,char *);
 extern  void    EmitPoundLine(unsigned,char *,int);
 
+// cdata.c
 extern  void    InitGlobalVars( void );
+
+// from cdebug.c
 extern  dbug_type DBType(TYPEPTR);
 extern  void    EmitDBType(void);
+extern  dbug_type FEDbgType( CGSYM_HANDLE cgsym_handle );
+extern  dbug_type FEDbgRetType( CGSYM_HANDLE cgsym_handle );
 
 extern  void    ParsePgm(void);
 extern  void    AdjParmType(SYMPTR sym);
 extern  void    Chk_Struct_Union_Enum(TYPEPTR);
-extern  void  Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state );
+extern  void    Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state );
 extern  int     DeclList(SYM_HANDLE *);
 extern  FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state );
 extern  TYPEPTR SkipDummyTypedef(TYPEPTR);
 extern  TYPEPTR TypeName(void);
+
+// cdecl2.c
+extern  void InvDecl( void );
+
 // cinfo.c
 extern  segment_id SymSegId( SYMPTR sym );
 
@@ -553,6 +564,7 @@ extern  TYPEPTR EnumDecl(int);                  /* cenum */
 extern  int     EnumLookup(int,char *,ENUM_INFO *); /* cenum */
 extern  void    EnumInit(void);                 /* cenum */
 extern  void    FreeEnums(void);                /* cenum */
+
 //cerror.c
 extern  void    CErr1(int);
 extern  void    CErr2(int,int);
@@ -892,7 +904,7 @@ extern  void    MyExit( int ret );              /* cintmain */
 
 extern  void    DBSetSymLoc(CGSYM_HANDLE,long); /* dbsupp */
 
-#if _OS == _CMS
+#if _OS == _CMS || ! defined(__WATCOMC__)
     #define  __va_list  va_list
     #define  __puts     puts
     #define  __printf   printf

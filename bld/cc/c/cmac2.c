@@ -35,23 +35,29 @@
 #include "scan.h"
 #include <stddef.h>
 
+// void    CPragma(void);
 
-void    CSkip(void);
-void    CSkipIf(void);
-void    CDefine(void);
-void    CInclude(void);
-void    CIfDef(void);
-void    CIfNDef(void);
-void    CIf(void);
-void    CElif(void);
-void    CElse(void);
-void    CEndif(void);
-void    CUndef(void);
-void    CLine(void);
-void    CError(void);
-void    CPragma(void);
-void    CIdent(void);
-void    CUnknown(void);
+static void    CSkip(void);
+static void    CSkipIf(void);
+static void    CDefine(void);
+static void    CInclude(void);
+static void    CIfDef(void);
+static void    CIfNDef(void);
+static void    CIf(void);
+static void    CElif(void);
+static void    CElse(void);
+static void    CEndif(void);
+static void    CUndef(void);
+static void    CLine(void);
+static void    CError(void);
+static void    CIdent(void);
+static void    CUnknown(void);
+
+local void Flush2EOL( void );
+local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, int defn_offset );
+local void IncLevel( int value );
+local int  FormalParm( struct macro_parm *formal_parms );
+local void ChkEOL( void );
 
 struct preproc {
     char  *directive;
@@ -122,7 +128,7 @@ void PreProcStmt(void)
     Flush2EOL();
 }
 
-extern bool PrintWhiteSpace;  //ppc printing
+extern bool PrintWhiteSpace;  //ppc printing   (from ccmain.c)
 int ChkControl(void)
 {
     int lines_skipped;
@@ -202,7 +208,7 @@ int ScanCharacters()
     return( c );
 }
 
-void Flush2EOL()
+static void Flush2EOL( void )
 {
 #if 1
     while( CurToken != T_NULL ) {
@@ -315,7 +321,7 @@ void CInclude()
 local void CDefine()
 {
     struct macro_parm *mp, *prev_mp, *formal_parms;
-    int         parm_cnt, parm_end;
+    int         parm_cnt, parm_end = 0;
     int         i, j;
     int         ppscan_mode;
 
@@ -329,7 +335,7 @@ local void CDefine()
         return;
     }
     i = 0;
-    while( TokenBuf[i] = Buffer[i] ) ++i;
+    while( (TokenBuf[i] = Buffer[i]) ) ++i;
     ++i;
     formal_parms = NULL;
     parm_cnt = -1;              /* -1 ==> no () following */
@@ -371,7 +377,8 @@ local void CDefine()
                 mp->parm = CStrSave( Buffer );
             prev_mp = mp;
             j = 0;
-            while( TokenBuf[i++] = Buffer[j++] );
+            while( (TokenBuf[i++] = Buffer[j++]) )
+                /* empty */;
             PPNextToken();
             if( CurToken == T_RIGHT_PAREN ) break;
             if( CurToken == T_NULL ) {
@@ -381,7 +388,7 @@ local void CDefine()
             if( parm_end ) {
                 ExpectingAfter( ")", "..." );
                 return;
-            }              
+            }
             MustRecog( T_COMMA );
             if( CurToken != T_ID &&
                 CurToken != T_DOT_DOT_DOT ) {            /* 16-nov-94 */
@@ -394,7 +401,7 @@ local void CDefine()
     ppscan_mode = InitPPScan();         // enable T_PPNUMBER tokens
     GrabTokens( parm_end?-(parm_cnt + 1):(parm_cnt + 1), formal_parms, i );
     FiniPPScan( ppscan_mode );          // disable T_PPNUMBER tokens
-    for(; mp = formal_parms; ) {
+    for(; (mp = formal_parms); ) {
         formal_parms = mp->next_macro_parm;
         CMemFree( mp->parm );
         CMemFree( mp );
@@ -402,10 +409,7 @@ local void CDefine()
 }
 
 
-local void GrabTokens( parm_cnt, formal_parms, defn_offset )
-        int     parm_cnt;
-        struct macro_parm *formal_parms;
-        int     defn_offset;
+local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, int defn_offset )
     {
         MEPTR   mentry;
         int     i;
@@ -475,7 +479,8 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
                     ++i;
                 } else {
                     j = 0;
-                    while( TokenBuf[i++] = Buffer[j++] ) ;
+                    while( (TokenBuf[i++] = Buffer[j++]) )
+                        /*empty*/ ;
                 }
                 break;
             case T_BAD_CHAR:
@@ -488,7 +493,10 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
             case T_BAD_TOKEN:
             case T_PPNUMBER:
                 j = 0;
-                while( TokenBuf[i++] = Buffer[j++] ) ;
+                while( (TokenBuf[i++] = Buffer[j++]) )
+                    /* empty */ ;
+                break;
+            default:
                 break;
             }
             if( CurToken != T_WHITE_SPACE ) {
@@ -785,7 +793,7 @@ local void CUndef()
 }
 
 
-local void ChkEOL()
+local void ChkEOL( void )
 {
     if( CurToken != T_NULL  &&  CurToken != T_EOF ) { /* 15-dec-91 */
         ExpectEndOfLine();
@@ -862,11 +870,11 @@ void CppStackInit( void )
     CppStack = NULL;
 }
 
-void CppStackFini(void)
+void CppStackFini( void )
 {
     struct cpp_info *cpp;
 
-    while( cpp = CppStack ) {
+    while( (cpp = CppStack) ) {
         SetErrLoc( cpp->file_name, cpp->line_num );
         CErr1( ERR_MISSING_CENDIF );
         CppStack = cpp->prev_cpp;

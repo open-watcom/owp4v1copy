@@ -38,13 +38,14 @@
 
 TYPEPTR *MakeParmList( struct parm_list *, int, int );
 struct parm_list *NewParm( TYPEPTR, struct parm_list * );
-void    InvDecl( void );
-TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod );
-TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod );
+static TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod );
+static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod );
 static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ );
 
-static int ThreadSeg;
+local void FreeParmList( void );
+local void GetFuncParmList( void );
 
+static int ThreadSeg;
 
 
 
@@ -101,6 +102,8 @@ static int SCSpecifier()
         case T_TYPEDEF: stg_class = SC_TYPEDEF; break;
         case T_AUTO:    stg_class = SC_AUTO;    break;
         case T_REGISTER:stg_class = SC_REGISTER;break;
+        default:
+            break;
         }
         NextToken();
     }
@@ -108,7 +111,7 @@ static int SCSpecifier()
 }
 
 
-void InvDecl()
+void InvDecl( void )
 {
     CErr1( ERR_INVALID_DECLARATOR );
 }
@@ -956,7 +959,7 @@ static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = NULL;
+    info.based_sym = 0;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -985,7 +988,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = NULL;
+    info.based_sym = 0;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -1084,7 +1087,7 @@ FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = NULL;
+    info.based_sym = 0;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -1173,7 +1176,7 @@ static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod )
 {
     PARMPTR     parm_list;
     TYPEPTR     *parms;
-    TYPEPTR     *FuncProtoType();
+    local TYPEPTR  *FuncProtoType();
 
     parms = NULL;
     if( CurToken != T_RIGHT_PAREN ) {
@@ -1276,7 +1279,7 @@ void AdjParmType( SYMPTR sym )
 local TYPEPTR *GetProtoType( decl_info *first )
 {
     PARMPTR     parm;
-    PARMPTR     prev_parm;
+    PARMPTR     prev_parm = NULL;
     PARMPTR     parm_namelist;
     int         parm_count;
     struct parm_list *parmlist;
@@ -1483,9 +1486,9 @@ local TYPEPTR *FuncProtoType()
 }
 
 
-local void GetFuncParmList()
+local void GetFuncParmList( void )
 {
-    PARMPTR     parm;
+    PARMPTR     parm = NULL;
     PARMPTR     newparm;
     PARMPTR     parm_namelist;
 
@@ -1533,11 +1536,11 @@ local void GetFuncParmList()
 }
 
 
-local void FreeParmList()
+local void FreeParmList( void )
 {
     PARMPTR     parm;
 
-    for( ; parm = ParmList; ) {
+    for( ; (parm = ParmList); ) {
         ParmList = parm->next_parm;
         CMemFree( parm->sym.name );
         CMemFree( parm );
