@@ -90,6 +90,24 @@ static char WorkFile[] = "__wrk0__";
 static char IsStdIn;
 static int IncFileDepth;
 
+int PrintWhiteSpace;     // also refered from cmac2.c
+
+// local functions definition
+static void DoCCompile( char **cmdline );
+static void DelErrFile( void );
+static void MakePgmName( void );
+static int OpenFCB( FILE *fp, char *filename );
+static bool IsFNameOnce( char const *filename );
+static int TryOpen( char *prefix, char *separator, char *filename, char *suffix );
+static void ParseInit( void );
+static void CPP_Parse( void );
+static int FCB_Alloc( FILE *fp, char *filename );
+local void Parse( void );
+static int OpenPgmFile( void );
+static void DelDepFile( void );
+
+
+//
 void FrontEndInit( bool reuse ) {
 //**************************//
 // Do the once only things //
@@ -106,7 +124,7 @@ void FrontEndFini( void ) {
     GlobalCompFlags.cc_first_use = TRUE;
 }
 
-void ClearGlobals()
+void ClearGlobals ( void )
 {
     InitStats();
     IsStdIn = 0;
@@ -196,7 +214,7 @@ local void MakeTmpName( char *fname )
 
 #if (_OS == _QNX) || (_OS == _LINUX)
 
-void OpenPageFile()
+void OpenPageFile ( void )
 {
     auto char fname[ _MAX_PATH ];
 
@@ -252,8 +270,7 @@ void OpenPageFile()
 
 #endif
 
-
-void CloseFiles()
+void CloseFiles( void )
 {
     #if (_OS != _QNX) && (_OS != _LINUX)
         auto char fname[ _MAX_PATH ];
@@ -387,7 +404,7 @@ void DumpDepFile( void )
     }
 }
 
-void DoCCompile( char **cmdline )
+static void DoCCompile( char **cmdline )
 /******************************/
 {
     auto jmp_buf env;
@@ -456,13 +473,11 @@ void DoCCompile( char **cmdline )
 
 
 
-
-
 /* open the primary source file, and return pointer to root file name */
 
 #define STDIN_NAME      "stdin"
 
-extern char FindIt[10] = "cgtype";
+// extern char FindIt[10] = "cgtype";
 
 static void MakePgmName( void )
 {
@@ -516,7 +531,7 @@ local void CantOpenFile( char *name )
     BannerMsg( msgbuf );
 }
 
-int OpenPgmFile()
+static int OpenPgmFile( void )
 {
     if( IsStdIn ) {
         return( OpenFCB( stdin, "stdin" ) );
@@ -691,7 +706,7 @@ void CppPrtf( char *fmt, ... )
 
 void OpenCppFile()
 {
-    char        *name;
+    char  *name = NULL;
 
     if( CompFlags.cpp_output_to_file ) {                /* 29-sep-90 */
         name = ObjFileName( CPP_EXT );
@@ -760,7 +775,7 @@ FILE *OpenBrowseFile()
 }
 
 
-void DelErrFile()
+static void DelErrFile(void)
 {
     char        *name;
 
@@ -768,7 +783,7 @@ void DelErrFile()
     if( name != NULL ) remove( name );
 }
 
-void DelDepFile()
+static void DelDepFile( void )
 {
     char        *name;
 
@@ -934,8 +949,7 @@ bool FreeSrcFP( void )
     return( ret );
 }
 
-static bool IsFNameOnce( char const *filename );
-int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
+static int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
 {
     int         i, j;
     FILE        *fp;
@@ -947,11 +961,11 @@ int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
         return( 0 );
     }
     i = 0;
-    while( buf[i] = *prefix++ )    ++i;
-    while( buf[i] = *separator++ ) ++i;
+    while( (buf[i] = *prefix++) )    ++i;
+    while( (buf[i] = *separator++) ) ++i;
     j = i;
-    while( buf[i] = *filename++ )  ++i;
-    while( buf[i] = *suffix++ )    ++i;
+    while( (buf[i] = *filename++) )  ++i;
+    while( (buf[i] = *suffix++) )    ++i;
     filename = &buf[0];                 /* point to the full name */
     if( IsFNameOnce( filename ) ) {
         return( 1 );
@@ -1079,7 +1093,7 @@ void FreeFNames( void )
 {
     FNAMEPTR    flist;
 
-    while( flist = FNames ) {
+    while( (flist = FNames) ) {
         FNames = flist->next;
         if( flist->fullpath != NULL ) {
             CMemFree( flist->fullpath );
@@ -1132,7 +1146,7 @@ void FreeRDir( void )
 {
     RDIRPTR    dirlist;
 
-    while( dirlist = RDirNames ) {
+    while( (dirlist = RDirNames) ) {
         RDirNames = dirlist->next;
         CMemFree( dirlist );
     }
@@ -1286,7 +1300,7 @@ void SetSrcFNameOnce( void )
     SrcFile->src_flist->once = TRUE;
 }
 
-static void ParseInit()
+static void ParseInit( void )
 {
     ScanInit();
     CTypeInit();
@@ -1301,7 +1315,7 @@ static void ParseInit()
 }
 
 
-local void Parse()
+local void Parse( void )
 {
     EmitInit();
     // The first token in a file should be #include if a user wants to
@@ -1336,8 +1350,7 @@ local void Parse()
     if( CompFlags.warnings_cause_bad_exit )  ErrCount += WngCount;
 }
 
-int PrintWhiteSpace;
-static void CPP_Parse()
+static void CPP_Parse( void )
 {
     if( ForceInclude ) {
         PrtChar( '\n' );
