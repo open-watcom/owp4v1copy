@@ -45,7 +45,7 @@ binp\wd.exe
 binp\wdpmhelp.exe
 binp\wdw.exe
 binp\wprof.exe
-binp\wsampos2.exe
+#binp\wsampos2.exe
 binp\wsmpos22.exe
 binw\nmp.dll
 binw\nmpservw.exe
