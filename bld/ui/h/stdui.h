@@ -417,7 +417,7 @@ typedef         unsigned char           ATTR;
 #define         iseditchar( ev )        ( ( ev >= EV_FIRST_EDIT_CHAR ) \
                                        && ( ev <= EV_LAST_EDIT_CHAR ) )
 
-#if defined(__AXP__) || defined(__NT__)
+#if defined(__NT__)
     typedef struct pixel {
             unsigned short  ch;
             unsigned short  attr;
@@ -433,7 +433,7 @@ typedef         unsigned char           ATTR;
     typedef PIXEL *LPPIXEL;
     #define __FAR
     #undef HAVE_FAR
-#elif defined(__UNIX__) && defined(__386__)
+#elif defined(__UNIX__)
     typedef struct pixel {
             char            ch;
             ATTR            attr;
@@ -441,23 +441,6 @@ typedef         unsigned char           ATTR;
     typedef PIXEL *LPPIXEL;
     #define __FAR
     #undef HAVE_FAR
-#elif defined(__UNIX__) && defined(__PPC__)
-    typedef struct pixel {
-            char            ch;
-            ATTR            attr;
-    } PIXEL;
-    typedef PIXEL *LPPIXEL;
-    #define __FAR
-    #undef HAVE_FAR
-#elif defined( __UNIX__ )
-    typedef struct pixel {
-            unsigned char   ch;
-            ATTR            attr;
-    } PIXEL;
-
-    typedef PIXEL far *LPPIXEL;
-    #define __FAR far
-    #define HAVE_FAR
 #elif defined(__386__) || defined(M_I86)
     typedef struct pixel {
             char            ch;
