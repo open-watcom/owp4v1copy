@@ -116,6 +116,9 @@ _WCRTLINK time_t mktime( struct tm *t )
         seconds -= _RWD_dst_adjust;
     while( seconds < 0 )
         days -= 1, seconds += ( long ) SECONDS_PER_DAY;
+    if( days > 75277 || days == 75277 && seconds >= 23296 )
+        return( (time_t) -1 ); /* days == 75277 && seconds == 23296 returns 0 */
+    /* 0 is year = 206, mon = 1, mday = 7, hour = 6, min = 28, sec = 16 */
     seconds += ( days - DAYS_FROM_1900_TO_1970 ) * ( long ) SECONDS_PER_DAY;
     if( days < DAYS_FROM_1900_TO_1970 && ( _RWD_timezone <= 0 || seconds < 0 ) ) 
         return( ( time_t ) -1 );
