@@ -176,7 +176,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     return( TRUE );
 }
 
-static bool getOs2Symbol( libfile io, char *symbol, unsigned_16 *ordinal )
+static bool getOs2Symbol( libfile io, char *symbol, unsigned_16 *ordinal, unsigned *len )
 {
     unsigned_8  name_len;
 
@@ -193,15 +193,24 @@ static bool getOs2Symbol( libfile io, char *symbol, unsigned_16 *ordinal )
     if( LibRead( io, ordinal, sizeof( unsigned_16 ) ) != sizeof( unsigned_16 ) ) {
         FatalError( ERR_BAD_DLL, io->name );
     }
+    *len = 1 + name_len + 2;
     return( TRUE );
 }
 
-static void importOs2Table( libfile io, arch_header *arch, char *dll_name, bool coff_obj, importType type )
+static void importOs2Table( libfile io, arch_header *arch, char *dll_name, bool coff_obj, importType type, unsigned length )
 {
     unsigned_16 ordinal;
     char        symbol[256];
+    unsigned    bytes_read;
+    unsigned    total_read = 0;
 
-    while( getOs2Symbol( io, symbol, &ordinal ) == TRUE ) {
+    while( getOs2Symbol( io, symbol, &ordinal, &bytes_read ) == TRUE ) {
+        /* Make sure we're not reading past the end of name table */
+        total_read += bytes_read;
+        if( total_read > length ) {
+            Warning( ERR_BAD_DLL, io->name );
+            return;
+        }
         /* The resident/non-resident name tables contain more than just exports
            (module names, comments etc.). Everything that has ordinal of zero isn't
            an export but more exports could follow */
@@ -224,21 +233,22 @@ static void os2AddImport( arch_header *arch, libfile io )
     char            junk[256];
     unsigned_16     ordinal;
     importType      type;
+    unsigned        bytes_read;
 
     LibSeek( io, OS2_NE_OFFSET, SEEK_SET );
     LibRead( io, &ne_offset, sizeof( ne_offset ) );
     LibSeek( io, ne_offset, SEEK_SET );
     LibRead( io, &os2_header, sizeof( os2_header ) );
     LibSeek( io, os2_header.resident_off - sizeof( os2_header ), SEEK_CUR );
-    getOs2Symbol( io, dll_name, &ordinal );
+    getOs2Symbol( io, dll_name, &ordinal, &bytes_read );
     type = Options.r_ordinal ? ORDINAL : NAMED;
-    importOs2Table( io, arch, dll_name, FALSE, type );
+    importOs2Table( io, arch, dll_name, FALSE, type, UINT_MAX );
     if( os2_header.nonres_off ) {
         type = Options.nr_ordinal ? ORDINAL : NAMED;
         LibSeek( io, os2_header.nonres_off, SEEK_SET );
         // The first entry is the module description and should be ignored
-        getOs2Symbol( io, junk, &ordinal );
-        importOs2Table( io, arch, dll_name, FALSE, type );
+        getOs2Symbol( io, junk, &ordinal, &bytes_read );
+        importOs2Table( io, arch, dll_name, FALSE, type, os2_header.nonres_size - bytes_read );
     }
 }
 
@@ -250,8 +260,9 @@ static void os2FlatAddImport( arch_header *arch, libfile io )
     unsigned_16     ordinal;
     bool            coff_obj;
     importType      type;
+    unsigned        bytes_read;
 
-    if( Options.coff_found || ( Options.libtype == WL_TYPE_AR && !Options.omf_found ) ) {
+    if( Options.coff_found || (Options.libtype == WL_TYPE_AR && !Options.omf_found) ) {
         coff_obj = TRUE;
     } else {
         coff_obj = FALSE;
@@ -261,16 +272,16 @@ static void os2FlatAddImport( arch_header *arch, libfile io )
     LibSeek( io, ne_offset, SEEK_SET );
     LibRead( io, &os2_header, sizeof( os2_header ) );
     LibSeek( io, os2_header.resname_off - sizeof( os2_header ), SEEK_CUR );
-    getOs2Symbol( io, dll_name, &ordinal );
+    getOs2Symbol( io, dll_name, &ordinal, &bytes_read );
     if( coff_obj == TRUE ) {
         coffAddImportOverhead( arch, dll_name, WL_PROC_X86 );
     }
     type = Options.r_ordinal ? ORDINAL : NAMED;
-    importOs2Table( io, arch, dll_name, coff_obj, type );
+    importOs2Table( io, arch, dll_name, coff_obj, type, os2_header.resname_off - os2_header.entry_off );
     if( os2_header.nonres_off ) {
         LibSeek( io, os2_header.nonres_off, SEEK_SET );
         type = Options.nr_ordinal ? ORDINAL : NAMED;
-        importOs2Table( io, arch, dll_name, coff_obj, type );
+        importOs2Table( io, arch, dll_name, coff_obj, type, os2_header.nonres_size );
     }
 }
 
