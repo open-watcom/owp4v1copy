@@ -116,9 +116,11 @@ ustat.h         : ..\quantum\ustat.mh ..\poppack.sp ..\pshpackl.sp
 sys\stat.h      : ..\watcom\stat.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 !endif
 !ifeq system LINUX
-dirent.h        : ..\watcom\linux\dirent.mh ..\poppack.sp ..\pshpackl.sp
-termios.h       : ..\watcom\linux\termios.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
-sys\ioctl.h     : ..\watcom\linux\ioctl.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
+dirent.h        : ..\watcom\linux\dirent.mh ..\poppack.sp ..\pshpackl.sp ..\lnxkpack.sp
+termios.h       : ..\watcom\linux\termios.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\lnxkpack.sp
+sys\ioctl.h     : ..\watcom\linux\ioctl.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\lnxkpack.sp
+sys\ptrace.h    : ..\watcom\linux\ptrace.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\lnxkpack.sp
+sys\wait.h      : ..\watcom\linux\wait.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\lnxkpack.sp
 !endif
 sys\timeb.h     : ..\watcom\timeb.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp ..\timet.sp
 sys\types.h     : ..\watcom\types.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crqnx.sp ..\crwat.sp ..\sizet.sp ..\timet.sp

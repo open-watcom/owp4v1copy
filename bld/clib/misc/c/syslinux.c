@@ -41,6 +41,7 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/ptrace.h>
 #include "syslinux.h"
 
 /* user-visible error numbers are in the range -1 - -124 */
@@ -205,5 +206,23 @@ _WCRTLINK int select( int __width, fd_set * __readfds, fd_set * __writefds, fd_s
 {
     u_long res = sys_call5(SYS_select, __width, (u_long)__readfds, (u_long)__writefds, (u_long)__exceptfds, (u_long)__timeout);
     __syscall_return(int,res);
+}
+
+_WCRTLINK int ptrace(int request, int pid, int addr, int data)
+{
+	long    res,ret;
+	
+    if (request > 0 && request < 4)
+        *((long**)&data) = &ret;
+    res = sys_call4(SYS_ptrace, request, pid, addr, data);
+	if (res >= 0) {
+		if (request > 0 && request < 4) {
+			errno = 0;
+			return (ret);
+		}
+		return (int)res;
+	}
+	errno = -res;
+	return -1;
 }
 

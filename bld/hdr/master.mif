@@ -207,7 +207,9 @@ LINUX_files = &
         unistd.h &
         termios.h &
         sys/time.h &
-        sys/ioctl.h
+        sys/ioctl.h &
+        sys/ptrace.h &
+        sys/wait.h
 
 all : $($(system)_files) .symbolic
     @%null
