@@ -724,7 +724,7 @@ typedef union {
     }                   f;
 } decomposed_item;
 
-//NYI: cross/big endian, non-twos complement support
+//NYI: non-two's complement support
 static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
                                 decomposed_item *v )
 {
@@ -915,6 +915,7 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
     unsigned    bytes;
     unsigned    mant_bits;
     unsigned    shifts;
+    unsigned    i;
 
     memset( v, 0, sizeof( *v ) );
     bytes = mti->b.bits / BITS_PER_BYTE;
@@ -923,7 +924,15 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
         /* number is zero */
         return( MS_OK );
     }
-    memcpy( &v->f.mantissa, d, bytes );
+
+    if( mti->i.endian == ME_HOST ) {
+        memcpy( &v->f.mantissa, d, bytes );
+    } else {
+        for( i = 0; i < bytes; i++ ) {
+            v->f.mantissa.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+        }
+    }
+
     ExtractBits( mti->f.exp.pos, mti->f.exp.data.b.bits,
                 &v->f.mantissa, &v->f.exp );
     /* Assuming IEEE here */
@@ -962,7 +971,17 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
 static mad_status ComposeInt( decomposed_item *v,
                                 const mad_type_info *mti, void *d )
 {
-    memcpy( d, v, mti->b.bits / BITS_PER_BYTE );
+    unsigned    bytes;
+    unsigned    i;
+
+    bytes = mti->b.bits / BITS_PER_BYTE;
+    if( mti->i.endian == ME_HOST ) {
+        memcpy( d, v, bytes );
+    } else {
+        for( i = 0; i < bytes; i++ ) {
+            ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]] = v->i.u._8[i];
+        }
+    }
     return( MS_OK );
 }
 
@@ -992,6 +1011,7 @@ static mad_status ComposeFloat( decomposed_item *v,
 {
     unsigned    bytes;
     unsigned    mant_bits;
+    unsigned    i;
 
     bytes = mti->b.bits / BITS_PER_BYTE;
     memset( d, 0, bytes );
@@ -1032,6 +1052,15 @@ static mad_status ComposeFloat( decomposed_item *v,
     InsertBits( mti->f.exp.pos, mti->f.exp.data.b.bits, &v->f.exp, d );
     if( v->f.sign != 0 ) {
         InsertBits( mti->f.mantissa.sign_pos, 1, &v->f.sign, d );
+    }
+    if( mti->i.endian != ME_HOST ) {
+        for( i = 0; i < bytes / 2; i++ ) {
+            unsigned_8  tmp;
+
+            tmp = ((unsigned_8 *)d)[bytes - i - 1];
+            ((unsigned_8 *)d)[bytes - i - 1] = ((unsigned_8 *)d)[i];
+            ((unsigned_8 *)d)[i] = tmp;
+        }
     }
     return( MS_OK );
 }
@@ -1199,7 +1228,6 @@ extern  void            _FtoS( char *buff,
 
 #define LOG10B2( v )    (((v) * 3) / 10)
 
-#if 1 //__WATCOMC__ >= 1100
 static char *DoStrLReal( lreal *value, char *p, mad_type_info const *mti )
 {
     unsigned    mant_digs;
@@ -1243,20 +1271,6 @@ static char *DoStrLReal( lreal *value, char *p, mad_type_info const *mti )
     *p = '\0';
     return( p );
 }
-#else
-static char *DoStrLReal( lreal *value, char *p, mad_type_info const *mti )
-{
-    unsigned    exp_digs;
-    unsigned    mant_digs;
-
-    exp_digs = LOG10B2( mti->f.exp.data.b.bits * (mti->f.exp.base / 2) );
-    mant_digs = LOG10B2( mti->b.bits + mti->f.exp.hidden
-                        - ( mti->f.exp.data.b.bits + 1 ) );
-    _FtoS( p, value, mant_digs, 1, mant_digs+exp_digs+REST, 1, exp_digs, 'e', 'E' );
-    p[mant_digs+exp_digs+REST] = '\0';
-    return( p+mant_digs+exp_digs+REST );
-}
-#endif
 
 static mad_status FloatTypeToString( unsigned radix, mad_type_info const *mti,
                         const void *d, unsigned *maxp, char *res )

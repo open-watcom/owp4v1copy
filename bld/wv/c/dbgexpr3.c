@@ -248,63 +248,33 @@ void FromItem( item_mach *tmp, stack_entry *entry )
 
 void ToItem( stack_entry *entry, item_mach *tmp )
 {
-    unsigned    size;
+    unsigned            size;
+    mad_type_info       src_type;
+    mad_type_info       dst_type;
 
     if( entry->info.size > sizeof( *tmp ) ) {
         Error( ERR_NONE, LIT( ERR_TYPE_CONVERSION ) );
     }
-    //NYI: use MAD routines
+    //NYI: use MAD routines for all conversions
     size = entry->info.size;
     switch( entry->info.kind ) {
     case TK_BOOL:
     case TK_ENUM:
     case TK_CHAR:
     case TK_INTEGER:
+        MADTypeInfo( MADTypeForDIPType( &entry->info ), &dst_type );
         if( (entry->info.modifier & TM_MOD_MASK) == TM_SIGNED ) {
-            switch( size ) {
-            case 1:
-                tmp->sb = I32FetchTrunc( entry->v.sint );
-                return;
-            case 2:
-                tmp->sw = I32FetchTrunc( entry->v.sint );
-                return;
-            case 4:
-                tmp->sd = I32FetchTrunc( entry->v.sint );
-                return;
-            case 8:
-                tmp->sq = entry->v.sint;
-                return;
-            }
+            MADTypeInfoForHost( MTK_INTEGER, -sizeof( entry->v.sint ), &src_type );
         } else {
-            switch( size ) {
-            case 1:
-                tmp->ub = U32FetchTrunc( entry->v.uint );
-                return;
-            case 2:
-                tmp->uw = U32FetchTrunc( entry->v.uint );
-                return;
-            case 4:
-                tmp->ud = U32FetchTrunc( entry->v.uint );
-                return;
-            case 8:
-                tmp->sq = entry->v.uint;
-                return;
-            }
+            MADTypeInfoForHost( MTK_INTEGER, sizeof( entry->v.sint ), &src_type );
         }
-        break;
+        MADTypeConvert( &src_type, &entry->v.uint, &dst_type, tmp, 0 );
+        return;
     case TK_REAL:
-        switch( size ) {
-        case 4:
-            tmp->sf.r = LDToD( &entry->v.real );
-            return;
-        case 8:
-            tmp->lf.r = LDToD( &entry->v.real );
-            return;
-        case 10:
-            tmp->xf = entry->v.real;
-            return;
-        }
-        break;
+        MADTypeInfo( MADTypeForDIPType( &entry->info ), &dst_type );
+        MADTypeInfoForHost( MTK_FLOAT, sizeof( entry->v.real ), &src_type );
+        MADTypeConvert( &src_type, &entry->v.real, &dst_type, tmp, 0 );
+        return;
     case TK_COMPLEX:
         switch( size ) {
         case 8:
