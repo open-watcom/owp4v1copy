@@ -14,13 +14,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"        /* US English, Unicode */
         BEGIN
-            VALUE "CompanyName", "Watcom International Corp.\0"
-            VALUE "FileDescription", "Watcom C++ Runtime DLL\0"
+            VALUE "CompanyName", "openwatcom.org\0"
+            VALUE "FileDescription", "Open Watcom C++ Runtime DLL\0"
             VALUE "FileVersion", "$j.$n$1\0"
             VALUE "InternalName", "$0\0"
-            VALUE "LegalCopyright", "Copyright (C) Watcom International Corp. 1996\0"
+            VALUE "LegalCopyright", "Portions Copyright (C) Sybase, Inc.\0"
             VALUE "OriginalFilename", "$0\0"
-            VALUE "ProductName", "Watcom C/C++\0"
+            VALUE "ProductName", "Open Watcom C/C++\0"
             VALUE "ProductVersion", "$j.$n$1\0"
         END
     END
