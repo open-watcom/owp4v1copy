@@ -508,20 +508,14 @@ char *ScanLine( char *string, int len )
 void AsmCodeByte( unsigned char byte )
 /************************************/
 {
-    if( Options.output_data_in_code_records && Globals.data_in_code == TRUE ) {
-        OutSelect( FALSE );
-    }
+    OutSelect( FALSE );
     AsmByte( byte );
 }
 
 void AsmDataByte( unsigned char byte )
 /************************************/
 {
-    if( Options.output_data_in_code_records &&
-        Globals.code_seg &&
-        Globals.data_in_code == FALSE ) {
-        OutSelect( TRUE );
-    }
+    OutSelect( TRUE );
     AsmByte( byte );
 }
 #endif
@@ -546,9 +540,7 @@ void AsmByte( unsigned char byte )
 /* Write a byte to the object file */
 {
 #ifdef _WASM_
-
     if( CurrSeg != NULL ) {
-//      (CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length)++;
         (CurrSeg->seg->e.seginfo->current_loc)++;
         if( CurrSeg->seg->e.seginfo->current_loc >=
             CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length ) {
@@ -564,9 +556,7 @@ void AsmByte( unsigned char byte )
             }
         }
     }
-
     PassTotal++;
-
 #else
     CodeBuffer[Address] = byte;
     ++Address;

@@ -456,6 +456,7 @@ static void dir_init( dir_node *dir, int tab )
         dir->e.comminfo->idx = ++extdefidx;
         dir->e.comminfo->use32 = Use32;
         dir->e.comminfo->comm = 1;
+        tab = TAB_EXT;
         break;
     case TAB_CONST:
         sym->state = SYM_CONST;
@@ -523,7 +524,7 @@ static void RemoveFromTable( dir_node *dir )
         }
         switch( dir->sym.state ) {
         case SYM_EXTERNAL:
-            tab = ( dir->e.extinfo->comm ) ? TAB_COMM : TAB_EXT;
+            tab = TAB_EXT;
             break;
         case SYM_SEG:
             tab = TAB_SEG;
@@ -775,12 +776,6 @@ static direct_idx InsertClassLname( char *name )
 
     return( LnamesIdx );
 }
-
-direct_idx FindClassLnameIdx( char *name )
-/****************************************/
-{
-    return( FindLnameIdx( name ) );
-    }
 
 direct_idx LnameInsert( char *name )
 /**********************************/
@@ -1345,14 +1340,8 @@ int  SetCurrSeg( int i )
     default:
         break;
     }
-    if( CurrSeg != NULL ) {
-        if( CurrSeg->seg->e.seginfo->segrec->d.segdef.class_name_idx
-            == FindClassLnameIdx( "code" ) ) {
-            Globals.code_seg = TRUE;
-        } else {
-            Globals.code_seg = FALSE;
-        }
-    }
+    if( CurrSeg != NULL )
+        Globals.code_seg = CurrSeg->seg->e.seginfo->iscode;
     find_use32();
     return( NOT_ERROR );
 }
@@ -1401,6 +1390,7 @@ int SegDef( int i )
     uint                type;           // type of option
     uint                initstate = 0;  // to show if a field is initialized
     char                oldreadonly;    // readonly value of a defined segment
+    char                oldiscode;      // iscode value of a defined segment
     bool                ignore;
     dir_node            *dirnode;
     char                *name;
@@ -1425,6 +1415,7 @@ int SegDef( int i )
                     // segment already defined
                     defined = TRUE;
                     oldreadonly = dirnode->e.seginfo->readonly;
+                oldiscode = dirnode->e.seginfo->iscode;
                     ignore = dirnode->e.seginfo->ignore;
                     if( dirnode->e.seginfo->lname_idx == 0 ) {
                         // segment was mentioned in a group statement, but not really set up
@@ -1454,9 +1445,11 @@ int SegDef( int i )
                 seg->d.segdef.class_name_idx = 1;
                 /* null class name, in case none is mentioned */
                 dirnode->e.seginfo->readonly = FALSE;
+            dirnode->e.seginfo->iscode = FALSE;
             } else {
                 oldobj = dirnode->e.seginfo->segrec;
                 dirnode->e.seginfo->readonly = oldreadonly;
+            dirnode->e.seginfo->iscode = oldiscode;
                 seg->d.segdef.align = oldobj->d.segdef.align;
                 seg->d.segdef.combine = oldobj->d.segdef.combine;
                 if( !ignore ) {
@@ -1479,10 +1472,13 @@ int SegDef( int i )
 
             for( ; i < Token_Count; i ++ ) {
                 if( AsmBuffer[i]->token == T_STRING ) {
+
+                int len;
+
                     /* the class name - the only token which is of type STRING */
                     token = AsmBuffer[i]->string_ptr;
 
-                    classidx = FindClassLnameIdx( token );
+                classidx = FindLnameIdx( token );
                     if( classidx == LNAME_NULL ) {
                         classidx = InsertClassLname( token );
                     if( classidx == LNAME_NULL ) {
@@ -1490,7 +1486,12 @@ int SegDef( int i )
                     }
                     }
                     seg->d.segdef.class_name_idx = classidx;
-                    Globals.code_seg = ( stricmp( token, "code" ) == 0 );
+                len = strlen( token );
+                if( len < 4 ) {
+                    dirnode->e.seginfo->iscode = FALSE;
+                } else {
+                    dirnode->e.seginfo->iscode = ( stricmp( token + len - 4, "code" ) == 0 );
+                }
                     continue;
                 }
 
@@ -1591,6 +1592,7 @@ int SegDef( int i )
             } else if( defined && dirnode->e.seginfo->ignore ) {
                 /* keep the old values */
                 dirnode->e.seginfo->readonly = oldreadonly;
+            dirnode->e.seginfo->iscode = oldiscode;
                 dirnode->e.seginfo->ignore = ignore;
                 ObjKillRec( seg );
                 if( push_seg( dirnode ) == ERROR ) {
@@ -1635,18 +1637,12 @@ int SegDef( int i )
                 return( ERROR );
             }
             pop_seg();
-        if( CurrSeg == NULL )
-            break;
-            if( CurrSeg->seg->e.seginfo->segrec->d.segdef.class_name_idx
-                == FindClassLnameIdx( "code" ) ) {
-                Globals.code_seg = TRUE;
-            } else {
-                Globals.code_seg = FALSE;
-            }
             break;
         default:
             return( ERROR );
     }
+    if( CurrSeg != NULL )
+        Globals.code_seg = CurrSeg->seg->e.seginfo->iscode;
     find_use32();
     return( NOT_ERROR );
 }

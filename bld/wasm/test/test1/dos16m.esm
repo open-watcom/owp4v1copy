@@ -59,21 +59,20 @@ _cstart_:
     DB	20H, 52H, 75H, 6eH, 2dH, 54H, 69H, 6dH
     DB	65H, 20H, 73H, 79H, 73H, 74H, 65H, 6dH
     DB	20H, 63H, 6fH, 64H, 65H, 20H, 69H, 73H
-    DB	20H, 70H, 72H, 6fH, 76H
-    DB	69H, 64H, 65H, 64H, 20H, 6fH, 6eH, 20H
-    DB	61H, 6eH, 20H, 22H, 61H, 73H, 20H, 69H
-    DB	73H, 22H, 20H, 62H, 61H, 73H, 69H, 73H
-    DB	20H, 61H, 6eH, 64H, 20H, 69H, 73H, 20H
-    DB	28H, 63H, 29H, 20H, 43H, 6fH, 70H, 79H
-    DB	72H, 69H, 67H, 68H, 74H, 20H, 62H, 79H
-    DB	20H, 57H, 41H, 54H, 43H, 4fH, 4dH, 20H
-    DB	49H, 6eH, 74H, 65H, 72H, 6eH, 61H, 74H
-    DB	69H, 6fH, 6eH, 61H, 6cH, 20H, 43H, 6fH
-    DB	72H, 70H, 2eH, 20H, 31H, 39H, 38H, 38H
-    DB	2dH, 31H, 39H, 39H, 33H, 2eH, 20H, 41H
-    DB	6cH, 6cH, 20H, 72H, 69H, 67H, 68H, 74H
-    DB	73H, 20H, 72H, 65H, 73H, 65H, 72H, 76H
-    DB	65H, 64H, 2eH
+    DB	20H, 70H, 72H, 6fH, 76H, 69H, 64H, 65H
+    DB	64H, 20H, 6fH, 6eH, 20H, 61H, 6eH, 20H
+    DB	22H, 61H, 73H, 20H, 69H, 73H, 22H, 20H
+    DB	62H, 61H, 73H, 69H, 73H, 20H, 61H, 6eH
+    DB	64H, 20H, 69H, 73H, 20H, 28H, 63H, 29H
+    DB	20H, 43H, 6fH, 70H, 79H, 72H, 69H, 67H
+    DB	68H, 74H, 20H, 62H, 79H, 20H, 57H, 41H
+    DB	54H, 43H, 4fH, 4dH, 20H, 49H, 6eH, 74H
+    DB	65H, 72H, 6eH, 61H, 74H, 69H, 6fH, 6eH
+    DB	61H, 6cH, 20H, 43H, 6fH, 72H, 70H, 2eH
+    DB	20H, 31H, 39H, 38H, 38H, 2dH, 31H, 39H
+    DB	39H, 33H, 2eH, 20H, 41H, 6cH, 6cH, 20H
+    DB	72H, 69H, 67H, 68H, 74H, 73H, 20H, 72H
+    DB	65H, 73H, 65H, 72H, 76H, 65H, 64H, 2eH
 L$1:
     DB	0dH, 0aH, 2aH, 2aH, 2aH, 20H, 4eH, 55H
     DB	4cH, 4cH, 20H, 61H, 73H, 73H, 69H, 67H
@@ -143,7 +142,7 @@ L$7:
     mov         word ptr es:L$24,es
     je          L$8
     inc         cx
-    rep movsb  
+    rep movsb   
 L$8:
     sub         al,al
     stosb       
@@ -197,7 +196,7 @@ L$12:
     mov         di,offset DGROUP:_edata
     sub         cx,di
     mov         al,0
-    rep stosb  
+    rep stosb   
     cmp         word ptr DGROUP:__get_ovl_stack,0
     jne         L$13
     mov         ax,offset __null_ovl_rtn
@@ -287,13 +286,8 @@ C_ETEXT		SEGMENT	PARA PUBLIC USE16 'ENDCODE'
 		ASSUME CS:C_ETEXT, DS:DGROUP, SS:DGROUP
 __first_data_16M:
     DW	seg __first_data_16M
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
-    add         byte ptr [bx+si],al
+    DB	0, 0, 0, 0, 0, 0, 0, 0
+    DB	0, 0, 0, 0, 0, 0
 C_ETEXT		ENDS
 nullseg		SEGMENT	PARA PUBLIC USE16 'CODE'
 		ASSUME CS:nullseg, DS:DGROUP, SS:DGROUP

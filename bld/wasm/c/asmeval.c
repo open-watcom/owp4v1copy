@@ -581,6 +581,10 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( token_1->type == EXPR_CONST ) {
                 token_2->value += token_1->value;
                 token_2->indirect |= token_1->indirect;
+                if( token_1->explicit ) {
+                    token_2->explicit |= token_1->explicit;
+                    token_2->expr_type = token_1->expr_type;
+                }
                 TokenAssign( token_1, token_2 );
             } else {
                 token_1->value += token_2->value;

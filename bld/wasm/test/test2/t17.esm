@@ -3,10 +3,10 @@ flora		GROUP	text
 pat		SEGMENT	PARA PRIVATE USE16 'code'
 		ASSUME CS:pat, DS:DGROUP, SS:DGROUP
 L$1:
-    add       byte ptr [bx+si],al
+    DB	0, 0
 pat		ENDS
 text		SEGMENT	PARA PRIVATE USE16 'code'
 		ASSUME CS:flora, DS:DGROUP, SS:DGROUP
-    mov       ax,word ptr ss:L$1
+    mov         ax,word ptr ss:L$1
 text		ENDS
 		END

@@ -1606,6 +1606,7 @@ static int process_address( expr_list *opndx )
                 return ERROR;
             }
 #endif
+            fixup_type = -1;
             if( sym != NULL ) {
                 if( sym->state == SYM_STACK ) {
                     AsmError( CANNOT_OFFSET_AUTO );
@@ -1614,11 +1615,22 @@ static int process_address( expr_list *opndx )
                 } else if( sym->state == SYM_GRP ) {
                     AsmError( CANNOT_OFFSET_GRP );
                     return( ERROR );
+                } else if( IS_ANY_BRANCH( Code->info.token ) ) {
+                    switch( sym->mem_type ) {
+                    case MT_FAR:
+                    case MT_NEAR:
+                    case MT_SHORT:
+                        fixup_type = SymIs32( sym );
+                        SET_OPSIZ( Code, fixup_type );
+                        break;
+                    default:
+                        break;
+                    }
 #endif
                 }
             }
-
-            if( MEM_TYPE( Code->mem_type, DWORD ) ) {
+            if( fixup_type != -1 ) {
+            } else if( MEM_TYPE( Code->mem_type, DWORD ) ) {
                 fixup_type = 1;
             } else if( MEM_TYPE( Code->mem_type, WORD ) ) {
                 fixup_type = 0;
@@ -1873,20 +1885,12 @@ static int process_address( expr_list *opndx )
 #ifdef _WASM_
     type = 0;
     if( ( sym != NULL ) && ( index == EMPTY ) && ( base == EMPTY ) ) {
-        switch( Code->mem_type ) {
+        switch( opndx->expr_type ) {
         case T_NEAR:
         case T_FAR:
             type = 1;
             break;
-        case EMPTY:
-            switch( sym->mem_type ) {
-            case T_NEAR:
-            case T_FAR:
-                type = 1;
-                break;
             }
-            break;
-        }
         if( Code->info.token == T_LEA ) {
             type = 0;
         }
@@ -2908,6 +2912,7 @@ static int check_size( void )
         Code->data[OPND1] = Code->data[OPND2];
         Code->data[OPND2] = temp;
         Code->info.opnd_type[OPND2] = OP_I16;
+        Code->info.opcode = 0;
         break;
     case T_MOVSX:
     case T_MOVZX:

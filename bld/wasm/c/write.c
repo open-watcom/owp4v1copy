@@ -105,6 +105,7 @@ global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
 static FNAMEPTR FNames = NULL;
 
 void AddFlist( char const *filename )
+/***********************************/
 {
     FNAMEPTR    flist;
     FNAMEPTR    last;
@@ -112,12 +113,14 @@ void AddFlist( char const *filename )
     char        *fname;
     char        buff[2*_MAX_PATH];
         
-    if( !Options.emit_dependencies ) return;
+    if( !Options.emit_dependencies )
+        return;
 
     index = 0;
     last = FNames;
     for( flist = last; flist != NULL; flist = flist->next ) {
-        if( strcmp( filename, flist->name ) == 0 ) return;
+        if( strcmp( filename, flist->name ) == 0 )
+            return;
         index++;
         last = flist;
     }
@@ -136,11 +139,13 @@ void AddFlist( char const *filename )
 }
 
 static void FreeFlist( void )
+/***************************/
 {
     FNAMEPTR      curr;
     FNAMEPTR      last;
 
-    if( !Options.emit_dependencies ) return;
+    if( !Options.emit_dependencies )
+        return;
 
     for( curr = FNames; curr != NULL; ) {
         AsmFree(curr->name);
@@ -153,6 +158,7 @@ static void FreeFlist( void )
 }
 
 static void write_init( void )
+/****************************/
 {
     BufSize     = 0;
     FixupListHead = NULL;
@@ -171,6 +177,7 @@ static void write_init( void )
 }
 
 static void write_fini( void )
+/****************************/
 {
     FixFini();
 }
@@ -181,14 +188,17 @@ void OutSelect( bool starts )
     obj_rec             *objr;
     unsigned long       curr;
 
-
     if( starts ) {
+        if( !Options.output_data_in_code_records || Globals.data_in_code 
+            || !Globals.code_seg )
+            return;
         Globals.sel_start = GetCurrAddr();
         Globals.data_in_code = TRUE;
     } else {
+        if( !Options.output_data_in_code_records || !Globals.data_in_code )
+            return;
         Globals.sel_idx = CurrSeg->seg->sym.segidx;
         Globals.data_in_code = FALSE;
-        FlushCurrSeg();
 
         if( (Parse_Pass > PASS_1) && !PhaseError ) {
             objr = ObjNewRec( CMD_COMENT );
@@ -217,6 +227,7 @@ void OutSelect( bool starts )
 }
 
 static void write_end_of_pass1( void )
+/************************************/
 {
     obj_rec     *objr;
 
@@ -228,6 +239,7 @@ static void write_end_of_pass1( void )
 }
 
 static void write_dosseg( void )
+/******************************/
 {
     obj_rec     *objr;
 
@@ -239,6 +251,7 @@ static void write_dosseg( void )
 }
 
 static void write_lib( void )
+/***************************/
 {
     obj_rec             *objr;
     struct dir_node     *curr;
@@ -255,6 +268,7 @@ static void write_lib( void )
 }
 
 static void write_one_export( dir_node *dir )
+/*******************************************/
 {
     obj_rec     *objr;
     char        *name;
@@ -280,6 +294,7 @@ static void write_one_export( dir_node *dir )
 }
 
 static void write_export( void )
+/******************************/
 {
     dir_node    *dir;
 
@@ -290,6 +305,7 @@ static void write_export( void )
 
 
 static void write_grp( void )
+/***************************/
 {
     dir_node    *curr;
     dir_node    *segminfo;
@@ -334,20 +350,24 @@ static void write_grp( void )
 }
 
 static void write_seg( void )
+/***************************/
 {
     dir_node    *curr;
     obj_rec     *objr;
     uint        seg_index;
     uint        total_segs = 0;
 
-    for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) total_segs++;
+    for( curr = Tables[TAB_SEG].head; curr; curr = curr->next )
+        total_segs++;
 
     curr = Tables[TAB_SEG].head;
     for( seg_index = 1; seg_index <= total_segs; seg_index++ ) {
         if( curr->sym.segidx != seg_index ) {
             /* segment is not in order ... so find it */
             for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-                if( curr->sym.segidx == seg_index ) break;
+                if( curr->sym.segidx == seg_index ) {
+                    break;
+                }
             }
         }
         if( curr == NULL || curr->sym.state != SYM_SEG ) {
@@ -364,6 +384,7 @@ static void write_seg( void )
 }
 
 static void write_lnames( void )
+/******************************/
 {
     obj_rec     *objr;
     uint        total_size = 0;
@@ -387,12 +408,11 @@ static void write_global( void )
     GetGlobalData();
 }
 
-static void write_ext( void )
+static dir_node *write_extdef( dir_node *start )
+/**********************************************/
 {
     obj_rec     *objr;
     dir_node    *curr;
-    dir_node    *start;
-    dir_node    *next;
     uint        num;
     uint        total_size;
     uint        i;
@@ -400,39 +420,36 @@ static void write_ext( void )
     char        buffer[MAX_LINE_LEN];
     uint        len;
 
-    next = Tables[TAB_EXT].head;
+    num = 0;
+    total_size = 0;
+    i = 0;
 
-    for( ; ; ) {
-        if( next == NULL ) break;
-        start = next;
-        num = 0;
-        total_size = 0;
-        i = 0;
+    objr = ObjNewRec( CMD_EXTDEF );
+    objr->d.extdef.first_idx = 0;
 
-        objr = ObjNewRec( CMD_EXTDEF );
-        objr->d.extdef.first_idx = 0;
+    for( curr = start;
+        ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
+        curr = curr->next ) {
+        Mangle( &curr->sym, buffer );
+        len = strlen( buffer );
 
-        for( curr = start; curr != NULL; curr = curr->next ) {
-            Mangle( &curr->sym, buffer );
-            len = strlen( buffer );
+        if( total_size + len >= MAX_EXT_LENGTH )
+            break;
+        total_size += len + 2;
+        num++;
 
-            if( total_size + len >= MAX_EXT_LENGTH ) break;
-            total_size += len + 2;
-            num++;
-
-            name[i] = (char)len;
-            i++;
-            memcpy( name+i, buffer, len );
-            i += len;
-            name[i++] = 0;      // for the type index
-
-        }
-        next = curr;
-        ObjAttachData( objr, name, total_size );
+        name[i] = (char)len;
+        i++;
+        memcpy( name+i, buffer, len );
+        i += len;
+        name[i++] = 0;      // for the type index
+    }
+    ObjAttachData( objr, name, total_size );
+    if( num != 0 ) {
         objr->d.extdef.num_names = num;
-        if( objr->d.extdef.num_names == 0 ) return;
         write_record( objr, TRUE );
     }
+    return( curr );
 }
 
 static int opsize( memtype mem_type )
@@ -474,8 +491,8 @@ static int get_number_of_bytes_for_size_in_commdef( unsigned long value )
     }
 }
 
-static void write_comm( void )
-/****************************/
+static dir_node *write_comdef( dir_node *start )
+/**********************************************/
 {
     obj_rec     *objr;
     dir_node    *curr;
@@ -495,8 +512,9 @@ static void write_comm( void )
     objr = ObjNewRec( CMD_COMDEF );
     objr->d.comdef.first_idx = 0;
 
-    for( curr = Tables[TAB_COMM].head; ; curr = curr->next ) {
-        if( curr == NULL ) break;
+    for( curr = start;
+        ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
+        curr = curr->next ) {
         ptr = Mangle( &curr->sym, buffer );
         total_size += 3 + strlen( ptr );
         /* 3 = 1 for string len + 1 for type index + 1 for data type */
@@ -513,8 +531,9 @@ static void write_comm( void )
 
     if( total_size > 0 ) {
         name = AsmAlloc( total_size * sizeof( char ) );
-        for( curr = Tables[TAB_COMM].head; ; curr = curr->next ) {
-            if( curr == NULL ) break;
+        for( curr = start;
+            ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
+            curr = curr->next ) {
             ptr = Mangle( &curr->sym, buffer );
             len = strlen( ptr );
             name[i] = (char)len;
@@ -545,7 +564,8 @@ static void write_comm( void )
                 name[i++] = COMDEF_LEAF_4;
                 break;
             }
-            if( varsize > 1 ) varsize--; /* we already output 1 byte */
+            if( varsize > 1 )
+                varsize--; /* we already output 1 byte */
 
             symsize = opsize( curr->sym.mem_type );
             if( curr->e.comminfo->distance != T_FAR ) {
@@ -565,14 +585,32 @@ static void write_comm( void )
         }
         ObjAttachData( objr, name, total_size );
     }
-
-    objr->d.comdef.num_names = num;
     ObjCanFree( objr );
-    if( objr->d.extdef.num_names == 0 ) return;
-    write_record( objr, TRUE );
+    if( num != 0 ) {
+        objr->d.comdef.num_names = num;
+        write_record( objr, TRUE );
+    }
+    return( curr );
+}
+
+static void write_ext_comm( void )
+/********************************/
+{
+    dir_node    *next;
+
+    for( next = Tables[TAB_EXT].head; next != NULL; ) {
+        if( next->e.extinfo->comm == 0 ) {
+            // extdef
+            next = write_extdef( next );
+        } else {
+            // comdef
+            next = write_comdef( next );
+        }
+    }
 }
 
 static void write_header( void )
+/******************************/
 {
     obj_rec     *objr;
     unsigned    len;
@@ -593,6 +631,7 @@ static void write_header( void )
 }
 
 static int write_modend( void )
+/*****************************/
 {
     if( ModendRec == NULL ) {
         AsmError( UNEXPECTED_END_OF_FILE );
@@ -603,6 +642,7 @@ static int write_modend( void )
 }
 
 static int write_autodep( void )
+/******************************/
 {
     obj_rec       *objr;
     char          buff[2*PATH_MAX + 5];
@@ -610,7 +650,8 @@ static int write_autodep( void )
     FNAMEPTR      curr;
     FNAMEPTR      last;
 
-    if( !Options.emit_dependencies ) return NOT_ERROR;
+    if( !Options.emit_dependencies )
+        return NOT_ERROR;
 
     // add source file to autodependency list
     AddFlist( AsmFiles.fname[ASM] );
@@ -723,7 +764,8 @@ static void check_need_32bit( obj_rec *objr ) {
 
     fix = objr->d.fixup.fixup;
     for( ;; ) {
-        if( fix == NULL ) break;
+        if( fix == NULL )
+            break;
         switch( fix->loc_method ) {
         case FIX_OFFSET386:
         case FIX_POINTER386:
@@ -733,7 +775,8 @@ static void check_need_32bit( obj_rec *objr ) {
         if( (unsigned_32)fix->lr.target_offset > 0xffffUL ) {
             objr->is_32 = 1;
         }
-        if( objr->is_32 ) break;
+        if( objr->is_32 )
+            break;
         fix = fix->next;
     }
 }
@@ -741,6 +784,7 @@ static void check_need_32bit( obj_rec *objr ) {
 #endif
 
 static void write_ledata( void )
+/******************************/
 {
     obj_rec         *objr;
 #ifdef SEPARATE_FIXUPP_16_32
@@ -752,10 +796,9 @@ static void write_ledata( void )
         objr = ObjNewRec( CMD_LEDATA );
         ObjAttachData( objr, CodeBuffer, BufSize );
         objr->d.ledata.idx = CurrSeg->seg->e.seginfo->segrec->d.segdef.idx;
-//      objr->d.ledata.offset = CurrSeg->seg->e.seginfo->current_loc - BufSize;
         objr->d.ledata.offset = CurrSeg->seg->e.seginfo->start_loc;
-        if( objr->d.ledata.offset > 0xffffUL ) objr->is_32 = TRUE;
-//      CurrSeg->seg->e.seginfo->start_loc = CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length;
+        if( objr->d.ledata.offset > 0xffffUL )
+            objr->is_32 = TRUE;
         CurrSeg->seg->e.seginfo->start_loc = CurrSeg->seg->e.seginfo->current_loc;
         write_record( objr, TRUE );
 
@@ -893,7 +936,7 @@ const char *NameGet( uint_16 hdl )
 
 
 void FlushCurrSeg( void )
-/***********************/
+/***************************/
 {
     unsigned i;
 
@@ -901,15 +944,8 @@ void FlushCurrSeg( void )
      * point when they are flushed
      * outselect calls flushcurrseg right back
      */
-    if( CurrSeg == NULL ) return;
-    if( Options.output_data_in_code_records && Globals.data_in_code ) {
-        if( CurrSeg->seg->e.seginfo->segrec->d.segdef.class_name_idx
-            == FindClassLnameIdx( "code" ) ) {
-            Globals.data_in_code = FALSE;
-            OutSelect( FALSE );
-            return;
-        }
-    }
+    if( CurrSeg == NULL )
+        return;
 
     /* first check if the last fixup overlaps the end of the ledata record
      * if so, wait until we get more bytes output so that it will not
@@ -940,9 +976,11 @@ void FlushCurrSeg( void )
 
     write_ledata();
     BufSize = 0;
+    OutSelect( FALSE );
 }
 
 static void reset_seg_len( void )
+/*******************************/
 /* Reset length of all segments to zero */
 {
     dir_node    *curr;
@@ -969,21 +1007,23 @@ static void writepass1stuff( void )
     }
     write_header();
     write_autodep();
-    if( Globals.dosseg ) write_dosseg();
+    if( Globals.dosseg )
+        write_dosseg();
     write_lib();
     write_lnames();
     write_seg();
     write_grp();
     write_global();
-    write_ext();
-    write_comm();
+    write_ext_comm();
     write_alias();
-    if( write_pub() == ERROR ) return;
+    if( write_pub() == ERROR )
+        return;
     write_export();
     write_end_of_pass1();
 }
 
 static unsigned long OnePass( char *string )
+/******************************************/
 {
     set_cpu_parameters();
     set_fpu_parameters();
@@ -998,9 +1038,11 @@ static unsigned long OnePass( char *string )
     MacroExitState = 0;
 
     for(;;) {
-        if( ScanLine( string, MAX_LINE_LEN ) == NULL ) break; // EOF
+        if( ScanLine( string, MAX_LINE_LEN ) == NULL )
+            break; // EOF
         AsmLine( string );
-        if( EndDirectiveFound ) break;
+        if( EndDirectiveFound )
+            break;
     }
     CheckProcOpen();
     return( PassTotal );
@@ -1025,9 +1067,11 @@ void WriteObjModule( void )
     if( EndDirectiveFound ) {
         if( !Options.stop_at_end ) {
             for( ;; ) {
-                if( ScanLine( string, MAX_LINE_LEN ) == NULL ) break;
+                if( ScanLine( string, MAX_LINE_LEN ) == NULL )
+                    break;
                 p = string;
-                while( isspace( *p ) ) ++p;
+                while( isspace( *p ) )
+                    ++p;
                 if( *p != '\0' ) {
                     AsmWarn( 1, END_DIRECTIVE_REQUIRED );
                     break;
@@ -1040,7 +1084,8 @@ void WriteObjModule( void )
     while( PopLineQueue() ) {
     }
     for( ;; ) {
-        if( !write_to_file || Options.error_count > 0 ) break;
+        if( !write_to_file || Options.error_count > 0 )
+            break;
         writepass1stuff();
         ++Parse_Pass;
         rewind( AsmFiles.file[ASM] );

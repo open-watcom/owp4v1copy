@@ -145,6 +145,10 @@ uint GetPublicData(
                         break;
                     *cmd = CMD_STATIC_PUBDEF;
                 } /* else we are just continuing a static def. */
+            } else {
+                if( *cmd == CMD_STATIC_PUBDEF ) {
+                    break;
+                }
             }
         }
         count++;

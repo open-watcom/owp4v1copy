@@ -39,9 +39,16 @@ _TEXT		ENDS
 _DATA		SEGMENT	DWORD PUBLIC USE32 'DATA'
 foo:
     DD	offset DGROUP:foo
+L$5:
+kyb:
     DD	offset DGROUP:kyb
+L$6:
+L$7:
+bar:
     DD	offset DGROUP:L$9
+L$8:
     DD	offset DGROUP:L$8
+L$9:
     DD	offset DGROUP:foo
     DD	offset DGROUP:L$5
     DD	offset DGROUP:L$6

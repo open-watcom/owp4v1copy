@@ -485,7 +485,7 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
             switch( Code->mem_type ) {
             case T_SHORT:
             case T_NEAR:
-                if( Opnd_Count == OPND1 ) {
+                if( Opnd_Count == OPND1 && Code->mem_type_fixed ) {
                 AsmError( CANNOT_USE_SHORT_OR_NEAR );
                 return( ERROR );
                 }

@@ -59,15 +59,17 @@ static byte NopList32[] = {
 
 static byte *NopLists[] = { NopList16, NopList32 };
 
-int ChangeCurrentLocation( bool relative, int_32 value  )
-/*******************************************************/
+int ChangeCurrentLocation( bool relative, int_32 value, bool select_data )
+/************************************************************************/
 {
-    if( CurrSeg == NULL ) return( ERROR );
+    if( CurrSeg == NULL )
+        return( ERROR );
     if( relative ) {
         value += GetCurrAddr();
     }
-    FlushCurrSeg();
-
+    FlushCurrSeg( );
+    if( select_data )
+        OutSelect( TRUE );
     CurrSeg->seg->e.seginfo->current_loc = value;
     CurrSeg->seg->e.seginfo->start_loc = value;
 
@@ -86,29 +88,17 @@ int OrgDirective( int i )
     int_32          value = 0;
 
     if( AsmBuffer[i+1]->token == T_NUM ) {
-        return( ChangeCurrentLocation( FALSE, AsmBuffer[i+1]->value ) );
+        return( ChangeCurrentLocation( FALSE, AsmBuffer[i+1]->value, FALSE ) );
     } else if( AsmBuffer[i+1]->token == T_ID ) {
         sym = AsmLookup( AsmBuffer[i+1]->string_ptr );
         if( AsmBuffer[i+2]->token == T_OP_SQ_BRACKET &&
             AsmBuffer[i+3]->token == T_NUM ) {
             value = AsmBuffer[i+3]->value;
         }
-        return( ChangeCurrentLocation( FALSE, sym->offset + value ) );
+        return( ChangeCurrentLocation( FALSE, sym->offset + value, FALSE ) );
     }
     AsmError( EXPECTING_NUMBER );
     return( ERROR );
-}
-
-static bool is_code_seg( void )
-/*****************************/
-{
-    direct_idx code;
-
-    code = FindClassLnameIdx( "CODE" );
-    if( CurrSeg->seg->e.seginfo->segrec->d.segdef.class_name_idx == code ) {
-        return( TRUE );
-    }
-    return( FALSE );
 }
 
 static void fill_in_objfile_space( uint size )
@@ -118,7 +108,7 @@ static void fill_in_objfile_space( uint size )
     int nop_type;
 
     /* first decide whether to output nulls or nops - is it a code seg? */
-    if( !is_code_seg() ) {
+    if( !CurrSeg->seg->e.seginfo->iscode ) {
         /* just output nulls */
         for( i = 0; i < size; i++ ) {
             AsmByte( 0x00 );

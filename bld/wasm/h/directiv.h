@@ -95,7 +95,7 @@ typedef enum {
 
 enum {
     TAB_FIRST = 0,
-    TAB_SEG = TAB_FIRST,        // order seg, grp, lname is important
+    TAB_SEG = TAB_FIRST,  // order seg, grp, lname is important
     TAB_GRP,
     TAB_PUB,
     TAB_LIB,
@@ -107,9 +107,9 @@ enum {
     TAB_CLASS_LNAME,
     TAB_STRUCT,
     TAB_GLOBAL,
-    TAB_COMM,
-    TAB_LAST
-};                      // tables for definitions
+    TAB_LAST,
+    TAB_COMM             // TAB_COMM is not included in tables, it is assigned to TAB_EXT
+};                       // tables for definitions
 
 enum {
     QUERY_COMMENT,
@@ -154,6 +154,7 @@ typedef struct {
     uint_32     start_loc;      // starting offset of current ledata or lidata
     unsigned    readonly:1;     // if the segment is readonly
     unsigned    ignore:1;       // ignore this if the seg is redefined
+    unsigned    iscode:1;       // segment is belonging to "*CODE" class
     direct_idx  lname_idx;
     uint_32     current_loc;    // current offset in current ledata or lidata
 } seg_info;
@@ -331,7 +332,6 @@ extern void             IdxInit( void );
 extern direct_idx       GetLnameIdx( char * );
 
 extern direct_idx       LnameInsert( char * );  // Insert a lname
-extern direct_idx       FindClassLnameIdx( char * ); // find index for given name
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment
 
 extern uint             GetCurrSeg( void );

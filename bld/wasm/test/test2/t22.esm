@@ -3,7 +3,7 @@
 foo		SEGMENT	PARA PRIVATE USE16 'code'
 		ASSUME CS:foo, DS:DGROUP, SS:DGROUP
 L$1:
-    add         byte ptr [bx+si],al
+    DB	0, 0
 foo		ENDS
 poo		SEGMENT	PARA PRIVATE USE16 'code'
 		ASSUME CS:poo, DS:DGROUP, SS:DGROUP

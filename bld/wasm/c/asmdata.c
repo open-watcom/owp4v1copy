@@ -59,7 +59,7 @@ extern int dup_array( asm_sym *sym, char start_pos, char no_of_bytes );
 
 #ifdef _WASM_
 
-extern int              ChangeCurrentLocation( bool, int_32 );
+extern int              ChangeCurrentLocation( bool, int_32, bool );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             find_frame( struct asm_sym *sym );
 
@@ -164,7 +164,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             }
 #ifdef _WASM_
             if( !struct_field ) {
-                ChangeCurrentLocation( TRUE, no_of_bytes );
+                ChangeCurrentLocation( TRUE, no_of_bytes, 
+                      ( ( CurrSeg != NULL ) && CurrSeg->seg->e.seginfo->iscode ) );
             } else {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;
