@@ -14,7 +14,8 @@ xname   =   wsample
 
 ..\bin\$(xname).exe : $(objects) makefile $(xname).res
     @%write tmp.lnk $(%debug) option map, quiet system dos
-    @%append tmp.lnk lib $(watcom_dir)\lib\wress
+    @%append tmp.lnk libpath $(wres_dir)\lib
+    @%append tmp.lnk lib wress
     @%append tmp.lnk name ..\bin\$(xname)
     @for %i in ($objects) do @%append tmp.lnk file %i
     wlink @tmp.lnk

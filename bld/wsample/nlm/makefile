@@ -48,7 +48,8 @@ xname = wsample
     @for %i in ($objects) do @%append tmp.lnk file %i
     @for %i in ($(imports)) do @%append tmp.lnk import %i
     @%append tmp.lnk import @$(ow_nwoss_root)\common\imp\owclib.imp
-    @%append tmp.lnk lib $(watcom_dir)\lib\wresfs
+    @%append tmp.lnk libpath $(wres_dir)\lib
+    @%append tmp.lnk lib wresfs
     @%append tmp.lnk lib $(%devdir)\clib\library\netware.386\ms_s\clibs.lib
     @%append tmp.lnk module clib
 

@@ -15,7 +15,8 @@ jname=wsmpecsj
 ..\bin\$(xname).exe ..\bin\$(jname).exe : $(objects) makefile $(xname).res $(jname).res
     @%write tmp.lnk $(%debug) option map,quiet form dos name ..\bin\$(xname)
     @%append tmp.lnk lib $(lang_root)\lib286\dos\clibs
-    @%append tmp.lnk lib $(watcom_dir)\lib\wress
+    @%append tmp.lnk libpath $(wres_dir)\lib
+    @%append tmp.lnk lib wress
     @for %i in ($(objects)) do @%append tmp.lnk file %i
 !include ..\setsize.mif
     wlink @tmp.lnk

@@ -47,7 +47,7 @@ $(xname).exp : $(objs) $(__MAKEFILES__)
     @%append $(lf) -nod -DPMI -map -acg -farcall -quiet -auto -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
     @%append $(lf) $(rsilib)\d16libc.lib $(lang_root)\lib286\dos\clib$(model).lib
-    @%append $(lf) $(watcom_dir)\lib\wres$(model)p.lib
+    @%append $(lf) $(wres_dir)\lib\wres$(model)p.lib
     $(rsidir)glu @$(lf)
     if exist *.err del *.err
 
@@ -61,7 +61,7 @@ nsamprsi.exp : $(nobjs) $(__MAKEFILES__)
     @%append $(lf) -nod -DPMI -map -acg -farcall -auto -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
     @%append $(lf) $(rsilib)\d16libc.lib $(lang_root)\lib286\dos\clib$(model).lib
-    @%append $(lf) $(watcom_dir)\lib\wres$(model)p.lib
+    @%append $(lf) $(wres_dir)\lib\wres$(model)p.lib
     $(rsidir)glu @$(lf)
     if exist *.err del *.err
 

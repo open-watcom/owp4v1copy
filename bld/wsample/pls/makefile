@@ -34,7 +34,7 @@ nec: ..\bin\$(nxname).exp .symbolic
     @%append $(lnk) libpath $(lang_root)\lib386\dos
     @%append $(lnk) libpath $(lang_root)\lib386
     @%append $(lnk) libpath $(plsdir)
-    @%append $(lnk) libpath $(watcom_dir)\lib
+    @%append $(lnk) libpath $(wres_dir)\lib
     @%append $(lnk) lib clib3r,wdos32,wdosx32,wresf
     @%append $(lnk) option maxdata=0
     @%append $(lnk) runtime maxreal=1023K
@@ -53,7 +53,7 @@ nec: ..\bin\$(nxname).exp .symbolic
     @%append $(lnk) libpath $(lang_root)\lib386\dos
     @%append $(lnk) libpath $(lang_root)\lib386
     @%append $(lnk) libpath $(plsdir)
-    @%append $(lnk) libpath $(watcom_dir)\lib
+    @%append $(lnk) libpath $(wres_dir)\lib
     @%append $(lnk) lib clib3r,wdos32,wdosx32,wresf
     @%append $(lnk) option maxdata=0
     @%append $(lnk) runtime maxreal=1023K
