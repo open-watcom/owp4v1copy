@@ -57,7 +57,7 @@ void CBanner()
     BannerMsg( banner1w( "C Alpha AXP Optimizing Compiler",
                                                 _WCC_VERSION_ ) );
 #elif _MACHINE == _PPC
-    BannerMsg( banner1w( "C Power PC Optimizing Compiler",
+    BannerMsg( banner1w( "C PowerPC Optimizing Compiler",
                                                 _WCC_VERSION_ ) );
 #else
     BannerMsg( banner1w( "C" _386 _COMPILER, _WCC_VERSION_ ) );

@@ -3,6 +3,8 @@
 ::
 :segment Taxp
 Usage: wccaxp [options] file [options]
+:elsesegment Tppc
+Usage: wccppc [options] file [options]
 :elsesegment T386
 Usage: wcc386 [options] file [options]
 :elsesegment

@@ -78,6 +78,17 @@ set PROJDIR=<CWD>
     <CPCMD> os2386.axp/wccdaxpe.dll <RELROOT>/rel2/binp/dll/wccdaxp.dll
     <CPCMD> os2386.axp/wccdaxpe.sym <RELROOT>/rel2/binp/dll/wccdaxp.sym
 
+  [ IFDEF (ppc) <2*> ]              # PPC target from 386 hosts
+    <CPCMD> nt386.ppc/wccppce.exe <RELROOT>/rel2/binnt/wccppc.exe
+    <CPCMD> nt386.ppc/wccppce.sym <RELROOT>/rel2/binnt/wccppc.sym
+    <CPCMD> nt386.ppc/wccdppce.dll <RELROOT>/rel2/binnt/wccdppc.dll
+    <CPCMD> nt386.ppc/wccdppce.sym <RELROOT>/rel2/binnt/wccdppc.sym
+
+    <CPCMD> os2386.ppc/wccppce.exe <RELROOT>/rel2/binp/wccppc.exe
+    <CPCMD> os2386.ppc/wccppce.sym <RELROOT>/rel2/binp/wccppc.sym
+    <CPCMD> os2386.ppc/wccdppce.dll <RELROOT>/rel2/binp/dll/wccdppc.dll
+    <CPCMD> os2386.ppc/wccdppce.sym <RELROOT>/rel2/binp/dll/wccdppc.sym
+
   [ IFDEF (os_qnx "") <2*> ]
 #    <CPCMD> qnx386.i86/wcci86c.qnx <RELROOT>/rel2/qnx/binq/wcc.
 #    <CPCMD> qnx386.i86/wcci86c.sym <RELROOT>/rel2/qnx/sym/wcc.sym
