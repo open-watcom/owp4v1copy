@@ -1,0 +1,63 @@
+.func memcpy _fmemcpy _umemcpy
+#include <string.h>
+void *memcpy( void *dst,
+              const void *src,
+              size_t length );
+.ixfunc2 '&Copy' &func
+.if &farfnc eq 1 .do begin
+void __far *_fmemcpy( void __far *dst,
+                      const void __far *src,
+                      size_t length );
+.ixfunc2 '&Copy' &ffunc
+.do end
+:cmt. .if &'length(&ufunc.) ne 0 .do begin
+:cmt. void *_umemcpy( void *dst,
+:cmt.                 const void *src,
+:cmt.                 size_t length );
+:cmt. .ixfunc2 '&Copy' &ufunc
+:cmt. .do end
+.funcend
+.desc begin
+The &func function copies
+.arg length
+characters from the buffer pointed to by
+.arg src
+into the buffer pointed to by
+.arg dst.
+Copying of overlapping objects is not guaranteed to work properly.
+See the
+.kw memmove
+function if you wish to copy objects that overlap.
+.im farfunc
+:cmt. .if &'length(&ufunc.) ne 0 .do begin
+:cmt. .np
+:cmt. The &ufunc Unicode function is identical to &func except that it
+:cmt. operates on 16-bit Unicode character strings.
+:cmt. The argument
+:cmt. .arg length
+:cmt. is interpreted to mean the number of Unicode characters.
+:cmt. .do end
+.desc end
+.return begin
+The original value of
+.arg dst
+is returned.
+.return end
+.see begin
+.seelist &function. memchr memcmp memcpy memicmp memmove memset
+.see end
+.exmp begin
+#include <stdio.h>
+#include <string.h>
+
+void main()
+  {
+    auto char buffer[80];
+.exmp break
+    memcpy( buffer, "Hello", 5 );
+    buffer[5] = '\0';
+    printf( "%s\n", buffer );
+  }
+.exmp end
+.class ANSI
+.system

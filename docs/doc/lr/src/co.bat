@@ -1,0 +1,15 @@
+p4 edit chdir.gml
+p4 edit clibdesc.gml
+p4 edit clibfunc.gml
+p4 edit clibover.gml
+p4 edit cwait.gml
+p4 edit fcloseal.gml
+p4 edit globdata.gml
+p4 edit libpref.gml
+p4 edit main.gml
+p4 edit statdesc.gml
+p4 edit system.gml
+p4 edit wait.gml
+p4 edit write.gml
+p4 edit _bthread.gml
+p4 edit _popen.gml
