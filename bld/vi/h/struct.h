@@ -32,7 +32,7 @@
 #ifndef _STRUCT_INCLUDED
 #define _STRUCT_INCLUDED
 
-typedef unsigned short u_short;
+typedef unsigned short vi_ushort;
 typedef unsigned short vi_key;
 
 typedef struct ss {
@@ -163,13 +163,13 @@ typedef struct {
  * info for a single text file line
  */
 typedef struct linedata {
-    u_short     mark:5;         // first mark on the line
-    u_short     globmatch:1;    // global command matched this line
-    u_short     nolinedata:1;   // no data associated with this line (WorkLine
+    vi_ushort   mark:5;         // first mark on the line
+    vi_ushort   globmatch:1;    // global command matched this line
+    vi_ushort   nolinedata:1;   // no data associated with this line (WorkLine
                                 // has the data instead)
-    u_short     hidden:1;       // line is hidden (NYI)
-    u_short     hilite:1;       // line need hiliting
-    u_short     fill10:1,fill11:1,fill12:1,fill13:1,fill14:1,fill15:1,fill16:1;
+    vi_ushort   hidden:1;       // line is hidden (NYI)
+    vi_ushort   hilite:1;       // line need hiliting
+    vi_ushort   fill10:1,fill11:1,fill12:1,fill13:1,fill14:1,fill15:1,fill16:1;
 } linedata;
 
 typedef struct line {
@@ -196,22 +196,22 @@ typedef struct fcb {
     short       byte_cnt;               // number of bytes in lines
     long        offset;                 // offset in swap file
     long        last_swap;              // time fcb was last swapped
-    u_short     swapped:1;              // fcb is swapped
-    u_short     in_memory:1;            // fcb is in memory
-    u_short     on_display:1;           // lines in fcb are displayed
-    u_short     non_swappable:1;        // fcb is not swappable
-    u_short     dead:1;                 // fcb is dead (obsolete)
-    u_short     was_on_display:1;       // fcb was on display (used to save
+    vi_ushort   swapped:1;              // fcb is swapped
+    vi_ushort   in_memory:1;            // fcb is in memory
+    vi_ushort   on_display:1;           // lines in fcb are displayed
+    vi_ushort   non_swappable:1;        // fcb is not swappable
+    vi_ushort   dead:1;                 // fcb is dead (obsolete)
+    vi_ushort   was_on_display:1;       // fcb was on display (used to save
                                         // display state when switching files)
-    u_short     in_extended_memory:1;   // fcb is in extended memory
-    u_short     in_xms_memory:1;        // fcb is in XMS memory
-    u_short     in_ems_memory:1;        // fcb is in EMS memory
-    u_short     nullfcb:1;              // fcb is a special one that has no
+    vi_ushort   in_extended_memory:1;   // fcb is in extended memory
+    vi_ushort   in_xms_memory:1;        // fcb is in XMS memory
+    vi_ushort   in_ems_memory:1;        // fcb is in EMS memory
+    vi_ushort   nullfcb:1;              // fcb is a special one that has no
                                         // lines associated with it
-    u_short     globalmatch:1;          // a global command matched at least
+    vi_ushort   globalmatch:1;          // a global command matched at least
                                         // one line in this fcb
-    u_short     flag12:1;
-    u_short     flag13:1,flag14:1,flag15:1,flag16:1;
+    vi_ushort   flag12:1;
+    vi_ushort   flag13:1,flag14:1,flag15:1,flag16:1;
     long        xmemaddr;               // address of fcb in extended memory
 } fcb;
 #define FCB_SIZE sizeof( fcb )
@@ -224,22 +224,22 @@ typedef struct file {
     char        *home;                  // home directory of file
     fcb         *fcb_head,*fcb_tail;    // linked list of fcbs
     long        curr_pos;               // current offset in file on disk
-    u_short     modified:1;             // file has been modified
-    u_short     bytes_pending:1;        // there are still bytes to be read
+    vi_ushort   modified:1;             // file has been modified
+    vi_ushort   bytes_pending:1;        // there are still bytes to be read
                                         // off the disk for the file
-    u_short     viewonly:1;             // file is view only
-    u_short     read_only:1;            // file is read only
-    u_short     check_readonly:1;       // file needs its read-only status
+    vi_ushort   viewonly:1;             // file is view only
+    vi_ushort   read_only:1;            // file is read only
+    vi_ushort   check_readonly:1;       // file needs its read-only status
                                         // checked against the file on disk
-    u_short     dup_count:4;            // number of duplicate views on the
+    vi_ushort   dup_count:4;            // number of duplicate views on the
                                         // file that have been opened
-    u_short     been_autosaved:1;       // file has been autosaved
-    u_short     need_autosave:1;        // file needs to be autosaved
-    u_short     is_stdio:1;             // file is a "stdio" file (reads from
+    vi_ushort   been_autosaved:1;       // file has been autosaved
+    vi_ushort   need_autosave:1;        // file needs to be autosaved
+    vi_ushort   is_stdio:1;             // file is a "stdio" file (reads from
                                         // stdin and writes to stdout)
-    u_short     needs_display:1;        // file needs to be displayed
-    u_short     check_for_crlf:1;       // check file system when we write it out
-    u_short     fill15:1,fill16:1;
+    vi_ushort   needs_display:1;        // file needs to be displayed
+    vi_ushort   check_for_crlf:1;       // check file system when we write it out
+    vi_ushort   fill15:1,fill16:1;
     long        size;                   // size of file in bytes
     int         handle;                 // file handle (if entire file is not
                                         // read, will be an open file handle)
@@ -256,9 +256,9 @@ typedef struct file {
 typedef struct {
     linenum     lineno;         // line number that mark is on
     char        next;           // pointer to next mark on the same line
-    u_short     col:12;         // column that mark is on
-    u_short     inuse:1;        // mark is being used
-    u_short     spare:3;
+    vi_ushort   col:12;         // column that mark is on
+    vi_ushort   inuse:1;        // mark is being used
+    vi_ushort   spare:3;
 } mark;
 #define MARK_SIZE sizeof( mark )
 
@@ -389,10 +389,10 @@ typedef struct undo_stack {
 } undo_stack;
 
 typedef struct select_rgn {
-    u_short     selected:1;
-    u_short     lines:1;
-    u_short     dragging:1;
-    u_short     empty:13;
+    vi_ushort   selected:1;
+    vi_ushort   lines:1;
+    vi_ushort   dragging:1;
+    vi_ushort   empty:13;
     linenum     start_line;
     linenum     end_line;
     int         start_col;
@@ -419,7 +419,7 @@ typedef struct info {
     bool        WriteCRLF;
     select_rgn  SelRgn;
     bool        IsColumnRegion;
-    u_short     DuplicateID;
+    vi_ushort   DuplicateID;
     void        *dc;
     int         dc_size;
     int         Language;
