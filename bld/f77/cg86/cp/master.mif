@@ -1,15 +1,21 @@
 proj_name = f77
 
-# Need lots of stack for NT because code gen turns off safe recurse.
-extra_l_flags_nt = op stack=1024k commit stack=32k
+!ifndef f77_autodepends
+f77_autodepends = .AUTODEPEND
+!endif
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-!include $(cg_dir)/mif/fe.mif
 !include wres.mif
+
+!include $(cg_dir)/mif/fe.mif
 !include mlibs.mif
+
+!ifeq release 0
+f77_trmem = 1
+!endif
 
 inc_dirs=$(f77_dir)/cg86/cp/h;$(f77_dir)/cg86/h;$(cg_inc_dirs);$(f77_dir)/h;$(dwarf_dir)/dw/h;$(comp_cfg_dir)/h
 
@@ -30,19 +36,12 @@ inline_asm_lib=$(as_dir)/ppc/inline/o.$(host_CPU)/asinline.lib
 !endif
 
 # define _USE_RESOURCES_ so that WASM error messages come from resources
-extra_c_flags_386 = -zp1 -fpc -d_USE_RESOURCES_
+extra_c_flags = -d_USE_RESOURCES_
+extra_c_flags_i86 = -fpc -zp1
+extra_c_flags_386 = -fpc -zp1
 
 .h: $(f77_dir)/h;$(f77_dir)/cg86/h;$(f77_dir)/cg86/cp/h
-
-!ifdef memtrack
 .c: $(f77_dir)/cg86/cp/c;$(f77_dir)/cg86/c;$(f77_dir)/cp;$(f77_dir)/c;$(wasm_dir)/c;$(trmem_dir);
-!else
-.c: $(f77_dir)/cg86/cp/c;$(f77_dir)/cg86/c;$(f77_dir)/cp;$(f77_dir)/c;$(wasm_dir)/c
-!endif
-
-.c.obj:
-    @set include=$(inc_path)
-    $(cc) $(cflags) $(extra_c_flags_$[&) $[@
 
 !ifeq host_CPU axp
 asm_opts  = -oc -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
@@ -53,7 +52,8 @@ asm_opts  = -oc -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
 
 !include ../files.mif
 
-!ifdef memtrack
+!ifeq f77_trmem 1
+#extra_c_flags = -DTRMEM
 fobjs += trmem.obj trmemcvr.obj
 !endif
 
@@ -61,32 +61,33 @@ exename_i86 = wfc
 exename_386 = wfc386
 exename_axp = wfcaxp
 exename_ppc = wfcppc
-exe         = $(exename_$(target_CPU))
-
-!ifdef f77_target_dir
-bindir_nt  = binnt
-bindir_dos = bin
-bindir_os2 = binp
-target_exe = $(f77_target_dir)/$(bindir_$(host_OS))/$(exe)
-!else
-target_exe = $(exe)
-!endif
+target_exe  = $(exename_$(target_CPU))
 
 !ifdef mkstubs
 f77_cg_libs = $(cg_stub_libs);
-!else
-!ifeq release 1
+!else ifeq release 1
 f77_cg_libs = $(cg_libs)
 !else
 f77_cg_libs = $(cg_debug_libs)
 !endif
-!endif
 
+extra_c_flags_trmem = -dTRMEM -of+
+extra_c_flags_trmemcvr = -dTRMEM -of+
 
-$(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(wres_lib) $(dw_lib) $(cg_deps) $(inline_asm_lib)
-    @%create $(exe).lnk
-    @for %i in ($(fobjs)) do @%append $(exe).lnk file %i
-    $(linker) name $^@ $(lflags) @$(exe) $(f77_cg_libs) op map lib $(wres_lib), $(dw_lib), $(inline_asm_lib)
+extra_l_flags = op map
+
+# Need lots of stack for NT because code gen turns off safe recurse.
+extra_l_flags_nt = op stack=1024k commit stack=32k
+
+flibs = $(wres_lib) $(dw_lib) $(inline_asm_lib)
+
+$(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
+    @%create $(target_exe).lnk
+    @%append $(target_exe).lnk name $^@
+    @for %i in ($(fobjs)) do @%append $(target_exe).lnk file %i
+    @for %i in ($(flibs)) do @%append $(target_exe).lnk lib %i
+    @%append $(target_exe).lnk $(f77_cg_libs)
+    $(linker) $(lflags) @$(target_exe).lnk
 !ifeq host_OS osi
     $(binder)\w32bind $(target_exe).rex $^@ $(binder)\os2ldr.exe
     erase $(target_exe).rex
@@ -95,18 +96,9 @@ $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(wres_lib) $(dw_lib) $
 
 option.obj : option.c optinfo.h
 
-!ifdef memtrack
-trmem.obj : trmem.c
-    @set include=$(inc_path);$(trmem_dir)
-    $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -dTRMEM -of+
-
-trmemcvr.obj : trmemcvr.c
-    @set include=$(inc_path);$(trmem_dir)
-    $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -dTRMEM -of+
-!endif
-
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -i="$(inc_path)" $[@ -fo=$^@
+    @set include=$(inc_path)
+    $(rc_aui) $[@ -fo=$^@
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $(wcl_util_opts) $[@
