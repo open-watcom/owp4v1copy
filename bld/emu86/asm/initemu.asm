@@ -36,9 +36,10 @@ extrn   __int3c         : near
 DGROUP  group   _DATA
         assume  ds:DGROUP
 _DATA   segment word public 'DATA'
-        extrn   __8087 : byte
+        extrn   __8087   : byte
         extrn   __real87 : byte
-        extrn   __no87 : word
+        extrn   __no87   : word
+        extrn   __8087cw : word
 
 i34off  dw      0
 i34seg  dw      0
@@ -164,6 +165,12 @@ endif                                   ; ...
         test    bx,bx                   ; if no 80x87 or no87 set
         _if     ne                      ; then
           mov   byte ptr __real87,0     ; - say we do not have a real 80x87
+          finit                         ; initialize the '8087' emulator
+          fldcw   word ptr __8087cw     ; load control word
+          fldz                          ; put 8087 into 4 empty / 4 full state
+          fldz                          ; ...
+          fldz                          ; ...
+          fldz                          ; ...
         _else                           ; else
           mov   byte ptr __real87,al    ; - we have a real 80x87 of type AL
         _endif                          ; endif

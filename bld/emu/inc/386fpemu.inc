@@ -78,7 +78,7 @@ ifdef __WIN387__
 precrtn dd              p_extended ; address of precision rtn
 endif
 ifdef _DEBUG
-    nyimsg      db ": not yet impemented",0dH,0aH,NC
+    nyimsg      db ": not yet implemented",0dH,0aH,NC
     illopmsg    db "Illegal instruction encountered by 8087 emulator",0dH,0aH,NC
 endif
 ifdef __WIN387__
