@@ -63,28 +63,31 @@ bld_cc          = *wcc386 $(bld_incs)
 !endif
 
 !ifdef __NTAXP__
-bld_cl          = wclaxp -l=$(bld_sys) $(bld_incs)
+bcl             = wclaxp
 !else ifdef __LINUX__
-bld_cl          = $(bld_bin)/bwcl386 -l=$(bld_sys) $(bld_incs)
+bcl             = $(bld_bin)/bwcl386
 !else
-bld_cl          = $(bld_bin)\bwcl386 -l=$(bld_sys) $(bld_incs)
+bcl             = $(bld_bin)\bwcl386
 !endif
+
+bld_cl          = $(bcl) -l=$(bld_sys) $(bld_incs)
 
 bld_link        = *wlink sys $(bld_sys)
 
 !ifeq host_cpu axp
-bas = $(as)
+bas             = $(as)
 !else ifeq host_cpu ppc
-bas = $(as)
+bas             = $(as)
 !else ifdef __LINUX__
-bas         = *$(bld_bin)/bwasm
+bas             = *$(bld_bin)/bwasm
 !else
-bas         = *$(bld_bin)\bwasm
+bas             = *$(bld_bin)\bwasm
 !endif
 
 !ifdef __LINUX__
-bvi         = $(bld_bin)/bvi
+bvi             = $(bld_bin)/bvi
 !else
-bvi         = $(bld_bin)\bvi
+bvi             = $(bld_bin)\bvi
 !endif
 bvi += -q -d -i
+

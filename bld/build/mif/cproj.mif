@@ -49,50 +49,51 @@ rc_os2      = $(rc_os2_path)\rc.exe
 rc              = *wrc
 
 
-!ifndef release_$(proj_name)
-!ifeq debug_build 1
+!ifdef release_$(proj_name)
+release = $(release_$(proj_name))
+!else ifeq debug_build 1
 release = 0
 !else
 release = 1
 !endif
+
+!ifdef $(proj_name)_debugfmt
+debugfmt = $($(proj_name)_debugfmt)
+!else ifeq %CODEVIEW 1
+debugfmt = codeview
 !else
-release = $(release_$(proj_name))
+debugfmt = dwarf
 !endif
 
-ldebug_i86 = debug all
-ldebug_386 = debug all
-
-cdebug_i86 =
-cdebug_386 =
-
-!ifeq %CODEVIEW 1
-cdebug_axp = -hc
-cdebug_ppc = -hc
-ldebug_axp = debug codeview
-ldebug_ppc = debug codeview
+!ifeq debugfmt codeview
+cdebug_fmt  = -hc
+ldebug_fmt  = debug c
+cldebug_fmt = -hc
+!else ifeq debugfmt watcom # supported only on intel
+cdebug_fmt  = -hw          # cg for axp and ppc don't use it
+ldebug_fmt  = debug w
+cldebug_fmt = -hw
 !else
-ldebug_axp = debug dwarf
-ldebug_ppc = debug dwarf
+#cdebug_fmt  = -hd              # defaul format
+ldebug_fmt  = debug d
+cldebug_fmt = -hd
 !endif
 
-mode_cflags_r   = -oaxt -d1-DNDEBUG
-mode_lflags_r   = $(ldebug_$(host_cpu))
-mode_aflags_r   = -DNDEBUG
-mode_cflags_d   = -od -d2 $(cdebug_$(host_cpu))
-mode_lflags_d   = $(ldebug_$(host_cpu))
-mode_aflags_d   = -d1
 !ifeq release 1
-mode_cflags     = $(mode_cflags_r)
-mode_lflags     = $(mode_lflags_r)
-mode_aflags     = $(mode_aflags_r)
+mode_cflags   = -oaxt -d1-DNDEBUG $(cdebug_fmt)
+mode_aflags   = -DNDEBUG
+mode_lflags   = $(ldebug_fmt)
+mode_clflags  = $(cldebug_fmt)
 !else
-mode_cflags     = $(mode_cflags_d)
-mode_lflags     = $(mode_lflags_d)
-mode_aflags     = $(mode_aflags_d)
+mode_cflags   = -od -d2 $(cdebug_fmt)
+mode_aflags   = -d1
+mode_lflags   = $(ldebug_fmt)
+mode_clflags  = $(cldebug_fmt)
 !endif
 
 !ifndef $(proj_name)_nosymfile
 mode_lflags    += option symfile
+mode_clflags   += -"option symfile"
 !endif
 
 !ifndef memory_model_i86
@@ -138,27 +139,6 @@ cflags_dos      = -bt=dos
 cflags_nov      = -bt=netware
 cflags_linux    = -bt=linux
 
-clflags_nt_386     = -l=nt
-clflags_nt_axp     = -l=ntaxp
-clflags_win_i86    = -l=windows
-clflags_win_386    = -l=windows
-clflags_os2_i86    = -l=os2
-clflags_os2_386    = -l=os2v2
-clflags_qnx_i86    = -l=qnx
-clflags_qnx_386    = -l=qnx
-clflags_osi_386    = -l=osi
-clflags_dos_i86    = -l=dos
-clflags_dos_386    = -l=dos4g
-clflags_nov_386    = -l=netware
-clflags_linux_386  = -l=linux
-clflags_linux_ppc  = -l=linux
-
-!ifeq release 1
-clflags_dbg      = -"op symf" 
-!else
-clflags_dbg      = -d2 -"op symf"
-!endif
-
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
 sys_rtdll       = 1
@@ -177,11 +157,26 @@ cflags_win     += -br
 cflags_os2     += -br
 !endif
 
+clflags_nt_386     = -l=nt
+clflags_nt_axp     = -l=ntaxp
+clflags_win_i86    = -l=windows
+clflags_win_386    = -l=windows
+clflags_os2_i86    = -l=os2
+clflags_os2_386    = -l=os2v2
+clflags_qnx_i86    = -l=qnx
+clflags_qnx_386    = -l=qnx
+clflags_osi_386    = -l=osi
+clflags_dos_i86    = -l=dos
+clflags_dos_386    = -l=dos4g
+clflags_nov_386    = -l=netware
+clflags_linux_386  = -l=linux
+clflags_linux_ppc  = -l=linux
+
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
 cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
-clflags          = $(clflags_$(host_os)_$(host_cpu)) $(clflags_dbg) -fe=$^@ -fm
+clflags          = $(clflags_$(host_os)_$(host_cpu)) $(mode_clflags) $(extra_cl_flags) -fe=$^@ -fm
 
 aflags_all      =-w4
 !ifdef __LINUX__

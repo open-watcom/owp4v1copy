@@ -8,9 +8,15 @@ as         += -q
 rc         += -q
 
 bld_cl     += -zq
+bcl        += -zq
 bld_cc     += -zq
 bld_link   += op q
 bas        += -q
+
+# redirect standard tools to pre-build versions
+as = $(bas)
+vi = $(bvi)
+cl = $(bcl)
 
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
@@ -92,6 +98,3 @@ cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a
 
 !endif
 !endif
-
-as = $(bas)
-vi = $(bvi)
