@@ -37,7 +37,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#ifdef __WIDECHAR__
 #include <wchar.h>
+#endif
 #include "xfloat.h"
 
 #define NEGATIVE_NUMBER         0x01

@@ -101,8 +101,8 @@ struct  exception {
 #define PLOSS           6       /* partial loss of significance */
 
 _WMRTLINK extern int    matherr( struct _exception * );
-:segment !SNAP & !SNAPDRV
 _WMRTLINK extern double _matherr( struct _exception * );
+:segment !SNAP & !SNAPDRV
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
 _WCRTLINK extern int _dmsbintoieee( double *__x, double *__y );
