@@ -38,7 +38,7 @@ extern int IsWhat( int );
         "and eax,0xff" \
         "mov al,_IsTable+0x1[eax]" \
         parm [eax]
-#elif defined(__I86__)
+#elif defined(__I86__) && !defined(__HUGE__)
 extern int IsWhat( int );
 #pragma aux IsWhat = \
         "push bx" \
