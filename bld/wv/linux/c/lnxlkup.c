@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Environment variable lookup for Linux. 
+* Description:  Environment variable lookup for Linux.
 *
 ****************************************************************************/
 
@@ -33,7 +33,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-
+#ifdef __WATCOMC__
+    #include <process.h>
+#endif
 
 extern char     *StrCopy( char *, char * );
 
