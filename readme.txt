@@ -11,54 +11,49 @@ which you can print or view.
   Getting up to Speed on Open Watcom
   ==================================
 
-Here's a quick intro on the build layout and build process as
-they used to be at Watcom/Sybase. The Open Watcom layout is
-slightly different and many parts of the build process are broken
-currently due to removal of third-party tools, headers and libraries.
-The original Watcom/Sybase setup placed all directories in d:\. It
-is however perfectly possible to place them wherever you wish, for
-instance w:\ow. Where this file refers to d:\, substitute your Open
-Watcom root location (stored in the owroot environment variable).
+Here's a quick intro on the build layout and build process. Original
+Sybase build tree was more or less fixed to d:\, Open Watcom is more
+flexible and the build tree root can be located anywhere. Where this
+file refers to d:\, substitute your Open Watcom root location (stored
+in the owroot environment variable).
 
 1) Default build machine layout:
 
 d:\
-    bld
-          - this is the root of the build tree
-            each project we build has a subdirectory under d:\bld
-            for example:
-            d:\bld\cg - code generator
-            d:\bld\cc - c compiler
-            d:\bld\plusplus - c++ compiler
-            etc. (see projects.txt for details)
+    bld     - this is the root of the build tree
+              each project we build has a subdirectory under d:\bld
+              for example:
+              d:\bld\cg - code generator
+              d:\bld\cc - C compiler
+              d:\bld\plusplus - C++ compiler
+              etc. (see projects.txt for details)
 
-    rel2  - this is where the software we actually ship gets copied
-            after it is built - it matches the directory structure of our
-            shipping watcom c/c++ tools
+    rel2    - this is where the software we actually ship gets copied
+              after it is built - it matches the directory structure of our
+              shipping Open Watcom C/C++/FORTRAN tools
 
-    bat   - batch files, many of which aren't used anymore
-            of most interest are the .ctl files - scripts for the "builder"
-            tool (see below)  and make init files
+    bat     - batch files, many of which aren't used anymore
+              of most interest are the .ctl files - scripts for the "builder"
+              tool (see below)  and make init files (makeint et al.).
 
-    tools - utilities and 3rd party tools - not in Open Watcom
+    docs    - here is everything related to documentation, sources and tools
 
-    lang  - used to hold Watcom 10.6 compiler
+    bin     - for the rare case where a tool is not available in source form
 
-    nlang - used to hold intermediate version of 11.0 compiler;
-            for OpenWatcom these both point to the same place
-            where Open Watcom 1.x binaries live
+    binp    - same as above, but containing OS/2 binaries
 
-    docs  - here is all for documentation, sources and tools
+    distrib - contains manifests and scripts for building binary
+              distribution packages
+
+    contrib - 3rd party source code which is not integral part of
+              Open Watcom. Contains primarily several DOS extenders.
 
 
 ------------------------------
 2) To set up a new machine:
 
-  - Modify setvars.bat/setvars.cmd to reflect your setup. See comments
-    within the file for additional information.
-
-    d:\bat\makeinit, d:\bat\makecomm may have some machine specific info,
-    but should be ok if you don't change any locations
+  - Modify setvars.bat/setvars.cmd/setvars.sh to reflect your setup. See
+    comments within the file for additional information.
 
     Your path should look something like this if you are on NT:
 
@@ -89,6 +84,14 @@ now please consider it an aptitude test.
 
 ------------------------------
 4) Build process:
+
+----
+Linux note - build process on Linux is somewhat different. It uses gcc to
+bootstrap Open Watcom, ie. wmake, the C compiler and several other utilities
+are first built using gcc, then the rest of the tree is built using the
+freshly created Open Watcom tools. See the build.sh script in the root of
+the source tree - it should take care of everything.
+----
 
 We use the Open Watcom C/C++ compilers and Open Watcom wmake to build our
 tools, but at the top level we have a tool which oversees traversing the
