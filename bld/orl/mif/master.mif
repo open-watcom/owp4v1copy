@@ -58,20 +58,7 @@ orl_objs        = orlentry$(obj) &
                         $(elf_objs) &
                         $(coff_objs)
 
-!define %SETUP $(default)
-
-nothing : .SYMBOLIC
-        @set EXE=..\$(bin_$(host_OS)_$(host_CPU))\orl.lib
-        @set SETUP=nothing
-
-.AFTER
-        @%make $(%SETUP)
-        @%make $(%EXE)
-
 ..\$(bin_$(host_OS)_$(host_CPU))\orl.lib : $(orl_objs)
-        @%make library
-
-library : .PROCEDURE
         @%create $(lbc)
         @for %i in ($(orl_objs)) do @%append $(lbc) -+%i
         $(librarian) -b $^@ @$(lbc)
