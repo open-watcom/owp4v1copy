@@ -29,12 +29,12 @@
 ****************************************************************************/
 #include "offset.h"
 
-extern name *MakeDisplay(name *op, int level);
-extern void BigGoto(int level);
-extern void BigLabel(void);
-extern bool AskIsFrameIndex(name *op);
-extern abspatch_handle *NextFramePatch(void);
-extern void PatchBigLabels(offset lc);
-extern an PassProcParm(an rtn);
-extern void SaveDisplay(opcode_defs op);
-extern void SetDisplay(name *temp);
+extern name     *MakeDisplay( name *op, int level );
+extern void     BigGoto( int level );
+extern void     BigLabel( void );
+extern bool     AskIsFrameIndex( name *op );
+extern abspatch_handle  *NextFramePatch( void );
+extern void     PatchBigLabels( offset lc );
+extern an       PassProcParm( an rtn );
+extern void     SaveDisplay( opcode_defs op );
+extern void     SetDisplay( name *temp );
