@@ -1,5 +1,10 @@
 .c.obj: $($(proj_name)_autodepends)
+!ifeq verbose 1
         $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) $[@
+!else
+	@echo cc $@
+        @$(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) $[@
+!endif
 
 .cpp.obj: $($(proj_name)_autodepends)
         $(cpp) $(cflags) $(cppflags) $(extra_c_flags_$[&) $(inc_path) $[@

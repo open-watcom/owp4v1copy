@@ -11,11 +11,15 @@ $# just in case anyone is curious ...
 !ifdef %WCC386
 !    error WCC386 environment variable must not be set
 !endif
-!ifdef %OPTASM
-!    error OPTASM environment variable must not be set
-!endif
 !ifdef %TESTMODE
 !    error You're building in test mode fool!
+!endif
+
+# don't output reams of junk
+!ifdef %QUIET
+verbose = 0
+!else
+verbose = 1
 !endif
 
 # don't ask, just nuke the files
@@ -231,45 +235,6 @@ apilib=$(build_root)\watcom\lib\api.lib
 os2386=$(lang_root)\lib386\os2\os2386.lib
 os2286=$(lang_root)\lib286\os2\os2.lib
 
-#
-# locations of c libraries - used by fortran library build
-#
-# clibmdos_dir    = $(clibdir)\bcsd\
-# clibldos_dir    = $(clibdir)\bcbd\
-# clibmos2_dir    = $(clibdir)\2bcsd\
-# cliblos2_dir    = $(clibdir)\2bcbd\
-# mtlibos2_dir    = $(clibdir)\os2mt\
-# clibswin_dir    = $(clibdir)\wscsd\
-# clibmwin_dir    = $(clibdir)\wbcsd\
-# cliblwin_dir    = $(clibdir)\wbcbd\
-# maths286_dir    = $(clibdir)\math\emu\scsd\
-# mathm286_dir    = $(clibdir)\math\emu\bcsd\
-# mathm287_dir    = $(clibdir)\math\87\bcsd\
-# mathl286_dir    = $(clibdir)\math\emu\bcbd\
-# mathl287_dir    = $(clibdir)\math\87\bcbd\
-# clibr386_dir    = $(clibdir)\ms386r\
-# clibs386_dir    = $(clibdir)\ms386s\
-# wlibr386_dir    = $(clibdir)\w3r\
-# wlibs386_dir    = $(clibdir)\w3s\
-# maths386_dir    = $(clibdir)\math\emu\ms386s\
-# mathr386_dir    = $(clibdir)\math\emu\ms386r\
-# maths387_dir    = $(clibdir)\math\87\ms386s\
-# mathr387_dir    = $(clibdir)\math\87\ms386r\
-# clibros2_dir    = $(clibdir)\23r\
-# clibsos2_dir    = $(clibdir)\23s\
-# clibrmt_dir   = $(clibdir)\23rmt\
-# clibsmt_dir   = $(clibdir)\23smt\
-# clibrdll_dir    = $(clibdir)\23rdll\
-# clibsdll_dir    = $(clibdir)\23sdll\
-# ntlibr_dir      = $(clibdir)\ntr\
-# ntlibrmt_dir    = $(clibdir)\ntrmt\
-# ntlibrdll_dir   = $(clibdir)\ntrmt\
-# ntlibs_dir      = $(clibdir)\nts\
-# ntlibsmt_dir    = $(clibdir)\ntsmt\
-# ntlibsdll_dir   = $(clibdir)\ntsmt\
-# clibspp_dir     = $(clibdir)\go3s\
-# mathspp_dir     = $(clibdir)\math\emu\go3s\
-# ovlldr_dir    = $(wldir)ovlldr\
 #
 # in order to build CLIB (replaces drive.mif/drive386.mif)
 #
