@@ -550,15 +550,14 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 
 #ifndef __OS2_PM__
 #if defined (__NT__)
-    if ( LOBYTE(LOWORD(GetVersion())) >= 4 &&
-         (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
-        CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
+    if ( LOBYTE(LOWORD(GetVersion())) >= 4 && (bar->is_fixed) ) {
+        CreateWindow( className, NULL, ( disp->style ^ WS_BORDER ),
             disp->area.left, disp->area.top, width, height,
             bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
     }
     else {
-        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
-            CreateWindow( className, NULL, WS_CHILD | WS_CLIPSIBLINGS,
+        if( LOBYTE(LOWORD(GetVersion())) >= 4 && ( !bar->is_fixed ) ) {
+            CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
                 disp->area.left, disp->area.top, width, height,
                 bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
         } else {
