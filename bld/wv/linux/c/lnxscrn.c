@@ -172,13 +172,14 @@ static bool TryXWindows()
         *p++ = '\0';
     }
     end = p;
-    _AllocA( argv, (argc + 10) * sizeof( *argv ) );
+    _AllocA( argv, (argc + 16) * sizeof( *argv ) );
 
     argv[0] = "xterm";
     argv[1] = "-title";
     argv[2] = "Open Watcom Debugger";
+    argv[3] = "-ut";
 
-    argc = 3;
+    argc = 4;
 
     if( DbgLines != 0 || DbgColumns != 0 ) {
         argv[argc++] = "-geometry";
