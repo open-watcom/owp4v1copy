@@ -73,6 +73,7 @@ if errorlevel 1 goto err2c
 goto done
 :done
     rm *.obj
+    rm err1.out
     rm tst1.out
     rm tst2.out
     rm app.lnk

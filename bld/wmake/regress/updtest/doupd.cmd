@@ -47,8 +47,8 @@ echo #   Test 4
 echo # ---------------------------
 set TRMEM_CODE=3
 rm test4.out
-%1 -h -f upd04 > test4.out 2>&1
-diff -b upd04.out test4.out
+%1 -h -f upd04 > tmp.out 2>&1
+diff -b upd04.out tmp.out
 if errorlevel 1 goto err4
     echo # UPD04 successful
     goto test5
@@ -62,8 +62,8 @@ echo # ---------------------------
 echo #   Test 5
 echo # ---------------------------
 rm test5.out
-%1 -h -s -f upd05 > test5.out 2>&1
-diff -b upd05.out test5.out
+%1 -h -s -f upd05 > tmp.out 2>&1
+diff -b upd05.out tmp.out
 if errorlevel 1 goto err5
     echo # UPD05 successful
     goto test6
@@ -76,8 +76,8 @@ echo # ---------------------------
 echo #   Test 6
 echo # ---------------------------
 rm test6.out
-%1 -h -f upd06 > test6.out 2>&1
-diff upd06.out test6.out
+%1 -h -f upd06 > tmp.out 2>&1
+diff upd06.out tmp.out
 if errorlevel 1 goto err6
     echo # UPD06 successful
     goto test7
@@ -90,8 +90,8 @@ echo # ---------------------------
 echo #   Test 7
 echo # ---------------------------
 rm test7.out
-%1 -h -f upd07 > test7.out 2>&1
-diff upd07.out test7.out
+%1 -h -f upd07 > tmp.out 2>&1
+diff upd07.out tmp.out
 if errorlevel 1 goto err7
     echo # UPD07 successful
     goto test8
