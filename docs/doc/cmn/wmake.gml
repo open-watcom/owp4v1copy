@@ -185,7 +185,7 @@ show why a target will be updated
 do not erase target after error/interrupt (disables prompting)
 .endnote
 .*
-.section Command Line Options
+.section *refid=clo Command Line Options
 .*
 .np
 Command line options, available with &makname, allow you to control
@@ -230,7 +230,7 @@ with other Make utilities.
 .ix 'NOCHECK' '&makcmdup directive'
 The
 .id &sysper.NOCHECK
-directive may be used to disable target existence in a makefile.
+directive is used to disable target existence checks in a makefile.
 :OPT name='d'
 .ix '&makcmdup' 'debugging makefiles'
 .ix 'debugging makefiles'
@@ -998,6 +998,36 @@ As &maksname reads the rules in "MAKEFILE", it discovers that updating
 "YEAR.LST" involves updating "SALES.DAT".
 The update sequence is similar to the previous example.
 .*
+.section Final Commands (.AFTER)
+.*
+.ix '&makcmdup directives' '.AFTER'
+.ix 'AFTER' '&makcmdup directive'
+The
+.id &sysper.AFTER
+directive specifies commands for &maksname to run after it has done all other commands.
+See the section entitled
+:HDREF refid='cld'.
+for a full description of its use.
+.*
+.section Ignoring Dependent Timestamps (.ALWAYS)
+.*
+.ix '&makcmdup directives' '.ALWAYS'
+.ix 'ALWAYS' '&makcmdup directive'
+The
+.id &sysper.ALWAYS
+directive indicates to &maksname that the target should always be updated
+regardless of the timestamps of its dependents.
+.millust begin
+#
+# .always directive
+#
+
+foo : bar .always
+    wtouch $@
+.millust end
+.pc
+foo is updated each time &maksname is run.
+.*
 .section Automatic Dependency Detection (.AUTODEPEND)
 .*
 .np
@@ -1035,6 +1065,621 @@ In the above example, &maksname will use the contents of the object
 file to determine whether the object file has to be built during
 processing.  The &wrcname can also insert dependency
 information into a resource file that can be used by &maksname..
+.*
+.section Initial Commands (.BEFORE)
+.*
+.ix '&makcmdup directives' '.BEFORE'
+.ix 'BEFORE' '&makcmdup directive'
+The
+.id &sysper.BEFORE
+directive specifies commands for &maksname to run before it does any other command.
+See the section entitled
+:HDREF refid='cld'.
+for a full description of its use.
+.*
+.section Disable Implicit Rules (.BLOCK)
+.*
+.ix '&makcmdup directives' '.BLOCK'
+.ix 'BLOCK' '&makcmdup directive'
+The
+.id &sysper.BLOCK
+directive and the "b" command line option are alternative controls to
+cause implicit rules to be ignored.
+See the section entitled
+:HDREF refid='clo'.
+for a full description of its use.
+.*
+.section Ignoring Irrelevant Errors (.CONTINUE)
+.*
+.ix '&makcmdup directives' '.CONTINUE'
+.ix 'CONTINUE' '&makcmdup directive'
+The
+.id &sysper.CONTINUE
+directive and the "b" command line option are alternative controls to
+cause failing commands to be ignored.
+See the section entitled
+:HDREF refid='clo'.
+for a full description of its use.
+.millust begin
+#
+# .continue example
+#
+
+&sysper.continue
+
+all: bad good
+    @%null
+
+bad:
+    false
+
+good:
+    touch $@
+.millust end
+.pc
+Although the command list for bad fails, that for good is done.
+Without the directive, good is not built.
+.*
+.section Default Command List (.DEFAULT)
+.*
+.ix '&makcmdup directives' '.DEFAULT'
+.ix 'DEFAULT' '&makcmdup directive'
+The
+.id &sysper.DEFAULT
+directive provides a command list for those targets which lack one.
+See the section entitled
+:HDREF refid='cld'.
+for a full description of its use.
+At 2003-12-03, the directive seems not to work.
+.millust begin
+#
+# .default example
+#
+
+&sysper.default:
+    @echo it is useless if  $@ is unknown
+
+all:
+.millust end
+.pc
+"all" has no command list. The one supplied to the default directive
+is not run
+.*
+.section Erasing Targets After Error (.ERASE)
+.*
+.np
+.ix '&makcmdup directives' '.ERASE'
+.ix 'ERASE' '&makcmdup directive'
+.ix '&makcmdup' 'return codes'
+.ix 'return codes'
+Most operating system utilities and programs have special return codes
+that indicate error conditions.
+&makname will check the return code for every command executed.
+If the return code is non-zero, &maksname will stop processing the
+current rule and optionally delete the current target being updated.
+By default, &maksname will prompt for deletion of the current target.
+The
+.id &sysper.ERASE
+directive indicates to &maksname that the target should be deleted if
+an error occurs during the execution of the associated command list.
+No prompt is issued in this case.
+Here is an example of the
+.id &sysper.ERASE
+directive:
+.millust begin
+#
+# .ERASE example
+#
+&sysper.ERASE
+balance.lst : ledger.dat sales.dat purchase.dat
+        doreport
+.millust end
+.pc
+If the program "DOREPORT" executes and its return code is non-zero
+then &maksname will attempt to delete "BALANCE.LST".
+.*
+.section Error Action (.ERROR)
+.*
+.ix '&makcmdup directives' '.ERROR'
+.ix 'ERROR' '&makcmdup directive'
+The
+.id &sysper.ERROR
+directive supplies a command list for error conditions.
+See the section entitled
+:HDREF refid='cld'.
+for a full description of its use.
+.millust begin
+#
+# .error example
+#
+
+&sysper.error:
+    @echo it is good that "$@" is known
+
+all: .symbolic
+    false
+.millust end
+.*
+.section Ignoring Target Timestamp (.EXISTSONLY)
+.*
+.ix '&makcmdup directives' '.EXISTSONLY'
+.ix 'EXISTSONLY' '&makcmdup directive'
+The
+.id &sysper.EXISTSONLY
+directive indicates to &maksname that the target should not be updated if it already exists, regardless of its timestamp.
+.millust begin
+#
+# .existsonly directive
+#
+
+foo: .existsonly
+    wtouch $@
+.millust end
+.pc
+If absent, this file creates foo; if present, this file does nothing.
+.*
+.section (.EXPLICIT)
+.*
+.ix '&makcmdup directives' '.EXPLICIT'
+.ix 'EXPLICIT' '&makcmdup directive'
+The
+.id &sysper.EXPLICIT
+directive seems to be largely redundant. The code only that uses it 
+treats the first target of a rule as special. The author can make no sense of that.
+.*
+.section *refid=extensions Defining Recognized File Extensions (.EXTENSIONS)
+.*
+.ix '&makcmdup directives' '.EXTENSIONS'
+.ix 'EXTENSIONS' '&makcmdup directive'
+The
+.id &sysper.EXTENSIONS
+directive and its synonym, the
+.id &sysper.SUFFIXES
+directive declare which extensions are allowed to be used in implicit
+rules and how these extensions are ordered.
+.id &sysper.EXTENSIONS
+is the traditional Watcom name;
+.id &sysper.SUFFIXES
+is the corresponding POSIX name.
+
+The default
+.id &sysper.EXTENSIONS
+declaration is:
+.code begin
+&sysper.EXTENSIONS:
+&sysper.EXTENSIONS: .exe .nlm .dsk .lan .exp .lib .obj &
+             .i .asm .c .cpp .cxx .cc .for .pas .cob &
+             .h .hpp .hxx .hh .fi .mif .inc
+.code end
+.pc
+A
+.id &sysper.EXTENSIONS
+directive with an empty list will clear the
+.id &sysper.EXTENSIONS
+list and any previously defined implicit rules.
+Any subsequent
+.id &sysper.EXTENSIONS
+directives will add extensions to the end of the list.
+.hint
+The default
+.id &sysper.EXTENSIONS
+declaration could have been coded as:
+.np
+:cmt. .millust
+&sysper.EXTENSIONS:
+.br
+&sysper.EXTENSIONS: .exe
+.br
+&sysper.EXTENSIONS: .nlm .dsk .lan .exp
+.br
+&sysper.EXTENSIONS: .lib
+.br
+&sysper.EXTENSIONS: .obj
+.br
+&sysper.EXTENSIONS: .i .asm .c .cpp .cxx .cc
+.br
+&sysper.EXTENSIONS: .for .pas .cob
+.br
+&sysper.EXTENSIONS: .h .hpp .hxx .hh .fi .mif .inc
+.br
+&sysper.EXTENSIONS: .inc
+:cmt. .emillust
+.np
+with identical results.
+.ehint
+.pc
+&maksname will not allow any implicit rule declarations that use
+extensions that are not in the current
+.id &sysper.EXTENSIONS
+list.
+.millust begin
+#
+# .extensions and .suffixes directives
+#
+
+&sysper.suffixes : # Clear list
+&sysper.extensions : .foo .bar
+
+&sysper.bar.foo:
+    copy $< $@
+
+fubar.foo:
+
+fubar.bar: .existsonly
+    wtouch $@
+.millust end
+.pc
+The first time this example runs, &maksname creates fubar.foo.
+This example always ensures that fubar.foo is a copy of fubar.bar.
+Note the implicit connection beween the two files. A more realistic example is
+.millust begin
+#
+# Implicit use of .extensions/.suffixes
+# (Use with -ms or -u command line options.)
+#
+
+hello.exe :
+.millust end
+.*
+.section Approximate Date Matching (.FUZZY)
+.*
+.ix '&makcmdup directives' '.FUZZY'
+.ix 'FUZZY' '&makcmdup directive'
+The
+.id &sysper.FUZZY
+directive allows 
+.id &sysper.AUTODEPEND
+times to be out by a minute without causing a rebuild.
+It does not work on 2003-12-03. The following example should build
+once and leave hello.c 5 seconds younger than hello.exe but not
+viewed as younger.
+.millust begin
+#
+# .fuzzy example
+#
+
+&sysper.fuzzy
+
+&sysper.c.exe: .autodepend
+    wcl386 -zq $<
+    sleep 5
+    wtouch $<
+
+hello.exe:
+.millust end
+.*
+.section Preserving Targets After Error (.HOLD)
+.*
+.np
+.ix '&makcmdup directives' '.HOLD'
+.ix 'HOLD' '&makcmdup directive'
+.ix '&makcmdup' 'return codes'
+.ix 'return codes'
+Most operating system utilities and programs have special return codes
+that indicate error conditions.
+&makname will check the return code for every command executed.
+If the return code is non-zero, &maksname will stop processing the
+current rule and optionally delete the current target being updated.
+By default, &maksname will prompt for deletion of the current target.
+The
+.id &sysper.HOLD
+directive indicates to &maksname that the target should not be deleted
+if an error occurs during the execution of the associated command
+list.
+No prompt is issued in this case.
+.ix '&makcmdup directives' '.PRECIOUS'
+.ix 'PRECIOUS' '&makcmdup directive'
+The
+.id &sysper.HOLD
+directive is similar to
+.id &sysper.PRECIOUS
+but applies to all targets listed in the makefile.
+Here is an example of the
+.id &sysper.HOLD
+directive:
+.millust begin
+#
+# .HOLD example
+#
+&sysper.HOLD
+balance.lst : ledger.dat sales.dat purchase.dat
+        doreport
+.millust end
+.pc
+If the program "DOREPORT" executes and its return code is non-zero
+then &maksname will not delete "BALANCE.LST".
+.*
+.section Ignoring Return Codes (.IGNORE)
+.*
+.np
+.ix '&makcmdup directives' '.IGNORE'
+.ix '&makcmdup command prefix' '-'
+.ix 'IGNORE' '&makcmdup directive'
+.ix '&makcmdup' 'ignoring return codes'
+.ix 'ignoring return codes'
+Some programs do not have meaningful return codes so for these
+programs we want to ignore the return code completely.
+There are different ways to ignore return codes namely,
+.autopoint
+.point
+.ix '&makcmdup options' 'i'
+use the command line option "i"
+.point
+put a "&minus" in front of specific commands, or
+.point
+use the
+.id &sysper.IGNORE
+directive.
+.endpoint
+.np
+In the following example, the rule:
+.millust begin
+#
+# ignore return code example
+#
+balance.lst : ledger.dat sales.dat purchase.dat
+        -doreport
+.millust end
+.pc
+will ignore the return status from the program "DOREPORT".
+Using the dash in front of the command is the preferred method for
+ignoring return codes because it allows &maksname to check all the
+other return codes.
+.np
+The
+.id &sysper.IGNORE
+directive is used as follows:
+.millust begin
+#
+# .IGNORE example
+#
+&sysper.IGNORE
+balance.lst : ledger.dat sales.dat purchase.dat
+        doreport
+.millust end
+.pc
+Using the
+.id &sysper.IGNORE
+directive will cause &maksname to ignore the return code for every
+command.
+The "i" command line option and the
+.id &sysper.IGNORE
+directive prohibit &maksname from performing any error checking on the
+commands executed and, as such, should be used with caution.
+.np
+Another way to handle non-zero return codes is to continue processing
+targets which do not depend on the target that had a non-zero return
+code during execution of its associated command list.
+There are two ways of indicating to &maksname that processing should
+continue after a non-zero return code:
+.autopoint
+.point
+use the command line option "k"
+.point
+use the
+.id &sysper.CONTINUE
+directive.
+.endpoint
+.*
+.section Minimise Target Timestamp (.JUST_ENOUGH)
+.*
+.ix '&makcmdup directives' '.JUST_ENOUGH'
+.ix 'JUST_ENOUGH`' '&makcmdup directive'
+The
+.id &sysper.JUST_ENOUGH
+directive is equivalent to the undocumented "j" command line option.
+The times of created targets are set to be the same as their youngest
+dependendents.
+.millust begin
+#
+# .just_enough example
+#
+
+&sysper.just_enough
+
+&sysper.c.exe:
+    wcl386 -zq $<
+
+hello.exe:
+.millust end
+.pc
+hello.exe is given the same time as hello.c.
+.*
+.section Retain Macro Spaces (.KEEP_SPACES)
+.*
+.ix '&makcmdup directives' '.KEEP_SPACES'
+.ix 'KEEP_SPACES' '&makcmdup directive'
+The
+.id &sysper.KEEP_SPACES
+directive is intended to allow leading spaces in macro values.
+It does not work on 2003-12-03. The following example should output a string containing several spaces.
+.millust begin
+#
+# .keep_spaces example
+#
+
+&sysper.keep_spaces
+
+b=    B
+
+all: .symbolic
+    @echo a$(b)c
+.millust end
+
+
+.*
+.section (.MULTIPLE)
+.*
+The
+.id &sysper.MULTIPLE
+directive exists but no code is provided to implement its unknown
+purpose.
+.*
+.section Ignoring Target Timestamp (.NOCHECK)
+.*
+.ix '&makcmdup directives' '.NOCHECK'
+.ix 'NOCHECK' '&makcmdup directive'
+The
+.id &sysper.NOCHECK
+directive is used to disable target existence checks in a makefile.
+See the section entitled
+:HDREF refid='clo'.
+for a full description of its use.
+.*
+.section Cache Search Path (.OPTIMIZE)
+.*
+.ix '&makcmdup directives' '.OPTIMIZE'
+.ix 'OPTIMIZE' '&makcmdup directive'
+The
+.id &sysper.OPTIMIZE
+directive and the equivalent "o" command line option cause &maksname
+to use a circular path search.
+If a file is found in a particular directory, that directory will be
+the first searched for the next file.
+
+See the section entitled
+:HDREF refid='clo'.
+for a full description of its use.
+.*
+.section Preserving Targets (.PRECIOUS)
+.*
+.np
+.ix '&makcmdup directives' '.PRECIOUS'
+.ix 'PRECIOUS' '&makcmdup directive'
+.ix '&makcmdup' 'return codes'
+.ix 'return codes'
+Most operating system utilities and programs have special return codes
+that indicate error conditions.
+&makname will check the return code for every command executed.
+If the return code is non-zero, &maksname will stop processing the
+current rule and optionally delete the current target being updated.
+If a file is precious enough that this treatment of return codes is
+not wanted then the
+.id &sysper.PRECIOUS
+directive may be used.
+The
+.id &sysper.PRECIOUS
+directive indicates to &maksname that the target should not be deleted
+if an error occurs during the execution of the associated command
+list.
+Here is an example of the
+.id &sysper.PRECIOUS
+directive:
+.code begin
+#
+# .PRECIOUS example
+#
+balance summary : sales.dat purchase.dat .PRECIOUS
+        doreport
+.code end
+.pc
+If the program "DOREPORT" executes and its return code is non-zero
+then &maksname will not attempt to delete "BALANCE" or "SUMMARY".
+If only one of the files is precious then the makefile could be coded
+as follows:
+.millust begin
+#
+# .PRECIOUS example
+#
+balance : .PRECIOUS
+balance summary : sales.dat purchase.dat
+        doreport
+.millust end
+.pc
+The file "BALANCE.LST" will not be deleted if an error occurs while
+the program "DOREPORT" is executing.
+.*
+.section Name Command Sequence (.PROCEDURE)
+.*
+.ix '&makcmdup directives' '.PROCEDURE'
+.ix 'PROCEDURE' '&makcmdup directive'
+The
+.id &sysper.PROCEDURE
+directive is a piece of syntactic sugar. It is often used to
+make "procedures" in a makefile.
+.millust begin
+#
+# .procedure example
+#
+
+all: .symbolic
+    @%make gone
+
+gone: .procedure
+    @echo Gone! Gone! Gone! Woe-awo-awo ;-)
+.millust end
+.*
+.section Suppressing Terminal Output (.SILENT)
+.*
+.np
+.ix '&makcmdup directives' '.SILENT'
+.ix '&makcmdup command prefix' '@'
+.ix 'SILENT' '&makcmdup directive'
+As commands are executed, &makname will print out the current command
+before it is executed.
+.ix '&makcmdup' 'suppressing output'
+.ix 'suppressing output'
+It is possible to execute the makefile without having the commands
+printed.
+There are three ways to inhibit the printing of the commands before
+they are executed, namely:
+.autopoint
+.point
+.ix '&makcmdup options' 's'
+use the command line option "s"
+.point
+put an "@" in front of specific commands, or
+.point
+use the
+.id &sysper.SILENT
+directive.
+.endpoint
+.np
+In the following example, the rule:
+.millust begin
+#
+# silent command example
+#
+balance summary : ledger.dat sales.dat purchase.dat
+        @doreport
+.millust end
+.pc
+will prevent the string "doreport" from being printed on the
+screen before the command is executed.
+.np
+The
+.id &sysper.SILENT
+directive is used as follows:
+.millust begin
+#
+# .SILENT example
+#
+&sysper.SILENT
+balance summary : ledger.dat sales.dat purchase.dat
+        doreport
+.millust end
+.pc
+Using the
+.id &sysper.SILENT
+directive or the "s" command line option will inhibit the printing of
+all commands before they are executed.
+The "sn" command line option can be used to veto any silencing control.
+.np
+At this point, most of the capability of &maksname may be realized.
+Methods for making makefiles more succinct will be discussed.
+.*
+.section Defining Recognized File Extensions (.SUFFIXES)
+.*
+.ix '&makcmdup directives' '.SUFFIXES'
+.ix 'SUFFIXES' '&makcmdup directive'
+The
+.id &sysper.SUFFIXES
+directive declares which extensions are allowed to be used in implicit
+rules and how these extensions are ordered. It is a synonym for the
+.id &sysper.EXTENSIONS
+directive.  See the section entitled
+:HDREF refid='extensions'.
+for a full description of both directives.
 .*
 .section Targets Without Any Dependents (.SYMBOLIC)
 .*
@@ -1137,335 +1782,6 @@ target
 .pc
 This kind of target definition is useful for many types of management
 tasks that can be described in a makefile.
-.*
-.section Preserving Targets (.PRECIOUS)
-.*
-.np
-.ix '&makcmdup directives' '.PRECIOUS'
-.ix 'PRECIOUS' '&makcmdup directive'
-.ix '&makcmdup' 'return codes'
-.ix 'return codes'
-Most operating system utilities and programs have special return codes
-that indicate error conditions.
-&makname will check the return code for every command executed.
-If the return code is non-zero, &maksname will stop processing the
-current rule and optionally delete the current target being updated.
-If a file is precious enough that this treatment of return codes is
-not wanted then the
-.id &sysper.PRECIOUS
-directive may be used.
-The
-.id &sysper.PRECIOUS
-directive indicates to &maksname that the target should not be deleted
-if an error occurs during the execution of the associated command
-list.
-Here is an example of the
-.id &sysper.PRECIOUS
-directive:
-.code begin
-#
-# .PRECIOUS example
-#
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat .PRECIOUS
-        doreport
-.code end
-.pc
-If the program "DOREPORT" executes and its return code is non-zero
-then &maksname will not attempt to delete "BALANCE.LST" or
-"SUMMARY.LST".
-If only one of the files is precious then the makefile could be coded
-as follows:
-.millust begin
-#
-# .PRECIOUS example
-#
-balance.lst : .PRECIOUS
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        doreport
-.millust end
-.pc
-The file "BALANCE.LST" will not be deleted if an error occurs while
-the program "DOREPORT" is executing.
-.*
-.section Ignoring Return Codes (.IGNORE)
-.*
-.np
-.ix '&makcmdup directives' '.IGNORE'
-.ix '&makcmdup command prefix' '-'
-.ix 'IGNORE' '&makcmdup directive'
-.ix '&makcmdup' 'ignoring return codes'
-.ix 'ignoring return codes'
-Some programs do not have meaningful return codes so for these
-programs we want to ignore the return code completely.
-There are different ways to ignore return codes namely,
-.autopoint
-.point
-.ix '&makcmdup options' 'i'
-use the command line option "i"
-.point
-put a "&minus" in front of specific commands, or
-.point
-use the
-.id &sysper.IGNORE
-directive.
-.endpoint
-.np
-In the following example, the rule:
-.millust begin
-#
-# ignore return code example
-#
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        -doreport
-.millust end
-.pc
-will ignore the return status from the program "DOREPORT".
-Using the dash in front of the command is the preferred method for
-ignoring return codes because it allows &maksname to check all the
-other return codes.
-.np
-The
-.id &sysper.IGNORE
-directive is used as follows:
-.millust begin
-#
-# .IGNORE example
-#
-&sysper.IGNORE
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        doreport
-.millust end
-.pc
-Using the
-.id &sysper.IGNORE
-directive will cause &maksname to ignore the return code for every
-command.
-The "i" command line option and the
-.id &sysper.IGNORE
-directive prohibit &maksname from performing any error checking on the
-commands executed and, as such, should be used with caution.
-.np
-Another way to handle non-zero return codes is to continue processing
-targets which do not depend on the target that had a non-zero return
-code during execution of its associated command list.
-There are two ways of indicating to &maksname that processing should
-continue after a non-zero return code:
-.autopoint
-.point
-use the command line option "k"
-.point
-use the
-.id &sysper.CONTINUE
-directive.
-.endpoint
-.*
-.section Erasing Targets After Error (.ERASE)
-.*
-.np
-.ix '&makcmdup directives' '.ERASE'
-.ix 'ERASE' '&makcmdup directive'
-.ix '&makcmdup' 'return codes'
-.ix 'return codes'
-Most operating system utilities and programs have special return codes
-that indicate error conditions.
-&makname will check the return code for every command executed.
-If the return code is non-zero, &maksname will stop processing the
-current rule and optionally delete the current target being updated.
-By default, &maksname will prompt for deletion of the current target.
-The
-.id &sysper.ERASE
-directive indicates to &maksname that the target should be deleted if
-an error occurs during the execution of the associated command list.
-No prompt is issued in this case.
-Here is an example of the
-.id &sysper.ERASE
-directive:
-.millust begin
-#
-# .ERASE example
-#
-&sysper.ERASE
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        doreport
-.millust end
-.pc
-If the program "DOREPORT" executes and its return code is non-zero
-then &maksname will attempt to delete "BALANCE.LST" or "SUMMARY.LST"
-depending on which it was updating.
-.*
-.section Preserving Targets After Error (.HOLD)
-.*
-.np
-.ix '&makcmdup directives' '.HOLD'
-.ix 'HOLD' '&makcmdup directive'
-.ix '&makcmdup' 'return codes'
-.ix 'return codes'
-Most operating system utilities and programs have special return codes
-that indicate error conditions.
-&makname will check the return code for every command executed.
-If the return code is non-zero, &maksname will stop processing the
-current rule and optionally delete the current target being updated.
-By default, &maksname will prompt for deletion of the current target.
-The
-.id &sysper.HOLD
-directive indicates to &maksname that the target should not be deleted
-if an error occurs during the execution of the associated command
-list.
-No prompt is issued in this case.
-.ix '&makcmdup directives' '.PRECIOUS'
-.ix 'PRECIOUS' '&makcmdup directive'
-The
-.id &sysper.HOLD
-directive is similar to
-.id &sysper.PRECIOUS
-but applies to all targets listed in the makefile.
-Here is an example of the
-.id &sysper.HOLD
-directive:
-.millust begin
-#
-# .HOLD example
-#
-&sysper.HOLD
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        doreport
-.millust end
-.pc
-If the program "DOREPORT" executes and its return code is non-zero
-then &maksname will not delete "BALANCE.LST" or "SUMMARY.LST".
-.*
-.section Ignoring Target Timestamp (.EXISTSONLY)
-.*
-.ix '&makcmdup directives' '.EXISTSONLY'
-.ix 'EXISTSONLY' '&makcmdup directive'
-The
-.id &sysper.EXISTSONLY
-directive indicates to &maksname that the target should not be updated if it already exists, regardless of its timestamp.
-.*
-.section Defining Recognized File Extensions (.EXTENSIONS)
-.*
-.ix '&makcmdup directives' '.EXTENSIONS'
-.ix 'EXTENSIONS' '&makcmdup directive'
-The
-.id &sysper.EXTENSIONS
-directive declares which extensions are allowed to be used in implicit
-rules and how these extensions are ordered.
-The default
-.id &sysper.EXTENSIONS
-declaration is:
-.code begin
-&sysper.EXTENSIONS:
-&sysper.EXTENSIONS: .exe .nlm .dsk .lan .exp .lib .obj &
-             .i .asm .c .cpp .cxx .cc .for .pas .cob &
-             .h .hpp .hxx .hh .fi .mif .inc
-.code end
-.pc
-A
-.id &sysper.EXTENSIONS
-directive with an empty list will clear the
-.id &sysper.EXTENSIONS
-list and any previously defined implicit rules.
-Any subsequent
-.id &sysper.EXTENSIONS
-directives will add extensions to the end of the list.
-.hint
-The default
-.id &sysper.EXTENSIONS
-declaration could have been coded as:
-.np
-:cmt. .millust
-&sysper.EXTENSIONS:
-.br
-&sysper.EXTENSIONS: .exe
-.br
-&sysper.EXTENSIONS: .nlm .dsk .lan .exp
-.br
-&sysper.EXTENSIONS: .lib
-.br
-&sysper.EXTENSIONS: .obj
-.br
-&sysper.EXTENSIONS: .i .asm .c .cpp .cxx .cc
-.br
-&sysper.EXTENSIONS: .for .pas .cob
-.br
-&sysper.EXTENSIONS: .h .hpp .hxx .hh .fi .mif .inc
-.br
-&sysper.EXTENSIONS: .inc
-:cmt. .emillust
-.np
-with identical results.
-.ehint
-.pc
-&maksname will not allow any implicit rule declarations that use
-extensions that are not in the current
-.id &sysper.EXTENSIONS
-list.
-.np
-.ix '&makcmdup directives' '.SUFFIXES'
-.ix 'SUFFIXES' '&makcmdup directive'
-For compatibility with UNIX Make, the
-.id &sysper.SUFFIXES
-directive is identical to the
-.id &sysper.EXTENSIONS
-directive.
-.*
-.section Suppressing Terminal Output (.SILENT)
-.*
-.np
-.ix '&makcmdup directives' '.SILENT'
-.ix '&makcmdup command prefix' '@'
-.ix 'SILENT' '&makcmdup directive'
-As commands are executed, &makname will print out the current command
-before it is executed.
-.ix '&makcmdup' 'suppressing output'
-.ix 'suppressing output'
-It is possible to execute the makefile without having the commands
-printed.
-There are three ways to inhibit the printing of the commands before
-they are executed, namely:
-.autopoint
-.point
-.ix '&makcmdup options' 's'
-use the command line option "s"
-.point
-put an "@" in front of specific commands, or
-.point
-use the
-.id &sysper.SILENT
-directive.
-.endpoint
-.np
-In the following example, the rule:
-.millust begin
-#
-# silent command example
-#
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        @doreport
-.millust end
-.pc
-will prevent the string "doreport" from being printed on the
-screen before the command is executed.
-.np
-The
-.id &sysper.SILENT
-directive is used as follows:
-.millust begin
-#
-# .SILENT example
-#
-&sysper.SILENT
-balance.lst summary.lst : ledger.dat sales.dat purchase.dat
-        doreport
-.millust end
-.pc
-Using the
-.id &sysper.SILENT
-directive or the "s" command line option will inhibit the printing of
-all commands before they are executed.
-.np
-At this point, most of the capability of &maksname may be realized.
-Methods for making makefiles more succinct will be discussed.
 .*
 .section Macros
 .*
@@ -3679,7 +3995,7 @@ A path and/or extension may be specified with the DLL name if desired.
 .*
 .endlevel
 .*
-.section Command List Directives
+.section *refid=cld Command List Directives
 .*
 .np
 &makname supports special directives that provide command lists for
