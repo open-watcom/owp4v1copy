@@ -3,7 +3,7 @@
  *
 :include crwat.sp
  *
- * Description: This header is part of the C/C++ standard library. It 
+ * Description: This header is part of the C/C++ standard library. It
  *              describes the math functions provided by those standards.
  ***************************************************************************/
 :segment CNAME
@@ -175,7 +175,8 @@ struct  exception {
 
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
-_WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) );
+:: The 'auto' keyword was added to work around W604/W594 in the C++ compiler
+_WMRTLINK void _set_matherr( auto int (*rtn)( struct _exception * ) );
 :segment !SNAP & !SNAPDRV
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
