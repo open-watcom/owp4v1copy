@@ -1,4 +1,4 @@
-#pmake: all build flat cpu_386 os_qnx
+#pmake: os_qnx cpu_386 flat
 #
 # contmt3r.lib -- register based multi-thread 32-bit CONTAINER library
 #

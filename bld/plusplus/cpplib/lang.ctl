@@ -109,10 +109,10 @@ set destdir=<relroot>\rel2
     <CPCMD> nt3rmt\plibmt3r.lib <destdir>\lib386\nt\
     <CPCMD> nt3smt\plbxmt3s.lib <destdir>\lib386\nt\
     <CPCMD> nt3smt\plibmt3s.lib <destdir>\lib386\nt\
-    <CPCMD> q3rmt\plbxmt3r.lib <destdir>\lib386\qnx\
-    <CPCMD> q3rmt\plibmt3r.lib <destdir>\lib386\qnx\
-    <CPCMD> q3smt\plbxmt3s.lib <destdir>\lib386\qnx\
-    <CPCMD> q3smt\plibmt3s.lib <destdir>\lib386\qnx\
+#    <CPCMD> q3rmt\plbxmt3r.lib <destdir>\lib386\qnx\
+#    <CPCMD> q3rmt\plibmt3r.lib <destdir>\lib386\qnx\
+#    <CPCMD> q3smt\plbxmt3s.lib <destdir>\lib386\qnx\
+#    <CPCMD> q3smt\plibmt3s.lib <destdir>\lib386\qnx\
     <CPCMD> os23r\plbx3r.lib <destdir>\lib386\os2\
     <CPCMD> os23r\plib3r.lib <destdir>\lib386\os2\
     <CPCMD> os23s\plbx3s.lib <destdir>\lib386\os2\

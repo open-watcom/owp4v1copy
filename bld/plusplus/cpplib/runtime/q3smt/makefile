@@ -1,4 +1,4 @@
-#pmake: all build flat cpu_386 os_qnx
+#pmake: os_qnx cpu_386 flat
 #
 # plibmt3s -- 32-bit 3s PLIB multi-thread
 #
