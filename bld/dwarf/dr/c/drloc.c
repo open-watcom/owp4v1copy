@@ -539,7 +539,7 @@ extern int DRLocBasedAT( dr_handle       var,
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( var, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     switch( tag ) {
@@ -571,7 +571,7 @@ extern int DRLocationAT( dr_handle       var,
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( var, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     switch( tag ) {
@@ -603,7 +603,7 @@ extern int DRParmEntryAT( dr_handle       var,
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( var, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     if( DWRScanForAttrib( &abbrev, &var, DW_AT_WATCOM_parm_entry ) != 0 ) {

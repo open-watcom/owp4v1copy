@@ -104,6 +104,7 @@ struct WDRRoutines {                                    /* defaults */
     void   (* except)( dr_except );                     // fatal error handler
 };
 
+typedef struct COMPUNIT_INFO * dr_cu_handle;
 typedef struct dr_dbg_info * dr_dbg_handle;
 
 typedef unsigned long dr_handle;

@@ -24,20 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Private DWARF reading library definitions.
 *
 ****************************************************************************/
 
 
-/*
- * definitions used in the dwarf reading library that are private to the
- * library
-*/
-
 #include "dr.h"
-#include "drrtns.h"
 #include "virtmem.h"
+#include "drrtns.h"
 
 #ifndef FALSE
 #define FALSE (1==0)
@@ -75,9 +69,13 @@ typedef struct {
 } sect_info;
 
 typedef struct COMPUNIT_INFO {
-    struct COMPUNIT_INFO *      next;
+    struct COMPUNIT_INFO        *next;
     dr_handle                   start;
+    dr_handle                   end;
     file_table                  filetab;
+    unsigned                    numabbrevs;
+    dr_handle                   abbrev_start;   // offset into abbrev section
+    dr_handle                   *abbrevs;       // variable length array
 } compunit_info;
 
 #if 0
@@ -92,7 +90,7 @@ struct dr_dbg_info {
     compunit_info       compunit;
 //  cache_info          cache;
     unsigned            numabbrevs;
-    dr_handle          *abbrevs;     // variable length array.
+    dr_handle           *abbrevs;   // variable length array.
     compunit_info       *last_ccu;
     unsigned_8          addr_size;
     unsigned_8          old_version;
@@ -103,4 +101,3 @@ extern struct dr_dbg_info * DWRCurrNode;
 
 #define ABBREV_TABLE_GUESS 500
 #define ABBREV_TABLE_INCREMENT 100
-

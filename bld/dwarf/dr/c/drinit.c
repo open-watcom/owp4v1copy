@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Initialize DWARF debug info for a module and distil
+*               the .debug_abbrev section.
 *
 ****************************************************************************/
 
@@ -38,8 +38,65 @@ struct dr_dbg_info * DWRCurrNode = NULL;
 
 /* function prototypes */
 
+static void ReadCUAbbrevTable( struct dr_dbg_info *dbg, compunit_info *compunit )
+/*******************************************************************************/
+/* this reads in the abbrev. table for a compilation unit, and fills in an
+ * array of pointers to it.
+ */
+{
+    unsigned        maxnum;
+    unsigned        sizealloc;
+    unsigned        oldsize;
+    dr_handle       start;
+    dr_handle       finish;
+    dr_handle       *abbrevs;
+    unsigned        code;
+    compunit_info   *cu;
+
+    // if a previous compilation unit shares the same table, reuse it
+    for( cu = &(dbg->compunit); cu != compunit; cu = cu->next ) {
+        if( cu->abbrev_start == compunit->abbrev_start ) {
+            compunit->numabbrevs = cu->numabbrevs;
+            compunit->abbrevs    = cu->abbrevs;
+            return;
+        }
+    }
+    sizealloc = ABBREV_TABLE_GUESS;
+    abbrevs = DWRALLOC( sizealloc * sizeof(dr_handle) );
+    memset( abbrevs, 0, sizealloc * sizeof(dr_handle) );
+    maxnum = 0;
+    start = dbg->sections[DR_DEBUG_ABBREV].base + compunit->abbrev_start;
+    finish = start + dbg->sections[DR_DEBUG_ABBREV].size;
+    while( start < finish ) {
+        code = DWRVMReadULEB128( &start );
+        if( code == 0 ) break;                  // indicates end of table
+        if( code > maxnum ) maxnum = code;
+        if( code >= sizealloc ) {
+            oldsize = sizealloc;
+            sizealloc = code + ABBREV_TABLE_INCREMENT;
+            abbrevs = DWRREALLOC( abbrevs, sizealloc * sizeof(dr_handle) );
+            memset( &abbrevs[oldsize], 0, (sizealloc - oldsize) * sizeof(dr_handle) );
+        }
+        if( abbrevs[code] == 0 ) {
+            abbrevs[code] = start;
+        }
+        DWRVMSkipLEB128( &start );              // skip tag
+        start++;                                // skip child indicator
+        do {
+            code = DWRVMReadULEB128( &start );  // read attribute
+            DWRVMSkipLEB128( &start );          // skip form
+        } while( code != 0 );
+    }
+    if( sizealloc > maxnum ) {  // reduce size to actual amount needed
+        /* abbrev[0] not used but we want abbrev[code] = start to work */
+        abbrevs = DWRREALLOC( abbrevs, (maxnum+1) * sizeof(dr_handle) );
+    }
+    compunit->numabbrevs = maxnum + 1;
+    compunit->abbrevs = abbrevs;
+}
+
 static void ReadAbbrevTable( struct dr_dbg_info *dbg )
-/**********************/
+/****************************************************/
 /* this reads in the abbrev. table, and fills in an array of pointers to it */
 {
     unsigned    maxnum;
@@ -51,7 +108,7 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
     unsigned    code;
 
     sizealloc = ABBREV_TABLE_GUESS;
-    abbrevs = DWRALLOC( sizealloc * sizeof(dr_handle));
+    abbrevs = DWRALLOC( sizealloc * sizeof(dr_handle) );
     memset( abbrevs, 0, sizealloc * sizeof(dr_handle) );
     maxnum = 0;
     start = dbg->sections[DR_DEBUG_ABBREV].base;
@@ -81,7 +138,7 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
         /* abbrev[0] not used but we want abbrev[code] = start to work */
         abbrevs = DWRREALLOC( abbrevs, (maxnum+1) * sizeof(dr_handle) );
     }
-    dbg->numabbrevs = maxnum+1;
+    dbg->numabbrevs = maxnum + 1;
     dbg->abbrevs = abbrevs;
 }
 
@@ -191,14 +248,15 @@ dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
     return dbg;
 }
 
-static void ReadCompUnits( void )
-/*******************************/
+static void ReadCompUnits( struct dr_dbg_info *dbg )
+/**************************************************/
 {
     compunit_info *     compunit;
     compunit_info *     next;
     dr_handle           start;
     dr_handle           finish;
     unsigned_32         length;
+    unsigned_32         abbrev_offset;
     unsigned_16         version;
     unsigned_8          addr_size;
     unsigned_8          curr_addr_size;
@@ -211,14 +269,19 @@ static void ReadCompUnits( void )
         compunit->next = NULL;
         compunit->start = start;
         length = DWRVMReadDWord( start );
+        compunit->end          = start + length;
         version = DWRVMReadWord( start + sizeof(unsigned_32) );
         if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
+        abbrev_offset = DWRVMReadDWord( start + sizeof(unsigned_32) + sizeof(unsigned_16) );
         curr_addr_size = DWRVMReadByte( start + 10 );
         if( curr_addr_size != addr_size ){
             addr_size = 0;
         }
         compunit->filetab.len  = 0;
         compunit->filetab.tab  = NULL;
+        compunit->abbrev_start = abbrev_offset;
+        ReadCUAbbrevTable( dbg, compunit );
+
         start += length + sizeof(unsigned_32);
         if( start >= finish ) break;
         next = DWRALLOC( sizeof( compunit_info ) );
@@ -235,8 +298,7 @@ dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes )
 
     dbg = InitDbgHandle( file, sizes );
     if( dbg != NULL ){
-        ReadAbbrevTable( dbg );
-        ReadCompUnits();
+        ReadCompUnits( dbg );
     }
     return dbg;
 }
@@ -254,6 +316,9 @@ void DRDbgFini( dr_dbg_handle dbg )
     while( compunit != NULL ) {
         next = compunit->next;
         DWRFiniFileTable( &compunit->filetab, FALSE );
+        if( compunit->abbrevs != NULL ){
+            DWRFREE( compunit->abbrevs );
+        }
         DWRFREE( compunit );
         compunit = next;
     }

@@ -71,7 +71,7 @@ extern void DRLoadEnum( dr_handle entry, void * data, enumCallback callback )
         DWREXCEPT( DREXCEP_DWARF_LIB_FAIL );
     }
 
-    abbrev = DWRCurrNode->abbrevs[abbrev];
+    abbrev = DWRLookupAbbrev( entry, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     if( tag != DW_TAG_enumeration_type ){
         DWREXCEPT( DREXCEP_DWARF_LIB_FAIL );

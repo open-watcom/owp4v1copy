@@ -216,7 +216,7 @@ static dr_handle ScopeLastNameable( dr_scope_stack * scope, char ** name )
 
         abbrev = DWRVMReadULEB128( &tmp_entry );
         if( abbrev != 0 ) {
-            abbrev = DWRCurrNode->abbrevs[ abbrev ];
+            abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
             DWRVMSkipLEB128( &abbrev );
             abbrev += sizeof( unsigned_8 );
 

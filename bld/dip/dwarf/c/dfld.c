@@ -184,6 +184,10 @@ static void DWRFree( void *what ){
 
 static void DWRErr( dr_except code ){
 /************************************/
+#if !defined( NDEBUG ) && defined( __WATCOMC__ ) && defined( __386__ )
+    // for easier debugging
+    __asm int 3;
+#endif
     switch( code ){
     case DREXCEP_OUT_OF_VM:
         DCStatus( DS_ERR | DS_NO_READ_MEM );

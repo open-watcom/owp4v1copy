@@ -73,7 +73,7 @@ extern void DRKidsSearch( dr_handle clhandle, dr_search search,
         return;
     }
 
-    abbrev = DWRCurrNode->abbrevs[abbrev];
+    abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     has_kids = DWRVMReadByte( abbrev );
     abbrev += sizeof( unsigned_8 );
@@ -91,7 +91,7 @@ extern void DRKidsSearch( dr_handle clhandle, dr_search search,
             break;
         }
 
-        abbrev = DWRCurrNode->abbrevs[abbrev];
+        abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
         tag = DWRVMReadULEB128( &abbrev );
         has_kids = DWRVMReadByte( abbrev );
         abbrev += sizeof( unsigned_8 );
@@ -152,7 +152,7 @@ static int baseHook( dr_sym_type notused1, dr_handle handle,
     tmp_entry = handle;
     abbrev = DWRVMReadULEB128( &tmp_entry );
     if( abbrev == 0 ) return TRUE;
-    abbrev = DWRCurrNode->abbrevs[abbrev];
+    abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     abbrev += sizeof( unsigned_8 );
 
@@ -161,7 +161,7 @@ static int baseHook( dr_sym_type notused1, dr_handle handle,
         tmp_entry = basehandle;
         abbrev = DWRVMReadULEB128( &tmp_entry );
         if( abbrev == 0 ) return TRUE;
-        abbrev = DWRCurrNode->abbrevs[abbrev];
+        abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
         tag = DWRVMReadULEB128( &abbrev );
         abbrev += sizeof( unsigned_8 );
 
@@ -199,7 +199,7 @@ static bool CheckEntry( dr_handle abbrev, dr_handle handle,
 
             if( tmp_abbrev == 0 ) DWREXCEPT( DREXCEP_BAD_DBG_INFO );
 
-            tmp_abbrev = DWRCurrNode->abbrevs[ tmp_abbrev ];
+            tmp_abbrev = DWRLookupAbbrev( tmp_entry, tmp_abbrev );
             tag = DWRVMReadULEB128( &tmp_abbrev );
             tmp_abbrev += sizeof( unsigned_8 );
 
@@ -299,7 +299,7 @@ extern dr_sym_type DRGetSymType( dr_handle entry )
     dw_tagnum   tag;
 
     abbrev = DWRVMReadULEB128( &entry );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( entry, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
 
     for( index = 0; index < DR_SYM_NOT_SYM; index++ ) {

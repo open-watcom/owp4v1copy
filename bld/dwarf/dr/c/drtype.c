@@ -121,7 +121,7 @@ extern void DRGetSubrangeInfo( dr_handle sub, dr_subinfo *info ){
     dr_val32    vals[3];
 
     abbrev = DWRVMReadULEB128( &sub );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( sub, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     DWRGetAT( abbrev, sub, vals, SubATList );
@@ -145,7 +145,7 @@ extern int DRGetBitFieldInfo( dr_handle mem, dr_bitfield *info ){
     int         count;
 
     abbrev = DWRVMReadULEB128( &mem );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( mem, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     count =  DWRGetAT( abbrev, mem, vals, BitATList );
@@ -171,7 +171,7 @@ extern bool DRGetTypeInfo( dr_handle entry,  dr_typeinfo *info )
     info->mclass = DR_MOD_NONE;
     for(;;){
         abbrev = DWRVMReadULEB128( &entry );
-        abbrev = DWRCurrNode->abbrevs[ abbrev ];
+        abbrev = DWRLookupAbbrev( entry, abbrev );
         tag = DWRVMReadULEB128( &abbrev );
         ++abbrev; /* skip child flag */
         switch( tag ){
@@ -397,7 +397,7 @@ extern dr_array_stat DRGetArrayInfo( dr_handle entry, dr_array_info *info )
 
     stat = DR_ARRAY_NONE;
     abbrev = DWRVMReadULEB128( &entry );
-    abbrev = DWRCurrNode->abbrevs[ abbrev ];
+    abbrev = DWRLookupAbbrev( entry, abbrev );
     tag = DWRVMReadULEB128( &abbrev );
     haschild = DWRVMReadByte( abbrev );
     ++abbrev; /* skip child flag */
@@ -436,7 +436,7 @@ extern dr_handle DRSkipTypeChain( dr_handle tref ){
     for(;;){
         entry = tref;
         abbrev = DWRVMReadULEB128( &entry );
-        abbrev = DWRCurrNode->abbrevs[ abbrev ];
+        abbrev = DWRLookupAbbrev( entry, abbrev );
         tag = DWRVMReadULEB128( &abbrev );
         ++abbrev; /* skip child flag */
         switch( tag ){
