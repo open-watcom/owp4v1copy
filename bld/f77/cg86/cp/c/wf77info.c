@@ -2166,13 +2166,9 @@ int     FECodeBytes( const char *buffer, int len )
     return( 0 );
 }
 
-char    *FEGetEnv( char const *name ) {
-//=====================================
+char    *FEGetEnv( char const *name )
+//===================================
 // do a getenv
-
-    return( getenv( name ) );
-}
-nv
-
+{
     return( getenv( name ) );
 }
