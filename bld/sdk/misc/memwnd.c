@@ -110,7 +110,7 @@ DWORD far GetASelectorLimit( WORD sel ) {
     return( CurLimit );
 }
 
-DWORD ReadMem( WORD sel, DWORD off, char *buff, DWORD size ) {
+DWORD ReadMem( WORD sel, DWORD off, void *buff, DWORD size ) {
 
     DWORD       bytesread;
 

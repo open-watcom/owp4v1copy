@@ -43,8 +43,8 @@ static DWORD    noGetAllocSize;
 #define NO_ATTATCH_ALLOC_INCREMENT      30
 #define REFRESH_INTERVAL                1000
 
-static int pidComp( const DWORD *p1, const DWORD *p2 ) {
-    return( *p1 - *p2 );
+static int pidComp( const void *p1, const void *p2 ) {
+    return( *(DWORD *)p1 - *(DWORD *)p2 );
 }
 
 /*
@@ -85,8 +85,9 @@ static void addDontAttatch( DWORD pid ) {
 /*
  * ErrAdding
  */
-void ErrAdding( ProcAttatchInfo *info ) {
+void ErrAdding( void *_info ) {
 
+    ProcAttatchInfo   *info = _info;
 #ifdef DEBUG
     char        buf[100];
 

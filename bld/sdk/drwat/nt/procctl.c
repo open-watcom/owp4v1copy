@@ -45,7 +45,9 @@ typedef struct {
 /*
  * MsgBoxMain
  */
-void MsgBoxMain( MsgBoxInfo *info ) {
+void MsgBoxMain( void *_info ) {
+    MsgBoxInfo          *info = _info;
+
     MessageBox( info->hwnd, info->text, info->title, info->flags );
     MemFree( info->text );
     MemFree( info->title );
@@ -152,8 +154,9 @@ static BOOL addRunningProcess( DWORD pid ) {
 /*
  * DebuggerMain - thread that acts as the debugger for attatched processes
  */
-void DebuggerMain( ProcAttatchInfo *info ) {
+void DebuggerMain( void *_info ) {
 
+    ProcAttatchInfo            *info = _info;
     STARTUPINFO                 startup;
     PROCESS_INFORMATION         procinfo;
     CommunicationBuffer         data;
@@ -230,8 +233,7 @@ void DebuggerMain( ProcAttatchInfo *info ) {
 /*
  * CallProcCtl
  */
-void CallProcCtl( DWORD event, void *info,
-                  void (*hdler)(ProcAttatchInfo *) )
+void CallProcCtl( DWORD event, void *info, void (*hdler)(void *) )
 {
     ProcAttatchInfo     *threadinfo;
 

@@ -300,8 +300,9 @@ static void logStack( ExceptDlgInfo *info ) {
 
 
 #define PAGE_WIDTH 75
-static walk_result logRegisterSet( const mad_reg_set_data *reg_set, mad_registers *regs)
+static walk_result logRegisterSet( const mad_reg_set_data *reg_set, void *_regs)
 {
+    mad_registers          *regs = _regs;
     int                     i;
     int                     j;
     int                     num_columns;

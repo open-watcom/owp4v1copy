@@ -172,8 +172,7 @@ void ProcessCommandLine( char *cmdline );
 
 /* taskctl.c */
 BOOL InitProcessCtl( void );
-void CallProcCtl( DWORD event, void *info,
-                  void (*hdler)(ProcAttatchInfo *) );
+void CallProcCtl( DWORD event, void *info, void (*hdler)(void *) );
 
 /* proclist.c */
 ProcNode *FindProcess( DWORD process );
