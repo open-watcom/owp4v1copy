@@ -229,7 +229,11 @@ EXE = $(exe_$(host_OS))
 EXE = exe
 !endif
 
+!ifeq release 0
+exe_name = dv.$(EXE)
+!else
 exe_name = wv.$(EXE)
+!endif
 
 # cflags
 #########
