@@ -972,28 +972,28 @@ static int comp_opt( uint direct )
 
     // follow Microsoft MASM
     static struct option {
-         uint_16        direct;
-         signed char    value;
-    }    processor[] = {
-                        T_DOT_NO87, P_NO87,
-                        T_DOT_8086, P_86,
-                        T_DOT_8087, P_87,
-                        T_DOT_186,  P_186,
-                        T_DOT_286,  P_286,
-                        T_DOT_287,  P_287,
-                        T_DOT_286P, P_286p,
-                        T_DOT_386,  P_386,
-                        T_DOT_387,  P_387,
-                        T_DOT_386P, P_386p,
-                        T_DOT_486,  P_486,
-                        T_DOT_486P, P_486p,
-                        T_DOT_586,  P_586,
-                        T_DOT_586P, P_586p,
-                        T_DOT_686,  P_686,
-                        T_DOT_686P, P_686p,
+        uint_16        direct;
+        signed char    value;
+    } processor[] = {
+        T_DOT_NO87, P_NO87,
+        T_DOT_8086, P_86,
+        T_DOT_8087, P_87,
+        T_DOT_186,  P_186,
+        T_DOT_286,  P_286,
+        T_DOT_287,  P_287,
+        T_DOT_286P, P_286p,
+        T_DOT_386,  P_386,
+        T_DOT_387,  P_387,
+        T_DOT_386P, P_386p,
+        T_DOT_486,  P_486,
+        T_DOT_486P, P_486p,
+        T_DOT_586,  P_586,
+        T_DOT_586P, P_586p,
+        T_DOT_686,  P_686,
+        T_DOT_686P, P_686p,
 
-                        NULL,   P_END,
-                       };
+        NULL,   P_END,
+    };
 
     for( i = 0; processor[i].value != P_END; i++ ) {
         if( direct == processor[i].direct ) {
@@ -1046,10 +1046,10 @@ int cpu_directive( uint_16 i )
             Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
         } else if( temp & P_FPU_MASK ) {
             Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
-            Code->info.cpu |= temp;             // turn on desired bit(s)
+            Code->info.cpu |= temp & P_FPU_MASK;        // turn on desired bit(s)
         } else {
-            Code->info.cpu &= ~(P_CPU_MASK|P_PM);
-            Code->info.cpu |= temp;
+            Code->info.cpu &= ~(P_CPU_MASK | P_PM);
+            Code->info.cpu |= temp & (P_CPU_MASK | P_PM);
         }
         return( NOT_ERROR );
     } else {
@@ -2478,6 +2478,7 @@ void AsmInit( int cpu, int fpu, int use32 )
     int         size = sizeof( AsmOpTable ) / sizeof( AsmOpTable[0] );
     int         count;
 
+    printf("AsmInit: %X, %X, %X\n", cpu, fpu, use32);
     for( count = 0; count < MAX_TOKEN; count ++ ) {
         AsmBuffer[count] = &tokens[count];
     }
@@ -2497,6 +2498,9 @@ void AsmInit( int cpu, int fpu, int use32 )
             AsmOpcode[token_value].position = pos;
             token_value++;
         }
+        if( use32 < 0 ) use32 = 0;
+        if( cpu < 0 ) cpu = 0;
+        if( fpu < 0 ) fpu = 0;
         switch( use32 ) {
         case 0:
             Code->use32 = 0;
@@ -2505,7 +2509,6 @@ void AsmInit( int cpu, int fpu, int use32 )
             Code->use32 = 1;
             break;
         }
-        if( fpu < 0 ) fpu = 0;
         switch( cpu ) {
         case 0:
             Code->info.cpu |= P_86;
