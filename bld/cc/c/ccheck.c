@@ -225,7 +225,9 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
 //            if( topLevelCheck || CompFlags.strict_ANSI ) {               /* 22-nov-94 */
                 if( ! IdenticalType( *plist1, *plist2 ) ) {
                     if ( topLevelCheck ) {
+                        SetDiagType2( *plist1, *plist2 );
                         CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                        SetDiagPop();
                     }
                     return( TC_PARM_TYPE_MISMATCH + parm_count );
                 }
@@ -656,9 +658,12 @@ extern void ChkCallParms( void )
                         actualparmlist[j] = tmp;
                     }
                 }
+        // Do not know when this function is called to check it :-(
+        //      SetDiagSymbol( &sym, callsite->op.sym_handle );
                 CompareParms( typ->u.parms, actualparmlist,
                                     nextcall->source_fno,
                                     nextcall->srclinenum );
+        //      SetDiagPop();
             }
         }
         next = nextcall->next;
@@ -736,67 +741,22 @@ static bool IsPtrtoFunc( TYPEPTR typ  ){
     return( ret );
 }
 
-void AsgnCheck( TYPEPTR typ1, TREEPTR opnd2 )
-{
-    TYPEPTR        typ2;
-
-    if( opnd2->op.opr == OPR_ERROR )  return;
-    typ2 = opnd2->expr_type;
-
-    switch( CompatibleType( typ1, typ2, 1 ) ) {
-    case NO:
-        CErr1( ERR_TYPE_MISMATCH );
-        break;
-    case PT:                                        /* 31-aug-89 */
-        CWarn1( WARN_POINTER_TRUNCATION, ERR_POINTER_TRUNCATION );
-        break;
-    case PX:
-        if( IsPtrtoFunc( typ1 ) ){
-            CWarn1( WARN_POINTER_TYPE_MISMATCH,ERR_POINTER_TYPE_MISMATCH );
-        }
-        break;
-    case PQ:
-        if( !CompFlags.no_check_qualifiers ){ // else fuck em
-            CWarn1( WARN_QUALIFIER_MISMATCH, ERR_QUALIFIER_MISMATCH );
-        }
-        break;
-    case PM:                                    /* 16-may-91 */
-        CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
-        break;
-    case PS:
-        CWarn1( WARN_SIGN_MISMATCH, ERR_SIGN_MISMATCH );
-        break;
-    case PW:
-        CWarn1( WARN_INCONSISTENT_INDIRECTION_LEVEL,
-                    ERR_INCONSISTENT_INDIRECTION_LEVEL );
-        break;
-    case PC:
-        if( opnd2->op.opr == OPR_PUSHINT ) {
-            if( opnd2->op.long_value != 0 ) {
-                CWarn1( WARN_NONPORTABLE_PTR_CONV,
-                    ERR_NONPORTABLE_PTR_CONV );
-            }
-        } else {
-            CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
-        }
-        break;
-    case OK:
-    case AC:
-        AssRangeChk( typ1, opnd2 );
-    }
-}
-
 void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
 {
-//TODO merge up with AsgnCheck & ChkCalls
+//TODO merge up with  ChkCalls
     TYPEPTR        typ2;
 
     if( opnd2->op.opr == OPR_ERROR )  return;
     typ2 = opnd2->expr_type;
 
+    SetDiagType2( typ2, typ1 );
     switch( CompatibleType( typ1, typ2, 1 ) ) {
     case NO:
-        CErr2( ERR_PARM_TYPE_MISMATCH, parm_num );
+        if ( parm_num == 0 ){
+            CErr1( ERR_TYPE_MISMATCH );
+        } else {
+            CErr2( ERR_PARM_TYPE_MISMATCH, parm_num );
+        }
         break;
     case PT:                                        /* 31-aug-89 */
         CWarn1( WARN_POINTER_TRUNCATION, ERR_POINTER_TRUNCATION );
@@ -808,28 +768,44 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         break;
     case PQ:
         if( !CompFlags.no_check_qualifiers ){ // else fuck em
-            CWarn2( WARN_QUALIFIER_MISMATCH,
-                    ERR_PARM_QUALIFIER_MISMATCH, parm_num );
+            if ( parm_num == 0 ) {
+                CWarn1( WARN_QUALIFIER_MISMATCH, ERR_QUALIFIER_MISMATCH );
+            } else {
+                CWarn2( WARN_QUALIFIER_MISMATCH,
+                        ERR_PARM_QUALIFIER_MISMATCH, parm_num );
+            }
         }
         break;
     case PM:                                    /* 16-may-91 */
-        CWarn2( WARN_POINTER_TYPE_MISMATCH,
-                ERR_PARM_POINTER_TYPE_MISMATCH, parm_num );
+        if ( parm_num == 0 ){
+            CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
+        } else {
+            CWarn2( WARN_POINTER_TYPE_MISMATCH,
+                    ERR_PARM_POINTER_TYPE_MISMATCH, parm_num );
+        }
         break;
     case PS:                                    /* 16-may-91 */
-        CWarn2( WARN_SIGN_MISMATCH,
-                ERR_PARM_SIGN_MISMATCH, parm_num );
+        if ( parm_num == 0 ){
+            CWarn1( WARN_SIGN_MISMATCH, ERR_SIGN_MISMATCH );
+        } else {
+            CWarn2( WARN_SIGN_MISMATCH,
+                    ERR_PARM_SIGN_MISMATCH, parm_num );
+        }
         break;
     case PW:
-        CWarn2( WARN_PARM_INCONSISTENT_INDIRECTION_LEVEL,
-                ERR_PARM_INCONSISTENT_INDIRECTION_LEVEL, parm_num );
-                break;
+        if ( parm_num == 0 ){
+            CWarn1( WARN_INCONSISTENT_INDIRECTION_LEVEL,
+                    ERR_INCONSISTENT_INDIRECTION_LEVEL );
+        } else {
+            CWarn2( WARN_PARM_INCONSISTENT_INDIRECTION_LEVEL,
+                    ERR_PARM_INCONSISTENT_INDIRECTION_LEVEL, parm_num );
+        }
         break;
     case PC:
         if( opnd2->op.opr == OPR_PUSHINT ) {
             if( opnd2->op.long_value != 0 ) {
                 CWarn1( WARN_NONPORTABLE_PTR_CONV,
-                    ERR_NONPORTABLE_PTR_CONV );
+                        ERR_NONPORTABLE_PTR_CONV );
             }
         } else {
             CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
@@ -839,6 +815,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
     case AC:
         AssRangeChk( typ1, opnd2 );
     }
+    SetDiagPop();
 }
 
 void TernChk( TYPEPTR typ1, TYPEPTR typ2 )
@@ -894,7 +871,7 @@ void ChkRetType( TREEPTR tree )
         }
     }
     /* check that the types are compatible */
-    AsgnCheck( func_type, tree );
+    ParmAsgnCheck( func_type, tree, 0 );
 }
 
 

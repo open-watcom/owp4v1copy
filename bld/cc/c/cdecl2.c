@@ -128,7 +128,8 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
     while( type_new->decl_type == TYPE_TYPEDEF ) type_new = type_new->object;
     type_old = old_sym->sym_type;
     while( type_old->decl_type == TYPE_TYPEDEF ) type_old = type_old->object;
-    //ChkFuncRetType( ret_new, ret_old, new_sym );
+
+    SetDiagType2( type_new->object, type_old->object );
     if( ! IdenticalType( type_new->object, type_old->object ) ) {
         TYPEPTR     ret_new, ret_old;
 
@@ -145,6 +146,7 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
             CErr2p( ERR_INCONSISTENT_TYPE, new_sym->name );
         }
     }
+    SetDiagPop();
 
     /* check types of parms, including promotion */
     ChkCompatibleFunction(type_new, type_old, 1);
@@ -352,8 +354,8 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
                 SetDiagSymbol( &old_sym, old_sym_handle );
                 if( ! IdenticalType( old_sym.sym_type, sym->sym_type ) ) {
                     CErr2p( ERR_TYPE_DOES_NOT_AGREE, sym->name );
-                SetDiagPop();
                 }
+                SetDiagPop();
             }
         }
     }
