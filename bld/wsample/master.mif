@@ -44,10 +44,11 @@ objs_rsi_i86 = samprsi.obj sysinit.obj sampexe.obj sbrk.obj settime.obj dbglib.o
 objs_pls_386 = samppls.obj sampexe.obj timer.obj settime.obj
 objs_nov_386 = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pitstuff.obj
 
-objects = sample.obj sampdata.obj io.obj sysio.obj wmsg.obj $(objs_$(target)_$(host_CPU))
+objects = $(objs_$(target)_$(host_CPU)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
+
 
 extra_c_flags_dos_dos = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far
-extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zdp -zu
+extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zu
 extra_c_flags_dos_pls = -dREPORT_TYPE= -dFAR_PTR= -d_PLS
 extra_c_flags_dos     = $(extra_c_flags_dos_$(target))
 extra_c_flags_win     = -dREPORT_TYPE= -dFAR_PTR=__far -zu -zw -orlt
@@ -55,11 +56,13 @@ extra_c_flags_nov     = -dREPORT_TYPE= -dFAR_PTR= -dNETWARE -3s -zp1
 extra_c_flags_nt      = -dREPORT_TYPE= -dFAR_PTR=
 extra_c_flags_os2     = -dREPORT_TYPE= -dFAR_PTR=
           
-extra_c_flags =  -s
+extra_c_flags =  -s -D_NO_LIB_PRAGMAS_
 !ifeq machine NEC
 extra_c_flags += -d_NEC_PC
 !endif
-extra_c_flags_i86     = -2
+
+extra_c_flags_i86     = -fpc -2
+extra_c_flags_386     = -fpc
 !ifeq target dos
 extra_c_flags_i86     += -DSHORT_OFF
 !else ifeq target os2
@@ -105,20 +108,15 @@ nlm_imports = &
     Free
 
 !ifdef __LINUX__
-description = \'Open Watcom Sampler\'
+description = \'Open Watcom Sampler V2.2\'
 !else
-description = 'Open Watcom Sampler'
+description = 'Open Watcom Sampler V2.2'
 !endif
 
-extra_l_flags = op symfile,map,quiet lib $(wres_lib) name $(xname)
+extra_l_flags = op symfile,map lib $(wres_lib) name $(xname)
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_CPU))
 extra_l_flags_win = option heap=10k, stack=10k segment class 'CODE' preload fixed segment class 'DATA' preload fixed lib commdlg,toolhelp
-extra_l_flags_nov = option osname='Novell NLM' format novell nlm $(description) debug novell option stack=10k &
- option nodefault import { $(nlm_imports) } &
- import @$(ow_nwoss_root)/common/imp/owclib.imp &
- lib ../../clib/library/nw_clib.386/ms_s/clib3s.lib &
- module clib
 
 !ifeq target nov
 inc_dirs=$(ow_nwoss_root)/common/h;$(ow_nwoss_root)/nw4/h;$(nwsrc);$(dig_dir)/h;
@@ -154,10 +152,10 @@ rsidir = $(tools_root)
 
 !ifeq target rsi
 $(xname).exe : $(xname).exp $(xname).res
-    $(rsidir)\splice $^@ $(xname).exp -ALT ..\..\wstub\wstubq.exe
+    $(rsidir)\splice $^@ $(xname).exp -ALT ../../wstub/wstubq.exe
     wstrip -q -a -r $^@ . $(xname).res
 
-$(xname).exp : $(objects) $(__MAKEFILES__)
+$(xname).exp : $(objects) $(wres_lib) $(__MAKEFILES__)
     @%create tmp.lnk
     @%append tmp.lnk exp($(xname)) map($(xname)) log($(xname).err)
     @%append tmp.lnk -nod -DPMI -map -acg -farcall -quiet -auto -rtnerr 2
@@ -167,7 +165,7 @@ $(xname).exp : $(objects) $(__MAKEFILES__)
     @%append tmp.lnk $(wres_lib)
     -$(rsidir)\glu @tmp.lnk
 !else ifeq target nov
-$(xname).nlm : $(xname).res  $objects makefile
+$(xname).nlm : $(xname).res $(objects) $(wres_lib) $(__MAKEFILES__)
     @%write $(%debug) tmp.lnk name $^@
     @%append tmp.lnk option osname='Novell NLM'
     @%append tmp.lnk format novell nlm $(description)
@@ -183,6 +181,24 @@ $(xname).nlm : $(xname).res  $objects makefile
     @%append tmp.lnk lib $(wres_lib)
     @%append tmp.lnk lib ../../clib/library/nw_clib.386/ms_s/clib3s.lib
     @%append tmp.lnk module clib
+    $(linker) @tmp.lnk
+    wstrip -q -a -r $^@ . $(xname).res
+!else ifeq pls
+$(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
+    @%write tmp.lnk format phar ext
+    @%append tmp.lnk op map
+    @%append tmp.lnk name $^@
+    @%append tmp.lnk lib $(plsdir)/wdos32.lib
+    @%append tmp.lnk lib $(plsdir)/wdosx32.lib
+    @%append tmp.lnk lib $(wres_lib)
+    @%append tmp.lnk $(lang_root)/lib386/dos/clib3r.lib
+    @%append tmp.lnk option maxdata=0
+    @%append tmp.lnk runtime maxreal=1023K
+    @%append tmp.lnk runtime maxibuf=4K
+    @%append tmp.lnk runtime flag=2
+    @%append tmp.lnk file $(plsdir)/dilseg.obj
+    @%append tmp.lnk file $(plsdir)/dilglue.obj
+    @for %i in ($(objects)) do @%append tmp.lnk file %i
     $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
 !else
