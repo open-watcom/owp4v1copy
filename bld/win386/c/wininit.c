@@ -233,8 +233,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
      * validate header signature
      */
     _fTinyRead( handle, &exe, sizeof( rex_exe ) );
-    BreakPoint();
-    BreakPoint();
+//    BreakPoint();
     if( !(exe.sig[0] == 'M' && exe.sig[1] == 'Q') ) {
         return( Fini( 1,(char _FAR *)"Invalid EXE" ) );
     }
@@ -478,6 +477,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
         Has87 = FALSE;
     }
     if( CheckWin386Debug() == WGOD_VERSION ) {
+//    BreakPoint();
         HasWGod = TRUE;
         if( !Has87 ) {
             EMUInit();
