@@ -109,7 +109,9 @@ static readable_name readableTAGs[] = {
     table( DW_TAG_try_block ),
     table( DW_TAG_variant_part ),
     table( DW_TAG_variable ),
-    table( DW_TAG_volatile_type )
+    table( DW_TAG_volatile_type ),
+    table( DW_TAG_WATCOM_address_class_type ),
+    table( DW_TAG_WATCOM_namespace )
 };
 
 #define NUM_TAGS        ( sizeof( readableTAGs ) / sizeof( readableTAGs[0] ) )
@@ -199,7 +201,9 @@ static readable_name readableATs[] = {
     table( DW_AT_variable_parameter ),
     table( DW_AT_virtuality ),
     table( DW_AT_vtable_elem_location ),
-    table( DW_AT_hi_user ),
+    table( DW_AT_WATCOM_memory_model ),
+    table( DW_AT_WATCOM_parm_entry ),
+    table( DW_AT_WATCOM_references_start )
 };
 #define NUM_ATS         ( sizeof( readableATs ) / sizeof( readableATs[0] ) )
 
