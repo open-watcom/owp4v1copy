@@ -69,7 +69,7 @@ componentsmmpm2 =    &
         $(cc) -i$(inc_dirs) -fo=.obj -zq-w4-we-dNDEBUG -zc -oaxt -d1 $<
 
 .asm.obj:
-        $(as) -fo=.obj -zq -d1 $<
+        $(as) -fo=.obj -zq -d1 -zld $<
 
 os2.lib: lib286.lbc msgseg.obj
         $(librarian) -b -c -n -io -ii -p=32 $@ @$<

@@ -140,7 +140,7 @@ libs = $(base_libs) $(directx_libs)
         $(librarian) -b -c -n $@ $<
 
 .c.obj:
-        $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
+        $(cc) $(cflags) -fpc -zld -fo=.obj -i"$(inc_dirs)" $<
 
 # the __UNIX__ has to be here until at least "for" is fixed in wmake for UNIX:
 # wmake exploits the special WATCOM readdir(wildcard) property...
