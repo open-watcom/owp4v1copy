@@ -40,7 +40,6 @@ include struct.inc
         name    code386
 
 _DATA   segment word public 'DATA'
-#DGROUP  group   _DATA
         assume  CS:_DATA
 
 module_start:
