@@ -538,7 +538,7 @@ rcfiles = &
     japstk.dlg &
     japhis.dlg
 
-wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) .autodepend
+wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) usage.rc usagej.rc .autodepend
         $(rc_aui) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
@@ -664,3 +664,23 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
 
 litdef.gh : ./mkstr.exe
         $[@ $^@
+
+!ifeq release 0
+wsplice_keys = -kIS_RC -k$(host_os) -kHIDDEN
+!else
+wsplice_keys = -kIS_RC -k$(host_os)
+!endif
+
+usage.rc : $(hdir)/usage.sp
+        @%write usage.tmp -kENGLISH $(wsplice_keys) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@
+        wsplice @usage.tmp
+
+usagej.rc : $(hdir)/usage.sp
+        @%write usagej.tmp -kJAPANESE $(wsplice_keys) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@
+        wsplice @usagej.tmp
+
+usage.u : $(hdir)/usage.sp
+        wsplice -kENGLISH -k$(host_os) -t8 -u $[@ $^@
+
+usagej.u : $(hdir)/usage.sp
+        wsplice -kJAPANESE -k$(host_os) -t8 -u $[@ $^@

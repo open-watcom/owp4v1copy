@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger command line processing.
 *
 ****************************************************************************/
 
@@ -38,8 +37,10 @@
 #include "dbgtoggl.h"
 #include "dbgmem.h"
 #include "dui.h"
+#include "wdmsg.h"
 #include <string.h>
 #include <ctype.h>
+#include <stdio.h>
 
 
 extern unsigned         ConfigScreen(void);
@@ -104,6 +105,7 @@ static char OptNameTab[] = {
     "DEfersymbols\0"
     "NOSOurcecheck\0"
     "CONtinueunexpectedbreak\0"
+    "Help\0"
 };
 
 enum { OPT_INVOKE=1,
@@ -131,6 +133,7 @@ enum { OPT_INVOKE=1,
        OPT_DEFERSYM,
        OPT_NOSOURCECHECK,
        OPT_CONTINUE_UNEXPECTED_BREAK,
+       OPT_HELP,
 };
 
 
@@ -337,6 +340,20 @@ static void GetInitCmd( int pass )
     }
 }
 
+#ifndef __GUI__
+static void PrintUsage( int first_ln )
+{
+    char        *msg_buff;
+
+    for( ;; first_ln++ ) {
+        msg_buff = DUILoadString( first_ln );
+        if( ( msg_buff[ 0 ] == '.' ) && ( msg_buff[ 1 ] == 0 ) )
+            break;
+        puts( msg_buff );
+    }
+}
+#endif
+
 /*
  * ProcOptList -- process an option list
  */
@@ -354,6 +371,12 @@ static void ProcOptList( int pass )
         if( !OptDelim( CurrChar ) ) break;
         NextChar();
         curr = buff;
+#ifndef __GUI__
+        if( CurrChar == '?' ) {
+            PrintUsage( MSG_USE_BASE );
+            StartupErr( "" );
+        }
+#endif
         while( isalnum( CurrChar ) ) {
             *curr++ = CurrChar;
             NextChar();
@@ -451,6 +474,12 @@ static void ProcOptList( int pass )
             break;
         case OPT_POWERBUILDER:
             _SwitchOn( SW_POWERBUILDER );
+            break;
+        case OPT_HELP:
+#ifndef __GUI__
+            PrintUsage( MSG_USE_BASE );
+            StartupErr( "" );
+#endif
             break;
         default:
             if( !ProcSysOption( buff, curr - buff, pass ) ) {
