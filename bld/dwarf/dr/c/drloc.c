@@ -116,7 +116,6 @@ static void DoLocExpr( char             *p,
     uint_32      *top;
     uint_32      *stk_top;
     dr_loc_kind  kind;
-    dr_handle    sym = var;
 
 #define Pop( a )     (++a)
 #define Push( a )    (--a)
@@ -256,29 +255,17 @@ static void DoLocExpr( char             *p,
             Push( top );
             top[0] = op1;
             break;
-        case DW_OP_fbreg: {
-            dr_handle   abbrev;
-            int         ret;
-
-            /* Earlier versions of Watcom did not emit DW_AT_frame_base attribute.
-             * this is against the DWARF spec which clearly states that DW_OP_fbreg
-             * refers to DW_AT_frame_base. We look for DW_AT_frame_base first but
-             * fall back to the old mechanism for compatibility with old debug info.
-             */
+        case DW_OP_fbreg:
+            /* We should look at DW_AT_frame_base here, however at this
+	     * point the debugger seems to be able to figure out the base
+	     * correctly without it - at least assuming that it's (E)BP on x86.
+	     */
             Push( top );
-            abbrev = DWRGetAbbrev( &var );
-            if( DWRScanForAttrib( &abbrev, &var, DW_AT_frame_base ) != 0 ) {
-                ret = DWRLocExpr( sym, abbrev, var, callbck, top );
-            } //else {
-            // TODO: This isn't working right yet - the 'frame' callback does extra
-            // stuff that we need to replicate!
-                if( !callbck->frame( d, top ) ) {
-                    return;
-                }
-//            }
+            if( !callbck->frame( d, top ) ) {
+                return;
+            }
             top[0] += op1;
             break;
-            }
         case DW_OP_breg0:
         case DW_OP_bregx:
             /* get contents of reg op1 */
