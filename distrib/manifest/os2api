@@ -43,6 +43,7 @@ h\os2\ssm.h
 h\os2\sw.h
 h\os2\tcpustd.h
 h\os2\types.h
+h\os2\upm.h
 h\os2\utils.h
 h\os2\arpa\inet.h
 h\os2\GL\gl.h
@@ -108,3 +109,4 @@ lib386\os2\os2386.lib
 lib386\os2\rexx.lib
 lib386\os2\rtmidi.lib
 lib386\os2\tcpip32.lib
+lib386\os2\upm32.lib
