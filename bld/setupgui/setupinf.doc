@@ -1,0 +1,527 @@
+OpenWatcom setupgui .inf file install script description. 1st draft
+
+The .inf file is devided in sections, indicated by a word between square
+brackets, e.g. [Application] . Other than section indicators, the file must
+consist of empty lines or lines which content is dependent on the section.
+Leading and trailing spaces are ignored. Lines starting with the hash sigh (#)
+are treated as comment lines. If a line ends in a trailing backslash '\', then
+it is continued on the next line.
+
+Variables.
+    Variables have a name and a value. Each time a variable is set in a script it is
+    overwritten, except variables which name starts with a '$': They keep the first
+    value.
+
+  Magic variables
+    FullInstall         If set, all non-magic variables are true
+    FullCDInstall       If set, all non-magic variables are true except "HelpFiles"
+    UnInstall           If set, all non-magic variables are false
+    MinimalInstall      If set, make all file variables false
+    SelectiveInstall
+    PreviousInstall
+    IsNEC
+
+  NonMagic variables
+    0
+    IsOS2
+    IsOS2DosBox
+    IsWin
+    IsWin32
+    IsWin32s
+    IsWin95
+    IsWinNT
+    HelpFiles
+
+Conditions.
+    A condition is an expression that evaluates to true or false. They cannot
+    be longer than 128 bytes (variable MAXBUF in setupinf.h).
+    Conditions consist of one or more variable names plus operators. The operators work
+    in Reverse Polish Notation, that is, they operate on the previous or previous two
+    varriables or results of operators. The available operators are:
+    &   AND     previous two values
+    |   OR      previous two values
+    !   NOT     previous value
+    ?   exist   previous value (must be a file name)
+
+    The default operator is AND.
+
+
+Section words
+[Application]
+    This defines global information for this install. Only one keyword is defined.
+    Typically global variables are defined/set here. The section can appear multiple
+    times, for instance to define more variables. But per script the latest
+    DefPMGroup will be in effect.
+
+  DefPMGroup=wcpp32.grp, Watcom C_C++, %DstDir%\watcom.ico
+    Defines the global PM group. The first value is the group file name, the second
+    is the group name, the optional third is the group's icon file
+
+  $xxxx=aaaa
+    If it doesn't exist yet, create global variable xxxx with value aaaa. Do nothing
+    if it exists.
+
+  yyyy=bbbb
+    (Re)set variable yyyy to value bbbb, create the variable if needed.
+
+[Autoexec]
+    This defines value to be added to autoexec.bat. The format is variable name, followed
+    by an '=', then the value terminated by a comma, then a condition. If the variable
+    is preceded by a + sign, the value is appended to any existing variable, else the
+    variable is simply set. Example:
+  +PATH=%DstDir%\BINNT,IsWin95
+
+[AutoSet]
+    Defines conditional variables, with a variable name and a condition. Example:
+    tools16=IsDos IsOS2 IsWin | |
+
+[Config]
+    This defines value to be added to config.sys. The format is variable name, followed
+    by an '=', then the value terminated by a comma, then a condition. If the variable
+    is preceded by a + sign, the value is appended to any existing variable, else the
+    variable is simply set. Example:
+  FILES=20,IsDOS IsWin |
+
+[DeleteFiles]
+    This defines which dialogs, directories or files should be deleted. Each of
+    the three possible keywords 'dialog', 'file' or 'directory' is followed by a
+    value giving the name of the dialog , file or directory to delete. Examples:
+
+  dialog=FoundMFC21
+  file=%DstDir%\binnt\mfc.hlp
+  directory=%DstDir%\src\mfc\v21
+
+[Dialog]
+    This defines a dialog with the user to get user input. A dialog section
+    must have only lines of the form keyword=value . The following keywords
+    are valid in a Dialog section
+
+  name=xxxx
+      Start a new dialog with the name xxxx. The dialog is referred to with this name.
+
+  condition=MakeDisks !
+      Define one or more conditions under which this dialog will be shown
+      A condition is a variable name which is true or not. The condition
+      can be reversed by following the name with a space and an exclamation mark (!)
+
+  title
+      Use the specified text as tile for the dialog
+
+  any_check
+
+  width
+      Set the dialog test wrap width
+
+  vis_condition
+      Set the visual condition ??
+
+  static_text="Please insert or specify new path"
+      Add a static text control to the dialog. If nothing is following the '='
+      sign, and empty line is added. The character '@'in static text is replaced
+      by the name of the installtion program.
+
+  dynamic_text=FormattedDiskInfo,""
+
+  other_button="&Target...",Target,"Target operating systems:"
+      Add a selection button. It needs 3 command separated values. The first is
+      the displayed button text, and an '&' before a letter will cause the button
+      to be activated if Alt+letter is pressed. The second value is the name of
+      a dialog that will be invoked if the button is activated. The third value is
+      the explanatory text.
+  edit_button
+
+  push_button=-"&Previous..."
+  push_button=.+"&OK"
+  push_button=?"&Help"
+  push_button=^"&Cancel"
+
+  radio_button=ModNow,1,"&Make all the modifications for you"
+      Define a radio button. It is followed by three values: a variable name,
+      an initial value (1 or 0), and an explantory text. & in front of a letter
+      of the text will activate the button (set the variable to 1) if Alt-letter
+      is pressed. Of multiple radiobuttons, only 1 will be set to 1, all other
+      will be 0.
+
+  check_box=CfgFileCreate,1,"&Create the file"
+      Define a check box. It is followed by three values: a variable name,
+      an initial value (1 or 0), and an explantory text. & in front of a letter
+      of the text will activate the button (toggle the variable between 0 and 1) if
+      Alt-letter is pressed. A checkbox is not influenced by other checkboxes in
+      the same dialog.
+
+  detail_check=dwin32sdk,"&Win32 SDK...",win32sdk,,"32-&bit Windows SDK"
+
+  check_box_continue
+      Like check_box, but placed after it on the same line rather than below
+      the previous checkbox.
+
+  edit_control=SrcDir,,"Source Directory:"
+      Get a value form the user. It is followed by 3 values: a variable name, an
+      optional initial value, and a explanatory text.
+
+  text_window
+
+
+
+[Dirs]
+    Defines the directories used by the software. Each line names one directory.
+    They are internally sequentially numbered started with 1 with the first
+    directory in the install script. Each line has three values e.g. :
+
+  binp\dll,1,8
+      The first value is the directory name, the second is the target (??), the
+      third is the parent. This parent is the number of the directory under which
+      this particular directory resides. In the example, "binp" would have been
+      the 8th directory line. If the parent is "-1", then ??
+
+[Disks]
+    This section defines the names of the disks on which the software is supplied.
+    Each line names one disk, e.g. "Disk 1".
+
+[End]
+
+[Environment]
+    This defines value to be added to the environment. The form is variable name, followed
+    by an '=', then the value terminated by a comma, then a condition. If the variable
+    is preceded by a + sign, the value is added to any existing variable, else the
+    variable is simply set. Example:
+  FILES=20,IsDOS IsWin |
+
+[ErrorMessage]
+    Maps a variable name to strings. The variable names are fixed values inside the setup program.
+    They are lsieted below in alphabetical sequence.
+  IDS_ADD_TO_VAR="add the following to the '%s' variable"
+  IDS_ALIAS_EXISTS="The alias '%s' exists already.&  Do you wish to enter a different alias?\n\n(Choose YES to go back and enter a different alias, or NO to overwrite the the existing alias.)"
+  IDS_ASSUME_ENOUGHSPACE="Cannot determine how much free disk space is on '%s'.\nAssume there is enough space and continue?"
+  IDS_BADCRC="Internal error unpacking: '%s' - bad CRC."
+  IDS_BADLENGTH="File length Error"
+  IDS_BADPATCHFILE="Bad patch file '%s'."
+  IDS_BAD_PATH="The path: '%s' that you entered is either inaccessible, not valid, or cannot be made.\nCheck the path and run this program again."
+  IDS_CANCEL_BUTTON="^&Cancel"
+  IDS_CANTALLOCATEMEMORY="Could not allocate memory."
+  IDS_CANTCREATEEFILE="Cannot create file %s."
+  IDS_CANTDELETEFILE="Cannot delete file %s."
+  IDS_CANTFINDAUTOEXEC="@ cannot find the original AUTOEXEC.BAT file"
+  IDS_CANTFINDCONFIGSYS="@ cannot find the original CONFIG.SYS file"
+  IDS_CANTFINDOUTPUT="Cannot find output file (to be patched) %s."
+  IDS_CANTMAKEDIR="The %s directory cannot be created.&\nEnter another directory or try another drive."
+  IDS_CANTOPENDST="Cannot create destination file:\n %s.&\nTry again or cancel @."
+  IDS_CANTOPENDST_NONAME="Cannot create destination file.&\nTry again or cancel @."
+  IDS_CANTOPENFILE="Cannot open file '%s'."
+  IDS_CANTOPENSRC="Cannot open source file:\n%s."
+  IDS_CANTREADFILE="Cannot read file '%s'."
+  IDS_CANTRENAME="Cannot rename %s to %s."
+  IDS_CANTREPLACE="Cannot replace the file %s.&\nContinue with the install?"
+  IDS_CANTWRITE="Cannot write to file %s."
+  IDS_CANT_OPEN_LOGFILE="Requested log file: %s could not be opened."
+  IDS_CANT_WRITE_LOGFILE="%s could not be written."
+  IDS_CHANGES="@ will save the changes it would make to\nyour Environment in the following file:\n\n    %s"
+  IDS_COMPLETE="@ has completed successfully."
+  IDS_COPYAUTOEXEC="@ will place the contents of your original\nAUTOEXEC.BAT and CONFIG.SYS files\n in the following backup files:\n\n    %s\n    %s"
+  IDS_COPYCONFIGSYS="@ will place the contents of your original CONFIG.SYS file in the following backup file: \n\n    %s\n"
+  IDS_COPYFILEERROR ="Cannot copy file %s.&\nContinue with PATCH process?"
+  IDS_CREATEDIRERROR="Cannot create directory %s.&\nContinue with PATCH Process?"
+  IDS_CREATINGDIR="Creating directory %s... "
+  IDS_DELETEFILEERROR ="Cannot delete file %s.&\nContinue with PATCH Process?"
+  IDS_DELETING="Deleting %s... "
+  IDS_DISKETTES_NEEDED="You will need %d diskettes"
+  IDS_DOS_REBOOT="@ has completed installing the software.&\n\nYou should reboot your computer so\nthat the changes to your AUTOEXEC.BAT\nand CONFIG.SYS will take effect."
+  IDS_DRIVE_AVAILABLE=" available."
+  IDS_DRIVE_FREED=" will be freed."
+  IDS_DRIVE_REQUIRED=" required,  "
+  IDS_DRIVE_SPEC="Drive %c: "
+  IDS_DRIVE_SPEC_UNC="Drive '%s' "
+  IDS_EMPTY_DIR="WARNING: Before copying files, this program will attempt to delete the contents of the existing directory: '%s'.\nAre you sure you wish to proceed?\n"
+  IDS_ENV_CHANGES="Required changes to environment:"
+  IDS_ERASE_ARE_YOU_SURE="Are you sure you want to erase all files on drive '%c'?"
+  IDS_ERASE_OK="All files on drive '%c' will be erased.\nProceed anyway?"
+  IDS_ERROR="%s"
+  IDS_ERRORBACKAUTO="An error occurred trying to create the backup\ncopy of your AUTOEXEC.BAT file"
+  IDS_ERRORBACKCONFIG="An error occurred trying to create the backup\ncopy of your CONFIG.SYS file"
+  IDS_ERROREDITING="Error editing the file '%s'."
+  IDS_ERROR_CLOSING="An I/O error occurred while closing the file '%s'"
+  IDS_ERROR_OPENING="An I/O error occurred while opening the file '%s'"
+  IDS_ERROR_WRITING="An I/O error occurred while writing to the file '%s'"
+  IDS_FAILEDBACKUP="The file '%s' could not be copied to '%s'.&\n\nDo you wish to continue without a backup?"
+  IDS_FAILED_COPYING="Error: The package could not be successfully copied to the directory: '%s'."
+  IDS_FAILED_CREATINGDIR="Failed creating directory"
+  IDS_FAILED_DELETING="Failed deleting."
+  IDS_FAILED_MODIFYING_FILE="Could not modify the configuration file:\n%s&\nDo you wish to continue?"
+  IDS_FAILED_PATCHING="Failed patching new file"
+  IDS_FAILED_UNPACKING="Failed unpacking"
+  IDS_FIRST="%s"
+  IDS_FORMAT_ARE_YOU_SURE="Are you sure you want format drive '%c' destroying all existing files?"
+  IDS_FORMAT_OK="This disk in drive '%c' will be formatted, destroying ALL files.\nProceed anyway?"
+  IDS_HELP_BUTTON="?&Help"
+  IDS_IISCONFIG_10="Virtual alias:"
+  IDS_IISCONFIG_1="'%s' was found on this machine."
+  IDS_IISCONFIG_2="Location: %s"
+  IDS_IISCONFIG_3="This dialog lets you choose how to configure the Web server for NetImpact Dynamo."
+  IDS_IISCONFIG_4="Select where to place the NetImpact Dynamo ISAPI DLLs for use by the Web server:"
+  IDS_IISCONFIG_5="Use the path: %s (&recommended)"
+  IDS_IISCONFIG_6="Use the &path: %s"
+  IDS_IISCONFIG_7="&Enter a path."
+  IDS_IISCONFIG_8="ISAPI DLL path:"
+  IDS_IISCONFIG_9="You must enter a virtual alias for this path (e.g. '/Sybase' )."
+  IDS_IOERROR="Error: I/O error on file %s"
+  IDS_INCONSISTENT="@ has determined that you are installing over a previous version of the software, or have manually added or removed files.  Do you wish to install all missing files?"
+  IDS_INVALID_DIR="'%s' is not a valid directory."
+  IDS_INVALID_DISKETTE_SPEC="'%s' is not a valid diskette drive name.\n"
+  IDS_INVALID_EXE="Existing executable is invalid"
+  IDS_LOGFILE_EXISTS="Requested log file: %s exists already.&\nReplace it?\n(If you choose 'NO', this program will abort.)"
+  IDS_MODIFY_AUTOEXEC="@ needs to modify AUTOEXEC.BAT and CONFIG.SYS."
+  IDS_MODIFY_CONFIG="@ needs to modify CONFIG.SYS."
+  IDS_MODIFY_ENVIRONMENT="@ needs to modify environment variables in the registry."
+  IDS_NEWAUTOEXEC="@ will save the changes it would make to\nyour AUTOEXEC.BAT and CONFIG.SYS files\nin the following backup files:\n\n    %s\n    %s"
+  IDS_NEWCONFIGSYS="@ will save the changes it would make to your CONFIG.SYS file in the following backup file:\n\n    %s\n"
+  IDS_NID_ACCESSDENIED="The destination file '%s' exists already and cannot be written to.\nThe file is probably being used by another application right now.\nMake sure that no applications that could use this file are running (like your Web server), and try this program again."
+  IDS_NID_CANTSETUPCGI="Note: One or more of the following files that make up the NetImpact Dynamo Application Server for %s Web servers was not found:\n\n%s\nReinstall NetImpact Dynamo if you want to use these files."
+  IDS_NID_CANTSETUPSERVERS="Note: @ will not try to detect %s on your machine because one or more of the following NetImpact Dynamo files used by this Web server was not found:\n\n%s&\nReinstall NetImpact Dynamo if you want to detect and configure this Web server."
+  IDS_NID_CGI="CGI"
+  IDS_NID_FAILED="Web server configuration was aborted or did not complete successfully."
+  IDS_NID_IIS="Microsoft Web servers"
+  IDS_NID_IS_CGI_PRESENT="Do you have a CGI / Win-CGI Web Server on this machine?"
+  IDS_NID_LOOKFORSERVERS="@ will attempt to detect Microsoft and/or Netscape Web servers on this machine.\n\nIf a Web server is found, @ will offer to do some of the configuration needed for the Web server work with NetImpact Dynamo.\n\nNote that NetImpact Dynamo must already be installed, and your Web server(s) should not be currently running for this to work."
+  IDS_NID_NOSERVERSFOUND="@ could not detect Microsoft or Netscape Web servers on this machine.  If a web server is installed but was not detected, consult the NetImpact Dynamo documentation to set up your web server manually."
+  IDS_NID_NS="Netscape Server"
+  IDS_NID_OPTIMAFILESMISSING="@ cannot set up the Web server(s) on this machine because one or more of the following NetImpact Dynamo files was not found in '%s' as expected:\n\n%s&\nTry reinstalling NetImpact Dynamo."
+  IDS_NID_QUERY_LOOKFORSERVERS="Do you want @ to attempt to detect Microsoft and/or Netscape Web servers on this machine?\n\n(If a Web server is found, @ will offer to do some of the configuration needed for the Web Server to work with NetImpact Dynamo.  Note that your Web server(s) should not be currently running for this to work.)"
+  IDS_NID_SUCCESS="Web server configuration completed successfully."
+  IDS_NID_WINCGI="Win-CGI"
+  IDS_NOATTRIBUTES="Cannot find file attributes of %s."
+  IDS_NODESTINFO="Disk space information from the destination path: '%s' could not be found.  An estimate is that about %ldK of space is needed.&\n\nDo you wish to continue anyway?"
+  IDS_NODIR="The directory '%s' does not exist.&  Do you want to create it?\n\n(Choose YES to create the directory, or NO to enter a different directory.)"
+  IDS_NODISKFOROPTION="This diskette set does not contain the requried option."
+  IDS_NODISKSPACE="Drive %c: contains %ldK of free disk space.\n@ requires a minimum of %ldK.&\n\nThe installation may fail. Do you want to proceed anyway?"
+  IDS_NODISKSPACE_UNC="'%s' contains %ldK of free disk space.\n@ requires a minimum of %ldK.&\n\nThe installation may fail. Do you want to proceed anyway?"
+  IDS_NOFREESPACEINFO="The amount of free space on '%s' cannot be determined.  About %ldK free space is needed.&\n\nDo you wish to continue anyway?"
+  IDS_NOMEMORY="Insufficient memory to run @.&\n Close an application and try again."
+  IDS_NOMEMORYCOPY="Insufficient memory to copy file.&\nTry again or cancel @."
+  IDS_NOSETUPINFOFILE="The %s file cannot be found.\nPlease verify the distribution diskette."
+  IDS_NOSPACE_AFTER_DELETING="The package will require about %ldK of space in the path '%s', yet even after the current contents of this path are deleted, only %ldK will be free.\nYou need %ld bytes (%ldK) more space.\nDo you wish to proceed and create a package even though this may fail?"
+  IDS_NOSRCINFO="Disk space information for the source path: '%s' could not be found.&\n\nDo you wish to continue anyway?"
+  IDS_NOTEMPSPACE="A drive could not be found with at least %ldK free to write a temporary file needed by @."
+  IDS_NOTENOUGHSPACE="The package will require about %ldK of space in the path '%s', yet %ldK is free.\nYou need %ld bytes (%ldK) more space.\nDo you wish to proceed and create a package even though this may fail?"
+  IDS_NOTPATCHFILE="%s is not a patch file."
+  IDS_NO_FILES_PATCHED="No files were patched"
+  IDS_NO_LICENSEINFO="Could not apply the license because a user name and company were not found in c:\sms.ini."
+  IDS_NSCONFIG_10="Modify the '%s' file(s)."
+  IDS_NSCONFIG_11="Below is a list of the %s file(s) for Netscape Web Servers found under this install of Netscape Server.  Select the %s file(s) you want @ to configure for NetImpact Dynamo:"
+  IDS_NSCONFIG_12="Before modifying the %s file(s) do you want to copy the original to a backup with the extension %s in the same directory?"
+  IDS_NSCONFIG_13="Yes, backup the %s file(s)."
+  IDS_NSCONFIG_1="Netscape Server was found in:"
+  IDS_NSCONFIG_2="This dialog lets you choose how to configure Netscape Server for NetImpact Dynamo."
+  IDS_NSCONFIG_3="Select where to place the NetImpact Dynamo NSAPI DLLs for use by Netscape Server:"
+  IDS_NSCONFIG_4="Use the path: %s (&recommended)"
+  IDS_NSCONFIG_5="Use the &path: %s"
+  IDS_NSCONFIG_6="&Enter a path."
+  IDS_NSCONFIG_7="NSAPI DLL path:"
+  IDS_NSCONFIG_8="@ can modify the '%s' file for each Web server under this install of Netscape Server that you want to work with NetImpact Dynamo."
+  IDS_NSCONFIG_9="&List selected file(s)..."
+  IDS_NT_REBOOT="@ has completed installing the software.&\n\nYou should reboot your computer so\nthat the changes to your system setup\nwill take effect."
+  IDS_OK_BUTTON=".+&OK"
+  IDS_OS2CONFIGSYS="The changes to the CONFIG.SYS file are required to run the software.  Please shutdown your system and restart to allow the changes to take effect.\n"
+  IDS_OS2_REBOOT="@ has completed installing the software.&\n\nYou should reboot your computer so\nthat the changes to your CONFIG.SYS\nwill take effect."
+  IDS_PACKAGE_CREATED="A package for Microsoft BackOffice has been successfully created in the directory: '%s'.\nThe package definition file: '%s' can also be found in the same directory."
+  IDS_PATCHABORT="Patch Process Aborted."
+  IDS_PATCHFILEERROR="Cannot apply patch file %s.&\nContinue with PATCH process?"
+  IDS_PDF_FAILED="Error: Failed to create the .pdf file for this package successfully."
+  IDS_PMADDNOGOOD="@ could not add the application(s) to the Program Manager.&\nDo you wish to ignore this problem and continue?"
+  IDS_PMREMNOGOOD="@ could not remove application(s) from the Program Manager.&\nDo you wish to ignore this problem and continue?"
+  IDS_QUERYABORT="@ has not completed installing the software.\nAre you sure you want to stop installation?"
+  IDS_REGERROR="An error occurred while attempting to modify the registry."
+  IDS_REG_ODBC_ERROR="Information about ODBC was expected in the registry, but not found."
+  IDS_REMOVE_DLL="@ has determined that after this uninstall, the file %s will no longer be used. Should this file be deleted?"
+  IDS_REMOVE_ODBC="@ has determined that after this uninstall, the ODBC core components will no longer be used. Should these files be deleted?"
+  IDS_RENAMEERROR="Cannot rename to %s.&\nContinue with PATCH process?"
+  IDS_SETUPNOGOOD="The software has not been successfully installed!\nYou must run @ again before using the software."
+  IDS_SET_VAR_TO="set variable '%s' to"
+  IDS_SUCCESS="Successful"
+  IDS_TWONAMES="Error: You can only specify one file to patch"
+  IDS_UNCPATH_NOTEXIST="Error: Drive '%s' does not exist.\nTry another drive."
+  IDS_UNCPATH_NOTWRITABLE="Error: Drive '%s' is not writable.\nTry another drive."
+  IDS_UNKNOWNERROR="Unknown error"
+  IDS_UNPACKING="Unpacking %s... "
+  IDS_UNSETUPCOMPLETE="@ has completed successfully."
+  IDS_UNSETUPNOGOOD="The software has not been successfully uninstalled!\nYou must run @ again to completely remove the software."
+  IDS_WINDOWS_REBOOT="@ has completed installing the software.&\n\nYou should reboot your computer so\nthat the changes to your AUTOEXEC.BAT,\nCONFIG.SYS and Windows .INI files will take effect."
+  IDS_WRONGCHECKSUM="Invalid Checksum Error"
+
+[Files]
+    Defines each individual file. This is done in the form of 'archive' lines,
+    frequently split over multiple lines with the continuation character '\',
+    where each archive file contains one or more files, directory and disk
+    references, file type and optional conditions under which the archive must be processed.
+
+  pck00063,1,ochook.dll!4t!!,6,-1,2,.,wnthost
+    The first value is the name of the archive, then second the
+    number of files in the archive in base-36 notation (symbols 0-9 and a-z).
+    Then there are as many file specifications as files in the archive, separated
+    from each other by a comma, then 5 more fields.
+    The rest of the line is split into comma-separated pieces, within each
+    piece values are separated with the exclamation mark '!'
+  ochook.dll!4t!!
+    File specification. The first value is the file name (if the extension is .NLM this
+    is flagged internally).
+    The second is the base-36 file size in 512 byte blocks.
+    The third (optional) value is the base-36 file 'last modified' date (time_t value
+    as returned by stat()'s st_mtime), if not supplied the date from the .inf file
+    is used.
+    The fourth (optional) value is a variable name which will be created if needed and
+    associated with the file.
+    The fifth (optional) value is an extra indicator, a single letter. If 'o' , it is odbc;
+    if 's', it is supplemental; if 'k', it is a core component.
+  6,-1,2,.,wnthost
+    The first value is the base-36 index of the directory into which the file(s) must be placed.
+    The second value is the base-36 old_dir index (?? if the file moves from one dir to another
+    in another release??; I guess -1 means no old_dir)
+    The third value is the base-36 disk index.
+    The fourth value is the file type, which can be '1', 'm' or '$' (?? possibly to do with
+    if a file is split over multiple diskettes, where '1' is the first part, 'm' is an
+    intermediate part and '$' is the last part). If not specified, it is a single-part file.
+    This is used to calculate file sizes.
+    The fifth value is a condition.
+
+[ForceDLLInstall]
+    This doesn't seem to work looking at the code. An extra define (EXTRA_CAUTIOUS_FOR_DLLS)
+    is needed for the code to activate. It purpose might have been to force installation even
+    if some paths etc don't match. TBS
+
+[Labels]
+    This is used in OS/2 only to add long label to directories using the extended attributes.
+    The line format is: directoryname=label
+
+[LicenseMessage]
+    Maps a variable name to strings. The variable names are fixed values inside the setup program.
+  IDS_APPLYLICENSE="Applying License..."
+  IDS_LICENSEMESSAGE="Name and Company name must be filled in"
+
+[MiscMessage]
+    Maps a variable name to strings. The variable names are fixed values inside the setup program.
+
+[Patch]
+  Defines patches.
+
+  copy
+      Copy has four values, respectively source file name, destination directory,
+      destination file name, and condition.
+
+  patch
+      Patch has five values, respectively source file name, destination directory,
+      destination file name, exec type, and condition.
+
+  delete
+      Delete has three values, respectively destination file name, destination directory,
+      and condition.
+
+  mkdir
+      MkDir has two value, destination directory and condition.
+
+
+[PM Info]
+    Defines whether a GUI folder/group will be populated with shortcuts and icons
+    to installed files or folders. There are two kinds of lines: those which first
+    word is 'GROUP' (case-sensitive), and which define a new group; and other lines,
+    which specify a file to be put into the group. Each line has comma-separated
+    values. The first two parameters are treated differently for group and file.
+
+  GROUP, wpp32hlp.grp, Watcom C_C++ Tools Help,,, DoCreateHelpIcons IsFortranInstall !
+      The first parameter is the group indicator
+      The second is the group file name
+
+  view.exe, c_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall !
+      The first parameter is the file name, e.g. executable program name like 'notepad.exe',
+      or .hlp file name, or text file name etc.
+      The second (optional) parameter is passed as parameters to the first item, if it is
+      an executable.
+
+      The third is a description/name of the item
+      The optional fourth is the icon file name, which must b present in the [Files] section.
+      The optional fifth is the numeric icon position within the file, if there are multiple
+      in the file. Only used on Windows.
+      The sixth parameter is a condition.
+
+
+[Profile]
+    Defines profile information. 3 examples are given.
+
+  386Enh, *device, %DstDir%\binw\wdebug.386, system.ini, , IsWin IsWin95 | ?%DstDir%\binw\wdebug.386
+  boot, +drivers, winmm16.dll, system.ini, , IsWin UnInstall ! win32s
+  Help,LocalHelp1,%HDir%\binnt,Software\Microsoft\MFC 3.0 Help,current_user,IsWin32 UnInstall !
+
+      The first parameter is the application name.
+      The second the key name. If it starts with a '+' it adds (during install) or deletes (uninstall)
+      the value from the key's existing value, which is a space-separated string of values. If it
+      starts with an '*', it adds or deletes a device entry to the file (line: device=value).
+      The third is the key value.
+      The next parameters are optional but no preceding once may be omitted, e.g. if you need the
+      last one you need to supply all; but that may be done by supplying a space.
+      The fourth is a filename, e.g. the ini file. This can the the name of an OS/2 binary .ini
+      file like user.ini, of a text based win.ini style file where lines starting with a '['
+      define an application and the lines after that the keys belonging to that application.
+      The fifth a hive name (used on windows only), which may have the values "local_machine",
+      "current_user" or anything else which is treated as "local_machine" as well. If the hive_name
+      is given, the Windows registry is updated.
+      The sixth a condition.
+
+[Restrictions]
+    Defines conditional variables which must be either true or false. Each line
+    in the section must be of the form aaaa=bbbb, where bbbb is either 'true' or
+    'false', and aaaa is a variable name. The variable will be created if needed.
+
+[SetupErrorMessage]
+    Maps a variable name to strings. The variable names are fixed values inside the setup program.
+  IDS_CONTROLCLASSERROR="Invalid control class"
+  IDS_CONTROLERROR="Error creating control"
+  IDS_FORMATTING_FAILED="Formatting Failed!"
+  IDS_HEAPDAMAGE="Head is Damaged"
+  IDS_HEAPEMPTY="Heap is Empty"
+  IDS_HEAPEND="End of Heap"
+  IDS_HEAPOK="Heap OK"
+  IDS_NULLSTRING="NULL String"
+  IDS_QUERYFSERROR="DosQueryFSInfo error: return code = %ld"
+  IDS_WRITEERROR="Error writing to destination file"
+
+[Spawn]
+    Runs an external program conditionally. Each line has three parts. The first
+    is a keyword which is one of 'end', 'after' or anything else which is treated
+    as 'before'. Then there are two values separated by a comma: the first is the
+    program to run, the second the condition(s) under which it should run. Example:
+
+    after=cmd.exe /c detach %CDDir%\binp\nmpbind.exe, SrcIsCD IsOS2
+
+[StatusLineMessage]
+    Maps a variable name to strings. The variable names are fixed values inside the setup program.
+  IDS_CHECKING="Checking directory for existing components ..."
+  IDS_CHECKINGPATH="Checking destination path..."
+  IDS_COPYFILE="Installing Files..."
+  IDS_COPYINGFILE="Copying Files..."
+  IDS_CREATEDIRECTORY="Creating Directories..."
+  IDS_CREATEFILE="Copying New File"
+  IDS_CREATEPROGRAMFOLDER="Creating Program Folder"
+  IDS_CREATESERVICE="Creating Windows NT Service..."
+  IDS_CREATING_DISKS="Creating Diskettes..."
+  IDS_CREATING_FILE="Creating File..."
+  IDS_DELETEFILE="Deleting File"
+  IDS_DELETEFILES="Deleting Files..."
+  IDS_DISKING=" - Creating Diskettes"
+  IDS_DISK_NOT_ENOUGH_FREE="Diskette does not have enough free space!"
+  IDS_DISK_NOT_WRITEABLE="Diskette cannot be written!"
+  IDS_EMBEDDED="Renaming files for embedded application..."
+  IDS_ERASING_DISKETTE="Erasing Diskette Contents..."
+  IDS_FORMATTING_DISK="Formatting Diskette..."
+  IDS_PATCHFILE="Applying Patch File"
+  IDS_RELOCATING="Relocating Files..."
+  IDS_REMOVING="Removing Files..."
+
+[Targets]
+    Defines target directories. The directory variable name may be followed by a comma and
+    the word 'supplimental'.
+  DstDir
+  windir,supplimental
+
+[Upgrade]
+    ??
+
+
+
