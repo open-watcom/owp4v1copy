@@ -813,11 +813,11 @@ static void write_alias()
 
         *new = len1;
         new++;
-        strcpy( new, alias );
+        strncpy( new, alias, len1 );
         new+=len1;
         *new = len2;
         new++;
-        strcpy( new, subst );
+        strncpy( new, subst, len2 );
         new -= len1 + 2;
 
         objr = ObjNewRec( CMD_ALIAS );
