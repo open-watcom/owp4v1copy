@@ -231,36 +231,5 @@ static void EmitDQuad( DATA_QUAD *dq )
         size += amount;
 #endif
         break;
-    case T_GOTO:
-#if _CPU == 8086
-        for( amount = dq->u.long_values[0]; amount != 0; ) {
-            if( amount + size >= 0x00010000 ) {
-                DGSeek( DGTell() + 0x10000 - size );
-                amount -= ( 0x10000 - size );
-                size = 0;
-                if( segment != SEG_CONST  &&  segment != SEG_DATA ) {
-                    ++segment;
-                    BESetSeg( segment );
-                }
-            } else if( (int)(amount + size) < 0 ) {
-                DGSeek( DGTell() - size );
-                amount += size;
-                size = 0;
-                if( segment != SEG_CONST  &&  segment != SEG_DATA ) {
-                    --segment;
-                    BESetSeg( segment );
-                }
-            } else {
-                DGSeek( DGTell() + amount );
-                size += amount;
-                amount = 0;
-            }
-        }
-#else
-        amount = dq->u.long_values[0];
-        DGSeek( DGTell() + amount );
-        size += amount;
-#endif
-        break;
     }
 }

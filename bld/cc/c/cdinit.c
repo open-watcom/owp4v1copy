@@ -733,24 +733,6 @@ local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
     return( field );
 }
 
-local void ClearArray( TYPEPTR typ, TYPEPTR ctyp, size_t members )
-{
-    unsigned long       n;
-    enum TOKEN          realtoken;
-
-    /* first fake an "= {}" assignment to zero out all fields
-       otherwise overlapping fields caused by designated initializers
-       will make life very difficult */
-    realtoken = CurToken;
-    CurToken = T_RIGHT_BRACE;
-    for( n = 0; n < members; n++ ) {
-        InitSymData( typ->object, ctyp, -1 );
-    }
-    if( realtoken == T_RIGHT_BRACE ) return;
-    RelSeekBytes( -n * SizeOfArg( typ->object ) );
-    CurToken = realtoken;
-}
-
 local bool DesignatedInSubAggregate( DATA_TYPE decl_type )
 {
     switch( decl_type ) {
@@ -774,6 +756,7 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
     unsigned long       m;
     unsigned long      *pm;
     unsigned long       array_size;
+    unsigned long       elem_size;
 
     array_size = TypeSize( typ );
     n = 0;
@@ -783,11 +766,12 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
         pm = DesignatedInit( typ, ctyp, pm );
         if( pm == NULL ) break;
         if( m != n ) {
+            elem_size = SizeOfArg( typ->object );
             if( typ->u.array->unspecified_dim && m > array_size ) {
-                RelSeekBytes( ( array_size - n ) * SizeOfArg( typ->object ) );
-                ZeroBytes( (m - array_size) * SizeOfArg( typ->object ) );
+                RelSeekBytes( ( array_size - n ) * elem_size );
+                ZeroBytes( (m - array_size) * elem_size );
             } else {
-                RelSeekBytes( ( m - n ) * SizeOfArg( typ->object ) );
+                RelSeekBytes( ( m - n ) * elem_size );
             }
             n = m;
         }
@@ -795,7 +779,10 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
         if( n > array_size ) {
             if( !typ->u.array->unspecified_dim ) break;
             array_size = n;
-            ClearArray( typ, ctyp, 1 );
+            /* clear out the new element just in case */
+            elem_size = SizeOfArg( typ->object );
+            ZeroBytes( elem_size );
+            RelSeekBytes( -elem_size );
         }
         InitSymData( typ->object, ctyp, 1 );
         if( CurToken == T_EOF ) break;
@@ -858,48 +845,6 @@ local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
     RelSeekBytes( (unsigned)n - offset );
 }
 
-local void ClearStruct( TYPEPTR typ, TYPEPTR ctyp )
-{
-    FIELDPTR            field;
-    TYPEPTR             ftyp;
-    unsigned long       n;
-    unsigned long       offset;
-    enum TOKEN          realtoken;
-
-    n = typ->u.tag->size;      /* get full size of the struct */
-    offset = 0;
-
-    /* first fake an "= {}" assignment to zero out all fields
-       otherwise overlapping fields caused by designated initializers
-       will make life very difficult */
-    realtoken = CurToken;
-    CurToken = T_RIGHT_BRACE;
-    field = typ->u.tag->u.field_list;
-    for( field = typ->u.tag->u.field_list; field; ) {
-        /* The first field might not start at offset 0;  19-mar-91 */
-        if( field->offset != offset ) {                 /* 14-dec-88 */
-            ZeroBytes( field->offset - offset );        /* padding */
-        }
-        ftyp = field->field_type;
-        offset = field->offset + SizeOfArg( ftyp );      /* 19-dec-88 */
-        if( ftyp->decl_type == TYPE_FIELD  ||
-            ftyp->decl_type == TYPE_UFIELD ) {
-            field = InitBitField( field );
-        } else {
-            InitSymData( ftyp, ctyp, -1 );
-            field = field->next_field;
-        }
-    }
-    if( (unsigned)n > offset ) {        /* 14-dec-88, 07-jun-92 */
-        ZeroBytes( (unsigned)n - offset );      /* padding */
-    }
-    if( realtoken == T_RIGHT_BRACE ) return;
-    RelSeekBytes( -n );
-
-    /* and then do the real init */
-    CurToken = realtoken;
-}
-
 local void InitStruct( TYPEPTR typ, TYPEPTR ctyp )
 {
     InitStructUnion( typ, ctyp, typ->u.tag->u.field_list );
@@ -950,13 +895,14 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             } else if( level == 0 ) {
                 CErr1( ERR_NEED_BRACES );
             }
-            /* 0: top level, -1: clearing, 1: filling */
-            if( level != 1 ) {
-                ClearArray( typ, ctyp, TypeSize( typ ) );
+            if( level == 0 ) { /* top level */
+                /* first zero out the whole array; otherwise
+                   overlapping fields caused by designated 
+                   initializers will make life very difficult */
+                ZeroBytes( size );
+                RelSeekBytes( -size );
             }
-            if( level != -1 ) {
-                InitArray( typ, ctyp );
-            }
+            InitArray( typ, ctyp );
         }
         break;
     case TYPE_FCOMPLEX:
@@ -968,13 +914,13 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         } else if( level == 0 ) {
             CErr1( ERR_NEED_BRACES );
         }
-        /* 0: top level, -1: clearing, 1: filling */
-        if( level != 1 ) {
-            ClearStruct( typ, ctyp );
+        if( level == 0 ) { /* top level */
+            /* zero out all fields; otherwise overlapping fields caused
+               by designated initializers will make life very difficult */
+            ZeroBytes( size );
+            RelSeekBytes( -size );
         }
-        if( level != -1 ) {
-            InitStruct( typ, ctyp );
-        }
+        InitStruct( typ, ctyp );
         break;
     case TYPE_UNION:
         if( token == T_LEFT_BRACE ) {

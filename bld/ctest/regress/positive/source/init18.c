@@ -98,9 +98,6 @@ int main() {
     if(memcmp(&noot1, &noot2, sizeof(noot1))) fail(__LINE__);
     if(memcmp(&a1, &a2, sizeof(a1))) fail(__LINE__);
     if(memcmp(&answer1, &answer2, sizeof(answer1))) fail(__LINE__);
-#if 0
-    /* there's a duplicate string pointer problem here. To be fixed */
     if(memcmp(&v1, &v2, sizeof(v1))) fail(__LINE__);
-#endif
     _PASS;
 }
