@@ -11,7 +11,7 @@ DpmiEmuSystemFlags dd 0
 ; do NOT change order of these variables (you can add at the end), MED 01/08/96
 ExceptionCode	dd 0
 ExceptionFlags	dd 0
-ExceptionIndex dd 0
+ExceptionIndex  dd 0
 ;
 ExceptionEBP	dd ?
 ExceptionEDI	dd ?
@@ -95,15 +95,11 @@ ExceptionIntBuffer db size RealRegsStruc dup (?)
 ;Generate the initial entry points for the interupt handlers.
 ;
 InterruptHandler proc near
-;	rept 256
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-
+	rept 256
 	db 0e8h
 	dd offset IntHandler-($+4)
 	db 3 dup (-1)
 	endm
-	ENDM
 InterruptHandler endp
 
 
@@ -113,59 +109,37 @@ InterruptTable	proc	near
 ;Interupt handler entry points (Int nn and IntR).
 ;
 IntNum	= 0
-;	rept 2fh
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2>
-
+	rept 2fh
 	dd offset IntNN386Catch+IntNum
 	dw DpmiEmuCS
 IntNum	= IntNum+8
 	endm
-
-	ENDM
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15>
-	dd offset IntNN386Catch+IntNum
-	dw DpmiEmuCS
-IntNum	= IntNum+8
-	ENDM
-
 	dd offset Raw2FPatch
 	dw DpmiEmuCS
 IntNum	= IntNum+8
-;	rept 30h-2fh
-	dd offset IntNN386Catch+IntNum
-	dw DpmiEmuCS
-IntNum	= IntNum+8
-;	endm
-
-	dd offset RawDPMIPatch
-	dw DpmiEmuCS
-IntNum	= IntNum+8
-;	rept 256-32h
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2,3,4,5,6,7,8,9,10,11,12,13,14>
-
+	rept 30h-2fh
 	dd offset IntNN386Catch+IntNum
 	dw DpmiEmuCS
 IntNum	= IntNum+8
 	endm
-	ENDM
-
+	dd offset RawDPMIPatch
+	dw DpmiEmuCS
+IntNum	= IntNum+8
+	rept 256-32h
+	dd offset IntNN386Catch+IntNum
+	dw DpmiEmuCS
+IntNum	= IntNum+8
+	endm
 InterruptTable	endp
 
 
 ;-------------------------------------------------------------------------------
 IntNN386Catch	proc	near
-;	rept 256
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-
+	rept 256
 	db 0e8h
 	dd offset IntNN386-($+4)
 	db 3 dup (-1)
 	endm
-	ENDM
-
 IntNN386Catch	endp
 
 
@@ -175,31 +149,21 @@ ExceptionTable	proc	near
 ;Exception handler entry points (Processor exceptions).
 ;
 IntNum	= 0
-;	rept 32
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2>
-
+	rept 32
 	dd offset ExcepNN386Catch+IntNum
 	dw DpmiEmuCS
 IntNum	= IntNum+8
 	endm
-	ENDM
-
 ExceptionTable	endp
 
 
 ;-------------------------------------------------------------------------------
 ExcepNN386Catch proc near
-;	rept 32
-	IRP	arg,<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16>
-	IRP	arg2,<1,2>
-
+	rept 32
 	db 0e8h
 	dd offset ExcepNN386-($+4)
 	db 3 dup (-1)
 	endm
-	ENDM
-
 ExcepNN386Catch endp
 
 
