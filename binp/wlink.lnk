@@ -20,4 +20,3 @@ system begin 386
     format os2 lx
 end
 @%watcom%\binw\wlsystem.lnk
-@%watcom%\binw\cwsystem.lnk
