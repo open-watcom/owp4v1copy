@@ -16,7 +16,6 @@ bas        += -q
 # redirect standard tools to pre-build versions
 as = $(bas)
 vi = $(bvi)
-cl = $(bcl) # temporary redirection to enable build 1.4 by 1.3, until problem will be fixed
 
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
