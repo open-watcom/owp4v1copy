@@ -20,6 +20,13 @@ All segment registers refer to the same segment.
 .discuss end
 .*
 .pp
+.mkwix &mkwFUNC_sp.
+.mkwfont &mkwFUNC.
+.discuss begin
+The name of the current function (a string literal).
+.discuss end
+.*
+.pp
 .mkwix &mkwHUGE_sp.
 .mkwfont &mkwHUGE.
 .discuss begin

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro processing, part one.
 *
 ****************************************************************************/
 
@@ -91,6 +90,8 @@ static struct special_macro_name {
 } SpcMacros[] = {
 #define pick( s, i )    { s, i },
 #include "specmac.h"
+    // Ugly code to support alternate spellings for MACRO_FUNCTION
+    { "__func__", MACRO_FUNCTION },
     { NULL, 0 }
 };
 

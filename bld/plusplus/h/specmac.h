@@ -24,17 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Special macros that can't be undefined or redefined.
 *
 ****************************************************************************/
 
 
-// macros that cannot be undef'd or redefined
 pick( "__LINE__",       MACRO_LINE )
 pick( "__FILE__",       MACRO_FILE )
 pick( "__DATE__",       MACRO_DATE )
 pick( "__TIME__",       MACRO_TIME )
 pick( "__cplusplus",    MACRO_CPLUSPLUS )
 pick( "__FUNCTION__",   MACRO_FUNCTION )
+// Can't have the following here because the IDs need to be unique!
+// pick( "__func__",       MACRO_FUNCTION )
 #undef pick

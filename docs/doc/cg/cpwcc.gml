@@ -44,12 +44,7 @@ Notes about the Code Generator
 The formal &product command line syntax is shown below.
 .ix 'invoking &product'
 .mbigbox
-.if &version ge 107 .do begin
 compiler_name [options] [file_spec] [options] [@extra_opts]
-.do end
-.el .do begin
-compiler_name [options] file_spec [options] [@extra_opts]
-.do end
 .embigbox
 .np
 The square brackets [ ] denote items which are optional.
@@ -95,12 +90,7 @@ is the &cmppname compiler for DEC Alpha AXP platforms.
 .do end
 .note file_spec
 is the file name specification of
-.if &version ge 107 .do begin
 one or more files to be compiled.
-.do end
-.el .do begin
-the file to be compiled.
-.do end
 .if '&target' ne 'QNX' .do begin
 .np
 If no drive is specified, the default drive is assumed.
@@ -184,7 +174,6 @@ If not successful, an adjacent "OCC" directory (i.e.,
 .endnote
 .*
 .if '&target' ne 'QNX' .do begin
-.if &version ge 107 .do begin
 .*
 .section *refid=wccdll &product DLL-based Compilers
 .*
@@ -212,7 +201,6 @@ is the DLL version of the &cmppname compiler for DEC Alpha AXP platforms.
 The DLL versions of the compilers can be loaded from the &wide (&vip)
 and &makname..
 .*
-.do end
 .do end
 .*
 .section *refid=wccenv Environment Variables
@@ -915,7 +903,7 @@ In addition to the standard ANSI/ISO-defined macros supported by the
 also defined.
 These are described in this section.
 See the
-.book WATCOM C Language Reference
+.book &company C Language Reference
 manual for a description of the standard macros.
 .np
 The &product compilers run on various host operating systems
@@ -949,12 +937,10 @@ The following macros are defined for 16-bit and 32-bit target systems.
 .ix 'M_I86'
 .ix 'macros' 'M_I386'
 .ix 'M_I386'
-.if &version ge 107 .do begin
 .ix 'macros' '_M_I86'
 .ix '_M_I86'
 .ix 'macros' '_M_I386'
 .ix '_M_I386'
-.do end
 .ix 'macros' '_M_IX86'
 .ix '_M_IX86'
 .millust begin
@@ -963,9 +949,7 @@ The following macros are defined for 16-bit and 32-bit target systems.
 __X86__     __X86__
 __I86__     __386__
 M_I86       M_I386
-.if &version ge 107 .do begin
 _M_I86      _M_I386
-.do end
 _M_IX86     _M_IX86
 .millust end
 .autonote Notes:
@@ -975,31 +959,17 @@ The
 identifies the target as an Intel environment.
 .note
 The
-.if &version ge 107 .do begin
 .kwm __I86__,
 .kwm M_I86
 and
 .kwm _M_I86
-.do end
-.el .do begin
-.kwm __I86__
-and
-.kwm M_I86
-.do end
 macros identify the target as a 16-bit Intel environment.
 .note
 The
-.if &version ge 107 .do begin
 .kwm __386__,
 .kwm M_I386
 and
 .kwm _M_I386
-.do end
-.el .do begin
-.kwm __386__
-and
-.kwm M_I386
-.do end
 macros identify the target as a 32-bit Intel environment.
 .note
 The
@@ -1016,10 +986,8 @@ The &product compilers support application development for a
 variety of operating systems.
 The following macros are defined for particular target operating
 systems.
-.if &version ge 107 .do begin
 .ix 'macros' '_DOS'
 .ix '_DOS'
-.do end
 .ix 'macros' '__DOS__'
 .ix '__DOS__'
 .ix 'macros' 'MSDOS'
@@ -1036,10 +1004,8 @@ systems.
 .ix '__NETWARE_386__'
 .ix 'macros' '__NT__'
 .ix '__NT__'
-.if &version ge 107 .do begin
 .ix 'macros' '_WINDOWS'
 .ix '_WINDOWS'
-.do end
 .ix 'macros' '__WINDOWS__'
 .ix '__WINDOWS__'
 .ix 'macros' '__WINDOWS_386__'
@@ -1047,35 +1013,19 @@ systems.
 .millust begin
 Target      Macros
 ======      ======================================
-.if &version ge 107 .do begin
 DOS         __DOS__, _DOS, MSDOS
-.do end
-.el .do begin
-DOS         __DOS__, MSDOS
-.do end
 OS/2        __OS2__
-:CMT. PenPoint    __PENPOINT__
 QNX         __QNX__, __UNIX__
 Netware     __NETWARE__, __NETWARE_386__
 NT          __NT__
-.if &version ge 107 .do begin
 Windows     __WINDOWS__, _WINDOWS, __WINDOWS_386__
-.do end
-.el .do begin
-Windows     __WINDOWS__, __WINDOWS_386__
-.do end
 Linux       __LINUX__, __UNIX__
 .millust end
 .autonote Notes:
 .note
 The
-.if &version ge 107 .do begin
 .kwm __DOS__,
 .kwm _DOS
-.do end
-.el .do begin
-.kwm __DOS__
-.do end
 and
 .kwm MSDOS
 macros are defined when the build target is "DOS" (16-bit DOS or
@@ -1110,14 +1060,12 @@ macro is defined when the build target is "WINDOWS" or one of the
 "zw", "zW", "zWs" options is specified (identifies the target
 operating system as 16-bit Windows or 32-bit extended Windows but not
 Windows NT or Windows 95).
-.if &version ge 107 .do begin
 .note
 The
 .kwm _WINDOWS
 macro is defined when the build target is "WINDOWS" or one of the
 "zw", "zW", "zWs" options is specified and you are using a 16-bit
 compiler (identifies the target operating system as 16-bit Windows).
-.do end
 .note
 The
 .kwm __WINDOWS_386__
@@ -1144,10 +1092,8 @@ The following macros are defined for the indicated options.
 .millust begin
 Option    Macro
 ====== ==================
-.if &version ge 107 .do begin
 bm     _MT
 br     _DLL
-.do end
 fpi    __FPI__
 fpi87  __FPI__
 j      __CHAR_SIGNED__
@@ -1175,7 +1121,6 @@ model options.
 .ix 'macros' 'M_I86CM'
 .ix 'macros' 'M_I86LM'
 .ix 'macros' 'M_I86HM'
-.if &version ge 107 .do begin
 .ix 'macros' '_M_I86SM'
 .ix 'macros' '_M_I86MM'
 .ix 'macros' '_M_I86CM'
@@ -1201,19 +1146,6 @@ mc     __COMPACT__ M_I86CM  _M_I86CM    M_386CM  _M_386CM
 ml     __LARGE__   M_I86LM  _M_I86LM    M_386LM  _M_386LM
 mh     __HUGE__    M_I86HM  _M_I86HM
 .millust end
-.do end
-.el .do begin
-.millust begin
-Option Macros
-====== ====================
-mf     __FLAT__
-ms     __SMALL__,   M_I86SM
-mm     __MEDIUM__,  M_I86MM
-mc     __COMPACT__, M_I86CM
-ml     __LARGE__,   M_I86LM
-mh     __HUGE__,    M_I86HM
-.millust end
-.do end
 .np
 The following macros indicate which compiler is compiling the C/C++
 source code.
@@ -1235,24 +1167,21 @@ to identify the compiler as one of the &product compilers.
 .np
 The value of the macro depends on the version number of the compiler.
 The value is 100 times the version number (version 8.5 yields 850,
-version 9.0 yields 900, etc.).
+version 9.0 yields 900, etc.). Note that for Open Watcom 1.0, the
+value of this macro is 1200.
 .*
 .note __WATCOM_CPLUSPLUS__
 .ix 'macros' '__WATCOM_CPLUSPLUS__'
 .ix '__WATCOM_CPLUSPLUS__'
-&product predefines the macro
+&cmppname predefines the macro
 .kwm __WATCOM_CPLUSPLUS__
 to identify the compiler as one of the &cmppname compilers.
 .np
 The value of the macro depends on the version number of the compiler.
 The value is 100 times the version number (version 10.0 yields 1000,
-version 10.5 yields 1050, etc.).
+version 10.5 yields 1050, etc.). Note that for Open Watcom 1.0, the
+value of this macro is 1200.
 .*
-:cmt. .note __EXPRESSC__
-:cmt. .ix 'macros' '__EXPRESSC__'
-:cmt. .ix '__EXPRESSC__'
-:cmt. identifies the compiler as the &company Express C compiler.
-:cmt. The Express C compiler runs on 16-bit DOS systems only.
 .endnote
 .np
 The following macros are defined for compatibility with Microsoft.
@@ -1279,7 +1208,7 @@ compile options are specified and is not defined otherwise.
 .*
 .note _fastcall, __fastcall
 .ix 'macros' '_fastcall, __fastcall'
-&cmppname predefines the
+&product predefines the
 .kwm _fastcall
 and
 .kwm __fastcall
@@ -1306,7 +1235,7 @@ keyword.
 .ix 'macros' '_INTEGRAL_MAX_BITS'
 .ix '_INTEGRAL_MAX_BITS'
 .ix 'keywords' '__int64'
-&prodname predefines the
+&product predefines the
 .kwm _INTEGRAL_MAX_BITS
 macro to indicate that maximum number of bits supported in an integral
 type (see the description of the "__int64" keyword in the next section).

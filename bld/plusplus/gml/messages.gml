@@ -1,67 +1,78 @@
-:cmt **********************************************************************
-:cmt *	     Copyright by WATCOM International Corporation, 1987, 1992.   *
-:cmt *	     All rights reserved. No part of this software may be	  *
-:cmt *	     reproduced in any form or by any means - graphic, electronic,*
-:cmt *	     mechanical or otherwise, including, without limitation,	  *
-:cmt *	     photocopying, recording, taping or information storage and   *
-:cmt *	     retrieval systems - except with the written permission of	  *
-:cmt *	     WATCOM International Corporation.				  *
-:cmt **********************************************************************
+:cmt ***************************************************************************
+:cmt *
+:cmt *                            Open Watcom Project
+:cmt *
+:cmt *    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+:cmt *
+:cmt *  ========================================================================
+:cmt *
+:cmt *    This file contains Original Code and/or Modifications of Original
+:cmt *    Code as defined in and that are subject to the Sybase Open Watcom
+:cmt *    Public License version 1.0 (the 'License'). You may not use this file
+:cmt *    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+:cmt *    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+:cmt *    provided with the Original Code and Modifications, and is also
+:cmt *    available at www.sybase.com/developer/opensource.
+:cmt *
+:cmt *    The Original Code and all software distributed under the License are
+:cmt *    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+:cmt *    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+:cmt *    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+:cmt *    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+:cmt *    NON-INFRINGEMENT. Please see the License for the specific language
+:cmt *    governing rights and limitations under the License.
+:cmt *
+:cmt *  ========================================================================
+:cmt *
+:cmt * Description:  C++ compiler diagnostic messages.
+:cmt *
+:cmt ***************************************************************************
 :cmt
-:cmt Modified	     By 	     Reason
-:cmt --------	     -- 	     ------
-:cmt 92/10/02	     Greg Bentz      Initial version, shipped as "alpha"
-:cmt		     Jim Randall
-:cmt		     Anthony Scian
-:cmt		     Jim Welch
-:cmt 93/11/23	     A.F.Scian	     used warning level 10 for warnings that
-:cmt				     cannot be coded around but somebody may
-:cmt				     want to enable them sometime
 
-:cmt	Word usage:
+:cmt    Word usage:
 :cmt
-:cmt	'parameter' is used for macro parms
-:cmt	'argument' is used for function arguments
+:cmt    'parameter' is used for macro parms
+:cmt    'argument' is used for function arguments
 
-:cmt	GML Macros used (see MSGMACS.GML):
+:cmt    GML Macros used (see MSGMACS.GML):
 
-:cmt		:ansi <n>	warning if extensions enabled, error otherwise
-:cmt		:ansierr	ignored if extensions enabled, error otherwise
-:cmt		:ansiwarn <n>	ignored if extensions enabled, warn otherwise
-:cmt		:warning <n>	message is a warning with a specific level
-:cmt		:info		informational message
+:cmt        :ansi <n>   warning if extensions enabled, error otherwise
+:cmt        :ansierr    ignored if extensions enabled, error otherwise
+:cmt        :ansiwarn <n>   ignored if extensions enabled, warn otherwise
+:cmt        :warning <n>    message is a warning with a specific level
+:cmt        :info       informational message
 :cmt
-:cmt		:msgsym <sym>	internal symbolic name for message
-:cmt		:msgtxt <text>	text for message
+:cmt        :msgsym <sym>   internal symbolic name for message
+:cmt        :msgtxt <text>  text for message
 :cmt
-:cmt		:msglvl 	start of header title for a group of messages
-:cmt		:emsglvl	end of header title for a group of messages
-:cmt		:errbad 	start of an example that generates an error msg
-:cmt		:eerrbad	end of an example that generates an error msg
-:cmt		:errgood	start of an example that compiles clean
-:cmt		:eerrgood	end of an example that compiles clean
+:cmt        :msglvl     start of header title for a group of messages
+:cmt        :emsglvl    end of header title for a group of messages
+:cmt        :errbad     start of an example that generates an error msg
+:cmt        :eerrbad    end of an example that generates an error msg
+:cmt        :errgood    start of an example that compiles clean
+:cmt        :eerrgood   end of an example that compiles clean
 :cmt
-:cmt		.kw		highlight a keyword
-:cmt		.id		highlight an identifier
-:cmt		.ev		highlight an environment variable
-:cmt		.us		italicize a phrase
-:cmt		.np		start a new paragraph
+:cmt        .kw     highlight a keyword
+:cmt        .id     highlight an identifier
+:cmt        .ev     highlight an environment variable
+:cmt        .us     italicize a phrase
+:cmt        .np     start a new paragraph
 
-:cmt	The following substitutions are made:
-:cmt		&incvarup	environment variable for include path
-:cmt		&wclname	Compile and Link utility name
+:cmt    The following substitutions are made:
+:cmt        &incvarup   environment variable for include path
+:cmt        &wclname    Compile and Link utility name
 
-:cmt	Note for translators:
+:cmt    Note for translators:
 
-:cmt	Japanese error messages are supported via the :MSGJTXT tag.
-:cmt	If there is no :MSGJTXT. for a particular :MSGSYM. then the
-:cmt	message will come out in English.  Translation may proceed
-:cmt	by translating error messages that do not have the :MSGJTXT.
-:cmt	tag present and adding the :MSGJTXT. tag with the Japanese
-:cmt	text after the :MSGTXT. tag.  If the :MSGJTXT. has no text
+:cmt    Japanese error messages are supported via the :MSGJTXT tag.
+:cmt    If there is no :MSGJTXT. for a particular :MSGSYM. then the
+:cmt    message will come out in English.  Translation may proceed
+:cmt    by translating error messages that do not have the :MSGJTXT.
+:cmt    tag present and adding the :MSGJTXT. tag with the Japanese
+:cmt    text after the :MSGTXT. tag.  If the :MSGJTXT. has no text
 :cmt    then the error message must also be translated.  This has
-:cmt	been found to be easier when searching for messages that
-:cmt	still need to be translated.
+:cmt    been found to be easier when searching for messages that
+:cmt    still need to be translated.
 
 :MSGSYM. ERR_CALL_WATCOM
 :MSGTXT. internal compiler error
@@ -131,7 +142,7 @@ virtual destructors.
 :MSGJTXT. ポインタあるいは参照が切り詰められます
 :WARNING. 1
 The expression contains a transfer of a pointer value to another
-pointer value of smaller size.	This can be caused by
+pointer value of smaller size.  This can be caused by
 .kw __near
 or
 .kw __far
@@ -159,7 +170,7 @@ have continued if a semicolon was present so there may be a semicolon
 missing.
 :errbad.
 enum S {
-}	// missing ';'
+}   // missing ';'
 
 class X {
 };
@@ -200,7 +211,7 @@ before your program has a chance to reference it or make a copy of it.
 int *foo()
 {
     int k = 123;
-    return &k;	    // k is automatic variable
+    return &k;      // k is automatic variable
 }
 :eerrbad.
 
@@ -332,7 +343,7 @@ statement.
 :errbad.
 int foo( int a, int b )
 {
-    break;	// illegal
+    break;  // illegal
     return a+b;
 }
 :eerrbad.
@@ -377,7 +388,7 @@ statement.
 :errbad.
 int foo( int a, int b )
 {
-    continue;	// illegal
+    continue;   // illegal
     return a+b;
 }
 :eerrbad.
@@ -510,14 +521,14 @@ int translate( int a )
 {
     switch( a ) {
       case 1:
-	a = 8;
-	break;
+    a = 8;
+    break;
       default:
-	a = 9;
-	break;
+    a = 9;
+    break;
       default: // illegal
-	a = 10;
-	break;
+    a = 10;
+    break;
     }
     return a;
 }
@@ -605,7 +616,7 @@ is not defined.
 :MSGJTXT. 次元はゼロであることができません
 The dimension of an array must be non-zero.
 :errbad.
-int array[0];	// not allowed
+int array[0];   // not allowed
 :eerrbad.
 
 :MSGSYM. ERR_NEGATIVE_DIMENSION
@@ -613,7 +624,7 @@ int array[0];	// not allowed
 :MSGJTXT. 次元は負の数であることができません
 The dimension of an array must be positive.
 :errbad.
-int array[-1];	// not allowed
+int array[-1];  // not allowed
 :eerrbad.
 
 :MSGSYM. ERR_DIMENSION_REQUIRED
@@ -622,7 +633,7 @@ int array[-1];	// not allowed
 All dimensions of a multiple dimension array must be specified.
 The only exception is the first dimension which can declared as "[]".
 :errbad.
-int array[][];	// not allowed
+int array[][];  // not allowed
 :eerrbad.
 
 :MSGSYM. ERR_INVALID_STG_CLASS_FOR_FUNC
@@ -702,7 +713,7 @@ int a = fun()->a;
 The specified symbol has already been defined.
 :errbad.
 char a = 2;
-char a = 2;	// not allowed
+char a = 2; // not allowed
 :eerrbad.
 
 :MSGSYM. ERR_FUNCTION_NOT_DEFINED
@@ -743,11 +754,11 @@ int fun( int a )
 {
     switch( a ) {
       case 1:
-	return 7;
+    return 7;
       case 2:
-	return 9;
+    return 9;
       case 1: // duplicate not allowed
-	return 7;
+    return 7;
     }
     return 79;
 }
@@ -815,7 +826,7 @@ One of the operands of "[]" must be an array or a pointer.
 int array[10];
 int i1 = array[0];  // ok
 int i2 = 0[array];  // same as above
-int i3 = 0[1];	    // illegal
+int i3 = 0[1];      // illegal
 :eerrbad.
 
 :MSGSYM. ERR_INCOMPLETE_COMMENT
@@ -857,7 +868,7 @@ Both examples are illegal.
 You have not supplied enough parameters to the specified macro.
 :errbad.
 #define mac(a,b) a+b
-int i = mac(123);	// needs 2 parameters
+int i = mac(123);   // needs 2 parameters
 :eerrbad.
 
 :MSGSYM. ERR_NOT_EXPECTING_RETURN_VALUE
@@ -872,7 +883,7 @@ statement, or change the type of the function.
 :errbad.
 void fun()
 {
-    return 14;	// not expecting return value
+    return 14;  // not expecting return value
 }
 :eerrbad.
 
@@ -919,7 +930,7 @@ You have supplied too many parameters for the specified macro.
 The extra parameters are ignored.
 :errbad.
 #define mac(a,b) a+b
-int i = mac(1,2,3);	// needs 2 parameters
+int i = mac(1,2,3); // needs 2 parameters
 :eerrbad.
 
 :MSGSYM. ERR_CANNOT_USE_PCPTR
@@ -940,9 +951,9 @@ extern int __based( __segname( "myseg" ) ) *pi;
 void bad()
 {
     try {
-	throw pi;
+    throw pi;
     } catch( int __far16 *p16 ) {
-	*p16 = 87;
+    *p16 = 87;
     }
 }
 :eerrbad.
@@ -963,7 +974,7 @@ class C
 {
 public:
     C();
-}			// needs ";"
+}           // needs ";"
 
 int foo() { return 7; }
 :eerrbad.
@@ -1056,12 +1067,12 @@ An integral expression is required.
 int foo( int a, float b, int *p )
 {
     switch( a ) {
-      case 1.3: 	// must be integral
-	return p[b];	// index not integer
+      case 1.3:     // must be integral
+    return p[b];    // index not integer
       case 2:
-	b <<= 2;	// can only shift integers
+    b <<= 2;    // can only shift integers
       default:
-	return b;
+    return b;
     }
 }
 :eerrbad.
@@ -1119,7 +1130,7 @@ int foo( int a )
 {
     switch( a ) {
       default:
-	return 7;
+    return 7;
       case 1: // needs statement following
     }
     return 18;
@@ -1138,9 +1149,9 @@ int foo( int a )
 {
     switch( a ) {
       case 7:
-	return 7;
+    return 7;
       default:
-	// needs statement following
+    // needs statement following
     }
     return 18;
 }
@@ -1286,14 +1297,14 @@ void fn()
 :MSGJTXT. '%S'のデフォルト引数がクラス定義の外部で宣言されました
 :WARNING. 1
 Problems can occur with member functions that do not declare all of their
-default arguments during the class definition.	For instance, a copy
+default arguments during the class definition.  For instance, a copy
 constructor is declared if a class does not define a copy constructor.
 If a default argument is added later on to a constructor that makes it
 a copy constructor, an ambiguity results.
 :errbad.
 struct S {
     S( S const &, int );
-    // S( S const & );	<-- declared by compiler
+    // S( S const & );  <-- declared by compiler
 };
 // ambiguity with compiler
 // generated copy constructor
@@ -1469,9 +1480,9 @@ information (in a safe manner) cannot be done if storage is overlaid.
 struct S1{ int f( int ); };
 struct S2{ int f( int ); };
 union un { S1 s1;
-	   S2 s2;
-	   virtual int vf( int );
-	 };
+       S2 s2;
+       virtual int vf( int );
+     };
 :eerrbad.
 
 :MSGSYM. ERR_UNION_CANNOT_BE_BASE
@@ -1520,7 +1531,7 @@ class C : public Undefined {
 :MSGSYM. ERR_REPEATED_BASE_CLASS
 :MSGTXT. repeated direct base class will cause ambiguities
 :MSGJTXT. 繰り返された直接のベースクラスが曖昧さを引き起こしています
-Almost all accesses will be ambiguous.	This restriction
+Almost all accesses will be ambiguous.  This restriction
 is useful in catching programming errors.  The repeated base class
 can be encapsulated in another class if the repetition is required.
 :errbad.
@@ -1677,10 +1688,10 @@ int foo( int a )
 {
     switch( a ) {
       case 1:
-	int b = 2;
-	return b;
+    int b = 2;
+    return b;
       default: // b bypassed
-	return b + 5;
+    return b + 5;
     }
 }
 :eerrbad.
@@ -1695,7 +1706,7 @@ int foo( int a )
 {
     switch( a ) {
       case 4 / 0:  // illegal
-	return a;
+    return a;
     }
     return a + 2;
 }
@@ -1712,7 +1723,7 @@ int foo( int a )
 {
     switch( a ) {
       case 0x7FFF * 0x7FFF * 0x7FFF:  // overflow
-	return a;
+    return a;
     }
     return a + 2;
 }
@@ -1819,7 +1830,7 @@ public:
 :MSGSYM. ERR_BITFIELD_NO_BASE_TYPE
 :MSGTXT. bit-field declaration must have a base type specified
 :MSGJTXT. ビットフィールド宣言は、基本型を指定しなければなりません
-A bit-field cannot make use of a default integer type.	Specify the type
+A bit-field cannot make use of a default integer type.  Specify the type
 .kw int
 to correct the code.
 :errbad.
@@ -2183,7 +2194,7 @@ int fn( void )
 :MSGSYM. ERR_CLASS_TEMPLATE_REWRITE_ERROR
 :MSGTXT. syntax error; class template cannot be processed
 :MSGJTXT. 構文エラー；クラス・テンプレートが処理できません
-The class template contains unbalanced braces.	The class definition
+The class template contains unbalanced braces.  The class definition
 cannot be processed in this form.
 
 :MSGSYM. ERR_PTR_CONVERSION
@@ -2220,7 +2231,7 @@ void fn()
 :MSGSYM. ERR_UNION_NO_STATIC_MEMBERS
 :MSGTXT. static data members are not allowed in an union
 :MSGJTXT. スタティック・データ・メンバは、共用体の中で許されません
-A union should only be used to organize memory in C++.	Enclose
+A union should only be used to organize memory in C++.  Enclose
 the union in a class if you need a static data member associated with
 the union.
 :errbad.
@@ -2383,7 +2394,7 @@ class C
 union U
 {
     int a;
-    C c;	// has constructor
+    C c;    // has constructor
 };
 :eerrbad.
 
@@ -2410,8 +2421,8 @@ of the type.
 static int const con = 12;
 void foo()
 {
-    con = 13;		// error
-    *(int*)&con = 13;	// ok
+    con = 13;       // error
+    *(int*)&con = 13;   // ok
 }
 :eerrbad.
 
@@ -2470,7 +2481,7 @@ The base operator (:>) requires the left operand to be of type __segment
 and the right operand to be a pointer.
 :errbad.
 char _based( void ) *pcb;
-char __far *pcf = pcb;	    // needs :> operator
+char __far *pcf = pcb;      // needs :> operator
 :eerrbad.
 Examples of typical uses are as follows:
 :errgood.
@@ -2574,9 +2585,9 @@ extern int goop();
 int foo()
 {
     try {
-	return goop();
+    return goop();
     } catch( struct S { int s; } ) {
-	return 2;
+    return 2;
     }
 }
 :eerrbad.
@@ -2612,7 +2623,7 @@ void foo( short a )
     switch( a ) {
       case 1:
       case 0x10001:    // converts to 1 as short
-	break;
+    break;
     }
 }
 :eerrbad.
@@ -2631,7 +2642,7 @@ what the programmer intended.
 void foo( int a )
 {
     if( a )
-	int b = 14;
+    int b = 14;
 }
 :eerrbad.
 
@@ -2649,9 +2660,9 @@ what the programmer intended.
 void foo( int a )
 {
     if( a )
-	int c = 15;
+    int c = 15;
     else
-	int b = 14;
+    int b = 14;
 }
 :eerrbad.
 
@@ -2669,7 +2680,7 @@ what the programmer intended.
 void foo( int a )
 {
     switch( a )
-	int b = 14;
+    int b = 14;
 }
 :eerrbad.
 
@@ -2700,7 +2711,7 @@ what the programmer intended.
 void foo( int a )
 {
     while( a )
-	int b = 14;
+    int b = 14;
 }
 :eerrbad.
 
@@ -2718,7 +2729,7 @@ what the programmer intended.
 void foo( int a )
 {
     do
-	int b = 14;
+    int b = 14;
     while( a );
 }
 :eerrbad.
@@ -2742,8 +2753,8 @@ loop, so this code is legal C++:
 void fn( int **a )
 {
     for( int i = 0; i < 10; ++i )
-	for( int j = 0; j < 10; ++j )
-	    a[i][j] = i + j;
+    for( int j = 0; j < 10; ++j )
+        a[i][j] = i + j;
 }
 :eerrgood.
 The following example, however, illustrates a potentially erroneous situation.
@@ -2751,7 +2762,7 @@ The following example, however, illustrates a potentially erroneous situation.
 void foo( int a )
 {
     for( ; a<10; )
-	int b = 14;
+    int b = 14;
 }
 :eerrbad.
 
@@ -2804,7 +2815,7 @@ public:
 C& foo()
 {
     C auto_var;
-    return auto_var;	// not allowed
+    return auto_var;    // not allowed
 }
 :eerrbad.
 
@@ -2828,10 +2839,10 @@ argument is not allowed.  The special case of one
 .kw void
 argument indicates that the function accepts no parameters.
 :errbad.
-void fn1( void )		// OK
+void fn1( void )        // OK
 {
 }
-void fn2( void, void, void )	// Error!
+void fn2( void, void, void )    // Error!
 {
 }
 :eerrbad.
@@ -3060,7 +3071,7 @@ Even if the two function bodies are identical, there must be only
 one definition for a particular function.
 :errbad.
 int foo( int s ) { return s; }
-int foo( int s ) { return s; }	// illegal
+int foo( int s ) { return s; }  // illegal
 :eerrbad.
 
 :MSGSYM. ERR_ARRAY_LEFT
@@ -3202,7 +3213,7 @@ The preceding example is illegal; the following is legal
 :errgood.
 struct A {
     struct B {
-	static int b;
+    static int b;
     };
 };
 int A::B::b = 2;    // B nested in A
@@ -3252,8 +3263,8 @@ void fn()
 {
     int a;
 
-    a = int( 1, 2 );		// Error!
-    a = int( ( 1, 2 ) );	// OK
+    a = int( 1, 2 );        // Error!
+    a = int( ( 1, 2 ) );    // OK
 }
 :eerrbad.
 
@@ -3365,12 +3376,12 @@ of a function declaration in successive declarations.
 The message indicates that the declaration is only valid if there
 was a default argument previously declared for the next argument.
 :errbad.
-void fn1( int	 , int	   );
-void fn1( int	 , int = 3 );
-void fn1( int = 2, int	   );	// OK
+void fn1( int    , int     );
+void fn1( int    , int = 3 );
+void fn1( int = 2, int     );   // OK
 
-void fn2( int	 , int	   );
-void fn2( int = 2, int	   );	// Error!
+void fn2( int    , int     );
+void fn2( int = 2, int     );   // Error!
 :eerrbad.
 
 :MSGSYM. ERR_CANNOT_REFERENCE_UNNAMED_ENUM
@@ -3381,7 +3392,7 @@ There is no way to reference an anonymous
 If all enums are named, the cause of this message is most likely
 a missing identifier.
 :errbad.
-enum   { X, Y, Z };	// anonymous enum
+enum   { X, Y, Z }; // anonymous enum
 void fn()
 {
     enum *p;
@@ -3449,11 +3460,11 @@ all default arguments that depend on other arguments.
 void goop( int d )
 {
     struct S {
-	// cannot access "d"
-	int foo( int c, int b = d )
-	    {
-		return b + c;
-	    };
+    // cannot access "d"
+    int foo( int c, int b = d )
+        {
+        return b + c;
+        };
     };
 }
 :eerrbad.
@@ -3470,11 +3481,11 @@ void goop( void )
 {
     int a;
     struct S {
-	// cannot access "a"
-	int foo( int c, int b = a )
-	    {
-		return b + c;
-	    };
+    // cannot access "a"
+    int foo( int c, int b = a )
+        {
+        return b + c;
+        };
     };
 }
 :eerrbad.
@@ -3573,8 +3584,8 @@ protected:
 };
 class Der : private Base
 {
-    public: Base::pub;	     // ok
-    public: Base::pro;	     // changes access
+    public: Base::pub;       // ok
+    public: Base::pro;       // changes access
 };
 :eerrbad.
 
@@ -3594,8 +3605,8 @@ protected:
 };
 class Der : public Base
 {
-    protected: Base::pub;	// changes access
-    protected: Base::pro;	// ok
+    protected: Base::pub;   // changes access
+    protected: Base::pro;   // ok
 };
 :eerrbad.
 
@@ -3853,7 +3864,7 @@ C& operator ++( C&, unsigned );
 This restriction is a result of the transformation that the compiler performs
 when the
 .kw operator ->
-is overloaded.	The transformation involves transforming the expression
+is overloaded.  The transformation involves transforming the expression
 to invoke the operator with "->" applied to the result of
 .kw operator ->.
 :errgood.
@@ -3918,8 +3929,8 @@ class.
 :errbad.
 struct S {
     union {
-	int S;		// Error!
-	char b;
+    int S;      // Error!
+    char b;
     };
 };
 :eerrbad.
@@ -3940,7 +3951,7 @@ A nested type cannot be declared with the same name as its containing
 class.
 :errbad.
 struct S {
-    typedef int S;	// Error!
+    typedef int S;  // Error!
 };
 :eerrbad.
 
@@ -3952,8 +3963,8 @@ class.
 :errbad.
 struct S {
     enum E {
-	S,	// Error!
-	T
+    S,  // Error!
+    T
     };
 };
 :eerrbad.
@@ -3965,7 +3976,7 @@ A static member cannot be declared with the same name as its containing
 class.
 :errbad.
 struct S {
-    static int S;	// Error!
+    static int S;   // Error!
 };
 :eerrbad.
 
@@ -4050,7 +4061,7 @@ public:
 :MSGTXT. types do not match in simple type destructor
 :MSGJTXT. 型は、単純な型デストラクタの中で一致しません
 A simple type destructor is available for "destructing" simple
-types.	The destructor has no effect.  Both of the types
+types.  The destructor has no effect.  Both of the types
 must be identical, for the destructor to have meaning.
 :errbad.
 void foo( int *p )
@@ -4078,7 +4089,7 @@ struct S {
 
 int fn( int b, int i, S s )
 {
-    //	  i    : s.operator int()
+    //    i    : s.operator int()
     // OR S(i) : s
     return b ? i : s;
 }
@@ -4133,7 +4144,7 @@ C++ mode.
 :errbad.
 struct S;
 struct T {
-    friend S;	// should be "friend class S;"
+    friend S;   // should be "friend class S;"
 };
 :eerrbad.
 
@@ -4145,7 +4156,7 @@ required in the C++ language.
 :errbad.
 struct S {
     friend struct X {
-	int f;
+    int f;
     };
 };
 :eerrbad.
@@ -4230,8 +4241,8 @@ unless a member pointer is being declared.
 :errbad.
 struct S;
 
-int S::* p;	// OK
-int S::a = 1;	// Error!
+int S::* p; // OK
+int S::a = 1;   // Error!
 :eerrbad.
 
 :MSGSYM. ERR_UNION_UNNAMED_BITFIELD
@@ -4314,8 +4325,8 @@ Any other storage class is also disallowed.
 :errbad.
 struct S {
     static union {
-	int iv;
-	unsigned us;
+    int iv;
+    unsigned us;
     };
 };
 :eerrbad.
@@ -4477,14 +4488,14 @@ template <class G> class S {
 
 struct Q {
     struct S<int> {
-	int x;
+    int x;
     };
 };
 
 void foo()
 {
     struct S<double> {
-	double x;
+    double x;
     };
 }
 :eerrbad.
@@ -4508,7 +4519,7 @@ is no way to define the static member in file scope.
 int foo()
 {
     struct local {
-	static int s;
+    static int s;
     };
 
     local lv;
@@ -4608,9 +4619,9 @@ for a function.
 :MSGJTXT. ネストにされたクラス'%T'のアクセス許可は、前の宣言と矛盾します
 :errbad.
 struct S {
-    struct N;	// public
+    struct N;   // public
 private:
-    struct N {	// private
+    struct N {  // private
     };
 };
 :eerrbad.
@@ -4708,7 +4719,7 @@ struct S {
 };
 void foo()
 {
-    static S a( C() );	// function prototype!
+    static S a( C() );  // function prototype!
     static S b( (C()) );// variable definition
 }
 :eerrbad.
@@ -4932,10 +4943,10 @@ void goop( void )
     int a;
     struct S
     {
-	int foo( int c, int b )
-	    {
-		return b + c + a;
-	    };
+    int foo( int c, int b )
+        {
+        return b + c + a;
+        };
     };
 }
 :eerrbad.
@@ -5071,7 +5082,7 @@ nested function definitions.
 void fn()
 {
     struct S {
-	int bar();
+    int bar();
     };
 }
 :eerrbad.
@@ -5088,10 +5099,10 @@ void foo()
 {
     class S
     {
-	int s;
+    int s;
     public:
-	friend void ext();
-	int q;
+    friend void ext();
+    int q;
     };
 }
 :eerrbad.
@@ -5110,10 +5121,10 @@ void foo()
 {
     class S
     {
-	int s;
+    int s;
     public:
-	friend class ext;
-	int q;
+    friend class ext;
+    int q;
     };
 }
 :eerrbad.
@@ -5143,10 +5154,10 @@ void goop( int d )
 {
     struct S
     {
-	int foo( int c, int b )
-	    {
-		return b + c + d;
-	    };
+    int foo( int c, int b )
+        {
+        return b + c + d;
+        };
     };
 }
 :eerrbad.
@@ -5209,9 +5220,9 @@ int foo( int a, int b )
 {
     switch ( TEST ) {
       case 0:
-	return a;
+    return a;
       default:
-	return b;
+    return b;
     }
 }
 :eerrbad.
@@ -5275,7 +5286,7 @@ struct S {
     int m;
     static void fn()
     {
-	m = 1;	// Error!
+    m = 1;  // Error!
     }
 };
 :eerrbad.
@@ -5316,9 +5327,9 @@ to call it.
 :errbad.
 struct S
 {
-    static virtual int foo();	// error
-    virtual int bar();		// ok
-    static int stat();		// ok
+    static virtual int foo();   // error
+    virtual int bar();      // ok
+    static int stat();      // ok
 };
 :eerrbad.
 
@@ -5384,7 +5395,7 @@ The
 expression will virtually call the correct destructor, which knows
 the correct size of the complete object.
 This message informs you that the class you are deleting has virtual
-functions but it has a non-virtual destructor.	This means that
+functions but it has a non-virtual destructor.  This means that
 the delete will not work correctly in all circumstances.
 :errbad.
 #include <stddef.h>
@@ -5404,7 +5415,7 @@ struct D : B {
 
 void dfn( B *p )
 {
-    delete p;	// could be a pointer to D!
+    delete p;   // could be a pointer to D!
 }
 :eerrbad.
 
@@ -5471,7 +5482,7 @@ struct S {
 :MSGTXT. attempt to override virtual function '%S' with a different return type
 :MSGJTXT. 異なる戻り型を持った仮想関数'%S'をオーバーライドしようとしました
 A function cannot be overloaded with identical argument types and a
-different return type.	This is due to the fact that the C++ language
+different return type.  This is due to the fact that the C++ language
 does not consider the function's return type when overloading.
 The exception to this rule in the C++ language involves restricted
 changes in the return type of virtual functions.
@@ -5490,7 +5501,7 @@ struct D : B {
 :MSGTXT. attempt to overload function '%S' with a different return type
 :MSGJTXT. 異なる戻り型を持った関数'%S'をオーバーロードしようとしました
 A function cannot be overloaded with identical argument types and a
-different return type.	This is due to the fact that the C++ language
+different return type.  This is due to the fact that the C++ language
 does not consider the function's return type when overloading.
 :errbad.
 int foo( char );
@@ -5501,16 +5512,16 @@ unsigned foo( char );
 :MSGTXT. attempt to use pointer to undefined class
 :MSGJTXT. 未定義のクラスへのポインタを使おうとします
 An attempt was made to indirect or increment a pointer to an undefined
-class.	Since the class is undefined, the size is not known so the
+class.  Since the class is undefined, the size is not known so the
 compiler cannot compile the expression properly.
 :errbad.
 class C;
 extern C* pc1;
-C* pc2 = ++pc1; 	// C not defined
+C* pc2 = ++pc1;     // C not defined
 
 int foo( C*p )
 {
-    return p->x;	// C not defined
+    return p->x;    // C not defined
 }
 :eerrbad.
 
@@ -5536,7 +5547,7 @@ The incrementation of the pointer in the expression is a side effect.
 :MSGJTXT. 整数定数は、代入か初期化の間に、切り詰められます
 :WARNING. 1
 This message indicates that the compiler knows that a constant value will
-not be preserved after the assignment.	If this is acceptable, cast the
+not be preserved after the assignment.  If this is acceptable, cast the
 constant value to the appropriate type in the assignment.
 :errbad.
 unsigned char c = 567;
@@ -5547,7 +5558,7 @@ unsigned char c = 567;
 :MSGJTXT. 整数値は、代入か初期化の間に、切り詰められるかもしれません
 :WARNING. 4
 This message indicates that the compiler knows that all values will
-not be preserved after the assignment.	If this is acceptable, cast the
+not be preserved after the assignment.  If this is acceptable, cast the
 value to the appropriate type in the assignment.
 :errbad.
 extern unsigned s;
@@ -5580,9 +5591,9 @@ to be an equality (using "==") test.
 int foo( int a, int b )
 {
     if( a = b ) {
-	return b;
+    return b;
     }
-    return a;		// always return 1 ?
+    return a;       // always return 1 ?
 }
 :eerrbad.
 
@@ -5881,12 +5892,12 @@ decide whether a class template or function template is being defined.
 :errbad.
 template <class T>
     class C {
-	T value;
+    T value;
     } fn( T x ) {
-	C y;
+    C y;
 
-	y.x = 0;
-	return y;
+    y.x = 0;
+    return y;
     };
 :eerrbad.
 .np
@@ -5906,7 +5917,7 @@ S::S( int x, int y ) : x(x), y(y) {
 :MSGTXT. data members cannot be initialized inside a class definition
 :MSGJTXT. データ・メンバは、クラス定義の内側で初期化できません
 This message appears when an initialization is attempted inside
-of a class definition.	In the case of static data members, initialization
+of a class definition.  In the case of static data members, initialization
 must be done outside the class definition.
 Ordinary data members can be initialized in a constructor.
 :errbad.
@@ -5950,7 +5961,7 @@ struct S {
 
 void cfn( const S *p )
 {
-    p->fn();	// Error!
+    p->fn();    // Error!
 }
 :eerrbad.
 
@@ -5998,7 +6009,7 @@ a non-static data member in the class.
 :MSGTXT. '%N' has not been declared as a member
 :MSGJTXT. '%N'は、メンバとして宣言されませんでした
 This message indicates that the member does not exist in the qualified
-class.	This usually occurs in the context of access declarations.
+class.  This usually occurs in the context of access declarations.
 
 :MSGSYM. ERR_MEMBER_WILL_NOT_BE_INIT
 :MSGTXT. const/reference member '%S' must have an initializer
@@ -6195,7 +6206,7 @@ More than one constructor could be used to copy a class object.
 :MSGTXT. function template '%S' already has a definition
 :MSGJTXT. 関数テンプレート'%S'は、すでに定義されています
 The function template has already been defined with a
-function body.	A function template cannot be
+function body.  A function template cannot be
 defined twice even if the function body is identical.
 :errbad.
 template <class T>
@@ -6238,20 +6249,20 @@ names can still be referenced in their elaborated form
 after the non-type name has been declared.
 :errbad.
 typedef int T;
-int T( int )		// error!
+int T( int )        // error!
 {
 }
 
 enum E { A, B, C };
 void E()
 {
-    enum E x = A;	// use "enum E"
+    enum E x = A;   // use "enum E"
 }
 
 class C { };
 void C()
 {
-    class C x;		// use "class C"
+    class C x;      // use "class C"
 }
 :eerrbad.
 
@@ -6267,21 +6278,21 @@ after the non-type name has been declared.
 int T( int )
 {
 }
-typedef int T;		// error!
+typedef int T;      // error!
 
 void E()
 {
 }
 enum E { A, B, C };
 
-enum E x = A;		// use "enum E"
+enum E x = A;       // use "enum E"
 
 void C()
 {
 }
 class C { };
 
-class C x;		// use "class C"
+class C x;      // use "class C"
 :eerrbad.
 
 :MSGSYM. ERR_ASSIGN_PRIVATE
@@ -6358,7 +6369,7 @@ struct S {
 
 void cfn( volatile S *p )
 {
-    p->fn();	// Error!
+    p->fn();    // Error!
 }
 :eerrbad.
 
@@ -6565,7 +6576,7 @@ use the temporary in the expression.
 int foo( char );
 int foo( unsigned );
 extern int (*p)( char );
-int k = ( p == &foo );		    // fails
+int k = ( p == &foo );          // fails
 :eerrbad.
 The first
 .id foo
@@ -6595,7 +6606,7 @@ use the temporary in the call.
 int foo( char );
 int foo( unsigned );
 int ellip_fun( int, ... );
-int k = ellip_fun( 14, &foo );	    // fails
+int k = ellip_fun( 14, &foo );      // fails
 :eerrbad.
 The first
 .id foo
@@ -6607,7 +6618,7 @@ int ellip_fun( int, ... );
 
 static int (*temp)( char ) = &foo;  // introduce temporary
 
-int k = ellip_fun( 14, temp );	    // ok
+int k = ellip_fun( 14, temp );      // ok
 :eerrgood.
 
 :MSGSYM. ERR_FUNCTION_CANNOT_BE_OVERLOADED
@@ -6656,7 +6667,7 @@ is not allowed in the C++ language.
 :errbad.
 void fn( int a )
 {
-    delete a;	// Error!
+    delete a;   // Error!
 }
 :eerrbad.
 
@@ -6686,7 +6697,7 @@ modified quietly.
 :errbad.
 void fn( const int &rci )
 {
-    int volatile &r = rci;	// Error!
+    int volatile &r = rci;  // Error!
 }
 :eerrbad.
 
@@ -6699,7 +6710,7 @@ accessed without correct volatile semantics.
 :errbad.
 void fn( volatile int &rvi )
 {
-    int const &r = rvi;	// Error!
+    int const &r = rvi; // Error!
 }
 :eerrbad.
 
@@ -6714,8 +6725,8 @@ and thus would be incorrectly accessing the data.
 :errbad.
 void fn( const int &rci, volatile int &rvi )
 {
-    int &r1 = rci;	// Error!
-    int &r2 = rvi;	// Error!
+    int &r1 = rci;  // Error!
+    int &r2 = rvi;  // Error!
 }
 :eerrbad.
 
@@ -6737,7 +6748,7 @@ struct S {
     int m();
     static void fn()
     {
-	m();	// Error!
+    m();    // Error!
     }
 };
 :eerrbad.
@@ -6804,8 +6815,8 @@ void B::fun( char *f, ... )
 
     va_start( args, f );
     while( *f ) {
-	cout << va_arg( args, char ) << endl;
-	++f;
+    cout << va_arg( args, char ) << endl;
+    ++f;
     }
     va_end( args );
 }
@@ -6815,8 +6826,8 @@ void D::fun( char *f, ... )
 
     va_start( args, f );
     while( *f ) {
-	cout << va_arg( args, int ) << endl;
-	++f;
+    cout << va_arg( args, int ) << endl;
+    ++f;
     }
     va_end( args );
 }
@@ -6830,11 +6841,11 @@ corresponding changes to the contents of the virtual functions.
 struct B {
     void fun( char *f, ... )
     {
-	va_list args;
+    va_list args;
 
-	va_start( args, f );
-	_fun( f, args );
-	va_end( args );
+    va_start( args, f );
+    _fun( f, args );
+    va_end( args );
     }
     virtual void _fun( char *, va_list );
 };
@@ -6845,11 +6856,11 @@ struct D : B {
     // since _fun is a virtual function
     void fun( char *f, ... )
     {
-	va_list args;
+    va_list args;
 
-	va_start( args, f );
-	_fun( f, args );
-	va_end( args );
+    va_start( args, f );
+    _fun( f, args );
+    va_end( args );
     }
     virtual void _fun( char *, va_list );
 };
@@ -6857,16 +6868,16 @@ struct D : B {
 void B::_fun( char *f, va_list args )
 {
     while( *f ) {
-	cout << va_arg( args, char ) << endl;
-	++f;
+    cout << va_arg( args, char ) << endl;
+    ++f;
     }
 }
 :errbreak.
 void D::_fun( char *f, va_list args )
 {
     while( *f ) {
-	cout << va_arg( args, int ) << endl;
-	++f;
+    cout << va_arg( args, int ) << endl;
+    ++f;
     }
 }
 
@@ -7094,7 +7105,7 @@ struct S;
 void fn( int S::* mp, int *p )
 {
     if( p == mp )
-	p[0] = 1;
+    p[0] = 1;
 }
 :eerrbad.
 
@@ -7107,7 +7118,7 @@ struct S;
 void fn( int S::* mp, int *p )
 {
     if( mp == p )
-	p[0] = 1;
+    p[0] = 1;
 }
 :eerrbad.
 
@@ -7153,7 +7164,7 @@ class.
 :MSGTXT. pointers to class members reference different object types
 :MSGJTXT. クラス・メンバへのポインタは異なるオブジェクト型を参照します
 Conversion of member pointers can only occur if the object types
-are identical.	This is necessary to ensure type safety.
+are identical.  This is necessary to ensure type safety.
 
 :MSGSYM. ERR_NOT_CLASS_PTR
 :MSGTXT. operand must be pointer to class or struct
@@ -7456,7 +7467,7 @@ When the level is zero, no inline expansion occurs.
 :MSGJTXT. ポインタか参照はキャストによって切り詰められました
 :WARNING. 10
 The cast expression causes a conversion of a pointer value to another
-pointer value of smaller size.	This can be caused by
+pointer value of smaller size.  This can be caused by
 .kw __near
 or
 .kw __far
@@ -7503,7 +7514,7 @@ redefinitions should be precisely identical.
 :MSGTXT. constructor for variable '%S' cannot be bypassed
 :MSGJTXT. 変数'%S'のコンストラクタはバイパスできません
 The variable may not be constructed when code is executing
-at the position the message indicated.	The C++ language
+at the position the message indicated.  The C++ language
 places these restrictions to prevent the use of unconstructed
 variables.
 
@@ -7583,7 +7594,7 @@ rely on extra information in order to understand certain language
 constructs.  The extra information required to disambiguate the
 language can be deduced by looking ahead in the source file.
 Once a single interpretation has been found, the compiler can continue
-analysing source code.	See the ARM p.93 for more details.
+analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct has been resolved in a certain direction.
@@ -7602,7 +7613,7 @@ rely on extra information in order to understand certain language
 constructs.  The extra information required to disambiguate the
 language can be deduced by looking ahead in the source file.
 Once a single interpretation has been found, the compiler can continue
-analysing source code.	See the ARM p.93 for more details.
+analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct has been resolved in a certain direction.
@@ -7622,7 +7633,7 @@ rely on extra information in order to understand certain language
 constructs.  The extra information required to disambiguate the
 language can be deduced by looking ahead in the source file.
 Once a single interpretation has been found, the compiler can continue
-analysing source code.	See the ARM p.93 for more details.
+analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct could not be resolved by the compiler.
@@ -7637,7 +7648,7 @@ rely on extra information in order to understand certain language
 constructs.  The extra information required to disambiguate the
 language can be deduced by looking ahead in the source file.
 Once a single interpretation has been found, the compiler can continue
-analysing source code.	See the ARM p.93 for more details.
+analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that another ambiguous
 construct was found inside an ambiguous construct.  The compiler will
@@ -7693,7 +7704,7 @@ performing casts involving different calling conventions.
 :MSGJTXT. クラス値が変換された関数型の中で戻り値か引数として使われます
 :WARNING. 1
 The compiler has detected a cast between "C" and "C++" linkage function
-types.	The calling conventions are different because of the different
+types.  The calling conventions are different because of the different
 language rules for copying structures.
 
 :MSGSYM. WARN_CNV_ARG_CLASS_VALUE
@@ -7701,7 +7712,7 @@ language rules for copying structures.
 :MSGJTXT. クラス値がオリジナルの関数型の中で戻り値か引数として使われます
 :WARNING. 1
 The compiler has detected a cast between "C" and "C++" linkage function
-types.	The calling conventions are different because of the different
+types.  The calling conventions are different because of the different
 language rules for copying structures.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT
@@ -7713,7 +7724,7 @@ rely on extra information in order to understand certain language
 constructs.  The extra information required to disambiguate the
 language can be deduced by looking ahead in the source file.
 Once a single interpretation has been found, the compiler can continue
-analysing source code.	See the ARM p.93 for more details.
+analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct has been used.  The final resolution varies between compilers
@@ -7729,7 +7740,7 @@ An error has been detected by the #pragma inline assembler.
 :MSGTXT. default argument expression cannot reference 'this'
 :MSGJTXT. デフォルト引数式は、'this'を参照できません
 The order of evaluation for function arguments is unspecified in the
-C++ language document.	Thus, a default argument must be able to
+C++ language document.  Thus, a default argument must be able to
 be evaluated before the 'this' argument (or any other
 argument) is evaluated.
 
@@ -7808,11 +7819,11 @@ The catch handler syntax must be used in conjunction with a try block.
 void f()
 {
     try {
-	// code that may throw an exception
+    // code that may throw an exception
     } catch( int x ) {
-	// handle 'int' exceptions
+    // handle 'int' exceptions
     } catch( ... ) {
-	// handle all other exceptions
+    // handle all other exceptions
     }
 }
 :eerrgood.
@@ -7885,23 +7896,23 @@ struct DERIVED : public BASE {};
 foo()
 {
     try {
-	// code for try
+    // code for try
     } catch( BASE b ) {     // [1]
-	// code
+    // code
     } catch( DERIVED ) {    // warning: [1]
-	// code
+    // code
     } catch( BASE* pb ) {   // [2]
-	// code
+    // code
     } catch( DERIVED* pd ) {// warning: [2]
-	// code
+    // code
     } catch( void* pv ) {   // [3]
-	// code
+    // code
     } catch( int* pi ) {    // warning: [3]
-	// code
+    // code
     } catch( BASE& br ) {   // warning: [1]
-	// code
+    // code
     } catch( float*& pfr ) {// warning: [3]
-	// code
+    // code
     }
 }
 :eerrbad.
@@ -7913,7 +7924,7 @@ which caused the error.
 :MSGTXT. cannot overload extern "C" functions (the other function is '%S')
 :MSGJTXT. extern "C"関数をオーバーロードできません（他の関数は'%S'です）
 The C++ language only allows you to overload functions that are strictly
-C++ functions.	The compiler will automatically generate the correct
+C++ functions.  The compiler will automatically generate the correct
 code to distinguish each particular function based on its argument types.
 The extern "C" linkage mechanism only allows you to
 define one "C" function of a particular name because the C language
@@ -7953,7 +7964,7 @@ void fn( void )
 :MSGTXT. not enough segment registers available to generate '%s'
 :MSGJTXT. '%s'を生成するのに十分に利用できるセグメント・レジスタがありません
 Through a combination of options, the number of available segment registers
-is too small.	This can occur when too many segment registers are pegged.
+is too small.   This can occur when too many segment registers are pegged.
 This can be fixed by changing the command line options to only peg the
 segment registers that must absolutely be pegged.
 
@@ -7961,7 +7972,7 @@ segment registers that must absolutely be pegged.
 :MSGTXT. pure virtual destructors must have a definition
 :MSGJTXT. 純粋仮想デストラクタは、定義を持たなければなりません
 :WARNING. 10
-This is an anomaly for pure virtual functions.	A destructor is
+This is an anomaly for pure virtual functions.  A destructor is
 the only special function that is inherited and allowed to be
 virtual.  A derived class must be able to call the base class
 destructor so a pure virtual destructor must be defined in a
@@ -7980,9 +7991,9 @@ foo( int a )
 
     try {
 tr_lab:
-	throw 1234;
+    throw 1234;
     } catch( int ) {
-	if(a) goto tr_lab;
+    if(a) goto tr_lab;
     }
 
     if(a) goto tr_lab;
@@ -8004,7 +8015,7 @@ foo( int a )
     if(a)goto ca_lab;
 
     try {
-	if(a)goto ca_lab;
+    if(a)goto ca_lab;
     } catch( int ) {
 ca_lab:
     }
@@ -8029,8 +8040,8 @@ extern void goop();
 void foo()
 {
     try {
-	goop();
-    }		// a catch block should follow!
+    goop();
+    }       // a catch block should follow!
 }
 :eerrbad.
 .np
@@ -8124,7 +8135,7 @@ or pure
 .kw virtual
 in a subsequent declaration.
 All properties of a function should be described in the first declaration
-of a function.	This is especially important for member functions because
+of a function.  This is especially important for member functions because
 the properties of a class are affected by its member functions.
 :errbad.
 struct S {
@@ -8141,7 +8152,7 @@ virtual void S::fun()
 :MSGJTXT. '%T'に対するテンプレート・クラス・インスタンス化は、%Lでした
 :INFO.
 This informational message indicates that the error or warning was
-detected during the instantiation of a class template.	The final type
+detected during the instantiation of a class template.  The final type
 of the template class is shown as well as the location in the source
 where the instantiation was initiated.
 
@@ -8223,7 +8234,7 @@ This message indicates that a large number of expansions were required
 to complete a template class or template function instantiation.  This
 may indicate that there is an erroneous use of a template.  If the program
 will complete given more depth, try using the suggested #pragma in the error
-message to increase the depth.	The number provided is double the previous
+message to increase the depth.  The number provided is double the previous
 value.
 
 :MSGSYM. ERR_CANNOT_INHERIT_PARTIALLY_DEFINED
@@ -8239,7 +8250,7 @@ contents of all base classes.
 :errbad.
 struct Partial {
     struct Nested : Partial {
-	int n;
+    int n;
     };
 };
 :eerrbad.
@@ -8251,7 +8262,7 @@ struct Partial {
 This informational message shows the functions that were detected to be
 ambiguous.
 :errbad.
-int amb( char );	    // will be ambiguous
+int amb( char );        // will be ambiguous
 int amb( unsigned char );   // will be ambiguous
 int amb( char, char );
 int k = amb( 14 );
@@ -8323,9 +8334,9 @@ This informational message indicates that the first is possible.
 :MSGTXT. cannot #undef '%s'
 :MSGJTXT. '%s'を#undefできません
 The predefined macros
-.id __cplusplus, __DATE__, __FILE__, __LINE__, __STDC__,
+.id __cplusplus, __DATE__, __FILE__, __LINE__, __STDC__, __TIME__, __FUNCTION__
 and
-.id __TIME__
+.id __func__
 cannot be undefined using the
 .kw #undef
 directive.
@@ -8336,6 +8347,8 @@ directive.
 #undef __LINE__
 #undef __STDC__
 #undef __TIME__
+#undef __FUNCTION__
+#undef __func__
 :eerrbad.
 All of the preceding directives are not permitted.
 
@@ -8345,17 +8358,17 @@ All of the preceding directives are not permitted.
 The predefined macros
 .id __cplusplus, __DATE__, __FILE__, __LINE__, __STDC__,
 and
-.id __TIME__
+.id  __TIME__
 cannot be defined using the
 .kw #define
 directive.
 :errbad.
-#define __cplusplus 1
-#define __DATE__    2
-#define __FILE__    3
-#define __LINE__    4
-#define __STDC__    5
-#define __TIME__    6
+#define __cplusplus     1
+#define __DATE__        2
+#define __FILE__        3
+#define __LINE__        4
+#define __STDC__        5
+#define __TIME__        6
 :eerrbad.
 All of the preceding directives are not permitted.
 
@@ -8375,7 +8388,7 @@ template <class T>
 
 void bar()
 {
-    foo(1);	    // could not instantiate
+    foo(1);     // could not instantiate
 }
 :eerrbad.
 The function template for
@@ -8416,7 +8429,7 @@ function template with the indicated name.
 The indicated operation cannot be applied to a function.
 :errbad.
 int Fun();
-int j = ++Fun;	// illegal
+int j = ++Fun;  // illegal
 :eerrbad.
 In the example, the attempt to increment a function is illegal.
 
@@ -8429,7 +8442,7 @@ is a function.
 extern int Fun();
 void foo()
 {
-    Fun = 0;	// illegal
+    Fun = 0;    // illegal
 }
 :eerrbad.
 In the example, the attempt to assign zero to a function is illegal.
@@ -8443,7 +8456,7 @@ is a function.
 extern int Fun();
 void foo()
 {
-    void* p = 3[Fun];	// illegal
+    void* p = 3[Fun];   // illegal
 }
 :eerrbad.
 In the example, the attempt to subscript a function is illegal.
@@ -8517,9 +8530,9 @@ type.
 main( int argc, char* argv )
 {
     if( (void)argc ) {
-	return 5;
+    return 5;
     } else {
-	return 9;
+    return 9;
     }
 }
 :eerrbad.
@@ -8549,7 +8562,7 @@ int& ref = var.bitfield;    // illegal
 An assignment cannot be be made to an object whose class has not been
 defined.
 :errbad.
-class X;	    // declared, but not defined
+class X;        // declared, but not defined
 extern X& foo();    // returns reference (ok)
 extern X obj;
 void goop()
@@ -8630,7 +8643,7 @@ as soon as possible.
 :MSGJTXT. 暗黙の単項の'operator &'は'%T'型でオーバーロードされません
 :WARNING. 3
 An explicit address operator can be applied to a reference
-to an undefined class.	The Watcom C++ compiler will assume
+to an undefined class.  The Watcom C++ compiler will assume
 that the address is required but it does not know whether
 this was the programmer's intention because the class definition
 has not been seen.
@@ -8724,7 +8737,7 @@ void fn( S c, ... )
 :MSGTXT. function modifier conflicts with previous declaration '%S'
 :MSGJTXT. 関数修飾子は、前の宣言'%S'と矛盾します
 The symbol declaration conflicts with a previous declaration with regard
-to function modifiers.	Either the previous declaration did not have a
+to function modifiers.  Either the previous declaration did not have a
 function modifier or it had a different one.
 :errbad.
 #pragma aux never_returns aborts;
@@ -8749,7 +8762,7 @@ int (* __pascal not_ok);
 :MSGJTXT. '%T'は、以下の純粋な仮想関数を含みます
 :INFO.
 This informational message indicates that the class contains pure
-virtual function declarations.	The class is definitely abstract
+virtual function declarations.  The class is definitely abstract
 as a result and cannot be used to declare variables.
 The pure virtual functions declared in the class are displayed
 immediately following this message.
@@ -8840,8 +8853,8 @@ constant but the constant contained the digits '8' and '9'.  The problem
 could be an incorrect octal constant or a missing '.' for a floating
 constant.
 :errbad.
-int i = 0123456789;	// invalid octal constant
-double d = 0123456789;	// missing '.'?
+int i = 0123456789; // invalid octal constant
+double d = 0123456789;  // missing '.'?
 :eerrbad.
 
 :MSGSYM. INF_CLASS_TEMPLATE_STARTED_HERE
@@ -8854,14 +8867,14 @@ be fixed quickly and easily.
 :errbad.
 template <class T>
     struct S {
-	void f1() {
-	// error missing '}'
+    void f1() {
+    // error missing '}'
     };
 
 template <class T>
     struct X {
-	void f2() {
-	}
+    void f2() {
+    }
     };
 :eerrbad.
 
@@ -8950,9 +8963,9 @@ int xyz;
 
 void func( void ) {
     try {
-	throw Derived();
+    throw Derived();
     } catch( Abstract abstract ) {   // object
-	xyz = 1;
+    xyz = 1;
     }
 }
 :eerrbad.
@@ -8973,9 +8986,9 @@ int xyz;
 
 void func( void ) {
     try {
-	throw Derived();
+    throw Derived();
     } catch( Abstract & abstract ) {  // reference
-	xyz = 1;
+    xyz = 1;
     }
 }
 :eerrgood.
@@ -9096,19 +9109,19 @@ syntax can make this error hard to identify visually.
 :errbad.
 template <class T>
     struct S {
-	typedef int X;
-	static X fn( int );
-	static X qq;
+    typedef int X;
+    static X fn( int );
+    static X qq;
     };
 
 template <class T>
     S<T>::X fn( int ) {// should be 'S<T>::fn'
 
-	return fn( 2 );
+    return fn( 2 );
     }
 
 template <class T>
-    S<T>::X qq = 1;	// should be 'S<T>::q'
+    S<T>::X qq = 1; // should be 'S<T>::q'
 
 S<int> x;
 :eerrbad.
@@ -9245,7 +9258,7 @@ This informational message indicates what modifier was repeated
 in the declaration.
 :errbad.
 typedef int __far FARINT;
-FARINT __far *p;	// repeated __far modifier
+FARINT __far *p;    // repeated __far modifier
 :eerrbad.
 
 :MSGSYM. INF_MISSING_SEMICOLON_AFTER_CLASS_ENUM_DEFN
@@ -9351,8 +9364,8 @@ or
 because it cannot be both at the same time.
 :errbad.
 struct S {
-    mutable const int * p;	// OK
-    mutable int * const q;	// error
+    mutable const int * p;  // OK
+    mutable int * const q;  // error
 };
 :eerrbad.
 
@@ -9585,7 +9598,7 @@ unsigned i = 0x;     // invalid hex constant
 This restriction is a result of the transformation that the compiler performs
 when the
 .kw operator ->
-is overloaded.	The transformation involves transforming the expression
+is overloaded.  The transformation involves transforming the expression
 to invoke the operator with "->" applied to the result of
 .kw operator ->.
 This warning indicates that the
@@ -9660,7 +9673,7 @@ argument list.
 :MSGJTXT. '//'形式のコメントが次行に継続します
 :WARNING. 1
 The compiler has detected a line continuation during the processing
-of a C++ style comment ("//").	The warning can be removed by switching to
+of a C++ style comment ("//").  The warning can be removed by switching to
 a C style comment ("/**/").  If you require the comment to be terminated
 at the end of the line, make sure that the backslash character is not
 the last character in the line.
@@ -10062,7 +10075,7 @@ The '::' operator has an invalid token following it.
 
 struct S {
     int inc( int y ) {
-	return ::fn( y );
+    return ::fn( y );
     }
 };
 :eerrbad.
@@ -10673,9 +10686,9 @@ bound to that temporary and so the reference must be a non-volatile const
 reference.
 :errbad.
 extern int * pi;
-void * & r1 = pi;		// error
-void * const & r2 = pi; 	// ok
-void * volatile & r3 = pi;	// error
+void * & r1 = pi;       // error
+void * const & r2 = pi;     // ok
+void * volatile & r3 = pi;  // error
 void * const volatile & r4 = pi;// error
 :eerrbad.
 
@@ -10698,7 +10711,7 @@ struct D : virtual B {
     int d;
 };
 int B::* mp_b = &B::b;
-int D::* mp_d = mp_b;	    // conversion across a virtual base
+int D::* mp_d = mp_b;       // conversion across a virtual base
 :eerrbad.
 
 :MSGSYM. ERR_NAME_USED_BY_NAMESPACE
@@ -10901,7 +10914,7 @@ or a namespace scope.
 :errbad.
 struct S {
     namespace N {
-	int x;
+    int x;
     };
 }
 :eerrbad.
@@ -10919,13 +10932,13 @@ scope that encloses the qualified name's namespace.
 :errbad.
 namespace M {
     namespace N {
-	void f();
-	void g();
-	namespace O {
-	    void N::f() {
-	      // error
-	    }
-	}
+    void f();
+    void g();
+    namespace O {
+        void N::f() {
+          // error
+        }
+    }
     }
     void N::g() {
       // OK
@@ -11021,7 +11034,7 @@ the
 directive can be removed.
 :errbad.
 namespace A {
-    using namespace A;	// useless
+    using namespace A;  // useless
 };
 :eerrbad.
 
@@ -11159,7 +11172,7 @@ namespace N {
 }
 void f() {
     using namespace N;
-    i = 7;	// error
+    i = 7;  // error
 }
 :eerrbad.
 
@@ -11221,8 +11234,8 @@ C++ language.
 :errbad.
 namespace A {
     struct S {
-	void ok();
-	void bad();
+    void ok();
+    void bad();
     };
     void ok();
     void bad();
@@ -11233,10 +11246,10 @@ void A::ok() {
 }
 namespace B {
     void A::S::bad() {
-	// error!
+    // error!
     }
     void A::bad() {
-	// error!
+    // error!
     }
 };
 :eerrbad.
@@ -11713,7 +11726,7 @@ void fn( int x )
 {
     switch( x ) {
     default:
-	++x;
+    ++x;
     }
 }
 :eerrbad.

@@ -1,67 +1,78 @@
-:cmt **********************************************************************
-:cmt *	     Copyright by WATCOM International Corporation, 1987, 1992.   *
-:cmt *	     All rights reserved. No part of this software may be	  *
-:cmt *	     reproduced in any form or by any means - graphic, electronic,*
-:cmt *	     mechanical or otherwise, including, without limitation,	  *
-:cmt *	     photocopying, recording, taping or information storage and   *
-:cmt *	     retrieval systems - except with the written permission of	  *
-:cmt *	     WATCOM International Corporation.				  *
-:cmt **********************************************************************
+:cmt *****************************************************************************
+:cmt *
+:cmt *                            Open Watcom Project
+:cmt *
+:cmt *    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+:cmt *
+:cmt *  ========================================================================
+:cmt *
+:cmt *    This file contains Original Code and/or Modifications of Original
+:cmt *    Code as defined in and that are subject to the Sybase Open Watcom
+:cmt *    Public License version 1.0 (the 'License'). You may not use this file
+:cmt *    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+:cmt *    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+:cmt *    provided with the Original Code and Modifications, and is also
+:cmt *    available at www.sybase.com/developer/opensource.
+:cmt *
+:cmt *    The Original Code and all software distributed under the License are
+:cmt *    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+:cmt *    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+:cmt *    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+:cmt *    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+:cmt *    NON-INFRINGEMENT. Please see the License for the specific language
+:cmt *    governing rights and limitations under the License.
+:cmt *
+:cmt *  ========================================================================
+:cmt *
+:cmt * Description:  C compiler diagnostic messages.
+:cmt *
+:cmt *****************************************************************************
 :cmt
-:cmt Modified	     By 	     Reason
-:cmt --------	     -- 	     ------
-:cmt 92/10/02	     Greg Bentz      Initial version, shipped as "alpha"
-:cmt		     Jim Randall
-:cmt		     Anthony Scian
-:cmt		     Jim Welch
-:cmt 93/11/23	     A.F.Scian	     used warning level 10 for warnings that
-:cmt				     cannot be coded around but somebody may
-:cmt				     want to enable them sometime
 
-:cmt	Word usage:
+:cmt    Word usage:
 :cmt
-:cmt	'parameter' is used for macro parms
-:cmt	'argument' is used for function arguments
+:cmt    'parameter' is used for macro parms
+:cmt    'argument' is used for function arguments
 
-:cmt	GML Macros used (see MSGMACS.GML):
+:cmt    GML Macros used (see MSGMACS.GML):
 
-:cmt		:ansi <n>	warning if extensions enabled, error otherwise
-:cmt		:ansierr	ignored if extensions enabled, error otherwise
-:cmt		:ansiwarn <n>	ignored if extensions enabled, warn otherwise
-:cmt		:warning <n>	message is a warning with a specific level
-:cmt		:info		informational message
+:cmt        :ansi <n>   warning if extensions enabled, error otherwise
+:cmt        :ansierr    ignored if extensions enabled, error otherwise
+:cmt        :ansiwarn <n>   ignored if extensions enabled, warn otherwise
+:cmt        :warning <n>    message is a warning with a specific level
+:cmt        :info       informational message
 :cmt
-:cmt		:msgsym <sym>	internal symbolic name for message
-:cmt		:msgtxt <text>	text for message
+:cmt        :msgsym <sym>   internal symbolic name for message
+:cmt        :msgtxt <text>  text for message
 :cmt
-:cmt		:msglvl 	start of header title for a group of messages
-:cmt		:emsglvl	end of header title for a group of messages
-:cmt		:errbad 	start of an example that generates an error msg
-:cmt		:eerrbad	end of an example that generates an error msg
-:cmt		:errgood	start of an example that compiles clean
-:cmt		:eerrgood	end of an example that compiles clean
+:cmt        :msglvl     start of header title for a group of messages
+:cmt        :emsglvl    end of header title for a group of messages
+:cmt        :errbad     start of an example that generates an error msg
+:cmt        :eerrbad    end of an example that generates an error msg
+:cmt        :errgood    start of an example that compiles clean
+:cmt        :eerrgood   end of an example that compiles clean
 :cmt
-:cmt		.kw		highlight a keyword
-:cmt		.id		highlight an identifier
-:cmt		.ev		highlight an environment variable
-:cmt		.us		italicize a phrase
-:cmt		.np		start a new paragraph
+:cmt        .kw     highlight a keyword
+:cmt        .id     highlight an identifier
+:cmt        .ev     highlight an environment variable
+:cmt        .us     italicize a phrase
+:cmt        .np     start a new paragraph
 
-:cmt	The following substitutions are made:
-:cmt		&incvarup	environment variable for include path
-:cmt		&wclname	Compile and Link utility name
+:cmt    The following substitutions are made:
+:cmt        &incvarup   environment variable for include path
+:cmt        &wclname    Compile and Link utility name
 
-:cmt	Note for translators:
+:cmt    Note for translators:
 
-:cmt	Japanese error messages are supported via the :MSGJTXT tag.
-:cmt	If there is no :MSGJTXT. for a particular :MSGSYM. then the
-:cmt	message will come out in English.  Translation may proceed
-:cmt	by translating error messages that do not have the :MSGJTXT.
-:cmt	tag present and adding the :MSGJTXT. tag with the Japanese
-:cmt	text after the :MSGTXT. tag.  If the :MSGJTXT. has no text
-:cmt	then the error message must also be translated.  This has
-:cmt	been found to be easier when searching for messages that
-:cmt	still need to be translated.
+:cmt    Japanese error messages are supported via the :MSGJTXT tag.
+:cmt    If there is no :MSGJTXT. for a particular :MSGSYM. then the
+:cmt    message will come out in English.  Translation may proceed
+:cmt    by translating error messages that do not have the :MSGJTXT.
+:cmt    tag present and adding the :MSGJTXT. tag with the Japanese
+:cmt    text after the :MSGTXT. tag.  If the :MSGJTXT. has no text
+:cmt    then the error message must also be translated.  This has
+:cmt    been found to be easier when searching for messages that
+:cmt    still need to be translated.
 
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn1
@@ -1277,9 +1288,9 @@ it before you can define it with a new definition.
 :MSGJTXT. '%s'‚Í#undef‚Å‚«‚Ü‚¹‚ñ
 .np
 The special macros
-.id __LINE__, __FILE__, __DATE__, __TIME__,
+.id __LINE__, __FILE__, __DATE__, __TIME__, __STDC__, __FUNCTION__
 and
-.id __STDC__,
+.id __func__,
 and the identifier "defined",
 cannot be deleted by the
 .id #undef

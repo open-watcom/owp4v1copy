@@ -87,6 +87,12 @@
 :SET symbol='mkwFPI'        value='__FPI__'.
 :SET symbol='mkwFPI_sp'     value='_&SYSRB._FPI_&SYSRB._'.
 :CMT.
+:SET symbol='mkwFNC'        value='__func__'.
+:SET symbol='mkwFNC_sp'     value='_&SYSRB._func_&SYSRB._'.
+:CMT.
+:SET symbol='mkwFUNC'       value='__FUNCTION__'.
+:SET symbol='mkwFUNC_sp'    value='_&SYSRB._FUNCTION_&SYSRB._'.
+:CMT.
 :SET symbol='mkwHUGE'       value='__HUGE__'.
 :SET symbol='mkwHUGE_sp'    value='_&SYSRB._HUGE_&SYSRB._'.
 :CMT.

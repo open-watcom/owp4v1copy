@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro processing, part one.
 *
 ****************************************************************************/
 
@@ -129,6 +128,7 @@ void MacroInit(void)
 
 static struct special_macro_names  SpcMacroCompOnly[] = {
         "__FUNCTION__", MACRO_FUNC,
+        "__func__", MACRO_FUNC,
         NULL,       0
  };
 

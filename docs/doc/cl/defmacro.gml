@@ -100,3 +100,9 @@ the current time is always available.
 .************************************************************************
 .*
 .discuss end
+.pp
+.mkwix &mkwFNC_sp.
+.mkwfont &mkwFNC.
+.discuss begin
+The name of the current function (a string literal).
+.discuss end
