@@ -29,8 +29,6 @@ exe = exe
 !endif
 
 inc_dirs = ..\h;$(wsample_dir)\h;$(aui_dir)\h;$(gui_dir)\h;$(trmem_dir);$(dig_dir)\h
-inc_dirs_os2 = $(lang_root)\h\os2
-inc_dirs_nt = $(watcom_dir)\nt_h
 
 .BEFORE:
         set INCLUDE=$(inc_path)
@@ -98,7 +96,11 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
     $(linker) name $(fname) $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifdef resfile
 !ifeq sys_windowed 1
+!ifeq host_OS os2
+    $(lang_root)\binp\rc $(rc_flags) $(resfile) $(fname).exe
+!else
     $(rc) $(rc_flags) $(resfile) $(fname).exe
+!endif
 !else
     wstrip /q /a /r  $(fname).$(exe) . $(resfile)
 !endif
@@ -159,3 +161,4 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.err del *.err
         @if exist *.map del *.map
         @if exist *.sym del *.sym
+
