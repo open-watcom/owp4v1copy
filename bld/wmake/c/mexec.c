@@ -370,7 +370,7 @@ STATIC char *createTmpFileName( void )
 }
 
 
-STATIC RET_T processInlineFile( int handle, const char* body, const char* fileName, 
+STATIC RET_T processInlineFile( int handle, const char* body, const char* fileName,
                                 BOOLEAN writeToFile )
 {
     int    index;
@@ -452,7 +452,7 @@ STATIC char* RemoveBackSlash( const char* inString )
     current = (char*) inString;
     pos = 0;
 
-    while( *current != NULLCHAR && 
+    while( *current != NULLCHAR &&
            pos < _MAX_PATH - 1 ) {
         if( *current == BACKSLASH ) {
             if( *( current+1 ) == DOUBLEQUOTE ) {
@@ -515,7 +515,7 @@ STATIC RET_T createFile( const FLIST *head )
 
     if( ret != RET_ERROR ) {
         tmpFileName = RemoveBackSlash( fileName );
-        handle = open( tmpFileName, O_TEXT| O_WRONLY | O_CREAT | O_TRUNC, 
+        handle = open( tmpFileName, O_TEXT| O_WRONLY | O_CREAT | O_TRUNC,
                        S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
         if( handle != -1 ) {
             if( writeLineByLine( handle, head->body ) == RET_ERROR ) {
@@ -569,7 +569,7 @@ STATIC RET_T writeInlineFiles( FLIST *head, char** commandIn )
     start      = index;
     current    = head;
 
-    while( current        != NULL        && 
+    while( current        != NULL        &&
            ret            == RET_SUCCESS &&
            cmdText[index] != NULLCHAR ) {
 
@@ -902,7 +902,7 @@ STATIC RET_T intSystem( const char *cmd )
 {
     pid_t pid = fork();
     int status;
-    
+
     if( pid == -1 )
         return -1;
     if( pid == 0 ) {
@@ -1634,16 +1634,16 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
                 } else if( retcode == IDEDRV_ERR_RUN_EXEC ) {
                     retcode = 1;
                 } else if( retcode == IDEDRV_ERR_RUN ) {
-                    PrtMsg( ERR | DLL_BAD_RETURN_STATUS, 
+                    PrtMsg( ERR | DLL_BAD_RETURN_STATUS,
                                   dll_cmd->inf.dll_name );
                     retcode = 4;
-                } else if( retcode == IDEDRV_ERR_LOAD || 
+                } else if( retcode == IDEDRV_ERR_LOAD ||
                             retcode == IDEDRV_ERR_UNLOAD ) {
-                    PrtMsg( ERR | UNABLE_TO_LOAD_DLL, 
+                    PrtMsg( ERR | UNABLE_TO_LOAD_DLL,
                                   dll_cmd->inf.dll_name );
                     retcode = 4;
                 } else {
-                    PrtMsg( ERR | DLL_BAD_INIT_STATUS, 
+                    PrtMsg( ERR | DLL_BAD_INIT_STATUS,
                                   dll_cmd->inf.dll_name );
                     retcode = 4;
                 }
