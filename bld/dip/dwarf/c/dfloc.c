@@ -281,7 +281,7 @@ static uint_16 const CLRegAXP[DW_AXP_MAX] = {
     Stuff dealing with evaluating dwarf location expr's
 */
 
-typedef struct{
+typedef struct {
     imp_image_handle *ii;
     location_context *lc;  /* addr context          */
     location_list    *ll;  /* where to store addr   */
@@ -291,9 +291,12 @@ typedef struct{
     uint_32          value;/* value on top of stack  */
     int              val_count;
     uint_32          seg;
-}loc_handle;
+} loc_handle;
 
-static dr_loc_kind Init( loc_handle *d, uint_32 *where ){
+static dr_loc_kind Init( void *_d, uint_32 *where )
+{
+    loc_handle  *d = _d;
+
 // Set location expr initial value
     switch( d->init ){
     case DR_LOC_NONE:
@@ -308,12 +311,11 @@ static dr_loc_kind Init( loc_handle *d, uint_32 *where ){
 }
 
 
-static int Ref( loc_handle *d,
-                uint_32    offset,
-                uint_32    size,
-               dr_loc_kind kind  ){
+static int Ref( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
+{
 // Collect a reference from location expr and stuff in ret ll
 // Assume d->ll init num == 0, flags == 0
+    loc_handle  *d = _d;
     location_list tmp, *ll;
 
     if( kind == DR_LOC_ADDR ){
@@ -355,10 +357,11 @@ static int Ref( loc_handle *d,
 }
 
 
-static int DRef( loc_handle *d, uint_32 *where, uint_32 offset, uint_32 size ){
+static int DRef( void *_d, uint_32 *where, uint_32 offset, uint_32 size ){
 // Dereference a value use default address space
 // The offset on top of the stack is relative to it
-    address a;
+    loc_handle  *d = _d;
+    address     a;
     location_list tmp;
     location_list ll;
 #if 1
@@ -383,9 +386,10 @@ static int DRef( loc_handle *d, uint_32 *where, uint_32 offset, uint_32 size ){
     return( TRUE );
 }
 
-static int DRefX( loc_handle *d, uint_32 *where, uint_32 offset,
-                  uint_32 seg, uint_16  size ){
+static int DRefX( void *_d, uint_32 *where, uint_32 offset, uint_32 seg, uint_16 size )
+{
 // Dereference an extended address
+    loc_handle  *d = _d;
     address a;
     location_list tmp;
     location_list ll;
@@ -405,7 +409,9 @@ static int DRefX( loc_handle *d, uint_32 *where, uint_32 offset,
     return( TRUE );
 }
 
-static int Frame( loc_handle *d, uint_32 *where ){
+static int Frame( void *_d, uint_32 *where )
+{
+    loc_handle  *d = _d;
     location_list ll;
     mad_handle  kind;
 // Get frame location
@@ -420,8 +426,10 @@ static int Frame( loc_handle *d, uint_32 *where ){
     return( TRUE );
 }
 
-static int Reg( loc_handle *d, uint_32 *where, uint_16 reg ){
+static int Reg( void *_d, uint_32 *where, uint_16 reg )
+{
 // get value of reg
+    loc_handle  *d = _d;
     location_list ll;
     location_list tmp;
     mad_handle  kind;
@@ -487,8 +495,10 @@ static int Reg( loc_handle *d, uint_32 *where, uint_16 reg ){
     return( TRUE );
 }
 
-static  int ACon( loc_handle *d, uint_32 *where, bool isfar ){
+static  int ACon( void *_d, uint_32 *where, bool isfar )
+{
 // relocate a map address constant
+    loc_handle  *d = _d;
 
     d->base.mach.offset = where[0];
     if( isfar ){ /* assume next in stack is a seg and an xdref is coming */
@@ -504,8 +514,10 @@ static  int ACon( loc_handle *d, uint_32 *where, bool isfar ){
     return( TRUE );
 }
 
-static int Live( loc_handle *d, uint_32 *where ){
+static int Live( void *_d, uint_32 *where )
+{
 // find the appropriate live range
+    loc_handle  *d = _d;
     location_list ll;
     dip_status    ret;
 // Get execution location
@@ -609,28 +621,33 @@ extern dip_status EvalLocation( imp_image_handle *ii,
 
 }
 
-static int NoFrame( loc_handle *d, uint_32 *where ){
+static int NoFrame( void *_d, uint_32 *where )
+{
 //For EvalParmLocation frame not valid
+    loc_handle  *d = _d;
 
     d->ret = DS_FAIL;
     *where = 0;
     return( FALSE  );
 }
-static int FakeLive( loc_handle *d, uint_32 *where ){
+
+static int FakeLive( void *_d, uint_32 *where )
+{
 // force loc to take first addr in live range hopefully the parm on entry
 // Get execution location
+    loc_handle  *d = _d;
+
     d->ret = DS_OK;
     *where  =  d->base.mach.offset;
     return( TRUE );
 }
 
-static int RegOnlyRef( loc_handle *d,
-                uint_32    offset,
-                uint_32    size,
-               dr_loc_kind kind  ){
+static int RegOnlyRef( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
+{
 // Collect a reference from location expr and stuff in ret ll
 // Assume d->ll init num == 0, flags == 0
 // if not reg return FALSE parmloc requirement
+    loc_handle  *d = _d;
     location_list tmp, *ll;
 
     if( kind == DR_LOC_ADDR ){
@@ -653,8 +670,16 @@ static int RegOnlyRef( loc_handle *d,
     return( TRUE );
 }
 static dr_loc_callbck_def const ParmBck = {
-    Init, RegOnlyRef, DRef, DRefX, NoFrame, Reg, ACon, FakeLive
+    Init,
+    RegOnlyRef,
+    DRef,
+    DRefX,
+    NoFrame,
+    Reg,
+    ACon,
+    FakeLive
 };
+
 extern dip_status EvalParmLocation( imp_image_handle *ii,
                                     location_context *lc,
                                     dr_handle         sym,
@@ -707,8 +732,10 @@ extern dip_status EvalRetLocation( imp_image_handle *ii,
 
 }
 
-static dr_loc_kind AdjInit( loc_handle *d, uint_32 *where ){
+static dr_loc_kind AdjInit( void *_d, uint_32 *where ){
 // Set location expr initial value
+    loc_handle  *d = _d;
+
     switch( d->init ){
     case DR_LOC_NONE:
         break;
@@ -721,7 +748,14 @@ static dr_loc_kind AdjInit( loc_handle *d, uint_32 *where ){
     return( d->init );
 }
 static dr_loc_callbck_def const AdjBck = {
-    AdjInit, Ref, DRef, DRefX, Frame, Reg, ACon, Live
+    AdjInit,
+    Ref,
+    DRef,
+    DRefX,
+    Frame,
+    Reg,
+    ACon,
+    Live
 };
 extern dip_status EvalLocAdj( imp_image_handle *ii,
                                location_context *lc,
@@ -750,12 +784,10 @@ extern dip_status EvalLocAdj( imp_image_handle *ii,
 
 }
 
-static int Val( loc_handle *d,
-                uint_32    offset,
-                uint_32    size,
-               dr_loc_kind kind  ){
+static int Val( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
+{
 // Assume top of stack is value to get
-
+    loc_handle  *d = _d;
     size = size;
     if( kind == DR_LOC_ADDR ){
         if( ++d->val_count == 1 ){
@@ -772,13 +804,20 @@ static int Val( loc_handle *d,
 }
 
 static dr_loc_callbck_def const ValBck = {
-    Init, Val, DRef, DRefX, Frame, Reg, ACon, Live
+    Init,
+    Val,
+    DRef,
+    DRefX,
+    Frame,
+    Reg,
+    ACon,
+    Live
 };
 
 extern dip_status EvalBasedPtr( imp_image_handle *ii,
                                 location_context *lc,
                                 dr_handle         sym,
-                                address          *addr ){
+                                address          *addr ) {
     loc_handle d;
     location_list ll;
 
@@ -804,7 +843,7 @@ extern dip_status EvalBasedPtr( imp_image_handle *ii,
 
 }
 
-typedef struct{
+typedef struct {
     uint_32     offset;
     uint_32     size;
     dr_loc_kind kind;
@@ -820,7 +859,8 @@ typedef struct{
     int live  :1;
 }nop_loc_handle;
 
-static dr_loc_kind NOPInit( nop_loc_handle *d, uint_32 *where ){
+static dr_loc_kind NOPInit( void *d, uint_32 *where )
+{
 // Set location expr initial value
     d = d;
     where = where;
@@ -828,10 +868,9 @@ static dr_loc_kind NOPInit( nop_loc_handle *d, uint_32 *where ){
 }
 
 
-static int NOPRef( nop_loc_handle *d,
-                uint_32    offset,
-                uint_32    size,
-               dr_loc_kind kind  ){
+static int NOPRef( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
+{
+    nop_loc_handle  *d = _d;
 
     d->offset = offset;
     d->size = size;
@@ -839,19 +878,22 @@ static int NOPRef( nop_loc_handle *d,
     return( d->ref );
 }
 
-static int NOPDRef( nop_loc_handle *d, uint_32 *where, uint_32 offset, uint_32 size ){
+static int NOPDRef( void *_d, uint_32 *where, uint_32 offset, uint_32 size )
+{
 // Dereference a value use default address space
-    d = d;
+    nop_loc_handle  *d = _d;
+
     offset = offset;
     size = size;
     *where = 0;
     return( d->dref );
 }
 
-static int NOPDRefX( nop_loc_handle *d, uint_32 *where, uint_32 offset,
-                  uint_32 seg, uint_16  size ){
+static int NOPDRefX( void *_d, uint_32 *where, uint_32 offset, uint_32 seg, uint_16 size )
+{
 // Dereference an extended address
-    d  = d;
+    nop_loc_handle  *d = _d;
+
     where = where;
     offset = offset;
     seg = seg;
@@ -859,30 +901,39 @@ static int NOPDRefX( nop_loc_handle *d, uint_32 *where, uint_32 offset,
     return( d->drefx );
 }
 
-static int NOPFrame( nop_loc_handle *d, uint_32 *where ){
-    d = d;
+static int NOPFrame( void *_d, uint_32 *where )
+{
+    nop_loc_handle  *d = _d;
+
     *where = 0;
     return( d->frame );
 }
 
 
-static int NOPReg( nop_loc_handle *d, uint_32 *where, uint_16 reg ){
-    d = d;
+static int NOPReg( void *_d, uint_32 *where, uint_16 reg )
+{
+    nop_loc_handle  *d = _d;
+
     reg = reg;
     *where = 0;
     return( d->reg );
 }
 
-static  int NOPACon( nop_loc_handle *d, uint_32 *where, bool isfar ){
+static  int NOPACon( void *_d, uint_32 *where, bool isfar )
+{
 // relocate a map address constant
-    d = d;
+    nop_loc_handle  *d = _d;
+
     where = where;
     isfar = isfar;
     return( d->acon );
 }
 
-static int NOPLive( nop_loc_handle *d, uint_32 *where ){
+static int NOPLive( void *_d, uint_32 *where )
+{
 // find the appropriate live range
+    nop_loc_handle  *d = _d;
+
     *where = d->live_value;
     return( d->live );
 }

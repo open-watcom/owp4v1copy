@@ -99,8 +99,9 @@ typedef struct{
     char*           ret;
 }file_walk_name;
 
-static int ACueFile( file_walk_name  *info, dr_line_file *curr ){
-/*************************************************************/
+static int ACueFile( void *_info, dr_line_file *curr ) {
+/******************************************************/
+    file_walk_name  *info = _info;
     int cont;
 
     if( info->index  == curr->index ){
@@ -152,8 +153,10 @@ typedef struct {
     dr_line_data first;
 }first_cue_wlk;
 
-static int TheFirstCue( first_cue_wlk  *wlk, dr_line_data *curr ){
-/*************************************************************/
+static int TheFirstCue( void *_wlk, dr_line_data *curr ) {
+/********************************************************/
+    first_cue_wlk   *wlk = _wlk;
+
     if( wlk->fno == curr->file ){
         wlk->first = *curr;
         return( FALSE );
@@ -193,10 +196,11 @@ typedef struct{
     walk_result       wr;
 }file_walk_cue;
 
-static int ACueFileNum( file_walk_cue  *fc, dr_line_file *curr ){
+static int ACueFileNum( void *_fc, dr_line_file *curr ){
 /*************************************************************/
+    file_walk_cue  *fc = _fc;
     int cont;
-    imp_cue_handle  *ic;
+    imp_cue_handle *ic;
     dr_dbg_handle  saved;
 
     ic = fc->ic;
@@ -260,8 +264,9 @@ typedef struct{
     seg_cue         *curr_seg;
 }la_walk_info;
 
-static int ACueAddr( la_walk_info  *info, dr_line_data *curr ){
+static int ACueAddr( void *_info, dr_line_data *curr ){
 /*************************************************************/
+    la_walk_info  *info = _info;
 
     if( curr->addr_set ){ /* a set address */
         info->curr_seg = InitSegCue( info->list, curr->seg, curr->offset );

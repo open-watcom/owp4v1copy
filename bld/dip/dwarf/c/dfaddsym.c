@@ -89,19 +89,20 @@ static off_info *AddMapOffset( seg_off *ctl, off_info *new ){
     return( next );
 }
 
-static void InitSegOff(  seg_info *new ){
+static void InitSegOff( seg_info *newseg ){
 /***************************************/
-    new->off.head = NULL;
+
+    newseg->off.head = NULL;
 }
 
-static seg_blk *GetSegOffBlk( void ){
+static seg_blk_head *GetSegOffBlk( void ){
 // Alloc a seg_info blk for seg routines
     seg_blk_off *new;
 
     new = DCAlloc( sizeof( *new ) );
     new->head.next = NULL;
     new->head.info  = &new->data[0].entry;
-    return( new );
+    return( (seg_blk_head*)new );
 }
 
 extern void AddAddrSym( seg_list *list, addrsym_info *new ){
@@ -207,9 +208,11 @@ extern  int  FindAddrSym( seg_list     *addr_map,
     return( last_find );
 }
 
-static int  OffCmp( off_info const *off1, off_info const *off2  ){
+static int  OffCmp( void const *_off1, void const *_off2  ){
 /*****************************************************************/
 //Compare to offsets
+    off_info const *off1 = _off1;
+    off_info const *off2 = _off2;
     long   diff;
 
     diff = (long)off1->map_offset - (long)off2->map_offset;
@@ -255,9 +258,10 @@ struct wlk_glue {
     WLKADDRSYM fn;
 };
 
-static int WalkOffsets( struct wlk_glue *wlk, seg_info *ctl ){
+static int WalkOffsets( void *_wlk, seg_info *ctl ){
 /***************************************************/
 //Sort a seg's offsets
+    struct wlk_glue *wlk = _wlk;
     off_blk    *blk;
     unsigned_16 blk_count;
     off_info    *next;

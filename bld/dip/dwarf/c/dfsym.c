@@ -194,11 +194,10 @@ struct mod_wlk{
     search_result    ret;
 };
 
-static int AMod( dr_handle         sym,
-                 struct mod_wlk    *d,
-                 dr_search_context *cont ){
-/*************************************************/
+static int AMod( dr_handle sym, void *_d, dr_search_context *cont ) {
+/*******************************************************************/
 //TODO: no segments, better TAG_label
+    struct mod_wlk  *d = _d;
     uint_32         offset;
     uint_32         seg;
     int             ret;
@@ -255,8 +254,9 @@ typedef struct{
     dr_handle   match;   /* handle that matches */
 }mem_func_wlk;
 
-static int AMemFuncSym( mem_func_wlk *df, addrsym_info *info ){
-/************************************************************/
+static int AMemFuncSym( void *_df, addrsym_info *info ) {
+/*******************************************************/
+    mem_func_wlk *df = _df;
     int     cont;
     char   buff[256];
     int    len;
@@ -549,8 +549,9 @@ dip_status      DIPENTRY DIPImpSymInfo( imp_image_handle *ii,
     return( DS_OK );
 }
 
-static int ARet( dr_handle var, int index, dr_handle  *var_ptr ){
-/*************************************************/
+static int ARet( dr_handle var, int index, void *_var_ptr ) {
+/***********************************************************/
+    dr_handle  *var_ptr = _var_ptr;
     char name[sizeof(".return")];
     int  cont;
     int  len;
@@ -614,8 +615,9 @@ dip_status      DIPENTRY DIPImpSymParmLocation( imp_image_handle *ii,
     return( ret );
 }
 
-static int AThis( dr_handle var, int index, dr_handle *var_ptr ){
-/*************************************************/
+static int AThis( dr_handle var, int index, void *_var_ptr ) {
+/************************************************************/
+    dr_handle *var_ptr = _var_ptr;
     char name[sizeof("this")];
     int  ret;
     int  len;
@@ -809,10 +811,9 @@ search_result   DIPENTRY DIPImpAddrSym( imp_image_handle *ii,
 /* Walk inner and outer blocks   */
 /*********************************/
 
-static int InBlk( dr_handle         blk,
-                  int               depth,
-                  scope_ctl        *ctl ){
-/*************************************************/
+static int InBlk( dr_handle blk, int depth, void *_ctl ) {
+/********************************************************/
+    scope_ctl        *ctl = _ctl;
     uint_32           lo;
     uint_32           hi;
     scope_node       *new;
@@ -1063,7 +1064,7 @@ typedef union {
     blk_wlk_lookup lookup;
 }blk_wlk;
 
-typedef int (*BLKLF)( dr_handle var, int index, blk_wlk *df );
+typedef int (*BLKLF)( dr_handle var, int index, void *df );
 
 static dr_srch Dip2DwarfSrch( symbol_type dip ){
     dr_srch ret;
@@ -1089,8 +1090,9 @@ static dr_srch Dip2DwarfSrch( symbol_type dip ){
     return( ret );
 }
 
-static int ASym( dr_handle var, int index, blk_wlk_wlk *df ){
-/*************************************************/
+static int ASym( dr_handle var, int index, void *_df ) {
+/******************************************************/
+    blk_wlk_wlk *df = _df;
     int     cont;
     imp_sym_handle   *is;
     dr_dbg_handle  saved;
@@ -1112,10 +1114,11 @@ static int ASym( dr_handle var, int index, blk_wlk_wlk *df ){
     return( cont );
 }
 
-static int ASymCont( dr_handle var, int index, blk_wlk_wlk *df ){
-/*********************************************************/
-    dr_handle        contain;
-    int              cont;
+static int ASymCont( dr_handle var, int index, void *_df ) {
+/**********************************************************/
+    blk_wlk_wlk     *df = _df;
+    dr_handle       contain;
+    int             cont;
 
     cont = TRUE;
     contain = DRGetContaining( var );
@@ -1128,8 +1131,9 @@ static int ASymCont( dr_handle var, int index, blk_wlk_wlk *df ){
     return( cont );
 }
 
-static int AModSym( dr_handle var, int index, blk_wlk_wlk *df ){
-/*************************************************/
+static int AModSym( dr_handle var, int index, void *_df ) {
+/*********************************************************/
+    blk_wlk_wlk *df = _df;
     int     cont;
     imp_sym_handle   *is;
     dr_tag_type      sc;
@@ -1158,8 +1162,9 @@ static int AModSym( dr_handle var, int index, blk_wlk_wlk *df ){
     return( cont );
 }
 
-static int ASymLookup( dr_handle var, int index, blk_wlk_lookup *df ){
-/*********************************************************/
+static int ASymLookup( dr_handle var, int index, void *_df ) {
+/************************************************************/
+    blk_wlk_lookup   *df = _df;
     imp_sym_handle   *is;
     int     cont;
     int    len;
@@ -1180,8 +1185,9 @@ static int ASymLookup( dr_handle var, int index, blk_wlk_lookup *df ){
     return( cont );
 }
 
-static int ASymContLookup( dr_handle var, int index, blk_wlk_lookup *df ){
-/*********************************************************/
+static int ASymContLookup( dr_handle var, int index, void *_df ) {
+/****************************************************************/
+    blk_wlk_lookup   *df = _df;
     dr_handle        contain;
     int              cont;
 
@@ -1342,9 +1348,9 @@ static int WalkSymSymList( blk_wlk *df, BLKLF fn, imp_sym_handle *is )
     return( cont );
 }
 
-static walk_result  WalkMyLDSyms( imp_image_handle *ii,
-                        im_idx imx, blk_wlk_wlk *df )
+static walk_result  WalkMyLDSyms( imp_image_handle *ii, im_idx imx, void *_df )
 {
+    blk_wlk_wlk *df = _df;
 
     df->com.imx = imx;
     WalkModSymList( df, &ASym, imx );
@@ -1454,7 +1460,8 @@ typedef struct {
     dr_handle           sym;
 }hash_look_data;
 
-static int AHashItem( hash_look_data *find, dr_handle sym, char *name ){
+static int AHashItem( void *_find, dr_handle sym, char *name ) {
+    hash_look_data *find = _find;
     imp_sym_handle *is;
 
     if( find->compare( name, find->name ) == 0 ){

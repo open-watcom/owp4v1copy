@@ -72,14 +72,14 @@ static void InitSegOff(  seg_info *new ){
     new->off.head = NULL;
 }
 
-static seg_blk *GetSegOffBlk( void ){
+static seg_blk_head *GetSegOffBlk( void ){
 // Alloc a seg_info blk for seg routines
     seg_blk_off *new;
 
     new = DCAlloc( sizeof( *new ) );
     new->head.next = NULL;
     new->head.info  = &new->data[0].entry;
-    return( new );
+    return( (seg_blk_head*)new );
 }
 
 extern void AddMapAddr( seg_list *list, void *dcmap, off_info *new ){
@@ -405,7 +405,8 @@ typedef struct {
     address     seg_base;
 }wlk_seg_offsets;
 
-static int WlkSegInfos( wlk_seg_offsets *d, seg_info *curr ){
+static int WlkSegInfos( void *_d, seg_info *curr ) {
+    wlk_seg_offsets *d = _d;
     int cont;
 
     d->seg_base.mach.segment = curr->entry.real;

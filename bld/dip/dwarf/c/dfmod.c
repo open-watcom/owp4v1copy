@@ -83,10 +83,11 @@ do_copy:
     *buff = '\0';
 }
 
-static bool ModFill( mod_list *mod, dr_handle mod_handle ){
+static bool ModFill( void *_mod, dr_handle mod_handle ){
 /**************************************************************/
 // fill in mod_handle for dip to dwarf mod map
 // pick up general info about mod while here for later calls
+    mod_list *mod = _mod;
     char    fname[MAX_PATH];
     char   *name;
     char   *path;
@@ -413,8 +414,9 @@ typedef struct{
     address           *ret;
 }l_walk_info;
 
-static int AModAddr( l_walk_info  *info, dr_line_data *curr ){
+static int AModAddr( void *_info, dr_line_data *curr ){
 /*************************************************************/
+    l_walk_info *info = _info;
     int ret;
     imp_image_handle  *ii;
 
@@ -435,8 +437,9 @@ static int AModAddr( l_walk_info  *info, dr_line_data *curr ){
     return( ret );
 }
 
-static int ALineCue( l_walk_info  *info, dr_line_data *curr ){
+static int ALineCue( void *_info, dr_line_data *curr ){
 /*************************************************************/
+    l_walk_info *info = _info;
     int ret;
 
     ret = TRUE;

@@ -46,9 +46,11 @@
 typedef struct {
     dr_handle curr;
     int       skip;
-}array_wlk_skip; /* and jump */
+} array_wlk_skip; /* and jump */
 
-static int ArrayIndexSkip( dr_handle index, int pos, array_wlk_skip *df ){
+static int ArrayIndexSkip( dr_handle index, int pos, void *_df )
+{
+    array_wlk_skip *df = _df;
     pos = pos;
     if( df->skip == 0 ){
         df->curr = index;
@@ -221,10 +223,9 @@ struct mod_type{
     walk_result     wr;
 };
 
-static int AType( dr_handle        type,
-                 struct mod_type   *typ_wlk,
-                 dr_search_context *cont ){
-/*************************************************/
+static int AType( dr_handle type, void *_typ_wlk, dr_search_context *cont ) {
+/***************************************************************************/
+    struct mod_type *typ_wlk = _typ_wlk;
     int             ret;
     imp_type_handle *it;
     dr_dbg_handle  saved;
@@ -448,8 +449,8 @@ typedef struct{
     int              cont;
 }array_wlk_wlk;
 
-static int ArraySubRange( dr_handle tsub, int index, array_wlk_wlk *df );
-static int ArrayEnumType( dr_handle tenu, int index, array_wlk_wlk *df );
+static int ArraySubRange( dr_handle tsub, int index, void *df );
+static int ArrayEnumType( dr_handle tenu, int index, void *df );
 static DRWLKBLK ArrayWlk[DR_WLKBLK_ARRSIB] = {
     ArraySubRange,
     ArrayEnumType,
@@ -461,7 +462,8 @@ typedef struct {
     int_32 high;
 }enum_range;
 
-static int AEnum( dr_handle var, int index, enum_range *de ){
+static int AEnum( dr_handle var, int index, void *_de ) {
+    enum_range *de = _de;
     int_32  value;
 
     index = index;
@@ -476,12 +478,13 @@ static int AEnum( dr_handle var, int index, enum_range *de ){
     return( TRUE );
 }
 
-static int ArrayEnumType( dr_handle tenu, int index, array_wlk_wlk *df ){
-/************************************************************/
+static int ArrayEnumType( dr_handle tenu, int index, void *_df ) {
+/****************************************************************/
 // Find low, high bounds of enum
 //TODO:unsigned range
+    array_wlk_wlk  *df = _df;
     enum_range     de;
-    int_32        count;
+    int_32         count;
 
     index = index;
     de.low  = LONG_MIN;
@@ -552,8 +555,9 @@ static int GetDrVal( array_wlk_wlk *df, dr_val32 *val,  int_32 *ret ){
     return( FALSE );
 }
 
-static int ArraySubRange( dr_handle tsub, int index, array_wlk_wlk *df ){
-/*************************************************/
+static int ArraySubRange( dr_handle tsub, int index, void *_df ) {
+/****************************************************************/
+    array_wlk_wlk *df = _df;
     dr_subinfo info;
     int_32     low;
     int_32     high;
@@ -705,8 +709,9 @@ typedef struct {
     dr_handle       var;
 }parm_wlk;
 
-static int AParm( dr_handle var, int index, parm_wlk *df ){
-/*************************************************/
+static int AParm( dr_handle var, int index, void *_df ) {
+/*******************************************************/
+    parm_wlk *df = _df;
 
     index = index;
     ++df->count;
@@ -861,9 +866,10 @@ static int AddBase( dr_handle base, inh_vbase **lnk ){
     return( TRUE );
 }
 
-static void FreeBases( inh_vbase **lnk ){
+static int FreeBases( void *_lnk ){
 /***************************************/
 //Free bases
+    inh_vbase   **lnk = _lnk;
     inh_vbase   *cur;
     inh_vbase   *old;
 
@@ -874,10 +880,11 @@ static void FreeBases( inh_vbase **lnk ){
         DCFree( old );
     }
     *lnk = NULL;
+    return 0;
 }
 
-static int AMem( dr_handle var, int index, type_wlk_wlk *d );
-static int AInherit( dr_handle inh, int index, type_wlk_wlk *d );
+static int AMem( dr_handle var, int index, void *d );
+static int AInherit( dr_handle inh, int index, void *d );
 static DRWLKBLK StrucWlk[DR_WLKBLK_STRUCT] = {
     AMem,
     AInherit,
@@ -899,8 +906,9 @@ static void SetSymHandle( type_wlk *d, imp_sym_handle  *is ){
     }
 }
 
-static int AMem( dr_handle var, int index, type_wlk_wlk *d ){
-/*************************************************/
+static int AMem( dr_handle var, int index, void *_d ) {
+/*****************************************************/
+    type_wlk_wlk   *d = _d;
     int            cont;
     imp_sym_handle  *is;
     dr_dbg_handle  saved;
@@ -935,9 +943,10 @@ static int AMem( dr_handle var, int index, type_wlk_wlk *d ){
     return( cont );
 }
 
-static int AInherit( dr_handle inh, int index, type_wlk_wlk *d ){
+static int AInherit( dr_handle inh, int index, void *_d ) {
 /*************************************************/
 //TODO: Need to track virtual base as not to visit same place twice
+    type_wlk_wlk *d = _d;
     int         cont;
     dr_handle   btype;
     dr_handle   old_inh;
@@ -978,8 +987,8 @@ static int AInherit( dr_handle inh, int index, type_wlk_wlk *d ){
 }
 
 
-static int AMemLookup( dr_handle var, int index, type_wlk_lookup *d );
-static int AInheritLookup( dr_handle inh, int index, type_wlk_lookup *d );
+static int AMemLookup( dr_handle var, int index, void *d );
+static int AInheritLookup( dr_handle inh, int index, void *d );
 static DRWLKBLK StrucWlkLookup[DR_WLKBLK_STRUCT] = {
     AMemLookup,
     AInheritLookup,
@@ -988,8 +997,9 @@ static DRWLKBLK StrucWlkLookup[DR_WLKBLK_STRUCT] = {
     NULL
 };
 
-static int AMemLookup( dr_handle var, int index, type_wlk_lookup *d ){
+static int AMemLookup( dr_handle var, int index, void *_d ){
 /*************************************************/
+    type_wlk_lookup  *d = _d;
     imp_sym_handle   *is;
     char   *name;
     int    len;
@@ -1027,9 +1037,10 @@ static int AMemLookup( dr_handle var, int index, type_wlk_lookup *d ){
     return( TRUE );
 }
 
-static int AInheritLookup( dr_handle inh, int index, type_wlk_lookup *d ){
+static int AInheritLookup( dr_handle inh, int index, void *_d ){
 /*************************************************/
 //Push inherit handle and search
+    type_wlk_lookup *d = _d;
     dr_handle btype;
     dr_handle old_inh;
 
@@ -1048,8 +1059,9 @@ static int AInheritLookup( dr_handle inh, int index, type_wlk_lookup *d ){
     return( TRUE );
 }
 
-static int AEnumMem( dr_handle var, int index, type_wlk_wlk *d ){
-/*************************************************/
+static int AEnumMem( dr_handle var, int index, void *_d ) {
+/*********************************************************/
+    type_wlk_wlk   *d = _d;
     int            cont;
     imp_sym_handle  *is;
     dr_dbg_handle  saved;
@@ -1068,8 +1080,9 @@ static int AEnumMem( dr_handle var, int index, type_wlk_wlk *d ){
     return( cont );
 }
 
-static int AEnumMemLookup( dr_handle var, int index, type_wlk_lookup *d ){
-/*************************************************/
+static int AEnumMemLookup( dr_handle var, int index, void *_d ) {
+/***************************************************************/
+    type_wlk_lookup  *d = _d;
     imp_sym_handle   *is;
     char   *name;
     int    len;
@@ -1145,8 +1158,8 @@ extern walk_result WalkTypeSymList( imp_image_handle *ii, imp_type_handle *it,
 extern search_result SearchMbr( imp_image_handle *ii, imp_type_handle *it,
                  lookup_item *li, void *d ){
 //Search for matching lookup item
-    dr_handle           btype;
-    type_wlk_lookup    df;
+    dr_handle       btype;
+    type_wlk_lookup df;
     df_cleaner      cleanup;
 
 
@@ -1217,7 +1230,7 @@ typedef struct type_wlk_inherit {
     bool             cont;
 }type_wlk_inherit;
 
-static int AInhFind( dr_handle inh, int index, type_wlk_inherit *df );
+static int AInhFind( dr_handle inh, int index, void *df );
 static DRWLKBLK InheritWlk[DR_WLKBLK_STRUCT] = {
     NULL,
     AInhFind,
@@ -1227,9 +1240,10 @@ static DRWLKBLK InheritWlk[DR_WLKBLK_STRUCT] = {
 };
 
 
-static int AInhFind( dr_handle inh, int index, type_wlk_inherit *df ){
+static int AInhFind( dr_handle inh, int index, void *_df ){
 /*************************************************/
 //Push inherit handle and search
+    type_wlk_inherit *df = _df;
     dr_handle       dr_derived;
     inh_path        head, *curr, **old_lnk;
 

@@ -147,8 +147,9 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes, uint_32 *bases ){
     return( DS_OK );
 }
 
-static void DWRRead( imp_image f,  uint sect,  void *buff, int size ) {
+static void DWRRead( void *_f,  uint sect,  void *buff, int size ) {
 /******************************************************************/
+    imp_image  f = _f;
     uint_32    base;
 
     base = f->dwarf->sect_offsets[sect];
@@ -156,8 +157,9 @@ static void DWRRead( imp_image f,  uint sect,  void *buff, int size ) {
 
 }
 
-static void DWRSeek( imp_image  f, uint sect, long offs ) {
+static void DWRSeek( void *_f, uint sect, long offs ) {
 /******************************************************/
+    imp_image f = _f;
     long base;
 
     base = f->dwarf->sect_offsets[sect];
@@ -201,7 +203,7 @@ static void DWRErr( dr_except code ){
     }
 }
 
-DWRSetRtns( DWRRead, DWRSeek, DWRAlloc, DWRRealloc, DWRFree, DWRErr );
+DWRSetRtns(DWRRead, DWRSeek, DWRAlloc, DWRRealloc, DWRFree, DWRErr);
 
 static dip_status InitDwarf( imp_image_handle *ii ){
 /**************************************************/
@@ -255,11 +257,12 @@ static void FiniDwarf( imp_image_handle *ii ){
         Loading/unloading symbolic information.
 */
 
-static int APubName( imp_image_handle *ii,
-                     dr_pubname_data  *curr ){
+static int APubName( void *_ii, dr_pubname_data *curr ) {
 //*************************************************
 // Add name from pubdefs to global name hash
 //*************************************************
+    imp_image_handle *ii = _ii;
+
     if( curr->is_start ){
         SetModPubNames( ii, curr->dbg_cu );
     }
@@ -267,12 +270,11 @@ static int APubName( imp_image_handle *ii,
     return( TRUE );
 }
 
-static int AModHash( dr_handle           sym,
-                     imp_image_handle *ii,
-                     dr_search_context  *cont ){
+static int AModHash( dr_handle sym, void *_ii, dr_search_context *cont ) {
 //*******************************************
 // Add any global symbol to the hash
 //******************************************
+    imp_image_handle *ii = _ii;
     int     len;
     char    buff[256];
 
@@ -342,7 +344,8 @@ typedef struct{
     im_idx imx;
 }a_walk_info;
 
-static int ARangeItem( a_walk_info  *info, dr_arange_data *curr ){
+static int ARangeItem( void *_info, dr_arange_data *curr ){
+    a_walk_info  *info = _info;
     off_info addr_info;
     uint_16  seg;
     imp_image_handle *ii;
