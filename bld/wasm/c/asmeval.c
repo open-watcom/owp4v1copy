@@ -94,21 +94,21 @@ static int get_precedence( int i )
 {
     /* Base on MASM 6.0 pg.18 Table 1.3 */
 
-/*
-    2              LENGTH, SIZE, WIDTH, MASK, (), [], <>
-    3              .
-    4              :
-    5              PTR, OFFSET, SEG, TYPE, THIS
-    6              HIGH, LOW
-    7              + (unary), - (unary)
-    8              *, /, MODE, SHL, SHR
-    9              +, -
-    10             EQ, NE, LT, LE, GT, GE
-    11             NOT
-    12             AND
-    13             OR, XOR
-    14             SHORT, .TYPE
-*/
+
+//    2              LENGTH, SIZE, WIDTH, MASK, (), [], <>
+//    3              .
+//    4              :
+//    5              PTR, OFFSET, SEG, TYPE, THIS
+//    6              HIGH, LOW
+//    7              + (unary), - (unary)
+//    8              *, /, MODE, SHL, SHR
+//    9              +, -
+//    10             EQ, NE, LT, LE, GT, GE
+//    11             NOT
+//    12             AND
+//    13             OR, XOR
+//    14             SHORT, .TYPE
+
 
     char        token;
 
@@ -1112,6 +1112,7 @@ static int fix( expr_list *res, int start, int end )
             AsmBuffer[ start++ ]->token = T_OP_SQ_BRACKET;
         }
         AsmBuffer[ start ]->token = T_REG;
+        AsmBuffer[ start ]->string_ptr = AsmBuffer[ res->base_reg ]->string_ptr;
         AsmBuffer[ start++ ]->value = AsmBuffer[ res->base_reg ]->value;
         if( res->override != EMPTY ) {
             AsmBuffer[ start++ ]->token = T_CL_SQ_BRACKET;
@@ -1200,14 +1201,17 @@ static int fix( expr_list *res, int start, int end )
         if( res->base_reg != EMPTY ) {
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_REG;
+            AsmBuffer[start]->string_ptr = Store[res->base_reg-old_start].string_ptr;
             AsmBuffer[start++]->value = Store[res->base_reg-old_start].value;
             AsmBuffer[start++]->token = T_CL_SQ_BRACKET;
         }
         if( res->idx_reg != EMPTY ) {
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_REG;
+            AsmBuffer[start]->string_ptr = Store[res->idx_reg-old_start].string_ptr;
             AsmBuffer[start++]->value = Store[res->idx_reg-old_start].value;
             if( res->scale != 1 ) {
+                AsmBuffer[start]->string_ptr = "*";
                 AsmBuffer[start++]->token = T_TIMES;
                 AsmBuffer[start]->token = T_NUM;
                 AsmBuffer[start++]->value = res->scale;
