@@ -56,8 +56,7 @@
     #include <sys/magic.h>
   #endif
 
-  #define BUF_SIZE 40
-  #define MAX_WIDTH 39
+  #define BUF_SIZE 72       /* 64-bit ints formatted as binary can get big */
   #define TRUE 1
   #define FALSE 0
 

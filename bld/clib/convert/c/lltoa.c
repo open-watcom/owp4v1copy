@@ -174,7 +174,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)(
         CHAR_TYPE *p = buffer;
         char *q;
         unsigned rem;
-        auto char buf[34];      // only holds ASCII so 'char' is OK
+        auto char buf[66];      // only holds ASCII so 'char' is OK
 
         buf[0] = '\0';
         q = &buf[1];
