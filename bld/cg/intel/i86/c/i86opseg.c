@@ -50,11 +50,14 @@ extern  void            GenRegMove(hw_reg_set,hw_reg_set);
 extern  void            GenRegXor(hw_reg_set,hw_reg_set);
 extern  void            GenRegNeg(hw_reg_set);
 extern  bool            SegIsSS(name*);
-extern  bool            CanZapBP();
+extern  bool            CanZapBP(void);
 extern  int             NumOperands(instruction*);
 
+/* forward declarations */
+static  int     Overs( name *op );
+static  int     CountSegOvers( void );
 
-extern  void    InitZeroPage() {
+extern  void    InitZeroPage( void ) {
 /*******************************
     Decide what type of "zeropage" scheme we should use (if it's worthwhile).
     This is sort of a misleading name, carried over from the days of the 6809.
@@ -106,7 +109,7 @@ extern  void    InitZeroPage() {
 }
 
 
-extern  void    FiniZeroPage() {
+extern  void    FiniZeroPage( void ) {
 /*******************************
     Pop the "zeropage" register.
 */
@@ -131,7 +134,7 @@ extern  void    FiniZeroPage() {
     ZPageType = ZP_USES_SS;
 }
 
-static  int     CountSegOvers() {
+static  int     CountSegOvers( void ) {
 /********************************
     Count the number of SS: overrides in the routine.
 */

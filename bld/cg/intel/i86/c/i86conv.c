@@ -54,103 +54,103 @@ extern    int   RoutineNum;
 static  opcode_entry    C2to1[] = {
 /*********************************/
 /*    from  to    eq       verify        gen             reg fu*/
-_Un( R,    ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_TWOBYTE,FU_NO,
-_Un( R,    ANY,  NONE ),  V_NO,       R_MOVOP1TEMP,     RG_,    FU_NO,
-_Un( U,    ANY,  NONE ),  V_CONSTTEMP, G_UNKNOWN,       RG_,    FU_NO,
-_Un( C,    ANY,  NONE ),  V_OP1RELOC, R_MOVOP1TEMP,     RG_,    FU_NO,
-_Un( ANY,  ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_,    FU_NO,
+{_Un( R,    ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_TWOBYTE,FU_NO},
+{_Un( R,    ANY,  NONE ),  V_NO,       R_MOVOP1TEMP,     RG_,    FU_NO},
+{_Un( U,    ANY,  NONE ),  V_CONSTTEMP, G_UNKNOWN,       RG_,    FU_NO},
+{_Un( C,    ANY,  NONE ),  V_OP1RELOC, R_MOVOP1TEMP,     RG_,    FU_NO},
+{_Un( ANY,  ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_,    FU_NO}, 
 };
 
 
 static  opcode_entry    C4to1[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_CONVERT_LOW,  RG_DBL_BYTE,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_CONVERT_LOW,  RG_DBL_BYTE,FU_NO},
 };
 
 
 static  opcode_entry    C4to2[] = {
 /*********************************/
 /*    from  to    eq       verify        gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),  V_NO,         R_MOVELOW,      RG_,FU_NO,
+{_Un( ANY,  ANY,  NONE ),  V_NO,         R_MOVELOW,      RG_,FU_NO},
 };
 
 
 static  opcode_entry    C8to4[] = {
 /*********************************/
 /*    from  to    eq       verify        gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),  V_NO,         R_MOVE8LOW,      RG_,FU_NO,
+{_Un( ANY,  ANY,  NONE ),  V_NO,         R_MOVE8LOW,      RG_,FU_NO},
 };
 
 
 static  opcode_entry    Ext1[] = {
 /*********************************/
 /*    from  to    eq          verify   gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,    R_CLRHIGH_B,    RG_,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,    R_CLRHIGH_B,    RG_,FU_NO},
 };
 
 
 static  opcode_entry    Ext2[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_W,    RG_WORD_DBL,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_W,    RG_WORD_DBL,FU_NO},
 };
 
 
 static  opcode_entry    Ext4[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_D,   RG_WORD_DBL,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_D,   RG_WORD_DBL,FU_NO},
 };
 
 
 static  opcode_entry    SExt1[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_BYTE_EXT,FU_ALU1,
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_BYTE_EXT,FU_NO,
+{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_BYTE_EXT,FU_ALU1},
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_BYTE_EXT,FU_NO},
 };
 
 
 static  opcode_entry    SExt2[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_WORD_EXT,FU_ALU1,
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_WORD_EXT,FU_NO,
+{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_WORD_EXT,FU_ALU1},
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_WORD_EXT,FU_NO},
 };
 
 static  opcode_entry    SExt4[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_CDQ,   RG_WORD_DBL,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_CDQ,   RG_WORD_DBL,FU_NO},
 };
 
 
 static  opcode_entry    ExtPT[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_EXTPT,        RG_,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_EXTPT,        RG_,FU_NO},
 };
 
 
 static  opcode_entry    CRtn[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-_Un( ANY,  ANY,  NONE ),     V_NO,           R_MAKECALL,     RG_,FU_NO,
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_MAKECALL,     RG_,FU_NO},
 };
 
 static opcode_entry     *CvtAddr[] = {
-        &C2to1,
-        &C4to1,
-        &C4to2,
-        &C8to4,
-        &Ext1,
-        &Ext2,
-        &Ext4,
-        &SExt1,
-        &SExt2,
-        &SExt4,
-        &ExtPT
+        C2to1,
+        C4to1,
+        C4to2,
+        C8to4,
+        Ext1,
+        Ext2,
+        Ext4,
+        SExt1,
+        SExt2,
+        SExt4,
+        ExtPT
         };
 
 static  rt_class         CvtTable[] = {
@@ -256,7 +256,7 @@ extern  instruction     *rDOCVT( instruction *ins ) {
         ins->table = CvtAddr[  how - ( OK + 1 )  ];
         new_ins = ins;
     } else {
-        ins->table = &CRtn;
+        ins->table = CRtn;
         RoutineNum = how - BEG_RTNS;
         new_ins = ins;
     }

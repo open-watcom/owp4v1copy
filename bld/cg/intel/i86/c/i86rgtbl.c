@@ -288,7 +288,7 @@ static  hw_reg_set      AHCLReg[] = {
                 HW_D_2( HW_AH, HW_CL ),
                 HW_D_1( HW_EMPTY ) };
 
-reg_list        *RegSets[] = {
+hw_reg_set *RegSets[] = {
         #undef RL
         #define RL(a,b,c,d) a
         #include "rl.h"
@@ -297,9 +297,9 @@ reg_list        *RegSets[] = {
 
 op_regs RegList[] = {
         #undef RG
-        #define RG( a,b,c,d,e,f ) a,b,c,d,e
+        #define RG( a,b,c,d,e,f ) {a,b,c,d,e}
         #include "rg.h"
-        RL_
+        {RL_}
 };
 
 static  reg_set_index   ClassSets[] = {
@@ -321,37 +321,37 @@ static  reg_set_index   ClassSets[] = {
         RL_,                    /* FL*/
         RL_ };                  /* XX*/
 
-static  reg_list        *ParmSets[] = {
-        &ByteRegs,              /* U1*/
-        &ByteRegs,              /* I1*/
-        &WordRegs,              /* U2*/
-        &WordRegs,              /* I2*/
-        &DoubleRegs,           /* U4*/
-        &DoubleRegs,           /* I4*/
-        &QuadReg,               /* U8*/
-        &QuadReg,               /* I8*/
-        &DblPtrRegs,           /* CP*/
-        &DblPtrRegs,           /* PT*/
-        &DoubleRegs,           /* FS*/
-        &QuadReg,               /* FD*/
-        &QuadReg,               /* FL*/
-        &Empty };               /* XX*/
+static  hw_reg_set        *ParmSets[] = {
+        ByteRegs,              /* U1*/
+        ByteRegs,              /* I1*/
+        WordRegs,              /* U2*/
+        WordRegs,              /* I2*/
+        DoubleRegs,           /* U4*/
+        DoubleRegs,           /* I4*/
+        QuadReg,               /* U8*/
+        QuadReg,               /* I8*/
+        DblPtrRegs,           /* CP*/
+        DblPtrRegs,           /* PT*/
+        DoubleRegs,           /* FS*/
+        QuadReg,               /* FD*/
+        QuadReg,               /* FL*/
+        Empty };               /* XX*/
 
-static  reg_list        *Parm8087[] = {
-        &ByteRegs,              /* U1*/
-        &ByteRegs,              /* I1*/
-        &WordRegs,              /* U2*/
-        &WordRegs,              /* I2*/
-        &DoubleRegs,            /* U4*/
-        &DoubleRegs,            /* I4*/
-        &QuadReg,               /* U8*/
-        &QuadReg,               /* I8*/
-        &DblPtrRegs,            /* CP*/
-        &DblPtrRegs,            /* PT*/
-        &STParmReg,             /* FS*/
-        &STParmReg,             /* FD*/
-        &STParmReg,             /* FL*/
-        &Empty };               /* XX*/
+static  hw_reg_set        *Parm8087[] = {
+        ByteRegs,              /* U1*/
+        ByteRegs,              /* I1*/
+        WordRegs,              /* U2*/
+        WordRegs,              /* I2*/
+        DoubleRegs,            /* U4*/
+        DoubleRegs,            /* I4*/
+        QuadReg,               /* U8*/
+        QuadReg,               /* I8*/
+        DblPtrRegs,            /* CP*/
+        DblPtrRegs,            /* PT*/
+        STParmReg,             /* FS*/
+        STParmReg,             /* FD*/
+        STParmReg,             /* FL*/
+        Empty };               /* XX*/
 
 static  reg_set_index   IsSets[] = {
         RL_BYTE,                /* U1*/
@@ -441,9 +441,9 @@ typedef struct reg_class {
 
 static  reg_class       IntersectInfo[] = {
         #undef RL
-        #define RL(a,b,c,d) c,d
+        #define RL(a,b,c,d) {c,d}
         #include "rl.h"
-        OTHER,          0 };    /* RL_NUMBER_OF_SETS*/
+        {OTHER,          0} };    /* RL_NUMBER_OF_SETS*/
 
 
 static  byte    Width[] = {
@@ -508,14 +508,14 @@ static  reg_set_index   OtherInter[] = {
         RL_ };
 
 static  reg_set_index   *InterTable[] = {
-        &OneByteInter,          /* ONE_BYTE*/
-        &TwoByteInter,          /* TWO_BYTE*/
-        &FourByteInter,         /* FOUR_BYTE*/
-        &EightByteInter,        /* EIGHT_BYTE*/
-        &FloatingInter,         /* FLOATING*/
-        &OtherInter };          /* others*/
+        OneByteInter,          /* ONE_BYTE*/
+        TwoByteInter,          /* TWO_BYTE*/
+        FourByteInter,         /* FOUR_BYTE*/
+        EightByteInter,        /* EIGHT_BYTE*/
+        FloatingInter,         /* FLOATING*/
+        OtherInter };          /* others*/
 
-extern  void            InitRegTbl() {
+extern  void            InitRegTbl( void ) {
 /************************************/
 
     if( _FPULevel( FPU_87 ) ) {
@@ -550,7 +550,7 @@ extern  reg_set_index   RegIntersect( reg_set_index s1, reg_set_index s2 ) {
 }
 
 
-extern  reg_list        *ParmChoices( type_class_def class ) {
+extern  hw_reg_set        *ParmChoices( type_class_def class ) {
 /************************************************************/
 
     hw_reg_set  *list;
@@ -585,7 +585,7 @@ extern  hw_reg_set      InLineParm( hw_reg_set regs, hw_reg_set used ) {
 }
 
 
-extern  hw_reg_set      StructReg() {
+extern  hw_reg_set      StructReg( void ) {
 /***********************************/
 
     return( HW_SI );
@@ -606,7 +606,7 @@ extern  hw_reg_set      ReturnReg( type_class_def class, bool use_87 ) {
 }
 
 
-extern  reg_set_index   SegIndex() {
+extern  reg_set_index   SegIndex( void ) {
 /**********************************/
 
     return( RL_SEG );
@@ -665,7 +665,7 @@ extern  type_class_def  RegClass( hw_reg_set regs ) {
 
     if( HW_COvlap( regs, HW_FLTS ) ) {
         if( HW_CEqual( regs, HW_ST0 ) ) return( FD );
-        possible = &STIReg;
+        possible = STIReg;
         while( !HW_CEqual( *possible, HW_EMPTY ) ) {
             if( HW_Equal( regs, *possible ) ) return( FD );
             ++possible;
@@ -741,7 +741,7 @@ extern  hw_reg_set      Low32Reg( hw_reg_set regs ) {
     hw_reg_set  *order;
 
     if( HW_CEqual( regs, HW_EMPTY ) ) return( HW_EMPTY );
-    order = &Reg32Order;
+    order = Reg32Order;
     for(;;) {
         if( HW_Ovlap( *order, regs ) ) break;
         ++order;
@@ -875,7 +875,7 @@ extern  hw_reg_set      ActualParmReg( hw_reg_set reg ) {
 }
 
 
-extern  hw_reg_set      FixedRegs() {
+extern  hw_reg_set      FixedRegs( void ) {
 /***********************************/
 
     hw_reg_set  tmp;
@@ -902,28 +902,28 @@ extern  bool    IsStackReg( name *sp ) {
 }
 
 
-extern  hw_reg_set      StackReg() {
+extern  hw_reg_set      StackReg( void ) {
 /**********************************/
 
     return( HW_SP );
 }
 
 
-extern  hw_reg_set      DisplayReg() {
+extern  hw_reg_set      DisplayReg( void ) {
 /************************************/
 
     return( HW_BP );
 }
 
 
-extern  int     SizeDisplayReg() {
+extern  int     SizeDisplayReg( void ) {
 /********************************/
 
     return( WORD_SIZE );
 }
 
 
-extern  hw_reg_set      AllCacheRegs() {
+extern  hw_reg_set      AllCacheRegs( void ) {
 /**************************************/
 
     hw_reg_set  tmp;
@@ -939,7 +939,7 @@ extern  hw_reg_set      AllCacheRegs() {
     return( tmp );
 }
 
-extern  hw_reg_set      *IdxRegs() {
+extern  hw_reg_set      *IdxRegs( void ) {
 /**********************************/
 
     return( IndexRegs );

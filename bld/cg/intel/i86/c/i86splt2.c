@@ -86,7 +86,10 @@ extern  void            DelSeg(instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  name            *AllocIntConst(int);
 extern  bool            Overlaps( name *, name * );
-extern  instruction     *MakeNop();
+extern  instruction     *MakeNop(void);
+
+/*forward declaration*/
+static  void            Split8Name( instruction *ins, name *tosplit, eight_byte_name *out );
 
 extern    type_class_def        HalfClass[];
 extern    type_class_def        Unsigned[];
@@ -94,7 +97,7 @@ extern    type_class_def        Unsigned[];
 extern  name    *LowPart( name *tosplit, type_class_def class ) {
 /************************************************************/
 
-    name                *new;
+    name                *new = NULL;
     name                *new_cons;
     signed_8            s8;
     unsigned_8          u8;
@@ -161,6 +164,8 @@ extern  name    *LowPart( name *tosplit, type_class_def class ) {
                                 tosplit->i.constant, class, 0, tosplit->i.scale,
                                 tosplit->i.index_flags );
         break;
+    default:
+        break;
     }
     return( new );
 }
@@ -169,7 +174,7 @@ extern  name    *LowPart( name *tosplit, type_class_def class ) {
 extern  name    *HighPart( name *tosplit, type_class_def class ) {
 /*************************************************************/
 
-    name                *new;
+    name                *new = NULL;
     name                *new_cons;
     name                *op;
     signed_8            s8;
@@ -239,6 +244,8 @@ extern  name    *HighPart( name *tosplit, type_class_def class ) {
         new = ScaleIndex( tosplit->i.index, tosplit->i.base,
                 tosplit->i.constant+ tosplit->n.size/2, class, 0,
                 tosplit->i.scale, tosplit->i.index_flags );
+        break;
+    default:
         break;
     }
     return( new );
@@ -412,6 +419,8 @@ extern  instruction     *rSPLIT8BIN( instruction *ins ) {
     case OP_SUB:
         op = OP_EXT_SUB;
         break;
+    default:
+        break;
     }
     mid_lo_ins = MakeBinary( op, left.mid_low, rite.mid_low, result.mid_low, U2 );
     mid_hi_ins = MakeBinary( op, left.mid_high, rite.mid_high, result.mid_high, U2 );
@@ -427,6 +436,8 @@ extern  instruction     *rSPLIT8BIN( instruction *ins ) {
         mid_lo_ins->ins_flags |= INS_CC_USED;
         lo_ins->table = hi_ins->table;
         lo_ins->ins_flags |= INS_CC_USED;
+        break;
+    default:
         break;
     }
     DupSeg( ins, lo_ins );
@@ -484,6 +495,8 @@ extern  instruction     *rSPLIT8TST( instruction *ins ) {
     case OP_BIT_TEST_FALSE:
         op = OP_BIT_TEST_TRUE;
         true_idx = false_idx;
+        break;
+    default:
         break;
     }
     false_idx = NO_JUMP;
@@ -582,6 +595,8 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
         DoNothing( new[i] );
         new[++i] = MakeCondition( ins->head.opcode, left.low, rite.low,
                                         true_idx, false_idx, U2 );
+        break;
+    default:
         break;
     }
     for( j = 0; j < i; ++j ) {

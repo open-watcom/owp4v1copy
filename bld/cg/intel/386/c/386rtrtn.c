@@ -239,55 +239,56 @@ rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
 #include "cgnoalgn.h"
 typedef struct {
         call_class      class;
-        byte_seq        seq;
+        byte_seq_len    length;
+        char            data[];    
 } rt_aux_info;
 
 static  rt_aux_info Scn1 = {
                         0, 2,
-                        0xF2,                   /*       repne     */
-                        0xAE                    /*       scasb     */
+                       {0xF2,                   /*       repne     */
+                        0xAE}                   /*       scasb     */
                         };
 
 static  rt_aux_info Scn1ES = {
                         0, 6,
-                        0x06,                   /*      push    es */
+                       {0x06,                   /*      push    es */
                         0x0e,                   /*      push    cs */
                         0x07,                   /*      pop     es */
                         0xF2,                   /*      repne      */
                         0xAE,                   /*      scasb      */
-                        0x07                    /*      pop     es */
+                        0x07}                   /*      pop     es */
                         };
 
 static  rt_aux_info Scn2 = {            /* or Scn4 in USE16 */
                         0, 3,
-                        0xF2,                   /*       repne     */
-                        0x66, 0xAF              /*       scasw     */
+                       {0xF2,                   /*       repne     */
+                        0x66, 0xAF}             /*       scasw     */
                         };
 
 static  rt_aux_info Scn2ES = {          /* or Scn4 in USE16 */
                         0, 7,
-                        0x06,                   /*      push    es */
+                       {0x06,                   /*      push    es */
                         0x0e,                   /*      push    cs */
                         0x07,                   /*      pop     es */
                         0xF2,                   /*      repne      */
                         0x66, 0xAF,             /*      scasw      */
-                        0x07                    /*      pop     es */
+                        0x07}                   /*      pop     es */
                         };
 
 static  rt_aux_info Scn4 = {            /* or Scn2 in USE16 */
                         0, 2,
-                        0xF2,                   /*       repne     */
-                        0xAF                    /*       scasd     */
+                       {0xF2,                   /*       repne     */
+                        0xAF}                   /*       scasd     */
                         };
 
 static  rt_aux_info Scn4ES = {          /* or Scn2 in USE16 */
                         0, 6,
-                        0x06,                   /*      push    es */
+                       {0x06,                   /*      push    es */
                         0x0e,                   /*      push    cs */
                         0x07,                   /*      pop     es */
                         0xF2,                   /*      repne      */
                         0xAF,                   /*      scasd      */
-                        0x07                    /*      pop     es */
+                        0x07}                   /*      pop     es */
                         };
 #include "cgrealgn.h"
 
@@ -462,7 +463,7 @@ extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
         return( &((rt_aux_info *)info)->class );
     case CALL_BYTES:
         info = hdl;
-        return( &((rt_aux_info *)info)->seq );
+        return( &((rt_aux_info *)info)->length );
     default:
         _Zoiks( ZOIKS_128 );
         return( NULL );

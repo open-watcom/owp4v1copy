@@ -51,7 +51,7 @@ static  byte    InsSize[ 4 ][ OC_DEST_FAR+1 ] = {
 extern  int     OptInsSize( oc_class class, oc_dest_attr attr) {
 /**************************************************************/
 
-    int         i;
+    int         i = 0;
 
     if( class == OC_LREF ) return( 2 );
     switch( class ) {

@@ -42,7 +42,7 @@ extern    block *HeadBlock;
 extern    bool  BlockByBlock;
 
 extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction     *MakeWait();
+extern  instruction     *MakeWait(void);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  bool            SameThing(name*,name*);
 extern  bool            DoesSomething( instruction *ins );
@@ -108,16 +108,16 @@ static  bool    NeedWait( name *op, name *res, instruction *ins_86 ) {
 }
 
 
-extern  void    Wait8087() {
+extern  void    Wait8087( void ) {
 /**************************/
 
     block       *blk;
     instruction *ins;
-    instruction *last_non_fpins;
+    instruction *last_non_fpins = NULL;
     instruction *last_fpins;
     gentype     gen;
-    name        *last_fpop;
-    name        *last_fpres;
+    name        *last_fpop = NULL;
+    name        *last_fpres = NULL;
     bool        past_jump;
 
     if( _CPULevel( CPU_386 ) ) return;

@@ -56,7 +56,7 @@ extern  hw_reg_set      CalcSegment(sym_handle,cg_class);
 extern  name            *DeAlias(name*);
 extern  void            AddByte(byte);
 extern  void            LayRMRegOp(name*);
-extern  void            EjectInst();
+extern  void            EjectInst(void);
 extern  void            LayOpbyte(opcode);
 extern  void            LayRegRM(hw_reg_set);
 extern  void            DoSegRef(seg_id);
@@ -70,11 +70,15 @@ extern  void            LayOpword(opcode);
 extern  void            DoAbsPatch(abspatch_handle*,int);
 extern  type_class_def  OpndSize(hw_reg_set );
 extern  void            LayReg(hw_reg_set );
-extern  void            GCondFwait();
-extern  void            Finalize();
+extern  void            GCondFwait(void);
+extern  void            Finalize(void);
 extern  type_length     NewBase(name*);
 extern  int             GetLog2(unsigned_32);
 extern  unsigned        UseRepForm(unsigned);
+
+/* forward declarations */
+extern  void            DoRelocConst( name *op, type_class_def kind );
+static  void            SetOff( name *op, int val );
 
 extern  byte                    OptForSize;
 extern  template                Temp;   /* template for oc_entries*/
@@ -89,7 +93,7 @@ extern  int                     ILen;
 #define D8      (1 << S_RMR_MOD)
 #define D16     (2 << S_RMR_MOD)
 
-static void OpndSizeIf() {
+static void OpndSizeIf( void ) {
 /*************************/
 
     if( _IsTargetModel( USE_32 ) ) {
@@ -317,7 +321,7 @@ extern  void    LayLeaRegOp( instruction *ins ) {
 }
 
 
-static  void    CheckSize() {
+static  void    CheckSize( void ) {
 /***************************/
 
     if( _IsTargetModel( USE_32 ) ) {
@@ -441,6 +445,8 @@ extern  void    LayModRM( name *op ) {
         break;
     case N_REGISTER:
         LayRMRegOp( op );
+        break;
+    default:
         break;
     }
 }
@@ -582,6 +588,8 @@ extern  void    By2Div( instruction *ins ) {
         _Next;
         LayOpword( 0xf8d1 );    /* sar  ax,1 */
         OpndSizeIf();
+    default:
+        break;
     }
 }
 
@@ -615,6 +623,8 @@ extern void Pow2Div286( instruction *ins ) {
         LayOpword( 0xf8c1 );    /* sar  ax,n */
         OpndSizeIf();
         AddByte( log2 );
+        break;
+    default:
         break;
     }
 }
@@ -650,6 +660,8 @@ extern  void    Pow2Div( instruction *ins ) {
         _Next;
         LayOpword( 0xf8d3 );    /* sar  ax,cl */
         OpndSizeIf();
+        break;
+    default:
         break;
     }
 }
@@ -719,7 +731,7 @@ void StartBlockProfiling( block *blk ) {
     blk = blk;
 }
 
-void EndBlockProfiling() {
+void EndBlockProfiling( void ) {
 /************************/
 
 }

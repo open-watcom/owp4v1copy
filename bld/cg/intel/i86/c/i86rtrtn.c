@@ -42,7 +42,7 @@
 #include "seldef.h"
 #include "cgaux.h"
 
-extern    reg_list      *RegSets[];
+extern    hw_reg_set      *RegSets[];
 
 extern  name            *GenFloat(name*,type_class_def);
 extern  name            *GenConstData(char*,type_class_def);
@@ -73,7 +73,7 @@ extern  void            AddIns(instruction*);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
 extern  name            *AddrConst(name*,int,constant_class);
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskCodeSeg(void);
 extern  void            LookupRoutine(instruction *);
 extern  label_handle    RTLabel(int);
 extern  int             FindRTLabel(label_handle);
@@ -90,169 +90,169 @@ extern  hw_reg_set      ReturnReg(type_class_def,bool);
 #define RL_SI   RL_TEMP_INDEX
 
 rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
-/* name    op            class   left            right           result*/
-"__U4FS",   OP_CONVERT,   U4,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__I4FS",   OP_CONVERT,   I4,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__U4FD",   OP_CONVERT,   U4,     RL_DX_AX,       RL_,            RL_8,
-"__I4FD",   OP_CONVERT,   I4,     RL_DX_AX,       RL_,            RL_8,
-"__U8FS",   OP_CONVERT,   U8,     RL_8,           RL_,            RL_DX_AX,
-"__I8FS",   OP_CONVERT,   I8,     RL_8,           RL_,            RL_DX_AX,
-"__U8FD",   OP_CONVERT,   U8,     RL_8,           RL_,            RL_8,
-"__I8FD",   OP_CONVERT,   I8,     RL_8,           RL_,            RL_8,
-"__FSFD",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8,
-"__FSI4",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__RSI4",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__FSU4",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__RSU4",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__FSI8",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8,
-"__RSI8",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_8,
-"__FSU8",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8,
-"__RSU8",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_8,
-"__FDI4",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX,
-"__RDI4",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX,
-"__FDU4",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX,
-"__RDU4",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX,
-"__FDI8",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_8,
-"__RDI8",   OP_ROUND,     FD,     RL_8,           RL_,            RL_8,
-"__FDU8",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_8,
-"__RDU8",   OP_ROUND,     FD,     RL_8,           RL_,            RL_8,
+/*  name    op            class   left            right           result*/
+{"__U4FS",   OP_CONVERT,   U4,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__I4FS",   OP_CONVERT,   I4,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__U4FD",   OP_CONVERT,   U4,     RL_DX_AX,       RL_,            RL_8},
+{"__I4FD",   OP_CONVERT,   I4,     RL_DX_AX,       RL_,            RL_8},
+{"__U8FS",   OP_CONVERT,   U8,     RL_8,           RL_,            RL_DX_AX},
+{"__I8FS",   OP_CONVERT,   I8,     RL_8,           RL_,            RL_DX_AX},
+{"__U8FD",   OP_CONVERT,   U8,     RL_8,           RL_,            RL_8},
+{"__I8FD",   OP_CONVERT,   I8,     RL_8,           RL_,            RL_8},
+{"__FSFD",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8},
+{"__FSI4",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__RSI4",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__FSU4",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__RSU4",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__FSI8",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8},
+{"__RSI8",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_8},
+{"__FSU8",   OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8},
+{"__RSU8",   OP_ROUND,     FS,     RL_DX_AX,       RL_,            RL_8},
+{"__FDI4",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX},
+{"__RDI4",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX},
+{"__FDU4",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX},
+{"__RDU4",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX},
+{"__FDI8",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_8},
+{"__RDI8",   OP_ROUND,     FD,     RL_8,           RL_,            RL_8},
+{"__FDU8",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_8},
+{"__RDU8",   OP_ROUND,     FD,     RL_8,           RL_,            RL_8},
 
-"__U8FS7",  OP_CONVERT,   U8,     RL_8,           RL_,            RL_DX_AX,
-"__U8FD7",  OP_CONVERT,   U8,     RL_8,           RL_,            RL_8,
-"__FSU87",  OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8,
-"__FDU87",  OP_CONVERT,   FD,     RL_8,           RL_,            RL_8,
+{"__U8FS7",  OP_CONVERT,   U8,     RL_8,           RL_,            RL_DX_AX},
+{"__U8FD7",  OP_CONVERT,   U8,     RL_8,           RL_,            RL_8},
+{"__FSU87",  OP_CONVERT,   FS,     RL_DX_AX,       RL_,            RL_8},
+{"__FDU87",  OP_CONVERT,   FD,     RL_8,           RL_,            RL_8},
 
-"__FDFS",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX,
-"__RDFS",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX,
+{"__FDFS",   OP_CONVERT,   FD,     RL_8,           RL_,            RL_DX_AX},
+{"__RDFS",   OP_ROUND,     FD,     RL_8,           RL_,            RL_DX_AX},
 
-"__FSA",    OP_ADD,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__FSS",    OP_SUB,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__FSM",    OP_MUL,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__FSD",    OP_DIV,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__FSC",    OP_CMP,       FS,     RL_DX_AX,       RL_CX_BX,       RL_,
-"__FSN",    OP_NEGATE,    FS,     RL_DX_AX,       RL_,            RL_DX_AX,
-"__FDA",    OP_ADD,       FD,     RL_8,           RL_8,           RL_8,
-"__EDA",    OP_ADD,       FD,     RL_8,           RL_8,           RL_8,
-"__FDS",    OP_SUB,       FD,     RL_8,           RL_8,           RL_8,
-"__EDS",    OP_SUB,       FD,     RL_8,           RL_8,           RL_8,
-"__FDM",    OP_MUL,       FD,     RL_8,           RL_8,           RL_8,
-"__EDM",    OP_MUL,       FD,     RL_8,           RL_8,           RL_8,
-"__FDD",    OP_DIV,       FD,     RL_8,           RL_8,           RL_8,
-"__EDD",    OP_DIV,       FD,     RL_8,           RL_8,           RL_8,
-"__FDC",    OP_CMP,       FD,     RL_8,           RL_8,           RL_,
-"__EDC",    OP_CMP,       FD,     RL_8,           RL_8,           RL_,
-"__FDN",    OP_NEGATE,    FD,     RL_8,           RL_,            RL_8,
-"__I4M",    OP_MUL,       I4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__I4D",    OP_DIV,       I4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__I4D",    OP_MOD,       I4,     RL_DX_AX,       RL_CX_BX,       RL_CX_BX,
-"__I8M",    OP_MUL,       I8,     RL_8,           RL_8,           RL_8,
-"__I8ME",   OP_MUL,       I8,     RL_8,           RL_8,           RL_8,
-"__I8DQ",   OP_DIV,       I8,     RL_8,           RL_8,           RL_8,
-"__I8DQE",  OP_DIV,       I8,     RL_8,           RL_8,           RL_8,
-"__I8DR",   OP_MOD,       I8,     RL_8,           RL_8,           RL_8,
-"__I8DRE",  OP_MOD,       I8,     RL_8,           RL_8,           RL_8,
-"__U4M",    OP_MUL,       U4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__U4D",    OP_DIV,       U4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__U4D",    OP_MOD,       U4,     RL_DX_AX,       RL_CX_BX,       RL_CX_BX,
-"__U8M",    OP_MUL,       U8,     RL_8,           RL_8,           RL_8,
-"__U8ME",   OP_MUL,       U8,     RL_8,           RL_8,           RL_8,
-"__U8DQ",   OP_DIV,       U8,     RL_8,           RL_8,           RL_8,
-"__U8DQE",  OP_DIV,       U8,     RL_8,           RL_8,           RL_8,
-"__U8DR",   OP_MOD,       U8,     RL_8,           RL_8,           RL_8,
-"__U8DRE",  OP_MOD,       U8,     RL_8,           RL_8,           RL_8,
-"__I8LS",   OP_LSHIFT,    I8,     RL_8,           RL_SI,          RL_8,
-"__I8RS",   OP_RSHIFT,    I8,     RL_8,           RL_SI,          RL_8,
-"__U8LS",   OP_LSHIFT,    U8,     RL_8,           RL_SI,          RL_8,
-"__U8RS",   OP_RSHIFT,    U8,     RL_8,           RL_SI,          RL_8,
-"__PTS",    OP_SUB,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__PTC",    OP_CMP,       PT,     RL_DX_AX,       RL_CX_BX,       RL_,
-"__PIS",    OP_SUB,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__PIA",    OP_ADD,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"__STK",    OP_CALL,       0,     RL_,            RL_,            RL_,
-"__CHP",    OP_CALL,       0,     RL_,            RL_,            RL_,
-"__SCN1",   OP_SELECT,     0,     RL_AL,          RL_,            RL_,
-"__SCN2",   OP_SELECT,     0,     RL_AX,          RL_,            RL_,
-"__SCN4",   OP_SELECT,     0,     RL_DX_AX,       RL_,            RL_,
-"__EPI",    OP_CALL,       0,     RL_,            RL_,            RL_,
-"__PRO",    OP_CALL,       0,     RL_,            RL_,            RL_,
+{"__FSA",    OP_ADD,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__FSS",    OP_SUB,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__FSM",    OP_MUL,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__FSD",    OP_DIV,       FS,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__FSC",    OP_CMP,       FS,     RL_DX_AX,       RL_CX_BX,       RL_},
+{"__FSN",    OP_NEGATE,    FS,     RL_DX_AX,       RL_,            RL_DX_AX},
+{"__FDA",    OP_ADD,       FD,     RL_8,           RL_8,           RL_8},
+{"__EDA",    OP_ADD,       FD,     RL_8,           RL_8,           RL_8},
+{"__FDS",    OP_SUB,       FD,     RL_8,           RL_8,           RL_8},
+{"__EDS",    OP_SUB,       FD,     RL_8,           RL_8,           RL_8},
+{"__FDM",    OP_MUL,       FD,     RL_8,           RL_8,           RL_8},
+{"__EDM",    OP_MUL,       FD,     RL_8,           RL_8,           RL_8},
+{"__FDD",    OP_DIV,       FD,     RL_8,           RL_8,           RL_8},
+{"__EDD",    OP_DIV,       FD,     RL_8,           RL_8,           RL_8},
+{"__FDC",    OP_CMP,       FD,     RL_8,           RL_8,           RL_},
+{"__EDC",    OP_CMP,       FD,     RL_8,           RL_8,           RL_},
+{"__FDN",    OP_NEGATE,    FD,     RL_8,           RL_,            RL_8},
+{"__I4M",    OP_MUL,       I4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__I4D",    OP_DIV,       I4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__I4D",    OP_MOD,       I4,     RL_DX_AX,       RL_CX_BX,       RL_CX_BX},
+{"__I8M",    OP_MUL,       I8,     RL_8,           RL_8,           RL_8},
+{"__I8ME",   OP_MUL,       I8,     RL_8,           RL_8,           RL_8},
+{"__I8DQ",   OP_DIV,       I8,     RL_8,           RL_8,           RL_8},
+{"__I8DQE",  OP_DIV,       I8,     RL_8,           RL_8,           RL_8},
+{"__I8DR",   OP_MOD,       I8,     RL_8,           RL_8,           RL_8},
+{"__I8DRE",  OP_MOD,       I8,     RL_8,           RL_8,           RL_8},
+{"__U4M",    OP_MUL,       U4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__U4D",    OP_DIV,       U4,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__U4D",    OP_MOD,       U4,     RL_DX_AX,       RL_CX_BX,       RL_CX_BX},
+{"__U8M",    OP_MUL,       U8,     RL_8,           RL_8,           RL_8},
+{"__U8ME",   OP_MUL,       U8,     RL_8,           RL_8,           RL_8},
+{"__U8DQ",   OP_DIV,       U8,     RL_8,           RL_8,           RL_8},
+{"__U8DQE",  OP_DIV,       U8,     RL_8,           RL_8,           RL_8},
+{"__U8DR",   OP_MOD,       U8,     RL_8,           RL_8,           RL_8},
+{"__U8DRE",  OP_MOD,       U8,     RL_8,           RL_8,           RL_8},
+{"__I8LS",   OP_LSHIFT,    I8,     RL_8,           RL_SI,          RL_8},
+{"__I8RS",   OP_RSHIFT,    I8,     RL_8,           RL_SI,          RL_8},
+{"__U8LS",   OP_LSHIFT,    U8,     RL_8,           RL_SI,          RL_8},
+{"__U8RS",   OP_RSHIFT,    U8,     RL_8,           RL_SI,          RL_8},
+{"__PTS",    OP_SUB,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__PTC",    OP_CMP,       PT,     RL_DX_AX,       RL_CX_BX,       RL_},
+{"__PIS",    OP_SUB,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__PIA",    OP_ADD,       PT,     RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"__STK",    OP_CALL,       0,     RL_,            RL_,            RL_},
+{"__CHP",    OP_CALL,       0,     RL_,            RL_,            RL_},
+{"__SCN1",   OP_SELECT,     0,     RL_AL,          RL_,            RL_},
+{"__SCN2",   OP_SELECT,     0,     RL_AX,          RL_,            RL_},
+{"__SCN4",   OP_SELECT,     0,     RL_DX_AX,       RL_,            RL_},
+{"__EPI",    OP_CALL,       0,     RL_,            RL_,            RL_},
+{"__PRO",    OP_CALL,       0,     RL_,            RL_,            RL_},
 
-"IF@DP5DIV",OP_P5DIV,      FD,    RL_8,           RL_,            RL_8,
-"IF@P5DIV", OP_P5DIV,      FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
+{"IF@DP5DIV",OP_P5DIV,      FD,    RL_8,           RL_,            RL_8},
+{"IF@P5DIV", OP_P5DIV,      FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
 
-"IF@DPOW",  OP_POW,        FD,    RL_8,           RL_,            RL_8,
-"IF@DPOWI", OP_POW,        FD,    RL_8,           RL_,            RL_8,
-"IF@POW",   OP_POW,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"IF@POWI",  OP_POW,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"IF@IPOW",  OP_POW,        I4,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
+{"IF@DPOW",  OP_POW,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DPOWI", OP_POW,        FD,    RL_8,           RL_,            RL_8},
+{"IF@POW",   OP_POW,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"IF@POWI",  OP_POW,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"IF@IPOW",  OP_POW,        I4,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
 
-"IF@DATAN2",OP_ATAN2,      FD,    RL_8,           RL_,            RL_8,
-"IF@DFMOD", OP_FMOD,       FD,    RL_8,           RL_,            RL_8,
-"IF@DLOG",  OP_LOG,        FD,    RL_8,           RL_,            RL_8,
-"IF@DCOS",  OP_COS,        FD,    RL_8,           RL_,            RL_8,
-"IF@DSIN",  OP_SIN,        FD,    RL_8,           RL_,            RL_8,
-"IF@DTAN",  OP_TAN,        FD,    RL_8,           RL_,            RL_8,
-"IF@DSQRT", OP_SQRT,       FD,    RL_8,           RL_,            RL_8,
-"IF@DFABS", OP_FABS,       FD,    RL_8,           RL_,            RL_8,
-"IF@DACOS", OP_ACOS,       FD,    RL_8,           RL_,            RL_8,
-"IF@DASIN", OP_ASIN,       FD,    RL_8,           RL_,            RL_8,
-"IF@DATAN", OP_ATAN,       FD,    RL_8,           RL_,            RL_8,
-"IF@DCOSH", OP_COSH,       FD,    RL_8,           RL_,            RL_8,
-"IF@DEXP",  OP_EXP,        FD,    RL_8,           RL_,            RL_8,
-"IF@DLOG10",OP_LOG10,      FD,    RL_8,           RL_,            RL_8,
-"IF@DSINH", OP_SINH,       FD,    RL_8,           RL_,            RL_8,
-"IF@DTANH", OP_TANH,       FD,    RL_8,           RL_,            RL_8,
+{"IF@DATAN2",OP_ATAN2,      FD,    RL_8,           RL_,            RL_8},
+{"IF@DFMOD", OP_FMOD,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DLOG",  OP_LOG,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DCOS",  OP_COS,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DSIN",  OP_SIN,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DTAN",  OP_TAN,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DSQRT", OP_SQRT,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DFABS", OP_FABS,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DACOS", OP_ACOS,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DASIN", OP_ASIN,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DATAN", OP_ATAN,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DCOSH", OP_COSH,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DEXP",  OP_EXP,        FD,    RL_8,           RL_,            RL_8},
+{"IF@DLOG10",OP_LOG10,      FD,    RL_8,           RL_,            RL_8},
+{"IF@DSINH", OP_SINH,       FD,    RL_8,           RL_,            RL_8},
+{"IF@DTANH", OP_TANH,       FD,    RL_8,           RL_,            RL_8},
 
-"IF@ATAN2",OP_ATAN2,       FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"IF@FMOD", OP_FMOD,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX,
-"IF@LOG",  OP_LOG,         FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@COS",  OP_COS,         FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@SIN",  OP_SIN,         FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@TAN",  OP_TAN,         FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@SQRT", OP_SQRT,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@FABS", OP_FABS,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@ACOS", OP_ACOS,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@ASIN", OP_ASIN,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@ATAN", OP_ATAN,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@COSH", OP_COSH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@EXP",  OP_EXP,         FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@LOG10",OP_LOG10,       FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@SINH", OP_SINH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
-"IF@TANH", OP_TANH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX,
+{"IF@ATAN2",OP_ATAN2,       FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"IF@FMOD", OP_FMOD,        FS,    RL_DX_AX,       RL_CX_BX,       RL_DX_AX},
+{"IF@LOG",  OP_LOG,         FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@COS",  OP_COS,         FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@SIN",  OP_SIN,         FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@TAN",  OP_TAN,         FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@SQRT", OP_SQRT,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@FABS", OP_FABS,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@ACOS", OP_ACOS,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@ASIN", OP_ASIN,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@ATAN", OP_ATAN,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@COSH", OP_COSH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@EXP",  OP_EXP,         FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@LOG10",OP_LOG10,       FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@SINH", OP_SINH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
+{"IF@TANH", OP_TANH,        FS,    RL_DX_AX,       RL_,            RL_DX_AX},
 
-"__chipbug",OP_NOP,        0,     RL_,            RL_,            RL_,
-"__fdiv_m32",OP_NOP,       0,     RL_,            RL_,            RL_,
-"__fdiv_m64",OP_NOP,       0,     RL_,            RL_,            RL_,
-"__fdiv_m32r",OP_NOP,      0,     RL_,            RL_,            RL_,
-"__fdiv_m64r",OP_NOP,      0,     RL_,            RL_,            RL_,
-"__fdiv_fpr",OP_NOP,       0,     RL_,            RL_,            RL_,
+{"__chipbug",OP_NOP,        0,     RL_,            RL_,            RL_},
+{"__fdiv_m32",OP_NOP,       0,     RL_,            RL_,            RL_},
+{"__fdiv_m64",OP_NOP,       0,     RL_,            RL_,            RL_},
+{"__fdiv_m32r",OP_NOP,      0,     RL_,            RL_,            RL_},
+{"__fdiv_m64r",OP_NOP,      0,     RL_,            RL_,            RL_},
+{"__fdiv_fpr",OP_NOP,       0,     RL_,            RL_,            RL_},
 
-"__NOP",    OP_NOP,        0,     RL_,            RL_,            RL_ };
+{"__NOP",    OP_NOP,        0,     RL_,            RL_,            RL_ }};
 
 #include "cgnoalgn.h"
 typedef struct {
         call_class      class;
-        byte_seq        seq;
+        byte_seq_len    length;
+        char            data[];
 }rt_aux_info;
 
 
 static  rt_aux_info Scn1 = {
-
                         0, 6,
-                        0xF2,                   /*       repne*/
+                       {0xF2,                   /*       repne*/
                         0xAE,                   /*       scasb*/
                         0xD1, 0xE1,             /*       shl     cx,1*/
-                        0x89, 0xCF              /*       mov     di,cx*/
+                        0x89, 0xCF}             /*       mov     di,cx*/
                         };
 
 static  rt_aux_info Scn2 = {
                         0, 2,
-                        0xF2,                   /*       repne*/
-                        0xAF                    /*       scasw*/
+                       {0xF2,                   /*       repne*/
+                        0xAF}                   /*       scasw*/
                         };
 
 static  rt_aux_info Scn4 = {
                         0, 18,
-                        0x83, 0xC7, 0x02,       /* L1:   add     d1,2*/
+                       {0x83, 0xC7, 0x02,       /* L1:   add     d1,2*/
                         0x49,                   /* L2:   dec     cx*/
                         0x74, 0x08,             /*       je      L3*/
                         0xAF,                   /*       scasw*/
@@ -262,7 +262,7 @@ static  rt_aux_info Scn4 = {
                         0x92,                   /*       xchg    dx,ax*/
                         0x75, 0xF5,             /*       jne     L2*/
                         0xD1, 0xE1,             /* L3:   shl     cx,1*/
-                        0x89, 0xCF              /*       mov     di,cx*/
+                        0x89, 0xCF}             /*       mov     di,cx*/
                         };
 
 #include "cgrealgn.h"
@@ -531,6 +531,8 @@ extern  instruction     *rMAKECALL( instruction *ins ) {
             break;
         case N_INDEXED:            /* Dec-20-88*/
             also_used = reg_name;  /* - the index doesn't need an index register!*/
+        default:
+            break;
         }
         new_ins->operands[ CALL_OP_USED2 ] = also_used;
     } else {
@@ -540,13 +542,13 @@ extern  instruction     *rMAKECALL( instruction *ins ) {
                                                     ins->type_class );
     new_ins->result = NULL;
     new_ins->num_operands = 2;         /* special case for OP_CALL*/
-    new_ins->zap = AllocRegName( all_regs );/* all parm regs could be zapped*/
+    new_ins->zap = &AllocRegName( all_regs )->r;/* all parm regs could be zapped*/
     last_ins = new_ins;
     if( ins->result != NULL ) {
         regs = FirstReg( info->result );
         tmp = regs;
         HW_TurnOn( tmp, new_ins->zap->reg );
-        new_ins->zap = AllocRegName( tmp );
+        new_ins->zap = &AllocRegName( tmp )->r;
         reg_name = AllocRegName( regs );
         new_ins->result = reg_name;
         last_ins = MakeMove( reg_name, ins->result, ins->type_class );
@@ -596,6 +598,8 @@ extern  name    *ScanCall( tbl_control *table, name *value,
     case U4:
         RoutineNum = RT_SCAN4 - BEG_RTNS;
         break;
+    default:
+        break;
     }
 
     reg_name = AllocRegName( FirstReg( RTInfo[  RoutineNum  ].left ) );
@@ -632,7 +636,7 @@ extern  name    *ScanCall( tbl_control *table, name *value,
                                              0, CG_LBL, U2 );
     new_ins->result = NULL;
     new_ins->num_operands = 2;
-    new_ins->zap = AllocRegName( HW_CX_DI );
+    new_ins->zap = &AllocRegName( HW_CX_DI )->r;
     new_ins->result = reg_name;
     AddIns( new_ins );
 
@@ -695,7 +699,7 @@ extern  instruction     *rMAKEFNEG( instruction *ins ) {
     new_ins->operands[ CALL_OP_ADDR ] = AllocMemory( lbl, 0, CG_LBL, U2 );
     new_ins->result = NULL;
     new_ins->num_operands = 2;
-    new_ins->zap = exp_reg;
+    new_ins->zap = &exp_reg->r;
     last_ins = new_ins;
     new_ins->result = exp_reg;
     last_ins = MakeMove( reg_name, ins->result, info->operand_class );
@@ -713,7 +717,7 @@ extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
     see ScanCall for explanation
 */
 
-    pointer     info;
+    pointer     info = NULL;
 
     switch( request ) {
     case AUX_LOOKUP:
@@ -738,7 +742,9 @@ extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
         break;
     case CALL_BYTES:
         info = hdl;
-        info = &((rt_aux_info *)info)->seq;
+        info = &((rt_aux_info *)info)->length;
+        break;
+    default:
         break;
     }
     return( info );
