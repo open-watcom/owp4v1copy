@@ -59,61 +59,61 @@ Modified        By              Reason
 93/02/09        A.F.Scian       added calls to zapTemplateClassDeclSpec
                                 (see YYDRIVER.C for explanation)
 93/03/11        J.W.Welch       New messaging
-93/03/16	A.F.Scian	streamlined member-declarator to directly call
-				DeclNoInit instead of going through DataInitNoInit
-93/03/29	A.F.Scian	added semantics for "new (int [x+1])" 5.3.3
-				"The first array dimension can be a general
-				 integral expression even when <type-id> is used"
-93/04/20	A.F.Scian	added rules for y_template_scoped_typename to
-				handle nested types inside of templates
-93/04/21	A.F.Scian	fixed actions for function-declaration to not
-				pop the GS_DECL_SPEC stack until the function
-				body is processed (this allows any linkage on
-				the function symbol to be retained for the
-				entire processing of the function body)
-93/07/13	A.F.Scian	- added more than one pointer declarator to
-				  conversion function ids
-				- fixed concatenation of strings so that the
-				  type of the result is correct
-93/07/29	A.F.Scian	it was impossible to tell the difference between
-				no parms and ( void ) (both had parms == NULL)
-				so code now calls AddExplicitParms which handles
-				the problem by setting a bit in the DECL_INFO
-93/08/11	A.F.Scian	allow multiple ;'s in member decl lists
-				e.g., struct S { int a;;;; void foo(){};;; };
-93/12/01	A.F.Scian	added %ambig directives supported by new YACC
-93/12/15	A.F.Scian	added operator new []/operator delete [] support
-94/03/23	A.F.Scian	set up so that class S<int>; doesn't define the
-				class
-94/04/18	A.F.Scian	added support for "class __export __stdcall X"
-94/04/19	A.F.Scian	push some calls to FreeDeclInfo into functions
-				that are called before
-94/06/08	A.F.Scian	improved error message location for missing ';'
-				error messages
-94/10/14	A.F.Scian	added __declspec( <id> )
-94/10/18	A.F.Scian	added kludge to support:
-				typedef struct S { } S, const *CPS;
-							^^^^^- accept this
-94/10/25	A.F.Scian	upgrade LHS of assignment-expr so that it
-				accepts casts and pm-exprs
-94/11/02	A.F.Scian	added support for "class __declspec(dllimport) X"
-94/12/07	A.F.Scian	added Y_GLOBAL_ID as a valid declarator-id so
-				struct S { friend int ::foo( int ); }; works
-95/02/23	A.F.Scian	added __builtin_isfloat( <type-id> ) construct
-95/04/28	A.F.Scian	added __unaligned modifier
-95/05/16	A.F.Scian	added class template directives
-95/06/28	A.F.Scian	added more general offsetof field expressions
-96/01/10	A.F.Scian	adjusted syntax of __unaligned to match 'const'
-				rather than 'far'
-96/02/12	A.F.Scian	added support for __declspec( pragma-modifier )
-96/02/26	A.F.Scian	added some namespace syntax
-96/03/19	A.F.Scian	adjusted ++@/--@ grammar as per ISO C++ mtg in
-				Santa Cruz, CA resolutions
-96/05/07	A.F.Scian	added "using namespace X;"
-96/06/07	A.F.Scian	added support for multiple ids in __declspec()
-96/07/02	A.F.Scian	added sizeof <type-name>
-96/07/25	A.F.Scian	accept unsigned <type-name> : 1; as a bitfield
-96/10/28	A.F.Scian	fixed 96/07/25 so that <type-name> : 1; still works
+93/03/16        A.F.Scian       streamlined member-declarator to directly call
+                                DeclNoInit instead of going through DataInitNoInit
+93/03/29        A.F.Scian       added semantics for "new (int [x+1])" 5.3.3
+                                "The first array dimension can be a general
+                                 integral expression even when <type-id> is used"
+93/04/20        A.F.Scian       added rules for y_template_scoped_typename to
+                                handle nested types inside of templates
+93/04/21        A.F.Scian       fixed actions for function-declaration to not
+                                pop the GS_DECL_SPEC stack until the function
+                                body is processed (this allows any linkage on
+                                the function symbol to be retained for the
+                                entire processing of the function body)
+93/07/13        A.F.Scian       - added more than one pointer declarator to
+                                  conversion function ids
+                                - fixed concatenation of strings so that the
+                                  type of the result is correct
+93/07/29        A.F.Scian       it was impossible to tell the difference between
+                                no parms and ( void ) (both had parms == NULL)
+                                so code now calls AddExplicitParms which handles
+                                the problem by setting a bit in the DECL_INFO
+93/08/11        A.F.Scian       allow multiple ;'s in member decl lists
+                                e.g., struct S { int a;;;; void foo(){};;; };
+93/12/01        A.F.Scian       added %ambig directives supported by new YACC
+93/12/15        A.F.Scian       added operator new []/operator delete [] support
+94/03/23        A.F.Scian       set up so that class S<int>; doesn't define the
+                                class
+94/04/18        A.F.Scian       added support for "class __export __stdcall X"
+94/04/19        A.F.Scian       push some calls to FreeDeclInfo into functions
+                                that are called before
+94/06/08        A.F.Scian       improved error message location for missing ';'
+                                error messages
+94/10/14        A.F.Scian       added __declspec( <id> )
+94/10/18        A.F.Scian       added kludge to support:
+                                typedef struct S { } S, const *CPS;
+                                                        ^^^^^- accept this
+94/10/25        A.F.Scian       upgrade LHS of assignment-expr so that it
+                                accepts casts and pm-exprs
+94/11/02        A.F.Scian       added support for "class __declspec(dllimport) X"
+94/12/07        A.F.Scian       added Y_GLOBAL_ID as a valid declarator-id so
+                                struct S { friend int ::foo( int ); }; works
+95/02/23        A.F.Scian       added __builtin_isfloat( <type-id> ) construct
+95/04/28        A.F.Scian       added __unaligned modifier
+95/05/16        A.F.Scian       added class template directives
+95/06/28        A.F.Scian       added more general offsetof field expressions
+96/01/10        A.F.Scian       adjusted syntax of __unaligned to match 'const'
+                                rather than 'far'
+96/02/12        A.F.Scian       added support for __declspec( pragma-modifier )
+96/02/26        A.F.Scian       added some namespace syntax
+96/03/19        A.F.Scian       adjusted ++@/--@ grammar as per ISO C++ mtg in
+                                Santa Cruz, CA resolutions
+96/05/07        A.F.Scian       added "using namespace X;"
+96/06/07        A.F.Scian       added support for multiple ids in __declspec()
+96/07/02        A.F.Scian       added sizeof <type-name>
+96/07/25        A.F.Scian       accept unsigned <type-name> : 1; as a bitfield
+96/10/28        A.F.Scian       fixed 96/07/25 so that <type-name> : 1; still works
 */
 %token Y_IMPOSSIBLE
 
@@ -547,7 +547,7 @@ expression-before-semicolon
     {
         $$ = $1;
         if( t != Y_SEMI_COLON ) {
-	    SetErrLoc( &yylocation );
+            SetErrLoc( &yylocation );
             CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
             what = P_DIAGNOSED;
         }
@@ -845,23 +845,23 @@ unary-expression
 offsetof-field
     : make-id
     {
-	$$ = PTreeBinary( CO_DOT, $1, NULL );
-	$$ = PTreeBinary( CO_DOT, NULL, $$ );
+        $$ = PTreeBinary( CO_DOT, $1, NULL );
+        $$ = PTreeBinary( CO_DOT, NULL, $$ );
     }
     | make-id offsetof-index
     {
-	$$ = PTreeBinary( CO_DOT, $1, $2 );
-	$$ = PTreeBinary( CO_DOT, NULL, $$ );
+        $$ = PTreeBinary( CO_DOT, $1, $2 );
+        $$ = PTreeBinary( CO_DOT, NULL, $$ );
     }
     | offsetof-field Y_DOT make-id
     {
-	$$ = setLocation( PTreeBinary( CO_DOT, $3, NULL ), &yylp[2] );
-	$$ = setLocation( PTreeBinary( CO_DOT, $1, $$ ), &yylp[2] );
+        $$ = setLocation( PTreeBinary( CO_DOT, $3, NULL ), &yylp[2] );
+        $$ = setLocation( PTreeBinary( CO_DOT, $1, $$ ), &yylp[2] );
     }
     | offsetof-field Y_DOT make-id offsetof-index
     {
-	$$ = setLocation( PTreeBinary( CO_DOT, $3, $4 ), &yylp[2] );
-	$$ = setLocation( PTreeBinary( CO_DOT, $1, $$ ), &yylp[2] );
+        $$ = setLocation( PTreeBinary( CO_DOT, $3, $4 ), &yylp[2] );
+        $$ = setLocation( PTreeBinary( CO_DOT, $1, $$ ), &yylp[2] );
     }
     ;
 
@@ -1257,8 +1257,8 @@ strings
 
 /*** declaration syntax ***/
 might-restart-declarations
-	: start-restart-declarations
-	{ popRestartDecl( state ); }
+    : start-restart-declarations
+    { popRestartDecl( state ); }
     | start-restart-declarations declarations
     { popRestartDecl( state ); }
     ;
@@ -1363,7 +1363,7 @@ simple-declaration-before-semicolon
     : simple-declaration
     {
         if( t != Y_SEMI_COLON ) {
-	    SetErrLoc( &yylocation );
+            SetErrLoc( &yylocation );
             CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
             what = P_DIAGNOSED;
         }
@@ -1722,7 +1722,7 @@ init-declarator
     {
         $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
         $$ = InsertDeclInfo( GetCurrScope(), $1 );
-	setInitWithLocn( $$, $3, &yylp[2] );
+        setInitWithLocn( $$, $3, &yylp[2] );
     }
     ;
 
@@ -1738,16 +1738,16 @@ comma-init-declarator
     { $$ = $1; }
     | cv-qualifiers-opt ptr-mod-init-declarator
     {
-	$2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = AddMSCVQualifierKludge( $1, $2 );
         $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
         $$ = InsertDeclInfo( GetCurrScope(), $2 );
     }
     | cv-qualifiers-opt actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
     {
-	$2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = AddMSCVQualifierKludge( $1, $2 );
         $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
         $$ = InsertDeclInfo( GetCurrScope(), $2 );
-	setInitWithLocn( $$, $4, &yylp[3] );
+        setInitWithLocn( $$, $4, &yylp[3] );
     }
     ;
 
@@ -1783,12 +1783,12 @@ declarator
 comma-declarator
     : cv-qualifiers-opt ptr-mod-declarator
     {
-	$2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = AddMSCVQualifierKludge( $1, $2 );
         $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
     }
     | cv-qualifiers-opt actual-declarator
     {
-	$2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = AddMSCVQualifierKludge( $1, $2 );
         $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
     }
     ;
@@ -1807,8 +1807,8 @@ ptr-mod-init-declarator
     { $$ = AddDeclarator( $2, $1 ); }
     | ptr-mod actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
     {
-	$$ = AddDeclarator( $2, $1 );
-	setInitWithLocn( $$, $4, &yylp[3] );
+        $$ = AddDeclarator( $2, $1 );
+        setInitWithLocn( $$, $4, &yylp[3] );
     }
     ;
 
@@ -1834,7 +1834,7 @@ actual-declarator
     | actual-declarator Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
     {
         $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
-	$$ = AddExplicitParms( $$, $3 );
+        $$ = AddExplicitParms( $$, $3 );
     }
     | actual-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
     { $$ = AddArrayDeclarator( $1, $3 ); }
@@ -2182,37 +2182,37 @@ defarg-parse-or-copy
     {
         DECL_INFO *dinfo;
 
-	DbgAssert( $1 == NULL );
-	dinfo = $<dinfo>0;
-	dinfo->defarg_expr = $3;
-	dinfo->has_defarg = TRUE;
-	TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        DbgAssert( $1 == NULL );
+        dinfo = $<dinfo>0;
+        dinfo->defarg_expr = $3;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
     }
     | defarg-check Y_DEFARG_GONE_SPECIAL
     {
         DECL_INFO *dinfo;
 
-	dinfo = $<dinfo>0;
-	dinfo->defarg_rewrite = $1;
-	dinfo->has_defarg = TRUE;
-	TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        dinfo = $<dinfo>0;
+        dinfo->defarg_rewrite = $1;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
     }
     ;
     
 defarg-check
     : /* nothing */
     {
-	if( ClassOKToRewrite() ) {
-	    if( t != Y_EQUAL ) {
-		what = P_SYNTAX;
-		$$ = NULL;
-	    } else {
-		$$ = RewritePackageDefArg( NULL );
-		t = Y_DEFARG_GONE_SPECIAL;
-	    }
-	} else {
-	    $$ = NULL;
-	}
+        if( ClassOKToRewrite() ) {
+            if( t != Y_EQUAL ) {
+                what = P_SYNTAX;
+                $$ = NULL;
+            } else {
+                $$ = RewritePackageDefArg( NULL );
+                t = Y_DEFARG_GONE_SPECIAL;
+            }
+        } else {
+            $$ = NULL;
+        }
     }
     ;
 
@@ -2238,10 +2238,10 @@ template-defarg-copy
     {
         DECL_INFO *dinfo;
 
-	dinfo = $<dinfo>0;
-	dinfo->defarg_rewrite = $1;
-	dinfo->has_defarg = TRUE;
-	TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        dinfo = $<dinfo>0;
+        dinfo->defarg_rewrite = $1;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
     }
     ;
 
@@ -2274,7 +2274,7 @@ ctor-declarator
             what = P_CLASS_TEMPLATE;
         } else {
             AddDeclarator( $$, MakeFnType( &($2), $4, $5 ) );
-	    $$ = AddExplicitParms( $$, $2 );
+            $$ = AddExplicitParms( $$, $2 );
             $$ = FinishDeclarator( dspec, $$ );
         }
     }
@@ -2325,10 +2325,10 @@ function-declaration
 function-definition
     : function-declaration function-body
     {
-        GStackPop( &(state->gstack) );	/* decl-info */
-	if( $1->has_dspec ) {
-	    GStackPop( &(state->gstack) );	/* decl-spec */
-	}
+        GStackPop( &(state->gstack) );  /* decl-info */
+        if( $1->has_dspec ) {
+            GStackPop( &(state->gstack) );      /* decl-spec */
+        }
         if( $1->body != NULL ) {
             if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) ) {
                 TemplateFunctionAttachDefn( $1 );
@@ -2364,7 +2364,7 @@ absorb-body
         /* token will be thrown away (see check-for-rewrite) */
         ParseFlush();
         if( doFnbodyRewrite() ) {
-	    REWRITE *rewrite;
+            REWRITE *rewrite;
             rewrite = RewritePackageFunction( getMultiToken() );
             state->gstack->u.dinfo->body = rewrite;
         } else {
@@ -2394,7 +2394,7 @@ init-start
         dinfo = state->gstack->u.dinfo;
         reuseGStack( state, GS_INIT_DATA );
         DataInitStart( &(state->gstack->u.initdata), dinfo );
-	DataInitSimpleLocn( &yylp[1] );
+        DataInitSimpleLocn( &yylp[1] );
     }
     ;
 
@@ -2459,12 +2459,12 @@ class-name
         switch( t ) {
         case Y_LEFT_BRACE:
         case Y_COLON:
-	    if( state->template_class_inst_defer ) {
-		what = P_DEFER_DEFN;
-		decl_type = CLASS_DECLARATION;
-	    } else {
-		decl_type = CLASS_DEFINITION;
-	    }
+            if( state->template_class_inst_defer ) {
+                what = P_DEFER_DEFN;
+                decl_type = CLASS_DECLARATION;
+            } else {
+                decl_type = CLASS_DEFINITION;
+            }
             break;
         case Y_SEMI_COLON:
             decl_type = CLASS_DECLARATION;
@@ -2588,8 +2588,8 @@ member-declaration
     | access-declaration Y_SEMI_COLON
     | Y_SEMI_COLON
     {
-	SetErrLoc( &yylp[1] );
-	CErr1( WARN_EMPTY_MEMBER_DECL );
+        SetErrLoc( &yylp[1] );
+        CErr1( WARN_EMPTY_MEMBER_DECL );
     }
     ;
 
@@ -2597,7 +2597,7 @@ simple-member-declaration-before-semicolon
     : simple-member-declaration
     {
         if( t != Y_SEMI_COLON ) {
-	    SetErrLoc( &yylocation );
+            SetErrLoc( &yylocation );
             CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
             what = P_DIAGNOSED;
         }
