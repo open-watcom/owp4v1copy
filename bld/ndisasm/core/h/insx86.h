@@ -430,6 +430,12 @@ inspick( fistp10,       "fistp",        0x000098db,     0x0000f8fb,     X86FType
 inspick( fistp6400,     "fistp",        0x000038df,     0x0000f8ff,     X86FType1)
 inspick( fistp6401,     "fistp",        0x000078df,     0x0000f8ff,     X86FType1)
 inspick( fistp6410,     "fistp",        0x0000b8df,     0x0000f8ff,     X86FType1)
+inspick( fisttp00,      "fisttp",       0x000008db,     0x0000f8fb,     X86FType2) // SSE3
+inspick( fisttp01,      "fisttp",       0x000048db,     0x0000f8fb,     X86FType2) // SSE3
+inspick( fisttp10,      "fisttp",       0x000088db,     0x0000f8fb,     X86FType2) // SSE3
+inspick( fisttp6400,    "fisttp",       0x000008dd,     0x0000f8ff,     X86FType1) // SSE3
+inspick( fisttp6401,    "fisttp",       0x000048dd,     0x0000f8ff,     X86FType1) // SSE3
+inspick( fisttp6410,    "fisttp",       0x000088dd,     0x0000f8ff,     X86FType1) // SSE3
 inspick( fsub00,        "fsub",         0x000020d8,     0x0000f8fb,     X86FType2)
 inspick( fsub01,        "fsub",         0x000060d8,     0x0000f8fb,     X86FType2)
 inspick( fsub10,        "fsub",         0x0000a0d8,     0x0000f8fb,     X86FType2)
@@ -516,6 +522,12 @@ inspick( fucomp,        "fucomp",       0x0000e8dd,     0x0000f8ff,     X86FType
 inspick( fucompp,       "fucompp",      0x0000e9da,     0x0000ffff,     X86FType4)
 inspick( fxam,          "fxam",         0x0000e5d9,     0x0000ffff,     X86FType4)
 inspick( fxch,          "fxch",         0x0000c8d9,     0x0000f8ff,     X86FType3B)
+inspick( fxrstor00,     "fxrstor",      0x0008ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
+inspick( fxrstor01,     "fxrstor",      0x0048ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
+inspick( fxrstor10,     "fxrstor",      0x0088ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
+inspick( fxsave00,      "fxsave",       0x0000ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
+inspick( fxsave01,      "fxsave",       0x0040ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
+inspick( fxsave10,      "fxsave",       0x0080ae0f,     0x00f8ffff,     X86ModRM_24) // MMX,SSEx
 inspick( fxtract,       "fxtract",      0x0000f4d9,     0x0000ffff,     X86FType4)
 inspick( fyl2x,         "fyl2x",        0x0000f1d9,     0x0000ffff,     X86FType4)
 inspick( fyl2xp1,       "fyl2xp1",      0x0000f9d9,     0x0000ffff,     X86FType4)
