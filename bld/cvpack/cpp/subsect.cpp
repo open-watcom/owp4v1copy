@@ -39,13 +39,6 @@
 
 WCStack< SymbolStruct*, WCPtrSList<SymbolStruct> > SstAlignSym::symStack;
 
-SstGlobalTypes::SstGlobalTypes()
-/******************************/
-{
-    LFLeafStruct::SetGlobalTypeArray(_globalTypingInfo);
-    LFLeafStruct::SetLocalTypeArray(_localTypingInfo);
-}
-
 /*SstGlobalTypes::~SstGlobalTypes()
 {
     for ( unsigned_16 i = ToTypeIndex(0);

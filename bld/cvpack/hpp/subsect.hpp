@@ -46,7 +46,7 @@
 #include "typemap.hpp"
 #include "makeexe.hpp"
 #include "cssymbol.hpp"
-#include "typearray.hpp"
+#include "typearay.hpp"
 #include "retrieve.hpp"
 
 class SymbolStruct;
@@ -65,7 +65,10 @@ class SstGlobalTypes {
 
     public :
 
-        SstGlobalTypes();
+        SstGlobalTypes() {
+            LFLeafStruct::SetGlobalTypeArray(_globalTypingInfo);
+            LFLeafStruct::SetLocalTypeArray(_localTypingInfo);
+        }
 
         virtual ~SstGlobalTypes() { }
 
