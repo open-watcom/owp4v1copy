@@ -239,8 +239,10 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
     }
 #endif
     if( *amt != len ) {
-    rc = ENOSPC;
-    __set_errno( rc );
+        rc = ENOSPC;
+        __set_errno( rc );
+    } else {
+        rc = 0;
     }
     return( rc );
 }
