@@ -1444,6 +1444,11 @@ STATIC RET_T handleCHDrive( char *cmd )
 
 
 #if !defined( __UNIX__ )
+typedef struct {
+    BIT bForce  : 1;
+    BIT bSilent : 1;
+} rm_flags;
+
 STATIC RET_T handleRMSyntaxError( void )
 /***************************************/
 {
@@ -1451,12 +1456,12 @@ STATIC RET_T handleRMSyntaxError( void )
     return( RET_ERROR );
 }
 
-STATIC RET_T getRMArgs( const char *line, BOOLEAN *bForce, const char **pfile )
+STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
 /******************************************************************************
  * returns RET_WARN when there are no more arguments
  */
 {
-    static char     *p;
+    static char     *p  = NULL;
 
                             /* first run? */
     if( line ) {
@@ -1468,7 +1473,10 @@ STATIC RET_T getRMArgs( const char *line, BOOLEAN *bForce, const char **pfile )
             while( isalpha(p[0]) ) {
                 switch( tolower( p[0] ) ) {
                     case 'f':
-                        *bForce = TRUE;
+                        flags->bForce = TRUE;
+                        break;
+                    case 's':
+                        flags->bSilent = TRUE;
                         break;
                     default:
                         return( handleRMSyntaxError() );
@@ -1477,14 +1485,9 @@ STATIC RET_T getRMArgs( const char *line, BOOLEAN *bForce, const char **pfile )
             }
             p = SkipWS( p );
         }
+    }
 
-        for( *pfile = (const char *) p; NULLCHAR != *p && !isws( p[0] ); p++ );
-        if( *p == NULLCHAR )
-            p = NULL;
-        else
-            *p++ = NULLCHAR;
-
-    } else if( p ) {
+    if( p && *p ) {
         for( *pfile = (const char *) p; NULLCHAR != *p && !isws( p[0] ); p++ );
         if( *p == NULLCHAR )
             p = NULL;
@@ -1500,14 +1503,17 @@ STATIC RET_T getRMArgs( const char *line, BOOLEAN *bForce, const char **pfile )
 
 STATIC RET_T handleRM( char *cmd )
 /*********************************
- * RM [-f] <file> ...
+ * RM [-f -s] <file> ...
+ *
+ * -f   Force deletion of read-only files.
+ * -s   Silent operation. Nothing is printed, ever.
  */
 {
-    BOOLEAN     bForce;
+    rm_flags    flags;
     RET_T       rt;
     const char  *pfname;
 
-    rt = getRMArgs( cmd, &bForce, &pfname );
+    rt = getRMArgs( cmd, &flags, &pfname );
     while( RET_SUCCESS == rt ) {
         const char    *dfile;
 
@@ -1521,16 +1527,21 @@ STATIC RET_T handleRM( char *cmd )
 
                 _dos_getfileattr( dfile, &attribute );
                 if( attribute & _A_RDONLY ) {
-                    if( bForce ) {
+                    if( flags.bForce ) {
                         _dos_setfileattr( dfile, _A_NORMAL );
                         rv = unlink( dfile );
                     }
                 }
             }
-            if( 0 != rv ) {
-                PrtMsg( ERR| SYSERR_DELETING_FILE, dfile );
-                return( RET_ERROR );
+            if( !flags.bSilent ) {
+                if( 0 != rv ) {
+                    PrtMsg( ERR| SYSERR_DELETING_FILE, dfile );
+                } else {
+                    PrtMsg( INF| DELETING_FILE, dfile );
+                }
             }
+            if( 0 != rv )
+                return( RET_ERROR );
 
             dfile = DoWildCard( NULL );
         }

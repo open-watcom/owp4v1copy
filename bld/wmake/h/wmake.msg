@@ -258,6 +258,8 @@ pick( GETDATE_MSG,                "\t%s\t%E",
                                 "\t%s\t%E" )
 pick( WILL_BE_BUILT_BECAUSE_OF,                "%s will be built because of %s",
                                 "%s will be built because of %s" )
+pick( DELETING_FILE,            "Deleting file %s",
+                                "Deleting file %s" )
 
 pick( JUST_A_TAB,                "\t",
                                 "\t" )
