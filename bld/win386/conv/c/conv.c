@@ -358,7 +358,11 @@ main( int argc, char *argv[] )
 
     while( fgets( fname, 50, pf ) != NULL ) {
         fname[ strlen( fname ) - 1 ] = 0;
+#ifdef __UNIX__
+        sprintf( defname, "%s/%s", dir, fname );
+#else
         sprintf( defname, "%s\\%s", dir, fname );
+#endif
         f = fopen( defname, "r" );
         if( f == NULL ) {
             printf("error opening file %s\n", defname );
