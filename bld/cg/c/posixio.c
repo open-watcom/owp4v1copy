@@ -309,7 +309,6 @@ static  handle  CreateStream( char *name ) {
 
     int         retc;
 
-    printf("stream created %s\n", name);
     retc = open( name, O_CREAT+O_TRUNC+O_RDWR+O_BINARY, PMODE );
     if( retc == -1 ) {
         ObjError( errno );
