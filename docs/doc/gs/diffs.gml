@@ -16,17 +16,123 @@ recompile your application.
 .*
 .np
 Following is a list of changes made in &product 1.3:
-:cmt Reflects main Perforce branch as of 2004/01/20 - Carl
+:cmt Reflects main Perforce branch as of 2004/05/23
 .begbull
 .bull
-Linker for Win32 targets can now create file checksums. These are primarily used for
-DLL's and device drivers but can be applied to all Win32 PECOFF images if required.
+The C runtime library has been made significantly more C99 compliant. A number
+of new headers have been added (inttypes.h, stdbool.h, stdint.h, wctype.h) and
+corresponding new functions implemented. Wide character classification
+functions were moved out of ctype.h into wctype.h. C99 va_copy macro was
+added to stdarg.h.
 .bull
-Linker for Win32 targets can now set operating system version requirements into the PECOFF 
+Added 'cname' style C++ headers.
+.bull
+Support for SSE, SSE2 and 3DNow! instruction sets has been added. Affected tools
+are the assembler (wasm), as well as all x86 compilers, disassembler and debugger.
+The debugger now also supports MMX registers formatted as floats (for 3DNow!)
+as well as a new XMM register window for SSE.
+.bull
+C compiler performance has been significantly improved (up to 5-10 times speedup)
+when compiling large and complex source files.
+.bull
+All x86 compilers now have the ability to perform no truncation when converting
+floating point values to integers. Additionally, 32-bit x86 compilers have the
+option to inline the rounding code instead of calling __CHP.
+.bull
+The C lexical scanner no longer evaluates constants with (U)LL suffix that
+fit into 32 bits as zero (1ULL was wrong, LONGLONG_MAX was correct).
+.bull
+C and C++ x86 inline assembler has been fixed to properly process hexadecimal
+constants postfixed with 'h'.
+.bull
+The C compiler now supports the C99 'inline' keyword, in addition to previously
+supported '_inline' and '__inline' keywords.
+.bull
+The C compiler now treats a sequence of adjacent character strings as wide if
+any of the components are wide (required by C99), instead of depending on the
+type of the last component. For example, L"foo " "bar" is now interpreted as
+L"foo bar", instead of "foo bar".
+.bull
+The internal C compiler limit on complex expressions has been increased
+and if it is still insufficient, the compiler now reports an error instead of
+crashing.
+.bull
+C++ compiler diagnostic messages have been made more consistent and slightly more
+detailed.
+.bull
+The C compiler now issues a warning on the default warning level if a function
+with no prototype is referenced. This was previously warning W301 (level 3), now
+it is warning W131 (level 1).
+.bull
+Linker for Win32 targets can now create file checksums. These are primarily used
+for DLL's and device drivers but can be applied to all Win32 PECOFF images
+if required.
+.bull
+Linker for Win32 targets can now set operating system version requirements into
+the PECOFF optional header (Microsoft extended header).
+.bull
+Linker for Win32 targets can now set the linker version number into the PECOFF
 optional header (Microsoft extended header).
-.bull (Microsoft extended header).
-Linker for Win32 targets can now set the linker version number into the PECOFF optional
-header (Microsoft extended header).
+.bull
+The linker will now eliminate zero-sized segments from NE format (16-bit OS/2
+and Windows) executables. This fixes a problem where Windows 3.x would refuse
+to load an executable with zero sized segment. This could happen especially
+with C++ programs where some segments may have ended up empty after eliminating
+unused functions.
+.bull
+Command line parsing for wccxxx, wppxxx and cl has been changed such that a
+double backslash inside a quoted string is collapsed to a single backslash,
+and hence "foo\\" now translates to 'foo\' and not 'foo\"'.
+.bull
+The IDE and other graphical tools no longer leak system resources (a bug introduced
+in version 1.2).
+.bull
+The source browser now correctly decodes array information; Version 11.0c of
+Watcom C/C++ started emitting array browse information in a new format and the
+browser hadn't been updated accordingly.
+.bull
+The OS/2 debuggers now dynamically allocate buffer for the command line,
+preventing crashes when the command line was over approx. 260 bytes long.
+.bull
+The make program (wmake) has been sped up very slightly. Also the 'echo' command
+is now internal and no longer spawns the system command interpreter.
+.bull
+The precision of DBL_MAX, DBL_MIN and DBL_EPSILON has been increased; the non-standard
+variants prefixed with an underscore have been removed.
+.bull
+The C99 functions atoll(), lltoa(), ulltoa(), strtoll(), strtoull() and corresponding
+wide character functions have been added to the C runtime library.
+.bull
+The _beginthread() function now consistently returns -1 in case of error on
+all platforms.
+.bull
+The stdaux and stdprn streams are now only defined on DOS based platforms, ie.
+DOS, Win16 and Win386. No other platforms support stdaux or stdprn.
+.bull
+The assert() macro now prints function name in addition to source file and
+line number, in accordance with C99.
+.bull
+The _heapchk() function will now always perform a consistency check on the
+heap, where it would previously only check consistency if there had been
+allocations/frees since last call to _heapchk(). As a consequence, _heapchk()
+previously did not detect certain instances of heap corruption.
+.bull
+[OS/2 32-bit] The default __disallow_single_dgroup() implementation no longer
+statically links agaist PMWIN.DLL. This allows DLLs to load on systems where
+PMWIN.DLL isn't present.
+.bull
+[OS/2 32-bit] Re-implemented clock(). The new implementation uses the OS
+millisecond counter and is hence not susceptible to TZ changes. It is also
+smaller, faster and more accurate, although it may wrap around earlier than
+the original implementation.
+.bull
+The disassembler (wdis) now correctly processes x86 'push 8-bit immediate'
+instructions.
+.bull
+The disassembler now correctly processes absolute memory references. All memory
+references without fixup are now disassembled as ds:[...] or sreg:[...].
+.bull
+Several DirectX Win32 programming samples have been added.
 .endbull
 .*
 .*
