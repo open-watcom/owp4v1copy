@@ -64,8 +64,8 @@ sw_a_16bit    =-0
 sw_a_register =-5r
 sw_a_stack    =-5s
 
-sw_a_286 =$(sw_a_intel) $(sw_a_calls)
-sw_a_386 =$(sw_a_intel) $(sw_a_calls)
+sw_a_286 =$(sw_a_intel) $(sw_a_calls) -D_BUILDING_MATHLIB
+sw_a_386 =$(sw_a_intel) $(sw_a_calls) -D_BUILDING_MATHLIB
 sw_a_287 =$(sw_a_intel) -fpi -fp0
 sw_a_387 =$(sw_a_intel) -fpi87 -fp5
 sw_a_axp =

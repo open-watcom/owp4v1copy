@@ -101,18 +101,16 @@ include xception.inc
 include fstatus.inc
 include fpconsts.inc
 include 386fpemu.inc
-include 386flda.inc
-include 386fldc.inc
-include 386fldd.inc
-include 386fldm.inc
-include 386ldi4.inc
-;;include 386ldi8.inc
-include 386i4ld.inc
-include 386fdld.inc
-include 386ldfs.inc
-include 386ldfd.inc
-include 386fsld.inc
-;;include 386i8ld.inc
+include flda386.asm
+include fldc386.asm
+include fldd386.asm
+include fldm386.asm
+include ldi4386.asm
+include i4ld386.asm
+include fdld386.asm
+include ldfs386.asm
+include ldfd386.asm
+include fsld386.asm
 include 386round.inc
 include 386atan.inc
 include 386fprem.inc
@@ -121,7 +119,7 @@ include 386log.inc
 include 386sind.inc
 include 386trig.inc
 include 386f2xm1.inc
-include 386sqrt.inc
+include sqrt386.asm
 include 386poly.inc
 
         endmod
