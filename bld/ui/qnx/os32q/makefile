@@ -1,3 +1,7 @@
+#pmake: all build cpu_386 os_qnx
+host_CPU = 386
+host_OS = qnx
+
 MODEL = S
 !ifdef comp386
 WCCEXE=$(comp386)

@@ -10,25 +10,7 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay dos\ofw
-    wmake /h /i
-    cdsay ..\..\os2\olw
-    wmake /h /i
-    cdsay ..\..\os2\ofw
-    wmake /h /i
-# Disable QNX builds until pmake can be used 20020618
-#    cdsay ..\..\qnx\olwq
-#    wmake /h /i
-#    cdsay ..\os32q
-#    wmake /h /i
-    cdsay ..\..\win\olw
-    wmake /h /i
-    cdsay ..\..\nt\ofw
-    wmake /h /i
-    cdsay ..\..\necdos\ofw
-    wmake /h /i
-    cdsay ..\..\necwin\olw
-    wmake /h /i
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
