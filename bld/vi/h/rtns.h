@@ -144,12 +144,10 @@ void PauseFileComplete( void );
 void FinishFileComplete( void );
 
 /* dosdir.c */
-#if !defined( __UNIX__ )
 int MyGetFileSize( char *, long * );
 void FormatFileEntry( direct_ent *file, char *res );
 int IsDirectory( char *name );
 void GetFileInfo( direct_ent *tmp, struct dirent *nd, char *path );
-#endif
 
 /* dotmode.c */
 int DoDotMode( void );
