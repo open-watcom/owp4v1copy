@@ -227,6 +227,36 @@ denormalized operand exception
 .mnote sw.ie
 invalid operation exception
 .endnote
+.pc
+.ix 'MMX registers'
+.ix 'registers' 'MMX'
+.ix 'registers' 'mm0 - mm7'
+.mnote mm0 - mm7
+MMX registers
+.begnote $compact
+.mnote mm0.b0 - mm0.b7
+MMX register component bytes
+.mnote mm0.w0 - mm0.w3
+MMX register component words
+.mnote mm0.d0 - mm0.d1
+MMX register component doublewords
+.endnote
+.pc
+.ix 'XMM registers'
+.ix 'registers' 'XMM'
+.ix 'registers' 'xmm0 - xmm7'
+.mnote xmm0 - xmm7
+XMM registers (SSE registers)
+.begnote $compact
+.mnote xmm0.b0 - xmm0.b15
+XMM register component bytes
+.mnote xmm0.w0 - xmm0.w7
+XMM register component words
+.mnote xmm0.d0 - xmm0.d3
+XMM register component doublewords
+.mnote xmm0.q0 - xmm0.q1
+XMM register component quadwords
+.endnote
 .endnote
 .np
 The debugger permits the manipulation of register contents using any
@@ -268,6 +298,17 @@ fl.c=0x03a6
 .pc
 In the above example, the "carry" flag is cleared since the
 low order bit of the result is 0.
+.np
+Similarly, the MMX and XMM registers can be accessed as a whole or by
+their component bytes, words, doublewords and quadwords (in the case
+of the 128-bit XMM registers).
+.exam begin
+/mm0.b1=1
+?mm0.d0
+.exam end
+.pc
+In the above example, the second byte of the first MMX register is
+set to 1, then the first doubleword of the same register is printed.
 .np
 The debugger also defines some other special names.
 .begnote
