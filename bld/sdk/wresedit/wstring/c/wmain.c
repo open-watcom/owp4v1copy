@@ -153,7 +153,7 @@ int WINAPI LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 
 #else
 
-int WINAPI LibMain ( HANDLE inst, WORD dataseg,
+int WINAPI LibMain ( HINSTANCE inst, WORD dataseg,
                         WORD heapsize, LPSTR cmdline )
 {
     _wtouch(dataseg);

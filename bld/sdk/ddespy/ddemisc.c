@@ -62,9 +62,8 @@ void LogHeader( int f ) {
     write( f, "\r\n", 2 );
 }
 
-void DumpHeader( void *_f ) {
+void DumpHeader( FILE *fptr ) {
 
-    FILE        *fptr = _f;
     time_t      tm;
     char        *str;
 

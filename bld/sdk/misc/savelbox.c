@@ -50,7 +50,7 @@
 /*
  * writeListBoxContents
  */
-static BOOL writeListBoxContents( void (*writefn)(void *),char *fname, HWND listbox )
+static BOOL writeListBoxContents( void (*writefn)(FILE *),char *fname, HWND listbox )
 {
     WORD        i;
     LRESULT     count;
@@ -246,7 +246,7 @@ void ReportSave( HWND parent, char *fname, char *appname, BOOL save_ok ) {
  * SaveListBox - save out a list box
  */
 
-void SaveListBox( int how, void (*writefn)(void *),char *tmpname,
+void SaveListBox( int how, void (*writefn)(FILE *),char *tmpname,
                   char *appname, HWND mainhwnd, HWND listbox )
 {
     char        fname[_MAX_PATH];

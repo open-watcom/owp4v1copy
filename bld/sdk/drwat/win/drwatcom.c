@@ -148,7 +148,7 @@ int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow
     /*
      * set up handlers
      */
-    faultFN = MakeProcInstance( IntHandler, Instance );
+    faultFN = MakeProcInstance( (FARPROC)IntHandler, Instance );
     notifyFN = MakeProcInstance( NotifyHandler, Instance );
     if( !InterruptRegister( NULL, faultFN ) ) {
         Death( STR_CANT_HOOK_INTER );

@@ -54,9 +54,8 @@ void MarkPrint( char *str ) {
 /*
  * SaveExtra - save extra to file
  */
-void SaveExtra( void *_f )
+void SaveExtra( FILE *f )
 {
-    FILE        *f = _f;
     time_t      tod;
 
     fprintf( f,"%s\n", AppName );

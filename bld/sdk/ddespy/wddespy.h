@@ -304,7 +304,7 @@ void SaveConfigFile( void );
 
 /* ddemisc.c */
 void LogHeader( int f );
-void DumpHeader( void *fptr );
+void DumpHeader( FILE *fptr );
 BOOL InitGblStrings( void );
 void FiniRCStrings( void );
 
