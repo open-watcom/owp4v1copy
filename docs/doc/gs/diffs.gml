@@ -13,6 +13,43 @@ recompile your application.
 .*
 
 .*
+.section Differences from Open Watcom Version 1.0
+.*
+.np
+A number of problems has been corrected in &product 1.1.
+.begbull
+.bull
+Using the -ol option (loop optimization) sometimes resulted in generation
+of incorrect code.
+.bull
+The
+.kw printf()
+function could access too much data when formatting strings, causing page
+faults.
+.bull
+NANs, INFs and denormals were not handled correctly by the math emulation
+library.
+.bull
+The assembler did not generate implicit segment override prefixes when
+accessing data in code segment.
+.bull
+The
+.kw clock()
+function sometimes produced incorrect results on OS/2 if the
+.mono TZ
+environment variable was set.
+.bull
+The editor has been changed to store temporary files in directory designated
+by the
+.mono TMP
+environment variable, instead of using the
+.mono TMPVAR
+environment variable.
+.bull
+Many packaging problems (missing files) have been resolved.
+.endbull
+.*
+.*
 .section Differences from Version 11.0
 .*
 .np
@@ -31,6 +68,8 @@ cases this is not a problem and may in fact avoid certain problems.
 If your project relies on case insensitive linking, please add
 .kw OPTION NOCASEEX
 to your linker directives.
+.bull
+Default windowing support has been removed from the runtime libraries.
 .endbull
 .if &version ge 110 .do begin
 .*
