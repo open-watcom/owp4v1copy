@@ -1,5 +1,5 @@
 #
-# WATCOM Debugger makefile
+# Open Watcom Debugger makefile
 #
 proj_name = wv
 
@@ -11,10 +11,14 @@ wv_autodepends = .AUTODEPEND
 wv_trmem = 1
 !endif
 
+# The dot_machine macro is used to work around the fact that on DOSish
+# filesystems, trailing dot is not significant, but on Unix it is
 !ifdef machine
-all_machine=$(machine)
+all_machine = $(machine)
+dot_machine = .$(machine)
 !else
-all_machine=at
+all_machine = at
+dot_machine =
 !endif
 
 .EXTENSIONS : .dlg .str
@@ -25,10 +29,10 @@ all_machine=at
 
 dig_os_os2_386 = os2v2
 dig_os_dos_386 = dsx
-!ifndef dig_os_$(host_OS)_$(host_CPU)
-dig_os = $(host_OS)
+!ifndef dig_os_$(host_os)_$(host_cpu)
+dig_os = $(host_os)
 !else
-dig_os = $(dig_os_$(host_OS)_$(host_CPU))
+dig_os = $(dig_os_$(host_os)_$(host_cpu))
 !endif
 
 !include $(dig_dir)/mif/dipcli.mif
@@ -195,7 +199,7 @@ objs_qnx_386_char       = helpio.obj
 objs_nt_axp_char        = helpio.obj
 objs_nt_axp_gui         =
 
-ui_objs += $(objs_$(host_OS)_$(host_CPU)_$(display))
+ui_objs += $(objs_$(host_os)_$(host_cpu)_$(display))
 
 objs = $(engine_objs) $(ui_objs)
 
@@ -203,10 +207,10 @@ objs = $(engine_objs) $(ui_objs)
 cdir   = $(wv_dir)/c
 hdir   = $(wv_dir)/h
 
-!ifeq host_OS nt
+!ifeq host_os nt
 sysdir = win
 !else
-sysdir = $(host_OS)
+sysdir = $(host_os)
 !endif
 
 !ifndef syscdir
@@ -223,8 +227,8 @@ sysadir = ../asm
 ###########
 exe_qnx = qnx
 
-!ifdef exe_$(host_OS)
-EXE = $(exe_$(host_OS))
+!ifdef exe_$(host_os)
+EXE = $(exe_$(host_os))
 !else
 EXE = exe
 !endif
@@ -278,18 +282,18 @@ inc_dirs = $(dig_dir)/h;$(syshdir);$(hdir);$(trmem_dir);
 !ifndef dll
 inc_dirs += $(aui_dir)/h;$(gui_dir)/h;$(ui_dir)/h;
 !endif
-inc_dirs += $($(host_OS)inc);
+inc_dirs += $($(host_os)inc);
 !ifndef dll
 inc_dirs += $(posix_dir)/h;$(gui_dir)/ui/h;$(help_dir)/h;
 !endif
-!ifeq host_OS linux
+!ifeq host_os linux
 inc_dirs += $(ncurses_dir)/h;
 dig_srcs+=;$(dig_dir)/c/dsx
 !endif
 
 # libs
 ###########
-libs_win_i86_char       = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/wini86/gui.lib $(ui_dir)/win.$(machine)/wini86/ui.lib $(wres_dir)/lib/wreslw.lib
+libs_win_i86_char       = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/wini86/gui.lib $(ui_dir)/win$(dot_machine)/wini86/ui.lib $(wres_dir)/lib/wreslw.lib
 libs_win_i86_gui        = $(aui_dir)/wini86/aui.lib $(gui_dir)/win/wini86/gui.lib
 libs_nt_386_char        = $(aui_dir)/nt386/aui.lib $(gui_dir)/ui/nt386/gui.lib $(ui_dir)/nt/nt386/ui.lib $(wres_dir)/lib/wresf.lib
 libs_nt_386_gui         = $(aui_dir)/nt386/aui.lib $(gui_dir)/win/nt386/gui.lib
@@ -297,14 +301,14 @@ libs_os2_i86_char       = $(aui_dir)/os2i86/aui.lib $(gui_dir)/ui/os2i86/gui.lib
 libs_os2_i86_gui        = $(aui_dir)/os2i86.pm/aui.lib $(gui_dir)/win/os2i86/gui.lib $(os2286)
 libs_os2_386_char       = $(aui_dir)/os2386/aui.lib $(gui_dir)/ui/os2386/gui.lib $(ui_dir)/os2/os2386/ui.lib $(wres_dir)/lib/wresf.lib
 libs_os2_386_gui        = $(aui_dir)/os2386.pm/aui.lib $(gui_dir)/win/os2386/gui.lib
-libs_dos_386_char       = $(aui_dir)/dos386/aui.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos.$(machine)/dos386/ui.lib $(wres_dir)/lib/wresf.lib
+libs_dos_386_char       = $(aui_dir)/dos386/aui.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos$(dot_machine)/dos386/ui.lib $(wres_dir)/lib/wresf.lib
 libs_qnx_i86_char       = $(aui_dir)/qnxi86/aui.lib $(gui_dir)/ui/qnxi86/gui.lib $(ui_dir)/qnx/qnxi86/ui.lib $(wres_dir)/lib/wresl.lib
 libs_qnx_386_char       = $(aui_dir)/qnx386/aui.lib $(gui_dir)/ui/qnx386/gui.lib $(ui_dir)/qnx/qnx386/ui.lib $(wres_dir)/lib/wressqnx.lib
 libs_linux_386_char     = $(aui_dir)/linux386/aui.lib $(gui_dir)/ui/linux386/gui.lib $(ui_dir)/unix/linux386/ui.lib $(wres_dir)/lib/wresf.lib $(ncurses_dir)/linux386/ncurses.lib
 libs_nt_axp_char        = $(aui_dir)/ntaxp/aui.lib $(gui_dir)/ui/ntaxp/gui.lib $(ui_dir)/nt/ntaxp/ui.lib $(wres_dir)/lib/wresaxp.lib
 libs_nt_axp_gui         = $(aui_dir)/ntaxp/aui.lib $(gui_dir)/win/ntaxp/gui.lib
 
-libs = $(libs_$(host_OS)_$(host_CPU)_$(display))
+libs = $(libs_$(host_os)_$(host_cpu)_$(display))
 
 !ifdef ovl_dos
 endsect=end
@@ -337,8 +341,8 @@ resname_win_gui         = wvwin
 resname_nt_gui          = wvnt
 resname_os2_gui         = wvpm
 
-!ifdef resname_$(host_OS)_$(display)
-resname = $(resname_$(host_OS)_$(display))
+!ifdef resname_$(host_os)_$(display)
+resname = $(resname_$(host_os)_$(display))
 !else
 resname = wvui
 !endif
@@ -351,11 +355,11 @@ $(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(l
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifeq display char
         wstrip -q -a -r $^@ . $(resfile)
-!else ifeq host_OS win
+!else ifeq host_os win
         $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $(resfile) $^@
-!else ifeq host_OS nt
+!else ifeq host_os nt
         $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $(resfile) $^@
-!else ifeq host_OS os2
+!else ifeq host_os os2
 !ifndef %use_os2tk_stuff
         @set opath=$(%path)
         @set path=$(lang_root)\binp
@@ -380,7 +384,7 @@ $(lnk) : $(__MAKEFILES__)
     @for %i in ($(libs))    do @%append $(lnk) library %i
     @for %i in ($(sysobjs)) do @%append $(lnk) file %i
     @%append $(lnk) file fingmsg.obj
-!ifeq host_OS dos
+!ifeq host_os dos
 !ifdef ovl_dos
     @%append $(lnk) begin autosection
 !endif
@@ -570,7 +574,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles)
 
 !ifeq display char
 .dlg : $(hdir)
-!else ifneq host_OS os2
+!else ifneq host_os os2
 .dlg : $(hdir)
 !else
 pmfont=-font=

@@ -1,11 +1,11 @@
 #pmake: build os_dos cpu_386 386 intel
 #
-# WATCOM Debugger makefile for dsx
+# Open Watcom Debugger makefile for dsx
 #
 
-host_OS=dos
-host_CPU=386
-display=char
+host_os  = dos
+host_cpu = 386
+display  = char
 
 syshdir = ../h;../../dos/h
 
