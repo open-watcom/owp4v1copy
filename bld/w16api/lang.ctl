@@ -15,6 +15,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 
     <CPCMD> wini86\*.lib <relroot>\rel2\lib286\win\
+    <CPCMD> include\*.h <relroot>\rel2\h\win\
 
 [ BLOCK <1> clean ]
 #==================
