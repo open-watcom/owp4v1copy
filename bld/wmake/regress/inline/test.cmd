@@ -9,11 +9,11 @@ echo # ---------------------------
 echo #   Inline File Test 1
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE01 > tmp.out 2>&1
 diff INLINE01.CMP tmp.out
 if errorlevel 1 goto err1
-del tmp.out
+rm tmp.out
 %1 -h -f INLN01B > tmp.out 2>&1
 diff INLINE01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -29,11 +29,11 @@ echo # ---------------------------
 echo #   Inline File Test 2
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE02 > tmp.out 2>&1
 diff INLINE02.CMP tmp.out
 if errorlevel 1 goto err2
-del tmp.out
+rm tmp.out
 %1 -h -f INLN02B > tmp.out 2>&1
 diff INLN02B.CMP tmp.out
 if errorlevel 1 goto err2
@@ -49,7 +49,7 @@ echo # ---------------------------
 echo #   Inline File Test 3
 echo # ---------------------------
 set TRMEM_CODE=3;
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE03 > tmp.out 2>&1
 diff INLINE03.CMP tmp.out
 if errorlevel 1 goto err3
@@ -65,7 +65,7 @@ echo # ---------------------------
 echo #   Inline File Test 4
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE04 > tmp.out 2>&1
 diff INLINE04.CMP tmp.out
 if errorlevel 1 goto err4
@@ -81,7 +81,7 @@ echo # ---------------------------
 echo #   Inline File Test 5
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE05 > tmp.out 2>&1
 diff INLINE05.CMP tmp.out
 if errorlevel 1 goto err5
@@ -97,7 +97,7 @@ echo # ---------------------------
 echo #   Inline File Test 6
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE06 > tmp.out 2>&1
 diff INLINE06.CMP tmp.out
 if errorlevel 1 goto err6
@@ -113,7 +113,7 @@ echo # ---------------------------
 echo #   Inline File Test 7
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f INLINE07 > tmp.out 2>&1
 diff INLINE07.CMP tmp.out
 if errorlevel 1 goto err7
@@ -128,4 +128,4 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-if exist tmp.out del tmp.out
+rm tmp.out

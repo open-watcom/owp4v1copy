@@ -199,7 +199,7 @@ extern RET_T TouchFile( const char *name )
     int fh;
 
     if( utime( name, 0 ) < 0 ) {
-        fh = creat( name, 0 );
+        fh = creat( name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
         if( fh < 0 ) {
             return( RET_ERROR );
         }
