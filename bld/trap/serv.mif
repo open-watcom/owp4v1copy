@@ -2,9 +2,9 @@
 # Master makefile for creating remote servers
 #
 
-!include cproj.mif
-!include deftarg.mif
-!include defrule.mif
+#!include cproj.mif
+#!include deftarg.mif
+#!include defrule.mif
 
 sys_x86_os2     = sys os2 op st=4k,modname=$^&, desc $^&
 sys_x86_os2v2   = sys os2v2 op modname=$^&, desc $^&
@@ -94,6 +94,6 @@ SERVER_remote_objs += servacc.obj servcmd.obj servname.obj $(trap_objs)
 extra_srcs +=;$(dig_srcs)
 !endif
 
-which = SERVER
+#which = SERVER
 
-!include $(trap_dir)/imp.mif
+#!include $(trap_dir)/imp.mif

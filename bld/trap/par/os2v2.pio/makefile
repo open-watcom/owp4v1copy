@@ -1,5 +1,6 @@
 #pmake: build trap remote os_os2 cpu_386 par
-host_cpu = i86
+host_CPU = i86
+host_OS = os2
 
 # This is a quick and dirty project because it is OS/2 specific and
 # intended to be temporary; Yes, I know it breaks all known rules. Once

@@ -1,12 +1,14 @@
 #pmake: all build trap remote os_os2 cpu_i86 cpu_386 vdm x86
-host_cpu = 386
+host_CPU = 386
+host_OS = os2
 
 os  = os2v2
 srv = vdm
 cpu = x86
+which = TRAP
 
 extra_cflags = -d2
 extra_objs = $(remote_objs) vdmcli2.obj
 extra_libs = $(os2386)
 
-!include $(trap_dir)/trap.mif
+!include $(trap_dir)/master.mif

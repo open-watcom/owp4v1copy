@@ -1,3 +1,14 @@
+proj_name = trap
+
+trap_autodepends = .AUTODEPEND
+
+suppress_zc = 1
+
+.CONTINUE
+.ERASE
+
+.EXTENSIONS : .res .rc
+
 #
 # Common stuff between trap file and server implementations
 #
@@ -34,10 +45,23 @@
 #                         the executable (optional).
 #       resource_file   - root name of a resource file (optional).
 
-.CONTINUE
-.ERASE
-.EXTENSIONS
-.EXTENSIONS : .exe .obj .res .rc .i .h .c .asm .cpp
+!ifndef memory_model_i86
+memory_model_i86 = c
+!endif
+
+!ifeq host_OS qnx
+memory_model_386 = s
+!endif
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!ifeq which SERVER
+!include $(trap_dir)/serv.mif
+!else
+!include $(trap_dir)/trap.mif
+!endif
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -45,76 +69,39 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-comp_x86_os2            = $(comp286) -mc-fpc
-comp_x86_os2v2          = $(comp386) -mf-fpc
-comp_x86_qnx            = $(comp386) -ms-fpc
-comp_x86_linux          = $(comp386) -mf-fpc
-comp_x86_win            = $(comp286) -mc-fpc
-!ifdef dos_large_model
-comp_x86_dos            = $(comp286) -ml-fpc
-!else
-comp_x86_dos            = $(comp286) -mc-fpc
-!endif
-comp_x86_rsi            = $(comp286) -mc-fpc
-comp_x86_cw             = $(comp386) -mc-fpc
-comp_x86_ads            = $(comp386) -mf-fpc-3s
-comp_x86_pls            = $(comp386) -mf-fpc
-comp_x86_nt             = $(comp386) -mf-fpc
-comp_x86_nlm            = $(comp386) -mf-fpc-3s
+# cflags stuff
+###############
+extra_c_flags +=-D$(which) -D_$(machine)_PC -DMD_$(cpu)
 
-comp_axp_nt             = $(compaxp)
-
-comp_ppc_nt             = $(compppc)
-
-cpp_x86_nt              = wpp386 -mf-fpc
-
-!ifeq host_cpu 386
-comp_opts = -fpc
-!endif
-!ifeq host_cpu i86
-comp_opts = -fpc
+!ifdef japanese
+extra_c_flags += -DJAPANESE_MESSAGES
 !endif
 
-!ifeq os os2
-comp_opts +=-mc
-!else ifeq os os2v2
-comp_opts +=-mf
-!else ifeq os qnx
-comp_opts +=-ms
-!else ifeq os linux
-comp_opts +=-mf
-!else ifeq os win
-comp_opts +=-mc
-!else ifeq os dos
-!ifdef dos_large_model
-comp_opts +=-ml
-!else
-comp_opts +=-mc
-!endif
-!else ifeq os rsi
-comp_opts +=-mc
-!else ifeq os cw
-comp_opts +=-mc
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
+
+!ifeq host_OS nov
+extra_c_flags_386 += -3s
 !else ifeq os ads
-comp_opts +=-mf-3s
-!else ifeq os pls
-comp_opts +=-mf
-!else ifeq os nt
-comp_opts +=-mf
-!else ifeq os nlm
-comp_opts +=-mf-3s
+extra_c_flags_386 += -3s
 !endif
 
-TRAP_opts_x86_os2       = -zu
-TRAP_opts_x86_win       = -zu-bd
-TRAP_opts_x86_dos       = -zu
+!ifeq which TRAP
+!ifeq host_cpu i86
+extra_c_flags_os2 += -zu
+extra_c_flags_win += -zu-bd
+extra_c_flags_dos += -zu
+!endif
+!endif
 
+# lflags stuff
+###############
 libs_x86_os2            = clibc
 libs_x86_os2v2          = clib3r
-libs_x86_qnx            = $(lang_root)\lib386\qnx\clib3r
-libs_x86_linux          = $(lang_root)\lib386\linux\clib3r
+libs_x86_qnx            = $(lang_root)/lib386/qnx/clib3r
+libs_x86_linux          = $(lang_root)/lib386/linux/clib3r
 libs_x86_win            = clibc
-!ifdef dos_large_model
+!ifeq memory_model_i86 l
 libs_x86_dos            = clibl
 !else
 libs_x86_dos            = clibc
@@ -128,20 +115,6 @@ libs_x86_nlm            = math3s
 libs_axp_nt             = clib
 
 libs_ppc_nt             = clib
-
-incs_os2        = $(inc_dirs_sys_os2_i86);$(watcom_dir)\h;$(lang_root)\h
-incs_os2v2      = $(inc_dirs_sys_os2_386);$(watcom_dir)\h;$(lang_root)\h
-incs_qnx        = $(watcom_dir)\qh;$(watcom_dir)\h;$(lang_root)\qh
-incs_linux      = $(watcom_dir)\h;$(lang_root)\lh
-incs_win        = $(lang_root)\h\win;$(watcom_dir)\h;$(lang_root)\h
-incs_dos        = $(watcom_dir)\h;$(lang_root)\h
-incs_rsi        = $(watcom_dir)\h;$(lang_root)\h;$(rsilib)
-incs_ads        = $(watcom_dir)\h;$(lang_root)\h;$(adsdir)
-incs_pls        = $(watcom_dir)\h;$(lang_root)\h;$(plsdir)
-incs_nt         = $(lang_root)\h\nt;$(watcom_dir)\h;$(lang_root)\h
-#incs_nlm        = $(watcom_dir)\h;$(nw$(nlm_ver)dir);$(nw$(nlm_ver)0src);$(watcom_dir)\nw40_h
-incs_nlm        = $(watcom_dir)\h;$(ow_nwoss_root)\nw$(nlm_ver)\h;$(ow_nwoss_root)\nw$(nlm_ver)\src;$(ow_nwoss_root)\common\h
-#;$(nwndk_root)\include\nlm
 
 !ifndef machine
 machine = IBM
@@ -182,12 +155,6 @@ targ = os2
 targ = $(os)
 !endif
 
-comp_opts += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -zq-w4-bt=$(targ) @IPATHS $(%COMP_DEBUG)
-!ifdef japanese
-comp_opts += -DJAPANESE_MESSAGES
-!endif
-asm_opts = -bt=$(targ) -w4
-
 !ifdef on_build_machine
 default_targ    = w
 !else
@@ -212,8 +179,8 @@ name_debug=d
 !endif
 dtarget = $+$(bin_root)/$(targ_$(cpu)_$(os))$-
 
-trperr_h = $(trap_dir)/h/_err.gh
-jtrperr_h = $(trap_dir)/h/_jerr.gh
+trperr_h = _err.gh
+jtrperr_h = _jerr.gh
 mkstr_c = $(trap_dir)/c/mkstr.c
 trap_msg = $(trap_dir)/h/trap.msg
 
@@ -234,14 +201,14 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         !cvpack $(dtarget)
 
 $(trperr_h) : $(mkstr_c) $(trap_msg)
-        wcl386 $[@ -zq -i"$(trap_dir)\h"
+        $(bld_cl) $[@ -i"$(trap_dir)\h"
         mkstr $^@
-        rm -f mkstr.*
+        @rm -f mkstr.*
 
 $(jtrperr_h) : $(mkstr_c) $(trap_msg)
-        wcl386 $[@ -zq -dJAPANESE_MESSAGES -i"$(trap_dir)\h"
+        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)\h"
         mkstr $^@
-        rm -f mkstr.*
+        @rm -f mkstr.*
 
 !ifndef extra_dobjs
 extra_dobjs = $(extra_objs)
@@ -251,7 +218,7 @@ objs  = $($(which)_objs) mxutil.obj $(extra_objs)
 dobjs = $($(which)_objs) mxutil.obj $(extra_dobjs)
 
 !ifndef substitute_linker
-$(target) : eraseall.obj $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
+$(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
         $(linker) op map $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
                 file {$(objs)} &
                 library {$(libs_$(cpu)_$(os)) $(extra_libs)} &
@@ -264,7 +231,7 @@ $(target) : eraseall.obj $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(
 !endif
 
 !ifneq target $(dtarget)
-$(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
+$(dtarget) : $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
         $(linker) op map $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
                 file {$(dobjs)} &
                 library {$(extra_libs) $(libs_$(cpu)_$(os))} &
@@ -279,41 +246,17 @@ $(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) 
 
 !endif
 
-eraseall.obj : $(trap_dir)/compile.gbl
-        rm -f *.obj
-        wtouch eraseall.obj
-
-#allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&) $[@
-#compile = $(comp_$(cpu)_$(os)) $(allcompopts)
-#ppcompile = $(cpp_$(cpu)_$(os)) $(allcompopts)
-allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&)
-compile = $(cc) $[@ $(allcompopts)
-ppcompile = $(cpp) $[@ $(allcompopts)
-whole_inc_path = $(extra_incs);$(dig_dir)/h;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/h;$(incs_$(os))
+inc_dirs+=;$(dig_dir)/h;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/h;$(watcom_dir)/h
+!ifeq host_os nov
+inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(ow_nwoss_root)/common/h
+!endif
 
 .c: ../c;../../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/c;$(extra_srcs)
 .cpp: ../c;../../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/c;$(extra_srcs)
-
-.c.obj: .autodepend
-        set IPATHS=-i"$(whole_inc_path)"
-        $(compile)
-
-.cpp.obj: .autodepend
-        @set IPATHS=-i$(whole_inc_path)
-        $(ppcompile)
-
-.c.i:
-        @set IPATHS=-i$(whole_inc_path)
-        $(compile) -plc -fo=.i
-
 .asm: ../asm;../../asm;$(trap_dir)/common/$(os);$(trap_dir)/common;$(extra_srcs)
-
-.asm.obj:
-        @set IPATHS=-i$(whole_inc_path)
-#        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_aflags_$[&) $[@
-        $(as) $[@ $(asm_opts) $(extra_aflags) $(extra_aflags_$[&)
-
 .rc: ../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(extra_srcs)
 
-.rc.res: .autodepend
-        $(rc) -r -i$(whole_inc_path) -bt=$(targ) -fo=$^&.res $[@
+# implicit rules
+#################
+.rc.res: .AUTODEPEND
+        $(rc) -r -i$(inc_path) -bt=$(targ) -fo=$^&.res $[@

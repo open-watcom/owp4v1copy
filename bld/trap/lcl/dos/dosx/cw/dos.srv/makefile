@@ -1,23 +1,24 @@
 #pmake: build serv lcl os_dos dsx cpu_386 x86
 host_cpu = 386
+host_OS = dos
+
+memory_model_386 = s
 
 os  = cw
 srv = cw
 cpu = x86
 name = cwhelp
+which = SERVER
 
-extra_cflags = -dDOS4G -dDOSXHELP
-extra_incs = $(trap_dir)/lcl/dos/h;../h
-extra_srcs = $(trap_dir)/lcl/dos/c
-extra_aflags_cwhelp = -i"../h"
+extra_c_flags = -DCAUSEWAY -DDOSXHELP
+inc_dirs = ..\h;
 
 !define substitute_linker
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
-!include $(trap_dir)/serv.mif
+!include $(trap_dir)/master.mif
 
-objs =  cwhelp.obj &
-        c2asm.obj
+objs =  cwhelp.obj c2asm.obj
 
-$(target) $(dtarget) : eraseall.obj $(objs) $(__MAKEFILES__)
+$(target) $(dtarget) : $(objs) $(__MAKEFILES__)
     $(linker) system causeway name $^@ op map, stub=cwdstub.exe f {$(objs)} l ../lib/system

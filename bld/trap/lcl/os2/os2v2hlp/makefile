@@ -3,6 +3,7 @@
 # Create OS2V2HLP.EXE
 #
 host_CPU = 386
+host_OS = os2
 
 !include cproj.mif
 !include deftarg.mif

@@ -1,5 +1,6 @@
 #pmake: all build serv lcl os_dos dsx cpu_386 x86
 host_cpu = 386
+host_OS = dos
 
 #NOTE: This file is also included from the ..\DOSPED.SRV makefile
 
@@ -9,12 +10,13 @@ cpu = x86
 !ifndef name
 name = plshelp
 !endif
+which = SERVER
+
+extra_c_flags = -fi=wcc.h -dDOSXHELP $(compflags_$[&)
+inc_dirs = ..\h;
 
 extra_objs = $(dosx_serv_objs) plsacc.obj plsintr.obj x86cpu.obj dilglue.obj
-extra_cflags = -fi=wcc.h -dDOSXHELP $(compflags_$[&)
-extra_aflags = -w2
-extra_incs = $(trap_dir)/lcl/dos/h;../h
-extra_srcs = $(trap_dir)/lcl/dos/c;$(plsdir)
+extra_srcs = $(plsdir)
 
 compflags_dilglue = -3s
 
@@ -26,4 +28,4 @@ extra_linker = &
 !endif
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
-!include $(trap_dir)/serv.mif
+!include $(trap_dir)/master.mif

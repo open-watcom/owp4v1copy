@@ -3,10 +3,12 @@
 # Create the NT STD.DLL for Alpha
 #
 host_CPU = axp
+host_OS = nt
 
 os      = nt
 srv     = lcl
 cpu     = axp
+which = TRAP
 
 extra_objs = &
         task.obj &
@@ -29,11 +31,11 @@ extra_objs = &
         dbgthrd.obj &
         core.obj
 
-extra_incs = $(trap_dir)/lcl/dos/h
-extra_cflags =
+inc_dirs += $(trap_dir)/lcl/dos/h
+extra_c_flags =
 
 !include $(trap_dir)/lcl/lcl.mif
-!include $(trap_dir)/trap.mif
+!include $(trap_dir)/master.mif
 
 globals.obj :: ../h/globals.h
 

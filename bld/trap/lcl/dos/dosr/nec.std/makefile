@@ -2,6 +2,4 @@
 
 machine = NEC
 
-extra_aflags_npxtype = -fpi87
-
 !include ../dos.std/makefile

@@ -1,5 +1,6 @@
 #pmake: build lcl os_os2 cpu_386 cpu_386 trap x86
-host_cpu = 386
+host_CPU = 386
+host_OS = os2
 
 #
 # Create the 32-bit OS/2 STD.DLL
@@ -9,6 +10,7 @@ os      = os2v2
 srv     = lcl
 cpu     = x86
 name    = std
+which = TRAP
 
 #extra_cflags = -d2
 
@@ -34,4 +36,4 @@ extra_linker = &
         imp _XferBuff wdsplice, DoDupFile_ wdsplice    &
         lib $(os2386),$(os2286)
 
-!include $(trap_dir)/trap.mif
+!include $(trap_dir)/master.mif

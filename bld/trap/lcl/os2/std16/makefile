@@ -3,11 +3,13 @@
 # Create the OS/2 STD16.DLL
 #
 host_CPU = i86
+host_OS = os2
 
 os      = os2
 srv     = lcl
 cpu     = x86
 name    = std16
+which = TRAP
 
 extra_objs = &
         accmisc.obj &
@@ -20,4 +22,4 @@ extra_objs = &
         supp.obj &
         core.obj
 
-!include $(trap_dir)/trap.mif
+!include $(trap_dir)/master.mif

@@ -1,14 +1,15 @@
 #pmake: all build trap lcl os_dos dsx cpu_386 x86
-host_cpu = i86
+host_CPU = i86
+host_OS = dos
 
 os = dos
 srv = cw
 cpu = x86
+which = TRAP
 
+inc_dirs=.;
 extra_objs = $(dosx_trap_objs)
-extra_cflags = -dCAUSEWAY -dDOSXTRAP
-extra_incs = $(trap_dir)/lcl/dos/h
-extra_srcs = $(trap_dir)/lcl/dos/c;$(trap_dir)/lcl/dos/asm
+extra_c_flags = -dCAUSEWAY -dDOSXTRAP
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
-!include $(trap_dir)/trap.mif
+!include $(trap_dir)/master.mif
