@@ -97,10 +97,10 @@ LIBS_dos    = $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 
 LIBS    = $(LIBS_$(host_os)) $(dwarf_dr_lib) $(wclass_lib)
 
-lflags_win_i86  = sys windows font mem
+lflags_win_i86  = sys windows font mem op stack=16k
 lflags_dos_386  = sys pharlap
 
-extra_l_flags   = op stack=16k,map
+extra_l_flags   = op map
 !ifndef quick_link
 extra_l_flags   += op show,art,static
 !endif
