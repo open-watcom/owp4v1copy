@@ -41,7 +41,7 @@
 #include "utils.h"
 #endif
 
-#ifdef __WIN__
+#if (defined __WIN__) && (!defined __NT__)
 BOOL isMultipleFiles( char *altname )
 {
     while( *altname && *altname != ' ' ) {
@@ -54,9 +54,73 @@ BOOL isMultipleFiles( char *altname )
 }
 #endif
 
+#ifdef __NT__
+BOOL isMultipleFiles( char *altname )
+{
+    while( *altname ) {
+        altname++;
+    }
+    if( altname[0] == 0 && altname[1] != 0 ) {
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+/*
+ * EliminateFirstNT - eliminate first n chars from buff for \0\0-strings
+ */
+void EliminateFirstNT( char *buff, int n  )
+{
+    char        *buff2;
+
+    buff2 = &buff[n];
+    while( buff2[0] != 0 || buff2[1] != 0 ) {
+        *buff++ = *buff2++;
+    }
+    buff[0] = 0;
+    buff[1] = 0;
+
+} /* EliminateFirstNT */
+
+/*
+ * NextWordNT - get next \0 delimited word in buff, final delimitier is \0\0
+ */
+static int NextWordNT( char *buff, char *res )
+{
+    int         j,k=0;
+    char        c, cnext;
+
+    if( buff[k] == 0 && buff[k+1] == 0 ) {
+        res[0] = 0;
+        return( -1 );
+    }
+    j = 0;
+
+    /*
+     * get word
+     */
+    while( TRUE ) {
+        c = buff[k];
+        cnext = buff[k+1];
+        if( c==0 ) {
+            res[j] = 0;
+            EliminateFirstNT( buff, k+1 );
+            return( j );
+        } else {
+            res[j++] = c;
+            k++;
+        }
+    }
+
+} /* NextWordNT */
+#endif
+
 /*
  * EditFile - read a file into text
  */
+#ifdef __NT__   /* on NT, we have \0 instead of spaces to delimit single file names and \0\0 to end the string */
+#define NextWord1(a,b) NextWordNT(a,b)
+#endif
 int EditFile( char *name, int dammit )
 {
     char        *fn,**list,*currfn;
@@ -300,6 +364,7 @@ EVIL_CONTINUE:
     return( rc );
 
 } /* EditFile */
+#undef NextWord1
 
 #ifndef __WIN__
 static char near *near fileOpts[] =  {
