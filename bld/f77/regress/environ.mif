@@ -196,7 +196,7 @@ targ_run_os2axp =
 
 run_386 = $(targ_run_$(targ_env_386))
 run_i86 = $(targ_run_$(targ_env_i86))
-run_axp = $(targ_run_$(targ_env_i86))
+run_axp = $(targ_run_$(targ_env_axp))
 
 run = $(run_$(arch))
 
@@ -229,7 +229,11 @@ targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
 targ_lnk_lnx386 = system bld_linux
+!ifdef __NT386__
+targ_lnk_wnti86 = system dos
+!else
 targ_lnk_wnti86 = system os2 pmc
+!endif
 targ_lnk_dosi86 = system dos
 targ_lnk_os2i86 = system os2 pmc
 targ_lnk_wntaxp = system ntaxp

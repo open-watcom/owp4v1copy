@@ -7,7 +7,7 @@ positive_dir = source
 
 !ifdef test1
 fflags_386 = -D2 -MF
-fflags_i86 = -D2 -MC -2
+fflags_i86 = -D2 -MM -2
 fflags_axp = -d2 -si
 alt_error = 01
 !else ifdef test2
@@ -22,12 +22,12 @@ fflags_axp = -d2
 alt_error = 03
 !else ifdef test4
 fflags_386 = -D2 -MF -6
-fflags_i86 = -D2 -MS -6
+fflags_i86 = -D2 -ML -6
 fflags_axp = -d2-si
 alt_error = 04
 !else ifdef test5
 fflags_386 = -D1 -MF
-fflags_i86 = -D1 -MC -2
+fflags_i86 = -D1 -MM -2
 fflags_axp = -d1
 alt_error = 05
 !else ifdef test6
@@ -41,18 +41,18 @@ fflags_i86 = -D1 -ML -DEBug -4
 fflags_axp = -d1
 alt_error = 07
 !else ifdef test8
-fflags_386 = -D1 -MF -SSfloats
-fflags_i86 = -D1 -MS -SSfloats
+fflags_386 = -D1 -MF
+fflags_i86 = -D1 -ML -SSfloats
 fflags_axp = -d1
 alt_error = 08
 !else ifdef test9
 fflags_386 = -D1 -OI -MF
-fflags_i86 = -D1 -OI -MS
+fflags_i86 = -D1 -OI -MM
 fflags_axp = -d1-oe
 alt_error = 09
 !else
 fflags_386 = -OX -D1 -MS
-fflags_i86 = -OX -D1 -MS
+fflags_i86 = -OX -D1 -ML
 fflags_axp = -ox-d1
 alt_error = 00
 !endif
