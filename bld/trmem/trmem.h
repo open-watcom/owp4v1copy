@@ -24,18 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to the trmem memory allocation tracker and
+*               validator.
 *
 ****************************************************************************/
 
 
 #ifndef _TRMEM_H_INCLUDED
-#define _TRMEM_H_INCLUDED   1
-/*
-    This file defines the interface with the trmem memory allocation
-    tracker and validator.
-*/
+#define _TRMEM_H_INCLUDED
+
 #include <stddef.h>
 
 typedef struct _trmem_internal *_trmem_hdl;

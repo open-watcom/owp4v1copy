@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C++ glue code for memory tracker, overloads new/delete.
 *
 ****************************************************************************/
 
 
 #include <malloc.h>
-//#include <dr.h>       //include only for the browser
+
 #ifdef TRACKER
 extern "C" {
 #include "trmem.h"
@@ -61,7 +60,7 @@ struct Memory
         ~Memory();
 };
 
-static Memory bogus;    // just need to get the ctor's called
+static Memory bogus;    // just need to get the ctors called
 
 void PrintLine( int *parm, const char *buf, size_t len )
 {
@@ -81,14 +80,11 @@ void *operator new( size_t size )
     caller = _trmem_guess_who();
 #endif
 
-//  for(;;) {
 #ifdef TRACKER
-        p = _trmem_alloc( size, _trmem_guess_who(), TrHdl );
+    p = _trmem_alloc( size, _trmem_guess_who(), TrHdl );
 #else
-        p = malloc( size );
+    p = malloc( size );
 #endif
-//      if( p != NULL || !DRSwap() ) break;     //only for browser
-//    }
     return p;
 }
 
@@ -106,14 +102,11 @@ void * WBRAlloc( size_t size )
     caller = _trmem_guess_who();
 #endif
 
-//    for(;;) {
 #ifdef TRACKER
-        p = _trmem_alloc( size, _trmem_guess_who(), TrHdl );
+    p = _trmem_alloc( size, _trmem_guess_who(), TrHdl );
 #else
-        p = malloc( size );
+    p = malloc( size );
 #endif
-//      if( p != NULL || !DRSwap() ) break;
-//    }
     return p;
 }
 
@@ -128,14 +121,11 @@ void * WBRRealloc( void * p, size_t size )
     caller = _trmem_guess_who();
 #endif
 
-//    for(;;) {
 #ifdef TRACKER
-        p = _trmem_realloc( p, size, caller, TrHdl );
+    p = _trmem_realloc( p, size, caller, TrHdl );
 #else
-        p = realloc( p, size );
+    p = realloc( p, size );
 #endif
-//      if( p != NULL || !DRSwap() ) break;
-//    }
     return p;
 }
 
@@ -172,7 +162,7 @@ Memory::Memory()
             _TRMEM_FREE_NULL | _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
 #ifdef TRMEM_NO_STDOUT
     TrFileHandle = open( "c:\\tmp\\tracker.txt",
-                                O_RDWR | O_CREAT | O_TRUNC | O_TEXT, 0 );
+                                O_RDWR | O_CREAT | O_TRUNC | O_TEXT, S_IRUSR | S_IWUSR );
 #else
     TrFileHandle = STDOUT_FILENO;
 #endif

@@ -24,14 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Cover routines to access the trmem memory tracker for
+*               programs that have no special needs.
 *
 ****************************************************************************/
 
 
-#ifndef TRMEMCVR_H_INCLUDED
-#define TRMEMCVR_H_INCLUDED
+/*
+
+The assumptions that these routines make are:
+    - memory alloction is done through malloc, free, realloc
+    - error messages are printed to stderr using write
+    - all trmem checks are performed (all flags are set on)
+    - all memory allocation throughout these routines uses the same memory
+            tracker (i.e. same memory handle)
+
+To use these routines compile trmemcvr.c into your program with the following
+compile options:  /dTRMEM /of+
+
+If you leave off these options ,trmemcvr will use malloc, free, and realloc
+directly.
+
+No special options are required for routines that call the routine in trmemcvr.
+
+*/
+
+
+#ifndef _TRMEMCVR_H_INCLUDED
+#define _TRMEMCVR_H_INCLUDED
 
 #include <stddef.h>
 
