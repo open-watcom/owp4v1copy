@@ -33,7 +33,7 @@ extra_c_flags_swchar = -i"../../h;../../dos386.i86;$(comp_cfg_dir)/h"
 
 extra_l_flags = op map
 
-.c: ..;../../c
+.c: ../c;../../c
 
 $(name) : $(objs)
         $(linker) $(lflags) name $^@ file {$<}
