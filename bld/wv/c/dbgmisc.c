@@ -589,6 +589,23 @@ static thread_state     *AddThread( dtid_t tid, unsigned state )
 }
 
 
+dtid_t GetNextTID()
+/*****************/
+{
+    thread_state    *thd;
+
+    for( thd = HeadThd; thd != NULL; thd = thd->link ) {
+	if( IsThdCurr( thd ) ) {
+	    thd = thd -> link;
+	    break;
+	}
+    }
+    if( thd == NULL ) thd = HeadThd;
+    if( thd == NULL ) return( 0 );
+    return( thd->tid );
+}
+
+
 void NameThread( dtid_t tid, char *name )
 /***************************************/
 {

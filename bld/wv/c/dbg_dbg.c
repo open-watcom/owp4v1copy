@@ -48,6 +48,7 @@ extern address          GetRegSP( void );
 extern address          GetRegBP( void );
 extern address          GetDataDot( void );
 extern address          GetCodeDot( void );
+extern dtid_t		GetNextTID( void );
 extern void             AddrFix( address * );
 extern bool             TokenName(unsigned int ,char **,unsigned int *);
 extern bool             IsInternalMod( mod_handle );
@@ -90,6 +91,7 @@ enum {
     INTERNAL_right,
     INTERNAL_etid,
     INTERNAL_ctid,
+    INTERNAL_ntid,
     INTERNAL_ip,
     INTERNAL_sp,
     INTERNAL_bp,
@@ -149,6 +151,7 @@ INTEGER_SYM( left );
 INTEGER_SYM( right );
 INTEGER_SYM( etid );
 INTEGER_SYM( ctid );
+INTEGER_SYM( ntid );
 INTEGER_SYM( loaded );
 INTEGER_SYM( WV_TNG );
 INTEGER_SYM( src );
@@ -180,6 +183,7 @@ CONST wv_sym_entry *const ListInternal[] = {
 (wv_sym_entry *)    &wvINT_right,
 (wv_sym_entry *)    &wvINT_etid,
 (wv_sym_entry *)    &wvINT_ctid,
+(wv_sym_entry *)    &wvINT_ntid,
 (wv_sym_entry *)    &wvINT_ip,
 (wv_sym_entry *)    &wvINT_sp,
 (wv_sym_entry *)    &wvINT_bp,
@@ -424,6 +428,9 @@ void InternalValue( unsigned index, void *d )
     case INTERNAL_ctid:
         *(unsigned_16 *)d = DbgRegs->tid;
         break;
+    case INTERNAL_ntid:
+	*(unsigned_16 *)d = GetNextTID();
+	break;
     case INTERNAL_ip:
         *(address *)d = GetRegIP();
         AddrFix( d );
