@@ -355,7 +355,6 @@ int match_phase_1( void )
     case T_LGDT:
         /* kludge fix to allow "LIDT fword ptr foo" */
         switch( Code->mem_type ) {
-        case MT_PWORD:
         case MT_FWORD:
             Code->info.opnd_type[OPND1] = OP_M_DW;
             break;

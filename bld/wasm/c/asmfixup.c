@@ -424,7 +424,6 @@ struct fixup *CreateFixupRec( int index )
                         sym->mem_type == MT_DWORD ||
                         sym->mem_type == MT_SDWORD ||
                         sym->mem_type == MT_FWORD ||
-                        sym->mem_type == MT_PWORD ||
                         sym->mem_type == MT_QWORD ||
                         sym->mem_type == MT_TBYTE ||
                         sym->mem_type == MT_ABS ) {

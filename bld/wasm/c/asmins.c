@@ -772,7 +772,6 @@ int OperandSize( unsigned long opnd )
 #endif
         case MT_DWORD:   return( 4 );
         case MT_FWORD:   return( 6 );
-        case MT_PWORD:   return( 6 );
         case MT_QWORD:   return( 8 );
         case MT_TBYTE:   return( 10 );
         }

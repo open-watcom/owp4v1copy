@@ -194,7 +194,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
             sym->mem_type != MT_WORD &&
             sym->mem_type != MT_DWORD &&
             sym->mem_type != MT_FWORD &&
-            sym->mem_type != MT_PWORD &&
             sym->mem_type != MT_FAR ) {
             temp = 0;
 
@@ -335,7 +334,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
                 Code->distance = sym->mem_type;
                 break;
             case MT_FWORD:
-            case MT_PWORD:
                 if( ptr_operator( MT_FWORD, TRUE ) == ERROR ) return( ERROR );
                 break;
             default:
@@ -376,7 +374,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
                     return( ERROR );
                 case MT_DWORD:
                 case MT_FWORD:
-                case MT_PWORD:
 #ifdef _WASM_
                 case MT_SDWORD:
 #endif
@@ -444,7 +441,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
 #endif
                 case MT_BYTE:
                 case MT_FWORD:
-                case MT_PWORD:
                 case MT_QWORD:
                 case MT_TBYTE:
                     AsmError( INVALID_SIZE );
@@ -612,7 +608,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
                 }
             }
         } else if( !Code->use32 &&
-            (( Code->mem_type == MT_FWORD ) || ( Code->mem_type == MT_PWORD ))) {
+            ( Code->mem_type == MT_FWORD )) {
             Code->prefix.opsiz = TRUE;
         }
     } else if(( mem_type == MT_FAR ) || ( mem_type == MT_NEAR ) || ( mem_type == MT_SHORT )){
@@ -641,7 +637,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
         }
     }
 
-    if( mem_type == MT_FAR || mem_type == MT_FWORD || mem_type == MT_PWORD ) {
+    if( mem_type == MT_FAR || mem_type == MT_FWORD ) {
         if( Code->info.token == T_CALLF  ||  Code->info.token == T_JMPF ) {
             Code->distance = MT_FAR;
         } else if( Code->info.token == T_CALL  ||  Code->info.token == T_JMP ) {
