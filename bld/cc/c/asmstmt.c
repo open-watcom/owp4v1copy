@@ -129,8 +129,9 @@ void AsmStmt( void )
     }
     CompFlags.pre_processing = 0;
     CompFlags.inside_asm_stmt = 0;
-    if( CurToken == skip_token )
-        NextToken();
     AsmSysMakeInlineAsmFunc( too_many_bytes );
     AsmSysFini();
+    if( CurToken == skip_token ) {
+        NextToken();
+    }
 }

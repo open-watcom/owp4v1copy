@@ -3,9 +3,11 @@
 int x;
 
 int main() {
-
-    x = 0;
 #if defined( __X86__ )
+    unsigned short sh1;
+
+    __asm mov sh1,ax
+    x = 0;
 #if defined( __386__ )
     __asm mov eax,x
 #else
