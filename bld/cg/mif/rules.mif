@@ -1,6 +1,6 @@
 .EXTENSIONS: .psm
 
-extra_c_flags_386       = -zp4 -fpc
+extra_c_flags_386       = -zp4
 extra_c_flags_linux     = -fo=.obj
 
 !ifndef cg_autodepends

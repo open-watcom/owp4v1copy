@@ -12,6 +12,13 @@ memory_model_386 = s
 suffix_register = r
 suffix_stack = s
 
+fpu_flags_dos_i86 = -fpc
+fpu_flags_dos_386 = -fpc
+fpu_flags_qnx_i86 = -fpc
+fpu_flags_qnx_386 = -fpc
+fpu_flags_os2_i86 = -fpc
+fpu_flags_os2_386 = -fpc
+
 objs = &
         sqrtf.obj &
         std.obj &
@@ -170,9 +177,9 @@ inc_dirs += -I"$(clib_dir)/h" -I"$(clib_dir)/defwin/h" -I"$(lib_misc_dir)/h" -I"
 
 extra_c_flags_ = -D_SUPERVGA
 !ifdef _WIN
-extra_c_flags = -zl -zld -fpc -D_FARD= -fo=$@ $(extra_c_flags_$(machine))
+extra_c_flags = -zl -zld -D_FARD= -fo=$@ $(extra_c_flags_$(machine))
 !else
-extra_c_flags = -r -zl -zld -fpc -D_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@ $(extra_c_flags_$(machine))
+extra_c_flags = -r -zl -zld -D_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@ $(extra_c_flags_$(machine))
 !endif
 
 extra_c_flags_386_register = -3r

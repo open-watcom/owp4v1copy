@@ -106,8 +106,7 @@ extra_c_flags += -d_UI
 extra_c_flags += -DPATCH
 !endif
 
-extra_c_flags_i86 = -fpc -zc
-extra_c_flags_386 = -fpc
+extra_c_flags_i86 = -zc
 
 #extra_c_flags_common = -fi=setupmem.h
 #extra_c_flags_io = -fi=setupmem.h

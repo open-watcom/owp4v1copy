@@ -161,6 +161,60 @@ cflags_win     += -br
 cflags_os2     += -br
 !endif
 
+######################
+# DEFAULT FPU SETINGS
+######
+  # DOS doesn't have emulator support, but OW has it
+  # must be -fpc or -fpi
+def_fpu_flags_dos_i86   = -fpi
+  ######
+  # OS/2 ????
+def_fpu_flags_os2_i86   = -fpi
+  ######
+  # Windows 3.x has emulator support (WIN87EM.DLL)
+  # must be -fpc or -fpi, don't use -fpi87
+def_fpu_flags_win_i86   = -fpi
+  ######
+  # QNX doesn't have emulator support, but OW has it
+  # must be -fpc or -fpi
+def_fpu_flags_qnx_i86   = -fpi
+  ######
+  # Extenders should have emulator support, but
+  # DOS4GW has it, CauseWay doesn't
+  # if any problems occure than we can change it to -fpc
+def_fpu_flags_dos_386   = -fpi87
+  ######
+  # OS/2 ????
+def_fpu_flags_os2_386   = -fpi87
+  ######
+  # OW 386 Windows extender has 387 emulator support
+  # must be -fpi87
+def_fpu_flags_win_386   = -fpi87
+  ######
+  # QNX doesn't have emulator support, but OW has it
+def_fpu_flags_qnx_386   = -fpi87
+  ######
+  # WIN32 systems have emulator support in kernel
+def_fpu_flags_nt_386    = -fpi87
+  ######
+  # LINUX has emulator support in kernel
+def_fpu_flags_linux_386 = -fpi87
+  ######
+  # NOVELL ?????
+def_fpu_flags_nov_386   = -fpc
+  ######
+  # should be compatible with all 386 platforms
+  # I ignore Novell seting
+  # I thing Novell doesn't use any OSI objects
+def_fpu_flags_osi_386   = -fpi87
+  ######
+
+!ifdef fpu_flags_$(host_os)_$(host_cpu)
+fpu_flags = $(fpu_flags_$(host_os)_$(host_cpu))
+!else
+fpu_flags = $(def_fpu_flags_$(host_os)_$(host_cpu))
+!endif
+
 clflags_nt_386     = -l=nt
 clflags_nt_axp     = -l=ntaxp
 clflags_win_i86    = -l=windows
@@ -177,7 +231,7 @@ clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linux
 
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
-cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(proj_c_flags)
+cflags           = $(cflags_all) $(fpu_flags) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
 clflags          = $(mode_clflags) $(clflags_$(host_os)_$(host_cpu)) $(extra_cl_flags) -fe=$^@ -fm

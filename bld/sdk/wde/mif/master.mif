@@ -23,8 +23,7 @@ fmedit_dir      = $(build_root)/fmedit
 !endif
 
 extra_c_flags     = -DWIN_GUI -s
-extra_c_flags_386 = -fpc
-extra_c_flags_i86 = -fpc
+
 extra_c_flags_win = -zu-zw-zc
 
 of_386  = -of+

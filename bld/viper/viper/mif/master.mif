@@ -38,8 +38,6 @@ description = \'Open Watcom IDE\'
 description = 'Open Watcom IDE'
 !endif
 
-extra_c_flags_386       = -fpc
-extra_c_flags_i86       = -fpc
 !ifeq host_os win
 extra_c_flags_link      = -dSERVER
 !endif

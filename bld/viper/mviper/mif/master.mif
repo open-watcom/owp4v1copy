@@ -38,8 +38,7 @@ objects =       contfile.obj &
                 mvswitch.obj &
                 mworkfil.obj
 
-extra_c_flags_386       = -fpc
-extra_c_flags_i86       = -fpc -zc -zm
+extra_c_flags_i86       = -zc -zm
 
 inc_dirs = $(wclass_inc_dirs)
 

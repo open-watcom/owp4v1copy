@@ -69,8 +69,7 @@ wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 extra_c_flags += -s -fh
 
 extra_c_flags_axp = -ai -aq
-extra_c_flags_i86 = -fpc -zu
-extra_c_flags_386 = -fpc
+extra_c_flags_i86 = -zu
 
 extra_c_flags_nov = -4s
 extra_c_flags_win = -zw

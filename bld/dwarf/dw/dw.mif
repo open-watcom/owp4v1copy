@@ -47,8 +47,6 @@ dw.lib : dwabenum.gh $(objs)
 dwtjbflags = -d1 -fo=$@
 dwmakeabflags = op quiet,map debug all file dwmakeab.obj n $^@
 extra_c_flags = -s
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
 
 dw.lib : dwabenum.gh $(objs)
         @%create tmp.lbc

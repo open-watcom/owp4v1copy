@@ -7,8 +7,6 @@ proj_name = edbind
 .c : ..
 
 extra_c_flags = -s
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
 
 inc_dirs = -I"../../h"
 

@@ -13,9 +13,6 @@ proj_name = bdiff
 
 inc_dirs = -I"../h"
 
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
-
 extra_l_flags = name $^@ op map
 
 .ERASE

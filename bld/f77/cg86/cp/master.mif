@@ -32,8 +32,8 @@ inc_dirs+= -I"$(as_dir)/h"
 
 # define _USE_RESOURCES_ so that WASM error messages come from resources
 extra_c_flags = -D_USE_RESOURCES_
-extra_c_flags_i86 = -fpc -zp1
-extra_c_flags_386 = -fpc -zp1
+extra_c_flags_i86 = -zp1
+extra_c_flags_386 = -zp1
 
 .h: $(f77_dir)/h;$(f77_dir)/cg86/h;$(f77_dir)/cg86/cp/h
 .c: $(f77_dir)/cg86/cp/c;$(f77_dir)/cg86/c;$(f77_dir)/cp;$(f77_dir)/c;$(wasm_dir)/c;$(trmem_dir);

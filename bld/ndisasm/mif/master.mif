@@ -36,9 +36,6 @@ xlibs = $(orl_lib) $(wres_lib)
 extra_l_flags = option map
 extra_l_flags_qnx = op res=wdis.u, off=8k
 
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
-
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
 extra_c_flags_trmem    = $(trmem_cflags)
 

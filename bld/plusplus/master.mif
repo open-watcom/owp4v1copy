@@ -79,8 +79,6 @@ cflags += -si
 !endif
 !endif
 
-cflags_386 += -fpc
-
 !ifdef plusplus_rtdll
 cflags += -br
 !endif

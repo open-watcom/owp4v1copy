@@ -8,6 +8,15 @@ dip_autodepends = .autodepend
 
 additional_cleanup = *.d32 *.dip
 
+fpu_flags_dos_i86   = -fpc
+fpu_flags_dos_386   = -fpc
+fpu_flags_os2_i86   = -fpc
+fpu_flags_os2_386   = -fpc
+fpu_flags_qnx_i86   = -fpc
+fpu_flags_qnx_386   = -fpc
+fpu_flags_nt_386    = -fpc
+fpu_flags_linux_386 = -fpc
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -55,8 +64,8 @@ clib_nt_386     = clib3r
 clib_nt_axp     = clib
 
 extra_c_flags     = -s -D__DIP__ $(extra_cflags)
-extra_c_flags_i86 = -fpc -zc -zu
-extra_c_flags_386 = -fpc
+
+extra_c_flags_i86 = -zc -zu
 
 inc_dirs = $(extra_incs) -I"$(dig_dir)/h"
 

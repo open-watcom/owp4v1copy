@@ -5,8 +5,6 @@ inc_dirs        = -I"../h"
 !include deftarg.mif
 !include defrule.mif
 
-extra_c_flags_386 = -fpc
-
 .c: $(cfloat_dir)/c
 
 cf_objs = &

@@ -51,6 +51,14 @@ memory_model_i86 = c
 memory_model_386 = s
 !endif
 
+fpu_flags_dos_i86   = -fpc
+fpu_flags_dos_386   = -fpc
+fpu_flags_os2_i86   = -fpc
+fpu_flags_os2_386   = -fpc
+fpu_flags_win_i86   = -fpc
+fpu_flags_nt_386    = -fpc
+fpu_flags_linux_386 = -fpc
+
 additional_cleanup = *.d32 *.trp
 
 !include cproj.mif
@@ -70,9 +78,6 @@ extra_c_flags += -D$(which) -DMD_$(cpu) -s $(extra_cflags)
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES
 !endif
-
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
 
 !ifeq host_os nov
 extra_c_flags_386 += -3s

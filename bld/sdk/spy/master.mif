@@ -46,8 +46,8 @@ dllobjs = spydll.obj
 extra_c_flags_mem = -dNO_WPI
 
 extra_c_flags     += -s
-extra_c_flags_i86 += -fpc -zu -2 -zW
-extra_c_flags_386 += -fpc -4
+extra_c_flags_i86 += -zu -2 -zW
+extra_c_flags_386 += -4
 !ifeq host_os win
 extra_c_flags_spydll = -bd -mc
 !else ifeq host_os nt

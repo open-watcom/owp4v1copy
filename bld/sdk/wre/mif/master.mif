@@ -31,8 +31,7 @@ TRMEM           += -of+
 !endif
 
 extra_c_flags     = -DWIN_GUI -s
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
+
 extra_c_flags_win = -zu-zw-zc
 
 extra_c_flags_preproc = -zm

@@ -58,8 +58,7 @@ extra_c_flags_nov     = -DREPORT_TYPE= -DFAR_PTR= -DNETWARE -3s -zp1
 extra_c_flags_nt      = -DREPORT_TYPE= -DFAR_PTR=
 extra_c_flags_os2     = -DREPORT_TYPE= -DFAR_PTR=
 
-extra_c_flags_i86     = -fpc -2
-extra_c_flags_386     = -fpc
+extra_c_flags_i86     = -2
 !ifeq target dos
 extra_c_flags_i86     += -DSHORT_OFF
 !else ifeq target os2

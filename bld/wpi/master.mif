@@ -11,8 +11,7 @@ wpi_autodepends = .AUTODEPEND
 #-------- CFLAGS
 extra_c_flags = -s
 
-extra_c_flags_386 = -fpc
-extra_c_flags_i86 = -fpc -zu
+extra_c_flags_i86 = -zu
 
 !ifeq host_cpu 386
 extra_c_flags_os2 = -3r

@@ -32,9 +32,10 @@ sdk_misc = $(sdk_dir)/misc
 # cflags stuff
 ###############
 
-extra_c_flags_386 = -fpc
-extra_c_flags_i86 = -fpc -zW -zu
+extra_c_flags_i86 = -zW -zu
+
 extra_c_flags_axp =
+
 extra_c_flags_mem = -DWANT_MSGS -DNO_WPI
 
 !ifneq host_OS win

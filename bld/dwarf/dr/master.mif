@@ -17,8 +17,8 @@ extra_c_flags += -dINLINE_VMEM
 
 inc_dirs = -I"../h"
 
-extra_c_flags_i86 = -fpc -zc -zu
-extra_c_flags_386 = -fpc -zc
+extra_c_flags_i86 = -zc -zu
+extra_c_flags_386 = -zc
 extra_c_flags_win = -zW
 
 !include ../dr.mif

@@ -45,8 +45,7 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
 msgfiles = $(wrc_dir)/h/rc.msg ../h/wr.msg
 
 extra_c_flags     = -DWIN_GUI -DWR_COMPILED -s
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
+
 extra_c_flags_win = -zu-zw-zc
 
 # wr objects

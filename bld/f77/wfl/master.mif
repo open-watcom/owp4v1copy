@@ -9,8 +9,6 @@ proj_name = f77
 inc_dirs=-I"../h" -I"$(f77_dir)/cg86/cp/h" -I"$(f77_dir)/cg86/h" -I"$(f77_dir)/h"
 
 extra_c_flags = -d__WFL__ -d__RT__
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
 
 .c: ../c;$(f77_dir)/cg86/cp/c;$(f77_dir)/cp;$(f77_dir)/c
 

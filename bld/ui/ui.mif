@@ -15,9 +15,6 @@ inc_dirs += -I"../h" -I"../../h"
 obj = obj
 !include ../objfiles.mif
 
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
-
 extra_c_flags += -os-s
 
 $(name).lib: $(objfiles)

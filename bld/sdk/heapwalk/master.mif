@@ -17,7 +17,7 @@ all: $(name).exe .SYMBOLIC
 
 !include $(wdisasm_dir)/mif/disasm.mif
 
-extra_c_flags= -2-s-zu-zW-fpc
+extra_c_flags= -2-s-zu-zW
 extra_c_flags_ldstr = -dSPECIAL_STRING_LOADING
 extra_c_flags_mem   = -dNO_WPI
 

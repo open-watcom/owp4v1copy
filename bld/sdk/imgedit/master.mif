@@ -69,8 +69,7 @@ extra_c_flags = -DWIN_GUI -s
 !ifdef wpitest
 extra_c_flags += -d_WPI_TEST_
 !endif
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
+
 extra_c_flags_win = -zc
 
 extra_c_flags_about = -DNOUSE3D

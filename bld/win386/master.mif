@@ -2,6 +2,8 @@ proj_name = win386
 
 win386_autodepends = .AUTODEPEND
 
+fpu_flags_win_i86  = -fpc
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -54,7 +56,7 @@ OBJS_vxd = wdebug.obj &
 
 # cflags stuff
 ###############
-extra_c_flags = -s-2-fpc
+extra_c_flags = -s-2
 !ifeq fmt dll
 extra_c_flags_wininit  = -DDLL32 -zu
 extra_c_flags_libmain  = -DDLL32 -zu

@@ -37,7 +37,7 @@ extra_c_flags_i86_dos = -D__86__
 
 extra_c_flags_i86_os2 = -2
 extra_c_flags_i86_qnx = -2
-extra_c_flags_i86_win = -fpc -zW -2 -zc
+extra_c_flags_i86_win = -zW -2 -zc
 
 extra_c_flags_i86 = $(extra_c_flags_i86_$(host_os))
 

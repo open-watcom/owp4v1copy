@@ -63,6 +63,7 @@ volatile struct NDP_Environment {
 
 extern void _TEST_NDP( void );
 #pragma aux _TEST_NDP = \
+        ".8087"         \
         "FINIT",                        /* initialize ND processor */ \
         "FLDCW   word ptr Control",     /* initialize control */ \
         "FENI",                         /* enable interrupts */ \
@@ -72,10 +73,10 @@ extern void _TEST_NDP( void );
         "FNOP"                          /* no-operation */
 
 extern void _INIT_NDP( void );
-#pragma aux _INIT_NDP = "FNINIT"        /* reinitialize NDP */;
+#pragma aux _INIT_NDP = ".8087" "FNINIT"        /* reinitialize NDP */;
 
 extern  void    __fstenv( void );
-#pragma aux     __fstenv = "FSTENV NDP_Env";
+#pragma aux     __fstenv = ".8087" "FSTENV NDP_Env";
 
 #define NUM_INTS 0x80
 

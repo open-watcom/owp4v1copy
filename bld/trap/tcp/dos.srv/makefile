@@ -3,12 +3,12 @@
 host_os  = dos
 host_cpu = i86
 
-memory_model_i86 = l
-
 os  = dos
 srv = tcp
 cpu = x86
 which = SERVER
+
+memory_model_i86 = l
 
 extra_objs = $(remote_objs)
 inc_dirs   = -I"$(%OWROOT)/contrib/wattcp/inc"

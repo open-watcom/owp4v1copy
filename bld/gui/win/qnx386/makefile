@@ -116,7 +116,7 @@ sysobjs += windlg.obj
 
 !include ../guiwin.mif
 
-extra_c_flags += -DWILLOWS -DTWIN32 -fpi
+extra_c_flags += -DWILLOWS -DTWIN32
 
 #rm_wpi :  $(wpi_dir)/h/wpicomp.h .SYMBOLIC
 #        @-rm $(sysobjs)
