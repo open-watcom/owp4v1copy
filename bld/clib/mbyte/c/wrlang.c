@@ -33,6 +33,7 @@
 #ifdef __NT__
     #include <windows.h>
     #include <winnls.h>
+    #pragma library("kernel32.lib")
 #elif defined __OS2__
     #define INCL_DOSNLS
     #include <wos2.h>

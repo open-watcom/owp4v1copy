@@ -36,6 +36,9 @@
 #include "osver.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+#pragma library("advapi32.lib")
+
 _WCRTLINK unsigned _dos_settime( struct dostime_t *time )
 {
     int                 error;

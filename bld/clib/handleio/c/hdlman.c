@@ -58,6 +58,8 @@ extern  void        __grow_iomode( int num );
 
 #if defined(__NT__)
 
+#pragma library("kernel32.lib")
+
 HANDLE *__OSHandles = NULL;
 
 unsigned __growPOSIXHandles( unsigned num )

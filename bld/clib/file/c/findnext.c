@@ -40,6 +40,7 @@
     #include <windows.h>
     #include "libwin32.h"
     #include "ntex.h"
+    #pragma library("kernel32.lib")
 #else
 #endif
 

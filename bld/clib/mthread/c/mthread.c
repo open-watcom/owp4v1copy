@@ -111,6 +111,9 @@ static semaphore_object IOBSemaphore;
 #endif
 
 #if defined( __NT__ )
+
+#pragma library("kernel32.lib")
+
 #define MAX_CRITICAL_SECTION 64
 static CRITICAL_SECTION critsect_cache[MAX_CRITICAL_SECTION];
 static int critsect_next;

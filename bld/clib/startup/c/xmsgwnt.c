@@ -37,6 +37,8 @@
 #include "rtdata.h"
 #include "exitwmsg.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
 {
 

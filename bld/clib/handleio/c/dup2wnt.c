@@ -39,6 +39,8 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK int dup2( int hid1, int hid2 )
 {
     HANDLE      ph;

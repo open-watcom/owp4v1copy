@@ -34,6 +34,8 @@
 #include <dos.h>
 #include <windows.h>
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK void _dos_getdate( struct dosdate_t *date )
 {
     SYSTEMTIME  st;

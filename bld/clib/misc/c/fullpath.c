@@ -53,6 +53,7 @@
     #elif defined(__NT__)
         #include <windows.h>
         #include "libwin32.h"
+        #pragma library("kernel32.lib")
     #elif !defined(__NETWARE__)
         #include "tinyio.h"
     #endif

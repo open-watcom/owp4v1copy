@@ -42,6 +42,8 @@
 #include "initfini.h"
 #include "thread.h"
 
+#pragma library("kernel32.lib")
+
 extern void __InitThreadData( thread_data * );
 
 #ifdef __SW_BR

@@ -55,6 +55,11 @@
 #include "enterdb.h"
 #include "liballoc.h"
 
+#if defined(__NT__)
+    #pragma library("kernel32.lib")
+    #pragma library("user32.lib")
+#endif
+
 #define MAX_MSG_LEN             512
 #define TOO_LONG_MSG            "_CrtDbgReport: Message too long"
 #define ASSERT_PREFIX1          "Assertion failed!"

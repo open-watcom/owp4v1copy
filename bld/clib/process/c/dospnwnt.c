@@ -47,6 +47,8 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 extern  void    __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *, CHAR_TYPE **, CHAR_TYPE *, int );
 
 #ifdef _M_IX86

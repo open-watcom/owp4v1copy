@@ -37,6 +37,7 @@
 #include "libwin32.h"
 #include "osver.h"
 
+#pragma library("kernel32.lib")
 
 HANDLE __lib_CreateFileW( LPCWSTR lpFileName,
                           DWORD dwDesiredAccess,

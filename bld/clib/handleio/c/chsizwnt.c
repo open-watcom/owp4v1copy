@@ -40,6 +40,8 @@
 #include "seterrno.h"
 #include "lseek.h"
 
+#pragma library("kernel32.lib")
+
 // pad with zero bytes
 void static __padfile( int hid, long offset, long diff ) {
     int rc;

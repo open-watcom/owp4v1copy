@@ -46,6 +46,7 @@
 #include "ntex.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
 
 #define SEEK_ATTRIB (~_A_VOLID)
 

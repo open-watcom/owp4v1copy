@@ -52,6 +52,8 @@
 #include "initfini.h"
 #include "rtinit.h"
 
+#pragma library("kernel32.lib")
+
 DWORD __TlsIndex = NO_INDEX;
 
 _WCRTLINK int *__threadid( void )

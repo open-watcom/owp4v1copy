@@ -36,6 +36,8 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK unsigned _dos_allocmem( unsigned size, LPVOID *p_mem )
 {
     LPVOID      ptr;

@@ -35,6 +35,8 @@
 #include <windows.h>
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK unsigned _dos_setfileattr( const char *path, unsigned attribute )
 {
     int         error;

@@ -48,6 +48,8 @@
 #include "extfunc.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 extern  void            __InitMultipleThread( void );
 
 extern  DWORD           __TlsIndex;

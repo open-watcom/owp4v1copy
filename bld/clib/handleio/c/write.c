@@ -40,6 +40,7 @@
 #include <string.h>
 #ifdef __NT__
     #include <windows.h>
+    #pragma library("kernel32.lib")
 #elif defined(__WINDOWS__)
     #include <windows.h>
     #include "tinyio.h"

@@ -41,6 +41,7 @@
 #include "seterrno.h"
 #include "defwin.h"
 
+#pragma library("kernel32.lib")
 
 int __close( int hid )
 {

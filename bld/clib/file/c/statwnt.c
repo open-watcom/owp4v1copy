@@ -56,6 +56,8 @@
 #include "osver.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 extern time_t _d2ttime();
 
 static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )

@@ -38,6 +38,8 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 /*
     DWORD SetFilePointer(
       HANDLE hFile,                // handle to file

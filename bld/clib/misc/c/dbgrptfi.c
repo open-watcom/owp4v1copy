@@ -35,6 +35,7 @@
 #include <crtdbg.h>
 #ifdef __NT__
     #include <windows.h>
+    #pragma library("kernel32.lib")
 #else
     #ifdef __UNIX__
         #include <unistd.h>

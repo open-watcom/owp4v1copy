@@ -33,6 +33,7 @@
 #include "variety.h"
 #if   defined(__NT__)
 #include <windows.h>
+#pragma library("kernel32.lib")
 #elif defined(__OS2__)
 #define INCL_DOSERRORS
 #include <wos2.h>

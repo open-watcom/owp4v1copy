@@ -34,6 +34,8 @@
 #include <windows.h>
 #include <process.h>
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK unsigned long __threadhandle( void ) {
     return( (unsigned long)GetCurrentThread() );
 }

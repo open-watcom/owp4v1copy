@@ -46,6 +46,9 @@
 #endif
 #if defined(__WINDOWS_286__) || defined(__NT__)
  #include "windows.h"
+ #if defined( __NT__ )
+  #pragma library("kernel32.lib")
+ #endif
 #endif
 #if defined(__OS2__)
  #include <wos2.h>
@@ -56,7 +59,6 @@
 #if defined(__SNAP__)
  #include <os/imports.h>
 #endif
-
 
 static frlptr __LinkUpNewMHeap( mheapptr );
 

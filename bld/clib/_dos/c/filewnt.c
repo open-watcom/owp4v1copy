@@ -46,6 +46,8 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK unsigned _dos_open( const char *name, unsigned mode, int *posix_handle )
 {
     HANDLE      handle;

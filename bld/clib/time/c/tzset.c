@@ -34,6 +34,7 @@
 #include <time.h>
 #ifdef __NT__
  #include <windows.h>
+ #pragma library("kernel32.lib")
 #endif
 #include "rtdata.h"
 #include "timedata.h"

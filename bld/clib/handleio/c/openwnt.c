@@ -52,6 +52,7 @@
 
 extern unsigned __NFiles;
 
+#pragma library("kernel32.lib")
 
 _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 {

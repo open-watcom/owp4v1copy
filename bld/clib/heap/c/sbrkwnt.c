@@ -37,6 +37,8 @@
 #include <dos.h>
 #include <windows.h>
 
+#pragma library("kernel32.lib")
+
 extern  unsigned                _curbrk;
 extern  unsigned                _STACKTOP;
 

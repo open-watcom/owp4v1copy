@@ -36,6 +36,7 @@
 #include <windows.h>
 #include "libwin32.h"
 
+#pragma library("kernel32.lib")
 
 /*
  * Apparently GetFileAttributes 3.51 sometimes gets confused when the

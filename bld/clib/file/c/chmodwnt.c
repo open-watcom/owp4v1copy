@@ -38,6 +38,8 @@
 #include "libwin32.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
 {
     BOOL        rc;

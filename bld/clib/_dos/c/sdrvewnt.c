@@ -34,6 +34,8 @@
 #include <dos.h>
 #include <windows.h>
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK void _dos_setdrive( unsigned drivenum, unsigned *drives )
 {
     char        dir[4];

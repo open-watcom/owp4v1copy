@@ -39,6 +39,8 @@
 #include "libwin32.h"
 #include "ntex.h"
 
+#pragma library("kernel32.lib")
+
 #ifndef __WIDECHAR__    /* same for wide char, so only compile this once */
 void __MakeDOSDT( FILETIME *NT_stamp, unsigned short *d, unsigned short *t )
 {

@@ -39,6 +39,8 @@
 #include "defwin.h"
 #include <unistd.h>
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK int kbhit( void )
 {
     DWORD n;

@@ -39,6 +39,8 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
+#pragma library("kernel32.lib")
+
 _WCRTLINK int dup( int old_hid )
 {
     HANDLE      new_handle=(HANDLE)-1;
