@@ -31,9 +31,11 @@
 
 #include "cvars.h"
 
-TYPEPTR StructDecl(int,int);
-
 extern  unsigned SymTypedef;
+
+local TYPEPTR StructDecl(int,int);
+static void SetPlainCharType( int char_type );
+local void CheckBitfieldType( TYPEPTR typ );
 
 #if _CPU == 386
 #define _CHECK_SIZE( s )
@@ -271,6 +273,7 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, int force_duplicate )
     return( newtype );
 }
 #endif
+
 static void SetPlainCharType( int char_type )
 {
     TYPEPTR     typ;
@@ -853,6 +856,8 @@ local int UnQualifiedType( TYPEPTR typ )                        /* 21-mar-91 */
     case TYPE_LONG64:
     case TYPE_ULONG64:
         return( TYPE_LONG64 );
+    default:
+        break;
     }
     return( 0 );
 }
@@ -1088,6 +1093,9 @@ local void CheckBitfieldType( TYPEPTR typ )
         if( CompFlags.extensions_enabled ) {
             return;
         }
+        break;
+    default:
+        break;
     }
     CErr1( ERR_INVALID_TYPE_FOR_FIELD );
 }
@@ -1135,7 +1143,7 @@ void FreeTags()
     int         hash;
 
     for( hash = 0; hash <= TAG_HASH_SIZE; ++hash ) {
-        for( ; tag = TagHash[ hash ]; ) {
+        for( ; (tag = TagHash[ hash ]); ) {
             if( tag->level < SymLevel ) break;
             TagHash[ hash ] = tag->next_tag;
             tag->next_tag = DeadTags;

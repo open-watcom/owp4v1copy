@@ -38,6 +38,9 @@
 extern  void    CSegFree( SEGADDR_T );
 extern  TREEPTR CurFuncNode;
 
+static void NewSym( void );
+
+
 static unsigned Cached_sym_num;
 static void     *Cached_sym_addr;
 struct sym_stats {
@@ -219,7 +222,7 @@ SYM_HANDLE MakeFunction( char *id, TYPEPTR typ )
 }
 
 
-void NewSym()
+static void NewSym( void )
 {
     ++NextSymHandle;
     if( NextSymHandle >= LARGEST_SYM_INDEX ) {
@@ -934,7 +937,7 @@ void FreeLabels()
 {
     LABELPTR label;
 
-    for( ; label = LabelHead; ) {
+    for( ; (label = LabelHead); ) {
         LabelHead = label->next_label;
         if( label->defined == 0 ) {
             CErr2p( ERR_UNDEFINED_LABEL, label->name );
