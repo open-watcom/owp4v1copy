@@ -2,10 +2,10 @@
 # Master makefile for creating MAD's
 #
 
-#.CONTINUE
-#.ERASE
-#.EXTENSIONS
-#.EXTENSIONS : .exe .lan .obj .i .h .c .asm .mif
+project_name = mad
+
+.CONTINUE
+.ERASE
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -13,112 +13,77 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-host_OS = $(os)
+memory_model_i86 = l
+memory_model_386 = f
+!ifeq host_os qnx
+memory_model_386 = s
+!endif
 
-#.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-model_os2 = l
-model_os2v2 = f
-model_qnx = s
-model_linux = f
-model_win = l
-model_dos = f
-model_nt  = f
-
-comp_os2_x86 = $(comp286) -zu
-comp_os2v2_x86 = $(comp386)
-comp_qnx_x86 = $(comp386)
-comp_linux_x86 = $(comp386)
-comp_win_x86 = $(comp286) -zu
-comp_dos_x86 = $(comp386)
-comp_nt_x86  = $(comp386)
-comp_nt_axp  = *wccaxp
-
-sys_os2_x86  = os2 dll export MADLOAD op modname=$(name)
-sys_os2v2_x86  = os2v2 dll export MADLOAD op modname=$(name)
-sys_qnx_x86  = pharlap rex disable 1023,1014
-sys_linux_x86  = pharlap rex disable 1023,1014
-sys_win_x86  = windows op modname=$(name),rwr
-sys_dos_x86  = pharlap rex disable 1023,1014
-sys_nt_x86   = nt_dll export MADLOAD op offset=0x6eb00000, modname=$(name)
-sys_nt_axp   = ntaxp_dll export MADLOAD op modname=$(name), dosseg
-
 name = mad$(mad)
-mad_os2_x86 = $(bin_root)/binp/dll/$(name).dll
-mad_os2v2_x86 = $(bin_root)/binp/dll/$(name).d32
-mad_qnx_x86 = $(bin_root)/qnx/$(name).mad
-mad_linux_x86 = $(bin_root)/linux/$(name).mad
-mad_win_x86 = $(bin_root)/bin/$(name).dll
-mad_dos_x86 = $(bin_root)/bin/$(name).mad
-mad_nt_x86  = $(bin_root)/binnt/$(name).dll
+mad_os2_i86 = $(bin_root)/binp/dll/$(name).dll
+mad_os2_386 = $(bin_root)/binp/dll/$(name).d32
+mad_qnx_386 = $(bin_root)/qnx/$(name).mad
+mad_linux_386 = $(bin_root)/linux/$(name).mad
+mad_win_i86 = $(bin_root)/bin/$(name).dll
+mad_dos_386 = $(bin_root)/bin/$(name).mad
+mad_nt_386  = $(bin_root)/binnt/$(name).dll
 mad_nt_axp  = $(bin_root)/axpnt/$(name).dll
 
-!ifeq os win
-targ = windows
-!else
-targ = $(os)
-!endif
+# cflags stuff
+###############
+extra_c_flags = -DMD_$(mad)
+extra_c_flags_i86 = -fpc -zu
+extra_c_flags_386 = -fpc
+extra_c_flags_win = -zc
 
-comp_opts_x86 = -m$(model_$(os)) -fpc -zc
-comp_opts = $(comp_opts_$(cpu)) -DMD_$(mad) -zq -w3 -bt=$(targ)
-ipaths=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h
+# lflags stuff
+###############
+lflags_qnx_386  = sys pharlap rex disable 1023,1014
+lflags_linux_386= sys pharlap rex disable 1023,1014
+lflags_dos_386  = sys pharlap rex disable 1023,1014
+lflags_os2_i86  = sys os2 dll
+lflags_os2_386  = sys os2v2 dll
+lflags_win_i86  = sys windows op rwr
+lflags_nt_386   = sys nt_dll op offset=0x6eb00000
+lflags_nt_axp   = sys ntaxp_dll op dosseg
 
-!ifdef extra_incs
-ipaths+=;$(extra_incs)
-!endif
+extra_l_flags  = op map
 
-!ifdef on_build_machine
-comp_opts       += -d1 -oaxt
-dbg_opts        = d a op symfile
-!else
-comp_opts       += -d2 -s
-dbg_opts        = d a
-comp_opts       += -dDEBUG
-!endif
+extra_l_flags_os2  = export MADLOAD op modname=$(name)
+extra_l_flags_nt  = export MADLOAD op modname=$(name)
+extra_l_flags_win  = export MADLOAD op modname=$(name)
 
-compile = $(comp_$(os)_$(cpu)) $(comp_opts) $(extra_cflags) $[@
-
+libs = clib3r
+!ifeq host_os linux
 !ifdef __LINUX__
-extra_cflags += -fo=.obj
+libs = $(clib_dir)/library/linux.386/ms_r/clibs.lib
+!endif
+!else ifeq host_cpu i86
+libs = clib$(memory_model_i86)
+!else ifneq host_cpu 386
+libs = clib
+!endif
+libs += $(imp_libs)
+
+##################
+
+inc_dirs=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h
+!ifdef extra_incs
+inc_dirs+=;$(extra_incs)
 !endif
 
 .c: ../c;../../c;$(extra_srcs)
 
-.c.obj: .autodepend
-        @set include=$(ipaths)
-        $(compile)
+objs =  madimp.obj $(imp_objs)
 
-.c.i:
-        @set include=$(ipaths)
-        $(compile) -p -fo=.i
-
-objs = &
-        madimp.obj &
-        $(imp_objs)
-
-!ifeq os linux
-!ifdef __LINUX__
-clib = $(clib_dir)/library/linux.386/ms_r/clibs.lib
-!else
-clib = clib3r
-!endif
-!else ifeq cpu x86
-clib = clib$(model_$(os))
-!ifeq clib clibf
-clib = clib3r
-!else ifeq os qnx
-clib = clib3r
-!endif
-!else
-clib = clib
-!endif
-$(mad_$(os)_$(cpu)) : eraseall.obj $(objs) $(imp_libs)
-        *wlink op quiet,map $(dbg_opts) sys $(sys_$(os)_$(cpu)) name $^@ &
-                file {$(objs)} &
-                library {$(clib) $(imp_libs)}
+# explicit rules
+##################
+$(mad_$(host_os)_$(host_cpu)) : eraseall.obj $(objs)
+        $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
 !ifdef lexusbld
         @newer $^@ $(lexlib_dir)\tools\system\$^. "^copy &f $#f > nul"
 !endif

@@ -137,7 +137,7 @@ mad_imp_routines        MadImpInterface = {
 #include <windows.h>
 #include <i86.h>
 
-#pragma aux (pascal) MADLOAD export
+#pragma aux (pascal) MADLOAD
 
 typedef void (DIGENTRY INTER_FUNC)();
 

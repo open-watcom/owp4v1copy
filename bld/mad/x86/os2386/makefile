@@ -1,6 +1,6 @@
 #pmake: all build os_os2 host_x86 targ_x86
 
-os  = os2v2
-cpu = x86
+host_os  = os2
+host_cpu = 386
 
 !include ../mad.mif

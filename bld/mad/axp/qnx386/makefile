@@ -1,6 +1,6 @@
 #pmake: os_qnx host_x86 targ_axp axp
 
-os  = qnx
-cpu = x86
+host_os  = qnx
+host_cpu = 386
 
 !include ../mad.mif
