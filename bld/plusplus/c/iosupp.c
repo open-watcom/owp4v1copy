@@ -848,7 +848,7 @@ char *IoSuppIncPathElement(     // GET ONE PATH ELEMENT FROM INCLUDE LIST
     length = 0;
     for( ; ; ) {
         if( *path == '\0' ) break;
-        if( *path == INC_PATH_SEP ) {
+        if( (*path == INC_PATH_SEP) || (*path == ';') ) {
             ++path;
             if( length != 0 ) {
                 break;
