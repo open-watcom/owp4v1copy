@@ -53,6 +53,7 @@
     #include "expand.h"
     #include "fixup.h"
 #endif
+#include "tbyte.h"
 
 extern int              Token_Count;
 extern struct asm_code  *Code;
@@ -70,7 +71,6 @@ extern int              GetStructSize( int );
 extern void             AsmCodeByte( char );
 extern void             AsmDataByte( char );
 extern void             AsmByte( char );
-extern void             double2tbyte( double, char * );
 
 #ifdef _WASM_
     extern int          ChangeCurrentLocation( bool, int_32 );
@@ -111,28 +111,24 @@ static void output_float( char index, char no_of_bytes, char negative )
     float               float_value;
     char                *char_ptr;
     uint_8              count;
+    long_double         tbyte;
 
-    double_value = strtod( AsmBuffer[index]->string_ptr, NULL );
-
-    if( negative ) {
-        double_value *= -1;
-    }
-
-    switch( no_of_bytes ) {
-    case BYTE_4:
-        float_value = double_value;
-        char_ptr = (char*)&float_value;
-        break;
-    case BYTE_8:
-        char_ptr = (char *)&double_value;
-        break;
-    case BYTE_10:
-        char_ptr = AsmTmpAlloc( BYTE_10 + 1 );
-        for( count = 0; count <= BYTE_10; count++ ) {
-            char_ptr[ count ] = '\0';
+    if( no_of_bytes == BYTE_10 ) {
+        char_ptr = (char *)strtotb( AsmBuffer[index]->string_ptr, &tbyte, NULL, negative );
+    } else {
+        double_value = strtod( AsmBuffer[index]->string_ptr, NULL );
+        if( negative ) {
+            double_value *= -1;
         }
-        double2tbyte( double_value, char_ptr );
-        break;
+        switch( no_of_bytes ) {
+        case BYTE_4:
+            float_value = double_value;
+            char_ptr = (char*)&float_value;
+            break;
+        case BYTE_8:
+            char_ptr = (char *)&double_value;
+            break;
+        }
     }
 
     count = 0;

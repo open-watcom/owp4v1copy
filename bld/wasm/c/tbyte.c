@@ -24,149 +24,109 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Conversion from string with real number to tbyte format
 *
 ****************************************************************************/
 
+// FIXME: long_double is not supported on all platforms as tbyte, it works with double
 
-/***************************************************************************
- * this module is used to convert numbers from DOUBLE
- * to a ten-byte floating byte format ( tbyte )
- * the tbyte value is just stored as an array of chars
- *
- * ( note that tbytes DO use little-endian format - so that the order chars
- * are flipped around - the char containing the sign bit & 1st part of the
- * exponent field comes last, etc. )
- *
- * this module will not be necessary when (if) our compiler begins to support
- * ten byte floating point numbers itself
- *
- * note that for now, the ten byte format will NOT really have any more
- * precision than the current double format ( 8 byte ) -- the last few
- * bits of the mantissa will just be left as zero
- ***************************************************************************/
+#include <ctype.h>
+#include "tbyte.h"
 
-#include <float.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+long_double * strtotb(const char* s, long_double * ld, char** endptr, char negative) {
+    const char    *p = s;
+    int           sign = +1;
+    unsigned int  expo;
+    long_double   value;
+    long_double   factor;
+    long_double   *pfactor;
+    long_double   ld1;
+    long_double   const_10;
+    long_double   const_0_1;
 
-#include "watcom.h"
+    // const_10 = 10.0L;
+    __I4LD(10, &const_10);
+    // const_0_1 = 0.1L;
+    __I4LD(1, &ld1);
+    __FLDD(&ld1, &const_10, &const_0_1);
 
-#define TBYTE_MAX_EXP 16383
-#define LDBL_EXP_DIG 11
-#define LDBL_MANTISSA_DIG 52
-#define INBYTES 8
-#define OUTBYTES 10
+    while ( isspace(*p) ) p++;
 
-
-static void swap( char *a, char *b )
-/**********************************/
-{
-    char tmp;
-
-    tmp = *a;
-    *a = *b;
-    *b = tmp;
-    return;
-}
-
-static void little_to_big_endian( char *data, uint_8 bytecount )
-/**************************************************************/
-{
-    uint_8 i;
-
-    for( i = 0; i < bytecount / 2; i++ ) {
-        swap( &data[ i ], &data[ bytecount - 1 - i ] );
+    switch (*p) {
+    case '-': sign = -1;
+    case '+': p++;
+    default : break;
     }
-}
+    if( negative ) {
+        sign = (sign > 0) ? -1 : +1;
+    }
 
-static void copy_mantissa( char *input, char *output, uint_8 no_of_bits )
-/***********************************************************************/
-{
-    #define     FIRST_BIT 0x80
+    // value = 0.0L;
+    __I4LD(0, &value);
+    while ( (unsigned int)(*p - '0') < 10u ) {
+        // value = value * 10 + (*p++ - '0') * factor;
+        __I4LD((*p++ - '0'), &ld1);
+        __FLDM(&value, &const_10, &value);
+        __FLDA(&value, &ld1, &value);
+    }
 
-                /* input_bit & output_bit are bit-masks -
-                 * 1 bit is on at a time, moving left to right in the byte
-                 */
-    uint_8      input_bit = 0x08;
-    uint_8      output_bit = 0x40;
-
-
-    char        *input_byte = input + 1;
-    char        *output_byte = output + 2;
-    uint_8      bitcount;
-
-    for( bitcount = 0; bitcount < no_of_bits; bitcount++ ) {
-        if( (*input_byte) & input_bit ) {
-            /* if the input bit is set, turn on the corresponding output bit */
-            (*output_byte) |= output_bit;
-        }
-        input_bit >>=1;
-        if( !input_bit ) {
-            input_bit = FIRST_BIT;
-            input_byte++;
-        }
-        output_bit >>=1;
-        if( !output_bit ) {
-            output_bit = FIRST_BIT;
-            output_byte++;
+    if ( *p == '.' ) {
+        // factor = 1.0L;
+        __I4LD(1, &factor);
+        p++;
+        while ( (unsigned int)(*p - '0') < 10u ) {
+            // factor *= 0.1L;
+            __FLDM(&factor, &const_0_1, &factor);
+            // value += (*p++ - '0') * factor;
+            __I4LD((*p++ - '0'), &ld1);
+            __FLDM(&ld1, &factor, &ld1);
+            __FLDA(&value, &ld1, &value);
         }
     }
-    return;
-}
 
-void double2tbyte( double data, char *output )
-/********************************************/
-{
-    double              save;
-    char                *input;
-    char                *tmp;
-    unsigned short int  *tmp2;
-    unsigned long int   sign, exponent;
-
-    save = data;
-    input = (char *)&data;
-
-    exponent = *((unsigned short int *)(input+INBYTES-2));
-    sign = exponent & 0x8000; /* get the 1st bit */
-    exponent &= 0x7fff; /* get rid of sign bit */
-    exponent >>= ( 15 - LDBL_EXP_DIG );
-    /* now use this to kill off those digits in input */
-
-    if( OUTBYTES == 10 && save != 0.0 ) {
-        /* we need to add a 1 for the integer part */
-        tmp = output + OUTBYTES - 3;
-        (*tmp) |= 0x80; /* put a 1 in the integer bit */
+    if ( (*p | 0x20) == 'e' ) {
+        expo   = 0;
+        pfactor = &const_10;
+        switch (*++p) {
+        case '-': pfactor = &const_0_1;
+        case '+': p++;
+                  break;
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+                  break;
+        default : 
+                  // value = 0.0L;
+                  __I4LD(0, &value);
+                  p = s;
+                  goto done;
+        }
+        while ( (unsigned int)(*p - '0') < 10u )
+            expo = 10 * expo + (*p++ - '0');
+        while ( 1 ) {
+            if ( expo & 1 )
+                // value *= factor;
+                __FLDM(&value, pfactor, &value);
+            if ( (expo >>= 1) == 0 )
+                break;
+            // factor *= factor;
+            __FLDM(pfactor, pfactor, pfactor);
+        }
     }
 
-    /* now put the sign bit & exponent into the output */
-    exponent -= LDBL_MAX_EXP - 1;   /* unbiased */
-    exponent += TBYTE_MAX_EXP;  /* biased for output type */
+done:
+    if ( endptr != NULL )
+        *endptr = (char*)p;
 
-    tmp2 = (unsigned short int*)(output + OUTBYTES - 2);
-    (*tmp2) |= exponent;
-
-    if( sign ) {
-        tmp = output + OUTBYTES - 1;
-        (*tmp) |= 0x80; /* sign bit - leftmost bit of last byte */
-    }
-
-    /*=============================================================*/
-
-    /* step 1 is done.
-     * now flip both input & output into big-endian format & copy
-     * the mantissa over bit by bit
-     */
-
-    little_to_big_endian( input, 8 );
-    little_to_big_endian( output, 10 );
-
-    copy_mantissa( input, output, LDBL_MANTISSA_DIG );
-
-    little_to_big_endian( input, 8 ); /* same both ways */
-    little_to_big_endian( output, 10 );
-
-    return;
+    // return value * sign;
+    __I4LD(sign, &ld1);
+    __FLDM(&value, &ld1, ld);
+    return ld;
 }
