@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #ifndef __UNIX__
 #include <direct.h>
 #else
@@ -270,17 +271,163 @@ int BuildQuotedFName( char *buffer, const char *path, const char *filename, cons
     return has_space;
 }
 
-int UnquoteFName( char *unquoted, const char *p )
-/***********************************************/
+int UnquoteFName( char *dst, int maxlen, const char *src )
+/***********************************************************************
+ * Removes doublequote characters from filename and copies other content
+ * from src to dst. Only maxlen number of characters are copied to dst
+ * including terminating NUL character. Returns value 1 when quotes was
+ * removed from orginal filename, 0 otherwise.
+ */
 {
-    if ( *p == '\"' ) {
-        strcpy( unquoted, p + 1 );
-        if( *unquoted && unquoted[ strlen( unquoted ) - 1 ] == '\"' ) {
-            unquoted[ strlen(unquoted) - 1 ] = 0;
+    char string_open = 0;
+    int pos = 0;
+    int t;
+    int un_quoted = 0;
+
+    assert( maxlen );
+
+    // leave space for NUL terminator
+    maxlen--;
+
+    while( pos < ( maxlen - 1 ) ) {
+        t = *src++;
+
+        if ( t == '\0' ) break;
+
+        if ( t == '\\' ) {
+            t = *src++;
+
+            if ( t == '\"' ) {
+                *dst++ = '\"';
+                pos++;
+                un_quoted = 1;
+            } else {
+                *dst++ = '\\';
+                pos++;
+
+                if ( pos < ( maxlen - 1 ) ) {
+                    *dst = t;
+                    pos++;
+                }
+            }
+        } else {
+            if ( t == '\"' ) {
+                string_open = !string_open;
+                un_quoted = 1;
+            } else {
+                if ( string_open ) {
+                    *dst++ = t;
+                    pos++;
+                } else
+                if ( isws( t ) ) {
+                    break;
+                } else {
+                    *dst++ = t;
+                    pos++;
+                }
+            }
         }
-        return 1;
-    } else {
-        strcpy( unquoted, p );
-        return 0;
     }
+
+    *dst = '\0';
+
+    return un_quoted;
+}
+
+int isws( char ch )
+{
+    if(ch == ' ') return 1;
+    if(ch == '\t') return 1;
+
+    return 0;
+}
+
+int iswsOrOpt( char ch, char opt, char *Switch_Chars )
+{
+    if(ch == ' ') return 1;
+    if(ch == '\t') return 1;
+
+    if( opt == '-'  ||  opt == Switch_Chars[1] ) {
+        /* if we are processing a switch, stop at a '-' */
+        if( ch == '-' ) return 1;
+#ifndef __UNIX__
+        if( ch == Switch_Chars[1] ) return 1;
+#endif
+    }
+
+    return 0;
+}
+
+char *FindNextWS( char *str )
+/***********************************
+ * Finds next free white space character, allowing doublequotes to
+ * be used to specify strings with white spaces.
+ */
+{
+    char string_open = 0;
+
+    while( *str != '\0' ) {
+        if ( *str == '\\' ) {
+            str++;
+            if (*str != '\0' )
+            {
+                if ( !string_open && isws ( *str ) ) {
+                    break;
+                }
+                str++;
+            }
+        } else
+        {
+            if ( *str == '\"' ) {
+                string_open = !string_open;
+                str++;
+            } else {
+                if ( string_open ) {
+                    str++;
+                } else {
+                    if ( isws( *str ) ) break;
+                    str++;
+                }
+            }
+        }
+    }
+
+    return str;
+}
+
+char *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars )
+/***********************************
+ * Finds next free white space character, allowing doublequotes to
+ * be used to specify strings with white spaces.
+ */
+{
+    char string_open = 0;
+
+    while( *str != '\0' ) {
+        if ( *str == '\\' ) {
+            str++;
+            if (*str != '\0' )
+            {
+                if ( !string_open && iswsOrOpt ( *str, opt, Switch_Chars ) ) {
+                    break;
+                }
+                str++;
+            }
+        } else
+        {
+            if ( *str == '\"' ) {
+                string_open = !string_open;
+                str++;
+            } else {
+                if ( string_open ) {
+                    str++;
+                } else {
+                    if ( iswsOrOpt( *str, opt, Switch_Chars ) ) break;
+                    str++;
+                }
+            }
+        }
+    }
+
+    return str;
 }

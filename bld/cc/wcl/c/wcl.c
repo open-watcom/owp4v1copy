@@ -242,6 +242,9 @@ void  main()
 
 static char *ScanFName( char *end, int len )
 {
+#if 0
+    // I can't find any use for this anymore, perhaps I am wrong?
+    // If there isn't any problems, this should be removed away.
     int quoted;
 
     if( *Word == '=' ) {
@@ -262,6 +265,7 @@ static char *ScanFName( char *end, int len )
         ++len;
         ++end;
     }
+#endif
     Word[ len ] = NULLCHAR;
     return( end );
 }
@@ -274,7 +278,7 @@ static int FileExtension( char *p, char *ext )
     /* Remove quoted from filename to make it easier to compare extension.
      * We are here assuming that filename comes with quotes or doesn't need them.
      */
-    UnquoteFName( unquoted, p );
+    UnquoteFName( unquoted, sizeof(unquoted), p );
     p = unquoted;
 
     dot = NULL;
@@ -351,25 +355,9 @@ static  int  Parse( void )
 
         end = Cmd;
         if( *Cmd == '"' ) {
-            for(;;) {
-                ++end;
-                if( *end == '\0' ) break;
-                if( *end == '"'  ) break;
-            }
+            end = FindNextWS( end );
         } else {
-            for(;;) {
-                if( *end == '\0' ) break;
-                if( *end == ' '  ) break;
-                if( *end == '\t'  ) break;              /* 16-mar-91 */
-                if( opt == '-'  ||  opt == Switch_Chars[1] ) {
-                    /* if we are processing a switch, stop at a '-' */
-                    if( *end == '-' ) break;
-#ifndef __UNIX__
-                    if( *end == Switch_Chars[1] ) break;
-#endif
-                }
-                ++end;
-            }
+            end = FindNextWSOrOpt( end, opt, Switch_Chars );
         }
         len = end - Cmd;
         if( len != 0 ) {
@@ -382,7 +370,7 @@ static  int  Parse( void )
                     strcat( Libs, Libs[0] != '\0' ? "," : " " );
 
                     /* remove quotes and change them to be compatible with wlink */
-                    UnquoteFName( unquoted, Word );
+                    UnquoteFName( unquoted, sizeof(unquoted), Word );
                     BuildQuotedFName( Word, "", unquoted, "'" );
 
                     strcat( Libs, Word );
@@ -777,16 +765,13 @@ static  int  CompLink( void )
     errors_found = 0;                   /* 21-jan-92 */
     p = Files;
     while( *p != '\0' ) {
-        if( *p == '"' ) {
-            end = strpbrk(++p, "\"");        /* get quoted filespec */
-        } else {
-            end = strpbrk(p, " ");         /* get filespec */
-        }
-        if( end != NULL ) {
+        end = FindNextWS(p);
+        if( *end != '\0' ) {
             *(end++) = 0;
             if( *end == ' ' ) end++;
         }
-        strcpy( Word, p );
+        UnquoteFName( Word, MAX_CMD, p ); /* Word has MAX_CMD characters allocated */
+
         cc_name = SrcName( Word );      /* if no extension, assume .c */
 
         file = GetName( Word );         /* get first matching filename */
