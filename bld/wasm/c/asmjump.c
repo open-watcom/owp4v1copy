@@ -34,10 +34,8 @@
 #include <string.h>
 #include <limits.h>
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmops2.h"
 #include "asmopnds.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmdefs.h"
@@ -57,8 +55,6 @@ extern int              mem2code( char, int, int );
 #ifdef _WASM_
 
 extern seg_list         *CurrSeg;       // points to stack of opened segments
-
-#define Address         ( GetCurrAddr() )
 
 extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
@@ -163,7 +159,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
     enum sym_state      state;
     #ifdef _WASM_
         dir_node                *seg;
-        bool                    old_use32;
     #endif
 
     sym = AsmLookup( AsmBuffer[i]->string_ptr );
@@ -368,16 +363,6 @@ int jmp( int i )                // Bug: can't handle indirect jump
         switch( Code->info.token ) {
         case T_CALLF:
         case T_JMPF:
-
-#ifdef _WASM_
-
-            old_use32 = Code->use32;
-            seg = GetSeg( sym );
-            if( seg != NULL ) {
-                Code->use32 = seg->e.seginfo->segrec->d.segdef.use_32;
-            }
-#endif
-
             switch( Code->distance ) {
             case T_SHORT:
             case T_NEAR:
@@ -409,19 +394,9 @@ int jmp( int i )                // Bug: can't handle indirect jump
                     if( Code->use32 ) {
                         temp = FIX_PTR32;
                         Code->info.opnd_type[Opnd_Count] = OP_J48;
-                        #ifdef _WASM_
-                        if( !old_use32 ) {
-                            Code->prefix.opsiz = TRUE;
-                        }
-                        #endif
                     } else {
                         temp = FIX_PTR16;
                         Code->info.opnd_type[Opnd_Count] = OP_J32;
-                        #ifdef _WASM_
-                        if( old_use32 ) {
-                            Code->prefix.opsiz = TRUE;
-                        }
-                        #endif
                     }
                 }
                 break;
