@@ -1,6 +1,6 @@
-!ifeq host_OS dos
+!ifeq host_os dos
 
-!ifeq host_CPU i86
+!ifeq host_cpu i86
 
 graph.lib : ../../dosi86/graphs.lib ../../../pgchart/dosi86/charts.lib
     cp ../../dosi86/graphs.lib graph.lib
@@ -20,9 +20,9 @@ graph386.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
 
 !endif
 
-!else ifeq host_OS qnx
+!else ifeq host_os qnx
 
-!ifeq host_CPU i86
+!ifeq host_cpu i86
 
 graph.lib : ../../qnxi86/graphs.lib ../../../pgchart/dosi86/charts.lib
     cp ../../qnxi86/graphs.lib graph.lib
@@ -42,11 +42,10 @@ graph3s.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386s/chart3s.lib
 
 !endif
 
-!else ifeq host_OS os2
+!else ifeq host_os os2
 
 graphp.obj : ../../c/seginit.c
-    @set include=$(inc_path)
-    $(cc) $(cflags) $(extra_c_flags_$[&) -fo=$@ $[*
+    $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[*
 
 !endif
 
