@@ -1,3 +1,5 @@
+!include deftarg.mif
+
 .extensions:
 .extensions: .lib .obj .cpp
 
@@ -17,3 +19,4 @@ lbc = tmp.lbc
 .cpp:..\..\cpp
 .cpp.obj: .AUTODEPEND
     $(ppcompile) -xs-zm-zld @compflags $[@
+
