@@ -3,7 +3,7 @@
 # host_OS  = nt | os2 | qnx | dos | linux
 
 obj_dir         = $(host_OS)$(host_CPU)
-obj_dir_libs    = o.$(host_CPU)
+obj_dir_libs    = osi$(host_CPU)
 
 !ifdef bootstrap
 obj_dir         = $(%OBJDIR)

@@ -17,6 +17,6 @@ dw_lib_axp = $(dwarf_dir)/dw/axp/dw.lib
 dw_lib_386 = $(dwarf_dir)/dw/o/dwf.lib
 dw_lib = $(dw_lib_$(host_CPU))
 
-cfloat_lib_axp = $(cfloat_dir)/o.axp/cf.lib
-cfloat_lib_386 = $(cfloat_dir)/o.386/cf.lib
+cfloat_lib_axp = $(cfloat_dir)/osiaxp/cf.lib
+cfloat_lib_386 = $(cfloat_dir)/osi386/cf.lib
 cfloat_lib = $(cfloat_lib_$(host_CPU))
