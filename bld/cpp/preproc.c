@@ -24,14 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  A simple macro preprocessor.
 *
 ****************************************************************************/
 
 
-//  PREPROC.C - A simple macro preprocessor
-//
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -342,7 +339,8 @@ void PP_Fini()
             me = PPHashTable[hash];
             if( me == NULL ) break;
             PPHashTable[hash] = me->next;
-            PP_Free( me->replacement_list );
+            if( me->replacement_list != NULL )
+                PP_Free( me->replacement_list );
             PP_Free( me );
         }
     }
