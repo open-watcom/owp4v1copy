@@ -90,6 +90,7 @@ static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
 static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
         char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
+static  char    Resources[MAX_CMD]; /* list of resources from Cmd         */
 static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
 static  char    CC_Path[_MAX_PATH]; /* path name for wcc.exe              */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
@@ -374,6 +375,10 @@ static  int  Parse( void )
                 if( FileExtension( Word, ".lib" ) ) {
                     strcat( Libs, Libs[0] != '\0' ? "," : " " );
                     strcat( Libs, Word );
+                } else
+                if( FileExtension( Word, ".res" ) ) {
+                    strcat( Resources, Word );
+                    strcat( Resources, " " );
                 } else {
                     strcat( Files, Word );
                     strcat( Files, " " );
@@ -727,6 +732,26 @@ static  int  CompLink( void )
         }
 #endif
     }
+
+    /* pass given resources to linker */
+    p = Resources;
+    while( *p != '\0' ) {
+        if( *p == '"' ) {
+            end = strpbrk(++p, "\"");   /* get quoted filespec */
+        } else {
+            end = strpbrk(p, " ");      /* get filespec */
+        }
+        if( end != NULL ) {
+            *(end++) = 0;
+            if( *end == ' ' ) end++;
+        }
+        fputs( "option resource='", Fp );
+        fputs( p, Fp );
+        Fputnl( "'", Fp );
+
+        p = end;                        /* get next filename */
+    }
+
     for( d_list = Directive_List; d_list; d_list = d_list->next ) {
         Fputnl( d_list->directive, Fp );
     }
