@@ -136,4 +136,4 @@ $(objs) : .SYMBOLIC
 	@%append $(cmd_file) :next$^@c
 
 clean : .SYMBOLIC
-	rm -f %1.obj %1.err test_tmp.cmd mem.trk
+	rm -f *.obj *.err *.dis *.lst *.tmp test_tmp.cmd mem.trk
