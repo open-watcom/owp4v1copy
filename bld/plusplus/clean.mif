@@ -1,3 +1,0 @@
-clean global : .SYMBOLIC
-    @rm -f *.?bj *.lib *.exe *.err *.tmp *.out *.map *.lnk *.lst *.gh *.gc
-    @rm -f *pch *.trk *.def *.lbc
