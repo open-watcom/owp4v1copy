@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap file loading for DOS extended debugger.
 *
 ****************************************************************************/
 
@@ -557,13 +556,13 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     }
     dh = PathOpen( trapbuff, end - trapbuff, DEFAULT_TRP_EXT );
     if( dh == NIL_HANDLE ) {
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
     err = ReadInTrap( GetSystemHandle( dh ) );
     FileClose( dh );
     if( err != NULL ) {
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         KillTrap();
         return( buff );
     }
