@@ -117,6 +117,8 @@ LIST                    *BeforeList = NULL;
 LIST                    *EndList = NULL;
 LIST                    *DeleteList = NULL;
 LIST                    *ForceDLLInstallList = NULL;
+LIST                    *ErrMsgList = NULL;
+LIST                    *SetupErrMsgList = NULL;
 unsigned                DiskNum;
 unsigned                MaxDiskFiles;
 int                     FillFirst = 1;
@@ -679,27 +681,29 @@ static void AddToList( LIST *new, LIST **list )
 }
 
 
-#define STRING_include "include="
-#define STRING_icon "icon="
-#define STRING_supplimental "supplimental="
-#define STRING_ini "ini="
-#define STRING_auto "auto="
-#define STRING_cfg "cfg="
-#define STRING_autoset "autoset="
-#define STRING_spawnafter "spawnafter="
-#define STRING_spawnbefore "spawnbefore="
-#define STRING_spawnend "spawnend="
-#define STRING_env "env="
-#define STRING_dialog "dialog="
-#define STRING_boottext "boottext="
-#define STRING_exe "exe="
-#define STRING_label "label="
-#define STRING_deletedialog "deletedialog="
-#define STRING_deletefile "deletefile="
-#define STRING_deletedir "deletedir="
-#define STRING_language "language="
-#define STRING_upgrade "upgrade="
-#define STRING_forcedll "forcedll="
+#define STRING_include          "include="
+#define STRING_icon             "icon="
+#define STRING_supplimental     "supplimental="
+#define STRING_ini              "ini="
+#define STRING_auto             "auto="
+#define STRING_cfg              "cfg="
+#define STRING_autoset          "autoset="
+#define STRING_spawnafter       "spawnafter="
+#define STRING_spawnbefore      "spawnbefore="
+#define STRING_spawnend         "spawnend="
+#define STRING_env              "env="
+#define STRING_dialog           "dialog="
+#define STRING_boottext         "boottext="
+#define STRING_exe              "exe="
+#define STRING_label            "label="
+#define STRING_deletedialog     "deletedialog="
+#define STRING_deletefile       "deletefile="
+#define STRING_deletedir        "deletedir="
+#define STRING_language         "language="
+#define STRING_upgrade          "upgrade="
+#define STRING_forcedll         "forcedll="
+#define STRING_errmsg           "errmsg="
+#define STRING_setuperrmsg      "setuperrmsg="
 
 #define STRING_IS( buf, new, string ) \
         ( strnicmp( buf, string, sizeof( string ) - 1 ) == 0 && \
@@ -865,6 +869,10 @@ void ReadSection( FILE *fp, char *section, LIST **list )
             free( new );
         } else if( STRING_IS( SectionBuf, new, STRING_forcedll ) ) {
             AddToList( new, &ForceDLLInstallList );
+        } else if( STRING_IS( SectionBuf, new, STRING_errmsg ) ) {
+            AddToList( new, &ErrMsgList );
+        } else if( STRING_IS( SectionBuf, new, STRING_setuperrmsg ) ) {
+            AddToList( new, &SetupErrMsgList );
         } else {
             new->item = strdup( SectionBuf );
             AddToList( new, list );
@@ -1177,6 +1185,20 @@ int CreateScript( long init_size, unsigned padding )
     if( ForceDLLInstallList != NULL ) {
         fprintf( fp, "\n[ForceDLLInstall]\n" );
         for( list = ForceDLLInstallList; list != NULL; list = list->next ) {
+            fprintf( fp, "%s\n", list->item );
+        }
+    }
+
+    if( ErrMsgList != NULL ) {
+        fprintf( fp, "\n[ErrorMessage]\n" );
+        for( list = ErrMsgList; list != NULL; list = list->next ) {
+            fprintf( fp, "%s\n", list->item );
+        }
+    }
+
+    if( SetupErrMsgList != NULL ) {
+        fprintf( fp, "\n[SetupErrorMessage]\n" );
+        for( list = SetupErrMsgList; list != NULL; list = list->next ) {
             fprintf( fp, "%s\n", list->item );
         }
     }

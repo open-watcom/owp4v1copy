@@ -2513,7 +2513,7 @@ extern long SimInit( char *inf_name, char *disk_name )
     GUIGetTextMetrics( MainWnd, &metrics );
     GUIGetDlgTextMetrics( &metrics );
     CharWidth = metrics.avg.x;
-    MaxWidthChars = GUIScale.x / CharWidth - WIDTH_BORDER;
+    MaxWidthChars = GUIScale.x / CharWidth - 4 * WIDTH_BORDER;
     if( MaxWidthChars > MAX_WINDOW_WIDTH )  {
         MaxWidthChars = MAX_WINDOW_WIDTH;
     }
