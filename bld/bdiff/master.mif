@@ -12,8 +12,17 @@ proj_name = bdiff
 name = bdiff
 
 !include cproj.mif
+!include defrule.mif
+!include deftarg.mif
 
-inc_dirs = $($(proj_name)_dir)/h
+.c : ../c
+
+inc_dirs = ../h
+
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
+
+extra_l_flags = name $^@ op map
 
 .ERASE
 
@@ -23,122 +32,110 @@ wreslib=$(wres_dir)/lib/wresf.lib
 wreslib=$(wres_dir)/lib/wresl.lib
 !endif
 
-targs = bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
-
-all : .symbolic $(targs)
+all : .SYMBOLIC bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
     @%null
-
-.EXTENSIONS:
-.EXTENSIONS: .exe .xbj .obj .dbj .wbj .pbj .ybj .c .h
-
-.c : $($(proj_name)_dir)/c
-
-.c.obj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.obj $[@
-
-.c.dbj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.dbj -dBDIFF $[@
-
-.c.pbj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.pbj -d_WPATCH $[@
-
-.c.wbj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.wbj -dBDIFF -d_WPATCH $[@
-
-.c.xbj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.xbj -dBDUMP $[@
-
-.c.ybj: $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -fo=.ybj -d_WPATCH $[@
 
 # I don't know what WPATCH and WCPATCH are for, they look somewhat like forerunner versions.
 # They are not in the list of targets.
 #
 # WCPATCH. Create patch. Uses .wbj object extension because of /dBDIFF /d_WPATCH requirement
 #
-WBJS = dopatch.wbj msg.obj myio.obj wcptchio.wbj wcpatch.wbj bdiffmem.obj wbdiff.wbj
-wcpatch.exe : $(WBJS) makefile
-        @%create tmp.lnk
-        @%append tmp.lnk option quiet $(lflags)
-        @%append tmp.lnk lib $(wreslib)
-        @for %i in ($(WBJS)) do @%append tmp.lnk file %i
-        wlink @tmp
-        rm -f tmp.lnk
+WBJS = dopatchw.obj msg.obj myio.obj wcptchio.obj wcpatch.obj bdiffmem.obj wbdiff.obj
+
+wcpatch.exe : $(WBJS) $(__MAKEFILES__)
+        @%create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk lib $(wreslib)
+        @for %i in ($(WBJS)) do @%append $^&.lnk file %i
+        $(linker) @$^&.lnk
 
 #
-# WPATCH. Apply patch. Uses .ybj object extension because of /d_WPATCH requirement
+# WPATCH. Apply patch. Uses .pbj object extension because of /d_WPATCH requirement
 #
-YBJS = dopatch.ybj msg.obj myio.obj oldfile.ybj wpatchio.ybj wpatch.ybj bdiffmem.obj bpatch.ybj
-wpatch.exe : $(YBJS) makefile
-        @%create tmp.lnk
-        @for %i in ($(YBJS)) do @%append tmp.lnk file %i
-        wlink name wpatch $(%debug) lib $(wreslib) @tmp
-        rm -f tmp.lnk
+YBJS = dopatchp.obj msg.obj myio.obj oldfile.obj wpatchio.obj wpatch.obj bdiffmem.obj bpatch.obj
+
+wpatch.exe : $(YBJS) $(__MAKEFILES__)
+        @%create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk lib $(wreslib)
+        @for %i in ($(YBJS)) do @%append $^&.lnk file %i
+        $(linker) @$^&.lnk
 
 #
 # BPATCH. Uses .pbj object extension because of /d_WPATCH requirement
 #
-OBJ = bpatch.pbj dopatch.pbj msg.obj myio.obj oldfile.obj patchio.pbj patmain.pbj bdiffmem.obj
-#OBJ = bpatch.obj dopatch.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
+OBJ = bpatch.obj dopatchp.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
-bpatch.exe : bpatch.res $(OBJ) makefile
-        @%create tmp.lnk
-        @%append tmp.lnk option quiet $(lflags)
-        @%append tmp.lnk lib $(wreslib)
-        @for %i in ($(OBJ)) do @%append tmp.lnk file %i
-        wlink @tmp
-        rm -f tmp.lnk
-        wstrip -q -a -r bpatch.exe . bpatch.res
+bpatch.exe : bpatch.res $(OBJ) $(__MAKEFILES__)
+        @%create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk lib $(wreslib)
+        @for %i in ($(OBJ)) do @%append $^&.lnk file %i
+        $(linker) @$^&.lnk
+        wstrip -q -a -r $^@ . bpatch.res
 
 #
 # BDUMP. Uses .xbj object extension because of /dBDUMP requirement
 #
-XBJ = bdump.xbj dopatch.xbj msg.obj myio.obj oldfile.obj patchio.xbj patmain.xbj bdiffmem.obj
+XBJ = bdump.obj dopatchx.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
-bdump.exe : bpatch.res $(XBJ) makefile
-        @%create tmp.lnk
-        @%append tmp.lnk option quiet $(lflags)
-        @%append tmp.lnk lib $(wreslib)
-        @for %i in ($(XBJ)) do @%append tmp.lnk file %i
-        wlink @tmp
-        rm -f tmp.lnk
-        wstrip -q -a -r bdump.exe . bpatch.res
+bdump.exe : bpatch.res $(XBJ) $(__MAKEFILES__)
+        @%create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk lib $(wreslib)
+        @for %i in ($(XBJ)) do @%append $^&.lnk file %i
+        $(linker) @$^&.lnk
+        wstrip -q -a -r $^@ . bpatch.res
 
 #
 # BDIFF. Uses .dbj object extension because of /dBDIFF requirement
 #
-DBJ = bdiff.dbj bdiffmem.obj dopatch.dbj msg.obj myio.obj
+DBJ = bdiff.obj bdiffmem.obj dopatchd.obj msg.obj myio.obj
 
-bdiff.exe : $(DBJ) makefile bdiff.res
-        @%create tmp.lnk
-        @%append tmp.lnk option quiet $(lflags)
-        @%append tmp.lnk lib $(wreslib)
-        @for %i in ($(DBJ)) do @%append tmp.lnk file %i
-        wlink @tmp
-        rm -f tmp.lnk
-        wstrip -q -a -r bdiff.exe . bdiff.res
+bdiff.exe : $(DBJ) bdiff.res $(__MAKEFILES__)
+        @%create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk lib $(wreslib)
+        @for %i in ($(DBJ)) do @%append $^&.lnk file %i
+        $(linker) @$^&.lnk
+        wstrip -q -a -r $^@ . bdiff.res
 
 #
 # BCMT
 #
-bpcmt.exe : bpcmt.obj bdiffmem.obj
-        $(linker) option quiet $(lflags) name $^@ file { $< }
+bpcmt_objs = bpcmt.obj bdiffmem.obj
+
+bpcmt.exe : $(bpcmt_objs) $(__MAKEFILES__)
+        $(linker) $(lflags) file { $(bpcmt_objs) }
 
 #
 # BLEVEL
 #
-bplevel.exe : bplevel.obj
-        $(linker) option quiet $(lflags) name $^@ file { $< }
+bplevel_objs = bplevel.obj
 
-bpatch.res : ../bpatch.rc $(inc_dirs)/bpatch.h pusage.rc pusagej.rc
-        $(rc_aui) -i.. -dBPATCH $[@ -fo=$^@
+bplevel.exe : $(bplevel_objs) $(__MAKEFILES__)
+        $(linker) $(lflags) file { $(bplevel_objs) }
 
+# explicit rules
+#################
+dopatchd.obj: dopatch.c $($(proj_name)_autodepends)
+        @set include=$(inc_path)
+        $(cc) $(cflags) -dBDIFF $[@ -fo=$^@
+
+dopatchp.obj: dopatch.c $($(proj_name)_autodepends)
+        @set include=$(inc_path)
+        $(cc) $(cflags) -d_WPATCH $[@ -fo=$^@
+
+dopatchw.obj: dopatch.c $($(proj_name)_autodepends)
+        @set include=$(inc_path)
+        $(cc) $(cflags) -dBDIFF -d_WPATCH $[@ -fo=$^@
+
+dopatchx.obj: dopatch.c $($(proj_name)_autodepends)
+        @set include=$(inc_path)
+        $(cc) $(cflags) -dBDUMP $[@ -fo=$^@
+
+# resources
+############
 pusage.rc : ../usage.sp
         wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" $[@ $^@
 
@@ -148,13 +145,8 @@ pusagej.rc : ../usage.sp
 dusage.rc : ../usage.sp
         wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" $[@ $^@
 
-bdiff.res : ../bpatch.rc dusage.rc $(inc_dirs)/bpatch.h
+bpatch.res : ../bpatch.rc ../h/bpatch.h pusage.rc pusagej.rc
+        $(rc_aui) -i.. -dBPATCH $[@ -fo=$^@
+
+bdiff.res : ../bpatch.rc dusage.rc ../h/bpatch.h
         $(rc_aui) -i.. -dBDIFF $[@ -fo=$^@
-
-# We cannot use deftarg.mif because of the non-default extension files which are generated.
-clean : .symbolic
-        @rm -f *.?bj *.lnk *.map *.err *.exe *.res *.rc *.sym
-        @rm -f usage.rc usagej.rc usage.u usagej.u msg.h usage.h tmp.msg
-        @rm -f pusage.rc pusagej.rc qpusage.rc qpusagej.rc dusage.rc bpatch.osz
-
-

@@ -1100,8 +1100,11 @@ void VerifyCorrect( char *name )
     }
 }
 
-int HoleCompare( region *h1, region *h2 )
+int HoleCompare( const void *_h1, const void *_h2 )
 {
+    region *h1 = _h1;
+    region *h2 = _h2;
+
     if( h1->diff < h2->diff ) return( -1 );
     if( h1->diff > h2->diff ) return( 1 );
     if( h1->new_start < h2->new_start ) return( -1 );
@@ -1156,8 +1159,11 @@ void OutStr( char *str )
 
 #define MIN_ITERS (sizeof(patch_cmd)+sizeof(hole)+sizeof(foff)+sizeof(foff))
 
-int FOffCompare( region *h1, region *h2 )
+int FOffCompare( const void *h1, const void *h2 )
 {
+    region *h1 = _h1;
+    region *h2 = _h2;
+
     if( h1->new_start < h2->new_start ) return( -1 );
     if( h1->new_start > h2->new_start ) return( 1 );
     return( 0 );

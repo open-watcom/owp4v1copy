@@ -118,8 +118,11 @@ void SeekCheck( long pos, char *name )
         NumHoles++;
     }
 
-    int HoleCompare( const save_hole *h1, const save_hole *h2 )
+    int HoleCompare( const void *_h1, const void *_h2 )
     {
+        const save_hole *h1 = _h1;
+        const save_hole *h2 = _h2;
+
         if( h1->offset < h2->offset ) return( -1 );
         if( h1->offset > h2->offset ) return( 1 );
         return( 0 );
