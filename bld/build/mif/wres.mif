@@ -7,18 +7,10 @@
 # 5. For large memory model windows version, define WINDOWS
 #
 
-!ifdef MODEL
-#
-# For backwards compatability, delete after a year or two.
-#
-memory_model_i86 = $(MODEL)
-!endif
-
-
-wres_nt_axp = WRESAXP.LIB
+wres_nt_axp = wresaxp.lib
 wres_nt_386 = wresf.lib
 !ifeq memory_model_386 s
-wres_qnx_386 = WRESSQNX.LIB
+wres_qnx_386 = wressqnx.lib
 !else
 wres_qnx_386 = wresf.lib
 !endif
@@ -27,15 +19,15 @@ wres_qnx_386 = wresf.lib
 wres_lib_dir = $(wres_dir)/lib
 !endif
 !ifdef PEGGED
-wres_l = WRESLP.LIB
+wres_l = wreslp.lib
 !else ifdef WINDOWS
-wres_l = WRESLW.LIB
+wres_l = wreslw.lib
 !else
-wres_l = WRESL.LIB
+wres_l = wresl.lib
 !endif
-wres_m = WRESM.LIB
-wres_c = WRESC.LIB
-wres_s = WRESS.LIB
+wres_m = wresm.lib
+wres_c = wresc.lib
+wres_s = wress.lib
 wres_i86 = $(wres_$(memory_model_i86))
 !ifdef STACK
 wres_386 = wresfs.lib
@@ -45,8 +37,8 @@ wres_386 = wresf.lib
 
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
-wres_nt_axp = WRESAXPD.LIB
-wres_nt_386 = WRESFDLL.LIB
+wres_nt_axp = wresaxpd.lib
+wres_nt_386 = wresfdll.lib
 !endif
 !endif
 

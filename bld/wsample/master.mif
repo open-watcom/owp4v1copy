@@ -3,7 +3,7 @@ proj_name = wsample
 
 !include cproj.mif
 !include defrule.mif
-MODEL = l
+
 !include wres.mif
 
 samp_obj_nt_axp         = sampaxp.obj

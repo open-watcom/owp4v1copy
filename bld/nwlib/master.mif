@@ -67,7 +67,6 @@ extra_c_flags_linux = -fo=.obj
 
 extra_lflags_qnx += op offset=64k, stack=60k
 
-MODEL = s
 !include orl.mif
 !include wres.mif
 
