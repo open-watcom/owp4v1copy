@@ -51,6 +51,18 @@ extra_l_flags_nt = lib $(watcom_dir)/lib/ld.lib
 def_targ        = wcc$(target_CPU)c.exe
 !endif
 
+#
+# Temporary solution to use the latest prebuild WASM version
+# for the building process
+#
+!ifdef __LINUX__
+#as_386          = *$(bld_bin)/wasm -3
+#as_i86          = *$(bld_bin)/wasm
+!else
+#as_386          = *$(bld_bin)\wasm -3
+#as_i86          = *$(bld_bin)\wasm
+!endif
+
 #global definition which tool is quiet
 cc         += -zq
 cpp        += -zq

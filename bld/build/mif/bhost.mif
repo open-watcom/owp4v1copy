@@ -50,18 +50,6 @@ bld_incs        = $(bld_extra_incs);$(lang_root)\h
 !error HOST OS not set
 !endif
 
-#
-# Temporary solution to use the latest prebuild WASM version
-# for the building process
-#
-!ifdef __LINUX__
-as_386          = *$(bld_bin)/wasm -3
-as_i86          = *$(bld_bin)/wasm
-!else
-as_386          = *$(bld_bin)\wasm -3
-as_i86          = *$(bld_bin)\wasm
-!endif
-
 !ifdef __NTAXP__
 bld_cl          = wclaxp -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wccaxp -i"$(bld_incs)"
