@@ -40,4 +40,7 @@ set BUILD_PLATFORM=
 #==================
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+    cdsay <PROJDIR>\<OBJDIR>
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean
+    cdsay <PROJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>

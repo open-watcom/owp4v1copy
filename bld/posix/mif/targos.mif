@@ -5,7 +5,7 @@
 !   ifdef __OS2__
 targos          = os2386
 !   else ifdef __MSDOS__
-targos          = dosos2
+targos          = dos
 !   else ifdef __NT__
 targos          = nt386
 !   else ifdef __QNX__
