@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Constant folding routines.
 *
 ****************************************************************************/
 
-
-//
-// USFOLD       : constant folding routines
-//
 
 #include "ftnstd.h"
 #include "optr.h"
@@ -54,10 +49,10 @@ extern  void            SetFUBit(void);
 #endif
 
 
-static void    MulIOFlow ( intstar4 *arg1, intstar4 *arg2 ) {
+static void    MulIOFlow ( ftn_type *arg1, ftn_type *arg2 ) {
 //===========================================================
 
-    MulIOFlo(arg1, arg2);
+    MulIOFlo(&arg1->intstar4, &arg2->intstar4);
 }
 
 //--------------------------------------------- integer arithmetic
@@ -66,7 +61,7 @@ static void    MulIOFlow ( intstar4 *arg1, intstar4 *arg2 ) {
 void    AddI( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-    if( AddIOFlo( opnd1, opnd2 ) ) {
+    if( AddIOFlo( &opnd1->intstar4, &opnd2->intstar4 ) ) {
         Warning( KO_IOVERFLOW );
     }
 //  opnd1->intstar4 = opnd1->intstar4 + opnd2->intstar4;
@@ -76,7 +71,7 @@ void    AddI( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    SubI( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-    if( SubIOFlo( opnd1, opnd2 ) ) {
+    if( SubIOFlo( &opnd1->intstar4, &opnd2->intstar4 ) ) {
         Warning( KO_IOVERFLOW );
     }
 //  opnd1->intstar4 = opnd1->intstar4 - opnd2->intstar4;
@@ -86,7 +81,7 @@ void    SubI( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    MulI( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-    if( MulIOFlo( opnd1, opnd2 ) ) {
+    if( MulIOFlo( &opnd1->intstar4, &opnd2->intstar4 ) ) {
         Warning( KO_IOVERFLOW );
     }
 //  opnd1->intstar4 = opnd1->intstar4 * opnd2->intstar4;
@@ -264,10 +259,12 @@ void    SubC( complex *x, complex *y ) {
 }
 
 
-void    MulC( complex *x, complex *y ) {
+void    MulC( ftn_type *_x, ftn_type *_y ) {
 //======================================
 
     complex     result;
+    complex     *x = &_x->complex;
+    complex     *y = &_y->complex;
 
 #if _TARGET == _VAX
     SetFUBit();
@@ -327,10 +324,12 @@ void    SubQ( dcomplex *x, dcomplex *y ) {
 }
 
 
-void    MulQ( dcomplex *x, dcomplex *y ) {
+void    MulQ( ftn_type *_x, ftn_type *_y ) {
 //========================================
 
     dcomplex    result;
+    dcomplex    *x = &_x->dcomplex;
+    dcomplex    *y = &_y->dcomplex;
 
 #if _TARGET == _VAX
     SetFUBit();
@@ -390,10 +389,12 @@ void    SubX( xcomplex *x, xcomplex *y ) {
 }
 
 
-void    MulX( xcomplex *x, xcomplex *y ) {
+void    MulX( ftn_type *_x, ftn_type *_y ) {
 //========================================
 
     xcomplex    result;
+    xcomplex    *x = &_x->xcomplex;
+    xcomplex    *y = &_y->xcomplex;
 
 #if _TARGET == _VAX
     SetFUBit();
