@@ -57,22 +57,29 @@
 
 #ifdef WCLAXP
   #define WCLNAME     "wclaxp"          /* Name of Compile and Link Utility*/
-  #define CC          "wccaxp"          /* WATCOM C compiler               */
-  #define CCXX        "wppaxp"          /* WATCOM C++ compiler             */
+  #define CC          "wccaxp"          /* Open Watcom C compiler          */
+  #define CCXX        "wppaxp"          /* Open Watcom C++ compiler        */
   #define WCLENV      "WCLAXP"          /* name of environment variable    */
   #define STACKSIZE   "8192"            /* default stack size              */
   #define _NAME_      "C/C++ Alpha AXP "
+#elif defined(WCLPPC)
+  #define WCLNAME     "wclppc"          /* Name of Compile and Link Utility*/
+  #define CC          "wccppc"          /* Open Watcom C compiler          */
+  #define CCXX        "wppppc"          /* Open Watcom C++ compiler        */
+  #define WCLENV      "WCLPPC"          /* name of environment variable    */
+  #define STACKSIZE   "8192"            /* default stack size              */
+  #define _NAME_      "C/C++ PowerPC "
 #elif defined(WCL386)
   #define WCLNAME     "wcl386"          /* Name of Compile and Link Utility*/
-  #define CC          "wcc386"          /* WATCOM C compiler               */
-  #define CCXX        "wpp386"          /* WATCOM C++ compiler             */
+  #define CC          "wcc386"          /* Open Watcom C compiler          */
+  #define CCXX        "wpp386"          /* Open Watcom C++ compiler        */
   #define WCLENV      "WCL386"          /* name of environment variable    */
   #define STACKSIZE   "8192"            /* default stack size              */
   #define _NAME_      "C/C++32 "
 #else
   #define WCLNAME     "wcl"             /* Name of Compile and Link Utility*/
-  #define CC          "wcc"             /* WATCOM C compiler               */
-  #define CCXX        "wpp"             /* WATCOM C++ compiler             */
+  #define CC          "wcc"             /* Open Watcom C compiler          */
+  #define CCXX        "wpp"             /* Open Watcom C++ compiler        */
   #define WCLENV      "WCL"             /* name of environment variable    */
   #define STACKSIZE   "4096"            /* default stack size              */
   #define _NAME_      "C/C++16 "
@@ -86,7 +93,7 @@
 #define PATH_SEP    '\\'
 #define PATH_SEP_STR "\\"
 #endif
-#define LINK        "wlink"             /* WATCOM linker                   */
+#define LINK        "wlink"             /* Open Watcom linker              */
 #define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
 #define NULLCHAR    '\0'
 #ifndef __UNIX__
@@ -121,7 +128,7 @@ static  char    *Temp_Link;         /* temporary linker directive file    */
 static  struct  list *Obj_List;     /* linked list of object filenames    */
 static  struct directives *Directive_List; /* linked list of directives   */
 static  char    Switch_Chars[4];    /* valid switch characters            */
-static  char    Exe_Name[_MAX_PATH];/* name of executable              */
+static  char    Exe_Name[_MAX_PATH];/* name of executable                 */
 static  char    *Map_Name;          /* name of map file                   */
 static  char    *Obj_Name;          /* object file name pattern           */
 static  char    *StackSize;         /* size of stack                      */
@@ -774,6 +781,8 @@ static  int  CompLink( void )
     } else {
 #if defined(WCLAXP)
         Fputnl( "system ntaxp", Fp );
+#elif defined(WCLPPC)
+        Fputnl( "system ntppc", Fp );
 #elif defined(WCL386)
   #if defined(__OS2__)
         Fputnl( "system os2v2", Fp );           /* 04-feb-92 */

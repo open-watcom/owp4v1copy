@@ -24,6 +24,9 @@ extra_c_flags += -DWCL386
 !else ifeq target_cpu axp
 name = wclaxp.exe
 extra_c_flags += -DWCLAXP
+!else ifeq target_cpu ppc
+name = wclppc.exe
+extra_c_flags += -DWCLPPC
 !endif
 
 extra_c_flags_swchar = -i"../../h;../../dos386.i86;$(comp_cfg_dir)/h"
