@@ -79,7 +79,7 @@ extern  void    CodeLabelLinenum( label_handle label, unsigned align, cg_linenum
     temp.op.objlen = align - 1;
     temp.handle = label;
     temp.line = line;
-    InputOC( &temp );
+    InputOC( (any_oc *)&temp );
 
 }
 #endif
@@ -105,7 +105,7 @@ extern  void    CodeLineNum( cg_linenum line, bool label_line ) {
         temp.op.objlen = 0;
         temp.label_line = label_line;
         temp.line = line;
-        InputOC( &temp );
+        InputOC( (any_oc *)&temp );
     }
 }
 
@@ -125,7 +125,7 @@ extern  void    CodeHandle( oc_class class, int len, label_handle handle ) {
 #if _TARGET & _TARG_RISC
     temp.line = 0;
 #endif
-    InputOC( &temp );
+    InputOC( (any_oc *)&temp );
 }
 
 static  void    DoCondJump( instruction *cond ) {
@@ -174,7 +174,7 @@ static  void    DoCondJump( instruction *cond ) {
         temp.op.reclen = sizeof( oc_jcond );
         temp.cond = CondCode( cond );
         temp.handle = dest_true;
-        InputOC( &temp );
+        InputOC( (any_oc *)&temp );
     }
     if( dest_false != dest_next && dest_false != NULL ) {
         GenJumpLabel( dest_false );
