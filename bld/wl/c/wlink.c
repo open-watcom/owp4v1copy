@@ -370,7 +370,7 @@ static void ResetMisc( void )
     OvlNum = 0;
     OvlFName = NULL;
     CurrMod = NULL;
-    StackSize = 0x200;
+    StackSize = 0x1000;
 }
 
 static void DoDefaultSystem( void )

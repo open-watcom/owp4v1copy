@@ -124,7 +124,7 @@ _BSS          ends
 
 STACK   segment para stack 'STACK'
         stklow  label   word
-        db      800h dup(?)
+        db      1000h dup(?)
 STACK   ends
 
         assume  nothing
