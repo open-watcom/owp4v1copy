@@ -34,10 +34,8 @@
 #include "dump.h"
 
 #if ( _TARGET & ( _TARG_IAPX86 | _TARG_80386 ) )
-#define GLOBAL extern
-#include "i87sched.h"
-#undef GLOBAL
 
+#include "i87sched.h"
 #include "opcodes.h"
 #include "gen8087.h"
 #include "pattern.h"

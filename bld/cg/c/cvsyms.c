@@ -81,7 +81,6 @@ extern  hw_reg_set      Low32Reg(hw_reg_set);
 #elif _TARGET & _TARG_80386
 extern  hw_reg_set      Low64Reg(hw_reg_set);
 #endif
-#define global
 extern  void            DataBytes(unsigned_32,byte*);
 extern  void            DoBigLblPtr(sym_handle);
 extern  void            DBLocFini( dbg_loc loc );
@@ -93,11 +92,13 @@ extern  void            CVEndType( cv_out *out );
 extern  sym_handle      LocSimpStatic(dbg_loc);
 extern  type_length     NewBase(name*);
 
-extern    source_line_number    SrcLine;
-extern    proc_def              *CurrProc;
-extern    uint                  TypeIdx;
-global    seg_id                CVSyms;
-global    seg_id                CVTypes;
+extern  source_line_number  SrcLine;
+extern  proc_def            *CurrProc;
+extern  uint                TypeIdx;
+
+// global variables
+seg_id                  CVSyms;
+seg_id                  CVTypes;
 
 static  void             DumpLocals( dbg_local *local );
 

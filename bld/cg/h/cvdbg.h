@@ -205,3 +205,6 @@ typedef enum {
     BASED_SEG,
     BASED_VALUE,
 }cv_based_kind;
+
+extern seg_id        CVSyms;
+extern seg_id        CVTypes;

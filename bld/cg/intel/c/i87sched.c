@@ -39,8 +39,6 @@
 #include "sysmacro.h"
 #include "gen8087.h"
 #include "model.h"
-
-#define GLOBAL
 #include "i87sched.h"
 
 extern  block   *HeadBlock;
@@ -87,6 +85,13 @@ static  opcode_entry    RNFBINP = { PRESERVE, 0, G_RNFBINP,0, 0 };
 
 static  block   *Entry;
 static  block   *Exit;
+
+// global variables
+st_seq          *STLocations;
+int             MaxSeq;
+byte            *SeqMaxDepth;
+byte            *SeqCurDepth;
+temp_entry      *TempList;
 
 #define FP_INS_INTRODUCED       INS_VISITED // this must stick!
 

@@ -52,9 +52,6 @@
 
 extern  seg_id          DbgSegDef( char *, char *, int  );
 
-extern seg_id                CVSyms;
-extern seg_id                CVTypes;
-
 
 extern  void    CVDefSegs( void ){
 /**************************/

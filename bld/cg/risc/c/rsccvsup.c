@@ -54,9 +54,6 @@
 extern  seg_id            DbgSegDef( char *name );
 extern owl_section_handle DbgSectDefComdat( char *str );
 
-extern seg_id                CVSyms;
-extern seg_id                CVTypes;
-
 static   section_def       *CVSymMain;
 static  owl_section_handle  owlCVSym; //.debug$s for non-comdats .text
 

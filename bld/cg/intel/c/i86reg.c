@@ -219,8 +219,8 @@ extern  void    UpdateReturn( call_state *state, type_def *tipe,
 
     hw_reg_set  normal;
 
-    if( _FPULevel( FPU_87 ) && ( tipe->attr & TYPE_FLOAT ) != EMPTY
-      && !( state->attr & ROUTINE_NO_8087_RETURNS ) ) {
+    if( _FPULevel( FPU_87 ) && _NPX( state->attr )
+      && ( ( tipe->attr & TYPE_FLOAT ) != EMPTY ) ) {
         HW_COnlyOn( state->return_reg, HW_ST0 );
     } else {
         HW_CTurnOff( state->return_reg, HW_FLTS );
