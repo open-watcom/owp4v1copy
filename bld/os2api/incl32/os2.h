@@ -9,7 +9,7 @@
 #define OS2_INCLUDED
 
 #ifdef __cplusplus
-#extern "C" {
+extern "C" {
 #endif
 
 #include <os2def.h>

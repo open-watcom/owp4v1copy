@@ -202,7 +202,6 @@ typedef LHANDLE HPS, *PHPS;
 typedef LHANDLE HRGN, *PHRGN;
 typedef VOID    *MPARAM, **PMPARAM;
 typedef VOID    *MRESULT, **PMRESULT;
-typedef USHORT  HVPS, *PHVPS;
 
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
@@ -1075,8 +1074,6 @@ typedef struct _ENTRYFDATA {
 #if defined(INCL_WINERRORS)
 
 #include <pmerr.h>
-
-typedef ULONG   ERRORID, *PERRORID;
 
 typedef struct _ERRINFO {
     USHORT  cbFixedErrInfo;

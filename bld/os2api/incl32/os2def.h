@@ -34,6 +34,21 @@
 
 #define NULLHANDLE  ((LHANDLE)0)
 
+#define MAKEERRORID(sev, error) (ERRORID)(MAKEULONG((error), (sev)))
+#define ERRORIDERROR(errid)     (LOUSHORT(errid))
+#define ERRORIDSEV(errid)       (HIUSHORT(errid))
+
+#define SEVERITY_NOERROR       0x0000
+#define SEVERITY_WARNING       0x0004
+#define SEVERITY_ERROR         0x0008
+#define SEVERITY_SEVERE        0x000C
+#define SEVERITY_UNRECOVERABLE 0x0010
+
+#define WINERR_BASE 0x1000
+#define GPIERR_BASE 0x2000
+#define DEVERR_BASE 0x3000
+#define SPLERR_BASE 0x4000
+
 #define APIENTRY16 _Far16 _Pascal
 #define PASCAL16   _Far16 _Pascal
 
@@ -88,6 +103,8 @@ typedef ULONG   HMUX, *PHMUX;
 typedef VOID    *HSEM;
 typedef HSEM    *PHSEM;
 typedef USHORT  SGID;
+
+typedef ULONG   ERRORID, *PERRORID;
 
 typedef struct _QWORD {
     ULONG   ulLo;
