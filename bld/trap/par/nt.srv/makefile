@@ -8,4 +8,4 @@ cpu = x86
 
 extra_objs = $(remote_objs) parnt.obj
 
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/serv.mif

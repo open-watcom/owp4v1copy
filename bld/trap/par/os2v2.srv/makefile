@@ -7,5 +7,5 @@ cpu = x86
 
 extra_objs = $(remote_objs) paros22.obj
 
-!include $(trap_dir)\serv.mif
-!include ..\os2v2.mif
+!include $(trap_dir)/serv.mif
+!include ../os2v2.mif

@@ -33,7 +33,7 @@
 #include <string.h>
 #include <time.h>
 #include <stddef.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 
 #include "autodep.h"
 #include "asmalloc.h"

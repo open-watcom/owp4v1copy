@@ -2,6 +2,7 @@
 #
 # Create OS2V2HLP.EXE
 #
+host_CPU = 386
 
 !include cproj.mif
 !include deftarg.mif
@@ -13,12 +14,12 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-w : .symbolic $(bin_root)\binp\dll\os2v2hlp.exe
+w : .symbolic $(bin_root)/binp/dll/os2v2hlp.exe
         @%null
 
-$(bin_root)\binp\dll\os2v2hlp.exe : os2v2hlp.obj
+$(bin_root)/binp/dll/os2v2hlp.exe : os2v2hlp.obj
         $(linker) system os2v2 lx op dosseg name $^@ f os2v2hlp &
                 imp DOS32WRITE DOSCALLS.282,DOS32DEBUG DOSCALLS.317
 
-os2v2hlp.obj: ..\asm\os2v2hlp.asm
-        $(as) -3r ..\asm\os2v2hlp
+os2v2hlp.obj: ../asm/os2v2hlp.asm
+        $(as) -3r $[@

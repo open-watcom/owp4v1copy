@@ -8,4 +8,4 @@ cpu = x86
 extra_objs = $(remote_objs) novdos.obj spx.obj ipx.obj
 extra_flags_novdos = -zu
 
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/serv.mif

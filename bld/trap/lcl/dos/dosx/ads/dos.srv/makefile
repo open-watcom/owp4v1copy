@@ -1,4 +1,5 @@
 #pmake: serv lcl os_dos dsx cpu_386 x86
+host_CPU = 386
 
 os = ads
 srv = ads
@@ -9,8 +10,8 @@ extra_objs = $(dosx_serv_objs) adsacc.obj adsintr.obj x86cpu.obj
 extra_cflags = -dACAD -dDOSXHELP
 extra_aflags = -w2
 extra_incs = $(trap_dir)\lcl\dos\h
-extra_srcs = $(trap_dir)\lcl\dos\c
+extra_srcs = $(trap_dir)/lcl/dos/c
 extra_linker = op nocaseexact
 
-!include $(trap_dir)\lcl\dos\dosx\dosx.mif
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/lcl/dos/dosx/dosx.mif
+!include $(trap_dir)/serv.mif

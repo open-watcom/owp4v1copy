@@ -7,4 +7,4 @@ cpu = x86
 
 extra_objs = $(remote_objs) seros22.obj
 
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/serv.mif

@@ -2,6 +2,7 @@
 #
 # Create the NT STD.DLL for Alpha
 #
+host_CPU = axp
 
 os      = nt
 srv     = lcl
@@ -31,8 +32,8 @@ extra_objs = &
 extra_incs = $(trap_dir)\lcl\dos\h
 extra_cflags =
 
-!include $(trap_dir)\lcl\lcl.mif
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/lcl/lcl.mif
+!include $(trap_dir)/trap.mif
 
 globals.obj :: ..\h\globals.h
 

@@ -128,4 +128,4 @@ TRAP_remote_objs += ntstub.obj
 
 which = TRAP
 
-!include $(trap_dir)\imp.mif
+!include $(trap_dir)/imp.mif

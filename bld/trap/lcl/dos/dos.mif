@@ -10,4 +10,4 @@ dos_objs = dossplit.obj &
         supp.obj &
         core.obj
 
-!include $(trap_dir)\lcl\lcl.mif
+!include $(trap_dir)/lcl/lcl.mif

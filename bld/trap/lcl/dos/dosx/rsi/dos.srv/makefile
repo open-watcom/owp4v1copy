@@ -22,17 +22,17 @@ extra_objs = &
 
 extra_cflags = -dDOS4G -dDOSXHELP -zdp -zu
 extra_incs = $(trap_dir)\lcl\dos\h
-extra_srcs = $(trap_dir)\lcl\dos\c;$(rsilib)
+extra_srcs = $(trap_dir)/lcl/dos/c;$(rsilib)
 
 extra_aflags_rsi87 = -fpi87
 
 !define substitute_linker
 
-!include $(trap_dir)\lcl\dos\dosx\dosx.mif
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/lcl/dos/dosx/dosx.mif
+!include $(trap_dir)/serv.mif
 
 objs = &
-        $(%WATCOM)\lib286\dos\dos16m.obj &
+        $(%WATCOM)/lib286/dos/dos16m.obj &
         segs_16m.obj &
         magicstr.obj &
         $+$(objs)$-
@@ -45,12 +45,12 @@ $(target) $(dtarget) : eraseall.obj $(objs) $(__MAKEFILES__)
     @%append $(lf) exp($^@) map($^&) log($^&.err)
     @%append $(lf) -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
-    @%append $(lf) $(rsilib)\$(libnam).lib $(lang_root)\lib286\dos\clibc.lib
+    @%append $(lf) $(rsilib)/$(libnam).lib $(lang_root)/lib286/dos/clibc.lib
     !$(tools_root)\glu @$(lf)
 
 #until wasm gets fixed up
 
-assemble = $(tools_root)\masm /mx /s /zd /I$(rsilib) /Dcompact $[@;
+assemble = $(tools_root)\masm -mx -s -zd -I$(rsilib) -Dcompact $[@;
 
 segs_16m.obj : segs_16m.asm
         $(assemble)

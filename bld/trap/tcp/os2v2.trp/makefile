@@ -8,4 +8,4 @@ cpu = x86
 extra_objs = $(remote_objs)
 extra_libs = $(os2386)
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

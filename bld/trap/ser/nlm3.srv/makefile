@@ -10,5 +10,5 @@ cpu = x86
 
 extra_objs = $(remote_objs) $(nlm_objs) sernlm.obj busywait.obj
 
-!include $(trap_dir)\lcl\nlm\nlm.mif
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/lcl/nlm/nlm.mif
+!include $(trap_dir)/serv.mif

@@ -2,6 +2,7 @@
 #
 # Create the OS/2 STD32.DLL (16-bit version)
 #
+host_CPU = i86
 
 os      = os2
 srv     = lcl
@@ -30,4 +31,4 @@ extra_linker = &
         exp TellHandles_.4,TellHardMode_.5 &
         lib os2
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

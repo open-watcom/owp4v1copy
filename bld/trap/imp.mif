@@ -234,9 +234,9 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         !cvpack $(dtarget)
 
 $(trperr_h) $(jtrperr_h) : $(mkstr_c) $(trap_msg)
-        wcl386 $(mkstr_c) /zq /dJAPANESE_MESSAGES /i$(trap_dir)\h
+        wcl386 $(mkstr_c) -zq -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
         mkstr $(jtrperr_h)
-        wcl386 $(mkstr_c) /zq /i$(trap_dir)\h
+        wcl386 $(mkstr_c) -zq -i"$(trap_dir)/h"
         mkstr $(trperr_h)
         del mkstr.obj
         del mkstr.exe
@@ -314,4 +314,4 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
 .rc: ..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(extra_srcs)
 
 .rc.res: .autodepend
-        $(rc) -r -i$(whole_inc_path) -bt=$(targ) /fo=$^&.res $[@
+        $(rc) -r -i$(whole_inc_path) -bt=$(targ) -fo=$^&.res $[@

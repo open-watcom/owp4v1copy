@@ -77,7 +77,7 @@ targ_ppc_nt     = ppcnt\$(name).exe
 objs_nlm        = nlmstrt.obj
 
 dig_os = $(os)
-!include $(dig_dir)\mif\trpcli.mif
+!include $(dig_dir)/mif/trpcli.mif
 
 SERVER_objs = $(objs_$(os))
 
@@ -96,4 +96,4 @@ extra_srcs +=;$(dig_srcs)
 
 which = SERVER
 
-!include $(trap_dir)\imp.mif
+!include $(trap_dir)/imp.mif

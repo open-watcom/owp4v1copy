@@ -7,5 +7,5 @@ cpu = x86
 
 extra_objs = $(remote_objs) parlinux.obj peloader.obj
 
-!include $(trap_dir)\serv.mif
+!include $(trap_dir)/serv.mif
 
