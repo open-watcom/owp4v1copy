@@ -871,8 +871,12 @@ static void Set_DbgFmt()       { SwData.dbg_fmt = OptValue; }
 
 #if _CPU == 8086 || _CPU == 386
 static void SetCPU()           { SwData.cpu = OptValue; }
+#endif
+#if _CPU == 386
 static void SetCPU_xR(){ SwData.cpu = OptValue; CompFlags.register_conventions = 1; }
 static void SetCPU_xS(){ SwData.cpu = OptValue; CompFlags.register_conventions = 0; }
+#endif
+#if _CPU == 8086 || _CPU == 386
 static void SetFPU()           { SwData.fpu = OptValue; }
 static void Set_FPR()          { Stack87 = 4; }
 static void Set_FPI87()        { SwData.fpt = SW_FPT_INLINE; }
@@ -887,7 +891,11 @@ static void Set_BD()           { CompFlags.bd_switch_used = 1; GenSwitches |= DL
 static void Set_BC()           { CompFlags.bc_switch_used = 1; }
 static void Set_BG()           { CompFlags.bg_switch_used = 1; }
 static void Set_BM()           { CompFlags.bm_switch_used = 1; }
+
+#if _CPU != 8086
 static void Set_BR()           { CompFlags.br_switch_used = 1; }
+#endif
+
 static void Set_BW()           { CompFlags.bw_switch_used = 1; }
 static void Set_BT()           { SetTargName( OptParm,  OptScanPtr - OptParm ); }
 
@@ -944,7 +952,11 @@ static void Set_D9()           { CompFlags.use_full_codegen_od = 1; }
 static void DefineMacro()      { OptScanPtr = Define_UserMacro( OptScanPtr ); }
 
 static void SetErrorLimit()    { ErrLimit = OptValue; }
+
+#if _CPU == 8086 || _CPU == 386
 static void Set_EC()           { CompFlags.ec_switch_used = 1; }
+#endif
+
 static void Set_EE()           { CompFlags.ee_switch_used = 1; }
 static void Set_EF()           { CompFlags.ef_switch_used = 1; }
 static void Set_EN()           { CompFlags.emit_names = 1; }
@@ -957,6 +969,9 @@ static void Set_EM()           { CompFlags.make_enums_an_int = 0;
 static void Set_ET()           { TargetSwitches |= P5_PROFILING; }
 static void Set_ETP()          { TargetSwitches |= NEW_P5_PROFILING; }
 static void Set_ESP()          { TargetSwitches |= STATEMENT_COUNTING; }
+#endif
+
+#if _CPU == 386
 static void Set_EZ()           { TargetSwitches |= EZ_OMF; }
 #endif
 
@@ -1221,33 +1236,40 @@ static void Set_ZM()
 }
 static void Set_ZPW()          { CompFlags.slack_byte_warning = 1; }
 
+#if _CPU == 8086 || _CPU == 386
 static void Set_ZRO()
 {
     GenSwitches |= FPU_ROUNDING_OMIT;
     GenSwitches &= ~FPU_ROUNDING_INLINE;
 }
+#endif
 
+#if _CPU == 386
 static void Set_ZRI()
 {
     GenSwitches |= FPU_ROUNDING_INLINE;
     GenSwitches &= ~FPU_ROUNDING_OMIT;
 }
+#endif
 
 static void Set_ZQ()           { CompFlags.quiet_mode = 1; }
-static void Set_EQ()           { CompFlags.no_conmsg  = 1; }
 static void Set_ZS()           { CompFlags.check_syntax = 1; }
 
 #if _CPU == 8086 || _CPU == 386
+static void Set_EQ()           { CompFlags.no_conmsg  = 1; }
+
 static void Set_ZU()
 {
     CompFlags.zu_switch_used = 1;
     TargetSwitches |= FLOATING_SS;
 }
 
+#if _CPU == 386
 static void Set_ZZ()
 {
     CompFlags.use_stdcall_at_number = 0;
 }
+#endif
 
 #if _CPU == 8086
 static void ChkSmartWindows()
@@ -1265,6 +1287,7 @@ static void SetCheapWindows()
     ChkSmartWindows();
 }
 #endif
+
 static void SetWindows()
 {
     _SetConstTarg( "windows" );
