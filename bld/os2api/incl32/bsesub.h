@@ -72,8 +72,13 @@
 #define KR_KBDXLATE        0x00001000
 #define KR_KBDSETCUSTXT    0x00002000
 
-#define IO_WAIT            0
-#define IO_NOWAIT          1
+#define IO_WAIT   0
+#define IO_NOWAIT 1
+
+#define KBDTRF_SHIFT_KEY_IN       0x01
+#define KBDTRF_CONVERSION_REQUEST 0x20
+#define KBDTRF_FINAL_CHAR_IN      0x40
+#define KBDTRF_INTERIM_CHAR_IN    0x80
 
 typedef SHANDLE HKBD;
 typedef HKBD    *PHKBD;
@@ -199,6 +204,16 @@ USHORT APIENTRY16 KbdXlate(PKBDTRANS XlateRecord, HKBD KbdHandle);
 #define MOU_MICKEYS 2
 #define MOU_PELS    0
 
+#define MOU_NOWAIT 0
+#define MOU_WAIT   1
+
+#define MOUSE_MOTION               0x0001
+#define MOUSE_MOTION_WITH_BN1_DOWN 0x0002
+#define MOUSE_BN1_DOWN             0x0004
+#define MOUSE_MOTION_WITH_BN2_DOWN 0x0008
+#define MOUSE_BN2_DOWN             0x0010
+#define MOUSE_MOTION_WITH_BN3_DOWN 0x0020
+#define MOUSE_BN3_DOWN             0x0040
 
 typedef SHANDLE  HMOU;
 typedef HMOU     *PHMOU;
@@ -374,6 +389,9 @@ USHORT APIENTRY16 MouSynch(USHORT IOWait);
 #define VP_OPAQUE      0
 #define VP_TRANSPARENT 2
 
+#define VMWR_POPUP 0
+#define VMWN_POPUP 0
+
 typedef SHANDLE  HVIO;
 typedef HVIO     *PHVIO;
 
@@ -526,4 +544,3 @@ USHORT APIENTRY16 VioWrtNChar(PBYTE Cell, USHORT Times, USHORT Row, USHORT Colum
 USHORT APIENTRY16 VioWrtTTY(PCH CharStr, USHORT Length, HVIO VioHandle);
 
 #endif
-
