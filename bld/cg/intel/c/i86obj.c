@@ -144,7 +144,7 @@ extern  void            OutRTImportRel( int rtindex, fix_class class, bool rel )
 extern  void            OutDataByte( byte value );
 extern  void            OutDataLong( long value );
 static  void            DoFix( int idx, bool rel, base_type base,
-                               fix_class class, int sidx ); 
+                               fix_class class, int sidx );
 extern  void            OutDLLExport( uint words, sym_handle sym );
 static  void            CheckImportSwitch( bool next_is_static );
 static  void            InitLineInfo( void );
@@ -168,7 +168,7 @@ static    import_handle ImportHdl;
 static    array_control *Imports;
 static    array_control *SegInfo;
 static    abspatch      *AbsPatches;
-static    seg_id        CodeSeg;
+static    seg_id        CodeSeg = BACKSEGS;
 static    seg_id        BackSeg;
 static    segdef        *SegDefs;
 static    long_offset   CodeSize;
@@ -186,7 +186,7 @@ static    char          CodeGroup[80];
 static    char          DataGroup[80];
 static    offset        SelStart;
 static    unsigned_16   SelIdx;
-static    unsigned      BackSegIdx;
+static    unsigned      BackSegIdx = BACKSEGS;
 static    import_handle FPPatchImp[FPP_NUMBER_OF_TYPES];
 static    int           SegsDefd;
 static    bool          NoDGroup;
