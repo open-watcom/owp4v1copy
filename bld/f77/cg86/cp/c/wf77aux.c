@@ -1626,8 +1626,28 @@ static  void    GetArgList() {
 #if ( _TARGET == _8086 || _TARGET == _80386 )
             } else if( RecToken( "FAR" ) ) {
                 pass_info |= ARG_FAR;
+
+                #if ( _TARGET == _8086 )
+                    pass_info |= ARG_SIZE_2;
+                #elif ( _TARGET == _80386 )
+                    pass_info |= ARG_SIZE_4;
+                #endif
+
             } else if( RecToken( "NEAR" ) ) {
                 pass_info |= ARG_NEAR;
+
+                #if ( _TARGET == _8086 )
+                    pass_info |= ARG_SIZE_2;
+                #elif ( _TARGET == _80386 )
+                    pass_info |= ARG_SIZE_4;
+                #endif
+
+            } else {
+                #if ( _TARGET == _8086 )
+                    pass_info |= ARG_SIZE_2;
+                #elif ( _TARGET == _80386 )
+                    pass_info |= ARG_SIZE_4;
+                #endif
 #endif
             }
         } else if( RecToken( "REFERENCE" ) ) {

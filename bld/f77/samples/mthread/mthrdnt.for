@@ -1,6 +1,6 @@
 * MTHREAD.FOR
 
-*$pragma aux (__stdcall) Sleep parm( value*4 )
+*$pragma aux (__stdcall) Sleep parm( value )
 *$pragma aux (__stdcall) InitializeCriticalSection parm( reference )
 *$pragma aux (__stdcall) DeleteCriticalSection parm( reference )
 *$pragma aux (__stdcall) EnterCriticalSection parm( reference )

@@ -111,7 +111,11 @@ static uint BldObjString( aux_info *aux, char *name, uint len,
 
             args_size = 0;
             for( arg = aux->arg_info; arg != NULL; arg = arg->link ) {
-                if( arg->info & (ARG_SIZE_1 | ARG_SIZE_2 | ARG_SIZE_4) ) {
+                if( arg->info & ARG_SIZE_1 ) {
+                    args_size += 1;
+                } else if( arg->info & ARG_SIZE_2 ) {
+                    args_size += 2;
+                } else if( arg->info & ARG_SIZE_4 ) {
                     args_size += 4;
                 } else if( arg->info & ARG_SIZE_8 ) {
                     args_size += 8;
