@@ -77,7 +77,6 @@ local ENUM_HANDLE EnumLkAdd( TAGPTR tag )
 #   define i64val(h,l) { l, h }
 #endif
 enum enum_rng {
-    ENUM_NONE = -1,
     ENUM_S8,
     ENUM_U8,
     ENUM_S16,
@@ -244,9 +243,6 @@ TYPEPTR EnumDecl( int flags )
             EnumTable[ esym->hash ] = esym;             /* 08-nov-94 */
             if( index > const_index ){ // change type of enum to fit const
                 if( CompFlags.extensions_enabled  ) {
-                    if( CompFlags.make_enums_an_int ) {
-                        CWarn1( WARN_ENUM_CONSTANT_TOO_LARGE, ERR_ENUM_CONSTANT_TOO_LARGE );
-                    }
                     typ->object = GetType( ItypeTable[index].decl_type );
                     tag->size   = ItypeTable[index].size;
                 } else {
