@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump formatted profiler data to a file.
 *
 ****************************************************************************/
 
@@ -48,13 +47,6 @@
 #include "sampinfo.h"
 #include "pathlist.h"
 
-//#include "getsamps.def"
-//#include "msg.def"
-//#include "memutil.def"
-//#include "support.def"
-//#include "utils.def"
-//#include "dipinter.def"
-
 extern unsigned         FormatAddr( address a, char *buffer, unsigned max );
 
 extern sio_data *       SIOData;
@@ -71,6 +63,7 @@ extern void ReportSampleInfo()
 {
     sio_data *      curr_sio;
 
+    if( SIOData == NULL ) return;
     df = fopen( "report.dmp", "w" );
     if( df != NULL ) {
         curr_sio = SIOData;
