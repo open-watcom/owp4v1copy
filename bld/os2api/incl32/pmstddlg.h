@@ -268,6 +268,10 @@ typedef struct _PAGESELECTNOTIFY {
 #define DID_OK_PB              DID_OK
 #define DID_CANCEL_PB          DID_CANCEL
 
+#define FDM_FILTER   (WM_USER+40)
+#define FDM_VALIDATE (WM_USER+41)
+#define FDM_ERROR    (WM_USER+42)
+
 typedef PSZ APSZ[1];
 typedef APSZ *PAPSZ;
 
@@ -343,6 +347,29 @@ BOOL    APIENTRY WinFreeFileDlgList(PAPSZ);
 #define FNTI_FAMILYNAME       0x0100
 #define FNTI_STYLENAME        0x0200
 #define FNTI_POINTSIZE        0x0400
+
+#define DID_FONT_DIALOG       300
+#define DID_NAME              301
+#define DID_STYLE             302
+#define DID_DISPLAY_FILTER    303
+#define DID_PRINTER_FILTER    304
+#define DID_SIZE              305
+#define DID_SAMPLE            306
+#define DID_OUTLINE           307
+#define DID_UNDERSCORE        308
+#define DID_STRIKEOUT         309
+#define DID_HELP_BUTTON       310
+#define DID_APPLY_BUTTON      311
+#define DID_RESET_BUTTON      312
+#define DID_OK_BUTTON         DID_OK
+#define DID_CANCEL_BUTTON     DID_CANCEL
+#define DID_NAME_PREFIX       313
+#define DID_STYLE_PREFIX      314
+#define DID_SIZE_PREFIX       315
+#define DID_SAMPLE_GROUPBOX   316
+#define DID_EMPHASIS_GROUPBOX 317
+#define DID_FONT_ISO_SUPPORT  318
+#define DID_FONT_ISO_UNTESTED 319
 
 #define FNTM_FACENAMECHANGED  (WM_USER+50)
 #define FNTM_POINTSIZECHANGED (WM_USER+51)

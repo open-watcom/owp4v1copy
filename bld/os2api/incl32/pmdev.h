@@ -90,6 +90,58 @@
 #define DEV_ITEM_BUF_TOO_SMALL    5
 #define DEV_INV_INP_JOBPROPERTIES 6
 
+#define DRIVER_NAME    1
+#define DRIVER_DATA    2
+#define DATA_TYPE      3
+#define COMMENT        4
+#define PROC_NAME      5
+#define PROC_PARAMS    6
+#define SPL_PARAMS     7
+#define NETWORK_PARAMS 8
+
+#define OD_SCREEN           0
+#define OD_QUEUED           2
+#define OD_DIRECT           5
+#define OD_INFO             6
+#define OD_METAFILE         7
+#define OD_MEMORY           8
+#define OD_METAFILE_NOQUERY 9
+
+#define DQHC_ERROR                    (-1)
+
+#define HCAPS_CURRENT                   1
+#define HCAPS_SELECTABLE                2
+
+typedef PSZ *PDEVOPENDATA;
+
+typedef struct _DRIVDATA {
+    LONG cb;
+    LONG lVersion;
+    CHAR szDeviceName[32];
+    CHAR abGeneralData[1];
+} DRIVDATA, *PDRIVDATA;
+
+typedef struct _DEVOPENSTRUC {
+    PSZ       pszLogAddress;
+    PSZ       pszDriverName;
+    PDRIVDATA pdriv;
+    PSZ       pszDataType;
+    PSZ       pszComment;
+    PSZ       pszQueueProcName;
+    PSZ       pszQueueProcParams;
+    PSZ       pszSpoolerParams;
+    PSZ       pszNetworkParams;
+} DEVOPENSTRUC, *PDEVOPENSTRUC;
+
+HMF    APIENTRY DevCloseDC(HDC);
+HDC    APIENTRY DevOpenDC(HAB,LONG,PCSZ,LONG,PDEVOPENDATA,HDC);
+LONG   APIENTRY DevPostDeviceModes(HAB,PDRIVDATA,PCSZ,PCSZ,PCSZ,ULONG);
+BOOL   APIENTRY DevQueryCaps(HDC,LONG,LONG,PLONG);
+
+#endif
+
+#if defined(INCL_DEV)
+
 #define DEVESC_QUERYESCSUPPORT          0
 #define DEVESC_GETSCALINGFACTOR         1
 #define DEVESC_QUERYVIOCELLSIZES        2
@@ -126,23 +178,6 @@
 #define DEVESC_STARTDOC_WPROP       49150
 #define DEVESC_NEWFRAME_WPROP       49151
 
-#define DRIVER_NAME    1
-#define DRIVER_DATA    2
-#define DATA_TYPE      3
-#define COMMENT        4
-#define PROC_NAME      5
-#define PROC_PARAMS    6
-#define SPL_PARAMS     7
-#define NETWORK_PARAMS 8
-
-#define OD_SCREEN           0
-#define OD_QUEUED           2
-#define OD_DIRECT           5
-#define OD_INFO             6
-#define OD_METAFILE         7
-#define OD_MEMORY           8
-#define OD_METAFILE_NOQUERY 9
-
 #define DPDM_ERROR      (-1)
 #define DPDM_NONE         0
 
@@ -150,17 +185,10 @@
 #define DPDM_CHANGEPROP   1
 #define DPDM_QUERYJOBPROP 2
 
-typedef CHAR STR16[16], *PSTR16;
-typedef CHAR STR32[32], *PSTR32;
-typedef CHAR STR64[64], *PSTR64;
+#define DQHC_ERROR (-1)
 
-#define DQHC_ERROR                    (-1)
-
-#define HCAPS_CURRENT                   1
-#define HCAPS_SELECTABLE                2
-
-
-typedef PSZ *PDEVOPENDATA;
+#define HCAPS_CURRENT    1
+#define HCAPS_SELECTABLE 2
 
 typedef struct _VIOSIZECOUNT {
     LONG maxcount;
@@ -184,33 +212,27 @@ typedef struct _BANDRECT {
     LONG ytop;
 } BANDRECT, *PBANDRECT;
 
-typedef struct _DRIVDATA {
-    LONG cb;
-    LONG lVersion;
-    CHAR szDeviceName[32];
-    CHAR abGeneralData[1];
-} DRIVDATA, *PDRIVDATA;
+typedef struct _HCINFO {
+    CHAR szFormname[32];
+    LONG cx;
+    LONG cy;
+    LONG xLeftClip;
+    LONG yBottomClip;
+    LONG xRightClip;
+    LONG yTopClip;
+    LONG xPels;
+    LONG yPels;
+    LONG flAttributes;
+} HCINFO, *PHCINFO;
 
-typedef struct _DEVOPENSTRUC {
-    PSZ       pszLogAddress;
-    PSZ       pszDriverName;
-    PDRIVDATA pdriv;
-    PSZ       pszDataType;
-    PSZ       pszComment;
-    PSZ       pszQueueProcName;
-    PSZ       pszQueueProcParams;
-    PSZ       pszSpoolerParams;
-    PSZ       pszNetworkParams;
-} DEVOPENSTRUC, *PDEVOPENSTRUC;
+typedef CHAR STR16[16], *PSTR16;
+typedef CHAR STR32[32], *PSTR32;
+typedef CHAR STR64[64], *PSTR64;
 
-HMF    APIENTRY DevCloseDC(HDC hdc);
-LONG   APIENTRY DevEscape(HDC hdc, LONG lCode, LONG lInCount, PBYTE pbInData,
-                   PLONG plOutCount, PBYTE pbOutData);
-HDC    APIENTRY DevOpenDC(HAB hab, LONG lType, PCSZ pszToken, LONG lCount,
-                   PDEVOPENDATA pdopData, HDC hdcComp);
-LONG   APIENTRY DevPostDeviceModes(HAB hab, PDRIVDATA pdrivDriverData, PCSZ pszDriverName,
-                   PCSZ pszDeviceName, PCSZ pszName, ULONG flOptions);
-BOOL   APIENTRY DevQueryCaps(HDC hdc, LONG lStart, LONG lCount, PLONG alArray);
+LONG   APIENTRY DevEscape(HDC,LONG,LONG,PBYTE,PLONG,PBYTE);
+LONG   APIENTRY DevPostDeviceModes(HAB,PDRIVDATA,PCSZ,PCSZ,PCSZ,ULONG);
+LONG   APIENTRY DevPostEscape(PCSZ,PCSZ,PCSZ,PCSZ,ULONG,ULONG,PBYTE,ULONG,PBYTE);
+BOOL   APIENTRY DevQueryDeviceNames(HAB,PCSZ,PLONG,PSTR32,PSTR64,PLONG,PSTR16);
+LONG   APIENTRY DevQueryHardcopyCaps(HDC,LONG,LONG,PHCINFO);
 
 #endif
-

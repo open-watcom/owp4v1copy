@@ -18,6 +18,7 @@
     #define INCL_GPIPRIMITIVES
     #define INCL_GPIREGIONS
     #define INCL_GPITRANSFORMS
+    #define INCL_GPISEGMENTS
 #endif
 
 #define GPI_ERROR      0
@@ -27,6 +28,7 @@
 #define CLR_NOINDEX (-254)
 
 #define FIXEDINT(fx)                 ((SHORT)HIUSHORT(fx))
+#define FIXEDFRAC(fx)                (LOUSHORT(fx))
 #define MAKEFIXED(intpart,fractpart) MAKELONG(fractpart,intpart)
 
 typedef struct _SIZEL {
@@ -34,9 +36,7 @@ typedef struct _SIZEL {
     LONG cy;
 } SIZEL, *PSIZEL;
 
-#if defined(INCL_GPIBITMAPS)
-
-#define CBM_INIT 4
+#if defined(INCL_GPIBITMAPS) || !defined(INCL_NOCOMMON)
 
 #define ROP_SRCCOPY     0x00CC
 #define ROP_SRCPAINT    0x00EE
@@ -62,6 +62,20 @@ typedef struct _SIZEL {
 
 #define FF_BOUNDARY 0
 #define FF_SURFACE  1
+
+#define HBM_ERROR ((HBITMAP)-1)
+
+LONG    APIENTRY GpiBitBlt(HPS,HPS,LONG,PPOINTL,LONG,ULONG);
+BOOL    APIENTRY GpiDeleteBitmap(HBITMAP);
+HBITMAP APIENTRY GpiLoadBitmap(HPS,HMODULE,ULONG,LONG,LONG);
+HBITMAP APIENTRY GpiSetBitmap(HPS,HBITMAP);
+LONG    APIENTRY GpiWCBitBlt(HPS,HBITMAP,LONG,PPOINTL,LONG,ULONG);
+
+#endif
+
+#if defined(INCL_GPIBITMAPS)
+
+#define CBM_INIT 4
 
 #define BCA_UNCOMP         0
 #define BCA_HUFFMAN1D      3
@@ -201,29 +215,19 @@ typedef struct _BITMAPARRAYFILEHEADER2 {
 
 #pragma pack()
 
-LONG    APIENTRY GpiBitBlt(HPS hpsTarget, HPS hpsSource, LONG lCount,
-                    PPOINTL aptlPoints, LONG lRop, ULONG flOptions);
-HBITMAP APIENTRY GpiCreateBitmap(HPS hps, PBITMAPINFOHEADER2 pbmpNew, ULONG flOptions,
-                   PBYTE pbInitData, PBITMAPINFO2 pbmiInfoTable);
-BOOL    APIENTRY GpiDeleteBitmap(HBITMAP hbm);
-LONG    APIENTRY GpiFloodFill(HPS hps, LONG lOptions, LONG lColor);
-HBITMAP APIENTRY GpiLoadBitmap(HPS hps, HMODULE Resrc, ULONG idBmp, LONG lWidth, LONG lHeight);
-LONG    APIENTRY GpiQueryBitmapBits(HPS hps, LONG lScanStart, LONG lScans,
-                   PBYTE pbBuffer, PBITMAPINFO2 pbmiInfoTable);
-BOOL    APIENTRY GpiQueryBitmapDimension(HBITMAP hbm, PSIZEL psizlBitmapDimension);
-HBITMAP APIENTRY GpiQueryBitmapHandle(HPS hps, LONG lLcid);
-BOOL    APIENTRY GpiQueryBitmapInfoHeader(HBITMAP hbm, PBITMAPINFOHEADER2 pbmpData);
-BOOL    APIENTRY GpiQueryBitmapParameters(HBITMAP hbm, PBITMAPINFOHEADER pbmpData);
-BOOL    APIENTRY GpiQueryDeviceBitmapFormats(HPS hps, LONG lCount, PLONG alArray);
-LONG    APIENTRY GpiQueryPel(HPS hps, PPOINTL pptlPoint);
-HBITMAP APIENTRY GpiSetBitmap(HPS hps, HBITMAP hbm);
-LONG    APIENTRY GpiSetBitmapBits(HPS hps, LONG lScanStart, LONG lScans,
-                   PBYTE pbBuffer, PBITMAPINFO2 pbmiInfoTable);
-BOOL    APIENTRY GpiSetBitmapDimension(HBITMAP hbm, PSIZEL psizlBitmapDimension);
-BOOL    APIENTRY GpiSetBitmapId(HPS hps, HBITMAP hbm, LONG lLcid);
-LONG    APIENTRY GpiSetPel(HPS hps, PPOINTL pptlPoint);
-LONG    APIENTRY GpiWCBitBlt(HPS hpsTarget, HBITMAP hbmSource, LONG lCount,
-                   PPOINTL aptlPoints, LONG lRop, ULONG flOptions);
+HBITMAP APIENTRY GpiCreateBitmap(HPS,PBITMAPINFOHEADER2,ULONG,PBYTE,PBITMAPINFO2);
+LONG    APIENTRY GpiFloodFill(HPS,LONG,LONG);
+LONG    APIENTRY GpiQueryBitmapBits(HPS,LONG,LONG,PBYTE,PBITMAPINFO2);
+BOOL    APIENTRY GpiQueryBitmapDimension(HBITMAP,PSIZEL);
+HBITMAP APIENTRY GpiQueryBitmapHandle(HPS,LONG);
+BOOL    APIENTRY GpiQueryBitmapInfoHeader(HBITMAP,PBITMAPINFOHEADER2);
+BOOL    APIENTRY GpiQueryBitmapParameters(HBITMAP,PBITMAPINFOHEADER);
+BOOL    APIENTRY GpiQueryDeviceBitmapFormats(HPS,LONG,PLONG);
+LONG    APIENTRY GpiQueryPel(HPS,PPOINTL);
+LONG    APIENTRY GpiSetBitmapBits(HPS,LONG,LONG,PBYTE,PBITMAPINFO2);
+BOOL    APIENTRY GpiSetBitmapDimension(HBITMAP,PSIZEL);
+BOOL    APIENTRY GpiSetBitmapId(HPS,HBITMAP,LONG);
+LONG    APIENTRY GpiSetPel(HPS,PPOINTL);
 
 #endif
 
@@ -1012,3 +1016,47 @@ BOOL   APIENTRY GpiSetPickApertureSize(HPS,LONG,PSIZEL);
 BOOL   APIENTRY GpiSetTag(HPS,LONG);
 
 #endif
+
+#if defined(INCL_GPISEGMENTS)
+
+#define DFORM_NOCONV    0
+#define DFORM_S370SHORT 1
+#define DFORM_PCSHORT   2
+#define DFORM_PCLONG    4
+
+#define ATTR_ERROR         (-1)
+#define ATTR_DETECTABLE      1
+#define ATTR_VISIBLE         2
+#define ATTR_CHAINED         6
+#define ATTR_DYNAMIC         8
+#define ATTR_FASTCHAIN       9
+#define ATTR_PROP_DETECTABLE 10
+#define ATTR_PROP_VISIBLE    11
+
+#define ATTR_OFF 0
+#define ATTR_ON  1
+
+#define LOWER_PRI  (-1)
+#define HIGHER_PRI   1
+
+BOOL   APIENTRY GpiCloseSegment(HPS);
+BOOL   APIENTRY GpiDeleteSegment(HPS,LONG);
+BOOL   APIENTRY GpiDeleteSegments(HPS,LONG,LONG);
+BOOL   APIENTRY GpiDrawChain(HPS);
+BOOL   APIENTRY GpiDrawDynamics(HPS);
+BOOL   APIENTRY GpiDrawFrom(HPS,LONG,LONG);
+BOOL   APIENTRY GpiDrawSegment(HPS,LONG);
+LONG   APIENTRY GpiGetData(HPS,LONG,PLONG,LONG,LONG,PBYTE);
+BOOL   APIENTRY GpiOpenSegment(HPS,LONG);
+LONG   APIENTRY GpiPutData(HPS,LONG,PLONG,PBYTE);
+LONG   APIENTRY GpiQueryInitialSegmentAttrs(HPS,LONG);
+LONG   APIENTRY GpiQuerySegmentAttrs(HPS,LONG,LONG);
+LONG   APIENTRY GpiQuerySegmentNames(HPS,LONG,LONG,LONG,PLONG);
+LONG   APIENTRY GpiQuerySegmentPriority(HPS,LONG,LONG);
+BOOL   APIENTRY GpiRemoveDynamics(HPS,LONG,LONG);
+BOOL   APIENTRY GpiSetInitialSegmentAttrs(HPS,LONG,LONG);
+BOOL   APIENTRY GpiSetSegmentAttrs(HPS,LONG,LONG,LONG);
+BOOL   APIENTRY GpiSetSegmentPriority(HPS,LONG,LONG,LONG);
+
+#endif
+

@@ -450,21 +450,6 @@ BOOL  APIENTRY  WinShowCursor(HWND hwnd, BOOL fShow);
 #define QW_PREVTOP    7
 #define QW_FRAMEOWNER 8
 
-#define QWS_USER      0
-#define QWS_ID        (-1)
-#define QWS_MIN       (-1)
-
-#define QWL_USER      0
-#define QWL_STYLE     (-2)
-#define QWP_PFNWP     (-3)
-#define QWL_HMQ       (-4)
-#define QWL_RESERVED  (-5)
-#define QWL_PENDATA   (-7)
-#define QWL_BD_ATTR   (-9)
-#define QWL_BD_STAT   (-10)
-#define QWL_KBDLAYER  (-11)
-#define QWL_MIN       (-11)
-
 #define AWP_MINIMIZED  0x00010000
 #define AWP_MAXIMIZED  0x00020000
 #define AWP_RESTORED   0x00040000
@@ -531,8 +516,6 @@ BOOL  APIENTRY  WinShowCursor(HWND hwnd, BOOL fShow);
 #define DB_STANDARD    0x0100
 #define DB_DLGBORDER   0x0200
 
-typedef LHANDLE HENUM;
-
 typedef struct _SWP {
     ULONG fl;
     LONG  cy;
@@ -545,7 +528,6 @@ typedef struct _SWP {
     ULONG ulReserved2;
 } SWP, *PSWP;
 
-HENUM   APIENTRY WinBeginEnumWindows(HWND hwnd);
 HPS     APIENTRY WinBeginPaint(HWND hwnd, HPS hps, PRECTL prclPaint);
 BOOL    APIENTRY WinCheckMenuItem(HWND hwndMenu, USHORT usId, BOOL fCheck);
 HWND    APIENTRY WinCreateWindow(HWND hwndParent, PCSZ pszClass, PCSZ pszName, ULONG flStyle,
@@ -561,14 +543,10 @@ LONG    APIENTRY WinDrawText(HPS hps, LONG cchText, PCH lpchText,
                    PRECTL prcl, LONG clrFore, LONG clrBack, ULONG flCmd);
 BOOL    APIENTRY WinEnableWindow(HWND hwnd, BOOL fNewEnabled);
 BOOL    APIENTRY WinEnableWindowUpdate(HWND hwnd, BOOL fEnable);
-BOOL    APIENTRY WinEndEnumWindows(HENUM henum);
 BOOL    APIENTRY WinEndPaint(HPS hps);
-LONG    APIENTRY WinExcludeUpdateRegion(HPS hps, HWND hwnd);
 BOOL    APIENTRY WinFillRect(HPS hps, PRECTL prcl, LONG lColor);
 HPS     APIENTRY WinGetClipPS(HWND hwnd, HWND hwndClipWindow, ULONG ulClipflags);
-HWND    APIENTRY WinGetNextWindow(HENUM henum);
 HPS     APIENTRY WinGetPS(HWND hwnd);
-HPS     APIENTRY WinGetScreenPS(HWND hwndDeskTop);
 HAB     APIENTRY WinInitialize(ULONG fsOptions);
 BOOL    APIENTRY WinInvalidateRect(HWND hwnd, PRECTL pwrc, BOOL fIncludeChildren);
 BOOL    APIENTRY WinInvalidateRegion(HWND hwnd, HRGN hrgn, BOOL fIncludeChildren);
@@ -585,9 +563,6 @@ BOOL    APIENTRY WinIsWindowShowing(HWND hwnd);
 BOOL    APIENTRY WinIsWindowVisible(HWND hwnd);
 LONG    APIENTRY WinLoadMessage(HAB hab, HMODULE hmodMod, ULONG ulId, LONG lcchMax, PSZ pBuffer);
 LONG    APIENTRY WinLoadString(HAB hab, HMODULE hmodMod, ULONG ulId, LONG lcchMax, PSZ pBuffer);
-BOOL    APIENTRY WinLockVisRegions(HWND hwndDesktop, BOOL fLock);
-BOOL    APIENTRY WinLockWindowUpdate(HWND hwndDeskTop, HWND hwndLockUpdate);
-BOOL    APIENTRY WinMapWindowPoints(HWND hwndFrom, HWND hwndTo, PPOINTL prgptl, LONG cwpt);
 LONG    APIENTRY WinMultWindowFromIDs(HWND hwndParent, PHWND prghwnd,
                    ULONG idFirst, ULONG idLast);
 HDC     APIENTRY WinOpenWindowDC(HWND hwnd);
@@ -595,19 +570,13 @@ BOOL    APIENTRY WinPopupMenu(HWND hwndParent, HWND hwndOwner, HWND hwndMenu,
                    LONG x, LONG y, LONG idItem, ULONG fs);
 HAB     APIENTRY WinQueryAnchorBlock(HWND hwnd);
 HWND    APIENTRY WinQueryDesktopWindow(HAB hab, HDC hdc);
-BOOL    APIENTRY WinQueryUpdateRect(HWND hwnd, PRECTL prclPrc);
-LONG    APIENTRY WinQueryUpdateRegion(HWND hwnd, HRGN hrgn);
 ULONG   APIENTRY WinQueryVersion(HAB hab);
 HWND    APIENTRY WinQueryWindow(HWND hwnd, LONG lCode);
-HDC     APIENTRY WinQueryWindowDC(HWND hwnd);
 BOOL    APIENTRY WinQueryWindowPos(HWND hwnd, PSWP pswp);
 BOOL    APIENTRY WinQueryWindowProcess(HWND hwnd, PPID ppid, PTID ptid);
-PVOID   APIENTRY WinQueryWindowPtr(HWND hwnd, LONG index);
 BOOL    APIENTRY WinQueryWindowRect(HWND hwnd, PRECTL prclDest);
 LONG    APIENTRY WinQueryWindowText(HWND hwnd, LONG lLength, PCH pun);
 LONG    APIENTRY WinQueryWindowTextLength(HWND hwnd);
-ULONG   APIENTRY WinQueryWindowULong(HWND hwnd, LONG index);
-USHORT  APIENTRY WinQueryWindowUShort(HWND hwnd, LONG index);
 BOOL    APIENTRY WinRegisterClass(HAB hab, PCSZ pszClassName, PFNWP pfnWndProc,
                    ULONG flStyle, ULONG cbWindowData);
 BOOL    APIENTRY WinReleasePS(HPS hps);
@@ -619,26 +588,54 @@ BOOL    APIENTRY WinSetMultWindowPos(HAB hab, PSWP pswp, ULONG cswp);
 BOOL    APIENTRY WinSetOwner(HWND hwnd, HWND hwndNewOwner);
 BOOL    APIENTRY WinSetParent(HWND hwnd, HWND hwndNewParent, BOOL fRedraw);
 BOOL    APIENTRY WinSetSysModalWindow(HWND hwndDesktop, HWND hwnd);
-BOOL    APIENTRY WinSetWindowBits(HWND hwnd, LONG index, ULONG flData, ULONG flMask);
 BOOL    APIENTRY WinSetWindowPos(HWND hwnd, HWND hwndInsertBehind, LONG x, LONG y,
                    LONG cx, LONG cy, ULONG fl);
-BOOL    APIENTRY WinSetWindowPtr(HWND hwnd, LONG lb, PVOID pp);
 BOOL    APIENTRY WinSetWindowText(HWND hwnd, PCSZ pszString);
-BOOL    APIENTRY WinSetWindowULong(HWND hwnd, LONG index, ULONG ul);
-BOOL    APIENTRY WinSetWindowUShort(HWND hwnd, LONG index, USHORT us);
 BOOL    APIENTRY WinShowWindow(HWND hwnd, BOOL fNewVisibility);
-PFNWP   APIENTRY WinSubclassWindow(HWND hwnd, PFNWP pNewWindowProc);
 BOOL    APIENTRY WinTerminate(HAB hab);
 BOOL    APIENTRY WinUpdateWindow(HWND hwnd);
-BOOL    APIENTRY WinValidateRect(HWND hwnd, PRECTL prclRect, BOOL fIncludeClippedChildren);
-BOOL    APIENTRY WinValidateRegion(HWND hwnd, HRGN hrgn, BOOL fIncludeClippedChildren);
-HWND    APIENTRY WinWindowFromDC(HDC hdc);
 HWND    APIENTRY WinWindowFromID(HWND hwndParent, ULONG id);
-HWND    APIENTRY WinWindowFromPoint(HWND hwndParent, PPOINTL pptlPoint, BOOL fEnumChildren);
 
 #endif
 
 #if defined(INCL_WINWINDOWMGR)
+
+#define QCRGN_ERROR          0
+#define QCRGN_OK             1
+#define QCRGN_NO_CLIP_REGION 2
+
+#define QWS_USER 0
+#define QWS_ID   (-1)
+#define QWS_MIN  (-1)
+
+#define QWL_USER     0
+#define QWL_STYLE    (-2)
+#define QWP_PFNWP    (-3)
+#define QWL_HMQ      (-4)
+#define QWL_RESERVED (-5)
+#define QWL_PENDATA  (-7)
+#define QWL_BD_ATTR  (-9)
+#define QWL_BD_STAT  (-10)
+#define QWL_KBDLAYER (-11)
+#define QWL_MIN      (-11)
+
+#define QWL_HHEAP         0x0004
+#define QWL_HWNDFOCUSSAVE 0x0018
+#define QWL_DEFBUTTON     0x0040
+#define QWL_PSSCBLK       0x0048
+#define QWL_PFEPBLK       0x004c
+#define QWL_PSTATBLK      0x0050
+
+#define QWS_FLAGS     0x0008
+#define QWS_RESULT    0x000a
+#define QWS_XRESTORE  0x000c
+#define QWS_YRESTORE  0x000e
+#define QWS_CXRESTORE 0x0010
+#define QWS_CYRESTORE 0x0012
+#define QWS_XMINIMIZE 0x0014
+#define QWS_YMINIMIZE 0x0016
+
+typedef LHANDLE HENUM;
 
 typedef struct _CLASSINFO {
     ULONG     flClassStyle;
@@ -662,9 +659,36 @@ typedef struct _CREATESTRUCT {
     HWND  hwndParent;
 } CREATESTRUCT, *PCREATESTRUCT;
 
+HENUM   APIENTRY WinBeginEnumWindows(HWND);
+BOOL    APIENTRY WinEndEnumWindows(HENUM);
+LONG    APIENTRY WinExcludeUpdateRegion(HPS,HWND);
+HWND    APIENTRY WinGetNextWindow(HENUM);
+HPS     APIENTRY WinGetScreenPS(HWND);
+BOOL    APIENTRY WinLockVisRegions(HWND,BOOL);
+BOOL    APIENTRY WinLockWindowUpdate(HWND,HWND);
+BOOL    APIENTRY WinMapWindowPoints(HWND,HWND,PPOINTL,LONG);
 HWND    APIENTRY WinQueryActiveWindow(HWND);
 BOOL    APIENTRY WinQueryClassInfo(HAB,PCSZ,PCLASSINFO);
 LONG    APIENTRY WinQueryClassName(HWND,LONG,PCH);
+LONG    APIENTRY WinQueryClipRegion(HWND,HRGN);
+HWND    APIENTRY WinQuerySysModalWindow(HWND);
+BOOL    APIENTRY WinQueryUpdateRect(HWND,PRECTL);
+LONG    APIENTRY WinQueryUpdateRegion(HWND,HRGN);
+HDC     APIENTRY WinQueryWindowDC(HWND);
+PVOID   APIENTRY WinQueryWindowPtr(HWND,LONG);
+ULONG   APIENTRY WinQueryWindowULong(HWND,LONG);
+USHORT  APIENTRY WinQueryWindowUShort(HWND,LONG);
+BOOL    APIENTRY WinSetClipRegion(HWND,HRGN);
+BOOL    APIENTRY WinSetSysModalWindow(HWND,HWND);
+BOOL    APIENTRY WinSetWindowBits(HWND,LONG,ULONG,ULONG);
+BOOL    APIENTRY WinSetWindowPtr(HWND,LONG,PVOID);
+BOOL    APIENTRY WinSetWindowULong(HWND,LONG,ULONG);
+BOOL    APIENTRY WinSetWindowUShort(HWND,LONG,USHORT);
+PFNWP   APIENTRY WinSubclassWindow(HWND,PFNWP);
+BOOL    APIENTRY WinValidateRect(HWND,PRECTL,BOOL);
+BOOL    APIENTRY WinValidateRegion(HWND,HRGN,BOOL);
+HWND    APIENTRY WinWindowFromDC(HDC);
+HWND    APIENTRY WinWindowFromPoint(HWND,PPOINTL,BOOL);
 
 #endif
 
@@ -1578,6 +1602,52 @@ typedef struct _LBOXINFO {
 #define MLN_MEMERROR              0x000c
 #define MLN_UNDOOVERFLOW          0x000d
 #define MLN_CLPBDFAIL             0x000f
+
+typedef LONG  IPT;
+typedef PLONG PIPT;
+typedef LONG  PIX;
+typedef ULONG LINE;
+
+typedef struct _FORMATRECT {
+    LONG cxFormat;
+    LONG cyFormat;
+} MLEFORMATRECT, *PFORMATRECT;
+
+typedef struct _MLECTLDATA {
+    USHORT cbCtlData;
+    USHORT afIEFormat;
+    ULONG  cchText;
+    IPT    iptAnchor;
+    IPT    iptCursor;
+    LONG   cxFormat;
+    LONG   cyFormat;
+    ULONG  afFormatFlags;
+    PVOID  pHWXCtlData;
+} MLECTLDATA, *PMLECTLDATA;
+
+typedef struct _MLEOVERFLOW {
+    ULONG afErrInd;
+    LONG  nBytesOver;
+    LONG  pixHorzOver;
+    LONG  pixVertOver;
+} MLEOVERFLOW, *POVERFLOW;
+
+typedef struct _MLEMARGSTRUCT {
+    USHORT afMargins;
+    USHORT usMouMsg;
+    IPT    iptNear;
+} MLEMARGSTRUCT, *PMARGSTRUCT;
+
+typedef struct _SEARCH {
+    USHORT cb;
+    PCHAR  pchFind;
+    PCHAR  pchReplace;
+    SHORT  cchFind;
+    SHORT  cchReplace;
+    IPT    iptStart;
+    IPT    iptStop;
+    USHORT cchFound;
+} MLE_SEARCHDATA, *PMLE_SEARCHDATA;
 
 #endif
 

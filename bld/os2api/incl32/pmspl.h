@@ -271,7 +271,7 @@ typedef struct _PRJINFO3 {
     PSZ    pszDriverName;
     PDRIVDATA pDriverData;
     PSZ    pszPrinterName;
-} PRJINFO, *PPRJINFO3;
+} PRJINFO3, *PPRJINFO3;
 
 typedef struct _PRJINFO4 {
     USHORT uJobId;
