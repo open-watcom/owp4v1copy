@@ -139,6 +139,15 @@ cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mo
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
 
+aflags_nt       = -bt=nt
+aflags_win      = -bt=windows
+aflags_os2      = -bt=os2
+aflags_qnx      = -bt=qnx
+aflags_osi      = -bt=osi
+aflags_dos      = -bt=dos
+aflags_nov      = -bt=netware
+aflags_linux    = -bt=linux
+
 lflags_dos_i86   = sys dos
 lflags_nt_axp    = sys ntaxp
 lflags_nt_386    = sys nt
