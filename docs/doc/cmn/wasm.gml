@@ -179,6 +179,8 @@ set module name
 set name of text segment
 .note o
 allow C form of octal constants
+.note zcm
+set C name mangler to MASM compatible mode
 .note zld
 remove file dependency information
 .note zq or q

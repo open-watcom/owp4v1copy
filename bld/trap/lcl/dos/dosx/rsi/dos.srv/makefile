@@ -27,6 +27,7 @@ extra_c_flags = -hc -dDOS4G -dDOSXHELP -zdp -zu
 extra_a_flags = -Dcompact
 extra_a_flags_npxtype = -fpi87
 extra_a_flags_rsi87 = -fpi87
+extra_a_flags_dbgliba = -zcm
 
 extra_srcs = $(rsilib);
 inc_dirs = $(rsilib);
