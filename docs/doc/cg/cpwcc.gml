@@ -2595,6 +2595,12 @@ the
 keyword (for which
 .kwm __declspec(dllexport)
 is the replacement), or through linker "EXPORT" directives.
+.np
+Note: When calling functions imported from other modules, it is not
+strictly necessary to use the
+.kwm __declspec(dllimport)
+modifier to declare the functions. This modifier however must always be used
+when importing data or objects to ensure correct behavior.
 .*
 .note __declspec( dllexport )
 .*
