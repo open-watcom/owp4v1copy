@@ -183,9 +183,12 @@ size_t strlen( const char *str )
     return( len );
 }
 
-char * memcpy( char *dst, const char *src, size_t len )
+void * memcpy( void *_dst, const void * _src, size_t len )
 {
+    char *dst = _dst;
+    const char *src = _src;
     char *p = dst;
+
     while( len != 0 ) {
         *p = *src;
         ++p;
