@@ -33,12 +33,12 @@ readout() and memeql() are output and string-comparison utilities.
 #if 0
 /* LTLMSG was used when buffer overflow stopped sed */
 static char const       LTLMSG[] = "sed: line too long \"%.*s\"\n";
+#define ABORTEX(msg) fprintf( stderr, msg, sizeof genbuf, genbuf ), exit( 2 )
 #endif
 
+static char const       FRENUL[] = "sed: first RE must be non-null\n";
 static char const       NOROOM[] = "sed: can only fit %d bytes at line %ld\n";
 static char const       INTERR[] = "sed: internal error: %s\n";
-
-#define ABORTEX(msg) fprintf( stderr, msg, sizeof genbuf, genbuf ), exit( 2 )
 
 static char     *spend;                 /* current end-of-line-buffer pointer */
 static long     lnum = 0L;              /* current source line number */
@@ -61,6 +61,7 @@ static int      delete;                 /* delete command flag */
                                         /* tagged-pattern tracking */
 static char     *bracend[MAXTAGS+1];    /* tagged pattern start pointers */
 static char     *brastart[MAXTAGS+1];   /* tagged pattern end pointers */
+static sedcmd   *pending = NULL;        /* next command to be executed */
 
 static int      selected( sedcmd *ipc );
 static int      match( char *expbuf, int gf, int is_cnt );
@@ -91,8 +92,8 @@ void execute( const char *file )        /* name of text source file to filter */
 
     if( pending ) {                     /* there's a command waiting */
         ipc = pending;                  /* it will be first executed */
-        pending = FALSE;                /*   turn off the waiting flag */
-        goto doit;                      /*   go to execute it immediately */
+        pending = NULL;                 /* turn off the waiting flag */
+        goto doit;                      /* go to execute it immediately */
     }
                                         /* the main command-execution loop */
     for( ;; ) {
@@ -109,11 +110,9 @@ void execute( const char *file )        /* name of text source file to filter */
         jump = FALSE;
         spend = execp;
                                         /* compiled commands execute loop */
-        for( ipc = cmds; ipc->command; ) {
-            if( !selected( ipc ) ) {
-                ipc++;
+        for( ipc = cmds; ipc->command; ipc++ ) {
+            if( !selected( ipc ) )
                 continue;
-            }
         doit:
             command( ipc );             /* execute the command pointed at */
 
@@ -122,13 +121,9 @@ void execute( const char *file )        /* name of text source file to filter */
 
             if( jump ) {                /* if jump set, follow cmd's link */
                 jump = FALSE;
-                if( ( ipc = ipc->u.link ) == 0 ) {
-                    ipc = cmds;
+                if( ( ipc = ipc->u.link ) == NULL )
                     break;
-                }
             }
-            else                        /* normal goto next command */
-                ipc++;
         }
                                         /* all commands now done on the line */
                                         /* output the transformed line is */
@@ -137,9 +132,8 @@ void execute( const char *file )        /* name of text source file to filter */
                 putc( *p1, stdout );
             putc( '\n', stdout );
         }
-                                        /* if appendn set, emit that text */
-        if( aptr > appends )
-            readout();
+
+        readout();                      /* emit any append text */
 
         delete = FALSE;                 /* clear delete flag; get next cmd */
     }
@@ -189,16 +183,28 @@ static int selected( sedcmd *ipc )
 }
 
 /* match RE at expbuf against linebuf; if gf set, copy linebuf from genbuf */
-static int match( char *expbuf, int gf, int is_cnt )
+static int match(
+    char                *expbuf,
+    int                 gf,
+    int                 is_cnt )
 {
     register char       *p1;
     register char       *p2;
     register char       c;
+    static char         *lastre = NULL; /* old RE pointer */
+
+    if( *expbuf == CEOF ) {
+        if( lastre == NULL )
+            fprintf( stderr, "%s", FRENUL ), exit( 2 ); /* no previous RE */
+        expbuf = lastre;
+    }
+    else
+        lastre = expbuf;
 
     if( gf ) {
         if( *expbuf )
             return( FALSE );
-        p1 = linebuf; 
+        p1 = linebuf;
         p2 = genbuf;
         while( ( *p1++ = *p2++ ) != 0 ) ;
         locs = p1 = loc2;
@@ -253,9 +259,8 @@ static int advance(
                 return( FALSE );        /* return false */
             break;                      /* matched */
 
-        case CDOT:                      /* anything but newline */
-            if( *lp == 0                /* first NUL is at EOL */
-            ||  *lp++ == '\n' )
+        case CDOT:                      /* anything but NUL */
+            if( *lp++ == 0 )            /* first NUL is at EOL */
                 return( FALSE );        /* return false */
             break;                      /* matched */
 
@@ -378,7 +383,7 @@ static int advance(
                     bracend[tagindex] = tep;
                     return( TRUE );
                 }
-                
+
                 return( advance( bracend[tagindex], ep + ct ) ); /* Zero matches */
             }
 
@@ -400,7 +405,7 @@ static int advance(
                     return( advance( bracend[tagindex], ep + ct + 1 ) ); /* Zero matches */
                 if( i2 == 0xFF )
                     i2 = MAXBUF;
-                
+
                 while( advance( brastart[tagindex] = bracend[tagindex], ep+2 ) && bracend[tagindex] > brastart[tagindex] && i2 )
                     if( i2--, advance( bracend[tagindex], ep + ct + 1 ) ) { /* Try to match RE after \(...\) */
                         matched = TRUE; /* Remember greediest match */
@@ -530,7 +535,7 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
     register char const *rp;
     int                 c;
                                         /* linebuf upto location 1 -> genbuf */
-    lp = linebuf; 
+    lp = linebuf;
     sp = genbuf;
     while( lp < loc1 ) {
         if( sp >= genbuf + sizeof genbuf ) { /* Not exercised by sedtest.mak */
@@ -561,7 +566,7 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
             break;
         }
     } while( ( *sp++ = *lp++ ) != 0 );
-    lp = linebuf; 
+    lp = linebuf;
     sp = genbuf;
     while( ( *lp++ = *sp++ ) != 0 ) ;
     spend = lp - 1;
@@ -604,25 +609,25 @@ static void listto(
             putc( '\\', fp );           /* emit a backslash */
             switch( *p1 ) {
             case '\a':
-                putc( 'a', fp ); 
+                putc( 'a', fp );
                 break;
             case '\b':
-                putc( 'b', fp ); 
+                putc( 'b', fp );
                 break;
             case '\f':
-                putc( 'f', fp ); 
+                putc( 'f', fp );
                 break;
             case '\n':                  /* Never activated */
-                putc( 'n', fp ); 
+                putc( 'n', fp );
                 break;
             case '\r':
-                putc( 'r', fp ); 
+                putc( 'r', fp );
                 break;
             case '\t':
-                putc( 't', fp ); 
+                putc( 't', fp );
                 break;
             case '\v':
-                putc( 'v', fp ); 
+                putc( 'v', fp );
                 break;
             default:
                 written++;
@@ -646,10 +651,9 @@ static void command( sedcmd *ipc )
 
     switch( ipc->command ) {
     case ACMD:                          /* append */
-        *aptr++ = ipc;
         if( aptr >= appends + MAXAPPENDS ) /* Not exercised by sedtest.mak */
             fprintf( stderr, "sed: too many appends after line %ld\n", lnum );
-        *aptr = 0;
+        *aptr++ = ipc;
         break;
 
     case CCMD:                          /* change pattern space */
@@ -677,15 +681,15 @@ static void command( sedcmd *ipc )
         break;
 
     case GCMD:                          /* copy hold space to pattern space */
-        p1 = linebuf;   
-        p2 = holdsp;    
+        p1 = linebuf;
+        p2 = holdsp;
         while( ( *p1++ = *p2++ ) != 0 ) ;
         spend = p1 - 1;
         break;
 
     case CGCMD:                         /* append hold space to pattern space */
         *spend++ = '\n';
-        p1 = spend;     
+        p1 = spend;
         p2 = holdsp;
         while( ( *p1++ = *p2++ ) != 0 )
             if( p1 >= linebuf + MAXBUF ) {
@@ -696,15 +700,15 @@ static void command( sedcmd *ipc )
         break;
 
     case HCMD:                          /* copy pattern space to hold space */
-        p1 = holdsp;    
-        p2 = linebuf;   
+        p1 = holdsp;
+        p2 = linebuf;
         while( ( *p1++ = *p2++ ) != 0 ) ;
         hspend = p1 - 1;
         break;
 
     case CHCMD:                         /* append pattern space to hold space */
         *hspend++ = '\n';
-        p1 = hspend;    
+        p1 = hspend;
         p2 = linebuf;
         while( ( *p1++ = *p2++ ) != 0 )
             if( p1 >= holdsp + MAXBUF ) {
@@ -723,14 +727,13 @@ static void command( sedcmd *ipc )
         break;
 
     case LCMD:                          /* list text */
-        listto( linebuf, ( ipc->fout != NULL ) ? ipc->fout : stdout ); 
+        listto( linebuf, ( ipc->fout != NULL ) ? ipc->fout : stdout );
         break;
 
     case NCMD:                          /* read next line into pattern space */
         if( !nflag )
             puts( linebuf );            /* flush out the current line */
-        if( aptr > appends )
-            readout();                  /* do pending a, r commands */
+        readout();                      /* do any pending a, r commands */
         if( ( execp = getline( linebuf ) ) == BAD ) {
             pending = ipc;
             delete = TRUE;
@@ -740,9 +743,8 @@ static void command( sedcmd *ipc )
         break;
 
     case CNCMD:                         /* append next line to pattern space */
-        if( aptr > appends )
-            readout();
-        *spend++ = '\n';
+        readout();                      /* do any pending a, r commands */
+        *spend++ = '\n';                /* seperate lines with '\n' */
         if( ( execp = getline( spend ) ) == BAD ) {
             *--spend = '\0';            /* Remove '\n' added for new line */
             pending = ipc;
@@ -765,15 +767,13 @@ static void command( sedcmd *ipc )
     case QCMD:                          /* quit the stream editor */
         if( !nflag )
             puts( linebuf );            /* flush out the current line */
-        if( aptr > appends )
-            readout();                  /* do any pending a and r commands */
+        readout();                      /* do any pending a and r commands */
         exit( 0 );
 
     case RCMD:                          /* read a file into the stream */
-        *aptr++ = ipc;
         if( aptr >= appends + MAXAPPENDS ) /* Not exercised by sedtest.mak */
             fprintf( stderr, "sed: too many reads after line %ld\n", lnum );
-        *aptr = 0;
+        *aptr++ = ipc;
         break;
 
     case SCMD:                          /* substitute RE */
@@ -812,21 +812,21 @@ static void command( sedcmd *ipc )
         break;
 
     case XCMD:                          /* exchange pattern and hold spaces */
-        p1 = linebuf;   
-        p2 = genbuf;    
+        p1 = linebuf;
+        p2 = genbuf;
         while( ( *p2++ = *p1++ ) != 0 ) ;
-        p1 = holdsp;    
-        p2 = linebuf;   
+        p1 = holdsp;
+        p2 = linebuf;
         while( ( *p2++ = *p1++ ) != 0 ) ;
         spend = p2 - 1;
-        p1 = genbuf;    
-        p2 = holdsp;    
+        p1 = genbuf;
+        p2 = holdsp;
         while( ( *p2++ = *p1++ ) != 0 ) ;
         hspend = p2 - 1;
         break;
 
     case YCMD:
-        p1 = linebuf;   
+        p1 = linebuf;
         p2 = ipc->u.lhs;
         while( ( *p1 = p2[*p1] ) != 0 )
             p1++;
@@ -843,7 +843,7 @@ static char *getline( register char *buf )  /* where to send the input */
     static char const * const   linebufend = linebuf + MAXBUF + 2;
     int const                   room = linebufend - buf;
     int                         temp;
-    char                        *sbuf = buf;
+    char const * const          sbuf = buf;
 
     assert( buf >= linebuf && buf < linebufend );
 
@@ -870,8 +870,11 @@ static char *getline( register char *buf )  /* where to send the input */
     }
 }
 
-static int memeql( register char const *a, register char const *b, int count )
 /* return TRUE if *a... == *b... for count chars, FALSE otherwise */
+static int memeql(
+    register char const *a,
+    register char const *b,
+    int                 count )
 {
     while( count-- )                    /* look at count characters */
         if( *a++ != *b++ )              /* if any are nonequal   */
@@ -886,19 +889,22 @@ static void readout( void )
     FILE                *fi;            /* ptr to file to be read */
     sedcmd * const      *ap;            /* Loops through appends */
 
-    for( ap = appends; *ap; ap ++ )
-        if( ( *ap )->command == ACMD ) /* process "a" cmd */
-            printf( "%s\n", ( *ap )->u.lhs );
+    for( ap = appends; ap < aptr; ap ++ ) {
+        sedcmd const * const    a = *ap;
+        char const * const      lhs = a->u.lhs;
+
+        if( a->command == ACMD )        /* process "a" cmd */
+            printf( "%s\n", lhs );
         else {                          /* process "r" cmd */
-            if( ( fi = fopen( ( *ap )->u.lhs, "r" ) ) != NULL ) {
+            if( ( fi = fopen( lhs, "r" ) ) != NULL ) {
                 while( ( t = getc( fi ) ) != EOF )
                     putc( ( char ) t, stdout );
                 fclose( fi );
             }
         }
+    }
 
     aptr = appends;                     /* reset the append ptr */
-    *aptr = 0;
 }
 
 /* sedexec.c ends here */
