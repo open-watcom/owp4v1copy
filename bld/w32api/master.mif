@@ -114,12 +114,6 @@ libs =               &
         $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
 
 all: $(libs) .SYMBOLIC
-        -@mkdir include > $(nulldevice)
-!ifdef __UNIX__
-        -@mkdir include/GL > $(nulldevice)
-!else
-        -@mkdir include\GL > $(nulldevice)
-!endif
         @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
         @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
         $(vi) -s ../fix/fix_h.vi

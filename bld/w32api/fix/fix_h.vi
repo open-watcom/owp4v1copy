@@ -12,6 +12,7 @@ edit include/winnt.h
 /Open Watcom fix
 if lastrc != ERR_NO_ERR
 /GetCurrentFiber
+if lastrc == ERR_NO_ERR
 insert 
 %(fix1beg)
 .
@@ -19,6 +20,7 @@ insert
 insert 
 %(fix1end)
 .
+endif
 endif
 x
 #
