@@ -1,9 +1,9 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
-!inject bsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject lfind.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject lsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject qsort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+#==============================================================================================
+!inject bsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject lfind.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject lsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject qsort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 
 !include ../../../../objlist.mif
 

@@ -28,6 +28,7 @@ objs_winnt_386    = $(nt)
 objs_winnt_axp    = $(nta)
 objs_winnt_ppc    = $(ntp)
 objs_linux_386    = $(l32)
+objs_snap_386     = $(snp)
 
 !ifeq objsuffix files
 objfiles = $+ $(objs_$(system)_$(processor)) $-
@@ -65,6 +66,7 @@ objs_winnt_386    =
 objs_winnt_axp    =
 objs_winnt_ppc    =
 objs_linux_386    =
+objs_snap_386     =
 
 d16 =
 d32 =
@@ -75,19 +77,19 @@ j16 =
 j32 =
 k16 =
 k32 =
-nc =
-nt =
+nc  =
+nt  =
 nta =
 ntp =
 nvc =
 nvl =
 o16 =
 o32 =
-op =
+op  =
 osi =
 q16 =
 q32 =
 w16 =
 w32 =
 l32 =
-
+snp =

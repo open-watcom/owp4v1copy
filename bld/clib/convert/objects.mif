@@ -1,14 +1,14 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
-!inject alphabet.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject atoi.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject atol.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject atoll.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+#==============================================================================================
+!inject alphabet.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject atoi.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject atol.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject atoll.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject atouni.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
-!inject itoa.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject lltoa.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject ltoa.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject strtol.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject itoa.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject lltoa.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject ltoa.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject strtol.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject uatoi.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject uatol.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject uatoll.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32

@@ -1,6 +1,6 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
-!inject abs.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+#==============================================================================================
+!inject abs.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject div.obj      d16                    nta ntp           o16   q16     w16
 !inject fpe387.obj       d32
 !inject fpedos4g.obj     d32
@@ -10,12 +10,12 @@
 #fixme: should fpeinth.obj be in the netware library?
 !inject fpeinth.obj      d32
 !inject fpephar.obj      d32
-!inject hvalptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject hugeval.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject labs.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject hvalptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject hugeval.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject labs.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject ldiv.obj                            nta ntp
-!inject max.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject min.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject rand.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject max.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject min.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject rand.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 
 !include ../../../../objlist.mif
