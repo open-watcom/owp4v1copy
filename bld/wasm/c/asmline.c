@@ -101,20 +101,20 @@ extern seg_list         *CurrSeg;
 extern File_Info        AsmFiles;
 extern uint_8           CheckSeg;
 extern dir_node         *CurrProc;
-extern int_8            DefineProc;     // TRUE if the definition of procedure
-                                        // has not ended
+extern int_8            DefineProc;             // TRUE if the definition of procedure
+                                                // has not ended
 extern unsigned long    PassTotal;
-extern symbol_queue     Tables[];       // tables of definitions
+extern symbol_queue     Tables[];               // tables of definitions
 
-uint_32                 BufSize;        // size of CodeBuffer
+uint_32                 BufSize;                // size of CodeBuffer
 extern struct asm_tok   *AsmBuffer[MAX_TOKEN];  // buffer to store token
 
-static input_queue      *line_queue;    // line queue
+static input_queue      *line_queue;            // line queue
 static file_list        *file_stack=NULL;       // top of included file stack
 
 static char             *IncludePath = NULL;
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
 #define                 INCLUDE_PATH_DELIM  ":"
 #define                 DIR_SEPARATOR       '/'
 #define                 DIR_SEP_STRING      "/"

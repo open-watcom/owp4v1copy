@@ -570,6 +570,8 @@ static int set_build_target( void )
             }
         #elif defined(__QNX__)
             strcpy( Options.build_target, "QNX" );
+        #elif defined(__LINUX__)
+            strcpy( Options.build_target, "LINUX" );
         #elif defined(__DOS__)
             strcpy( Options.build_target, "DOS" );
         #elif defined(__OS2__)
@@ -694,7 +696,7 @@ static void parse_token( char *token, int nesting_level )
         case '#':
             AsmError( SPACES_NOT_ALLOWED_IN_COMMAND_LINE_OPTIONS );
             break;
-    #ifndef __QNX__
+    #ifndef __UNIX__
         case '/':
     #endif
         case '-':
@@ -898,7 +900,7 @@ static void parse_token( char *token, int nesting_level )
         }
         if( ptr == NULL ) break;
         switch( *ptr ) {
-        #ifndef __QNX__
+        #ifndef __UNIX__
             case '/':
         #endif
         case '-':

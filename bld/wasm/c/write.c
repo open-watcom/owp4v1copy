@@ -626,7 +626,7 @@ static void write_header( void )
     } else {
         _fullpath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
         name = full_name;
-        #if defined(__QNX__)
+        #if defined(__UNIX__)
             if( full_name[0] == '/'
              && full_name[1] == '/'
              && (AsmFiles.fname[ASM][0] != '/' || AsmFiles.fname[ASM][1] != '/') ) {
