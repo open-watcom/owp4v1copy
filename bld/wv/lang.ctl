@@ -18,41 +18,41 @@ cdsay .
     <CPCMD> <devdir>/wv/rfx/dosi86/rfx.exe <relroot>/rel2/binw/rfx.exe
     <CPCMD> <devdir>/wv/rfx/os2386/rfx.exe <relroot>/rel2/binp/rfx.exe
 
-    <CPCMD> <devdir>/bin/bin.nec/dv.exe <relroot>/rel2/n98bw/wd.exe
+    <CPCMD> <devdir>/bin/bin.nec/wv.exe <relroot>/rel2/n98bw/wd.exe
 
-    <CPCMD> <devdir>/bin/bin/dv.exe <relroot>/rel2/binw/wd.exe
-    <CPCMD> <devdir>/bin/bin/dv.sym <relroot>/rel2/binw/wd.sym
+    <CPCMD> <devdir>/bin/bin/wv.exe <relroot>/rel2/binw/wd.exe
+    <CPCMD> <devdir>/bin/bin/wv.sym <relroot>/rel2/binw/wd.sym
 
-    <CPCMD> <devdir>/bin/binp/dv.exe <relroot>/rel2/binp/wd.exe
-    <CPCMD> <devdir>/bin/binp/dvw.exe <relroot>/rel2/binp/wdw.exe
-    <CPCMD> <devdir>/bin/binp/dv.sym <relroot>/rel2/binp/wd.sym
-    <CPCMD> <devdir>/bin/binp/dvw.sym <relroot>/rel2/binp/wdw.sym
-#   <CPCMD> <devdir>/bin/binp/dv16.exe <relroot>/rel2/binp/wd16.exe
-#   <CPCMD> <devdir>/bin/binp/dvw16.exe <relroot>/rel2/binp/wdw16.exe
+    <CPCMD> <devdir>/bin/binp/wv.exe <relroot>/rel2/binp/wd.exe
+    <CPCMD> <devdir>/bin/binp/wvw.exe <relroot>/rel2/binp/wdw.exe
+    <CPCMD> <devdir>/bin/binp/wv.sym <relroot>/rel2/binp/wd.sym
+    <CPCMD> <devdir>/bin/binp/wvw.sym <relroot>/rel2/binp/wdw.sym
+#   <CPCMD> <devdir>/bin/binp/wv16.exe <relroot>/rel2/binp/wd16.exe
+#   <CPCMD> <devdir>/bin/binp/wvw16.exe <relroot>/rel2/binp/wdw16.exe
 
-    <CPCMD> <devdir>/bin/bin.nec/dvc.exe <relroot>/rel2/n98bw/wdc.exe
-    <CPCMD> <devdir>/bin/bin.nec/dvc.sym <relroot>/rel2/n98bw/wdc.sym
+    <CPCMD> <devdir>/bin/bin.nec/wvc.exe <relroot>/rel2/n98bw/wdc.exe
+    <CPCMD> <devdir>/bin/bin.nec/wvc.sym <relroot>/rel2/n98bw/wdc.sym
 
-    <CPCMD> <devdir>/bin/bin/dvc.exe <relroot>/rel2/binw/wdc.exe
-    <CPCMD> <devdir>/bin/bin/dvw.exe <relroot>/rel2/binw/wdw.exe
-    <CPCMD> <devdir>/bin/bin/dvc.sym <relroot>/rel2/binw/wdc.sym
-    <CPCMD> <devdir>/bin/bin/dvw.sym <relroot>/rel2/binw/wdw.sym
+    <CPCMD> <devdir>/bin/bin/wvc.exe <relroot>/rel2/binw/wdc.exe
+    <CPCMD> <devdir>/bin/bin/wvw.exe <relroot>/rel2/binw/wdw.exe
+    <CPCMD> <devdir>/bin/bin/wvc.sym <relroot>/rel2/binw/wdc.sym
+    <CPCMD> <devdir>/bin/bin/wvw.sym <relroot>/rel2/binw/wdw.sym
 
-    <CPCMD> <devdir>/bin/binnt/dv.exe <relroot>/rel2/binnt/wd.exe
-    <CPCMD> <devdir>/bin/binnt/dvw.exe <relroot>/rel2/binnt/wdw.exe
-    <CPCMD> <devdir>/bin/binnt/dv.sym <relroot>/rel2/binnt/wd.sym
-    <CPCMD> <devdir>/bin/binnt/dvw.sym <relroot>/rel2/binnt/wdw.sym
+    <CPCMD> <devdir>/bin/binnt/wv.exe <relroot>/rel2/binnt/wd.exe
+    <CPCMD> <devdir>/bin/binnt/wvw.exe <relroot>/rel2/binnt/wdw.exe
+    <CPCMD> <devdir>/bin/binnt/wv.sym <relroot>/rel2/binnt/wd.sym
+    <CPCMD> <devdir>/bin/binnt/wvw.sym <relroot>/rel2/binnt/wdw.sym
 
-#    <CPCMD> <devdir>/bin/axpnt/dv.exe <relroot>/rel2/axpnt/wd.exe
-#    <CPCMD> <devdir>/bin/axpnt/dvw.exe <relroot>/rel2/axpnt/wdw.exe
-#    <CPCMD> <devdir>/bin/axpnt/dv.sym <relroot>/rel2/axpnt/wd.sym
-#    <CPCMD> <devdir>/bin/axpnt/dvw.sym <relroot>/rel2/axpnt/wdw.sym
+#    <CPCMD> <devdir>/bin/axpnt/wv.exe <relroot>/rel2/axpnt/wd.exe
+#    <CPCMD> <devdir>/bin/axpnt/wvw.exe <relroot>/rel2/axpnt/wdw.exe
+#    <CPCMD> <devdir>/bin/axpnt/wv.sym <relroot>/rel2/axpnt/wd.sym
+#    <CPCMD> <devdir>/bin/axpnt/wvw.sym <relroot>/rel2/axpnt/wdw.sym
 
-#    <CPCMD> <devdir>/bin/qnx/dv.sym <relroot>/rel2/qnx/sym/wd.sym
-#    <CPCMD> <devdir>/bin/qnx/dv.qnx <relroot>/rel2/qnx/binq/wd
+#    <CPCMD> <devdir>/bin/qnx/wv.sym <relroot>/rel2/qnx/sym/wd.sym
+#    <CPCMD> <devdir>/bin/qnx/wv.qnx <relroot>/rel2/qnx/binq/wd
 
-    <CPCMD> <devdir>/bin/linux/dv.sym <relroot>/rel2/binl/wd.sym
-    <CPCMD> <devdir>/bin/linux/dv.exe <relroot>/rel2/binl/wd
+    <CPCMD> <devdir>/bin/linux/wv.sym <relroot>/rel2/binl/wd.sym
+    <CPCMD> <devdir>/bin/linux/wv.exe <relroot>/rel2/binl/wd
 
     <CPCMD> <devdir>/wv/dbg/*.dbg <relroot>/rel2/binw/
     <CPCMD> <devdir>/wv/ssl/*.prs <relroot>/rel2/binw/

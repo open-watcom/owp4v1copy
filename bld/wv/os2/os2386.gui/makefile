@@ -3,15 +3,13 @@
 # Open Watcom Debugger makefile for OS/2 PM
 #
 
-# trmem = 1
 host_OS  = os2
 host_CPU = 386
 display  = gui
+
+sys_windowed = 1
+
 syshdir  =
-
-#trap loader is different for 32-bit OS/2
-dig_os_os2_386 = os2v2
-
 
 sysobjs =            &
         os22ini.obj  &
@@ -21,7 +19,3 @@ sysobjs =            &
         pmscrn2.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system os2v2_pm
-    @%append $(lnk) imp WinThreadAssocQueue PMMERGE.5398

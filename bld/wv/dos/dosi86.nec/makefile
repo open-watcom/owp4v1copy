@@ -5,13 +5,9 @@
 
 host_OS=dos
 host_CPU=i86
-machine = nec
-EXTRA_CFLAGS = -wo-of -d_OVERLAYED_
-ui_library = $(uidir)/dos.nec/ui.lib
+display=char
 
-!ifeq d 1
-EXTRA_CFLAGS += -dDEBUG_NEC
-!endif
+machine = nec
 
 sysobjs =   &
     fork.obj &
@@ -27,6 +23,3 @@ sysobjs =   &
     necscrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) sys dos op dyn,area=0k,stack=3k

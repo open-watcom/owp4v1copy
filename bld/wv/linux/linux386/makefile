@@ -5,16 +5,16 @@
 
 host_OS  = linux
 host_CPU = 386
-
 display = char
 
-sysobjs = linuxcmd.obj linuxio.obj lnxinit.obj lnxscrn.obj lnxlkup.obj lnxchk.obj peloader.obj
+syshdir =
+
+sysobjs = linuxcmd.obj &
+          linuxio.obj &
+          lnxinit.obj &
+          lnxscrn.obj &
+          lnxlkup.obj &
+          lnxchk.obj &
+          peloader.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-!ifdef __LINUX__
-    @%append $(lnk) sys bld_linux
-!else
-    @%append $(lnk) sys linux
-!endif

@@ -9,9 +9,6 @@ display  = char
 
 syshdir  =
 
-#trap loader is different for 32-bit OS/2
-dig_os_os2_386 = os2v2
-
 sysobjs =            &
         os22ini.obj  &
         os2chk.obj   &
@@ -20,7 +17,3 @@ sysobjs =            &
         os2scrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system os2v2
-    @%append $(lnk) option verbose

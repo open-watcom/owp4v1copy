@@ -8,7 +8,6 @@ host_CPU = i86
 display  = char
 
 syshdir  =
-extra_cflags = -zc
 
 #add '16' suffix to avoid conflicts
 tail_char_os2 = 16
@@ -22,8 +21,3 @@ sysobjs =            &
         os2scrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system os2 pmc
-    @%append $(lnk) option newfile
-    @%append $(lnk) option stack=16k

@@ -17,7 +17,3 @@ sysobjs =   &
     winlkup.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system nt
-    @%append $(lnk) option stack=30k

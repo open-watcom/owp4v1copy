@@ -3,12 +3,13 @@
 # Open Watcom Debugger makefile for OS/2 PM
 #
 
-# trmem = 1
 host_OS  = os2
 host_CPU = i86
 display  = gui
+
+sys_windowed = 1
+
 syshdir  =
-extra_cflags = -zc -zu
 
 #add '16' suffix to avoid conflicts
 tail_gui_os2 = w16
@@ -22,9 +23,3 @@ sysobjs =            &
         pmscrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system os2 pm
-    @%append $(lnk) option newfile
-    @%append $(lnk) option stack=20k
-    @%append $(lnk) option map

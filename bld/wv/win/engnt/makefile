@@ -6,24 +6,16 @@
 host_OS=nt
 host_cpu=386
 display=gui
+
+sys_windowed = 1
 dll = 1
-extra_cflags= -br
+extra_c_flags= -br
 
-all : .symbolic
-        @%make $(bdir)/dve.exe
+all1 : $(exe_name) wd.lib .SYMBOLIC
+        @%null
 
-lexusbld : .symbolic lib
-    @newer wd.lib $(lexlib_dir)\wv\lib "^copy &f $#f > nul"
-    @newer ..\..\h\*.* $(lexlib_dir)\wv\h "^copy &f $#f > nul"
-    @newer $(dig_dir)\h\*.* $(lexlib_dir)\dig\h "^copy &f $#f > nul"
-
-sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj
+sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj stubdb.obj
 
 !include ../../master.mif
 
-stubdb.obj : ../c/stubdb.c
-         $(compile) /fh
-
-$(bdir)/dve.exe : eraseall.obj lib stubdb.obj $(resfile) $(__MAKEFILES__)
-        $(linker) debug all op symf name $^@ sys nt op map file stubdb.obj lib wd.lib
-        *wrc -k -bt=nt -i="$(rcinclude)" $(resfile) $^@
+extra_l_flags_nt = lib wd.lib

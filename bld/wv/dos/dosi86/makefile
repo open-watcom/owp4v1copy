@@ -6,9 +6,9 @@
 host_OS=dos
 host_CPU=i86
 display=char
+
 ovl_dos = 1
 # really_ovl_dos = 1
-EXTRA_CFLAGS = -wo-of -d_OVERLAYED_
 
 sysobjs =   &
     fork.obj &
@@ -24,8 +24,3 @@ sysobjs =   &
     dosscrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) sys dos
-    @%append $(lnk) op stack=12k
-    @%append $(lnk) op dyn,area=0k

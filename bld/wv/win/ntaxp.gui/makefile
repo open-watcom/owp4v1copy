@@ -7,6 +7,8 @@ host_CPU=axp
 host_OS=nt
 display=gui
 
+sys_windowed = 1
+
 sysobjs =   &
     ntinit.obj &
     ntguiscn.obj &
@@ -17,7 +19,3 @@ sysobjs =   &
     winlkup.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system ntaxp_win
-    @%append $(lnk) option stack=64k

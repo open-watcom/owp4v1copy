@@ -7,6 +7,8 @@ host_OS=nt
 host_CPU=386
 display=gui
 
+sys_windowed = 1
+
 sysobjs =   &
     ntinit.obj &
     ntguiscn.obj &
@@ -17,7 +19,3 @@ sysobjs =   &
     winlkup.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) system nt_win
-    @%append $(lnk) option stack=64k

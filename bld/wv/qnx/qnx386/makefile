@@ -5,9 +5,9 @@
 
 host_os  = qnx
 host_cpu = 386
-
 display = char
-extra_cflags = -ms
+
+memory_model_386 = s
 
 sysobjs = &
         qnxinit.obj  &
@@ -18,7 +18,3 @@ sysobjs = &
         qnxscrn.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) sys qnx386 flat
-    @%append $(lnk) opt stack = 0x8000, offset=0x9000, resource=..\wvqnx.u

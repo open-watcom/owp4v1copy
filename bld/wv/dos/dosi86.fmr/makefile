@@ -6,8 +6,8 @@
 host_OS=dos
 host_CPU=i86
 display=char
+
 machine=fmr
-EXTRA_CFLAGS = -wo-of-d_OVERLAYED_
 
 sysobjs =   &
     fork.obj &
@@ -23,6 +23,3 @@ sysobjs =   &
     dostrap.obj
 
 !include ../../master.mif
-
-syslnk : .PROCEDURE
-    @%append $(lnk) sys dos op dyn,area=0k,stack=3k
