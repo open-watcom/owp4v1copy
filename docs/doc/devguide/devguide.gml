@@ -45,6 +45,9 @@
 .sepsect Building
 :INCLUDE file='ARCH'.
 .*
+.sepsect Style
+:INCLUDE file='STYLE'.
+.*
 .sepsect Documentation
 :INCLUDE file='DOCS'.
 .*
