@@ -41,12 +41,14 @@
 #include <fcntl.h>
 #include "wic.h"
 #include "wressetr.h"
+#include "wreslang.h"
 #include "banner.h"
 #ifdef TRMEM
     #include "trmem.h"
 #endif
 
 static int _fileNum = 0;
+static int MsgShift = 0;
 
 const char *FingerMsg[] = {
     banner1w( "Interface Converter", _WIC_VERSION_ ),
@@ -92,11 +94,12 @@ void initWicResources( char * fname )
         fprintf(stderr, "Internal error: Cannot open resources");
         wicExit(-1);
     }
+    MsgShift = WResLanguage() * MSG_LANG_SPACING;
 }
 
 int getResStr( int resourceid, char *buffer )
 {
-    if ( LoadString( &hInstance, resourceid,
+    if ( LoadString( &hInstance, resourceid + MsgShift,
                 (LPSTR) buffer, MAX_RESOURCE_SIZE ) != 0 ) {
         buffer[0] = 0;
         return 0;
