@@ -1,4 +1,4 @@
-#pmake: build all cpu_386 dwarf
+#pmake: build all os_nt cpu_386 dwarf
 model = fdll
 host_CPU = 386
 host_OS = nt
