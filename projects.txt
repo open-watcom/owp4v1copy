@@ -1,0 +1,80 @@
+This is a list of Open Watcom projects.
+each is genrally a subdirectory under OpenWatcom\bld.
+
+as              - alpha assembler
+aui             - ui library used by debugger
+bdiff           - diff and patch utilities
+bin             - some tools such as the debugger get built into this dir.
+brinfo
+browser         - c++ class browser
+build           - tools used by the build process
+builder         - source for builder tool
+cc              - C compiler
+cfloat
+cg              - code generator
+clib            - C library
+cmdedit         - source code for cmdedit dos shell shortcut program
+comp_cfg        - compiler config
+cpp             - C preprocessor
+cvpack
+diff
+dig             - used by debugger
+dip             - used by debugger
+dwarf           - dwarf reading/writing libraries
+editdll         - DLL to integrate VI and codewright with watcom IDE
+emu             - emulator libraries
+emu86           - emulator libraries
+f77             - fortran 77 compiler
+fe_misc         - misc. compiler front end stuff
+fmedit          - part of the SDK - fmedit.dll
+graphlib        - graphics library
+gui             - GUI library
+hdr             - header files
+help            - whelp character mode help utility
+idebatch        - batch processor for watcom IDE
+lib_misc        - shared library
+mad             - machine architecture definition ( used by debugger)
+mathlib         - math library
+mstools         - microsoft clone tools ( cl, link, rc, etc. )
+ndisasm         - "new" disassembler
+nwlib           - "new" WLIB librarian
+online          - online help files
+orl             - object reading library
+owl             - object writing library
+pbide           - DLL for Powerbuilder IDE (powerbuilder c++ class builder )
+pgchart
+plusplus        - C++ compiler
+plusplus\cpplib - C++ class library
+pmake           - parallel make
+posix           - posix tools
+rcsdll          - RCS DLL for editor
+rtdll           - clib, mathlib, c++ lib. runtime DLLs
+sdk             - dialog editor,image editor,resource compiler,etc.
+src             - sample source code
+techinfo        - utility to check watcom tool versions, etc.
+trap            - trap files - used by debugger
+trmem           - memory tracker utility
+ui              - UI library
+uiforms
+vi              - VI editor ( character mode & VIW )
+viper           - Watcom IDE
+viprdemo        - three-d demo - IDE demo program
+w32loadr        - 32-bit dos extender stuff
+wasm            - watcom assembler
+watcom          - shared source code
+wclass          - wclass C++ class library - used by IDE, browser
+wdisasm         - old disassembler - source code still used by debugger
+wic             -
+win386          - watcom 32-bit windows extender
+wl              - linker
+wmake           - watcom make
+womp            - used by wasm
+wpack           - used by install / patch
+wpi             - macro library used by GUI
+wprof           - execution profiler
+wsample         - sampler
+wsplice         - wsplice utility - text file processor
+wstrip
+wstub
+wtouch
+wv              - WVIDEO - watcom debugger frontend
