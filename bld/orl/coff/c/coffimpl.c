@@ -314,7 +314,12 @@ char * undecoratedName(char * sym){
     pos = strlen(sym);
     while (pos-- > 0) {
         c = sym[pos];
-        if ((c < '0' || c > '9') && c !=  '@') break;
+        if (c == '@') {
+            sym[pos] = 0;
+            break;
+        } else if (c < '0' || c > '9') {
+            break;
+        }
     }
     sym[pos + 1] = 0;
     return sym;
