@@ -5,7 +5,6 @@ set PROJDIR=<CWD>
 
 [ INCLUDE <LANG_BLD>/master.ctl ]
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
-[ LOG <LOGFNAME>.<LOGEXT> ]
 
 [ INCLUDE <devdir>/clib/prereq.ctl ]
 [ INCLUDE <devdir>/builder/lang.ctl ]
