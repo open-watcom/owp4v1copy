@@ -21,7 +21,7 @@
 
 :include readonly.sp
 ::
-:: The following somewhat long segment only appears in time.h
+:: The following segment only appears in time.h
 :segment !CNAME
 #ifdef __cplusplus
 #include <ctime>
@@ -207,10 +207,11 @@ _WMRTLINK extern double       difftime( time_t __t1, time_t __t0 );
 _WCRTLINK extern struct tm   *gmtime( const time_t *__timer );
 _WCRTLINK extern struct tm   *localtime( const time_t *__timer );
 _WCRTLINK extern time_t       mktime( struct tm *__timeptr );
-_WCRTLINK extern size_t       strftime( char *__s, size_t __maxsiz,
-                                        const char *__fmt,
-                                        const struct tm *__tp );
+_WCRTLINK extern size_t       strftime( char *__s, size_t __maxsiz, const char *__fmt, const struct tm *__tp );
 _WCRTLINK extern time_t       time( time_t *__timer );
+:segment !NO_WIDECHAR
+_WCRTLINK extern size_t       wcsftime( wchar_t *, size_t, const wchar_t *, const struct tm * );
+:endsegment
 :segment CNAME
 }
 :endsegment
@@ -225,42 +226,27 @@ _WCRTLINK extern wchar_t      *_wasctime( const std::tm * );
 _WCRTLINK extern wchar_t      *_wctime( const std::time_t * );
 _WCRTLINK extern wchar_t      *_wstrdate( wchar_t *__buf );
 _WCRTLINK extern wchar_t      *_wstrtime( wchar_t *__buf );
-_WCRTLINK extern std::size_t   _wstrftime_ms( wchar_t *, std::size_t,
-                                              const char *,
-                                              const std::tm * );
-_WCRTLINK extern std::size_t   wcsftime( wchar_t *, std::size_t,
-                                         const wchar_t *,
-                                         const std::tm * );
+_WCRTLINK extern std::size_t   _wstrftime_ms( wchar_t *, std::size_t, const char *, const std::tm * );
 :elsesegment
 _WCRTLINK extern wchar_t     *_wasctime( const struct tm * );
 _WCRTLINK extern wchar_t     *_wctime( const time_t * );
 _WCRTLINK extern wchar_t     *_wstrdate( wchar_t *__buf );
 _WCRTLINK extern wchar_t     *_wstrtime( wchar_t *__buf );
-_WCRTLINK extern size_t       _wstrftime_ms( wchar_t *, size_t,
-                                             const char *, const struct tm * );
-_WCRTLINK extern size_t       wcsftime( wchar_t *, size_t, const wchar_t *,
-                                        const struct tm * );
+_WCRTLINK extern size_t       _wstrftime_ms( wchar_t *, size_t, const char *, const struct tm * );
 :endsegment
 :endsegment
 
 :include ext.sp
 :segment CNAME
-_WCRTLINK extern char        *_asctime( const std::tm *__timeptr,
-                                        char *__buf );
-_WCRTLINK extern char        *_ctime( const std::time_t *__timer,
-                                      char *__buf );
-_WCRTLINK extern std::tm     *_gmtime( const std::time_t *__timer,
-                                       std::tm *__tmbuf );
-_WCRTLINK extern std::tm     *_localtime( const std::time_t *__timer,
-                                          std::tm *__tmbuf );
+_WCRTLINK extern char        *_asctime( const std::tm *__timeptr, char *__buf );
+_WCRTLINK extern char        *_ctime( const std::time_t *__timer, char *__buf );
+_WCRTLINK extern std::tm     *_gmtime( const std::time_t *__timer, std::tm *__tmbuf );
+_WCRTLINK extern std::tm     *_localtime( const std::time_t *__timer, std::tm *__tmbuf );
 :elsesegment
-_WCRTLINK extern char        *_asctime( const struct tm *__timeptr,
-                                        char *__buf );
+_WCRTLINK extern char        *_asctime( const struct tm *__timeptr, char *__buf );
 _WCRTLINK extern char        *_ctime( const time_t *__timer, char *__buf );
-_WCRTLINK extern struct tm   *_gmtime( const time_t *__timer,
-                                       struct tm *__tmbuf );
-_WCRTLINK extern struct tm   *_localtime( const time_t *__timer,
-                                          struct tm *__tmbuf );
+_WCRTLINK extern struct tm   *_gmtime( const time_t *__timer, struct tm *__tmbuf );
+_WCRTLINK extern struct tm   *_localtime( const time_t *__timer, struct tm *__tmbuf );
 :endsegment
 _WCRTLINK extern char        *_strdate( char *__buf );
 _WCRTLINK extern char        *_strtime( char *__buf );
