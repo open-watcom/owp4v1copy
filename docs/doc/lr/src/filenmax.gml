@@ -3,21 +3,16 @@
 #define FILENAME_MAX 123
 .funcend
 .desc begin
-The &func macro expands to an integral constant expression that is the
-size needed for an array of char large enough to hold the
-longest file name string that the implementation guarantees can be opened;
-If the implementation imposes no practical limit on the length of file name
-strings, the value of &func should instead be the recommended size of an array
-intended to hold a file name string. Of course, file name string contents
-are subject to other system-specific constraints; therefore all possible
-strings of length &func cannot be expected to be opened successfully.
+The &func macro is the size of an array of char big enough to hold a string 
+naming any file that the implementation expects to open;
+If there is no practical file name length limit, &func is the recommended
+size of such an array.  As file name string contents must meet other
+system-specific constraints, some strings of length &func may not work.
 .np
-The &func macro is typically used to dimension an array to hold a file name.
-.np
-.us ANSI C:
+&func typically sizes an array to hold a file name.
 .desc end
 .return begin
-The &func macro returns a positive integral value.
+The &func macro returns a positive integer value.
 .return end
 .exmp begin
 #include <stdio.h>
@@ -27,10 +22,10 @@ The &func macro returns a positive integral value.
 int main( int argc, char *argv[] )
 {
     if( argc ) {
-      char fname[FILENAME_MAX];
+        char fname[FILENAME_MAX];
 
-      strcpy( fname, argv[0] );
-      puts( fname );
+        strcpy( fname, argv[0] );
+        puts( fname );
     }
     return( 0 );
 }
