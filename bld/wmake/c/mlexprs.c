@@ -136,9 +136,9 @@ extern TOKEN_T LexPath( STRM_T t )
     pos = 0;
     for(;;) {
         /*
-         Extract path from filename. If '"' is found, start string mode and
-         ignore all file name character specifiers and just copy all characters.
-         String mode ends with another '"'. If we are not in string mode file
+         Extract path from stream. If '"' is found, start string mode and
+         ignore all filename character specifiers and just copy all characters.
+         String mode ends with another '"'. If we are not in string mode
          character validity is checked against isfilec().
          */
 
