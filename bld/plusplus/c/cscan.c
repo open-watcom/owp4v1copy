@@ -1159,7 +1159,7 @@ static int scanNum( int expanding )
     } else {
         --TokenLen;
         Buffer[TokenLen] = '\0';
-        return( CurToken );
+        return( T_CONSTANT );
     }
 }
 
