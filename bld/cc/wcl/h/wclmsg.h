@@ -37,7 +37,7 @@
 #define FILEREF DELIM "%s" DELIM
 
 // No \n on messages followed by exit() or on "pause" message
-pick( UNABLE_TO_OPEN_DIRECTIVE_FILE,  "Error: Unable to open directive file " FILEREF ),
+pick( UNABLE_TO_OPEN_DIRECTIVE_FILE,  "Error: Unable to open directive file " FILEREF " - %s\n" ),
 pick( UNABLE_TO_OPEN_TEMPORARY_FILE,  "Error: Unable to open temporary file " FILEREF " - %s" ),
 pick( UNABLE_TO_INVOKE_EXE,           "Error: Unable to invoke " FILEREF ),
 pick( COMPILER_RETURNED_A_BAD_STATUS, "Error: Compiler returned a bad status compiling " FILEREF "\n" ),
@@ -47,6 +47,7 @@ pick( UNABLE_TO_OPEN,                 "Unable to open " FILEREF ),
 pick( UNABLE_TO_FIND,                 "Error: Unable to find " FILEREF ),
 pick( OUT_OF_MEMORY,                  "Out of memory" ),
 pick( PRESS_ANY_KEY_TO_CONTINUE,      "Press any key to continue:" ),
+pick( RECURSIVE_ENVIRONMENT_VARIABLE, "Error: unable to expand recursive environment variable " FILEREF "\n" ),
 
 #undef FILEREF
 #undef DELIM

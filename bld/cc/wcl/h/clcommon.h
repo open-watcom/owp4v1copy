@@ -28,10 +28,11 @@
 *
 ****************************************************************************/
 
+/* Several char foo[MAX_CMD] arrays are defined. Overflow goes undetected */
 #if defined(__OS2__) || defined(__NT__) || defined(__UNIX__)
 #define MAX_CMD 10240
 #else
-#define MAX_CMD 130
+#define MAX_CMD 250
 #endif
 
 #ifdef __UNIX__

@@ -313,8 +313,9 @@ static  int  Parse( int argc, char **argv )
         case '@':
             if( Word[0] != '\0' ) {
                 MakeName( Word, ".lnk" );
+                errno = 0;
                 if( ( atfp = fopen( Word, "r" ) ) == NULL ) {
-                    PrintMsg( WclMsgs[UNABLE_TO_OPEN_DIRECTIVE_FILE], Word );
+                    PrintMsg( WclMsgs[UNABLE_TO_OPEN_DIRECTIVE_FILE], Word, strerror(  errno ) );
                     return( 1 );
                 }
                 while( fgets( buffer, sizeof(buffer), atfp ) != NULL ) {
