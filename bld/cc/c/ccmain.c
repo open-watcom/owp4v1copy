@@ -141,6 +141,9 @@ void ClearGlobals ( void )
     PageHandle = -1;
     WorkFile[5] = '0';
     SegmentNum = FIRST_PRIVATE_SEGMENT;
+    BufSize = BUF_SIZE;
+    Buffer = CMemAlloc( BufSize );
+    TokenBuf = CMemAlloc( BufSize );
 }
 
 
@@ -693,14 +696,16 @@ void CppPrtf( char *fmt, ... )
 {
     va_list     arg;
     char        *p;
-    char        buff[BUF_SIZE];
+    char        *buff;
 
+    buff = CMemAlloc( BufSize );
     va_start( arg, fmt );
-    vsprintf( buff, fmt, arg );
+    vsnprintf( buff, BufSize, fmt, arg );
     for( p = buff; *p != '\0'; ++p ) {
         CppPutc( *p );
     }
     va_end( arg );
+    CMemFree( buff );
 }
 
 

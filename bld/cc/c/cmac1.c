@@ -401,6 +401,21 @@ local int NextMToken()
     return( CurToken );
 }
 
+void EnlargeBuffer( size_t size )
+{
+    char       *newBuffer;
+
+    newBuffer = CMemAlloc( size );
+    memcpy( newBuffer, Buffer, BufSize );
+    CMemFree( Buffer );
+    Buffer = newBuffer;
+    newBuffer = CMemAlloc( size );
+    memcpy( newBuffer, TokenBuf, BufSize );
+    CMemFree( TokenBuf );
+    TokenBuf = newBuffer;
+    BufSize = size;
+}
+
 static MACRO_ARG *CollectParms(void)
 {
     MEPTR       mentry;
@@ -486,15 +501,8 @@ static MACRO_ARG *CollectParms(void)
             default:
                 break;
             }
-            if( MTokenLen + j >= BUF_SIZE ) { /* if not enough space */
-                *token_tail = (struct tokens *)
-                    CMemAlloc( sizeof( struct tokens ) + MTokenLen );
-                (*token_tail)->length = MTokenLen;
-                (*token_tail)->next = NULL;
-                memcpy( &(*token_tail)->buf, TokenBuf, MTokenLen );
-                token_tail = &(*token_tail)->next;
-                total += MTokenLen;
-                MTokenLen = 0;
+            if( MTokenLen + j >= BufSize ) { /* if not enough space */
+                EnlargeBuffer( ( MTokenLen + j ) * 2 );
             }
             if( tok == T_STRING  &&  CompFlags.wide_char_string ) {
                 tok = T_LSTRING;
@@ -1079,9 +1087,9 @@ local MACRO_TOKEN *BuildString(  byte *p )
     if( p != NULL ) {
         while( *p == T_WHITE_SPACE ) ++p;   //eat leading wspace
         while(  *p != T_NULL ) {
-            if( i >= (BUF_SIZE-8) ) {
-                lnk = NextString( lnk, buf, i );
-                i = 0;
+            if( i >= (BufSize-8) ) {
+                EnlargeBuffer( 2 * i );
+                buf = Buffer;
             }
             switch( *p ) {
             case T_CONSTANT:
@@ -1095,9 +1103,9 @@ local MACRO_TOKEN *BuildString(  byte *p )
                     if( c == '\0' ) break;
                     if( c == '\\' ) buf[i++] = c; /* 15-mar-88 */
                     buf[i++] = c;
-                    if( i >= (BUF_SIZE-8) ) {
-                        lnk = NextString( lnk, buf, i );
-                        i = 0;
+                    if( i >= (BufSize-8) ) {
+                        EnlargeBuffer( 2 * i );
+                        buf = Buffer;
                     }
                 }
                 break;
@@ -1112,9 +1120,9 @@ local MACRO_TOKEN *BuildString(  byte *p )
                     if( c == '\0' ) break;
                     if( c == '\\'  ||  c == '"' ) buf[i++] = '\\';
                     buf[i++] = c;
-                    if( i >= (BUF_SIZE-8) ) {
-                        lnk = NextString( lnk, buf, i );
-                        i = 0;
+                    if( i >= (BufSize-8) ) {
+                        EnlargeBuffer( 2 * i );
+                        buf = Buffer;
                     }
                 }
                 buf[i++] = '\\';
@@ -1137,9 +1145,9 @@ local MACRO_TOKEN *BuildString(  byte *p )
                 tokenstr = Tokens[ *p ];
                 ++p;
                 len = strlen( tokenstr );
-                if( i >= (BUF_SIZE-len) ) {
-                    lnk = NextString( lnk, buf, i );
-                    i = 0;
+                if( i >= (BufSize-len) ) {
+                    EnlargeBuffer( 2 * i );
+                    buf = Buffer;
                 }
                 memcpy( &buf[i], tokenstr, len );
                 i += len;

@@ -228,9 +228,10 @@ global  SYM_HASHPTR __FAR *HashTab;
 global  TYPEPTR BaseTypes[TYPE_LAST_ENTRY];
 global  int     CTypeCounts[TYPE_LAST_ENTRY];
 
-#define BUF_SIZE 4096
-global  char Buffer[BUF_SIZE+16];
-global  char TokenBuf[ BUF_SIZE ];
+#define BUF_SIZE 512
+global  size_t BufSize;
+global  char *Buffer;
+global  char *TokenBuf;
 
 global  unsigned long   GenSwitches;    /* target independant switches for code generator */
 global  unsigned long   TargetSwitches; /* target specific code generator switches */
@@ -680,6 +681,7 @@ extern char    *FEGetEnv( char const  *name );
 extern void     FESetCurInc( void );
 
 //cmac1.c
+extern  void    EnlargeBuffer(size_t);
 extern  void    MacroInit(void);
 extern  void    MacroAddComp(void);
 extern  void    MacroFini(void);

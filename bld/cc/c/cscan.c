@@ -49,7 +49,6 @@ enum scan_class {
     SCAN_DELIM2,        // one, two, or three byte delimiter
     SCAN_DOT,           // .
     SCAN_STRING,        // "string"
-    SCAN_STRING2,       // "string" continued
     SCAN_CHARCONST,     // 'a'
     SCAN_CR,            // '\r'
     SCAN_NEWLINE,       // '\n'
@@ -139,15 +138,10 @@ int SaveNextChar()
     int         c;
 
     c = NextChar();
-    if( TokenLen < BUF_SIZE - 2 ) {
-        Buffer[TokenLen] = c;
-        ++TokenLen;
-    } else if( TokenLen == BUF_SIZE - 2 ) { /* 10-aug-88 */
-        if( NestLevel == SkipLevel ) {  /* 07-jun-92 */
-            CErr1( ERR_TOKEN_TRUNCATED );
-        }
-        ++TokenLen;
-    }
+    if( TokenLen >= BufSize - 2 )
+        EnlargeBuffer( TokenLen * 2 );
+    Buffer[TokenLen] = c;
+    ++TokenLen;
     return( c );
 }
 
@@ -303,7 +297,9 @@ int doScanName()
             Buffer[token] = u.uc;
             ++token;
             u.uc = *scanptr++;
-            if( token >= BUF_SIZE )  token = BUF_SIZE;
+            if( token >= BufSize ) {
+                EnlargeBuffer( token * 2 );
+            }
         }
         ScanCharPtr = scanptr;
         if( (CharSet[u.c] & C_EX) == 0 ) break;
@@ -311,11 +307,8 @@ int doScanName()
         if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
     }
     CurrChar = u.c;
-    if( token >= BUF_SIZE - 2 ) {
-        if( NestLevel == SkipLevel ) {          /* 07-jun-92 */
-            CErr1( ERR_TOKEN_TRUNCATED );
-        }
-        token = BUF_SIZE - 2;
+    if( token >= BufSize - 2 ) {
+        EnlargeBuffer( token * 2 );
     }
     Buffer[token] = '\0';
     TokenLen = token;
@@ -1381,17 +1374,8 @@ static int ScanString( void )
         }
 
         if( c == '\\' ) {               /* 23-mar-90 */
-            if( TokenLen > BUF_SIZE - 32 ) {
-                /*
-                    allow infinite length string tokens by faking up
-                    a string concatenation
-                */
-                // break long strings apart (parser will join them)
-                UnGetChar( '\\' );
-                CurrChar = CONTINUE_CHAR_STRING;
-                ++TokenLen;
-                ok = 1;
-                break;
+            if( TokenLen > BufSize - 32 ) {
+                EnlargeBuffer( TokenLen * 2 );
             }
             c = NextChar();
             Buffer[TokenLen++] = c;
@@ -1403,15 +1387,8 @@ static int ScanString( void )
             /* if first character of a double-byte character, then
                save it and get the next one.    10-nov-89  */
             if( CharSet[c] & C_DB ) SaveNextChar();
-            if( TokenLen > BUF_SIZE - 32 ) {
-                /*
-                    allow infinite length string tokens by faking up
-                    a string concatenation
-                */
-                CurrChar = CONTINUE_CHAR_STRING;
-                ++TokenLen;
-                ok = 1;
-                break;
+            if( TokenLen > BufSize - 32 ) {
+                EnlargeBuffer( TokenLen * 2 );
             }
             c = NextChar();
             Buffer[TokenLen++] = c;
@@ -1427,17 +1404,6 @@ static int ScanString( void )
     Buffer[TokenLen-1] = '\0';
     BadTokenInfo = ERR_MISSING_QUOTE;
     return( T_BAD_TOKEN );
-}
-
-int ScanStringContinue()
-{
-    int         token;
-    int         was_wide;
-
-    was_wide = CompFlags.wide_char_string;
-    token = ScanString();
-    CompFlags.wide_char_string = was_wide;
-    return( token );
 }
 
 int ESCChar( int c, const char **pbuf, char *error )
@@ -1665,7 +1631,6 @@ int (*ScanFunc[])() = {
     ScanDelim2,
     ScanDot,
     ScanString,
-    ScanStringContinue,
     ScanCharConst,
     ScanCarriageReturn,
     ScanNewline,
@@ -1772,7 +1737,6 @@ void ScanInit()
     memset( &ClassTable['a'], SCAN_NAME,    26 );
     memset( &ClassTable['0'], SCAN_NUM,     10 );
     ClassTable[ EOF_CHAR ] = SCAN_EOF;
-    ClassTable[ CONTINUE_CHAR_STRING ] = SCAN_STRING2;
     ClassTable[ MACRO_CHAR ] = SCAN_MACRO;
     for( i = 0; ; i += 2 ) {
         c = InitClassTable[i];
