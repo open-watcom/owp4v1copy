@@ -1,9 +1,8 @@
-//
-//  _comdef.h   Common Macro Definitions
-//
-:keep CPP_HDR
+/*
+ *  _comdef.h   Common Macro Definitions
+ *
 :include crwat.sp
-//
+ */
 #ifndef _COMDEF_H_INCLUDED
 #define _COMDEF_H_INCLUDED
 :include readonly.sp
@@ -119,7 +118,7 @@
       #define _WPRTLINK
     #endif
   #endif
-  // control import modifier on intrinsic functions
+  /* control import modifier on intrinsic functions */
   #ifndef _WCIRTLINK
     #if defined(__INLINE_FUNCTIONS__)
       #define _WCIRTLINK
