@@ -446,7 +446,10 @@ extern  void    OWLInitSegDefs() {
         #error Unknown RISC target
     #endif
         );
-    owlFile = OWLFileInit( owlHandle, FEAuxInfo( NULL, SOURCE_NAME ), (owl_client_file)MAGIC_FLAG,OWL_FORMAT_ELF, OWL_FILE_OBJECT );
+    owlFile = OWLFileInit( owlHandle, FEAuxInfo( NULL, SOURCE_NAME ),
+                           (owl_client_file)MAGIC_FLAG,
+                           (_IsTargetModel(ELF) ? OWL_FORMAT_ELF : OWL_FORMAT_COFF),
+                           OWL_FILE_OBJECT );
     if( _IsTargetModel( OWL_LOGGING ) ) {
         OWLLogEnable( owlFile, (void *)STDOUT_FILENO );
     }

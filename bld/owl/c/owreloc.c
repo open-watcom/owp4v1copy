@@ -68,6 +68,22 @@ static uint_32 coffRelocTypesAlpha[] = {
     0,
 };
 
+static uint_32 coffRelocTypes386[] = {
+    IMAGE_REL_I386_ABSOLUTE,
+    IMAGE_REL_I386_DIR32,
+    0,
+    0,
+    0,
+    IMAGE_REL_I386_REL32,
+    0,
+    0,
+    0,
+    IMAGE_REL_I386_SECTION,
+    IMAGE_REL_I386_SECREL,
+    0,
+    0
+};
+
 static Elf32_Word elfRelocTypesPPC[] = {
     R_PPC_NONE,
     R_PPC_ADDR32,
@@ -135,6 +151,9 @@ uint_32 OWLENTRY CoffRelocType( owl_reloc_type reloc_type, owl_cpu cpu ) {
         break;
     case OWL_CPU_ALPHA:
         coff_relocs = coffRelocTypesAlpha;
+        break;
+    case OWL_CPU_INTEL:
+        coff_relocs = coffRelocTypes386;
         break;
     default:
         assert( 0 );
