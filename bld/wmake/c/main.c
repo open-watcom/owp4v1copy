@@ -91,7 +91,7 @@ STATIC void doBuiltIns( const char *makeopts )
         if( Glob.microsoft | Glob.unix ) {
             // suffixes must be parsed before builtins
             const char *suffices = MSSuffixList;
-            const char *builtins = MSBuiltIn; 
+            const char *builtins = MSBuiltIn;
             FmtStr( cpy, "%%MAKEFLAGS=$(%%MAKEFLAGS) %F", makeopts );
             InsString( cpy, FALSE );
             list = Parse();
@@ -121,6 +121,8 @@ STATIC void doBuiltIns( const char *makeopts )
 static void setFirstTarget( TLIST *potential_first )
 {
     if( firstTargFound != NULL || potential_first == NULL ) {
+        if( potential_first )
+            FreeTList( potential_first );
         return;
     }
     /*  Note all first targets must not have attribute explicit */
@@ -228,7 +230,7 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
     int      options[256 + 1] = { 0 };
 
     if( ( p = argv[1] ) != NULL ) {
-        if( strcmp( p, "?" ) == 0 
+        if( strcmp( p, "?" ) == 0
         || (( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0) ) {
             Usage();
         }
