@@ -33,9 +33,6 @@
 #ifndef WRESSET2_INCLUDED
 #define WRESSET2_INCLUDED
 #ifdef WIN_GUI
-#ifndef STRICT
-#define STRICT
-#endif
 #include "windows.h"
 #endif
 

@@ -32,7 +32,6 @@
 
 #if defined(__WINDOWS__)
 
-#define STRICT
 #include <windows.h>
 #include <stdlib.h>     // for __win_xxx_flags
 

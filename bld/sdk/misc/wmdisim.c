@@ -37,7 +37,6 @@
 #include "os2.h"
 #else
 #define OEMRESOURCE
-#define STRICT
 #include <windows.h>
 #ifdef __WINDOWS_386__
 #include <malloc.h>

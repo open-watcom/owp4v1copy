@@ -32,7 +32,6 @@
 
 #include <stdlib.h>
 
-#define STRICT
 #include "windows.h"
 #include "wpi.h"
 

@@ -42,7 +42,6 @@
 #define INCL_PM
 #include <os2.h>
 #else
-#define STRICT
 #include <windows.h>
 #endif
 

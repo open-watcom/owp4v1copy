@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include "windows.h"
 #include "hint.h"
 #include "rcstr.gh"

@@ -31,7 +31,6 @@
 
 
 #include "guiwind.h"
-#define STRICT
 #include <windows.h>
 #include <dos.h>
 #include "dpmi.h"

@@ -37,7 +37,6 @@
 #include <ctype.h>
 #include <direct.h>
 #include <stdlib.h>
-#define STRICT
 #include <windows.h>
 #include <commdlg.h>
 #if defined( __WINDOWS__ )

@@ -46,7 +46,6 @@ Description:
 #define INCL_DOSMODULEMGR
 #include <os2.h>
 #else
-#define STRICT
 #include <windows.h>
 #endif
 /* include the memory tracker from the mem library */

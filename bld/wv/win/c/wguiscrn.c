@@ -36,7 +36,6 @@
 #include <string.h>
 #include <stddef.h>
 #include "../../dos/h/dbgscrn.h"
-#define STRICT
 #include <windows.h>
 
 extern void     *ExtraAlloc( unsigned );

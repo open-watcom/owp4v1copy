@@ -33,7 +33,6 @@
 #pragma library( "ddeml.lib" );
 #endif
 
-#define STRICT
 #include <windows.h>
 #include <ddeml.h>
 #include <stdio.h>

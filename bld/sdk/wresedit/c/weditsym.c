@@ -35,7 +35,6 @@
 #define _WINREG_
 #define WIN32_LEAN_AND_MEAN
 
-#define STRICT
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>

@@ -135,7 +135,7 @@ cflags_386      += -zc
 !endif
 
 cflags_nt       = -bt=nt
-cflags_win      = -bt=windows
+cflags_win      = -bt=windows -DSTRICT
 cflags_os2      = -bt=os2
 cflags_qnx      = -bt=qnx
 cflags_osi      = -bt=osi
@@ -215,8 +215,8 @@ fpu_flags = $(def_fpu_flags_$(host_os)_$(host_cpu))
 
 clflags_nt_386     = -l=nt
 clflags_nt_axp     = -l=ntaxp
-clflags_win_i86    = -l=windows
-clflags_win_386    = -l=windows
+clflags_win_i86    = -l=windows -DSTRICT
+clflags_win_386    = -l=windows -DSTRICT
 clflags_os2_i86    = -l=os2
 clflags_os2_386    = -l=os2v2
 clflags_qnx_i86    = -l=qnx

@@ -32,7 +32,6 @@
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
 
-#define STRICT
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -32,7 +32,6 @@
 
 /* ALIGN.C - impelmentation of alignment relative to other objects */
 
-#define STRICT
 #include "windows.h"
 #include "fmedit.def"
 #include "state.def"

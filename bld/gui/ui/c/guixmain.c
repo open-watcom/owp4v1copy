@@ -64,7 +64,6 @@ bool GUIMainTouched = FALSE;
 
 #ifdef __WINDOWS__
 #include "swap.h"
-#define STRICT
 #include <windows.h>
 #include "win1632.h"
 #include <dos.h>

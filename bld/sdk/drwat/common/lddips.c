@@ -31,7 +31,6 @@
 
 
 #include <string.h>
-#define STRICT
 #include "windows.h"
 #include "drwatcom.h"
 #include "dip.h"

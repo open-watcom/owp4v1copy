@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define STRICT
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 

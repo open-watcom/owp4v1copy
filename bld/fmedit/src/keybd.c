@@ -36,7 +36,6 @@
     Routines to handle keyboard input.
 */
 
-#define STRICT
 #include <windows.h>
 
 #include "fmedit.def"

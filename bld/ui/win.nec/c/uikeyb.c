@@ -37,7 +37,6 @@
 #include "uidos.h"
 #include "uidef.h"
 #include "uishift.h"
-#define STRICT
 #include "windows.h"
 
 #define SCAN( n )       ( ( (n) - 0x100 ) << 8 )

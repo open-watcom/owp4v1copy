@@ -33,7 +33,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#define STRICT
 #include <windows.h>
 #include <toolhelp.h>
 #include "stubs.h"

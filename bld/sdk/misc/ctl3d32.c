@@ -31,7 +31,6 @@
 
 
 #ifdef __WINDOWS_386__
-#define STRICT
 #include <windows.h>
 
 static HANDLE   dllCtl3d;

@@ -32,7 +32,6 @@
 
 #include <stdio.h>
 #include <dos.h>
-#define STRICT
 #include <windows.h>
 #include "restest.h"
 #include "resname.h"

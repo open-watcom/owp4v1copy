@@ -44,7 +44,6 @@
 #include "uigchar.h"
 #include "uiswap.h"
 
-#define STRICT
 #include <windows.h>
 #include "win1632.h"
 

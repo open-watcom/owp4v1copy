@@ -41,7 +41,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #if defined( __WINDOWS__ ) || defined( __NT__ )
-  #define STRICT
   #include <windows.h>
 #endif
 #if defined( __OS2__ )

@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include <windows.h>
 
 int GetIData( HINSTANCE inst, void near *data, unsigned int size )

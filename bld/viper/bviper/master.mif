@@ -20,4 +20,4 @@ LIBS = $(wclass_lib) &
     $(viper_dir)/mviper/$(host_os)$(host_cpu)/mviper.lib
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) option map name $^@ file { $< } lib {$(LIBS)}
+    $(linker) option quiet $(lflags) option map name $^@ file { $< } lib {$(LIBS)}

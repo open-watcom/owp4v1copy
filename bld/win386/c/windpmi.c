@@ -31,7 +31,6 @@
 
 
 #include <stddef.h>
-#define STRICT
 #include <windows.h>
 #include "winext.h"
 #include "dpmi.h"

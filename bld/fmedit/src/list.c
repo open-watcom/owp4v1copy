@@ -33,7 +33,6 @@
 
 /* LIST.C - routines to handle the operations on a LIST */
 
-#define STRICT
 #include <windows.h>
 
 #include "fmedit.def"

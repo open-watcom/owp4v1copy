@@ -31,7 +31,6 @@
 
 
 #define OEMRESOURCE
-#define STRICT
 #include <windows.h>
 #include <string.h>
 #include "mdisim.h"

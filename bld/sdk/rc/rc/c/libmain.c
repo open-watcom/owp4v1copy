@@ -34,7 +34,6 @@
 #ifdef __OS2__
 #include <os2def.h>
 #else
-#define STRICT
 #include <windows.h>
 #endif
 #include "rcdll.h"

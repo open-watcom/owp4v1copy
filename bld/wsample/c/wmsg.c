@@ -51,7 +51,6 @@ _WCRTLINK extern char *_cmdname( char *__name );
 #include "wmsg.h"
 #include "wreslang.h"
 #if defined(__WINDOWS__)
- #define STRICT
  #include "windows.h"
 #else
  #include "wressetr.h"

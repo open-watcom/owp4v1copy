@@ -51,7 +51,6 @@
 #endif
 
 #ifndef __OS2_PM__
-    #define STRICT
     #if defined(__WINDOWS_386__)
         #define INCLUDE_COMMDLG_H
     #endif

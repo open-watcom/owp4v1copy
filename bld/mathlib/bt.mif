@@ -1,7 +1,7 @@
 # bt_(system)
 bt_msdos    =-bt=dos
 bt_os2      =-bt=os2
-bt_windows  =-bt=windows
+bt_windows  =-bt=windows -dSTRICT
 bt_winnt    =-bt=nt
 bt_linux    =-bt=linux
 bt_netware  =-bt=netware

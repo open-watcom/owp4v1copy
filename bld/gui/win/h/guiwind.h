@@ -45,9 +45,6 @@
         #define INCLUDE_COMMDLG_H
     #endif
     #define NOCOMM
-    #ifndef STRICT
-    #define STRICT
-    #endif
     #include <windows.h>
     #if defined( UNIX )
         #include <wtypes.h>

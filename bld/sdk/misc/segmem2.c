@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <dos.h>
-#define STRICT
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 #include "descript.h"

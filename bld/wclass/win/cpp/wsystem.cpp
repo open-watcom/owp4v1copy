@@ -166,7 +166,7 @@ void WEXPORT WSystemService::sysSleep( unsigned long interval ) {
 WModuleHandle WEXPORT WSystemService::loadLibrary( const char *lib_name ) {
 /*************************************************************************/
 
-    HINSTANCE      lib_handle;
+    WModuleHandle      lib_handle;
 
     WFileName fn( lib_name );
     if( *fn.ext() == NULLCHAR ) {
@@ -189,12 +189,12 @@ WProcAddr WEXPORT WSystemService::getProcAddr( WModuleHandle mod_handle,
                                                const char *proc ) {
 /*****************************************************************/
 
-    return( (WProcAddr) GetProcAddress( (HINSTANCE) mod_handle, proc ) );
+    return( (WProcAddr) GetProcAddress( mod_handle, proc ) );
 }
 
 
 void WEXPORT WSystemService::freeLibrary( WModuleHandle mod_handle ) {
 /********************************************************************/
 
-    FreeLibrary( (HINSTANCE) mod_handle );
+    FreeLibrary( mod_handle );
 }

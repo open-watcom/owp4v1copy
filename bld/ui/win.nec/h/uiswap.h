@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include <windows.h>
 
 extern void ToCharacter();

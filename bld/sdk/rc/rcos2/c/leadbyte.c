@@ -33,7 +33,6 @@
 #include "leadbyte.h"
 
 #ifdef NT_HOSTED
-#define STRICT
 #include <windows.h>
 
 void SetDBRange( unsigned from, unsigned to );

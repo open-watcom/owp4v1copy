@@ -49,7 +49,6 @@ typedef char __far *va_list[1];
 #include <dos.h>
 #include <share.h>
 #include <sys/stat.h>
-#define STRICT
 #include <windows.h>
 #include "winext.h"
 #include "watcom.h"

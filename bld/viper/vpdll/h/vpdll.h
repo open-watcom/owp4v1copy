@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#ifndef STRICT
-#define STRICT
-#endif
 #include <windows.h>
 #define VPDLL_VERSION           1
 

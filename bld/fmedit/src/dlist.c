@@ -32,7 +32,6 @@
 
 /* DLIST.C - routines to handle the operations on a DLIST */
 
-#define STRICT
 #include <windows.h>
 
 #include "fmedit.def"

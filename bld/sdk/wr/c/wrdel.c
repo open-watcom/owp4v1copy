@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include <windows.h>
 #include "wrglbl.h"
 #include "wrmem.h"

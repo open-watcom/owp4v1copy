@@ -14,7 +14,7 @@ bt_osi        =-d__OSI__ -bt=DOS
 bt_qnx        =-bt=QNX
 bt_windows_086=
 bt_windows_386=-d__WIN386__
-bt_windows    =$(bt_windows_$(processor)) -bt=WINDOWS
+bt_windows    =$(bt_windows_$(processor)) -bt=WINDOWS -DSTRICT
 bt_winnt      =-bt=NT
 bt_linux      =-bt=linux
 bt_snap       =-bt=SNAP

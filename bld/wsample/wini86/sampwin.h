@@ -32,9 +32,6 @@
 
 #ifndef __WINDOWS_INCLUDED__
 #define __WINDOWS_INCLUDED__
-#ifndef STRICT
-#define STRICT
-#endif
 #include <windows.h>
 #include <toolhelp.h>
 #endif

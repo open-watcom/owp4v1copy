@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include <stdio.h>
 #include <windows.h>
 #include <stdarg.h>

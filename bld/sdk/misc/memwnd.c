@@ -38,7 +38,6 @@
 #include <fcntl.h>
 #include <io.h>
 #include <time.h>
-#define STRICT
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 #include "font.h"

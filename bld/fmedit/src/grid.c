@@ -32,7 +32,6 @@
 
 /* GRID.C - routines to support creation of object on a specified grid */
 
-#define STRICT
 #include <windows.h>
 #include "global.h"
 #include "fmedit.def"

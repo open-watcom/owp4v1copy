@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#define STRICT
 #include <windows.h>
 
 int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)

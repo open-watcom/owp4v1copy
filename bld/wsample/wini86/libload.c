@@ -41,7 +41,6 @@
 #include "exeos2.h"
 #include "exedos.h"
 #include "ismod32.h"
-#define STRICT
 #include "windows.h"
 
 /*

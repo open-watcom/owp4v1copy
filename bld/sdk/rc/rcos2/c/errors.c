@@ -57,7 +57,6 @@
 #define _WINREG_
 #define WIN32_LEAN_AND_MEAN
 
-#define STRICT
 #include <windows.h>
 #include <setjmp.h>
 extern jmp_buf RC_Dead_env;

@@ -46,7 +46,6 @@
 #include <os2.h>
 #include <bsedos.h>
 #else
-#define STRICT
 #include <windows.h>
 #endif
 #include "wpi.h"

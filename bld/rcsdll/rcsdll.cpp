@@ -34,7 +34,6 @@
 #include <string.h>
 #include <unistd.h>
 #if defined( __WINDOWS__ ) || defined( __NT__ )
-    #define STRICT
     #include <windows.h>
     static      HINSTANCE   hInstance = 0;
 #elif defined( __OS2__ )

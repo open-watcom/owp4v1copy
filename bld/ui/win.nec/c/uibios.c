@@ -44,7 +44,6 @@
 
 #include <stdlib.h>
 #include <dos.h>
-#define STRICT
 #include <windows.h>
 #include "uidos.h"
 #include "biosui.h"

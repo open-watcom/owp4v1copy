@@ -30,7 +30,6 @@
 
 
 #include "limits.h"
-#define STRICT
 #include "windows.h"
 
 #include "fmedit.def"

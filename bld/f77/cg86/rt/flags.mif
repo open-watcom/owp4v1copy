@@ -121,14 +121,14 @@ sw_c_qnx_286      = -oax
 sw_c_qnx_287      = -oax
 sw_c_qnx_386      = -oaxt-d__MT__ #-bm
 sw_c_qnx_387      = -oaxt-d__MT__ #-bm
-sw_c_windows_086  = -oax-dSTRICT
-sw_c_windows_087  = -oax-dSTRICT
-sw_c_windows_386  = -oaxt-d__CALL21__-dSTRICT
-sw_c_windows_387  = -oaxt-d__CALL21__-dSTRICT
+sw_c_windows_086  = -oax
+sw_c_windows_087  = -oax
+sw_c_windows_386  = -oaxt-d__CALL21__
+sw_c_windows_387  = -oaxt-d__CALL21__
 sw_c_winnt_386    = -oaxt-d__MT__ #-bm
 sw_c_winnt_387    = -oaxt-d__MT__ #-bm
-sw_c_winnt_axp    = -oaxt-d__MT__ #-bm-dWIN32-d_WIN32
-sw_c_winnt_ppc    = -oaxt-d__MT__ #-bm-dWIN32-d_WIN32
+sw_c_winnt_axp    = -oaxt-d__MT__-dWIN32-d_WIN32 #-bm
+sw_c_winnt_ppc    = -oaxt-d__MT__-dWIN32-d_WIN32 #-bm
 sw_c_linux_386    = -oaxt-d__MT__
 sw_c_linux_387    = -oaxt-d__MT__
 
@@ -241,7 +241,7 @@ bt_os2        =-bt=os2
 bt_qnx        =-bt=qnx
 bt_windows_086=
 bt_windows_386=-d__WIN386__
-bt_windows    =$(bt_windows_$(processor)) -bt=windows
+bt_windows    =$(bt_windows_$(processor)) -bt=windows -dSTRICT
 bt_winnt      =-bt=nt
 bt_linux      =-bt=linux
 

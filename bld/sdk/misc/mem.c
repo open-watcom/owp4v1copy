@@ -43,7 +43,6 @@
 #define INCL_GPI
 #include <os2.h>
 #else
-#define STRICT
 #include <windows.h>
 #endif
 #include "mem.h"

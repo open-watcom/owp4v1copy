@@ -37,7 +37,6 @@
 #include "uidos.h"
 #include "uidef.h"
 #include "uishift.h"
-#define STRICT
 #include "windows.h"
 
 extern unsigned far _child;   /* fake out CG */

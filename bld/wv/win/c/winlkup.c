@@ -33,7 +33,6 @@
 #include "dbgdefn.h"
 #include "dbgmem.h"
 #include <string.h>
-#define STRICT
 #include "windows.h"
 
 

@@ -31,7 +31,6 @@
 
 
 #include <stdio.h>
-#define STRICT
 #include <windows.h>
 #include "rcdll.h"
 

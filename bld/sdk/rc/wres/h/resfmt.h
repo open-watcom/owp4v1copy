@@ -38,9 +38,6 @@
 // that winreg.h defines a type called ppvalue
 #define _WINREG_
 #define WIN32_LEAN_AND_MEAN
-#ifndef STRICT
-#define STRICT
-#endif
 #include "windows.h"
 #endif
 

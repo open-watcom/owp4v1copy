@@ -39,7 +39,6 @@
 #include <os2.h>
 #define __FAR
 #else
-#define STRICT
 #include <windows.h>
 #endif
 

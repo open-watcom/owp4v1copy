@@ -38,7 +38,6 @@
 
 */
 
-#define STRICT
 #include <windows.h>
 #include "version.h"
 

@@ -30,7 +30,6 @@
 
 
 #include <stddef.h>
-#define STRICT
 #include <windows.h>
 #include "winext.h"
 extern DWORD ReturnCode;

@@ -32,7 +32,6 @@
 
 #include <string.h>
 #include "heapwalk.h"
-#define STRICT
 #include <windows.h>
 #include "jdlg.h"
 

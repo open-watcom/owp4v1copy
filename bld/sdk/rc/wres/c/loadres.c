@@ -60,7 +60,6 @@
 #endif
 
 #ifdef WIN_GUI
-#define STRICT
 #include <windows.h>
 #else
 #define WINAPI

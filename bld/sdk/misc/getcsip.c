@@ -31,7 +31,6 @@
 
 
 #include <stdio.h>
-#define STRICT
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 
