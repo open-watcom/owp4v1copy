@@ -11,25 +11,25 @@ host_cpu = 386
 !include deftarg.mif
 
 !ifdef test
-sys_x86_os2  = sys os2
-sys_x86_os2v2  = sys os2v2
-sys_x86_win  = sys windows
-sys_x86_nt   = sys nt
-sys_x86_dos  = sys dos
-sys_x86_qnx  = sys qnx
+sys_x86_os2   = sys os2
+sys_x86_os2v2 = sys os2v2
+sys_x86_win   = sys windows
+sys_x86_nt    = sys nt
+sys_x86_dos   = sys dos
+sys_x86_qnx   = sys qnx
 
-sys_axp_nt   = sys ntaxp
+sys_axp_nt    = sys ntaxp
 
-targ_x86_os2    = binp\$(name)cli.exe
-targ_x86_os2v2  = binp\$(name)cli2.exe
-targ_x86_qnx    = qnx\$(name)cli.qnx
-targ_x86_win    = bin\$(name)cliw.exe
-targ_x86_dos    = bin\$(name)cli.exe
-targ_x86_nt     = binnt\$(name)cli.exe
+targ_x86_os2   = binp\$(name)cli1.exe
+targ_x86_os2v2 = binp\$(name)cli.exe
+targ_x86_qnx   = qnx\$(name)cli.qnx
+targ_x86_win   = bin\$(name)cliw.exe
+targ_x86_dos   = bin\$(name)cli.exe
+targ_x86_nt    = binnt\$(name)cli.exe
 
-targ_axp_nt     = axpnt\$(name)cli.exe
+targ_axp_nt    = axpnt\$(name)cli.exe
 
-TRAP_objs   = testcli.obj
+TRAP_objs     = testcli.obj
 TRAP_remote_objs =
 
 !else

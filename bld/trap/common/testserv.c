@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Simple server for testing remote communication transport.
 *
 ****************************************************************************/
 
@@ -62,6 +61,12 @@ void SetLinkName( char *name )
 void Output( char *p )
 {
     printf( "%s", p );
+}
+
+void ServMessage( char *msg )
+{
+    Output( msg );
+    Output( "\n" );
 }
 
 full_block      Data;
