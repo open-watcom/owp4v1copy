@@ -1,11 +1,15 @@
-proj_name = plusplus
+diproj_name = plusplus
 plusplus_autodepends = .autodepend
 
 # Important! The C++ compiler modifies string literals
 suppress_zc = 1
 
+# Extra files to delete on clean
+additional_cleanup = *.c y.out
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 .mif: $(mif_path)
 
@@ -24,7 +28,7 @@ xlibs = $(dwarf_dw_lib) $(asminline_lib)
 !include ../verify.mif
 
 #pre_obj_deps must be defined before ppobjs.mif is included
-pre_obj_deps = global.chk errmsgs.gh ic_mask.gh weights.gh keywords.gh yylex.gh
+pre_obj_deps = errmsgs.gh ic_mask.gh weights.gh keywords.gh yylex.gh
 # international data files
 pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
 
@@ -614,24 +618,4 @@ project : .symbolic
     pexist as           # target_cpu == axp
     pexist wasm         # target_cpu == i86 or 386
     pexist trmem        # plusplus_trmem def'd
-
-#
-# add audit trail to compile.gbl to force global recompile on refresh
-#
-global.chk : ../compile.gbl
-    %make clean
-!ifdef __LINUX__
-    touch -r $[@ $^@
-!else
-    wtouch -f $[@ $^@
-!endif
-
-clean global : .symbolic
-    @rm -f *.?bj *.lib *.pch *.lst *.gh *.rc *.int *.res *.err *.tmp
-    @rm -f *.cod *.asm *.dmp *.lnk *.bak *.dll *.pdb errmsgs.c y.out ytab.*
-    @rm -f cmdlnprs.* usage.u global.chk
-    @rm -f usage.u @del usage.u $(exe_dbg_name).* $(exe_bld_name).*
-    @rm -f $(exe_ref_name).* ../bin/$(exe_ref_name).* $(dll_bld_name).*
-    @rm -f $(dll_dbg_name).* mkopcode.* optencod.* msgencod.*
-    @rm -f icmask.* intlbin.* mkcode.* findhash.* mktrans.* umktable.*
 
