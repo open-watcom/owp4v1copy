@@ -1,7 +1,13 @@
 Open Watcom C/C++/FORTRAN Version 1.0
-=============================
+=============================================
 
 Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.0 release! This file contains information about the software package you are about to install. Please read this readme information throughly before installing this software package.
+
+=============================================
+Limited Distribution of Binary Installers
+=============================================
+
+Although Open Watcom is an Open Source project and freely available, SciTech Software has invested considerable time, energy and capital to make this project a reality. For this reason SciTech Software has retained the rights to the Open Watcom installer source code. Please read the license agreement on the following screen to understand your rights if you wish to re-distribute this binary package installer.
 
 =============================================
 Minimal Windows and OS/2 SDK support
