@@ -14,6 +14,7 @@ libs =               &
         commdlg.lib  &
         ctl3d.lib    &
         ddeml.lib    &
+        shell.lib    &
         stress.lib   &
         toolhelp.lib &
         windows.lib  &
@@ -24,7 +25,6 @@ winlibs =            &
         kernel.lbc   &
         keyboard.lbc &
 #        lzexpand.lbc &
-        shell.lbc    &
         sound.lbc    &
         user.lbc     &
         win87em.lbc
