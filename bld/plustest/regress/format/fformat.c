@@ -342,7 +342,7 @@ void FFormat::PutCommas(char *from, int intlen, char *to)
     if (!from || !*from || !to)
         return; // abort, abort!
 
-    while (!isdigit(*from))
+    while (*from && !isdigit(*from))
         *to++ = *from++;
 
     if (putseps)
