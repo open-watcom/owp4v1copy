@@ -31,6 +31,7 @@
 
 
 include struct.inc
+include traps.inc
 
         extrn       _DOS_major:byte
         extrn       _DOS_minor:byte
@@ -251,7 +252,7 @@ EnterDebugger:  cli                     ; interrupts off
                 pop     SI
                 pop     DS
                 pop     ES
-                mov     AL,-1
+                mov     AL,TRAP_SKIP
                 xchg    AL,CS:TrapType  ; get cause of termination
                 cbw
                 ret                     ; return to caller
@@ -392,7 +393,7 @@ TimerHandler:
                 pop     bx              ; restore BX
                 pop     ds              ; restore DS
                 jne     NullHandler     ; quit if can't interrupt right now
-DoIntTask:      mov     byte ptr CS:TrapType,4  ; user interrupt request
+DoIntTask:      mov     byte ptr CS:TrapType,TRAP_USER  ; user interrupt request
                 mov     byte ptr UsrInt,0       ; clear pending request
                 jmp     DebugTask
 
@@ -551,7 +552,7 @@ terminate:      push    BP                      ; save BP
 not_an_int:     pop     DS                      ; restore DS
                 pop     BX                      ; restore BX
                 pop     BP                      ; restore BP
-                mov     byte ptr CS:TrapType,5  ; indicate program termintation
+                mov     byte ptr CS:TrapType,TRAP_TERMINATE ; indicate program termintation
                 jmp     DebugTask               ; enter the debugger
 
 
@@ -675,7 +676,7 @@ DOSLoadProg_    endp
 
 debugprogend:
                 mov     CS:TaskPSP,0            ; don't have a task anymore
-                mov     byte ptr CS:TrapType,5 ; program terminated
+                mov     byte ptr CS:TrapType,TRAP_TERMINATE ; program terminated
                 jmp     DebugTask
 
 

@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+//#define DEBUG_ME
 
 #include <string.h>
 #include <i86.h>
@@ -59,24 +60,16 @@ typedef enum {
     EXE_LAST_TYPE
 } EXE_TYPE;
 
-#pragma aux MoveBytes =                                         \
-/*      MoveBytes( fromseg, fromoff, toseg, tooff, len );*/     \
-0X1E            /* push   ds                            */      \
-0X8E 0XD8       /* mov    ds,ax                         */      \
-0XF3            /* rep                                  */      \
-0XA4            /* movsb                                */      \
-0X1F            /* pop    ds                            */      \
-        parm    caller  [ ax ] [ si ] [ es ] [ di ] [ cx ]      \
-        modify  [ si di ];
+#pragma aux MoveBytes =                                  \
+/*  MoveBytes( fromseg, fromoff, toseg, tooff, len ); */ \
+       " rep    movsb "                                  \
+    parm    caller  [ ds ] [ si ] [ es ] [ di ] [ cx ]   \
+    modify  [ si di ];
 
-#pragma aux MyCS =              \
-0x8c 0xc8       /* mov ax,cx */ \
-        value [ax];
-
-#pragma aux MyFlags =           \
-0x9c            /* pushf    */  \
-0x58            /* pop ax   */  \
-        value [ax];
+#pragma aux MyFlags = \
+       " pushf  "     \
+       " pop ax "     \
+    value [ax];
 
 extern void MoveBytes();
 extern unsigned short MyCS( void );
@@ -97,7 +90,7 @@ typedef _Packed struct pblock {
 //
 // NOTE: if you change this structure, you must update DBGTRAP.ASM
 //
-typedef struct watch {
+typedef _Packed struct watch {
     addr32_ptr  addr;
     dword       value;
     dword       linear;
@@ -118,7 +111,8 @@ typedef enum {
         TRAP_USER,
         TRAP_TERMINATE,
         TRAP_MACH_EXCEPTION,
-        TRAP_OVL_CHANGE
+        TRAP_OVL_CHANGE_LOAD,
+        TRAP_OVL_CHANGE_RET
 } trap_types;
 
 /* user modifiable flags */
@@ -147,10 +141,10 @@ extern char             NPXType(void);
 extern char             Have87Emu(void);
 extern void             Null87Emu( void );
 extern void             OvlTrap( int );
-extern void             Read87State( void * );
-extern void             Read87EmuState( void * );
-extern void             Write87State( void * );
-extern void             Write87EmuState( void * );
+extern void             Read87State( void far * );
+extern void             Read87EmuState( void far * );
+extern void             Write87State( void far * );
+extern void             Write87EmuState( void far * );
 extern tiny_ret_t       FindFilePath( char *, char *, char * );
 extern unsigned         Redirect( bool );
 extern unsigned         ExceptionText( unsigned, char * );
@@ -160,6 +154,7 @@ extern void             FPUExpand( void * );
 extern int              far NoOvlsHdlr( int, void * );
 extern bool             CheckOvl( addr32_ptr );
 extern int              NullOvlHdlr(void);
+
 
 extern word             far SegmentChain;
 
@@ -183,17 +178,19 @@ trap_cpu_regs   TaskRegs;
 char            DOS_major;
 char            DOS_minor;
 char            RealNPXType;
+char            CPUType;
 bool            BoundAppLoading;
 bool            IsBreak[4];
 
 struct {
     unsigned    Is386       : 1;
+    unsigned    IsMMX       : 1;
+    unsigned    IsXMM       : 1;
     unsigned    DRsOn       : 1;
     unsigned    com_file    : 1;
     unsigned    NoOvlMgr    : 1;
     unsigned    BoundApp    : 1;
-}               Flags;
-
+} Flags;
 
 #ifdef DEBUG_ME
 int out( char * str )
@@ -226,23 +223,11 @@ char * hex( unsigned long num )
     }
     return( p );
 
-#ifndef TRACE_ME
-    #undef put
-    #define put( s )    out( s )
-#endif
 }
 #else
-//    #define out( s ) 0
-//    #define put( s )
-//    #define hex( n ) 1
     #define out( s )
     #define out0( s ) 0
-    #define put( s )
     #define hex( n )
-#endif
-
-#ifndef put
-    #define put( s )
 #endif
 
 unsigned ReqGet_sys_config()
@@ -253,19 +238,16 @@ unsigned ReqGet_sys_config()
     ret->sys.os = OS_DOS;
     ret->sys.osmajor = DOS_major;
     ret->sys.osminor = DOS_minor;
-    ret->sys.cpu = X86CPUType();
-    if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_386 ) {
-        Flags.Is386 = TRUE;
-    } else {
-        Flags.Is386 = FALSE;
-    }
+    ret->sys.cpu = CPUType;
+    ret->sys.cpu |= ( Flags.IsMMX ) ? X86_MMX : 0;
+    ret->sys.cpu |= ( Flags.IsXMM ) ? X86_XMM : 0;
     if( Have87Emu() ) {
         ret->sys.fpu = X86_EMU;
     } else if( RealNPXType != 0 ) {
-        if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_486 ) {
-            ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
-        } else {
+        if( CPUType < X86_486 ) {
             ret->sys.fpu = RealNPXType;
+        } else {
+            ret->sys.fpu = CPUType;
         }
     } else {
         ret->sys.fpu = X86_NO;
@@ -366,9 +348,9 @@ static bool IsInterrupt( addr48_ptr addr, unsigned length )
 unsigned ReqRead_mem()
 {
     bool          int_tbl;
-    read_mem_req        *acc;
+    read_mem_req  *acc;
     void          *data;
-    unsigned    len;
+    unsigned      len;
 
     acc = GetInPtr(0);
     data = GetOutPtr( 0 );
@@ -478,7 +460,7 @@ unsigned ReqRead_cpu()
 //OBSOLETE - use ReqRead_regs
 unsigned ReqRead_fpu()
 {
-    void *regs;
+    void far *regs;
 
     regs = GetOutPtr(0);
     if( Have87Emu() ) {
@@ -505,7 +487,7 @@ unsigned ReqWrite_cpu()
 //OBSOLETE - use ReqWrite_regs
 unsigned ReqWrite_fpu()
 {
-    void *regs;
+    void far *regs;
 
     regs = GetInPtr(sizeof(write_fpu_req));
     FPUContract( regs );
@@ -903,16 +885,35 @@ static bool SetDebugRegs()
 static unsigned MapReturn( int trap )
 {
     switch( trap ) {
-    case TRAP_TRACE_POINT:      return( COND_TRACE );
-    case TRAP_BREAK_POINT:      return( COND_BREAK );
-    case TRAP_WATCH_POINT:      return( COND_WATCH );
-    case TRAP_USER:             return( COND_USER );
-    case TRAP_TERMINATE:        return( COND_TERMINATE );
+    case TRAP_TRACE_POINT:
+        out( "cond=trace point" );
+        return( COND_TRACE );
+    case TRAP_BREAK_POINT:
+        out( "cond=break point" );
+        return( COND_BREAK );
+    case TRAP_WATCH_POINT:
+        out( "cond=watch point" );
+        return( COND_WATCH );
+    case TRAP_USER:
+        out( "cond=user" );
+        return( COND_USER );
+    case TRAP_TERMINATE:
+        out( "cond=terminate" );
+        return( COND_TERMINATE );
     case TRAP_MACH_EXCEPTION:
+        out( "cond=exception" );
         ExceptNum = 0;
         return( COND_EXCEPTION );
-    case TRAP_OVL_CHANGE:       return( COND_SECTIONS );
+    case TRAP_OVL_CHANGE_LOAD:
+        out( "cond=overlay load" );
+        return( COND_SECTIONS );
+    case TRAP_OVL_CHANGE_RET:
+        out( "cond=overlay ret" );
+        return( COND_SECTIONS );
+    default:
+        break;
     }
+    out( "cond=none" );
     return( 0 );
 }
 
@@ -945,7 +946,7 @@ static unsigned ProgRun( bool step )
     out( "\r\n" );
     ret->conditions = MapReturn( ClearDebugRegs( RunProg( &TaskRegs, &TaskRegs ) ) );
     ret->conditions |= COND_CONFIG;
-    out( "cond=" ); out( hex( ret->conditions ) );
+//    out( "cond=" ); out( hex( ret->conditions ) );
     out( " CS:EIP=" ); out( hex( TaskRegs.CS ) ); out(":" ); out( hex( TaskRegs.EIP ) );
     out( " SS:ESP=" ); out( hex( TaskRegs.SS ) ); out(":" ); out( hex( TaskRegs.ESP ) );
     out( "\r\n" );
@@ -1030,18 +1031,18 @@ char *GetExeExtensions()
     return( DosExtList );
 }
 
-#pragma off(unreferenced);
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
-#pragma on(unreferenced);
 {
     trap_version ver;
 
 out( "in TrapInit\r\n" );
 out( "    checking environment:\r\n" );
+    CPUType = X86CPUType();
+    Flags.Is386 = ( CPUType >= X86_386 );
     if( parm[0] == 'D' || parm[0] == 'd' ) {
         Flags.DRsOn = FALSE;
         ++parm;
-    } else if( out0( "    CPU type\r\n" ) || ( X86CPUType() & X86_CPU_MASK ) < X86_386 ) {
+    } else if( out0( "    CPU type\r\n" ) || ( Flags.Is386 == 0 ) ) {
         Flags.DRsOn = FALSE;
     } else if( out0( "    WinEnh\r\n" ) || ( EnhancedWinCheck() & 0x7f ) ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */
@@ -1057,6 +1058,11 @@ out( "    checking environment:\r\n" );
     }
 out( "    done checking environment\r\n" );
     err[0] = '\0'; /* all ok */
+
+    Flags.IsMMX = ( ( CPUType & X86_MMX ) != 0 );
+    Flags.IsXMM = ( ( CPUType & X86_XMM ) != 0 );
+    CPUType &= X86_CPU_MASK;
+
     /* NPXType initializes '87, so check for it before a program
        starts using the thing */
     RealNPXType = NPXType();

@@ -24,18 +24,13 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  DOS real mode Trap routines for WATCOM Debugger
 ;*
 ;*****************************************************************************
 
 
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;<>
-;<>     Trap routines for WATCOM Debugger
-;<>
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;
+include traps.inc
+
                 NAME    DBGTRAP
 
 .8087
@@ -54,7 +49,7 @@ SaveRegs   dw   ?,?             ; save regs pointer
 AreWatching db  0               ; have we got watch points
 
 public  TrapType
-TrapType   db   0               ; trap type
+TrapType   db   TRAP_NONE       ; trap type
 public  TraceRtn
 TraceRtn   dw   0               ; routine for int 1 vector
 
@@ -96,17 +91,6 @@ REG_GROUP       ends
 assume  cs:_text
 
 
-NO_TRAP         equ     0       ; no trap (startup time)
-TRACE_TRAP      equ     1       ; T-bit trap
-BREAK_POINT_TRAP equ    2       ; break point trap
-WATCH_POINT_TRAP equ    3       ; watch point trap
-USER_TRAP       equ     4       ; user requested trap
-TERMINATE_TRAP  equ     5       ; task is done
-MACH_TRAP       equ     6       ; machine blew up on program
-OVL_CHANGE_TRAP equ     7       ; overlay state has changed
-
-
-
 ; These offsets must match the struct in DOSACC.C
 WP_ADDR         equ     0       ; offset of watch point address
 WP_VALUE        equ     4       ; offset of watch point value
@@ -116,7 +100,7 @@ VALID   equ     1234H           ; value used to validate debugger data segment
 
 public  TrapTypeInit_
 TrapTypeInit_ proc       near           ; initialize trap information
-        mov     byte ptr CS:TrapType,NO_TRAP    ; no trap at startup time
+        mov     byte ptr CS:TrapType,TRAP_NONE ; no trap at startup time
 
         ; fall into SetSingleStep
 TrapTypeInit_ endp
@@ -156,12 +140,15 @@ RetAddr dw  ?,?
 
 public  OvlTrap_
 OvlTrap_:                       ; Overlay state change trap
-        mov     byte ptr CS:TrapType,OVL_CHANGE_TRAP
+        mov     byte ptr CS:TrapType,TRAP_OVL_CHANGE_LOAD
         pop     CS:RetAddr+0    ; save return offset
         pop     CS:RetAddr+2    ; save return segment
         pushf                   ; fake up an interrupt stack frame
         push    CS:RetAddr+2    ; . . .
         push    CS:RetAddr+0    ; . . .
+        test    dl,1
+        jz      short DebugTask ; invoke the debugger
+        mov     byte ptr CS:TrapType,TRAP_OVL_CHANGE_RET
         jmp     short DebugTask ; invoke the debugger
 
 
@@ -186,7 +173,7 @@ w386_2:
         ; no indicator in DR6, fall into TraceTrap and check T-bit
 
 TraceTrap:                      ; T-trap trap
-        mov     byte ptr CS:TrapType,TRACE_TRAP; indicate T-bit trap
+        mov     byte ptr CS:TrapType,TRAP_TRACE_POINT ; indicate T-bit trap
         push    BP              ; save BP
         mov     BP,SP           ; get access to stack
         test    byte ptr 7[BP],1; check to see if the T-bit's off
@@ -207,7 +194,7 @@ TraceTrap:                      ; T-trap trap
 
 public  BptTrap
 BptTrap:                        ; come here for breakpoint trap
-        mov     byte ptr CS:TrapType,BREAK_POINT_TRAP
+        mov     byte ptr CS:TrapType,TRAP_BREAK_POINT
         push    BP              ; save BP
         mov     BP,SP           ; get access to stack
         dec     word ptr 2[BP]  ; decrement IP
@@ -297,7 +284,7 @@ not_watch:
 
 watch_trap:                     ; we have a watch point trap
         lds     BX,dword ptr CS:SaveRegs; point at save area
-        mov     byte ptr CS:TrapType,WATCH_POINT_TRAP
+        mov     byte ptr CS:TrapType,TRAP_WATCH_POINT
         jmp     save_rest       ; save rest of the registers & enter debugger
 
 WatchRestart:                   ; restart a watch point after a soft int
@@ -416,7 +403,7 @@ abort_watch:
 brk_point:                      ; next instruction is a break point
         pop     DS              ; restore DS
         pop     BX              ; restore BX
-        mov     byte ptr CS:TrapType,BREAK_POINT_TRAP; we have a brk point trap
+        mov     byte ptr CS:TrapType,TRAP_BREAK_POINT ; we have a brk point trap
         jmp     DebugTask       ; enter the debugger
 
         public  Read87State_
@@ -425,7 +412,7 @@ Read87State_ proc near
         push    bx
         mov     ds,dx
         mov     bx,ax
-        fnsave  ds:[bx]
+        fnsave  [bx]
         pop     bx
         pop     ds
         fwait
@@ -438,7 +425,7 @@ Write87State_ proc near
         push    bx
         mov     ds,dx
         mov     bx,ax
-        frstor  ds:[bx]
+        fnrstor [bx]
         pop     bx
         pop     ds
         fwait

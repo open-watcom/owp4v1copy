@@ -102,6 +102,7 @@ unsigned ReqOvl_read_state( void )
 }
 
 unsigned ReqOvl_write_state( void )
+/*********************************/
 {
     SetUsrTask(); /* overlay manager needs access to its file table */
     OvlRequest( OVLDBG_SET_OVERLAY_STATE, GetInPtr( sizeof( ovl_write_state_req ) ) );
