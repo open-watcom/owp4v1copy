@@ -33,6 +33,12 @@
 #include <string.h>
 #include "trpimp.h"
 
+#if defined(DOSXTRAP) || defined(DOSXHELP)
+    #define DOSX
+#elif defined(__WINDOWS__) && !defined(__386__)
+    #define WIN16
+#endif
+
 static unsigned (* const CoreRequests[])(void) = {
         ReqConnect,
         ReqDisconnect,
@@ -82,13 +88,10 @@ extern char             RemoteConnect(void);
 
 extern char             *InitDebugging(void);
 extern void             FinishDebugging(void);
+
+#if defined( WIN16 )
 extern void             far pascal SetEventHook( void far * );
 extern void             far *HookRtn;
-
-#if defined(DOSXTRAP) || defined(DOSXHELP)
-    #define DOSX
-#elif defined(__WINDOWS__) && !defined(__386__)
-    #define WIN16
 #endif
 
 unsigned ReqConnect()

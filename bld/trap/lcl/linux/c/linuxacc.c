@@ -44,7 +44,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <process.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -647,8 +646,8 @@ unsigned ReqProg_load()
     unsigned                    len;
     int                         status;
 
-    flatDS = DS();
-    flatCS = CS();
+    flatDS = get_ds();
+    flatCS = get_cs();
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -710,7 +709,7 @@ unsigned ReqProg_load()
             if ((long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0) {
                 exit( 1 );
             }
-            execve( exe_name, (const char **)args, (const char **)environ );
+            execve( exe_name, (const char **)args, (const char **)dbg_environ );
             exit( 1 ); /* failsafe */
         }
         setpgid( 0, save_pgrp );

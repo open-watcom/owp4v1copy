@@ -97,7 +97,7 @@ unsigned ReqFile_run_cmd()
         argv[1] = NULL;
     }
     pid = qnx_spawn( 0, 0, 0, -1, -1, _SPAWN_NEWPGRP | _SPAWN_TCSETPGRP,
-                    shell, argv, environ, NULL, -1 );
+                    shell, argv, dbg_environ, NULL, -1 );
     if( pid == -1 ) {
         ret->err = errno;
         return( sizeof( *ret ) );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Core trap requests definitions.
 *
 ****************************************************************************/
 
@@ -33,9 +32,9 @@
 #ifndef TRPCORE_H
 
 #include "trptypes.h"
-#include <_comdef.h>
 
-#if __WATCOMC__ > 1000
+#if defined( __WATCOMC__ )
+#include <_comdef.h>
 #pragma pack(push,1);
 #endif
 
@@ -218,9 +217,16 @@ typedef struct {
     unsigned_32 ESP;
     unsigned_32 EIP;
     unsigned_32 EFL;
+#ifdef __GNUC__
+    // I don't know why GCC doesn't like the numerals
+    unsigned_32 CRzero;
+    unsigned_32 CRtwo;
+    unsigned_32 CRthree;
+#else    
     unsigned_32 CR0;
     unsigned_32 CR2;
     unsigned_32 CR3;
+#endif    
     unsigned_16 DS;
     unsigned_16 ES;
     unsigned_16 SS;
@@ -481,7 +487,7 @@ typedef struct {
     /* followed by whatever machine specific data is being returned */
 } machine_data_ret;
 
-#if __WATCOMC__ > 1000
+#if defined( __WATCOMC__ )
 #pragma pack(pop);
 #endif
 

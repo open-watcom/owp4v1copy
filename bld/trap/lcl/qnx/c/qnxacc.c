@@ -884,7 +884,7 @@ unsigned ReqProg_load()
         setpgid( 0, OrigPGrp );
         ProcInfo.pid = qnx_spawn(0, 0, nid, -1, SCHED_OTHER,
                             _SPAWN_HOLD, //NYI: | _SPAWN_NOZOMBIE,
-                            exe_name, args, environ, 0, -1);
+                            exe_name, args, dbg_environ, 0, -1);
         setpgid( 0, save_pgrp );
         if( ProcInfo.pid != -1 ) {
             qnx_psinfo( PROC_PID, ProcInfo.pid, &proc, 0, 0 );

@@ -34,7 +34,7 @@
 #include "trpimp.h"
 #include "trpqimp.h"
 
-_WCRTLINK char **_WCNEAR environ;  /*  pointer to environment table        */
+char                            **dbg_environ;  /* pointer to parent's environment table */
 const trap_callbacks            *Client;
 extern const trap_requests      ImpInterface;
 
@@ -42,7 +42,7 @@ const trap_requests *TrapLoad( trap_callbacks *client )
 {
     Client = client;
     if( Client->len <= offsetof(trap_callbacks,signal) ) return( NULL );
-    environ = *Client->environ;
+    dbg_environ = *Client->environ;
     return( &ImpInterface );
 }
 
