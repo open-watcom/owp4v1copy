@@ -144,15 +144,3 @@ usage.u : ../h/usage.sp
 
 usagej.u : ../h/usage.sp
         $(bld_bin)\wsplice -kJAPANESE -k$(host_OS) -t8 -u ../h/usage.sp usagej.u
-
-###################################################################
-
-..\h\inlnops.h: ..\inlnops.tok ..\mkopcode.exe
-        ..\mkopcode ..\inlnops.tok $^@
-
-..\h\fullops.h: ..\fullops.tok ..\inlnops.tok ..\mkopcode.exe
-        ..\mkopcode ..\fullops.tok ..\inlnops.tok $^@
-
-..\mkopcode.exe: ..\mkopcode.c
-        $(bld_cl) $[@ /fe=$^@
-        del mkopcode.obj
