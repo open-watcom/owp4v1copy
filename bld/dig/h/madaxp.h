@@ -185,7 +185,7 @@ struct axp_mad_registers {
         struct {
             unsigned_64         pc;
             unsigned_8          ps;
-        }       unix;
+        }       nix;
         struct {
             unsigned_64         pc;
             unsigned_64         psr;
