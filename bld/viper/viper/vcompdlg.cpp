@@ -288,10 +288,11 @@ void VCompDialog::updateCurOs( void )
     MTarget     *curtarg;
     int         pos;
     WString     curname;
+    int         i;
 
     WPickList&  targets = _config->targets();
     int icount = _imagelist->count();
-    for( int i=0; i < icount; i++ ) {
+    for( i=0; i < icount; i++ ) {
         _imagelist->deleteString( 0 );
     }
     pos = 0;

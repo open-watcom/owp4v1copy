@@ -453,12 +453,13 @@ void VpeMain::buildMenuBar()
     MAction     *action;
     WString     mname;
     WMenuItem   *mi;
+    int         i;
 
     WPopupMenu* pop7 = makeMenu( &popup7, toolBar );
     menuBar->insertPopup( pop7, 7 );
     helpcnt = _config->helpactions().count();
     if( helpcnt > 0 ) pop7->insertSeparator();
-    for( int i = 0; i < helpcnt; i++ ) {
+    for( i = 0; i < helpcnt; i++ ) {
         action = (MAction *)_config->helpactions()[i];
         action->menuName( &mname );
         mi = new WMenuItem( mname, this, (cbm)&VpeMain::mHelpItem,
@@ -637,7 +638,8 @@ void VpeMain::onPopup1( WPopupMenu* pop )
     }
 
     int icount = _config->actions().count();
-    for( int i=0; i<icount; i++ ) {
+    int i;
+    for( i=0; i<icount; i++ ) {
         MAction* action = (MAction*)_config->actions()[i];
         WString  mname;
         action->menuName( &mname );
@@ -1207,7 +1209,9 @@ void VpeMain::openProject( WMenuItem* )
 
 void VpeMain::addOldProject( const WFileName& filename )
 {
-    for( int i=0; i<_oldProjects.count(); i++ ) {
+    int i;
+
+    for( i=0; i<_oldProjects.count(); i++ ) {
         WFileName* fn = (WFileName*)_oldProjects[ i ];
         if( *fn == filename ) {
             delete _oldProjects.removeAt( i );
@@ -1666,11 +1670,12 @@ bool VpeMain::kDynAccel( WKeyCode kc ) {
 
     bool        done;
     MAction     *action;
+    int         i;
 
     done = FALSE;
     // search project level accelerators
     int icount = _config->actions().count();
-    for( int i=0; i<icount; i++ ) {
+    for( i=0; i<icount; i++ ) {
         action = (MAction*)_config->actions()[i];
         if( action->menuAccel() == kc ) {
             doAction( action );

@@ -328,7 +328,8 @@ bool MProject::makeMakeFile()
             expand( pmak, _after, ".after" );
             pmak.puts( "project :" );
             int icount = _components.count();
-            for( int i=0; i<icount; i++ ) {
+            int i;
+            for( i=0; i<icount; i++ ) {
                 MComponent* comp = (MComponent*)_components[i];
                 if( comp->rule()->ismakeable() ) {
                     WFileName fn;

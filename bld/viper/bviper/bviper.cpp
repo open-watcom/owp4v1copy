@@ -105,7 +105,9 @@ WEXPORT VpeMain::VpeMain( int argc, char** argv )
     WStringList parms;
     char sMode = 0;
     bool debug = FALSE;
-    for( int i=1; i<argc; i++ ) {
+    int  i;
+
+    for( i=1; i<argc; i++ ) {
         if( streq( argv[i], "-c" ) ) {
             if( i+1 < argc ) {
                 i++;

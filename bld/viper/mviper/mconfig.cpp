@@ -181,7 +181,9 @@ bool MConfig::readConfig()
 void MConfig::zapTargetMasks()
 {
     static char hostChars[] = { 'w', 'o', 'n', 's', '9', 'j', '8', 'a' };
-    for( int i=0; i<_hostMask.size(); i++ ) {
+    int     i;
+
+    for( i=0; i<_hostMask.size(); i++ ) {
         if( _hostMask[i] == '@' ) {
             _hostMask.setChar( i, hostChars[ _hostType ] );
         }
@@ -556,9 +558,10 @@ void MConfig::enumAccel( WObject *obj, bcbk fn )
 {
     int         icount;
     WKeyCode    key;
+    int         i;
 
     icount = _actions.count();
-    for( int i=0; i < icount; i++ ) {
+    for( i=0; i < icount; i++ ) {
         MAction *action;
         action = (MAction *)_actions[i];
         key = action->menuAccel();

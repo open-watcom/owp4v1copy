@@ -70,7 +70,8 @@ void MSwitch::displayText( WString& s )
     if( on().size() > 0 ) {
         s.concat( '[' );
         const char* c = on();
-        for( int i=strlen( c ); i>0; i-- ) {
+        int i;
+        for( i=strlen( c ); i>0; i-- ) {
             if( c[i-1] == '\\' ) break;
         }
         s.concat( &c[i] );

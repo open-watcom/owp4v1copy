@@ -237,7 +237,8 @@ void VComponent::createControls()
 
     int BW = 0;
     int BH = 0;
-    for( int i=0; i<icount; i++ ) {
+    int i;
+    for( i=0; i<icount; i++ ) {
         MAction* action = (MAction*)actlist[i];
         if( action->button() ) {
             WString text;

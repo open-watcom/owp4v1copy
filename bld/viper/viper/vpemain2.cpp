@@ -372,10 +372,12 @@ bool VpeMain::reallyClose()
 
 bool VpeMain::executeCommand( const char* c, int location, const char* title )
 {
+    int i;
+
     if( c && strlen( c ) > 0 ) {
         WString* cur = NULL;
         WStringList opts;
-        for( int i=0; c[i]!= '\0'; i++ ) {
+        for( i=0; c[i]!= '\0'; i++ ) {
             if( cur ) {
                 if( c[i] == '"' ) {
                     opts.add( cur );

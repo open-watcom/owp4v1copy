@@ -215,11 +215,13 @@ void MComponent::getMaskItems( WVList& list )
 
 void MComponent::updateItemList( bool update )
 {
+    int     i;
+
     if( !_batchMode ) {
         _target->updateAttribs();
         MRule* nilRule = _config->nilRule();
         _items.setUpdates( FALSE );
-        for( int i=0; i<_items.count(); i++ ) {
+        for( i=0; i<_items.count(); i++ ) {
             MItem* item = (MItem*)_items[i];
             item->updateAttribs();
             item->setParent( NULL );
