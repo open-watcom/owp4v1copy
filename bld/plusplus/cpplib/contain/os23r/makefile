@@ -2,12 +2,11 @@
 #
 # cont3r.lib -- register based 32-bit CONTAINER library
 #
-host_cpu = 386
-
+processor  = 386
+system     = os2
+model      = f
+convention = register
+linkage    = static
 fs_registration = yes
-target_system = os2v2
-text = -d__USE_FS
-suffix = 3r
 define_library_include = $(plusplus_contain_dir)/contain.mif
-define_target_include = $(plusplus_dir)/lib32$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

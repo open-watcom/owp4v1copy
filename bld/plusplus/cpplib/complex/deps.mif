@@ -1,7 +1,7 @@
 !ifeq release 0
 
 complex.$(obj_deps_ext) : &
-             abs.cp acos.cpp acosh.cpp arg.cpp asin.cpp asinh.cpp atan.cpp &
+             abs.cpp acos.cpp acosh.cpp arg.cpp asin.cpp asinh.cpp atan.cpp &
              atanh.cpp cos.cpp cosh.cpp dicomcom.cpp direlcom.cpp divide.cpp &
              exp.cpp log.cpp log10.cpp multiply.cpp opinput.cpp opoutput.cpp &
              polar.cpp powcbcp.cpp powcbdp.cpp powccbip.cpp powdbcp.cpp &

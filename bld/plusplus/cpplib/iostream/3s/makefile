@@ -2,11 +2,11 @@
 #
 # iost3s.lib -- stack based 32-bit IOSTREAM library
 #
-host_cpu = 386
-
-suffix = 3s
-target_system = generic
+processor  = 386
+system     = generic
+model      = f
+convention = stack
+linkage    = static
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif
-define_target_include = $(plusplus_dir)/lib32$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

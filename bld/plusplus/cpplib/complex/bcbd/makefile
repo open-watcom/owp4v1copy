@@ -2,11 +2,10 @@
 #
 # cplxl.lib -- large memory-model COMPLEX library fpc
 #
-host_cpu = i86
-
-suffix = l
-target_system = generic
+processor  = i86
+system     = generic
+model      = l
+linkage    = static
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif
-define_target_include = $(plusplus_dir)/lib16$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

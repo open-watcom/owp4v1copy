@@ -2,11 +2,10 @@
 #
 # strgc.lib -- compact memory-model STRING library
 #
-host_cpu = i86
-
-suffix = c
-target_system = generic
+processor  = i86
+system     = generic
+model      = c
+linkage    = static
 define_library_include = $(plusplus_string_dir)/string.mif
 define_deps_include = $(plusplus_string_dir)/deps.mif
-define_target_include = $(plusplus_dir)/lib16$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

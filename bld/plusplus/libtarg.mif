@@ -1,0 +1,32 @@
+cflags_generic = -bt=generic
+
+cpplib_hos_cpu_i86 = i86
+cpplib_hos_cpu_i87 = i86
+cpplib_hos_cpu_386 = 386
+cpplib_hos_cpu_387 = 386
+cpplib_hos_cpu_axp = axp
+host_cpu = $(cpplib_hos_cpu_$(processor))
+
+cpplib_hos_os_generic = generic
+cpplib_hos_os_winnt   = nt
+cpplib_hos_os_windows = win
+cpplib_hos_os_os2     = os2
+cpplib_hos_os_qnx     = qnx
+cpplib_hos_os_netware = nov
+host_os = $(cpplib_hos_os_$(system))
+
+!ifdef mthreaded
+suffix = mt
+!else
+suffix =
+!endif
+!ifeq host_cpu i86
+suffix +=$(model)
+!else ifeq host_cpu 386
+!ifeq convention stack
+suffix +=3s
+!else
+suffix +=3r
+!endif
+!else ifeq host_cpu axp
+!endif

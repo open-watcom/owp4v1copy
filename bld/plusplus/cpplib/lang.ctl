@@ -111,6 +111,7 @@ set destdir=<RELROOT>/rel2
     <CPCMD> os23smt/plibmt3s.lib        <destdir>/lib386/os2/
 
   [ IFDEF (os_nov "") <2*> ]
+    <CPCMD> complex/nov3s/cplx3s.lib    <destdir>/lib386/netware/
     <CPCMD> complex/nov73s/cplx73s.lib  <destdir>/lib386/netware/
 
   [ IFDEF (os_qnx) <2*> ]

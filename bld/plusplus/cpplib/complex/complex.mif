@@ -1,17 +1,6 @@
 prefix = cplx
 
-!ifdef fp_option
-target_lib = $(prefix)7$(suffix).lib
-!else
-target_lib = $(prefix)$(suffix).lib
-!endif
-
-cpp_dirs = ../cpp
-c_dirs = ../c
-
-inc_dirs = -I"../h"
-
-objs = &
+objs_cpp = &
 abs.obj &
 acos.obj &
 acosh.obj &
@@ -71,3 +60,7 @@ extra_cpp_flags_powcbcp = -fh=pch02.pch
 extra_cpp_flags_powcbdp = -fh=pch02.pch
 extra_cpp_flags_powccbip = -fh=pch02.pch
 extra_cpp_flags_powdbcp = -fh=pch02.pch
+
+!include $(plusplus_dir)/mklibtgt.mif
+
+!undef target_lib_x

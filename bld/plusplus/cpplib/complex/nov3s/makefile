@@ -1,10 +1,11 @@
-#pmake: all build medium cpu_i86 os_win
+#pmake: build small cpu_386 os_nov
 #
-# cplxm.lib -- medium memory-model COMPLEX library fpc for Windows
+# cplx73s.lib -- Netware stack based 32-bit COMPLEX library fpc
 #
-processor  = i86
-system     = windows
-model      = m
+processor  = 386
+system     = netware
+model      = s
+convention = stack
 linkage    = static
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif

@@ -18,14 +18,24 @@ files = $+ $(static_objs) $-
 !ifdef objs_c
 !undef objs_c
 !endif
+!ifdef objs_cpp
 !undef objs_cpp
+!endif
+!ifdef obj_ext
 !undef obj_ext
+!endif
 
+!ifeq processor i87
+target_lib = $(prefix)7$(suffix).lib
+target_lib_x = $(prefix_x)7$(suffix).lib
+!else ifeq processor 387
+target_lib = $(prefix)7$(suffix).lib
+target_lib_x = $(prefix_x)7$(suffix).lib
+!else
 target_lib = $(prefix)$(suffix).lib
 target_lib_x = $(prefix_x)$(suffix).lib
+!endif
 
 cpp_dirs = ../cpp
 c_dirs = ../c
 asm_dirs = ../a;../inc
-
-inc_dirs = -I"../h" -I"$(plusplus_dir)/h"

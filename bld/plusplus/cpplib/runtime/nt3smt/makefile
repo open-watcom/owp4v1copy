@@ -2,12 +2,12 @@
 #
 # plib3s -- 32-bit 3s MT PLIB, PLBX
 #
-host_cpu = 386
-
+processor  = 386
+system     = winnt
+model      = f
+convention = stack
+linkage    = static
+mthreaded  = 1
 fs_registration = yes
-suffix = mt3s
-target_system = nt
-text = -D__USE_FS
 define_library_include = $(plusplus_runtime_dir)/plib.mif
-define_target_include = $(plusplus_dir)/lib$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

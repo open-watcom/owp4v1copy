@@ -2,13 +2,12 @@
 #
 # iost3r.lib -- register based 32-bit IOSTREAM library
 #
-host_cpu = 386
-
+processor  = 386
+system     = winnt
+model      = f
+convention = register
+linkage    = static
 fs_registration = yes
-target_system = nt
-text = -d__USE_FS
-suffix = 3r
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif
-define_target_include = $(plusplus_dir)/lib32$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

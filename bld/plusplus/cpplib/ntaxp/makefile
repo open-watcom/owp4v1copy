@@ -1,7 +1,9 @@
 #pmake: nomodel cpu_axp os_nt
-host_CPU = axp
-
-suffix = nt
-subdir = ntaxp
+processor    = axp
+system       = winnt
+model        =
+convention   =
+linkage      = static
+subdir       = ntaxp
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

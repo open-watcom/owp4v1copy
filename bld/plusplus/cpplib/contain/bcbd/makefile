@@ -2,10 +2,9 @@
 #
 # contl.lib -- large memory-model CONTAINER library
 #
-host_cpu = i86
-
-suffix = l
-target_system = generic
+processor  = i86
+system     = generic
+model      = l
+linkage    = static
 define_library_include = $(plusplus_contain_dir)/contain.mif
-define_target_include = $(plusplus_dir)/lib16$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

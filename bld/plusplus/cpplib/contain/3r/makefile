@@ -2,10 +2,10 @@
 #
 # cont3r.lib -- register based 32-bit CONTAINER library
 #
-host_cpu = 386
-
-suffix = 3r
-target_system = generic
+processor  = 386
+system     = generic
+model      = f
+convention = register
+linkage    = static
 define_library_include = $(plusplus_contain_dir)/contain.mif
-define_target_include = $(plusplus_dir)/lib32$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

@@ -2,10 +2,9 @@
 #
 # plibc -- 16-bit compact memory-model PLIB
 #
-host_cpu = i86
-
-suffix = c
-target_system = generic
+processor  = i86
+system     = generic
+model      = c
+linkage    = static
 define_library_include = $(plusplus_runtime_dir)/plib.mif
-define_target_include = $(plusplus_dir)/lib16$(suffix).mif
 !include $(plusplus_dir)/mklib.mif

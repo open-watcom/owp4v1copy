@@ -2,11 +2,11 @@
 #
 # iost -- 32-bit axp IOSTREAM library
 #
-host_cpu = axp
-
-suffix = nt
-target_system = ntaxp
+processor    = axp
+system       = winnt
+model        =
+convention   =
+linkage      = static
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif
-define_target_include = $(plusplus_dir)/libaxp$(suffix).mif
 !include $(plusplus_dir)/mklib.mif
