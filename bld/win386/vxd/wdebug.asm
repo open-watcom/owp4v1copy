@@ -104,7 +104,7 @@ I_InterruptNumber       dw ?
 Interrupt_struct        ends
 
 ;Declare_Virtual_Device WDEBUG, 3, 0, WGod_Control, Debug_Device_ID, 0f0000000h
-Declare_Virtual_Device WDEBUG, 3, 0, WGod_Control, Debug_Device_ID, 00000001h
+Declare_Watcom_Debug_Virtual_Device 3, 0, WGod_Control, Debug_Device_ID, 00000001h
 
 extrn __Win387_emulator:PROC
 
@@ -120,59 +120,59 @@ VxD_IDATA_ENDS
 ;*
 VxD_DATA_SEG
 CallTable LABEL DWORD
-        dd      OFFSET32 SVC_GetVersion         ; request 00
-        dd      OFFSET32 SVC_CopyMemory         ; request 01
-        dd      OFFSET32 SVC_GetDescriptor      ; request 02
-        dd      OFFSET32 SVC_GetLimit           ; request 03
-        dd      OFFSET32 SVC_GetDR              ; request 04
-        dd      OFFSET32 SVC_SetDR              ; request 05
-        dd      OFFSET32 SVC_InitSampler        ; request 06
-        dd      OFFSET32 SVC_QuitSampler        ; request 07
-        dd      OFFSET32 SVC_StartSampler       ; request 08
-        dd      OFFSET32 SVC_StopSampler        ; request 09
-        dd      OFFSET32 SVC_GetCurrTick        ; request 0a
-        dd      OFFSET32 SVC_SetTimerRate       ; request 0b
-        dd      OFFSET32 SVC_GetTimerRate       ; request 0c
-        dd      OFFSET32 SVC_GetCurrCount       ; request 0d
-        dd      OFFSET32 SVC_GetSample0Tick     ; request 0e
-        dd      OFFSET32 SVC_RegisterName       ; request 0f
-        dd      OFFSET32 SVC_AccessName         ; request 10
-        dd      OFFSET32 SVC_UnregisterName     ; request 11
-        dd      OFFSET32 SVC_UnaccessName       ; request 12
-        dd      OFFSET32 SVC_StartConv          ; request 13
-        dd      OFFSET32 SVC_LookForConv        ; request 14
-        dd      OFFSET32 SVC_EndConv            ; request 15
-        dd      OFFSET32 SVC_ConvGet            ; request 16
-        dd      OFFSET32 SVC_ConvPut            ; request 17
-        dd      OFFSET32 SVC_IsConvAck          ; request 18
-        dd      OFFSET32 SVC_MyID               ; request 19
-        dd      OFFSET32 SVC_SetExecutionFocus  ; request 1a
-        dd      OFFSET32 SVC_WhatHappened       ; request 1b
-        dd      OFFSET32 SVC_ConvGetTimeout     ; request 1c
-        dd      OFFSET32 SVC_ConvPutTimeout     ; request 1d
-        dd      OFFSET32 SVC_EMUInit            ; request 1e
-        dd      OFFSET32 SVC_EMUShutdown        ; request 1f
-        dd      OFFSET32 SVC_EMURegister        ; request 20
-        dd      OFFSET32 SVC_EMUUnRegister      ; request 21
-        dd      OFFSET32 SVC_FPUPresent         ; request 22
-        dd      OFFSET32 SVC_EMUSaveRestore     ; request 23
-        dd      OFFSET32 SVC_PauseSampler       ; request 24
-        dd      OFFSET32 SVC_UnPauseSampler     ; request 25
-        dd      OFFSET32 SVC_EGAWrite           ; request 26
-        dd      OFFSET32 SVC_VGARead            ; request 27
-        dd      OFFSET32 SVC_DisableVideo       ; request 28
-        dd      OFFSET32 SVC_RegisterInterruptCallback ; request 29
-        dd      OFFSET32 SVC_UnRegisterInterruptCallback ; request 2a
-        dd      OFFSET32 SVC_GetInterruptCallback ; request 2b
-        dd      OFFSET32 SVC_RestartFromInterrupt; request 2c
-        dd      OFFSET32 SVC_Is32BitSel         ; request 2d
-        dd      OFFSET32 SVC_GetVMId            ; request 2e
-        dd      OFFSET32 SVC_HookIDT            ; request 2f
-        dd      OFFSET32 SVC_IDTFini            ; request 30
-        dd      OFFSET32 SVC_IDTInit            ; request 31
-        dd      OFFSET32 SVC_ConvPutPending     ; request 32
-        dd      OFFSET32 SVC_UseHotKey          ; request 33
-        dd      OFFSET32 SVC_RaiseInterruptInVM ; request 34
+        dd      OFFSET SVC_GetVersion         ; request 00
+        dd      OFFSET SVC_CopyMemory         ; request 01
+        dd      OFFSET SVC_GetDescriptor      ; request 02
+        dd      OFFSET SVC_GetLimit           ; request 03
+        dd      OFFSET SVC_GetDR              ; request 04
+        dd      OFFSET SVC_SetDR              ; request 05
+        dd      OFFSET SVC_InitSampler        ; request 06
+        dd      OFFSET SVC_QuitSampler        ; request 07
+        dd      OFFSET SVC_StartSampler       ; request 08
+        dd      OFFSET SVC_StopSampler        ; request 09
+        dd      OFFSET SVC_GetCurrTick        ; request 0a
+        dd      OFFSET SVC_SetTimerRate       ; request 0b
+        dd      OFFSET SVC_GetTimerRate       ; request 0c
+        dd      OFFSET SVC_GetCurrCount       ; request 0d
+        dd      OFFSET SVC_GetSample0Tick     ; request 0e
+        dd      OFFSET SVC_RegisterName       ; request 0f
+        dd      OFFSET SVC_AccessName         ; request 10
+        dd      OFFSET SVC_UnregisterName     ; request 11
+        dd      OFFSET SVC_UnaccessName       ; request 12
+        dd      OFFSET SVC_StartConv          ; request 13
+        dd      OFFSET SVC_LookForConv        ; request 14
+        dd      OFFSET SVC_EndConv            ; request 15
+        dd      OFFSET SVC_ConvGet            ; request 16
+        dd      OFFSET SVC_ConvPut            ; request 17
+        dd      OFFSET SVC_IsConvAck          ; request 18
+        dd      OFFSET SVC_MyID               ; request 19
+        dd      OFFSET SVC_SetExecutionFocus  ; request 1a
+        dd      OFFSET SVC_WhatHappened       ; request 1b
+        dd      OFFSET SVC_ConvGetTimeout     ; request 1c
+        dd      OFFSET SVC_ConvPutTimeout     ; request 1d
+        dd      OFFSET SVC_EMUInit            ; request 1e
+        dd      OFFSET SVC_EMUShutdown        ; request 1f
+        dd      OFFSET SVC_EMURegister        ; request 20
+        dd      OFFSET SVC_EMUUnRegister      ; request 21
+        dd      OFFSET SVC_FPUPresent         ; request 22
+        dd      OFFSET SVC_EMUSaveRestore     ; request 23
+        dd      OFFSET SVC_PauseSampler       ; request 24
+        dd      OFFSET SVC_UnPauseSampler     ; request 25
+        dd      OFFSET SVC_EGAWrite           ; request 26
+        dd      OFFSET SVC_VGARead            ; request 27
+        dd      OFFSET SVC_DisableVideo       ; request 28
+        dd      OFFSET SVC_RegisterInterruptCallback ; request 29
+        dd      OFFSET SVC_UnRegisterInterruptCallback ; request 2a
+        dd      OFFSET SVC_GetInterruptCallback ; request 2b
+        dd      OFFSET SVC_RestartFromInterrupt; request 2c
+        dd      OFFSET SVC_Is32BitSel         ; request 2d
+        dd      OFFSET SVC_GetVMId            ; request 2e
+        dd      OFFSET SVC_HookIDT            ; request 2f
+        dd      OFFSET SVC_IDTFini            ; request 30
+        dd      OFFSET SVC_IDTInit            ; request 31
+        dd      OFFSET SVC_ConvPutPending     ; request 32
+        dd      OFFSET SVC_UseHotKey          ; request 33
+        dd      OFFSET SVC_RaiseInterruptInVM ; request 34
 MaxAPI equ ($-CallTable)/4
 
 PM_Int2FNextCS  dd 0
@@ -274,7 +274,7 @@ BeginProc WGod_Sys_Critical_Init
         mov     [PM_Int2FNextCS], ecx
         mov     [PM_Int2FNextEIP], edx
 
-        mov     esi, OFFSET32 WDebugPM_Int2F
+        mov     esi, OFFSET WDebugPM_Int2F
         VxDcall Allocate_PM_Call_Back
 
         movzx   edx, ax                         ;eax has cs:ip
@@ -287,11 +287,11 @@ BeginProc WGod_Sys_Critical_Init
 ;*** hook gp fault
 ;*
         mov     eax,0dh
-        mov     esi,OFFSET32 Fault0DHandler
+        mov     esi,OFFSET Fault0DHandler
         VxDcall Hook_PM_Fault
         cmp     esi,0
         jne     short aretd
-        mov     esi,OFFSET32 JustReturn
+        mov     esi,OFFSET JustReturn
 aretd:
         mov     Old0DHandler,esi
 
@@ -461,7 +461,7 @@ BeginProc Fault07Handler
         pushad
         movzx   edx,[ebp.Client_CS]
         mov     ecx,0
-        mov     edi,OFFSET32 EMUList
+        mov     edi,OFFSET EMUList
 again102:
         cmp     word ptr [edi.E_CS],dx
         je      short fnd102
@@ -622,18 +622,18 @@ BeginProc WGod_Device_Init
 ;*** hook into V86 int 2f chain
 ;*
         mov     eax,02fh
-        mov     esi,OFFSET32 WDebugV86_Int2F
+        mov     esi,OFFSET WDebugV86_Int2F
         VxDcall Hook_V86_Int_Chain
 
 ;*
 ;*** hook div by 0 fault
 ;*
         mov     eax,0
-        mov     esi,OFFSET32 Fault00Handler
+        mov     esi,OFFSET Fault00Handler
         VxDcall Hook_PM_Fault
         cmp     esi,0
         jne     short aret0
-        mov     esi,OFFSET32 JustReturn
+        mov     esi,OFFSET JustReturn
 aret0:
         mov     Old00Handler,esi
 
@@ -641,11 +641,11 @@ aret0:
 ;*** hook illegal instruction fault
 ;*
         mov     eax,6
-        mov     esi,OFFSET32 Fault06Handler
+        mov     esi,OFFSET Fault06Handler
         VxDcall Hook_PM_Fault
         cmp     esi,0
         jne     short aret6
-        mov     esi,OFFSET32 JustReturn
+        mov     esi,OFFSET JustReturn
 aret6:
         mov     Old06Handler,esi
 
@@ -653,11 +653,11 @@ aret6:
 ;*** hook Invalid Page Faults (08-feb-94)
 ;*
 ;       mov     eax,0eh
-;       mov     esi,OFFSET32 Fault0EHandler
+;       mov     esi,OFFSET Fault0EHandler
 ;       VxDcall Hook_PM_Fault
 ;       cmp     esi,0
 ;       jne     short arete
-;       mov     esi,OFFSET32 JustReturn
+;       mov     esi,OFFSET JustReturn
 ;arete:
 ;       mov     Old0EHandler,esi
 
@@ -667,7 +667,7 @@ aret6:
         mov     ax,33                           ; 'F' key
         ShiftState <SS_Either_Ctrl + SS_Either_Alt + SS_Toggle_mask>, <SS_Ctrl + SS_Alt>
         mov     cl,CallOnPress
-        mov     esi,OFFSET32 HotKeyPressed
+        mov     esi,OFFSET HotKeyPressed
         mov     edi,0
         VxDcall VKD_Define_Hot_Key
 
@@ -697,7 +697,7 @@ BeginProc HotKeyPressed
         ret
 useit:
         VxDcall Get_Sys_VM_Handle
-        mov     esi,OFFSET32 HotStop
+        mov     esi,OFFSET HotStop
         VxDcall Schedule_VM_Event
         mov     HotEventHandle,esi
         ret
@@ -801,7 +801,7 @@ FindServerPtrFromName PROC near
         push    esi
         mov     ecx,0
         mov     edi,eax                         ; save string ptr
-        mov     ebx,OFFSET32 Convs              ; first conv
+        mov     ebx,OFFSET Convs              ; first conv
 again9:
         cmp     [ebx.C_InUse],1                 ; active one?
         jne     short skip
@@ -848,7 +848,7 @@ FindServerPtrFromName ENDP
 ;***                                  ***
 ;****************************************
 FindAnyPtr PROC near
-        mov     edx,OFFSET32 Convs
+        mov     edx,OFFSET Convs
         mov     ecx,0
         mov     bl,InUse
         mov     bh,IsServer
@@ -1309,7 +1309,7 @@ EndProc SVC_SetDR
 SetTimer PROC near
         mov     eax,TimeOutTime
         mov     edx,eax                     ; reference data
-        mov     esi,OFFSET32 SampleStuff    ; callback routine
+        mov     esi,OFFSET SampleStuff    ; callback routine
         VxDcall Set_Global_Time_Out
         mov     TimerHandle,esi
         ret
@@ -1756,7 +1756,7 @@ BeginProc SVC_LookForConv
 oklfc:
         mov     ebx,VMHandle                    ; server id
         mov     ecx,0
-        mov     edx,OFFSET32 Convs
+        mov     edx,OFFSET Convs
 again20:
         cmp     [edx.C_InUse],1                 ; in use?
         jne     short nextlfc                   ; nope, skip
@@ -1863,7 +1863,7 @@ oktox:
         ;*
         mov     eax,IDAddr                      ; our data
         mov     eax,[eax.C_MyID]                ; our id
-        mov     edx,OFFSET32 Convs
+        mov     edx,OFFSET Convs
         xor     ecx,ecx
 loopmebaby:
         cmp     [edx.C_InUse],1
@@ -1938,7 +1938,7 @@ put4:
         mov     [edx.C_Off],ax
 
         mov     [ebp.Client_AX],NO_BLOCK
-        mov     esi,OFFSET32 MySuspend
+        mov     esi,OFFSET MySuspend
         mov     edx,VMHandle
         VxDcall Schedule_Global_Event
         ret
@@ -2069,7 +2069,7 @@ EndProc SVC_ConvPut
 ;***********************************************
 SetDataTimeOut PROC near
         mov     edx,IDAddr                  ; reference data - ID ptr
-        mov     esi,OFFSET32 DataTimedOut   ; callback routine
+        mov     esi,OFFSET DataTimedOut   ; callback routine
         VxDcall Set_Global_Time_Out
         ret
 SetDataTimeOut ENDP
@@ -2251,7 +2251,7 @@ TaskSwitched PROC NEAR
         ret                             ; no, leave NOW
 try:
         mov     ecx,0
-        mov     edi,OFFSET32 EMUList
+        mov     edi,OFFSET EMUList
 again_ts:
         cmp     [edi.E_ID],ebx          ; current VM?
         je      short fnd_ts            ; yes, turn on emulation
@@ -2261,7 +2261,7 @@ again_ts:
         jne     short again_ts
         ret
 fnd_ts:
-        mov     esi,OFFSET32 SetCR0
+        mov     esi,OFFSET SetCR0
         VxDcall Schedule_Global_Event
         ret
 TaskSwitched ENDP
@@ -2284,14 +2284,14 @@ BeginProc SVC_EMUInit
 initmebaby:
         cmp     TaskSwitcherActive,1
         je      short yes_active
-        mov     esi,OFFSET32 TaskSwitched
+        mov     esi,OFFSET TaskSwitched
         VxDCall Call_When_Task_Switched
         mov     TaskSwitcherActive,1
 yes_active:
         mov     IsEMUInit,1                     ; flag that we are emulating
 
         mov     eax,07h
-        mov     esi,OFFSET32 Fault07Handler
+        mov     esi,OFFSET Fault07Handler
         VxDcall Hook_PM_Fault                   ; grab int
         jnc     short ok07
         mov     [ebp.Client_AX],1
@@ -2299,7 +2299,7 @@ yes_active:
 ok07:
         cmp     esi,0
         jne     short aret7
-        mov     esi,OFFSET32 JustReturn
+        mov     esi,OFFSET JustReturn
 aret7:
         mov     Old07Handler,esi                ; stash old handler
 
@@ -2365,7 +2365,7 @@ BeginProc SVC_EMURegister
 ;*** find an empty list element
 ;*
         mov     ecx,0
-        mov     edi,OFFSET32 EMUList
+        mov     edi,OFFSET EMUList
 again100:
         cmp     word ptr [edi.E_CS],0
         je      short fnd100
@@ -2410,7 +2410,7 @@ BeginProc SVC_EMUUnRegister
 ;*** find the specified CS
 ;*
         mov     ecx,0
-        mov     eax,OFFSET32 EMUList
+        mov     eax,OFFSET EMUList
         mov     bx,[ebp.Client_DX]
 again101:
         cmp     word ptr [eax.E_CS],bx
@@ -2469,7 +2469,7 @@ BeginProc SVC_EMUSaveRestore
 ;*** find an empty list element
 ;*
         mov     ecx,0
-        mov     edi,OFFSET32 EMUList
+        mov     edi,OFFSET EMUList
         mov     ax,[ebp.Client_DX]
 again103:
         cmp     word ptr [edi.E_CS],ax
@@ -2499,10 +2499,10 @@ fnd103:
         mov     [ebp.Client_CS],cs
         mov     [ebp.Client_DS],ds
 
-        mov     [ebp.Client_EIP],OFFSET32 just_an_fsave
+        mov     [ebp.Client_EIP],OFFSET just_an_fsave
         cmp     [ebp.Client_SI],0
         jne     short label199
-        mov     [ebp.Client_EIP],OFFSET32 just_an_frstor
+        mov     [ebp.Client_EIP],OFFSET just_an_frstor
 label199:
         mov     ebx,VMHandle
         movzx   edx,[edi.E_CS]
@@ -2802,7 +2802,7 @@ BeginProc SVC_HookIDT
 
         mov     byte ptr [esi+5],0eeh           ; ring 3, present, 386 gate
         mov     word ptr [esi+2], cs            ; segment
-        mov     edx, OFFSET32 Int01IDT
+        mov     edx, OFFSET Int01IDT
         mov     word ptr [esi], dx              ; lo word of offset
         shr     edx,16
         mov     word ptr [esi+6], dx            ; hi word of offset
@@ -2811,7 +2811,7 @@ BeginProc SVC_HookIDT
 
         mov     byte ptr [esi+5],0eeh           ; ring 3, present, 386 gate
         mov     word ptr [esi+2], cs            ; segment
-        mov     edx, OFFSET32 Int03IDT
+        mov     edx, OFFSET Int03IDT
         mov     word ptr [esi], dx              ; lo word of offset
         shr     edx,16
         mov     word ptr [esi+6], dx            ; hi word of offset
@@ -2879,7 +2879,7 @@ EndProc SVC_IDTInit
 ;***                                           ***
 ;*************************************************
 BeginProc SVC_ConvPutPending
-        mov     edx,OFFSET32 Convs
+        mov     edx,OFFSET Convs
         xor     ecx,ecx
 loopmetoo:
         cmp     [edx.C_InUse],1
@@ -2939,7 +2939,7 @@ BeginProc SVC_RaiseInterruptInVM
         call    GetIDFrom_CX_BX
         mov     ebx,eax
         movzx   edx,[ebp.Client_DX]
-        mov     esi, OFFSET32 RaiseInterrupt
+        mov     esi, OFFSET RaiseInterrupt
         VxDcall Schedule_VM_Event
         mov     [ebp.Client_AX],0
         ret
