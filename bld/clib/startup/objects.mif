@@ -222,4 +222,12 @@ axp_xd_opts=-xd
 main2wnt_opts=$($(processor)_xd_opts)
 main4wnt_opts=$($(processor)_xd_opts)
 
+abort_postopts   =-os
+atexit_postopts  =-os
+dmaino32_postopts=-os
+exit_postopts    =-os
+maino16_postopts =-os
+maino32_postopts =-os
+seterrno_postopts=-os
+
 no_truncate_object_code=1
