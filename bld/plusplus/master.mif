@@ -537,7 +537,7 @@ ytab.c ytab.gh : ..\y\plusplus.y ..\c\yydriver.c
     $(yacc) -b -d -f -t -u $[@ $]@ >y.out
     diff y.out ..\y\check.out
     if exist ytab.gh del ytab.gh >nul
-    rename ytab.h ytab.gh
+    ren ytab.h ytab.gh
 
 cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : $(fe_misc_dir)\c\optencod.c ..\gml\options.gml
     $(bld_cl) $[@ $(wcl_util_opts) -i$(fe_misc_dir)\h
