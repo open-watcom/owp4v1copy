@@ -51,9 +51,11 @@ Options:                    ( /option is also supported )
 -nt=<name>          set name of text segment
 -o                  allow C form of octal constants
 -zq or -q           operate quietly
--?                  print this message
+-zld                suppress generation of file dependency info in object file
+-? or h             print this message
 -w<number>          set warning level number
 -we                 treat all warnings as errors
+-wx                 set warning level to the highest level
 
 :elsesegment JAPANESE
 Žg—p•û–@: wasm [options] file [options] [@env_var]

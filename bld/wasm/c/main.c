@@ -310,6 +310,7 @@ static void SetFPU(void)
         break;
     case 3:
     case 5:
+    case 6:
         token = T_DOT_387;
         break;
     }
@@ -396,6 +397,8 @@ static void Set_ZLD(void) { Options.emit_dependencies = FALSE; }
 
 static void Set_ZQ(void) { Options.quiet = TRUE; }
 
+static void HelpUsage(void) { usage_msg();}
+
 #ifdef DEBUG_OUT
 static void Set_D6(void) { Options.debug = TRUE; DebugMsg(( "debugging output on \n" )); }
 #endif
@@ -407,7 +410,9 @@ static struct option const cmdl_options[] = {
     { "3$",     3,        SetCPU },
     { "4$",     4,        SetCPU },
     { "5$",     5,        SetCPU },
+    { "6$",     6,        SetCPU },
     { "7$",     7,        SetCPU },
+    { "?",      0,        HelpUsage },
     { "bt=$",   0,        Set_BT },
     { "c",      0,        Set_C },
     { "d0",     0,        Set_D },
@@ -428,10 +433,12 @@ static struct option const cmdl_options[] = {
     { "fp2",    2,        SetFPU },
     { "fp3",    3,        SetFPU },
     { "fp5",    5,        SetFPU },
+    { "fp6",    6,        SetFPU },
     { "fpi87",  '7',      SetFPU },
     { "fpi",    'i',      SetFPU },
     { "fpc",    'c',      SetFPU },
     { "fr=@",   0,        Set_FR },
+    { "h",      0,        HelpUsage },
     { "hc",     'c',      Ignore },
     { "hd",     'd',      Ignore },
     { "hw",     'w',      Ignore },
