@@ -49,7 +49,7 @@
 #undef  _BANEXTRA
 #define _BANEXTRA _BANEXSHORT
 
-#if defined(__OS2) || defined(__NT)
+#if defined(__OS2) || defined(__NT) || defined(__LINUX__)
 #define MAX_CMD 10240
 #else
 #define MAX_CMD 130
