@@ -1,5 +1,5 @@
 proj_name = editdll
-name = weditviw
+name = wedit
 
 sys_dll = 1
 
@@ -24,8 +24,9 @@ lflags_nt_386 += initinstance terminstance
 lflags_win_i86 += initinstance memory
 
 extra_l_flags = op map, verbose, static, heapsize=8k
-extra_l_flags_win = op stack=20k lib windows, ddeml export WEP RESIDENT
+extra_l_flags += option description 'Open Watcom Editor DLL for VIW'
+extra_l_flags_win = op stack=20k lib ddeml export WEP RESIDENT
 extra_l_flags_nt = op stack=40k
 
-$(name).dll : $(name).obj
-        $(linker) $(lflags) name $(name) file $(name)
+wedit.dll : weditviw.obj
+        $(linker) $(lflags) name wedit option modname=wedit file weditviw

@@ -15,19 +15,20 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\editdll\epm\epmlink.dll  <relroot>\rel2\binp\dll\
-    <CPCMD> <devdir>\editdll\viw\objwin\weditviw.dll <relroot>\rel2\binw\weditviw.dll
-    <CPCMD> <devdir>\editdll\viw\objnt\weditviw.dll <relroot>\rel2\binnt\weditviw.dll
+    <CPCMD> <devdir>\editdll\epm\wedit.dll  <relroot>\rel2\binp\dll\weditepm.dll
 
-    <CPCMD> <devdir>\editdll\cw\wini86\weditcw.dll <relroot>\rel2\binw\weditcw.dll
-    <CPCMD> <devdir>\editdll\cw\nt386\weditcwn.dll <relroot>\rel2\binnt\weditcw.dll
-    <CPCMD> <devdir>\editdll\cw\weditcw.c <relroot>\rel2\src\editdll\weditcw.c
-    <CPCMD> <devdir>\editdll\cw\weditcw.h <relroot>\rel2\src\editdll\weditcw.h
-    <CPCMD> <devdir>\editdll\cw\weditcw.lnk <relroot>\rel2\src\editdll\weditcw.lnk
-    <CPCMD> <devdir>\editdll\cw\weditcwn.lnk <relroot>\rel2\src\editdll\weditcwn.lnk
-    <CPCMD> <devdir>\editdll\cw\makefile <relroot>\rel2\src\editdll\makefile
+    <CPCMD> <devdir>\editdll\viw\wini86\wedit.dll <relroot>\rel2\binw\weditviw.dll
+    <CPCMD> <devdir>\editdll\viw\nt386\wedit.dll <relroot>\rel2\binnt\weditviw.dll
+
+    <CPCMD> <devdir>\editdll\cw\wini86\wedit.dll <relroot>\rel2\binw\weditcw.dll
+    <CPCMD> <devdir>\editdll\cw\nt386\wedit.dll <relroot>\rel2\binnt\weditcw.dll
+
     <CPCMD> <devdir>\editdll\wedit.h <relroot>\rel2\src\editdll\wedit.h
     <CPCMD> <devdir>\editdll\wedit.doc <relroot>\rel2\src\editdll\wedit.doc
+
+    <CPCMD> <devdir>\editdll\cw\nt386\wedit.lib <relroot>\rel2\src\editdll\nt\wedit.lib
+    <CPCMD> <devdir>\editdll\cw\wini86\wedit.lib <relroot>\rel2\src\editdll\win\wedit.lib
+    <CPCMD> <devdir>\editdll\epm\wedit.lib <relroot>\rel2\src\editdll\os2\wedit.lib
 
 [ BLOCK <1> clean ]
 #==================
