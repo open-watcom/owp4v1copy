@@ -31,7 +31,6 @@
 
 
 #include <stdio.h>
-#include <dos.h>
 #include <signal.h>
 #include <setjmp.h>
 #include "vi.h"

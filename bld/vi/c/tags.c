@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support for ctags style tags.
 *
 ****************************************************************************/
 
@@ -34,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
+#include "posix.h"
 #include "vi.h"
 #include "keys.h"
 #include "rxsupp.h"
@@ -103,7 +102,7 @@ int TagHunt( char *str )
  */
 int FindTag( char *tag )
 {
-    extern char near META[];
+    extern char _NEAR META[];
     int         rc,omag;
     char        *oldms;
 

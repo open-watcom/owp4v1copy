@@ -24,18 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 mouse interface functions.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
-#include <dos.h>
 #include "vi.h"
 #include "mouse.h"
 #define INCL_BASE
-#include "os2.h"
+#include <os2.h>
 
 static bool mouseHasTwoButtons = FALSE;
 static HMOU mouseHandle;

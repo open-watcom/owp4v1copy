@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 specific system interface functions.
 *
 ****************************************************************************/
 
@@ -33,7 +32,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <dos.h>
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Autosave support.
 *
 ****************************************************************************/
 
@@ -35,11 +34,13 @@
 #include <string.h>
 #include <time.h>
 #ifdef __WATCOMC__
-#include <process.h>
-#include <share.h>
-#define sopen4 sopen
+  #include <process.h>
+  #include <share.h>
+  #define sopen3 sopen
+  #define sopen4 sopen
 #else
-#define sopen4(a,b,c,d) open(a,b,d)
+  #define sopen3(a,b,c)   open(a,b)
+  #define sopen4(a,b,c,d) open(a,b,d)
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -233,7 +234,7 @@ bool LostFileCheck( void )
     off = strlen( path ) - 5;
     for( ch =START_CHAR;ch<=END_CHAR;ch++ ) {
         path[ off ] = ch;
-        handle = sopen( path, O_RDONLY | O_TEXT, SH_DENYRW );
+        handle = sopen3( path, O_RDONLY | O_TEXT, SH_DENYRW );
         if( handle > 0 ) {
             MakeTmpPath( path, checkFileName );
             path[ off ] = ch;
@@ -345,7 +346,7 @@ void AutoSaveInit( void )
         for( ch =START_CHAR;ch<=END_CHAR;ch++ ) {
             as_path[ off ] = ch;
             asl_path[ off ] = ch;
-            handle = sopen( as_path, O_RDONLY | O_TEXT, SH_DENYRW );
+            handle = sopen3( as_path, O_RDONLY | O_TEXT, SH_DENYRW );
             if( handle < 0 ) {
                 continue;
             }

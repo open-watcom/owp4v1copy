@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declaration of editor global variables.
 *
 ****************************************************************************/
 
@@ -34,21 +33,21 @@
 #define _GLOBALS_INCLUDED
 
 /* strings */
-extern char near TITLE[];
-extern char near AUTHOR[];
-extern char near VERSIONT[];
-extern char near DATESTAMP_T[];
-extern char near DATESTAMP_D[];
-extern char near MSG_CHARACTERS[];
-extern char near MSG_LINES[];
-extern char near MSG_PRESSANYKEY[];
-extern char near MSG_DELETEDINTOBUFFER[];
-extern char near CONFIG_FILE[];
-extern char near MEMORIZE_MODE[];
-extern char near SingleBlank[];
-extern char near SingleSlash[];
-extern char near *near EditOpts[];
-extern char near * near BoolStr[];
+extern char _NEAR TITLE[];
+extern char _NEAR AUTHOR[];
+extern char _NEAR VERSIONT[];
+extern char _NEAR DATESTAMP_T[];
+extern char _NEAR DATESTAMP_D[];
+extern char _NEAR MSG_CHARACTERS[];
+extern char _NEAR MSG_LINES[];
+extern char _NEAR MSG_PRESSANYKEY[];
+extern char _NEAR MSG_DELETEDINTOBUFFER[];
+extern char _NEAR CONFIG_FILE[];
+extern char _NEAR MEMORIZE_MODE[];
+extern char _NEAR SingleBlank[];
+extern char _NEAR SingleSlash[];
+extern char _NEAR * _NEAR EditOpts[];
+extern char _NEAR * _NEAR BoolStr[];
 extern int NumEditOpts;
 
 /* mouse data */
@@ -83,14 +82,14 @@ extern char *GrepDefault;
 extern int LastEvent;
 extern int StackK;
 extern char SpinCount;
-extern char near SpinData[];
+extern char _NEAR SpinData[];
 extern char ExitAttr,VideoPage;
 extern char *Majick,*BndMemory,*EXEName,*HistoryFile,*TagFileName;
 extern char *StaticBuffer;
 extern int CurrFIgnore;
 extern char *FIgnore;
 extern int FcbBlocksInUse;
-extern char * near MatchData[ MAX_SEARCH_STRINGS*2 ];
+extern char * _NEAR MatchData[ MAX_SEARCH_STRINGS*2 ];
 extern int MatchCount;
 extern mark *MarkList;
 extern fcb *FcbThreadHead,*FcbThreadTail;
@@ -124,8 +123,8 @@ extern key_map *KeyMaps,*InputKeyMaps;
 extern int CurrentSavebuf;
 extern int SavebufNumber;
 extern char LastSavebuf;
-extern savebuf near Savebufs[ MAX_SAVEBUFS ];
-extern savebuf near SpecialSavebufs[ MAX_SPECIAL_SAVEBUFS+1 ];
+extern savebuf _NEAR Savebufs[ MAX_SAVEBUFS ];
+extern savebuf _NEAR SpecialSavebufs[ MAX_SPECIAL_SAVEBUFS+1 ];
 extern savebuf *WorkSavebuf;
 
 /* undo data */
@@ -141,7 +140,7 @@ extern char *ScriptBound;
 extern char *InputScriptBound;
 
 /* directory info */
-extern direct_ent * near DirFiles[MAX_FILES];
+extern direct_ent * _NEAR DirFiles[MAX_FILES];
 extern int DirFileCount;
 
 /* window info */
@@ -165,7 +164,7 @@ extern long MaxMemFree,MemoryLeft,MaxMemFreeAfterInit;
 extern cursor_type OverstrikeCursorType,InsertCursorType,NormalCursorType;
 extern int RegExpError;
 extern eflags EditFlags;
-extern char near crlf[];
+extern char _NEAR crlf[];
 extern int LastError,TabAmount,ShiftWidth,HardTab;
 extern int LineNumWinWidth;
 extern int maxdotbuffer;
@@ -174,9 +173,9 @@ extern int DotDigits,DotCount,DotCmdCount,AltDotDigits,AltDotCount;
 extern volatile long ClockTicks;
 extern int RepeatDigits;
 extern bool NoRepeatInfo;
-extern char near RepeatString[MAX_REPEAT_STRING];
+extern char _NEAR RepeatString[MAX_REPEAT_STRING];
 extern int SourceErrCount;
-extern char near SpawnPrompt[];
+extern char _NEAR SpawnPrompt[];
 
 /* file io globals */
 extern int SwapBlocksInUse;
@@ -204,10 +203,10 @@ extern int GreyedMenuColour;
 
 /* parse constants */
 extern int MaxColorTokens,ColorTokensSize;
-extern char near ParseClTokens[];
-extern char near SetTokens1[];
-extern char near SetTokens2[];
-extern char near SetTokens2a[];
+extern char _NEAR ParseClTokens[];
+extern char _NEAR SetTokens1[];
+extern char _NEAR SetTokens2[];
+extern char _NEAR SetTokens2a[];
 
 /* Toolbar constants */
 extern int ToolBarButtonHeight;

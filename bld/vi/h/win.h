@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Screen output and windowing interface.
 *
 ****************************************************************************/
 
@@ -76,12 +75,10 @@ typedef struct wind {
 #define WIND_SIZE sizeof( wind )
 
 #ifndef __NT__
-#pragma pack(1);
 typedef struct {
     char ch;
     char attr;
 } char_info;
-#pragma pack();
 typedef unsigned short cinfo_type;
 #else
 typedef struct {
@@ -231,4 +228,3 @@ extern int WindowCascade(void );
 
 /* filesel.c (Windows only functions) */
 int SelectFileSave( char * );
-

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definition of editor's global variables.
 *
 ****************************************************************************/
 
@@ -37,23 +36,23 @@
 #include "rxsupp.h"
 
 /* strings */
-char near MSG_CHARACTERS[] = "characters";
-char near MSG_LINES[] = "lines";
-char near MSG_PRESSANYKEY[] = "Press any key";
-char near MSG_DELETEDINTOBUFFER[] = " deleted into buffer ";
-char near MEMORIZE_MODE[]="Memorize Mode ";
-char near CONFIG_FILE[] = CFG_NAME;
-char near SingleBlank[] = " ";
-char near SingleSlash[] = "/";
-char near *near BoolStr[] = { "FALSE", "TRUE" };
+char _NEAR MSG_CHARACTERS[] = "characters";
+char _NEAR MSG_LINES[] = "lines";
+char _NEAR MSG_PRESSANYKEY[] = "Press any key";
+char _NEAR MSG_DELETEDINTOBUFFER[] = " deleted into buffer ";
+char _NEAR MEMORIZE_MODE[]="Memorize Mode ";
+char _NEAR CONFIG_FILE[] = CFG_NAME;
+char _NEAR SingleBlank[] = " ";
+char _NEAR SingleSlash[] = "/";
+char _NEAR * _NEAR BoolStr[] = { "FALSE", "TRUE" };
 
 /* edit options */
-char near *near EditOpts[] =  {
+char _NEAR * _NEAR EditOpts[] =  {
     "<F1> Go To",
     "<F2> Edit",
     "<F3> Get All"
 };
-int NumEditOpts = (sizeof( EditOpts )/sizeof( char near * ) );
+int NumEditOpts = (sizeof( EditOpts )/sizeof( char _NEAR * ) );
 
 /* mouse data */
 #if !defined( __LINUX__ ) || defined( PREBUILD )
@@ -82,7 +81,7 @@ char            *GrepDefault;
 int             LastEvent;
 int             StackK=MIN_STACK_K;
 char            SpinCount;
-char            near SpinData[]="Ä\\|/";
+char            _NEAR SpinData[]="Ä\\|/";
 char            ExitAttr=7;
 char            VideoPage;
 char            *EXEName;
@@ -122,7 +121,7 @@ int             CursorBlinkRate=-1;
 /*
  * directory data
  */
-direct_ent      * near DirFiles[MAX_FILES];
+direct_ent      * _NEAR DirFiles[MAX_FILES];
 int             DirFileCount;
 
 /*
@@ -180,8 +179,8 @@ int             _NEAR SavebufBound[ MAX_SAVEBUFS ] =
                           VI_KEY( CTRL_F9 ) };
 int             CurrentSavebuf = 0;     /* this is 0 based */
 char            LastSavebuf;    /* this is 1 based - users see it */
-savebuf         near Savebufs[ MAX_SAVEBUFS ];
-savebuf         near SpecialSavebufs[ MAX_SPECIAL_SAVEBUFS+1 ];
+savebuf         _NEAR Savebufs[ MAX_SAVEBUFS ];
+savebuf         _NEAR SpecialSavebufs[ MAX_SPECIAL_SAVEBUFS+1 ];
 savebuf         *WorkSavebuf = &SpecialSavebufs[ MAX_SPECIAL_SAVEBUFS ];
 int             SavebufNumber=NO_SAVEBUF; /* this is 0 based */
 
@@ -300,11 +299,11 @@ long            MaxMemFree;
 long            MaxMemFreeAfterInit;
 int             RegExpError;
 regexp          *CurrentRegularExpression;
-char            near crlf[] = { 13,10 };
+char            _NEAR crlf[] = { 13,10 };
 cursor_type     OverstrikeCursorType={100,100};
 cursor_type     InsertCursorType={50,0};
 cursor_type     NormalCursorType={7,0};
-char            * near MatchData[ MAX_SEARCH_STRINGS*2 ];
+char            * _NEAR MatchData[ MAX_SEARCH_STRINGS*2 ];
 int             MatchCount=INITIAL_MATCH_COUNT;
 int             LastError;
 int             LineNumWinWidth = 8;
@@ -323,9 +322,9 @@ int             AltDotCount;
 volatile long   ClockTicks;
 int             RepeatDigits;
 bool            NoRepeatInfo;
-char            near RepeatString[MAX_REPEAT_STRING];
+char            _NEAR RepeatString[MAX_REPEAT_STRING];
 int             SourceErrCount;
-char            near SpawnPrompt[ MAX_STR ];
+char            _NEAR SpawnPrompt[ MAX_STR ];
 
 /*
  * windowing data

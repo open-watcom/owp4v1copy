@@ -178,8 +178,8 @@ typedef struct resident {
 /*
  * external defs (from srcdata.c)
  */
-extern char near StrTokens[];
-extern char near SourceTokens[];
+extern char _NEAR StrTokens[];
+extern char _NEAR SourceTokens[];
 extern char *ErrorTokens;
 extern int *ErrorValues;
 extern vars *VarHead,*VarTail;

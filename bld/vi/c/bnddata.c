@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Access data bound into editor executable.
 *
 ****************************************************************************/
 
@@ -37,7 +36,12 @@
 #include <ctype.h>
 #include <string.h>
 #ifdef __WATCOMC__
-#include <share.h>
+  #include <share.h>
+  #define sopen3 sopen
+  #define sopen4 sopen
+#else
+  #define sopen3(a,b,c)   open(a,b)
+  #define sopen4(a,b,c,d) open(a,b,d)
 #endif
 #include "vi.h"
 
@@ -60,7 +64,7 @@ void CheckForBoundData( void )
     /*
      * get trailer
      */
-    h = sopen( EXEName, O_RDONLY | O_BINARY, SH_COMPAT );
+    h = sopen3( EXEName, O_RDONLY | O_BINARY, SH_COMPAT );
     lseek( h, -((long) MAGIC_COOKIE_SIZE+3L), SEEK_END );
     read( h, buff, 3+MAGIC_COOKIE_SIZE );
 
@@ -137,7 +141,7 @@ bool SpecialOpen( char *fn, GENERIC_FILE *gf )
             EditFlags.BndMemoryLocked = TRUE;
 
             if( BndMemory == NULL ) {
-                h = sopen( EXEName, O_RDONLY | O_BINARY, SH_COMPAT );
+                h = sopen3( EXEName, O_RDONLY | O_BINARY, SH_COMPAT );
                 if( h == -1 ) {
                     return( FALSE );
                 }

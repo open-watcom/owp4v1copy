@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spawn external commands.
 *
 ****************************************************************************/
 
@@ -34,17 +33,16 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dos.h>
 #include "vi.h"
 #include "fcbmem.h"
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS
 #include <os2.h>
 
-char near *near ExeExtensions[] = {".cmd", ".exe" };
-int ExeExtensionCount = sizeof( ExeExtensions ) / sizeof( char near * );
+char _NEAR * _NEAR ExeExtensions[] = {".cmd", ".exe" };
+int ExeExtensionCount = sizeof( ExeExtensions ) / sizeof( char _NEAR * );
 
-char near *near InternalCommands[] = {
+char _NEAR * _NEAR InternalCommands[] = {
     "BREAK",
     "CALL",
     "CD",
@@ -85,7 +83,7 @@ char near *near InternalCommands[] = {
     "VERIFY",
     "VOL"
 };
-int InternalCommandCount = sizeof( InternalCommands ) / sizeof( char near * );
+int InternalCommandCount = sizeof( InternalCommands ) / sizeof( char _NEAR * );
 
 void ResetSpawnScreen( void )
 {

@@ -1,7 +1,5 @@
 !ifdef is286
 name_dos_i86 = vi
-!else ifdef vroomed
-name_dos_i86 = viv
 !else
 name_dos_i86 = vi86
 !endif
@@ -38,7 +36,7 @@ ED = $(name_$(host_os)_$(host_cpu))
 !endif
 
 name = $(ED).exe
-!ifeq host_OS qnx
+!ifeq host_os qnx
 name = $(ED).qnx
 !endif
 

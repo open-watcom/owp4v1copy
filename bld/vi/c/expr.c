@@ -39,18 +39,18 @@
 #include "source.h"
 #include "expr.h"
 
-static long near cExpr1( void );
-static long near cExpr2( void );
-static long near cExpr3( void );
-static long near cExpr4( void );
-static long near cExpr5( void );
-static long near cExpr6( void );
-static long near cExpr7( void );
-static long near cExpr8( void );
-static long near cExpr9( void );
-static long near cExpr10( void );
-static long near cExpr11( void );
-static long near cExpr12( void );
+static long _NEAR cExpr1( void );
+static long _NEAR cExpr2( void );
+static long _NEAR cExpr3( void );
+static long _NEAR cExpr4( void );
+static long _NEAR cExpr5( void );
+static long _NEAR cExpr6( void );
+static long _NEAR cExpr7( void );
+static long _NEAR cExpr8( void );
+static long _NEAR cExpr9( void );
+static long _NEAR cExpr10( void );
+static long _NEAR cExpr11( void );
+static long _NEAR cExpr12( void );
 static token nextToken( void );
 
 static char     wasString;
@@ -448,7 +448,7 @@ long GetConstExpr( void )
     return( value );
 }
 
-static long near cExpr1( void )
+static long _NEAR cExpr1( void )
 {
     long value;
 
@@ -460,7 +460,7 @@ static long near cExpr1( void )
     return( value );
 }
 
-static long near cExpr2( void )
+static long _NEAR cExpr2( void )
 {
     long value;
 
@@ -472,7 +472,7 @@ static long near cExpr2( void )
     return( value );
 }
 
-static long near cExpr3( void )
+static long _NEAR cExpr3( void )
 {
     long value;
 
@@ -484,7 +484,7 @@ static long near cExpr3( void )
     return( value );
 }
 
-static long near cExpr4( void )
+static long _NEAR cExpr4( void )
 {
     long value;
 
@@ -496,7 +496,7 @@ static long near cExpr4( void )
     return( value );
 }
 
-static long near cExpr5( void )
+static long _NEAR cExpr5( void )
 {
     long value;
 
@@ -508,7 +508,7 @@ static long near cExpr5( void )
     return( value );
 }
 
-static long doCompare( long val1, long (near *fn)( void ) )
+static long doCompare( long val1, long (_NEAR *fn)( void ) )
 {
     char        tmp1[TBUFF_SIZE];
     char        tmp2[TBUFF_SIZE];
@@ -543,7 +543,7 @@ static long doCompare( long val1, long (near *fn)( void ) )
     return( -1 );
 }
 
-static long near cExpr6( void )
+static long _NEAR cExpr6( void )
 {
     long value;
 
@@ -560,7 +560,7 @@ static long near cExpr6( void )
     return( value );
 }
 
-static long near cExpr7( void )
+static long _NEAR cExpr7( void )
 {
     long value;
 
@@ -582,7 +582,7 @@ static long near cExpr7( void )
     return( value );
 }
 
-static long near cExpr8( void )
+static long _NEAR cExpr8( void )
 {
     long value;
 
@@ -601,7 +601,7 @@ static long near cExpr8( void )
     return( value );
 }
 
-static long near cExpr9( void )
+static long _NEAR cExpr9( void )
 {
     long value;
 
@@ -620,7 +620,7 @@ static long near cExpr9( void )
     return( value );
 }
 
-static long near cExpr10( void )
+static long _NEAR cExpr10( void )
 {
     long value;
     long temp;
@@ -653,7 +653,7 @@ static long near cExpr10( void )
     return( value );
 }
 
-static long near cExpr11( void )
+static long _NEAR cExpr11( void )
 {
     long        value,v2,v3;
     long        i;
@@ -672,7 +672,7 @@ static long near cExpr11( void )
 }
 
 
-static long near cExpr12( void )
+static long _NEAR cExpr12( void )
 {
     long value;
 

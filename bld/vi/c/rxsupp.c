@@ -37,7 +37,7 @@
 #include "vi.h"
 #include "rxsupp.h"
 
-extern char near META[];
+extern char _NEAR META[];
 
 /*
  * CurrentRegComp - compile current regular expression

@@ -24,38 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  determine the flavour of VI
+* Description:  Determine the flavour du jour of editor.
 *
 ****************************************************************************/
 
 
 #include "control.h"
-#if defined(__WINDOWS_386__)
+#if defined( __WINDOWS_386__ )
 char TITLE[] = "vi/win386";
-#elif defined(__WINDOWS__)
+#elif defined( __WINDOWS__ )
 char TITLE[] = "vi/win";
-#elif defined(__OS2V2__)
+#elif defined( __OS2V2__ )
 char TITLE[] = "vi/os2v2";
-#elif defined(__OS2__)
+#elif defined( __OS2__ )
 char TITLE[] = "vi/os2";
-#elif defined(__NT__)
-#if defined(__WIN__)
+#elif defined( __NT__ )
+#if defined( __WIN__ )
 char TITLE[] = "vi/ntwin";
 #else
 char TITLE[] = "vi/nt";
 #endif
-#elif defined(__PHAR__) || defined(__4G__)
+#elif defined( __PHAR__ ) || defined( __4G__ )
 char TITLE[] = "vi/386";
-#elif defined(__QNX__)
+#elif defined( __QNX__ )
 char TITLE[] = "vi/qnx";
-#elif defined(__LINUX__)
+#elif defined( __LINUX__ )
 char TITLE[] = "vi/linux";
-#elif defined(__286__)
-#if defined(__V__)
-char TITLE[] = "vi/286v";
-#else
+#elif defined( __286__ )
 char TITLE[] = "vi/286";
-#endif
 #else
 char TITLE[] = "vi/86";
 #endif

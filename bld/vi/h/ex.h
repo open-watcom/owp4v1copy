@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface for 'ex' emulation routines.
 *
 ****************************************************************************/
 
@@ -55,7 +54,7 @@ EX_T_EQUALS
 /*
  * external defs (from exdata.c)
  */
-extern char near ExTokens[];
+extern char _NEAR ExTokens[];
 
 /*
  * function prototypes

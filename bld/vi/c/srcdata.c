@@ -37,7 +37,7 @@
 /*
  * language tokens
  */
-char near SourceTokens[] = {
+char _NEAR SourceTokens[] = {
 "EXPR\0"
 "LABEL\0"
 "IF\0"
@@ -67,7 +67,7 @@ char near SourceTokens[] = {
 "\0"
 };
 
-char near StrTokens[] = {
+char _NEAR StrTokens[] = {
 "SUBSTR\0"
 "STRLEN\0"
 "STRCHR\0"

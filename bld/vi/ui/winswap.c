@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Swap window data to disk.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include "posix.h"
 #include "vi.h"
 #include "win.h"
 

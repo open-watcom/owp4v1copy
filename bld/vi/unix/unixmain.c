@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for Unix systems.
 *
 ****************************************************************************/
 
@@ -36,19 +35,19 @@
 #include <malloc.h>
 #ifdef __WATCOMC__
 #include <process.h>
+#include "stack.h"
 #endif
 #include "vi.h"
 #include "source.h"
-#include "stack.h"
 
 #ifndef __WATCOMC__
 int _argc;
 char **_argv;
 #endif
 
-void main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
-    static char buffer[PATH_MAX];
+    static char buffer[_MAX_PATH];
     argc = argc;
 #ifndef __WATCOMC__
     _argc = argc;
@@ -65,5 +64,6 @@ void main( int argc, char *argv[] )
     FinalStack();
 #endif
     EditMain();
+    return( 0 );
 
 } /* main */

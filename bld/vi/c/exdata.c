@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Tokens used in 'ex' emulation.
 *
 ****************************************************************************/
 
@@ -37,7 +36,7 @@
 /*
  * language tokens
  */
-char near ExTokens[] = {
+char _NEAR ExTokens[] = {
 "Append\0"
 "Change\0"
 "COpy\0"

@@ -24,41 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RCS interface.
 *
 ****************************************************************************/
 
 
 #ifdef __WIN__
-    #ifndef STRICT
+  #ifndef STRICT
     #define STRICT
-    #endif
-    #include <windows.h>
+  #endif
+  #include <windows.h>
 #endif
 
 #if defined( __NT__ )
-    typedef const char *rcsstring;
-    typedef void *rcsdata;
-#if defined( __AXP__ )
+  typedef const char *rcsstring;
+  typedef void *rcsdata;
+  #if defined( __AXP__ )
     #define RCSAPI      __export __stdcall
-#else
+  #else
     #pragma aux __fortran "*" parm [] modify [ eax ecx edx ];
     #define RCSAPI      __export __fortran
-#endif
+  #endif
 #elif defined( __WINDOWS__ )
-    typedef const char far *rcsstring;
-    typedef void far *rcsdata;
-    #define RCSAPI      __export far pascal
+  typedef const char far *rcsstring;
+  typedef void far *rcsdata;
+  #define RCSAPI      __export far pascal
 #elif defined( __OS2__ )
-    typedef const char *rcsstring;
-    typedef void *rcsdata;
-    #define RCSAPI      __export _syscall
-#elif defined( __DOS__ ) || defined( __UNIX__ )
-    #define RCSAPI // typedefs in api.h
-#else
-    #error Unsupported OS
+  typedef const char *rcsstring;
+  typedef void *rcsdata;
+  #ifdef __WATCOMC__
+    #define RCSAPI      __export _System
+  #else
     #define RCSAPI
+  #endif  
+#elif defined( __DOS__ ) || defined( __UNIX__ )
+  #define RCSAPI // typedefs in api.h
+#else
+  #error Unsupported OS
+  #define RCSAPI
 #endif
 
 #if defined( __NT__ ) || defined( __WINDOWS__ ) || defined( __OS2__ )

@@ -154,7 +154,7 @@ typedef struct {
     #ifdef __WINDOWS_386__
         typedef unsigned short window_id;
     #else
-        typedef const void near * window_id;
+        typedef const void _NEAR * window_id;
     #endif
 #endif
 #else

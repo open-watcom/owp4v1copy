@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definition of editor constants.
 *
 ****************************************************************************/
-
 
 
 #ifndef _CONST_INCLUDED
@@ -60,7 +58,7 @@ typedef enum {
     USE_UNDO_UNDO = 0x02
 } linedel_flags;
 
-#if defined( __UNIX__ )
+#if defined( __UNIX__ ) || defined( __IBMC__ )
     #define _A_NORMAL       0x00    /* Normal file - read/write permitted */
     #define _A_RDONLY       0x01    /* Read-only file */
     #define _A_HIDDEN       0x02    /* Hidden file */
@@ -68,23 +66,21 @@ typedef enum {
     #define _A_VOLID        0x08    /* Volume-ID entry */
     #define _A_SUBDIR       0x10    /* Subdirectory */
     #define _A_ARCH         0x20    /* Archive file */
-
+#endif
+    
+#if defined( __UNIX__ )
     #define FILE_SEP            '/'
     #define FILE_SEP_STR        "/"
     #define ALL_FILES_WILD_CARD "*"
+    #define TMP_NAME_LEN        18
 #else
     #define FILE_SEP            '\\'
     #define FILE_SEP_STR        "\\"
     #define ALL_FILES_WILD_CARD "*.*"
-#endif
-
-#define NAMEWIDTH 14
-#ifdef __UNIX__
-    #define TMP_NAME_LEN        18
-#else
     #define TMP_NAME_LEN        14
 #endif
 
+#define NAMEWIDTH       14
 #define MAX_NUM_STR     48
 
 /*

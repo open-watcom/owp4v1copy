@@ -35,9 +35,9 @@
 #include <string.h>
 #include "vi.h"
 
-extern char  near * near ExeExtensions[];
+extern char  _NEAR * _NEAR ExeExtensions[];
 extern int ExeExtensionCount;
-extern char near * near InternalCommands[];
+extern char _NEAR * _NEAR InternalCommands[];
 extern int InternalCommandCount;
 
 void GetSpawnCommandLine( char *path, char *cmdl, cmd_struct *cmds )

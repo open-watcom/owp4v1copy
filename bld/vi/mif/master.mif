@@ -43,12 +43,6 @@ extra_c_flags +=-DPREBUILD
 videps =
 !endif
 
-!ifdef vroomed
-start_flags += begin section
-more_flags = autosection
-final_flags = end
-!endif
-
 !ifdef sys_windowed
 bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif

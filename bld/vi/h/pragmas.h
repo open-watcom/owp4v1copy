@@ -60,10 +60,10 @@ extern short BIOSGetCursor( char );
 extern void BIOSSetCursor( char, char, char );
 extern void BIOSNewCursor( char, char );
 extern long BIOSGetColorRegister( short );
-extern char near *GetSP( void );
-extern char near *GetBP( void );
-extern void SetBP( char near * );
-extern void SetSP( char near * );
+extern char _NEAR *GetSP( void );
+extern char _NEAR *GetBP( void );
+extern void SetBP( char _NEAR * );
+extern void SetSP( char _NEAR * );
 extern char IsWindows( void );
 
 #if defined(__WATCOMC__) && defined(__X86__)

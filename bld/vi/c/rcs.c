@@ -79,6 +79,7 @@ extern RCSFiniFn                RCSFini = NULL;
     APIRET APIENTRY  DosFreeModule(HMODULE hmod);
     APIRET APIENTRY  DosQueryProcAddr(HMODULE hmod, ULONG ordinal, PSZ pszName,PFN* ppfn);
     #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
+    static void getFunctionPtrs();
 
     int ViRCSInit()
     {

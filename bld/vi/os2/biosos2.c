@@ -87,7 +87,7 @@ void BIOSGetColorPalette( void _FAR *palette )
 {
     VIOPALSTATE         *pal_state;
     USHORT              size, i;
-    char far            *pal = palette;
+    char _FAR           *pal = palette;
 
     size = sizeof( VIOPALSTATE ) + sizeof( USHORT )*(MAX_COLOR_REGISTERS - 1);
     pal_state = MemAlloc( size );

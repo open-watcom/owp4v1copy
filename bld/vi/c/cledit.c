@@ -369,13 +369,13 @@ EVIL_CONTINUE:
 #endif
 
 #ifndef __WIN__
-static char near *near fileOpts[] =  {
+static char _NEAR *_NEAR fileOpts[] =  {
 "<F1> Go To",
 "<F2> Quit",
 "<F3> Save & Quit"
 };
 
-#define NUM_OPTS sizeof( fileOpts )/sizeof( char near * )
+#define NUM_OPTS sizeof( fileOpts )/sizeof( char _NEAR * )
 
 /*
  * EditFileFromList - edit from file in current active list

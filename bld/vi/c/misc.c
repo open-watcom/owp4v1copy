@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  A hodgepodge of miscellaneous functions.
 *
 ****************************************************************************/
 
@@ -37,26 +36,26 @@
 #include <ctype.h>
 
 #ifdef _M_I86
-#include <i86.h>
+ #include <i86.h>
 #endif
 #include <errno.h>
 #ifdef __WATCOMC__
-#include <env.h>
-#include <process.h>
+  #include <env.h>
+  #include <process.h>
 #endif
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <assert.h>
 #include "vi.h"
 #ifdef __WIN__
-#include "winvi.h"
+  #include "winvi.h"
 #endif
 #include "source.h"
+#include "posix.h"
 #include "win.h"
 #ifdef __NT__
-    #include <windows.h>
-    extern HANDLE       OutputHandle;
+  #include <windows.h>
+  extern HANDLE       OutputHandle;
 #endif
 
 static char *oldPrompt;
