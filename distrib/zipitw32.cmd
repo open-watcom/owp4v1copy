@@ -1,5 +1,5 @@
 @echo off
-echo Building '%1'...
+echo Building 'w32api'...
 cd %relroot%\%defrel%
-comstrip %distroot%\manifest\%1 | zip %distroot%\archives\%1.zip -@ >> %distroot%\mkzips.log 2>&1
+comstrip %distroot%\manifest\w32api | zip %distroot%\archives\w32api.zip -@ >> %distroot%\mkzips.log 2>&1
 cd %distroot%
