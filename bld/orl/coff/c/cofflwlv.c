@@ -171,7 +171,15 @@ orl_return CoffCreateSymbolHandles( coff_file_handle file_hnd )
                 }
                 break;
             case IMAGE_SYM_CLASS_FUNCTION:
-                current->binding = ORL_SYM_BINDING_LOCAL;
+                // The .bf, .lf and .ef symbols are not regular symbols
+                // and their values in particular must not be interpreted
+                // as offsets/addresses.
+                if( !memcmp( current->name, ".bf", 4 )
+                    || !memcmp( current->name, ".lf", 4 )
+                    || !memcmp( current->name, ".ef", 4 ) )
+                    current->binding = ORL_SYM_BINDING_NONE;
+                else
+                    current->binding = ORL_SYM_BINDING_LOCAL;
                 current->type |= ORL_SYM_TYPE_FUNC_INFO;
                 break;
             case IMAGE_SYM_CLASS_FILE:

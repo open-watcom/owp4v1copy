@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Disassembler pass 2.
 *
 ****************************************************************************/
 
@@ -280,7 +279,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             // of the displacement in a relative call and get a bad
             // offset, due to CORE implementation
             //
-            // Main reason : 
+            // Main reason :
             // instruction size with displacement and with addend is correct for
             // relative addresses without relocate
             //
@@ -547,6 +546,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         DisDecode( &DHnd, &contents[data.loop], &decoded );
         if( sec_label_list ) {
             if( l_entry != NULL &&
+                l_entry->binding != ORL_SYM_BINDING_NONE &&
                 l_entry->offset > data.loop &&
                 l_entry->offset < ( data.loop + decoded.size ) ) {
                 /*
