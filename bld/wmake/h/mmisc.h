@@ -45,6 +45,8 @@ extern int _fFNameCmp( const char FAR *a, const char FAR *b );
 extern const char *DoWildCard( const char *base );
 extern int KWCompare( const char **p1, const char **p2 );
 extern char *SkipWS( const char *p );
+extern char *FindNextWS( char *str );
+extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src );
 extern int PutEnvSafe( ENV_TRACKER *env );
 #ifndef NDEBUG
 extern void PutEnvFini( void );

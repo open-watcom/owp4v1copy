@@ -1025,7 +1025,6 @@ STATIC RET_T handleEcho( const char *cmd )
     return( RET_SUCCESS );
 }
 
-
 STATIC RET_T handleIf( const char *cmd )
 /***************************************
  *          { ERRORLEVEL <number> }
@@ -1087,7 +1086,10 @@ STATIC RET_T handleIf( const char *cmd )
         PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_IF ] );
         return( RET_ERROR );
     }
-    while( !isws( *p ) && *p != NULLCHAR ) ++p;
+
+    //while( !isws( *p ) && *p != NULLCHAR ) ++p;
+    p = FindNextWS( p );
+
     if( *p == NULLCHAR ) {
         PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_IF ] );
         return( RET_ERROR );
@@ -1098,8 +1100,14 @@ STATIC RET_T handleIf( const char *cmd )
         *p = NULLCHAR;
         condition = lastErrorLevel >= atoi( tmp2 );
     } else if( stricmp( tmp1, "EXIST" ) == 0 ) {
+        char tmp3[_MAX_PATH];
+
         *p = NULLCHAR;
-        file = DoWildCard( tmp2 );
+
+        // handle long filenames
+        RemoveDoubleQuotes( tmp3, sizeof(tmp3), tmp2 );
+
+        file = DoWildCard( tmp3 );
         condition = file != NULL && CacheExists( file );
         if( condition ) {
             while( DoWildCard( NULL ) != NULL )
@@ -1326,7 +1334,10 @@ STATIC RET_T handleFor( const char *line )
     hold = *set;
     while( hold != NULLCHAR ) {
         subst = set;        /* remember start of subst string */
-        while( *set != NULLCHAR && !isws( *set ) ) ++set;
+
+        //while( *set != NULLCHAR && !isws( *set ) ) ++set;
+        set = FindNextWS( set );
+
         hold = *set;
         *set = NULLCHAR;
 

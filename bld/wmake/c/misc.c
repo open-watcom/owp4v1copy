@@ -43,6 +43,7 @@
 #include "mmisc.h"
 #include "mpathgrp.h"
 #include "mtypes.h"
+#include "mlex.h"
 
 #if ! defined(__UNIX__)
  #define CHECK_MASK( attr ) if((attr & IGNORE_MASK)==0) break
@@ -59,6 +60,102 @@ extern char *SkipWS( const char *p )
     return( (char *)p );
 }
 
+extern char *FindNextWS( char *str )
+/***********************************
+ * Finds next free white space character, allowing doublequotes to
+ * be used to specify strings with white spaces.
+ */
+{
+    char string_open = 0;
+
+    while( *str != NULLCHAR ) {
+        if ( *str == BACKSLASH ) {
+            str++;
+            if (*str != NULLCHAR)
+            {
+                if ( !string_open && isws ( *str ) ) {
+                    break;
+                }
+                str++;
+            }
+        } else
+        {
+            if ( *str == DOUBLEQUOTE ) {
+                string_open = !string_open;
+                str++;
+            } else {
+                if ( string_open ) {
+                    str++;
+                } else {
+                    if ( isws( *str ) ) break;
+                    str++;
+                }
+            }
+        }
+    }
+
+    return str;
+}
+
+extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
+/***********************************************************************
+ * Removes doublequote characters from string and copies other content
+ * from src to dst. Only maxlen number of characters are copied to dst
+ * including terminating NUL character.
+ */
+{
+    char *orgdst = dst;
+    char string_open = 0;
+    int pos = 0;
+    int t;
+
+    assert( maxlen );
+
+    // leave space for NUL terminator
+    maxlen--;
+
+    while( pos < ( maxlen - 1 ) ) {
+        t = *src++;
+
+        if ( t == NULLCHAR ) break;
+
+        if ( t == BACKSLASH ) {
+            t = *src++;
+
+            if ( t == DOUBLEQUOTE ) {
+                *dst++ = DOUBLEQUOTE;
+                pos++;
+            } else {
+                *dst++ = BACKSLASH;
+                pos++;
+
+                if ( pos < ( maxlen - 1 ) ) {
+                    *dst = t;
+                    pos++;
+                }
+            }
+        } else {
+            if ( t == DOUBLEQUOTE ) {
+                string_open = !string_open;
+            } else {
+                if ( string_open ) {
+                    *dst++ = t;
+                    pos++;
+                } else
+                if ( isws( t ) ) {
+                    break;
+                } else {
+                    *dst++ = t;
+                    pos++;
+                }
+            }
+        }
+    }
+
+    *dst = NULLCHAR;
+
+    return orgdst;
+}
 
 #if defined( __DOS__ )
 
