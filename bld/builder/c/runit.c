@@ -287,11 +287,12 @@ static int mkdir_nested( char *path )
     /* special case for drive letters */
     if( p[0] && p[1] && p[1] == ':' ) {
         p += 2;
-        if( (p[0] == '/') || (p[0] == '\\') )
-            ++p;
     }
 #endif
-
+    /* skip initial path separator if present */
+    if( (p[0] == '/') || (p[0] == '\\') )
+        ++p;
+	  
     /* find the next path component */
     while( p < end ) {
         while( (p < end) && (*p != '/') && (*p != '\\') )
