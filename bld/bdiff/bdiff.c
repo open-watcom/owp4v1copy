@@ -1098,7 +1098,7 @@ void VerifyCorrect( char *name )
     }
 }
 
-int HoleCompare( region *h1, region *h2 )
+int HoleCompare(const region *h1, const region *h2)
 {
     if( h1->diff < h2->diff ) return( -1 );
     if( h1->diff > h2->diff ) return( 1 );
@@ -1154,7 +1154,7 @@ void OutStr( char *str )
 
 #define MIN_ITERS (sizeof(patch_cmd)+sizeof(hole)+sizeof(foff)+sizeof(foff))
 
-int FOffCompare( region *h1, region *h2 )
+int FOffCompare(const region *h1, const region *h2)
 {
     if( h1->new_start < h2->new_start ) return( -1 );
     if( h1->new_start > h2->new_start ) return( 1 );
@@ -1182,7 +1182,7 @@ long HolesToDiffs() {
 
         /* sort by file offset */
 
-        qsort( HoleArray, NumHoles, sizeof( region ), FOffCompare );
+        qsort(HoleArray, NumHoles, sizeof( region ), FOffCompare );
 
         end = HoleArray + NumHoles - 1;
         next = HoleArray+1;
