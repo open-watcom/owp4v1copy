@@ -106,6 +106,11 @@ unsigned char InitClassTable[] = {
     '\0',       0
 };
 
+static void UnGetChar( int c );
+static int ScanString( void );
+static int CharConst( int char_type );
+static void ScanComment( void );
+
 void ReScanInit( char *ptr )                            /* 28-oct-92 */
 {
     ReScanPtr = ptr;
@@ -577,7 +582,7 @@ static cnv_cc Cnv16( void ){
     value = 0;
     while( --len > 0 ){
         c = *curr;
-        if( value & 0xF0000000 )goto is64; /* 64 bit */
+        if( value & 0xF0000000 ) goto is64; /* 64 bit */
         if( CharSet[ c ] & C_HX ){
             c = (( c | HEX_MASK ) - HEX_BASE ) + 10 + '0';
         }
@@ -642,17 +647,19 @@ is64:
     return( ret );
 }
 
-int ScanNum()
+static int ScanNum( void )
 {
     int                 c;
     int                 bad_token_type;
     cnv_cc              ov;
+
     struct {
         enum{ CON_DEC, CON_HEX, CON_OCT, CON_ERR }form;
         enum { SUFF_NONE,SUFF_U, SUFF_L,SUFF_UL,  SUFF_I, SUFF_UI,
                SUFF_LL,SUFF_ULL } suffix;
     }con;
 
+    ov = CNV_32;
     Constant = 0;
     TokenLen = 1;
     c = CurrChar;
@@ -845,6 +852,8 @@ int ScanNum()
         case SUFF_UL:
             ConstType = TYPE_ULONG;
             break;
+        default:
+            break;
         }
     }else{
         switch( con.suffix ){
@@ -872,6 +881,8 @@ int ScanNum()
                 U32ToU64( Constant, &Const64 );
             }
             ConstType = TYPE_ULONG64;
+            break;
+        default:
             break;
         }
     }
@@ -1091,7 +1102,7 @@ int ScanDelim2()
     return( tok );
 }
 
-void ScanComment()
+static void ScanComment( void )
 {
     int         c;
     int         prev_char;
@@ -1186,7 +1197,7 @@ void ScanComment()
     NextChar();
 }
 
-int CharConst( int char_type )
+static int CharConst( int char_type )
 {
     int         c;
     int         i;
@@ -1311,7 +1322,7 @@ int ScanCharConst()
     return( CharConst( TYPE_CHAR ) );
 }
 
-int ScanString()
+static int ScanString( void )
 {
     int         c;
     int         ok;
