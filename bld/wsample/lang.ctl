@@ -14,17 +14,18 @@ set PROJDIR=<CWD>
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 #   <CPCMD> bin/wsampecs.exe <relroot>/rel2/binw/wsampecs.exe
-    <CPCMD> bin/wsample.exe <relroot>/rel2/binw/wsample.exe
-    <CPCMD> bin/wsamprsi.exe <relroot>/rel2/binw/wsamprsi.exe
-    <CPCMD> bin/wsamplew.exe <relroot>/rel2/binw/wsamplew.exe
-#    <CPCMD> bin/wsampos2.exe <relroot>/rel2/binp/wsampos2.exe
-    <CPCMD> bin/wsmpos22.exe <relroot>/rel2/binp/wsmpos22.exe
-    <CPCMD> bin/wsmpnt.exe <relroot>/rel2/binnt/wsample.exe
-#    <CPCMD> bin/wsmpaxp.exe <relroot>/rel2/axpnt/wsample.exe
-    <CPCMD> bin/wsamppls.exp <relroot>/rel2/binw/wsamppls.exp
-    <CPCMD> bin/wsample.nlm <relroot>/rel2/nlm/wsample.nlm
-    <CPCMD> bin/nsamprsi.exe <relroot>/rel2/n98bw/wsamprsi.exe
-    <CPCMD> bin/nsamppls.exp <relroot>/rel2/n98bw/wsamppls.exp
+    <CPCMD> dos386/wsample.exe <relroot>/rel2/binw/wsample.exe
+    <CPCMD> rsii86/wsamprsi.exe <relroot>/rel2/binw/wsamprsi.exe
+    <CPCMD> pls386/wsamppls.exp <relroot>/rel2/binw/wsamppls.exp
+    <CPCMD> wini86/wsamplew.exe <relroot>/rel2/binw/wsamplew.exe
+#    <CPCMD> os2i86/wsampos2.exe <relroot>/rel2/binp/wsampos2.exe
+    <CPCMD> os2386/wsmpos22.exe <relroot>/rel2/binp/wsmpos22.exe
+    <CPCMD> nt386/wsmpnt.exe <relroot>/rel2/binnt/wsample.exe
+#    <CPCMD> ntaxp/wsmpaxp.exe <relroot>/rel2/axpnt/wsample.exe
+    <CPCMD> nlm/wsample.nlm <relroot>/rel2/nlm/wsample.nlm
+#    <CPCMD> dosi86.nec/wsample.exe <relroot>/rel2/n98bw/wsample.exe
+    <CPCMD> rsii86.nec/wsamprsi.exe <relroot>/rel2/n98bw/wsamprsi.exe
+    <CPCMD> pls386.nec/wsamppls.exp <relroot>/rel2/n98bw/wsamppls.exp
 
 [ BLOCK <1> clean ]
 #==================

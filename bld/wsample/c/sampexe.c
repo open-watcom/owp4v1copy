@@ -72,7 +72,13 @@ void GetProg( char *cmd, char *eoc )
     _splitpath2( (char *)cmd, (char *)buff1,
         (char **)&drive, (char **)&dir, (char **)&fname, (char **)&ext );
     *eoc = save;
-    if( ext[0] == '\0' ) ext = EXT;
+#ifdef __NETWARE__
+    if( ext[0] == '\0' ) ext = ".nlm";
+#elif defined( __DOS__ ) && defined( _PLS )
+    if( ext[0] == '\0' ) ext = ".exp";
+#else
+    if( ext[0] == '\0' ) ext = ".exe";
+#endif
     _makepath( (char *)prog_name, (char *)drive, (char *)dir, (char *)fname, (char *)ext );
 
     if( drive[0] == '\0' && dir[0] == '\0' ) {

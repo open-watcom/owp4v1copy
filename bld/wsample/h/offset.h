@@ -29,5 +29,8 @@
 *
 ****************************************************************************/
 
-
-#define EXT ".EXE"
+#ifdef SHORT_OFF
+typedef unsigned short off;
+#else
+typedef unsigned long off;
+#endif

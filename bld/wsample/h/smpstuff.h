@@ -41,7 +41,7 @@ Date            By              Reason
 */
 typedef unsigned short seg;
 #include "offset.h"
-#include "exeext.h"
+//#include "exeext.h"
 
 typedef struct {
     off         offset;
