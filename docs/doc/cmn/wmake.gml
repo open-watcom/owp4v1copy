@@ -173,6 +173,10 @@ silent mode - do not print commands before execution
 touch files instead of executing commands
 .note &sw.u
 UNIX compatibility mode
+.note &sw.v
+verbose listing of inline files
+.note &sw.y
+show why a target will be updated
 .note &sw.z
 do not erase target after error/interrupt (disables prompting)
 .endnote
@@ -493,6 +497,14 @@ UNIX compatibility mode
 .np
 The "u" option will indicate to &maksname that the line continuation
 character should be a backslash "\" rather than an ampersand "&".
+:OPT name='v'
+.ix '&makcmdup options' 'v'
+The "v" option enables a verbose listing of inline temporary files.
+:OPT name='y'
+.ix '&makcmdup options' 'y'
+The "y" option enables the display of a progress line denoting which 
+dependent file has caused a target to be updated. This is a useful 
+option for helping to debug makefiles.
 :OPT name='z'
 .ix '&makcmdup options' 'z'
 .ix '&makcmdup' 'target deletion prompt'
