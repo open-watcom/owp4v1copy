@@ -1,26 +1,59 @@
-/*
- *  stdarg.h    Variable argument macros
- *              definitions for use with variable argument lists
+/***************************************************************************
+ * FILE: stdarg.h/cstdarg (Macros for use with variable argument lists)
  *
 :include crwat.sp
- */
+ *
+ * Description: This header is part of the C/C++ standard library. It
+ *              contains macros for use in variable length argument
+ *              lists.
+ ***************************************************************************/
+:segment CNAME
+#ifndef _CSTDARG_INCLUDED
+#define _CSTDARG_INCLUDED
+
+#ifndef __cplusplus
+#error the header cstdarg requires C++
+#endif
+:elsesegment
 #ifndef _STDARG_H_INCLUDED
 #define _STDARG_H_INCLUDED
+:endsegment
+
 :include readonly.sp
+::
+:: The following segment only appears in stdarg.h.
+:segment !CNAME
+#ifdef __cplusplus
+#include <cstdarg>
+
+using std::va_list;
+
+#else /* __cplusplus not defined */
+:endsegment
+
+:segment CNAME
 :include cpluspro.sp
+:endsegment
 
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
 
 :include valist.sp
+
+:segment CNAME
+namespace std {
+  typedef __va_list va_list;
+}
+:elsesegment
 typedef __va_list va_list;
+:endsegment
 
 #if defined(__AXP__)
  #define _AXP_WORD_SIZE     8
  #define _AXP_FLOAT_SIZE    8
  #define _AXP_FLOAT_REGS    6
- extern void *__builtin_va_start(va_list*, ...);
+ extern void *__builtin_va_start(__va_list*, ...);
  #pragma intrinsic(__builtin_va_start);
  #define va_start(ap,pn) (__builtin_va_start(&ap,pn,1))
  #define va_arg(ap,type) ((ap).__offset+=\
@@ -36,11 +69,11 @@ typedef __va_list va_list;
   #define _INTSIZEOF(n)   ( (sizeof(n) + sizeof(int) - 1) & ~(sizeof(int) - 1) )
   #define       _ALIGNIT(ap,t) \
         ((((int)(ap))+(sizeof(t)<8?3:7)) & (sizeof(t)<8?~3:~7))
-  #define va_start(ap,v)  ( ap = (va_list)&v + _INTSIZEOF(v) )
+  #define va_start(ap,v)  ( ap = (__va_list)&v + _INTSIZEOF(v) )
   #define va_arg(ap,t)    ( *(t *)((ap = (char *) (_ALIGNIT(ap, t) + _INTSIZEOF(t))) - _INTSIZEOF(t)) )
-  #define va_end(ap)      ( ap = (va_list)0 )
+  #define va_end(ap)      ( ap = (__va_list)0 )
  #else
-  extern void *__builtin_va_start( va_list * );
+  extern void *__builtin_va_start( __va_list * );
   #pragma intrinsic(__builtin_va_start);
   #define va_start(ap,pn) (__builtin_va_start(&ap,pn))
   #define va_arg(ap,type) (__builtin_va_arg(&ap,type))
@@ -63,5 +96,13 @@ typedef __va_list va_list;
  #endif
 #endif
 
+:segment CNAME
 :include cplusepi.sp
+:endsegment
+
+:: This #endif closes the #ifdef __cplusplus in stdarg.h
+:segment !CNAME
+#endif
+:endsegment
+
 #endif
