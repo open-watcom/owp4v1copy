@@ -22,7 +22,7 @@ name = $(proj_name)
 !include cproj.mif
 !include defrule.mif
 
-!include owl.mif
+!include $(owl_dir)/client.mif
 !include wres.mif
 
 obj             = .obj
@@ -150,8 +150,8 @@ asi_test_objs   = asitest$(obj) trmemcvr$(obj)
 asi_test_objs   += trmem$(obj)
 !endif
 
-asi_lib     = $(as_dir)/$(cpu)/inline/o.$(host_cpu)/asinline.lib
-asi_lib_j   = $(as_dir)/$(cpu)/inline/o.$(host_cpu)/asinlinj.lib
+asi_lib     = $(as_dir)/$(cpu)/inline/osi$(host_cpu)/asinline.lib
+asi_lib_j   = $(as_dir)/$(cpu)/inline/osi$(host_cpu)/asinlinj.lib
 !ifdef test_inline_as
 asi_test_name = asinline
 
@@ -159,9 +159,9 @@ $(asi_test_name)$(exe) : $(asi_test_objs) $(asi_lib)
         $(linker) $(lflags) name $@ file { $(asi_test_objs) } lib $(asi_lib)
 
 $(asi_lib) :
-        cd $(as_dir)\$(cpu)\inline\o.$(host_cpu)
+        cd $(as_dir)\$(cpu)\inline\osi$(host_cpu)
         wmake -h
-        cd $(as_dir)\$(cpu)\inline\o.$(host_cpu)\test
+        cd $(as_dir)\$(cpu)\inline\osi$(host_cpu)\test
 !endif
 
 !ifdef asi_build_lib
