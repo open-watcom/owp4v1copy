@@ -93,7 +93,6 @@ cdsay .
     <CPCMD> startup\library\winnt.axp\_s\commode.obj <relroot>\rel2\libaxp\nt\commode.obj
     <CPCMD> library\linux.386\ms_r\clibs.lib <relroot>\rel2\lib386\linux\clib3r.lib
     <CPCMD> library\linux.386\ms_s\clibs.lib <relroot>\rel2\lib386\linux\clib3s.lib
-    <CPCMD> startup\library\linux.386\ms_r\binmode.obj <relroot>\rel2\lib386\linux\binmode.obj
     <CPCMD> startup\library\linux.386\ms_r\commode.obj <relroot>\rel2\lib386\linux\commode.obj
 
 [ BLOCK <1> clibqa ]
