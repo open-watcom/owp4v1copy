@@ -59,7 +59,7 @@ char *ScanLine( char *, int );
 
 #ifdef _WASM_
 
-typedef struct input_queue;
+struct input_queue;
 
 typedef struct line_list {
     struct line_list    *next;

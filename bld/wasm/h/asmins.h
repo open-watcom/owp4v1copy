@@ -44,7 +44,7 @@
 #endif
 
 #ifdef _WASM_
-    typedef struct asm_ins {
+    struct asm_ins {
         unsigned short  token;                  /* T_ADD, etc */
         unsigned        allowed_prefix  : 3,    /* allowed prefix */
                         byte1_info      : 2,    /* flags for 1st byte */
@@ -55,7 +55,7 @@
         unsigned char   rm_byte;                /* mod_rm_byte */
     };
 #else
-    typedef struct asm_ins {
+    struct asm_ins {
         unsigned        token           : 10,   /* T_ADD, etc */
 
                         allowed_prefix  : 3,    /* allowed prefix */
@@ -68,7 +68,7 @@
     };
 #endif
 
-typedef struct asm_code {
+struct asm_code {
     struct {
         signed short ins;           // prefix before instruction, e.g. lock
         signed char  seg;           // segment register override
