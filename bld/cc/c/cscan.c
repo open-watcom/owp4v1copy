@@ -251,14 +251,11 @@ int IdLookup( const char *buf )
 int doScanName()
 {
     int         token;
-    union {
     int         c;
-    unsigned char uc;
-    } u;
     char        *scanptr;
     char        *p;
 
-    u.c = CurrChar;
+    c = CurrChar;
 //      we know that NextChar will be pointing to GetNextChar()
 //      so it is safe to inline the function here.
 //      NextChar could also be pointing to ReScanBuffer().
@@ -266,30 +263,30 @@ int doScanName()
     for(;;) {
         scanptr = ScanCharPtr;
         for(;;) {
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
-            if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = u.uc;
-            u.uc = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+            *p++ = c;
+            c = *scanptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char *oldbuf = Buffer;
                 EnlargeBuffer( BufSize * 2 );
@@ -297,11 +294,11 @@ int doScanName()
             }
         }
         ScanCharPtr = scanptr;
-        if( (CharSet[u.c] & C_EX) == 0 ) break;
-        u.c = GetCharCheck( u.c );
-        if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
+        if( (CharSet[c] & C_EX) == 0 ) break;
+        c = GetCharCheck( c );
+        if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
     }
-    CurrChar = u.c;
+    CurrChar = c;
     if( p >= &Buffer[BufSize - 18] ) {
         char *oldbuf = Buffer;
         EnlargeBuffer( BufSize * 2 );
@@ -1539,44 +1536,41 @@ int ESCChar( int c, const char **pbuf, char *error )
 int ScanWhiteSpace()
 {
     char        *scanptr;
-    union {
     int         c;
-    unsigned char uc;
-    } u;
 
     if( NextChar == getCharAfterBackSlash ) {
         for(;;) {
-            u.c = NextChar();
-            if( (CharSet[u.c] & C_WS) == 0 ) break;
+            c = NextChar();
+            if( (CharSet[c] & C_WS) == 0 ) break;
         }
     } else {
-        u.c = 0;
+        c = 0;
         for(;;) {
             scanptr = ScanCharPtr;
             for(;;) {
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
-                u.uc = *scanptr++;
-                if( (CharSet[u.c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
+                c = *scanptr++;
+                if( (CharSet[c] & C_WS) == 0 ) break;
             }
             ScanCharPtr = scanptr;
-            if( (CharSet[u.c] & C_EX) == 0 ) break;
-            u.c = GetCharCheck( u.c );
-            if( (CharSet[u.c] & C_WS) == 0 ) break;
+            if( (CharSet[c] & C_EX) == 0 ) break;
+            c = GetCharCheck( c );
+            if( (CharSet[c] & C_WS) == 0 ) break;
         }
-        CurrChar = u.c;
+        CurrChar = c;
     }
     return( T_WHITE_SPACE );
 }
