@@ -37,6 +37,9 @@ set default_windowing=0
 REM Change the default command prompt
 prompt $p$g
 
+REM setup right COMSPEC for non-standard COMSPEC setting on NT based systems
+if '%OS%' == 'Windows_NT' set COMSPEC=%windir%\system32\cmd.exe
+
 REM Make the window bigger
 mode 80,50
 cls
