@@ -7,11 +7,6 @@ proj_name = emu
 .EXTENSIONS:
 .EXTENSIONS: .exp .lib .pl3 .obj .qbj .asm .psm .c .inc
 
-cflags = -oais -s -zq -w3
-
-#MASM = 1
-mlopts = -c -Cx -DMASM6
-
 INCS = &
  386flda.inc 386fldc.inc 386fldm.inc 386fldd.inc 386ldi4.inc &
  386ldfs.inc 386fdld.inc 386i4ld.inc 386ldfd.inc 386fsld.inc &
@@ -25,6 +20,8 @@ INCS = &
 .c : ..\..\emu86\c
 .psm : ..\asm
 .asm : ..\asm
+
+cflags = -oais -s -zq -w3
 
 as_flags = -zq -i$(mathlib_dir)\h -bt=$(host_OS) $[@
 
@@ -53,11 +50,7 @@ emu387: $(objs)
 !else ifeq host_OS win
 
 emu387w.obj: emu387.asm $(INCS)
-!ifdef MASM
-    ml $(mlopts) -D_OS=_PLDT -D__WIN387__ -I$(emu386)\inc -I$(watcom_dir)\h\ -I$(mathlib_dir)\h -Fo$^@ $[@
-!else
     $(as) -mf -d_OS=_PLDT -d__WIN387__ -I$(mathlib_dir)\h;$(emu386)\inc -fo=$^@ $[@
-!endif
 
 !else
 
