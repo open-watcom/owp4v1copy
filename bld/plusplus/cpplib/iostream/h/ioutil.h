@@ -71,8 +71,6 @@ _WCRTLINK extern int __plusplus_fstat( int handle, int *ios_mode );
 _WCRTLINK extern int __plusplus_open( const char *name, int *ios_mode, int prot );
 _WCRTLINK extern FILE *__get_std_stream( unsigned handle );
 _WCRTLINK extern int __flush( FILE *fp );
-_WCRTLINK extern char *__clib_lltoa( signed __int64 pv, char *buf, unsigned radix );
-_WCRTLINK extern char *__clib_ulltoa( unsigned __int64 pv, char *buf, unsigned radix );
 };
 
 #define _IOUTIL_H_INCLUDED
