@@ -38,7 +38,7 @@
 #include "dbgio.h"
 
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
 
 #ifdef LOGGING
 #include <stdio.h>

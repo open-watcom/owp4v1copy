@@ -285,7 +285,7 @@ void Invoke( char *invfile, int len, char_ring *parmlist )
 void ProfileInvoke( char *name )
 {
     unsigned    len;
-#if defined(__QNX__)
+#if defined(__UNIX__)
     handle      hndl;
 #endif
 
@@ -297,8 +297,8 @@ void ProfileInvoke( char *name )
     /* default name search */
     len = strlen( EXENAME );
     _AllocA( name, len + 4 );
-#if defined(__QNX__)
-        /* under QNX, look for .wdrc first */
+#if defined(__UNIX__)
+        /* under QNX and Linux, look for .wdrc first */
         name[0] = '.';
         strcpy( &name[1], EXENAME );
         strcat( name, "rc" );

@@ -65,7 +65,7 @@ void FiniHelp()
 static void LocateHelpFile()
 {
     handle              h;
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
     char                buff[1024];
 #endif
 
@@ -74,7 +74,7 @@ static void LocateHelpFile()
         FileClose( h );
         return;
     }
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
     if( DUIEnvLkup( "WWINHELP", buff, sizeof( buff ) ) == 0 ) {
         Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), TxtBuff );
     }

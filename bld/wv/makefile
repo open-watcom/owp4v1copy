@@ -12,15 +12,15 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-cdir   = $(wv_dir)\c
-hdir   = $(wv_dir)\h
+cdir   = $(wv_dir)/c
+hdir   = $(wv_dir)/h
 
-common_h= $(lang_root)\h;$(watcom_dir)\h
+common_h= $(lang_root)/h;$(watcom_dir)/h
 os2inc  = $(common_h)
 dosinc  = $(common_h)
 ntinc   = $(watcom_nt_h);$(common_h)
-wininc  = $(lang_root)\h\win;$(common_h)
-qnxinc  = $(lang_root)\qh;$(watcom_dir)\h
+wininc  = $(lang_root)/h/win;$(common_h)
+qnxinc  = $(lang_root)/qh;$(watcom_dir)/h
 
 !ifeq host_OS nt
 sysdir = win
@@ -35,31 +35,35 @@ all_machine=$(machine)
 all_machine=at
 !endif
 
-bdir_win_i86_at         = $(bin_root)\bin
-bdir_win_i86_nec        = $(bin_root)\bin.nec
-bdir_dos_386_at         = $(bin_root)\bin
-bdir_dos_386_nec        = $(bin_root)\bin.nec
-bdir_nt_386_at          = $(bin_root)\binnt
-bdir_os2_i86_at         = $(bin_root)\binp
-bdir_os2_386_at         = $(bin_root)\binp
-bdir_qnx_i86_at         = $(bin_root)\qnx
-bdir_qnx_386_at         = $(bin_root)\qnx
-bdir_nt_axp_at          = $(bin_root)\axpnt
+bdir_win_i86_at         = $(bin_root)/bin
+bdir_win_i86_nec        = $(bin_root)/bin.nec
+bdir_dos_386_at         = $(bin_root)/bin
+bdir_dos_386_nec        = $(bin_root)/bin.nec
+bdir_nt_386_at          = $(bin_root)/binnt
+bdir_os2_i86_at         = $(bin_root)/binp
+bdir_os2_386_at         = $(bin_root)/binp
+bdir_qnx_i86_at         = $(bin_root)/qnx
+bdir_qnx_386_at         = $(bin_root)/qnx
+bdir_linux_386_at       = $(bin_root)/linux
+bdir_nt_axp_at          = $(bin_root)/axpnt
 
 bdir = $(bdir_$(host_OS)_$(host_CPU)_$(all_machine))
 
 !ifndef syscdir
-syscdir = ..\c
+syscdir = ../c
 !endif
 !ifndef syshdir
-syshdir = ..\h
+syshdir = ../h
 !endif
 !ifndef sysadir
-sysadir = ..\asm
+sysadir = ../asm
 !endif
 
 !ifndef extra_cflags
 extra_cflags =
+!endif
+!ifdef __LINUX__
+extra_cflags += -fo=.obj
 !endif
 
 compiler_i86    =$(comp286) -ml -fpc
@@ -108,10 +112,10 @@ tail_exe = $(tail_$(display))
 tail_exe =
 !endif
 
-d : $(bdir)\dv$(tail_exe).$(EXE) .SYMBOLIC
+d : $(bdir)/dv$(tail_exe).$(EXE) .SYMBOLIC
     @%null
 
-w : $(bdir)\wv$(tail_exe).$(EXE) .SYMBOLIC
+w : $(bdir)/wv$(tail_exe).$(EXE) .SYMBOLIC
     @%null
 
 lib : wd.lib .SYMBOLIC
@@ -138,24 +142,19 @@ cflags +=-dTRMEM
 
 cflags += $(extra_cflags)
 
-.BEFORE
-    @set ipaths=-i$(dig_dir)\h
-    @set ipaths=$(%ipaths);$(syshdir)
-    @set ipaths=$(%ipaths);$(hdir)
-    @set ipaths=$(%ipaths);$(trmem_dir)
+inc_dirs = $(dig_dir)/h;$(syshdir);$(hdir);$(trmem_dir);
 !ifndef dll
-    @set ipaths=$(%ipaths);$(aui_dir)\h
-    @set ipaths=$(%ipaths);$(gui_dir)\h
-    @set ipaths=$(%ipaths);$(ui_dir)\h
+inc_dirs += $(aui_dir)/h;$(gui_dir)/h;$(ui_dir)/h;
 !endif
-    @set ipaths=$(%ipaths);$($(host_OS)inc)
+inc_dirs += $($(host_OS)inc);
 !ifndef dll
-    @set ipaths=$(%ipaths);$(posix_dir)\h
-    @set ipaths=$(%ipaths);$(gui_dir)\ui\h
-    @set ipaths=$(%ipaths);$(help_dir)\h
+inc_dirs += $(posix_dir)/h;$(gui_dir)/ui/h;$(help_dir)/h
 !endif
 
-compile  = *$(compiler_$(host_CPU)) $[* $(cflags) @ipaths
+.before:
+    @set include = $(inc_path)
+
+compile  = *$(compiler_$(host_CPU)) $[* $(cflags)
 assemble = wasm $(extra_aflags) $[@ -fo=$^@
 
 dig_os_dos_386  = dsx
@@ -320,19 +319,20 @@ engine_objs += &
 !endif
 
 
-libs_win_i86_char       = $(aui_dir)\wini86\aui.lib $(gui_dir)\ui\guiwinl.lib $(ui_dir)\$(machine)win\uilibl.lib $(wres_dir)\lib\wreslw.lib
-libs_win_i86_gui        = $(aui_dir)\wini86\aui.lib $(gui_dir)\win\guiwinl.lib
-libs_nt_386_char        = $(aui_dir)\nt386\aui.lib $(gui_dir)\ui\guintf.lib $(ui_dir)\nt\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_nt_386_gui         = $(aui_dir)\nt386\aui.lib $(gui_dir)\win\guintf.lib
-libs_os2_i86_char       = $(aui_dir)\os2i86\aui.lib $(gui_dir)\ui\guios2l.lib $(ui_dir)\os2\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_os2_i86_gui        = $(aui_dir)\os2i86.pm\aui.lib $(gui_dir)\win\guios2l.lib $(os2286)
-libs_os2_386_char       = $(aui_dir)\os2386\aui.lib $(gui_dir)\ui\guios2f.lib $(ui_dir)\os2\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_os2_386_gui        = $(aui_dir)\os2386.pm\aui.lib $(gui_dir)\win\guios2f.lib
-libs_dos_386_char       = $(aui_dir)\dos386\aui.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\$(machine)dos\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_qnx_i86_char       = $(aui_dir)\qnxi86\aui.lib $(gui_dir)\ui\guiqnxl.lib $(ui_dir)\qnx\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_qnx_386_char       = $(aui_dir)\qnx386\aui.lib $(gui_dir)\ui\guiqnxs.lib $(ui_dir)\qnx\uilibs.lib $(wres_dir)\lib\wressqnx.lib
-libs_nt_axp_char        = $(aui_dir)\ntaxp\aui.lib $(gui_dir)\ui\guintaxp.lib $(uidir)\nt\uilibaxp.lib $(wres_dir)\lib\wresaxp.lib
-libs_nt_axp_gui         = $(aui_dir)\ntaxp\aui.lib $(gui_dir)\win\guintaxp.lib
+libs_win_i86_char       = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/guiwinl.lib $(ui_dir)/$(machine)win/uilibl.lib $(wres_dir)/lib/wreslw.lib
+libs_win_i86_gui        = $(aui_dir)/wini86/aui.lib $(gui_dir)/win/guiwinl.lib
+libs_nt_386_char        = $(aui_dir)/nt386/aui.lib $(gui_dir)/ui/guintf.lib $(ui_dir)/nt/uilibf.lib $(wres_dir)/lib/wresf.lib
+libs_nt_386_gui         = $(aui_dir)/nt386/aui.lib $(gui_dir)/win/guintf.lib
+libs_os2_i86_char       = $(aui_dir)/os2i86/aui.lib $(gui_dir)/ui/guios2l.lib $(ui_dir)/os2/uilibl.lib $(wres_dir)/lib/wresl.lib
+libs_os2_i86_gui        = $(aui_dir)/os2i86.pm/aui.lib $(gui_dir)/win/guios2l.lib $(os2286)
+libs_os2_386_char       = $(aui_dir)/os2386/aui.lib $(gui_dir)/ui/guios2f.lib $(ui_dir)/os2/uilibf.lib $(wres_dir)/lib/wresf.lib
+libs_os2_386_gui        = $(aui_dir)/os2386.pm/aui.lib $(gui_dir)/win/guios2f.lib
+libs_dos_386_char       = $(aui_dir)/dos386/aui.lib $(gui_dir)/ui/guidosf.lib $(ui_dir)/$(machine)dos/uilibf.lib $(wres_dir)/lib/wresf.lib
+libs_qnx_i86_char       = $(aui_dir)/qnxi86/aui.lib $(gui_dir)/ui/guiqnxl.lib $(ui_dir)/qnx/uilibl.lib $(wres_dir)/lib/wresl.lib
+libs_qnx_386_char       = $(aui_dir)/qnx386/aui.lib $(gui_dir)/ui/guiqnxs.lib $(ui_dir)/qnx/uilibs.lib $(wres_dir)/lib/wressqnx.lib
+libs_linux_386_char     = $(aui_dir)/linux386/aui.lib $(gui_dir)/ui/guilinuxf.lib $(ui_dir)/unix/uilibf.lib $(wres_dir)/lib/wresf.lib $(ncurses_dir)/linux386/ncurses.lib
+libs_nt_axp_char        = $(aui_dir)/ntaxp/aui.lib $(gui_dir)/ui/guintaxp.lib $(uidir)/nt/uilibaxp.lib $(wres_dir)/lib/wresaxp.lib
+libs_nt_axp_gui         = $(aui_dir)/ntaxp/aui.lib $(gui_dir)/win/guintaxp.lib
 
 libs = $(libs_$(host_OS)_$(host_CPU)_$(display))
 
@@ -356,13 +356,13 @@ endsect=end
 
 objs = $(engine_objs) $(ui_objs)
 
-regexp.obj : $(posix_dir)\misc\regexp.c .autodepend
+regexp.obj : $(posix_dir)/misc/regexp.c .autodepend
         $(compile) -fi=wndregx.h
 
 lnk = wv.lnk
 lnk2 = wv2.lnk
 
-$(bdir)\dv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
+$(bdir)/dv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
         @set DEBUG=$(debug_all)
         @set NAME=$^&
         @set RESFILE=$+ $(resfile) $-
@@ -371,10 +371,10 @@ $(bdir)\dv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs
 wd.lib : eraseall.obj $(engine_objs) $(sysobjs)
         if exist tmp.lbc del tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
-        wlib /b /n wd.lib @tmp.lbc
+        wlib -b -n wd.lib @tmp.lbc
         del tmp.lbc
 
-$(bdir)\wv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
+$(bdir)/wv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
 !ifndef on_build_machine
         @set DEBUG=debug line
 !else
@@ -384,7 +384,7 @@ $(bdir)\wv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs
         @set RESFILE=$+ $(resfile) $-
         @%make do_link
 
-eraseall.obj : $(wv_dir)\compile.gbl
+eraseall.obj : $(wv_dir)/compile.gbl
         if exist *.obj erase *.obj
         wtouch eraseall.obj
 
@@ -396,11 +396,11 @@ do_link : .PROCEDURE
         !objsetsz all.osz
 !endif
 !endif
-        $(linker) op symfile=$(bdir)\$(%NAME).sym $(%DEBUG) name $(bdir)\$(%NAME).$(EXE) @$(lnk) $(endsect)
+        $(linker) op symfile=$(bdir)/$(%NAME).sym $(%DEBUG) name $(bdir)/$(%NAME).$(EXE) @$(lnk) $(endsect)
         @%make post_process
 
 all.osz :
-        $(linker) name $(bdir)\$(%NAME).$(EXE) @$(lnk) $(endsect)
+        $(linker) name $(bdir)/$(%NAME).$(EXE) @$(lnk) $(endsect)
         objsize @map $(%NAME).map > all.osz
         objpad all.osz
 
@@ -413,7 +413,7 @@ $(lnk) : $(__MAKEFILES__)
 !endif
     @for %i in ($(libs))    do @%append $(lnk) library %i
     @for %i in ($(sysobjs)) do @%append $(lnk) file %i
-    @%append $(lnk) file fingmsg
+    @%append $(lnk) file fingmsg.obj
 !ifeq host_OS dos
 !ifdef ovl_dos
     @%append $(lnk) begin autosection
@@ -421,7 +421,7 @@ $(lnk) : $(__MAKEFILES__)
 !endif
     @for %i in ($(objs))    do @%append $(lnk) file %i
 
-rcinclude=.;$(hdir);$(dig_dir)\h;$(aui_dir)\h;$(gui_dir);$(gui_dir)\h;$(lang_root)\h
+rcinclude=.;$(hdir);$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(lang_root)/h
 
 post_process :.PROCEDURE
 !ifdef codeview
@@ -432,156 +432,156 @@ post_process :.PROCEDURE
 !ifdef really_ovl_dos
         cp dv.map $(lnk2)
         vi -d -q -s ..\mapfix.vi $(lnk2)
-        $(linker) $(symfile) $(%DEBUG) name $(bdir)\$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
+        $(linker) $(symfile) $(%DEBUG) name $(bdir)/$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
         @%null
 !endif
 !endif
 !else ifeq host_OS qnx
 !ifdef %QNX_KEY
-        serialize $(bdir)\$(%NAME).$(EXE) $(%QNX_KEY)
+        serialize $(bdir)/$(%NAME).$(EXE) $(%QNX_KEY)
 !endif
 !endif
 !ifeq display char
-        wstrip /q /a /r  $(bdir)\$(%NAME).$(EXE) . $(%RESFILE)
+        wstrip -q -a -r  $(bdir)/$(%NAME).$(EXE) . $(%RESFILE)
 !else ifeq host_OS win
-        *wrc -k -bt=windows -i=$(rcinclude);$(lang_root)\h\win $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
+        *wrc -k -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS nt
-        *wrc -k -bt=nt -i=$(rcinclude);$(lang_root)\h\nt $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
+        *wrc -k -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS os2
-        $(rc_os2) -p -x $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
+        $(rc_os2) -p -x $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !endif
 
-sortlist.obj : $(watcom_dir)\c\sortlist.c .autodepend
+sortlist.obj : $(watcom_dir)/c/sortlist.c .autodepend
         $(compile)
 
 comp_tracker_i86        = $(compile) -of+
 comp_tracker_386        = $(compile) -of+
 comp_tracker_axp        = $(compile)
 
-trmem.obj : $(trmem_dir)\trmem.c .autodepend
+trmem.obj : $(trmem_dir)/trmem.c .autodepend
         $(comp_tracker_$(host_CPU))
 
-srcmgt.obj : $(watcom_dir)\c\srcmgt.c $(hdir)\srcmgt.h  .autodepend
+srcmgt.obj : $(watcom_dir)/c/srcmgt.c $(hdir)/srcmgt.h  .autodepend
         $(compile)
 
 finger_msg  :.PROCEDURE
        @set DGINFO=
-        @$(compiler_$(host_CPU)) ..\..\c\fingmsg $(cflags) $(%DGINFO) @ipaths
+        @$(compiler_$(host_CPU)) "../../c/fingmsg" $(cflags) $(%DGINFO)
 
 bitmaps = &
-        $(wvdir)\win\zapant.ico &
-        $(wvdir)\os2\zapant.ico
+        $(wvdir)/win/zapant.ico &
+        $(wvdir)/os2/zapant.ico
 
 !ifeq display gui
 bitmaps += &
-        $(wv_dir)\win\8087.ico &
-        $(wv_dir)\os2\8087.ico &
-        $(wv_dir)\win\asm.ico &
-        $(wv_dir)\os2\asm.ico &
-        $(wv_dir)\win\brk.ico &
-        $(wv_dir)\os2\brk.ico &
-        $(wv_dir)\win\call.ico &
-        $(wv_dir)\os2\call.ico &
-        $(wv_dir)\win\exe.ico &
-        $(wv_dir)\os2\exe.ico &
-        $(wv_dir)\win\func.ico &
-        $(wv_dir)\os2\func.ico &
-        $(wv_dir)\win\glob.ico &
-        $(wv_dir)\os2\glob.ico &
-        $(wv_dir)\win\hot.ico &
-        $(wv_dir)\os2\hot.ico &
-        $(wv_dir)\win\io.ico &
-        $(wv_dir)\os2\io.ico &
-        $(wv_dir)\win\log.ico &
-        $(wv_dir)\os2\log.ico &
-        $(wv_dir)\win\mem.ico &
-        $(wv_dir)\os2\mem.ico &
-        $(wv_dir)\win\mod.ico &
-        $(wv_dir)\os2\mod.ico &
-        $(wv_dir)\win\reg.ico &
-        $(wv_dir)\os2\reg.ico &
-        $(wv_dir)\win\repl.ico &
-        $(wv_dir)\os2\repl.ico &
-        $(wv_dir)\win\src.ico &
-        $(wv_dir)\os2\src.ico &
-        $(wv_dir)\win\srch.ico &
-        $(wv_dir)\os2\srch.ico &
-        $(wv_dir)\win\thrd.ico &
-        $(wv_dir)\os2\thrd.ico &
-        $(wv_dir)\win\var.ico &
-        $(wv_dir)\os2\var.ico &
-        $(wv_dir)\win\splash.bmp &
-        $(wv_dir)\win\closebmp.bmp &
-        $(wv_dir)\win\read1.bmp &
-        $(wv_dir)\win\read2.bmp &
-        $(wv_dir)\win\write1.bmp &
-        $(wv_dir)\win\write2.bmp &
-        $(wv_dir)\win\open1.bmp &
-        $(wv_dir)\win\open2.bmp &
-        $(wv_dir)\win\close1.bmp &
-        $(wv_dir)\win\close2.bmp &
-        $(wv_dir)\win\points1.bmp &
-        $(wv_dir)\win\points2.bmp &
-        $(wv_dir)\win\codeher1.bmp &
-        $(wv_dir)\win\codeher2.bmp &
-        $(wv_dir)\win\brkhere1.bmp &
-        $(wv_dir)\win\brkhere2.bmp &
-        $(wv_dir)\win\dimbrk1.bmp &
-        $(wv_dir)\win\dimbrk2.bmp &
-        $(wv_dir)\win\source1.bmp &
-        $(wv_dir)\win\source2.bmp &
-        $(wv_dir)\win\source2.bmp &
-        $(wv_dir)\win\source1.bmp &
-        $(wv_dir)\win\assembl1.bmp &
-        $(wv_dir)\win\assembl2.bmp &
-        $(wv_dir)\win\assembl2.bmp &
-        $(wv_dir)\win\assembl1.bmp &
-        $(wv_dir)\win\currlin1.bmp &
-        $(wv_dir)\win\currlin2.bmp &
-        $(wv_dir)\win\unpoint1.bmp &
-        $(wv_dir)\win\unpoint2.bmp &
-        $(wv_dir)\win\currbrk1.bmp &
-        $(wv_dir)\win\currbrk2.bmp &
-        $(wv_dir)\win\currdim1.bmp &
-        $(wv_dir)\win\currdim2.bmp &
-        $(wv_dir)\win\go.bmp &
-        $(wv_dir)\win\over.bmp &
-        $(wv_dir)\win\into.bmp &
-        $(wv_dir)\win\return.bmp &
-        $(wv_dir)\win\back.bmp &
-        $(wv_dir)\win\for.bmp &
-        $(wv_dir)\win\up.bmp &
-        $(wv_dir)\win\down.bmp &
-        $(wv_dir)\win\home.bmp
+        $(wv_dir)/win/8087.ico &
+        $(wv_dir)/os2/8087.ico &
+        $(wv_dir)/win/asm.ico &
+        $(wv_dir)/os2/asm.ico &
+        $(wv_dir)/win/brk.ico &
+        $(wv_dir)/os2/brk.ico &
+        $(wv_dir)/win/call.ico &
+        $(wv_dir)/os2/call.ico &
+        $(wv_dir)/win/exe.ico &
+        $(wv_dir)/os2/exe.ico &
+        $(wv_dir)/win/func.ico &
+        $(wv_dir)/os2/func.ico &
+        $(wv_dir)/win/glob.ico &
+        $(wv_dir)/os2/glob.ico &
+        $(wv_dir)/win/hot.ico &
+        $(wv_dir)/os2/hot.ico &
+        $(wv_dir)/win/io.ico &
+        $(wv_dir)/os2/io.ico &
+        $(wv_dir)/win/log.ico &
+        $(wv_dir)/os2/log.ico &
+        $(wv_dir)/win/mem.ico &
+        $(wv_dir)/os2/mem.ico &
+        $(wv_dir)/win/mod.ico &
+        $(wv_dir)/os2/mod.ico &
+        $(wv_dir)/win/reg.ico &
+        $(wv_dir)/os2/reg.ico &
+        $(wv_dir)/win/repl.ico &
+        $(wv_dir)/os2/repl.ico &
+        $(wv_dir)/win/src.ico &
+        $(wv_dir)/os2/src.ico &
+        $(wv_dir)/win/srch.ico &
+        $(wv_dir)/os2/srch.ico &
+        $(wv_dir)/win/thrd.ico &
+        $(wv_dir)/os2/thrd.ico &
+        $(wv_dir)/win/var.ico &
+        $(wv_dir)/os2/var.ico &
+        $(wv_dir)/win/splash.bmp &
+        $(wv_dir)/win/closebmp.bmp &
+        $(wv_dir)/win/read1.bmp &
+        $(wv_dir)/win/read2.bmp &
+        $(wv_dir)/win/write1.bmp &
+        $(wv_dir)/win/write2.bmp &
+        $(wv_dir)/win/open1.bmp &
+        $(wv_dir)/win/open2.bmp &
+        $(wv_dir)/win/close1.bmp &
+        $(wv_dir)/win/close2.bmp &
+        $(wv_dir)/win/points1.bmp &
+        $(wv_dir)/win/points2.bmp &
+        $(wv_dir)/win/codeher1.bmp &
+        $(wv_dir)/win/codeher2.bmp &
+        $(wv_dir)/win/brkhere1.bmp &
+        $(wv_dir)/win/brkhere2.bmp &
+        $(wv_dir)/win/dimbrk1.bmp &
+        $(wv_dir)/win/dimbrk2.bmp &
+        $(wv_dir)/win/source1.bmp &
+        $(wv_dir)/win/source2.bmp &
+        $(wv_dir)/win/source2.bmp &
+        $(wv_dir)/win/source1.bmp &
+        $(wv_dir)/win/assembl1.bmp &
+        $(wv_dir)/win/assembl2.bmp &
+        $(wv_dir)/win/assembl2.bmp &
+        $(wv_dir)/win/assembl1.bmp &
+        $(wv_dir)/win/currlin1.bmp &
+        $(wv_dir)/win/currlin2.bmp &
+        $(wv_dir)/win/unpoint1.bmp &
+        $(wv_dir)/win/unpoint2.bmp &
+        $(wv_dir)/win/currbrk1.bmp &
+        $(wv_dir)/win/currbrk2.bmp &
+        $(wv_dir)/win/currdim1.bmp &
+        $(wv_dir)/win/currdim2.bmp &
+        $(wv_dir)/win/go.bmp &
+        $(wv_dir)/win/over.bmp &
+        $(wv_dir)/win/into.bmp &
+        $(wv_dir)/win/return.bmp &
+        $(wv_dir)/win/back.bmp &
+        $(wv_dir)/win/for.bmp &
+        $(wv_dir)/win/up.bmp &
+        $(wv_dir)/win/down.bmp &
+        $(wv_dir)/win/home.bmp
 !endif
 
 
-litdef = $(hdir)\litdef.gh
+litdef = litdef.gh
 
 rcfiles = &
-    $(gui_dir)\h\gui.rc &
-    $(gui_dir)\h\gui.msg &
-    $(aui_dir)\h\aui.rc &
-    $(aui_dir)\h\dlgrx.dlg &
-    $(aui_dir)\h\dlgsrch.dlg &
-    $(aui_dir)\h\dlgsrcha.dlg &
-    $(aui_dir)\h\japrx.dlg &
-    $(aui_dir)\h\japsrch.dlg &
-    $(aui_dir)\h\japsrcha.dlg &
-    $(hdir)\dialogs.rc &
-    $(hdir)\strings.rc &
+    $(gui_dir)/h/gui.rc &
+    $(gui_dir)/h/gui.msg &
+    $(aui_dir)/h/aui.rc &
+    $(aui_dir)/h/dlgrx.dlg &
+    $(aui_dir)/h/dlgsrch.dlg &
+    $(aui_dir)/h/dlgsrcha.dlg &
+    $(aui_dir)/h/japrx.dlg &
+    $(aui_dir)/h/japsrch.dlg &
+    $(aui_dir)/h/japsrcha.dlg &
+    $(hdir)/dialogs.rc &
+    $(hdir)/strings.rc &
     $(litdef) &
-    $(hdir)\dlgamb.h &
-    $(hdir)\dlgayn.h &
-    $(hdir)\dlgstk.h &
-    $(hdir)\dlgbrk.h &
-    $(hdir)\dlgcmd.h &
-    $(hdir)\dlglist.h &
-    $(hdir)\dlgnewp.h &
-    $(hdir)\dlgoptn.h &
-    $(hdir)\dlgvarx.h &
-    $(hdir)\dlgwind.h &
-    $(hdir)\dlgstk.h &
+    $(hdir)/dlgamb.h &
+    $(hdir)/dlgayn.h &
+    $(hdir)/dlgstk.h &
+    $(hdir)/dlgbrk.h &
+    $(hdir)/dlgcmd.h &
+    $(hdir)/dlglist.h &
+    $(hdir)/dlgnewp.h &
+    $(hdir)/dlgoptn.h &
+    $(hdir)/dlgvarx.h &
+    $(hdir)/dlgwind.h &
+    $(hdir)/dlgstk.h &
     dlgayn.dlg &
     dlgbrk.dlg &
     dlgcmd.dlg &
@@ -605,30 +605,30 @@ rcfiles = &
     japstk.dlg &
     japhis.dlg
 
-$(litdef) : wd.str wdengin.str menu.str $(cdir)\mkstr.c $(dig_dir)\h\mad.str
-        wcl386 $(cdir)\mkstr -zq -i$(hdir);$(dig_dir)\h
+./mkstr.exe : $(cdir)/mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
+        $(bld_cl) $(wcl_util_opts) $[@ -i"$(hdir);$(dig_dir)/h"
+
+$(litdef) : ./mkstr.exe wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
         set DOS4G=quiet
-        mkstr $(litdef)
-        del mkstr.obj
-        del mkstr.exe
+        $[@ $^@
 
-wvui.res : auistr.gh $(hdir)\wvui.rc $(rcfiles) .autodepend
-        *wrc -r -q -bt=windows -i=$(rcinclude);$(lang_root)\h\win $(hdir)\wvui.rc /fo=wvui.res
+wvui.res : $(hdir)/wvui.rc auistr.gh $(rcfiles) .autodepend
+        *wrc -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
-wvntdll.res : $(hdir)\strings.rc .autodepend
-        *wrc -r -q -bt=nt -i=$(rcinclude);$(lang_root)\h\win $(hdir)\strings.rc /fo=wvntdll.res
+wvntdll.res : $(hdir)/strings.rc .autodepend
+        *wrc -r -q -bt=nt -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@x
 
-wvwin.res : auistr.gh $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
-        *wrc -k -r -bt=windows -i=$(rcinclude);$(lang_root)\h\win $(hdir)\wvwin.rc /fo=wvwin.res
+wvwin.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
+        *wrc -k -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=^@
 
-wvnt.res : auistr.gh $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
-        *wrc -k -r -bt=nt -i=$(rcinclude);$(lang_root)\h\nt $(hdir)\wvwin.rc /fo=wvnt.res
+wvnt.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
+        *wrc -k -r -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
 
-wvpm.res wvpmj.res : auistr.gh $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
+wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
         set include=$(inc_dirs_sys);$(rcinclude);$(%include)
-        *wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
-        *wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
+        *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpm.i $[@
+        *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpmj.i $[@ -dJAPANESE_MESSAGES
 
 !ifndef %use_os2tk_stuff
 
@@ -660,26 +660,26 @@ wvpm.res wvpmj.res : auistr.gh $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
 
 .str: $(hdir)
 
-.h: $(syshdir);$(hdir);$(auidir)\h
+.h: $(syshdir);$(hdir);$(auidir)/h
 
-.c: $(syscdir);$(cdir);$(auidir)\c;$(dig_srcs)
+.c: $(syscdir);$(cdir);$(auidir)/c;$(dig_srcs)
 
 .c.obj: .autodepend
         $(compile)
 
 .c.i:
-        $(compile) /plc /fo=.i
+        $(compile) -plc -fo=.i
 
 .c.def:
-        $(compile) /v /e1000
+        $(compile) -v -e1000
 
 
 .asm: $(sysadir)
 .asm.obj:
         $(assemble)
 
-litengin.obj :: litengin.c wdengin.str $(dig_dir)\h\mad.str $(litdef)
-litwd.obj :: litwd.c wd.str $(dig_dir)\h\mad.str $(litdef)
+litengin.obj :: litengin.c wdengin.str $(dig_dir)/h/mad.str $(litdef)
+litwd.obj :: litwd.c wd.str $(dig_dir)/h/mad.str $(litdef)
 dbgwthrd.obj :: dbgwthrd.c menutrd.h menudef.h
 dbgwass.obj :: dbgwass.c menuasm.h masmopt.h masmshow.h menudef.h gadgets.h
 dbgwimg.obj :: dbgwimg.c menuimg.h menudef.h
@@ -706,7 +706,7 @@ dbgicon.obj :: dbgicon.c dbgicon.h
 dbgexdat.obj :: dbgexdat.c menumem.h menumem.h
 wndsys.obj :: wndsys.c wndnames.h gadgets.h dbginp.h menudef.h
 dbgpaint.obj :: dbgpaint.c wndnames.h
-dsxtrap.obj :: $(syscdir)\dsxtrap.c $(hdir)\dbgaccmx.h
+dsxtrap.obj :: $(syscdir)/dsxtrap.c $(hdir)/dbgaccmx.h
 namelist.obj :: namelist.c namelist.h
 dbgbrk.obj :: dbgbrk.c namelist.h dbginp.h
 symcomp.obj :: symcomp.c namelist.h
@@ -727,8 +727,8 @@ dbgacc2.obj :: dbgacc2.c dbgaccmx.h
 dbgwrep.obj :: dbgwrep.c menurep.h menudef.h
 dbgwdlg.obj :: dbgwdlg.c menudef.h
 wnddump.obj :: wnddump.c gadgets.h
-dbglit.obj :: dbglit.c dbglit.h literals.h $(hdir)\wd.str $(dig_dir)\h\mad.str
-madinter.obj :: madinter.c $(dig_dir)\h\mad.str
+dbglit.obj :: dbglit.c dbglit.h literals.h $(hdir)/wd.str $(dig_dir)/h/mad.str
+madinter.obj :: madinter.c $(dig_dir)/h/mad.str
 
 !ifeq display char
 .dlg : $(hdir)
@@ -737,53 +737,54 @@ madinter.obj :: madinter.c $(dig_dir)\h\mad.str
 !else
 pmfont=-font=
 pmfontj=-font=
-dlgayn.dlg : $(hdir)\dlgayn.dlg
-        parsedlg $(pmfont) $(hdir)\dlgayn.dlg dlgayn.dlg
-dlgbrk.dlg : $(hdir)\dlgbrk.dlg
-        parsedlg $(pmfont) $(hdir)\dlgbrk.dlg dlgbrk.dlg
-dlgcmd.dlg : $(hdir)\dlgcmd.dlg
-        parsedlg $(pmfont) $(hdir)\dlgcmd.dlg dlgcmd.dlg
-dlglist.dlg : $(hdir)\dlglist.dlg
-        parsedlg $(pmfont) $(hdir)\dlglist.dlg dlglist.dlg
-dlgnewp.dlg : $(hdir)\dlgnewp.dlg
-        parsedlg $(pmfont) $(hdir)\dlgnewp.dlg dlgnewp.dlg
-dlgoptn.dlg : $(hdir)\dlgoptn.dlg
-        parsedlg $(pmfont) $(hdir)\dlgoptn.dlg dlgoptn.dlg
-dlgvarx.dlg : $(hdir)\dlgvarx.dlg
-        parsedlg $(pmfont) $(hdir)\dlgvarx.dlg dlgvarx.dlg
-dlgamb.dlg : $(hdir)\dlgamb.dlg
-        parsedlg $(pmfont) $(hdir)\dlgamb.dlg dlgamb.dlg
-dlgwind.dlg : $(hdir)\dlgwind.dlg
-        parsedlg $(pmfont) $(hdir)\dlgwind.dlg dlgwind.dlg
-dlgstk.dlg : $(hdir)\dlgstk.dlg
-        parsedlg $(pmfont) $(hdir)\dlgstk.dlg dlgstk.dlg
-dlghis.dlg : $(hdir)\dlghis.dlg
-        parsedlg $(pmfont) $(hdir)\dlghis.dlg dlghis.dlg
-japayn.dlg : $(hdir)\japayn.dlg
-        parsedlg $(pmfontj) $(hdir)\japayn.dlg japayn.dlg
-japbrk.dlg : $(hdir)\japbrk.dlg
-        parsedlg $(pmfontj) $(hdir)\japbrk.dlg japbrk.dlg
-japcmd.dlg : $(hdir)\japcmd.dlg
-        parsedlg $(pmfontj) $(hdir)\japcmd.dlg japcmd.dlg
-japlist.dlg : $(hdir)\japlist.dlg
-        parsedlg $(pmfontj) $(hdir)\japlist.dlg japlist.dlg
-japnewp.dlg : $(hdir)\japnewp.dlg
-        parsedlg $(pmfontj) $(hdir)\japnewp.dlg japnewp.dlg
-japoptn.dlg : $(hdir)\japoptn.dlg
-        parsedlg $(pmfontj) $(hdir)\japoptn.dlg japoptn.dlg
-japvarx.dlg : $(hdir)\japvarx.dlg
-        parsedlg $(pmfontj) $(hdir)\japvarx.dlg japvarx.dlg
-japamb.dlg : $(hdir)\japamb.dlg
-        parsedlg $(pmfontj) $(hdir)\japamb.dlg japamb.dlg
-japwind.dlg : $(hdir)\japwind.dlg
-        parsedlg $(pmfontj) $(hdir)\japwind.dlg japwind.dlg
-japstk.dlg : $(hdir)\japstk.dlg
-        parsedlg $(pmfontj) $(hdir)\japstk.dlg japstk.dlg
-japhis.dlg : $(hdir)\japhis.dlg
-        parsedlg $(pmfontj) $(hdir)\japhis.dlg japhis.dlg
+dlgayn.dlg : $(hdir)/dlgayn.dlg
+        parsedlg $(pmfont) $[@ dlgayn.dlg
+dlgbrk.dlg : $(hdir)/dlgbrk.dlg
+        parsedlg $(pmfont) $[@ dlgbrk.dlg
+dlgcmd.dlg : $(hdir)/dlgcmd.dlg
+        parsedlg $(pmfont) $[@ dlgcmd.dlg
+dlglist.dlg : $(hdir)/dlglist.dlg
+        parsedlg $(pmfont) $[@ dlglist.dlg
+dlgnewp.dlg : $(hdir)/dlgnewp.dlg
+        parsedlg $(pmfont) $[@ dlgnewp.dlg
+dlgoptn.dlg : $(hdir)/dlgoptn.dlg
+        parsedlg $(pmfont) $[@ dlgoptn.dlg
+dlgvarx.dlg : $(hdir)/dlgvarx.dlg
+        parsedlg $(pmfont) $[@ dlgvarx.dlg
+dlgamb.dlg : $(hdir)/dlgamb.dlg
+        parsedlg $(pmfont) $[@ dlgamb.dlg
+dlgwind.dlg : $(hdir)/dlgwind.dlg
+        parsedlg $(pmfont) $[@ dlgwind.dlg
+dlgstk.dlg : $(hdir)/dlgstk.dlg
+        parsedlg $(pmfont) $[@ dlgstk.dlg
+dlghis.dlg : $(hdir)/dlghis.dlg
+        parsedlg $(pmfont) $[@ dlghis.dlg
+japayn.dlg : $(hdir)/japayn.dlg
+        parsedlg $(pmfontj) $[@ japayn.dlg
+japbrk.dlg : $(hdir)/japbrk.dlg
+        parsedlg $(pmfontj) $[@ japbrk.dlg
+japcmd.dlg : $(hdir)/japcmd.dlg
+        parsedlg $(pmfontj) $[@ japcmd.dlg
+japlist.dlg : $(hdir)/japlist.dlg
+        parsedlg $(pmfontj) $[@ japlist.dlg
+japnewp.dlg : $(hdir)/japnewp.dlg
+        parsedlg $(pmfontj) $[@ japnewp.dlg
+japoptn.dlg : $(hdir)/japoptn.dlg
+        parsedlg $(pmfontj) $[@ japoptn.dlg
+japvarx.dlg : $(hdir)/japvarx.dlg
+        parsedlg $(pmfontj) $[@ japvarx.dlg
+japamb.dlg : $(hdir)/japamb.dlg
+        parsedlg $(pmfontj) $[@ japamb.dlg
+japwind.dlg : $(hdir)/japwind.dlg
+        parsedlg $(pmfontj) $[@ japwind.dlg
+japstk.dlg : $(hdir)/japstk.dlg
+        parsedlg $(pmfontj) $[@ japstk.dlg
+japhis.dlg : $(hdir)/japhis.dlg
+        parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
 
-auistr.gh : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
-        $(bld_cl) -i"$(auidir)\h" $]@
-        mkstr $^@
-        @rm -f mkstr.*
+./auimkstr.exe : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
+        $(bld_cl) -i"$(auidir)/h" $]@ -fe=$^@
+
+auistr.gh : $(auidir)/h/aui.msg ./auimkstr.exe
+        $]@ $^@
