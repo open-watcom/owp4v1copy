@@ -18,9 +18,9 @@ inc_dirs = $($(proj_name)_dir)\h
 .ERASE
 
 !ifeq host_CPU 386
-wreslib=$(watcom_dir)\lib\wresf
+wreslib=$(wres_dir)\lib\wresf
 !else
-wreslib=$(watcom_dir)\lib\wresl
+wreslib=$(wres_dir)\lib\wresl
 !endif
 
 targs = bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe

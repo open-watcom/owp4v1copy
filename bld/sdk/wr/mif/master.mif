@@ -28,7 +28,6 @@ sys_dll = 1
 MODEL = l
 WINDOWS = 1
 !include wres.mif
-wres_lib_dir = $(wres_dir)\lib
 
 object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
                 wrrdw16.obj wrrdwnt.obj wrrdres.obj wrimg.obj &

@@ -140,7 +140,7 @@ libs = $(cliblnec_lib)
 !    else
 libs = $(clibldos_lib)
 !    endif
-libs += $(ovlldr_lib) $(watcom_dir)\lib\wresl.lib
+libs += $(ovlldr_lib) $(wres_dir)\lib\wresl.lib
 !    ifeq fp_model c
 libs += $(mathl286_lib)
 !    else
@@ -148,7 +148,7 @@ libs += $(mathl287_lib) $(emu286_lib)
 !    endif
 
 !  else ifeq form os2v2
-libs = $(clibros2_lib) $(os2386) $(watcom_dir)\lib\wresf.lib
+libs = $(clibros2_lib) $(os2386) $(wres_dir)\lib\wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -156,7 +156,7 @@ libs += $(mathr387_lib)
 !    endif
 
 !  else ifeq form nt
-libs = $(clibrnt_lib) $(watcom_dir)\lib\wresf.lib
+libs = $(clibrnt_lib) $(wres_dir)\lib\wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -169,7 +169,7 @@ libs = $(clibrnec_lib)
 !    else
 libs = $(clibr386_lib)
 !    endif
-libs += $(watcom_dir)\lib\wresf.lib
+libs += $(wres_dir)\lib\wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else

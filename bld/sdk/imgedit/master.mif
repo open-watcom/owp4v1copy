@@ -9,7 +9,6 @@ sys_windowed = 1
 WINDOWS=1
 MODEL=l
 !include wres.mif
-wres_lib_dir = $(wres_dir)\lib
 
 # Got rid of "-we" switch because FreeProcInstance() gives warning.
 cflags_all      = -zq -w4

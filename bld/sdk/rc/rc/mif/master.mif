@@ -6,7 +6,6 @@ name = wrc
 !include defrule.mif
 
 #always use the most up to date wres library
-wres_lib_dir =  $(wres_dir)\lib
 !include wres.mif
 
 .EXTENSIONS :

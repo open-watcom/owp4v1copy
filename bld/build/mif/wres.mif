@@ -24,7 +24,7 @@ wres_qnx_386 = WRESF.LIB
 !endif
 
 !ifndef wres_lib_dir
-wres_lib_dir = $(watcom_dir)\lib
+wres_lib_dir = $(wres_dir)\lib
 !endif
 !ifdef PEGGED
 wres_l = WRESLP.LIB

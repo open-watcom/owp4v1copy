@@ -101,9 +101,9 @@ $(link_name) : $(__MAKEFILES__)
         @%write $^@ $(lflags)
         @%append  $^@ file { $(proj_obj) }
 !ifeq host_CPU 386
-        @%append $^@  lib $(watcom_dir)\lib\wresf.lib
+        @%append $^@  lib $(wres_dir)\lib\wresf.lib
 !else ifeq host_CPU axp
-        @%append $^@  lib $(watcom_dir)\lib\wresaxp.lib
+        @%append $^@  lib $(wres_dir)\lib\wresaxp.lib
 !endif
 !ifeq host_OS osi
         @%append  $^@ name $(proj_name).rex

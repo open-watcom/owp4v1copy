@@ -17,7 +17,6 @@ sys_windowed=1
 WINDOWS=1
 MODEL=l
 !include wres.mif
-wres_lib_dir = $(wres_dir)\lib
 
 # path names used in the script
 !ifndef fmedit_dir

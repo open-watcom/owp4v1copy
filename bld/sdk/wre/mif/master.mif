@@ -19,7 +19,6 @@ sys_windowed = 1
 MODEL = l
 WINDOWS = 1
 !include wres.mif
-wres_lib_dir = $(wres_dir)\lib
 
 # path names used in the script
 wacc_dir        =$(sdk_dir)\wresedit\waccel

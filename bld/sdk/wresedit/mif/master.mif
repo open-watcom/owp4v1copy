@@ -28,7 +28,6 @@ sys_dll = 1
 MODEL = l
 WINDOWS = 1
 !include wres.mif
-wres_lib_dir = $(wres_dir)\lib
 
 object = $(sys_object)
 object +=       wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
