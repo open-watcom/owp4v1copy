@@ -13,27 +13,23 @@ exc_name = $(proj_name).exe
 !endif
 link_name = $(proj_name).lnk
 
-!ifdef bootstrap
-cc = cc
-bld_cl = cc
-cflags = -funsigned-char -c -D_WASM_ -DUNIX -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I$(proj_path)/h -I$(womp_dir)/h -I$(watcom_dir)/h -I$(wres_dir)/h -I$(trmem_dir) -o $@
-force_include = -include
-LIBS = -L$(clib_dir)/$(%OBJDIR) -lwatcom
-wcl_util_opts = -I$(watcom_dir)/h -o $^@ $(LIBS)
-!else
-wcl_util_opts = -fe=$^@
-!endif
-
 .OPTIMIZE
 
+!ifdef bootstrap
+inc_dirs = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h" -I"$(watcom_dir)/h" &
+-I"$(wres_dir)/h" -I"$(trmem_dir)"
+!else
 inc_dirs = .;$(proj_path)/h;$(womp_dir)/h;$(watcom_dir)/h;$(wres_dir)/h;$(trmem_dir)
+!endif
+
+libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom
 
 #cflags stuff
 #########
-extra_c_flags =-d_WASM_
+extra_c_flags =-D_WASM_
 extra_c_flags_386 =-fpc
 !ifeq release 0
-extra_c_flags += -dTRMEM -dDEBUG_OUT
+extra_c_flags += -DTRMEM -DDEBUG_OUT
 extra_c_flags_386 += -of
 !endif
 
@@ -136,7 +132,7 @@ $(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(proj_name).res $(pr
 !endif
 !ifdef bootstrap
         @%make usage.u
-        $(cc) -o $^@ $(proj_obj) $(LIBS)
+        $(cc) -o $^@ $(proj_obj) $(libs)
 !else
         $(linker) @$(link_name)
 !ifeq host_OS osi

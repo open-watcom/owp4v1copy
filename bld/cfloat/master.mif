@@ -21,12 +21,6 @@ cf_objs = &
     cfutil.obj &
     u32moddi.obj
 
-!ifeq bootstrap 1
-inc_dirs = -I$(watcom_dir)/h -I../h
-libcfloat.a: $(cf_objs)
-	ar crs libcfloat.a $(cf_objs)
-!endif
-
 cf.lib : $(cf_objs)
         rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i

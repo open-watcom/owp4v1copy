@@ -94,6 +94,9 @@ stub_objs = dlldrvr.obj stubidedrv.obj idemsgfm.obj drvmsgpr.obj
 
 !ifeq host_CPU 386
 !    define obj_dir o
+!    ifeq bootstrap 1
+!        define obj_dir $(%OBJDIR)
+!    endif
 !    define dwarf_lib $(dwarf_dir)/dw/$(obj_dir)/dwf.lib
 !    ifdef wlink_rtdll
 !       ifeq wlink_rtdll 1
@@ -228,7 +231,7 @@ stubexe = $(bin_prefix)wlstub.exe
 exe = $(proj_name)
 inc_dirs = -I../linux386 -I. -I../h -I$(rc_dir)/h -I$(lib_misc_dir)/h &
 -I$(watcom_dir)/h
-libs = $(wres_dir)/$(%OBJDIR)/libwres.a $(dwarf_dir)/dw/$(%OBJDIR)/libdwarf.a &
+libs = $(wres_dir)/$(%OBJDIR)/libwres.a $(dwarf_lib) &
 $(orl_dir)/$(%OBJDIR)/liborl.a $(clib_dir)/$(%OBJDIR)/libwatcom.a
 !endif
 

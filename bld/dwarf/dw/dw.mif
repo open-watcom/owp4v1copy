@@ -42,12 +42,9 @@ dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $[@
 
 !ifeq bootstrap 1
 
-inc_dirs=-I$(watcom_dir)/h -I. -I../h
+inc_dirs = -I$(watcom_dir)/h -I. -I../h
 dwtjbflags = -c $(cflags) -o $@
 dwmakeabflags = dwmakeab.tbj dwutils.tbj -o $<
-
-libdwarf.a: dwabenum.i dwabinfo.i $(OBJS)
-    ar crs libdwarf.a $(OBJS)
 
 !else
 

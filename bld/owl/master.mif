@@ -22,15 +22,6 @@ owl_objs = owl.obj &
         owsymdmp.obj &
         log.obj
 
-!ifeq bootstrap 1
-
-inc_dirs = -I$(watcom_dir)/h -I../h
-
-libowl.a: $(owl_objs)
-	ar crs $@ $<
-
-!endif
-
 owl.lib : $(owl_objs)
         rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i

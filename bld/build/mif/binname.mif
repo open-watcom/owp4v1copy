@@ -23,7 +23,11 @@
 bin_suffix_win  = w
 bin_type = dll
 !ifeq host_os os2
+!ifdef __LINUX__
+dll_suffix = /dll
+!else
 dll_suffix = \dll
+!endif
 !endif
 !else
 bin_type = exe
@@ -73,7 +77,11 @@ bin_root = $(bin_root_$(proj_name))
 !endif
 
 !ifdef bin_root
+!ifdef __LINUX__
+bin_dir         = $(bin_root)/$(bin_dir_$(host_os)_$(host_cpu))$(machine_suffix_$(host_machine))$(dll_suffix)
+!else
 bin_dir         = $(bin_root)\$(bin_dir_$(host_os)_$(host_cpu))$(machine_suffix_$(host_machine))$(dll_suffix)
+!endif
 !else
 bin_dir         = .
 !endif
@@ -86,4 +94,8 @@ bin_ext         = $(bin_ext_$(host_os)_$(bin_type))
 bin_name        = $(proj_name)
 !endif
 
+!ifdef __LINUX__
+bin_path        = $(bin_dir)/$(bin_name)$(bin_suffix)$(bin_ext)
+!else
 bin_path        = $(bin_dir)\$(bin_name)$(bin_suffix)$(bin_ext)
+!endif

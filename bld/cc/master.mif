@@ -144,12 +144,11 @@ inc_dirs += -I$(dwarf_dir)/dw/h
 inc_dirs += -I$(comp_cfg_dir)/h
 inc_dirs += -I$(fe_misc_dir)/h
 
-ldflags = -L$(cg_dir)/intel/$(target_CPU)/$(%OBJDIR) -L$(dwarf_dir)/dw/$(%OBJDIR) &
--L$(cfloat_dir)/$(%OBJDIR) -L$(owl_dir)/$(%OBJDIR) -L$(clib_dir)/$(%OBJDIR) &
--L$(wres_dir)/$(%OBJDIR)
-libs = -lcg$(target_cpu) -ldwarf -lcfloat -lowl -lwatcom -lwres
+ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR) 
+libs = $(dwarf_dir)/dw/$(%OBJDIR)/dwf.lib -lwatcom -lwres
 
 !else
+
 inc_dirs =.;
 inc_dirs +=$(cc_dir)/h;$(cg_inc_dirs);
 inc_dirs +=$(inline_asm_h);
@@ -157,8 +156,6 @@ inc_dirs +=$(dwarf_dir)/dw/h;
 inc_dirs +=$(comp_cfg_dir)/h;
 inc_dirs +=$(fe_misc_dir)/h
 
-# options for single source utility compilations
-wcl_util_opts = -ox -fe=$@
 !endif
 
 .BEFORE
@@ -197,13 +194,12 @@ target: $(def_targ) .SYMBOLIC
 
 !ifdef bootstrap
 xname = wcc$(target_cpu)
-cg_deps =
 dwarf_deps =
 !endif
 
 $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
 !ifdef bootstrap
-	$(cc) $(ldflags) -o $@ $(cc_objs) $(libs)
+	$(cc) $(ldflags) -o $@ $(cc_objs) $(libs) $(cg_deps)
 !else
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
