@@ -36,23 +36,16 @@
 
 #include <stdlib.h>
 #include <malloc.h>
-
-#include "asmalloc.h"
-
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "asmalloc.h"
 #include "fatal.h"
+#include "memutil.h"
 
-#ifdef  TRMEM
+#ifdef TRMEM
 #include "trmem.h"
-#endif
 
-extern void     Fatal( unsigned, ... );
-extern void     heap( char * );
-
-
-#ifdef  TRMEM
 static _trmem_hdl   memHandle;
 static int          memFile;     /* file handle we'll write() to */
 
@@ -95,7 +88,6 @@ void MemFini( void ) {
     }
 #endif
 }
-
 
 void *AsmAlloc( size_t size )
 {
