@@ -222,6 +222,7 @@ _WCRTLINK extern void       _wsplitpath( const wchar_t *__path,
 _WCRTLINK extern int        _wsystem( const wchar_t *__cmd );
 :endsegment
 
+
 _WCRTLINK extern int     putenv( const char *__string );
 _WCRTLINK extern void    _searchenv( const char *__name, const char *__env_var,
                                      char *__buf );
@@ -303,6 +304,21 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 :segment QNX
 _WCRTLINK extern char **environ;                /*  pointer to environment table */
 _WCRTLINK extern wchar_t **_wenviron;   /*  pointer to wide environment */
+:elsesegment
+#if defined(__FUNCTION_DATA_ACCESS)
+ #define environ (*__get_environ_ptr())
+ #define _wenviron (*__get_wenviron_ptr())
+ #define _fileinfo (*__get_fileinfo_ptr())
+#elif defined(__SW_BR) || defined(_RTDLL)
+ #define environ   environ_br
+ #define _wenviron _wenviron_br
+ #define _fileinfo _fileinfo_br
+#endif
+_WCRTLINK extern char **_WCDATA environ;        /*  pointer to environment table */
+_WCRTLINK extern wchar_t **_WCDATA _wenviron; /*  pointer to wide environment */
+#if defined(__NT__)
+ _WCRTLINK extern int _fileinfo;        /* for inheriting POSIX handles */
+#endif
 :endsegment
 
 :include errno.sp
