@@ -1,13 +1,5 @@
 .before:
     @set include=
-!ifdef on_build_machine
-!ifeq profile 1
-    # This should be using $(%dwatcom) but those tools don't have the latest -etp support
-    # the rel2 tools do have the latest -etp support, so I am using them.
-    set watcom=$(%relroot)\$(%defrel)
-    set path=$(%watcom)\binnt;$(%watcom)\binw;$(%path)
-!endif
-!endif
 
 all : $(objfiles) $(libname).lib .symbolic
     @%null
@@ -18,7 +10,7 @@ $(libname).lib : $(objs) $(libs) .precious
     vi -q -s $(lib_misc_dir)\vi\export.vi tmp.def
     cat ..\..\..\export.$(processor) tmp.def > tmp2.def
     sort < tmp2.def > tmp3.def
-    -uniq < tmp3.def > export.def
+    uniq tmp3.def > export.def
     @erase tmp.def
     @erase tmp2.def
     @erase tmp3.def
