@@ -106,11 +106,12 @@ typedef int rboolean;
 #endif
 
 
-extern "C" {
 
 #if defined(__MT__)
 #include <lock.h>
 #endif
+
+extern "C" {
 
 #include "wcpp.h"
 
