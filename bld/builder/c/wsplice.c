@@ -79,12 +79,7 @@
 #else
 #include <sys/utime.h>
 #endif
-#ifndef _MAX_PATH2
-#define _MAX_PATH2 PATH_MAX+4
-#endif
-#ifdef __USE_BSD
-#define stricmp strcasecmp
-#endif
+#include "watcom.h"
 
 //#define local static
 #define local
@@ -179,6 +174,9 @@ local unsigned RecordInitialize(); // - initialize for record processing
 local void OutputString();      // - send string to output file
 local void PutNL();             // - output a newline
 local void AddIncludePathList();// - add to list of include paths
+local void ProcessRecord(int,char *); // - PROCESS A RECORD OF INPUT
+local void EatWhite(void);      // - eat white space
+local int Expr(void);
 
                                 // DATA (READ ONLY)
 
@@ -248,7 +246,7 @@ enum                            // PROCESSING MODES
 
 
 int main(                  // MAIN-LINE
-    unsigned arg_count,     // - # arguments
+    int arg_count,          // - # arguments
     char *param[] )         // - arguments list
 {
 #define src_file param[ count ]         // - name of source file
@@ -258,8 +256,8 @@ int main(                  // MAIN-LINE
     SEGMENT *seg;           // - segment structure
     struct utimbuf      dest_time;
     struct stat         src_time;
-    char                *src;
-    char                *tgt;
+    char                *src = NULL;
+    char                *tgt = NULL;
 
     ErrCount = 0;
     if( arg_count < 3 ) {
@@ -494,7 +492,7 @@ local void OutputString( char *p, char *record )
 
 local void PutNL()
 {
-#if !defined( __QNX__ )
+#if !defined( __UNIX__ )
     if( !UnixStyle ) fputc( '\r', OutputFile );
 #endif
     fputc( '\n', OutputFile );

@@ -43,7 +43,7 @@ static char _tmpstr[TMPSLEN+1];
 static int _tmpoff=0;
 
 static int _SplitParms( char *, char ** );
-extern void wmake_main( int, const char ** );
+extern int wmake_main( int, const char ** );
 long PASCAL FAR MainDriver( HWND, unsigned, WORD, LONG );
 BOOL FAR PASCAL About( HWND, unsigned, WORD, LONG );
 

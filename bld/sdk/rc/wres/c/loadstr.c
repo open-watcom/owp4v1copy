@@ -79,6 +79,8 @@ typedef char _WCI86FAR *   LPSTR;
 
 WResDir    MainDir;
 
+extern int InitResources2( WResDir *dir, PHANDLE_INFO hInstance );
+
 static int GetString(   WResLangInfo    *res,
                         PHANDLE_INFO    hInstance,
                         UINT            idResource,

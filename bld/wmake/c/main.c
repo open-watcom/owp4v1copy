@@ -514,8 +514,8 @@ STATIC void init( const char **argv )
 }
 
 
-extern void ExitSafe( int rc )
-/****************************/
+extern int ExitSafe( int rc )
+/***************************/
 {
     static BOOLEAN busy = FALSE;    /* recursion protection */
 
@@ -555,20 +555,22 @@ extern void ExitSafe( int rc )
         LogFini();
     }
 
-    exit( rc );
+    return( rc );
 }
 
 #ifndef __WATCOMC__
 char **_argv;
-#endif
-
-#pragma off(unreferenced);
-#if !defined( __WINDOWS__ )
-extern void main( int argc, char **argv )
 #else
-extern void wmake_main( int argc, char **argv )
+#pragma off(unreferenced);
 #endif
+#if !defined( __WINDOWS__ )
+extern int main( int argc, char **argv )
+#else
+extern int wmake_main( int argc, char **argv )
+#endif
+#ifdef __WATCOMC__
 #pragma on (unreferenced);
+#endif
 /*********************************************/
 {
 
@@ -583,16 +585,16 @@ extern void wmake_main( int argc, char **argv )
     parseFiles();
     if( Glob.print ) {
         print();
-        ExitSafe( EXIT_OK );
+        return( ExitSafe( EXIT_OK ) );
     }
     if( Glob.erroryet ) {
-        ExitSafe( EXIT_ERROR );
+        return( ExitSafe( EXIT_ERROR ) );
     }
     if( doMusts() != RET_SUCCESS ) {
-        ExitSafe( EXIT_ERROR );
+        return( ExitSafe( EXIT_ERROR ) );
     }
     ParseFini();
-    ExitSafe( EXIT_OK );
+    return( ExitSafe( EXIT_OK ) );
 }
 
 #if 0

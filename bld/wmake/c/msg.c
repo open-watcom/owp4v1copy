@@ -498,7 +498,7 @@ extern void PrtMsg( enum MsgClass num, ... )
         PrtMsg( WRN | LOC | MICROSOFT_MAKEFILE );
     }
     if( class == ( FTL & CLASS_MSK ) ) {
-        ExitSafe( EXIT_FATAL );
+        exit( ExitSafe( EXIT_FATAL ) );
     }
 }
 #pragma off(check_stack);
@@ -526,7 +526,7 @@ extern void Usage( void )
             PrtMsg( INF|PRNTSTR, msgbuff );
         }
     }
-    ExitSafe( EXIT_OK );
+    exit( ExitSafe( EXIT_OK ) );
 }
 
 

@@ -134,7 +134,7 @@ usagej.rc : ../h/usage.sp
 
 usageend.gh : usage.rc usagej.rc
         wsplice usage.rc -o "%n%n%n%n" usage.rcp
-        wsplice -f "%+" usage.rcp -o "$#define USAGE_LAST (USAGE_BASE+%$#)" usageend.gh
+        wsplice -f "%+" usage.rcp -o "$#define USAGE_LAST (USAGE_BASE+%$#)%n" usageend.gh
         rm -f usage.rcp
 
 # usage.h : ..\h\usage.sp

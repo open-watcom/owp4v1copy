@@ -858,7 +858,7 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
     switch( num ) {
     case PER_ABORT:
         closeCurrentFile();
-        ExitSafe( EXIT_ERROR );
+        exit( ExitSafe( EXIT_ERROR ) );
         break;
 
     case PER_APPEND:
@@ -878,13 +878,13 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
 
     case PER_QUIT:
         closeCurrentFile();
-        ExitSafe( EXIT_OK );
+        exit( ExitSafe( EXIT_OK ) );
         break;
 
     case PER_STOP:
         closeCurrentFile();
         if( !GetYes( DO_YOU_WISH_TO_CONT ) ) {
-            ExitSafe( EXIT_OK );
+            exit( ExitSafe( EXIT_OK ) );
         }
         break;
 

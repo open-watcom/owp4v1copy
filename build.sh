@@ -15,6 +15,7 @@ if [ ! -d $WATCOM/lib386/linux ]; then
     ln -s $OWROOT/bld/mathlib/library/msdos.386/ms_s/maths.lib $WATCOM/lib386/math3s.lib
     ln -s $OWROOT/bld/clib/library/linux.386/ms_r/clibs.lib $WATCOM/lib386/linux/clib3r.lib
     ln -s $OWROOT/bld/clib/library/linux.386/ms_s/clibs.lib $WATCOM/lib386/linux/clib3s.lib
+    ln -s $OWROOT/bld/emu/stub386/emu387.lib $WATCOM/lib386/linux/emu387.lib
 fi
 mkdir -p $DEVDIR/build/binl
 if [ ! -f $DEVDIR/build/binl/wtouch ]; then

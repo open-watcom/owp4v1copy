@@ -20,7 +20,7 @@ $(OBJDIR)/usagej.rc : h/usage.sp
 
 $(OBJDIR)/usageend.gh: $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
 	wsplice $< -o "%n%n%n%n" $(OBJDIR)/usage.rcp
-	wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)" $@
+	wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)%n" $@
 	rm -f $(OBJDIR)/usage.rcp
 
 $(OBJDIR)/cretype : cretype.c

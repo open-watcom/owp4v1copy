@@ -27,6 +27,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/hdr/lang.ctl ]
 [ INCLUDE <devdir>/clib/lang.ctl ]
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
+[ INCLUDE <devdir>/emu/lang.ctl ]
 [ INCLUDE <devdir>/cfloat/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
 [ INCLUDE <devdir>/sdk/rc/lang.ctl ]

@@ -15,12 +15,12 @@ INCS = &
  consts.inc fpubits.inc fpucc.inc memops.inc stkops.inc &
  tagtab.inc tentab.inc xception.inc
 
-.inc : ..\inc
-.c : ..\..\emu86\c
-.psm : ..\asm
-.asm : ..\asm
+.inc : ../inc
+.c : ../../emu86/c
+.psm : ../asm
+.asm : ../asm
 
-as_flags = -i$(mathlib_dir)\h;$(emu386)\inc
+as_flags = -i"$(mathlib_dir)/h;$(emu386)/inc"
 
 !ifeq host_OS dos
 
@@ -38,7 +38,7 @@ objs = qnxemu87.obj emu387.obj fpeqnx.obj
     $(cc) $[* -oais-s-w3 -i$(new_qnx_h) -dQNX32
 
 emu387: $(objs)
-    $(linker) $(lflags) name $^@ file { $(objs) } opt priv=0,map,long,quiet,res=..\..\emu86\emu87.u
+    $(linker) $(lflags) name $^@ file { $(objs) } opt priv=0,map,long,quiet,res=../../emu86/emu87.u
 
 !else ifeq host_OS win
 
@@ -53,7 +53,7 @@ emu387.lib: 386stub.obj
 !endif
 
 .psm.obj:
-    $(as) $[@ -mf -d_OS=_PLDT $(as_flags) -i$(watcom_dir)\h\;$(comp_cfg_dir)\h
+    $(as) $[@ -fo=$@ -mf -d_OS=_PLDT $(as_flags) -i"$(watcom_dir)/h/;$(comp_cfg_dir)/h"
 
 emu387.obj: emu387.asm $(INCS)
     $(as) $[@ $(as_flags) $(extra_as_flags)

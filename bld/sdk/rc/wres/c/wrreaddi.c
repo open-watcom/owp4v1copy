@@ -277,8 +277,8 @@ static int readMResDir( WResFileID handle, WResDir currdir, int *dup_discarded,
                         char iswin32, void *fileinfo )
 /******************************************************************************/
 {
-    MResResourceHeader     *head;
-    M32ResResourceHeader   *head32;
+    MResResourceHeader     *head = NULL;
+    M32ResResourceHeader   *head32 = NULL;
     WResDirWindow           dup;
     int                     error;
     off_t                   seek_rc;
