@@ -37,7 +37,7 @@ TRAP_remote_objs =
 sys_x86_os2  = sys os2 dll initinstance &
             exp TrapInit_.1,TrapRequest_.3,TrapFini_.2 &
             op modname=$^& &
-            lib $(lang_root)\lib286\os2\os2.lib
+            lib $(os2286)
 sys_x86_os2v2  = sys os2v2 dll initinstance terminstance &
             exp TrapInit_.1,TrapRequest_.3,TrapFini_.2 &
             op modname=$^&
