@@ -88,4 +88,4 @@ $(namewin)e.wbj : $(namewin).c
         $(CC) -zW -ml -dSERVER -zu $(CFLAGS) $[* -fo=.wbj
 
 .asm.obj : $[*
-        masm /Mx /Zd /s $[*;
+        wasm -bt=DOS -ms -q -d1 $[*
