@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface for communicating betwen user applications and
+*               the Open Watcom debugger.
 *
 ****************************************************************************/
 
@@ -38,9 +38,6 @@ extern "C" {
 #endif
 
 /*
-
-        This file let's an application Talk to the Watcom debugger.
-
         entry points:
 
         void CheckEnterDebugger
@@ -251,6 +248,16 @@ _WCRTLINK extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
         sprintf( __buff, DEBUGGER_BREAKUNWIND_FORMAT, levels ); \
         PassDebuggerAMessage( __buff ); \
         CheckEnterDebuggerWithMessage( msg ); \
+    }
+
+#define DEBUGGER_LOADMODULE_COMMAND "!LOADMODULE "
+#define DEBUGGER_LOADMODULE_FORMAT DEBUGGER_LOADMODULE_COMMAND "0x%4.4x:0x%8.8x,%s"
+#define DebuggerLoadUserModule( modname, segment, offset ) \
+    { \
+        char *__buff = (char*)alloca( sizeof( DEBUGGER_LOADMODULE_COMMAND )+\
+                                      2+4+1+8+1+strlen( modname )+1 ); \
+        sprintf( __buff, DEBUGGER_LOADMODULE_FORMAT, segment, offset, modname ); \
+        PassDebuggerAMessage( __buff ); \
     }
 
 #define DebuggerInitPresent() DebuggerSetCharVariableTrue( DEBUG_PRESENT_NAME )

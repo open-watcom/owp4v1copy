@@ -1380,13 +1380,13 @@ OVL_EXTERN void MapAddrUser( image_entry *image, addr_ptr *addr,
     }
 }
 
+
 /*
  * SymFileNew - process a new symbolic file request
  */
 
 OVL_EXTERN void SymFileNew()
 {
-
     char        *fname;
     unsigned    fname_len;
     image_entry *image;
@@ -1430,6 +1430,8 @@ OVL_EXTERN void SymFileNew()
         curr->real_addr = addr.mach;
         curr->map_valid_lo = 0;
         curr->map_valid_hi = ~(addr_off)0;
+        curr->map_addr.offset  = 0;
+        curr->map_addr.segment = 0;
         if( CurrToken == T_COMMA ) {
             Scan();
         }
@@ -1449,6 +1451,90 @@ OVL_EXTERN void SymFileNew()
     }
     DbgUpdate( UP_SYMBOLS_ADDED );
     InitImageInfo( image );
+}
+
+
+/*
+ * MapAddrUsrMod - simple address mapping for user loaded modules
+ */
+
+OVL_EXTERN void MapAddrUsrMod( image_entry *image, addr_ptr *addr,
+                        addr_off *lo_bound, addr_off *hi_bound )
+{
+    address     mapped;
+    addr_off    offset   = addr->offset;
+
+    *lo_bound = 0;
+    *hi_bound = ~(addr_off)0;
+    if( image->map_list != NULL && !image->map_list->pre_map
+      && MADAddrMap( addr, &image->map_list->map_addr,
+                &image->map_list->real_addr, &DbgRegs->mr ) == MS_OK ) {
+        return;
+    }
+    mapped.mach.segment = NO_SEG;
+    mapped.mach.offset  = 0;
+
+    // Assumes flat model images with single base address
+    if( image->map_list != NULL ) {
+        mapped.mach = image->map_list->real_addr;
+
+        PostProcMapExpr( &mapped );
+        mapped.mach.offset += offset;   // add offset back!
+        *addr = mapped.mach;
+    }
+}
+
+
+/*
+ * SymUserModLoad - process symbol information for user loaded module
+ *                  NB: assumes flat model
+ */
+
+bool SymUserModLoad( char *fname, address *loadaddr )
+{
+    unsigned    fname_len;
+    image_entry *image;
+    map_entry   **owner;
+    map_entry   *curr;
+
+    if( !fname )
+        return TRUE;
+
+    if( !( fname_len = strlen( fname ) ) )
+        return TRUE;
+
+    memcpy( TxtBuff, fname, fname_len );
+    TxtBuff[ fname_len ] = '\0';
+    image = DoCreateImage( fname, TxtBuff );
+    image->mapper = MapAddrUsrMod;
+    if( !ProcSymInfo( image ) ) {
+        FreeImage( image );
+        Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), TxtBuff );
+    }
+    owner = &image->map_list;
+
+    _Alloc( curr, sizeof( *curr ) );
+    if( curr == NULL ) {
+        DIPUnloadInfo( image->dip_handle );
+        Error( ERR_NONE, LIT( ERR_NO_MEMORY_FOR_DEBUG ) );
+    }
+
+    // Save off the load address in a map entry
+    *owner = curr;
+    owner = &curr->link;
+    curr->link    = NULL;
+    curr->pre_map = TRUE;
+    curr->map_valid_lo = 0;
+    curr->map_valid_hi = ~(addr_off)0;
+    curr->real_addr    = loadaddr->mach;
+    curr->map_addr.offset  = 0;
+    curr->map_addr.segment = 0;
+
+    DIPMapInfo( image->dip_handle, image );
+    curr = image->map_list->link;
+    DbgUpdate( UP_SYMBOLS_ADDED );
+    InitImageInfo( image );
+    return( FALSE );
 }
 
 

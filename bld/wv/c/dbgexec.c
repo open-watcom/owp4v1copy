@@ -110,6 +110,7 @@ extern void             TypeInpStack(input_type);
 extern char             *CnvNearestAddr( address, char *, unsigned );
 extern void             PopInpStack(void);
 extern void             ProcACmd(void);
+extern bool             SymUserModLoad( char *fname, address *loadaddr );
 
 extern input_stack      *InpStack;
 extern machine_state    *DbgRegs;
@@ -227,14 +228,14 @@ bool SetMsgText( char *message, unsigned *conditions )
         message += sizeof( DEBUGGER_LOOKUP_COMMAND )-1;
         comma1 = strchr( message, ',' );
         if( comma1 == NULL ) return( TRUE );
-        *comma1 = '\0';
-        comma2 = strchr( comma1+1, ',' );
+        *comma1++ = '\0';
+        comma2 = strchr( comma1, ',' );
         if( comma2 == NULL ) return( TRUE );
-        *comma2 = '\0';
-        NoCRLF( comma2+1 );
+        *comma2++ = '\0';
+        NoCRLF( comma2 );
         if( !DlgScanDataAddr( message, &addr ) ) return( TRUE );
-        if( !DlgScanDataAddr( comma1+1, &buff_addr ) ) return( TRUE );
-        if( !DlgScanLong( comma2+1, &buff_len ) ) return( TRUE );
+        if( !DlgScanDataAddr( comma1, &buff_addr ) ) return( TRUE );
+        if( !DlgScanLong( comma2, &buff_len ) ) return( TRUE );
         CnvNearestAddr( addr, TxtBuff, TXT_LEN );
         sym_len = strlen( TxtBuff )+1;
         if( sym_len > buff_len ) {
@@ -242,6 +243,18 @@ bool SetMsgText( char *message, unsigned *conditions )
             sym_len = buff_len;
         }
         ProgPoke( buff_addr, TxtBuff, sym_len );
+        return( FALSE );
+    } else if( memcmp( message, DEBUGGER_LOADMODULE_COMMAND,
+                sizeof( DEBUGGER_LOADMODULE_COMMAND )-1 ) == 0 ) {
+        message += sizeof( DEBUGGER_LOADMODULE_COMMAND )-1;
+        comma1 = strchr( message, ',' );
+        if( comma1 == NULL )
+            return( TRUE );
+        *comma1++ = '\0';
+        NoCRLF( comma1 );
+        if( !DlgScanDataAddr( message, &addr ) )
+            return( TRUE );
+        SymUserModLoad( comma1, &addr );
         return( FALSE );
     } else {
         AddMessageText( message );
