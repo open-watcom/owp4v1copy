@@ -15,6 +15,9 @@
 #ifndef _NEW_INCLUDED
   #include <new>
 #endif
+:: No using declarations here. <new.h> exists only to support legacy
+:: programs. Thus access to new features (like std::bad_alloc) via
+:: <new.h> is not provided.
 
 #endif
 :elsesegment
@@ -28,10 +31,15 @@
 #endif
 
 #ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
+  #include <_comdef.h>
 #endif
+
 #ifndef _STDDEF_H_INCLUDED
- #include <stddef.h>
+  #include <stddef.h>
+#endif
+
+#ifndef _EXCEPTION_INCLUDED
+  #include <exception>
 #endif
 
 :include cpppfv.sp
@@ -52,6 +60,26 @@ _WPRTLINK extern PFU _set_new_handler( PFU );
   _WPRTLINK extern _PVV _set_op_delete_array( _PVV );
 #endif
 :endsegment
+
+// NOTE: Open Watcom currently does not throw std::bad_alloc on
+// allocation failures. This class is defined here to so that programs
+// that reference it will at least compile. Consider this a first step
+// in building an exception throwing implementation of operator new.
+
+namespace std {
+  class bad_alloc : public exception {
+  public:
+    bad_alloc( ) _WCTHROWS() :
+      exception( "unable to allocate memory" ) { }
+
+    bad_alloc( const bad_alloc & ) _WCTHROWS() { }
+
+    bad_alloc & operator=( bad_alloc & ) _WCTHROWS()
+        { return *this; }
+
+    virtual ~bad_alloc( ) _WCTHROWS() { }
+  };
+}
 
 #endif
 :endsegment

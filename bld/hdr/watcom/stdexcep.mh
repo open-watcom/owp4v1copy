@@ -43,17 +43,35 @@ using std::underflow_error;
 #endif
 
 #ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
+  #include <_comdef.h>
 #endif
 
-#include <exception>
+#ifndef __STRDEF_H_INCLUDED
+  #include <_strdef.h>
+#endif
+
+#ifndef _EXCEPTION_INCLUDED
+  #include <exception>
+#endif
 
 namespace std {
 
-  class _WPRTLINK logic_error : public exception {
+  namespace _ow {
+    class _WPRTLINK str_exception : public exception {
+      string message;
+    public:
+      str_exception( const string &what_arg ) _WCTHROWS()
+        : message( what_arg ) { }
+
+      virtual const char *what( ) const _WCTHROWS()
+        { return message.c_str( ); }
+    };
+  }
+
+  class _WPRTLINK logic_error : public _ow::str_exception {
   public:
     logic_error( const string &what_arg ) _WCTHROWS()
-      : exception( what_arg ) { }
+      : _ow::str_exception( what_arg ) { }
   };
 
   class _WPRTLINK domain_error : public logic_error {
@@ -80,10 +98,10 @@ namespace std {
       : logic_error( what_arg ) { }
   };
 
-  class _WPRTLINK runtime_error : public exception {
+  class _WPRTLINK runtime_error : public _ow::str_exception {
   public:
     runtime_error( const string &what_arg ) _WCTHROWS()
-      : exception( what_arg ) { }
+      : _ow::str_exception( what_arg ) { }
   };
 
   class _WPRTLINK range_error : public runtime_error {

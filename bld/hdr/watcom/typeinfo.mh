@@ -41,7 +41,9 @@ using std::bad_typeid;
  #include <_comdef.h>
 #endif
 
-#include <exception>
+#ifndef _EXCEPTION_INCLUDED
+  #include <exception>
+#endif
 
 namespace std {
 
@@ -62,14 +64,14 @@ namespace std {
 
   class _WPRTLINK bad_cast : public exception {
   public:
-    bad_cast( const string &what_arg ) _WCTHROWS()
-        : exception( what_arg ) { }
+    bad_cast( ) _WCTHROWS()
+        : exception( "invalid dynamic cast" ) { }
   };
 
   class _WPRTLINK bad_typeid : public exception {
   public:
-    bad_typeid( const string &what_arg ) _WCTHROWS()
-        : exception( what_arg ) { }
+    bad_typeid( ) _WCTHROWS()
+        : exception( "bad typeid expression" ) { }
   };
 
 } // namespace std

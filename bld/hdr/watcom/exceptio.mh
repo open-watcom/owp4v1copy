@@ -52,19 +52,17 @@ using std::terminate;
 
 :include throws.sp
 
-#include <_strdef.h>
-
 namespace std {
 
   class _WPRTLINK exception {
-    string _what_val;
+    const char *_what_val;
   public:
     exception( ) _WCTHROWS() { }
 
     exception( const exception &src ) _WCTHROWS()
         : _what_val( src._what_val ) { }
 
-    exception( const string &what_val ) _WCTHROWS()
+    exception( const char *what_val ) _WCTHROWS()
         : _what_val( what_val ) { }
 
     exception& operator=( const exception &src ) _WCTHROWS()
@@ -73,15 +71,14 @@ namespace std {
     virtual ~exception( ) _WCTHROWS() { }
 
     virtual const char *what( ) const _WCTHROWS()
-        { return _what_val.c_str( ); }
+        { return _what_val; }
   };
 
 
   class _WPRTLINK bad_exception : public exception {
   public:
-    bad_exception( ) _WCTHROWS() :
-        exception( "exception missing from function exception specification" )
-        { }
+    bad_exception( ) _WCTHROWS()
+        : exception( "exception missing from exception specification" ) { }
 
     bad_exception( const bad_exception & ) _WCTHROWS() { }
 
@@ -89,9 +86,6 @@ namespace std {
         { return *this; }
 
     virtual ~bad_exception( ) _WCTHROWS() { }
-
-    virtual const char *what( ) const _WCTHROWS()
-        { return exception::what(); }
   };
 
 

@@ -38,9 +38,17 @@
 #error The header memory requires C++
 #endif
 
-#include <cstddef>
-#include <iterator>
-#include <new.h>
+#ifndef _CSTDDEF_INCLUDED
+  #include <cstddef>
+#endif
+
+#ifndef _ITERATOR_INCLUDED
+  #include <iterator>
+#endif
+
+#ifndef _NEW_INCLUDED
+  #include <new>
+#endif
 
 #define typename
 

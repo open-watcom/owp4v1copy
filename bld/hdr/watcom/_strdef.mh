@@ -20,13 +20,21 @@
 #error The header _strdef.h requires C++
 #endif
 
-#if !defined(_STRING_INCLUDED) && !defined(_EXCEPTION_INCLUDED)
+#if !defined(_STDEXCEPT_INCLUDED)
 #error The header _strdef.h is not to be directly included in user programs
 #endif
 
-#include <cstring>
-#include <cwchar>
-#include <memory>
+#ifndef _CSTRING_INCLUDED
+  #include <cstring>
+#endif
+
+#ifndef _CWCHAR_INCLUDED
+  #include <cwchar>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+  #include <memory>
+#endif
 
 #define typename
 
