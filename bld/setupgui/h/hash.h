@@ -38,7 +38,7 @@ typedef void        *hash_data;
  */
 typedef int     (*hash_key_cmp)( hash_key_const s1, hash_key_const s2 );
 
-extern hash_handle      HashInit( unsigned int size, hash_key_cmp func );
+extern hash_handle      HashInit( int size, hash_key_cmp func );
 extern int              HashInsert( hash_handle h, hash_key k, hash_data d );
 extern hash_data        HashFind( hash_handle h, hash_key_const k );
 extern void             HashFini( hash_handle h );
