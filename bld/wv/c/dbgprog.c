@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing of the NEW command, program and symbol loading.
 *
 ****************************************************************************/
 
@@ -1341,10 +1340,15 @@ static void EvalMapExpr( address *addr )
     PostProcMapExpr( addr );
 }
 
+/*
+ * MapAddrUser - have the user supply address mapping information
+ */
+
 OVL_EXTERN void MapAddrUser( image_entry *image, addr_ptr *addr,
                         addr_off *lo_bound, addr_off *hi_bound )
 {
     address     mapped;
+    addr_off    offset   = addr->offset;
 
     //NYI: what about bounds under Netware?
     *lo_bound = 0;
@@ -1355,11 +1359,21 @@ OVL_EXTERN void MapAddrUser( image_entry *image, addr_ptr *addr,
         return;
     }
     for( ;; ) {
-        Format( TxtBuff, LIT( Map_Selector ), addr->segment, image->sym_name );
+        switch( addr->segment ) {
+        case 0xFFFF:
+            Format( TxtBuff, LIT( Map_Named_Selector ), "Flat Code", image->sym_name );
+            break;
+        case 0xFFFE:
+            Format( TxtBuff, LIT( Map_Named_Selector ), "Flat Data", image->sym_name );
+            break;
+        default:
+            Format( TxtBuff, LIT( Map_Selector ), addr->segment, image->sym_name );
+        }
         mapped.mach.segment = NO_SEG;
         mapped.mach.offset = 0;
         if( DlgGivenAddr( TxtBuff, &mapped ) ) {
             PostProcMapExpr( &mapped );
+            mapped.mach.offset += offset;   // add offset back!
             *addr = mapped.mach;
             break;
         }
