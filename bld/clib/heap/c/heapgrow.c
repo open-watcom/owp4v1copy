@@ -37,6 +37,7 @@
 #include <malloc.h>
 #if defined(__QNX__)
     #include <sys/seginfo.h>
+#elif defined(__LINUX__)
 #elif defined(__OS2__)
     #include "tinyos2.h"
     #define INCL_DOSMEMMGR

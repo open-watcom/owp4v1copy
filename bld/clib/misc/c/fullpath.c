@@ -44,6 +44,11 @@
     #include <sys/stat.h>
     #include <sys/io_msg.h>
     #include <fcntl.h>
+#elif defined(__LINUX__)
+    #include <dirent.h>
+    #include <unistd.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
 #else
     #include <direct.h>
     #if defined(__OS2__)
@@ -62,15 +67,17 @@
     #include <mbstring.h>
 #endif
 
-// TODO: This will require porting to Linux if we actually need this!
-
 #define _WILL_FIT( c )  if(( (c) + 1 ) > size ) {       \
                             __set_errno( ERANGE );      \
                             return( NULL );             \
                         }                               \
                         size -= (c);
 
+#ifdef __UNIX__
+#define _IS_SLASH( c )  ((c) == '/')
+#else
 #define _IS_SLASH( c )  (( (c) == '/' ) || ( (c) == '\\' ))
+#endif
 
 #if !defined( __NT__ ) && !defined( __NETWARE__ )
 #pragma on (check_stack);
@@ -81,7 +88,7 @@ extern char *ConvertNameToFullPath( const char *, char * );
 #endif
 
 #if defined(__QNX__)
-static char *my_qnx_fullpath(char *fullpath, const char *path)
+static char *__qnx_fullpath(char *fullpath, const char *path)
 {
     struct {
             struct _io_open _io_open;
@@ -101,172 +108,6 @@ static char *my_qnx_fullpath(char *fullpath, const char *path)
     return fullpath;
 }
 #endif
-
-
-#if 0
-#if defined(__NT__) || defined(__WARP__)
-
-/*
- * Try to find the exact case for the fully qualified filename given in
- * 'buff'.  If successful, the proper name will be in 'buff' (of size
- * 'size') on return.  If unsuccessful, the original name will be unmodified
- * in 'buff'.  There is no indication of success versus failure because
- * fix_case is purely cosmetic; NTFS and HPFS preserve case, but are case-
- * insensitive, so the full pathname passed to this function would still
- * be sufficient.
- *
- * The 'filepart' parameter is either NULL (in which case it will be
- * calculated) or else points the first character of the filename portion
- * of the input pathname.
- */
-static void fix_case( CHAR_TYPE *buff, size_t size, CHAR_TYPE *filepart )
-{
-    #ifdef __NT__
-        WIN32_FIND_DATA findbuf;
-        HANDLE          handle;
-        CHAR_TYPE *     curdir;
-    #else
-        APIRET          rc;
-        FILEFINDBUF3    findbuf;
-        HDIR            handle = HDIR_CREATE;
-        ULONG           searchcount = 1;
-        #ifdef __WIDECHAR__
-            char *      mbBuff;
-            size_t      cvt;
-        #endif
-    #endif
-    CHAR_TYPE *         tmpbuff;
-    CHAR_TYPE           ch;
-    size_t              len;
-
-    #ifdef __NT__
-        /*** Always initialized under NT, so avoid code bloat ***/
-        if( filepart == NULL ) {
-            return;             /* shouldn't happen, but play it safe */
-        }
-    #else
-        /*** Initialize filepart if it wasn't supplied ***/
-        if( filepart == NULL ) {
-            filepart = __F_NAME(_mbsrchr,wcsrchr)( buff, '\\' );
-            if( filepart == NULL ) {
-                return;         /* shouldn't happen, but play it safe */
-            }
-            filepart++;
-        }
-    #endif
-
-    /*** Make a temporary buffer ***/
-    tmpbuff = lib_malloc( _MAX_PATH * CHARSIZE );
-    if( tmpbuff == NULL ) {
-        return;
-    }
-
-    #ifdef __NT__
-        /*
-         * Note: This part of the code is broken.  It may also be necessary
-         * to change drives, which is gross.  Additionally, there may be
-         * issues with things like the full path of a:\foo.bar when there's
-         * no disk in drive A, and similar problems for CD-ROM drives.
-         * It seems to work ok if the directory is on the current drive,
-         * though.
-         *
-         * This whole exact case thing is gross.  Yuck.
-         */
-
-        /*** Remember the current directory ***/
-        curdir = __F_NAME(getcwd,_wgetcwd)( NULL, 0 );
-        if( curdir == NULL ) {
-            lib_free( tmpbuff );
-            return;
-        }
-
-        /*** Get the correct case for the path portion ***/
-        ch = *(filepart-1);                     /* smite backslash */
-        *(filepart-1) = NULLCHAR;
-        if( __F_NAME(chdir,_wchdir)( buff ) == -1 ) {
-            __F_NAME(chdir,_wchdir)( curdir );
-            free( curdir );
-            lib_free( tmpbuff );
-            return;
-        }
-        if( __F_NAME(getcwd,_wgetcwd)( tmpbuff, _MAX_PATH ) == NULL ) {
-            __F_NAME(chdir,_wchdir)( curdir );
-            free( curdir );
-            lib_free( tmpbuff );
-            return;
-        }
-        __F_NAME(strcat,wcscat)( tmpbuff, __F_NAME("\\",L"\\") );
-        *(filepart-1) = ch;                     /* restore backslash */
-        __F_NAME(chdir,_wchdir)( curdir );
-        free( curdir );
-    #else
-        /*** For some reason the above technique doesn't work under OS/2 ***/
-        ch = *(filepart-1);                     /* smite backslash */
-        *(filepart-1) = NULLCHAR;
-        __F_NAME(strcpy,wcscpy)( tmpbuff, buff );
-        __F_NAME(strcat,wcscat)( tmpbuff, __F_NAME("\\",L"\\") );
-        *(filepart-1) = ch;                     /* restore backslash */
-    #endif
-
-    /*** Get the correct case for the filename portion ***/
-    #ifdef __NT__
-        #ifdef __WIDECHAR__
-            handle = __lib_FindFirstFileW( buff, &findbuf );
-        #else
-            handle = FindFirstFileA( buff, &findbuf );
-        #endif
-        if( handle == INVALID_HANDLE_VALUE ) {
-            lib_free( tmpbuff );
-            return;
-        }
-        __F_NAME(strcat,wcscat)( tmpbuff, findbuf.cFileName );
-        FindClose( handle );
-    #else
-        #ifdef __WIDECHAR__
-            mbBuff = lib_malloc( _MAX_PATH );
-            if( mbBuff == NULL ) {
-                lib_free( tmpbuff );
-                return;
-            }
-            cvt = wcstombs( mbBuff, buff, _MAX_PATH );
-            if( cvt == (size_t)-1 ) {
-                lib_free( tmpbuff );
-                return;
-            }
-            rc = DosFindFirst( mbBuff, &handle, 0, &findbuf,
-                               sizeof( findbuf ), &searchcount,
-                               FIL_STANDARD );
-            lib_free( mbBuff );
-        #else
-            rc = DosFindFirst( buff, &handle, 0, &findbuf, sizeof( findbuf ),
-                               &searchcount, FIL_STANDARD );
-        #endif
-        if( rc != NO_ERROR ) {
-            lib_free( tmpbuff );
-            return;
-        }
-        DosFindClose( handle );
-        #ifdef __WIDECHAR__
-            cvt = mbstowcs( tmpbuff, findbuf.achName,
-                            _MAX_PATH - wcslen( tmpbuff ) );
-            if( cvt == (size_t)-1 ) {
-                lib_free( tmpbuff );
-                return;
-            }
-        #else
-            strcat( tmpbuff, findbuf.achName );
-        #endif
-    #endif
-
-    len = __F_NAME(strlen,wcslen)( tmpbuff ) + 1;
-    if( len <= size ) {
-        __F_NAME(strcpy,wcscpy)( buff, tmpbuff );
-        lib_free( tmpbuff );
-    }
-}
-
-#endif  /* defined(__NT__) || defined(__WARP__) */
-#endif  /* 0 */
 
 _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
                 ( CHAR_TYPE *buff, const CHAR_TYPE *path, size_t size )
@@ -296,9 +137,6 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         __set_errno_nt();
         return( NULL );
     }
-    #if 0
-        fix_case( buff, size, filepart );
-    #endif
 
     return( buff );
 #elif defined(__WARP__)
@@ -316,9 +154,6 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         i = __F_NAME(strlen,wcslen)( path );
         _WILL_FIT(i);
         __F_NAME(strcpy,wcscpy)( buff, path );
-        #if 0
-            fix_case( buff, size, NULL );
-        #endif
         return( buff );
     }
 
@@ -359,38 +194,99 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     }
     #ifdef __WIDECHAR__
         if( mbstowcs( buff, mbBuff, size ) != (size_t)-1 ) {
-            #if 0
-                fix_case( buff, size, NULL );
-            #endif
             return( buff );
         } else {
             return( NULL );
         }
     #else
-        #if 0
-            fix_case( buff, size, NULL );
-        #endif
         return( buff );
     #endif
 #elif defined(__QNX__) || defined( __NETWARE__ )
     size_t len;
-    char curr_dir[_MAX_PATH];
+    char temp_dir[_MAX_PATH];
 
-    #ifdef __NETWARE__
-        if( ConvertNameToFullPath( path, curr_dir ) != 0 ) {
+    #if defined(__NETWARE__)
+        if( ConvertNameToFullPath( path, temp_dir ) != 0 ) {
             return( NULL );
         }
     #else
-        if( my_qnx_fullpath( curr_dir, path ) == NULL ) {
+        if( __qnx_fullpath( temp_dir, path ) == NULL ) {
             return( NULL );
         }
     #endif
-    len = strlen( curr_dir );
+    len = strlen( temp_dir );
     if( len >= size ) {
         __set_errno( ERANGE );
         return( NULL );
     }
-    return( strcpy( buff, curr_dir ) );
+    return( strcpy( buff, temp_dir ) );
+#elif defined(__UNIX__)
+    const char  *p;
+    char        *q;
+    size_t      len;
+    unsigned    path_drive_idx;
+    char        curr_dir[_MAX_PATH];
+
+    p = path;
+    q = buff;
+    if( ! _IS_SLASH( p[0] ) ) {
+        if( getcwd( curr_dir, sizeof(curr_dir) ) == NULL ) {
+            __set_errno( ENOENT );
+            return( NULL );
+        }
+        len = strlen( curr_dir );
+        _WILL_FIT( len );
+        strcpy( q, curr_dir );
+        q += len;
+        if( q[-1] != '/' ) {
+            _WILL_FIT( 1 );
+            *(q++) = '/';
+        }
+        for(;;) {
+            if( p[0] == '\0' ) break;
+            if( p[0] != '.' ) {
+                _WILL_FIT( 1 );
+                *(q++) = *(p++);
+                continue;
+            }
+            ++p;
+            if( _IS_SLASH( p[0] ) ) {
+                /* ignore "./" in directory specs */
+                if( ! _IS_SLASH( q[-1] ) ) {
+                    *q++ = '/';
+                }
+                ++p;
+                continue;
+            }
+            if( p[0] == '\0' ) break;
+            if( p[0] == '.' && _IS_SLASH( p[1] ) ) {
+                /* go up a directory for a "../" */
+                p += 2;
+                if( ! _IS_SLASH( q[-1] ) ) {
+                    return( NULL );
+                }
+                q -= 2;
+                for(;;) {
+                    if( q < buff ) {
+                        return( NULL );
+                    }
+                    if( _IS_SLASH( *q ) ) break;
+                    --q;
+                }
+                ++q;
+                *q = '\0';
+                continue;
+            }
+            _WILL_FIT( 1 );
+            *(q++) = '.';
+        }
+        *q = '\0';
+    } else {
+        len = strlen( p );
+        _WILL_FIT( len );
+        strcpy( q, p );
+    }
+    return( buff );
 #else
     const CHAR_TYPE *   p;
     CHAR_TYPE *         q;

@@ -10,7 +10,11 @@ cstdlib.h       : ..\watcom\cstdlib.mh ..\readonly.sp ..\crwat.sp
 cstring.h       : ..\watcom\cstring.mh ..\readonly.sp ..\crwat.sp
 ctype.h         : ..\watcom\ctype.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\wchar_t.sp ..\wctypet.sp
 direct.h        : ..\watcom\direct.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\dskfreet.sp ..\poppack.sp ..\pshpackl.sp ..\wchar_t.sp
+!ifeq system QNX
 dirent.h        : ..\quantum\dirent.mh ..\poppack.sp ..\pshpackl.sp
+!else
+dirent.h        : ..\watcom\linux\dirent.mh ..\poppack.sp ..\pshpackl.sp
+!endif
 dos.h           : ..\watcom\dos.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\dskfreet.sp ..\poppack.sp ..\pshpackl.sp ..\wchar_t.sp
 dosfunc.h       : ..\watcom\dosfunc.mh ..\readonly.sp ..\crwat.sp
 eh.h            : ..\watcom\eh.mh ..\readonly.sp ..\crwat.sp

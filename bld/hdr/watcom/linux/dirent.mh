@@ -1,0 +1,52 @@
+/*
+ *  dirent.h    Portable directory entry definitions
+ *
+:include crwat.sp
+ */
+#ifndef _DIRENT_H_INCLUDED
+
+#ifndef __TYPES_H_INCLUDED
+ #include <sys/types.h>
+#endif
+
+#define _DIRBUF  8  /*  Max number of dir entries buffered  */
+
+:include pshpackl.sp
+struct dirent {
+    ino_t           d_ino;
+    off_t           d_off;
+    unsigned short  d_reclen;
+    unsigned char   d_type;
+    char            d_name[256];		/* We must not include limits.h! */
+};
+
+#define d_fileno	d_ino	/* Backwards compatibility.  */
+
+#undef  _DIRENT_HAVE_D_NAMLEN
+#define _DIRENT_HAVE_D_RECLEN
+#define _DIRENT_HAVE_D_OFF
+#define _DIRENT_HAVE_D_TYPE
+
+/* This is the data type of directory stream objects.
+ * The actual structure is opaque to users.
+ */
+typedef struct __dirstream DIR;
+
+:include poppack.sp
+/*
+ *  POSIX 1003.1 Prototypes.
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+_WCRTLINK extern DIR              *opendir( const char *__dirname );
+_WCRTLINK extern struct dirent    *readdir( DIR *__dirp );
+_WCRTLINK extern void             rewinddir( DIR *__dirp );
+_WCRTLINK extern int              closedir( DIR *__dirp );
+#ifdef __cplusplus
+};
+#endif
+
+#define _DIRENT_H_INCLUDED
+#endif
+

@@ -20,7 +20,7 @@
 
 :include sizet.sp
 
-:segment QNX | LINUX
+:segment LINUX
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
  typedef signed ssize_t;
@@ -32,37 +32,93 @@
 
 /* Define POSIX 1003.1 types */
 
-typedef long        dev_t;      /* Combination of node and device   */
+typedef __int64         dev_t;  /* Combination of node and device   */
 #ifndef _GID_T_DEFINED_
- typedef int gid_t;             /* Used for group IDs           */
- typedef short mgid_t;          /* Used for group in messages */
+ typedef int            gid_t;  /* Used for group IDs               */
  #define _GID_T_DEFINED_
 #endif
-typedef long        ino_t;      /* Used for file serial numbers     */
-typedef short unsigned  mode_t; /* Used for some file attributes    */
-typedef short unsigned  nlink_t;/* Used for link counts         */
-typedef long        off_t;      /* Used for file sizes, offsets     */
-typedef int   pid_t;            /* Used for process IDs & group IDs */
-typedef short mpid_t;           /* Used for process & group IDs in messages */
+typedef unsigned long   ino_t;  /* Used for file serial numbers     */
+typedef unsigned        mode_t; /* Used for some file attributes    */
+typedef unsigned        nlink_t;/* Used for link counts             */
+typedef long            off_t;  /* Used for file sizes, offsets     */
+typedef int             pid_t;  /* Used for process IDs & group IDs */
 #ifndef _UID_T_DEFINED_
- typedef int uid_t;             /* Used for user IDs            */
- typedef short muid_t;          /* used in messages */
+ typedef int            uid_t;  /* Used for user IDs                */
  #define _UID_T_DEFINED_
 #endif
-:segment LINUX
-#if defined(_LINUX_SOURCE) || !defined(NO_EXT_KEYS)
-:elsesegment QNX
 #if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-:endsegment
-typedef short unsigned  msg_t;  /* Used for message passing     */
-typedef long        nid_t;      /* Used for network IDs         */
 #ifndef _TIMER_T_DEFINED_
  #define _TIMER_T_DEFINED_
-typedef int         timer_t;    /* Used for timer IDs           */
+typedef int             timer_t;/* Used for timer IDs               */
 #endif
 #ifndef _CLOCKID_T_DEFINED_
  #define _CLOCKID_T_DEFINED_
-typedef int         clockid_t;  /* Used for clock IDs           */
+typedef int             clockid_t;/* Used for clock IDs             */
+#endif
+#endif
+
+#define major(device)                   ((int)(((device) >> 8) & 0xFF))
+#define minor(device)                   ((int)((device) & 0xff))
+#define makedev(major,minor)            ((dev_t) (((major) << 8) | (minor)))
+
+typedef char            *caddr_t;
+typedef long            daddr_t;
+typedef char            int8_t;
+typedef unsigned char   uint8_t;
+typedef short           int16_t;
+typedef unsigned short  uint16_t;
+typedef int             int32_t;
+typedef unsigned int    uint32_t;
+typedef unsigned char   u_char;
+typedef unsigned short  u_short;
+typedef unsigned int    u_int;
+typedef unsigned long   u_long;
+typedef unsigned __int64 u_quad_t;
+typedef __int64         quad_t;
+typedef quad_t *        qaddr_t;
+typedef int             key_t;
+typedef long            blksize_t;
+typedef long            blkcnt_t;
+
+:elsesegment QNX
+#ifndef _SSIZE_T_DEFINED_
+#define _SSIZE_T_DEFINED_
+ typedef signed ssize_t;
+#endif
+
+#ifndef _LIMITS_H_INCLUDED
+ #include <limits.h>
+#endif
+
+/* Define POSIX 1003.1 types */
+
+typedef long            dev_t;  /* Combination of node and device   */
+#ifndef _GID_T_DEFINED_
+ typedef int            gid_t;  /* Used for group IDs               */
+ typedef short          mgid_t; /* Used for group in messages       */
+ #define _GID_T_DEFINED_
+#endif
+typedef long            ino_t;  /* Used for file serial numbers     */
+typedef short unsigned  mode_t; /* Used for some file attributes    */
+typedef short unsigned  nlink_t;/* Used for link counts             */
+typedef long            off_t;  /* Used for file sizes, offsets     */
+typedef int             pid_t;  /* Used for process IDs & group IDs */
+typedef short           mpid_t; /* Used for process & group IDs in messages */
+#ifndef _UID_T_DEFINED_
+ typedef int            uid_t;  /* Used for user IDs                */
+ typedef short          muid_t; /* used in messages                 */
+ #define _UID_T_DEFINED_
+#endif
+#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+typedef short unsigned  msg_t;  /* Used for message passing         */
+typedef long            nid_t;  /* Used for network IDs             */
+#ifndef _TIMER_T_DEFINED_
+ #define _TIMER_T_DEFINED_
+typedef int             timer_t;/* Used for timer IDs               */
+#endif
+#ifndef _CLOCKID_T_DEFINED_
+ #define _CLOCKID_T_DEFINED_
+typedef int             clockid_t;/* Used for clock IDs             */
 #endif
 #endif
 
@@ -91,19 +147,15 @@ typedef unsigned short wchar_t;
 #endif
 
 typedef char _WCI86FAR *caddr_t;
-:segment QNX
 #if defined __386__
-:endsegment
 typedef int             int32_t;
 typedef unsigned int    u_int32_t;
 typedef unsigned int    uint32_t;
-:segment QNX
 #else
 typedef long            int32_t;
 typedef unsigned long   u_int32_t;
 typedef unsigned long   uint32_t;
 #endif
-:endsegment
 typedef char _WCFAR *   faddr_t;
 typedef unsigned long   paddr_t;
 typedef long            daddr_t;

@@ -203,6 +203,7 @@ QNX_files = &
 
 LINUX_files = &
       $(common) &
+        dirent.h &
         unistd.h &
 
 all : $($(system)_files) .symbolic
