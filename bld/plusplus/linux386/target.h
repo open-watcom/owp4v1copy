@@ -24,29 +24,24 @@
 *
 *  ========================================================================
 *
-* Description:  Get appropriate language environment for target.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#ifndef __TGTENV_H__
+/*  size of data types on target machine */
 
-#include "langenvd.h"
+#ifndef _TARGET_INCLUDED
+#define _TARGET_INCLUDED
+#include "target32.h"
+#include "targdef.h"
 
-#if _INTEL_CPU
+// target
+#define _CPU            386
 
-    #define __TGT_SYS __TGT_SYS_X86
-    #include "langenv.h"
-
-#elif _CPU == _AXP
-
-    #define __TGT_SYS __TGT_SYS_AXP_NT
-    #include "langenv.h"
-
-#else
-
-    #error Invalid target environment
-
-#endif
+// host
+#define _OS             _LINUX
+#define _HOST           386
 
 #endif
