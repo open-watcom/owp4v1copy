@@ -367,13 +367,15 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
     if( old_sym_handle != 0 ) {                         /* 28-feb-94 */
         SymGet( &old_sym, old_sym_handle );
         if( old_sym.level == SymLevel ) {
+            SetDiagSymbol( &old_sym, old_sym_handle );
             if( old_sym.stg_class == SC_EXTERN  &&  stg_class == SC_EXTERN ) {
-                SetDiagSymbol( &old_sym, old_sym_handle );
                 if( ! IdenticalType( old_sym.sym_type, sym->sym_type ) ) {
                     CErr2p( ERR_TYPE_DOES_NOT_AGREE, sym->name );
                 }
-                SetDiagPop();
+            } else if( old_sym.stg_class == SC_TYPEDEF ) {
+                CErr2p( ERR_SYM_ALREADY_DEFINED, sym->name );
             }
+            SetDiagPop();
         }
     }
     if( stg_class == SC_EXTERN ) {              /* 27-oct-88 */
