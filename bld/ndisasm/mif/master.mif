@@ -1,5 +1,9 @@
 proj_name = wdis
 
+!ifndef wdis_autodepends
+wdis_autodepends = .AUTODEPEND
+!endif
+
 .EXTENSIONS: .rc .msg
 
 !ifeq host_os linux

@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Select architectures supported by wdis executable.
 *
 ****************************************************************************/
 
 
-#define DISCPU (DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_sparc )
-//#define DISCPU DISCPU_axp
+#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_sparc )
