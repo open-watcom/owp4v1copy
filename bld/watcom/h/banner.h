@@ -34,10 +34,6 @@
 #define DOBANSTR( p )   #p
 #define BANSTR( p )     DOBANSTR( p )
 
-#ifndef _BANEXTRA
-#define _BANEXTRA
-#endif
-
 #ifndef _BETASTR_
 #define _BETASTR_ "beta"
 #endif
