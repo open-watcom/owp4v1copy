@@ -42,3 +42,8 @@
 #define SECURITY_NETWORK_DREP 0
 
 #endif /* _NTSECPKG_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

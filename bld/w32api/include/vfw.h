@@ -1128,3 +1128,8 @@ ICDecompressExQuery(HIC hic,DWORD dwFlags,LPBITMAPINFOHEADER lpbiSrc,LPVOID lpSr
 #endif
 #include <poppack.h>
 #endif /* _VFW_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

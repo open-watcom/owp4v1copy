@@ -118,3 +118,8 @@ HRESULT WINAPI SetWindowTheme(HWND,LPCWSTR,LPCWSTR);
 }
 #endif
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -40,3 +40,8 @@ typedef long SECURITY_STATUS;
 #include <secext.h>
 
 #endif /* _SECURITY_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

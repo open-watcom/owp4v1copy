@@ -231,3 +231,8 @@ NET_API_STATUS WINAPI NetWkstaTransportEnum(LPWSTR,DWORD,PBYTE*,DWORD,PDWORD,PDW
 }
 #endif
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

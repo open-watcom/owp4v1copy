@@ -6,3 +6,8 @@
 #define rmm 23
 #define rup 639
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -1470,3 +1470,8 @@ GLAPI void APIENTRY glSamplePass( GLenum pass );
 #endif
 
 #endif /* __gl_h_ */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

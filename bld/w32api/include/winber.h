@@ -65,3 +65,8 @@ WINBERAPI BerElement *ber_alloc_t(int);
 }
 #endif
 #endif /* _WINBER_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

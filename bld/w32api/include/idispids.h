@@ -8,3 +8,8 @@
 #define DISPID_AMBIENT_SILENT (-5502)
 
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -72,3 +72,8 @@ NET_API_STATUS I_BrowserDebugTrace(PWCHAR,PCHAR);
 }
 #endif
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -9,3 +9,8 @@
 #define __W32API_MINOR_VERSION 5
 
 #endif /* ndef _W32API_H_ */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

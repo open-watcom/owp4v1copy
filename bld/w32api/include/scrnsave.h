@@ -79,3 +79,8 @@ extern UINT		MyHelpMessage;
 #endif
 
 #endif /* _SCRNSAVE_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -124,3 +124,8 @@ typedef SERVICE_INFOA SERVICE_INFO, *LPSERVICE_INFO;
 }
 #endif
 #endif /* _NSPAPI_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -8,3 +8,8 @@
 #define USE_FORCE 1
 #define USE_LOTS_OF_FORCE 2
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

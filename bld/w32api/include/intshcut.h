@@ -80,3 +80,8 @@ HRESULT WINAPI URLAssociationDialogW(HWND,DWORD,PCWSTR,PCWSTR,PWSTR,UINT);
 } 
 #endif 
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

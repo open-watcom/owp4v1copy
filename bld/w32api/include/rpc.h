@@ -57,3 +57,8 @@ long RPC_ENTRY I_RpcMapWin32Status(RPC_STATUS);
 }
 #endif
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

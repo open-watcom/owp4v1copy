@@ -117,3 +117,8 @@ typedef unsigned __int64 UINT64,  *PUINT64;
 #endif /* !RC_INVOKED */
 
 #endif /* _BASETSD_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

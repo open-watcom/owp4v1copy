@@ -33,3 +33,8 @@ typedef struct sockaddr_nb {
 }
 #endif   /* RC_INVOKED */
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -88,3 +88,8 @@ typedef struct _SecPkgContext_ConnectionInfo {
 #endif
 
 #endif /* _SCHANNEL_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

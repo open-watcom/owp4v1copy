@@ -16,3 +16,8 @@ NET_API_STATUS WINAPI NetapipBufferAllocate(DWORD,PVOID*);
 }
 #endif
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

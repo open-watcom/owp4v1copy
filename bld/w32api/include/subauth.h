@@ -207,3 +207,8 @@ NTSTATUS NTAPI Msv1_0SubAuthenticationRoutineEx(NETLOGON_LOGON_INFO_CLASS,PVOID,
 }
 #endif
 #endif /* _SUBAUTH_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -711,3 +711,8 @@ WINLDAPAPI INT LdapUTF8ToUnicode(LPCSTR,int,LPWSTR,int);
 #include <poppack.h>
 
 #endif /* _WINLDAP_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

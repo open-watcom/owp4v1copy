@@ -1551,3 +1551,8 @@ WINSETUPAPI BOOL WINAPI SetupTerminateFileLog(HSPFILELOG);
 #include <poppack.h>
 #endif /* _SETUPAPI_H_ */
 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

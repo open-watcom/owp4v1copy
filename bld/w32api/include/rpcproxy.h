@@ -198,3 +198,8 @@ NdrCStdStubBuffer2_Release(IRpcStubBuffer*,IPSFactoryBuffer*);
 #endif  /* defined  __cplusplus  && !defined CINTERFACE  */
 #endif  /* ndef _RPCPROXY_H  */
 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

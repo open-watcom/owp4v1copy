@@ -92,3 +92,8 @@ NET_API_STATUS WINAPI NetReplImportDirUnlock(LPCWSTR,LPCWSTR,DWORD);
 }
 #endif
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -140,3 +140,8 @@ SQLRETURN SQL_API SQLGetStmtAttrW(SQLHSTMT,SQLINTEGER,SQLPOINTER,SQLINTEGER,SQLI
 }
 #endif  /* __cplusplus*/
 #endif  /* ndef _SQLUCODE_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

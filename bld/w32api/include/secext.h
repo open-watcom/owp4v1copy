@@ -41,3 +41,8 @@ BOOLEAN WINAPI TranslateNameW(LPCWSTR,EXTENDED_NAME_FORMAT,EXTENDED_NAME_FORMAT,
 #endif /* ! RC_INVOKED */
 #endif /* _WIN32_WINNT >= 0x0500 */
 #endif /* ! _SECEXT_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

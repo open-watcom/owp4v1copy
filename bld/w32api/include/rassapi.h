@@ -180,3 +180,8 @@ DWORD APIENTRY RasAdminSetUserParms( WCHAR*, DWORD, PRAS_USER_0 );
 #endif
 
 #endif /* _RASSAPI_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

@@ -208,3 +208,8 @@
 #define ERROR_NO_EAPTLS_CERTIFICATE          (RASBASE+198)
 #define RASBASEEND                           (RASBASE+198)
 #endif /* _RASERROR_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

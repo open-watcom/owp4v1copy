@@ -2226,3 +2226,8 @@
 /* #define NTE_TOKEN_KEYSET_STORAGE ??? */
 
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

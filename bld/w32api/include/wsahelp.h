@@ -90,3 +90,8 @@ typedef INT (WINAPI *PWSH_STRING_TO_ADDRESS)(LPWSTR,DWORD,LPWSAPROTOCOL_INFOW,LP
 #endif /* __cplusplus */
 
 #endif /* _WSAHELP_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

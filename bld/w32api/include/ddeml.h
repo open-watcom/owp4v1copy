@@ -312,3 +312,8 @@ BOOL WINAPI DdeUninitialize(DWORD);
 }
 #endif
 #endif /* _DDEML_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

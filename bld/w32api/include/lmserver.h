@@ -604,3 +604,8 @@ BOOL SetServiceBits(SERVICE_STATUS_HANDLE,DWORD,BOOL,BOOL);
 }
 #endif
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

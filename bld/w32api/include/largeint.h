@@ -110,3 +110,8 @@ LARGE_INTEGER WINAPI ExtendedMagicDivide (LARGE_INTEGER, LARGE_INTEGER, int);
 #endif
 
 #endif /* _LARGEINT_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

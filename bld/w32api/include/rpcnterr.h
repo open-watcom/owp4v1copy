@@ -21,3 +21,8 @@
 #define RPC_X_INVALID_BUFFER ERROR_INVALID_USER_BUFFER
 #define RPC_X_INVALID_PIPE_OPERATION RPC_X_WRONG_PIPE_ORDER
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

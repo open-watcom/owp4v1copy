@@ -52,3 +52,8 @@ STDAPI_(BOOL) CeGetFileTime (HANDLE, LPFILETIME, LPFILETIME, LPFILETIME);
 STDAPI_(BOOL) CeCloseHandle (HANDLE); 
 
 #endif /* _RAPI_H */
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

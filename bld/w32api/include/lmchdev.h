@@ -59,3 +59,8 @@ NET_API_STATUS WINAPI NetHandleSetInfo(HANDLE,DWORD,PBYTE,DWORD,PDWORD);
 }
 #endif
 #endif 
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+

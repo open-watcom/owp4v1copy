@@ -919,3 +919,8 @@ BOOL WINAPI InternetReadFileExW(HINTERNET,LPINTERNET_BUFFERSW,DWORD,DWORD_PTR);
 }
 #endif
 #endif
+
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+
