@@ -48,6 +48,10 @@
 #include "wrselimg.h"
 #include "iemem.h"
 
+#ifdef __NT__
+#pragma library("shell32")
+#endif
+
 static signed short     imgType = BITMAP_IMG;
 static char             initialDir[ _MAX_PATH+_MAX_DIR ];
 

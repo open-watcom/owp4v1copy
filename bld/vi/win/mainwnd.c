@@ -38,6 +38,10 @@
 #include "keys.h"
 #include "win.h"
 
+#ifdef __NT__
+#pragma library("shell32")
+#endif
+
 extern LONG WINEXP MainWindowProc( HWND, unsigned, UINT, LONG );
 extern void DefaultWindows( RECT *, RECT * );
 

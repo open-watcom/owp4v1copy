@@ -249,8 +249,69 @@ system begin nt
     option osname='Windows NT character-mode'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
+    format windows nt ^
+    runtime console=4.0
+end
+system begin nt_win
+    option osname='Windows NT windowed'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
+    format windows nt ^
+    runtime windows=4.0
+end
+system begin nt_dll
+    option osname='Windows NT'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
+    format windows nt dll ^
+    runtime windows=4.0
+end
+system begin win95
+    option osname='Windows 95'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
+    format windows nt ^
+    runtime windows=4.0
+end
+system begin win32
+    option osname='Win32'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
+    format windows nt ^
+    runtime windows=4.0
+end
+system begin nt3
+    option osname='Windows NT character-mode'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
     format windows nt ^
     runtime console
+end
+system begin nt3_win
+    option osname='Windows NT windowed'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
+    format windows nt ^
+end
+system begin nt3_dll
+    option osname='Windows NT'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
+    format windows nt dll ^
 end
 system begin tnt
     option osname='Phar Lap TNT DOS style'
@@ -259,35 +320,13 @@ system begin tnt
     format windows nt tnt ^
     runtime dosstyle
 end
-system begin nt_win
-    option osname='Windows NT windowed'
-    libpath %WATCOM%/lib386
-    libpath %WATCOM%/lib386/nt
-    format windows nt ^
-end
-system begin nt_dll
-    option osname='Windows NT'
-    libpath %WATCOM%/lib386
-    libpath %WATCOM%/lib386/nt
-    format windows nt dll ^
-end
-system begin win95
-    option osname='Windows 95'
-    libpath %WATCOM%/lib386
-    libpath %WATCOM%/lib386/nt
-    format windows nt ^
-    runtime windows=4.0
-end
-system begin win32
-    option osname='Win32'
-    libpath %WATCOM%/lib386
-    libpath %WATCOM%/lib386/nt
-    format windows nt ^
-end
 system begin ntaxp
     option osname='Windows NT(AXP) character-mode'
     libpath %WATCOM%/libaxp
     libpath %WATCOM%/libaxp/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
     format windows nt ^
     runtime console
 end
@@ -295,12 +334,18 @@ system begin ntaxp_win
     option osname='Windows NT(AXP) windowed'
     libpath %WATCOM%/libaxp
     libpath %WATCOM%/libaxp/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
     format windows nt ^
 end
 system begin ntaxp_dll
     option osname='Windows NT(AXP)'
     libpath %WATCOM%/libaxp
     libpath %WATCOM%/libaxp/nt
+    library kernel32,user32,gdi32,advapi32,comdlg32,winspool,shell32,version,ole32
+    library netapi32,dlcapi,mpr,rpcns4,rpcrt4,vdmdbg,winmm,winstrm,wsock32,lz32
+#    library win32spl
     format windows nt dll ^
 end
 system begin causeway

@@ -46,6 +46,10 @@
 #include "trptypes.h"
 #include "bool.h"
 
+#ifdef __NT__
+#pragma library("wsock32")
+#endif
+
 #ifdef SERVER
 static HANDLE                   ResponderThreadHandle;
 static int                      ResponderSocket;

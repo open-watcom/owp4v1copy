@@ -38,6 +38,10 @@
 #include "iedde.h"
 #include "wrdll.h"
 
+#ifdef __NT__
+#pragma library("shell32")
+#endif
+
 #define DDE_OPT "-DDE"
 #define NEW_OPT "/n"
 #define NOTITLE_OPT "/notitle"
