@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Code to handle pre-compiled header files.
 *
 ****************************************************************************/
 
@@ -54,12 +53,13 @@
     #define sopen4 sopen
 #else
     #define sopen4(a,b,c,d) open((a),(b),(d))
-    #define sopen(a,b,c) open((a),(b))
+//    #define sopen(a,b,c) open((a),(b))
 #endif
 
 extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
+#define PCH_SIGNATURE   (unsigned long) 'WPCH'
 #define PCH_VERSION     ((_HOST << 16) | 0x0196)
 
 static  jmp_buf         PH_jmpbuf;
@@ -133,6 +133,11 @@ static struct aux_info *BuiltinInfos[] = {
         NULL
 };
 #endif
+
+static int FixupDataStructures( char *p, struct pheader *pch );
+
+void InitDebugTypes( void );
+
 //========================================================================
 //      This portion of the code creates the pre-compiled header.
 //========================================================================
@@ -227,7 +232,7 @@ static void OutPutHeader()
     int                 rc;
     struct pheader      pch;
 
-    pch.signature       = 'WPCH';
+    pch.signature       = PCH_SIGNATURE;
     pch.version         = PCH_VERSION;
     pch.size_of_header  = sizeof(struct pheader);
     pch.size_of_int     = TARGET_INT;
@@ -462,9 +467,9 @@ void SetTypeIndex( TYPEPTR typ )
     typ->type_index = PH_TypeCount;
 }
 
-void SetFuncTypeIndex( TYPEPTR typ, int index )
+static void SetFuncTypeIndex( TYPEPTR typ, int index )
 {
-    index;
+    // index;      /* unused */
     SetTypeIndex( typ );
 }
 
@@ -592,7 +597,7 @@ static void OutPutFuncParmList( TYPEPTR typ, int index )
         int     type_index;
     } parm;
 
-    index;
+    // index;      /* unused */
     parm_list = typ->u.parms;
     if( parm_list != NULL ) {
         for( ; *parm_list; ++parm_list ) {
@@ -683,7 +688,7 @@ static void OutPutPragmaInfo()
     int                 rc;
     unsigned            len;
 
-    for( index = 0; info = BuiltinInfos[index]; ++index ) {
+    for( index = 0; (info = BuiltinInfos[index]); ++index ) {
         OutPutAuxInfo( info );          // write out the aux_info struct
     }
     PH_PragmaCount = 0;
@@ -1345,6 +1350,8 @@ static void FixupTag( TYPEPTR typ )
     case TYPE_ENUM:
         typ->u.tag = TagArray[ typ->u.tag_index ];
         break;
+    default:
+        break;
     }
 }
 
@@ -1433,7 +1440,7 @@ static char *FixupPragmaInfo( char *p, unsigned pragma_count )
     int                 index;
     unsigned            len;
 
-    for( index = 0; info = BuiltinInfos[index]; ++index ) {
+    for( index = 0; (info = BuiltinInfos[index]); ++index ) {
         memcpy( info, p, sizeof(struct aux_info) );
         p = FixupAuxInfo( p, info );
     }
@@ -1475,8 +1482,8 @@ void FixupFNames( void ){
 
 int ValidHeader( struct pheader *pch )
 {
-    if( pch->signature      == 'WPCH'           &&
-        pch->version        == PCH_VERSION      &&
+    if( pch->signature      == PCH_SIGNATURE  &&
+        pch->version        == PCH_VERSION    &&
         pch->size_of_header == sizeof(struct pheader)  &&
         pch->size_of_int    == TARGET_INT       &&
         pch->specialsyms_count    == SpecialSyms      &&
@@ -1656,11 +1663,11 @@ void SetDebugType( TYPEPTR typ )
 
 void SetFuncDebugType( TYPEPTR typ, int index )
 {
-    index;
+    // index;      /* unused */
     typ->debug_type = DBG_NIL_TYPE;
 }
 
-void InitDebugTypes()
+void InitDebugTypes( void )
 {
     WalkTypeList( SetDebugType );
     WalkFuncTypeList( SetFuncDebugType );

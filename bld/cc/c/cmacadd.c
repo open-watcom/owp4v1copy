@@ -73,11 +73,11 @@ void AllocMacroSegment( unsigned minimum )
 }
 
 
-void FreeMacroSegments()
+void FreeMacroSegments( void )
 {
     struct macro_seg_list *msl;
 
-    for( ; msl = MacSegList; ) {
+    for( ; (msl = MacSegList); ) {
         FEfree( (void *)(msl->segment) );
         MacSegList = msl->next;
         CMemFree( msl );
