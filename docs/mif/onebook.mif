@@ -229,6 +229,20 @@ $(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
 !endif
     %make prepare_wgml_opts
     -$(wgml) $(book_src) ( file $(optfile_wgml)
+!ifeq hbook vi
+    bvi -s << vi.ps
+/^\/
+insert
+/setSize { pop gsave } def
+/startFig { /Courier findfont 8 scalefont setfont 0 192 moveto pop } def
+/paintString { show pop } def
+/nextline { 0 currentpoint 8 sub exch pop moveto } def
+/endFig { grestore showpage } def
+.
+x
+q
+<<
+!endif
 
 .bmp: $(book_bmroot)
 .bmp.ps:
@@ -347,6 +361,8 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( file nn7x9ps
 !else ifeq hbook f77lr
     @%append $(optfile_wgml) ( file nbpsshad
+!else ifeq hbook cgdoc
+    @%append $(optfile_wgml) ( file cgdps
 !else
     @%append $(optfile_wgml) ( file nb7x9ps
 !endif
@@ -373,6 +389,8 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( output (t:100)$(hbook)
 !else ifeq hbook fpguide
     @%append $(optfile_wgml) ( output (t:100)$(hbook)
+!else ifeq hbook guitool
+    @%append $(optfile_wgml) ( output (t:100)$(hbook)
 !else
     @%append $(optfile_wgml) ( output (t:80)$(hbook)
 !endif
@@ -386,6 +404,7 @@ prepare_wgml_opts : .PROCEDURE
 #    @%append $(optfile_wgml) ( setsymbol defwinnt 1
 # add default windowing for OS/2
 #    @%append $(optfile_wgml) ( setsymbol defwinos2 1
+#
 #--------------------------------------
 # settings for on-line help processing
 #--------------------------------------

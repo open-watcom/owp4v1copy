@@ -3,6 +3,7 @@
 #===================================================
 !inject c_readme    dos  html  nt  os2  pdf  ps  win
 !inject cbooks                 nt
+!inject cgdoc                                       
 !inject cguide      dos  html  nt  os2  pdf  ps  win
 !inject cguideq          html           pdf  ps
 !inject clbtst
@@ -43,6 +44,7 @@
 !inject resstr                 nt                win
 !inject spy                    nt                win
 !inject tools       dos  html  nt  os2  pdf  ps  win
+#!inject vi                                   ps     
 !inject wasaxp
 !inject wbrw                   nt  os2           win
 !inject wccerrs     dos  html  nt  os2           win
@@ -549,31 +551,25 @@ book_incs=$(incs_gui);$(incs_cg)
 book_bmroot=$(bmroot_gui)
 book_src=guitool
 
+!else ifeq hbook cgdoc
+# cgdoc
+book_title=$(company) Code generator
+book_objs=$(objs_cgdoc)
+book_incs=$(incs_cgdoc)
+book_src=cgdoc
+
+!else ifeq hbook vi
+# vi
+book_title=$(company) VI Editor
+book_objs=$(objs_vi)
+book_incs=$(incs_vi)
+book_src=vi
+
 !else
 
 !error $(hbook) is Undefined $(company) documentation book
 
 !endif
-
-#############################################################
-#
-# ?????? Unknown books ???????. May be deleted.
-#
-#############################################################
-
-# wedit
-wedit_title=
-wedit_objs=$(objs_wed)
-wedit_incs=$(incs_wed)
-wedit_src=wedit
-wedit_opts=
-
-# weditdoc
-weditdoc_title=
-weditdoc_objs=$(objs_wed2)
-weditdoc_incs=$(incs_wed2)
-weditdoc_src=weditdoc
-weditdoc_opts=
 
 !endif
 

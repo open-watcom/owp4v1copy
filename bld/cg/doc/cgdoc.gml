@@ -1,21 +1,34 @@
-:PSC proc='rita'.
-**RTA**wgmlstd.rta
-:ePSC.
+:INCLUDE file='LYTCHG'.
+:INCLUDE file='FMTMACRO'.
+:INCLUDE file='GMLMACS'.
+:INCLUDE file='XDEFS'.
+:INCLUDE file='DEFS'.
+.*
 :GDOC.
+.*
+.if &e'&dohelp eq 0 .do begin
 :FRONTM.
 :TITLEP.
-:TITLE.CONFIDENTIAL - WATCOM 386 Code Generator Interface
-:DATE.
+:TITLE.&company Code Generator Interface
+:cmt. :DATE.
 :eTITLEP.
 :TOC.
+.do end
+.*
 :BODY.
-:H0.CONFIDENTIAL - WATCOM 386 Code Generator Interface
-:H1.General
+.*
+.if &e'&dohelp eq 1 .do begin
+:exhelp
+:include file='&book..idx'
+:include file='&book..tbl'
+:include file='&book..kw'
+.do end
+.chap General
 :P.The code generator (back end) interface is a set of procedure calls.
 These are divided into Code Generation (CG), Data Generation (DG),
 miscellaneous Back End (BE), Front end supplied (FE), and debugger
 information (DB) routines.
-:H2.cg_init_info BEInit( cg_switches switches, cg_target_switches targ_switches, uint optsize, proc_revision proc )
+.section cg_init_info BEInit( cg_switches switches, cg_target_switches targ_switches, uint optsize, proc_revision proc )
 :I1.BEInit
 :P.Initialize the code generator.
 This must be the first routine to be called.
@@ -218,30 +231,30 @@ enum {
   II_TARG_370
 };
 :eXMP.
-:H2.void BEStart()
+.section void BEStart()
 :I1.BEStart
 :P.Start the code generator.
 Must be called immediately after all calls to BEDefSeg have been made.
 This restriction is relaxed somewhat for the 80(x)86 code generator.
 See BEDefSeg for details.
-:H2.void BEStop()
+.section void BEStop()
 :I1.BEStop
 :P.Normal termination of code generator.
 This must be the second last routine called.
-:H2.void BEAbort()
+.section void BEAbort()
 :I1.BEAbort
 :P.Abnormal termination of code generator.
 This must be the second last routine called.
-:H2.void BEFini()
+.section void BEFini()
 :I1.BEFini
 :P.Finalize the code generator.
 This must be the last routine called.
-:H2.extern patch_handle BEPatch()
+.section extern patch_handle BEPatch()
 :P.Allocate a patch handle which can be used to create a patchable
 integer (an integer which will have a constant value provided sometime
 while the codegen is handling the CGDone call).
 See CGPatchNode.
-:H2.extern void BEPatchInteger( patch_handle hdl, signed_32 value )
+.section extern void BEPatchInteger( patch_handle hdl, signed_32 value )
 :P.Patch the integer corresponding to the given handle to have the
 given value.
 This may be called repeatedly with different values, providing
@@ -259,10 +272,10 @@ is undefined.
 This will be the new value of the node which has been associated with
 the patch handle.
 :eDL.
-:H2.extern cg_name BEFiniPatch( patch_handle hdl )
+.section extern cg_name BEFiniPatch( patch_handle hdl )
 :P.This must be called to free up resources used by the given handle.
 After this, the handle must not be used again.
-:H1.Segments
+.chap Segments
 :P.The object file produced by the code generator is composed of
 various segments.
 These are defined by the front end.
@@ -278,7 +291,7 @@ It is illegal to write data to the code segment for a routine in
 between the CGProcDecl call and the CGReturn call.
 :P.The following routines are used for initializing, finalizing,
 defining and selecting segments.
-:H2.void BEDefSeg( segment_id id, seg_attr attr, char *str, uint algn )
+.section void BEDefSeg( segment_id id, seg_attr attr, char *str, uint algn )
 :I1.BEDefSeg
 :I1.segments
 :P.Define a segment.
@@ -341,7 +354,7 @@ specified on the x86).
 When GIVEN_NAME is specified, the back end outputs the segment name to
 the object file exactly as given.
 :eDL.
-:H2.segment_id BESetSeg( segment_id seg )
+.section segment_id BESetSeg( segment_id seg )
 :I1.BESetSeg
 :I1.segments
 :P.Select the current segment for data generation routines.
@@ -363,7 +376,7 @@ that segment anytime you make a call to a code generation routine
 (CG*).
 Do NOT expect data items to be contiguous in the segment if you have
 made an intervening CG* call.
-:H2.void BEFlushSeg( segment_id seg )
+.section void BEFlushSeg( segment_id seg )
 :I1.BEFlushSeg
 :I1.segments
 :P.BEFlushSeg informs the back end that no more code/data will be
@@ -382,14 +395,14 @@ table which is thrown out at the end of the function).
 :DT.seg
 :DD.The code segment id.
 :eDL.
-:H1.Labels
+.chap Labels
 :I1.label, code
 :P.The back end uses a :HP2.label_handle:eHP2. for flow of control.
 Each :HP2.label_handle:eHP2. is a unique code label.
 These labels may only be used for flow of control.
 In order to define a label in a data segment, a :HP2.back_handle:eHP2.
 must be used.
-:H2.label_handle BENewLabel()
+.section label_handle BENewLabel()
 :I1.BENewLabel
 :I1.label, code
 :P.Allocate a new control flow label.
@@ -397,7 +410,7 @@ must be used.
 :DT.Returns
 :DD.A new label_handle.
 :eDL.
-:H2.void BEFiniLabel( label_handle lbl )
+.section void BEFiniLabel( label_handle lbl )
 :I1.BEFiniLabel
 :I1.label, code
 :P.Indicate that a label_handle will not be used by the front end
@@ -409,7 +422,7 @@ This allows the back end to free some memory at some later stage.
 :DT.lbl
 :DD.A label_handle
 :eDL.
-:H1 id='bck'.Back Handles
+.chap *refid=bck Back Handles
 :I1.back handle
 :I1.label, data
 :P.A :HP2.back_handle:eHP2. is the front end's handle for a code
@@ -452,7 +465,7 @@ duration that has no cg_sym_handle associated with it (anonymous
 back_handle) by calling BENewBack(NULL).
 These are useful for literal strings.
 These must also be freed after calling BEStop.
-:H2.back_handle BENewBack( cg_sym_handle sym )
+.section back_handle BENewBack( cg_sym_handle sym )
 :I1.BENewBack
 :I1.back handle
 :P.Allocate a new back_handle.
@@ -467,7 +480,7 @@ It may be NULL.
 :DT.Returns
 :DD.A new back_handle.
 :eDL.
-:H2.void BEFiniBack( back_handle bck )
+.section void BEFiniBack( back_handle bck )
 :I1.BEFiniBack
 :I1.back handle
 :P.Indicate that :HP2.bck:eHP2. will never be passed to the back end
@@ -479,7 +492,7 @@ This allows the code generator to free some memory at some later stage.
 :DT.bck
 :DD.A back_handle.
 :eDL.
-:H2.void BEFreeBack( back_handle bck )
+.section void BEFreeBack( back_handle bck )
 :I1.BEFreeBack
 :I1.back handle
 :P.Free the back_handle :HP2.bck:eHP2..
@@ -491,7 +504,7 @@ back_handle.
 :DT.bck
 :DD.A back_handle.
 :eDL.
-:H1.Type definitions
+.chap Type definitions
 :I1.typing
 :P.Base types are defined as constants.
 All other types (structures, arrays, unions, etc) are simply defined by
@@ -548,7 +561,7 @@ May also be used as an integer.
 :DT.T_FIRST_FREE
 :DD.The first user definable type
 :eDL.
-:H2.void BEDefType( cg_type what, uint align, unsigned_32 len )
+.section void BEDefType( cg_type what, uint align, unsigned_32 len )
 :I1.BEDefType
 :I1.typing
 :P.Define a new type to the code generator.
@@ -563,7 +576,7 @@ identifier.
 :DT.len
 :DD.The length of the new type.
 :eDL.
-:H2.void BEAliasType( cg_type what, cg_type to )
+.section void BEAliasType( cg_type what, cg_type to )
 :I1.BEAliasType
 :I1.typing
 :P.Define a type to be an alias for an existing type.
@@ -575,7 +588,7 @@ identifier.
 :DT.to
 :DD.An existing type.
 :eDL.
-:H2.unsigned_32 BETypeLength( cg_type type )
+.section unsigned_32 BETypeLength( cg_type type )
 :I1.BETypeLength
 :I1.typing
 :P.Return the length of a previously defined type, or a base type.
@@ -589,7 +602,7 @@ identifier.
 :DT.Returns
 :DD.The length associated with the type.
 :eDL.
-:H2.uint BETypeAlign( cg_type type )
+.section uint BETypeAlign( cg_type type )
 :I1.BETypeAlign
 :I1.typing
 :P.Return the alignment requirements of a type.
@@ -605,8 +618,8 @@ This is always 1 for x86 and 370 machines.
 :DD.The alignment requirements of :HP2.type:eHP2. as declared in
 BEDefType, or for a base type, as defined by the machine architecture.
 :eDL.
-:H1.Procedure Declarations
-:H2.void CGProcDecl( cg_sym_handle name, cg_type type )
+.chap Procedure Declarations
+.section void CGProcDecl( cg_sym_handle name, cg_type type )
 :I1.CGProcDecl
 :I1.procedures
 :I1.routines
@@ -624,7 +637,7 @@ A back_handle will be requested.
 :DD.The return type of the procedure.
 Use T_INTEGER for void functions.
 :eDL.
-:H2.void CGParmDecl( cg_sym_handle name, cg_type type )
+.section void CGParmDecl( cg_sym_handle name, cg_type type )
 :I1.CGParmDecl
 :I1.procedures
 :I1.routines
@@ -642,14 +655,14 @@ procedure prototype.
 :DT.type
 :DD.The type of the parameter.
 :eDL.
-:H2.label_handle CGLastParm()
+.section label_handle CGLastParm()
 :I1.CGLastParm
 :P.End a parameter declaration section.
 This function must be called after the last parameter has been
 declared.
 Prior to this function, the only calls the front-end is allowed to make
 are CGParmDecl and CGAutoDecl.
-:H2.void CGAutoDecl( cg_sym_handle name, cg_type type )
+.section void CGAutoDecl( cg_sym_handle name, cg_type type )
 :I1.CGAutoDecl
 :P.Declare an automatic variable.
 :P.This routine may be called at any point in the generation of a
@@ -663,7 +676,7 @@ called before :HP2.name:eHP2. is passed to CGFEName.
 :DT.type
 :DD.The type of the variable.
 :eDL.
-:H2.temp_handle CGTemp( cg_type type )
+.section temp_handle CGTemp( cg_type type )
 :I1.CGTemp
 :I1.Variables
 :I1.Temporaries
@@ -686,7 +699,7 @@ Other temporary results are handled by the expression trees.
 This will be freed and invalidated by the back end when CGReturn is
 called.
 :eDL.
-:H1.Expressions
+.chap Expressions
 :I1.expressions
 :P.Expression processing involves building an expression tree in the
 back end, using calls to CG routines.
@@ -864,8 +877,8 @@ arithmetic operations.
 are to be added, the back end will automatically convert the operands
 to T_INT_4 before performing the addition.
 The resulting node will have type T_INT_4.
-:H1.Leaf Nodes
-:H2.cg_name CGInteger( signed_32 val, cg_type type )
+.chap Leaf Nodes
+.section cg_name CGInteger( signed_32 val, cg_type type )
 :I1.CGInteger
 :I1.integers
 :P.Create an integer constant leaf node.
@@ -877,7 +890,7 @@ The resulting node will have type T_INT_4.
 :DT.type
 :DD.An integral type.
 :eDL.
-:H2.cg_name CGFloat( char *num, cg_type type )
+.section cg_name CGFloat( char *num, cg_type type )
 :I1.CGFloat
 :I1.floating point constant
 :P.Create a floating-point constant leaf node.
@@ -890,7 +903,7 @@ The resulting node will have type T_INT_4.
 :DT.type
 :DD.A floating point type.
 :eDL.
-:H2.cg_name CGFEName( cg_sym_handle sym, cg_type type )
+.section cg_name CGFEName( cg_sym_handle sym, cg_type type )
 :I1.CGFEName
 :I1.variables
 :P.Create a leaf node representing the address of the back_handle
@@ -905,7 +918,7 @@ CGParmDecl must be called before this routine is first used.
 :DT.type
 :DD.The type to be associated with the value of the symbol.
 :eDL.
-:H2.cg_name CGBackName( back_handle bck, cg_type type )
+.section cg_name CGBackName( back_handle bck, cg_type type )
 :I1.CGBackName
 :I1.variables
 :I1.label, data
@@ -918,7 +931,7 @@ CGParmDecl must be called before this routine is first used.
 :DT.type
 :DD.The type to be associated with the :HP2.value:eHP2. of the symbol.
 :eDL.
-:H2.cg_name CGTempName( temp_handle temp, cg_type type )
+.section cg_name CGTempName( temp_handle temp, cg_type type )
 :I1.CGTempName
 :I1.temporaries
 :P.Create a leaf node which yields the address of the temp_handle.
@@ -931,8 +944,8 @@ CGParmDecl must be called before this routine is first used.
 :DD.The type to be associated with the :HP2.value:eHP2. of the symbol.
 :eDL.
 
-:H1.Assignment Operations
-:H2.cg_name CGAssign( cg_name dest, cg_name src, cg_type type )
+.chap Assignment Operations
+.section cg_name CGAssign( cg_name dest, cg_name src, cg_type type )
 :I1.CGAssign
 :I1.assignment
 :P.Create an assignment node.
@@ -950,11 +963,11 @@ CGParmDecl must be called before this routine is first used.
 :DT.Returns
 :DD.The value of the right hand side.
 :eDL.
-:H2.cg_name CGLVAssign( cg_name dest, cg_name src, cg_type type )
+.section cg_name CGLVAssign( cg_name dest, cg_name src, cg_type type )
 :I1.CGLVAssign
 :I1.assignment
 :P.Like CGAssign, but yields the address of the destination.
-:H2.cg_name CGPreGets( cg_op op, cg_name dest, cg_name src, cg_type type )
+.section cg_name CGPreGets( cg_op op, cg_name dest, cg_name src, cg_type type )
 :I1.CGPreGets
 :I1.assignment
 :P.Used for the C expressions a += b, a /= b.
@@ -974,11 +987,11 @@ CGParmDecl must be called before this routine is first used.
 :DT.Returns
 :DD.The value of the left hand side.
 :eDL.
-:H2.cg_name CGLVPreGets( cg_op op, cg_name dest, cg_name src, cg_type type )
+.section cg_name CGLVPreGets( cg_op op, cg_name dest, cg_name src, cg_type type )
 :I1.CGLVPreGets
 :I1.assignment
 :P.Like CGPreGets, but yields the address of the destination.
-:H2.cg_name CGPostGets( cg_op op, cg_name dest, cg_name src, cg_type type )
+.section cg_name CGPostGets( cg_op op, cg_name dest, cg_name src, cg_type type )
 :I1.CGPostGets
 :I1.assignment
 :P.Used for the C expressions a++, a--.
@@ -999,8 +1012,8 @@ No automatic scaling is done for pointers.
 :DT.Returns
 :DD.The value of the left hand side before the operation occurs.
 :eDL.
-:H1.Arithmetic/logical operations
-:H2.cg_name CGBinary( cg_op op, cg_name left, cg_name right, cg_type type )
+.chap Arithmetic/logical operations
+.section cg_name CGBinary( cg_op op, cg_name left, cg_name right, cg_type type )
 :I1.CGBinary
 :I1.expressions
 :P.Binary operations.
@@ -1021,7 +1034,7 @@ No automatic scaling is done for pointer operations.
 :DT.Returns
 :DD.The value of the result.
 :eDL.
-:H2.cg_name CGUnary( cg_op op, cg_name name, cg_type type )
+.section cg_name CGUnary( cg_op op, cg_name name, cg_type type )
 :I1.CGUnary
 :I1.expressions
 :P.Unary operations.
@@ -1039,12 +1052,12 @@ No automatic scaling is done for pointer operations.
 :DT.Returns
 :DD.The value of the result.
 :eDL.
-:H2.cg_name CGIndex( cg_name name, cg_name by, cg_type type, cg_type ptype )
+.section cg_name CGIndex( cg_name name, cg_name by, cg_type type, cg_type ptype )
 :I1.CGIndex
 :P.Obsolete.
 Do not use.
-:H1.Procedure calls
-:H2.call_handle CGInitCall( cg_name name, cg_type type, cg_sym_handle aux_info )
+.chap Procedure calls
+.section call_handle CGInitCall( cg_name name, cg_type type, cg_sym_handle aux_info )
 :I1.CGInitCall
 :I1.procedures
 :I1.Routines
@@ -1065,7 +1078,7 @@ the attributes of the call.
 :DT.Returns
 :DD.A :HP2.call_handle:eHP2. to be passed to the following routines.
 :eDL.
-:H2.void CGAddParm( call_handle call, cg_name name, cg_type type )
+.section void CGAddParm( call_handle call, cg_name name, cg_type type )
 :I1.CGAddParm
 :I1.procedures
 :I1.routines
@@ -1088,7 +1101,7 @@ This type will be passed to FEParmType to determine the actual type to
 be used when passing the parameter.
 For instance, characters are usually passes as integers in C.
 :eDL.
-:H2.cg_name CGCall( call_handle call )
+.section cg_name CGCall( call_handle call )
 :P.Turn a call_handle into a cg_name by performing the call.
 This may be immediately followed by an optional addition operation, to
 reference a field in a structure return value.
@@ -1104,8 +1117,8 @@ has no return value.
 :DT.Returns
 :DD.The address of the function return value.
 :eDL.
-:H1.Comparison/short-circuit operations
-:H2.cg_name CGCompare( cg_op op, cg_name left, cg_name right, cg_type type )
+.chap Comparison/short-circuit operations
+.section cg_name CGCompare( cg_op op, cg_name left, cg_name right, cg_type type )
 :I1.CGCompare
 :I1.short circuit operations.
 :I1.boolean expresssions.
@@ -1128,8 +1141,8 @@ comparison.
 :DD.A T_BOOLEAN cg_name, which may be passed to a control flow CG
 routine, or used in an expression as an integral value.
 :eDL.
-:H1.Control flow operations
-:H2.cg_name CGFlow( cg_op op, cg_name left, cg_name right )
+.chap Control flow operations
+.section cg_name CGFlow( cg_op op, cg_name left, cg_name right )
 :I1.short circuit operations.
 :I1.boolean expresssions.
 :I1.CGFlow
@@ -1148,7 +1161,7 @@ routine, or used in an expression as an integral value.
 :DT.Returns
 :DD.A T_BOOLEAN cg_name.
 :eDL.
-:H2.cg_name CGChoose( cg_name sel, cg_name n1, cg_name n2, cg_type type )
+.section cg_name CGChoose( cg_name sel, cg_name n1, cg_name n2, cg_type type )
 :I1.CGChoose
 :I1.short circuit operations.
 :I1.boolean expresssions.
@@ -1171,7 +1184,7 @@ routine, or used in an expression as an integral value.
 :DD.The value of :HP2.n1:eHP2. or :HP2.n2:eHP2. depending upon the
 truth of :HP2.sel:eHP2..
 :eDL.
-:H2.cg_name CGWarp( cg_name before, label_handle label, cg_name after )
+.section cg_name CGWarp( cg_name before, label_handle label, cg_name after )
 :I1.CGWarp
 :I1.statement functions
 :I1.FORTRAN
@@ -1198,7 +1211,7 @@ This can be passed to CGEval, to guarantee that nested statement
 functions are fully evaluated before their parameter variables are
 reassigned, as in f(1,f(2,3,4),5).
 :eDL.
-:H2.void CG3WayControl( cg_name expr, label_handle lt, label_handle eq, label_handle gt )
+.section void CG3WayControl( cg_name expr, label_handle lt, label_handle eq, label_handle gt )
 :I1.CG3WayControl
 :I1.arithmetic if
 :I1.FORTRAN
@@ -1217,7 +1230,7 @@ whether :HP2.expr:eHP2. is less than, equal to, or greater than zero.
 :DT.gt
 :DD.A label_handle.
 :eDL.
-:H2.void CGControl( cg_op op, cg_name expr, label_handle lbl )
+.section void CGControl( cg_op op, cg_name expr, label_handle lbl )
 :I1.CGControl
 :I1.control flow
 :P.Generate conditional and unconditional flow of control.
@@ -1232,7 +1245,7 @@ NULL otherwise.
 :DT.lbl
 :DD.The target label.
 :eDL.
-:H2.void CGBigLabel( back_handle lbl )
+.section void CGBigLabel( back_handle lbl )
 :I1.CGBigLabel
 :I1.control flow
 :P.Generate a label which may be branched to from a nested procedure or
@@ -1246,7 +1259,7 @@ It kills a lot of optimizations.
 :DD.A back_handle.
 There must be a front end symbol associated with this back handle.
 :eDL.
-:H2.void CGBigGoto( back_handle value, int level )
+.section void CGBigGoto( back_handle value, int level )
 :I1.CGBigGoto
 :I1.control flow
 :P.Generate a branch to a label in an outer procedure.
@@ -1259,7 +1272,7 @@ There must be a front end symbol associated with this back handle.
 :DT.level
 :DD.The lexical level of the target label.
 :eDL.
-:H1.Select and Switch statements.
+.chap Select and Switch statements.
 :P.The select routines are used as follows.
 CGSelOther should always be used even if there is no otherwise/default
 case.
@@ -1290,7 +1303,7 @@ CGSelect( sel_handle );
 
 CGControl( O_LABEL, NULL, end_label );
 :eXMP.
-:H2.sel_handle CGSelInit()
+.section sel_handle CGSelInit()
 :I1.CGSelInit
 :I1.control flow
 :P.Create a sel_handle.
@@ -1298,7 +1311,7 @@ CGControl( O_LABEL, NULL, end_label );
 :DT.Returns
 :DD.A sel_handle to be passed to the following routines.
 :eDL.
-:H2.void CGSelCase( sel_handle sel, label_handle lbl, signed_32 val )
+.section void CGSelCase( sel_handle sel, label_handle lbl, signed_32 val )
 :I1.CGSelCase
 :I1.control flow
 :P.Add a single value case to a select or switch.
@@ -1312,7 +1325,7 @@ CGControl( O_LABEL, NULL, end_label );
 :DT.val
 :DD.The case value.
 :eDL.
-:H2.void CGSelRange( sel_handle s, signed_32 lo, signed_32 hi, label_handle lbl )
+.section void CGSelRange( sel_handle s, signed_32 lo, signed_32 hi, label_handle lbl )
 :I1.CGSelRange
 :I1.control flow
 :P.Add a range of values to a select.
@@ -1330,7 +1343,7 @@ switch code, so lo and hi must have the same sign.
 :DT.lbl
 :DD.The label to be associated with the case value.
 :eDL.
-:H2.void CGSelOther( sel_handle s, label_handle lbl )
+.section void CGSelOther( sel_handle s, label_handle lbl )
 :I1.CGSelOther
 :I1.control flow
 :P.Add the otherwise case to a select.
@@ -1342,7 +1355,7 @@ switch code, so lo and hi must have the same sign.
 :DT.lbl
 :DD.The label to be associated with the otherwise case.
 :eDL.
-:H2.void CGSelect( sel_handle s, cg_name expr )
+.section void CGSelect( sel_handle s, cg_name expr )
 :I1.CGSelect
 :I1.control flow
 :P.Add the select  expression to a select statement and generate code.
@@ -1356,7 +1369,7 @@ It invalidates the sel_handle.
 :DT.expr
 :DD.The value we are selecting.
 :eDL.
-:H2.void CGSelectRestricted( sel_handle s, cg_name expr, cg_switch_type allowed )
+.section void CGSelectRestricted( sel_handle s, cg_name expr, cg_switch_type allowed )
 :P.Identical to CGSelect, except that only switch generation techniques
 corresponding to the set of allowed methods will be considered when
 determining how to produce code.
@@ -1376,8 +1389,8 @@ Must be a combination (non-empty) of the following bits:
 :LI.CG_SWITCH_TABLE
 :eSL.
 :eDL.
-:H1.Other
-:H2.void CGReturn( cg_name name, cg_type type )
+.chap Other
+.section void CGReturn( cg_name name, cg_type type )
 :I1.CGReturn
 :I1.procedures
 :I1.routines
@@ -1396,7 +1409,7 @@ before this routine call.
 :DD.The type of the return value.
 Use T_INTEGER for void functions.
 :eDL.
-:H2.cg_name CGEval( cg_name name )
+.section cg_name CGEval( cg_name name )
 :I1.CGEval
 :I1.expressions
 :P.Evaluate this expression tree now and assign its value to a leaf
@@ -1416,7 +1429,7 @@ This usually used to force the order of parameter evaluation.
 :DT.Returns
 :DD.A leaf node containing the value of the tree.
 :eDL.
-:H2.void CGDone( cg_name name )
+.section void CGDone( cg_name name )
 :I1.expressions
 :I1.CGDone
 :P.Generate the tree and throw away the resultant value.
@@ -1431,12 +1444,12 @@ will have been performed.
 :DT.name
 :DD.The cg_name to be generated/discarded.
 :eDL.
-:H2.void CGTrash( cg_name name )
+.section void CGTrash( cg_name name )
 :I1.expressions
 :I1.CGTrash
 :P.Like CGDone, but used for partial expression trees.
 This routine does not cause all existing cg_names to become invalid.
-:H2.cg_type CGType( cg_name name )
+.section cg_type CGType( cg_name name )
 :I1.typing
 :I1.CGType
 :P.Returns the type of the given cg_name.
@@ -1450,7 +1463,7 @@ This routine does not cause all existing cg_names to become invalid.
 :DT.Returns
 :DD.The type of the cg_name.
 :eDL.
-:H2.cg_name *CGDuplicate( cg_name name )
+.section cg_name *CGDuplicate( cg_name name )
 :I1.expressions
 :I1.CGDuplicate
 :P.Create two copies of a cg_name.
@@ -1467,7 +1480,7 @@ same value as the original.
 These should be copied out of the array immediately since subsequent
 calls to CGDuplicate will overwrite the array.
 :eDL.
-:H2.cg_name CGBitMask( cg_name name, byte start, byte len, cg_type type )
+.section cg_name CGBitMask( cg_name name, byte start, byte len, cg_type type )
 :I1.CGBitMask
 :I1.expressions
 :I1.bit fields
@@ -1500,7 +1513,7 @@ typedef struct {
     short field3 : 7;
 }
 :eXMP.
-:H2.cg_name CGVolatile( cg_name name )
+.section cg_name CGVolatile( cg_name name )
 :I1.CGVolatile
 :I1.expressions
 :I1.volatile
@@ -1519,7 +1532,7 @@ this routine each time that address is used.
 :DT.Returns
 :DD.A new cg_name representing the same value as name.
 :eDL.
-:H2.cg_name CGCallback( cg_callback func, void *ptr )
+.section cg_name CGCallback( cg_callback func, void *ptr )
 :P.When a callback node is inserted into the tree, the code generator
 will call the given function with the pointer as a parameter when it
 turns the node into an instruction.
@@ -1537,7 +1550,7 @@ as it's only parameter sometime during the execution of the CGDone call.
 :DD.This will be a parameter to the function given as the first
 parameter.
 :eDL.
-:H2.cg_name CGPatchNode( patch_handle hdl, cg_type type )
+.section cg_name CGPatchNode( patch_handle hdl, cg_type type )
 :P.This prepares a leaf node to hold an integer constant which will be
 provided sometime during the execution of the CGDone call by means of a
 BEPatchInteger() call.
@@ -1552,14 +1565,14 @@ BEPatchInteger().
 :DD.The actual type of the node.
 Must be an integer type.
 :eDL.
-:H1.Data Generation
+.chap Data Generation
 :I1.data
 :I1.segments
 :I1.label, data
 :P.The following routines generate a data item described at the current
 location in the current segment, and increment the current location by
 the size of the generated object.
-:H2.void DGLabel( back_handle bck )
+.section void DGLabel( back_handle bck )
 :I1.DGLabel
 :I1.label, data
 :P.Generate the label for a given back_handle.
@@ -1569,7 +1582,7 @@ the size of the generated object.
 :DT.bck
 :DD.A back_handle.
 :eDL.
-:H2.void DGBackPtr( back_handle bck, segment_id seg, signed_32 offset, cg_type type )
+.section void DGBackPtr( back_handle bck, segment_id seg, signed_32 offset, cg_type type )
 :I1.DGBackPtr
 :I1.back handle
 :I1.relocatable data item
@@ -1587,7 +1600,7 @@ will be defined if it has not already been passed to DGLabel.
 :DT.type
 :DD.The pointer type to be used.
 :eDL.
-:H2.void DGFEPtr( cg_sym_handle sym, cg_type type, signed_32 offset )
+.section void DGFEPtr( cg_sym_handle sym, cg_type type, signed_32 offset )
 :I1.DGFEPtr
 :I1.relocatable data item
 :P.Generate a pointer to the label associated with :HP2.sym:eHP2..
@@ -1601,7 +1614,7 @@ will be defined if it has not already been passed to DGLabel.
 :DT.offset
 :DD.A value to be added to the generated pointer value.
 :eDL.
-:H2.void DGInteger( unsigned_32 value, cg_type type )
+.section void DGInteger( unsigned_32 value, cg_type type )
 :I1.DGInteger
 :P.Generate an integer.
 :DL.
@@ -1612,7 +1625,7 @@ will be defined if it has not already been passed to DGLabel.
 :DT.type
 :DD.The integral type to be used.
 :eDL.
-:H2.void DGFloat( char *value, cg_type type )
+.section void DGFloat( char *value, cg_type type )
 :I1.DGFloat
 :I1.floating point constant
 :P.Generate a floating-point constant.
@@ -1624,7 +1637,7 @@ will be defined if it has not already been passed to DGLabel.
 :DT.type
 :DD.The floating point type to be used.
 :eDL.
-:H2.void DGChar( char value )
+.section void DGChar( char value )
 :I1.DGChar
 :I1.character
 :P.Generate a character constant.
@@ -1635,7 +1648,7 @@ Will be translated if cross compiling.
 :DT.value
 :DD.A character value.
 :eDL.
-:H2.void DGString( char *value, uint len )
+.section void DGString( char *value, uint len )
 :I1.DGString
 :I1.character
 :P.Generate a character string.
@@ -1649,7 +1662,7 @@ It is not necessarily a null terminated string.
 :DT.len
 :DD.The length of the string.
 :eDL.
-:H2.void DGBytes( unsigned_32 len, byte *src )
+.section void DGBytes( unsigned_32 len, byte *src )
 :I1.DGBytes
 :P.Generate raw binary data.
 :DL.
@@ -1660,7 +1673,7 @@ It is not necessarily a null terminated string.
 :DT.len
 :DD.The length of the byte stream.
 :eDL.
-:H2.void DGIBytes( unsigned_32 len, byte pat )
+.section void DGIBytes( unsigned_32 len, byte pat )
 :I1.DGIBytes
 :P.Generate the byte :HP2.pat:eHP2., :HP2.len:eHP2. times.
 :DL.
@@ -1671,7 +1684,7 @@ It is not necessarily a null terminated string.
 :DT.len
 :DD.The number of times to repeat the byte.
 :eDL.
-:H2.void DGUBytes( unsigned_32 len )
+.section void DGUBytes( unsigned_32 len )
 :I1.DGUBytes
 :P.Generate :HP2.len:eHP2. undefined bytes.
 :DL.
@@ -1680,7 +1693,7 @@ It is not necessarily a null terminated string.
 :DT.len
 :DD.The size by which to increase the segment.
 :eDL.
-:H2.void DGAlign( uint align )
+.section void DGAlign( uint align )
 :I1.DGAlign
 :I1.segments
 :P.Align the segment to an :HP2.align:eHP2. byte boundary.
@@ -1691,7 +1704,7 @@ Any slack bytes will have an undefined value.
 :DT.align
 :DD.The desired alignment boundary.
 :eDL.
-:H2.unsigned_32 DGSeek( unsigned_32 where )
+.section unsigned_32 DGSeek( unsigned_32 where )
 :I1.DGSeek
 :I1.segments
 :P.Seek to a location within a segment.
@@ -1705,22 +1718,22 @@ Any slack bytes will have an undefined value.
 :DT.Returns
 :DD.The current location in the segment before the seek takes place.
 :eDL.
-:H2.unsigned long DGTell()
+.section unsigned long DGTell()
 :I1.DGTell
 :I1.segments
 :DL.
 :DT.Returns
 :DD.The current location within the segment.
 :eDL.
-:H2.unsigned long DGBackTell( back_handle bck )
+.section unsigned long DGBackTell( back_handle bck )
 :I1.DGBackTell
 :DL.
 :DT.Returns
 :DD.The location of the label within its segment.
 The label must have been previously generated via DGLabel.
 :eDL.
-:H1.Front End Routines
-:H2.void FEGenProc( cg_sym_handle sym )
+.chap Front End Routines
+.section void FEGenProc( cg_sym_handle sym )
 :I1.FEGenProc
 :I1.inline procedures
 :I1.procedures
@@ -1741,7 +1754,7 @@ It is up to the front end to prevent infinite recursion.
 :DT.sym
 :DD.The cg_sym_handle of the function to be generated.
 :eDL.
-:H2.back_handle FEBack( cg_sym_handle sym )
+.section back_handle FEBack( cg_sym_handle sym )
 :I1.FEBack
 :I1.back handle
 :P.Return, and possibly allocate using BENewBack, a back handle for
@@ -1757,7 +1770,7 @@ See the example under :HDREF refid='bck'.
 :DT.Returns
 :DD.A back_handle.
 :eDL.
-:H2.segment_id FESegID( cg_sym_handle sym )
+.section segment_id FESegID( cg_sym_handle sym )
 :I1.FESegID
 :I1.segments
 :P.Return the segment_id for symbol :HP2.sym:eHP2..
@@ -1775,7 +1788,7 @@ assumes that they are both defined in the same (unknown) segment.
 :DT.Returns
 :DD.A segment_id.
 :eDL.
-:H2.char *FEModuleName()
+.section char *FEModuleName()
 :I1.FEModuleName
 :DL.
 :DT.Returns
@@ -1784,14 +1797,14 @@ compiled.
 This is usually the file name with path and extension information
 stripped.
 :eDL.
-:H2.char FEStackCheck( cg_sym_handle sym )
+.section char FEStackCheck( cg_sym_handle sym )
 :I1.stack probes
 :I1.FEStackCheck
 :DL.
 :DT.Returns
 :DD.1 if stack checking required for this routine
 :eDL.
-:H2.unsigned FELexLevel( cg_sym_handle sym )
+.section unsigned FELexLevel( cg_sym_handle sym )
 :I1.FELexLevel
 :I1.pascal
 :DL.
@@ -1801,7 +1814,7 @@ This must be zero for all languages except Pascal.
 In Pascal, 1 indicates the level of the main program.
 Each nested procedures adds an additional level.
 :eDL.
-:H2.char *FEName( cg_sym_handle sym )
+.section char *FEName( cg_sym_handle sym )
 :I1.FEName
 :DL.
 :DT.Returns
@@ -1809,7 +1822,7 @@ Each nested procedures adds an additional level.
 A null string should be returned if the symbol has no name.
 NULL should never be returned.
 :eDL.
-:H2.cg_type FEParmType( cg_type type )
+.section cg_type FEParmType( cg_type type )
 :I1.FEParmType
 :DL.
 :DT.Returns
@@ -1817,14 +1830,14 @@ NULL should never be returned.
 passing it to a procedure.
 Type will be a dealiased type.
 :eDL.
-:H2.int FETrue()
+.section int FETrue()
 :I1.FETrue
 :DL.
 :DT.Returns
 :DD.The value of TRUE.
 This is normally 1.
 :eDL.
-:H2.char FEMoreMem( unsigned size )
+.section char FEMoreMem( unsigned size )
 :I1.FEMoreMem
 :P.Release memory for the back end to use.
 :DL.
@@ -1839,13 +1852,13 @@ This is normally 1.
 May always return 0 if memory is not a scarce resource in the host
 environment.
 :eDL.
-:H2.dbg_type FEDbgType( cg_sym_handle sym )
+.section dbg_type FEDbgType( cg_sym_handle sym )
 :I1.FEDbgType
 :DL.
 :DT.Returns
 :DD.The dbg_type handle for the symbol :HP2.sym:eHP2..
 :eDL.
-:H2.fe_attr FEAttr( cg_sym_handle sym )
+.section fe_attr FEAttr( cg_sym_handle sym )
 :I1.FEAttr
 :P.Return symbol attributes for :HP2.sym:eHP2..
 These are bits combinable with the bit-wise or operator |.
@@ -1889,7 +1902,7 @@ necessarally visible to the code generator).
 :DT.FE_INTERNAL
 :DD.The symbol is not at file scope.
 :eDL.
-:H2.void FEMessage( msg_class msg, void *extra )
+.section void FEMessage( msg_class msg, void *extra )
 :I1.FEMessage
 :P.Relays information to the front end.
 :DL.
@@ -1969,7 +1982,7 @@ user has requested a far pointer indirection.
 Extra (cg_sym_handle) is the procedure which contained the far pointer
 usage.
 :eDL.
-:H2.void *FEAuxInfo( void *extra, aux_class class )
+.section void *FEAuxInfo( void *extra, aux_class class )
 :I1.FEAuxInfo
 :P.relay information to back end
 :DL.
@@ -2276,9 +2289,9 @@ prologue has grown it) to be through the SS register.
 :DT.LINKAGE_CLINK
 :DD.WSL linkage.
 :eDL.
-:H1.Debugging Information
+.chap Debugging Information
 These routines generate information about types, symbols, etc.
-:H2.extern void DBLineNum( uint no )
+.section extern void DBLineNum( uint no )
 :I1.DBLineNum
 :P.Set the current source line number.
 :DL.
@@ -2287,7 +2300,7 @@ These routines generate information about types, symbols, etc.
 :DT.no
 :DD.Is the current source line number.
 :eDL.
-:H2.extern void DBModSym( cg_sym_handle sym, cg_type indirect )
+.section extern void DBModSym( cg_sym_handle sym, cg_type indirect )
 :I1.DBModSym
 :P.Define a symbol within the module (file scope).
 :DL.
@@ -2298,7 +2311,7 @@ These routines generate information about types, symbols, etc.
 :DT.indirect
 :DD.is the type of indirection needed to obtain the value
 :eDL.
-:H2.extern void DBObject( dbg_type tipe, dbg_loc loc )
+.section extern void DBObject( dbg_type tipe, dbg_loc loc )
 :I1.DBObject
 :P.Define a function as being a member function of a C++ class, and
 identify the type of the class and the location of the object being
@@ -2315,10 +2328,10 @@ object being manipulated by the function (the contents of the 'this'
 pointer in C++).
 This parameter is NULL if the routine is a static member function.
 :eDL.
-:H2.extern void DBLocalSym( cg_sym_handle sym, cg_type indirect )
+.section extern void DBLocalSym( cg_sym_handle sym, cg_type indirect )
 :I1.DBLocalSym
 :P.As DBModSym but for local (routine scope) symbols.
-:H2.extern void DBGenSym( cg_sym_handle sym, dbg_loc loc, int scoped )
+.section extern void DBGenSym( cg_sym_handle sym, dbg_loc loc, int scoped )
 :I1.DBGenSym
 :P.Define a symbol either with module scope ('scoped' == 0) or within
 the current block ('scoped' != 0).
@@ -2337,42 +2350,42 @@ locate the lvalue of the symbol.
 :DT.scoped
 :DD.whether the symbol is file scoped or not.
 :eDL.
-:H2.extern void DBBegBlock()
+.section extern void DBBegBlock()
 :I1.DBBegBlock
 :P.Open a new scope level.
-:H2.extern void DBEndBlock()
+.section extern void DBEndBlock()
 :I1.DBEndBlock
 :P.Close the current scope level.
-:H2.extern dbg_type DBScalar( char *name, cg_type tipe )
+.section extern dbg_type DBScalar( char *name, cg_type tipe )
 :I1.DBScalar
 :P.Defines the string :HP2.name:eHP2. to have type :HP2.tipe:eHP2..
-:H2.extern dbg_type DBScope( char *name )
+.section extern dbg_type DBScope( char *name )
 :I1.DBScope
 :P.define a symbol which "scopes" subsequent symbols.
 In C, the keywords :HP2.enum:eHP2., :HP2.union:eHP2., :HP2.struct:eHP2.
 may perform this function as in :HP2.struct foo:eHP2..
-:H2.extern dbg_name DBBegName( char *name, dbg_type scope )
+.section extern dbg_name DBBegName( char *name, dbg_type scope )
 :I1.DBBegName
 :P.start a type name whose type is yet undetermined
-:H2.extern dbg_type DBForward( dbg_name name )
+.section extern dbg_type DBForward( dbg_name name )
 :I1.DBForward
 :P.declare a type to be a forward reference
-:H2.extern dbg_type DBEndName( dbg_name name, dbg_type tipe )
+.section extern dbg_type DBEndName( dbg_name name, dbg_type tipe )
 :I1.DBEndName
 :P.complete the definition of a type name.
-:H2.extern dbg_type DBArray( dbg_type index, dbg_type base )
+.section extern dbg_type DBArray( dbg_type index, dbg_type base )
 :I1.DBArray
 :P.define a C array type
-:H2.extern dbg_type DBIntArray( unsigned_32 hi, dbg_type base )
+.section extern dbg_type DBIntArray( unsigned_32 hi, dbg_type base )
 :I1.DBIntArray
 :P.define a C array type
-:H2.extern dbg_type DBSubRange( signed_32 lo, signed_32 hi, dbg_type base )
+.section extern dbg_type DBSubRange( signed_32 lo, signed_32 hi, dbg_type base )
 :I1.DBSubRange
 :P.define an integer range type
-:H2.extern dbg_type DBPtr( cg_type ptr_type, dbg_type base )
+.section extern dbg_type DBPtr( cg_type ptr_type, dbg_type base )
 :I1.DBPtr
 :P.declare a pointer type
-:H2.extern dbg_type DBBasedPtr( cg_type ptr_type, dbg_type base, dbg_loc seg_loc )
+.section extern dbg_type DBBasedPtr( cg_type ptr_type, dbg_type base, dbg_loc seg_loc )
 :I1.DBBasedPtr
 :P.declare a based pointer type.
 The 'seg_loc' parameter is a location expression which evaluates to the
@@ -2380,16 +2393,16 @@ base address for the pointer after the indirection has been performed.
 Before the location expression is evalated, the current lvalue of the
 pointer symbol associated with this type is pushed onto the expression
 stack (needed for based on self pointers).
-:H2.extern dbg_struct DBBegStruct()
+.section extern dbg_struct DBBegStruct()
 :I1.DBBegStruct
 :P.start a structure type definition
-:H2.extern void DBAddField( dbg_struct st, unsigned_32 off, char *nm, dbg_type base )
+.section extern void DBAddField( dbg_struct st, unsigned_32 off, char *nm, dbg_type base )
 :I1.DBAddField
 :P.add a field to a structure
-:H2.extern void DBAddBitField( dbg_struct st, unsigned_32 off, byte strt, byte len, char *nm, dbg_type base )
+.section extern void DBAddBitField( dbg_struct st, unsigned_32 off, byte strt, byte len, char *nm, dbg_type base )
 :I1.DBAddBitField
 :P.add a bit field to a structure
-:H2.extern void DBAddLocField( dbg_struct st, dbg_loc loc, uint attr, byte strt, byte len, char *nm, dbg_type base )
+.section extern void DBAddLocField( dbg_struct st, dbg_loc loc, uint attr, byte strt, byte len, char *nm, dbg_type base )
 :I1.DBAddLocField
 :P.Add a field or bit field to a structure with a generalized location
 expression 'loc'.
@@ -2413,7 +2426,7 @@ normally visible to the user.
 :eDL.
 :PC.If the field being described is _not_ a bit field, the 'len'
 parameter should be set to zero.
-:H2.extern void DBAddInheritance( dbg_struct st, dbg_type inherit, dbg_loc adjust )
+.section extern void DBAddInheritance( dbg_struct st, dbg_type inherit, dbg_loc adjust )
 :I1.DBAddInheritance
 Add the fields of an inherited structure to the current structure being
 defined.
@@ -2433,46 +2446,46 @@ The base address of the symbol associated with the structure type is
 pushed onto the location expression stack before the expression is
 evaluated.
 :eDL.
-:H2.extern dbg_type DBEndStruct( dbg_struct st )
+.section extern dbg_type DBEndStruct( dbg_struct st )
 :I1.DBEndStruct
 :P.end a structure definition
-:H2.extern dbg_enum DBBegEnum( cg_type tipe )
+.section extern dbg_enum DBBegEnum( cg_type tipe )
 :I1.DBBegEnum
 :P.begin defining an enumerated type
-:H2.extern void DBAddConst( dbg_enum en, char *nm, signed_32 val )
+.section extern void DBAddConst( dbg_enum en, char *nm, signed_32 val )
 :I1.DBAddConst
 :P.add a symbolic constant to an enumerated type
-:H2.extern dbg_type DBEndEnum( dbg_enum en )
+.section extern dbg_type DBEndEnum( dbg_enum en )
 :I1.DBEndEnum
 :P.finish declaring an enumerated type
-:H2.extern dbg_proc DBBegProc( cg_type call_type, dbg_type ret )
+.section extern dbg_proc DBBegProc( cg_type call_type, dbg_type ret )
 :I1.DBBegProc
 :P.begin the a current procedure
-:H2.extern void DBAddParm( dbg_proc pr, dbg_type tipe )
+.section extern void DBAddParm( dbg_proc pr, dbg_type tipe )
 :I1.DBAddParm
 :P.declare a parameter to the procedure
-:H2.extern dbg_type DBEndProc( proc_list *pr )
+.section extern dbg_type DBEndProc( proc_list *pr )
 :I1.DBEndProc
 :P.end the current procedure
-:H2.extern dbg_type DBFtnType( char *name, dbg_ftn_type tipe )
+.section extern dbg_type DBFtnType( char *name, dbg_ftn_type tipe )
 :I1.DBFtnType
 :P.declare a fortran COMPLEX type
-:H2.extern dbg_type DBCharBlock( unsigned_32 len )
+.section extern dbg_type DBCharBlock( unsigned_32 len )
 :I1.DBCharBlock
 :P.declare a type to be a block of length :HP2.len:eHP2. characters
-:H2.extern dbg_type DBIndCharBlock( back_handle len, cg_type len_type, int off )
+.section extern dbg_type DBIndCharBlock( back_handle len, cg_type len_type, int off )
 :I1.DBIndCharBlock
 :P.declare a type to be a block of characters.
 The length is found at run-time at back_handle :HP2.len:eHP2. + offset
 :HP2.off:eHP2..
 The integral type of the back_handle location is :HP2.len_type:eHP2.
-:H2.extern dbg_type DBLocCharBlock( dbg_loc loc, cg_type len_type )
+.section extern dbg_type DBLocCharBlock( dbg_loc loc, cg_type len_type )
 :I1.DBLocCharBlock
 :P.declare a type to be a block of characters.
 The length is found at run-time at the address specified by the
 location expression :HP2.loc:eHP2..
 The integral type of the location is :HP2.len_type:eHP2.
-:H2.extern dbg_type DBFtnArray( back_handle dims, cg_type lo_bound_tipe, cg_type num_elts_tipe, int off, dbg_type base )
+.section extern dbg_type DBFtnArray( back_handle dims, cg_type lo_bound_tipe, cg_type num_elts_tipe, int off, dbg_type base )
 :I1.DBFtnArray
 :P.define a FORTRAN array dimension slice.
 :HP2.dims:eHP2. is a back handle + offset :HP2.off:eHP2. which will
@@ -2481,25 +2494,25 @@ The structure contains the array low bound (type
 :HP2.lo_bound_tipe:eHP2.) followed by the number of elements (type
 :HP2.num_elts_tipe:eHP2.).
 :HP2.base:eHP2. is the element type of the array.
-:H2.extern dbg_type DBDereference( cg_type ptr_type, dbg_type base )
+.section extern dbg_type DBDereference( cg_type ptr_type, dbg_type base )
 :I1.DBDereference
 :P.declare a type to need an implicit de-reference to retrieve the
 value (for FORTRAN parameters)
 :NOTE.This routine has been superceded by the use of location
 expressions.
-:H2.extern dbg_loc DBLocInit( void )
+.section extern dbg_loc DBLocInit( void )
 :I1.DBLocInit
 create an initial empty location expression
-:H2.extern dbg_loc DBLocSym( dbg_loc loc, cg_sym_handle sym )
+.section extern dbg_loc DBLocSym( dbg_loc loc, cg_sym_handle sym )
 :I1.DBLocSym
 push the address of 'sym' on to the expression stack
-:H2.extern dbg_loc DBLocTemp( dbg_loc loc, temp_handle tmp )
+.section extern dbg_loc DBLocTemp( dbg_loc loc, temp_handle tmp )
 :I1.DBLocTemp
 push the address of 'tmp' on to the expression stack
-:H2.extern dbg_loc DBLocConst( dbg_loc loc, unsigned_32 val )
+.section extern dbg_loc DBLocConst( dbg_loc loc, unsigned_32 val )
 :I1.DBLocConst
 push the constant 'val' on to the expression stack
-:H2.extern dbg_loc DBLocOp( dbg_loc loc, dbg_loc_op op, unsigned other )
+.section extern dbg_loc DBLocOp( dbg_loc loc, dbg_loc_op op, unsigned other )
 :I1.DBLocOp
 perform the following list of operations on the expression stack
 :DL.
@@ -2531,10 +2544,10 @@ value of an address.
 :DT.DB_OP_POP
 :DD.pop off (throw away) the top stack entry.
 :eDL.
-:H2.extern void DBLocFini( dbg_loc loc )
+.section extern void DBLocFini( dbg_loc loc )
 :I1.DBLocFini
 the given location expression will not be used anymore.
-:H1.Registers
+.chap Registers
 :I1.registers
 :P.The hw_reg_set type is an abstract data type capable of representing
 any combination of machine registers.
@@ -2631,7 +2644,7 @@ hw_reg_set reg;
 HW_CAsgn( reg, HW_FULL );
 HW_CTurnOff( reg, HW_UNUSED );
 :eXMP.
-:H1.Miscellaneous
+.chap Miscellaneous
 :P.I apologize for my lack of consistency in this document.
 I use the terms function, routine, procedure interchangeably, as well
 as index, subscript - select, switch - parameter, argument - etc.
@@ -2778,7 +2791,7 @@ segment.
 :DD.(enum)
 :eDL.
 :APPENDIX.
-:H1.Pre-defined macros
+.chap Pre-defined macros
 :P.The following macros are defined by the code generator include files.
 :SL.
 :LI.HW_D
@@ -2941,7 +2954,7 @@ segment.
 :LI.near
 :LI.offsetof
 :eSL.
-:H1.Register constants
+.chap Register constants
 :P.The following register constants are defined for x86 targets.
 :SL.
 :LI.HW_AH
@@ -3012,6 +3025,12 @@ segment.
 :LI.HW_E0
 :LI.HW_E4
 :eSL.
+.*
+.if &e'&dohelp eq 0 .do begin
 :BACKM.
+.cd set 2
 :INDEX.
+.do end
+.cd set 1
+.cntents end_of_book
 :eGDOC.

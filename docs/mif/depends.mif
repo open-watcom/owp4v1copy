@@ -2534,3 +2534,13 @@ hlpmix_incs = $(docsrc_dir)\hlp
 hlpmix_objs =               &
 $(docsrc_dir)\hlp\cmix.gml  &
 $(docsrc_dir)\hlp\fmix.gml
+
+# cgdoc sub-directory
+incs_cgdoc = $(bldsrc_dir)\cg\doc
+objs_cgdoc = &
+$(bldsrc_dir)\cg\doc\cgdoc.gml
+
+# vi sub-directory
+incs_vi = $(bldsrc_dir)\vi\man;$(bldsrc_dir)\vi\man\pict;..\gml\help
+objs_vi = &
+$(bldsrc_dir)\vi\man\vi.gml
