@@ -1,4 +1,4 @@
-#pmake:all huge 16bit msdos intel iX86 static build os_dos cpu_i86
+#pmake:all huge 16bit msdos intel iX86 static build os_dos os_os2 cpu_i86
 processor=286
 model=mh
 system=msdos
