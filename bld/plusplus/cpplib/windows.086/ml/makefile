@@ -1,8 +1,8 @@
-#pmake: all build large cpu_i86 os_win
-processor  = i86
+#pmake: build large cpu_i86 os_win
+processor  = 086
 system     = windows
-model      = l
+model      = ml
 linkage    = static
-subdir     = wbcbd
+subdir     = ml
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

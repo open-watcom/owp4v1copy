@@ -4,7 +4,7 @@
 #
 processor  = 386
 system     = os2
-model      = f
+model      = mf
 convention = register
 linkage    = dynamic
 mthreaded  = 1

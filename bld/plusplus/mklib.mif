@@ -9,18 +9,15 @@ suppress_zc = 1
 
 !include $(plusplus_dir)/libtarg.mif
 
-#mem_model_dos_386    =s
-mem_model_qnx_386    =s
-mem_model_nov_386    =s
-!ifdef mem_model_$(host_os)_$(host_cpu)
-model = $(mem_model_$(host_os)_$(host_cpu))
+!ifdef mem_model_$(model)
+memory_model_i86 = $(mem_model_$(model))
+memory_model_386 = $(mem_model_$(model))
 !endif
 
-memory_model_i86 = $(model)
-memory_model_386 = $(model)
-
-fp_option_i86 = -fpc
-fp_option_i87 = -fpi
+fp_option_086 = -fpc
+fp_option_087 = -fpi
+fp_option_286 = -fpc
+fp_option_287 = -fpi
 fp_option_386 = -fpc
 fp_option_387 = -fpi
 fp_option = $(fp_option_$(processor))
@@ -143,8 +140,8 @@ extra_c_flags +=-etp
 # -zv has to be on in case the user uses -zv
 # temporary fix until AXP targets support -zv properly
 extra_c_flags_i86 = -zv
-!ifneq model m
-!ifneq model s
+!ifneq model mm
+!ifneq model ms
 extra_c_flags_i86 += -zu
 !endif
 !endif
@@ -187,7 +184,7 @@ c_inc_dirs_nt     =-I"$(hdr_dir)/dos" $(inc_dirs_sys_nt)
 c_inc_dirs_qnx    =-I"$(hdr_dir)/qnx"
 c_inc_dirs_linux  =-I"$(hdr_dir)/linux"
 
-inc_dirs = -I"$(lib_misc_dir)/h" -I"../h" -I"$(plusplus_dir)/h" -I"$(plusplus_runtime_dir)/h" $(c_inc_dirs_$(host_os)) -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
+inc_dirs = -I"$(lib_misc_dir)/h" -I"../../h" -I"$(plusplus_dir)/h" -I"$(plusplus_runtime_dir)/h" $(c_inc_dirs_$(host_os)) -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
 
 reference : .symbolic $(target_lib)
     cp $(target_lib) $(plusplus_dir)/bin
@@ -205,11 +202,8 @@ comp_cpp_386 = $(plusplus_dir)\bin\rpp38612.exe
 comp_cpp_axp = $(plusplus_dir)\bin\rppaxp12.exe
 !endif
 comp_cpp = $(comp_cpp_$(host_cpu))
-#comp_c = $(cc)
 
 .cpp : $(cpp_dirs)
-
-.c : $(c_dirs)
 
 .asm : $(asm_dirs)
 
@@ -218,12 +212,6 @@ comp_cpp = $(comp_cpp_$(host_cpu))
 
 .cpp.xbj : $(comp_cpp)
     *$(comp_cpp) -zq -xs $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.xbj -nm=$[& $(pch_flags_x) $(extra_cpp_flags_x_$[&) $[@
-
-#.c.obj :
-#    $(comp_c) -zq $(comp_flags) $(inc_dirs) -fo=.obj $[@
-
-#.c.xbj :
-#    $(comp_c) -zq $(comp_flags) $(inc_dirs) -fo=.xbj $[@
 
 .asm.obj :
     $(as) $(aflags) $[@

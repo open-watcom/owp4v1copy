@@ -1,10 +1,10 @@
-#pmake: all build huge cpu_i86 os_osi
+#pmake: build huge cpu_i86 os_osi
 #
 # iosth.lib -- huge memory-model IOSTREAM library
 #
-processor  = i86
+processor  = 086
 system     = generic
-model      = h
+model      = mh
 linkage    = static
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif

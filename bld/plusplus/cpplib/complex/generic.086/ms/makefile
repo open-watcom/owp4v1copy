@@ -1,10 +1,10 @@
-#pmake: all build small cpu_i86 os_osi
+#pmake: build small cpu_i86 os_osi
 #
 # cplxs.lib -- small memory-model COMPLEX library fpc
 #
-processor  = i86
+processor  = 086
 system     = generic
-model      = s
+model      = ms
 linkage    = static
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif

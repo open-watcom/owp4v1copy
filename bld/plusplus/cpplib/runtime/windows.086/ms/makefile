@@ -1,10 +1,10 @@
-#pmake: all build small cpu_i86 os_win
+#pmake: build small cpu_i86 os_win
 #
 # plibs -- 16-bit small memory-model PLIB for Windows
 #
-processor  = i86
+processor  = 086
 system     = windows
-model      = s
+model      = ms
 linkage    = static
 define_library_include = $(plusplus_runtime_dir)/plib.mif
 !include $(plusplus_dir)/mklib.mif

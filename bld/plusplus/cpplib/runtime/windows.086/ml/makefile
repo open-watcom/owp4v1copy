@@ -1,10 +1,10 @@
-#pmake: all build large cpu_i86 os_win
+#pmake: build large cpu_i86 os_win
 #
 # plibl -- 16-bit large memory-model PLIB for Windows
 #
-processor  = i86
+processor  = 086
 system     = windows
-model      = l
+model      = ml
 linkage    = static
 define_library_include = $(plusplus_runtime_dir)/plib.mif
 !include $(plusplus_dir)/mklib.mif

@@ -1,10 +1,10 @@
-#pmake: all build compact cpu_i86 os_osi
+#pmake: build compact cpu_i86 os_osi
 #
 # contc.lib -- compact memory-model CONTAINER library
 #
-processor  = i86
+processor  = 086
 system     = generic
-model      = c
+model      = mc
 linkage    = static
 define_library_include = $(plusplus_contain_dir)/contain.mif
 !include $(plusplus_dir)/mklib.mif

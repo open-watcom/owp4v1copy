@@ -1,10 +1,10 @@
 #pmake: os_qnx cpu_386 flat
 processor  = 386
 system     = qnx
-model      = f
+model      = ms
 convention = register
 linkage    = static
 mthreaded  = 1
-subdir     = q3rmt
+subdir     = ms_rmt
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

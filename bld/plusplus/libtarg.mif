@@ -1,19 +1,28 @@
 cflags_generic = -bt=generic
 
-cpplib_hos_cpu_i86 = i86
-cpplib_hos_cpu_i87 = i86
-cpplib_hos_cpu_386 = 386
-cpplib_hos_cpu_387 = 386
-cpplib_hos_cpu_axp = axp
-host_cpu = $(cpplib_hos_cpu_$(processor))
+cpplib_host_cpu_086 = i86
+cpplib_host_cpu_087 = i86
+cpplib_host_cpu_286 = i86
+cpplib_host_cpu_287 = i86
+cpplib_host_cpu_386 = 386
+cpplib_host_cpu_387 = 386
+cpplib_host_cpu_axp = axp
+host_cpu = $(cpplib_host_cpu_$(processor))
 
-cpplib_hos_os_generic = generic
-cpplib_hos_os_winnt   = nt
-cpplib_hos_os_windows = win
-cpplib_hos_os_os2     = os2
-cpplib_hos_os_qnx     = qnx
-cpplib_hos_os_netware = nov
-host_os = $(cpplib_hos_os_$(system))
+cpplib_host_os_generic = generic
+cpplib_host_os_winnt   = nt
+cpplib_host_os_windows = win
+cpplib_host_os_os2     = os2
+cpplib_host_os_qnx     = qnx
+cpplib_host_os_netware = nov
+host_os = $(cpplib_host_os_$(system))
+
+mem_model_ms = s
+mem_model_mc = c
+mem_model_mm = m
+mem_model_ml = l
+mem_model_mh = h
+mem_model_mf = f
 
 !ifdef mthreaded
 suffix = mt
@@ -21,7 +30,7 @@ suffix = mt
 suffix =
 !endif
 !ifeq host_cpu i86
-suffix +=$(model)
+suffix +=$(mem_model_$(model))
 !else ifeq host_cpu 386
 !ifeq convention stack
 suffix +=3s

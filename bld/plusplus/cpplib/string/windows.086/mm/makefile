@@ -1,10 +1,10 @@
-#pmake: all build medium cpu_i86 os_win
+#pmake: build medium cpu_i86 os_win
 #
 # strgm.lib -- medium memory-model STRING library for Windows
 #
-processor  = i86
+processor  = 086
 system     = windows
-model      = m
+model      = mm
 linkage    = static
 define_library_include = $(plusplus_string_dir)/string.mif
 define_deps_include = $(plusplus_string_dir)/deps.mif

@@ -1,10 +1,10 @@
-#pmake: all build flat cpu_386 os_nt dynamic
+#pmake: build flat cpu_386 os_nt dynamic
 #
 # iostmt3r.lib -- register based multi-thread 32-bit IOSTREAM library
 #
 processor  = 386
 system     = winnt
-model      = f
+model      = mf
 convention = register
 linkage    = dynamic
 mthreaded  = 1

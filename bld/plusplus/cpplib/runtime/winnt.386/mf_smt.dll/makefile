@@ -1,10 +1,10 @@
-#pmake: all build flat cpu_386 os_nt dynamic
+#pmake: build flat cpu_386 os_nt dynamic
 #
 # plib3s -- 32-bit 3s MT PLIB, PLBX
 #
 processor  = 386
 system     = winnt
-model      = f
+model      = mf
 convention = stack
 linkage    = dynamic
 mthreaded  = 1

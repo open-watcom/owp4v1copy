@@ -1,8 +1,8 @@
-#pmake: all build compact cpu_i86 os_osi
-processor  = i86
+#pmake: build compact cpu_i86 os_osi
+processor  = 086
 system     = generic
-model      = c
+model      = mc
 linkage    = static
-subdir     = scbd
+subdir     = mc
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

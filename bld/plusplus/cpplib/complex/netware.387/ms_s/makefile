@@ -4,7 +4,7 @@
 #
 processor  = 387
 system     = netware
-model      = s
+model      = ms
 convention = stack
 linkage    = static
 define_library_include = $(plusplus_complex_dir)/complex.mif

@@ -1,10 +1,10 @@
-#pmake: all build compact cpu_i86 os_osi
+#pmake: build compact cpu_i86 os_osi
 #
 # strgc.lib -- compact memory-model STRING library
 #
-processor  = i86
+processor  = 086
 system     = generic
-model      = c
+model      = mc
 linkage    = static
 define_library_include = $(plusplus_string_dir)/string.mif
 define_deps_include = $(plusplus_string_dir)/deps.mif

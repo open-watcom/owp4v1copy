@@ -1,10 +1,10 @@
-#pmake: all build flat cpu_386 os_osi
+#pmake: build flat cpu_386 os_osi
 processor  = 386
 system     = generic
-model      = f
+model      = mf
 convention = stack
 linkage    = static
 mthreaded  = 1
-subdir     = 3smt
+subdir     = mf_smt
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

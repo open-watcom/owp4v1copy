@@ -1,10 +1,10 @@
-#pmake: all build flat cpu_386 os_nt dynamic
+#pmake: build flat cpu_386 os_nt dynamic
 #
 # contmt3s.lib -- stack based multi-thread 32-bit CONTAINER library
 #
 processor  = 386
 system     = winnt
-model      = f
+model      = mf
 convention = stack
 linkage    = dynamic
 mthreaded  = 1

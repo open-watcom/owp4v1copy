@@ -1,10 +1,10 @@
-#pmake: all build large cpu_i86 os_win
+#pmake: build large cpu_i86 os_win
 #
 # cplxl.lib -- large memory-model COMPLEX library fpc for Windows
 #
-processor  = i86
+processor  = 086
 system     = windows
-model      = l
+model      = ml
 linkage    = static
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif

@@ -4,7 +4,7 @@
 #
 processor  = 386
 system     = qnx
-model      = f
+model      = ms
 convention = register
 linkage    = static
 mthreaded  = 1
