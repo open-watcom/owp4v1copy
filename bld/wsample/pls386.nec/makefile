@@ -1,4 +1,4 @@
-#pmake: all os_dos cpu_386 nec
+#pmake: os_dos cpu_386 nec pls
 
 machine = NEC
 

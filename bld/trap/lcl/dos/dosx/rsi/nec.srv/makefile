@@ -1,4 +1,4 @@
-#pmake: all serv lcl os_dos dsx cpu_386 nec
+#pmake: serv lcl os_dos dsx cpu_386 nec rsi
 
 machine = NEC
 

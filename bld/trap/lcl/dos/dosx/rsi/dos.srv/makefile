@@ -1,4 +1,4 @@
-#pmake: all serv lcl os_dos dsx cpu_386 x86
+#pmake: serv lcl os_dos dsx cpu_386 x86 rsi
 host_CPU = i86
 host_OS = dos
 
