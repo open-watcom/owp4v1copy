@@ -10,7 +10,7 @@ proj_name = techinfo
 .EXTENSIONS : .exe .obj .c .asm
 
 cflags_dos = -bt=dos -zq -os -s -d1 -w3
-cflags_os2 = -bt=os2 -zq -os -s -d1 -w3 -d__OS2__ -i$(lang_root)\h\os21x
+cflags_os2 = -bt=os2 -zq -os -s -d1 -w3 -d__OS2__ -i$(inc_dirs_sys)
 
 .c:..
 .asm:..
