@@ -77,8 +77,6 @@ static struct {
     unsigned    have_OS_TZ : 1;
 }               tzFlag = { 1, 0 };
 
-void __parse_tz( char * tz );
-
 int __DontCacheOSTZ( void )
 {
     int old_flag;
@@ -97,69 +95,6 @@ int __CacheOSTZ( void )
     tzFlag.cache_OS_TZ = 1;
     tzFlag.have_OS_TZ  = 0;
     return( old_flag );
-}
-
-static int tryOSTimeZone( const char *tz )
-{
-    if( tzFlag.cache_OS_TZ && tzFlag.have_OS_TZ ) 
-        return( 1 ); /* calling OS can be expensive; many programs don't care */
-    tzFlag.have_OS_TZ = 1;
-#ifndef __LINUX__
-    if( tz != NULL ) 
-        return( 0 );
-#endif
-#if defined( __NT__ )
-    {
-        auto TIME_ZONE_INFORMATION  tz_info;
-        size_t                      rc;
-
-        _RWD_daylight = 1;                  // assume daylight savings supported
-        switch( GetTimeZoneInformation( &tz_info ) ) {
-        case TIME_ZONE_ID_UNKNOWN:          // returned by Windows NT/2000
-        case TIME_ZONE_ID_STANDARD:         // returned by Windows 95
-        case TIME_ZONE_ID_DAYLIGHT:
-            _RWD_timezone = ( tz_info.Bias + tz_info.StandardBias ) * 60L;
-            _RWD_dst_adjust = ( tz_info.DaylightBias - tz_info.StandardBias ) * -60L;
-            if( tz_info.DaylightBias == 0 ) 
-                _RWD_daylight = 0;  // daylight savings not supported
-
-            rc = wcstombs( stzone, tz_info.StandardName, TZNAME_MAX );
-            if( rc == ( size_t ) - 1 )  // cannot convert string
-                stzone[0] = '\0'; 
-            else  // ensure null-terminated
-                stzone[TZNAME_MAX] = '\0';
-
-            rc = wcstombs( dtzone, tz_info.DaylightName, TZNAME_MAX );
-            if( rc == ( size_t ) - 1 )  // cannot convert string
-                dtzone[0] = '\0'; 
-            else  // ensure null-terminated
-                dtzone[TZNAME_MAX] = '\0';
-            break;
-        default:
-            // assume Eastern (North America) time zone
-            _RWD_timezone = 5L * 60L * 60L;
-            _RWD_dst_adjust = 60L * 60L;
-        }
-
-        return( 1 );
-    }
-#elif defined( __LINUX__ )
-    return( __read_tzfile( tz ) );
-#else
-    return( 1 );
-#endif
-}
-
-_WCRTLINK void tzset( void )
-/**************************/
-{
-    #ifndef __NETWARE__
-    char        *tz;
-
-    tz = getenv( "TZ" );
-    if( !tryOSTimeZone( tz ) && tz != NULL ) 
-        __parse_tz( tz );
-    #endif
 }
 
 static char *parse_time( char *tz, int *val )
@@ -215,7 +150,7 @@ static char *parse_offset( char *tz, char *name, long *offset )
     if( ch == '-' ) {
         neg = 1;
         ++tz;
-    } else if( ch == '+' ) 
+    } else if( ch == '+' )
         ++tz;
     ch = *tz;
     if( ch >= '0' && ch <= '9' ) {
@@ -223,7 +158,7 @@ static char *parse_offset( char *tz, char *name, long *offset )
         tz = parse_time( tz, &hours );
         if( *tz == ':' ) {
             tz = parse_time( tz + 1, &minutes );
-            if( *tz == ':' ) 
+            if( *tz == ':' )
                 tz = parse_time( tz + 1, &seconds );
         }
         *offset = seconds + ( ( minutes + ( hours * 60 ) ) * 60L );
@@ -252,8 +187,8 @@ static char *parse_rule( char *tz, struct tm *timeptr )
     }
     timeptr->tm_isdst = date_form;
     tz = parse_time( tz, &days );
-    if( date_form != 0 ) 
-        timeptr->tm_yday = days; 
+    if( date_form != 0 )
+        timeptr->tm_yday = days;
     else {
         timeptr->tm_mon = days - 1;             /* 1-12 for M form */
         if( *tz == '.' ) {
@@ -273,7 +208,7 @@ static char *parse_rule( char *tz, struct tm *timeptr )
         tz = parse_time( tz + 1, &hours );
         if( *tz == ':' ) {
             tz = parse_time( tz + 1, &minutes );
-            if( *tz == ':' ) 
+            if( *tz == ':' )
                 tz = parse_time( tz + 1, &seconds );
         }
     }
@@ -310,4 +245,68 @@ void __parse_tz( char * tz )
         __end_dst.tm_min -= ( _RWD_dst_adjust / 60 ) % 60;
         __end_dst.tm_sec -= _RWD_dst_adjust % 60;
     }
+}
+
+static void tryOSTimeZone( void )
+{
+    if( tzFlag.cache_OS_TZ && tzFlag.have_OS_TZ )
+        return;     /* calling OS can be expensive; many programs don't care */
+    /* Assume that even if we end up not getting the TZ from OS, we won't have
+     * any better luck if we try later.
+     */
+    tzFlag.have_OS_TZ = 1;
+#if defined( __NT__ )
+    {
+        auto TIME_ZONE_INFORMATION  tz_info;
+        size_t                      rc;
+
+        _RWD_daylight = 1;                  // assume daylight savings supported
+        switch( GetTimeZoneInformation( &tz_info ) ) {
+        case TIME_ZONE_ID_UNKNOWN:          // returned by Windows NT/2000
+        case TIME_ZONE_ID_STANDARD:         // returned by Windows 95
+        case TIME_ZONE_ID_DAYLIGHT:
+            _RWD_timezone = ( tz_info.Bias + tz_info.StandardBias ) * 60L;
+            _RWD_dst_adjust = ( tz_info.DaylightBias - tz_info.StandardBias ) * -60L;
+            if( tz_info.DaylightBias == 0 )
+                _RWD_daylight = 0;  // daylight savings not supported
+
+            rc = wcstombs( stzone, tz_info.StandardName, TZNAME_MAX );
+            if( rc == ( size_t ) - 1 )  // cannot convert string
+                stzone[0] = '\0';
+            else  // ensure null-terminated
+                stzone[TZNAME_MAX] = '\0';
+
+            rc = wcstombs( dtzone, tz_info.DaylightName, TZNAME_MAX );
+            if( rc == ( size_t ) - 1 )  // cannot convert string
+                dtzone[0] = '\0';
+            else  // ensure null-terminated
+                dtzone[TZNAME_MAX] = '\0';
+            break;
+        default:
+            // assume Eastern (North America) time zone
+            _RWD_timezone = 5L * 60L * 60L;
+            _RWD_dst_adjust = 60L * 60L;
+        }
+
+        return;
+    }
+#elif defined( __LINUX__ )
+//    __read_tzfile( tz );    TODO: Ought to be fixed, but I don't know how!
+    __read_tzfile( NULL );
+#endif
+    return;
+}
+
+_WCRTLINK void tzset( void )
+/**************************/
+{
+    #ifndef __NETWARE__
+    char    *tz;
+
+    tz = getenv( "TZ" );
+    if( tz == NULL )
+        tryOSTimeZone();
+    else
+        __parse_tz( tz );
+    #endif
 }
