@@ -17,9 +17,9 @@ extra_c_flags_386 = -fpc
 
 inc_dirs = ..\..\h;$(watcom_dir)\h
 
-extra_l_flags_dos =
-extra_l_flags_os2 = op stack=12k,heap=8k,newfile
-extra_l_flags_nt = op stack=20k,caseexact
+extra_l_flags_dos = op quiet
+extra_l_flags_os2 = op stack=12k,heap=8k,quiet
+extra_l_flags_nt = op stack=20k,caseexact,quiet
 extra_l_flags = name $(name)
 
 edbind.exe: main.obj

@@ -1,4 +1,4 @@
-extra_l_flags = option map
+extra_l_flags = option map,quiet
 extra_l_flags += option symfile
 
 extra_l_flags_os2_386 = op newfiles,stack=20k

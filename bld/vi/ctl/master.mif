@@ -1,0 +1,45 @@
+proj_name = vi
+name = vi
+
+.extensions:
+.extensions: .exe .obj .h .c .mif
+
+.mif: $(mif_path)
+!include cproj.mif
+!include defrule.mif
+
+# This makefile is to build internal utils, only used for the build process itself.
+# Therefore it should run only if the OS you are running it on equals the intended
+# host. E.g. if we are building on OS/2 we don't need to build utils for NT or DOS,
+# even if we are building 'all'. We do need a 'clean' target, though .
+
+!ifeq __OS2__
+! ifneqi host_OS os2
+dummytarget: .SYMBOLIC
+! endif
+!else ifeq __NT386__
+! ifneqi host_OS nt
+dummytarget: .SYMBOLIC
+! endif
+!else ifeq __MSDOS__
+! ifneqi host_OS dos
+dummytarget: .SYMBOLIC
+! endif
+!endif
+
+all: parsectl.exe
+
+.c: ..
+
+parsectl.exe : parsectl.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
+
+clean: .SYMBOLIC .EXPLICIT
+        @if exist *.?bj @del *.?bj
+        @if exist *.exe @del *.exe
+        @if exist *.err @del *.err
+        @if exist *.map @del *.map
+        @if exist *.sym @del *.sym
+        @if exist $(bld_bin)\parsectl.exe @del $(bld_bin)\parsectl.exe
+

@@ -80,6 +80,6 @@ wasm_flags = -3
 #       masm $(masm_flags) /Mx /Zd $[*;
 
 .ctl.ch:
-        $(datactl_dir)\parsectl $[@ $[&.ch Ctl_$^&
+        $(bld_bin)\parsectl $[@ $[&.ch Ctl_$^&
 .dyn.dh:
-        $(datactl_dir)\parsedyn $[@ $[&.dh Dyn_$^&
+        $(bld_bin)\parsedyn $[@ $[&.dh Dyn_$^&
