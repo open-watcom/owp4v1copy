@@ -448,7 +448,7 @@ post_process :.PROCEDURE
 !else ifeq host_OS nt
         *wrc -k -bt=nt -i=$(rcinclude);$(lang_root)\h\nt $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
 !else ifeq host_OS os2
-        $(lang_root)\binp\rc -p -x $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
+        $(os2rc) -p -x $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
 !endif
 
 sortlist.obj : $(watcom_dir)\c\sortlist.c .autodepend
@@ -629,15 +629,27 @@ wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         set include=$(inc_dirs_sys);$(rcinclude);$(%include)
         wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
         wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
+
+!ifndef %use_os2tk_stuff
+
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+
+!endif
+
+        $(os2rc) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
         copy foros2pm.res wvpm.res
         copy wvpmj.i wvpm.i
-        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+        $(os2rc) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         copy foros2pm.res wvpmj.res
+
+!ifndef %use_os2tk_stuff
+
         set path=$(%opath)
+
+!endif
+
         @set include=$(%oinc)
 
 .CONTINUE
