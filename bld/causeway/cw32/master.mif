@@ -1,0 +1,17 @@
+proj_name = causeway
+
+causeway_autodepends = .AUTODEPEND
+
+!include cproj.mif
+!include defrule.mif
+!include deftarg.mif
+
+extra_a_flags = -DENGLISH=1 -i="../inc"
+
+extra_l_flags = op map, verbose
+
+.asm : ../asm;../asm/loadle
+
+cw32.exe : cw32.obj $(__MAKEFILES__)
+    $(linker) $(lflags) name $@ file $[@
+#    cwc /m2 /l85 cw32.exe
