@@ -17,7 +17,7 @@ cdsay .
 
 #NT stuff
     <CPCMD> include\*.h <relroot>\rel2\h\nt\
-    <CPCMD> win32386\*.lib <relroot>\rel2\lib386\nt\
+    <CPCMD> nt386\*.lib <relroot>\rel2\lib386\nt\
 
 [ BLOCK <1> clean ]
 #==================
