@@ -9,7 +9,7 @@ f77_autodepends = .AUTODEPEND
 !include defrule.mif
 
 !include wres.mif
-
+!include $(dwarf_dir)/dw/client.mif
 !include $(cg_dir)/mif/fe.mif
 
 !ifeq release 0
