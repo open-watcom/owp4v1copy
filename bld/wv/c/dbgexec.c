@@ -111,6 +111,7 @@ extern char             *CnvNearestAddr( address, char *, unsigned );
 extern void             PopInpStack(void);
 extern void             ProcACmd(void);
 extern bool             SymUserModLoad( char *fname, address *loadaddr );
+extern bool             SymUserModUnload( char *fname );
 
 extern input_stack      *InpStack;
 extern machine_state    *DbgRegs;
@@ -255,6 +256,12 @@ bool SetMsgText( char *message, unsigned *conditions )
         if( !DlgScanDataAddr( message, &addr ) )
             return( TRUE );
         SymUserModLoad( comma1, &addr );
+        return( FALSE );
+    } else if( memcmp( message, DEBUGGER_UNLOADMODULE_COMMAND,
+                sizeof( DEBUGGER_UNLOADMODULE_COMMAND )-1 ) == 0 ) {
+        message += sizeof( DEBUGGER_UNLOADMODULE_COMMAND )-1;
+        NoCRLF( message );
+        SymUserModUnload( message );
         return( FALSE );
     } else {
         AddMessageText( message );

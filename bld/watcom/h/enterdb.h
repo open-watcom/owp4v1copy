@@ -260,6 +260,16 @@ _WCRTLINK extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
         PassDebuggerAMessage( __buff ); \
     }
 
+#define DEBUGGER_UNLOADMODULE_COMMAND "!UNLOADMODULE "
+#define DEBUGGER_UNLOADMODULE_FORMAT DEBUGGER_UNLOADMODULE_COMMAND "%s"
+#define DebuggerUnloadUserModule( modname ) \
+    { \
+        char *__buff = (char*)alloca( sizeof( DEBUGGER_UNLOADMODULE_COMMAND )+\
+                                      strlen( modname )+1 ); \
+        sprintf( __buff, DEBUGGER_UNLOADMODULE_FORMAT, modname ); \
+        PassDebuggerAMessage( __buff ); \
+    }
+
 #define DebuggerInitPresent() DebuggerSetCharVariableTrue( DEBUG_PRESENT_NAME )
 
 #ifdef __cplusplus

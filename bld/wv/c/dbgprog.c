@@ -1498,10 +1498,10 @@ bool SymUserModLoad( char *fname, address *loadaddr )
     map_entry   *curr;
 
     if( !fname )
-        return TRUE;
+        return( TRUE );
 
     if( !( fname_len = strlen( fname ) ) )
-        return TRUE;
+        return( TRUE );
 
     memcpy( TxtBuff, fname, fname_len );
     TxtBuff[ fname_len ] = '\0';
@@ -1537,6 +1537,25 @@ bool SymUserModLoad( char *fname, address *loadaddr )
     return( FALSE );
 }
 
+
+/*
+ * SymUserModUnload - unload symbol information for user loaded module
+ */
+
+bool SymUserModUnload( char *fname )
+{
+    image_entry *image;
+
+    if( fname ) {
+        for( image = ImagePrimary(); image != NULL; image = image->link ) {
+            if( image->sym_name && ( strcmp( image->sym_name, fname ) == 0 ) ) {
+                UnLoadSymInfo( image, FALSE );
+                return( FALSE );
+            }
+        }
+    }
+    return( TRUE );
+}
 
 static char NewNameTab[] = {
     "Program\0"
