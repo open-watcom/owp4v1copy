@@ -161,3 +161,9 @@ deps : .symbolic
 
 do : .symbolic
     wmake -h -n | sed -f ../mif/mkdo.sed >do.bat
+
+# In NT, failure of ..\regress\test does not set a failure return code.
+test : $(xname).$(ext) .always .symbolic
+    ..\regress\test $(%cwd)\$(xname).$(ext) # Works in NT, will fail in Linux
+    # ../regress/test $(%cwd)\$(xname).$(ext) # Fails in NT
+    # No Linux ../regress/test has been ported. W.Briscoe 2004-01-17

@@ -7,7 +7,6 @@ if .%1 == . goto usage
 echo # ---------------------------
 echo # Test A
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR01 > tst2.out 2>&1
 diff tst2.out FOR01.cmp
 if errorlevel 1 goto tst2aerr
@@ -22,7 +21,6 @@ if errorlevel 1 goto tst2aerr
 echo # ---------------------------
 echo # Test B
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR02 > tst2.out 2>&1
 diff tst2.out FOR02.cmp
 if errorlevel 1 goto tst2berr
@@ -37,7 +35,6 @@ if errorlevel 1 goto tst2berr
 echo # ---------------------------
 echo # Test C
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR03 > tst2.out 2>&1
 diff tst2.out FOR03.cmp
 if errorlevel 1 goto tst2cerr
@@ -57,7 +54,6 @@ dir /b /-o       >> tmpfile.tmp
 type FOR04b.cmp  >> tmpfile.tmp
 dir /b /-o for?? >> tmpfile.tmp
 type FOR04c.cmp  >> tmpfile.tmp
-rm tst2.out
 %1 -h -f FOR04 > tst2.out 2>&1
 diff tst2.out tmpfile.tmp
 if errorlevel 1 goto tst2derr
@@ -72,7 +68,6 @@ if errorlevel 1 goto tst2derr
 echo # ---------------------------
 echo # Test E
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR05 > tst2.out 2>&1
 diff tst2.out FOR05.cmp
 if errorlevel 1 goto tst2eerr
@@ -87,7 +82,6 @@ if errorlevel 1 goto tst2eerr
 echo # ---------------------------
 echo # Test F
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR06 > tst2.out 2>&1
 diff tst2.out FOR06.cmp
 if errorlevel 1 goto tst2ferr
@@ -102,7 +96,6 @@ if errorlevel 1 goto tst2ferr
 echo # ---------------------------
 echo # Test G
 echo # ---------------------------
-rm tst2.out
 %1 -h -f FOR07 > tst2.out 2>&1
 diff tst2.out FOR07.cmp
 if errorlevel 1 goto tst2gerr
@@ -128,7 +121,6 @@ prntdir "echo b" >> tmpfile.tmp
 echo b >> tmpfile.tmp
 prntdir "echo c" >> tmpfile.tmp
 echo c >> tmpfile.tmp
-rm tst2.out
 %1 -h -f FOR08 > tst2.out 2>&1
 diff -b tst2.out tmpfile.tmp
 if errorlevel 1 goto tst2herr

@@ -208,9 +208,9 @@ extern void MemFini( void )
                 PrtMsg( ERR| ERROR_TRMEM );
             }
         }
-    }
 
-    _trmem_close( Handle );
+        _trmem_close( Handle );
+    }
     MemCheck();
     if( trkfile != -1 ) {
         close( trkfile );

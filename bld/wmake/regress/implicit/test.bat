@@ -9,7 +9,6 @@ wtouch hello.cpp
 echo # ---------------------------
 echo # IMPLICIT RULES TEST 1
 echo # ---------------------------
-rm err1.out
 %1 -h -l err1.out > tst1.out
 if errorlevel 1 goto tst2err
     echo # Implicit Rules Test successful
@@ -25,7 +24,6 @@ echo # IMPLICIT RULES TEST 2A
 echo # ---------------------------
 sleep 2
 wtouch hello.h
-rm tst1.out
 %1 -h -c -f IMP02A > tst1.out
 diff IMP02.CMP tst1.out
 if errorlevel 1 goto err2
@@ -42,7 +40,6 @@ echo # IMPLICIT RULES TEST 2B
 echo # ---------------------------
 sleep 2
 wtouch hello.h
-rm tst1.out
 %1 -c -h -f IMP02B > tst1.out
 diff IMP02.CMP tst1.out
 if errorlevel 1 goto err2b
@@ -59,7 +56,6 @@ echo # IMPLICIT RULES TEST 2C
 echo # ---------------------------
 sleep 2
 wtouch hello.h
-rm tst1.out
 %1 -h -c -f IMP02C /ms /m > tst1.out
 diff IMP02.CMP tst1.out
 if errorlevel 1 goto err2c

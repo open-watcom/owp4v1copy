@@ -9,7 +9,6 @@ echo # ---------------------------
 echo #   PreProcess Test 1
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f PREP01 > tmp.out 2>&1
 diff -b PREP01.CMP tmp.out
 if errorlevel 1 goto err1
