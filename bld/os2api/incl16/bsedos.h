@@ -50,7 +50,21 @@
 #define CCHMAXPATH          260
 #define CCHMAXPATHCOMP      256
 
-#ifdef INCL_DOSPROCESS
+#if (defined(INCL_DOSPROCESS) || !defined(INCL_NOCOMMON))
+
+#define EXIT_THREAD  0
+#define EXIT_PROCESS 1
+
+#define EXEC_SYNC        0
+#define EXEC_ASYNC       1
+#define EXEC_ASYNCRESULT 2
+#define EXEC_TRACE       3
+#define EXEC_BACKGROUND  4
+#define EXEC_LOAD        5
+
+#define EXLST_ADD    1
+#define EXLST_REMOVE 2
+#define EXLST_EXIT   3
 
 typedef struct _RESULTCODES {
     USHORT codeTerminate;
@@ -87,7 +101,81 @@ USHORT APIENTRY DosSuspendThread(TID ThreadID);
 
 #endif
 
-#ifdef INCL_DOSFILEMGR
+#if (defined(INCL_DOSFILEMGR) || !defined(INCL_NOCOMMON))
+
+#define FILE_BEGIN    0
+#define FILE_CURRENT  1
+#define FILE_END      2
+
+#define HDIR_SYSTEM   0x0001
+#define HDIR_CREATE   0xFFFF
+
+#define DCPY_EXISTING 1
+#define DCPY_APPEND   2
+
+#define FILE_NORMAL    0x0000
+#define FILE_READONLY  0x0001
+#define FILE_HIDDEN    0x0002
+#define FILE_SYSTEM    0x0004
+#define FILE_DIRECTORY 0x0010
+#define FILE_ARCHIVED  0x0020
+
+#define FILE_EXISTED   1
+#define FILE_CREATED   2
+#define FILE_TRUNCATED 3
+
+#define FILE_OPEN      0x0001
+#define FILE_TRUNCATE  0x0002
+#define FILE_CREATE    0x0010
+
+#define OPEN_ACTION_FAIL_IF_EXISTS     0
+#define OPEN_ACTION_OPEN_IF_EXISTS     1
+#define OPEN_ACTION_REPLACE_IF_EXISTS  2
+
+#define OPEN_ACTION_FAIL_IF_NEW     0x0000
+#define OPEN_ACTION_CREATE_IF_NEW   0x0010
+
+#define OPEN_ACCESS_READONLY        0x0000
+#define OPEN_ACCESS_WRITEONLY       0x0001
+#define OPEN_ACCESS_READWRITE       0x0002
+#define OPEN_SHARE_DENYREADWRITE    0x0010
+#define OPEN_SHARE_DENYWRITE        0x0020
+#define OPEN_SHARE_DENYREAD         0x0030
+#define OPEN_SHARE_DENYNONE         0x0040
+#define OPEN_FLAGS_NOINHERIT        0x0080
+#define OPEN_FLAGS_NO_LOCALITY      0x0000
+#define OPEN_FLAGS_SEQUENTIAL       0x0100
+#define OPEN_FLAGS_RANDOM           0x0200
+#define OPEN_FLAGS_RANDOMSEQUENTIAL 0x0300
+#define OPEN_FLAGS_NO_CACHE         0x1000
+#define OPEN_FLAGS_FAIL_ON_ERROR    0x2000
+#define OPEN_FLAGS_WRITE_THROUGH    0x4000
+#define OPEN_FLAGS_DASD             0x8000
+
+#define SEARCH_PATH          0
+#define SEARCH_CUR_DIRECTORY 1
+#define SEARCH_ENVIRONMENT   2
+#define SEARCH_IGNORENETERRS 4
+
+#define FIO_LOCK      0
+#define FIO_UNLOCK    1
+#define FIO_SEEK      2
+#define FIO_READ      3
+#define FIO_WRITE     4
+
+#define FIO_NOSHARE   0
+#define FIO_SHAREREAD 1
+
+#define FSIL_ALLOC    1
+#define FSIL_VOLSER   2
+
+#define FHT_DISKFILE  0
+#define FHT_CHRDEV    1
+#define FHT_PIPE      2
+
+#define FHB_DSKREMOTE    0x8000
+#define FHB_CHRDEVREMOTE 0x8000
+#define FHB_PIPEREMOTE   0x8000
 
 typedef SHANDLE     HDIR;
 typedef HDIR FAR    *PHDIR;
@@ -139,6 +227,26 @@ typedef struct _FILEFINDBUF2 {
     UCHAR  cchName;
     CHAR   achName[CCHMAXPATHCOMP];
 } FILEFINDBUF2, FAR *PFILEFINDBUF2;
+
+typedef struct _FILESTATUS {
+    FDATE  fdateCreation;
+    FTIME  ftimeCreation;
+    FDATE  fdateLastAccess;
+    FTIME  ftimeLastAccess;
+    FDATE  fdateLastWrite;
+    FTIME  ftimeLastWrite;
+    ULONG  cbFile;
+    ULONG  cbFileAlloc;
+    USHORT attrFile;
+} FILESTATUS, FAR *PFILESTATUS;
+
+typedef struct _FSALLOCATE {
+    ULONG  idFileSystem;
+    ULONG  cSectorUnit;
+    ULONG  cUnit;
+    ULONG  cUnitAvail;
+    USHORT cbSector;
+} FSALLOCATE, FAR *PFSALLOCATE;
 
 typedef struct _GEA {
     BYTE cbName;
@@ -236,10 +344,11 @@ USHORT APIENTRY DosWriteAsync(HFILE FileHandle, PULONG RamSemaphore, PUSHORT Ret
 
 #endif
 
-#ifdef INCL_DOSMEMMGR
+#if (defined(INCL_DOSMEMMGR) || !defined(INCL_NOCOMMON))
 
+#define SEG_NONSHARED    0
 #define SEG_GIVEABLE     1
-#define SEG_SHAREABLE    2
+#define SEG_GETTABLE     2
 #define SEG_DISCARDABLE  4
 
 USHORT APIENTRY DosAllocHuge(USHORT NumSeg, USHORT Size, PSEL Selector, USHORT MaxNumSeg, USHORT AllocFlags);
@@ -464,6 +573,31 @@ USHORT APIENTRY DosSetProcCp(USHORT CodePage, USHORT Reserved);
 
 #ifdef INCL_DOSSIGNALS
 
+#define SIG_CTRLC        1
+#define SIG_BROKENPIPE   2
+#define SIG_KILLPROCESS  3
+#define SIG_CTRLBREAK    4
+#define SIG_PFLG_A       5
+#define SIG_PFLG_B       6
+#define SIG_PFLG_C       7
+#define SIG_CSIGNALS     8
+
+#define PFLG_A           0
+#define PFLG_B           1
+#define PFLG_C           2
+
+#define SIGA_KILL        0
+#define SIGA_IGNORE      1
+#define SIGA_ACCEPT      2
+#define SIGA_ERROR       3
+#define SIGA_ACKNOWLEDGE 4
+
+#define HLDSIG_ENABLE    0
+#define HLDSIG_DISABLE   1
+
+#define FLGP_SUBTREE     0
+#define FLGP_PID         1
+
 typedef VOID (PASCAL FAR *PFNSIGHANDLER)(USHORT, USHORT);
 
 USHORT APIENTRY DosFlagProcess(PID ProcessID, USHORT ActionCode, USHORT Flagnum, USHORT Flagarg);
@@ -524,7 +658,7 @@ USHORT APIENTRY DosQSysInfo(USHORT Index, PBYTE DataBuf, USHORT DataBufLen);
 USHORT APIENTRY DosScanEnv(PSZ EnvVarName, PSZ FAR *ResultPointer);
 USHORT APIENTRY DosSearchPath(USHORT Control, PSZ PathRef, PSZ FileName, PBYTE ResultBuffer,
                         USHORT ResultBufferLen);
-USHORT APIENTRY DosSetVec(USHORT VecNum, PFN Routine, PFN PrevAddress);
+USHORT APIENTRY DosSetVec(USHORT VecNum, PFN Routine, PFN FAR *PrevAddress);
 
 #endif
 
@@ -537,7 +671,7 @@ typedef struct _STATUSDATA {
 } STATUSDATA, FAR *PSTATUSDATA;
 
 typedef struct _STARTDATA {
-    USHORT cb;
+    USHORT Length;
     USHORT Related;
     USHORT FgBg;
     USHORT TraceOpt;

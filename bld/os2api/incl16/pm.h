@@ -24,13 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 top level include file for 16-bit development.
+* Description:  OS/2 Presentation Manager top level include file
+*               for 16-bit development.
 *
 ****************************************************************************/
 
 
-#define OS2_INCLUDED
+#ifdef INCL_PM
+    #define INCL_WIN
+    #define INCL_GPI
+    #define INCL_DEV
+    #define INCL_ERRORS
+#endif
 
-#include <os2def.h>
-#include <bse.h>
-#include <pm.h>
+#include <pmwin.h>
+//#include <pmgpi.h>
+//#include <pmdev.h>
