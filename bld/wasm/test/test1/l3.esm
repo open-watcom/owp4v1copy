@@ -14,7 +14,7 @@ L$1:
     xor         di,di
     mov         cx,100H
     cli         
-    repe movsw  
+    rep movsw  
     sti         
     push        es
     push        offset L$2

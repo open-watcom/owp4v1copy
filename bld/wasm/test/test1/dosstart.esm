@@ -210,7 +210,7 @@ L$20:
     mov         di,offset dgroup:_edata
     sub         cx,di
     mov         al,0
-    repe stosb  
+    rep stosb  
     pop         es
     pop         ax
     pop         di

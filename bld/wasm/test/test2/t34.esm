@@ -25,6 +25,6 @@ _TEXT		SEGMENT	BYTE PUBLIC USE16 'code'
     mov       ax,seg L$2
     mov       es,ax
     mov       di,offset L$2
-    repe movsw 
+    rep movsw 
 _TEXT		ENDS
 		END

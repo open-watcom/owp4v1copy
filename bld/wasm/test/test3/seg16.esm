@@ -71,7 +71,7 @@ __Far16Func2:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax
@@ -109,7 +109,7 @@ __Far16Func:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax
@@ -146,7 +146,7 @@ __Far16Pascal2:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax
@@ -183,7 +183,7 @@ __Far16Pascal:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax
@@ -219,7 +219,7 @@ __Far16Cdecl2:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax
@@ -258,7 +258,7 @@ __Far16Cdecl:
     sub         esp,ecx
     mov         edi,esp
     shr         ecx,1
-    repe movsw  
+    rep movsw  
     mov         eax,esp
     call        near ptr DosFlatToSel
     push        eax

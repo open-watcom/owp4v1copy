@@ -127,16 +127,30 @@ static int output( int i )
      * Output instruction prefix LOCK, REP or REPNE
      */
     if( rCode->prefix.ins != EMPTY ) {
-        if( rCode->prefix.ins == T_LOCK ) {
+        switch( rCode->prefix.ins ) {
+        case T_LOCK:
             if( ins->allowed_prefix != LOCK ) {
                 AsmError( LOCK_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION );
                 return( ERROR );
             }
-        } else {
+            break;
+        case T_REP:
+            if( ins->allowed_prefix != REP ) {
+                AsmError( REP_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION );
+                return( ERROR );
+            }
+            break;
+        case T_REPZ:
+        case T_REPE:
+        case T_REPNZ:
+        case T_REPNE:
             if( ins->allowed_prefix != REPxx ) {
                 AsmError( REP_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION );
                 return( ERROR );
             }
+            break;
+        default:
+            break;
         }
         AsmCodeByte( AsmOpTable[AsmOpcode[rCode->prefix.ins].position].opcode );
     }

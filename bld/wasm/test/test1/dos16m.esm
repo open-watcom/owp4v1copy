@@ -143,7 +143,7 @@ L$7:
     mov         word ptr es:L$24,es
     je          L$8
     inc         cx
-    repe movsb  
+    rep movsb  
 L$8:
     sub         al,al
     stosb       
@@ -197,7 +197,7 @@ L$12:
     mov         di,offset DGROUP:_edata
     sub         cx,di
     mov         al,0
-    repe stosb  
+    rep stosb  
     cmp         word ptr DGROUP:__get_ovl_stack,0
     jne         L$13
     mov         ax,offset __null_ovl_rtn

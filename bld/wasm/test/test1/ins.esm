@@ -6,27 +6,27 @@ _TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
     insb      
     insw      
     insd      
-    repe insb 
-    repe insw 
-    repe insd 
+    rep insb 
+    rep insw 
+    rep insd 
     insb      
     insw      
     insd      
-    repe insb 
-    repe insw 
-    repe insd 
+    rep insb 
+    rep insw 
+    rep insd 
     insb      
     insw      
     insd      
-    repe insb 
-    repe insw 
-    repe insd 
+    rep insb 
+    rep insw 
+    rep insd 
     ins       byte ptr [di],dx
     ins       word ptr [di],dx
     ins       dword ptr [di],dx
-    repe ins  byte ptr [di],dx
-    repe ins  word ptr [di],dx
-    repe ins  dword ptr [di],dx
+    rep ins  byte ptr [di],dx
+    rep ins  word ptr [di],dx
+    rep ins  dword ptr [di],dx
 _TEXT		ENDS
 _DATA		SEGMENT	DWORD PUBLIC USE32 'DATA'
     DB	0, 0, 0, 0, 0, 0, 0

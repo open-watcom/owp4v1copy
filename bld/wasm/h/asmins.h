@@ -119,14 +119,15 @@ struct asm_code {
 
 #define NO_PREFIX   0x00
 #define LOCK        0x01
-#define REPxx       0x02
-#define FWAIT       0x03
-#define NO_FWAIT    0x04
-#define K3D_SET     0x05   // AMD 3DNow instruction set
-#define MMX_SET     0x06   // MMX instruction set
-#define SSE_SET     0x07   // XMM instruction set
-#define SSE2_SET    0x08   // XMM instruction set
-#define SSE3_SET    0x09   // XMM instruction set
+#define REP         0x02
+#define REPxx       0x03
+#define FWAIT       0x04
+#define NO_FWAIT    0x05
+#define K3D_SET     0x06   // AMD 3DNow instruction set
+#define MMX_SET     0x07   // MMX instruction set
+#define SSE_SET     0x08   // XMM instruction set
+#define SSE2_SET    0x09   // XMM instruction set
+#define SSE3_SET    0x0A   // XMM instruction set
 
 #define F_16        0x1
 #define F_32        0x2

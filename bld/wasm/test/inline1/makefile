@@ -2,7 +2,8 @@
 objs = &
 bug31 &
 extprocf &
-extprocn
+extprocn &
+tokens
 
 dev_objs = &
 
