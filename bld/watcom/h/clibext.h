@@ -16,6 +16,7 @@
 #define _vbprintf vsnprintf
 #define __near
 #define near
+#define __based(x)
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 #define  __va_list  va_list

@@ -35,4 +35,5 @@ ltoa_opts  =-zc
 uitoa_opts =-zc
 ulltoa_opts=-zc
 ultoa_opts =-zc
+alphabet_opts=-zc
 !endif

@@ -35,7 +35,7 @@
 #include "clibi64.h"
 #include <stdlib.h>
 
-extern const char _WCI86FAR __Alphabet[];
+extern const char __based(__segname("_CODE")) __Alphabet[];
 
 #if defined(__386__) || defined(M_I86)
 unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);

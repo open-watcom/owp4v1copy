@@ -33,7 +33,7 @@
 #include "widechar.h"
 #include <stdlib.h>
 
-extern const char _WCI86FAR __Alphabet[];
+extern const char __based(__segname("_CODE")) __Alphabet[];
 
 unsigned long __uldiv( unsigned long, unsigned _WCNEAR * );
 #if defined(__386__)
