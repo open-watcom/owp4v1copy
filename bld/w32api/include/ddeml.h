@@ -138,7 +138,7 @@ extern "C" {
 #define MF_CONV	0x40000000
 #define MF_MASK 0xFF000000
 #define MH_CREATE	1
-#define MH_KEEP		2
+#define MH_KEEP	2
 #define MH_DELETE	3
 #define MH_CLEANUP	4
 
