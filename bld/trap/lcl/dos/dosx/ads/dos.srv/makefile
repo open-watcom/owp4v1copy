@@ -1,4 +1,4 @@
-#pmake: all build serv lcl os_dos dsx cpu_386 x86
+#pmake: serv lcl os_dos dsx cpu_386 x86
 
 os = ads
 srv = ads

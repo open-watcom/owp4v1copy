@@ -1,4 +1,4 @@
-#pmake: all build trap lcl os_dos dsx cpu_386 x86
+#pmake: trap lcl os_dos dsx cpu_386 x86
 
 os = dos
 cpu = x86

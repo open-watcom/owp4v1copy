@@ -1,4 +1,4 @@
-#pmake: all build trap lcl os_dos dsx cpu_386 nec
+#pmake: trap lcl os_dos dsx cpu_386 nec
 
 machine = NEC
 
