@@ -204,7 +204,7 @@ void ObjRSkipPage( OBJ_RFILE *obj, size_t page_len ) {
 
 #if _WOMP_OPT & _WOMP_WRITE
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define OP_MODE         (O_RDWR | O_CREAT | O_TRUNC)
 #define OP_PERM         (0666)
 #else
