@@ -1,36 +1,26 @@
 
         C Front End Notes
         -----------------
-1. There are two implementations: TREE vs QUAD. The version to be built
-   can be controlled with an entry in the makefile.
-   cc_version = quad    - this builds older quads and leafs version
-   cc_version = tree    - this builds the newer parse tree version
-   All new development has been done on the TREE version and is the
-   recommended version for the future. Features required for the Alpha
-   were only added to the TREE version. Some of the new Microsoft
-   compatibility issues were fixed only in the TREE version.
+1. There used to be two implementations: TREE and QUAD. The old quads
+   and leafs version used to represent expressions as quads, ie:
 
-   The TREE version uses some new source files with suffix 2. e.g.
-   QUAD version: cexpr.c  cfold.c  cmath.c  cgen.c  cstmt.c
-   TREE version: cexpr2.c cfold2.c cmath2.c cgen2.c cstmt2.c
-   Other source files that only had minor changes are controlled with
-   the macro NEWCFE. e.g.
-        #ifdef NEWCFE
-                code for TREE version
-        #else
-                code for QUAD version
-        #endif
+   result = operand1 operator operand2
+
+   All new development has been done on the TREE version which represents
+   expressions as trees, and the old QUAD version was eventually retired.
+
+   The TREE version introduced some new source files with suffix 2. e.g.
+   cexpr2.c cfold2.c cmath2.c cgen2.c cstmt2.c.
 
 2. Major header files
-   The major header files are cvars.h and ctypes.h. For the TREE version
-   xcgops.h is also a major file. Most source files need only include
-   cvars.h.
+   The major header files are cvars.h, ctypes.h and cops.h. Most source
+   files need only include cvars.h.
    CVARS.H      - primary include file. The file includes most of the
                   other header files. Most global data variables are
                   declared here using the GLOBAL macro. All function
                   prototypes are also in this file.
    CTYPES.H     - defines common data structures, enum constants
-   XCGOPS.H     - defines parse tree operators and parse tree data structures
+   COPS.H       - defines parse tree operators and parse tree data structures
    CERRS.H      - error messages
 
 3. Adding a new keyword:
