@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Installer utility functions for Unix.
 *
 ****************************************************************************/
 
@@ -1612,23 +1611,6 @@ extern bool MakeDisks( void )
         strcpy( path_end+1, info->d_name );
         strcpy( end_dst_path, info->d_name );
         state = DLG_START;
-        #ifdef NECCHECK
-            /*
-               We don't have enough room on the install diskettes for
-               both DOSSETUP.EXE & 98SETUP.EXE. So, if we're on a NEC-98,
-               don't put DOSSETUP.EXE on the disk and if we're on an AT
-               clone, don't put 98SETUP.EXE on.
-            */
-            if( GetVariableIntVal( "IsNEC" ) ) {
-                if( stricmp( info->d_name, "DOSSETUP.EXE" ) == 0 ) {
-                    state = DLG_SKIP;
-                }
-            } else {
-                if( stricmp( info->d_name, "98SETUP.EXE" ) == 0 ) {
-                    state = DLG_SKIP;
-                }
-            }
-        #endif
         if( state != DLG_SKIP ) {
             state = CopyToDisk( 0, src_path, dst_path );
             if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );

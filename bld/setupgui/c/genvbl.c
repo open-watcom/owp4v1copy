@@ -342,15 +342,7 @@ extern void SetDefaultGlobalVarList( void )
     // create global variables for each default system
     SetVariableByName( "true", "1" );
     SetVariableByName( "false", "0" );
-#if !defined( __AXP__ ) && !defined( __OS2__ )
-  #ifdef NECCHECK
-    SetVariableByName( "IsNEC", __nonIBM() ? "1" : "0" );
-  #else
     SetVariableByName( "IsNEC", "0" );
-  #endif
-#else
-    SetVariableByName( "IsNEC", "0" );
-#endif
 #if defined( __DOS__ )
     SetVariableByName( "IsDos", "1" );
     SetVariableByName( "IsOS2DosBox", _osmajor >= 10 ? "1" : "0" );
@@ -434,7 +426,7 @@ extern void FreeGlobalVarList( bool including_real_globals )
 
     if( GlobalVarList == NULL )
         return;
-    
+
     if( including_real_globals ) {
         for( i=0; i < GlobalVarArray.num; i++ ) {
             GUIMemFree( GlobalVarList[i].name );
@@ -453,7 +445,7 @@ extern void FreeGlobalVarList( bool including_real_globals )
                 GUIMemFree( GlobalVarList[i].name );
                 GUIMemFree( GlobalVarList[i].strval );
                 GUIMemFree( GlobalVarList[i].autoset );
-                
+
                 for( j = i; j < GlobalVarArray.num - 1; j++ ) {
                     memcpy( &GlobalVarList[ j ], &GlobalVarList[ j + 1 ],
                         sizeof( a_variable ) );

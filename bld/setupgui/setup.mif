@@ -6,8 +6,6 @@ setupgui_autodepends = .AUTODEPEND
 
 .ERROR:
 
-#NECCHECK=1
-
 !include cproj.mif
 !include defrule.mif
 #!include deftarg.mif
@@ -99,9 +97,6 @@ gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 # cflags
 #########
 extra_c_flags = -DINSTALL_PROGRAM -DGUISETUP -s
-!ifeq NECCHECK 1
-extra_c_flags += -DNECCHECK
-!endif
 !ifneq sys_windowed 1
 extra_c_flags += -d_UI
 !endif
@@ -111,7 +106,6 @@ extra_c_flags += -DPATCH
 
 extra_c_flags_i86 = -fpc -zc
 extra_c_flags_386 = -fpc
-extra_c_flags_os2 = -d__OS220__ -Ufar -Dfar=
 
 #extra_c_flags_common = -fi=setupmem.h
 #extra_c_flags_io = -fi=setupmem.h
@@ -354,11 +348,7 @@ setup.res : setup.rc $(dep_res1) ../generic.bmp
 !endif
 
 dosstub.exe : ../stub/dosstub.c
-!ifeq NECCHECK 1
-    wcl -zq -l=dos -os -d0 -dNECCHECK -bt=dos ..\stub\dosstub
-!else
     wcl -zq -l=dos -os -d0 -bt=dos ..\stub\dosstub
-!endif
 
 csetup.exe: virgin.exe csetup.res
     cp $[@ $^@ > $(nulldevice)

@@ -2,7 +2,7 @@
 
 proj_name = mkdisk
 
-mkdisk_autodepends = .AUTODEPEND
+mkdisk_autodepends = .autodepend
 
 !ifeq %BUILD_PLATFORM dos386
 host_os = dos
@@ -25,7 +25,7 @@ host_cpu = 386
 
 extra_l_flags = op map
 
-commands = mkdisk.exe splitfil.exe packsize.exe # genmkfil.exe
+commands = mkdisk.exe splitfil.exe packsize.exe genmkfil.exe
 
 all : $(commands) .SYMBOLIC
 
