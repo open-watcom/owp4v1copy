@@ -53,7 +53,7 @@ void print_msg( const char *format, ... )
 
 char *StrCopy( char *src, char *dst )
 {
-    while( *dst = *src ) {
+    while( (*dst = *src) ) {
         ++src;
         ++dst;
     }

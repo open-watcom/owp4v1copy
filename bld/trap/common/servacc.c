@@ -52,9 +52,9 @@ static mx_entry     Out[1];
 static void AccTrap( bool want_return )
 {
     if( want_return ) {
-        PutBuffPacket( TrapAccess( 1, &In, 1, &Out ), (void  *)RWBuff );
+        PutBuffPacket( TrapAccess( 1, &In[0], 1, &Out[0] ), (void  *)RWBuff );
     } else {
-        TrapAccess( 1, &In, 0, NULL );
+        TrapAccess( 1, &In[0], 0, NULL );
     }
 }
 
@@ -74,7 +74,7 @@ static bool AccConnect()
         PutBuffPacket( sizeof( *acc ) + sizeof( TRP_ERR_WRONG_SERVER_VERSION ),
                         (void *)RWBuff );
     } else {
-        len = TrapAccess( 1, &In, 1, &Out );
+        len = TrapAccess( 1, &In[0], 1, &Out[0] );
         max = MaxPacketSize();
         if( max > sizeof( RWBuff ) ) max = sizeof( RWBuff );
         if( ret->max_msg_size > max ) ret->max_msg_size = max;
@@ -110,8 +110,8 @@ bool Session()
         #endif
         In[0].len = GetPacket();
         In[0].ptr = GetPacketBuffPtr();
-        In_Mx_Ptr = &In;
-        Out_Mx_Ptr = &Out;
+        In_Mx_Ptr = &In[0];
+        Out_Mx_Ptr = &Out[0];
         In_Mx_Num = 1;
         Out_Mx_Num = 1;
         req = *(access_req *)In[0].ptr;

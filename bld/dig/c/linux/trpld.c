@@ -39,7 +39,7 @@
 #include "trpqimp.h"
 
 #if defined( BUILTIN_TRAP_FILE )
-extern const trap_requests *TrapLoad( trap_callbacks *client );
+extern const trap_requests *TrapLoad( const trap_callbacks *client );
 #endif
 
 #ifndef __WATCOMC__
