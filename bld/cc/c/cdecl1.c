@@ -211,7 +211,7 @@ local void BeginFunc()
     name = CurFunc->name;
     for( main_entry = MAIN_WMAIN; main_entry < MAIN_NUM; ++main_entry )
     {
-       if( stricmp( name, MainNames[main_entry] ) == 0 )
+       if( strcmp( name, MainNames[main_entry] ) == 0 )
            break;
     }
 
