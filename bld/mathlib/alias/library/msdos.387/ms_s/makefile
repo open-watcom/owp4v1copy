@@ -1,4 +1,4 @@
-#pmake:all small 32bit stack inline msdos iX86 static build os_dos cpu_386 alias os_nt os_os2 os_win os_nov
+#pmake:all small 32bit stack inline msdos iX86 static build os_dos cpu_386 alias os_nt os_os2 os_win os_nov os_qnx
 processor=387
 model=ms
 system=msdos
