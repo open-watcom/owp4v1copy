@@ -31,7 +31,6 @@
 
 #include <stddef.h>
 #include <string.h>
-//#include <i86.h>
 #define INCL_DOSEXCEPTIONS
 #define INCL_DOSPROCESS
 #define INCL_DOSMISC
@@ -56,14 +55,13 @@
 dos_debug               Buff;
 static BOOL             stopOnSecond;
 USHORT                  TaskFS;
-extern char             SetHardMode(char);
-extern VOID             InitDebugThread(VOID);
 
+extern VOID             InitDebugThread(VOID);
 extern unsigned         X86CPUType();
 
 #ifdef DEBUG_OUT
 
-void Out(char *str)
+static void Out(char *str)
 {
     USHORT      written;
 
@@ -71,7 +69,7 @@ void Out(char *str)
 }
 
 #define NSIZE 20
-void OutNum(ULONG i)
+static void OutNum(ULONG i)
 {
     char numbuff[NSIZE];
     char *ptr;
@@ -101,23 +99,20 @@ void OutNum(ULONG i)
 #define EXE_IS_PMC              0x0200
 #define EXE_IS_PM               0x0300
 
-static ULONG    ExceptLinear;
-static UCHAR    TypeProcess;
-static BOOL     Is32Bit;
-static watch    WatchPoints[MAX_WP];
-static short    WatchCount = 0;
-static short    DebugRegsNeeded = 0;
+static ULONG            ExceptLinear;
+static UCHAR            TypeProcess;
+static BOOL             Is32Bit;
+static watch            WatchPoints[MAX_WP];
+static short            WatchCount = 0;
+static short            DebugRegsNeeded = 0;
 static unsigned_16      lastCS;
 static unsigned_16      lastSS;
 static unsigned_32      lastEIP;
 static unsigned_32      lastESP;
 
 
-extern void bp(void);
 bool    ExpectingAFault;
 char    OS2ExtList[] = {".exe\0"};
-
-#pragma aux bp = 0xcc;
 
 static bool Is32BitSeg(unsigned seg)
 {
@@ -131,7 +126,7 @@ static bool Is32BitSeg(unsigned seg)
 /*
  * RecordModHandle - save module handle for later reference
  */
-void RecordModHandle(ULONG value)
+static void RecordModHandle(ULONG value)
 {
     if (ModHandles == NULL) {
         DosAllocMem(&ModHandles, sizeof(ULONG) * 512, PAG_COMMIT | PAG_READ | PAG_WRITE);
@@ -144,7 +139,7 @@ void RecordModHandle(ULONG value)
 /*
  * SeekRead - seek to a file position, and read the data
  */
-BOOL SeekRead(HFILE handle, ULONG newpos, void *ptr, ULONG size)
+static BOOL SeekRead(HFILE handle, ULONG newpos, void *ptr, ULONG size)
 {
     ULONG       read;
     ULONG       pos;

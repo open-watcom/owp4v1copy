@@ -43,7 +43,9 @@
 #include <os2dbg.h>
 #include "pmhook.h"
 #include "trpimp.h"
+#include "softmode.h"
 
+// Undocumented PM APIs, oh joy!
 extern BOOL APIENTRY16 WinLockInput( HWND, USHORT );
 extern BOOL APIENTRY16 WinQuerySendMsg( HAB, HMQ, HMQ, PQMSG );
 extern BOOL APIENTRY16 WinReplyMsg( HAB, HMQ, HMQ, MRESULT );
@@ -78,7 +80,7 @@ static  HEV             BeginThreadSem = NULL;
 
 #define STACK_SIZE 32768
 
-void APIENTRY SoftModeThread( thread_data *thread )
+static void APIENTRY SoftModeThread( thread_data *thread )
 {
     QMSG        qmsg;
     ULONG       rc;
@@ -129,7 +131,7 @@ static VOID APIENTRY BeginThreadHelper( ULONG arg )
 }
 
 
-void BeginSoftModeThread( thread_data *arglist )
+static void BeginSoftModeThread( thread_data *arglist )
 {
     TID         tid;
     ULONG       ulCount;
@@ -154,7 +156,7 @@ BOOL IsPMDebugger()
     return( HabDebugger != NULL );
 }
 
-void CreateDummyWindow()
+static void CreateDummyWindow()
 {
     ULONG     flCreate;
     HWND      frame;
@@ -168,7 +170,7 @@ void CreateDummyWindow()
     }
 }
 
-void GrabThreadQueue( PID pid, TID tid )
+static void GrabThreadQueue( PID pid, TID tid )
 {
     thread_data         thread;
     int                 i;
@@ -187,7 +189,7 @@ void GrabThreadQueue( PID pid, TID tid )
     BeginSoftModeThread( &thread );
 }
 
-void ReleaseThreadQueue( PID pid, TID tid )
+static void ReleaseThreadQueue( PID pid, TID tid )
 {
     HMQ                 hmq;
     int                 i;
@@ -204,7 +206,7 @@ void ReleaseThreadQueue( PID pid, TID tid )
     }
 }
 
-void ForAllTids( PID pid, void (*rtn)( PID pid, TID tid ) )
+static void ForAllTids( PID pid, void (*rtn)( PID pid, TID tid ) )
 {
     TID tid;
 
@@ -213,7 +215,7 @@ void ForAllTids( PID pid, void (*rtn)( PID pid, TID tid ) )
     }
 }
 
-void WakeOneThread( PID pid, TID tid )
+static void WakeOneThread( PID pid, TID tid )
 {
     HMQ         hmq;
 
@@ -228,7 +230,7 @@ VOID WakeThreads( PID pid )
     ForAllTids( pid, WakeOneThread );
 }
 
-void EnterSoftMode( PID pid )
+static void EnterSoftMode( PID pid )
 {
     if( NumAssumedQueues != 0 )
         return;
@@ -239,7 +241,7 @@ void EnterSoftMode( PID pid )
 //    if (WinIsWindow(HabDebugger, DBActiveWnd)) WinSetActiveWindow(HWND_DESKTOP, DBActiveWnd);
 }
 
-void ExitSoftMode( PID pid )
+static void ExitSoftMode( PID pid )
 {
     int         i;
     QMSG        qmsg;
@@ -257,7 +259,7 @@ void ExitSoftMode( PID pid )
 //    if (WinIsWindow(HabDebugger, AppActiveWnd)) WinSetActiveWindow(HWND_DESKTOP, AppActiveWnd);
 }
 
-void EnterHardMode()
+static void EnterHardMode()
 {
     if( InHardMode )
         return;
@@ -265,7 +267,7 @@ void EnterHardMode()
     InHardMode = TRUE;
 }
 
-void ExitHardMode()
+static void ExitHardMode()
 {
     if( !InHardMode )
         return;

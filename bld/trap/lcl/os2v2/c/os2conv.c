@@ -53,27 +53,10 @@ extern dos_debug        Buff;
 extern USHORT           TaskFS;
 
 /* Hardcoded selector values - extremely unlikely to change. */
-USHORT FlatCS = 0x5b, FlatDS = 0x53;
+USHORT FlatCS = 0x5B, FlatDS = 0x53;
 
 extern ULONG            ExceptNum;
 
-extern void bp(void);
-#pragma aux bp = 0xcc;
-
-/*
- * MakeSegmentedPointer - create a 16:16 ptr from a 0:32 ptr
- */
-ULONG MakeSegmentedPointer(ULONG val)
-{
-    dos_debug   buff;
-
-    buff.Pid = Buff.Pid;
-    buff.Cmd = DBG_C_LinToSel;
-    buff.Addr = val;
-    CallDosDebug(&buff);
-    return ((USHORT)buff.Value << 16) + (USHORT)buff.Index;
-
-} /* MakeSegmentedPointer */
 
 /*
  * IsFlatSeg - check for flat segment
@@ -83,7 +66,6 @@ int IsFlatSeg(USHORT seg)
     if (seg == FlatCS || seg == FlatDS)
         return TRUE;
     return FALSE;
-
 } /* IsFlatSeg */
 
 
@@ -100,7 +82,6 @@ int IsUnknownGDTSeg(USHORT seg)
         return TRUE;
     }
     return FALSE;
-
 } /* IsUnknownGDTSeg */
 
 
@@ -119,19 +100,7 @@ ULONG MakeItFlatNumberOne(USHORT seg, ULONG offset)
     buff.Index = offset;
     CallDosDebug(&buff);
     return buff.Addr;
-
 } /* MakeItFlatNumberOne */
-
-/*
- * MakeItSegmentedNumberOne - make a (sel,offset) into a 16:16 pointer
- */
-ULONG MakeItSegmentedNumberOne(USHORT seg, ULONG offset)
-{
-    if (!IsFlatSeg(seg))
-        return ((USHORT)seg << 16) + (USHORT)offset;
-
-    return MakeSegmentedPointer(offset);
-} /* MakeItSegmentedNumberOne */
 
 
 /*
