@@ -212,9 +212,38 @@
 #define ERROR_OPLOCKED_FILE             268
 #define ERROR_OPLOCK_THREAD_EXISTS      269
 #define ERROR_VOLUME_CHANGED            270
-
+#define ERROR_FINDNOTIFY_HANDLE_IN_USE  271
+#define ERROR_FINDNOTIFY_HANDLE_CLOSED  272
+#define ERROR_NOTIFY_OBJECT_REMOVED     273
 #define ERROR_ALREADY_SHUTDOWN          274
 #define ERROR_EAS_DIDNT_FIT             275
+#define ERROR_EA_FILE_CORRUPT           276
+#define ERROR_EA_TABLE_FULL             277
+#define ERROR_INVALID_EA_HANDLE         278
+#define ERROR_NO_CLUSTER                279
+#define ERROR_CREATE_EA_FILE            280
+#define ERROR_CANNOT_OPEN_EA_FILE       281
+#define ERROR_EAS_NOT_SUPPORTED         282
+#define ERROR_NEED_EAS_FOUND            283
+#define ERROR_DUPLICATE_HANDLE          284
+#define ERROR_DUPLICATE_NAME            285
+#define ERROR_EMPTY_MUXWAIT             286
+#define ERROR_MUTEX_OWNED               287
+#define ERROR_NOT_OWNER                 288
+#define ERROR_PARAM_TOO_SMALL           289
+#define ERROR_TOO_MANY_HANDLES          290
+#define ERROR_TOO_MANY_OPENS            291
+#define ERROR_WRONG_TYPE                292
+#define ERROR_UNUSED_CODE               293
+#define ERROR_THREAD_NOT_TERMINATED     294
+#define ERROR_INIT_ROUTINE_FAILED       295
+#define ERROR_MODULE_IN_USE             296
+#define ERROR_NOT_ENOUGH_WATCHPOINTS    297
+#define ERROR_TOO_MANY_POSTS            298
+#define ERROR_ALREADY_POSTED            299
+#define ERROR_ALREADY_RESET             300
+#define ERROR_SEM_BUSY                  301
+
 #define ERROR_INVALID_PROCID            303
 #define ERROR_INVALID_PDELTA            304
 #define ERROR_NOT_DESCENDANT            305
@@ -424,3 +453,4 @@
 #define ERROR_SMG_INVALID_ICON_FILE     506
 
 #endif
+

@@ -10,6 +10,7 @@
     #define INCL_WINATOM
     #define INCL_WINBUTTONS
     #define INCL_WINCLIPBOARD
+    #define INCL_WINCOUNTRY
     #define INCL_WINCURSORS
     #define INCL_WINDDE
     #define INCL_WINDIALOGS
@@ -31,6 +32,7 @@
     #define INCL_WINSHELLDATA
     #define INCL_WINSTATICS
     #define INCL_WINSTDDLGS
+    #define INCL_WINSWITCHLIST
     #define INCL_WINSYS
     #define INCL_WINTIMER
     #define INCL_WINTRACKRECT
@@ -525,7 +527,6 @@ typedef struct _SWP {
 
 HENUM   APIENTRY WinBeginEnumWindows(HWND hwnd);
 HPS     APIENTRY WinBeginPaint(HWND hwnd, HPS hps, PRECTL prclPaint);
-USHORT  APIENTRY WinCheckButton(HWND hwndDlg, USHORT usId, USHORT usChkstate);
 BOOL    APIENTRY WinCheckMenuItem(HWND hwndMenu, USHORT usId, BOOL fCheck);
 HWND    APIENTRY WinCreateWindow(HWND hwndParent, PCSZ pszClass, PCSZ pszName, ULONG flStyle,
                    LONG x, LONG y, LONG cx, LONG cy, HWND hwndOwner,
@@ -907,6 +908,18 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 #define MBID_ENTER          9
 #define MBID_ERROR          (-1)
 
+#define WinCheckButton(hwndDlg, id, usCheckState) \
+    ((ULONG)WinSendDlgItemMsg(hwndDlg, id, BM_SETCHECK, MPFROMSHORT(usCheckState), (MPARAM)NULL))
+#define WinQueryButtonCheckstate(hwndDlg, id) \
+    ((ULONG)WinSendDlgItemMsg(hwndDlg, id, BM_QUERYCHECK, (MPARAM)NULL, (MPARAM)NULL))
+#define WinEnableControl(hwndDlg, id, fEnable) \
+    WinEnableWindow(WinWindowFromID(hwndDlg, id), fEnable)
+#define WinShowControl(hwndDlg, id, fShow) \
+    WinShowWindow(WinWindowFromID(hwndDlg, id), fShow)
+#define WinIsControlEnabled(hwndDlg, id) \
+    ((BOOL)WinIsWindowEnabled(WinWindowFromID(hwndDlg, id)))
+
+
 #pragma pack(2)
 
 typedef struct _DLGTITEM {
@@ -924,7 +937,7 @@ typedef struct _DLGTITEM {
     USHORT id;
     USHORT offPresParams;
     USHORT offCtlData;
-} DLGTITEM, *PDLGITEM;
+} DLGTITEM, *PDLGTITEM;
 
 typedef struct _DLGTEMPLATE {
     USHORT   cbTemplate;
@@ -945,6 +958,8 @@ MRESULT APIENTRY WinDefDlgProc(HWND hwndDlg, ULONG msg, MPARAM mp1, MPARAM mp2);
 USHORT  APIENTRY WinMessageBox(HWND hwndParent, HWND hwndOwner, PSZ pszText, PSZ pszTitle,
                     USHORT usWindow, USHORT fsStyle);
 BOOL    APIENTRY WinDismissDlg(HWND hwndDlg, ULONG usResult);
+ULONG   APIENTRY WinDlgBox(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc, HMODULE hmod,
+                    ULONG idDlg, PVOID pCreateParams);
 
 HWND    APIENTRY WinLoadDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
                     HMODULE hmod, ULONG idDlg, PVOID pCreateParams);
@@ -955,6 +970,8 @@ ULONG   APIENTRY WinProcessDlg(HWND hwndDlg);
 BOOL    APIENTRY WinQueryDlgItemShort(HWND hwndDlg, ULONG idItem, PSHORT psResult, BOOL fSigned);
 ULONG   APIENTRY WinQueryDlgItemText(HWND hwndDlg, ULONG idItem, LONG lMaxText, PSZ pszText);
 LONG    APIENTRY WinQueryDlgItemTextLength(HWND hwndDlg, ULONG idItem);
+
+MRESULT APIENTRY WinSendDlgItemMsg(HWND hwndDlg, ULONG idItem, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 BOOL    APIENTRY WinSetDlgItemText(HWND hwndDlg, ULONG idItem, PCSZ pszText);
 
@@ -1335,6 +1352,7 @@ BOOL   APIENTRY WinSetHook(HAB hab, HMQ hmq, LONG lHookType, PFN pHookProc, HMOD
 #define VK_COPY                    0x3F
 #define VK_BLK1                    0x40
 #define VK_BLK2                    0x41
+#define VK_MENU                    VK_F10
 
 #define KC_NONE        0x0000
 #define KC_CHAR        0x0001
@@ -1781,6 +1799,7 @@ BOOL     APIENTRY WinShowPointer(HWND hwndDeskTop, BOOL fShow);
 typedef LHANDLE HPROGRAM, *PHPROGRAM;
 typedef LHANDLE HAPP, *PHAPP;
 typedef LHANDLE HINI, *PHINI;
+typedef LHANDLE HSWITCH, *PHSWITCH;
 
 typedef struct _PRFPROFILE {
     ULONG cchUserName;
@@ -1823,7 +1842,41 @@ typedef struct _PRFPROFILE {
 #define PROG_DOS_MODE             (PROGCATEGORY)23
 #define PROG_RESERVED             (PROGCATEGORY)255
 
+#define SHE_VISIBLE     0
+#define SHE_INVISIBLE   1
+#define SHE_RESERVED    255
+#define SHE_UNPROTECTED 0
+#define SHE_PROTECTED   0
+
+#define SAF_VALIDFLAGS       0x001F
+#define SAF_INSTALLEDCMDLINE 0x0001
+#define SAF_STARTCHILDAPP    0x0002
+#define SAF_MAXIMIZED        0x0004
+#define SAF_MINIMIZED        0x0008
+#define SAF_BACKGROUND       0x0010
+
 typedef ULONG PROGCATEGORY, *PPROGCATEGORY;
+
+typedef struct _PROGTYPE {
+    PROGCATEGORY progc;
+    ULONG        fbVisible;
+} PROGTYPE, *PPROGTYPE;
+
+typedef struct _PROGDETAILS {
+    ULONG     Length;
+    PROGTYPE  progt;
+    PSZ       pszTitle;
+    PSZ       pszExecutable;
+    PSZ       pszParameters;
+    PSZ       pszStartupDir;
+    PSZ       pszIcon;
+    PSZ       pszEnvironment;
+    SWP       swpInitial;
+} PROGDETAILS, *PPROGDETAILS;
+
+HAPP APIENTRY WinStartApp(HWND hwndNotify, PPROGDETAILS pDetails, PCSZ pszParams,
+                   PVOID Reserved, ULONG fbOptions);
+BOOL APIENTRY WinTerminateApp(HAPP happ);
 
 #endif
 
@@ -1921,6 +1974,58 @@ BOOL   APIENTRY  PrfWriteProfileString(HINI hini, PCSZ pszApp, PCSZ pszKey, PCSZ
 
 #define WM_MSGBOXINIT    0x010E
 #define WM_MSGBOXDISMISS 0x010F
+
+#endif
+
+#if defined(INCL_WINSWITCHLIST) || !defined(INCL_NOCOMMON)
+
+#define SWL_INVISIBLE 1
+#define SWL_GRAYED    2
+#define SWL_VISIBLE   4
+
+#define SWL_JUMPABLE    2
+#define SWL_NOTJUMPABLE 1
+
+#define MAXNAMEL 60
+
+typedef struct _SWCNTRL {
+    HWND     hwnd;
+    HWND     hwndIcon;
+    HPROGRAM hprog;
+    PID      idProcess;
+    ULONG    idSession;
+    ULONG    uchVisibility;
+    ULONG    fbJump;
+    CHAR     szSwtitle[MAXNAMEL+4];
+    ULONG    bProgType;
+} SWCNTRL, *PSWCNTRL;
+
+HSWITCH APIENTRY WinAddSwitchEntry(PSWCNTRL);
+ULONG   APIENTRY WinRemoveSwitchEntry(HSWITCH);
+
+#endif
+
+#if defined(INCL_WINSWITCHLIST)
+
+typedef struct _SWENTRY {
+    HSWITCH hswitch;
+    SWCNTRL swctl;
+} SWENTRY, *PSWENTRY;
+
+typedef struct _SWBLOCK {
+    ULONG   cswentry;
+    SWENTRY aswentry[1];
+} SWBLOCK, *PSWBLOCK;
+
+ULONG   APIENTRY WinChangeSwitchEntry(HSWITCH hswitchSwitch, PSWCNTRL pswctlSwitchData);
+HSWITCH APIENTRY WinCreateSwitchEntry(HAB hab, PSWCNTRL pswctlSwitchData);
+ULONG   APIENTRY WinQuerySessionTitle(HAB hab, ULONG usSession, PCSZ pszTitle, ULONG usTitlelen);
+ULONG   APIENTRY WinQuerySwitchEntry(HSWITCH hswitchSwitch, PSWCNTRL pswctlSwitchData);
+HSWITCH APIENTRY WinQuerySwitchHandle(HWND hwnd, PID pidProcess);
+ULONG   APIENTRY WinQuerySwitchList(HAB hab, PSWBLOCK pswblkSwitchEntries, ULONG usDataLength);
+ULONG   APIENTRY WinQueryTaskSizePos(HAB hab, ULONG usScreenGroup, PSWP pswpPositionData);
+ULONG   APIENTRY WinQueryTaskTitle(ULONG usSession, PCSZ pszTitle, ULONG usTitlelen);
+ULONG   APIENTRY WinSwitchToProgram(HSWITCH hswitchSwHandle);
 
 #endif
 
@@ -2096,6 +2201,50 @@ BOOL   APIENTRY  PrfWriteProfileString(HINI hini, PCSZ pszApp, PCSZ pszKey, PCSZ
 #define PP_MINORTABFOREGROUNDCOLOR              72
 #define PP_MINORTABBACKGROUNDCOLOR              73
 
+#define SYSCLR_SHADOWHILITEBGND      (-50)
+#define SYSCLR_SHADOWHILITEFGND      (-49)
+#define SYSCLR_SHADOWTEXT            (-48)
+#define SYSCLR_ENTRYFIELD            (-47)
+#define SYSCLR_MENUDISABLEDTEXT      (-46)
+#define SYSCLR_MENUHILITE            (-45)
+#define SYSCLR_MENUHILITEBGND        (-44)
+#define SYSCLR_PAGEBACKGROUND        (-43)
+#define SYSCLR_FIELDBACKGROUND       (-42)
+#define SYSCLR_BUTTONLIGHT           (-41)
+#define SYSCLR_BUTTONMIDDLE          (-40)
+#define SYSCLR_BUTTONDARK            (-39)
+#define SYSCLR_BUTTONDEFAULT         (-38)
+#define SYSCLR_TITLEBOTTOM           (-37)
+#define SYSCLR_SHADOW                (-36)
+#define SYSCLR_ICONTEXT              (-35)
+#define SYSCLR_DIALOGBACKGROUND      (-34)
+#define SYSCLR_HILITEFOREGROUND      (-33)
+#define SYSCLR_HILITEBACKGROUND      (-32)
+#define SYSCLR_INACTIVETITLETEXTBGND (-31)
+#define SYSCLR_ACTIVETITLETEXTBGND   (-30)
+#define SYSCLR_INACTIVETITLETEXT     (-29)
+#define SYSCLR_ACTIVETITLETEXT       (-28)
+#define SYSCLR_OUTPUTTEXT            (-27)
+#define SYSCLR_WINDOWSTATICTEXT      (-26)
+#define SYSCLR_SCROLLBAR             (-25)
+#define SYSCLR_BACKGROUND            (-24)
+#define SYSCLR_ACTIVETITLE           (-23)
+#define SYSCLR_INACTIVETITLE         (-22)
+#define SYSCLR_MENU                  (-21)
+#define SYSCLR_WINDOW                (-20)
+#define SYSCLR_WINDOWFRAME           (-19)
+#define SYSCLR_MENUTEXT              (-18)
+#define SYSCLR_WINDOWTEXT            (-17)
+#define SYSCLR_TITLETEXT             (-16)
+#define SYSCLR_ACTIVEBORDER          (-15)
+#define SYSCLR_INACTIVEBORDER        (-14)
+#define SYSCLR_APPWORKSPACE          (-13)
+#define SYSCLR_HELPBACKGROUND        (-12)
+#define SYSCLR_HELPTEXT              (-11)
+#define SYSCLR_HELPHILITE            (-10)
+
+#define SYSCLR_CSYSCOLORS 41
+
 typedef struct _PARAM {
     ULONG id;
     ULONG cb;
@@ -2146,3 +2295,20 @@ BOOL   APIENTRY WinShowTrackRect(HWND hwnd, BOOL fShow);
 BOOL   APIENTRY WinTrackRect(HWND hwnd, HPS hps, PTRACKINFO ptiTrackinfo);
 
 #endif
+
+#if defined(INCL_WINCOUNTRY)
+
+PCSZ   APIENTRY WinNextChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
+PCSZ   APIENTRY WinPrevChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ pszStart, PCSZ psz);
+
+ULONG  APIENTRY WinQueryCp(HMQ hmq);
+ULONG  APIENTRY WinQueryCpList(HAB hab, ULONG ccpMax, PULONG prgcp);
+
+BOOL   APIENTRY WinSetCp(HMQ hmq, ULONG idCodePage);
+
+ULONG  APIENTRY WinUpper(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
+ULONG  APIENTRY WinUpperChar(HAB hab, ULONG idcp, ULONG idcc, ULONG c);
+
+#endif
+
+

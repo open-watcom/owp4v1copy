@@ -15,3 +15,9 @@
 #ifdef INCL_DOSDEVIOCTL
     #include <bsedev.h>
 #endif
+
+#ifdef INCL_ORDINALS
+    #include <bseord.h>
+#endif
+
+

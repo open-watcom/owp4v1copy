@@ -7,6 +7,159 @@
 
 #ifdef INCL_WINSTDDLGS
     #define INCL_WINSTDFILE
+    #define INCL_WINSTDBOOK
+#endif
+
+#if defined(INCL_WINSTDBOOK)
+
+#define BKM_CALCPAGERECT         0x0353
+#define BKM_DELETEPAGE           0x0354
+#define BKM_INSERTPAGE           0x0355
+#define BKM_INVALIDATETABS       0x0356
+#define BKM_TURNTOPAGE           0x0357
+#define BKM_QUERYPAGECOUNT       0x0358
+#define BKM_QUERYPAGEID          0x0359
+#define BKM_QUERYPAGEDATA        0x035a
+#define BKM_QUERYPAGEWINDOWHWND  0x035b
+#define BKM_QUERYTABBITMAP       0x035c
+#define BKM_QUERYTABTEXT         0x035d
+#define BKM_SETDIMENSIONS        0x035e
+#define BKM_SETPAGEDATA          0x035f
+#define BKM_SETPAGEWINDOWHWND    0x0360
+#define BKM_SETSTATUSLINETEXT    0x0361
+#define BKM_SETTABBITMAP         0x0362
+#define BKM_SETTABTEXT           0x0363
+#define BKM_SETNOTEBOOKCOLORS    0x0364
+#define BKM_QUERYPAGESTYLE       0x0365
+#define BKM_QUERYSTATUSLINETEXT  0x0366
+#define BKM_SETPAGEINFO          0x0367
+#define BKM_QUERYPAGEINFO        0x0368
+#define BKM_SETTABCOLOR          0x0374
+#define BKM_SETNOTEBOOKBUTTONS   0x0375
+
+#define BKN_PAGESELECTED        130
+#define BKN_NEWPAGESIZE         131
+#define BKN_HELP                132
+#define BKN_PAGEDELETED         133
+#define BKN_PAGESELECTEDPENDING 134
+
+#define BKA_ALL    1
+#define BKA_SINGLE 2
+#define BKA_TAB    4
+
+#define BKA_LAST  0x0002
+#define BKA_FIRST 0x0004
+#define BKA_NEXT  0x0008
+#define BKA_PREV  0x0010
+#define BKA_TOP   0x0020
+
+#define BKA_MAJORTAB   0x0001
+#define BKA_MINORTAB   0x0002
+#define BKA_PAGEBUTTON 0x0100
+
+#define BKA_STATUSTEXTON 0x0001
+#define BKA_MAJOR        0x0040
+#define BKA_MINOR        0x0080
+#define BKA_AUTOPAGESIZE 0x0100
+#define BKA_END          0x0200
+
+#define BKA_TEXT   0x0400
+#define BKA_BITMAP 0x0800
+
+#define BKA_AUTOCOLOR   (-1)
+#define BKA_MAXBUTTONID 7999
+
+#define BKS_BACKPAGESBR      0x00000001
+#define BKS_BACKPAGESBL      0x00000002
+#define BKS_BACKPAGESTR      0x00000004
+#define BKS_BACKPAGESTL      0x00000008
+#define BKS_MAJORTABRIGHT    0x00000010
+#define BKS_MAJORTABLEFT     0x00000020
+#define BKS_MAJORTABTOP      0x00000040
+#define BKS_MAJORTABBOTTOM   0x00000080
+#define BKS_SQUARETABS       0x00000000
+#define BKS_ROUNDEDTABS      0x00000100
+#define BKS_POLYGONTABS      0x00000200
+#define BKS_SOLIDBIND        0x00000000
+#define BKS_SPIRALBIND       0x00000400
+#define BKS_STATUSTEXTLEFT   0x00000000
+#define BKS_STATUSTEXTRIGHT  0x00001000
+#define BKS_STATUSTEXTCENTER 0x00002000
+#define BKS_TABTEXTLEFT      0x00000000
+#define BKS_TABTEXTRIGHT     0x00004000
+#define BKS_TABTEXTCENTER    0x00008000
+#define BKS_TABBEDDIALOG     0x00000800
+#define BKS_BUTTONAREA       0x00000200
+
+#define BKA_BACKGROUNDPAGECOLORINDEX  0x0001
+#define BKA_BACKGROUNDPAGECOLOR       0x0002
+#define BKA_BACKGROUNDMAJORCOLORINDEX 0x0003
+#define BKA_BACKGROUNDMAJORCOLOR      0x0004
+#define BKA_BACKGROUNDMINORCOLORINDEX 0x0005
+#define BKA_BACKGROUNDMINORCOLOR      0x0006
+#define BKA_FOREGROUNDMAJORCOLORINDEX 0x0007
+#define BKA_FOREGROUNDMAJORCOLOR      0x0008
+#define BKA_FOREGROUNDMINORCOLORINDEX 0x0009
+#define BKA_FOREGROUNDMINORCOLOR      0x000A
+
+#define BFA_PAGEDATA            0x00000001
+#define BFA_PAGEFROMHWND        0x00000002
+#define BFA_PAGEFROMDLGTEMPLATE 0x00000004
+#define BFA_PAGEFROMDLGRES      0x00000008
+#define BFA_STATUSLINE          0x00000010
+#define BFA_MAJORTABBITMAP      0x00000020
+#define BFA_MINORTABBITMAP      0x00000040
+#define BFA_MAJORTABTEXT        0x00000080
+#define BFA_MINORTABTEXT        0x00000100
+#define BFA_BIDIINFO            0x00000200
+
+typedef struct _BOOKPAGEINFO {
+    ULONG        cb;
+    ULONG        fl;
+    BOOL         bLoadDlg;
+    ULONG        ulPageData;
+    HWND         hwndPage;
+    PFN          pfnPageDlgProc;
+    ULONG        idPageDlg;
+    HMODULE      hmodPageDlg;
+    PVOID        pPageDlgCreateParams;
+    PDLGTEMPLATE pdlgtPage;
+    ULONG        cbStatusLine;
+    PSZ          pszStatusLine;
+    HBITMAP      hbmMajorTab;
+    HBITMAP      hbmMinorTab;
+    ULONG        cbMajorTab;
+    PSZ          pszMajorTab;
+    ULONG        cbMinorTab;
+    PSZ          pszMinorTab;
+    PVOID        pBidiInfo;
+} BOOKPAGEINFO, *PBOOKPAGEINFO;
+
+typedef struct _BOOKTEXT {
+    PSZ   pString;
+    ULONG textLen;
+} BOOKTEXT, *PBOOKTEXT;
+
+typedef struct _NOTEBOOKBUTTON {
+    PSZ     pszText;
+    ULONG   idButton;
+    LHANDLE hImage;
+    LONG    flStyle;
+} NOTEBOOKBUTTON, *PNOTEBOOKBUTTON;
+
+typedef struct _DELETENOTIFY {
+    HWND    hwndBook;
+    HWND    hwndPage;
+    ULONG   ulAppPageData;
+    HBITMAP hbmTab;
+} DELETENOTIFY, *PDELETENOTIFY;
+
+typedef struct _PAGESELECTNOTIFY {
+    HWND  hwndBook;
+    ULONG ulPageIdCur;
+    ULONG ulPageIdNew;
+} PAGESELECTNOTIFY, *PPAGESELECTNOTIFY;
+
 #endif
 
 #if defined(INCL_WINSTDFILE)
@@ -73,3 +226,4 @@ HWND   APIENTRY WinFileDlg(HWND hwndP, HWND hwndO, PFILEDLG pfild);
 BOOL   APIENTRY WinFreeFileDlgList(PAPSZ papszFQFilename);
 #endif
 
+

@@ -297,6 +297,18 @@ APIRET APIENTRY DosWaitThread(PTID ptid, ULONG option);
 #define EAT_APPTYP_EXETYPE  0x03
 #define EAT_APPTYP_RESERVED ~(EAT_APPTYP_EXETYPE)
 
+#define EAT_BINARY   0xFFFE
+#define EAT_ASCII    0xFFFD
+#define EAT_BITMAP   0xFFFB
+#define EAT_METAFILE 0xFFFA
+#define EAT_ICON     0xFFF9
+#define EAT_EA       0xFFEE
+#define EAT_MVMT     0xFFDF
+#define EAT_MVST     0xFFDE
+#define EAT_ASN1     0xFFDD
+
+#define DSPI_WRTTHRU 0x10
+
 typedef LHANDLE HDIR, *PHDIR;
 typedef ULONG FHLOCK, *PFHLOCK;
 
@@ -447,6 +459,18 @@ typedef struct _FSQBUFFER2 {
     UCHAR  rgFSAData[1];
 } FSQBUFFER2, *PFSQBUFFER2;
 
+typedef struct _VOLUMELABEL {
+    BYTE cch;
+    CHAR szVolLabel[12];
+} VOLUMELABEL, *PVOLUMELABEL;
+
+typedef struct _FSINFO {
+    FDATE fdateCreation;
+    FTIME ftimeCreation;
+    VOLUMELABEL vol;
+} FSINFO, *PFSINFO;
+
+
 APIRET APIENTRY DosCancelLockRequest(HFILE hFile, PFILELOCK pflLock);
 APIRET APIENTRY DosClose(HFILE hFile);
 APIRET APIENTRY DosCopy(PCSZ pszOld, PCSZ pszNew, ULONG option);
@@ -502,7 +526,7 @@ APIRET APIENTRY DosQueryFSInfo(ULONG disknum, ULONG  infolevel, PVOID pBuf, ULON
 APIRET APIENTRY DosQueryHType(HFILE hFile, PULONG pType, PULONG pAttr);
 APIRET APIENTRY DosQueryPathInfo(PCSZ pszPathName, ULONG ulInfoLevel,
                    PVOID pInfoBuf, ULONG cbInfoBuf);
-APIRET APIENTRY DosQueryVerify(BOOL32 pBool);
+APIRET APIENTRY DosQueryVerify(BOOL32 *pBool);
 APIRET APIENTRY DosRead(HFILE hFile, PVOID pBuffer, ULONG cbRead, PULONG pcbActual);
 APIRET APIENTRY DosResetBuffer(HFILE hFile);
 APIRET APIENTRY DosSetCurrentDir(PCSZ pszDir);
@@ -824,6 +848,32 @@ APIRET APIENTRY DosUnwindException(PEXCEPTIONREGISTRATIONRECORD phandler,
 
 #if defined(INCL_DOSRESOURCES)
 
+#define RT_POINTER      1
+#define RT_BITMAP       2
+#define RT_MENU         3
+#define RT_DIALOG       4
+#define RT_STRING       5
+#define RT_FONTDIR      6
+#define RT_FONT         7
+#define RT_ACCELTABLE   8
+#define RT_RCDATA       9
+#define RT_MESSAGE      10
+#define RT_DLGINCLUDE   11
+#define RT_VKEYTBL      12
+#define RT_KEYTBL       13
+#define RT_CHARTBL      14
+#define RT_DISPLAYINFO  15
+#define RT_FKASHORT     16
+#define RT_FKALONG      17
+#define RT_HELPTABLE    18
+#define RT_HELPSUBTABLE 19
+#define RT_FDDIR        20
+#define RT_FD           21
+#define RT_MAX          22
+#define RT_RESNAMES     255
+
+#define RF_ORDINALID 0x80000000
+
 APIRET APIENTRY DosFreeResource(PVOID pb);
 APIRET APIENTRY DosGetResource(HMODULE hmod, ULONG idType, ULONG idName, PPVOID ppb);
 APIRET APIENTRY DosQueryResourceSize(HMODULE hmod, ULONG idt, ULONG idn, PULONG pulsize);
@@ -1085,3 +1135,4 @@ APIRET APIENTRY DosTmrQueryTime(PQWORD pqwTmrTime);
 #endif
 
 #endif
+

@@ -336,6 +336,9 @@ USHORT APIENTRY16 MouSynch(USHORT IOWait);
 #define VR_VIOENDPOPUP       0x40000000
 #define VR_VIOPRTSCTOGGLE    0x80000000
 
+#define ANSI_ON  1
+#define ANSI_OFF 0
+
 #define VGMT_OTHER         1
 #define VGMT_GRAPHICS      2
 #define VGMT_DISABLEBURST  4
@@ -518,3 +521,4 @@ USHORT APIENTRY16 VioWrtNChar(PBYTE Cell, USHORT Times, USHORT Row, USHORT Colum
 USHORT APIENTRY16 VioWrtTTY(PCH CharStr, USHORT Length, HVIO VioHandle);
 
 #endif
+
