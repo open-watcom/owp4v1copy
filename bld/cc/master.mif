@@ -226,7 +226,7 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps
 !else
         @%append $^&.lnk $(cg_debug_libs)
 !endif
-        $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
+        $(linker) $(mode_lflags) @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
         $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_dirs_sys) cc.rc $^@
 !endif
