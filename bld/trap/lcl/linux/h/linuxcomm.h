@@ -256,11 +256,20 @@ extern int      DelOneLib( struct link_map * );
 extern void     AddProcess( void );
 extern void     DelProcess( void );
 extern char     *dbg_strcpy( char *, const char * );
+extern unsigned ReadMem( void *ptr, addr_off offv, unsigned size );
+extern unsigned WriteMem( void *ptr, addr_off offv, unsigned size );
+
 
 extern void print_msg( const char *format, ... );
 
 /* Copy of parent's environment */
 extern char     **dbg_environ;
+
+/* Global variables */
+extern pid_t    pid;
+extern long     orig_eax;
+extern long     last_eip;
+
 
 /* Internal debugging functions */
 

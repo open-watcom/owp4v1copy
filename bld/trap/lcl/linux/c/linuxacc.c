@@ -47,32 +47,27 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <limits.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include "trpimp.h"
 #include "trperr.h"
-#include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
-#include "dbg386.h"
 #include "exeelf.h"
 #include "linuxcomm.h"
+#if defined(MD_x86)
 #include "x86cpu.h"
+#include "dbg386.h"
+#endif
 
 u_short                 flatCS;
 u_short                 flatDS;
 pid_t                   pid;
+long                    orig_eax;
+long                    last_eip;
 
 static pid_t            OrigPGrp;
-static watch_point      wpList[ MAX_WP ];
-static int              wpCount = 0;
 static int              attached;
-static long             orig_eax;
-static long             last_eip;
 static int              last_sig;
 static int              at_end;
 static struct r_debug   rdebug;         /* Copy of debuggee's r_debug (if present) */
@@ -97,14 +92,14 @@ void OutNum( unsigned long i )
     do {
         *--ptr = ( i % 16 ) + '0';
         if( *ptr > '9' )
-	    *ptr += 'A' - '9' - 1;
+        *ptr += 'A' - '9' - 1;
         i /= 16;
     } while( i != 0 );
     Out( ptr );
 }
 #endif
 
-static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
+unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
 {
     char    *data = ptr;
     int     count;
@@ -163,7 +158,7 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
     return( size );
 }
 
-static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
+unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 {
     char    *data = ptr;
     int     count;
@@ -179,7 +174,7 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
     /* Now handle last partial read if neccesary */
     if( count ) {
         u_long  val;
-	
+    
         if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
             return( size - count );
         switch( count ) {
@@ -195,7 +190,7 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
             *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
             break;
         }
-	count = 0;
+    count = 0;
     }
     return( size - count );
 }
@@ -255,17 +250,17 @@ int Get_ld_info( struct r_debug *debug_ptr, struct r_debug **dbg_rdebug_ptr )
     read_len = sizeof( loc_dyn );
     if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
         Out( "Get_ld_info: failed to copy first dynamic entry\n" );
-	return( FALSE );
+    return( FALSE );
     }
     while( loc_dyn.d_tag != DT_NULL ) {
         if( loc_dyn.d_tag == DT_DEBUG ) {
             rdebug = (struct r_debug *)loc_dyn.d_un.d_ptr;
-	    break;
+        break;
         }
-	dbg_dyn++;
+    dbg_dyn++;
         if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
             Out( "Get_ld_info: failed to copy dynamic entry\n" );
-	    return( FALSE );
+        return( FALSE );
         }
     }
     if( rdebug == NULL ) {
@@ -296,11 +291,11 @@ char *dbg_strcpy( char *s1, const char *s2 )
             OutNum( (addr48_off)s2 );
             Out( "\n" );
             return( NULL );
-	}
+    }
         *dst++ = c;
-	++s2;
+    ++s2;
     } while( c );
-    
+
     return( s1 );
 }
 
@@ -318,7 +313,7 @@ int GetLinkMap( struct link_map *dbg_lmap, struct link_map *local_lmap )
         Out( "\n" );
         return( FALSE );
     }
-    return( TRUE ); 
+    return( TRUE );
 }
 
 unsigned ReqGet_sys_config( void )
@@ -400,272 +395,16 @@ unsigned ReqWrite_mem( void )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqRead_io( void )
-{
-    read_io_req *acc;
-    void        *ret;
-    unsigned    len;
-
-    /* Perform I/O on the target machine on behalf of the debugger.
-     * Since there are no kernel APIs in Linux to do this, we just
-     * enable IOPL and use regular I/O. We will bail if we can't get
-     * IOPL=3, so the debugger trap file will need to be run as root
-     * before it can be used for I/O access.
-     */
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    if( iopl( 3 ) == 0 ) {
-        len = acc->len;
-        switch( len ) {
-        case 1:
-            *((unsigned_8*)ret) = inpb( acc->IO_offset );
-            break;
-        case 2:
-            *((unsigned_16*)ret) = inpw( acc->IO_offset );
-            break;
-        case 4:
-            *((unsigned_32*)ret) = inpd( acc->IO_offset );
-            break;
-        }
-    } else {
-        len = 0;
-    }
-    return( len );
-}
-
-unsigned ReqWrite_io( void )
-{
-    write_io_req    *acc;
-    write_io_ret    *ret;
-    void            *data;
-    unsigned        len;
-
-    /* Perform I/O on the target machine on behalf of the debugger.
-     * Since there are no kernel APIs in Linux to do this, we just
-     * enable IOPL and use regular I/O. We will bail if we can't get
-     * IOPL=3, so the debugger trap file will need to be run as root
-     * before it can be used for I/O access.
-     */
-    acc = GetInPtr( 0 );
-    data = GetInPtr( sizeof( *acc ) );
-    len = GetTotalSize() - sizeof( *acc );
-    ret = GetOutPtr( 0 );
-    if( iopl( 3 ) == 0 ) {
-        ret->len = len;
-        switch( len ) {
-        case 1:
-            outpb( acc->IO_offset, *((unsigned_8*)data) );
-            break;
-        case 2:
-            outpw( acc->IO_offset, *((unsigned_16*)data) );
-            break;
-        case 4:
-            outpd( acc->IO_offset, *((unsigned_32*)data) );
-            break;
-        }
-    } else {
-        ret->len = 0;
-    }
-    return( sizeof( *ret ) );
-}
-
 static int GetFlatSegs( u_short *cs, u_short *ds )
 {
     user_regs_struct    regs;
 
     if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         *cs = regs.cs;
-	*ds = regs.ds;
-	return( TRUE );
+    *ds = regs.ds;
+    return( TRUE );
     }
     return( FALSE );
-}
-
-static void ReadCPU( struct x86_cpu *r )
-{
-    user_regs_struct    regs;
-
-    memset( r, 0, sizeof( *r ) );
-    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
-        last_eip = regs.eip;
-        orig_eax = regs.orig_eax;
-        r->eax = regs.eax;
-        r->ebx = regs.ebx;
-        r->ecx = regs.ecx;
-        r->edx = regs.edx;
-        r->esi = regs.esi;
-        r->edi = regs.edi;
-        r->ebp = regs.ebp;
-        r->esp = regs.esp;
-        r->eip = regs.eip;
-        r->efl = regs.eflags;
-        r->cs = regs.cs;
-        r->ds = regs.ds;
-        r->ss = regs.ss;
-        r->es = regs.es;
-        r->fs = regs.fs;
-        r->gs = regs.gs;
-    }
-}
-
-static void ReadFPU( struct x86_fpu *r )
-{
-    user_i387_struct    regs;
-
-    memset( r, 0, sizeof( *r ) );
-    if( sys_ptrace( PTRACE_GETFPREGS, pid, 0, &regs ) == 0 ) {
-        r->cw = regs.cwd;
-        r->sw = regs.swd;
-        r->tag = regs.twd;
-        r->ip_err.p.offset = regs.fip;
-        r->ip_err.p.segment = regs.fcs;
-        r->op_err.p.offset = regs.foo;
-        r->op_err.p.segment = regs.fos;
-        memcpy( r->reg, regs.st_space, sizeof( r->reg ) );
-    }
-}
-
-static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
-{
-    user_fxsr_struct    regs;
-    int                 i;
-
-    memset( r, 0, sizeof( *r ) );
-    memset( x, 0, sizeof( *x ) );
-    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
-        r->cw = regs.cwd;
-        r->sw = regs.swd;
-        r->tag = regs.twd;
-        r->ip_err.p.offset = regs.fip;
-        r->ip_err.p.segment = regs.fcs;
-        r->op_err.p.offset = regs.foo;
-        r->op_err.p.segment = regs.fos;
-        for( i = 0; i < 8; i++ )
-            memcpy( &r->reg[i], &regs.st_space[i], sizeof( r->reg[0] ) );
-        memcpy( x->xmm, regs.xmm_space, sizeof( x->xmm ) );
-        x->mxcsr = regs.mxcsr;
-    }
-}
-
-unsigned ReqRead_cpu( void )
-{
-    ReadCPU( GetOutPtr( 0 ) );
-    return( sizeof( struct x86_cpu ) );
-}
-
-unsigned ReqRead_fpu( void )
-{
-    ReadFPU( GetOutPtr( 0 ) );
-    return( sizeof( struct x86_fpu ) );
-}
-
-unsigned ReqRead_regs( void )
-{
-    mad_registers   *mr;
-
-    mr = GetOutPtr( 0 );
-    ReadCPU( &mr->x86.cpu );
-    ReadFPUXMM( &mr->x86.fpu, &mr->x86.xmm );
-    return( sizeof( mr->x86 ) );
-}
-
-static void WriteCPU( struct x86_cpu *r )
-{
-    user_regs_struct    regs;
-
-    /* the kernel uses an extra register orig_eax
-       If orig_eax >= 0 then it will check eax for
-       certain values to see if it needs to restart a
-       system call.
-       If it restarts a system call then it will set
-       eax=orig_eax and eip-=2.
-       If orig_eax < 0 then eax is used as is.
-    */
-
-    regs.eax = r->eax;
-    regs.ebx = r->ebx;
-    regs.ecx = r->ecx;
-    regs.edx = r->edx;
-    regs.esi = r->esi;
-    regs.edi = r->edi;
-    regs.ebp = r->ebp;
-    regs.esp = r->esp;
-    regs.eip = r->eip;
-    if( regs.eip != last_eip ) {
-        /* eip is actually changed! This means that
-           the orig_eax value does not make sense;
-           set it to -1 */
-        orig_eax = -1;
-        last_eip = regs.eip;
-    }
-    regs.orig_eax = orig_eax;
-    regs.eflags = r->efl;
-    regs.cs = r->cs;
-    regs.ds = r->ds;
-    regs.ss = r->ss;
-    regs.es = r->es;
-    regs.fs = r->fs;
-    regs.gs = r->gs;
-    sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
-}
-
-static void WriteFPU( struct x86_fpu *r )
-{
-    user_i387_struct    regs;
-
-    regs.cwd = r->cw;
-    regs.swd = r->sw;
-    regs.twd = r->tag;
-    regs.fip = r->ip_err.p.offset;
-    regs.fcs = r->ip_err.p.segment;
-    regs.foo = r->op_err.p.offset;
-    regs.fos = r->op_err.p.segment;
-    memcpy( regs.st_space, r->reg, sizeof( r->reg ) );
-    sys_ptrace( PTRACE_SETFPREGS, pid, 0, &regs );
-}
-
-static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
-{
-    user_fxsr_struct    regs;
-    int                 i;
-
-    memset( &regs, 0, sizeof( regs ) );
-    if( sys_ptrace( PTRACE_GETFPXREGS, pid, 0, &regs ) == 0 ) {
-        regs.cwd = r->cw;
-        regs.swd = r->sw;
-        regs.twd = r->tag;
-        regs.fip = r->ip_err.p.offset;
-        regs.fcs = r->ip_err.p.segment;
-        regs.foo = r->op_err.p.offset;
-        regs.fos = r->op_err.p.segment;
-        for( i = 0; i < 8; i++ )
-            memcpy( &regs.st_space[i], &r->reg[i], sizeof( r->reg[0] ) );
-        memcpy( regs.xmm_space, x->xmm, sizeof( x->xmm ) );
-        regs.mxcsr = x->mxcsr;
-        sys_ptrace( PTRACE_SETFPXREGS, pid, 0, &regs );
-    }
-}
-
-unsigned ReqWrite_cpu( void )
-{
-    WriteCPU( GetInPtr( sizeof( write_cpu_req ) ) );
-    return( 0 );
-}
-
-unsigned ReqWrite_fpu()
-{
-    WriteFPU( GetInPtr( sizeof( write_fpu_req ) ) );
-    return( 0 );
-}
-
-unsigned ReqWrite_regs( void )
-{
-    mad_registers   *mr;
-
-    mr = GetInPtr( sizeof( write_regs_req ) );
-    WriteCPU( &mr->x86.cpu );
-    WriteFPUXMM( &mr->x86.fpu, &mr->x86.xmm );
-    return( 0 );
 }
 
 static int SplitParms( char *p, char *args[], unsigned len )
@@ -741,7 +480,7 @@ static int GetExeNameFromPid( pid_t pid, char *buffer, int max_len )
 {
     char        procfile[24];
     int         len;
-    
+
     sprintf( procfile, "/proc/%d/exe", pid );
     len = readlink( procfile, buffer, max_len );
     if( len < 0 )
@@ -854,10 +593,10 @@ unsigned ReqProg_load( void )
             if( WSTOPSIG( status ) != SIGTRAP )
                 goto fail;
         }
-	if( !GetFlatSegs( &flatCS, &flatDS ) )
-	    goto fail;
+    if( !GetFlatSegs( &flatCS, &flatDS ) )
+        goto fail;
         dbg_dyn = GetDebuggeeDynSection( exe_name );
-	AddProcess();
+    AddProcess();
         errno = 0;
     }
     ret->err = errno;
@@ -889,7 +628,7 @@ unsigned ReqProg_kill( void )
             attached = FALSE;
         } else {
             int status;
-	    
+    
             sys_ptrace( PTRACE_KILL, pid, 0, 0 );
             waitpid( pid, &status, 0 );
         }
@@ -925,138 +664,6 @@ unsigned ReqClear_break( void )
     acc = GetInPtr( 0 );
     opcode = acc->old;
     WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
-    return( 0 );
-}
-
-u_long GetDR6( void )
-{
-    u_long  val;
-    
-    sys_ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
-    return( val );
-}
-
-static void SetDR6( u_long val )
-{
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( 6 ), (void *)val );
-}
-
-static void SetDR7( u_long val )
-{
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val );
-}
-
-static u_long SetDRn( int i, u_long linear, long type )
-{
-    sys_ptrace( PTRACE_POKEUSER, pid, O_DEBUGREG( i ), (void *)linear );
-    return( ( type << DR7_RWLSHIFT( i ) )
-//        | ( DR7_GEMASK << DR7_GLSHIFT( i ) ) | DR7_GE
-          | ( DR7_LEMASK << DR7_GLSHIFT( i ) ) | DR7_LE );
-}
-
-void ClearDebugRegs( void )
-{
-    int i;
-
-    for( i = 0; i < 4; i++)
-        SetDRn( i, 0, 0 );
-    SetDR6( 0 );
-    SetDR7( 0 );
-}
-
-int SetDebugRegs( void )
-{
-    int         needed,i,dr;
-    u_long      dr7;
-    watch_point *wp;
-
-    needed = 0;
-    for( i = 0; i < wpCount; i++)
-        needed += wpList[i].dregs;
-    if( needed > 4 )
-        return( FALSE );
-    dr  = 0;
-    dr7 = 0;
-    for( i = 0, wp = wpList; i < wpCount; i++, wp++ ) {
-        dr7 |= SetDRn( dr, wp->linear, DRLen( wp->len ) | DR7_BWR );
-        dr++;
-        if( wp->dregs == 2 ) {
-            dr7 |= SetDRn( dr, wp->linear+wp->len, DRLen( wp->len ) | DR7_BWR );
-            dr++;
-        }
-    }
-    SetDR7( dr7 );
-    return( TRUE );
-}
-
-int CheckWatchPoints( void )
-{
-    u_long  value;
-    int     i;
-
-    for( i = 0; i < wpCount; i++ ) {
-        ReadMem( &value, wpList[i].loc.offset, sizeof( value ) );
-        if( value != wpList[i].value ) {
-            return( TRUE );
-        }
-    }
-    return( FALSE );
-}
-
-unsigned ReqSet_watch( void )
-{
-    set_watch_req   *acc;
-    set_watch_ret   *ret;
-    u_long          value;
-    watch_point     *curr;
-    u_long          linear;
-    unsigned        i,needed;
-
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    ret->multiplier = 100000;
-    ret->err = 1;
-    if( wpCount < MAX_WP ) {
-        ret->err = 0;
-        curr = wpList + wpCount;
-        curr->loc.segment = acc->watch_addr.segment;
-        curr->loc.offset = acc->watch_addr.offset;
-        ReadMem( &value, acc->watch_addr.offset, sizeof( dword ) );
-        curr->value = value;
-        curr->len = acc->size;
-        wpCount++;
-        curr->linear = linear = acc->watch_addr.offset;
-        curr->linear &= ~(curr->len-1);
-        curr->dregs = (linear & (curr->len-1) ) ? 2 : 1;
-        needed = 0;
-        for( i = 0; i < wpCount; ++i ) {
-            needed += wpList[ i ].dregs;
-        }
-        if( needed <= 4 ) ret->multiplier |= USING_DEBUG_REG;
-    }
-    return( sizeof( *ret ) );
-}
-
-unsigned ReqClear_watch( void )
-{
-    clear_watch_req *acc;
-    watch_point     *dst;
-    watch_point     *src;
-    int             i;
-
-    acc = GetInPtr( 0 );
-    dst = src = wpList;
-    for( i = 0; i < wpCount; i++ ) {
-        if( src->loc.segment != acc->watch_addr.segment
-                || src->loc.offset != acc->watch_addr.offset ) {
-            dst->loc.offset = src->loc.offset;
-            dst->loc.segment = src->loc.segment;
-            dst->value = src->value;
-            dst++;
-        }
-        src++;
-    }
-    wpCount--;
     return( 0 );
 }
 
@@ -1126,11 +733,11 @@ static unsigned ProgRun( int step )
                 break;
             default:
                 /* For signals that we do not wish to handle, we need
-                 * to continue the debuggee until we get a signal 
+                 * to continue the debuggee until we get a signal
                  * that we need to handle
                  */
                 debug_continue = TRUE;
-                break;             
+                break;
             }
         } else if( WIFEXITED( status ) ) {
             Out( "WIFEXITED\n" );
@@ -1139,7 +746,7 @@ static unsigned ProgRun( int step )
             ptrace_sig = 0;
             goto end;
         }
-    } while( debug_continue );        
+    } while( debug_continue );
     if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         Out( " eip " );
         OutNum( regs.eip );
@@ -1149,11 +756,11 @@ static unsigned ProgRun( int step )
                 int         psig = 0;
                 void        (*oldsig)(int);
                 unsigned_8  opcode = BRK_POINT;
-		
+        
                 /* The dynamic linker breakpoint was hit, meaning that
                  * libraries are being loaded or unloaded. This gets a bit
                  * tricky because we must restore the original code that was
-                 * at the breakpoint and execute it, but we still want to 
+                 * at the breakpoint and execute it, but we still want to
                  * keep the breakpoint.
                  */
                 WriteMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
@@ -1210,12 +817,12 @@ static unsigned ProgRun( int step )
     if( !have_rdebug && (dbg_dyn != NULL) ) {
         if( Get_ld_info( &rdebug, &dbg_rdebug ) ) {
             unsigned_8  opcode;
-	    
+    
             AddInitialLibs( rdebug.r_map );
             have_rdebug = TRUE;
             ret->conditions |= COND_LIBRARIES;
-	    
-            /* Set a breakpoint in dynamic linker. That way we can be 
+    
+            /* Set a breakpoint in dynamic linker. That way we can be
              * informed on dynamic library load/unload events.
              */
             ReadMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
@@ -1245,7 +852,7 @@ unsigned ReqProg_go( void )
 unsigned ReqRedirect_stdin( void  )
 {
     redirect_stdin_ret *ret;
-    
+
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
@@ -1254,7 +861,7 @@ unsigned ReqRedirect_stdin( void  )
 unsigned ReqRedirect_stdout( void  )
 {
     redirect_stdout_ret *ret;
-    
+
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
