@@ -197,6 +197,7 @@ typedef enum {
     ORL_SYM_TYPE_FILE                   = 0x0008, // symbol gives info on a source file
     ORL_SYM_TYPE_FUNC_INFO              = 0x0010, // symbol gives additional info on a function
     ORL_SYM_TYPE_GROUP                  = 0x0020, // symbol refers to an OMF group
+    ORL_SYM_TYPE_NOTYPE                 = 0x0040, // symbol without a type
     // and at most one of these:
     ORL_SYM_TYPE_ABSOLUTE               = 0x0100, // symbol has an absolute value
     ORL_SYM_TYPE_COMMON                 = 0x0200, // symbol labels a common unallocated block (Elf)

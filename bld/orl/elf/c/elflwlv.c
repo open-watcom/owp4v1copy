@@ -86,7 +86,7 @@ orl_return ElfCreateSymbolHandles( elf_sec_handle elf_sec_hnd )
                 current->type = ORL_SYM_TYPE_FILE;
                 break;
             default:
-                current->type = ORL_SYM_TYPE_NONE; // ?
+                current->type = ORL_SYM_TYPE_NOTYPE;
                 break;
         }
         switch( current->symbol->st_shndx ) {
