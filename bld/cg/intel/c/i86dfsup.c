@@ -65,6 +65,7 @@ extern  hw_reg_set      Low64Reg(hw_reg_set);
 
 extern  seg_id          DbgSegDef( char *, char *, int  );
 extern  hw_reg_set      StackReg(void);
+extern  hw_reg_set      DisplayReg(void);
 extern  void            OutBckExport( char *name, bool is_export );
 extern  void            BackImpPtr( char *nm, bck_info *bck, offset plus );
 
@@ -250,6 +251,14 @@ extern uint DFStkReg( void ){
 
     stk = StackReg();
     ret = DFRegMap( stk );
+    return( ret );
+}
+extern uint DFDisplayReg( void ){
+    dw_regs    ret;
+    hw_reg_set dsp;
+
+    dsp = DisplayReg();
+    ret = DFRegMap( dsp );
     return( ret );
 }
 #define ABBREV_NAME  "___DFABBREV"

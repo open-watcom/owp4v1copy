@@ -205,7 +205,6 @@ dw_handle DWENTRY DWBeginSubroutine(
 
     _Validate( name != NULL );
     call_type = call_type;
-    frame_base_loc = frame_base_loc;
     new = GetHandle( cli );
     if( flags & DW_FLAG_DECLARATION ){
         abbrev = AB_SUBROUTINE_DECL;
@@ -278,6 +277,12 @@ dw_handle DWENTRY DWBeginSubroutine(
     }
     /* AT_address_class */
     Info8( cli, (flags & DW_PTR_TYPE_MASK) >> DW_PTR_TYPE_SHIFT );
+    /* AT_frame_base */
+    if( frame_base_loc != NULL ){
+        EmitLocExpr( cli, DW_DEBUG_INFO, sizeof( uint_8),frame_base_loc );
+    }else{
+        EmitLocExprNull( cli, DW_DEBUG_INFO, sizeof( uint_8) );
+    }
     EndDIE( cli );
     StartChildren( cli );
     return( new );

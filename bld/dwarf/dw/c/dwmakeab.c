@@ -404,6 +404,7 @@ abbrev_data const abbrevInfo[] = {
             DW_AT_low_pc,               DW_FORM_addr,
             DW_AT_high_pc,              DW_FORM_addr,
             DW_AT_address_class,        DW_FORM_data1,
+            DW_AT_frame_base,           DW_FORM_block1,
             0
         }
     },
@@ -422,6 +423,7 @@ abbrev_data const abbrevInfo[] = {
             DW_AT_artificial,           DW_FORM_flag,
             DW_AT_declaration,          DW_FORM_flag,
             DW_AT_address_class,        DW_FORM_data1,
+            DW_AT_frame_base,           DW_FORM_block1,
             0
         }
     },

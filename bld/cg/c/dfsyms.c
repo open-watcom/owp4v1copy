@@ -91,6 +91,7 @@ extern  void            DoBigBckPtr(back_handle,offset);
 extern dw_loc_handle    DBGLoc2DF( dbg_loc loc );
 extern dw_loc_id        DBGLoc2DFCont( dbg_loc loc, dw_loc_id df_locid );
 extern uint             DFStkReg( void );
+extern uint             DFDisplayReg( void );
 extern void             DFFEPtrRef( sym_handle sym );
 extern char             GetMemModel( void );
 extern  bool            NeedBaseSet();
@@ -849,6 +850,19 @@ static dw_loc_handle  RetLoc( uint_32 ret_offset ){
     df_loc = DWLocFini( Client, locid );
     return( df_loc );
 }
+
+static dw_loc_handle  FrameLoc( void ){
+/**** make a loc for frame  address *************/
+    uint            dsp;
+    dw_loc_id       locid;
+    dw_loc_handle   df_loc;
+
+    locid = DWLocInit( Client );
+    dsp = DFDisplayReg();
+    DWLocReg( Client, locid, dsp );
+    df_loc = DWLocFini( Client, locid );
+    return( df_loc );
+}
 #endif
 static dw_loc_id StkLoc( uint_32 stk_offset, dw_loc_id locid ){
 /**** make a loc for stack  address *************/
@@ -933,6 +947,7 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
     call_class          *class_ptr;
     uint                flags;
     dw_loc_handle       dw_retloc;
+    dw_loc_handle       dw_frameloc;
     dw_loc_handle       dw_segloc;
     dbg_local           *parm;
     dbg_local           *junk;
@@ -974,6 +989,7 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
     DBLocFini( rtn->obj_loc );
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
     dw_retloc = RetLoc( rtn->ret_offset );
+    dw_frameloc = FrameLoc();
     if( _IsTargetModel( FLAT_MODEL ) ) {
         dw_segloc = NULL;
     }else{
@@ -981,6 +997,7 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
     }
 #else
     dw_retloc = NULL;
+    dw_frameloc = NULL;
     dw_segloc = NULL;
 #endif
     bck = FEBack( sym );
@@ -988,7 +1005,7 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
     Pc_Low  = bck;
     Pc_High = rtn->end_lbl;
     obj = DWBeginSubroutine( Client, 0, tipe, dw_retloc,
-                     NULL, NULL, rtn->obj_type,
+                     dw_frameloc, NULL, rtn->obj_type,
                      dw_segloc, name, rtn->pro_size, flags );
     if( attr &  FE_GLOBAL ){
         if( rtn->obj_type != DBG_NIL_TYPE ) {
@@ -1000,6 +1017,9 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
     }
     if( dw_retloc != NULL ){
         DWLocTrash( Client, dw_retloc );
+    }
+    if( dw_frameloc != NULL ){
+        DWLocTrash( Client, dw_frameloc );
     }
     if( dw_segloc != NULL ){
         DWLocTrash( Client, dw_segloc );
