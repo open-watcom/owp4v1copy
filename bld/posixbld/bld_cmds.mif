@@ -32,7 +32,7 @@ COMMANDS = &
 #    split &
 #    strings &
 #    tail &
-#    tee &
+    tee &
 #    tr &
 #    true &
 #    trunc &
