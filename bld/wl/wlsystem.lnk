@@ -218,6 +218,12 @@ system begin qnx386
     libpath %WATCOM%\lib386\qnx
     format qnx ^
 end
+system begin linux
+    option osname='Linux x86'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\linux
+    format elf
+end
 system begin nt
     option osname='Windows NT character-mode'
     libpath %WATCOM%\lib386

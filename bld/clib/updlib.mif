@@ -97,6 +97,7 @@ libpath_winnt_axp       =libaxp\nt
 libpath_generic_ppc     =libppc
 libpath_winnt_ppc       =libppc\nt
 libpath_os2_ppc         =libppc\os2
+libpath_linux_386       =lib386\linux
 updlibpath =$(libpath_$(system)_$(processor))
 
 update : .symbolic $(libname).lib

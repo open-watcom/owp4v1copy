@@ -22,6 +22,7 @@ include_c_osi      =;$(hdr_dir)\dos
 include_c_qnx      =;$(hdr_dir)\qnx
 include_c_windows  =;$(inc_dirs_sys_win);$(hdr_dir)\dos
 include_c_winnt    =;$(inc_dirs_sys_nt);$(hdr_dir)\dos
+include_c_linux    =;$(inc_dirs_sys_linux);$(hdr_dir)\dos
 !else
 include_c_generic  =;$(%watcom)\h
 include_c_kanji    =;$(%watcom)\h
@@ -44,6 +45,7 @@ include_c_winnt_386=$(inc_dirs_sys_nt)
 include_c_winnt_axp=$(inc_dirs_sys_nt)
 include_c_winnt_ppc=$(inc_dirs_sys_nt)
 include_c_winnt    =$(inc_dirs_sys_nt);$(%watcom)\h
+include_c_linux    =$(inc_dirs_sys_linux);$(%watcom)\h
 !endif
 
 include_c_path =$(include_default)$(include_c_$(system))$(include_watcom)
@@ -63,5 +65,6 @@ include_a_osi      =
 include_a_qnx      =
 include_a_windows  =
 include_a_winnt    =
+include_a_linux    =
 
 include_a_path =$(include_default)$(include_a_$(system))$(include_watcom)
