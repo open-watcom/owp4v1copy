@@ -743,47 +743,47 @@ madinter.obj :: madinter.c $(dig_dir)\h\mad.str
 pmfont=-font=
 pmfontj=-font=
 dlgayn.dlg : $(hdir)\dlgayn.dlg
-        parsedlg $(pmfont) $(hdir)\dlgayn.dlg dlgayn.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgayn.dlg dlgayn.dlg
 dlgbrk.dlg : $(hdir)\dlgbrk.dlg
-        parsedlg $(pmfont) $(hdir)\dlgbrk.dlg dlgbrk.dlg
+        *-parsedlg $(pmfont) $(hdir)\dlgbrk.dlg dlgbrk.dlg
 dlgcmd.dlg : $(hdir)\dlgcmd.dlg
-        parsedlg $(pmfont) $(hdir)\dlgcmd.dlg dlgcmd.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgcmd.dlg dlgcmd.dlg
 dlglist.dlg : $(hdir)\dlglist.dlg
-        parsedlg $(pmfont) $(hdir)\dlglist.dlg dlglist.dlg
+        -parsedlg $(pmfont) $(hdir)\dlglist.dlg dlglist.dlg
 dlgnewp.dlg : $(hdir)\dlgnewp.dlg
-        parsedlg $(pmfont) $(hdir)\dlgnewp.dlg dlgnewp.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgnewp.dlg dlgnewp.dlg
 dlgoptn.dlg : $(hdir)\dlgoptn.dlg
-        parsedlg $(pmfont) $(hdir)\dlgoptn.dlg dlgoptn.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgoptn.dlg dlgoptn.dlg
 dlgvarx.dlg : $(hdir)\dlgvarx.dlg
-        parsedlg $(pmfont) $(hdir)\dlgvarx.dlg dlgvarx.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgvarx.dlg dlgvarx.dlg
 dlgamb.dlg : $(hdir)\dlgamb.dlg
-        parsedlg $(pmfont) $(hdir)\dlgamb.dlg dlgamb.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgamb.dlg dlgamb.dlg
 dlgwind.dlg : $(hdir)\dlgwind.dlg
-        parsedlg $(pmfont) $(hdir)\dlgwind.dlg dlgwind.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgwind.dlg dlgwind.dlg
 dlgstk.dlg : $(hdir)\dlgstk.dlg
-        parsedlg $(pmfont) $(hdir)\dlgstk.dlg dlgstk.dlg
+        -parsedlg $(pmfont) $(hdir)\dlgstk.dlg dlgstk.dlg
 dlghis.dlg : $(hdir)\dlghis.dlg
-        parsedlg $(pmfont) $(hdir)\dlghis.dlg dlghis.dlg
+        -parsedlg $(pmfont) $(hdir)\dlghis.dlg dlghis.dlg
 japayn.dlg : $(hdir)\japayn.dlg
-        parsedlg $(pmfontj) $(hdir)\japayn.dlg japayn.dlg
+        -parsedlg $(pmfontj) $(hdir)\japayn.dlg japayn.dlg
 japbrk.dlg : $(hdir)\japbrk.dlg
-        parsedlg $(pmfontj) $(hdir)\japbrk.dlg japbrk.dlg
+        -parsedlg $(pmfontj) $(hdir)\japbrk.dlg japbrk.dlg
 japcmd.dlg : $(hdir)\japcmd.dlg
-        parsedlg $(pmfontj) $(hdir)\japcmd.dlg japcmd.dlg
+        -parsedlg $(pmfontj) $(hdir)\japcmd.dlg japcmd.dlg
 japlist.dlg : $(hdir)\japlist.dlg
-        parsedlg $(pmfontj) $(hdir)\japlist.dlg japlist.dlg
+        -parsedlg $(pmfontj) $(hdir)\japlist.dlg japlist.dlg
 japnewp.dlg : $(hdir)\japnewp.dlg
-        parsedlg $(pmfontj) $(hdir)\japnewp.dlg japnewp.dlg
+        -parsedlg $(pmfontj) $(hdir)\japnewp.dlg japnewp.dlg
 japoptn.dlg : $(hdir)\japoptn.dlg
-        parsedlg $(pmfontj) $(hdir)\japoptn.dlg japoptn.dlg
+        -parsedlg $(pmfontj) $(hdir)\japoptn.dlg japoptn.dlg
 japvarx.dlg : $(hdir)\japvarx.dlg
-        parsedlg $(pmfontj) $(hdir)\japvarx.dlg japvarx.dlg
+        -parsedlg $(pmfontj) $(hdir)\japvarx.dlg japvarx.dlg
 japamb.dlg : $(hdir)\japamb.dlg
-        parsedlg $(pmfontj) $(hdir)\japamb.dlg japamb.dlg
+        -parsedlg $(pmfontj) $(hdir)\japamb.dlg japamb.dlg
 japwind.dlg : $(hdir)\japwind.dlg
-        parsedlg $(pmfontj) $(hdir)\japwind.dlg japwind.dlg
+        -parsedlg $(pmfontj) $(hdir)\japwind.dlg japwind.dlg
 japstk.dlg : $(hdir)\japstk.dlg
-        parsedlg $(pmfontj) $(hdir)\japstk.dlg japstk.dlg
+        -parsedlg $(pmfontj) $(hdir)\japstk.dlg japstk.dlg
 japhis.dlg : $(hdir)\japhis.dlg
-        parsedlg $(pmfontj) $(hdir)\japhis.dlg japhis.dlg
+        -parsedlg $(pmfontj) $(hdir)\japhis.dlg japhis.dlg
 !endif
