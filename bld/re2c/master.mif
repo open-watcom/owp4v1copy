@@ -1,0 +1,27 @@
+proj_name = re2c
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = $(re2c_dir)\h
+
+.cpp: ..\cpp
+
+.cpp.obj: $($(proj_name)_autodepends)
+        set include=$(inc_path)
+        $(cpp) -ox-zq-mf-zc $(extra_c_flags_$[&) $[@
+
+objs =                  &
+       actions.obj      &
+       code.obj         &
+       dfa.obj          &
+       main.obj         &
+       memchk.obj       &
+       parser.obj       &
+       scanner.obj      &
+       substr.obj       &
+       translat.obj
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }

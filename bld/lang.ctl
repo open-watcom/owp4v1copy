@@ -15,6 +15,7 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\builder\lang.ctl ]
 [ INCLUDE <devdir>\pmake\lang.ctl ]
 [ INCLUDE <devdir>\yacc\lang.ctl ]
+[ INCLUDE <devdir>\re2c\lang.ctl ]
 [ INCLUDE <devdir>\whpcvt\lang.ctl ]
 [ INCLUDE <devdir>\helpcomp\lang.ctl ]
 [ INCLUDE <devdir>\ssl\lang.ctl ]
