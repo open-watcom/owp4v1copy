@@ -83,6 +83,7 @@ pre_obj_deps += $(intname)01.int
 #
 extra_l_flags_qnx= OPTION stack=16k,offset=24k, res=wcc.u, priv=3
 extra_l_flags_nt = OPTION stack=1024k COMMIT stack=32k
+extra_l_flags_dos = OPTION stack=32k
 
 extra_l_flags = OPTION map, caseexact, quiet
 
@@ -218,7 +219,7 @@ $(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc
         $(linker) $(ldebug_$(host_CPU))  @$^&.lnk
 !ifdef build_rc_$(host_OS)_$(host_CPU)
         $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
-        genverrc ..\rc\r_$(host_OS)$(host_CPU).rc cc.rc $$ $^@ $(patch_level)
+        genverrc $(cc_dir)\rc\r_$(host_OS)$(host_CPU).rc cc.rc $$ $^@ $(patch_level)
         del genverrc.*
         $(rc) -q -bt=$(build_rc_$(host_OS)_$(host_CPU)) cc.rc $^@
 !endif
@@ -257,9 +258,9 @@ linkfile: .procedure
 !ifdef as_lib_$(target_CPU)
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
-$(cc_dir)\h\codei86.gh : ..\a\codei86.asm ..\a\mkcode.c
-        wasm -i=$(watcom_dir)\h ..\a\codei86.asm
-        wcc -zq -ox ..\a\mkcode.c @ipaths
+$(cc_dir)\h\codei86.gh : $(cc_dir)\a\codei86.asm $(cc_dir)\a\mkcode.c
+        wasm -i=$(watcom_dir)\h $(cc_dir)\a\codei86.asm
+        wcc -zq -ox $(cc_dir)\a\mkcode.c @ipaths
 !ifdef __OS2__
         wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
 !else
@@ -270,9 +271,9 @@ $(cc_dir)\h\codei86.gh : ..\a\codei86.asm ..\a\mkcode.c
         erase mkcode.exe
         erase codei86.obj
 
-$(cc_dir)\h\code386.gh : ..\a\code386.asm ..\a\mkcode.c
-        wasm -i=$(watcom_dir)\h ..\a\code386.asm
-        wcc386 -zq $(popt) -ox ..\a\mkcode.c @ipaths
+$(cc_dir)\h\code386.gh : $(cc_dir)\a\code386.asm $(cc_dir)\a\mkcode.c
+        wasm -i=$(watcom_dir)\h $(cc_dir)\a\code386.asm
+        wcc386 -zq $(popt) -ox $(cc_dir)\a\mkcode.c @ipaths
         wcl386 mkcode.obj code386.obj -fe=mkcode -zq
         mkcode
         erase mkcode.obj
@@ -285,26 +286,26 @@ $(cc_dir)\h\codeaxp.gh :
 $(cc_dir)\h\codeppc.gh :
         echo // Dummy file > $@
 
-usage.gh: ../usage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS)  "-f\"%s\0\"" ../usage.sp usage.gh
+usage.gh: $(cc_dir)/usage.sp
+        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS)  "-f\"%s\0\"" $(cc_dir)/usage.sp usage.gh
 
-wcc.u: ../usage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) -u -t8 ../usage.sp wcc.u
-usage01.int : $(fe_misc_dir)\c\usageenc.c ../jusage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) ../jusage.sp usageenc.in
+wcc.u: $(cc_dir)/usage.sp
+        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) -u -t8 $(cc_dir)/usage.sp wcc.u
+usage01.int : $(fe_misc_dir)\c\usageenc.c $(cc_dir)/jusage.sp
+        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) $(cc_dir)/jusage.sp usageenc.in
         $(bld_cl) $[@ $(wcl_util_opts)
         usageenc.exe usageenc.in usage01.int
         del usageenc.*
-msgtxt.gh msgdefs.gh msgattr.gh errors01.int : $(fe_misc_dir)\c\msgencod.c ..\gml\cerrs.gml
+msgtxt.gh msgdefs.gh msgattr.gh errors01.int : $(fe_misc_dir)\c\msgencod.c $(cc_dir)/gml/cerrs.gml
     $(bld_cl) $[@ $(wcl_util_opts)
-    msgencod.exe -i -ip -q -g ..\gml\cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
+    msgencod.exe -i -ip -q -g $(cc_dir)\gml\cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
     del msgencod.*
 $(intname)01.int : $(fe_misc_dir)\c\intlbin.c errors01.int usage01.int
     $(bld_cl) $[@ $(wcl_util_opts)
     intlbin.exe $(intname)
     del intlbin.*
 
-eraseall.obj : ..\compile.gbl
+eraseall.obj : $(cc_dir)/compile.gbl
     if exist *.?bj erase *.?bj
     wtouch eraseall.obj
 
