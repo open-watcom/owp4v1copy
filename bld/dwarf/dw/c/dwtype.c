@@ -95,7 +95,7 @@ dw_handle DWENTRY DWModifier(
     dw_handle                   hdl,
     uint                        modifiers )
 {
-    dw_handle                   new_hdl;
+    dw_handle                   new_hdl = NULL;
     abbrev_code                 abbrev;
 
     _Validate( hdl != NULL );
