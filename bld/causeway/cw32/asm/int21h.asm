@@ -2,7 +2,7 @@
 ;/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ;
         .386P
-_Int21h segment para public 'extension code' use32
+_Int21h segment para private 'extension code' use32
         assume cs:_Int21h, ds:nothing, es:nothing
 Int21hStart     label byte
 
