@@ -266,26 +266,27 @@ typedef struct assoc_desc {
     key_desc            u;
     char _WCI86FAR      *name;
 } assoc_desc;
+
 static assoc_desc const _WCI86FAR watcomObject[] = {
-    { "A*",  "__internal" },
-    { "BI",  "__onceonly" },
-    { "DA",  "__arrdtorblk" },
-    { "DF",  "__defarg" },
-    { "DI",  "__debuginfo" },
-    { "DO",  "__dtorobjblk" },
-    { "MP",  "__mbrptrthunk" },
-    { "SI",  "__staticinit" },
-    { "TH",  "__throwblk" },
-    { "TI",  "__typeid" },
-    { "TS",  "__typesig" },
-    { "VA",  "__rtti" },
-    { "VB",  "__vbtbl" },
-    { "VF",  "__vftbl" },
-    { "VM",  "__vmtbl" },
-    { "VT",  "__vfthunk" },
-    { "ST",  "__typstattab" },
-    { "CM",  "__stattabcmd" },
-    { "UN",  "<unique>" },
+    { {"A*"},  "__internal" },
+    { {"BI"},  "__onceonly" },
+    { {"DA"},  "__arrdtorblk" },
+    { {"DF"},  "__defarg" },
+    { {"DI"},  "__debuginfo" },
+    { {"DO"},  "__dtorobjblk" },
+    { {"MP"},  "__mbrptrthunk" },
+    { {"SI"},  "__staticinit" },
+    { {"TH"},  "__throwblk" },
+    { {"TI"},  "__typeid" },
+    { {"TS"},  "__typesig" },
+    { {"VA"},  "__rtti" },
+    { {"VB"},  "__vbtbl" },
+    { {"VF"},  "__vftbl" },
+    { {"VM"},  "__vmtbl" },
+    { {"VT"},  "__vfthunk" },
+    { {"ST"},  "__typstattab" },
+    { {"CM"},  "__stattabcmd" },
+    { {"UN"},  "<unique>" },
 };
 #define MAX_WATCOM_OBJECT       num_elements( watcomObject )
 
@@ -293,6 +294,10 @@ static assoc_desc const _WCI86FAR watcomObject[] = {
 int no_errors;
 unsigned errors;
 #endif
+
+static int scoped_name( output_desc *data, state_desc *state );
+static int type_encoding( output_desc *data, state_desc *state );
+static int recursive_mangled_name( output_desc *data, state_desc *state );
 
 static void zapSpace( output_desc *data )
 {
@@ -821,7 +826,7 @@ static int array( output_desc *data, state_desc *state )
 static int function( output_desc *data, state_desc *state )
 {
     auto state_desc new_state;
-    size_t          conv_offset;
+    size_t          conv_offset = 0;
     int             first_arg = 0;
     char            c;
 
