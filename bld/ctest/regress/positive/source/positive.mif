@@ -58,7 +58,7 @@ opt_opt13 = -fpd
 !ifeq arch i86
 # i86 specific
 opt_opt13 = -fpd
-opt_opt29 = -zff
+opt_opt29 = -3 -zff
 opt_opt31 = -zff
 !endif
 
