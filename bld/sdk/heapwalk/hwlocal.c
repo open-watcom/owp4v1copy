@@ -182,7 +182,7 @@ BOOL FormatLocalHeapListItem( char *line, unsigned index ) {
     }
     sprintf( line, "%04X    %04X  %6d %-9s %4d  %-20s",
              item->wAddress,
-             item->hHandle,
+             (UINT)item->hHandle,
              item->wSize,
              flags,
              item->wcLock,
