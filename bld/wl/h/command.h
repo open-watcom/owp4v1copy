@@ -114,6 +114,7 @@ typedef struct cmdfilelist {
     struct cmdfilelist *prev;
     struct cmdfilelist *next;
     f_handle            file;
+    char *              symprefix;
     char *              name;
     tok                 token;
 } cmdfilelist;
@@ -190,6 +191,7 @@ extern cmdfilelist *CmdFile;
 /* routines used in command parser */
 
 extern bool             ProcArgList( bool (*)( void ), tokcontrol );
+extern bool             ProcArgListEx( bool (*)( void ), tokcontrol ,cmdfilelist *resetpoint);
 extern bool             ProcOne( parse_entry *, sep_type, bool );
 extern ord_state        getatoi( unsigned_16 * );
 extern ord_state        getatol( unsigned_32 * );
@@ -198,6 +200,7 @@ extern bool             GetLong( unsigned_32 * );
 extern char *           tostring( void );
 extern char *           totext( void );
 extern bool             GetToken( sep_type, tokcontrol );
+extern bool             GetTokenEx( sep_type, tokcontrol ,cmdfilelist *, bool * pbreset);
 extern void             RestoreParser( void );
 extern void             NewCommandSource( char *, char *, method );
 extern void             SetCommandFile( f_handle, char * );

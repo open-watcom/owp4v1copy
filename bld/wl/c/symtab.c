@@ -56,6 +56,7 @@
 #include "carve.h"
 #include "permdata.h"
 #include "nwpfx.h"
+#include "command.h"
 
 
 #define STATIC_TABSIZE  241  /* should be prime */
@@ -77,8 +78,6 @@ static symbol **    StaticSymPtrs;
 
 static unsigned GlobalHashFn( char *, int );
 static unsigned StaticHashFn( char *, int );
-
-static char	g_szCurrentPrefix[255+1] = {0};
 
 static const unsigned ScatterTable[] = {
 #ifdef __386__
@@ -885,7 +884,7 @@ extern symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix
 	if(NULL == retsym)
 		return NULL;
 
-	if(((NULL != prefix) && (0 != prefixLen)) || (0 != strlen(g_szCurrentPrefix)))
+	if(((NULL != prefix) && (0 != prefixLen)) || (NULL != CmdFile->symprefix))
 	{
 		char * pfxname = alloca(255+1);	/* max len of PString - used to be prefixLen+1 */
 
@@ -901,7 +900,7 @@ extern symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix
 	        pfxname[ prefixLen] = '\0';
 		}
 		else
-			strcpy( pfxname, g_szCurrentPrefix);
+			strcpy( pfxname, CmdFile->symprefix);
 
 		if(NULL == (retsym->prefix = AddStringTable(&PrefixStrings, pfxname, strlen(pfxname) + 1)))
 		{
@@ -1023,23 +1022,6 @@ static symbol * DoSymOp( byte op, char *symname, int length )
         sym = AddSym();
         sym->name = AddStringTable( &PermStrings, symname, length + 1 );
         sym->namelen = searchlen;
-#if 0
-		moved to nw specific function
-		/*
-		//	NetWare: add prefix to symbol if necessary
-		*/
-		if(strlen(g_szCurrentPrefix))
-		{
-			if(NULL == (sym->prefix = AddStringTable(&PrefixStrings, g_szCurrentPrefix, strlen(g_szCurrentPrefix) + 1)))
-			{
-				/*
-				//	We don't delete the symbol as it has already been added to the symbol chain
-				*/
-		        LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
-				return NULL;
-			}
-		}
-#endif
 
         if( op & ST_STATIC ) {
             sym->info |= SYM_STATIC;
@@ -1554,10 +1536,19 @@ extern bool SetCurrentPrefix(const char * pszPrefix, int nLen)
 	const char *	pStart = pszPrefix;
 	char *			pFix;
 	int				nIntLen = nLen;
+    char *          newbuff = NULL;
 	
+    /*
+    //  Always delete
+    */
+	if(CmdFile->symprefix)
+    {
+        _LnkFree( CmdFile->symprefix );
+        CmdFile->symprefix = NULL;
+    }
+
 	if((NULL == pStart) || (nLen == 0))
 	{
-		g_szCurrentPrefix[0] = 0;
 		return TRUE;
 	}
 
@@ -1571,13 +1562,15 @@ extern bool SetCurrentPrefix(const char * pszPrefix, int nLen)
 		return FALSE;
 
 	/* convert to C string */
-	memcpy(g_szCurrentPrefix, pStart, nIntLen-1);	/* hopefully drop the closing parentheses */
-	g_szCurrentPrefix[nIntLen-1] = '\0';
+    _LnkAlloc( newbuff, nIntLen + 1 );
+    memcpy(newbuff, pStart, nIntLen-1);
+    newbuff[nIntLen-1] = '\0';
+    CmdFile->symprefix = newbuff;
 	
-	pFix = g_szCurrentPrefix;
+	pFix = newbuff;
 	while((0 != *pFix) && (!IS_WHITESPACE(pFix)))
 		pFix++;
 	*pFix = '\0';
 
-	return (0 != strlen(g_szCurrentPrefix));
+	return (0 != strlen(newbuff));
 }

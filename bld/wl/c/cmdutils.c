@@ -165,27 +165,39 @@ static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
 }
 
 extern bool ProcArgList( bool (*rtn)( void ), tokcontrol ctrl )
+{
+    return(ProcArgListEx(rtn, ctrl ,NULL));
+}
+
+extern bool ProcArgListEx( bool (*rtn)( void ), tokcontrol ctrl ,cmdfilelist *resetpoint)
 /*************************************************************/
 {
-    if( GetToken( SEP_LCURLY, ctrl ) ) {
+    bool bfilereset = FALSE;    /* did we open a file and get reset ? */
+
+    if( GetTokenEx( SEP_LCURLY, ctrl, resetpoint, &bfilereset) ) {
         for(;;) {
             if( !WildCard( rtn, ctrl ) ) {
                 return( FALSE );
             }
             if( CheckFence() ) {
                 break;
-            } else if( !GetToken( SEP_NO, ctrl ) ) {
+            } else if( !GetTokenEx( SEP_NO, ctrl ,resetpoint, &bfilereset) ) {
                 LnkMsg( LOC+LINE+ERR+MSG_BAD_CURLY_LIST, NULL );
                 break;
             }
         }
     } else {
-        if( GetToken( SEP_NO, ctrl ) == FALSE ) return( FALSE );
+        if(resetpoint && bfilereset)
+            return TRUE;
+        if( GetTokenEx( SEP_NO, ctrl, resetpoint, &bfilereset) == FALSE ) 
+            return( FALSE );
         do {
+            if(resetpoint && bfilereset)
+                return TRUE;
             if( !WildCard( rtn, ctrl ) ) {
                 return( FALSE );
             }
-        } while( GetToken( SEP_COMMA, ctrl ) );
+        } while( GetTokenEx( SEP_COMMA, ctrl , resetpoint, &bfilereset) );
     }
     return( TRUE );
 }
@@ -428,7 +440,12 @@ static bool CheckFence()
     return FALSE;
 }
 
-extern bool GetToken( sep_type req, tokcontrol ctrl )
+extern bool GetToken( sep_type req, tokcontrol ctrl)
+{
+    return(GetTokenEx(req, ctrl, NULL, NULL));
+}
+
+extern bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, bool * pbreset)
 /***************************************************/
 /* return TRUE if no problem */
 /* return FALSE if problem   */
@@ -463,7 +480,7 @@ extern bool GetToken( sep_type req, tokcontrol ctrl )
 		//	prefix token(s) may also appear anywhere in the file.
 		*/
 
-		if(Token.skipToNext)
+		if( (Token.skipToNext) && (req == SEP_COMMA) )
 		{
 			Token.skipToNext = 0;
 			need_sep = FALSE;
@@ -591,6 +608,12 @@ extern bool GetToken( sep_type req, tokcontrol ctrl )
                 Token.next = Token.this;        /* re-process last token */
             }
             Token.quoted = FALSE;
+            if(resetpoint && (CmdFile == resetpoint))
+            {
+                if(pbreset)
+                    *pbreset = TRUE;            /* Show we have hit a file end-point for a directive */
+                return FALSE;
+            }
             break;
         case ENDOFCMD:
             if( CmdFile->next != NULL ) {
@@ -1048,6 +1071,9 @@ extern void RestoreCmdLine( void )
         }
         break;
     }
+    if( CmdFile->symprefix)
+        _LnkFree( CmdFile->symprefix );
+    CmdFile->symprefix = NULL;
     _LnkFree( CmdFile->name );
     temp = CmdFile->prev;
     temp->next = CmdFile->next;
@@ -1086,6 +1112,9 @@ extern void BurnUtils( void )
         if( CmdFile->file > STDIN_HANDLE ) {
             QClose( CmdFile->file, CmdFile->name );
         }
+        if( CmdFile->symprefix)
+            _LnkFree( CmdFile->symprefix );
+        CmdFile->symprefix = NULL;
         _LnkFree( CmdFile->name );
         switch( CmdFile->token.how ) {
         case ENVIRONMENT:

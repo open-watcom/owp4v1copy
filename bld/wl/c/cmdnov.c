@@ -155,27 +155,33 @@ static unsigned int DoWeNeedToSkipASeparator(void)
 	if(('\n' == *parse) || ('\r' == *parse))
 		parse++;
 
-	if(!IS_WHITESPACE(parse))	/* import lines must be in second column or greater */
-		return 0;
+    /*
+    //  always skip to the next token if the next available token is not a comma
+    //  this will allow individual tokens without commas which isn't a big deal
+    */
+	if(('\0' != *parse) && (',' != *parse))
+		return 1;
 
-	return 1;
+	return 0;
 }
 
 extern bool ProcNovImport( void )
 /*******************************/
 {
 	SetCurrentPrefix(NULL, 0);
-	return(ProcArgList( GetNovImport, TOK_INCLUDE_DOT ));
+	return(ProcArgListEx( GetNovImport, TOK_INCLUDE_DOT, CmdFile ));
 }
 
 extern bool ProcNovExport( void )
 /*******************************/
 {
 	SetCurrentPrefix(NULL, 0);
-    return( ProcArgList( GetNovExport, TOK_INCLUDE_DOT ) );
+    return(ProcArgListEx( GetNovExport, TOK_INCLUDE_DOT, CmdFile));
 }
 
-//extern int printf(char *fmt, ...);
+#ifndef NDEBUG
+extern int printf(char *fmt, ...);
+#endif
 
 static bool GetNovImport( void )
 /******************************/
@@ -201,6 +207,10 @@ static bool GetNovImport( void )
 
 		Token.skipToNext = DoWeNeedToSkipASeparator();
 
+#ifndef NDEBUG
+	    printf("Set new prefix. Skip = %d\n", Token.skipToNext);
+#endif
+
 		return result;
 	}
 
@@ -214,7 +224,9 @@ static bool GetNovImport( void )
         return( TRUE );
     }
 
-//	printf("imported %s from %s\n", sym->name, sym->prefix ? sym->prefix : "(NONE)");
+#ifndef NDEBUG
+	printf("imported %s from %s\n", sym->name, sym->prefix ? sym->prefix : "(NONE)");
+#endif
 
     SET_SYM_TYPE( sym, SYM_IMPORTED );
     sym->info |= SYM_DCE_REF;   // make sure we don't try to get rid of these.
