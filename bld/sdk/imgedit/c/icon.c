@@ -30,11 +30,11 @@
 ****************************************************************************/
 
 
+#define STRICT
+#include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define STRICT
-#include <windows.h>
 #include "imgedit.h"
 #include "iemem.h"
 

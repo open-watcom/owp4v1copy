@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
 #define STRICT
 #include <windows.h>
+#include <stdlib.h>
+#include <string.h>
 #include "wrdll.h"
 
 /* functions to replace those in mem.c in SDK/MISC */

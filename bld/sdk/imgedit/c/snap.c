@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
+#include "imgedit.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "imgedit.h"
 #ifdef __NT__
 #include "desknt.h"
 #endif

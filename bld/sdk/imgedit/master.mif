@@ -36,6 +36,7 @@ objs =  imgedit.obj ieproc.obj ieclrpal.obj ieglob.obj pmcreate.obj &
         getdata.obj clip.obj iconinfo.obj bkcolour.obj pmicon.obj undo.obj &
         ietoolbr.obj funcbar.obj chgsize.obj bits.obj wpi_mem.obj closeall.obj &
         errors.obj
+
 .c : $(wimgedit_dir)/objos2/c;$(wimgedit_dir)/c;$(sdk_dir)/misc;$(misc_dir)
 .h : $(wimgedit_dir)/objos2/h;$(wimgedit_dir)/h;$(sdk_dir)/misc
 .dlg : $(wimgedit_dir)/objos2/res;$(wimgedit_dir)/res;$(sdk_dir)/misc
@@ -65,7 +66,7 @@ extras = wincreat.obj title.obj winutils.obj
 .rc : $(wimgedit_dir)/res
 !endif
 
-extra_c_flags = -DWIN_GUI -s -fhq
+extra_c_flags = -DWIN_GUI -s
 !ifdef wpitest
 extra_c_flags += -d_WPI_TEST_
 !endif
@@ -74,6 +75,61 @@ extra_c_flags_386 = -fpc
 extra_c_flags_win = -zc
 
 extra_c_flags_about = -DNOUSE3D
+extra_c_flags_imgedit= -fh
+extra_c_flags_ieproc= -fh
+extra_c_flags_ieglob= -fh
+extra_c_flags_ieclrpal= -fh
+extra_c_flags_ienew= -fh
+extra_c_flags_ieopen= -fh=win.pch
+extra_c_flags_iesave= -fh=win.pch
+extra_c_flags_ieviewin= -fh
+extra_c_flags_iedraw= -fh
+extra_c_flags_icon= -fh=win.pch
+extra_c_flags_wstatus= -fh=win.pch
+extra_c_flags_palette= -fh=win.pch
+extra_c_flags_bitmap= -fh=win.pch
+extra_c_flags_ietoolbr= -fh
+extra_c_flags_wptoolbr= -fh=win.pch
+extra_c_flags_wwinhelp= -fh=win.pch
+extra_c_flags_xorand= -fh
+extra_c_flags_freehand= -fh
+extra_c_flags_clip= -fh
+extra_c_flags_drawproc= -fh
+extra_c_flags_iestatus= -fh
+extra_c_flags_undo= -fh
+extra_c_flags_snap= -fh
+extra_c_flags_colours= -fh
+extra_c_flags_iconinfo= -fh
+extra_c_flags_ieutil= -fh
+extra_c_flags_fill= -fh
+extra_c_flags_clrcntls= -fh
+extra_c_flags_curclr= -fh
+extra_c_flags_funcbar= -fh
+extra_c_flags_modclrs= -fh=win.pch
+extra_c_flags_bkcolour= -fh
+extra_c_flags_imgdata= -fh
+extra_c_flags_getdata= -fh=win.pch
+extra_c_flags_pickbmp= -fh
+extra_c_flags_iefonts= -fh
+extra_c_flags_chgsize= -fh
+extra_c_flags_settings= -fh
+extra_c_flags_trnsform= -fh
+extra_c_flags_hinttext= -fh
+extra_c_flags_ieprofil= -fh
+extra_c_flags_ldstr= -fh=win.pch
+extra_c_flags_wpi_mem= -fh
+extra_c_flags_closeall= -fh
+extra_c_flags_bits= -fh
+extra_c_flags_errors= -fh
+extra_c_flags_iebmpdat= -fh=win.pch
+extra_c_flags_iedde= -fh=win.pch
+extra_c_flags_iemem= -fh=win.pch
+extra_c_flags_iectl3d= -fh
+extra_c_flags_jdlg= -fh=win.pch
+extra_c_flags_desknt= -fh=win.pch
+extra_c_flags_wincreat= -fh
+extra_c_flags_title= -fh
+extra_c_flags_winutils= -fh
 
 extra_l_flags_win = libpath $(watcom_dir)/lib &
                     lib toolhelp.lib lib commdlg.lib lib ddeml.lib &

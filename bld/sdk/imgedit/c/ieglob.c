@@ -30,8 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
 #include "imgedit.h"
+#include <stdio.h>
 #include "wrutil.h"
 
 char            const PaletteClass[]    = "PalletClass";

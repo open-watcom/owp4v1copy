@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
+#include "imgedit.h"
 #include <string.h>
 #include <stdio.h>
-#include "imgedit.h"
 #include "ieclrpal.h"
 
 static selected_colour  lButton;

@@ -56,7 +56,7 @@ extra_defines           = -d$(as_cpu)
 extra_defines           += -d_STANDALONE_
 !endif
 
-extra_c_flags           = -fhq $(extra_defines)
+extra_c_flags           = $(extra_defines)
 
 as_trmem_flag_386       = -of+
 
@@ -66,17 +66,39 @@ as_yydebug              = -dYYDEBUG=1
 !endif
 
 extra_c_flags_asitest   = $(as_trmem)
-extra_c_flags_asmem     = -fhq=asmem.pch $(as_trmem)
-extra_c_flags_trmemcvr  = -fhq=trmemcvr.pch $(as_trmem)
-extra_c_flags_trmem     = -fhq=trmem.pch $(as_trmem)
-extra_c_flags_asytab    = -fhq=asytab.pch $(as_yydebug)
-extra_c_flags_aslexyy   = -fhq=aslexyy.pch
-extra_c_flags_preproc   = -fhq=preproc.pch
-extra_c_flags_ppexpr    = -fhq=ppexpr.pch
-extra_c_flags_ppmacro   = -fhq=ppmacro.pch
-extra_c_flags_ppmem     = -fhq=ppmem.pch
+extra_c_flags_asmem     = -fh=asmem.pch $(as_trmem)
+extra_c_flags_trmemcvr  = -fh=trmemcvr.pch $(as_trmem)
+extra_c_flags_trmem     = -fh=trmem.pch $(as_trmem)
+extra_c_flags_asytab    = -fh=asytab.pch $(as_yydebug)
+extra_c_flags_aslexyy   = -fh=aslexyy.pch
+extra_c_flags_preproc   = -fh=preproc.pch
+extra_c_flags_ppexpr    = -fh=ppexpr.pch
+extra_c_flags_ppmacro   = -fh=ppmacro.pch
+extra_c_flags_ppmem     = -fh=ppmem.pch
 
-extra_l_flags           = option map,quiet
+extra_c_flags_asexpr= -fh
+extra_c_flags_asopernd= -fh
+extra_c_flags_asutils= -fh
+extra_c_flags_alphafmt= -fh
+extra_c_flags_alphains= -fh
+extra_c_flags_asregs= -fh
+extra_c_flags_assymbol= -fh
+extra_c_flags_asdrectv= -fh
+extra_c_flags_asdirop= -fh
+extra_c_flags_asnumlab= -fh
+extra_c_flags_asmsg= -fh
+extra_c_flags_asmsgj=
+extra_c_flags_ashash= -fh
+extra_c_flags_asinline= -fh
+extra_c_flags_asiobj= -fh
+extra_c_flags_main= -fh
+extra_c_flags_obj= -fh
+extra_c_flags_sections= -fh
+extra_c_flags_options= -fh
+extra_c_flags_ppcfmt= -fh
+extra_c_flags_ppcins= -fh
+
+extra_l_flags           = option map
 !ifndef inline_as
 extra_l_flags           += library { $(libs) }
 !endif
@@ -154,9 +176,9 @@ $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
         $(librarian) -b $^@ -asmsg.obj
         $(librarian) -b $^@ +asmsgj.obj
 
-asmsgj$(obj): asmsg.c
-        @set include=$(inc_path)
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=$^@ -dJAPANESE_MSG
+#asmsgj$(obj): asmsg.c
+#        @set include=$(inc_path)
+#        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=$^@ -dJAPANESE_MSG
 !endif
 
 $(name)$(exe) : $(as_objs) $(libs) $(exe_deps_$(host_OS)) $(name).res

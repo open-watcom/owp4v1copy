@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
+#include "imgedit.h"
 #include <malloc.h>
 #include <math.h>
-#include "imgedit.h"
 
 /*
  * InitXorAndBitmaps - initializes the XOR and AND bitmaps

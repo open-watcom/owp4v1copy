@@ -41,7 +41,7 @@ TRMEM           += -of+
 !endif
 !endif
 
-extra_c_flags     = -DWIN_GUI -s -fhq
+extra_c_flags     = -DWIN_GUI -s
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 extra_c_flags_win = -zu-zw-zc
@@ -62,6 +62,50 @@ OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wreclip.obj wresym.obj &
         preproc.obj ppexpr.obj ppmacro.obj &
         toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
+
+extra_c_flags_wremain= -fh
+extra_c_flags_wremem= -fh
+extra_c_flags_wremsg= -fh
+extra_c_flags_wreresin= -fh
+extra_c_flags_wrestat= -fh
+extra_c_flags_wregetfn= -fh
+extra_c_flags_wrestrdp= -fh
+extra_c_flags_wreselft= -fh
+extra_c_flags_wreres= -fh
+extra_c_flags_wrehints= -fh
+extra_c_flags_wrelist= -fh
+extra_c_flags_wrenames= -fh
+extra_c_flags_wreopts= -fh
+extra_c_flags_wretoolb= -fh
+extra_c_flags_wreribbn= -fh
+extra_c_flags_wreseted= -fh
+extra_c_flags_wreftype= -fh
+extra_c_flags_wregcres= -fh
+extra_c_flags_wrerenam= -fh
+extra_c_flags_wrefres= -fh
+extra_c_flags_wrememf= -fh
+extra_c_flags_wredel= -fh
+extra_c_flags_wrewait= -fh
+extra_c_flags_wresvobj= -fh
+extra_c_flags_wrectl3d= -fh
+extra_c_flags_wreaccel= -fh
+extra_c_flags_wremenu= -fh
+extra_c_flags_wrestr= -fh
+extra_c_flags_wrenew= -fh
+extra_c_flags_wre_wres= -fh
+extra_c_flags_wredlg= -fh
+extra_c_flags_wreimg= -fh
+extra_c_flags_wredde= -fh
+extra_c_flags_wresvmlt= -fh
+extra_c_flags_wreimage= -fh
+extra_c_flags_wreclip= -fh
+extra_c_flags_wresym=
+
+extra_c_flags_toolbr= -fh
+extra_c_flags_statwnd= -fh
+extra_c_flags_ldstr= -fh
+extra_c_flags_wwinhelp= -fh
+extra_c_flags_jdlg= -fh
 
 !ifeq wre_trmem 1
 OBJS += trmem.tbj trmemcvr.tbj
@@ -115,3 +159,4 @@ wretemp.gh: ../h/wre.msg
 #################
 .rc.res: .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
+

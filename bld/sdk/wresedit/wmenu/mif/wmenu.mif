@@ -20,4 +20,20 @@ sys_object =    wmain.obj w_menu.obj winfo.obj whndl.obj &
                 wdel.obj wnewitem.obj &
                 wsvobj.obj wprev.obj wmen2rc.obj
 
+extra_c_flags_wmain= -fh
+extra_c_flags_w_menu= -fh
+extra_c_flags_winfo= -fh
+extra_c_flags_whndl= -fh
+extra_c_flags_whints= -fh
+extra_c_flags_wstat= -fh
+extra_c_flags_wtoolbar= -fh
+extra_c_flags_wribbon= -fh
+extra_c_flags_wedit= -fh
+extra_c_flags_wdel= -fh
+extra_c_flags_wnewitem= -fh
+extra_c_flags_wsvobj= -fh
+extra_c_flags_wprev= -fh
+extra_c_flags_wmen2rc= -fh
+
 !include ../../mif/master.mif
+

@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
+#include "imgedit.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "imgedit.h"
 
 static img_node         *activeImage = NULL;
 

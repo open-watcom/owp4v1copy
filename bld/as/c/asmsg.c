@@ -30,16 +30,14 @@
 ****************************************************************************/
 
 
+#include "as.h"
 #ifdef _STANDALONE_
 #include <process.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "wressetr.h"
 #include "wreslang.h"
-#endif
-#include "as.h"
-
-#ifndef _STANDALONE_
+#else
 // No res file to use. Just compile in the messages...
 #undef PICK
 // Use English message unless compiled with "-dJAPANESE_MSG"

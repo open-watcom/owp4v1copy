@@ -29,7 +29,7 @@
 *
 ****************************************************************************/
 
-
+#define  STRICT
 #include <windows.h>
 #include "wdecust.h"
 #include <win1632.h>

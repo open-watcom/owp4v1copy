@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
+#include "imgedit.h"
 #include <string.h>
 #include <math.h>
-#include "imgedit.h"
 #include "iedraw.h"
 #include "iemem.h"
 

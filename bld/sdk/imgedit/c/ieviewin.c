@@ -30,8 +30,8 @@
 ****************************************************************************/
 
 
-#include <string.h>
 #include "imgedit.h"
+#include <string.h>
 #include "ieprofil.h"
 
 static int              showState = SW_SHOWNORMAL;

@@ -43,13 +43,36 @@ object +=       wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
 
 msgfiles = ../../h/w.msg ../h/$(name).msg
 
-extra_c_flags     = -DWIN_GUI -s -fhq
+extra_c_flags     = -DWIN_GUI -s
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 extra_c_flags_win = -zu-zw-zc
 
 # main dll object
-extra_c_flags_wmain = -bd
+extra_c_flags_wmem= -fh
+extra_c_flags_wctl3d= -fh
+extra_c_flags_wgetfn= -fh
+extra_c_flags_wlist= -fh
+extra_c_flags_winst= -fh
+extra_c_flags_wsetedit= -fh
+extra_c_flags_wmsg= -fh
+extra_c_flags_wopts= -fh
+extra_c_flags_wstrdup= -fh
+extra_c_flags_wselft= -fh
+extra_c_flags_wrename= -fh
+extra_c_flags_wwait= -fh
+extra_c_flags_wmemf= -fh
+extra_c_flags_wcopystr= -fh
+extra_c_flags_widn2str= -fh
+extra_c_flags_wclip= -fh
+extra_c_flags_wisedit= -fh
+extra_c_flags_weditsym= -bd
+
+extra_c_flags_toolbr= -fh
+extra_c_flags_mstatwnd= -fh
+extra_c_flags_ldstr= -fh
+extra_c_flags_wwinhelp= -fh
+extra_c_flags_jdlg= -fh
 
 # preprocessor objects
 extra_c_flags_preproc = -zm
