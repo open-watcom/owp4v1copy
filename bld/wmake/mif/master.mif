@@ -112,12 +112,13 @@ extra_l_flags_dos = option stack=16k
 !else
 extra_l_flags_dos = option stack=4k
 !endif
-extra_l_flags = NAME $(xname) option map=$(xname),quiet op symfile
+extra_l_flags = NAME $(xname) option quiet
 
 libs_nt_386     = $(orl_dir)\o\orl.lib
 libs_nt_axp     = $(orl_dir)\axp\orl.lib
 libs_os2_386    = $(orl_dir)\os2\orl.lib
 libs_qnx_386    = $(orl_dir)\o\orl.lib
+libs_dos_386    = $(orl_dir)\o\orl.lib
 libs            = $(libs_$(host_OS)_$(host_CPU))
 
 .exe. : .symbolic   # so that "wmake wmk" works as expected

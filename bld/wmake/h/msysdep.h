@@ -67,9 +67,14 @@
 # define MAX_SUFFIX         16      /* must fit dotname, or largest .ext.ext*/
 # define MAX_TOK_SIZE       130     /* Maximum token size                   */
 # define LINE_BUFF          80      /* length of one-line user input buffer */
-# define FILE_BUFFER_SIZE   512     /* amount to read() at a time           */
+#if !defined( __386__ )
 # define USE_FAR            1       /* use far memory for some things       */
 # define FAR                far
+# define FILE_BUFFER_SIZE   512     /* amount to read() at a time           */
+#else
+# define FAR
+# define FILE_BUFFER_SIZE   4096    /* amount to read() at a time           */
+#endif
 # define DLL_CMD_ENTRY      "???"   /* entry-pt for .DLL version of command */
 
 #elif defined( __WINDOWS__ )

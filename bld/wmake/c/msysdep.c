@@ -96,7 +96,7 @@ extern int SwitchChar( void )
 #endif
 }
 
-#if defined( __DOS__ )
+#if defined( __DOS__ ) && !defined ( __386__ )
 /* see page 90-91 of "Undocumented DOS" */
 
 extern void far *       _DOS_list_of_lists( void );
