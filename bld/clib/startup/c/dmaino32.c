@@ -84,34 +84,6 @@ extern  int                 __disallow_single_dgroup(unsigned);
     #endif
 #endif
 
-static void APIENTRY LibMainExitList( ULONG reason ) {
-    APIRET rc;
-    reason = reason;
-    #ifndef __SW_BR
-        if( _LpwCmdLine ) {
-            lib_free( _LpwCmdLine );
-            _LpwCmdLine = NULL;
-        }
-        if( _LpwPgmName ) {
-            lib_free( _LpwPgmName );
-            _LpwPgmName = NULL;
-        }
-    #endif
-    #ifdef __SW_BR
-        __FiniRtns( 0, 255 );
-    #else
-        __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-        // calls to free memory have to be done before semaphores closed
-        __FreeInitThreadData( __FirstThreadData );
-        __OS2Fini(); // must be done before following finalizers get called
-        __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
-    #endif
-    #ifndef __SW_BR
-        __shutdown_stack_checking();
-    #endif
-    rc = DosExitList( EXLST_EXIT, LibMainExitList );
-}
-
 
 unsigned __LibMain( unsigned hmod, unsigned termination )
 /*******************************************************/
@@ -122,6 +94,28 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
     if( termination != 0 ) {
         rc = LibMain( hmod, termination );
         --processes;
+        #ifndef __SW_BR
+            if( _LpwCmdLine ) {
+                lib_free( _LpwCmdLine );
+                _LpwCmdLine = NULL;
+            }
+            if( _LpwPgmName ) {
+                lib_free( _LpwPgmName );
+                _LpwPgmName = NULL;
+            }
+        #endif
+        #ifdef __SW_BR
+            __FiniRtns( 0, 255 );
+        #else
+            __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+            // calls to free memory have to be done before semaphores closed
+            __FreeInitThreadData( __FirstThreadData );
+            __OS2Fini(); // must be done before following finalizers get called
+            __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+        #endif
+        #ifndef __SW_BR
+            __shutdown_stack_checking();
+        #endif
         return( rc );
     }
     ++processes;
@@ -147,7 +141,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         PTIB        pptib;
         PPIB        pppib;
         unsigned    i;
-		
+        
         DosGetInfoBlocks( &pptib, &pppib );
         _Envptr = pppib->pib_pchenv;
         _LpCmdLine = pppib->pib_pchcmd;
@@ -188,12 +182,6 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         __InitRtns( 255 );
     }
     #endif
-    // setup shutdown routine
-    #define SHUTDOWN_ORDER 0x0000E000
-    if( DosExitList( EXLST_ADD|SHUTDOWN_ORDER, LibMainExitList ) ) {
-        __FiniRtns( 0, 255 );
-        return( 0 );
-    }
     __CommonInit();
     #ifndef __SW_BR
         /* allocate alternate stack for F77 */
