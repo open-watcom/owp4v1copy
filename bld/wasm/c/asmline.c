@@ -395,7 +395,7 @@ int InputQueueFile( char *path )
     }
 
     if( file == NULL ) {
-        AsmError( CANNOT_OPEN_INCLUDE_FILE );
+        AsmErr( CANNOT_OPEN_INCLUDE_FILE, fullpath );
         return( ERROR );
     } else {
         new = push_flist( tmp, TRUE );

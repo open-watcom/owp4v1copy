@@ -38,8 +38,8 @@ pick( EXT_DEF_DIFF,		"External definition different from previous one" ,
 				"外部定義が前の定義と異なります" )
 pick( MEMORY_NOT_FOUND,		"Memory model is not found in .MODEL" ,
 				".MODELの中にメモリモデルがありません" )
-pick( CANNOT_OPEN_INCLUDE_FILE,	"Cannot open include file" ,
-				"インクルード・ファイルをオープンできません" )
+pick( CANNOT_OPEN_INCLUDE_FILE,	"Cannot open include file %s" ,
+				"インクルード・ファイルをオープンできません %s" )
 pick( NAME_USED_ALREADY,	"Name is used already" ,
 				"名前は既に使用されています" )
 pick( LIBRARY_NAME_MISSING,	"Library name is missing" ,
