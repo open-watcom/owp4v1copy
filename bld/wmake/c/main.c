@@ -265,8 +265,8 @@ STATIC char *procFlags( const char **argv, const char **log_name )
                 /* these options require a filename */
             case 'F':
             case 'L':
-                p = *++argv;
-                if( p == NULL ) {
+                p = *(argv + 1);
+                if(( p == NULL ) || ( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
                     PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
                     Usage();
                 }
@@ -311,6 +311,31 @@ STATIC char *procFlags( const char **argv, const char **log_name )
     return( FinishVec( makeopts ) );
 }
 
+
+STATIC const char *procLogName( const char **argv )
+/*****************************************************************
+ Find log file name
+ */
+{
+    const char *p;      /* working pointer to *argv                 */
+
+    p = argv[1];
+    if ( p == NULL) return NULL;
+    for( ++argv; *argv != NULL; ++argv ) {
+        p = *argv;
+        if((( p[0] == '-' ) || ( p[0] == Glob.swchar ))
+                && ( toupper( p[1] ) == 'L' )
+                && ( p[2] == NULLCHAR )) {
+            p = *(argv + 1);
+            if(( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
+                return NULL;
+            } else {
+                return p;
+            }
+        }
+    }
+    return( NULL );
+}
 
 STATIC void parseFiles( void )
 /*****************************
@@ -444,7 +469,6 @@ STATIC void init( const char **argv )
     char    *makeopts;
     char const *log_name;
 
-
     LogInit( NULL );
     globInit();
     MemInit();          /* memory handlers          */
@@ -469,9 +493,9 @@ STATIC void init( const char **argv )
     filesToDo = NULL;
     mustTargs = NULL;
     log_name = NULL;
-    makeopts = procFlags( argv, &log_name );
     LogFini();
-    LogInit( log_name );
+    LogInit( procLogName( argv ) );
+    makeopts = procFlags( argv, &log_name );
     ParseInit();
     doBuiltIns( makeopts );
     FreeSafe( makeopts );
@@ -578,3 +602,4 @@ char *getenv( const char *name )
     }
 #endif
 #endif
+
