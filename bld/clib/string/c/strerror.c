@@ -36,7 +36,6 @@
 #include "rtdata.h"
 #if defined(__NT__)
  #include <windows.h>
- #pragma library("kernel32.lib")
 #endif
 
 #define UNKNOWN_ERROR   "unknown error"

@@ -33,7 +33,6 @@
 #include "variety.h"
 #ifdef __NT__
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #else
     #include "malloc.h"
 #endif

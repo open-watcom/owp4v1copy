@@ -36,8 +36,6 @@
 #include "iomode.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK unsigned _dos_write( int hid, void const *buffer, unsigned count, unsigned *bytes )
 {
     int         error;

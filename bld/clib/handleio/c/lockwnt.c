@@ -38,8 +38,6 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK int lock( int hid, unsigned long offset, unsigned long nbytes )
 {
     __handle_check( hid, -1 );

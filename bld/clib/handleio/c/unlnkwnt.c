@@ -36,8 +36,6 @@
 #include "libwin32.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK int __F_NAME(unlink,_wunlink)( CHAR_TYPE *filename )
 {
     if( __F_NAME(DeleteFileA,__lib_DeleteFileW)( filename )  ==  FALSE ) {

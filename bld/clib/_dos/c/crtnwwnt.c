@@ -42,8 +42,6 @@
 #include "openmode.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK unsigned _dos_creatnew( const char *name, unsigned mode, int *posix_handle )
 {
     HANDLE      handle;

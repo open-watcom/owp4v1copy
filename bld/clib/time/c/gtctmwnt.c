@@ -34,8 +34,6 @@
 #include <time.h>
 #include "timedata.h"
 
-#pragma library("kernel32.lib")
-
 int __getctime( struct tm *t )
 {
     SYSTEMTIME  st;

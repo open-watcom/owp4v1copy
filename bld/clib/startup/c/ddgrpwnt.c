@@ -34,9 +34,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#pragma library("kernel32.lib")
-#pragma library("user32.lib")
-
 #define message_prefix \
     "This Dynamic Link Library is already in use by:\n"
 

@@ -35,8 +35,6 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#pragma library("kernel32.lib")
-
 void __init_stack_limits( unsigned *stacklow, unsigned *stacktop ) {
 
     unsigned low;

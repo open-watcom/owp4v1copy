@@ -35,8 +35,6 @@
 #include <ctype.h>
 #include <windows.h>
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK void _dos_getdrive( unsigned *drive )
 {
     char        buff[MAX_PATH];

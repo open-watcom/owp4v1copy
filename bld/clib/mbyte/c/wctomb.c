@@ -35,7 +35,6 @@
     #include <windows.h>
     #include <winnls.h>
     #include "mbchar.h"
-    #pragma library("kernel32.lib")
 #endif
 #include <mbstring.h>
 #include "farfunc.h"

@@ -39,10 +39,6 @@
 #include "mthread.h"
 #include "exitwmsg.h"
 
-#if defined( __NT__ )
- #pragma library("kernel32.lib")
-#endif
-
 extern void     (*_AccessTDList)(void);
 extern void     (*_ReleaseTDList)(void);
 

@@ -50,8 +50,6 @@
     #include "mbwcconv.h"
 #endif
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const *times )
 /**********************************************************************************/
 {

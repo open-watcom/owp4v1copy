@@ -35,7 +35,6 @@
 #include "widechar.h"
 #ifdef __NT__
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #endif
 /* gross hack for building 11.0 libraries with 10.6 compiler */
 #ifndef __WATCOM_INT64__

@@ -37,8 +37,6 @@
 #include "libwin32.h"
 #include "osver.h"
 
-#pragma library("kernel32.lib")
-
 /*
  * The Win32 CreateProcessW actually has a few other parameters, but the
  * C library doesn't really use them.  Instead of bloating the executables

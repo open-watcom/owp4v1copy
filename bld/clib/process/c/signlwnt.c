@@ -49,8 +49,6 @@
 #include "signlwnt.h"
 #include "rtinit.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK extern void (*__sig_init_rtn)(void);
 _WCRTLINK extern void (*__sig_fini_rtn)(void);
 

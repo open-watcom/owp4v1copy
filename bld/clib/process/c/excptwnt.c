@@ -42,8 +42,6 @@
 #include "fpusig.h"
 #include "excptwnt.h"
 
-#pragma library("kernel32.lib")
-
 void *(*__oscode_check_func)(int, long) = NULL;
 int   (*__raise_func)(int)              = NULL;
 unsigned char   __ExceptionHandled;

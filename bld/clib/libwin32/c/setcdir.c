@@ -37,8 +37,6 @@
 #include "libwin32.h"
 #include "osver.h"
 
-#pragma library("kernel32.lib")
-
 BOOL __lib_SetCurrentDirectoryW( LPCWSTR lpPathName )
 /***************************************************/
 {

@@ -34,7 +34,6 @@
 #include <io.h>
 #ifdef __NT__
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #else
     #include <dos.h>
     #include "liballoc.h"

@@ -38,8 +38,6 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK int cwait(int *status, int process_id, int action)
 /***********************************************************/
 {

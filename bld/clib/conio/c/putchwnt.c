@@ -36,8 +36,6 @@
 #include "fileacc.h"
 #include "defwin.h"
 
-#pragma library("kernel32.lib")
-
 /*
     BOOL WriteConsole(
       HANDLE hConsoleOutput,           // handle to screen buffer

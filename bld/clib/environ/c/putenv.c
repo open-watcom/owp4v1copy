@@ -38,7 +38,6 @@
 #ifdef __NT__
     #include <windows.h>
     #include "libwin32.h"
-    #pragma library("kernel32.lib")
 #endif
 #include "liballoc.h"
 #include "rtdata.h"

@@ -37,8 +37,6 @@
 #include "fileacc.h"
 #include "defwin.h"
 
-#pragma library("kernel32.lib")
-
 #define BACKSPACE       8
 #define SPACE           ' '
 #define CRLF            13

@@ -39,8 +39,6 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 extern void (*__int23_exit)(void);
 
 _WCRTLINK int __F_NAME(execve,_wexecve)( const CHAR_TYPE *path, const CHAR_TYPE * const argv[], const CHAR_TYPE * const envp[] )

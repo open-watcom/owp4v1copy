@@ -37,8 +37,6 @@
 #include "rtdata.h"
 #include "fileacc.h"
 
-#pragma library("kernel32.lib")
-
 static HANDLE console_in = (HANDLE)-1;
 static HANDLE console_out = (HANDLE)-1;
 

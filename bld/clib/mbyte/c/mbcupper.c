@@ -34,7 +34,6 @@
 #ifdef __NT__
     #include <windows.h>
     #include <winnls.h>
-    #pragma library("user32.lib")
 #else
     #include <ctype.h>
 #endif

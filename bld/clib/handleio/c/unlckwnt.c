@@ -38,8 +38,6 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
-#pragma library("kernel32.lib")
-
 /*
     BOOL UnlockFile(
       HANDLE hFile,                    // handle to file

@@ -45,10 +45,6 @@
 #include "rtinit.h"
 #include "exitwmsg.h"
 
-#if defined( __NT__ )
- #pragma library("kernel32.lib")
-#endif
-
 _WCRTLINK unsigned __ThreadDataSize = sizeof( thread_data );
 
 void __InitThreadData( thread_data *tdata )

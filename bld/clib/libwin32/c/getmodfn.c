@@ -37,8 +37,6 @@
 #include "liballoc.h"
 #include "libwin32.h"
 
-#pragma library("kernel32.lib")
-
 /*
  * Since the multibyte stuff isn't initialized when this module is called
  * from the startup code, call MultiByteToWideChar directly.  Since we tell

@@ -36,7 +36,6 @@
     #include <dos.h>
 #elif defined(__NT__)
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #elif defined(__OS2__)
     #include <os2.h>
 #elif defined(__NETWARE__)

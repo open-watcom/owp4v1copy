@@ -36,8 +36,6 @@
 #include "iomode.h"
 #include "fileacc.h"
 
-#pragma library("kernel32.lib")
-
 /*
     DWORD GetFileType(
       HANDLE hFile   // handle to file

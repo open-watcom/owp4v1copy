@@ -34,8 +34,6 @@
 #include <process.h>
 #include <windows.h>
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK int getpid( void )
 {
     return( GetCurrentProcessId() );

@@ -34,8 +34,6 @@
 #include <dos.h>
 #include <windows.h>
 
-#pragma library("kernel32.lib")
-
 _WCRTLINK void delay( unsigned ms )
 {
     Sleep( ms );

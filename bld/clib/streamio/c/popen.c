@@ -42,7 +42,6 @@
 #include <string.h>
 #if defined(__NT__)
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #elif defined(__OS2__)
     #include <wos2.h>
 #endif

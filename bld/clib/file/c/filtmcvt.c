@@ -34,7 +34,6 @@
 #include <time.h>
 #ifdef __NT__
     #include <windows.h>
-    #pragma library("kernel32.lib")
 #else
 #endif
 #include "find.h"

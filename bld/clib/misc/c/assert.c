@@ -43,8 +43,6 @@
 #elif defined(__NT__)
     #include <errno.h>
     #include <windows.h>
-    #pragma library("user32.lib")
-    #pragma library("kernel32.lib")
 #elif defined( __OS2__ ) && defined( __386__ )
     #define INCL_DOSPROCESS
     #define INCL_WINDIALOGS

@@ -39,7 +39,6 @@
 #include <unistd.h>
 #ifdef __NT__
  #include <windows.h>
- #pragma library("kernel32.lib")
 #endif
 
 #define info new_P5_timing_info
