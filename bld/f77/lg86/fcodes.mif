@@ -17,7 +17,7 @@ fcode_headers = $(fcodes_h) $(fcodes_inc)
 # The fcinfo.dat processing utility
 #
 ./fcbuild.exe : fcbuild.c
-    $(bld_cl) $[@ -oailt -s -w4 -d1 -i"$(c_dir)h" -fe=$@
+    $(bld_cl) $(wcl_util_opts) -i"$(c_dir)h" $[@
 #!ifdef __OS2__
 #    wlink sys os2 debug all option quiet name $(fcbuild) file $[@
 #!else

@@ -204,7 +204,7 @@ msg.gh : ./mkstrid.exe
         $[@ $^@
 
 ./mkstrid.exe : mkstrid.c as.msg
-        $(bld_cl) $[@ -w4-we-zc-oaxt $(extra_defines)
+        $(bld_cl) $(wcl_util_opts) $(extra_defines) $[@
 
 $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
 !ifdef __LINUX__

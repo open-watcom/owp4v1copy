@@ -207,13 +207,13 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         !cvpack $(dtarget)
 
 ./mkstr.exe: $(mkstr_c)
-        $(bld_cl) -i"$(trap_dir)/h" -fe=$^@ $[@
+        $(bld_cl) $(wcl_util_opts) -i"$(trap_dir)/h" $[@
 
 $(trperr_h) : ./mkstr.exe
         $[@ $^@
 
 ./jmkstr.exe: $(mkstr_c)
-        $(bld_cl) -i"$(trap_dir)/h" -fe=$^@ $[@ -dJAPANESE_MESSAGES
+        $(bld_cl) $(wcl_util_opts) -i"$(trap_dir)/h" -dJAPANESE_MESSAGES $[@
 
 $(jtrperr_h) : ./jmkstr.exe
         $[@ $^@

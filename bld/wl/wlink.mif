@@ -303,7 +303,7 @@ $(stubexe) : $(stub_objs)
 # explicit rules
 
 version.rc : ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $]@ $(wcl_util_opts) -d_VERSION=$(bld_ver)
+        $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $]@
         genverrc $[@ version.rc $$ wlink.dll $(patch_level)
 
 stubidedrv.obj : idedrv.c .AUTODEPEND

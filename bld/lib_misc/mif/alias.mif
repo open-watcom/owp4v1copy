@@ -11,7 +11,7 @@ src = $(lib_misc_dir)/c/aliasgen.c
 !ifdef __LINUX__
     gcc $< -o $@
 !else
-    $(bld_cl) $< $(wcl_util_opts) -fe=$@
+    $(bld_cl) $(wcl_util_opts) $<
 !endif
 
 clean : .symbolic

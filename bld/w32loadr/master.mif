@@ -53,7 +53,7 @@ dos16m.obj : dos16m.asm
 all : w32bindnt.exe ntrunner.exe
 
 w32bindnt.exe : w32bind.c
-  $(bld_cl) $[* $(wcl_util_opts)
+  $(bld_cl) $(wcl_util_opts) $[@
 
 dbgntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk debug all
@@ -90,9 +90,9 @@ all: w32bind.exe os2ldr.exe
 
 w32bind.exe : w32bind.c
 !ifdef __LINUX__
-  $(bld_cl) $[* $(wcl_util_opts) -\"option stub=wstubq.exe\"
+  $(bld_cl) $(wcl_util_opts) -\"option stub=wstubq.exe\" $[*
 !else
-  $(bld_cl) $[* $(wcl_util_opts) -"option stub=wstubq.exe"
+  $(bld_cl) $(wcl_util_opts) -"option stub=wstubq.exe" $[@
 !endif
 
 os2ldr.exe : cstrtos2.obj loader.obj int21.obj int21os2.obj tnk.obj os2stub.exe

@@ -44,7 +44,7 @@ tmp.def : $(dll_def) $(__MAKEFILES__)
 !include $(rtdll_dir)/upddll.mif
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) $[@ $(wcl_util_opts) -d_VERSION=$(bld_ver)
+    $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
 
 $(dllname).rc : ./genverrc.exe
     $[@ ../verinfo.rc $^@ $$ $(dllname).dll $(patch_level)

@@ -122,7 +122,7 @@ $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 error.obj : msg.gh error.c
 
 ./mkstr.exe : ../mkstr.c ../wlib.msg
-    $(bld_cl) $(wcl_util_opts) $[@ -I..
+    $(bld_cl) $(wcl_util_opts) -I.. $[@
 
 msg.gh : ./mkstr.exe
     *$< $@

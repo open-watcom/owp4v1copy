@@ -68,4 +68,4 @@ optparsc.gh optparsh.gh : ./optencod.exe ../gml/ms.gml
 # Dependencies for source in $(fe_misc_dir).
 #
 ./optencod.exe : $(fe_misc_dir)/c/optencod.c
-        $(bld_cl) -i"$(fe_misc_dir)/h;$(watcom_dir)/h" $[@
+        $(bld_cl) $(wcl_util_opts) -i"$(fe_misc_dir)/h;$(watcom_dir)/h" $[@

@@ -425,7 +425,7 @@ $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
     $(linker) $(lflags_dll) NAME $^* @pdlldbg
 
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+        $(bld_cl) $(wcl_util_opts) -D_VERSION=$(bld_ver) $[@
 
 plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ $]@ $^@ $$ $(dll_bld_name).dll $(patch_level)
