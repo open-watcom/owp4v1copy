@@ -34,16 +34,16 @@ typedef signed ssize_t;
 
 typedef unsigned short  dev_t;  /* Combination of node and device   */
 #ifndef _GID_T_DEFINED_
- typedef int            gid_t;  /* Used for group IDs               */
+ typedef unsigned short gid_t;  /* Used for group IDs               */
  #define _GID_T_DEFINED_
 #endif
 typedef unsigned long   ino_t;  /* Used for file serial numbers     */
-typedef unsigned        mode_t; /* Used for some file attributes    */
-typedef unsigned        nlink_t;/* Used for link counts             */
+typedef unsigned short  mode_t; /* Used for some file attributes    */
+typedef unsigned short  nlink_t;/* Used for link counts             */
 typedef long            off_t;  /* Used for file sizes, offsets     */
 typedef int             pid_t;  /* Used for process IDs & group IDs */
 #ifndef _UID_T_DEFINED_
- typedef int            uid_t;  /* Used for user IDs                */
+ typedef unsigned short uid_t;  /* Used for user IDs                */
  #define _UID_T_DEFINED_
 #endif
 #if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
