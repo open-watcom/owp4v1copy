@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal header with defined to support the multi-thread
+*               runtime library.
 *
 ****************************************************************************/
-
 
 #ifndef _THREAD_H_INCLUDED
 #define _THREAD_H_INCLUDED
@@ -77,6 +76,8 @@ typedef struct  semaphore_object {
         void            *semaphore;
   #elif defined(__QNX__)
         sem_t           semaphore;
+  #elif defined(__LINUX__)
+    // TODO: Linux semaphore goes here!
   #else
         unsigned long   semaphore;
   #endif
@@ -109,9 +110,6 @@ _WCRTLINK void __CloseSemaphore( semaphore_object * );
  *     - must be the same size as struct thread_ctl
  *       in plusplus\cpplib\runtime\h\cpplib.h
  */
-// Note: this has changed for 32bit code in 10.0
-//       now the C++ library will register how much thread data it wants
-//       in an initializer
 struct wcpp_thread_ctl {
     void *autos;
     void *d0;
@@ -130,7 +128,7 @@ struct wcpp_thread_ctl {
 /* stack checking routine assumes "__stklowP" is first field */
 typedef struct thread_data {
     unsigned                    __stklowP;
-    #if !defined(__QNX__)
+    #if !defined(__QNX__) && !defined(__LINUX__)
         int                     __errnoP;
         int                     __doserrnoP;
     #endif
@@ -154,6 +152,8 @@ typedef struct thread_data {
         unsigned long           thread_id;
     #elif defined(__QNX__)
         pid_t                   thread_id;
+    #elif defined(__LINUX__)
+        // TODO: Linux thread ID!
     #endif
     #if defined(__NT__)
         void                    *thread_handle;
@@ -211,3 +211,4 @@ extern  unsigned        __MaxThreads;
 
 #pragma pack(__pop);
 #endif
+

@@ -89,7 +89,7 @@ extern      void            (*__FPE_handler_exit)();
 #if !defined (_NETWARE_LIBC)
 extern      unsigned        _STACKTOP;
 #endif
-#if !defined(__QNX__)
+#if !defined(__QNX__) && !defined(__LINUX__)
     extern void         (*__Save8087)();/* Ptr to FP state save rtn (spawn) */
     extern void         (*__Rest8087)();/* Ptr to FP state restore rtn (spawn) */
 #endif
@@ -134,7 +134,7 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
 #if !defined (_NETWARE_LIBC)
 #define _RWD_stacktop           _STACKTOP
 #endif
-#if !defined(__QNX__)
+#if !defined(__QNX__) && !defined(__LINUX__)
     #define _RWD_Save8087       __Save8087
     #define _RWD_Rest8087       __Rest8087
 #endif

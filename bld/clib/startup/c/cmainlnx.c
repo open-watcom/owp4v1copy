@@ -40,7 +40,6 @@
 
 //void    __near *_endheap;         /* temporary work-around */
 //char    *__near __env_mask;
-//char    **environ;
 _WCRTLINK char ** _WCNEAR environ;  /* pointer to environment table */
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
@@ -56,11 +55,16 @@ extern int main( int, char **, char ** );
 
 void __cdecl _LinuxMain(int argc, char **argv, char **arge)
 {
+//    thread_data *tdata;
+
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
     __FPE_handler =     &__null_FPE_rtn;
     __InitRtns( 1 );
+//    tdata = __alloca( __ThreadDataSize );
+//    memset( tdata, 0, __ThreadDataSize );
+//    tdata->__data_size = __ThreadDataSize;
     __InitRtns( 255 );
     _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
     exit(main(argc,argv,arge));

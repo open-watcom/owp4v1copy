@@ -87,6 +87,9 @@ typedef unsigned_8      sbit;
         #undef  OS_QNX_16
         #define OS_QNX_16       1
     #endif
+#elif defined( __LINUX__ )
+    #undef  OS_LINUX
+    #define OS_LINUX            1
 #elif defined( __OS2__ )
     #undef  OS_OS2
     #define OS_OS2              1
@@ -138,9 +141,6 @@ typedef unsigned_8      sbit;
     #elif
         #error OS_xxx macro not enabled.
     #endif
-#elif defined( LINUX )
-    #undef  OS_LINUX
-    #define OS_LINUX             1
 #else
     #error OS_xxx macro not enabled.
 #endif

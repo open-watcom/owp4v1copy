@@ -49,12 +49,9 @@ int sys_write(int handle, const char *buf, int len);
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
-    char        c;
-
     sys_write(1,msg,strlen(msg));
     sys_exit( retcode );
 }
-
 
 _WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
 {
