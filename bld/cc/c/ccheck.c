@@ -55,6 +55,12 @@ typedef enum {
    AC,          /* assignment compatible */
 }cmp_type;
 
+typedef enum {
+   VC_CONVERT,  /* "promote" void * to the type it is compared with */
+   VC_WARN,     /* warn for mismatching void * in function pointer argument lists */
+   VC_ERR       /* err for mismatching void * in normal prototypes */
+}voidptr_cmp_type;
+
 #define __  NO
 
 local  cmp_type const __FAR CompTable[22][22] = {
@@ -85,7 +91,7 @@ local  cmp_type const __FAR CompTable[22][22] = {
 
 static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
-                                  int assign_compar );
+                                  voidptr_cmp_type voidptr_cmp );
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
 {
@@ -159,7 +165,7 @@ void ChkParmList( TYPEPTR *plist1 ,TYPEPTR *plist2 ){
         ptype1 = *plist1;
         ptype2 = *plist2;
         if( ptype1 == NULL  ||  ptype2 == NULL ) break;
-        cmp = DoCompatibleType( ptype1, ptype2, 0, 1 );
+        cmp = DoCompatibleType( ptype1, ptype2, 0, VC_ERR );
         switch( cmp ){
         case NO:
         case PT:
@@ -285,7 +291,7 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
                     return( TC_PARM_TYPE_MISMATCH + parm_count );
                 }
             } else{
-                cmp = DoCompatibleType( *plist1, *plist2, 0, 0 );
+                cmp = DoCompatibleType( *plist1, *plist2, 0, VC_WARN );
                 switch( cmp ){
                 case NO:
                 case PT:
@@ -321,7 +327,7 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
-                                  int assign_compar )
+                                  voidptr_cmp_type voidptr_cmp )
 {
     cmp_type         ret_val;
     type_modifiers   typ1_flags, typ2_flags;
@@ -357,10 +363,12 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         typ1 = typ1->object;
         typ2 = typ2->object;
     }
-    if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ){
+    if( voidptr_cmp != VC_ERR && 
+        ( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) ) {
     // allow  void ** with any **
         if( top_level==1 || !CompFlags.strict_ANSI ){
-            if ( !assign_compar || (top_level > 1 && !CompFlags.extensions_enabled) ) {
+            if ( voidptr_cmp == VC_WARN || 
+                 (top_level > 1 && !CompFlags.extensions_enabled) ) {
                 CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
             return( ret_val ); // void *  and  anything *
@@ -513,7 +521,7 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment )
         typ2 = typ2->object;
         ++top_level;
     }
-    ret_val = DoCompatibleType( typ1, typ2, top_level, 1 );
+    ret_val = DoCompatibleType( typ1, typ2, top_level, VC_CONVERT );
     if( ret_val == OK ){
         ret_val = ret_pq;
     }
@@ -1026,7 +1034,7 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
         if( typ1 == typ2 ) return( TC_OK );
         if( typ1->decl_type != typ2->decl_type ) {
             if( pointer_type ) {
-                /* on popular demand, I disabled the questionable feature
+                /* by popular demand, I disabled the questionable feature
                    to accept
                    void *foo(void);
                    int *foo(void) {return NULL};
