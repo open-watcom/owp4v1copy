@@ -37,7 +37,7 @@ COMMANDS = &
 #    true &
 #    trunc &
 #    unexpand &
-#    uniq &
+    uniq &
 #    uuencode &
 #    uudecode &
 #    wc &
