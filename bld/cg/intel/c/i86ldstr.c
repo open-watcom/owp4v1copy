@@ -69,6 +69,7 @@ extern  hw_reg_set      FullReg( hw_reg_set );
 extern  bool            ReDefinedBy( instruction *, name * );
 extern  void            MoveSegRes( instruction *, instruction * );
 extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  int             NumOperands(instruction*);
 
 extern  type_length     TypeClassSize[];
 
@@ -435,6 +436,7 @@ static void     CompressIns( instruction *ins )
     name        **preplace;
     name        *replacement;
     int         i;
+    int         num_op;
 
     if( !(ins->ins_flags & INS_RISCIFIED) ) return;
     switch( ins->head.opcode ) {
@@ -459,7 +461,12 @@ static void     CompressIns( instruction *ins )
         presult = &ins->result;
     }
     if( prev != NULL ) {
-        for( i = 0; i < ins->num_operands; ++i ) {
+        // 2005-04-05 RomanT
+        // Do not use ins->num_operands here, otherwise we'll falsely trigger
+        // compression for segment operand of instruction which we shouldn't.
+        // (bug #442)
+        num_op = NumOperands( ins );
+        for( i = 0; i < num_op; ++i ) {
             if( prev->result == ins->operands[i] ) {
                 popnd = &ins->operands[i];
             }
