@@ -1,12 +1,12 @@
-tools_10_5 = 1
-bld_ver=$(%bld_ver)
-patch_level=b
-lang_root = $(%lang)
-# librarian=$(lang_root)\binnt\wlib
-build_dir = $(%devdir)\build
-dev_dir = $(%devdir)
+bld_ver      = $(%bld_ver)
+patch_level  =
+lang_root    = $(%lang)
+build_dir    = $(%devdir)\build
+dev_dir      = $(%devdir)
+mif_path     = $(build_dir)\local;$(build_dir)\mif
 guitools_dir = $(%devdir)\online\hlp
-mif_path = $(build_dir)\local;$(build_dir)\mif
+#librarian    = $(lang_root)\binnt\wlib
+
 .mif: $(mif_path)
 !include cdirs.mif
 !include $(%BATDIR)\bat\makecomm
