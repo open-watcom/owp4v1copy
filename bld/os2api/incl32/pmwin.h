@@ -480,9 +480,35 @@ BOOL   APIENTRY WinSetClipbrdViewer(HAB,HWND);
 
 #endif
 
+#if defined(INCL_WINCURSORS) || !defined(INCL_NOCOMMON)
+
+#define CURSOR_SOLID      0x0000
+#define CURSOR_HALFTONE   0x0001
+#define CURSOR_FRAME      0x0002
+#define CURSOR_FLASH      0x0004
+#define CURSOR_SETPOS     0x8000
+#define CURSOR_BIDI_FIRST 0x0100
+#define CURSOR_BIDI_LAST  0x0200
+
+BOOL   APIENTRY WinCreateCursor(HWND,LONG,LONG,LONG,LONG,ULONG,PRECTL);
+BOOL   APIENTRY WinDestroyCursor(HWND);
+BOOL   APIENTRY WinShowCursor(HWND,BOOL);
+
+#endif
+
 #if defined(INCL_WINCURSORS)
 
-BOOL  APIENTRY  WinShowCursor(HWND,BOOL);
+typedef struct _CURSORINFO {
+    HWND  hwnd;
+    LONG  x;
+    LONG  y;
+    LONG  cx;
+    LONG  cy;
+    ULONG fs;
+    RECTL rclClip;
+} CURSORINFO, *PCURSORINFO;
+
+BOOL   APIENTRY WinQueryCursorInfo(HWND,PCURSORINFO);
 
 #endif
 
@@ -903,31 +929,6 @@ BOOL   APIENTRY WinDestroyAccelTable(HACCEL);
 BOOL   APIENTRY WinTranslateAccel(HAB,HWND,HACCEL,PQMSG);
 BOOL   APIENTRY WinSetAccelTable(HAB,HACCEL,HWND);
 ULONG  APIENTRY WinCopyAccelTable(HACCEL,PACCELTABLE,ULONG);
-
-#endif
-
-#if defined(INCL_WINCURSORS)
-
-#define CURSOR_SOLID       0x0000
-#define CURSOR_HALFTONE    0x0001
-#define CURSOR_FRAME       0x0002
-#define CURSOR_FLASH       0x0004
-#define CURSOR_SETPOS      0x8000
-#define CURSOR_BIDI_FIRST  0x0100
-#define CURSOR_BIDI_LAST   0x0200
-
-typedef struct _CURSORINFO {
-    HWND  hwnd;
-    LONG  x;
-    LONG  y;
-    LONG  cx;
-    LONG  cy;
-    ULONG fs;
-    RECTL rclClip;
-} CURSORINFO, *PCURSORINFO;
-
-BOOL   APIENTRY WinCreateCursor(HWND,LONG,LONG,LONG,LONG,ULONG,PRECTL);
-BOOL   APIENTRY WinDestroyCursor(HWND);
 
 #endif
 
