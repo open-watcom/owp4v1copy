@@ -5,8 +5,6 @@ proj_name = docs
 
 .mif : ..\mif
 
-all: all_ .SYMBOLIC
-
 # location of documentation sources
 docsrc_dir=..\doc
 
@@ -71,12 +69,12 @@ OS2_TK=dummy
 # project configuration files
 #
 proj_objs=..\lang.ctl &
-	..\mif\depends.mif &
-	..\mif\books.mif 
-#	..\mif\makebook.mif &
-#	..\mif\clean.mif &
-#	makefile
-	
+        ..\mif\depends.mif &
+        ..\mif\books.mif
+#       ..\mif\makebook.mif &
+#       ..\mif\clean.mif &
+#       makefile
+
 ####################################################
 #
 # Settings for the wgml utility
@@ -126,7 +124,7 @@ wgml_opts+= outp (t:80)$(hbook).ps
 #
 # common setting
 #
-wgml_opts+= cpi 10 index set dotarget $(dotarget) 
+wgml_opts+= cpi 10 index set dotarget $(dotarget)
 
 !else
 
@@ -185,8 +183,8 @@ whpcvt_opts += -hn
 
 .OPTIMIZE
 
-all_ : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
-	@%null
+all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
+        @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
     $(%WIN95HC) -xn $*.hpj
@@ -220,7 +218,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .hlp .hpj .hh .h .rtf
 
-all_ : $(hbook).hlp $(hbook).h .SYMBOLIC
+all : $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
@@ -254,8 +252,8 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ihp .ib .h
 
-all_ : $(hbook).ihp $(hbook).h .SYMBOLIC
-	@%null
+all : $(hbook).ihp $(hbook).h .SYMBOLIC
+        @%null
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
     $(%HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
@@ -274,7 +272,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
 .EXTENSIONS: .htm .h
 
 all : $(hbook).htm $(hbook).h .SYMBOLIC
-	@%null
+        @%null
 
 $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
@@ -292,12 +290,12 @@ $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ps
 
-all_ : $(hbook).ps .SYMBOLIC
-	@%null
+all : $(hbook).ps .SYMBOLIC
+        @%null
 
 $(hbook).ps : $(book_objs) $(proj_objs)
-	@set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-	-$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+        @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
+        -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
 
 
 !else ifeq dotarget os2
@@ -310,7 +308,7 @@ $(hbook).ps : $(book_objs) $(proj_objs)
 .EXTENSIONS: .hlp .inf .ipf .h
 
 all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
-	@%null
+        @%null
 
 $(hbook).inf : $(hbook).ipf
     set ipfcartwork=$(book_incs)
@@ -343,10 +341,10 @@ $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
 #  2nd pass create final data with correct table of
 #      content and index of topic
 #
-#  vhpcvt must be call after 2. pass with -h and -hn
+#  whpcvt must be call after 2. pass with -h and -hn
 #  option, it create correct index in .h file
 #
-#  next vhpcvt calls must be done only with -hn option
+#  next whpcvt calls must be done only with -hn option
 #   do not use -h option
 #
 # !!!!!!!!!!!!!!!  IMPORTANT   !!!!!!!!!!!!!!!!!!!!
