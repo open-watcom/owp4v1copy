@@ -119,7 +119,8 @@ enum SegmentSortMethods {
 
 enum RCTargetOS {
     RC_TARGET_OS_WIN16,
-    RC_TARGET_OS_WIN32
+    RC_TARGET_OS_WIN32,
+    RC_TARGET_OS_OS2,
 };
 
 extern bool ScanParams( int argc, char * argv[] );

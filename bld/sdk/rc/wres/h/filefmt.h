@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom resource file format structures and constants.
 *
 ****************************************************************************/
 
@@ -49,7 +48,8 @@ typedef struct WResHeader {
 
 enum {
     WRES_OS_WIN16 = 1,
-    WRES_OS_WIN32
+    WRES_OS_WIN32,
+    WRES_OS_OS2
 };
 typedef uint_16 WResTargetOS;
 
