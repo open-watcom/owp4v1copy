@@ -290,7 +290,7 @@ extern void _wpi_getbitmapdim( HBITMAP bmp, int *pwidth, int *pheight );
                                     MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_makelineddaprocinstance( proc, inst ) \
-                                    MakeProcInstance( (FARPROC)proc, inst )
+                                    (WPI_LINEDDAPROC)MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_defdlgproc( hwnd, msg, mp1, mp2 ) FALSE
 

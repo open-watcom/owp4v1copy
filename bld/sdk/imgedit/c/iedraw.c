@@ -540,7 +540,7 @@ void Paint( HWND hwnd, WPI_POINT *start_pt, WPI_POINT *end_pt, int mousebutton )
 
     currentMouseButton = mousebutton;
     SET_HWND_PARAM2( lparam, hwnd );
-    fp = _wpi_makelineddaprocinstance( (WPI_LINEDDAPROC)drawPt, Instance );
+    fp = _wpi_makelineddaprocinstance( drawPt, Instance );
     _wpi_linedda( s_pt.x, s_pt.y, e_pt.x, e_pt.y, (WPI_LINEDDAPROC)fp, lparam);
     _wpi_freeprocinstance( fp );
 

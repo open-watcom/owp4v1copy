@@ -101,7 +101,7 @@ mad_status MADSysLoad( char *path, mad_client_routines *cli,
         return( MS_ERR|MS_FOPEN_FAILED );
     }
     *sys_hdl = (unsigned long)transfer_block.unload;
-    init_func = transfer_block.load;
+    init_func = (mad_imp_routines*(DIGENTRY*)(mad_status*,mad_client_routines*)) transfer_block.load;
     if( init_func == NULL ) {
         MADSysUnload( *sys_hdl );
         return( MS_ERR|MS_INVALID_MAD );
