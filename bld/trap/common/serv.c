@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for remote debug servers.
 *
 ****************************************************************************/
 
@@ -133,7 +132,10 @@ main()
 
 void OpeningStatement( void )
 {
+    Output( "Open Watcom " );
     Output( ServName );
     Output( "\r\nVersion " _XXXSERV_VERSION_ "\r\n" );
     Output( banner2( "1988" ) "\r\n" );
+    Output( banner3 "\r\n" );
+    Output( banner3a "\r\n" );
 }

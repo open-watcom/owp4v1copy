@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Remote debug server mainline for Windows GUI versions.
 *
 ****************************************************************************/
 
@@ -167,7 +166,7 @@ static BOOL AnyInstance( HANDLE this_inst, int cmdshow, LPSTR cmdline )
      */
     hwndMain = CreateWindow(
         ServerClass,            /* class */
-        "WATCOM Debug Server",
+        "Open Watcom Debug Server",
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */
