@@ -739,12 +739,13 @@ LONG    APIENTRY WinQueryClassName(HWND hwnd, LONG lLength, PCH PCHBuffer);
 typedef LHANDLE HMQ, *PHMQ;
 
 typedef struct _QMSG {
-    HWND  hwnd;
-    USHORT msg;
+    HWND   hwnd;
+    ULONG  msg;
     MPARAM mp1;
     MPARAM mp2;
     ULONG  time;
     POINTL ptl;
+    ULONG  reserved;
 } QMSG, *PQMSG;
 
 HMQ     APIENTRY WinCreateMsgQueue(HAB hab, LONG lQueuesize);
