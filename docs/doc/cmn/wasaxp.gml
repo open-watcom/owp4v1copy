@@ -3,8 +3,8 @@
 :INCLUDE file='LYTCHG'.
 :INCLUDE file='FMTMACRO'.
 :INCLUDE file='GMLMACS'.
-:INCLUDE file='DEFS'.
 :INCLUDE file='XDEFS'.
+:INCLUDE file='DEFS'.
 .*
 .if &e'&dohelp eq 1 .do begin
 .dm sepsect begin

@@ -4,9 +4,9 @@
 .do end
 :INCLUDE file='FMTMACRO'.
 :INCLUDE file='GMLMACS'.
+:INCLUDE file='XDEFS'.
 :set symbol="lang"       value="FORTRAN 77".
 :INCLUDE file='DEFS'.
-:INCLUDE file='XDEFS'.
 .*
 :GDOC.
 .*

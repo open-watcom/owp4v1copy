@@ -8,9 +8,9 @@
 :INCLUDE file='GMLMACS'.
 :CMT. :INCLUDE file='HTMLMACS'.
 :INCLUDE file='BANTOP'.
+:INCLUDE file='XDEFS'.
 :set symbol="lang"       value="C/C++".
 :INCLUDE file='DEFS'.
-:INCLUDE file='XDEFS'.
 .*
 :GDOC.
 .*
