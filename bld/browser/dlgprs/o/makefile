@@ -27,12 +27,18 @@ wldbgf = pa .
 
 .BEFORE
 #   @set compflags=-zq-mf-xs-w4 -bt=dos $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
-    @set compflags=-zq-mf-xs-w4         $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
+!ifdef __NT__
+    @set compflags=-zq-mf-xs-w4 -bt=nt  $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\nt
+!else
+    @set compflags=-zq-mf-xs-w4         $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\nt
+!endif
 
 .extensions:
 .extensions: .exe .obj .gh .c .cpp .gpp .y
 
-!ifdef __OS2__
+!ifdef __NT__
+compile.tim : dlgprsnt.exe
+!else ifdef __OS2__
 compile.tim : dlgprsp.exe
 !else
 compile.tim : dlgprs.exe
@@ -43,7 +49,15 @@ dlgprs.exe : $(c_objs) $(browse_objs)
     @%create $(lnk)
     @%append $(lnk) name $^@
     @%append $(lnk) $(wldbgf)
-    @%append $(lnk) op map=dlgprs,quiet,show,art,static sort
+    @%append $(lnk) op map=dlgprs,quiet,show,art,static sort sys dos4g
+    @for %i in ($(c_objs)) do @%append $(lnk) file %i
+    wlink @$(lnk)
+
+dlgprsnt.exe : $(c_objs) $(browse_objs)
+    @%create $(lnk)
+    @%append $(lnk) name $^@
+    @%append $(lnk) $(wldbgf)
+    @%append $(lnk) op map=dlgprsnt,quiet,show,art,static sort sys nt
     @for %i in ($(c_objs)) do @%append $(lnk) file %i
     wlink @$(lnk)
 

@@ -24,7 +24,9 @@ dialog_headers = $+$(dialogs)$-
 dlg_dir = ..\res\dlg
 bnd_dir = ..\bnd
 
-!ifdef __OS2__
+!ifdef __NT__
+dlgprs = ..\dlgprs\o\dlgprsnt
+!else ifdef __OS2__
 dlgprs = ..\dlgprs\o\dlgprsp
 !else
 dlgprs = ..\dlgprs\o\dlgprs
