@@ -131,6 +131,7 @@ static unsigned         TempIndex;
 static cvlineinfo       LineInfo;
 
 static bool     CVStoreLines( segdata *, mod_entry * );
+static void     GenSrcModHeader( void );
 
 extern void CVInit( void )
 /************************/

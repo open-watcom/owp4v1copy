@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OBJFREE : free linker structures
 *
 ****************************************************************************/
 
-
-/*
- *  OBJFREE : free linker structures
- *
- */
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
@@ -55,6 +49,12 @@
 #include "permdata.h"
 #include "objpass1.h"
 #include "objpass2.h"
+#include "objfree.h"
+
+static void FreeAreas( OVL_AREA *area );
+static void FreeClasses( class_entry * list );
+static void FreeFiles( file_list *list );
+static void FreeMods( mod_entry *head );
 
 extern void FiniLinkStruct( void )
 /********************************/

@@ -49,6 +49,13 @@
 
 static group_entry *    GetAutoGroup( bool );
 static void             SortGroup( seg_leader * );
+static void             PackClass( class_entry *class, section *sec );
+static void             PackSegs( seg_leader * seg, unsigned num_segs,
+                                  offset size, class_entry *class,
+                                  bool isdata, bool isrdwr );
+static void             SortGroupList( void );
+static void             FindSplitGroups( void );
+static void             NumberNonAutos( void );
 
 static group_entry *    CurrGroup;
 int                     NumGroups;
@@ -139,6 +146,7 @@ static void PackClass( class_entry *class, section *sec )
     size = 0;
     num_segs = 0;
     lastseg = FALSE;
+    isdata = FALSE;
     if( seg != NULL ) {
         limit = SetSegType( seg );
         isdata = !(seg->info & SEG_CODE);

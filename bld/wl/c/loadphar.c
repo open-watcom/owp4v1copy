@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  LOADPHAR : routines for creating phar lap load files.
 *
 ****************************************************************************/
 
-
-/*
-   LOADPHAR : routines for creating phar lap load files.
-
-*/
 #include <string.h>
 #include "linkstd.h"
 #include "exephar.h"
@@ -54,6 +48,8 @@ static unsigned_32  WritePharSegData( void );
 static unsigned_32  WriteRTPBlock( void );
 static unsigned_32  WriteSIT( void );
 static unsigned_32  WritePharRelocs( void );
+static void         WritePharSimple( unsigned_32 start );
+static void         WritePharExtended( unsigned_32 start );
 
 extern void FiniPharLapLoadFile( void )
 /*************************************/

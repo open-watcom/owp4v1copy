@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  IMPEXP : utilities for handling imports and exports
 *
 ****************************************************************************/
-
-
-/*
-   IMPEXP : utilities for handling imports and exports
-
-*/
 
 #include <string.h>
 #include <malloc.h>
@@ -56,6 +49,9 @@
 #include "loados2.h"
 #include "loadpe.h"
 #include "impexp.h"
+
+static void ReadOldLib( void );
+static void ReadNameTable( f_handle the_file );
 
 static entry_export * FindPlace( entry_export *exp )
 /**************************************************/

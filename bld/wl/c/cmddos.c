@@ -54,6 +54,7 @@ byte            OvlLevel;
 static  void            PrintOvl( void );
 #endif
 static bool             AddClass( void );
+static void             NewArea( section *sect );
 
 extern void SetDosFmt( void )
 /***************************/

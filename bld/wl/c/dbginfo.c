@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  produce WVIDEO debugging information in load file
 *
 ****************************************************************************/
-
-
-/*
- *  DBGINFO -- produce WVIDEO debugging information in load file
- *
-*/
 
 #include <string.h>
 #include <malloc.h>
@@ -105,6 +98,9 @@ static class_entry *TypeClass;
 static void             ReadSegInfo( section *, void ** );
 static snamelist *      LangAlloc( byte len, void *buff );
 static void             ODBIGenAddrInfo( seg_leader * );
+static void             AllocDBIClasses( class_entry *class );
+static void             NewArea( section *sect );
+static void             DoName( char *cname, char *intelname, int len );
 
 #ifdef _INT_DEBUG
 struct {

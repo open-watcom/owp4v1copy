@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  LOADQNX : routines for creating QNX load files.
 *
 ****************************************************************************/
-
-
-/*
- *  LOADQNX : routines for creating QNX load files.
- *
-*/
 
 #include <string.h>
 #include <malloc.h>
@@ -56,6 +49,9 @@ static offset           AmountWritten;
 static bool             InVerifySegment;
 static lmf_rw_end       RWEndRec;
 static group_entry *    CurrGroup;
+
+static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg );
+static void SetQNXGroupFlags( void );
 
 #define QNX_MAX_DATA_SIZE (QNX_MAX_REC_SIZE - sizeof(lmf_data))
 #define VERIFY_END (VERIFY_OFFSET + sizeof(RWEndRec.verify))

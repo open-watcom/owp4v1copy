@@ -80,6 +80,10 @@ static segdata *        LastSegData;
 static offset           FixupOverflow;
 
 static unsigned         MapOS2FixType( unsigned type );
+static void             PatchOffset( fix_data *fix, unsigned_32 val,
+                                     bool isdelta );
+static void             Relocate( fix_data *fix, frame_spec *targ );
+
 
 #define MAX_ADDEND_SIZE (2 * sizeof(unsigned_32))
 

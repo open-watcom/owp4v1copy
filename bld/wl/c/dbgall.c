@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  general routines for producing debugging information in
+*               load file
 *
 ****************************************************************************/
-
-
-/*
- *  DBGALL -- general routines for producing debugging information in load file
- *
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -61,6 +55,7 @@ char *          SymFileName;
 group_entry *   DBIGroups;
 
 static void     DBIGenLocal( void * );
+static void     DBIGenLines( mod_entry *mod );
 
 extern void ResetDBI( void )
 /**************************/

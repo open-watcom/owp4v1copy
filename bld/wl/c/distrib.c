@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  routines for distributing libraries over overlays
 *
 ****************************************************************************/
-
-
-/*
-   DISTRIB -- routines for distributing libraries over overlays
-
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -62,6 +55,7 @@ section **          SectOvlTab;
 /* forward declarations */
 
 static bool NewRefVector( symbol *, unsigned_16, unsigned_16 );
+static void ScanArcs( mod_entry *mod );
 
 #define MOD_DEREF( x )  (ModTable[(x)])
 #define INITIAL_MOD_ALLOC 32

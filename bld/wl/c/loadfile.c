@@ -81,6 +81,17 @@ typedef struct {
 
 static implibinfo       ImpLib;
 
+static void OpenOutFiles( void );
+static void CloseOutFiles( void );
+static void SetupImpLib( void );
+static void DoCVPack( void );
+static void FlushImpBuffer( void );
+static void ExecWlib( void );
+static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
+                         void * (*rtn)(void *, const void *, unsigned) );
+static void BufImpWrite( char *buffer, int len );
+static void FlushBuffFile( outfilelist *outfile );
+
 extern void ResetLoadFile( void )
 /*******************************/
 {

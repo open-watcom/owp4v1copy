@@ -53,6 +53,8 @@
 #include "mapio.h"
 #include "wressetr.h"   // from wres project
 
+static void WalkList( node *list, void (*fn)( void * ) );
+
 #if _LINKER != _WATFOR77
 static int ResWrite( int dummy, const void *buff, size_t size )
 /*************************************************************/
