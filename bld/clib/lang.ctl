@@ -43,7 +43,11 @@ cdsay .
     <CPCMD> library\nw_libcl.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\libc3sl.lib
     <CPCMD> library\nw_clib.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\clib3s.lib
     <CPCMD> library\nw_clibl.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\clib3sl.lib
-    <CPCMD> startup\library\netware.386\ms_s\binmode.obj <relroot>\rel2\lib386\netware\binmode.obj
+#
+# Note binmode applies to both LIBC and CLIB libraries but only needs to be built once from the
+# fat CLIB source code.
+#
+    <CPCMD> startup\library\nw_clib.386\ms_s\binmode.obj <relroot>\rel2\lib386\netware\binmode.obj
     <CPCMD> library\os2.286\mc\clibc.lib <relroot>\rel2\lib286\os2\clibc.lib
     <CPCMD> library\os2.286\mh\clibh.lib <relroot>\rel2\lib286\os2\clibh.lib
     <CPCMD> library\os2.286\ml\clibl.lib <relroot>\rel2\lib286\os2\clibl.lib
