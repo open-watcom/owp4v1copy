@@ -7,9 +7,9 @@
 
 /* constants for compiled-command representation */
 #define EQCMD   0x01    /* = -- print current line number               */
-#define ACMD    0x02    /* a -- append text after current line  */
+#define ACMD    0x02    /* a -- append text after current line          */
 #define BCMD    0x03    /* b -- branch to label                         */
-#define CCMD    0x04    /* c -- change current line             */
+#define CCMD    0x04    /* c -- change current line                     */
 #define DCMD    0x05    /* d -- delete all of pattern space             */
 #define CDCMD   0x06    /* D -- delete first line of pattern space      */
 #define GCMD    0x07    /* g -- copy hold space to pattern space        */
@@ -23,7 +23,7 @@
 #define PCMD    0x0F    /* p -- print pattern space to output           */
 #define CPCMD   0x10    /* P -- print first line of pattern space       */
 #define QCMD    0x11    /* q -- exit the stream editor                  */
-#define RCMD    0x12    /* r -- read in a file after current line */
+#define RCMD    0x12    /* r -- read in a file after current line       */
 #define SCMD    0x13    /* s -- regular-expression substitute           */
 #define TCMD    0x14    /* t -- branch on last substitute successful    */
 #define CTCMD   0x15    /* T -- branch on last substitute failed        */
