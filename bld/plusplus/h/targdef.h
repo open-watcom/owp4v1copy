@@ -42,16 +42,6 @@
 #define _ASCII  0
 #define _EBCDIC 1
 
-/*
-    _OS: indicates what OS the host compiler will run on
-*/
-#define _DOS    0
-#define _OS2    1
-#define _NT     2
-#define _QNX    3
-#define _OSI    4
-#define _CMS    5
-
 //
 // target configuration
 //
@@ -70,4 +60,3 @@
 
 // macros for architecture classes
 #define _INTEL_CPU      ( _CPU == 8086 || _CPU == 386 )
-#define _INTEL_HOST     ( _HOST == 8086 || _HOST == 386 )

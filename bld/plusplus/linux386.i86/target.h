@@ -37,8 +37,4 @@
 // target
 #define _CPU            8086
 
-// host
-#define _OS             _LINUX
-#define _HOST           386
-
 #endif

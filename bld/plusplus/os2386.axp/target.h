@@ -40,8 +40,4 @@
 // target
 #define _CPU            _AXP
 
-// host
-#define _OS             _OS2
-#define _HOST           386
-
 #endif

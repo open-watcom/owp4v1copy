@@ -40,8 +40,4 @@
 // target
 #define _CPU            386
 
-// host
-#define _OS             _LINUX
-#define _HOST           386
-
 #endif

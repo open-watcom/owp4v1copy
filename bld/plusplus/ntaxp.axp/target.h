@@ -40,8 +40,4 @@
 // target
 #define _CPU            _AXP
 
-// host
-#define _OS             _NT
-#define _HOST           _AXP
-
 #endif
