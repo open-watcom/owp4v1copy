@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines for creating auto groups and packing segments
 *
 ****************************************************************************/
 
@@ -155,10 +154,9 @@ static void PackClass( class_entry *class, section *sec )
         if( seg->group == NULL ) {
             align_size = CAlign(size, seg->align );
             new_size = align_size + seg->size;
-            if( seg->size != 0 && (new_size < size
-                                        || new_size >= limit
-                                        || lastseg
-                                        || !CanPack( packstart, seg )) ) {
+            if( new_size >= limit          // group overflow 16/32-bit
+                || new_size < size         // group overflow 32-bit
+                || seg->size && ( lastseg || !CanPack( packstart, seg ) ) ) {
                 PackSegs(packstart, num_segs, size, class, isdata, isreadwrite);
                 packstart = seg;
                 num_segs = 1;
