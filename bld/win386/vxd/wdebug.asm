@@ -40,7 +40,7 @@
         .386p
         .387
 
-        INCLUDE win30VMM.Inc
+        INCLUDE win30vxd.inc
         INCLUDE WDEBUG.INC
 
 MAX_EMU_REG     equ 32

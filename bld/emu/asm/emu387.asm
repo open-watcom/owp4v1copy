@@ -39,7 +39,7 @@ _QNX  = 3 ;     QNX/386
 
 ifdef __WIN387__
 
-        include win30vmm.inc
+        include win30vxd.inc
 
 VxD_LOCKED_CODE_SEG
 
