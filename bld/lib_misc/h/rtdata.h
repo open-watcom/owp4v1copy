@@ -158,7 +158,9 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     #define _RWD_doserrno       _DOSERRNO
 #endif
 #define _RWD_tmpfnext           __tmpfnext
-#define _RWD_errno              _ERRNO
+#if !defined(_RWD_errno)
+    #define _RWD_errno              _ERRNO
+#endif
 #define _RWD_nexttok            _NEXTTOK
 #define _RWD_nextftok           _NEXTFTOK
 #define _RWD_nextmbtok          _NEXTMBTOK

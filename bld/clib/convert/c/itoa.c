@@ -91,7 +91,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(utoa,_utow)( unsigned value, CHAR_TYPE *buffer, in
             ++q;
             value = quot;
         } while( value != 0 );
-        while( *p++ = (CHAR_TYPE)*--q );
+        while( (*p++ = (CHAR_TYPE)*--q) );
         return( buffer );
     }
 

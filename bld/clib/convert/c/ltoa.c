@@ -108,7 +108,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ultoa,_ultow)( value, buffer, radix )
             *q = __Alphabet[ rem ];
             ++q;
         } while( value != 0 );
-        while( *p++ = (CHAR_TYPE)*--q );
+        while( (*p++ = (CHAR_TYPE)*--q) );
         return( buffer );
     }
 
