@@ -63,6 +63,7 @@ md %relroot%\%defrel%\samples\cplbexam
 md %relroot%\%defrel%\samples\dll
 md %relroot%\%defrel%\samples\goodies
 md %relroot%\%defrel%\samples\ide
+md %relroot%\%defrel%\samples\os2
 md %relroot%\%defrel%\samples\win
 md %relroot%\%defrel%\samples\clibexam\kanji
 md %relroot%\%defrel%\samples\clibexam\test
@@ -97,6 +98,7 @@ md %relroot%\%defrel%\samples\ide\fortran\os2
 md %relroot%\%defrel%\samples\ide\fortran\win
 md %relroot%\%defrel%\samples\ide\fortran\win32
 md %relroot%\%defrel%\samples\ide\fortran\win386
+md %relroot%\%defrel%\samples\os2\dll
 md %relroot%\%defrel%\samples\win\alarm
 md %relroot%\%defrel%\samples\win\datactl
 md %relroot%\%defrel%\samples\win\edit

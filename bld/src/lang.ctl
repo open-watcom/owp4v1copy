@@ -80,8 +80,8 @@ cdsay .
 
     <CPCMD> <devdir>/src/dll/*.*        <relroot>/rel2/samples/dll/
     <CPCMD> <devdir>/src/goodies/*.*    <relroot>/rel2/samples/goodies/
-#    <CPCMD> <devdir>/src/os2/*.*       <relroot>/rel2/samples/os2/
-#    <CPCMD> <devdir>/src/p16/*.*       <relroot>/rel2/samples/p16/
+    <CPCMD> <devdir>/src/os2/*.*        <relroot>/rel2/samples/os2/
+    <CPCMD> <devdir>/src/os2/dll/*.*    <relroot>/rel2/samples/os2/dll/
     <CPCMD> <devdir>/src/win/*.*        <relroot>/rel2/samples/win/
     <CPCMD> <devdir>/src/clibexam/kanji/*.*     <relroot>/rel2/samples/clibexam/kanji/
     <CPCMD> <devdir>/src/clibexam/test/*.*      <relroot>/rel2/samples/clibexam/test/

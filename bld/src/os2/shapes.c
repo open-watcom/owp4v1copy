@@ -7,7 +7,6 @@
 int             SizeX;
 int             SizeY;
 HWND            FrameHandle;
-HWND            WinHandle;
 HMQ             hMessageQueue;
 HAB             AnchorBlock;
 
@@ -22,14 +21,15 @@ static void NewColor( HPS ps )
     GpiSetColor( ps, Random( 15 ) + 1 );
 }
 
-static void DrawEllipse()
+/* Draw a rectangular shape of random size and color at random position */
+static void DrawEllipse(HWND hwndWindow)
 {
     POINTL      ptl;
     HPS         ps;
     static int  Odd = 0;
     int         parm1,parm2;
 
-    ps = WinGetPS( WinHandle );
+    ps = WinGetPS( hwndWindow );
     ptl.x = Random( SizeX );
     ptl.y = Random( SizeY );
     GpiMove( ps, &ptl );
@@ -53,6 +53,7 @@ static void DrawEllipse()
     WinReleasePS( ps );
 }
 
+/* Client window procedure */
 MRESULT EXPENTRY MainDriver( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 {
     HPS         ps;
@@ -60,50 +61,65 @@ MRESULT EXPENTRY MainDriver( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 )
 
     switch( msg ) {
     case WM_CREATE:
-        WinHandle = hwnd;
-        WinStartTimer( AnchorBlock, WinHandle, 1, 150 ) ;
+        /* Start a 150ms timer on window creation */
+        WinStartTimer( AnchorBlock, hwnd, 1, 150 ) ;
         break;
     case WM_TIMER:
-        DrawEllipse();
+        /* Draw another ellipse on each timer tick */
+        DrawEllipse( hwnd );
         return( 0 );
     case WM_SIZE:
+        /* Remember new dimensions when window is resized */
         SizeX = SHORT1FROMMP( mp2 );
         SizeY = SHORT2FROMMP( mp2 );
         return( 0 );
     case WM_PAINT:
-        ps = WinBeginPaint( WinHandle, NULL, NULL );
-        WinQueryWindowRect( WinHandle, &rcl );
+        /* Handle paint events */
+        ps = WinBeginPaint( hwnd, NULL, NULL );
+        WinQueryWindowRect( hwnd, &rcl );
         WinFillRect( ps, &rcl, CLR_WHITE );
         WinEndPaint( ps );
         return( 0 );
     }
-    return( WinDefWindowProc( WinHandle, msg, mp1, mp2 ) );
+    /* Let the default window procedure handle all other messages */
+    return( WinDefWindowProc( hwnd, msg, mp1, mp2 ) );
 }
 
 int     main()
 {
     ULONG       style;
     QMSG        qmsg;
+    HWND        WinHandle;
 
+    /* Initialize windowing and create message queue */
     AnchorBlock = WinInitialize( 0 );
     if( AnchorBlock == 0 ) return( 0 );
     hMessageQueue = WinCreateMsgQueue( AnchorBlock, 0 );
     if( hMessageQueue == 0 ) return( 0 );
-    if( !WinRegisterClass( AnchorBlock, (PSZ)"WATCOM", (PFNWP)MainDriver,
+
+    /* Register window class */
+    if( !WinRegisterClass( AnchorBlock, "Watcom", (PFNWP)MainDriver,
                            CS_SIZEREDRAW, 0 ) ) {
         return( 0 );
     }
+
+    /* Create frame and client windows */
     style = FCF_TITLEBAR | FCF_SYSMENU | FCF_SIZEBORDER | FCF_MINMAX |
             FCF_SHELLPOSITION | FCF_TASKLIST;
     FrameHandle = WinCreateStdWindow( HWND_DESKTOP, WS_VISIBLE, &style,
-                                      (PSZ)"WATCOM", (PSZ)"", 0, NULL, 0,
-                                      &WinHandle );
+                                      "Watcom",
+                                      "Shapes - C sample",
+                                      0, NULL, 0, &WinHandle );
+
+    /* If window creation failed, exit immediately! */
     if( FrameHandle == 0 ) return( 0 );
 
+    /* Message loop */
     while( WinGetMsg( AnchorBlock, &qmsg, NULL, 0, 0 ) ) {
         WinDispatchMsg( AnchorBlock, &qmsg );
     }
 
+    /* Shut down and clean up */
     WinDestroyWindow( FrameHandle );
     WinDestroyMsgQueue( hMessageQueue );
     WinTerminate( AnchorBlock );
