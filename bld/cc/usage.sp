@@ -34,7 +34,7 @@ Options:
 -aa           allow non const initializers for local aggregates or unions
 -ad[=<file>]  generate make style auto depend file
 -adt[=<file>] set make style auto depend target name
--adbs         force slashes to backward '\' slashes (auto dep gen)
+-adbs         force slashes to backward '\\' slashes (auto dep gen)
 -adfs         force slashes to forward '/' slashes (auto dep gen)
 -ai           turn off type checking on static initialization
 -aq           turn off qualifier mismatch warning for const/volatile
