@@ -47,6 +47,9 @@ extra_c_flags_386 += -of
 extra_c_flags += -DTRMEM
 !endif
 
+extra_c_flags_genmsomf = -DMSG_WOMP_RC_BASE=200
+extra_c_flags_fixup = -DMSG_WOMP_RC_BASE=200
+
 #lflags stuff
 #########
 extra_l_flags = option map,symfile
@@ -219,8 +222,9 @@ wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 wmpmsg.gh : $(proj_path)/h/womp.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
+        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WOMP_RC_BASE/' > $^@
 !else
-        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_RC_BASE" $[@
+        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_WOMP_RC_BASE" $[@
 !endif
 
 ###################################################################

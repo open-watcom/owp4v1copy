@@ -54,8 +54,8 @@ extern void             AsmNote( int msgnum, ... );
 
 #if defined( _WASM_ )
 
-    #define MSG_RC_BASE         16
-    #define MSG_SHARE_RC_BASE   200
+    #define MSG_SHARE_RC_BASE   1
+    #define MSG_WOMP_RC_BASE    200
     #define MSG_WASM_RC_BASE    500
     #define MSG_USE_BASE        900
 
