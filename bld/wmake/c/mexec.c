@@ -1560,6 +1560,10 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
 
     memcpy( cmdname, cmd, arg - cmd );  /* copy command */
     cmdname[ arg - cmd ] = NULLCHAR;    /* null terminate it */
+
+    /* skip whitespace between the command and the argument */
+    for( ; isws( *arg ); arg++ );
+
 #if defined( __DOS__ )
     _splitpath( cmdname, NULL, NULL, NULL, ext );
     if( ext[0] == '.' ) {
