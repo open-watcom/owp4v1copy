@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Environment variable lookup for Linux. 
 *
 ****************************************************************************/
 
@@ -34,6 +33,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <process.h>
 
 extern char     *StrCopy( char *, char * );
 
@@ -41,9 +41,8 @@ unsigned EnvLkup( char *name, char *buff, int max_len )
 {
     char        *env;
     char        *ptr;
-#if 0
     char        *p;
-#endif
+    char        cmd[_MAX_PATH];
 
     max_len = max_len; // nyi obey
     /* if we're asking for the PATH variable, we really want to know where
@@ -61,25 +60,26 @@ unsigned EnvLkup( char *name, char *buff, int max_len )
             ptr = StrCopy( env, ptr );          /* look in HOME dir */
             *ptr++ = ':';
         }
-#if 0
-        if( _cmdname( ptr ) != NULL ) {
-            p = strrchr( ptr, '/' );
+        if( _cmdname( cmd ) != NULL ) {
+            p = strrchr( cmd, '/' );
             if( p != NULL ) {
                 *p = NULLCHAR;
-                p = strrchr( ptr, '/' );
+                /* look in the executable's directory */
+                ptr = StrCopy( cmd, ptr );
+                *ptr++ = ':';
+                p = strrchr( cmd, '/' );
                 if( p != NULL ) {
                     /* look in a sibling directory of where the executable is */
-                    ptr = StrCopy( "wd", p + 1 );
+                    p = StrCopy( "wd", p + 1 );
+                    ptr = StrCopy( cmd, ptr );
                     *ptr++ = ':';
                 }
             }
         }
-#endif
-        ptr = StrCopy( "/usr/watcom/wd", ptr );    /* look in "/usr/watcom/wd" */
+        ptr = StrCopy( "/opt/watcom/wd", ptr );    /* look in "/opt/watcom/wd" */
         return( ptr - buff );
     }
     env = getenv( name );
     if( env == NULL ) return( 0 );
     return( StrCopy( env, buff ) - buff );
 }
-
