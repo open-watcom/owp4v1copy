@@ -340,7 +340,7 @@ The source code for this example can be found in
       common NumThreads, HoldThreads
 
       integer STACK_SIZE
-      parameter (STACK_SIZE=8192)
+      parameter (STACK_SIZE=32768)
       integer NUM_THREADS
       parameter (NUM_THREADS=5)
 
@@ -376,8 +376,8 @@ The source code for this example can be found in
           call DosSleep( 1 )
       end while
 .code break
-      print '(''Hi from thread '', i4)', threadid()
       call DosEnterCritSec()
+      print '(''Hi from thread '', i4)', threadid()
       NumThreads = NumThreads - 1
       call DosExitCritSec()
       call endthread()
@@ -396,7 +396,7 @@ static  volatile int    NumThreads;
 static  volatile int    HoldThreads;
 
 #define NUM_THREADS     5
-#define STACK_SIZE      8192
+#define STACK_SIZE      32768
 
 .code break
 static void a_thread( void *arglist )
