@@ -158,7 +158,7 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
     dbg->file = file;
     dbg->abbrevs = NULL;
     dbg->addr_size = 0;
-    dbg->old_version = 0;
+    dbg->wat_version = 0; /* zero means not Watcom DWARF */
     dbg->last_ccu = &dbg->compunit;
     for( i = 0; i < DR_DEBUG_NUM_SECTS; i++ ) {
         dbg->sections[i].size = *sizes;
@@ -200,10 +200,10 @@ extern void DRDbgDone( dr_dbg_handle dbg )
     }
 }
 
-extern void DRDbgOldVersion( dr_dbg_handle dbg )
-/**********************************************/
+extern void DRDbgOldVersion( dr_dbg_handle dbg, int version )
+/***********************************************************/
 {
-    dbg->old_version = 1; // remove when pat 10.5
+    dbg->wat_version = version;
 }
 
 static void ReadFileTable( void )

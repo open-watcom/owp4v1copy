@@ -94,7 +94,7 @@ struct dr_dbg_info {
     dr_handle           *abbrevs;   // variable length array.
     compunit_info       *last_ccu;
     unsigned_8          addr_size;
-    unsigned_8          old_version;
+    unsigned_8          wat_version;// compatibility flag for non-standard data
 };
 
 extern struct dr_dbg_info * DWRCurrNode;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stuff dealing with module handles.
 *
 ****************************************************************************/
 
@@ -39,9 +38,6 @@
 #include "dfld.h"
 #include "dfaddr.h"
 #include "dfaddsym.h"
-/*
-        Stuff dealing with module handles
-*/
 
 //NYI: should be OS && location sensitive
 #define IS_PATH_CHAR( c ) ((c)=='\\'||(c)=='/'||(c)==':')
@@ -116,7 +112,9 @@ static bool ModFill( void *_mod, dr_handle mod_handle ){
 
         df_ver version;
 
-        if( strcmp( path, "V1.0 WATCOM" ) == 0 ){
+        if( strcmp( path, "V2.0 WATCOM" ) == 0 ) {
+            version = VER_V3;
+        } else if( strcmp( path, "V1.0 WATCOM" ) == 0 ) {
             version = VER_V2;
         }else if( strcmp( path, "WATCOM" ) == 0 ){
             version = VER_V1;
@@ -167,9 +165,11 @@ extern  dip_status     InitModMap( imp_image_handle *ii ){
     DRDbgClear( ii->dwarf->handle ); /* clear some mem */
     ii->mod_count = list.count;
     ii->mod_map = FiniModInfo( &list );
-    if( list.version == VER_V1 ){
-        DRDbgOldVersion( ii->dwarf->handle );
-    }else if( list.version == VER_ERROR ){
+    if( list.version == VER_V1 ) {
+        DRDbgOldVersion( ii->dwarf->handle, 1 );
+    } else if( list.version == VER_V2 ) {
+        DRDbgOldVersion( ii->dwarf->handle, 2 );
+    } else if( list.version == VER_ERROR ) {
         DCStatus( DS_INFO_BAD_VERSION );
         ret = DS_FAIL | DS_INFO_BAD_VERSION;
     }

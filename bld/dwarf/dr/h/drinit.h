@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Initialization routines.
 *
 ****************************************************************************/
 
@@ -39,4 +38,4 @@ extern int  DRDbgClear( dr_dbg_handle dbg );
 extern void DRDbgDone( dr_dbg_handle dbg );
 void DRInit( void );
 void DRFini( void );
-extern void DRDbgOldVersion( dr_dbg_handle dbg );
+extern void DRDbgOldVersion( dr_dbg_handle dbg, int version );

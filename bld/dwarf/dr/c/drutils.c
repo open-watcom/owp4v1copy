@@ -202,7 +202,7 @@ extern void DWRSkipChildren( dr_handle *abbrev, dr_handle *mod )
         for(;;) {
             handle = DWRVMReadULEB128( mod );   // get attribute
             if( handle == 0 ) break;    // found end of chain!
-            handle = DWRReadAbbrev( handle );
+            handle = DWRLookupAbbrev( *mod, handle );
             DWRVMSkipLEB128( &handle ); // skip tag
             handle++;           // skip child;
             DWRSkipAttribs( handle, mod );
@@ -447,7 +447,7 @@ extern dr_handle DWRReadReference( dr_handle abbrev, dr_handle info )
         if( form != DW_FORM_ref_addr ){
             handle += DWRFindCompileUnit( info );
         }else{
-            if( DWRCurrNode->old_version ){ // handle 10.5
+            if( DWRCurrNode->wat_version == 1 ) { // handle Watcom 10.x DWARF
                 handle += DWRFindCompileUnit( info );
             }else{
                 handle += DWRCurrNode->sections[DR_DEBUG_INFO].base;
