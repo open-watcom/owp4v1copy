@@ -180,7 +180,7 @@ $(libname).lib : $(objs) $(special_objs) graphics.lbc
 
 graphics.lbc : ../graphics.mif
         %create graphics.lbc
-        for %i in ($(objs)) do %append graphics.lbc -+%i
+        @for %i in ($(objs)) do @%append graphics.lbc -+%i
 
 clean: .symbolic
         rm -f *.obj *.lib *.lbc *.mod *.ref *.stb *.2bj *.err *.o
