@@ -246,8 +246,8 @@ enum                            // PROCESSING MODES
 
 
 int main(                  // MAIN-LINE
-    int arg_count,          // - # arguments
-    char *param[] )         // - arguments list
+    int argc,          // - # arguments
+    char *argv[] )         // - arguments list
 {
 #define src_file param[ count ]         // - name of source file
 #define tgt_file param[ arg_count-1 ]   // - name of modifications file
@@ -258,6 +258,65 @@ int main(                  // MAIN-LINE
     struct stat         src_time;
     char                *src = NULL;
     char                *tgt = NULL;
+
+    char                *param[32];
+    int                 arg_count = 0;
+
+    for( count = 0; count < argc; count++ ) {
+        if( argv[count][0] != '@' ) {
+            param[arg_count] = malloc( strlen( argv[count] ) + 1 );
+            strcpy( param[arg_count++], argv[count] );
+        } else {
+            FILE        *f;
+            char        st[512], separator;
+            int         i, j, k;
+
+            f = fopen( argv[count]+1, "r" );
+            if( f == NULL ) {
+                Error( "Unable to open indirect argument file" );
+                continue;
+            }    
+
+            fgets( st, 512, f );
+            fclose( f );
+
+            if( st[strlen( st ) - 1] == '\n' )
+                st[strlen( st ) - 1] = 0;
+
+            i = 0;
+            while( i < strlen( st )) {
+                while( st[i] == ' ' )
+                    i++;
+                if( st[i] == 0 )
+                    break;
+                if( st[i] == '"' ) {
+                    separator = '"';
+                    i++;
+                } else {
+                    separator = ' ';
+                }
+                j = i;
+                while(( st[j] != separator ) && ( st[j] != 0 )) {
+                    if(( separator == '"') && ( st[j] == '\\' ))
+                        j++;
+                    j++;
+                }
+
+                param[arg_count] = malloc( j - i + 1 );
+                for( k = 0; k < j - i; k++ ) {
+                    if(( separator == '"') && ( st[i + k] == '\\' ))
+                        i++;
+                    param[arg_count][k] = st[i + k];
+                }    
+                param[arg_count][k] = 0;
+                arg_count++;
+
+                i = j;
+                if ( st[i] == '"' )
+                    i++;
+            }
+        }    
+    }    
 
     ErrCount = 0;
     if( arg_count < 3 ) {
