@@ -177,6 +177,7 @@ typedef struct global_options {
     #endif
     char *      default_name_mangler;
     bool        allow_c_octals;
+    bool        emit_dependencies;
 } global_options;
 
 extern global_options Options;

@@ -47,6 +47,7 @@
 #include "asmalloc.h"
 #include "condasm.h"
 #include "expand.h"
+#include "autodep.h"
 #endif
 
 
@@ -267,6 +268,7 @@ static file_list *push_flist( char *name, bool is_a_file )
         new->name = AsmAlloc( strlen( dir->e.macroinfo->filename ) + 1 );
         strcpy( new->name, dir->e.macroinfo->filename );
     } else {
+		AddFlist( name );
         new->name = AsmAlloc( strlen( name ) + 1 );
         strcpy( new->name, name );
         LineNumber = 0;

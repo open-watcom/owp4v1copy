@@ -55,6 +55,7 @@
 #include "pcobj.h"
 #include "fixup.h"
 #include "queue.h"
+#include "autodep.h"
 
 #define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
 
@@ -624,21 +625,7 @@ static void write_header( void )
     if( Options.module_name != NULL ) {
         name = Options.module_name;
     } else {
-        _fullpath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
-        name = full_name;
-        #if defined(__UNIX__)
-            if( full_name[0] == '/'
-             && full_name[1] == '/'
-             && (AsmFiles.fname[ASM][0] != '/' || AsmFiles.fname[ASM][1] != '/') ) {
-                /*
-                   if the _fullpath result has a node number and
-                   the user didn't specify one, strip the node number
-                   off before returning
-                */
-                name += 2;
-                while( *name != '/' ) ++name;
-            }
-        #endif
+        name = FilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
     }
     objr->is_32 = Use32;
     len = strlen( name );
@@ -655,6 +642,46 @@ static int write_modend( void )
         return ERROR;
     }
     write_record( ModendRec, TRUE );
+    return NOT_ERROR;
+}
+
+static int write_autodep( void )
+{
+    obj_rec       *objr;
+    char          buff[2*PATH_MAX + 5];
+    unsigned int len;
+    FNAMEPTR      curr;
+    FNAMEPTR      last;
+
+    if( !Options.emit_dependencies ) return NOT_ERROR;
+
+    for( curr = FNames; curr != NULL; ) {
+        objr = ObjNewRec( CMD_COMENT );
+        objr->d.coment.attr = 0x80;
+        objr->d.coment.class = CMT_DEPENDENCY;
+
+        len = strlen(curr->name);
+        *((time_t*)buff) = curr->mtime;
+        *(buff + 4) = (unsigned char)len;
+        strcpy(buff + 5, curr->name);
+        len += 5;
+
+        ObjAttachData( objr, buff, len );
+
+        write_record( objr, TRUE );
+
+        AsmFree(curr->name);
+        last = curr;
+        curr = curr->next;
+        AsmFree(last);
+    }
+    FNames = NULL;
+    // one NULL dependency record must be on the end
+    objr = ObjNewRec( CMD_COMENT );
+    objr->d.coment.attr = 0x80;
+    objr->d.coment.class = CMT_DEPENDENCY;
+    ObjAttachData( objr, "", 0 );
+    write_record( objr, TRUE );
     return NOT_ERROR;
 }
 
@@ -1004,6 +1031,7 @@ static void writepass1stuff( void )
         return;
     }
     write_header();
+    write_autodep();
     if( Globals.dosseg ) write_dosseg();
     write_lib();
     write_lnames();
