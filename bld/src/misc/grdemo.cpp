@@ -107,7 +107,7 @@ static void DrawText( short width, short y )
     int                 xc;
 
     xc = VC.numxpixels / 2;
-    _setcharsize( width, width * 3 / 2 );
+    _setcharsize( width * 3 / 2, width );
     _settextalign( _CENTER, _BOTTOM );
     _grtext( xc, y, "Open Watcom C" );
     _setcharsize( width, width );
@@ -192,6 +192,7 @@ static void FadeColors( void )
         _remappalette( TextColour, blue );
         _remappalette( TextColour2, blue + green );
         _remappalette( BorderColour, red );
+        delay( 125 );
     }
 }
 
