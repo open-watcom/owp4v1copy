@@ -88,12 +88,18 @@ static void decodeMsg(          // DECODE MESSAGE
     char *tgt,                  // - message location
     unsigned msg_num )          // - message number
 {
+    char *endp;
     unsigned msg_start;
     unsigned msg_stop;
 
     msg_start = msg_base[ msg_num ];
     msg_stop = msg_base[ msg_num + 1 ];
-    *decodePhrase( tgt, msg_start, msg_stop ) = '\0';
+    endp = decodePhrase( tgt, msg_start, msg_stop );
+
+    /* encodeRaw always adds a trailing space, remove it */
+    if( ( endp != tgt ) && ( endp[-1] == ' ' ) ) {
+        endp[-1] = '\0';
+    }
 }
 
 
