@@ -82,4 +82,13 @@ call zipit plib_o16
 call zipit plib_o32
 call zipit plib_w16
 call zipit plib_w32
+call zipit cm_samples
+call zipit clib_samples
+call zipit plib_samples
+call zipit win_samples
+call zipit ide_samples
+call zipit f_samples
+call zipit misc_src
+call zipit os2api
+call zipit w32api
 echo All done!

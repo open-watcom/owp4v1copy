@@ -1,4 +1,4 @@
 # Manifest file for Fortran runtime libraries (Netware target)
 
-\LIB386\NETWARE\FLIB7S.LIB
-\LIB386\NETWARE\FLIBS.LIB
+lib386\netware\flib7s.lib
+lib386\netware\flibs.lib

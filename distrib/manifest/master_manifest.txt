@@ -769,120 +769,120 @@ lib386\nt\flib7s.lib                            FLIB_W32        FLIB_W32
 lib386\nt\flib.lib                              FLIB_W32        FLIB_W32
 lib386\nt\flibs.lib                             FLIB_W32        FLIB_W32
 
-samples\fortran\os2\calendar.for                FSAMPLES        FSAMPLES
-samples\fortran\os2\comm.for                    FSAMPLES
-samples\fortran\os2\fshapes.fi                  FSAMPLES
-samples\fortran\os2\fshapes.for                 FSAMPLES
-samples\fortran\os2\makefile                    FSAMPLES
-samples\fortran\os2\mthread.for                 FSAMPLES
-samples\fortran\os2\dll\dllinit.for             FSAMPLES
-samples\fortran\os2\dll\dllsamp.for             FSAMPLES
-samples\fortran\os2\dll\dlltest.for             FSAMPLES
-samples\fortran\os2\dll\makefile                FSAMPLES
-samples\fortran\os2\rexx\func1.for              FSAMPLES
-samples\fortran\os2\rexx\func2.for              FSAMPLES
-samples\fortran\os2\rexx\funcload.fi            FSAMPLES
-samples\fortran\os2\rexx\funcload.for           FSAMPLES
-samples\fortran\os2\rexx\makefile               FSAMPLES
-samples\fortran\os2\rexx\rxsutils.fi            FSAMPLES
-samples\fortran\os2\rexx\rxsutils.for           FSAMPLES
-samples\fortran\os2\rexx\testdll.cmd            FSAMPLES
-samples\fortran\win\dll                         FSAMPLES
-samples\fortran\win\ellipse.for                 FSAMPLES
-samples\fortran\win\fwcopy.fi                   FSAMPLES
-samples\fortran\win\fwcopy.for                  FSAMPLES
-samples\fortran\win\makefile                    FSAMPLES
-samples\fortran\win\dll\cover16.c               FSAMPLES
-samples\fortran\win\dll\cover16.obj             FSAMPLES
-samples\fortran\win\dll\gen16.for               FSAMPLES
-samples\fortran\win\dll\gen16v.for              FSAMPLES
-samples\fortran\win\dll\gen32.for               FSAMPLES
-samples\fortran\win\dll\gen32v.for              FSAMPLES
-samples\fortran\win\dll\makefile                FSAMPLES
-samples\fortran\win\dll\vbdll32.for             FSAMPLES
-samples\fortran\win\dll\windll.for              FSAMPLES
-samples\fortran\win\dll\windllv.for             FSAMPLES
-samples\fortran\win32\dll                       FSAMPLES
-samples\fortran\win32\make.bat                  FSAMPLES
-samples\fortran\win32\mthread.for               FSAMPLES
-samples\fortran\win32\dll\dllinit.for           FSAMPLES
-samples\fortran\win32\dll\dllsamp.for           FSAMPLES
-samples\fortran\win32\dll\dlltest.for           FSAMPLES
-samples\fortran\win32\dll\makefile              FSAMPLES
-samples\ide\fortran                             FSAMPLES
-samples\ide\back.bmp                            FSAMPLES
-samples\ide\box.cpp                             FSAMPLES
-samples\ide\box.hpp                             FSAMPLES
-samples\ide\brighter.bmp                        FSAMPLES
-samples\ide\btnos2.c                            FSAMPLES
-samples\ide\btnwin.c                            FSAMPLES
-samples\ide\button.h                            FSAMPLES
-samples\ide\darker.bmp                          FSAMPLES
-samples\ide\down.bmp                            FSAMPLES
-samples\ide\draw.ico                            FSAMPLES
-samples\ide\draw.rc                             FSAMPLES
-samples\ide\drawmenu.h                          FSAMPLES
-samples\ide\drawos2.c                           FSAMPLES
-samples\ide\drawos2.rc                          FSAMPLES
-samples\ide\drawroom.cpp                        FSAMPLES
-samples\ide\drawwin.c                           FSAMPLES
-samples\ide\forward.bmp                         FSAMPLES
-samples\ide\furnitu.cpp                         FSAMPLES
-samples\ide\furnitu.hpp                         FSAMPLES
-samples\ide\left.bmp                            FSAMPLES
-samples\ide\right.bmp                           FSAMPLES
-samples\ide\room.h                              FSAMPLES
-samples\ide\threed.h                            FSAMPLES
-samples\ide\up.bmp                              FSAMPLES
-samples\ide\win1632.h                           FSAMPLES
-samples\ide\fortran\os2                         FSAMPLES
-samples\ide\fortran\win                         FSAMPLES
-samples\ide\fortran\win32                       FSAMPLES
-samples\ide\fortran\win386                      FSAMPLES
-samples\ide\fortran\btnnt.for                   FSAMPLES
-samples\ide\fortran\btnos2.for                  FSAMPLES
-samples\ide\fortran\btnwin.for                  FSAMPLES
-samples\ide\fortran\button.fi                   FSAMPLES
-samples\ide\fortran\drawmenu.fi                 FSAMPLES
-samples\ide\fortran\drawnt.fi                   FSAMPLES
-samples\ide\fortran\drawnt.for                  FSAMPLES
-samples\ide\fortran\drawos2.fi                  FSAMPLES
-samples\ide\fortran\drawos2.for                 FSAMPLES
-samples\ide\fortran\drawos2.rc                  FSAMPLES
-samples\ide\fortran\drawwin.fi                  FSAMPLES
-samples\ide\fortran\drawwin.for                 FSAMPLES
-samples\ide\fortran\ntdefs.fi                   FSAMPLES
-samples\ide\fortran\os2.wpj                     FSAMPLES
-samples\ide\fortran\os2_3d.dll                  FSAMPLES
-samples\ide\fortran\room.fi                     FSAMPLES
-samples\ide\fortran\threed.fi                   FSAMPLES
-samples\ide\fortran\win.wpj                     FSAMPLES
-samples\ide\fortran\win32.wpj                   FSAMPLES
-samples\ide\fortran\win386.wpj                  FSAMPLES
-samples\ide\fortran\os2\box.obj                 FSAMPLES
-samples\ide\fortran\os2\button.tgt              FSAMPLES
-samples\ide\fortran\os2\drawos2.tgt             FSAMPLES
-samples\ide\fortran\os2\drawroom.obj            FSAMPLES
-samples\ide\fortran\os2\furnitu.obj             FSAMPLES
-samples\ide\fortran\os2\os2_3d.dll              FSAMPLES
-samples\ide\fortran\win\box.obj                 FSAMPLES
-samples\ide\fortran\win\button.tgt              FSAMPLES
-samples\ide\fortran\win\draw16.tgt              FSAMPLES
-samples\ide\fortran\win\drawroom.obj            FSAMPLES
-samples\ide\fortran\win\furnitu.obj             FSAMPLES
-samples\ide\fortran\win\win_3d.dll              FSAMPLES
-samples\ide\fortran\win32\box.obj               FSAMPLES
-samples\ide\fortran\win32\button.tgt            FSAMPLES
-samples\ide\fortran\win32\draw32.tgt            FSAMPLES
-samples\ide\fortran\win32\drawroom.obj          FSAMPLES
-samples\ide\fortran\win32\furnitu.obj           FSAMPLES
-samples\ide\fortran\win32\nt_3d.dll             FSAMPLES
-samples\ide\fortran\win386\box.obj              FSAMPLES
-samples\ide\fortran\win386\button.tgt           FSAMPLES
-samples\ide\fortran\win386\draw.tgt             FSAMPLES
-samples\ide\fortran\win386\drawroom.obj         FSAMPLES
-samples\ide\fortran\win386\furnitu.obj          FSAMPLES
-samples\ide\fortran\win386\win_3d.dll           FSAMPLES
+samples\fortran\os2\calendar.for                FSAMPLES        F_SAMPLES
+samples\fortran\os2\comm.for                    FSAMPLES        F_SAMPLES
+samples\fortran\os2\fshapes.fi                  FSAMPLES        F_SAMPLES
+samples\fortran\os2\fshapes.for                 FSAMPLES        F_SAMPLES
+samples\fortran\os2\makefile                    FSAMPLES        F_SAMPLES
+samples\fortran\os2\mthread.for                 FSAMPLES        F_SAMPLES
+samples\fortran\os2\dll\dllinit.for             FSAMPLES        F_SAMPLES
+samples\fortran\os2\dll\dllsamp.for             FSAMPLES        F_SAMPLES
+samples\fortran\os2\dll\dlltest.for             FSAMPLES        F_SAMPLES
+samples\fortran\os2\dll\makefile                FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\func1.for              FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\func2.for              FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\funcload.fi            FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\funcload.for           FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\makefile               FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\rxsutils.fi            FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\rxsutils.for           FSAMPLES        F_SAMPLES
+samples\fortran\os2\rexx\testdll.cmd            FSAMPLES        F_SAMPLES
+samples\fortran\win\dll                         FSAMPLES        F_SAMPLES
+samples\fortran\win\ellipse.for                 FSAMPLES        F_SAMPLES
+samples\fortran\win\fwcopy.fi                   FSAMPLES        F_SAMPLES
+samples\fortran\win\fwcopy.for                  FSAMPLES        F_SAMPLES
+samples\fortran\win\makefile                    FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\cover16.c               FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\cover16.obj             FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\gen16.for               FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\gen16v.for              FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\gen32.for               FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\gen32v.for              FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\makefile                FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\vbdll32.for             FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\windll.for              FSAMPLES        F_SAMPLES
+samples\fortran\win\dll\windllv.for             FSAMPLES        F_SAMPLES
+samples\fortran\win32\dll                       FSAMPLES        F_SAMPLES
+samples\fortran\win32\make.bat                  FSAMPLES        F_SAMPLES
+samples\fortran\win32\mthread.for               FSAMPLES        F_SAMPLES
+samples\fortran\win32\dll\dllinit.for           FSAMPLES        F_SAMPLES
+samples\fortran\win32\dll\dllsamp.for           FSAMPLES        F_SAMPLES
+samples\fortran\win32\dll\dlltest.for           FSAMPLES        F_SAMPLES
+samples\fortran\win32\dll\makefile              FSAMPLES        F_SAMPLES
+samples\ide\fortran                             FSAMPLES        F_SAMPLES
+samples\ide\back.bmp                            FSAMPLES        F_SAMPLES
+samples\ide\box.cpp                             FSAMPLES        F_SAMPLES
+samples\ide\box.hpp                             FSAMPLES        F_SAMPLES
+samples\ide\brighter.bmp                        FSAMPLES        F_SAMPLES
+samples\ide\btnos2.c                            FSAMPLES        F_SAMPLES
+samples\ide\btnwin.c                            FSAMPLES        F_SAMPLES
+samples\ide\button.h                            FSAMPLES        F_SAMPLES
+samples\ide\darker.bmp                          FSAMPLES        F_SAMPLES
+samples\ide\down.bmp                            FSAMPLES        F_SAMPLES
+samples\ide\draw.ico                            FSAMPLES        F_SAMPLES
+samples\ide\draw.rc                             FSAMPLES        F_SAMPLES
+samples\ide\drawmenu.h                          FSAMPLES        F_SAMPLES
+samples\ide\drawos2.c                           FSAMPLES        F_SAMPLES
+samples\ide\drawos2.rc                          FSAMPLES        F_SAMPLES
+samples\ide\drawroom.cpp                        FSAMPLES        F_SAMPLES
+samples\ide\drawwin.c                           FSAMPLES        F_SAMPLES
+samples\ide\forward.bmp                         FSAMPLES        F_SAMPLES
+samples\ide\furnitu.cpp                         FSAMPLES        F_SAMPLES
+samples\ide\furnitu.hpp                         FSAMPLES        F_SAMPLES
+samples\ide\left.bmp                            FSAMPLES        F_SAMPLES
+samples\ide\right.bmp                           FSAMPLES        F_SAMPLES
+samples\ide\room.h                              FSAMPLES        F_SAMPLES
+samples\ide\threed.h                            FSAMPLES        F_SAMPLES
+samples\ide\up.bmp                              FSAMPLES        F_SAMPLES
+samples\ide\win1632.h                           FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2                         FSAMPLES        F_SAMPLES
+samples\ide\fortran\win                         FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32                       FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386                      FSAMPLES        F_SAMPLES
+samples\ide\fortran\btnnt.for                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\btnos2.for                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\btnwin.for                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\button.fi                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawmenu.fi                 FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawnt.fi                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawnt.for                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawos2.fi                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawos2.for                 FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawos2.rc                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawwin.fi                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\drawwin.for                 FSAMPLES        F_SAMPLES
+samples\ide\fortran\ntdefs.fi                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2.wpj                     FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2_3d.dll                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\room.fi                     FSAMPLES        F_SAMPLES
+samples\ide\fortran\threed.fi                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\win.wpj                     FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32.wpj                   FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386.wpj                  FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\box.obj                 FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\button.tgt              FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\drawos2.tgt             FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\drawroom.obj            FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\furnitu.obj             FSAMPLES        F_SAMPLES
+samples\ide\fortran\os2\os2_3d.dll              FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\box.obj                 FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\button.tgt              FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\draw16.tgt              FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\drawroom.obj            FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\furnitu.obj             FSAMPLES        F_SAMPLES
+samples\ide\fortran\win\win_3d.dll              FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\box.obj               FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\button.tgt            FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\draw32.tgt            FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\drawroom.obj          FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\furnitu.obj           FSAMPLES        F_SAMPLES
+samples\ide\fortran\win32\nt_3d.dll             FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\box.obj              FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\button.tgt           FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\draw.tgt             FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\drawroom.obj         FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\furnitu.obj          FSAMPLES        F_SAMPLES
+samples\ide\fortran\win386\win_3d.dll           FSAMPLES        F_SAMPLES
 
 src\fortran\blackjac.for                        FSAMPLES        FLIB_HDR_ALL
 src\fortran\blackjac.jpn                        FSAMPLES        FLIB_HDR_ALL
@@ -1217,1063 +1217,1027 @@ binw\resmnu.hlp                                 IDE_HLP_WIN     CM_HLP_WIN
 binw\resstr.hlp                                 IDE_HLP_WIN     CM_HLP_WIN
 binw\wbrw.hlp                                   IDE_HLP_WIN     HLP_WIN
 
-samples\clibexam\abort.c                        SAMPLES
-samples\clibexam\abs.c                          SAMPLES
-samples\clibexam\access.c                       SAMPLES
-samples\clibexam\acos.c                         SAMPLES
-samples\clibexam\acosh.c                        SAMPLES
-samples\clibexam\alloca.c                       SAMPLES
-samples\clibexam\allocmem.c                     SAMPLES
-samples\clibexam\asctime.c                      SAMPLES
-samples\clibexam\asin.c                         SAMPLES
-samples\clibexam\asinh.c                        SAMPLES
-samples\clibexam\assert.c                       SAMPLES
-samples\clibexam\atan2.c                        SAMPLES
-samples\clibexam\atan.c                         SAMPLES
-samples\clibexam\atanh.c                        SAMPLES
-samples\clibexam\atexit.c                       SAMPLES
-samples\clibexam\atof.c                         SAMPLES
-samples\clibexam\atoi.c                         SAMPLES
-samples\clibexam\atol.c                         SAMPLES
-samples\clibexam\b_disk.c                       SAMPLES
-samples\clibexam\bdos.c                         SAMPLES
-samples\clibexam\b_equip.c                      SAMPLES
-samples\clibexam\bessel.c                       SAMPLES
-samples\clibexam\_bfreese.c                     SAMPLES
-samples\clibexam\_bheapse.c                     SAMPLES
-samples\clibexam\b_keybrd.c                     SAMPLES
-samples\clibexam\b_memsiz.c                     SAMPLES
-samples\clibexam\b_print.c                      SAMPLES
-samples\clibexam\_bprintf.c                     SAMPLES
-samples\clibexam\bsearch.c                      SAMPLES
-samples\clibexam\b_serial.c                     SAMPLES
-samples\clibexam\_bthread.c                     SAMPLES
-samples\clibexam\b_time.c                       SAMPLES
-samples\clibexam\cabs.c                         SAMPLES
-samples\clibexam\calloc.c                       SAMPLES
-samples\clibexam\ceil.c                         SAMPLES
-samples\clibexam\cgets.c                        SAMPLES
-samples\clibexam\chainint.c                     SAMPLES
-samples\clibexam\chdir.c                        SAMPLES
-samples\clibexam\chmod.c                        SAMPLES
-samples\clibexam\chsize.c                       SAMPLES
-samples\clibexam\_clear87.c                     SAMPLES
-samples\clibexam\clearenv.c                     SAMPLES
-samples\clibexam\clearerr.c                     SAMPLES
-samples\clibexam\clock.c                        SAMPLES
-samples\clibexam\close.c                        SAMPLES
-samples\clibexam\closedir.c                     SAMPLES
-samples\clibexam\control8.c                     SAMPLES
-samples\clibexam\controlf.c                     SAMPLES
-samples\clibexam\cos.c                          SAMPLES
-samples\clibexam\cosh.c                         SAMPLES
-samples\clibexam\cprintf.c                      SAMPLES
-samples\clibexam\cputs.c                        SAMPLES
-samples\clibexam\creat.c                        SAMPLES
-samples\clibexam\creatnew.c                     SAMPLES
-samples\clibexam\cscanf.c                       SAMPLES
-samples\clibexam\ctime.c                        SAMPLES
-samples\clibexam\cwait.c                        SAMPLES
-samples\clibexam\d_close.c                      SAMPLES
-samples\clibexam\d_creat.c                      SAMPLES
-samples\clibexam\delay.c                        SAMPLES
-samples\clibexam\difftime.c                     SAMPLES
-samples\clibexam\_disable.c                     SAMPLES
-samples\clibexam\div.c                          SAMPLES
-samples\clibexam\d_open.c                       SAMPLES
-samples\clibexam\dosexter.c                     SAMPLES
-samples\clibexam\d_read.c                       SAMPLES
-samples\clibexam\dup2.c                         SAMPLES
-samples\clibexam\dup.c                          SAMPLES
-samples\clibexam\d_write.c                      SAMPLES
-samples\clibexam\ecvt.c                         SAMPLES
-samples\clibexam\_enable.c                      SAMPLES
-samples\clibexam\eof.c                          SAMPLES
-samples\clibexam\_ethread.c                     SAMPLES
-samples\clibexam\exec.c                         SAMPLES
-samples\clibexam\_exit.c                        SAMPLES
-samples\clibexam\exit.c                         SAMPLES
-samples\clibexam\_expand.c                      SAMPLES
-samples\clibexam\exp.c                          SAMPLES
-samples\clibexam\fabs.c                         SAMPLES
-samples\clibexam\fcloseal.c                     SAMPLES
-samples\clibexam\fclose.c                       SAMPLES
-samples\clibexam\fcvt.c                         SAMPLES
-samples\clibexam\fdopen.c                       SAMPLES
-samples\clibexam\feof.c                         SAMPLES
-samples\clibexam\ferror.c                       SAMPLES
-samples\clibexam\fflush.c                       SAMPLES
-samples\clibexam\fgetc.c                        SAMPLES
-samples\clibexam\fgetchar.c                     SAMPLES
-samples\clibexam\fgetpos.c                      SAMPLES
-samples\clibexam\fgets.c                        SAMPLES
-samples\clibexam\fileleng.c                     SAMPLES
-samples\clibexam\fileno.c                       SAMPLES
-samples\clibexam\findfirs.c                     SAMPLES
-samples\clibexam\floor.c                        SAMPLES
-samples\clibexam\flushall.c                     SAMPLES
-samples\clibexam\fmod.c                         SAMPLES
-samples\clibexam\fopen.c                        SAMPLES
-samples\clibexam\fp_off.c                       SAMPLES
-samples\clibexam\_fpreset.c                     SAMPLES
-samples\clibexam\fprintf.c                      SAMPLES
-samples\clibexam\fp_seg.c                       SAMPLES
-samples\clibexam\fputc.c                        SAMPLES
-samples\clibexam\fputchar.c                     SAMPLES
-samples\clibexam\fputs.c                        SAMPLES
-samples\clibexam\fread.c                        SAMPLES
-samples\clibexam\free.c                         SAMPLES
-samples\clibexam\_freect.c                      SAMPLES
-samples\clibexam\freemem.c                      SAMPLES
-samples\clibexam\freopen.c                      SAMPLES
-samples\clibexam\frexp.c                        SAMPLES
-samples\clibexam\fscanf.c                       SAMPLES
-samples\clibexam\fseek.c                        SAMPLES
-samples\clibexam\fsetpos.c                      SAMPLES
-samples\clibexam\_fsopen.c                      SAMPLES
-samples\clibexam\fstat.c                        SAMPLES
-samples\clibexam\ftell.c                        SAMPLES
-samples\clibexam\ftime.c                        SAMPLES
-samples\clibexam\_fullpat.c                     SAMPLES
-samples\clibexam\fwrite.c                       SAMPLES
-samples\clibexam\gcvt.c                         SAMPLES
-samples\clibexam\getc.c                         SAMPLES
-samples\clibexam\getchar.c                      SAMPLES
-samples\clibexam\getch.c                        SAMPLES
-samples\clibexam\getche.c                       SAMPLES
-samples\clibexam\getcmd.c                       SAMPLES
-samples\clibexam\getcwd.c                       SAMPLES
-samples\clibexam\getdate.c                      SAMPLES
-samples\clibexam\getdiskf.c                     SAMPLES
-samples\clibexam\getdrive.c                     SAMPLES
-samples\clibexam\getenv.c                       SAMPLES
-samples\clibexam\getfattr.c                     SAMPLES
-samples\clibexam\getftime.c                     SAMPLES
-samples\clibexam\getpid.c                       SAMPLES
-samples\clibexam\gets.c                         SAMPLES
-samples\clibexam\gettime.c                      SAMPLES
-samples\clibexam\getvect.c                      SAMPLES
-samples\clibexam\gmtime.c                       SAMPLES
-samples\clibexam\_grow_ha.c                     SAMPLES
-samples\clibexam\halloc.c                       SAMPLES
-samples\clibexam\_harderr.c                     SAMPLES
-samples\clibexam\_heapchk.c                     SAMPLES
-samples\clibexam\_heapgrw.c                     SAMPLES
-samples\clibexam\_heapmin.c                     SAMPLES
-samples\clibexam\_heapset.c                     SAMPLES
-samples\clibexam\_heapshr.c                     SAMPLES
-samples\clibexam\_heapwal.c                     SAMPLES
-samples\clibexam\hfree.c                        SAMPLES
-samples\clibexam\hypot.c                        SAMPLES
-samples\clibexam\inp.c                          SAMPLES
-samples\clibexam\inpw.c                         SAMPLES
-samples\clibexam\int386.c                       SAMPLES
-samples\clibexam\int386x.c                      SAMPLES
-samples\clibexam\int86.c                        SAMPLES
-samples\clibexam\int86x.c                       SAMPLES
-samples\clibexam\intdos.c                       SAMPLES
-samples\clibexam\intdosx.c                      SAMPLES
-samples\clibexam\intr.c                         SAMPLES
-samples\clibexam\isalnum.c                      SAMPLES
-samples\clibexam\isalpha.c                      SAMPLES
-samples\clibexam\isascii.c                      SAMPLES
-samples\clibexam\isatty.c                       SAMPLES
-samples\clibexam\iscntrl.c                      SAMPLES
-samples\clibexam\isdigit.c                      SAMPLES
-samples\clibexam\isgraph.c                      SAMPLES
-samples\clibexam\islower.c                      SAMPLES
-samples\clibexam\isprint.c                      SAMPLES
-samples\clibexam\ispunct.c                      SAMPLES
-samples\clibexam\isspace.c                      SAMPLES
-samples\clibexam\isupper.c                      SAMPLES
-samples\clibexam\isxdigit.c                     SAMPLES
-samples\clibexam\itoa.c                         SAMPLES
-samples\clibexam\kanji\btom.c                   SAMPLES
-samples\clibexam\kanji\chkctype.c               SAMPLES
-samples\clibexam\kanji\hantozen.c               SAMPLES
-samples\clibexam\kanji\isalkana.c               SAMPLES
-samples\clibexam\kanji\isalnmka.c               SAMPLES
-samples\clibexam\kanji\isgrkana.c               SAMPLES
-samples\clibexam\kanji\iskana.c                 SAMPLES
-samples\clibexam\kanji\iskanji2.c               SAMPLES
-samples\clibexam\kanji\iskanji.c                SAMPLES
-samples\clibexam\kanji\iskmoji.c                SAMPLES
-samples\clibexam\kanji\iskpun.c                 SAMPLES
-samples\clibexam\kanji\ispnkana.c               SAMPLES
-samples\clibexam\kanji\isprkana.c               SAMPLES
-samples\clibexam\kanji\jasctime.c               SAMPLES
-samples\clibexam\kanji\jctime.c                 SAMPLES
-samples\clibexam\kanji\jgetmoji.c               SAMPLES
-samples\clibexam\kanji\jisalpha.c               SAMPLES
-samples\clibexam\kanji\jisdigit.c               SAMPLES
-samples\clibexam\kanji\jishira.c                SAMPLES
-samples\clibexam\kanji\jiskana.c                SAMPLES
-samples\clibexam\kanji\jiskigou.c               SAMPLES
-samples\clibexam\kanji\jisl0.c                  SAMPLES
-samples\clibexam\kanji\jisl1.c                  SAMPLES
-samples\clibexam\kanji\jisl2.c                  SAMPLES
-samples\clibexam\kanji\jislower.c               SAMPLES
-samples\clibexam\kanji\jisprint.c               SAMPLES
-samples\clibexam\kanji\jisspace.c               SAMPLES
-samples\clibexam\kanji\jistojms.c               SAMPLES
-samples\clibexam\kanji\jisupper.c               SAMPLES
-samples\clibexam\kanji\jiszen.c                 SAMPLES
-samples\clibexam\kanji\jmstojis.c               SAMPLES
-samples\clibexam\kanji\jperror.c                SAMPLES
-samples\clibexam\kanji\jputmoji.c               SAMPLES
-samples\clibexam\kanji\jstradv.c                SAMPLES
-samples\clibexam\kanji\jstrcat.c                SAMPLES
-samples\clibexam\kanji\jstrchr.c                SAMPLES
-samples\clibexam\kanji\jstrcmp.c                SAMPLES
-samples\clibexam\kanji\jstrcspn.c               SAMPLES
-samples\clibexam\kanji\jstrerro.c               SAMPLES
-samples\clibexam\kanji\jstricmp.c               SAMPLES
-samples\clibexam\kanji\jstrlen.c                SAMPLES
-samples\clibexam\kanji\jstrlwr.c                SAMPLES
-samples\clibexam\kanji\jstrmatc.c               SAMPLES
-samples\clibexam\kanji\jstrncat.c               SAMPLES
-samples\clibexam\kanji\jstrncmp.c               SAMPLES
-samples\clibexam\kanji\jstrncpy.c               SAMPLES
-samples\clibexam\kanji\jstrnicm.c               SAMPLES
-samples\clibexam\kanji\jstrnset.c               SAMPLES
-samples\clibexam\kanji\jstrrchr.c               SAMPLES
-samples\clibexam\kanji\jstrrev.c                SAMPLES
-samples\clibexam\kanji\jstrset.c                SAMPLES
-samples\clibexam\kanji\jstrskip.c               SAMPLES
-samples\clibexam\kanji\jstrspn.c                SAMPLES
-samples\clibexam\kanji\jstrstr.c                SAMPLES
-samples\clibexam\kanji\jstrtok.c                SAMPLES
-samples\clibexam\kanji\jstrupr.c                SAMPLES
-samples\clibexam\kanji\jtohira.c                SAMPLES
-samples\clibexam\kanji\jtokata.c                SAMPLES
-samples\clibexam\kanji\jtolower.c               SAMPLES
-samples\clibexam\kanji\jtoupper.c               SAMPLES
-samples\clibexam\kanji\mtob.c                   SAMPLES
-samples\clibexam\kanji\nthctype.c               SAMPLES
-samples\clibexam\kanji\zentohan.c               SAMPLES
-samples\clibexam\kbhit.c                        SAMPLES
-samples\clibexam\keep.c                         SAMPLES
-samples\clibexam\labs.c                         SAMPLES
-samples\clibexam\ldexp.c                        SAMPLES
-samples\clibexam\ldiv.c                         SAMPLES
-samples\clibexam\lfind.c                        SAMPLES
-samples\clibexam\localeco.c                     SAMPLES
-samples\clibexam\localtim.c                     SAMPLES
-samples\clibexam\lock.c                         SAMPLES
-samples\clibexam\locking.c                      SAMPLES
-samples\clibexam\log10.c                        SAMPLES
-samples\clibexam\log2.c                         SAMPLES
-samples\clibexam\log.c                          SAMPLES
-samples\clibexam\longjmp.c                      SAMPLES
-samples\clibexam\_lrotl.c                       SAMPLES
-samples\clibexam\_lrotr.c                       SAMPLES
-samples\clibexam\lsearch.c                      SAMPLES
-samples\clibexam\lseek.c                        SAMPLES
-samples\clibexam\ltoa.c                         SAMPLES
-samples\clibexam\main.c                         SAMPLES
-samples\clibexam\_makepat.c                     SAMPLES
-samples\clibexam\malloc.c                       SAMPLES
-samples\clibexam\matherr.c                      SAMPLES
-samples\clibexam\max.c                          SAMPLES
-samples\clibexam\mblen.c                        SAMPLES
-samples\clibexam\mbstowcs.c                     SAMPLES
-samples\clibexam\mbtowc.c                       SAMPLES
-samples\clibexam\_memavl.c                      SAMPLES
-samples\clibexam\memccpy.c                      SAMPLES
-samples\clibexam\memchr.c                       SAMPLES
-samples\clibexam\memcmp.c                       SAMPLES
-samples\clibexam\memcpy.c                       SAMPLES
-samples\clibexam\memicmp.c                      SAMPLES
-samples\clibexam\_memmax.c                      SAMPLES
-samples\clibexam\memmove.c                      SAMPLES
-samples\clibexam\memset.c                       SAMPLES
-samples\clibexam\min.c                          SAMPLES
-samples\clibexam\mkdir.c                        SAMPLES
-samples\clibexam\mk_fp.c                        SAMPLES
-samples\clibexam\mktime.c                       SAMPLES
-samples\clibexam\modf.c                         SAMPLES
-samples\clibexam\movedata.c                     SAMPLES
-samples\clibexam\_msize.c                       SAMPLES
-samples\clibexam\nosound.c                      SAMPLES
-samples\clibexam\offsetof.c                     SAMPLES
-samples\clibexam\onexit.c                       SAMPLES
-samples\clibexam\open.c                         SAMPLES
-samples\clibexam\opendir.c                      SAMPLES
-samples\clibexam\outp.c                         SAMPLES
-samples\clibexam\outpw.c                        SAMPLES
-samples\clibexam\perror.c                       SAMPLES
-samples\clibexam\pow.c                          SAMPLES
-samples\clibexam\printf.c                       SAMPLES
-samples\clibexam\putc.c                         SAMPLES
-samples\clibexam\putchar.c                      SAMPLES
-samples\clibexam\putch.c                        SAMPLES
-samples\clibexam\putenv.c                       SAMPLES
-samples\clibexam\puts.c                         SAMPLES
-samples\clibexam\qsort.c                        SAMPLES
-samples\clibexam\raise.c                        SAMPLES
-samples\clibexam\rand.c                         SAMPLES
-samples\clibexam\read.c                         SAMPLES
-samples\clibexam\readdir.c                      SAMPLES
-samples\clibexam\realloc.c                      SAMPLES
-samples\clibexam\remove.c                       SAMPLES
-samples\clibexam\rename.c                       SAMPLES
-samples\clibexam\rewind.c                       SAMPLES
-samples\clibexam\rmdir.c                        SAMPLES
-samples\clibexam\_rotl.c                        SAMPLES
-samples\clibexam\_rotr.c                        SAMPLES
-samples\clibexam\sbrk.c                         SAMPLES
-samples\clibexam\scanf.c                        SAMPLES
-samples\clibexam\_searche.c                     SAMPLES
-samples\clibexam\segread.c                      SAMPLES
-samples\clibexam\setblock.c                     SAMPLES
-samples\clibexam\setbuf.c                       SAMPLES
-samples\clibexam\setdate.c                      SAMPLES
-samples\clibexam\setdrive.c                     SAMPLES
-samples\clibexam\setenv.c                       SAMPLES
-samples\clibexam\setfattr.c                     SAMPLES
-samples\clibexam\setftime.c                     SAMPLES
-samples\clibexam\setjmp.c                       SAMPLES
-samples\clibexam\setlocal.c                     SAMPLES
-samples\clibexam\setmode.c                      SAMPLES
-samples\clibexam\settime.c                      SAMPLES
-samples\clibexam\setvbuf.c                      SAMPLES
-samples\clibexam\setvect.c                      SAMPLES
-samples\clibexam\signal.c                       SAMPLES
-samples\clibexam\sin.c                          SAMPLES
-samples\clibexam\sinh.c                         SAMPLES
-samples\clibexam\sleep.c                        SAMPLES
-samples\clibexam\sopen.c                        SAMPLES
-samples\clibexam\sound.c                        SAMPLES
-samples\clibexam\spawn.c                        SAMPLES
-samples\clibexam\_splitp2.c                     SAMPLES
-samples\clibexam\_splitpa.c                     SAMPLES
-samples\clibexam\sprintf.c                      SAMPLES
-samples\clibexam\sqrt.c                         SAMPLES
-samples\clibexam\srand.c                        SAMPLES
-samples\clibexam\sscanf.c                       SAMPLES
-samples\clibexam\stackava.c                     SAMPLES
-samples\clibexam\stat.c                         SAMPLES
-samples\clibexam\_status8.c                     SAMPLES
-samples\clibexam\strcat.c                       SAMPLES
-samples\clibexam\strchr.c                       SAMPLES
-samples\clibexam\strcmp.c                       SAMPLES
-samples\clibexam\strcmpi.c                      SAMPLES
-samples\clibexam\strcoll.c                      SAMPLES
-samples\clibexam\strcpy.c                       SAMPLES
-samples\clibexam\strcspn.c                      SAMPLES
-samples\clibexam\strdup.c                       SAMPLES
-samples\clibexam\strerror.c                     SAMPLES
-samples\clibexam\strftime.c                     SAMPLES
-samples\clibexam\stricmp.c                      SAMPLES
-samples\clibexam\strlen.c                       SAMPLES
-samples\clibexam\strlwr.c                       SAMPLES
-samples\clibexam\strncat.c                      SAMPLES
-samples\clibexam\strncmp.c                      SAMPLES
-samples\clibexam\strncpy.c                      SAMPLES
-samples\clibexam\strnicmp.c                     SAMPLES
-samples\clibexam\strnset.c                      SAMPLES
-samples\clibexam\strpbrk.c                      SAMPLES
-samples\clibexam\strrchr.c                      SAMPLES
-samples\clibexam\strrev.c                       SAMPLES
-samples\clibexam\strset.c                       SAMPLES
-samples\clibexam\strspn.c                       SAMPLES
-samples\clibexam\strstr.c                       SAMPLES
-samples\clibexam\strtod.c                       SAMPLES
-samples\clibexam\strtok.c                       SAMPLES
-samples\clibexam\strtol.c                       SAMPLES
-samples\clibexam\strtoul.c                      SAMPLES
-samples\clibexam\strupr.c                       SAMPLES
-samples\clibexam\strxfrm.c                      SAMPLES
-samples\clibexam\swab.c                         SAMPLES
-samples\clibexam\system.c                       SAMPLES
-samples\clibexam\tan.c                          SAMPLES
-samples\clibexam\tanh.c                         SAMPLES
-samples\clibexam\tell.c                         SAMPLES
-samples\clibexam\time.c                         SAMPLES
-samples\clibexam\tmpfile.c                      SAMPLES
-samples\clibexam\tmpnam.c                       SAMPLES
-samples\clibexam\tolower.c                      SAMPLES
-samples\clibexam\toupper.c                      SAMPLES
-samples\clibexam\tzset.c                        SAMPLES
-samples\clibexam\ultoa.c                        SAMPLES
-samples\clibexam\umask.c                        SAMPLES
-samples\clibexam\ungetc.c                       SAMPLES
-samples\clibexam\ungetch.c                      SAMPLES
-samples\clibexam\unlink.c                       SAMPLES
-samples\clibexam\unlock.c                       SAMPLES
-samples\clibexam\utime.c                        SAMPLES
-samples\clibexam\utoa.c                         SAMPLES
-samples\clibexam\va_arg.c                       SAMPLES
-samples\clibexam\va_end.c                       SAMPLES
-samples\clibexam\va_start.c                     SAMPLES
-samples\clibexam\_vbprint.c                     SAMPLES
-samples\clibexam\vcprintf.c                     SAMPLES
-samples\clibexam\vcscanf.c                      SAMPLES
-samples\clibexam\vfprintf.c                     SAMPLES
-samples\clibexam\vfscanf.c                      SAMPLES
-samples\clibexam\vprintf.c                      SAMPLES
-samples\clibexam\vscanf.c                       SAMPLES
-samples\clibexam\vsprintf.c                     SAMPLES
-samples\clibexam\vsscanf.c                      SAMPLES
-samples\clibexam\wait.c                         SAMPLES
-samples\clibexam\wcstombs.c                     SAMPLES
-samples\clibexam\wctomb.c                       SAMPLES
-samples\clibexam\write.c                        SAMPLES
-samples\cplbexam\complex\friend                 SAMPLES
-samples\cplbexam\complex\friend\lshift.cpp      SAMPLES
-samples\cplbexam\complex\friend\makefile        SAMPLES
-samples\cplbexam\complex\friend\rshift.cpp      SAMPLES
-samples\cplbexam\complex\pubfun                 SAMPLES
-samples\cplbexam\complex\pubfun\assign.cpp      SAMPLES
-samples\cplbexam\complex\pubfun\construc.cpp    SAMPLES
-samples\cplbexam\complex\pubfun\decre.cpp       SAMPLES
-samples\cplbexam\complex\pubfun\div.cpp         SAMPLES
-samples\cplbexam\complex\pubfun\imag.cpp        SAMPLES
-samples\cplbexam\complex\pubfun\incre.cpp       SAMPLES
-samples\cplbexam\complex\pubfun\makefile        SAMPLES
-samples\cplbexam\complex\pubfun\minus.cpp       SAMPLES
-samples\cplbexam\complex\pubfun\multi.cpp       SAMPLES
-samples\cplbexam\complex\pubfun\plus.cpp        SAMPLES
-samples\cplbexam\complex\pubfun\real.cpp        SAMPLES
-samples\cplbexam\complex\relfun                 SAMPLES
-samples\cplbexam\complex\relfun\abs.cpp         SAMPLES
-samples\cplbexam\complex\relfun\acos.cpp        SAMPLES
-samples\cplbexam\complex\relfun\acosh.cpp       SAMPLES
-samples\cplbexam\complex\relfun\arg.cpp         SAMPLES
-samples\cplbexam\complex\relfun\asin.cpp        SAMPLES
-samples\cplbexam\complex\relfun\asinh.cpp       SAMPLES
-samples\cplbexam\complex\relfun\atan.cpp        SAMPLES
-samples\cplbexam\complex\relfun\atanh.cpp       SAMPLES
-samples\cplbexam\complex\relfun\conj.cpp        SAMPLES
-samples\cplbexam\complex\relfun\cos.cpp         SAMPLES
-samples\cplbexam\complex\relfun\cosh.cpp        SAMPLES
-samples\cplbexam\complex\relfun\exp.cpp         SAMPLES
-samples\cplbexam\complex\relfun\imag.cpp        SAMPLES
-samples\cplbexam\complex\relfun\log10.cpp       SAMPLES
-samples\cplbexam\complex\relfun\log.cpp         SAMPLES
-samples\cplbexam\complex\relfun\makefile        SAMPLES
-samples\cplbexam\complex\relfun\norm.cpp        SAMPLES
-samples\cplbexam\complex\relfun\polar.cpp       SAMPLES
-samples\cplbexam\complex\relfun\pow.cpp         SAMPLES
-samples\cplbexam\complex\relfun\real.cpp        SAMPLES
-samples\cplbexam\complex\relfun\sin.cpp         SAMPLES
-samples\cplbexam\complex\relfun\sinh.cpp        SAMPLES
-samples\cplbexam\complex\relfun\sqrt.cpp        SAMPLES
-samples\cplbexam\complex\relfun\tan.cpp         SAMPLES
-samples\cplbexam\complex\relfun\tanh.cpp        SAMPLES
-samples\cplbexam\complex\relop                  SAMPLES
-samples\cplbexam\complex\relop\add.cpp          SAMPLES
-samples\cplbexam\complex\relop\divide.cpp       SAMPLES
-samples\cplbexam\complex\relop\equal.cpp        SAMPLES
-samples\cplbexam\complex\relop\makefile         SAMPLES
-samples\cplbexam\complex\relop\multiply.cpp     SAMPLES
-samples\cplbexam\complex\relop\notequal.cpp     SAMPLES
-samples\cplbexam\complex\relop\subtract.cpp     SAMPLES
-samples\cplbexam\contain\alloctor.cpp           SAMPLES
-samples\cplbexam\contain\wcldintr.cpp           SAMPLES
-samples\cplbexam\contain\wcldptr.cpp            SAMPLES
-samples\cplbexam\contain\wcldval.cpp            SAMPLES
-samples\cplbexam\contain\wcqueue.cpp            SAMPLES
-samples\cplbexam\contain\wcstack.cpp            SAMPLES
-samples\cplbexam\contain\wcvdli.cpp             SAMPLES
-samples\cplbexam\fstream\fstream\construc.cpp   SAMPLES
-samples\cplbexam\fstream\fstream\handbuf.cpp    SAMPLES
-samples\cplbexam\fstream\fstream\handle.cpp     SAMPLES
-samples\cplbexam\fstream\fstream\makefile       SAMPLES
-samples\cplbexam\fstream\fstream\open.cpp       SAMPLES
-samples\cplbexam\fstream\ifstream\construc.cpp  SAMPLES
-samples\cplbexam\fstream\ifstream\handbuf.cpp   SAMPLES
-samples\cplbexam\fstream\ifstream\handle.cpp    SAMPLES
-samples\cplbexam\fstream\ifstream\makefile      SAMPLES
-samples\cplbexam\fstream\ifstream\open.cpp      SAMPLES
-samples\cplbexam\fstream\ofstream\construc.cpp  SAMPLES
-samples\cplbexam\fstream\ofstream\handbuf.cpp   SAMPLES
-samples\cplbexam\fstream\ofstream\handle.cpp    SAMPLES
-samples\cplbexam\fstream\ofstream\makefile      SAMPLES
-samples\cplbexam\fstream\ofstream\open.cpp      SAMPLES
-samples\cplbexam\ios\bad.cpp                    SAMPLES
-samples\cplbexam\ios\bitalloc.cpp               SAMPLES
-samples\cplbexam\ios\clear.cpp                  SAMPLES
-samples\cplbexam\ios\constrbu.cpp               SAMPLES
-samples\cplbexam\ios\eof.cpp                    SAMPLES
-samples\cplbexam\ios\except.cpp                 SAMPLES
-samples\cplbexam\ios\fail.cpp                   SAMPLES
-samples\cplbexam\ios\fill.cpp                   SAMPLES
-samples\cplbexam\ios\flags.cpp                  SAMPLES
-samples\cplbexam\ios\good.cpp                   SAMPLES
-samples\cplbexam\ios\init.cpp                   SAMPLES
-samples\cplbexam\ios\iword.cpp                  SAMPLES
-samples\cplbexam\ios\makefile                   SAMPLES
-samples\cplbexam\ios\opexam.cpp                 SAMPLES
-samples\cplbexam\ios\opvoid.cpp                 SAMPLES
-samples\cplbexam\ios\precisio.cpp               SAMPLES
-samples\cplbexam\ios\pword.cpp                  SAMPLES
-samples\cplbexam\ios\rdbuf.cpp                  SAMPLES
-samples\cplbexam\ios\rdstate.cpp                SAMPLES
-samples\cplbexam\ios\setf.cpp                   SAMPLES
-samples\cplbexam\ios\tie.cpp                    SAMPLES
-samples\cplbexam\iostream\iostream\conbuf.cpp   SAMPLES
-samples\cplbexam\iostream\iostream\conios.cpp   SAMPLES
-samples\cplbexam\iostream\iostream\destruct.cpp SAMPLES
-samples\cplbexam\iostream\iostream\eqiostrm.cpp SAMPLES
-samples\cplbexam\iostream\iostream\eqstrmbu.cpp SAMPLES
-samples\cplbexam\iostream\iostream\makefile     SAMPLES
-samples\cplbexam\iostream\istream\conbuf.cpp    SAMPLES
-samples\cplbexam\iostream\istream\conistrm.cpp  SAMPLES
-samples\cplbexam\iostream\istream\destruct.cpp  SAMPLES
-samples\cplbexam\iostream\istream\eatwhite.cpp  SAMPLES
-samples\cplbexam\iostream\istream\eqistrm.cpp   SAMPLES
-samples\cplbexam\iostream\istream\eqstrmbu.cpp  SAMPLES
-samples\cplbexam\iostream\istream\gcount.cpp    SAMPLES
-samples\cplbexam\iostream\istream\getchar.cpp   SAMPLES
-samples\cplbexam\iostream\istream\get.cpp       SAMPLES
-samples\cplbexam\iostream\istream\getinbuf.cpp  SAMPLES
-samples\cplbexam\iostream\istream\getinstr.cpp  SAMPLES
-samples\cplbexam\iostream\istream\getline.cpp   SAMPLES
-samples\cplbexam\iostream\istream\ignore.cpp    SAMPLES
-samples\cplbexam\iostream\istream\ipfx.cpp      SAMPLES
-samples\cplbexam\iostream\istream\makefile      SAMPLES
-samples\cplbexam\iostream\istream\open.cpp      SAMPLES
-samples\cplbexam\iostream\istream\peek.cpp      SAMPLES
-samples\cplbexam\iostream\istream\putback.cpp   SAMPLES
-samples\cplbexam\iostream\istream\read.cpp      SAMPLES
-samples\cplbexam\iostream\istream\rshchar.cpp   SAMPLES
-samples\cplbexam\iostream\istream\rshchbuf.cpp  SAMPLES
-samples\cplbexam\iostream\istream\rshman.cpp    SAMPLES
-samples\cplbexam\iostream\istream\rshnum.cpp    SAMPLES
-samples\cplbexam\iostream\istream\rshstrbu.cpp  SAMPLES
-samples\cplbexam\iostream\istream\seekgoff.cpp  SAMPLES
-samples\cplbexam\iostream\istream\seekgpos.cpp  SAMPLES
-samples\cplbexam\iostream\istream\sync.cpp      SAMPLES
-samples\cplbexam\iostream\istream\tellg.cpp     SAMPLES
-samples\cplbexam\iostream\ostream\conbuf.cpp    SAMPLES
-samples\cplbexam\iostream\ostream\conostrm.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\destruct.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\eqostrm.cpp   SAMPLES
-samples\cplbexam\iostream\ostream\eqstrmbu.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\flush.cpp     SAMPLES
-samples\cplbexam\iostream\ostream\lshchar.cpp   SAMPLES
-samples\cplbexam\iostream\ostream\lshfloat.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\lshint.cpp    SAMPLES
-samples\cplbexam\iostream\ostream\lshman.cpp    SAMPLES
-samples\cplbexam\iostream\ostream\lshptr.cpp    SAMPLES
-samples\cplbexam\iostream\ostream\lshstrbu.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\lshstr.cpp    SAMPLES
-samples\cplbexam\iostream\ostream\makefile      SAMPLES
-samples\cplbexam\iostream\ostream\opfx.cpp      SAMPLES
-samples\cplbexam\iostream\ostream\put.cpp       SAMPLES
-samples\cplbexam\iostream\ostream\seekpoff.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\seekppos.cpp  SAMPLES
-samples\cplbexam\iostream\ostream\tellp.cpp     SAMPLES
-samples\cplbexam\iostream\ostream\write.cpp     SAMPLES
-samples\cplbexam\ios\unsetf.cpp                 SAMPLES
-samples\cplbexam\ios\width.cpp                  SAMPLES
-samples\cplbexam\string\friend\add.cpp          SAMPLES
-samples\cplbexam\string\friend\equal.cpp        SAMPLES
-samples\cplbexam\string\friend\lonequal.cpp     SAMPLES
-samples\cplbexam\string\friend\long.cpp         SAMPLES
-samples\cplbexam\string\friend\lshift.cpp       SAMPLES
-samples\cplbexam\string\friend\makefile         SAMPLES
-samples\cplbexam\string\friend\notequal.cpp     SAMPLES
-samples\cplbexam\string\friend\rshift.cpp       SAMPLES
-samples\cplbexam\string\friend\short.cpp        SAMPLES
-samples\cplbexam\string\friend\shtequal.cpp     SAMPLES
-samples\cplbexam\string\friend\valid.cpp        SAMPLES
-samples\cplbexam\string\pubfun\alloc.cpp        SAMPLES
-samples\cplbexam\string\pubfun\char.cpp         SAMPLES
-samples\cplbexam\string\pubfun\conchar.cpp      SAMPLES
-samples\cplbexam\string\pubfun\concstr.cpp      SAMPLES
-samples\cplbexam\string\pubfun\condef.cpp       SAMPLES
-samples\cplbexam\string\pubfun\constr.cpp       SAMPLES
-samples\cplbexam\string\pubfun\cstr.cpp         SAMPLES
-samples\cplbexam\string\pubfun\index.cpp        SAMPLES
-samples\cplbexam\string\pubfun\length.cpp       SAMPLES
-samples\cplbexam\string\pubfun\lower.cpp        SAMPLES
-samples\cplbexam\string\pubfun\makefile         SAMPLES
-samples\cplbexam\string\pubfun\match.cpp        SAMPLES
-samples\cplbexam\string\pubfun\opequal.cpp      SAMPLES
-samples\cplbexam\string\pubfun\opincre.cpp      SAMPLES
-samples\cplbexam\string\pubfun\poschara.cpp     SAMPLES
-samples\cplbexam\string\pubfun\poscharb.cpp     SAMPLES
-samples\cplbexam\string\pubfun\poslen.cpp       SAMPLES
-samples\cplbexam\string\pubfun\upper.cpp        SAMPLES
-samples\cplbexam\string\pubfun\valid.cpp        SAMPLES
-samples\cplbexam\strstrea\istrstre\char.cpp     SAMPLES
-samples\cplbexam\strstrea\istrstre\charlen.cpp  SAMPLES
-samples\cplbexam\strstrea\istrstre\makefile     SAMPLES
-samples\cplbexam\strstrea\ostrstre\charlen.cpp  SAMPLES
-samples\cplbexam\strstrea\ostrstre\construc.cpp SAMPLES
-samples\cplbexam\strstrea\ostrstre\makefile     SAMPLES
-samples\cplbexam\strstrea\ostrstre\pcount.cpp   SAMPLES
-samples\cplbexam\strstrea\ostrstre\str.cpp      SAMPLES
-samples\cplbexam\strstrea\strstre\charlen.cpp   SAMPLES
-samples\cplbexam\strstrea\strstre\construc.cpp  SAMPLES
-samples\cplbexam\strstrea\strstre\makefile      SAMPLES
-samples\cplbexam\strstrea\strstre\str.cpp       SAMPLES
-samples\dll\cover16.c                           SAMPLES
-samples\dll\dll16.c                             SAMPLES
-samples\dll\dll16.lnk                           SAMPLES
-samples\dll\dll32.c                             SAMPLES
-samples\dll\dll32.lnk                           SAMPLES
-samples\dll\gen16.c                             SAMPLES
-samples\dll\gen16.lnk                           SAMPLES
-samples\dll\gen32.c                             SAMPLES
-samples\dll\gen32.lnk                           SAMPLES
-samples\dll\makefile                            SAMPLES
-samples\dll\vbdll32.c                           SAMPLES
-samples\goodies\bimo.asm                        SAMPLES         CM_SAMPLES
-samples\goodies\bimodal.c                       SAMPLES         CM_
-samples\goodies\bindata.fil                     SAMPLES
-samples\goodies\bindata.for                     SAMPLES
-samples\goodies\cw87.for                        SAMPLES
-samples\goodies\dta.for                         SAMPLES
-samples\goodies\fhandles.for                    SAMPLES
-samples\goodies\fileio.c                        SAMPLES
-samples\goodies\fmemory.for                     SAMPLES
-samples\goodies\fscreen.for                     SAMPLES
-samples\goodies\handles.c                       SAMPLES
-samples\goodies\keystapl.c                      SAMPLES
-samples\goodies\keystat.c                       SAMPLES
-samples\goodies\makefile                        SAMPLES
-samples\goodies\makefile.c                      SAMPLES
-samples\goodies\makefile.for                    SAMPLES
-samples\goodies\mathdemo.for                    SAMPLES
-samples\goodies\_matherr.for                    SAMPLES
-samples\goodies\memory.c                        SAMPLES
-samples\goodies\mempls40.c                      SAMPLES
-samples\goodies\memwin.c                        SAMPLES
-samples\goodies\mix1c.c                         SAMPLES
-samples\goodies\mix1f.for                       SAMPLES
-samples\goodies\mix2c.c                         SAMPLES
-samples\goodies\mix2f.for                       SAMPLES
-samples\goodies\mix3c.c                         SAMPLES
-samples\goodies\mix3f.for                       SAMPLES
-samples\goodies\mix4c.c                         SAMPLES
-samples\goodies\mix4f.for                       SAMPLES
-samples\goodies\mix5c.c                         SAMPLES
-samples\goodies\mix5f.for                       SAMPLES
-samples\goodies\mix6.for                        SAMPLES
-samples\goodies\mouse.c                         SAMPLES
-samples\goodies\screen.c                        SAMPLES
-samples\goodies\screenpl.c                      SAMPLES
-samples\goodies\simulate.c                      SAMPLES
-samples\goodies\spwndd4g.c                      SAMPLES
-samples\goodies\spwndpls.c                      SAMPLES
-samples\goodies\spwnrd4g.c                      SAMPLES
-samples\goodies\spwnrpls.c                      SAMPLES
-samples\ide\back.bmp                            SAMPLES
-samples\ide\box.cpp                             SAMPLES
-samples\ide\box.hpp                             SAMPLES
-samples\ide\brighter.bmp                        SAMPLES
-samples\ide\btnos2.c                            SAMPLES
-samples\ide\btnwin.c                            SAMPLES
-samples\ide\button.h                            SAMPLES
-samples\ide\darker.bmp                          SAMPLES
-samples\ide\down.bmp                            SAMPLES
-samples\ide\draw.ico                            SAMPLES
-samples\ide\drawmenu.h                          SAMPLES
-samples\ide\drawos2.c                           SAMPLES
-samples\ide\drawos2.rc                          SAMPLES
-samples\ide\draw.rc                             SAMPLES
-samples\ide\drawroom.cpp                        SAMPLES
-samples\ide\drawwin.c                           SAMPLES
-samples\ide\forward.bmp                         SAMPLES
-samples\ide\furnitu.cpp                         SAMPLES
-samples\ide\furnitu.hpp                         SAMPLES
-samples\ide\left.bmp                            SAMPLES
-samples\ide\os2_3d.dll                          SAMPLES
-samples\ide\os2\button.tgt                      SAMPLES
-samples\ide\os2\drawos2.tgt                     SAMPLES
-samples\ide\os2\os2_3d.dll                      SAMPLES
-samples\ide\os2.wpj                             SAMPLES
-samples\ide\right.bmp                           SAMPLES
-samples\ide\room.h                              SAMPLES
-samples\ide\threed.h                            SAMPLES
-samples\ide\up.bmp                              SAMPLES
-samples\ide\win1632.h                           SAMPLES
-samples\ide\win32\button.tgt                    SAMPLES
-samples\ide\win32\draw32.tgt                    SAMPLES
-samples\ide\win32\nt_3d.dll                     SAMPLES
-samples\ide\win32.wpj                           SAMPLES
-samples\ide\win386\button.tgt                   SAMPLES
-samples\ide\win386\draw.tgt                     SAMPLES
-samples\ide\win386\win_3d.dll                   SAMPLES
-samples\ide\win386.wpj                          SAMPLES
-samples\ide\win\button.tgt                      SAMPLES
-samples\ide\win\draw16.tgt                      SAMPLES
-samples\ide\win\win_3d.dll                      SAMPLES
-samples\ide\win.wpj                             SAMPLES
-samples\win\alarm\alarm.c                       SAMPLES
-samples\win\alarm\alarm.h                       SAMPLES
-samples\win\alarm\alarm.ico                     SAMPLES
-samples\win\alarm\alarm.mif                     SAMPLES
-samples\win\alarm\alarm.rc                      SAMPLES
-samples\win\alarm\win16\alarm.tgt               SAMPLES
-samples\win\alarm\win16\alarm.wpj               SAMPLES
-samples\win\alarm\win16\makefile                SAMPLES
-samples\win\alarm\win32\alarm.tgt               SAMPLES
-samples\win\alarm\win32\alarm.wpj               SAMPLES
-samples\win\alarm\win32\makefile                SAMPLES
-samples\win\alarm\win386\alarm.tgt              SAMPLES
-samples\win\alarm\win386\alarm.wpj              SAMPLES
-samples\win\alarm\win386\makefile               SAMPLES
-samples\win\datactl\check.c                     SAMPLES
-samples\win\datactl\combo.c                     SAMPLES
-samples\win\datactl\combomod.c                  SAMPLES
-samples\win\datactl\ctltype.c                   SAMPLES
-samples\win\datactl\ctltype.h                   SAMPLES
-samples\win\datactl\ctluser.c                   SAMPLES
-samples\win\datactl\ctluser.h                   SAMPLES
-samples\win\datactl\dcombo.c                    SAMPLES
-samples\win\datactl\dialog.dlg                  SAMPLES
-samples\win\datactl\dialog.h                    SAMPLES
-samples\win\datactl\float.c                     SAMPLES
-samples\win\datactl\int.c                       SAMPLES
-samples\win\datactl\parsectl.c                  SAMPLES
-samples\win\datactl\radio.c                     SAMPLES
-samples\win\datactl\read.me                     SAMPLES
-samples\win\datactl\rfloat.c                    SAMPLES
-samples\win\datactl\rint.c                      SAMPLES
-samples\win\datactl\testctl.c                   SAMPLES
-samples\win\datactl\testctl.h                   SAMPLES
-samples\win\datactl\testctl.mif                 SAMPLES
-samples\win\datactl\testctl.rc                  SAMPLES
-samples\win\datactl\testdata.ctl                SAMPLES
-samples\win\datactl\testdata.h                  SAMPLES
-samples\win\datactl\text.c                      SAMPLES
-samples\win\datactl\textmod.c                   SAMPLES
-samples\win\datactl\win16\datactl.wpj           SAMPLES
-samples\win\datactl\win16\makefile              SAMPLES
-samples\win\datactl\win16\testctl.tgt           SAMPLES
-samples\win\datactl\win32\datactl.wpj           SAMPLES
-samples\win\datactl\win32\makefile              SAMPLES
-samples\win\datactl\win32\testctl.tgt           SAMPLES
-samples\win\datactl\win386\datactl.wpj          SAMPLES
-samples\win\datactl\win386\makefile             SAMPLES
-samples\win\datactl\win386\testctl.tgt          SAMPLES
-samples\win\edit\edit.c                         SAMPLES
-samples\win\edit\edit.h                         SAMPLES
-samples\win\edit\edit.mif                       SAMPLES
-samples\win\edit\edit.rc                        SAMPLES
-samples\win\edit\efile.c                        SAMPLES
-samples\win\edit\efont.c                        SAMPLES
-samples\win\edit\emem.c                         SAMPLES
-samples\win\edit\eprint.c                       SAMPLES
-samples\win\edit\win16\edit.tgt                 SAMPLES
-samples\win\edit\win16\edit.wpj                 SAMPLES
-samples\win\edit\win16\makefile                 SAMPLES
-samples\win\edit\win32\edit.tgt                 SAMPLES
-samples\win\edit\win32\edit.wpj                 SAMPLES
-samples\win\edit\win32\makefile                 SAMPLES
-samples\win\edit\win386\edit.tgt                SAMPLES
-samples\win\edit\win386\edit.wpj                SAMPLES
-samples\win\edit\win386\makefile                SAMPLES
-samples\win\generic\generic.c                   SAMPLES
-samples\win\generic\generic.h                   SAMPLES
-samples\win\generic\generic.ico                 SAMPLES
-samples\win\generic\generic.mif                 SAMPLES
-samples\win\generic\generic.rc                  SAMPLES
-samples\win\generic\genwin.h                    SAMPLES
-samples\win\generic\win16\generic.tgt           SAMPLES
-samples\win\generic\win16\generic.wpj           SAMPLES
-samples\win\generic\win16\makefile              SAMPLES
-samples\win\generic\win32\generic.tgt           SAMPLES
-samples\win\generic\win32\generic.wpj           SAMPLES
-samples\win\generic\win32\makefile              SAMPLES
-samples\win\generic\win386\generic.tgt          SAMPLES
-samples\win\generic\win386\generic.wpj          SAMPLES
-samples\win\generic\win386\makefile             SAMPLES
-samples\win\helpex\bullet.bmp                   SAMPLES
-samples\win\helpex\chkboff.bmp                  SAMPLES
-samples\win\helpex\chkbon.bmp                   SAMPLES
-samples\win\helpex\codec.bmp                    SAMPLES
-samples\win\helpex\continue.bmp                 SAMPLES
-samples\win\helpex\done.bmp                     SAMPLES
-samples\win\helpex\help.cur                     SAMPLES
-samples\win\helpex\helpex                       SAMPLES
-samples\win\helpex\helpex.c                     SAMPLES
-samples\win\helpex\helpex.def                   SAMPLES
-samples\win\helpex\helpex.dlg                   SAMPLES
-samples\win\helpex\helpex.h                     SAMPLES
-samples\win\helpex\helpex.hpj                   SAMPLES
-samples\win\helpex\helpex.mif                   SAMPLES
-samples\win\helpex\helpex.ph                    SAMPLES
-samples\win\helpex\helpex.rc                    SAMPLES
-samples\win\helpex\helpex.rtf                   SAMPLES
-samples\win\helpex\helpicon.bmp                 SAMPLES
-samples\win\helpex\helpids.h                    SAMPLES
-samples\win\helpex\keys.rtf                     SAMPLES
-samples\win\helpex\max2icon.bmp                 SAMPLES
-samples\win\helpex\mouse.bmp                    SAMPLES
-samples\win\helpex\terms.rtf                    SAMPLES
-samples\win\helpex\win16\helpex.tgt             SAMPLES
-samples\win\helpex\win16\helpex.wpj             SAMPLES
-samples\win\helpex\win16\makefile               SAMPLES
-samples\win\helpex\win16\makehelp.bat           SAMPLES
-samples\win\helpex\win32\helpex.tgt             SAMPLES
-samples\win\helpex\win32\helpex.wpj             SAMPLES
-samples\win\helpex\win32\makefile               SAMPLES
-samples\win\helpex\win32\makehelp.bat           SAMPLES
-samples\win\helpex\win386\helpex.tgt            SAMPLES
-samples\win\helpex\win386\helpex.wpj            SAMPLES
-samples\win\helpex\win386\makefile              SAMPLES
-samples\win\helpex\win386\makehelp.bat          SAMPLES
-samples\win\helpex\winword.bmp                  SAMPLES
-samples\win\iconview\icon.c                     SAMPLES
-samples\win\iconview\icon.h                     SAMPLES
-samples\win\iconview\mdi.c                      SAMPLES
-samples\win\iconview\mdi.h                      SAMPLES
-samples\win\iconview\switch.c                   SAMPLES
-samples\win\iconview\switch.h                   SAMPLES
-samples\win\iconview\util.c                     SAMPLES
-samples\win\iconview\util.h                     SAMPLES
-samples\win\iconview\view.c                     SAMPLES
-samples\win\iconview\view.h                     SAMPLES
-samples\win\iconview\view.ico                   SAMPLES
-samples\win\iconview\view.mif                   SAMPLES
-samples\win\iconview\view.rc                    SAMPLES
-samples\win\iconview\win16\iconview.wpj         SAMPLES
-samples\win\iconview\win16\makefile             SAMPLES
-samples\win\iconview\win16\view.tgt             SAMPLES
-samples\win\iconview\win32\iconview.wpj         SAMPLES
-samples\win\iconview\win32\makefile             SAMPLES
-samples\win\iconview\win32\view.tgt             SAMPLES
-samples\win\iconview\win386\iconview.wpj        SAMPLES
-samples\win\iconview\win386\makefile            SAMPLES
-samples\win\iconview\win386\view.tgt            SAMPLES
-samples\win\life\array.c                        SAMPLES
-samples\win\life\bitmap.c                       SAMPLES
-samples\win\life\bitmap.h                       SAMPLES
-samples\win\life\bitmaps.c                      SAMPLES
-samples\win\life\blink10.lif                    SAMPLES
-samples\win\life\blink11.lif                    SAMPLES
-samples\win\life\blink13.lif                    SAMPLES
-samples\win\life\blink14.lif                    SAMPLES
-samples\win\life\blink15.lif                    SAMPLES
-samples\win\life\blink1.lif                     SAMPLES
-samples\win\life\blink2.lif                     SAMPLES
-samples\win\life\blink3.lif                     SAMPLES
-samples\win\life\blink4.lif                     SAMPLES
-samples\win\life\blink5.lif                     SAMPLES
-samples\win\life\blink6.lif                     SAMPLES
-samples\win\life\blink7.lif                     SAMPLES
-samples\win\life\blink8.lif                     SAMPLES
-samples\win\life\blink9.lif                     SAMPLES
-samples\win\life\blnkship.lif                   SAMPLES
-samples\win\life\cell.bmp                       SAMPLES
-samples\win\life\double.lif                     SAMPLES
-samples\win\life\dpuffer.lif                    SAMPLES
-samples\win\life\escort1.lif                    SAMPLES
-samples\win\life\escort2.lif                    SAMPLES
-samples\win\life\file.c                         SAMPLES
-samples\win\life\galaxy.lif                     SAMPLES
-samples\win\life\gldrgun.lif                    SAMPLES
-samples\win\life\glider.lif                     SAMPLES
-samples\win\life\life.c                         SAMPLES
-samples\win\life\life.dlg                       SAMPLES
-samples\win\life\life.h                         SAMPLES
-samples\win\life\life.ico                       SAMPLES
-samples\win\life\life.mif                       SAMPLES
-samples\win\life\life.rc                        SAMPLES
-samples\win\life\line.lif                       SAMPLES
-samples\win\life\menu.bmp                       SAMPLES
-samples\win\life\menu.h                         SAMPLES
-samples\win\life\mouse.c                        SAMPLES
-samples\win\life\palette.c                      SAMPLES
-samples\win\life\palette.h                      SAMPLES
-samples\win\life\patterns.c                     SAMPLES
-samples\win\life\pingpong.lif                   SAMPLES
-samples\win\life\puffer.lif                     SAMPLES
-samples\win\life\quad.lif                       SAMPLES
-samples\win\life\round.bmp                      SAMPLES
-samples\win\life\rules.h                        SAMPLES
-samples\win\life\seed1.lif                      SAMPLES
-samples\win\life\seed2.lif                      SAMPLES
-samples\win\life\seed3.lif                      SAMPLES
-samples\win\life\seed4.lif                      SAMPLES
-samples\win\life\swengine.lif                   SAMPLES
-samples\win\life\timer.c                        SAMPLES
-samples\win\life\triple.lif                     SAMPLES
-samples\win\life\watcom.bmp                     SAMPLES
-samples\win\life\win16\life.tgt                 SAMPLES
-samples\win\life\win16\life.wpj                 SAMPLES
-samples\win\life\win16\makefile                 SAMPLES
-samples\win\life\win32\life.tgt                 SAMPLES
-samples\win\life\win32\life.wpj                 SAMPLES
-samples\win\life\win32\makefile                 SAMPLES
-samples\win\life\win386\life.tgt                SAMPLES
-samples\win\life\win386\life.wpj                SAMPLES
-samples\win\life\win386\makefile                SAMPLES
-samples\win\life\zig.lif                        SAMPLES
-samples\win\master.mif                          SAMPLES
-samples\win\mswin.wpj                           SAMPLES
-samples\win\read.me                             SAMPLES
-samples\win\shootgal\bolt.ico                   SAMPLES
-samples\win\shootgal\gun.cur                    SAMPLES
-samples\win\shootgal\keyboard.ico               SAMPLES
-samples\win\shootgal\mouse.ico                  SAMPLES
-samples\win\shootgal\scroll.ico                 SAMPLES
-samples\win\shootgal\shootgal.c                 SAMPLES
-samples\win\shootgal\shootgal.h                 SAMPLES
-samples\win\shootgal\shootgal.ico               SAMPLES
-samples\win\shootgal\shootgal.mif               SAMPLES
-samples\win\shootgal\shootgal.rc                SAMPLES
-samples\win\shootgal\target.bmp                 SAMPLES
-samples\win\shootgal\timer.ico                  SAMPLES
-samples\win\shootgal\win16\makefile             SAMPLES
-samples\win\shootgal\win16\shootgal.tgt         SAMPLES
-samples\win\shootgal\win16\shootgal.wpj         SAMPLES
-samples\win\shootgal\win32\makefile             SAMPLES
-samples\win\shootgal\win32\shootgal.tgt         SAMPLES
-samples\win\shootgal\win32\shootgal.wpj         SAMPLES
-samples\win\shootgal\win386\makefile            SAMPLES
-samples\win\shootgal\win386\shootgal.tgt        SAMPLES
-samples\win\shootgal\win386\shootgal.wpj        SAMPLES
-samples\win\watzee\dice1.bmp                    SAMPLES
-samples\win\watzee\dice2.bmp                    SAMPLES
-samples\win\watzee\dice3.bmp                    SAMPLES
-samples\win\watzee\dice4.bmp                    SAMPLES
-samples\win\watzee\dice5.bmp                    SAMPLES
-samples\win\watzee\dice6.bmp                    SAMPLES
-samples\win\watzee\watzee.c                     SAMPLES
-samples\win\watzee\watzee.h                     SAMPLES
-samples\win\watzee\watzee.ico                   SAMPLES
-samples\win\watzee\watzee.mif                   SAMPLES
-samples\win\watzee\watzee.rc                    SAMPLES
-samples\win\watzee\wdice.c                      SAMPLES
-samples\win\watzee\wdlg.c                       SAMPLES
-samples\win\watzee\wdraw.c                      SAMPLES
-samples\win\watzee\wfont.c                      SAMPLES
-samples\win\watzee\wglobal.c                    SAMPLES
-samples\win\watzee\win16\makefile               SAMPLES
-samples\win\watzee\win16\watzee.tgt             SAMPLES
-samples\win\watzee\win16\watzee.wpj             SAMPLES
-samples\win\watzee\win32\makefile               SAMPLES
-samples\win\watzee\win32\watzee.tgt             SAMPLES
-samples\win\watzee\win32\watzee.wpj             SAMPLES
-samples\win\watzee\win386\makefile              SAMPLES
-samples\win\watzee\win386\watzee.tgt            SAMPLES
-samples\win\watzee\win386\watzee.wpj            SAMPLES
-samples\win\watzee\wpc.c                        SAMPLES
-samples\win\win1632.h                           SAMPLES
-src\calendar.c                                  SAMPLES
-src\calendar.cpp                                SAMPLES
-src\calendar.jc                                 SAMPLES
-src\cpplib\contain\wcexcept.cpp                 SAMPLES
-src\cpplib\contain\wchash.cpp                   SAMPLES
-src\cpplib\contain\wclist.cpp                   SAMPLES
-src\cpplib\contain\wcskip.cpp                   SAMPLES
-src\editdll\makefile                            SAMPLES
-src\editdll\weditcw.c                           SAMPLES
-src\editdll\weditcw.h                           SAMPLES
-src\editdll\weditcw.lnk                         SAMPLES
-src\editdll\weditcwn.lnk                        SAMPLES
-src\editdll\wedit.doc                           SAMPLES
-src\editdll\wedit.h                             SAMPLES
-src\grdemo.c                                    SAMPLES
-src\grdemo.cpp                                  SAMPLES
-src\hello.c                                     SAMPLES
-src\hello.cpp                                   SAMPLES
-src\inc\cmacros.inc                             SAMPLES
-src\inc\mmsystem.inc                            SAMPLES
-src\inc\toolhelp.inc                            SAMPLES
-src\inc\windows.inc                             SAMPLES
-src\_matherr.c                                  SAMPLES
-src\memos.c                                     SAMPLES
-src\memos.def                                   SAMPLES
-src\memos.h                                     SAMPLES
-src\os2\pdd\devaux.h                            SAMPLES
-src\os2\pdd\devdefs.h                           SAMPLES
-src\os2\pdd\devhdr.h                            SAMPLES
-src\os2\pdd\devreqp.h                           SAMPLES
-src\os2\pdd\devsegs.asm                         SAMPLES
-src\os2\pdd\header.c                            SAMPLES
-src\os2\pdd\hrdev.h                             SAMPLES
-src\os2\pdd\hrtest.c                            SAMPLES
-src\os2\pdd\hrtimer.h                           SAMPLES
-src\os2\pdd\makefile                            SAMPLES
-src\os2\pdd\strategy.c                          SAMPLES
-src\os2\pdd\stratini.c                          SAMPLES
-src\os2\pdd\timer.c                             SAMPLES
-src\pgdemo.c                                    SAMPLES
-src\pmhello.c                                   SAMPLES
-src\shapes.c                                    SAMPLES
-src\shapes.cpp                                  SAMPLES
-src\startup\386\cmain386.c                      SAMPLES
-src\startup\386\cstrt386.asm                    SAMPLES
-src\startup\386\cstrto32.asm                    SAMPLES
-src\startup\386\cstrtw32.asm                    SAMPLES
-src\startup\386\cstrtwnt.asm                    SAMPLES
-src\startup\386\cstrtwwt.asm                    SAMPLES
-src\startup\386\cstrtx32.asm                    SAMPLES
-src\startup\386\dmaino32.c                      SAMPLES
-src\startup\386\dmainwnt.c                      SAMPLES
-src\startup\386\dstrt386.asm                    SAMPLES
-src\startup\386\initfini.h                      SAMPLES
-src\startup\386\libmno32.c                      SAMPLES
-src\startup\386\lmainwnt.c                      SAMPLES
-src\startup\386\lmn2wnt.c                       SAMPLES
-src\startup\386\main2o32.c                      SAMPLES
-src\startup\386\main2wnt.c                      SAMPLES
-src\startup\386\wmainwnt.c                      SAMPLES
-src\startup\8087cw.c                            SAMPLES
-src\startup\dos\cmain086.c                      SAMPLES
-src\startup\dos\cstrt086.asm                    SAMPLES
-src\startup\dos\dos16m.asm                      SAMPLES
-src\startup\dos\hpgrw086.c                      SAMPLES
-src\startup\dos\mdef.inc                        SAMPLES
-src\startup\os2\cmain086.c                      SAMPLES
-src\startup\os2\cstrto16.asm                    SAMPLES
-src\startup\os2\dmaino16.c                      SAMPLES
-src\startup\os2\initfini.h                      SAMPLES
-src\startup\os2\libmno16.c                      SAMPLES
-src\startup\os2\maino16.c                       SAMPLES
-src\startup\os2\mdef.inc                        SAMPLES
-src\startup\os2\wos2.h                          SAMPLES
-src\startup\wildargv.c                          SAMPLES
-src\startup\win\cstrtw16.asm                    SAMPLES
-src\startup\win\libentry.asm                    SAMPLES
-src\startup\win\mdef.inc                        SAMPLES
-src\winhello.c                                  SAMPLES
-src\wstub.c                                     SAMPLES
+samples\clibexam\abort.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\abs.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\access.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\acos.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\acosh.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\alloca.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\allocmem.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\asctime.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\asin.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\asinh.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\assert.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\atan2.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\atan.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\atanh.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\atexit.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\atof.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\atoi.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\atol.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_disk.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\bdos.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_equip.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\bessel.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_bfreese.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_bheapse.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_keybrd.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_memsiz.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_print.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\_bprintf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\bsearch.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_serial.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_bthread.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\b_time.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\cabs.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\calloc.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\ceil.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\cgets.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\chainint.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\chdir.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\chmod.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\chsize.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_clear87.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\clearenv.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\clearerr.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\clock.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\close.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\closedir.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\control8.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\controlf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\cos.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\cosh.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\cprintf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\cputs.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\creat.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\creatnew.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\cscanf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\ctime.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\cwait.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\d_close.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\d_creat.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\delay.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\difftime.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_disable.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\div.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\d_open.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\dosexter.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\d_read.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\dup2.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\dup.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\d_write.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\ecvt.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_enable.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\eof.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\_ethread.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\exec.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_exit.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\exit.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_expand.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\exp.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\fabs.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\fcloseal.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fclose.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\fcvt.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\fdopen.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\feof.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\ferror.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\fflush.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\fgetc.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fgetchar.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fgetpos.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\fgets.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fileleng.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fileno.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\findfirs.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\floor.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\flushall.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fmod.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\fopen.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fp_off.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_fpreset.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fprintf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\fp_seg.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\fputc.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fputchar.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fputs.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fread.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\free.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_freect.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\freemem.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\freopen.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\frexp.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fscanf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\fseek.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\fsetpos.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\_fsopen.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\fstat.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ftell.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ftime.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\_fullpat.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\fwrite.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\gcvt.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\getc.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\getchar.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\getch.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\getche.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\getcmd.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\getcwd.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\getdate.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\getdiskf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\getdrive.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\getenv.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\getfattr.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\getftime.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\getpid.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\gets.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\gettime.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\getvect.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\gmtime.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_grow_ha.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\halloc.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_harderr.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapchk.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapgrw.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapmin.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapset.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapshr.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_heapwal.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\hfree.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\hypot.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\inp.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\inpw.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\int386.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\int386x.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\int86.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\int86x.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\intdos.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\intdosx.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\intr.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\isalnum.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isalpha.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isascii.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isatty.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\iscntrl.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isdigit.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isgraph.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\islower.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isprint.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\ispunct.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isspace.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isupper.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\isxdigit.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\itoa.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\btom.c                   SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\chkctype.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\hantozen.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\isalkana.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\isalnmka.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\isgrkana.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\iskana.c                 SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\iskanji2.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\iskanji.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\iskmoji.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\iskpun.c                 SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\ispnkana.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\isprkana.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jasctime.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jctime.c                 SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jgetmoji.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisalpha.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisdigit.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jishira.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jiskana.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jiskigou.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisl0.c                  SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisl1.c                  SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisl2.c                  SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jislower.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisprint.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisspace.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jistojms.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jisupper.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jiszen.c                 SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jmstojis.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jperror.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jputmoji.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstradv.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrcat.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrchr.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrcmp.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrcspn.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrerro.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstricmp.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrlen.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrlwr.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrmatc.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrncat.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrncmp.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrncpy.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrnicm.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrnset.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrrchr.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrrev.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrset.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrskip.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrspn.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrstr.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrtok.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jstrupr.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jtohira.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jtokata.c                SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jtolower.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\jtoupper.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\mtob.c                   SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\nthctype.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kanji\zentohan.c               SAMPLES         CLIB_SAMPLES
+samples\clibexam\kbhit.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\keep.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\labs.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\ldexp.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ldiv.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\lfind.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\localeco.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\localtim.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\lock.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\locking.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\log10.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\log2.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\log.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\longjmp.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\_lrotl.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_lrotr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\lsearch.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\lseek.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ltoa.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\main.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_makepat.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\malloc.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\matherr.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\max.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\mblen.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\mbstowcs.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\mbtowc.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\_memavl.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\memccpy.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\memchr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\memcmp.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\memcpy.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\memicmp.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\_memmax.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\memmove.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\memset.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\min.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\mkdir.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\mk_fp.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\mktime.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\modf.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\movedata.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_msize.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\nosound.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\offsetof.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\onexit.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\open.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\opendir.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\outp.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\outpw.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\perror.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\pow.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\printf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\putc.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\putchar.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\putch.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\putenv.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\puts.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\qsort.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\raise.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\rand.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\read.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\readdir.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\realloc.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\remove.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\rename.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\rewind.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\rmdir.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\_rotl.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\_rotr.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\sbrk.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\scanf.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\_searche.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\segread.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\setblock.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\setbuf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\setdate.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\setdrive.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\setenv.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\setfattr.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\setftime.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\setjmp.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\setlocal.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\setmode.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\settime.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\setvbuf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\setvect.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\signal.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\sin.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\sinh.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\sleep.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\sopen.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\sound.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\spawn.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\_splitp2.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_splitpa.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\sprintf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\sqrt.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\srand.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\sscanf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\stackava.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\stat.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\_status8.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcat.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strchr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcmp.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcmpi.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcoll.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcpy.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strcspn.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strdup.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strerror.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\strftime.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\stricmp.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strlen.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strlwr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strncat.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strncmp.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strncpy.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strnicmp.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\strnset.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strpbrk.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strrchr.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strrev.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strset.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strspn.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strstr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strtod.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strtok.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strtol.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strtoul.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\strupr.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\strxfrm.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\swab.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\system.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\tan.c                          SAMPLES         CLIB_SAMPLES
+samples\clibexam\tanh.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\tell.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\time.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\tmpfile.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\tmpnam.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\tolower.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\toupper.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\tzset.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ultoa.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\umask.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\ungetc.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\ungetch.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\unlink.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\unlock.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\utime.c                        SAMPLES         CLIB_SAMPLES
+samples\clibexam\utoa.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\va_arg.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\va_end.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\va_start.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\_vbprint.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\vcprintf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\vcscanf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\vfprintf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\vfscanf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\vprintf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\vscanf.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\vsprintf.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\vsscanf.c                      SAMPLES         CLIB_SAMPLES
+samples\clibexam\wait.c                         SAMPLES         CLIB_SAMPLES
+samples\clibexam\wcstombs.c                     SAMPLES         CLIB_SAMPLES
+samples\clibexam\wctomb.c                       SAMPLES         CLIB_SAMPLES
+samples\clibexam\write.c                        SAMPLES         CLIB_SAMPLES
 
-samples\goodies\bimo.asm                        SAMPLES_GOODIES
-samples\goodies\bimodal.c                       SAMPLES_GOODIES
-samples\goodies\bindata.fil                     SAMPLES_GOODIES
-samples\goodies\bindata.for                     SAMPLES_GOODIES
-samples\goodies\cw87.for                        SAMPLES_GOODIES
-samples\goodies\dta.for                         SAMPLES_GOODIES
-samples\goodies\fhandles.for                    SAMPLES_GOODIES
-samples\goodies\fileio.c                        SAMPLES_GOODIES
-samples\goodies\fmemory.for                     SAMPLES_GOODIES
-samples\goodies\fscreen.for                     SAMPLES_GOODIES
-samples\goodies\handles.c                       SAMPLES_GOODIES
-samples\goodies\keystapl.c                      SAMPLES_GOODIES
-samples\goodies\keystat.c                       SAMPLES_GOODIES
-samples\goodies\makefile                        SAMPLES_GOODIES
-samples\goodies\makefile.c                      SAMPLES_GOODIES
-samples\goodies\makefile.for                    SAMPLES_GOODIES
-samples\goodies\mathdemo.for                    SAMPLES_GOODIES
-samples\goodies\memory.c                        SAMPLES_GOODIES
-samples\goodies\mempls40.c                      SAMPLES_GOODIES
-samples\goodies\memwin.c                        SAMPLES_GOODIES
-samples\goodies\mix1c.c                         SAMPLES_GOODIES
-samples\goodies\mix1f.for                       SAMPLES_GOODIES
-samples\goodies\mix2c.c                         SAMPLES_GOODIES
-samples\goodies\mix2f.for                       SAMPLES_GOODIES
-samples\goodies\mix3c.c                         SAMPLES_GOODIES
-samples\goodies\mix3f.for                       SAMPLES_GOODIES
-samples\goodies\mix4c.c                         SAMPLES_GOODIES
-samples\goodies\mix4f.for                       SAMPLES_GOODIES
-samples\goodies\mix5c.c                         SAMPLES_GOODIES
-samples\goodies\mix5f.for                       SAMPLES_GOODIES
-samples\goodies\mix6.for                        SAMPLES_GOODIES
-samples\goodies\mouse.c                         SAMPLES_GOODIES
-samples\goodies\screen.c                        SAMPLES_GOODIES
-samples\goodies\screenpl.c                      SAMPLES_GOODIES
-samples\goodies\simulate.c                      SAMPLES_GOODIES
-samples\goodies\spwndd4g.c                      SAMPLES_GOODIES
-samples\goodies\spwndpls.c                      SAMPLES_GOODIES
-samples\goodies\spwnrd4g.c                      SAMPLES_GOODIES
-samples\goodies\spwnrpls.c                      SAMPLES_GOODIES
-samples\goodies\_matherr.for                    SAMPLES_GOODIES
+samples\cplbexam\complex\friend                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\friend\lshift.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\friend\makefile        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\friend\rshift.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\assign.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\construc.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\decre.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\div.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\imag.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\incre.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\makefile        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\minus.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\multi.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\plus.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\pubfun\real.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\abs.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\acos.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\acosh.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\arg.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\asin.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\asinh.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\atan.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\atanh.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\conj.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\cos.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\cosh.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\exp.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\imag.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\log10.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\log.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\makefile        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\norm.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\polar.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\pow.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\real.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\sin.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\sinh.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\sqrt.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\tan.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relfun\tanh.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\add.cpp          SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\divide.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\equal.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\makefile         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\multiply.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\notequal.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\complex\relop\subtract.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\alloctor.cpp           SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcldintr.cpp           SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcldptr.cpp            SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcldval.cpp            SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcqueue.cpp            SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcstack.cpp            SAMPLES         PLIB_SAMPLES
+samples\cplbexam\contain\wcvdli.cpp             SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\fstream\construc.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\fstream\handbuf.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\fstream\handle.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\fstream\makefile       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\fstream\open.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ifstream\construc.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ifstream\handbuf.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ifstream\handle.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ifstream\makefile      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ifstream\open.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ofstream\construc.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ofstream\handbuf.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ofstream\handle.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ofstream\makefile      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\fstream\ofstream\open.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\bad.cpp                    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\bitalloc.cpp               SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\clear.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\constrbu.cpp               SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\eof.cpp                    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\except.cpp                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\fail.cpp                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\fill.cpp                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\flags.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\good.cpp                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\init.cpp                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\iword.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\makefile                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\opexam.cpp                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\opvoid.cpp                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\precisio.cpp               SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\pword.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\rdbuf.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\rdstate.cpp                SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\setf.cpp                   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\tie.cpp                    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\conbuf.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\conios.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\destruct.cpp SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\eqiostrm.cpp SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\eqstrmbu.cpp SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\iostream\makefile     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\conbuf.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\conistrm.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\destruct.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\eatwhite.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\eqistrm.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\eqstrmbu.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\gcount.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\getchar.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\get.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\getinbuf.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\getinstr.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\getline.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\ignore.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\ipfx.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\makefile      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\open.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\peek.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\putback.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\read.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\rshchar.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\rshchbuf.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\rshman.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\rshnum.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\rshstrbu.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\seekgoff.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\seekgpos.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\sync.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\istream\tellg.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\conbuf.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\conostrm.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\destruct.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\eqostrm.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\eqstrmbu.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\flush.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshchar.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshfloat.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshint.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshman.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshptr.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshstrbu.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\lshstr.cpp    SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\makefile      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\opfx.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\put.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\seekpoff.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\seekppos.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\tellp.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\iostream\ostream\write.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\unsetf.cpp                 SAMPLES         PLIB_SAMPLES
+samples\cplbexam\ios\width.cpp                  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\add.cpp          SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\equal.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\lonequal.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\long.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\lshift.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\makefile         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\notequal.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\rshift.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\short.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\shtequal.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\friend\valid.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\alloc.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\char.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\conchar.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\concstr.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\condef.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\constr.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\cstr.cpp         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\index.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\length.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\lower.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\makefile         SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\match.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\opequal.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\opincre.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\poschara.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\poscharb.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\poslen.cpp       SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\upper.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\string\pubfun\valid.cpp        SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\istrstre\char.cpp     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\istrstre\charlen.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\istrstre\makefile     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\ostrstre\charlen.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\ostrstre\construc.cpp SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\ostrstre\makefile     SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\ostrstre\pcount.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\ostrstre\str.cpp      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\strstre\charlen.cpp   SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\strstre\construc.cpp  SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\strstre\makefile      SAMPLES         PLIB_SAMPLES
+samples\cplbexam\strstrea\strstre\str.cpp       SAMPLES         PLIB_SAMPLES
+
+samples\dll\cover16.c                           SAMPLES         CM_SAMPLES
+samples\dll\dll16.c                             SAMPLES         CM_SAMPLES
+samples\dll\dll16.lnk                           SAMPLES         CM_SAMPLES
+samples\dll\dll32.c                             SAMPLES         CM_SAMPLES
+samples\dll\dll32.lnk                           SAMPLES         CM_SAMPLES
+samples\dll\gen16.c                             SAMPLES         CM_SAMPLES
+samples\dll\gen16.lnk                           SAMPLES         CM_SAMPLES
+samples\dll\gen32.c                             SAMPLES         CM_SAMPLES
+samples\dll\gen32.lnk                           SAMPLES         CM_SAMPLES
+samples\dll\makefile                            SAMPLES         CM_SAMPLES
+samples\dll\vbdll32.c                           SAMPLES         CM_SAMPLES
+samples\goodies\bimo.asm                        SAMPLES         CM_SAMPLES
+samples\goodies\bimodal.c                       SAMPLES         CM_SAMPLES
+samples\goodies\bindata.fil                     SAMPLES         CM_SAMPLES
+samples\goodies\bindata.for                     SAMPLES         CM_SAMPLES
+samples\goodies\cw87.for                        SAMPLES         CM_SAMPLES
+samples\goodies\dta.for                         SAMPLES         CM_SAMPLES
+samples\goodies\fhandles.for                    SAMPLES         CM_SAMPLES
+samples\goodies\fileio.c                        SAMPLES         CM_SAMPLES
+samples\goodies\fmemory.for                     SAMPLES         CM_SAMPLES
+samples\goodies\fscreen.for                     SAMPLES         CM_SAMPLES
+samples\goodies\handles.c                       SAMPLES         CM_SAMPLES
+samples\goodies\keystapl.c                      SAMPLES         CM_SAMPLES
+samples\goodies\keystat.c                       SAMPLES         CM_SAMPLES
+samples\goodies\makefile                        SAMPLES         CM_SAMPLES
+samples\goodies\makefile.c                      SAMPLES         CM_SAMPLES
+samples\goodies\makefile.for                    SAMPLES         CM_SAMPLES
+samples\goodies\mathdemo.for                    SAMPLES         CM_SAMPLES
+samples\goodies\_matherr.for                    SAMPLES         CM_SAMPLES
+samples\goodies\memory.c                        SAMPLES         CM_SAMPLES
+samples\goodies\mempls40.c                      SAMPLES         CM_SAMPLES
+samples\goodies\memwin.c                        SAMPLES         CM_SAMPLES
+samples\goodies\mix1c.c                         SAMPLES         CM_SAMPLES
+samples\goodies\mix1f.for                       SAMPLES         CM_SAMPLES
+samples\goodies\mix2c.c                         SAMPLES         CM_SAMPLES
+samples\goodies\mix2f.for                       SAMPLES         CM_SAMPLES
+samples\goodies\mix3c.c                         SAMPLES         CM_SAMPLES
+samples\goodies\mix3f.for                       SAMPLES         CM_SAMPLES
+samples\goodies\mix4c.c                         SAMPLES         CM_SAMPLES
+samples\goodies\mix4f.for                       SAMPLES         CM_SAMPLES
+samples\goodies\mix5c.c                         SAMPLES         CM_SAMPLES
+samples\goodies\mix5f.for                       SAMPLES         CM_SAMPLES
+samples\goodies\mix6.for                        SAMPLES         CM_SAMPLES
+samples\goodies\mouse.c                         SAMPLES         CM_SAMPLES
+samples\goodies\screen.c                        SAMPLES         CM_SAMPLES
+samples\goodies\screenpl.c                      SAMPLES         CM_SAMPLES
+samples\goodies\simulate.c                      SAMPLES         CM_SAMPLES
+samples\goodies\spwndd4g.c                      SAMPLES         CM_SAMPLES
+samples\goodies\spwndpls.c                      SAMPLES         CM_SAMPLES
+samples\goodies\spwnrd4g.c                      SAMPLES         CM_SAMPLES
+samples\goodies\spwnrpls.c                      SAMPLES         CM_SAMPLES
+
+samples\ide\back.bmp                            SAMPLES         IDE_SAMPLES
+samples\ide\box.cpp                             SAMPLES         IDE_SAMPLES
+samples\ide\box.hpp                             SAMPLES         IDE_SAMPLES
+samples\ide\brighter.bmp                        SAMPLES         IDE_SAMPLES
+samples\ide\btnos2.c                            SAMPLES         IDE_SAMPLES
+samples\ide\btnwin.c                            SAMPLES         IDE_SAMPLES
+samples\ide\button.h                            SAMPLES         IDE_SAMPLES
+samples\ide\darker.bmp                          SAMPLES         IDE_SAMPLES
+samples\ide\down.bmp                            SAMPLES         IDE_SAMPLES
+samples\ide\draw.ico                            SAMPLES         IDE_SAMPLES
+samples\ide\drawmenu.h                          SAMPLES         IDE_SAMPLES
+samples\ide\drawos2.c                           SAMPLES         IDE_SAMPLES
+samples\ide\drawos2.rc                          SAMPLES         IDE_SAMPLES
+samples\ide\draw.rc                             SAMPLES         IDE_SAMPLES
+samples\ide\drawroom.cpp                        SAMPLES         IDE_SAMPLES
+samples\ide\drawwin.c                           SAMPLES         IDE_SAMPLES
+samples\ide\forward.bmp                         SAMPLES         IDE_SAMPLES
+samples\ide\furnitu.cpp                         SAMPLES         IDE_SAMPLES
+samples\ide\furnitu.hpp                         SAMPLES         IDE_SAMPLES
+samples\ide\left.bmp                            SAMPLES         IDE_SAMPLES
+samples\ide\os2_3d.dll                          SAMPLES         IDE_SAMPLES
+samples\ide\os2\button.tgt                      SAMPLES         IDE_SAMPLES
+samples\ide\os2\drawos2.tgt                     SAMPLES         IDE_SAMPLES
+samples\ide\os2\os2_3d.dll                      SAMPLES         IDE_SAMPLES
+samples\ide\os2.wpj                             SAMPLES         IDE_SAMPLES
+samples\ide\right.bmp                           SAMPLES         IDE_SAMPLES
+samples\ide\room.h                              SAMPLES         IDE_SAMPLES
+samples\ide\threed.h                            SAMPLES         IDE_SAMPLES
+samples\ide\up.bmp                              SAMPLES         IDE_SAMPLES
+samples\ide\win1632.h                           SAMPLES         IDE_SAMPLES
+samples\ide\win32\button.tgt                    SAMPLES         IDE_SAMPLES
+samples\ide\win32\draw32.tgt                    SAMPLES         IDE_SAMPLES
+samples\ide\win32\nt_3d.dll                     SAMPLES         IDE_SAMPLES
+samples\ide\win32.wpj                           SAMPLES         IDE_SAMPLES
+samples\ide\win386\button.tgt                   SAMPLES         IDE_SAMPLES
+samples\ide\win386\draw.tgt                     SAMPLES         IDE_SAMPLES
+samples\ide\win386\win_3d.dll                   SAMPLES         IDE_SAMPLES
+samples\ide\win386.wpj                          SAMPLES         IDE_SAMPLES
+samples\ide\win\button.tgt                      SAMPLES         IDE_SAMPLES
+samples\ide\win\draw16.tgt                      SAMPLES         IDE_SAMPLES
+samples\ide\win\win_3d.dll                      SAMPLES         IDE_SAMPLES
+samples\ide\win.wpj                             SAMPLES         IDE_SAMPLES
+
+samples\win\alarm\alarm.c                       SAMPLES         WIN_SAMPLES
+samples\win\alarm\alarm.h                       SAMPLES         WIN_SAMPLES
+samples\win\alarm\alarm.ico                     SAMPLES         WIN_SAMPLES
+samples\win\alarm\alarm.mif                     SAMPLES         WIN_SAMPLES
+samples\win\alarm\alarm.rc                      SAMPLES         WIN_SAMPLES
+samples\win\alarm\win16\alarm.tgt               SAMPLES         WIN_SAMPLES
+samples\win\alarm\win16\alarm.wpj               SAMPLES         WIN_SAMPLES
+samples\win\alarm\win16\makefile                SAMPLES         WIN_SAMPLES
+samples\win\alarm\win32\alarm.tgt               SAMPLES         WIN_SAMPLES
+samples\win\alarm\win32\alarm.wpj               SAMPLES         WIN_SAMPLES
+samples\win\alarm\win32\makefile                SAMPLES         WIN_SAMPLES
+samples\win\alarm\win386\alarm.tgt              SAMPLES         WIN_SAMPLES
+samples\win\alarm\win386\alarm.wpj              SAMPLES         WIN_SAMPLES
+samples\win\alarm\win386\makefile               SAMPLES         WIN_SAMPLES
+samples\win\datactl\check.c                     SAMPLES         WIN_SAMPLES
+samples\win\datactl\combo.c                     SAMPLES         WIN_SAMPLES
+samples\win\datactl\combomod.c                  SAMPLES         WIN_SAMPLES
+samples\win\datactl\ctltype.c                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\ctltype.h                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\ctluser.c                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\ctluser.h                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\dcombo.c                    SAMPLES         WIN_SAMPLES
+samples\win\datactl\dialog.dlg                  SAMPLES         WIN_SAMPLES
+samples\win\datactl\dialog.h                    SAMPLES         WIN_SAMPLES
+samples\win\datactl\float.c                     SAMPLES         WIN_SAMPLES
+samples\win\datactl\int.c                       SAMPLES         WIN_SAMPLES
+samples\win\datactl\parsectl.c                  SAMPLES         WIN_SAMPLES
+samples\win\datactl\radio.c                     SAMPLES         WIN_SAMPLES
+samples\win\datactl\read.me                     SAMPLES         WIN_SAMPLES
+samples\win\datactl\rfloat.c                    SAMPLES         WIN_SAMPLES
+samples\win\datactl\rint.c                      SAMPLES         WIN_SAMPLES
+samples\win\datactl\testctl.c                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\testctl.h                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\testctl.mif                 SAMPLES         WIN_SAMPLES
+samples\win\datactl\testctl.rc                  SAMPLES         WIN_SAMPLES
+samples\win\datactl\testdata.ctl                SAMPLES         WIN_SAMPLES
+samples\win\datactl\testdata.h                  SAMPLES         WIN_SAMPLES
+samples\win\datactl\text.c                      SAMPLES         WIN_SAMPLES
+samples\win\datactl\textmod.c                   SAMPLES         WIN_SAMPLES
+samples\win\datactl\win16\datactl.wpj           SAMPLES         WIN_SAMPLES
+samples\win\datactl\win16\makefile              SAMPLES         WIN_SAMPLES
+samples\win\datactl\win16\testctl.tgt           SAMPLES         WIN_SAMPLES
+samples\win\datactl\win32\datactl.wpj           SAMPLES         WIN_SAMPLES
+samples\win\datactl\win32\makefile              SAMPLES         WIN_SAMPLES
+samples\win\datactl\win32\testctl.tgt           SAMPLES         WIN_SAMPLES
+samples\win\datactl\win386\datactl.wpj          SAMPLES         WIN_SAMPLES
+samples\win\datactl\win386\makefile             SAMPLES         WIN_SAMPLES
+samples\win\datactl\win386\testctl.tgt          SAMPLES         WIN_SAMPLES
+samples\win\edit\edit.c                         SAMPLES         WIN_SAMPLES
+samples\win\edit\edit.h                         SAMPLES         WIN_SAMPLES
+samples\win\edit\edit.mif                       SAMPLES         WIN_SAMPLES
+samples\win\edit\edit.rc                        SAMPLES         WIN_SAMPLES
+samples\win\edit\efile.c                        SAMPLES         WIN_SAMPLES
+samples\win\edit\efont.c                        SAMPLES         WIN_SAMPLES
+samples\win\edit\emem.c                         SAMPLES         WIN_SAMPLES
+samples\win\edit\eprint.c                       SAMPLES         WIN_SAMPLES
+samples\win\edit\win16\edit.tgt                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win16\edit.wpj                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win16\makefile                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win32\edit.tgt                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win32\edit.wpj                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win32\makefile                 SAMPLES         WIN_SAMPLES
+samples\win\edit\win386\edit.tgt                SAMPLES         WIN_SAMPLES
+samples\win\edit\win386\edit.wpj                SAMPLES         WIN_SAMPLES
+samples\win\edit\win386\makefile                SAMPLES         WIN_SAMPLES
+samples\win\generic\generic.c                   SAMPLES         WIN_SAMPLES
+samples\win\generic\generic.h                   SAMPLES         WIN_SAMPLES
+samples\win\generic\generic.ico                 SAMPLES         WIN_SAMPLES
+samples\win\generic\generic.mif                 SAMPLES         WIN_SAMPLES
+samples\win\generic\generic.rc                  SAMPLES         WIN_SAMPLES
+samples\win\generic\genwin.h                    SAMPLES         WIN_SAMPLES
+samples\win\generic\win16\generic.tgt           SAMPLES         WIN_SAMPLES
+samples\win\generic\win16\generic.wpj           SAMPLES         WIN_SAMPLES
+samples\win\generic\win16\makefile              SAMPLES         WIN_SAMPLES
+samples\win\generic\win32\generic.tgt           SAMPLES         WIN_SAMPLES
+samples\win\generic\win32\generic.wpj           SAMPLES         WIN_SAMPLES
+samples\win\generic\win32\makefile              SAMPLES         WIN_SAMPLES
+samples\win\generic\win386\generic.tgt          SAMPLES         WIN_SAMPLES
+samples\win\generic\win386\generic.wpj          SAMPLES         WIN_SAMPLES
+samples\win\generic\win386\makefile             SAMPLES         WIN_SAMPLES
+samples\win\helpex\bullet.bmp                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\chkboff.bmp                  SAMPLES         WIN_SAMPLES
+samples\win\helpex\chkbon.bmp                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\codec.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\continue.bmp                 SAMPLES         WIN_SAMPLES
+samples\win\helpex\done.bmp                     SAMPLES         WIN_SAMPLES
+samples\win\helpex\help.cur                     SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex                       SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.c                     SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.def                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.dlg                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.h                     SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.hpj                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.mif                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.ph                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.rc                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpex.rtf                   SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpicon.bmp                 SAMPLES         WIN_SAMPLES
+samples\win\helpex\helpids.h                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\keys.rtf                     SAMPLES         WIN_SAMPLES
+samples\win\helpex\max2icon.bmp                 SAMPLES         WIN_SAMPLES
+samples\win\helpex\mouse.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\terms.rtf                    SAMPLES         WIN_SAMPLES
+samples\win\helpex\win16\helpex.tgt             SAMPLES         WIN_SAMPLES
+samples\win\helpex\win16\helpex.wpj             SAMPLES         WIN_SAMPLES
+samples\win\helpex\win16\makefile               SAMPLES         WIN_SAMPLES
+samples\win\helpex\win16\makehelp.bat           SAMPLES         WIN_SAMPLES
+samples\win\helpex\win32\helpex.tgt             SAMPLES         WIN_SAMPLES
+samples\win\helpex\win32\helpex.wpj             SAMPLES         WIN_SAMPLES
+samples\win\helpex\win32\makefile               SAMPLES         WIN_SAMPLES
+samples\win\helpex\win32\makehelp.bat           SAMPLES         WIN_SAMPLES
+samples\win\helpex\win386\helpex.tgt            SAMPLES         WIN_SAMPLES
+samples\win\helpex\win386\helpex.wpj            SAMPLES         WIN_SAMPLES
+samples\win\helpex\win386\makefile              SAMPLES         WIN_SAMPLES
+samples\win\helpex\win386\makehelp.bat          SAMPLES         WIN_SAMPLES
+samples\win\helpex\winword.bmp                  SAMPLES         WIN_SAMPLES
+samples\win\iconview\icon.c                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\icon.h                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\mdi.c                      SAMPLES         WIN_SAMPLES
+samples\win\iconview\mdi.h                      SAMPLES         WIN_SAMPLES
+samples\win\iconview\switch.c                   SAMPLES         WIN_SAMPLES
+samples\win\iconview\switch.h                   SAMPLES         WIN_SAMPLES
+samples\win\iconview\util.c                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\util.h                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\view.c                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\view.h                     SAMPLES         WIN_SAMPLES
+samples\win\iconview\view.ico                   SAMPLES         WIN_SAMPLES
+samples\win\iconview\view.mif                   SAMPLES         WIN_SAMPLES
+samples\win\iconview\view.rc                    SAMPLES         WIN_SAMPLES
+samples\win\iconview\win16\iconview.wpj         SAMPLES         WIN_SAMPLES
+samples\win\iconview\win16\makefile             SAMPLES         WIN_SAMPLES
+samples\win\iconview\win16\view.tgt             SAMPLES         WIN_SAMPLES
+samples\win\iconview\win32\iconview.wpj         SAMPLES         WIN_SAMPLES
+samples\win\iconview\win32\makefile             SAMPLES         WIN_SAMPLES
+samples\win\iconview\win32\view.tgt             SAMPLES         WIN_SAMPLES
+samples\win\iconview\win386\iconview.wpj        SAMPLES         WIN_SAMPLES
+samples\win\iconview\win386\makefile            SAMPLES         WIN_SAMPLES
+samples\win\iconview\win386\view.tgt            SAMPLES         WIN_SAMPLES
+samples\win\life\array.c                        SAMPLES         WIN_SAMPLES
+samples\win\life\bitmap.c                       SAMPLES         WIN_SAMPLES
+samples\win\life\bitmap.h                       SAMPLES         WIN_SAMPLES
+samples\win\life\bitmaps.c                      SAMPLES         WIN_SAMPLES
+samples\win\life\blink10.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\blink11.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\blink13.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\blink14.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\blink15.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\blink1.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink2.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink3.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink4.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink5.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink6.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink7.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink8.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blink9.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\blnkship.lif                   SAMPLES         WIN_SAMPLES
+samples\win\life\cell.bmp                       SAMPLES         WIN_SAMPLES
+samples\win\life\double.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\dpuffer.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\escort1.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\escort2.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\file.c                         SAMPLES         WIN_SAMPLES
+samples\win\life\galaxy.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\gldrgun.lif                    SAMPLES         WIN_SAMPLES
+samples\win\life\glider.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\life.c                         SAMPLES         WIN_SAMPLES
+samples\win\life\life.dlg                       SAMPLES         WIN_SAMPLES
+samples\win\life\life.h                         SAMPLES         WIN_SAMPLES
+samples\win\life\life.ico                       SAMPLES         WIN_SAMPLES
+samples\win\life\life.mif                       SAMPLES         WIN_SAMPLES
+samples\win\life\life.rc                        SAMPLES         WIN_SAMPLES
+samples\win\life\line.lif                       SAMPLES         WIN_SAMPLES
+samples\win\life\menu.bmp                       SAMPLES         WIN_SAMPLES
+samples\win\life\menu.h                         SAMPLES         WIN_SAMPLES
+samples\win\life\mouse.c                        SAMPLES         WIN_SAMPLES
+samples\win\life\palette.c                      SAMPLES         WIN_SAMPLES
+samples\win\life\palette.h                      SAMPLES         WIN_SAMPLES
+samples\win\life\patterns.c                     SAMPLES         WIN_SAMPLES
+samples\win\life\pingpong.lif                   SAMPLES         WIN_SAMPLES
+samples\win\life\puffer.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\quad.lif                       SAMPLES         WIN_SAMPLES
+samples\win\life\round.bmp                      SAMPLES         WIN_SAMPLES
+samples\win\life\rules.h                        SAMPLES         WIN_SAMPLES
+samples\win\life\seed1.lif                      SAMPLES         WIN_SAMPLES
+samples\win\life\seed2.lif                      SAMPLES         WIN_SAMPLES
+samples\win\life\seed3.lif                      SAMPLES         WIN_SAMPLES
+samples\win\life\seed4.lif                      SAMPLES         WIN_SAMPLES
+samples\win\life\swengine.lif                   SAMPLES         WIN_SAMPLES
+samples\win\life\timer.c                        SAMPLES         WIN_SAMPLES
+samples\win\life\triple.lif                     SAMPLES         WIN_SAMPLES
+samples\win\life\watcom.bmp                     SAMPLES         WIN_SAMPLES
+samples\win\life\win16\life.tgt                 SAMPLES         WIN_SAMPLES
+samples\win\life\win16\life.wpj                 SAMPLES         WIN_SAMPLES
+samples\win\life\win16\makefile                 SAMPLES         WIN_SAMPLES
+samples\win\life\win32\life.tgt                 SAMPLES         WIN_SAMPLES
+samples\win\life\win32\life.wpj                 SAMPLES         WIN_SAMPLES
+samples\win\life\win32\makefile                 SAMPLES         WIN_SAMPLES
+samples\win\life\win386\life.tgt                SAMPLES         WIN_SAMPLES
+samples\win\life\win386\life.wpj                SAMPLES         WIN_SAMPLES
+samples\win\life\win386\makefile                SAMPLES         WIN_SAMPLES
+samples\win\life\zig.lif                        SAMPLES         WIN_SAMPLES
+samples\win\master.mif                          SAMPLES         WIN_SAMPLES
+samples\win\mswin.wpj                           SAMPLES         WIN_SAMPLES
+samples\win\read.me                             SAMPLES         WIN_SAMPLES
+samples\win\shootgal\bolt.ico                   SAMPLES         WIN_SAMPLES
+samples\win\shootgal\gun.cur                    SAMPLES         WIN_SAMPLES
+samples\win\shootgal\keyboard.ico               SAMPLES         WIN_SAMPLES
+samples\win\shootgal\mouse.ico                  SAMPLES         WIN_SAMPLES
+samples\win\shootgal\scroll.ico                 SAMPLES         WIN_SAMPLES
+samples\win\shootgal\shootgal.c                 SAMPLES         WIN_SAMPLES
+samples\win\shootgal\shootgal.h                 SAMPLES         WIN_SAMPLES
+samples\win\shootgal\shootgal.ico               SAMPLES         WIN_SAMPLES
+samples\win\shootgal\shootgal.mif               SAMPLES         WIN_SAMPLES
+samples\win\shootgal\shootgal.rc                SAMPLES         WIN_SAMPLES
+samples\win\shootgal\target.bmp                 SAMPLES         WIN_SAMPLES
+samples\win\shootgal\timer.ico                  SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win16\makefile             SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win16\shootgal.tgt         SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win16\shootgal.wpj         SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win32\makefile             SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win32\shootgal.tgt         SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win32\shootgal.wpj         SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win386\makefile            SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win386\shootgal.tgt        SAMPLES         WIN_SAMPLES
+samples\win\shootgal\win386\shootgal.wpj        SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice1.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice2.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice3.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice4.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice5.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\dice6.bmp                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\watzee.c                     SAMPLES         WIN_SAMPLES
+samples\win\watzee\watzee.h                     SAMPLES         WIN_SAMPLES
+samples\win\watzee\watzee.ico                   SAMPLES         WIN_SAMPLES
+samples\win\watzee\watzee.mif                   SAMPLES         WIN_SAMPLES
+samples\win\watzee\watzee.rc                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\wdice.c                      SAMPLES         WIN_SAMPLES
+samples\win\watzee\wdlg.c                       SAMPLES         WIN_SAMPLES
+samples\win\watzee\wdraw.c                      SAMPLES         WIN_SAMPLES
+samples\win\watzee\wfont.c                      SAMPLES         WIN_SAMPLES
+samples\win\watzee\wglobal.c                    SAMPLES         WIN_SAMPLES
+samples\win\watzee\win16\makefile               SAMPLES         WIN_SAMPLES
+samples\win\watzee\win16\watzee.tgt             SAMPLES         WIN_SAMPLES
+samples\win\watzee\win16\watzee.wpj             SAMPLES         WIN_SAMPLES
+samples\win\watzee\win32\makefile               SAMPLES         WIN_SAMPLES
+samples\win\watzee\win32\watzee.tgt             SAMPLES         WIN_SAMPLES
+samples\win\watzee\win32\watzee.wpj             SAMPLES         WIN_SAMPLES
+samples\win\watzee\win386\makefile              SAMPLES         WIN_SAMPLES
+samples\win\watzee\win386\watzee.tgt            SAMPLES         WIN_SAMPLES
+samples\win\watzee\win386\watzee.wpj            SAMPLES         WIN_SAMPLES
+samples\win\watzee\wpc.c                        SAMPLES         WIN_SAMPLES
+samples\win\win1632.h                           SAMPLES         WIN_SAMPLES
+
+src\calendar.c                                  SAMPLES         MISC_SRC
+src\calendar.cpp                                SAMPLES         MISC_SRC
+src\calendar.jc                                 SAMPLES         MISC_SRC
+src\cpplib\contain\wcexcept.cpp                 SAMPLES         MISC_SRC
+src\cpplib\contain\wchash.cpp                   SAMPLES         MISC_SRC
+src\cpplib\contain\wclist.cpp                   SAMPLES         MISC_SRC
+src\cpplib\contain\wcskip.cpp                   SAMPLES         MISC_SRC
+src\editdll\makefile                            SAMPLES         MISC_SRC
+src\editdll\weditcw.c                           SAMPLES         MISC_SRC
+src\editdll\weditcw.h                           SAMPLES         MISC_SRC
+src\editdll\weditcw.lnk                         SAMPLES         MISC_SRC
+src\editdll\weditcwn.lnk                        SAMPLES         MISC_SRC
+src\editdll\wedit.doc                           SAMPLES         MISC_SRC
+src\editdll\wedit.h                             SAMPLES         MISC_SRC
+src\grdemo.c                                    SAMPLES         MISC_SRC
+src\grdemo.cpp                                  SAMPLES         MISC_SRC
+src\hello.c                                     SAMPLES         MISC_SRC
+src\hello.cpp                                   SAMPLES         MISC_SRC
+src\inc\cmacros.inc                             SAMPLES         MISC_SRC
+src\inc\mmsystem.inc                            SAMPLES         MISC_SRC
+src\inc\toolhelp.inc                            SAMPLES         MISC_SRC
+src\inc\windows.inc                             SAMPLES         MISC_SRC
+src\_matherr.c                                  SAMPLES         MISC_SRC
+src\memos.c                                     SAMPLES         MISC_SRC
+src\memos.def                                   SAMPLES         MISC_SRC
+src\memos.h                                     SAMPLES         MISC_SRC
+src\os2\pdd\devaux.h                            SAMPLES         MISC_SRC
+src\os2\pdd\devdefs.h                           SAMPLES         MISC_SRC
+src\os2\pdd\devhdr.h                            SAMPLES         MISC_SRC
+src\os2\pdd\devreqp.h                           SAMPLES         MISC_SRC
+src\os2\pdd\devsegs.asm                         SAMPLES         MISC_SRC
+src\os2\pdd\header.c                            SAMPLES         MISC_SRC
+src\os2\pdd\hrdev.h                             SAMPLES         MISC_SRC
+src\os2\pdd\hrtest.c                            SAMPLES         MISC_SRC
+src\os2\pdd\hrtimer.h                           SAMPLES         MISC_SRC
+src\os2\pdd\makefile                            SAMPLES         MISC_SRC
+src\os2\pdd\strategy.c                          SAMPLES         MISC_SRC
+src\os2\pdd\stratini.c                          SAMPLES         MISC_SRC
+src\os2\pdd\timer.c                             SAMPLES         MISC_SRC
+src\pgdemo.c                                    SAMPLES         MISC_SRC
+src\pmhello.c                                   SAMPLES         MISC_SRC
+src\shapes.c                                    SAMPLES         MISC_SRC
+src\shapes.cpp                                  SAMPLES         MISC_SRC
+src\startup\386\cmain386.c                      SAMPLES         MISC_SRC
+src\startup\386\cstrt386.asm                    SAMPLES         MISC_SRC
+src\startup\386\cstrto32.asm                    SAMPLES         MISC_SRC
+src\startup\386\cstrtw32.asm                    SAMPLES         MISC_SRC
+src\startup\386\cstrtwnt.asm                    SAMPLES         MISC_SRC
+src\startup\386\cstrtwwt.asm                    SAMPLES         MISC_SRC
+src\startup\386\cstrtx32.asm                    SAMPLES         MISC_SRC
+src\startup\386\dmaino32.c                      SAMPLES         MISC_SRC
+src\startup\386\dmainwnt.c                      SAMPLES         MISC_SRC
+src\startup\386\dstrt386.asm                    SAMPLES         MISC_SRC
+src\startup\386\initfini.h                      SAMPLES         MISC_SRC
+src\startup\386\libmno32.c                      SAMPLES         MISC_SRC
+src\startup\386\lmainwnt.c                      SAMPLES         MISC_SRC
+src\startup\386\lmn2wnt.c                       SAMPLES         MISC_SRC
+src\startup\386\main2o32.c                      SAMPLES         MISC_SRC
+src\startup\386\main2wnt.c                      SAMPLES         MISC_SRC
+src\startup\386\wmainwnt.c                      SAMPLES         MISC_SRC
+src\startup\8087cw.c                            SAMPLES         MISC_SRC
+src\startup\dos\cmain086.c                      SAMPLES         MISC_SRC
+src\startup\dos\cstrt086.asm                    SAMPLES         MISC_SRC
+src\startup\dos\dos16m.asm                      SAMPLES         MISC_SRC
+src\startup\dos\hpgrw086.c                      SAMPLES         MISC_SRC
+src\startup\dos\mdef.inc                        SAMPLES         MISC_SRC
+src\startup\os2\cmain086.c                      SAMPLES         MISC_SRC
+src\startup\os2\cstrto16.asm                    SAMPLES         MISC_SRC
+src\startup\os2\dmaino16.c                      SAMPLES         MISC_SRC
+src\startup\os2\initfini.h                      SAMPLES         MISC_SRC
+src\startup\os2\libmno16.c                      SAMPLES         MISC_SRC
+src\startup\os2\maino16.c                       SAMPLES         MISC_SRC
+src\startup\os2\mdef.inc                        SAMPLES         MISC_SRC
+src\startup\os2\wos2.h                          SAMPLES         MISC_SRC
+src\startup\wildargv.c                          SAMPLES         MISC_SRC
+src\startup\win\cstrtw16.asm                    SAMPLES         MISC_SRC
+src\startup\win\libentry.asm                    SAMPLES         MISC_SRC
+src\startup\win\mdef.inc                        SAMPLES         MISC_SRC
+src\winhello.c                                  SAMPLES         MISC_SRC
+src\wstub.c                                     SAMPLES         MISC_SRC
