@@ -1,8 +1,8 @@
-             Overview of all Watcom C/C++/Fortran ZIP archives			 b
-             =================================================
+           Overview of all Open Watcom C/C++/FORTRAN ZIP archives			
+           ======================================================
 
-Files common to both Watcom C/C++ and Watcom Fortran 77
-=======================================================
+Files common to both Open Watcom C/C++ and FORTRAN 77
+=====================================================
 
 cm_core_all	        - Core binaries (All hosts)
 cm_core_dos	        - Core binaries (DOS host)
@@ -35,7 +35,6 @@ cm_dbg_dos          - Debugger, profiler & sampler (DOS host)
 cm_dbg_win          - Debugger, profiler & sampler (Win16 host)
 cm_dbg_doswin       - Debugger                     (DOS & Win16 hosts)
 cm_dbg_dosos2       - Debugger                     (DOS & OS/2 hosts)
-cm_dbg_winos2       - Debugger                     (Win16 & OS/2 hosts)
 cm_dbg_os2nt        - Debugger                     (OS/2 & NT hosts)
 cm_dbg_misc1	    - Debugger			 (DOS host or target)
 cm_dbg_misc2	    - Debugger			 (Win16, 95, 98 or ME hosts)
@@ -57,8 +56,8 @@ ide_samples         - Sample IDE files
 win_samples         - Sample windows programs
 misc_src            - Misc source files and sample programs
 
-Files used by Watcom C/C++ only
-===============================
+Files used by Open Watcom C/C++ only
+====================================
 
 core_all	        - Core binaries (All hosts)
 core_nt		        - Core binaries (NT host)
@@ -100,29 +99,29 @@ os2api              - OS/2 Toolkit replacement files
 w32api              - Win32 SDK replacement files
 
 
-Files used by Watcom Fortran 77 only
-====================================
+Files used by Open Watcom FORTRAN 77 only
+=========================================
 
-fc_doswin           - Fortran compiler (DOS & Win16 hosts)
-fc_os2              - Fortran compiler (OS/2 host)
-fc_nt               - Fortran compiler (NT host)
+fc_doswin           - FORTRAN compiler (DOS & Win16 hosts)
+fc_os2              - FORTRAN compiler (OS/2 host)
+fc_nt               - FORTRAN compiler (NT host)
 
-flib_hdr            - Fortran runtime library header files
+flib_hdr            - FORTRAN runtime library header files
 
-flib_d16            - Fortran runtime libraries (16-bit DOS target)
-flib_d32            - Fortran runtime libraries (32-bit DOS target)
-flib_n32            - Fortran runtime libraries (32-bit Netware target)
-flib_o16            - Fortran runtime libraries (16-bit OS/2 target)
-flib_o32            - Fortran runtime libraries (32-bit OS/2 target)
-flib_w16            - Fortran runtime libraries (16-bit Windows & Win386 targets)
-flib_w32            - Fortran runtime libraries (32-bit Window target)
+flib_d16            - FORTRAN runtime libraries (16-bit DOS target)
+flib_d32            - FORTRAN runtime libraries (32-bit DOS target)
+flib_n32            - FORTRAN runtime libraries (32-bit Netware target)
+flib_o16            - FORTRAN runtime libraries (16-bit OS/2 target)
+flib_o32            - FORTRAN runtime libraries (32-bit OS/2 target)
+flib_w16            - FORTRAN runtime libraries (16-bit Windows & Win386 targets)
+flib_w32            - FORTRAN runtime libraries (32-bit Window target)
 
 fc_hlp_dos          - Help files (Dos host)
 fc_hlp_win          - Help files (Win16 host)
 fc_hlp_os2          - Help files (OS/2 host)
 fc_hlp_nt           - Help files (NT host)
 
-f_samples           - Fortran sample programs
+f_samples           - FORTRAN sample programs
 
 
 Extra stuff
