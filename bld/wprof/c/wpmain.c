@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution profiler mainline.
 *
 ****************************************************************************/
 
@@ -45,13 +44,6 @@
 #include "rcdef.h"
 #endif
 
-//#include "wpmain.def"
-//#include "wpstart.def"
-//#include "wpsamp.def"
-//#include "aboutmsg.def"
-//#include "wpdriver.def"
-//#include "dlgsamp.def"
-//#include "wphelp.def"
 extern void WPInitHelp(void);
 extern void WPInit(void);
 extern void AboutOpen(void);
@@ -65,7 +57,6 @@ extern void ReportSampleInfo(void);
 
 
 extern gui_colour_set   WndColours[];
-extern gui_colour_set   NecColours[];
 extern int              WndNumColours;
 extern a_window *       WndMain;
 extern char             SamplePath[];
@@ -74,17 +65,9 @@ extern char             SamplePath[];
 STATIC gui_resource     MainIcon = { WPROF_ICON, NULL };
 #endif
 
-extern int uionnec( void );
-
-
 extern void GUImain( void )
 /*************************/
 {
-#if defined(__DOS__)
-    if( uionnec() ) {
-        memcpy( WndColours, NecColours, sizeof(gui_colour_set)*WndNumColours );
-    }
-#endif
     WPInit();
     WndCreateStatusWindow( &WndColours[ WPA_STATUS_LINE ] );
     WndStatusText( "" );
@@ -101,7 +84,6 @@ extern void GUImain( void )
         OpenSample();
     }
 }
-
 
 
 extern bool WndProcMacro( a_window * wnd, unsigned key )

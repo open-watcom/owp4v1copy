@@ -18,7 +18,6 @@ cdsay .
     <CPCMD> <DEVDIR>/wprof/os2386/wprof.exe      <RELROOT>/rel2/binp/wprofc.exe
     <CPCMD> <DEVDIR>/wprof/wini86/wprof.exe      <RELROOT>/rel2/binw/wprofw.exe
     <CPCMD> <DEVDIR>/wprof/dos386/wprof.exe      <RELROOT>/rel2/binw/wprof.exe
-    <CPCMD> <DEVDIR>/wprof/dos386.nec/wprofnec.exe <RELROOT>/rel2/n98bw/wprof.exe
     <CPCMD> <DEVDIR>/wprof/nt386/wprof.exe       <RELROOT>/rel2/binnt/wprof.exe
 #    <CPCMD> <DEVDIR>/wprof/ntaxp/wprof.exe       <RELROOT>/rel2/axpnt/wprof.exe
 #    <CPCMD> <DEVDIR>/wprof/qnx386/wprof.qnx      <RELROOT>/rel2/qnx/binq/wprof.
