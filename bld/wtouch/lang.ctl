@@ -15,10 +15,10 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wtouch\o\wtouch.exe <relroot>\rel2\binw\wtouch.exe
-    <CPCMD> <devdir>\wtouch\os2\wtouch.exe <relroot>\rel2\binp\wtouch.exe
-    <CPCMD> <devdir>\wtouch\nt.386\wtouch.exe <relroot>\rel2\binnt\wtouch.exe
-#    <CPCMD> <devdir>\wtouch\nt.axp\wtouch.exe <relroot>\rel2\axpnt\wtouch.exe
+    <CPCMD> <devdir>\wtouch\dosi86\wtouch.exe <relroot>\rel2\binw\wtouch.exe
+    <CPCMD> <devdir>\wtouch\os2386\wtouch.exe <relroot>\rel2\binp\wtouch.exe
+    <CPCMD> <devdir>\wtouch\nt386\wtouch.exe  <relroot>\rel2\binnt\wtouch.exe
+#    <CPCMD> <devdir>\wtouch\ntaxp\wtouch.exe <relroot>\rel2\axpnt\wtouch.exe
 
 [ BLOCK <1> clean ]
 #==================

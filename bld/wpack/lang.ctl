@@ -10,16 +10,13 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay o
-    wmake /h /i
-    cdsay ..\nt
-    wmake /h /i
-    cd <PROJDIR>
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wpack\nt\wpack.exe <distroot>\supp\
+    <CPCMD> <devdir>\wpack\nt386\wpack.exe <distroot>\supp\
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean

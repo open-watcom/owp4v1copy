@@ -82,6 +82,9 @@ owl_dir         = $(dev_dir)\owl
 !ifndef as_dir
 as_dir          = $(dev_dir)\as
 !endif
+!ifndef wpack_dir
+wpack_dir      = $(dev_dir)\wpack
+!endif
 !ifndef wtouch_dir
 wtouch_dir      = $(dev_dir)\wtouch
 !endif
