@@ -284,10 +284,10 @@ extern bool ApplyLicense(void)
                         break;
                     }
                     if( licname != NULL ) {
-                        GUIFree( licname );
+                        GUIMemFree( licname );
                     }
                     if( liccompname != NULL ) {
-                        GUIFree( liccompname );
+                        GUIMemFree( liccompname );
                     }
                     licname = reg_name;
                     liccompname = reg_company;
@@ -315,10 +315,10 @@ extern bool ApplyLicense(void)
 
                 if( ini_name[ 0 ] != '\0' && ini_company[ 0 ] != '\0' ) {
                     if( licname != NULL ) {
-                        GUIFree( licname );
+                        GUIMemFree( licname );
                     }
                     if( liccompname != NULL ) {
-                        GUIFree( liccompname );
+                        GUIMemFree( liccompname );
                     }
                     licname = ini_name;
                     liccompname = ini_company;

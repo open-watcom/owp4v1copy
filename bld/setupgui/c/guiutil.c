@@ -127,10 +127,9 @@ extern bool SetupInit()
     gui_rect            rect;
     gui_create_info     init;
 
-    GUIMemOpen();
-    #ifdef NECCHECK
-        GUISetJapanese();
-    #endif
+#ifdef NECCHECK
+    GUISetJapanese();
+#endif
 
     // Cancel button is wider in Japanese
     NominalButtonWidth = strlen( LIT( Cancel ) ) + 5;

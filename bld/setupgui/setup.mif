@@ -64,7 +64,26 @@ objs += &
     utils.obj
 !endif
 
-gendeps = _guimsgs.gh $(objs) setup.lnk
+libs_dos = &
+$(guidir)/ui/dos$(host_cpu)/gui.lib &
+$(uidir)/dos/dos$(host_cpu)/ui.lib &
+$(wres_lib)
+
+libs_linux = &
+$(guidir)/ui/linux$(host_cpu)/gui.lib &
+$(uidir)/unix/linux$(host_cpu)/ui.lib &
+$(ncurses_dir)/linux$(host_cpu)/ncurses.lib &
+$(wres_lib)
+
+libs_nt = $(guidir)/win/nt$(host_cpu)/gui.lib
+
+libs_os2 = $(guidir)/win/os2$(host_cpu)/gui.lib
+
+libs_win = $(guidir)/win/win$(host_cpu)/gui.lib
+
+libs = $(libs_$(host_os))
+
+gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 
 # cflags
 #########
@@ -83,26 +102,12 @@ extra_c_flags_i86 = -fpc -zc
 extra_c_flags_386 = -fpc
 extra_c_flags_os2 = -d__OS220__ -Ufar -Dfar=
 
+#extra_c_flags_common = -fi=setupmem.h
+#extra_c_flags_io = -fi=setupmem.h
+
 # lflags
 #########
 extra_l_flags = op map op symfile
-
-extra_l_flags_dos = lib { &
-$(guidir)/ui/dos$(host_cpu)/gui.lib &
-$(uidir)/dos/dos$(host_cpu)/ui.lib &
-$(wres_lib) }
-
-extra_l_flags_linux = lib { &
-$(guidir)/ui/linux$(host_cpu)/gui.lib &
-$(uidir)/unix/linux$(host_cpu)/ui.lib &
-$(ncurses_dir)/linux$(host_cpu)/ncurses.lib &
-$(wres_lib) }
-
-extra_l_flags_nt = lib $(guidir)/win/nt$(host_cpu)/gui.lib
-
-extra_l_flags_os2 = lib $(guidir)/win/os2$(host_cpu)/gui.lib
-
-extra_l_flags_win = lib $(guidir)/win/win$(host_cpu)/gui.lib
 
 # rc flags
 ###########
@@ -128,7 +133,7 @@ dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
 # where to find objects
 ########################
 
-.c : ../c;$(build_root)/bdiff;$(build_root)/wpack/c
+.c : ../c;$(build_root)/bdiff;$(build_root)/wpack/c;$(trmem_dir)
 .rc : res;$(gui_dir)/h
 .ico : res
 
@@ -138,7 +143,7 @@ dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
 #inc_dirs_os2 = $(guidir)/win/os2$(host_cpu)
 #inc_dirs_win = $(guidir)/win/win$(host_cpu)
 
-inc_dirs = ../h;$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(build_root)/bdiff/h;
+inc_dirs = ../h;$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(build_root)/bdiff/h;$(trmem_dir)
 
 .BEFORE
     @set include=$(inc_path)
@@ -236,7 +241,8 @@ setup.lnk : makefile ../setup.mif
 !ifdef PROJECT_LIBS
     @%append setup.lnk lib $(PROJECT_LIBS)
 !endif
-    @for %i in ($(objs)) do @%append setup.lnk file %i
+    @for %i in ( $(objs) ) do @%append setup.lnk file %i
+    @for %i in ( $(libs) ) do @%append setup.lnk lib %i
 
 nonibm.obj : $(new_clib)/startup/c/nonibm.c
 

@@ -47,7 +47,7 @@
 #include <malloc.h>
 
 extern  void    _Not_Enough_Memory();
-static  void    *_allocate(unsigned);
+static  void    *_allocate( size_t );
 extern  char    *_LpCmdLine;
 extern  char    *_LpPgmName;
 extern  int     _argc;                  /* argument count  */
@@ -159,7 +159,7 @@ static int _make_argv( char *p, char ***argv )
     }
 
 
-static void *_allocate( unsigned amount )
+static void *_allocate( size_t amount )
     {
         void *p;
 

@@ -28,17 +28,30 @@
 *
 ****************************************************************************/
 
+#include "vhandle.h"
 
 typedef void        *hash_handle;
 typedef char        *hash_key;
 typedef const char  *hash_key_const;
-typedef void        *hash_data;
+typedef vhandle     hash_data;
 
 /* standard compare function return, 0 if equal, < 0 if s1 < s2, > 0 is s1 > s2
  */
 typedef int     (*hash_key_cmp)( hash_key_const s1, hash_key_const s2 );
 
-extern hash_handle      HashInit( int size, hash_key_cmp func );
-extern int              HashInsert( hash_handle h, hash_key k, hash_data d );
-extern hash_data        HashFind( hash_handle h, hash_key_const k );
-extern void             HashFini( hash_handle h );
+typedef struct hash_element_struct {
+    struct hash_element_struct  *next;
+    hash_key                    key;
+    hash_data                   data;
+} hash_element;
+
+typedef struct hash_table_struct {
+    unsigned int        size;
+    hash_key_cmp        cmp_func;
+    hash_element        *table[1];
+} hash_table;
+
+extern hash_table       *HashInit( size_t size, hash_key_cmp func );
+extern int              HashInsert( hash_table *ht, hash_key k, hash_data d );
+extern hash_data        HashFind( hash_table *ht, hash_key_const k );
+extern void             HashFini( hash_table *ht );

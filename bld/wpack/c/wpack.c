@@ -100,7 +100,7 @@ extern void Error(int code,char *message)
     PackExit();
 }
 
-extern void * MemAlloc( unsigned amount )
+extern void * WPMemAlloc( size_t amount )
 /***************************************/
 {
     void *  ret;
@@ -112,7 +112,7 @@ extern void * MemAlloc( unsigned amount )
     return( ret );
 }
 
-extern void MemFree( void *mem )
+extern void WPMemFree( void *mem )
 /******************************/
 {
     free( mem );
@@ -154,11 +154,11 @@ static void Usage( bool verbose )
 static void ProcPath( char **argv, arccmd *cmd )
 /**********************************************/
 {
-    int len;
+    size_t len;
 
     (*argv)++;
     len = strlen( *argv ) + 1;
-    cmd->u.path = MemAlloc( len );
+    cmd->u.path = WPMemAlloc( len );
     memcpy( cmd->u.path, *argv, len );
 }
 
@@ -178,7 +178,7 @@ static void SetCmdTime( arccmd *cmd )
     cmd->time = mktime( &timeval );
 }
 
-static wpackfile *AddFileName( wpackfile *list, char *fname, unsigned *listlen )
+static wpackfile *AddFileName( wpackfile *list, char *fname, size_t *listlen )
 /******************************************************************************/
 {
     char            *packname;
@@ -430,7 +430,7 @@ static void DeleteEntry( arccmd *cmd )
     unsigned long   compressed;
     unsigned_16     num_left;
     unsigned        entrylen;
-    unsigned        namelen;
+    size_t          namelen;
 
     if( cmd->files == NULL  ||  cmd->files->filename ) {
         Error( -1, "No files to delete\n" );

@@ -55,7 +55,6 @@
 #include "wpack.h"
 #include "txttable.h"
 
-extern void *   MemAlloc( unsigned );
 extern void     BumpStatus( long );
 
 #define STDOUT_HANDLE 1
@@ -340,8 +339,8 @@ extern int InitIO( void )
 /************************/
 {
 //  _nheapgrow();   called in main()
-    ReadBuf = (char *)MemAlloc( READ_SIZE + 3 ) + 3;  // so we can "unread"
-    WriteBuf = MemAlloc( WRITE_SIZE ); // 3 bytes
+    ReadBuf = (char *)WPMemAlloc( READ_SIZE + 3 ) + 3;  // so we can "unread"
+    WriteBuf = WPMemAlloc( WRITE_SIZE ); // 3 bytes
     if( ReadBuf == NULL  ||  WriteBuf == NULL ) {
         return( FALSE );
     }
@@ -353,6 +352,17 @@ extern int InitIO( void )
     IOStatus = OK;
     infile_posn = ~0L;
     return( TRUE );
+}
+
+extern void FiniIO( void )
+/************************/
+{
+    if( ReadBuf != NULL ) {
+        WPMemFree( ReadBuf );
+    }
+    if( WriteBuf != NULL ) {
+        WPMemFree( WriteBuf );
+    }
 }
 
 extern int BufSeek( unsigned long position )

@@ -36,12 +36,12 @@
 
 #define INCREMENT       10
 
-void InitArray( void **array, int esize, array_info *info )
-/*********************************************************/
+void InitArray( void **array, size_t esize, array_info *info )
+/*************************************************************/
 {
     if( info->increment == 0 ) info->increment = INCREMENT;
     if( info->alloc == 0 ) info->alloc = info->increment;
-    *array = GUIAlloc( esize * info->alloc );
+    *array = GUIMemAlloc( esize * info->alloc );
     info->esize = esize;
     info->array = array;
 }
@@ -51,7 +51,7 @@ bool BumpArray( array_info *info )
 {
     if( ++info->num >= info->alloc ) {
         info->alloc = info->num + info->increment;
-        *(info->array) = GUIRealloc( *(info->array), info->esize * info->alloc );
+        *(info->array) = GUIMemRealloc( *(info->array), info->esize * info->alloc );
         if( *(info->array) == NULL ) return( FALSE );
     }
     return( TRUE );
@@ -62,7 +62,7 @@ bool BumpDownArray( array_info *info )
 {
     if( info->alloc - info->num >= info->increment ) {
         info->alloc -= info->increment;
-        *(info->array) = GUIRealloc( *(info->array), info->esize * info->alloc );
+        *(info->array) = GUIMemRealloc( *(info->array), info->esize * info->alloc );
         if( *(info->array) == NULL ) return( FALSE );
     }
     return( TRUE );
