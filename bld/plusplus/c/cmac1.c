@@ -956,6 +956,8 @@ static MACRO_TOKEN *glueTokens( MACRO_TOKEN *head )
                             // keep the thing after the ##
                             rem = next->next;
                             next->next = NULL;
+                            _ptail = ptail;
+                            ptail = &(mtok->next);
                             mtok = mtok->next; // skip first...
                         }
                         while( mtok != NULL ){ //free old stuff [mtoken,##,{atok,} next]
