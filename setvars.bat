@@ -34,7 +34,7 @@ echo OpenWatcom compiler build environment
 
 REM Stuff for the Open Watcom build environment
 set rsidir=d:\rsi
-set batdir=%owdrive%
+set batdir=%owroot%
 set bld_ver=110
 set builder.ctl=lang.ctl
 set cge=vi.exe pagedown pageup end
@@ -51,7 +51,7 @@ set lang_bld=%owroot%\bat
 set lc=-r
 set lib=%owroot%\bld\watcom\lib
 set more=-t
-set path=%owroot%\bin;%devdir%\build\bin;%devdir%\bat;%lang%\binnt;%lang%\binw;%devdir%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
+set path=%owroot%\bin;%devdir%\build\bin;%owroot%\bat;%lang%\binnt;%lang%\binw;%devdir%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
 set rm=-s
 set manifest=%owroot%\manifest
