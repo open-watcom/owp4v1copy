@@ -2707,8 +2707,9 @@ static  bool    ReplUses( induction *var, induction *rep,
                 if( !RepIndVar( ins, rep, 1, 0, class ) ) return( FALSE );
             }
         }
+        return( TRUE );
     }
-    return( TRUE );
+    return( FALSE );
 }
 
 
