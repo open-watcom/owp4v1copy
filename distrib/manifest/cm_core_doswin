@@ -1,10 +1,8 @@
 # Manifest file for common core binaries (Watcom C/C++/Fortran, DOS & Win16 hosts)
 
 binw\batchbox.pif
-binw\cfig386.exe
 binw\cmdedit.exe
 binw\d4grun.exe
-binw\tntrun.exe
 binw\w32run.exe
 binw\wlib.exe
 binw\wlink.exe
