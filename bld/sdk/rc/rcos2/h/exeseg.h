@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NE segment table manipulation prototypes and structures.
 *
 ****************************************************************************/
 
@@ -47,6 +46,7 @@ typedef enum {
 } CpSegRc;
 
 extern int AllocAndReadSegTables( int *err_code );
+extern int AllocAndReadOS2SegTables( int *err_code );
 extern uint_32 ComputeSegmentSize( int handle, SegTable *, int shift_count );
 extern CpSegRc CopySegments( uint_16 sect2mask, uint_16 sect2bits, bool sect2 );
 

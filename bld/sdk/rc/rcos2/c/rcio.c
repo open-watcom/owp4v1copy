@@ -507,7 +507,7 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
         return( FALSE );
     }
     info->IsOpen = TRUE;
-    info->Type = FindNEPEHeader( info->Handle, &info->WinHeadOffset );
+    info->Type = FindNEPELXHeader( info->Handle, &info->WinHeadOffset );
     info->name = filename;
     switch( info->Type ) {
     case EXE_TYPE_NE:
@@ -530,6 +530,10 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
         } else {
             info->DebugOffset = info->WinHeadOffset + sizeof(pe_header);
         }
+        break;
+    case EXE_TYPE_LX:
+        printf("Writing resource data to LX modules not yet supported.\n");
+        return( FALSE );
         break;
     default:
         RcError( ERR_NOT_VALID_EXE, filename );

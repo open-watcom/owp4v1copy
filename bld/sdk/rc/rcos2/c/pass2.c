@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource Compiler pass 2.
 *
 ****************************************************************************/
 
@@ -255,6 +254,32 @@ static int copyBody( void )
 
 } /* copyBody */
 
+static int copyOS2Body( void )
+{
+    NEExeInfo *         tmp;
+    CpSegRc             copy_segs_ret;
+    int                 error;
+
+    tmp = &Pass2Info.TmpFile.u.NEInfo;
+
+    Pass2Info.TmpFile.u.NEInfo.WinHead.align =
+                        Pass2Info.OldFile.u.NEInfo.WinHead.align;
+    tmp->Res.Dir.ResShiftCount = computeShiftCount();
+
+    /* third arg to Copy???? is TRUE  --> copy section two */
+    copy_segs_ret = CopySegments( 0, 0, TRUE );
+    if( copy_segs_ret == CPSEG_ERROR) {
+        return( TRUE  );
+    }
+    if( !CmdLineParms.NoResFile ) {
+        error = CopyOS2Resources();
+        if( error) return( TRUE  );
+    }
+
+    return( FALSE );
+
+} /* copyOS2Body */
+
 /*
  * copyDebugInfo
  * NB when an error occurs this function must return without altering errno
@@ -368,6 +393,89 @@ static int writeHeadAndTables( int *err_code )
     return( error );
 
 } /* writeHeadAndTables */
+
+/*
+ * Processing OS/2 NE modules is very very similar to Windows NE processing
+ * but there are enough differences in detail to warrant separate
+ * implementation to keep the two cleaner.
+ */
+static int writeOS2HeadAndTables( int *err_code )
+{
+    ExeFileInfo *   oldfile;
+    ExeFileInfo *   tmpfile;
+    NEExeInfo *     oldne;
+    NEExeInfo *     tmpne;
+    uint_16         tableshift;     /* amount the tables are shifted in the */
+                                    /* tmp file */
+    uint_16         info;           /* os2_exe_header.info */
+    long            seekrc;
+    int             numwrote;
+    int             error;
+
+    oldfile = &(Pass2Info.OldFile);
+    oldne = &oldfile->u.NEInfo;
+    tmpfile = &(Pass2Info.TmpFile);
+    tmpne = &tmpfile->u.NEInfo;
+
+    /* set the info flag for the new executable from the one flag and */
+    /* the command line options given */
+    info = oldne->WinHead.info;
+    if( CmdLineParms.ProtModeOnly ) {
+        info |= OS2_PROT_MODE_ONLY;
+    }
+
+    /* copy the fields in the os2_exe_header then change some of them */
+    tmpfile->WinHeadOffset = oldfile->WinHeadOffset;
+    /* copy the WinHead fields up to, but excluding, the segment_off field */
+    memcpy( &(tmpne->WinHead), &(oldne->WinHead),
+            offsetof(os2_exe_header, segment_off) );
+    tmpne->WinHead.info = info;
+    tmpne->WinHead.segment_off = sizeof(os2_exe_header);
+    tmpne->WinHead.resource_off = tmpne->WinHead.segment_off +
+                                tmpne->Seg.NumSegs * sizeof(segment_record);
+    tableshift = tmpne->Res.Dir.TableSize -
+                ( oldne->WinHead.resident_off - oldne->WinHead.resource_off ) +
+                ( tmpne->WinHead.resource_off - oldne->WinHead.resource_off );
+    tmpne->WinHead.entry_off = oldne->WinHead.entry_off + tableshift;
+    tmpne->WinHead.resident_off = oldne->WinHead.resident_off + tableshift;
+    tmpne->WinHead.module_off = oldne->WinHead.module_off + tableshift;
+    tmpne->WinHead.import_off = oldne->WinHead.import_off + tableshift;
+    tmpne->WinHead.nonres_off = oldne->WinHead.nonres_off + tableshift;
+    tmpne->WinHead.movable = oldne->WinHead.movable;
+    tmpne->WinHead.resource = tmpne->Res.Dir.NumResources;
+    tmpne->WinHead.target = oldne->WinHead.target;
+    tmpne->WinHead.segments = tmpne->Seg.NumSegs;
+
+    /* seek to the start of the os2_exe_header in tmpfile */
+    seekrc = RcSeek( tmpfile->Handle, tmpfile->WinHeadOffset, SEEK_SET );
+    if( seekrc == -1 ) {
+        *err_code = errno;
+        return( RS_WRITE_ERROR );
+    }
+
+    /* write the header */
+    numwrote = RcWrite( tmpfile->Handle, &(tmpne->WinHead),
+                sizeof(os2_exe_header) );
+    if( numwrote != sizeof(os2_exe_header) ) {
+        *err_code = errno;
+        return( RS_WRITE_ERROR );
+    }
+
+    /* write the segment table */
+    if( tmpne->Seg.NumSegs > 0 ) {
+        numwrote = RcWrite( tmpfile->Handle, tmpne->Seg.Segments,
+                    tmpne->Seg.NumSegs * sizeof(segment_record) );
+        if( numwrote != tmpne->Seg.NumSegs * sizeof(segment_record)  ) {
+            *err_code = errno;
+            return( RS_WRITE_ERROR );
+        }
+    }
+
+    /* write the resource table */
+    error = WriteOS2ResTable( tmpfile->Handle, &(tmpne->Res), err_code );
+    return( error );
+
+} /* writeOS2HeadAndTables */
 
 static int findEndOfResources( int *err_code )
 /* if this exe already contains resources find the end of them so we don't
@@ -493,50 +601,95 @@ static RcStatus writePEHeadAndObjTable( void )
 
 } /* writePEHeadAndObjTable */
 
+/*
+ * Windows NE files store resources in a special data structure. OS/2 NE modules
+ * are quite different and store each resource in its own data segment. The OS/2
+ * resource table is completely different as well and only contains resource
+ * types/IDs.
+ */
 extern int MergeResExeNE( void )
 {
     RcStatus        error;
     int             err_code;
 
-    error = copyStubFile( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+    if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
+        error = copyStubFile( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = AllocAndReadSegTables( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+        InitResTable();
 
-    InitResTable();
+        error = AllocAndReadOS2SegTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = seekPastResTable( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+        error = seekPastResTable( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = findEndOfResources( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+        error = findEndOfResources( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = copyOtherTables( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+        error = copyOtherTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = copyBody();
-    if( error ) return( FALSE );
-    if( StopInvoked ) goto STOP_ERROR;
+        error = copyOS2Body();
+        if( error ) return( FALSE );
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = copyDebugInfo();
-    if( error != RS_OK ) {
-        err_code = errno;
-        goto HANDLE_ERROR;
+        error = copyDebugInfo();
+        if( error != RS_OK ) {
+            err_code = errno;
+            goto HANDLE_ERROR;
+        }
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = writeOS2HeadAndTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
     }
-    if( StopInvoked ) goto STOP_ERROR;
+    else {
+        error = copyStubFile( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
-    error = writeHeadAndTables( &err_code );
-    if( error != RS_OK ) goto HANDLE_ERROR;
-    if( StopInvoked ) goto STOP_ERROR;
+        error = AllocAndReadSegTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
+
+        InitResTable();
+
+        error = seekPastResTable( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = findEndOfResources( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = copyOtherTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = copyBody();
+        if( error ) return( FALSE );
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = copyDebugInfo();
+        if( error != RS_OK ) {
+            err_code = errno;
+            goto HANDLE_ERROR;
+        }
+        if( StopInvoked ) goto STOP_ERROR;
+
+        error = writeHeadAndTables( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
+    }
 
     return( TRUE );
-
 
 HANDLE_ERROR:
     switch( error ) {

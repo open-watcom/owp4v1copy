@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Executable resource manipulation types and functions.
 *
 ****************************************************************************/
 
@@ -69,6 +68,8 @@ typedef struct ResTable {
 extern void InitResTable( void );
 extern uint_32 ComputeResourceSize( WResDir dir );
 extern int CopyResources( uint_16 sect2mask, uint_16 sect2bits, bool sect2 );
+extern int CopyOS2Resources( void );
 extern RcStatus WriteResTable( int handle, ResTable *restab, int *err_code );
+extern RcStatus WriteOS2ResTable( int handle, ResTable *restab, int *err_code );
 
 #endif

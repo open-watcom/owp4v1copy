@@ -52,19 +52,18 @@ int ResOS2WriteAccelEntry( AccelTableEntryOS2 * currentry, WResFileID handle )
     return( FALSE );
 }
 
+#define CTRL_EVENT  0x8000
+
 const FullAccelFlagsOS2 DefaultAccelFlagsOS2 = { 0, FALSE };
 
-#if 0
-int SemStrToAccelEvent( char * string )
+int SemOS2StrToAccelEvent( char * string )
 /*************************************/
 {
     if (*string == '^') {
         /* control character requested */
         string++;
         if (isalpha( *string )) {
-            /* assume we are using the ASCII charater set to get the */
-            /* corresponding code for control-letter */
-            return( toupper( *string ) - 0x40 );
+            return( *string | CTRL_EVENT );
         } else {
             return( 0 );
         }
@@ -75,7 +74,6 @@ int SemStrToAccelEvent( char * string )
         return( 0 );
     }
 }
-#endif
 
 static void CheckAccelFlags( uint_16 * flags, unsigned long idval )
 /********************************************************************/
@@ -108,6 +106,11 @@ FullAccelEntryOS2 SemOS2MakeAccItem( AccelEvent event, unsigned long idval,
         entry.entry.Ascii = event.event;
         entry.entry.Flags = flags.flags;
         entry.entry.Id = idval;
+        if( event.event & CTRL_EVENT ) {
+            entry.entry.Ascii  = event.event & ~CTRL_EVENT;
+            entry.entry.Flags |= OS2_ACCEL_CTRL;
+        }
+
 //    } else {
 //        RcError( ERR_ACCEL_NO_TYPE, idval );
 //        ErrorHasOccured = TRUE;

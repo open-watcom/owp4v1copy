@@ -195,6 +195,7 @@
 %type <diagctrl>        dialog-stmt
 %type <diagctrlopts>    cntl-text-options
 %type <diagctrlopts>    cntl-options
+%type <diagctrlopts>    icon-parms
 %type <presparams>      presparam-stmt
 %type <presparamlist>   presparam-list
 %type <diagctrl>        autocheckbox-stmt
@@ -220,7 +221,6 @@
 %type <diagctrl>        control-stmt
 %type <nameorord>       control-name
 %type <nameorord>       presparam-name
-%type <diagctrlopts>    icon-parms
 %type <integral>        cntl-id
 %type <resid>           cntl-text
 %type <maskint>         cntl-style
@@ -790,7 +790,7 @@ acc-item
 acc-event
     : string-constant
         {
-            $$.event = SemStrToAccelEvent( $1.string );
+            $$.event = SemOS2StrToAccelEvent( $1.string );
             $$.strevent = TRUE;
             RcMemFree( $1.string );
         }
@@ -953,6 +953,13 @@ menu-entry-defn
         {
             $$.ItemStyle = $5;
             $$.ItemAttrs = 0;
+            $$.ItemCmd   = $3;
+            $$.ItemText  = $1.string;
+        }
+    | menu-text Y_COMMA menu-id Y_COMMA Y_COMMA menuitem-attrib
+        {
+            $$.ItemStyle = OS2_MIS_TEXT;
+            $$.ItemAttrs = $6;
             $$.ItemCmd   = $3;
             $$.ItemText  = $1.string;
         }
@@ -1270,21 +1277,8 @@ icon-stmt
         { $6.Text = $2; $6.ID = $4; $$ = SemOS2NewDiagCtrl( Y_ICON, $6, NULL ); }
     ;
 
-control-name
-    : name-id
-        { $$ = WResIDToNameOrOrd( $1 ); RcMemFree( $1 ); }
-    ;
-
 icon-parms
-    : size-x comma-opt size-y
-        {
-            $$.Size.x = $1;
-            $$.Size.y = $3;
-            $$.Size.width = 0;          /* ignore width, height, style */
-            $$.Size.height = 0;
-            $$.Style.Mask = 0;
-        }
-    | size-x comma-opt size-y comma-opt size-w comma-opt size-h
+    : size-x comma-opt size-y comma-opt size-w comma-opt size-h
         {
             $$.Size.x = $1;
             $$.Size.y = $3;
@@ -1300,6 +1294,11 @@ icon-parms
             $$.Size.height = $7;
             $$.Style = $9;
         }
+    ;
+
+control-name
+    : name-id
+        { $$ = WResIDToNameOrOrd( $1 ); RcMemFree( $1 ); }
     ;
 
 control-stmt

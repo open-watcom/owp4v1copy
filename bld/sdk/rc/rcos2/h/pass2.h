@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource Compiler pass 2 structures and constants.
 *
 ****************************************************************************/
 
@@ -38,6 +37,7 @@
 #include "wres.h"
 #include "exeos2.h"
 #include "exepe.h"
+#include "exeflat.h"
 #include "exerespe.h"
 #include "exeseg.h"
 #include "exeres.h"
@@ -48,7 +48,8 @@
 typedef enum {
     EXE_TYPE_UNKNOWN,
     EXE_TYPE_PE,
-    EXE_TYPE_NE
+    EXE_TYPE_NE,
+    EXE_TYPE_LX
 } ExeType;
 
 typedef struct ResFileInfo {
@@ -97,5 +98,6 @@ typedef struct RcPass2Info {
 
 extern int MergeResExeNE( void );
 extern int MergeResExePE( void );
+extern int MergeResExeLX( void );
 
 #endif

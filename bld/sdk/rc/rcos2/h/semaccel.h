@@ -85,6 +85,7 @@ extern FullAccelEntry SemMakeAccItem( AccelEvent event, unsigned long idval,
 extern void SemWriteAccelEntry( FullAccelEntry entry );
 extern void SemWriteLastAccelEntry( FullAccelEntry entry );
 
+extern int SemOS2StrToAccelEvent( char * string );
 extern FullAccelTableOS2 *SemOS2NewAccelTable( FullAccelEntryOS2 );
 extern FullAccelTableOS2 *SemOS2AddAccelEntry( FullAccelEntryOS2,
                                                FullAccelTableOS2 * );

@@ -94,6 +94,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
         name->ID.Num = 999;
         firstIcon    = TRUE;    /* Trigger a warning if we have one already */
         /* Note the fallthrough! */
+    case Y_POINTER:
     case Y_ICON:
         if (fullflags != NULL) {
             SemCheckMemFlags( fullflags, 0,
@@ -130,20 +131,6 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
             SemAddResourceFree( name, WResIDFromNum( OS2_RT_POINTER ),
                                 flags, start );
         }
-        break;
-
-    case Y_POINTER:
-        if (fullflags != NULL) {
-            SemCheckMemFlags( fullflags, 0,
-                              MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
-                              0 );
-            flags = fullflags->flags;
-        } else {
-            flags = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE;
-        }
-        start = SemCopyRawFile( filename );
-        SemAddResourceFree( name, WResIDFromNum( OS2_RT_POINTER ),
-                            flags, start );
         break;
 
     case Y_BITMAP:
