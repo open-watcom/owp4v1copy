@@ -41,7 +41,7 @@
 
 #define MAX_SECS    255
 
-extern getopt(int, char **, char *);
+extern int      getopt(int, char **, char *);
 extern int      optind;
 extern char     *optarg;
 
