@@ -54,10 +54,12 @@
 #endif
 
 #define BLOCK_TEMPLATE_INFO     16
+#define BLOCK_TEMPLATE_SPECIALIZATION 16
 #define BLOCK_CLASS_INST        32
 #define BLOCK_TEMPLATE_MEMBER   32
 #define BLOCK_FN_TEMPLATE_DEFN  16
 static carve_t carveTEMPLATE_INFO;
+static carve_t carveTEMPLATE_SPECIALIZATION;
 static carve_t carveCLASS_INST;
 static carve_t carveTEMPLATE_MEMBER;
 static carve_t carveFN_TEMPLATE_DEFN;
@@ -235,6 +237,7 @@ static void templateInit( INITFINI* defn )
     templateSuicide.call_back = templateSuicideHandler;
     RegisterSuicideCallback( &templateSuicide );
     carveTEMPLATE_INFO = CarveCreate( sizeof( TEMPLATE_INFO ), BLOCK_TEMPLATE_INFO );
+    carveTEMPLATE_SPECIALIZATION = CarveCreate( sizeof( TEMPLATE_SPECIALIZATION ), BLOCK_TEMPLATE_SPECIALIZATION );
     carveCLASS_INST = CarveCreate( sizeof( CLASS_INST ), BLOCK_CLASS_INST );
     carveTEMPLATE_MEMBER = CarveCreate( sizeof( TEMPLATE_MEMBER ), BLOCK_TEMPLATE_MEMBER );
     carveFN_TEMPLATE_DEFN = CarveCreate( sizeof( FN_TEMPLATE_DEFN ), BLOCK_FN_TEMPLATE_DEFN );
@@ -244,6 +247,7 @@ static void templateFini( INITFINI *defn )
 {
     defn = defn;
     CarveDestroy( carveTEMPLATE_INFO );
+    CarveDestroy( carveTEMPLATE_SPECIALIZATION );
     CarveDestroy( carveCLASS_INST );
     CarveDestroy( carveTEMPLATE_MEMBER );
     CarveDestroy( carveFN_TEMPLATE_DEFN );
@@ -300,6 +304,8 @@ void TemplateDeclInit( TEMPLATE_DATA *data, DECL_INFO *args )
         data->all_generic = FALSE;
     }
     data->args = args;
+    data->spec_args = NULL;
+    data->unbound_type = NULL;
     data->decl_scope = ScopeBegin( SCOPE_TEMPLATE_DECL );
     data->defn = NULL;
     data->member_defn = NULL;
@@ -340,36 +346,56 @@ static unsigned getArgList( DECL_INFO *args, TYPE *type_list, char **names, REWR
     return( count );
 }
 
-static unsigned getTinfoArgList( DECL_INFO *args, TEMPLATE_INFO *tinfo )
+static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
+    TEMPLATE_DATA *data )
 {
-    return( getArgList( args, tinfo->type_list, tinfo->arg_names, tinfo->defarg_list ) );
+    DECL_INFO *args;
+    TEMPLATE_SPECIALIZATION *tspec;
+    unsigned arg_count;
+
+    args = data->args;
+    arg_count = getArgList( args, NULL, NULL, NULL );
+    tspec = CarveAlloc( carveTEMPLATE_SPECIALIZATION );
+
+    tspec->instantiations = NULL;
+    tspec->member_defns = NULL;
+    tspec->corrupted = FALSE;
+    tspec->num_args = arg_count;
+    tspec->type_list = CPermAlloc( arg_count * sizeof( TYPE ) );
+    tspec->arg_names = CPermAlloc( arg_count * sizeof( char * ) );
+    tspec->spec_args = data->spec_args;
+    data->spec_args = NULL;
+    tspec->defn = NULL;
+    tspec->defn_found = FALSE;
+    tspec->free = FALSE;
+
+    getArgList( args, tspec->type_list, tspec->arg_names, NULL );
+    return( tspec );
 }
 
 static TEMPLATE_INFO *newTemplateInfo( TEMPLATE_DATA *data )
 {
     DECL_INFO *args;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tprimary;
     unsigned arg_count;
 
     args = data->args;
     arg_count = getArgList( args, NULL, NULL, NULL );
     tinfo = RingCarveAlloc( carveTEMPLATE_INFO, &allClassTemplates );
-    tinfo->instantiations = NULL;
-    tinfo->member_defns = NULL;
+    tprimary = newTemplateSpecialization( data );
+    tprimary->next = tprimary;
+    tinfo->specializations = tprimary;
+
     tinfo->unbound_type = ClassUnboundTemplate( data->template_name );
-    tinfo->corrupted = FALSE;
-    tinfo->num_args = arg_count;
-    tinfo->arg_names = CPermAlloc( arg_count * sizeof( char * ) );
     tinfo->sym = NULL;
-    tinfo->type_list = CPermAlloc( arg_count * sizeof( TYPE ) );
     tinfo->defarg_list = CPermAlloc( arg_count * sizeof( REWRITE * ) );
-    tinfo->defn = data->defn;
-    tinfo->defn_found = FALSE;
     tinfo->free = FALSE;
-    if( data->defn_found ) {
-        tinfo->defn_found = TRUE;
-    }
-    getTinfoArgList( args, tinfo );
+
+    tprimary->defn = data->defn;
+    tprimary->defn_found = data->defn_found;
+
+    getArgList( args, NULL, NULL, tinfo->defarg_list );
     return( tinfo );
 }
 
@@ -429,25 +455,29 @@ SYMBOL ClassTemplateLookup( SCOPE scope, char *name )
     return( NULL );
 }
 
-static boolean templateArgListsSame( DECL_INFO *args, TEMPLATE_INFO *tinfo )
+#if 0
+static boolean templateArgListsSame( DECL_INFO *args,
+                                     TEMPLATE_SPECIALIZATION *tspec )
+
 {
     unsigned curr_count;
     unsigned i;
     DECL_INFO *curr;
 
     curr_count = getArgList( args, NULL, NULL, NULL );
-    if( curr_count != tinfo->num_args ) {
+    if( curr_count != tspec->num_args ) {
         return( FALSE );
     }
     i = 0;
     RingIterBeg( args, curr ) {
-        if( ! TypesIdentical( curr->type, tinfo->type_list[i] ) ) {
+        if( ! TypesIdentical( curr->type, tspec->type_list[i] ) ) {
             return( FALSE );
         }
         ++i;
     } RingIterEnd( curr )
     return( TRUE );
 }
+#endif
 
 static boolean sameArgNames( DECL_INFO *args, char **names )
 {
@@ -462,12 +492,13 @@ static boolean sameArgNames( DECL_INFO *args, char **names )
     return( TRUE );
 }
 
-static char **getUniqueArgNames( DECL_INFO *args, TEMPLATE_INFO *tinfo )
+static char **getUniqueArgNames( DECL_INFO *args,
+                                 TEMPLATE_SPECIALIZATION *tspec )
 {
     unsigned arg_count;
     char **arg_names;
 
-    arg_names = tinfo->arg_names;
+    arg_names = tspec->arg_names;
     if( ! sameArgNames( args, arg_names ) ) {
         arg_count = getArgList( args, NULL, NULL, NULL );
         arg_names = CPermAlloc( arg_count * sizeof( char * ) );
@@ -476,56 +507,188 @@ static char **getUniqueArgNames( DECL_INFO *args, TEMPLATE_INFO *tinfo )
     return( arg_names );
 }
 
-static void mergeClassTemplates( TEMPLATE_DATA *data, SYMBOL old_sym )
+static boolean templateArgSame( PTREE left, PTREE right ) {
+    if( ( left->op == PT_TYPE ) && ( right->op == PT_TYPE ) ) {
+        return left->type == right->type;
+    } else if( ( left->op == PT_INT_CONSTANT )
+            && ( right->op == PT_INT_CONSTANT ) ) {
+        return ! U64Cmp( &left->u.int64_constant, &right->u.int64_constant);
+    }
+
+    // TODO: add missing cases
+
+    return FALSE;
+}
+
+static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
+    TEMPLATE_INFO *tinfo, PTREE args )
+{
+    TEMPLATE_SPECIALIZATION *curr_spec;
+    TEMPLATE_SPECIALIZATION *tspec;
+    PTREE curr_list;
+    PTREE spec_list;
+    PTREE curr_arg;
+    PTREE spec_arg;
+
+    DbgAssert( args != NULL );
+    tspec = NULL;
+
+    RingIterBeg( tinfo->specializations, curr_spec ) {
+        if( tspec != NULL ) {
+            /* we are done */
+            break;
+        }
+
+        if( curr_spec->spec_args == NULL ) {
+            /* no need to match against the primary template */
+            continue;
+        }
+
+        for( curr_list = args, spec_list = curr_spec->spec_args;
+             ( curr_list != NULL ) && ( spec_list != NULL );
+             curr_list = curr_list->u.subtree[0],
+                 spec_list = spec_list->u.subtree[0] ) {
+
+            curr_arg = curr_list->u.subtree[1];
+            spec_arg = spec_list->u.subtree[1];
+            if( ( curr_arg == NULL ) || ( spec_arg == NULL ) ) {
+                break;
+            }
+
+            if( ! templateArgSame( spec_arg, curr_arg ) ) {
+                break;
+            }
+        }
+
+        if( ( curr_list == NULL ) && ( spec_list == NULL ) ) {
+            tspec = curr_spec;
+        }
+    } RingIterEnd( curr_spec )
+
+    return tspec;
+}
+
+static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
+                                                     SYMBOL old_sym )
 {
     DECL_INFO *args;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tspec;
     REWRITE *defn;
-
+    REWRITE **defarg_list;
+    boolean primary_specialization;
+ 
     tinfo = old_sym->u.tinfo;
-    if( tinfo->corrupted ) {
-        return;
-    }
     args = data->args;
-    if( ! templateArgListsSame( args, tinfo ) ) {
-        CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, old_sym );
-        return;
+    if( data->spec_args != NULL ) {
+        primary_specialization = FALSE;
+        tspec = findMatchingTemplateSpecialization( tinfo, data->spec_args );
+        if( tspec == NULL ) {
+            tspec = newTemplateSpecialization( data );
+            RingAppend( &tinfo->specializations, tspec );
+        }
+    } else if( data->unbound_type != NULL ) {
+        PTREE parm;
+        PTREE parms;
+        SYMBOL curr;
+        SYMBOL stop;
+        SCOPE parm_scope;
+
+        parm_scope = data->unbound_type->u.c.scope->enclosing;
+        DbgAssert( parm_scope->id == SCOPE_TEMPLATE_PARM );
+
+        /* TODO: factor out, see fakeUpTemplateParms */
+        parms = NULL;
+        curr = NULL;
+        stop = ScopeOrderedStart( parm_scope );
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            switch( curr->id ) {
+              case SC_TYPEDEF:
+                parm = PTreeType( curr->sym_type );
+                break;
+
+              case SC_STATIC:
+                parm = PTreeIntConstant( curr->u.uval, TYP_SINT );
+                parm->type = curr->sym_type;
+                break;
+
+              case SC_ADDRESS_ALIAS:
+                parm = MakeNodeSymbol( curr->u.alias );
+                break;
+
+              default:
+                DbgAssert( 0 );
+            }
+            parms = PTreeBinary( CO_LIST, parms, parm );
+        }
+
+        if( parms != NULL ) {
+            tspec = findMatchingTemplateSpecialization( tinfo, parms );
+        } else {
+            tspec = NULL;
+        }
+        if( tspec == NULL ) {
+            primary_specialization = TRUE;
+            tspec = RingFirst( tinfo->specializations );
+        } else {
+            primary_specialization = FALSE;
+        }
+
+        PTreeFreeSubtrees( parms );
+    } else {
+        tspec = RingFirst( tinfo->specializations );
+        primary_specialization = TRUE;
+    }
+    if( tspec->corrupted ) {
+        return tspec;
     }
     defn = data->defn;
     if( data->defn_found ) {
-        if( tinfo->defn_found ) {
+        if( tspec->defn_found ) {
             CErr2p( ERR_CANT_REDEFINE_CLASS_TEMPLATES, old_sym );
             RewriteFree( defn );
             data->defn = NULL;
         } else {
-            RewriteFree( tinfo->defn );
-            tinfo->defn = defn;
-            tinfo->defn_found = TRUE;
+            RewriteFree( tspec->defn );
+            tspec->defn = defn;
+            tspec->defn_found = TRUE;
             data->defn_added = TRUE;
-            tinfo->arg_names = getUniqueArgNames( args, tinfo );
-            getTinfoArgList( args, tinfo );
+            tspec->arg_names = getUniqueArgNames( args, tspec );
+            if( primary_specialization ) {
+                defarg_list = tinfo->defarg_list;
+            } else {
+                defarg_list = NULL;
+            }
+
+            getArgList( args, tspec->type_list, tspec->arg_names,
+                        defarg_list );
         }
     } else {
         RewriteFree( defn );
         data->defn = NULL;
     }
+
+    return tspec;
 }
 
-static void addMemberEntry( TEMPLATE_INFO *tinfo, REWRITE *r, char **arg_names )
+static void addMemberEntry( TEMPLATE_SPECIALIZATION *tspec, REWRITE *r,
+                            char **arg_names )
 {
     TEMPLATE_MEMBER *extra_defn;
 
     extra_defn = RingCarveAlloc( carveTEMPLATE_MEMBER
-                               , &(tinfo->member_defns) );
+                               , &(tspec->member_defns) );
     extra_defn->defn = r;
     extra_defn->arg_names = arg_names;
 }
 
-static void addClassTemplateMember( TEMPLATE_DATA *data, SYMBOL sym )
+static void addClassTemplateMember( TEMPLATE_DATA *data, SYMBOL sym,
+                                    TEMPLATE_SPECIALIZATION *tspec )
 {
     char **arg_names;
-    DECL_INFO *args;
-    TEMPLATE_INFO *tinfo;
 
     if( ( NULL == data) || ( NULL == sym) ){
         return;
@@ -534,28 +697,22 @@ static void addClassTemplateMember( TEMPLATE_DATA *data, SYMBOL sym )
     if( ! data->member_found ) {
         return;
     }
-    tinfo = sym->u.tinfo;
-    if( tinfo->corrupted ) {
-        return;
-    }
-    args = data->args;
-    if( ! templateArgListsSame( args, tinfo ) ) {
-        CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, sym );
-        return;
-    }
-    arg_names = getUniqueArgNames( args, tinfo );
-    addMemberEntry( tinfo, data->member_defn, arg_names );
+
+    arg_names = getUniqueArgNames( data->args, tspec );
+    addMemberEntry( tspec, data->member_defn, arg_names );
+    /* CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, sym ); */
 }
 
-static TYPE doParseClassTemplate( TEMPLATE_INFO *tinfo, REWRITE *defn,
-                                  TOKEN_LOCN *locn, tc_instantiate control )
+static TYPE doParseClassTemplate( TEMPLATE_SPECIALIZATION *tspec,
+                                  REWRITE *defn, TOKEN_LOCN *locn,
+                                  tc_instantiate control )
 {
     TYPE new_type;
     DECL_SPEC *dspec;
     auto TEMPLATE_CONTEXT context;
 
     new_type = TypeError;
-    if( ! tinfo->corrupted ) {
+    if( ! tspec->corrupted ) {
         pushInstContext( &context, TCTX_CLASS_DEFN, locn, GetCurrScope() );
         dspec = ParseClassInstantiation( defn, ( control & TCI_NO_CLASS_DEFN ) != 0 );
         popInstContext();
@@ -563,7 +720,7 @@ static TYPE doParseClassTemplate( TEMPLATE_INFO *tinfo, REWRITE *defn,
             new_type = dspec->partial;
             PTypeRelease( dspec );
         } else {
-            tinfo->corrupted = TRUE;
+            tspec->corrupted = TRUE;
         }
     }
     return( new_type );
@@ -626,6 +783,7 @@ static void defineAllClassDecls( SYMBOL sym )
                this definition
     */
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tspec;
     CLASS_INST *curr;
     SCOPE file_scope;
     SCOPE save_enclosing;
@@ -639,46 +797,52 @@ static void defineAllClassDecls( SYMBOL sym )
     save_scope = GetCurrScope();
     tinfo = sym->u.tinfo;
     file_scope = SymScope( tinfo->sym );
-    RingIterBeg( tinfo->instantiations, curr ) {
-        if( curr->specific ) {
-            /* we shouldn't mess around with specific instantiations */
-            continue;
-        }
-        /* we have to splice in the new parm scope under the old INST scope */
-        /* because the parm names may have changed but the class type must be */
-        /* exactly as before (it may have been used in typedefs) */
-        inst_scope = curr->scope;
-        old_parm_scope = inst_scope->enclosing;
-        SetCurrScope(file_scope);
-        parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
-        ScopeSetParmCopy( parm_scope, old_parm_scope );
-        copyWithNewNames( old_parm_scope, tinfo->arg_names );
-        save_enclosing = ScopeEstablishEnclosing( inst_scope, parm_scope );
-        SetCurrScope(inst_scope);
-        doParseClassTemplate( tinfo, tinfo->defn, &location, TCI_NULL );
-        ScopeSetEnclosing( inst_scope, save_enclosing );
-    } RingIterEnd( curr )
+    RingIterBeg( tinfo->specializations, tspec ) {
+        RingIterBeg( tspec->instantiations, curr ) {
+            if( curr->specific ) {
+                /* we shouldn't mess around with specific instantiations */
+                continue;
+            }
+            /* we have to splice in the new parm scope under the old INST scope */
+            /* because the parm names may have changed but the class type must be */
+            /* exactly as before (it may have been used in typedefs) */
+            inst_scope = curr->scope;
+            old_parm_scope = inst_scope->enclosing;
+            SetCurrScope(file_scope);
+            parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
+            ScopeSetParmCopy( parm_scope, old_parm_scope );
+            copyWithNewNames( old_parm_scope, tspec->arg_names );
+            save_enclosing = ScopeEstablishEnclosing( inst_scope, parm_scope );
+            SetCurrScope(inst_scope);
+            doParseClassTemplate( tspec, tspec->defn, &location, TCI_NULL );
+            ScopeSetEnclosing( inst_scope, save_enclosing );
+        } RingIterEnd( curr )
+    } RingIterEnd( tspec )
     SetCurrScope(save_scope);
 }
 
 extern int WalkTemplateInst( SYMBOL sym, AInstSCOPE fscope  )
 {
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tspec;
     CLASS_INST *curr;
 
     tinfo = sym->u.tinfo;
-    RingIterBeg( tinfo->instantiations, curr ) {
-        if( !fscope( curr->scope ) ){
-            return( FALSE );
-        }
-    } RingIterEnd( curr )
-    return( TRUE );
+    RingIterBeg( tinfo->specializations, tspec ) {
+        RingIterBeg( tspec->instantiations, curr ) {
+            if( !fscope( curr->scope ) ){
+                return( FALSE );
+            }
+        } RingIterEnd( curr )
+    } RingIterEnd( tspec )
+   return( TRUE );
 }
 
 void TemplateDeclFini( void )
 /***************************/
 {
     TEMPLATE_DATA *data;
+    TEMPLATE_SPECIALIZATION *tspec;
     char *name;
     SYMBOL sym;
     SCOPE decl_scope;
@@ -687,20 +851,29 @@ void TemplateDeclFini( void )
     data = currentTemplate;
     name = data->template_name;
     sym = NULL;
+    tspec = NULL;
     if( name != NULL && ScopeId( GetCurrScope() ) == SCOPE_FILE ) {
         DbgAssert( data->template_scope != NULL );
         sym = ClassTemplateLookup( data->template_scope, name );
         if( ( sym != NULL )
          && ( sym->name->containing == data->template_scope ) ) {
-            mergeClassTemplates( data, sym );
-        } else {
+            tspec = mergeClassTemplates( data, sym );
+        } else if( data->spec_args == NULL ) {
             sym = newTemplateSymbol( data );
+            tspec = RingFirst( sym->u.tinfo->specializations );
+        } else {
+            /* TODO: error message */
+            DbgAssert( 0 );
         }
-        addClassTemplateMember( data, sym );
+        addClassTemplateMember( data, sym, tspec );
     }
     if( CErrOccurred( &(data->errors) ) ) {
         if( sym != NULL ) {
-            sym->u.tinfo->corrupted = TRUE;
+            if( tspec == NULL ) {
+                tspec = RingFirst( sym->u.tinfo->specializations );
+            }
+
+            tspec->corrupted = TRUE;
         }
     } else {
         if( data->defn_added ) {
@@ -710,6 +883,8 @@ void TemplateDeclFini( void )
 
     FreeArgsDefaultsOK( data->args );
     data->args = NULL;
+    PTreeFreeSubtrees( data->spec_args );
+    data->spec_args = NULL;
 
     StackPop( &currentTemplate );
 }
@@ -1017,6 +1192,9 @@ static PTREE templateParmSimpleEnough( TYPE arg_type, PTREE parm )
                     }
                 }
             }
+        } else if( MemberPtrType( arg_type ) != NULL ) {
+            /* TODO: handle member function pointers */
+            DbgAssert( 0 );
         }
         break;
     case PT_BINARY:
@@ -1089,6 +1267,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
     PTREE list;
     PTREE parm;
     TYPE arg_type;
+    TEMPLATE_SPECIALIZATION *tprimary;
     unsigned num_parms;
     unsigned i;
     boolean something_went_wrong;
@@ -1099,12 +1278,13 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
     save_scope = GetCurrScope();
     parms = NodeReverseArgs( &num_parms, parms );
     something_went_wrong = FALSE;
-
-    if( tinfo->corrupted ) {
+    tprimary = RingFirst( tinfo->specializations );
+ 
+    if( tprimary->corrupted ) {
         something_went_wrong = TRUE;
     }
     /* Check for argument overflow */
-    if( num_parms > tinfo->num_args ) {
+    if( num_parms > tprimary->num_args ) {
         CErr1( ERR_TOO_MANY_TEMPLATE_PARAMETERS );
         something_went_wrong = TRUE;
     } else if( ! something_went_wrong ) {
@@ -1118,7 +1298,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
         i = 0;
 
         for( i = 0; ; list = list->u.subtree[0] ) {
-            arg_type = TypedefRemove( tinfo->type_list[i] );
+            arg_type = TypedefRemove( tprimary->type_list[i] );
             if( arg_type->id == TYP_GENERIC || arg_type->id == TYP_CLASS ) {
                 arg_type = NULL;
             }
@@ -1197,11 +1377,11 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
                 break;
 
             if( ! inside_decl_scope ) {
-                injectTemplateParm( parm_scope, parm, tinfo->arg_names[i] );
+                injectTemplateParm( parm_scope, parm, tprimary->arg_names[i] );
             }
 
             ++i;
-            if( i >= tinfo->num_args )
+            if( i >= tprimary->num_args )
                 break;
 
             if( list->u.subtree[0] == NULL )
@@ -1317,12 +1497,13 @@ static SCOPE sameParms( CLASS_INST *inst, PTREE parms )
     return( NULL );
 }
 
-static SCOPE findInstScope( TEMPLATE_INFO *tinfo, PTREE parms, CLASS_INST **inst )
+static SCOPE findInstScope( TEMPLATE_SPECIALIZATION *tspec, PTREE parms,
+                            CLASS_INST **inst )
 {
     CLASS_INST *curr;
     SCOPE inst_scope;
 
-    RingIterBeg( tinfo->instantiations, curr ) {
+    RingIterBeg( tspec->instantiations, curr ) {
         inst_scope = sameParms( curr, parms );
         if( inst_scope != NULL ) {
             *inst = curr;
@@ -1332,11 +1513,12 @@ static SCOPE findInstScope( TEMPLATE_INFO *tinfo, PTREE parms, CLASS_INST **inst
     return( NULL );
 }
 
-static TYPE checkAlreadyDone( TEMPLATE_INFO *tinfo, PTREE parms, CLASS_INST **inst )
+static TYPE checkAlreadyDone( TEMPLATE_SPECIALIZATION *tspec, PTREE parms,
+                              CLASS_INST **inst )
 {
     SCOPE inst_scope;
 
-    inst_scope = findInstScope( tinfo, parms, inst );
+    inst_scope = findInstScope( tspec, parms, inst );
     if( inst_scope != NULL ) {
         /* return previously instantiated class type */
         return( firstSymbol( inst_scope )->sym_type );
@@ -1354,12 +1536,12 @@ static void setDirectiveFlags( CLASS_INST *inst, tc_instantiate control )
     }
 }
 
-static CLASS_INST *newClassInstantiation( TEMPLATE_INFO *tinfo, SCOPE scope,
-                                          tc_instantiate control )
+static CLASS_INST *newClassInstantiation( TEMPLATE_SPECIALIZATION *tspec,
+                                          SCOPE scope, tc_instantiate control )
 {
     CLASS_INST *new_inst;
 
-    new_inst = RingCarveAlloc( carveCLASS_INST, &(tinfo->instantiations) );
+    new_inst = RingCarveAlloc( carveCLASS_INST, &(tspec->instantiations) );
     new_inst->scope = scope;
     new_inst->locn.src_file = NULL;
     new_inst->must_process = FALSE;
@@ -1426,15 +1608,16 @@ static void injectTemplateParm( SCOPE scope, PTREE parm, char *name )
     }
 }
 
-static void injectTemplateParms( TEMPLATE_INFO *tinfo, SCOPE scope, PTREE parms )
+static void injectTemplateParms( TEMPLATE_SPECIALIZATION *tspec, SCOPE scope,
+                                 PTREE parms )
 {
     PTREE list;
     char **pname;
     char *name;
 
     pname = NULL;
-    if( tinfo != NULL ) {
-        pname = tinfo->arg_names;
+    if( tspec != NULL ) {
+        pname = tspec->arg_names;
     }
     for( list = parms; list != NULL; list = list->u.subtree[0] ) {
         if( pname != NULL ) {
@@ -1443,11 +1626,14 @@ static void injectTemplateParms( TEMPLATE_INFO *tinfo, SCOPE scope, PTREE parms 
         } else {
             name = NameDummy();
         }
-        injectTemplateParm( scope, list->u.subtree[1], name );
+        if( list->u.subtree[1] ) {
+            injectTemplateParm( scope, list->u.subtree[1], name );
+        }
     }
 }
 
-static TYPE instantiateClass( TEMPLATE_INFO *tinfo, REWRITE *defn, PTREE parms,
+static TYPE instantiateClass( TEMPLATE_INFO *tinfo,
+                              TEMPLATE_SPECIALIZATION *tspec, PTREE parms,
                               TOKEN_LOCN *locn, tc_instantiate control )
 {
     boolean nothing_to_do;
@@ -1460,7 +1646,8 @@ static TYPE instantiateClass( TEMPLATE_INFO *tinfo, REWRITE *defn, PTREE parms,
     CLASS_INST *curr_instantiation;
 
     curr_instantiation = NULL;
-    already_instantiated = checkAlreadyDone( tinfo, parms, &curr_instantiation );
+    already_instantiated = checkAlreadyDone( tspec, parms,
+                                             &curr_instantiation );
     if( already_instantiated != NULL ) {
         setDirectiveFlags( curr_instantiation, control );
         nothing_to_do = FALSE;
@@ -1493,18 +1680,20 @@ static TYPE instantiateClass( TEMPLATE_INFO *tinfo, REWRITE *defn, PTREE parms,
         parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
         ScopeSetParmClass( parm_scope, tinfo );
         inst_scope = ScopeBegin( SCOPE_TEMPLATE_INST );
-        curr_instantiation = newClassInstantiation( tinfo, inst_scope, control );
+        curr_instantiation = newClassInstantiation( tspec, inst_scope, control );
         curr_instantiation->locn = *locn;
         curr_instantiation->locn_set = TRUE;
     }
-    injectTemplateParms( tinfo, parm_scope, parms );
+    injectTemplateParms( tspec, parm_scope, parms );
     NodeFreeDupedExpr( parms );
-    new_type = doParseClassTemplate( tinfo, defn, locn, control );
+    new_type = doParseClassTemplate( tspec, tspec->defn, locn, control );
     SetCurrScope(save_scope);
     return( new_type );
 }
 
-static TYPE instantiateUnboundClass( TEMPLATE_INFO *tinfo, PTREE parms, char *name )
+static TYPE instantiateUnboundClass( TEMPLATE_INFO *tinfo,
+                                     TEMPLATE_SPECIALIZATION *tspec,
+                                     PTREE parms, char *name )
 {
     TYPE new_type;
     SCOPE file_scope;
@@ -1516,11 +1705,59 @@ static TYPE instantiateUnboundClass( TEMPLATE_INFO *tinfo, PTREE parms, char *na
     SetCurrScope(file_scope);
     parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
     ScopeSetParmClass( parm_scope, tinfo );
-    injectTemplateParms( tinfo, parm_scope, parms );
+    injectTemplateParms( tspec, parm_scope, parms );
     new_type = ClassUnboundTemplate( name );
     ScopeOpen( new_type->u.c.scope );
     SetCurrScope(save_scope);
     return( new_type );
+}
+
+static TEMPLATE_SPECIALIZATION *findTemplateClassSpecialization( TEMPLATE_INFO *tinfo, PTREE parms, PTREE *inst_parms )
+{
+    TEMPLATE_SPECIALIZATION *curr_spec;
+    TEMPLATE_SPECIALIZATION *tspec;
+    TEMPLATE_SPECIALIZATION *tprimary;
+    PTREE parm_list;
+    PTREE spec_list;
+    boolean ambiguous;
+    unsigned i;
+    unsigned num_args;
+
+    tspec = NULL;
+    tprimary = RingFirst( tinfo->specializations );
+    num_args = tprimary->num_args;
+    *inst_parms = NULL;
+    ambiguous = FALSE;
+
+    RingIterBeg( tinfo->specializations, curr_spec ) {
+        spec_list = curr_spec->spec_args;
+        if( spec_list == NULL ) {
+            tspec = curr_spec;
+            PTreeFreeSubtrees( *inst_parms );
+            *inst_parms = NULL;
+        } else if( curr_spec->num_args == 0 ) {
+            parm_list = parms;
+            for( i = 0; i < num_args; ++i ) {
+                PTREE spec_node = spec_list->u.subtree[1];
+                PTREE parm_node = parm_list->u.subtree[1];
+
+                if( ! templateArgSame( spec_node, parm_node ) ) {
+                    break;
+                }
+
+                spec_list = spec_list->u.subtree[0];
+                parm_list = parm_list->u.subtree[0];
+            }
+
+            if( i == num_args ) {
+                tspec = curr_spec;
+                PTreeFreeSubtrees( *inst_parms );
+                *inst_parms = PTreeBinary( CO_LIST, NULL, NULL );
+            }
+        }
+    } RingIterEnd( curr_spec );
+
+    return tspec;
 }
 
 DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate control )
@@ -1530,6 +1767,8 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
     char *template_name;
     TYPE type_instantiated;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tprimary;
+    TEMPLATE_SPECIALIZATION *tspec;
     TEMPLATE_DATA *data;
 
     type_instantiated = TypeError;
@@ -1562,20 +1801,36 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
 
     if( class_template != NULL ) {
         tinfo = class_template->u.tinfo;
+        tprimary = RingFirst( tinfo->specializations );
         parms = processClassTemplateParms( tinfo, parms );
         if( parms != NULL ) {
             /* parms have been validated; we can instantiate the class! */
             if( ScopeAccessType( SCOPE_TEMPLATE_DECL ) ) {
                 type_instantiated = tinfo->unbound_type;
                 data = currentTemplate;
-                if( data->all_generic ) {
-                    /* we could be inside a function template */
-                    type_instantiated = instantiateUnboundClass( tinfo, parms,
-                                                                 template_name );
+
+                /* we could be inside a function template? */
+                tspec = findMatchingTemplateSpecialization( tinfo, parms );
+                if( tspec == NULL ) {
+                    tspec = RingFirst( tinfo->specializations );
                 }
+
+                type_instantiated =
+                    instantiateUnboundClass( tinfo, tspec, parms,
+                                             template_name );
+
                 NodeFreeDupedExpr( parms );
             } else {
-                type_instantiated = instantiateClass( tinfo, tinfo->defn, parms,
+                PTREE inst_parms = NULL;
+                tspec = findTemplateClassSpecialization( tinfo, parms,
+                                                         &inst_parms );
+                if( inst_parms == NULL ) {
+                    inst_parms = parms;
+                } else {
+                    PTreeFreeSubtrees( parms );
+                }
+
+                type_instantiated = instantiateClass( tinfo, tspec, inst_parms,
                                                       &(tid->locn), control );
             }
         }
@@ -1665,6 +1920,7 @@ static TYPE makeBoundClass( SCOPE scope, char *name, SCOPE parm_scope,
     TYPE type_instantiated;
     SYMBOL class_template;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tspec;
     PTREE parms;
 
     type_instantiated = NULL;
@@ -1672,7 +1928,8 @@ static TYPE makeBoundClass( SCOPE scope, char *name, SCOPE parm_scope,
     if( class_template != NULL ) {
         parms = fakeUpTemplateParms( parm_scope, type_args );
         tinfo = class_template->u.tinfo;
-        type_instantiated = instantiateClass( tinfo, tinfo->defn, parms, locn, TCI_NULL );
+        tspec = RingFirst( tinfo->specializations );
+        type_instantiated = instantiateClass( tinfo, tspec, parms, locn, TCI_NULL );
     }
     return( type_instantiated );
 }
@@ -1714,6 +1971,7 @@ void TemplateHandleClassMember( DECL_INFO *dinfo )
     data->member_found = TRUE;
     data->template_name = SimpleTypeName( dinfo->id->u.subtree[0]->type );
     data->template_scope = ScopeNearestFile( TypeScope( dinfo->id->u.subtree[0]->type ) );
+    data->unbound_type = dinfo->id->u.subtree[0]->type;
     FreeDeclInfo( dinfo );
 }
 
@@ -1735,7 +1993,9 @@ static boolean sameParmArgNames( SCOPE parm_scope, char **arg_names )
     return( TRUE );
 }
 
-static void instantiateMember( TEMPLATE_INFO *tinfo, CLASS_INST *instance,
+static void instantiateMember( TEMPLATE_INFO *tinfo,
+                               TEMPLATE_SPECIALIZATION *tspec,
+                               CLASS_INST *instance,
                                TEMPLATE_MEMBER *member )
 {
     SCOPE save_scope;
@@ -1756,7 +2016,7 @@ static void instantiateMember( TEMPLATE_INFO *tinfo, CLASS_INST *instance,
     class_inst_scope = instance->scope;
     class_parm_scope = class_inst_scope->enclosing;
     member_arg_names = member->arg_names;
-    if( tinfo->arg_names != member_arg_names ||
+    if( tspec->arg_names != member_arg_names ||
         ! sameParmArgNames( class_parm_scope, member_arg_names ) ) {
         file_scope = SymScope( tinfo->sym );
         SetCurrScope (file_scope);
@@ -1983,22 +2243,26 @@ static void freeDefns( void )
     unsigned i;
     REWRITE *r;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tprimary;
+    TEMPLATE_SPECIALIZATION *tspec;
     TEMPLATE_MEMBER *member;
     FN_TEMPLATE_DEFN *curr_fn;
 
     RingIterBeg( allClassTemplates, tinfo ) {
-        r = tinfo->defn;
-        tinfo->defn = NULL;
-        RewriteFree( r );
-        RingIterBeg( tinfo->member_defns, member ) {
-            r = member->defn;
-            member->defn = NULL;
-            RewriteFree( r );
-        } RingIterEnd( member )
-        for( i = 0; i < tinfo->num_args; ++i ) {
+        tprimary = RingFirst( tinfo->specializations );
+        for( i = 0; i < tprimary->num_args; ++i ) {
             RewriteFree( tinfo->defarg_list[i] );
             tinfo->defarg_list[i] = NULL;
         }
+        RingIterBeg( tinfo->specializations, tspec ) {
+            RewriteFree( tspec->defn );
+            tspec->defn = NULL;
+            PTreeFreeSubtrees( tspec->spec_args );
+            RingIterBeg( tspec->member_defns, member ) {
+                RewriteFree( member->defn );
+                member->defn = NULL;
+            } RingIterEnd( member )
+        } RingIterEnd( tspec )
     } RingIterEnd( tinfo )
     RingIterBeg( allFunctionTemplates, curr_fn ) {
         r = curr_fn->defn;
@@ -2038,6 +2302,7 @@ void TemplateProcessInstantiations( void )
     TEMPLATE_INFO *curr_tinfo;
     CLASS_INST *curr_instance;
     TEMPLATE_MEMBER *curr_member;
+    TEMPLATE_SPECIALIZATION *tspec;
 
     /* NYI: only define extra members that are required */
     ScopeWalkAllNameSpaces( initLastSym, NULL );
@@ -2049,22 +2314,25 @@ void TemplateProcessInstantiations( void )
         // instantiate extra class members
         templateData.extra_members = TRUE;
         RingIterBeg( allClassTemplates, curr_tinfo ) {
-            RingIterBeg( curr_tinfo->instantiations, curr_instance ) {
-                if( curr_instance->processed || curr_instance->specific
-                    || curr_instance->dont_process ) {
-                    continue;
-                }
-                if( ! classTemplateWasDefined( curr_instance ) ) {
-                    continue;
-                }
-                templateData.extra_member_class = classTemplateType( curr_instance );
-                curr_instance->processed = TRUE;
-                RingIterBeg( curr_tinfo->member_defns, curr_member ) {
-                    // loop nesting is critical because extra members cannot be
-                    // generated if a class has not been instantiated
-                    instantiateMember( curr_tinfo, curr_instance, curr_member );
-                } RingIterEnd( curr_member )
-            } RingIterEnd( curr_instance )
+            RingIterBeg( curr_tinfo->specializations, tspec ) {
+                RingIterBeg( tspec->instantiations, curr_instance ) {
+                    if( curr_instance->processed || curr_instance->specific
+                        || curr_instance->dont_process ) {
+                        continue;
+                    }
+                    if( ! classTemplateWasDefined( curr_instance ) ) {
+                        continue;
+                    }
+                    templateData.extra_member_class = classTemplateType( curr_instance );
+                    curr_instance->processed = TRUE;
+                    RingIterBeg( tspec->member_defns, curr_member ) {
+                        // loop nesting is critical because extra members cannot be
+                        // generated if a class has not been instantiated
+                        instantiateMember( curr_tinfo, tspec, curr_instance,
+                                           curr_member );
+                    } RingIterEnd( curr_member )
+                } RingIterEnd( curr_instance )
+            } RingIterEnd( tspec )
         } RingIterEnd( curr_tinfo )
         templateData.extra_members = FALSE;
         // instantiate any template functions (delta from previous pass)
@@ -2087,6 +2355,7 @@ void TemplateSpecificDefnStart( PTREE tid, PTREE parms )
     SYMBOL class_template;
     CLASS_INST *instance;
     TEMPLATE_INFO *tinfo;
+    TEMPLATE_SPECIALIZATION *tprimary;
     SCOPE inst_scope;
     SCOPE parm_scope;
     char *name;
@@ -2117,14 +2386,15 @@ void TemplateSpecificDefnStart( PTREE tid, PTREE parms )
     }
 
     tinfo = class_template->u.tinfo;
-    if( tinfo->corrupted ) {
+    tprimary = RingFirst( tinfo->specializations );
+    if( tprimary->corrupted ) {
         return;
     }
     parms = processClassTemplateParms( tinfo, parms );
     if( parms != NULL ) {
         /* parms have been validated; we can instantiate the class! */
         instance = NULL;
-        inst_scope = findInstScope( tinfo, parms, &instance );
+        inst_scope = findInstScope( tprimary, parms, &instance );
         if( inst_scope != NULL ) {
             instance->specific = TRUE;
             SetCurrScope (inst_scope);
@@ -2132,13 +2402,14 @@ void TemplateSpecificDefnStart( PTREE tid, PTREE parms )
             parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
             ScopeSetParmClass( parm_scope, tinfo );
             inst_scope = ScopeBegin( SCOPE_TEMPLATE_INST );
-            instance = newClassInstantiation( tinfo, inst_scope, TCI_SPECIFIC );
+            instance = newClassInstantiation( tprimary, inst_scope,
+                                              TCI_SPECIFIC );
             injectTemplateParms( NULL, parm_scope, parms );
         }
         DbgAssert( instance->specific );
         NodeFreeDupedExpr( parms );
     } else {
-        tinfo->corrupted = TRUE;
+        tprimary->corrupted = TRUE;
     }
 }
 
@@ -2149,6 +2420,15 @@ void TemplateSpecificDefnEnd( void )
         ScopeEnd( SCOPE_TEMPLATE_INST );
         ScopeEnd( SCOPE_TEMPLATE_PARM );
     }
+}
+
+void TemplateSpecializationDefn( PTREE tid, PTREE parms )
+/*******************************************************/
+{
+    unsigned arg_count;
+
+    DbgAssert( currentTemplate != NULL );
+    currentTemplate->spec_args = NodeReverseArgs( &arg_count, parms );
 }
 
 SCOPE TemplateClassInstScope( TYPE class_type )
@@ -2278,6 +2558,13 @@ FN_TEMPLATE_DEFN *TemplateFunctionInfoMapIndex( FN_TEMPLATE_DEFN *e )
     return( CarveMapIndex( carveFN_TEMPLATE_DEFN, e ) );
 }
 
+static void markFreeTemplateSpecialization( void *p )
+{
+    TEMPLATE_SPECIALIZATION *s = p;
+
+    s->free = TRUE;
+}
+
 static void markFreeTemplateInfo( void *p )
 {
     TEMPLATE_INFO *s = p;
@@ -2299,17 +2586,15 @@ static void markFreeFnTemplateDefn( void *p )
     s->type_list = NULL;
 }
 
-static void saveTemplateInfo( void *p, carve_walk_base *d )
+static void saveTemplateSpecialization( void *p, carve_walk_base *d )
 {
-    TEMPLATE_INFO *s = p;
-    TEMPLATE_INFO *save_next;
+    TEMPLATE_SPECIALIZATION *s = p;
+    TEMPLATE_SPECIALIZATION *save_next;
     REWRITE *save_defn;
     CLASS_INST *save_instantiations;
-    TYPE save_unbound_type;
-    SYMBOL save_sym;
+    PTREE save_spec_args;
     TEMPLATE_MEMBER *member;
     void *nti;
-    void *defarg_index;
     unsigned i;
     auto void *member_buff[2];
 
@@ -2317,15 +2602,13 @@ static void saveTemplateInfo( void *p, carve_walk_base *d )
         return;
     }
     save_next = s->next;
-    s->next = CarveGetIndex( carveTEMPLATE_INFO, save_next );
+    s->next = CarveGetIndex( carveTEMPLATE_SPECIALIZATION, save_next );
     save_defn = s->defn;
     s->defn = RewriteGetIndex( save_defn );
     save_instantiations = s->instantiations;
     s->instantiations = CarveGetIndex( carveCLASS_INST, save_instantiations );
-    save_unbound_type = s->unbound_type;
-    s->unbound_type= TypeGetIndex( save_unbound_type );
-    save_sym = s->sym;
-    s->sym= SymbolGetIndex( save_sym );
+    save_spec_args = s->spec_args;
+    s->spec_args = PTreeGetIndex( save_spec_args );
     PCHWriteCVIndex( d->index );
     PCHWrite( s, sizeof( *s ) );
     for( i = 0; i < s->num_args; ++i ) {
@@ -2335,10 +2618,6 @@ static void saveTemplateInfo( void *p, carve_walk_base *d )
     for( i = 0; i < s->num_args; ++i ) {
         nti = TypeGetIndex( s->type_list[i] );
         PCHWrite( &nti, sizeof( nti ) );
-    }
-    for( i = 0; i < s->num_args; ++i ) {
-        defarg_index = RewriteGetIndex( s->defarg_list[i] );
-        PCHWrite( &defarg_index, sizeof( defarg_index ) );
     }
     RingIterBeg( s->member_defns, member ){
         member_buff[0] = RewriteGetIndex( member->defn );
@@ -2357,9 +2636,46 @@ static void saveTemplateInfo( void *p, carve_walk_base *d )
     member_buff[0] = NULL;
     member_buff[1] = NULL;
     PCHWrite( member_buff, sizeof( member_buff ) );
+    s->spec_args = save_spec_args;
     s->next = save_next;
     s->defn = save_defn;
     s->instantiations = save_instantiations;
+}
+
+static void saveTemplateInfo( void *p, carve_walk_base *d )
+{
+    TEMPLATE_INFO *s = p;
+    TEMPLATE_INFO *save_next;
+    TEMPLATE_SPECIALIZATION *save_specializations;
+    TYPE save_unbound_type;
+    SYMBOL save_sym;
+    void *defarg_index;
+    unsigned i;
+    unsigned num_args;
+
+    if( s->free ) {
+        return;
+    }
+
+    num_args = s->specializations->num_args;
+
+    save_next = s->next;
+    s->next = CarveGetIndex( carveTEMPLATE_INFO, save_next );
+    save_specializations = s->specializations;
+    s->specializations = CarveGetIndex( carveTEMPLATE_SPECIALIZATION,
+                                        save_specializations );
+    save_unbound_type = s->unbound_type;
+    s->unbound_type = TypeGetIndex( save_unbound_type );
+    save_sym = s->sym;
+    s->sym = SymbolGetIndex( save_sym );
+    PCHWriteCVIndex( d->index );
+    PCHWrite( s, sizeof( *s ) );
+    for( i = 0; i < num_args; ++i ) {
+        defarg_index = RewriteGetIndex( s->defarg_list[i] );
+        PCHWrite( &defarg_index, sizeof( defarg_index ) );
+    }
+    s->next = save_next;
+    s->specializations = save_specializations;
     s->unbound_type = save_unbound_type;
     s->sym = save_sym;
 }
@@ -2438,6 +2754,11 @@ pch_status PCHWriteTemplates( void )
     CarveWalkAllFree( carveFN_TEMPLATE_DEFN, markFreeFnTemplateDefn );
     CarveWalkAll( carveFN_TEMPLATE_DEFN, saveFnTemplateDefn, &data );
     PCHWriteCVIndex( terminator );
+    CarveWalkAllFree( carveTEMPLATE_SPECIALIZATION,
+                      markFreeTemplateSpecialization );
+    CarveWalkAll( carveTEMPLATE_SPECIALIZATION, saveTemplateSpecialization,
+                  &data );
+    PCHWriteCVIndex( terminator );
     CarveWalkAllFree( carveTEMPLATE_INFO, markFreeTemplateInfo );
     CarveWalkAll( carveTEMPLATE_INFO, saveTemplateInfo, &data );
     PCHWriteCVIndex( terminator );
@@ -2456,6 +2777,7 @@ pch_status PCHReadTemplates( void )
     REWRITE **defarg_list;
     CLASS_INST *ci;
     FN_TEMPLATE_DEFN *ftd;
+    TEMPLATE_SPECIALIZATION *ts;
     TEMPLATE_INFO *ti;
     REWRITE *memb_defn;
     char **memb_arg_names;
@@ -2499,34 +2821,29 @@ pch_status PCHReadTemplates( void )
             type_list[j] = TypeMapIndex( type_list[j] );
         }
     }
-    CarveInitStart( carveTEMPLATE_INFO, &data );
+    CarveInitStart( carveTEMPLATE_SPECIALIZATION, &data );
     for(;;) {
         i = PCHReadCVIndex();
         if( i == CARVE_NULL_INDEX ) break;
-        ti = CarveInitElement( &data, i );
-        PCHRead( ti, sizeof( *ti ) );
-        ti->next = CarveMapIndex( carveTEMPLATE_INFO, ti->next );
-        ti->defn = RewriteMapIndex( ti->defn );
-        ti->instantiations = CarveMapIndex( carveCLASS_INST, ti->instantiations );
-        ti->member_defns = NULL;
-        ti->unbound_type= TypeMapIndex( ti->unbound_type );
-        ti->sym= SymbolMapIndex( ti->sym );
-        arg_names_size = ti->num_args * sizeof( char * );
+        ts = CarveInitElement( &data, i );
+        PCHRead( ts, sizeof( *ts ) );
+        ts->next = CarveMapIndex( carveTEMPLATE_SPECIALIZATION, ts->next );
+        ts->defn = RewriteMapIndex( ts->defn );
+        ts->instantiations = CarveMapIndex( carveCLASS_INST,
+                                            ts->instantiations );
+        ts->member_defns = NULL;
+        ts->spec_args = PTreeMapIndex( ts->spec_args );
+        arg_names_size = ts->num_args * sizeof( char * );
         arg_names = CPermAlloc( arg_names_size );
-        ti->arg_names = arg_names;
-        type_list_size = ti->num_args * sizeof( TYPE );
+        ts->arg_names = arg_names;
+        type_list_size = ts->num_args * sizeof( TYPE );
         type_list = CPermAlloc( type_list_size );
-        ti->type_list = type_list;
-        defarg_list_size = ti->num_args * sizeof( REWRITE * );
-        defarg_list = CPermAlloc( defarg_list_size );
-        ti->defarg_list = defarg_list;
+        ts->type_list = type_list;
         PCHRead( arg_names, arg_names_size );
         PCHRead( type_list, type_list_size );
-        PCHRead( defarg_list, defarg_list_size );
-        for( j = 0; j < ti->num_args; ++j ) {
+        for( j = 0; j < ts->num_args; ++j ) {
             arg_names[j] = NameMapIndex( arg_names[j] );
             type_list[j] = TypeMapIndex( type_list[j] );
-            defarg_list[j] = RewriteMapIndex( defarg_list[j] );
         }
         for(;;) {
             PCHRead( member_buff, sizeof( member_buff ) );
@@ -2536,13 +2853,32 @@ pch_status PCHReadTemplates( void )
                 memb_arg_names = CPermAlloc( arg_names_size );
                 member_buff[1] = memb_arg_names;
                 PCHRead( memb_arg_names, arg_names_size );
-                for( j = 0; j < ti->num_args; ++j ) {
+                for( j = 0; j < ts->num_args; ++j ) {
                     memb_arg_names[j] = NameMapIndex( memb_arg_names[j] );
                 }
             } else {
                 memb_arg_names = arg_names;
             }
-            addMemberEntry( ti, memb_defn, memb_arg_names );
+            addMemberEntry( ts, memb_defn, memb_arg_names );
+        }
+    }
+    CarveInitStart( carveTEMPLATE_INFO, &data );
+    for(;;) {
+        i = PCHReadCVIndex();
+        if( i == CARVE_NULL_INDEX ) break;
+        ti = CarveInitElement( &data, i );
+        PCHRead( ti, sizeof( *ti ) );
+        ti->next = CarveMapIndex( carveTEMPLATE_INFO, ti->next );
+        ti->specializations = CarveMapIndex( carveTEMPLATE_SPECIALIZATION,
+                                             ti->specializations );
+        ti->unbound_type = TypeMapIndex( ti->unbound_type );
+        ti->sym = SymbolMapIndex( ti->sym );
+        defarg_list_size = ti->specializations->num_args * sizeof( REWRITE * );
+        defarg_list = CPermAlloc( defarg_list_size );
+        ti->defarg_list = defarg_list;
+        PCHRead( defarg_list, defarg_list_size );
+        for( j = 0; j < ti->specializations->num_args; ++j ) {
+            defarg_list[j] = RewriteMapIndex( defarg_list[j] );
         }
     }
     return( PCHCB_OK );
@@ -2559,6 +2895,8 @@ pch_status PCHInitTemplates( boolean writing )
         PCHWriteCVIndex( n );
         n = CarveLastValidIndex( carveTEMPLATE_MEMBER );
         PCHWriteCVIndex( n );
+        n = CarveLastValidIndex( carveTEMPLATE_SPECIALIZATION );
+        PCHWriteCVIndex( n );
         n = CarveLastValidIndex( carveTEMPLATE_INFO );
         PCHWriteCVIndex( n );
     } else {
@@ -2571,6 +2909,9 @@ pch_status PCHInitTemplates( boolean writing )
         carveTEMPLATE_MEMBER = CarveRestart( carveTEMPLATE_MEMBER );
         n = PCHReadCVIndex();
         CarveMapOptimize( carveTEMPLATE_MEMBER, n );
+        carveTEMPLATE_SPECIALIZATION = CarveRestart( carveTEMPLATE_SPECIALIZATION );
+        n = PCHReadCVIndex();
+        CarveMapOptimize( carveTEMPLATE_SPECIALIZATION, n );
         carveTEMPLATE_INFO = CarveRestart( carveTEMPLATE_INFO );
         n = PCHReadCVIndex();
         CarveMapOptimize( carveTEMPLATE_INFO, n );
@@ -2584,6 +2925,7 @@ pch_status PCHFiniTemplates( boolean writing )
         CarveMapUnoptimize( carveCLASS_INST );
         CarveMapUnoptimize( carveFN_TEMPLATE_DEFN );
         CarveMapUnoptimize( carveTEMPLATE_MEMBER );
+        CarveMapUnoptimize( carveTEMPLATE_SPECIALIZATION );
         CarveMapUnoptimize( carveTEMPLATE_INFO );
     }
     return( PCHCB_OK );

@@ -39,6 +39,8 @@ typedef struct template_data TEMPLATE_DATA;
 struct template_data {
     TEMPLATE_DATA       *next;          // (stack)
     DECL_INFO           *args;          // template arguments
+    PTREE               spec_args;      // template specialization arguments
+    TYPE                unbound_type;   // unbound class type
     SCOPE               decl_scope;     // template decl scope
     REWRITE             *defn;          // class template definition
     REWRITE             *member_defn;   // class template member definition
@@ -75,19 +77,26 @@ PCH_struct template_member {
     char                **arg_names;    // argument names
 };
 
-PCH_struct template_info {
-    TEMPLATE_INFO       *next;          // (ring)
-    REWRITE             *defn;          // template def'n (may be NULL)
+PCH_struct template_specialization {
+    TEMPLATE_SPECIALIZATION *next;      // (ring)
     CLASS_INST          *instantiations;// list of current instantiations
+    REWRITE             *defn;          // template def'n (may be NULL)
     TEMPLATE_MEMBER     *member_defns;  // external member defns
     unsigned            num_args;       // number of template arguments
-    TYPE                unbound_type;   // type to use in unbound circumstances
     TYPE                *type_list;     // template argument types
     char                **arg_names;    // argument names
-    REWRITE             **defarg_list;  // default arguments
-    SYMBOL              sym;            // template symbol
+    PTREE               spec_args;      // template specialization arguments
     unsigned            corrupted : 1;  // template def'n contained errors
     unsigned            defn_found : 1; // a template defn has been found
+    unsigned            free : 1;       // used for precompiled headers
+};
+
+PCH_struct template_info {
+    TEMPLATE_INFO       *next;          // (ring)
+    TEMPLATE_SPECIALIZATION *specializations;// template specializations
+    TYPE                unbound_type;   // type to use in unbound circumstances
+    REWRITE             **defarg_list;  // default arguments
+    SYMBOL              sym;            // template symbol
     unsigned            free : 1;       // used for precompiled headers
 };
 
@@ -134,6 +143,7 @@ extern boolean TemplateMemberCanBeIgnored( void );
 extern boolean TemplateVerifyDecl( SYMBOL );
 extern void TemplateSpecificDefnStart( PTREE, PTREE );
 extern void TemplateSpecificDefnEnd( void );
+extern void TemplateSpecializationDefn( PTREE, PTREE );
 extern SCOPE TemplateClassInstScope( TYPE );
 extern SCOPE TemplateClassParmScope( TYPE );
 extern boolean TemplateParmEqual( SYMBOL, SYMBOL );

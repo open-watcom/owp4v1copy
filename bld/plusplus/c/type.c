@@ -7237,25 +7237,19 @@ boolean ProcessTemplateArgs( DECL_INFO *dinfo )
 /*********************************************/
 {
     DECL_INFO *curr;
-    struct {
-        unsigned all_generics : 1;
-        unsigned some_generics : 1;
-    } flag;
+    boolean all_generics;
+    boolean some_generics;
 
-    if( dinfo == NULL ) {
-        CErr1( ERR_TEMPLATE_MUST_HAVE_ARGS );
-        return( FALSE );
-    }
-    flag.some_generics = FALSE;
-    flag.all_generics = TRUE;
+    some_generics = FALSE;
+    all_generics = TRUE;
     RingIterBeg( dinfo, curr ) {
         if( validateTemplateArgType( curr->type ) ) {
-            flag.some_generics = TRUE;
+            some_generics = TRUE;
         } else {
-            flag.all_generics = FALSE;
+            all_generics = FALSE;
         }
     } RingIterEnd( curr )
-    return( flag.all_generics && flag.some_generics );
+    return( all_generics && some_generics );
 }
 
 static boolean markAllUnused( SCOPE scope, void (*diag)( SYMBOL ) )

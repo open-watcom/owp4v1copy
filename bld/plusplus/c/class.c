@@ -949,9 +949,12 @@ void ClassSpecificInstantiation( PTREE tree, CLASS_DECL declaration )
             data->specific_defn = TRUE;
             data->tflag |= TF1_SPECIFIC | TF1_INSTANTIATION;
             TemplateSpecificDefnStart( id, args );
+        } else if ( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_INST ) ) {
+            /* new template specialization syntax */
         } else if ( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL )
                  && ScopeType( GetCurrScope()->enclosing, SCOPE_FILE ) ) {
-            /* TODO: new template specialization syntax */
+            /* new template specialization syntax */
+            TemplateSpecializationDefn( id, args );
         } else {
             PTreeFreeSubtrees( args );
             CErr1( ERR_ONLY_GLOBAL_SPECIFICS );

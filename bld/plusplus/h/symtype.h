@@ -54,6 +54,7 @@ typedef struct reloc_list RELOC_LIST;
 typedef struct parse_tree_node *PTREE;          // defined in PTREE.H
 typedef struct rewrite_package REWRITE;         // defined in REWRITE.H
 typedef struct template_info TEMPLATE_INFO;     // defined in TEMPLATE.H
+typedef struct template_specialization TEMPLATE_SPECIALIZATION; // defined in TEMPLATE.H
 typedef struct fn_template_defn FN_TEMPLATE_DEFN;//defined in TEMPLATE.H
 typedef struct func_list FNOV_LIST;             // defined in FNOVLOAD.H
 typedef struct pool_con POOL_CON;               // defined in CONPOOL.H
