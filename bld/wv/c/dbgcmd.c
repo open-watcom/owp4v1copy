@@ -64,8 +64,10 @@ static bool DoneCmd( char *buff, inp_rtn_action action )
 }
 
 
-static void DoOneCmd( char *cmd )
+static void DoOneCmd( void *_cmd )
 {
+    char        *cmd = _cmd;
+
     if( cmd[0] == NULLCHAR ) {
         DUIDlgTxt( LIT( Empty ) );
     } else {

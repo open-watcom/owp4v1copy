@@ -70,7 +70,7 @@ static void SetKey( a_symbol *sym )
                                tolower(b[3]);
 }
 
-OVL_EXTERN int SymCompare( a_symbol **pa, a_symbol **pb )
+OVL_EXTERN int SymCompare( void **pa, void **pb )
 {
     char        *cmpa,*cmpb;
     a_symbol    *a = *pa;
@@ -114,8 +114,9 @@ static bool CheckType( sym_handle *sym, name_list *name )
 
 
 static SYM_WALKER StickEmIn;
-static walk_result StickEmIn( sym_walk_info swi, sym_handle *sym, name_list *name )
+static walk_result StickEmIn( sym_walk_info swi, sym_handle *sym, void *_name )
 {
+    name_list   *name = _name;
     char        *p;
     a_symbol    *curr;
 

@@ -115,8 +115,9 @@ typedef struct cue_mod {
     bool        found;
 } cue_mod;
 
-static walk_result CheckFirstFile( cue_handle *ch, cue_mod *d )
+static walk_result CheckFirstFile( cue_handle *ch, void *_d )
 {
+    cue_mod     *d = _d;
     char        *buff;
     unsigned    len;
 
@@ -129,8 +130,9 @@ static walk_result CheckFirstFile( cue_handle *ch, cue_mod *d )
     return( WR_STOP );
 }
 
-static walk_result CheckOneMod( mod_handle mh, cue_mod *d )
+static walk_result CheckOneMod( mod_handle mh, void *_d )
 {
+    cue_mod     *d = _d;
     d->mod = mh;
     if( ModHasInfo( mh, HK_CUE ) == DS_OK ) {
         WalkFileList( mh, CheckFirstFile, d );

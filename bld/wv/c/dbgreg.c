@@ -795,8 +795,10 @@ typedef struct {
 } move_info;
 
 CALL_CHAIN_RTN CheckOneLevel;
-static bool CheckOneLevel( call_chain_entry *entry, move_info *info )
+static bool CheckOneLevel( call_chain_entry *entry, void *_info )
 {
+    move_info  *info = _info;
+
     if( info->curr == info->targ ) {
         info->success = TRUE;
         info->lc = entry->lc;

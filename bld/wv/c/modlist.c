@@ -92,13 +92,13 @@ int ModCompare( mod_handle const *a, mod_handle const *b )
     return( stricmp( namea, nameb ) );
 }
 
-static int ModOrder( mod_handle const *ap, mod_handle const *bp )
+static int ModOrder( const void *ap, const void *bp )
 {
     image_entry *ia;
     image_entry *ib;
 
-    ia = ImageEntry( *ap );
-    ib = ImageEntry( *bp );
+    ia = ImageEntry( *(mod_handle const *)ap );
+    ib = ImageEntry( *(mod_handle const *)bp );
     if( ia == ib ) return( ModCompare( ap, bp ) );
     if( ia == ImagePrimary() ) return( -1 );
     if( ib == ImagePrimary() ) return( +1 );

@@ -64,9 +64,9 @@ OVL_EXTERN void GetExprAny( void *value )
     ReqEOC();
 }
 
-OVL_EXTERN void GetExprLong( long *value )
+OVL_EXTERN void GetExprLong( void *value )
 {
-    *value = ReqLongExpr();
+    *(long *)value = ReqLongExpr();
     ReqEOC();
 }
 
@@ -77,25 +77,25 @@ OVL_EXTERN void GetExprSyntax( void *value )
     ReqEOC();
 }
 
-OVL_EXTERN void GetExprCodeAddr( address *value )
+OVL_EXTERN void GetExprCodeAddr( void *value )
 {
     ReqMemAddr( EXPR_CODE, value );
     ReqEOC();
 }
 
-OVL_EXTERN void GetExprDataAddr( address *value )
+OVL_EXTERN void GetExprDataAddr( void *value )
 {
     ReqMemAddr( EXPR_DATA, value );
     ReqEOC();
 }
 
-OVL_EXTERN void GetExprGivenAddr( address *value )
+OVL_EXTERN void GetExprGivenAddr( void *value )
 {
     ReqMemAddr( EXPR_GIVEN, value );
     ReqEOC();
 }
 
-OVL_EXTERN void GetModName( mod_handle *value )
+OVL_EXTERN void GetModName( void *value )
 {
     mod_handle  mod;
     char        *start;
@@ -109,7 +109,7 @@ OVL_EXTERN void GetModName( mod_handle *value )
     }
     Scan();
     ReqEOC();
-    *value = mod;
+    *(mod_handle *)value = mod;
 }
 
 static bool DlgDoScan( char *str, void *value, void (*rtn)(void*) )

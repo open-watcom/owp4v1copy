@@ -446,8 +446,8 @@ extern  char            *WndSetIDChars( a_window *, char * );
 extern  bool            WndIDChar( a_window *, char ch );
 extern  bool            WndKeyChar( char ch );
 
-extern bool             WndCursorRight( a_window *wnd );
-extern bool             WndCursorLeft( a_window *wnd );
+extern void             WndCursorRight( a_window *wnd );
+extern void             WndCursorLeft( a_window *wnd );
 extern bool             WndTabLeft( a_window *wnd, bool wrap );
 extern bool             WndTabRight( a_window *wnd, bool wrap );
 

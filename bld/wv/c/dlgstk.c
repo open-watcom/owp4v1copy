@@ -41,7 +41,7 @@
 extern void LastStackPos();
 extern void LastMachState();
 
-OVL_EXTERN bool StkOrHistoryEvent( gui_window * gui, gui_event gui_ev, bool *param )
+OVL_EXTERN bool StkOrHistoryEvent( gui_window * gui, gui_event gui_ev, void *param )
 {
     unsigned    id;
     int         *resp;

@@ -122,7 +122,7 @@ cflags_nec = -D_NEC_PC
 cflags_gui = -D__GUI__
 cflags_char = -D__CHAR__
 
-cflags = -bt=$(host_OS)-zq-d1-oxt-s-w3 $(cflags_$(all_machine)) $(cflags_$(display))
+cflags = -bt=$(host_OS)-zq-d1-oxt-s-w4-we $(cflags_$(all_machine)) $(cflags_$(display))
 !ifndef on_build_machine
 !ifndef nodebug
 !ifdef codeview
@@ -627,8 +627,8 @@ wvnt.res : $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
 wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
         set include=$(inc_dirs_sys);$(rcinclude);$(%include)
-        wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
-        wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
+        *wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
+        *wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
 
 !ifndef %use_os2tk_stuff
 

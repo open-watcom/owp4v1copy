@@ -205,9 +205,9 @@ OVL_EXTERN void NoModWalker( srch_window *srch )
 }
 
 
-OVL_EXTERN int FoundCompare( found_item const *a, found_item const *b )
+OVL_EXTERN int FoundCompare( const void *a, const void *b )
 {
-    return( ModCompare( &a->mod, &b->mod ) );
+    return( ModCompare( &((found_item const *)a)->mod, &((found_item const *)b)->mod ) );
 }
 
 static  void    SrchFreeFound( srch_window *srch )

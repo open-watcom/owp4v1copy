@@ -71,10 +71,10 @@ extern stack_entry      *ExprSP;
 #define EXPR_LEN        128
 
 extern bool DlgScanModName( char *str, void *value );
-extern bool DlgScanLong( char *str, long *value );
-extern bool DlgScanCodeAddr( char *str, address *value );
-extern bool DlgScanDataAddr( char *str, address *value );
-extern bool DlgScanGivenAddr( char *str, address *value );
+extern bool DlgScanLong( char *str, void *value );
+extern bool DlgScanCodeAddr( char *str, void *value );
+extern bool DlgScanDataAddr( char *str, void *value );
+extern bool DlgScanGivenAddr( char *str, void *value );
 extern bool DlgScanAny( char *str, void *value );
 extern bool DlgScanString( char *str, void *value );
 

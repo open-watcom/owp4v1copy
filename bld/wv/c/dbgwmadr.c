@@ -246,8 +246,9 @@ static int GetRegIdx( reg_window *reg, int row, int piece )
 
 
 DLGPICKTEXT RegValueName;
-static char *RegValueName( mad_modify_list *possible, int i )
+static char *RegValueName( void *_possible, int i )
 {
+    mad_modify_list    *possible = _possible;
     unsigned    max;
 
     if( possible[i].name == MSTR_NIL ) {

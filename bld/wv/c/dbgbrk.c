@@ -1471,9 +1471,11 @@ typedef struct tmp_break_struct
     char        *comment;
 } tmp_break_struct;
 
-static void BreakOnAddress( tmp_break_struct *s )
+static void BreakOnAddress( void *_s )
 /***********************************************/
 {
+    tmp_break_struct *s = _s;
+
     if( IS_NIL_ADDR( s->addr )
      || !BreakWrite( s->addr,
                     FindMADTypeHandle(MAS_MEMORY|MTK_INTEGER,s->size),
@@ -1554,8 +1556,9 @@ static  bool    HaveHitBP( brk *bp )
 }
 
 
-OVL_EXTERN      void    TestExpression( brk *bp )
+OVL_EXTERN      void    TestExpression( void *_bp )
 {
+    brk         *bp = _bp;
     char        *old;
     int         val;
 
@@ -1772,8 +1775,9 @@ typedef struct cue_first {
     bool        found;
 } cue_first;
 
-OVL_EXTERN walk_result FindCue( cue_handle *ch, cue_first *d )
+OVL_EXTERN walk_result FindCue( cue_handle *ch, void *_d )
 {
+    cue_first          *d = _d;
     HDLAssign( cue, d->dest, ch );
     d->found = TRUE;
     return( WR_STOP );

@@ -186,9 +186,9 @@ typedef unsigned_8 var_type; enum {
 extern type_display     *TypeDisplay;
 
 extern  bool            VarDeleteAScope(var_info *i,void*);
-extern  bool            VarUnMap(var_info *i, image_entry *);
+extern  bool            VarUnMap(var_info *i, void *);
 extern  bool            VarDeleteAllScopes(var_info *i,void*);
-extern  bool            VarReMap(var_info *i,image_entry*);
+extern  bool            VarReMap(var_info *i, void *);
 extern void             VarUnMapScopes( image_entry *image );
 extern void             VarReMapScopes( image_entry *image );
 

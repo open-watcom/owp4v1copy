@@ -656,10 +656,10 @@ extern char *DupStr( char *str )
     return( DupStrLen( str, strlen( str ) ) );
 }
 
-static walk_result RegWalkList( mad_reg_set_data const *data, mad_reg_set_data const **pdata )
+static walk_result RegWalkList( mad_reg_set_data const *data, void *pdata )
 {
 
-    *pdata = data;
+    *((mad_reg_set_data const **)pdata) = data;
     return( WR_STOP );
 }
 

@@ -79,7 +79,7 @@ extern bool             DlgAnyExpr(char *,char*,unsigned);
 extern void             WndVarNewWindow( char *);
 extern void             WndVarInspect( char *);
 extern void             DlgNewWithSym(char*title,char*buff,int len);
-extern void             BreakOnExprSP(char*);
+extern void             BreakOnExprSP(void*);
 extern unsigned         NewCurrRadix(unsigned int );
 extern void             FreezeInpStack();
 extern void             PopInpStack();
@@ -633,8 +633,9 @@ typedef struct {
 
 extern int              TargRow;
 static SYM_WALKER CheckOneField;
-static walk_result CheckOneField( sym_walk_info swi, sym_handle *sh, find_field_info *d )
+static walk_result CheckOneField( sym_walk_info swi, sym_handle *sh, void *_d )
 {
+    find_field_info *d = _d;
     switch( swi ) {
     case SWI_SYMBOL:
         if( d->expand == d->vfield ) {
@@ -658,17 +659,17 @@ static walk_result CheckOneField( sym_walk_info swi, sym_handle *sh, find_field_
 }
 
 SYM_WALKER DoPushFirstField;
-OVL_EXTERN walk_result DoPushFirstField( sym_walk_info swi, sym_handle *sh, bool *pdone )
+OVL_EXTERN walk_result DoPushFirstField( sym_walk_info swi, sym_handle *sh, void *pdone )
 {
     if( swi == SWI_SYMBOL ) {
         PushField( sh );
-        *pdone = TRUE;
+        *(bool *)pdone = TRUE;
         return( WR_STOP );
     }
     return( WR_CONTINUE );
 }
 
-static void     PushFirstField( type_handle *th )
+static void     PushFirstField( void *th )
 {
     bool        done;
 
@@ -683,8 +684,10 @@ typedef struct {
 } dot_named_field_info;
 
 SYM_WALKER DoDotNamedField;
-OVL_EXTERN walk_result DoDotNamedField( sym_walk_info swi, sym_handle *sh, dot_named_field_info *info )
+OVL_EXTERN walk_result DoDotNamedField( sym_walk_info swi, sym_handle *sh, void *_info )
 {
+    dot_named_field_info *info = _info;
+
     if( swi != SWI_SYMBOL ) return( WR_CONTINUE );
     SymName( sh, NULL, SN_SOURCE, TxtBuff, TXT_LEN );
     if( strcmp( TxtBuff, info->name ) != 0 ) return( WR_CONTINUE );
@@ -694,7 +697,7 @@ OVL_EXTERN walk_result DoDotNamedField( sym_walk_info swi, sym_handle *sh, dot_n
     return( WR_STOP );
 }
 
-static void     DotNamedField( type_handle *th, char *name )
+static void     DotNamedField( void *th, void *name )
 /***********************************************************/
 {
     dot_named_field_info        info;
@@ -868,12 +871,13 @@ typedef struct {
 } alloc_field_info;
 
 static SYM_WALKER AllocOneField;
-static walk_result AllocOneField( sym_walk_info swi, sym_handle *sh, alloc_field_info *d )
+static walk_result AllocOneField( sym_walk_info swi, sym_handle *sh, void *_d )
 {
     var_node            *new;
     int                 len;
     symbol_type         tag;
     DIPHDL( type, th );
+    alloc_field_info *d = _d;
 
     switch( swi ) {
     case SWI_SYMBOL:
@@ -1179,7 +1183,7 @@ var_node *VarNextVisibleSibling( var_info *i, var_node *v )
     }
 }
 
-static void     VarScanForward( var_node *v )
+static void     VarScanForward( void *_v )
 /*
     Scan forward through our data structure, evaluating the expressions
     as we go until we reach the desired row. This will often be the
@@ -1193,6 +1197,7 @@ static void     VarScanForward( var_node *v )
     var_node            *expand;
     type_display        *parent;
     DIPHDL( sym, field );
+    var_node            *v = _v;
 
     have_array_parms = FALSE;
     while( v != NULL ) {
@@ -2202,8 +2207,9 @@ typedef struct add_new_var_info {
 } add_new_var_info;
 
 static SYM_WALKER AddNewVar;
-static walk_result AddNewVar( sym_walk_info swi, sym_handle *sym, add_new_var_info *d )
+static walk_result AddNewVar( sym_walk_info swi, sym_handle *sym, void *_d )
 {
+    add_new_var_info    *d = _d;
     var_node            *new;
     sym_info            sinfo;
 
@@ -2332,7 +2338,7 @@ bool VarDeleteAScope( var_info *i, void *cookie )
 }
 
 
-bool VarUnMap( var_info *i, image_entry *image )
+bool VarUnMap( var_info *i, void *image )
 {
     scope_state *s, *next;
     mod_handle  mod;
@@ -2357,7 +2363,7 @@ bool VarUnMap( var_info *i, image_entry *image )
 }
 
 
-bool VarReMap( var_info *i, image_entry *image )
+bool VarReMap( var_info *i, void *image )
 {
     scope_state *s, *next;
     add_new_var_info    info;

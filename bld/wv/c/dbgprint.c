@@ -688,8 +688,9 @@ typedef struct {
 } print_fld;
 
 
-static walk_result PrintDlgField( sym_walk_info swi, sym_handle *member, print_fld *d )
+static walk_result PrintDlgField( sym_walk_info swi, sym_handle *member, void *_d )
 {
+    print_fld   *d = _d;
     char        *name;
     unsigned    len;
 
@@ -715,7 +716,7 @@ static walk_result PrintDlgField( sym_walk_info swi, sym_handle *member, print_f
     return( WR_CONTINUE );
 }
 
-static void PrintStruct()
+static void PrintStruct( void )
 {
     print_fld   d;
 
@@ -725,7 +726,7 @@ static void PrintStruct()
     PrtChar( '}' );
 }
 
-static void PrintArray()
+static void PrintArray( void )
 {
     array_info          ai;
     char                *ptr;

@@ -109,9 +109,9 @@ static gui_menu_struct MacMenu[] = {
 
 
 DLGPICKTEXT WndGetName;
-static char *WndGetName( char ***from, int i )
+static char *WndGetName( void *from, int i )
 {
-    return( *from[i] );
+    return( *((char ***)from)[i] );
 }
 
 #ifdef DEADCODE
@@ -539,9 +539,9 @@ static  bool    MacGetLine( a_window *wnd, int row, int piece,
 }
 
 
-static int MacCompare( wnd_macro **pa, wnd_macro **pb )
+static int MacCompare( void **pa, void **pb )
 {
-    return( (*pa)->key - (*pb)->key );
+    return( (*(wnd_macro **)pa)->key - (*(wnd_macro **)pb)->key );
 }
 
 static WNDREFRESH MacRefresh;

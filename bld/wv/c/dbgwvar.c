@@ -728,7 +728,7 @@ static  void    VarEndPaint( a_window *wnd, int row, int piece )
 }
 
 
-void VarSaveWndToScope( a_window *wnd )
+void VarSaveWndToScope( void *wnd )
 {
     var_window  *var = WndVar( wnd );
 
@@ -736,7 +736,7 @@ void VarSaveWndToScope( a_window *wnd )
     WndGetCurrent( wnd, &curr_row( var->i.s ), &curr_piece( var->i.s ) );
 }
 
-void VarRestoreWndFromScope( a_window *wnd )
+void VarRestoreWndFromScope( void *wnd )
 {
     var_window  *var = WndVar( wnd );
 
