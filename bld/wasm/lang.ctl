@@ -10,8 +10,8 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay h
-    wmake /h
+;    cdsay h
+;    wmake /h
     cd <PROJDIR>
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
