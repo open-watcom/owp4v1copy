@@ -34,7 +34,7 @@
 #include "uidef.h"
 #include "uiattrs.h"
 
-#if (defined(__386__)||defined(M_I86)) && !defined(_NEC_PC) && defined(_FMR_PC)
+#if (defined(__386__)||defined(M_I86)) && !defined(_NEC_PC) && !defined(_FMR_PC)
    #define PROGRAM_VGA
 #endif
 
