@@ -153,6 +153,12 @@ clflags_nov_386    = -l=netware
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linux
 
+!ifeq release 1
+clflags_dbg      = 
+!else
+clflags_dbg      = -d2
+!endif
+
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
 sys_rtdll       = 1
@@ -175,10 +181,7 @@ proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags
 cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
-clflags          = $(clflags_$(host_os)_$(host_cpu)) -fe=$@ -fm
-!ifneq release 1
-clflags         += -d2
-!endif
+clflags          = $(clflags_$(host_os)_$(host_cpu)) $(clflags_dbg) -fe=$^@ -fm
 
 aflags_all      =-w4
 !ifdef __LINUX__
