@@ -9,11 +9,14 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
 #=======================
-    cdsay <PROJDIR>/dlgprs/o
-    wmake -i -h
-    cdsay <PROJDIR>/gen
-    wmake -i -h
-    cd <PROJDIR>
+    # pmake priorities are used to build:
+    # 1) dlgprs/o
+    # 2) gen
+    # 3) everywhere else.
+    #
+    # gen is dependent on dlgprs/o
+    # the os_dos dlgprs/o and gen are dependent on windows.h and not selected.
+    # brg/* are independent of dlgprs/o and gen
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>
 
@@ -40,11 +43,6 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> clean ]
 #==================
-   cdsay <PROJDIR>/dlgprs/o
-   wmake -i -h clean
-   cdsay <PROJDIR>/gen
-   wmake -i -h clean
-   cd <PROJDIR>
    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
    cdsay <PROJDIR>
 

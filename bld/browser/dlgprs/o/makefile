@@ -1,3 +1,5 @@
+#pmake/20: build os_nt os_os2 os_osi os_win cpu_axp cpu_i86 cpu_386
+
 proj_name = dlgprs
 
 !ifndef dlgprs_autodepends

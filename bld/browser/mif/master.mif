@@ -86,6 +86,7 @@ rc_file_nt  = ../res/wbrw.rc
 rc_file_win = ../res/wbrw.rc
 rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
+additional_cleanup += ../res/*.res
 
 #linker
 LIBS_win    = $(gui_dir)/win/wini86/gui.lib
