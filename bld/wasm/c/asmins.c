@@ -189,6 +189,7 @@ static void seg_override( int seg_reg )
     int                 default_seg;
 #ifdef _WASM_
     struct asm_sym      *sym;
+    int                 assume_seg;
 
     switch( seg_reg ) {
         case T_SS:
@@ -210,25 +211,25 @@ static void seg_override( int seg_reg )
             /**/myassert( sym != NULL );
             switch( Code->prefix.seg ) {
                 case PREFIX_ES:
-                    default_seg = ASSUME_ES;
+                    assume_seg = ASSUME_ES;
                     break;
                 case PREFIX_CS:
-                    default_seg = ASSUME_CS;
+                    assume_seg = ASSUME_CS;
                     break;
                 case PREFIX_SS:
-                    default_seg = ASSUME_SS;
+                    assume_seg = ASSUME_SS;
                     break;
                 case PREFIX_DS:
-                    default_seg = ASSUME_DS;
+                    assume_seg = ASSUME_DS;
                     break;
                 case PREFIX_FS:
-                    default_seg = ASSUME_FS;
+                    assume_seg = ASSUME_FS;
                     break;
                 case PREFIX_GS:
-                    default_seg = ASSUME_GS;
+                    assume_seg = ASSUME_GS;
                     break;
             }
-            if( GetPrefixAssume( sym, default_seg ) == ASSUME_NOTHING ) {
+            if( GetPrefixAssume( sym, assume_seg ) == ASSUME_NOTHING ) {
                 AsmWarn( 3, CANNOT_ADDRESS_WITH_ASSUMED_REGISTER );
             }
         }
