@@ -33,7 +33,7 @@
 #include "cover.h"
 
 short PASCAL _Cover_DialogBoxIndirectParam( HANDLE inst, HANDLE htmp,
-                              HWND wnd, FARPROC p, DWORD param )
+                              HWND wnd, DLGPROC p, DWORD param )
 {
     return( DialogBoxIndirectParam( inst, htmp, wnd,
                 SetProc( p, GETPROC_CALLBACK ),  param ) );
