@@ -1483,6 +1483,7 @@ namespace std {
   {
     typename Allocator::pointer ptemp;
     typename Allocator::size_type stemp;
+    Allocator atemp;
 
     ptemp        = left.buffer;
     left.buffer  = right.buffer;
@@ -1495,6 +1496,10 @@ namespace std {
     stemp        = left.filled;
     left.filled  = right.filled;
     right.filled = stemp;
+
+    atemp        = left.mem;
+    left.mem     = right.mem;
+    right.mem    = atemp;
   }
 
 } // namespace std
