@@ -61,7 +61,7 @@
 
 #define SMALLEST_YEAR_VALUE ( __MONTHS + __DAYS + __MINUTES + __SECONDS )
 
-_WCRTLINK time_t __local_mktime( const struct tm *t, long *pdays, long *pseconds )
+time_t __local_mktime( const struct tm *t, long *pdays, long *pseconds )
 {
     int         month;
     int         year;
