@@ -79,19 +79,11 @@ typedef struct COMPUNIT_INFO {
     unsigned                    *abbrev_refs;   // abbrevs reference counter
 } compunit_info;
 
-#if 0
-typedef struct {
-} cache_info;
-#endif
-
 struct dr_dbg_info {
     struct dr_dbg_info *next;
     void *              file;   // task's file information.
     sect_info           sections[DR_DEBUG_NUM_SECTS];
     compunit_info       compunit;
-//  cache_info          cache;
-    unsigned            numabbrevs;
-    dr_handle           *abbrevs;   // variable length array.
     compunit_info       *last_ccu;
     unsigned_8          addr_size;
     unsigned_8          wat_version;// compatibility flag for non-standard data
