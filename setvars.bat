@@ -29,7 +29,7 @@ REM Change the default command prompt
 prompt $p$g
 
 REM Ensure COMSPEC points to CMD.EXE
-set COMSPEC=C:\WINNT\system32\CMD.EXE
+set COMSPEC=%SystemRoot%\system32\CMD.EXE
 REM Make the window bigger
 mode 80,50
 cls
