@@ -18,7 +18,7 @@ curr_dir_all=$+ $(%cwd) $-
         @cd $(curr_dir_all)
 
 $(commands) : .symbolic
-        !@wmake -h -f $(posix_dir)/src/$^@/makefile targos=$(targos) make_all=1
+        !@wmake -h targos=$(targos) make_all=1 -f $(posix_dir)/src/$^@/makefile
 !ifdef install
         @wstrip $^@.exe $(install)/$^@.exe
         @wtouch -f $^@.exe $(install)/$^@.exe
