@@ -68,18 +68,11 @@ mode_cflags = -oaxs -s -d1
 
 inc_dirs = $(wmake_dir)\h;$(watcom_dir)\h;$(orl_dir)\h;$(trmem_dir)
 
-extra_c_flags =
 !ifeq release 1
-extra_c_flags = -dNDEBUG
+extra_c_flags += -dNDEBUG
 !endif
 !ifdef cachestat
 extra_c_flags += -dCACHE_STATS
-!endif
-
-!ifeq host_OS os2
-!ifeq host_CPU 386
-extra_c_flags += -i$(watcom_dir)\os220_h
-!endif
 !endif
 
 !include wmk.mif                    #   get our objs macro
