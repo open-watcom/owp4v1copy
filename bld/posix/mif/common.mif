@@ -88,7 +88,7 @@ librarian       = wlib
 compiler        = $(comp286)
 env_variable    = wcc
 targos_cflags   = -m$(model)-bt=os2
-include_dirs    = $(lang_root)\h;$(watcom_dir)\os21x_h;$(watcom_h)
+include_dirs    = $(lang_root)\h;$(lang_root)\h\os21x;$(watcom_h)
 
 !else ifeq      targos  dos
 compiler        = $(comp286)
@@ -100,7 +100,7 @@ include_dirs    = $(lang_root)\h;$(watcom_h)
 compiler        = $(comp386)
 env_variable    = wcc386
 targos_cflags   = -mf-bt=os2
-include_dirs    = $(watcom_os220_h);$(lang_root)\h;$(watcom_h)
+include_dirs    = $(lang_root)\h\os2;$(lang_root)\h;$(watcom_h)
 
 !else ifeq      targos  pharlap
 compiler        = $(comp386)
