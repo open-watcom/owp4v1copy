@@ -11,7 +11,7 @@ notes on the estimated effort required to bring them to C99 conformance:
     assert.h    - C99 conforming
     complex.h   - Completely new; requires compiler changes (new types)
     ctype.h     - Needs review, no changes expected
-    errno.h     - No changes required
+    errno.h     - C99 conforming
     fenv.h      - Completely new; requires compiler changes (new #pragma)
     float.h     - Needs review, no significant changes expected
     inttypes.h  - Completely new; only several new functions added
