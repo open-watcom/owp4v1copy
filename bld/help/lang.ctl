@@ -10,14 +10,14 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay dos
-    wmake -h
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\help\dos\whelp.exe <relroot>\rel2\binw\whelp.exe
+    <CPCMD> <devdir>\help\dos386\whelp.exe <relroot>\rel2\binw\whelp.exe
+    <CPCMD> <devdir>\help\os2386\whelp.exe <relroot>\rel2\binp\whelp.exe
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d all -h clean

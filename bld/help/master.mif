@@ -1,0 +1,35 @@
+proj_name = whelp
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = $(help_dir)\h;$(uidir)\h;$(trmem_dir)
+
+.c: ..\c;$(trmem_dir)
+
+help_objs =       &
+    help.obj      &
+    vvscroll.obj  &
+    helpmem.obj   &
+    helpopen.obj  &
+    helpio.obj    &
+    helpscan.obj  &
+    dlg.obj       &
+    msgbox.obj    &
+    search.obj    &
+    dialcb.obj
+
+objs =  main.obj filelist.obj
+objs += $(help_objs)
+
+!ifdef whelp_trmem
+extra_c_flags += -dTRMEM
+objs +=  trmemcvr.obj trmem.obj
+!endif
+
+libs = $(uidir)\$(host_OS)\uilibf.lib
+extra_l_flags = op map l { $(libs) }
+
+$(proj_name).exe : $(objs) $(libs)
+        $(linker) option quiet $(lflags) name $^. file { $(objs) }

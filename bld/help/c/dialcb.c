@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  UI library dialog callback.
 *
 ****************************************************************************/
 
 
-//#include "wstd.h"
 #include "uidef.h"
 #include "stdui.h"
 #include "uidialog.h"

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WHELP character mode help browser mainline.
 *
 ****************************************************************************/
 
@@ -72,9 +71,9 @@ static void memFini( void ) {
 //    TRMemPrtList();
     TRMemClose();
     if( tell( memFHdl ) != 0 ) {
-        printf( "**************************\n" );
-        printf( "* A memory error ocurred *\n" );
-        printf( "**************************\n" );
+        printf( "***************************\n" );
+        printf( "* A memory error occurred *\n" );
+        printf( "***************************\n" );
     }
     close( memFHdl );
 #endif
@@ -122,7 +121,7 @@ static HelpSrchPathItem *checkFileName( char *name, char *buf ) {
 
 static void freeSrchList( void ) {
 
-    if( freeSrchList != NULL && searchList[0].info != FIRST_SRCH_PATH ) {
+    if( strcmp(searchList[0].info, FIRST_SRCH_PATH) ) {
         HelpMemFree( searchList[0].info );
     }
 }
