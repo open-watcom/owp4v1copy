@@ -882,7 +882,9 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         off = SUB_ADDR( fix->tgt_addr, fix->loc_addr );
     }
     fixsize = CalcFixupSize( fix->type );
-    off -= fixsize;
+    if ( !( fix->type & FIX_NOADJ ) ) {
+        off -= fixsize;
+    }
     if( fix->type == FIX_OFFSET_16 ) {
         temp = off + (fix->loc_addr.off + fixsize);
         if( temp < 0 || temp >= 0x10000 ) {

@@ -45,6 +45,8 @@ typedef enum {
     FIX_TARGET_SHIFT    = 8,            // contains frame_type
     FIX_TARGET_MASK     = 0x00000700,
 
+    FIX_NOADJ           = 0x00000800,   // flags no adjustment for FIX_REL
+
     FIX_NO_BASE         = 0x00001000,
     FIX_SIGNED          = 0x00002000,
     FIX_LOADER_RES      = 0x00004000,

@@ -95,6 +95,7 @@ static int isSelfReloc( ref_entry r_entry )
     case ORL_RELOC_TYPE_REL_HI_8:
     case ORL_RELOC_TYPE_REL_32_SEG:
     case ORL_RELOC_TYPE_REL_32:
+    case ORL_RELOC_TYPE_REL_32_NOADJ:
         return( 1 );
     }
     return( 0 );

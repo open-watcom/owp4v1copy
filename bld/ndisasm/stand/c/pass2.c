@@ -266,6 +266,11 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
                                  flags );
             }
             break;
+        case ORL_RELOC_TYPE_REL_32_NOADJ:
+            // this is a little kluge because Brian's ELF files seem to have
+            // -4 in the implicit addend for calls and such BBB May 09, 1997
+            nvalue += 4;
+            // fall through
         case ORL_RELOC_TYPE_REL_8:
         case ORL_RELOC_TYPE_REL_16_SEG:
         case ORL_RELOC_TYPE_REL_HI_8:
@@ -281,11 +286,6 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             //
             if( (*r_entry)->no_val == 0 ) {
                 nvalue -= ins_size;
-            }
-            if( GetMachineType() == ORL_MACHINE_TYPE_I386 && GetFormat() == ORL_ELF ) {
-                // this is a little kluge because Brian's ELF files seem to have
-                // -4 in the implicit addend for calls and such BBB May 09, 1997
-                nvalue += 4;
             }
             referenceString( *r_entry, sec_size, "", "", "", buff, flags );
             break;

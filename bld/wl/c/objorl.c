@@ -715,6 +715,9 @@ static orl_return DoReloc( orl_reloc *reloc )
     case ORL_RELOC_TYPE_REL_32:
         type = FIX_OFFSET_32 | FIX_REL;
         break;
+    case ORL_RELOC_TYPE_REL_32_NOADJ:
+        type = FIX_OFFSET_32 | FIX_REL | FIX_NOADJ;
+        break;
     case ORL_RELOC_TYPE_SEGMENT:
         type = FIX_BASE;
         break;
