@@ -11,7 +11,7 @@ goto extra_done
 :not_nt
 rem assume we want to add i86 if not Windows_NT
 :add_i86
-if [%plustest_i86] == [no] goto extra_done
+if [%plustest_i86%] == [no] goto extra_done
 set extra_arch=i86
 :extra_done
 if exist local.cmd call local.cmd
@@ -127,7 +127,7 @@ cd ..
 cd yacl
 call testrun.cmd
 cd ..
-if [%plustest_i86] == [no] goto skip_i86_specific
+if [%plustest_i86%] == [no] goto skip_i86_specific
 cd wclass
 call testrun.cmd
 cd ..

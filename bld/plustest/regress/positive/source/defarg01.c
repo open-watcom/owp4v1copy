@@ -1,6 +1,6 @@
 #include "fail.h"
 
-#if __WATCOM_REVISION >= 8
+#if __WATCOM_REVISION__ >= 8
 struct S {
     int & foo( int & i1 = j, int i2 = fn(), int i3= 4 );
     int goo( int & i1 = k, int i2 = fn(), int i3= 4 );
@@ -12,6 +12,9 @@ struct S {
     int loo( S  s = 1 );
     int moo( S const & s = 1 ); 
 };
+
+int m = 4;
+int n = 2;
 
 int & S::j = m;
 int S::k = n;

@@ -1,6 +1,6 @@
 #include "fail.h"
 
-#if __WATCOM_REVISION >= 7
+#if __WATCOM_REVISION__ >= 7
 #define INLINE inline
 #else
 #define INLINE
@@ -41,7 +41,7 @@ int inline uses_burst( int a, int b ) {
 
 int inline my_xor( short a, short b ) {
     short r;
-#if __WATCOM_REVISION >= 8
+#if __WATCOM_REVISION__ >= 8
     __asm {
 	mov ax,word ptr a
 	xor ax,word ptr b
