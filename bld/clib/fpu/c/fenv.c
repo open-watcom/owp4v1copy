@@ -37,7 +37,7 @@
 
 #ifdef __386__
 _WCRTLINK const fenv_t __fenv_h_default_environment = {
-    0x037f,   /*CW*/
+    0x127f,   /*CW*/
     0,
     0,        /*SW*/
     0,
@@ -47,7 +47,7 @@ _WCRTLINK const fenv_t __fenv_h_default_environment = {
 };
 #else
 _WCRTLINK const fenv_t __fenv_h_default_environment = {
-    0x037f,   /*CW*/
+    0x127f,   /*CW*/
     0,        /*SW*/
     0xffff,   /*TAG*/
     0,0,0,0,
@@ -144,7 +144,7 @@ _WCRTLINK void fesetexceptflag(const fexcept_t *flagp, int excepts)
 
     __asm fnstenv env;
     env.status_word &= ~FE_ALL_EXCEPT;
-    env.status_word |= excepts;
+    env.status_word |= excepts & *flagp & FE_ALL_EXCEPT;
     __asm fldenv env;
 }
 
@@ -211,7 +211,9 @@ in the object pointed to by envp.
 */
 _WCRTLINK void fegetenv(fenv_t *envp)
 {
-    __asm fnstenv envp;
+    fenv_t env;
+    __asm fnstenv env;
+    *envp = env;
 }
 
 /*
@@ -225,31 +227,36 @@ was successfully installed.
 _WCRTLINK int feholdexcept(fenv_t *envp)
 {
     unsigned short status;
+    fenv_t env;
 
-    __asm fnstenv envp;
-    status = envp->control_word | FE_ALL_EXCEPT;
-    __asm fldcw [status];    
+    __asm fnstenv env;
+    status = env.control_word | FE_ALL_EXCEPT;
+    __asm fldcw [status];
+    *envp = env;
     return 0;
 }
 
 /*
-The fesetenv function establishes the floating-point environment represented by the
-object pointed to by envp. The argument envp shall point to an object set by a call to
-fegetenv or feholdexcept, or equal a floating-point environment macro. Note that
-fesetenv merely installs the state of the floating-point status flags represented through
-its argument, and does not raise these floating-point exceptions.
+The fesetenv function establishes the floating-point environment represented
+by the object pointed to by envp. The argument envp shall point to an object
+set by a call to fegetenv or feholdexcept, or equal a floating-point
+environment macro. Note that fesetenv merely installs the state of the
+floating-point status flags represented through its argument, and does not
+raise these floating-point exceptions.
 */
 _WCRTLINK void fesetenv(const fenv_t *envp)
 {
-    __asm fldenv envp
+    fenv_t env;
+    env = *envp;
+    __asm fldenv env
 }
 
 /*
-The feupdateenv function saves the currently raised floating-point exceptions in its
-automatic storage, installs the floating-point environment represented by the object
-pointed to by envp, and then raises the saved floating-point exceptions. The argument
-envp shall point to an object set by a call to feholdexcept or fegetenv, or equal a
-floating-point environment macro.
+The feupdateenv function saves the currently raised floating-point exceptions
+in its automatic storage, installs the floating-point environment represented
+by the object pointed to by envp, and then raises the saved floating-point
+exceptions. The argument envp shall point to an object set by a call to
+feholdexcept or fegetenv, or equal a floating-point environment macro.
 */
 _WCRTLINK void feupdateenv(const fenv_t *envp)
 {
