@@ -72,10 +72,10 @@ cdsay .
     <CPCMD> os2i86/wcci8601.int <relroot>/rel2/binp/dll/wcci8601.int
 
 #linux stuff
-    <CPCMD> linux386/wcc386c.elf <relroot>/rel2/binl/wcc386.
+    <CPCMD> linux386/wcc386c.elf <relroot>/rel2/binl/wcc386
     <CPCMD> linux386/wcc386c.sym <relroot>/rel2/binl/wcc386.sym
 #    <CPCMD> linux386/wcc38601.int <relroot>/rel2/binl/wcc38601.int
-    <CPCMD> linuxi86/wcci86c.elf <relroot>/rel2/binl/wcc.
+    <CPCMD> linuxi86/wcci86c.elf <relroot>/rel2/binl/wcc
     <CPCMD> linuxi86/wcci86c.sym <relroot>/rel2/binl/wcc.sym
 #    <CPCMD> linuxi86/wcci8601.int <relroot>/rel2/binl/wcci8601.int
 
