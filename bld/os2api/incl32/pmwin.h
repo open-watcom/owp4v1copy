@@ -1594,6 +1594,7 @@ LONG   APIENTRY WinGetPhysKeyState(HWND,LONG);
 HWND   APIENTRY WinQueryCapture(HWND);
 HWND   APIENTRY WinQueryFocus(HWND);
 BOOL   APIENTRY WinSetCapture(HWND,HWND);
+BOOL   APIENTRY WinCheckInput(HAB hab);
 
 #endif
 
