@@ -43,6 +43,7 @@
 inspick( opnd_pr,       "opnd",         0X00000066,     0x000000ff,     X86PrefixOpnd )
 inspick( addr_pr,       "addr",         0X00000067,     0x000000ff,     X86PrefixAddr )
 inspick( repe_pr,       "repe",         0x000000f3,     0x000000ff,     X86PrefixRepe )
+inspick( rep_pr,        "rep",          0x00000000,     0x00000000,     NULL )
 inspick( repne_pr,      "repne",        0x000000f2,     0x000000ff,     X86PrefixRepne )
 inspick( cs_pr,         "cs",           0x0000002e,     0x000000ff,     X86PrefixCS )
 inspick( ss_pr,         "ss",           0x00000036,     0x000000ff,     X86PrefixSS )

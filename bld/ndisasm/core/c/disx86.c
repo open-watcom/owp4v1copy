@@ -3698,7 +3698,15 @@ static unsigned X86InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         *p++ = ' ';
     }
     if( ins->flags & DIF_X86_REPE ) {
-        p += DisGetString( DisInstructionTable[DI_X86_repe_pr].name, p, 0 );
+        switch( ins->type ) {
+        case DI_X86_cmps:
+        case DI_X86_scas:
+            p += DisGetString( DisInstructionTable[DI_X86_repe_pr].name, p, 0 );
+            break;
+        default:
+            p += DisGetString( DisInstructionTable[DI_X86_rep_pr].name, p, 0 );
+            break;
+        }
         if( flags & DFF_X86_UNIX ) *p++ = ';';
         *p++ = ' ';
     }
