@@ -51,8 +51,8 @@ typedef struct expr_list {
     int             label;          // Position of token holding the label
     int             override;       // Position of token holding the override label
                                     //   or register
-    int             instr;          // Position of token holding the instruction for
-                                    //   the label
+    int             instr;          // instruction token for label
+                                    //
     unsigned        indirect : 1;   // Whether inside [] or not
     unsigned        explicit : 1;   // Whether expression type explicitly given
     unsigned        empty : 1;
