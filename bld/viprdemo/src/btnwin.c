@@ -160,4 +160,5 @@ void draw_button( int button_id, DRAWITEMSTRUCT FAR * draw )
     DeleteObject( blackpen );
     DeleteObject( brightpen );
     DeleteObject( shadowpen );
+    DeleteObject( facepen );
 }
