@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Extended DOS trap file main module.
 *
 ****************************************************************************/
 
@@ -359,9 +358,10 @@ unsigned ReqProg_load()
     err = RemoteLink( LinkParm, 0 );
     if( err != NULL ) {
         _DBG_Writeln( "Can't RemoteLink" );
-        TinyWrite( 2, LoadError, strlen( LoadError ) );
+        TinyWrite( 2, err, strlen( err ) );
         LoadError = err;
         ret->err = 1;
+        len = 0;
     } else {
         while( *src != '\0' ) ++src;
         if( rc == 0 ) {
