@@ -58,7 +58,7 @@ void _WCI86FAR _L2getimage( short x1, short y1, short x2, short y2,
    in physical coordinates, into a buffer pointed to by image.  */
 
 {
-    _L1GetPic( x1, y1, x2, y2, image );
+    _L1GetPic( x1, y1, x2, y2, (struct picture _WCI86HUGE *)image );
 }
 
 
