@@ -39,7 +39,13 @@
 
 ;** Set up values for cMacros
 
-        INCLUDE TOOLHELP.INC
+;** TOOLHELP.INC is not included in OpenWatcom
+;** but we need only the declaration of NO_UAE_BOX
+;**        INCLUDE TOOLHELP.INC
+
+;** TerminateApp() flag values (taken from TOOLHELP.INC)
+NO_UAE_BOX      EQU     1
+
 
 extrn _FaultHandler:FAR
 extrn TerminateApp:FAR
@@ -164,3 +170,4 @@ IntHandler ENDP
 
 _TEXT ends
         end
+
