@@ -3,7 +3,7 @@ os2_objs = &
     memlimit.obj &
     envvar.obj &
     onexit.obj &
-    os220.obj &
+    pmstubs.obj &
     doblips.obj &
     memmgr.obj &
     stack.obj
