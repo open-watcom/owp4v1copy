@@ -105,7 +105,7 @@ This message is issued for a function return value or an assignment where
 both types are pointers, but they are pointers to different kinds of objects.
 :MSGSYM. ERR_PARM_COUNT_WARNING
 :MSGTXT. Parameter count does not agree with previous definition (warning)
-:MSGJTXT. パラメーター数が、前の定義と一致しません
+:MSGJTXT. パラメーター数が，前の定義と一致しません
 :WARNING. 1
 .np
 You have either not enough parameters or too many parameters in a call
@@ -207,7 +207,7 @@ You are missing the semicolon ";" on the field definition just before
 the right curly brace "}".
 :MSGSYM. ERR_ADDR_OF_ARRAY
 :MSGTXT. &array may not produce intended result
-:MSGJTXT. 配列名への&演算子の使用、意図された結果を生じないかもしれません
+:MSGJTXT. 配列名への&演算子の使用，意図された結果を生じないかもしれません
 :WARNING. 1
 .np
 The type of the expression "&array" is different from the type of the
@@ -239,14 +239,14 @@ Therefore, the data pointed to by the return value may be destroyed
 before your program has a chance to reference it or make a copy of it.
 :MSGSYM. ERR_PASTE_TOKEN_DISCARDED
 :MSGTXT. '##' tokens did not generate a single token (rest discarded)
-:MSGJTXT. '##'トークンが、単一トークンを生成しませんでした（残りは捨てられました）
+:MSGJTXT. '##'トークンが，単一トークンを生成しませんでした（残りは捨てられました）
 :WARNING. 1
 .np
 When two tokens are pasted together using ##, they must form a string
 that can be parsed as a single token.
 :MSGSYM. ERR_UNREFERENCED_LABEL
 :MSGTXT. Label '%s' has been defined but not referenced
-:MSGJTXT. ラベル'%s'が定義されましたが、参照されませんでした
+:MSGJTXT. ラベル'%s'が定義されましたが，参照されませんでした
 :WARNING. 1
 .np
 You have defined a label that is not referenced in a
@@ -266,7 +266,7 @@ If not, then the label can be deleted.
 This warning may indicate a potential problem when the program is overlayed.
 :MSGSYM. ERR_LVALUE_CAST
 :MSGTXT. lvalue cast is not standard C
-:MSGJTXT. 左辺値のキャストは、標準のCではありません
+:MSGJTXT. 左辺値のキャストは，標準のCではありません
 :WARNING. 1
 .np
 A cast operation does not yield an lvalue in ANSI standard C.
@@ -276,7 +276,7 @@ cast operation, and the cast operation does not cause any conversions, the
 compiler treats the result as an lvalue and issues this warning.
 :MSGSYM. ERR_JUNK_FOLLOWS_DIRECTIVE
 :MSGTXT. Text following pre-processor directives is not standard C
-:MSGJTXT. プリプロセッサ擬似命令に続いているテキストが、標準のCではありません
+:MSGJTXT. プリプロセッサ擬似命令に続いているテキストが，標準のCではありません
 :WARNING. 1
 .np
 Arbitrary text is not allowed following a pre-processor directive.
@@ -332,7 +332,7 @@ check for recursive include statements.
 A pointer is being compared using == or != to a non-zero constant.
 :MSGSYM. ERR_EXPANDED_TRIGRAPH
 :MSGTXT. trigraph found in string
-:MSGJTXT. 問題となる三重文字があります
+:MSGJTXT. 問題となる三重文字（トライグラフ）があります
 :WARNING. 1
 .np
 Trigraph expansion occurs inside a  string literal.
@@ -372,14 +372,13 @@ solve a preprocessing directive problem.
 :WARNING. 1
 .np
 This warning indicates that you may be converting a argument
-of one size to another, different size. For instance, you maybe 
-losing precision by passing a long argument to a function that 
+of one size to another, different size. For instance, you may be
+losing precision by passing a long argument to a function that
 takes a short.
-This warning is initially disabled. It must be specifically enabled with
+This warning is initially disabled. It must be explicitly enabled with
 .us #pragma enable_message(130).
 It can be disabled later by using
 .us #pragma disable_message(130).
-
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
@@ -389,7 +388,7 @@ It can be disabled later by using
 :cmt -------------------------------------------------------------------
 :MSGSYM. ERR_SYM_NOT_ASSIGNED
 :MSGTXT. '%s' has been referenced but never assigned a value
-:MSGJTXT. '%s'は参照されましたが、値が代入されていません
+:MSGJTXT. '%s'は参照されましたが，値が代入されていません
 :WARNING. 2
 .np
 You have used the variable in an expression without previously assigning
@@ -403,7 +402,7 @@ The statement will never be executed, because there is no path through
 the program that causes control to reach this statement.
 :MSGSYM. ERR_SYM_NOT_REFERENCED
 :MSGTXT. Symbol '%s' has been defined, but not referenced
-:MSGJTXT. シンボル'%s'が定義されましたが、参照されませんでした
+:MSGJTXT. シンボル'%s'が定義されましたが，参照されませんでした
 :WARNING. 2
 .np
 There are no references to the declared variable.
@@ -414,7 +413,7 @@ You can prevent the message from being issued through use of
 .us #pragma off(unreferenced).
 :MSGSYM. ERR_UNDECLARED_PP_SYM
 :MSGTXT. Preprocessing symbol '%s' has not been declared
-:MSGJTXT. 前処理シンボル'%s'が、宣言されませんでした
+:MSGJTXT. 前処理シンボル'%s'が，宣言されませんでした
 :WARNING. 2
 .np
 The symbol has been used in a preprocessor expression.
@@ -434,7 +433,7 @@ for the symbol.
 :cmt -------------------------------------------------------------------
 :MSGSYM. ERR_NESTED_COMMENT
 :MSGTXT. Nested comment found in comment started on line %u
-:MSGJTXT. %u行から始まるコメントの中に、ネストにされたコメントがあります
+:MSGJTXT. %u行から始まるコメントの中に，ネストにされたコメントがあります
 :WARNING. 3
 .np
 While scanning a comment for its end, the compiler detected
@@ -461,7 +460,7 @@ You have an expression that would have generated the warning
 a side-effect, such as ++, &minus.&minus., or a function call.
 :MSGSYM. ERR_PARM_NOT_REFERENCED
 :MSGTXT. Parameter '%s' has been defined, but not referenced
-:MSGJTXT. パラメータ'%s'は定義されましたが、参照されませんでした
+:MSGJTXT. パラメータ'%s'は定義されましたが，参照されませんでした
 :WARNING. 3
 .np
 There are no references to the declared parameter.
@@ -549,7 +548,7 @@ and the
 label.
 :MSGSYM. ERR_MISPLACED_RIGHT_BRACE
 :MSGTXT. Misplaced '}' or missing earlier '{'
-:MSGJTXT. 間違った位置に'}'があるか、もっと前にあるべき'{'がありません
+:MSGJTXT. 間違った位置に'}'があるか，もっと前にあるべき'{'がありません
 .np
 An extra
 .id }
@@ -579,7 +578,7 @@ preprocessing group and follow all
 directives if present.
 :MSGSYM. ERR_MISPLACED_ENDIF
 :MSGTXT. Misplaced #endif directive
-:MSGJTXT. #endif擬似命令の位置が間違っています"
+:MSGJTXT. #endif擬似命令の位置が間違っています
 .np
 A
 preprocessing directive has been found without a matching
@@ -591,7 +590,7 @@ or you are missing an
 directive earlier in the file.
 :MSGSYM. ERR_ONLY_1_DEFAULT
 :MSGTXT. Only 1 DEFAULT per switch allowed
-:MSGJTXT. 1つのswitch文には、1つのDEFAULTだけが認められます
+:MSGJTXT. 1つのswitch文には1つのDEFAULTだけが認められます
 .np
 You cannot have more than one
 .kw default
@@ -600,7 +599,7 @@ label in a
 statement.
 :MSGSYM. ERR_EXPECTING_BUT_FOUND
 :MSGTXT. Expecting '%s' but found '%s'
-:MSGJTXT. '%s'があるはずですが、'%s'がありました
+:MSGJTXT. '%s'があるはずですが，'%s'がありました
 .np
 A syntax error has been detected.
 The tokens displayed in the message should help you to determine the problem.
@@ -612,7 +611,7 @@ For pointer subtraction, both pointers must point to the same type.
 For other operators, both expressions must be assignment compatible.
 :MSGSYM. ERR_UNDECLARED_SYM
 :MSGTXT. Symbol '%s' has not been declared
-:MSGJTXT. シンボル'%s'が、宣言されませんでした
+:MSGJTXT. シンボル'%s'が宣言されませんでした
 .np
 The compiler has found a symbol which has not been previously declared.
 The symbol may be spelled differently than the declaration, or you may
@@ -621,7 +620,7 @@ need to
 a header file that contains the declaration.
 :MSGSYM. ERR_NOT_A_FUNCTION
 :MSGTXT. Expression is not a function
-:MSGJTXT. 式が、関数ではありません
+:MSGJTXT. 式が関数ではありません
 .np
 The compiler has found an expression that looks like a function call, but
 it is not defined as a function.
@@ -641,7 +640,7 @@ The operand on the left side of an "=" sign must be a variable or memory
 location which can have a value assigned to it.
 :MSGSYM. ERR_SYM_ALREADY_DEFINED_AS_VAR
 :MSGTXT. '%s' is already defined as a variable
-:MSGJTXT. '%s'が、すでに変数として定義されています
+:MSGJTXT. '%s'は既に変数として定義されています
 .np
 You are trying to declare a function with the same name as a previously
 declared variable.
@@ -677,7 +676,7 @@ and
 tag names must be unique.
 :MSGSYM. ERR_INVALID_DIMENSION
 :MSGTXT. Dimension cannot be 0 or negative
-:MSGJTXT. 次元が0または負であることができません
+:MSGJTXT. 次元が0または負であることはできません
 .np
 The dimension of an array must be positive and non-zero.
 :MSGSYM. ERR_DIMENSION_REQUIRED
@@ -688,27 +687,27 @@ All dimensions of a multiple dimension array must be specified.
 The only exception is the first dimension which can declared as "[]".
 :MSGSYM. ERR_MISSING_DATA_TYPE
 :MSGTXT. Missing or misspelled data type near '%s'
-:MSGJTXT. '%s'の近くのデータ型がないか、つづりが間違ってています
+:MSGJTXT. '%s'の近くのデータ型がないか，つづりが間違ってています
 .np
 The compiler has found an identifier that is not a predefined type or the
 name of a "typedef".
 Check the identifier for a spelling mistake.
 :MSGSYM. ERR_INVALID_STG_CLASS_FOR_PARM
 :MSGTXT. Storage class of parameter must be register or unspecified
-:MSGJTXT. パラメーターの記憶クラスは、レジスタか無指定でなければなりません
+:MSGJTXT. パラメーターの記憶クラスは，レジスタか無指定でなければなりません
 .np
 The only storage class allowed for a parameter declaration is
 .kw register.
 :MSGSYM. ERR_SYM_NOT_IN_PARM_LIST
 :MSGTXT. Declared symbol '%s' is not in parameter list
-:MSGJTXT. 宣言されたシンボル'%s'が、パラメーターリストにありません
+:MSGJTXT. 宣言されたシンボル'%s'はパラメーターリストにありません
 .np
 Make sure that all the identifiers in the parameter list match those
 provided in the declarations between the start of the function and the
 opening brace "{".
 :MSGSYM. ERR_PARM_ALREADY_DECLARED
 :MSGTXT. Parameter '%s' already declared
-:MSGJTXT. パラメーター'%s'が、すでに宣言されています
+:MSGJTXT. パラメーター'%s'は既に宣言されています
 .np
 A declaration for the specified parameter has already been processed.
 :MSGSYM. ERR_INVALID_DECLARATOR
@@ -726,7 +725,7 @@ or
 .kw extern.
 :MSGSYM. ERR_VAR_CANT_BE_VOID
 :MSGTXT. Variable '%s' cannot be void
-:MSGJTXT. 変数'%s'が、void型であることはできません
+:MSGJTXT. 変数'%s'はvoid型であることはできません
 .np
 You cannot declare a
 .kw void
@@ -757,7 +756,7 @@ or
 .kw union.
 :MSGSYM. ERR_MUST_BE_STRUCT_OR_UNION
 :MSGTXT. Expression for '.' must be a 'structure' or 'union'
-:MSGJTXT. .に対する式は、'構造体'か'共用体'でなければなりません
+:MSGJTXT. .に対する式は，'構造体'か'共用体'でなければなりません
 .np
 The compiler has encountered the pattern "expression" "." "field_name"
 where the expression is not a
@@ -767,7 +766,7 @@ or
 type.
 :MSGSYM. ERR_MUST_BE_PTR_TO_STRUCT_OR_UNION
 :MSGTXT. Expression for '->' must be 'pointer to struct or union'
-:MSGJTXT. '->'に対する式は、'structかunionへのポインタ'でなければなりません
+:MSGJTXT. '->'に対する式は，'structかunionへのポインタ'でなければなりません
 .np
 The compiler has encountered the pattern "expression" "->" "field_name"
 where the expression is not a pointer to
@@ -777,12 +776,12 @@ or
 type.
 :MSGSYM. ERR_SYM_ALREADY_DEFINED
 :MSGTXT. Symbol '%s' already defined
-:MSGJTXT. シンボル'%s'がすでに定義されています
+:MSGJTXT. シンボル'%s'は既に定義されています
 .np
 The specified symbol has already been defined.
 :MSGSYM. ERR_FUNCTION_NOT_DEFINED
 :MSGTXT. static function '%s' has not been defined
-:MSGJTXT. スタティック関数'%s'が、定義されませんでした
+:MSGJTXT. スタティック関数'%s'が定義されていません
 .np
 A prototype has been found for a
 .kw static
@@ -791,14 +790,14 @@ function, but a definition for the
 function has not been found in the file.
 :MSGSYM. ERR_RIGHT_OPERAND_IS_A_POINTER
 :MSGTXT. Right operand of '%s' is a pointer
-:MSGJTXT. '%s'の右オペランドが、ポインタです
+:MSGJTXT. '%s'の右オペランドがポインタです
 .np
 The right operand of "+=" and "&minus.=" cannot be a pointer.
 The right operand of "&minus." cannot be a pointer unless the left
 operand is also a pointer.
 :MSGSYM. ERR_MUST_BE_SCALAR_TYPE
 :MSGTXT. Type cast must be a scalar type
-:MSGJTXT. 型キャストは、スカラー型でなければなりません
+:MSGJTXT. 型キャストは，スカラー型でなければなりません
 .np
 You cannot type cast an expression to be a
 .kw struct,
@@ -806,7 +805,7 @@ You cannot type cast an expression to be a
 array or function.
 :MSGSYM. ERR_EXPECTING_LABEL
 :MSGTXT. Expecting label for goto statement
-:MSGJTXT. goto文に対するラベルがあるはずです
+:MSGJTXT. goto文に対するラベルがあるべきです
 .np
 The
 .kw goto
@@ -830,7 +829,7 @@ The maximum field width allowed is 16 bits.
 A bit field must be at least one bit in size.
 :MSGSYM. ERR_WIDTH_NEGATIVE
 :MSGTXT. Field width must be positive
-:MSGJTXT. フィールドの幅は、正の数でなければなりません
+:MSGJTXT. フィールドの幅は正の数でなければなりません
 .np
 You cannot have a negative field width.
 :MSGSYM. ERR_INVALID_TYPE_FOR_FIELD
@@ -869,12 +868,12 @@ The compiler did not find
 to mark the end of a comment.
 :MSGSYM. ERR_MUST_BE_MACRO_PARM
 :MSGTXT. Argument for # must be a macro parm
-:MSGJTXT. #への引数は、マクロ・パラメータでなければなりません
+:MSGJTXT. #への引数は，マクロ・パラメータでなければなりません
 .np
 The argument for the stringize operator "#" must be a macro parameter.
 :MSGSYM. ERR_UNKNOWN_DIRECTIVE
 :MSGTXT. Unknown preprocessing directive '#%s'
-:MSGJTXT. 前処理擬似命令'#%s'の意味が分かりません
+:MSGJTXT. 前処理擬似命令'#%s'の意味が不明です
 .np
 An unrecognized preprocessing directive has been encountered.
 Check for correct spelling.
@@ -977,7 +976,7 @@ and
 .kw double.
 :MSGSYM. ERR_EXPECTING_DECL_BUT_FOUND
 :MSGTXT. Expecting data or function declaration, but found '%s'
-:MSGJTXT. データまたは関数の宣言があるはずですが、'%s'があります
+:MSGJTXT. データまたは関数の宣言があるはずですが，'%s'があります
 .np
 The compiler is expecting the start of a data or function declaration.
 If you are only part way through a function, then you have too many
@@ -1029,7 +1028,7 @@ to
 .kw auto.
 :MSGSYM. ERR_VAR_ALREADY_INITIALIZED
 :MSGTXT. Variable '%s' already initialized
-:MSGJTXT. 変数'%s'は、すでに初期化されました
+:MSGJTXT. 変数'%s'は既に初期化されました
 .np
 The specified variable has already been statically initialized.
 :MSGSYM. ERR_MISSING_QUOTE
@@ -1039,13 +1038,13 @@ The specified variable has already been statically initialized.
 The compiler did not find a second double quote to end the string literal.
 :MSGSYM. ERR_NEED_BRACES
 :MSGTXT. Data for aggregate type must be enclosed in curly braces
-:MSGJTXT. 集合体型のデータは、波括弧に入れられなければなりません
+:MSGJTXT. 集合体型のデータは，波括弧に入れられなければなりません
 .np
 When an array, struct or union is statically initialized, the data
 must be enclosed in curly braces {}.
 :MSGSYM. ERR_PARM_TYPE_MISMATCH
 :MSGTXT. Type of parameter %d does not agree with previous definition
-:MSGJTXT. パラメータ%dの型が、前の定義と一致しません
+:MSGJTXT. パラメータ%dの型が前の定義と一致しません
 .np
 The type of the specified parameter is incompatible with the prototype
 for that function.
@@ -1077,7 +1076,7 @@ This will assure that the first instance of structure
 is defined at the proper outer scope.
 :MSGSYM. ERR_STG_CLASS_DISAGREES
 :MSGTXT. Storage class disagrees with previous definition of '%s'
-:MSGJTXT. 記憶クラスが、'%s'の前の定義と一致しません
+:MSGJTXT. 記憶クラスが'%s'の前の定義と一致しません
 .np
 The previous definition of the specified variable has a storage class of
 .kw static.
@@ -1121,7 +1120,7 @@ end the current function.
 The type of a switch expression must be integral.
 :MSGSYM. ERR_EXPR_MUST_BE_INTEGRAL
 :MSGTXT. Expression must be integral
-:MSGJTXT. 式が、整数型でなければなりません
+:MSGJTXT. 式は整数型でなければなりません
 .np
 An integral expression is required.
 :MSGSYM. ERR_EXPR_MUST_BE_ARITHMETIC
@@ -1143,7 +1142,7 @@ The C language definition requires a statement following a label.
 You can use a null statement which consists of just a semicolon (";").
 :MSGSYM. ERR_STMT_REQUIRED_AFTER_DO
 :MSGTXT. Statement required after 'do'
-:MSGJTXT. 'do'文の後には文が必要です
+:MSGJTXT. 'do'の後には文が必要です
 .np
 A statement is required between the
 .kw do
@@ -1168,7 +1167,7 @@ label.
 You can use a null statement which consists of just a semicolon (";").
 :MSGSYM. ERR_EXPR_TOO_COMPLICATED
 :MSGTXT. Expression too complicated, split it up and try again
-:MSGJTXT. 式があまりに複雑ですので、分割して再度試してください
+:MSGJTXT. 式があまりに複雑ですので，分割して再度試してください
 .np
 The expression contains too many levels of nested parentheses.
 Divide the expression up into two or more sub-expressions.
@@ -1184,7 +1183,7 @@ or
 preprocessing directive.
 :MSGSYM. ERR_INVALID_MACRO_DEFN
 :MSGTXT. Invalid macro definition, missing )
-:MSGJTXT. 不適切なマクロ定義です、）がありません
+:MSGJTXT. 不適切なマクロ定義です，）がありません
 .np
 The right parenthesis ")" is required for a function-like macro definition.
 :MSGSYM. ERR_INCOMPLETE_MACRO
@@ -1261,7 +1260,7 @@ value specified to be consistent with the other
 statement in the function.
 :MSGSYM. ERR_MISSING_QUESTION_OR_MISPLACED_COLON
 :MSGTXT. Missing ? or misplaced :
-:MSGJTXT. ?がないか、:の位置が間違っています
+:MSGJTXT. ?がないか，:の位置が間違っています
 .np
 The compiler has detected a syntax error related to the "?" and ":"
 operators.
@@ -1279,7 +1278,7 @@ is limited to 64K so that the compiler
 can represent the offset of a member in a 16-bit register.
 :MSGSYM. ERR_STMT_MUST_BE_INSIDE_FUNCTION
 :MSGTXT. Statement must be inside function. Probable cause: missing {
-:MSGJTXT. 文は、関数の内部でなければなりません。考えられる原因：{がありません
+:MSGJTXT. 文は関数の内部でなければなりません。考えられる原因：{がありません
 .np
 The compiler has detected a statement such as
 .kw for,
@@ -1290,7 +1289,7 @@ You either have too many closing braces "}" or you are missing an
 opening brace "{" earlier in the function.
 :MSGSYM. ERR_MACRO_DEFN_NOT_IDENTICAL
 :MSGTXT. Definition of macro '%s' not identical to previous definition
-:MSGJTXT. マクロ'%s'の定義は前の定義と一致しません
+:MSGJTXT. マクロ'%s'の定義が前の定義と一致しません
 .np
 If a macro is defined more than once, the definitions must be identical.
 If you want to redefine a macro to have a different definition, you must
@@ -1354,7 +1353,7 @@ then you can compare two structs using
 .id memcmp.
 :MSGSYM. ERR_EMPTY_ENUM_LIST
 :MSGTXT. Enumerator list cannot be empty
-:MSGJTXT. 列挙子リストが空であることができません
+:MSGJTXT. 列挙子リストは空であることができません
 .np
 You must have at least one identifier in an
 .kw enum
@@ -1414,7 +1413,7 @@ Check for a missing "*" in the declaration.
 The enumeration tag has not been previously defined.
 :MSGSYM. ERR_ID_LIST_SHOULD_BE_EMPTY
 :MSGTXT. An id list not allowed except for function definition
-:MSGJTXT. 関数定義を除いて、IDリストは許されません
+:MSGJTXT. 関数定義を除いて，IDリストは許されません
 .np
 A function prototype must contain type information.
 :MSGSYM. ERR_MUST_BE_VAR_PARM_FUNC
@@ -1485,7 +1484,7 @@ The compiler ran out of memory for storing macro definitions.
 The compile has been aborted with Ctrl/C or Ctrl/Break.
 :MSGSYM. ERR_INV_DATA_TYPE_FOR_REGISTER
 :MSGTXT. Array, struct or union cannot be placed in a register
-:MSGJTXT. 配列、structあるいはunionをレジスタに置くことはできません
+:MSGJTXT. 配列，struct，あるいはunionをレジスタに置くことはできません
 .np
 Only scalar objects can be specified with the
 .kw register
@@ -1512,7 +1511,7 @@ You have more than one definition of a variable or function that do not
 agree.
 :MSGSYM. ERR_DUPLICATE_FIELD_NAME
 :MSGTXT. Duplicate name '%s' not allowed in struct or union
-:MSGJTXT. structあるいはunionの中で、同じ名前'%s'を二度使うことはできません
+:MSGJTXT. structあるいはunionの中で，同じ名前'%s'を二度使うことはできません
 .np
 All the field names in a
 .kw struct
@@ -1521,7 +1520,7 @@ or
 must be unique.
 :MSGSYM. ERR_DUPLICATE_MACRO_PARM
 :MSGTXT. Duplicate macro parameter '%s'
-:MSGJTXT. マクロ・パラメータ'%s'が二度繰り返しています
+:MSGJTXT. マクロ・パラメータ'%s'の定義が二度行われています
 .np
 The parameters specified in a macro definition must be unique.
 :MSGSYM. ERR_UNABLE_TO_OPEN_WORK_FILE
@@ -1590,7 +1589,7 @@ keyword causes the program to jump to the start of the
 block.
 :MSGSYM. ERR_EXPECTING_END_OF_LINE_BUT_FOUND
 :MSGTXT. Expecting end of line but found '%s'
-:MSGJTXT. 行末であるはずですが、'%s'があります
+:MSGJTXT. 行末であるはずですが，'%s'があります
 .np
 A syntax error has been detected.
 The token displayed in the message should help you determine the problem.
@@ -1618,7 +1617,7 @@ You can only reference a parameter or local variable by passing it as
 a parameter to the in-line code pragma.
 :MSGSYM. ERR_INTERNAL_LIMIT_EXCEEDED
 :MSGTXT. Internal compiler limit exceeded, break module into smaller pieces
-:MSGJTXT. コンパイラの内部制限を越えました、モジュールをより小さい部分に分割してください
+:MSGJTXT. コンパイラの内部制限を越えました。モジュールをより小さい部分に分割してください
 .np
 The compiler can handle 65535 quadruples, 65535 leaves, and 65535 symbol
 table entries and literal strings.
@@ -1641,19 +1640,19 @@ The error limit can be set with the "-e" option.
 The default error limit is 20.
 :MSGSYM. ERR_EXPECTING_IDENTIFIER_BUT_FOUND
 :MSGTXT. Expecting identifier but found '%s'
-:MSGJTXT. 識別子があるはずですが、'%s'がありました
+:MSGJTXT. 識別子があるはずですが，'%s'がありました
 .np
 A syntax error has been detected.
 The token displayed in the message should help you determine the problem.
 :MSGSYM. ERR_EXPECTING_CONSTANT_BUT_FOUND
 :MSGTXT. Expecting constant but found '%s'
-:MSGJTXT. 定数があるはずですが、'%s'がありました
+:MSGJTXT. 定数があるはずですが，'%s'がありました
 .np
 The #line directive must be followed by a constant indicating the
 desired line number.
 :MSGSYM. ERR_EXPECTING_STRING_BUT_FOUND
 :MSGTXT. Expecting \"filename\" but found '%s'
-:MSGJTXT. \"ファイル名\"があるはずですが、'%s'がありました
+:MSGJTXT. \"ファイル名\"があるはずですが，'%s'がありました
 .np
 The second argument of the #line directive must be a filename
 enclosed in quotes.
@@ -1712,7 +1711,7 @@ compiler must be declared as
 Too many parameter register sets have been specified in the pragma.
 :MSGSYM. ERR_IO_ERR
 :MSGTXT. I/O error reading '%s': %s
-:MSGJTXT. '%s'を読み込み中のＩ／Ｏエラー：%s
+:MSGJTXT. '%s'読み込み中のＩ／Ｏエラー：%s
 .np
 An I/O error has been detected by the compiler while reading the source file.
 The system dependent reason is also displayed in the message.
@@ -1724,7 +1723,7 @@ The compiler does not have any segment registers available to access the
 desired far memory location.
 :MSGSYM. ERR_NO_MACRO_ID_COMMAND_LINE
 :MSGTXT. No identifier provided for /D option
-:MSGJTXT. /Dオプションで指定された識別子がありません
+:MSGJTXT. /Dオプションに対する識別子がありません
 .np
 The command line option /D must be followed by the name of the macro
 to be defined.
@@ -1788,14 +1787,14 @@ and "__declspec(dllimport)".
 You can only specify one storage class specifier in a declaration.
 :MSGSYM. ERR_EXPECTING_BUT_FOUND_END_OF_FILE
 :MSGTXT. Expecting '%s' but found end of file
-:MSGJTXT. '%s'があるはずですが、ファイルが終了してしまいました
+:MSGJTXT. '%s'があるはずですが，ファイルが終了してしまいました
 .np
 A syntax error has been detected.
 The compiler is still expecting more input when it reached the
 end of the source program.
 :MSGSYM. ERR_EXPECTING_STRUCT_UNION_TAG_BUT_FOUND
 :MSGTXT. Expecting struct/union tag but found '%s'
-:MSGJTXT. 構造体/共用体タグがあるはずですが、'%s'がありました
+:MSGJTXT. 構造体/共用体タグがあるはずですが，'%s'がありました
 .np
 The compiler expected to find an identifier following the
 .kw struct
@@ -1867,7 +1866,7 @@ You need a '\' to continue a string literal across a line.
 :cmt -------------------------------------------------------------------
 :MSGSYM. INFO_NOT_ENOUGH_MEMORY_TO_FULLY_OPTIMIZE
 :MSGTXT. Not enough memory to fully optimize procedure '%s'
-:MSGJTXT. プロシージャ'%s'を最適化するのに、メモリが不十分です
+:MSGJTXT. プロシージャ'%s'を最適化するのに，メモリが不十分です
 :INFO.
 .np
 The compiler did not have enough memory to fully optimize the
@@ -1876,7 +1875,7 @@ The code generated will still be correct and execute properly.
 This message is purely informational.
 :MSGSYM. INFO_NOT_ENOUGH_MEMORY_TO_MAINTAIN_PEEPHOLE
 :MSGTXT. Not enough memory to maintain full peephole
-:MSGJTXT. 完全なピープホールを維持するのに、メモリが不十分です
+:MSGJTXT. 完全なピープホールを維持するのに，メモリが不十分です
 :INFO.
 .np
 Certain optimizations benefit from being able to store the entire module
@@ -1909,13 +1908,13 @@ Following the warning, the informational message indicates the line at
 which 'a' was declared.
 :MSGSYM. INFO_SRC_CNV_TYPE
 :MSGTXT. source conversion type is '%s'
-:MSGJTXT. 変換ソースの型は、'%s'です
+:MSGJTXT. 変換ソースの型は'%s'です
 :INFO.
 This informational message indicates the type of the source operand, for the
 preceding conversion diagnostic.
 :MSGSYM. INFO_TGT_CNV_TYPE
 :MSGTXT. target conversion type is '%s'
-:MSGJTXT. 変換ターゲットの型は、'%s'です
+:MSGJTXT. 変換ターゲットの型は'%s'です
 :INFO.
 This informational message indicates the target type of the conversion,
 for the preceding conversion diagnostic.
@@ -1955,7 +1954,7 @@ This can effect the values of the pre-compiled information.
 The pre-compiled header file was compiled in a different directory.
 :MSGSYM. PCHDR_INCFILE_CHANGED
 :MSGTXT. Include file '%s' has been modified since PCH file was made
-:MSGJTXT. インクルードファイル'%s'が修正されたのでPCHファイルが作られました
+:MSGJTXT. PCHファイルが作られてから，インクルードファイル'%s'が修正されました
 :INFO.
 .np
 The include files have been modified since the pre-compiled header
@@ -1974,7 +1973,7 @@ The pre-compiled header file was made using a different include file.
 The include paths have changed.
 :MSGSYM. PCHDR_MACRO_CHANGED
 :MSGTXT. Preprocessor macro definition differs with PCH file
-:MSGJTXT. プリプロセッサマクロ定義がPCHファイルと異なります
+:MSGJTXT. プリプロセッサマクロの定義がPCHファイルと異なります
 :INFO.
 .np
 The definition of a preprocessor macro has changed.
@@ -2019,7 +2018,7 @@ String used in message construction.
 String used in message construction.
 :MSGSYM. PHRASE_PRESS_RETURN
 :MSGTXT. (Press return to continue)
-:MSGJTXT. (リターンを押すと、続行します)
+:MSGJTXT. (リターンを押すと，続行します)
 :INFO.
 .np
 String used in message construction.

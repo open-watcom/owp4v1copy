@@ -117,7 +117,7 @@ The message will be issued at the end of the function.
 
 :MSGSYM. WARN_BASE_CLASS_HAS_NO_VDTOR
 :MSGTXT. base class '%T' does not have a virtual destructor
-:MSGJTXT. 基底クラス'%T'は、仮想デストラクタを持ちません
+:MSGJTXT. 基底クラス'%T'は仮想デストラクタを持ちません
 :WARNING. 1
 A virtual destructor has been declared in a class with base classes.
 The compiler has detected that a base class does not have a virtual
@@ -163,7 +163,7 @@ int __near *p_near = p_far; // truncated
 
 :MSGSYM. ERR_SYNTAX_MISSING_SEMICOLON
 :MSGTXT. syntax error; probable cause: missing ';'
-:MSGJTXT. 構文エラー；考えられる原因：';'がありません
+:MSGJTXT. 構文エラー； ';'がない可能性があります
 The compiler has found a complete expression (or declaration) during
 parsing but could not continue.  The compiler has detected that it could
 have continued if a semicolon was present so there may be a semicolon
@@ -178,7 +178,7 @@ class X {
 
 :MSGSYM. WARN_ADDR_OF_ARRAY
 :MSGTXT. "&array" may not produce intended result
-:MSGJTXT. "&array"は、意図された結果を生じないかもしれません
+:MSGJTXT. "&array"は意図された結果を生じないかもしれません
 :WARNING. 3
 The type of the expression "&array" is different from the type of the
 expression "array".
@@ -198,7 +198,7 @@ array.
 
 :MSGSYM. WARN_RET_ADDR_OF_AUTO
 :MSGTXT. returning address of function argument or of auto or register variable
-:MSGJTXT. 関数引数、あるいは、自動またはレジスタ変数のアドレスを返しています
+:MSGJTXT. 関数引数または自動／レジスタ変数のアドレスを返しています
 :WARNING. 1
 This warning usually indicates a serious programming error.
 When a function exits, the storage allocated on the stack for
@@ -217,13 +217,13 @@ int *foo()
 
 :MSGSYM. ERR_INVALID_OPTION_FILE
 :MSGTXT. option requires a file name
-:MSGJTXT. '##'トークンは、単一トークンを生成しません（残りは捨てられます）
+:MSGJTXT. オプションはファイル名を必要とします
 The specified option is not recognized by the compiler
 since there was no file name after it (i.e., "-fo=my.obj" ).
 
 :MSGSYM. WARN_ASM_IGNORED
 :MSGTXT. asm directive ignored
-:MSGJTXT. Asm擬似命令無視されます
+:MSGJTXT. asm擬似命令が無視されました
 :WARNING. 1
 The asm directive (e.g., asm( "mov r0,1" ); ) is a non-portable construct.
 The Watcom C++ compiler treats all asm directives like comments.
@@ -246,7 +246,7 @@ class Private {
 
 :MSGSYM. ERR_INVALID_TEMPLATE_ARG_TYPE
 :MSGTXT. template argument cannot be type '%T'
-:MSGJTXT. テンプレート引数は、'%T'型であることができません
+:MSGJTXT. テンプレート引数は'%T'型であることができません
 A template argument can be either a generic type (e.g.,
 .id template < class
 T
@@ -300,13 +300,13 @@ for the previous comment.
 
 :MSGSYM. ERR_TEMPLATE_MUST_HAVE_ARGS
 :MSGTXT. template argument list cannot be empty
-:MSGJTXT. テンプレート引数リストは、空であることができません
+:MSGJTXT. テンプレート引数リストは，空であることができません
 An empty template argument list would result in a template that
 could only define a single class or function.
 
 :MSGSYM. WARN_UNREFERENCED_LABEL
 :MSGTXT. label '%s' has not been referenced by a goto
-:MSGJTXT. ラベル'%s'は、gotoによって参照できません
+:MSGJTXT. ラベル'%s'はgotoによって参照できません
 :WARNING. 3
 The indicated label has not been referenced and, as such, is useless.
 This warning can be safely ignored.
@@ -327,7 +327,7 @@ any effect.
 
 :MSGSYM. ERR_MISPLACED_BREAK
 :MSGTXT. 'break' may only appear in a for, do, while, or switch statement
-:MSGJTXT. BREAKはfor、do、switch文の中でのみ使えます
+:MSGJTXT. 'break'はfor, do, switch文の中でのみ使えます
 A
 .kw break
 statement has been found in an illegal place in the program.
@@ -350,7 +350,7 @@ int foo( int a, int b )
 
 :MSGSYM. ERR_MISPLACED_CASE
 :MSGTXT. 'case' may only appear in a switch statement
-:MSGJTXT. CASEはswitch文でのみ使えます
+:MSGJTXT. 'case'はswitch文でのみ使えます
 A
 .kw case
 label has been found that is not inside a
@@ -366,7 +366,7 @@ int foo( int a, int b )
 
 :MSGSYM. ERR_MISPLACED_CONTINUE
 :MSGTXT. 'continue' may only appear in a for, do, or while statement
-:MSGJTXT. CONTINUEはfor, do, while文でのみ使えます
+:MSGJTXT. 'continue'はfor, do, while文でのみ使えます
 The
 .kw continue
 statement must be inside a
@@ -395,7 +395,7 @@ int foo( int a, int b )
 
 :MSGSYM. ERR_MISPLACED_DEFAULT
 :MSGTXT. 'default' may only appear in a switch statement
-:MSGJTXT. DEFAULTはswitch文でのみ使えます
+:MSGJTXT. 'default'はswitch文でのみ使えます
 A
 .kw default
 label has been found that is not inside a
@@ -418,7 +418,7 @@ int foo( int a, int b )
 
 :MSGSYM. ERR_MISPLACED_RIGHT_BRACE
 :MSGTXT. misplaced '}' or missing earlier '{'
-:MSGJTXT. '}'の位置が間違っているか、もっと前にあるはずの'{'がありません
+:MSGJTXT. '}'の位置が間違っているか，もっと前にあるはずの'{'がありません
 An extra
 .id }
 has been found which cannot be matched up with an earlier
@@ -510,7 +510,7 @@ that corresponds to them.
 
 :MSGSYM. ERR_ONLY_1_DEFAULT
 :MSGTXT. only one 'default' per switch statement is allowed
-:MSGJTXT. 1つのswitch文につきDEFAULTは1つだけ、許されます
+:MSGJTXT. 1つのswitch文に許される'default'は1つだけです
 You cannot have more than one
 .kw default
 label in a
@@ -536,7 +536,7 @@ int translate( int a )
 
 :MSGSYM. ERR_EXPECTING_BUT_FOUND
 :MSGTXT. expecting '%s' but found '%s'
-:MSGJTXT. '%s'があるはずですが、'%s'がありました
+:MSGJTXT. '%s'があるはずですが，'%s'がありました
 A syntax error has been detected.
 The tokens displayed in the message should help you to determine the problem.
 
@@ -554,7 +554,7 @@ int a = b;  // b has not been declared
 
 :MSGSYM. ERR_NOT_A_FUNCTION
 :MSGTXT. left expression must be a function or a function pointer
-:MSGJTXT. 左の式は、関数か関数ポインタでなければなりません
+:MSGJTXT. 左辺は関数か関数ポインタでなければなりません
 The compiler has found an expression that looks like a function call,
 but it is not defined as a function.
 :errbad.
@@ -564,7 +564,7 @@ int b = a( 12 );
 
 :MSGSYM. ERR_MUST_BE_LVALUE
 :MSGTXT. operand must be an 'lvalue'
-:MSGJTXT. オペランドは、'左辺値'でなければなりません
+:MSGJTXT. オペランドは'左辺値'でなければなりません
 The operand on the left side of an "=" sign must be a variable or
 memory location which can have a value assigned to it.
 :errbad.
@@ -671,7 +671,7 @@ char *p2 = & (c+1); // not allowed
 
 :MSGSYM. ERR_MUST_BE_STRUCT_OR_UNION
 :MSGTXT. expression for '.' must be a class, struct or union
-:MSGJTXT. .に対する式は、class、struct、unionでなければなりません
+:MSGJTXT. '.'に対する式はclass, struct, またはunionでなければなりません
 The compiler has encountered the pattern "expression" "." "field_name"
 where the expression is not a
 .kw class,
@@ -690,7 +690,7 @@ int a = fun().a;
 
 :MSGSYM. ERR_MUST_BE_PTR_TO_STRUCT_OR_UNION
 :MSGTXT. expression for '->' must be pointer to class, struct or union
-:MSGJTXT. '->'に対する式は、class、struct、unionへのポインタでなければなりません
+:MSGJTXT. '->'に対する式はclass, struct, またはunionへのポインタでなければなりません
 The compiler has encountered the pattern "expression" "->"
 "field_name" where the expression is not a pointer to
 .kw class,
@@ -766,7 +766,7 @@ int fun( int a )
 
 :MSGSYM. ERR_FIELD_TOO_WIDE
 :MSGTXT. bit-field width is too large
-:MSGJTXT. ビットフィールド幅は大きすぎます
+:MSGJTXT. ビットフィールド幅が大きすぎます
 The maximum field width allowed is 16 bits in the 16-bit compiler
 and 32 bits in the 32-bit compiler.
 :errbad.
@@ -778,7 +778,7 @@ struct S
 
 :MSGSYM. ERR_WIDTH_0
 :MSGTXT. width of a named bit-field must not be zero
-:MSGJTXT. 名をつけられたビットフィールドの幅はゼロであってはなりません
+:MSGJTXT. 名前をつけられたビットフィールドの幅はゼロであってはなりません
 A bit field must be at least one bit in size.
 :errbad.
 struct S {
@@ -935,7 +935,7 @@ int i = mac(1,2,3); // needs 2 parameters
 
 :MSGSYM. ERR_CANNOT_USE_PCPTR
 :MSGTXT. cannot use __based or __far16 pointers in this context
-:MSGJTXT. このコンテキストにおいて、__basedあるいは__far16ポインタを使うことはできません
+:MSGJTXT. このコンテキストにおいて，__basedあるいは__far16ポインタを使うことはできません
 The use of
 .kw __based
 and
@@ -1022,7 +1022,7 @@ int bar()
 
 :MSGSYM. ANSI_NO_DELETE_SIZE_EXPR
 :MSGTXT. 'delete' expression size is not allowed
-:MSGJTXT. '削除'式の大きさの指定は許されません
+:MSGJTXT. 'delete'式の大きさの指定は許されません
 :ANSI. 1
 The C++ language has evolved to the point where the
 .kw delete
@@ -1036,7 +1036,7 @@ void fn( unsigned n, char *p ) {
 
 :MSGSYM. ERR_MISSING_QUOTE
 :MSGTXT. ending " missing for string literal
-:MSGJTXT. "文字列定数に対する終了の"がありません
+:MSGJTXT. 文字列定数に対する終了の"がありません
 The compiler did not find a second double quote to end the string literal.
 :errbad.
 char *a = "no_ending_quote;
@@ -1044,17 +1044,17 @@ char *a = "no_ending_quote;
 
 :MSGSYM. ERR_INVALID_OPTION
 :MSGTXT. invalid option
-:MSGJTXT. 不適切なオプション'%s'です
+:MSGJTXT. 不適切なオプションです
 The specified option is not recognized by the compiler.
 
 :MSGSYM. ERR_INVALID_OPTIMIZATION
 :MSGTXT. invalid optimization option
-:MSGJTXT. 不適切な最適化オプション'%s'です
+:MSGJTXT. 不適切な最適化オプションです
 The specified option is an unrecognized optimization option.
 
 :MSGSYM. ERR_INVALID_MEMORY_MODEL
 :MSGTXT. invalid memory model
-:MSGJTXT. 不適切なメモリモデル'%s'です
+:MSGJTXT. 不適切なメモリモデルです
 Memory model option must be one of "ms", "mm", "mc", "ml", "mh" or
 "mf" which selects the Small, Medium, Compact, Large, Huge or Flat
 memory model.
@@ -1176,7 +1176,7 @@ int a;
 
 :MSGSYM. ERR_INVALID_MACRO_DEFN
 :MSGTXT. invalid macro definition, missing )
-:MSGJTXT. 不適切なマクロ定義です、）がありません
+:MSGJTXT. 不適切なマクロ定義です； ）がありません
 The right parenthesis ")" is required for a function-like macro definition.
 :errbad.
 #define bad_mac( a, b
@@ -1247,7 +1247,7 @@ automatically instantiate functions purely from the argument types of calls.
 
 :MSGSYM. ERR_MAX_STRUCT_EXCEEDED
 :MSGTXT. maximum class size has been exceeded
-:MSGJTXT. クラス大きさが最大値を越えました
+:MSGJTXT. クラスサイズが最大値を越えました
 The 16-bit compiler limits the size of a
 .kw struct
 or
@@ -1270,7 +1270,7 @@ struct S
 
 :MSGSYM. ANSI_MACRO_DEFN_NOT_IDENTICAL
 :MSGTXT. definition of macro '%s' not identical to previous definition
-:MSGJTXT. マクロ'%s'の定義は以前の定義と一致しません
+:MSGJTXT. マクロ'%s'の定義が以前の定義と一致しません
 :ANSI. 1
 If a macro is defined more than once, the definitions must be identical.
 If you want to redefine a macro to have a different definition, you must
@@ -1389,7 +1389,7 @@ The designated registers cannot hold the value for the parameter.
 
 :MSGSYM. ERR_BAD_RETURN_REGISTER
 :MSGTXT. procedure '%s' has invalid return register in #pragma
-:MSGJTXT. プロシージャ'%s'は、#pragmaの中で不適切なリターン・レジスタが指定されています
+:MSGJTXT. プロシージャ'%s'は，#pragmaの中で不適切なリターン・レジスタが指定されています
 The size of the return register does not match the size of the result
 returned by the function.
 
@@ -1453,7 +1453,7 @@ An error was encountered trying to read information from the work file.
 
 :MSGSYM. ERR_TOKEN_TRUNCATED
 :MSGTXT. token too long; truncated
-:MSGJTXT. トーケンが長すぎます；切り詰められます
+:MSGJTXT. トークンが長すぎます；切り詰められます
 The token must be less than 510 bytes in length.
 
 :MSGSYM. ERR_FILENAME_REQUIRED
@@ -1547,14 +1547,14 @@ class C : public Dup, public Dup
 
 :MSGSYM. ERR_ONLY_GLOBAL_TEMPLATES
 :MSGTXT. templates may only be declared in file scope
-:MSGJTXT. テンプレートは、ファイル・スコープの中で宣言されるだけです
+:MSGJTXT. テンプレートはファイル・スコープの中で宣言されるだけです
 Currently, templates can only be declared at file scope.
 This simple restriction was chosen in favour of more freedom with
 possibly subtle restrictions.
 
 :MSGSYM. ERR_ONLY_GLOBAL_LINKAGES
 :MSGTXT. linkages may only be declared in file scope
-:MSGJTXT. リンクは、ファイル・スコープの中で宣言されるだけです
+:MSGJTXT. リンクはファイル・スコープの中で宣言されるだけです
 A common source of errors for C and C++ result from the use of prototypes
 inside of functions.  This restriction attempts to prevent
 such errors.
@@ -1628,20 +1628,20 @@ a compiler problem.  Please report this directly to Watcom.
 
 :MSGSYM. ERR_NO_NESTED_TEMPLATES
 :MSGTXT. template declarations cannot be nested within each other
-:MSGJTXT. テンプレート宣言は、お互いの範囲内でネストすることができません
+:MSGJTXT. テンプレート宣言は，お互いの範囲内でネストすることができません
 Currently, templates can only be declared at file scope.
 Furthermore, a template declaration must be finished before another
 template can be declared.
 
 :MSGSYM. ERR_COMPLICATED_EXPRESSION
 :MSGTXT. expression is too complicated
-:MSGJTXT. 式は、あまりに複雑です
+:MSGJTXT. 式が複雑すぎます
 The expression contains too many levels of nested parentheses.
 Divide the expression up into two or more sub-expressions.
 
 :MSGSYM. ERR_INVALID_TYPEDEF_REDEFINITION
 :MSGTXT. invalid redefinition of the typedef name '%S'
-:MSGJTXT. typedef名'%S'の定義はできません
+:MSGJTXT. typedef名'%S'の再定義はできません
 Redefinition of typedef names is only allowed if you are redefining a
 typedef name to itself.
 Any other redefinition is illegal.
@@ -1655,7 +1655,7 @@ typedef float TD;   // illegal
 
 :MSGSYM. ERR_CLASS_REDEFINED
 :MSGTXT. class '%T' has already been defined
-:MSGJTXT. クラス'%T'は、すでに定義されました
+:MSGJTXT. クラス'%T'は既に定義されています
 This message usually results from the definition of two classes in the
 same scope.  This is illegal regardless of whether the class definitions
 are identical.
@@ -1668,7 +1668,7 @@ class C {
 
 :MSGSYM. ERR_CANT_TAKE_SIZEOF_UNDEFINED
 :MSGTXT. 'sizeof' is not allowed for an undefined type
-:MSGJTXT. 'sizeof'は、未定義の型には使用できません
+:MSGJTXT. 'sizeof'は未定義の型には使用できません
 If a type has not been defined, the compiler cannot know how large it is.
 :errbad.
 class C;
@@ -1766,7 +1766,7 @@ Only one parameter passing description is allowed.
 
 :MSGSYM. ERR_BAD_FN_MODIFIER
 :MSGTXT. 'friend', 'virtual' or 'inline' modifiers may only be used on functions
-:MSGJTXT. 'friend'、'virtual'、あるいは、'inline'修飾子が関数に対してのみ使用できます
+:MSGJTXT. 'friend'，'virtual'，あるいは，'inline'修飾子が関数に対してのみ使用できます
 This message indicates that you are trying to declare a strange entity like
 an
 .kw inline
@@ -1781,7 +1781,7 @@ Combine the pragmas into one pragma and apply it once.
 
 :MSGSYM. ERR_MUST_BE_ZERO
 :MSGTXT. pure member function constant must be '0'
-:MSGJTXT. 純粋メンバ関数定数は、'0'でなければなりません
+:MSGJTXT. 純粋メンバ関数定数は'0'でなければなりません
 The constant must be changed to '0' in order for the Watcom C++ compiler
 to accept the pure virtual member function declaration.
 :errbad.
@@ -1815,7 +1815,7 @@ enum Days day = 2;
 
 :MSGSYM. ERR_BITFIELD_STG_CLASS
 :MSGTXT. bit-field declaration cannot have a storage class specifier
-:MSGJTXT. ビットフィールド宣言は、記憶クラス指定子を持つことができません
+:MSGJTXT. ビットフィールド宣言は記憶クラス指定子を持つことができません
 Bit-fields (along with most members) cannot have storage class specifiers
 in their declaration.  Remove the storage class specifier to correct the
 code.
@@ -1829,7 +1829,7 @@ public:
 
 :MSGSYM. ERR_BITFIELD_NO_BASE_TYPE
 :MSGTXT. bit-field declaration must have a base type specified
-:MSGJTXT. ビットフィールド宣言は、基本型を指定しなければなりません
+:MSGJTXT. ビットフィールド宣言は基本型を指定しなければなりません
 A bit-field cannot make use of a default integer type.  Specify the type
 .kw int
 to correct the code.
@@ -1874,7 +1874,7 @@ struct Derived : public public Base { int d; };
 
 :MSGSYM. ERR_TOO_MANY_ACCESS_SPECIFIERS
 :MSGTXT. only one access specifier is allowed
-:MSGJTXT. アクセス指定子は、1つだけ許されます
+:MSGJTXT. アクセス指定子は1つだけ許されます
 The compiler has found more than one access specifier for a base class.
 Since the compiler cannot choose one over the other, remove the unwanted
 access specifier to correct the code.
@@ -1913,7 +1913,7 @@ object.
 
 :MSGSYM. ERR_AMBIGUOUS_MEMBER
 :MSGTXT. access to '%S' is not allowed because it is ambiguous
-:MSGJTXT. '%S'へのアクセスは、それが曖昧ですので、許されません
+:MSGJTXT. '%S'へのアクセスは，曖昧さのため許可されません
 There are two ways that this error can show up in C++ code.
 The first way a member can be ambiguous is that the same name
 can be used in two different classes.  If these classes are
@@ -1945,7 +1945,7 @@ struct Bot : public Top, public Mid
 
 :MSGSYM. ERR_PRIVATE_MEMBER
 :MSGTXT. access to private member '%S' is not allowed
-:MSGJTXT. プライベート・メンバ'%S'へのアクセスは、許されません
+:MSGJTXT. プライベート・メンバ'%S'へのアクセスは許されません
 The indicated member is being accessed by an expression that does not
 have permission to access private members of the class.
 :errbad.
@@ -1960,7 +1960,7 @@ int k = b.foo();    // foo is private
 
 :MSGSYM. ERR_PROTECTED_MEMBER
 :MSGTXT. access to protected member '%S' is not allowed
-:MSGJTXT. プロテクト・メンバ'%S'へのアクセスは、許されません
+:MSGJTXT. プロテクト・メンバ'%S'へのアクセスは許されません
 The indicated member is being accessed by an expression that does not
 have permission to access protected members of the class.
 The compiler also requires that
@@ -1999,7 +1999,7 @@ void fn()
 
 :MSGSYM. ERR_NOT_PTR_ARITH
 :MSGTXT. operand is neither a pointer nor an arithmetic type
-:MSGJTXT. オペランドは、ポインタでも算術型でもありません
+:MSGJTXT. オペランドはポインタでも算術型でもありません
 An example of this error is incrementing a class that does not
 have any overloaded operators.
 :errbad.
@@ -2012,7 +2012,7 @@ void fn()
 
 :MSGSYM. ERR_LEFT_NOT_PTR_ARITH
 :MSGTXT. left operand is neither a pointer nor an arithmetic type
-:MSGJTXT. 左オペランドは、ポインタでも算術型でもありません
+:MSGJTXT. 左オペランドはポインタでも算術型でもありません
 An example of this error is trying to add 1 to a class that does not
 have any overloaded operators.
 :errbad.
@@ -2025,7 +2025,7 @@ void fn()
 
 :MSGSYM. ERR_RIGHT_NOT_PTR_ARITH
 :MSGTXT. right operand is neither a pointer nor an arithmetic type
-:MSGJTXT. 右オペランドは、ポインタでも算術型でもありません
+:MSGJTXT. 右オペランドはポインタでも算術型でもありません
 An example of this error is trying to add 1 to a class that does not
 have any overloaded operators.
 :errbad.
@@ -2115,7 +2115,7 @@ void fn( char *p )
 
 :MSGSYM. ERR_DTOR_OBJ_MEM_MODEL
 :MSGTXT. attempt to destruct a far object when data model is near
-:MSGJTXT. データモデルがnearであるとき、farオブジェクトにデストラクタを適用しています
+:MSGJTXT. データモデルがnearであるとき，farオブジェクトにデストラクタを適用しています
 Destructors cannot be applied to objects which are stored in far memory
 when the default memory model for data is near.
 :errbad.
@@ -2132,7 +2132,7 @@ small (switch -ms), since the memory model for data is near.
 
 :MSGSYM. ERR_THIS_OBJ_MEM_MODEL
 :MSGTXT. attempt to call member function for far object when the data model is near
-:MSGJTXT. そのデータモデルがnearであるとき、farオブジェクトのメンバ関数を呼んでいます
+:MSGJTXT. データモデルがnearであるとき，farオブジェクトのメンバ関数を呼んでいます
 Member functions cannot be called for objects which are stored in
 far memory when the default memory model for data is near.
 :errbad.
@@ -2150,14 +2150,14 @@ small (switch -ms), since the memory model for data is near.
 
 :MSGSYM. ERR_NO_TYPE_DEFAULTS
 :MSGTXT. template type argument cannot have a default argument
-:MSGJTXT. テンプレート型引数は、デフォルト引数を持つことができません
+:MSGJTXT. テンプレート型引数はデフォルト引数を持つことができません
 Currently, the C++ language does not allow template type arguments
 to have a default type.  There is neither syntax to express the notion
 nor semantics defined for its meaning.
 
 :MSGSYM. ERR_DLT_OBJ_MEM_MODEL
 :MSGTXT. attempt to 'delete' a far object when the data model is near
-:MSGJTXT. そのデータモデルがnearであるとき、farオブジェクトを'delete'しています
+:MSGJTXT. そのデータモデルがnearであるとき，farオブジェクトを'delete'しています
 .kw delete
 cannot be used to deallocate objects which are stored in
 far memory when the default memory model for data is near.
@@ -2177,7 +2177,7 @@ is small (switch -ms), since the memory model for data is near.
 
 :MSGSYM. ERR_OFFSETOF_CLASS
 :MSGTXT. first operand is not a class, struct or union
-:MSGJTXT. 第１オペランドは、class、struct、unionではありません
+:MSGJTXT. 第１オペランドがclass, struct, またはunionでありません
 The
 .kw offsetof
 operation can only be performed on a type that can
@@ -2214,7 +2214,7 @@ void fun( C1* pc1, C2* pc2 )
 
 :MSGSYM. ERR_LEFT_MUST_BE_LVALUE
 :MSGTXT. left operand must be an 'lvalue'
-:MSGJTXT. 左オペランドは、'左辺値'でなければなりません
+:MSGJTXT. 左オペランドは'左辺値'でなければなりません
 The left operand must be an expression that is valid
 on the left side of an assignment.
 Examples of incorrect lvalues include constants and
@@ -2230,7 +2230,7 @@ void fn()
 
 :MSGSYM. ERR_UNION_NO_STATIC_MEMBERS
 :MSGTXT. static data members are not allowed in an union
-:MSGJTXT. スタティック・データ・メンバは、共用体の中で許されません
+:MSGJTXT. スタティック・データ・メンバは共用体の中で許されません
 A union should only be used to organize memory in C++.  Enclose
 the union in a class if you need a static data member associated with
 the union.
@@ -2261,7 +2261,7 @@ class C
 
 :MSGSYM. ERR_COMPLICATED_DECLARATION
 :MSGTXT. declaration is too complicated
-:MSGJTXT. 宣言は、あまりに複雑です
+:MSGJTXT. 宣言が複雑すぎます
 The declaration contains too many declarators (i.e., pointer, array, and
 function types).  Break up the declaration into a series of typedefs
 ending in a final declaration.
@@ -2277,14 +2277,14 @@ PD2 ****p;
 
 :MSGSYM. ERR_COMPLICATED_EXCEPTION
 :MSGTXT. exception declaration is too complicated
-:MSGJTXT. 例外宣言は、あまりに複雑です
+:MSGJTXT. 例外宣言が複雑すぎます
 The exception declaration contains too many declarators (i.e., pointer,
 array, and function types).  Break up the declaration into a series
 of typedefs ending in a final declaration.
 
 :MSGSYM. ERR_FLOATING_CONSTANT_OVERFLOW
 :MSGTXT. floating-point constant too large to represent
-:MSGJTXT. 浮動小数点定数は表現するにはあまりに大きすぎます
+:MSGJTXT. 浮動小数点定数が大きすぎます
 The Watcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the positive exponent is too large.
 :errbad.
@@ -2293,7 +2293,7 @@ float f = 1.2e78965;
 
 :MSGSYM. ERR_FLOATING_CONSTANT_UNDERFLOW
 :MSGTXT. floating-point constant too small to represent
-:MSGJTXT. 浮動小数点定数は表現するにはあまりに小さすぎます
+:MSGJTXT. 浮動小数点定数が小さすぎます
 The Watcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the negative exponent is too large.
 :errbad.
@@ -2302,7 +2302,7 @@ float f = 1.2e-78965;
 
 :MSGSYM. ERR_CANT_OVERLOAD_CLASS_TEMPLATES
 :MSGTXT. class template '%S' cannot be overloaded
-:MSGJTXT. クラス・テンプレート'%S'は、オーバーロードできません
+:MSGJTXT. クラス・テンプレート'%S'はオーバーロードできません
 A class template name must be unique across the entire C++ program.
 Furthermore, a class template cannot coexist with another
 class template of the same name.
@@ -2325,7 +2325,7 @@ enum E
 
 :MSGSYM. ERR_NAME_USED_BY_NON_CLASS_TEMPLATE
 :MSGTXT. '%S' cannot be in the same scope as a class template
-:MSGJTXT. '%S'が、クラス・テンプレートと同じスコープにあることができません
+:MSGJTXT. '%S'がクラス・テンプレートと同じスコープにあることができません
 A class template name must be unique across the entire C++ program.
 Any other use of a name cannot be in the same scope as the class template.
 
@@ -2342,7 +2342,7 @@ auto int a;
 
 :MSGSYM. ERR_CONST_MUST_BE_INITIALIZED
 :MSGTXT. const object must be initialized
-:MSGJTXT. Constオブジェクトは、初期化されなければなりません
+:MSGJTXT. Constオブジェクトは，初期化されなければなりません
 Constant objects cannot be modified so they must be initialized before use.
 :errbad.
 const int a;
@@ -2356,13 +2356,13 @@ Any other use of a name cannot be in the same scope as the class template.
 
 :MSGSYM. ERR_NO_UNNAMED_TEMPLATE_ARGS
 :MSGTXT. template arguments must be named
-:MSGJTXT. テンプレート引数は、名前をつけなければなりません
+:MSGJTXT. テンプレート引数には名前をつけなければなりません
 A member function of a template class cannot be defined outside
 the class declaration unless all template arguments have been named.
 
 :MSGSYM. ERR_CANT_REDEFINE_CLASS_TEMPLATES
 :MSGTXT. class template '%S' is already defined
-:MSGJTXT. クラス・テンプレート'%S'は、すでに定義されます
+:MSGJTXT. クラス・テンプレート'%S'は既に定義されています
 A class template cannot have its definition repeated regardless of whether
 it is identical to the previous definition.
 
@@ -2383,7 +2383,7 @@ int foo( extern int a )
 
 :MSGSYM. ERR_UNION_CANT_HAVE_MEMBER_WITH_CTOR
 :MSGTXT. unions cannot have members with constructors
-:MSGJTXT. 共用体は、コンストラクタを持つメンバを持つことができません
+:MSGJTXT. 共用体はコンストラクタを持つメンバを有することができません
 A union should only be used to organize memory in C++.
 Allowing union members to have constructors would mean
 that the same piece of memory could be constructed twice.
@@ -2400,7 +2400,7 @@ union U
 
 :MSGSYM. ERR_COMPLICATED_STATEMENT
 :MSGTXT. statement is too complicated
-:MSGJTXT. 文は、あまりに複雑です
+:MSGJTXT. 文が複雑すぎます
 The statement contains too many nested constructs.
 Break up the statement into multiple statements.
 
@@ -2428,7 +2428,7 @@ void foo()
 
 :MSGSYM. ERR_OFFSETOF_BITFIELD
 :MSGTXT. 'offsetof' is not allowed for a bit-field
-:MSGJTXT. 'offsetof'は、ビットフィールドに使えません
+:MSGJTXT. 'offsetof'はビットフィールドに使えません
 A bit-field cannot have a simple offset so it cannot be referenced in an
 .kw offsetof
 expression.
@@ -2445,7 +2445,7 @@ int k = offsetof( S, b2 );
 
 :MSGSYM. WARN_PRIVATE_BASE_ASSUMED
 :MSGTXT. base class is inherited with private access
-:MSGJTXT. 基底クラスは、プライベート・アクセスで継承されています
+:MSGJTXT. 基底クラスはプライベート・アクセスで継承されています
 :WARNING. 1
 This warning indicates that the base class was originally declared
 as a
@@ -2476,7 +2476,7 @@ int k = foo( 5 );
 
 :MSGSYM. ERR_SEGOP_OPERANDS
 :MSGTXT. base operator operands must be " __segment :> pointer "
-:MSGJTXT. ベース演算子のオペランドは、"__segment：>ポインタ"でなければなりません
+:MSGJTXT. ベース演算子のオペランドは"__segment：>ポインタ"でなければなりません
 The base operator (:>) requires the left operand to be of type __segment
 and the right operand to be a pointer.
 :errbad.
@@ -2493,7 +2493,7 @@ char __far *c_fp_2 = __segname( "_DATA" ) :> c_bv;
 
 :MSGSYM. ERR_NOT_PTR_OR_ZERO
 :MSGTXT. expression must be a pointer or a zero constant
-:MSGJTXT. 式は、ポインタか0定数でなければなりません
+:MSGJTXT. 式はポインタまたはゼロ定数でなければなりません
 In a conditional expression, if one side of the ':' is a pointer then
 the other side must also be a pointer or a zero constant.
 :errbad.
@@ -2554,7 +2554,7 @@ void *q = ++p;
 
 :MSGSYM. ERR_CANT_TAKE_SIZEOF_FUNC
 :MSGTXT. 'sizeof' is not allowed for a function
-:MSGJTXT. 'sizeof'は、関数に対して使用できません
+:MSGJTXT. 'sizeof'は関数に対して使用できません
 A function has no size defined for it by the C++ language specification.
 :errbad.
 typedef int FT( int );
@@ -2564,7 +2564,7 @@ unsigned y = sizeof( FT );
 
 :MSGSYM. ERR_CANT_TAKE_SIZEOF_VOID
 :MSGTXT. 'sizeof' is not allowed for a type 'void'
-:MSGJTXT. 'sizeof'は、'void'型に対して使用できません
+:MSGJTXT. 'sizeof'は'void'型に対して使用できません
 The type
 .kw void
 has no size defined for it by the C++ language specification.
@@ -2575,7 +2575,7 @@ unsigned size = sizeof( *p );
 
 :MSGSYM. ERR_TYPE_SPECIFIER_DEFINES
 :MSGTXT. type cannot be defined in this context
-:MSGJTXT. 型は、このコンテキストにおける定義できません
+:MSGJTXT. ここで型を定義することはできません
 A type cannot be defined in certain contexts.  For example,
 a new type cannot be defined in an argument list, a
 .kw new
@@ -2594,7 +2594,7 @@ int foo()
 
 :MSGSYM. ERR_INVALID_TEMPLATE_PARM
 :MSGTXT. expression cannot be used as a class template parameter
-:MSGJTXT. 式が、クラス・テンプレート・パラメータとして使えません
+:MSGJTXT. 式はクラス・テンプレート・パラメータとして使えません
 The compiler has to be able to compare expressions during
 compilation so this limits the complexity of expressions
 that can be used for template parameters.
@@ -2604,13 +2604,13 @@ Any symbols must have external linkage or must be static class members.
 
 :MSGSYM. ERR_PREMATURE_ENDFILE
 :MSGTXT. premature end-of-file encountered during compilation
-:MSGJTXT. コンパイルの途中で、ファイルが終わりました
+:MSGJTXT. コンパイルの途中でファイルが終わりました
 The compiler expects more source code at this point.  This can be due
 to missing parentheses (')') or missing closing braces ('}').
 
 :MSGSYM. ERR_DUPLICATE_CONV_CASE_VALUE
 :MSGTXT. duplicate case value '%s' after conversion to type of switch expression
-:MSGJTXT. switch式の型に変換の後、等しいcase値'%s'が2つあります
+:MSGJTXT. switch式で型変換を行った後，同じcase値'%s'が2つ存在します
 A duplicate
 .kw case
 value has been found.  Keep in mind that all case values must be converted
@@ -2630,7 +2630,7 @@ void foo( short a )
 
 :MSGSYM. WARN_DCL_IF
 :MSGTXT. declaration statement follows an if statement
-:MSGJTXT. 宣言文の前に、if文があります
+:MSGJTXT. 宣言文の前にif文があります
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2648,7 +2648,7 @@ void foo( int a )
 
 :MSGSYM. WARN_DCL_ELSE
 :MSGTXT. declaration statement follows an else statement
-:MSGJTXT. 宣言文の前に、else文があります
+:MSGJTXT. 宣言文の前にelse文があります
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2668,7 +2668,7 @@ void foo( int a )
 
 :MSGSYM. WARN_DCL_SWITCH
 :MSGTXT. declaration statement follows a switch statement
-:MSGJTXT. 宣言文の前に、switch文があります
+:MSGJTXT. 宣言文の前にswitch文があります
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2686,7 +2686,7 @@ void foo( int a )
 
 :MSGSYM. ERR_NO_THIS_PTR_DEFINED
 :MSGTXT. 'this' pointer is not defined
-:MSGJTXT. 'this'ポインタは、定義されません
+:MSGJTXT. 'this'ポインタは定義されません
 The
 .kw this
 value can only be used from within non-static member functions.
@@ -2699,7 +2699,7 @@ void *fn()
 
 :MSGSYM. WARN_DCL_WHILE
 :MSGTXT. declaration statement cannot follow a while statement
-:MSGJTXT. 宣言文は、while文に続くことができません
+:MSGJTXT. 宣言文はwhile文に続くことができません
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2717,7 +2717,7 @@ void foo( int a )
 
 :MSGSYM. WARN_DCL_DO
 :MSGTXT. declaration statement cannot follow a do statement
-:MSGJTXT. 宣言文は、do文に続くことができません
+:MSGJTXT. 宣言文はdo文に続くことができません
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2736,7 +2736,7 @@ void foo( int a )
 
 :MSGSYM. WARN_DCL_FOR
 :MSGTXT. declaration statement cannot follow a for statement
-:MSGJTXT. 宣言文は、for文に続くことができません
+:MSGJTXT. 宣言文はfor文に続くことができません
 :WARNING. 1
 :cmt was illegal in the ARM but clarified in X3J16 and it is now legal
 There are implicit scopes created for most control structures.
@@ -2768,7 +2768,7 @@ void foo( int a )
 
 :MSGSYM. ERR_CONVERT_FROM_VIRTUAL_BASE
 :MSGTXT. pointer to virtual base class converted to pointer to derived class
-:MSGJTXT. 仮想基底クラスへのポインタは、派生クラスへのポインタに変換されました
+:MSGJTXT. 仮想基底クラスへのポインタは，派生クラスへのポインタに変換されました
 Since the relative position of a virtual base can change through repeated
 derivations, this conversion is very dangerous.  All C++ translators must
 report an error for this type of conversion.
@@ -2781,7 +2781,7 @@ Der *pd = (Der *)pv;
 
 :MSGSYM. ERR_USE_FAR
 :MSGTXT. cannot use far pointer in this context
-:MSGJTXT. このコンテキストにおいて、farポインタを使うことができません
+:MSGJTXT. ここでfarポインタを使うことはできません
 Only near pointers can be thrown when the data memory model is near.
 :errbad.
 extern int __far *p;
@@ -2799,7 +2799,7 @@ statements when the data memory model is near.
 
 :MSGSYM. ERR_RET_AUTO_REF
 :MSGTXT. returning reference to function argument or to auto or register variable
-:MSGJTXT. 関数引数への参照、あるいは、自動またはレジスタ変数への参照を返します
+:MSGJTXT. 関数引数への参照，または自動／レジスタ変数への参照を返します
 The storage for the automatic variable will be destroyed immediately upon
 function return.  Returning a reference effectively allows the caller
 to modify storage which does not exist.
@@ -2821,7 +2821,7 @@ C& foo()
 
 :MSGSYM. WARN_PRAGMA_MERGE
 :MSGTXT. #pragma attributes for '%S' may be inconsistent
-:MSGJTXT. '%S'に対する#pragma属性は、矛盾しているかもしれません
+:MSGJTXT. '%S'に対する#pragma属性は矛盾しているかもしれません
 :WARNING. 1
 A pragma attribute was changed to a value which matches neither the current
 default not the previous value for that attribute.
@@ -2832,7 +2832,7 @@ two pragmas for the same object.
 
 :MSGSYM. ERR_NO_VOID_PARMS
 :MSGTXT. function arguments cannot be of type 'void'
-:MSGJTXT. 関数引数は、'void'型であることができません
+:MSGJTXT. 関数引数は'void'型であることができません
 Having more than one
 .kw void
 argument is not allowed.  The special case of one
@@ -2849,19 +2849,19 @@ void fn2( void, void, void )    // Error!
 
 :MSGSYM. ERR_TOO_FEW_TEMPLATE_PARAMETERS
 :MSGTXT. class template requires more parameters for instantiation
-:MSGJTXT. クラス・テンプレートは、インスタンス化のためにより多くのパラメータを必要とします
+:MSGJTXT. クラス・テンプレートのインスタンス化のためのパラメータが不足しています
 The class template instantiation has too few parameters supplied
 so the class cannot be instantiated properly.
 
 :MSGSYM. ERR_TOO_MANY_TEMPLATE_PARAMETERS
 :MSGTXT. class template requires less parameters for instantiation
-:MSGJTXT. クラス・テンプレートは、インスタンス化のためにより少ないパラメータを必要とします
+:MSGJTXT. クラス・テンプレートのインスタンス化のためのパラメータが多すぎます
 The class template instantiation has too many parameters supplied
 so the class cannot be instantiated properly.
 
 :MSGSYM. ERR_NEW_OVERLOAD_FAILURE
 :MSGTXT. no declared 'operator new' has arguments that match
-:MSGJTXT. 宣言された'operator new'は、一致する引数を持ちません
+:MSGJTXT. 宣言された'operator new'は一致する引数を持ちません
 An
 .kw operator new
 could not be found to match the
@@ -2896,7 +2896,7 @@ char *p = "1234" L"5678";
 
 :MSGSYM. ERR_OFFSETOF_STATIC
 :MSGTXT. 'offsetof' is not allowed for a static member
-:MSGJTXT. 'offsetof'は、スタティックなメンバに使用できません
+:MSGJTXT. 'offsetof'はスタティックなメンバに使用できません
 A
 .kw static
 member does not have an offset like simple data members.
@@ -2992,7 +2992,7 @@ S *p = new S[10] ( 12 );
 
 :MSGSYM. ERR_CANT_HAVE_VOID_VARIABLE
 :MSGTXT. '%N' is a variable of type 'void'
-:MSGJTXT. '%N'は、'void'型の変数です
+:MSGJTXT. '%N'は'void'型の変数です
 A variable cannot be of type
 .kw void.
 The
@@ -3038,7 +3038,7 @@ extern int foo( S* const ); // not distinct enough
 
 :MSGSYM. ERR_FUNCTION_AMBIGUOUS_OVERLOAD
 :MSGTXT. overloaded function is ambiguous for arguments used in call
-:MSGJTXT. オーバーロード関数は、呼び出しの中で使われる引数が曖昧です
+:MSGJTXT. 呼び出しに用いられている引数が多重定義関数に対して曖昧です
 The compiler could not find an unambiguous choice for
 the function being called.
 :errbad.
@@ -3049,7 +3049,7 @@ int k = foo( 4 );
 
 :MSGSYM. ERR_NEW_OVERLOAD_AMBIGUOUS
 :MSGTXT. declared 'operator new' is ambiguous for arguments used
-:MSGJTXT. 宣言された'operator new'は、使われる引数が曖昧です
+:MSGJTXT. 使用された引数は宣言された'operator new'に対して曖昧です
 The compiler could not find an unambiguous choice for
 .kw operator new.
 :errbad.
@@ -3065,7 +3065,7 @@ Der *p = new(10) Der;
 
 :MSGSYM. ERR_FUNCTION_REDEFINITION
 :MSGTXT. function '%S' has already been defined
-:MSGJTXT. 関数'%S'は、すでに定義されました
+:MSGJTXT. 関数'%S'は既に定義されました
 The function being defined has already been defined elsewhere.
 Even if the two function bodies are identical, there must be only
 one definition for a particular function.
@@ -3076,7 +3076,7 @@ int foo( int s ) { return s; }  // illegal
 
 :MSGSYM. ERR_ARRAY_LEFT
 :MSGTXT. expression on left is an array
-:MSGJTXT. 左の式は、配列です
+:MSGJTXT. 左式は配列です
 The array expression is being used in a context where only pointers
 are allowed.
 :errbad.
@@ -3092,7 +3092,7 @@ void fn( void *p )
 
 :MSGSYM. ERR_USER_CONV_BAD_RETURN
 :MSGTXT. user-defined conversion has a return type
-:MSGJTXT. ユーザ-定義変換は、戻り型を持ちます
+:MSGJTXT. ユーザー定義変換は戻り型を持ちます
 A user-defined conversion cannot be declared with a return type.
 The "return type" of the user-defined conversion is implicit in the
 name of the user-defined conversion.
@@ -3104,7 +3104,7 @@ struct S {
 
 :MSGSYM. ERR_USER_CONV_BAD_DECL
 :MSGTXT. user-defined conversion must be a function
-:MSGJTXT. ユーザ-定義変換は、関数でなければなりません
+:MSGJTXT. ユーザー定義変換は関数でなければなりません
 The operator name describing a user-defined conversion can only be
 used to designate functions.
 :errbad.
@@ -3114,7 +3114,7 @@ int operator char = 9;
 
 :MSGSYM. ERR_USER_CONV_BAD_FUNC
 :MSGTXT. user-defined conversion has an argument list
-:MSGJTXT. ユーザ-定義変換は、引数リストを持ちます
+:MSGJTXT. ユーザー定義変換は引数リストを持ちます
 A user-defined conversion cannot have an argument list.
 Since user-defined conversions can only be non-static member
 functions, they have an implicit
@@ -3144,7 +3144,7 @@ struct S {
 
 :MSGSYM. ERR_DESTRUCTOR_BAD_DECL
 :MSGTXT. destructor must be a function
-:MSGJTXT. デストラクタは、関数でなければなりません
+:MSGJTXT. デストラクタは関数でなければなりません
 The tilde ('~') style of name is reserved for declaring destructor functions.
 Variable names cannot make use of the destructor style of names.
 :errbad.
@@ -3155,7 +3155,7 @@ struct S {
 
 :MSGSYM. ERR_DESTRUCTOR_BAD_FUNC
 :MSGTXT. destructor has an argument list
-:MSGJTXT. デストラクタは、引数リストを持ちます
+:MSGJTXT. デストラクタは引数リストを持ちます
 A destructor cannot have an argument list.
 Since destructors can only be non-static member
 functions, they have an implicit
@@ -3169,7 +3169,7 @@ struct S {
 
 :MSGSYM. ERR_OPERATOR_BAD_DECL
 :MSGTXT. '%N' must be a function
-:MSGJTXT. '%N'は、関数でなければなりません
+:MSGJTXT. '%N'は関数でなければなりません
 The
 .kw operator
 style of name is reserved for declaring operator functions.
@@ -3184,7 +3184,7 @@ struct S {
 
 :MSGSYM. ERR_INCORRECT_FUNCTION_DECL
 :MSGTXT. '%N' is not a function
-:MSGJTXT. '%N'は、関数ではありません
+:MSGJTXT. '%N'は関数ではありません
 The compiler has detected what looks like a function body.
 The message is a result of not finding a function being declared.
 This can happen in many ways, such as dropping the ':' before
@@ -3196,7 +3196,7 @@ struct D B { int i; };
 
 :MSGSYM. ERR_UNDECLARED_NESTED_CLASS_SYM
 :MSGTXT. nested type 'class %s' has not been declared
-:MSGJTXT. ネストにされた'class %s'型は、宣言されませんでした
+:MSGJTXT. ネストにされた'class %s'型は宣言されていません
 A nested class has not been found but is required by the use of
 repeated '::' operators.  The construct "A::B::C" requires that
 'A' be a class type, and 'B' be a nested class within the scope
@@ -3221,7 +3221,7 @@ int A::B::b = 2;    // B nested in A
 
 :MSGSYM. ERR_UNDECLARED_ENUM_SYM
 :MSGTXT. 'enum %s' has not been declared
-:MSGJTXT. 'enum %s'は、宣言されませんでした
+:MSGJTXT. 'enum %s'は宣言されていません
 An elaborated reference to an
 .kw enum
 could not be satisfied.  All enclosing scopes have been searched for an
@@ -3237,7 +3237,7 @@ enum E enum_var;    // E not visible
 
 :MSGSYM. ERR_UNDECLARED_CLASS_SYM
 :MSGTXT. 'class %s' has not been declared
-:MSGJTXT. 'クラス%s'は、宣言されませんでした
+:MSGJTXT. 'クラス%s'は宣言されていません
 The construct "A::B::C" requires that
 'A' be a class type, and 'B' be a nested class within the scope of 'A'.
 The reference to 'A' could not be satisfied.
@@ -3253,7 +3253,7 @@ int c = B::A::b;
 
 :MSGSYM. ERR_ONE_CTOR_ARG_REQD
 :MSGTXT. only one initializer argument allowed
-:MSGJTXT. スカラー型に対しては、一つの初期化引数だけが許されます
+:MSGJTXT. スカラー型に対しては，一つの初期化引数だけが許されます
 The comma (',') in a function like cast is treated like
 an argument list comma (',').
 If a comma expression is desired, use parentheses to enclose the comma
@@ -3270,7 +3270,7 @@ void fn()
 
 :MSGSYM. ERR_DEFAULT_ARGS_IN_A_TYPE
 :MSGTXT. default arguments are not part of a function's type
-:MSGJTXT. デフォルト引数は、関数の型の一部ではありません
+:MSGJTXT. デフォルト引数は関数の型の一部ではありません
 This message indicates that a declaration has been found that
 requires default arguments to be part of a function's type.
 Either declaring a function
@@ -3293,7 +3293,7 @@ void fn( int = 1, int, int = 3 );
 
 :MSGSYM. ERR_DEFAULT_ARGS_OPERATOR
 :MSGTXT. overloaded operator cannot have default arguments
-:MSGJTXT. オーバーロード演算子は、デフォルト引数を持つことができません
+:MSGJTXT. オーバーロード演算子はデフォルト引数を持つことができません
 Preventing overloaded operators from having default arguments
 enforces the property that binary operators will only be called
 from a use of a binary operator.  Allowing default arguments
@@ -3311,7 +3311,7 @@ public:
 
 :MSGSYM. ERR_LEFT_NOT_CONST_PTR
 :MSGTXT. left expression is not a pointer to a constant object
-:MSGJTXT. 左の式は、定数のオブジェクトへのポインタではありません
+:MSGJTXT. 左式は定数オブジェクトへのポインタではありません
 One cannot assign a pointer to a constant type to a pointer to a
 non-constant type.  This would allow a constant object to be modified
 via the non-constant pointer.  Use a cast if this is absolutely
@@ -3340,7 +3340,7 @@ static int foo( int a = 10 )
 
 :MSGSYM. WARN_DEFAULT_ARG_HITS_ANOTHER_SYM
 :MSGTXT. using default arguments would be overload ambiguous with '%S'
-:MSGJTXT. デフォルト引数を使うことは、'%S'で曖昧なオーバーロードです
+:MSGJTXT. デフォルト引数の使用は，'%S'で曖昧なオーバーロードとなります
 :WARNING. 3
 The declaration declares enough default arguments that the function
 is indistinguishable from another function of the same name.
@@ -3355,7 +3355,7 @@ the second 'fn' with a default argument applied.
 
 :MSGSYM. WARN_DEFAULT_ARG_HITS_ANOTHER_ARG
 :MSGTXT. using default arguments would be overload ambiguous with '%S' using default arguments
-:MSGJTXT. デフォルト引数を使うことは、デフォルト引数を使っている'%S'で曖昧なオーバーロードです
+:MSGJTXT. デフォルト引数の使用は，デフォルト引数を使っている'%S'で曖昧なオーバーロードとなります
 :WARNING. 3
 The declaration declares enough default arguments that the function
 is indistinguishable from another function of the same name with default arguments.
@@ -3386,7 +3386,7 @@ void fn2( int = 2, int     );   // Error!
 
 :MSGSYM. ERR_CANNOT_REFERENCE_UNNAMED_ENUM
 :MSGTXT. enum references must have an identifier
-:MSGJTXT. Enum参照は、識別子を持たなければなりません
+:MSGJTXT. enum参照は識別子を持たなければなりません
 There is no way to reference an anonymous
 .kw enum.
 If all enums are named, the cause of this message is most likely
@@ -3401,7 +3401,7 @@ void fn()
 
 :MSGSYM. ERR_INVALID_DESTRUCTOR_NAME
 :MSGTXT. class declaration has not been seen for '~%s'
-:MSGJTXT. '~%s'に対応するクラス宣言は見えませんでした
+:MSGJTXT. '~%s'に対するクラス宣言は見つかりません
 A destructor has been used in a context where its class is
 not visible.
 :errbad.
@@ -3436,7 +3436,7 @@ struct S {
 
 :MSGSYM. ERR_NOT_A_MEMBER
 :MSGTXT. '%S' has not been declared as a member
-:MSGJTXT. '%S'は、メンバとして宣言されませんでした
+:MSGJTXT. '%S'はメンバとして宣言されていません
 In a definition of a class member, the indicated declaration must already
 have been declared when the class was defined.
 :errbad.
@@ -3452,7 +3452,7 @@ C::not_decled() { }
 
 :MSGSYM. ERR_DEFAULT_ARG_USES_ARG
 :MSGTXT. default argument expression cannot use function argument '%S'
-:MSGJTXT. デフォルト引数式は、関数引数'%S'を使えません
+:MSGJTXT. デフォルト引数式は，関数引数'%S'を使えません
 Default arguments must be evaluated at each call.  Since the order
 of evaluation for arguments is undefined, a compiler must diagnose
 all default arguments that depend on other arguments.
@@ -3471,7 +3471,7 @@ void goop( int d )
 
 :MSGSYM. ERR_DEFAULT_ARG_USES_LOCAL
 :MSGTXT. default argument expression cannot use local variable '%S'
-:MSGJTXT. デフォルト引数式は、局所変数'%S'を使えません
+:MSGJTXT. デフォルト引数式は，局所変数'%S'を使えません
 Default arguments must be evaluated at each call.  Since a local
 variable is not always available in all contexts (e.g., file scope
 initializers), a compiler must diagnose all default arguments that
@@ -3492,7 +3492,7 @@ void goop( void )
 
 :MSGSYM. ERR_ACCESS_DECL_IN_PRIVATE
 :MSGTXT. access declarations may only be 'public' or 'protected'
-:MSGJTXT. アクセス宣言は、'public'、'protected'のみです
+:MSGJTXT. アクセス宣言は'public'または'protected'のみです
 Access declarations are used to increase access.  A
 .kw private
 access declaration is useless because there is no access level for which
@@ -3531,7 +3531,7 @@ struct S {
 
 :MSGSYM. ERR_NOT_A_DIRECT_BASE_CLASS
 :MSGTXT. class in access declaration ('%T') must be a direct base class
-:MSGJTXT. アクセス宣言（'%T'）の中のクラスは、直接の基底クラスでなければなりません
+:MSGJTXT. アクセス宣言（'%T'）の中のクラスは，直接の基底クラスでなければなりません
 Access declarations can only be applied to direct (immediate) base classes.
 :errbad.
 struct B {
@@ -3550,7 +3550,7 @@ base class of "C", but "B" is not a direct base class of "D".
 
 :MSGSYM. ERR_ACCESS_DECL_ALL_SAME
 :MSGTXT. overloaded functions ('%N') do not have the same access
-:MSGJTXT. オーバーロード関数（'%N'）は、同じアクセスを持ちません
+:MSGJTXT. オーバーロード関数（'%N'）は同じアクセスを持ちません
 If an access declaration is referencing a set of overloaded functions,
 then they all must have the same access.  This is due to the lack
 of a type in an access declaration.
@@ -3612,7 +3612,7 @@ class Der : public Base
 
 :MSGSYM. ERR_NESTED_CLASS_NOT_DEFINED
 :MSGTXT. nested class '%N' has not been defined
-:MSGJTXT. ネストにされたクラス'%N'は、定義されませんでした
+:MSGJTXT. ネストされたクラス'%N'は定義されていません
 The current state of the C++ language supports nested types.
 Unfortunately, this means that some working C code will not work
 unchanged.
@@ -3637,7 +3637,7 @@ struct S {
 
 :MSGSYM. ERR_USER_CONV_NOT_MEMBER
 :MSGTXT. user-defined conversion must be a non-static member function
-:MSGJTXT. ユーザ-定義変換は、非スタティック・メンバ関数でなければなりません
+:MSGJTXT. ユーザ-定義変換は，非スタティック・メンバ関数でなければなりません
 A user-defined conversion is a special member function that allows the
 class to be converted implicitly (or explicitly) to an arbitrary type.
 In order to do this, it must have access to an instance of the class
@@ -3651,7 +3651,7 @@ struct S
 
 :MSGSYM. ERR_DESTRUCTOR_NOT_MEMBER
 :MSGTXT. destructor must be a non-static member function
-:MSGJTXT. デストラクタは、非スタティック・メンバ関数でなければなりません
+:MSGJTXT. デストラクタは，非スタティック・メンバ関数でなければなりません
 A destructor is a special member function that will perform cleanup on a
 class before the storage for the class will be released.  In order to do
 this, it must have access to an instance of the class so it is
@@ -3665,7 +3665,7 @@ struct S
 
 :MSGSYM. ERR_OPERATOR_NOT_MEMBER
 :MSGTXT. '%N' must be a non-static member function
-:MSGJTXT. '%N'は、非スタティック・メンバ関数でなければなりません
+:MSGJTXT. '%N'は非スタティック・メンバ関数でなければなりません
 The operator function in the message is restricted to being a non-static
 member function.  This usually means that the operator function is treated
 in a special manner by the compiler.
@@ -3679,7 +3679,7 @@ public:
 
 :MSGSYM. ERR_OPERATOR_MUST_HAVE_1_ARG
 :MSGTXT. '%N' must have one argument
-:MSGJTXT. '%N'は、一つの引数を持たなければなりません
+:MSGJTXT. '%N'は1個の引数を持たなければなりません
 The operator function in the message is only allowed to have one
 argument.  An operator like
 .kw operator ~
@@ -3694,7 +3694,7 @@ C& operator~( const C&, int );
 
 :MSGSYM. ERR_OPERATOR_MUST_HAVE_2_ARGS
 :MSGTXT. '%N' must have two arguments
-:MSGJTXT. '%N'は、2つの引数を持たなければなりません
+:MSGJTXT. '%N'は2個の引数を持たなければなりません
 The operator function in the message must have two
 arguments.  An operator like
 .kw operator +=
@@ -3709,7 +3709,7 @@ C& operator += ( const C& );
 
 :MSGSYM. ERR_OPERATOR_MUST_HAVE_1_OR_2_ARGS
 :MSGTXT. '%N' must have either one argument or two arguments
-:MSGJTXT. '%N'は、一つの引数か2つの引数を持たなければなりません
+:MSGJTXT. '%N'は1個または2個の引数を持たなければなりません
 The operator function in the message must have either one argument or two
 arguments.  An operator like
 .kw operator +
@@ -3724,7 +3724,7 @@ C& operator+( const C&, int, float );
 
 :MSGSYM. ERR_OPERATOR_NEW_MUST_HAVE_ARGS
 :MSGTXT. '%N' must have at least one argument
-:MSGJTXT. '%N'は、少くとも1つの引数を持たなければなりません
+:MSGJTXT. '%N'は少くとも1個の引数を持たなければなりません
 The
 .kw operator new
 and
@@ -3749,7 +3749,7 @@ void fn()
 
 :MSGSYM. ERR_OPERATOR_DEL_RETURNS_VOID
 :MSGTXT. '%N' must have a return type of 'void'
-:MSGJTXT. '%Nは、'void'の戻り型を持たなければなりません
+:MSGJTXT. '%Nは'void'の戻り型を持たなければなりません
 The C++ language requires that
 .kw operator delete
 and
@@ -3768,7 +3768,7 @@ public:
 
 :MSGSYM. ERR_OPERATOR_NEW_RETURNS_VOID
 :MSGTXT. '%N' must have a return type of 'void *'
-:MSGJTXT. '%Nは、'void *'の戻り型を持たなければなりません
+:MSGJTXT. '%Nは'void *'の戻り型を持たなければなりません
 The C++ language requires that both
 .kw operator new
 and
@@ -3788,7 +3788,7 @@ public:
 
 :MSGSYM. ERR_OPERATOR_NEW_FIRST_ARG
 :MSGTXT. the first argument of '%N' must be of type 'size_t'
-:MSGJTXT. '%N'の最初の引数は、'size_t'型でなければなりません
+:MSGJTXT. '%N'の最初の引数は'size_t'型でなければなりません
 The C++ language requires that the first argument for
 .kw operator new
 and
@@ -3804,7 +3804,7 @@ void *operator new []( double size, char c );
 
 :MSGSYM. ERR_OPERATOR_DEL_FIRST_ARG
 :MSGTXT. the first argument of '%N' must be 'void *'
-:MSGJTXT. '%N'の最初の引数は、'void *'でなければなりません
+:MSGJTXT. '%N'の最初の引数は'void *'でなければなりません
 The C++ language requires that the first argument for
 .kw operator delete
 and
@@ -3819,7 +3819,7 @@ void operator delete []( C* );
 
 :MSGSYM. ERR_OPERATOR_DEL_SECOND_ARG
 :MSGTXT. the second argument of '%N' must be of type 'size_t'
-:MSGJTXT. '%N'の二番目の引数は、'size_t'型でなければなりません
+:MSGJTXT. '%N'の二番目の引数は'size_t'型でなければなりません
 The C++ language requires that the second argument for
 .kw operator delete
 and
@@ -3841,7 +3841,7 @@ struct S {
 
 :MSGSYM. ERR_OPERATOR_INC_DEC_SECOND_ARG
 :MSGTXT. the second argument of 'operator ++' or 'operator --' must be 'int'
-:MSGJTXT. 'operator ++'か'operator --'の二番目の引数は、intでなければなりません
+:MSGJTXT. 'operator ++'か'operator --'の二番目の引数はintでなければなりません
 The C++ language requires that the second argument for
 .kw operator ++
 be
@@ -3860,7 +3860,7 @@ C& operator ++( C&, unsigned );
 
 :MSGSYM. ERR_OPERATOR_ARROW_RETURN_BAD
 :MSGTXT. return type of '%S' must allow the '->' operator to be applied
-:MSGJTXT. '%S'の戻り型は、'->'演算子が適用されるのを許さなければなりません
+:MSGJTXT. '%S'の戻り型は，'->'演算子が適用されるのを許さなければなりません
 This restriction is a result of the transformation that the compiler performs
 when the
 .kw operator ->
@@ -3881,7 +3881,7 @@ void fn( S &q )
 
 :MSGSYM. ERR_OPERATOR_MUST_TAKE_CLASS_OR_ENUM
 :MSGTXT. '%N' must take at least one argument of a class/enum or a reference to a class/enum
-:MSGJTXT. '%N'は、class/enumかclass/enumへの参照の少くとも1つの引数をとらなければなりません
+:MSGJTXT. '%N'は，class/enumかclass/enumへの参照の少くとも1つの引数をとらなければなりません
 Overloaded operators can only be defined for classes and enumerations.
 At least one argument, must be a class or an enum type in order for the
 C++ compiler to distinguish the operator from the built-in operators.
@@ -3914,7 +3914,7 @@ char ac[3] = "abc";
 
 :MSGSYM. ERR_EXPECTING_BUT_FOUND_EXPRESSION
 :MSGTXT. expecting '%s' but found expression
-:MSGJTXT. '%s'があるはずですが、式がありました
+:MSGJTXT. '%s'があるはずですが，式がありました
 This message is output when some bracing or punctuation is expected but
 an expression was encountered.
 :errbad.
@@ -3923,7 +3923,7 @@ int b[3] = 3;
 
 :MSGSYM. ERR_ANONYMOUS_SAME_NAME_AS_CLASS
 :MSGTXT. anonymous struct/union member '%N' cannot be declared in this class
-:MSGJTXT. 名前なしのstruct/unionメンバー'%N'は、このクラスにおいて宣言できません
+:MSGJTXT. 名前なしのstruct/unionメンバー'%N'は，このクラスにおいて宣言できません
 An anonymous member cannot be declared with the same name as its containing
 class.
 :errbad.
@@ -3946,7 +3946,7 @@ int e = { { 1 };
 
 :MSGSYM. ERR_TYPEDEF_SAME_NAME_AS_CLASS
 :MSGTXT. nested type '%N' cannot be declared in this class
-:MSGJTXT. ネストにされた型'%N'は、このクラスにおいて宣言されることができません
+:MSGJTXT. ネストにされた型'%N'は，このクラスにおいて宣言されることができません
 A nested type cannot be declared with the same name as its containing
 class.
 :errbad.
@@ -3957,7 +3957,7 @@ struct S {
 
 :MSGSYM. ERR_ENUM_SAME_NAME_AS_CLASS
 :MSGTXT. enumerator '%N' cannot be declared in this class
-:MSGJTXT. 列挙子'%N'は、このクラスにおいて宣言されることができません
+:MSGJTXT. 列挙子'%N'は，このクラスにおいて宣言されることができません
 An enumerator cannot be declared with the same name as its containing
 class.
 :errbad.
@@ -3971,7 +3971,7 @@ struct S {
 
 :MSGSYM. ERR_STATIC_SAME_NAME_AS_CLASS
 :MSGTXT. static member '%N' cannot be declared in this class
-:MSGJTXT. スタティック・メンバ'%N'は、このクラスにおいて宣言されることができません
+:MSGJTXT. スタティック・メンバ'%N'は，このクラスにおいて宣言されることができません
 A static member cannot be declared with the same name as its containing
 class.
 :errbad.
@@ -4059,7 +4059,7 @@ public:
 
 :MSGSYM. ERR_INVALID_SCALAR_DESTRUCTOR
 :MSGTXT. types do not match in simple type destructor
-:MSGJTXT. 型は、単純な型デストラクタの中で一致しません
+:MSGJTXT. 型は，単純な型デストラクタの中で一致しません
 A simple type destructor is available for "destructing" simple
 types.  The destructor has no effect.  Both of the types
 must be identical, for the destructor to have meaning.
@@ -4072,7 +4072,7 @@ void foo( int *p )
 
 :MSGSYM. ERR_OPERATOR_AMBIGUOUS_OVERLOAD
 :MSGTXT. overloaded operator is ambiguous for operands used
-:MSGJTXT. オーバーロード演算子は、使われるオペランドが曖昧です
+:MSGJTXT. 使われているオペランドのため，オーバーロード演算子が曖昧です
 The Watcom C++ compiler performs exhaustive analysis using formalized
 techniques in order to decide what implicit conversions should be
 applied for overloading operators.  Because of this, Watcom C++
@@ -4101,7 +4101,7 @@ cannot decide which one it should choose, hence an ambiguity.
 
 :MSGSYM. ERR_NOT_IMPLEMENTED
 :MSGTXT. feature not implemented
-:MSGJTXT. 昨日は実装されていません
+:MSGJTXT. 機能は実装されていません
 The compiler does not support the indicated feature.
 
 :MSGSYM. ERR_FRIEND_BAD
@@ -4123,7 +4123,7 @@ class C
 
 :MSGSYM. ERR_FRIEND_NOT_IN_CLASS
 :MSGTXT. friend declarations may only be declared in a class
-:MSGJTXT. フレンド宣言は、クラスの中でのみ宣言できます
+:MSGJTXT. フレンド宣言はクラスの中でのみ宣言できます
 This message indicates that a
 .kw friend
 declaration was found outside a class scope (i.e., a class
@@ -4135,7 +4135,7 @@ friend void foo();
 
 :MSGSYM. ANSI_CLASS_FRIEND_NEEDS_CLASS
 :MSGTXT. class friend declaration needs 'class' or 'struct' keyword
-:MSGJTXT. クラス・フレンド宣言は、'class'か'struct'キーワードを必要とします
+:MSGJTXT. クラス・フレンド宣言は，'class'か'struct'キーワードを必要とします
 :ANSI. 4
 The C++ language has evolved to require that all friend class declarations
 be of the form "class S" or "struct S".  The Watcom C++ compiler accepts
@@ -4150,7 +4150,7 @@ struct T {
 
 :MSGSYM. ERR_CLASS_FRIEND_DEFINES_SOMETHING
 :MSGTXT. class friend declarations cannot contain a class definition
-:MSGJTXT. クラス・フレンド宣言は、クラス定義を含むことができません
+:MSGJTXT. クラス・フレンド宣言は，クラス定義を含むことができません
 A class friend declaration cannot define a new class.  This is a restriction
 required in the C++ language.
 :errbad.
@@ -4163,7 +4163,7 @@ struct S {
 
 :MSGSYM. WARN_CLASS_FRIEND_REPEATED
 :MSGTXT. '%T' has already been declared as a friend
-:MSGJTXT. '%T'は、フレンドとしてすでに宣言されました
+:MSGJTXT. '%T'はフレンドとして既に宣言されました
 :WARNING. 2
 The class in the message has already been declared as a friend.
 Remove the extra friend declaration.
@@ -4178,7 +4178,7 @@ class T {
 
 :MSGSYM. WARN_FN_FRIEND_REPEATED
 :MSGTXT. function '%S' has already been declared as a friend
-:MSGJTXT. 関数'%S'は、フレンドとしてすでに宣言されました
+:MSGJTXT. 関数'%S'はフレンドとして既に宣言されました
 :WARNING. 2
 The function in the message has already been declared as a friend.
 Remove the extra friend declaration.
@@ -4193,7 +4193,7 @@ class T {
 
 :MSGSYM. ERR_BAD_FIV_MODIFIER
 :MSGTXT. 'friend', 'virtual' or 'inline' modifiers are not part of a function's type
-:MSGJTXT. 'friend'、'virtual'、あるいは、'inline'修飾子は、関数の型の一部ではありません
+:MSGJTXT. 'friend'，'virtual'，あるいは，'inline'修飾子は，関数の型の一部ではありません
 This message indicates that the modifiers may be incorrectly placed in
 the declaration.  If the declaration is intended, it cannot be accepted
 because the modifiers can only be applied to functions that have code
@@ -4222,7 +4222,7 @@ int foo()
 
 :MSGSYM. ERR_CTOR_AMBIGUOUS
 :MSGTXT. constructor is ambiguous for operands used
-:MSGJTXT. コンストラクタは、使われるオペランドが曖昧です
+:MSGJTXT. 使用されているオペランドのため，コンストラクタが曖昧です
 The operands provided for the constructor did not select a unique constructor.
 :errbad.
 struct S {
@@ -4235,7 +4235,7 @@ S x = S(1.0);
 
 :MSGSYM. ERR_CLASS_NOT_DEFINED
 :MSGTXT. 'class %s' has not been defined
-:MSGJTXT. 'class %s'は、定義されませんでした
+:MSGJTXT. 'class %s'は定義されていません
 The name before a '::' scope resolution operator must be defined
 unless a member pointer is being declared.
 :errbad.
@@ -4247,7 +4247,7 @@ int S::a = 1;   // Error!
 
 :MSGSYM. ERR_UNION_UNNAMED_BITFIELD
 :MSGTXT. all bit-fields in a union must be named
-:MSGJTXT. 共用体の中のすべてのビットフィールドは、名前をつけられなければなりません
+:MSGJTXT. 共用体中のすべてのビットフィールドは名前を持たなければなりません
 This is a restriction in the C++ language.
 The same effect can be achieved with a named bitfield.
 :errbad.
@@ -4292,7 +4292,7 @@ void fn()
 
 :MSGSYM. ERR_UNNAMED_CLASS_USELESS
 :MSGTXT. an anonymous class without a declarator is useless
-:MSGJTXT. 宣言子のない名前なしクラスは、役に立たないです
+:MSGJTXT. 宣言子のない名前なしクラスは役に立ちません
 There is no way to reference the type in this kind of declaration.
 A name must be provided for either the class or a variable using
 the class as its type.
@@ -4305,7 +4305,7 @@ struct {
 
 :MSGSYM. ERR_GLOBAL_ANONYMOUS_UNION_MUST_BE_STATIC
 :MSGTXT. global anonymous union must be declared 'static'
-:MSGJTXT. グローバルな名前なし共用体は、'static'と宣言されなければなりません
+:MSGJTXT. グローバルな名前なし共用体は，'static'と宣言されなければなりません
 This is a restriction in the C++ language.  Since there is no unique
 name for the anonymous union, it is difficult for C++ translators
 to provide a correct implementation of external linkage anonymous unions.
@@ -4318,7 +4318,7 @@ static union {
 
 :MSGSYM. ERR_NONGLOBAL_ANONYMOUS_UNION_CANT_BE_ANYTHING
 :MSGTXT. anonymous struct/union cannot have storage class in this context
-:MSGJTXT. 名前なしstruct/unionは、このコンテキストにおいて、記憶クラスを持つことができません
+:MSGJTXT. 名前なしstruct/unionは，ここで記憶クラスを持つことができません
 Anonymous unions (or structs) declared in class scopes cannot be
 .kw static.
 Any other storage class is also disallowed.
@@ -4333,7 +4333,7 @@ struct S {
 
 :MSGSYM. WARN_UNION_PROTECTED_MEMBER
 :MSGTXT. union contains a 'protected' member
-:MSGJTXT. 共用体は、'protected'メンバを含みます
+:MSGJTXT. 共用体は'protected'メンバを含みます
 :WARNING. 1
 A union cannot have a
 .kw protected
@@ -4348,7 +4348,7 @@ protected:
 
 :MSGSYM. ERR_UNION_PRIVATE_MEMBER
 :MSGTXT. anonymous struct/union contains a private member '%S'
-:MSGJTXT. 名前なしstruct/unionは、プライベート・メンバ'%S'を含みます
+:MSGJTXT. 名前なしstruct/unionは，プライベート・メンバ'%S'を含みます
 An anonymous union (or struct) cannot have member functions or friends
 so it cannot have
 .kw private
@@ -4363,7 +4363,7 @@ private:
 
 :MSGSYM. ERR_UNION_FUNCTION_MEMBER
 :MSGTXT. anonymous struct/union contains a function member '%S'
-:MSGJTXT. 名前なしstruct/unionは、関数メンバ'%S'を含みます
+:MSGJTXT. 名前なしstruct/unionは，関数メンバ'%S'を含みます
 An anonymous union (or struct) cannot have any function members.
 This is a restriction in the C++ language.
 :errbad.
@@ -4376,7 +4376,7 @@ static union {
 
 :MSGSYM. ERR_UNION_TYPEDEF_MEMBER
 :MSGTXT. anonymous struct/union contains a typedef member '%S'
-:MSGJTXT. 名前なしstruct/unionは、typedefメンバ'%S'を含みます
+:MSGJTXT. 名前なしstruct/unionは，typedefメンバ'%S'を含みます
 An anonymous union (or struct) cannot have any nested types.
 This is a restriction in the C++ language.
 :errbad.
@@ -4390,7 +4390,7 @@ static union {
 
 :MSGSYM. ERR_UNION_ENUMERATION_MEMBER
 :MSGTXT. anonymous struct/union contains an enumeration member '%S'
-:MSGJTXT. 名前なしstruct/unionは、列挙型メンバ'%S'を含みます
+:MSGJTXT. 名前なしstruct/unionは，列挙型メンバ'%S'を含みます
 An anonymous union (or struct) cannot have any enumeration members.
 This is a restriction in the C++ language.
 :errbad.
@@ -4404,7 +4404,7 @@ static union {
 
 :MSGSYM. ERR_UNION_COLLISION_MEMBER
 :MSGTXT. anonymous struct/union member '%s' is not distinct in enclosing scope
-:MSGJTXT. 名前なしstruct/unionメンバー'%s'は、スコープの中で区別がつきません
+:MSGJTXT. 名前なしstruct/unionメンバー'%s'はスコープの中で区別がつきません
 Since an anonymous union (or struct) provides its member names to the
 enclosing scope, the names must not collide with other names in the
 enclosing scope.
@@ -4419,7 +4419,7 @@ static union {
 
 :MSGSYM. ERR_UNION_CANT_HAVE_MEMBER_WITH_DTOR
 :MSGTXT. unions cannot have members with destructors
-:MSGJTXT. 共用体は、デストラクタを持つメンバを持つことができません
+:MSGJTXT. 共用体はデストラクタを持つメンバを有することができません
 A union should only be used to organize memory in C++.
 Allowing union members to have destructors would mean
 that the same piece of memory could be destructed twice.
@@ -4439,7 +4439,7 @@ static union
 
 :MSGSYM. ERR_UNION_CANT_HAVE_MEMBER_WITH_ASSIGN
 :MSGTXT. unions cannot have members with user-defined assignment operators
-:MSGJTXT. 共用体は、ユーザ-定義代入演算子を持つメンバを持つことができません
+:MSGJTXT. 共用体は，ユーザ-定義代入演算子を持つメンバを有することができません
 A union should only be used to organize memory in C++.
 Allowing union members to have assignment operators would mean
 that the same piece of memory could be assigned twice.
@@ -4461,7 +4461,7 @@ static union
 
 :MSGSYM. ERR_UNION_CANT_HAVE_FRIENDS
 :MSGTXT. anonymous struct/union cannot have any friends
-:MSGJTXT. 名前なしstruct/unionは、フレンドを持つことができません
+:MSGJTXT. 名前なしstruct/unionはフレンドを持つことができません
 An anonymous union (or struct) cannot have any friends.
 This is a restriction in the C++ language.
 :errbad.
@@ -4477,7 +4477,7 @@ static union {
 
 :MSGSYM. ERR_ONLY_GLOBAL_SPECIFICS
 :MSGTXT. specific versions of template classes can only be defined in file scope
-:MSGJTXT. テンプレート・クラスの特定のバージョンは、ファイル･スコープの中でのみ定義できます
+:MSGJTXT. テンプレート・クラスの特定のバージョンは，ファイル･スコープの中でのみ定義できます
 Currently, specific versions of class templates can only be declared at
 file scope.  This simple restriction was chosen in favour of more
 freedom with possibly subtle restrictions.
@@ -4502,7 +4502,7 @@ void foo()
 
 :MSGSYM. ERR_FUNCTION_ANONYMOUS_UNION
 :MSGTXT. anonymous union in a function may only be 'static' or 'auto'
-:MSGJTXT. 関数の中の名前なし共用体は、'static'か、'auto'でなければんりません
+:MSGJTXT. 関数の中の名前なし共用体は'static'または'auto'でなければんりません
 The current C++ language definition only allows
 .kw auto
 anonymous unions.  The Watcom C++ compiler allows
@@ -4512,7 +4512,7 @@ Any other storage class is not allowed.
 
 :MSGSYM. ERR_LOCAL_CLASS_NO_STATIC_MEMBERS
 :MSGTXT. static data members are not allowed in a local class
-:MSGJTXT. スタティック・データ・メンバは、ローカルなクラスにおいて許されません
+:MSGJTXT. スタティック・データ・メンバは，ローカル・クラスでは許されません
 Static data members are not allowed in a local class because there
 is no way to define the static member in file scope.
 :errbad.
@@ -4548,7 +4548,7 @@ S fn()
 
 :MSGSYM. ERR_RETURN_IMPOSSIBLE
 :MSGTXT. conversion of return value is impossible
-:MSGJTXT. 戻り値の変換は、不可能です
+:MSGJTXT. 戻り値の変換は不可能です
 The return is trying to convert an expression to a completely unrelated
 type.  There is no way the compiler can provide any meaning for the
 intended return type.
@@ -4564,7 +4564,7 @@ T fn()
 
 :MSGSYM. ERR_FUNCTION_CANT_RETURN_BASED_SELF
 :MSGTXT. function cannot return a pointer based on __self
-:MSGJTXT. 関数は、__selfに基づくポインタを戻すことができません
+:MSGJTXT. 関数は，__selfに基づくポインタを戻すことができません
 A function cannot return a pointer that is based on
 .kw __self.
 :errbad.
@@ -4573,7 +4573,7 @@ void __based(__self) *fn( unsigned );
 
 :MSGSYM. ERR_CANNOT_DEFINE_VARIABLE
 :MSGTXT. defining '%S' is not possible because its type has unknown size
-:MSGJTXT. その型が未知の大きさを持ちますので、'%S'を定義することはできません
+:MSGJTXT. その型が未知の大きさを持ちますので，'%S'を定義することはできません
 In order to define a variable, the size must be known so that the
 correct amount of storage can be reserved.
 :errbad.
@@ -4593,7 +4593,7 @@ typedef int INT = 15;
 
 :MSGSYM. ERR_CONFLICTING_STORAGE_CLASSES
 :MSGTXT. storage class of '%S' conflicts with previous declaration
-:MSGJTXT. '%S'の記憶クラスは、前の宣言と矛盾します
+:MSGJTXT. '%S'の記憶クラスは，前の宣言と矛盾します
 The symbol declaration conflicts with a previous declaration with regard
 to storage class.  A symbol cannot be both
 .kw static
@@ -4602,7 +4602,7 @@ and
 
 :MSGSYM. ERR_CONFLICTING_MODIFIERS
 :MSGTXT. modifiers of '%S' conflict with previous declaration
-:MSGJTXT. '%S'の修飾子は、前の宣言と矛盾します
+:MSGJTXT. '%S'の修飾子は，前の宣言と矛盾します
 The symbol declaration conflicts with a previous declaration with regard
 to modifiers.  Correct the program by using the same modifiers for
 both declarations.
@@ -4616,7 +4616,7 @@ for a function.
 
 :MSGSYM. ERR_CLASS_ACCESS
 :MSGTXT. access permission of nested class '%T' conflicts with previous declaration
-:MSGJTXT. ネストにされたクラス'%T'のアクセス許可は、前の宣言と矛盾します
+:MSGJTXT. ネストにされたクラス'%T'のアクセス許可は，前の宣言と矛盾します
 :errbad.
 struct S {
     struct N;   // public
@@ -4693,7 +4693,7 @@ void __based(p) *q;
 
 :MSGSYM. ERR_MISSING_DECL_SPECS
 :MSGTXT. declaration specifiers are required to declare '%N'
-:MSGJTXT. 宣言指定子は、'%N'を宣言しなけばなりません
+:MSGJTXT. 宣言指定子は，'%N'を宣言しなけばなりません
 The compiler has detected that the name does not represent a function.
 Only function declarations can leave out declaration specifiers.
 This error also shows up when a typedef name declaration is missing.
@@ -4748,7 +4748,7 @@ There is not an appropriate constructor for the set of arguments provided.
 
 :MSGSYM. ERR_PARM_COUNT_MISMATCH
 :MSGTXT. number of arguments for function '%S' is incorrect
-:MSGJTXT. 関数'%S'に対する引数の数は、不正確です
+:MSGJTXT. 関数'%S'に対する引数の数が不正確です
 The number of arguments in the function call does not match the number
 declared for the indicated non-overloaded function.
 :errbad.
@@ -4760,7 +4760,7 @@ Three arguments were used in the call.
 
 :MSGSYM. ERR_CAST_PRIVATE
 :MSGTXT. private base class accessed to convert cast expression
-:MSGJTXT. プライベート基底クラスは、キャスト式を変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，キャスト式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4780,7 +4780,7 @@ Priv *pp = (Priv*)pd;
 
 :MSGSYM. ERR_RETURN_PRIVATE
 :MSGTXT. private base class accessed to convert return expression
-:MSGJTXT. プライベート基底クラスは、リターン式を変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，リターン式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4820,7 +4820,7 @@ object.
 
 :MSGSYM. ERR_PTR_COMMON_PRIVATE
 :MSGTXT. private base class accessed to convert to common pointer type
-:MSGJTXT. プライベート基底クラスは、共通のポインタ型に変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，共通のポインタ型に変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4842,7 +4842,7 @@ int foo( Der *pd, Priv *pp )
 
 :MSGSYM. ERR_CAST_PROTECTED
 :MSGTXT. protected base class accessed to convert cast expression
-:MSGJTXT. プロテクト基底クラスは、キャスト式を変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，キャスト式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4862,7 +4862,7 @@ Prot *pp = (Prot*)pd;
 
 :MSGSYM. ERR_RETURN_PROTECTED
 :MSGTXT. protected base class accessed to convert return expression
-:MSGJTXT. プロテクト基底クラスは、リターン式を変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，リターン式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4884,7 +4884,7 @@ Prot *foo( Der *p )
 
 :MSGSYM. ERR_CANT_HAVE_MEMBER_POINTER_TO_MEM_MODEL
 :MSGTXT. cannot define a member pointer with a memory model modifier
-:MSGJTXT. メモリーモデル修飾子とともにメンバ・ポインタを定義することができません
+:MSGJTXT. メモリーモデル修飾子と共にメンバ・ポインタを定義することはできません
 A member pointer describes how to access a field from a class.
 Because of this a member pointer must be independent of any memory
 model considerations.
@@ -4896,7 +4896,7 @@ int near S::*mp;
 
 :MSGSYM. ERR_PTR_COMMON_PROTECTED
 :MSGTXT. protected base class accessed to convert to common pointer type
-:MSGJTXT. プロテクト基底クラスは、共通のポインタ型に変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，共通のポインタ型に変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -4918,14 +4918,14 @@ int foo( Der *pd, Prot *pp )
 
 :MSGSYM. ERR_NON_TYPE_PROVIDED_FOR_TYPE
 :MSGTXT. non-type parameter supplied for a type argument
-:MSGJTXT. 型を指定するパラメータに対して、型が指定されませんでした
+:MSGJTXT. 型を指定するパラメータに対して，型が指定されませんでした
 A non-type parameter (e.g., an address or a constant expression) has
 been supplied for a template type argument.  A type should be used
 instead.
 
 :MSGSYM. ERR_TYPE_PROVIDED_FOR_NON_TYPE
 :MSGTXT. type parameter supplied for a non-type argument
-:MSGJTXT. 型を指定しないパラメータに対して、型が指定されました
+:MSGJTXT. 型を指定しないパラメータに対して型が指定されました
 A type parameter (e.g.,
 .kw int
 ) has
@@ -4988,7 +4988,7 @@ unsigned k = ( 0 >= p );   // always 0
 
 :MSGSYM. ERR_ILLEGAL_TYPE_USE
 :MSGTXT. type cannot be used in this context
-:MSGJTXT. 型名は、ここでは使用できません
+:MSGJTXT. ここでは型名は使用できません
 This message is issued when a type name is being used in a context
 where a non-type name should be used.
 :errbad.
@@ -5023,7 +5023,7 @@ virtual void bar()
 
 :MSGSYM. ERR_CLASS_REF_UNION_CLASS
 :MSGTXT. '%T' referenced as a union
-:MSGJTXT. '%T'が、共用体として参照されています
+:MSGJTXT. '%T'が共用体として参照されています
 A class type defined as a
 .kw class
 or
@@ -5041,7 +5041,7 @@ union S var;
 
 :MSGSYM. ERR_CLASS_REF_CLASS_UNION
 :MSGTXT. 'union %T' referenced as a class
-:MSGJTXT. 'union %T'が、クラスとして参照されています
+:MSGJTXT. 'union %T'がクラスとして参照されています
 A class type defined as a
 .kw union
 has been referenced as a
@@ -5109,7 +5109,7 @@ void foo()
 
 :MSGSYM. ERR_LOCAL_CLASS_FRIEND_CLASS
 :MSGTXT. local class cannot have '%S' as a friend
-:MSGJTXT. ローカルなクラスは、フレンドとして'%S'を持つことができません
+:MSGJTXT. ローカルなクラスは，フレンドとして'%S'を持つことができません
 The only classes that a local class can have as a friend are classes within
 its own containing scope.
 :errbad.
@@ -5164,14 +5164,14 @@ void goop( int d )
 
 :MSGSYM. WARN_SWITCH_NOT_IMPL
 :MSGTXT. support for switch '%s' is not implemented
-:MSGJTXT. switch '%s'のサポートは、実装されていません
+:MSGJTXT. switch '%s'のサポートは実装されていません
 :WARNING. 1
 Actions for the indicated switch have not been implemented.
 The switch is supported for compatibility with the Watcom C compiler.
 
 :MSGSYM. WARN_IF_ALWAYS_TRUE
 :MSGTXT. conditional expression in if statement is always true
-:MSGJTXT. ｉｆ文の中の条件付き表現式は、常に、真です
+:MSGJTXT. if文の中の条件式は常に真です
 :WARNING. 3
 The compiler has detected that the expression will always be true.
 If this is not the expected behaviour, the code may contain a
@@ -5189,7 +5189,7 @@ int foo( int a, int b )
 
 :MSGSYM. WARN_IF_ALWAYS_FALSE
 :MSGTXT. conditional expression in if statement is always false
-:MSGJTXT. ｉｆ文の中の条件付き表現式は、常に、偽です
+:MSGJTXT. if文の中の条件式は常に偽です
 :WARNING. 3
 The compiler has detected that the expression will always be false.
 If this is not the expected behaviour, the code may contain a
@@ -5207,7 +5207,7 @@ int foo( int a, int b )
 
 :MSGSYM. WARN_SWITCH_ALWAYS_CONSTANT
 :MSGTXT. selection expression in switch statement is a constant value
-:MSGJTXT. ｓｗｉｔｃｈ文の中の選択式は、定数値です
+:MSGJTXT. switch文の中の選択式は定数値です
 :WARNING. 3
 The expression in the
 .kw switch
@@ -5229,7 +5229,7 @@ int foo( int a, int b )
 
 :MSGSYM. ERR_CONST_MEMBER_MEANS_CTOR
 :MSGTXT. constructor is required for a class with a const member
-:MSGJTXT. コンストラクタには、constメンバーを持ったクラスが必要です
+:MSGJTXT. コンストラクタには，constメンバーを持ったクラスが必要です
 If a class has a constant member, a constructor is required in order
 to initialize it.
 :errbad.
@@ -5242,7 +5242,7 @@ struct S
 
 :MSGSYM. ERR_REFERENCE_MEMBER_MEANS_CTOR
 :MSGTXT. constructor is required for a class with a reference member
-:MSGJTXT. コンストラクタには、参照メンバーを持ったクラスが必要です
+:MSGJTXT. コンストラクタには，参照メンバーを持ったクラスが必要です
 If a class has a reference member, a constructor is required in order
 to initialize it.
 :errbad.
@@ -5255,7 +5255,7 @@ struct S
 
 :MSGSYM. ERR_INLINE_MEMBER_FRIEND
 :MSGTXT. inline member friend function '%S' is not allowed
-:MSGJTXT. インライン・メンバ・フレンド関数'%S'は、許されません
+:MSGJTXT. インライン・メンバ・フレンド関数'%S'は許されません
 A friend that is a member function of another class
 cannot be defined.  Inline friend rules are currently
 in flux so it is best to avoid inline friends.
@@ -5277,7 +5277,7 @@ int fn( int far x )
 
 :MSGSYM. ERR_INVALID_NONSTATIC_ACCESS
 :MSGTXT. object (or object pointer) required to access non-static data member
-:MSGJTXT. オブジェクト（あるいは、オブジェクト・ポインタ）は、非スタティック・データ・メンバにアクセスするために必要です
+:MSGJTXT. オブジェクト（あるいは，オブジェクト・ポインタ）は，非スタティック・データ・メンバにアクセスするために必要です
 A reference to a member in a class has occurred.
 The member is non-static so in order to access it, an object
 of the class is required.
@@ -5293,7 +5293,7 @@ struct S {
 
 :MSGSYM. ERR_CONVERSION_NOT_DEFINED
 :MSGTXT. user-defined conversion has not been declared
-:MSGJTXT. ユーザ-定義変換は、宣言されませんでした
+:MSGJTXT. ユーザー定義変換は宣言されていません
 The named user-defined conversion has not been declared in the
 class of any of its base classes.
 :errbad.
@@ -5335,7 +5335,7 @@ struct S
 
 :MSGSYM. ERR_PARM_PROTECTED
 :MSGTXT. protected base class accessed to convert argument expression
-:MSGJTXT. プロテクト基底クラスは、引数式を変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，引数式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -5356,7 +5356,7 @@ The last line is erroneous since the constructor is protected.
 
 :MSGSYM. ERR_PARM_PRIVATE
 :MSGTXT. private base class accessed to convert argument expression
-:MSGJTXT. プライベート基底クラスは、引数式を変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，引数式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -5376,7 +5376,7 @@ The last line is erroneous since the constructor is private.
 
 :MSGSYM. WARN_VIRTUAL_DTOR_DELETE
 :MSGTXT. 'delete' expression will invoke a non-virtual destructor
-:MSGJTXT. 'delete'式は、非仮想デストラクタを起動します
+:MSGJTXT. 'delete'式は，非仮想デストラクタを起動します
 :WARNING. 1
 In C++, it is possible to assign a base class pointer the value
 of a derived class pointer so that code that makes use of
@@ -5510,7 +5510,7 @@ unsigned foo( char );
 
 :MSGSYM. ERR_UNDEFED_CLASS_PTR
 :MSGTXT. attempt to use pointer to undefined class
-:MSGJTXT. 未定義のクラスへのポインタを使おうとします
+:MSGJTXT. 未定義のクラスへのポインタを使用しようとしています
 An attempt was made to indirect or increment a pointer to an undefined
 class.  Since the class is undefined, the size is not known so the
 compiler cannot compile the expression properly.
@@ -5527,7 +5527,7 @@ int foo( C*p )
 
 :MSGSYM. WARN_ONLY_SIDE_EFFECT
 :MSGTXT. expression is useful only for its side effects
-:MSGJTXT. 式は、その副作用だけ効果があります
+:MSGJTXT. 式は，その副作用しか効果がありません
 :WARNING. 3
 The indicated expression is not meaningful.
 The expression, however, does contain one or more side effects.
@@ -5544,7 +5544,7 @@ The incrementation of the pointer in the expression is a side effect.
 
 :MSGSYM. WARN_TRUNC_INT_CONSTANT
 :MSGTXT. integral constant will be truncated during assignment or initialization
-:MSGJTXT. 整数定数は、代入か初期化の間に、切り詰められます
+:MSGJTXT. 整数定数は，代入か初期化の間に切り詰められます
 :WARNING. 1
 This message indicates that the compiler knows that a constant value will
 not be preserved after the assignment.  If this is acceptable, cast the
@@ -5555,7 +5555,7 @@ unsigned char c = 567;
 
 :MSGSYM. WARN_TRUNC_INT_VALUE
 :MSGTXT. integral value may be truncated during assignment or initialization
-:MSGJTXT. 整数値は、代入か初期化の間に、切り詰められるかもしれません
+:MSGJTXT. 整数値は，代入か初期化の間に切り詰められるかもしれません
 :WARNING. 4
 This message indicates that the compiler knows that all values will
 not be preserved after the assignment.  If this is acceptable, cast the
@@ -5567,7 +5567,7 @@ unsigned char c = s;
 
 :MSGSYM. ERR_NO_DEFAULT_INIT_CTOR
 :MSGTXT. cannot generate default constructor to initialize '%T' since constructors were declared
-:MSGJTXT. コンストラクタが宣言されていたので、'%T'を初期状態にするためにデフォルト・コンストラクタを生成することができません
+:MSGJTXT. コンストラクタが宣言されていたので，'%T'を初期状態にするためにデフォルト・コンストラクタを生成することができません
 A default constructor will not be generated by the compiler if there
 are already constructors declared.  Try using default arguments to
 change one of the constructors to a default constructor or define a
@@ -5583,7 +5583,7 @@ C cv;
 
 :MSGSYM. WARN_ASSIGN_VALUE_IN_BOOL_EXPR
 :MSGTXT. assignment found in boolean expression
-:MSGJTXT. 代入が、論理式の中にあります
+:MSGJTXT. 論理式の中に代入があります
 :WARNING. 3
 This is a construct that can lead to errors if it was intended
 to be an equality (using "==") test.
@@ -5625,7 +5625,7 @@ directives which are currently being processed.
 
 :MSGSYM. ERR_REFERENCE_MUST_BE_INITIALIZED
 :MSGTXT. reference object must be initialized
-:MSGJTXT. 参照オブジェクトは、初期化されなければなりません
+:MSGJTXT. 参照オブジェクトは初期化されなければなりません
 A reference cannot be set except through initialization.
 Also references cannot be 0 so they must always be initialized.
 :errbad.
@@ -5640,7 +5640,7 @@ since there was no identifier after it (i.e., "-nt=module" ).
 
 :MSGSYM. ERR_MAIN_CANNOT_BE_OVERLOADED
 :MSGTXT. 'main' cannot be overloaded
-:MSGJTXT. 'main'は、オーバーロードできません
+:MSGJTXT. 'main'はオーバーロードできません
 There can only be one entry point for a C++ program.  The "main"
 function cannot be overloaded.
 :errbad.
@@ -5676,7 +5676,7 @@ tdfun *tdv = new tdfun;
 
 :MSGSYM. WARN_NEW_TYPE_CONST_VOLATILE
 :MSGTXT. 'new' expression allocates a 'const' or 'volatile' object
-:MSGJTXT. 'new'式は、'const'か'volatile'オブジェクトを割り当てます
+:MSGJTXT. 'new'式は，'const'か'volatile'オブジェクトを割り当てます
 :WARNING. 3
 The pool of raw memory cannot be guaranteed to support
 .kw const
@@ -5722,7 +5722,7 @@ S x = 1.0;
 
 :MSGSYM. WARN_CLASS_TEMPLATE_FRIEND_REPEATED
 :MSGTXT. class template '%S' has already been declared as a friend
-:MSGJTXT. クラス・テンプレート'%S'は、フレンドとしてすでに宣言されました
+:MSGJTXT. クラス・テンプレート'%S'は，フレンドとしてすでに宣言されました
 :WARNING. 2
 The class template in the message has already been declared as a friend.
 Remove the extra friend declaration.
@@ -5739,14 +5739,14 @@ class X {
 
 :MSGSYM. ERR_INIT_PRIVATE
 :MSGTXT. private base class accessed to convert initialization expression
-:MSGJTXT. プライベート基底クラスは、初期化式を変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，初期化式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
 
 :MSGSYM. ERR_INIT_PROTECTED
 :MSGTXT. protected base class accessed to convert initialization expression
-:MSGJTXT. プロテクト基底クラスは、初期化式を変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，初期化式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
@@ -5777,7 +5777,7 @@ int *foo( const int *p )
 
 :MSGSYM. ERR_CLASS_TEMPLATE_MUST_BE_NAMED
 :MSGTXT. class templates must be named
-:MSGJTXT. クラス・テンプレートは、名前をつけなければなりません
+:MSGJTXT. クラス・テンプレートには名前が必要です
 There is no syntax in the C++ language to reference an
 unnamed class template.
 :errbad.
@@ -5788,7 +5788,7 @@ template <class T>
 
 :MSGSYM. ERR_NO_VARIABLE_TEMPLATES
 :MSGTXT. function templates can only name functions
-:MSGJTXT. 関数テンプレートは、関数に名前をつけることだけができます
+:MSGJTXT. 関数テンプレートは，関数に名前をつけることだけができます
 Variables cannot be overloaded in C++ so it is not
 possible to have many different instances of a variable
 with different types.
@@ -5799,7 +5799,7 @@ template <class T>
 
 :MSGSYM. ERR_FUNCTION_TEMPLATE_MUST_USE_ALL_ARGS
 :MSGTXT. template argument '%S' is not used in the function argument list
-:MSGJTXT. テンプレート引数'%S'が、関数引数リストの中で使われません
+:MSGJTXT. テンプレート引数'%S'が関数引数リストの中で使われていません
 This restriction ensures that function templates can be bound to
 types during overload resolution.
 Functions currently can only be overloaded based on argument types.
@@ -5812,7 +5812,7 @@ template <class T>
 
 :MSGSYM. ERR_DTOR_CANT_BE_CONST_VOLATILE
 :MSGTXT. destructor cannot be declared 'const' or 'volatile'
-:MSGJTXT. デストラクタは、'const'または'volatile'と宣言することはできません
+:MSGJTXT. デストラクタは，'const'または'volatile'と宣言することはできません
 A destructor must be able to operate on all instances of classes
 regardless of whether they are
 .kw const
@@ -5821,7 +5821,7 @@ or
 
 :MSGSYM. ERR_STATIC_CANT_BE_CONST_VOLATILE
 :MSGTXT. static member function cannot be declared 'const' or 'volatile'
-:MSGJTXT. スタティック・メンバ関数は、'const'または'volatile'と宣言することはできません
+:MSGJTXT. スタティック・メンバ関数は，'const'または'volatile'と宣言することはできません
 A static member function does not have an implicit
 .kw this
 argument so the
@@ -5832,7 +5832,7 @@ function qualifiers cannot be used.
 
 :MSGSYM. ERR_NON_MEMBER_CANT_BE_CONST_VOLATILE
 :MSGTXT. only member functions can be declared 'const' or 'volatile'
-:MSGJTXT. メンバ関数だけは、'const'または'volatile'と宣言することはできます
+:MSGJTXT. メンバ関数だけは，'const'または'volatile'と宣言することができます
 A non-member function does not have an implicit
 .kw this
 argument so the
@@ -5843,7 +5843,7 @@ function qualifiers cannot be used.
 
 :MSGSYM. ERR_CONST_VOLATILE_IN_A_TYPE
 :MSGTXT. 'const' or 'volatile' modifiers are not part of a function's type
-:MSGJTXT. 'const'または'volatile'修飾子は、関数の型の一部ではありません
+:MSGJTXT. 'const'または'volatile'修飾子は，関数の型の一部ではありません
 The
 .kw const
 and
@@ -5872,7 +5872,7 @@ void S::fun() const
 
 :MSGSYM. ERR_TYPE_CREATED_IN_ARG
 :MSGTXT. type cannot be defined in an argument
-:MSGJTXT. 型は、引数の中で定義できません
+:MSGJTXT. 型は引数の中で定義できません
 A new type cannot be defined in an argument because the type will only
 be visible within the function.  This amounts to defining a function
 that can never be called because C++ uses name equivalence for type checking.
@@ -5882,7 +5882,7 @@ extern foo( struct S { int s; } );
 
 :MSGSYM. ERR_TYPE_CREATED_IN_RETURN
 :MSGTXT. type cannot be defined in return type
-:MSGJTXT. 型は、戻り型の中で定義または宣言できません
+:MSGJTXT. 型は戻り型の中で定義または宣言できません
 This is a restriction in the current C++ language.  A function
 prototype should only use previously declared types in order
 to guarantee that it can be called from other functions.
@@ -5915,7 +5915,7 @@ S::S( int x, int y ) : x(x), y(y) {
 
 :MSGSYM. ERR_PURE_FUNCTIONS_ONLY
 :MSGTXT. data members cannot be initialized inside a class definition
-:MSGJTXT. データ・メンバは、クラス定義の内側で初期化できません
+:MSGJTXT. データ・メンバは，クラス定義の内側で初期化できません
 This message appears when an initialization is attempted inside
 of a class definition.  In the case of static data members, initialization
 must be done outside the class definition.
@@ -5928,7 +5928,7 @@ struct S {
 
 :MSGSYM. ERR_PURE_VIRTUAL_FUNCTIONS_ONLY
 :MSGTXT. only virtual functions may be declared pure
-:MSGJTXT. 仮想関数だけ、pureと宣言できます
+:MSGJTXT. 仮想関数だけpureと宣言できます
 The C++ language requires that all pure functions be declared virtual.
 A pure function establishes an interface that must consist of virtual
 functions because the functions are required to be defined in the
@@ -5941,7 +5941,7 @@ struct S {
 
 :MSGSYM. ERR_DESTRUCTOR_IN_WRONG_CLASS
 :MSGTXT. destructor is not declared in its proper class
-:MSGJTXT. デストラクタは、その適当なクラスにおいて宣言されません
+:MSGJTXT. デストラクタは，その適当なクラスにおいて宣言されません
 The destructor name is not declared in its own class or qualified
 by its own class.  This is required in the C++ language.
 
@@ -5973,47 +5973,47 @@ of the constructor function.
 
 :MSGSYM. ERR_DUPLICATE_MEMBER_INIT
 :MSGTXT. cannot initialize member '%N' twice
-:MSGJTXT. メンバ'%N'を二回、初期化することはできません
+:MSGJTXT. メンバ'%N'を2回初期化することはできません
 A member cannot be initialized twice in a member initialization list.
 
 :MSGSYM. ERR_DUPLICATE_BASE_INIT
 :MSGTXT. cannot initialize base class '%T' twice
-:MSGJTXT. 基底クラス'%T'を二回、初期化することはできません
+:MSGJTXT. 基底クラス'%T'を2回初期化することはできません
 A base class cannot be constructed twice in a member initialization list.
 
 :MSGSYM. ERR_NOT_DIRECT_BASE_INIT
 :MSGTXT. '%T' is not a direct base class
-:MSGJTXT. '%T'は、直接の基底クラスではありません
+:MSGJTXT. '%T'は直接の基底クラスではありません
 A base class initializer in a member initialization list must either
 be a direct base class or a virtual base class.
 
 :MSGSYM. ERR_NOT_MEMBER_MEMBER_INIT
 :MSGTXT. '%N' cannot be initialized because it is not a member
-:MSGJTXT. '%N'はメンバではありませんので、初期化できません
+:MSGJTXT. '%N'はメンバではありませんので，初期化できません
 The name used in the member initialization list does not name a member
 in the class.
 
 :MSGSYM. ERR_FN_MEMBER_MEMBER_INIT
 :MSGTXT. '%N' cannot be initialized because it is a member function
-:MSGJTXT. '%N'はメンバ関数ですので、初期化できません
+:MSGJTXT. '%N'はメンバ関数ですので，初期化できません
 The name used in the member initialization list does not name
 a non-static data member in the class.
 
 :MSGSYM. ERR_STATIC_MEMBER_MEMBER_INIT
 :MSGTXT. '%N' cannot be initialized because it is a static member
-:MSGJTXT. '%N'はスタティック・メンバですので、初期化できません
+:MSGJTXT. '%N'はスタティック・メンバですので，初期化できません
 The name used in the member initialization list does not name
 a non-static data member in the class.
 
 :MSGSYM. ERR_NOT_A_MEMBER_NAME
 :MSGTXT. '%N' has not been declared as a member
-:MSGJTXT. '%N'は、メンバとして宣言されませんでした
+:MSGJTXT. '%N'はメンバとして宣言されていません
 This message indicates that the member does not exist in the qualified
 class.  This usually occurs in the context of access declarations.
 
 :MSGSYM. ERR_MEMBER_WILL_NOT_BE_INIT
 :MSGTXT. const/reference member '%S' must have an initializer
-:MSGJTXT. const/参照メンバー'%S'初期化子を持たなければなりません
+:MSGJTXT. const/参照メンバー'%S'は初期化子を持たなければなりません
 The
 .kw const
 or reference member does not have an initializer so the constructor
@@ -6022,21 +6022,21 @@ way to initialize these types of members.
 
 :MSGSYM. ERR_ARG_ABSTRACT_TYPE
 :MSGTXT. abstract class '%T' cannot be used as an argument type
-:MSGJTXT. 抽象的なクラス'%T'が、引数の型として使えません
+:MSGJTXT. 抽象的なクラス'%T'は，引数の型として使えません
 An abstract class can only exist as a base class of another class.
 The C++ language does not allow an abstract class to be used as
 an argument type.
 
 :MSGSYM. ERR_FUNCTION_CANT_RETURN_AN_ABSTRACT
 :MSGTXT. abstract class '%T' cannot be used as a function return type
-:MSGJTXT. 抽象的なクラス'%T'が、関数戻り型として使えません
+:MSGJTXT. 抽象的なクラス'%T'は，関数戻り型として使えません
 An abstract class can only exist as a base class of another class.
 The C++ language does not allow an abstract class to be used as
 a return type.
 
 :MSGSYM. ERR_CANNOT_DEFINE_ABSTRACT_VARIABLE
 :MSGTXT. defining '%S' is not possible because '%T' is an abstract class
-:MSGJTXT. '%T'が抽象的なクラスですので、'%S'を定義することはできません
+:MSGJTXT. '%T'が抽象的なクラスですので，'%S'を定義することはできません
 An abstract class can only exist as a base class of another class.
 The C++ language does not allow an abstract class to be used as
 either a member or a variable.
@@ -6050,7 +6050,7 @@ the destination type in a conversion.
 
 :MSGSYM. WARN_MANGLED_NAME_TOO_LONG
 :MSGTXT. mangled name for '%S' has been truncated
-:MSGJTXT. '%S'に対するマングル名は、切り詰められました
+:MSGJTXT. '%S'に対するマングル名は切り詰められました
 :WARNING. 9
 The name used in the object file that encodes the name and full type
 of the symbol is often called a mangled name.  The warning indicates
@@ -6085,7 +6085,7 @@ the size is not known.
 
 :MSGSYM. WARN_STRING_CONCAT_IN_ARRAY
 :MSGTXT. string literal concatenated during array initialization
-:MSGJTXT. 配列の初期化中、文字列リテラルは連結されました
+:MSGJTXT. 配列の初期化中，文字列リテラルは連結されました
 :WARNING. 3
 This message indicates that a missing comma (',') could have
 made a quiet change in the program.  Otherwise, ignore this
@@ -6093,19 +6093,19 @@ message.
 
 :MSGSYM. ERR_MAX_SEGMENT_EXCEEDED
 :MSGTXT. maximum size of segment '%s' has been exceeded for '%S'
-:MSGJTXT. セグメント'%s'の最大サイズを、'%S'のために越えました
+:MSGJTXT. セグメント'%s'の最大サイズを，'%S'のために越えました
 The indicated symbol has grown in size to a point where it
 has caused the segment it is defined inside of to be exhausted.
 
 :MSGSYM. ERR_DATA_TOO_BIG
 :MSGTXT. maximum data item size has been exceeded for '%S'
-:MSGJTXT. 最大データ項目サイズを、'%S'のために越えました
+:MSGJTXT. 最大データ項目サイズを，'%S'のために越えました
 A non-huge data item is larger than 64k bytes in size.
 This message only occurs during 16-bit compilation of C++ code.
 
 :MSGSYM. WARN_REPEATED_FUNCTION_MODS
 :MSGTXT. function attribute has been repeated
-:MSGJTXT. 関数属性が繰り返し使われていました
+:MSGJTXT. 関数属性が繰り返し使われています
 :WARNING. 1
 A function attribute (like the
 .kw __export
@@ -6114,7 +6114,7 @@ Remove the extra attribute to correct the declaration.
 
 :MSGSYM. WARN_REPEATED_DATA_MODS
 :MSGTXT. modifier has been repeated
-:MSGJTXT. 修飾子が繰り返し使われていました
+:MSGJTXT. 修飾子が繰り返し使われています
 :WARNING. 1
 A modifier (like the
 .kw far
@@ -6129,19 +6129,19 @@ be combined meaningfully.
 
 :MSGSYM. ERR_DUPLICATE_ARG_NAME
 :MSGTXT. argument name '%N' has already been used
-:MSGJTXT. 引数名'%N'が、すでに使われました
+:MSGJTXT. 引数名'%N'は既に使われています
 The indicated argument name has already been used in the same argument
 list.  This is not allowed in the C++ language.
 
 :MSGSYM. ERR_BAD_FUNCTION_TYPE
 :MSGTXT. function definition for '%S' must be declared with an explicit argument list
-:MSGJTXT. '%S'に対する関数定義は、明示的な引数リストで宣言されなければなりません
+:MSGJTXT. '%S'に対する関数定義は，明示的な引数リストで宣言されなければなりません
 A function cannot be defined with a typedef.  The argument list
 must be explicit.
 
 :MSGSYM. ANSI_USER_CONV_REF_DERIVED
 :MSGTXT. user-defined conversion cannot convert to its own class or base class
-:MSGJTXT. ユーザ定義変換は、それ自身のクラスまたはベースクラスを変換できません
+:MSGJTXT. ユーザ定義変換は，それ自身のクラスまたはベースクラスを変換できません
 :ANSI. 1
 A user-defined conversion cannot be declared as a conversion either to
 its own class or to a base class of itself.
@@ -6171,14 +6171,14 @@ An identifier was expected during processing.
 
 :MSGSYM. ERR_BASED_EXTRACT_NO_SEG
 :MSGTXT. symbol '%S' does not have a segment associated with it
-:MSGJTXT. シンボル'%S'は、それと関連するセグメントを持ちません
+:MSGJTXT. シンボル'%S'は，それと関連するセグメントを持ちません
 A pointer cannot be based on a member because it has no segment associated
 with it.  A member describes a layout of storage that can occur in any
 segment.
 
 :MSGSYM. ERR_BASED_FETCH_NO_SEG
 :MSGTXT. symbol '%S' must have integral or pointer type
-:MSGJTXT. シンボル'%S'は、整数部かポインタ型でなければなりません
+:MSGJTXT. シンボル'%S'は，整数型かポインタ型でなければなりません
 If a symbol is based on another symbol, it must be integral or a pointer
 type.  An integral type indicates the segment value that will be used.
 A pointer type means that all accesses will be added to the pointer value
@@ -6186,7 +6186,7 @@ to construct a full pointer.
 
 :MSGSYM. ERR_CANNOT_ALWAYS_ACCESS
 :MSGTXT. symbol '%S' cannot be accessed in all contexts
-:MSGJTXT. シンボル'%S'は、すべてのコンテクストの中でアクセスできません
+:MSGJTXT. シンボル'%S'は，すべてのコンテクストの中でアクセスできません
 The symbol that the pointer is based on is in another class so it cannot
 be accessed in all contexts that the based pointer can be accessed.
 
@@ -6204,7 +6204,7 @@ More than one constructor could be used to copy a class object.
 
 :MSGSYM. ERR_FUNCTION_TEMPLATE_ALREADY_HAS_DEFN
 :MSGTXT. function template '%S' already has a definition
-:MSGJTXT. 関数テンプレート'%S'は、すでに定義されています
+:MSGJTXT. 関数テンプレート'%S'は既に定義されています
 The function template has already been defined with a
 function body.  A function template cannot be
 defined twice even if the function body is identical.
@@ -6221,7 +6221,7 @@ template <class T>
 
 :MSGSYM. ERR_FUNCTION_TEMPLATE_NO_DEFARGS
 :MSGTXT. function templates cannot have default arguments
-:MSGJTXT. 関数テンプレートは、デフォルト引数を持つことができません
+:MSGJTXT. 関数テンプレートは，デフォルト引数を持つことができません
 A function template must not have default arguments because
 there are certain types of default arguments that do not force
 the function argument to be a specific type.
@@ -6234,14 +6234,14 @@ template <class T>
 
 :MSGSYM. ERR_MAIN_CANNOT_BE_FN_TEMPLATE
 :MSGTXT. 'main' cannot be a function template
-:MSGJTXT. 'main'は、関数テンプレートであることができません
+:MSGJTXT. 'main'は関数テンプレートであることができません
 This is a restriction in the C++ language because "main"
 cannot be overloaded.  A function template provides the
 possibility of having more than one "main" function.
 
 :MSGSYM. ERR_PREV_MUST_BE_ELABORATED_TYPEDEF
 :MSGTXT. '%S' was previously declared as a typedef
-:MSGJTXT. '%S'は、typedefとして以前に宣言されました
+:MSGJTXT. '%S'はtypedefとして以前に宣言されました
 The C++ language only allows function and variable names
 to coexist with names of classes or enumerations.
 This is due to the fact that the class and enumeration
@@ -6268,7 +6268,7 @@ void C()
 
 :MSGSYM. ERR_CURR_MUST_BE_ELABORATED_TYPEDEF
 :MSGTXT. '%S' was previously declared as a variable/function
-:MSGJTXT. '%S'は、変数/関数として以前に宣言されました
+:MSGJTXT. '%S'は変数／関数として以前に宣言されました
 The C++ language only allows function and variable names
 to coexist with names of classes or enumerations.
 This is due to the fact that the class and enumeration
@@ -6297,21 +6297,21 @@ class C x;      // use "class C"
 
 :MSGSYM. ERR_ASSIGN_PRIVATE
 :MSGTXT. private base class accessed to convert assignment expression
-:MSGJTXT. プライベート基底クラスは、代入式を変換するためにアクセスされました
+:MSGJTXT. プライベート基底クラスは，代入式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
 
 :MSGSYM. ERR_ASSIGN_PROTECTED
 :MSGTXT. protected base class accessed to convert assignment expression
-:MSGJTXT. プロテクト基底クラスは、代入式を変換するためにアクセスされました
+:MSGJTXT. プロテクト基底クラスは，代入式を変換するためにアクセスされました
 A conversion involving the inheritance hierarchy required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
 
 :MSGSYM. ERR_MAX_DGROUP_EXCEEDED
 :MSGTXT. maximum size of DGROUP has been exceeded for '%S' in segment '%s'
-:MSGJTXT. DGROUPの最大サイズは、'%S'のためにセグメント'%s'の中で越えました
+:MSGJTXT. DGROUPの最大サイズは，'%S'のためにセグメント'%s'の中で越えました
 The indicated symbol's size has caused the DGROUP contribution of this
 module to exceed 64k.  Changing memory models or declaring some data as
 .kw far
@@ -6319,32 +6319,32 @@ data are two ways of fixing this problem.
 
 :MSGSYM. ERR_BAD_ENUM_RETURN
 :MSGTXT. type of return value is not the enumeration type of function
-:MSGJTXT. 戻り値の型は、関数の列挙型ではありません
+:MSGJTXT. 戻り値の型は，関数の列挙型ではありません
 The return value does not have the proper enumeration type.
 Keep in mind that integral values are not automatically converted
 to enum types like the C language.
 
 :MSGSYM. ERR_MISPLACED_EXTERN_LINKAGE
 :MSGTXT. linkage must be first in a declaration; probable cause: missing ';'
-:MSGJTXT. リンクは、宣言の中で最初でなければなりません；考えられる原因：';'がありません
+:MSGJTXT. リンクは宣言の中で最初でなければなりません；考えられる原因：';'がありません
 This message usually indicates a missing semicolon (';').  The linkage
 specification must be the first part of a declaration if it is used.
 
 :MSGSYM. ERR_MAIN_CANNOT_BE_STATIC
 :MSGTXT. 'main' cannot be a static function
-:MSGJTXT. 'main'は、スタティック関数であることができません
+:MSGJTXT. 'main'はスタティック関数であることができません
 This is a restriction in the C++ language because "main"
 must have external linkage.
 
 :MSGSYM. ERR_MAIN_CANNOT_BE_INLINE
 :MSGTXT. 'main' cannot be an inline function
-:MSGJTXT. 'main'は、インライン関数であることができません
+:MSGJTXT. 'main'はインライン関数であることができません
 This is a restriction in the C++ language because "main"
 must have external linkage.
 
 :MSGSYM. ERR_REFERENCED_MAIN
 :MSGTXT. 'main' cannot be referenced
-:MSGJTXT. 'main'は、参照できません
+:MSGJTXT. 'main'は参照できません
 This is a restriction in the C++ language to prevent implementations
 from having to work around multiple invocations of "main".
 This can occur if an implementation has to generate special code in
@@ -6398,7 +6398,7 @@ int k = ( pci == vp );
 
 :MSGSYM. ERR_FUNC_ADDR_TOO_BIG
 :MSGTXT. address of function is too large to be converted to 'void*'
-:MSGJTXT. 関数のアドレスは、'void*'に変えるには大きすぎます
+:MSGJTXT. 関数のアドレスは'void*'に変えるには大きすぎます
 The address of a function can be converted to 'void*' only when the size
 of a 'void*' object is large enough to contain the function pointer.
 :errbad.
@@ -6408,7 +6408,7 @@ void __near *v = &foo;
 
 :MSGSYM. ERR_OBJECT_ADDR_TOO_BIG
 :MSGTXT. address of data object is too large to be converted to 'void*'
-:MSGJTXT. データオブジェクトのアドレスは、'void*'に変えるには大きすぎます
+:MSGJTXT. データオブジェクトのアドレスは，'void*'に変えるには大きすぎます
 The address of an object can be converted to 'void*' only when the size
 of a 'void*' object is large enough to contain the pointer.
 :errbad.
@@ -6434,7 +6434,7 @@ has been initialized.
 
 :MSGSYM. ERR_FUNCTION_NO_MATCH
 :MSGTXT. function argument(s) do not match those in prototype
-:MSGJTXT. 関数引数は、プロトタイプの中でそれらと一致しません
+:MSGJTXT. 関数引数は，プロトタイプの中でそれらと一致しません
 The C++ language requires great precision in specifying arguments
 for a function.  For instance, a pointer to
 .id char
@@ -6462,7 +6462,7 @@ The expression on the right cannot be assigned to the indicated class object.
 
 :MSGSYM. INF_NUMBER_ARGS_HAS_THIS
 :MSGTXT. argument count is %d since there is an implicit 'this' argument
-:MSGJTXT. 暗黙の'this'引数があるので、引数の数は%dです
+:MSGJTXT. 暗黙の'this'引数があるので，引数の数は%dです
 :INFO.
 This informational message indicates the number of arguments
 for the function mentioned in the error message.
@@ -6472,7 +6472,7 @@ argument so it may have one more argument than expected.
 
 :MSGSYM. INF_NUMBER_ARGS_NO_THIS
 :MSGTXT. argument count is %d since there is no implicit 'this' argument
-:MSGJTXT. 暗黙の'this'引数がないので、引数の数は%dです
+:MSGJTXT. 暗黙の'this'引数がないので，引数の数は%dです
 :INFO.
 This informational message indicates the number of arguments
 for the function mentioned in the error message.
@@ -6482,7 +6482,7 @@ argument so it may have one less argument than expected.
 
 :MSGSYM. INF_NUMBER_ARGS
 :MSGTXT. argument count is %d for a non-member function
-:MSGJTXT. 引数の数は、非メンバー関数に対して%dです
+:MSGJTXT. 引数の数は，非メンバー関数に対して%dです
 :INFO.
 This informational message indicates the number of arguments
 for the function mentioned in the error message.
@@ -6498,7 +6498,7 @@ More than one constructor to copy the indicated array exists.
 
 :MSGSYM. WARN_TYPEDEF_HAS_SAME_NAME
 :MSGTXT. variable/function has the same name as the class/enum '%S'
-:MSGJTXT. 変数/関数は、そのclass/enum'%S'と同じ名を持ちます
+:MSGJTXT. 変数/関数は，そのclass/enum'%S'と同じ名を持ちます
 :WARNING. 3
 In C++, a class or enum name can coexist with a variable or function of
 the same name in a scope.  This warning is indicating that the current
@@ -6508,7 +6508,7 @@ unrelated uses of the same name.
 
 :MSGSYM. WARN_NON_TYPEDEF_HAS_SAME_NAME
 :MSGTXT. class/enum has the same name as the function/variable '%S'
-:MSGJTXT. class/enumは、その関数/変数'%S'と同じ名を持ちます
+:MSGJTXT. class/enumは，その関数/変数'%S'と同じ名を持ちます
 :WARNING. 1
 In C++, a class or enum name can coexist with a variable or function of
 the same name in a scope.  This warning is indicating that the current
@@ -6554,7 +6554,7 @@ symbol's components cannot be aligned to the segment boundary.
 
 :MSGSYM. ERR_CLASS_FRIEND_NO_CLASS
 :MSGTXT. friend declaration does not specify a class or function
-:MSGJTXT. フレンド宣言は、クラスまたは関数を指定していません
+:MSGJTXT. フレンド宣言は，クラスまたは関数を指定していません
 A class or function must be declared as a friend.
 :errbad.
 struct T {
@@ -6623,20 +6623,20 @@ int k = ellip_fun( 14, temp );      // ok
 
 :MSGSYM. ERR_FUNCTION_CANNOT_BE_OVERLOADED
 :MSGTXT. '%N' cannot be overloaded
-:MSGJTXT. '%N'は、オーバーロードできません
+:MSGJTXT. '%N'はオーバーロードできません
 The indicated function cannot be overloaded.  Functions that fall into
 this category include
 .kw operator delete.
 
 :MSGSYM. ERR_CANNOT_INIT_AGAIN
 :MSGTXT. symbol '%S' has already been initialized
-:MSGJTXT. シンボル'%S'は、すでに初期状態にされました
+:MSGJTXT. シンボル'%S'は既に初期化されています
 The indicated symbol has already been initialized.  It cannot be
 initialized twice even if the initialization value is identical.
 
 :MSGSYM. ERR_DLT_PTR_TO_FUNCTION
 :MSGTXT. 'delete' expression is a pointer to a function
-:MSGJTXT. 'delete'式は、関数へのポインタです
+:MSGJTXT. 'delete'式は関数へのポインタです
 A pointer to a function cannot be allocated so it cannot be
 deleted.
 
@@ -6657,7 +6657,7 @@ void fn( S const *p, S const *q ) {
 
 :MSGSYM. ERR_DLT_NOT_PTR_TO_DATA
 :MSGTXT. 'delete' expression is not a pointer to data
-:MSGJTXT. 'delete'式は、データへのポインタではありません
+:MSGJTXT. 'delete'式はデータへのポインタではありません
 A
 .kw delete
 expression can only delete pointers.
@@ -6673,7 +6673,7 @@ void fn( int a )
 
 :MSGSYM. ERR_TEMPLATE_ARG_NON_CONSTANT
 :MSGTXT. template argument is not a constant expression
-:MSGJTXT. テンプレート引数は、定数式ではありません
+:MSGJTXT. テンプレート引数は定数式ではありません
 The compiler has found an incorrect expression provided
 as the value for a constant value template argument.
 The only expressions allowed for scalar template arguments
@@ -6681,7 +6681,7 @@ are integral constant expressions.
 
 :MSGSYM. ERR_TEMPLATE_ARG_NOT_SYMBOL
 :MSGTXT. template argument is not an external linkage symbol
-:MSGJTXT. テンプレート引数は、外部のリンク・シンボルではありません
+:MSGJTXT. テンプレート引数は外部のリンク・シンボルではありません
 The compiler has found an incorrect expression provided
 as the value for a pointer value template argument.
 The only expressions allowed for pointer template arguments
@@ -6739,7 +6739,7 @@ syntax error.
 
 :MSGSYM. ERR_BARE_FUNCTION_ACCESS
 :MSGTXT. object (or object pointer) required to access non-static member function
-:MSGJTXT. オブジェクト（あるいは、オブジェクト・ポインタ）は、非スタティック・メンバ関数にアクセスするために必要です
+:MSGJTXT. オブジェクト（あるいは，オブジェクト・ポインタ）は，非スタティック・メンバ関数にアクセスするために必要です
 A reference to a member function in a class has occurred.
 The member is non-static so in order to access it, an object
 of the class is required.
@@ -6755,13 +6755,13 @@ struct S {
 
 :MSGSYM. ERR_EXTRA_THIS_FOR_FUNCTION
 :MSGTXT. object (or object pointer) cannot be used to access function
-:MSGJTXT. オブジェクト（あるいは、オブジェクトポインタ）は、関数にアクセスするために使用することはできません
+:MSGJTXT. オブジェクト（あるいは，オブジェクトポインタ）は，関数にアクセスするために使用することはできません
 :cmt JWW to look at
 The indicated object (or object pointer) cannot be used to access function.
 
 :MSGSYM. ERR_EXTRA_THIS_FOR_DATA
 :MSGTXT. object (or object pointer) cannot be used to access data
-:MSGJTXT. オブジェクト（あるいは、オブジェクトポインタ）が、データにアクセスするために使用することはできません
+:MSGJTXT. オブジェクト（あるいは，オブジェクトポインタ）が，データにアクセスするために使用することはできません
 :cmt JWW to look at
 The indicated object (or object pointer) cannot be used to access data.
 
@@ -6928,28 +6928,28 @@ of the derived class.
 
 :MSGSYM. ERR_MEMB_PTR_PRIVATE
 :MSGTXT. conversion of pointer to class member involves a private base class
-:MSGJTXT. クラス・メンバへのポインタの変換は、プライベート基底クラスを含みます
+:MSGJTXT. クラス・メンバへのポインタの変換は，プライベート基底クラスを含みます
 The member pointer conversion required access
 to a private base class.  The access check did not succeed so the
 conversion is not allowed.
 
 :MSGSYM. ERR_MEMB_PTR_PROTECTED
 :MSGTXT. conversion of pointer to class member involves a protected base class
-:MSGJTXT. クラス・メンバへのポインタの変換は、プロテクト基底クラスを含みます
+:MSGJTXT. クラス・メンバへのポインタの変換は，プロテクト基底クラスを含みます
 The member pointer conversion required access
 to a protected base class.  The access check did not succeed so the
 conversion is not allowed.
 
 :MSGSYM. ERR_MEMB_PTR_ADDR_OF
 :MSGTXT. item is neither a non-static member function nor data member
-:MSGJTXT. 項目は、非スタティック・メンバ関数でもデータ・メンバでもありません
+:MSGJTXT. 項目は，非スタティック・メンバ関数でもデータ・メンバでもありません
 A member pointer can only be created for non-static member functions
 and non-static data members.  Static members can have their address
 taken just like their file scope counterparts.
 
 :MSGSYM. ERR_MEMB_PTR_FUN_IMPOSSIBLE
 :MSGTXT. function address cannot be converted to pointer to class member
-:MSGJTXT. 関数アドレスは、クラス・メンバへのポインタに変換できません
+:MSGJTXT. 関数アドレスは，クラス・メンバへのポインタに変換できません
 :cmt JWW to look at
 The indicated function address cannot be converted to pointer to class member.
 
@@ -6961,19 +6961,19 @@ The indicated conversion is ambiguous.
 
 :MSGSYM. ERR_MEMB_PTR_FUN_PRIVATE
 :MSGTXT. addressed function is in a private base class
-:MSGJTXT. アドレス指定された関数が、プライベート基底クラスにあります
+:MSGJTXT. アドレス指定された関数が，プライベート基底クラスにあります
 :cmt JWW to look at
 The addressed function is in a private base class.
 
 :MSGSYM. ERR_MEMB_PTR_FUN_PROTECTED
 :MSGTXT. addressed function is in a protected base class
-:MSGJTXT. アドレス指定された関数が、プロテクト基底クラスにあります
+:MSGJTXT. アドレス指定された関数が，プロテクト基底クラスにあります
 :cmt JWW to look at
 The addressed function is in a protected base class.
 
 :MSGSYM. ERR_UNDEFINED_CLASS_OBJECT
 :MSGTXT. class for object is not defined
-:MSGJTXT. オブジェクトに対するクラスは、定義されません
+:MSGJTXT. オブジェクトに対するクラスは，定義されません
 The left hand operand for the "." or ".*" operator must be of a class type
 that is completely defined.
 :errbad.
@@ -6987,13 +6987,13 @@ int fun( C& x )
 
 :MSGSYM. ERR_NOT_CLASS
 :MSGTXT. left expression is not a class object
-:MSGJTXT. 左の式は、クラスオブジェクトではありません
+:MSGJTXT. 左式はクラスオブジェクトではありません
 The left hand operand for the ".*" operator must be of a class type
 since member pointers can only be used with classes.
 
 :MSGSYM. ERR_RIGHT_NOT_MEMBPTR
 :MSGTXT. right expression is not a pointer to class member
-:MSGJTXT. 右式は、クラス・メンバへのポインタではありません
+:MSGJTXT. 右式はクラス・メンバへのポインタではありません
 The right hand operand for the ".*" operator must be a
 member pointer type.
 
@@ -7011,13 +7011,13 @@ hand operand.
 
 :MSGSYM. ERR_MP_PTR_PRIVATE
 :MSGTXT. conversion of pointer to class of member pointer involves a private base class
-:MSGJTXT. メンバ・ポインタのクラスへのポインタの変換は、プライベート基底クラスを含みます
+:MSGJTXT. メンバ・ポインタのクラスへのポインタの変換は，プライベート基底クラスを含みます
 The class of the pointer to member is a private base class of the left
 hand operand.
 
 :MSGSYM. ERR_MP_PTR_PROTECTED
 :MSGTXT. conversion of pointer to class of member pointer involves a protected base class
-:MSGJTXT. メンバ・ポインタのクラスへのポインタの変換は、プロテクト基底クラスを含みます
+:MSGJTXT. メンバ・ポインタのクラスへのポインタの変換は，プロテクト基底クラスを含みます
 The class of the pointer to member is a protected base class of the left
 hand operand.
 
@@ -7035,13 +7035,13 @@ hand operand.
 
 :MSGSYM. ERR_MP_OBJECT_PRIVATE
 :MSGTXT. conversion of object to class of member pointer involves a private base class
-:MSGJTXT. メンバ・ポインタのクラスへのオブジェクトの変換は、プライベート基底クラスを含みます
+:MSGJTXT. メンバ・ポインタのクラスへのオブジェクトの変換は，プライベート基底クラスを含みます
 The class of the pointer to member is a private base class of the left
 hand operand.
 
 :MSGSYM. ERR_MP_OBJECT_PROTECTED
 :MSGTXT. conversion of object to class of member pointer involves a protected base class
-:MSGJTXT. メンバ・ポインタのクラスへのオブジェクトの変換は、プロテクト基底クラスを含みます
+:MSGJTXT. メンバ・ポインタのクラスへのオブジェクトの変換は，プロテクト基底クラスを含みます
 The class of the pointer to member is a protected base class of the left
 hand operand.
 
@@ -7063,7 +7063,7 @@ Either 'on' or 'off' must be specified.
 
 :MSGSYM. ERR_NEW_ARRAY_EXPRESSION
 :MSGTXT. expression for number of array elements must be integral
-:MSGJTXT. 配列要素の数に対する式は、整数でなければなりません
+:MSGJTXT. 配列要素の数に対する式は，整数でなければなりません
 The expression for the number of elements in a
 .kw new
 expression must be integral because it is used to calculate the size
@@ -7073,32 +7073,32 @@ truncation issues with floating-point values.
 
 :MSGSYM. ERR_MEMB_PTR_FUNC_NOT_CALLED
 :MSGTXT. function accessed with '.*' or '->*' can only be called
-:MSGJTXT. '.*'か'->*'でアクセスされた関数は、呼び出されるのみです
+:MSGJTXT. '.*'か'->*'でアクセスされた関数は，呼び出されるのみです
 The result of the ".*" and "->*" operators can only be called
 because it is often specific to the instance used for the left hand
 operand.
 
 :MSGSYM. ERR_LEFT_NOT_PTR_ARITH_MP
 :MSGTXT. left operand must be a pointer, pointer to class member, or arithmetic
-:MSGJTXT. 左オペランドは、ポインタ、クラス・メンバへのポインタあるいは算術演算型でなければなりません
+:MSGJTXT. 左オペランドは，ポインタ，クラス・メンバへのポインタあるいは算術演算型でなければなりません
 :cmt JWW to look at
 The left operand must be a pointer, pointer to class member, or arithmetic.
 
 :MSGSYM. ERR_RIGHT_NOT_PTR_ARITH_MP
 :MSGTXT. right operand must be a pointer, pointer to class member, or arithmetic
-:MSGJTXT. 右オペランドは、ポインタ、クラス・メンバへのポインタあるいは算術演算型でなければなりません
+:MSGJTXT. 右オペランドは，ポインタ，クラス・メンバへのポインタあるいは算術演算型でなければなりません
 :cmt JWW to look at
 The right operand must be a pointer, pointer to class member, or arithmetic.
 
 :MSGSYM. ERR_MEMB_PTR_CMP_NOT_DERIVED
 :MSGTXT. neither pointer to class member can be converted to the other
-:MSGJTXT. クラス・メンバへのどちらのポインタも、もう一方に変換できません
+:MSGJTXT. クラス・メンバへのどちらのポインタも，もう一方に変換できません
 The two member pointers being compared are from two unrelated classes.
 They cannot be compared since their members can never be related.
 
 :MSGSYM. ERR_LEFT_MEMB_PTR_OPERAND
 :MSGTXT. left operand is not a valid pointer to class member
-:MSGJTXT. 左オペランドは、クラス・メンバへの有効なポインタではありません
+:MSGJTXT. 左オペランドは，クラス・メンバへの有効なポインタではありません
 The specified operator requires a pointer to member as the left operand.
 :errbad.
 struct S;
@@ -7111,7 +7111,7 @@ void fn( int S::* mp, int *p )
 
 :MSGSYM. ERR_RIGHT_MEMB_PTR_OPERAND
 :MSGTXT. right operand is not a valid pointer to class member
-:MSGJTXT. 右オペランドは、クラス・メンバへの有効なポインタではありません
+:MSGJTXT. 右オペランドは，クラス・メンバへの有効なポインタではありません
 The specified operator requires a pointer to member as the right operand.
 :errbad.
 struct S;
@@ -7124,13 +7124,13 @@ void fn( int S::* mp, int *p )
 
 :MSGSYM. ERR_MEMB_PTR_DEREF_ZERO
 :MSGTXT. cannot use '.*' nor '->*' with pointer to class member with zero value
-:MSGJTXT. 値が0のクラス・メンバへのポインタとともに、'.*'も'->*'も使うことができません
+:MSGJTXT. 値が0のクラス・メンバへのポインタとともに，'.*'も'->*'も使うことができません
 The compiler has detected a NULL pointer use with a member pointer
 dereference.
 
 :MSGSYM. ERR_MEMB_PTR_OPERAND
 :MSGTXT. operand is not a valid pointer to class member
-:MSGJTXT. オペランドは、クラス・メンバへの有効なポインタではありません
+:MSGJTXT. オペランドは，クラス・メンバへの有効なポインタではありません
 The operand cannot be converted to a valid pointer to class member.
 :errbad.
 struct S;
@@ -7143,20 +7143,20 @@ int S::* fn()
 
 :MSGSYM. ERR_DTOR_NO_OBJECT
 :MSGTXT. destructor can be invoked only with '.' or '->'
-:MSGJTXT. デストラクタは、.か'->'で起動できます
+:MSGJTXT. デストラクタは'.'か'->'で起動できます
 This is a restriction in the C++ language.  An explicit invocation
 of a destructor is not recommended for objects that have their
 destructor called automatically.
 
 :MSGSYM. ERR_DTOR_NOT_SAME
 :MSGTXT. class of destructor must be class of object being destructed
-:MSGJTXT. デストラクタのクラスは、消去されるオブジェクトのクラスでなければなりません
+:MSGJTXT. デストラクタのクラスは，消去されるオブジェクトのクラスでなければなりません
 Destructors can only be called for the exact static type of the object being
 destroyed.
 
 :MSGSYM. ERR_DTOR_BAD_QUAL
 :MSGTXT. destructor is not properly qualified
-:MSGJTXT. デストラクタは、正しく修飾されていません
+:MSGJTXT. デストラクタは正しく修飾されていません
 An explicit destructor invocation can only be qualified with its own
 class.
 
@@ -7168,13 +7168,13 @@ are identical.  This is necessary to ensure type safety.
 
 :MSGSYM. ERR_NOT_CLASS_PTR
 :MSGTXT. operand must be pointer to class or struct
-:MSGJTXT. オペランドは、classかstructへのポインタでなければなりません
+:MSGJTXT. オペランドは，classかstructへのポインタでなければなりません
 The left hand operand of a '->*' operator must be a pointer to a class.
 This is a restriction in the C++ language.
 
 :MSGSYM. ERR_NOT_VOID
 :MSGTXT. expression must have 'void' type
-:MSGJTXT. 式は、'void'型を持たなければなりません
+:MSGJTXT. 式は'void'型を持たなければなりません
 If one operand of the ':' operator has
 .kw void
 type, then the other operand must also have
@@ -7230,7 +7230,7 @@ access to a protected base class.
 
 :MSGSYM. WARN_CLASS_HAS_SPECIAL_FIELDS
 :MSGTXT. 'sizeof' operand contains compiler generated information
-:MSGJTXT. 'sizeof'オペランドは、コンパイラが生成された情報を含みます
+:MSGJTXT. 'sizeof'オペランドは，コンパイラが生成された情報を含みます
 :WARNING. 3
 The type used in the 'sizeof' operand contains compiler generated
 information.  Clearing a struct with a call to memset() would
@@ -7251,26 +7251,26 @@ common type.
 
 :MSGSYM. ERR_COLON_REF_CNV_PRIVATE
 :MSGTXT. conversion of reference to ':' object involves a private base class
-:MSGJTXT. '：'オブジェクトへの参照の変換は、プライベート基底クラスを含みます
+:MSGJTXT. '：'オブジェクトへの参照の変換は，プライベート基底クラスを含みます
 The conversion of the reference operands requires a conversion through
 a private base class.
 
 :MSGSYM. ERR_COLON_REF_CNV_PROTECTED
 :MSGTXT. conversion of reference to ':' object involves a protected base class
-:MSGJTXT. '：'オブジェクトへの参照の変換は、プロテクト基底クラスを含みます
+:MSGJTXT. '：'オブジェクトへの参照の変換は，プロテクト基底クラスを含みます
 The conversion of the reference operands requires a conversion through
 a protected base class.
 
 :MSGSYM. ERR_NOT_BOOLEAN
 :MSGTXT. expression must have type arithmetic, pointer, or pointer to class member
-:MSGJTXT. 式は、算術演算型、ポインタまたはクラス・メンバへのポインタを持たなければなりません
+:MSGJTXT. 式は，算術演算型，ポインタまたはクラス・メンバへのポインタを持たなければなりません
 This message means that the type cannot be converted to any of these
 types, also.  All of the mentioned types can be compared against zero ('0')
 to produce a true or false value.
 
 :MSGSYM. WARN_WHILE_FALSE
 :MSGTXT. expression for 'while' is always false
-:MSGJTXT. 'while'に対する式は、常に偽です
+:MSGJTXT. 'while'に対する式は，常に偽です
 :WARNING. 3
 The compiler has detected that the expression will always be false.
 If this is not the expected behaviour, the code may contain a
@@ -7280,7 +7280,7 @@ against zero for addresses can also result in trivially false expressions.
 
 :MSGSYM. WARN_FOR_FALSE
 :MSGTXT. testing expression for 'for' is always false
-:MSGJTXT. 'for'に対する式のテストは、常に偽です
+:MSGJTXT. 'for'に対する式のテストは，常に偽です
 :WARNING. 3
 The compiler has detected that the expression will always be false.
 If this is not the expected behaviour, the code may contain a
@@ -7297,7 +7297,7 @@ or '*' (meaning all warnings) was not found when it was expected.
 
 :MSGSYM. ERR_PRAG_WARNING_BAD_LEVEL
 :MSGTXT. warning level must be an integer in range 0 to 9
-:MSGJTXT. 警告レベルは、0～9の範囲の整数でなければなりません
+:MSGJTXT. 警告レベルは，0～9の範囲の整数でなければなりません
 The new warning level that can be used for the warning can be in the range
 0 to 9.  The level 0 means that the warning will be treated as an error
 (compilation will not succeed).  Levels 1 up to 9 are used to classify
@@ -7307,7 +7307,7 @@ ignore all cases where the warning shows up.
 
 :MSGSYM. ERR_CANNOT_DEFINE_DEFAULT
 :MSGTXT. function '%S' cannot be defined because it is generated by the compiler
-:MSGJTXT. 関数'%S'は、コンパイラによって生成されますので、定義できません
+:MSGJTXT. 関数'%S'は，コンパイラによって生成されますので，定義できません
 The indicated function cannot be defined because it is generated by the compiler.
 The compiler will automatically generate default constructors, copy constructors,
 assignment operators, and destructors according to the rules of the C++ language.
@@ -7337,7 +7337,7 @@ is to use a member pointer.
 
 :MSGSYM. ERR_CANNOT_GENERATE_DEFAULT
 :MSGTXT. cannot generate default '%S' because class contains either a constant or a reference member
-:MSGJTXT. クラスが定数か参照メンバを含みますので、デフォルト'%S'を生成できません
+:MSGJTXT. クラスが定数か参照メンバを含みますので，デフォルト'%S'を生成できません
 An assignment operator cannot be generated because the class contains
 members that cannot be assigned into.
 
@@ -7376,7 +7376,7 @@ A pointer or reference to a volatile object cannot be returned.
 
 :MSGSYM. ERR_LEFT_NOT_VOLATILE_PTR
 :MSGTXT. left expression is not a pointer to a volatile object
-:MSGJTXT. 左の式は、揮発性オブジェクトへのポインタではありません
+:MSGJTXT. 左の式は，揮発性オブジェクトへのポインタではありません
 One cannot assign a pointer to a volatile type to a pointer to a
 non-volatile type.  This would allow a volatile object to be modified
 via the non-volatile pointer.  Use a cast if this is absolutely
@@ -7392,13 +7392,13 @@ Two of the overriding functions are listed as informational messages.
 
 :MSGSYM. ERR_PRAG_INITIALIZE_PRIORITY
 :MSGTXT. initialization priority must be number 0-255, 'library', or 'program'
-:MSGJTXT. 初期化優先順位は、番号0-255、'library'か'program'でなければなりません
+:MSGJTXT. 初期化優先順位は，番号0-255，'library'か'program'でなければなりません
 An incorrect module initialization priority has been provided.
 Check the User's Guide for the correct format of the priority directive.
 
 :MSGSYM. INF_PREVIOUS_CASE
 :MSGTXT. previous 'case' label defined %L
-:MSGJTXT. 前の'case'ラベルは、次で定義されています：%L
+:MSGJTXT. 前の'case'ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
 .kw case
@@ -7406,7 +7406,7 @@ label is defined.
 
 :MSGSYM. INF_PREVIOUS_DEFAULT
 :MSGTXT. previous 'default' label defined %L
-:MSGJTXT. 前の'default'ラベルは、次で定義されています：%L
+:MSGJTXT. 前の'default'ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
 .kw default
@@ -7414,25 +7414,25 @@ label is defined.
 
 :MSGSYM. INF_PREVIOUS_LABEL
 :MSGTXT. label defined %L
-:MSGJTXT. ラベルは、次で定義されています：%L
+:MSGJTXT. ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a label is defined.
 
 :MSGSYM. INF_PREVIOUS_LABEL_REF
 :MSGTXT. label referenced %L
-:MSGJTXT. ラベルは、次で定義されています：%L
+:MSGJTXT. ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a label is referenced.
 
 :MSGSYM. INF_THROW_TYPE
 :MSGTXT. object thrown has type: %T
-:MSGJTXT. 送出されたオブジェクトは、次の型を持ちます：%T
+:MSGJTXT. 送出されたオブジェクトは，次の型を持ちます：%T
 :INFO.
 This informational message indicates the type of the object being thrown.
 
 :MSGSYM. ERR_THR_AMBIGUOUS_CLASS
 :MSGTXT. object thrown has an ambiguous base class %T
-:MSGJTXT. 送出されたオブジェクトは、曖昧な基底クラス%Tを持ちます
+:MSGJTXT. 送出されたオブジェクトは，曖昧な基底クラス%Tを持ちます
 It is illegal to throw an object with a base class to which a conversion
 would be ambiguous.
 :errbad.
@@ -7454,7 +7454,7 @@ cannot be converted to an object of type "ambiguous".
 
 :MSGSYM. ERR_PRAG_INLINE_DEPTH
 :MSGTXT. form is '#pragma inline_depth level' where 'level' is 0 to 255
-:MSGJTXT. 書式は、'#pragma inline_depth level'です。ここで'level'は0～255です
+:MSGJTXT. 書式は，'#pragma inline_depth level'です。ここで'level'は0～255です
 This
 .kw pragma
 sets the number of times inline expansion will occur for an inline
@@ -7490,14 +7490,14 @@ expression does not uniquely identify a single constructor.
 
 :MSGSYM. ERR_CANT_HAVE_BASED_VARIABLE
 :MSGTXT. variable '%N' can only be based on a string in this context
-:MSGJTXT. 変数'%N'は、このコンテキストにおいて、文字列をベースにできるだけです
+:MSGJTXT. 変数'%N'は，このコンテキストにおいて，文字列をベースにできるだけです
 All of the based modifiers can only be applied to pointer types.
 The only based modifier that can be applied to non-pointer types
 is the '__based(__segname("WATCOM"))' style.
 
 :MSGSYM. ERR_MEM_MODEL_CLASS
 :MSGTXT. memory model modifiers are not allowed for class members
-:MSGJTXT. メモリ・モデル修飾子は、クラス・メンバに対して許されません
+:MSGJTXT. メモリ・モデル修飾子は，クラス・メンバに対して許されません
 Class members describe the arrangement and interpretation of memory
 and, as such, assume the memory model of the address used to access
 the member.
@@ -7539,7 +7539,7 @@ argument expression.
 
 :MSGSYM. ERR_DEFARG_IMPOSSIBLE
 :MSGTXT. conversion of expression for default argument is impossible
-:MSGJTXT. デフォルト引数に対する式の変換は、不可能です
+:MSGJTXT. デフォルト引数に対する式の変換は，不可能です
 A conversion to a unrelated class was detected in the default
 argument expression.
 
@@ -7563,7 +7563,7 @@ argument expression.
 
 :MSGSYM. ERR_MUST_BE_LVALUE_CAST
 :MSGTXT. operand must be an 'lvalue' (cast produces 'rvalue')
-:MSGJTXT. オペランドは、'左辺値'でなければなりません（キャストは'右辺値'を生じます）
+:MSGJTXT. オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
 value is always created.  Assigning a new value to a temporary
@@ -7571,7 +7571,7 @@ is a meaningless operation.
 
 :MSGSYM. ERR_LEFT_MUST_BE_LVALUE_CAST
 :MSGTXT. left operand must be an 'lvalue' (cast produces 'rvalue')
-:MSGJTXT. 左オペランドは、'左辺値'でなければなりません（キャストは'右辺値'を生じます）
+:MSGJTXT. 左オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
 value is always created.  Assigning a new value to a temporary
@@ -7579,7 +7579,7 @@ is a meaningless operation.
 
 :MSGSYM. ERR_RIGHT_MUST_BE_LVALUE_CAST
 :MSGTXT. right operand must be an 'lvalue' (cast produces 'rvalue')
-:MSGJTXT. 右オペランドは、'左辺値'でなければなりません（キャストは'右辺値'を生じます）
+:MSGJTXT. 右オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
 value is always created.  Assigning a new value to a temporary
@@ -7587,7 +7587,7 @@ is a meaningless operation.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_DECL
 :MSGTXT. construct resolved as a declaration/type
-:MSGJTXT. コンストラクトは、宣言/型として解決されました
+:MSGJTXT. コンストラクトは宣言/型として解決されました
 :WARNING. 9
 The C++ language contains language ambiguities that force compilers to
 rely on extra information in order to understand certain language
@@ -7606,7 +7606,7 @@ is more than three tokens away from the start of the ambiguity.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_EXPR
 :MSGTXT. construct resolved as an expression
-:MSGJTXT. コンストラクトは、式として解決されました
+:MSGJTXT. コンストラクトは式として解決されました
 :WARNING. 9
 The C++ language contains language ambiguities that force compilers to
 rely on extra information in order to understand certain language
@@ -7626,7 +7626,7 @@ is more than three tokens away from the start of the ambiguity.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_UNKNOWN
 :MSGTXT. construct cannot be resolved
-:MSGJTXT. コンストラクトは、解決されません
+:MSGJTXT. コンストラクトは解決されません
 :WARNING. 9
 The C++ language contains language ambiguities that force compilers to
 rely on extra information in order to understand certain language
@@ -7641,7 +7641,7 @@ Please report this to Watcom so that the problem can be analysed.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_AGAIN
 :MSGTXT. encountered another ambiguous construct during disambiguation
-:MSGJTXT. 曖昧さを解決する途中で、、もう一つの曖昧なコンストラクトがありました
+:MSGJTXT. 曖昧さを解決する途中で，もう一つの曖昧なコンストラクトがありました
 :WARNING. 9
 The C++ language contains language ambiguities that force compilers to
 rely on extra information in order to understand certain language
@@ -7658,7 +7658,7 @@ uncharted territory in the C++ language.
 
 :MSGSYM. WARN_ELLIPSIS_CLASS_ARG
 :MSGTXT. ellipsis (...) argument contains compiler generated information
-:MSGJTXT. 省略記号（...）引数は、コンパイラが生成した情報を含みます
+:MSGJTXT. 省略記号（...）引数は，コンパイラが生成した情報を含みます
 :WARNING. 1
 A class with virtual functions or virtual bases is being
 passed to a function that will not know the type of the argument.
@@ -7694,7 +7694,7 @@ to an ellipsis (...) argument.
 
 :MSGSYM. WARN_CNV_FUNC_PRAGMA
 :MSGTXT. converted function type has different #pragma from original function type
-:MSGJTXT. 変換された関数型は、オリジナルの関数型と異なる#pragmaを持ちます
+:MSGJTXT. 変換された関数型は，オリジナルの関数型と異なる#pragmaを持ちます
 :WARNING. 1
 Since a #pragma can affect calling conventions, one must be very careful
 performing casts involving different calling conventions.
@@ -7738,7 +7738,7 @@ An error has been detected by the #pragma inline assembler.
 
 :MSGSYM. ERR_DEFAULT_ARG_USES_THIS
 :MSGTXT. default argument expression cannot reference 'this'
-:MSGJTXT. デフォルト引数式は、'this'を参照できません
+:MSGJTXT. デフォルト引数式は，'this'を参照できません
 The order of evaluation for function arguments is unspecified in the
 C++ language document.  Thus, a default argument must be able to
 be evaluated before the 'this' argument (or any other
@@ -7746,7 +7746,7 @@ argument) is evaluated.
 
 :MSGSYM. ERR_PRAGMA_AUX_CANNOT_OVERLOAD
 :MSGTXT. #pragma aux must reference a "C" linkage function '%S'
-:MSGJTXT. #pragma auxは、"Ｃ"リンケージ関数'%S'を参照しなければなりません
+:MSGJTXT. #pragma auxは，"Ｃ"リンケージ関数'%S'を参照しなければなりません
 The method of assigning pragma information via the #pragma syntax
 is provided for compatibility with Watcom C.  Because C only
 allows one function per name, this was adequate for the C language.
@@ -7763,7 +7763,7 @@ struct S {
 
 :MSGSYM. ERR_ASSIGN_AMBIGUOUS
 :MSGTXT. assignment is ambiguous for operands used
-:MSGJTXT. 代入は、使われるオペランドが曖昧です
+:MSGJTXT. 使われるオペランドのため，代入が曖昧です
 An ambiguity was detected while attempting to convert the right operand
 to the type of the left operand.
 :errbad.
@@ -7798,7 +7798,7 @@ object.
 
 :MSGSYM. ERR_PRAGMA_NOT_FOUND
 :MSGTXT. pragma name '%s' is not defined
-:MSGJTXT. プラグマ名'%s'は、定義されません
+:MSGJTXT. プラグマ名'%s'は定義されません
 Pragmas are defined with the #pragma aux syntax.  See the User's
 Guide for the details of defining a pragma name.  If the pragma
 has been defined then check the spelling between the definition
@@ -7806,14 +7806,14 @@ and the reference of the pragma name.
 
 :MSGSYM. ERR_DURING_GEN
 :MSGTXT. '%S' could not be generated by the compiler
-:MSGJTXT. '%S'は、そのコンパイラによって生成されてはいけません
+:MSGJTXT. '%S'はコンパイラによって生成できませんでした
 An error occurred while the compiler tried to generate the specified
 function.  The error prevented the compiler from generating the
 function properly so the compilation cannot continue.
 
 :MSGSYM. ERR_MISPLACED_CATCH
 :MSGTXT. 'catch' does not immediately follow a 'try' or 'catch'
-:MSGJTXT. 'catch'は、'try'または'catch'のすぐ後には続きません
+:MSGJTXT. 'catch'は，'try'または'catch'のすぐ後には続きません
 The catch handler syntax must be used in conjunction with a try block.
 :errgood.
 void f()
@@ -7838,7 +7838,7 @@ so that the "..." catch handler is the last handler.
 
 :MSGSYM. WARN_EXTERN_C_CLASS_ARG
 :MSGTXT. argument to extern "C" function contains compiler generated information
-:MSGJTXT. extern "C"関数への引数は、コンパイラが生成された情報を含みます
+:MSGJTXT. extern "C"関数への引数は，コンパイラが生成された情報を含みます
 :WARNING. 1
 A class with virtual functions or virtual bases is being
 passed to a function that will not know the type of the argument.
@@ -7861,7 +7861,7 @@ information associated with the virtual function for that class.
 
 :MSGSYM. INF_PREVIOUS_TRY
 :MSGTXT. previous try block defined %L
-:MSGJTXT. 前のトライ・ブロックは、次で定義されています：%L
+:MSGJTXT. 前のトライ・ブロックは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
 .kw try
@@ -7869,7 +7869,7 @@ block is defined.
 
 :MSGSYM. INF_PREVIOUS_CATCH
 :MSGTXT. previous catch block defined %L
-:MSGJTXT. 前のキャッチ・ブロックは、次で定義されています：%L
+:MSGJTXT. 前のキャッチ・ブロックは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
 .kw catch
@@ -7877,7 +7877,7 @@ block is defined.
 
 :MSGSYM. WARN_CATCH_PREVIOUS
 :MSGTXT. 'catch' handler can never be invoked
-:MSGJTXT. 'catch'ハンドラは、決して起動されることができません
+:MSGJTXT. 'catch'ハンドラは，決して起動されることができません
 :WARNING. 1
 Because the handlers for a
 .kw try
@@ -7932,7 +7932,7 @@ does not support function overloading.
 
 :MSGSYM. WARN_FN_HITS_ANOTHER_ARG
 :MSGTXT. function will be overload ambiguous with '%S' using default arguments
-:MSGJTXT. 関数は、デフォルト引数を使っている'%S'で曖昧なオーバーロードです
+:MSGJTXT. 関数は，デフォルト引数を使っている'%S'で曖昧なオーバーロードです
 :WARNING. 3
 The declaration declares a function that is indistinguishable from
 another function of the same name with default arguments.
@@ -7947,7 +7947,7 @@ the second 'fn' without any default arguments.
 
 :MSGSYM. ERR_CONFLICTING_LINKAGE_SPEC
 :MSGTXT. linkage specification is different than previous declaration '%S'
-:MSGJTXT. リンク仕様が、前の宣言'%S'と異なります
+:MSGJTXT. リンク仕様が前の宣言'%S'と異なります
 The linkage specification affects the binding of names throughout a
 program.  It is important to maintain consistency because subtle
 problems could arise when the incorrect function is called.  Usually
@@ -7970,7 +7970,7 @@ segment registers that must absolutely be pegged.
 
 :MSGSYM. WARN_VDTOR_MUST_BE_DEFINED
 :MSGTXT. pure virtual destructors must have a definition
-:MSGJTXT. 純粋仮想デストラクタは、定義を持たなければなりません
+:MSGJTXT. 純粋仮想デストラクタは定義を持たなければなりません
 :WARNING. 10
 This is an anomaly for pure virtual functions.  A destructor is
 the only special function that is inherited and allowed to be
@@ -8029,7 +8029,7 @@ for forward jumps and at the goto's for backward jumps.
 
 :MSGSYM. ERR_CATCH_MISSING
 :MSGTXT. catch block does not immediately follow try block
-:MSGJTXT. キャッチ・ブロックは、トライ・ブロックの直後には置けません
+:MSGJTXT. キャッチ・ブロックはトライ・ブロックの直後には置けません
 At least one
 .kw catch
 handler must immediately follow the "}" of a
@@ -8062,7 +8062,7 @@ exceptions.
 
 :MSGSYM. ERR_IO_ERR
 :MSGTXT. I/O error reading '%s': %s"
-:MSGJTXT. Ｉ／Ｏエラー、読み込み中'%s'：%s"
+:MSGJTXT. '%s'の読み込みＩ／Ｏエラー：%s"
 When attempting to read data from a source or header file, the
 indicated system error occurred. Likely there is a hardware problem,
 or the file system has become corrupt.
@@ -8081,7 +8081,7 @@ is not legal under standard C or C++. Make the tokens into a comment.
 
 :MSGSYM. WARN_EXPR_NOT_MEANINGFUL
 :MSGTXT. expression is not meaningful
-:MSGJTXT. 式は、意味がありません
+:MSGJTXT. 式は意味がありません
 :WARNING. 1
 This message indicates that the indicated expression is not meaningful.
 An expression is meaningful when a function is invoked, when an
@@ -8096,7 +8096,7 @@ void foo( int i, int j )
 
 :MSGSYM. WARN_EXPR_NO_SIDE_EFFECT
 :MSGTXT. expression has no side effect
-:MSGJTXT. 式は、副作用を持ちません
+:MSGJTXT. 式は副作用を持ちません
 :WARNING. 1
 The indicated expression does not cause a side effect.
 A side effect is caused by invoking a function, by an assignment or an
@@ -8114,21 +8114,21 @@ void foo( int i, int j )
 
 :MSGSYM. INF_SRC_CNV_TYPE
 :MSGTXT. source conversion type is "%T"
-:MSGJTXT. 変換ソースの型は、"%T"です
+:MSGJTXT. 変換ソースの型は"%T"です
 :INFO.
 This informational message indicates the type of the source operand, for the
 preceding conversion diagnostic.
 
 :MSGSYM. INF_TGT_CNV_TYPE
 :MSGTXT. target conversion type is "%T"
-:MSGJTXT. 変換ターゲットの型は、"%T"です
+:MSGJTXT. 変換ターゲットの型は"%T"です
 :INFO.
 This informational message indicates the target type of the conversion,
 for the preceding conversion diagnostic.
 
 :MSGSYM. ERR_CANNOT_REDECLARE_FUNCTION_PROPERTIES
 :MSGTXT. redeclaration of '%S' has different attributes
-:MSGJTXT. '%S'の再宣言は、異なる属性を持ちます
+:MSGJTXT. '%S'の再宣言は異なる属性を持ちます
 A function cannot be made
 .kw virtual
 or pure
@@ -8149,7 +8149,7 @@ virtual void S::fun()
 
 :MSGSYM. INF_TEMPLATE_CLASS_DEFN_TRACEBACK
 :MSGTXT. template class instantiation for '%T' was %L
-:MSGJTXT. '%T'に対するテンプレート・クラス・インスタンス化は、%Lでした
+:MSGJTXT. '%T'に対するテンプレート・クラス・インスタンス化は，%Lでした
 :INFO.
 This informational message indicates that the error or warning was
 detected during the instantiation of a class template.  The final type
@@ -8158,7 +8158,7 @@ where the instantiation was initiated.
 
 :MSGSYM. INF_TEMPLATE_FN_DEFN_TRACEBACK
 :MSGTXT. template function instantiation for '%S' was %L
-:MSGJTXT. '%S'に対するテンプレート関数インスタンス化は、%Lでした
+:MSGJTXT. '%S'に対するテンプレート関数インスタンス化は%Lでした
 :INFO.
 This informational message indicates that the error or warning was
 detected during the instantiation of a function template.  The final
@@ -8167,7 +8167,7 @@ source where the instantiation was initiated.
 
 :MSGSYM. INF_TEMPLATE_MEMBER_DEFN_TRACEBACK
 :MSGTXT. template class member instantiation was %L
-:MSGJTXT. テンプレート・クラス・メンバ・インスタンス化は、%Lでした
+:MSGJTXT. テンプレート・クラス・メンバ・インスタンス化は%Lでした
 :INFO.
 This informational message indicates that the error or warning was
 detected during the instantiation of a member of a class template.  The
@@ -8175,7 +8175,7 @@ location in the source where the instantiation was initiated is shown.
 
 :MSGSYM. INF_TEMPLATE_FN_BIND_TRACEBACK
 :MSGTXT. function template binding for '%S' was %L
-:MSGJTXT. '%S'に対する関数テンプレート・バインドは、%Lでした
+:MSGJTXT. '%S'に対する関数テンプレート・バインドは%Lでした
 :INFO.
 This informational message indicates that the error or warning was
 detected during the binding process of a function template.
@@ -8187,7 +8187,7 @@ in the source code that initiated the binding process.
 
 :MSGSYM. INF_TEMPLATE_FN_BIND_AND_GEN_TRACEBACK
 :MSGTXT. function template binding of '%S' was %L
-:MSGJTXT. '%S'の関数テンプレート・バインドは、%Lでした
+:MSGJTXT. '%S'の関数テンプレート・バインドは%Lでした
 :INFO.
 This informational message indicates that the error or warning was
 detected during the binding process of a function template.
@@ -8199,7 +8199,7 @@ in the source code that initiated the binding process.
 
 :MSGSYM. INF_CLASS_DECLARATION
 :MSGTXT. '%s' defined %L
-:MSGJTXT. '%s'は、次で定義されています：%L
+:MSGJTXT. '%s'は次で定義されています：%L
 :INFO.
 This informational message indicates where the class in question was defined.
 The message is displayed following an error or warning diagnostic for the
@@ -8220,7 +8220,7 @@ which the class S was declared.
 
 :MSGSYM. ERR_PRAG_TEMPLATE_DEPTH
 :MSGTXT. form is '#pragma template_depth level' where 'level' is a non-zero number
-:MSGJTXT. 書式は、'#pragma template_depth level'です。ここで'level'が0以外の数値です
+:MSGJTXT. 書式は'#pragma template_depth level'です。ここで'level'が0以外の数値です
 This
 .kw pragma
 sets the number of times templates will be instantiated for nested
@@ -8257,7 +8257,7 @@ struct Partial {
 
 :MSGSYM. INF_FUNC_AMBIGUOUS
 :MSGTXT. ambiguous function: %F defined %L
-:MSGJTXT. 曖昧な関数：%Fは、次で定義されています：%L
+:MSGJTXT. 曖昧な関数：%Fは，次で定義されています：%L
 :INFO.
 This informational message shows the functions that were detected to be
 ambiguous.
@@ -8287,7 +8287,7 @@ name.
 
 :MSGSYM. INF_THIS_MISMATCH
 :MSGTXT. 'this' cannot be converted
-:MSGJTXT. 'this'は、変換することができません
+:MSGJTXT. 'this'は変換することができません
 :INFO.
 This informational message indicates the
 .kw this
@@ -8300,7 +8300,7 @@ name.
 
 :MSGSYM. INF_FUNC_REJECTED
 :MSGTXT. rejected function: %F defined %L
-:MSGJTXT. 除外された関数：%Fは、次で定義されています：%L
+:MSGJTXT. 除外された関数：%Fは次で定義されています：%L
 :INFO.
 This informational message shows the overloaded functions which were
 rejected from consideration during function-overload resolution.
@@ -8309,7 +8309,7 @@ with the indicated name.
 
 :MSGSYM. INF_CONV_AMBIG_SCALAR
 :MSGTXT. '%T' operator can be used
-:MSGJTXT. '%T'演算子が、使えます
+:MSGJTXT. '%T'演算子が使えます
 :INFO.
 Following a diagnosis of operator ambiguity, this information message indicates
 that the operator can be applied with operands of the type indicated in the
@@ -8374,7 +8374,7 @@ All of the preceding directives are not permitted.
 
 :MSGSYM. INF_TEMPLATE_FN_DECL
 :MSGTXT. template function '%F' defined %L
-:MSGJTXT. テンプレート関数'%F'は、次で定義されています：%L
+:MSGJTXT. テンプレート関数'%F'は次で定義されています：%L
 :INFO.
 This informational message indicates where the function template in question
 was defined.
@@ -8401,7 +8401,7 @@ was declared.
 
 :MSGSYM. INF_TEMPLATE_FN_AMBIGUOUS
 :MSGTXT. ambiguous function template: %F defined %L
-:MSGJTXT. 曖昧な関数テンプレート：%Fは、次で定義されています：%L
+:MSGJTXT. 曖昧な関数テンプレート：%Fは次で定義されています：%L
 :INFO.
 This informational message shows the function templates that were detected
 to be ambiguous for the arguments at the call point.
@@ -8416,7 +8416,7 @@ the indicated name.
 
 :MSGSYM. INF_TEMPLATE_FN_REJECTED
 :MSGTXT. rejected function template: %F defined %L
-:MSGJTXT. 除外された関数テンプレート：%Fは、次で定義されています：%L
+:MSGJTXT. 除外された関数テンプレート：%Fは次で定義されています：%L
 :INFO.
 This informational message shows the overloaded function template which was
 rejected from consideration during function-overload resolution.
@@ -8425,7 +8425,7 @@ function template with the indicated name.
 
 :MSGSYM. ERR_CANT_BE_FUNC
 :MSGTXT. operand cannot be a function
-:MSGJTXT. オペランドは、関数ではありえません
+:MSGJTXT. オペランドは関数ではありえません
 The indicated operation cannot be applied to a function.
 :errbad.
 int Fun();
@@ -8435,7 +8435,7 @@ In the example, the attempt to increment a function is illegal.
 
 :MSGSYM. ERR_CANT_BE_FUNC_LEFT
 :MSGTXT. left operand cannot be a function
-:MSGJTXT. 左オペランドは、関数ではありえません
+:MSGJTXT. 左オペランドは関数ではありえません
 The indicated operation cannot be applied to the left operand which
 is a function.
 :errbad.
@@ -8449,7 +8449,7 @@ In the example, the attempt to assign zero to a function is illegal.
 
 :MSGSYM. ERR_CANT_BE_FUNC_RIGHT
 :MSGTXT. right operand cannot be a function
-:MSGJTXT. 右オペランドは、関数ではありえません
+:MSGJTXT. 右オペランドは関数ではありえません
 The indicated operation cannot be applied to the right operand which
 is a function.
 :errbad.
@@ -8522,7 +8522,7 @@ cannot be converted, resulting in the informational message.
 
 :MSGSYM. ERR_EXPR_IS_VOID
 :MSGTXT. expression cannot have 'void' type
-:MSGJTXT. 式は、'void'型を持つことができません
+:MSGJTXT. 式は'void'型を持つことができません
 The indicated expression cannot have a
 .kw void
 type.
@@ -8630,7 +8630,7 @@ bound to the non-const reference argument of the copy constructor.
 
 :MSGSYM. ANSI_TEMP_USED_TO_INIT_NONCONST_REF
 :MSGTXT. temporary object used to initialize a non-constant reference
-:MSGJTXT. 一時オブジェクトは、非定数の参照を初期するために使われました
+:MSGJTXT. 一時オブジェクトは，非定数の参照を初期するために使われました
 :ANSI. 1
 Ordinarily, a temporary value cannot be bound to a non-constant
 reference.  There is enough legacy code present that the Watcom C++
@@ -8658,7 +8658,7 @@ S * fn( S &y ) {
 
 :MSGSYM. WARN_NO_ARG_BEFORE_ELLIPSE
 :MSGTXT. 'va_start' macro will not work without an argument before "..."
-:MSGJTXT. 'va_start'マクロは、"..."の前に引数がないと働きません
+:MSGJTXT. 'va_start'マクロは，"..."の前に引数がないと働きません
 :WARNING. 3
 The warning indicates that it is impossible to access the arguments
 passed to the function without declaring an argument before the "..."
@@ -8673,7 +8673,7 @@ void fn( ... )
 
 :MSGSYM. WARN_REF_ARG_BEFORE_ELLIPSE
 :MSGTXT. 'va_start' macro will not work with a reference argument before "..."
-:MSGJTXT. 'va_start'マクロは、"..."の前に参照引数があると働きません
+:MSGJTXT. 'va_start'マクロは，"..."の前に参照引数があると働きません
 :WARNING. 1
 The warning indicates that taking the address of the argument before the
 "..." argument, which 'va_start' does in order to access the
@@ -8700,7 +8700,7 @@ void fn( int &r, ... )
 
 :MSGSYM. WARN_CLASS_ARG_BEFORE_ELLIPSE
 :MSGTXT. 'va_start' macro will not work with a class argument before "..."
-:MSGJTXT. 'va_start'マクロは、"..."の前にクラス引数があると働きません
+:MSGJTXT. 'va_start'マクロは，"..."の前にクラス引数があると働きません
 :WARNING. 1
 This warning is specific to C++ compilers that quietly convert
 class arguments to class reference arguments.  The warning
@@ -8735,7 +8735,7 @@ void fn( S c, ... )
 
 :MSGSYM. ERR_CONFLICTING_PRAGMA_MODIFIERS
 :MSGTXT. function modifier conflicts with previous declaration '%S'
-:MSGJTXT. 関数修飾子は、前の宣言'%S'と矛盾します
+:MSGJTXT. 関数修飾子は前の宣言'%S'と矛盾します
 The symbol declaration conflicts with a previous declaration with regard
 to function modifiers.  Either the previous declaration did not have a
 function modifier or it had a different one.
@@ -8748,7 +8748,7 @@ void __pragma("never_returns") fn( int, int );
 
 :MSGSYM. ERR_FUNCTION_MOD_ON_VAR
 :MSGTXT. function modifier cannot be used on a variable
-:MSGJTXT. 関数修飾子は、変数に対して使用できません
+:MSGJTXT. 関数修飾子は変数に対して使用できません
 The symbol declaration has a function modifier being applied to
 a variable or non-function.  The cause of this may be a
 declaration with a missing function argument list.
@@ -8759,7 +8759,7 @@ int (* __pascal not_ok);
 
 :MSGSYM. INF_CLASS_CONTAINS_PURE
 :MSGTXT. '%T' contains the following pure virtual functions
-:MSGJTXT. '%T'は、以下の純粋な仮想関数を含みます
+:MSGJTXT. '%T'は以下の純粋な仮想関数を含みます
 :INFO.
 This informational message indicates that the class contains pure
 virtual function declarations.  The class is definitely abstract
@@ -8776,7 +8776,7 @@ A x;
 
 :MSGSYM. INF_CLASS_DIDNT_DEFINE_PURE
 :MSGTXT. '%T' has no implementation for the following pure virtual functions
-:MSGJTXT. '%T'は、以下の純粋な仮想関数に対応する実装を持ちません
+:MSGJTXT. '%T'は，以下の純粋な仮想関数に対応する実装を持ちません
 :INFO.
 This informational message indicates that the class is derived
 from an abstract class but the class did not override enough
@@ -8812,7 +8812,7 @@ D x;
 
 :MSGSYM. ERR_BAD_CALL_CONVENTION
 :MSGTXT. restriction: standard calling convention required for '%S'
-:MSGJTXT. 制限：標準の呼出し規約は、'%S'に対して必要です
+:MSGJTXT. 制限：標準の呼出し規約は'%S'に対して必要です
 The indicated function may be called by the C++ run-time system using
 the standard calling convention.
 The calling convention specified for the function is incompatible with
@@ -8829,7 +8829,7 @@ for the function.
 
 :MSGSYM. ERR_PARM_COUNT_MISMATCH_POINTER
 :MSGTXT. number of arguments in function call is incorrect
-:MSGJTXT. 関数呼出しの中の引数の数は、不正確です
+:MSGJTXT. 関数呼出しの中の引数の数は不正確です
 The number of arguments in the function call does not match the number
 declared for the function type.
 :errbad.
@@ -8841,7 +8841,7 @@ Three arguments were used in the call.
 
 :MSGSYM. INF_FUNCTION_TYPE
 :MSGTXT. function has type '%T'
-:MSGJTXT. 関数は、'%T'型を持ちます
+:MSGJTXT. 関数は'%T'型を持ちます
 :INFO.
 This informational message indicates the type of the function being called.
 
@@ -8859,7 +8859,7 @@ double d = 0123456789;  // missing '.'?
 
 :MSGSYM. INF_CLASS_TEMPLATE_STARTED_HERE
 :MSGTXT. class template definition started %L
-:MSGJTXT. クラス・テンプレート定義は、%Lで始まりました
+:MSGJTXT. クラス・テンプレート定義は%Lで始まりました
 :INFO.
 This informational message indicates where the class template
 definition started so that any problems with missing braces can
@@ -8880,7 +8880,7 @@ template <class T>
 
 :MSGSYM. INF_CTOR_INIT_STARTED_HERE
 :MSGTXT. constructor initializer started %L
-:MSGJTXT. コンストラクタ・イニシャライザは、%Lで始まりました
+:MSGJTXT. コンストラクタ・イニシャライザは%Lで始まりました
 :INFO.
 This informational message indicates where the constructor initializer
 started so that any problems with missing parenthesis can
@@ -8895,7 +8895,7 @@ struct S {
 
 :MSGSYM. ERR_ZERO_ARRAY_MUST_BE_LAST
 :MSGTXT. zero size array must be the last data member
-:MSGJTXT. 大きさが無指定の配列は、最後のデータ・メンバでなければなりません
+:MSGJTXT. 大きさが無指定の配列は，最後のデータ・メンバでなければなりません
 The language extension that allows a zero size array to be declared
 in a class definition requires that the array be the last data
 member in the class.
@@ -8926,7 +8926,7 @@ struct D : B {
 
 :MSGSYM. ERR_CANNOT_HAVE_ZERO_ARRAY_AND_BASES
 :MSGTXT. zero size array '%S' cannot be used in a class with base classes
-:MSGJTXT. 大きさが無指定の配列'%S'は、基底クラスを持ったクラスにおいて使うことはできません
+:MSGJTXT. 大きさが無指定の配列'%S'は，基底クラスを持ったクラスにおいて使うことはできません
 The language extension that allows a zero size array to be declared
 in a class definition requires that the class not have any base classes.
 This is required because the C++ compiler must be free to organize base
@@ -8995,7 +8995,7 @@ void func( void ) {
 
 :MSGSYM. ERR_CANT_BE_MEMB_FUN
 :MSGTXT. non-static member function '%S' cannot be specified
-:MSGJTXT. 非スタティック・メンバ関数'%S'は、指定できません
+:MSGJTXT. 非スタティック・メンバ関数'%S'は指定できません
 The indicated non-static member function cannot be used in this context.
 For example, such a function cannot be used as the second or third operand
 of the conditional operator.
@@ -9058,7 +9058,7 @@ Derived& ReturnRef() { return (Derived&)b; }
 
 :MSGSYM. WARN_WHILE_TRUE
 :MSGTXT. expression for 'while' is always true
-:MSGJTXT. 常に、'while'に対する式は真です
+:MSGJTXT. 'while'に対する式は常に真です
 :WARNING. 3
 The compiler has detected that the expression will always be true.
 Consequently, the loop will execute infinitely unless there is a
@@ -9073,7 +9073,7 @@ without causing warnings.
 
 :MSGSYM. WARN_FOR_TRUE
 :MSGTXT. testing expression for 'for' is always true
-:MSGJTXT. 常に、'for'の条件式は真です
+:MSGJTXT. 'for'の条件式は常に真です
 :WARNING. 3
 The compiler has detected that the expression will always be true.
 Consequently, the loop will execute infinitely unless there is a
@@ -9089,20 +9089,20 @@ without causing warnings.
 
 :MSGSYM. WARN_ALWAYS_TRUE
 :MSGTXT. conditional expression is always true (non-zero)
-:MSGJTXT. 常に、条件式は真（非0）です
+:MSGJTXT. 条件式は常に真（非ゼロ）です
 :WARNING. 4
 The indicated expression is a non-zero constant and so will always be true.
 
 
 :MSGSYM. WARN_ALWAYS_FALSE
 :MSGTXT. conditional expression is always false (zero)
-:MSGJTXT. 常に、条件式は偽（ゼロ）です
+:MSGJTXT. 条件式は常に偽（ゼロ）です
 :WARNING. 4
 The indicated expression is a zero constant and so will always be false.
 
 :MSGSYM. ERR_INVALID_TEMPLATE_MEMBER
 :MSGTXT. expecting a member of '%T' to be defined in this context
-:MSGJTXT. '%T'のメンバは、このコンテキストにおいて定義されるはずです
+:MSGJTXT. '%T'のメンバは，ここで定義されるはずです
 A class template member definition must define a member of the
 associated class template.  The complexity of the C++ declaration
 syntax can make this error hard to identify visually.
@@ -9238,21 +9238,21 @@ A new version of the pre-compiled header file will be created.
 
 :MSGSYM. ERR_ZWS_MUST_HAVE_SS_DS_SAME
 :MSGTXT. command line specifies smart windows callbacks and DS not equal to SS
-:MSGJTXT. コマンド・ラインで、スマート・ウィンドウ・コールバックと、SSと等くないDSの設定が指定されています
+:MSGJTXT. コマンド・ラインで，スマート・ウィンドウ・コールバックと，SSと等くないDSの設定が指定されています
 An illegal combination of switches has been detected.  The windows smart
 callbacks option cannot be combined with either of the build DLL or DS not
 equal to SS options.
 
 :MSGSYM. ERR_DUMP_OBJ_MODEL
 :MSGTXT. class '%N' cannot be used with #pragma dump_object_model
-:MSGJTXT. クラス'%N'は、#pragma dump_object_modelとともには使えません
+:MSGJTXT. クラス'%N'は，#pragma dump_object_modelとともには使えません
 The indicated name has not yet been declared or has been declared but not
 yet been defined as a class.
 Consequently, the object model cannot be dumped.
 
 :MSGSYM. INF_REPEATED_ITEM
 :MSGTXT. repeated modifier is '%s'
-:MSGJTXT. 繰り返された修飾子は、'%s'です
+:MSGJTXT. 繰り返された修飾子は'%s'です
 :INFO.
 This informational message indicates what modifier was repeated
 in the declaration.
@@ -9263,7 +9263,7 @@ FARINT __far *p;    // repeated __far modifier
 
 :MSGSYM. INF_MISSING_SEMICOLON_AFTER_CLASS_ENUM_DEFN
 :MSGTXT. semicolon (';') may be missing after class/enum definition
-:MSGJTXT. class/enum定義の後、セミコロン（';'）がありません
+:MSGJTXT. class/enum定義の後，セミコロン（';'）がありません
 :INFO.
 This informational message indicates that a missing semicolon (';')
 may be the cause of the error.
@@ -9460,7 +9460,7 @@ This informational message indicates the type of the expression.
 
 :MSGSYM. ERR_CANT_GENERATE_RETURN_THUNK
 :MSGTXT. virtual function '%S' cannot have its return type changed
-:MSGJTXT. 仮想関数'%S'は、その戻り型を変更できませんでした
+:MSGJTXT. 仮想関数'%S'は，その戻り型を変更できませんでした
 This restriction is due to the relatively new feature in the C++
 language that allows return values to be changed when a virtual
 function has been overridden.  It is not possible to support both
@@ -9492,7 +9492,7 @@ declaration modifier is not supported by Watcom C++.
 
 :MSGSYM. ERR_CTOR_OBJ_MEM_MODEL
 :MSGTXT. attempt to construct a far object when data model is near
-:MSGJTXT. データモデルがnearであるとき、farオブジェクトをつくろうとしています
+:MSGJTXT. データモデルがnearであるとき，farオブジェクトをつくろうとしています
 Constructors cannot be applied to objects which are stored in far memory
 when the default memory model for data is near.
 :errbad.
@@ -9562,7 +9562,7 @@ void fn( void *p )
 
 :MSGSYM. WARN_CONFLICTING_CLASS_MODS
 :MSGTXT. class modifiers for '%T' conflict with class modifiers for '%T'
-:MSGJTXT. '%T'に対するクラス修飾子は、'%T'のためにクラス修飾子と矛盾します
+:MSGJTXT. '%T'に対するクラス修飾子は，'%T'のためにクラス修飾子と矛盾します
 :WARNING. 1
 A conflict between class modifiers for classes related through inheritance
 has been detected.
@@ -9593,7 +9593,7 @@ unsigned i = 0x;     // invalid hex constant
 
 :MSGSYM. WARN_OPERATOR_ARROW_WONT_WORK
 :MSGTXT. return type of 'operator ->' will not allow '->' to be applied
-:MSGJTXT. 'operator ->'の戻り型は、'->'が適用できません
+:MSGJTXT. 'operator ->'の戻り型は，'->'が適用できません
 :WARNING. 1
 This restriction is a result of the transformation that the compiler performs
 when the
@@ -9619,7 +9619,7 @@ void *fn( S &q )
 
 :MSGSYM. WARN_UNNAMED_CLASS_HAS_SPECIAL_MEMBER
 :MSGTXT. class should have a name since it needs a constructor or a destructor
-:MSGJTXT. クラスはコンストラクタまたはデストラクタを必要とするので、名前を持たなければなりません
+:MSGJTXT. クラスはコンストラクタまたはデストラクタを必要とするので，名前を持たなければなりません
 :WARNING. 1
 The class definition does not have a class name but it includes members
 that have constructors or destructors.
@@ -9639,7 +9639,7 @@ typedef struct {
 
 :MSGSYM. WARN_UNNAMED_CLASS_INHERITS
 :MSGTXT. class should have a name since it inherits a class
-:MSGJTXT. クラスは継承するので、名前を持つべきです
+:MSGJTXT. クラスは継承するので，名前を持つべきです
 :WARNING. 1
 The class definition does not have a class name but it inherits a class.
 Since the class has C++ semantics, it should be have a name in case the
@@ -9688,7 +9688,7 @@ comment end
 
 :MSGSYM. ERR_CANNOT_CREATE_OUTPUT_FILE
 :MSGTXT. cannot open file '%s' for write access
-:MSGJTXT. 書き込みアクセスで、ファイル'%s'をオープンできません
+:MSGJTXT. 書き込みアクセスで，ファイル'%s'をオープンできません
 The compiler has detected a problem while trying to open the indicated
 file for write access.
 
@@ -9739,7 +9739,7 @@ command line used to invoke the compiler.
 
 :MSGSYM. ERR_FC_EMPTY
 :MSGTXT. file specified by -fc is empty or cannot be read
-:MSGJTXT. -fcで指定されたファイルは空か、読み込みできません
+:MSGJTXT. -fcで指定されたファイルは空か，読み込みできません
 The file specified using the -fc option is either empty or an input/output
 error was diagnosed for the file.
 
@@ -9751,7 +9751,7 @@ does not exist.  An input/output error is also possible.
 
 :MSGSYM. ERR_FC_READ
 :MSGTXT. input/output error reading the file specified by -fc option
-:MSGJTXT. -fcオプションで指定されたファイルを読み込むとき、入出力エラーが出ました
+:MSGJTXT. -fcオプションで指定されたファイルを読み込むとき，入出力エラーが出ました
 The compiler was unable to open the indicated file.  Most likely, the file
 does not exist.  An input/output error is also possible.
 
@@ -9809,7 +9809,7 @@ clause.  It is permissible to catch a reference to an undefined class.
 
 :MSGSYM. ERR_CLASS_CORRUPTED
 :MSGTXT. class '%T' cannot be used since its definition has errors
-:MSGJTXT. クラス定義がエラーなので、クラス'%T'は使用できません
+:MSGJTXT. クラス定義がエラーなので，クラス'%T'は使用できません
 The analysis of the expression could not continue due to previous
 errors diagnosed in the class definition.
 
@@ -9850,7 +9850,7 @@ prototype is for the message in question.
 
 :MSGSYM. WARN_ZERO_ARRAY_CLASS_USED
 :MSGTXT. class '%T' contains a zero size array
-:MSGJTXT. クラス'%T'には大きさが0の配列があります
+:MSGJTXT. クラス'%T'には大きさがゼロの配列があります
 :WARNING. 1
 This warning is triggered when a class with a zero sized array
 is used in an array or as a class member.
@@ -9906,7 +9906,7 @@ int __declspec(thread) e = rand();
 
 :MSGSYM. WARN_CODE_MAY_BE_SPLIT_ACROSS_SEGS
 :MSGTXT. code may not work properly if this module is split across a code segment
-:MSGJTXT. このモジュールがコード･セグメントをまたがり、分割されると、コードは正しく動作しないかもしれません
+:MSGJTXT. このモジュールがコード･セグメントをまたがって分割されると，コードは正しく動作しないかもしれません
 :WARNING. 4
 The "zm" option allows the compiler to generate functions into separate
 segments that have different names so that more than 64k of code can
@@ -9961,7 +9961,7 @@ not overloaded and for external data items.
 
 :MSGSYM. ERR_PRAG_EXTREF_EXTERN
 :MSGTXT. #pragma extref: '%S' is not external
-:MSGJTXT. #pragma extref: '%S'外部参照ではありません
+:MSGJTXT. #pragma extref: '%S'は外部参照ではありません
 This error message indicates that the symbol referenced by
 .kw #pragma extref
 cannot have an external reference emitted for it
@@ -10068,7 +10068,7 @@ A warning has been issued by the #pragma inline assembler.
 
 :MSGSYM. ERR_COLON_COLON_SYNTAX
 :MSGTXT. expecting 'id' after '::' but found '%s'
-:MSGJTXT. '::'の後に'id'があるはずですが、'%s'があります
+:MSGJTXT. '::'の後に'id'があるはずですが，'%s'があります
 The '::' operator has an invalid token following it.
 :errbad.
 #define fn( x ) ((x)+1)
@@ -10095,7 +10095,7 @@ int explicit fn( int x ) {
 
 :MSGSYM. ERR_CONST_CAST_TYPE
 :MSGTXT. const_cast type must be pointer, member pointer, or reference
-:MSGJTXT. const_cast型はポインタ、メンバーポインタ、参照のいずれかでなければなりません
+:MSGJTXT. const_cast型はポインタ，メンバーポインタ，参照のいずれかでなければなりません
 The type specified in a
 .kw const_cast
 operator must be a pointer, a pointer to a member of a class, or a reference.
@@ -10446,7 +10446,7 @@ within that class or a base class of that class.
 
 :MSGSYM. ERR_DYNAMIC_CAST_NO_VFN
 :MSGTXT. dynamic_cast requires class '%T' to have virtual functions
-:MSGJTXT. dynamic_castを使用するには、クラス'%T'は仮想関数を持たなければなりません
+:MSGJTXT. dynamic_castを使用するには，クラス'%T'は仮想関数を持たなければなりません
 The indicated class must have virtual functions defined
 within that class or a base class of that class.
 
@@ -10601,7 +10601,7 @@ of values for the signed type involved.
 
 :MSGSYM. INF_SIGNED_CONST_EXPR_VALUE
 :MSGTXT. constant expression in comparison has value %d
-:MSGJTXT. 比較の中の定数式は、値%dを持ちます
+:MSGJTXT. 比較の中の定数式は，値%dを持ちます
 :INFO.
 This informational message indicates the value of the constant expression
 involved in a comparison which caused a warning to be issued.
@@ -10615,7 +10615,7 @@ value (0 in this case) involved in the comparison.
 
 :MSGSYM. INF_UNSIGNED_CONST_EXPR_VALUE
 :MSGTXT. constant expression in comparison has value %u
-:MSGJTXT. 比較の中の定数式は、値%uを持ちます
+:MSGJTXT. 比較の中の定数式は，値%uを持ちます
 :INFO.
 This informational message indicates the value of the constant expression
 involved in a comparison which caused a warning to be issued.
@@ -11370,7 +11370,7 @@ namespace B {
 
 :MSGSYM. WARN_MUST_BE_MULTITHREADED
 :MSGTXT. use of '%N' requires build target to be multi-threaded
-:MSGJTXT. '%N'を使用するには、マルチ･スレッドのターゲットとして作成しなければなりません
+:MSGJTXT. '%N'を使用するには，マルチ･スレッドのターゲットとして作成しなければなりません
 :WARNING. 1
 The compiler has detected a use of a run-time function that
 will create a new thread but the current build target indicates
@@ -11412,7 +11412,7 @@ int __based(__segname("_CODE")) f() {return 1;}
 
 :MSGSYM. INF_CODE_SEGMENT_SUFFIX
 :MSGTXT. Use a segment name ending in "%s", or the default code segment "_CODE".
-:MSGJTXT. "%s"で終わるセグメント名を使用するか、デフォルト･コードセグメント"_CODE"を使用します
+:MSGJTXT. "%s"で終わるセグメント名を使用するか，デフォルト･コードセグメント"_CODE"を使用します
 :INFO.
 This informational message explains how to use
 .kw __segname
@@ -11420,7 +11420,7 @@ to name a code segment.
 
 :MSGSYM. ERR_RTTI_DISABLED
 :MSGTXT. RTTI must be enabled to use feature (use 'xr' option)
-:MSGJTXT. RTTIを使うには、この機能を使用できるようにしなければなりません('xr'オプションを使用してください)
+:MSGJTXT. RTTIを使うには，この機能を使用できるようにしなければなりません('xr'オプションを使用してください)
 RTTI must be enabled by specifying the 'xr' option when the compiler is
 invoked.  The error message indicates that a feature such as
 .kw dynamic_cast,
@@ -11654,7 +11654,7 @@ char *g = "(\?\?\?)\?\?\?-\?\?\?\?";
 
 :MSGSYM. ANSI_INVALID_HEX_ESCAPE
 :MSGTXT. hexadecimal escape sequence out of range; truncated
-:MSGJTXT. 16iGXP[vV[PXLMMp4&\5=BXhl_\7B
+:MSGJTXT. 16進数のエスケープシーケンスが範囲外です；切り詰められました
 :ANSI. 1
 This message indicates that the hexadecimal escape sequence
 produces an integer that cannot fit into the required character type.
@@ -11694,7 +11694,7 @@ int y = '\x1a';
 
 :MSGSYM. WARN_CHAR_PROMOTION
 :MSGTXT. promotion of unadorned char type to int
-:MSGJTXT.
+:MSGJTXT. 符号が無指定のchar型からint型への変換があります
 :WARNING. 1
 This message is enabled by the hidden -jw option.
 The warning may be used to locate all places where an
@@ -11714,7 +11714,7 @@ values, depending on the choice being made.
 
 :MSGSYM. WARN_SWITCH_NO_CASE_LABELS
 :MSGTXT. switch statement has no case labels
-:MSGJTXT.
+:MSGJTXT. switch文の中にcaseラベルがありません
 :WARNING. 4
 The switch
 statement referenced in the warning did not have
@@ -11733,7 +11733,7 @@ void fn( int x )
 
 :MSGSYM. WARN_WEIRD_CHARACTER
 :MSGTXT. unexpected character (%u) in source file
-:MSGJTXT.
+:MSGJTXT. ソースファイルに予期されない文字(%u)があります
 :WARNING. 1
 The compiler has encountered a character in the
 source file that is not in the allowable set of
@@ -11745,7 +11745,7 @@ character byte is output for diagnostic purposes.
 
 :MSGSYM. WARN_WHITE_AFTER_SPLICE
 :MSGTXT. ignoring whitespace after line splice
-:MSGJTXT.
+:MSGJTXT. 行結合の後の空白は無視されます
 :WARNING. 10
 The compiler is ignoring some whitespace characters
 that occur after the line splice.  This warning
@@ -11760,7 +11760,7 @@ XXXX
 
 :MSGSYM. WARN_EMPTY_MEMBER_DECL
 :MSGTXT. empty member declaration
-:MSGJTXT.
+:MSGJTXT. メンバ宣言の内容が空です
 :WARNING. 10
 The compiler is warning about an extra semicolon
 found in a class definition.  The extra semicolon
@@ -11772,7 +11772,7 @@ struct S { ; };
 
 :MSGSYM. WARN_NON_PORTABLE_DECL_ZERO_SIZED_ARRAY
 :MSGTXT. '%S' makes use of a non-portable feature (zero-sized array)
-:MSGJTXT.
+:MSGJTXT. '%S'は移植性のない機能を利用しています(サイズがゼロの配列)
 :WARNING. 10
 The compiler is warning about the use of a non-portable feature
 in a declaration or definition.
