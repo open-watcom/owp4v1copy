@@ -13,6 +13,7 @@ ppc_objs = &
         ppcrgtbl.obj &
         ppcsplit.obj &
         ppctable.obj &
+        ppcstub.obj  &
         rscptype.obj
 
 src_path        = $(cg_dir)\risc\ppc\c

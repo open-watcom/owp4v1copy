@@ -718,4 +718,7 @@ extern  ppc_regn PpcRegN( name *reg_name ) {
 }
 
 extern hw_reg_set ParmRegConflicts( hw_reg_set r ) {
-/
+//**************************************************
+
+    return( r );
+}

@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-// (jww) 93/12/13 -- force recompile
-
 #include <stdarg.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -841,14 +839,15 @@ extern  void    NotDefault( cg_type  t ) {
     }
 }
 
-extern  void    CFCnvFS( cfloat *f ) {
+extern  char   *CFCnvFS( cfloat *f, char *buffer, int maxlen ) {
 //====================================
 
     int         len;
-    char        *buffer;
 
-    buffer = UBuff;
     len = f->len - 1;
+    if( len + 10 > maxlen ) {
+        len = maxlen - 10;
+    }
     if( f->sign == -1 ) {
         *buffer++ = '-';
     }
@@ -858,11 +857,17 @@ extern  void    CFCnvFS( cfloat *f ) {
     buffer += len;
     *buffer++ = 'E';
     len = f->exp - 1;
-    buffer[ 2 ] = len % 10;
+    if( len < 0 ) {
+        *buffer++ = '-';
+        len = -len;
+    }
+    buffer[ 2 ] = len % 10 + '0';
     len /= 10;
-    buffer[ 1 ] = len % 10;
+    buffer[ 1 ] = len % 10 + '0';
     len /= 10;
-    buffer[ 0 ] = len % 10;
+    buffer[ 0 ] = len + '0';
+    buffer += 3;
+    return( buffer );
 }
 
 pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {

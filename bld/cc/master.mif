@@ -282,6 +282,9 @@ $(cc_dir)\h\code386.gh : ..\a\code386.asm ..\a\mkcode.c
 $(cc_dir)\h\codeaxp.gh :
         echo // Dummy file > $@
 
+$(cc_dir)\h\codeppc.gh :
+        echo // Dummy file > $@
+
 usage.gh: ../usage.sp
         $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS)  "-f\"%s\0\"" ../usage.sp usage.gh
 

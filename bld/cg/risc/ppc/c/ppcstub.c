@@ -24,37 +24,51 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stub routines for the PowerPC backend.
 *
 ****************************************************************************/
 
 
 #include "standard.h"
 #include "coderep.h"
-#include "indvars.h"
-#include "opcodes.h"
-#include "sysmacro.h"
-#include "model.h"
-#include "sched.h"
-#include "funits.h"
-#include "pattern.h"
+#include "cgdefs.h"
+#include "regset.h"
+#include "addrname.h"
+#include "offset.h"
+#include "optopts.h"
+#include "optlbl.h"
+#include "rttable.h"
+#include "rtclass.h"
+#include "zoiks.h"
 
-enum {
-    F_NONE      = 0x0000,
-    F_ALU       = 0x0001,
-    F_FOP       = 0x0004,
-    F_LDSTR     = 0x0008,
-};
+extern code_lbl *GetWeirdPPCDotDotLabel( code_lbl *lbl ) {
+/********************************************************/
 
-static const FU_entry FUnits[] = {
-    /* units                    unit_stall  opnd_stall */
-    F_NONE,                     0,          0,      /* NO */
-    F_ALU,                      1,          1,      /* ALU */
-    F_ALU,                      1,          1,      /* LDSTR */
-};
+    return( lbl );
+}
 
-FU_entry const *FUEntry( instruction *ins )
-{
-    return( &FUnits[ ins->u.gen_table->func_unit ] );
+extern void     LookupConvertRoutine( instruction *ins ) {
+/********************************************************/
+
+    ins = ins;
+    RoutineNum = RT_NOP;
+    _Zoiks( ZOIKS_101 );
+}
+
+void StartBlockProfiling( block *blk ) {
+/**************************************/
+
+    blk = blk;
+}
+
+void EndBlockProfiling() {
+/************************/
+
+}
+
+segment_id GenP5ProfileData( char *fe_name, label_handle *data ) {
+/****************************************************************/
+    fe_name = fe_name;
+    data = data;
+    return( 0 );
 }
