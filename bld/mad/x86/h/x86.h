@@ -51,7 +51,8 @@ struct imp_mad_state_data {
         MT_SIGNED       = 0x2,
         MT_BYTE         = 0x4,
         MT_WORD         = 0x8,
-        MT_DWORD        = 0x10
+        MT_DWORD        = 0x10,
+        MT_QWORD        = 0x20
     }           mmx_toggles;
     enum {
         XT_HEX          = 0x1,

@@ -114,11 +114,12 @@ struct x86_fpu {
 
 typedef struct {
     union {
-        unsigned_32             ud[2];
-        unsigned_16             uw[4];
-        unsigned_8              ub[8];
+        unsigned_64     uq[1];
+        unsigned_32     ud[2];
+        unsigned_16     uw[4];
+        unsigned_8      ub[8];
     };
-    unsigned_16                 _spacer;
+    unsigned_16         _spacer;
 } mmx_reg;
 
 struct x86_mmx {
@@ -128,10 +129,10 @@ struct x86_mmx {
 
 typedef struct {
     union {
-        unsigned_64             uq[2];
-        unsigned_32             ud[4];
-        unsigned_16             uw[8];
-        unsigned_8              ub[16];
+        unsigned_64     uq[2];
+        unsigned_32     ud[4];
+        unsigned_16     uw[8];
+        unsigned_8      ub[16];
     };
 } xmm_reg;
 

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  X86 registers structures and procedures
+*                       for input/output/expression
 *
 ****************************************************************************/
 
@@ -228,6 +228,7 @@ NULL };
 #define MMXS_b  8
 #define MMXS_w  16
 #define MMXS_d  32
+#define MMXS_q  64
 #define XMMS_b  8
 #define XMMS_w  16
 #define XMMS_d  32
@@ -258,12 +259,13 @@ NULL };
         MMX_SUBREG( w, 3, n )   \
         MMX_SUBREG( d, 0, n )   \
         MMX_SUBREG( d, 1, n )   \
+        MMX_SUBREG( q, 0, n )   \
                                 \
         static const x86_reg_info * const MMXSubList##n[] = {           \
             &MMX##n##_b0, &MMX##n##_b1, &MMX##n##_b2, &MMX##n##_b3,     \
             &MMX##n##_b4, &MMX##n##_b5, &MMX##n##_b6, &MMX##n##_b7,     \
             &MMX##n##_w0, &MMX##n##_w1, &MMX##n##_w2, &MMX##n##_w3,     \
-            &MMX##n##_d0, &MMX##n##_d1, NULL };
+            &MMX##n##_d0, &MMX##n##_d1, &MMX##n##_q0, NULL };
 
 MMX_SUBLIST( 0 )
 MMX_SUBLIST( 1 )
@@ -356,10 +358,10 @@ NULL };
 
 
 struct mad_reg_set_data {
-    mad_string          name;
-    const x86_reg_info  * const *reglist;
+    mad_string                  name;
+    const x86_reg_info          * const *reglist;
     const mad_toggle_strings    *togglelist;
-    unsigned_8          grouping;
+    unsigned_8                  grouping;
 };
 
 static const mad_toggle_strings CPUToggleList[] =
@@ -381,7 +383,7 @@ static const mad_toggle_strings MMXToggleList[] =
     {MSTR_BYTE,MSTR_BYTE,MSTR_NIL},
     {MSTR_WORD,MSTR_WORD,MSTR_NIL},
     {MSTR_DWORD,MSTR_DWORD,MSTR_NIL},
-    {MSTR_FLOAT,MSTR_FLOAT,MSTR_NIL},
+    {MSTR_QWORD,MSTR_QWORD,MSTR_NIL},
     {MSTR_NIL,MSTR_NIL,MSTR_NIL}
 };
 static const mad_toggle_strings XMMToggleList[] =
@@ -408,7 +410,7 @@ static const mad_reg_set_data MMXRegSet =
 static const mad_reg_set_data XMMRegSet =
     { MSTR_XMM, XMMRegList, XMMToggleList, 1 };
 
-unsigned        DIGENTRY MIRegistersSize( void )
+unsigned DIGENTRY MIRegistersSize( void )
 {
     return( sizeof( struct x86_mad_registers ) );
 }
@@ -416,7 +418,7 @@ unsigned        DIGENTRY MIRegistersSize( void )
 
 #define EXTRACT_ST( mr ) (((unsigned_16)(mr)->x86.fpu.sw >> SHIFT_st) & ((1<<LEN_st)-1))
 
-mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
+mad_status DIGENTRY MIRegistersHost( mad_registers *mr )
 {
     unsigned    st;
     unsigned_16 tag;
@@ -430,7 +432,7 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
     return( MS_MODIFIED );
 }
 
-mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
+mad_status DIGENTRY MIRegistersTarget( mad_registers *mr )
 {
     unsigned    st;
     unsigned_16 tag;
@@ -444,7 +446,7 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
     return( MS_MODIFIED );
 }
 
-walk_result     DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void *d )
+walk_result DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void *d )
 {
     walk_result wr;
 
@@ -467,12 +469,12 @@ walk_result     DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, 
     return( WR_CONTINUE );
 }
 
-mad_string      DIGENTRY MIRegSetName( const mad_reg_set_data *rsd )
+mad_string DIGENTRY MIRegSetName( const mad_reg_set_data *rsd )
 {
     return( rsd->name );
 }
 
-unsigned        DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char *buff )
+unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char *buff )
 {
     char        str[80];
     unsigned    len;
@@ -528,15 +530,17 @@ unsigned        DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned ma
     return( len );
 }
 
-unsigned        DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
+unsigned DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
 {
     if( rsd == &MMXRegSet ) {
         if( MADState->mmx_toggles & MT_BYTE ) {
             return( 8 );
         } else if( MADState->mmx_toggles & MT_WORD ) {
             return( 4 );
-        } else {
+        } else if( MADState->mmx_toggles & MT_DWORD ) {
             return( 2 );
+        } else {
+            return( 1 );
         }
     } else if( rsd == &XMMRegSet ) {
         if( MADState->xmm_toggles & XT_BYTE ) {
@@ -559,13 +563,14 @@ unsigned        DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
 
 static char     DescriptBuff[40];
 
-static mad_status CPUGetPiece( const mad_registers *mr,
-                                unsigned piece,
-                                char **descript_p,
-                                unsigned *max_descript_p,
-                                const mad_reg_info **reg_p,
-                                mad_type_handle *disp_type_p,
-                                unsigned *max_value_p )
+static mad_status CPUGetPiece(
+    const mad_registers *mr,
+    unsigned piece,
+    char **descript_p,
+    unsigned *max_descript_p,
+    const mad_reg_info **reg_p,
+    mad_type_handle *disp_type_p,
+    unsigned *max_value_p )
 {
     static const x86_reg_info *list16[] = {
         &CPU_ax, &CPU_bx, &CPU_cx, &CPU_dx,
@@ -653,11 +658,17 @@ static const mad_modify_list ModBit[] = {
     { &zero, X86T_BYTE, MSTR_NIL },
     { &one,  X86T_BYTE, MSTR_NIL },
 };
+static const mad_modify_list ModByte[] = {
+    { NULL, X86T_BYTE, MSTR_NIL },
+};
 static const mad_modify_list ModWord[] = {
     { NULL, X86T_WORD, MSTR_NIL },
 };
 static const mad_modify_list ModDWord[] = {
     { NULL, X86T_DWORD, MSTR_NIL },
+};
+static const mad_modify_list ModQWord[] = {
+    { NULL, X86T_QWORD, MSTR_NIL },
 };
 static const mad_modify_list ModFPUTag[] = {
     { &zero,  X86T_BYTE, MSTR_VALID },
@@ -718,13 +729,14 @@ static unsigned MaxModLen( const mad_modify_list *list, unsigned num )
 
 static x86_reg_info     XXX_dummy;
 
-static mad_status FPUGetPiece( const mad_registers *mr,
-                                unsigned piece,
-                                char **descript_p,
-                                unsigned *max_descript_p,
-                                const mad_reg_info **reg_p,
-                                mad_type_handle *disp_type_p,
-                                unsigned *max_value_p )
+static mad_status FPUGetPiece(
+    const mad_registers *mr,
+    unsigned piece,
+    char **descript_p,
+    unsigned *max_descript_p,
+    const mad_reg_info **reg_p,
+    mad_type_handle *disp_type_p,
+    unsigned *max_value_p )
 {
     const static x86_reg_info   FPU_nil;
     LIST( 0, st0,  st1,  st2,  st3,  st4,  st5,  st6,  st7 );
@@ -870,13 +882,14 @@ static mad_status FPUGetPiece( const mad_registers *mr,
     return( MS_OK );
 }
 
-static mad_status MMXGetPiece( const mad_registers *mr,
-                                unsigned piece,
-                                char **descript_p,
-                                unsigned *max_descript_p,
-                                const mad_reg_info **reg_p,
-                                mad_type_handle *disp_type_p,
-                                unsigned *max_value_p )
+static mad_status MMXGetPiece(
+    const mad_registers *mr,
+    unsigned piece,
+    char **descript_p,
+    unsigned *max_descript_p,
+    const mad_reg_info **reg_p,
+    mad_type_handle *disp_type_p,
+    unsigned *max_value_p )
 {
     static const x86_reg_info *list_byte[] = {
         &MMX0_b7,&MMX0_b6,&MMX0_b5,&MMX0_b4,&MMX0_b3,&MMX0_b2,&MMX0_b1,&MMX0_b0,
@@ -908,12 +921,22 @@ static mad_status MMXGetPiece( const mad_registers *mr,
         &MMX6_d1,&MMX6_d0,
         &MMX7_d1,&MMX7_d0,
     };
+    static const x86_reg_info *list_qword[] = {
+        &MMX0_q0,
+        &MMX1_q0,
+        &MMX2_q0,
+        &MMX3_q0,
+        &MMX4_q0,
+        &MMX5_q0,
+        &MMX6_q0,
+        &MMX7_q0,
+    };
     #define T(t)        X86T_##t
     static const mad_type_handle type_select[2][2][4] = {
-        /* decimal, unsigned */                     /* decimal, signed */
-        { { T(UCHAR),T(USHORT),T(ULONG),T(FLOAT) }, { T(CHAR), T(SHORT),T(LONG),  T(FLOAT) } },
-        /* hex, unsigned */                         /* hex, signed */
-        { { T(BYTE), T(WORD),  T(DWORD),T(DWORD) }, { T(SBYTE),T(SWORD),T(SDWORD),T(SDWORD) } },
+        { { T(UCHAR),T(USHORT),T(ULONG), T(U64) },      /* decimal, unsigned */
+          { T(CHAR), T(SHORT), T(LONG),  T(I64) } },    /* decimal, signed */
+        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD) },    /* hex, unsigned */
+          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD) } }, /* hex, signed */
     };
     #undef T
 
@@ -949,14 +972,14 @@ static mad_status MMXGetPiece( const mad_registers *mr,
         group = 2;
         type = 2;
     } else {
-        list = list_dword;
-        list_num = NUM_ELTS( list_dword );
-        group = 2;
+        list = list_qword;
+        list_num = NUM_ELTS( list_qword );
+        group = 1;
         type = 3;
     }
-    *disp_type_p = type_select[(MADState->mmx_toggles&MT_HEX) ? 1 : 0]
-                                [(MADState->mmx_toggles&MT_SIGNED) ? 1 : 0]
-                                [type];
+    *disp_type_p = type_select[( MADState->mmx_toggles & MT_HEX ) ? 1 : 0]
+                              [( MADState->mmx_toggles & MT_SIGNED ) ? 1 : 0]
+                              [type];
 
     if( piece < group ) {
         *max_value_p = 2;
@@ -979,31 +1002,32 @@ static mad_status MMXGetPiece( const mad_registers *mr,
     return( MS_OK );
 }
 
-static mad_status XMMGetPiece( const mad_registers *mr,
-                                unsigned piece,
-                                char **descript_p,
-                                unsigned *max_descript_p,
-                                const mad_reg_info **reg_p,
-                                mad_type_handle *disp_type_p,
-                                unsigned *max_value_p )
+static mad_status XMMGetPiece(
+    const mad_registers *mr,
+    unsigned piece,
+    char **descript_p,
+    unsigned *max_descript_p,
+    const mad_reg_info **reg_p,
+    mad_type_handle *disp_type_p,
+    unsigned *max_value_p )
 {
     static const x86_reg_info *list_byte[] = {
         &XMM0_b15,&XMM0_b14,&XMM0_b13,&XMM0_b12,&XMM0_b11,&XMM0_b10,&XMM0_b9,&XMM0_b8,
-        &XMM0_b7,&XMM0_b6,&XMM0_b5,&XMM0_b4,&XMM0_b3,&XMM0_b2,&XMM0_b1,&XMM0_b0,
+        &XMM0_b7, &XMM0_b6, &XMM0_b5, &XMM0_b4, &XMM0_b3, &XMM0_b2, &XMM0_b1,&XMM0_b0,
         &XMM1_b15,&XMM1_b14,&XMM1_b13,&XMM1_b12,&XMM1_b11,&XMM1_b10,&XMM1_b9,&XMM1_b8,
-        &XMM1_b7,&XMM1_b6,&XMM1_b5,&XMM1_b4,&XMM1_b3,&XMM1_b2,&XMM1_b1,&XMM1_b0,
+        &XMM1_b7, &XMM1_b6, &XMM1_b5, &XMM1_b4, &XMM1_b3, &XMM1_b2, &XMM1_b1,&XMM1_b0,
         &XMM2_b15,&XMM2_b14,&XMM2_b13,&XMM2_b12,&XMM2_b11,&XMM2_b10,&XMM2_b9,&XMM2_b8,
-        &XMM2_b7,&XMM2_b6,&XMM2_b5,&XMM2_b4,&XMM2_b3,&XMM2_b2,&XMM2_b1,&XMM2_b0,
+        &XMM2_b7, &XMM2_b6, &XMM2_b5, &XMM2_b4, &XMM2_b3, &XMM2_b2, &XMM2_b1,&XMM2_b0,
         &XMM3_b15,&XMM3_b14,&XMM3_b13,&XMM3_b12,&XMM3_b11,&XMM3_b10,&XMM3_b9,&XMM3_b8,
-        &XMM3_b7,&XMM3_b6,&XMM3_b5,&XMM3_b4,&XMM3_b3,&XMM3_b2,&XMM3_b1,&XMM3_b0,
+        &XMM3_b7, &XMM3_b6, &XMM3_b5, &XMM3_b4, &XMM3_b3, &XMM3_b2, &XMM3_b1,&XMM3_b0,
         &XMM4_b15,&XMM4_b14,&XMM4_b13,&XMM4_b12,&XMM4_b11,&XMM4_b10,&XMM4_b9,&XMM4_b8,
-        &XMM4_b7,&XMM4_b6,&XMM4_b5,&XMM4_b4,&XMM4_b3,&XMM4_b2,&XMM4_b1,&XMM4_b0,
+        &XMM4_b7, &XMM4_b6, &XMM4_b5, &XMM4_b4, &XMM4_b3, &XMM4_b2, &XMM4_b1,&XMM4_b0,
         &XMM5_b15,&XMM5_b14,&XMM5_b13,&XMM5_b12,&XMM5_b11,&XMM5_b10,&XMM5_b9,&XMM5_b8,
-        &XMM5_b7,&XMM5_b6,&XMM5_b5,&XMM5_b4,&XMM5_b3,&XMM5_b2,&XMM5_b1,&XMM5_b0,
+        &XMM5_b7, &XMM5_b6, &XMM5_b5, &XMM5_b4, &XMM5_b3, &XMM5_b2, &XMM5_b1,&XMM5_b0,
         &XMM6_b15,&XMM6_b14,&XMM6_b13,&XMM6_b12,&XMM6_b11,&XMM6_b10,&XMM6_b9,&XMM6_b8,
-        &XMM6_b7,&XMM6_b6,&XMM6_b5,&XMM6_b4,&XMM6_b3,&XMM6_b2,&XMM6_b1,&XMM6_b0,
+        &XMM6_b7, &XMM6_b6, &XMM6_b5, &XMM6_b4, &XMM6_b3, &XMM6_b2, &XMM6_b1,&XMM6_b0,
         &XMM7_b15,&XMM7_b14,&XMM7_b13,&XMM7_b12,&XMM7_b11,&XMM7_b10,&XMM7_b9,&XMM7_b8,
-        &XMM7_b7,&XMM7_b6,&XMM7_b5,&XMM7_b4,&XMM7_b3,&XMM7_b2,&XMM7_b1,&XMM7_b0,
+        &XMM7_b7, &XMM7_b6, &XMM7_b5, &XMM7_b4, &XMM7_b3, &XMM7_b2, &XMM7_b1,&XMM7_b0,
     };
     static const x86_reg_info *list_word[] = {
         &XMM0_w7,&XMM0_w6,&XMM0_w5,&XMM0_w4,&XMM0_w3,&XMM0_w2,&XMM0_w1,&XMM0_w0,
@@ -1037,14 +1061,10 @@ static mad_status XMMGetPiece( const mad_registers *mr,
     };
     #define T(t)        X86T_##t
     static const mad_type_handle type_select[2][2][6] = {
-        /* decimal, unsigned */
-        { { T(UCHAR),T(USHORT),T(ULONG), T(U64),   T(FLOAT), T(DOUBLE) },
-        /* decimal, signed */
-          { T(CHAR), T(SHORT), T(LONG),  T(I64),   T(FLOAT), T(DOUBLE) } },
-        /* hex, unsigned */
-        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD), T(DWORD), T(QWORD) },
-        /* hex, signed */
-          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD),T(SDWORD),T(SQWORD) } },
+        { { T(UCHAR),T(USHORT),T(ULONG), T(U64),   T(FLOAT),T(DOUBLE) },   /* decimal, unsigned */
+          { T(CHAR), T(SHORT), T(LONG),  T(I64),   T(FLOAT),T(DOUBLE) } }, /* decimal, signed */
+        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD), T(FLOAT),T(DOUBLE) },   /* hex, unsigned */
+          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD),T(FLOAT),T(DOUBLE) } }, /* hex, signed */
     };
     #undef T
 
@@ -1096,8 +1116,8 @@ static mad_status XMMGetPiece( const mad_registers *mr,
         type = 5;
     }
     *disp_type_p = type_select[( MADState->xmm_toggles & XT_HEX ) ? 1 : 0]
-                                [( MADState->xmm_toggles & XT_SIGNED ) ? 1 : 0]
-                                [type];
+                              [( MADState->xmm_toggles & XT_SIGNED ) ? 1 : 0]
+                              [type];
 
     if( piece < group ) {
         *max_value_p = 2;
@@ -1121,14 +1141,15 @@ static mad_status XMMGetPiece( const mad_registers *mr,
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
-                                const mad_registers *mr,
-                                unsigned piece,
-                                char **descript,
-                                unsigned *max_descript,
-                                const mad_reg_info **reg,
-                                mad_type_handle *disp_type,
-                                unsigned *max_value )
+mad_status DIGENTRY MIRegSetDisplayGetPiece( 
+    const mad_reg_set_data *rsd,
+    const mad_registers *mr,
+    unsigned piece,
+    char **descript,
+    unsigned *max_descript,
+    const mad_reg_info **reg,
+    mad_type_handle *disp_type,
+    unsigned *max_value )
 {
     if( rsd == &CPURegSet ) {
         return( CPUGetPiece( mr, piece, descript, max_descript, reg, disp_type, max_value ) );
@@ -1141,7 +1162,11 @@ mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
     }
 }
 
-mad_status      DIGENTRY MIRegSetDisplayModify( const mad_reg_set_data *rsd, const mad_reg_info *ri, const mad_modify_list **possible_p, unsigned *num_possible_p )
+mad_status DIGENTRY MIRegSetDisplayModify(
+    const mad_reg_set_data *rsd,
+    const mad_reg_info *ri,
+    const mad_modify_list **possible_p,
+    unsigned *num_possible_p )
 {
     rsd = rsd;
     if( ri == &XXX_dummy.info ) return( MS_FAIL );
@@ -1170,12 +1195,18 @@ mad_status      DIGENTRY MIRegSetDisplayModify( const mad_reg_set_data *rsd, con
     } else if( ri->bit_size == 1 ) {
         *possible_p = ModBit;
         *num_possible_p = NUM_ELTS( ModBit );
+    } else if( ri->bit_size <= 8 ) {
+        *possible_p = ModByte;
+        *num_possible_p = NUM_ELTS( ModByte );
     } else if( ri->bit_size <= 16 ) {
         *possible_p = ModWord;
         *num_possible_p = NUM_ELTS( ModWord );
-    } else {
+    } else if( ri->bit_size <= 32 ) {
         *possible_p = ModDWord;
         *num_possible_p = NUM_ELTS( ModDWord );
+    } else {
+        *possible_p = ModQWord;
+        *num_possible_p = NUM_ELTS( ModQWord );
     }
     return( MS_OK );
 }
@@ -1245,8 +1276,10 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
             title[0] = 'b';
         } else if( MADState->mmx_toggles & MT_WORD ) {
             title[0] = 'w';
-        } else {
+        } else if( MADState->mmx_toggles & MT_DWORD ) {
             title[0] = 'd';
+        } else {
+            title[0] = 'q';
         }
         title[1] = th - X86T_MMX_TITLE0 + '0';
         title[2] = '\0';
@@ -1310,7 +1343,11 @@ static unsigned GetTag( const mad_registers *mr, int st )
     return( (mr->x86.fpu.tag >> (st*2)) & 0x03 );
 }
 
-mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_info *ri, const mad_registers *old, const mad_registers *cur )
+mad_status DIGENTRY MIRegModified(
+    const mad_reg_set_data *rsd,
+    const mad_reg_info *ri,
+    const mad_registers *old,
+    const mad_registers *cur )
 {
     unsigned    old_start;
     unsigned    cur_start;
@@ -1452,7 +1489,7 @@ const mad_toggle_strings *DIGENTRY MIRegSetDisplayToggleList( const mad_reg_set_
     return( rsd->togglelist );
 }
 
-unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, unsigned on, unsigned off )
+unsigned DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, unsigned on, unsigned off )
 {
     unsigned    toggle;
     unsigned    save;
@@ -1515,7 +1552,11 @@ unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, uns
     }
 }
 
-walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_info *ri, MI_REG_WALKER *wk, void *d )
+walk_result DIGENTRY MIRegWalk(
+    const mad_reg_set_data *rsd,
+    const mad_reg_info *ri,
+    MI_REG_WALKER *wk,
+    void *d )
 {
     const x86_reg_info  *const *list;
     const x86_reg_info  *reg;
@@ -1626,7 +1667,12 @@ void DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, const addr
     }
 }
 
-unsigned DIGENTRY MIRegSpecialName( mad_special_reg sr, const mad_registers *mr, mad_address_format af, unsigned max, char *buff )
+unsigned DIGENTRY MIRegSpecialName(
+    mad_special_reg sr,
+    const mad_registers *mr,
+    mad_address_format af,
+    unsigned max,
+    char *buff )
 {
     const char  *seg;
     const char  *offset;
