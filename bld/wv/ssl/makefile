@@ -1,20 +1,12 @@
-#pmake: build
+#pmake: build os_dos os_os2 os_win os_nt os_linux
 
-!include ../make.wv
-
-bin = bin
+!include cproj.mif
 
 .extensions:
 .extensions: .prs .ssl
 
 !ifndef on_build_machine
 verbose = /v
-!endif
-
-!ifdef __UNIX__
-nulldevice = /dev/null
-!else
-nulldevice = nul
 !endif
 
 all : fortran.prs cpp.prs c.prs java.prs .SYMBOLIC
@@ -32,8 +24,8 @@ java.prs : java.ssl pp_c.ssl $(common)
 .ssl.prs
         ssl $(verbose) $[@ $^@
 !ifndef on_build_machine
-    @cp $^@ $(bdir) >$(nulldevice)
+    @cp $^@ $(bin_root_wv)\bin >$(nulldevice)
 !endif
 
 clean: .SYMBOLIC
-    @if exist *.prs @del *.prs
+    rm -f *.prs
