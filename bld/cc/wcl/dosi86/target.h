@@ -42,7 +42,7 @@
 #define _MACHINE        _PC
 #define _CPU            8086
 
-#define _OS             _OS2
+#define _OS             _DOS
 #define _EMS            0
 
 #define _HOST           286

@@ -1,0 +1,44 @@
+
+!include cproj.mif
+!include deftarg.mif
+
+all: wcl.exe wcl386.exe wclaxp.exe
+
+dependents = ..\wcl.c ..\wclhelp.h ..\wclmsg.h
+c_flags = $(cflags_$(host_os)) -i"$(inc_path)" -d1
+
+!ifeq host_os dos
+objs = swchar.obj
+c_flags += -os -s
+!else ifeq host_os nt
+c_flags += -os -s
+!else ifeq host_os os2
+c_flags += -os -s
+!else ifeq host_os linux
+c_flags += -ox
+!endif
+
+# We cannot use default rules since we need to build the same file several
+# times with different switches.
+
+wcl.exe : wcl.obj $(objs)
+        $(linker) $(lflags) name $^@ file {wcl.obj $(objs)}
+
+wcl386.exe : wcl386.obj $(objs)
+        $(linker) $(lflags) name $^@ file {wcl386.obj $(objs)}
+
+wclaxp.exe : wclaxp.obj $(objs)
+        $(linker) $(lflags) name $^@ file {wclaxp.obj $(objs)}
+
+wcl.obj : $(dependents)
+        $(cc) $[@ -fo=$^@ $(c_flags) -dWCLI86
+
+wcl386.obj : $(dependents)
+        $(cc) $[@ -fo=$^@ $(c_flags) -dWCL386
+
+wclaxp.obj : $(dependents)
+        $(cc) $[@ -fo=$^@ $(c_flags) -dWCLAXP
+
+swchar.obj: ..\..\c\swchar.c
+        $(cc) $[@ $(c_flags) -i..\..\h
+

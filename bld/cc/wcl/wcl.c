@@ -49,7 +49,7 @@
 #undef  _BANEXTRA
 #define _BANEXTRA _BANEXSHORT
 
-#if defined(__OS2) || defined(__NT) || defined(__LINUX__)
+#if defined(__OS2__) || defined(__NT__) || defined(__LINUX__)
 #define MAX_CMD 10240
 #else
 #define MAX_CMD 130
@@ -170,7 +170,7 @@ char    *GetName( char * );
 void    Usage( void );
 #if defined( __UNIX__ )
   #define _dos_switch_char() '-'
-#elif defined( __OS2 ) || defined( __NT )
+#elif defined( __OS2__ ) || defined( __NT__ )
   #define _dos_switch_char() '/'
 #else
   extern  int     _dos_switch_char();
@@ -762,9 +762,9 @@ static  int  CompLink( void )
 #if defined(WCLAXP)
         Fputnl( "system ntaxp", Fp );
 #elif defined(WCL386)
-  #if defined(__OS2)
+  #if defined(__OS2__)
         Fputnl( "system os2v2", Fp );           /* 04-feb-92 */
-  #elif defined(__NT)
+  #elif defined(__NT__)
         Fputnl( "system nt", Fp );
   #elif defined(__LINUX__)
         Fputnl( "system linux", Fp );
@@ -781,7 +781,7 @@ static  int  CompLink( void )
         } else if( Flags.link_for_os2 ) {
             Fputnl( "system os2", Fp );
         } else {
-#if defined(__OS2)
+#if defined(__OS2__)
             Fputnl( "system os2", Fp );
 #else
             Fputnl( "system dos", Fp );
