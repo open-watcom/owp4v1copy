@@ -56,7 +56,7 @@ be passed as a pair of backslash characters and a double quote character.
 .exmp begin
 echo "he\"l\lo world\\"
 .exmp end
-passes the single argument 
+passes the single argument
 .arg he"l\lo world\
 .np
 The command line arguments can also be obtained in its original
@@ -373,6 +373,7 @@ is run while the environment variable
 has the value
 .arg a b
 .blktext end
+.exmp end
 .sr wfunc=''
 .sr ffunc='x wmain'
 .sr mfunc='x WinMain'
