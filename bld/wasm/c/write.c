@@ -321,7 +321,7 @@ static void write_export( void )
 static void write_grp( void )
 {
     dir_node    *curr;
-    dir_node    *seg_info;
+    dir_node    *segminfo;
     seg_list    *seg;
     obj_rec     *grp;
     uint        line;
@@ -344,15 +344,15 @@ static void write_grp( void )
 
         for( seg = curr->e.grpinfo->seglist; seg; seg = seg->next ) {
             writeseg = TRUE;
-            seg_info = (dir_node *)(seg->seg);
-            if( seg_info->sym.state != SYM_SEG ) {
+            segminfo = (dir_node *)(seg->seg);
+            if( segminfo->sym.state != SYM_SEG ) {
                 LineNumber = curr->line;
                 AsmError( SEG_NOT_DEFINED );
                 write_to_file = FALSE;
                 LineNumber = line;
             } else {
                 ObjPut8( grp, GRP_SEGIDX );
-                ObjPutIndex( grp, seg_info->e.seginfo->segrec->d.segdef.idx);
+                ObjPutIndex( grp, segminfo->e.seginfo->segrec->d.segdef.idx);
             }
         }
         if( write_to_file ) {

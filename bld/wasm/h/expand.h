@@ -33,8 +33,9 @@
 extern int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg );
 extern int ExpandAllConsts( int start_pos, bool early_only );
 extern int ExpandProcString( int index );
-extern int ExpandSymbol( int i, int early_only );
+extern int ExpandSymbol( int i, bool early_only );
 extern void AddTokens( struct asm_tok **buffer, int start, int count );
 extern int DefineConstant( int i, bool redefine, bool expand_early );
-extern int StoreConstant( char *name, char *value, int_8 redefine );
+extern int StoreConstant( char *name, char *value, bool redefine );
+extern void MakeConstantUnderscored( int token );
 #define STRING_EXPANDED (NOT_ERROR+1)

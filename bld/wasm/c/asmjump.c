@@ -57,6 +57,7 @@ extern seg_list         *CurrSeg;       // points to stack of opened segments
 extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
 extern uint_32          GetCurrAddr( void );
+extern int              SymIs32( struct asm_sym *sym );
 
 extern int              curr_ptr_type;
 
@@ -389,7 +390,10 @@ int jmp( int i )                // Bug: can't handle indirect jump
                     AsmError( INVALID_SIZE );
                     return( ERROR );
                 case EMPTY:
-                    if( Code->use32 ) {
+#ifdef _WASM_
+                    SET_OPSIZ( Code, SymIs32( sym ));
+#endif
+                    if( oper_32( Code )) {
                         temp = FIX_PTR32;
                         Code->info.opnd_type[Opnd_Count] = OP_J48;
                     } else {

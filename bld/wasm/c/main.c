@@ -48,6 +48,7 @@
 #include "fatal.h"
 #include "asmerr.h"
 #include "asmdefs.h"
+#include "expand.h"
 
 #ifdef TRMEM
 #include "memutil.h"

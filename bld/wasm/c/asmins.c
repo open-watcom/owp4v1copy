@@ -71,7 +71,6 @@
 
 extern int              ptr_operator( int, uint_8 );
 extern int              jmp( int i );
-extern void             MakeConstantUnderscored( long );
 
 unsigned char           More_Array_Element = FALSE;
 unsigned char           Last_Element_Size;
@@ -1001,7 +1000,7 @@ static int comp_opt( uint direct )
 }
 
 #ifdef _WASM_
-static void MakeCPUConstant( long i )
+static void MakeCPUConstant( int i )
 /****************************/
 {
     MakeConstantUnderscored( i );
@@ -1049,7 +1048,7 @@ int cpu_directive( int i )
     }
 
     #ifdef _WASM_
-        MakeCPUConstant( (long)i );
+        MakeCPUConstant( i );
         switch( i ) {
         case T_DOT_686P:
         case T_DOT_686:

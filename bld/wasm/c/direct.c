@@ -78,7 +78,6 @@ extern int              InputQueueFile( char * );
 extern void             InputQueueLine( char * );
 extern void             AsmTakeOut( char * );
 extern void             GetInsString( enum asm_token, char *, int );
-extern void             MakeConstantUnderscored( long );
 extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
 
 static char *Check4Mangler( int *i );
@@ -537,16 +536,21 @@ void FreeInfo( dir_node *dir )
         AsmFree( dir->e.lnameinfo );
         break;
     case SYM_CONST:
-        DebugMsg(( "freeing const: %s = ", dir->sym.name ));
-
+#ifdef DEBUG_OUT
+        if(( dir->e.constinfo->count > 0 ) && ( dir->e.constinfo->data[0].token != T_NUM )) {
+            DebugMsg(( "freeing const(String): %s = ", dir->sym.name ));
+        } else {
+            DebugMsg(( "freeing const(Number): %s = ", dir->sym.name ));
+        }
+#endif
         for( i=0; i < dir->e.constinfo->count; i++ ) {
-            #ifdef DEBUG_OUT
+#ifdef DEBUG_OUT
             if( dir->e.constinfo->data[i].token == T_NUM ) {
                 DebugMsg(( "%d ", dir->e.constinfo->data[i].value ));
             } else {
                 DebugMsg(( "%s ", dir->e.constinfo->data[i].string_ptr ));
             }
-            #endif
+#endif
             AsmFree( dir->e.constinfo->data[i].string_ptr );
         }
         DebugMsg(( "\n" ));

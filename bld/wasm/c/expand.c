@@ -103,7 +103,7 @@ void AddTokens( struct asm_tok **buffer, int start, int count )
     Token_Count += count;
 }
 
-int ExpandSymbol( int i, int early_only )
+int ExpandSymbol( int i, bool early_only )
 /***************************************/
 {
     struct asm_sym      *sym;
@@ -116,7 +116,8 @@ int ExpandSymbol( int i, int early_only )
     switch( sym->state ) {
     case SYM_CONST:
         dir = (dir_node *)sym;
-        if( !dir->e.constinfo->expand_early && early_only ) return( NOT_ERROR );
+        if(( dir->e.constinfo->expand_early == FALSE ) 
+            && ( early_only == TRUE )) return( NOT_ERROR );
         DebugMsg(( "Expand Constant: %s ->", sym->name ));
         /* insert the pre-scanned data for this constant */
         AddTokens( AsmBuffer, i, dir->e.constinfo->count - 1 );
@@ -272,14 +273,14 @@ int DefineConstant( int i, bool redefine, bool expand_early )
     return( createconstant( name, FALSE, i, redefine, expand_early ) );
 }
 
-int StoreConstant( char *name, char *value, int_8 redefine )
+int StoreConstant( char *name, char *value, bool redefine )
 /**********************************************************/
 {
     AsmScan( value );
     return( createconstant( name, FALSE, 0, redefine, FALSE ) );
 }
 
-void MakeConstantUnderscored( long token )
+void MakeConstantUnderscored( int token )
 /*****************************/
 {
     char buffer[23];
@@ -290,10 +291,10 @@ void MakeConstantUnderscored( long token )
     GetInsString( (enum asm_token)token, buffer+2, 18 );
     strcat( buffer, "__" );
     strupr( buffer );
-    createconstant( buffer, 1, 0, TRUE, FALSE );
+    createconstant( buffer, TRUE, 0, TRUE, FALSE );
 }
 
-static int createconstant( char *name, int value, int start, int_8 redefine, bool expand_early )
+static int createconstant( char *name, bool value, int start, bool redefine, bool expand_early )
 /**********************************************************************************************/
 {
     struct asm_tok      *new;
@@ -409,15 +410,11 @@ int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
 /**************************************************/
 {
     if( ExpandAllConsts( start_pos, early_only ) == ERROR ) return( ERROR );
-    if( !early_only ) {
+    if( early_only == FALSE ) {
         int    val;
 
         val = EvalExpr( Token_Count, start_pos, Token_Count, flag_msg );
-#if 0        
-        if( val == ERROR ) val = 0;
-#else
         if( val == ERROR ) return( ERROR );
-#endif        
         Token_Count = val;
     }
     return( NOT_ERROR );
