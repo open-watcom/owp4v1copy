@@ -1,12 +1,3 @@
-###################################################################
-#       Copyright by WATCOM Systems Inc. 1987, 1990. All rights   #
-#       reserved. No part of this software may be reproduced      #
-#       in any form or by any means - graphic, electronic or      #
-#       mechanical, including photocopying, recording, taping     #
-#       or information storage and retrieval systems - except     #
-#       with the written permission of WATCOM Systems Inc.        #
-###################################################################
-
 proj_name = wtouch
 name = wtouch
 
@@ -37,7 +28,7 @@ objects = touch.obj dtparse.obj wtmsg.obj
 dependants = wtouch.res $(objects) $(extra_dependants_$(host_OS))
 
 lflags_dos_i86 = sys dos
-extra_l_flags_os2 = option newfiles,stub=$(extra_dependants_os2)
+extra_l_flags_os2 = option newfiles,stack=8k,stub=$(extra_dependants_os2)
 
 lnk = tmp.lnk
 
@@ -51,9 +42,6 @@ $(name).exe : $(dependants)
         $(linker) op quiet $(lflags) @$(lnk)
         wstrip -q -a -r $(name).exe . wtouch.res
         @del $(lnk)
-#!ifneq host_OS dos
-#       wstrip -q -a -r $(name).exe . wtouch.res
-#!endif
 
 $(name).res : $(name).rc $(name).msg usage.rc usagej.rc msg.gh
         $(rc) -q -r -i$(wtouch_dir) -zk0 -fo=$^@ $[@ /bt=windows
