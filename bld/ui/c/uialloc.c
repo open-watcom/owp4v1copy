@@ -36,9 +36,10 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "trmem.h"
 
 #ifdef TRMEM
+#include "trmem.h"
+
 _trmem_hdl  UIMemHandle;
 static int  UIMemFileHandle;   /* stream to put output on */
 static void UIMemPrintLine( int *, const char * buff, size_t len );
