@@ -1,11 +1,10 @@
-#pmake:all small stack 32bit linux threading string iX86 static build os_linux cpu_386
+#pmake:all small register 32bit linux threading tchar iX86 static build os_linux cpu_386
 processor=386
 model=ms
 system=linux
 linkage=static
-convention=stack
+convention=register
 !include ..\..\..\objects.mif
 !include $(clib_dir)\master.mif
 !include $(clib_dir)\mklib.mif
-!include ..\..\..\deps.mif
 

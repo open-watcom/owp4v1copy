@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit linux threading string iX86 static build os_linux cpu_386
+#pmake:all small stack 32bit linux threading search iX86 static build os_linux cpu_386
 processor=386
 model=ms
 system=linux
