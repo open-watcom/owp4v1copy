@@ -386,9 +386,10 @@ static TEMPLATE_INFO *newTemplateInfo( TEMPLATE_DATA *data )
     args = data->args;
     arg_count = getArgList( args, NULL, NULL, NULL );
     tinfo = RingCarveAlloc( carveTEMPLATE_INFO, &allClassTemplates );
+    tinfo->specializations = NULL;
     tprimary = newTemplateSpecialization( data );
-    tprimary->next = tprimary;
-    tinfo->specializations = tprimary;
+    RingAppend( &tinfo->specializations, tprimary );
+    /* RingFirst( tinfo->specializations ) is always the primary template */
 
     tinfo->unbound_type = ClassUnboundTemplate( data->template_name );
     tinfo->sym = NULL;
@@ -528,14 +529,63 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
 {
     TEMPLATE_SPECIALIZATION *curr_spec;
     TEMPLATE_SPECIALIZATION *tspec;
+    TEMPLATE_SPECIALIZATION *tprimary;
     PTREE curr_list;
     PTREE spec_list;
     PTREE curr_arg;
     PTREE spec_arg;
+    TYPE arg_type;
+    unsigned i;
+    boolean something_went_wrong;
 
+    /* pre-process args */
     DbgAssert( args != NULL );
-    tspec = NULL;
+    something_went_wrong = FALSE;
+    tprimary = RingFirst( tinfo->specializations );
 
+    for( curr_list = args, i = 0;
+         curr_list != NULL;
+         curr_list = curr_list->u.subtree[0], i++ ) {
+
+        curr_arg = curr_list->u.subtree[1];
+
+        if( ( curr_arg == NULL )
+         || ( i >= tprimary->num_args ) ) {
+            /* number of parameters don't match */
+            /* error message: wrong number of template arguments */
+            something_went_wrong = TRUE;
+            break;
+        }
+
+        arg_type = tprimary->type_list[i];
+        if( arg_type->id == TYP_GENERIC || arg_type->id == TYP_CLASS ) {
+            arg_type = NULL;
+        }
+
+        if( arg_type != NULL ) {
+            curr_arg = AnalyseRawExpr( curr_arg );
+            if( curr_arg->op == PT_ERROR ) {
+                something_went_wrong = TRUE;
+                break;
+            }
+            curr_arg = CastImplicit( curr_arg, arg_type, CNV_FUNC_ARG,
+                                     &diagTempParm );
+            if( curr_arg->op == PT_ERROR ) {
+                something_went_wrong = TRUE;
+                break;
+            }
+        }
+
+        curr_list->u.subtree[1] = curr_arg;
+    }
+
+    if( something_went_wrong ) {
+        /* TODO: diagnose error */
+        DbgAssert( 0 );
+        return NULL;
+    }
+
+    tspec = NULL;
     RingIterBeg( tinfo->specializations, curr_spec ) {
         if( tspec != NULL ) {
             /* we are done */
@@ -2655,17 +2705,17 @@ static void saveTemplateInfo( void *p, carve_walk_base *d )
     TEMPLATE_INFO *s = p;
     TEMPLATE_INFO *save_next;
     TEMPLATE_SPECIALIZATION *save_specializations;
+    TEMPLATE_SPECIALIZATION *tprimary;
     TYPE save_unbound_type;
     SYMBOL save_sym;
     void *defarg_index;
     unsigned i;
-    unsigned num_args;
 
     if( s->free ) {
         return;
     }
 
-    num_args = s->specializations->num_args;
+    tprimary = RingFirst( s->specializations );
 
     save_next = s->next;
     s->next = CarveGetIndex( carveTEMPLATE_INFO, save_next );
@@ -2678,7 +2728,7 @@ static void saveTemplateInfo( void *p, carve_walk_base *d )
     s->sym = SymbolGetIndex( save_sym );
     PCHWriteCVIndex( d->index );
     PCHWrite( s, sizeof( *s ) );
-    for( i = 0; i < num_args; ++i ) {
+    for( i = 0; i < tprimary->num_args; ++i ) {
         defarg_index = RewriteGetIndex( s->defarg_list[i] );
         PCHWrite( &defarg_index, sizeof( defarg_index ) );
     }
@@ -2786,6 +2836,7 @@ pch_status PCHReadTemplates( void )
     CLASS_INST *ci;
     FN_TEMPLATE_DEFN *ftd;
     TEMPLATE_SPECIALIZATION *ts;
+    TEMPLATE_SPECIALIZATION *tprimary;
     TEMPLATE_INFO *ti;
     REWRITE *memb_defn;
     char **memb_arg_names;
@@ -2881,11 +2932,12 @@ pch_status PCHReadTemplates( void )
                                              ti->specializations );
         ti->unbound_type = TypeMapIndex( ti->unbound_type );
         ti->sym = SymbolMapIndex( ti->sym );
-        defarg_list_size = ti->specializations->num_args * sizeof( REWRITE * );
+        tprimary = RingFirst( ti->specializations );
+        defarg_list_size = tprimary->num_args * sizeof( REWRITE * );
         defarg_list = CPermAlloc( defarg_list_size );
         ti->defarg_list = defarg_list;
         PCHRead( defarg_list, defarg_list_size );
-        for( j = 0; j < ti->specializations->num_args; ++j ) {
+        for( j = 0; j < tprimary->num_args; ++j ) {
             defarg_list[j] = RewriteMapIndex( defarg_list[j] );
         }
     }

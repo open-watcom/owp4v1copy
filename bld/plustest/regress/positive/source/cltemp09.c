@@ -10,6 +10,11 @@ struct A<0> {
     static const int res = 0;
 };
 
+template<>
+struct A<-1> {
+    static const int res = -1;
+};
+
 
 template<class T1, class T2>
 struct B {
@@ -33,6 +38,7 @@ int main() {
     if( A<2>::res != 3) fail(__LINE__);
     if( A<1>::res != 1) fail(__LINE__);
     if( A<0>::res != 0) fail(__LINE__);
+    if( A<-1>::res != -1) fail(__LINE__);
 
     if( B<int, int>::val != 1) fail(__LINE__);
     if( B<int, long>::val != 2) fail(__LINE__);
