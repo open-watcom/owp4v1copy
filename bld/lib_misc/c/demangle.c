@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C++ name demangling.
 *
 ****************************************************************************/
 
@@ -2365,7 +2364,7 @@ void main( int argc )
     }
     for( i = 0 ; testVector[i].mangle != NULL ; ++i ) {
         p = malloc( ALLOC_SIZE );
-        len = __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, realloc );
+        len = __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, (char *(*)(char *, size_t))realloc );
         if( argc > 1 ) {
             printf( "%s -->%s<-- (%u)\n", testVector[i].mangle, p, len );
         }
@@ -2393,7 +2392,7 @@ void main( int argc )
     }
     for( i = 0 ; testVector[i].mangle != NULL ; ++i ) {
         p = malloc( ALLOC_SIZE );
-        len = __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, realloc );
+        len = __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, (char *(*)(char *, size_t))realloc );
         if( strcmp( p, testVector[i].full_demangle ) ) {
             printf( "ERROR:\n%s\ndemangle should yield -->%s<--\n", testVector[i].mangle, testVector[i].full_demangle );
             printf(             "          but yielded -->%s<-- (%u)\n", p, len );
@@ -2453,7 +2452,7 @@ void main( int argc )
             for( j = max ; j > 0 ; j-- ) {
                 testVector[i].mangle[j] = '\0';
                 p = malloc( ALLOC_SIZE );
-                __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, realloc );
+                __demangle_r( testVector[i].mangle, 0, &p, ALLOC_SIZE, (char *(*)(char *, size_t))realloc );
                 printf( "truncated demangle yielded -->%s<-- (%u)\n", p, len );
                 free( p );
             }
@@ -2461,5 +2460,22 @@ void main( int argc )
     }
     printf( "...test completed.\n" );
     exit( 0 );
+}
+#endif
+
+#if 0 || defined(UTIL)
+
+#define BUF_SIZE 1024
+
+void main( int argc, char **argv )
+{
+    char    buffer[1024];
+
+    if( argc < 2) {
+        printf( "Usage: demangle <mangled name>\n" );
+        return;
+    }
+    __demangle_l( argv[1], strlen( argv[1] ), buffer, BUF_SIZE );
+    puts( buffer );
 }
 #endif
