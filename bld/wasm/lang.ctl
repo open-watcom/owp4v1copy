@@ -22,9 +22,9 @@ cdsay .
     <CPCMD> os2386/wasm.sym   <RELROOT>/rel2/binp/wasm.sym
     <CPCMD> dos386/wasm.exe   <RELROOT>/rel2/binw/wasm.exe
     <CPCMD> dos386/wasm.sym   <RELROOT>/rel2/binw/wasm.sym
-#    <CPCMD> qnx386/wasm.qnx   <RELROOT>/rel2/qnx/binq/wasm.
+#    <CPCMD> qnx386/wasm.qnx   <RELROOT>/rel2/qnx/binq/wasm
 #    <CPCMD> qnx386/wasm.sym   <RELROOT>/rel2/qnx/sym/
-    <CPCMD> linux386/wasm.exe <RELROOT>/rel2/binl/wasm.
+    <CPCMD> linux386/wasm.exe <RELROOT>/rel2/binl/wasm
     <CPCMD> linux386/wasm.sym <RELROOT>/rel2/binl/wasm.sym
 
 [ BLOCK <1> clean ]

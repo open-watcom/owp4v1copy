@@ -15,13 +15,13 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/rcsdll/os2386/rcsdll.dll <relroot>/rel2/binp/dll/rcsdll.dll
-    <CPCMD> <devdir>/rcsdll/wini86/rcsdll.dll <relroot>/rel2/binw/rcsdll.dll
-    <CPCMD> <devdir>/rcsdll/nt386/rcsdll.dll <relroot>/rel2/binnt/rcsdll.dll
-#    <CPCMD> <devdir>/rcsdll/ntaxp/rcsdll.dll <relroot>/rel2/axpnt/rcsdll.dll
-    <CPCMD> <devdir>/rcsdll/bat/*.bat <relroot>/rel2/binw/
-    <CPCMD> <devdir>/rcsdll/cmd/*.cmd <relroot>/rel2/binp/
+    <CPCMD> <PROJDIR>/os2386/rcsdll.dll  <RELROOT>/rel2/binp/dll/rcsdll.dll
+    <CPCMD> <PROJDIR>/wini86/rcsdll.dll  <RELROOT>/rel2/binw/rcsdll.dll
+    <CPCMD> <PROJDIR>/nt386/rcsdll.dll   <RELROOT>/rel2/binnt/rcsdll.dll
+#    <CPCMD> <PROJDIR>/ntaxp/rcsdll.dll   <RELROOT>/rel2/axpnt/rcsdll.dll
+    <CPCMD> <PROJDIR>/bat/*.bat          <RELROOT>/rel2/binw/
+    <CPCMD> <PROJDIR>/cmd/*.cmd          <RELROOT>/rel2/binp/
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

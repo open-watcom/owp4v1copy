@@ -1,8 +1,7 @@
-# H Builder Control file
-# ======================
+# HDR Builder Control file
+# ========================
 
 set PROJDIR=<CWD>
-set reldir=<relroot>/rel2
 
 [ INCLUDE <LANG_BLD>/master.ctl ]
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
@@ -13,22 +12,18 @@ cdsay .
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
-[ BLOCK <1> nlang ]
-    set reldir=<DWATCOM>
-    set CPCMD=copy
-
-[ BLOCK <1> rel2 cprel2 acprel2 nlang ]
-#======================================
-    <CPCMD> <devdir>/hdr/dos/*.h* <reldir>/h/
-    <CPCMD> <devdir>/hdr/dos/*.cnv <reldir>/h/
-    <CPCMD> <devdir>/hdr/dos/sys/*.h <reldir>/h/sys/
-    <CPCMD> <devdir>/hdr/dos/win/*.h <reldir>/h/win/
-    <CPCMD> <devdir>/hdr/linux/*.h <reldir>/lh/
-    <CPCMD> <devdir>/hdr/linux/arpa/*.h <reldir>/lh/arpa/
-    <CPCMD> <devdir>/hdr/linux/sys/*.h <reldir>/lh/sys/
-    <CPCMD> <devdir>/hdr/linux/netinet/*.h <reldir>/lh/netinet/
-#    <CPCMD> <devdir>/hdr/qnx/*.h* <reldir>/qh/
-#    <CPCMD> <devdir>/hdr/qnx/sys/*.h <reldir>/qh/sys/
+[ BLOCK <1> rel2 cprel2 acprel2 ]
+#================================
+    <CPCMD> <PROJDIR>/dos/*.h*           <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
+    <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
+    <CPCMD> <PROJDIR>/linux/*.h          <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/rel2/lh/arpa/
+    <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/rel2/lh/sys/
+    <CPCMD> <PROJDIR>/linux/netinet/*.h  <RELROOT>/rel2/lh/netinet/
+#    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 
 [ BLOCK <1> clean ]
 #==================

@@ -14,11 +14,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-<CPCMD> <devdir>/as/alpha/os2386/wasaxp.exe <relroot>/rel2/binp/wasaxp.exe
-<CPCMD> <devdir>/as/ppc/os2386/wasppc.exe   <relroot>/rel2/binp/wasppc.exe
-<CPCMD> <devdir>/as/alpha/nt386/wasaxp.exe  <relroot>/rel2/binnt/wasaxp.exe
-#<CPCMD> <devdir>/as/alpha/ntaxp/wasaxp.exe  <relroot>/rel2/axpnt/wasaxp.exe
-<CPCMD> <devdir>/as/alpha/dos386/wasaxp.exe <relroot>/rel2/binw/wasaxp.exe
+<CPCMD> <PROJDIR>/alpha/os2386/wasaxp.exe  <RELROOT>/rel2/binp/wasaxp.exe
+<CPCMD> <PROJDIR>/ppc/os2386/wasppc.exe    <RELROOT>/rel2/binp/wasppc.exe
+<CPCMD> <PROJDIR>/alpha/nt386/wasaxp.exe   <RELROOT>/rel2/binnt/wasaxp.exe
+#<CPCMD> <PROJDIR>/alpha/ntaxp/wasaxp.exe   <RELROOT>/rel2/axpnt/wasaxp.exe
+<CPCMD> <PROJDIR>/alpha/dos386/wasaxp.exe  <RELROOT>/rel2/binw/wasaxp.exe
 
 [ BLOCK <1> clean ]
 #==================
