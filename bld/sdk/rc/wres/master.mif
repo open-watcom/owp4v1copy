@@ -96,11 +96,7 @@ $(wres_dir)\lib\$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
         $(librarian) -n -b -q $^@ @$(lbcfile)
 !ifdef on_build_machine
-!ifdef __OS2__
-        xcopy /o/r $^@ $(watcom_dir)\lib
-!else
-        xcopy /k/r $^@ $(watcom_dir)\lib
-!endif
+        copy $^@ $(watcom_dir)\lib
 !endif
         @del $(lbcfile)
 
