@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Register names for x86 CPUs.
 *
 ****************************************************************************/
 
@@ -74,6 +73,14 @@ regpick( mm4, "mm4")
 regpick( mm5, "mm5")
 regpick( mm6, "mm6")
 regpick( mm7, "mm7")
+regpick( xmm0, "xmm0" )
+regpick( xmm1, "xmm1")
+regpick( xmm2, "xmm2")
+regpick( xmm3, "xmm3")
+regpick( xmm4, "xmm4")
+regpick( xmm5, "xmm5")
+regpick( xmm6, "xmm6")
+regpick( xmm7, "xmm7")
 regpick( cr0, "cr0")
 regpick( cr2, "cr2")
 regpick( cr3, "cr3")

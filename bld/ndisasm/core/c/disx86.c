@@ -466,6 +466,24 @@ dis_register X86GetMMReg(WBIT w, RM reg, dis_dec_ins *ins )
     }
 }
 
+dis_register X86GetXMMReg(WBIT w, RM reg, dis_dec_ins *ins )
+/**********************************************************************
+ *  Get SSE  (Streaming SIMD Extensions) Register  w - not used
+ */
+{
+    switch( reg ) {
+    case RM_0: return( DR_X86_xmm0 );
+    case RM_1: return( DR_X86_xmm1 );
+    case RM_2: return( DR_X86_xmm2 );
+    case RM_3: return( DR_X86_xmm3 );
+    case RM_4: return( DR_X86_xmm4 );
+    case RM_5: return( DR_X86_xmm5 );
+    case RM_6: return( DR_X86_xmm6 );
+    case RM_7: return( DR_X86_xmm7 );
+    default:   return( DR_NONE );
+    }
+}
+
 dis_register X86GetCRegister( WBIT w, RM reg, dis_dec_ins *ins )
 /**********************************************************************
  *  Get Control Register
@@ -835,6 +853,21 @@ static void X86GetMMModRM(WBIT w, MOD mod, RM rm, void * d,
     }
 }
 
+static void X86GetXMMModRM(WBIT w, MOD mod, RM rm, void * d,
+                         dis_dec_ins *ins, dis_ref_type ref_type)
+/**********************************************************************
+ * Gets the Floating Point MOD/RM
+ * NOT the same with X86GetModRM it returns XMM instead of a register
+ * if MOD = MOD_3
+ */
+{
+    if( DIF_X86_ADDR_LONG & ins->flags ) {
+        X86GetModRM_L(w, mod, rm, d ,ins, ref_type, X86GetXMMReg);
+    } else {
+        X86GetModRM_S(w, mod, rm, d ,ins, ref_type, X86GetXMMReg);
+    }
+}
+
 /*=====================================================================*/
 /*               Get Register as Operands                              */
 /*=====================================================================*/
@@ -874,6 +907,20 @@ static void X86GetMM( RM reg, dis_dec_ins *ins )
     oper = ins->num_ops;
     ins->op[oper].type = DO_REG;
     ins->op[oper].base = X86GetMMReg( W_DEFAULT, reg, ins );
+    ins->op[oper].ref_type = DRT_X86_MM64;
+    ++ins->num_ops;
+}
+
+static void X86GetXMM( RM reg, dis_dec_ins *ins )
+/**********************************************************************
+ *  Get XMM Register
+ */
+{
+    int oper;
+
+    oper = ins->num_ops;
+    ins->op[oper].type = DO_REG;
+    ins->op[oper].base = X86GetXMMReg( W_DEFAULT, reg, ins );
     ins->op[oper].ref_type = DRT_X86_MM64;
     ++ins->num_ops;
 }
@@ -1238,6 +1285,33 @@ static void X86GetMMRegModRM_B( MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
 {
     X86GetMM( reg, ins );
     X86GetMMModRM(W_DEFAULT, mod, rm, d, ins, ref_type);
+}
+
+static void X86GetXMMRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins )
+/**********************************************************************/
+//    dir                   1                 0
+//   Destination           Reg              MODRM
+//   Source               MODRM              Reg
+{
+
+    if( dir ) {
+        X86GetXMMModRM(w, mod, rm, d, ins, ref_type);
+        X86GetXMM( reg, ins );
+    } else {
+        X86GetXMM( reg, ins );
+        X86GetXMMModRM(w, mod, rm, d, ins, ref_type);
+    }
+}
+
+static void X86GetXMMRegModRM_B( MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins)
+/**********************************************************************/
+//   Destination           Reg
+//   Source               MODRM
+{
+    X86GetXMM( reg, ins );
+    X86GetXMMModRM(W_DEFAULT, mod, rm, d, ins, ref_type);
 }
 
 void X86GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
@@ -2882,6 +2956,14 @@ typedef union {
         unsigned_32 mm : 3;
         unsigned_32 mod: 2;
     } type1;
+    struct {
+        unsigned_32 op1: 8;
+        unsigned_32 dir: 1;
+        unsigned_32 op2: 7;
+        unsigned_32 rm : 3;
+        unsigned_32 mm : 3;
+        unsigned_32 mod: 2;
+    } type2;
 } mm;
 
 
@@ -2891,7 +2973,7 @@ dis_handler_return X86MMNoOp( dis_handle *h, void *d, dis_dec_ins *ins )
  */
 {
     ins->num_ops = 0;
-    ins->size +=2;
+    ins->size += 2;
     return( DHR_DONE );
 }
 
@@ -2904,7 +2986,7 @@ dis_handler_return X86MMRegModRM32( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = ins->opcode;
     ins->num_ops = 0;
-    ins->size +=3;
+    ins->size += 3;
 
     X86GetMMRegModRMMixed(code.type1.dir, W_DEFAULT,
                    code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM32, d, ins) ;
@@ -2920,7 +3002,7 @@ dis_handler_return X86MMRegModRM64( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = ins->opcode;
     ins->num_ops = 0;
-    ins->size +=3;
+    ins->size += 3;
 
     X86GetMMRegModRM(code.type1.dir, W_DEFAULT,
                    code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins) ;
@@ -2936,7 +3018,7 @@ dis_handler_return X86MMRegModRM64_B( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = ins->opcode;
     ins->num_ops = 0;
-    ins->size +=3;
+    ins->size += 3;
 
     X86GetMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
     return( DHR_DONE );
@@ -2954,6 +3036,82 @@ dis_handler_return X86MMImmMM( dis_handle *h, void *d, dis_dec_ins * ins)
     ins->num_ops = 0;
     ins->size += 3;
     X86GetMM( code.type1.rm, ins );
+    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    return( DHR_DONE );
+}
+
+/*=====================================================================*/
+/*           Streaming SIMD Extension (SSE) Instructions               */
+/*=====================================================================*/
+
+dis_handler_return X86XMMNoOp( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE No Operands
+ */
+{
+    ins->num_ops = 0;
+    ins->size += 3;
+    return( DHR_DONE );
+}
+
+dis_handler_return X86XMMRegModRM64( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM(code.type2.dir, W_DEFAULT,
+                   code.type2.mod, code.type2.rm, code.type2.mm, DRT_X86_MM64, d, ins) ;
+    return( DHR_DONE );
+}
+
+dis_handler_return X86XMMRegModRM64_B( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM - Destination only mm
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
+    return( DHR_DONE );
+}
+
+dis_handler_return X86XMMRegModRM64_BImm( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 64-Bit RegModRM, imm8 - Destination only mm
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins);
     X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
     return( DHR_DONE );
 }
