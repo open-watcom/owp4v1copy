@@ -170,8 +170,6 @@ void  main()
     char        *p;
     char        *q;
 
-//      determine language to use and set WclMsgs
-
     CC_Opts[0] = '\0';
 
     Switch_Chars[0] = '-';
@@ -417,8 +415,15 @@ static  int  Parse( void )
                             PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
                             exit( 1 );
                         }
-
+#if 0
+                        /* "Analysing" this saves linking printf functionality */
                         sprintf(Cmd, "bt=%s -l=%s", sys_name, sys_name);
+#else
+                        strcpy(Cmd, "bt=");
+                        strcat(Cmd, sys_name);
+                        strcat(Cmd, " -l=");
+                        strcat(Cmd, sys_name);
+#endif
                         strcat(Cmd, temp_cmd);
                         end = Cmd - 1;
                         wcc_option = 0;
@@ -823,9 +828,9 @@ static  int  CompLink( void )
     BuildLinkFile();
 
     if( ( Obj_List != NULL || Flags.do_link )  &&  Flags.no_link == FALSE ) {
-        FindPath( "wlink" EXE_EXT, PathBuffer );
+        FindPath( LINK EXE_EXT, PathBuffer );
         if( !Flags.be_quiet ) {
-            puts( "" );
+            PrintMsg( "       %s %s\n", LINK, Temp_Link );
         }
         fflush( stdout );
         rc = spawnlp( P_WAIT, PathBuffer, LINK, Temp_Link, NULL );
@@ -839,6 +844,10 @@ static  int  CompLink( void )
         }
         if( Flags.do_cvpack ){
             FindPath( "cvpack" EXE_EXT, PathBuffer );
+            if( !Flags.be_quiet ) {
+                PrintMsg( "       %s %s\n", "cvpack", Exe_Name );
+                fflush( stdout );
+            }
             rc = spawnlp( P_WAIT, PathBuffer, "cvpack", Exe_Name, NULL );
             if( rc != 0 ) {
                 if( rc == -1  ||  rc == 255 ) {

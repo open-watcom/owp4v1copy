@@ -28,14 +28,25 @@
 *
 ****************************************************************************/
 
+// " is a good file delimiter in non-UNIX systems. ' works better in UNIX
+#ifndef __UNIX__
+#define DELIM "\""
+#else
+#define DELIM "\'"
+#endif
+#define FILEREF DELIM "%s" DELIM
 
-pick( UNABLE_TO_OPEN_DIRECTIVE_FILE,  "Error: Unable to open directive file '%s'" ),
-pick( UNABLE_TO_OPEN_TEMPORARY_FILE,  "Error: Unable to open temporary file '%s' - %s" ),
-pick( UNABLE_TO_INVOKE_EXE,           "Error: Unable to invoke '%s'" ),
-pick( COMPILER_RETURNED_A_BAD_STATUS, "Error: Compiler returned a bad status compiling '%s'" ),
+// No \n on messages followed by exit() or on "pause" message
+pick( UNABLE_TO_OPEN_DIRECTIVE_FILE,  "Error: Unable to open directive file " FILEREF ),
+pick( UNABLE_TO_OPEN_TEMPORARY_FILE,  "Error: Unable to open temporary file " FILEREF " - %s" ),
+pick( UNABLE_TO_INVOKE_EXE,           "Error: Unable to invoke " FILEREF ),
+pick( COMPILER_RETURNED_A_BAD_STATUS, "Error: Compiler returned a bad status compiling " FILEREF "\n" ),
 pick( LINKER_RETURNED_A_BAD_STATUS,   "Error: Linker returned a bad status" ),
 pick( CVPACK_RETURNED_A_BAD_STATUS,   "Error: cvpack returned a bad status" ),
-pick( UNABLE_TO_OPEN,                 "Unable to open '%s'" ),
-pick( UNABLE_TO_FIND,                 "Error: Unable to find '%s'" ),
+pick( UNABLE_TO_OPEN,                 "Unable to open " FILEREF ),
+pick( UNABLE_TO_FIND,                 "Error: Unable to find " FILEREF ),
 pick( OUT_OF_MEMORY,                  "Out of memory" ),
 pick( PRESS_ANY_KEY_TO_CONTINUE,      "Press any key to continue:" ),
+
+#undef FILEREF
+#undef DELIM
