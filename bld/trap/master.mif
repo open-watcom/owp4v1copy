@@ -6,9 +6,6 @@ trap_autodepends = .AUTODEPEND
 
 suppress_zc = 1
 
-.CONTINUE
-.ERASE
-
 .EXTENSIONS : .res .rc
 
 #
@@ -50,7 +47,7 @@ suppress_zc = 1
 memory_model_i86 = c
 !endif
 
-!ifeq host_OS qnx
+!ifeq host_os qnx
 memory_model_386 = s
 !endif
 
@@ -75,7 +72,7 @@ extra_c_flags += -DJAPANESE_MESSAGES
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 
-!ifeq host_OS nov
+!ifeq host_os nov
 extra_c_flags_386 += -3s
 !else ifeq os ads
 extra_c_flags_386 += -3s
@@ -115,7 +112,7 @@ libs_axp_nt             = clib
 
 libs_ppc_nt             = clib
 
-!ifeq host_OS nov
+!ifeq host_os nov
 mknver_c = $(trap_dir)/c/mknver.c
 !endif
 
@@ -184,7 +181,7 @@ trperr_h = _err.gh
 jtrperr_h = _jerr.gh
 mkstr_c = $(trap_dir)/c/mkstr.c
 trap_msg = $(trap_dir)/h/trap.msg
-!ifeq host_OS nov
+!ifeq host_os nov
 nversion_tmp = ./nversion.tmp
 !else
 nversion_tmp =
@@ -205,22 +202,22 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         !cvpack $(target)
 
 ./mkstr.exe: $(mkstr_c) $(trap_msg)
-        $(bld_cl) $(wcl_util_opts) -i"$(trap_dir)/h" $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" $[@
 
-!ifeq host_OS nov
+!ifeq host_os nov
 
 $(nversion_tmp): ./mknver.exe
     $[@ $^@
 
 ./mknver.exe: $(mknver_c) .AUTODEPEND
-        $(bld_cl) $(wcl_util_opts) -i"$(trap_dir)/h" -i"$(watcom_dir)/h" $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" -I"$(watcom_dir)/h" $[@
 !endif
 
 $(trperr_h) : ./mkstr.exe
         $[@ $^@
 
 ./jmkstr.exe: $(mkstr_c) $(trap_msg)
-        $(bld_cl) $(wcl_util_opts) -i"$(trap_dir)/h" -dJAPANESE_MESSAGES $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" -dJAPANESE_MESSAGES $[@
 
 $(jtrperr_h) : ./jmkstr.exe
         $[@ $^@
