@@ -730,6 +730,7 @@ extern  void    CMemInit(void);                 /* cmemmgr */
 extern  void    CMemFini(void);                 /* cmemmgr */
 extern  void    *CPermAlloc(unsigned);          /* cmemmgr */
 extern  void    *CMemAlloc(unsigned);           /* cmemmgr */
+extern  void    *CMemRealloc( void *loc, unsigned size ); /* cmemmgr */
 extern  void    CMemFree(void *);               /* cmemmgr */
 extern  void    *FEmalloc(unsigned);            /* cmemmgr */
 extern  void    FEfree(void *);                 /* cmemmgr */

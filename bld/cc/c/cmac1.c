@@ -1078,19 +1078,18 @@ local MACRO_TOKEN *BuildString(  byte *p )
     char           *tokenstr;
     int             len;
     char           *buf;
+    size_t          bufsize;
 
     head = NULL;
     lnk = &head;
 
     i = 0;
-    buf = Buffer;
     if( p != NULL ) {
+        bufsize = BUF_SIZE;
+        buf = CMemAlloc( bufsize );
         while( *p == T_WHITE_SPACE ) ++p;   //eat leading wspace
         while(  *p != T_NULL ) {
-            if( i >= (BufSize-8) ) {
-                EnlargeBuffer( 2 * i );
-                buf = Buffer;
-            }
+            if( i >= (bufsize-8) )  buf = CMemRealloc( buf, 2 * i );
             switch( *p ) {
             case T_CONSTANT:
             case T_PPNUMBER:
@@ -1103,10 +1102,7 @@ local MACRO_TOKEN *BuildString(  byte *p )
                     if( c == '\0' ) break;
                     if( c == '\\' ) buf[i++] = c; /* 15-mar-88 */
                     buf[i++] = c;
-                    if( i >= (BufSize-8) ) {
-                        EnlargeBuffer( 2 * i );
-                        buf = Buffer;
-                    }
+                    if( i >= (bufsize-8) )  buf = CMemRealloc( buf, 2 * i );
                 }
                 break;
             case T_LSTRING:
@@ -1120,10 +1116,7 @@ local MACRO_TOKEN *BuildString(  byte *p )
                     if( c == '\0' ) break;
                     if( c == '\\'  ||  c == '"' ) buf[i++] = '\\';
                     buf[i++] = c;
-                    if( i >= (BufSize-8) ) {
-                        EnlargeBuffer( 2 * i );
-                        buf = Buffer;
-                    }
+                    if( i >= (bufsize-8) )  buf = CMemRealloc( buf, 2 * i );
                 }
                 buf[i++] = '\\';
                 buf[i++] = '"';
@@ -1145,10 +1138,7 @@ local MACRO_TOKEN *BuildString(  byte *p )
                 tokenstr = Tokens[ *p ];
                 ++p;
                 len = strlen( tokenstr );
-                if( i >= (BufSize-len) ) {
-                    EnlargeBuffer( 2 * i );
-                    buf = Buffer;
-                }
+                if( i >= (bufsize-len) )  buf = CMemRealloc( buf, 2 * i );
                 memcpy( &buf[i], tokenstr, len );
                 i += len;
                 break;
@@ -1158,6 +1148,7 @@ local MACRO_TOKEN *BuildString(  byte *p )
             lnk = NextString( lnk, buf, i );
             i = 0;
         }
+        CMemFree( buf );
     }
     return( head );
 }

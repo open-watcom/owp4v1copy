@@ -208,6 +208,19 @@ void *CMemAlloc( unsigned size )
     return( memset( p, 0, size ) );
 }
 
+void *CMemRealloc( void *loc, unsigned size )
+     /**************************************/
+{
+    void           *p;
+    MCB            *p1;
+
+    p = CMemAlloc( size );
+    p1 = (MCB *) ( (char *)loc - sizeof( int ) );
+    memcpy( p, loc, p1->len & 0xfffe );
+    CMemFree( loc );
+    return( p );
+}
+
 enum cmem_kind {
     CMEM_PERM,
     CMEM_MEM,
