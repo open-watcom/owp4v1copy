@@ -190,8 +190,10 @@ char *WGetFileName ( WGetFileStruct *gf, HWND owner, DWORD flags,
         WFileFilter = 1;
     }
 
+#if !defined (__NT__)
     //ctl3d no longer requires this
     flags |= OFN_ENABLEHOOK;
+#endif
 
     /* initialize the OPENFILENAME struct */
     memset (&wofn, 0, sizeof(OPENFILENAME));
@@ -211,8 +213,10 @@ char *WGetFileName ( WGetFileStruct *gf, HWND owner, DWORD flags,
     wofn.lpstrInitialDir   = WInitialDir;
     wofn.lpstrTitle        = WFnTitle;
     wofn.Flags             = flags;
+#if !defined (__NT__)
     wofn.lpfnHook          = (LPVOID) MakeProcInstance
                                 ( (LPVOID) WOpenHookProc, app_inst );
+#endif
 
 #if 0
     wofn.nFileOffset       = 0L;
@@ -231,11 +235,11 @@ char *WGetFileName ( WGetFileStruct *gf, HWND owner, DWORD flags,
         return ( NULL );
     }
 
-    #ifndef __NT__
+#ifndef __NT__
     if ( wofn.lpfnHook ) {
         FreeProcInstance ( (FARPROC) wofn.lpfnHook );
     }
-    #endif
+#endif
 
     if( !ret ) {
         error = CommDlgExtendedError();

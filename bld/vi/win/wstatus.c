@@ -80,8 +80,13 @@ static BOOL Init( window *w, void *parm )
 
     rc = StatusWndInit( InstanceHandle, StatusWindowProc, sizeof( LPVOID ),
                         (HCURSOR)NULL );
+#if defined (__NT__)
+    StatusWndChangeSysColors( GetSysColor( COLOR_BTNFACE ),
+                              GetSysColor( COLOR_BTNTEXT ),
+#else
     StatusWndChangeSysColors( GetRGB( statusw_info.text.background ),
                               GetRGB( statusw_info.text.foreground ),
+#endif
                               GetSysColor( COLOR_BTNHIGHLIGHT ),
                               GetSysColor( COLOR_BTNSHADOW ) );
     if( NumStatusSections > 0 ) {

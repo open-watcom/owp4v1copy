@@ -101,6 +101,7 @@ static HPEN     btnHighlightPen;
 static HPEN     btnFacePen;
 static HBRUSH   blackBrush;
 static HBRUSH   btnFaceBrush;
+static COLORREF crButtonFace;
 
 static tool             *currTool;
 static char             currIsDown;
@@ -108,6 +109,10 @@ static WORD             lastID = -1;
 static BOOL             mouse_captured = FALSE;
 static BOOL             ignore_mousemove = FALSE; // release_capture generates
                                                   // a WM_MOUSEMOVE msg
+
+#if defined(__NT__)
+void TB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
+#endif
 
 LONG WINEXP ToolBarWndProc( HWND, unsigned, UINT, LONG );
 
@@ -262,7 +267,8 @@ toolbar *ToolBarInit( HWND parent )
     }
 
     if( !gdiObjectsCreated ) {
-        blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ), RGB( 0, 0, 0 ) );
+        blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                              GetSysColor( COLOR_BTNTEXT ) );
         btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
                                 GetSysColor( COLOR_BTNSHADOW ) );
         btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
@@ -280,22 +286,30 @@ toolbar *ToolBarInit( HWND parent )
 
 /*
  * ToolBarChangeSysColors - fiddle with what ToolBar believes
- *                          are the system colours
+ *                          are the system colours.
+ * new:                     stopped fiddeling!
  */
 void ToolBarChangeSysColors( COLORREF tbFace,
                              COLORREF tbHighlight, COLORREF tbShadow )
 {
     if( gdiObjectsCreated ) {
+        DeleteObject( blackPen );
         DeleteObject( btnShadowPen );
         DeleteObject( btnHighlightPen );
         DeleteObject( btnFacePen );
         DeleteObject( btnFaceBrush );
     }
 
-    btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ), tbShadow );
-    btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ), tbHighlight );
-    btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ), tbFace );
-    btnFaceBrush = CreateSolidBrush( tbFace );
+    blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                          GetSysColor( COLOR_BTNTEXT ) );
+    btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                          GetSysColor( COLOR_BTNSHADOW ) );
+    btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                          GetSysColor( COLOR_BTNHIGHLIGHT ) );
+    btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                          GetSysColor( COLOR_BTNFACE ) );
+    crButtonFace = GetSysColor( COLOR_BTNFACE );
+    btnFaceBrush = CreateSolidBrush( crButtonFace );
     gdiObjectsCreated = TRUE;
 }
 
@@ -438,9 +452,29 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     bar->is_fixed = disp->is_fixed;
     width = disp->area.right - disp->area.left;
     height = disp->area.bottom - disp->area.top;
+#if defined (__NT__)
+    if ( LOBYTE(LOWORD(GetVersion())) >= 4 &&
+         (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
+        CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
+            disp->area.left, disp->area.top, width, height,
+            bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+    }
+    else {
+        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+            CreateWindow( className, NULL, WS_CHILD | WS_CLIPSIBLINGS,
+                disp->area.left, disp->area.top, width, height,
+                bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+        } else {
+            CreateWindow( className, NULL, disp->style,
+                disp->area.left, disp->area.top, width, height,
+                bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+        }
+    }
+#else
     CreateWindow( className, NULL, disp->style,
         disp->area.left, disp->area.top, width, height,
         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+#endif
     /*
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
@@ -638,14 +672,20 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
 {
     toolbar     *bar;
     HBRUSH      brush;
-    HBITMAP     bitmap, oldbmp;
-    HDC         mem;
     int         shift;
     BOOL        selected;
     BOOL        got_dc;
     POINT       dst_size;
     POINT       dst_org;
     HBITMAP     used_bmp;
+    HBITMAP     bitmap, oldbmp;
+    HDC         mem;
+#if defined (__NT__)
+    HBITMAP     bitmap2, oldbmp2, bmptmp;
+    HDC         mem2;
+    RECT        fill;
+    COLORREF    cr;
+#endif
 
     if( tool->flags & ITEM_BLANK ) {
         return;
@@ -669,10 +709,17 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
         hdc = GetDC( hwnd );
         got_dc = TRUE;
     }
+
     mem = CreateCompatibleDC( hdc );
     bitmap = CreateCompatibleBitmap( hdc,
                 bar->button_size.x, bar->button_size.y );
     oldbmp = SelectObject( mem, bitmap );
+#if defined (__NT__)
+    mem2 = CreateCompatibleDC( hdc );
+    bitmap2 = CreateCompatibleBitmap( hdc,
+                bar->button_size.x, bar->button_size.y );
+    oldbmp2 = SelectObject( mem2, bitmap2 );
+#endif
 
     brush = btnFaceBrush;
     if( selected && bar->bgbrush != HNULL ) {
@@ -694,6 +741,34 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
         }
     }
     toolBarDrawBitmap( mem, dst_size, dst_org, used_bmp );
+    
+#if defined (__NT__)
+    /* New, on WIN32 platforms, use TB_TransparentBlt() */
+    /* Get background color of button bitmap */
+    bmptmp = SelectObject(mem2, used_bmp);
+    /* Expects 0,0 pix in original to be in background color */
+    cr = GetPixel(mem2, 0, 0);
+    bmptmp = SelectObject(mem2, bmptmp);
+    /* IMPORTANT: must set required new background color for dest bmp */
+    SetBkColor(mem2, GetSysColor(COLOR_BTNFACE));
+    fill.top = 0;
+    fill.left = 0;
+    fill.right = bar->button_size.x;
+    fill.bottom = bar->button_size.y;
+    FillRect(mem2, &fill, brush); 
+    TB_TransparentBlt( mem2, dst_org.x,  dst_org.y,
+                             dst_size.x, dst_size.y,
+                       mem,  cr);
+    if( oldbmp != HNULL ) {
+        SelectObject( mem, oldbmp );
+        DeleteObject(bitmap);
+    }
+    DeleteDC(mem);
+    /* Switch new bitmap into vars expected by code below */
+    mem = mem2;
+    bitmap = bitmap2;
+    oldbmp = oldbmp2;
+#endif
 
     drawBorder( mem, bar->button_size, BORDER_WIDTH( bar ) );
     if( selected ) {
@@ -713,6 +788,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     BitBlt( hdc, tool->area.left, tool->area.top,
             bar->button_size.x, bar->button_size.y,
             mem, 0, 0, SRCCOPY ); /* copy it to screen */
+
     if( oldbmp != HNULL ) {
         SelectObject( mem, oldbmp );
     }
@@ -914,7 +990,19 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             }
         }
         break;
+#if defined (__NT__)
+    case WM_SYSCOLORCHANGE:
+        ToolBarChangeSysColors((COLORREF)0L, (COLORREF)0L, (COLORREF)0L);
+    break;
+#endif
     case WM_PAINT:
+#if defined (__NT__)
+        if(crButtonFace != GetSysColor( COLOR_BTNFACE )) {
+            /* WM_SYSCOLORCHANGED: sometimes not received by window.
+               Have to fake it...  */
+            ToolBarChangeSysColors((COLORREF)0L, (COLORREF)0L, (COLORREF)0L);
+        }
+#endif
         hdc = BeginPaint( hwnd, &ps );
         FillRect( hdc, &ps.rcPaint, btnFaceBrush );
         for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
@@ -947,3 +1035,95 @@ void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
     }
 
 } /* ChangeToolButtonBitmap */
+
+
+/********** Below - new inserted 2003.10.22 ********************/
+
+#if defined (__NT__)
+
+/*
+ * TB_TransparentBlt
+ * 
+ * Purpose: Given two DC's and a color to assume as transparent in
+ * the source, BitBlts the bitmap to the dest DC letting the existing
+ * background show in place of the transparent color.
+ * Adapted from an old MS SDK sample.
+ *
+ * NOTE: make sure BkColor is set in dest hDC.
+ * 
+ * Parameters: hDC      HDC      destination, on which to draw. 
+ *             x, y     UINT     location at which to draw the bitmap 
+ *             width    UINT     width to draw
+ *             height   UINT     height to draw
+ *             hDCIn    HDC      source, to draw from
+ *             cr       COLORREF to consider as transparent in source.
+ * 
+ * Return Value: None
+ */
+
+#define ROP_DSPDxax  0x00E20746
+
+void TB_TransparentBlt (HDC hDC, UINT x, UINT y, UINT width, UINT height,
+                     HDC hDCIn, COLORREF cr)
+{
+   HDC hDCMid, hMemDC;
+   HBITMAP hBmpMono, hBmpT;
+   HBRUSH hBr, hBrT;
+   COLORREF crBack, crText;
+   
+   if (NULL == hDCIn)
+      return;
+
+   /* Make two intermediate DC's */
+   hDCMid = CreateCompatibleDC (hDC);
+   hMemDC = CreateCompatibleDC (hDC);
+
+   /* Create a monochrome bitmap for masking */
+   hBmpMono = CreateCompatibleBitmap (hDCMid, x + width, y + height);
+   SelectObject (hDCMid, hBmpMono);
+
+   /* Create a mid-stage bitmap */
+   hBmpT = CreateCompatibleBitmap (hDC, x + width, y + height);
+   SelectObject (hMemDC, hBmpT);
+
+   /* Create a monochrome mask where we have 0's in the image, 1's elsewhere. */
+   crBack = SetBkColor (hDCIn, cr);
+   BitBlt (hDCMid, x, y, width, height, hDCIn, x, y, SRCCOPY);
+   SetBkColor (hDCIn, crBack);
+
+   /* Put the unmodified image in the temporary bitmap */
+   BitBlt (hMemDC, x, y, width, height, hDCIn, x, y, SRCCOPY);
+
+   /* Create an select a brush of the background color */
+   hBr = CreateSolidBrush (GetBkColor (hDC));
+   hBrT = SelectObject (hMemDC, hBr);
+
+   /* Force conversion of the monochrome to stay black and white. */
+   crText = SetTextColor (hMemDC, 0L);
+   crBack = SetBkColor (hMemDC, RGB (255, 255, 255));
+
+   /*
+    * Where the monochrome mask is 1, Blt the brush; where the mono
+    * mask is 0, leave the destination untouched.  This results in
+    * painting around the image with the background brush.  We do this
+    * first in the temporary bitmap, then put the whole thing to the
+    * screen (avoids flicker).
+    */
+   BitBlt (hMemDC, x, y, width, height, hDCMid, x, y, ROP_DSPDxax);
+   BitBlt (hDC, x, y, width, height, hMemDC, x, y, SRCCOPY);
+
+   SetTextColor (hMemDC, crText);
+   SetBkColor (hMemDC, crBack);
+
+   SelectObject (hMemDC, hBrT);
+   DeleteObject (hBr);
+
+   DeleteDC (hMemDC);
+   DeleteDC (hDCMid);
+   DeleteObject (hBmpT);
+   DeleteObject (hBmpMono);
+
+}  /* TansparentBlt () */
+
+#endif
+

@@ -42,21 +42,39 @@
  */
 void CreateListBox( HWND parent, ListBoxInfo *info )
 {
-    info->box = CreateWindow(
-        "LISTBOX",                      /* Window class name */
-        "Messages",                     /* Window caption */
-        WS_CHILD | LBS_NOTIFY |
-        WS_VSCROLL | WS_HSCROLL |
-        LBS_NOINTEGRALHEIGHT|
-        WS_BORDER,                      /* Window style */
-        SPY_X,                          /* Initial X position */
-        info->ypos,                     /* Initial Y position */
-        0,                              /* Initial X size */
-        0,                              /* Initial Y size */
-        parent,                         /* Parent window handle */
-        NULL,                           /* Window menu handle */
-        Instance,                       /* Program instance handle */
-        NULL);                          /* Create parameters */
+#if defined (__NT__)
+    if (LOBYTE(LOWORD(GetVersion())) >= 4) {
+        info->box = CreateWindowEx(WS_EX_CLIENTEDGE,
+            "LISTBOX",                      /* Window class name */
+            "Messages",                     /* Window caption */
+            WS_CHILD | LBS_NOTIFY |
+            WS_VSCROLL | WS_HSCROLL |
+            LBS_NOINTEGRALHEIGHT,
+            SPY_X,                          /* Initial X position */
+            info->ypos,                     /* Initial Y position */
+            0,                              /* Initial X size */
+            0,                              /* Initial Y size */
+            parent,                         /* Parent window handle */
+            NULL,                           /* Window menu handle */
+            Instance,                       /* Program instance handle */
+            NULL);                          /* Create parameters */
+    } else
+#endif
+        info->box = CreateWindow(
+            "LISTBOX",                      /* Window class name */
+            "Messages",                     /* Window caption */
+            WS_CHILD | LBS_NOTIFY |
+            WS_VSCROLL | WS_HSCROLL |
+            LBS_NOINTEGRALHEIGHT|
+            WS_BORDER,                      /* Window style */
+            SPY_X,                          /* Initial X position */
+            info->ypos,                     /* Initial Y position */
+            0,                              /* Initial X size */
+            0,                              /* Initial Y size */
+            parent,                         /* Parent window handle */
+            NULL,                           /* Window menu handle */
+            Instance,                       /* Program instance handle */
+            NULL);                          /* Create parameters */
     ShowWindow( info->box, SW_NORMAL );
     UpdateWindow( info->box );
     SendMessage( info->box, WM_SETFONT, (WPARAM)GetMonoFont(), 0L );

@@ -226,8 +226,10 @@ char *WREGetFileName ( WREGetFileStruct *gf, DWORD flags,
         getcwd ( wre_initial_dir, _MAX_PATH );
     }
 
+#if !defined (__NT__)
     //ctl3d no longer requires this
     flags |= OFN_ENABLEHOOK;
+#endif
 
     /* initialize the OPENFILENAME struct */
     memset (&wreofn, 0, sizeof(OPENFILENAME));
@@ -266,11 +268,11 @@ char *WREGetFileName ( WREGetFileStruct *gf, DWORD flags,
         return ( NULL );
     }
 
-    #ifndef __NT__
+#ifndef __NT__
     if ( wreofn.lpfnHook ) {
         FreeProcInstance ( (FARPROC) wreofn.lpfnHook );
     }
-    #endif
+#endif
 
     if (!ret) {
         error = CommDlgExtendedError();

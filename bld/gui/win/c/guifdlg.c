@@ -72,7 +72,12 @@ extern  WPI_INST        GUIMainHInst;
 static  char    *LastPath; // this is set in NT for the sake of viper
 #endif
 
+#if defined (__NT__)
+/* Changed default from hook to not */
+static  bool    hookFileDlg = FALSE;
+#else
 static  bool    hookFileDlg = TRUE;
+#endif
 
 void GUIHookFileDlg( bool hook )
 {

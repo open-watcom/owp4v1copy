@@ -111,6 +111,10 @@ BEGIN
     #include "rcstrmsg.gh"
 END
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 #include "wimgedit.men"
 
 #include "selimg.dlg"

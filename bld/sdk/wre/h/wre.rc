@@ -67,6 +67,10 @@ StringD      BITMAP strd.bmp
 UPUser       BITMAP user.bmp
 UserD        BITMAP userd.bmp
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 #include "about.dlg"
 #include "del.dlg"
 #include "paste.dlg"

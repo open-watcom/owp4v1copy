@@ -12,6 +12,9 @@
  #define sp( s1, s2 ) s1
 #endif
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
 
 "APPLICON" ICON 10ddespy.ico
 

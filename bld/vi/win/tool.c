@@ -245,7 +245,11 @@ static void createToolBar( RECT *rect )
     dinfo.background = LoadBitmap( InstanceHandle, "BUTTONPATTERN" );
     buttonPattern = dinfo.background;
     toolBar = ToolBarInit( Root );
+#if defined (__NT__)
+    ToolBarChangeSysColors( GetSysColor( COLOR_BTNFACE ),
+#else
     ToolBarChangeSysColors( GetRGB( ToolBarColor ),
+#endif
                             GetSysColor( COLOR_BTNHIGHLIGHT ),
                             GetSysColor( COLOR_BTNSHADOW ) );
     ToolBarDisplay( toolBar, &dinfo );

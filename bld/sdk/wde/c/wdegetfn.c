@@ -246,8 +246,9 @@ char *WdeGetFileName( WdeGetFileStruct *gf, DWORD flags,
     }
 
     //ctl3d no longer requires this
+#if !defined (__NT__)
     flags |= OFN_ENABLEHOOK;
-
+#endif
     /* initialize the OPENFILENAME struct */
     memset (&wdeofn, 0, sizeof(OPENFILENAME));
 
@@ -266,8 +267,10 @@ char *WdeGetFileName( WdeGetFileStruct *gf, DWORD flags,
     wdeofn.lpstrInitialDir   = wde_initial_dir;
     wdeofn.lpstrTitle        = wdefntitle;
     wdeofn.Flags             = flags;
+#if !defined (__NT__)
     wdeofn.lpfnHook          = (LPVOID) MakeProcInstance
                                 ( (LPVOID) WdeOpenHookProc, app_inst );
+#endif
 
 #if 0
     wdeofn.nFileOffset       = 0L;

@@ -186,10 +186,52 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
         wndHeight = _wpi_getheightrect( statusRect );
         _wpi_inflaterect(classHandle, &statusRect, -HORZ_BORDER, -VERT_BORDER);
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
+#if defined (__NT__)
+    case WM_SYSCOLORCHANGE:
+            if( hasGDIObjects ) {
+                _wpi_deleteobject( penLight );
+                _wpi_deleteobject( penShade );
+                _wpi_deleteobject( brushButtonFace );
+                hasGDIObjects = FALSE;
+            }
+            colorButtonFace = GetSysColor( COLOR_BTNFACE );
+            _wpi_setbackcolour( pres, colorButtonFace );
+            if( !hasGDIObjects ) {
+                brushButtonFace = CreateSolidBrush( colorButtonFace );
+                penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+                penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+                hasGDIObjects = TRUE;
+            }
+        break;
+#endif
     case WM_PAINT:
         pres = _wpi_beginpaint( hwnd, NULL, &ps );
 #ifdef __OS2_PM__
         WinFillRect( pres, &ps, CLR_PALEGRAY );
+#endif
+#if defined (__NT__)
+        /* Have to do this little trick because currently this Window does
+           note recieve the WM_SYSCOLORCHANGE: when it should.             */
+        if(colorButtonFace != GetSysColor( COLOR_BTNFACE ))
+        {
+            RECT rs;
+            if( hasGDIObjects ) {
+                _wpi_deleteobject( penLight );
+                _wpi_deleteobject( penShade );
+                _wpi_deleteobject( brushButtonFace );
+                hasGDIObjects = FALSE;
+            }
+            colorButtonFace = GetSysColor( COLOR_BTNFACE );
+            _wpi_setbackcolour( pres, colorButtonFace );
+            if( !hasGDIObjects ) {
+                brushButtonFace = CreateSolidBrush( colorButtonFace );
+                penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+                penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+                hasGDIObjects = TRUE;
+            }
+            GetClientRect( hwnd, &rs );
+            FillRect( hwnd, &rs, brushButtonFace );
+        }
 #endif
         StatusWndDraw3DBox( pres );
         if( initPRES( pres ) ) {

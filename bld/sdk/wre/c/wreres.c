@@ -1270,9 +1270,6 @@ LRESULT WINEXPORT WREResInfoProc ( HWND hDlg, UINT message,
                                    WPARAM wParam, LPARAM lParam )
 {
     WREResInfo *info;
-#ifdef __NT__
-    RECT        r;
-#endif
     LRESULT     ret;
     WORD        wp;
     UINT        cmd;
@@ -1292,17 +1289,11 @@ LRESULT WINEXPORT WREResInfoProc ( HWND hDlg, UINT message,
             break;
 
         case WM_SYSCOLORCHANGE:
+#if defined (__NT__)
+            SetClassLong( hDlg, GCL_HBRBACKGROUND, (LONG)(HBRUSH)(COLOR_BTNFACE+1) );
+#endif
             WRECtl3dColorChange ();
             break;
-
-#ifdef __NT__
-        case WM_ERASEBKGND:
-            GetClientRect( hDlg, &r );
-            UnrealizeObject ( WREResInfoBrush );
-            FillRect( (HDC)wParam, &r, WREResInfoBrush );
-            ret = TRUE;
-            break;
-#endif
 
         case WM_COMMAND:
             wp = LOWORD(wParam);

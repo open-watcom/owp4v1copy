@@ -36,6 +36,8 @@
 #include "ieclrpal.h"
 #include "ieprofil.h"
 
+static HBRUSH hbrush;
+
 /*
  * paintPalette - Repaint the colour palette
  */
@@ -54,12 +56,18 @@ static void paintPalette( HWND hwnd )
 #ifdef __OS2_PM__
     WinFillRect( hdc, &rect, CLR_PALEGRAY );
 #endif
-
     _wpi_torgbmode( hdc );
     GetClientRect( hwnd, &client );
     height = _wpi_getheightrect( client );
+#if defined (__NT__)
+    FillRect( (HDC)hdc, (CONST RECT*)&client, hbrush );
+#endif
 
+#if defined (__NT__)
+    hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor (COLOR_BTNSHADOW) );
+#else
     hgraypen = _wpi_createpen( PS_SOLID, 0, DKGRAY );
+#endif
     holdpen = _wpi_selectobject( hdc, hgraypen );
     pt.x = 2;
     pt.y = 50;
@@ -75,7 +83,11 @@ static void paintPalette( HWND hwnd )
     _wpi_selectobject( hdc, holdpen );
     _wpi_deleteobject( hgraypen );
 
+#if defined (__NT__)
+    hwhitepen = _wpi_createpen( PS_SOLID, 0, GetSysColor (COLOR_BTNHIGHLIGHT) );
+#else
     hwhitepen = _wpi_createpen( PS_SOLID, 0, WHITE );
+#endif
     holdpen = _wpi_selectobject( hdc, hwhitepen );
     pt.y = 50;
     _wpi_cvth_pt( &(pt), height );
@@ -98,7 +110,6 @@ MRESULT CALLBACK ColourPalWinProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 mp1, WPI_P
     IMGED_DIM           left, right, top, bottom;
     static HMENU        menu;
     static HWND         hframe;
-    static HBRUSH       hbrush;
 
     switch( msg ) {
 
@@ -120,15 +131,22 @@ MRESULT CALLBACK ColourPalWinProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 mp1, WPI_P
         break;
 
     case WM_PAINT:
+        _wpi_deleteobject(hbrush);
+        SetBkColor( (HDC)mp1, GetSysColor(COLOR_BTNFACE) );
+        SetTextColor( (HDC)mp1, GetSysColor(COLOR_BTNTEXT) );
+        hbrush = _wpi_createsolidbrush( GetSysColor(COLOR_BTNFACE) );
         paintPalette( hwnd );
         break;
 
 #ifndef __OS2_PM__
 #ifdef __NT__
+    case WM_SYSCOLORCHANGE:
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLORBTN:
-        SetBkColor( (HDC)mp1, LTGRAY );
-        SetTextColor( (HDC)mp1, BLACK );
+        _wpi_deleteobject(hbrush);
+        hbrush = _wpi_createsolidbrush( GetSysColor(COLOR_BTNFACE) );
+        SetBkColor( (HDC)mp1, GetSysColor(COLOR_BTNFACE) );
+        SetTextColor( (HDC)mp1, GetSysColor(COLOR_BTNTEXT) );
         return( (DWORD)hbrush );
 #else
     case WM_CTLCOLOR:

@@ -15,6 +15,10 @@ END
 
 #include "wde.men"
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 WdeAccelTable ACCELERATORS
 BEGIN
     VK_RETURN,  IDM_DEFINEOBJECT,       VIRTKEY

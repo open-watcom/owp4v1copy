@@ -21,6 +21,10 @@
 #include "../ctl/setscr.h"
 #include "../ctl/setgen.h"
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 APPLICON        ICON    viw.ico
 WATCOMICON      ICON    watcom.ico
 BUTTONPATTERN   BITMAP  button.bmp

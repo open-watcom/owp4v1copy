@@ -39,9 +39,9 @@
 
 #define MAX_STR 256
 
-static HFONT    fixedFont;
-static HFONT    courierFont;
 static LOGFONT  logFont;
+static HFONT    fixedFont = (HFONT)0;
+static HFONT    courierFont = (HFONT)0;
 
 static char     *fontKey="Font";
 
@@ -54,7 +54,22 @@ int CALLBACK EnumFunc( LPLOGFONT lf, LPTEXTMETRIC tm, UINT ftype, LPSTR data )
     ftype = ftype;
     data = data;
 
-    if( !FARstricmp( lf->lfFaceName, "courier" ) ) {
+    /* Something has happened in the font world and windows font mapper since
+       the original source was written, it checked only for Courier. All the
+       font names below are verified as good monospaced fonts. Checks for the
+       best fonts first, so that the system picks the best if enumerated first.
+       Changed the test to == 0, because it is easier to read and understand.   */
+#if defined (__NT__)
+    if((FARstricmp( lf->lfFaceName, "andale mono" ) == 0)    ||
+       (FARstricmp( lf->lfFaceName, "lucida console" ) == 0) ||
+       (FARstricmp( lf->lfFaceName, "vera sans mono" ) == 0) ||
+       (FARstricmp( lf->lfFaceName, "courier new" ) == 0)    ||
+       (FARstricmp( lf->lfFaceName, "courier" ) == 0) )
+#else
+    if((FARstricmp( lf->lfFaceName, "courier new" ) == 0) ||
+       (FARstricmp( lf->lfFaceName, "courier" ) == 0) )
+#endif
+    {
         courierFont = CreateFont(
             13,
             0,
@@ -154,13 +169,20 @@ void InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst )
             }
         }
     }
-    if( need_stock ) {
-        fixedFont = GetStockObject( default_font );
-        GetObject( fixedFont, sizeof( LOGFONT ), &logFont );
-        fixedFont = CreateFontIndirect( &logFont );
-    }
     getCourierFont( inst );
-
+    if( need_stock ) {
+#if defined (__NT__)
+        fixedFont = courierFont; 
+#endif  
+        if (fixedFont == (HFONT)0) {
+#if defined (__NT__)
+            fixedFont = GetStockObject(ANSI_FIXED_FONT); 
+#endif  
+            fixedFont = GetStockObject( default_font );
+            GetObject( fixedFont, sizeof( LOGFONT ), &logFont );
+            fixedFont = CreateFontIndirect( &logFont );
+        }
+    }
 } /* InitMonoFont */
 
 /*
@@ -192,8 +214,8 @@ BOOL ChooseMonoFont( HWND hwnd )
     cf.lpLogFont = &lf;
     cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY |
                 CF_INITTOLOGFONTSTRUCT;
-    cf.rgbColors = RGB( 0, 0, 0 );
     cf.nFontType = SCREEN_FONTTYPE;
+    cf.rgbColors = RGB( 0, 0, 0 );
 
     if( !ChooseFont( &cf ) ) {
         return( FALSE );

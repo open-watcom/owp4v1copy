@@ -589,8 +589,16 @@ extern void _wpi_suspendthread( UINT thread_id, WPI_QMSG *msg );
 
     #define _wpi_f_getoldfont( hdc, oldfont ) SelectObject( hdc, oldfont )
 
+#ifdef __NT__
+    #define _wpi_f_getsystemfont( hdc, font ) \
+        GetObject( \
+            GetStockObject( LOBYTE(LOWORD(GetVersion())) >= 4 ? \
+            DEFAULT_GUI_FONT : SYSTEM_FONT ) \
+            , sizeof( *(font) ), (font) )
+#else
     #define _wpi_f_getsystemfont( hdc, font ) \
         GetObject( GetStockObject( SYSTEM_FONT ), sizeof( *(font) ), (font) )
+#endif
 
     #define _wpi_f_createfont( font ) \
                 CreateFontIndirect( font )
@@ -824,7 +832,13 @@ extern void _wpi_setbmphdrvalues( WPI_BITMAPINFOHEADER *bmih, ULONG size,
 
     #define _wpi_restorepres( pres, pres_id ) RestoreDC( pres, pres_id )
 
+#ifdef __NT__
+    #define _wpi_getsystemfont() \
+        GetStockObject( LOBYTE(LOWORD(GetVersion())) >= 4 ? \
+        DEFAULT_GUI_FONT : SYSTEM_FONT )
+#else
     #define _wpi_getsystemfont() GetStockObject( SYSTEM_FONT )
+#endif
 
     #define _wpi_wmgetfont( hwnd, font_hld ) \
         font_hld = _wpi_sendmessage( hwnd, WM_GETFONT, NULL, NULL );

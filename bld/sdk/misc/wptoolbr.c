@@ -118,6 +118,10 @@ static BOOL     mouse_captured = FALSE;
 static BOOL     ignore_mousemove = FALSE; // release_capture generates a
                                           // WM_MOUSEMOVE msg
 
+#if defined(__NT__)
+void WPTB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
+#endif
+
 MRESULT CALLBACK ToolBarWndProc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 
 static void toolbardestroywindow( HWND hwnd )
@@ -293,7 +297,11 @@ toolbar *ToolBarInit( HWND parent )
     clr_btnhighlight = GetSysColor( COLOR_BTNHIGHLIGHT );
     btnColour = GetSysColor( COLOR_BTNFACE );
     clr_btnface = btnColour;
+#if defined (__NT__)
+    clr_black = GetSysColor(COLOR_BTNTEXT);
+#else
     clr_black = RGB(0, 0, 0);
+#endif
 #else
         /*
          ******************
@@ -526,15 +534,19 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     width = _wpi_getwidthrect( (disp->area) );
     height = _wpi_getheightrect( (disp->area) );
 #ifndef __OS2_PM__
-#	ifndef __NT__
+#ifndef __NT__
     CreateWindow( className, NULL, disp->style,
         disp->area.left, disp->area.top, width, height,
         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
-#	else
+#else
+    if((width > height) && (LOBYTE(LOWORD(GetVersion())) >= 4)) {
+        /* Small hack to avoid black border around main toolbar */
+        disp->style = WS_CHILD;
+    }
     CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
         disp->area.left, disp->area.top, width, height,
         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
-#	endif
+#endif
     /*
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
@@ -838,6 +850,11 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
     TOOLBR_DIM  bottom;
     BOOL        delete_pres;
     BOOL        delete_mempres;
+#if defined (__NT__)
+    HBITMAP     bitmap2, oldbmp2 , bmptmp;
+    HDC         mem2;
+    COLORREF    cr;
+#endif
 
     if( tool->flags & ITEM_BLANK ) {
         return;
@@ -870,13 +887,19 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
     bitmap = _wpi_createcompatiblebitmap( pres, bar->button_size.x,
                                             bar->button_size.y );
     oldbmp = _wpi_selectbitmap( mempres, bitmap );
+#if defined (__NT__)
+    mem2 = CreateCompatibleDC( pres );
+    bitmap2 = CreateCompatibleBitmap( pres,
+                bar->button_size.x, bar->button_size.y );
+    oldbmp2 = SelectObject( mem2, bitmap2 );
+#endif
 
     brush = btnFaceBrush;
     if( selected && bar->bgbrush != HNULL ) {
         brush = bar->bgbrush;
     }
-    // Does this do anything ???
-//    _wpi_fillrect( mempres, &tool->area, btnColour, brush );
+    /* Does this do anything ??? */
+    /* _wpi_fillrect( mempres, &tool->area, btnColour, brush ); */
 
     dst_size = bar->button_size;
     dst_size.x -= 4 * BORDER_WIDTH( bar );
@@ -896,6 +919,32 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
         }
     }
     toolBarDrawBitmap( mempres, dst_size, dst_org, used_bmp );
+
+#if defined (__NT__)
+    /* New, on WIN32 platforms, use WPTB_TransparentBlt() */
+    /* Get background color of button bitmap */
+    bmptmp = SelectObject(mem2, used_bmp);
+    /* Expects 0,0 pix in original to be in background color */
+    cr = GetPixel(mem2, 0, 0);
+    bmptmp = SelectObject(mem2, bmptmp);
+    /* IMPORTANT: must set required new background color for dest bmp */
+    SetBkColor(mem2, GetSysColor(COLOR_BTNFACE));
+    WPTB_TransparentBlt( mem2,    dst_org.x,  dst_org.y,
+                                  dst_size.x, dst_size.y,
+                         mempres, cr);
+    if( oldbmp != HNULL ) {
+        SelectObject( mempres, oldbmp );
+        DeleteObject(bitmap);
+    }
+    if( delete_mempres ) {
+        DeleteDC(mempres);
+    }
+    /* Switch new bitmap into vars expected by code below */
+    mempres = mem2;
+    delete_mempres = TRUE;
+    bitmap = bitmap2;
+    oldbmp = oldbmp2;
+#endif
 
     drawBorder( mempres, bar->button_size, BORDER_WIDTH( bar ) );
     if( selected ) {
@@ -1114,6 +1163,39 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             }
         }
         break;
+#if defined (__NT__)
+    case WM_SYSCOLORCHANGE: {
+        COLORREF    clr_btnface;
+        COLORREF    clr_btnshadow;
+        COLORREF    clr_btnhighlight;
+        COLORREF    clr_black;
+        
+        if( gdiObjectsCreated ) {
+            _wpi_deleteobject( blackPen );
+            _wpi_deleteobject( btnShadowPen );
+            _wpi_deleteobject( btnHighlightPen );
+            _wpi_deleteobject( btnFacePen );
+            _wpi_deleteobject( blackBrush );
+            _wpi_deleteobject( btnFaceBrush );
+            gdiObjectsCreated = FALSE;
+        }
+        clr_btnshadow = GetSysColor( COLOR_BTNSHADOW );
+        clr_btnhighlight = GetSysColor( COLOR_BTNHIGHLIGHT );
+        btnColour = GetSysColor( COLOR_BTNFACE );
+        clr_btnface = btnColour;
+        clr_black = GetSysColor(COLOR_BTNTEXT);
+        if( !gdiObjectsCreated ) {
+            blackPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH(bar), clr_black );
+            btnShadowPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH(bar), clr_btnshadow );
+            btnHighlightPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH(bar), clr_btnhighlight );
+            btnFacePen = _wpi_createpen( PS_SOLID, BORDER_WIDTH(bar), clr_btnface );
+            blackBrush = _wpi_createsolidbrush( clr_black );
+            btnFaceBrush = _wpi_createsolidbrush( clr_btnface );
+            gdiObjectsCreated = TRUE;
+        }
+        }
+        break;
+#endif
     case WM_PAINT:
         pres = _wpi_beginpaint( hwnd, NULL, &ps );
         mempres = _wpi_createcompatiblepres( pres, appInst, &memdc );
@@ -1122,6 +1204,10 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
             if( _wpi_intersectrect( appInst, &inter, &ps, &tool->area ) ) {
 #else
+        /* First non comment line below inserted as test by RR 2003.10.26 */
+        /* Ref PM implementation above, and WM_PAINT: handler in toolbr.c */
+        _wpi_fillrect( pres, &ps.rcPaint, clr_btnface, btnFaceBrush );
+        /* FillRect( pres, &ps.rcPaint, btnFaceBrush ); */
         for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
             if( _wpi_intersectrect( appInst, &inter, &ps.rcPaint, &tool->area ) ) {
 #endif
@@ -1154,3 +1240,95 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
     }
 
 } /* ChangeToolButtonBitmap */
+
+
+/********** Below - new inserted 2003.10.31 ********************/
+
+#if defined (__NT__)
+
+/*
+ * WPTB_TransparentBlt
+ * 
+ * Purpose: Given two DC's and a color to assume as transparent in
+ * the source, BitBlts the bitmap to the dest DC letting the existing
+ * background show in place of the transparent color.
+ * Adapted from an old MS SDK sample.
+ *
+ * NOTE: make sure BkColor is set in dest hDC.
+ * 
+ * Parameters: hDC      HDC      destination, on which to draw. 
+ *             x, y     UINT     location at which to draw the bitmap 
+ *             width    UINT     width to draw
+ *             height   UINT     height to draw
+ *             hDCIn    HDC      source, to copy from
+ *             cr       COLORREF to consider as transparent in source.
+ * 
+ * Return Value: None
+ */
+
+#define ROP_DSPDxax  0x00E20746
+
+void WPTB_TransparentBlt (HDC hDC, UINT x, UINT y, UINT width, UINT height,
+                     HDC hDCIn, COLORREF cr)
+{
+   HDC hDCMid, hMemDC;
+   HBITMAP hBmpMono, hBmpT;
+   HBRUSH hBr, hBrT;
+   COLORREF crBack, crText;
+   
+   if (NULL == hDCIn)
+      return;
+
+   /* Make two intermediate DC's */
+   hDCMid = CreateCompatibleDC (hDC);
+   hMemDC = CreateCompatibleDC (hDC);
+
+   /* Create a monochrome bitmap for masking */
+   hBmpMono = CreateCompatibleBitmap (hDCMid, x + width, y + height);
+   SelectObject (hDCMid, hBmpMono);
+
+   /* Create a mid-stage bitmap */
+   hBmpT = CreateCompatibleBitmap (hDC, x + width, y + height);
+   SelectObject (hMemDC, hBmpT);
+
+   /* Create a monochrome mask where we have 0's in the image, 1's elsewhere. */
+   crBack = SetBkColor (hDCIn, cr);
+   BitBlt (hDCMid, x, y, width, height, hDCIn, x, y, SRCCOPY);
+   SetBkColor (hDCIn, crBack);
+
+   /* Put the unmodified image in the temporary bitmap */
+   BitBlt (hMemDC, x, y, width, height, hDCIn, x, y, SRCCOPY);
+
+   /* Create an select a brush of the background color */
+   hBr = CreateSolidBrush (GetBkColor (hDC));
+   hBrT = SelectObject (hMemDC, hBr);
+
+   /* Force conversion of the monochrome to stay black and white. */
+   crText = SetTextColor (hMemDC, 0L);
+   crBack = SetBkColor (hMemDC, RGB (255, 255, 255));
+
+   /*
+    * Where the monochrome mask is 1, Blt the brush; where the mono
+    * mask is 0, leave the destination untouched.  This results in
+    * painting around the image with the background brush.  We do this
+    * first in the temporary bitmap, then put the whole thing to the
+    * screen (avoids flicker).
+    */
+   BitBlt (hMemDC, x, y, width, height, hDCMid, x, y, ROP_DSPDxax);
+   BitBlt (hDC, x, y, width, height, hMemDC, x, y, SRCCOPY);
+
+   SetTextColor (hMemDC, crText);
+   SetBkColor (hMemDC, crBack);
+
+   SelectObject (hMemDC, hBrT);
+   DeleteObject (hBr);
+
+   DeleteDC (hMemDC);
+   DeleteDC (hDCMid);
+   DeleteObject (hBmpT);
+   DeleteObject (hBmpMono);
+
+}  /* TansparentBlt () */
+
+#endif
+

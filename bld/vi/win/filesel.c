@@ -93,7 +93,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     bool is_chicago = FALSE;
 
     ver = GetVersion();
-    if( !( ver < 0x80000000 ) && !( LOBYTE( LOWORD( ver ) ) < 4 ) ) {
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
         is_chicago = TRUE;
     }
     /* -------------------------------------------------------- */
@@ -114,7 +114,8 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     of.lpstrInitialDir = dir;
     #ifdef __NT__
     if( is_chicago ) {
-        of.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+        of.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY |
+                   OFN_ALLOWMULTISELECT | OFN_EXPLORER;
     } else {
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK |
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_EXPLORER;
@@ -179,8 +180,13 @@ int SelectFileSave( char *result )
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = CurrentFile->home;
 #ifdef __NT__    
-    of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+        of.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
+    } else {
+        of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
+               OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
+    }
 #else
     of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN;

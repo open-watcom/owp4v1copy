@@ -48,6 +48,9 @@ static status_block_desc        sectionDesc[MAX_SECTIONS];
 static LPSTR                    sectionData[MAX_SECTIONS+1];
 static UINT                     sectionDataFlags[MAX_SECTIONS+1];
 static HFONT                    sectionDataFont;
+#if defined (__NT__)
+static HFONT                    systemDataFont;
+#endif
 static HPEN                     penLight;
 static HPEN                     penShade;
 static HBRUSH                   brushButtonFace;
@@ -55,7 +58,7 @@ static COLORREF                 colorButtonFace;
 static COLORREF                 colorTextFace;
 static statushook               statusWndHookFunc;
 static RECT                     statusRect;
-static BOOL                     hasGDIObjects;
+static BOOL                     hasGDIObjects = FALSE;
 
 #if defined(__WINDOWS_386__)
 #define CB      FAR PASCAL
@@ -108,7 +111,11 @@ static char initHDC( HDC hdc )
     if( sectionDataFont == NULL ) {
         return( FALSE );
     }
+#if defined (__NT__)
+    oldFont = SelectObject( hdc, systemDataFont );
+#else
     oldFont = SelectObject( hdc, sectionDataFont );
+#endif
     oldBrush = SelectObject( hdc, brushButtonFace );
     oldBkColor = GetBkColor( hdc );
     oldTextColor = GetTextColor( hdc );
@@ -164,7 +171,32 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam  )
         }
         EndPaint( hwnd, &ps );
         break;
+#if defined (__NT__)
+    case WM_SYSCOLORCHANGE:
+        if( hasGDIObjects ) {
+            DeleteObject( penLight );
+            DeleteObject( penShade );
+            DeleteObject( brushButtonFace );
+            hasGDIObjects = FALSE;
+        }
+        if( !hasGDIObjects ) {
+            colorButtonFace = GetSysColor( COLOR_BTNFACE );
+            colorTextFace = GetSysColor( COLOR_BTNTEXT );
+            brushButtonFace = CreateSolidBrush( colorButtonFace );
+            penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+            penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+            hasGDIObjects = TRUE;
+        }    
+    break;
+#endif
     case WM_ERASEBKGND:
+#if defined (__NT__)
+        if(colorButtonFace != GetSysColor( COLOR_BTNFACE )) {
+            /* WM_SYSCOLORCHANGED: not received by this window.
+               Have to fake it...  */
+            SendMessage( hwnd, WM_SYSCOLORCHANGE, (WPARAM)0, (LPARAM)0 );
+        }
+#endif
         GetClientRect( hwnd, &r );
         UnrealizeObject( brushButtonFace );
         FillRect( (HDC)wparam, &r, brushButtonFace );
@@ -243,12 +275,36 @@ HWND StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance,
 {
     HWND        stat;
 
+#if defined (__NT__)
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+        stat = CreateWindow( className, NULL,
+                             WS_CHILD,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    } else {
+        stat = CreateWindow( className, NULL,
+                             WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    }
+#else
     stat = CreateWindow( className, NULL,
                          WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
                          size->left, size->top,
                          size->right - size->left, size->bottom - size->top,
                          parent, (HMENU)NULL, hinstance, lpvParam );
+#endif
     if( stat != NULL ) {
+#if defined (__NT__)
+       if (LOBYTE(LOWORD(GetVersion())) >= 4) {
+           /* New shell active, Win95 or later */
+           systemDataFont = (HFONT) GetStockObject(DEFAULT_GUI_FONT);
+       } else {
+           systemDataFont = (HFONT) GetStockObject(SYSTEM_FONT);
+       }
+#endif        
         ShowWindow( stat, SW_SHOWNORMAL );
         UpdateWindow( stat );
     }
@@ -376,7 +432,11 @@ void StatusWndDrawLine( HDC hdc, HFONT hfont, char *str, UINT flags )
     int         curr_block;
 
     curr_block = 0;
+#if defined (__NT__)
+    sectionDataFont = systemDataFont;
+#else
     sectionDataFont = hfont;
+#endif
     initHDC( hdc );
     getRect( &rect, curr_block );
     makeInsideRect( &rect );

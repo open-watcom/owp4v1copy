@@ -712,7 +712,17 @@ LRESULT WINEXPORT WdeInfoWndProc( HWND hWnd, UINT message,
 
     switch ( message ) {
 
+#if defined (__NT__)
+        case WM_INITDIALOG:
+            SetWindowLong( hWnd, GWL_STYLE, WS_CHILD );
+        break;
+#endif
         case WM_SYSCOLORCHANGE:
+#if defined (__NT__)
+            WdeInfoColor = GetSysColor( COLOR_BTNFACE );
+            DeleteObject( WdeInfoBrush );
+            WdeInfoBrush = CreateSolidBrush( WdeInfoColor );
+#endif
             WdeCtl3dColorChange ();
             break;
 
@@ -739,6 +749,12 @@ LRESULT WINEXPORT WdeInfoWndProc( HWND hWnd, UINT message,
 #endif
 
         case WM_ERASEBKGND:
+#if defined (__NT__)
+            if( WdeInfoColor != GetSysColor( COLOR_BTNFACE )) {
+                /* Fake it, this proc does not get it ... */
+                SendMessage( hWnd, WM_SYSCOLORCHANGE, (WPARAM)0, (LPARAM)0);
+            }
+#endif
             GetClientRect( hWnd, &r );
             UnrealizeObject( WdeInfoBrush );
             FillRect( (HDC)wParam, &r, WdeInfoBrush );

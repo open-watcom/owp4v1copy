@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include "imgedit.h"
 #include <io.h>
 #include <stdio.h>
@@ -53,6 +52,10 @@ static HICON    hIconIcon;
 static HICON    hCursorIcon;
 static HCURSOR  handCursor;
 static HANDLE   hAccel;
+
+#if defined (__NT__)
+static HBRUSH   hBkBrush;
+#endif
 
 BOOL OpenNewFiles = FALSE;
 BOOL FusionCalled = FALSE;
@@ -93,6 +96,10 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
     hAccel = LoadAccelerators( Instance, "Accelerators" );
 
     IECtl3DInit( Instance );
+
+#if defined (__NT__)
+    hBkBrush = CreateSolidBrush( GetSysColor (COLOR_BTNFACE) );
+#endif
 
     /*
      * set up window class
@@ -179,7 +186,11 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = NULL;
         wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
+#if defined (__NT__)
+        wc.hbrBackground = hBkBrush;
+#else
         wc.hbrBackground = (HBRUSH) (GetStockObject( LTGRAY_BRUSH ));
+#endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = PaletteClass;
         if( !RegisterClass( &wc ) ) return( FALSE );
@@ -194,7 +205,11 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = NULL;
         wc.hCursor = handCursor;
+#if defined (__NT__)
+        wc.hbrBackground = hBkBrush;
+#else
         wc.hbrBackground = (HBRUSH) (GetStockObject( LTGRAY_BRUSH ));
+#endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = "ColoursClass";
         if( !RegisterClass( &wc ) ) return( FALSE );
@@ -208,7 +223,11 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = NULL;
         wc.hCursor = handCursor;
+#if defined (__NT__)
+        wc.hbrBackground = hBkBrush;
+#else
         wc.hbrBackground = (HBRUSH) (GetStockObject( LTGRAY_BRUSH ));
+#endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = "ScreenClass";
         if( !RegisterClass( &wc ) ) return( FALSE );
@@ -222,7 +241,11 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = NULL;
         wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
+#if defined (__NT__)
+        wc.hbrBackground = hBkBrush;
+#else
         wc.hbrBackground = (HBRUSH) (GetStockObject( LTGRAY_BRUSH ));
+#endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = "CurrentClass";
         if( !RegisterClass( &wc ) ) return( FALSE );
@@ -236,7 +259,11 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = NULL;
         wc.hCursor = NULL;
-        wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+#if defined (__NT__)
+        wc.hbrBackground = hBkBrush;
+#else
+        wc.hbrBackground = (HBRUSH) (GetStockObject( LTGRAY_BRUSH ));
+#endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = BitmapPickClass;
         if( !RegisterClass( &wc ) ) return( FALSE );
@@ -351,7 +378,9 @@ static void parseArgs( int count, char **cmdline )
  */
 static void imgEditFini( void )
 {
-
+#if defined (__NT__)
+    DeleteObject(hBkBrush);
+#endif
     IECtl3DFini( Instance );
     DestroyIcon( hBitmapIcon );
     DestroyIcon( hIconIcon );

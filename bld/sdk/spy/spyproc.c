@@ -545,6 +545,14 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         showHintBar( hwnd );
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
         break;
+#if defined (__NT__)
+    case WM_ERASEBKGND: {
+        static RECT r;
+        GetClientRect( hwnd, &r );
+        FillRect( (HDC)wparam, &r, (HBRUSH)(COLOR_BTNFACE+1) );
+        return 1;
+    }
+#endif
     default:
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }

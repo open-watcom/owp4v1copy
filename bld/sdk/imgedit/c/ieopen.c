@@ -545,7 +545,11 @@ BOOL CALLBACK OpenHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
     case WM_INITDIALOG:
         // We must call this to subclass the directory listbox even
         // if the app calls Ctl3dAutoSubclass (commdlg bug)
-        IECtl3dSubclassDlg( hwnd, CTL3D_ALL );
+#if defined (__NT__)
+        // Only do it if NOT new shell.
+        if ( LOBYTE(LOWORD(GetVersion())) < 4 )
+#endif
+            IECtl3dSubclassDlg( hwnd, CTL3D_ALL );
         return( TRUE );
     }
     return( FALSE );
@@ -586,10 +590,26 @@ static BOOL getOpenFName( char *fname )
     static OPENFILENAME of;
     char                szFileTitle[_MAX_PATH];
     int                 rc;
+    long of_size;
 
+    of_size = sizeof(OPENFILENAME);
+#if defined (__NT__) && (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0500)
+    {
+        OSVERSIONINFO os_info;
+        os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        GetVersionEx(os_info);
+        if ( os_info.dwMajorVersion < 5 ) {
+            of_size = OPENFILENAME_SIZE_VERSION_400;
+            /* WIN32 major version < 5 detected     */
+            /* See OPENFILENAME doc on www.msdn.com */
+            /* Added as future proofing...          */
+        }
+    }
+#endif    
     fname[ 0 ] = 0;
-    memset( &of, 0, sizeof( OPENFILENAME ) );
-    of.lStructSize = sizeof( OPENFILENAME );
+    memset( &of, 0, of_size );
+    
+    of.lStructSize = of_size;
     of.hwndOwner = HMainWindow;
     of.lpstrFilter = (LPSTR)IEImageFilter;
     of.lpstrDefExt = "*.*";
@@ -600,9 +620,14 @@ static BOOL getOpenFName( char *fname )
     of.nMaxFileTitle = sizeof(szFileTitle);
     of.lpstrTitle = IEOpenImageTitle;
     of.lpstrInitialDir = initialDir;
-    of.Flags = OFN_SHOWHELP | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST |
-                                OFN_HIDEREADONLY | OFN_ENABLEHOOK;
+#if !defined (__NT__)
+    /* Important! Do not use hook in WIN32, you will not get the nice dialog! */
     of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) OpenHook, Instance );
+    of.Flags  = OFN_ENABLEHOOK;
+#endif
+    of.Flags |= OFN_PATHMUSTEXIST |
+                OFN_FILEMUSTEXIST |
+                OFN_HIDEREADONLY;
     rc = GetOpenFileName( &of );
     #ifndef __NT__
     FreeProcInstance( (LPVOID) of.lpfnHook );
@@ -772,10 +797,26 @@ static BOOL getOpenPalName( char *fname )
     static OPENFILENAME of;
     char                szFileTitle[_MAX_PATH];
     int                 rc;
+    long of_size;
+
+    of_size = sizeof(OPENFILENAME);
+#if defined (__NT__) && (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0500)
+    {
+        OSVERSIONINFO os_info;
+        os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        GetVersionEx(os_info);
+        if ( os_info.dwMajorVersion < 5 ) {
+            of_size = OPENFILENAME_SIZE_VERSION_400;
+            /* WIN32 major version < 5 detected     */
+            /* See OPENFILENAME doc on www.msdn.com */
+            /* Added as future proofing...          */
+        }
+    }
+#endif    
 
     fname[ 0 ] = 0;
-    memset( &of, 0, sizeof( OPENFILENAME ) );
-    of.lStructSize = sizeof( OPENFILENAME );
+    memset( &of, 0, of_size );
+    of.lStructSize = of_size;
     of.hwndOwner = HMainWindow;
     of.lpstrFilter = (LPSTR)IEPaletteFilter;
     of.lpstrDefExt = "*.*";
@@ -786,9 +827,12 @@ static BOOL getOpenPalName( char *fname )
     of.nMaxFileTitle = sizeof(szFileTitle);
     of.lpstrTitle = IEOpenPaletteTitle;
     of.lpstrInitialDir = initialDir;
-    of.Flags = OFN_SHOWHELP | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST |
-                        OFN_HIDEREADONLY | OFN_ENABLEHOOK;
+    of.Flags =  OFN_SHOWHELP | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST |
+                OFN_HIDEREADONLY;
+#if !defined (__NT__)
+    of.Flags |= OFN_ENABLEHOOK;
     of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) OpenHook, Instance );
+#endif
     rc = GetOpenFileName( &of );
     #ifndef __NT__
     FreeProcInstance( (LPVOID) of.lpfnHook );

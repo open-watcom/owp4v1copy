@@ -96,9 +96,11 @@ static COLORREF oldBkColor;
  */
 static char initHDC( statwnd *sw, HDC hdc )
 {
+#if !defined (__NT__)
     if( sw->sectionDataFont == NULL ) {
         return( FALSE );
     }
+#endif
     oldFont = SelectObject( hdc, sw->sectionDataFont );
     oldBrush = SelectObject( hdc, brushButtonFace );
     oldBkColor = GetBkColor( hdc );
@@ -115,7 +117,7 @@ static void finiHDC( HDC hdc )
     SelectObject( hdc, oldBrush );
     SelectObject( hdc, oldFont );
     SetBkColor( hdc, oldBkColor );
-
+    
 } /* finiHDC */
 
 /*
@@ -152,6 +154,13 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
         BeginPaint( hwnd, &ps );
         StatusWndDraw3DBox( sw, ps.hdc );
         if( initHDC( sw, ps.hdc ) ) {
+#if defined (__NT__)
+            if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+                SelectObject( ps.hdc, (HFONT)GetStockObject(DEFAULT_GUI_FONT) );
+            } else {
+                SelectObject( ps.hdc, (HFONT)GetStockObject(SYSTEM_FONT) ); 
+            }
+#endif
             for( i=0;i<=sw->numSections;i++ ) {
                 if( sw->sectionData[i] != NULL ) {
                     getRect( sw, &r, i );
@@ -164,6 +173,18 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
         EndPaint( hwnd, &ps );
         break;
     case WM_ERASEBKGND:
+#if defined (__NT__)
+        if( colorButtonFace != GetSysColor( COLOR_BTNFACE ) ) {
+            DeleteObject( brushButtonFace );
+            DeleteObject( penLight );
+            DeleteObject( penShade );
+            colorButtonFace = GetSysColor( COLOR_BTNFACE );
+            brushButtonFace = CreateSolidBrush( colorButtonFace );
+            penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+            penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+            hasGDIObjects = TRUE;        
+        }
+#endif    
         GetClientRect( hwnd, &r );
         UnrealizeObject( brushButtonFace );
         FillRect( (HDC)wparam, &r, brushButtonFace );
@@ -242,13 +263,28 @@ int StatusWndCreate( statwnd *sw, HWND parent, RECT *size,
 
     cheesy_stat = sw;
 
+#if defined (__NT__)
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+        sw->win = CreateWindow( className, NULL,
+                             WS_CHILD | WS_CLIPSIBLINGS,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    } else {
+        sw->win= CreateWindow( className, NULL,
+                             WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    }
+#else
     sw->win = CreateWindow( className, NULL,
                               WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
                               size->left, size->top,
                               size->right - size->left,
                               size->bottom - size->top,
                               parent, (HMENU)NULL, hinstance, lpvParam );
-
+#endif
     if( sw->win == (HWND)NULL ) {
         return ( FALSE );
     }
@@ -340,6 +376,11 @@ void outputText( statwnd *sw, HDC hdc, char *buff, RECT *r,
     {
         SIZE    sz;
 
+        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+            SelectObject( hdc, (HFONT)GetStockObject(DEFAULT_GUI_FONT) );
+        } else {
+            SelectObject( hdc, (HFONT)GetStockObject(SYSTEM_FONT) ); 
+        }
         GetTextExtentPoint( hdc, buff, len, &sz );
         ext = sz.cx;
     }

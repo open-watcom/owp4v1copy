@@ -62,18 +62,31 @@ static void drawBorder( img_node *node )
     int         bottom;
 
     presborder = _wpi_getpres( node->viewhwnd );
+#if defined (__NT__)
+    hwhitepen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNHIGHLIGHT) );
+    hblackpen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNTEXT) );
+#else
     hwhitepen = _wpi_createpen( PS_SOLID, 0, CLR_WHITE );
     hblackpen = _wpi_createpen( PS_SOLID, 0, CLR_BLACK );
+#endif
 
     GetClientRect(node->viewhwnd, &rcclient);
     width = _wpi_getwidthrect( rcclient );
     height = _wpi_getheightrect( rcclient );
 
     if (node->imgtype != BITMAP_IMG) {
+#if defined (__NT__)
+        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNSHADOW) );
+#else
         hgraypen = _wpi_createpen( PS_SOLID, 0, CLR_DARKGRAY );
+#endif
         holdpen = _wpi_selectobject(presborder, hgraypen );
 
+#if defined (__NT__)
+        hnewbrush = _wpi_createsolidbrush( GetSysColor(COLOR_BTNFACE) );
+#else
         hnewbrush = _wpi_createsolidbrush( CLR_PALEGRAY );
+#endif
         holdbrush = _wpi_selectobject( presborder, hnewbrush );
 
         top = 0;
@@ -125,7 +138,11 @@ static void drawBorder( img_node *node )
         _wpi_selectobject( presborder, holdpen );
         _wpi_deleteobject( hgraypen );
 #else
+#if defined (__NT__)
+        hgraypen = _wpi_createpen( PS_INSIDEFRAME, BORDER_WIDTH, GetSysColor(COLOR_BTNFACE) );
+#else
         hgraypen = _wpi_createpen( PS_INSIDEFRAME, BORDER_WIDTH, CLR_PALEGRAY );
+#endif
         holdpen = _wpi_selectobject( presborder, hgraypen );
         nullbrush = _wpi_createnullbrush();
         holdbrush = _wpi_selectbrush( presborder, nullbrush );
@@ -138,7 +155,11 @@ static void drawBorder( img_node *node )
 #endif
 
         nullbrush = _wpi_createnullbrush();
+#if defined (__NT__)
+        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNSHADOW) );
+#else
         hgraypen = _wpi_createpen( PS_SOLID, 0, CLR_DARKGRAY );
+#endif
         holdbrush = _wpi_selectbrush( presborder, nullbrush );
         holdpen = _wpi_selectobject( presborder, hgraypen );
         top = 0;
