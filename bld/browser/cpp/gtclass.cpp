@@ -181,9 +181,10 @@ bool TreeClassNode::doParents( WVList& world, TreeClassList & roots,
     for( int i = _bases.count(); i > 0; i -= 1 ) {
         TreeClassNode * baseNode = (TreeClassNode*)_bases[ i - 1 ]->_class;
         bool            thisNodeJoinable = FALSE;
+        int             j;
 
         // remove a base from the world -- should be done for all bases
-        for( int j = world.count(); j > 0; j -= 1 ) {
+        for( j = world.count(); j > 0; j -= 1 ) {
             if( ((Symbol *)world[ j - 1 ])->getHandle() ==
                 baseNode->getHandle() ) {
                 delete world.removeAt( j - 1 );

@@ -320,7 +320,9 @@ bool TreeFuncNode::TreeFuncHook( dr_handle owner, dr_ref_info * ref,
                 ((TreeFuncPtr *)ptr)->incRefs();
             }
         } else {
-            for( int i = child->_flatNodes->count(); i > 0; i -= 1 ) {
+            int     i;
+
+            for( i = child->_flatNodes->count(); i > 0; i -= 1 ) {
                 parent->_flatNodes->add( (*child->_flatNodes)[ i - 1 ] );
             }
 
