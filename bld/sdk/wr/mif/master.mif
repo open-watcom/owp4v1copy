@@ -70,9 +70,9 @@ OF = -of+
 !endif
 
 extra_c_flags_nt_386    = -fpc
-extra_c_flags_nt        = $(extra_c_flags_nt_$(host_CPU))-s
+extra_c_flags_nt        = $(extra_c_flags_nt_$(host_CPU))
 extra_c_flags_win       = -fpc-s-zc-zu-zw
-extra_c_flags           = -DWIN_GUI -DSTRICT -we
+extra_c_flags           = -DWIN_GUI -DSTRICT
 
 extra_c_flags_trmem     = $(OF) $(TRMEM)
 extra_c_flags_trmemcvr  = $(OF) $(TRMEM)

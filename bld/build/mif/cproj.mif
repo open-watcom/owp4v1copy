@@ -89,12 +89,12 @@ memory_model_386 = f
 !endif
 
 
-cflags_all      = -zq -w4 -we
+cflags_all      =-zq-w4-we
 !ifeq release 1
-cflags_all      += -dNDEBUG
+cflags_all      +=-dNDEBUG
 !endif
 
-cflags_386      = $(model_switch_$(host_CPU)) -zc
+cflags_386      = $(model_switch_$(host_CPU))-zc
 cflags_i86      = $(model_switch_$(host_CPU))
 cflags_axp      =
 cflags_ppc      =

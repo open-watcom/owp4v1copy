@@ -37,7 +37,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <io.h>
-#include <sys\stat.h>
+#include <ctype.h>
+#include <sys/stat.h>
 #include "drwatcom.h"
 #include "srchmsg.h"
 #include "intdlg.h"
