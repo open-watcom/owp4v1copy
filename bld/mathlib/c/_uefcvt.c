@@ -34,4 +34,4 @@
 // it is done this way to support the reuse of the source file
 #define __WIDECHAR__
 #define UNICODE
-#include "EFCVT.C"
+#include "efcvt.c"

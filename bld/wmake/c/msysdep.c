@@ -244,7 +244,8 @@ BOOLEAN IdenticalAutoDepTimes( time_t in_obj, time_t stamp )
 {
     time_t diff_time;
 
-    if( in_obj == stamp ) {
+    /* in_obj can be a DOS time so we need to round to the nearest two-second */
+    if( in_obj == stamp || in_obj == (stamp & ~1) ) {
         return( TRUE );
     }
     if( in_obj < stamp ) {

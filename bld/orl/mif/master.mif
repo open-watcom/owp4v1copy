@@ -23,12 +23,12 @@ bin_os2_386 = os2.dll
 !endif
 !endif
 
-.c: $(orl_dir)\c;$(orl_dir)\elf\c;$(orl_dir)\coff\c;$(orl_dir)\omf\c
-.h: $(orl_dir)\h;$(orl_dir)\elf\h;$(orl_dir)\coff\h;$(orl_dir)\omf\h
+.c: $(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c
+.h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h
 
-lbc = ..\tmp.lbc
+lbc = ../tmp.lbc
 
-inc_dirs = $(orl_dir)\h;$(orl_dir)\elf\h;$(orl_dir)\coff\h;$(orl_dir)\omf\h;$(watcom_dir)\h
+inc_dirs = $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;$(watcom_dir)/h
 
 .before:
         set include=$(inc_path)
@@ -58,10 +58,10 @@ orl_objs        = orlentry$(obj) &
                         $(elf_objs) &
                         $(coff_objs)
 
-..\$(bin_$(host_OS)_$(host_CPU))\orl.lib : $(orl_objs)
+../$(bin_$(host_OS)_$(host_CPU))/orl.lib : $(orl_objs)
         @%create $(lbc)
         @for %i in ($(orl_objs)) do @%append $(lbc) -+%i
-        $(librarian) -b $^@ @$(lbc)
+        $(librarian) -b $^@ @"$(lbc)"
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj

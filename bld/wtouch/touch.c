@@ -377,6 +377,7 @@ static int doTouchFile( char *full_name, struct dirent *ndir,
     utime_rc = utime( full_name, stamp );
     if( utime_rc == -1 ) {
         stat_rc = stat( full_name, &sb );
+        if( stat_rc == -1 ) return 0;
         if( TouchFlags.allow_read_only && stat_rc == 0 ) {
             chmod( full_name, sb.st_mode | S_IWRITE );
             utime_rc = utime( full_name, stamp );

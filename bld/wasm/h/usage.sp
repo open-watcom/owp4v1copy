@@ -1,6 +1,6 @@
 :segment ENGLISH
 Usage:   wasm [options] asm_file [options] [@env_var]
-:segment qnx
+:segment qnx|linux
 Options:
 :elsesegment
 Options:                    ( /option is also supported )

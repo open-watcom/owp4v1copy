@@ -17,8 +17,8 @@
     sib.obj
 
 
-include_path    = $(cg_dir)\intel\386\h
-src_path        = $(cg_dir)\intel\386\c
+include_path    = $(cg_dir)/intel/386/h
+src_path        = $(cg_dir)/intel/386/c
 
 asm_path        =
 asm_include     =

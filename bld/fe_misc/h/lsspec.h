@@ -54,7 +54,7 @@ typedef enum LocaleSpecificSig {
     #undef LS_DEF
 } LocaleSpecificSig;
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define LSF_TEXT_HEADER         "Sybase C++ Locale Data 1.0\n\x0c\x04"
 #else
 #define LSF_TEXT_HEADER         "Sybase C++ Locale Data 1.0\r\n\x1a"

@@ -1,5 +1,5 @@
 while( <STDIN> ) {
-    if( /^(pick|wdpick).*\(\s*(\w+).*/ ) {
+    if( /^(pick|wdpick)\(\s*(\w+).*/ ) {
 	push( @picks, $2 );
     }
 }

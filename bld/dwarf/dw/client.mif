@@ -4,30 +4,30 @@
 #
 # DWARF library
 #
-dwarf_dw_lib_dos_386     = $(dwarf_dir)\dw\o\dwf.lib
-dwarf_dw_lib_os2_386     = $(dwarf_dir)\dw\os2\dwf.lib
-dwarf_dw_lib_osi_386     = $(dwarf_dir)\dw\o\dwf.lib
-dwarf_dw_lib_qnx_386     = $(dwarf_dir)\dw\o\dwf.lib
-dwarf_dw_lib_linux_386   = $(dwarf_dir)\dw\o\dwf.lib
-dwarf_dw_lib_nt_386      = $(dwarf_dir)\dw\o\dwf.lib
-dwarf_dw_lib_nt_axp      = $(dwarf_dir)\dw\axp\dw.lib
-dwarf_dw_lib_os2_386_dll = $(dwarf_dir)\dw\os2.dll\dwfdll.lib
-dwarf_dw_lib_nt_386_dll  = $(dwarf_dir)\dw\o.dll\dwfdll.lib
-dwarf_dw_lib_nt_axp_dll  = $(dwarf_dir)\dw\axp.dll\dwdll.lib
+dwarf_dw_lib_dos_386     = $(dwarf_dir)/dw/o/dwf.lib
+dwarf_dw_lib_os2_386     = $(dwarf_dir)/dw/os2/dwf.lib
+dwarf_dw_lib_osi_386     = $(dwarf_dir)/dw/o/dwf.lib
+dwarf_dw_lib_qnx_386     = $(dwarf_dir)/dw/o/dwf.lib
+dwarf_dw_lib_linux_386   = $(dwarf_dir)/dw/o/dwf.lib
+dwarf_dw_lib_nt_386      = $(dwarf_dir)/dw/o/dwf.lib
+dwarf_dw_lib_nt_axp      = $(dwarf_dir)/dw/axp/dw.lib
+dwarf_dw_lib_os2_386_dll = $(dwarf_dir)/dw/os2.dll/dwfdll.lib
+dwarf_dw_lib_nt_386_dll  = $(dwarf_dir)/dw/o.dll/dwfdll.lib
+dwarf_dw_lib_nt_axp_dll  = $(dwarf_dir)/dw/axp.dll/dwdll.lib
 
 #
 # DWARF dependencies
 #
-dwarf_dw_dep_dos_386     = $(dwarf_dir)\dw\o\compile.tim
-dwarf_dw_dep_os2_386     = $(dwarf_dir)\dw\os2\compile.tim
-dwarf_dw_dep_osi_386     = $(dwarf_dir)\dw\o\compile.tim
-dwarf_dw_dep_qnx_386     = $(dwarf_dir)\dw\o\compile.tim
-dwarf_dw_dep_linux_386   = $(dwarf_dir)\dw\o\compile.tim
-dwarf_dw_dep_nt_386      = $(dwarf_dir)\dw\o\compile.tim
-dwarf_dw_dep_nt_axp      = $(dwarf_dir)\dw\axp\compile.tim
-dwarf_dw_dep_os2_386_dll = $(dwarf_dir)\dw\os2.dll\compile.tim
-dwarf_dw_dep_nt_386_dll  = $(dwarf_dir)\dw\o.dll\compile.tim
-dwarf_dw_dep_nt_axp_dll  = $(dwarf_dir)\dw\axp.dll\compile.tim
+dwarf_dw_dep_dos_386     = $(dwarf_dir)/dw/o/compile.tim
+dwarf_dw_dep_os2_386     = $(dwarf_dir)/dw/os2/compile.tim
+dwarf_dw_dep_osi_386     = $(dwarf_dir)/dw/o/compile.tim
+dwarf_dw_dep_qnx_386     = $(dwarf_dir)/dw/o/compile.tim
+dwarf_dw_dep_linux_386   = $(dwarf_dir)/dw/o/compile.tim
+dwarf_dw_dep_nt_386      = $(dwarf_dir)/dw/o/compile.tim
+dwarf_dw_dep_nt_axp      = $(dwarf_dir)/dw/axp/compile.tim
+dwarf_dw_dep_os2_386_dll = $(dwarf_dir)/dw/os2.dll/compile.tim
+dwarf_dw_dep_nt_386_dll  = $(dwarf_dir)/dw/o.dll/compile.tim
+dwarf_dw_dep_nt_axp_dll  = $(dwarf_dir)/dw/axp.dll/compile.tim
 
 #
 # 'host_OS' and 'host_CPU' must be set to use these forms

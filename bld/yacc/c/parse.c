@@ -881,7 +881,7 @@ static int xlat_char( int special, int c ) {
     }
     warn( "'x' token contains unknown character '%c' (\\x%x)\n", c, c );
     addbuf( 'X' );
-    ultoa( c, buff, 16 );
+    sprintf( buff, "%x", c );
     addstr( buff );
     return( TRUE );
 }

@@ -4,8 +4,8 @@ model=ms
 system=linux
 convention=register
 linkage=alias
-!include ..\..\..\objects.mif
-!include $(mathlib_dir)\master.mif
-!include $(mathlib_dir)\mklib.mif
-!include ..\..\..\deps.mif
+!include ../../../objects.mif
+!include $(mathlib_dir)/master.mif
+!include $(mathlib_dir)/mklib.mif
+!include ../../../deps.mif
 

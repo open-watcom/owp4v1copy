@@ -32,7 +32,7 @@ mem_model_386 = -ms
 extra_c_flags += -fpc
 !endif
 
-inc_dirs = $(watcom_dir)\h
+inc_dirs = $(watcom_dir)/h
 
 .BEFORE
     @set include=$(inc_path)
@@ -45,17 +45,22 @@ dw$(model).lib : dwabenum.i $(objs)
         $(librarian) -n -b -q $^@ @tmp.lbc
         wtouch compile.tim
 
-dwabenum.i dwabinfo.i : dwmakeab.exe
+./dwmakeab.exe : dwmakeab.tbj dwutils.tbj
+        wtouch dwmakeab.exe
+
+dwabenum.i dwabinfo.i : ./dwmakeab.exe
+        rm -f $[@
+        $(bld_link) $(dwmakeabflags)
         $[@
 
+dwtjbflags = -d1 -fo=$@
+dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $[@
+
 dwmakeab.tbj : dwmakeab.c
-        $(bld_cc) -d1 -fo=dwmakeab.tbj dwmakeab.c
+        $(bld_cc) $(dwtjbflags) $<
 
 dwutils.tbj : dwutils.c
-        $(bld_cc) -d1 -fo=dwutils.tbj  dwutils.c
-
-dwmakeab.exe : dwmakeab.tbj dwutils.tbj
-        $(bld_link) op quiet,map debug all file dwmakeab.tbj, dwutils.tbj
+        $(bld_cc) $(dwtjbflags) $<
 
 dwabbrev.obj : dwabbrev.c dwabinfo.i
 

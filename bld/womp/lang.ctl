@@ -3,15 +3,15 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
 
 [ BLOCK <1> build rel2 ]
     cdsay h
-    wmake /h /i
+    wmake -h -i
 #   cdsay ..\release
 #   wmake /h /i
 
@@ -22,5 +22,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-     rm -f h\wmpmsg.h
+     rm -f h/wmpmsg.h
 #    sweep killobjs

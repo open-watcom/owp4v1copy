@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ LOG <devdir>\<LOGFNAME>.<LOGEXT> ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ LOG <devdir>/<LOGFNAME>.<LOGEXT> ]
 
 set FULLBUILD=1
 
@@ -9,6 +9,11 @@ cdsay .
 
 echo Languages Build <1>
 
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#================================
+[ INCLUDE <devdir>/langlnx.ctl ]
+
+[ BLOCK <BUILD_PLATFORM> dos386 os2386 nt386 ]
 #
 #        First of all build prerequisite utilities used in the build
 #
@@ -155,4 +160,4 @@ echo Languages Build <1>
 # deal with the project which contains this file last --- the BAT directory
 # BATDIR Builder Control file
 # ===========================
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]

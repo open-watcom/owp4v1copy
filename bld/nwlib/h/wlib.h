@@ -35,17 +35,20 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
-#include <process.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
 #include <limits.h>
 #include <errno.h>
-#include <conio.h>
 #include <malloc.h>
 #include <sys/stat.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#include <conio.h>
+#endif
 
+#include "watcom.h"
 #include "trmemcvr.h"
 #include "orl.h"
 #include "ar.h"
@@ -56,7 +59,7 @@
 #include "wreslang.h"
 #include "demangle.h"
 
-#include "libio.h"
+#include "wlibio.h"
 #include "types.h"
 #include "optdef.h"
 #include "ops.h"

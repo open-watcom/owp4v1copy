@@ -151,5 +151,5 @@
 !inject qmatherr.obj d16c d16i d32c d32i ncc nci wnc wni axp ntp op
 !inject zmatherr.obj d16c d16i d32c d32i ncc nci wnc wni axp ntp op
 
-!include $(mathlib_dir)\objlist.mif
-!include $(mathlib_dir)\libs.mif
+!include $(mathlib_dir)/objlist.mif
+!include $(mathlib_dir)/libs.mif

@@ -91,22 +91,22 @@ stub_objs = dlldrvr.obj stubidedrv.obj idemsgfm.obj drvmsgpr.obj
 
 !ifeq host_CPU 386
 !    define obj_dir o
-!    define dwarf_lib $(dwarf_dir)\dw\$(obj_dir)\dwf.lib
+!    define dwarf_lib $(dwarf_dir)/dw/$(obj_dir)/dwf.lib
 !    ifdef wlink_rtdll
 !       ifeq wlink_rtdll 1
 !           define obj_dir o.dll
-!           define dwarf_lib $(dwarf_dir)\dw\$(obj_dir)\dwfdll.lib
+!           define dwarf_lib $(dwarf_dir)/dw/$(obj_dir)/dwfdll.lib
 !       endif
 !    endif
 !else
 !   define obj_dir axp
-!   define dwarf_lib $(dwarf_dir)\dw\$(obj_dir)\dw.lib
+!   define dwarf_lib $(dwarf_dir)/dw/$(obj_dir)/dw.lib
 !endif
 
 libs += &
 $(wres_lib) &
 $(dwarf_lib) &
-$(orl_dir)\$(obj_dir)\orl.lib
+$(orl_dir)/$(obj_dir)/orl.lib
 
 !ifeq host_OS dos
 extra_objs = linkio.obj virtmem.obj
@@ -144,15 +144,18 @@ cflags_axp = -hc
 
 cflags_386 =                    # get rid of the -zc
 cflags_all = -w4 -we -zp4
+!ifdef __LINUX__
+cflags_all += -fo=$@
+!endif
 wcl_util_opts = -ox -zq
 
-extra_c_flags_ntio = /i=$(wres_dir)\h
-extra_c_flags_posixio = /i=$(wres_dir)\h
-extra_c_flags_linkio = /i=$(wres_dir)\h
-extra_c_flags_objorl = /i=$(orl_dir)\h
-extra_c_flags_dbgdwarf = /i=$(dwarf_dir)\dw\h
-extra_c_flags_loadpe = /i=..\h;$(wrc_dir)\h;$(wres_dir)\h /dINSIDE_WLINK
-extra_c_flags_loados2 = /i=$(wres_dir)\h
+extra_c_flags_ntio = -I"$(wres_dir)/h"
+extra_c_flags_posixio = -I"$(wres_dir)/h"
+extra_c_flags_linkio = -i"$(wres_dir)/h"
+extra_c_flags_objorl = -I"$(orl_dir)/h"
+extra_c_flags_dbgdwarf = -I"$(dwarf_dir)/dw/h"
+extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
+extra_c_flags_loados2 = -I"$(wres_dir)/h"
 
 exe_cflags = $+$(cflags)$-
 
@@ -162,9 +165,9 @@ cflags_all += -bd
 
 # now get all of the linker flags set properly
 
-ldebug_386 = debug dwarf  # file $(stkdepth_dir)\stkd386.lib
+ldebug_386 = debug dwarf  # file $(stkdepth_dir)/stkd386.lib
 
-extra_l_flags =  op map=wl,verbose,static,noredefs libpath $(watcom_dir)\lib
+extra_l_flags =  op map=wl,verbose,static,noredefs libpath $(watcom_dir)/lib
 extra_l_flags += l { $(libs) }
 
 #!ifdef on_build_machine
@@ -199,13 +202,13 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h
+inc_dirs = .;../h
 
 !ifndef execomp
-execomp = $(cc) -i$(inc_path)
+execomp = $(cc)
 !endif
 
-compile = $(cc) $(cflags) $[@ -i$(inc_path)
+compile = $(cc) $(cflags) $[@
 
 !ifeq host_OS qnx
 extra_rc_flags = /d_QNX
@@ -216,7 +219,7 @@ extra_rc_flags = /d_QNX
 
 .mif : $(mif_path)
 
-.c: ..\c
+.c: ../c
 
 !include defrule.mif
 
@@ -246,12 +249,12 @@ $(exe) : global.chk $(c_objs) $(extra_objs) $(libs) wlink.res
 !endif
     %make $(stubexe)
 !endif
-    wstrip /q /a /r $@ . wlink.res
+    wstrip -q -a -r $@ . wlink.res
 
 slnk = stub.lnk
 
 $(stubexe) : $(stub_objs)
-    if exist wlink.lib del wlink.lib
+    rm -f wlink.lib
     $(librarian) wlink.lib $(exe)
     @%create $(slnk)
     @%append $(slnk) $(mode_lflags) $(exe_lflags_$(host_OS)_$(host_CPU))
@@ -263,102 +266,102 @@ $(stubexe) : $(stub_objs)
 !endif
     $(linker) @$(slnk)
 
-version.rc : ..\h\wlver.rc
-    $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
-    genverrc ..\h\wlver.rc version.rc $$ wlink.dll $(patch_level)
-    del genverrc.*
+version.rc : ../h/wlver.rc
+    $(bld_cl) $(fe_misc_dir)/c/genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
+    genverrc ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
+    rm -f genverrc.*
 
-trmem.obj : $(trmem_dir)\trmem.c
-        $(compile) /i=$(trmem_dir)
+trmem.obj : $(trmem_dir)/trmem.c
+        $(compile) -I"$(trmem_dir)"
 
 dmem.obj : mem.c
-        $(compile) /dTRACKER /fo=dmem.obj /of+ /i=$(trmem_dir)
+        $(compile) -dTRACKER /fo=dmem.obj -of+ -I"$(trmem_dir)"
 
 amem.obj : mem.c
-        $(compile) /dTRACKER /fo=amem.obj /i=$(trmem_dir)
+        $(compile) -dTRACKER /fo=amem.obj -I"$(trmem_dir)"
 
-cmdutils.obj : cmdutils.c ..\h\link.h
+cmdutils.obj : cmdutils.c ../h/link.h
         $(compile)
 
-mapio.obj : mapio.c ..\h\msg.h
+mapio.obj : mapio.c ../h/msg.h
         $(compile)
 
-msg.obj : msg.c ..\h\msg.h ..\h\wlnkmsg.h
-        $(compile) /i=$(lib_misc_dir)\h
+msg.obj : msg.c ../h/msg.h ../h/wlnkmsg.h
+        $(compile) -I"$(lib_misc_dir)/h"
 
-dllentry.obj : dllentry.c $(watcom_dir)\h\idedll.h
-        $(compile) /i=$(lang_root)\h\$(host_OS)
+dllentry.obj : dllentry.c $(watcom_dir)/h/idedll.h
+        $(compile) -I"$(lang_root)/h/$(host_OS)"
 
-stubidedrv.obj : $(watcom_dir)\c\idedrv.c $(watcom_dir)\h\idedll.h
+stubidedrv.obj : $(watcom_dir)/c/idedrv.c $(watcom_dir)/h/idedll.h
         $(execomp) $(exe_cflags) $[@ -dSTATIC_LINKAGE -fo=stubidedrv.obj
 
-idedrv.obj : $(watcom_dir)\c\idedrv.c $(watcom_dir)\h\idedll.h
+idedrv.obj : $(watcom_dir)/c/idedrv.c $(watcom_dir)/h/idedll.h
         $(compile) -dCHAIN_CALLBACK
 
-idemsgfm.obj : $(watcom_dir)\c\idemsgfm.c $(watcom_dir)\h\idedll.h
+idemsgfm.obj : $(watcom_dir)/c/idemsgfm.c $(watcom_dir)/h/idedll.h
         $(execomp) $(exe_cflags) $[@
 
-drvmsgpr.obj : $(watcom_dir)\c\idemsgpr.c $(watcom_dir)\h\idedll.h
+drvmsgpr.obj : $(watcom_dir)/c/idemsgpr.c $(watcom_dir)/h/idedll.h
         $(execomp) $(exe_cflags) $[@ /fo=drvmsgpr.obj
 
-idemsgpr.obj : $(watcom_dir)\c\idemsgpr.c $(watcom_dir)\h\idedll.h
+idemsgpr.obj : $(watcom_dir)/c/idemsgpr.c $(watcom_dir)/h/idedll.h
         $(compile)
 
-dlldrvr.obj : dlldrvr.c  $(watcom_dir)\h\idedll.h
+dlldrvr.obj : dlldrvr.c  $(watcom_dir)/h/idedll.h
         $(execomp) $(exe_cflags) $[@
 
-wlnkmsg.obj : wlnkmsg.c ..\h\wlnkmsg.h
+wlnkmsg.obj : wlnkmsg.c ../h/wlnkmsg.h
         $(compile)
 
-global.obj : global.c ..\h\globals.h ..\h\specials.h
+global.obj : global.c ../h/globals.h ../h/specials.h
         $(compile)
 
-cmdline.obj : cmdline.c ..\h\whoami.h
+cmdline.obj : cmdline.c ../h/whoami.h
         $(compile)
 
-demangle.obj : $(lib_misc_dir)\c\demangle.c
-        $(compile) /i=$(lib_misc_dir)\h
+demangle.obj : $(lib_misc_dir)/c/demangle.c
+        $(compile) -I"$(lib_misc_dir)/h"
 
-exerespe.obj : $(wrc_dir)\c\exerespe.c
-        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_path)
-#        $(compile) -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK
+exerespe.obj : $(wrc_dir)/c/exerespe.c
+        $(cc) $(cflags) $[@ -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 
-sharedio.obj : $(wrc_dir)\c\sharedio.c
-        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_path)
-#        $(compile) -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK
+sharedio.obj : $(wrc_dir)/c/sharedio.c
+        $(cc) $(cflags) $[@ -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 
-rcstr.obj : $(wrc_dir)\c\rcstr.c
-        $(compile) -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h -fi=..\h\wlrcmem.h /dINSIDE_WLINK
+force_include = -fi
 
-wlink.res : ..\h\wlink.rc ..\h\lnkerror.rc ..\h\wlnkmsg.h ..\h\lnkerror.msg ..\h\wlink.msg ..\h\rcmsg.h
-        $(rc) /zk /r /bt=windows $(extra_rc_flags) /fo=$^@ ..\h\wlink.rc /i=$(watcom_dir)\h
+rcstr.obj : $(wrc_dir)/c/rcstr.c
+        $(compile) -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
 
-..\h\rcmsg.h : $(wrc_dir)\h\rc.msg
-        copy $(wrc_dir)\h\rc.msg ..\h\rc.msg
-        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"tmp.h" ..\h\rc.msg
-        vi -q -i -s ..\h\rcrebase.vi tmp.h
-        copy tmp.h ..\h\rcmsg.h
-        del tmp.h
+wlink.res : ../h/wlink.rc ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.msg ../h/rcmsg.h
+        $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $[@ -I"$(watcom_dir)/h"
+
+../h/rcmsg.h : $(wrc_dir)/h/rc.msg
+        cp $(wrc_dir)/h/rc.msg ../h/rc.msg
+!ifdef __LINUX__
+        perl $(sdk_dir)/misc/msgtoh.pl < ../h/rc.msg | sed 's/0$$/800/' > tmp.h
+!else
+        vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" ../h/rc.msg
+        vi -q -i -s ../h/rcrebase.vi tmp.h
+!endif
+        cp tmp.h ../h/rcmsg.h
+        rm -f tmp.h
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
+        @rm -f *.?bj
         @%make killnonobj
 
 killnonobj: .SYMBOLIC .EXPLICIT
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.dll del *.dll
-        @if exist *.lib del *.lib
-        @if exist *.res del *.res
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.lst del *.lst
-        @if exist *.tmp del *.tmp
-        @if exist *.ilk del *.ilk
-        @if exist *.sym del *.sym
-        @if exist grok*.* del grok*.*
-        @if exist ..\h\rcmsg.h del ..\h\rcmsg.h
+        @rm -f *.lnk *.exe *.dll *.lib *.res *.err *.map *.lst
+        @rm -f *.tmp *.ilk *.sym grok*.* ../h/rcmsg.h
 
-global.chk : ..\compile.gbl
+global.chk : ../compile.gbl
     @%make clean
+!ifdef __LINUX__
+    touch -r $[@ $^@
+!else
     wtouch -f $[@ $^@
+!endif
+
+.BEFORE:
+	 @set INCLUDE=$(inc_path)

@@ -31,12 +31,18 @@
 
 
 #include <unistd.h>
+#ifndef UNIX
+#define UNIX __UNIX__
+#endif
+#ifndef LINUX
+#define LINUX __LINUX__
+#endif
 #if defined( __QNX__ ) || defined( UNIX )
 #include <fcntl.h>
 #endif
 #include <malloc.h>
 #include "wressetr.h"
-#ifdef UNIX
+#if defined( UNIX ) && !defined( __WATCOMC__ )
     #include "clibext.h"
     #include <stdlib.h>  // malloc for AIX
 #endif

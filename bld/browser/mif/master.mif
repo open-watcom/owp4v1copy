@@ -4,7 +4,8 @@ name = wbrw
 .extensions:
 .extensions: .exe .obj .cpp .gpp .c .y .mif
 
-.mif : $(mif_path);..\mif
+.mif : $(mif_path)
+.mif : ../mif
 sys_windowed = 1
 !include cproj.mif
 !include defrule.mif

@@ -4,7 +4,7 @@ host_OS=nt
 
 !include cproj.mif
 
-splice = $(bld_bin)\wsplice -i.. -k$(system) $(options) ..\common.sp $[@ $^@
+splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
 
 .EXTENSIONS
 .EXTENSIONS : .h .hpp .cnv .mh .mhp
@@ -231,19 +231,15 @@ all : $($(system)_files) .symbolic
 # Special case for sys/time.h since there is also a time.h
 #
 !ifeq system QNX
-sys/time.h : ..\quantum/sys_time.mh ..\poppack.sp ..\pshpackl.sp
+sys/time.h : ../quantum/sys_time.mh ../poppack.sp ../pshpackl.sp
         $(splice)
 !endif
 !ifeq system LINUX
-sys/time.h : linux/sys_time.mh ..\readonly.sp ..\cpluspro.sp ..\lnxkpack.sp ..\poppack.sp ..\cplusepi.sp
+sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../poppack.sp ../cplusepi.sp
         $(splice)
 !endif
 
-!include ..\deps.mif
+!include ../deps.mif
 
 clean: .SYMBOLIC
-      @if exist *.h @del *.h
-      @if exist sys\*.h @del sys\*.h
-      @if exist win\*.h @del win\*.h
-      @if exist *.hpp @del *.hpp
-      @if exist common.cnv @del common.cnv
+      rm -f *.h sys/*.h win/*.h *.hpp common.cnv

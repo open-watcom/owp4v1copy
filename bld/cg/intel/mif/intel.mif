@@ -39,5 +39,5 @@ intel_objs = &
     wvsyms.obj &
     wvtypes.obj
 
-include_path    = $+$(include_path)$-;$(cg_dir)\intel\h
-src_path        = $+$(src_path)$-;$(cg_dir)\intel\c
+include_path    = $+$(include_path)$-;$(cg_dir)/intel/h
+src_path        = $+$(src_path)$-;$(cg_dir)/intel/c

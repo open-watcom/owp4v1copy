@@ -87,7 +87,7 @@ typedef struct _ResInOutInfo {
 
 // PutPEResources:  Put PE resource file into object file.
 // Also sets info->res_obj and info->resTblEntry.
-WResStatus PutPEResources(pResInOutInfo info);
+WResStatus PutPEResources(pResInOutInfo info, PEResDir *outres);
 WResStatus CopyPEResData(pResInOutInfo info, PEResDir *outRes);
 int BuildPEResDir( PEResDir * res, WResDir dir );
 WResStatus WriteDirectory( PEResDir * dir, int handle );

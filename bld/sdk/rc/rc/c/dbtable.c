@@ -36,11 +36,16 @@
 #include "types.h"
 #include "dbtable.h"
 #include "rcmem.h"
-#include "fcntl.h"
-#include "io.h"
+#include <fcntl.h>
+#include <unistd.h>
 #include "write.h"
 #include "iortns.h"
-#ifdef UNIX
+
+#ifndef UNIX
+#define UNIX __UNIX__
+#endif
+
+#if defined(UNIX) && !defined(__WATCOMC__)
     #include "clibext.h"
 #endif
 
@@ -130,7 +135,9 @@ RcStatus OpenTable( char *fname, char *path ) {
     RcStatus    status;
 
     status = RS_OK;
+#ifndef UNIX
     _searchenv( fname, "PATH", path );
+#endif
     if( path[0] == '\0' ) return( RS_FILE_NOT_FOUND );
     fp = RcOpen( path, O_RDONLY | O_BINARY );
     if( fp == -1 ) {

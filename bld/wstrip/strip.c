@@ -46,7 +46,10 @@
 #endif
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef __WATCOMC__
 #include <share.h>
+#endif
+#include "watcom.h"
 #include "machtype.h"
 #include "dbginfo.h"
 #include "cv4.h"
@@ -144,6 +147,12 @@ int nodebug_ok;
 int res = 0;
 unsigned bufsize;
 
+#ifndef __WATCOMC__
+#undef sopen
+#define sopen(w,x,y,z) open(w,x,z)
+char **_argv;
+#endif
+
 int main( int argc, char *argv[] )
 {
     size_t              size;
@@ -159,8 +168,14 @@ int main( int argc, char *argv[] )
     struct utimbuf      uptime;
     int                 has_ext;
 
+#ifndef __WATCOMC__
+    _argv = argv;
+#endif
+
     if( Msg_Init() != EXIT_SUCCESS ) {
+#ifndef BOOTSTRAP
         return( EXIT_FAILURE );
+#endif
     }
     add_file = 0;
     j = argc-1;
@@ -250,7 +265,11 @@ int main( int argc, char *argv[] )
         StripInfo();
     }
     /* make sure that size of output file is correct */
+#ifdef __WATCOMC__
     chsize( fout.h, lseek( fout.h, 0L, SEEK_CUR ) );
+#else
+    ftruncate( fout.h, lseek( fout.h, 0L, SEEK_CUR ) );
+#endif
 
     close( fin.h );
     close( fout.h );

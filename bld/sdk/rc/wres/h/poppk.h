@@ -38,6 +38,8 @@
     #pragma pack();
 #elif defined( __MWERKS__ )
     #pragma options align= reset
+#else
+    #pragma pack(pop)
 #endif
 
 #if defined ( _NO_PRAGMA_PUSH_PACK )

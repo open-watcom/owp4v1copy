@@ -57,5 +57,5 @@ typedef struct StringBlock {
 
 extern void StringBlockBuild( StringBlock *, WResDir, int use_unicode );
 extern int_32 StringBlockFind( StringBlock *, WResIDName * name );
-extern int CompareStringItems32( StringItem32 *item1, StringItem32 *item2 );
+extern int CompareStringItems32( const StringItem32 *item1, const StringItem32 *item2 );
 #endif

@@ -1,12 +1,12 @@
 proj_name       = owl
-inc_dirs        = $(watcom_dir)\h;..\h
+inc_dirs        = $(watcom_dir)/h;../h
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
 
-.c: $(owl_dir)\c
+.c: $(owl_dir)/c
 
 owl_objs = owl.obj &
         owbuffer.obj &
@@ -23,7 +23,7 @@ owl_objs = owl.obj &
         log.obj
 
 owl.lib : $(owl_objs)
-        @if exist $^&.clb @erase $^&.clb
+        rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i
         $(librarian) -n -q -b $^. @$^&.clb
 

@@ -177,9 +177,9 @@ event _NEAR EventList[] = {
 /* '~' */ { IMChar, IMChar, ChangeCase, {EVENT_OP, 1, 0, 0, 0, 0, 1}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
 /* '' */ { IMChar, InvalidKey, InvalidKey, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
 #ifdef __NT__
-/* '€' */ { IMChar, AbsoluteNullResponse, AbsoluteNullResponse, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
+/* 'Ç' */ { IMChar, AbsoluteNullResponse, AbsoluteNullResponse, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
 #else
-/* '€' */ { IMChar, InvalidKey, InvalidKey, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
+/* 'Ç' */ { IMChar, InvalidKey, InvalidKey, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_INS, 1, 0, 0, 0, 0, 0} },
 #endif
 
 /*

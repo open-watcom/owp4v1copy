@@ -1,6 +1,16 @@
-include watcom.mk
-
 SRCDIRS = $(WRES_DIR)/c
+
+DEVDIR = $(PWD)/../../..
+SDK_DIR = $(DEVDIR)/sdk
+WRES_DIR = $(SDK_DIR)/rc/wres
+WATCOMH = $(DEVDIR)/watcom/h
+OBJDIR = bootstrp
+CFLAGS = -funsigned-char -W -Wall -g #-O2
+CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
+DEFS += -D__386__ -DLINUX -DUNIX -D_WCUNALIGNED= -D_LINKER=_WLINK -D__FLAT__
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 OBJECTS = 
 # OBJECTS += loadstr.o wresrtns.o wriidfn.o wrfindrs.o wrgetli.o ropenfro.o 
@@ -46,17 +56,21 @@ LIBNAME = wres
 # host_OS = dos
 # host_CPU = 386
 
-DEFS += -D_NO_LIB_PRAGMAS_ -DNATURAL_PACK
+DEFS += -D_NO_LIB_PRAGMAS_ #-DNATURAL_PACK
 CFLAGS += $(OPT_PIC)
 
-$(OBJDIR)/lib$(LIBNAME).a : $(OBJECTS)
+$(OBJDIR)/lib$(LIBNAME).a : $(OBJDIR) $(OBJECTS)
 	@rm -f $@
 	$(AR) crs $@ $(OBJECTS)
 
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
 clean	:
-	rm -f $(OBJDIR)/*
+	rm -rf $(OBJDIR)
 
 .PHONY	: dep depend make
+
 dep depend make:
 	$(MKMK) -Q -m .depend -f '$$(OBJDIR)/%s' nopath -f '$$(OBJDIR)/%s' \
 		$(foreach i,$(SRCDIRS),$i/*.[ch]) \

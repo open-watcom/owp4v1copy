@@ -33,7 +33,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 #include <ctype.h>
 #include <malloc.h>
 
@@ -185,9 +187,16 @@ void do_init_stuff( int argc, char *argv[] )
     PushLineQueue();
 }
 
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+
 int main( int argc, char *argv[] )
 /********************************/
 {
+#ifndef __WATCOMC__
+    _argv = argv;
+#endif
     main_init();
     do_init_stuff( argc, argv );
 

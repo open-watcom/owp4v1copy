@@ -66,25 +66,25 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 
-extra_l_flags += libpath $(watcom_dir)\lib &
+extra_l_flags += libpath $(watcom_dir)/lib &
                 lib $(WRES_LIB) &
                 option map, quiet
 extra_l_flags_osi += option symfile
 
 # where to look for various files
-.c : $(wrc_dir)\c;$(cpp_dir);$(trmem_dir);$(watcom_dir)\c
-.cpp : $(wrc_dir)\c;$(trmem_dir)
-.y : $(wrc_dir)\y
-.key : $(wrc_dir)\hash
-.h : $(wrc_dir)\h;$(trmem_dir)
-.gh : $(wrc_dir)\h
-.mif : $(wrc_dir)\mif
+.c : $(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
+.cpp : $(wrc_dir)/c;$(trmem_dir)
+.y : $(wrc_dir)/y
+.key : $(wrc_dir)/hash
+.h : $(wrc_dir)/h;$(trmem_dir)
+.gh : $(wrc_dir)/h
+.mif : $(wrc_dir)/mif
 
-inc_dirs = $(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h;$(cpp_dir);$(trmem_dir)
+inc_dirs = $(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 .before:
         @set INCLUDE=$(inc_path)
-#       @set OS2_INCLUDE=$(wrc_dir)\h;$(%os2_include)
+#       @set OS2_INCLUDE=$(wrc_dir)/h;$(%os2_include)
 
 # explicit rules
 
@@ -93,12 +93,12 @@ $(NAME).dll : $(NAME).res $(objs) $(WRES_LIB)
 !else
 $(NAME).exe : $(NAME).res $(objs) $(WRES_LIB)
 !endif
-        $(linker) $(lflags) name $(name) file { $(objs) }
+        $(linker) $(lflags) name $@ file { $(objs) }
         #e:\lang\binnt\wlink $(lflags) name $(name) file { $(objs) }
         @%make bindit
 !ifeq sys_dll 1
         wstrip -q -a -r $(NAME).dll . $(NAME).res
-        if exist wrc.lib del wrc.lib >nul
+        rm -f wrc.lib >nul
         $(librarian) wrc.lib +wrc.dll
 !else
         wstrip -q -a -r $(NAME).exe . $(NAME).res
@@ -106,7 +106,7 @@ $(NAME).exe : $(NAME).res $(objs) $(WRES_LIB)
 
 bindit : .PROCEDURE
 !ifeq host_OS osi
-        $(bld_bin)\w32bind $(NAME).rex $(NAME).exe $(tools_root)\os2ldr.exe
+        w32bind $(NAME).rex $(NAME).exe $(tools_root)\os2ldr.exe
         erase $(NAME).rex
         @%null
 !else ifeq host_OS dos
@@ -124,51 +124,58 @@ ytab.obj : ytab.c param.h ytab.gh
         $(CC) $(CFLAGS) $[*
 #!endif
 
-ytab.c ytab.gh : rc.y $(wrc_dir)\y\yydriver.c rcmem.h
+ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
+!ifdef __LINUX__
+        wacc -d -b $[@ $[:yydriver.c  >nul
+!else
         $(yacc) -d -b $[@ $[:yydriver.c  >nul
-        @copy ytab.c $(wrc_dir)\c
-        @copy ytab.h $(wrc_dir)\h\ytab.gh
-        @del ytab.h
-        @del ytab.c
+!endif
+        @cp ytab.c $(wrc_dir)/c
+        @cp ytab.h $(wrc_dir)/h/ytab.gh
+        @rm -f ytab.h
+        @rm -f ytab.c
 
-weights1.gh keyword1.gh : rc1.key
-        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
-        findhash $[@ >nul
-        del findhash.*
-        copy keywords.gh $(wrc_dir)\h\keyword1.gh
-        copy weights.gh $(wrc_dir)\h\weights1.gh
-        @del keywords.gh
-        @del weights.gh
+./findhash.exe: $(fe_misc_dir)/c/findhash.c
+        $(bld_cl) $< $(wcl_util_opts) -fe=$@
 
-weights2.gh keyword2.gh : rc2.key
-        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
-        findhash $[@ >nul
-        del findhash.*
-        copy keywords.gh $(wrc_dir)\h\keyword2.gh
-        copy weights.gh $(wrc_dir)\h\weights2.gh
-        @del keywords.gh
-        @del weights.gh
+weights1.gh keyword1.gh : rc1.key ./findhash.exe
+        $]@ $[@ >nul
+        cp keywords.gh $(wrc_dir)/h/keyword1.gh
+        cp weights.gh $(wrc_dir)/h/weights1.gh
+        @rm -f keywords.gh
+        @rm -f weights.gh
 
-$(NAME).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)\rc.rc
-        $(rc) -bt=windows -r $(wrc_dir)\rc.rc -fo=$(NAME).res
+weights2.gh keyword2.gh : rc2.key ./findhash.exe
+        $]@ $[@ >nul
+        cp keywords.gh $(wrc_dir)/h/keyword2.gh
+        cp weights.gh $(wrc_dir)/h/weights2.gh
+        @rm -f keywords.gh
+        @rm -f weights.gh
 
-rcmsg.h : $(wrc_dir)\h\rc.msg
-        copy $(wrc_dir)\h\rc.msg rc.msg
+$(NAME).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
+        $(rc) -bt=windows -r $]@ -fo=$(NAME).res
+
+rcmsg.h : $(wrc_dir)/h/rc.msg
+        cp $< rc.msg
+!ifdef __LINUX__
+        perl $(sdk_dir)/misc/msgtoh.pl < rc.msg > tmp.h
+!else
         vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"tmp.h" rc.msg
-        del rc.msg
-        copy tmp.h $(wrc_dir)\h\rcmsg.h
-        del tmp.h
+!endif
+        rm -f rc.msg
+        cp tmp.h $(wrc_dir)/h/rcmsg.h
+        rm -f tmp.h
 
 usage.rc : $(wrc_dir)/usage.sp
-        $(bld_bin)\wsplice -kENGLISH -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
+        wsplice -kENGLISH -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
 
 usagej.rc : $(wrc_dir)/usage.sp
-        $(bld_bin)\wsplice -kJAPANESE -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
+        wsplice -kJAPANESE -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
 rcmem.obj : rcmem.c rcmem.h
 rcalloc1.obj : rcalloc1.c rcalloc1.h
 rcalloc0.obj : rcalloc0.c rcalloc0.h
-errors.obj : errors.c $(wrc_dir)\h\errors.lst errors.h rcio.h
+errors.obj : errors.c $(wrc_dir)/h/errors.lst errors.h rcio.h
 hash1.obj : hash1.c weights1.gh
 hash2.obj : hash2.c weights2.gh
 keyword.obj : keyword.c keyword1.gh keyword2.gh ytab.gh scan.h
@@ -188,23 +195,19 @@ semmenu.obj : semmenu.c semmenu.h ytab.gh
 
 clean: .SYMBOLIC .EXPLICIT
 !ifeq sys_dll 1
-        @if exist $(NAME).dll @del $(NAME).dll
-        @if exist $(NAME).lib @del $(NAME).lib
+        @rm -f $(NAME).dll
+        @rm -f $(NAME).lib
 !else
-        @if exist $(NAME).exe @del $(NAME).exe
+        @rm -f $(NAME).exe
 !endif
-        @if exist $(name).map @del $(name).map
-        @if exist usage*.rc @del usage*.rc
-        @if exist *.obj @del *.obj
-        @if exist $(wrc_dir)\h\*.gh @del $(wrc_dir)\h\*.gh
-        @if exist $(wrc_dir)\c\ytab.c @del $(wrc_dir)\c\ytab.c
-        @if exist $(wrc_dir)\o\ytab.obj @del $(wrc_dir)\o\ytab.obj
-        @if exist *.res @del *.res
-        @if exist *.err @del *.err
-        @if exist *.sym @del *.sym
-        @if exist all.osz @del all.osz
-        @if exist rcmsg.h @del rcmsg.h
-        @if exist $(wrc_dir)\h\rcmsg.h @del $(wrc_dir)\h\rcmsg.h
+        @rm -f $(name).map
+        @rm -f usage*.rc
+        @rm -f *.obj
+        @rm -f $(wrc_dir)\h\*.gh
+        @rm -f $(wrc_dir)\c\ytab.c
+        @rm -f $(wrc_dir)\o\ytab.obj
+        @rm -f *.res *.err *.sym all.osz rcmsg.gh findhash.exe
+        @rm -f $(wrc_dir)\h\rcmsg.h
 
 # implicit rules
 .c.obj:

@@ -115,7 +115,7 @@ typedef struct {
 #define ASM_EXT "asm"
 #define ERR_EXT "err"
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define OBJ_EXT "o"
 #else
 #define OBJ_EXT "obj"

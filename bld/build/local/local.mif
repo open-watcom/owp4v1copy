@@ -1,7 +1,7 @@
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
 !else
-lang_root = $(%dwatcom)
+lang_root = $(%DWATCOM)
 !endif
 
 # Do not fuck with the env vars, that way it's far too easy to break stuff!
@@ -52,10 +52,10 @@ cpp_386         += -i$(bld_incs)
 !endif
 
 !ifeq proj_name cc
-extra_l_flags_nt = lib $(watcom_dir)\lib\ld.lib
+extra_l_flags_nt = lib $(watcom_dir)/lib/ld.lib
+!endif
 !ifeq host_CPU axp
 def_targ        = wcc$(target_CPU)c.exe
-!endif
 !endif
 
 #global definition which tool is quiet

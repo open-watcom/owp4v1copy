@@ -47,7 +47,6 @@ extern void             AsmError( int );
 extern void             DefFlatGroup();
 
 extern struct asm_tok   *AsmBuffer[];
-extern char             Parse_pass;
 
 static int              TakeOut[ MAX_TOKEN ];
 static int              TokCnt;
@@ -426,7 +425,7 @@ static int_8 calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
                 }
                 if( token_1->label == EMPTY ) {
                     token_1->label = token_2->label;
-                } else if( token_2->label != EMPTY && Parse_pass > PASS_1 ) {
+                } else if( token_2->label != EMPTY && Parse_Pass > PASS_1 ) {
                     AsmError( LABEL_NOT_DEFINED );
                 }
                 token_1->indirect |= token_2->indirect;

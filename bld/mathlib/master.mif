@@ -24,4 +24,4 @@ host_OS=$(clib_host_os_$(system))
 
 !include cproj.mif
 
-!include $(mathlib_dir)\flags.mif
+!include $(mathlib_dir)/flags.mif

@@ -47,17 +47,17 @@ mupdate.obj  :  mupdate.c    make.h macros.h massert.h mcache.h mmemory.h   &
                 mtarget.h mtypes.h mupdate.h mvecstr.h
 mcache.obj   :  mcache.c     make.h massert.h mhash.h mmemory.h mmisc.h     &
                 mpathgrp.h mrcmsg.h msg.h
-msysdep.obj  :  msysdep.c    make.h $(watcom_dir)\h\idedrv.h
+msysdep.obj  :  msysdep.c    make.h $(watcom_dir)/h/idedrv.h
 mexec.obj    :  mexec.c      macros.h make.h massert.h mcache.h mmemory.h   &
                 mexec.h mmisc.h mrcmsg.h msg.h msuffix.h mtarget.h          &
                 mtypes.h mupdate.h
 macros.obj   :  macros.c     macros.h make.h massert.h mmemory.h mhash.h    &
                 mmisc.h mlex.h mpathgrp.h mrcmsg.h msg.h mstream.h          &
                 mtypes.h mupdate.h mvecstr.h
-mrcmsg.obj   :  mrcmsg.c     watcom.h mrcmsg.h mrcmsg.h $(watcom_dir)\h\wressetr.h
+mrcmsg.obj   :  mrcmsg.c     watcom.h mrcmsg.h mrcmsg.h $(watcom_dir)/h/wressetr.h
 
-idedrv.obj   :  idedrv.c     $(watcom_dir)\h\idedrv.h $(watcom_dir)\h\idedll.h
+idedrv.obj   :  idedrv.c     $(watcom_dir)/h/idedrv.h $(watcom_dir)/h/idedll.h
 
-idemsgfm.obj :  idemsgfm.c   $(watcom_dir)\h\idedrv.h $(watcom_dir)\h\idedll.h
+idemsgfm.obj :  idemsgfm.c   $(watcom_dir)/h/idedrv.h $(watcom_dir)/h/idedll.h
 
-idemsgpr.obj :  idemsgpr.c   $(watcom_dir)\h\idedll.h
+idemsgpr.obj :  idemsgpr.c   $(watcom_dir)/h/idedll.h

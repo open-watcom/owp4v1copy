@@ -559,14 +559,14 @@ extern void ExitSafe( int rc )
 }
 
 #ifndef __WATCOMC__
-const char **_argv;
+char **_argv;
 #endif
 
 #pragma off(unreferenced);
 #if !defined( __WINDOWS__ )
-extern void main( int argc, const char **argv )
+extern void main( int argc, char **argv )
 #else
-extern void wmake_main( int argc, const char **argv )
+extern void wmake_main( int argc, char **argv )
 #endif
 #pragma on (unreferenced);
 /*********************************************/
@@ -578,7 +578,7 @@ extern void wmake_main( int argc, const char **argv )
 #endif
     InitSignals();
     InitHardErr();
-    init( argv );                       /* initialize, process cmdline */
+    init( (const char **)argv );        /* initialize, process cmdline */
     Header();
     parseFiles();
     if( Glob.print ) {

@@ -8,7 +8,7 @@ proj_name = strip
 
 .EXTENSIONS: .gh .rc .msg .sp
 
-inc_dirs = $(wstrip_dir);$(watcom_dir)\h;$(dip_dir)\watcom\h
+inc_dirs = $(wstrip_dir);$(watcom_dir)/h;$(dip_dir)/watcom/h
 
 .c .rc .msg .sp: .. #$(wstrip_dir)
 
@@ -29,7 +29,11 @@ $(proj_name).exe : $(dependants)
         wstrip -q -a -r $^@ . $(res_$(host_os))
 
 msg.gh : wstrip.msg
-        vi -q -s..\go.vi
+!ifdef __LINUX__
+        perl $(sdk_dir)/misc/msgtoh.pl < $< | sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE+1/' > $@
+!else
+        vi -q -s../go.vi
+!endif
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
         $(rc) -r -fo=$^@ -zk0 -DDOS $[@ -bt=windows

@@ -33,6 +33,9 @@
 #include <assert.h>
 #include "elflwlv.h"
 #include "orlhash.h"
+#ifdef _BSD_SOURCE
+#define stricmp strcasecmp
+#endif
 
 orl_return ElfCreateSymbolHandles( elf_sec_handle elf_sec_hnd )
 {

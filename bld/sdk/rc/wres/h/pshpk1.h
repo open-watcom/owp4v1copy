@@ -45,6 +45,8 @@
     #else
         #error "Need a push/pack for this Mac compiler"
     #endif
+#else
+    #pragma pack(push,1)
 #endif
 
 #if defined( _NO_PRAGMA_PUSH_PACK )

@@ -38,6 +38,10 @@
 #ifdef UNIX
     #include "clibext.h"
 #endif
+#ifndef _MAX_PATH
+#include <limits.h>
+#define _MAX_PATH PATH_MAX+1
+#endif
 
 #define DB_CHAR         1
 

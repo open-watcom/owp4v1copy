@@ -1,18 +1,32 @@
-include watcom.mk
+SRCDIRS = ./c $(CPP_DIR)
 
-SRCDIRS = c
+DEVDIR = $(PWD)/../../..
+SDK_DIR = $(DEVDIR)/sdk
+RC_DIR = $(SDK_DIR)/rc/rc
+WRES_DIR = $(SDK_DIR)/rc/wres
+WCLIB_DIR = $(DEVDIR)/clib
+WATCOMH = $(DEVDIR)/watcom/h
+CPP_DIR = $(DEVDIR)/cpp
+OBJDIR = bootstrp
+CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
+LIBS = $(addprefix -L,$(LIBDIRS))
+CFLAGS = -O2 -Wall -funsigned-char
+DEFS = -D__386__ -DUNIX -D_WCUNALIGNED="__attribute__((packed))" 
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 vpath %.c $(SRCDIRS)
 
 OBJECTS =
 OBJECTS += ytab.o
-OBJECTS += error.o errprt.o exeobj.o exeres.o exerespe.o
+OBJECTS += errors.o errprt.o exeobj.o exeres.o exerespe.o
 OBJECTS += exeseg.o exeutil.o global.o hash1.o hash2.o
 OBJECTS += keyword.o layer0.o param.o pass2.o rc.o rcio.o
 OBJECTS += rcmem.o rcstr.o ppalloc.o scan.o semaccel.o
 OBJECTS += semantic.o semdiag.o semmenu.o semver.o semtbar.o
 OBJECTS += semraw.o semsingl.o semstr.o swchar.o dbtable.o
-# OBJECTS += preproc.o ppexpr.o ppmacro.o
+OBJECTS += preproc.o ppexpr.o ppmacro.o
 OBJECTS += tmpctl.o autodep.o
 OBJECTS += ldstr.o rcalloc1.o rcalloc0.o sharedio.o semresfl.o
 
@@ -35,7 +49,7 @@ LIBDIRS += $(CPP_DIR)/$(OBJDIR)
 LIBDIRS += /usr/local/lib
 
 LIBS	+= -lrc
-LIBS	+= -lcpp
+#LIBS	+= -lcpp
 LIBS	+= -lwres
 LIBS	+= -lwatcom
 
@@ -52,7 +66,7 @@ WACC_FLAGS = -d -b -s
 DEFS += -D_NO_LIB_PRAGMAS_ -DNATURAL_PACK -DBOOTSTRAP_RC -DSCANDEBUG -DYYDEBUG
 CFLAGS += $(OPT_PIC)
 
-$(OBJDIR)/$(NAME)	: $(OBJDIR)/lib$(LIBNAME).a
+$(OBJDIR)/$(NAME)	: $(OBJDIR) $(OBJDIR)/lib$(LIBNAME).a
 	$(CC) $(CFLAGS) -o $@ $(LIBS)
 
 $(OBJDIR)/lib$(LIBNAME).a : $(GENERATED_FILES) $(OBJECTS)
@@ -68,28 +82,35 @@ $(OBJDIR)/rc.res: rc.rc
 	rc -r -i=/src/cproj/rc/h\;/src/watcom/h rc.rc -fo=$(OBJDIR)/rc.res
 
 $(OBJDIR)/ytab.c: y/rc.y
-	cd $(OBJDIR);wacc $(WACC_FLAGS) $(RC_DIR)/y/rc.y $(RC_DIR)/y/yydriver.c >out
+	cd $(OBJDIR);wyacc $(WACC_FLAGS) $(RC_DIR)/y/rc.y $(RC_DIR)/y/yydriver.c >out
 
 $(OBJDIR)/ytab.gh: $(OBJDIR)/ytab.c
 	rm -f $@
 	ln -s ytab.h $@
 
-$(OBJDIR)/usage.h: usage.sp GNUmakefile
+$(OBJDIR)/usage.h: usage.sp gnumake
 	sed 's/\(.*\)/"\1",/' <$< | sed 's;/;-;' >$@
 
 #
 # Note: "findhash" is compiled from //lang/fe_misc/c/findhash.c
 #
 $(OBJDIR)/weights1.gh $(OBJDIR)/keyword1.gh	: hash/rc1.key
+	$(CC) ../../../fe_misc/c/findhash.c -o $(OBJDIR)/findhash
 	@rm -f $(OBJDIR)/weights1.gh $(OBJDIR)/keyword1.gh
-	cd $(OBJDIR);findhash ../hash/rc1.key >/dev/null; mv weights.gh weights1.gh; mv keywords.gh keyword1.gh
+	cd $(OBJDIR);./findhash ../hash/rc1.key >/dev/null; mv weights.gh weights1.gh; mv keywords.gh keyword1.gh
+	@rm $(OBJDIR)/findhash
 
 $(OBJDIR)/weights2.gh $(OBJDIR)/keyword2.gh	: hash/rc2.key
+	$(CC) ../../../fe_misc/c/findhash.c -o $(OBJDIR)/findhash
 	@rm -f $(OBJDIR)/weights2.gh $(OBJDIR)/keyword2.gh
 	cd $(OBJDIR);findhash ../hash/rc2.key >/dev/null; mv weights.gh weights2.gh; mv keywords.gh keyword2.gh
+	@rm $(OBJDIR)/findhash
 
 clean	:
-	rm -f $(OBJDIR)/*
+	rm -rf $(OBJDIR)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
 
 .PHONY	: dep depend make
 dep depend make:

@@ -37,13 +37,19 @@
 #include "global.h"
 #include "fcntl.h"
 #include "ldstr.h"
+#ifndef UNIX
 #include "process.h"
+#endif
 #include "wreslang.h"
 #include "iortns.h"
 
 static unsigned MsgShift;
 
-#ifdef UNIX
+#ifndef UNIX
+#define UNIX __UNIX__
+#endif
+
+#if defined( UNIX ) && !defined( __WATCOMC__ )
     #undef BOOTSTRAP_RC
     #define BOOTSTRAP_RC
 #endif

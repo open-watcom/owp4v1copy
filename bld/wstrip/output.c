@@ -33,10 +33,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "watcom.h"
 #include "wstrip.h"
 #include "banner.h"
 #include "wressetr.h"

@@ -31,6 +31,9 @@
 
 
 #include <stdlib.h>
+#ifndef UNIX
+#define UNIX __UNIX__
+#endif
 
 #ifndef __NT__
 extern  unsigned char     _DOS_Switch_Char();

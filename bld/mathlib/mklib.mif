@@ -7,8 +7,8 @@ all : $(objfiles) $(libname).lib .symbolic
 $(libname).lib : $(objs) $(libs) .precious
     $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ $(objs) $(libs)
 !ifeq linkage dynamic
-    vi -q -s $(lib_misc_dir)\vi\export.vi tmp.def
-    cat ..\..\..\export.$(processor) tmp.def > tmp2.def
+    vi -q -s $(lib_misc_dir)/vi/export.vi tmp.def
+    cat ../../../export.$(processor) tmp.def > tmp2.def
     sort < tmp2.def > tmp3.def
     uniq tmp3.def > export.def
     @erase tmp.def
@@ -22,18 +22,18 @@ $(libname).lib : $(objs) $(libs) .precious
     wtouch compile.tim
 
 .cpp.obj :
-    *$(cpp) $[@ $(include_c_path) $(build_target) $(cpp_flags)
+    *$(cpp) $[@ -i"$(include_c_path)" $(build_target) $(cpp_flags)
 
 .c.obj :
-    *$(cc) $[@ $(include_c_path) $(build_target) $($^&_flags) $(c_flags)
+    *$(cc) $[@ -i"$(include_c_path)" $(build_target) $($^&_flags) $(c_flags)
 
 .asm.obj :
-    *$(as) $[@ $(include_a_path) $(build_target) $($^&_flags) $(a_flags)
+    *$(as) $[@ -i"$(include_a_path)" $(build_target) $($^&_flags) $(a_flags)
 
-.c   : ..\..\..\c
-.cpp : ..\..\..\cpp
-.asm : ..\..\..\a;$(emu286)\asm;$(emu386)\asm
+.c   : ../../../c
+.cpp : ../../../cpp
+.asm : ../../../a;$(emu286)/asm;$(emu386)/asm
 
-!include $(mathlib_dir)\clean.mif
-!include $(mathlib_dir)\updlib.mif
-!include $(mathlib_dir)\project.mif
+!include $(mathlib_dir)/clean.mif
+!include $(mathlib_dir)/updlib.mif
+!include $(mathlib_dir)/project.mif

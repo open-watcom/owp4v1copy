@@ -100,7 +100,7 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), t
                     flag.this_caused_it = TRUE;
                 } else {
                     flag.exists = TRUE;
-                    if( !IdenticalAutoDepTimes( curr_dep_time, dep_time ) ) {
+                    if( !IdenticalAutoDepTimes( dep_time, curr_dep_time ) ) {
                         flag.out_of_date = TRUE;
                         flag.this_caused_it = TRUE;
                     } else if( (*chk)( stamp, curr_dep_time ) ) {

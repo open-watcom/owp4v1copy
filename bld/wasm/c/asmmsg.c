@@ -55,7 +55,7 @@ void print_include_file_nesting_structure( void );
 //    WngLvls[level] // warning levels associated with warning messages
 //    CompFlags.errout_redirected
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define errout stderr
 #else
 #define errout stdout

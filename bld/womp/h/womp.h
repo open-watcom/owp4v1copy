@@ -60,7 +60,9 @@
 #endif
 
 #if defined( M_I86 ) || defined( __386__ ) || defined ( __AXP__ )
+#ifndef LITTLE_ENDIAN
 #define LITTLE_ENDIAN   1
+#endif
 #define ReadU16(p)      (*(uint_16*)(p))
 #define ReadU32(p)      (*(uint_32*)(p))
 #define ReadS16(p)      (*(int_16*)(p))

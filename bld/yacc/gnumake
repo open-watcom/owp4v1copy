@@ -1,4 +1,7 @@
-include watcom.mk
+vpath %.c c
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -I$(INCDIRS) $< -c -o $@
 
 SOURCE := 
 SOURCE += c
@@ -26,16 +29,17 @@ OBJECTS += gentable.o genfast.o gensupp.o
 
 OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 
-vpath %.c c
-
 LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
 
-LIBS = -lwatcom
+#LIBS = -lwatcom
 
-$(OBJDIR)/yacc	: $(OBJECTS)
+$(OBJDIR)/yacc	: $(OBJDIR) $(OBJECTS)
 	$(CC) -o $@ $(CFLAGS) $(OBJECTS) $(LIBS)
+
+$(OBJDIR) :
+	mkdir $(OBJDIR)
 
 .PHONY	: clean
 clean	:
-	rm -f $(OBJDIR)/*.[ocha] $(OBJDIR)/yacc
+	rm -rf $(OBJDIR)
 

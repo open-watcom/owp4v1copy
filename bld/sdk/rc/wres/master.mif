@@ -7,7 +7,7 @@ proj_name = wres
 name = wres$(libname)
 
 # where to look for various files
-.c : $(wres_dir)\c
+.c : $(wres_dir)/c
 
 .mif: $(mif_path)
 
@@ -77,8 +77,8 @@ extra_c_flags += -s
 
 lbcfile = tmp.lbc
 
-inc_dirs_NT = $(watcom_dir)\h\nt
-inc_dirs = $(watcom_dir)\h;$(wres_dir)\h;$(inc_dirs_$(NT))
+inc_dirs_NT = $(watcom_dir)/h/nt
+inc_dirs = $(watcom_dir)/h;$(wres_dir)/h;$(inc_dirs_$(NT))
 
 !include cproj.mif
 !include defrule.mif
@@ -88,18 +88,17 @@ inc_dirs = $(watcom_dir)\h;$(wres_dir)\h;$(inc_dirs_$(NT))
 
 # explicit rules
 
-all : $(wres_dir)\lib\$(name).lib .SYMBOLIC
+all : ../lib/$(name).lib .SYMBOLIC
         @%null
 
-$(wres_dir)\lib\$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
+../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
         %create $(lbcfile)
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
         $(librarian) -n -b -q $^@ @$(lbcfile)
 !ifdef on_build_machine
-        copy $^@ $(watcom_dir)\lib
+        cp $^@ $(watcom_dir)/lib
 !endif
-        @del $(lbcfile)
+        @rm -f $(lbcfile)
 
 clean : .SYMBOLIC .EXPLICIT
-    -@if exist *.obj @del *.obj
-    -@if exist $(wres_dir)\lib\$(name).lib @del $(wres_dir)\lib\$(name).lib
+    -@rm -f *.obj $(wres_dir)/lib/$(name).lib

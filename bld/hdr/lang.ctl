@@ -2,10 +2,10 @@
 # ======================
 
 set PROJDIR=<CWD>
-set reldir=<relroot>\rel2
+set reldir=<relroot>/rel2
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .

@@ -86,7 +86,9 @@ void IDEDLL_EXPORT IDEStopRunning( void )
 
 void IDEDLL_EXPORT IDEFreeHeap( void )
 {
+#ifdef __WATCOMC__
     _heapshrink();
+#endif
 }
 
 void IDEDLL_EXPORT IDEFiniDLL( IDEDllHdl hdl )

@@ -45,6 +45,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
+#include "watcom.h"
 #include "demangle.h"
 
 #ifndef _WCI86FAR
