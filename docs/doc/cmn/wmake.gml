@@ -794,6 +794,8 @@ specified command.
 The terminology employed here is used by S.I.Feldman of Bell
 Laboratories in
 .us Make - A Program for Maintaining Computer Programs.
+http://www.softlab.ntua.gr/facilities/documentation/unix/docs/make.txt
+has a copy of this seminal article.
 Confusion often arises from the use of the word "dependent".
 In this context, it means "a subordinate part".
 In the example, "LEDGER.DAT" is a subordinate part of the report
@@ -1001,6 +1003,55 @@ then the file "YEAR.LST" would be updated.
 As &maksname reads the rules in "MAKEFILE", it discovers that updating
 "YEAR.LST" involves updating "SALES.DAT".
 The update sequence is similar to the previous example.
+.*
+.section Command Lists
+.*
+A command list is a sequence of one or more commands.
+Each command is preceded by one or more spaces or tabs.
+Command lists may also be used to construct inline files "on the fly".
+Macros substitute in command lists and in inline files.
+An inline file is introduced by "<<" in a command in a command list.
+Data to insert into that file is placed (left-justified) in the command list.
+The data is terminated by "<<" in the first column.
+It is not possible to place a line which starts "<<" in an inline file.
+More than one inline file may be created in a command.
+Data for each is placed in order of reference in the command.
+.pc
+In building the Open Watcom system, it is sometimes necessary to do some text
+substitution with a program called vi. This needs a file of instructions.
+The following simplifies an example used to build Open Watcom
+so that inline files may be shown.
+Without inline files, this is done as:
+.millust begin
+$(dllname).imp : $(dllname).lbc ../../trimlbc.vi
+    cp $(dllname).lbc $(dllname).imp
+    $(vi) -s ../../trimlbc.vi $(dllname).imp
+
+where trimlbc.vi consists of
+set magic
+set magicstring = ()
+atomic
+%s/\.dll'/'/
+%s/^(\+\+')(.*)('\.'.*')\.[0-9]+$/\1\2\3..'\2'/
+x
+.millust end
+A doubled "$" to produce a single dollar is notable when an inline file is used:
+.millust begin
+$(dllname).imp : $(dllname).lbc
+    cp $(dllname).lbc $(dllname).imp
+    $(vi) -s << $(dllname).imp
+set magic
+set magicstring = ()
+atomic
+%s/\.dll'/'/
+%s/^(\+\+')(.*)('\.'.*')\.[0-9]+$$/\1\2\3..'\2'/
+x
+<<
+.millust end
+A filename may follow a "<<" on a command line to cause a file with that
+name to be created. (Otherwise, '&makcmdup' chooses a name.)
+"keep" or "nokeep" may follow a terminating "<<" to show what to do
+with the file after usage. The default is "nokeep" which zaps it.
 .*
 .section Final Commands (.AFTER)
 .*
@@ -4452,34 +4503,194 @@ FILE mouse.obj
 &maksname supports nine internal commands:
 .autopoint
 .point
-.ix '&makcmdup internal commands' '%null'
-.id %null
-.point
-.ix '&makcmdup internal commands' '%stop'
-.id %stop
-.point
-.ix '&makcmdup internal commands' '%quit'
-.id %quit
-.point
 .ix '&makcmdup internal commands' '%abort'
 .id %abort
 .point
-.ix '&makcmdup internal commands' '%create'
-.id %create
-.point
-.ix '&makcmdup internal commands' '%write'
-.id %write
-.point
 .ix '&makcmdup internal commands' '%append'
 .id %append
+.point
+.ix '&makcmdup internal commands' '%create'
+.id %create
 .point
 .ix '&makcmdup internal commands' '%erase'
 .id %erase
 .point
 .ix '&makcmdup internal commands' '%make'
 .id %make
+.point
+.ix '&makcmdup internal commands' '%null'
+.id %null
+.point
+.ix '&makcmdup internal commands' '%quit'
+.id %quit
+.point
+.ix '&makcmdup internal commands' '%stop'
+.id %stop
+.point
+.ix '&makcmdup internal commands' '%write'
+.id %write
 .endpoint
 .np
+.ix '&makcmdup internal commands' '%abort'
+.ix '&makcmdup internal commands' '%quit'
+The
+.id %abort
+and
+.id %quit
+internal commands terminate execution of &maksname and return to
+the operating system shell:
+.id %abort
+sets a non-zero exit code;
+.id %quit
+sets a zero exit code.
+.millust begin
+#
+# %abort and %quit example
+#
+done_enough :
+        %quit
+
+suicide :
+        %abort
+.millust end
+.np
+The
+.id %append,
+.id %create,
+.id %erase,
+and
+.id %write
+internal commands allow &makcmdup to generate files under makefile
+control.
+This is useful for files that have contents that depend on makefile
+contents.
+Through the use of macros and the "for" command, &maksname becomes a
+very powerful tool in maintaining lists of files for other programs.
+.np
+The
+.id %append
+internal command appends a text line to the end of a file (which
+is created if absent) while the
+.id %write
+internal command creates or truncates a file and writes one line of
+text into it.
+Both commands have the same form, namely:
+.millust begin
+%append <file> <text>
+%write <file> <text>
+.millust end
+.pc
+where
+.id <file>
+is a file specification and
+.id <text>
+is arbitrary text.
+.np
+The
+.id %create
+internal command will create or truncate a file so that the file does
+not contain any text while the
+.id %erase
+internal command will delete a file.
+Both commands have the same form, namely:
+.millust begin
+%create <file>
+%erase <file>
+.millust end
+.pc
+where
+.id <file>
+is a file specification.
+.np
+Full macro processing is performed on these internal commands so the
+full power of &makcmdup can be used.
+The following example illustrates a common use of these internal
+commands.
+.ix '&makcmdup internal commands' '%append'
+.ix '&makcmdup internal commands' '%create'
+.ix '&makcmdup internal commands' '%erase'
+.ix '&makcmdup internal commands' '%write'
+.millust begin
+#
+# %append, %create, %erase, and %write example
+#
+!include objdef.mif
+
+plot&exe : $(objs) plot.lnk
+        &lnkcmd @plot
+
+plot.lnk : objdef.mif
+        %create $^@
+        %append $^@ NAME $^&
+        # Next line equivalent to previous two lines.
+        %create $^@ NAME $^&
+        %append $^@ DEBUG all
+        for %i in ($(objs)) do %append $^@ FILE %i
+
+clean : .SYMBOLIC
+        %erase plot.lnk
+.millust end
+.pc
+The above code demonstrates a valuable technique that can generate
+directive files for &lnkcmdup, &libcmdup, and other utilities.
+.np
+The
+.id %make
+internal command permits the updating of a specific target and
+has the form:
+.millust begin
+%make <target>
+.millust end
+.pc
+where
+.id <target>
+is a target in the makefile.
+.ix '&makcmdup internal commands' '%make'
+.millust begin
+#
+# %make example
+#
+!include objdef.mif
+
+plot&exe : $(objs)
+        %make plot.lnk
+        &lnkcmd @plot
+
+plot.lnk : objdef.mif
+        %create $^@
+        %append $^@ NAME $^&
+        %append $^@ DEBUG all
+        for %i in ($(objs)) do %append $^@ FILE %i
+.millust end
+There seem to be other ways of doing the same thing.
+Among them is putting plot.lnk into the list of dependencies:
+.millust begin
+#
+# %make counter-example
+#
+!include objdef.mif
+
+plot&exe : $(objs) plot.lnk
+        &lnkcmd @plot
+
+plot.lnk : objdef.mif
+        %create $^@
+        %append $^@ NAME $^&
+        %append $^@ DEBUG all
+        for %i in ($(objs)) do %append $^@ FILE %i
+.millust end
+and using a make variable:
+.millust begin
+#
+# %make counter-example
+#
+!include objdef.mif
+
+plot&exe : $(objs)
+        &lnkcmd NAME $^& DEBUG all FILE { $(objs) }
+.millust end
+.np
+.ix '&makcmdup internal commands' '%null'
 The
 .id %null
 internal command does absolutely nothing.
@@ -4512,11 +4723,12 @@ Through the use of the
 .id %null
 internal command, multiple application makefiles may be produced that
 are quite readable and maintainable.
+.np
 .ix '&makcmdup internal commands' '%stop'
 The
 .id %stop
 internal command will temporarily suspend makefile processing and print
-out a message asking whether the Makefile processing should continue.
+out a message asking whether Makefile processing should continue.
 &maksname will wait for either the "y" key (indicating that the Makefile
 processing should continue) or the "n" key.
 If the "n" key is pressed, makefile processing will stop.
@@ -4527,137 +4739,19 @@ The
 .id %stop
 internal command is very useful for debugging makefiles but it may be
 used also to develop interactive makefiles.
-.ix '&makcmdup internal commands' '%quit'
-The
-.id %quit
-internal command will terminate execution of &maksname and return to
-the operating system shell with an exit code of zero.
-.ix '&makcmdup internal commands' '%abort'
-The
-.id %abort
-internal command is identical to
-.id %quit
-except that a non-zero exit code is returned by &makcmdup..
+.millust begin
+#
+# %stop example
+#
+all : appl1&exe .SYMBOLIC
+        %null
+
+appl1&exe : (dependents ...)
+        @echo Are you feeling lucky? Punk!
+        @%stop
+        (commands)
+.millust end
 .np
-The
-.id %create,
-.id %write,
-.id %append,
-and
-.id %erase
-internal commands allow &makcmdup to generate files under makefile
-control.
-This is useful for files that have contents that depend on makefile
-contents.
-Through the use of macros and the "for" command, &maksname becomes a
-very powerful tool in maintaining lists of files for other programs.
-The
-.id %create
-internal command will create or truncate a file so that the file does
-not contain any text.
-The
-.id %create
-internal command has the form:
-.millust begin
-%create <file>
-.millust end
-.pc
-where
-.id <file>
-is a file specification.
-The
-.id %write
-internal command will create or truncate a file and write one line of
-text into it.
-The
-.id %append
-internal command will append a text line to the end of a file (which
-will be created if it does not exist).
-The
-.id %erase
-internal command will delete a file.
-The
-.id %erase
-internal command has the form:
-.millust begin
-%erase <file>
-.millust end
-.pc
-where
-.id <file>
-is a file specification.
-The
-.id %write
-and
-.id %append
-internal commands have the same form, namely:
-.millust begin
-%write <file> <text>
-%append <file> <text>
-.millust end
-.pc
-where
-.id <file>
-is a file specification and
-.id <text>
-is arbitrary text.
-Full macro processing is performed on these internal commands so the
-full power of &makcmdup can be used.
-The following example illustrates a common use of these internal
-commands.
-.ix '&makcmdup internal commands' '%create'
-.ix '&makcmdup internal commands' '%append'
-.millust begin
-#
-# %create %append %erase example
-#
-!include objdef.mif
-
-plot&exe : $(objs) plot.lnk
-        &lnkcmd @plot
-
-plot.lnk : objdef.mif
-        %create $^@
-        %append $^@ NAME $^&
-        %append $^@ DEBUG all
-        for %i in ($(objs)) do %append $^@ FILE %i
-
-clean : .SYMBOLIC
-        %erase plot.lnk
-.millust end
-.pc
-The above code demonstrates a valuable technique that can generate
-directive files for &lnkcmdup, &libcmdup, and other utilities.
-.np
-The
-.id %make
-internal command permits the updating of a specific target.
-The
-.id %make
-internal command has the form:
-.millust begin
-%make <target>
-.millust end
-.pc
-where
-.id <target>
-is a target in the makefile.
-.millust begin
-#
-# %make example
-#
-!include objdef.mif
-
-plot&exe : $(objs)
-        %make plot.lnk
-        &lnkcmd @plot
-
-plot.lnk : objdef.mif
-        %create $^@
-        %append $^@ NAME $^&
-        %append $^@ DEBUG all
-        for %i in ($(objs)) do %append $^@ FILE %i
-.millust end
 .*
 .section Compatibility Between &makname and UNIX Make
 .*
