@@ -15,6 +15,8 @@ name = bdiff
 !include defrule.mif
 !include deftarg.mif
 
+!include wres.mif
+
 .c : ../c
 
 inc_dirs = ../h
@@ -25,12 +27,6 @@ extra_c_flags_386 = -fpc
 extra_l_flags = name $^@ op map
 
 .ERASE
-
-!ifeq host_CPU 386
-wreslib=$(wres_dir)/lib/wresf.lib
-!else
-wreslib=$(wres_dir)/lib/wresl.lib
-!endif
 
 all : .SYMBOLIC bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
     @%null
@@ -45,7 +41,7 @@ WBJS = dopatchw.obj msg.obj myio.obj wcptchio.obj wcpatch.obj bdiffmem.obj wbdif
 wcpatch.exe : $(WBJS) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
-        @%append $^&.lnk lib $(wreslib)
+        @%append $^&.lnk lib $(wres_lib)
         @for %i in ($(WBJS)) do @%append $^&.lnk file %i
         $(linker) @$^&.lnk
 
@@ -57,7 +53,7 @@ YBJS = dopatchp.obj msg.obj myio.obj oldfile.obj wpatchio.obj wpatch.obj bdiffme
 wpatch.exe : $(YBJS) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
-        @%append $^&.lnk lib $(wreslib)
+        @%append $^&.lnk lib $(wres_lib)
         @for %i in ($(YBJS)) do @%append $^&.lnk file %i
         $(linker) @$^&.lnk
 
@@ -69,7 +65,7 @@ OBJ = bpatch.obj dopatchp.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.o
 bpatch.exe : bpatch.res $(OBJ) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
-        @%append $^&.lnk lib $(wreslib)
+        @%append $^&.lnk lib $(wres_lib)
         @for %i in ($(OBJ)) do @%append $^&.lnk file %i
         $(linker) @$^&.lnk
         wstrip -q -a -r $^@ . bpatch.res
@@ -82,7 +78,7 @@ XBJ = bdump.obj dopatchx.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.ob
 bdump.exe : bpatch.res $(XBJ) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
-        @%append $^&.lnk lib $(wreslib)
+        @%append $^&.lnk lib $(wres_lib)
         @for %i in ($(XBJ)) do @%append $^&.lnk file %i
         $(linker) @$^&.lnk
         wstrip -q -a -r $^@ . bpatch.res
@@ -95,7 +91,7 @@ DBJ = bdiff.obj bdiffmem.obj dopatchd.obj msg.obj myio.obj
 bdiff.exe : $(DBJ) bdiff.res $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
-        @%append $^&.lnk lib $(wreslib)
+        @%append $^&.lnk lib $(wres_lib)
         @for %i in ($(DBJ)) do @%append $^&.lnk file %i
         $(linker) @$^&.lnk
         wstrip -q -a -r $^@ . bdiff.res
