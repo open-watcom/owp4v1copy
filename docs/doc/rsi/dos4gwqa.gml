@@ -43,18 +43,17 @@ Compatibility
 Here are the various ways you may contact Tenberry Software for
 technical support.
 .millust begin
-Voice:          (508)653-6006
-Fax:            (508)655-2753
-Internet:       dos4gw@ratsys.com
-CompuServe:     73667,1753
-WATCOM BBS:     &dos4gprd Professional area
-Mail:           Tenberry Software, Inc.
-                220 N. Main St.
-                Natick, MA 01760
-                USA
+WWW:    http://www.tenberry.com/dos4g/
+Email:  4gwhelp@tenberry.com
+Phone:  1.480.767.8868
+Fax:    1.480.767.8709
+Mail:   Tenberry Software, Inc.
+        PO Box 20050
+        Fountain Hills, Arizona
+        U.S.A  85269-0050
 .millust end
-.np
 .bi PLEASE GIVE YOUR SERIAL NUMBER WHEN YOU CONTACT TENBERRY.
+.np
 .*
 .keep
 .note 1b. When to contact &company, when to contact Tenberry.
@@ -103,26 +102,16 @@ The &dos4gprd documentation from &company is the primary reference for
 .ix 'DPMI specification'
 Another useful reference is the DPMI specification.
 In the past, the DPMI specification could be obtained free of charge
-by contacting Intel Literature JP26 at 800-548-4725 or by writing
-to the address below.
+by contacting Intel Literature.
 We have been advised that the DPMI specification is no longer
 available in printed form.
-.illust begin
-Intel Literature JP26
-3065 Bowers Avenue
-P.O. Box 58065
-Santa Clara, California
-U.S.A. 95051-8065
-.illust end
 .np
-However, the DPMI 1.0 specification can be obtained from the Intel ftp
-site.
-Here is the URL.
+However, the DPMI 1.0 specification can be obtained at:
 .code begin
-ftp://ftp.intel.com/pub/IAL/software_specs/dpmiv1.zip
+http://www.delorie.com/djgpp/doc/dpmi/
 .code end
 .pc
-This ZIP file contains a Postscript version of the DPMI 1.0 specification.
+Online HTML as well as a downloadable archive are provided.
 .endnote
 .*
 .section Differences Within the DOS/4G Product Line
