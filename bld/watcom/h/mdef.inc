@@ -113,7 +113,7 @@ codeptr         macro   p1,p2
                 ifb <p2>
                 extrn p1 : dword
                 else
-                extrn p1,p2 : dword
+                extrn "&p1",p2 : dword
                 endif
                 endm
 
@@ -172,7 +172,7 @@ xdefp           macro   p1,p2
                 ifb <p2>
                 public p1
                 else
-                public p1,p2
+                public "&p1",p2
                 endif
                 endm
 
@@ -180,7 +180,7 @@ xref            macro   p1,p2
                 ifb <p2>
                 extrn `p1` : far
                 else
-                extrn p1,`p2` : far
+                extrn "&p1",`p2` : far
                 endif
                 endm
 
@@ -205,13 +205,13 @@ codeptr         macro   p1,p2
                     ifb <p2>
                     extrn p1 : dword
                     else
-                    extrn p1,p2 : dword
+                    extrn "&p1",p2 : dword
                     endif
                 else
                     ifb <p2>
                     extrn p1 : word
                     else
-                    extrn p1,p2 : word
+                    extrn "&p1",p2 : word
                     endif
                 endif
                 endm
@@ -266,7 +266,7 @@ xdefp           macro   p1,p2
                 ifb <p2>
                 public p1
                 else
-                public p1,p2
+                public "&p1",p2
                 endif
                 endm
 
@@ -274,7 +274,7 @@ xref            macro   p1,p2
                 ifb <p2>
                 extrn `p1` : near
                 else
-                extrn p1,`p2` : near
+                extrn "&p1",`p2` : near
                 endif
                 endm
 
