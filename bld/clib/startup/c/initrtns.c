@@ -66,7 +66,7 @@ typedef void (*pfn)(void);
 typedef void (_WCI86FAR * _WCI86FAR fpfn)(void);
 typedef void (_WCI86NEAR * _WCI86NEAR npfn)(void);
 
-#if defined(__AXP__) || defined(__PPC__)
+#if defined(__AXP__) || defined(__PPC__) || defined(__SNAP__)
     #define __GETDS()
     #define save_ds()
     #define restore_ds()
