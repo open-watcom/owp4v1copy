@@ -82,8 +82,6 @@ extern const char       *FingerMsg[];
 File_Info               AsmFiles;       // files information
 pobj_state              pobjState;      // object file information for WOMP
 
-#define IS_EQ_CHAR( ch ) ( (ch)=='=' || (ch)=='#' )
-
 struct  option {
     char        *option;
     unsigned    value;
@@ -103,12 +101,12 @@ static char *OptParm;
 
 extern  unsigned char    _DOS_Switch_Char();
 #pragma aux     _DOS_Switch_Char = \
-                        0x52            /* push dx */\
-                        0xb4 0x37       /* mov ah,37h    */\
-                        0xb0 0x00       /* mov al,00h    */\
-                        0xcd 0x21       /* int 21h       */\
-                        0x88 0xd0       /* mov al,dl     */\
-                        0x5a            /* pop dx        */;
+    0x52            /* push dx */\
+    0xb4 0x37       /* mov ah,37h    */\
+    0xb0 0x00       /* mov al,00h    */\
+    0xcd 0x21       /* int 21h       */\
+    0x88 0xd0       /* mov al,dl     */\
+    0x5a            /* pop dx        */;
 #endif
 
 unsigned char _dos_switch_char()
@@ -135,6 +133,54 @@ static char *CopyOfParm(void)
     memcpy( ParamBuf, OptParm, len );
     ParamBuf[ len ] = '\0';
     return( ParamBuf );
+}
+
+static void StripQuotes( char *fname )
+/*******************************************/
+{
+    char *s;
+    char *d;
+
+    if( *fname == '"' ) {
+        // string will shrink so we can reduce in place
+        d = fname;
+        for( s = d + 1; *s && *s != '"'; ++s ) {
+            if( *s == '\0' )break;
+            if( s[0] == '\\' && s[1] == '"' ) {
+                ++s;
+            }
+            *d++ = *s;
+        }
+        *d = '\0';
+    }
+}
+
+static char *GetAFileName(void)
+/*******************************************/
+{
+    char *fname;
+    fname = CopyOfParm();
+    StripQuotes( fname );
+    return( fname );
+}
+
+static void SetTargName( char *name, unsigned len )
+/*******************************************/
+{
+    char        *p;
+
+    if( Options.build_target != NULL ) {
+        AsmFree( Options.build_target );
+        Options.build_target = NULL;
+    }
+    if( name == NULL || len == 0 ) return;
+    Options.build_target = AsmAlloc( len + 1 );
+    p = Options.build_target;
+    while( len != 0 ) {
+        *p++ = toupper( *name++ );
+        --len;
+    }
+    *p++ = '\0';
 }
 
 static void SetCPU(void)
@@ -227,13 +273,13 @@ static void SetFPU(void)
     switch( OptValue ) {
     case 'i':
     case '7':
-                if(OptValue == 'i') {
+        if(OptValue == 'i') {
             Options.floating_point = DO_FP_EMULATION;
             add_constant("__FPI__");
-                } else {
+        } else {
             Options.floating_point = NO_FP_EMULATION;
             add_constant("__FPI87__");
-                }
+        }
         switch( Code->info.cpu & P_CPU_MASK ) {
         case P_286:
             token =  T_DOT_287;
@@ -268,131 +314,6 @@ static void SetFPU(void)
         break;
     }
     cpu_directive( token );
-}
-
-static void StripQuotes( char *fname )
-/*******************************************/
-{
-    char *s;
-    char *d;
-
-    if( *fname == '"' ) {
-        // string will shrink so we can reduce in place
-        d = fname;
-        for( s = d + 1; *s && *s != '"'; ++s ) {
-            if( *s == '\0' )break;
-            if( s[0] == '\\' && s[1] == '"' ) {
-                ++s;
-            }
-            *d++ = *s;
-        }
-        *d = '\0';
-    }
-}
-
-static char *GetAFileName(void)
-/*******************************************/
-{
-    char *fname;
-    fname = CopyOfParm();
-    StripQuotes( fname );
-    return( fname );
-}
-
-static void SetTargName( char *name, unsigned len )
-/*******************************************/
-{
-    char        *p;
-
-    if( Options.build_target != NULL ) {
-        AsmFree( Options.build_target );
-        Options.build_target = NULL;
-    }
-    if( name == NULL || len == 0 ) return;
-    Options.build_target = AsmAlloc( len + 1 );
-    p = Options.build_target;
-    while( len != 0 ) {
-        *p++ = toupper( *name++ );
-        --len;
-    }
-    *p++ = '\0';
-}
-
-static void Ignore(void) {};
-
-static void Set_BT(void)
-/*******************************************/
-{
-    SetTargName( OptParm,  OptScanPtr - OptParm );
-}
-
-static void Set_C(void)
-/*******************************************/
-{
-    Options.output_data_in_code_records = FALSE;
-}
-
-static void Set_D(void)
-/*******************************************/
-{
-    Options.debug_flag = (OptValue != 0) ? TRUE : FALSE;
-}
-
-#ifdef DEBUG_OUT
-static void Set_D6(void)
-/*******************************************/
-{
-    Options.debug = TRUE;
-    DebugMsg(( "debugging output on \n" ));
-}
-#endif
-
-static void DefineMacro(void)
-/*******************************************/
-{
-    add_constant( CopyOfParm() );
-}
-
-static void SetErrorLimit(void)
-/*******************************************/
-{
-    Options.error_limit = OptValue;
-}
-
-static void SetStopEnd(void)
-/*******************************************/
-{
-    Options.stop_at_end = TRUE;
-}
-
-static void Set_FR(void)
-/*******************************************/
-{
-    get_fname( GetAFileName(), ERR );
-}
-
-static void Set_FI(void)
-/*******************************************/
-{
-    InputQueueFile( GetAFileName() );
-}
-
-static void Set_FO(void)
-/*******************************************/
-{
-    get_fname( GetAFileName(), OBJ );
-}
-
-static void SetInclude(void)
-/*******************************************/
-{
-    AddStringToIncludePath( GetAFileName() );
-}
-
-static void Set_S(void)
-/*******************************************/
-{
-    Options.sign_value = TRUE;
 }
 
 static void SetMemoryModel(void)
@@ -437,41 +358,45 @@ static void SetMemoryModel(void)
     return;    
 }
 
-static void Set_N(void)
-/*******************************************/
-{
-    set_some_kinda_name( OptValue, CopyOfParm() );
-}
+static void Ignore(void) {};
 
-static void Set_O(void)
-/*******************************************/
-{
-    Options.allow_c_octals = TRUE;
-}
+static void Set_BT(void) { SetTargName( OptParm,  OptScanPtr - OptParm ); }
 
-static void Set_ZQ(void)
-/*******************************************/
-{
-    Options.quiet = TRUE;
-}
+static void Set_C(void) { Options.output_data_in_code_records = FALSE; }
 
-static void Set_WE(void)
-/*******************************************/
-{
-    Options.warning_error = TRUE;
-}
+static void Set_D(void) { Options.debug_flag = (OptValue != 0) ? TRUE : FALSE; }
 
-static void Set_WX(void)
-/*******************************************/
-{
-    Options.warning_level = 4;
-}
+static void DefineMacro(void) { add_constant( CopyOfParm() ); }
 
-static void SetWarningLevel(void)
-/*******************************************/
-{
-    Options.warning_level = OptValue;
-}
+static void SetErrorLimit(void) { Options.error_limit = OptValue; }
+
+static void SetStopEnd(void) { Options.stop_at_end = TRUE; }
+
+static void Set_FR(void) { get_fname( GetAFileName(), ERR ); }
+
+static void Set_FI(void) { InputQueueFile( GetAFileName() ); }
+
+static void Set_FO(void) { get_fname( GetAFileName(), OBJ ); }
+
+static void SetInclude(void) { AddStringToIncludePath( GetAFileName() ); }
+
+static void Set_S(void) { Options.sign_value = TRUE; }
+
+static void Set_N(void) { set_some_kinda_name( OptValue, CopyOfParm() ); }
+
+static void Set_O(void) { Options.allow_c_octals = TRUE; }
+
+static void Set_ZQ(void) { Options.quiet = TRUE; }
+
+static void Set_WE(void) { Options.warning_error = TRUE; }
+
+static void Set_WX(void) { Options.warning_level = 4; }
+
+static void SetWarningLevel(void) { Options.warning_level = OptValue; }
+
+#ifdef DEBUG_OUT
+static void Set_D6(void) { Options.debug = TRUE; DebugMsg(( "debugging output on \n" )); }
+#endif
 
 static struct option const cmdl_options[] = {
     { "0$",     0,        SetCPU },
@@ -997,9 +922,9 @@ static void set_some_kinda_name( char token, char *name )
     default:
         return;
     }
-        if( *tmp != NULL ) {
-                AsmFree(*tmp);
-        }
+    if( *tmp != NULL ) {
+        AsmFree(*tmp);
+    }
     *tmp = AsmAlloc( len );
     strcpy( *tmp, name );
     return;
