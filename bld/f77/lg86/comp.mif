@@ -50,6 +50,19 @@ c_opts +=-d__MT__
 c_opts +=-d__NEC__
 !endif
 
+!ifeq release 0
+c_opts += -d2
+!else
+c_opts += -d1 -DNDEBUG
+!endif
+compile = $(comp) $(c_opts) $(inc_dirs) $[*
+
+!ifeq release 0
+asm_opts += -d1
+!else
+asm_opts += -DNDEBUG
+!endif
+
 wlib_opts = -b-n
 !ifeq release 1
 wlib_opts += -s-t
@@ -68,13 +81,6 @@ wlib_opts += -s-t
 !endif
 .asm.obj:
     $(as) $[* -fo=$^. $(asm_opts)
-
-!ifeq release 0
-c_opts += -d2
-!else
-c_opts += -d1
-!endif
-compile = $(comp) $(c_opts) $(inc_dirs) $[*
 
 !ifdef in_sa_library
 .c: $(f77_dir)/lg86/rt/c;$(f77_dir)/lg86/c;$(f77_dir)/lg86/cp/c;$(f77_dir)/cg86/rt/c;$(f77_dir)/rt

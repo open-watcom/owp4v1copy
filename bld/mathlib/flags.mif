@@ -116,6 +116,9 @@ a_flags += $(extra_a_flags)
 !ifeq release 0
 c_dbg_flags = -d2
 a_dbg_flags = -d1
+!else
+c_dbg_flags = -DNDEBUG
+a_dbg_flags = -DNDEBUG
 !endif
 
 !include $(mathlib_dir)/include.mif

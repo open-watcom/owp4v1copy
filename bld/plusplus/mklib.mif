@@ -103,8 +103,10 @@ asm_flags = -zq-w4 $(asm_model) -fo=.obj -I"$(watcom_dir)/h"
 
 !ifeq release 0
 comp_flags += -d2
+asm_flags += -d1
 !else
 comp_flags += -d1 -DNDEBUG
+asm_flags += -DNDEBUG
 !endif
 
 !ifeq linkage dynamic

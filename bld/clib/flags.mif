@@ -229,6 +229,9 @@ a_flags += -d__MT__
 !ifeq release 0
 c_dbg_flags = -d2
 a_dbg_flags = -d1
+!else
+c_dbg_flags = -DNDEBUG
+a_dbg_flags = -DNDEBUG
 !endif
 
 !include $(clib_dir)/bt.mif
