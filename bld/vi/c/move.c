@@ -118,7 +118,8 @@ static int goToLine( linenum lineno, int relcurs )
             }
         }
         if( TopOfPage < 1 ) {
-            assert( diff < 0 );
+            assert( diff <= 0 ); // < -> <= W.Briscoe 20031003 to avoid debug build failure of
+            // C:\watcom\source\docs\nt) wmake -h -f ..\mif\master.mif hbook=wccerrs dotarget=nt
             diff += ( 1 - TopOfPage );
             TopOfPage = 1;
         }
