@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS MODULE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definitions for regular expression processor built into aui.
 *
 ****************************************************************************/
 
@@ -39,8 +38,12 @@
 #define MAGICSTR SrchIgnoreMagic
 #define META SrchMetaChars
 extern char SrchIgnoreMagic[];
+#ifdef __WATCOMC__
 extern char near SrchMetaChars[];
-extern void *WndAlloc(unsigned int );
+#else
+extern char SrchMetaChars[];
+#endif
+extern void *WndAlloc( unsigned int );
 #define STANDALONE_RX
 #ifdef bool
     #define BOOL_DEFINED
