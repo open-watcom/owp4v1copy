@@ -25,10 +25,10 @@ $(libname).lib : $(objs) $(libs) .precious
     *$(cpp) $[@ -i"$(include_c_path)" $(build_target) $(cpp_flags)
 
 .c.obj :
-    *$(cc) $[@ -i"$(include_c_path)" $(build_target) $($^&_flags) $(c_flags)
+    *$(cc) $[@ -i"$(include_c_path)" $(build_target) $(c_flags) $($^&_flags)
 
 .asm.obj :
-    *$(as) $[@ $(include_a_path) $(build_target) $($^&_flags) $(a_flags)
+    *$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $($^&_flags)
 
 .c   : ../../../c
 .cpp : ../../../cpp

@@ -152,3 +152,16 @@
 
 !include $(mathlib_dir)/objlist.mif
 !include $(mathlib_dir)/libs.mif
+
+atan87__flags=-fpi87
+exp87__flags=-fpi87
+log87__flags=-fpi87
+sin87__flags=-fpi87
+tan87__flags=-fpi87
+sqrt87__flags=-fpi87
+atan387__flags=-fpi87
+exp387__flags=-fpi87
+log387__flags=-fpi87
+sin387__flags=-fpi87
+tan387__flags=-fpi87
+sqrt387__flags=-fpi87
