@@ -749,22 +749,25 @@ static orl_return       doSEGDEF( omf_file_handle ofh, omf_rectyp typ )
 
     if( ( datum >> 5 ) == ALIGN_ABS ) {
         if( ofh->status & OMF_STATUS_EASY_OMF ) {
-            frame = getUWord( buffer, 4 );
+            // FIXME !!! it looks bugy, frame should be 16-bit and offset ? 
+            // I can not found any information about it
+            frame = getUWord( buffer, 2 );
         } else {
             frame = getUWord( buffer, 2 );
         }
         buffer += 3;
         len -= 3;
-        if( len < ( wordsize + 3 ) ) return( ORL_ERROR );
+        if( len < ( wordsize + 3 ) ) {
+            return( ORL_ERROR );
+        }
     } else {
         frame = ORL_SEC_NO_ABS_FRAME;
     }
 
     if( datum & 0x02 ) {
         max = 1;
-    } else {
-        size = getUWord( buffer, wordsize );
     }
+    size = getUWord( buffer, wordsize );
     buffer += wordsize;
     len -= wordsize;
 
