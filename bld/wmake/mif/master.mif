@@ -1,8 +1,6 @@
 #
 #   The master file for creating wmake.
 #
-#   Winter90    D.J.Gaudet      Re-Implementation of WMAKE
-#
 
 ##############################################################################
 
@@ -143,10 +141,10 @@ wmake.res : ..\h\wmake.rc mrcmsg.h usage.rc usagej.rc
         $(rc) /bt=windows /zk0 /q /r /fo=$^@ $[@
 
 usage.rc : ..\h\usage.sp
-        wsplice -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\""..\h\usage.sp usage.rc
+        wsplice -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ..\h\usage.sp usage.rc
 
 usagej.rc : ..\h\usage.sp
-        wsplice -kIS_RC -kJAPANESE -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\""..\h\usage.sp usagej.rc
+        wsplice -kIS_RC -kJAPANESE -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ..\h\usage.sp usagej.rc
 
 usageend.h : usage.rc usagej.rc
         wsplice usage.rc -o "%n%n%n%n" usage.rcp
@@ -160,7 +158,7 @@ usageend.h : usage.rc usagej.rc
 # make the final program any larger.  Oh well - the end justifying the
 # means, I suppose. CSK
 #       wsplice -k$(OS) -kENGLISH -f "%s"..\h\usage.sp -o "%n%n%n%n%n%n%n%n%n%n" usage.h
-#       wsplice -f "$#define USAGE_LN_%$# (USAGE_BASE+%$#)%+"usage.h usage.h
+#       wsplice -f "$#define USAGE_LN_%$# (USAGE_BASE+%$#)%+" usage.h usage.h
 #       wsplice -f "%s%+"usage.h -o "$#define USAGE_LAST (USAGE_BASE+%$#)" usage.h
 
 
