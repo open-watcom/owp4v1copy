@@ -80,13 +80,13 @@ extra_cflags   = -dWIN32 -d_WIN32
 .c: $(posix_dir)/misc;$(lang_root)/src/startup
 !endif
 
-.before:
+.before
 !ifndef make_lib
 extra_c_flags = -fo="$(obj_dir)/.obj" -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)\src\$(name);$(posix_dir)\h;$(inc_path)"
 !ifdef __MSDOS__
-        @!if not exist $(obj_dir)\nul md $(obj_dir)     # for dos
+        @if not exist $(obj_dir) md $(obj_dir)    # for dos
 !else
-        @!if not exist $(obj_dir) md $(obj_dir)         # for os2
+        @if not exist $(obj_dir) md $(obj_dir)    # for os2
 !endif
 !else
 extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/.$(model)bj" -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)/h;$(inc_path)"
