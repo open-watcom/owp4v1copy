@@ -20,6 +20,7 @@ help &
 imul &
 j2 &
 jmp &
+jmptst &
 jnk &
 label &
 new &
@@ -71,7 +72,6 @@ timer
 
 dev_objs = &
 data &
-jmptst &
 old2 &
 set386 &
 setjmp &

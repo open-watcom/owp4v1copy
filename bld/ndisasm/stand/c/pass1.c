@@ -222,7 +222,7 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                                 }
                             }
                             value = decoded.op[i].value;
-                            if( value < 0 || value >= ORLSecGetSize( r_entry->label->shnd ) ) {
+                            if( value < 0 || value > ORLSecGetSize( r_entry->label->shnd ) ) {
                                 // can't fold it into the label position - BBB Oct 28, 1996
                                 value = 0;
                                 r_entry->no_val = 0;
