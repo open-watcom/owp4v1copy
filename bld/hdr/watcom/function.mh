@@ -17,8 +17,6 @@
 #error The header functional requires C++
 #endif
 
-#define typename
-
 namespace std {
 
   template< class Arg1, class Result >
@@ -195,8 +193,10 @@ namespace std {
 
   template< class Operation, class Type >
   inline binder1st< Operation > bind1st( const Operation &x, const Type &y )
-    { return( binder1st< Operation >(
-                x, typename Operation::first_argument_type( y ) ) ); }
+  {
+    return( binder1st< Operation >(
+      x, /* typename */ Operation::first_argument_type( y ) ) );
+  }
 
 
   template< class Operation >
@@ -218,8 +218,10 @@ namespace std {
 
   template< class Operation, class Type >
   inline binder2nd< Operation > bind2nd( const Operation &x, const Type &y )
-    { return( binder2nd< Operation >(
-                x, typename Operation::second_argument_type( y ) ) ); }
+  {
+    return( binder2nd< Operation >(
+      x, /* typename */ Operation::second_argument_type( y ) ) );
+  }
 
 
   template< class Arg1, class Result >

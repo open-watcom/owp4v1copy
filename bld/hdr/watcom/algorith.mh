@@ -23,8 +23,6 @@
   #include <stdexcept>
 #endif
 
-#define typename
-
 namespace std {
 
   // Non-modifying sequence operations

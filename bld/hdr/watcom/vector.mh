@@ -33,9 +33,6 @@
   #include <stdexcept>
 #endif
 
-:: Temporary; until typename support added to compiler.
-#define typename
-
 namespace std {
 
   template<class Type, class Allocator = allocator< Type > >
