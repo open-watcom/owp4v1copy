@@ -129,6 +129,8 @@ void AddFlist( char const *filename )
     char        *fname;
     char        buff[2*_MAX_PATH];
         
+    if( !Options.emit_dependencies ) return;
+
     index = 0;
     last = FNames;
     for( flist = last; flist != NULL; flist = flist->next ) {
