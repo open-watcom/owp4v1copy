@@ -85,7 +85,7 @@ int     directories_only;
 int     files_only;
 int     separate_read_only;
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: lc [-?dfr] [files]",
     "\tfiles       : directories to list",
     "\tOptions: -? : display this message",
@@ -242,9 +242,9 @@ DoLC( char *dir )
     }
 
     /*
-     * sort the data
+     * sort the data. need to cast Compare as it's prototype is wrong. (marginally) better than casting the params to Compare
      */
-    qsort( files, filecnt, sizeof(struct dirent *), Compare );
+    qsort( files, filecnt, sizeof(struct dirent *), (int (*)(const void *, const void * ))Compare );
 
     /*
      * determine if there are files and/or directories

@@ -45,6 +45,8 @@
 
 #include <stdio.h>
 
+#include "getopt.h"	/* local copy of getopt */
+
 
 int
 getoldopt(argc, argv, optstring)

@@ -42,6 +42,9 @@
 
 #include <stdio.h>
 #include <sys/types.h>                  /* Needed for typedefs in tar.h */
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #ifdef MSDOS
 #include <conio.h>
@@ -580,9 +583,7 @@ char           *s;
  * least this is a head start, I hope...
  */
 
-int
-convmode(s)
-char           *s;
+int convmode(char * s)
 {
         char          **p;
 
@@ -682,7 +683,7 @@ name_next()
 /*
  * Close the name file, if any.
  */
-name_close()
+void name_close(void)
 {
 
         if (namef != NULL && namef != stdin)
@@ -701,7 +702,7 @@ name_close()
  * This option lets users of small machines extract an arbitrary
  * number of files by doing "tar t" and editing down the list of files.
  */
-name_gather()
+void name_gather()
 {
         register char  *p;
         static struct name namebuff[1];         /* One-name buffer */
@@ -767,8 +768,7 @@ char           *name;                   /* pointer to name */
  *
  * FIXME: Allow regular expressions in the name list.
  */
-name_match(p)
-register char  *p;
+int name_match(register char *p)
 {
         register struct name *nlp;
         register int    len;
@@ -809,7 +809,7 @@ again:
 /*
  * Print the names of things in the namelist that were not matched.
  */
-names_notfound()
+void names_notfound(void)
 {
         register struct name *nlp;
         register char  *p;

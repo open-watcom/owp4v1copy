@@ -137,7 +137,7 @@ linker          = wlink
 
 !endif
 
-common_cflags   = -zq-w4-d1-oxs
+common_cflags   = -zq-w4-we-d1-oxs
 
 !ifndef make_lib
 .obj: $(obj_dir)

@@ -51,7 +51,14 @@
 #define MSDOS 1
 #endif
 
-uprintf(int, char *, ... );
+void uprintf(int, char *, ... );
+
+/* from TAR.C */
+void	name_gather(void);		
+void	names_notfound(void);
+int		name_match(register char *p);
+int		convmode(char * s);
+void	name_close(void);
 
 /*
  * Kludge for handling systems that can't cope with multiple

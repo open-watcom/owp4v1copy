@@ -47,6 +47,7 @@
 #endif
 #include "tar.h"
 
+#if 0
 static int      saveuid = -993;
 static char     saveuname[TUNMLEN];
 static int      my_uid = -993;
@@ -54,6 +55,7 @@ static int      my_uid = -993;
 static int      savegid = -993;
 static char     savegname[TGNMLEN];
 static int      my_gid = -993;
+#endif
 
 #define myuid   ( my_uid < 0? my_uid = getuid(): my_uid )
 #define mygid   ( my_gid < 0? my_gid = getgid(): my_gid )

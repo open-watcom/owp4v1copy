@@ -45,7 +45,7 @@
 
 char *OptEnvVar="mkdir";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: mkdir [-?] [@env] directory [directories...]",
     "\tenv                : environment variable to expand",
     "\tdirectory          : name of directory to be created",

@@ -42,6 +42,8 @@
  * @(#)list.c 1.18 9/23/86 Public Domain - gnu
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,15 +60,15 @@ char           *ctime();                /* From libc.a */
 #define isodigit(c)     ( ((c) >= '0') && ((c) <= '7') )
 
 #include "tar.h"
+#include "buffer.h"
+#include "list.h"
 
-long            from_oct();             /* Decode octal number */
 void            demode();               /* Print file mode */
 
 union record   *head;                   /* Points to current archive header */
 struct stat     hstat[1];               /* Stat struct corresponding */
 struct stat    *phstat = hstat;         /* to overcome construct ACK C can't handle */
 
-void            print_header();
 void            skip_file();
 
 
@@ -248,11 +250,11 @@ read_header()
  * If wantug != 0, we want the uid/group info decoded from Unix Standard
  * tapes (for extraction).  If == 0, we are just printing anyway, so save time.
  */
-decode_header(header, st, stdp, wantug)
-register union record *header;
-register struct stat *st;
-int            *stdp;
-int             wantug;
+void decode_header(
+	register union record *	header, 
+	register struct stat *	st, 
+	int            *		stdp, 
+	int						wantug)
 {
         st->st_mode = from_oct(8, header->header.mode);
         st->st_mtime = from_oct(1 + 12, header->header.mtime);
@@ -304,10 +306,7 @@ int             wantug;
  *
  * Result is -1 if the field is invalid (all blank, or nonoctal).
  */
-long
-from_oct(digs, where)
-register int    digs;
-register char  *where;
+long from_oct(register int digs, register char * where)
 {
         register long   value;
 
@@ -338,9 +337,7 @@ register char  *where;
 #define DATEWIDTH       19                      /* Last mod date */
 static int      ugswidth = UGSWIDTH;    /* Max width encountered so far */
 
-void
-print_header(xname)
-char           *xname;
+void print_header(char * xname)
 {
         char            modes[11];
         char           *timestamp;

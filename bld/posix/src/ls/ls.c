@@ -106,7 +106,7 @@ int  N1flag=FALSE,
      sflag=FALSE,
      tflag=FALSE;
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: ls [-?1CFRlhprstX] [files]",
     "\tfiles       : directories/files to list",
     "\tOptions: -? : display this message",
@@ -442,7 +442,7 @@ void DoLS( char *path, char *name )
                 fn = Compare;
             }
         }
-        qsort( files, filecnt, sizeof(struct dirent *), fn );
+        qsort( files, filecnt, sizeof(struct dirent *), (int (*)(const void *, const void * ))fn );
 
         /*
          * print out results

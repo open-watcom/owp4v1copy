@@ -44,8 +44,12 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "tar.h"
+#include "list.h"
+#include "buffer.h"
 
 #ifndef MSDOS
 #include <pwd.h>

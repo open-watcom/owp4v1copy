@@ -46,9 +46,7 @@ char           *optarg;                 /* argument associated with option */
 #define tell(s) fputs(*nargv,stderr);fputs(s,stderr); \
                 fputc(optopt,stderr);fputc('\n',stderr);return(BADCH);
 
-getopt(nargc, nargv, ostr)
-int             nargc;
-char          **nargv, *ostr;
+int getopt(int nargc, char ** nargv, char *ostr)
 {
         static char    *place = EMSG;           /* option letter processing */
         register char  *oli;            /* option letter list index */

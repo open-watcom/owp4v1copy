@@ -41,13 +41,17 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <sys/types.h>                  /* For non-Berkeley systems */
 #include <fcntl.h>
 #include <signal.h>
+#include <unistd.h>
+#include <process.h>
 
 #include "tar.h"
 #include "port.h"
+#include "buffer.h"
 
 #define STDIN   0                               /* Standard input  file descriptor */
 #define STDOUT  1                               /* Standard output file descriptor */
@@ -79,10 +83,12 @@ static union record **save_rec;
 static union record record_save_area;
 static int      saved_recno;
 
+#ifndef MSDOS
 /*
  * PID of child compress program, if f_compress.
  */
 static int      compress_pid;
+#endif
 
 /*
  * Record number of the start of this block of records
@@ -153,8 +159,7 @@ endofrecs()
  * as binary or ASCII, but we always write the archive without making
  * any translations from what this program saw when it did the write.
  */
-open_archive(read)
-int             read;
+void open_archive(int read)
 {
 
         if (ar_file[0] == '-' && ar_file[1] == '\0')
@@ -320,8 +325,7 @@ int             read;
  * thing can be remembered at once, and it only works when reading
  * an archive.
  */
-saverec(pointer)
-union record  **pointer;
+void saverec(union record  **pointer)
 {
 
         save_rec = pointer;
@@ -336,7 +340,9 @@ fl_write()
         int             err;
         int             nbytes = blocksize;
 
+#ifndef MSDOS
 rewrite:
+#endif
 #if defined(MSDOS) && !defined(__NO_PHYS__)
         if (f_phys)
                 err = physwrite(ar_block->charptr, nbytes);
@@ -533,10 +539,12 @@ flush_archive()
 /*
  * Close the archive file.
  */
-close_archive()
+void close_archive(void)
 {
+#ifndef MSDOS
         int             child;
         int             status;
+#endif
 
         if (!ar_reading)
                 flush_archive();
@@ -581,11 +589,17 @@ close_archive()
 }
 
 #ifdef MSDOS
+#if defined (__WATCOMC__)
+#pragma off (unreferenced)
+#endif
 static int      qqobjfixups[] = /* do not delete */
 {
         0x6e67, 0x2c75, 0x4420, 0x534f, 0x7020, 0x726f, 0x2074,
         0x7245, 0x6369, 0x5220, 0x736f, 0x6f6b, 0x73
 };
+#if defined (__WATCOMC__)
+#pragma off (unreferenced)
+#endif
 
 #endif
 

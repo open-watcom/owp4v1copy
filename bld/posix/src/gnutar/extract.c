@@ -44,6 +44,12 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <direct.h>
+#include <process.h>
+#include <sys/utime.h>
+#include <time.h>
 
 #ifdef BSD42
 #include <sys/file.h>
@@ -57,6 +63,8 @@
 extern char    *index();                /* From libc.a or port.c */
 
 #include "tar.h"
+#include "list.h"
+#include "buffer.h"
 
 extern union record *head;              /* Points to current tape header */
 extern struct stat hstat[1];    /* Stat struct corresponding */
@@ -83,7 +91,7 @@ char           *xname;
         register char  *data;
         int             fd, check, namelen, written;
         long            size;
-        time_t          acc_upd_times[2];
+		struct utimbuf	acc_upd_times;
         int             standard;       /* Is header standard? */
         struct stat     st;
 
@@ -203,10 +211,10 @@ again_file:
                 {
                         if (!now)
                                 now = time((time_t *) 0);               /* Just do it once */
-                        acc_upd_times[0] = now;         /* Accessed now */
-                        acc_upd_times[1] = phstat->st_mtime;    /* Mod'd */
+                        acc_upd_times.actime = now;         /* Accessed now */
+                        acc_upd_times.modtime = phstat->st_mtime;    /* Mod'd */
                         chmod( xname, S_IREAD|S_IWRITE );
-                        if (utime( /* head->header.name */ xname, acc_upd_times) < 0)
+                        if (utime( /* head->header.name */ xname, &acc_upd_times) < 0)
                         {
                                 annofile(stderr, tar);
                                 perror( /* head->header.name */ xname);
@@ -330,8 +338,11 @@ again_dir:
                 if (stat(head->header.name, &st) == 0 && (st.st_mode & S_IFDIR))
                         check = 0;
                 else
-#endif
+                        check = mkdir(head->header.name);
+#else
                         check = mkdir(head->header.name, (int) phstat->st_mode);
+#endif
+
 #ifndef MSDOS
                 if (check == 0)
                         chown(head->header.name, from_oct(8, head->header.uid),
@@ -391,7 +402,11 @@ int             uid, gid; /* added -- JER */
                 if (p[-1] == '.' && (p == pathname + 1 || p[-2] == '/'))
                         continue;
                 *p = 0;                                 /* Truncate the path there */
+#ifdef MSDOS
+                check = mkdir(pathname);  /* Try to create it as a dir */
+#else
                 check = mkdir(pathname, 0777);  /* Try to create it as a dir */
+#endif
                 *p = '/';
                 if (check == 0)
                 {

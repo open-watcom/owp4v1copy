@@ -73,7 +73,7 @@ typedef enum outmode {                  // Output modes:
 
 char *OptEnvVar = "fgrep";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: fgrep [-?Xcilnsvx] [-e pattern] [-f patfile] [@env] [pattern]"
     " [files...]",
     "\tenv                 : environment variable to expand",

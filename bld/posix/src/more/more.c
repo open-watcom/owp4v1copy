@@ -42,7 +42,7 @@
 #include "console.h"
 
 char *OptEnvVar = "more";
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: more [-?cftX] [+<n>] [-n<lines>] [-p<prompt>] [files]",
     "\tfiles              : files to display",
     "\tOptions: -?        : print this list",
