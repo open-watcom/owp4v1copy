@@ -65,7 +65,7 @@ extern void             GetMADTypeDefaultAt( address a, mad_type_kind mtk, mad_t
 
 extern mod_handle       ContextMod;
 
-static machine_state            *FreezeRegSet;
+static machine_state            *FreezeRegSet = NULL;
 static struct location_context  FreezeContext;
 static mod_handle               FreezeContextMod;
 
