@@ -151,6 +151,8 @@ static int tryOSTimeZone( char *tz )
     }
 #elif defined (__LINUX__)
     return( __read_tzfile( tz ) );
+#else
+    return( 1 );
 #endif
 }
 
