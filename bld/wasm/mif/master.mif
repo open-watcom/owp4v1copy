@@ -157,7 +157,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : fullops.gh wmpmsg.gh $(link_name) $(name).res $(proj_obj)
+$(exc_name) : fullops.gh $(link_name) $(name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -186,7 +186,7 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
-$(name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc msg.gh wasmmsg.gh
+$(name).res : $(proj_path)/h/$(proj_name).rc usage.rc usagej.rc msg.gh wasmmsg.gh wmpmsg.gh
         $(rc_aui) -d_WASM_ $[@ -fo=$^@
 
 usage.rc : $(proj_path)/h/usage.sp
@@ -211,7 +211,7 @@ msg.gh : $(proj_path)/h/asmshare.msg
         $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_SHARE_RC_BASE" $[@
 !endif
 
-wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
+wasmmsg.gh : $(proj_path)/h/wasm.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ | &
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE/' > $^@

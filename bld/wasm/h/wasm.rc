@@ -10,6 +10,7 @@ BEGIN
 
 #include "../h/asmshare.msg"
 #if defined( _WASM_ )
+    #include "../h/womp.msg"
     #include "../h/wasm.msg"
 #endif
 
@@ -19,6 +20,7 @@ BEGIN
 
 #include "../h/asmshare.msg"
 #if defined( _WASM_ )
+    #include "../h/womp.msg"
     #include "../h/wasm.msg"
 #endif
 
