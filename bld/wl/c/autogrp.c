@@ -53,6 +53,8 @@ static void             SortGroup( seg_leader * );
 static group_entry *    CurrGroup;
 int                     NumGroups;
 
+static void AutoGroupSect( section * sec );
+
 extern void AutoGroup( void )
 /***************************/
 {

@@ -321,9 +321,10 @@ extern list_of_names * MakeListName( char *name, size_t len )
     return new;
 }
 
-extern void BadObjFormat( void )
-/******************************/
+extern unsigned long BadObjFormat( void )
+/***************************************/
 {
     LnkMsg( FTL+MSG_BAD_OBJECT, "s", CurrMod->f.source->file->name );
+    return 0;
 }
 

@@ -77,7 +77,7 @@ void ResetObjOMF( void )
 }
 
 static unsigned long ProcObj( file_list * file, unsigned long loc,
-                              bool (*procrtn)( byte ) )
+                              void (*procrtn)( byte ) )
 /****************************************************************/
 /* Process an object file. */
 {
