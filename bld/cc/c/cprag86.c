@@ -41,6 +41,12 @@ extern  void    AsmInit(int, int, int);
 extern  void    AsmLine(char *);
 extern  void    AsmSymFini(void);
 
+local   void    GetParmInfo( void );
+local   void    GetRetInfo( void );
+local   void    GetSTRetInfo( void );
+local   void    GetSaveInfo( void );
+local   int     GetByteSeq( void );
+
 extern  long        Address;
 extern  char       *CodeBuffer;
 extern  TREEPTR     CurFuncNode;
@@ -739,7 +745,7 @@ local void FreeAsmFixups()
 }
 
 
-local int GetByteSeq()
+local int GetByteSeq( void )
 {
     auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
     int                 i;
@@ -885,7 +891,7 @@ hw_reg_set PragRegName( char *str )
 
 
 
-local void GetParmInfo()
+local void GetParmInfo( void )
 {
     struct {
         unsigned f_pop           : 1;
@@ -926,7 +932,7 @@ local void GetParmInfo()
 }
 
 
-local void GetRetInfo()
+local void GetRetInfo( void )
 {
     struct {
         unsigned f_no8087        : 1;
@@ -957,7 +963,7 @@ local void GetRetInfo()
 }
 
 
-local void GetSTRetInfo()
+local void GetSTRetInfo( void )
 {
     struct {
         unsigned f_float        : 1;
@@ -994,7 +1000,7 @@ local void GetSTRetInfo()
 }
 
 
-local void GetSaveInfo()
+local void GetSaveInfo( void )
 {
     hw_reg_set  modlist;
     hw_reg_set  default_flt_n_seg;

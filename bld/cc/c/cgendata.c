@@ -40,6 +40,7 @@
 #include "standard.h"
 #include "cgprotos.h"
 
+static void EmitDQuad( DATA_QUAD *dq );
 
 void EmitZeros( unsigned long amount )
 {
@@ -82,7 +83,7 @@ void EmitDataQuads()
     }
 }
 
-void EmitDQuad( DATA_QUAD *dq )
+static void EmitDQuad( DATA_QUAD *dq )
 {
     cg_type             data_type;
     int                 size_of_item;
