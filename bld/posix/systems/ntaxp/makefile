@@ -1,4 +1,3 @@
-#pmake: all build os_nt cpu_axp
 
 targos          = ntaxp
 

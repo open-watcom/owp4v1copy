@@ -127,10 +127,10 @@ main( int argc, char *argv[] )
         case 'T':
             todflag = TRUE;
             if( ch =='T' ) {
-                Tflag=TRUE;
+                Tflag1=TRUE;
                 t_d = &before_t_d;
             } else {
-                tflag=TRUE;
+                tflag2=TRUE;
                 t_d = &after_t_d;
             }
             parseTD( OptArg,':',&t_d->hr,&t_d->min, &t_d->sec );
@@ -139,10 +139,10 @@ main( int argc, char *argv[] )
         case 'D':
             todflag = TRUE;
             if( ch =='D' ) {
-                Dflag=TRUE;
+                Dflag1=TRUE;
                 t_d = &before_t_d;
             } else {
-                dflag=TRUE;
+                dflag2=TRUE;
                 t_d = &after_t_d;
             }
             parseTD( OptArg,'-',&t_d->yy,&t_d->mm, &t_d->dd );

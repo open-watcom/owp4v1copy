@@ -101,7 +101,7 @@ extern char __FAR *Buffer;
 extern char __FAR *FileList;
 extern char OutOfMemory[],InvalidTDStr[];
 extern timedate before_t_d,after_t_d;
-extern int rflag,iflag,npflag,aflag,fflag,tflag,Tflag,dflag,Dflag,sflag,xflag;
+extern int rflag,iflag,npflag,aflag,fflag,tflag2,Tflag1,dflag2,Dflag1,sflag,xflag;
 extern int todflag,pattrflag,rxflag;
 
 /* routines */

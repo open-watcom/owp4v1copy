@@ -67,8 +67,10 @@ obj_dir = $(posix_dir)\src\$(name)\$(targos)
 #       define options for each specific operating system supported
 #
 
-!ifeq      targos  pharlap
+!ifeq        targos  pharlap
 extra_cflags   = -bt=pharlap $(extra_cflags)
+!else ifeq   targos  ntaxp
+extra_cflags   = -dWIN32 -d_WIN32
 !endif
 
 !ifndef make_lib

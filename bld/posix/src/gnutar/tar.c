@@ -64,6 +64,7 @@ extern int      optind;                 /* Global argv index from getopt */
  */
 #define TAR_EXTERN                              /**/
 #include "tar.h"
+#include "port.h"
 
 /*
  * We should use a conversion routine that does reasonable error

@@ -34,8 +34,8 @@
 #include "cp.h"
 
 int rflag = FALSE, iflag = FALSE, npflag = TRUE,  aflag = FALSE;
-int fflag = FALSE, tflag = FALSE, Tflag = FALSE, dflag = FALSE;
-int Dflag = FALSE, sflag = FALSE, todflag = FALSE;
+int fflag = FALSE, tflag2 = FALSE, Tflag1 = FALSE, dflag2 = FALSE;
+int Dflag1 = FALSE, sflag = FALSE, todflag = FALSE;
 int pattrflag = FALSE,rxflag = FALSE;
 
 char OutOfMemory[] = "Out of memory!\n";
