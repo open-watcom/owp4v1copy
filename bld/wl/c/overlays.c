@@ -72,7 +72,7 @@ static void NumASect( section *sect )
 extern void NumberSections( void )
 /********************************/
 {
-    if( FmtData.type & MK_OVERLAYS && FmtData.u.dos.distribute ) {
+    if( ( FmtData.type & MK_OVERLAYS ) && FmtData.u.dos.distribute ) {
         _ChkAlloc( SectOvlTab, sizeof(section *) * (OvlNum + 1) );
         SectOvlTab[0] = Root;
     }

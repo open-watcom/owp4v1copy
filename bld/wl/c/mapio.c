@@ -360,7 +360,8 @@ static void WriteVerbSeg( void *_seg )
     targ_addr   addr;
     seg_leader *leader;
 
-    if( seg->isdead ) return;
+    if( seg->isdead )
+        return;
     leader = seg->u.leader;
     WriteFormat( 16, leader->segname );
     WriteFormat( 38, leader->class->name );
