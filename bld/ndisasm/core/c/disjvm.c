@@ -37,7 +37,7 @@
 
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          JVMRangeTable[];
+extern const dis_range          *JVMRangeTable[];
 extern const unsigned char      JVMMaxInsName;
 
 #if DISCPU & DISCPU_jvm

@@ -37,7 +37,7 @@
 
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          PPCRangeTable[];
+extern const dis_range          *PPCRangeTable[];
 extern const unsigned char      PPCMaxInsName;
 extern const unsigned short     DisRegisterTable[];
 

@@ -71,6 +71,7 @@ typedef enum {
     DI_X86_SKIPBACK = DI_X86_FIRST - 1,
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) DI_X86_##idx,
+    #include "insx86e.h"
     #include "insx86.h"
 #endif
 #if DISCPU & DISCPU_jvm

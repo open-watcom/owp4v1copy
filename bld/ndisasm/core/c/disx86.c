@@ -37,7 +37,7 @@
 
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          X86RangeTable[];
+extern const dis_range          *X86RangeTable[];
 extern const unsigned char      X86MaxInsName;
 extern const dis_ins_descript   DisInstructionTable[];
 extern const unsigned short     DisRefTypeTable[];
@@ -885,6 +885,7 @@ static dis_ref_type X86RegRefType( dis_register reg )
     if( reg <= DR_X86_edi ) return( DRT_X86_DWORD );
     if( reg <= DR_X86_st7 ) return( DRT_X86_TBYTE );
     if( reg <= DR_X86_mm7 ) return( DRT_X86_MM64 );
+    if( reg <= DR_X86_xmm7 ) return( DRT_X86_MM128 );
     if( reg <= DR_X86_dr7 ) return( DRT_X86_DWORD );
     return( DRT_X86_WORD );
 }
@@ -927,7 +928,7 @@ static void X86GetXMM( RM reg, dis_dec_ins *ins )
     oper = ins->num_ops;
     ins->op[oper].type = DO_REG;
     ins->op[oper].base = X86GetXMMReg( W_DEFAULT, reg, ins );
-    ins->op[oper].ref_type = DRT_X86_MM64;
+    ins->op[oper].ref_type = DRT_X86_MM128;
     ++ins->num_ops;
 }
 
@@ -3241,6 +3242,68 @@ dis_handler_return X86XMMRegModRM64_BImm( dis_handle *h, void *d, dis_dec_ins *i
     return( DHR_DONE );
 }
 
+dis_handler_return X86XMMRegModRM128( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 128-Bit RegModRM
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM(code.type2.dir, W_DEFAULT,
+                   code.type2.mod, code.type2.rm, code.type2.mm, DRT_X86_MM128, d, ins) ;
+    return( DHR_DONE );
+}
+
+dis_handler_return X86XMMRegModRM128_B( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 128-Bit RegModRM - Destination only mm
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM128, d, ins);
+    return( DHR_DONE );
+}
+
+dis_handler_return X86XMMRegModRM128_BImm( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SSE 128-Bit RegModRM, imm8 - Destination only mm
+ */
+{
+    mm code;
+
+    // Skip the "prefix" byte if present
+    if( (ins->opcode & 0xFF) == 0xF3 ) {
+        ins->size++;
+        code.full = ins->opcode >> 8;
+    } else
+        code.full = ins->opcode;
+    ins->num_ops = 0;
+    ins->size += 3;
+
+    X86GetXMMRegModRM_B( code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM128, d, ins);
+    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    return( DHR_DONE );
+}
+
 /*=====================================================================*/
 /*           AMD 3DNow! Instructions ( with suffix )                   */
 /*=====================================================================*/
@@ -3299,10 +3362,10 @@ dis_handler_return X86_3DNow( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->type = DI_X86_pfrcp;
         break;
     case 0xA6:
-        ins->type = DI_X86_pfrcpt1;
+        ins->type = DI_X86_pfrcpit1;
         break;
     case 0xB6:
-        ins->type = DI_X86_pfrcpt2;
+        ins->type = DI_X86_pfrcpit2;
         break;
     case 0xA7:
         ins->type = DI_X86_pfrsqit1;

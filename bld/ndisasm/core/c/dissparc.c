@@ -41,7 +41,7 @@ extern long SEX( unsigned long v, unsigned bit );
 
 #if DISCPU & DISCPU_sparc
 
-extern const dis_range          SPARCRangeTable[];
+extern const dis_range          *SPARCRangeTable[];
 extern const unsigned char      SPARCMaxInsName;
 
 #define _SparcReg( x )          ( (x) + DR_SPARC_r0 )

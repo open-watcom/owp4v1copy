@@ -37,7 +37,7 @@
 
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          AXPRangeTable[];
+extern const dis_range          *AXPRangeTable[];
 extern const unsigned char      AXPMaxInsName;
 
 #if DISCPU & DISCPU_axp

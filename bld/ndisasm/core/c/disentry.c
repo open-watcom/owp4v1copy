@@ -143,24 +143,30 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     int                         curr;
     const dis_range             *table;
+    const dis_range             **curr_table;
     dis_return                  dr;
     unsigned                    idx;
     unsigned                    start;
     dis_handler_return          hr;
 
-    table = h->d->range;
     start = 0;
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
         if( dr != DR_OK ) return( dr );
-        curr = 0;
-        for( ;; ) {
-            idx = (ins->opcode >> table[curr].shift) & table[curr].mask;
-            curr = DisSelectorTable[idx + table[curr].index];
-            if( curr >= 0 ) break;
-            curr = -curr;
+        for( curr_table = h->d->range ; *curr_table != NULL ; ++curr_table ) {
+            table = *curr_table;
+            curr = 0;
+            for( ;; ) {
+                idx = (ins->opcode >> table[curr].shift) & table[curr].mask;
+                curr = DisSelectorTable[idx + table[curr].index];
+                if( curr >= 0 ) break;
+                curr = -curr;
+            }
+            if( (DisInstructionTable[curr].mask & ins->opcode) == DisInstructionTable[curr].opcode ) {
+                break;
+            }
         }
-        if( (DisInstructionTable[curr].mask & ins->opcode) != DisInstructionTable[curr].opcode ) {
+        if( *curr_table == NULL ) {
             BadOpcode( h, ins );
             break;
         }
