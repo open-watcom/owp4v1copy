@@ -1195,7 +1195,7 @@ typedef struct tagRGBTRIPLE {
 	BYTE rgbtBlue;
 	BYTE rgbtGreen;
 	BYTE rgbtRed;
-} RGBTRIPLE;
+} RGBTRIPLE,*LPRGBTRIPLE;
 #pragma pack(pop)
 #pragma pack(push,2)
 typedef struct tagBITMAPFILEHEADER {
@@ -1228,7 +1228,7 @@ typedef struct tagRGBQUAD {
 	BYTE	rgbGreen;
 	BYTE	rgbRed;
 	BYTE	rgbReserved;
-} RGBQUAD;
+} RGBQUAD,*LPRGBQUAD;
 typedef struct tagBITMAPINFO {
 	BITMAPINFOHEADER bmiHeader;
 	RGBQUAD bmiColors[1];
