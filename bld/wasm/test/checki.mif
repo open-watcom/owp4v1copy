@@ -3,7 +3,12 @@
     @set CHK_CHECK=-@diff -i -b $(name).lst $(name).chk
 
 all: $(name).chk .symbolic
-    $(%CHK_CHECK)
+    @%append testcomp.log $(name) ================================================================
+    @SET TESTCOMP=Test OK
+    $(%CHK_CHECK) >>testcomp.log
+    @if errorlevel 1 @SET TESTCOMP=!!! Test unsuccessful !!!
+    @%append testcomp.log $(%TESTCOMP)
+    @echo $(%TESTCOMP)
 
 $(name).chk: .existsonly
     @set CHK_CHECK=-@diff -i -b $(name).lst $(name).asm

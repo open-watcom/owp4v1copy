@@ -105,20 +105,26 @@ asmbug13
 testcomp=wcc386
 !endif 
 
+!ifdef __UNIX__
+nulldevice=/dev/null
+!else
+nulldevice=nul
+!endif
+
 all : clean reverse.exe $(objs) .SYMBOLIC
 
 reverse.exe : reverse.c
-	wcl ..\reverse.c -fe=..\reverse.exe
+    wcl ..\reverse.c -fe=..\reverse.exe
 
 $(objs) : .SYMBOLIC
-	@echo $@ ================================================================
-	@rm -f $@.c
-	@vi -d -q -k ":r $@.asm\n:so toc.vi\n:0r cinit.vi\n:w $@.c\n:q!\n"
-	@$(testcomp) $@.c -s -ot -zm -zq -fo=.obj
-	@wdis -a -l $@.obj
-	@vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
-	@..\reverse $@.lst
-        @wmake -h -f ../checki.mif name=$@
+    @echo $@ ================================================================
+    @rm -f $@.c
+    @vi -d -q -k ":r $@.asm\n:so toc.vi\n:0r cinit.vi\n:w $@.c\n:q!\n"
+    @$(testcomp) $@.c -s -ot -zm -zq -wx -fo=.obj >$(nulldevice)
+    @wdis -a -l $@.obj >$(nulldevice)
+    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
+    @..\reverse $@.lst
+    @wmake -h -f ../checki.mif name=$@
 
 clean : .SYMBOLIC
-	@rm -f *.obj *.lst *.c *.err reverse.obj ..\reverse.exe mem.trk
+    @rm -f *.obj *.lst *.c *.err reverse.obj ..\reverse.exe mem.trk
