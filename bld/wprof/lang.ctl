@@ -14,15 +14,15 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/wprof/os2386pm/wprof.exe <relroot>/rel2/binp/wprof.exe
-    <CPCMD> <devdir>/wprof/os2386/wprof.exe   <relroot>/rel2/binp/wprofc.exe
-    <CPCMD> <devdir>/wprof/win/wprof.exe      <relroot>/rel2/binw/wprofw.exe
-    <CPCMD> <devdir>/wprof/dos/wprof.exe      <relroot>/rel2/binw/wprof.exe
-    <CPCMD> <devdir>/wprof/nec/wprofnec.exe   <relroot>/rel2/n98bw/wprof.exe
-    <CPCMD> <devdir>/wprof/nt/wprof.exe       <relroot>/rel2/binnt/wprof.exe
-#    <CPCMD> <devdir>/wprof/axp/wprof.exe     <relroot>/rel2/axpnt/wprof.exe
-#    <CPCMD> <devdir>/wprof/qnx/wprof.qnx      <relroot>/rel2/qnx/binq/wprof.
-#    <CPCMD> <devdir>/wprof/qnx/wprof.sym      <relroot>/rel2/qnx/sym/wprof.sym
+    <CPCMD> <devdir>/wprof/os2386pm/wprof.exe    <relroot>/rel2/binp/wprof.exe
+    <CPCMD> <devdir>/wprof/os2386/wprof.exe      <relroot>/rel2/binp/wprofc.exe
+    <CPCMD> <devdir>/wprof/wini86/wprof.exe      <relroot>/rel2/binw/wprofw.exe
+    <CPCMD> <devdir>/wprof/dos386/wprof.exe      <relroot>/rel2/binw/wprof.exe
+    <CPCMD> <devdir>/wprof/dos386.nec/wprofnec.exe <relroot>/rel2/n98bw/wprof.exe
+    <CPCMD> <devdir>/wprof/nt386/wprof.exe       <relroot>/rel2/binnt/wprof.exe
+#    <CPCMD> <devdir>/wprof/ntaxp/wprof.exe       <relroot>/rel2/axpnt/wprof.exe
+#    <CPCMD> <devdir>/wprof/qnx386/wprof.qnx      <relroot>/rel2/qnx/binq/wprof.
+#    <CPCMD> <devdir>/wprof/qnx386/wprof.sym      <relroot>/rel2/qnx/sym/wprof.sym
 
 [ BLOCK <1> clean ]
 #==================
