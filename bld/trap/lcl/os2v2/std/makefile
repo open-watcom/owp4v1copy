@@ -26,6 +26,6 @@ extra_objs = &
 
 extra_linker = &
         exp TellHandles_.4,TellHardMode_.5 &
-        lib os2386,os2
+        lib os2386,$(lang_root)\lib286\os2\os2.lib
 
 !include $(trap_dir)\trap.mif
