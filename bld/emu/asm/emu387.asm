@@ -24,8 +24,8 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  387 emulator code
+;*               
 ;*
 ;*****************************************************************************
 
@@ -38,13 +38,10 @@ _NW   = 2 ;     Netware 386
 _QNX  = 3 ;     QNX/386
 
 ifdef __WIN387__
-WIN31COMPAT equ 1
-        include win30VMM.Inc
-;        include VMM.Inc
 
-;VxD_LOCKED_CODE_SEG
-_LTEXT	SEGMENT
-   ASSUME   cs:FLAT, ds:FLAT, es:FLAT, ss:FLAT
+        include win30vmm.inc
+
+VxD_LOCKED_CODE_SEG
 
 else
 _DATA segment dword public 'DATA'
@@ -54,6 +51,11 @@ DGROUP  group   _DATA
 
 _TEXT   segment dword public 'CODE'
         assume  cs:_TEXT
+
+endproc         macro   dsym
+         dsym   endp
+                endm
+
 endif
 
 modstart        macro   modname
@@ -69,26 +71,18 @@ defp            macro   dsym
          dsym   proc    near
                 endm
 
-endproc         macro   dsym
-         dsym   endp
-                endm
-
 xref            macro   dsym
                 endm
 
 ifdef __WIN387__
 startdata       macro
-;VxD_LOCKED_DATA_SEG
-_LDATA	SEGMENT
-  ALIGN 4 
+VxD_LOCKED_DATA_SEG
                 endm
 enddata         macro
-;VxD_LOCKED_DATA_ENDS
-_LDATA	ENDS
+VxD_LOCKED_DATA_ENDS
                 endm
 endmod          macro
-;VxD_LOCKED_CODE_ENDS
-_LTEXT	ENDS
+VxD_LOCKED_CODE_ENDS
                 endm
 else
 endmod          macro

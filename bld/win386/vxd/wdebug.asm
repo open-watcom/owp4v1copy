@@ -39,10 +39,8 @@
 
         .386p
         .387
-        INCLUDE VMM.Inc
-        INCLUDE V86MMGR.Inc
-        INCLUDE VTD.Inc
-        INCLUDE VKD.Inc
+
+        INCLUDE win30VMM.Inc
         INCLUDE WDEBUG.INC
 
 MAX_EMU_REG     equ 32

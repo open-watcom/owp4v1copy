@@ -6,40 +6,46 @@ LNK = wdebug.lnk
 LNKEMU = wemu387.lnk
 
 objs =  wdebug.obj
-objl = $(emu386)\emu387w.obj
+objl = $(emu386)\win386\emu387w.obj
+
+##############################################################
+# it uses still MS Windows 98 DDK tools for VxD creation
+# ML.EXE (MASM V6) and LINK.EXE, don't require anything more
+#
+# ML.EXE should copy to bld\bin directory
+# LINK.EXE should copy as MSLINK.EXE to bld\bin directory
+##############################################################
+
+mlopts = -c -Cx -DMASM6 -I..\..\emu\inc
+# -Sf -Fl$^*.lst
 
 all : wdebug.386 wemu387.386 .SYMBOLIC
         @%null
 
 wdebug.386: wdebug.def $(OBJS) $(OBJL) $(LNK)
-        link386 @$(LNK)
-        addhdr wdebug.386
-        mapsym32 wdebug
+        mslink -vxd @$(LNK)
 
 wemu387.386: wemu387.def $(OBJS) $(OBJL) $(LNKEMU)
-        link386 @$(LNKEMU)
-        addhdr wemu387.386
-        mapsym32 wemu387
+        mslink -vxd @$(LNKEMU)
 
 $(LNK) : makefile
         %create $(LNK)
-        @for %i in ($(objs)) do @%append $(lnk) %i+
+        @%append $(LNK) -def:wdebug.def
+        @%append $(LNK) -out:wdebug.386
+        @%append $(LNK) -map
+        @for %i in ($(objs)) do @%append $(lnk) %i
         @%append $(LNK) $(objl)
-        @%append $(LNK) wdebug.386 /NOI /NOD /NOP
-        @%append $(LNK) wdebug.map /MAP
-        @%append $(LNK)
-        @%append $(LNK) wdebug.def
 
 $(LNKEMU) : makefile
         %create $(LNKEMU)
-        @for %i in ($(objs)) do @%append $(LNKEMU) %i+
+        @%append $(LNKEMU) -def:wemu387.def
+        @%append $(LNKEMU) -out:wemu387.386
+        @%append $(LNKEMU) -map
+        @for %i in ($(objs)) do @%append $(LNKEMU) %i
         @%append $(LNKEMU) $(objl)
-        @%append $(LNKEMU) wemu387.386 /NOI /NOD /NOP
-        @%append $(LNKEMU) wemu387.map /MAP
-        @%append $(LNKEMU)
-        @%append $(LNKEMU) wemu387.def
 
 .obj : $(OBJ)
 
 .asm.obj :
-        masm5 -p -w2 -Mx $(DEBUG) $[*;
+        ml $(mlopts) $[@ 
+#	wasm -w2 -i..\..\emu\inc -d6 $[@

@@ -9,6 +9,9 @@ proj_name = emu
 
 cflags = -oais -s -zq -w3
 
+mlopts = -c -Cx -DMASM6
+# -Sf -Fl$^*.lst
+
 INCS = &
  386flda.inc 386fldc.inc 386fldm.inc 386fldd.inc 386ldi4.inc &
  386ldfs.inc 386fdld.inc 386i4ld.inc 386ldfd.inc 386fsld.inc &
@@ -18,8 +21,8 @@ INCS = &
  consts.inc fpubits.inc fpucc.inc memops.inc stkops.inc &
  tagtab.inc tentab.inc xception.inc
 
-.inc: ..\inc
-.c : ..\..\emu86
+.inc : ..\inc
+.c : ..\..\emu86\c
 .psm : ..\asm
 .asm : ..\asm
 
@@ -50,8 +53,8 @@ emu387: $(objs)
 !else ifeq host_OS win
 
 emu387w.obj: emu387.asm $(INCS)
-    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc /dOFFSET32=OFFSET /fo=$^@ $[@
-#    ml /D_OS=_PLDT /D__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc /Fl$[*.lst /Zm /c /Sf $[@
+    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h;$(emu386)\inc /fo=$^@ $[@
+#    ml $(mlopts) -D_OS=_PLDT -D__WIN387__ -I$(emu386)\inc -I$(watcom_dir)\h\ -I$(mathlib_dir)\h -Fo$^@ $[@
 
 !else
 
@@ -65,4 +68,3 @@ emu387.lib: 386stub.obj
 emu387.obj: ..\asm\emu387.asm $(INCS)
     $(as) $(as_flags) $(extra_as_flags) /dSEGMENTED /I$(emu386)\inc
     wtouch compile.tim
-
