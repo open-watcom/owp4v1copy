@@ -18,7 +18,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
     <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
-    <CPCMD> <PROJDIR>/linux/*.h          <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/rel2/lh/arpa/
     <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/rel2/lh/sys/
     <CPCMD> <PROJDIR>/linux/netinet/*.h  <RELROOT>/rel2/lh/netinet/
