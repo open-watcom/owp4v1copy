@@ -572,8 +572,9 @@ extern void SuffixFini( void )
     ClearSuffixes();
     FreeHashTab( sufTab );
     sufTab = NULL;
-#endif
+#else
     WalkHashTab( sufTab, freeSuffix, NULL );
     FreeHashTab( sufTab );
+#endif    
 }
 
