@@ -3,11 +3,7 @@ proj_name = cc
 .continue
 .erase
 
-.EXTENSIONS: .gh
-#.EXTENSIONS:
-#.EXTENSIONS:  .exe .exp .lib .obj .cpp .c .asm .h .gh .mif
-
-#.mif: $(mif_path)
+.extensions: .gh
 
 !include cproj.mif
 !include deftarg.mif
@@ -144,7 +140,7 @@ inc_dirs += -I$(dwarf_dir)/dw/h
 inc_dirs += -I$(comp_cfg_dir)/h
 inc_dirs += -I$(fe_misc_dir)/h
 
-ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR) 
+ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR)
 libs = $(dwarf_dir)/dw/$(%OBJDIR)/dwf.lib -lwatcom -lwres
 
 !else
@@ -199,7 +195,7 @@ dwarf_deps =
 
 $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
 !ifdef bootstrap
-	$(cc) $(ldflags) -o $@ $(cc_objs) $(libs) $(cg_deps)
+    $(cc) $(ldflags) -o $@ $(cc_objs) $(libs) $(cg_deps)
 !else
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
@@ -372,3 +368,4 @@ eraseall.obj : ../compile.gbl
         rm -f *.?bj
         wtouch eraseall.obj
 
+wccexed: $(dxname) .symbolic .explicit
