@@ -3,9 +3,9 @@
 #
 
 !ifdef __LINUX__
-description = \'Open WATCOM Debugger Trap File\'
+description = \'Open Watcom Debugger Trap File\'
 !else
-description = 'Open WATCOM Debugger Trap File'
+description = 'Open Watcom Debugger Trap File'
 !endif
 
 !ifdef test
