@@ -2,7 +2,7 @@
 SET TRMEM_CODE=1
 
 if not exist ERROR.OUT  goto not_exist
-    del ERROR.OUT
+    rm ERROR.OUT
 :not_exist
 if .%1. == .. goto usage
 

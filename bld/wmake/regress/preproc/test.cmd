@@ -9,7 +9,7 @@ echo # ---------------------------
 echo #   PreProcess Test 1
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f PREP01 > tmp.out 2>&1
 diff -b PREP01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -25,7 +25,7 @@ echo # ---------------------------
 echo #   PreProcess Test 2
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -h -f PREP02 -ms > tmp.out 2>&1
 diff PREP02.CMP tmp.out
 if errorlevel 1 goto err2
@@ -41,4 +41,4 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-if exist tmp.out del tmp.out
+if exist tmp.out rm tmp.out

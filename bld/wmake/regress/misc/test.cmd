@@ -9,7 +9,7 @@ echo # ---------------------------
 echo #   Miscellaneous Test 1
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -c -h -f MISC01 > tmp.out 2>&1
 diff -b MISC01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -25,7 +25,7 @@ echo # ---------------------------
 echo #   Miscellaneous Test 2
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -c -h -f MISC02 > tmp.out 2>&1
 diff -b MISC02.CMP tmp.out
 if errorlevel 1 goto err2
@@ -41,7 +41,7 @@ echo # ---------------------------
 echo #   Miscellaneous Test 3
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -a -c -h -f MISC03 > tmp.out 2>&1
 diff -b MISC03.CMP tmp.out
 if errorlevel 1 goto err3
@@ -57,7 +57,7 @@ echo # ---------------------------
 echo #   Miscellaneous Test 4
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -a -c -h -f MISC04 > tmp.out 2>&1
 diff -b MISC04.CMP tmp.out
 if errorlevel 1 goto err4
@@ -73,7 +73,7 @@ echo # ---------------------------
 echo #   Miscellaneous Test 5
 echo # ---------------------------
 
-del tmp.out
+rm tmp.out
 %1 -a -c -h -f MISC05 test1 test2 test3 > tmp.out 2>&1
 diff -b MISC05.CMP tmp.out
 if errorlevel 1 goto err5
@@ -89,4 +89,4 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-if exist tmp.out del tmp.out
+if exist tmp.out rm tmp.out

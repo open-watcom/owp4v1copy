@@ -10,7 +10,7 @@ echo #   Long FileName Test 1
 echo # ---------------------------
 echo LONGFILENAME OK > "HELLO TMP.TMP"
 wtouch HELLO.H
-del tmp.out
+rm tmp.out
 %1 -h -a -f LONG01 > tmp.out 2>&1
 diff -b LONG01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -21,13 +21,13 @@ if errorlevel 1 goto err1
     @echo Error: Long FileName #1 unsuccessful!!! | tee -a %2
 
 :test2
-del "HELLO TMP.TMP"
-del HELLO.H
+rm "HELLO TMP.TMP"
+rm HELLO.H
 
 echo # ---------------------------
 echo #   Long FileName Test 2
 echo # ---------------------------
-del tmp.out
+rm tmp.out
 %1 -h -ms -a -f LONG02 > tmp.out 2>&1
 diff -b LONG02.CMP tmp.out
 if errorlevel 1 goto err2
@@ -43,4 +43,4 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-if exist tmp.out del tmp.out
+rm tmp.out

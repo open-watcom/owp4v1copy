@@ -45,10 +45,10 @@ pre08.005:
 
 
 pre08.006: .symbolic
-    $(mkerr) 0
+    true
     if not errorlevel 0 $(mkerr)
-    -$(mkerr) 1
-    if errorlevel 2 $(mkerr)
+    -false
+    if not errorlevel 255 $(mkerr)
 
 
 # this is an oddball case - try if a b == a echo hi under DOS
@@ -57,7 +57,7 @@ pre08.007:
 
 
 pre08.008:
-    if a	==	a	wtouch pre08.008
+    if a        ==      a       wtouch pre08.008
 
 
 pre08.009: .symbolic
