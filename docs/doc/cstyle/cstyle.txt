@@ -139,6 +139,7 @@ manner:
 *
 ****************************************************************************/
 
+
 #include "myhdr.h"      /* Include any necessary headers */
 
 /* Global variable declarations and static globals local to module */
@@ -164,13 +165,7 @@ first line, with the return type preceding the function name. Between
 the return type and the function name may be a macro for the function
 type modifier. Using a macro for this modifier allows it to be changed
 to suit new operating environments, such as __pascal or __stdcall for
-Windows environments by only changing a single macro definition. It is
-recommended that each argument to the function be listed one per line,
-with a single indentation level (4 spaces) before the argument type.
-There should be only a single space between the argument type and the
-argument name for each line, followed by a comma. The last argument
-should be ended with the closing ')' instead of a comma (this must not
-be placed on the following line).
+Windows environments by only changing a single macro definition.
 
 If the function is static or private, it may be left without any
 preceding documenation provided the function is short. However any
@@ -181,27 +176,18 @@ follows:
 
 // Concise description of the function.
 // May use C or C++ style comments.
-bool MYAPI my_function(
-    int arg1,
-    int arg2 )
+bool MYAPI my_function( int arg1, int arg2 )
 {
     // function body goes here.
 }
 
-Note also that if a function does not have any arguments, it should be
-formatted on a single line as follows:
+If a function has too many arguments to comfortably fit on a single line,
+the line needs to be broken up appropriately. Recommended formatting is
+as follows:
 
-void my_function( void )
-{
-    // function body goes here.
-}
-
-instead of:
-
-void my_function(
-    void )
-{
-    // function body goes here.
+void my_long_function( first_complex_type *arg1, second_complex_type *arg2,
+                       int arg3, third_complex_type *arg4 ) {
+    // function body goes here
 }
 
 Note that a C language function which takes no parameters should be
@@ -234,20 +220,31 @@ if(condition){
 Where the dependent statement does not require braces, it may, in order
 of preference, either:
 
-a) be indented on the next line
-
-if( condition )
-    consequence;
-
-b) or given braces it does not need
+a) given braces it does not strictly need
 
 if( condition ) {
     consequence;
 }
 
+b) or be indented on the next line
+
+if( condition )
+    consequence;
+
 c) or be placed on the same line
 
 if( condition ) consequence;
+
+The last form is not recommended for practical reasons. If a conditional
+statement is formated like
+
+if( condition ) do_something();
+
+it is not immediately obvious when stepping over the line in a debugger
+whether the condition was true or false. Hence if this form is used, it
+should only ever be done with control constructs such as return, break
+or continue. Even so, it is impossible to put a breakpoint on the conditional
+statement in a line oriented debugger, therefore this form should be avoided.
 
 The following shows the templates to use for formatting each of the flow
 control structures in C and C++.
@@ -368,7 +365,7 @@ If you wish to create a nested code block for a case statement (for
 example to declare some local variables in C code), do so like the
 following:
 
-switch (x) {
+switch( x ) {
 case 1:
     {
         int local_var;
@@ -413,21 +410,37 @@ errInvalid:
 ...
 }
 
+Usage of gotos should be kept to minimum and is not recommended. In the
+vast majority of cases, the same effect can be achieved using structured
+programming constructs in a much safer way.
+
 Expressions
 -----------
 
 When formatting expressions, try to use spaces and parentheses to
 enhance the readability of the expression---splitting it over multiple
 lines if necessary to make it more readable. Do not format expressions
-without any spaces between the operators and the operands. Judiciously
-group together sections of the expression without using spaces. For
+without any spaces between binary operators and their operands. For
 example:
 
-    x = ( y+10 ) - 240 * ( 20 / ( t + my_func() ) );
+    x = (y + 10) - 240 * (20 / (t + my_func()));
 
 rather than
 
     x=(y+10)-240*(20/(t+my_func()));
+
+If parentheses contain an expression, there should be no space
+after the opening and before the closing parenthesis. Combined with the
+preceding guidelines, code should be formatted this way:
+
+if( (a || my_func( b )) && ((c = my_other_func( 1 + x )) == 42) ) {
+    // do something
+}
+
+That is, for parentheses that are parts of control statements and function
+calls, spaces should be after the opening and before the closing parenthesis,
+but spaces should not be used with parentheses that simply group expressions
+together.
 
 Return statements
 -----------------
@@ -443,6 +456,15 @@ return( TRUE );
 
 In other words, format return statements as if 'return' was a name of a
 function.
+
+Operator sizeof
+---------------
+
+The same applies to the sizeof operator, that is, parentheses should be used
+as if sizeof was a function. For example:
+
+i = sizeof( void * );
+
 
 Variable Declarations
 ---------------------
@@ -491,6 +513,7 @@ void foo( void )
 {
     int         my_var1;
     long        my_var2;
+    void        *my_ptr;
 
     // code follows here
 }
@@ -587,25 +610,23 @@ All C header files should be formatted in the following manner:
 *
 ****************************************************************************/
 
+
 #ifndef _HEADER_H_INCLUDED  /* Include guard. The #define name should be   */
 #define _HEADER_H_INCLUDED  /* the same as the header (ie: header.h here). */
 
 #include <stdio.h>      /* Include any dependant include files */
 
-/* If necessary, declare structure packing; it is often preferable to
- * use the compiler default for performance reasons, and only pack
- * data structures that need to be exchanged with external code.
- * The __Packed keyword may be used on individual basis instead of
- * the #pragma.
+/* If necessary, declare structure packing; The __Packed keyword may be
+ * used on individual basis instead of the #pragma.
  */
-#pragma pack(1)
+#pragma pack( push, 1 )
 
 /* Macros, enumerations, type definitions, structures and unions should be
  * defined in this section for both C and C++ code.
  */
 
-/* Restore the compile default packing value if it has been changed */
-#pragma pack()
+/* Restore the previous packing value if it has been changed */
+#pragma pack( pop )
 
 /* The following is not stricly required for header files that are not
  * intended to be included from C++ code.
@@ -622,6 +643,20 @@ extern "C" {            /* Use "C" linkage when in C++ mode */
 
 #endif  /* __HEADER_H */
 ------------------------------------------------------------------------------
+
+Structure packing warrants further note. For structures that are only used
+internally within a single project, it is highly recommended that compiler
+default packing is used. This is especially important on platforms where
+misaligned accesses incur significant penalties (that includes nearly all
+modern processor architectures).
+
+However, for structures that are shared by multiple projects, especially
+structures that describe external data stored in files, received over
+network links etc., packing is *critical*. In ideal case, structures are
+designed to be naturally aligned and structure packing becomes irrelevant.
+In reality, many structures aren't naturally aligned and proper packing
+must be specified. Problems caused by improper structure packing are
+notoriously difficult to diagnose and correct.
 
 Enumerations
 ------------
@@ -643,8 +678,8 @@ typedef enum {
 Structures and Unions
 ---------------------
 
-Always declare structures and unions using a typedef, so that the
-structure can be used without requiring the 'struct' or 'union' keyword.
+It is preferred to declare structures and unions using a typedef, so that
+the structure can be used without requiring the 'struct' or 'union' keyword.
 For example:
 
 typedef struct {
@@ -762,23 +797,23 @@ All C++ header files should be formatted in the following manner:
 *
 ****************************************************************************/
 
+
 #ifndef __HEADER_HPP      // Mandatory include guard. The #define name must
 #define __HEADER_HPP      // be the same as the header (ie: header.h here).
 
 #include <iostream>       // Include any dependant include files
 
-// If necessary, declare structure packing; it is often preferable to
-// use the compiler default for performance reasons, and only pack
-// data structures that need to be exchanged with external code.
-// The __Packed keyword may be used on individual basis instead of
-// the #pragma.
-#pragma pack(1)
+
+// If necessary, declare structure packing; The __Packed keyword may be
+// used on individual basis instead of the #pragma.
+// See C header description for additional information on structure packing.
+#pragma pack( push, 1 )
 
 // Macros, enumerations, type definitions, structures and unions should be
 // defined in this section for both C and C++ code.
 
-// Restore the compile default packing value if it has been changed
-#pragma pack()
+// Restore the previous packing value if it has been changed
+#pragma pack( pop )
 
 // Any C++ class definitions should be defined in this section.
 
