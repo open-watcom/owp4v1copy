@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Convert C statements to expression trees.
 *
 ****************************************************************************/
 
@@ -378,16 +377,11 @@ static void ChkRetValue()
     TYPEPTR     typ;
 
     typ = CurFunc->sym_type;
-    if( CurFunc->flags & SYM_TYPE_GIVEN ) {
-        typ = typ->object;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        if( typ->decl_type != TYPE_VOID ) {
-            CWarn( WARN_MISSING_RETURN_VALUE,
-                    ERR_MISSING_RETURN_VALUE, CurFunc->name );
-        }
-    } else {  //default is type_int make void to catch bad use
-        CurFunc->sym_type = FuncNode( GetType( TYPE_VOID ),
-                                    FLAG_NONE, typ->u.parms );
+    typ = typ->object;
+    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    if( typ->decl_type != TYPE_VOID ) {
+        CWarn( WARN_MISSING_RETURN_VALUE,
+                ERR_MISSING_RETURN_VALUE, CurFunc->name );
     }
 }
 
