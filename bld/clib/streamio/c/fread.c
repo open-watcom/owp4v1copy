@@ -55,9 +55,10 @@ extern int  __fill_buffer( FILE * );    /* located in fgetc */
 extern void __ioalloc( FILE *fp );
 
 
-_WCRTLINK size_t fread( char *buf, size_t size, size_t n, FILE *fp )
+_WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
 {
-    size_t len_read;
+    char    *buf = _buf;
+    size_t  len_read;
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );

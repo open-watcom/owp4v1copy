@@ -153,8 +153,8 @@ static BOOL WINAPI CtrlSignalHandler(IN ULONG Event)
 
 static BOOL CtrlHandlerIsNeeded(void)
 {
-    void (*int_func)(void) = __GetSignalFunc(SIGINT);
-    void (*brk_func)(void) = __GetSignalFunc(SIGBREAK);
+    void *int_func = __GetSignalFunc(SIGINT);
+    void *brk_func = __GetSignalFunc(SIGBREAK);
 
     return (((int_func != SIG_DFL) && (int_func != SIG_ERR))
                     || ((brk_func != SIG_DFL) && (brk_func != SIG_ERR)));

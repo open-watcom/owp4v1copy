@@ -133,7 +133,7 @@ _WCRTLINK void (*signal( int sig, void (*func)(int) ))(int)
         if( func != SIG_DFL  &&  func != SIG_ERR ) {
             if( _RWD_sigtab[sig].os_sig_code != 0 ) {
                 if( _RWD_sigtab[sig].os_func == NULL ) {
-                    DosSetSigHandler( break_handler,
+                    DosSetSigHandler( (PFNSIGHANDLER)break_handler,
                                       &_RWD_sigtab[sig].os_func,
                                       &_RWD_sigtab[sig].prev_action,
                                       2,

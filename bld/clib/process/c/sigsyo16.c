@@ -63,7 +63,7 @@ void __grab_int23()
         USHORT          action;
 
         if( handler != 0 ) return;
-        DosSetSigHandler( break_handler, &handler, &action, 2, SIG_CTRLC );
+        DosSetSigHandler( (PFNSIGHANDLER)break_handler, &handler, &action, 2, SIG_CTRLC );
         __int23_exit = restore_handler;
     }
 
