@@ -742,8 +742,9 @@ int ScanNum()
             if( c == 'l' || c == 'L' ) {
                 c = SaveNextChar();
                 con.suffix = SUFF_ULL;
+            }else{
+                con.suffix = SUFF_UL;
             }
-            con.suffix = SUFF_UL;
         } else if( c == 'i' || c == 'I' ) {
             c = SaveNextChar();
             con.suffix = SUFF_UI;
