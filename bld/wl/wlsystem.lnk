@@ -223,6 +223,7 @@ system begin linux
     libpath %WATCOM%\lib386
     libpath %WATCOM%\lib386\linux
     format elf
+    op exportall
 end
 system begin nt
     option osname='Windows NT character-mode'

@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
+#include <conio.h>
 #include "trpimp.h"
 
 extern char RWBuff[];

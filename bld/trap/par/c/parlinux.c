@@ -30,9 +30,11 @@
 ****************************************************************************/
 
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <conio.h>
-#include <stdlib.h>
+#include <unistd.h>
 
 
 #define NUM_ELTS( a )   (sizeof( a ) / sizeof( a[0] ))
@@ -53,12 +55,14 @@ unsigned PrnAddress( int printer )
 
 unsigned AccessPorts( unsigned first, unsigned last )
 {
-    return ioperm(first,last,1) == 0;
+    int res = ioperm(first,last-first+1,1) == 0;
+    printf("ioperm(%X,%X,1) == %d\n", first, last-first+1, res);
+    return res;
 }
 
 void FreePorts( unsigned first, unsigned last )
 {
-    ioperm(first,last,0);
+    ioperm(first,last-first,0);
 }
 
 static int CheckForPort( int i, char value )
@@ -76,7 +80,10 @@ char *InitSys()
 
     PortsFound = 0;
     for( i = 0; i < NUM_ELTS( PortTest ); ++i ) {
-        AccessPorts(PortTest[i], PortTest[i]);
+        if (!AccessPorts(PortTest[i], PortTest[i])) {
+            printf("Failed to get I/O permissions. This program must run as root!\n");
+            exit(-1);
+            }
         if( CheckForPort( i, 0x55 ) && CheckForPort( i, 0xaa ) ) {
             PortAddress[ PortsFound++ ] = PortTest[ i ];
         }
