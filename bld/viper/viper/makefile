@@ -24,3 +24,6 @@ win\pbide.cfg : ide.mfg
 nt\pbide.cfg : ide.mfg
         wsplice -k C_FOR_PB -k C_FOR_PB_NT ide.mfg nt\pbide.cfg
 
+clean: .SYMBOLIC
+	@if exist win\*.cfg erase win\*.cfg
+	@if exist nt\*.cfg erase nt\*.cfg
