@@ -7,10 +7,11 @@ set FULLBUILD=1
 
 cdsay .
 
-echo Languages Build <1>
+echo Languages Build: <1> <2> <3>
 
-[ BLOCK <BUILD_PLATFORM> linux386 ]
+[ BLOCK bootstrap <1*> ]
 #================================
+echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/langlnx.ctl ]
 
 [ BLOCK . . ]

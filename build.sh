@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# Build script to bootstrap build the Linux version of the compiler
+# using the GNU C/C++ compiler tools. If you already have a working
+# Open Watcom compiler, you do not need to use the bootstrap process
+
 if [ -f setvars ]; then
     . setvars
 else
@@ -13,4 +18,5 @@ cd ../builder
 $MAKE -f gnumake
 cp $OBJDIR/builder ../build/binl
 cd ..
-builder build os_linux
+builder build os_linux bootstrap 
+
