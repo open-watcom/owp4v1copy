@@ -176,6 +176,57 @@ bool relational_test( )
   return( rc );
 }
 
+bool capacity_test( )
+{
+  bool rc = true;
+
+  std::string s1;
+  std::string s2("Hello, World!");
+
+  if( s1.capacity( ) == 0) {
+    std::cout << "capacity FAIL 0001\n"; rc = false;
+  }
+  if( s2.size( ) > s2.capacity( ) ) {
+    std::cout << "capacity FAIL 0002\n"; rc = false;
+  }
+  if( s1.empty( ) == false ) {
+    std::cout << "capacity FAIL 0003\n"; rc = false;
+  }
+  if( s2.empty( ) == true ) {
+    std::cout << "capacity FAIL 0004\n"; rc = false;
+  }
+
+  s2.clear( );
+  if( s2.empty( ) == false ) {
+    std::cout << "capacity FAIL 0005\n"; rc = false;
+  }
+
+  std::string s3("Hello");
+  s3.resize( 2 );
+  if( s3.size( ) != 2 || s3 != "He" ) {
+    std::cout << "capacity FAIL 0006\n"; rc = false;
+  }
+  s3.resize( 5, 'x' );
+  if( s3.size( ) != 5 || s3 != "Hexxx" ) {
+    std::cout << "capacity FAIL 0007\n"; rc = false;
+  }
+  s3.resize( 40, 'y' );
+  if( s3.size( ) != 40 ||
+      s3 != "Hexxxyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" ) {
+    std::cout << "capacity FAIL 0008\n"; rc = false;
+  }
+
+  std::string s4("Hello");
+  std::string::size_type new_s4capacity = ( 7 * s4.capacity( ) ) / 2;
+  s4.reserve( new_s4capacity );
+  if( s4.capacity( ) < new_s4capacity ||
+      s4.size( ) != 5 ||
+      s4 != "Hello" ) {
+    std::cout << "capacity FAIL 0009\n"; rc = false;
+  }
+  return( rc );
+}
+
 // This function should probably be some kind of template so it can be
 // readily used to check iterators from any kind of sequence container.
 //
@@ -407,6 +458,24 @@ bool erase_test( )
   return( rc );
 }
 
+bool swap_test( )
+{
+  bool rc = true;
+
+  std::string s1("ABC");
+  std::string s2("XYZ");
+
+  s1.swap( s2 );
+  if( s1 != "XYZ" || s2 != "ABC" ) {
+    std::cout << "swap FAIL 0001\n"; rc = false;
+  }
+  std::swap( s1, s2 );
+  if( s1 != "ABC" || s2 != "XYZ" ) {
+    std::cout << "swap FAIL 0002\n"; rc = false;
+  }
+  return( rc );
+}
+
 bool cstr_test( )
 {
         bool  rc = true;
@@ -506,6 +575,160 @@ bool find_first_of_test()
   return( rc );
 }
 
+bool find_last_of_test()
+{
+  bool rc = true;
+  std::string s1( "Hello, World!" );
+  if( s1.find_last_of( "eoW" ) != 8 ) {
+    std::cout << "find_last_of FAIL 0001\n"; rc = false;
+  }
+  if( s1.find_last_of( "eoW", 1 ) != 1 ) {
+    std::cout << "find_last_of FAIL 0002\n"; rc = false;
+  }
+  if( s1.find_last_of( "oWe", 2 ) != 1 ) {
+    std::cout << "find_last_of FAIL 0003\n"; rc = false;
+  }
+  if( s1.find_last_of( "!" ) != 12 ) {
+    std::cout << "find_last_of FAIL 0004\n"; rc = false;
+  }
+  if( s1.find_last_of( "!", 13 ) != 12 ) {
+    std::cout << "find_last_of FAIL 0005\n"; rc = false;
+  }
+  if( s1.find_last_of( "z#+" ) != std::string::npos ) {
+    std::cout << "find_last_of FAIL 0006\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+bool find_first_not_of_test()
+{
+  bool rc = true;
+
+  std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  std::string s1("xAWQKSMQIFJJWXGV"); // Be sure both 'A' and 'Z' represented.
+  std::string s2("KFNNAWEZxZNEKGDW");
+  std::string s3("QMVVXZKRIGJJWTAx");
+  std::string s4("UUDHHAKVVLZVFLQP");
+  std::string s5("");
+
+  if( s1.find_first_not_of( good_chars ) != 0 ) {
+    std::cout << "find_first_not_of FAIL 0001\n"; rc = false;
+  }
+  if( s2.find_first_not_of( good_chars ) != 8 ) {
+    std::cout << "find_first_not_of FAIL 0002\n"; rc = false;
+  }
+  if( s3.find_first_not_of( good_chars ) != 15 ) {
+    std::cout << "find_first_not_of FAIL 0003\n"; rc = false;
+  }
+  if( s4.find_first_not_of( good_chars ) != std::string::npos ) {
+    std::cout << "find_first_not_of FAIL 0004\n"; rc = false;
+  }
+  if( s2.find_first_not_of( good_chars, 8 ) != 8 ) {
+    std::cout << "find_first_not_of FAIL 0005\n"; rc = false;
+  }
+  if( s3.find_first_not_of( good_chars, 15) != 15 ) {
+    std::cout << "find_first_not_of FAIL 0006\n"; rc = false;
+  }
+  if( s3.find_first_not_of( good_chars, 16) != std::string::npos ) {
+    std::cout << "find_first_not_of FAIL 0007\n"; rc = false;
+  }
+  if( s3.find_first_not_of( good_chars, 17) != std::string::npos ) {
+    std::cout << "find_first_not_of FAIL 0008\n"; rc = false;
+  }
+  if( s5.find_first_not_of( good_chars ) != std::string::npos ) {
+    std::cout << "find_first_not_of FAIL 0009\n"; rc = false;
+  }
+  if( s4.find_first_not_of( s5 ) != 0 ) {
+    std::cout << "find_first_not_of FAIL 0010\n"; rc = false;
+  }
+  return( rc );
+}
+
+
+bool find_last_not_of_test()
+{
+  bool rc = true;
+
+  std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  std::string s1("xAWQKSMQIFJJWXGV");  // Be sure both 'A' and 'Z' represented.
+  std::string s2("KFNNAWEZxZNEKGDW");
+  std::string s3("QMVVXZKRIGJJWTAx");
+  std::string s4("UUDHHAKVVLZVFLQP");
+  std::string s5("");
+
+  if( s1.find_last_not_of( good_chars ) != 0 ) {
+    std::cout << "find_last_not_of FAIL 0001\n"; rc = false;
+  }
+  if( s2.find_last_not_of( good_chars ) != 8 ) {
+    std::cout << "find_last_not_of FAIL 0002\n"; rc = false;
+  }
+  if( s3.find_last_not_of( good_chars ) != 15 ) {
+    std::cout << "find_last_not_of FAIL 0003\n"; rc = false;
+  }
+  if( s4.find_last_not_of( good_chars ) != std::string::npos ) {
+    std::cout << "find_last_not_of FAIL 0004\n"; rc = false;
+  }
+  if( s2.find_last_not_of( good_chars, 8 ) != 8 ) {
+    std::cout << "find_last_not_of FAIL 0005\n"; rc = false;
+  }
+  if( s3.find_last_not_of( good_chars, 15) != 15 ) {
+    std::cout << "find_last_not_of FAIL 0006\n"; rc = false;
+  }
+  if( s3.find_last_not_of( good_chars, 16) != 15 ) {
+    std::cout << "find_last_not_of FAIL 0007\n"; rc = false;
+  }
+  if( s3.find_last_not_of( good_chars, 17) != 15 ) {
+    std::cout << "find_last_not_of FAIL 0008\n"; rc = false;
+  }
+  if( s5.find_last_not_of( good_chars ) != std::string::npos ) {
+    std::cout << "find_last_not_of FAIL 0009\n"; rc = false;
+  }
+  if( s4.find_last_not_of( s5 ) != 15 ) {
+    std::cout << "find_last_not_of FAIL 0010\n"; rc = false;
+  }
+  return( rc );
+}
+
+bool substr_test()
+{
+  bool rc = true;
+
+  std::string s1("Hello, World!");
+
+  if( s1.substr( ) != "Hello, World!" ) {
+    std::cout << "substr FAIL 0001\n"; rc = false;
+  }
+  if( s1.substr( 1 ) != "ello, World!" ) {
+    std::cout << "substr FAIL 0002\n"; rc = false;
+  }
+  if( s1.substr( 0, 1 ) != "H" ) {
+    std::cout << "substr FAIL 0003\n"; rc = false;
+  }
+  if( s1.substr( 0, 0 ) != "" ) {
+    std::cout << "substr FAIL 0004\n"; rc = false;
+  }
+  if( s1.substr( 12 ) != "!" ) {
+    std::cout << "substr FAIL 0005\n"; rc = false;
+  }
+  if( s1.substr( 3, 4 ) != "lo, " ) {
+    std::cout << "substr FAIL 0006\n"; rc = false;
+  }
+  if( s1.substr( 13 ) != "" ) {
+    std::cout << "substr FAIL 0007\n"; rc = false;
+  }
+  try {
+    if( s1.substr( 14 ) != "" ) {
+      std::cout << "substr FAIL 0008: Exception expected!\n"; rc = false;
+    }
+  }
+  catch( std::out_of_range ) {
+    // Ok.
+  }
+  return( rc );
+}
+
+
 // Main Program
 // ============
 
@@ -514,24 +737,30 @@ int main( )
   int rc = 0;
 
   try {
-    if( !construct_test( )    ) rc = 1;
-    if( !assign_test( )       ) rc = 1;
-    if( !access_test( )       ) rc = 1;
-    if( !relational_test( )   ) rc = 1;
-    if( !iterator_test( )     ) rc = 1;
-    if( !append_test( )       ) rc = 1;
-    if( !insert_test( )       ) rc = 1;
-    if( !erase_test( )        ) rc = 1;
-    if( !cstr_test( )         ) rc = 1;
-    if( !find_test( )         ) rc = 1;
-    if( !rfind_test( )        ) rc = 1;
-    if( !find_first_of_test() ) rc = 1;
+    if( !construct_test( )       ) rc = 1;
+    if( !assign_test( )          ) rc = 1;
+    if( !access_test( )          ) rc = 1;
+    if( !relational_test( )      ) rc = 1;
+    if( !capacity_test( )        ) rc = 1;
+    if( !iterator_test( )        ) rc = 1;
+    if( !append_test( )          ) rc = 1;
+    if( !insert_test( )          ) rc = 1;
+    if( !erase_test( )           ) rc = 1;
+    if( !swap_test( )            ) rc = 1;
+    if( !cstr_test( )            ) rc = 1;
+    if( !find_test( )            ) rc = 1;
+    if( !rfind_test( )           ) rc = 1;
+    if( !find_first_of_test()    ) rc = 1;
+    if( !find_last_of_test()     ) rc = 1;
+    if( !find_first_not_of_test()) rc = 1;
+    if( !find_last_not_of_test() ) rc = 1;
+    if( !substr_test()           ) rc = 1;
   }
-  catch( out_of_range e ) {
+  catch( std::out_of_range e ) {
     std::cout << "Unexpected out_of_range exception: " << e.what( ) << "\n";
     rc = 1;
   }
-  catch( length_error e ) {
+  catch( std::length_error e ) {
     std::cout << "Unexpected length_error exception: " << e.what( ) << "\n";
     rc = 1;
   }

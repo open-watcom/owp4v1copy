@@ -413,7 +413,7 @@ extern void __strerror( int __max, int __errnum, char *__buf );
 #endif
 
 :: The header <_strdef.h> is indirectly included below.
-#include <stdexcep.h>
+#include <stdexcept>
 
 namespace std {
 
@@ -524,7 +524,7 @@ namespace std {
       size_type n )
   {
     basic_string temp( str, pos, n, mem );
-    swap( *this, temp );
+    swap( temp );
     return( *this );
   }
 
@@ -537,7 +537,7 @@ namespace std {
       size_type n )
   {
     basic_string temp( s, n, mem );
-    swap( *this, temp );
+    swap( temp );
     return( *this );
   }
 
@@ -549,7 +549,7 @@ namespace std {
       const CharT *s )
   {
     basic_string temp( s, mem );
-    swap( *this, temp );
+    swap( temp );
     return( *this );
   }
 
@@ -562,7 +562,7 @@ namespace std {
       CharT c )
   {
     basic_string temp( n, c, mem );
-    swap( *this, temp );
+    swap( temp );
     return( *this );
   }
 
@@ -634,6 +634,78 @@ namespace std {
     basic_string< CharT, Traits, Allocator >::capacity( ) const
   {
     return( total );
+  }
+
+  // max_size( ) const
+  // *****************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::max_size( ) const
+  {
+    return npos; // This is probably not correct.
+  }
+
+  // resize( size_type, CharT )
+  // **************************
+  template< class CharT, class Traits, class Allocator >
+  void basic_string< CharT, Traits, Allocator >::resize(
+    size_type n,
+    CharT c )
+  {
+    if( n <= filled ) {
+      filled = n;
+      return;
+    }
+
+    if( n < total ) {
+      Traits::assign( buffer + filled, n - filled, c );
+      filled = n;
+      return;
+    }
+
+    size_type new_total;
+    pointer new_buffer = alloc( n + 1, new_total );
+    Traits::copy( new_buffer, buffer, filled );
+    Traits::assign( new_buffer + filled, n - filled, c );
+    mem.deallocate( buffer, total );
+    buffer = new_buffer;
+    total  = new_total;
+    filled = n;
+  }
+
+  // reserve( size_type )
+  // ********************
+  template< class CharT, class Traits, class Allocator >
+  void basic_string< CharT, Traits, Allocator >::reserve(
+    size_type new_capacity )
+  {
+    if( new_capacity <= total ) return;
+
+    size_type new_total;
+    pointer new_buffer = alloc( new_capacity + 1, new_total );
+    Traits::copy( new_buffer, buffer, filled );
+    mem.deallocate( buffer, total );
+    buffer = new_buffer;
+    total  = new_total;
+  }
+
+  // clear( )
+  // ********
+  template< class CharT, class Traits, class Allocator >
+  inline
+  void basic_string< CharT, Traits, Allocator >::clear( )
+  {
+    filled = 0;
+  }
+
+  // empty( ) const
+  // **************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  bool basic_string< CharT, Traits, Allocator >::empty( ) const
+  {
+    return( filled == 0 );
   }
 
   // operator[]( size_type ) const
@@ -1007,6 +1079,33 @@ namespace std {
     return( first );
   }
 
+  // swap( basic_string & )
+  // **********************
+  template< class CharT, class Traits, class Allocator >
+  void basic_string< CharT, Traits, Allocator >::swap(
+    basic_string &str )
+  {
+    typename Allocator::pointer ptemp;
+    typename Allocator::size_type stemp;
+    Allocator atemp;
+
+    ptemp      = buffer;
+    buffer     = str.buffer;
+    str.buffer = ptemp;
+
+    stemp      = total;
+    total      = str.total;
+    str.total  = stemp;
+
+    stemp      = filled;
+    filled     = str.filled;
+    str.filled = stemp;
+
+    atemp      = mem;
+    mem        = str.mem;
+    str.mem    = atemp;
+  }
+
   // data( ) const
   // *************
   template< class CharT, class Traits, class Allocator >
@@ -1214,6 +1313,210 @@ namespace std {
       size_type pos ) const
   {
     return( find_first_of( basic_string( 1, c ), pos ) );
+  }
+
+  // find_last_of( const basic_string &, size_type ) const
+  // *****************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_of(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    size_type index = pos;
+
+    if( filled < index ) index = filled - 1;
+
+    while( index != npos ) {
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+          return( index );
+        }
+      }
+      --index;
+    }
+
+    return( npos );
+  }
+
+  // find_last_of( const CharT *, size_type, size_type ) const
+  // *********************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( find_last_of( basic_string( s, n ), pos ) );
+  }
+
+  // find_last_of( const CharT *, size_type ) const
+  // **********************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_of(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( find_last_of( basic_string( s ), pos ) );
+  }
+
+  // find_last_of( CharT, size_type ) const
+  // **************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_of(
+      CharT c,
+      size_type pos ) const
+  {
+    return( find_last_of( basic_string( 1, c ), pos ) );
+  }
+
+  // find_first_not_of( const basic_string &, size_type ) const
+  // **********************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_not_of(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    size_type index = pos;
+
+    if( filled <= index ) return( npos );
+
+    while( index < filled ) {
+      bool found = false;
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+          found = true;
+          break;
+        }
+      }
+      if ( !found ) return( index );
+      ++index;
+    }
+
+    return( npos );
+  }
+
+  // find_first_not_of( const CharT *, size_type, size_type ) const
+  // **************************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_not_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( find_first_not_of( basic_string( s, n ), pos ) );
+  }
+
+  // find_first_not_of( const CharT *, size_type ) const
+  // ***************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_not_of(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( find_first_not_of( basic_string( s ), pos ) );
+  }
+
+  // find_first_not_of( CharT, size_type ) const
+  // *******************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_not_of(
+      CharT c,
+      size_type pos ) const
+  {
+    return( find_first_not_of( basic_string( 1, c ), pos ) );
+  }
+
+  // find_last_not_of( const basic_string &, size_type ) const
+  // *********************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_not_of(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    size_type index = pos;
+
+    if( filled <= index ) index = filled - 1;
+
+    while( index != npos ) {
+      bool found = false;
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+          found = true;
+          break;
+        }
+      }
+      if( !found ) return( index );
+      --index;
+    }
+
+    return( npos );
+  }
+
+  // find_last_not_of( const CharT *, size_type, size_type ) const
+  // *************************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_not_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( find_last_not_of( basic_string( s, n ), pos ) );
+  }
+
+  // find_last_not_of( const CharT *, size_type ) const
+  // **************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_not_of(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( find_last_not_of( basic_string( s ), pos ) );
+  }
+
+  // find_last_not_of( CharT, size_type ) const
+  // ******************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_not_of(
+      CharT c,
+      size_type pos ) const
+  {
+    return( find_last_not_of( basic_string( 1, c ), pos ) );
+  }
+
+  // substr( size_type, size_type ) const
+  // ************************************
+  template< class CharT, class Traits, class Allocator >
+  basic_string< CharT, Traits, Allocator >
+    basic_string< CharT, Traits, Allocator >::substr(
+      size_type pos,
+      size_type n ) const
+  {
+    if( pos > filled )
+      throw out_of_range( "basic_string::substr" );
+
+    size_type sublength = (n < filled - pos) ? n : filled - pos;
+    return( basic_string( buffer + pos, sublength ) );
   }
 
   // ======================================
@@ -1477,29 +1780,12 @@ namespace std {
   // swap( basic_string &, basic_string & )
   // ++++++++++++++++++++++++++++++++++++++
   template< class CharT, class Traits, class Allocator >
+  inline
   void swap(
       basic_string< CharT, Traits, Allocator > &left,
       basic_string< CharT, Traits, Allocator > &right )
   {
-    typename Allocator::pointer ptemp;
-    typename Allocator::size_type stemp;
-    Allocator atemp;
-
-    ptemp        = left.buffer;
-    left.buffer  = right.buffer;
-    right.buffer = ptemp;
-
-    stemp        = left.total;
-    left.total   = right.total;
-    right.total  = stemp;
-
-    stemp        = left.filled;
-    left.filled  = right.filled;
-    right.filled = stemp;
-
-    atemp        = left.mem;
-    left.mem     = right.mem;
-    right.mem    = atemp;
+    left.swap( right );
   }
 
 } // namespace std

@@ -38,7 +38,7 @@ namespace std {
 
   // struct char_traits< char >
   // **************************
-  // template< >
+  template< >
   struct char_traits< char > {
     typedef char      char_type;
     typedef int       int_type;
@@ -91,7 +91,7 @@ namespace std {
 
   // struct char_traits< wchar_t >
   // *****************************
-  // template< >
+  template< >
   struct char_traits< wchar_t > {
     typedef wchar_t   char_type;
     typedef wint_t    int_type;
@@ -376,8 +376,7 @@ namespace std {
 
       // Constructors.
       explicit basic_string( const Allocator &a = Allocator( ) );
-      basic_string( const basic_string &str,
-                    const Allocator &a = Allocator( ) );
+      basic_string( const basic_string &str );
       basic_string( const basic_string &str,
                           size_type  pos,
                           size_type  n = npos,
@@ -411,6 +410,11 @@ namespace std {
       size_type size( ) const;
       size_type length( ) const;
       size_type capacity( ) const;
+      size_type max_size( ) const;
+      void resize( size_type n, CharT c = CharT( ) );
+      void reserve( size_type new_capacity );
+      void clear( );
+      bool empty( ) const;
 
       const_reference operator[]( size_type pos ) const;
       reference       operator[]( size_type pos );
@@ -442,6 +446,8 @@ namespace std {
       iterator      erase( iterator p );
       iterator      erase( iterator first, iterator last );
 
+      void swap( basic_string &str );
+
       const CharT  *c_str( ) const;
       const CharT  *data( ) const;
       allocator_type get_allocator( ) const;
@@ -463,14 +469,47 @@ namespace std {
       size_type find_first_of( const CharT *s, size_type pos = 0 ) const;
       size_type find_first_of( CharT c, size_type pos = 0 ) const;
 
+      size_type find_last_of( const basic_string &str,
+                              size_type pos = npos ) const;
+      size_type find_last_of( const CharT *s,
+                              size_type pos,
+                              size_type n ) const;
+      size_type find_last_of( const CharT *s, size_type pos = npos ) const;
+      size_type find_last_of( CharT c, size_type pos = npos ) const;
+
+      size_type find_first_not_of( const basic_string &str,
+                                   size_type pos = 0 ) const;
+      size_type find_first_not_of( const CharT *s,
+                                   size_type pos,
+                                   size_type n ) const;
+      size_type find_first_not_of( const CharT *s, size_type pos = 0 ) const;
+      size_type find_first_not_of( CharT c, size_type pos = 0 ) const;
+
+      size_type find_last_not_of( const basic_string &str,
+                                  size_type pos = npos ) const;
+      size_type find_last_not_of( const CharT *s,
+                                  size_type pos,
+                                  size_type n ) const;
+      size_type find_last_not_of( const CharT *s, size_type pos = npos ) const;
+      size_type find_last_not_of( CharT c, size_type pos = npos ) const;
+
+      basic_string substr( size_type pos = 0, size_type n = npos ) const;
+
     private:
+      // 1. buffer has size total.
+      // 2. buffer never shrinks.
+      // 3. total >= filled + 1. The extra space is for a O(1) c_str().
+      // 4. total is a power of two.
+      // 5. buffer allocated with mem or a copy of mem.
+      // 6. Every string has its own buffer (no reference counting).
+      //
       Allocator mem;      // Object used to get and release memory.
       pointer   buffer;   // Points at start of string.
       size_type filled;   // Number of buffer slots with characters.
       size_type total;    // Total number of buffer slots.
 
       // This method encapsulates the memory allocation policy.
-      pointer alloc(size_type required, size_type &found);
+      pointer alloc( size_type required, size_type &found );
   };
 
 
@@ -519,8 +558,7 @@ namespace std {
   // ***************************************************************
   template< class CharT, class Traits, class Allocator >
   basic_string< CharT, Traits, Allocator >::basic_string(
-    const basic_string &other,
-    const Allocator &a ) : mem( a )
+    const basic_string &other ) : mem( other.mem )
   {
     buffer = alloc( other.filled + 1, total );
     Traits::copy( buffer, other.buffer, other.filled );
