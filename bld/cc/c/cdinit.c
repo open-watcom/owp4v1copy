@@ -96,8 +96,8 @@ local void StoreInt64( TYPEPTR typ );
 
 int DataQuadsAvailable( void )
 {
-    return ( CurDataQuad != NULL &&
-             ( CurDataQuad->prev != NULL || CurDataQuad->next != NULL ) );
+    DATA_QUAD_LIST *dql = DataQuadSegs[ 0 ];
+    return( dql != NULL && dql->next != NULL );
 }
 
 void InitDataQuads()
