@@ -214,7 +214,7 @@ static  int     ShowAll( int fmt ) {
 }
 
 
-int             DbExamine() {
+void            DbExamine() {
 //===========================
 
     db_item     PGM *item;
@@ -224,7 +224,7 @@ int             DbExamine() {
 
     ParseBlanks();
     fmt = DEFAULT_FMT;
-    if( ParseEOL() ) return( ShowAll( fmt ) );
+    if( ParseEOL() ) { ShowAll( fmt ); return; }
     if( ParseChr( '(' ) ) {
         ParseBlanks();
         if( ParseChr( 'z' ) ) {
@@ -234,29 +234,23 @@ int             DbExamine() {
         }
         if( !ParseChr( ')' ) ) {
             DbMsg( MS_DB_SYNTAX_ERR );
-            return( 0 );
         }
     }
-    if( ParseEOL() ) return( ShowAll( fmt ) );
+    if( ParseEOL() ) { ShowAll( fmt ); return; }
     for(;;) {
         ParseBlanks();
         name = ParsePtr();
         len = ParseName();
         if( len == 0 ) {
             DbMsg( MS_DB_SYNTAX_ERR );
-            return( 0 );
         }
         item = FindVar( name, len );
         if( item == NULL ) {
             DbMsg( MS_DB_VAR_NOT_FOUND );
-            return( 0 );
         }
-        if( !ShowOne( item, fmt ) ) {
-            return( 0 );
-        }
+        ShowOne( item, fmt ); 
         if( __XcptFlags & XF_LIMIT_ERR ) {
             __XcptFlags &= ~XF_LIMIT_ERR;
-            return( 0 );
         }
         StartInput();
         ParseBlanks();
@@ -264,7 +258,5 @@ int             DbExamine() {
     }
     if( !ParseEOL() ) {
         DbMsg( MS_DB_SYNTAX_ERR );
-        return( 0 );
     }
-    return( 1 );
 }

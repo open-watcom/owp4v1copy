@@ -51,7 +51,7 @@ extern char     *FindType( id_type );
 extern char     *FindStmt( id_type );
 extern unsigned GetStmntCnt( void );
 extern char     *ConvertRetType( id_type id );
-extern void     ConvertVarType( char *typebuf, char *arraybuf, id_type id, void *array );
-extern void     ConvertParmType( char *buf, char *name, id_type id, void *array );
+extern void     ConvertVarType( char *typebuf, char *arraybuf, id_type id, ArrayInfo *array );
+extern void     ConvertParmType( char *buf, char *name, id_type id, ArrayInfo *array );
 
 #endif

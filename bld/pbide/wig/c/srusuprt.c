@@ -1016,9 +1016,9 @@ static statement *replaceStatement( statement *locale, char *stmt ) {
     return( locale->next );
 }
 
-static void freeVarList( VarInfo *cur ) {
+static void freeVarList( void *cur ) {
 /****************************************/
-    MemFree( cur->name );
+    MemFree( ((VarInfo *)cur)->name );
 }
 
 static void freeStatement( statement *curr ) {

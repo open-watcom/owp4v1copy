@@ -126,7 +126,7 @@ void FiniHash( HashTable _table, int freeitems )
 /*
  * Insert an item into a hash table.  Duplicates are ignored.
  */
-void InsertHash( HashTable _table, const void *item )
+void InsertHash( HashTable *_table, const void *item )
 /***************************************************/
 {
     Hash *              table = (Hash*)_table;

@@ -39,8 +39,11 @@
 #include "cioconst.h"
 #include "csetinfo.h"
 
-#define _BANEXTRA
 #include "banner.h"
+#ifdef _BANEXTRA
+#undef _BANEXTRA
+#endif
+#define _BANEXTRA
 
 #include <stdio.h>
 #include <string.h>

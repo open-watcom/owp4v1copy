@@ -165,10 +165,10 @@ void FiniLex( void ) {
     yyLine = NULL;
 }
 
-int compKeywords( const char *p1, const keyword *p2 ) {
-/******************************************/
+int compKeywords( const void *p1, const void *p2 ) {
+/**************************************************/
 
-    return( stricmp( p1, p2->key ) );
+    return( stricmp( p1, ((const keyword *)p2)->key ) );
 }
 
 id_type checkKeyWord( const char *text ) {

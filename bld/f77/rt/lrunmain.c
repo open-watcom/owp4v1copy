@@ -67,8 +67,8 @@ extern  file_handle     OpenWrite(char *);
 #endif
 extern  void            F77Data(targ_addr *);
 extern  void            Program(void);
-extern  bool            DebugInit(comp_options);
-extern  bool            DebugFini(void);
+extern  void            DebugInit(comp_options);
+extern  void            DebugFini(void);
 extern  void            R_TrapInitLG(void);
 extern  void            R_TrapFiniLG(void);
 extern  ftnfile         *_GetFtnFile(int,int,void *,char *);

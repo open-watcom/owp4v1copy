@@ -39,8 +39,8 @@
 #include <io.h>
 #include "global.h"
 #include "types.h"
-#include "keywords.h"
 #include "sruinter.h"
+#include "keywords.h"
 #include "mem.h"
 #include "error.h"
 #include "options.h"
