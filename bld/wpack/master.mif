@@ -8,7 +8,7 @@ wpack_autodepends = .AUTODEPEND
 
 inc_dirs = -I"$(wpack_dir)/h" -I$(wtouch_dir)
 
-.c: ../c;$(wtouch_dir)
+.c: ../c;$(wtouch_dir);$(clib_dir)/startup/c
 
 objs =               &
         common.obj   &
