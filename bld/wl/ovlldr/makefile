@@ -19,7 +19,7 @@ debugobjs = dovlboth.obj dovldata.obj
 
 lib_opts = -b -p16
 
-extra_c_flags = -Fo=$^@ -r -d1 -zu -zl -zld -nc=_OVLCODE -nt=_TEXT -nm=$^&
+extra_c_flags = -I$(watcom_h) -Fo=$^@ -r -d1 -zu -zl -zld -nc=_OVLCODE -nt=_TEXT -nm=$^&
 
 extra_c_flags_sovlldr  = -mc -DOVL_SMALL
 extra_c_flags_dsovlldr = -mc -DOVL_SMALL -DOVL_DEBUG
