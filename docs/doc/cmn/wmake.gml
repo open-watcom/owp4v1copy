@@ -4147,7 +4147,7 @@ FILE keyboard.obj
 FILE mouse.obj
 .millust end
 .np
-&maksname supports eight internal commands:
+&maksname supports nine internal commands:
 .autopoint
 .point
 .ix '&makcmdup internal commands' '%null'
@@ -4170,6 +4170,9 @@ FILE mouse.obj
 .point
 .ix '&makcmdup internal commands' '%append'
 .id %append
+.point
+.ix '&makcmdup internal commands' '%erase'
+.id %erase
 .point
 .ix '&makcmdup internal commands' '%make'
 .id %make
@@ -4237,8 +4240,9 @@ except that a non-zero exit code is returned by &makcmdup..
 The
 .id %create,
 .id %write,
+.id %append,
 and
-.id %append
+.id %erase
 internal commands allow &makcmdup to generate files under makefile
 control.
 This is useful for files that have contents that depend on makefile
@@ -4268,6 +4272,19 @@ The
 internal command will append a text line to the end of a file (which
 will be created if it does not exist).
 The
+.id %erase
+internal command will delete a file.
+The
+.id %erase
+internal command has the form:
+.millust begin
+%erase <file>
+.millust end
+.pc
+where
+.id <file>
+is a file specification.
+The
 .id %write
 and
 .id %append
@@ -4290,7 +4307,7 @@ commands.
 .ix '&makcmdup internal commands' '%append'
 .millust begin
 #
-# %create %append example
+# %create %append %erase example
 #
 !include objdef.mif
 
@@ -4302,6 +4319,9 @@ plot.lnk : objdef.mif
         %append $^@ NAME $^&
         %append $^@ DEBUG all
         for %i in ($(objs)) do %append $^@ FILE %i
+
+clean : .SYMBOLIC
+        %erase plot.lnk
 .millust end
 .pc
 The above code demonstrates a valuable technique that can generate

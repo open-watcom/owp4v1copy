@@ -265,6 +265,7 @@ static const char * const percentCmds[] = {
     "ABORT",
     "APPEND",
     "CREATE",
+    "ERASE",
     "MAKE",
     "NULL",
     "QUIT",
@@ -278,6 +279,7 @@ enum {
     PER_ABORT,
     PER_APPEND,
     PER_CREATE,
+    PER_ERASE,
     PER_MAKE,
     PER_NULL,
     PER_QUIT,
@@ -830,6 +832,16 @@ STATIC RET_T percentWrite( const char *arg, enum write_type type )
 }
 
 
+STATIC RET_T percentErase( char *arg )
+/****************************************************************/
+{
+    if( 0==unlink( FixName( arg ) ) ) {
+        return( RET_SUCCESS );
+    }
+    return( RET_ERROR );
+}
+
+
 STATIC RET_T percentCmd( const char *cmdname, char *arg )
 /********************************************************
  * handle our special percent commands
@@ -867,6 +879,9 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
 
     case PER_CREATE:
         return( percentWrite( arg, WR_CREATE ) );
+
+    case PER_ERASE:
+        return( percentErase( arg ) );
 
     case PER_MAKE:
         return( percentMake( arg ) );
