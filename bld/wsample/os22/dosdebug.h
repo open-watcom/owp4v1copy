@@ -120,6 +120,7 @@ typedef struct  {
 
 #define DBG_C_GetLibName        100     /* get library name */
 
+#ifndef DBG_N_Success
 #define DBG_N_Success           0       /* Successful command completion */
 #define DBG_N_Error             -1      /* Error detected during command */
 #define DBG_N_ProcTerm          -6      /* Process termination - DosExitList done */
@@ -134,6 +135,7 @@ typedef struct  {
 #define DBG_N_ThreadCreate      -15     /* Thread creation */
 #define DBG_N_ModuleFree        -16     /* Module freed */
 #define DBG_N_RangeStep         -17     /* Range Step detected */
+#endif
 
 #define DBG_N_Breakpoint        -100
 #define DBG_N_SStep             -101

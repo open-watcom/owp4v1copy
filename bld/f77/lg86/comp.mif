@@ -5,22 +5,6 @@
 !include wres.mif
 !include mlibs.mif
 
-!ifdef on_build_machine
-clibldos_dir    = $(new_clib)\library\msdos.086\ml
-clibldos_lib    = $(new_clib)\library\msdos.086\ml\clibl.lib
-cliblnec_lib    = $(new_clib)\library\necdos.086\ml\clibl.lib
-mathl286_lib    = $(new_mlib)\library\msdos.286\ml\mathl.lib
-mathl287_lib    = $(new_mlib)\library\msdos.287\ml\mathl.lib
-ovlldr_lib      = $(wlink_dir)\ovlldr\wovl.lib
-emu286_lib      = $(emu286)\noemu87.lib
-clibros2_lib    = $(new_clib)\library\os2.386\ms_r\clibs.lib
-clibrnt_lib     = $(new_clib)\library\winnt.386\ms_r\clibs.lib
-clibrnec_lib    = $(new_clib)\library\necdos.386\ms_r\clibs.lib
-clibr386_lib    = $(new_clib)\library\msdos.386\ms_r\clibs.lib
-mathr386_lib    = $(new_mlib)\library\msdos.386\ms_r\maths.lib
-mathr387_dir    = $(new_mlib)\library\msdos.387\ms_r
-mathr387_lib    = $(new_mlib)\library\msdos.387\ms_r\maths.lib
-!else
 clibldos_dir    = $(%watcom)\lib286\dos
 clibldos_lib    = $(%watcom)\lib286\dos\clibl.lib
 mathl286_lib    = $(%watcom)\lib286\mathl.lib
@@ -33,7 +17,6 @@ clibr386_lib    = $(%watcom)\lib386\dos\clib3r.lib
 mathr386_lib    = $(%watcom)\lib386\math3r.lib
 mathr387_dir    = $(%watcom)\lib386
 mathr387_lib    = $(%watcom)\lib386\math387r.lib
-!endif
 
 asm = *wasm
 
