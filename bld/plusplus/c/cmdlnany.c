@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent command line processing.
 *
 ****************************************************************************/
 
@@ -411,7 +410,10 @@ static void stripQuotes( char *fname )
         // string will shrink so we can reduce in place
         d = fname;
         for( s = d + 1; *s && *s != '"'; ++s ) {
-            if( s[0] == '\\' && s[1] == '"' ) {
+            // collapse double backslashes, only then look for escaped quotes
+            if( s[0] == '\\' && s[1] == '\\' ) {
+                ++s;
+            } else if( s[0] == '\\' && s[1] == '"' ) {
                 ++s;
             }
             *d++ = *s;
