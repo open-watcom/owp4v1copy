@@ -371,7 +371,7 @@ static void processOptionFile( char *fname )
 } /* processOptionFile */
 
 
-main( int argc , char *argv[] )
+int main( int argc , char *argv[] )
 {
     int         ch,i;
 

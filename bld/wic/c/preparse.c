@@ -761,7 +761,7 @@ extern int      prenstate, prenvar, prentoken, prenrule;
 # define preassert(condition, msg, arg)
 #endif
 
-preparse()
+int preparse( void )
 {
 
         register short          prei, *prep;    /* for table lookup */

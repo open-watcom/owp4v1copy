@@ -41,7 +41,7 @@
 
 static symbol_table symTab;
 
-static symTabCmp(void *_entry1, void *_entry2) {
+static int symTabCmp(void *_entry1, void *_entry2) {
     pSymTabEntry entry1 = _entry1;
     pSymTabEntry entry2 = _entry2;
 

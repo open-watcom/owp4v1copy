@@ -38,7 +38,7 @@
 #include "keys.h"
 #include "win.h"
 
-static lastChar[2];
+static int lastChar[2];
 
 static int checkLine( linenum *ln )
 {

@@ -35,7 +35,7 @@
 #include "wic.h"
 
 static pSLList tokQue;
-static eofScanned = 0;
+static int eofScanned = 0;
 
 static pToken getNextTokQueElem(void);
 static pToken getNextTokQueElemEmitEOL(int emitEol);

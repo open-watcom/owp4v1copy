@@ -685,7 +685,7 @@ extern int      cnstate, cnvar, cntoken, cnrule;
 # define cassert(condition, msg, arg)
 #endif
 
-cparse()
+int cparse( void )
 {
 
         register short          ci, *cp;        /* for table lookup */
