@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  A variety of printf-like functions for vi
 *
 ****************************************************************************/
 
@@ -35,12 +34,13 @@
 #include <stdarg.h>
 #include <string.h>
 #include "const.h"
-#include "control.h"
 #ifdef __WIN__
 #include "winvi.h"
 #endif
 
 void Lead( char c, int num, char *buff )
+// With "c", to "num" bytes, put leading bytes in "buff"
+// This is a service for basePrintf() which is made available externally.
 {
     int len,diff,i;
 
@@ -57,8 +57,10 @@ void Lead( char c, int num, char *buff )
     }
 }
 
+// barfChar() - called from basePrintf() - writes to (cFile) ? cFile : cStr
 static FILE *cFile;
 static char *cStr;
+
 static void barfChar( char ch )
 {
     if( cFile == NULL ) {
@@ -69,6 +71,10 @@ static void barfChar( char ch )
 }
 
 static void basePrintf( const char *in, va_list al )
+// With format "in" and argument list "al", use barfChar() to write an output
+// Flags, minimum field width, precision, and length modifiers are unsupported.
+// conversion specifiers are a superset of a subset of those printf supports.
+// Unsupported specifiers are quietly ignored.
 {
     char        cin;
     int         i,j;
@@ -94,28 +100,23 @@ static void basePrintf( const char *in, va_list al )
                 i = va_arg( al, int );
                 itoa( (unsigned int) i, buff, 10 );
                 goto copyloop1;
-                break;
             case 'U':
                 l = va_arg( al, long );
                 ultoa( (unsigned long) l, buff, 10 );
                 goto copyloop1;
-                break;
             case 'l':
                 l = va_arg( al, long );
                 ltoa( (long) l, buff, 10 );
                 goto copyloop1;
-                break;
             case 's':
                 tmp = va_arg( al, char * );
                 goto copyloop2;
-                break;
             #ifdef DBG
                 case 'W':
                     #ifdef __386__
                         i = va_arg( al, int );
                         itoa( j, buff, 16 );
                         Lead( '0', 8, buff );
-                        goto copyloop1;
                     #else
                         i = va_arg( al, int );
                         j = va_arg( al, int );
@@ -124,8 +125,8 @@ static void basePrintf( const char *in, va_list al )
                         buff[4] = ':';
                         itoa( i, &buff[5], 16 );
                         Lead( '0', 4, &buff[5] );
-                        goto copyloop1;
                     #endif
+                    goto copyloop1;
             #endif
             case 'Z':   /* %02x */
                 i = va_arg( al, int );
@@ -137,48 +138,40 @@ static void basePrintf( const char *in, va_list al )
                 itoa( i, buff, 10 );
                 Lead( '0', 2, buff );
                 goto copyloop1;
-                break;
             case 'L':   /* %8ld */
                 l = va_arg( al, long );
                 ltoa( l, buff, 10 );
                 j = 8;
                 goto copyloop;
-                break;
             case 'M':   /* %5ld */
                 l = va_arg( al, long );
                 ltoa( l, buff, 10 );
                 j = 5;
                 goto copyloop;
-                break;
             case 'N':   /* %6ld */
                 l = va_arg( al, long );
                 ltoa( l, buff, 10 );
                 j = 6;
                 goto copyloop;
-                break;
             case 'O':   /* %6d */
                 l = va_arg( al, int );
                 itoa( l, buff, 10 );
                 j = 6;
                 goto copyloop;
-                break;
             case 'S':   /* %-12s */
-                tmp = va_arg( al, char * );
-                strcpy( buff, tmp );
                 j = 12;
                 goto copyloopa;
             case 'X':   /* %-15s */
-                tmp = va_arg( al, char * );
-                strcpy( buff, tmp );
                 j = 15;
                 goto copyloopa;
             case 'Y':   /* %-32s */
-                tmp = va_arg( al, char * );
-                strcpy( buff, tmp );
                 j = 32;
 copyloopa:
+                tmp = va_arg( al, char * );
+                strcpy( buff, tmp );
                 {
-                int k,l;
+                    int k,l;
+
                     l = strlen( buff );
                     k = j-l;
                     if( k > 0 ) {
@@ -190,11 +183,11 @@ copyloopa:
                     }
                 }
                 goto copyloop1;
-copyloop:           Lead( ' ', j, buff );
-copyloop1:          tmp = buff;
-copyloop2:          while( *tmp ) {
-                        barfChar( *tmp++ );
-                    }
+copyloop:       Lead( ' ', j, buff );
+copyloop1:      tmp = buff;
+copyloop2:      while( *tmp ) {
+                    barfChar( *tmp++ );
+                }
                 break;
             }
         } else {
@@ -209,26 +202,38 @@ copyloop2:          while( *tmp ) {
 }
 
 void MyPrintf( const char *str, ... )
+// printf++ functionality; MessageBox() rather than stdout in windows programs.
 {
     va_list     al;
 
 #ifdef __WIN__
     char        tmp[MAX_STR];
+#ifdef MB_TOPMOST
+    // MB_TOPMOST to overlay HWND_TOPMOST window on screen. (else hangs)
+    static const UINT MessageType = MB_OK | MB_TASKMODAL | MB_TOPMOST;
+#else
+    // MB_TOPMOST not in 16 bit Windows. Nor does that hang! W.Briscoe 20041113
+    // MB_SETFOREGROUND is both 16/32 bit but ineffective with seizure.
+    static const UINT MessageType = MB_OK | MB_TASKMODAL | MB_SETFOREGROUND;
+#endif
+
     va_start( al, str );
     cFile = NULL;
     cStr = tmp;
     basePrintf( str, al );
-    // MB_TOPMOST to overlay MB_TOPMOST window already on screen. (else hangs)
-    MessageBox( NULL, tmp, EditorName, MB_OK | MB_TASKMODAL | MB_TOPMOST );
+    MessageBox( NULL, tmp, EditorName, MessageType );
 #else
     va_start( al, str );
     cFile = stdout;
     cStr = NULL;
     basePrintf( str, al );
 #endif
+    va_end( al );
 
 }
+
 void MySprintf( char *out, const char *str, ... )
+// sprintf++ functionality
 {
     va_list     al;
 
@@ -236,9 +241,11 @@ void MySprintf( char *out, const char *str, ... )
     cFile = NULL;
     cStr = out;
     basePrintf( str, al );
+    va_end( al );
 }
 
 void MyVSprintf( char *out, const char *str, va_list al )
+// vsprintf++ functionality
 {
     cFile = NULL;
     cStr = out;
@@ -246,16 +253,19 @@ void MyVSprintf( char *out, const char *str, va_list al )
 }
 
 void MyVPrintf( const char *str, va_list al )
+// vprintf++ functionality
 {
     cFile = stdout;
     basePrintf( str, al );
 }
 
 void MyFprintf( FILE *fp, const char *str, ... )
+// vfprintf++ functionality
 {
     va_list al;
 
     va_start( al, str );
     cFile = fp;
     basePrintf( str, al );
+    va_end( al );
 }
