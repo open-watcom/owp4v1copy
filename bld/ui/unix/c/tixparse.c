@@ -382,7 +382,7 @@ static int do_parse( void )
     return( 1 );
 }
 
-unsigned char default_tix[] = {
+static unsigned char default_tix[] = {
     /* arrows */
     0x10, '+', 0x11, ',', 0x1e, '-', 0x1f, '.', 0x1a, '+', 0x1b, ',', 0x18, '-',
     0x19, '.',
@@ -400,9 +400,12 @@ unsigned char default_tix[] = {
     0xf1, 'g', 0xf8, 'f', 0xf9, '~', 0xfa, '~', 0xfe, 'h'
 };
 
+static char alt_keys[] = "QWERTYUIOP\0\0\0\0ASDFGHJKL\0\0\0\0\0ZXCVBNM";
+static char esc_str[] = "\x1bA";
+
 /* use above table if no .tix file is found */
 static int do_default( void )
-/*************************/
+/***************************/
 {
     unsigned char       code, c, cmap;
     int                 i;
@@ -424,6 +427,16 @@ static int do_default( void )
 	}
 	ti_char_map[ code ] = cmap & 0x7f;
     }
+    for( i = 0; i < sizeof( alt_keys ); i++ ) {
+        esc_str[0] = alt_keys[i];
+        TrieAdd( 0x110 + i, esc_str );
+        esc_str[0] += 0x20;
+        TrieAdd( 0x110 + i, esc_str );
+    }
+    /* sticky function key ^F */
+    TrieAdd( 0xff0, "\6");
+    /* sticky ALT ^A */
+    TrieAdd( 0xff3, "\1");
     return( 1 );
 }
 
