@@ -82,7 +82,7 @@ enum naming_conventions {
                              *  & the back of procedures
                              *  this is what the compiler does with /3r
                              */
-    REMOVE_USCORES          /*
+    REMOVE_USCORES,         /*
                              * assume that the user manually put uscores
                              * as described above into the assembly file
                              * and take them off
@@ -175,6 +175,7 @@ typedef struct global_options {
     char *      default_name_mangler;
     bool        allow_c_octals;
     bool        emit_dependencies;
+    bool        watcom_c_mangler;
 } global_options;
 
 extern global_options Options;

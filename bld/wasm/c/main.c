@@ -346,6 +346,8 @@ static void Set_WX(void) { Options.warning_level = 4; }
 
 static void SetWarningLevel(void) { Options.warning_level = OptValue; }
 
+static void Set_ZCM(void) { Options.watcom_c_mangler = FALSE; }
+
 static void Set_ZLD(void) { Options.emit_dependencies = FALSE; }
 
 static void Set_ZQ(void) { Options.quiet = TRUE; }
@@ -417,6 +419,7 @@ static struct option const cmdl_options[] = {
     { "wx",     0,        Set_WX },
     { "w=#",    0,        SetWarningLevel },
     { "zld",    0,        Set_ZLD },
+    { "zcm",    0,        Set_ZCM },
     { "zq",     0,        Set_ZQ },
     { 0,        0,        0 }
 };
@@ -448,7 +451,8 @@ global_options Options = {
     #endif
     /* default_name_mangler */  NULL,
     /* allow_c_octals   */      FALSE,
-    /* emit_dependencies */     TRUE
+    /* emit_dependencies */     TRUE,
+    /* Watcom C name mangler */ TRUE
 };
 
 static int OptionDelimiter( char c )
@@ -818,6 +822,8 @@ void set_cpu_parameters( void )
         } else {
             Options.naming_convention = DO_NOTHING;
         }
+    } else if( Options.default_name_mangler == NULL ) {
+        Options.naming_convention = ADD_USCORES;
     }
     switch( SWData.cpu ) {
     case 0:

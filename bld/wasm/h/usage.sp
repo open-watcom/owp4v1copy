@@ -50,6 +50,7 @@ Options:                    ( /option is also supported )
 -nm=<name>          set module name
 -nt=<name>          set name of text segment
 -o                  allow C form of octal constants
+-zcm                set C name mangler to MASM compatible mode
 -zq or -q           operate quietly
 -zld                suppress generation of file dependency info in object file
 -? or h             print this message

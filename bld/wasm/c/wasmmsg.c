@@ -187,28 +187,17 @@ void PrintfUsage( int first_ln )
     #endif
     for( ;; first_ln++ ) {
 #ifndef __UNIX__
-        if( ++count > 23 ) {
+        if( ++count >= 23 ) {
             Wait_for_return();
             count = 0;
         }
 #endif
         MsgGet( first_ln, msg_buff );
-        if( ( msg_buff[ 0 ] == '.' ) && ( msg_buff[ 1 ] == 0 ) ) break;
+        if( ( msg_buff[ 0 ] == '.' ) && ( msg_buff[ 1 ] == 0 ) )
+            break;
         puts( msg_buff );
     }
 }
-/* {
-    char        msgbuf[128];
-
-    for( ; first_ln <= last_ln; first_ln++ ) {
-        MsgGet( first_ln, msgbuf );
-        if( msgbuf[ 0 ] == '\0' ) {
-            break;
-        };
-        strcat( msgbuf, "\n" );
-        printf( msgbuf );
-    }
-} */
 
 void MsgFini()
 {

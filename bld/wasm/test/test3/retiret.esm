@@ -1,10 +1,10 @@
 .387
 .386p
-		PUBLIC	proc1
+		PUBLIC	_proc1
 DGROUP		GROUP	_DATA
 retiret_TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
 		ASSUME CS:retiret_TEXT, DS:DGROUP, SS:DGROUP
-proc1:
+_proc1:
     push        ebp
     mov         ebp,esp
     sub         esp,8

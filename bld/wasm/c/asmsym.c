@@ -87,6 +87,7 @@ char *InitAsmSym( struct asm_sym *sym, char *name )
         sym->segidx = 0;
         sym->offset = 0;
         sym->public = FALSE;
+        sym->langtype = ModuleInfo.langtype;
         sym->first_size = 0;
         sym->first_length = 0;
         sym->total_size = 0;
@@ -333,6 +334,8 @@ static void DumpSymbol( struct asm_sym *sym )
     dir_node    *dir;
     char        *type;
     char        value[512];
+    char        *langtype;
+    char        *public;
 
     dir = (dir_node *)sym;
     *value = 0;
@@ -423,7 +426,38 @@ static void DumpSymbol( struct asm_sym *sym )
         type = "UNKNOWN";
         break;
     }
-    DoDebugMsg( "%-30s\t%s\t%8X\t%s\n", sym->name, type, sym->offset, value );
+    if( sym->public ) {
+        public = "PUBLIC ";
+    } else {
+        public = "";
+    }
+    switch( sym->langtype ) {
+    case LANG_C:
+        langtype = "C";
+        break;
+    case LANG_BASIC:
+        langtype = "BASIC";
+        break;
+    case LANG_FORTRAN:
+        langtype = "FORTRAN";
+        break;
+    case LANG_PASCAL:
+        langtype = "PASCAL";
+        break;
+    case LANG_WATCOM_C:
+        langtype = "WATCOM_C";
+        break;
+    case LANG_STDCALL:
+        langtype = "STDCALL";
+        break;
+    case LANG_SYSCALL:
+        langtype = "SYSCALL";
+        break;
+    default:
+        langtype = "";
+        break;
+    }
+    DoDebugMsg( "%-30s\t%s\t%s%s\t%8X\t%s\n", sym->name, type, public, langtype, sym->offset, value );
 }
 
 void DumpASym( void )

@@ -180,15 +180,21 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
+!ifeq release 0
+wsplice_keys = -kIS_RC -k$(host_OS) -kHIDDEN
+!else
+wsplice_keys = -kIS_RC -k$(host_OS)
+!endif
+
 $(name).res : $(proj_path)/h/$(proj_name).rc usage.rc usagej.rc msg.gh wasmmsg.gh wmpmsg.gh
         $(rc_aui) -d_WASM_ $[@ -fo=$^@
 
 usage.rc : $(proj_path)/h/usage.sp
-        @%write usage.tmp -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@
+        @%write usage.tmp -kENGLISH $(wsplice_keys) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@
         wsplice @usage.tmp
 
 usagej.rc : $(proj_path)/h/usage.sp
-        @%write usagej.tmp -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@ 
+        @%write usagej.tmp -kJAPANESE $(wsplice_keys) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@ 
         wsplice @usagej.tmp
 
 usage.u : $(proj_path)/h/usage.sp

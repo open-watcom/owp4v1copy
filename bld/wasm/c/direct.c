@@ -77,7 +77,7 @@ extern void             AsmError( int );
 extern int              InputQueueFile( char * );
 extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
-extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
+extern void             SetMangler( struct asm_sym *, char *, int );
 
 static char *Check4Mangler( int *i );
 void         find_use32( void );
@@ -1039,6 +1039,31 @@ uint GetCurrGrp( void )
     return( 0 );
 }
 
+int GetLangType( int i )
+/***********************/
+{
+    if( AsmBuffer[i]->token != T_RES_ID)
+        return( LANG_NONE );
+    switch( AsmBuffer[i]->value ) {
+    case T_C:
+        return( LANG_C );
+    case T_BASIC:
+        return( LANG_BASIC );
+    case T_FORTRAN:
+        return( LANG_FORTRAN );
+    case T_PASCAL:
+        return( LANG_PASCAL );
+    case T_WATCOM_C:
+        return( LANG_WATCOM_C );
+    case T_STDCALL:
+        return( LANG_STDCALL );
+    case T_SYSCALL:
+        return( LANG_SYSCALL );
+    default:
+        return( LANG_NONE );
+    }
+}
+
 int GlobalDef( int i )
 /********************/
 {
@@ -1049,9 +1074,13 @@ int GlobalDef( int i )
     struct asm_sym *sym;
     dir_node    *dir;
     struct queuenode    *qnode;
+    int                 lang_type;
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
+        lang_type = GetLangType( i );
+        if( lang_type != LANG_NONE )
+            i++;
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
 
@@ -1090,8 +1119,7 @@ int GlobalDef( int i )
         sym->offset = 0;
         sym->state = SYM_UNDEFINED;
         sym->mem_type = TypeInfo[type].value;
-
-        SetMangler( sym, mangle_type );
+        SetMangler( sym, mangle_type, lang_type );
 
         /* put the symbol in the globaldef table */
         qnode = AsmAlloc( sizeof( queuenode ) );
@@ -1139,9 +1167,13 @@ int ExtDef( int i )
     memtype             mem_type;
     struct asm_sym      *sym;
     struct asm_sym      *struct_sym;
+    int                 lang_type;
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
+        lang_type = GetLangType( i );
+        if( lang_type != LANG_NONE )
+            i++;
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
 
@@ -1184,7 +1216,7 @@ int ExtDef( int i )
             }
         }
         sym = AsmGetSymbol( token );
-        SetMangler( sym, mangle_type );
+        SetMangler( sym, mangle_type, lang_type );
     }
     return( NOT_ERROR );
 }
@@ -1227,9 +1259,13 @@ int PubDef( int i )
     char                *token;
     struct asm_sym      *sym;
     dir_node            *node;
+    int                 lang_type;
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i+=2 ) {
+        lang_type = GetLangType( i );
+        if( lang_type != LANG_NONE )
+            i++;
         token = AsmBuffer[i]->string_ptr;
         /* Add the public name */
 
@@ -1257,27 +1293,26 @@ int PubDef( int i )
             case SYM_EXTERNAL:
             case SYM_STACK:
             case SYM_CONST:
-                if( sym->public ) {
-                    return( NOT_ERROR );
-                }
-                sym->public = TRUE;
-                // fixme
                 break;
             case SYM_PROC:
-                sym->public = TRUE;
                 if( node->e.procinfo->visibility != VIS_EXPORT ) {
                     node->e.procinfo->visibility = VIS_PUBLIC;
                 }
+            default:
                 break;
             }
         } else {
             node = dir_insert( token, TAB_PUB );
+            MakePublic( node );
+            sym = &node->sym;
         }
-        SetMangler( &node->sym, mangle_type );
+        SetMangler( sym, mangle_type, lang_type );
+        if( !sym->public ) {
         /* put it into the pub table */
+            sym->public = TRUE;
         MakePublic( node );
     }
-
+    }
     return( NOT_ERROR );
 }
 
@@ -2862,14 +2897,14 @@ static memtype proc_exam( int i )
     info->localsize = 0;
     info->is_vararg = FALSE;
     info->pe_type = ( ( Code->info.cpu & P_CPU_MASK ) == P_286 ) || ( ( Code->info.cpu & P_CPU_MASK ) == P_386 );
-    SetMangler( &dir->sym, NULL );
+    SetMangler( &dir->sym, NULL, LANG_NONE );
 
     /* Parse the definition line, except the parameters */
     for( i++; i < Token_Count && AsmBuffer[i]->token != T_COMMA; i++ ) {
         token = AsmBuffer[i]->string_ptr;
         if( AsmBuffer[i]->token == T_STRING ) {
             /* name mangling */
-            SetMangler( &dir->sym, token );
+            SetMangler( &dir->sym, token, LANG_NONE );
             continue;
         }
 
@@ -2893,6 +2928,7 @@ static memtype proc_exam( int i )
         case TOK_PROC_STDCALL:
         case TOK_PROC_SYSCALL:
             info->langtype = TypeInfo[type].value;
+            ((asm_sym *)dir)->langtype = info->langtype;
             minimum = TOK_PROC_PRIVATE;
             break;
         case TOK_PROC_PRIVATE:
@@ -3539,6 +3575,7 @@ int CommDef( int i )
     int         distance;
     int         count;
     struct asm_sym *sym;
+    int             lang_type;
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
@@ -3554,6 +3591,10 @@ int CommDef( int i )
         } else {
             distance = TOK_EXT_NEAR;
         }
+
+        lang_type = GetLangType( i );
+        if( lang_type != LANG_NONE )
+            i++;
 
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
@@ -3586,7 +3627,6 @@ int CommDef( int i )
         sym = AsmGetSymbol( token );
 
         if( sym != NULL ) {
-            SetMangler( sym, mangle_type );
             if( sym->state == SYM_UNDEFINED ) {
                 if( MakeComm( token, TypeInfo[type].value, TRUE, count,
                     TypeInfo[distance].value ) == ERROR ) {
@@ -3602,8 +3642,8 @@ int CommDef( int i )
                 return( ERROR );
             }
             sym = AsmGetSymbol( token );
-            SetMangler( sym, mangle_type );
         }
+        SetMangler( sym, mangle_type, lang_type );
     }
     return( NOT_ERROR );
 }

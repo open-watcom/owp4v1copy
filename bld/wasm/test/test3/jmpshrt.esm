@@ -1,17 +1,17 @@
 .387
-		PUBLIC	proc1
-		PUBLIC	proc2
+		PUBLIC	_proc1
+		PUBLIC	_proc2
 DGROUP		GROUP	_DATA
 jmpshrt_TEXT		SEGMENT	WORD PUBLIC USE16 'CODE'
 		ASSUME CS:jmpshrt_TEXT, DS:DGROUP, SS:DGROUP
     DB	01FH DUP(0,0,0,0,0,0,0,0)
     DB	0, 0, 0, 0, 0, 0, 0, 0
-proc1:
+_proc1:
     mov         ax,0bH
-    jmp         proc_both
-proc2:
+    jmp         _proc_both
+_proc2:
     mov         ax,0cH
-proc_both:
+_proc_both:
     push        bp
     mov         bp,sp
     push        es

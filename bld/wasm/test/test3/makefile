@@ -35,4 +35,7 @@ tst1
 dev_objs = &
 irpexitm
 
+asm_flags_jmpshrt = -zcm
+asm_flags_retiret = -zcm
+
 !include ../test.mif

@@ -10,13 +10,11 @@ nulldevice=/dev/null
 !else
 nulldevice=nul
 !endif
-nulldevice=null1.txt
 
 log_file=testasm.log
 
 .BEFORE
     @%create $(log_file)
-    @%create null1.txt
 
 all : clean $(objs) $(dev_objs) .SYMBOLIC
 

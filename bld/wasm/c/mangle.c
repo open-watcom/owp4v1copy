@@ -71,9 +71,9 @@ char *CMangler( struct asm_sym *sym, char *buffer )
     char                *name;
     char                *ptr = sym->name;
     uint                changes = NORMAL;
-    proc_info           *info;
     uint                additional_size = 1; // for null
 
+    if( Options.watcom_c_mangler ) {
     switch( Options.naming_convention ) {
     case DO_NOTHING:
         return( AsmMangler( sym, buffer ));
@@ -108,13 +108,22 @@ char *CMangler( struct asm_sym *sym, char *buffer )
         }
     }
     if( sym->state == SYM_PROC ) {
-        info = ((dir_node *)sym)->e.procinfo;
-        if( info->langtype == LANG_C || info->langtype == LANG_STDCALL ) {
+            if( ( sym->langtype == LANG_C ) || ( sym->langtype == LANG_STDCALL ) ) {
             changes |= USCORE_BACK;
-        } else if( info->langtype >= LANG_BASIC && info->langtype <= LANG_PASCAL ) {
+            } else if( ( sym->langtype >= LANG_BASIC ) && ( sym->langtype <= LANG_PASCAL ) ) {
+                changes |= UPPERCASE;
+            }
+        }
+    } else {
+        if( ( sym->langtype == LANG_C ) || ( sym->langtype == LANG_STDCALL ) ) {
+            changes |= USCORE_FRONT;
+        } else if( ( sym->langtype >= LANG_BASIC ) && ( sym->langtype <= LANG_PASCAL ) ) {
             changes |= UPPERCASE;
+        } else {
+            return( AsmMangler( sym, buffer ));
         }
     }
+
     #define USCORE "_"
 
     if( changes & USCORE_FRONT ) {
@@ -181,17 +190,25 @@ char *Mangle( struct asm_sym *sym, char *buffer )
     mangle = sym->mangler;
     if( mangle == NULL ) {
         mangle = GetMangler( Options.default_name_mangler );
-        if( mangle == NULL ) mangle = AsmMangler;
+        if( mangle == NULL ) {
+            if( sym->langtype == LANG_NONE ) {
+                mangle = AsmMangler;
+            } else {
+                mangle = CMangler;
+            }
+        }
         sym->mangler = mangle;
     }
     return( mangle( sym, buffer ) );
 }
 
-void SetMangler( struct asm_sym *sym, char *mangle_type )
-/*******************************************************/
+void SetMangler( struct asm_sym *sym, char *mangle_type, int langtype )
+/*********************************************************************/
 {
     mangle_func mangle;
 
+    if( langtype != LANG_NONE )
+        sym->langtype = langtype;
     mangle = GetMangler( mangle_type );
     if( mangle == NULL ) {
         /* nothing to do */

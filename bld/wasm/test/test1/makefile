@@ -60,6 +60,7 @@ movs &
 new &
 newbug &
 newmif &
+newproc &
 notcomm &
 offset &
 org &
@@ -96,7 +97,6 @@ xx
 dev_objs = &
 fubar &
 jmp &
-newproc &
 loader2
 
 asm_flags_x = -c
