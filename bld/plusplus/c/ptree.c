@@ -145,6 +145,7 @@ PTREE PTreeAlloc( void )
     tree->id_cgop = CO_NOP;
     tree->flags = PTF_NULL;
     tree->type = NULL;
+    tree->sym_name = NULL;
     tree->locn.src_file = NULL;
     tree->locn.line = 0;
     tree->locn.column = 0;
@@ -1263,12 +1264,6 @@ PTREE CutAwayQualification( PTREE scoped_id )
     return keepRightId( scoped_id );
 }
 
-PTREE MakeTemplateId( PTREE global_id )
-/*************************************/
-{
-    return keepRightId( global_id );
-}
-
 PTREE MakeGlobalOperatorId( PTREE global_operator, CGOP op )
 /**********************************************************/
 {
@@ -1650,6 +1645,7 @@ PTREE PTreeDupExpr(             // MAKE DUPLICATE-EXPRESSION NODE
     dup->u.dup.subtree[0] = expr;
     dup->u.dup.node = NULL;
     dup->type = expr->type;
+    dup->sym_name = expr->sym_name;
     dup->flags = expr->flags;
     return PTreeCopySrcLocation( dup, expr );
 }

@@ -176,6 +176,7 @@ typedef struct parse_tree_node {
     CGOP                id_cgop;
     uint_8              filler;
     TYPE                type;
+    SYMBOL_NAME         sym_name;
     PTD                 *decor;                 // decoration for node
     TOKEN_LOCN          locn;
     union {
@@ -396,7 +397,6 @@ extern PTREE PTreeExtractLocn( PTREE, TOKEN_LOCN * );
 extern void PTreeDeleteSizeExpr( PTREE );
 extern PTREE PTreeStringLiteralConcat( PTREE, PTREE );
 extern PTREE CutAwayQualification( PTREE );
-extern PTREE MakeTemplateId( PTREE );
 extern PTREE MakeBuiltinIsFloat( PTREE );
 extern PTREE PTreeOffsetof( PTREE, PTREE );
 extern PTREE PTreeCheckFloatRepresentation( PTREE tree );

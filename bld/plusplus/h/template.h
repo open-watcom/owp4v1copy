@@ -43,6 +43,7 @@ struct template_data {
     REWRITE             *defn;          // class template definition
     REWRITE             *member_defn;   // class template member definition
     char                *template_name; // name of the template
+    SCOPE               template_scope; // conaining scope of the template
     TOKEN_LOCN          locn;           // location of class template id
     error_state_t       errors;         // error state at beginning
     unsigned            all_generic : 1;// all args are generic types
@@ -124,14 +125,14 @@ extern void TemplateDeclFini( void );
 extern void TemplateFunctionCheck( SYMBOL, DECL_INFO * );
 extern void TemplateFunctionAttachDefn( DECL_INFO * );
 extern unsigned TemplateFunctionGenerate( SYMBOL *, arg_list *, TOKEN_LOCN *, SYMBOL *, boolean );
-extern void TemplateClassDeclaration( PTREE );
-extern boolean TemplateClassDefinition( PTREE );
+extern void TemplateClassDeclaration( PTREE, SCOPE, char * );
+extern boolean TemplateClassDefinition( PTREE, SCOPE, char * );
 extern DECL_SPEC *TemplateClassInstantiation( PTREE, PTREE, tc_instantiate );
 extern void TemplateHandleClassMember( DECL_INFO * );
 extern void TemplateProcessInstantiations();
 extern boolean TemplateMemberCanBeIgnored( void );
 extern boolean TemplateVerifyDecl( SYMBOL );
-extern void TemplateSpecificDefnStart( char *, PTREE );
+extern void TemplateSpecificDefnStart( PTREE, PTREE );
 extern void TemplateSpecificDefnEnd( void );
 extern SCOPE TemplateClassInstScope( TYPE );
 extern SCOPE TemplateClassParmScope( TYPE );
@@ -140,7 +141,7 @@ extern void TemplateFunctionInstantiate( SYMBOL, SYMBOL, void * );
 extern SYMBOL TemplateFunctionTranslate( SYMBOL, SCOPE * );
 extern tc_fn_control TemplateFunctionControl( void );
 extern TYPE TemplateUnboundInstantiate( TYPE, arg_list *, TOKEN_LOCN * );
-extern SYMBOL ClassTemplateLookup( char * );
+extern SYMBOL ClassTemplateLookup( SCOPE scope, char * );
 extern SYMBOL TemplateSymFromClass( TYPE );
 extern void TemplateSetDepth( unsigned );
 extern boolean TemplateUnboundSame( TYPE, TYPE );

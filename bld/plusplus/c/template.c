@@ -304,6 +304,7 @@ void TemplateDeclInit( TEMPLATE_DATA *data, DECL_INFO *args )
     data->defn = NULL;
     data->member_defn = NULL;
     data->template_name = NULL;
+    data->template_scope = NULL;
     data->locn.src_file = NULL;
     data->defn_found = FALSE;
     data->member_found = FALSE;
@@ -375,10 +376,8 @@ static TEMPLATE_INFO *newTemplateInfo( TEMPLATE_DATA *data )
 static SYMBOL newTemplateSymbol( TEMPLATE_DATA *data )
 {
     SYMBOL sym;
-    SCOPE scope;
     TEMPLATE_INFO *tinfo;
 
-    scope = GetCurrScope();
     tinfo = newTemplateInfo( data );
     sym = AllocSymbol();
     sym->id = SC_CLASS_TEMPLATE;
@@ -388,7 +387,7 @@ static SYMBOL newTemplateSymbol( TEMPLATE_DATA *data )
     if( data->locn.src_file != NULL ) {
         SymbolLocnDefine( &(data->locn), sym );
     }
-    sym = ScopeInsert( scope, sym, data->template_name );
+    sym = ScopeInsert( data->template_scope, sym, data->template_name );
     return( sym );
 }
 
@@ -409,7 +408,7 @@ void TemplateUsingDecl( SYMBOL sym, TOKEN_LOCN *locn )
     }
 }
 
-SYMBOL ClassTemplateLookup( char *name )
+SYMBOL ClassTemplateLookup( SCOPE scope, char *name )
 /**************************************/
 {
     SCOPE file_scope;
@@ -417,7 +416,7 @@ SYMBOL ClassTemplateLookup( char *name )
     SYMBOL_NAME sym_name;
     SYMBOL sym;
 
-    file_scope = ScopeNearestFile( GetCurrScope() );
+    file_scope = ScopeNearestFile( scope );
     result = ScopeFindNaked( file_scope, name );
     if( result != NULL ) {
         sym_name = result->sym_name;
@@ -689,8 +688,10 @@ void TemplateDeclFini( void )
     name = data->template_name;
     sym = NULL;
     if( name != NULL && ScopeId( GetCurrScope() ) == SCOPE_FILE ) {
-        sym = ClassTemplateLookup( name );
-        if( sym != NULL ) {
+        DbgAssert( data->template_scope != NULL );
+        sym = ClassTemplateLookup( data->template_scope, name );
+        if( ( sym != NULL )
+         && ( sym->name->containing == data->template_scope ) ) {
             mergeClassTemplates( data, sym );
         } else {
             sym = newTemplateSymbol( data );
@@ -909,15 +910,18 @@ unsigned TemplateFunctionGenerate( SYMBOL *psym, arg_list *args, TOKEN_LOCN *loc
     return( FNOV_NO_MATCH );
 }
 
-static void commonTemplateClass( TEMPLATE_DATA *data, PTREE id )
+static void commonTemplateClass( TEMPLATE_DATA *data, PTREE id, SCOPE scope, char *name )
 {
-    data->template_name = id->u.id.name;
+    data->template_name = name;
+    data->template_scope = ( ScopeId( scope ) == SCOPE_TEMPLATE_DECL ) ?
+        scope->enclosing : scope;
+
     if( id->locn.src_file != NULL ) {
         TokenLocnAssign( data->locn, id->locn );
     }
 }
 
-void TemplateClassDeclaration( PTREE id )
+void TemplateClassDeclaration( PTREE id, SCOPE scope, char *name )
 /***************************************/
 {
     TEMPLATE_DATA *data;
@@ -927,15 +931,16 @@ void TemplateClassDeclaration( PTREE id )
     data = currentTemplate;
     r = ParseGetRecordingInProgress( &locn );
     data->defn = r;
-    commonTemplateClass( data, id );
+    commonTemplateClass( data, id, scope, name );
 }
 
-boolean TemplateClassDefinition( PTREE id )
+boolean TemplateClassDefinition( PTREE id, SCOPE scope, char *name )
 /*****************************************/
 {
     TEMPLATE_DATA *data;
     TOKEN_LOCN *locn;
     REWRITE *r;
+    SCOPE template_scope;
 
     data = currentTemplate;
     r = ParseGetRecordingInProgress( &locn );
@@ -946,7 +951,8 @@ boolean TemplateClassDefinition( PTREE id )
     r = RewritePackageClassTemplate( r, locn );
     data->defn = r;
     data->defn_found = TRUE;
-    commonTemplateClass( data, id );
+    template_scope = ( id->op == PT_ID ) ? GetCurrScope() : scope;
+    commonTemplateClass( data, id, template_scope, name );
     return( r == NULL );
 }
 
@@ -1530,30 +1536,28 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
 
     if( tid->op == PT_ID ) {
         template_name = tid->u.id.name;
-        class_template = ClassTemplateLookup( template_name );
+        if( tid->sym_name != NULL ) {
+            if( ( tid->sym_name->name_type != NULL )
+             && SymIsClassTemplateModel( tid->sym_name->name_type ) ) {
+                class_template = tid->sym_name->name_type;
+            } else {
+                class_template = ClassTemplateLookup( GetCurrScope(),
+                                                      template_name );
+            }
+        }
     } else {
         /* we are dealing with a scoped template here */
-        SCOPE scope;
-        PTREE left;
         PTREE right;
 
-        DbgAssert( ( tid->op == PT_BINARY ) && ( tid->cgop == CO_STORAGE ) );
+        DbgAssert( NodeIsBinaryOp( tid, CO_STORAGE ) );
 
-        left = tid->u.subtree[0];
         right = tid->u.subtree[1];
-        DbgAssert( ( left->op == PT_BINARY )
-                && ( left->cgop == CO_COLON_COLON ) );
         DbgAssert( ( right->op == PT_ID ) );
 
         template_name = right->u.id.name;
 
-        if( left->u.subtree[1] != NULL ) {
-            scope = left->u.subtree[1]->u.id.scope;
-        } else {
-            scope = ScopeNearestFile( GetCurrScope() );
-        }
-
-        class_template = ScopeYYMember( scope, template_name )->name_type;
+        DbgAssert( tid->sym_name != NULL );
+        class_template = tid->sym_name->name_type;
     }
 
     if( class_template != NULL ) {
@@ -1655,8 +1659,8 @@ static PTREE fakeUpTemplateParms( SCOPE parm_scope, arg_list *type_args )
     return( parms );
 }
 
-static TYPE makeBoundClass( char *name, SCOPE parm_scope, arg_list *type_args,
-                            TOKEN_LOCN *locn )
+static TYPE makeBoundClass( SCOPE scope, char *name, SCOPE parm_scope,
+                            arg_list *type_args, TOKEN_LOCN *locn )
 {
     TYPE type_instantiated;
     SYMBOL class_template;
@@ -1664,7 +1668,7 @@ static TYPE makeBoundClass( char *name, SCOPE parm_scope, arg_list *type_args,
     PTREE parms;
 
     type_instantiated = NULL;
-    class_template = ClassTemplateLookup( name );
+    class_template = ClassTemplateLookup( scope, name );
     if( class_template != NULL ) {
         parms = fakeUpTemplateParms( parm_scope, type_args );
         tinfo = class_template->u.tinfo;
@@ -1677,6 +1681,7 @@ TYPE TemplateUnboundInstantiate( TYPE unbound_class, arg_list *type_args, TOKEN_
 /******************************************************************************************/
 {
     char *template_name;
+    SCOPE template_scope;
     SCOPE parm_scope;
     TYPE new_type;
 
@@ -1684,9 +1689,11 @@ TYPE TemplateUnboundInstantiate( TYPE unbound_class, arg_list *type_args, TOKEN_
     if( new_type == NULL ) {
         parm_scope = TemplateClassParmScope( unbound_class );
         if( parm_scope != NULL ) {
+            template_scope = TypeScope( unbound_class );
             template_name = SimpleTypeName( unbound_class );
             DbgAssert( template_name != NULL );
-            new_type = makeBoundClass( template_name, parm_scope, type_args, locn );
+            new_type = makeBoundClass( template_scope, template_name,
+                                       parm_scope, type_args, locn );
         }
     }
     return( new_type );
@@ -1706,6 +1713,7 @@ void TemplateHandleClassMember( DECL_INFO *dinfo )
     data->member_defn = r;
     data->member_found = TRUE;
     data->template_name = SimpleTypeName( dinfo->id->u.subtree[0]->type );
+    data->template_scope = ScopeNearestFile( TypeScope( dinfo->id->u.subtree[0]->type ) );
     FreeDeclInfo( dinfo );
 }
 
@@ -2073,7 +2081,7 @@ boolean TemplateMemberCanBeIgnored( void )
     return( templateData.extra_members );
 }
 
-void TemplateSpecificDefnStart( char *name, PTREE parms )
+void TemplateSpecificDefnStart( PTREE tid, PTREE parms )
 /*******************************************************/
 {
     SYMBOL class_template;
@@ -2081,8 +2089,33 @@ void TemplateSpecificDefnStart( char *name, PTREE parms )
     TEMPLATE_INFO *tinfo;
     SCOPE inst_scope;
     SCOPE parm_scope;
+    char *name;
 
-    class_template = ClassTemplateLookup( name );
+    if( tid->op == PT_ID ) {
+        name = tid->u.id.name;
+        if( tid->sym_name != NULL ) {
+            if ( ( tid->sym_name->name_type != NULL )
+              && SymIsClassTemplateModel( tid->sym_name->name_type ) ) {
+                class_template = tid->sym_name->name_type;
+            } else {
+                class_template = ClassTemplateLookup( GetCurrScope(), name );
+            }
+        }
+    } else {
+        /* we are dealing with a scoped template here */
+        PTREE right;
+
+        DbgAssert( NodeIsBinaryOp( tid, CO_STORAGE ) );
+
+        right = tid->u.subtree[1];
+        DbgAssert( ( right->op == PT_ID ) );
+
+        name = right->u.id.name;
+
+        DbgAssert( tid->sym_name != NULL );
+        class_template = tid->sym_name->name_type;
+    }
+
     tinfo = class_template->u.tinfo;
     if( tinfo->corrupted ) {
         return;

@@ -1048,18 +1048,12 @@ class-name-id
     | Y_TYPE_NAME
     | Y_TEMPLATE_NAME
     | Y_NAMESPACE_NAME
-    | Y_GLOBAL_ID
     | Y_GLOBAL_TYPE_NAME
     | Y_GLOBAL_TEMPLATE_NAME
-    | Y_GLOBAL_NAMESPACE_NAME
-    | Y_SCOPED_ID
     | Y_SCOPED_TYPE_NAME
     | Y_SCOPED_TEMPLATE_NAME
-    | Y_SCOPED_NAMESPACE_NAME
-    | Y_TEMPLATE_SCOPED_ID
     | Y_TEMPLATE_SCOPED_TYPE_NAME
     | Y_TEMPLATE_SCOPED_TEMPLATE_NAME
-    | Y_TEMPLATE_SCOPED_NAMESPACE_NAME
     ;
 
 destructor-name
@@ -1301,10 +1295,20 @@ namespace-using-directive
     ;
     
 namespace-using-declaration
-    : Y_USING qualified-type-specifier
-    { NameSpaceUsingDeclType( $2 ); }
-    | Y_USING qualified-id-expression
+    : Y_USING qualified-id-expression
     { NameSpaceUsingDeclId( $2 ); }
+    | Y_USING Y_TYPE_NAME
+    { NameSpaceUsingDeclType( sendType( $2 ) ); }
+    | Y_USING Y_GLOBAL_TYPE_NAME
+    { NameSpaceUsingDeclType( sendType( $2 ) ); }
+    | Y_USING Y_SCOPED_TYPE_NAME
+    { NameSpaceUsingDeclType( sendType( $2 ) ); }
+    | Y_USING template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
+    { NameSpaceUsingDeclType( sendType( $3 ) ); PTypeRelease( $2 ); }
+    | Y_USING Y_GLOBAL_TEMPLATE_NAME
+    { NameSpaceUsingDeclTemplateName( $2 ); }
+    | Y_USING Y_SCOPED_TEMPLATE_NAME
+    { NameSpaceUsingDeclTemplateName( $2 ); }
     | Y_USING Y_GLOBAL_ID
     { NameSpaceUsingDeclId( MakeGlobalId( $2 ) ); }
     | Y_USING Y_GLOBAL_OPERATOR operator-function-type
@@ -2809,7 +2813,7 @@ template-class-instantiation
     }
     | Y_GLOBAL_TEMPLATE_NAME Y_LT template-arg-list-opt
     {
-        $$ = TemplateClassInstantiation( MakeTemplateId( $1 ), $3, TCI_NULL );
+        $$ = TemplateClassInstantiation( $1, $3, TCI_NULL );
         setWatchColonColon( state, $$ );
     }
     | Y_SCOPED_TEMPLATE_NAME Y_LT template-arg-list-opt
@@ -2827,10 +2831,9 @@ template-class-pre-instantiation
     : Y_TEMPLATE_NAME Y_LT template-arg-list
     { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
     | Y_GLOBAL_TEMPLATE_NAME Y_LT template-arg-list
-    {
-        $1 = MakeTemplateId( $1 );
-        $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] );
-    }
+    { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
+    | Y_SCOPED_TEMPLATE_NAME Y_LT template-arg-list
+    { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
     ;
 
 template-arg-list-opt
@@ -2871,7 +2874,9 @@ template-directive-class
     : Y_TEMPLATE_NAME Y_LT template-arg-list Y_GT
     { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
     | Y_GLOBAL_TEMPLATE_NAME Y_LT template-arg-list Y_GT
-    { $$ = PTreeBinary( CO_LIST, MakeTemplateId( $1 ), $3 ); }
+    { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
+    | Y_SCOPED_TEMPLATE_NAME Y_LT template-arg-list Y_GT
+    { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
     ;
 
 /*** exception syntax ***/

@@ -95,7 +95,9 @@ static char * TokenNames[] = {
 
 #define NUM_PREC (sizeof(Prec) / sizeof(int))
 
-#define IS_OPERAND( token ) ( ( token == T_ID ) || ( token == T_CONSTANT ) )
+#define IS_OPERAND( token ) ( ( token == T_ID ) || ( token == T_CONSTANT ) \
+                           || ( ( token > T_BEFORE_KEYWORDS ) \
+                             && ( token < T_AFTER_KEYWORDS ) ) )
 
 typedef struct ppvalue {
     union {
@@ -939,6 +941,13 @@ static boolean COperand()
             done = PpNextToken();
         }
         break;
+      case T_FALSE:
+      case T_TRUE:
+        I32ToI64( CurToken == T_TRUE, &(p.sval) );
+        p.no_sign = 0;
+        PushOperandCurLocation( p );
+        done = PpNextToken();
+        break;
       case T_CONSTANT:
         switch( ConstType ) {
           case TYP_FLOAT:
@@ -968,7 +977,13 @@ static boolean COperand()
             done = PpNextToken();
         }
         break;
-      DbgDefault( "Default in COperand\n" );
+
+      default:
+        CErr2p( WARN_UNDEFD_MACRO_IS_ZERO, Buffer );
+        I64SetZero( p );
+        p.no_sign = 0;
+        PushOperandCurLocation( p );
+        done = PpNextToken();
     }
     return( done );
 }

@@ -438,3 +438,33 @@ void NameSpaceUsingDeclType( DECL_SPEC *dspec )
     }
     PTypeRelease( dspec );
 }
+
+void NameSpaceUsingDeclTemplateName( PTREE tid )
+/**********************************************/
+{
+    SYMBOL_NAME sym_name;
+    TOKEN_LOCN id_locn;
+    SYMBOL name_type;
+    SYMBOL name_syms;
+    PTREE right;
+
+    DbgAssert( NodeIsBinaryOp( tid, CO_STORAGE ) );
+
+    right = tid->u.subtree[1];
+    DbgAssert( ( right->op == PT_ID ) );
+
+    PTreeExtractLocn( tid, &id_locn );
+    sym_name = tid->sym_name;
+    name_type = sym_name->name_type;
+    name_syms = sym_name->name_syms;
+    if( name_type != NULL ) {
+        switch( name_type->id ) {
+          case SC_CLASS_TEMPLATE:
+            TemplateUsingDecl( name_type, &id_locn );
+            break;
+          DbgDefault( "unexpected storage class" );
+        }
+    }
+
+    PTreeFreeSubtrees( tid );
+}

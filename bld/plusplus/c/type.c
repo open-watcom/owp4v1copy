@@ -2345,7 +2345,7 @@ static SYMBOL checkPreviouslyDeclared( SYMBOL sym, char *name )
         }
         ScopeFreeResult( result );
     } else {
-        class_template = ClassTemplateLookup( name );
+        class_template = ClassTemplateLookup( GetCurrScope(), name );
         if( class_template == NULL ) {
             if( sym != NULL ) {
                 scope = ScopeNearestNonClass( GetCurrScope() );
