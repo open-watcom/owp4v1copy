@@ -18,6 +18,7 @@ dsxfork &
 dsxhdlr &
 extprocf &
 extprocn &
+float &
 indirect &
 jmpimpl &
 jmpshrt &

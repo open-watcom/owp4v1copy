@@ -100,5 +100,6 @@ jmp &
 loader2
 
 asm_flags_x = -c
+asm_flags_getenv = -I"$(watcom_dir)/h"
 
 !include ../test.mif
