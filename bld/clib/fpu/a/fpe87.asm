@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  80x87 interrupt handler.
 ;*
 ;*****************************************************************************
 
 
-;
-;   FPEHNDLR    : 80x87 interrupt handler
-;
 .8087
 .286
 
@@ -335,6 +331,9 @@ endif
         fwait                           ; make sure 80x87 is ready
         add     SP,ENV_SIZE             ; clean up stack
         pop     BP                      ; ...
+ifdef __OS2__
+        add     SP,2                    ; OS/2 stored the FP status word on stack!
+endif
         iret                            ; return from interrupt handler
 endproc __FPEHandler
 
