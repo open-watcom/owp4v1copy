@@ -29,9 +29,9 @@
 :BODY.
 .if &e'&dohelp eq 1 .do begin
 :exhelp
-:include file='&book.idx'
-:include file='&book.tbl'
-:include file='&book.kw'
+:include file='&book..idx'
+:include file='&book..tbl'
+:include file='&book..kw'
 .do end
 .sepsect Introduction
 :INCLUDE file='wdbgintr.gml'.
