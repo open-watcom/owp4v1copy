@@ -38,7 +38,7 @@
 /* menu.c */
 void BarfMenuData( void *f );
 int StartMenu( char *data );
-int EndMenu( void );
+int ViEndMenu( void );
 int MenuItem( char *data );
 int MenuItemFileList( void );
 int MenuItemLastFiles( void );

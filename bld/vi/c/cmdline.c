@@ -220,7 +220,7 @@ int TryCompileableToken( int token, char *data, bool iscmdline,
         rc = ActivateFloatMenu( data );
         break;
     case PCL_T_ENDMENU:
-        rc = EndMenu();
+        rc = ViEndMenu();
         break;
     case PCL_T_FILETYPESOURCE:
         rc = FTSStart( data );

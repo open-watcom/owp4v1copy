@@ -612,9 +612,9 @@ int DoMenuChar( void )
 } /* DoMenuChar */
 
 /*
- * EndMenu - stop adding a top level menu
+ * ViEndMenu - stop adding a top level menu
  */
-int EndMenu( void )
+int ViEndMenu( void )
 {
     int ch;
 

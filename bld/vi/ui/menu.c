@@ -331,9 +331,9 @@ static void initMenuList( menu *cmenu )
 } /* initMenuList */
 
 /*
- * EndMenu - terminate new menu
+ * ViEndMenu - terminate new menu
  */
-int EndMenu( void )
+int ViEndMenu( void )
 {
     char        ch;
 
@@ -358,7 +358,7 @@ int EndMenu( void )
 
     return( ERR_NO_ERR );
 
-} /* EndMenu */
+} /* ViEndMenu */
 
 /*
  * MenuItem - add new item current menu
