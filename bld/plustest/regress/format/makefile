@@ -18,7 +18,7 @@ cflags_i86 = $(cflags) -mc
 
 i_objs = iformat.obj itest.obj
 f_objs = fformat.obj ftest.obj
-    
+
 test : .symbolic testi.$(exe) testf.$(exe)
     $(run) testi >testi.out
     diff testi.out icheck.chk
@@ -38,16 +38,16 @@ testi.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, verbose, caseexact, stack=4k, quiet
+    @%append $^@ OPTION map, verbose, caseexact, quiet
     @for %i in ( $(i_objs) ) do @%append $^@ FILE %i
-    
+
 testf.lnk : makefile
     %create $^@
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=4k, quiet
+    @%append $^@ OPTION map, caseexact, quiet
     @for %i in ( $(f_objs) ) do @%append $^@ FILE %i
-    
+
 global : .SYMBOLIC
     @%make common_clean
