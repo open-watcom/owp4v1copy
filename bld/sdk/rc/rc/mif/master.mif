@@ -7,8 +7,7 @@ name = wrc
 #always use the most up to date wres library
 !include wres.mif
 
-.EXTENSIONS :
-.EXTENSIONS : .obj .cpp .c .h .mif .y .key .gh
+.EXTENSIONS : .y .key .gh
 
 !ifndef on_build_machine
 !ifeq host_os nt
@@ -51,8 +50,8 @@ extra_c_flags    += -dNT_HOSTED
 !endif
 
 !ifeq sys_dll 1
+extra_c_flags    += -dDLL_COMPILE
 !ifeq host_os nt
-extra_c_flags    += -bd -dDLL_COMPILE
 extra_l_flags    += option offset=0x69800000
 !endif
 !endif
@@ -67,19 +66,16 @@ extra_c_flags_386 = -fpc
 
 extra_l_flags += libpath $(watcom_dir)/lib &
                 lib $(WRES_LIB) &
-                option map, quiet
+                option map
 extra_l_flags_osi += option symfile
 
 # where to look for various files
 .c : $(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
-.cpp : $(wrc_dir)/c;$(trmem_dir)
 .y : $(wrc_dir)/y
 .key : $(wrc_dir)/hash
 .h : $(wrc_dir)/h;$(trmem_dir)
-.gh : $(wrc_dir)/h
-.mif : $(wrc_dir)/mif
 
-inc_dirs = $(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
+inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 .before:
         @set INCLUDE=$(inc_path)
@@ -124,39 +120,35 @@ ytab.obj : ytab.c param.h ytab.gh
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(yacc) -d -b $[@ $[:yydriver.c  >nul
-        @cp ytab.c $(wrc_dir)/c
-        @cp ytab.h $(wrc_dir)/h/ytab.gh
+        @cp ytab.h ytab.gh
         @rm -f ytab.h
-        @rm -f ytab.c
 
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
         $(bld_cl) $< $(wcl_util_opts) -fe=$@
 
 weights1.gh keyword1.gh : rc1.key ./findhash.exe
         $]@ $[@ >nul
-        cp keywords.gh $(wrc_dir)/h/keyword1.gh
-        cp weights.gh $(wrc_dir)/h/weights1.gh
+        @cp keywords.gh keyword1.gh
+        @cp weights.gh weights1.gh
         @rm -f keywords.gh
         @rm -f weights.gh
 
 weights2.gh keyword2.gh : rc2.key ./findhash.exe
         $]@ $[@ >nul
-        cp keywords.gh $(wrc_dir)/h/keyword2.gh
-        cp weights.gh $(wrc_dir)/h/weights2.gh
+        @cp keywords.gh keyword2.gh
+        @cp weights.gh weights2.gh
         @rm -f keywords.gh
         @rm -f weights.gh
 
-$(name).res : ../h/rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
+$(name).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
         $(rc) -bt=windows -r $]@ -fo=$(name).res
 
-../h/rcmsg.h : ../h/rc.msg
+rcmsg.h : ../h/rc.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > tmp.h
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > $^@
 !else
-        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" $[@
+        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 !endif
-        cp tmp.h $(wrc_dir)/h/rcmsg.h
-        rm -f tmp.h
 
 usage.rc : $(wrc_dir)/usage.sp
         wsplice -kENGLISH -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
@@ -168,18 +160,6 @@ hash1.obj : hash1.c weights1.gh
 hash2.obj : hash2.c weights2.gh
 
 clean: .SYMBOLIC .EXPLICIT
-    rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
-    rm -f *.sym *.tmp *.ilk *.lst *.err *.trk
-    rm -f ../h/ytab.gh ../c/ytab.c
-    rm -f ../h/keyword1.gh ../h/keyword2.gh
-    rm -f ../h/weights1.gh ../h/weights2.gh
-    rm -f ../h/rcmsg.h
-
-# implicit rules
-.c.obj: .autodepend
-        @set include=$(inc_path)
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@
-
-.c.cpp :
-        @set include=$(inc_path)
-        $(cc) $(cflags) $(extra_c_flags_$[&) -plc $[* -fo=$[*.cpp
+        rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
+        rm -f *.sym *.tmp *.ilk *.lst *.err *.trk
+        rm -f ytab.* *.gh rcmsg.h

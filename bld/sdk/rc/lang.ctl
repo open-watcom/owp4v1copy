@@ -26,7 +26,7 @@ cdsay .
     <CPCMD> <devdir>/sdk/rc/rc/nt386/wrc.exe <relroot>/rel2/binnt/wrc.exe
     <CPCMD> <devdir>/sdk/rc/rc/dos386/wrc.exe <relroot>/rel2/binw/wrc.exe
 #    <CPCMD> <devdir>/sdk/rc/rc/axp386/wrc.exe <relroot>/rel2/axpnt/wrc.exe
-#    <CPCMD> <devdir>/sdk/rc/rc/osi/wrc.exe <relroot>/rel2/binw/wrc.exe
+#    <CPCMD> <devdir>/sdk/rc/rc/osi386/wrc.exe <relroot>/rel2/binw/wrc.exe
     <CPCMD> <devdir>/sdk/rc/rc/nt386.dll/wrc.dll <relroot>/rel2/binnt/wrc.dll
 #    <CPCMD> <devdir>/sdk/rc/rc/os2386.dll/wrc.dll <relroot>/rel2/binp/dll/wrc.dll
     <CPCMD> <devdir>/sdk/rc/rc/kanji.uni <relroot>/rel2/binw/kanji.uni

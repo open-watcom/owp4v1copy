@@ -31,7 +31,9 @@
 
 
 #include <stdio.h>
-#ifndef __OS2__
+#ifdef __OS2__
+#include <os2def.h>
+#else
 #define STRICT
 #include <windows.h>
 #endif
@@ -87,5 +89,6 @@ unsigned APIENTRY LibMain( unsigned hmod, unsigned termination ) {
     }
     return( __dll_initialize() );
 */
+    return( 1 );
 }
 #endif
