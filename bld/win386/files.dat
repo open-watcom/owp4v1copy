@@ -1,4 +1,4 @@
-[ DEFAULT type="e" redist="" dir="binw" rel="."  where="c jc f77 jf77" ]
+[ DEFAULT type="e" dir="binw" rel="."  where="c jc f77 jf77" ]
 usr="win386.ext"	cond="wintarg"		desc="32-bit Windows Supervisor"
 usr="w386dll.ext"	cond="wintarg"		desc="32-bit Windows Supervisor for DLLs"
 usr="wemu387.386"	cond="wintarg"

@@ -1,4 +1,4 @@
-[ DEFAULT type="e" redist="" where="f77 jf77"
+[ DEFAULT type="e" where="f77 jf77" ]
 
 dir="binw"	usr="wfc.exe"		cond="doshost winhost | tools16" old="binb"	desc="16-bit FORTRAN 77 compiler"
 dir="binw"	usr="wfl.exe"		cond="doshost winhost | tools16" old="binb"	desc="Compile and link utility for 16-bit FORTRAN 77 compiler"

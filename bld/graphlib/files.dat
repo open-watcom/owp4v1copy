@@ -1,4 +1,4 @@
-[ DEFAULT type="g" redist="" where="c jc f77 jf77" rel="." ]
+[ DEFAULT type="g" where="c jc f77 jf77" rel="." ]
 
 dir="lib286\dos"	usr="graph.lib"		cond="tools16 dostarg"
 dir="lib386\dos"	usr="graph.lib"		cond="dostarg"

@@ -1,4 +1,4 @@
-[ DEFAULT type="s" cond="" where="f77 jf77" desc="src/fortran" ]
+[ DEFAULT type="s" where="f77 jf77" desc="src/fortran" ]
 dir="src\fortran"		usr="BLACKJAC.FOR"
 dir="src\fortran"		usr="BLACKJAC.JPN"
 dir="src\fortran"		usr="FSIGNAL.FI"
