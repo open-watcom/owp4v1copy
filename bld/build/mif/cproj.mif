@@ -87,7 +87,7 @@ mode_clflags  = $(cldebug_fmt)
 !else
 mode_cflags   = -od -d2 $(cdebug_fmt)
 mode_aflags   = -d1
-mode_lflags   = $(ldebug_fmt)
+mode_lflags   = $(ldebug_fmt) all
 mode_clflags  = $(cldebug_fmt)
 !endif
 
@@ -116,7 +116,7 @@ model_switch_386        = $(mem_model_386)
 model_switch_386        = -m$(memory_model_386)
 !endif
 
-cflags_all      =-w4-we
+cflags_all      =-w4 -we $(mode_cflags)
 !ifdef __LINUX__
 cflags_all      += -fo=.obj
 !endif
@@ -173,10 +173,10 @@ clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linux
 
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
-cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
+cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
-clflags          = $(clflags_$(host_os)_$(host_cpu)) $(mode_clflags) $(extra_cl_flags) -fe=$^@ -fm
+clflags          = $(mode_clflags) $(clflags_$(host_os)_$(host_cpu)) $(extra_cl_flags) -fe=$^@ -fm
 
 aflags_all      =-w4
 !ifdef __LINUX__
