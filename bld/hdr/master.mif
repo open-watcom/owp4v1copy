@@ -310,4 +310,7 @@ clean: .SYMBOLIC
       rm -f *.h sys/*.h *.hpp common.cnv
 !ifeq system DOS
       rm -f win/*.h
+!else ifeq system LINUX
+      rm -f arpa/*.h
+      rm -f netinet/*.h
 !endif
