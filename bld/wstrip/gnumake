@@ -16,7 +16,7 @@ $(OBJDIR)/qusage.rc : usage.sp
 $(OBJDIR)/msg.gh : wstrip.msg
 	perl $(SDK_DIR)/misc/msgtoh.pl < $< > $@
 
-INCDIRS = $(DIP_DIR)/watcom/h $(PWD)/$(OBJDIR) $(WATCOMH)
+INCDIRS = $(DIP_DIR)/watcom/h $(OBJDIR) $(WATCOMH)
 LIBDIRS = $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
 LIBS += -lwres -lwatcom
 
