@@ -1721,6 +1721,7 @@ int AsmParse()
                     case T_SEG2:
                         if( AsmBuffer[operator_loc]->value == T_OFFSET ) {
                             int         use32 = rCode->use32;
+#if 0
 #ifdef _WASM_
                             dir_node    *seg;
 
@@ -1728,6 +1729,7 @@ int AsmParse()
                             if( seg != NULL ) {
                                 use32 = seg->e.seginfo->segrec->d.segdef.use_32;
                             } else
+#endif
 #endif
                             if( MEM_TYPE( rCode->mem_type, DWORD ) ) {
                                 use32 = 1;
@@ -2528,9 +2530,9 @@ void AsmInit( int cpu, int fpu, int use32 )
         AsmBuffer[count] = &tokens[count];
     }
 
-    if( use32 < 0 ) use32 = 0;
-    if( cpu < 0 ) cpu = 0;
-    if( fpu < 0 ) fpu = 0;
+    if( use32 < 0 ) use32 = 0; // default is 16-bit segment
+    if( cpu < 0 ) cpu = 0;     // default is 8086 CPU
+    if( fpu < 0 ) fpu = 1;     // default is FPU use
     switch( use32 ) {
     case 0:
         Code->use32 = 0;

@@ -93,7 +93,12 @@ static struct SWData {
     char protect_mode;
     int cpu;
     int fpu;
-} SWData = { 0, 0, -1, -1 };
+} SWData = {
+    0,  // no naming convention
+    0,  // real mode CPU instructions set
+    0,  // default CPU 8086
+    -1  // unspecified FPU
+};
 
 #define MAX_NESTING 15
 #define BUF_SIZE 512
@@ -834,9 +839,6 @@ static void set_cpu_parameters( void )
     case 6:
         token =  SWData.protect_mode ? T_DOT_686P : T_DOT_686;
         break;
-    default: // default CPU is 8086
-        token = T_DOT_8086;
-        break;
     }
     cpu_directive( token );
 }
@@ -857,9 +859,6 @@ static void set_fpu_parameters( void )
         return;
     }
     switch( SWData.fpu ) {
-    case -1: // default FPU is none
-        cpu_directive( T_DOT_NO87 );
-        break;
     case 0:
     case 1:
         cpu_directive( T_DOT_8087 );
@@ -874,6 +873,7 @@ static void set_fpu_parameters( void )
         cpu_directive( T_DOT_387 );
         break;
     case 7:
+    default: // unspecified FPU
         switch( SWData.cpu ) {
         case 0:
         case 1:
@@ -888,13 +888,7 @@ static void set_fpu_parameters( void )
         case 6:
             cpu_directive( T_DOT_387 );
             break;
-        default: // default CPU is 8086
-            cpu_directive( T_DOT_8087 );
-            break;
         }
-        break;
-    default: // default FPU is none
-        cpu_directive( T_DOT_NO87 );
         break;
     }
 }
