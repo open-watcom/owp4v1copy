@@ -156,6 +156,7 @@ struct parm_list {
 struct array_info {
     unsigned long   dimension;
     int             refno;
+    bool            unspecified_dim;    // or flexible array member?
 };
 typedef enum BASED_KIND{
     BASED_NONE,

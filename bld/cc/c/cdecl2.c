@@ -1175,6 +1175,7 @@ local TYPEPTR ArrayDecl( TYPEPTR typ )
         MustRecog( T_RIGHT_BRACKET );
         next_node = ArrayNode( typ );
         next_node->u.array->dimension = dimension;
+        next_node->u.array->unspecified_dim = ( dimension == 0 );
         if( first_node == NULL ) {
             first_node = next_node;
         } else {

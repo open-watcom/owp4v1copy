@@ -118,6 +118,7 @@ positive_tests = &
     init15.$(ext) &
     init16.$(ext) &
     init17.$(ext) &
+    init18.$(ext) &
     inline01.$(ext) &
     inline04.$(ext) &
     intel01.$(ext) &

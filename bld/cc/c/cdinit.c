@@ -574,36 +574,10 @@ local FIELDPTR InitBitField( FIELDPTR field )
    associated with the closest brace pair. It may or may not be
    equal to typ */
 
-local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
+/* Detects a C99 designated initializer */
+local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
 {
-    unsigned long       n;
-    unsigned long       array_size;
-
-    array_size = TypeSize( typ );
-    n = 0;
-    for( ;; ) {
-        if( CurToken == T_RIGHT_BRACE ) break;
-        InitSymData( typ->object, ctyp, 1 );
-        n++;
-        if( n == array_size ){
-            break;
-        }
-        if( CurToken == T_EOF ) break;
-        if( CurToken == T_RIGHT_BRACE ) break;
-        MustRecog( T_COMMA );
-        if( CurToken == T_RIGHT_BRACE ) break;
-        if( CurToken == T_DOT ) break;
-    }
-    if( array_size == 0 ){
-        typ->u.array->dimension = n;
-    }else if( array_size > n ){
-        ZeroBytes( (array_size-n) * SizeOfArg( typ->object ) );
-    }
-}
-
-/* Detects a C99 designated initializer for fields */
-local FIELDPTR DesignatedField( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
-{
+    TREEPTR             tree;
     unsigned long       offs;
     static int          new_field = 1;
 
@@ -611,33 +585,134 @@ local FIELDPTR DesignatedField( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
         return( field );
     }
 
-    if( CurToken != T_DOT ) {
+    if( CurToken != T_LEFT_BRACKET && CurToken != T_DOT ) {
         new_field = 1;
         return( field );
     }
 
     /* if designator refers to outer type: back out */
-    if( typ != ctyp && new_field )
+    if(typ != ctyp && new_field)
         return( NULL );
 
     new_field = 0;
-    NextToken();
-    if ( CurToken != T_ID ) {
-        CErr1( ERR_EXPECTING_ID );
+    if( typ->decl_type == TYPE_ARRAY ) {
+        if ( CurToken != T_LEFT_BRACKET )
+            return( NULL );
+        NextToken();
+        tree = SingleExpr();
+        if( tree->op.opr == OPR_PUSHINT || tree->op.opr == OPR_PUSHFLOAT ) {
+            CastConstValue( tree, typ->decl_type );
+            *(unsigned long *)field = tree->op.ulong_value;
+        }else{
+            CErr1( ERR_NOT_A_CONSTANT_EXPR );
+        }
+        FreeExprTree( tree );
+        MustRecog( T_RIGHT_BRACKET );
+    } else {
+        if ( CurToken != T_DOT )
+            return( NULL );
+        NextToken();
+        if ( CurToken != T_ID ) {
+            CErr1( ERR_EXPECTING_ID );
+        }
+        offs = 0;
+        field = SearchFields( &typ, &offs, Buffer );
+        if ( field == NULL ) {
+            CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, Buffer, typ->u.tag->name );
+        }
+        NextToken();
     }
-    offs = 0;
-    field = SearchFields( &typ, &offs, Buffer );
-    if ( field == NULL ) {
-        CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, Buffer, typ->u.tag->name );
-    }
-    NextToken();
-    if( CurToken != T_DOT ) {
+
+    if( CurToken != T_LEFT_BRACKET && CurToken != T_DOT ) {
         new_field = 1;
         MustRecog( T_EQUAL );
     }
     return( field );
 }
 
+local void ClearArray( TYPEPTR typ, TYPEPTR ctyp )
+{
+    unsigned long       n;
+    enum TOKEN          realtoken;
+
+    /* first fake an "= {}" assignment to zero out all fields
+       otherwise overlapping fields caused by designated initializers
+       will make life very difficult */
+    realtoken = CurToken;
+    CurToken = T_RIGHT_BRACE;
+    for( n = 0; n < TypeSize( typ ); n++ ) {
+        InitSymData( typ->object, ctyp, -1 );
+    }
+    if( realtoken == T_RIGHT_BRACE ) return;
+    RelSeekBytes( -n * SizeOfArg( typ->object ) );
+    CurToken = realtoken;
+}
+
+local bool DesignatedInSubAggregate( DATA_TYPE decl_type )
+{
+    switch( decl_type ) {
+    case TYPE_ARRAY:
+    case TYPE_STRUCT:
+    case TYPE_UNION:
+    case TYPE_FCOMPLEX:
+    case TYPE_DCOMPLEX:
+    case TYPE_LDCOMPLEX:
+        /* A subaggregate can be stopped by a designated initializer.
+           in that case the comma was already eaten... */
+        return ( CurToken == T_DOT || CurToken == T_LEFT_BRACKET );
+    default:
+        return FALSE;
+    }
+}
+
+local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
+{
+    unsigned long       n;
+    unsigned long       m;
+    unsigned long      *pm;
+    unsigned long       array_size;
+
+    array_size = TypeSize( typ );
+    n = 0;
+    pm = &m;
+    for( ;; ) {
+        m = n;
+        pm = DesignatedInit( typ, ctyp, pm );
+        if( pm == NULL ) break;
+        if( m != n ) {
+            if( typ->u.array->unspecified_dim && m > array_size ){
+                RelSeekBytes( ( array_size - n ) * SizeOfArg( typ->object ) );
+                ZeroBytes( (m - array_size) * SizeOfArg( typ->object ) );
+            } else {
+                RelSeekBytes( ( m - n ) * SizeOfArg( typ->object ) );
+            }
+            n = m;
+        }
+        if( !typ->u.array->unspecified_dim && n >= array_size ){
+            break;
+        }
+        InitSymData( typ->object, ctyp, 1 );
+        n++;
+        if( typ->u.array->unspecified_dim && n > array_size ){
+            array_size = n;
+        }
+        if( CurToken == T_EOF ) break;
+        if( CurToken == T_RIGHT_BRACE ) break;
+        if( DesignatedInSubAggregate( typ->object->decl_type ) ) continue;
+        if( n < array_size || typ == ctyp || typ->u.array->unspecified_dim ) {
+            MustRecog( T_COMMA );
+        }
+        if( CurToken == T_RIGHT_BRACE ) break;
+    }
+    if( typ->u.array->unspecified_dim ){
+        typ->u.array->dimension = array_size;
+    }
+    if( array_size > n ) {
+        RelSeekBytes( ( array_size - n ) * SizeOfArg( typ->object ) );
+    }
+}
+
+/* Detects a C99 designated initializer for fields */
 /* Initialize struct or union fields */
 local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
 {
@@ -649,7 +724,7 @@ local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
     offset = 0;
 
     for( ;; ) {
-        field = DesignatedField( typ, ctyp, field );
+        field = DesignatedInit( typ, ctyp, field );
         if( field == NULL ) break;
         /* The first field might not start at offset 0;  19-mar-91 */
         if( field->offset != offset ) {                 /* 14-dec-88 */
@@ -672,27 +747,16 @@ local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
         }
         if( CurToken == T_EOF ) break;
         if( CurToken == T_RIGHT_BRACE ) break;
-        switch( ftyp->decl_type ) {
-        case TYPE_ARRAY:
-        case TYPE_STRUCT:
-        case TYPE_UNION:
-        case TYPE_FCOMPLEX:
-        case TYPE_DCOMPLEX:
-        case TYPE_LDCOMPLEX:
-            /* A subaggregate can be stopped by a designated initializer.
-               in that case the comma was already eaten... */
-            if( CurToken == T_DOT ) continue;
-        default:
-            if( field != NULL || typ == ctyp ) {
-                MustRecog( T_COMMA );
-            }
+        if( DesignatedInSubAggregate( ftyp->decl_type ) ) continue;
+        if( field != NULL || typ == ctyp ) {
+            MustRecog( T_COMMA );
         }
         if( CurToken == T_RIGHT_BRACE ) break;
     }
     RelSeekBytes( (unsigned)n - offset );
 }
 
-local void InitStruct( TYPEPTR typ, TYPEPTR ctyp )
+local void ClearStruct( TYPEPTR typ, TYPEPTR ctyp )
 {
     FIELDPTR            field;
     TYPEPTR             ftyp;
@@ -720,7 +784,7 @@ local void InitStruct( TYPEPTR typ, TYPEPTR ctyp )
             ftyp->decl_type == TYPE_UFIELD ) {
             field = InitBitField( field );
         } else {
-            InitSymData( ftyp, ctyp, 1 );
+            InitSymData( ftyp, ctyp, -1 );
             field = field->next_field;
         }
     }
@@ -732,6 +796,10 @@ local void InitStruct( TYPEPTR typ, TYPEPTR ctyp )
 
     /* and then do the real init */
     CurToken = realtoken;
+}
+
+local void InitStruct( TYPEPTR typ, TYPEPTR ctyp )
+{
     InitStructUnion( typ, ctyp, typ->u.tag->u.field_list );
 }
 
@@ -778,7 +846,13 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             } else if( level == 0 ) {
                 CErr1( ERR_NEED_BRACES );
             }
-            InitArray( typ, ctyp );
+            /* 0: top level, -1: clearing, 1: filling */
+            if( level != 1 ) {
+                ClearArray( typ, ctyp );
+            }
+            if( level != -1 ) {
+                InitArray( typ, ctyp );
+            }
         }
         break;
     case TYPE_FCOMPLEX:
@@ -790,7 +864,13 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         } else if( level == 0 ) {
             CErr1( ERR_NEED_BRACES );
         }
-        InitStruct( typ, ctyp );
+        /* 0: top level, -1: clearing, 1: filling */
+        if( level != 1 ) {
+            ClearStruct( typ, ctyp );
+        }
+        if( level != -1 ) {
+            InitStruct( typ, ctyp );
+        }
         break;
     case TYPE_UNION:
         if( token == T_LEFT_BRACE ) {
@@ -904,7 +984,7 @@ local void InitCharArray( TYPEPTR typ )
     if( CompFlags.wide_char_string )
         CErr1( ERR_TYPE_MISMATCH );
     len = str_lit->length;
-    if( typ->u.array->dimension == 0 )  typ->u.array->dimension = len;
+    if( typ->u.array->unspecified_dim )  typ->u.array->dimension = len;
     size = typ->u.array->dimension;
     if( len > size ) {
         if( (len - size) > 1 ) {
@@ -943,7 +1023,7 @@ local void InitWCharArray( TYPEPTR typ )
     if( !CompFlags.wide_char_string )
         CErr1( ERR_TYPE_MISMATCH );
     len = str_lit->length / sizeof(unsigned short);
-    if( typ->u.array->dimension == 0 ) {
+    if( typ->u.array->unspecified_dim ) {
         typ->u.array->dimension = len;
     }
     size = typ->u.array->dimension;
@@ -1042,9 +1122,10 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
         while( field->next_field != NULL ) field = field->next_field;
         typ = field->field_type;
     }
-    if( typ->decl_type == TYPE_ARRAY  &&  TypeSize( typ ) == 0 ) {
+    if( typ->decl_type == TYPE_ARRAY  &&  typ->u.array->unspecified_dim ) {
         if( struct_typ == NULL ) {
             sym->sym_type = ArrayNode( typ->object ); /* 18-oct-88 */
+            sym->sym_type->u.array->unspecified_dim = TRUE;
         } else {
             sym->sym_type = TypeNode( TYPE_STRUCT,
                                             ArrayNode( typ->object ) );
@@ -1060,6 +1141,7 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
     if( struct_typ != NULL ) {          /* 17-mar-92 */
         /* structure contains a unspecified length array as last field */
         struct_typ->object->u.array->dimension = typ->u.array->dimension;
+        typ->u.array->unspecified_dim = TRUE;
         typ->u.array->dimension = 0;    /* reset back to 0 */
     }
     if( sym->u.var.segment == 0 ) {             /* 01-dec-91 */
@@ -1268,7 +1350,7 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
                     CErr1( ERR_TOO_MANY_INITS );
                }
             }
-            if( n == 0 ){
+            if( typ->u.array->unspecified_dim ){
                 typ->u.array->dimension = i;
             }else{
                 while( i < n ){
@@ -1313,7 +1395,7 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
                }
                base += size;
             }
-            if( n == 0 ){
+            if( typ->u.array->unspecified_dim ){
                 typ->u.array->dimension = i;
             }else{
                 while( i < n ){ // mop up
