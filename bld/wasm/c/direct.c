@@ -3056,6 +3056,7 @@ int WritePrologue( void )
             strcpy( curr->replace, buffer );
 
         }
+        info->localsize = offset;
 
         /* Figure out the replacing string for the parameters */
 
