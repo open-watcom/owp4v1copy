@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing of pop-up menu for assembly view.
 *
 ****************************************************************************/
 
@@ -483,6 +482,7 @@ static void     AsmMenuItem( a_window *wnd, unsigned id, int row, int piece )
         WndMenuEnable( wnd, MENU_ASM_STEP_INTO, has_popitem );
         WndMenuEnable( wnd, MENU_ASM_BREAK, has_popitem );
         WndMenuEnable( wnd, MENU_ASM_RUN, !IS_NIL_ADDR( addr ) );
+        WndMenuEnable( wnd, MENU_ASM_SKIP_TO_CURSOR, !IS_NIL_ADDR( addr ) );
         bit = MADDisasmToggle( 0, 0 );
         for( i = 0; i < asm->num_toggles; ++i ) {
             WndMenuCheck( wnd, MENU_ASM_TOGGLES + i, ( bit & 1 ) != 0 );
@@ -491,6 +491,9 @@ static void     AsmMenuItem( a_window *wnd, unsigned id, int row, int piece )
         break;
     case MENU_ASM_RUN:
         GoToAddr( addr );
+        break;
+    case MENU_ASM_SKIP_TO_CURSOR:
+        SkipToAddr( addr );
         break;
     case MENU_ASM_HOME:
         GoHome();
