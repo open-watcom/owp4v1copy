@@ -132,7 +132,7 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow, LPSTR cmdline )
      */
     wind_handle = CreateWindow(
         TestCtlClass,           /* class */
-        "WATCOM Data Control Test Program",     /* caption */
+        "Open WATCOM Data Control Test Program",     /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */

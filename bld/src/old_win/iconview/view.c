@@ -163,7 +163,7 @@ static BOOL InitInstance( int cmdshow )
      */
     FrameWindow = CreateWindow(
         FrameClass,             /* class */
-        "WATCOM Icon Viewer",   /* caption */
+        "Open WATCOM Icon Viewer",   /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */

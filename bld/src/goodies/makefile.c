@@ -32,7 +32,7 @@
 
 # REMARKS
 # -------
-# Default Watcom compiler options are set using an environment variable
+# Default Open Watcom compiler options are set using an environment variable
 # which can be placed in "config.sys". For instance, one may have:
 #
 # SET WCC386=/3 /FPI87 /Ox /D1

@@ -23,7 +23,7 @@ int main( void )
     WinMessageBox( HWND_DESKTOP,
                    0,
                    "Hello World",
-                   "WATCOM Example",
+                   "Open WATCOM Example",
                    0,
                    MB_NOICON | MB_OK );
 

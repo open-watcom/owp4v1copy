@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "edit.h"
 
-char            EditTitle[] = "WATCOM Edit Example";
+char            EditTitle[] = "Open WATCOM Edit Example";
 psupp           PrinterSupport;
 static char     EditClass[32]="EditClass";
 

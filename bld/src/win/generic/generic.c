@@ -81,7 +81,7 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow, LPSTR cmdline )
      */
     hwnd = CreateWindow(
         GenericClass,           /* class */
-        "WATCOM Generic Kind Of Application",   /* caption */
+        "Open WATCOM Generic Kind Of Application",   /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */
