@@ -47,7 +47,7 @@ COMMANDS = &
 !else ifeq      targos  qnx16
 !else
 COMMANDS += &
-#    chmod &
+    chmod &
     cp &
 #    df &
 #    du &
