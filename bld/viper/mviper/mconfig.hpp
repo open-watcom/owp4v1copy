@@ -112,7 +112,7 @@ WCLASS MConfig : public WObject
                 void kludgeString( WString& str );
                 void zapMask( WString& mask );
                 HostType hostType() { return _hostType; }
-                void enumAccel( WObject *obj, bcbi fn );
+                void enumAccel( WObject *obj, bcbk fn );
                 WVList& targetOSs() { return _targetOSs; }
                 bool editorIsDLL() { return _editorIsDLL; }
                 WFileName& editorParms() { return _editorParms; }

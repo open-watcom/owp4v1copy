@@ -70,7 +70,7 @@ WCLASS VMsgLog : public WMdiChild
 
         WVList          _helpList;      //<WSystemHelp>
 
-        bool kAccelKey( int key );
+        bool kAccelKey( gui_key key );
 
         WString         _command;
         WFileName       _cwd;

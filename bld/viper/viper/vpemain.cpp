@@ -247,7 +247,7 @@ WEXPORT VpeMain::VpeMain()
     if( !_config->ok() ) {
         WMessageDialog::messagef( this, MsgError, MsgOk, _viperError, (const char*)_config->errMsg() );
     }
-    _config->enumAccel( this, (bcbi)&VpeMain::registerAccel );
+    _config->enumAccel( this, (bcbk)&VpeMain::registerAccel );
 
     _editor = _config->editor();
     _editorIsDll = _config->editorIsDLL();
@@ -360,7 +360,7 @@ void WEXPORT VpeMain::writeSelf( WObjectFile& p )
 bool VpeMain::registerAccel( WKeyCode kc )
 {
     removeAccelKey( kc );
-    addAccelKey( kc, this, (bcbi)&VpeMain::kDynAccel );
+    addAccelKey( kc, this, (bcbk)&VpeMain::kDynAccel );
     return( FALSE );
 }
 
@@ -491,11 +491,11 @@ void VpeMain::buildMenuBar()
     setToolBar( toolBar );
     _toolBarActive = TRUE;
 
-    addAccelKey( WKeyInsert, this, (bcbi)&VpeMain::kAddItem );
-    addAccelKey( WKeyDelete, this, (bcbi)&VpeMain::kRemoveItem );
-    addAccelKey( WKeyCtrlN, this, (bcbi)&VpeMain::kNewProject );
-    addAccelKey( WKeyCtrlO, this, (bcbi)&VpeMain::kOpenProject );
-    addAccelKey( WKeyCtrlS, this, (bcbi)&VpeMain::kSaveProject );
+    addAccelKey( WKeyInsert, this, (bcbk)&VpeMain::kAddItem );
+    addAccelKey( WKeyDelete, this, (bcbk)&VpeMain::kRemoveItem );
+    addAccelKey( WKeyCtrlN, this, (bcbk)&VpeMain::kNewProject );
+    addAccelKey( WKeyCtrlO, this, (bcbk)&VpeMain::kOpenProject );
+    addAccelKey( WKeyCtrlS, this, (bcbk)&VpeMain::kSaveProject );
     setUpdates();
 }
 
@@ -659,7 +659,7 @@ void VpeMain::onPopup1( WPopupMenu* pop )
 
 MenuPop VpeMain::popup2 = { "&Targets", (cbp)&VpeMain::onPopup2, menu2, 5 };
 MenuData VpeMain::menu2[] = {
-    "&New Target...", (cbm)&VpeMain::addComponent,"Create a new target", 0, NULL,
+    "&New Target...", (cbm)&VpeMain::vAddComponent,"Create a new target", 0, NULL,
     "Remo&ve Target", (cbm)&VpeMain::removeComponent, "Remove/delete current target", 0, NULL,
     "Ren&ame Target...", (cbm)&VpeMain::renameComponent, "Rename current target", 0, NULL,
     "", NULL, NULL, 0, &popup2a,
@@ -1074,9 +1074,10 @@ bool VpeMain::validateProjectName( WFileName& fn )
     return( FALSE );
 }
 
-void VpeMain::kNewProject( WKeyCode )
+bool VpeMain::kNewProject( WKeyCode )
 {
     newProject( NULL );
+    return( FALSE );
 }
 
 void VpeMain::newProject( WMenuItem* )
@@ -1181,8 +1182,9 @@ bool VpeMain::unloadProject( const WFileName& fn, bool checkout )
     return( ok );
 }
 
-void VpeMain::kOpenProject( WKeyCode ) {
+bool VpeMain::kOpenProject( WKeyCode ) {
     openProject( NULL );
+    return FALSE;
 }
 
 void VpeMain::openProject( WMenuItem* )
@@ -1535,6 +1537,11 @@ static char cFilter[] = { "Target Files(*.tgt)\0*.tgt\0Executables(*.exe)\0*.exe
     }
     HelpStack.pop();
     return( ok );
+}
+
+void VpeMain::vAddComponent( WMenuItem* )
+{
+    addComponent();
 }
 
 bool VpeMain::attachTgtFile( WFileName& fn )

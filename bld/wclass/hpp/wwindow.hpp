@@ -131,6 +131,7 @@ WCLASS AccelKey;
 WCLASS WControl;
 
 typedef void (WObject::*cbw)( WWindow *w );
+typedef bool (WObject::*bcbk)( gui_key k );
 
 WCLASS WWindow : public WObject {
     public:
@@ -144,8 +145,8 @@ WCLASS WWindow : public WObject {
 
         void WEXPORT addChild( WObject *child );
         void WEXPORT removeChild( WObject *child );
-        void WEXPORT addAccelKey( WKeyCode key, WObject *client, bcbi cb );
-        void addAccelKey( int key, WObject *client, bcbi cb );
+        void WEXPORT addAccelKey( WKeyCode key, WObject *client, bcbk cb );
+        void addAccelKey( int key, WObject *client, bcbk cb );
         void WEXPORT removeAccelKey( WKeyCode key );
         virtual bool gettingFocus( WWindow * ) { return( FALSE ); }
         virtual bool losingFocus( WWindow * ) { return( FALSE ); }

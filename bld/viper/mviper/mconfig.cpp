@@ -550,7 +550,7 @@ void MConfig::buildTargetOSList() {
     delete os;
 }
 
-void MConfig::enumAccel( WObject *obj, bcbi fn )
+void MConfig::enumAccel( WObject *obj, bcbk fn )
 {
     int         icount;
     WKeyCode    key;

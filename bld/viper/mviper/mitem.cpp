@@ -411,7 +411,7 @@ void MItem::pruneStates( WVList& states )
     }
 }
 
-int MItem::type() const
+int MItem::type()
 {
     if( _parent ) {
         return 3;

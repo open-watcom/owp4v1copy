@@ -45,7 +45,7 @@ WEXPORT WName::WName( WWindow* parent, const WRect& r, WWindow* client,
             if( text[i] == '&' ) {
                 int key = text[i+1];
                 if( (key != '\0') && (key != '&') ) {
-                    parent->addAccelKey( key, this, (bcbi)&WName::hotKey );
+                    parent->addAccelKey( key, this, (bcbk)&WName::hotKey );
                 }
             }
         }

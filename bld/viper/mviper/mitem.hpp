@@ -75,7 +75,7 @@ WCLASS MItem : public WFileName
                 void resetRuleRefs();
                 bool ismakeable();
                 void addStates( WVList& list, SwMode mode );
-                int type() const;
+                int type();
                 void setExpanded( bool expanded=TRUE ) { _expanded = expanded; }
                 bool expanded() { return _expanded; }
                 bool included();

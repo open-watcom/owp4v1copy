@@ -51,17 +51,17 @@ unsigned        WWindow::_idMaster = 1;
 
 WCLASS AccelKey : public WObject {
     public:
-        AccelKey( WKeyCode key, WObject* client, bcbi callback );
+        AccelKey( WKeyCode key, WObject* client, bcbk callback );
         ~AccelKey() {}
         bool callClient( WKeyCode kc ) { return( (_client->*_callback)( kc ) ); }
 
         WKeyCode        _key;
         WObject*        _client;
-        bcbi            _callback;
+        bcbk            _callback;
 };
 
 
-AccelKey::AccelKey( WKeyCode key, WObject* client, bcbi callback )
+AccelKey::AccelKey( WKeyCode key, WObject* client, bcbk callback )
     : _key( key )
     , _client( client )
     , _callback( callback ) {
@@ -607,14 +607,14 @@ AccelKey *WWindow::findAccelKey( WKeyCode key ) {
 }
 
 
-void WEXPORT WWindow::addAccelKey( WKeyCode key, WObject* client, bcbi cb ) {
+void WEXPORT WWindow::addAccelKey( WKeyCode key, WObject* client, bcbk cb ) {
 /***************************************************************************/
 
     _accelKeys.add( new AccelKey( key, client, cb ) );
 }
 
 
-void WEXPORT WWindow::addAccelKey( int key, WObject* client, bcbi cb ) {
+void WEXPORT WWindow::addAccelKey( int key, WObject* client, bcbk cb ) {
 /**********************************************************************/
 
     WKeyCode    kc;

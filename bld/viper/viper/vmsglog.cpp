@@ -162,8 +162,8 @@ WEXPORT VMsgLog::VMsgLog( VpeMain* parent )
 
     _batcher->setPopup( _parent->logPopup() );
 
-    addAccelKey( LOG_ESCAPE_KEY, this, (bcbi)&VMsgLog::kAccelKey );
-    addAccelKey( LOG_HELP_KEY, this, (bcbi)&VMsgLog::kAccelKey );
+    addAccelKey( LOG_ESCAPE_KEY, this, (bcbk)&VMsgLog::kAccelKey );
+    addAccelKey( LOG_HELP_KEY, this, (bcbk)&VMsgLog::kAccelKey );
 }
 
 void VMsgLog::startConnect()
@@ -306,8 +306,10 @@ bool VMsgLog::saveLogAs()
     return ok;
 }
 
-bool VMsgLog::kAccelKey( int key )
+bool VMsgLog::kAccelKey( gui_key _key )
 {
+    int key = _key;
+
     switch( key ) {
         case LOG_ESCAPE_KEY: {
             stopRequest( NULL );

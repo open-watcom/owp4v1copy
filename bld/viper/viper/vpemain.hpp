@@ -100,6 +100,7 @@ WCLASS VpeMain : public WMdiWindow, public WView
         void readIdeInit();
         void buildMenuBar();
         bool addComponent( WMenuItem* =NULL );
+        void vAddComponent( WMenuItem* =NULL );
         void removeComponent( WMenuItem* =NULL );
         void renameComponent( WMenuItem* =NULL );
         void setupComponent( WMenuItem* =NULL );
@@ -140,12 +141,12 @@ WCLASS VpeMain : public WMdiWindow, public WView
         void    mAutotrack( WMenuItem* );
         void    mDebugMode( WMenuItem* );
         void    mRefresh( WMenuItem* item );
-        void kNewProject( WKeyCode );
+        bool kNewProject( WKeyCode );
         void newProject( WMenuItem* );
         bool loadProject( const WFileName& f );
         WStyle vCompStyle();
         bool unloadProject( const WFileName& f, bool try_checkout =1 );
-        void kOpenProject( WKeyCode );
+        bool kOpenProject( WKeyCode );
         void openProject( WMenuItem* );
         void openOldProject( WMenuItem* );
         void closeProject( WMenuItem* );
@@ -213,16 +214,8 @@ WCLASS VpeMain : public WMdiWindow, public WView
         // editor stuff
         VEditDLL        _editorDll;
         WFileName       _editor;                // editor for the
-        bool            _editorIsDll;           // current plateform
+        bool            _editorIsDll;           // current platform
         WString         _editorParms;           // parms to non-dll editor
-        #if 0
-        WFileName       _winEditor;
-        bool            _winEditorIsDll;
-        WFileName       _ntEditor;
-        bool            _ntEditorIsDll;
-        WFileName       _os2Editor;
-        bool            _os2EditorIsDll;
-        #endif
 
         const char* toolName( char tag );
 //      WServer*        _server;

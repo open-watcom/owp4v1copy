@@ -324,7 +324,7 @@ void MRule::makeCommand( WString& s, WFileName* target, WVList* workFiles, WStri
     expandCommand( s, cmd, target, workFiles, mask, stateList, mode, browse );
 }
 
-bool MRule::enumAccel( WObject *obj, bcbi fn ) {
+bool MRule::enumAccel( WObject *obj, bcbk fn ) {
 
     int         icount;
     WKeyCode    key;

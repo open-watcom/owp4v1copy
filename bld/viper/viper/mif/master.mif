@@ -33,10 +33,11 @@ extra_cpp_flags_i86     = -zm-zc
         set INCLUDE=$(inc_path)
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
-        $(linker) $(lflags) name $(name) op map op stack=12k, de 'WATCOM IDE' f {$(OBJECTS)} lib {$(LIBS)}
 !ifneq host_OS os2
+        $(linker) $(lflags) name $(name) op map op stack=12k, de 'WATCOM IDE' f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) -q viper.res $(name).exe
 !else
+        $(linker) $(lflags) name $(name) op map, de 'WATCOM IDE' f {$(OBJECTS)} lib {$(LIBS)}
         $(rc_os2) -p -x viper.res $(name).exe
 !endif
 
