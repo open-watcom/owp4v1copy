@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CVPACK mainline.
 *
 ****************************************************************************/
 
@@ -47,10 +46,10 @@
 #include "symdis.hpp"
 
 
-static const char* CVpackHeader = "Watcom (R) CV4 Symbolic Debugging "\
+static const char* CVpackHeader = "Open Watcom CV4 Symbolic Debugging "\
                                   "Information Compactor Version 1.00\n"\
-                                  "Copyright (c) Watcom International Corp. "\
-                                  "1995.  All rights reserved.\n";
+                                  "Portions Copyright (c) Sybase, Inc. 1995-2002.\n"\
+                                  "All rights reserved.\n";
 
 static const char* CVpackUsage = "usage : cvpack [/nologo] <exefile>\n";
 

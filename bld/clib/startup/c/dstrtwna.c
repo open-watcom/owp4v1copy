@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Open Watcom C/C++32 Alpha AXP DLL startup code.
 *
 ****************************************************************************/
 
@@ -41,6 +40,5 @@ int wDllMainCRTStartup( void ) {
     return( _LibMain() );
 }
 const char  _DLLstart_CopyRight[] =
-        "WATCOM C/C++ Alpha Run-Time system. "
-        "(c) Copyright by WATCOM International Corp. 1995. "
-        "All rights reserved.";
+        "Open Watcom C/C++ Alpha Run-Time system. "
+        "Portions Copyright (c) Sybase, Inc. 1995-2002.";

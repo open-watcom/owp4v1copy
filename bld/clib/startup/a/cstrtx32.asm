@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++32 FlashTek DOS extender startup code.
 ;*
 ;*****************************************************************************
 
@@ -225,9 +224,8 @@ STACK   ends
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++32 Run-Time system. "
-        db      "(c) Copyright by WATCOM International Inc. 1989-1995."
-        db      " All rights reserved."
+        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1989-2002."
 ;
 ; miscellaneous code-segment messages
 ;

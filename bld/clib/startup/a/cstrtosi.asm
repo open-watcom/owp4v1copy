@@ -24,15 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  OS Independent startup code for 32-bit hosted Open Watcom
+;*               character-mode apps.
 ;*
 ;*****************************************************************************
 
 
-;
-; OS independent startup code for 32-bit hosted WATCOM character-mode apps
-;
 ;       This must be assembled using the following command:
 ;               masm /mx /s cstrtosi
 ;

@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Watcom C/C++32 AutoCAD ADS startup code.
 ;*
 ;*****************************************************************************
 
@@ -37,8 +36,6 @@
 ;%       Autodesk, Inc.                                            %
 ;%                                                                 %
 ;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-;
-; startup code for WATCOM C/C++32 Version 10.0
 ;
 ;       This must be assembled using one of the following commands:
 ;               wasm adstart -fo=adsstart.obj -dADS -3s
@@ -250,9 +247,8 @@ _cstart_ proc near
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++32 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      " All rights reserved."
+        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
 ;
 ; miscellaneous code-segment messages
 ;

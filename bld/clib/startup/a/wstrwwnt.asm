@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++32 Windows NT windowed startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++32 window mode under Microsoft Windows NT
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrwwwt -bt=NT -ms -3r
 ;               wasm cstrwwwt -bt=NT -ms -3s
@@ -58,9 +54,8 @@ wWinMainCRTStartup:
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++32 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      " All rights reserved."
+        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
 _wstartw_ endp
 
 _TEXT   ends

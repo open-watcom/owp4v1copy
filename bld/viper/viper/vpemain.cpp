@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Viper (Open Watcom IDE) mainline.
 *
 ****************************************************************************/
 
@@ -119,6 +118,7 @@ const char* _viperDesc[] = {
     banner1w( "Integrated Development Environment", _VIPER_VERSION_ ),
     banner2( "1993" ),
     banner3,
+    banner3a,
     NULL
 };
 

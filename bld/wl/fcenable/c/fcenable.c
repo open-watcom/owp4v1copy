@@ -24,19 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Far call optimization enabling utility.
 *
 ****************************************************************************/
 
-
-/*
-   FCENABLE  : far call optimization enabling utility
-
-    Modified:   By:             Reason:
-    ---------   ---             -------
-    90/03/27    Jim Randall     created from W2TD which was from OBJ65CVT
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -122,6 +113,7 @@ extern int main(int argc, char **argv )
     put( banner1w( "Far Call Optimization Enabling Utility", _FCENABLE_VERSION_ ) "\n" );
     put( banner2( "1990" ) "\n" );
     put( banner3 "\n" );
+    put( banner3a "\n" );
     InitRecStuff();
     InFile = NOFILE;
     OutFile = NOFILE;

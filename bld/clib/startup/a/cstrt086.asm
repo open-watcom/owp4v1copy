@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++ 16 DOS startup module.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++16 under MS-DOS
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrt086 -bt=DOS -ms -0r -d__TINY__
 ;               wasm cstrt086 -bt=DOS -ms -0r
@@ -207,9 +203,8 @@ endif
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++16 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      ' All rights reserved.'
+        db      "Open Watcom C/C++16 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
 ;
 ; miscellaneous code-segment messages
 ;

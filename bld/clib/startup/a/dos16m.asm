@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++16 DOS/16M startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++16 and WATCOM FORTRAN 77
-;        under Rational's DOS/16M
 ;
 ;  To reassemble this file for DOS/16M, use the following command:
 ;               wasm dos16m -bt=DOS -ml -2r
@@ -303,9 +299,8 @@ _cstart_:
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++16 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      ' All rights reserved.'
+        db      "Open Watcom C/C++16 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
 ;
 ; miscellaneous code-segment messages
 ;

@@ -32,8 +32,8 @@ xname_os2_i86   = wsampos2
 xname = $(xname_$(host_OS)_$(host_CPU))
 
 extra_l_flags = op symfile,map,quiet lib $(wres_lib) name ..\bin\$(xname)
-extra_l_flasg_os2_i86 = lib $(watcom_dir)\lib\doscalls.lib op stack=4k
-extra_l_flags_os2 = op newfiles $(extra_l_flags_os2_$(host_CPU))
+extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
+extra_l_flags_os2 = $(extra_l_flags_os2_$(host_CPU))
 
 ..\bin\$(xname).exe : $(objects) makefile $(xname).res $(wres_lib)
     $(linker) $(lflags) file {$(objects)}

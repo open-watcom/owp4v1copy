@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler mainline.
 *
 ****************************************************************************/
 
@@ -62,6 +61,7 @@ void CBanner()
 #endif
     BannerMsg( banner2( "1984" ) );
     BannerMsg( banner3 );
+    BannerMsg( banner3a );
 #if 0
     ChkExpiryDate();
 #endif

@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++32 QNX startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++32 under QNX
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrtq32 -bt=QNX -ms -3r
 ;               wasm cstrtq32 -bt=QNX -ms -3s
@@ -180,9 +176,8 @@ endif
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++32 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1989-2000."
-        db      " All rights reserved."
+        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1989-2002."
         dd      ___begtext      ; make sure dead code elimination
                                 ; doesn't kill BEGTEXT segment
 

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compile and link utility for Open Watcom FORTRAN.
 *
 ****************************************************************************/
 
-
-//
-// WFL          : compile and link utility for WATCOM FORTRAN
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -190,6 +185,7 @@ static  void    PrtBanner() {
     puts( banner1w( _NAME_ "Compile and Link Utility", _WFL_VERSION_ ) );
     puts( banner2( "1990" ) );
     puts( banner3 );
+    puts( banner3a );
 }
 
 

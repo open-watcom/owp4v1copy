@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WRC I/O routines.
 *
 ****************************************************************************/
 
@@ -665,6 +664,7 @@ static const char * BannerText =
     banner1( "WATCOM Windows Resource Compiler", _WRC_VERSION_ )"\n"
     banner2("1993") "\n"
     banner3         "\n"
+    banner3a        "\n"
 ;
 
 extern void RcIoPrintBanner( void )

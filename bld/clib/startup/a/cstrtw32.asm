@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++32 Microsoft Windows startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++32 under Microsoft Windows
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrtw32 -bt=WINDOWS -mf -3r
 ;               wasm cstrtw32 -bt=WINDOWS -mf -3s
@@ -334,9 +330,8 @@ not_dll2:                               ; endif
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++32 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      " All rights reserved."
+        db      "Open Watcom C/C++32 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
         dd      ___begtext              ; make sure dead code elimination
                                         ; doesn't kill BEGTEXT segment
 _cstart_ endp

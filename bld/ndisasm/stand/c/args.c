@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WDISASM command line handling.
 *
 ****************************************************************************/
 
@@ -58,6 +57,7 @@ static void printUsage( int msg ) {
         banner1w( "Multi-processor Disassembler", _WDISASM_VERSION_ ),
         banner2( "1995" ),
         banner3,
+        banner3a,
         NULL
     };
     const char * const *text;

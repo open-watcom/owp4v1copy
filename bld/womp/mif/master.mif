@@ -44,22 +44,7 @@ default_cflags = $(opts_cc)/d__FNAME__="$[&"
 womp : womp.$(exe) wompj.$(exe) .symbolic
     @%null
 
-!ifdef on_build_machine
-all.osz :
-!ifeq form_exe pharlap
-    wlink NAME womp @womp.lnk lib wresf
-!else
-    wlink NAME womp @womp.lnk lib wresl
-!endif
-    objsize @map womp.map >all.osz
-    objpad all.osz
-!endif
-
 womp.$(exe) wompj.$(exe) : womp.res wompj.res womp.lnk $(objs)
-!ifdef on_build_machine
-    @%make all.osz
-    objsetsz all.osz
-!endif
 !ifeq form_exe pharlap
     wlink NAME womp @womp.lnk lib wresf
 !else
@@ -71,14 +56,6 @@ womp.$(exe) wompj.$(exe) : womp.res wompj.res womp.lnk $(objs)
     copy womp.$(exe) wompj.$(exe)
     wstrip /a /r /q womp.$(exe) . womp.res
     wstrip /a /r /q wompj.$(exe) . wompj.res
-!ifdef jims_machine
-!ifeq form_exe pharlap
-    copy/b $(pharlap)stub386.exe+womp.exp $(%devdir)\bin\wompd.exe
-    cfig386 $(%devdir)\bin\wompd.exe -win30grow -win30limit +524228
-    copy/b $(pharlap)stub386.exe+wompj.exp $(%devdir)\bin\wompdj.exe
-    cfig386 $(%devdir)\bin\wompdj.exe -win30grow -win30limit +524228
-!endif
-!endif
 #
 # We may have to copy ..\h\wmpmsg.h up to the root.
 # Depends on where WASM and WATFOR expect it....
@@ -107,13 +84,6 @@ womp.lnk : objfiles.mif master.mif
 !endif
     @%append $^@ OPTION quiet,map,stack=16k
     @for %i in ($(objs)) do @%append $^@ FILE %i
-!ifndef release
-!ifeq form_exe pharlap
-    @%append $^@ file $(%devdir)\stkdepth\stkd386.lib
-!else
-    @%append $^@ file $(%devdir)\stkdepth\stkdl.lib
-!endif
-!endif
 
 womp.res : ..\h\womp.rc ..\womp.msg usage.rc wpmsg.h ..\h\wmpmsg.h
     $(wrce) /r /q /dENGLISH /fo=$^@ $[@

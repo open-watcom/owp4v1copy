@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for bpatch.
 *
 ****************************************************************************/
 
@@ -46,6 +45,7 @@ static void PrintBanner()
         printf( banner1w( "BPATCH", _BPATCH_VERSION_ ) "\n" );
         printf( banner2( "1990" ) "\n" );
         printf( banner3 "\n" );
+        printf( banner3a "\n" );
     }
 }
 

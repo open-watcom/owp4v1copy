@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Open Watcom Debugger certificate of authenticity.
 *
 ****************************************************************************/
 
@@ -41,6 +40,7 @@ char *AboutMessage[] = {
     "", // constructed
     banner2( "1987" ),
     banner3,
+    banner3a,
 #ifdef D32_NAME
     "",
     D32_NAME " " D32_VERSION,

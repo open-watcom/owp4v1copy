@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Buffered POSIX style I/O.
 *
 ****************************************************************************/
 
@@ -474,6 +473,8 @@ extern  void    CopyRite() {
     PutError( banner2( "1984" ) );
     PutError( "\r\n" );
     PutError( banner3 );
+    PutError( "\r\n" );
+    PutError( banner3a );
     PutError( "\r\n" );
 }
 

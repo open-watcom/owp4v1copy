@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WBIND for the Win386 extender.
 *
 ****************************************************************************/
 
@@ -124,6 +123,7 @@ static void doBanner( void )
     myPrintf( "%s\n", banner1w( "Win386 Bind Utility",_WBIND_VERSION_ ) );
     myPrintf( "%s\n", banner2( "1991" ) );
     myPrintf( "%s\n", banner3 );
+    myPrintf( "%s\n", banner3a );
     myPrintf("\n");
 }
 

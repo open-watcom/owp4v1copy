@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution Sampler mainline.
 *
 ****************************************************************************/
 
@@ -374,6 +373,7 @@ void Usage()
 banner1w( "Execution Sampler", _WSAMP_VERSION_ ) NL
 banner2( "1989" ) NL
 banner3 NL
+banner3a NL
 NL );
     MsgPrintfUsage( MSG_USAGE_LN_1, MSG_USAGE_LN_3 );
 //  MSG_USAGE_4 is the option for call graph support

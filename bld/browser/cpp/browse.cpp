@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Source Browser mainline.
 *
 ****************************************************************************/
 
@@ -87,11 +86,9 @@ static const char *BrowseTitle = { "WATCOM Source Browser" };
 static const char *SplashInfo[] = {
                 " ",
                 "Version " _WBRW_VERSION_,
-/* switch from banner2a to banner2 when we get to 1995
                 banner2( "1994" ),
-*/
-                banner2a(),
                 banner3,
+                banner3a,
                 " ",
                 NULL };
 #pragma warning 438 1

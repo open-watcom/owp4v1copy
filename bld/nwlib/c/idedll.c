@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WLIB DLL version mainline.
 *
 ****************************************************************************/
 
@@ -226,6 +225,7 @@ banner1w( "Library Manager", _WLIB_VERSION_ ),
 #endif
 banner2a(),
 banner3,
+banner3a,
     NULL
     };
     static int alreadyDone=0;

@@ -57,6 +57,7 @@ void BannerMessage( void )
         banner1w( "C/C++ CVTRES Clone for " CPU_NAME " ", _CVTRES_CLONE_VERSION_ ) "\n"
         banner2( "1995" ) "\n"
         banner3 "\n"
+        banner3a "\n"
     };
 
     if( !alreadyPrinted && !quietMode ) {

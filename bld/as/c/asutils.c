@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous 'as' helper functions.
 *
 ****************************************************************************/
 
@@ -59,14 +58,15 @@ extern void Banner( void ) {
 
     if( _IsOption( BE_QUIET ) || printed ) return;
     #if defined( AS_ALPHA )
-    puts( banner1w( "Alpha AXP Assembler", "0" ) );
+    puts( banner1w( "Alpha AXP Assembler", "0.8" ) );
     #elif defined( AS_PPC )
-    puts( banner1w( "PowerPC Assembler", "0" ) );
+    puts( banner1w( "PowerPC Assembler", "0.3" ) );
     #else
     #error unknown AS_CPU
     #endif
     puts( banner2a() );
     puts( banner3 );
+    puts( banner3a );
     printed = TRUE;
 }
 

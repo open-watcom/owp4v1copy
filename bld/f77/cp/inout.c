@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Input/output for listing, errors and source files.
 *
 ****************************************************************************/
 
-
-//
-// INOUT     : input/output for listing, errs, and source files
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -825,6 +820,8 @@ void    GetTrademark( char *buff ) {
 //==================================
 
     strcpy( buff, banner3 );
+    strcat( buff, "\n" );
+    strcat( buff, banner3a );
 }
 
 

@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker message output.
 *
 ****************************************************************************/
 
-
-/*
- * MSG : linker message output
- *
- */
 
 #include <string.h>
 #include <stdlib.h>
@@ -566,6 +560,8 @@ extern void WLPrtBanner( void )
         msg = MsgStrings[ COPYRIGHT ];
         WriteInfoStdOut( msg, BANNER, NULL );
         msg = MsgStrings[ TRADEMARK ];
+        WriteInfoStdOut( msg, BANNER, NULL );
+        msg = MsgStrings[ TRADEMARK2 ];
         WriteInfoStdOut( msg, BANNER, NULL );
         BannerPrinted = TRUE;
     }

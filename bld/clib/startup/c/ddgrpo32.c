@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Single DGROUP in a DLL sanity check.
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
 
 #define message \
     "This Dynamic Link Library is already in use.\n\n" \
-    "The Watcom OS/2 32bit runtime library does not support "\
+    "The Open Watcom OS/2 32bit runtime library does not support "\
     "attaching more than one process to a Dynamic Link Library "\
     "that does not have a separate data space for each attached process.\n"
 

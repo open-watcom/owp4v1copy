@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  VI editor bind utility.
 *
 ****************************************************************************/
 
@@ -68,6 +67,7 @@ void Banner( void )
     printf( "%s\n", banner1w( "Editor Bind Utility",_EDBIND_VERSION_ ) );
     printf( "%s\n", banner2a() );
     printf( "%s\n", banner3 );
+    printf( "%s\n", banner3a );
 }
 
 /*

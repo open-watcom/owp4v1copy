@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  VI ctags utility.
 *
 ****************************************************************************/
 
@@ -84,6 +83,7 @@ static void displayBanner( void )
     printf( "%s\n", banner1w( "CTAGS Utility", "1.0") );
     printf( "%s\n", banner2a() );
     printf( "%s\n", banner3 );
+    printf( "%s\n", banner3a );
 
 } /* displayBanner */
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Remote Transfer Utility.
 *
 ****************************************************************************/
 
@@ -695,6 +694,7 @@ static void Interactive()
         Error( banner1w( "Remote File eXchange program", _RFX_VERSION_ ) );
         Error( banner2( "1990" ) );
         Error( banner3 );
+        Error( banner3a );
         Error( "" );
     }
     for( ;; ) {

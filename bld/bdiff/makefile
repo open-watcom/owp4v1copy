@@ -68,23 +68,12 @@ wpatch.exe : $(PBJS) makefile
 OBJ = bpatch.obj dopatch.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 QNX_OBJ = bpatch.qbj dopatch.qbj msg.qbj myio.qbj oldfile.qbj patchio.qbj patmain.qbj bdiffmem.obj
 
-!ifdef on_build_machine
-bpatch.osz :
-        wlink @tmp
-        objsize @map bpatch.map >bpatch.osz
-        objpad bpatch.osz
-!endif
-
 bpatch.exe : obpatch.res $(OBJ) makefile
         @%create tmp.lnk
     @%append tmp.lnk system os2 pmc
         @%append tmp.lnk $(%debug) option map,newfile,heap=8k,stack=8k
         @%append tmp.lnk lib $(wres16)
         @for %i in ($(OBJ)) do @%append tmp.lnk file %i
-!ifdef on_build_machine
-        @%make bpatch.osz
-        objsetsz bpatch.osz
-!endif
         wlink @tmp
         erase tmp.lnk
         @set path=$(%path);$(binder)
@@ -98,10 +87,6 @@ bpatch.qnx : qbpatch.res $(QNX_OBJ) makefile
         @%append tmp.lnk lib $(wres16)
         @for %i in ($(QNX_OBJ)) do @%append tmp.lnk file %i
     @%append tmp.lnk name bpatch
-!ifdef on_build_machine
-        @%make bpatch.osz
-        objsetsz bpatch.osz
-!endif
         wlink @tmp
         erase tmp.lnk
         wstrip /q /a /r bpatch.qnx . qbpatch.res

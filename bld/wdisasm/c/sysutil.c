@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WDISASM system specific functions.
 *
 ****************************************************************************/
-
 
 
 #include <stdlib.h>
@@ -52,6 +50,7 @@ void  SysHelp()
         banner1( "", _WDISASM_VERSION_ ) "\n"
         banner2( "1988" ) "\n"
         banner3 "\n",
+        banner3a "\n",
         stdout
     );
     #ifdef __OSI__

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Touch utility command line processing.
 *
 ****************************************************************************/
 
@@ -154,6 +153,7 @@ static void usage( void )
 banner1w( "Touch Utility", _WTOUCH_VERSION_ ),
 banner2( "1988" ),
 banner3,
+banner3a,
     NULL
     };
     char **text;

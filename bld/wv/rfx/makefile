@@ -3,8 +3,8 @@
 # WATCOM Debugger makefile (RFX)
 #
 !include $(wvdir)\make.wv
-trap_os = $(os)
-!include $(trap_dir)\client.mif
+dig_os = $(os)
+!include $(dig_dir)/mif/trpcli.mif
 
 wvdir  = $+$(mdir)$-
 mdir   = $(wvdir)\rfx
@@ -62,18 +62,7 @@ w : .SYMBOLIC $(bdir)\rfx.exe
 
 $(bdir)\rfx.exe : $(objs) $(__MAKEFILES__)
         @%make additional
-!ifdef on_build_machine
-        @%make rfx.osz
-        objsetsz rfx.osz
-!endif
         wlink sys $(form) name $(bdir)\rfx @rfx
-
-!ifdef on_build_machine
-rfx.osz :
-        wlink sys $(form) name $(bdir)\rfx @rfx
-        objsize @map rfx.map > rfx.osz
-        objpad rfx.osz
-!endif
 
 additional : .PROCEDURE
     @%write rfx.lnk $# rfx link file
@@ -84,12 +73,12 @@ additional : .PROCEDURE
 .ERASE
 
 .BEFORE
-        @set include=..\;$(wvdir)\$(os)\h;$(wvdir)\h;$(dig_dir)\h;$(watcom_dir)\os21x_h;$(%include)
+        @set include=..\;$(wvdir)\$(os)\h;$(wvdir)\h;$(dig_dir)\h;$(lang_root)\h\os21x;$(%include)
 
 .EXTENSIONS
 .EXTENSIONS : .trp .exe .obj .fbj .nbj .c .asm
 
-.c: $(cdir);$(trap_dir)\c
+.c: $(cdir);$(dig_srcs)
 .c.obj:
         $(compile)
 

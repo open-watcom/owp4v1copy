@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WLINK message output definitions.
 *
 ****************************************************************************/
 
@@ -71,6 +70,7 @@ enum msg_num {
 pick( PRODUCT,                  banner1( IDV "Open Watcom Linker", _WLINK_VERSION_ ) ),
 pick( COPYRIGHT,                banner2( "1985" ) ),
 pick( TRADEMARK,                banner3 ),
+pick( TRADEMARK2,               banner3a ),
 };
 
 extern unsigned FmtStr( char *, unsigned, char *, ... );

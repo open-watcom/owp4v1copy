@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Open Watcom C/C++16 OS/2 startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C/C++16 under OS/2
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrto16 -bt=OS2 -ms -2r
 ;               wasm cstrto16 -bt=OS2 -mm -2r
@@ -145,9 +141,8 @@ __DLLstart_:
 ;
 ; copyright message
 ;
-        db      "WATCOM C/C++16 Run-Time system. "
-        db      "(c) Copyright by Sybase, Inc. 1988-2000."
-        db      ' All rights reserved.'
+        db      "Open Watcom C/C++16 Run-Time system. "
+        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
 ife _MODEL and _BIG_CODE
         dw      ___begtext      ; make sure dead code elimination
                                 ; doesn't kill BEGTEXT
