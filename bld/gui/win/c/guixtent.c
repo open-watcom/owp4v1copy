@@ -86,8 +86,7 @@ bool GetControlInfo( gui_window * wnd, unsigned id, HWND *hwnd, WPI_PRES *dc )
             return( *dc != NULLHANDLE );
         }
     }
-    return( NULL );
-
+    return( FALSE );
 }
 
 bool GetControlExtent( gui_window * wnd, unsigned id, char * text, int length, gui_coord *coord )

@@ -130,7 +130,7 @@ static bool InitDialog( gui_window *wnd )
     control_item        *item;
     unsigned            focus_id;
 
-    focus_id = NULL;
+    focus_id = 0;
     for( item = wnd->controls; item != NULL; item = item->next ) {
         GUIInitControl( item, wnd, &focus_id );
     }

@@ -732,13 +732,13 @@ typedef struct {
 } wpi_f_font;
 
 #else
-    #define LIT_END                     NULL
-    #define LIT_SORTASCENDING           NULL
-    #define LIT_SORTDESCENDING          NULL
+    #define LIT_END                     0
+    #define LIT_SORTASCENDING           0
+    #define LIT_SORTDESCENDING          0
     #define LIT_NONE                    -1
-    #define LIT_FIRST                   NULL
-    #define LIT_SELECT                  NULL
-    #define LIT_UNSELECT                NULL
+    #define LIT_FIRST                   0
+    #define LIT_SELECT                  0
+    #define LIT_UNSELECT                0
     #define HINI                        short
     #define MRESULT                     LONG
     #define WM_DLGCOMMAND               WM_COMMAND

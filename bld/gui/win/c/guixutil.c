@@ -458,7 +458,7 @@ WPI_MRESULT GUISendMessage( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     if( hwnd != NULLHANDLE ) {
         return( _wpi_sendmessage( hwnd, msg, wparam, lparam ) );
     } else {
-        return( NULL );
+        return( 0L );
     }
 }
 
@@ -471,7 +471,7 @@ WPI_MRESULT GUISendDlgItemMessage( HWND parent, int control, WPI_MSG msg,
     if( hwnd != NULLHANDLE ) {
         return( _wpi_sendmessage( hwnd, msg, wparam, lparam ) );
     } else {
-        return( NULL );
+        return( 0L );
     }
 }
 
