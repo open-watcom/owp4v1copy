@@ -39,7 +39,7 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#ifdef __WATCOMC__
+#ifndef __UNIX__
 #include <sys/utime.h>
 #else
 #include <sys/types.h>

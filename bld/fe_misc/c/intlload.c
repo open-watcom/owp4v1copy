@@ -177,7 +177,6 @@ IntlData *getData( int fh ) {
     return( data );
 }
 
-#ifdef __WATCOMC__
 static char *imageName( char *buff )
 {
 #if defined(__NT__) || ( defined(__OS2__) && ! defined(__OSI__) )
@@ -244,4 +243,3 @@ void FreeInternationalData(
         _MemoryFree( handle );
     }
 }
-#endif
