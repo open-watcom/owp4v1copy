@@ -4,6 +4,7 @@ binp\help\cguide.inf
 binp\help\clr.inf
 binp\help\cmix.inf
 binp\help\cpplib.inf
+binp\help\cw.inf
 binp\help\c_readme.inf
 binp\help\pguide.inf
 binp\help\tools.inf

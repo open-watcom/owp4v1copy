@@ -16,7 +16,7 @@ books=c_readme ide wbrw wprof editor &
  clr cguide pguide lguide wlnkerrs tools wd rescomp &
  clib cpplib wccerrs wpperrs wrcerrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
- cbooks ebooks fbooks
+ cbooks ebooks fbooks cw
 
 !else ifeq dotarget dos
 #### DOS ######
@@ -26,7 +26,7 @@ books=c_readme wprof &
  clr rescomp &
  clib cpplib wccerrs wpperrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
- cmix fmix
+ cmix fmix cw
 
 !else ifeq dotarget html
 #### HTML ######
@@ -44,14 +44,14 @@ books=c_readme ide wbrw wprof &
  clr rescomp &
  clib cpplib wccerrs wpperrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
- cmix fmix
+ cmix fmix cw
 
 !else ifeq dotarget ps
 #### POST SCRIPT ######
 books=c_readme clr cguide pguide lguide &
  tools guitool wd clib cpplib &
  f_readme fuguide fpguide ftools f77graph f77lr &
- cguideq clibqnx
+ cguideq clibqnx cw
 
 !else
 
@@ -110,32 +110,6 @@ book_objs=$(objs_gs)
 book_incs=$(incs_gs)
 book_bmroot=$(bmroot_gs)
 book_src=ebooks
-
-!else ifeq hbook isv
-# isv
-book_title=Sybase Partners Program
-book_objs=$(objs_isv)
-book_incs=$(incs_isv)
-book_bmroot=$(bmroot_isv)
-book_src=isv
-
-!else ifeq hbook isvcpp
-# isvcpp
-book_title=Watcom C/C++ 11.0 Add-In Tools Guide
-book_objs=$(objs_isv)
-book_incs=$(incs_isv)
-book_bmroot=$(bmroot_isv)
-book_src=isvcpp
-!define book_multi_chapter
-
-!else ifeq hbook isvfor
-# isvfor
-book_title=Watcom F77 11.0 Add-In Tools Guide
-book_objs=$(objs_isv)
-book_incs=$(incs_isv)
-book_bmroot=$(bmroot_isv)
-book_src=isvfor
-!define book_multi_chapter
 
 !else ifeq hbook c_readme
 # c_readme

@@ -966,60 +966,6 @@ $(docsrc_dir)\gui\snaps\wzm1.ps &
 $(docsrc_dir)\gui\snaps\wzm2.bmp &
 $(docsrc_dir)\gui\snaps\wzm2.ps
 
-# isv sub-directory
-bmroot_isv = $(docsrc_dir)\isv
-incs_isv = $(docsrc_dir)\isv
-objs_isv = &
-$(docsrc_dir)\isv\2020.bmp  &
-$(docsrc_dir)\isv\accusoft.bmp &
-$(docsrc_dir)\isv\algologo.bmp  &
-$(docsrc_dir)\isv\algoold.bmp  &
-$(docsrc_dir)\isv\amcyber.bmp  &
-$(docsrc_dir)\isv\apmoney.bmp  &
-$(docsrc_dir)\isv\blinker.bmp  &
-$(docsrc_dir)\isv\bluesky.bmp  &
-$(docsrc_dir)\isv\cplexlog.bmp  &
-$(docsrc_dir)\isv\csi.bmp  &
-$(docsrc_dir)\isv\cwindow.bmp  &
-$(docsrc_dir)\isv\dos_ext.bmp  &
-$(docsrc_dir)\isv\dsscreen.bmp  &
-$(docsrc_dir)\isv\ets_draw.bmp  &
-$(docsrc_dir)\isv\faircom.bmp  &
-$(docsrc_dir)\isv\fastgr2.bmp  &
-$(docsrc_dir)\isv\glenco.bmp  &
-$(docsrc_dir)\isv\glenco2.bmp  &
-$(docsrc_dir)\isv\green1.bmp  &
-$(docsrc_dir)\isv\green2.bmp  &
-$(docsrc_dir)\isv\green3.bmp  &
-$(docsrc_dir)\isv\green4.bmp  &
-$(docsrc_dir)\isv\green5.bmp  &
-$(docsrc_dir)\isv\imagea.bmp  &
-$(docsrc_dir)\isv\isv.gml  &
-$(docsrc_dir)\isv\isvcpp.gml  &
-$(docsrc_dir)\isv\isvfor.gml  &
-$(docsrc_dir)\isv\iswin.bmp  &
-$(docsrc_dir)\isv\keylok.bmp  &
-$(docsrc_dir)\isv\lisp2c1.bmp  &
-$(docsrc_dir)\isv\listc.gml  &
-$(docsrc_dir)\isv\listf.gml  &
-$(docsrc_dir)\isv\math.bmp  &
-$(docsrc_dir)\isv\mc-demo.bmp  &
-$(docsrc_dir)\isv\metapowr.bmp  &
-$(docsrc_dir)\isv\neural.bmp  &
-$(docsrc_dir)\isv\okino.bmp  &
-$(docsrc_dir)\isv\okino2.bmp  &
-$(docsrc_dir)\isv\rseos22.bmp  &
-$(docsrc_dir)\isv\sciend.bmp  &
-$(docsrc_dir)\isv\screen00.bmp  &
-$(docsrc_dir)\isv\se1.bmp  &
-$(docsrc_dir)\isv\symmetry.bmp  &
-$(docsrc_dir)\isv\visual.bmp  &
-$(docsrc_dir)\isv\wgtlogo.bmp  &
-$(docsrc_dir)\isv\windune.bmp  &
-$(docsrc_dir)\isv\wmewlgui.bmp  &
-$(docsrc_dir)\isv\wndxlogo.pcx  &
-$(docsrc_dir)\isv\zinc.bmp
-
 # lg sub-directory
 incs_lg = $(docsrc_dir)\lg
 objs_lg = &
