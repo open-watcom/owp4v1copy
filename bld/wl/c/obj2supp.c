@@ -1514,7 +1514,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
             new_reloc.item.elf.info = R_386_32;
         }
         sym = tthread->u.sym;
-        if( IS_SYM_ALIAS( sym ) ) {
+        if( IS_SYM_ALIAS( sym ) && ( sym->info & SYM_WAS_LAZY ) ) {
             save = FALSE;
         } else if( (tthread->type & FIX_FRAME_EXT) && IsSymElfImpExp(sym) ) {
             new_reloc.item.elf.addend = 0;
