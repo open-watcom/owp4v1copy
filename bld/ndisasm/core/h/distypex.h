@@ -231,6 +231,7 @@ typedef enum {
     DO_MEMORY_ABS,
     DO_MEMORY_REL,
     DO_MASK             = 0x0f,
+    DO_NO_SEG_OVR       = 0x20,
     DO_EXTRA            = 0x40,
     DO_HIDDEN           = 0x80
 } dis_operand_type;

@@ -559,6 +559,26 @@ dis_register X86GetRegister( WBIT w, RM reg, dis_dec_ins *ins )
 }
 
 
+dis_register X86GetRegisterAddr( WBIT w, RM reg, dis_dec_ins *ins )
+/**********************************************************************
+ *  Get Register
+ *                 w   =  1  (default) use full width of operand
+ *                     =  0            use byte size operand
+ */
+{
+    switch(ins->type) {
+    default:
+        if( w != W_FULL ) {
+            return( X86GetRegister_B ( w, reg, ins ) );
+        } else if( DIF_X86_ADDR_LONG & ins->flags ) {
+            return( X86GetRegister_D( w, reg, ins ) );
+        } else {
+            return( X86GetRegister_W( w, reg, ins ) );
+        }
+    }
+}
+
+
 static void X86GetModRM_S(WBIT w, MOD mod, RM rm, void * d,
                            dis_dec_ins *ins, dis_ref_type ref_type,
            dis_register (*func) (WBIT w,RM reg, dis_dec_ins* ins))
@@ -1393,31 +1413,31 @@ dis_handler_return X86String_8( dis_handle *h, void *d, dis_dec_ins *ins )
 
     switch( ins->type ) {
     case DI_X86_cmps:
-        ins->op[0].base = X86GetRegister(W_DEFAULT,REG_SI,ins );
+        ins->op[0].base = X86GetRegisterAddr(W_DEFAULT,REG_SI,ins );
         ins->op[0].type = DO_MEMORY_ABS;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
-        ins->op[1].base = X86GetRegister(W_DEFAULT,REG_DI,ins );
-        ins->op[1].type = DO_MEMORY_ABS;
+        ins->op[1].base = X86GetRegisterAddr(W_DEFAULT,REG_DI,ins );
+        ins->op[1].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
         ins->op[1].ref_type = X86GetRefType(code.type1.w, ins);
         break;
     case DI_X86_movs:
-        ins->op[0].base = X86GetRegister(W_DEFAULT,REG_DI,ins );
-        ins->op[0].type = DO_MEMORY_ABS;
+        ins->op[0].base = X86GetRegisterAddr(W_DEFAULT,REG_DI,ins );
+        ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
-        ins->op[1].base = X86GetRegister(W_DEFAULT,REG_SI,ins );
+        ins->op[1].base = X86GetRegisterAddr(W_DEFAULT,REG_SI,ins );
         ins->op[1].type = DO_MEMORY_ABS;
         ins->op[1].ref_type = X86GetRefType(code.type1.w, ins);
         break;
     case DI_X86_ins:
-        ins->op[0].base = X86GetRegister(W_DEFAULT,REG_DI,ins );
-        ins->op[0].type = DO_MEMORY_ABS;
+        ins->op[0].base = X86GetRegisterAddr(W_DEFAULT,REG_DI,ins );
+        ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
         ins->op[1].base = DR_X86_dx;
         ins->op[1].type = DO_REG;
         ins->op[1].ref_type = X86GetRefType(code.type1.w, ins);
         break;
     case DI_X86_lods:
-        ins->op[0].base = X86GetRegister(W_DEFAULT,REG_SI,ins );
+        ins->op[0].base = X86GetRegisterAddr(W_DEFAULT,REG_SI,ins );
         ins->op[0].type = DO_MEMORY_ABS;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
         ins->num_ops = 1;
@@ -1426,14 +1446,14 @@ dis_handler_return X86String_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[0].base = DR_X86_dx;
         ins->op[0].type = DO_REG;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
-        ins->op[1].base = X86GetRegister(W_DEFAULT,REG_SI,ins );
+        ins->op[1].base = X86GetRegisterAddr(W_DEFAULT,REG_SI,ins );
         ins->op[1].type = DO_MEMORY_ABS;
         ins->op[1].ref_type = X86GetRefType(code.type1.w, ins);
         break;
     case DI_X86_stos:
     case DI_X86_scas:
-        ins->op[0].base = X86GetRegister(W_DEFAULT,REG_DI,ins );
-        ins->op[0].type = DO_MEMORY_ABS;
+        ins->op[0].base = X86GetRegisterAddr(W_DEFAULT,REG_DI,ins );
+        ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
         ins->op[0].ref_type = X86GetRefType(code.type1.w, ins);
         ins->num_ops = 1;
         break;
@@ -3108,7 +3128,7 @@ static unsigned X86InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         len = UnixMangleName( ins, p, len );
     }
     p += len;
-    if( !X86SegmentOverride( ins ) ) {
+    if( !X86SegmentOverride( ins ) && (( ins->flags & DIF_X86_ADDR_SIZE ) == 0 )) {
         switch( ins->type ) {
         case DI_X86_cmps:
         case DI_X86_ins:
@@ -3261,6 +3281,7 @@ static int NeedSizing( dis_dec_ins *ins, dis_format_flags flags, unsigned op_num
     switch( ins->type ) {
     case DI_X86_movsx:
     case DI_X86_movzx:
+    case DI_X86_outs:
         /* these always need sizing */
         return( TRUE );
     }
@@ -3296,7 +3317,8 @@ static unsigned X86OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
                 p += sizeof( SUFFIX ) - 1;
             }
         }
-        if( (ins_flags & SEGOVER) != 0 ) {
+        if((( ins_flags & SEGOVER ) != 0 )
+            && (( ins->op[op_num].type & DO_NO_SEG_OVR ) == 0 )) {
             switch( ins_flags & SEGOVER ) {
             case DIF_X86_CS:
                 over = 'c';
