@@ -498,8 +498,8 @@ void sort(vector, vecsize)
                 aim = &ai[mid];
                 if (aim < ai) break;      /* ?? Why ??     */
                 if (aim->hash > ai->hash ||
-                    aim->hash == ai->hash &&
-                    aim->serial > ai->serial) break;
+                    (aim->hash == ai->hash &&
+                     aim->serial > ai->serial)) break;
                 work.hash = ai->hash;
                 ai->hash = aim->hash;
                 aim->hash = work.hash;
