@@ -24,9 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  16-bit chain interrupt handler function
 ;*
+;* date          by              reason
+;* ====          ==              ======
+;* 14-aug-02     SJHowe          Now passes original flags
 ;*****************************************************************************
 
 
@@ -48,6 +50,9 @@ _chain_intr     proc far
         mov     sp,bp                   ; reset SP to point to saved registers
         xchg    cx,20[bp]               ; restore cx, & put in offset
         xchg    ax,22[bp]               ; restore ax, & put in segment
+        mov     bx,28[bp]               ; restore flags
+        push    bx                      ; :
+        popf                            ; :
         pop     dx                      ; pop off dummy fs entry
         pop     dx                      ; pop off dummy gs entry
         pop     es                      ; restore segment registers
