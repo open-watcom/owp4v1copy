@@ -1,29 +1,32 @@
+# OWL library finder.
+# ~~~~~~~~~~~~~~~~~~
 #
-# owl library
 #
-owl_lib_386     = $(owl_dir)\osi386\owl.lib
-owl_lib_axp     = $(owl_dir)\osiaxp\owl.lib
-owl_lib_nt_386_dll = $(owl_dir)\nt386.dll\owl.lib
-owl_lib_nt_axp_dll = $(owl_dir)\ntaxp.dll\owl.lib
-owl_lib_386_dll = $(owl_lib_$(host_os)_386_dll)
-owl_lib_axp_dll = $(owl_lib_$(host_os)_axp_dll)
+# OWL library
+#
+owl_lib_386    = $(owl_dir)/osi386/owl.lib
+owl_lib_axp    = $(owl_dir)/osiaxp/owl.lib
 
 #
-# owl dependencies
+# OWL dependency
 #
-owl_dep_386     = $(owl_lib_386)
-owl_dep_axp     = $(owl_lib_axp)
-owl_dep_386_dll = $(owl_lib_386_dll)
-owl_dep_axp_dll = $(owl_lib_axp_dll)
+owl_dep_386    = $(owl_dir)/osi386/compile.tim
+owl_dep_axp    = $(owl_dir)/osiaxp/compile.tim
 
 #
-# 'host_CPU' must be set to use these forms
+# OWL run-time DLL used
 #
-owl_dll_ext=
-!ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
-owl_dll_ext=_dll
+owl_lib_nt_386 = $(owl_dir)/nt386.dll/owl.lib
+owl_lib_nt_axp = $(owl_dir)/ntaxp.dll/owl.lib
+
+owl_dep_nt_386 = $(owl_dir)/osi386.dll/compile.tim
+owl_dep_nt_axp = $(owl_dir)/osiaxp.dll/compile.tim
 !endif
+
+#
+!ifdef owl_lib_$(host_os)_$(host_cpu)
+owl_lib = $(owl_lib_$(host_os)_$(host_cpu))
+!else
+owl_lib = $(owl_lib_$(host_cpu))
 !endif
-owl_lib = $(owl_lib_$(host_CPU)$(owl_dll_ext))
-owl_dep = $(owl_dep_$(host_CPU)$(owl_dll_ext))
