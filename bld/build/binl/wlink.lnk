@@ -17,7 +17,7 @@ system begin 386
     runtime console
 end
 system begin bld_linux
-    option osname='Linux x86'
+    option osname='Linux x86 (build)'
     debug all
     libpath %DEVDIR%/clib/library/linux.386/ms_r
     libpath %DEVDIR%/clib/library/linux.386/ms_s
