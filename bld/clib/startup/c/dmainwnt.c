@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 DLL startup code.
 *
 ****************************************************************************/
 
@@ -36,10 +35,15 @@
 #include <stdlib.h>
 #include "initfini.h"
 #include "libwin32.h"
+#include "osthread.h"
 
 extern int APIENTRY LibMain( HANDLE, DWORD, LPVOID );
 extern void __CommonInit( void );
 extern BOOL __disallow_single_dgroup( HANDLE );
+
+thread_data             *__AllocInitThreadData( thread_data * );
+void                     __FreeInitThreadData( thread_data * );
+extern      thread_data *__FirstThreadData;
 
 #ifdef __SW_BR
     extern int          __Is_DLL;       /* TRUE => DLL, else not a DLL */
@@ -87,9 +91,12 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
             //      nothing is called
             __InitRtns( 1 );
             // allocate some thread data storage and initialize run-time variables
-            if( !__NTInit( TRUE, NULL, hdll ) ) {
-                rc = FALSE;
-                break;
+            {
+                thread_data *tdata = __AllocInitThreadData( NULL );
+                if(  !tdata || !__NTInit( TRUE, tdata, hdll ) ) {
+                    rc = FALSE;
+                    break;
+                }
             }
             // set up TLSIndex thingee
             if( !__NTThreadInit() ) {   // safe to call multiple times
@@ -162,6 +169,8 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
         #ifndef __SW_BR
             __NTRemoveThread( TRUE );
         #endif
+        __FreeInitThreadData( __FirstThreadData );
+        __FirstThreadData = NULL;
         --processes;
     }
     return( rc );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 main routines for executables and DLLs.
 *
 ****************************************************************************/
 
@@ -61,8 +60,6 @@ _WCRTLINK int *__threadid( void )
 }
 
 thread_data             *__FirstThreadData = NULL;
-thread_data             *__AllocInitThreadData( thread_data * );
-void                     __FreeInitThreadData( thread_data * );
 
 static void *__SingleThread()
 {
@@ -125,14 +122,10 @@ int __NTInit( int is_dll, thread_data *tdata, HANDLE hdll )
     WORD        os_ver;
 
     __Is_DLL = is_dll;                                  /* 15-feb-93 */
-    __FirstThreadData = __AllocInitThreadData( tdata );
-    if( __FirstThreadData == NULL ) {
-        if( is_dll ) {
-            return( FALSE );
-        }
-        ExitProcess( 1 );
-    }
-
+    // tdata is guaranteed to never be NULL. If starting up for an EXE,
+    // it's pointing on the stack (alloca). If this is run on behalf of
+    // a DLL startup, it's already NULL checked by the caller.
+    __FirstThreadData = tdata;
     __initPOSIXHandles();
 
     _Envptr = GetEnvironmentStrings();
@@ -268,9 +261,6 @@ _WCRTLINK void __exit( unsigned ret_code )
     }
     // Also gets done by __FreeThreadDataList which is activated from FiniSema4s
     // for multi-threaded apps
-    if( __FirstThreadData != NULL ) {
-        __FreeInitThreadData( __FirstThreadData );
-        __FirstThreadData = NULL;
-    }
+    __FirstThreadData = NULL;
     ExitProcess( ret_code );
 }
