@@ -102,9 +102,9 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
     $(linker) name $(fname) $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifdef on_build_machine
 !ifeq host_OS dos
-    @ren $(fname).exe x.exe
-    $(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe x.exe $(fname).exe -V
-    @del x.exe
+#    @ren $(fname).exe x.exe
+#    $(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe x.exe $(fname).exe -V
+#    @del x.exe
 !endif
 !endif
 !ifdef resfile
@@ -160,7 +160,7 @@ rcfiles = &
     $(aui_dir)\h\japsrch.dlg &
     $(aui_dir)\h\japsrcha.dlg
 
-rcinclude=.;..\h;$(dig_dir)\h;$(aui_dir)\h;$(gui_dir);$(gui_dir)\h
+rcinclude=.;..\h;$(dig_dir)\h;$(aui_dir)\h;$(gui_dir);$(gui_dir)\h;$(brinfo_dir)\merge\res
 
 wprofui.res : ..\h\wprofui.rc $(rcfiles)
     $(rc) -r -q -bt=windows -i=$(rcinclude);$(lang_root)\h\win ..\h\wprofui.rc /fo=wprofui.res
