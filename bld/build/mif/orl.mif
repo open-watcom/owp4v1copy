@@ -1,22 +1,36 @@
-# ORL library finder.  You must define:
+# ORL library finder.
 # ~~~~~~~~~~~~~~~~~~
-# 1. host_cpu
 #
-orl_386    = $(orl_dir)/osi386/orl.lib
-orl_axp    = $(orl_dir)/osiaxp/orl.lib
+#
+# ORL library
+#
+orl_lib_386    = $(orl_dir)/osi386/orl.lib
+orl_lib_axp    = $(orl_dir)/osiaxp/orl.lib
 
-!ifdef $(proj_name)_rtdll
+#
+# ORL dependency
+#
+orl_dep_386    = $(orl_dir)/osi386/compile.tim
+orl_dep_axp    = $(orl_dir)/osiaxp/compile.tim
+
+#
+# ORL run-time DLL used
+#
 !ifeq $(proj_name)_rtdll 1
-orl_nt_386  = $(orl_dir)/nt386.dll/orl.lib
-orl_nt_axp  = $(orl_dir)/ntaxp.dll/orl.lib
-orl_os2_386 = $(orl_dir)/os2386.dll/orl.lib
-!endif
+orl_lib_nt_386  = $(orl_dir)/nt386.dll/orl.lib
+orl_lib_nt_axp  = $(orl_dir)/ntaxp.dll/orl.lib
+orl_lib_os2_386 = $(orl_dir)/os2386.dll/orl.lib
+
+orl_dep_nt_386  = $(orl_dir)/nt386.dll/compile.tim
+orl_dep_nt_axp  = $(orl_dir)/ntaxp.dll/compile.tim
+orl_dep_os2_386 = $(orl_dir)/os2386.dll/compile.tim
 !endif
 
+#
 !ifdef bootstrap
 orl_lib = $(orl_dir)/$(%OBJDIR)/liborl.a
-!else ifdef orl_$(host_os)_$(host_cpu)
-orl_lib = $(orl_$(host_os)_$(host_cpu))
+!else ifdef orl_lib_$(host_os)_$(host_cpu)
+orl_lib = $(orl_lib_$(host_os)_$(host_cpu))
 !else
-orl_lib = $(orl_$(host_cpu))
+orl_lib = $(orl_lib_$(host_cpu))
 !endif
