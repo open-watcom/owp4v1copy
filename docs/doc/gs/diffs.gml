@@ -24,6 +24,9 @@ The C++ compiler also supports these suffixes.
 .bull
 Added C99 style *LLONG_MIN/MAX defines in limits.h.
 .bull
+Added support for the __func__ symbol (name of the current function)
+which is equivalent to the already existing __FUNCTION__ symbol.
+.bull
 The C compiler has been fixed to correctly diagnose illegal union
 assignments.
 .bull
