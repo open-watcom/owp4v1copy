@@ -477,6 +477,9 @@ walk_result MemReference( int opnd, mad_disasm_data *dd, MEMREF_WALKER *wk, cons
     case DRT_X86_QWORDF:
         th = X86T_DOUBLE;
         break;
+    case DRT_X86_QWORD:
+        th = X86T_QWORD;
+        break;
     case DRT_X86_WORD:
         th = X86T_WORD;
         break;
