@@ -24,20 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  This file contains prototypes and #defines used by the
+*               implementation of the iostream library.
+*               This file is not for distribution.
 *
 ****************************************************************************/
 
 
-// This file contains prototypes and #defines used by the implementation
-// of the iostream library.
-// This file is not for distribution.
-//
-//  Modified    By              Reason
-//  ========    ==              ======
-//  92/08/29    Greg Bentz      Initial implementation.
-//
 #ifndef _IOUTIL_H_INCLUDED
 
 // function should be inlined
@@ -78,8 +71,8 @@ _WCRTLINK extern int __plusplus_fstat( int handle, int *ios_mode );
 _WCRTLINK extern int __plusplus_open( const char *name, int *ios_mode, int prot );
 _WCRTLINK extern FILE *__get_std_stream( unsigned handle );
 _WCRTLINK extern int __flush( FILE *fp );
-_WCRTLINK extern char *__clib_lltoa( signed __int64 *pv, char *buf, unsigned radix );
-_WCRTLINK extern char *__clib_ulltoa( unsigned __int64 *pv, char *buf, unsigned radix );
+_WCRTLINK extern char *__clib_lltoa( signed __int64 pv, char *buf, unsigned radix );
+_WCRTLINK extern char *__clib_ulltoa( unsigned __int64 pv, char *buf, unsigned radix );
 };
 
 #define _IOUTIL_H_INCLUDED
