@@ -36,7 +36,6 @@
 #include <unistd.h>
 #include <winsock.h>
 #include <wsipx.h>
-#include <wsnwlink.h>
 #include <svcguid.h>
 #include <nspapi.h>
 
