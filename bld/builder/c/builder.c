@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Builder tool mainline.
 *
 ****************************************************************************/
 
@@ -34,9 +33,12 @@
 #include <ctype.h>
 #ifdef __UNIX__
 #include <stdlib.h>
+#include <unistd.h>
 #else
-#include <env.h>
 #include <direct.h>
+#endif
+#if defined(__WATCOMC__) || !defined(__UNIX__)
+#include <env.h>
 #endif
 #include "watcom.h"
 #include "builder.h"

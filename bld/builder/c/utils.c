@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Builder utility functions.
 *
 ****************************************************************************/
 
@@ -89,7 +88,11 @@ void LogFlush()
 
 void OpenLog( const char *name )
 {
+#ifdef __UNIX__
+   LogFile = fopen( name, "w" );
+#else
    LogFile = _fsopen( name, "w", SH_DENYWR );
+#endif
    if( LogFile == NULL ) {
        Fatal( "Can not open '%s': %s\n", name, strerror( errno ) );
    }

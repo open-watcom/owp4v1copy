@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  *nix specifix functions for builder
+* Description:  *nix specific functions for builder
 *
 ****************************************************************************/
 
 #include <unistd.h>
+#include <string.h>
 #include <sys/wait.h>
 #include "watcom.h"
 #include "builder.h"
@@ -45,7 +46,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int pipe_fd[2];
     pid_t pid;
-    
+
     if( pipe( pipe_fd ) == -1)
         return( errno );
     if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )

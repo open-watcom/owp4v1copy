@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sweep utility - run a command recursively in subtree.
 *
 ****************************************************************************/
 
@@ -103,6 +102,12 @@ dirstack        *Stack = NULL;
 int             DoneFlag = 0;
 
 
+void SetDoneFlag()
+{
+    DoneFlag = 1;
+}
+
+
 void *SafeMalloc( size_t n )
 {
     void *p = malloc( n );
@@ -138,7 +143,7 @@ char *CurrPath()
 
 char *StringCopy( char *dst, char *src )
 {
-    while( *dst = *src ) {
+    while( (*dst = *src) ) {
         ++dst;
         ++src;
     }
@@ -329,12 +334,6 @@ void ExecuteCommands()
         }
         closedir( dirh );
     }
-}
-
-
-void SetDoneFlag()
-{
-    DoneFlag = 1;
 }
 
 

@@ -32,7 +32,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#ifndef __UNIX__
+#ifdef __UNIX__
+#include <unistd.h>
+#else
 #include <direct.h>
 #include <dos.h>
 #endif
@@ -73,7 +75,9 @@ unsigned ChgDir( char *dir )
 {
     char        *end;
     unsigned    len;
+#ifndef __UNIX__
     unsigned    total;
+#endif
 
     if( dir[0] == '\0' ) return( 0 );
     len = strlen( dir );

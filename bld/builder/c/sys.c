@@ -32,7 +32,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#ifdef __WATCOMC__
+#ifdef __UNIX__
+#include <sys/wait.h>
+#else
 #include <process.h>
 #endif
 #include "watcom.h"
@@ -48,7 +50,7 @@ unsigned SysRunCommand( const char *cmd )
     int         rc;
     int         readpipe = -1;
     char        buff[256 + 1];
-    
+
     my_std_output = dup( STDOUT_FILENO );
     my_std_error = dup( STDERR_FILENO );
     rc = SysRunCommandPipe( cmd, &readpipe );

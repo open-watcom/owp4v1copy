@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Built-in builder commands.
 *
 ****************************************************************************/
 
@@ -35,12 +34,15 @@
 #include <time.h>
 #include <stdlib.h>
 #ifdef __UNIX__
+#include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #else
 #include <direct.h>
-#include <env.h>
 #include <dos.h>
+#endif
+#if defined(__WATCOMC__) || !defined(__UNIX__)
+#include <env.h>
 #endif
 #include "watcom.h"
 #include "builder.h"
@@ -89,7 +91,9 @@ static unsigned ProcSet( char *cmd )
 void ResetArchives( copy_entry *list )
 {
     copy_entry  *next;
+#ifndef __UNIX__
     unsigned    attr;
+#endif
 
     while( list != NULL ) {
         next = list->next;
@@ -117,8 +121,10 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     char        *ext;
     DIR                 *directory;
     struct dirent       *dent;
+#ifndef __UNIX__
     FILE        *fp;
     unsigned    attr;
+#endif
 
     end = &dst[strlen(dst)-1];
     while( end[0] == ' ' || end[0] == '\t' ) {
