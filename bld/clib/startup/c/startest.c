@@ -99,7 +99,10 @@ int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
 
     (void) argc; // Unused
 
-    __F_NAME( __Fini_Argv, __wFini_Argv )(); // Release allocated data
+//  This was causing a crash in the multi-threaded 16-bit OS/2 runtime.
+//  This test program relies far too much on clib internals but probably
+//  isn't worth "fixing" properly.
+//    __F_NAME( __Fini_Argv, __wFini_Argv )(); // Release allocated data
 
     // tryanalysis( __LINE__, 0, 0, 0 ); // Fails as _Lp* can't be NULL
 
@@ -159,7 +162,7 @@ int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
     if( NumErrors != 0 ) {
         printf( __F_NAME( "%s: FAILURE (%d errors).\n", "%ls: FAILURE (%d errors).\n" ),
             ProgramName, NumErrors );
-        
+
         return( EXIT_FAILURE );
     }
     printf( __F_NAME( "Tests completed (%s).\n", "Tests completed (%ls).\n" ),
