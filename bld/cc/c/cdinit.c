@@ -72,6 +72,7 @@ local unsigned long BitMask[] = {
 /* use a double-linked list of dataquads to facilitate insertions */
 typedef struct data_quad_list {
     DATA_QUAD dq;
+    unsigned long size;
     struct data_quad_list *prev, *next;
 } DATA_QUAD_LIST;
 
@@ -88,7 +89,7 @@ local int CharArray( TYPEPTR typ );
 local int WCharArray( TYPEPTR typ );
 local void InitCharArray( TYPEPTR typ );
 local void InitWCharArray( TYPEPTR typ );
-local void StoreFloat( int float_type );
+local void StoreFloat( int float_type, unsigned long size );
 local void StoreInt64( TYPEPTR typ );
 
 void InitDataQuads()
@@ -150,7 +151,7 @@ local DATA_QUAD_LIST *NewDataQuad( void )
     return dql;
 }
 
-local void GenDataQuad( DATA_QUAD *dq )
+local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 {
     DATA_QUAD_LIST *dql = NewDataQuad();
     memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
@@ -158,6 +159,7 @@ local void GenDataQuad( DATA_QUAD *dq )
         LastDataQuad->next = dql;
     dql->prev = LastDataQuad;
     dql->next = NULL;
+    dql->size = size;
     LastDataQuad = dql;
 }
 
@@ -169,7 +171,7 @@ local void ZeroBytes( long n )
     dq.flags = Q_DATA;
     dq.u.long_values[0] = n;
     dq.u.long_values[1] = 0;
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, n );
 }
 
 local void RelSeekBytes( long n )
@@ -180,7 +182,7 @@ local void RelSeekBytes( long n )
     dq.flags = Q_DATA;
     dq.u.long_values[0] = n;
     dq.u.long_values[1] = 0;
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, -n );
 }
 
 local void ChkConstant( unsigned long value, unsigned long max_value )
@@ -192,7 +194,8 @@ local void ChkConstant( unsigned long value, unsigned long max_value )
     }
 }
 
-local void StoreIValue( TOKEN int_type, unsigned long value )
+local void StoreIValue( TOKEN int_type, unsigned long value,
+                        unsigned long size )
 {
     static DATA_QUAD_LIST *PrevLastDataQuad;
 
@@ -209,6 +212,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value )
         dq_ptr->flags == (Q_DATA | Q_REPEATED_DATA)  &&
         dq_ptr->u.long_values[0] == value ) {
         dq_ptr->u.long_values[1]++;             /* increment repeat count */
+        LastDataQuad->size += size;
     } else if( dq_ptr->opr == int_type  &&  dq_ptr->flags == Q_DATA ) {
         if( dq_ptr->u.long_values[0] == value ) {
             dq_ptr->flags |= Q_REPEATED_DATA;
@@ -217,12 +221,13 @@ local void StoreIValue( TOKEN int_type, unsigned long value )
             dq_ptr->flags |= Q_2_INTS_IN_ONE;
             dq_ptr->u.long_values[1] = value;
         }
+        LastDataQuad->size += size;
     } else {
         dq.opr = int_type;
         dq.flags = Q_DATA;
         dq.u.long_values[0] = value;
         if( value != 0 ) CompFlags.non_zero_data = 1;
-        GenDataQuad( &dq );
+        GenDataQuad( &dq, size );
         PrevLastDataQuad = LastDataQuad;
     }
 }
@@ -237,7 +242,7 @@ local void StoreIValue64( uint64 value )
     dq_ptr = &dq;
     dq.u.long64 = value;
     CompFlags.non_zero_data = 1;
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, sizeof( int64 ) );
 }
 
 
@@ -395,7 +400,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info )
     }
 }
 
-local void StorePointer( TYPEPTR typ, TOKEN int_type )
+local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
 {
     int                 flags;
     TREEPTR             tree;
@@ -466,20 +471,20 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type )
         }
     }
     if( typ->decl_type == TYPE_POINTER ) {
-        GenDataQuad( &dq );
+        GenDataQuad( &dq, size );
     } else if( dq.opr == T_STRING ) {           /* 05-jun-91 */
         if( TypeSize( typ ) != DataPtrSize  ||  CompFlags.strict_ANSI ) {
             CErr1( ERR_INVALID_INITIALIZER );
         }
-        GenDataQuad( &dq );
+        GenDataQuad( &dq, size );
     } else { /* dq.opr == T_ID */
         if( dq.u.var.sym_handle != 0 ) {
             if( TypeSize( typ ) != DataPtrSize ) {
                 CErr1( ERR_INVALID_INITIALIZER );
             }
-            GenDataQuad( &dq );
+            GenDataQuad( &dq, size );
         } else {
-            StoreIValue( int_type, dq.u.var.offset );
+            StoreIValue( int_type, dq.u.var.offset, size );
         }
     }
 }
@@ -504,13 +509,14 @@ local void StoreInt64( TYPEPTR typ )
         FreeExprTree( tree );
         CompFlags.non_zero_data = 1;
     }
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, sizeof( int64 ) );
 }
 
 local FIELDPTR InitBitField( FIELDPTR field )
 {
     TYPEPTR             typ;
     unsigned long       value;
+    unsigned long       size;
     uint64              value64;
     unsigned long       bit_value;
     unsigned long       offset;
@@ -520,6 +526,7 @@ local FIELDPTR InitBitField( FIELDPTR field )
     token = CurToken;
     if( CurToken == T_LEFT_BRACE ) NextToken();
     typ = field->field_type;
+    size = SizeOfArg( typ );
     switch( typ->u.f.field_type ) {
     case TYPE_CHAR:
     case TYPE_UCHAR:
@@ -570,7 +577,7 @@ local FIELDPTR InitBitField( FIELDPTR field )
     if( int_type == T___INT64 ) {
         StoreIValue64( value64 );
     } else {
-        StoreIValue( int_type, value );
+        StoreIValue( int_type, value, size );
     }
     if( token == T_LEFT_BRACE ) {
         if( CurToken == T_COMMA ) NextToken();
@@ -834,6 +841,7 @@ local void InitUnion( TYPEPTR typ, TYPEPTR ctyp )
 void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
 {
     int                 token;
+    unsigned long       size;
 
     while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
     if( typ->decl_type == TYPE_ENUM ) typ = typ->object;        /* 07-nov-90 */
@@ -844,6 +852,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             CErr1( ERR_EMPTY_INITIALIZER_LIST );
         }
     }
+    size = SizeOfArg( typ );
     switch( typ->decl_type ) {
     case TYPE_ARRAY:
         if( CharArray( typ->object ) ) {
@@ -892,49 +901,49 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         break;
     case TYPE_CHAR:
     case TYPE_UCHAR:
-        StorePointer( typ, T_CHAR );
+        StorePointer( typ, T_CHAR, size );
         break;
     case TYPE_SHORT:
     case TYPE_USHORT:
-        StorePointer( typ, T_SHORT );
+        StorePointer( typ, T_SHORT, size );
         break;
     case TYPE_INT:
     case TYPE_UINT:
-        StorePointer( typ, T_INT );
+        StorePointer( typ, T_INT, size );
         break;
     case TYPE_LONG:
     case TYPE_ULONG:
-        StorePointer( typ, T_LONG );
+        StorePointer( typ, T_LONG, size );
         break;
     case TYPE_LONG64:
     case TYPE_ULONG64:
         StoreInt64( typ );
         break;
     case TYPE_FLOAT:
-        StoreFloat( T_FLOAT );
+        StoreFloat( T_FLOAT, size );
         break;
     case TYPE_DOUBLE:
-        StoreFloat( T_DOUBLE );
+        StoreFloat( T_DOUBLE, size );
         break;
     case TYPE_LONG_DOUBLE:
         //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE );
+        StoreFloat( T_DOUBLE, size );
         break;
     case TYPE_POINTER:
-        StorePointer( typ, T_ID );
+        StorePointer( typ, T_ID, size );
         break;
     case TYPE_BOOL:
-        StorePointer( typ, T_CHAR );
+        StorePointer( typ, T_CHAR, size );
         break;
     case TYPE_FIMAGINARY:
-        StoreFloat( T_FLOAT );
+        StoreFloat( T_FLOAT, size );
         break;
     case TYPE_DIMAGINARY:
-        StoreFloat( T_DOUBLE );
+        StoreFloat( T_DOUBLE, size );
         break;
     case TYPE_LDIMAGINARY:
         //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE );
+        StoreFloat( T_DOUBLE, size );
         break;
     default:
         break;
@@ -1005,7 +1014,7 @@ local void InitCharArray( TYPEPTR typ )
     dq.opr = T_CONST;
     dq.flags = Q_DATA;
     dq.u.string_leaf = str_lit;
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, len );
     if( size > len ) {                  /* if array > len of literal */
         ZeroBytes( size - len );
     }
@@ -1049,7 +1058,7 @@ local void InitWCharArray( TYPEPTR typ )
         value = *pwc++;
         if( value != 0 ) CompFlags.non_zero_data = 1;
         dq.u.long_values[0] = value;
-        GenDataQuad( &dq );
+        GenDataQuad( &dq, sizeof( target_short ) );
         ++i;
     }
     if( i < size ) {
@@ -1059,7 +1068,7 @@ local void InitWCharArray( TYPEPTR typ )
  }
 
 
-local void StoreFloat( int float_type )
+local void StoreFloat( int float_type, unsigned long size )
 {
     TREEPTR     tree;
     auto DATA_QUAD dq;
@@ -1099,7 +1108,7 @@ local void StoreFloat( int float_type )
         FreeExprTree( tree );
         if( dq.u.double_value != 0.0 ) CompFlags.non_zero_data = 1;
     }
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, size );
 }
 
 local void GenStaticDataQuad( SYM_HANDLE sym_handle )
@@ -1110,7 +1119,7 @@ local void GenStaticDataQuad( SYM_HANDLE sym_handle )
     dq.flags = Q_DATA;
     dq.u.var.sym_handle = sym_handle;
     dq.u.var.offset = 0;
-    GenDataQuad( &dq );
+    GenDataQuad( &dq, 0 );
 }
 
 void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
