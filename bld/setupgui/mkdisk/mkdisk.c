@@ -1,11 +1,43 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <direct.h>
 #include <process.h>
 #include <ctype.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "disksize.h"
 
 #define RoundUp( size, limit )  ( ( ( size + limit - 1 ) / limit ) * limit )
@@ -85,7 +117,7 @@ LIST                    *AfterList = NULL;
 LIST                    *BeforeList = NULL;
 LIST                    *EndList = NULL;
 LIST                    *DeleteList = NULL;
-LIST			*ForceDLLInstallList = NULL;
+LIST                    *ForceDLLInstallList = NULL;
 unsigned                DiskNum;
 unsigned                MaxDiskFiles;
 int                     FillFirst = 1;
@@ -225,36 +257,36 @@ int CheckParms( int *pargc, char **pargv[] )
     argc = *pargc;
     argv = *pargv;
     if( argc != 6 ) {
-	printf( "Usage: MKDISK [-x] <version> <size> <file_list> <pack_dir> <rel_root>\n" );
-	return( FALSE );
+        printf( "Usage: MKDISK [-x] <version> <size> <file_list> <pack_dir> <rel_root>\n" );
+        return( FALSE );
     }
     Version = argv[ 1 ];
     size = argv[ 2 ];
     if( strcmp( size, "360" ) == 0 ) {
-	DiskSize = DISK_360;
-	MaxDiskFiles = DISK_360_FN;
-	BlockSize = 1024;
+        DiskSize = DISK_360;
+        MaxDiskFiles = DISK_360_FN;
+        BlockSize = 1024;
     } else if( strcmp( size, "720" ) == 0 ) {
-	DiskSize = DISK_720;
-	MaxDiskFiles = DISK_720_FN;
-	BlockSize = 1024;
+        DiskSize = DISK_720;
+        MaxDiskFiles = DISK_720_FN;
+        BlockSize = 1024;
     } else if( strcmp( size, "1.2" ) == 0 ) {
-	DiskSize = DISK_1p2;
-	MaxDiskFiles = DISK_1p2_FN;
-	BlockSize = 1024;
+        DiskSize = DISK_1p2;
+        MaxDiskFiles = DISK_1p2_FN;
+        BlockSize = 1024;
     } else if ( strcmp( size, "1.4" ) == 0 ) {
-	DiskSize = DISK_1p4;
-	MaxDiskFiles = DISK_1p4_FN;
-	BlockSize = 512;
+        DiskSize = DISK_1p4;
+        MaxDiskFiles = DISK_1p4_FN;
+        BlockSize = 512;
     } else {
-	printf( "SIZE must be one of 360, 720, 1.2, 1.4\n" );
-	return( FALSE );
+        printf( "SIZE must be one of 360, 720, 1.2, 1.4\n" );
+        return( FALSE );
     }
     RelRoot  = argv[ 5 ];
     PackDir  = argv[ 4 ];
     if( stat( PackDir, &stat_buf ) != 0 ) {  // exists
-	printf( "\nDirectory '%s' does not exist\n", PackDir );
-	return( FALSE );
+        printf( "\nDirectory '%s' does not exist\n", PackDir );
+        return( FALSE );
     }
     return( TRUE );
 }
@@ -351,7 +383,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             strcat( src, rel_file );
         }
     } else if( strchr( path, ':' ) != NULL ) {
-        // path is absolute. don't use RelRoot 
+        // path is absolute. don't use RelRoot
         strcpy( src, path );
         strcat( src, "\\" );
         strcat( src, file );
@@ -375,14 +407,14 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     }
     strcpy( dst, PackDir );
     if( dst[ strlen( dst ) - 1 ] != '\\' ) {
-	strcat( dst, "\\" );
+        strcat( dst, "\\" );
     }
     strcat( dst, patch );
     if( stat( dst, &stat_buf ) != 0 ) {
-	printf( "\n'%s' does not exist\n", dst );
-	return( FALSE );
+        printf( "\n'%s' does not exist\n", dst );
+        return( FALSE );
     } else {
-	cmp_size = stat_buf.st_size;
+        cmp_size = stat_buf.st_size;
     }
 //    printf( "\r%s                              \r", file );
 //    fflush( stdout );
@@ -435,40 +467,40 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     // see if the pack_file has been seen already
     curr = FileList;
     while( curr != NULL ) {
-	if( stricmp( curr->pack, patch ) == 0 ) {
-	    // this file is already in the current pack file
-	    curr->num_files++;
-	    ns = malloc( sizeof( size_list ) + strlen( root_file ) );
-	    if( ns == NULL ) {
-		printf( "Out of memory\n" );
-		return( NULL );
-	    }
-	    strcpy( ns->name, root_file );
-	    for( sl = curr->sizes; sl != NULL; sl = sl->next ) {
-		if( stricmp( sl->name, ns->name ) == 0 ) {
-		    printf( "file '%s' included in archive '%s' more than once\n", sl->name, curr->pack );
-		    return( FALSE );
-		}
-	    }
-	    ns->size = act_size;
-	    ns->stamp = time;
-	    ns->redist = redist;
-	    ns->dst_var = dst_var;
-	    ns->next = curr->sizes;
-	    curr->sizes = ns;
-	    if( curr->path != path_dir ) {
-		printf( "\nPath for archive '%s' changed to '%s'\n", curr->pack, path );
-		return( FALSE );
-	    }
-	    if( strcmp( curr->condition, cond ) != 0 ) {
-		printf( "\nCondition for archive '%s' changed:\n", curr->pack );
-		printf( "Old: <%s>\n", curr->condition );
-		printf( "New: <%s>\n", cond );
-		return( FALSE );
-	    }
-	    return( TRUE );
-	}
-	curr = curr->next;
+        if( stricmp( curr->pack, patch ) == 0 ) {
+            // this file is already in the current pack file
+            curr->num_files++;
+            ns = malloc( sizeof( size_list ) + strlen( root_file ) );
+            if( ns == NULL ) {
+                printf( "Out of memory\n" );
+                return( NULL );
+            }
+            strcpy( ns->name, root_file );
+            for( sl = curr->sizes; sl != NULL; sl = sl->next ) {
+                if( stricmp( sl->name, ns->name ) == 0 ) {
+                    printf( "file '%s' included in archive '%s' more than once\n", sl->name, curr->pack );
+                    return( FALSE );
+                }
+            }
+            ns->size = act_size;
+            ns->stamp = time;
+            ns->redist = redist;
+            ns->dst_var = dst_var;
+            ns->next = curr->sizes;
+            curr->sizes = ns;
+            if( curr->path != path_dir ) {
+                printf( "\nPath for archive '%s' changed to '%s'\n", curr->pack, path );
+                return( FALSE );
+            }
+            if( strcmp( curr->condition, cond ) != 0 ) {
+                printf( "\nCondition for archive '%s' changed:\n", curr->pack );
+                printf( "Old: <%s>\n", curr->condition );
+                printf( "New: <%s>\n", cond );
+                return( FALSE );
+            }
+            return( TRUE );
+        }
+        curr = curr->next;
     }
 
     // add to list
@@ -665,47 +697,47 @@ static char *ReplaceEnv( char *file_name )
 // value of the environment variable
 
 {
-    char		*p, *q, *e, *var;
-    char		buff[ _MAX_PATH ];
+    char                *p, *q, *e, *var;
+    char                buff[ _MAX_PATH ];
 
     // copy and make changes into 'buff'
     q = buff;
     p = file_name;
     for( ;; ) {
-	if( *p == '$' ) {
-	    e = strchr( p + 1, '$' );
-	    if( e == NULL ) {
-		strcpy( q, p );
-		break;
-	    } else {
-		*e = '\0';
-		var = getenv( p + 1 );
-		if( var == NULL ) {
-		    printf( "Error: environment variable '%s' not found\n", p + 1 );
-		} else {
-		    strcpy( q, var );
-		    q += strlen( var );
-		}
-		p = e + 1;
-	    }
-	} else {
-	    *q = *p;
-	    if( *p == '\0' ) break;
-	    ++p;
-	    ++q;
-	}
+        if( *p == '$' ) {
+            e = strchr( p + 1, '$' );
+            if( e == NULL ) {
+                strcpy( q, p );
+                break;
+            } else {
+                *e = '\0';
+                var = getenv( p + 1 );
+                if( var == NULL ) {
+                    printf( "Error: environment variable '%s' not found\n", p + 1 );
+                } else {
+                    strcpy( q, var );
+                    q += strlen( var );
+                }
+                p = e + 1;
+            }
+        } else {
+            *q = *p;
+            if( *p == '\0' ) break;
+            ++p;
+            ++q;
+        }
     }
     if( strcmp( buff, file_name ) == 0 ) {
-	// no environment variables found
-	return( file_name );
+        // no environment variables found
+        return( file_name );
     } else {
-	return( strdup( buff ) );
+        return( strdup( buff ) );
     }
 }
 
-#define SECTION_BUF_SIZE 8192	// allow long text strings
+#define SECTION_BUF_SIZE 8192   // allow long text strings
 
-static char		SectionBuf[ SECTION_BUF_SIZE ];
+static char             SectionBuf[ SECTION_BUF_SIZE ];
 
 void ReadSection( FILE *fp, char *section, LIST **list )
 //======================================================
@@ -728,7 +760,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
     for( ;; ) {
         if( mygets( SectionBuf, sizeof( SectionBuf ), fp ) == NULL ) {
             if( --file_curr >= 0 ) {
-		fclose( fp );
+                fclose( fp );
                 fp = file_stack[file_curr];
                 continue;
             } else {
@@ -739,7 +771,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
         SectionBuf[ strlen( SectionBuf ) - 1 ] = '\0';
         if( SectionBuf[ 0 ] == '\0' ) break;
         if( strnicmp( SectionBuf, "setup=", 6 ) == 0 ) {
-	    Setup = strdup( &SectionBuf[6] );
+            Setup = strdup( &SectionBuf[6] );
             Setup = ReplaceEnv( Setup );
             continue;
         }
@@ -780,7 +812,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
             AddToList( new, &BootTextList );
         } else if( STRING_IS( SectionBuf, new, STRING_exe ) ) {
             AddToList( new, &ExeList );
-	    new->item = ReplaceEnv( new->item );
+            new->item = ReplaceEnv( new->item );
         } else if( STRING_IS( SectionBuf, new, STRING_label ) ) {
             AddToList( new, &LabelList );
         } else if( STRING_IS( SectionBuf, new, STRING_upgrade ) ) {
@@ -799,7 +831,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
             free( new->item );
             free( new );
         } else if( STRING_IS( SectionBuf, new, STRING_forcedll ) ) {
-	    AddToList( new, &ForceDLLInstallList );
+            AddToList( new, &ForceDLLInstallList );
         } else {
             new->item = strdup( SectionBuf );
             AddToList( new, list );
@@ -850,19 +882,19 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
     for( csize = curr->sizes; csize != NULL; csize = csize->next ) {
         fprintf( fp, "%s!", csize->name );
         fput36( fp, csize->size/512 );
-	fprintf( fp, "!" );
-	if( csize->redist != ' ' ) {
-	    fput36( fp, csize->stamp );
-	}
-	fprintf( fp, "!" );
-	if( csize->dst_var ) {
-	    fprintf( fp, "%s", csize->dst_var );
-	}
-	if( csize->redist != ' ' ) {
-	    // 'o' for ODBC file
-	    // 's' for supplimental file (not deleted)
-	    fprintf( fp, "!%c", tolower( csize->redist ) );
-	}
+        fprintf( fp, "!" );
+        if( csize->redist != ' ' ) {
+            fput36( fp, csize->stamp );
+        }
+        fprintf( fp, "!" );
+        if( csize->dst_var ) {
+            fprintf( fp, "%s", csize->dst_var );
+        }
+        if( csize->redist != ' ' ) {
+            // 'o' for ODBC file
+            // 's' for supplimental file (not deleted)
+            fprintf( fp, "!%c", tolower( csize->redist ) );
+        }
         if( csize->dst_var ) {
             fprintf( fp, "!%s", csize->dst_var );
         }
@@ -1367,7 +1399,7 @@ void DumpFile( FILE *out, char *fname )
 
 {
     FILE                *in;
-    char		*buf;
+    char                *buf;
     int                 len;
 
     in = PathOpen( fname );
@@ -1377,8 +1409,8 @@ void DumpFile( FILE *out, char *fname )
     }
     buf = malloc( SECTION_BUF_SIZE );
     if( buf == NULL ) {
-	printf( "Out of memory\n" );
-	return;
+        printf( "Out of memory\n" );
+        return;
     }
     for( ;; ) {
         if( mygets( buf, SECTION_BUF_SIZE, in ) == NULL ) {
