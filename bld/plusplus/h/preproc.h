@@ -87,7 +87,7 @@ global  signed_64   Constant64;         // value of constant: 33-64 bits
 global  int         NestLevel;          // pre-processing level of #if
 global  int         SkipLevel;          // pre-processing level of #if to skip to
 global  char *      SavedId;            // saved id when doing look ahead
-global  int         LAToken;            // look ahead token
+global  enum TOKEN  LAToken;            // look ahead token
 global  char        InitialMacroFlag;   // current value to init macro flags to
 global  MACADDR_T   MacroOffset;        // first free byte in MacroSegment
 global  char        __Time[10];         // "HH:MM:SS" for __TIME__ macro
