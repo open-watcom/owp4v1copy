@@ -59,7 +59,7 @@ extern file_offset LibTell( libfile io );
 extern void LibReadError( libfile io );
 extern void LibWriteError( libfile io );
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define FNCMP strcmp
 #else
 #define FNCMP stricmp

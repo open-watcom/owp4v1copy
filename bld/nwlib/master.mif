@@ -116,15 +116,18 @@ error.obj : msg.gh error.c
 
 wcl_flags = -fe=$@
 #../mkstr.exe : ../mkstr.c ../wlib.msg
-mkstr.exe : ../mkstr.c ../wlib.msg
+./mkstr.exe : ../mkstr.c ../wlib.msg
     $(bld_cl) $(wcl_flags) $[@ -I..
 
 #../h/msg.gh : ../mkstr.exe
-msg.gh : mkstr.exe
+msg.gh : ./mkstr.exe
     *$< $@
 
 !ifeq host_OS qnx
-msg_rc_flags = /d__QNX__
+msg_rc_flags = -d__UNIX__
+!endif
+!ifeq host_OS linux
+msg_rc_flags = -d__UNIX__
 !endif
 
 #wlib.res : ../wlib.rc ../wlib.msg ../h/msg.gh
