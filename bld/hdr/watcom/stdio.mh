@@ -37,7 +37,11 @@
 #endif
 ::
 #define _NFILES         20      /* number of files that can be handled */
-#define FILENAME_MAX    80
+#if defined(__OS2__) || defined(__NT__)
+ #define FILENAME_MAX   260
+#else
+ #define FILENAME_MAX   144
+#endif
 :endsegment
 
 struct __stream_link;
