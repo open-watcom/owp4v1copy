@@ -232,8 +232,8 @@ int Init32BitTask( HANDLE thishandle, HANDLE prevhandle, LPSTR cmdline,
      * validate header signature
      */
     _fTinyRead( handle, &exe, sizeof( rex_exe ) );
-//    BreakPoint();
-//    BreakPoint();
+    BreakPoint();
+    BreakPoint();
     if( !(exe.sig[0] == 'M' && exe.sig[1] == 'Q') ) {
         return( Fini( 1,(char _FAR *)"Invalid EXE" ) );
     }

@@ -28,7 +28,7 @@ typedef	struct tagCTLSTYLE {
 	DWORD	dwStyle;
 	char	szClass[CTLCLASS];
 	char	szTitle[CTLTITLE];
-} CTLSTYLE;
+} CTLSTYLE,*PCTLSTYLE,FAR *LPCTLSTYLE;
 typedef	struct tagCTLTYPE {
 	UINT	wType;
 	UINT	wWidth;
@@ -43,11 +43,7 @@ typedef	struct tagCTLINFO {
 	char	szTitle[CTLTITLE];
 	char	szReserved[10];
 	CTLTYPE	Type[CTLTYPES];
-} CTLINFO;
-typedef	CTLSTYLE *PCTLSTYLE;
-typedef	CTLSTYLE FAR *LPCTLSTYLE;
-typedef	CTLINFO *PCTLINFO;
-typedef	CTLINFO FAR *LPCTLINFO;
+} CTLINFO,*PCTLINFO,FAR *LPCTLINFO;
 
 #ifdef STRICT
 typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPCSTR);
