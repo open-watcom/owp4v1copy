@@ -264,10 +264,8 @@ static void PrepSegData( void *_sdata, void *info )
     }
     sdata->next = CarveGetIndex( CarveSegData, sdata->next );  // not used
     sdata->mod_next = CarveGetIndex( CarveSegData, sdata->mod_next );
-    if( !sdata->isdead || sdata->iscdat ) {
-        sdata->o.clname = sdata->u.leader->class->name;
-        sdata->u.name = sdata->u.leader->segname;
-    }
+    sdata->o.clname = sdata->u.leader->class->name;
+    sdata->u.name = sdata->u.leader->segname;
 }
 
 static void PrepSymbol( void *_sym, void *info )
@@ -737,16 +735,8 @@ static void RebuildSegData( void *_sdata, void *info )
     }
     sdata->next = CarveMapIndex( CarveSegData, sdata->next );  // dont use this?
     sdata->mod_next = CarveMapIndex( CarveSegData, sdata->mod_next );
-    if( !sdata->isdead || sdata->iscdat ) {
-        sdata->u.name = MapString( sdata->u.name );
-        sdata->o.clname = MapString( sdata->o.clname );
-    } else {
-        // the pointers won't be valid, just clear them; no one should be
-        // touching them!
-        sdata->u.name = NULL;
-        sdata->o.clname = NULL;
-    }
-
+    sdata->u.name = MapString( sdata->u.name );
+    sdata->o.clname = MapString( sdata->o.clname );
 }
 
 static void RebuildSymbol( void *_sym, void *info )
