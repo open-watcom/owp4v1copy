@@ -5,18 +5,6 @@ proj_name = wpi
 .mif    : $(mif_path)
 !include cproj.mif
 
-!define MKS_ECHO        %null
-
-# database team uses fpi87 as default in 6.0
-!ifdef wsqlver
-!  ifeqi wsqlver 6.0
-!    define deffp -fpi87
-!  else
-!    define deffp -fpc
-!  endif
-!else
-!    define deffp -fpc
-!endif
 
 #-------- CFLAGS
 extra_c_flags_nt_386    = -mf$(deffp)-zc
@@ -53,9 +41,6 @@ mode_cflags = -$(%MAKE_DEBUG)
 
 #-------- INCLUDES
 inc_dirs_win = $(win31_hdrs)
-inc_dirs_os2_i86 = $(watcom_dir)\os21x_h
-inc_dirs_os2_386 = $(watcom_dir)\os220_h
-inc_dirs_os2 = $(inc_dirs_os2_$(host_CPU))
 
 inc_dirs = $(inc_dirs_$(host_OS));$(watcom_dir)\h
 
@@ -110,8 +95,6 @@ lib :: $(LIB_DIR)\$(libname).lib .SYMBOLIC
     %null
 
 .c.obj :
-    @$(MKS_ECHO)
-    @$(MKS_ECHO) "**********   Compiling  $[&.c   **************"
     $(cc) @INCS $(cflags) $[*
 
 clean: .SYMBOLIC .EXPLICIT

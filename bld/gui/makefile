@@ -34,18 +34,7 @@ inc_dirs_lang   = $(lang_root)\h
 !endif
 
 .before
-    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)\h;$(guidir)\h;$(guidir)\$(type)\h;$(trmem_dir);$(help_dir);$(plat_inc);$(inc_dirs_lang)
-
-# database team uses fpi87 as default in 6.0
-!ifdef wsqlver
-!  ifeqi wsqlver 6.0
-!    define deffp /fpi87
-!  else
-!    define deffp /fpc
-!  endif
-!else
-!    define deffp /fpc
-!endif
+    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)\h;$(guidir)\h;$(guidir)\$(type)\h;$(trmem_dir);$(help_dir)\h;$(plat_inc);$(inc_dirs_lang)
 
 nodebugflags = $(xflags)-zq-w3 -bt=$(build_target)
 !ifndef axp
@@ -170,7 +159,7 @@ eraseall.obj : $(guidir)\$(type)\compile.gbl
 .ERASE
 
 
-.c:     $(source_dir);$(os_source_dir);$(os_extra_dir);$(trmem_dir);$(help_dir)
+.c:     $(source_dir);$(os_source_dir);$(os_extra_dir);$(trmem_dir);$(help_dir)\c
 .h:     $(guidir)\h;$(guidir)\$(type)\h;$(wpi_dir)\h
 .msg:   $(guidir)\h
 

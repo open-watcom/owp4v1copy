@@ -1,12 +1,12 @@
 #pmake: all build cpu_i86 os_os2
 host_CPU = i86
-host_OS = os2
+host_OS  = os2
 
 os = pm
 build_target = os2_pm
 model=l
 compiler = comp286
-plat_inc=$(lang_root)\h\os21x;
+plat_inc=$(inc_dirs_sys_os2);
 xflags=-zu-s
 wpi_lib=wpi_pm16
 wlib_opt = /p=32

@@ -1,6 +1,6 @@
 #pmake: all build cpu_386 os_os2
 host_CPU = 386
-host_OS = os2
+host_OS  = os2
 
 MODEL = F
 !ifdef comp386
@@ -9,7 +9,6 @@ WCCEXE=$(comp386)
 WCCEXE=wcc386p
 !endif
 WCPPEXE=wcpp386
-INCLUDES=/I$(lang_root)\h\os2
 FORM=os2v2
 
 !include ..\makefile
