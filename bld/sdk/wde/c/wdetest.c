@@ -45,7 +45,7 @@
 #include "wdedebug.h"
 #include "wdestat.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdemem.h"
 #include "wdeopts.h"
 #include "wdectl3d.h"

@@ -43,7 +43,7 @@
 #include "wde_rc.h"
 #include "wdehints.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "list.def"
 
 /****************************************************************************/

@@ -41,7 +41,7 @@
 #include "wdemain.h"
 #include "wdehints.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wde_rc.h"
 #include "wderibbn.h"
 #include "wde_rc.h"

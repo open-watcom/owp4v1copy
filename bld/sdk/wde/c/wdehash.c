@@ -42,7 +42,7 @@
 #include "wdesdup.h"
 #include "wdelist.h"
 #include "wdestat.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdemain.h"
 #include "wdewait.h"
 #include "wdehash.h"

@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include "wdeglbl.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdemem.h"
 #include "wdei2mem.h"
 #include "wdewait.h"

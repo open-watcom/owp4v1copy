@@ -50,7 +50,7 @@
 #include "wdeinfo.h"
 #include "wdefutil.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdefont.h"
 #include "wdeopts.h"
 #include "wdefinit.h"

@@ -42,7 +42,7 @@
 #include "wdereq.h"
 #include "wdeobjid.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdeldres.h"
 #include "wdefinit.h"
 #include "wdeedit.h"

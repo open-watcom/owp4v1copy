@@ -37,7 +37,7 @@
 #include "wdeglbl.h"
 #include "wdemem.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wderesin.h"
 #include "wdeobjid.h"
 #include "wdemain.h"

@@ -44,7 +44,7 @@
 #include "wdefont.h"
 #include "wdemem.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdeedit.h"
 #include "wderesiz.h"
 #include "wdeinfo.h"

@@ -39,7 +39,7 @@
 #include "wdemain.h"
 #include "wdemem.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 #include "wdehints.h"
 #include "wdelist.h"
 #include "wdetoolb.h"

@@ -1,7 +1,7 @@
 #include <windows.h>
 #include "banner.h"
 #include "wde_rc.h"
-#include "wdemsgs.h"
+#include "wdemsgs.gh"
 
 #undef pick
 #undef sp
