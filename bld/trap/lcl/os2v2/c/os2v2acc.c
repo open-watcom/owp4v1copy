@@ -1003,8 +1003,14 @@ static BOOL ExecuteUntilLinearAddressHit( ULONG lin )
         ExceptNum = 0;
         DebugExecute( &Buff, DBG_C_Go, TRUE );
         if( ExceptNum == 0 ) {
-            rc = TRUE; // dll loaded
-            continue;
+            rc = TRUE; // DLL loaded
+            /* Breaking on DLL load means that this routine does not
+             * necessarily stop when the linear address is truly hit;
+             * this seemingly strange behaviour is desirable if we
+             * want to debug startup code of DLLs (and we do) - we have
+             * to stop program execution before DLLs are all loaded!
+             */
+            break;
         }
         if( ExceptNum != XCPT_BREAKPOINT ) {
             rc = FALSE;
