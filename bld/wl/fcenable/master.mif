@@ -12,10 +12,9 @@ spawn.obj &
 !endif
 fcenable.obj &
 mem.obj &
-records.obj &
-wildargv.obj
+records.obj
 
-.c: ../c;$(lang_root)/src/startup
+.c: ../c
 
 fcenable.exe : $(objs)
         $(linker) $(lflags) name $^@ op map file {$(objs)}
