@@ -1,4 +1,4 @@
-.func main wmain WinMain wWinMain
+.func main wmain WinMain wWinMain __Get_Argv __wGet_Argv
 .funcw wmain
 int main( void );
 int main( int argc, const char *argv[] );
@@ -19,6 +19,10 @@ int PASCAL wWinMain( HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      wcharT *lpszCmdLine,
                      int nCmdShow );
+void *__Get_Argv( int historical, char *exe, char *cmd,
+                  int *pargc, char ***pargv );
+void *__wGet_Argv( int historical, wchar_t *exe, wchar_t *cmd,
+                   int *pargc, wchar_t ***pargv );
 .do end
 .funcend
 .desc begin
@@ -49,6 +53,11 @@ A literal double quote character can be passed by preceding it with a
 backslash.
 A literal backslash followed by an enclosing double quote character can
 be passed as a pair of backslash characters and a double quote character.
+.exmp begin
+echo "he\"l\lo world\\"
+.exmp end
+passes the single argument 
+.arg he"l\lo world\
 .np
 The command line arguments can also be obtained in its original
 format by using the
@@ -73,9 +82,9 @@ Alternatively, the &func function can be declared to return
 In this case, you will not be able to return an exit code from &func
 using a
 .kw return
-statement; to do so, you must use the
+statement but must use the
 .kw exit
-function.
+function to do so.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is a user-defined wide-character version of &func
@@ -179,6 +188,28 @@ function's
 parameter.
 .do end
 .********************************
+.np
+The
+.kw __Get_Argv
+function analyses a "command line" into a sequence of tokens
+separated by blanks and passed to the caller as an array of pointers
+to character strings.
+.kw __wGet_Argv
+is the wide character version of
+.kw __Get_Argv.
+Each has the following parameters:
+.arg historical
+selects between historical and modern methods of handling double quote
+characters in command lines and should be passed with a value of zero;
+.arg exe
+is the name of the "executable";
+.arg cmd
+is the "command line" to be analysed after removal of the name of the "executable";
+.arg pargc
+is set on output to the number of arguments found;
+.arg pargv
+is set on output to point at an array of arguments.
+.********************************
 .desc end
 .return begin
 The
@@ -188,7 +219,7 @@ The
 .el .do begin
 &func and &wfunc functions return
 .do end
-an exit code back to the calling program (usually the operating
+an exit code to the calling program (usually the operating
 system).
 .if '&machsys' ne 'QNX' .do begin
 .np
@@ -202,6 +233,16 @@ message and return the exit value contained in that message's
 .kw wParam
 parameter.
 .do end
+.np
+The
+.kw __Get_Argv
+and
+.kw __wGet_Argv
+functions return a pointer to memory allocated by those functions or
+.kw NULL
+on an allocation failure. That memory may be passed to
+.kw free
+when access to the output argument array is no longer needed.
 .return end
 .see begin
 .im seeproc main
@@ -211,23 +252,23 @@ parameter.
 #include <stdio.h>
 
 int main( int argc, char *argv[] )
-  {
+{
     int i;
     for( i = 0; i < argc; ++i ) {
-      printf( "argv[%d] = %s\n", i, argv[i] );
+        printf( "argv[%d] = %s\n", i, argv[i] );
     }
     return( 0 );
-  }
+}
 .if &'length(&wfunc.) ne 0 .do begin
 #ifdef _WIDE_
 int wmain( int wargc, wchar_t *wargv[] )
-  {
+{
     int i;
     for( i = 0; i < wargc; ++i ) {
-      wprintf( L"wargv[%d] = %s\n", i, wargv[i] );
+        wprintf( L"wargv[%d] = %s\n", i, wargv[i] );
     }
     return( 0 );
-  }
+}
 #endif
 .do end
 .exmp output
@@ -258,28 +299,85 @@ A sample Windows main program is shown below.
 .blkcode begin
 int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst,
                     LPSTR cmdline, int cmdshow )
-  {
+{
     MSG         msg;
 
     if( !prev_inst ) {
-      if( !FirstInstance( this_inst ) ) return( 0 );
+        if( !FirstInstance( this_inst ) ) return( 0 );
     }
     if( !AnyInstance( this_inst, cmdshow ) ) return( 0 );
     /*
       GetMessage returns FALSE when WM_QUIT is received
     */
     while( GetMessage( &msg, NULL, NULL, NULL ) ) {
-      TranslateMessage( &msg );
-      DispatchMessage( &msg );
+        TranslateMessage( &msg );
+        DispatchMessage( &msg );
     }
     return( msg.wParam );
-  }
+}
 .blkcode end
 .do end
-.exmp end
+.blktext begin
+A sample usage of __Get_Argv follows:
+.blktext end
+.blkcode begin
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void *__Get_Argv( int historical, char *exe, char *cmd,
+                  int *pargc, char ***pargv );
+
+void extraparams( const char *envname )
+{
+    char const * const evaluero = getenv( envname );
+    if( evaluero ) {
+        char * const cmd = strdup( evaluero );
+        char exe[] = "dummy";
+        int c;
+        char **v;
+        void * const opaque = __Get_Argv( 0, exe, cmd,
+                                          &c, &v );
+        if( opaque ) {
+            int i;
+            for( i = 0; i < c; ++i ) {
+                printf( "argv[%d] = %s\n", i, v[i] );
+            }
+            free( opaque );
+        }
+    }
+}
+
+void main( int argc, char **argv )
+{
+    if( argc >= 2 ) {
+        extraparams( argv[1] );
+    }
+}
+.exmp output
+argv[0] = dummy
+argv[1] = a
+argv[2] = b
+.blkcode end
+.blktext begin
+when
+.mono mypgm
+is executed with the command
+.blktext end
+.blkcode begin
+mypgm name
+.blkcode end
+.blktext begin
+is run while the environment variable
+.arg name
+has the value
+.arg a b
+.blktext end
 .sr wfunc=''
 .sr ffunc='x wmain'
 .sr mfunc='x WinMain'
 .sr fmfunc='x wWinMain'
+.sr ffunc='x __Get_Argv'
+.sr ffunc='x __wGet_Argv'
 .class ANSI
 .system

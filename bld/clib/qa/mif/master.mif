@@ -35,10 +35,18 @@
 
 !include cproj.mif
 
+# Avoid the need for !include $(clib_dir)/flags.mif with
+# debug flags need to be last to override optimization flags
+!ifeq release 0
+c_dbg_flags = -d2
+a_dbg_flags = -d1
+!endif
+
 .erase
 .extensions:
 .extensions: .exe .rex .exp .obj .c .asm
 
+# Use delivered files for a release build; development files for debug build
 .before
 !ifeq release 0
 !else
@@ -147,177 +155,177 @@ runtests : .symbolic
 !endif
 
 dos_s.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -bt=dos
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 dos_c.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -bt=dos
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 dos_m.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -bt=dos
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 dos_l.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bt=dos
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 dos_h.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -bt=dos
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 pls_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__PHARLAP__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__PHARLAP__ $(c_dbg_flags)
     wlink SYSTEM pharlap $(link_opts) $(link_i86) FILE $^*
     $(pharlap)bind386 $(pharlap)run386b $^*.exp -exe $^*.exe>nul
     @del $^*.exp>nul
     @del $^*.obj>nul
 
 pls_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__PHARLAP__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__PHARLAP__ $(c_dbg_flags)
     wlink SYSTEM pharlap $(link_opts) $(link_i86) FILE $^*
     $(pharlap)bind386 $(pharlap)run386b $^*.exp -exe $^*.exe>nul
     @del $^*.exp>nul
     @del $^*.obj>nul
 
 rsi_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__DOS4G__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__DOS4G__ $(c_dbg_flags)
     wlink SYSTEM dos4g $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 rsi_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__DOS4G__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__DOS4G__ $(c_dbg_flags)
     wlink SYSTEM dos4g $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 x32_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__X32__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__X32__ $(c_dbg_flags)
     wlink $(link_opts) $(link_i86) SYSTEM x32s FILE $^* libpath $(flashtek)
     $(flashtek)x32fix $^*.exe>nul
     @del $^*.obj>nul
 
 x32_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__X32__
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__X32__ $(c_dbg_flags)
     wlink $(link_opts) $(link_i86) SYSTEM x32r FILE $^* libpath $(flashtek)
     $(flashtek)x32fix $^*.exe>nul
     @del $^*.obj>nul
 
 os2_s.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os2_c.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os2_m.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os2_l.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os2_h.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os2_mt.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bm -2 -bt=os2
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bm -2 -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os3_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=os2
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2v2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os3_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=os2
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2v2 pmcompatible $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os3pm_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r $(defwin) -bt=os2
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r $(defwin) -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2v2_pm $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 os3pm_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s $(defwin) -bt=os2
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s $(defwin) -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2v2_pm $(link_opts) $(link_i86) FILE $^*
     @del $^*.obj>nul
 
 win_s.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -zw $(defwin) -bt=windows
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -zw $(defwin) -bt=windows $(c_dbg_flags)
     wlink SYSTEM windows $(link_opts) $(link_i86) OPTION heap=10k, stack=5k FILE $^*
     @del $^*.obj>nul
 
 win_c.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -zw $(defwin) -bt=windows
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -zw $(defwin) -bt=windows $(c_dbg_flags)
     *wlink SYSTEM windows $(link_opts) $(link_i86) OPTION heap=10k, stack=5k FILE $^*
     @del $^*.obj>nul
 
 win_m.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -zw $(defwin) -bt=windows
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -zw $(defwin) -bt=windows $(c_dbg_flags)
     *wlink SYSTEM windows $(link_opts) $(link_i86) OPTION heap=10k, stack=5k FILE $^*
     @del $^*.obj>nul
 
 win_l.exe : $(srcfile)
-    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -zw $(defwin) -bt=windows
+    $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -zw $(defwin) -bt=windows $(c_dbg_flags)
     *wlink SYSTEM windows $(link_opts) $(link_i86) OPTION heap=10k, stack=5k FILE $^*
     @del $^*.obj>nul
 
 win32_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -zw $(defwin) -bt=windows
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -zw $(defwin) -bt=windows $(c_dbg_flags)
     *wlink SYSTEM win386 $(link_opts) $(link_i86) OPTION mindata=32K,maxdata=32K FILE $^*
     @del $^*.obj>nul
     wbind -n -q -s $(%watcom)\binw\win386.ext $^*
     @del $^*.rex>nul
 
 win32_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -zw $(defwin) -bt=windows
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -zw $(defwin) -bt=windows $(c_dbg_flags)
     wlink SYSTEM win386 $(link_opts) $(link_i86) OPTION mindata=32K,maxdata=32K FILE $^*
     @del $^*.obj>nul
     wbind -n -q -s $(%watcom)\binw\win386.ext $^*
     @del $^*.rex>nul
 
 wnt_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=nt
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=nt $(c_dbg_flags)
     wlink SYSTEM nt $(link_opts) $(link_i86) FILE $^*
     @del *.obj>nul
 
 wnt_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=nt
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=nt $(c_dbg_flags)
     wlink SYSTEM nt $(link_opts) $(link_i86) FILE $^*
     @del *.obj>nul
 
 wntw_3r.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r $(defwin) -bt=nt
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r $(defwin) -bt=nt $(c_dbg_flags)
     wlink SYSTEM nt_win $(link_opts) $(link_i86) FILE $^*
     @del *.obj>nul
 
 wntw_3s.exe : $(srcfile)
-    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s $(defwin) -bt=nt
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s $(defwin) -bt=nt $(c_dbg_flags)
     wlink SYSTEM nt_win $(link_opts) $(link_i86) FILE $^*
     @del *.obj>nul
 
 wnt_axp.exe : $(srcfile)
-    $(cc_axp) $[@ $(comp_opts) $(comp_axp) -bt=nt
+    $(cc_axp) $[@ $(comp_opts) $(comp_axp) -bt=nt $(c_dbg_flags)
     wlink SYSTEM ntaxp $(link_opts) $(link_axp) FILE $^*
     @del *.obj>nul
 
 wntw_axp.exe : $(srcfile)
-    $(cc_axp) $[@ $(comp_opts) $(comp_axp) $(defwin) -bt=nt
+    $(cc_axp) $[@ $(comp_opts) $(comp_axp) $(defwin) -bt=nt $(c_dbg_flags)
     wlink SYSTEM ntaxp_win $(link_opts) $(link_axp) FILE $^*
     @del *.obj>nul
 
