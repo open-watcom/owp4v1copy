@@ -266,8 +266,8 @@ typedef	DWORD	COLORREF;
 #define WM_USER	0x400
 
 /* Dialog styles */
-#define DS_ABSALIGN	0x1L
-#define DS_SYSMODAL	0x2L
+#define DS_ABSALIGN	1L
+#define DS_SYSMODAL	2L
 #define DS_LOCALEDIT	0x20L
 #define DS_SETFONT	0x40L
 #define DS_MODALFRAME	0x80L
@@ -277,19 +277,15 @@ typedef	DWORD	COLORREF;
 #define WS_OVERLAPPED	0L
 #define WS_POPUP	0x80000000L
 #define WS_CHILD	0x40000000L
-
 /* Clipping styles */
 #define WS_CLIPSIBLINGS	0x4000000L
 #define WS_CLIPCHILDREN	0x2000000L
-
 /* Generic window states */
 #define WS_VISIBLE	0x10000000L
 #define WS_DISABLED	0x8000000L
-
 /* Main window states */
 #define WS_MINIMIZE	0x20000000L
 #define WS_MAXIMIZE	0x1000000L
-
 /* Main window styles */
 #define WS_CAPTION	0xC00000L	/* WS_BORDER | WS_DLGFRAME	*/
 #define WS_BORDER	0x800000L
@@ -300,11 +296,9 @@ typedef	DWORD	COLORREF;
 #define WS_THICKFRAME	0x40000L
 #define WS_MINIMIZEBOX	0x20000L
 #define WS_MAXIMIZEBOX	0x10000L
-
 /* Control window styles */
 #define WS_GROUP	0x20000L
 #define WS_TABSTOP	0x10000L
-
 /* Common Window Styles */
 #define WS_OVERLAPPEDWINDOW (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX)
 #define WS_POPUPWINDOW	(WS_POPUP | WS_BORDER | WS_SYSMENU)
@@ -312,25 +306,25 @@ typedef	DWORD	COLORREF;
 
 /* Static Control Styles */
 #define SS_LEFT	0L
-#define SS_CENTER	0x1L
-#define SS_RIGHT	0x2L
-#define SS_ICON	0x3L
-#define SS_BLACKRECT	0x4L
-#define SS_GRAYRECT	0x5L
-#define SS_WHITERECT	0x6L
-#define SS_BLACKFRAME	0x7L
-#define SS_GRAYFRAME	0x8L
-#define SS_WHITEFRAME	0x9L
+#define SS_CENTER	1L
+#define SS_RIGHT	2L
+#define SS_ICON	3L
+#define SS_BLACKRECT	4L
+#define SS_GRAYRECT	5L
+#define SS_WHITERECT	6L
+#define SS_BLACKFRAME	7L
+#define SS_GRAYFRAME	8L
+#define SS_WHITEFRAME	9L
 #define SS_SIMPLE	0xBL
 #define SS_LEFTNOWORDWRAP	0xCL
 #define SS_NOPREFIX	0x80L
 
 /* Edit control styles */
 #define ES_LEFT	0L
-#define ES_CENTER	0x1L
-#define ES_RIGHT	0x2L
-#define ES_MULTILINE	0x4L
-#define ES_UPPERCASE	0x8L
+#define ES_CENTER	1L
+#define ES_RIGHT	2L
+#define ES_MULTILINE	4L
+#define ES_UPPERCASE	8L
 #define ES_LOWERCASE	0x10L
 #define ES_PASSWORD	0x20L
 #define ES_AUTOVSCROLL	0x40L
@@ -341,9 +335,9 @@ typedef	DWORD	COLORREF;
 #define ES_WANTRETURN	0x1000L
 
 /* Combo box styles */
-#define CBS_SIMPLE	0x1L
-#define CBS_DROPDOWN	0x2L
-#define CBS_DROPDOWNLIST	0x3L
+#define CBS_SIMPLE	1L
+#define CBS_DROPDOWN	2L
+#define CBS_DROPDOWNLIST	3L
 #define CBS_OWNERDRAWFIXED	0x10L
 #define CBS_OWNERDRAWVARIABLE	0x20L
 #define CBS_AUTOHSCROLL	0x40L
@@ -354,10 +348,10 @@ typedef	DWORD	COLORREF;
 #define CBS_DISABLENOSCROLL	0x800L
 
 /* Listbox styles */
-#define LBS_NOTIFY	0x1L
-#define LBS_SORT	0x2L
-#define LBS_NOREDRAW	0x4L
-#define LBS_MULTIPLESEL	0x8L
+#define LBS_NOTIFY	1L
+#define LBS_SORT	2L
+#define LBS_NOREDRAW	4L
+#define LBS_MULTIPLESEL	8L
 #define LBS_OWNERDRAWFIXED	0x10L
 #define LBS_OWNERDRAWVARIABLE	0x20L
 #define LBS_HASSTRINGS	0x40L
@@ -377,18 +371,17 @@ typedef	DWORD	COLORREF;
 #define BS_PATTERN	3
 #define BS_INDEXED	4
 #define BS_DIBPATTERN	5
-
 /* Button Control Styles */
 #define BS_PUSHBUTTON	0L
-#define BS_DEFPUSHBUTTON	0x1L
-#define BS_CHECKBOX	0x2L
-#define BS_AUTOCHECKBOX	0x3L
-#define BS_RADIOBUTTON	0x4L
-#define BS_3STATE	0x5L
-#define BS_AUTO3STATE	0x6L
-#define BS_GROUPBOX	0x7L
-#define BS_USERBUTTON	0x8L
-#define BS_AUTORADIOBUTTON	0x9L
+#define BS_DEFPUSHBUTTON	1L
+#define BS_CHECKBOX	2L
+#define BS_AUTOCHECKBOX	3L
+#define BS_RADIOBUTTON	4L
+#define BS_3STATE	5L
+#define BS_AUTO3STATE	6L
+#define BS_GROUPBOX	7L
+#define BS_USERBUTTON	8L
+#define BS_AUTORADIOBUTTON	9L
 #define BS_OWNERDRAW	0xBL
 #define BS_LEFTTEXT	0x20L
 
@@ -521,7 +514,6 @@ typedef	DWORD	COLORREF;
 #define LB_SETITEMHEIGHT	(WM_USER+33)
 #define LB_GETITEMHEIGHT	(WM_USER+34)
 #define LB_FINDSTRINGEXACT	(WM_USER+35)
-
 /* Listbox message return values */
 #define LB_OKAY	0
 #define LB_ERR	(-1)
@@ -548,7 +540,6 @@ typedef	DWORD	COLORREF;
 #define MB_ICONEXCLAMATION	0x30
 #define MB_ICONASTERISK	0x40
 #define MB_ICONMASK	0xF0
-
 #define MB_ICONINFORMATION	MB_ICONASTERISK
 #define MB_ICONSTOP	MB_ICONHAND
 
@@ -605,7 +596,6 @@ typedef	DWORD	COLORREF;
 #define FW_BOLD	700
 #define FW_EXTRABOLD	800
 #define FW_HEAVY	900
-
 #define FW_ULTRALIGHT	FW_EXTRALIGHT
 #define FW_REGULAR	FW_NORMAL
 #define FW_DEMIBOLD	FW_SEMIBOLD
@@ -820,7 +810,6 @@ typedef	DWORD	COLORREF;
 #define MF_SYSMENU	0x2000
 #define MF_HELP	0x4000
 #define MF_MOUSESELECT	0x8000
-
 #define MF_END	0x80	/* Only valid in menu resource templates */
 
 /* Standard icon resource IDs */
@@ -842,7 +831,6 @@ typedef	DWORD	COLORREF;
 #define SW_SHOWMINNOACTIVE	7
 #define SW_SHOWNA	8
 #define SW_RESTORE	9
-
 /* WM_SHOWWINDOW wParam codes */
 #define SW_PARENTCLOSING	1
 #define SW_OTHERMAXIMIZED	2
@@ -944,16 +932,13 @@ typedef	DWORD	COLORREF;
 #define CF_PENDATA	10
 #define CF_RIFF	11
 #define CF_WAVE	12
-
 #define CF_OWNERDISPLAY	0x80
 #define CF_DSPTEXT	0x81
 #define CF_DSPBITMAP	0x82
 #define CF_DSPMETAFILEPICT	0x83
-
 /* "Private" formats don't get GlobalFree()'d */
 #define CF_PRIVATEFIRST	0x200
 #define CF_PRIVATELAST	0x2FF
-
 /* "GDIOBJ" formats do get DeleteObject()'d */
 #define CF_GDIOBJFIRST	0x300
 #define CF_GDIOBJLAST	0x3FF
@@ -969,10 +954,8 @@ typedef	DWORD	COLORREF;
 #define SWP_HIDEWINDOW	0x80
 #define SWP_NOCOPYBITS	0x100
 #define SWP_NOOWNERZORDER	0x200	/* Don't do owner Z ordering */
-
 #define SWP_DRAWFRAME	SWP_FRAMECHANGED
 #define SWP_NOREPOSITION	SWP_NOOWNERZORDER
-
 #define SWP_NOSENDCHANGING	0x400
 #define SWP_DEFERERASE	0x2000
 
@@ -987,7 +970,7 @@ typedef	DWORD	COLORREF;
 #define MM_ANISOTROPIC	8
 
 /* constants for CreateDIBitmap */
-#define CBM_INIT	0x4L
+#define CBM_INIT	4L
 
 /* DIB color table identifiers */
 #define DIB_RGB_COLORS	0
@@ -1033,7 +1016,6 @@ typedef	DWORD	COLORREF;
 #define SB_BOTTOM	7
 #define SB_RIGHT	7
 #define SB_ENDSCROLL	8
-
 /* Scroll bar selection constants */
 #define SB_HORZ	0
 #define SB_VERT	1
@@ -1058,20 +1040,20 @@ typedef	DWORD	COLORREF;
 #define ODS_CHECKED	8
 #define ODS_FOCUS	0x10
 
-#define ETO_GRAYED	0x1
-#define ETO_OPAQUE	0x2
-#define ETO_CLIPPED	0x4
+#define ETO_GRAYED	1
+#define ETO_OPAQUE	2
+#define ETO_CLIPPED	4
 
 /* Scroll bar styles */
-#define SBS_HORZ	0x0L
-#define SBS_VERT	0x1L
-#define SBS_TOPALIGN	0x2L
-#define SBS_LEFTALIGN	0x2L
-#define SBS_BOTTOMALIGN	0x4L
-#define SBS_RIGHTALIGN	0x4L
-#define SBS_SIZEBOXTOPLEFTALIGN	0x2L
-#define SBS_SIZEBOXBOTTOMRIGHTALIGN	0x4L
-#define SBS_SIZEBOX	0x8L
+#define SBS_HORZ	0L
+#define SBS_VERT	1L
+#define SBS_TOPALIGN	2L
+#define SBS_LEFTALIGN	2L
+#define SBS_BOTTOMALIGN	4L
+#define SBS_RIGHTALIGN	4L
+#define SBS_SIZEBOXTOPLEFTALIGN	2L
+#define SBS_SIZEBOXBOTTOMRIGHTALIGN	4L
+#define SBS_SIZEBOX	8L
 
 #define WH_GETMESSAGE	3
 #define WH_CALLWNDPROC	4
@@ -1083,7 +1065,6 @@ typedef	DWORD	COLORREF;
 #define HWND_BOTTOM	((HWND)1)
 #define HWND_TOPMOST	((HWND)-1)
 #define HWND_NOTOPMOST	((HWND)-2)
-
 /* Special value for CreateWindow, et al. */
 #define HWND_DESKTOP	((HWND)0)
 
@@ -1131,7 +1112,6 @@ typedef	DWORD	COLORREF;
 #define CB_GETEXTENDEDUI	(WM_USER+22)
 #define CB_GETDROPPEDSTATE	(WM_USER+23)
 #define CB_FINDSTRINGEXACT	(WM_USER+24)
-
 /* Combo box message return values */
 #define CB_OKAY	0
 #define CB_ERR	(-1)
@@ -1152,9 +1132,9 @@ typedef	DWORD	COLORREF;
 #define GCW_ATOM	(-32)
 
 /* Extended Window Styles */
-#define WS_EX_DLGMODALFRAME	0x1L
-#define WS_EX_NOPARENTNOTIFY	0x4L
-#define WS_EX_TOPMOST	0x8L
+#define WS_EX_DLGMODALFRAME	1L
+#define WS_EX_NOPARENTNOTIFY	4L
+#define WS_EX_TOPMOST	8L
 #define WS_EX_ACCEPTFILES	0x10L
 #define WS_EX_TRANSPARENT	0x20L
 
@@ -1181,7 +1161,6 @@ typedef	DWORD	COLORREF;
 #define SC_TASKLIST	0xF130
 #define SC_SCREENSAVE	0xF140
 #define SC_HOTKEY	0xF150
-
 /* Obsolete names */
 #define SC_ICON	SC_MINIMIZE
 #define SC_ZOOM	SC_MAXIMIZE
@@ -2220,4 +2199,3 @@ int	CALLBACK	LibMain(HANDLE,WORD,WORD,LPSTR);
 #pragma	pack(pop)
 
 #endif
-
