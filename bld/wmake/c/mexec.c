@@ -1465,6 +1465,9 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
 
                             /* first run? */
     if( line ) {
+        flags->bForce = FALSE;
+        flags->bSilent = FALSE;
+
         p = SkipWS( line + 2 ); /* find first non-ws after "RM" */
 
                                 /* is it a switch? */
