@@ -1,4 +1,4 @@
-#pmake: os_nt cpu_386 aui_sample
+#pmake/150: os_nt cpu_386 aui_sample
 
 host_os  = nt
 host_cpu = 386

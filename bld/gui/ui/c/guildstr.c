@@ -45,10 +45,6 @@
     #include "clibext.h"
 #endif
 
-#ifdef __WINDOWS__
-#define WINAPI _far _pascal
-#endif
-
 #include "wressetr.h"
 
 #define NIL_HANDLE      ((int)-1)

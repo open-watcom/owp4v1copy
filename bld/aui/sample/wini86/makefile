@@ -1,4 +1,4 @@
-#pmake: os_win cpu_i86 aui_sample
+#pmake/150: os_win cpu_i86 aui_sample
 
 host_os  = win
 host_cpu = i86

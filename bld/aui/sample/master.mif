@@ -10,8 +10,9 @@ gui_type = win
 gui_type = ui
 !endif
 
-inc_dirs=$(auidir)/h;$(guidir)/h;$(uidir)/h;../h;
+!include wres.mif
 
+inc_dirs=$(auidir)/h;$(guidir)/h;$(uidir)/h;../h;
 
 auilib = $(auidir)/$(host_os)$(host_cpu)/aui.lib
 guilib = $(guidir)/$(gui_type)/$(host_os)$(host_cpu)/gui.lib
@@ -20,7 +21,6 @@ uilib  = $(uidir)/$(host_os)/$(host_os)$(host_cpu)/ui.lib
 rcfiles = &
     $(guidir)\h\gui.rc &
     $(auidir)\h\aui.rc &
-    $(auidir)\sample\h\app.rc &
     $(auidir)\sample\h\appcomm.rc &
     $(auidir)\sample\h\dlgoptn.h &
     $(auidir)\sample\h\dlgoptn.dlg &
@@ -34,32 +34,47 @@ objs = app.obj util.obj window1.obj window2.obj window3.obj &
        window4.obj window5.obj window6.obj window7.obj window8.obj &
        menus.obj appcolor.obj dlgcmd.obj dlgoptn.obj password.obj
 
-!ifeq host_cpu 386
-reslib = $(wres_dir)/lib/wresf.lib
+!ifdef sys_windowed
+!ifeq host_os os2
+resfile = apppm.res
+#resfile = apppmj.res
 !else
-reslib = $(wres_dir)/lib/wresl.lib
+resfile = app.res
+#resfile = appj.res
+!endif
+!else
+resfile = appui.res
+#resfile = appuij.res
 !endif
 
-resfile = appui.res
+aui_prereq = auistr.gh _guimsgs.gh
+
 rcinc   = $(inc_dirs_sys_win)$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_dirs)
 
-app.exe : auistr.gh $(objs) $(auilib) $(guilib) $(uilib) $(reslib) $(resfile)
-        $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(reslib)
-        wstrip -q -a -r app.exe . $(resfile)
+app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfile)
+        $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(wres_lib)
+!ifndef sys_windowed
+        wstrip -q -a -r $^@ . $(resfile)
+!else ifneq host_os os2
+        $(rc) $(rc_flags) -k $(resfile) $^@
+!else
 # Need to bind PM/Windows resources into executable
-#!ifeq host_os os2
-#        $(lang_root)\binp\rc apppm.res app.exe
-#!endif
+        $(lang_root)\binp\rc $(resfile) $^@
+!endif
 
-app.res appj.res : $(rcfiles)
-        wrc $(rcopt) -r -q ..\h\app.rc /foapp.res
-        wrc $(rcopt) -r -q ..\h\app.rc /foappj.res
+app.res : ../h/app.rc $(rcfiles)
+        $(rc) $(rc_flags) -r $[@ -fo=$@
 
-appui.res appuij.res : $(rcfiles) ../h/appui.rc
-        wrc -bt=windows -r -q -I$(rcinc) ..\h\appui.rc /foappui.res
-        wrc -dJAPANESE_MESSAGES -bt=windows -r -q -I$(rcinc) ..\h\appui.rc /foappuij.res
+appj.res : ../h/app.rc $(rcfiles)
+        $(rc) $(rc_flags) -r -dJAPANESE_MESSAGES $[@ -fo=$@
 
-apppm.res apppmj.res : $(rcfiles) ../h/apppm.rc
+appui.res : ../h/appui.rc ../h/app.rc $(rcfiles)
+        $(rc_aui) -I$(inc_dirs_sys_win) $[@ -fo=$@
+
+appuij.res : ../h/appui.rc ../h/app.rc $(rcfiles)
+        $(rc_aui) -I$(inc_dirs_sys_win) -dJAPANESE_MESSAGES $[@ -fo=$@
+
+apppm.res apppmj.res : ../h/apppm.rc ../h/app.rc $(rcfiles)
         @set oinc=$(%include)
         set include=..;.;$(auidir)\os2$(host_cpu).pm;$(rcinc);$(%include);$(lang_root)\h\os21x
         wpp -p -fo=apppm.i ..\h\apppm.rc
@@ -77,8 +92,14 @@ apppm.res apppmj.res : $(rcfiles) ../h/apppm.rc
 
 .c: ../c
 
-./mkstr.exe: $(auidir)/c/mkstr.c
-        $(bld_cl) $]@ -I$(auidir)\h -fe=$^@
+./auimkstr.exe: $(auidir)/c/mkstr.c
+        $(bld_cl) -I"$(auidir)/h" $(wcl_util_opts) $]@
 
-auistr.gh : ./mkstr.exe $(auidir)/h/aui.msg
+auistr.gh : ./auimkstr.exe $(auidir)/h/aui.msg
         $[@ $^@
+
+./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
+        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+
+_guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
+        $[@ $^@ $(gui_msg_id_modifier)
