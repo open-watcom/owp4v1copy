@@ -67,7 +67,7 @@ void GUImain( void )
     char    *buff;
     int     len;
 
-    len = _bgetcmd( NULL, INT_MAX );
+    len = _bgetcmd( NULL, INT_MAX ) + 1;
     buff = malloc( len );
     CmdStart = buff;
     getcmd( CmdStart );
