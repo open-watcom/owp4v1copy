@@ -154,7 +154,7 @@ void WEXPORT WListBox::getString( int index, WString& str ) {
 
     list_item = GUIGetListItem( parent()->handle(), controlId(), index );
     WString s( list_item );
-    GUIFree( list_item );
+    GUIMemFree( list_item );
     str = s;
 }
 
