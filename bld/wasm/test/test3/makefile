@@ -13,6 +13,8 @@ commdef &
 datamix1 &
 datamix2 &
 dgroup &
+dsxfork &
+dsxhdlr &
 extprocf &
 extprocn &
 indirect &
