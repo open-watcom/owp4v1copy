@@ -48,9 +48,6 @@ objs_nov_386 = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pit
 objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
 
 extra_c_flags =  -s
-!ifeq machine NEC
-extra_c_flags += -d_NEC_PC
-!endif
 
 extra_c_flags_dos_dos = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far
 extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zu -hc
@@ -83,9 +80,6 @@ extra_rc_flags_dos         = $(extra_rc_flags_dos_$(target)_$(host_cpu))
 extra_rc_flags_nov         = -dNLM
 extra_rc_flags_win         = -dWIN -30
 extra_rc_flags             = $(extra_rc_flags_$(host_os))
-!ifeq machine NEC
-extra_rc_flags += -d_NEC_PC
-!endif
 
 nlm_imports = &
     FileServerMajorVersionNumber &

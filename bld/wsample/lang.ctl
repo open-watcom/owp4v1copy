@@ -27,10 +27,6 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> <PROJDIR>/nlm/wsample.nlm         <RELROOT>/rel2/nlm/wsample.nlm
 
-#    <CPCMD> <PROJDIR>/dosi86.nec/wsample.exe  <RELROOT>/rel2/n98bw/wsample.exe
-#    <CPCMD> <PROJDIR>/rsii86.nec/wsamprsi.exe <RELROOT>/rel2/n98bw/wsamprsi.exe
-#    <CPCMD> <PROJDIR>/pls386.nec/wsamppls.exp <RELROOT>/rel2/n98bw/wsamppls.exp
-
 [ BLOCK <1> clean ]
 #==================
     pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

@@ -127,16 +127,8 @@ void InstallDOSIntercepts()
     old_int21 = INT_LOCATE( 0x21 );
     INT_LOCATE( 0x21 ) = &int21_handler;
 
-#if defined(_FMR_PC)
-    old_int13 = INT_LOCATE( 0x93 );
-    INT_LOCATE( 0x93 ) = &int13_handler;
-#elif defined(_NEC_PC)
-    old_int13 = INT_LOCATE( 0x1b );
-    INT_LOCATE( 0x1b ) = &int13_handler;
-#else
     old_int13 = INT_LOCATE( 0x13 );
     INT_LOCATE( 0x13 ) = &int13_handler;
-#endif
 
     old_int03 = INT_LOCATE( 0x03 );
     INT_LOCATE( 0x03 ) = &int03_handler;
@@ -157,13 +149,7 @@ void RemoveDOSIntercepts()  /* will undo the above */
     _disable();
     INT_LOCATE( 0x21 ) = old_int21;
     INT_LOCATE( 0x28 ) = old_int28;
-#if defined(_FMR_PC)
-    INT_LOCATE( 0x93 ) = old_int13;
-#elif defined(_NEC_PC)
-    INT_LOCATE( 0x1b ) = old_int13;
-#else
     INT_LOCATE( 0x13 ) = old_int13;
-#endif
     INT_LOCATE( 0x03 ) = old_int03;
     _enable();
 }
