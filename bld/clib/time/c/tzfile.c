@@ -73,10 +73,11 @@ void __check_tzfile( time_t t, struct tm *timep )
     tzh_typecnt = pntohl( tzp + 16 );
     tzh_charcnt = pntohl( tzp + 20 );
     tzp += 24;
-    stdzon = 0;
+    timidx = 0;
     for( i = 0; i < tzh_timecnt; i++ ) {
-        if (t >= pntohl( tzp ))
+        if (t >= pntohl( tzp )) {
             timidx = i;
+        }
         tzp += 4;
     }
     stdzon = tzh_timecnt + tzp[timidx] * 6;
