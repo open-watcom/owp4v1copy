@@ -851,6 +851,16 @@ GS floats i.e. not fixed to a segment
 GS is pegged to a segment
 :optref refid='SWzgfp'.
 .do end
+.if &e'&$SWzri eq 1 .do begin
+.note zri
+Inline floating point rounding code
+:optref refid='SWzri'.
+.do end
+.if &e'&$SWzro eq 1 .do begin
+.note zro
+Omit floating point rounding code
+:optref refid='SWzro'.
+.do end
 .if &e'&$SWzu eq 1 .do begin
 .note zu
 SS != DGROUP
@@ -4589,6 +4599,31 @@ will be predefined if "zgf" is selected.
 The macro
 .kwm __SW_ZGP
 will be predefined if "zgp" is selected.
+.do end
+.*
+.if &e'&$SWzri eq 1 .do begin
+:OPT refid='SWzri' name='zri'.&optdag.
+.ix 'options' 'zri'
+&386only.
+The "zri" option inlines the code for floating point rounding.
+Normally a function call is generated for each float to int conversion
+ which may not be desirable.
+.np
+The macro
+.kwm __SW_ZRI
+will be predefined if "zri" is selected.
+.do end
+.*
+.if &e'&$SWzro eq 1 .do begin
+:OPT refid='SWzro' name='zro'.&optdag.
+.ix 'options' 'zro'
+The "zro" option omits the code for floating point rounding.
+This results in non-conformant code - the rounding mode is not ANSI C
+compliant - but the code generated is very fast.
+.np
+The macro
+.kwm __SW_ZRO
+will be predefined if "zro" is selected.
 .do end
 .*
 .if &e'&$SWzu eq 1 .do begin
