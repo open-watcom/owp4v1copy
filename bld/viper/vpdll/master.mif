@@ -9,10 +9,7 @@ sys_dll = 1
 
 .c: ../c
 
-inc_dirs = ../h;../..
-
-.before:
-        set include=$(inc_path)
+inc_dirs = -I"../h" -I"../.."
 
 extra_c_flags_386 = -bd
 extra_c_flags_axp = -bd
@@ -27,7 +24,7 @@ extra_l_flags_win = op stack=8k, rwr lib windows, ddeml export WEP RESIDENT
 extra_l_flags_nt = op stack=40k
 
 $(name).dll : $(name).obj
-!ifeq host_OS nt
+!ifeq host_os nt
         $(linker) $(lflags) name $^@ file $[@ @../export.mif
 !else
         $(linker) $(lflags) name $^@ file $[@
