@@ -25,9 +25,9 @@ sw_c_bigcode  =-nt=_TEXT
 sw_c_bigdata  =-zu
 
 sw_c_286 =$(sw_c_intel)$(sw_c_calls)
-sw_c_386 =$(sw_c_intel)$(sw_c_calls)-zc-fpd
+sw_c_386 =$(sw_c_intel)$(sw_c_calls)-zc-fpd-r
 sw_c_287 =$(sw_c_intel)-fpi
-sw_c_387 =$(sw_c_intel)-zc-fpd-fpi87
+sw_c_387 =$(sw_c_intel)-zc-fpd-fpi87-r
 sw_c_axp =
 sw_c_ppc =
 

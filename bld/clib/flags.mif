@@ -36,7 +36,7 @@ sw_c_intel    = -fpc
 
 sw_c_086 = $(sw_c_intel)-0
 sw_c_286 = $(sw_c_intel)-2
-sw_c_386 = $(sw_c_intel)-zc
+sw_c_386 = $(sw_c_intel)-zc-r
 sw_c_axp =
 sw_c_ppc =
 
