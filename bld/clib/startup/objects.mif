@@ -151,7 +151,7 @@
 !inject wstrwaxp.obj                        nta
 !inject wstrwwna.obj                        nta ntp
 !inject wstrwwnt.obj                     nt
-!inject xiyi.obj     d16 d32                        nvc ncl nvl nll o16     q16 q32 w16 w32 osi l32
+!inject xiyi.obj     d16 d32                        nvc ncl nvl nll o16     q16 q32 w16 w32 osi
 !inject xmsg.obj     d16 d32
 !inject xmsgnov.obj                                 nvc ncl nvl nll
 !inject xmsgo16.obj                                                 o16

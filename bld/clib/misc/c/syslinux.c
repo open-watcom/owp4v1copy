@@ -366,9 +366,74 @@ _WCRTLINK clock_t times( struct tms *__buf )
     __syscall_return(clock_t,res);
 }
 
-_WCRTLINK extern pid_t  getpgrp( void )
+_WCRTLINK pid_t  getpgrp( void )
 {
     u_long res = sys_call0(SYS_getpgrp);
     __syscall_return(pid_t,res);
 }
 
+_WCRTLINK gid_t  getgid( void )
+{
+    u_long res = sys_call0(SYS_getgid);
+    __syscall_return(gid_t,res);
+}
+
+_WCRTLINK gid_t  getegid( void )
+{
+    u_long res = sys_call0(SYS_getegid);
+    __syscall_return(gid_t,res);
+}
+
+_WCRTLINK uid_t  getuid( void )
+{
+    u_long res = sys_call0(SYS_getuid);
+    __syscall_return(uid_t,res);
+}
+
+_WCRTLINK uid_t  geteuid( void )
+{
+    u_long res = sys_call0(SYS_geteuid);
+    __syscall_return(uid_t,res);
+}
+
+_WCRTLINK int    setegid( gid_t __newegroup )
+{
+    u_long res = sys_call2(SYS_setregid, -1, __newegroup);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    seteuid( uid_t __neweuserid )
+{
+    u_long res = sys_call2(SYS_setreuid, -1, __neweuserid);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    setgid( gid_t __newgroup )
+{
+    u_long res = sys_call1(SYS_setgid, __newgroup);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    setpgid( pid_t __pid, pid_t __pgroupid )
+{
+    u_long res = sys_call2(SYS_setpgid, __pid, __pgroupid);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    setregid(gid_t real, uid_t effective)
+{
+    u_long res = sys_call2(SYS_setregid, real, effective);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    setreuid(uid_t real, uid_t effective)
+{
+    u_long res = sys_call2(SYS_setreuid, real, effective);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int    setuid( uid_t __newuserid )
+{
+    u_long res = sys_call1(SYS_setuid, __newuserid);
+    __syscall_return(int,res);
+}
