@@ -21,14 +21,24 @@ assemble = $(masmdir)\masm -mx -s -I$(rsilib) -Dlarge $[@; # masm 5
 !include cproj.mif
 !include defrule.mif
 
-objs = $(lang_root)/lib286/dos/dos16m.obj dbglib.obj &
-        segs_16m.obj dbgliba.obj rmhdlr.obj sbrk.obj sample.obj &
-        samprsi.obj sampdata.obj io.obj sysio.obj sampexe.obj settime.obj &
-        magicstr.obj wmsg.obj sysinit.obj
+objs =  $(lang_root)/lib286/dos/dos16m.obj &
+        dbglib.obj &
+        segs_16m.obj &
+        dbgliba.obj &
+        rmhdlr.obj &
+        sbrk.obj &
+        sample.obj &
+        samprsi.obj &
+        sampdata.obj &
+        io.obj &
+        sysio.obj &
+        sampexe.obj &
+        settime.obj &
+        magicstr.obj &
+        wmsg.obj &
+        sysinit.obj
 
-extra_c_flags_dbglib = -wcd=1177
-
-extra_c_flags = -zdp -osail -s -dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h
+extra_c_flags = -s -dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h -zdp
 !ifeq machine NEC
 extra_c_flags += -d_NEC_PC
 extra_rc_flags = -dNEC
@@ -53,7 +63,8 @@ inc_dirs = $(rsilib);$(dig_dir)/h
 lf = tmp.lnk
 
 ../bin/$(xname).exe : $(xname).exp $(xname).res
-    $(rsidir)\splice $^@ $(xname).exp -ALT $(rsidir)\wstubq.exe
+#    $(rsidir)\splice $^@ $(xname).exp -ALT $(rsidir)\wstubq.exe
+    $(rsidir)\splice $^@ $(xname).exp -ALT ..\..\wstub\wstubq.exe
     wstrip -q -a -r $^@ . $(xname).res
     %null
 

@@ -35,11 +35,12 @@ extra_c_flags_rsiacc = -I"$(rsilib)"
 extra_c_flags_realmode = -I"$(rsilib)"
 extra_c_flags_dbglib = -I"$(rsilib)" -wcd=1177
 
+extra_a_flags = -Dcompact
 extra_a_flags_npxtype = -fpi87
 extra_a_flags_rsi87 = -fpi87
-extra_a_flags_segs_16m = -I"$(rsilib)" -Dcompact
-extra_a_flags_dbgliba = -I"$(rsilib)" -Dcompact
-extra_a_flags_rmhdlr = -I"$(rsilib)" -Dcompact
+extra_a_flags_segs_16m = -I"$(rsilib)"
+extra_a_flags_dbgliba = -I"$(rsilib)"
+extra_a_flags_rmhdlr = -I"$(rsilib)"
 
 extra_srcs = $(rsilib)
 
@@ -62,7 +63,8 @@ $(target) $(dtarget) : $(objs) $(__MAKEFILES__)
     @%append $(lf) exp($^@) map($^&) log($^&.err)
     @%append $(lf) -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
-    @%append $(lf) $(rsilib)/$(libnam).lib $(lang_root)/lib286/dos/clibc.lib
+    @%append $(lf) $(rsilib)/$(libnam).lib
+    @%append $(lf) $(lang_root)/lib286/dos/clibc.lib
     !$(rsidir)\glu @$(lf)
 
 !ifdef assemble
