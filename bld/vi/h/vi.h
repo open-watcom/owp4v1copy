@@ -63,7 +63,7 @@ void *_inline_memset( void *__s, int __c, unsigned int __n );
     #define _NEAR near
 #endif
 
-#if !defined( __AXP__ ) && !defined( __LINUX__ )
+#if !defined( __AXP__ ) && !defined( __LINUX__ ) && !defined( PREBUILD )
 #define VI_RCS  1
 #endif
 

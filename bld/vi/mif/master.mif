@@ -18,7 +18,9 @@ PROJECT : $(name) .symbolic
 #!include deftarg.mif
 !include defrule.mif
 
+!ifndef prebuild
 !include rcsdll.mif
+!endif
 !include include.mif
 !include objects.mif
 !include compile.mif
@@ -31,6 +33,10 @@ PROJECT : $(name) .symbolic
 
 .BEFORE:
         set include=$(inc_path)
+
+!ifdef prebuild
+extra_c_flags +=-DPREBUILD
+!endif
 
 !ifdef bind
 .vi : $(vi_dir)/dat
@@ -60,7 +66,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
 !ifdef sys_windowed
 !ifeq host_os win
 !ifeq host_cpu 386
-        wbind $(lname) -s $(lang_root)\binw\win386.ext -R $(ED).res
+        wbind $(lname) -s $(lang_root)\binw\win386.ext -R -q $(ED).res
         @erase $(lname)
 !else
         $(rc) $(rc_flags) -k -zk0 $(ED).res $^@
@@ -70,6 +76,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
 !endif
         # don't bind - it screws up everything - BBB
 !else
+!ifndef prebuild
         set edpath=$(vi_dir)/dat
     # run the right version of edbind depending on host platform
 !ifdef __OS2__
@@ -80,6 +87,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
         $(vi_dir)/bind/linux386/edbind.exe $(bindextra) -q $(name)
 !else
         $(vi_dir)\bind\nt386\edbind $(bindextra) -q $(name)
+!endif
 !endif
 !endif
 

@@ -23,7 +23,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../dos386/makefile bname=bvi
+    wmake -h -f ../dos386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/bin/
     cdsay <PROJDIR>
 
@@ -36,7 +36,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../os2386/makefile bname=bvi
+    wmake -h -f ../os2386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binp/
     cdsay <PROJDIR>
 
@@ -49,7 +49,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../nt386/makefile bname=bvi
+    wmake -h -f ../nt386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binnt/
     cdsay <PROJDIR>
 
@@ -62,7 +62,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../linux386/makefile bname=bvi
+    wmake -h -f ../linux386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binl/bvi.
     cdsay <PROJDIR>
 
@@ -71,7 +71,15 @@ set BUILD_PLATFORM=
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
     rm -f -r <PROJDIR>/<OBJDIR>
-    @rm -f <RELROOT>/bld/build/bin/bvi.*
-    @rm -f <RELROOT>/bld/build/binp/bvi.*
-    @rm -f <RELROOT>/bld/build/binnt/bvi.*
-    @rm -f <RELROOT>/bld/build/binl/bvi.*
+    @rm -f <owroot>/bld/build/bin/bvi.*
+    @rm -f <owroot>/bld/build/bin/parsectl.*
+    @rm -f <owroot>/bld/build/bin/parsedyn.*
+    @rm -f <owroot>/bld/build/binp/bvi.*
+    @rm -f <owroot>/bld/build/binp/parsectl.*
+    @rm -f <owroot>/bld/build/binp/parsedyn.*
+    @rm -f <owroot>/bld/build/binnt/bvi.*
+    @rm -f <owroot>/bld/build/binnt/parsectl.*
+    @rm -f <owroot>/bld/build/binnt/parsedyn.*
+    @rm -f <owroot>/bld/build/binl/bvi.*
+    @rm -f <owroot>/bld/build/binl/parsectl.*
+    @rm -f <owroot>/bld/build/binl/parsedyn.*
