@@ -102,11 +102,7 @@
 #define lstat stat
 #endif
 
-extern char    *malloc();
-extern char    *strcpy();
-extern char    *strncpy();
 #include <errno.h>
-//extern int      errno;
 
 union record   *start_header();
 void            finish_header();

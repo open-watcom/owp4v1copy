@@ -32,6 +32,8 @@
 #ifndef _CP_INCLUDED
 #define _CP_INCLUDED
 
+#include <sys/stat.h>
+
 #if defined(__OS_nt386__) || defined(__OS_os2386__) || defined(__OS_ntaxp__)
 #define __FAR
 #else
@@ -106,7 +108,7 @@ extern int todflag,pattrflag,rxflag;
 void MemInit( void );
 void DoCP( char *, char * );
 void CopyOneFile( char *, char *);
-int GrabFile( char *, void *, char *, char );
+int GrabFile( char *, struct stat *, char *, char );
 void FlushMemoryBlocks( void );
 void __FAR *FarAlloc( unsigned );
 void *NearAlloc( unsigned );

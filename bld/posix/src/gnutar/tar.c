@@ -55,9 +55,6 @@ FILE *fopen();
 char *fgets();
 #endif
 
-extern char    *malloc();
-extern char    *
-strncpy(), *index(), *rindex();
 extern char    *optarg;                 /* Pointer to argument */
 extern int      optind;                 /* Global argv index from getopt */
 

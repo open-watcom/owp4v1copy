@@ -243,12 +243,12 @@ int             n;
         (void) memcpy(s2, s1, n);
         return (s1);
 }
-#endif
 
 void bzero(char * s1, int n)
 {
 	memset(s1, 0, n);
 }
+#endif
 
 #endif
 
