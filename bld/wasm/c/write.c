@@ -152,6 +152,23 @@ void AddFlist( char const *filename )
     return;
 }
 
+static void FreeFlist( void )
+{
+    FNAMEPTR      curr;
+    FNAMEPTR      last;
+
+    if( !Options.emit_dependencies ) return;
+
+    for( curr = FNames; curr != NULL; ) {
+        AsmFree(curr->name);
+        last = curr;
+        curr = curr->next;
+        AsmFree(last);
+    }
+    FNames = NULL;
+    return;
+}
+
 static void write_init( void )
 {
 #ifndef _WASM_
@@ -1166,6 +1183,7 @@ void WriteObjModule( void )
     }
     if( write_to_file && Options.error_count == 0 ) write_modend();
 
+    FreeFlist();
     AsmSymFini();
     FreeIncludePath();
     write_fini();
