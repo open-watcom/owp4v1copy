@@ -166,13 +166,11 @@ char *_getFilenameFullPath( char *buff, char const *name, size_t max )
 time_t _getFilenameTimeStamp( char const *filename )
 {
     struct stat statbuf;
-    static time_t stamp;
 
     if( stat( filename, &statbuf ) != 0 ) {
-        stamp = 0;
+        return( 0 );
     } else {
-        stamp = statbuf.st_mtime;
+        return( statbuf.st_mtime );
     }
-    return( stamp );
 }
 
