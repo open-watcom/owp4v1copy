@@ -30,3 +30,11 @@ set PROJDIR=<CWD>
     <CPCMD> WASM.exe <relroot>\bld\build\binnt\
     <CPCMD> WASM.sym <relroot>\bld\build\binnt\
     cdsay <projdir>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#===============================
+    cdsay <projdir>/linux386
+    wmake -h
+    <CPCMD> WASM.exe <relroot>/bld/build/binl/
+    <CPCMD> WASM.sym <relroot>/bld/build/binl/
+    cdsay <projdir>

@@ -40,7 +40,7 @@ $(name).exe : $(OBJS) $(LNK)
        $(linker) $(lflags) option stack=1500 name $(name) file {$(objs)}
 
 .asm.obj : $[*
-        wasm -bt=DOS -ms -q -d1 $[*
+        $(as) -bt=DOS -ms -q -d1 $[*
 
 !else ifeq host_OS win
 

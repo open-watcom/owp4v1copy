@@ -95,7 +95,7 @@ mem.obj : mem.c
 .c.obj :
         $(comp286) $[* -ml$(cflags)
 .asm.obj:
-        wasm $[* /fo=$[&.obj
+        $(as) $[* /fo=$[&.obj
 
 clean : .symbolic
     @rm -f *.exe *.res *.lnk *.map

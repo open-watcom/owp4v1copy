@@ -46,11 +46,11 @@
 #include <string.h>
 
 #ifdef __386__
- #define OUTFILE        "../h/code386.gh"
+    #define OUTFILE        "../h/code386.gh"
 #else
- #define OUTFILE        "../h/codei86.gh"
+    #define OUTFILE        "../h/codei86.gh"
 #endif
-
+  
 struct bursts {
         unsigned char    *defs;
         unsigned char    *name;
@@ -59,7 +59,7 @@ struct bursts {
 extern struct bursts Functions[];
 
 
-main()
+main(int argc, char *argv[])
 {
     FILE        *fp;
     int         i;
@@ -67,7 +67,11 @@ main()
     unsigned char *p;
     struct bursts *cb;
 
-    fp = fopen( OUTFILE, "w" );
+    if( argc > 1 ) {
+        fp = fopen( argv[1], "w" );
+    } else {
+        fp = fopen( OUTFILE, "w" );
+    }
     cb = Functions;
     for(;;) {
         p = cb->defs;

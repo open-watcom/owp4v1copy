@@ -64,6 +64,7 @@ inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
 !include $(wasm_dir)/mif/inline.mif
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
+pre_deps_wasm = $(wasm_dir)/h/inlnops.h
 !endif
 !endif
 
@@ -81,9 +82,10 @@ pre_deps_qnx = wcc.u
 pre_deps_osi = $(tools_root)/os2ldr.exe
 
 # other goofy stuff
-pre_obj_deps = $(pre_deps_$(host_os)) $(cc_dir)/h/code$(target_cpu).gh usage.gh msgtxt.gh msgdefs.gh msgattr.gh
+pre_obj_deps = $(pre_deps_wasm) $(pre_deps_$(host_os)) $(cc_dir)/h/code$(target_cpu).gh usage.gh msgtxt.gh msgdefs.gh msgattr.gh
 
 pre_obj_deps += $(intname)01.int
+
 #
 # NOTE: "op off=?" must be 8K bigger than the stack size in wlink_sys_qnx_f
 #
@@ -200,11 +202,15 @@ $(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_stub_deps)
 !endif
 !endif
 
+!ifdef build_rc_$(host_os)_$(host_cpu)
+rc_objs = cc.rc
+!endif
+
 #
 # Note this is just hammered in cause I don't know what
 # I'm doing
 #
-$(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
+$(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
         @if exist $^&.lnk @rm -f $^&.lnk
         @%write $^&.lnk name $@
         @%append $^&.lnk OP map
@@ -225,9 +231,6 @@ $(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc
 !endif
         $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
-        $(bld_cl) $(fe_misc_dir)\c\genverrc.c -ox -fe=genverrc -D_VERSION=$(bld_ver)
-        genverrc ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $^@ $(patch_level)
-        rm -f genverrc genverrc.*
         $(rc) -q -bt=$(build_rc_$(host_os)_$(host_cpu)) cc.rc $^@
 !endif
 
@@ -265,24 +268,25 @@ linkfile: .procedure
 !ifdef as_lib_$(target_cpu)
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
+
 $(cc_dir)/h/codei86.gh : ../a/codei86.asm ../a/mkcode.c
-        $(as_i86) -i="$(watcom_dir)/h" $[@
+        $(as) -i="$(watcom_dir)/h" $[@
         wcc -zq -ox $]@ @ipaths
 !ifdef __OS2__
         wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
 !else
         wcl  mkcode.obj codei86.obj -fe=mkcode -zq
 !endif
-        mkcode
+        mkcode $^@
         rm -f mkcode.obj
         rm -f mkcode.exe
         rm -f codei86.obj
 
 $(cc_dir)/h/code386.gh : ../a/code386.asm ../a/mkcode.c
-        $(as_386) -i"$(watcom_dir)/h" $[@
+        $(as) -i"$(watcom_dir)/h" $[@
         wcc386 -zq $(popt) -ox $]@ @ipaths
         wcl386 mkcode.obj code386.obj -fe=mkcode -zq
-        mkcode
+        mkcode $^@
         rm -f mkcode.obj
         rm -f mkcode.exe
         rm -f code386.obj
@@ -317,6 +321,20 @@ msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
 
 $(intname)01.int : ./intlbin.exe errors01.int usage01.int
         $[@ $(intname)
+
+./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
+        $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
+        rm -f genverrc.*
+
+./mkopcode.exe: $(wasm_dir)/mkopcode.c
+        $(bld_cl) $[@ $(wcl_util_opts)
+
+$(wasm_dir)/h/inlnops.h: ./mkopcode.exe $(wasm_dir)/inlnops.tok
+        $[@ $(wasm_dir)/inlnops.tok $^@
+        rm -f mkopcode.*
 
 eraseall.obj : ../compile.gbl
         rm -f *.?bj

@@ -26,6 +26,9 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\ssl\lang.ctl ]
 [ INCLUDE <devdir>\posixbld\lang.ctl ]
 #
+#        Prebuild newest WASM version for building process
+[ INCLUDE <devdir>\wasmbld\lang.ctl ]
+#
 #        Next build online docs. This will create required header files
 #        as a by-product.
 #
@@ -88,9 +91,10 @@ echo Languages Build <1>
 #
 #        Starting with the code generators
 #
-#        BWOMP must be done before BWASM and F77
-[ INCLUDE <devdir>\womp\lang.ctl ]
+#        BWOMP must be done before BWASM and F77, now it is not necessary
+#[ INCLUDE <devdir>\womp\lang.ctl ]
 #        BWASM must be done early so that inline assembler users are up-to-date
+#        now it is not necessary, it can be anywhere
 [ INCLUDE <devdir>\wasm\lang.ctl ]
 [ INCLUDE <devdir>\cg\lang.ctl ]
 #        c front ends must be built after code generator

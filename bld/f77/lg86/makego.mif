@@ -199,9 +199,16 @@ errmsg.obj : errmsg.c
 #
 !include $(womp_dir)\watfor\files.mif
 !ifdef __386__
-$(womp_dir)\watfor\obj386\wompobj.lib : $(womp_srcs)
+$(womp_dir)\watfor\obj386\wompobj.lib : $(womp_dir)/h/wmpmsg.h $(womp_srcs)
     @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__) __386__=
 !else
-$(womp_dir)\watfor\obj\wompobj.lib : $(womp_srcs)
+$(womp_dir)\watfor\obj\wompobj.lib : $(womp_dir)/h/wmpmsg.h $(womp_srcs)
     @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__)
+!endif
+
+$(womp_dir)/h/wmpmsg.h : $(womp_dir)/womp.msg
+!ifdef __LINUX__
+    perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
+!else
+    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p "$^@" $[@
 !endif

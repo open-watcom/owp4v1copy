@@ -3,4 +3,5 @@
 host_os  = dos
 host_cpu = 386
 
-!include ..\..\wasm\master.mif
+proj_path = ../../wasm
+!include $(proj_path)/mif/master.mif

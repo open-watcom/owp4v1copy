@@ -1,6 +1,7 @@
 set nomagic
+g!/^pick/d
 %s/^.*( \([A-Z0-9_]*\).*$/#define \1 (MSG_WASM_RC_BASE-1+\#)/
 %s/\+0/+/
 %s/\+0/+/
-w! wasmmsg.gh
+w! %1
 q!

@@ -1,6 +1,6 @@
-#pmake: build os_nt cpu_386
+#pmake: build os_linux cpu_386
 
-host_os  = nt
+host_os  = linux
 host_cpu = 386
 
 proj_path = ../../wasm

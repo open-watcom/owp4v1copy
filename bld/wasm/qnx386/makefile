@@ -3,4 +3,5 @@
 host_os  = qnx
 host_cpu = 386
 
-!include ..\mif\master.mif
+proj_path = ..
+!include $(proj_path)/mif/master.mif

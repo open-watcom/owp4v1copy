@@ -3,8 +3,20 @@ proj_name = wasm
 !include cproj.mif
 !include defrule.mif
 
+mkopcode_opts = -fe=$^@
+
 !ifeq host_OS qnx
 exc_name = $(proj_name).qnx
+!else ifneq host_OS linux
+exc_name = $(proj_name).exe
+!else ifdef bootstrap
+exc_name = $(proj_name)
+cc = cc
+cflags = -funsigned-char -c -D_WASM_ -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I../h -I$(womp_dir)/h -I$(womp_dir) -I$(trmem_dir)/h -I../../watcom/h -o $@
+force_include = -include
+bld_cl = cc
+mkopcode_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
+LIBS = -L../../clib/bootstrp -lwatcom -L../../sdk/rc/wres/bootstrp -lwres 
 !else
 exc_name = $(proj_name).exe
 !endif
@@ -12,7 +24,7 @@ link_name = $(proj_name).lnk
 
 .OPTIMIZE
 
-inc_dirs = ../h;$(womp_dir)/h;$(womp_dir);$(trmem_dir)
+inc_dirs = $(proj_path)/h;$(womp_dir)/h;$(womp_dir);$(trmem_dir)
 
 #cflags stuff
 #########
@@ -28,7 +40,7 @@ extra_c_flags_386 = -fpc
 extra_l_flags = option map,symfile,stack=12k
 extra_l_flags_qnx = option offset=16k, res=usage.u
 
-.c      : ../c;$(womp_dir)/c;$(trmem_dir)
+.c : $(proj_path)/c;$(womp_dir)/c;$(trmem_dir)
 
 
 proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
@@ -79,14 +91,19 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : ../h/fullops.h ../h/inlnops.h $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : $(proj_path)/h/fullops.h $(proj_path)/h/inlnops.h $(womp_dir)/h/wmpmsg.h $(link_name) $(proj_name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
+!ifdef bootstrap
+        @%make usage.u
+        $(cc) -o $^@ $(proj_obj) $(LIBS)
+!else
         $(linker) @$(link_name)
 !ifeq host_OS osi
         $(bld_bin)/w32bind $(proj_name).rex $@ $(tools_root)/os2ldr.exe
         @rm -f $(proj_name).rex
+!endif
 !endif
         wstrip -a -r -q $@ . $(proj_name)
 
@@ -108,62 +125,61 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
-$(proj_name).res : ../h/$(proj_name).rc ../h/asmshare.msg ../h/$(proj_name).msg usage.rc usagej.rc ../h/msg.gh ../h/wasmmsg.gh
+$(proj_name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc $(proj_path)/h/msg.gh $(proj_path)/h/wasmmsg.gh
         $(rc) -bt=windows -d_WASM_ -r -zk0 -fo=$^@ $[@
 
-usage.rc : ../h/usage.sp
+usage.rc : $(proj_path)/h/usage.sp
         wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< usage.rc
 
-usagej.rc : ../h/usage.sp
+usagej.rc : $(proj_path)/h/usage.sp
         wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< usagej.rc
 
-../h/msg.gh : ../h/asmshare.msg
-        @SET OLD_CWD=$+$(%cwd)$-
-        @cd ../h
+$(proj_path)/h/msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
-        perl ../../sdk/misc/msgtoh.pl < asmshare.msg > t.msg
-        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > msg.gh
-!else
-        vi -q -d -i "-k:g!/^pick/d\n:w!t.msg\n:q!\n" asmshare.msg
-        vi -q -d -s makemsg.vi t.msg
-!endif
+        perl ../../sdk/misc/msgtoh.pl < $[@ > t.msg
+        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
-        @cd $(%OLD_CWD)
+!else
+        vi -q -d -i -s $(proj_path)/h/makemsg.vi -p "$^@" $[@
+!endif
 
-../h/wasmmsg.gh : ../h/$(proj_name).msg
-        @SET OLD_CWD=$+$(%cwd)$-
-        @cd ../h
+$(proj_path)/h/wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 !ifdef __LINUX__
-        perl ../../sdk/misc/msgtoh.pl < wasm.msg > t.msg
-        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE-1/' t.msg > wasmmsg.gh
-!else
-        vi -q -d -i "-k:g!/^pick/d\n:w!t.msg\n:q!\n" $(proj_name).msg
-        vi -q -d -s makewmsg.vi t.msg
-!endif
+        perl ../../sdk/misc/msgtoh.pl < $[@ > t.msg
+        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
-        @cd $(%OLD_CWD)
+!else
+        vi -q -d -i -s $(proj_path)/h/makewmsg.vi -p "$^@" $[@
+!endif
 
-usage.u : ../h/usage.sp
-        $(bld_bin)/wsplice -kENGLISH -k$(host_OS) -t8 -u ../h/usage.sp usage.u
+usage.u : $(proj_path)/h/usage.sp
+        $(bld_bin)/wsplice -kENGLISH -k$(host_OS) -t8 -u $(proj_path)/h/usage.sp usage.u
 
-usagej.u : ../h/usage.sp
-        $(bld_bin)/wsplice -kJAPANESE -k$(host_OS) -t8 -u ../h/usage.sp usagej.u
+usagej.u : $(proj_path)/h/usage.sp
+        $(bld_bin)/wsplice -kJAPANESE -k$(host_OS) -t8 -u $(proj_path)/h/usage.sp usagej.u
 
 ###################################################################
 
-../h/inlnops.h: ../inlnops.tok ./mkopcode.exe
-        $]@ ../inlnops.tok $^@
+$(proj_path)/h/inlnops.h: $(proj_path)/inlnops.tok ./mkopcode.exe
+        $]@ $(proj_path)/inlnops.tok $^@
 
-../h/fullops.h: ../fullops.tok ../inlnops.tok ./mkopcode.exe
-        $]@ ../fullops.tok ../inlnops.tok $^@
+$(proj_path)/h/fullops.h: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
+        $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
 
-mkopcode_opts = -fe=$^@
+$(womp_dir)/h/wmpmsg.h : $(womp_dir)/womp.msg
+!ifdef __LINUX__
+    perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
+!else
+    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p "$^@" $[@
+!endif
 
-./mkopcode.exe: ../mkopcode.c
+./mkopcode.exe: $(proj_path)/mkopcode.c
         $(bld_cl) $[@ $(mkopcode_opts)
         rm -f mkopcode.obj mkopcode.o
 
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.lnk *.exe *.lib *.rc *.res *.lst *.err *.pch *.map *.sym *.tmp *.ilk *.gh
-        rm -f ../mkopcode.exe mkopcode.exe
-        rm -f ../h/msg.gh ../h/wasmmsg.gh ../h/inlnops.h ../h/fullops.h
+        rm -f ./mkopcode.exe
+        rm -f $(proj_path)/h/inlnops.h $(proj_path)/h/fullops.h
+        rm -f $(proj_path)/h/msg.gh $(proj_path)/h/wasmmsg.gh
+        rm -f $(womp_dir)/h/wmpmsg.h

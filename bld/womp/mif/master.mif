@@ -103,10 +103,9 @@ usagej.rc : ../usage.sp
 
 ../h/wmpmsg.h : ../womp.msg
 !ifdef __LINUX__
-    perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > ../h/wmpmsg.h
+    perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    cp -f ../womp.msg ../h/wmpmsg.h
-    vi -q -d -i -s ..\h\makemsg.vi ..\h\wmpmsg.h
+    vi -q -d -i -s ..\h\makemsg.vi -p "$^@" $[@
 !endif
 
 !include $(womp_dir)/mif/depends.mif

@@ -18,8 +18,6 @@ mathr386_lib    = $(%watcom)\lib386\math3r.lib
 mathr387_dir    = $(%watcom)\lib386
 mathr387_lib    = $(%watcom)\lib386\math387r.lib
 
-asm = *wasm
-
 c_opts = /w4 /zp1
 !ifdef __386__
 comp = $(comp386)
@@ -66,14 +64,14 @@ wlib_opts += /s/t
 # .obj indicates an object that is in common with another compiler...
 #       for example:  obj387\wf387.exe and os2_387\wf387.exe share
 #       many object files.
-# .XBJ indicates an object that is dependant on the target and must
-#       be recompiled always.  XBJ was chose to stand out in the long
+# .xbj indicates an object that is dependant on the target and must
+#       be recompiled always.  xbj was chose to stand out in the long
 #       file lists.
-# .JBJ indicates objects that must be compiled when creating Japanese
+# .jbj indicates objects that must be compiled when creating Japanese
 #       versions
 #
 .extensions:
-.extensions: .exp .exe .2bj .3bj .XBJ .JBJ .obj .asm .c
+.extensions: .exp .exe .2bj .3bj .xbj .jbj .obj .asm .c
 
 !ifndef __386__
 !ifeq fp_model i87
@@ -86,11 +84,11 @@ wlib_opts += /s/t
 !endif
 .asm: $(f77_dir)\lg86\rt\asm386
 !endif
-.asm.XBJ:
-    $(asm) $[* $(asm_o_opt)$^. $(asm_opts)
+.asm.xbj:
+    $(as) $[* $(asm_o_opt)$^. $(asm_opts)
 
 .asm.obj:
-    $(asm) $[* $(asm_o_opt)$(share_objs)$^. $(asm_opts)
+    $(as) $[* $(asm_o_opt)$(share_objs)$^. $(asm_opts)
 
 !ifdef on_build_machine
 c_opts += /d1
@@ -112,14 +110,14 @@ compile = $(comp) $(c_opts) $[*
 !else
     $(compile)
 !endif
-.c.XBJ:
+.c.xbj:
 !ifdef japan_objs
-    $(compile)/fo=$(share_objs).XBJ
+    $(compile)/fo=$(share_objs).xbj
 !else
-    $(compile)/fo=.XBJ
+    $(compile)/fo=.xbj
 !endif
-.c.JBJ:
-    $(compile)/fo=.JBJ
+.c.jbj:
+    $(compile)/fo=.jbj
 .c.2bj .c.3bj:
     $(compile)/fo=$^@
 
@@ -127,7 +125,7 @@ compile = $(comp) $(c_opts) $[*
 .obj: $(share_objs)
 !endif
 !ifdef japan_objs
-.XBJ: $(share_objs)
+.xbj: $(share_objs)
 !endif
 
 !ifdef oshdrs

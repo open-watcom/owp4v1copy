@@ -3,6 +3,7 @@
 # Assembler files
 
 !include $(wasm_dir)\mif\inline.mif
+pre_obj_deps_wasm = $(wasm_dir)/h/inlnops.h
 common_objs += $(inline_objs)
 common_objs += asmalloc.obj
 common_objs += asmmsg.obj
