@@ -69,6 +69,8 @@ static void BrkHandler( int signo )
 
 void GUImain( void )
 {
+    struct sigaction sa;
+
     CmdStart = _argv[1];
     NumArgs = _argc - 1;
 
@@ -78,7 +80,9 @@ void GUImain( void )
     */
     setegid( getgid() );
     seteuid( getuid() );
-    signal( SIGINT, &BrkHandler );
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = BrkHandler;
+    sigaction( SIGINT, &sa, NULL );
     DebugMain();
 }
 
@@ -165,7 +169,7 @@ long _fork( char *cmd, unsigned len )
             dup2( DbgConHandle, 1 );
             dup2( DbgConHandle, 2 );
             close( DbgConHandle );
-            setpgid( 0, 0 );
+            setsid(); 
             execve(shell, argv, (const char **)environ);
             exit( 1 );
     } else {
@@ -173,7 +177,6 @@ long _fork( char *cmd, unsigned len )
             if( pid == -1 ) return( 0xffff0000 | errno );
             do {
             } while( waitpid( pid, NULL, 0 ) == -1 && errno == EINTR );
-            return( 0 );
     }
     return 0;
 }

@@ -1060,6 +1060,17 @@ unsigned ReqClear_watch( void )
     return( 0 );
 }
 
+typedef void (*sighandler_t)(int);
+static sighandler_t setsig( int sig, sighandler_t handler )
+{
+    struct sigaction sa, old_sa;
+
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = handler;
+    sigaction( sig, &sa, &old_sa );
+    return old_sa.sa_handler;
+}
+
 static unsigned ProgRun( int step )
 {
     static int          ptrace_sig = 0;
@@ -1082,14 +1093,14 @@ static unsigned ProgRun( int step )
 
     /* we only want child-generated SIGINTs now */
     do {
-        old = signal( SIGINT, SIG_IGN );
+        old = setsig( SIGINT, SIG_IGN );
         if( step ) {
             sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
         } else {
             sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
         }
         waitpid( pid, &status, 0 );
-        signal( SIGINT, old );
+        setsig( SIGINT, old );
         debug_continue = FALSE;
         if( WIFSTOPPED( status ) ) {
             switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
@@ -1171,10 +1182,10 @@ static unsigned ProgRun( int step )
                 regs.orig_eax = -1;
                 regs.eip--;
                 sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
-                oldsig = signal( SIGINT, SIG_IGN );
+                oldsig = setsig( SIGINT, SIG_IGN );
                 sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)psig );
                 waitpid( pid, &status, 0 );
-                signal( SIGINT, oldsig );
+                setsig( SIGINT, oldsig );
                 WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
                 ret->conditions = COND_LIBRARIES;
             } else {

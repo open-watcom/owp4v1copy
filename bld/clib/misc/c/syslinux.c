@@ -549,3 +549,8 @@ _WCRTLINK int mprotect( void *addr, size_t len, int prot )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int setsid( void )
+{
+    u_long res = sys_call0(SYS_setsid);
+    __syscall_return(int,res);
+}

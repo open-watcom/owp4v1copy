@@ -157,6 +157,7 @@ static bool TryXWindows()
     DbgConHandle = slavefd;
     if( DbgConHandle == -1 ) {
         StartupErr( "unable to open debugger console" );
+        return( FALSE );            
     }
     tcgetattr(slavefd, &termio);
     termio.c_lflag &= ~ECHO;
@@ -174,7 +175,7 @@ static bool TryXWindows()
     _AllocA( argv, (argc + 10) * sizeof( *argv ) );
 
     argv[0] = "xterm";
-    argv[1] = "-T";
+    argv[1] = "-title";
     argv[2] = "Open Watcom Debugger";
 
     argc = 3;
@@ -210,7 +211,12 @@ static bool TryXWindows()
     } while ( res != -1 && buf != '\n' );
     termio.c_lflag |= ECHO;
     tcsetattr(slavefd, TCSANOW, &termio);
-    
+
+    /* make slavefd a controlling tty */
+    setpgid( 0, XTermPid );
+    setsid();
+    ioctl( slavefd, TIOCSCTTY, 1 );
+
     signal( SIGHUP, &HupHandler );
     return( TRUE );
 }
