@@ -3,6 +3,9 @@
 */
 
 
+#ifndef __OS2DEF_H__
+#define __OS2DEF_H__
+
 #ifndef NULL
 #define NULL  0
 #endif
@@ -128,4 +131,6 @@ typedef struct _ICONINFO {
     ULONG   cbIconData;
     PVOID   pIconData;
 } ICONINFO, *PICONINFO;
+
+#endif
 
