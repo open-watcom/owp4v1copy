@@ -6,6 +6,8 @@ rcsdll_os2_386 = os2386
 
 rcsdll_qnx_i86 = qnxi86
 
+rcsdll_linux_386 = linux386
+
 rcsdll_win_i86 = wini86
 rcsdll_win_386 = wini86
 
