@@ -76,7 +76,7 @@
     #define _WCINTERRUPT
     #define _WCUNALIGNED
   #endif
-  #if defined(M_I86MH)
+  #if defined(M_I86HM)
     #define _WCDATA _WCFAR
   #elif defined(__SW_ND) || defined(__FUNCTION_DATA_ACCESS)
     #define _WCDATA
