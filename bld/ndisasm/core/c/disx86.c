@@ -34,8 +34,6 @@
 #include "distypes.h"
 #include "dis.h"
 
-#if DISCPU & DISCPU_x86
-
 extern long SEX( unsigned long v, unsigned bit );
 
 extern const dis_range          X86RangeTable[];
@@ -4017,5 +4015,3 @@ static void X86ByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
 const dis_cpu_data X86Data = {
     X86RangeTable, X86RangeTablePos, X86ByteSwapHook, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
 };
-
-#endif

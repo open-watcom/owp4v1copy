@@ -34,8 +34,6 @@
 #include "distypes.h"
 #include "dis.h"
 
-#if DISCPU & DISCPU_ppc
-
 extern long SEX( unsigned long v, unsigned bit );
 
 extern const dis_range          PPCRangeTable[];
@@ -1455,5 +1453,3 @@ static void PPCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
 const dis_cpu_data PPCData = {
     PPCRangeTable, PPCRangeTablePos, PPCByteSwapHook, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
 };
-
-#endif

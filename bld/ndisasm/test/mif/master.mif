@@ -1,38 +1,35 @@
 proj_name = wdistest
+
+host_cpu = 386
+
+!ifdef __LINUX__
+host_os = linux
+!else ifdef __DOS__
+host_os = dos
+!else ifdef __NT__
+host_os = nt
+!else ifdef __OS2__
+host_os = os2
+!endif
+
 name = dis
+
+all: $(name).exe .symbolic
 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.c: $(disasm_dir)/core/c;$(disasm_dir)/test/c
-.h: $(disasm_dir)/core/h
+!include ../../mif/dis.mif
 
-inc_dirs = $(disasm_dir)/core/h;$(watcom_dir)/h
+extra_c_flags = -DNDIS_$(target_cpu)
 
-dis_objs =  &
-        disentry.obj &
-        disaxp.obj &
-        disppc.obj &
-        disx86.obj &
-        disjvm.obj &
-        dissparc.obj
+.c: $(dis_srcs);$(disasm_dir)/test/c
+.h: $(dis_hdirs)
+
+inc_dirs = $(dis_includes)
 
 test_objs = main.obj $(dis_objs)
 
 $(name).exe : distbls.gh $(test_objs)
         $(bld_link) debug all name $@ option quiet, map file { $(test_objs) }
-
-.c.obj:
-        @set include=$(inc_path)
-        $(bld_cc) -zq -d2 $[@
-
-distbls.gh : ./disbuild.exe
-        $[@
-
-disbuild_headers = $(disasm_dir)/core/h/insaxp.h $(disasm_dir)/core/h/refaxp.h $(disasm_dir)/core/h/regaxp.h
-disbuild_headers += $(disasm_dir)/core/h/insppc.h $(disasm_dir)/core/h/refppc.h $(disasm_dir)/core/h/regppc.h
-disbuild_headers += $(disasm_dir)/core/h/insx86.h $(disasm_dir)/core/h/refx86.h $(disasm_dir)/core/h/regx86.h
-
-./disbuild.exe : $(disasm_dir)/core/c/disbuild.c $(disbuild_headers)
-        $(bld_cl) -zq $[@ $(wcl_util_opts) -i"../h;$(disasm_dir)/core/h"

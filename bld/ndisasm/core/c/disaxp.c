@@ -34,8 +34,6 @@
 #include "distypes.h"
 #include "dis.h"
 
-#if DISCPU & DISCPU_axp
-
 extern long SEX( unsigned long v, unsigned bit );
 
 extern const dis_range          AXPRangeTable[];
@@ -587,5 +585,3 @@ static void AXPByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
 const dis_cpu_data AXPData = {
     AXPRangeTable, AXPRangeTablePos, AXPByteSwapHook, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
 };
-
-#endif

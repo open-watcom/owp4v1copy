@@ -35,8 +35,6 @@
 #include "distypes.h"
 #include "dis.h"
 
-#if DISCPU & DISCPU_sparc
-
 #include "bool.h"
 #include "sparcenc.h"
 
@@ -351,5 +349,3 @@ static void SPARCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
 const dis_cpu_data SPARCData = {
     SPARCRangeTable, SPARCRangeTablePos, SPARCByteSwapHook, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
 };
-
-#endif

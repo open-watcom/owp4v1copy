@@ -1,5 +1,7 @@
-#pmake: all build os_nt cpu_386
-host_CPU = 386
-host_OS = nt
+#pmake: build os_nt cpu_386
+host_cpu = 386
+host_os = nt
+
+target_cpu = all
 
 !include ../mif/master.mif

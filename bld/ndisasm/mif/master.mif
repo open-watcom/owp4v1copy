@@ -1,7 +1,5 @@
 proj_name = wdis
 
-target_cpu = all
-
 !ifndef wdis_autodepends
 wdis_autodepends = .AUTODEPEND
 !endif
@@ -44,15 +42,15 @@ extra_c_flags_386 = -fpc
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
 extra_c_flags_trmem    = $(trmem_cflags)
 
-inc_dirs  = -I. -I"$(disasm_dir)/core/h" -I"$(disasm_dir)/stand/h" 
+inc_dirs  = -I. $(dis_includes) -I"$(disasm_dir)/stand/h" 
 inc_dirs += -I"$(disasm_dir)/h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" 
 inc_dirs += -I"$(comp_cfg_dir)/h"
 
 pre_deps_osi = $(tools_root)/os2ldr.exe
 pre_deps_qnx = wdis.u
 
-.c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(disasm_dir)/core/c;$(lib_misc_dir)/c
-.h: $(disasm_dir)/stand/h;$(disasm_dir)/core/h;$(lib_misc_dir)/h
+.c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(dis_srcs);$(lib_misc_dir)/c
+.h: $(disasm_dir)/stand/h;$(dis_hdirs);$(lib_misc_dir)/h
 .rc : $(disasm_dir)/stand/h
 .msg : $(disasm_dir)/stand
 
@@ -78,10 +76,10 @@ stand_objs      = args.obj &
                 srcmix.obj &
                 refproc.obj
 
-wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj $(trmem_objs)
+disasm_objs = $(stand_objs) $(dis_objs) demangle.obj $(trmem_objs)
 
-$(exe_name) : $(proj_name).res $(dis_prereq) $(wdisasm_objs) $(pre_deps_$(host_os)) $(xlibs)
-        $(cl) $(clflags) $(wdisasm_objs) $(xlibs) $(cl_libs)
+$(exe_name) : $(proj_name).res $(dis_prereq) $(disasm_objs) $(pre_deps_$(host_os)) $(xlibs)
+        $(cl) $(clflags) $(disasm_objs) $(xlibs) $(cl_libs)
 !ifeq host_os osi
         w32bind $^&.rex $^@ $(tools_root)/os2ldr.exe
         rm -f $^&.rex

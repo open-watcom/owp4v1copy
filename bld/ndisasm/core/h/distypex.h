@@ -24,13 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Target processor platform related declarations
 *
 ****************************************************************************/
 
 
 #ifndef DISTYPEX_H
+#define DISTYPEX_H
+
 #include "watcom.h"
 #include "bool.h"
 
@@ -41,7 +42,21 @@
 #define DISCPU_jvm      0x08
 #define DISCPU_sparc    0x10
 
-#include "discpu.h"
+#if defined( NDIS_axp )
+#define DISCPU DISCPU_axp
+#elif defined( NDIS_ppc )
+#define DISCPU DISCPU_ppc
+#elif defined( NDIS_x86 )
+#define DISCPU DISCPU_x86
+#elif defined( NDIS_jvm )
+#define DISCPU DISCPU_jvm
+#elif defined( NDIS_sparc )
+#define DISCPU DISCPU_sparc
+#elif defined( NDIS_test )
+#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_jvm | DISCPU_sparc )
+#else
+#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_sparc )
+#endif
 
 typedef struct dis_range        dis_range;
 
@@ -293,5 +308,4 @@ struct dis_handle {
     bool                need_bswap;
 };
 
-#define DISTYPEX_H
 #endif

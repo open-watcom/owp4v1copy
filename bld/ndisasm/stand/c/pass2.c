@@ -537,7 +537,8 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
     }
 
     PrintHeader( sec );
-    PrintAssumeHeader( sec );
+    if( size && sec_label_list )
+        PrintAssumeHeader( sec );
     flags = 0;
     if( GetMachineType() == ORL_MACHINE_TYPE_I386 ) {
         if( ( GetFormat() != ORL_OMF ) ||

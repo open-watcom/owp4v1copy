@@ -107,7 +107,7 @@ int main( void )
         } else if( memcmp( op_buff, "cpu", 3 ) == 0 ) {
             if( cpu != DISCPU_none ) DisFini( &handle );
             cpu = strtoul( &op_buff[4], NULL, 16 );
-            if( DisInit( cpu, &handle ) != DR_OK ) {
+            if( DisInit( cpu, &handle, 0 ) != DR_OK ) {
                 printf("Init Failed\n");
                 cpu = DISCPU_none;
             }

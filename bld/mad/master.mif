@@ -36,7 +36,7 @@ additional_cleanup = *.d32 *.mad
 
 # cflags stuff
 ###############
-extra_c_flags = -DMD_$(target_cpu) -s
+extra_c_flags = -DMD_$(target_cpu) -DNDIS_$(target_cpu) -s
 extra_c_flags_i86 = -fpc -zu
 extra_c_flags_386 = -fpc
 extra_c_flags_win = -zc
