@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger expression handling, Part III (Type conversion).
 *
 ****************************************************************************/
 
@@ -652,9 +651,6 @@ static bool (* const ConvFunc[])( stack_entry *, conv_class ) = {
 };
 
 
-#define UTRUNC( typ )   (U32ToU64( (typ)U32FetchTrunc( entry->v.uint ), &entry->v.uint))
-#define STRUNC( typ )   (I32ToI64( (typ)I32FetchTrunc( entry->v.sint ), &entry->v.sint))
-
 /*
  * ConvertTo -- convert 'entry' to the given 'class'.
  *      'entry' should be an rvalue.
@@ -673,22 +669,22 @@ void ConvertTo( stack_entry *entry, type_kind k, type_modifier m, unsigned s )
     from = ConvIdx( &entry->info );
     switch( from ) {
     case U1:
-        UTRUNC( unsigned_8 );
+        U32ToU64( U8FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case U2:
-        UTRUNC( unsigned_16 );
+        U32ToU64( U16FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case U4:
-        UTRUNC( unsigned_32 );
+        U32ToU64( U32FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case I1:
-        STRUNC( signed_8 );
+        I32ToI64( I8FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case I2:
-        STRUNC( signed_16 );
+        I32ToI64( I16FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case I4:
-        STRUNC( signed_32 );
+        I32ToI64( I32FetchNative( entry->v.uint ), &entry->v.uint );
         break;
     case F4:
         DToLD( (float)LDToD( &entry->v.real ), &entry->v.real );

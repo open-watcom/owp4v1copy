@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support for 64-bit integers (no native 64-bit type required).
 *
 ****************************************************************************/
 
@@ -137,10 +136,22 @@ int  U64Cnv16( unsigned_64 *res, char c );
 #define U32FetchTrunc( x )      ((x).u._32[I64LO32])
 #define I32FetchTrunc( x )      ((signed_32)(x).u._32[I64LO32])
 
+/* Note about the FetchNative macros: These assume that the value is stored
+ * in memory as a non-64bit type, starting at the lowest address. That is,
+ * it must be accessed as the first entry of the appropriate array (u._16
+ * array for 16-bit value etc.) *regardless* of host endianness.
+ */
+#define U32FetchNative( x )     ((x).u._32[0])
+#define I32FetchNative( x )     ((signed_32)(x).u._32[0])
+#define U16FetchNative( x )     ((x).u._16[0])
+#define I16FetchNative( x )     ((signed_16)(x).u._16[0])
+#define U8FetchNative( x )      ((x).u._8[0])
+#define I8FetchNative( x )      ((signed_8)(x).u._8[0])
+
 #if defined( __BIG_ENDIAN__ )
-#   define I64Val(h,l) { h, l }
+#   define I64Val( h, l ) { h, l }
 #else
-#   define I64Val(h,l) { l, h }
+#   define I64Val( h, l ) { l, h }
 #endif
 
 // is the U64 a valid U32?

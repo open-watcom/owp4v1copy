@@ -99,14 +99,22 @@ typedef struct {
 } unsigned_64;
 typedef unsigned_64     signed_64;
 
-/* for little endian machines */
+/* Macros for low/high end access on little and big endian machines */
 
 #if defined( __BIG_ENDIAN__ )
     #define I64LO32     1
     #define I64HI32     0
+    #define I64LO16     3
+    #define I64HI16     0
+    #define I64LO8      7
+    #define I64HI8      0
 #else
     #define I64LO32     0
     #define I64HI32     1
+    #define I64LO16     0
+    #define I64HI16     3
+    #define I64LO8      0
+    #define I64HI8      7
 #endif
 
 /* Define _crtn for prototypes for external C routines called from C++.
