@@ -14,10 +14,11 @@ aliasgen.exe : $(src)
 clean : .symbolic
     @if exist aliasgen.exe @erase aliasgen.exe
     @if exist ..\a\*.asm @erase ..\a\*.asm
-    @if exist ..\objs.mif @erase ..\objs.mif
     @if exist *.?bj @erase *.?bj
     @if exist *.err @erase *.err
 
+realclean : .symbolic clean
+    @if exist ..\objs.mif @erase ..\objs.mif
 
 #
 # list of projects required to build the alias sub-component
