@@ -127,7 +127,7 @@ wprof.res : wprof.rc
 #       wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -r foros2pm.rc
+        $(lang_root)\binp\rc -i $(lang_root)\h\os2 -r foros2pm.rc
         copy foros2pm.res wprof.res
         set path=$(%opath)
         @set include=$(%oinc)
