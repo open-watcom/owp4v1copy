@@ -222,7 +222,9 @@ static mad_disasm_control DisasmControl( mad_disasm_data *dd, const mad_register
     case DI_X86_int:
         return( MDC_SYSCALL | MDC_TAKEN );
     case DI_X86_call:
+    case DI_X86_call2:
     case DI_X86_call3:
+    case DI_X86_call4:
         return( MDC_CALL | MDC_TAKEN );
     case DI_X86_jmp:
     case DI_X86_jmp1:

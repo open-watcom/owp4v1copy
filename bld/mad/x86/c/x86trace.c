@@ -83,11 +83,13 @@ static void BreakRet( mad_trace_data *td, mad_disasm_data *dd, const mad_registe
     }
     switch( td->prev_ins_type ) {
     case DI_X86_call:
+    case DI_X86_call2:
     case DI_X86_ret:
     case DI_X86_ret2:
         td->brk.mach.segment = mr->x86.cpu.cs;
         break;
     case DI_X86_call3:
+    case DI_X86_call4:
     case DI_X86_int:
     case DI_X86_into:
     case DI_X86_iret:
@@ -123,7 +125,9 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
     case MTRK_OVER:
         switch( dd->ins.type ) {
         case DI_X86_call:
+        case DI_X86_call2:
         case DI_X86_call3:
+        case DI_X86_call4:
         case DI_X86_int:
         case DI_X86_into:
             BreakNext( td, dd );
@@ -270,7 +274,9 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
     case MTRH_BREAK:
         switch( td->prev_ins_type ) {
         case DI_X86_call:
+        case DI_X86_call2:
         case DI_X86_call3:
+        case DI_X86_call4:
         case DI_X86_int:
         case DI_X86_into:
             MCNotify( MNT_EXECUTE_LONG, NULL );
