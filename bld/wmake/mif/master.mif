@@ -11,7 +11,7 @@ xname       = wmk
 .CONTINUE
 
 .extensions:
-.extensions: . .qnx .exe .obj .wbj .asm .c .inc .h .mif
+.extensions: . .qnx .exe .obj .wbj .asm .c .inc .h .mif .cpp
 
 !ifdef __LINUX__
 extra_c_flags += -fo=.obj

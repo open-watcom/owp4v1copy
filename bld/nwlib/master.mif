@@ -110,8 +110,9 @@ $(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 
 error.obj : ../h/msg.gh error.c
 
+wcl_flags = -fe=$@
 ../mkstr.exe : ../mkstr.c ../wlib.msg
-    $(bld_cl) -fe=$@ $[@ -I..
+    $(bld_cl) $(wcl_flags) $[@ -I..
 
 ../h/msg.gh : ../mkstr.exe
     *$< $@
