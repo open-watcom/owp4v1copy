@@ -1,31 +1,27 @@
 .section Header Files
 .*
 .np
-The following header files are supplied with the C library.
-As has been previously noted, when a library function is referenced in
-a source file, the related header files (shown in the synopsis for
-that function) should be included into that source file.
-The header files provide the proper declarations for the functions and
-for the number and types of arguments used with them.
-Constant values used in conjunction with the functions are also
-declared.
-The files can be included in any order.
+The following header files are supplied with the C library. As has been
+previously noted, when a library function is referenced in a source
+file, the related header files (shown in the synopsis for that function)
+should be included into that source file. The header files provide the
+proper declarations for the functions and for the number and types of
+arguments used with them. Constant values used in conjunction with the
+functions are also declared. The files can be included multiple times
+and in any order.
 .if '&machsys' eq 'PP' .do begin
 .np
 When the &company C compiler option "za" is used ("ANSI conformance"),
 the macro
 .kw NO_EXT_KEYS
-is predefined.
-The "za" option is used when you are creating an application that must
-conform to a certain standard, whether it be ANSI or POSIX.
-The effect on the inclusion of ANSI- and POSIX-defined header files is
-that certain portions of the header files are omitted.
-For ANSI header files, these are the portions that go beyond the ANSI
-standard.
+is predefined. The "za" option is used when you are creating an
+application that must conform to a certain standard, whether it be ANSI
+or POSIX. The effect on the inclusion of ANSI- and POSIX-defined header
+files is that certain portions of the header files are omitted. For ANSI
+header files, these are the portions that go beyond the ANSI standard.
 For POSIX header files, these are the portions that go beyond the POSIX
-standard.
-Feature test macros may then be defined to select those portions which
-are omitted.
+standard. Feature test macros may then be defined to select those
+portions which are omitted.
 .if &unifnc eq 1 .do begin
 Three feature test macros may be defined.
 .do end
@@ -159,18 +155,14 @@ feature test macro.
 When the &company C compiler option "za" is used ("ANSI conformance"),
 the macro
 .kw NO_EXT_KEYS
-is predefined.
-The "za" option is used when you are creating an application that must
-conform to a certain standard, whether it be ANSI or POSIX.
-The effect on the inclusion of ANSI- and POSIX-defined header files is
-that certain portions of the header files are omitted.
-For ANSI header files, these are the portions that go beyond the ANSI
-standard.
+is predefined. The "za" option is used when you are creating an
+application that must conform to a certain standard, whether it be ANSI
+or POSIX. The effect on the inclusion of ANSI- and POSIX-defined header
+files is that certain portions of the header files are omitted. For ANSI
+header files, these are the portions that go beyond the ANSI standard.
 For POSIX header files, these are the portions that go beyond the POSIX
-standard.
-Feature test macros may then be defined to select those portions which
-are omitted.
-Two feature test macros may be defined.
+standard. Feature test macros may then be defined to select those
+portions which are omitted. Two feature test macros may be defined.
 .begterm 17
 .term _POSIX_SOURCE
 Include those portions of the ANSI header files which relate to the
@@ -193,10 +185,10 @@ so it is not necessary to define
 also.
 .endterm
 .np
-Feature test macros may be defined on the command line or in the
-source file before any header files are included.
-The latter is illustrated in the following example in which an ANSI
-and POSIX conforming application is being developed.
+Feature test macros may be defined on the command line or in the source
+file before any header files are included. The latter is illustrated in
+the following example in which an ANSI and POSIX conforming application
+is being developed.
 .millust begin
     #define _POSIX_SOURCE
     #include <limits.h>
@@ -254,8 +246,8 @@ feature test macro.
 .section Header Files in &hdrdir.
 .*
 .np
-The following header files are provided with the software.
-The header files that are located in the
+The following header files are provided with the software. The header
+files that are located in the
 .id &hdrdirup.
 directory are described first.
 .dfbeg
@@ -264,8 +256,7 @@ directory are described first.
 .df assert.h
 This ANSI header file is required when an
 .kw assert
-macro is used.
-These assertions will be ignored when the identifier
+macro is used. These assertions will be ignored when the identifier
 .mono NDEBUG
 is defined.
 .do end
@@ -273,29 +264,28 @@ is defined.
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df bios.h
-This header file contains structure definitions and function
-prototypes for all of the BIOS related functions.
+This header file declares all BIOS related functions.
 .do end
 .do end
 .*------------------------------
 .df conio.h
 .ix '&KbIo'
 .ix '&PortIo'
-This header file provides the declarations for
+This header file declares
 .if '&machsys' ne 'PP' .do begin
 console and
 .do end
 Intel 80x86 port input/output functions.
 .*------------------------------
 .df ctype.h
-This ANSI header file provides the declarations for functions which
-manipulate characters.
+This ANSI header file declares functions that perform character
+classification and case conversion operations. Similar functions for
+wide characters are declared in <wctype.h>.
 .*------------------------------
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df direct.h
-This header file provides the declarations for functions related to
-directories and for the type
+This header file declares functions related to directories and the type
 .kw DIR
 which describes an entry in a directory.
 .do end
@@ -303,8 +293,8 @@ which describes an entry in a directory.
 .*------------------------------
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
 .df dirent.h
-This POSIX header file provides the declarations for functions related
-to directories and for the type
+This POSIX header file declares functions related to directories and
+the type
 .kw DIR
 which describes an entry in a directory.
 .do end
@@ -312,9 +302,8 @@ which describes an entry in a directory.
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df dos.h
-This header file is used with functions that interact with DOS.
-It includes the definitions for these functions, symbolic names for
-the numbers of DOS calls, definitions for the
+This header file declares functions that interact with DOS. It includes
+the definitions of the
 .kw FP_OFF
 .ct,
 .kw FP_SEG
@@ -337,8 +326,7 @@ describes the input parameter to an "interrupt" function.
 .do end
 .*------------------------------
 .df env.h
-This POSIX header file contains prototypes for environment string
-functions.
+This POSIX header file declares environment string functions.
 .*------------------------------
 .df errno.h
 .ix '&Errs'
@@ -350,13 +338,12 @@ and provides the symbolic names for error codes that can be placed in
 the error variable.
 .*------------------------------
 .df fcntl.h
-This POSIX header file provides the flags used by the
+This POSIX header file defines the flags used by the
 .if '&machsys' ne 'QNX' .do begin
 .kw open
 and
 .kw sopen
-functions.
-The function declarations for these are found in the
+functions. The function declarations for these functions are found in the
 .hdrfile &iohdr
 header file.
 .do end
@@ -371,46 +358,48 @@ and
 functions.
 .do end
 .*------------------------------
+.df fenv.h
+This ISO C99 header file defines several types and declares several
+functions that give access to the floating point environment. These
+functions can be used to control status flags and control modes in the
+floating point processor.
+.*------------------------------
 .df float.h
-This ANSI header file contains declarations for constants related to
-floating-point numbers, declarations for low-level
-floating-point functions, and the declaration of the floating-point
-exception codes.
+This ANSI header file declares constants related to floating-point
+numbers, declarations for low-level floating-point functions, and the
+declaration of the floating-point exception codes.
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df fnmatch.h
-This header file provides the declaration for the
+This header file declares the pattern matching function
 .kw fnmatch
-pattern matching function.
 .do end
 .*------------------------------
 .if '&machsys' ne 'PP' .do begin
 .df graph.h
 This header file contains structure definitions and function
-prototypes for the &company C Graphics library functions.
+declarations for the &company C Graphics library functions.
 .do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df grp.h
-This POSIX header file contains structures and prototypes for group
-operations.
+This POSIX header file contains structure definitions and function
+declarations for group operations.
 .do end
 .*------------------------------
 .if '&machsys' eq 'PP' .do begin
 .df i86.h
-This header file is used with functions that interact with the Intel
-architecture.
+This header file contains structure definitions and function
+declarations for interacting with the Intel architecture.
 .do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df i86.h
 This header file is used with functions that interact with the Intel
-architecture.
-It defines the structs and unions used to handle the input and output
-registers for the Intel 80x86 and 80386/80486 interrupt interface
-routines.
-It includes prototypes for the interrupt functions, definitions for
-the
+architecture. It defines the structs and unions used to handle the input
+and output registers for the Intel 80x86 and 80386/80486 interrupt
+interface routines. It includes prototypes for the interrupt functions,
+definitions for the
 .kw FP_OFF
 .ct,
 .kw FP_SEG
@@ -429,13 +418,23 @@ describes the input parameter to an "interrupt" function.
 .sfend
 .do end
 .*------------------------------
+.df inttypes.h
+This ISO C99 header file includes <stdint.h> and expands on it by
+definition macros for printing and scanning specific sized integer
+types. This header also declares several functions for manipulating
+maximum sized integers.
+.np
+Note that the format macros are not visible in C++ programs unless the
+macro
+.kw __STDC_FORMAT_MACROS
+is defined.
+.*------------------------------
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df io.h
-This header file contains the declarations for functions that perform
-input/output operations at the operating system level.
-These functions use file &handle.s to reference files or devices.
-The function
+This header file declares functions that perform input/output
+operations at the operating system level. These functions use file
+&handle.s to reference files or devices. The function
 .kw fstat
 is declared in the
 .hdrfile sys&pc.stat.h
@@ -458,21 +457,19 @@ function which is also declared.
 .*------------------------------
 .if '&machsys' ne 'FOX' .do begin
 .df malloc.h
-This header file provides declarations for the memory allocation and
-deallocation functions.
+This header file declares the memory allocation and deallocation
+functions.
 .do end
 .*------------------------------
 .df math.h
 .ix '&Math'
-This ANSI header file contains declarations for the mathematical
-functions (which operate with floating-point numbers) and for the
-structures:
+This ANSI header file declares the mathematical functions (which operate
+with floating-point numbers) and the structures:
 .sfbeg
 .sf exception
 describes the exception structure passed to the
 .kw matherr
-function;
-symbolic constants for the types of exceptions are included
+function; symbolic constants for the types of exceptions are included
 .sf complex
 declares a complex number
 .sfend
@@ -482,34 +479,31 @@ declares a complex number
 .ix 'Multimedia Extension'
 .ix 'MMX'
 .ix 'IA MMX'
-This header file is used with functions that interact with the Intel
-Architecture Multimedia Extensions.
-It defines the datatype used to store multimedia values:
+This header file declares functions that interact with the Intel
+Architecture Multimedia Extensions. It defines the datatype used to
+store multimedia values:
 .sfbeg
 .sf __m64
-describes the 64-bit multimedia data element.
-Note: the underlying implementation details of this datatype are
-subject to change.
-Other compilers may implement a similar datatype in a different
-manner.
+describes the 64-bit multimedia data element. Note: the underlying
+implementation details of this datatype are subject to change. Other
+compilers may implement a similar datatype in a different manner.
 .sfend
 .np
-It also contains prototypes for multimedia functions and pragmas for
-the in-line generation of code that operates on multimedia registers.
+It also contains prototypes for multimedia functions and pragmas for the
+in-line generation of code that operates on multimedia registers.
 .do end
 .*------------------------------
 .if '&machsys' ne 'FOX' .do begin
 .if '&machsys' ne 'PP' .do begin
 .df process.h
 .ix '&Process'
-This header file contains function declarations for the
+This header file declares the
 .kw spawn...
 functions, the
 .kw exec...
 functions, and the
 .kw system
-function.
-The file also contains declarations for the constants
+function. The file also contains declarations for the constants
 .kw P_WAIT
 .ct,
 .kw P_NOWAIT
@@ -523,26 +517,25 @@ and
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df pwd.h
-This POSIX header file contains structure definitions and prototypes
-for password operations.
+This POSIX header file contains structure definitions and function
+declarations for password operations.
 .do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df regex.h
-This header file contains structure definitions and prototypes
-for regular expression handling.
+This header file contains structure definitions and function
+declarations for regular expression handling.
 .do end
 .*------------------------------
 .df search.h
-This header file contains function prototypes for the
+This header file declares the functions
 .kw lfind
 and
 .kw lsearch
-functions.
 .*------------------------------
 .df setjmp.h
 .ix 'Non-local jumps'
-This ANSI header file provides declarations to be used with the
+This ANSI header file declares the
 .kw setjmp
 and
 .kw longjmp
@@ -550,15 +543,14 @@ functions.
 .*------------------------------
 .if '&machsys' ne 'PP' .do begin
 .df share.h
-This header file defines constants for shared access to files
-using the
+This header file defines constants for shared access to files using the
 .kw sopen
 function.
 .do end
 .*------------------------------
 .if '&machsys' ne 'FOX' .do begin
 .df signal.h
-This ANSI header file contains the declarations related to the
+This ANSI header file declares the
 .kw signal
 and
 .kw raise
@@ -566,12 +558,34 @@ functions.
 .do end
 .*------------------------------
 .df stdarg.h
-This ANSI header file contains the declarations for the macros which
-handle variable argument lists.
+This ANSI header file defines the macros which handle variable argument
+lists.
+.*------------------------------
+.df stdbool.h
+This ISO C99 header file defines the macro
+.kw bool
+and the macros
+.kw true
+and
+.kw false
+for use in C programs. If this header is included in a C++ program there
+is no effect. The C++ reserved words will not be redefined. However the
+definition of
+.kw bool
+,
+.kw true
+, and
+.kw false
+used in a C program will be compatible with their C++ counterparts. In
+particular, a C function declared as taking a
+.kw bool
+parameter and a structure containing a
+.kw bool
+member can both be shared between C and C++ without error.
 .*------------------------------
 .df stddef.h
-This ANSI header file contains declarations for a few popular
-constants including
+This ANSI header file defines a few popular constants and types
+including
 .mono NULL
 (null pointer),
 .kw size_t
@@ -583,26 +597,37 @@ It also contains a declaration for the
 .kw offsetof
 macro.
 .*------------------------------
+.df stdint.h
+This ISO C99 header file defines numerous type names for integers of
+various sizes. Such type names provide a reasonably portable way to
+refer to integers with a specific number of bits. This header file also
+defines macros that describe the minimum and maximum values for these
+types (similar to the macros in limits.h), and macros for writing
+integer constants with specific sized types.
+.np
+Note that in C++ programs the limit macros are not visible unless the
+macro
+.kw __STDC_LIMIT_MACROS
+is defined. Similarly the constant writing macros are not visible unless
+the macro
+.kw __STDC_CONSTANT_MACROS
+is defined.
+.*------------------------------
 .if '&machsys' ne 'FOX' .do begin
 .df stdio.h
-This ANSI header file relates to "standard" input/output functions.
-Files, devices and directories are referenced using pointers to
-objects of the type
+This ANSI header file declares the standard input/output functions.
+Files, devices and directories are referenced using pointers to objects
+of the type
 .kw FILE.
-The header file contains declarations for these functions and macros,
-defines the
-.kw FILE
-type and contains various constants related to files.
 .do end
 .*------------------------------
 .df stdlib.h
-This ANSI header file contains declarations for many standard
-functions excluding those declared in other header files discussed in
-this section.
+This ANSI header file declares many standard functions excluding those
+declared in other header files discussed in this section.
 .*------------------------------
 .df string.h
-This ANSI header file contains declarations for functions which
-manipulate strings or blocks of memory.
+This ANSI header file declares functions that manipulate strings or
+blocks of memory.
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df tar.h
@@ -623,16 +648,15 @@ This POSIX header file contains terminal I/O system types.
 .df time.h
 .ix '&TimeFunc'
 .ix tm
-This ANSI header file declares the functions related to times and
-dates and defines the structured type
+This ANSI header file declares functions related to times and dates and
+defines the structure
 .kw struct tm.
 .*------------------------------
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
 .df unistd.h
-This POSIX header file contains the declarations for functions that
-perform input/output operations at the operating system level.
-These functions use file &handle.s to reference files or devices.
-The function
+This POSIX header file declares functions that perform input/output
+operations at the operating system level. These functions use file
+&handle.s to reference files or devices. The function
 .kw fstat
 is declared in the
 .hdrfile sys&pc.stat.h
@@ -647,20 +671,19 @@ UNIX code.
 .*------------------------------
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
 .df utime.h
-This POSIX header file contains a declaration for the
+This POSIX header file declares the
 .kw utime
-function and for the structured type
+function and defines the structure
 .kw utimbuf
-used by it.
+that is used by it.
 .do end
 .*------------------------------
 .df varargs.h
-This UNIX System V header file provides an alternate way of
-handling variable argument lists.
-The equivalent ANSI header file is <stdarg.h>.
+This UNIX System V header file provides an alternate way of handling
+variable argument lists. The equivalent ANSI header file is <stdarg.h>.
 .*------------------------------
 .df wchar.h
-This header file contains definitions for data types including
+This ISO C99 header file defines several data types including
 .kw wchar_t,
 .kw size_t,
 .kw mbstate_t
@@ -678,23 +701,27 @@ value as well as
 (a character that is not in the set of "wchar_t" characters
 and that is used to indicate
 .us end-of-file
-on an input stream).
-The functions that are declared in this header file are
-grouped as follows:
+on an input stream). The functions that are declared in this header file
+are grouped as follows:
 .begbull
 .bull
-wide character classification and case conversion;
+Wide character classification and case conversion.
 .bull
-input and output of wide characters, or multibyte characters, or both;
+Input and output of wide characters, or multibyte characters, or both.
 .bull
-wide string numeric conversion;
+Wide string numeric conversion.
 .bull
-wide string manipulation;
+Wide string manipulation.
 .bull
-wide string data and time conversion; and
+Wide string data and time conversion.
 .bull
-conversion between multibyte and wide character sequences.
+Conversion between multibyte and wide character sequences.
 .endbull
+.*------------------------------
+.df wctype.h
+This ISO C99 header file declares functions that perform characater
+classification and case conversion operations on wide characters.
+Similar functions for ordinary characters are declared in <ctype.h>.
 .*------------------------------
 .dfend
 .*
