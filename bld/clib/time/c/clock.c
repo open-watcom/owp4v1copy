@@ -105,5 +105,10 @@ static void __clock_init(void)
     get_clock_time(&init_seconds, &init_milliseconds);
 } /* __clock_init() */
 
-AXI( __clock_init, INIT_PRIORITY_LIBRARY )
+/* Note: __clock_init() ends up calling tzset() which ends up querying the
+ * TZ envirnment variable. Because getenv() access has also
+ * INIT_PRIORITY_LIBRARY, we must make sure __clock_init() can't be executed
+ * before the environment access is initialised!!   MN
+ */
+AXI( __clock_init, INIT_PRIORITY_LIBRARY + 1)
 
