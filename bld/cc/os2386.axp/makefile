@@ -1,7 +1,7 @@
-#pmake: axp alpha cpu_386 os_os2 target_axp
-host_CPU = 386
-host_OS = os2
-host_CG = os220
-target_CPU = axp
-cc_version = tree
+#pmake: build axp alpha cpu_386 os_os2 target_axp
+
+host_cpu   = 386
+host_os    = os2
+target_cpu = axp
+
 !include ../master.mif
