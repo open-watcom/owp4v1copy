@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  16-bit DPMI stub loader.
 ;*
 ;*****************************************************************************
 
@@ -34,8 +33,6 @@
 
 .386
 include struct.inc
-
-        DOSSEG
 
         extrn   __Int21 : near
         extrn   __fInt21: near
