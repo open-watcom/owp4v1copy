@@ -36,7 +36,9 @@
 #ifdef __OS2__
    #include <stdio.h>
 #endif
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 
 #include "macros.h"
 #include "make.h"
@@ -556,6 +558,10 @@ extern void ExitSafe( int rc )
     exit( rc );
 }
 
+#ifndef __WATCOMC__
+const char **_argv;
+#endif
+
 #pragma off(unreferenced);
 #if !defined( __WINDOWS__ )
 extern void main( int argc, const char **argv )
@@ -567,6 +573,9 @@ extern void wmake_main( int argc, const char **argv )
 {
 
     assert( argv[argc] == NULL );       /* part of ANSI standard */
+#ifndef __WATCOMC__
+    _argv = argv;
+#endif
     InitSignals();
     InitHardErr();
     init( argv );                       /* initialize, process cmdline */

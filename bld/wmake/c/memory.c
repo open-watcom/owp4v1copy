@@ -225,7 +225,7 @@ STATIC void memGrow( void )
     _nheapgrow();
     _fheapgrow();
 #else
-#ifndef __NT__
+#if !defined(__NT__) && !defined(__UNIX__)
     _heapgrow();
 #endif
 #endif
@@ -387,7 +387,7 @@ extern void MemShrink( void )
 #ifdef USE_FAR
     _nheapshrink();
     _fheapshrink();
-#else
+#elif !defined(__LINUX__)
     _heapshrink();
 #endif
     largeNearSeg = FALSE;

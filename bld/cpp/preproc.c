@@ -37,7 +37,10 @@
 #include <fcntl.h>
 #include <time.h>
 #include "preproc.h"
-#ifdef UNIX
+#ifndef UNIX
+#define UNIX __UNIX__
+#endif
+#if defined( UNIX ) && !defined( __WATCOMC__ )
     #include "clibext.h"
     #include "rotate.h"
 #endif

@@ -30,7 +30,9 @@
 ****************************************************************************/
 
 #include <stdio.h>
+#ifdef __WATCOMC__
 #include <conio.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -257,7 +259,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
             switch( ch ) {
                 /* case statements are sorted in ascii order */
             case 'D' :
-                dest = strDec2( dest, va_arg( args, UINT16 ) );
+                dest = strDec2( dest, (UINT16)va_arg( args, unsigned ) );
                 positnArg( args, (UINT16)sizeof(UINT16) );
                 break;
             case 'C' :
@@ -297,7 +299,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 positnArg( args, (UINT16)sizeof(int) );
                 break;
             case 'd' :
-                dest = strDec( dest, va_arg( args, UINT16 ) );
+                dest = strDec( dest, (UINT16)va_arg( args, unsigned ) );
                 positnArg( args, (UINT16)sizeof(UINT16) );
                 break;
 #ifdef CACHE_STATS
@@ -313,11 +315,11 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
                 positnArg( args, (UINT16)sizeof(char *) );
                 break;
             case 'u' :
-                dest = strDec5( dest, va_arg( args, UINT16 ) );
+                dest = strDec5( dest, (UINT16)va_arg( args, unsigned ) );
                 positnArg( args, (UINT16)sizeof(UINT16) );
                 break;
             case 'x' :
-                dest = strHex( dest, va_arg( args, UINT16 ) );
+                dest = strHex( dest, (UINT16)va_arg( args, unsigned ) );
                 positnArg( args, (UINT16)sizeof(UINT16) );
                 break;
             default :
@@ -585,12 +587,12 @@ static void reOrder( va_list args, char *paratype )
         case 'D':
         case 'd':
         case 'x':
-            ArgValue[i].ui16 = va_arg( args, UINT16 );
+            ArgValue[i].ui16 = (UINT16)va_arg( args, unsigned );
             break;
         case 'C':
         case 'c':
         case 'M':
-            ArgValue[i].i = va_arg( args, UINT16 );
+            ArgValue[i].i = (UINT16)va_arg( args, unsigned );
             break;
         case 'E':
         case 's':
@@ -618,6 +620,6 @@ void positnArg( va_list args, UINT16 size )
     UINT16      i; /* to avoid a compiler warning */
 
     if( USEARGVALUE && ( size < (UINT16)sizeof(MSG_ARG) ) ) {
-        i = va_arg( args, UINT16 );
+        i = (UINT16)va_arg( args, unsigned );
     }
 }

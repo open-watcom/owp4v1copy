@@ -36,7 +36,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 
 #include "watcom.h"
 #include "mtypes.h"

@@ -35,7 +35,9 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __WATCOMC__
 #include <share.h>
+#endif
 
 #include "macros.h"
 #include "make.h"

@@ -31,7 +31,7 @@
 
 
 #include <stdio.h>
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
     #include <conio.h>
 #endif
 #include <stdlib.h>

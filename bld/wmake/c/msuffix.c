@@ -272,7 +272,7 @@ STATIC void ringPath( PATHRING **pring, const char *path )
     p = path;
     while( *p != NULLCHAR ) {
             /* find end of path in string */
-        while( *p != NULLCHAR && *p != PATH_SPLIT ) ++p;
+        while( *p != NULLCHAR && *p != PATH_SPLIT && *p != ';' ) ++p;
 
         new = MallocSafe( sizeof( *new ) );     /* get a new node */
         len = p - path;                         /* get length of sub-path */

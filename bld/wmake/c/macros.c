@@ -32,10 +32,12 @@
 #if !defined(__UNIX__)
  #include <direct.h>
 #endif
-#include <env.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#ifdef __WATCOMC__
+#include <env.h>
+#endif
 
 #include "macros.h"
 #include "make.h"

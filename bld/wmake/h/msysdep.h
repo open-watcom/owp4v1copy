@@ -37,6 +37,10 @@
 #include <signal.h>
 #include <unistd.h>
 
+#ifndef __WATCOMC__
+#include "clibext.h"
+#endif
+
 #include "mtypes.h"
 
 //
