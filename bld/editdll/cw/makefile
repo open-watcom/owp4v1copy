@@ -7,7 +7,7 @@ weditcw.dll : weditcw.obj
     wlib -b -n weditcw.lib +weditcw.dll
 
 weditcw.obj : ../weditcw.c
-    wcc $< /i=..\..;$(%watcom)\h\win /mc /d1 /oaxt /zc /zw /zu /zq
+    wcc $< /i=..\..;$(%watcom)\h\win /mc /d1 /oaxt /zc /zw /zu /zq /we
 
 !else ifeq host_OS nt
 
@@ -17,6 +17,6 @@ weditcwn.dll : weditcwn.obj
     wlib -b -n weditcwn.lib +weditcwn.dll
 
 weditcwn.obj : ../weditcw.c
-    wcc386 $< /i=..\..;$(%watcom)\h\nt -bt=nt /d1 /oaxt -fo=weditcwn.obj
+    wcc386 $< /i=..\..;$(%watcom)\h\nt -bt=nt /d1 /oaxt /we -fo=weditcwn.obj
 
 !endif
