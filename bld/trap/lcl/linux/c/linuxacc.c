@@ -737,13 +737,26 @@ static pid_t RunningProc( char *name, char **name_ret )
     return( pidd );
 }
 
+static int GetExeNameFromPid( pid_t pid, char *buffer, int max_len )
+{
+    char        procfile[24];
+    int         len;
+    
+    sprintf( procfile, "/proc/%d/exe", pid );
+    len = readlink( procfile, buffer, max_len );
+    if( len < 0 )
+        len = 0;
+    buffer[len] = '\0';
+    return( len );
+}
+
 unsigned ReqProg_load( void )
 {
     char                        **args;
     char                        *parms;
     char                        *parm_start;
     int                         i;
-    char                        exe_name[255];
+    char                        exe_name[PATH_MAX];
     char                        *name;
     pid_t                       save_pgrp;
     prog_load_req               *acc;
@@ -817,8 +830,11 @@ unsigned ReqProg_load( void )
             exit( 1 ); /* failsafe */
         }
         setpgid( 0, save_pgrp );
+    } else if( pid ) {
+        GetExeNameFromPid( pid, exe_name, PATH_MAX );
     }
     ret->flags = 0;
+    ret->mod_handle = 0;
     if( (pid != -1) && (pid != 0) ) {
         int status;
 
@@ -1242,7 +1258,6 @@ unsigned ReqFile_string_to_fullpath( void )
     char                        *name;
     char                        *fullname;
     pid_t                       pidd;
-    char                        procfile[20];
 
     pidd = 0;
     acc = GetInPtr( 0 );
@@ -1254,11 +1269,7 @@ unsigned ReqFile_string_to_fullpath( void )
         pidd = RunningProc( name, &name );
     }
     if( pidd != 0 ) {
-        sprintf( procfile, "/proc/%d/exe", pidd );
-        len = readlink( procfile, fullname, PATH_MAX );
-        if( len < 0 )
-            len = 0;
-        fullname[len] = '\0';
+        len = GetExeNameFromPid( pidd, fullname, PATH_MAX );
     } else {
         len = FindFilePath( exe, name, fullname );
     }
