@@ -52,7 +52,9 @@
     int const _staksize = (100*1024);/* stack size */
 #elif _OS == _QNX
     #include <stdio.h>
-    #include <i86.h>
+    #ifdef __WATCOMC__
+        #include <i86.h>
+    #endif
     #include <fcntl.h>
     #include <unistd.h>
     #include <sys/stat.h>
@@ -65,7 +67,18 @@
 #ifdef __OSI__
     #include "ostype.h"
 #endif
+#ifndef _MAX_PATH
+#define _MAX_PATH (PATH_MAX+1)
+#endif
+#ifndef _MAX_PATH2
+#define _MAX_PATH2 (PATH_MAX+4)
+#endif
+#ifndef O_TEMP
+#define O_TEMP 0
+#endif
+#ifdef __WATCOMC__
 #include <conio.h>
+#endif
 extern  char    CharSet[];
 
 static char WorkFile[] = "__wrk0__";
@@ -114,12 +127,14 @@ unsigned char _real87;
 int FrontEnd( char **cmdline )
 {
         _real87 = _8087 = 0;/* set to 0 in case 8087 is present; 27-may-91 */
-#if _HOST == 386
+#if _HOST == 386 && defined(__WATCOMC__)
         _amblksiz = 16;
 #endif
     InitGlobalVars();
     CMemInit();
+#ifdef __WATCOMC__
     InitMsg();
+#endif
     InitPurge();
 
     SwitchChar = _dos_switch_char();
@@ -129,7 +144,9 @@ int FrontEnd( char **cmdline )
     #endif
     DoCCompile( cmdline );
     PurgeMemory();
+#ifdef __WATCOMC__
     FiniMsg();
+#endif
     CMemFini();
     GlobalCompFlags.cc_first_use = FALSE;
     return( ErrCount );
@@ -372,8 +389,6 @@ static void MakePgmName( void )
     int         len;
     char *ptr;
     char buff[ _MAX_PATH2 ];
-    char *drive;
-    char *dir;
     char *fname;
     char *ext;
 
@@ -386,7 +401,7 @@ static void MakePgmName( void )
         strcpy( WholeFName, STDIN_NAME );
         fname = WholeFName;
     } else {
-         _splitpath2( ptr, buff, &drive, &dir, &fname, &ext );
+        _splitpath2( ptr, buff, NULL, NULL, &fname, &ext );
         if(  *ext == '\0' ) { // no extension
             char *new;
 
@@ -446,7 +461,7 @@ static char *CreateFileName( char *template, char *extension )
         char *dir;
         char *fname;
         char *ext;
-        char    *path;
+        char *path;
 
         path = (template == NULL) ? WholeFName : template;
 

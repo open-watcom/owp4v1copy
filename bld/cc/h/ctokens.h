@@ -220,4 +220,9 @@ pick( T_ALLOCA,        "alloca",    TC_XX ),
 pick( T_LAST_TOKEN,    " ",         TC_XX )
 
 };
+
+#ifndef _TOKEN_DEFINED
+#define _TOKEN_DEFINED
 typedef enum TOKEN TOKEN;
+#endif
+
