@@ -58,7 +58,6 @@ app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfi
 !else ifneq host_os os2
         $(rc) $(rc_flags) -k $(resfile) $^@
 !else
-# Need to bind PM/Windows resources into executable
         $(lang_root)\binp\rc $(resfile) $^@
 !endif
 
@@ -76,17 +75,17 @@ appuij.res : ../h/appui.rc ../h/app.rc $(rcfiles)
 
 apppm.res apppmj.res : ../h/apppm.rc ../h/app.rc $(rcfiles)
         @set oinc=$(%include)
-        set include=..;.;$(auidir)\os2$(host_cpu).pm;$(rcinc);$(%include);$(lang_root)\h\os21x
+        set include=$(auidir)\os2$(host_cpu).pm;$(rcinc);$(lang_root)\h\os2;
         wpp -p -fo=apppm.i ..\h\apppm.rc
-        wpp -dJAPANESE_MESSAGES -p -fo=apppmj.i ..\h\apppm.rc
+#        wpp -dJAPANESE_MESSAGES -p -fo=apppmj.i ..\h\apppm.rc
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -r ..\app2.rc
+        $(lang_root)\binp\rc -r ..\app2.rc app2.res
         rm -f apppm.i
-        cp app.res apppm.res
+        cp app2.res apppm.res
 #        rename apppmj.i apppm.i
-#        $(lang_root)\binp\rc -r app.rc
-#        cp app.res apppmj.res
+#        $(lang_root)\binp\rc -r ..\app2.rc
+#        cp ..\app2.res apppmj.res
         set path=$(%opath)
         @set include=$(%oinc)
 
