@@ -34,6 +34,8 @@ cdsay .
     <CPCMD> <devdir>\bin\binp\dvw.exe <relroot>\rel2\binp\wdw.exe
     <CPCMD> <devdir>\bin\binp\dv.sym <relroot>\rel2\binp\wd.sym
     <CPCMD> <devdir>\bin\binp\dvw.sym <relroot>\rel2\binp\wdw.sym
+    <CPCMD> <devdir>\bin\binp\dv32.exe <relroot>\rel2\binp\wd32.exe
+    <CPCMD> <devdir>\bin\binp\dvw32.exe <relroot>\rel2\binp\wdw32.exe
 
     <CPCMD> <devdir>\bin\bin.nec\dvc.exe <relroot>\rel2\n98bw\wdc.exe
     <CPCMD> <devdir>\bin\bin.nec\dvc.sym <relroot>\rel2\n98bw\wdc.sym

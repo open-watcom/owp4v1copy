@@ -1,5 +1,7 @@
 .IGNORE
 
+!include bhost.mif
+
 scan_files = &
 bind.obj &
 dialog.obj &
@@ -18,11 +20,7 @@ c_objs = $+$(scan_files) $(browse_files)$-
 
 lnk = dlgprs.lnk
 
-!ifdef __OS2__
-yacc = $(plusplus_dir)\bin\yacc2.exe -b
-!else
-yacc = $(plusplus_dir)\bin\yacc.exe -b
-!endif
+yacc = $(bld_bin)\yacc -b
 
 wppdbgf = -d1-oaxt
 wldbgf = pa .
