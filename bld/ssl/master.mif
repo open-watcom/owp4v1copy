@@ -20,6 +20,4 @@ objs =                  &
         ppmacro.obj     &
         ppmem.obj
 
-$(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
-
+!include exetarg.mif

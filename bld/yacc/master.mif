@@ -1,4 +1,5 @@
 proj_name = yacc
+yacc_autodepends = .autodepend
 
 !include cproj.mif
 !include deftarg.mif
@@ -22,9 +23,9 @@ objs =                  &
         parse.obj       &
         sentence.obj    &
         used.obj        &
-        yacc.obj
+        yacc.obj        &
+        gentable.obj    &
+	genfast.obj     &
+	gensupp.obj
 
-table_objs = gentable.obj genfast.obj gensupp.obj
-
-$(proj_name).exe : $(objs) $(table_objs)
-        $(cl) $(clflags) $<
+!include exetarg.mif

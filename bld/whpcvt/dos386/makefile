@@ -1,6 +1,6 @@
-#pmake: all os_dos cpu_386 whpcvt
+#pmake: os_dos cpu_386 whpcvt
 
-host_CPU        = 386
-host_OS         = dos
+host_os         = dos
+host_cpu        = 386
 
 !include ../master.mif

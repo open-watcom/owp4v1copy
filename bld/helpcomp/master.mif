@@ -35,7 +35,4 @@ objs =                  &
         compress.obj    &
         parsing.obj
 
-
-$(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
-
+!include exetarg.mif

@@ -24,5 +24,4 @@ objs =                  &
        substr.obj       &
        translat.obj
 
-$(proj_name).exe : $(objs)
-        $(linker) option quiet op stack=8k $(lflags) name $^@ file { $< }
+!include exetarg.mif

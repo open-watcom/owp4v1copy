@@ -15,5 +15,4 @@ objs =                  &
         bmepsoe.obj     &
         bmpeps.obj
 
-$(proj_name).exe : $(objs)
-        $(linker) option quiet, map $(lflags) name $^. file { $< }
+!include exetarg.mif
