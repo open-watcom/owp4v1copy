@@ -1522,7 +1522,7 @@ directive.
 .section Minimise Target Timestamp (.JUST_ENOUGH)
 .*
 .ix '&makcmdup directives' '.JUST_ENOUGH'
-.ix 'JUST_ENOUGH`' '&makcmdup directive'
+.ix 'JUST_ENOUGH' '&makcmdup directive'
 The
 .id &sysper.JUST_ENOUGH
 directive is equivalent to the undocumented "j" command line option.
