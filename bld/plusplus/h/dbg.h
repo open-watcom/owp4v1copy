@@ -136,7 +136,7 @@ void DumpMemberPtrInfo(         // DUMP MEMBER_PTR_CAST STRUCTURE
     MEMBER_PTR_CAST *info )     // - the information
 ;
 void DumpPTree(                 // DUMP A PARSE TREE
-    void *node )                // - node in parse tree
+    PTREE node )                // - node in parse tree
 ;
 void DumpScope(                 // DUMP SCOPE INFO FOR SYMBOL
     SCOPE scope )               // - scope
