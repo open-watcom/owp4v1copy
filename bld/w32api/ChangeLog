@@ -1,3 +1,210 @@
+2004-01-16 Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (SHGDN_INCLUDE_NONFILESYS): Add define.
+
+2004-01-15  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/mcd.h: Don't care about value of DBG define.
+	* include/ddk/srb.h: Ditto.
+	* include/ddk/storport.h: Ditto.
+	* include/ddk/video.h: Ditto.
+	* include/nspapi.h (SetServiceW, GetAddressByNameA,
+	GetAddressByNameW): Correct protoype.
+	* include/ntsecapi.h (PCUNICODE_STRING): Define.
+
+2004-01-05  Filip Navara  <xnavara@volny.cz>
+
+	* include/prsht.h (LPCPROPSHEETPAGEW): Fix definition.
+	* include/shlwapi.h (SHRegQueryInfoUSKey[AW]): Fix prototype.
+	* include/cpl.h (CPL_STARTWPARMS[AW]): Correct.
+	* include/shellapi.h (ABS_AUTOHIDE, ABS_ALWAYSONTOP,
+	SEE_MASK_NO_CONSOLE, SEE_MASK_ASYNCOK, SEE_MASK_HMONITOR,
+	FOF_NOCOPYSECURITYATTRIBS): Add defines.
+	* include/shlobj.h (BFFM_SETOKTEXT, BFFM_SETEXPANDED,
+	CSIDL_FLAG_DONT_VERIFY, CSIDL_FLAG_CREATE, CSIDL_FLAG_MASK,
+	CFSTR_INETURL[AW], SHGDN_FOREDITING, SHGDN_FORADDRESSBAR,
+	SSF_*): Add defines.
+	(SHCNF_PATH[AW], SHCNF_PRINTER[AW], CFSTR_FILENAME[AW],
+	CFSTR_FILENAMEMAP[AW], CFSTR_FILEDESCRIPTOR[AW], CFSTR_SHELLURL,
+	CMDSTR_NEWFOLDER[AW], CMDSTR_VIEWLIST[AW], CMDSTR_VIEWDETAILS[AW]):
+	Correct.
+	(IEnumIDList): Add COBJMACROS.
+	* include/winuser.h (MIM_*): Add define.
+
+2004-01-04  Filip Navara  <xnavara@volny.cz>
+
+	* include/shlguid.h (IID_IPersistFolder2, IID_IPersistFolder3,
+	IID_IShellFolder2, IID_IFileSystemBindData): Add declarations.
+	* include/shlobj.h (EXTRASEARCH, SHCOLSTATEF, SHELLDETAILS,
+	PERSIST_FOLDER_TARGET_INFO): Define structures.
+	(IEnumExtraSearch, IShellFolder2, IFileSystemBindData,
+	IPersistFolder2, IPersistFolder3): Add COM interface
+	definitions.
+	(IExtractIcon[AW], IShellLink[AW], IPersistFolder, IShellView,
+	ICommDlgBrowser, IShellFolder2, IPersistFolder2, IPersistFolder3):
+	Add COBJMACROS.
+	(SHCreateDirectoryEx[AW], SHBindToParent): Add prototypes.
+        * lib/shell32.c	(IID_IPersistFolder2, IID_IPersistFolder3,
+	IID_IShellFolder2, IID_IFileSystemBindData): Add definitions.
+
+2004-01-03  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/mshtml.h (IHTMLDocument2): Correct write, writeln
+	declarations.
+	Thanks to: Rene Nyffenegger <renenyffenegger@users.sf.net>.
+
+2004-01-03  Filip Navara  <xnavara@volny.cz>
+
+	* include/cguid.h (CLSID_StdGlobalInterfaceTable): Declare IID.
+	* include/oaidl.h (ITypeLib2, ITypeInfo2): Define interfaces,
+	declare IID's.
+	(IErrorInfo): Add COBJMACROS.
+	* include/objbase.h (STGM_NOSNAPSHOT): Add define.
+	(CoGetPSClsid): Add protototype,
+	(CoRegisterPSClsid): Likewise.
+	* include/objidl.h (IMarshal): Correct methods.
+	(IMallocSpy): Likewise,
+	(LPPSFACTORYBUFFER): Add typedef.
+	(IGlobalInterfaceTable): Define interface and COBJMACROS. Declare
+	IID.
+	(IStorage_CreateStorage, IRpcStubBuffer_Invoke): Fix macros.
+	* include/ocidl.h (PROPBAG2_TYPE): Define enum.
+	(PROPBAG2, QACONTAINERFLAGS, QACONTAINER, QACONTROL): Define
+	structures.
+	(IPropertyBag2, IPersistPropertyBag2,IAdviseSinkEx, IPointerInactive,
+	IOleUndoUnit, IOleParentUndoUnit, IEnumOleUndoUnits, IOleUndoManager,
+	IQuickActivate): Define interfaces. Declare IID's.
+	(IPersistPropertyBag2): Add COBJMACROS.
+	(LPOLEUNDOMANAGER): Add typedef.
+	(LPPROPERTYBAG2): Likewise.
+	* include/oleidl.h (LPPARSEDISPLAYNAME): Fix definiton.
+	(BINDSPEED): Add definition.
+	(IParseDisplayName, IOleItemContainer, IOleObject, IDropSource,
+	IDropTarget): Add COBJMACROS.
+	* include/wtypes.h (MEMCTX, MSHCTX): Fix enum.
+	* include/winerror.h (CO_S_NOTALLINTERFACES): Add define.
+	* lib/uuid.c (IID_IGlobalInterfaceTable, IID_IOleUndoManager,
+	IID_IPersistPropertyBag2, IID_IPropertyBag2, IID_IRpcProxyBuffer):
+	Add IID definitions.
+
+2004-01-02  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/winddk.h: Don't care about value of
+	DBG define.
+
+2004-01-02  Danny Smith  <dannysmith@users.sourceforge.net>
+	    Filip Navara  <xnavara@volny.cz>
+	    
+	* include/ddk/winddk.h (_DDK_DUMMYUNION_MEMBER,
+	_DDK_DUMMYUNION_N_MEMBER): New macros.
+	(ExAllocateFromPagedLookasideList,ExFreeToPagedLookasideList,
+	ExAllocateFromNPagedLookasideList, ExFreeToNPagedLookasideList):
+	Use them.
+
+2004-01-01  Filip Navara  <xnavara@volny.cz>
+
+	* include/objbase.h:  Don't care about value of DBG define.
+	* include/objidl.h: Add some COBJMACROS.
+	* include/ocidl.h: Ditto.
+	* include/oleidl.h: Ditto.
+	* include/servprov.h: Ditto.
+	* include/shlobj.h: Ditto.
+	* include/shlobj.h (IContextMenu2): Correct parent in
+	DECLARE_INTERFACE.
+	* include/oleidl.h (IOleCache, IOleCache2, IOleCacheControl):
+	Define interfaces.
+	* include/setupapi.h (SetupGetLineTextA): Correct prototype.
+	Add new constants for _SETUPAPI_VER >= 0x501.
+
+2004-01-01  Filip Navara  <xnavara@volny.cz>
+
+	* include/winnt.h (NtCurrentTeb): Add inline definition.
+
+2004-01-01  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (SHCoCreateInstance): Add prototype.
+	* lib/shell32.def (SHCoCreateInstance): Add export stub.
+
+2004-01-01  Igor Pechtchanski  <pechtcha@cs.nyu.edu>
+
+	* lib/setupapi.def (CM_Request_Device_Eject[AW]): Add export.
+	(CM_Request_Device_Eject_Ex[AW]): Likwise.
+	* include/ddk/cfg.h (DN_*): Add defines.
+
+2004-01-01  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/ddk/cfgmgr32.def: Remove duplicate symbol names.
+
+2004-01-01  Mattia Barbon  <mbarbon@users.sourceforge.net>
+
+	* include/commctrl.h (TVN_GETINFOTIP): Add UNICODE mappings.
+	(NMTVGETINFOTIP): Add structure.
+
+2003-12-08  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (DISPLAY_DEVICE_*): Remove defines.
+	* include/wingdi.h  (DISPLAY_DEVICE_REMOVABLE,
+	DISPLAY_DEVICE_MODESPRUNED): Add defines.
+
+2003-12-08  Hartmut Honisch  <hhonisch@users.sourceforge.net>
+
+	* include/commctrl.h (ListView_Get_State, ListView_Check_State):
+	Add macros.
+	* include/wingdi.h  (DISPLAY_DEVICE_*): Add multi-monitor
+	constants.
+	* include/shlobj.h (SHCOLUMNINIT); Add structure.
+	(SHCOLUMNDAT): Likwise.
+	(SHCOLUMNID): Likewise.
+	(SHCOLUMNINFO): Likewise.
+	(SHCOLSTATE): Add enum.
+	(IColumnProvider): Add COM interface.
+	(IQueryInfo): Likewise.
+	(IShellIconOverlayIdentifier): Likewise. 
+  	* include/shlguid.h (IID_IColumnProvider) Declare.
+	(IID_IQueryInfo): Likweise.
+	(IID_IShellIconOverlayIdentifier): Likwise. 
+	* lib/shell32.c (IID_IColumnProvider) Define.
+	(IID_IQueryInfo): Likweise.
+	(IID_IShellIconOverlayIdentifier): Likwise.
+
+2003-12-08  Roald Ribe <rrib@users.sourceforge.net>
+
+	* include/winuser.h (RT_MANIFEST): Add define.
+
+2003-12-08  Pascal Buhler <pbuhler@users.sourceforge.net>
+
+	* include/oleidl.h (IViewObject2): Inherit from IViewObject.
+
+2003-12-01  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (GetCurrentFiber): Remove duplicate prototype.
+	(GetFiberData); Likewise.
+	(GetCurrentFiber): Change volatile to __volatile__.
+	(GetFiberData); Likewise.
+
+2003-11-27  Christopher Faylor  <cgf@redhat.com>
+
+	* lib/Makefile.in: Use make function to locate .mri file to allow
+	building in directory other than source directory.
+
+2003-11-27  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/vfw32.def: Remove, replacing with ...
+	* lib/msvfw32.def: New file.
+	* lib/avicap32.def: New file.
+	* lib/avifil32.def: New file.
+	* lib/vfw32.mri: New file.
+	* Makefile.in: (MRI_FILES, MIMPLIBS): New vars for
+	import libs with multiple dll's.
+	(LIBS): Add MIMPLIBS.
+	(DISTFILES): Add MRI_FILES.
+	(libvfw32.a): Build using mri script.
+
+2003-11-23  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (PAGE_*): Group defines together. Change
+	constants to hex notation.
+
 2003-11-15  Manu B  <manubee@users.sourceforge.net>
 
 	* include/commctrl.h (TabCtrl_GetImageList): Add macro.
