@@ -17,23 +17,23 @@
 !inject exaddwnt.obj                     nt nta ntp
 !inject excptwnt.obj                     nt nta ntp
 !inject execaddr.obj d16 d32
-!inject exl.obj      d16                 nt nta ntp         o16 o32
-!inject exle.obj     d16                 nt nta ntp         o16 o32
+!inject exl.obj      d16                 nt nta ntp         o16 o32                     l32
+!inject exle.obj     d16                 nt nta ntp         o16 o32                     l32
 !inject exleqnx.obj                                                 q16 q32
-!inject exlp.obj     d16                 nt nta ntp         o16 o32
-!inject exlpe.obj    d16                 nt nta ntp         o16 o32
+!inject exlp.obj     d16                 nt nta ntp         o16 o32                     l32
+!inject exlpe.obj    d16                 nt nta ntp         o16 o32                     l32
 !inject exlpeqnx.obj                                                q16 q32
 !inject exlpqnx.obj                                                 q16 q32
 !inject exlqnx.obj                                                  q16 q32
-!inject exv.obj      d16                 nt nta ntp         o16 o32
+!inject exv.obj      d16                 nt nta ntp         o16 o32                     l32
 !inject exve.obj     d16
 !inject exveos2.obj                                         o16 o32
 !inject exveqnx.obj                                                 q16 q32
 !inject exvewnt.obj                      nt nta ntp
 !inject exvp.obj     d16                 nt nta ntp         o16 o32
 !inject exvpe.obj    d16                 nt nta ntp         o16 o32
-!inject exvpeqnx.obj                                                q16 q32
-!inject exvpqnx.obj                                                 q16 q32
+!inject exvpeqnx.obj                                                q16 q32             l32
+!inject exvpqnx.obj                                                 q16 q32             l32
 !inject exvqnx.obj                                                  q16 q32
 !inject exwc2mb.obj  d16 d32                                o16 o32         w16 w32
 !inject _povrlay.obj                     nt nta ntp
