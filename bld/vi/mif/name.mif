@@ -23,13 +23,18 @@ name_nt_axp = viaxp
 
 name_qnx_i86 = viq
 name_linux_386 = vil
+name_linux_ppc = vil
 
 !ifdef bname
 lnk = $(bname).lnk
 ED = $(bname)
 !else
-lnk = $(name_$(host_OS)_$(host_CPU)).lnk
-ED = $(name_$(host_OS)_$(host_CPU))
+lnk = $(name_$(host_os)_$(host_cpu)).lnk
+ED = $(name_$(host_os)_$(host_cpu))
+!endif
+
+!ifeq ED 
+!error Macro ED must be defined!
 !endif
 
 name = $(ED).exe
@@ -38,8 +43,8 @@ name = $(ED).qnx
 !endif
 
 lname = $(name)
-!ifeq host_OS win
-!ifeq host_CPU 386
+!ifeq host_os win
+!ifeq host_cpu 386
 lname = $(ED).rex
 !endif
 !endif
