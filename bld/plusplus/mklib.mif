@@ -149,6 +149,13 @@ extra_c_flags_386 += -3s
 !else
 extra_c_flags_386 += -3r
 !endif
+!ifeq model ms
+!ifeq host_os generic
+extra_c_flags_386 += -r
+!else ifeq host_os qnx
+extra_c_flags_386 += -r
+!endif
+!endif
 
 extra_c_flags_win = -zW
 

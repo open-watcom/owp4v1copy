@@ -297,7 +297,7 @@ static void EndFunction( OPNODE *node )
         dtype = CGenType( sym.sym_type );
         name = CGTempName( sym.info.return_var, dtype );
         name = CGUnary( O_POINTS, name, dtype );
-        if( CompFlags. returns_promoted ) {
+        if( CompFlags.returns_promoted ) {
             dtype = FEParmType( NULL, NULL, dtype );
         }
         CGReturn( name, dtype );

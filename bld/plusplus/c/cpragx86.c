@@ -54,7 +54,7 @@ static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 static  hw_reg_set      stackParms[] = { HW_D( HW_EMPTY ) };
 #if _CPU == 386
 static  hw_reg_set      optlinkParms[] = { HW_D( HW_FLTS ), HW_D( HW_EMPTY ) };
-static  hw_reg_set      FastParms[]  = { HW_D( HW_ECX ), HW_D( HW_EDX ), HW_D( HW_EMPTY ) };
+static  hw_reg_set      FastParms[] = { HW_D( HW_ECX ), HW_D( HW_EDX ), HW_D( HW_EMPTY ) };
 #endif
 
 #define WCPP_ASM     // enable assembler
@@ -150,15 +150,10 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     }
 
 #if _CPU == 386
-    pragmaInitInfo( &FastcallInfo
-                  , call_type
-                   | SPECIAL_STRUCT_RETURN
-                  , "@*@#" );
-#else
-    pragmaInitInfo( &FastcallInfo
-                  , call_type
-                   | SPECIAL_STRUCT_RETURN
-                  , "@*" );
+    FastcallInfo._class = call_type | SPECIAL_STRUCT_RETURN;
+    FastcallInfo.objname = strsave( "@*@#" );
+    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
+    memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 #endif
 
 #if _CPU == 386
@@ -190,8 +185,6 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     HW_CTurnOff( FastcallInfo.save, HW_EAX );
     HW_CTurnOff( FastcallInfo.save, HW_ECX );
     HW_CTurnOff( FastcallInfo.save, HW_EDX );
-    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
-    memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 
     HW_CTurnOff( asmRegsSaved, HW_EAX );
     HW_CTurnOff( asmRegsSaved, HW_EBX );
@@ -219,10 +212,6 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     HW_CTurnOff( StdcallInfo.save, HW_ABCD );
     HW_CTurnOff( StdcallInfo.save, HW_ES );
     HW_CAsgn( StdcallInfo.streturn, HW_AX );
-
-    HW_CTurnOff( FastcallInfo.save, HW_ABCD );
-    HW_CTurnOff( FastcallInfo.save, HW_ES );
-    HW_CAsgn( FastcallInfo.streturn, HW_AX );
 
     HW_CTurnOff( asmRegsSaved, HW_ABCD );
     HW_CTurnOff( asmRegsSaved, HW_SI );

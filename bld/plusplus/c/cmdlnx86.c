@@ -908,29 +908,13 @@ static  hw_reg_set      metaWareParms[] = { HW_D( HW_EMPTY ) };
 
 static void setStackConventions( void )    // SET 386 HARDWARE OPTIONS
 {
-    DefaultInfo._class   &= GENERATE_STACK_FRAME;
-    DefaultInfo._class   |= CALLER_POPS | NO_8087_RETURNS;
-    DefaultInfo.code    = NULL;
+    DefaultInfo._class &= ( GENERATE_STACK_FRAME | FAR );
+    DefaultInfo._class |= CALLER_POPS | NO_8087_RETURNS;
     DefaultInfo.parms = AuxParmDup( metaWareParms );
-    HW_CAsgn( DefaultInfo.returns, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.streturn, HW_EMPTY );
     HW_CTurnOff( DefaultInfo.save, HW_EAX );
     HW_CTurnOff( DefaultInfo.save, HW_EDX );
     HW_CTurnOff( DefaultInfo.save, HW_ECX );
-    if( TargetSwitches & FLOATING_DS ) {
-        HW_CTurnOff( DefaultInfo.save, HW_DS );
-    }
-    if( TargetSwitches & FLOATING_ES ) {
-        HW_CTurnOff( DefaultInfo.save, HW_ES );
-    }
-    if( TargetSwitches & FLOATING_FS ) {
-        HW_CTurnOff( DefaultInfo.save, HW_FS );
-    }
-    if( TargetSwitches & FLOATING_GS ) {
-        HW_CTurnOff( DefaultInfo.save, HW_GS );
-    }
     HW_CTurnOff( DefaultInfo.save, HW_FLTS );
-    DefaultInfo.use = 0;
     DefaultInfo.objname = strsave( "*" );
 }
 
@@ -949,7 +933,7 @@ static void miscAnalysis( OPT_STORAGE *data )
         /* issue warning message if /zf[f|p] or /zg[f|p] spec'd? */
         TargetSwitches &= ~( FLOATING_FS | FLOATING_GS );
     }
-    if( ! data->r ) {
+    if( ! CompFlags.save_restore_segregs ) {
         if( TargetSwitches & FLOATING_DS ) {
             HW_CTurnOff( DefaultInfo.save, HW_DS );
         }
@@ -966,6 +950,7 @@ static void miscAnalysis( OPT_STORAGE *data )
     if( GET_FPU( CpuSwitches ) > FPU_NONE ) {
         PreDefineStringMacro( "__FPI__" );
     }
+    FastcallInfo = DefaultInfo;
 #if _CPU == 386
     if( ! CompFlags.register_conventions ) {
         setStackConventions();

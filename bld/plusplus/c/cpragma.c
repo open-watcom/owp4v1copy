@@ -1054,7 +1054,8 @@ void PragInit(
     SyscallInfo = DefaultInfo;
     OptlinkInfo = DefaultInfo;
     StdcallInfo = DefaultInfo;
-    FastcallInfo = DefaultInfo;
+
+    FastcallInfo.use = 2;
 
     CompInfo.init_priority = INIT_PRIORITY_PROGRAM;
 }

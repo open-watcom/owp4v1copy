@@ -171,9 +171,11 @@ void PragInit( void )
     PascalInfo  = DefaultInfo;
     SyscallInfo = DefaultInfo;
     StdcallInfo = DefaultInfo;
-    FastcallInfo= DefaultInfo;
     OptlinkInfo = DefaultInfo;
     FortranInfo = DefaultInfo;
+
+    FastcallInfo.use = 2;
+
     PackInfo = NULL;
     EnumInfo = NULL;
 }

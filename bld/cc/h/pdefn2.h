@@ -42,7 +42,6 @@ global  hw_reg_set              CdeclParms[];
 global  hw_reg_set              PascalParms[];
 global  hw_reg_set              DefaultVarParms[];
 global  hw_reg_set              RegBits[];
-global  hw_reg_set              MSC_Save;
 global  char                    Registers[];
 global  struct  aux_info        InlineInfo;
 global  struct  inline_funcs    SInline_Functions[];

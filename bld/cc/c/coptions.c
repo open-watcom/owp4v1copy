@@ -138,9 +138,6 @@ static struct
     unsigned    nd_used         : 1;
 } SwData;
 
-// local functions.
-local void SetStackConventions( void );
-
 // local variables
 static int character_encoding = 0;
 static long unicode_CP = 0;
@@ -1368,7 +1365,9 @@ static void Set_OC()           { TargetSwitches |= NO_CALL_RET_TRANSFORM; }
 static void Set_OF()
 {
     TargetSwitches |= NEED_STACK_FRAME;
-    if( OptValue != 0 )  DefaultInfo.class |= GENERATE_STACK_FRAME;
+    if( OptValue != 0 ) {
+        DefaultInfo.class |= GENERATE_STACK_FRAME;
+    }
 }
 static void Set_OM()           { TargetSwitches |= I_MATH_INLINE; }
 static void Set_OP()           { CompFlags.op_switch_used = 1; } // force floats to memory
@@ -2073,68 +2072,6 @@ local void Define_Memory_Model()
     #endif
 }
 
-void GenCOptions( char **cmdline )
-{
-    memset( &SwData,0, sizeof( SwData ) ); //re-useable
-    EnableDisableMessage( 0, ERR_PARM_NOT_REFERENCED );
-    /* 29-oct-03 Add precision warning but disabled by default */
-    EnableDisableMessage( 0, ERR_LOSE_PRECISION );
-    InitModInfo();
-    InitCPUModInfo();
-    #if _CPU == 386
-        ProcOptions( FEGetEnv( "WCC386" ) );              /* 12-mar-90 */
-    #elif _CPU == 8086
-        ProcOptions( FEGetEnv( "WCC" ) );                 /* 12-mar-90 */
-    #elif _MACHINE == _ALPHA
-        ProcOptions( FEGetEnv( "WCCAXP" ) );
-    #elif _MACHINE == _PPC
-        ProcOptions( FEGetEnv( "WCCPPC" ) );
-    #elif _MACHINE == _SPARC
-        ProcOptions( FEGetEnv( "WCCSPC" ) );
-    #else
-        #error Compiler environment variable not configured
-    #endif
-    for( ;*cmdline != NULL; ++cmdline ) {
-        ProcOptions( *cmdline );
-    }
-    if( CompFlags.cpp_output_requested )  CompFlags.cpp_output = 1;
-    if( CompFlags.cpp_output )  CompFlags.quiet_mode = 1;       /* 29-sep-90 */
-    CBanner();          /* print banner if -zq not specified */
-    GblPackAmount = PackAmount;
-    SetTargSystem();
-    SetGenSwitches();
-    SetCharacterEncoding();
-    Define_Memory_Model();
-    #ifdef __PCODE__                                                /* 04-feb-91 */
-        if( Toggles & TOGGLE_PCODE )  CompFlags.inline_functions = 0;
-    #endif
-    #if _CPU == 8086 || _CPU == 386
-        if( GET_CPU( ProcRevision ) < CPU_386 ) {
-            /* issue warning message if /zf[f|p] or /zg[f|p] spec'd? */
-            TargetSwitches &= ~(FLOATING_FS|FLOATING_GS);
-        }
-        if( ! CompFlags.save_restore_segregs ) {                /* 11-apr-91 */
-            if( TargetSwitches & FLOATING_DS ) {
-                HW_CTurnOff( DefaultInfo.save, HW_DS );
-            }
-            if( TargetSwitches & FLOATING_ES ) {
-                HW_CTurnOff( DefaultInfo.save, HW_ES );
-            }
-            if( TargetSwitches & FLOATING_FS ) {
-                HW_CTurnOff( DefaultInfo.save, HW_FS );
-            }
-            if( TargetSwitches & FLOATING_GS ) {
-                HW_CTurnOff( DefaultInfo.save, HW_GS );
-            }
-        }
-        #if _CPU == 386
-            if( ! CompFlags.register_conventions )  SetStackConventions();
-        #endif
-    #endif
-    MacroDefs();                                        /* 07-aug-90 */
-    MiscMacroDefs();
-}
-
 #if _CPU == 386
 
 static hw_reg_set MetaWareParms[] = {
@@ -2145,15 +2082,60 @@ local void SetStackConventions( void )
 {
     DefaultInfo.class &= (GENERATE_STACK_FRAME | FAR); /* 19-nov-93 */
     DefaultInfo.class |= CALLER_POPS | NO_8087_RETURNS;
-    DefaultInfo.code  = NULL;
     DefaultInfo.parms = (hw_reg_set *)CMemAlloc( sizeof(MetaWareParms) );
     memcpy( DefaultInfo.parms, MetaWareParms, sizeof( MetaWareParms ) );
-    HW_CAsgn( DefaultInfo.returns, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.streturn, HW_EMPTY );
     HW_CTurnOff( DefaultInfo.save, HW_EAX );
     HW_CTurnOff( DefaultInfo.save, HW_EDX );
     HW_CTurnOff( DefaultInfo.save, HW_ECX );
-    if( ! CompFlags.save_restore_segregs ) {            /* 11-apr-91 */
+    HW_CTurnOff( DefaultInfo.save, HW_FLTS );
+    DefaultInfo.objname = CStrSave( "*" );   /* DefaultObjName; */
+}
+#endif
+
+void GenCOptions( char **cmdline )
+{
+    memset( &SwData,0, sizeof( SwData ) ); //re-useable
+    EnableDisableMessage( 0, ERR_PARM_NOT_REFERENCED );
+    /* 29-oct-03 Add precision warning but disabled by default */
+    EnableDisableMessage( 0, ERR_LOSE_PRECISION );
+    InitModInfo();
+    InitCPUModInfo();
+#if _CPU == 386
+    ProcOptions( FEGetEnv( "WCC386" ) );              /* 12-mar-90 */
+#elif _CPU == 8086
+    ProcOptions( FEGetEnv( "WCC" ) );                 /* 12-mar-90 */
+#elif _MACHINE == _ALPHA
+    ProcOptions( FEGetEnv( "WCCAXP" ) );
+#elif _MACHINE == _PPC
+    ProcOptions( FEGetEnv( "WCCPPC" ) );
+#elif _MACHINE == _SPARC
+    ProcOptions( FEGetEnv( "WCCSPC" ) );
+#else
+    #error Compiler environment variable not configured
+#endif
+    for( ;*cmdline != NULL; ++cmdline ) {
+        ProcOptions( *cmdline );
+    }
+    if( CompFlags.cpp_output_requested )
+        CompFlags.cpp_output = 1;
+    if( CompFlags.cpp_output )
+        CompFlags.quiet_mode = 1;       /* 29-sep-90 */
+    CBanner();          /* print banner if -zq not specified */
+    GblPackAmount = PackAmount;
+    SetTargSystem();
+    SetGenSwitches();
+    SetCharacterEncoding();
+    Define_Memory_Model();
+#ifdef __PCODE__                                                /* 04-feb-91 */
+    if( Toggles & TOGGLE_PCODE )
+        CompFlags.inline_functions = 0;
+#endif
+#if _CPU == 8086 || _CPU == 386
+    if( GET_CPU( ProcRevision ) < CPU_386 ) {
+        /* issue warning message if /zf[f|p] or /zg[f|p] spec'd? */
+        TargetSwitches &= ~(FLOATING_FS|FLOATING_GS);
+    }
+    if( ! CompFlags.save_restore_segregs ) {                /* 11-apr-91 */
         if( TargetSwitches & FLOATING_DS ) {
             HW_CTurnOff( DefaultInfo.save, HW_DS );
         }
@@ -2167,8 +2149,12 @@ local void SetStackConventions( void )
             HW_CTurnOff( DefaultInfo.save, HW_GS );
         }
     }
-    HW_CTurnOff( DefaultInfo.save, HW_FLTS );
-    DefaultInfo.use     = 0;
-    DefaultInfo.objname = CStrSave( "*" );   /* DefaultObjName; */
-}
+    FastcallInfo = DefaultInfo; // save reg conventions
+  #if _CPU == 386
+    if( ! CompFlags.register_conventions )
+        SetStackConventions();
+  #endif
 #endif
+    MacroDefs();                                        /* 07-aug-90 */
+    MiscMacroDefs();
+}
