@@ -2269,9 +2269,9 @@ dis_handler_return X86SRegModRM_16( dis_handle *h, void * d, dis_dec_ins *ins )
         if( ins->op[0].base == DR_NONE ) {
             return ( DHR_INVALID );
         }
-        X86GetModRM_W( W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, DRT_X86_WORD );
+        X86GetModRM( W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, X86GetRefType( W_DEFAULT,ins ) );
     } else {
-        X86GetModRM_W( W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, DRT_X86_WORD );
+        X86GetModRM( W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, X86GetRefType( W_DEFAULT,ins ) );
         X86GetSReg( W_DEFAULT, code.type2.reg, ins );
         if( ins->op[1].base == DR_NONE ) {
             return( DHR_INVALID );
@@ -3897,8 +3897,12 @@ static int NeedSizing( dis_dec_ins *ins, dis_format_flags flags, unsigned op_num
     for( i = 0; i < ins->num_ops; ++i ) {
         switch( ins->op[i].type & DO_MASK ) {
         case DO_REG:
-            /* if you've got a reg, you know the size */
-            return( FALSE );
+            if( ( ins->op[i].base >= DR_X86_es ) || ( ins->op[i].base <= DR_X86_gs ) ) {
+                return( TRUE );
+            } else {
+                /* if you've got a reg, you know the size */
+                return( FALSE );
+            }
         }
     }
     return( TRUE );
