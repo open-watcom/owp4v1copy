@@ -94,7 +94,7 @@ memory_model_386 = f
 !endif
 
 
-cflags_all      =-zq-w4-we
+cflags_all      =-w4-we
 !ifeq release 1
 cflags_all      +=-dNDEBUG
 !endif

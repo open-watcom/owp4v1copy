@@ -8,8 +8,6 @@ lang_root = $(%dwatcom)
 #%WATCOM=$+$(lang_root)$-
 #%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
 #%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
-librarian       = *wlib
-libaxp          = *wlib
 # this is since the path stuff above doesn't appear to work at the moment
 !ifdef __NTAXP__
 bld_cl          = wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
@@ -34,11 +32,11 @@ use_bld_incs    = 0
 !endif
 
 !ifeq use_bld_incs 0
-cc_386          = *wcc386 -zq
-cpp_386         = *wpp386 -zq
+cc_386          = *wcc386
+cpp_386         = *wpp386
 !else
-cc_386          = *wcc386 -zq -i$(bld_incs)
-cpp_386         = *wpp386 -zq -i$(bld_incs)
+cc_386          = *wcc386 -i$(bld_incs)
+cpp_386         = *wpp386 -i$(bld_incs)
 !endif
 
 !endif
@@ -67,3 +65,11 @@ extra_l_flags_nt = lib $(watcom_dir)\lib\ld.lib
 def_targ        = wcc$(target_CPU)c.exe
 !endif
 !endif
+
+#global definition which tool is quiet
+cc         += -zq
+cpp        += -zq
+linker     += op q
+librarian  += -q
+as         += -q
+rc         += -q
