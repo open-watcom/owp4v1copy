@@ -24,15 +24,15 @@ L$2:
 L$3:
     DB	0, 0, 0, 0, 2, 0, 0, 0
 a:
-    DD	DGROUP:L$1
+    DD	offset DGROUP:L$1
 p:
-    DD	DGROUP:L$2
+    DD	offset DGROUP:L$2
 q:
-    DD	DGROUP:L$3
+    DD	offset DGROUP:L$3
 b:
-    DD	DGROUP:L$2
+    DD	offset DGROUP:L$2
 d:
-    DD	DGROUP:L$2
+    DD	offset DGROUP:L$2
 e:
     DB	2, 0, 0, 0
 f:

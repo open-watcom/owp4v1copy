@@ -1,0 +1,4 @@
+callimpl.asm(18): Warning! W604: Far call is converted to near call.
+callimpl.asm(58): Warning! W604: Far call is converted to near call.
+callimpl.asm(82): Warning! W604: Far call is converted to near call.
+callimpl.asm(122): Warning! W604: Far call is converted to near call.

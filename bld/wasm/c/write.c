@@ -60,6 +60,11 @@
 #include "queue.h"
 #include "autodept.h"
 
+// use separate fixupp and fixupp32 records
+// fixupp32 record is used only for FIX_OFFSET386 and FIX_POINTER386 fixup
+// it is for better compatibility with MASM
+#define SEPARATE_FIXUPP_16_32 1
+
 #define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
 
 extern char             *ScanLine( char *, int );
@@ -73,6 +78,7 @@ extern void             CheckForOpenConditionals();
 extern bool             PopLineQueue();
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
+extern void             CheckProcOpen( void );
 
 extern pobj_state       pobjState;      // for WOMP interface
 extern File_Info        AsmFiles;
@@ -190,7 +196,6 @@ static void write_init( void )
 
     ModuleInit();
     FixInit();
-    AssumeInit();
 }
 
 static void write_fini( void )
@@ -448,8 +453,6 @@ static void write_global( void )
 {
     queuenode           *curr;
     struct asm_sym      *sym;
-    struct asm_sym      *new;
-    char                *(*save)( struct asm_sym *sym, char *buffer );
 
     if( GlobalQueue == NULL ) return;
     for( ; ; ) {
@@ -457,16 +460,7 @@ static void write_global( void )
         if( curr == NULL ) break;
         sym = (asm_sym *)curr->data;
         if( sym->state == SYM_UNDEFINED ) {
-            int seg;
-            int grp;
-
-            seg = sym->segidx;
-            grp = sym->grpidx;
-            save = sym->mangler;
-            new = MakeExtern( sym->name, sym->mem_type, TRUE );
-            new->mangler = save;
-            new->segidx = seg;
-            new->grpidx = grp;
+            dir_change( (dir_node *)curr->data, TAB_EXT );
             AsmFree( curr );
         } else {
             /* make this record a pubdef */
@@ -550,6 +544,7 @@ static int opsize( memtype mem_type )
     case T_FWORD:   return( 6 );
     case T_QWORD:   return( 8 );
     case T_TBYTE:   return( 10 );
+    case T_OWORD:   return( 16 );
     default:        return( 0 );
     }
 }
@@ -798,6 +793,50 @@ static void write_linnum( void )
     write_record( objr, TRUE );
 }
 
+#ifdef SEPARATE_FIXUPP_16_32
+
+static void divide_fixup_list( struct fixup **fl16, struct fixup **fl32 ) {
+/**********************************************/
+/* divide fixup record list to the 16-bit or 32-bit list of a fixup record */
+
+    struct fixup *fix;
+    struct fixup *fix16;
+    struct fixup *fix32;
+
+    fix16 = NULL;
+    fix32 = NULL;
+    fix = FixupListHead;
+    for( fix = FixupListHead; fix != NULL; fix = fix->next ) {
+        switch( fix->loc_method ) {
+        case FIX_OFFSET386:
+        case FIX_POINTER386:
+            if( fix32 == NULL ) {
+                *fl32 = fix;
+            } else {
+                fix32->next = fix;
+            }
+            fix32 = fix;
+            break;
+        default:
+            if( fix16 == NULL ) {
+                *fl16 = fix;
+            } else {
+                fix16->next = fix;
+            }
+            fix16 = fix;
+            break;
+        }
+    }
+    if( fix32 != NULL ) {
+        fix32->next = NULL;
+    }
+    if( fix16 != NULL ) {
+        fix16->next = NULL;
+    }
+}
+
+#else
+
 static void check_need_32bit( obj_rec *objr ) {
 /**********************************************/
 /* figure out if we need the 16-bit or 32-bit form of a fixup record */
@@ -821,9 +860,15 @@ static void check_need_32bit( obj_rec *objr ) {
     }
 }
 
+#endif
+
 static void write_ledata( void )
 {
-    obj_rec     *objr;
+    obj_rec         *objr;
+#ifdef SEPARATE_FIXUPP_16_32
+    struct fixup    *fl16 = NULL;
+    struct fixup    *fl32 = NULL;
+#endif
 
     if( BufSize > 0 ) {
         objr = ObjNewRec( CMD_LEDATA );
@@ -838,13 +883,29 @@ static void write_ledata( void )
 
         /* Process Fixup, if any */
         if( FixupListHead != NULL ) {
+#ifdef SEPARATE_FIXUPP_16_32
+            divide_fixup_list( &fl16, &fl32 );
+            /* Process Fixup, if any */
+            if( fl16 != NULL ) {
+                objr = ObjNewRec( CMD_FIXUP );
+                objr->is_32 = FALSE;
+                objr->d.fixup.fixup = fl16;
+                write_record( objr, TRUE );
+            }
+            if( fl32 != NULL ) {
+                objr = ObjNewRec( CMD_FIXUP );
+                objr->is_32 = TRUE;
+                objr->d.fixup.fixup = fl32;
+                write_record( objr, TRUE );
+            }
+#else
             objr = ObjNewRec( CMD_FIXUP );
             objr->d.fixup.fixup = FixupListHead;
             check_need_32bit( objr );
             write_record( objr, TRUE );
+#endif
             FixupListHead = FixupListTail = NULL;
         }
-
         /* add line numbers if debugging info is desired */
         if( Options.debug_flag ) {
             write_linnum();
@@ -1113,6 +1174,8 @@ static unsigned long OnePass( char *string )
     set_cpu_parameters();
     set_fpu_parameters();
 
+    AssumeInit();
+
     EndDirectiveFound = FALSE;
     PhaseError = FALSE;
     Modend = FALSE;
@@ -1125,6 +1188,7 @@ static unsigned long OnePass( char *string )
         AsmLine( string );
         if( EndDirectiveFound ) break;
     }
+    CheckProcOpen();
     return( PassTotal );
 }
 
@@ -1138,8 +1202,6 @@ void WriteObjModule( void )
     unsigned long       curr_total;
 
     CodeBuffer = codebuf;
-
-    AsmEvalInit();
 
     write_init();
 
@@ -1182,6 +1244,9 @@ void WriteObjModule( void )
         }
         if( !PhaseError && prev_total == curr_total )
             break;
+#ifdef DEBUG_OUT
+        write_modend();
+#endif
         ObjWriteClose( pobjState.file_out );
         /* This remove works around an NT networking bug */
         remove( AsmFiles.fname[OBJ] );
@@ -1198,6 +1263,5 @@ void WriteObjModule( void )
     AsmSymFini();
     FreeIncludePath();
     write_fini();
-    AsmEvalFini();
 }
 

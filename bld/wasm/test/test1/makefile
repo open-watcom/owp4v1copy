@@ -3,10 +3,12 @@ objs = &
 387 &
 a &
 alias &
+alignorg &
 anon &
 anthony &
 b &
 backquot &
+bar &
 beep &
 bigext &
 bug &
@@ -16,7 +18,9 @@ cmps &
 comm &
 current &
 data &
+dos16m &
 dosinite &
+dosstart &
 do_ax &
 dup &
 empty &
@@ -56,6 +60,7 @@ movs &
 new &
 newbug &
 newmif &
+notcomm &
 offset &
 org &
 orgage &
@@ -79,6 +84,7 @@ stos &
 strmang &
 struct &
 structjn &
+t2 &
 test &
 tmp &
 tn &
@@ -88,16 +94,10 @@ x &
 xx
 
 dev_objs = &
-alignorg &
-bar &
-dos16m &
-dosstart &
 fubar &
 jmp &
-loader2 &
 newproc &
-notcomm &
-t2
+loader2
 
 asm_flags_x = -c
 

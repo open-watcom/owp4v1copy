@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  symbol manipulation routines
 *
 ****************************************************************************/
 
@@ -82,8 +81,6 @@ char *InitAsmSym( struct asm_sym *sym, char *name )
     if( sym->name != NULL ) {
         strcpy( sym->name, name );
         sym->next = NULL;
-        sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
         sym->fixup = NULL;
 #ifdef _WASM_
         sym->grpidx = 0;
@@ -95,8 +92,16 @@ char *InitAsmSym( struct asm_sym *sym, char *name )
         sym->total_size = 0;
         sym->total_length = 0;
         sym->mangler = NULL;
+        sym->state = SYM_UNDEFINED;
+        sym->mem_type = EMPTY;
 #else
         sym->addr = 0;
+        sym->state = AsmQueryExternal( sym->name );
+        if( sym->state == SYM_UNDEFINED ) {
+            sym->mem_type = EMPTY;
+        } else {
+            sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
+        }
 #endif
     }
     return( sym->name );
@@ -183,16 +188,8 @@ struct asm_sym *AsmLookup( char *name )
             sym->mem_type = T_NEAR;
             return( sym );
         }
-        sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
 #else
         sym->addr = Address;
-        sym->state = AsmQueryExternal( name );
-        if( sym->state == SYM_UNDEFINED ) {
-            sym->mem_type = EMPTY;
-        } else {
-            sym->mem_type = CvtTable[ AsmQueryType( name ) ];
-        }
 #endif
     } else {
         AsmError( NO_MEMORY );
@@ -256,21 +253,6 @@ struct asm_sym *AsmAdd( struct asm_sym *sym )
 
     sym->next = *location;
     *location = sym;
-    sym->fixup = NULL;
-#ifdef _WASM_
-    sym->offset = 0;
-    sym->public = FALSE;
-    sym->mangler = NULL;
-    sym->state = SYM_UNDEFINED;
-    sym->mem_type = EMPTY;
-#else
-    sym->state = AsmQueryExternal( sym->name );
-    if( sym->state == SYM_UNDEFINED ) {
-        sym->mem_type = EMPTY;
-    } else {
-        sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
-    }
-#endif
     return( sym );
 }
 

@@ -76,6 +76,7 @@
 #define BYTE_6                  6
 #define BYTE_8                  8
 #define BYTE_10                 10
+#define BYTE_16                 16
 
 enum naming_conventions {
     DO_NOTHING,

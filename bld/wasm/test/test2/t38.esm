@@ -1,0 +1,104 @@
+.387
+.386p
+_data		SEGMENT	BYTE PUBLIC USE32 'code'
+		ASSUME CS:_data, DS:DGROUP, SS:DGROUP
+L$1:
+    xor         ax,ax
+    jmp         far ptr L$4
+_data		ENDS
+_text		SEGMENT	BYTE PUBLIC USE32 'code'
+		ASSUME CS:_text, DS:DGROUP, SS:DGROUP
+L$2:
+    xor         ax,ax
+    xor         ax,ax
+L$3:
+    xor         ax,ax
+    jmp         far ptr L$1
+    mov         ax,seg L$2
+    mov         eax,offset L$4
+    mov         ax,seg L$1
+    mov         eax,offset L$1
+L$4:
+    and         ax,ax
+    jne         L$4
+    jmp         L$5
+    jmp         far ptr L$1
+    xor         bx,bx
+L$5:
+    nop         
+    jmp         ax
+    jmp         far ptr L$5
+    jmp         word ptr es:[bx+si]
+    jmp         word ptr es:[si]
+    jmp         word ptr cs:[si]
+    jmp         word ptr [si]
+    jmp         dword ptr es:[bx+si]
+    jmp         dword ptr es:[si]
+    jmp         dword ptr cs:[si]
+    jmp         dword ptr [si]
+    shl         bx,1
+    jmp         near ptr L$6
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+    mov         ax,3039H
+L$6:
+    xor         ax,ax
+    jmp         near ptr L$4
+    xor         ax,ax
+    jmp         far ptr L$3
+_text		ENDS
+		END

@@ -1936,24 +1936,24 @@ L$212:
     mov         byte ptr -0cH[bp],al
     jmp         L$214
 L$213:
-    DW	L$215
-    DW	L$222
-    DW	L$222
-    DW	L$216
-    DW	L$222
-    DW	L$217
-    DW	L$222
-    DW	L$222
-    DW	L$222
-    DW	L$218
-    DW	L$219
-    DW	L$222
-    DW	L$222
-    DW	L$222
-    DW	L$222
-    DW	L$222
-    DW	L$220
-    DW	L$221
+    DW	offset L$215
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$216
+    DW	offset L$222
+    DW	offset L$217
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$218
+    DW	offset L$219
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$222
+    DW	offset L$220
+    DW	offset L$221
 L$214:
     mov         al,byte ptr -0cH[bp]
     sub         al,63H
@@ -2485,18 +2485,18 @@ L$290:
     jmp         near ptr L$313
     cld         
 L$291:
-    DW	L$300
-    DW	L$309
-    DW	L$309
-    DW	L$309
-    DW	L$294
-    DW	L$309
-    DW	L$309
-    DW	L$309
-    DW	L$309
-    DW	L$309
-    DW	L$297
-    DW	L$303
+    DW	offset L$300
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$294
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$309
+    DW	offset L$297
+    DW	offset L$303
 L$292:
     lds         bx,dword ptr -0cH[bp]
     mov         bl,byte ptr 1[bx]
@@ -2638,12 +2638,12 @@ L$305:
     call        near ptr L$144
     jmp         near ptr L$316
 L$306:
-    DW	L$308
-    DW	L$309
-    DW	L$308
-    DW	L$308
-    DW	L$309
-    DW	L$308
+    DW	offset L$308
+    DW	offset L$309
+    DW	offset L$308
+    DW	offset L$308
+    DW	offset L$309
+    DW	offset L$308
 L$307:
     lds         bx,dword ptr -0cH[bp]
     mov         bl,byte ptr 2[bx]

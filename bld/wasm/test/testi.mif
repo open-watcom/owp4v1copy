@@ -1,0 +1,38 @@
+.CONTINUE
+.IGNORE
+
+!ifndef testcomp
+testcomp=wcc386
+!endif 
+
+!ifdef __UNIX__
+nulldevice=/dev/null
+!else
+nulldevice=nul
+!endif
+
+.BEFORE
+    @%create testcomp.log
+
+all : clean $(objs) $(dev_objs) .SYMBOLIC
+
+!ifneq objs
+$(objs) : .SYMBOLIC
+    @echo $^@ ================================================================
+    @$(testcomp) $@.c -s -os -zq -fo=.obj >$(nulldevice)
+    @wmake -h -f ../check.mif name=$^@ testname=testcomp
+!endif
+
+!ifneq dev_objs
+$(dev_objs) : .SYMBOLIC
+    @echo .
+    @echo ==============================================================
+    @echo DEVELOPMENT - $^@.asm 
+    @echo ==============================================================
+    @$(testcomp) $@.c -s -os -zq -fo=.obj >$(nulldevice)
+    @wmake -h -f ../check.mif name=$^@ testname=testcomp
+    @echo .
+!endif
+
+clean : .SYMBOLIC
+    @rm -f *.obj *.err *.dis *.lst *.tmp mem.trk

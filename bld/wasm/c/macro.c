@@ -65,8 +65,6 @@ extern int              InputQueueFile( char * );
 extern int              AsmScan( char * );
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
-extern void             AsmTakeOut( char * );
-extern dir_node         *dir_insert( char *name, int tab );
 extern void             wipe_space( char *token );
 extern char             *get_curr_filename( void );
 extern void             PushMacro( char *, bool );
@@ -670,39 +668,27 @@ int ExpandMacro( int tok_count)
 int MacroDef( int i, bool hidden )
 /********************************/
 {
-    struct asm_sym      *sym;
     char                *name;
     dir_node            *currproc;
 
-    if( Parse_Pass != PASS_1 ) {
-        /**/myassert( i >= 0 );
-        //  currproc = DirLookup( AsmBuffer[i]->string_ptr, TAB_MACRO );
-        currproc = (dir_node *)AsmGetSymbol( AsmBuffer[i]->string_ptr );
-        if( currproc != NULL ) {
-            return( macro_exam( i ) );
-        }
-    }
-    // error checking for nested macro defs here?
-
     if( i < 0 ) {
-        AsmError( PROC_MUST_HAVE_A_NAME );
+        if( Parse_Pass == PASS_1 )
+            AsmError( PROC_MUST_HAVE_A_NAME );
         return( ERROR );
     }
     name = AsmBuffer[i]->string_ptr;
-    sym = AsmGetSymbol( name );
-    if( sym == NULL ) {
-         currproc = dir_insert( name, TAB_MACRO );
-         name = get_curr_filename();
-         currproc->e.macroinfo->filename = AsmAlloc( strlen( name ) + 1 );
-         strcpy( currproc->e.macroinfo->filename, name );
-         currproc->e.macroinfo->hidden = hidden;
-         sym = (asm_sym *)currproc;
-    } else {
+    currproc = (dir_node *)AsmGetSymbol( name );
+    if( currproc == NULL ) {
+        currproc = dir_insert( name, TAB_MACRO );
+        name = get_curr_filename();
+        currproc->e.macroinfo->filename = AsmAlloc( strlen( name ) + 1 );
+        strcpy( currproc->e.macroinfo->filename, name );
+        currproc->e.macroinfo->hidden = hidden;
+    } else if( Parse_Pass == PASS_1 ) {
         AsmError( PROC_ALREADY_DEFINED );
         return( ERROR );
     }
-    sym->state = SYM_MACRO;
-    return( macro_exam( i ) ) ;
+    return( macro_exam( i ) );
 }
 
 int MacroEnd( bool exit_flag )

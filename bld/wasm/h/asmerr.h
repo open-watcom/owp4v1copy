@@ -51,6 +51,15 @@ extern void             AsmErr( int msgnum, ... );
 extern void             AsmWarn( int level, int msgnum, ... );
 extern void             AsmNote( int msgnum, ... );
 
+extern char             *curr_src_line;
+
+#ifndef _WASM_
+#define AsmIntErr( x )
+#elif DEBUG_OUT
+#define AsmIntErr( x ) printf( "%s\n", curr_src_line );printf( "Internal error = %d\n", x )
+#else
+#define AsmIntErr( x ) printf( "Internal error = %d\n", x )
+#endif
 
 #if defined( _WASM_ )
 

@@ -5,113 +5,113 @@
 _DATA16		SEGMENT	PARA PRIVATE USE16 'DATA'
 L$1:
     DB	0, 0, 0, 0
-    DW	L$1
-    DW	L$2
-    DW	code_proc16
-    DW	code_proc32
-    DW	L$1
-    DW	code_proc16
-    DW	L$2
-    DW	code_proc32
-    DW	L$1
+    DW	seg L$1
+    DW	seg L$2
+    DW	seg code_proc16
+    DW	seg code_proc32
+    DW	seg L$1
+    DW	seg code_proc16
+    DW	seg L$2
+    DW	seg code_proc32
+    DW	seg L$1
     DB	0, 0
-    DW	L$2
+    DW	seg L$2
     DB	0, 0
-    DW	code_proc16
+    DW	seg code_proc16
     DB	0, 0
-    DW	code_proc32
+    DW	seg code_proc32
     DB	0, 0
-    DW	L$1
+    DW	seg L$1
     DB	0, 0
-    DW	code_proc16
+    DW	seg code_proc16
     DB	0, 0
-    DW	L$2
+    DW	seg L$2
     DB	0, 0
-    DW	code_proc32
+    DW	seg code_proc32
     DB	0, 0
 
 _DATA16		ENDS
 _DATA32		SEGMENT	PARA PRIVATE USE32 'DATA'
 L$2:
     DB	0, 0, 0, 0
-    DW	L$1
-    DW	L$2
-    DW	code_proc16
-    DW	code_proc32
-    DW	L$1
-    DW	code_proc16
-    DW	L$2
-    DW	code_proc32
-    DW	L$1
+    DW	seg L$1
+    DW	seg L$2
+    DW	seg code_proc16
+    DW	seg code_proc32
+    DW	seg L$1
+    DW	seg code_proc16
+    DW	seg L$2
+    DW	seg code_proc32
+    DW	seg L$1
     DB	0, 0
-    DW	L$2
+    DW	seg L$2
     DB	0, 0
-    DW	code_proc16
+    DW	seg code_proc16
     DB	0, 0
-    DW	code_proc32
+    DW	seg code_proc32
     DB	0, 0
-    DW	L$1
+    DW	seg L$1
     DB	0, 0
-    DW	code_proc16
+    DW	seg code_proc16
     DB	0, 0
-    DW	L$2
+    DW	seg L$2
     DB	0, 0
-    DW	code_proc32
+    DW	seg code_proc32
     DB	0, 0
 
 _DATA32		ENDS
 _TEXT16		SEGMENT	PARA PRIVATE USE16 'CODE'
 		ASSUME CS:_TEXT16, DS:DGROUP, SS:DGROUP
 code_proc16:
-    mov       ax,seg L$1
-    mov       ax,seg L$2
-    mov       eax,seg L$1
-    mov       eax,seg L$2
-    mov       dword ptr [bx],seg L$1
-    mov       dword ptr [bx],seg L$2
-    mov       dword ptr [ebx],seg L$1
-    mov       dword ptr [ebx],seg L$2
-    mov       ax,seg L$1
-    mov       eax,seg L$1
-    mov       eax,seg code_proc16
-    mov       dword ptr [bx],seg L$1
-    mov       dword ptr [ebx],seg L$1
-    mov       dword ptr [bx],seg code_proc16
-    mov       dword ptr [ebx],seg code_proc16
-    mov       ax,seg L$2
-    mov       eax,seg L$2
-    mov       eax,seg code_proc32
-    mov       dword ptr [bx],seg L$2
-    mov       dword ptr [ebx],seg L$2
-    mov       dword ptr [bx],seg code_proc32
-    mov       dword ptr [ebx],seg code_proc32
-    ret       
+    mov         ax,seg L$1
+    mov         ax,seg L$2
+    mov         eax,seg L$1
+    mov         eax,seg L$2
+    mov         dword ptr [bx],seg L$1
+    mov         dword ptr [bx],seg L$2
+    mov         dword ptr [ebx],seg L$1
+    mov         dword ptr [ebx],seg L$2
+    mov         ax,seg L$1
+    mov         eax,seg L$1
+    mov         eax,seg code_proc16
+    mov         dword ptr [bx],seg L$1
+    mov         dword ptr [ebx],seg L$1
+    mov         dword ptr [bx],seg code_proc16
+    mov         dword ptr [ebx],seg code_proc16
+    mov         ax,seg L$2
+    mov         eax,seg L$2
+    mov         eax,seg code_proc32
+    mov         dword ptr [bx],seg L$2
+    mov         dword ptr [ebx],seg L$2
+    mov         dword ptr [bx],seg code_proc32
+    mov         dword ptr [ebx],seg code_proc32
+    ret         
 _TEXT16		ENDS
 _TEXT32		SEGMENT	PARA PRIVATE USE32 'CODE'
 		ASSUME CS:_TEXT32, DS:DGROUP, SS:DGROUP
 code_proc32:
-    mov       ax,seg L$1
-    mov       ax,seg L$2
-    mov       eax,seg L$1
-    mov       eax,seg L$2
-    mov       dword ptr [bx],seg L$1
-    mov       dword ptr [bx],seg L$2
-    mov       dword ptr [ebx],seg L$1
-    mov       dword ptr [ebx],seg L$2
-    mov       ax,seg L$1
-    mov       eax,seg L$1
-    mov       eax,seg code_proc16
-    mov       dword ptr [bx],seg L$1
-    mov       dword ptr [ebx],seg L$1
-    mov       dword ptr [bx],seg code_proc16
-    mov       dword ptr [ebx],seg code_proc16
-    mov       ax,seg L$2
-    mov       eax,seg L$2
-    mov       eax,seg code_proc32
-    mov       dword ptr [bx],seg L$2
-    mov       dword ptr [ebx],seg L$2
-    mov       dword ptr [bx],seg code_proc32
-    mov       dword ptr [ebx],seg code_proc32
-    ret       
+    mov         ax,seg L$1
+    mov         ax,seg L$2
+    mov         eax,seg L$1
+    mov         eax,seg L$2
+    mov         dword ptr [bx],seg L$1
+    mov         dword ptr [bx],seg L$2
+    mov         dword ptr [ebx],seg L$1
+    mov         dword ptr [ebx],seg L$2
+    mov         ax,seg L$1
+    mov         eax,seg L$1
+    mov         eax,seg code_proc16
+    mov         dword ptr [bx],seg L$1
+    mov         dword ptr [ebx],seg L$1
+    mov         dword ptr [bx],seg code_proc16
+    mov         dword ptr [ebx],seg code_proc16
+    mov         ax,seg L$2
+    mov         eax,seg L$2
+    mov         eax,seg code_proc32
+    mov         dword ptr [bx],seg L$2
+    mov         dword ptr [ebx],seg L$2
+    mov         dword ptr [bx],seg code_proc32
+    mov         dword ptr [ebx],seg code_proc32
+    ret         
 _TEXT32		ENDS
 		END

@@ -1,18 +1,18 @@
 .387
 .386p
-		PUBLIC	_proc1
+		PUBLIC	proc1
 DGROUP		GROUP	_DATA
-RETIRET_TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
-		ASSUME CS:RETIRET_TEXT, DS:DGROUP, SS:DGROUP
-_proc1:
+retiret_TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
+		ASSUME CS:retiret_TEXT, DS:DGROUP, SS:DGROUP
+proc1:
     push        ebp
     mov         ebp,esp
-    add         esp,0fffffffcH
-    pushw       bx
+    sub         esp,8
+    push        bx
     mov         bx,word ptr 0cH[ebp]
-    mov         word ptr -2[ebp],bx
-    mov         bx,word ptr 10H[ebp]
     mov         word ptr -4[ebp],bx
+    mov         bx,word ptr 10H[ebp]
+    mov         word ptr -8[ebp],bx
     mov         bx,word ptr 0cH[ebp]
     mov         word ptr 10H[ebp],bx
     or          ax,ax
@@ -52,7 +52,7 @@ L$7:
     pop         bx
     leave       
     retf        
-RETIRET_TEXT		ENDS
+retiret_TEXT		ENDS
 _DATA		SEGMENT	DWORD PUBLIC USE32 'DATA'
     DB	0
 

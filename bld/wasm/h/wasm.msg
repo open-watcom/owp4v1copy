@@ -204,3 +204,8 @@ pick( UNCLOSED_CONDITIONALS,	"%u unclosed conditional directive(s) detected" ,
 				"%u ï¬Ç∂ÇƒÇ¢Ç»Ç¢èåèã[éóñΩóﬂÇåüèoÇµÇ‹ÇµÇΩ" )
 pick( WRONG_CPU_FOR_32BIT_SEGMENT, "Wrong CPU type for 32-bit segment" , 
                                 "Wrong CPU type for 32-bit segment")
+pick( PROC_IS_NOT_CLOSED,	"Procedure %s is not closed" , 
+                                "Procedure %s is not closed")
+pick( CALL_FAR_TO_NEAR,
+                                "Far call is converted to near call." ,
+                                "Far call is converted to near call." )

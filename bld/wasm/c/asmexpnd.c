@@ -29,6 +29,10 @@
 *
 ****************************************************************************/
 
+#include "asmglob.h"
+#include "asmexpnd.h"
+
+#ifdef _WASM_
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -36,7 +40,6 @@
 #include <malloc.h>
 #include <ctype.h>
 
-#include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
 #include "asmins.h"
@@ -52,7 +55,6 @@
 #include "fixup.h"
 #include "queue.h"
 
-#include "asmexpnd.h"
 #include "directiv.h"
 
 extern dir_node         *CurrProc;
@@ -61,7 +63,6 @@ extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 extern void             wipe_space( char *token );
 extern int              AsmScan( char * );
-extern dir_node         *dir_insert( char *name, int tab );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              MakeLabel( char *symbol_name, memtype mem_type );
 
@@ -315,18 +316,14 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         }
         dir->e.constinfo->redefine = redefine;
         dir->e.constinfo->expand_early = expand_early;
-        dir->e.constinfo->data = NULL;
-        dir->e.constinfo->count = 0;
-        dir->sym.state = SYM_UNDEFINED; /* can't use the value yet */
     } else {
         /* check if it can be redefined */
         dir = (dir_node *)sym;
         if( sym->state == SYM_UNDEFINED ) {
-            dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
+            dir_change( dir, TAB_CONST );
             dir->e.constinfo->redefine = redefine;
             dir->e.constinfo->expand_early = expand_early;
             sym->grpidx = sym->segidx = sym->offset = 0;
-            dir->e.constinfo->data = NULL;
         } else if(( sym->state != SYM_CONST )
             || (( dir->e.constinfo->redefine == FALSE ) && ( Parse_Pass == PASS_1 ))) {
             /* error */
@@ -344,14 +341,12 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         new[0].string_ptr = NULL;
 
         if( dir->e.constinfo->data != NULL ) {
-            FreeInfo( dir );
-            dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
+            dir_change( dir, TAB_CONST );
             dir->e.constinfo->redefine = redefine;
             dir->e.constinfo->expand_early = expand_early;
         }
         dir->e.constinfo->count = 1;
         dir->e.constinfo->data = new;
-        dir->sym.state = SYM_CONST;
         return( NOT_ERROR );
     }
 
@@ -396,31 +391,13 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         }
     }
     if( dir->e.constinfo->data != NULL ) {
-        FreeInfo( dir );
-        dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
+        dir_change( dir, TAB_CONST );
         dir->e.constinfo->redefine = redefine;
         dir->e.constinfo->expand_early = expand_early;
     }
     dir->e.constinfo->count = count;
     dir->e.constinfo->data = new;
-
-    dir->sym.state = SYM_CONST;
     return( NOT_ERROR );
-}
-
-int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
-/**************************************************/
-{
-    if( ExpandAllConsts( start_pos, early_only ) == ERROR ) return( ERROR );
-    if( early_only == FALSE ) {
-        int    val;
-
-        val = EvalExpr( Token_Count, start_pos, Token_Count, flag_msg );
-        if( val == ERROR ) return( ERROR );
-        Token_Count = val;
-    }
-    return( NOT_ERROR );
-
 }
 
 int ExpandAllConsts( int start_pos, bool early_only )
@@ -450,3 +427,36 @@ int ExpandAllConsts( int start_pos, bool early_only )
     return( NOT_ERROR );
 }
 
+int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
+/******************************************************************/
+{
+    if( ExpandAllConsts( start_pos, early_only ) == ERROR ) return( ERROR );
+    if( early_only == FALSE ) {
+        int    val;
+
+        val = EvalExpr( Token_Count, start_pos, Token_Count, flag_msg );
+        if( val == ERROR )
+            return( ERROR );
+        Token_Count = val;
+    }
+    return( NOT_ERROR );
+}
+
+#else
+
+extern int      EvalExpr( int, int, int, bool );
+extern int      Token_Count;    // number of tokens on line
+
+int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
+/******************************************************************/
+{
+    int    val;
+
+    val = EvalExpr( Token_Count, start_pos, Token_Count, flag_msg );
+    if( val == ERROR )
+        return( ERROR );
+    Token_Count = val;
+    return( NOT_ERROR );
+}
+
+#endif

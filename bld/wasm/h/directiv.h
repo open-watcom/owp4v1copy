@@ -49,7 +49,7 @@
 typedef int     direct_idx;     // directive index, such as segment index,
                                 // group index or lname index, etc.
 
-#define MAGIC_FLAT_GROUP        (ModuleInfo.flat_idx)
+#define MAGIC_FLAT_GROUP        ModuleInfo.flat_idx
 
 typedef enum {
         SIM_CODE = 0,
@@ -163,7 +163,7 @@ typedef struct {
 
 typedef struct {
     obj_rec     *segrec;
-    direct_idx  idx;            // its group index
+    direct_idx  grpidx;         // its group index
     uint_32     start_loc;      // starting offset of current ledata or lidata
     unsigned    readonly:1;     // if the segment is readonly
     unsigned    ignore:1;       // ignore this if the seg is redefined
@@ -174,10 +174,13 @@ typedef struct {
 typedef struct {
     uint        idx;            // external definition index
     unsigned    use32:1;
+    unsigned    comm:1;
 } ext_info;
 
 typedef struct {
     uint            idx;                // external definition index
+    unsigned        use32:1;
+    unsigned        comm:1;
     unsigned long   size;
     uint            distance;
 } comm_info;
@@ -326,17 +329,19 @@ typedef struct {
 
 /*---------------------------------------------------------------------------*/
 
-enum {
+enum assume_reg {
     ASSUME_DS=0,
     ASSUME_ES,
     ASSUME_SS,
     ASSUME_FS,
     ASSUME_GS,
     ASSUME_CS,
-    ASSUME_LAST,
     ASSUME_ERROR,
     ASSUME_NOTHING
 };
+
+#define ASSUME_FIRST    ASSUME_DS
+#define ASSUME_LAST     ASSUME_ERROR
 
 typedef struct {
     asm_sym             *symbol;        /* segment or group that is to
@@ -358,6 +363,9 @@ extern void             FreeTable( int );
 //extern dir_dir        *DirLookup( char *, int );
 /* Search for the directive node (name specified by 1st para) in the table
    ( specified by 2nd para ) */
+
+extern dir_node         *dir_insert( char *, int );
+extern void             dir_change( dir_node *, int );
 
 extern void             IdxInit( void );
 /* Initialize all the index variables */
@@ -419,11 +427,11 @@ extern dir_node *GetSeg( struct asm_sym *sym );
 extern void             AssumeInit( void );     // init all assumed-register table
 extern int              SetAssume( int );       // Assume a register
 
-extern int              GetAssume( struct asm_sym*, int );
+extern enum assume_reg  GetAssume( struct asm_sym*, enum assume_reg );
 /* Return the assumed register of the symbol, and determine the frame and
    frame_datum of its fixup */
 
-extern int              GetPrefixAssume( struct asm_sym*, int );
+extern enum assume_reg  GetPrefixAssume( struct asm_sym*, enum assume_reg );
 /* Determine the frame and frame_datum of a symbol with a register prefix */
 
 extern int              FixOverride( int );
@@ -512,6 +520,7 @@ fix( TOK_EXT_PWORD,     "PWORD",        T_FWORD,        0               ),
 fix( TOK_EXT_FWORD,     "FWORD",        T_FWORD,        0               ),
 fix( TOK_EXT_QWORD,     "QWORD",        T_QWORD,        0               ),
 fix( TOK_EXT_TBYTE,     "TBYTE",        T_TBYTE,        0               ),
+fix( TOK_EXT_OWORD,     "OWORD",        T_OWORD,        0               ),
 fix( TOK_EXT_ABS,       "ABS",          T_ABS,          0               ),
 fix( TOK_DS,            "DS",           ASSUME_DS,      0               ),
 fix( TOK_ES,            "ES",           ASSUME_ES,      0               ),

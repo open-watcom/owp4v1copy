@@ -4,15 +4,16 @@ DGROUP		GROUP	_DATA
 _TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
 		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
 L$1:
-    xor       ax,ax
+    xor         ax,ax
 L$2:
-    mov       ax,word ptr DGROUP:L$4
-    mov       ax,word ptr DGROUP:L$4
-    mov       eax,dword ptr DGROUP:L$5
-    mov       ax,DGROUP
-    mov       ax,DGROUP
-    mov       ax,DGROUP
-    xor       ax,ax
+    mov         ax,word ptr DGROUP:L$4
+    mov         ax,word ptr DGROUP:L$4
+    mov         eax,dword ptr DGROUP:L$5
+    mov         ax,DGROUP
+    mov         ax,DGROUP
+    mov         eax,DGROUP
+    mov         ax,DGROUP
+    xor         ax,ax
 _TEXT		ENDS
 _DATA		SEGMENT	DWORD PUBLIC USE32 'DATA'
 L$3:
@@ -21,18 +22,18 @@ L$3:
 L$4:
     DB	0, 0
 L$5:
-    DD	DGROUP:L$4
-    DD	DGROUP:L$4
-    DD	L$2
-    DD	L$2
-    DD	DGROUP:L$6
-    DD	DGROUP:L$7
+    DD	offset DGROUP:L$4
+    DD	offset DGROUP:L$4
+    DD	offset L$2
+    DD	offset L$2
+    DD	offset DGROUP:L$6
+    DD	offset DGROUP:L$7
 L$6:
-    DW	DGROUP:L$3
+    DW	seg DGROUP:L$3
 L$7:
-    DW	L$1
-    DD	DGROUP:L$7
-    DD	L$2
+    DW	seg L$1
+    DD	offset DGROUP:L$7
+    DD	offset L$2
     DW	DGROUP
     DW	DGROUP
 

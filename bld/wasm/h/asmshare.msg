@@ -292,3 +292,6 @@ pick( ASSUMING_DWORD,
 pick( FLOAT_OPERAND,
                                 "Float is used as operand" ,
                                 "Float is used as operand" )
+pick( ONLY_SHORT_AND_NEAR_DISPLACEMENT_IS_ALLOWED,
+                                "Only SHORT and NEAR displacement is allowed" ,
+                                "SHORT,NEARディスプレースメントのみ可能です" )

@@ -35,6 +35,7 @@ _DATA32 SEGMENT USE32 'DATA'
 
 	dd offset code_proc16
 	dd code_proc16
+	dd 0
 
 data_dd32 dd ?
 
@@ -77,6 +78,7 @@ _TEXT32 SEGMENT USE32 'CODE'
 
         assume cs:_TEXT32
 
+            nop
             nop
             nop
             nop

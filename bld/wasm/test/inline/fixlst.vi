@@ -1,4 +1,4 @@
-g/ENDS/.-1,.j
+g/^r[0-9]+_:/.-1,.j
 g/^$/d
 g/EXTRN/d
 g/SEGMENT/d
@@ -17,3 +17,5 @@ g/^r[0-9]+_:/d
 %s/_x/x/
 %s/ +/ /g
 %s/ $//g
+$d
+g/^ret r[0-9]+_:/d

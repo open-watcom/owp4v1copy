@@ -353,7 +353,7 @@ hook_in_emulator proc near
           mov   eax,00000E02h           ; - "set cr0" function
           mov   ebx,EM                  ; - want EM bit turned on
           mov   ecx,__GDAptr            ; - get address of GDA
-          call  GDA_SERV[ecx]           ; - call extender service routine
+          call  dword ptr [ecx+GDA_SERV]          ; - call extender service routine
         _admit                          ; guess: Rational DOS/4G
           cmp   byte ptr __Extender,X_RATIONAL   ; - quit if not DOS/4G
           _quif ne                      ; - ...
@@ -475,7 +475,7 @@ __sys_fini_387_emulator proc near
           mov   eax,00000E02h           ; - "set cr0" function
           mov   ebx,0                   ; - want EM bit turned off
           mov   ecx,__GDAptr            ; - get address of GDA
-          call  GDA_SERV[ecx]           ; - call extender service routine
+          call  dword ptr [ecx+GDA_SERV]          ; - call extender service routine
         _admit                          ; guess: Ergo DOS extender (OS/386)
           cmp   al,X_ERGO               ; - quit if not OS/386
           _quif ne                      ; - ...

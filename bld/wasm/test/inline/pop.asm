@@ -32,7 +32,3 @@ pusha
 pushad
 pushf
 pushfd
-pusha
-pushad
-pushf
-pushfd

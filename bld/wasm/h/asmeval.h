@@ -33,33 +33,37 @@
 #ifndef ASMEVAL_H
 #define ASMEVAL_H
 
-enum {
+#include "bool.h"
+
+enum exprtype {
     EXPR_ADDR,          // e.g. "foo", "seg foo" and "offset foo"
     EXPR_CONST,         // A constant; note that "label1 - label2" -> constant
-    EXPR_REG            // A register
+    EXPR_REG,           // A register
+    EXPR_EMPTY = EMPTY
 };
 
 typedef struct expr_list {
-    int_8       type;           // Type of expression
-    int_32      value;          // For constant, which may also be the offset
+    enum exprtype   type;           // Type of expression
+    int_32          value;          // For constant, which may also be the offset
                                 //   to a label
-    char        *string;        // for strings only -- NULL otherwise
-    int         base_reg;       // position of token for base register
+    char            *string;        // for strings only -- NULL otherwise
+    int             base_reg;       // position of token for base register
                                 // if type is EXPR_REG, it holds register
-    int         idx_reg;        // position of token for index register
-    int         label;          // Position of token holding the label
-    int         override;       // Position of token holding the override label
+    int             idx_reg;        // position of token for index register
+    int             label;          // Position of token holding the label
+    int             override;       // Position of token holding the override label
                                 //   or register
-    int         instr;          // Position of token holding the instruction for
+    int             instr;          // Position of token holding the instruction for
                                 //   the label
-    unsigned    indirect : 1;   // Whether inside [] or not
-    unsigned    explicit : 1;   // Whether expression type explicitly given
-    int         expr_type;      // Whether expr is BYTE, WORD, DWORD, etc.
-    uint_8      scale;          // scaling factor 1, 2, 4, or 8 - 386 code only
+    unsigned        indirect : 1;   // Whether inside [] or not
+    unsigned        explicit : 1;   // Whether expression type explicitly given
+    unsigned        empty : 1;
+    int             expr_type;      // Whether expr is BYTE, WORD, DWORD, etc.
+    uint_8          scale;          // scaling factor 1, 2, 4, or 8 - 386 code only
+    struct asm_sym  *sym;
+    struct asm_sym  *mbr;
 } expr_list;
 
 extern int      EvalExpr( int, int, int, bool );
-extern void     AsmEvalInit( void );
-extern void     AsmEvalFini( void );
 
 #endif

@@ -260,9 +260,10 @@ static file_list *push_flist( char *name, bool is_a_file )
 
     new = AsmAlloc( sizeof( file_list ) );
     new->next = file_stack;
-    new->line = LineNumber;
     file_stack = new;
+    new->line = LineNumber;
     new->is_a_file = is_a_file;
+    new->hidden = 0;
     if( !is_a_file ) {
         dir_node *dir;
 
@@ -328,27 +329,6 @@ void InputQueueLine( char *line )
     new->line = AsmAlloc( strlen( line ) + 1 );
     strcpy( new->line, line );
 }
-
-#if 0
-static void StripQuotes( char *fname )
-{
-    char *s;
-    char *d;
-
-    if( *fname == '"' ) {
-        // string will shrink so we can reduce in place
-        d = fname;
-        for( s = d + 1; *s && *s != '"'; ++s ) {
-            if( *s == '\0' )break;
-            if( s[0] == '\\' && s[1] == '"' ) {
-                ++s;
-            }
-            *d++ = *s;
-        }
-        *d = '\0';
-    }
-}
-#endif
 
 static FILE *open_file_in_include_path( char *name, char *fullpath )
 /******************************************************************/
@@ -627,6 +607,56 @@ static void output( void )
                     break;
                 case T_CL_SQ_BRACKET:
                     DebugMsg(( " %s ", "]" ));
+                    break;
+                case T_COLON:
+                    DebugMsg(( " %s ", ":" ));
+                    break;
+                case T_RES_ID:
+                    switch( AsmBuffer[i]->value ) {
+                    case T_PTR:
+                        DebugMsg(( " %s ", "Ptr" ));
+                        break;
+                    case T_NEAR:
+                        DebugMsg(( " %s ", "Near" ));
+                        break;
+                    case T_FAR:
+                        DebugMsg(( " %s ", "Far" ));
+                        break;
+                    case T_PROC:
+                        DebugMsg(( " %s ", "Proc" ));
+                        break;
+                    case T_BYTE:
+                    case T_SBYTE:
+                        DebugMsg(( " %s ", "Byte" ));
+                        break;
+                    case T_WORD:
+                    case T_SWORD:
+                        DebugMsg(( " %s ", "Word" ));
+                        break;
+                    case T_DWORD:
+                    case T_SDWORD:
+                        DebugMsg(( " %s ", "DWord" ));
+                        break;
+                    case T_PWORD:
+                    case T_FWORD:
+                        DebugMsg(( " %s ", "FWord" ));
+                        break;
+                    case T_QWORD:
+                        DebugMsg(( " %s ", "QWord" ));
+                        break;
+                    case T_TBYTE:
+                        DebugMsg(( " %s ", "TByte" ));
+                        break;
+                    case T_OWORD:
+                        DebugMsg(( " %s ", "OWord" ));
+                        break;
+                    case T_ABS:
+                        DebugMsg(( " %s ", "Abs" ));
+                        break;
+                    default:
+                        DebugMsg((" %s ", AsmBuffer[i]->string_ptr ));
+                        break;
+                    }
                     break;
                 default:
                     DebugMsg((" %s ", AsmBuffer[i]->string_ptr ));

@@ -44,25 +44,35 @@
 #include "asmsym.h"
 #include "asmdefs.h"
 #include "asmalloc.h"
+#include "asmfixup.h"
 
 #ifdef _WASM_
-    #include "directiv.h"
-    #include "womp.h"
-    #include "queue.h"
+
+#include "directiv.h"
+#include "womp.h"
+#include "queue.h"
 
 extern int_8                    PhaseError;
 
 static void AddLinnumData( void );
 
+extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
+qdesc       *LinnumQueue = NULL;    // queue of linnum_data structs
+
 #endif
 
-int match_phase_3( int *i, unsigned long determinant );
+int match_phase_3( int *i, enum operand_type determinant );
 
-#ifdef _WASM_
-extern int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
-    qdesc       *LinnumQueue = NULL;    // queue of linnum_data structs
-#endif
+static int output_3DNow( int i )
+/************************/
+{
+    const struct asm_ins ASMFAR *ins = &AsmOpTable[i];
 
+    if( ins->byte1_info == F_0F0F ) {
+        AsmCodeByte( ins->opcode | Code->info.opcode );
+    }
+    return( NOT_ERROR );
+}
 static int output( int i )
 /************************/
 /*
@@ -76,14 +86,23 @@ static int output( int i )
     unsigned_8                  tmp;
 
 #ifdef _WASM_
+    /*
+     * Output debug info - line numbers
+     */
     if( Options.debug_flag && !PhaseError && (Parse_Pass != PASS_1) ) {
         AddLinnumData();
     }
 
+    /*
+     * Check if FP is valid
+     */
     if((( ins->cpu & P_FPU_MASK ) != P_NO87 ) && ( Options.floating_point == NO_FP_ALLOWED )) {
         AsmError( NO_FP_WITH_FPC_SET );
         return( ERROR );
     }
+    /*
+     * Output FP fixup if required
+     */
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
@@ -94,24 +113,19 @@ static int output( int i )
     }
 #endif
 
-    if( (ins->cpu&P_CPU_MASK) > (rCode->info.cpu&P_CPU_MASK)
-      ||(ins->cpu&P_FPU_MASK) > (rCode->info.cpu&P_FPU_MASK) ) {
+    /*
+     * Check if CPU and FPU is valid for output code
+     */
+    if( ( ins->cpu & P_CPU_MASK ) > ( rCode->info.cpu & P_CPU_MASK )
+        || ( ins->cpu & P_FPU_MASK ) > ( rCode->info.cpu & P_FPU_MASK )
+        || ( ins->cpu & P_EXT_MASK ) > ( ins->cpu & rCode->info.cpu & P_EXT_MASK ) ) {
         AsmError( INVALID_INSTRUCTION_WITH_CURRENT_CPU_SETTING );
         return( ERROR );
     }
 
-    // some instructions have to add prefix when in 386/486 mode
-    switch( ins->byte1_info ) {
-    case F_16:
-        if( rCode->use32 ) rCode->prefix.opsiz = TRUE;
-        break;
-    case F_32:
-        if( !rCode->use32 ) rCode->prefix.opsiz = TRUE;
-        break;
-    case F_0F:
-        rCode->extended_ins = NOT_EMPTY;
-        break;
-    }
+    /*
+     * Output instruction prefix LOCK, REP or REPNE
+     */
     if( rCode->prefix.ins != EMPTY ) {
         if( rCode->prefix.ins == T_LOCK ) {
             if( ins->allowed_prefix != LOCK ) {
@@ -126,7 +140,29 @@ static int output( int i )
         }
         AsmCodeByte( AsmOpTable[AsmOpcode[rCode->prefix.ins].position].opcode );
     }
+    /*
+     * Output instruction prefix REP or REPNE for SSEx instructions
+     */
+    switch( ins->byte1_info ) {
+    case F_F20F:
+        AsmCodeByte( 0xF2 );
+        break;
+    case F_F3:
+    case F_F30F:
+        AsmCodeByte( 0xF3 );
+        break;
+    case F_16:
+    case F_32:
+    case F_660F:
+    case F_0F:
+    case F_0F0F:
+    default:
+        break;
+    }
 
+    /*
+     * Output FP FWAIT if required
+     */
     if( ins->token == T_FWAIT ) {
         if(( rCode->info.cpu&P_CPU_MASK ) < P_386 ) {
 #ifdef _WASM_
@@ -155,6 +191,9 @@ static int output( int i )
     }
 
 #ifdef _WASM_
+    /*
+     * Output FP fixup if required
+     */
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
@@ -164,54 +203,89 @@ static int output( int i )
         }
     }
 #endif
+    /*
+     * Output address size prefix
+     */
     if( rCode->prefix.adrsiz == TRUE ) {
         AsmCodeByte( ADRSIZ );
+    }
+    /*
+     * Output operand size prefix
+     */
+    if( ins->cpu & NO_OPPRFX )
+        rCode->prefix.opsiz = FALSE;
+    switch( ins->byte1_info ) {
+    case F_16:
+        if( rCode->use32 ) rCode->prefix.opsiz = TRUE;
+        break;
+    case F_32:
+        if( !rCode->use32 ) rCode->prefix.opsiz = TRUE;
+        break;
+    case F_660F:
+        rCode->prefix.opsiz = TRUE;
+        break;
+    case F_0F:
+    case F_0F0F:
+    case F_F20F:
+    case F_F30F:
+    default:
+        break;
     }
     if( rCode->prefix.opsiz == TRUE ) {
         /*
             Certain instructions use the ADDRSIZE prefix when they really
             should use OPERSIZE prefix (well, I think so!). Stupid Intel.
         */
-        if( ins->opnd_type[OPND2] == (OP_MMX|OP_M) ) {
-            /*
-                An operand size prefix for MMX instructions indicates a
-                128-bit operand.  We don't support this properly. JBS 2001/02/19
-            */
-        } else {
-            switch( ins->token ) {
-            case T_JCXZ:
-            case T_JECXZ:
-            case T_LOOPD:
-            case T_LOOPW:
-            case T_LOOPED:
-            case T_LOOPEW:
-            case T_LOOPNED:
-            case T_LOOPNEW:
-            case T_LOOPZD:
-            case T_LOOPZW:
-            case T_LOOPNZD:
-            case T_LOOPNZW:
-                AsmCodeByte( ADRSIZ );
-                break;
-            default:
-                AsmCodeByte( OPSIZ );
-                break;
-            }
+        switch( ins->token ) {
+        case T_JCXZ:
+        case T_JECXZ:
+        case T_LOOPD:
+        case T_LOOPW:
+        case T_LOOPED:
+        case T_LOOPEW:
+        case T_LOOPNED:
+        case T_LOOPNEW:
+        case T_LOOPZD:
+        case T_LOOPZW:
+        case T_LOOPNZD:
+        case T_LOOPNZW:
+            AsmCodeByte( ADRSIZ );
+            break;
+        default:
+            AsmCodeByte( OPSIZ );
+            break;
         }
     }
+    /*
+     * Output segment prefix
+     */
     if( rCode->prefix.seg != EMPTY ) {
         AsmCodeByte( rCode->prefix.seg );
     }
-    if( rCode->extended_ins != EMPTY ) {
-        // special case for some 286 and 386 instructions
+    /*
+     * Output extended opcode
+     * special case for some 286 and 386 instructions
+     * or 3DNow!, MMX and SSEx instructions
+     */
+    switch( ins->byte1_info ) {
+    case F_0F0F:
         AsmCodeByte( EXTENDED_OPCODE );
+        // no break
+    case F_0F:
+    case F_660F:
+    case F_F20F:
+    case F_F30F:
+        AsmCodeByte( EXTENDED_OPCODE );
+        break;
+    case F_F3:
+    default:
+        break;
     }
-    if( rCode->info.opnd_type[OPND1] == OP_MMX && rCode->info.opnd_type[OPND2] == OP_MMX ) {
+    if( ins->opnd_dir ) {
         /* The reg and r/m fields are backwards */
         tmp = rCode->info.rm_byte;
-        rCode->info.rm_byte = 0xc0 | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
+        rCode->info.rm_byte = ( tmp & 0xc0 ) | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
     }
-
     switch( ins->rm_info ) {
     case R_in_OP:
         AsmCodeByte( ins->opcode | ( rCode->info.rm_byte & NOT_BIT_67 ) );
@@ -223,7 +297,10 @@ static int output( int i )
         rCode->info.opcode = 0;
         // no break
     default:
-        AsmCodeByte( ins->opcode  | rCode->info.opcode );
+        // don't output opcode for 3DNow! instructions
+        if( ins->byte1_info != F_0F0F ) {
+            AsmCodeByte( ins->opcode | rCode->info.opcode );
+        }
         tmp = ins->rm_byte | rCode->info.rm_byte;
         AsmCodeByte( tmp );
         if( addr_32( rCode ) ) {
@@ -245,7 +322,7 @@ static int output( int i )
     return( NOT_ERROR );
 }
 
-static int output_data( unsigned long determinant, int index )
+static int output_data( enum operand_type determinant, int index )
 /************************************************************/
 /*
   output address displacement and immediate data;
@@ -268,7 +345,6 @@ static int output_data( unsigned long determinant, int index )
     }
 
 #ifdef _WASM_
-//    if( store_fixup( index ) == ERROR ) return( ERROR );
     store_fixup( index );
 #endif
 
@@ -280,14 +356,6 @@ static int output_data( unsigned long determinant, int index )
         out = 4;
     } else if( determinant & OP_J48 ) {
         out = 6;
-    } else if( determinant == OP_M16_IND ||
-               determinant == OP_M32_IND ||
-               determinant == OP_M48_IND ) {
-        if( Code->use32 ) {
-            out = 4;
-        } else {
-            out = 2;
-        }
     } else if( determinant & OP_M_ANY ) {
         // switch on the mode ( the leftmost 2 bits )
         switch( Code->info.rm_byte & BIT_67 ) {
@@ -338,8 +406,8 @@ int match_phase_1( void )
     int                 i;
     int                 retcode;
     signed char         temp_opsiz = 0;
-    unsigned long       cur_opnd;
-    unsigned long       asm_op1;
+    enum operand_type   cur_opnd;
+    enum operand_type   asm_op1;
 
     // if nothing inside, no need to output anything
     if( Code->info.token == T_NULL ) {
@@ -354,18 +422,6 @@ int match_phase_1( void )
             return( ERROR );
         }
     }
-    switch( Code->info.token ) {
-    case T_LIDT:
-    case T_LGDT:
-        /* kludge fix to allow "LIDT fword ptr foo" */
-        switch( Code->mem_type ) {
-        case T_FWORD:
-            Code->info.opnd_type[OPND1] = OP_M_DW;
-            break;
-        }
-        break;
-    }
-
     // look up the hash table to get the real position of instruction
     i = AsmOpcode[Code->info.token].position;
 
@@ -397,17 +453,25 @@ int match_phase_1( void )
         /* fixme -- temporary fix for all OP_M types */
         // if( cur_opnd & OP_M ) { I think there is a problem here
         if( cur_opnd & OP_M_ANY ) {
-            if( ! ( cur_opnd & asm_op1 ) ) {
+            if( !( ( asm_op1 & cur_opnd ) && ( ( asm_op1 & OP_M_DFT ) == ( cur_opnd & OP_M_DFT ) ) ) ) {
                 if( MEM_TYPE( Code->mem_type, BYTE ) ) {
                     cur_opnd = OP_M_B;
                 } else if( MEM_TYPE( Code->mem_type, WORD ) ) {
                     cur_opnd = OP_M_W;
                 } else if( MEM_TYPE( Code->mem_type, DWORD ) ) {
                     cur_opnd = OP_M_DW;
+                } else if( Code->mem_type == T_FWORD ) {
+                    cur_opnd = OP_M_FW;
                 } else if( Code->mem_type == T_QWORD ) {
                     cur_opnd = OP_M_QW;
                 } else if( Code->mem_type == T_TBYTE ) {
                     cur_opnd = OP_M_TB;
+                } else if( Code->mem_type == T_OWORD ) {
+                    cur_opnd = OP_M_OW;
+                } else if( Code->mem_type == T_FAR ) {
+                    cur_opnd = ( Code->use32 ) ? OP_M_FW : OP_M_DW ;
+                } else if( Code->mem_type == T_NEAR ) {
+                    cur_opnd = ( Code->use32 ) ? OP_M_DW : OP_M_W ;
                 }
             }
         }
@@ -423,7 +487,12 @@ int match_phase_1( void )
 
         switch( asm_op1 ) {
         case OP_MMX:
-             if( cur_opnd == OP_MMX ) {
+             if( cur_opnd & OP_MMX ) {
+                 return( match_phase_2( &i ) );
+             }
+             break;
+        case OP_XMM:
+             if( cur_opnd & OP_XMM ) {
                  return( match_phase_2( &i ) );
              }
              break;
@@ -503,7 +572,9 @@ int match_phase_1( void )
             /* this is the check to see if the operand we have matches
              * the type of the one we need
              */
-            if( asm_op1 & cur_opnd ) {
+            if( ( asm_op1 & cur_opnd )
+                && ( ( ( cur_opnd & OP_M_ANY ) == 0 )
+                    || ( ( asm_op1 & OP_M_DFT ) == ( cur_opnd & OP_M_DFT ) ) ) ) {
                 retcode = match_phase_2( &i );
                 if( retcode != EMPTY ) {
                     return( retcode );
@@ -543,7 +614,44 @@ int match_phase_2( int *i )
     }
 }
 
-int match_phase_3( int *i, unsigned long determinant )
+static int check_3rd_operand( int i )
+{
+    enum operand_type   cur_opnd;
+
+    cur_opnd = Code->info.opnd_type[OPND3];
+    if( ( AsmOpTable[i].opnd_type_3rd == OP3_NONE )
+        || ( AsmOpTable[i].opnd_type_3rd & OP3_HID ) ) {
+        if( cur_opnd == OP_NONE ) {
+            return( NOT_ERROR );
+        } else {
+            return( ERROR );
+        }
+    } else if( cur_opnd == OP_NONE ) {
+        return( ERROR );
+    } else {
+        return( NOT_ERROR );
+    }
+}
+
+static int output_3rd_operand( int i )
+{
+    if( AsmOpTable[i].opnd_type_3rd == OP3_NONE ) {
+        return( NOT_ERROR );
+    } else if( AsmOpTable[i].opnd_type_3rd == OP3_I8_U ) {
+        if( Code->info.opnd_type[OPND3] & OP_I ) {
+            return( output_data( OP_I8, OPND3 ) );
+        } else {
+            return( ERROR );
+        }
+    } else if( AsmOpTable[i].opnd_type_3rd & OP3_HID ) {
+        Code->data[OPND3] = AsmOpTable[i].opnd_type_3rd & ~OP3_HID;
+        return( output_data( OP_I8, OPND3 ) );
+    } else {
+        return( NOT_ERROR );
+    }
+}
+
+int match_phase_3( int *i, enum operand_type determinant )
 /*
 - this routine will look up the assembler opcode table and try to match
   the second operand with what we get;
@@ -552,9 +660,9 @@ int match_phase_3( int *i, unsigned long determinant )
 - call by match_phase_2() only;
 */
 {
-    unsigned long       cur_opnd;
-    unsigned long       last_opnd;
-    unsigned long       asm_op2;
+    enum operand_type   cur_opnd;
+    enum operand_type   last_opnd;
+    enum operand_type   asm_op2;
     unsigned            instruction;
 
     instruction = AsmOpTable[*i].token;
@@ -572,8 +680,7 @@ int match_phase_3( int *i, unsigned long determinant )
         case OP_ST:
         case OP_STI:
             if( cur_opnd & asm_op2 ) {
-                if( output( *i ) == ERROR ) return( ERROR );
-                return( NOT_ERROR );
+                return( output( *i ) );
             }
             break;
         case OP_SR:
@@ -583,8 +690,13 @@ int match_phase_3( int *i, unsigned long determinant )
         case OP_R1632:
         case OP_R32:
             if( cur_opnd & asm_op2 ) {
-                if( output( *i ) == ERROR ) return( ERROR );
-                return( output_data( last_opnd, OPND1 ) );
+                if( check_3rd_operand( *i ) == ERROR )
+                    break;
+                if( output( *i ) == ERROR )
+                    return( ERROR );
+                if( output_data( last_opnd, OPND1 ) == ERROR )
+                    return( ERROR );
+                return( output_3rd_operand( *i ) );
             }
             break;
         case OP_CL:
@@ -592,38 +704,40 @@ int match_phase_3( int *i, unsigned long determinant )
                 // CL is encoded in bit 345 of rm_byte, but we don't need it
                 // so clear it here
                 Code->info.rm_byte &= NOT_BIT_345;
-                if( output( *i ) == ERROR ) return( ERROR );
+                if( output( *i ) == ERROR )
+                    return( ERROR );
                 return( output_data( last_opnd, OPND1 ) );
             }
             break;
         case OP_R16:
             if( cur_opnd & asm_op2 ) {
                 Code->prefix.opsiz = FALSE;
-                if( output( *i ) == ERROR ) return( ERROR );
+                if( output( *i ) == ERROR )
+                    return( ERROR );
                 return( output_data( last_opnd, OPND1 ) );
             }
             break;
         case OP_I:
             if( cur_opnd & asm_op2 ) {
-                #if defined(_WASM_)
-                    long operand = Code->data[OPND2];
-                #endif
+#if defined(_WASM_)
+                long operand = Code->data[OPND2];
+#endif
                 if( last_opnd & OP_R8 ) {
                     // 8-bit register, so output 8-bit data
-                    #if defined(_WASM_)
-                        if( Parse_Pass == PASS_1 && !InRange( operand, 1 ) ) {
-                            AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
-                        }
-                    #endif
+#if defined(_WASM_)
+                    if( Parse_Pass == PASS_1 && !InRange( operand, 1 ) ) {
+                        AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
+                    }
+#endif
                     Code->prefix.opsiz = FALSE;
                     cur_opnd = OP_I8;
                 } else if( last_opnd & OP_R16 ) {
                     // 16-bit register, so output 16-bit data
-                    #if defined(_WASM_)
-                        if( Parse_Pass == PASS_1 && !InRange( operand, 2 ) ) {
-                            AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
-                        }
-                    #endif
+#if defined(_WASM_)
+                    if( Parse_Pass == PASS_1 && !InRange( operand, 2 ) ) {
+                        AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
+                    }
+#endif
                     cur_opnd = OP_I16;
                 } else if( last_opnd & OP_R32 ) {
                     // 32-bit register, so output 32-bit data
@@ -646,10 +760,10 @@ int match_phase_3( int *i, unsigned long determinant )
                         break;
                     }
                 }
-                if( output( *i ) == ERROR ) {
+                if( output( *i ) == ERROR )
                     return( ERROR );
-                }
-                if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
+                if( output_data( last_opnd, OPND1 ) == ERROR )
+                    return( ERROR );
                 return( output_data( cur_opnd, OPND2 ) );
             }
             break;
@@ -663,18 +777,21 @@ int match_phase_3( int *i, unsigned long determinant )
             if( Code->data[OPND2] > UCHAR_MAX ) {
                 break;
             }
-            if( output( *i ) == ERROR ) {
+            if( output( *i ) == ERROR )
                 return( ERROR );
-            }
-            if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
+            if( output_data( last_opnd, OPND1 ) == ERROR )
+                return( ERROR );
             return( output_data( OP_I8, OPND2 ) );
-            break;
         case OP_I8:
-            if( cur_opnd == asm_op2 ) {
+            if( cur_opnd == OP_I8 ) {
                 /* do nothing yet */
-            } else if( ( last_opnd & OP_M16_R16 ) && ( cur_opnd & OP_I ) &&
-                ( MEM_TYPE( Code->mem_type, WORD ) ) &&
-                InsFixups[OPND2] == NULL ) {
+                if( InsFixups[OPND2] != NULL ) {
+                    break;
+                }
+            } else if( ( cur_opnd & OP_I )
+                && ( InsFixups[OPND2] == NULL )
+                && ( ( last_opnd & OP_R16 )
+                || ( last_opnd & OP_M16 ) && ( MEM_TYPE( Code->mem_type, WORD ) ) ) ) {
                 if( (int_8)Code->data[OPND2] ==
                     (int_16)Code->data[OPND2] ) {
                     Code->info.opnd_type[OPND2] = OP_I8;
@@ -682,9 +799,10 @@ int match_phase_3( int *i, unsigned long determinant )
                 } else {
                     break;
                 }
-            } else if( ( last_opnd & OP_M32_R32 ) && ( cur_opnd & OP_I ) &&
-                ( MEM_TYPE( Code->mem_type, DWORD ) ) &&
-                InsFixups[OPND2] == NULL ) {
+            } else if( ( cur_opnd & OP_I )
+                && ( InsFixups[OPND2] == NULL )
+                && ( ( last_opnd & OP_R32 )
+                || ( last_opnd & OP_M32 ) && ( MEM_TYPE( Code->mem_type, DWORD ) ) ) ) {
                 if( (int_8)Code->data[OPND2] ==
                     (int_32)Code->data[OPND2] ) {
                     Code->info.opnd_type[OPND2] = OP_I8;
@@ -695,38 +813,61 @@ int match_phase_3( int *i, unsigned long determinant )
             } else {
                 break;
             }
-            if( output( *i ) == ERROR ) return( ERROR );
-            if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
+            if( output( *i ) == ERROR )
+                return( ERROR );
+            if( output_data( last_opnd, OPND1 ) == ERROR )
+                return( ERROR );
             return( output_data( OP_I8, OPND2 ) );
         case OP_I_1:
             if( cur_opnd == OP_I8  &&  Code->data[OPND2] == 1 ) {
-                if( output( *i ) == ERROR ) return( ERROR );
+                if( output( *i ) == ERROR )
+                    return( ERROR );
                 return( output_data( last_opnd, OPND1 ) );
             }
             break;
         case OP_M16:
-            if( cur_opnd & OP_M &&
-                   ( MEM_TYPE( Code->mem_type, WORD ) ||
-                     Code->mem_type == EMPTY ) ) {
-                if( output( *i ) == ERROR ) return( ERROR );
-                if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
+            if( cur_opnd & OP_M
+                && ( MEM_TYPE( Code->mem_type, WORD )
+                || Code->mem_type == EMPTY ) ) {
+                if( output( *i ) == ERROR )
+                    return( ERROR );
+                if( output_data( last_opnd, OPND1 ) == ERROR )
+                    return( ERROR );
                 return( output_data( cur_opnd, OPND2 ) );
             }
             break;
-        case OP_MMX|OP_M:
-        case OP_MMX:
-            if( cur_opnd == OP_MMX ) {
-                if( output( *i ) == ERROR ) return( ERROR );
-                return( output_data( last_opnd, OPND1 ) );
-//              return( NOT_ERROR );
-            }
-            if( !(asm_op2 & OP_M) ) break;
-            /* fall through */
         case OP_M:
             if( cur_opnd & asm_op2 ) {
-                if( output( *i ) == ERROR ) return( ERROR );
-                if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
-                return( output_data( cur_opnd, OPND2 ) );
+                if( check_3rd_operand( *i ) == ERROR )
+                    break;
+                if( output( *i ) == ERROR )
+                    return( ERROR );
+                if( output_data( last_opnd, OPND1 ) == ERROR )
+                    return( ERROR );
+                if( output_data( cur_opnd, OPND2 ) == ERROR )
+                    return( ERROR );
+                if( output_3rd_operand( *i ) == ERROR )
+                    return( ERROR );
+                return( output_3DNow( *i ) );
+            }
+            break;
+        default:
+            if( ( asm_op2 & ( OP_MMX | OP_XMM ) )
+                && ( cur_opnd & asm_op2 ) ) {
+                if( check_3rd_operand( *i ) == ERROR )
+                    break;
+                if( output( *i ) == ERROR )
+                    return( ERROR );
+                if( output_data( last_opnd, OPND1 ) == ERROR )
+                    return( ERROR );
+                if( ( cur_opnd  & OP_M_ANY ) && ( asm_op2 & OP_M_ANY ) ) {
+                    if( output_data( cur_opnd, OPND2 ) == ERROR ) {
+                        return( ERROR );
+                    }
+                }
+                if( output_3rd_operand( *i ) == ERROR )
+                    return( ERROR );
+                return( output_3DNow( *i ) );
             }
             break;
         }

@@ -2,6 +2,7 @@
 .IGNORE
 
 objs = &
+3dnow &
 486 &
 adc &
 add &
@@ -22,6 +23,7 @@ amodes6 &
 and &
 bt &
 bug &
+calljmp &
 cc2 &
 cmp &
 cmpx &
@@ -55,6 +57,7 @@ lod &
 lxs &
 misc &
 misc2 &
+mmx &
 modes &
 modes1 &
 modes2 &
@@ -79,6 +82,9 @@ sbb &
 scas &
 setcc &
 shld &
+sse &
+sse2 &
+sse3 &
 sub &
 test &
 try &
@@ -99,6 +105,14 @@ asmbug11 &
 asmbug12 &
 asmbug13
 
+dev_objs = &
+
+init_3dnow = K3D
+init_mmx = MMX
+init_sse = XMM
+init_sse2 = XMM2
+init_sse3 = XMM3
+
 .exe : ..
 .c : ..
 
@@ -112,23 +126,41 @@ nulldevice=/dev/null
 nulldevice=nul
 !endif
 
+log_file=testcomp.log
+
 .BEFORE
-    @%create testcomp.log
+    @%create $(log_file)
 
-all : clean reverse.exe $(objs) .SYMBOLIC
+all : clean $(objs) $(dev_objs) .SYMBOLIC
 
-reverse.exe : reverse.c
-    @wcl -zq ..\reverse.c -fe=..\reverse.exe
-
+!ifdef objs
+!ifneq objs
 $(objs) : .SYMBOLIC
     @echo $@ ================================================================
     @rm -f $@.c
-    @vi -d -q -k ":r $@.asm\n:so toc.vi\n:0r cinit.vi\n:w $@.c\n:q!\n"
-    @$(testcomp) $@.c -s -ot -zm -zq -wx -wcd=301 -fo=.obj >$(nulldevice)
+    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
+    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
     @wdis -a -l $@.obj >$(nulldevice)
     @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
-    @..\reverse $@.lst
-    @wmake -h -f ../checki.mif name=$@
+    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
+!endif
+!endif
+
+!ifdef dev_objs
+!ifneq dev_objs
+$(dev_objs) : .SYMBOLIC
+    @echo .
+    @echo $@ ==============================================================
+    @echo DEVELOPMENT - $^@.asm
+    @echo ==============================================================
+    @rm -f $@.c
+    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
+    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
+    @wdis -a -l $@.obj >$(nulldevice)
+    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
+    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
+!endif
+!endif
 
 clean : .SYMBOLIC
-    @rm -f *.obj *.lst *.c *.err reverse.obj ..\reverse.exe mem.trk
+    @rm -f *.obj *.lst *.c *.err mem.trk

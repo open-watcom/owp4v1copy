@@ -40,6 +40,7 @@
 #include "directiv.h"
 #include "myassert.h"
 #include "asmdefs.h"
+#include "asmfixup.h"
 
 extern char *AsmMangler( struct asm_sym *sym, char *buffer );
 

@@ -1,5 +1,5 @@
-lgdt x
-lidt x
+lgdt fword ptr x
+lidt fword ptr x
 lldt word ptr x
 lldt ax
 lmsw ax
@@ -12,8 +12,8 @@ nop
 ret
 ret 4
 sahf
-sgdt x
-sidt x
+sgdt fword ptr x
+sidt fword ptr x
 sldt word ptr x
 sldt ax
 smsw ax

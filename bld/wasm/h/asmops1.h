@@ -31,6 +31,8 @@
 
 
 #ifndef ASMOPS1_H
+#define ASMOPS1_H
+
 #include "watcom.h"
 
 struct AsmCodeName {
@@ -43,34 +45,41 @@ struct AsmCodeName {
 enum asm_cpu {
         /* bit count from left: ( need at least 7 bits )
            bit 0-2:   Math coprocessor
-           bit 3:   Protected mode
-           bit 4-6: cpu type */
+           bit 3:     Protected mode
+           bit 4-6:   cpu type
+           bit 7-11;  extension set */
 
-        P_NO87  = 0x00,         /* no FPU */
-        P_87    = 0x01,         /* 8087 */
-        P_287   = 0x02,         /* 80287 */
-        P_387   = 0x04,         /* 80387 */
+        P_NO87  = 0x0000,         /* no FPU */
+        P_87    = 0x0001,         /* 8087 */
+        P_287   = 0x0002,         /* 80287 */
+        P_387   = 0x0004,         /* 80387 */
 
-        P_PM    = 0x08,         /* protect-mode */
+        P_PM    = 0x0008,         /* protect-mode */
 
-        P_86    = 0x00,         /* 8086, default */
-        P_186   = 0x10,         /* 80186 */
-        P_286   = 0x20,         /* 80286 */
-        P_286p  = P_286 | P_PM, /* 80286, protected mode */
-        P_386   = 0x30,         /* 80386 */
-        P_386p  = P_386 | P_PM, /* 80386, protected mode */
-        P_486   = 0x40,         /* 80486 */
-        P_486p  = P_486 | P_PM, /* 80486, protected mode */
-        P_586   = 0x50,         /* pentium */
-        P_586p  = P_586 | P_PM, /* pentium, protected mode */
-        P_686   = 0x60,         /* pentium */
-        P_686p  = P_686 | P_PM, /* pentium, protected mode */
+        P_86    = 0x0000,         /* 8086, default */
+        P_186   = 0x0010,         /* 80186 */
+        P_286   = 0x0020,         /* 80286 */
+        P_286p  = P_286 | P_PM,   /* 80286, protected mode */
+        P_386   = 0x0030,         /* 80386 */
+        P_386p  = P_386 | P_PM,   /* 80386, protected mode */
+        P_486   = 0x0040,         /* 80486 */
+        P_486p  = P_486 | P_PM,   /* 80486, protected mode */
+        P_586   = 0x0050,         /* pentium */
+        P_586p  = P_586 | P_PM,   /* pentium, protected mode */
+        P_686   = 0x0060,         /* pentium */
+        P_686p  = P_686 | P_PM,   /* pentium, protected mode */
 
-        P_END  = 0x70,      /* END */
+        P_MMX   = 0x0080,         /* MMX extension instructions */
+        P_K3D   = 0x0100,         /* 3DNow extension instructions */
+        P_SSE   = 0x0200,         /* SSE extension instructions */
+        P_SSE2  = 0x0400,         /* SSE extension instructions */
+        P_SSE3  = 0x0800,         /* SSE extension instructions */
 
+        NO_OPPRFX  = P_MMX | P_SSE | P_SSE2 | P_SSE3,
 
-        P_FPU_MASK = 0x07,
-        P_CPU_MASK = 0x70
+        P_FPU_MASK = 0x0007,
+        P_CPU_MASK = 0x0070,
+        P_EXT_MASK = 0x0F80
 };
 
 
@@ -123,5 +132,4 @@ struct asm_tok {
         };
 };
 
-#define ASMOPS1_H
 #endif

@@ -10,25 +10,39 @@ nulldevice=/dev/null
 !else
 nulldevice=nul
 !endif
+nulldevice=null1.txt
+
+log_file=testasm.log
 
 .BEFORE
-    @%create testasm.log
+    @%create $(log_file)
+    @%create null1.txt
 
 all : clean $(objs) $(dev_objs) .SYMBOLIC
 
+!ifdef objs
+!ifneq objs
 $(objs) : .SYMBOLIC
     @echo $^@ ================================================================
-    @$(testasm) -q -zld -wx $(asm_flags_$^@) $^@.asm -fr=$^@.tmp >$(nulldevice)
-    @wmake -h -f ../check.mif name=$^@
+    @%append $(nulldevice) $^@
+    @$(testasm) -q -zld -wx -nm=$^@.asm $(asm_flags_$^@) $^@.asm -fr=$^@.out >>$(nulldevice)
+    @wmake -h -f ../check.mif name=$^@ log_file=$(log_file)
+!endif
+!endif
 
+!ifdef dev_objs
+!ifneq dev_objs
 $(dev_objs) : .SYMBOLIC
     @echo .
     @echo ==============================================================
     @echo DEVELOPMENT - $^@.asm 
     @echo ==============================================================
-    @$(testasm) -q -zld -wx $(asm_flags_$^@) $^@.asm -fr=$^@.tmp >$(nulldevice)
-    @wmake -h -f ../check.mif name=$^@
+    @%append $(nulldevice) $^@
+    @$(testasm) -q -zld -wx -nm=$^@.asm $(asm_flags_$^@) $^@.asm -fr=$^@.out >>$(nulldevice)
+    @wmake -h -f ../check.mif name=$^@ log_file=$(log_file)
     @echo .
+!endif
+!endif
 
 clean : .SYMBOLIC
-    @rm -f *.obj *.err *.dis *.lst *.tmp mem.trk
+    @rm -f *.obj *.err *.dis *.lst *.tmp *.out mem.trk

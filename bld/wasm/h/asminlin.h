@@ -82,6 +82,14 @@ enum fixup_types {
         FIX_PTR32
 };
 
+enum fixup_options {
+        OPTJ_NONE,
+        OPTJ_EXPLICIT,           /* forward reference explicit J... SHORT */
+        OPTJ_EXTEND,             /* forward reference JXX (SHORT 8086), can be extend by JMP NEAR */
+        OPTJ_JXX,                /* forward reference JXX (SHORT/NEAR 386) */
+        OPTJ_CALL                /* forward reference CALL (NEAR or converted FAR to NEAR) */
+};
+
 #ifndef _WASM_
 /*
    The following function is supplied by the user of the mini-assembler.
@@ -109,6 +117,7 @@ struct asmfixup {
         unsigned long           offset;
         unsigned                fixup_loc;
         enum fixup_types        fixup_type;
+        enum fixup_options      fixup_option;
         char                    external;
 
 #ifdef _WASM_

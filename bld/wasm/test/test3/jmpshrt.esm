@@ -8,25 +8,25 @@ jmpshrt_TEXT		SEGMENT	WORD PUBLIC USE16 'CODE'
     DB	0, 0, 0, 0, 0, 0, 0, 0
 proc1:
     mov         ax,0bH
-    jmp         L$1
+    jmp         proc_both
 proc2:
     mov         ax,0cH
-L$1:
+proc_both:
     push        bp
     mov         bp,sp
     push        es
-    pushd       edi
-    pushd       ebx
+    push        edi
+    push        ebx
     les         di,dword ptr 8[bp]
     movzx       edi,di
     movzx       ebx,word ptr 6[bp]
     int         31H
-    jb          L$2
+    jb          L$1
     mov         ax,1
-    jmp         L$3
-L$2:
+    jmp         L$2
+L$1:
     xor         ax,ax
-L$3:
+L$2:
     pop         ebx
     pop         edi
     pop         es

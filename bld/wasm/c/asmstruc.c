@@ -43,7 +43,6 @@
 
 a_definition_struct Definition = { 0, NULL, NULL };
 
-extern dir_node         *dir_insert( char *, int );
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 

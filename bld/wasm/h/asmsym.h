@@ -43,7 +43,7 @@ typedef enum {
         MT_QWORD  = T_QWORD,
         MT_FWORD  = T_FWORD,
         MT_TBYTE  = T_TBYTE,
-//        MT_OWORD  = T_OWORD,
+        MT_OWORD  = T_OWORD,
 
         MT_SHORT  = T_SHORT,
         MT_NEAR   = T_NEAR,
@@ -91,9 +91,12 @@ extern struct asm_sym *AsmAdd( struct asm_sym *symbol );
 extern void AsmSymFini(void);
 extern struct asm_sym **AsmFind( char *name );
 extern struct asm_sym *AsmGetSymbol( char *name );
+
 #ifdef _WASM_
-    extern void AsmTakeOut( char *name );
-    extern int AsmChangeName( char *old, char *new );
+
+extern void AsmTakeOut( char *name );
+extern int AsmChangeName( char *old, char *new );
+
 #endif
 
 #endif
