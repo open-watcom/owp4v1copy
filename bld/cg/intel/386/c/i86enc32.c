@@ -351,6 +351,50 @@ static  void    EA( hw_reg_set base, hw_reg_set index,
     }
 }
 
+/*
+ * 2004-11-05  RomanT
+ *
+ * Check that following instruction is addition or substraction with constant,
+ * and this instruction is safe to delete (ALU flags not generated).
+ * If yes, return constant's value and delete instruction.
+ * If no, return 0.
+ * Caller must embed returned constant into current opcode.
+ */
+
+static  signed_32  GetNextAddConstant( instruction *ins )
+{
+    instruction *next;
+    int         neg;
+    signed_32   disp;
+
+    next = ins->head.next;
+    neg = 1;
+    disp = 0;
+    switch( next->head.opcode ) {
+    case OP_SUB:
+        neg = -1;
+        /* fall through */
+    case OP_ADD:
+        if( next->operands[0] != ins->result ) break;
+        if( next->result != ins->result ) break;
+        if( next->operands[1]->n.class != N_CONSTANT ) break;
+        if( next->operands[1]->c.const_type != CONS_ABSOLUTE ) break;
+        /* we should not remove the ADD if its flags are used! */
+        if( next->ins_flags & INS_CC_USED ) break;
+        /*
+           we've got something like:
+                LEA     EAX, [ECX+EDX]
+                ADD     EAX, 3
+           turn it into:
+                LEA     EAX, 3[ECX+EDX]
+        */
+        disp = neg*next->operands[1]->c.int_value,
+        DoNothing( next );
+        break;
+    }
+
+    return disp;
+}
 
 extern  void    LayLeaRegOp( instruction *ins ) {
 /***********************************************/
@@ -359,7 +403,6 @@ extern  void    LayLeaRegOp( instruction *ins ) {
     name        *right;
     int         shift;
     int         neg;
-    instruction *next;
     signed_32   disp;
 
     left = ins->operands[ 0 ];
@@ -378,36 +421,8 @@ extern  void    LayLeaRegOp( instruction *ins ) {
                 EA( HW_EMPTY, left->r.reg, 0, 0, right, TRUE );
             }
         } else if( right->n.class == N_REGISTER ) {
-            next = ins->head.next;
-            neg = 1;
-            disp = 0;
-            switch( next->head.opcode ) {
-            case OP_SUB:
-                neg = -1;
-                /* fall through */
-            case OP_ADD:
-                if( next->operands[0] != ins->result ) break;
-                if( next->result != ins->result ) break;
-                if( next->operands[1]->n.class != N_CONSTANT ) break;
-                if( next->operands[1]->c.const_type != CONS_ABSOLUTE ) break;
-                /* we should not remove the ADD if its flags are used! */
-                if( next->ins_flags & INS_CC_USED ) break;
-                /*
-                   we've got something like:
-                        LEA     EAX, [ECX+EDX]
-                        ADD     EAX, 3
-                   turn it into:
-                        LEA     EAX, 3[ECX+EDX]
-                */
-                disp = neg*next->operands[1]->c.int_value,
-                DoNothing( next );
-                break;
-            }
-            if( disp != 0 ) {
-                EA( left->r.reg, right->r.reg, 0, disp, NULL, TRUE );
-            } else {
-                EA( left->r.reg, right->r.reg, 0, 0, NULL, TRUE );
-            }
+            disp = GetNextAddConstant( ins );
+            EA( left->r.reg, right->r.reg, 0, disp, NULL, TRUE );
         }
         break;
     case OP_MUL:
@@ -416,20 +431,22 @@ extern  void    LayLeaRegOp( instruction *ins ) {
         case 5: shift = 2;  break;
         case 9: shift = 3;  break;
         }
-        EA( left->r.reg, left->r.reg, shift, 0, NULL, TRUE );
+        disp = GetNextAddConstant( ins );   /* 2004-11-05  RomanT */
+        EA( left->r.reg, left->r.reg, shift, disp, NULL, TRUE );
         break;
     case OP_LSHIFT:
+        disp = GetNextAddConstant( ins );   /* 2004-11-05  RomanT */
         switch( right->c.int_value ) {
         case 1:
             if( _CPULevel( CPU_586 ) ) {
                 // want to avoid the extra big-fat 0 on 586's
                 // but two base registers is slower on a 486
-                EA( left->r.reg, left->r.reg, 0, 0, NULL, TRUE );
+                EA( left->r.reg, left->r.reg, 0, disp, NULL, TRUE );
                 break;
             }
             /* fall through */
         default:
-            EA( HW_EMPTY, left->r.reg, right->c.int_value, 0, NULL, TRUE );
+            EA( HW_EMPTY, left->r.reg, right->c.int_value, disp, NULL, TRUE );
         }
         break;
     }
