@@ -69,6 +69,9 @@
 #include "trptypes.h"
 #include "trperr.h"
 #include "bool.h"
+#if defined(__DOS__)
+    #include <tcp.h>
+#endif
 
 #define DEFAULT_PORT    0xDEB
 
@@ -326,4 +329,8 @@ void RemoteUnLink( void )
 #if defined(__NT__) || defined(__WINDOWS__)
     WSACleanup();
 #endif
+#if defined(__DOS__)
+    sock_exit();
+#endif
 }
+
