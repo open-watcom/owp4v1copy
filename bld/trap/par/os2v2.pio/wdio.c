@@ -35,15 +35,7 @@
 #endif
 #include <conio.h>
 
-/* There is a stupid bug in wlink: it doesn't eliminate empty segments from
- * NE modules. Both OS/2 and Windows 3.1 refuse to load those.
- */
-int dummy;
-void foo(void)
-{
-}
-
-#pragma code_seg("IO_TEXT")
+#pragma code_seg( "IO_TEXT" )
 
 unsigned far __pascal outport( unsigned port, unsigned value )
 {
