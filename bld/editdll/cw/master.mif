@@ -18,7 +18,13 @@ inc_dirs = ../..
 
 extra_c_flags_win = -zw -zu
 
-extra_l_flags = op description 'Open Watcom Editor DLL for Codewright'
+!ifdef __LINUX__
+description = \'Open Watcom Editor DLL for Codewright\'
+!else
+description = 'Open Watcom Editor DLL for Codewright'
+!endif
+
+extra_l_flags = op description $(description)
 extra_l_flags += op map, elim, verbose, static
 extra_l_flags_win = library ddeml
 extra_l_flags_win += op stack=8k

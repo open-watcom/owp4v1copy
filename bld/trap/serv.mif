@@ -2,9 +2,11 @@
 # Master makefile for creating remote servers
 #
 
-#!include cproj.mif
-#!include deftarg.mif
-#!include defrule.mif
+!ifdef __LINUX__
+description = \'Open Watcom Debug Server\'
+!else
+description = 'Open Watcom Debug Server'
+!endif
 
 sys_x86_os2     = sys os2 op st=4k,modname=$^&, desc $^&
 sys_x86_os2v2   = sys os2v2 op modname=$^&, desc $^&
@@ -31,7 +33,7 @@ sys_x86_nt      = sys nt_win op st=20k, modname=$^&, desc $^&
 !endif
 !endif
 !endif
-sys_x86_nlm     = form novell nlm 'Open Watcom Debug Server' &
+sys_x86_nlm     = form novell nlm $(description) &
                         libpath $(lang_root)/lib386 &
                         op st=8k &
                         import @$(trap_dir)/common/nlm/trap.imp op nodef
@@ -93,7 +95,3 @@ SERVER_remote_objs += serv.obj $(os)trio.obj
 SERVER_remote_objs += servacc.obj servcmd.obj servname.obj $(trap_objs)
 extra_srcs +=;$(dig_srcs)
 !endif
-
-#which = SERVER
-
-#!include $(trap_dir)/imp.mif

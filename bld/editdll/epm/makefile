@@ -15,8 +15,14 @@ sys_dll = 1
 !include deftarg.mif
 !include defrule.mif
 
+!ifdef __LINUX__
+description = \'Open Watcom Editor DLL for EPM\'
+!else
+description = 'Open Watcom Editor DLL for EPM'
+!endif
+
 extra_l_flags_os2 = initinstance terminstance pm
-extra_l_flags_os2 += op description 'Open Watcom Editor DLL for EPM'
+extra_l_flags_os2 += op description $(description)
 extra_l_flags_os2 += op manyautodata
 
 all: epmlink.dll wedit.dll .SYMBOLIC

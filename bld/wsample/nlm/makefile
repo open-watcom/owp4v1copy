@@ -3,6 +3,12 @@ host_cpu = 386
 
 !include cproj.mif
 
+!ifdef __LINUX__
+description = \'OpenWatcom Execution Sampler Version 1.0\'
+!else
+description = 'OpenWatcom Execution Sampler Version 1.0'
+!endif
+
 objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
           io.obj sysio.obj settime.obj wmsg.obj pitstuff.obj cpuspeed.obj
 
@@ -38,7 +44,7 @@ xname = wsample
 ..\bin\$(xname).nlm : $(xname).res  $objects makefile
     @%write $(%debug) tmp.lnk name ..\bin\$(xname)
     @%append tmp.lnk option osname='Novell NLM'
-    @%append tmp.lnk format novell nlm 'OpenWatcom Execution Sampler Version 1.0'
+    @%append tmp.lnk format novell nlm $(description)
     @%append tmp.lnk debug novell
     @%append tmp.lnk debug all
     @%append tmp.lnk option map

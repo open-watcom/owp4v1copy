@@ -26,6 +26,12 @@ sys_windowed = 1
 !include lib.mif
 !include include.mif
 
+!ifdef __LINUX__
+description = \'Open Watcom IDE\'
+!else
+description = 'Open Watcom IDE'
+!endif
+
 extra_c_flags_386       = -fpc
 extra_c_flags_i86       = -fpc
 !ifeq host_os win
@@ -41,10 +47,10 @@ extra_cpp_flags_i86     = -zm-zc
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
-        $(linker) $(lflags) name $(name) op map, de 'Open Watcom IDE' f {$(OBJECTS)} lib {$(LIBS)}
+        $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) -q viper.res $(name).exe
 !else
-        $(linker) $(lflags) name $(name) op map, de 'Open Watcom IDE' f {$(OBJECTS)} lib {$(LIBS)}
+        $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc_os2) -p -x viper.res $(name).exe
 !endif
 

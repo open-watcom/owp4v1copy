@@ -5,6 +5,12 @@
 .EXTENSIONS: .obj
 .EXTENSIONS: .asm .c .h
 
+!ifdef __LINUX__
+description = \'Open WATCOM Sampler\'
+!else
+description = 'Open WATCOM Sampler'
+!endif
+
 objects = winmain.obj sample.obj sampdata.obj sampwin.obj io.obj &
           wmsg.obj sysio.obj sampexe.obj winopts.obj &
           fault.obj notify.obj libload.obj &
@@ -30,7 +36,7 @@ xname=wsamplew
     @%append $(lnk) sys windows
     @%append $(lnk) name ..\bin\$(xname)
     @%append $(lnk) option heap=10k, stack=10k
-    @%append $(lnk) option description 'WATCOM Sampler'
+    @%append $(lnk) option description $(description)
     @%append $(lnk) segment class 'CODE' preload fixed
     @%append $(lnk) segment class 'DATA' preload fixed
     @%append $(lnk) lib commdlg,toolhelp

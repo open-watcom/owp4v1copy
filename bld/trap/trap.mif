@@ -2,9 +2,11 @@
 # Master makefile for creating trap files
 #
 
-#!include cproj.mif
-#!include deftarg.mif
-#!include defrule.mif
+!ifdef __LINUX__
+description = \'Open WATCOM Debugger Trap File\'
+!else
+description = 'Open WATCOM Debugger Trap File'
+!endif
 
 !ifdef test
 sys_x86_os2   = sys os2
@@ -31,12 +33,6 @@ TRAP_objs     = testcli.obj
 TRAP_remote_objs =
 
 !else
-
-!ifdef __LINUX__
-description = \'WATCOM Debugger Trap File\'
-!else
-description = 'WATCOM Debugger Trap File'
-!endif
 
 sys_x86_os2  = sys os2 dll initinstance &
             export TrapInit_.1 &
@@ -131,7 +127,3 @@ TRAP_remote_objs += winstub.obj
 !else ifeq os nt
 TRAP_remote_objs += ntstub.obj
 !endif
-
-#which = TRAP
-
-#!include $(trap_dir)/imp.mif

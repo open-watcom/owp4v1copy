@@ -6,6 +6,12 @@ win386_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
+!ifdef __LINUX__
+description = \'Win386 $($^&_name) Device (Version 1.1 Open Watcom)\'
+!else
+description = 'Win386 $($^&_name) Device (Version 1.1 Open Watcom)'
+!endif
+
 .before
     @set INCLUDE =
 
@@ -92,7 +98,7 @@ LNK = $^&.lnk
         %create $(LNK)
         @%append $(LNK) system win_vxd
         @%append $(LNK) name $^&.386
-        @%append $(LNK) option description 'Win386 $($^&_name) Device (Version 1.1 Open Watcom)'
+        @%append $(LNK) option description $(description)
         @%append $(LNK) option modname=WDEBUG
         @%append $(LNK) option map
         @%append $(LNK) segment '_LTEXT'  preload nondiscardable
@@ -112,7 +118,11 @@ LNK = $^&.lnk
         @%append $(LNK) name $^&.ext
         @%append $(LNK) library clibs
         @%append $(LNK) option modname=win38600
+!ifdef __LINUX__
+        @%append $(LNK) option desc \'                                                                                \'
+'else
         @%append $(LNK) option desc '                                                                                '
+!endif
         @%append $(LNK) option map
         @%append $(LNK) option nodefault
         @%append $(LNK) option heapsize=8k

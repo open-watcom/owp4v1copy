@@ -11,6 +11,12 @@ host_cpu = 386
 !include defrule.mif
 !include deftarg.mif
 
+!ifdef __LINUX__
+description = \'Open Watcom Debugger PM Helper\'
+!else
+description = 'Open Watcom Debugger PM Helper'
+!endif
+
 !ifndef bin_root
 !ifdef bin_root_wv
 bin_root = $(bin_root_wv)
@@ -46,7 +52,7 @@ $(bdir)/wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     @%append $(tmplnk) file pmhelp
     @%append $(tmplnk) library os2386.lib
     @%append $(tmplnk) option modname=wdpmhelp
-    @%append $(tmplnk) option description 'Open Watcom Debugger PM Helper'
+    @%append $(tmplnk) option description $(description)
     $(linker) @$(tmplnk)
     $(rc_os2) pmhelp.res $^@
 
