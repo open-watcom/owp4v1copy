@@ -1,0 +1,55 @@
+proj_name = wsample
+
+!ifeq machine NEC
+xname = wsampnec
+!else
+xname = wsample
+!endif
+
+memory_model_i86 = s
+
+!include cproj.mif
+!include defrule.mif
+
+.erase
+
+objects = sample.obj sampdata.obj realmode.obj rmhooks.obj sampdos.obj &
+          io.obj sysio.obj timasm.obj interc.obj sampexe.obj settime.obj &
+          wmsg.obj
+
+extra_c_flags = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far #-fi=watcom.h
+!ifeq machine NEC
+extra_c_flags_NEC = -d_NEC_PC
+extra_rc_flags_NEC = -dNEC
+!endif
+
+extra_l_flags = op map
+
+.c: ../dos;../c
+.asm: ../dos
+
+inc_dirs = .;$(dig_dir)/h
+
+../bin/$(xname).exe : $(objects) makefile $(xname).res
+    @%create tmp.lnk
+    @%append tmp.lnk libpath $(wres_dir)/lib
+    @%append tmp.lnk lib wress
+    @%append tmp.lnk name $^@
+    @for %i in ($objects) do @%append tmp.lnk file %i
+    $(linker) $(lflags) @tmp.lnk
+    wstrip -q -a -r $^@ . $(xname).res
+
+.c.obj :
+    @set include=$(inc_path)
+    $(cc) $(cflags) -zu $(extra_c_flags_NEC) $[@
+
+$(xname).res : ../h/wsample.rc ../h/wmsg.h
+    $(rc_aui) -zk0 -dDOS $(extra_rc_flags_NEC) -fo=$^. $[@
+
+wmsg.obj: ../c/wmsg.c ../h/wmsg.h
+    @set include=$(inc_path)
+    $(cc) $(cflags) $[@
+
+clean : .symbolic
+    @rm -f *.obj *.res *.lnk *.map
+    @rm -f ../bin/$(xname).exe
