@@ -146,7 +146,7 @@ void Initialize( void )
 
 #if defined(ACAD)
 
-main( int argc, char **argv )
+int main( int argc, char **argv )
 {
     _DBG( ( "Calling ads_init()\r\n" ) );
     ads_init( argc, argv );
@@ -154,7 +154,7 @@ main( int argc, char **argv )
 
 #else
 
-main()
+int main( void )
 {
 
 #endif
@@ -175,4 +175,5 @@ main()
     #ifdef ACAD
         LetACADDie();
     #endif
+    return( 0 );
 }
