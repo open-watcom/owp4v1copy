@@ -68,7 +68,7 @@ extra_cflags += -fo=.obj
 
 compiler_i86    =$(comp286) -ml -fpc
 !ifeq host_OS linux
-compiler_386    =$(comp386) -mf -fpc
+compiler_386    =$(comp386) -mf -fpi87
 !else
 compiler_386    =$(comp386) -mf -fpc
 !endif
