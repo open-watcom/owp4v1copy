@@ -1,4 +1,4 @@
-#pmake:all small register 32bit linux threading direct iX86 static build os_linux cpu_386
+#pmake: build2 small register 32bit linux threading direct iX86 static os_linux cpu_386
 processor=386
 model=ms
 system=linux

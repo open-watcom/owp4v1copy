@@ -8,15 +8,11 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
 #=======================
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
-  [ IFDEF (os_osi) <2*> ]
-    <CPCMD> library/osi.386/ms_r/clibs.lib                  <RELROOT>/rel2/lib386/osi/clib3r.lib
-    <CPCMD> startup/library/osi.386/ms_r/binmode.obj        <RELROOT>/rel2/lib386/osi/binmode.obj
-
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> library/msdos.086/mc/clibc.lib                  <RELROOT>/rel2/lib286/dos/clibc.lib
     <CPCMD> library/msdos.086/mh/clibh.lib                  <RELROOT>/rel2/lib286/dos/clibh.lib
@@ -25,13 +21,13 @@ set PROJDIR=<CWD>
     <CPCMD> library/msdos.086/mm/clibm.lib                  <RELROOT>/rel2/lib286/dos/clibm.lib
     <CPCMD> library/msdos.086/mm_ov/clibm.lib               <RELROOT>/rel2/lib286/dos/clibom.lib
     <CPCMD> library/msdos.086/ms/clibs.lib                  <RELROOT>/rel2/lib286/dos/clibs.lib
-    <CPCMD> library/msdos.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/dos/clib3r.lib
-    <CPCMD> library/msdos.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/dos/clib3s.lib
-
     <CPCMD> startup/library/msdos.086/ml/dos16m.obj         <RELROOT>/rel2/lib286/dos/dos16m.obj
     <CPCMD> startup/library/msdos.086/ms/binmode.obj        <RELROOT>/rel2/lib286/dos/binmode.obj
     <CPCMD> startup/library/msdos.086/ms/commode.obj        <RELROOT>/rel2/lib286/dos/commode.obj
     <CPCMD> startup/library/msdos.086/ms/cstrtiny.obj       <RELROOT>/rel2/lib286/dos/cstart_t.obj
+
+    <CPCMD> library/msdos.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/dos/clib3r.lib
+    <CPCMD> library/msdos.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/dos/clib3s.lib
     <CPCMD> startup/library/msdos.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/dos/binmode.obj
     <CPCMD> startup/library/msdos.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/dos/commode.obj
     <CPCMD> startup/library/msdos.386/ms_r/cstrtx32.obj     <RELROOT>/rel2/lib386/dos/cstrtx3r.obj
@@ -55,42 +51,55 @@ set PROJDIR=<CWD>
     <CPCMD> library/os2.286/ml_mt/clibl.lib                 <RELROOT>/rel2/lib286/os2/clibmtl.lib
     <CPCMD> library/os2.286/mm/clibm.lib                    <RELROOT>/rel2/lib286/os2/clibm.lib
     <CPCMD> library/os2.286/ms/clibs.lib                    <RELROOT>/rel2/lib286/os2/clibs.lib
-    <CPCMD> library/os2.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
-    <CPCMD> library/os2.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
-    <CPCMD> library/os2.386/ms_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
-
     <CPCMD> startup/library/os2.286/ms/binmode.obj          <RELROOT>/rel2/lib286/os2/binmode.obj
     <CPCMD> startup/library/os2.286/ms/commode.obj          <RELROOT>/rel2/lib286/os2/commode.obj
-    <CPCMD> startup/library/os2.386/ms_r/binmode.obj        <RELROOT>/rel2/lib386/os2/binmode.obj
-    <CPCMD> startup/library/os2.386/ms_r/commode.obj        <RELROOT>/rel2/lib386/os2/commode.obj
+
+#    <CPCMD> library/os2.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
+#    <CPCMD> library/os2.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
+#    <CPCMD> library/os2.386/ms_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
+    <CPCMD> library/os2.386/mf_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
+    <CPCMD> library/os2.386/mf_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
+    <CPCMD> library/os2.386/mf_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
+#    <CPCMD> startup/library/os2.386/ms_r/binmode.obj        <RELROOT>/rel2/lib386/os2/binmode.obj
+#    <CPCMD> startup/library/os2.386/ms_r/commode.obj        <RELROOT>/rel2/lib386/os2/commode.obj
+    <CPCMD> startup/library/os2.386/mf_r/binmode.obj        <RELROOT>/rel2/lib386/os2/binmode.obj
+    <CPCMD> startup/library/os2.386/mf_r/commode.obj        <RELROOT>/rel2/lib386/os2/commode.obj
 
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> library/windows.086/mc/clibc.lib                <RELROOT>/rel2/lib286/win/clibc.lib
     <CPCMD> library/windows.086/ml/clibl.lib                <RELROOT>/rel2/lib286/win/clibl.lib
     <CPCMD> library/windows.086/mm/clibm.lib                <RELROOT>/rel2/lib286/win/clibm.lib
     <CPCMD> library/windows.086/ms/clibs.lib                <RELROOT>/rel2/lib286/win/clibs.lib
-    <CPCMD> library/windows.386/mf_r/clib3r.lib             <RELROOT>/rel2/lib386/win/clib3r.lib
-    <CPCMD> library/windows.386/mf_s/clib3s.lib             <RELROOT>/rel2/lib386/win/clib3s.lib
-
     <CPCMD> startup/library/windows.086/ml/libentry.obj     <RELROOT>/rel2/lib286/win/libentry.obj
     <CPCMD> startup/library/windows.086/ms/binmode.obj      <RELROOT>/rel2/lib286/win/binmode.obj
     <CPCMD> startup/library/windows.086/ms/commode.obj      <RELROOT>/rel2/lib286/win/commode.obj
+
+    <CPCMD> library/windows.386/mf_r/clib3r.lib             <RELROOT>/rel2/lib386/win/clib3r.lib
+    <CPCMD> library/windows.386/mf_s/clib3s.lib             <RELROOT>/rel2/lib386/win/clib3s.lib
     <CPCMD> startup/library/windows.386/mf_r/binmode.obj    <RELROOT>/rel2/lib386/win/binmode.obj
     <CPCMD> startup/library/windows.386/mf_r/commode.obj    <RELROOT>/rel2/lib386/win/commode.obj
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> library/winnt.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
-    <CPCMD> library/winnt.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
-    <CPCMD> library/winnt.386/ms_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
+#    <CPCMD> library/winnt.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
+#    <CPCMD> library/winnt.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
+#    <CPCMD> library/winnt.386/ms_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
+    <CPCMD> library/winnt.386/mf_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
+    <CPCMD> library/winnt.386/mf_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
+    <CPCMD> library/winnt.386/mf_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
 
-    <CPCMD> startup/library/winnt.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
-    <CPCMD> startup/library/winnt.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
+#    <CPCMD> startup/library/winnt.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
+#    <CPCMD> startup/library/winnt.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
+    <CPCMD> startup/library/winnt.386/mf_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
+    <CPCMD> startup/library/winnt.386/mf_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> library/linux.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/linux/clib3r.lib
-    <CPCMD> library/linux.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/linux/clib3s.lib
+#    <CPCMD> library/linux.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/linux/clib3r.lib
+#    <CPCMD> library/linux.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/linux/clib3s.lib
+    <CPCMD> library/linux.386/mf_r/clib3r.lib               <RELROOT>/rel2/lib386/linux/clib3r.lib
+    <CPCMD> library/linux.386/mf_s/clib3s.lib               <RELROOT>/rel2/lib386/linux/clib3s.lib
 
-    <CPCMD> startup/library/linux.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/linux/commode.obj
+#    <CPCMD> startup/library/linux.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/linux/commode.obj
+    <CPCMD> startup/library/linux.386/mf_r/commode.obj      <RELROOT>/rel2/lib386/linux/commode.obj
 
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> library/nw_libc.386/ms_s/clib3s.lib             <RELROOT>/rel2/lib386/netware/libc3s.lib
@@ -121,10 +130,10 @@ set PROJDIR=<CWD>
     <CPCMD> library/qnx.286/ml_sh/clibl.lib                 <RELROOT>/rel2/lib286/qnx/clibshar.lib
     <CPCMD> library/qnx.286/mm/clibm.lib                    <RELROOT>/rel2/lib286/qnx/clibm.lib
     <CPCMD> library/qnx.286/ms/clibs.lib                    <RELROOT>/rel2/lib286/qnx/clibs.lib
+    <CPCMD> startup/library/qnx.286/ms/commode.obj          <RELROOT>/rel2/lib286/qnx/commode.obj
+
     <CPCMD> library/qnx.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/qnx/clib3r.lib
     <CPCMD> library/qnx.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/qnx/clib3s.lib
-
-    <CPCMD> startup/library/qnx.286/ms/commode.obj          <RELROOT>/rel2/lib286/qnx/commode.obj
     <CPCMD> startup/library/qnx.386/ms_r/commode.obj        <RELROOT>/rel2/lib386/qnx/commode.obj
 
 [ BLOCK <1> clibqa ]
@@ -136,7 +145,7 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     cd alias/library
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cd ../..
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    pmake -d build build1 .or <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cd <PROJDIR>

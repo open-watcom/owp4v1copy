@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit winnt threading dll mbyte iX86 dynamic build os_nt cpu_386
+#pmake: build2 small stack 32bit winnt threading dll mbyte iX86 dynamic os_nt cpu_386
 processor=386
 model=ms
 system=winnt

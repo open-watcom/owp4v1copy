@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit os2 threading dll kanji iX86 dynamic build os_os2 cpu_386
+#pmake: build2 small stack 32bit os2 threading dll kanji iX86 dynamic os_os2 cpu_386
 processor=386
 model=ms
 system=os2

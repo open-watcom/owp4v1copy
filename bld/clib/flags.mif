@@ -24,7 +24,7 @@ def_windowing =
 
 # sw_c_(linkage)
 sw_c_static  =
-sw_c_dynamic = -d__MAKE_DLL_CLIB
+sw_c_dynamic = -d__MAKE_DLL_CLIB -D__MAKE_DLL_WRTLIB
 
 # sw_c_(processor)_(model)
 sw_c_register = -5r
@@ -36,7 +36,7 @@ sw_c_intel    = -fpc
 
 sw_c_086 = $(sw_c_intel)-0
 sw_c_286 = $(sw_c_intel)-2
-sw_c_386 = $(sw_c_intel)-zc-r
+sw_c_386 = $(sw_c_intel)-zc
 sw_c_axp =
 sw_c_ppc =
 
@@ -49,6 +49,10 @@ sw_c_common += -d__RUNTIME_HANDLE_CHECKS__
 sw_c_axp += -fiaxpnf.h
 !endif
 
+sw_c_386_ms_generic = -r
+sw_c_386_ms_msdos   = -r
+sw_c_386_ms_qnx     = -r
+
 sw_c_086_ms = -ms
 sw_c_286_ms = -ms
 sw_c_086_mm = -mm$(sw_c_bigcode)
@@ -59,7 +63,7 @@ sw_c_086_ml = -ml$(sw_c_bigdata)$(sw_c_bigcode)
 sw_c_286_ml = -ml$(sw_c_bigdata)$(sw_c_bigcode)
 sw_c_086_mh = -mh$(sw_c_bigdata)$(sw_c_bigcode)
 sw_c_286_mh = -mh$(sw_c_bigdata)$(sw_c_bigcode)
-sw_c_386_ms = -ms$(sw_c_$(convention))
+sw_c_386_ms = -ms$(sw_c_$(convention))$(sw_c_386_ms_$(system))
 sw_c_386_mf = -mf$(sw_c_$(convention))
 sw_c_axp_   =
 sw_c_ppc_   =
@@ -130,19 +134,19 @@ sw_c_snapdrv_386  = -oaxt
 
 # sw_a_(system)_(processor)
 sw_a_generic_086  =
-sw_a_generic_086  =
+sw_a_generic_286  =
 sw_a_generic_386  =
-sw_a_msdos_286    =
+sw_a_msdos_086    =
 sw_a_msdos_286    =
 sw_a_msdos_386    =
 sw_a_necdos_086   =
 sw_a_necdos_386   =
 sw_a_necwin_086   =
 sw_a_necwin_386   =
-sw_a_nw_clib_386  = -d_NETWARE_CLIB -we
-sw_a_nw_clibl_386 = -d_NETWARE_CLIB -d_THIN_LIB -we
-sw_a_nw_libc_386  = -d_NETWARE_LIBC -we
-sw_a_nw_libc_386  = -d_NETWARE_LIBC -d_THIN_LIB -we
+sw_a_nw_clib_386  = -d_NETWARE_CLIB -d__MT__ -we
+sw_a_nw_clibl_386 = -d_NETWARE_CLIB -d__MT__ -d_THIN_LIB -we
+sw_a_nw_libc_386  = -d_NETWARE_LIBC -d__MT__ -we
+sw_a_nw_libc_386  = -d_NETWARE_LIBC -d__MT__ -d_THIN_LIB -we
 sw_a_os2_286      =
 sw_a_os2_386      = -d__MT__
 sw_a_os2_ppc      = -d__MT__
@@ -160,9 +164,9 @@ sw_a_snapdrv_386  =
 
 # sw_l_(system)_(processor)
 sw_l_generic_086  =
-sw_l_generic_086  =
+sw_l_generic_286  =
 sw_l_generic_386  =
-sw_l_msdos_286    =
+sw_l_msdos_086    =
 sw_l_msdos_286    =
 sw_l_msdos_386    =
 sw_l_necdos_086   =
