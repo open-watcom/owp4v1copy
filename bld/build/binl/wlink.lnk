@@ -21,6 +21,8 @@ system begin bld_linux
     debug all
     libpath %DEVDIR%/clib/library/linux.386/ms_r
     libpath %DEVDIR%/clib/library/linux.386/ms_s
+    libpath %DEVDIR%/plusplus/cpplib/3r
+    libpath %DEVDIR%/plusplus/cpplib/3s
     libpath %DEVDIR%/mathlib/library/msdos.387/ms_r
     libpath %DEVDIR%/mathlib/library/msdos.387/ms_s
     libpath %DEVDIR%/mathlib/library/msdos.386/ms_r
