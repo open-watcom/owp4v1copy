@@ -17,7 +17,7 @@ objs =  zoom.obj zmglob.obj zmproc.obj zmscreen.obj zmconfig.obj &
 extra_c_flags_mem = -DNO_WPI
 
 extra_l_flags     = option map
-extra_l_flags_nt  = op stack=64k
+extra_l_flags_nt  = op stack=64k lib ctl3d32.lib
 extra_l_flags_win = op stack=7k, heapsize=2k
 extra_l_flags_win += lib toolhelp.lib, $(misc_dir)/ctl3d.lib
 

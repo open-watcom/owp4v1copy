@@ -64,8 +64,7 @@ extra_l_flags_win = option stack=9k option heapsize=2k &
                     lib windows.lib lib commdlg.lib lib toolhelp.lib &
                     lib $(dllname).lib lib $(misc_dir)/ctl3d.lib
 extra_l_flags_nt  = option stack=64k option heapsize=2k &
-                    lib $(dllname).lib
-extra_l_flags_nt_axp = lib ctl3d32.lib
+                    lib $(dllname).lib lib ctl3d32.lib
 
 extra_l_flags     = option map
 !ifeq host_CPU  386
@@ -134,7 +133,7 @@ spymsgnt.dlg spymsgnt.gh: spyarray.h ./mkdlgnt.exe
 ./mkdlg.exe : ../utils/mkdlg.c
         $(bld_cl) -I".." -d__NOSPYMSGS__ $(wcl_util_opts) $[@
 
-./mkdlgnt.exe : ../utils/mkdlg.c 
+./mkdlgnt.exe : ../utils/mkdlg.c
         $(bld_cl) -I".." -d__NOSPYMSGS__ -dNT_MSGS $(wcl_util_opts) $[@
 
 $(dllname).lib : $(dllname).dll

@@ -1,5 +1,5 @@
 sw_c_common =-ox-w4-zl-zld
-sw_a_common =-w4 -zld
+sw_a_common =
 
 !ifdef __LINUX__
 sw_c_common +=-fo=.obj
@@ -54,7 +54,7 @@ sw_c_387_mf =-mf$(sw_c_$(convention))
 sw_c_axp_   =
 sw_c_ppc_   =
 
-sw_a_intel   =-e -dPDIV
+sw_a_intel   = -w4 -zld -e -dPDIV
 sw_a_static  =
 sw_a_dynamic = -d__MAKE_DLL_MATHLIB -d_EXPORT
 sw_a_alias   = -d__MAKE_DLL_MATHLIB -d_EXPORT
