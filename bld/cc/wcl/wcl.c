@@ -38,6 +38,8 @@
 #include <unistd.h>
 #ifndef __UNIX__
 #include <direct.h>
+#else
+#include <dirent.h>
 #endif
 #include <process.h>
 #include <malloc.h>
@@ -77,13 +79,19 @@
 #endif
 #ifdef __UNIX__
 #define OBJ_EXT     ".o"
+#define PATH_SEP    '/'
+#define PATH_SEP_STR "/"
 #else
 #define OBJ_EXT     ".obj"
+#define PATH_SEP    '\\'
+#define PATH_SEP_STR "\\"
 #endif
 #define LINK        "wlink"             /* WATCOM linker                   */
 #define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
 #define NULLCHAR    '\0'
+#ifndef __UNIX__
 #define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
+#endif
                                         /* mask for illegal file types     */
 #define TRUE        1
 #define FALSE       0
@@ -158,9 +166,7 @@ void    *MemAlloc( int );
 void    MakeName( char *, char * );
 void    AddName( char *, FILE * );
 char    *MakePath( char * );
-#ifndef __UNIX__
 char    *GetName( char * );
-#endif
 void    Usage( void );
 #if defined( __UNIX__ )
   #define _dos_switch_char() '-'
@@ -231,19 +237,17 @@ void PrintMsg( char *fmt, ... )
                 for(;;) {
                     c = *p++;
                     if( c == '\0' ) break;
-                    buf[len++] = c;
+                    putchar(c);
                 }
             } else if( c == 'd' ) {
                 i = va_arg( args, int );
-                itoa( i, &buf[len], 10 );
-                while( buf[len] != '\0' ) ++len;
+                itoa( i, buf, 10 );
+                for( len = 0; buf[len] != '\0'; ++len ) putchar(buf[len]);
             }
         } else {
-            buf[len++] = c;
+            putchar(c);
         }
     }
-    buf[len] = '\0';
-    puts( buf );
 }
 
 
@@ -729,10 +733,8 @@ static  int  CompLink( void )
 {
     int         rc;
     char        *p;
-#ifndef __UNIX__
     char        *file;
     char        *path;
-#endif
     char        *cc_name;
     struct directives *d_list;
     char        errors_found;
@@ -793,13 +795,11 @@ static  int  CompLink( void )
         strcpy( Word, p );
         cc_name = SrcName( Word );      /* if no extension, assume .c */
 
-#ifndef __UNIX__
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
             strcpy( Word, path );
             strcat( Word, file );
-#endif
             if( ! FileExtension( Word, OBJ_EXT ) ) { // if not .obj, compile
                 if( ! Flags.be_quiet ) {
                     PrintMsg( "       %s %s %s", cc_name, Word, CC_Opts );
@@ -815,14 +815,9 @@ static  int  CompLink( void )
                     }
                     errors_found = 1;           /* 21-jan-92 */
                 }
-#ifdef __UNIX__
-                p = strrchr( Word, '.' );
-                if( p != NULL )  *p = NULLCHAR;
-#else
                 p = strrchr( file, '.' );
                 if( p != NULL )  *p = NULLCHAR;
                 strcpy( Word, file );
-#endif
             }
             AddName( Word, Fp );
             if( Exe_Name[0] == '\0' ) {
@@ -830,10 +825,8 @@ static  int  CompLink( void )
                 if( p != NULL )  *p = NULLCHAR;
                 strcpy( Exe_Name, Word );
             }
-#ifndef __UNIX__
             file = GetName( NULL );     /* get next filename */
         }
-#endif
         p = strtok( NULL, " " );        /* get next filespec */
     }
     if( errors_found )  return( 1 );            /* 21-jan-92 */
@@ -924,7 +917,7 @@ static  void  *MemAlloc( int size )
 static  void  MakeName( char *name, char *ext )
 /*********************************************/
 {
-    if( strrchr( name, '.' ) <= strstr( name, "\\" ) ) {
+    if( strrchr( name, '.' ) <= strstr( name, PATH_SEP_STR ) ) {
         strcat( name, ext );
     }
 }
@@ -979,24 +972,28 @@ static  char  *MakePath( char *path )
 {
     char        *p;
 
-    p = strrchr( path ,'\\' );
+    p = strrchr( path ,PATH_SEP );
     if( p != NULL ) {
         p[ 1 ] = NULLCHAR;
     } else {
+#ifdef __UNIX__
+        *path = NULLCHAR;
+#else
         p = strchr( path, ':' );
         if( p != NULL ) {
             p[ 1 ] = NULLCHAR;
         } else {
             *path = NULLCHAR;
         }
+#endif
     }
     return( strdup( path ) );
 }
 
-#ifndef __UNIX__
 static  char  *GetName( char *path )
 /**********************************/
 {
+#ifndef __UNIX__    
     static      DIR     *dirp;
     struct      dirent  *direntp;
 
@@ -1019,8 +1016,18 @@ static  char  *GetName( char *path )
     }
     closedir( dirp );
     return( NULL );
-}
+#else
+    char *name;
+    if ( path == NULL )
+            return NULL;
+    name = strrchr(path, '/');
+    if ( name == NULL )
+        name = path;
+    else
+        name++;
+    return ( strdup(name) );
 #endif
+}
 
 void FindPath( char *name, char *buf )
 /************************************/
