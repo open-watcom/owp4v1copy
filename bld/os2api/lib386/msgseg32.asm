@@ -30,6 +30,7 @@
 ;*****************************************************************************
 
 .386p
+.model flat
 
     PUBLIC    sig32
 ;    PUBLIC    DOSGETMESSAGE
@@ -38,8 +39,7 @@
     PUBLIC    Dos32GetMessage
     EXTRN     DOS32TRUEGETMESSAGE:BYTE
 
-_MSGSEG32     SEGMENT DWORD PUBLIC USE32 'CODE'
-              ASSUME CS:_MSGSEG32, DS:DGROUP, SS:DGROUP
+.code _MSGSEG32
 
 sig32:
     db        0FFh, 'MSGSEG32', 0, 1, 80h, 0, 0
@@ -63,5 +63,4 @@ L1:
     dw        0
     dw        0FFFFh
 
-_MSGSEG32     ENDS
               END
