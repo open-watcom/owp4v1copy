@@ -14,7 +14,7 @@ $(OBJDIR)/qusage.rc : usage.sp
 	wsplice -kIS_RC -kENGLISH -kQNX -t8 -f "%+(MSG_USE_E_BASE+%#-1), \"%s\"" $< $@
 
 $(OBJDIR)/msg.gh : wstrip.msg
-	perl $(SDK_DIR)/misc/msgtoh.pl < $< | sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE+1/' > $@
+	perl $(SDK_DIR)/misc/msgtoh.pl < $< > $@
 
 INCDIRS = $(DIP_DIR)/watcom/h $(PWD)/$(OBJDIR) $(WATCOMH)
 LIBDIRS = $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
