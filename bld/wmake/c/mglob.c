@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Global variables for wmake.
 *
 ****************************************************************************/
 
@@ -71,7 +70,7 @@ struct Glob Glob;
 const char FAR *BuiltIns = {
     "__MAKEOPTS__=%s\n"
     "__MAKEFILES__=\n"
-    "__VERSION__=11\n"
+    "__VERSION__=12\n"
 #ifdef DLLS_IMPLEMENTED
     "__LOADDLL__=\n"
 #endif
@@ -97,7 +96,7 @@ const char FAR *BuiltIns = {
     "__QNX__=\n"
     "__UNIX__=\n"
 
-#elif defined( __LINUX__ )    
+#elif defined( __LINUX__ )
     "__LINUX__=\n"
     "__UNIX__=\n"
 
