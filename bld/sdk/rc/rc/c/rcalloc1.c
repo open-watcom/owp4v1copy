@@ -65,7 +65,7 @@ BigMemList       *BigList;
 static char RCMemGetHeapIndex( size_t size )
 /******************************************/
 {
-    char      i;
+    unsigned char     i;
 
     for( i = 0; i < NUM_HEAPS; i++ ) {
         if( size + sizeof( HeapId ) < HeapSizes[i] ) {
@@ -136,7 +136,7 @@ extern void *RCMemLayer1Malloc( size_t size )
     BigMemList      *memptr;
     HeapHandle      *handle;
     HeapId          *idptr;
-    char             heapindex;
+    unsigned char    heapindex;
     unsigned long    headersize;
 
     heapindex = RCMemGetHeapIndex( size );

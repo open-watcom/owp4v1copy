@@ -57,7 +57,7 @@
 
 #include "wstrip.h"
 
-#pragma pack (1);
+#pragma pack (1)
 
 typedef struct WResHeader {
     uint_32     Magic[ 2 ]; /* must be WRESMAGIC0 and WRESMAGIC1 */

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro processing for the preprocessor
 *
 ****************************************************************************/
 
@@ -732,7 +731,8 @@ MACRO_TOKEN *SubstituteParms( MACRO_TOKEN *head, MACRO_ARG *macro_parms )
             }
             if( mtok2 != NULL ) {
                 if( mtok2->token == PPT_MACRO_PARM ) {
-                    list = BuildString( macro_parms[mtok2->data[0]].arg );
+                    list = BuildString(
+                            macro_parms[(unsigned char)mtok2->data[0]].arg );
                     toklist = mtok->next;
                     mtok->next = mtok2->next;
                     mtok2->next = NULL;
@@ -742,7 +742,8 @@ MACRO_TOKEN *SubstituteParms( MACRO_TOKEN *head, MACRO_ARG *macro_parms )
         } else if( mtok->token == PPT_MACRO_PARM ) {
             // replace this ID with a copy of the tokens from
             // macro_parms[mtok->data[0]].arg
-            list = DuplicateList( macro_parms[mtok->data[0]].arg );
+            list = DuplicateList(
+                    macro_parms[(unsigned char)mtok->data[0]].arg );
             if( prev_token != PPT_SHARP_SHARP && !SharpSharp( mtok->next ) ) {
                 list = ExpandNestedMacros( list, 0 );
             }
@@ -783,6 +784,9 @@ MACRO_TOKEN *BuildSpecialToken( MACRO_ENTRY *me )
     char        token;
     char        buffer[200];
 
+    p = NULL;
+    token = 0;
+    
     switch( me->name[2] ) {
     case 'L':                           /* __LINE__ */
         sprintf( buffer, "%d", PPLineNumber );

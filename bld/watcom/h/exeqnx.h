@@ -32,7 +32,7 @@
 
 #ifndef _EXEQNX_H
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 // structures used in processing QNX load files.
 
@@ -122,7 +122,7 @@ typedef struct lmf_rw_end {
 
 #define VERIFY_OFFSET 36
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #define _EXEQNX_H
 #endif

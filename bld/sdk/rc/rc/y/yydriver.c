@@ -385,6 +385,7 @@ static p_action doParse( parse_stack * resource_state )
     int         token_count;
 
     error_state = FALSE;
+    token_count = 0;
 
     do {
         token = yylex();

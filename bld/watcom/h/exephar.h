@@ -32,7 +32,7 @@
 
 #ifndef _EXEPHAR_H
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 typedef struct simple_header {
     unsigned_16     signature;
@@ -122,7 +122,7 @@ typedef struct {
 #define PHAR_FORMAT_FLAT        1
 #define PHAR_FORMAT_SEGMENTED   2
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #define _EXEPHAR_H
 #endif

@@ -218,7 +218,7 @@ static void PP_GenLine()
 #ifndef UNIX
         if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
 #endif
-        if( DBChar[*fname] )  {
+        if( DBChar[(unsigned char)*fname] )  {
             *p = *fname;
             p++;
             fname++;
@@ -964,7 +964,7 @@ char *PPScanLiteral( char *p )
 
     quote_char = *p++;
     for(;;) {
-        if( DBChar[*p] )  {
+        if( DBChar[(unsigned char)*p] )  {
             p += 2;             /* 07-jul-93 */
             continue;           /* 09-jul-93 */
         }
