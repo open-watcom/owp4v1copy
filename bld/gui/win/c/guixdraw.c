@@ -86,7 +86,8 @@ void GUIDrawTextBitmapRGB ( gui_window *wnd, char *text,
     //draw_cache        dcache;
 
     if( ( wnd->hdc == NULLHANDLE ) || ( wnd->ps == NULL ) ||
-        ( ( text == NULL ) && ( bitmap == 0 ) ) ) {
+        ( ( text == NULL ) && ( bitmap == 0 ) ) ||
+        ( ( bitmap != 0 ) && ( height == 0 ) ) ) {
         return;
     }
     old_rop = 0;
