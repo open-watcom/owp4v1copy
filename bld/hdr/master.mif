@@ -156,7 +156,8 @@ common = &
         wcstack.h &
         wctype.h &
         wcvbase.h &
-        wcvector.h
+        wcvector.h &
+        wsample.h
 
 DOS_files = &
       $(common) &
@@ -177,7 +178,6 @@ DOS_files = &
         win/win16.h &
         win/windows.h &
         win/win386.h &
-        wsample.h &
         unistd.h
 
 QNX_files = &
@@ -292,67 +292,6 @@ LINUX_files = &
         netinet/in.h &
         netinet/tcp.h &
         arpa/inet.h
-
-SNAPDRV_files = &
-        _comdef.h &
-        assert.h &
-        ctype.h &
-        errno.h &
-        fcntl.h &
-        float.h &
-        limits.h &
-        locale.h &
-        malloc.h &
-        math.h &
-        search.h &
-        setjmp.h &
-        share.h &
-        signal.h &
-        stdarg.h &
-        stddef.h &
-        stdio.h &
-        stdlib.h &
-        string.h &
-        time.h &
-        unistd.h &
-        complex.h &
-        except.h &
-        exceptio.h &
-        exstring.h &
-        fstream.h &
-        generic.h &
-        iomanip.h &
-        iostream.h &
-        new.h &
-        stdexcep.h &
-        stdiobuf.h &
-        streambu.h &
-        string.hpp &
-        strstrea.h &
-        typeinfo.h &
-        wcdefs.h &
-        wcexcept.h &
-        wchash.h &
-        wchbase.h &
-        wchiter.h &
-        wclbase.h &
-        wclcom.h &
-        wclibase.h &
-        wclist.h &
-        wclistit.h &
-        wcqueue.h &
-        wcsbase.h &
-        wcsibase.h &
-        wcskip.h &
-        wcskipit.h &
-        wcstack.h &
-        wcvbase.h &
-        wcvector.h &
-        sys/stat.h &
-        sys/types.h
-
-SNAP_files = &
-      $(SNAPDRV_files)
 
 all : $($(system)_files) .symbolic
     @%null

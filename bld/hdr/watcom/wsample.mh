@@ -1,5 +1,5 @@
 /*
- *  wsample.h   WATCOM Execution Sampler include file
+ *  wsample.h   Open Watcom Execution Sampler include file
  *
 :include crwat.sp
  */
