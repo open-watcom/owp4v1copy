@@ -48,7 +48,9 @@
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
+#if _OS != LINUX
 #include <sys/proc_msg.h>
+#endif
 #include "wlnkmsg.h"
 #include "wressetr.h"   // from wres project
 #include "objio.h"
