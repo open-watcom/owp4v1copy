@@ -1,3 +1,4 @@
+platform = Win32
 CC = wcc386
 CFLAGS = -bt=nt
 res1_flags = -bt=nt -d__NT__

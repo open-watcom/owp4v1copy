@@ -1,3 +1,4 @@
+platform = Win32
 CC = wccaxp
 CFLAGS = -bt=nt
 res1_flags = -bt=nt

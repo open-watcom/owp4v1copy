@@ -1,3 +1,4 @@
+platform = Win16
 CC = wcc386
 CFLAGS = -zW -zp2
 res1_flags = -bt=windows -30

@@ -23,14 +23,15 @@
 #                               second pass
 #       lnk_dependencies        a list of files the linker command file
 #                               depends upon
+#       platform                Win32 for Win9x/Me/NT/2K/XP, Win16 for 3.x/Win386
 #
 # In addition the makefile must declare a procedure called linkit that
 # that can be used to add commands to the linker command file
 
-!ifeq CFLAGS -zW
-CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\win
-!else
+!ifeq platform Win32
 CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\nt
+!else
+CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\win
 !endif
 
 CFLAGS += -oaxt -d2 -w4
