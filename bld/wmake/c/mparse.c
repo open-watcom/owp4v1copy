@@ -519,7 +519,7 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
         case DOT_HOLD:          Glob.hold = TRUE;               break;
         case DOT_NOCHECK:       Glob.nocheck = TRUE;            break;
         case DOT_OPTIMIZE:      Glob.optimize = TRUE;           break;
-        case DOT_SILENT:        Glob.silent = TRUE;             break;
+        case DOT_SILENT:        Glob.silent++;                  break;
         case DOT_RCS_MAKE:      Glob.rcs_make = TRUE;           break;
         case DOT_KEEP_SPACES:   Glob.keep_spaces = TRUE;        break;
         default:

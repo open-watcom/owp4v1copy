@@ -473,7 +473,7 @@ STATIC char* RemoveBackSlash ( const char* inString ) {
 STATIC RET_T VerbosePrintTempFile(FLIST *head) {
 
     FLIST* current;
-    RET_T  ret = RET_SUCCESS;
+    RET_T  ret;
 
     current = head;
     while (current != NULL) {
@@ -492,8 +492,8 @@ STATIC RET_T createFile (FLIST *head) {
 
     NKLIST *temp;
     int    handle;
-    char   *fileName = NULL;
-    char   *tmpFileName = NULL;
+    char   *fileName;
+    char   *tmpFileName;
     RET_T  ret;
 
     assert (head != NULL);
@@ -1536,7 +1536,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     char    *arg;
     char const *argv[ 3 ]; /* for spawnvp */
     int     retcode;    /* from spawnvp */
-    UINT16  tmp_env = 0;    /* for * commands */
+    UINT16  tmp_env;    /* for * commands */
     RET_T   my_ret;     /* return code for this function */
 
     assert( cmd != NULL );
@@ -1683,7 +1683,7 @@ STATIC RET_T execLine( char *line )
 
     CheckForBreak();
     /* make a copy of global flags */
-    flags =     ( Glob.silent ? FLAG_SILENT : 0 )
+    flags =     ( ( Glob.silent == 1 ) ? FLAG_SILENT : 0 )
                 | ( Glob.ignore ? FLAG_IGNORE : 0 )
                 | ( Glob.shell ? FLAG_SHELL : 0 );
 
@@ -1692,7 +1692,8 @@ STATIC RET_T execLine( char *line )
         p = SkipWS( p );
 
         if( *p == '@' ) {
-            flags |= FLAG_SILENT;
+            if( Glob.silent <= 1 )
+                flags |= FLAG_SILENT;
         } else if( *p == '*' ) {
             flags |= FLAG_ENV_ARGS;
         } else if( *p == '!' ) {
@@ -1723,7 +1724,7 @@ extern RET_T ExecCList( CLIST *clist )
 /***********************************/
 {
     char    *line;
-    RET_T   ret = RET_SUCCESS;
+    RET_T   ret;
     FLIST   *currentFlist;
 
     while( clist != NULL ) {

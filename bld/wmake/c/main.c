@@ -256,7 +256,7 @@ STATIC char *procFlags( const char **argv, const char **log_name )
             case 'P':   Glob.print     = TRUE;  break;
             case 'Q':   Glob.query     = TRUE;  break;
             case 'R':   Glob.overide   = TRUE;  break;
-            case 'S':   Glob.silent    = TRUE;  break;
+            case 'S':   Glob.silent++;          break;
             case 'T':   Glob.touch     = TRUE;  break;
             case 'U':   Glob.unix      = TRUE;  break;
             case 'V':   Glob.verbose   = TRUE;  break;
