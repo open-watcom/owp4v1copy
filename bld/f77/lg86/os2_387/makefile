@@ -7,7 +7,7 @@ fp_model        = i87
 exe             = wf387
 form            = os2v2
 __386__         =
-oshdrs          = $(watcom_dir)\os220_h
+oshdrs          = $(lang_root)\h\os2
 share_objs      = ..\obj387\
 
 !include        ..\makego.mif
