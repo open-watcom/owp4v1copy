@@ -525,7 +525,8 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
 static int openNewExeFileInfo( char *filename, ExeFileInfo *info )
 /******************************************************************/
 {
-    info->Handle = RcOpen( filename, O_RDWR|O_CREAT|O_TRUNC|O_BINARY, S_IRWXU );
+    info->Handle = RcOpen( filename, O_RDWR|O_CREAT|O_TRUNC|O_BINARY, 
+                S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
     if( info->Handle == -1 ) {
         RcError( ERR_OPENING_TMP, filename, strerror( errno ) );
         return( FALSE );
