@@ -54,7 +54,7 @@ errrsrc.obj
 # The following are SYSTEM DEPENDENT files used BOTH
 # at compile-time and run-time.
 obj_0 += &
-btraps.jbj &
+btraps.obj &
 global.obj &
 intarith.obj &
 fciftbl.obj &
@@ -70,7 +70,7 @@ sdfile.obj
 !ifdef __386__
 obj_0 += &
 wf77main.obj &
-posput.xbj &
+posput.obj &
 spawn.obj
 !else
 # We include posput.xbj here because it calls write which calls _STK
@@ -78,7 +78,7 @@ spawn.obj
 # be possible, its kludgy, but it works
 root = $(obj_rt_0) &
 wf77main.obj &
-posput.xbj &
+posput.obj &
 spawn.obj
 !endif
 
@@ -189,9 +189,9 @@ lfio.obj &
 posback.obj &
 posrew.obj &
 postrunc.obj &
-rtinit.xbj &
-rtsysutl.xbj &
-rttraps.xbj &
+rtinit.obj &
+rtsysutl.obj &
+rttraps.obj &
 sysinq.obj
 
 !ifdef __386__
@@ -227,7 +227,7 @@ flushuni.obj &
 fspawn.obj &
 fsystem.obj &
 getdat.obj &
-gettim.xbj &
+gettim.obj &
 urand.obj &
 filesize.obj &
 seekunit.obj &
@@ -235,7 +235,7 @@ fgrowhdl.obj &
 fargs.obj &
 fexit.obj
 !ifeq host_OS dos
-obj_1 += fintr.xbj
+obj_1 += fintr.obj
 !endif
 
 #
@@ -265,16 +265,16 @@ showopts.obj
 
 # sysdep
 obj_3 += &
-cptraps.xbj &
+cptraps.obj &
 docle.obj &
-inout.xbj &
+inout.obj &
 ifaddr.obj &
-mainline.xbj &
+mainline.obj &
 objutil.obj &
-sdcio.xbj &
+sdcio.obj &
 tdlreloc.obj &
-filescan.xbj &
-sdcline.xbj &
+filescan.obj &
+sdcline.obj &
 ifargct.obj &
 genfixup.obj
 
@@ -286,7 +286,7 @@ editcomp.obj
 obj_3 += &
 gedit3.obj
 !ifneq form os2v2
-obj_3 += editcomp.xbj
+obj_3 += editcomp.obj
 !endif
 !endif
 
@@ -417,7 +417,7 @@ volatile.obj
 obj_4 += &
 asgnop.obj &
 binops.obj &
-cmdparms.xbj &
+cmdparms.obj &
 csdep.obj &
 emit.obj &
 exprutil.obj &
@@ -440,12 +440,12 @@ iftable.obj &
 initopt.obj &
 libsupp.obj &
 logops.obj &
-option.xbj &
+option.obj &
 relops.obj &
 stkctrl.obj &
 stkops.obj &
 tddump.obj &
-tdinit.xbj &
+tdinit.obj &
 auxlook.obj &
 regs.obj &
 wf77aux.obj
@@ -467,7 +467,7 @@ $(dwarf_dw_lib)  # DWARF library
 !endif
 
 obj_4 += &
-ufns.xbj
+ufns.obj
 
 #
 # OVERLAY 5: This overlay contain a compile-time, and a debugger module

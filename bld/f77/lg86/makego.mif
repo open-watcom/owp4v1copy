@@ -85,12 +85,10 @@ fcmds=@%append $^@ file %i
 $(exe).lnk : $(f77_dir)/lg86/files.mif $(f77_dir)/lg86/rt/rt.mif $(f77_dir)/lg86/comp.mif
     @echo Creating $^@
     @%create $^@
-!ifdef share_objs
 !ifdef __LINUX__
-    @%append $^@ path .:$(share_objs).
+    @%append $^@ path .
 !else
-    @%append $^@ path .;$(share_objs).
-!endif
+    @%append $^@ path .
 !endif
     @%append $^@ debug all option symfile
     @for %i in ($(libs)) do @%append $^@ lib %i
@@ -161,7 +159,7 @@ res_dependencies += $(wl95_dir)/h/wlink.rc
 !endif
 
 errmsg.res : $(res_dependencies)
-   $(rc_aui) -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 ../c/errmsg.rc
+   $(rc_aui) -I"$(f77_dir)/h" -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 ../c/errmsg.rc
 
 !endif
 

@@ -55,23 +55,6 @@ wlib_opts = -b-n
 wlib_opts += -s-t
 !endif
 
-#
-# define possible extensions
-#
-# .2bj and .3bj are used to build ifbuild[23].exe in f77\lg86\utils
-#
-# .obj indicates an object that is in common with another compiler...
-#       for example:  obj387\wf387.exe and os2_387\wf387.exe share
-#       many object files.
-# .xbj indicates an object that is dependant on the target and must
-#       be recompiled always.  xbj was chose to stand out in the long
-#       file lists.
-# .jbj indicates objects that must be compiled when creating Japanese
-#       versions
-#
-.extensions:
-.extensions: .exp .exe .2bj .3bj .xbj .jbj .obj .asm .c
-
 !ifndef __386__
 !ifeq fp_model i87
 .asm: $(f77_dir)/lg86/rt/asm87
@@ -83,18 +66,15 @@ wlib_opts += -s-t
 !endif
 .asm: $(f77_dir)/lg86/rt/asm386
 !endif
-.asm.xbj:
-    $(as) $[* -fo=$^. $(asm_opts)
-
 .asm.obj:
-    $(as) $[* -fo=$(share_objs)$^. $(asm_opts)
+    $(as) $[* -fo=$^. $(asm_opts)
 
 !ifeq release 0
 c_opts += -d2
 !else
 c_opts += -d1
 !endif
-compile = $(comp) $(c_opts) $[*
+compile = $(comp) $(c_opts) $(inc_dirs) $[*
 
 !ifdef in_sa_library
 .c: $(f77_dir)/lg86/rt/c;$(f77_dir)/lg86/c;$(f77_dir)/lg86/cp/c;$(f77_dir)/cg86/rt/c;$(f77_dir)/rt
@@ -104,28 +84,7 @@ compile = $(comp) $(c_opts) $[*
 .c: $(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/rt/ufns;$(f77_dir)/rt/iad;$(f77_dir)/cg86/c
 .c: $(f77_dir)/c;$(f77_dir)/cp;$(f77_dir)/cg86/cp/c;$(f77_dir)/lg86/utils/c
 .c.obj:
-!ifdef share_objs
-    $(compile) -fo=$(share_objs).obj
-!else
     $(compile) -fo=.obj
-!endif
-.c.xbj:
-!ifdef japan_objs
-    $(compile) -fo=$(share_objs).xbj
-!else
-    $(compile) -fo=.xbj
-!endif
-.c.jbj:
-    $(compile) -fo=.jbj
-.c.2bj .c.3bj:
-    $(compile) -fo=$^@
-
-!ifdef share_objs
-.obj: $(share_objs)
-!endif
-!ifdef japan_objs
-.xbj: $(share_objs)
-!endif
 
 !ifdef oshdrs
 oshdrs +=;
@@ -183,14 +142,17 @@ libs += $(dwarf_dw_lib)  # DWARF library
 !endif
 
 !ifdef in_sa_library
-rt_h    = $(f77_dir)/lg86/rt/h;
+rt_h=-I"$(f77_dir)/lg86/rt/h;"
 !else
-rt_h    =
+rt_h=
 !endif
 
 !ifeq form dos
-wlink_include_dir = $(wl95_dir)/h
+wlink_include_dir =-I"$(wl95_dir)/h"
 !endif
 
-.before
-    set include=$(rt_h)$(f77_dir)/lg86/h;$(f77_dir)/cg86/h;$(f77_dir)/h;$(womp_dir)/h;$(wlink_inlcude_dir);$(lang_root)/h;$(oshdrs)$(watcom_dir)/h;$(dwarf_dir)/dw/h;$(clib_dir)/h;$(lib_misc_dir)/h;$(comp_cfg_dir)/h;$(cg_inc_dirs)
+!ifeq host_os os2
+extra_oshdrs=$(inc_dirs_sys_os2)
+!endif
+
+inc_dirs=$(rt_h) -I"$(f77_dir)/lg86/h" -I"$(f77_dir)/cg86/h" -I"$(f77_dir)/h" -I"$(womp_dir)/h" $(wlink_include_dir) -I"$(lang_root)/h" $(extra_oshdrs) -I"$(watcom_dir)/h" -I"$(dwarf_dir)/dw/h" -I"$(clib_dir)/h" -I"$(lib_misc_dir)/h" -I"$(comp_cfg_dir)/h" $(cg_inc_dirs)

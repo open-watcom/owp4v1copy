@@ -37,7 +37,7 @@ extra_c_flags += -d__NEC__
 
 #------------------------ assembler options
 
-asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
+asm_incs  = -I"$(f77_dir)/cg86/inc" -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
 extra_a_flags = -fp$(fp_model) -m$(model) -zld $(asm_incs) -fo=.obj
 
 !ifeq host_CPU 386
@@ -131,7 +131,7 @@ extra_a_flags += -d_NT_
 # "is_MT" is defined when building DLL and muti-threaded
 # versions of the libraries
 
-inc_dirs=$(f77_dir)/cg86/rt/h;$(f77_dir)/cg86/h;$(f77_dir)/h;$(lib_misc_dir)/h;$(clib_dir)/h;$(hdr_dir)/dos;$(comp_cfg_dir)/h
+inc_dirs=-I"$(f77_dir)/cg86/rt/h" -I"$(f77_dir)/cg86/h" -I"$(f77_dir)/h" -I"$(lib_misc_dir)/h" -I"$(clib_dir)/h" -I"$(hdr_dir)/dos" -I"$(comp_cfg_dir)/h"
 
 .c: $(f77_dir)/cg86/rt/c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
 

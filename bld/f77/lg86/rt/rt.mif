@@ -5,108 +5,103 @@
 # different directory, all the .objs here have to have $(indep) in
 # front of them.  The xbj files should not have this prefix.
 #
-!ifdef in_sa_library
-indep=$(share_objs)
-!else
-indep=
-!endif
 
 obj_rt_0 = &
-$+$(indep)$-insertxt.obj &
-lgtraps.xbj &
-$+$(indep)$-rtglob.obj
+insertxt.obj &
+lgtraps.obj &
+rtglob.obj
 
 !ifeq fp_model i87
 obj_rt_0 += &
-$+$(indep)$-chk8087.obj
+chk8087.obj
 !endif
 
 obj_rt_1 = &
-fptraps.xbj &
-$+$(indep)$-fcifprlg.obj &
-$+$(indep)$-ifalog.obj &
-$+$(indep)$-ifalog10.obj &
-$+$(indep)$-ifamod.obj &
-$+$(indep)$-ifdmod.obj &
-$+$(indep)$-aalloc.obj &
-$+$(indep)$-enaddr.obj &
-$+$(indep)$-errwrt.obj &
-$+$(indep)$-exdata.obj &
-$+$(indep)$-f77data.obj &
-$+$(indep)$-fcalloc.obj &
-$+$(indep)$-fcbool.obj &
-$+$(indep)$-fccntrl.obj &
-$+$(indep)$-fccnvt.obj &
-$+$(indep)$-fcdebug.obj &
-$+$(indep)$-fcdo.obj &
-$+$(indep)$-fcdrvr.obj &
-$+$(indep)$-fcexp.obj &
-$+$(indep)$-fcflip.obj &
-$+$(indep)$-fcio.obj &
-$+$(indep)$-fcioout.obj &
-$+$(indep)$-fcisn.obj &
-$+$(indep)$-fcloc.obj &
-$+$(indep)$-fcmath.obj &
-$+$(indep)$-fcmove.obj &
-$+$(indep)$-fcpop.obj &
-$+$(indep)$-fcpop2.obj &
-$+$(indep)$-fcpsh.obj &
-$+$(indep)$-fcpsh2.obj &
-$+$(indep)$-fcsscr.obj &
-$+$(indep)$-fcstop.obj &
-$+$(indep)$-fcstring.obj &
-$+$(indep)$-fcstruct.obj &
-$+$(indep)$-fcsubpgm.obj &
-$+$(indep)$-fcuchk.obj &
-$+$(indep)$-fgnobj.obj &
-$+$(indep)$-halt.obj &
-$+$(indep)$-limiterr.obj &
-$+$(indep)$-lrunmain.obj &
-$+$(indep)$-pgmcall.obj &
-$+$(indep)$-powii.obj &
-$+$(indep)$-powri.obj &
-$+$(indep)$-powxi.obj &
-$+$(indep)$-powrr.obj &
-$+$(indep)$-response.obj &
-$+$(indep)$-rinsert.obj &
-$+$(indep)$-rmsgproc.obj &
-$+$(indep)$-rtstruct.obj &
-$+$(indep)$-rundefo.obj &
-$+$(indep)$-setioflg.obj &
-$+$(indep)$-undeflg.obj &
-$+$(indep)$-zmath.obj &
-$+$(indep)$-wfext.obj &
-$+$(indep)$-wfccall.obj
+fptraps.obj &
+fcifprlg.obj &
+ifalog.obj &
+ifalog10.obj &
+ifamod.obj &
+ifdmod.obj &
+aalloc.obj &
+enaddr.obj &
+errwrt.obj &
+exdata.obj &
+f77data.obj &
+fcalloc.obj &
+fcbool.obj &
+fccntrl.obj &
+fccnvt.obj &
+fcdebug.obj &
+fcdo.obj &
+fcdrvr.obj &
+fcexp.obj &
+fcflip.obj &
+fcio.obj &
+fcioout.obj &
+fcisn.obj &
+fcloc.obj &
+fcmath.obj &
+fcmove.obj &
+fcpop.obj &
+fcpop2.obj &
+fcpsh.obj &
+fcpsh2.obj &
+fcsscr.obj &
+fcstop.obj &
+fcstring.obj &
+fcstruct.obj &
+fcsubpgm.obj &
+fcuchk.obj &
+fgnobj.obj &
+halt.obj &
+limiterr.obj &
+lrunmain.obj &
+pgmcall.obj &
+powii.obj &
+powri.obj &
+powxi.obj &
+powrr.obj &
+response.obj &
+rinsert.obj &
+rmsgproc.obj &
+rtstruct.obj &
+rundefo.obj &
+setioflg.obj &
+undeflg.obj &
+zmath.obj &
+wfext.obj &
+wfccall.obj
 
 !ifdef __386__
 obj_rt_1 += &
-$+$(indep)$-tbacc.obj
+tbacc.obj
 !endif
 
 !ifeq fp_model i87
 obj_rt_1 += &
-$+$(indep)$-fcstkctl.obj
+fcstkctl.obj
 !else ifeq fp_model c
 obj_rt_1 += &
-$+$(indep)$-ifabs.obj &
-$+$(indep)$-ifcotan.obj &
-$+$(indep)$-ifdabs.obj &
-$+$(indep)$-ifdcotan.obj
+ifabs.obj &
+ifcotan.obj &
+ifdabs.obj &
+ifdcotan.obj
 !endif
 
 # this is a debugger file
 # (containing the fcode interface to the debugger)
 obj_rt_1 += &
-$+$(indep)$-dbfc.obj
+dbfc.obj
 
 obj_rt_2 = &
-$+$(indep)$-dbarea.obj &
-$+$(indep)$-dbdata.obj &
-$+$(indep)$-dbexam.obj &
-$+$(indep)$-dbline.obj &
-$+$(indep)$-dbmodify.obj &
-$+$(indep)$-dbmsg.obj &
-$+$(indep)$-dbprint.obj &
-$+$(indep)$-dbscan.obj &
-$+$(indep)$-dbss.obj &
-$+$(indep)$-dbutils.obj
+dbarea.obj &
+dbdata.obj &
+dbexam.obj &
+dbline.obj &
+dbmodify.obj &
+dbmsg.obj &
+dbprint.obj &
+dbscan.obj &
+dbss.obj &
+dbutils.obj

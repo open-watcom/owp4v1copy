@@ -25,7 +25,7 @@ ifbuild_objs = &
 
 .c : c;../../cp;
 
-inc_dirs = ../h;../../h;
+inc_dirs = -I"../h" -I"../../h"
 
 extra_c_flags = -zp1 -d__RT__
 
