@@ -63,6 +63,7 @@ extern int              GetStructSize( int );
 
 #ifdef _WASM_
     extern int          ChangeCurrentLocation( bool, int_32 );
+    extern int          SymIs32( struct asm_sym *sym );
 #endif
 
 extern int dup_array( asm_sym *sym, char start_pos, char no_of_bytes );
@@ -535,6 +536,11 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             break;
                         case 4:
                             temp = FIX_OFF32;
+#ifdef _WASM_
+                            if( !SymIs32( init_sym ) ) {
+                                temp = FIX_OFF16;
+                            }
+#endif
                             break;
                         default:
                             AsmError( NOT_IMPLEMENTED );
@@ -731,7 +737,7 @@ int data_init( int sym_loc, int initializer_loc )
 */
 {
     char                no_of_bytes;
-    int                 mem_type;
+    memtype              mem_type;
     struct asm_sym      *sym = NULL;
 #ifdef _WASM_
     uint                old_offset;
@@ -749,30 +755,30 @@ int data_init( int sym_loc, int initializer_loc )
     switch( AsmBuffer[initializer_loc]->value ) {
 #ifdef _WASM_
     case T_SBYTE:                       // 20-Aug-92
-        mem_type = T_SBYTE;
+        mem_type = MT_SBYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_SWORD:                       // 20-Aug-92
-        mem_type = T_SWORD;
+        mem_type = MT_SWORD;
         no_of_bytes = BYTE_2;
         break;
     case T_SDWORD:                      // 20-Aug-92
-        mem_type = T_SDWORD;
+        mem_type = MT_SDWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DQ:
     case T_QWORD:
-        mem_type = T_QWORD;
+        mem_type = MT_QWORD;
         no_of_bytes = BYTE_8;
         break;
     case T_DT:
     case T_TBYTE:                       // 20-Aug-92
-        mem_type = T_TBYTE;
+        mem_type = MT_TBYTE;
         no_of_bytes = BYTE_10;
         break;
     case T_STRUC:
     case T_STRUCT:
-        mem_type = T_STRUCT;
+        mem_type = MT_STRUCT;
         no_of_bytes = GetStructSize( initializer_loc );
         if( Definition.struct_depth == 0 ) {
             InitializeStructure( sym, initializer_loc );
@@ -781,24 +787,24 @@ int data_init( int sym_loc, int initializer_loc )
 #endif
     case T_DB:
     case T_BYTE:
-        mem_type = T_BYTE;
+        mem_type = MT_BYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_DW:
     case T_WORD:
-        mem_type = T_WORD;
+        mem_type = MT_WORD;
         no_of_bytes = BYTE_2;
         break;
     case T_DD:
     case T_DWORD:
-        mem_type = T_DWORD;
+        mem_type = MT_DWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DF:                          // 20-Aug-92
     case T_FWORD:
     case T_DP:
     case T_PWORD:
-        mem_type = T_FWORD;
+        mem_type = MT_FWORD;
         no_of_bytes = BYTE_6;
         break;
     default:
@@ -870,7 +876,7 @@ int data_init( int sym_loc, int initializer_loc )
         BackPatch( sym );
     }
     #ifdef _WASM_
-        if( mem_type == T_STRUCT ) return( NOT_ERROR );
+        if( mem_type == MT_STRUCT ) return( NOT_ERROR );
         if( label_dir ) return( NOT_ERROR );
     #endif
     if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {

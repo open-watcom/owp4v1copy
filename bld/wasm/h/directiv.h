@@ -215,7 +215,7 @@ typedef struct {
     label_list  *locallist;     // list of local variables
     int         parasize;       // total no. of bytes used by parameters
     int         localsize;      // total no. of bytes used by local variables
-    int         mem_type;       // distance of procedure: near or far
+    memtype     mem_type;       // distance of procedure: near or far
     unsigned    is_vararg:1;    // if it has a vararg
     unsigned    pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
 } proc_info;
@@ -385,7 +385,7 @@ extern uint             GetDirIdx( char *, int );
 extern int              GlobalDef( int );       // define an global symbol
 extern int              ExtDef( int );          // define an external symbol
 extern int              CommDef( int );         // define an communal symbol
-extern struct asm_sym   *MakeExtern( char *name, int type, char already_defd );
+extern struct asm_sym   *MakeExtern( char *name, memtype type, char already_defd );
 extern int              PubDef( int );          // define a public symbol
 extern int              GrpDef( int );          // define a group
 extern int              SegDef( int );          // open or close a segment
@@ -499,20 +499,20 @@ fix( TOK_HUGE,          "HUGE",         MOD_HUGE,       INIT_MEMORY     ),
 fix( TOK_FLAT,          "FLAT",         MOD_FLAT,       INIT_MEMORY     ),
 fix( TOK_NEARSTACK,     "NEARSTACK",    STACK_NEAR,     INIT_STACK      ),
 fix( TOK_FARSTACK,      "FARSTACK",     STACK_FAR,      INIT_STACK      ),
-fix( TOK_EXT_NEAR,      "NEAR",         T_NEAR,         0               ),
-fix( TOK_EXT_FAR,       "FAR",          T_FAR,          0               ),
-fix( TOK_EXT_PROC,      "PROC",         T_PROC,         0               ),
-fix( TOK_EXT_BYTE,      "BYTE",         T_BYTE,         0               ),
-fix( TOK_EXT_SBYTE,     "SBYTE",        T_BYTE,         0               ),
-fix( TOK_EXT_WORD,      "WORD",         T_WORD,         0               ),
-fix( TOK_EXT_SWORD,     "SWORD",        T_WORD,         0               ),
-fix( TOK_EXT_DWORD,     "DWORD",        T_DWORD,        0               ),
-fix( TOK_EXT_SDWORD,    "SDWORD",       T_DWORD,        0               ),
-fix( TOK_EXT_PWORD,     "PWORD",        T_FWORD,        0               ),
-fix( TOK_EXT_FWORD,     "FWORD",        T_FWORD,        0               ),
-fix( TOK_EXT_QWORD,     "QWORD",        T_QWORD,        0               ),
-fix( TOK_EXT_TBYTE,     "TBYTE",        T_TBYTE,        0               ),
-fix( TOK_EXT_ABS,       "ABS",          T_ABS,          0               ),
+fix( TOK_EXT_NEAR,      "NEAR",         MT_NEAR,        0               ),
+fix( TOK_EXT_FAR,       "FAR",          MT_FAR,         0               ),
+fix( TOK_EXT_PROC,      "PROC",         MT_PROC,        0               ),
+fix( TOK_EXT_BYTE,      "BYTE",         MT_BYTE,        0               ),
+fix( TOK_EXT_SBYTE,     "SBYTE",        MT_BYTE,        0               ),
+fix( TOK_EXT_WORD,      "WORD",         MT_WORD,        0               ),
+fix( TOK_EXT_SWORD,     "SWORD",        MT_WORD,        0               ),
+fix( TOK_EXT_DWORD,     "DWORD",        MT_DWORD,       0               ),
+fix( TOK_EXT_SDWORD,    "SDWORD",       MT_DWORD,       0               ),
+fix( TOK_EXT_PWORD,     "PWORD",        MT_FWORD,       0               ),
+fix( TOK_EXT_FWORD,     "FWORD",        MT_FWORD,       0               ),
+fix( TOK_EXT_QWORD,     "QWORD",        MT_QWORD,       0               ),
+fix( TOK_EXT_TBYTE,     "TBYTE",        MT_TBYTE,       0               ),
+fix( TOK_EXT_ABS,       "ABS",          MT_ABS,         0               ),
 fix( TOK_DS,            "DS",           ASSUME_DS,      0               ),
 fix( TOK_ES,            "ES",           ASSUME_ES,      0               ),
 fix( TOK_SS,            "SS",           ASSUME_SS,      0               ),
@@ -521,8 +521,8 @@ fix( TOK_GS,            "GS",           ASSUME_GS,      0               ),
 fix( TOK_CS,            "CS",           ASSUME_CS,      0               ),
 fix( TOK_ERROR,         "ERROR",        ASSUME_ERROR,   0               ),
 fix( TOK_NOTHING,       "NOTHING",      ASSUME_NOTHING, 0               ),
-fix( TOK_PROC_FAR,      "FAR",          T_FAR,          0               ),
-fix( TOK_PROC_NEAR,     "NEAR",         T_NEAR,         0               ),
+fix( TOK_PROC_FAR,      "FAR",          MT_FAR,         0               ),
+fix( TOK_PROC_NEAR,     "NEAR",         MT_NEAR,        0               ),
 fix( TOK_PROC_BASIC,    "BASIC",        LANG_BASIC,     0               ),
 fix( TOK_PROC_FORTRAN,  "FORTRAN",      LANG_FORTRAN,   0               ),
 fix( TOK_PROC_PASCAL,   "PASCAL",       LANG_PASCAL,    0               ),

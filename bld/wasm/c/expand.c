@@ -63,7 +63,7 @@ extern void             wipe_space( char *token );
 extern int              AsmScan( char * );
 extern dir_node         *dir_insert( char *name, int tab );
 extern void             GetInsString( enum asm_token , char *, int );
-extern int              MakeLabel( char *symbol_name, int mem_type );
+extern int              MakeLabel( char *symbol_name, memtype mem_type );
 
 #define    MAX_EQU_NESTING      20
 
@@ -379,7 +379,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
                 sprintf( buff, ".$%x/%lx", GetCurrSeg(), (unsigned long)GetCurrAddr() );
                 AsmBuffer[start+i]->string_ptr = buff;
                 sym = AsmGetSymbol( buff );
-                if( sym == NULL ) MakeLabel( buff, T_NEAR );
+                if( sym == NULL ) MakeLabel( buff, MT_NEAR );
             }
             break;
         }

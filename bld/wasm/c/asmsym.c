@@ -59,17 +59,17 @@ extern void     AsmError( int );
 
 
 static unsigned short CvtTable[] = {
-    T_BYTE,
-    T_WORD,
-    T_DWORD,
-    T_DWORD,    /* should be T_PWORD, T_FWORD */
-    T_DWORD,
-    T_QWORD,
-    T_TBYTE,
-    T_NEAR,
-    T_NEAR,
-    T_FAR,
-    T_FAR,
+    MT_BYTE,
+    MT_WORD,
+    MT_DWORD,
+    MT_DWORD,    /* should be T_PWORD, T_FWORD */
+    MT_DWORD,
+    MT_QWORD,
+    MT_TBYTE,
+    MT_NEAR,
+    MT_NEAR,
+    MT_FAR,
+    MT_FAR,
 };
 
 #ifdef _WASM_
@@ -88,7 +88,7 @@ char *InitAsmSym( struct asm_sym *sym, char *name )
         strcpy( sym->name, name );
         sym->next = NULL;
         sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
+        sym->mem_type = MT_EMPTY;
         sym->fixup = NULL;
 #ifdef _WASM_
         sym->grpidx = 0;
@@ -184,7 +184,7 @@ struct asm_sym *AsmLookup( char *name )
         if( is_current_loc ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
-            sym->mem_type = T_NEAR;
+            sym->mem_type = MT_NEAR;
         }
 #endif
         if( is_current_loc ) {
@@ -192,7 +192,7 @@ struct asm_sym *AsmLookup( char *name )
         }
         sym->state = AsmQueryExternal( name );
         if( sym->state == SYM_UNDEFINED ) {
-            sym->mem_type = EMPTY;
+            sym->mem_type = MT_EMPTY;
         } else {
             sym->mem_type = CvtTable[ AsmQueryType( name ) ];
         }
@@ -266,7 +266,7 @@ struct asm_sym *AsmAdd( struct asm_sym *sym )
 #endif
     sym->state = AsmQueryExternal( sym->name );
     if( sym->state == SYM_UNDEFINED ) {
-        sym->mem_type = EMPTY;
+        sym->mem_type = MT_EMPTY;
     } else {
         sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
     }

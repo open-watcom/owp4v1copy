@@ -355,8 +355,8 @@ int match_phase_1( void )
     case T_LGDT:
         /* kludge fix to allow "LIDT fword ptr foo" */
         switch( Code->mem_type ) {
-        case T_PWORD:
-        case T_FWORD:
+        case MT_PWORD:
+        case MT_FWORD:
             Code->info.opnd_type[OPND1] = OP_M_DW;
             break;
         }
@@ -401,9 +401,9 @@ int match_phase_1( void )
                     cur_opnd = OP_M_W;
                 } else if( MEM_TYPE( Code->mem_type, DWORD ) ) {
                     cur_opnd = OP_M_DW;
-                } else if( Code->mem_type == T_QWORD ) {
+                } else if( Code->mem_type == MT_QWORD ) {
                     cur_opnd = OP_M_QW;
-                } else if( Code->mem_type == T_TBYTE ) {
+                } else if( Code->mem_type == MT_TBYTE ) {
                     cur_opnd = OP_M_TB;
                 }
             }
@@ -702,7 +702,7 @@ int match_phase_3( int *i, unsigned long determinant )
         case OP_M16:
             if( cur_opnd & OP_M &&
                    ( MEM_TYPE( Code->mem_type, WORD ) ||
-                     Code->mem_type == EMPTY ) ) {
+                     Code->mem_type == MT_EMPTY ) ) {
                 if( output( *i ) == ERROR ) return( ERROR );
                 if( output_data( last_opnd, OPND1 ) == ERROR ) return( ERROR );
                 return( output_data( cur_opnd, OPND2 ) );

@@ -528,27 +528,27 @@ static void write_ext( void )
     }
 }
 
-static int opsize( unsigned mem_type )
+static int opsize( memtype mem_type )
 /************************************/
 {
     switch( mem_type ) {
-    case EMPTY:     return( 0 );
+    case MT_EMPTY:     return( 0 );
 #ifdef _WASM_
-    case T_SBYTE:
+    case MT_SBYTE:
 #endif
-    case T_BYTE:    return( 1 );
+    case MT_BYTE:    return( 1 );
 #ifdef _WASM_
-    case T_SWORD:
+    case MT_SWORD:
 #endif
-    case T_WORD:    return( 2 );
+    case MT_WORD:    return( 2 );
 #ifdef _WASM_
-    case T_SDWORD:
+    case MT_SDWORD:
 #endif
-    case T_DWORD:   return( 4 );
-    case T_FWORD:   return( 6 );
-    case T_PWORD:   return( 6 );
-    case T_QWORD:   return( 8 );
-    case T_TBYTE:   return( 10 );
+    case MT_DWORD:   return( 4 );
+    case MT_FWORD:   return( 6 );
+    case MT_PWORD:   return( 6 );
+    case MT_QWORD:   return( 8 );
+    case MT_TBYTE:   return( 10 );
     default:        return( 0 );
     }
 }

@@ -30,6 +30,8 @@
 
 
 #ifndef ASMGLOB_H
+#define ASMGLOB_H
+
 #include <stdio.h>
 #include <watcom.h>
 
@@ -88,9 +90,7 @@ enum naming_conventions {
                              */
 };
 
-#endif
-
-#if ( defined(_WASM_) && !defined( ASMSYM_H ) )
+#if defined( _WASM_ )
 
 #define DELIM                   " ,\t\0"
 #define T_UNDEFINED             -1
@@ -196,6 +196,4 @@ extern global_vars Globals;
 
 #endif
 
-#ifndef ASMGLOB_H
-#define ASMGLOB_H
 #endif

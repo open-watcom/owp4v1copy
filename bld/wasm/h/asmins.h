@@ -38,6 +38,7 @@
     #define ASMFAR
 #endif
 
+#include "asmsym.h"
 #include "asmops1.h"
 #ifndef   asm_op
     #include "asmops2.h"
@@ -46,9 +47,9 @@
 #ifdef _WASM_
     struct asm_ins {
         unsigned short  token;                  /* T_ADD, etc */
-        unsigned        allowed_prefix  : 3,    /* allowed prefix */
-                        byte1_info      : 2,    /* flags for 1st byte */
-                        rm_info         : 2;    /* info on r/m byte */
+        unsigned        allowed_prefix  : 3;    /* allowed prefix */
+        unsigned        byte1_info      : 2;    /* flags for 1st byte */
+        unsigned        rm_info         : 2;    /* info on r/m byte */
         enum asm_cpu    cpu;                    /* CPU type */
         unsigned long   opnd_type[2];           /* asm_opnds */
         unsigned char   opcode;                 /* opcode byte */
@@ -56,12 +57,11 @@
     };
 #else
     struct asm_ins {
-        unsigned        token           : 10,   /* T_ADD, etc */
-
-                        allowed_prefix  : 3,    /* allowed prefix */
-                        byte1_info      : 2,    /* flags for 1st byte */
-                        rm_info         : 2,    /* info on r/m byte */
-                        cpu             : 8;    /* CPU type */
+        unsigned        token           : 10;   /* T_ADD, etc */
+        unsigned        allowed_prefix  : 3;    /* allowed prefix */
+        unsigned        byte1_info      : 2;    /* flags for 1st byte */
+        unsigned        rm_info         : 2;    /* info on r/m byte */
+        unsigned        cpu             : 8;    /* CPU type */
         unsigned long   opnd_type[2];           /* asm_opnds */
         unsigned char   opcode;                 /* opcode byte */
         unsigned char   rm_byte;                /* mod_rm_byte */
@@ -75,12 +75,12 @@ struct asm_code {
         unsigned     adrsiz:1;      // address size prefix
         unsigned     opsiz:1;       // operand size prefix
     } prefix;
-    int             mem_type;       // byte / word / etc. NOT near/far
+    memtype         mem_type;       // byte / word / etc. NOT near/far
     long            data[2];
     struct asm_ins  info;
     signed char     extended_ins;
     unsigned char   sib;
-    signed short    distance;       // short / near / far / empty
+    memtype         distance;       // short / near / far / empty
     unsigned        use32:1;
     unsigned        indirect:1;     // CALL/JMP indirect jump
     unsigned        mem_type_fixed:1;
@@ -92,12 +92,12 @@ struct asm_code {
 #define FWAIT       0x03
 #define NO_FWAIT    0x04
 
-#define PREFIX_ES       0x26
-#define PREFIX_CS       0x2E
-#define PREFIX_SS       0x36
-#define PREFIX_DS       0x3E
-#define PREFIX_FS       0x64
-#define PREFIX_GS       0x65
+#define PREFIX_ES   0x26
+#define PREFIX_CS   0x2E
+#define PREFIX_SS   0x36
+#define PREFIX_DS   0x3E
+#define PREFIX_FS   0x64
+#define PREFIX_GS   0x65
 
 #define F_0F        0x2
 #define F_16        0x1
