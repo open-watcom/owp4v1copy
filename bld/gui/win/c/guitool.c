@@ -176,7 +176,15 @@ BOOL GUIToolBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpara
          * if we are fixed then start to float or vice versa
          */
         if( !HasToolAtPoint( toolbar->hdl, wparam, lparam ) ) {
+#ifdef __OS2_PM__
+            // Hack: For some reason we will get here with bogus coords,
+            // we need to ignore the event. Should really find out where
+            // the message is coming from.
+            if( (ULONG)wparam != 0x0FFFFFFF )
+                GUIChangeToolBar( wnd );
+#else
             GUIChangeToolBar( wnd );
+#endif
             return( TRUE );
         }
         break;
