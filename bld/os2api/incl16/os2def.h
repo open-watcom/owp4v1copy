@@ -16,6 +16,7 @@
 
 #define EXPENTRY  PASCAL FAR _loadds
 #define APIENTRY  PASCAL FAR
+#define CALLBACK  EXPENTRY
 
 #define CHAR     char
 #define SHORT    short
@@ -122,7 +123,32 @@ typedef struct _RECTL {
     LONG yTop;
 } RECTL, FAR  *PRECTL, NEAR *NPRECTL;
 
+typedef struct _WPOINT {
+    SHORT x;
+    SHORT dummy1;
+    SHORT y;
+    SHORT dummy2;
+} WPOINT, FAR *PWPOINT, NEAR *NPWPOINT;
+
+typedef struct _WRECT {
+    SHORT xLeft;
+    SHORT dummy1;
+    SHORT yBottom;
+    SHORT dummy2;
+    SHORT xRight;
+    SHORT dummy3;
+    SHORT yTop;
+    SHORT dummy4;
+} WRECT, FAR *PWRECT, NEAR *NPWRECT;
+
 typedef CHAR STR8[8], FAR *PSTR8;
+
+typedef struct _DRIVDATA {
+    LONG cb;
+    LONG lVersion;
+    CHAR szDeviceName[32];
+    CHAR abGeneralData[1];
+} DRIVDATA, FAR *PDRIVDATA;
 
 #define FATTR_SEL_ITALIC            0x0001
 #define FATTR_SEL_UNDERSCORE        0x0002

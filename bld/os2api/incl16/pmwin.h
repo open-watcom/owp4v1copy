@@ -7,6 +7,8 @@
 #define INCL_WININCLUDED
 
 #ifdef INCL_WIN
+    #define INCL_WINACCELERATORS
+    #define INCL_WINBUTTONS
     #define INCL_WINCLIPBOARD
     #define INCL_WINDIALOGS
     #define INCL_WINWINDOWMGR
@@ -16,7 +18,33 @@
     #define INCL_WININPUT
     #define INCL_WINMENUS
     #define INCL_WINMESSAGEMGR
+    #define INCL_WINPOINTERS
+    #define INCL_WINPROGRAMLIST
+    #define INCL_WINRECTANGLES
+    #define INCL_WINSCROLLBARS
+    #define INCL_WINSHELLDATA
+    #define INCL_WINSTATICS
+    #define INCL_WINSWITCHLIST
     #define INCL_WINSYS
+    #define INCL_WINTRACKRECT
+#else
+  #ifdef RC_INVOKED
+    #define INCL_WINACCELERATORS
+    #define INCL_WINBUTTONS
+    #define INCL_WINDIALOGS
+    #define INCL_WINENTRYFIELDS
+    #define INCL_WINFRAMECTLS
+    #define INCL_WINFRAMEMGR
+    #define INCL_WINHELP
+    #define INCL_WININPUT
+    #define INCL_WINLISTBOXES
+    #define INCL_WINMENUS
+    #define INCL_WINMESSAGEMGR
+    #define INCL_WINMLE
+    #define INCL_WINPOINTERS
+    #define INCL_WINSCROLLBARS
+    #define INCL_WINSTATICS
+  #endif
 #endif
 
 #define MPFROMP(p)          ((MPARAM)(VOID FAR *)(p))
@@ -78,6 +106,7 @@
 
 typedef LHANDLE HWND, FAR *PHWND;
 typedef LHANDLE HAB;
+typedef LHANDLE HPOINTER;
 
 typedef VOID FAR    *MPARAM;
 typedef MPARAM FAR  *PMPARAM;
@@ -700,6 +729,67 @@ BOOL    APIENTRY WinSetDlgItemText(HWND,USHORT,PSZ);
 
 #endif
 
+#ifdef INCL_WINDIALOGS
+
+#define DLGC_ENTRYFIELD  0x0001
+#define DLGC_BUTTON      0x0002
+#define DLGC_RADIOBUTTON 0x0004
+#define DLGC_STATIC      0x0008
+#define DLGC_DEFAULT     0x0010
+#define DLGC_PUSHBUTTON  0x0020
+#define DLGC_CHECKBOX    0x0040
+#define DLGC_SCROLLBAR   0x0080
+#define DLGC_MENU        0x0100
+#define DLGC_TABONCLICK  0x0200
+#define DLGC_MLE         0x0400
+
+#define EDI_FIRSTTABITEM   0
+#define EDI_LASTTABITEM    1
+#define EDI_NEXTTABITEM    2
+#define EDI_PREVTABITEM    3
+#define EDI_FIRSTGROUPITEM 4
+#define EDI_LASTGROUPITEM  5
+#define EDI_NEXTGROUPITEM  6
+#define EDI_PREVGROUPITEM  7
+
+typedef struct _DLGTITEM {
+    USHORT fsItemStatus;
+    USHORT cChildren;
+    USHORT cchClassName;
+    USHORT offClassName;
+    USHORT cchText;
+    USHORT offText;
+    ULONG  flStyle;
+    SHORT  x;
+    SHORT  y;
+    SHORT  cx;
+    SHORT  cy;
+    USHORT id;
+    USHORT offPresParams;
+    USHORT offCtlData;
+} DLGTITEM, FAR *PDLGTITEM;
+
+typedef struct _DLGTEMPLATE {
+    USHORT   cbTemplate;
+    USHORT   type;
+    USHORT   codepage;
+    USHORT   offadlgti;
+    USHORT   fsTemplateStatus;
+    USHORT   iItemFocus;
+    USHORT   coffPresParams;
+    DLGTITEM adlgti[1];
+} DLGTEMPLATE, FAR *PDLGTEMPLATE;
+
+HWND    APIENTRY WinCreateDlg(HWND,HWND,PFNWP,PDLGTEMPLATE,PVOID);
+HWND    APIENTRY WinEnumDlgItem(HWND,HWND,USHORT,BOOL);
+BOOL    APIENTRY WinMapDlgPoints(HWND,PPOINTL,USHORT,BOOL);
+USHORT  APIENTRY WinProcessDlg(HWND);
+MRESULT APIENTRY WinSendDlgItemMsg(HWND,USHORT,USHORT,MPARAM,MPARAM);
+USHORT  APIENTRY WinStartDlg(HWND);
+SHORT   APIENTRY WinSubstituteStrings(HWND,PSZ,SHORT,PSZ);
+
+#endif
+
 #if defined(INCL_WININPUT) || !defined(INCL_NOCOMMON)
 
 #define FC_NOSETFOCUS            0x0001
@@ -1118,6 +1208,376 @@ BOOL  APIENTRY WinSetSysColors(HWND,ULONG,ULONG,LONG,ULONG,PLONG);
 
 #endif
 
+#ifdef INCL_WINACCELERATORS
+
+#define AF_CHAR       0x0001
+#define AF_VIRTUALKEY 0x0002
+#define AF_SCANCODE   0x0004
+#define AF_SHIFT      0x0008
+#define AF_CONTROL    0x0010
+#define AF_ALT        0x0020
+#define AF_LONEKEY    0x0040
+#define AF_SYSCOMMAND 0x0100
+#define AF_HELP       0x0200
+
+typedef LHANDLE HACCEL;
+
+typedef struct _ACCEL {
+    USHORT fs;
+    USHORT key;
+    USHORT cmd;
+} ACCEL, FAR *PACCEL;
+
+typedef struct _ACCELTABLE {
+    USHORT cAccel;
+    USHORT codepage;
+    ACCEL  aaccel[1];
+} ACCELTABLE, FAR *PACCELTABLE;
+
+USHORT APIENTRY WinCopyAccelTable(HACCEL,PACCELTABLE,USHORT);
+HACCEL APIENTRY WinCreateAccelTable(HAB,PACCELTABLE);
+BOOL   APIENTRY WinDestroyAccelTable(HACCEL);
+HACCEL APIENTRY WinLoadAccelTable(HAB,HMODULE,USHORT);
+HACCEL APIENTRY WinQueryAccelTable(HAB,HWND);
+BOOL   APIENTRY WinSetAccelTable(HAB,HACCEL,HWND);
+BOOL   APIENTRY WinTranslateAccel(HAB,HWND,HACCEL,PQMSG);
+
+#endif
+
+#ifdef INCL_WINBUTTONS
+
+#define BS_PUSHBUTTON      0
+#define BS_CHECKBOX        1
+#define BS_AUTOCHECKBOX    2
+#define BS_RADIOBUTTON     3
+#define BS_AUTORADIOBUTTON 4
+#define BS_3STATE          5
+#define BS_AUTO3STATE      6
+#define BS_USERBUTTON      7
+
+#define BS_HELP           0x0100
+#define BS_SYSCOMMAND     0x0200
+#define BS_DEFAULT        0x0400
+#define BS_NOPOINTERFOCUS 0x0800
+#define BS_NOBORDER       0x1000
+#define BS_NOCURSORSELECT 0x2000
+
+#define BN_CLICKED    1
+#define BN_DBLCLICKED 2
+#define BN_PAINT      3
+
+#define BDS_HILITED  0x0100
+#define BDS_DISABLED 0x0200
+#define BDS_DEFAULT  0x0400
+
+#define BM_CLICK           0x0120
+#define BM_QUERYCHECKINDEX 0x0121
+#define BM_QUERYHILITE     0x0122
+#define BM_SETHILITE       0x0123
+#define BM_QUERYCHECK      0x0124
+#define BM_SETCHECK        0x0125
+#define BM_SETDEFAULT      0x0126
+
+#define WC_BUTTON       ((PSZ)0xffff0003L)
+
+typedef struct _BTNCDATA {
+    USHORT  cb;
+    USHORT  fsCheckState;
+    USHORT  fsHiliteState;
+} BTNCDATA, FAR *PBTNCDATA;
+
+typedef struct _USERBUTTON {
+    HWND   hwnd;
+    HPS    hps;
+    USHORT fsState;
+    USHORT fsStateOld;
+} USERBUTTON, FAR *PUSERBUTTON;
+
+#endif
+
+#ifdef INCL_WINENTRYFIELDS
+
+#define ES_LEFT        0x00000000L
+#define ES_CENTER      0x00000001L
+#define ES_RIGHT       0x00000002L
+#define ES_AUTOSCROLL  0x00000004L
+#define ES_MARGIN      0x00000008L
+#define ES_AUTOTAB     0x00000010L
+#define ES_READONLY    0x00000020L
+#define ES_COMMAND     0x00000040L
+#define ES_UNREADABLE  0x00000080L
+#define ES_PICTUREMASK 0x00000100L
+#define ES_ANY         0x00000000L
+#define ES_SBCS        0x00001000L
+#define ES_DBCS        0x00002000L
+#define ES_MIXED       0x00003000L
+
+#define CBS_SIMPLE       0x0001
+#define CBS_DROPDOWN     0x0002
+#define CBS_DROPDOWNLIST 0x0004
+
+#define CBID_LIST 0x029A
+#define CBID_EDIT 0x029B
+
+#define CBM_SHOWLIST      0x0170
+#define CBM_HILITE        0x0171
+#define CBM_ISLISTSHOWING 0x0172
+
+#define CBN_EFCHANGE 1
+#define CBN_EFSCROLL 2
+#define CBN_MEMERROR 3
+#define CBN_LBSELECT 4
+#define CBN_LBSCROLL 5
+#define CBN_SHOWLIST 6
+#define CBN_ENTER    7
+
+#define EM_QUERYCHANGED     0x0140
+#define EM_QUERYSEL         0x0141
+#define EM_SETSEL           0x0142
+#define EM_SETTEXTLIMIT     0x0143
+#define EM_CUT              0x0144
+#define EM_COPY             0x0145
+#define EM_CLEAR            0x0146
+#define EM_PASTE            0x0147
+#define EM_QUERYFIRSTCHAR   0x0148
+#define EM_SETFIRSTCHAR     0x0149
+#define EM_QUERYREADONLY    0x014a
+#define EM_SETREADONLY      0x014b
+#define EM_SETINSERTMODE    0x014c
+
+#define EN_SETFOCUS         0x0001
+#define EN_KILLFOCUS        0x0002
+#define EN_CHANGE           0x0004
+#define EN_SCROLL           0x0008
+#define EN_MEMERROR         0x0010
+#define EN_OVERFLOW         0x0020
+#define EN_INSERTMODETOGGLE 0x0040
+
+#define WC_COMBOBOX   ((PSZ)0xffff0002L)
+#define WC_ENTRYFIELD ((PSZ)0xffff0006L)
+
+typedef struct _ENTRYFDATA {
+    USHORT cb;
+    USHORT cchEditLimit;
+    USHORT ichMinSel;
+    USHORT ichMaxSel;
+} ENTRYFDATA, FAR *PENTRYFDATA;
+
+#endif
+
+#ifdef INCL_WINSTATICS
+
+#define SS_TEXT          0x0001
+#define SS_GROUPBOX      0x0002
+#define SS_ICON          0x0003
+#define SS_BITMAP        0x0004
+#define SS_FGNDRECT      0x0005
+#define SS_HALFTONERECT  0x0006
+#define SS_BKGNDRECT     0x0007
+#define SS_FGNDFRAME     0x0008
+#define SS_HALFTONEFRAME 0x0009
+#define SS_BKGNDFRAME    0x000a
+#define SS_SYSICON       0x000b
+
+#define SM_SETHANDLE   0x0100
+#define SM_QUERYHANDLE 0x0101
+
+#define WC_STATIC ((PSZ)0xffff0005L)
+
+#endif
+
+#ifdef INCL_WINSCROLLBARS
+
+#define SBS_HORZ      0
+#define SBS_VERT      1
+#define SBS_THUMBSIZE 2
+#define SBS_AUTOTRACK 4
+
+#define SB_LINEUP         1
+#define SB_LINEDOWN       2
+#define SB_LINELEFT       1
+#define SB_LINERIGHT      2
+#define SB_PAGEUP         3
+#define SB_PAGEDOWN       4
+#define SB_PAGELEFT       3
+#define SB_PAGERIGHT      4
+#define SB_SLIDERTRACK    5
+#define SB_SLIDERPOSITION 6
+#define SB_ENDSCROLL      7
+
+#define SBM_SETSCROLLBAR 0x01a0
+#define SBM_SETPOS       0x01a1
+#define SBM_QUERYPOS     0x01a2
+#define SBM_QUERYRANGE   0x01a3
+#define SBM_SETHILITE    0x01a4
+#define SBM_QUERYHILITE  0x01a5
+#define SBM_SETTHUMBSIZE 0x01a6
+
+#define WC_SCROLLBAR ((PSZ)0xffff0008L)
+
+typedef struct _SBCDATA {
+    USHORT cb;
+    USHORT sHilite;
+    SHORT  posFirst;
+    SHORT  posLast;
+    SHORT  posThumb;
+    SHORT  cVisible;
+    SHORT  cTotal;
+} SBCDATA, FAR *PSBCDATA;
+
+#endif
+
+#ifdef INCL_WINTRACKRECT
+
+#define TF_LEFT              0x0001
+#define TF_TOP               0x0002
+#define TF_RIGHT             0x0004
+#define TF_BOTTOM            0x0008
+#define TF_MOVE              0x000F
+#define TF_SETPOINTERPOS     0x0010
+#define TF_GRID              0x0020
+#define TF_STANDARD          0x0040
+#define TF_ALLINBOUNDARY     0x0080
+#define TF_VALIDATETRACKRECT 0x0100
+#define TF_PARTINBOUNDARY    0x0200
+
+typedef struct _TRACKINFO {
+    SHORT  cxBorder;
+    SHORT  cyBorder;
+    SHORT  cxGrid;
+    SHORT  cyGrid;
+    SHORT  cxKeyboard;
+    SHORT  cyKeyboard;
+    RECTL  rclTrack;
+    RECTL  rclBoundary;
+    POINTL ptlMinTrackSize;
+    POINTL ptlMaxTrackSize;
+    USHORT fs;
+} TRACKINFO, FAR *PTRACKINFO;
+
+BOOL APIENTRY WinShowTrackRect(HWND,BOOL);
+BOOL APIENTRY WinTrackRect(HWND,HPS,PTRACKINFO);
+
+#endif
+
+#ifdef INCL_WINRECTANGLES
+
+BOOL APIENTRY WinCopyRect(HAB,PRECTL,PRECTL);
+BOOL APIENTRY WinEqualRect(HAB,PRECTL,PRECTL);
+BOOL APIENTRY WinInflateRect(HAB,PRECTL,SHORT,SHORT);
+BOOL APIENTRY WinIntersectRect(HAB,PRECTL,PRECTL,PRECTL);
+BOOL APIENTRY WinIsRectEmpty(HAB,PRECTL);
+BOOL APIENTRY WinMakePoints(HAB,PWPOINT,USHORT);
+BOOL APIENTRY WinMakeRect(HAB,PWRECT);
+BOOL APIENTRY WinOffsetRect(HAB,PRECTL,SHORT,SHORT);
+BOOL APIENTRY WinPtInRect(HAB,PRECTL,PPOINTL);
+BOOL APIENTRY WinSetRect(HAB,PRECTL,SHORT,SHORT,SHORT,SHORT);
+BOOL APIENTRY WinSetRectEmpty(HAB,PRECTL);
+BOOL APIENTRY WinSubtractRect(HAB,PRECTL,PRECTL,PRECTL);
+BOOL APIENTRY WinUnionRect(HAB,PRECTL,PRECTL,PRECTL);
+
+#endif
+
+#ifdef INCL_WINPOINTERS
+
+#define SBMP_OLD_SYSMENU       1
+#define SBMP_OLD_SBUPARROW     2
+#define SBMP_OLD_SBDNARROW     3
+#define SBMP_OLD_SBRGARROW     4
+#define SBMP_OLD_SBLFARROW     5
+#define SBMP_MENUCHECK         6
+#define SBMP_CHECKBOXES        7
+#define SBMP_BTNCORNERS        8
+#define SBMP_OLD_MINBUTTON     9
+#define SBMP_OLD_MAXBUTTON     10
+#define SBMP_OLD_RESTOREBUTTON 11
+#define SBMP_OLD_CHILDSYSMENU  12
+#define SBMP_DRIVE             15
+#define SBMP_FILE              16
+#define SBMP_FOLDER            17
+#define SBMP_TREEPLUS          18
+#define SBMP_TREEMINUS         19
+#define SBMP_PROGRAM           22
+#define SBMP_MENUATTACHED      23
+#define SBMP_SIZEBOX           24
+#define SBMP_SYSMENU           25
+#define SBMP_MINBUTTON         26
+#define SBMP_MAXBUTTON         27
+#define SBMP_RESTOREBUTTON     28
+#define SBMP_CHILDSYSMENU      29
+#define SBMP_SYSMENUDEP        30
+#define SBMP_MINBUTTONDEP      31
+#define SBMP_MAXBUTTONDEP      32
+#define SBMP_RESTOREBUTTONDEP  33
+#define SBMP_CHILDSYSMENUDEP   34
+#define SBMP_SBUPARROW         35
+#define SBMP_SBDNARROW         36
+#define SBMP_SBLFARROW         37
+#define SBMP_SBRGARROW         38
+#define SBMP_SBUPARROWDEP      39
+#define SBMP_SBDNARROWDEP      40
+#define SBMP_SBLFARROWDEP      41
+#define SBMP_SBRGARROWDEP      42
+#define SBMP_SBUPARROWDIS      43
+#define SBMP_SBDNARROWDIS      44
+#define SBMP_SBLFARROWDIS      45
+#define SBMP_SBRGARROWDIS      46
+#define SBMP_COMBODOWN         47
+
+#define SPTR_ARROW             1
+#define SPTR_TEXT              2
+#define SPTR_WAIT              3
+#define SPTR_SIZE              4
+#define SPTR_MOVE              5
+#define SPTR_SIZENWSE          6
+#define SPTR_SIZENESW          7
+#define SPTR_SIZEWE            8
+#define SPTR_SIZENS            9
+#define SPTR_APPICON           10
+#define SPTR_ICONINFORMATION   11
+#define SPTR_ICONQUESTION      12
+#define SPTR_ICONERROR         13
+#define SPTR_ICONWARNING       14
+#define SPTR_CPTR              14
+#define SPTR_ILLEGAL           18
+#define SPTR_FILE              19
+#define SPTR_FOLDER            20
+#define SPTR_MULTFILE          21
+#define SPTR_PROGRAM           22
+#define SPTR_HANDICON          SPTR_ICONERROR
+#define SPTR_QUESICON          SPTR_ICONQUESTION
+#define SPTR_BANGICON          SPTR_ICONWARNING
+#define SPTR_NOTEICON          SPTR_ICONINFORMATION
+
+#define DP_NORMAL    0
+#define DP_HALFTONED 1
+#define DP_INVERTED  2
+
+typedef struct _POINTERINFO {
+    BOOL    fPointer;
+    SHORT   xHotspot;
+    SHORT   yHotspot;
+    HBITMAP hbmPointer;
+    HBITMAP hbmColor;
+} POINTERINFO, FAR *PPOINTERINFO;
+
+HPOINTER APIENTRY WinCreatePointer(HWND,HBITMAP,BOOL,SHORT,SHORT);
+HPOINTER APIENTRY WinCreatePointerIndirect(HWND,PPOINTERINFO);
+BOOL     APIENTRY WinDestroyPointer(HPOINTER);
+BOOL     APIENTRY WinDrawPointer(HPS,SHORT,SHORT,HPOINTER,USHORT);
+HBITMAP  APIENTRY WinGetSysBitmap(HWND,USHORT);
+HPOINTER APIENTRY WinLoadPointer(HWND,HMODULE,USHORT);
+HPOINTER APIENTRY WinQueryPointer(HWND);
+BOOL     APIENTRY WinQueryPointerInfo(HPOINTER,PPOINTERINFO);
+BOOL     APIENTRY WinQueryPointerPos(HWND,PPOINTL);
+HPOINTER APIENTRY WinQuerySysPointer(HWND,SHORT,BOOL);
+BOOL     APIENTRY WinSetPointer(HWND,HPOINTER);
+BOOL     APIENTRY WinSetPointerPos(HWND,SHORT,SHORT);
+BOOL     APIENTRY WinShowPointer(HWND,BOOL);
+
+#endif
+
+#include <pmshl.h>
 
 #ifdef INCL_WINERRORS
 
