@@ -456,14 +456,18 @@ MADs are used:
 The :F.cpu:eF. fields returns the type of the remote CPU. The size of that field
 is unsigned_8. Possible CPU types for MAD_X86 are:
 :XMP.
-    X86_86  = 0     - 8086
-    X86_186 = 1     - 80186
-    X86_286 = 2     - 80286
-    X86_386 = 3     - 80386
-    X86_486 = 4     - 80486
-    X86_586 = 5     - Pentium
-    X86_686 = 6     - Pentium Pro/II/III
-    X86_P4  = 15    - Pentium 4
+    bits 0-3
+       X86_86  = 0   - 8086
+       X86_186 = 1   - 80186
+       X86_286 = 2   - 80286
+       X86_386 = 3   - 80386
+       X86_486 = 4   - 80486
+       X86_586 = 5   - Pentium
+       X86_686 = 6   - Pentium Pro/II/III
+       X86_P4  = 15  - Pentium 4
+    bit  4           - MM registers
+    bit  5           - XMM registers
+    bits 6,7         - unused
 :eXMP.
 :PC.
 The :F.fpu:eF. fields tells the type of FPU. The size of the field is unsigned_8.
