@@ -485,41 +485,41 @@ static char * set_processor_type(char *input)
 
     switch( *input ) {
     case '0':
-        token = T_8086;
+        token = T_DOT_8086;
         break;
     case '1':
-        token = T_186;
+        token = T_DOT_186;
         break;
     case '2':
-        token =  protect ? T_286P : T_286;
+        token =  protect ? T_DOT_286P : T_DOT_286;
         break;
     case '3':
-        token =  protect ? T_386P : T_386;
+        token =  protect ? T_DOT_386P : T_DOT_386;
         break;
     case '4':
-        token =  protect ? T_486P : T_486;
+        token =  protect ? T_DOT_486P : T_DOT_486;
         break;
     case '5':
-        token =  protect ? T_586P : T_586;
+        token =  protect ? T_DOT_586P : T_DOT_586;
         break;
     case '6':
-        token =  protect ? T_686P : T_686;
+        token =  protect ? T_DOT_686P : T_DOT_686;
         break;
     case '7':
         switch( Code->info.cpu & P_CPU_MASK ) {
         case P_286:
-            token =  T_287;
+            token =  T_DOT_287;
             break;
         case P_386:
         case P_486:
         case P_586:
         case P_686:
-            token =  T_387;
+            token =  T_DOT_387;
             break;
         case P_86:
         case P_186:
         default:
-            token =  T_8087;
+            token =  T_DOT_8087;
             break;
         }
         break;
@@ -529,14 +529,14 @@ static char * set_processor_type(char *input)
             token = T_NO87;
             break;
         case '0':
-            token = T_8087;
+            token = T_DOT_8087;
             break;
         case '2':
-            token = T_287;
+            token = T_DOT_287;
             break;
         case '3':
         case '5':
-            token = T_387;
+            token = T_DOT_387;
             break;
         }
         break;

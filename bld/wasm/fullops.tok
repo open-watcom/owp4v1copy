@@ -23,9 +23,11 @@ compact
 dq
 dt
 echo
+.else
 else
 elseif
 end
+.endif
 endif
 endp
 ends
@@ -65,6 +67,7 @@ gt
 high
 highword
 huge
+.if
 if
 if1
 if2

@@ -42,6 +42,7 @@ main( int argc, char *argv[] )
     struct words *Words;
     char        *word;
     char        buf[80];
+    char        *prefix;
     char        *suffix;
     char        *ptr;
 
@@ -136,30 +137,36 @@ main( int argc, char *argv[] )
     for( i = 0; i < count; i++ ) {
         strcpy( buf, Words[i].word );
         strupr( buf );
-
-        j = strlen( buf );
-        /*** Some special cases for simplified segment ***/
-        if( stricmp( buf, ".DATA?" ) == 0 ) {
-            strcpy( buf, ".DATA_UN" );
-        } else if( stricmp( buf, ".FARDATA?" ) == 0 ) {
-            strcpy( buf, ".FARDATA_UN" );
+        ptr = buf;
+        if( *ptr == '.' ) {
+            ptr++;
+            prefix = "T_DOT_";
+        } else {
+            prefix = "T_";
         }
-
+        j = strlen(buf);
         /*** Some special cases because of same name in pcobj.h ***/
         if( stricmp( buf, "ABS" ) == 0 ||
             stricmp( buf, "INS" ) == 0 ||
             stricmp( buf, "SEG" ) == 0 ) {
             suffix = "2";
+        } else if( *(buf + j - 1) == '?' ) {
+        // append suffix _UN if ? on end
+            suffix = "_UN";
+            *(buf + j - 1) = 0;
         } else {
             suffix = "";
         }
-        ptr = buf;
-        if( *ptr == '.' ) ptr++;
-        fprintf( out, "asm_op( T_%s%s,\t", ptr, suffix );
-        if( j < 5 ) fprintf( out, "\t" );
-        fprintf( out, "%d, %d\t),\n", j, Words[i].index );
+        fprintf( out, "asm_op( %s%s%s,\t", prefix, ptr, suffix );
+        j = 9 + strlen( prefix ) + strlen( ptr ) + strlen( suffix );
+        while ( j < 24) {
+            fprintf( out, "\t" );
+            j += 8;
+        }
+        j = strlen(Words[i].word);
+        fprintf( out, "%d,\t%d\t),\n", j, Words[i].index );
     }
-    fprintf( out, "asm_op( T_NULL,\t\t0, 0\t)\n" );
+    fprintf( out, "asm_op( T_NULL,\t\t\t0,\t0\t)\n" );
     fprintf( out, "};\n" );
     fclose( out );
     exit( 0 );

@@ -1688,16 +1688,16 @@ static void input_group( int type )
     strcpy( buffer, "DGROUP GROUP " );
 
     switch( type ) {
-        case T_DATA:
+        case T_DOT_DATA:
             strcat( buffer, "_DATA" );
             break;
-        case T_DATA_UN:
+        case T_DOT_DATA_UN:
             strcat( buffer, "_BSS" );
             break;
-        case T_CONST:
+        case T_DOT_CONST:
             strcat( buffer, "CONST" );
             break;
-        case T_STACK:
+        case T_DOT_STACK:
             strcat( buffer, "STACK" );
     }
     InputQueueLine( buffer );
@@ -1730,7 +1730,7 @@ int Startup( int i )
     ModuleInfo.cmdline = FALSE;
 
     switch( AsmBuffer[i]->value ) {
-    case T_STARTUP:
+    case T_DOT_STARTUP:
         count = 0;
         strcpy( buffer, StartAddr );
         strcat( buffer, ":" );
@@ -1748,7 +1748,7 @@ int Startup( int i )
         }
         StartupDirectiveFound = TRUE;
         break;
-    case T_EXIT:
+    case T_DOT_EXIT:
         i++;
         if( AsmBuffer[i]->string_ptr != NULL &&
              *(AsmBuffer[i]->string_ptr) != '\0' ) {
@@ -1789,7 +1789,7 @@ int SimSeg( int i )
     }
     ModuleInfo.cmdline = FALSE;
 
-    if( AsmBuffer[i]->value != T_STACK ) {
+    if( AsmBuffer[i]->value != T_DOT_STACK ) {
         close_lastseg();
     }
     buffer[0] = '\0';
@@ -1800,10 +1800,10 @@ int SimSeg( int i )
         string = AsmBuffer[i]->string_ptr;
     } else {
         switch( type ) {
-        case T_CODE:
+        case T_DOT_CODE:
             string = Options.text_seg;
             break;
-        case T_DATA:
+        case T_DOT_DATA:
             string = Options.data_seg;
             break;
         default:
@@ -1812,7 +1812,7 @@ int SimSeg( int i )
     }
 
     switch( type ) {
-    case T_CODE:
+    case T_DOT_CODE:
         strcpy( buffer, string );
         /* we already have a name */
         strcat( buffer, SimCodeBegin[bit][SIM_CODE] + SIM_CODE_OFFSET  );
@@ -1852,7 +1852,7 @@ int SimSeg( int i )
                 break;
         }
         break;
-    case T_STACK:
+    case T_DOT_STACK:
         InputQueueLine( SimCodeBegin[bit][SIM_STACK] );
         input_group( type );
         InputQueueLine( SimCodeEnd[SIM_STACK] );
@@ -1867,18 +1867,18 @@ int SimSeg( int i )
             lastseg.stack_size = DEFAULT_STACK_SIZE;
         }
         break;
-    case T_DATA:
-    case T_DATA_UN:             // .data?
-    case T_CONST:
-        if( type == T_DATA ) {
+    case T_DOT_DATA:
+    case T_DOT_DATA_UN:             // .data?
+    case T_DOT_CONST:
+        if( type == T_DOT_DATA ) {
             seg = SIM_DATA;
-        } else if( type == T_DATA_UN ) {
+        } else if( type == T_DOT_DATA_UN ) {
             seg = SIM_DATA_UN;
         } else {
             seg = SIM_CONST;
         }
 
-        if( string != NULL && type == T_DATA ) {
+        if( string != NULL && type == T_DOT_DATA ) {
             strcpy( buffer, string );
             /* we already have a name */
             strcat( buffer, SimCodeBegin[bit][seg] + SIM_DATA_OFFSET  );
@@ -1896,9 +1896,9 @@ int SimSeg( int i )
             strcpy( lastseg.close, SimCodeEnd[seg] );
         }
         break;
-    case T_FARDATA:
-    case T_FARDATA_UN:  // .fardata?
-        seg = type == T_FARDATA ? SIM_FARDATA : SIM_FARDATA_UN;
+    case T_DOT_FARDATA:
+    case T_DOT_FARDATA_UN:  // .fardata?
+        seg = type == T_DOT_FARDATA ? SIM_FARDATA : SIM_FARDATA_UN;
         if( string != NULL ) {
             strcpy( buffer, string );
             strcat( buffer, SimCodeBegin[bit][seg] + FAROFFSET(seg) );

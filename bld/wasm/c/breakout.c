@@ -69,29 +69,29 @@ int directive( int i, long direct )
 
     /* no expansion on the following */
     switch( direct ) {
-    case T_286C:
-        direct = T_286;
-    case T_386:
-    case T_386P:
-    case T_486:
-    case T_486P:
-    case T_586:
-    case T_586P:
-    case T_686:
-    case T_686P:
+    case T_DOT_286C:
+        direct = T_DOT_286;
+    case T_DOT_386:
+    case T_DOT_386P:
+    case T_DOT_486:
+    case T_DOT_486P:
+    case T_DOT_586:
+    case T_DOT_586P:
+    case T_DOT_686:
+    case T_DOT_686P:
         ModuleInfo.use32 = TRUE;
-    case T_8086:
-    case T_186:
-    case T_286:
-    case T_286P:
-    case T_8087:
-    case T_287:
-    case T_387:
+    case T_DOT_8086:
+    case T_DOT_186:
+    case T_DOT_286:
+    case T_DOT_286P:
+    case T_DOT_8087:
+    case T_DOT_287:
+    case T_DOT_387:
     case T_NO87:
         ret = cpu_directive(direct);
         if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
         return( ret );
-    case T_DOSSEG:
+    case T_DOT_DOSSEG:
         Globals.dosseg = TRUE;
         return( NOT_ERROR );
     case T_PUBLIC:
@@ -113,17 +113,17 @@ int directive( int i, long direct )
     case T_IFIDN:
     case T_IFIDNI:
         return( conditional_assembly_directive( i ) );
-    case T_ERR:
-    case T_ERRB:
-    case T_ERRDEF:
-    case T_ERRDIF:
-    case T_ERRDIFI:
-    case T_ERRE:
-    case T_ERRIDN:
-    case T_ERRIDNI:
-    case T_ERRNB:
-    case T_ERRNDEF:
-    case T_ERRNZ:
+    case T_DOT_ERR:
+    case T_DOT_ERRB:
+    case T_DOT_ERRDEF:
+    case T_DOT_ERRDIF:
+    case T_DOT_ERRDIFI:
+    case T_DOT_ERRE:
+    case T_DOT_ERRIDN:
+    case T_DOT_ERRIDNI:
+    case T_DOT_ERRNB:
+    case T_DOT_ERRNDEF:
+    case T_DOT_ERRNZ:
         return( conditional_error_directive( i ) );
     case T_ENDS:
         if( Definition.struct_depth != 0 ) {
@@ -138,34 +138,34 @@ int directive( int i, long direct )
         return( ProcDef(i-1) );
     case T_ENDP:
         return( ProcEnd(i-1) );
-    case T_CODE:
-    case T_STACK:
-    case T_DATA:
-    case T_DATA_UN:
-    case T_FARDATA:
-    case T_FARDATA_UN:
-    case T_CONST:
+    case T_DOT_CODE:
+    case T_DOT_STACK:
+    case T_DOT_DATA:
+    case T_DOT_DATA_UN:
+    case T_DOT_FARDATA:
+    case T_DOT_FARDATA_UN:
+    case T_DOT_CONST:
         return( SimSeg(i) );
-    case T_ALPHA:
-    case T_SEQ:
-    case T_LIST:
-    case T_LISTALL:
-    case T_LISTIF:
-    case T_LISTMACRO:
-    case T_LISTMACROALL:
-    case T_NOLIST:
-    case T_XLIST:
-    case T_TFCOND:
-    case T_SFCOND:
-    case T_LFCOND:
+    case T_DOT_ALPHA:
+    case T_DOT_SEQ:
+    case T_DOT_LIST:
+    case T_DOT_LISTALL:
+    case T_DOT_LISTIF:
+    case T_DOT_LISTMACRO:
+    case T_DOT_LISTMACROALL:
+    case T_DOT_NOLIST:
+    case T_DOT_XLIST:
+    case T_DOT_TFCOND:
+    case T_DOT_SFCOND:
+    case T_DOT_LFCOND:
     case T_PAGE:
     case T_TITLE:
     case T_SUBTITLE:
     case T_SUBTTL:
-    case T_CREF:
-    case T_XCREF:
-    case T_NOCREF:
-    case T_SALL:
+    case T_DOT_CREF:
+    case T_DOT_XCREF:
+    case T_DOT_NOCREF:
+    case T_DOT_SALL:
         AsmWarn( 4, IGNORING_DIRECTIVE );
         return( NOT_ERROR );
     case T_ECHO:
@@ -174,13 +174,16 @@ int directive( int i, long direct )
     case T_LOW:
     case T_LOWWORD:
         /* these could possibly be useful */
-    case T_BREAK:
-    case T_CONTINUE:
-    case T_ENDW:
-    case T_RADIX:
-    case T_REPEAT:
-    case T_UNTIL:
-    case T_WHILE:
+    case T_DOT_BREAK:
+    case T_DOT_CONTINUE:
+    case T_DOT_ELSE:
+    case T_DOT_ENDIF:
+    case T_DOT_ENDW:
+    case T_DOT_IF:
+    case T_DOT_RADIX:
+    case T_DOT_REPEAT:
+    case T_DOT_UNTIL:
+    case T_DOT_WHILE:
     case T_ADDR:
     case T_BOUND:
     case T_CASEMAP:
@@ -199,8 +202,8 @@ int directive( int i, long direct )
     case T_TYPEDEF:
     case T_UNION:
     case T_WIDTH:
-    case T_STARTUP:
-    case T_EXIT:
+    case T_DOT_STARTUP:
+    case T_DOT_EXIT:
         AsmError( NOT_SUPPORTED );
         return( ERROR );
     case T_EQU:
@@ -230,7 +233,7 @@ int directive( int i, long direct )
     case T_GLOBAL:
     case T_EXTERNDEF:
         return( Parse_Pass == PASS_1 ? GlobalDef(i+1) : NOT_ERROR );
-    case T_MODEL:
+    case T_DOT_MODEL:
         return( Parse_Pass == PASS_1 ? Model(i) : NOT_ERROR );
     case T_INCLUDE:
         return( Include(i+1) );

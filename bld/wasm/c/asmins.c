@@ -978,21 +978,21 @@ static int comp_opt( uint direct )
          signed char    value;
     }    processor[] = {
                         T_NO87, P_NO87,
-                        T_8086, P_86,
-                        T_8087, P_87,
-                        T_186,  P_186,
-                        T_286,  P_286,
-                        T_287,  P_287,
-                        T_286P, P_286p,
-                        T_386,  P_386,
-                        T_387,  P_387,
-                        T_386P, P_386p,
-                        T_486,  P_486,
-                        T_486P, P_486p,
-                        T_586,  P_586,
-                        T_586P, P_586p,
-                        T_686,  P_686,
-                        T_686P, P_686p,
+                        T_DOT_8086, P_86,
+                        T_DOT_8087, P_87,
+                        T_DOT_186,  P_186,
+                        T_DOT_286,  P_286,
+                        T_DOT_287,  P_287,
+                        T_DOT_286P, P_286p,
+                        T_DOT_386,  P_386,
+                        T_DOT_387,  P_387,
+                        T_DOT_386P, P_386p,
+                        T_DOT_486,  P_486,
+                        T_DOT_486P, P_486p,
+                        T_DOT_586,  P_586,
+                        T_DOT_586P, P_586p,
+                        T_DOT_686,  P_686,
+                        T_DOT_686P, P_686p,
 
                         NULL,   P_END,
                        };
@@ -1014,22 +1014,22 @@ void MakeCPUConstant( long i )
 
     switch( i ) {
     // fall right through
-    case T_686P:
-    case T_686:
-        MakeConstant( T_686 );
-    case T_586P:
-    case T_586:
-        MakeConstant( T_586 );
-    case T_486P:
-    case T_486:
-        MakeConstant( T_486 );
-    case T_386P:
-    case T_386:
-        MakeConstant( T_386 );
+    case T_DOT_686P:
+    case T_DOT_686:
+        MakeConstant( T_DOT_686 );
+    case T_DOT_586P:
+    case T_DOT_586:
+        MakeConstant( T_DOT_586 );
+    case T_DOT_486P:
+    case T_DOT_486:
+        MakeConstant( T_DOT_486 );
+    case T_DOT_386P:
+    case T_DOT_386:
+        MakeConstant( T_DOT_386 );
         break;
-    case T_286P:
-    case T_286:
-        MakeConstant( T_286 );
+    case T_DOT_286P:
+    case T_DOT_286:
+        MakeConstant( T_DOT_286 );
     }
     return;
 }
