@@ -32,8 +32,8 @@
 
 int  RcOpen( const char *, int, ... );
 int  RcClose( int );
-int  RcWrite( int, const void *, int );
-int  RcRead( int, void *, int );
+int  RcWrite( int, const void *, size_t );
+int  RcRead( int, void *, size_t );
 long RcSeek( int, long, int );
 long RcTell( int );
 
