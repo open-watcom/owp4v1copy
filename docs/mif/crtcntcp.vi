@@ -3,7 +3,7 @@
 #
 # remove first topic link on first level
 #
-/^1\ndd
+execute /^1\ndd
 w! %1
 q!
 

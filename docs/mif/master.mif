@@ -1,7 +1,5 @@
 proj_name = docs
 
-.OPTIMIZE
-
 .EXTENSIONS: .cop .pcd
 
 !include cproj.mif
