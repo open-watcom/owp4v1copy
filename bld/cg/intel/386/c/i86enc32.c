@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  32-bit instruction encodings.
 *
 ****************************************************************************/
 
@@ -383,6 +382,8 @@ extern  void    LayLeaRegOp( instruction *ins ) {
                 if( next->result != ins->result ) break;
                 if( next->operands[1]->n.class != N_CONSTANT ) break;
                 if( next->operands[1]->c.const_type != CONS_ABSOLUTE ) break;
+                /* we should not remove the ADD if its flags are used! */
+                if( next->ins_flags & INS_CC_USED ) break;
                 /*
                    we've got something like:
                         LEA     EAX, [ECX+EDX]

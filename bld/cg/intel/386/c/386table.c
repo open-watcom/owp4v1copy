@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Table of possible instructions and reductions for each
+*               opcode.
 *
 ****************************************************************************/
 
@@ -146,7 +146,7 @@ _BinSC( R,    R,    R,    EQ_R1 ),V_NO,           G_RR2,        RG_DBL,FU_ALUX,
 _BinSC( R,    M,    R,    EQ_R1 ),V_NO,           G_RM2,        RG_DBL,FU_ALUX,
 _BinSC( M,    R,    M,    EQ_R1 ),V_NO,           G_MR2,        RG_DBL,FU_ALUX,
 _Bin(   R,    R,    R,    EQ_R2 ),V_NO,           R_SWAPOPS,    RG_DBL,FU_NO,
-_Bin(   R,    R,    R,    NONE ), V_LEA,          G_LEA,        RG_DBL,FU_ALUX,
+_BinPP( R,    R,    R,    NONE ), V_NO,           G_LEA,        RG_DBL,FU_ALUX,
 
 /* simplifying reductions*/
 
