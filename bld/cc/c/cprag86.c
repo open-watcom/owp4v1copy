@@ -135,11 +135,12 @@ void PragmaInit()
                          // NO_STRUCT_REG_RETURNS |
                          // ROUTINE_RETURN;
                          SPECIAL_STRUCT_RETURN;
-    FastcallInfo.objname = CStrSave( "@*@#" );
 #if _CPU == 386
+    FastcallInfo.objname = CStrSave( "@*@#" );
     FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
     memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 #else
+    FastcallInfo.objname = CStrSave( "@*" );
     FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
     memcpy( FastcallInfo.parms, StackParms, sizeof( StackParms ) );
 #endif

@@ -152,120 +152,125 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
                   , "_*" );
     }
 
+#if _CPU == 386
     pragmaInitInfo( &FastcallInfo
                   , call_type
                    | SPECIAL_STRUCT_RETURN
                   , "@*@#" );
+#else
+    pragmaInitInfo( &FastcallInfo
+                  , call_type
+                   | SPECIAL_STRUCT_RETURN
+                  , "@*" );
+#endif
 
-    #if _CPU == 386
-        HW_CTurnOff( CdeclInfo.save, HW_EAX );
-        HW_CTurnOff( CdeclInfo.save, HW_ECX );
-        HW_CTurnOff( CdeclInfo.save, HW_EDX );
-        HW_CAsgn( CdeclInfo.streturn, HW_EAX );
+#if _CPU == 386
+    HW_CTurnOff( CdeclInfo.save, HW_EAX );
+    HW_CTurnOff( CdeclInfo.save, HW_ECX );
+    HW_CTurnOff( CdeclInfo.save, HW_EDX );
+    HW_CAsgn( CdeclInfo.streturn, HW_EAX );
 
-        HW_CTurnOff( PascalInfo.save, HW_EAX );
-        HW_CTurnOff( PascalInfo.save, HW_EBX );
-        HW_CTurnOff( PascalInfo.save, HW_ECX );
-        HW_CTurnOff( PascalInfo.save, HW_EDX );
+    HW_CTurnOff( PascalInfo.save, HW_EAX );
+    HW_CTurnOff( PascalInfo.save, HW_EBX );
+    HW_CTurnOff( PascalInfo.save, HW_ECX );
+    HW_CTurnOff( PascalInfo.save, HW_EDX );
 
-        HW_CTurnOff( SyscallInfo.save, HW_EAX );
-        HW_CTurnOn ( SyscallInfo.save, HW_EBX );
-        HW_CTurnOff( SyscallInfo.save, HW_ECX );
-        HW_CTurnOff( SyscallInfo.save, HW_EDX );
-        HW_CAsgn( SyscallInfo.streturn, HW_EMPTY );
+    HW_CTurnOff( SyscallInfo.save, HW_EAX );
+    HW_CTurnOn ( SyscallInfo.save, HW_EBX );
+    HW_CTurnOff( SyscallInfo.save, HW_ECX );
+    HW_CTurnOff( SyscallInfo.save, HW_EDX );
+    HW_CAsgn( SyscallInfo.streturn, HW_EMPTY );
 
-        HW_CTurnOff( OptlinkInfo.save, HW_EAX );
-        HW_CTurnOff( OptlinkInfo.save, HW_ECX );
-        HW_CTurnOff( OptlinkInfo.save, HW_EDX );
-        HW_CAsgn( OptlinkInfo.streturn, HW_EMPTY );
+    HW_CTurnOff( OptlinkInfo.save, HW_EAX );
+    HW_CTurnOff( OptlinkInfo.save, HW_ECX );
+    HW_CTurnOff( OptlinkInfo.save, HW_EDX );
+    HW_CAsgn( OptlinkInfo.streturn, HW_EMPTY );
 
-        HW_CTurnOff( StdcallInfo.save, HW_EAX );
-        HW_CTurnOff( StdcallInfo.save, HW_ECX );
-        HW_CTurnOff( StdcallInfo.save, HW_EDX );
+    HW_CTurnOff( StdcallInfo.save, HW_EAX );
+    HW_CTurnOff( StdcallInfo.save, HW_ECX );
+    HW_CTurnOff( StdcallInfo.save, HW_EDX );
 
-        HW_CTurnOff( FastcallInfo.save, HW_EAX );
-        HW_CTurnOff( FastcallInfo.save, HW_ECX );
-        HW_CTurnOff( FastcallInfo.save, HW_EDX );
-        FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
-        memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
+    HW_CTurnOff( FastcallInfo.save, HW_EAX );
+    HW_CTurnOff( FastcallInfo.save, HW_ECX );
+    HW_CTurnOff( FastcallInfo.save, HW_EDX );
+    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
+    memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 
-        HW_CTurnOff( asmRegsSaved, HW_EAX );
-        HW_CTurnOff( asmRegsSaved, HW_EBX );
-        HW_CTurnOff( asmRegsSaved, HW_ECX );
-        HW_CTurnOff( asmRegsSaved, HW_EDX );
-        HW_CTurnOff( asmRegsSaved, HW_ESI );
-        HW_CTurnOff( asmRegsSaved, HW_EDI );
-    #else
-        HW_CTurnOff( CdeclInfo.save, HW_ABCD );
-        HW_CTurnOff( CdeclInfo.save, HW_ES );
-        HW_CAsgn( CdeclInfo.streturn, HW_AX );
+    HW_CTurnOff( asmRegsSaved, HW_EAX );
+    HW_CTurnOff( asmRegsSaved, HW_EBX );
+    HW_CTurnOff( asmRegsSaved, HW_ECX );
+    HW_CTurnOff( asmRegsSaved, HW_EDX );
+    HW_CTurnOff( asmRegsSaved, HW_ESI );
+    HW_CTurnOff( asmRegsSaved, HW_EDI );
+#else
+    HW_CTurnOff( CdeclInfo.save, HW_ABCD );
+    HW_CTurnOff( CdeclInfo.save, HW_ES );
+    HW_CAsgn( CdeclInfo.streturn, HW_AX );
 
-        HW_CTurnOff( PascalInfo.save, HW_ABCD );
-        HW_CTurnOff( PascalInfo.save, HW_ES );
+    HW_CTurnOff( PascalInfo.save, HW_ABCD );
+    HW_CTurnOff( PascalInfo.save, HW_ES );
 
-        /* roughly like pascal */
-        HW_CTurnOff( SyscallInfo.save, HW_ABCD );
-        HW_CTurnOff( SyscallInfo.save, HW_ES );
+    /* roughly like pascal */
+    HW_CTurnOff( SyscallInfo.save, HW_ABCD );
+    HW_CTurnOff( SyscallInfo.save, HW_ES );
 
-        /* roughly like pascal */
-        HW_CTurnOff( OptlinkInfo.save, HW_ABCD );
-        HW_CTurnOff( OptlinkInfo.save, HW_ES );
+    /* roughly like pascal */
+    HW_CTurnOff( OptlinkInfo.save, HW_ABCD );
+    HW_CTurnOff( OptlinkInfo.save, HW_ES );
 
-        /* roughly like cdecl */
-        HW_CTurnOff( StdcallInfo.save, HW_ABCD );
-        HW_CTurnOff( StdcallInfo.save, HW_ES );
-        HW_CAsgn( StdcallInfo.streturn, HW_AX );
+    /* roughly like cdecl */
+    HW_CTurnOff( StdcallInfo.save, HW_ABCD );
+    HW_CTurnOff( StdcallInfo.save, HW_ES );
+    HW_CAsgn( StdcallInfo.streturn, HW_AX );
 
-        HW_CTurnOff( FastcallInfo.save, HW_ABCD );
-        HW_CTurnOff( FastcallInfo.save, HW_ES );
-        HW_CAsgn( FastcallInfo.streturn, HW_AX );
+    HW_CTurnOff( FastcallInfo.save, HW_ABCD );
+    HW_CTurnOff( FastcallInfo.save, HW_ES );
+    HW_CAsgn( FastcallInfo.streturn, HW_AX );
 
-        HW_CTurnOff( asmRegsSaved, HW_ABCD );
-        HW_CTurnOff( asmRegsSaved, HW_SI );
-        HW_CTurnOff( asmRegsSaved, HW_DI );
-        HW_CTurnOff( asmRegsSaved, HW_ES );
-    #endif
+    HW_CTurnOff( asmRegsSaved, HW_ABCD );
+    HW_CTurnOff( asmRegsSaved, HW_SI );
+    HW_CTurnOff( asmRegsSaved, HW_DI );
+    HW_CTurnOff( asmRegsSaved, HW_ES );
+#endif
 
-    #if _CPU == 386
-    {
-        /*
-            These pragmas are used for all far16 function definitions
-            depending on whether the function's parms are reversed or not.
-            Far16 calls are handled by the code generator w.r.t. what
-            calling convention is used.
-        */
-        Far16CdeclInfo = DefaultInfo;
-        pragmaInitInfo( &Far16CdeclInfo
-                      , call_type
-                       | CALLER_POPS
-                       | NO_FLOAT_REG_RETURNS
-                       | NO_STRUCT_REG_RETURNS
-                       | ROUTINE_RETURN
-                       | SPECIAL_STRUCT_RETURN
-                       | FAR16_CALL
-                      , "_*" );
-        HW_CTurnOff( Far16CdeclInfo.save, HW_EAX );
-        HW_CTurnOff( Far16CdeclInfo.save, HW_EBX );
-        HW_CTurnOff( Far16CdeclInfo.save, HW_ECX );
-        HW_CTurnOff( Far16CdeclInfo.save, HW_EDX );
-        HW_CAsgn( Far16CdeclInfo.streturn, HW_EAX );
+#if _CPU == 386
+    /*
+        These pragmas are used for all far16 function definitions
+        depending on whether the function's parms are reversed or not.
+        Far16 calls are handled by the code generator w.r.t. what
+        calling convention is used.
+    */
+    Far16CdeclInfo = DefaultInfo;
+    pragmaInitInfo( &Far16CdeclInfo
+                  , call_type
+                   | CALLER_POPS
+                   | NO_FLOAT_REG_RETURNS
+                   | NO_STRUCT_REG_RETURNS
+                   | ROUTINE_RETURN
+                   | SPECIAL_STRUCT_RETURN
+                   | FAR16_CALL
+                  , "_*" );
+    HW_CTurnOff( Far16CdeclInfo.save, HW_EAX );
+    HW_CTurnOff( Far16CdeclInfo.save, HW_EBX );
+    HW_CTurnOff( Far16CdeclInfo.save, HW_ECX );
+    HW_CTurnOff( Far16CdeclInfo.save, HW_EDX );
+    HW_CAsgn( Far16CdeclInfo.streturn, HW_EAX );
 
-        Far16PascalInfo = DefaultInfo;
-        pragmaInitInfo( &Far16PascalInfo
-                      , call_type
-                       | REVERSE_PARMS
-                       | NO_FLOAT_REG_RETURNS
-                       | NO_STRUCT_REG_RETURNS
-                       | SPECIAL_STRUCT_RETURN
-                       | FAR16_CALL
-                      , "^" );
+    Far16PascalInfo = DefaultInfo;
+    pragmaInitInfo( &Far16PascalInfo
+                  , call_type
+                   | REVERSE_PARMS
+                   | NO_FLOAT_REG_RETURNS
+                   | NO_STRUCT_REG_RETURNS
+                   | SPECIAL_STRUCT_RETURN
+                   | FAR16_CALL
+                  , "^" );
 
-        HW_CTurnOff( Far16PascalInfo.save, HW_EAX );
-        HW_CTurnOff( Far16PascalInfo.save, HW_EBX );
-        HW_CTurnOff( Far16PascalInfo.save, HW_ECX );
-        HW_CTurnOff( Far16PascalInfo.save, HW_EDX );
-    }
-    #endif
+    HW_CTurnOff( Far16PascalInfo.save, HW_EAX );
+    HW_CTurnOff( Far16PascalInfo.save, HW_EBX );
+    HW_CTurnOff( Far16PascalInfo.save, HW_ECX );
+    HW_CTurnOff( Far16PascalInfo.save, HW_EDX );
+#endif
 }
 
 
