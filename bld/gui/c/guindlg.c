@@ -35,17 +35,7 @@
 #include <string.h>
 
 static gui_colour_set DlgColours[GUI_NUM_ATTRS+1] = {
-#ifndef __NT__    /* May need a && !GUI flag as well? */
-  /* Fore              Back        */
-  { GUI_BRIGHT_BLUE,  GUI_BRIGHT_WHITE },   /* GUI_MENU_PLAIN     */
-  { GUI_BRIGHT_WHITE, GUI_BLUE },           /* GUI_MENU_STANDOUT  */
-  { GUI_WHITE,        GUI_BRIGHT_WHITE },   /* GUI_BACKGROUND     */
-  { GUI_RED,          GUI_WHITE },          /* GUI_TITLE_ACTIVE   */
-  { GUI_GREY,         GUI_WHITE },          /* GUI_TITLE_INACTIVE */
-  { GUI_BRIGHT_BLUE,  GUI_WHITE },          /* GUI_FRAME_ACTIVE   */
-  { GUI_GREY,         GUI_WHITE },          /* GUI_FRAME_INACTIVE */
-  { GUI_BRIGHT_CYAN,  GUI_CYAN }            /* GUI_FIRST_UNUSED   */
-#else
+#if defined (__NT__) && (GUI_IS_GUI == TRUE)
   /* GUI_BRIGHT_WHITE will be GetSysColor(COLOR_WINDOW)  */
   /* GUI_WHITE        will be GetSysColor(COLOR_BTNFACE) */
   /* and so on and so forth. See InitSystemRGB() in guicolor.c */
@@ -55,6 +45,16 @@ static gui_colour_set DlgColours[GUI_NUM_ATTRS+1] = {
   { GUI_BLUE,         GUI_WHITE },          /* GUI_TITLE_ACTIVE   */
   { GUI_GREY,         GUI_WHITE },          /* GUI_TITLE_INACTIVE */
   { GUI_BLUE,         GUI_WHITE },          /* GUI_FRAME_ACTIVE   */
+  { GUI_GREY,         GUI_WHITE },          /* GUI_FRAME_INACTIVE */
+  { GUI_BRIGHT_CYAN,  GUI_CYAN }            /* GUI_FIRST_UNUSED   */
+#else
+  /* Fore              Back        */
+  { GUI_BRIGHT_BLUE,  GUI_BRIGHT_WHITE },   /* GUI_MENU_PLAIN     */
+  { GUI_BRIGHT_WHITE, GUI_BLUE },           /* GUI_MENU_STANDOUT  */
+  { GUI_WHITE,        GUI_BRIGHT_WHITE },   /* GUI_BACKGROUND     */
+  { GUI_RED,          GUI_WHITE },          /* GUI_TITLE_ACTIVE   */
+  { GUI_GREY,         GUI_WHITE },          /* GUI_TITLE_INACTIVE */
+  { GUI_BRIGHT_BLUE,  GUI_WHITE },          /* GUI_FRAME_ACTIVE   */
   { GUI_GREY,         GUI_WHITE },          /* GUI_FRAME_INACTIVE */
   { GUI_BRIGHT_CYAN,  GUI_CYAN }            /* GUI_FIRST_UNUSED   */
 #endif
