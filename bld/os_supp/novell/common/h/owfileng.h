@@ -1,8 +1,11 @@
+#ifndef _OWFILEENGD_H_F39997A6_88FC_434B_B339_554BE343B3E8
+#define _OWFILEENGD_H_F39997A6_88FC_434B_B339_554BE343B3E8
 /****************************************************************************
 *
 *                            Open Watcom Project
 *
 *    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*    Portions Copyright (c) 1989-2002 Novell, Inc.  All Rights Reserved.                      
 *
 *  ========================================================================
 *
@@ -24,58 +27,31 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+*   This header file was generated for the OpenWatcom project by Carl Young
+*       carl.young@keycomm.co.uk
+*   Any problems or updates required, please either contact the author or
+*   the OpenWatcom contributors forums. 
+*       http://www.openwatcom.com/
+*
+* Description:  This is a compatibility file to replace fileengd.h
 *
 ****************************************************************************/
 
+#include <ownwsupp.h>
 
-#include "variety.h"
-#include <errno.h>
-#if defined(__DOS__) || defined(__WINDOWS__)
-    #include <dos.h>
-#elif defined(__NT__)
-    #include <windows.h>
-#elif defined(__OS2__)
-    #include <os2.h>
-#elif defined(__NETWARE__)
-    #include <owfileng.h>
-#endif
-#include "iomode.h"
-#include "rtcheck.h"
-#include "seterrno.h"
-
-
-_WCRTLINK int fsync( int handle )
-/*******************************/
+#ifdef __cplusplus
+extern "C"
 {
-    int                 ret = 0;
+#endif
 
-    __handle_check( handle, -1 );
+int	FEFlushWrite
+(      
+	int		/*	nHandle		*/
+);
 
-    #if defined(__DOS__) || defined(__WINDOWS__)
-    ret = _dos_commit( handle );
-    #elif defined(__NT__)
-    if( !FlushFileBuffers( __getOSHandle( handle ) ) ) 
-    {
-        __set_errno_nt();
-        ret = -1;
-    }
-    #elif defined(__OS2__)
-    if( DosBufReset( handle ) != 0 ) 
-    {
-        __set_errno( EBADF );
-        ret = -1;
-    }
-    #elif defined(__NETWARE__)
-    if( FEFlushWrite( handle ) != 0 ) 
-    {
-        __set_errno( EBADF );
-        ret = -1;
-    }
-    #else
-        #error Unknown target system
-    #endif
 
-    return( ret );
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* _OWFILEENGD_H_F39997A6_88FC_434B_B339_554BE343B3E8 */
