@@ -9,7 +9,7 @@ all : setup targa targb clean .symbolic
     @%null
 
 setup : .symbolic
-    @echo Should get Error(E42) on (upd04a1) and (upd04b1.d)
+    @echo "Should get Error(E42) on (upd04a1) and (upd04b1.d)"
     @wtouch upd04b1.1 upd04b2.2
 
 clean : .symbolic

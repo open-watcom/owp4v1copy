@@ -45,7 +45,7 @@ bad7\
 !else
 good7\
 !endif
-!if exist(PREP02) 
+!if exist(prep02) 
 good8
 !else
 bad8

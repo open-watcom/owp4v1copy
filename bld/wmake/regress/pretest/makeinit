@@ -1,2 +1,2 @@
-ifeq = @..\cmds\ifeq
+ifeq = @../cmds/ifeq.exe
 mkerr = @false

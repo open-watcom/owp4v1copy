@@ -5,8 +5,8 @@
 #
 
 test: .symbolic longfile.txt longfile2.txt
-    del longfile.txt
-    del longfile2.txt
+    rm longfile.txt
+    rm longfile2.txt
 
 longfile.txt:
     @echo Creating <<longfile.txt

@@ -11,7 +11,7 @@ once    : .symbolic
 twice   : .procedure
 
 once twice :
-    @echo you should get this message $^@ ($<) ($[@ $]@)
+    @echo "you should get this message $^@ ($<) ($[@ $]@)"
 
 
 

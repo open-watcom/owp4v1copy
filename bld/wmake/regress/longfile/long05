@@ -12,4 +12,4 @@ create: .symbolic
     @for %i in ($(OBJS)) do echo OK > %i
     
 clean: .symbolic
-    @for %i in ($(OBJS)) do if exist %i rm.exe %i 
+    @for %i in ($(OBJS)) do if exist %i rm %i 
