@@ -3345,9 +3345,9 @@ extern void SimCalcAddRemove()
             } else if( SimFileSplit( i ) ) {
                 tmp_size += diskette;
             }
+            DirInfo[ dir_index ].num_files += FileInfo[i].num_files;
         }
         TargetInfo[ targ_index ].num_files += FileInfo[i].num_files;
-        DirInfo[ dir_index ].num_files += FileInfo[i].num_files;
 #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
         if( *TargetInfo[ targ_index ].temp_disk == '\\' &&
             *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
@@ -3432,6 +3432,8 @@ extern void SimCalcAddRemove()
 #endif
             for( j = 0; j < SetupInfo.dirs.num; ++j ) {
                 if( DirInfo[j].target != i )
+                    continue;
+                if( !DirInfo[j].used )
                     continue;
                 if( DirInfo[j].num_files <= DirInfo[j].num_existing )
                     continue;
