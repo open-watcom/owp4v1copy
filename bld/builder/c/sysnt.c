@@ -41,9 +41,8 @@
 
 #include <windows.h>
 
-char    *CmdProc;
 #define TITLESIZE 256
-char    Title[TITLESIZE];
+static char    Title[TITLESIZE];
 
 void SysInitTitle( int argc, char *argv[] )
 {
@@ -89,10 +88,6 @@ int RunChildProcessCmdl( const char *cmdl )
 void SysInit( int argc, char *argv[] )
 {
     SysInitTitle( argc, argv );
-    CmdProc = getenv( "ComSpec" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
-    }
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
