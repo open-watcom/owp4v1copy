@@ -151,9 +151,9 @@
 %type <fullmemflags>    resource-options
 %type <token>           resource-option
 %type <string>          file-name
-%type <integral>        fontitalic
 %type <integral>        fontweight
-%type <integral>        fontextra
+%type <accflags>        acc-item-option
+%type <accflags>        acc-item-options
 %type <menuflags>       menu-item-options
 %type <token>           menu-item-option
 %type <menuptr>         menu-section
@@ -621,14 +621,14 @@ id-value
 accel-table-resource
     : Y_ACCELTABLE name-id acc-section
         {
-            SemMergeAccTable( $2, $3,
-                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE );
+/* TODO           SemMergeAccTable( $2, $3,
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE ); */
         }
     | Y_ACCELTABLE name-id resource-options acc-section
         {
             SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemMergeAccTable( $2, $4, $3.flags );
+/* TODO           SemMergeAccTable( $2, $4, $3.flags );*/
         }
     ;
 
@@ -642,15 +642,16 @@ acc-section
 acc-items
     : acc-item
         {
-            $$ = SemNewAccelTable();
+/*            $$ = SemNewAccelTable();
             SemAddStrToAccelTable( $$, $1.ItemID, $1.String );
-            RcMemFree( $1.String );
+            RcMemFree( $1.String ); */
         }
     | acc-items acc-item
         {
+/*
             SemAddStrToAccelTable( $1, $2.ItemID, $2.String );
             $$ = $1;
-            RcMemFree( $2.String );
+            RcMemFree( $2.String );*/
         }
     ;
 
@@ -661,11 +662,11 @@ acc-item
 
 acc-key
     : constant-expression
-        { $$ = $1.Value; }
+        { /* TODO $$ = $1.Value;*/ }
     ;
 acc-cmd
     : constant-expression
-        { $$ = $1.Value; }
+        { /* TODO $$ = $1.Value; */ }
     ;
 
 acc-item-options
@@ -681,25 +682,26 @@ acc-item-options
         }
     ;
 
+/* TODO!!! */
 acc-item-option
     : Y_ALT
         { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_CHAR
-        { $$.flags = ACCEL_CHAR; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_CONTROL
-        { $$.flags = ACCEL_CONTROL; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_HELP
-        { $$.flags = ACCEL_HELP; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_LONEKEY
-        { $$.flags = ACCEL_LONEKEY; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_SCANCODE
-        { $$.flags = ACCEL_SCANCODE; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_SHIFT
         { $$.flags = ACCEL_SHIFT; $$.typegiven = FALSE; }
     | Y_SYSCOMMAND
-        { $$.flags = ACCEL_SYSCOMMAND; $$.typegiven = FALSE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = FALSE; }
     | Y_VIRTUALKEY
-        { $$.flags = ACCEL_VIRTKEY; $$.typegiven = TRUE; }
+        { $$.flags = ACCEL_ALT; $$.typegiven = TRUE; }
     ;
 
 menu-resource
@@ -1056,7 +1058,7 @@ cntl-options
         {
             $$.ID = $2;
             $$.Size = $4;
-            $$.Style = 0L;
+            /* $$.Style = 0L; */
             $$.Text = NULL;
             $$.ExtendedStyle = 0L;
             $$.HelpId = 0L;
@@ -1169,13 +1171,13 @@ control-stmt
     : Y_CONTROL cntl-text comma-opt cntl-id comma-opt ctl-class-name comma-opt
                     comma-opt size-info
         {
-            $$ = SemSetControlData( $7, $4, $8, $2, $6, 0L, NULL );
+            /* TODO $$ = SemSetControlData( $7, $4, $8, $2, $6, 0L, NULL ); */
         }
 
     | Y_CONTROL cntl-text comma-opt cntl-id comma-opt ctl-class-name comma-opt
                     comma-opt size-info comma-opt helpId-opt
         {
-            $$ = SemSetControlData( $7, $4, $9, $2, $6, $11.Value, NULL );
+            /* TODO $$ = SemSetControlData( $7, $4, $9, $2, $6, $11.Value, NULL ); */
         }
     ;
 
