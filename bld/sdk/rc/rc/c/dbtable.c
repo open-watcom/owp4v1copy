@@ -130,9 +130,7 @@ RcStatus OpenTable( char *fname, char *path ) {
     RcStatus    status;
 
     status = RS_OK;
-#ifndef __UNIX__
     _searchenv( fname, "PATH", path );
-#endif
     if( path[0] == '\0' ) return( RS_FILE_NOT_FOUND );
     fp = RcOpen( path, O_RDONLY | O_BINARY );
     if( fp == -1 ) {
