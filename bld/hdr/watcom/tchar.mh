@@ -6,7 +6,6 @@
 #ifndef _TCHAR_H_INCLUDED
 #define _TCHAR_H_INCLUDED
 :include readonly.sp
-:include cpluspro.sp
 
 :include null.sp
 
@@ -22,13 +21,12 @@
 
 #if defined(_UNICODE) || defined(__UNICODE__)
 // **************************** UNICODE **************************************
-:include wchar_t.sp
-
-:include wctypet.sp
 
 #ifndef _WCHAR_H_INCLUDED
  #include <wchar.h>
 #endif
+
+:include cpluspro.sp
 
 #ifndef __TCHAR_DEFINED
 typedef wchar_t _TCHAR;
@@ -362,9 +360,12 @@ _WCRTLINK extern wchar_t *_wcsset( wchar_t *, wchar_t );
 _WCRTLINK extern wchar_t *_wcsnset( wchar_t *, int, size_t );
 _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 
+:include cplusepi.sp
+
 #else
 // **************************** SBCS and MBCS ********************************
 
+:include cpluspro.sp
 
 #define _TEOF           EOF
 
@@ -1013,10 +1014,12 @@ inline char *_strspnp( const char *__p1, const char *__p2 ) {
 
 
 #endif
+
+:include cplusepi.sp
+
 #endif
 
 #define _T(x)           __T(x)
 #define _TEXT(x)        __T(x)
 
-:include cplusepi.sp
 #endif
