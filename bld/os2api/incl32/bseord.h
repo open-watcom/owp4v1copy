@@ -1930,5 +1930,3 @@
 #define ORD_IMRELEASEINSTANCEMQ             718
 
 #endif
-
-
