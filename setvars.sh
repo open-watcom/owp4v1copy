@@ -17,7 +17,7 @@ export OBJDIR=bootstrp
 export DEBUG_BUILD=0
 
 # Set this variable to 1 to get default windowing support in clib
-export default_windowing=0
+export DEFAULT_WINDOWING=0
 
 # Stuff for the Open Watcom build environment
 export BATDIR=$OWROOT
@@ -28,12 +28,12 @@ export DEFPATH=$PATH
 export DEFREL=rel2
 export DEVDIR=$OWROOT/bld
 export DWATCOM=$WATCOM
+export DOC_ROOT=$OWROOT/docs
 export INCLUDE=$WATCOM/lh:$DEVDIR/watcom/h
 export LIB=$OWROOT/bld/watcom/lib
 export LANG_BLD=$OWROOT/bat
 export PATH=$OWROOT/bin:$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
 export RELROOT=$OWROOT
-export doc_root=$OWROOT/docs
 export WD_PATH=$WATCOM/binl
 
 # Setup environment variables for Perforce

@@ -68,10 +68,6 @@ set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
 
 REM Documentation related variables
-set doc_root=%owroot%\docs
-set gml_path=%doc_root%\gml\dos
-set gmllib=%doc_root%\gml\syslib
-set hcdos=%doc_root%\cmds\hcdos32
 set win95hc=hcrtf
 set wat31hc=whc
 set win31hc=hc31

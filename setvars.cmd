@@ -71,11 +71,6 @@ set wwinhelp=%owroot%\bld\online\hlp\ib
 set beginlibpath=%watcom%\binp\dll
 
 REM Documentation related variables
-set doc_root=%owroot%\docs
-set gml_path=%doc_root%\gml\os2
-set gmllib=%doc_root%\gml\syslib
-set hcdos=%doc_root%\cmds\hcdosos2
-set ipfc=%os2tkroot%\ipfc
 set win95hc=hcrtf
 set wat31hc=whc
 set win31hc=hc31

@@ -27,11 +27,11 @@ $# just in case anyone is curious ...
 debug_build = $(%DEBUG_BUILD)
 !endif
 # default windowing support
-!ifdef %default_windowing
-default_windowing = $(%default_windowing)
+!ifdef %DEFAULT_WINDOWING
+default_windowing = $(%DEFAULT_WINDOWING)
 !endif
 
-os2_toolkit     = $(%os2tkroot)
+os2_toolkit     = $(%OS2TKROOT)
 
 !ifndef __LINUX__
 
@@ -87,12 +87,12 @@ libcompaxp=$(compaxp)
 #
 # compilers used for install
 #
-inscomp286=$(%relroot)\rel2\binw\wcc -r -fpr
+inscomp286=$(%RELROOT)\rel2\binw\wcc -r -fpr
 
 !ifdef msc
 inscomp386=$(comp386)
 !else
-inscomp386=$(%relroot)\rel2\binw\wcc386 -r -fpr
+inscomp386=$(%RELROOT)\rel2\binw\wcc386 -r -fpr
 !endif
 
 #
@@ -375,12 +375,12 @@ libcompaxp=$(compaxp)
 #
 # compilers used for install
 #
-inscomp286=$(%relroot)/rel2/binw/wcc -r-fpr
+inscomp286=$(%RELROOT)/rel2/binw/wcc -r-fpr
 
 !ifdef gcc
 inscomp386=$(comp386)
 !else
-inscomp386=$(%relroot)/rel2/binw/wcc386 -r-fpr
+inscomp386=$(%RELROOT)/rel2/binw/wcc386 -r-fpr
 !endif
 
 #
