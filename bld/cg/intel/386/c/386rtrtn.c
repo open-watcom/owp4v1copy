@@ -44,7 +44,6 @@
 
 extern  name            *GenFloat(name*,type_class_def);
 extern  void            UpdateLive(instruction*,instruction*);
-extern  void            DoNothing(instruction*);
 extern  name            *AllocIntConst(int);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);

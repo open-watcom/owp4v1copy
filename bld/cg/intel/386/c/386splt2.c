@@ -78,7 +78,6 @@ extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_clas
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            DupSeg(instruction*,instruction*);
-extern  void            DoNothing(instruction*);
 extern  name            *SegName(name*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  name            *AllocS32Const(signed_32);

@@ -57,7 +57,6 @@ extern  void            UpdateLive(instruction*,instruction*);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            DupSeg(instruction*,instruction*);
 extern  void            DelSeg(instruction*);
-extern  void            DoNothing(instruction*);
 extern  void            DeadInstructions(void);
 extern  bool            ChangeIns(instruction*,name*,name**,change_type);
 extern  void            FreeIns(instruction*);
