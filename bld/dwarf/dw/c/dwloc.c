@@ -401,7 +401,7 @@ void DWENTRY DWLocOp(
     case DW_LOC_xderef_size:
     case DW_LOC_pick:
         op = nextOp( cli, loc, op_code, 1 );
-        op->data[0] = va_arg( args, uint_8 );
+        op->data[0] = (uint_8)va_arg( args, int );
         ADD_ADDR( cli, loc, 1 );
         break;
     case DW_LOC_plus_uconst:
