@@ -39,8 +39,9 @@
 #include <string.h>
 #include "rtdata.h"
 
+#include <limits.h>
 #ifndef TZNAME_MAX
-#define TZNAME_MAX 128 // not defined for netware
+#define TZNAME_MAX 128 // Only defined in UNIX <limits.h>
 #endif
 
 static const char awday_name[] = { "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat" };
