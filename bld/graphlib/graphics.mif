@@ -149,13 +149,13 @@ objs += $(english_objs)
 !include deftarg.mif
 
 !ifeq host_os qnx
-inc_dirs = $(dev_dir)/graphlib/h;$(hdr_dir)/qnx;$(watcom_dir)/h;$(%watcom)/qh;$(%watcom)/h
+inc_dirs = -I"$(dev_dir)/graphlib/h" -I"$(hdr_dir)/qnx"
 !else
-inc_dirs = $(dev_dir)/graphlib/h;$(hdr_dir)/dos;$(watcom_dir)/h;$(%watcom)/h
+inc_dirs = -I"$(dev_dir)/graphlib/h" -I"$(hdr_dir)/dos"
 !endif
 
 !ifdef _WIN
-inc_dirs += ;$(%watcom)/h/win;$(clib_dir)/h;$(clib_dir)/defwin/h;$(wpi_dir)/h;$(inc_dirs_sys)
+inc_dirs += -I"$(clib_dir)/h" -I"$(clib_dir)/defwin/h" -I"$(wpi_dir)/h"
 !endif
 
 !ifeq host_cpu 386

@@ -44,7 +44,7 @@ objs = &
 !include defrule.mif
 !include deftarg.mif
 
-inc_dirs = ../h;$(build_root)/graphlib/h;$(build_root)/watcom/h;$(build_root)/hdr/dos;$(%include)
+inc_dirs = -I"../h" -I"$(build_root)/graphlib/h" -I"$(build_root)/watcom/h" -I"$(build_root)/hdr/dos"
 
 .c: ../c
 
