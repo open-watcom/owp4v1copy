@@ -142,7 +142,7 @@ void double2tbyte( double data, char *output )
     }
 
     /* now put the sign bit & exponent into the output */
-    exponent -= LDBL_MAX_EXP;   /* unbiased */
+    exponent -= LDBL_MAX_EXP - 1;   /* unbiased */
     exponent += TBYTE_MAX_EXP;  /* biased for output type */
 
     tmp2 = (unsigned short int*)(output + OUTBYTES - 2);
