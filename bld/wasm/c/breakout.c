@@ -53,7 +53,7 @@ extern int              AlignDirective( uint_16, int );
 extern int              LabelDirective( int );
 extern int              StructDef( int );
 extern void             GetInsString( enum asm_token , char *, int );
-extern int              ForDirective( int, bool );
+extern int              ForDirective( int, enum irp_type );
 
 /* global vars */
 extern dir_node         *CurrProc;
@@ -264,6 +264,10 @@ int directive( int i, long direct )
         return( DefineConstant( i-1, TRUE, TRUE ) );
     case T_MACRO:
         return( MacroDef(i-1, FALSE ) );
+    case T_ENDM:
+        return( MacroEnd( FALSE ) );
+    case T_EXITM:
+        return( MacroEnd( TRUE ) );
     case T_LOCAL:
         return( Parse_Pass == PASS_1 ? LocalDef(i) : NOT_ERROR );
     case T_COMMENT:
@@ -282,9 +286,13 @@ int directive( int i, long direct )
         return( AlignDirective( direct, i ) );
     case T_FOR:
     case T_IRP:
-        return( ForDirective ( i+1, FALSE ) );
+        return( ForDirective ( i+1, IRP_WORD ) );
     case T_FORC:
-        return( ForDirective ( i+1, TRUE ) );
+    case T_IRPC:
+        return( ForDirective ( i+1, IRP_CHAR ) );
+    case T_REPT:
+    case T_REPEAT:
+        return( ForDirective ( i+1, IRP_REPEAT ) );
     }
     AsmError( UNKNOWN_DIRECTIVE );
     return( ERROR );

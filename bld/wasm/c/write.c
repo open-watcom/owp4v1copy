@@ -90,6 +90,8 @@ extern uint             LnamesIdx;      // Number of LNAMES definition
 extern obj_rec          *ModendRec;     // Record for Modend
 extern sim_seg          LastSimSeg;     // last opened simplified segment
 
+extern int              MacroExitState;
+
 int                     MacroLocalVarCounter = 0; // counter for temp. var names
 char                    Parse_Pass;     // phase of parsing
 char                    write_to_file;  // write if there is no error
@@ -1115,6 +1117,7 @@ static unsigned long OnePass( char *string )
     Modend = FALSE;
     PassTotal = 0;
     LineNumber = 0;
+    MacroExitState = 0;
 
     for(;;) {
         if( ScanLine( string, MAX_LINE_LEN ) == NULL ) break; // EOF

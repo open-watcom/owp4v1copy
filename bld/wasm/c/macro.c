@@ -70,6 +70,7 @@ extern dir_node         *dir_insert( char *name, int tab );
 extern void             wipe_space( char *token );
 extern char             *get_curr_filename( void );
 extern void             PushMacro( char *, bool );
+extern bool             GetQueueMacroHidden( void );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
@@ -78,6 +79,7 @@ extern File_Info        AsmFiles;
 extern char             *CurrString;    // Current Input Line
 extern int              MacroLocalVarCounter;
 
+int                     MacroExitState = 0;
 
 /* quick explanation:
  *
@@ -366,7 +368,10 @@ static int macro_exam( int i )
         while( isspace( *ptr ) ) ptr++;
         if( lineis( ptr, "for" )
          || lineis( ptr, "forc" )
-         || lineis( ptr, "irp" ) ) {
+         || lineis( ptr, "irp" )
+         || lineis( ptr, "irpc" )
+         || lineis( ptr, "rept" )
+         || lineis( ptr, "repeat" ) ) {
             nesting_depth++;
         }
         while( *ptr != '\0' && !isspace( *ptr ) ) ptr++; // skip 1st token
@@ -374,7 +379,10 @@ static int macro_exam( int i )
         if( lineis( ptr, "macro" )
          || lineis( ptr, "for" )
          || lineis( ptr, "forc" )
-         || lineis( ptr, "irp" ) ) {
+         || lineis( ptr, "irp" )
+         || lineis( ptr, "irpc" )
+         || lineis( ptr, "rept" )
+         || lineis( ptr, "repeat" ) ) {
             nesting_depth++;
         }
 
@@ -695,4 +703,21 @@ int MacroDef( int i, bool hidden )
     }
     sym->state = SYM_MACRO;
     return( macro_exam( i ) ) ;
+}
+
+int MacroEnd( bool exit_flag )
+/*******************/
+{
+    if( exit_flag ) {
+        MacroExitState = 2;
+    } else if( MacroExitState > 0 ) {
+        if( GetQueueMacroHidden() ) {
+            MacroExitState--;
+        } else {
+            MacroExitState = 0;
+        }
+    } else {
+        MacroExitState = 0;
+    }
+    return( 0 );
 }

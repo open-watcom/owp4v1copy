@@ -218,6 +218,15 @@ bool PopLineQueue()
     return( TRUE );
 }
 
+bool GetQueueMacroHidden( void )
+{
+    if(( file_stack != NULL ) && !file_stack->is_a_file ) {
+        return( file_stack->hidden );
+    } else {
+        return( FALSE );
+    }
+}
+
 static line_list *enqueue( void )
 /*******************************/
 {
@@ -446,6 +455,8 @@ static char *input_get( char *string )
                 AsmFree( inputline );
                 return( string );
             }
+            MacroEnd( FALSE );
+
             file_stack = inputfile->next;
             AsmFree( inputfile->name );
             AsmFree( inputfile->lines );

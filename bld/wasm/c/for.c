@@ -40,6 +40,7 @@
 #include "namemgr.h"
 #include "asmsym.h"
 #include "directiv.h"
+#include "expand.h"
 
 extern void             PushLineQueue(void);
 extern void             AddTokens( struct asm_tok **, int, int );
@@ -48,7 +49,7 @@ extern void             PushMacro( char *, bool );
 
 const char macroname[] = "__STATIC_IRP_MACRO_";
 
-int ForDirective( int i, bool is_char )
+int ForDirective( int i, enum irp_type type )
 /*************************************/
 {
     int start = i - 1; /* location of "directive name .. after any labels" */
@@ -60,29 +61,45 @@ int ForDirective( int i, bool is_char )
     char buffer[MAX_LINE_LEN];
     int len;
 
-    /* save the parm list, make a temporary macro, then call it with each parm */
-    if( AsmBuffer[i]->token != T_ID ) {
-        AsmError( OPERAND_EXPECTED );
-        return( ERROR );
-    }
-    arg_loc = i;
-    for( ;AsmBuffer[i]->token != T_COMMA; i++ ) {
-        if( AsmBuffer[i]->token == T_FINAL ) {
-            AsmError( EXPECTING_COMMA );
+    if( type == IRP_REPEAT ) {
+        ExpandTheWorld( i, FALSE, TRUE );
+        /* make a temporary macro, then call it */
+        if( AsmBuffer[i]->token != T_NUM ) {
+            AsmError( OPERAND_EXPECTED );
             return( ERROR );
         }
+        arg_loc = i;
+        len = AsmBuffer[i]->value;
+        i++;
+        if( AsmBuffer[i]->token != T_FINAL ) {
+            AsmError( OPERAND_EXPECTED );
+            return( ERROR );
+        }
+    } else {
+        /* save the parm list, make a temporary macro, then call it with each parm */
+        if( AsmBuffer[i]->token != T_ID ) {
+            AsmError( OPERAND_EXPECTED );
+            return( ERROR );
+        }
+        arg_loc = i;
+        for( ;AsmBuffer[i]->token != T_COMMA; i++ ) {
+            if( AsmBuffer[i]->token == T_FINAL ) {
+                AsmError( EXPECTING_COMMA );
+                return( ERROR );
+            }
+        }
+        i++;
+        if( AsmBuffer[i]->token != T_STRING ) {
+            AsmError( PARM_REQUIRED );
+            return( ERROR );
+        }
+        parmstring = AsmTmpAlloc( strlen( AsmBuffer[i]->string_ptr ) + 1 );
+        strcpy( parmstring, AsmBuffer[i]->string_ptr );
+        AsmBuffer[i]->token = T_FINAL;
+        
+        AddTokens( AsmBuffer, arg_loc, 1 );
     }
-    i++;
-    if( AsmBuffer[i]->token != T_STRING ) {
-        AsmError( PARM_REQUIRED );
-        return( ERROR );
-    }
-    parmstring = AsmTmpAlloc( strlen( AsmBuffer[i]->string_ptr ) + 1 );
-    strcpy( parmstring, AsmBuffer[i]->string_ptr );
-    AsmBuffer[i]->token = T_FINAL;
-
     /* now make a macro */
-    AddTokens( AsmBuffer, arg_loc, 1 );
     i = start;
     sprintf( buffer, "%s%d", macroname, Globals.for_counter );
     AsmBuffer[i]->string_ptr = buffer;
@@ -96,26 +113,33 @@ int ForDirective( int i, bool is_char )
     /* now call the above macro with each of the given parms */
 
     PushLineQueue();
-    end_of_parms = parmstring + strlen( parmstring );
-    for( ptr = parmstring; ptr < end_of_parms; ) {
+    if( type == IRP_REPEAT ) {
         sprintf( buffer, "%s%d", macroname, Globals.for_counter );
-        strcat( buffer, " " );
-
-        if( is_char ) {
-            len = strlen( buffer );
-            buffer[len] = *ptr;
-            buffer[len+1] = NULLC;
-            ptr++;
-        } else {
-            next_parm = ptr + strcspn( ptr, ",\0" );
-            *next_parm = NULLC;
-            next_parm++;
-            strcat( buffer, ptr );
-            ptr = next_parm;
+        while( len-- > 0 ) {
+            InputQueueLine( buffer );
         }
-        InputQueueLine( buffer );
+    } else {
+        end_of_parms = parmstring + strlen( parmstring );
+        for( ptr = parmstring; ptr < end_of_parms; ) {
+            sprintf( buffer, "%s%d", macroname, Globals.for_counter );
+            strcat( buffer, " " );
+            
+            if( type == IRP_CHAR ) {
+                len = strlen( buffer );
+                buffer[len] = *ptr;
+                buffer[len+1] = NULLC;
+                ptr++;
+            } else if( type == IRP_WORD ) {
+                next_parm = ptr + strcspn( ptr, ",\0" );
+                *next_parm = NULLC;
+                next_parm++;
+                strcat( buffer, ptr );
+                ptr = next_parm;
+            }
+            InputQueueLine( buffer );
+        }
+        sprintf( buffer, "%s%d", macroname, Globals.for_counter );
     }
-    sprintf( buffer, "%s%d", macroname, Globals.for_counter );
     Globals.for_counter++;
     PushMacro( buffer, TRUE );
     return( NOT_ERROR );

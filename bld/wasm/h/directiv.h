@@ -130,6 +130,12 @@ enum {
     END_COMMENT
 };                      // parms to Comment
 
+typedef enum irp_type {
+        IRP_CHAR,
+        IRP_WORD,
+        IRP_REPEAT
+};
+
 /*---------------------------------------------------------------------------*/
 
 typedef struct stacknode {
@@ -159,8 +165,8 @@ typedef struct {
     obj_rec     *segrec;
     direct_idx  idx;            // its group index
     uint_32     start_loc;      // starting offset of current ledata or lidata
-    unsigned    readonly:1,     // if the segment is readonly
-                ignore:1;       // ignore this if the seg is redefined
+    unsigned    readonly:1;     // if the segment is readonly
+    unsigned    ignore:1;       // ignore this if the seg is redefined
     direct_idx  lname_idx;
     uint_32     current_loc;    // current offset in current ledata or lidata
 } seg_info;
@@ -178,8 +184,8 @@ typedef struct {
 
 typedef struct {
 //    char              *string;        // string assigned to the symbol
-    unsigned            redefine:1,     // whether it is redefinable or not
-                        expand_early:1; // if TRUE expand before parsing
+    unsigned            redefine:1;     // whether it is redefinable or not
+    unsigned            expand_early:1; // if TRUE expand before parsing
     int                 count;          // number of tokens
     struct asm_tok      *data;          // array of asm_tok's to replace symbol
 } const_info;
@@ -210,8 +216,8 @@ typedef struct {
     int         parasize;       // total no. of bytes used by parameters
     int         localsize;      // total no. of bytes used by local variables
     int         mem_type;       // distance of procedure: near or far
-    unsigned    is_vararg:1,    // if it has a vararg
-                pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
+    unsigned    is_vararg:1;    // if it has a vararg
+    unsigned    pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
 } proc_info;
 
 typedef struct parm_list {
@@ -301,11 +307,11 @@ typedef struct {
     mod_type    model;           // memory model;
     lang_type   langtype;        // language;
     os_type     ostype;          // operating system;
-    unsigned    use32:1,         // If 32-bit segment is used
-                init:1,
-                cmdline:1,
-                defseg32:1,      // default segment size 32-bit
-                mseg:1;          // mixed segments (16/32-bit)
+    unsigned    use32:1;         // If 32-bit segment is used
+    unsigned    init:1;
+    unsigned    cmdline:1;
+    unsigned    defseg32:1;      // default segment size 32-bit
+    unsigned    mseg:1;          // mixed segments (16/32-bit)
     unsigned    flat_idx;        // index of FLAT group
     char        name[_MAX_FNAME];// name of module
 } module_info;                   // Information about the module
@@ -335,8 +341,8 @@ enum {
 typedef struct {
     asm_sym             *symbol;        /* segment or group that is to
                                            be associated with the register */
-    unsigned            error:1,        // the register is assumed to ERROR
-                        flat:1;         // the register is assumed to FLAT
+    unsigned            error:1;        // the register is assumed to ERROR
+    unsigned            flat:1;         // the register is assumed to FLAT
 } assume_info;
 
 extern assume_info AssumeTable[ASSUME_LAST];
@@ -392,6 +398,7 @@ extern int              Ret( int, int, int );   // emit return statement from pr
 extern int              WritePrologue( void );  // emit prologue statement after the
                                                 // declaration of a procedure
 extern int              MacroDef( int, char );  // define a macro
+extern int              MacroEnd( char );       // end a macro
 extern int              Startup( int );         // handle .startup & .exit
 extern int              SimSeg( int );          // handle simplified segment
 extern int              Include( int );         // handle an INCLUDE statement

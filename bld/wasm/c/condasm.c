@@ -49,6 +49,8 @@ extern void             AsmError( int );
 
 extern int              get_instruction_position( char *string );
 
+extern int              MacroExitState;
+
 enum if_state CurState = ACTIVE;
 // fixme char *IfSymbol;        /* save symbols in IFDEF's so they don't get expanded */
 #define    MAX_NESTING  20
@@ -91,7 +93,9 @@ void prep_line_for_conditional_assembly( char *line )
     *end = fix;
     if( count == EMPTY ) {
         /* if it is not in the table */
-        if( CurState == LOOKING_FOR_TRUE_COND || CurState == DONE ) {
+        if(( CurState == LOOKING_FOR_TRUE_COND )
+            || ( CurState == DONE )
+            || MacroExitState ) {
             *line = '\0';
         }
         return;
@@ -117,7 +121,9 @@ void prep_line_for_conditional_assembly( char *line )
     case T_IFIDNI:
         break;
     default:
-        if( CurState == LOOKING_FOR_TRUE_COND || CurState == DONE ) {
+        if(( CurState == LOOKING_FOR_TRUE_COND )
+            || ( CurState == DONE )
+            || MacroExitState ) {
             *line = '\0';
         }
     }
