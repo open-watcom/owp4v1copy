@@ -158,6 +158,12 @@ int EDITAPI EDITConnect( void )
                         if( n++ == MAX_TRIES ) break;
                     }
                 }
+                /*
+                //  Carl Young 2004-01-27
+                //  Close handles as they are no longer needed and nobody has been passed them anyway
+                */
+                CloseHandle(pi.hThread);
+                CloseHandle(pi.hProcess);
             }
         }
         #else
