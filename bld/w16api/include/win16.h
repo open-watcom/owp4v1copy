@@ -1063,7 +1063,7 @@ typedef	DWORD	COLORREF;
 #define ETO_CLIPPED	0x4
 
 /* Scroll bar styles */
-#define SBS_HORZ	0xL
+#define SBS_HORZ	0x0L
 #define SBS_VERT	0x1L
 #define SBS_TOPALIGN	0x2L
 #define SBS_LEFTALIGN	0x2L
