@@ -43,12 +43,12 @@
 
 extern proc_def             *CurrProc;
 
-extern  seg_id          AskCodeSeg();
-extern  seg_id          AskBackSeg();
+extern  seg_id          AskCodeSeg( void );
+extern  seg_id          AskBackSeg( void );
 extern  name            *SegmentPart(name*);
 extern  name    *       AllocRegName(hw_reg_set);
 extern  name    *       AllocAddrConst(name*,int,constant_class,type_class_def);
-extern  bool            HaveCodeGroup();
+extern  bool            HaveCodeGroup( void );
 extern  bool            AskSegPrivate(segment_id);
 extern  bool            AskSegNear(segment_id);
 extern  segment_id      AskSegID(pointer,cg_class);
@@ -65,12 +65,12 @@ extern  bool    IsFarFunc( sym_handle sym ) {
 }
 
 
-extern  void    InitSegment() {
+extern  void    InitSegment( void ) {
 /*****************************/
 }
 
 
-extern  void    FiniSegment() {
+extern  void    FiniSegment( void ) {
 /*****************************/
 }
 
@@ -182,7 +182,7 @@ extern  name    *GetSegment( name *op ) {
     return( AddrConst( op, seg, CONS_SEGMENT ) );
 }
 
-extern  name    *NearSegment() {
+extern  name    *NearSegment( void ) {
 /******************************/
 
     if( _IsntTargetModel( FLOATING_DS ) )
@@ -312,6 +312,8 @@ extern  bool    SegOver( name *op ) {
             return( FALSE );
         case CG_CLB:
             return( FALSE );
+        default:
+            break;
         }
     }
     return( FALSE );

@@ -58,9 +58,9 @@ extern  void            OutLabel(label_handle);
 extern  void            SetUpObj(bool);
 extern  seg_id          SetOP(seg_id);
 extern  sym_handle      AskForLblSym(label_handle);
-extern  offset          AskLocation();
+extern  offset          AskLocation(void);
 extern  offset          AskAddress(label_handle);
-extern  bool            NeedBaseSet();
+extern  bool            NeedBaseSet( void );
 extern  void            SetLocation(offset);
 extern  void            DataInt(short_offset);
 extern  void            BuffIndex(uint);
@@ -79,13 +79,18 @@ extern  sym_handle      LocSimpStatic(dbg_loc);
 extern  dbg_loc         LocReg(dbg_loc,name*);
 extern  void            WVSrcCueLoc( void  );
 
+/* forward declarations */
+static  void            DumpDbgBlkStart( dbg_block *blk, offset lc );
+static  void            DumpParentPtr( dbg_block *blk );
+static  void            DumpLocals( dbg_local *local );
+static  void            DumpDbgBlk( dbg_block *blk, offset lc );
+
 extern    seg_id                DbgLocals;
 extern    seg_id                DbgTypes;
 extern    proc_def              *CurrProc;
 extern    unsigned_16           TypeIdx;
 
 static    offset        CodeOffset;
-
 
 typedef struct block_patch {
     struct block_patch  *link;
@@ -94,7 +99,7 @@ typedef struct block_patch {
 
 #define CurrProc_debug ((dbg_rtn *)CurrProc->targ.debug)
 
-extern  void    WVInitDbgInfo() {
+extern  void    WVInitDbgInfo( void ) {
 /******************************/
 
     TypeIdx   = 0;
@@ -103,13 +108,13 @@ extern  void    WVInitDbgInfo() {
 }
 
 
-extern  void    WVObjInitInfo() {
+extern  void    WVObjInitInfo( void ) {
 /******************************/
 // Called right after define seg's in Obj
     WVSrcCueLoc();
 }
 
-extern  void    WVFiniDbgInfo() {
+extern  void    WVFiniDbgInfo( void ) {
 /******************************/
 
 }
@@ -134,7 +139,7 @@ extern  void    WVGenStatic( sym_handle sym, dbg_loc loc ) {
     BuffEnd( DbgLocals );
 }
 
-extern  void    WVSetBase() {
+extern  void    WVSetBase( void ) {
 /****************************/
 
 

@@ -53,7 +53,9 @@ extern  name            *Names[];
 extern  byte            OptForSize;
 extern  savings         Save;
 
-extern  void    PushLocals() {
+static  void    AssignPushLocals( void );
+
+extern  void    PushLocals( void ) {
 /*****************************
     Assign locals which can have their initial value pushed onto the stack
 */
@@ -63,7 +65,7 @@ extern  void    PushLocals() {
     AssignPushLocals();
 }
 
-static  void    AssignPushLocals() {
+static  void    AssignPushLocals( void ) {
 /***********************************
     Scan through HeadBlock to see if there are any leading instructions of
     the form MOV REG => temp, where temp is on the stack. We can eliminate
@@ -150,7 +152,7 @@ extern  void    SetTempLocation( name *temp, type_length size ) {
 }
 
 
-extern  void    RelocParms() {
+extern  void    RelocParms( void ) {
 /*****************************
     Relocate parameter locations based on what type of prolog we generated,
     how many registers were pushed on the stack, and all that other stuff

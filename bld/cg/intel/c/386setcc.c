@@ -169,7 +169,7 @@ static  bool    FindFlowOut( block *blk ) {
     return( TRUE );
 }
 
-extern  bool    SetOnCondition() {
+extern  bool    SetOnCondition( void ) {
 /********************************/
 
     block       *blk;

@@ -67,10 +67,12 @@ extern  void            PrefixIns(instruction*,instruction*);
 extern  int             NumOperands(instruction*);
 extern  name            *IndexToTemp(instruction*,name*);
 extern  name            *FindIndex(instruction*);
-extern  bool            FPCInCode();
+extern  bool            FPCInCode( void );
 extern  sym_handle      AskForLblSym(label_handle);
 extern  void            ExpandThreadDataRef(instruction*);
 
+static  void            Merge( name **pname, instruction *ins );
+static  void            PropSegments(void);
 
 extern  instruction     *NeedIndex( instruction *ins ) {
 /*******************************************************
@@ -277,7 +279,7 @@ extern  void    AddSegment( instruction *ins ) {
     }
 }
 
-extern  void    FixMemRefs() {
+extern  void    FixMemRefs( void ) {
 /*****************************
     Make sure that no N_MEMORY names are used as indecies.  This would
     cause problems since we might need a segment override for the INDEX
@@ -304,7 +306,7 @@ extern  void    FixMemRefs() {
 }
 
 
-extern  void    FixSegments() {
+extern  void    FixSegments( void ) {
 /******************************
     Add segment overrides to any instruction in the routine that needs
     them.
@@ -353,7 +355,7 @@ static  type_class_def  FltClass( instruction *ins ) {
     return( XX );
 }
 
-extern  void    MergeIndex() {
+extern  void    MergeIndex( void ) {
 /*****************************
     Merge segment overrides back into the index registers.  This is
     called just before scoreboarding to simplify matters.  For example
@@ -416,7 +418,7 @@ static  void    Merge( name **pname, instruction *ins ) {
 }
 
 
-extern  void    FixChoices() {
+extern  void    FixChoices( void ) {
 /*****************************
     Run through the conflict list and make sure that no conflict is
     allowed to get cached in a segment register unless it was actually
@@ -447,7 +449,7 @@ extern  void    FixChoices() {
     }
 }
 
-static  void    PropSegments() {
+static  void    PropSegments( void ) {
 /*******************************
     For every instruction of the form MOV X => Y, mark the conflict node
     for X as a valid segment if the conflict for Y is marked as a valid

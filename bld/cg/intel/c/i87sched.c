@@ -65,6 +65,16 @@ extern  void            RevCond( instruction * );
 extern  int             FPStkReq( instruction * );
 extern  bool            InsOrderDependant( instruction *, instruction * );
 
+/* forward declarations */
+static  void            PushStack( instruction *ins );
+static  void            IncrementAll( void );
+static  void            DecrementAll( void );
+static  void            PopStack( instruction *ins );
+static  void            PushVirtualStack( instruction *ins );
+static  void            GetToTopOfStack( instruction *ins, int virtual_reg );
+static  void            PopVirtualStack( instruction *ins );
+
+
 static  opcode_entry    RFST    = { PRESERVE, 0, G_RFST,   0, 0 };
 static  opcode_entry    RFSTNP  = { PRESERVE, 0, G_RFSTNP, 0, 0 };
 static  opcode_entry    RFLD    = { PRESERVE, 0, G_RFLD,   0, 0 };
@@ -489,7 +499,7 @@ static  instruction     *GetST0andST1( instruction *ins ) {
 }
 
 
-static  void    IncrementAll() {
+static  void    IncrementAll( void ) {
 /*************************/
 
     int         i,j;
@@ -530,7 +540,7 @@ static  void    PushStack( instruction *ins ) {
 }
 
 
-static  void    DecrementAll() {
+static  void    DecrementAll( void ) {
 /************************/
 
     int         i,j;
@@ -573,7 +583,7 @@ static  void    PopStack( instruction *ins ) {
 
 
 
-static  void    InitStackLocations() {
+static  void    InitStackLocations( void ) {
 /**************************************/
 
     temp_entry  *temp;
@@ -591,7 +601,7 @@ static  void    InitStackLocations() {
 }
 
 
-static  void    FiniStackLocations() {
+static  void    FiniStackLocations( void ) {
 /**************************/
 
     _Free( STLocations, MaxSeq * sizeof( st_seq ) );
@@ -687,10 +697,10 @@ static  void    CheckTemp( instruction *ins, name *op, bool defined ) {
 }
 
 
-static  bool Better( temp_entry *t1, temp_entry *t2 ) {
+static  bool Better( void *t1, void *t2 ) {
 /*****************************************************/
 
-    return( t1->savings > t2->savings );
+    return( ((temp_entry *)t1)->savings > ((temp_entry *)t2)->savings );
 }
 
 
@@ -716,7 +726,7 @@ extern  void    InitTempEntries( block *blk ) {
 }
 
 
-extern  void    FiniTempEntries() {
+extern  void    FiniTempEntries( void ) {
 /***************************/
 
     temp_entry  *temp,*junk;
@@ -786,7 +796,7 @@ static  void    CacheTemps( block *blk ) {
 /****************************************/
 
     temp_entry *temp, **owner;
-    block_edge  *exit_edge;
+    block_edge  *exit_edge = NULL;
 
     Entry = NULL;
     Exit = NULL;
@@ -932,7 +942,7 @@ extern  void    FPPreSched( block *blk ) {
 }
 
 
-static  void    FiniGlobalTemps() {
+static  void    FiniGlobalTemps( void ) {
 /*********************************/
 
     temp_entry  *temp;
@@ -952,7 +962,7 @@ static  void    FiniGlobalTemps() {
 }
 
 
-static  void    InitGlobalTemps() {
+static  void    InitGlobalTemps( void ) {
 /*********************************/
 
     temp_entry  *temp;

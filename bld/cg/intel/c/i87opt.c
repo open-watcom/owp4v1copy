@@ -85,7 +85,7 @@ extern  void            PrefixIns(instruction*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            PrefFXCH(instruction*,int);
-extern  void            Wait8087();
+extern  void            Wait8087( void );
 extern  void            FreeIns(instruction*);
 extern  void            ReverseFPGen(instruction*);
 extern  bool            InsOrderDependant(instruction*,instruction*);
@@ -93,9 +93,13 @@ extern  int             FPStkReq(instruction*);
 extern  bool            FPResultNotNeeded(instruction*);
 extern  void            ReserveStack( call_state *, instruction *, type_length );
 
+/* forward declarations */
+static  void            MoveThrough( name *from, name *to, instruction *from_ins,
+                                     instruction *to_ins, name *reg,
+                                     type_class_def class );
+extern  void            Opt8087( void );
 
-
-extern  void    FPParms() {
+extern  void    FPParms( void ) {
 /**************************
     Find sequences like
              PARM_DEF         => ST(0),
@@ -314,6 +318,8 @@ static  void    UseInOther( name *op )
         UseInOther( op->i.index );
         UseInOther( op->i.base );
         break;
+    default:
+        break;
     }
 }
 
@@ -401,7 +407,7 @@ extern  void    FPPushParms( pn parm, call_state *state ) {
 
 
 
-extern  void    FPOptimize() {
+extern  void    FPOptimize( void ) {
 /*****************************
 
     Fix up the 8087 instructions.  The instructions so far
@@ -838,7 +844,7 @@ extern  bool    DivIsADog( type_class_def class )
     return( _FPULevel( FPU_87 ) && _IsFloating( class ) );
 }
 
-extern  void    Opt8087() {
+extern  void    Opt8087( void ) {
 /**************************
     Look for silly 8087 sequences and change them into better ones.
 */

@@ -51,7 +51,7 @@
 extern  cg_type         SelType(unsigned_32);
 extern  type_def        *TypeAddress(cg_type);
 extern  seg_id          SetOP(seg_id);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel(void);
 extern  an              BGDuplicate(an);
 extern  void            Gen4ByteValue(unsigned_32);
 extern  an              TreeGen(tn);
@@ -65,13 +65,21 @@ extern  name            *GenIns(an);
 extern  void            Gen2ByteValue(unsigned_16);
 extern  void            BGDone(an);
 extern  void            Gen1ByteValue(byte);
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskCodeSeg(void);
 extern  signed_32       NumValues(select_list*,signed_32);
 extern  int             SelCompare(signed_32,signed_32);
 extern  instruction     *NewIns(int);
 extern  void            AddIns(instruction*);
 extern  an              BGInteger( signed_32, type_def * );
 extern  tn              TGBinary( cg_op, tn, tn, type_def * );
+
+/* forward declarations */
+static  void    GenValuesBackward( select_list *list, signed_32 hi,
+                                   signed_32 lo, signed_32 to_sub,
+                                   cg_type tipe );
+static  void    GenValuesForward( select_list *list, signed_32 hi,
+                                  signed_32 lo, signed_32 to_sub,
+                                  cg_type tipe );
 
 extern    byte  OptForSize;
 
@@ -366,14 +374,14 @@ extern  name_def        *SelIdx( tbl_control *table, an node ) {
 /**************************************************************/
 
     an          idxan;
-    name_def    *idx;
+    name        *idx;
 
     /* use CG routines here to get folding*/
     idxan = TreeGen( TGBinary( O_TIMES, TGLeaf( BGDuplicate( node ) ),
                                 TGLeaf( BGInteger( WORD_SIZE, TypeAddress( T_WORD ) ) ), TypeAddress( T_WORD ) ) );
     idx = GenIns( idxan );
     BGDone( idxan );
-    return( AllocIndex( idx, AllocMemory( table, 0, CG_TBL, WD ), 0, WD ) );
+    return( &AllocIndex( idx, AllocMemory( table, 0, CG_TBL, WD ), 0, WD )->n );
 }
 
 

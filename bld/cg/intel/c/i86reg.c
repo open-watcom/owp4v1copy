@@ -47,17 +47,20 @@ extern  hw_reg_set      FullReg(hw_reg_set);
 extern  sym_handle      AskForLblSym(label_handle);
 extern  bool            IsRegClass(hw_reg_set,type_class_def);
 extern  hw_reg_set      ReturnReg(type_class_def,bool);
-extern  hw_reg_set      StructReg();
+extern  hw_reg_set      StructReg( void );
 extern  byte            *Copy(void*,void*,uint);
 extern  type_class_def  ReturnClass(type_def*,call_attributes);
 extern  pointer         BEAuxInfo(pointer,aux_class);
 extern  bool            AskIfRTLabel(label_handle);
-extern  hw_reg_set      FixedRegs();
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      DisplayReg();
-extern  int             SizeDisplayReg();
-extern  hw_reg_set      AllCacheRegs();
+extern  hw_reg_set      FixedRegs( void );
+extern  hw_reg_set      StackReg( void );
+extern  hw_reg_set      DisplayReg( void );
+extern  int             SizeDisplayReg( void );
+extern  hw_reg_set      AllCacheRegs( void );
 
+/* forward declaration */
+extern  void            UpdateReturn( call_state *state, type_def *tipe,
+                                      type_class_def class, aux_handle aux );
 
 #define _NPX( x ) ( !( (x) & ROUTINE_NO_8087_RETURNS ) )
 
@@ -269,7 +272,7 @@ extern  hw_reg_set      CallZap( call_state *state ) {
 
 
 
-extern  hw_reg_set      MustSaveRegs() {
+extern  hw_reg_set      MustSaveRegs( void ) {
 /**************************************/
 
     hw_reg_set  save;
@@ -299,7 +302,7 @@ extern  hw_reg_set      MustSaveRegs() {
     return( save );
 }
 
-extern  hw_reg_set      SaveRegs() {
+extern  hw_reg_set      SaveRegs( void ) {
 /**********************************/
 
    hw_reg_set   save;

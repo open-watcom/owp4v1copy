@@ -48,7 +48,7 @@ extern  uint            BuffLoc(void);
 extern  void            BuffByte(byte);
 extern  void            BuffWSLString(char*);
 extern  seg_id          SetOP(seg_id);
-extern  offset          AskLocation();
+extern  offset          AskLocation( void );
 extern  void            SetLocation(offset);
 extern  void            ChkDbgSegSize( offset, bool );
 extern  void            DataInt(short_offset);
@@ -66,6 +66,9 @@ extern  void            BuffEnd(seg_id);
 extern  void            LocDump( dbg_loc );
 extern  dbg_loc         LocDupl( dbg_loc );
 extern  type_def        *TypeAddress(cg_type);
+
+static  void            NewType( temp_buff *temp, uint ty_def );
+static  void            EndType( bool check_too_big );
 
 extern  unsigned_16     TypeIdx;
 extern  seg_id          DbgTypes;
@@ -342,7 +345,7 @@ static  void    ReverseDims( array_list *ar  ){
 extern  dbg_type    WVEndArray( array_list *ar ){
 /************************************************/
     dim_any   *dim;
-    dbg_type  ret;
+    dbg_type  ret = 0;
     dbg_type  sub;
 
 //  ReverseDims( ar );
@@ -410,23 +413,23 @@ extern  dbg_type        WVBasedPtr( cg_type ptr_type, dbg_type base,
     return( DbgPtr( ptr_type, base, 0, loc_segment ) );
 }
 
-static  void    AddField( field_any **owner, field_member *field  ){
+static  void    AddField( field_any **owner, field_any *field  ){
 /*** Sort according to WV(brian)***********************************/
 
-    field_member  *curr;
+    field_any     *curr;
     unsigned      strt;
     offset        off;
 
-    strt = field->b_strt;
-    off  = field->u.off;
+    strt = field->member.b_strt;
+    off  = field->member.u.off;
     for(;;) {
         curr = *owner;
         if( curr == NULL ) break;
-        if( curr->entry.field_type == FIELD_OFFSET ) {
-            if( (off == curr->u.off) && (strt >= curr->b_strt) ) break;
-            if( off >= curr->u.off ) break;
+        if( curr->member.entry.field_type == FIELD_OFFSET ) {
+            if( (off == curr->member.u.off) && (strt >= curr->member.b_strt) ) break;
+            if( off >= curr->member.u.off ) break;
         }
-        owner = &curr->entry.next;
+        owner = &curr->member.entry.next;
     }
     field->entry.next = curr;
     *owner = field;
@@ -436,8 +439,8 @@ static  void    SortFields( struct_list *st  ){
 /***********************************************/
 
     field_any   *curr;
-    field_entry *next;
-    field_entry *head;
+    field_any   *next;
+    field_any   *head;
 
     curr = st->list;
     head = NULL;
@@ -517,6 +520,8 @@ extern  dbg_type        WVEndStruct( struct_list  *st ) {
         case FIELD_NESTED:
             break;
         case FIELD_VFUNC:
+            break;
+        default:
             break;
         }
         EndType( FALSE );

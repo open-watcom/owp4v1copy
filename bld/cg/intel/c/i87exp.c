@@ -54,7 +54,7 @@ extern  int             Max87Stk;
 extern  bool            Used87;
 extern  byte            OptForSize;
 
-extern  void            Opt8087();
+extern  void            Opt8087( void );
 extern  bool            DoesSomething(instruction*);
 extern  int             NumOperands(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
@@ -73,9 +73,20 @@ extern  void            AllocALocal(name*);
 extern  void            RevCond(instruction*);
 extern  void            MoveSegRes(instruction*,instruction*);
 extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  hw_reg_set      *IdxRegs();
-extern  void            FPCalcMax();
-extern  void            InitFPStkReq();
+extern  hw_reg_set      *IdxRegs( void );
+extern  void            FPCalcMax( void );
+extern  void            InitFPStkReq( void );
+
+/* forward declarations */
+extern  void            ExpCompare ( instruction *ins,
+                                     operand_type op1, operand_type op2 );
+static  void            ExpBinary( instruction *ins,
+                                   operand_type op1, operand_type op2 ); 
+static  void            ExpBinFunc( instruction *ins,
+                                    operand_type op1, operand_type op2 ); 
+extern  int             FPRegNum( name *reg_name );
+static  void            RevOtherCond( block *blk, instruction *ins );
+
 
 extern  opcode_entry    DoNop[];
 extern  type_length     TypeClassSize[];
@@ -213,7 +224,7 @@ extern  instruction     *PrefFLDOp( instruction *ins,
                                     operand_types op, name *opnd ) {
 /*****************************************************************/
 
-    instruction *new_ins;
+    instruction *new_ins = NULL;
 
     switch( op ) {
     case OP_STK0:
@@ -559,6 +570,8 @@ static  instruction     *ExpandFPIns( instruction *ins, operand_type op1,
             case RES_NONE:
                 ExpCompare( ins, op1, op2 );
                 break;
+            default:
+                break;
             }
             break;
         }
@@ -613,6 +626,8 @@ static  instruction     *ExpandFPIns( instruction *ins, operand_type op1,
                 ins = ExpMove( ins, op1, res );
             }
             break;
+        default:
+            break;
         }
     }
     return( ins );
@@ -631,7 +646,7 @@ static  instruction     *DoExpand( instruction *ins ) {
     int                 i;
     int                 reg_num;
     operand_type        op1_type;
-    operand_type        op2_type;
+    operand_type        op2_type = OP_NONE;
     result_type         res_type;
 
     i = NumOperands( ins );
@@ -667,7 +682,7 @@ static  instruction     *DoExpand( instruction *ins ) {
     return( ExpandFPIns( ins, op1_type, op2_type, res_type ) );
 }
 
-static  void    Expand() {
+static  void    Expand( void ) {
 /************************
     Run through the instruction stream expanding each
     instruction.  All 8087 instructions will have
@@ -877,7 +892,7 @@ static  void    RevOtherCond( block *blk, instruction *ins ) {
         }
         if( ( ins->u.gen_table->op_type & MASK_CC ) != PRESERVE ) break;
         if( _OpIsCondition( ins->head.opcode )
-          && ins->table == &DoNop ) { /* used cond codes of original ins */
+          && ins->table == DoNop ) { /* used cond codes of original ins */
             RevCond( ins );
             ins->table = &FNOP;
             ins->u.gen_table = &FNOP;
@@ -1086,7 +1101,7 @@ extern  void    NoMemBin( instruction *ins ) {
 }
 
 
-extern  instruction     *MakeWait() {
+extern  instruction     *MakeWait( void ) {
 /************************************
     Create an "instruction" that will generate an FWAIT.
 */
@@ -1098,7 +1113,7 @@ extern  instruction     *MakeWait() {
     return( new_ins );
 }
 
-extern  void    InitFP() {
+extern  void    InitFP( void ) {
 /*************************
     Initialize.
 */
@@ -1110,7 +1125,7 @@ extern  void    InitFP() {
     InitFPStkReq();
 }
 
-extern  void    FPExpand() {
+extern  void    FPExpand( void ) {
 /**************************
     Expand the 8087 instructions.  The instructions so far
     have been assigned registers, with ST(1) ..  ST(Max87Stk) being the

@@ -58,20 +58,20 @@ extern  int     MulCost( unsigned_32 num )
     return( cost );
 }
 
-extern  int     AddCost()
+extern  int     AddCost( void )
 /***********************/
 {
     if( !_CPULevel( CPU_486 ) ) return( 2 );
     return( 1 );
 }
 
-extern  int     SubCost()
+extern  int     SubCost( void )
 /***********************/
 {
     return( AddCost() );
 }
 
-extern  int     ShiftCost()
+extern  int     ShiftCost( void )
 /*************************/
 {
     if( _CPULevel( CPU_586 ) ) return( 1 );

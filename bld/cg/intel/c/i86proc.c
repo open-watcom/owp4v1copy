@@ -45,16 +45,16 @@
 
 extern  void        OutDLLExport(uint,sym_handle);
 extern  void        GenLeaSP(long);
-extern  void        Gcld();
+extern  void        Gcld( void );
 extern  void        GenReturn(int,bool,bool);
-extern  void        GenLeave();
-extern  void        GenWindowsProlog();
-extern  void        GenCypWindowsProlog();
-extern  void        GenWindowsEpilog();
-extern  void        GenCypWindowsEpilog();
-extern  void        EmitRtnEnd();
-extern  abspatch_handle *NextFramePatch();
-extern  void        EmitEpiBeg();
+extern  void        GenLeave( void );
+extern  void        GenWindowsProlog( void );
+extern  void        GenCypWindowsProlog( void );
+extern  void        GenWindowsEpilog( void );
+extern  void        GenCypWindowsEpilog( void );
+extern  void        EmitRtnEnd( void );
+extern  abspatch_handle *NextFramePatch( void );
+extern  void        EmitEpiBeg( void );
 extern  void        PatchBigLabels(offset);
 extern  void        GenEnter(int,int);
 extern  void        GenUnkEnter(pointer,int);
@@ -66,11 +66,11 @@ extern  bool        DoesSomething(instruction*);
 extern  void        GenRegAdd(hw_reg_set,type_length);
 extern  void        GenRegMove(hw_reg_set,hw_reg_set);
 extern  void        GenPushOffset(byte);
-extern  void        EmitProEnd();
+extern  void        EmitProEnd( void );
 extern  void        DbgRetOffset(type_length);
-extern  void        RelocParms();
-extern  type_length AdjustBase();
-extern  hw_reg_set  SaveRegs();
+extern  void        RelocParms( void );
+extern  type_length AdjustBase( void );
+extern  hw_reg_set  SaveRegs( void );
 extern  void        DoCall(label_handle,bool,bool,oc_class);
 extern  label_handle    RTLabel(int);
 extern  void        GenUnkPush(pointer);
@@ -79,12 +79,12 @@ extern  void        GenUnkMov(hw_reg_set,pointer);
 extern  void        QuickSave(hw_reg_set,opcode_defs);
 extern  sym_handle  AskForLblSym(label_handle);
 extern  void        CodeLabel(label_handle,unsigned);
-extern  void        EmitRtnBeg();
+extern  void        EmitRtnBeg( void );
 extern  void        CodeLineNum( cg_linenum,bool);
 extern  seg_id      SetOP(seg_id);
-extern  seg_id      AskCodeSeg();
-extern  void        Gpusha();
-extern  void        Gpopa();
+extern  seg_id      AskCodeSeg( void );
+extern  void        Gpusha( void );
+extern  void        Gpopa( void );
 extern  void        AbsPatch(abspatch_handle,offset);
 extern  label_handle    AskForSymLabel(pointer ,cg_class );
 extern  bool        AskIfRTLabel(label_handle);
@@ -104,6 +104,16 @@ extern  void        GenP5ProfilingEpilog( label_handle );
 extern  bool        SymIsExported( sym_handle );
 extern  void        FlowSave( hw_reg_set * );
 extern  void        FlowRestore( hw_reg_set * );
+
+/* forward declarations */
+static  void        MoveParms( void );
+static  int         PushAll( void );
+static  void        CalcUsedRegs( void );
+static  void        Enter( void );
+static  void        AllocStack( void );
+static  int         Push( hw_reg_set to_push );
+static  void        DoEnter( int level );
+static  void        DoEpilog( void );
 
 extern  block       *HeadBlock;
 extern  proc_def    *CurrProc;
@@ -136,7 +146,7 @@ extern  pointer     Parm8087[ MAX_8087_REG+1 ];
 
 type_length StackDepth;
 
-extern hw_reg_set   PushRegs[] = {
+hw_reg_set   PushRegs[] = {
 #if _TARGET & _TARG_80386
 #define ALL_REG_SIZE 12*WORD_SIZE
 #define HW_STACK_CHECK HW_EAX
@@ -170,14 +180,14 @@ extern hw_reg_set   PushRegs[] = {
     HW_D( HW_EMPTY )
 };
 
-extern  bool    CanZapBP() {
+extern  bool    CanZapBP( void ) {
 /**************************/
 
     return( !CHAIN_FRAME );
 }
 
 
-static  bool    ScanInstructions()
+static  bool    ScanInstructions( void )
 /**********************************/
 {
     block       *blk;
@@ -244,7 +254,7 @@ static  void    ChkFDOp( name *op, int depth ) {
 
 
 #if _TARGET & _TARG_80386
-static  void    ScanForFDOps()
+static  void    ScanForFDOps( void )
 /****************************/
 {
     block       *blk;
@@ -293,7 +303,7 @@ static  block   *ScanForLabelReturn( block *blk ) {
         son = blk->edge[i].destination;
         if( son->edge[0].flags & DOWN_ONE_CALL )
             continue;
-        if( SafeRecurse( ScanForLabelReturn, son ) == NULL )
+        if( SafeRecurse( (void *(*)(void *))ScanForLabelReturn, son ) == NULL )
             return( NULL );
     }
     return( blk );
@@ -302,7 +312,7 @@ static  block   *ScanForLabelReturn( block *blk ) {
 
 
 #if _TARGET & _TARG_80386
-static  bool    ScanLabelCalls() {
+static  bool    ScanLabelCalls( void ) {
 /*********************************
 
     Make sure that all blocks that are called are only called
@@ -325,7 +335,7 @@ static  bool    ScanLabelCalls() {
 #endif
 
 
-extern  void    AddCacheRegs() {
+extern  void    AddCacheRegs( void ) {
 /******************************/
 
     #if _TARGET & _TARG_80386
@@ -367,7 +377,7 @@ extern  void    AddCacheRegs() {
 }
 
 
-static  void    AdjustPushLocals() {
+static  void    AdjustPushLocals( void ) {
 /**********************************/
 
     instruction *ins;
@@ -385,7 +395,7 @@ static  void    AdjustPushLocals() {
     }
 }
 
-static  bool    NeedBPProlog() {
+static  bool    NeedBPProlog( void ) {
 /******************************/
 
     if( CurrProc->parms.size != 0 )
@@ -410,7 +420,7 @@ static  bool    NeedBPProlog() {
 }
 
 
-static void FindIfExported() {
+static void FindIfExported( void ) {
 /****************************/
 
     sym_handle  sym;
@@ -431,14 +441,14 @@ extern void RTCall( rt_class rtn, oc_class pop_bit ) {
 }
 
 
-static  bool    NeedStackCheck()
+static  bool    NeedStackCheck( void )
 /******************************/
 {
     return( FEStackChk( AskForLblSym( CurrProc->label ) ) );
 }
 
 
-static void DoStackCheck() {
+static void DoStackCheck( void ) {
 /**************************/
 
     if( CurrProc->prolog_state & GENERATE_THUNK_PROLOG )
@@ -470,7 +480,7 @@ static void DoStackCheck() {
 }
 
 
-static  void    EmitNameInCode() {
+static  void    EmitNameInCode( void ) {
 /********************************/
 
     sym_handle      sym;
@@ -494,7 +504,7 @@ static  void    EmitNameInCode() {
 }
 
 
-static  int ProEpiDataSize()
+static  int ProEpiDataSize( void )
 /***************************
 */
 {
@@ -504,7 +514,7 @@ static  int ProEpiDataSize()
 }
 
 
-static  void    PrologHook()
+static  void    PrologHook( void )
 /***************************
 */
 {
@@ -526,7 +536,7 @@ static  void    PrologHook()
 }
 
 
-static  void    EpilogHook()
+static  void    EpilogHook( void )
 /***************************
 */
 {
@@ -541,7 +551,7 @@ static  void    EpilogHook()
 }
 
 
-static  void    DoLoadDS()
+static  void    DoLoadDS( void )
 {
     #if _TARGET & _TARG_80386
     if( _IsntTargetModel( LOAD_DS_DIRECTLY ) ) {
@@ -560,7 +570,7 @@ static  void    DoLoadDS()
 }
 
 
-static  int LoadDS()
+static  int LoadDS( void )
 /**********************/
 {
     int     size;
@@ -577,7 +587,7 @@ static  int LoadDS()
 }
 
 
-static  void    UnloadDS() {
+static  void    UnloadDS( void ) {
 /**************************/
 
     if( CurrProc->state.attr & ROUTINE_LOADS_DS ) {
@@ -587,7 +597,7 @@ static  void    UnloadDS() {
     }
 }
 
-extern  void    GenProlog() {
+extern  void    GenProlog( void ) {
 /***************************/
 
     seg_id  old;
@@ -749,7 +759,7 @@ extern  void    GenProlog() {
 }
 
 
-static  void    MoveParms() {
+static  void    MoveParms( void ) {
 /***************************/
 
     int     i;
@@ -817,6 +827,8 @@ extern  void        AdjustStackDepth( instruction *ins ) {
                StackDepth -= op->c.int_value;
             }
         }
+    default:
+        break;
     }
 }
 
@@ -843,7 +855,7 @@ extern  type_length NewBase( name *op ) {
 }
 
 
-static  int PushAll() {
+static  int PushAll( void ) {
 /*************************/
 
     if( _CPULevel( CPU_186 ) ) {
@@ -875,7 +887,7 @@ static  int PushAll() {
 }
 
 
-static  void    PopAll() {
+static  void    PopAll( void ) {
 /************************/
 
     if( CurrProc->locals.size != 0 ) {
@@ -905,7 +917,7 @@ static  void    PopAll() {
 }
 
 
-static  void    Enter() {
+static  void    Enter( void ) {
 /***********************/
 
     int     lex_level;
@@ -946,7 +958,7 @@ static  void    Enter() {
 }
 
 
-static  void    CalcUsedRegs() {
+static  void    CalcUsedRegs( void ) {
 /******************************/
 
     block   *blk;
@@ -991,7 +1003,7 @@ static  int Push( hw_reg_set to_push ) {
     if( _IsntModel( NO_OPTIMIZATION ) && CurrProc->targ.sp_frame && !CurrProc->targ.sp_align ) {
         FlowSave( &to_push );
     }
-    curr_push = &PushRegs;
+    curr_push = PushRegs;
     while( !HW_CEqual( to_push, HW_EMPTY ) ) {
         if( HW_Ovlap( *curr_push, to_push ) ) {
             QuickSave( *curr_push, OP_PUSH );
@@ -1012,7 +1024,7 @@ static  void        Pop( hw_reg_set to_pop ) {
     if( _IsntModel( NO_OPTIMIZATION ) && CurrProc->targ.sp_frame && !CurrProc->targ.sp_align ) {
         FlowRestore( &to_pop );
     }
-    curr_pop = &PushRegs;
+    curr_pop = PushRegs;
     while( !HW_CEqual( *curr_pop, HW_EMPTY ) ) {
         ++ curr_pop;
     }
@@ -1034,7 +1046,7 @@ extern  type_length PushSize( type_length len ) {
 }
 
 
-static  void    AllocStack() {
+static  void    AllocStack( void ) {
 /****************************/
 
     type_length     size;
@@ -1093,7 +1105,7 @@ static  void    DoEnter( int level ) {
 }
 
 
-extern  void    GenEpilog() {
+extern  void    GenEpilog( void ) {
 /***************************/
 
     type_length stack;
@@ -1136,7 +1148,7 @@ extern  void    GenEpilog() {
 }
 
 
-static  void    DoEpilog() {
+static  void    DoEpilog( void ) {
 /**************************/
 
     hw_reg_set  to_pop;

@@ -195,6 +195,8 @@ extern  instruction             *rSPLIT8CMP( instruction * );
 extern  instruction             *rMOVE8LOW( instruction * );
 extern  instruction             *rCMPCP( instruction * );
 
+/* forward declaration */
+extern  void                    CnvOpToInt( instruction * ins, int op );
 
 extern  opcode_entry    String[];
 extern  opcode_entry    Move2[];
@@ -203,7 +205,7 @@ extern  type_class_def  DoubleClass[];
 extern  bool            OptForSize;
 
 
-extern instruction *(*ReduceTab[])() = {
+instruction *(*ReduceTab[])( instruction * ) = {
 /**************************************/
 
 #undef _R_
@@ -318,7 +320,7 @@ extern instruction      *rMULREGISTER( instruction *ins ) {
     ins2 = MakeUnary( OP_MOV, name1, ins->result, ins->type_class );
     ins2->base_type_class = DoubleClass[  ins->type_class  ];
     ins->result = name2;
-    ins->zap = AllocRegName( ZapReg( ins ) );
+    ins->zap = &AllocRegName( ZapReg( ins ) )->r;
     MoveSegRes( ins, ins2 );
     SuffixIns( ins, ins2 );
     return( new_ins );
@@ -343,7 +345,7 @@ extern instruction      *rDIVREGISTER( instruction *ins ) {
     name2 = AllocRegName( ResultReg( ins ) );
     ins2 = MakeMove( name2, ins->result, ins->type_class );
     ins->result = name2;
-    ins->zap = AllocRegName( ZapReg( ins ) );
+    ins->zap = &AllocRegName( ZapReg( ins ) )->r;
     MoveSegRes( ins, ins2 );
     SuffixIns( ins, ins2 );
     return( new_ins );
@@ -433,7 +435,7 @@ bool UseRepForm( unsigned size )
 */
 {
     unsigned    count;
-    unsigned    extra;
+    unsigned    extra = 0;
     unsigned    rep_startup;
     unsigned    rep_iter;
     unsigned    movs_cost;
@@ -620,7 +622,7 @@ static  instruction     *LoadStringOps( instruction *ins,
     HW_CTurnOff( new_op1, HW_SP );
     HW_CTurnOff( new_op1, HW_ES );
     HW_CTurnOff( new_op1, HW_DS );
-    ins->zap = AllocRegName( new_op1 );
+    ins->zap = &AllocRegName( new_op1 )->r;
     if( ins->head.opcode == OP_MOV ) {
         ins->result = FakeIndex( ins->result, ES_DI );
     } else {
@@ -854,9 +856,9 @@ extern  void    CheckCC( instruction *ins, instruction *new_ins ) {
 
     if( ins->head.opcode == OP_EXT_ADD || ins->head.opcode == OP_EXT_SUB ) {
     #if _TARGET & _TARG_80386
-        new_ins->table = &Move4; /* ensure it doesn't set the condition codes */
+        new_ins->table = Move4; /* ensure it doesn't set the condition codes */
     #else
-        new_ins->table = &Move2; /* ensure it doesn't set the condition codes */
+        new_ins->table = Move2; /* ensure it doesn't set the condition codes */
     #endif
         new_ins->ins_flags |= INS_CC_USED;
     }
@@ -870,9 +872,9 @@ static  instruction     *SplitPush( instruction *ins, type_length size ) {
     instruction         *new_ins;
     instruction         *first_ins;
     name                *op;
-    name                *new_op;
+    name                *new_op = NULL;
 
-    size = size + (WORD_SIZE-1) &~(WORD_SIZE-1);
+    size = (size + (WORD_SIZE-1)) &~(WORD_SIZE-1);
     op = ins->operands[ 0 ];
     first_ins = NULL;
     for( ;; ) {
@@ -963,7 +965,7 @@ extern  name    *OpAdjusted( name *op, int bias, type_class_def type ) {
     amount specified by 'bias'.
 
 */
-    name        *new_op;
+    name        *new_op = NULL;
 
     switch( op->n.class ) {
     case N_MEMORY:
@@ -1040,6 +1042,8 @@ extern  void            CnvOpToInt( instruction * ins, int op ) {
         }
         break;
 #endif
+    default:
+        break;
     }
 }
 

@@ -48,7 +48,7 @@
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  label_handle    AskForNewLabel(void);
-extern  memory_name     *SAllocMemory(pointer,type_length,cg_class,type_class_def,type_length);
+extern  name            *SAllocMemory(pointer,type_length,cg_class,type_class_def,type_length);
 extern  name            *AddrConst(name*,segment_id,constant_class);
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *AllocTemp(type_class_def);
@@ -81,7 +81,7 @@ extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def
 extern  void            ReverseParmNodeList(pn *);
 extern  name            *STempOffset(name*,type_length,type_class_def,type_length);
 extern  void            SuffixIns( instruction *, instruction * );
-extern  temp_name       *BGNewTemp( type_def *tipe );
+extern  name            *BGNewTemp( type_def *tipe );
 extern  void            BGDone( an );
 
 
@@ -95,6 +95,8 @@ extern  block           *CurrBlock;
 
 
 extern  type_length     TypeClassSize[];
+
+static  void    AddCall( instruction *ins, cn call );
 
 #if _TARGET & _TARG_80386
 static  void    Far16Parms( cn call ) {
@@ -117,7 +119,7 @@ static  void    Far16Parms( cn call ) {
     parm_size = 0;
     state = call->state;
     for( parm = call->parms; parm != NULL; parm = parm->next ) {
-        parm_size += ( parm->name->tipe->length ) + 1 & ~1;
+        parm_size += (( parm->name->tipe->length ) + 1) & ~1;
     }
     parmlist = SAllocTemp( XX, parm_size );
     parmlist->v.usage |= NEEDS_MEMORY+USE_IN_ANOTHER_BLOCK+USE_ADDRESS;
@@ -126,7 +128,7 @@ static  void    Far16Parms( cn call ) {
         parm->name->u.ins->result = STempOffset( parmlist, offset,
                                                  TypeClass( parm->name->tipe ),
                                                  parm->name->tipe->length );
-        offset += ( parm->name->tipe->length ) + 1 & ~1;
+        offset += (( parm->name->tipe->length ) + 1) & ~1;
     }
     for( parm = call->parms; parm != NULL; parm = next ) {
         parm->name->format = NF_ADDR;
@@ -166,7 +168,7 @@ static  void    Far16Parms( cn call ) {
     call_ins->flags.call_flags |= CALL_FAR16 | CALL_POPS_PARMS;
     call_ins->operands[CALL_OP_USED] = AllocRegName( state->parm.used );
     call_ins->operands[CALL_OP_POPS] = AllocS32Const( 0 );
-    call_ins->zap = call_ins->operands[CALL_OP_USED];
+    call_ins->zap = &call_ins->operands[CALL_OP_USED]->r;
 }
 #endif
 
@@ -176,11 +178,11 @@ extern  an      BGCall( cn call, bool use_return, bool in_line ) {
 
     instruction         *call_ins;
     call_state          *state;
-    name                *ret_ptr;
+    name                *ret_ptr = NULL;
     name                *result;
     name                *temp;
     name                *reg_name;
-    instruction         *ret_ins;
+    instruction         *ret_ins = NULL;
     hw_reg_set          return_reg;
     hw_reg_set          zap_reg;
 
@@ -414,7 +416,7 @@ extern  reg_set_index   CallIPossible( instruction *ins ) {
 }
 
 
-extern  void    InitTargProc() {
+extern  void    InitTargProc( void ) {
 /******************************/
 
     CurrProc->targ.stack_check = NULL;
@@ -429,14 +431,14 @@ extern  void    InitTargProc() {
 }
 
 
-extern  void    SaveToTargProc() {
+extern  void    SaveToTargProc( void ) {
 /********************************/
 
     CurrProc->targ.max_stack = MaxStack;
 }
 
 
-extern  void    RestoreFromTargProc() {
+extern  void    RestoreFromTargProc( void ) {
 /*************************************/
 
     MaxStack = CurrProc->targ.max_stack;

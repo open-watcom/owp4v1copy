@@ -51,9 +51,8 @@
 #include "encode.h"
 #include "feprotos.h"
 
-extern  pointer         Copy(pointer,pointer,uint);
 extern  hw_reg_set      Low32Reg(hw_reg_set);
-extern  void            EjectInst();
+extern  void            EjectInst( void );
 extern  void            LayRegAC(hw_reg_set);
 extern  hw_reg_set      High32Reg(hw_reg_set);
 extern  void            LayOpbyte(opcode);
@@ -62,13 +61,13 @@ extern  void            TellScrapLabel(label_handle);
 extern  offset          AskAddress(label_handle);
 extern  label_handle    AskForSymLabel(pointer,cg_class);
 extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskCodeSeg( void );
 extern  void            LayRegRM(hw_reg_set);
 extern  void            LayRMRegOp(name*);
 extern  void            LayModRM(name*);
 extern  void            LayOpword(opcode);
 extern  void            ReFormat(oc_class);
-extern  void            Finalize();
+extern  void            Finalize( void );
 extern  pointer         FindAuxInfo(name*,aux_class);
 extern  void            InputOC(any_oc*);
 extern  void            AddByte(byte);
@@ -81,11 +80,16 @@ extern  name            *DeAlias(name*);
 extern  name            *AllocUserTemp(pointer,type_class_def);
 extern  type_length     NewBase(name*);
 extern  void            EmitOffset(offset);
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskCodeSeg( void );
 extern  sym_handle      AskForLblSym(label_handle);
 extern  bool            AskIfRTLabel(label_handle);
 extern  byte            *Copy(void*,void*,uint);
 
+extern  void            CodeBytes( byte *src, byte_seq_len len );
+extern  void            GenReturn( int pop, bool is_long, bool iret );
+
+static  void            JumpReg( instruction *ins, name *reg_name );
+static  void            Pushf(void);
 
 extern  int             ILen;
 extern  fp_patches      FPPatchType;
@@ -257,10 +261,10 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
     bool        first;
     byte        *endp;
     byte        *startp;
-    char        type;
-    sym_handle  sym;
-    offset      off;
-    fe_attr     attr;
+    byte        type;
+    sym_handle  sym = 0;
+    offset      off = 0;
+    fe_attr     attr = 0;
     name        *temp;
 
     endp = p + len;
@@ -465,7 +469,7 @@ extern  void    GenRCall( instruction *ins ) {
 }
 
 
-static  void    Pushf() {
+static  void    Pushf( void ) {
 /***********************/
 
     LayOpbyte( 0x9c ); /* PUSHF*/
@@ -486,7 +490,7 @@ extern  void    GenSelEntry( bool starts ) {
     temp.op.reclen = sizeof( oc_select );
     temp.op.objlen = 0;
     temp.starts = starts;
-    InputOC( &temp );
+    InputOC( (any_oc *)&temp );
 }
 
 
@@ -545,7 +549,7 @@ extern  void    GenCallLabel( pointer label ) {
 }
 
 
-extern  void    GenLabelReturn() {
+extern  void    GenLabelReturn( void ) {
 /*********************************
     generate a return from CALL_LABEL instruction (near return)
 */
@@ -574,7 +578,7 @@ extern  void    GenReturn( int pop, bool is_long, bool iret ) {
     if( iret ) {
         oc.op.class |= ATTR_IRET;
     }
-    InputOC( &oc );
+    InputOC( (any_oc *)&oc );
 }
 
 extern  void    GenMJmp( instruction *ins ) {
@@ -656,14 +660,14 @@ static  void    DoCodeBytes( byte *src, byte_seq_len len, oc_class class ) {
         temp->objlen = MAX_OBJ_LEN;
         temp->reclen = sizeof( oc_header  )+ MAX_OBJ_LEN;
         Copy( src, &temp->data[ 0 ], MAX_OBJ_LEN );
-        InputOC( temp );
+        InputOC( (any_oc *)temp );
         src += MAX_OBJ_LEN;
         len -= MAX_OBJ_LEN;
     }
     temp->objlen = len;
     temp->reclen = sizeof( oc_header ) + len;
     Copy( src, &temp->data[ 0 ], len );
-    InputOC( temp );
+    InputOC( (any_oc *)temp );
     _Free( temp, sizeof( oc_header ) + MAX_OBJ_LEN );
 }
 

@@ -69,7 +69,7 @@ extern  void            GenRJmp(instruction*);
 extern  void            GenICall(instruction*);
 extern  void            GenRCall(instruction*);
 extern  void            GenCall(instruction*);
-extern  abspatch_handle *NextFramePatch();
+extern  abspatch_handle *NextFramePatch( void );
 extern  bool            AskIsFrameIndex(name*);
 extern  void            GenCondJump(instruction*);
 extern  int             NumOperands(instruction*);
@@ -98,11 +98,11 @@ extern  hw_reg_set      FullReg(hw_reg_set);
 extern  bool            BaseIsSP(name*);
 extern  type_length     TmpLoc(name*,name*);
 extern  name            *DeAlias(name*);
-extern  seg_id          AskBackSeg();
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskBackSeg( void );
+extern  seg_id          AskCodeSeg( void );
 extern  void            DoLblRef(label_handle,seg_id,offset,byte);
 extern  void            AddWData(signed_32,type_class_def );
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel( void );
 extern  name            *LowPart(name *,type_class_def);
 extern  name            *HighPart(name *,type_class_def);
 extern  void            CodeLabel(label_handle, unsigned);
@@ -111,8 +111,37 @@ extern  void            DoFESymRef(sym_handle,cg_class,offset,int);
 extern  void            GenJumpLabel( label_handle );
 extern  void            GenKillLabel( label_handle );
 extern  segment_id      GenP5ProfileData( char *fe_name, label_handle *data, label_handle *stack );
-extern  void            EndBlockProfiling();
+extern  void            EndBlockProfiling( void );
+extern  void            LayOpbyte( opcode op );
+extern  void            LayOpword( opcode op );
+extern  void            LayW( type_class_def class );
+extern  void            GenSeg( hw_reg_set regs );
+extern  void            GenLoadDS(void);
+extern  void            LayRMRegOp( name *r );
+extern  void            AddWCons( name *op, type_class_def kind );
+extern  void            LayReg( hw_reg_set r );
+extern  void            GCondFwait(void);
+extern  void            GFldz(void);
+extern  void            AddSData( signed_32 value, type_class_def kind );
+extern  void            GFwait(void);
+extern  void            GCondFwait(void);
+extern  void            GFldM( pointer what );
 
+static  void            AddSWCons( opcode_defs op, name *opnd, type_class_def class );
+static  void            TransferIns(void);
+static  void            LayST( name *op );
+static  void            LayMF( name *op );
+static  void            AddSCons( name *op, type_class_def kind );
+static  void            LayACRegOp( name *r );
+static  void            LayRegOp( name *r );
+static  void            LaySROp( name *r );
+static  void            SetCC(void);
+static  void            CallMathFunc( instruction *ins );
+static  void            MathFunc( instruction *ins );
+static  void            PopSeg( hw_reg_set reg );
+static  void            PushSeg( hw_reg_set reg );
+static  void            GFld1(void);
+static  int             FPRegTrans( hw_reg_set reg );
 
 
 extern    pccode_def            PCCodeTable[];
@@ -152,7 +181,7 @@ static  fp_patches SegPatchTab[] = {
         FPP_SS,         FPP_DS,
         FPP_FS,         FPP_GS };
 
-extern  hw_reg_set FPRegs[] = {
+        hw_reg_set FPRegs[] = {
         HW_D( HW_ST0 ),
         HW_D( HW_ST1 ),
         HW_D( HW_ST2 ),
@@ -270,8 +299,8 @@ extern  void    EmitOffset( offset i ) {
     ICur += sizeof( offset );
 }
 
-extern  void    EjectInst() {
-/****************************
+extern  void    EjectInst( void ) {
+/**********************************
     Dump the current instruction into the peephole optimizer
 */
 
@@ -281,8 +310,8 @@ extern  void    EjectInst() {
     IEsc = 0;
 }
 
-static  void    TransferIns() {
-/******************************
+static  void    TransferIns( void ) {
+/************************************
     Transfer an instruction from Inst[] to Temp
 */
 
@@ -303,8 +332,8 @@ static  void    TransferIns() {
     Temp.oc.objlen += ILen;
 }
 
-extern  void    Finalize() {
-/***************************
+extern  void    Finalize( void ) {
+/*********************************
     Invoked by macro _Emit. Spits Temp into the peephole optimizer
 */
 
@@ -314,7 +343,7 @@ extern  void    Finalize() {
         FPPatchType = FPP_NONE;
     }
     if( Temp.oc.objlen != 0 ) {
-        InputOC( &Temp.oc );
+        InputOC( (any_oc *)&Temp.oc );
     }
 }
 
@@ -329,7 +358,7 @@ static  void    LayInitial( instruction *ins, gentype gen ) {
     int         index;
     pccode_def  *table;
 
-    table = &PCCodeTable;
+    table = PCCodeTable;
     for(;;) {
         if( gen < table->low_gen ) break;
         if( table->width == 0 ) return;
@@ -430,6 +459,8 @@ static  bool    NeedOpndSize( instruction *ins ) {
     case OP_DIV:
     case OP_RSHIFT:
         return( TRUE );
+    default:
+        break;
     }
     if( _OpIsCondition( ins->head.opcode ) ) return( TRUE );
     if( ins->ins_flags & INS_CC_USED ) return( TRUE );
@@ -498,6 +529,8 @@ static  bool    LayOpndSize( instruction *ins, gentype gen ) {
         case G_POW2DIV:
         case G_DIV2:
             return( FALSE );
+        default:
+            break;
         }
         if( _IsTargetModel( USE_32 ) ) {
             if( ins->type_class == U2 || ins->type_class == I2 ) {
@@ -562,7 +595,7 @@ static  void    DoP5RegisterDivide( instruction *ins ) {
     temp.op.reclen = sizeof( oc_jcond );
     temp.cond = 4;
     temp.handle = lbl;
-    InputOC( &temp );
+    InputOC( (any_oc *)&temp );
     i = FPRegTrans( ins->operands[ 0 ]->r.reg );
     reverse = FALSE;
     pop = FALSE;
@@ -652,7 +685,7 @@ static  void    DoP5MemoryDivide( instruction *ins ) {
     temp.op.reclen = sizeof( oc_jcond );
     temp.cond = 4;
     temp.handle = lbl;
-    InputOC( &temp );
+    InputOC( (any_oc *)&temp );
 
     seg = NULL;
     if( ins->num_operands > NumOperands( ins ) ) {
@@ -822,8 +855,8 @@ extern  void    GenObjCode( instruction *ins ) {
 
     gentype     gen;
     name        *result;
-    name        *left;
-    name        *right;
+    name        *left = NULL;
+    name        *right = NULL;
     int         i;
     bool        opnd_size;
 
@@ -1126,7 +1159,7 @@ extern  void    GenObjCode( instruction *ins ) {
                 GenP5ProfileData( "", &junk, &CurrProc->targ.routine_profile_data );
                 c[0] = PROFILE_FLAG_END_GROUP;
                 c[1] = 0;
-                GenP5ProfileData( &c, &junk, &CurrProc->targ.routine_profile_data );
+                GenP5ProfileData( c, &junk, &CurrProc->targ.routine_profile_data );
                 _Code;
                 LayOpword( 0xc5f7 ); // test ebp, offset L1
                 ILen += WORD_SIZE;
@@ -1161,6 +1194,8 @@ extern  void    GenObjCode( instruction *ins ) {
                         if( _IsTargetModel( USE_32 ) ) AddToTemp( M_OPND_SIZE );
                         AddToTemp( M_CBW );
                         break;
+                    default:
+                        break;
                     }
                     if( HW_CEqual( ins->result->r.reg, HW_DX_AX ) ) {
                         LayOpbyte( M_CWD );
@@ -1179,6 +1214,8 @@ extern  void    GenObjCode( instruction *ins ) {
             case I2:
                 LayOpbyte( M_CBW );
                 if( _IsTargetModel( USE_32 ) ) AddToTemp( M_OPND_SIZE );
+                break;
+            default:
                 break;
             }
             break;
@@ -1308,6 +1345,8 @@ extern  void    GenObjCode( instruction *ins ) {
                 case I4:
                     if( _IsntTargetModel( USE_32 ) ) AddToTemp( M_OPND_SIZE );
                     break;
+                default:
+                    break;
                 }
             }
             LayModRM( left );
@@ -1329,8 +1368,8 @@ extern  void    GenObjCode( instruction *ins ) {
 }
 
 
-static  void    SetCC() {
-/************************
+static  void    SetCC(void) {
+/******************************
     Generate code to set the condition codes based on an 8087 FCMP instruction
 */
 
@@ -1405,6 +1444,8 @@ extern  void    LayW( type_class_def class ) {
     switch( class ) {
     case U2: case I2: case U4: case I4: case FS:
         Inst[ KEY ] |= B_KEY_W;       /* turn on the W bit*/
+        break;
+    default:
         break;
     }
 }
@@ -1889,8 +1930,8 @@ extern  void    GFxch( int i ) {
 }
 
 
-extern  void    GFldz() {
-/************************
+extern  void    GFldz( void ) {
+/******************************
     FLDZ
 */
 
@@ -1900,8 +1941,8 @@ extern  void    GFldz() {
 }
 
 
-static  void    GFld1() {
-/************************
+static  void    GFld1( void ) {
+/******************************
     FLD1
 */
 
@@ -1923,8 +1964,8 @@ extern  void    GFld( int i ) {
 }
 
 
-extern  void    GCondFwait() {
-/*****************************
+extern  void    GCondFwait( void ) {
+/***********************************
     FWAIT, but only if we need one
 */
 
@@ -1942,8 +1983,8 @@ extern  void    GCondFwait() {
 }
 
 
-extern  void    GFwait() {
-/*************************
+extern  void    GFwait( void ) {
+/*******************************
     FWAIT
 */
 
@@ -1959,8 +2000,8 @@ extern  void    GFwait() {
    _Emit;
 }
 
-extern  void    Gpusha() {
-/*************************
+extern  void    Gpusha( void ) {
+/*******************************
     PUSHA{d}
 */
 
@@ -1969,8 +2010,8 @@ extern  void    Gpusha() {
    _Emit;
 }
 
-extern  void    Gpopa() {
-/************************
+extern  void    Gpopa( void ) {
+/******************************
     POPA{d}
 */
 
@@ -1979,8 +2020,8 @@ extern  void    Gpopa() {
    _Emit;
 }
 
-extern  void    Gcld() {
-/***********************
+extern  void    Gcld( void ) {
+/*****************************
     CLD
 */
 
@@ -1989,8 +2030,8 @@ extern  void    Gcld() {
    _Emit;
 }
 
-extern  void    GenLeave() {
-/***************************
+extern  void    GenLeave( void ) {
+/*********************************
     LEAVE
 */
 
@@ -2120,8 +2161,8 @@ extern  void    GenUnkEnter( pointer value, int level ) {
     _Emit;
 }
 
-extern  void    GenWindowsProlog() {
-/**********************************/
+extern  void    GenWindowsProlog( void ) {
+/****************************************/
 
     _Code;
     if( _IsTargetModel( SMART_WINDOWS ) ) {
@@ -2141,8 +2182,8 @@ extern  void    GenWindowsProlog() {
     _Emit;
 }
 
-extern  void    GenCypWindowsProlog() {
-/**************************************
+extern  void    GenCypWindowsProlog( void ) {
+/********************************************
     Generate a "cheap" windows prolog
 */
 
@@ -2155,8 +2196,8 @@ extern  void    GenCypWindowsProlog() {
     _Emit;
 }
 
-extern  void    GenWindowsEpilog() {
-/**********************************/
+extern  void    GenWindowsEpilog( void ) {
+/****************************************/
 
     _Code;
     LayOpbyte( 0x1f );                  /*      pop     ds      */
@@ -2167,8 +2208,8 @@ extern  void    GenWindowsEpilog() {
     _Emit;
 }
 
-extern  void    GenCypWindowsEpilog() {
-/**************************************
+extern  void    GenCypWindowsEpilog( void ) {
+/********************************************
     Generate a "cheap" windows epilog
 */
 
@@ -2181,8 +2222,8 @@ extern  void    GenCypWindowsEpilog() {
 }
 
 
-extern  void    GenLoadDS()
-/*************************/
+extern  void    GenLoadDS( void )
+/*******************************/
 {
     _Code;
     LayOpbyte( 0xb8 );                  /*      mov     ax,DGROUP */
@@ -2248,6 +2289,8 @@ static  void    MathFunc( instruction *ins ) {
         break;
     case OP_FABS:
         OutputFP( 0xE1D9 );             /*   FABS    */
+        break;
+    default:
         break;
     }
 }

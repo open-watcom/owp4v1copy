@@ -142,16 +142,16 @@ static opcode G9Opcodes[] = {
 static opcode_defs NoIndex[] = {
         OP_NOP };               /* i.e. will match anything*/
 
-extern pccode_def PCCodeTable[] = {
+pccode_def PCCodeTable[] = {
 
-/* low    width                  opcode_table    opcode_list     flags*/
-G_GROUP1,G_GROUP2-G_GROUP1,     &G1Opcodes,     &G1Index,   BYTE_WORD,
-G_GROUP2,G_GROUP3-G_GROUP2,     &G2Opcodes,     &G2Index,   BYTE_OPCODE,
-G_GROUP3,G_GROUP4-G_GROUP3,     &G3Opcodes,     &G3Index,BYTE_WORD|SIGN_UNSIGN,
-G_GROUP4,G_GROUP5-G_GROUP4,     &G4Opcodes,     &G4Index,SIGN_UNSIGN|BYTE_WORD,
-G_GROUP5,G_GROUP6-G_GROUP5,     &G5Opcodes,     &NoIndex,   BYTE_WORD,
-G_GROUP6,G_GROUP7-G_GROUP6,     &G6Opcodes,     &NoIndex,   0,
-G_GROUP7,G_GROUP8-G_GROUP7,     &G7Opcodes,     &NoIndex,   BYTE_OPCODE,
-G_GROUP8,G_GROUP9-G_GROUP8,     &G8Opcodes,     &G8Index,   NEED_WAIT,
-G_GROUP9,G_OTHER-G_GROUP9,      &G9Opcodes,     &NoIndex,   NEED_WAIT,
-G_OTHER, 0,                     NULL,           NULL,       0 };
+/* low     width                 opcode_table   opcode_list     flags*/
+{G_GROUP1,G_GROUP2-G_GROUP1,     G1Opcodes,     G1Index,   BYTE_WORD},
+{G_GROUP2,G_GROUP3-G_GROUP2,     G2Opcodes,     G2Index,   BYTE_OPCODE},
+{G_GROUP3,G_GROUP4-G_GROUP3,     G3Opcodes,     G3Index,   BYTE_WORD|SIGN_UNSIGN},
+{G_GROUP4,G_GROUP5-G_GROUP4,     G4Opcodes,     G4Index,   SIGN_UNSIGN|BYTE_WORD},
+{G_GROUP5,G_GROUP6-G_GROUP5,     G5Opcodes,     NoIndex,   BYTE_WORD},
+{G_GROUP6,G_GROUP7-G_GROUP6,     G6Opcodes,     NoIndex,   0},
+{G_GROUP7,G_GROUP8-G_GROUP7,     G7Opcodes,     NoIndex,   BYTE_OPCODE},
+{G_GROUP8,G_GROUP9-G_GROUP8,     G8Opcodes,     G8Index,   NEED_WAIT},
+{G_GROUP9,G_OTHER-G_GROUP9,      G9Opcodes,     NoIndex,   NEED_WAIT},
+{G_OTHER, 0,                     NULL,          NULL,      0 }};

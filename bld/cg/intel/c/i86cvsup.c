@@ -56,7 +56,7 @@ extern seg_id                CVSyms;
 extern seg_id                CVTypes;
 
 
-extern  void    CVDefSegs(){
+extern  void    CVDefSegs( void ){
 /**************************/
     if( _IsModel( DBG_LOCALS ) ) {
         CVSyms = DbgSegDef( "$$SYMBOLS", "DEBSYM",

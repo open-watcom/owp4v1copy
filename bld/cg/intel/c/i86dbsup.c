@@ -54,7 +54,7 @@ extern  seg_id          AskOP(void);
 extern  name            *DeAlias(name*);
 extern  name            *AllocUserTemp(pointer,type_class_def);
 extern  seg_id          SetOP(seg_id);
-extern  offset          AskLocation();
+extern  offset          AskLocation(void);
 extern  void            DataInt(short_offset);
 #if _TARGET & _TARG_IAPX86
 extern  hw_reg_set      Low32Reg(hw_reg_set);
@@ -130,7 +130,7 @@ extern  void    BuffEnd( seg_id seg ) {
 }
 
 
-extern  uint    BuffLoc() {
+extern  uint    BuffLoc( void ) {
 /*************************/
 
 
@@ -386,7 +386,7 @@ static  void    DoLocDump( dbg_loc loc ) {
         if( reg > 15 ) {
             patch = BuffLoc();
             BuffByte( 0 );
-            BuffPatch( LOC_MULTI_REG | MultiReg( loc->u.be_sym )-1, patch );
+            BuffPatch( LOC_MULTI_REG | (MultiReg( &loc->u.be_sym->r )-1), patch );
         } else {
             BuffByte( LOC_REG | reg );
         }
@@ -400,7 +400,7 @@ static  void    DoLocDump( dbg_loc loc ) {
             reg = RegNibble( loc->u.be_sym->r.reg );
             if( reg > REG_LAST ) {
                 BuffByte( loc->class + 1 ); /* assumes ..._FAR is one greater*/
-                MultiReg( loc->u.be_sym );
+                MultiReg( &loc->u.be_sym->r );
             } else {
                 BuffByte( loc->class );
                 BuffByte( reg );

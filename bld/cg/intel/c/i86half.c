@@ -78,7 +78,7 @@ extern  void            DelSeg(instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  name            *AllocIntConst(int);
 extern  bool            Overlaps( name *, name * );
-extern  instruction     *MakeNop();
+extern  instruction     *MakeNop(void);
 extern  name            *LowPart( name *, type_class_def );
 extern  name            *HighPart( name *, type_class_def );
 extern  void            CnvOpToInt( instruction *, int );
@@ -229,7 +229,7 @@ extern  instruction     *rMAKEU2( instruction *ins ) {
 
     instruction *new_ins;
     instruction *ins2;
-    name        *temp;
+    name        *temp = NULL;
 
     if( IndexOverlaps( ins, 0 ) || IndexOverlaps( ins, 1 ) ) {
         ChangeType( ins, WORD );
@@ -310,9 +310,9 @@ extern  instruction     *rSPLITCMP( instruction *ins ) {
 
     name                *left;
     name                *right;
-    instruction         *low;
-    instruction         *high;
-    instruction         *not_equal;
+    instruction         *low = NULL;
+    instruction         *high = NULL;
+    instruction         *not_equal = NULL;
     type_class_def      high_class;
     type_class_def      low_class;
     byte                true_idx;
@@ -425,6 +425,8 @@ extern  instruction     *rSPLITCMP( instruction *ins ) {
                         LowPart( right, low_class ),
                         true_idx, false_idx,
                         low_class );
+        break;
+    default:
         break;
     }
     if( high != NULL ) {

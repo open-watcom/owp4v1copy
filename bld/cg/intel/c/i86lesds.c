@@ -94,6 +94,8 @@ static bool     MemMove( instruction *ins ) {
         case N_MEMORY:
         case N_INDEXED:
             return( TRUE );
+        default:
+            break;
         }
     }
     return( FALSE );
@@ -105,7 +107,7 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
     unsigned_32         shift;
     unsigned_32         lo;
     unsigned_32         hi;
-    type_class_def      result_type;
+    type_class_def      result_type = 0;
     unsigned_32         result_const;
     name                *result;
 
@@ -132,9 +134,11 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
                 break;
             default:
                 shift = 0;
+                result_type = 0;
                 break;
             }
             if( shift ) {
+                result = NULL;
                 if( AdjacentMem( ins->result, next->result, ins->type_class ) ) {
                     hi =  ins->operands[ 0 ]->c.int_value;
                     lo = next->operands[ 0 ]->c.int_value;
@@ -170,6 +174,8 @@ static bool isPushX2( instruction *ins ) {
         case U2:
         case I2:
             return( TRUE );
+        default:
+            break;
         }
     }
     return( FALSE );
@@ -276,7 +282,7 @@ static  void    CheckLDSES( instruction *seg, instruction *reg,
 }
 
 
-extern  void    OptSegs() {
+extern  void    OptSegs( void ) {
 /*************************/
 
     block       *blk;
@@ -311,6 +317,8 @@ extern  void    OptSegs() {
                         case U1:
                         case U2:
                             redo = TRUE;
+                            break;
+                        default:
                             break;
                         }
                         tmp = next->head.next;
