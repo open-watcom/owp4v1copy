@@ -49,6 +49,16 @@ typedef struct {
     char *      name;
 } readable_name;
 
+#pragma pack( push, 1 )
+typedef struct arange_header {
+    uint_32     len;
+    uint_16     version;
+    uint_32     dbg_pos;
+    uint_8      addr_size;
+    uint_8      seg_size;
+} _WCUNALIGNED arange_header;
+#pragma pack( pop )
+
 #define table( x )      { x, #x }
 
 static readable_name readableTAGs[] = {
@@ -960,6 +970,158 @@ static void dumpRef(
 }
 
 
+static const uint_8 *dumpSegAddr( const uint_8 *input, uint_8 addrsize, uint_8 segsize )
+{
+    const uint_8 *          p;
+    uint_32                 addr;
+    uint_32                 seg;
+
+    p = input;
+
+    switch( addrsize ) {
+    case 4:
+        addr = getU32( (uint_32 *)p );
+        p += sizeof( uint_32 );
+        break;
+    case 2:
+        addr = getU16( (uint_16 *)p );
+        p += sizeof( uint_16 );
+        break;
+    default:
+        printf( "Unknown address size\n" );
+        p += addrsize;
+        break;
+    }
+    switch( segsize ) {
+    case 4:
+        seg = getU32( (uint_32 *)p );
+        p += sizeof( uint_32 );
+        printf( "%08lx:", seg );
+        break;
+    case 2:
+        seg = getU16( (uint_16 *)p );
+        p += sizeof( uint_16 );
+        printf( "%04lx:", seg );
+        break;
+    case 0:
+        break;
+    default:
+        printf( "Unknown address size\n" );
+        p += addrsize;
+        break;
+    }
+    switch( addrsize ) {
+    case 4:
+        printf( "%08lx", addr );
+        break;
+    case 2:
+        printf( "%04lx", addr );
+        break;
+    }
+    return( p );
+}
+
+
+static void dumpARanges( const uint_8 *input, uint length )
+{
+    const uint_8 *              p;
+    const uint_8 *              q;
+    const uint_8 *              cu_ar_end;
+    uint_32                     cu;
+    uint_32                     tmp;
+    uint_32                     tuple_size;
+    uint_32                     padding;
+    arange_header               ar_header;
+
+    p = input;
+
+    if( (input == NULL) || (length == 0) )
+        return;
+
+    if( length < sizeof( ar_header ) ) {
+        printf( ".debug_aranges section too small!\n" );
+        return;
+    }
+
+    cu = 0;
+
+    while( p - input < length ) {
+        ++cu;
+        printf( "Compilation Unit %d\n", cu );
+
+        ar_header.len = getU32( (uint_32 *)p );
+        p += sizeof( uint_32 );
+        ar_header.version = getU16( (uint_16 *)p );
+        p += sizeof( uint_16 );
+        ar_header.dbg_pos = getU32( (uint_32 *)p );
+        p += sizeof( uint_32 );
+        ar_header.addr_size = *p;
+        p += sizeof( uint_8 );
+        ar_header.seg_size = *p;
+        p += sizeof( uint_8 );
+
+        printf( "  length:    %08lx\n", ar_header.len );
+        printf( "  version:   %04lx\n", ar_header.version );
+        printf( "  dbg_pos:   %08lx\n", ar_header.dbg_pos );
+        printf( "  addr_size: %02lx\n", ar_header.addr_size );
+        printf( "  seg_size:  %02lx\n", ar_header.seg_size );
+
+        /* tuples should be aligned on twice the size of a tuple; some Watcom
+         * versions didn't do this right!
+         */
+        tuple_size = (ar_header.addr_size + ar_header.seg_size) * 2;
+        q = (const uint_8 *)(((uint_32)p + tuple_size - 1) & ~(tuple_size - 1));
+        padding = q - p;
+
+        /* check if padding contains non-zero data */
+        if( padding ) {
+            switch( ar_header.addr_size ) {
+            case 4:
+                tmp = getU32( (uint_32 *)p );
+                break;
+            case 2:
+                tmp = getU16( (uint_16 *)p );
+                break;
+            default:
+                printf( "Unknown address size\n" );
+                return;
+            }
+            /* padding is missing! */
+            if( tmp )
+                padding = 0;
+        }
+
+        p += padding;
+        cu_ar_end = p - sizeof( ar_header ) + sizeof( ar_header.len )
+            + ar_header.len - padding;
+
+        while( p < cu_ar_end ) {
+            /* range address */
+            printf( "\t" );
+            p = dumpSegAddr( p, ar_header.addr_size, ar_header.seg_size );
+            /* range length */
+            printf( "\t" );
+            switch( ar_header.addr_size ) {
+            case 4:
+                tmp = getU32( (uint_32 *)p );
+                p += sizeof( uint_32 );
+                printf( "%08lx\n", tmp );
+                break;
+            case 2:
+                tmp = getU16( (uint_16 *)p );
+                p += sizeof( uint_16 );
+                printf( "%04lx\n", tmp );
+                break;
+            default:
+                printf( "Unknown address size\n" );
+                p += ar_header.addr_size;
+                return;
+            }
+        }
+    }
+}
+
+
 void DumpSections( void ) {
 
     uint        sect;
@@ -980,6 +1142,9 @@ void DumpSections( void ) {
             break;
         case DW_DEBUG_REF:
             dumpRef( Sections[ sect ].data, Sections[ sect ].max_offset );
+            break;
+        case DW_DEBUG_ARANGES:
+            dumpARanges( Sections[ sect ].data, Sections[ sect ].max_offset );
             break;
         case DW_DEBUG_STR:
             // Strings are displayed when dumping other sections
