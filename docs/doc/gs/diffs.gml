@@ -27,7 +27,7 @@ added to stdarg.h.
 .bull
 Added 'cname' style C++ headers.
 .bull
-Support for SSE, SSE2 and 3DNow! instruction sets has been added. Affected tools
+Support for SSE, SSE2, SSE3 and 3DNow! instruction sets has been added. Affected tools
 are the assembler (wasm), as well as all x86 compilers, disassembler and debugger.
 The debugger now also supports MMX registers formatted as floats (for 3DNow!)
 as well as a new XMM register window for SSE.
