@@ -550,7 +550,7 @@ static void vscroll_fields( a_field **ht, SAREA use, int incr )
     }
 }
 
-a_field *help_next_field( a_field *fld, a_field *table )
+a_tab_field *help_next_field( a_field *fld, a_field *table )
 {
     _unused( table );
     if( fld != NULL ){
@@ -1377,8 +1377,7 @@ int showhelp( char *helptopic, EVENT (*rtn)( EVENT ), HelpLangType lang ) {
     currentAttr = AT(ATTR_NORMAL);
     /* initialize the tab filter */
     tabFilter.tab = help_in_tab;
-    // TODO: see if the function field could be properly declared
-    tabFilter.next = (a_tab_field *(*)())help_next_field;
+    tabFilter.next = help_next_field;
     tabFilter.parm = helpTab;
     tabFilter.mousepos = (void *(*)())uivmousepos;
     tabFilter.mouseparm = &helpScreen;
