@@ -63,7 +63,7 @@
 :chain. O optimization options
 :chain. Z language options
 
-:option. 10\x_
+:option. \1\0\x_
 :target. any
 :internal.
 :usage. use 10.x options
@@ -165,19 +165,19 @@
 :internal.
 :usage. generate SBR file without local variables
 
-:option. \G3
+:option. \G\3
 :target. i86
 :immediate. handle_arch_i86
 :enumerate. arch_i86
 :usage. 386 instructions
 
-:option. \G4
+:option. \G\4
 :target. i86
 :immediate. handle_arch_i86
 :enumerate. arch_i86
 :usage. 386 instructions, optimize for 486
 
-:option. \G5
+:option. \G\5
 :target. i86
 :immediate. handle_arch_i86
 :enumerate. arch_i86
@@ -309,13 +309,13 @@
 :target. any
 :usage. operate quietly
 
-:option. \O1
+:option. \O\1
 :target. any
 :immediate. handle_opt_level
 :enumerate. opt_level
 :usage. minimize size
 
-:option. \O2
+:option. \O\2
 :target. any
 :immediate. handle_opt_level
 :enumerate. opt_level
@@ -430,12 +430,12 @@
 :internal.
 :usage. undefine all predefined macros
 
-:option. \v\d0
+:option. \v\d\0
 :target. any
 :internal.
 :usage. disable constructor/destructor displacements
 
-:option. \v\d1
+:option. \v\d\1
 :target. any
 :internal.
 :usage. enable vtordisp constructor/destructor displacements
@@ -521,7 +521,7 @@
 :optional.
 :usage. use pre-compiled header file
 
-:option. \Z7
+:option. \Z\7
 :target. any
 :immediate. handle_debug_info
 :enumerate. debug_info

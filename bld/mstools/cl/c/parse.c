@@ -56,6 +56,7 @@
     #error Unrecognized CPU type
 #endif
 
+#pragma disable_message (202);
 
 /*
  * Initialize the OPT_STORAGE structure.
