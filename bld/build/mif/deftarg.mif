@@ -18,3 +18,4 @@ killnonobj: .SYMBOLIC .EXPLICIT
         @if exist *.tmp @del *.tmp
         @if exist *.ilk @del *.ilk
         @if exist *.gh @del *.gh
+        @if exist compile.tim @del compile.tim
