@@ -1,0 +1,15 @@
+
+hello.exe : hello.obj main.obj
+    wlink op q sys os2v2 file { $< } lib somtk
+
+hello.obj : hello.c hello.ih hello.h
+    wcc386 -zq $[@
+
+main.obj : main.c hello.h
+    wcc386 -zq $[@
+
+hello.ih hello.h : hello.idl
+    sc -s"ih;h" $<
+
+clean : .symbolic
+    rm -f *.obj *.exe *.h *.ih *.err
