@@ -117,6 +117,7 @@ char DIPDefaults[] = {
     "dwarf\0"
     "watcom\0"
     "codeview\0"
+    "mapsym\0"
     "export\0"
     "\0"
 };

@@ -272,7 +272,7 @@ try to use either of the Windows debuggers in a seamless Win-OS/2 session.
 .endpoint
 .np
 If you find that the Windows debugger starts too slowly, try using the
-.sy DIp=WATCOM
+.sy DIp=DWARF
 option. This prevents the debugger from searching each DLL in the
 system for debugging information. It will start up faster, but you
 will not be able to see the name of the Windows API calls.
