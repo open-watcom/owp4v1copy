@@ -37,7 +37,7 @@
 
 #include <string.h>
 
-#if !defined(__QNX__) && !defined(UNIX)
+#if !defined(__UNIX__) && !defined(UNIX)
     #include <direct.h>
 #endif
 

@@ -48,7 +48,7 @@
     #define X_OK    1       /*  Test for execute permission */
     #define F_OK    0       /*  Test for existence of file  */
 #endif
-#if !defined(__QNX__) && !defined(UNIX)
+#if !defined(__UNIX__) && !defined(UNIX)
     #include <direct.h>
 #endif
 

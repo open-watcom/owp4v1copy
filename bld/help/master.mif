@@ -4,9 +4,9 @@ proj_name = whelp
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(help_dir)\h;$(uidir)\h;$(trmem_dir)
+inc_dirs = $(help_dir)/h;$(uidir)/h;$(trmem_dir)
 
-.c: ..\c;$(trmem_dir)
+.c: ../c;$(trmem_dir)
 
 !include ../help.mif
 
@@ -18,7 +18,7 @@ extra_c_flags += -dTRMEM
 objs +=  trmemcvr.obj trmem.obj
 !endif
 
-libs = $(uidir)\$(host_OS)\uilibf.lib
+libs = $(uidir)/$(host_OS)/uilibf.lib
 extra_l_flags = op map l { $(libs) }
 
 $(proj_name).exe : $(objs) $(libs)

@@ -20,20 +20,20 @@ compiler_axp=wccaxp
 !ifndef compiler
 compiler=compiler_$(host_CPU)
 !endif
-source_dir = $(guidir)\c
-os_source_dir =  $(guidir)\$(type)\c;$(sys_dep_dir)
-gui_msg_file = ..\..\h\_guimsgs.h
+source_dir = $(guidir)/c
+os_source_dir =  $(guidir)/$(type)/c;$(sys_dep_dir)
+gui_msg_file = ../../h/_guimsgs.h
 
-inc_dirs_lang_qnx = $(lang_root)\qh
+inc_dirs_lang_qnx = $(lang_root)/qh
 
 !ifdef inc_dirs_lang_$(host_OS)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_OS))
 !else
-inc_dirs_lang   = $(lang_root)\h
+inc_dirs_lang   = $(lang_root)/h
 !endif
 
 .before
-    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)\h;$(guidir)\h;$(guidir)\$(type)\h;$(trmem_dir);$(help_dir)\h;$(inc_dirs_lang);$(plat_inc)
+    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)/h;$(guidir)/h;$(guidir)/$(type)/h;$(trmem_dir);$(help_dir)/h;$(inc_dirs_lang);$(plat_inc)
 
 nodebugflags = $(xflags)-zq-w3 -bt=$(build_target)
 !ifndef axp
@@ -57,9 +57,12 @@ cflags = $(nodebugflags) -d2    # need a space: -bt=foo-d2 eats the -d2. Ugh!
 !endif
 !endif
 !endif
+!ifdef __LINUX__
+cflags += -fo=.obj
+!endif
 
 !ifdef wpi_lib
-wpi_library=$(wpi_dir)\lib\$(wpi_lib).lib
+wpi_library=$(wpi_dir)/lib/$(wpi_lib).lib
 !endif
 
 librarian_i86=wlib
@@ -75,7 +78,7 @@ compile  = $($(compiler)) $(cflags) $[*
 !ifndef track
 track=/dTRMEM
 !ifndef axp
-track += /of+
+track += -of+
 !endif
 !endif
 
@@ -128,28 +131,28 @@ mem_objs += &
 
 objs = $(wv_objs) $(mem_objs)
 
-lib_cmdfile = $(guidir)\gui$(os)$(model).clb
+lib_cmdfile = $(guidir)/gui$(os)$(model).clb
 here = $(%cdrive):$(%cwd)
 
 tail_i86 = $(model)
 tail_386 = $(model)
 tail_axp = axp
 
-..\gui$(host_OS)$(tail_$(host_CPU)).lib : eraseall.obj $(gui_msg_file) $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
+../gui$(host_OS)$(tail_$(host_CPU)).lib : eraseall.obj $(gui_msg_file) $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
         @%create $(lib_cmdfile)
         @for %i in ($(objs)) do @%append $(lib_cmdfile) +%i
         @for %i in ($(sysobjs)) do @%append $(lib_cmdfile) +%i
 !ifdef wpi_lib
-        @%append $(lib_cmdfile) +$(wpi_dir)\lib\$(wpi_lib).lib
+        @%append $(lib_cmdfile) +$(wpi_dir)/lib/$(wpi_lib).lib
         @%append $(lib_cmdfile) +wpimem
 !endif
 !ifdef ctl3d_lib
         @%append $(lib_cmdfile) +$(ctl3d_lib)
 !endif
-        $(librarian_$(host_CPU)) $(wlib_opt) /n/b/q $^@ @$(lib_cmdfile)
-        del $(lib_cmdfile)
+        $(librarian_$(host_CPU)) $(wlib_opt) -n -b -q $^@ @$(lib_cmdfile)
+        rm -f $(lib_cmdfile)
 
-eraseall.obj : $(guidir)\$(type)\compile.gbl
+eraseall.obj : $(guidir)/$(type)/compile.gbl
         if exist *.obj erase *.obj
         wtouch eraseall.obj
 
@@ -158,9 +161,9 @@ eraseall.obj : $(guidir)\$(type)\compile.gbl
 .ERASE
 
 
-.c:     $(source_dir);$(os_source_dir);$(os_extra_dir);$(trmem_dir);$(help_dir)\c
-.h:     $(guidir)\h;$(guidir)\$(type)\h;$(wpi_dir)\h
-.msg:   $(guidir)\h
+.c:     $(source_dir);$(os_source_dir);$(os_extra_dir);$(trmem_dir);$(help_dir)/c
+.h:     $(guidir)/h;$(guidir)/$(type)/h;$(wpi_dir)/h
+.msg:   $(guidir)/h
 
 .c.obj:
 !ifdef on_build_machine
@@ -184,25 +187,21 @@ wasmopt=-3
 wasmopt=-3
 !endif
 
-guimem.obj :    guimem.c
-           $($(compiler)) $(guidir)\c\guimem.c $(cflags) $(track)
+guimem.obj :    $(guidir)/c/guimem.c
+           $($(compiler)) $[@ $(cflags) $(track)
 
-trmemcvr.obj :  trmemcvr.c
-           $($(compiler)) $(trmem_dir)\trmemcvr.c $(cflags) $(track)
+trmemcvr.obj :  $(trmem_dir)/trmemcvr.c
+           $($(compiler)) $[@ $(cflags) $(track)
 
-trmem.obj :     trmem.c
-           $($(compiler)) $(trmem_dir)\trmem.c $(cflags) $(track)
+trmem.obj :     $(trmem_dir)/trmem.c
+           $($(compiler)) $[@ $(cflags) $(track)
 
-$(gui_msg_file): gui.msg mkstr.c
-        wcl386 -zq $(guidir)\c\mkstr.c /i$(guidir)\h /lr
-        mkstr $(gui_msg_file) $(gui_msg_id_modifier)
+./mkstr.exe: gui.msg $(guidir)/c/mkstr.c
+        wcl386 -fe=$^@ -zq $]@ -i"$(guidir)/h" -lr
+
+$(gui_msg_file): gui.msg ./mkstr.exe
+        $]@ $(gui_msg_file) $(gui_msg_id_modifier)
 
 clean : .SYMBOLIC
-        @-if exist *.?bj @rm *.?bj
-        @-if exist *.res @rm *.res
-        @-if exist *.err @rm *.err
-        @-if exist *.sym @rm *.sym
-        @-if exist *.map @rm *.map
-        @-if exist *.lnk @rm *.lnk
-        @-if exist *.pp  @rm *.pp
+        @rm -f *.?bj *.res *.err *.sym *.map *.lnk *.pp
 

@@ -57,6 +57,9 @@
     #include <unistd.h>
     #include <sys/disk.h>
     #include <fnmatch.h>
+#elif defined( __LINUX__ )
+    #include <dirent.h>
+    #include <unistd.h>
 #elif defined( UNIX )
     #include <dirent.h>
     #include <unistd.h>
@@ -76,7 +79,7 @@
 #include "guidlg.h"
 #include "guistr.h"
 
-#if defined( __QNX__ ) || defined( NLM ) || defined( UNIX )
+#if defined( __UNIX__ ) || defined( NLM ) || defined( UNIX )
     #define FILE_SEP    "/"
     #define FILE_SEP_CHAR       '/'
     #define FILES_ALL   "*"
@@ -145,7 +148,7 @@ static gui_control_info dlgControls[] =
 /*  7 */ DLG_BUTTON(    NULL, CTL_CANCEL,       (DIR_START+BOX_WIDTH2+4), 6, (DIR_START+BOX_WIDTH2+14) ),
 /*  8 */ DLG_STRING(    NULL, 2, 11, 20 ),
 /*  9 */ DLG_COMBO_BOX( NULL, CTL_FILE_TYPES, 2,12,2+BOX_WIDTH+3,15 ),
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /* 10 */ DLG_STRING(    NULL, DIR_START+2, 11, DIR_START+8 ),
 /* 11 */ DLG_COMBO_BOX( NULL, CTL_DRIVES, DIR_START+2,12,DIR_START+BOX_WIDTH,15 )
 #endif
@@ -162,7 +165,7 @@ static bool     ControlsInitialized = FALSE;
 
 #if defined(__PENPOINT__)
   #define PC '\\'
-#elif defined(__QNX__) || defined( NLM ) || defined( UNIX )
+#elif defined(__UNIX__) || defined( NLM ) || defined( UNIX )
   #define PC '/'
 #else   /* DOS, OS/2, Windows */
   #define PC '\\'
@@ -178,7 +181,7 @@ static void InitDlgControls( void )
 /*  6 */ dlgControls[ 6 ].text = LIT( OK );
 /*  7 */ dlgControls[ 7 ].text = LIT( Cancel );
 /*  8 */ dlgControls[ 8 ].text = LIT( List_Files_of_Type_Colon );
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /* 10 */ dlgControls[ 10 ].text = LIT( Drives_Colon );
 #endif
 }
@@ -205,7 +208,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
     char        *startp;
     char        ch;
 
-#if defined(__QNX__) || defined( NLM ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
     /* process node/drive specification */
     startp = path;
     if( path[0] == FILE_SEP_CHAR && path[1] == FILE_SEP_CHAR ) {
@@ -248,7 +251,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
             continue;
         }
         path++;
-#if defined(__QNX__) || defined( NLM ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
         if( ch == FILE_SEP_CHAR ) {
 #else
         if( ch == FILE_SEP_CHAR  ||  ch == '/' ) {
@@ -261,7 +264,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
     if( dotp == NULL ) {
         dotp = path;
     }
-#if defined(__QNX__) || defined( NLM ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
     if( ext == NULL )  {
         dotp = path;
     }
@@ -296,7 +299,7 @@ static drive_type getDriveType( int drv )
     }
     return( DRIVE_NONE );
 }
-#elif defined(__QNX__) || defined( NLM ) || defined( UNIX )
+#elif defined(__UNIX__) || defined( NLM ) || defined( UNIX )
 #elif defined(__NT__)
 static drive_type getDriveType( int drv )
 {
@@ -410,7 +413,7 @@ static void freeStringList( void *ptr )
 
 } /* freeStringList */
 
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /*
  * buildDriveList - get a list of all drives
  */
@@ -529,7 +532,7 @@ static bool goToDir( gui_window *gui, char *dir )
 
     splitPath( dir, drive, NULL, NULL, NULL );
     if( drive[0] != 0 ) {
-#if defined( __QNX__ ) || defined( NLM ) || defined( UNIX )
+#if defined( __UNIX__ ) || defined( NLM ) || defined( UNIX )
         total = 1;
 #else
         _dos_setdrive( tolower( drive[0] ) - 'a'+1, &total );
@@ -586,12 +589,14 @@ static bool isrdonly( struct dirent *dent, char *path )
     }
     return( !(dent->d_stat.st_mode & bit) );
 }
-#elif defined(UNIX)
+#elif defined(UNIX) || defined(__UNIX__)
 static bool isdir( struct dirent *dent, char *path )
 {
     struct stat stats;
 
-    _stat2( path, dent->d_name, &stats );
+    // FIXME: implement a "_stat2()" equivalent.
+    //_stat2( path, dent->d_name, &stats );
+    stat( dent->d_name, &stats );
     return( S_ISDIR( stats.st_mode ) );
 }
 
@@ -606,7 +611,9 @@ static bool isrdonly( struct dirent *dent, char *path )
         /* we're root - we can alway write the file */
         return( FALSE );
     }
-    _stat2( path, dent->d_name, &stats );
+    // FIXME: implement a "_stat2()" equivalent.
+    //_stat2( path, dent->d_name, &stats );
+    stat( dent->d_name, &stats );
     if( stats.st_uid == user ) {
         bit = S_IWUSR;
     } else if( stats.st_gid == getegid() ) {
@@ -655,7 +662,7 @@ static bool setFileList( gui_window *gui, char *ext )
             break;
         }
 
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         if( path[strlen(path)-1] != FILE_SEP_CHAR ) {
             strcat( path, FILE_SEP );
         }
@@ -671,6 +678,7 @@ static bool setFileList( gui_window *gui, char *ext )
                         continue;
                     }
 #if defined(__QNX__) || defined( UNIX )
+                    // FIXME: implement fnmatch() for Linux.
                     if( fnmatch( ptr, dent->d_name, FNM_PATHNAME ) != 0 ) {
                         continue;
                     }
@@ -727,11 +735,11 @@ static bool setDirList( gui_window *gui )
     }
 
     if( path[strlen(path)-1] == FILE_SEP_CHAR ) {
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         strcat( path, FILES_ALL );
 #endif
     } else {
-#if defined (__QNX__) || defined ( NLM ) || defined( UNIX )
+#if defined (__UNIX__) || defined ( NLM ) || defined( UNIX )
         strcat( path, FILE_SEP );
 #else
         strcat( path, FILE_SEP FILES_ALL );
@@ -746,7 +754,7 @@ static bool setDirList( gui_window *gui )
 
     drive[0] = OPENED_DIR_CHAR;
     drvlist = NULL;
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     drvlist = (char **) dlgControls[DRIVE_LIST_INDEX].text;
 #endif
     i = 0;
@@ -760,7 +768,7 @@ static bool setDirList( gui_window *gui )
         }
         i++;
     }
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         drive[3] = '\\';
         drive[4] = 0;
 #endif
@@ -1001,7 +1009,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
         break;
     case CTL_DIR_LIST :
         sel = GUIGetCurrSelect( gui, id );
-#if defined ( __QNX__ ) || defined( NLM ) || defined( UNIX )
+#if defined ( __UNIX__ ) || defined( NLM ) || defined( UNIX )
         path[0] = FILE_SEP_CHAR;
         path[1] = 0;
 #else
@@ -1078,7 +1086,7 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
     case GUI_INIT_DIALOG:
         dlg->initted = FALSE;
         InitList( gui, CTL_FILE_TYPES, FILE_TYPES_INDEX );
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         InitList( gui, CTL_DRIVES, DRIVE_LIST_INDEX );
 #endif
         if( !initDialog( gui, dlg->fileExtensions[ dlg->currExtIndex ], dlg->currOFN->file_name ) ) {
@@ -1157,7 +1165,7 @@ int GUIGetFileName( gui_window *gui, open_file_name *ofn )
     dlg.currExtIndex = ofn->filter_index;
     dlg.dialogRC = OFN_RC_NO_FILE_SELECTED;
 
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     dlgControls[DRIVE_LIST_INDEX].text = buildDriveList();
     if( dlgControls[DRIVE_LIST_INDEX].text == NULL ) {
         return( OFN_RC_FAILED_TO_INITIALIZE );
@@ -1179,7 +1187,7 @@ int GUIGetFileName( gui_window *gui, open_file_name *ofn )
         goToDir( gui, olddir );
     }
 
-#if !defined(__QNX__) && !defined( NLM ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     freeStringList( &dlgControls[DRIVE_LIST_INDEX].text );
 #endif
     freeStringList( &dlgControls[FILE_TYPES_INDEX].text );
