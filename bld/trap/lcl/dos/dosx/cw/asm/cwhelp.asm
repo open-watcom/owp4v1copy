@@ -1476,7 +1476,7 @@ PL@@3:    mov     DebugSegs,ebp
 ;
 ;Setup results.
 ;
-PL@@4:    mov     edi,@@outaddr
+PL@@4:  mov     edi,@@outaddr
         mov     d[edi],0                ;error code=zero.
         movzx   ebx,DebugPSP
         mov     d[edi+4],ebx            ;task ID=PSP.
@@ -3477,9 +3477,10 @@ RC@@3:
         push    offset DebugLevel
         push    offset DebugVar
         push    offset SetupName
-        push    ConfigName
+        push    offset ConfigName
         call    cfgGetOnOff
         lea     esp,[esp+16]
+
 ;
 RC@@9:    ret
 ReadConfig      endp
