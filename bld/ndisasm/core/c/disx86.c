@@ -1440,10 +1440,10 @@ dis_handler_return X86ImmAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
     switch( ins->type ) {
     case DI_X86_in:
         X86GetReg(code.type1.w, REG_AX, ins);
-        X86GetUImmedVal( S_DEFAULT, code.type1.w, d, ins);
+        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins);
         break;
     case DI_X86_out:
-        X86GetUImmedVal( S_DEFAULT, code.type1.w, d, ins);
+        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins);
         X86GetReg(code.type1.w, REG_AX, ins);
         break;
     default:
@@ -3313,3 +3313,4 @@ const dis_cpu_data X86Data = {
 
 const dis_cpu_data X86Data;
 #endif
+ndif
