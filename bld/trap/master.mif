@@ -101,7 +101,11 @@ extra_c_flags_dos += -zu
 libs_x86_os2            = clibc
 libs_x86_os2v2          = clib3r
 libs_x86_qnx            = $(lang_root)/lib386/qnx/clib3r
+!ifdef __LINUX__
+libs_x86_linux          = $(clib_dir)/library/linux.386/ms_r/clibs
+!else
 libs_x86_linux          = $(lang_root)/lib386/linux/clib3r
+!endif
 libs_x86_win            = clibc
 !ifeq memory_model_i86 l
 libs_x86_dos            = clibl
@@ -202,15 +206,17 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         @%make $(dtarget)
         !cvpack $(dtarget)
 
-$(trperr_h) : $(mkstr_c) $(trap_msg)
-        $(bld_cl) $[@ -i"$(trap_dir)\h"
-        mkstr $^@
-        @rm -f mkstr.*
+./mkstr.exe: $(mkstr_c)
+        $(bld_cl) -fe=$^@ $[@ -i"$(trap_dir)/h"
 
-$(jtrperr_h) : $(mkstr_c) $(trap_msg)
-        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)\h"
-        mkstr $^@
-        @rm -f mkstr.*
+$(trperr_h) : ./mkstr.exe
+        $[@ $^@
+
+./jmkstr.exe: $(mkstr_c)
+        $(bld_cl) -fe=$^@ $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
+
+$(jtrperr_h) : ./jmkstr.exe
+        $[@ $^@
 
 !ifndef extra_dobjs
 extra_dobjs = $(extra_objs)

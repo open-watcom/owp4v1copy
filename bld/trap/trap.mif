@@ -17,20 +17,26 @@ sys_x86_linux = sys linux
 
 sys_axp_nt    = sys ntaxp
 
-targ_x86_os2   = binp\$(name)cli1.exe
-targ_x86_os2v2 = binp\$(name)cli.exe
-targ_x86_qnx   = qnx\$(name)cli.qnx
-targ_x86_linux = linux\$(name)cli.elf
-targ_x86_win   = bin\$(name)cliw.exe
-targ_x86_dos   = bin\$(name)cli.exe
-targ_x86_nt    = binnt\$(name)cli.exe
+targ_x86_os2   = binp/$(name)cli1.exe
+targ_x86_os2v2 = binp/$(name)cli.exe
+targ_x86_qnx   = qnx/$(name)cli.qnx
+targ_x86_linux = linux/$(name)cli.elf
+targ_x86_win   = bin/$(name)cliw.exe
+targ_x86_dos   = bin/$(name)cli.exe
+targ_x86_nt    = binnt/$(name)cli.exe
 
-targ_axp_nt    = axpnt\$(name)cli.exe
+targ_axp_nt    = axpnt/$(name)cli.exe
 
 TRAP_objs     = testcli.obj
 TRAP_remote_objs =
 
 !else
+
+!ifdef __LINUX__
+description = \'WATCOM Debugger Trap File\'
+!else
+description = 'WATCOM Debugger Trap File'
+!endif
 
 sys_x86_os2  = sys os2 dll initinstance &
             export TrapInit_.1 &
@@ -55,8 +61,8 @@ sys_x86_win  = sys windows dll &
             export SETHARDMODE.12 &
             export UNLOCKINPUT.13 &
             op modname=$^& &
-            option description 'WATCOM Debugger Trap File' &
-            file $(lang_root)\lib286\win\libentry.obj
+            option description $(description) &
+            file $(lang_root)/lib286/win/libentry.obj
 sys_x86_nt   = sys nt_dll initinstance &
             export TrapInit_.1 &
             export TrapFini_.2 &
@@ -64,7 +70,7 @@ sys_x86_nt   = sys nt_dll initinstance &
             export InfoFunction_.4 &
             export InterruptProgram_.5 &
             export Terminate_.6 &
-            option description 'WATCOM Debugger Trap File' &
+            option description $(description) &
             op offset=0x6e900000, modname=$^&
 sys_x86_dos  = sys dos
 sys_x86_qnx  = sys pharlap rex disable 1014, 1023
@@ -76,7 +82,7 @@ sys_x86_linux = sys nt_dll op nodefaultlibs &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
-            option description 'WATCOM Debugger Trap File'
+            option description $(description)
 
 sys_axp_nt   = sys ntaxp_dll initinstance &
             export TrapInit.1 &
@@ -85,7 +91,7 @@ sys_axp_nt   = sys ntaxp_dll initinstance &
             export InfoFunction.4 &
             export InterruptProgram.5 &
             export Terminate.6 &
-            option description 'WATCOM Debugger Trap File' &
+            option description $(description) &
             op modname=$^&
 
 sys_ppc_nt   = sys ntppc_dll initinstance &
@@ -95,7 +101,7 @@ sys_ppc_nt   = sys ntppc_dll initinstance &
             export InfoFunction.4 &
             export InterruptProgram.5 &
             export Terminate.6 &
-            option description 'WATCOM Debugger Trap File' &
+            option description $(description) &
             op modname=$^&
 
 !ifeq machine IBM
@@ -104,17 +110,17 @@ machsuff=
 machsuff=$+$(machine)$-
 !endif
 
-targ_x86_os2    = binp\dll\$(name).dll
-targ_x86_os2v2  = binp\dll\$(name).d32
-targ_x86_qnx    = qnx\$(name).trp
-targ_x86_linux  = linux\$(name).trp
-targ_x86_win    = bin.$(machsuff)\$(name).dll
-targ_x86_dos    = bin.$(machsuff)\$(name).trp
-targ_x86_nt     = binnt\$(name).dll
+targ_x86_os2    = binp/dll/$(name).dll
+targ_x86_os2v2  = binp/dll/$(name).d32
+targ_x86_qnx    = qnx/$(name).trp
+targ_x86_linux  = linux/$(name).trp
+targ_x86_win    = bin.$(machsuff)/$(name).dll
+targ_x86_dos    = bin.$(machsuff)/$(name).trp
+targ_x86_nt     = binnt/$(name).dll
 
-targ_axp_nt     = axpnt\$(name).dll
+targ_axp_nt     = axpnt/$(name).dll
 
-targ_ppc_nt     = ppcnt\$(name).dll
+targ_ppc_nt     = ppcnt/$(name).dll
 
 TRAP_objs   = $(os)strt.obj
 TRAP_remote_objs = remote.obj
