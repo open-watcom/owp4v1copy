@@ -78,8 +78,10 @@ enum {
     REQ_SPLIT_CMD,                      /* 35 */
     REQ_READ_REGS,                      /* 36 */
     REQ_WRITE_REGS,                     /* 37 */
-    REQ_MACHINE_DATA                    /* 38 */
+    REQ_MACHINE_DATA,                   /* 38 */
+    REQ__LAST                           // for debug trap/server
 };
+
 
 typedef struct {
     access_req          req;

@@ -271,7 +271,7 @@ typedef unsigned_8 type_modifier; enum {
     TM_UNICODE,
 
     TM_MOD_MASK         = 0x0f,
-    TM_FLAG_DEREF       = 0x10,
+    TM_FLAG_DEREF       = 0x10
 };
 
 typedef struct type_info {

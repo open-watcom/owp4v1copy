@@ -31,7 +31,7 @@
 
 
 //#define DEBUG_TRAP
-#include "trapdbg2.h"
+#include "trapdbg.h"
 
 #include <string.h>
 #include "trpimp.h"

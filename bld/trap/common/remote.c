@@ -31,7 +31,7 @@
 
 
 //#define DEBUG_TRAP
-#include "trapdbg2.h"
+#include "trapdbg.h"
 
 #include <string.h>
 //#include <i86.h>
@@ -134,7 +134,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *error, bool remote )
 {
     trap_version    ver;
     char           *err;
-    int             fix_minor
+    int             fix_minor;
 
     _DBG_EnterFunc( "TrapInit" );
     ver.remote = TRUE;

@@ -65,7 +65,7 @@
 #else
 
     #include "tinyio.h"
-    #include "trapdbg2.h"
+    #include "trapdbg.h"
     #include <i86.h>
 
     extern unsigned short MyCS( void );

@@ -35,8 +35,7 @@
 #include "trperr.h"
 #include "packet.h"
 #include "tinyio.h"
-#include "trapdbg1.h"
-#include "trapdbg2.h"
+#include "trapdbg.h"
 #include "winchk.h"
 #include "madregs.h"
 

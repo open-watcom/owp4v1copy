@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-#define DEBUG_TRAP
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -36,8 +35,6 @@
 #include <termios.h>
 #include <conio.h>
 #include <sys/time.h>
-#include "trapdbg1.h"
-#include "trapdbg2.h"
 #include "trpimp.h"
 
 extern char RWBuff[];
