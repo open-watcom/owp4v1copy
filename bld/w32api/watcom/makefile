@@ -8,11 +8,11 @@ mkmh.exe: lastbld
 	wlink option quiet system nt file mkmh.obj
 	mkmh
 	cd win
-	$(MAKE)
-        cd ..
+	wmake
+    cd ..
 
 lastbld: 
-	touch $@
+	wtouch $@
         
 clean: .symbolic
 	rm lastbld master.mif deps.mif mkmh.obj mkmh.exe
