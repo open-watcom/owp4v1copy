@@ -217,23 +217,31 @@ local void DeleteDataQuad( DATA_QUAD_LIST *dql )
 local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 {
     DATA_QUAD_LIST *dql;
+    unsigned long  cursize;
 
     dql = CurDataQuad->next;
     if( dql != NULL ) {
         /* overwrite the current dataquad */
-        while( size > dql->size && dql->next != NULL ) {
-            dql->size += dql->next->size;
-            DeleteDataQuad( dql->next );
+        cursize = dql->size;
+        while( size > cursize && dql->next != NULL ) {
+            DeleteDataQuad( dql );
+            dql = dql->next;
+            cursize += dql->size;
         }
-        if( size < dql->size )
-            SplitDataQuad( dql, size );
+        /* dql now takes up cursize bytes but was defined to
+           take up dql->size bytes: split into a dataquad with
+           dql->size - (cursize - size) bytes and one with
+           cursize - size bytes.
+        */
+        if( size < cursize )
+            SplitDataQuad( dql, dql->size - (cursize - size) );
     } else {
         dql = NewDataQuad();
         CurDataQuad->next = dql;
         dql->prev = CurDataQuad;
         dql->next = NULL;
-        dql->size = size;
     }
+    dql->size = size;
     memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
     CurDataQuad = dql;
 }
