@@ -28,7 +28,7 @@ test_cflags_axp = -os-d1-xst
 !endif
 
 test_cflags_386 += -zq-fpi87-fp5-mf
-test_cflags_i86 += -zq-fpi87-fp5-ml
+test_cflags_i86 += -zq-fpi87-fp5-ml-zm
 test_cflags_axp += -zq
 
 stack_386=opt stack=16k
