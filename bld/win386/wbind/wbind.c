@@ -30,11 +30,10 @@
 
 
 #include <stdio.h>
-#include <io.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <fcntl.h>
-#include <malloc.h>
 #include <errno.h>
 #include <string.h>
 #include <process.h>
@@ -62,7 +61,6 @@ typedef char FAR *LPSTR;
 #define FALSE 0
 #define MAGIC_OFFSET    0x38L
 #define MAX_DESC        80
-
 #define RC_STR          "wrc"
 
 static int quietFlag=FALSE;
@@ -225,7 +223,7 @@ static long CopyFile( int in, int out, char *infile, char *outfile )
     buff = myAlloc( IO_BUFF );
     bufsize = IO_BUFF;
     totalsize = 0L;
-    for(;;) {
+    for( ;; ) {
         size = read( in, buff, bufsize );
         if( size == 0 ) {
             break;
@@ -301,7 +299,11 @@ int main( int argc, char *argv[] )
     }
     currarg=1;
     while( currarg < argc ) {
+#ifdef __UNIX__
+        if( argv[ currarg ][0] == '-' ) {
+#else
         if( argv[ currarg ][0] == '/' || argv[ currarg ][0] == '-' ) {
+#endif
             len = strlen( argv[ currarg ] );
             for( i=1; i<len; i++ ) {
                 switch( argv[ currarg ][i] ) {
@@ -385,13 +387,13 @@ int main( int argc, char *argv[] )
         lseek( in, exelen, SEEK_SET );
         read( in, &re, sizeof( rex_exe ) );
         if( !(re.sig[0] == 'M' && re.sig[1] == 'Q') ) {
-            doError( "Not a bound Open WATCOM 32-bit Windows application" );
+            doError( "Not a bound Open Watcom 32-bit Windows application" );
         }
         lseek( in, exelen, SEEK_SET );
         CopyFile( in, out, path, rex );
         close( in );
         close( out );
-        myPrintf( ".REX file %s created", rex );
+        myPrintf( ".rex file %s created", rex );
         exit( 0 );
     }
 
@@ -459,20 +461,20 @@ int main( int argc, char *argv[] )
             remove( exe );
             switch( errno ) {
             case E2BIG:
-                doError( "Argument list too big. WRC step failed." );
+                doError( "Argument list too big. Resource compiler step failed." );
                 break;
             case ENOENT:
-                doError( "Could not find WRC.EXE." );
+                doError( "Could not find wrc.exe." );
                 break;
             case ENOMEM:
-                doError( "Not enough memory. WRC step failed." );
+                doError( "Not enough memory. Resource compiler step failed." );
                 break;
             }
-            doError( "Unknown error %d, WRC step failed.", errno );
+            doError( "Unknown error %d, resource compiler step failed.", errno );
         }
         if( i != 0 ) {
             remove( exe );
-            errPrintf( "WRC failed, return code = %d\n", i );
+            errPrintf( "Resource compiler failed, return code = %d\n", i );
             exit( i );
         }
     }

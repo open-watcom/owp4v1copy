@@ -777,7 +777,7 @@ extern WORD __F000;
 extern WORD LocalPtr;
 #pragma aux LocalPtr "_*";
 
-#pragma library (WIN386);
+#pragma library (win386);
 
 #if     defined(STRICT)
 int     PASCAL  WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
