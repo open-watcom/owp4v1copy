@@ -209,4 +209,4 @@ wmpmsg.gh : $(womp_dir)/womp.msg
 !endif
 
 ./mkopcode.exe: $(proj_path)/mkopcode.c
-        $(bld_cl) $(wcl_util_opts) $[@
+        $(bld_cl) $[@ $(wcl_util_opts) # order is important for gcc (linux bootstrap)
