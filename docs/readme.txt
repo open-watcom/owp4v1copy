@@ -1,7 +1,7 @@
-Open Watcom C/C++/FORTRAN Version 1.1 - README
+Open Watcom C/C++/FORTRAN Version 1.2 - README
 ----------------------------------------------
 
-Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.1 release! This
+Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.2 release! This
 README provides helpful hints to help you get the software package up and
 running. For more detailed information on installation and setup, please
 refer to online Getting Started Guide (c_readme.hlp/c_readme.inf for
@@ -29,7 +29,7 @@ on the ost platform (DOS, OS/2, Win32). The common variables are:
               and is used by various Open Watcom tools to locate files
  - EDPATH   - points to VI/VIW configuration files
  - INCLUDE  - points to directories containing header files used by the
-              C/C++ compilers   
+              C/C++ compilers
  - FINCLUDE - points to directories containing header files used by the
               FORTRAN compilers
  - LIB      - points to directories containing library files; note that

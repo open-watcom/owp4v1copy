@@ -11,7 +11,16 @@ recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
 .*
-
+.*
+.section Differences from Open Watcom Version 1.1
+.*
+.np
+Following is a list of changes made in &product 1.2.
+.begbull
+.bull
+Fill in all the changes...
+.endbull
+.*
 .*
 .section Differences from Open Watcom Version 1.0
 .*
