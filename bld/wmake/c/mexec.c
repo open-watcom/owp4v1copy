@@ -34,7 +34,9 @@
 #endif
 #include <fcntl.h>
 #include <unistd.h>
+#ifndef __LINUX__
 #include <process.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1585,7 +1587,13 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         closeCurrentFile();
         dll_cmd = OSFindDLL( argv[0] );
         if( dll_cmd == NULL ) {
+#ifdef __LINUX__ /* For Linux we must for now use system since
+                    without splitting argv[1] the spawnvp below
+                    does not always work */
+            retcode = mySystem( cmdname, cmd );
+#else
             retcode = spawnvp( P_WAIT, cmdname, argv );
+#endif
             if( retcode < 0 ) {
                 PrtMsg( ERR| UNABLE_TO_EXEC, cmdname );
             }
