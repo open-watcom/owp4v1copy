@@ -1,0 +1,37 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: istream/istream.h (istream class)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: THIS IS A SKELETON FILE!
+///////////////////////////////////////////////////////////////////////////
+:segment !CNAME
+#ifndef _ISTREAM_H_INCLUDED
+#define _ISTREAM_H_INCLUDED
+
+:include readonly.sp
+
+#ifndef _ISTREAM_INCLUDED
+  #include <istream>
+#endif
+
+#endif
+:elsesegment
+#ifndef _ISTREAM_INCLUDED
+#define _ISTREAM_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header istream requires C++
+#endif
+
+#ifndef _COMDEF_H_INCLUDED
+ #include <_comdef.h>
+#endif
+
+:: Placeholder declaration.
+namespace std { }
+
+:endsegment

@@ -1,19 +1,36 @@
-//
-//  iostream.h  I/O streams
+///////////////////////////////////////////////////////////////////////////
+// FILE: iostream/iostream.h (iostreams "top level" file)
 //
 :keep CPP_HDR
 :include crwat.sp
 //
+// Description: This header is part of the C++ standard library.
+///////////////////////////////////////////////////////////////////////////
+:segment !CNAME
 #ifndef _IOSTREAM_H_INCLUDED
 #define _IOSTREAM_H_INCLUDED
+
+:include readonly.sp
+
+#ifndef _IOSTREAM_INCLUDED
+  #include <iostream>
+#endif
+
+#endif
+:elsesegment
+#ifndef _IOSTREAM_INCLUDED
+#define _IOSTREAM_INCLUDED
 :include readonly.sp
 
 #ifndef __cplusplus
-#error iostream.h is for use with C++
+#error The header iostream requires C++
 #endif
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
+
+:: Placeholder declaration
+namespace std { }
 
 :include watexc.sp
 
@@ -699,3 +716,4 @@ _WPRTLINK extern ostream &flush( ostream & );
  _WPRTLINK extern ostream _WCDATA clog;
 
 #endif
+:endsegment

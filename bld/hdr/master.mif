@@ -32,8 +32,15 @@ common = &
         i86.h &
         inttypes.h &
         iomanip.h &
+        ios &
+        ios.h &
+        iosfwd &
+        iosfwd.h &
+        iostream &
         iostream.h &
         iso646.h &
+        istream &
+        istream.h &
         jctype.h &
         jstring.h &
         jtime.h &
@@ -46,6 +53,8 @@ common = &
         mem.h &
         mmintrin.h &
         new.h &
+        ostream &
+        ostream.h &
         pgchart.h &
         process.h &
         search.h &
@@ -391,6 +400,23 @@ cwchar  : $(wchar_deps)
 
 cwctype : $(wctype_deps)
         $(csplice)
+
+# IOStream headers.
+
+ios      : $(ios_deps)
+         $(csplice)
+
+iosfwd   : $(iosfwd_deps)
+         $(csplice)
+
+iostream : $(iostream_deps)
+         $(csplice)
+
+istream  : $(istream_deps)
+         $(csplice)
+
+ostream  : $(ostream_deps)
+         $(csplice)
 
 
 clean: .SYMBOLIC

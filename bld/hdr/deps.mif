@@ -1,4 +1,7 @@
-# These dependency lists are used for both standard name.h and cname headers.
+
+# These dependency lists are used for both standard name.h and cname
+# headers. This is only relevant for headers in the C++ standard library.
+
 assert_deps = ../watcom/assert.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
 ctype_deps = ../watcom/ctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../wchar_t.sp ../wctypet.sp
 errno_deps = ../watcom/errno.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp
@@ -18,7 +21,16 @@ time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../cr
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
+ios_deps = ../watcom/ios.mh ../readonly.sp ../crwat.sp
+iosfwd_deps = ../watcom/iosfwd.mh ../readonly.sp ../crwat.sp
+iostream_deps = ../watcom/iostream.mh ../readonly.sp ../cpplock.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../watexc.sp
+istream_deps = ../watcom/istream.mh ../readonly.sp ../crwat.sp
+ostream_deps = ../watcom/ostream.mh ../readonly.sp ../crwat.sp
+
 # The follow describe the dependences for the various *.h files.
+# Dependencies for the extensionless C++ headers are currently in the
+# master makefile.
+
 assert.h        : $(assert_deps)
 bios.h          : ../watcom/bios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 bios98.h        : ../watcom/bios98.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
@@ -39,6 +51,7 @@ except.h        : ../watcom/except.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ..
 exceptio.h      : ../watcom/exceptio.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
 exstring.h      : ../watcom/exstring.mh ../readonly.sp ../crwat.sp
 fcntl.h         : ../watcom/fcntl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+fenv.h          : ../watcom/fenv.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 float.h         : $(float_deps)
 fstream.h       : ../watcom/fstream.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 generic.h       : ../watcom/generic.mh ../readonly.sp ../crwat.sp
@@ -48,8 +61,11 @@ i86.h           : ../watcom/i86.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp 
 inttypes.h      : ../watcom/inttypes.mh ../readonly.sp ../crwat.sp
 io.h            : ../watcom/io.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../maxpath.sp ../wchar_t.sp
 iomanip.h       : ../watcom/iomanip.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
-iostream.h      : ../watcom/iostream.mh ../readonly.sp ../cpplock.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../watexc.sp
+ios.h           : $(ios_deps)
+iosfwd.h        : $(iosfwd_deps)
+iostream.h      : $(iostream_deps)
 iso646.h        : $(iso646_deps)
+istream.h       : $(istream_deps)
 jctype.h        : ../watcom/jctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
 jstring.h       : ../watcom/jstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../null.sp ../sizet.sp
 jtime.h         : ../watcom/jtime.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
@@ -63,6 +79,7 @@ mem.h           : ../watcom/mem.mh ../readonly.sp ../crwat.sp ../ptrdiff.sp
 memory.h        : ../watcom/memory.mh ../readonly.sp ../crwat.sp
 mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
 new.h           : ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
+ostream.h       : $(ostream_deps)
 pgchart.h       : ../watcom/pgchart.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 process.h       : ../watcom/process.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../wchar_t.sp
 search.h        : ../watcom/search.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp

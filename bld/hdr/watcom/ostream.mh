@@ -1,0 +1,37 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: ostream/ostream.h (ostream class)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: THIS IS A SKELETON FILE!
+///////////////////////////////////////////////////////////////////////////
+:segment !CNAME
+#ifndef _OSTREAM_H_INCLUDED
+#define _OSTREAM_H_INCLUDED
+
+:include readonly.sp
+
+#ifndef _OSTREAM_INCLUDED
+  #include <ostream>
+#endif
+
+#endif
+:elsesegment
+#ifndef _OSTREAM_INCLUDED
+#define _OSTREAM_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header ostream requires C++
+#endif
+
+#ifndef _COMDEF_H_INCLUDED
+ #include <_comdef.h>
+#endif
+
+:: Placeholder declaration.
+namespace std { }
+
+:endsegment
