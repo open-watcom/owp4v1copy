@@ -35,7 +35,7 @@
 #include <ctype.h>
 #include "keys.h"
 
-static FARPROC      oldEditProc;
+static WNDPROC      oldEditProc;
 static FARPROC      editProc;
 static history_data *hData;
 static int      currHist;
@@ -153,7 +153,7 @@ long WINEXP EditSubClassProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     }
     break;
     }
-    return( CallWindowProc( (LPVOID) oldEditProc, hwnd, msg, wparam, lparam ) );
+    return( CallWindowProc( oldEditProc, hwnd, msg, wparam, lparam ) );
 
 } /* EditSubClassProc */
 
@@ -167,7 +167,7 @@ void EditSubClass( HWND hwnd, int id, history_data *h )
     hData = h;
     currHist = h->curr;
     edit = GetDlgItem( hwnd, id );
-    oldEditProc = (FARPROC) GetWindowLong( edit, GWL_WNDPROC );
+    oldEditProc = (WNDPROC) GetWindowLong( edit, GWL_WNDPROC );
     editProc = MakeProcInstance( (FARPROC) EditSubClassProc, InstanceHandle );
     SetWindowLong( edit, GWL_WNDPROC, (LONG) editProc );
     SendMessage( edit, EM_LIMITTEXT, MAX_INPUT_LINE, 0L );

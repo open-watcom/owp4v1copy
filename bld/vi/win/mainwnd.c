@@ -52,7 +52,7 @@ BOOL RegisterMainWindow( HANDLE inst )
     WNDCLASS    wc;
 
     wc.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = (LPVOID) MainWindowProc;
+    wc.lpfnWndProc = MainWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = inst;

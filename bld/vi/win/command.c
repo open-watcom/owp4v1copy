@@ -65,7 +65,7 @@ static BOOL Init( window *w, void *parm )
     w = w;
     parm = parm;
     wc.style = 0;
-    wc.lpfnWndProc = (LPVOID) CommandWindowProc;
+    wc.lpfnWndProc = CommandWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;

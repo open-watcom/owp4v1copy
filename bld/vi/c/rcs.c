@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RCS DLL loading and function import for vi.
 *
 ****************************************************************************/
 
@@ -56,7 +55,7 @@ extern RCSFiniFn                RCSFini = NULL;
 #if defined( __WINDOWS__ ) || defined( __NT__ )
     #include <windows.h>
 
-    #define GET_ADDR( inst, name, proc ) proc = (void*)GetProcAddress( inst, name )
+    #define GET_ADDR( inst, name, proc, type ) proc = (type)GetProcAddress( inst, name )
     static HINSTANCE LibHandle;
     int ViRCSInit()
     {
@@ -78,7 +77,7 @@ extern RCSFiniFn                RCSFini = NULL;
     APIRET APIENTRY  DosLoadModule(PSZ pszName, ULONG cbName, PSZ pszModname, PHMODULE phmod);
     APIRET APIENTRY  DosFreeModule(HMODULE hmod);
     APIRET APIENTRY  DosQueryProcAddr(HMODULE hmod, ULONG ordinal, PSZ pszName,PFN* ppfn);
-    #define GET_ADDR( inst, name, proc ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
+    #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
 
     int ViRCSInit()
     {
@@ -106,17 +105,17 @@ extern RCSFiniFn                RCSFini = NULL;
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || (defined( __OS2__ ) && defined( __386__ ))
 static void getFunctionPtrs()
 {
-    GET_ADDR( LibHandle, GETVER_FN_NAME,        RCSGetVersion );
-    GET_ADDR( LibHandle, INIT_FN_NAME,          RCSInit );
-    GET_ADDR( LibHandle, CHECKOUT_FN_NAME,      RCSCheckout );
-    GET_ADDR( LibHandle, CHECKIN_FN_NAME,       RCSCheckin );
-    GET_ADDR( LibHandle, HAS_SHELL_FN_NAME,     RCSHasShell );
-    GET_ADDR( LibHandle, RUNSHELL_FN_NAME,      RCSRunShell );
-    GET_ADDR( LibHandle, SETSYS_FN_NAME,        RCSSetSystem );
-    GET_ADDR( LibHandle, GETSYS_FN_NAME,        RCSQuerySystem );
-    GET_ADDR( LibHandle, REG_BAT_CB_FN_NAME,    RCSRegisterBatchCallback );
-    GET_ADDR( LibHandle, REG_MSGBOX_CB_FN_NAME, RCSRegisterMessageBoxCallback );
-    GET_ADDR( LibHandle, SET_PAUSE_FN_NAME,     RCSSetPause );
-    GET_ADDR( LibHandle, FINI_FN_NAME,          RCSFini );
+    GET_ADDR( LibHandle, GETVER_FN_NAME,        RCSGetVersion,                 RCSGetVerFn );
+    GET_ADDR( LibHandle, INIT_FN_NAME,          RCSInit,                       RCSInitFn );
+    GET_ADDR( LibHandle, CHECKOUT_FN_NAME,      RCSCheckout,                   RCSCheckoutFn );
+    GET_ADDR( LibHandle, CHECKIN_FN_NAME,       RCSCheckin,                    RCSCheckinFn );
+    GET_ADDR( LibHandle, HAS_SHELL_FN_NAME,     RCSHasShell,                   RCSHasShellFn );
+    GET_ADDR( LibHandle, RUNSHELL_FN_NAME,      RCSRunShell,                   RCSRunShellFn );
+    GET_ADDR( LibHandle, SETSYS_FN_NAME,        RCSSetSystem,                  RCSSetSystemFn );
+    GET_ADDR( LibHandle, GETSYS_FN_NAME,        RCSQuerySystem,                RCSQuerySystemFn );
+    GET_ADDR( LibHandle, REG_BAT_CB_FN_NAME,    RCSRegisterBatchCallback,      RCSRegBatchCbFn );
+    GET_ADDR( LibHandle, REG_MSGBOX_CB_FN_NAME, RCSRegisterMessageBoxCallback, RCSRegMsgBoxCbFn );
+    GET_ADDR( LibHandle, SET_PAUSE_FN_NAME,     RCSSetPause,                   RCSSetPauseFn );
+    GET_ADDR( LibHandle, FINI_FN_NAME,          RCSFini,                       RCSFiniFn );
 }
 #endif

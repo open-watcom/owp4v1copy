@@ -167,15 +167,15 @@ static void freeAllStringHandles( void )
  */
 bool DDEInit( void )
 {
-    FARPROC     fp;
+    PFNCALLBACK  fp;
 
     if( UseDDE ) {
         return( TRUE );
     }
 
-    fp = MakeProcInstance( (LPVOID) DDECallback, InstanceHandle );
+    fp = (PFNCALLBACK)MakeProcInstance( (FARPROC)DDECallback, InstanceHandle );
 
-    if( DdeInitialize( &DDEInstId, (LPVOID) fp, CBF_FAIL_EXECUTES |
+    if( DdeInitialize( &DDEInstId, fp, CBF_FAIL_EXECUTES |
                         CBF_FAIL_ADVISES | CBF_SKIP_REGISTRATIONS |
                         CBF_SKIP_UNREGISTRATIONS, 0L ) ) {
         return( FALSE );

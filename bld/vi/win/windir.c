@@ -59,7 +59,7 @@ static BOOL Init( window *w, void *parm )
     w = w;
     parm = parm;
     wc.style = CS_DBLCLKS;
-    wc.lpfnWndProc = (LPVOID) FileCompleteWindowProc;
+    wc.lpfnWndProc = FileCompleteWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;

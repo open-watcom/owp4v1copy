@@ -45,7 +45,9 @@ static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
                           "\0";
 static char *FileNameList;
 
-BOOL WINEXP OpenHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
+typedef UINT (WINEXP * OPENHOOKTYPE)( HWND, UINT, WPARAM, LPARAM );
+
+UINT WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     int len;
     static OPENFILENAME *of;
@@ -116,8 +118,8 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     #endif
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK |
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY;
-        of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) OpenHook,
-                                                 InstanceHandle );
+        of.lpfnHook = (OPENHOOKTYPE) MakeProcInstance( (FARPROC) OpenHook,
+                          InstanceHandle );
     #ifdef __NT__
     }
     #endif
@@ -127,7 +129,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     if( is_chicago ) {
     #endif
     #ifndef __NT__
-        FreeProcInstance( (LPVOID) of.lpfnHook );
+        FreeProcInstance( (FARPROC) of.lpfnHook );
     #endif
     #ifdef __NT__
     }
@@ -174,10 +176,11 @@ int SelectFileSave( char *result )
     of.lpstrInitialDir = CurrentFile->home;
     of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN;
-    of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) OpenHook, InstanceHandle );
+    of.lpfnHook = (OPENHOOKTYPE) MakeProcInstance( (FARPROC) OpenHook,
+                      InstanceHandle );
     doit = GetSaveFileName( &of );
     #ifndef __NT__
-    FreeProcInstance( (LPVOID) of.lpfnHook );
+    FreeProcInstance( (FARPROC) of.lpfnHook );
     #endif
 
     if( doit != 0 ) {

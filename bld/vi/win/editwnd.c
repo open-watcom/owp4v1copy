@@ -73,7 +73,7 @@ static BOOL Init( window *w, void *parm )
     parm = parm;
 
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-    wc.lpfnWndProc = (LPVOID) EditWindowProc;
+    wc.lpfnWndProc = EditWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID ) * WIN_LAST;
     wc.hInstance = InstanceHandle;
