@@ -130,8 +130,10 @@ NOTES
    is minimal. Modern C++ programs are probably using exceptions and
    setjmp.h still works fine in C++ for old style code.
 
-4. I [PeterC] have no idea what the purpose of 'files.dat' in the top
-   level directory might be.
+4. The file 'files.dat' in the top level directory was used by the original
+   Watcom file packer/installer and contains a list of files to be
+   distributed together with flags determining which files are needed when.
+   This file is currently not used but might be in the future.
 
 5. In my [PeterC] opinion, Open Watcom's header files are significantly
    more readible than average. This is a good thing; particularly for
