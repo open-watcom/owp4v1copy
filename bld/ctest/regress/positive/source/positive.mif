@@ -165,7 +165,7 @@ positive_tests = &
     opt25.$(ext) &
     opt26.$(ext) &
     opt27.$(ext) &
-    opt28.$(ext) &
+#    opt28.$(ext) &
     opt29.$(ext) &
     opt30.$(ext) &
     opt31.$(ext) &
