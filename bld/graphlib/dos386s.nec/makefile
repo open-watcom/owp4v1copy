@@ -1,6 +1,9 @@
 #pmake: build os_dos cpu_386
 # makefile for GRAPH3S.LIB
 
+host_CPU = 386
+host_OS = dos
+
 libname =       graph3s
 model =         -ms -3s -d_NEC_PC -d__STACK
 module =        $[&s

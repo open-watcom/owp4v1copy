@@ -1,5 +1,8 @@
-#pmake: build os_dos cpu_386
+#pmake: build os_dos cpu_i86
 # makefile for GRAPHS.LIB
+
+host_CPU = i86
+host_OS = dos
 
 libname =       graphs
 model =         -ms -d_SUPERVGA

@@ -1,5 +1,8 @@
-#pmake: build os_qnx cpu_386
+#pmake: os_qnx cpu_386
 # makefile for GRAPH3R.LIB
+
+host_cpu = 386
+host_os = qnx
 
 libname =       graph3s
 model =         -ms -3s -d_SUPERVGA -bt=QNX -d__STACK

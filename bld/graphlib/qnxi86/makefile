@@ -1,5 +1,8 @@
-#pmake: build os_qnx cpu_i86
+#pmake: os_qnx cpu_i86
 # makefile for GRAPHS.LIB
+
+host_cpu = i86
+host_os = qnx
 
 libname =       graphs
 model =         -ms -d_SUPERVGA -bt=QNX

@@ -3,6 +3,9 @@
 # WATCOM Presentation Graphics (PGCHART.LIB)
 #
 
+host_CPU = i86
+host_OS = dos
+
 libname =       charts
 model =         -ms
 module =        $[&
