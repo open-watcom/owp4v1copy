@@ -123,8 +123,12 @@ int GetOpt( int *argc, char *argv[], char *optstr, const char *usage[] )
                 optOff++;
                 ch = currarg[optOff];
             }
-            if( ch == '\0' ) { // option char by itself should be
-                return( -1 );           // left alone
+            if( ch == '\0' ) { // option char by itself should be left alone
+                return( -1 );  // unconsumed end of options delimiter
+            }
+            if( ch == '-' && currarg[optOff+1] == '\0' ) {
+                eatArg( argc, argv, 1 );
+                return( -1 );  // "--" PoSIX end of options delimiter.
             }
             if( ch == '?' ) {
                 Quit( usage, NULL );
