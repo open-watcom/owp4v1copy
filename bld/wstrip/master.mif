@@ -38,7 +38,7 @@ $(name).exe : $(dependants)
         $(linker) $(lflags) name $^@ file {$(OBJS)}
 !ifeq host_OS dos
         copy $^@ $(name).dos
-        $(linker) debug all op symfile name $^@ system os2 pmc op newfile,stub=$(name).dos file {$(OBJS)} library $(wres_lib)
+        $(linker) debug all op symfile name $^@ system os2 pmc op newfile,st=8k,stub=$(name).dos file {$(OBJS)} library $(wres_lib)
 !endif
         wstrip -q -a -r $^@ . $(res_$(host_OS))
 
