@@ -1091,16 +1091,6 @@ static int ti_hwcursor()
 #define TI_DUMPCHARS()  {TI_REPEAT_CHAR( rchar, rcount, ralt, rcol );\
                         rcount= 0;}
 
-// Slurps a char to be output. Will dump existing chars if new char is
-// different.
-#define TI_SLURPCHAR( c )  {if( rcount!=0 &&\
-                            (rchar!=ti_char_map[c] || ralt!=ti_alt_map(c))\
-                                        ) TI_DUMPCHARS();\
-                            rcol=(rcount==0)?j:rcol;\
-                            rcount++;\
-                            rchar= ti_char_map[c];\
-                            ralt= ti_alt_map(c);}
-
 void update_shadow(void)
 /**********************/
 {
@@ -1371,8 +1361,20 @@ static int ti_refresh( int must )
 
                 if( !TI_ignore_bottom_right || (j!=UIData->width-1) ||
                                                     (i!=UIData->height-1) ){
-                    // slurp up the char
-                    TI_SLURPCHAR( (unsigned)bufp[j].ch );
+                    // Slurp up the char to be output. Will dump existing 
+                    // chars if new char is different.
+                    unsigned c = bufp[j].ch;
+                    if( rcount != 0 && ( rchar != ti_char_map[c][0] || ralt != ti_alt_map( c ) ) )
+                         TI_DUMPCHARS();
+                    rcol = ( rcount == 0 ) ? j : rcol;
+                    rcount++;
+                    if( ti_char_map[c][1] ) {
+                         /* a UTF-8 string: write it immediately, 1-byte repeats unlikely */
+                         fputs( ti_char_map[c], UIConFile );
+                         rcount = 0;
+                    }
+                    rchar = ti_char_map[c][0];
+                    ralt = ti_alt_map(c);
                     OldCol++;
 
                     // if we walk off the edge our position is undefined
