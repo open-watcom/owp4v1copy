@@ -1446,7 +1446,7 @@ STATIC RET_T handleCHDrive( char *cmd )
 #if !defined( __UNIX__ )
 typedef struct {
     BIT bForce  : 1;
-    BIT bSilent : 1;
+    BIT bVerbose : 1;
 } rm_flags;
 
 STATIC RET_T handleRMSyntaxError( void )
@@ -1466,7 +1466,7 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
                             /* first run? */
     if( line ) {
         flags->bForce = FALSE;
-        flags->bSilent = FALSE;
+        flags->bVerbose = FALSE;
 
         p = SkipWS( line + 2 ); /* find first non-ws after "RM" */
 
@@ -1478,8 +1478,8 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
                     case 'f':
                         flags->bForce = TRUE;
                         break;
-                    case 's':
-                        flags->bSilent = TRUE;
+                    case 'v':
+                        flags->bVerbose = TRUE;
                         break;
                     default:
                         return( handleRMSyntaxError() );
@@ -1504,12 +1504,37 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
     return( RET_SUCCESS );
 }
 
+STATIC BOOLEAN doRM( const char *file, rm_flags *flags )
+/*******************************************************
+ */
+{
+    int rv;
+
+    rv = unlink( file );
+    if( 0 != rv && flags->bForce ) {
+        unsigned attribute;
+
+        _dos_getfileattr( file, &attribute );
+        if( attribute & _A_RDONLY ) {
+            _dos_setfileattr( file, _A_NORMAL );
+            rv = unlink( file );
+        }
+    }
+    if( 0 != rv && !flags->bForce ) {
+        PrtMsg( ERR| SYSERR_DELETING_FILE, file );
+    } else if( flags->bVerbose ) {
+        PrtMsg( INF| DELETING_FILE, file );
+    }
+
+    return( 0 == rv );
+}
+
 STATIC RET_T handleRM( char *cmd )
 /*********************************
- * RM [-f -s] <file> ...
+ * RM [-f -v] <file> ...
  *
  * -f   Force deletion of read-only files.
- * -s   Silent operation. Nothing is printed, ever.
+ * -v   Verbose operation.
  */
 {
     rm_flags    flags;
@@ -1518,35 +1543,20 @@ STATIC RET_T handleRM( char *cmd )
 
     rt = getRMArgs( cmd, &flags, &pfname );
     while( RET_SUCCESS == rt ) {
-        const char    *dfile;
+        if( strpbrk( pfname, WILD_METAS ) == NULL ) {
+            doRM( pfname, &flags );
 
-        dfile = DoWildCard( pfname );
-        while( dfile && strcmp(dfile,pfname) ) {
-            int rv;
+        } else {
+            const char    *dfile;
 
-            rv = unlink( dfile );
-            if( 0 != rv ) {
-                unsigned attribute;
+            dfile = DoWildCard( pfname );
+            if( dfile && strcmp(dfile,pfname) ) {
+                do {
+                    if( !doRM( dfile, &flags ) )
+                        return( RET_ERROR );
 
-                _dos_getfileattr( dfile, &attribute );
-                if( attribute & _A_RDONLY ) {
-                    if( flags.bForce ) {
-                        _dos_setfileattr( dfile, _A_NORMAL );
-                        rv = unlink( dfile );
-                    }
-                }
+                } while( dfile = DoWildCard( NULL ) );
             }
-            if( !flags.bSilent ) {
-                if( 0 != rv ) {
-                    PrtMsg( ERR| SYSERR_DELETING_FILE, dfile );
-                } else {
-                    PrtMsg( INF| DELETING_FILE, dfile );
-                }
-            }
-            if( 0 != rv )
-                return( RET_ERROR );
-
-            dfile = DoWildCard( NULL );
         }
 
         rt = getRMArgs( NULL, NULL, &pfname );

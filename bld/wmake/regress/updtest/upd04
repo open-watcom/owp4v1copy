@@ -13,7 +13,7 @@ setup : .symbolic
     @wtouch upd04b1.1 upd04b2.2
 
 clean : .symbolic
-    @rm -f -s upd04a2 upd04b1.1 upd04b2.2 upd04b2.d
+    @rm -f upd04a2 upd04b1.1 upd04b2.2 upd04b2.d
 
 #
 # example using explicit rules
