@@ -86,6 +86,7 @@ h\os2\sys\sockio.h
 h\os2\sys\sysctl.h
 h\os2\sys\time.h
 h\os2\sys\uio.h
+h\os2\sys\un.h
 h\os21x\bse.h
 h\os21x\bsedos.h
 h\os21x\bseerr.h
