@@ -1,6 +1,6 @@
 @echo off
 echo Building '%1'...
 cd %relroot%\%defrel%
-comstrip %distroot%\manifest\%1 | zip %distroot%\archives\%1.zip -@ >> mkzips.log
-zip %distroot%\archives\%1.zip -j %relroot%\license.txt >> mkzips.log
+comstrip %distroot%\manifest\%1 | zip %distroot%\archives\%1.zip -@ >> %distroot%\mkzips.log 2>&1
+zip %distroot%\archives\%1.zip -j %relroot%\license.txt >> %distroot%\mkzips.log 2>&1
 cd %distroot%
