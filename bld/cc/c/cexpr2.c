@@ -1116,24 +1116,31 @@ bool ConstExprAndType( const_val *val )
     switch( tree->op.opr ) {
     case OPR_PUSHINT:
         val->type = tree->op.const_type;
-        if( tree->op.const_type == TYPE_LONG64
-         ||  tree->op.const_type == TYPE_ULONG64 ){
-            val->val64 = tree->op.long64_value;
-        }else{
-            val->val32 = tree->op.long_value;
+        switch( tree->op.const_type ) {
+        case TYPE_LONG64:
+        case TYPE_ULONG64:
+            val->value = tree->op.long64_value;
+            break;
+        case TYPE_ULONG:
+        case TYPE_UINT:
+            U32ToU64( tree->op.long_value, &val->value );
+            break;
+        default:
+            I32ToI64( tree->op.long_value, &val->value );
+            break;
         }
         ret = TRUE;
         break;
     case OPR_PUSHFLOAT:
         CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
-        val->val32 = (long)atof( tree->op.float_value->string );
+        I32ToI64( (long)atof( tree->op.float_value->string ), &val->value );
         ret = FALSE;
         break;
     default:
         if( tree->op.opr != OPR_ERROR ){
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
         }
-        val->val32 = 0;
+        U64Clear( val->value );
         ret = FALSE;
         break;
     }
@@ -1146,7 +1153,12 @@ long int ConstExpr()
     const_val   val;
 
     ConstExprAndType( &val );
-    return( val.val32 );
+    if( ( val.type == TYPE_ULONG64 ) && !U64IsI32( val.value ) ) {
+        CErr1( ERR_CONSTANT_TOO_BIG );
+    } else if( ( val.type == TYPE_LONG64 ) && !I64IsI32( val.value ) ) {
+        CErr1( ERR_CONSTANT_TOO_BIG );
+    }
+    return( I32FetchTrunc( val.value ) );
 }
 
 

@@ -1158,7 +1158,12 @@ local TYPEPTR ArrayDecl( TYPEPTR typ )
             const_val val;
 
             if( ConstExprAndType( &val ) ) {
-                dimension = val.val32;
+                if( ( val.type == TYPE_ULONG64 ) && !U64IsI32( val.value ) ) {
+                    CErr1( ERR_CONSTANT_TOO_BIG );
+                } else if( ( val.type == TYPE_LONG64 ) && !I64IsI32( val.value ) ) {
+                    CErr1( ERR_CONSTANT_TOO_BIG );
+                }
+                dimension = I32FetchTrunc( val.value );
             } else {
                 dimension = 1;
             }

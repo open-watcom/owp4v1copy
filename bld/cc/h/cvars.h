@@ -579,17 +579,16 @@ extern  void    SetDiagPop(void);
 
 //  cexpr2.c
 extern  void    ExprInit(void);
-extern  void ChkCallNode( TREEPTR tree );
+extern  void    ChkCallNode( TREEPTR tree );
 extern  TREEPTR Expr(void);
 extern  TREEPTR AddrExpr(void);
 extern  TREEPTR BoolExpr(TREEPTR);
 extern  TREEPTR CommaExpr(void);
 extern  long int ConstExpr(void);
-typedef struct{
-    int_32    val32;
-    int64     val64;
+typedef struct {
+    int64     value;
     DATA_TYPE type;
-}const_val;
+} const_val;
 extern  bool    ConstExprAndType(const_val *);
 extern  TREEPTR SingleExpr(void);
 extern  TREEPTR IntLeaf(target_int);

@@ -65,10 +65,76 @@ typedef enum {
 } enum_s642;
 
 typedef enum {
-    en643_3 = -0x7FFFFFFFFFFFFFFF,
+    en643_3 = 0x7FFFFFFFFFFFFFFF,
     en643_1 = 0xFFFFFFFFFFFFFFFF,
-    en643_2 = -0x7FFFFFFFFFFFFFFF
+    en643_2 = 0x7FFFFFFFFFFFFFFF
 } enum_u643;
+
+typedef enum {
+    en1_81_3 = 0x7F,
+    en1_81_1 = -0x7F,
+    en1_81_2 = 0x7F
+} enum1_s81;
+
+typedef enum {
+    en1_82_3 = 0xFF,
+    en1_82_1 = 0x7F,
+    en1_82_2 = 0xFF
+} enum1_u82;
+
+typedef enum {
+    en1_161_3 = 0xFF,
+    en1_161_1 = -0x7F,
+    en1_161_2 = 0xFF
+} enum1_s161;
+
+typedef enum {
+    en1_162_3 = 0x7FFF,
+    en1_162_1 = -0x7FFF,
+    en1_162_2 = 0x7FFF
+} enum1_s162;
+
+typedef enum {
+    en1_163_3 = 0xFFFF,
+    en1_163_1 = 0x7FFF,
+    en1_163_2 = 0xFFFF
+} enum1_u163;
+
+typedef enum {
+    en1_321_3 = 0xFFFF,
+    en1_321_1 = -0x7FFF,
+    en1_321_2 = 0xFFFF
+} enum1_s321;
+
+typedef enum {
+    en1_322_3 = 0x7FFFFFFF,
+    en1_322_1 = -0x7FFFFFFF,
+    en1_322_2 = 0x7FFFFFFF
+} enum1_s322;
+
+typedef enum {
+    en1_323_3 = 0xFFFFFFFF,
+    en1_323_1 = 0x7FFFFFFF,
+    en1_323_2 = 0xFFFFFFFF
+} enum1_u323;
+
+typedef enum {
+    en1_641_3 = 0xFFFFFFFF,
+    en1_641_1 = -0x7FFFFFFF,
+    en1_641_2 = 0xFFFFFFFF
+} enum1_s641;
+
+typedef enum {
+    en1_642_3 = 0x7FFFFFFFFFFFFFFF,
+    en1_642_1 = -0x7FFFFFFFFFFFFFFF,
+    en1_642_2 = 0x7FFFFFFFFFFFFFFF
+} enum1_s642;
+
+typedef enum {
+    en1_643_3 = 0xFFFFFFFFFFFFFFFF,
+    en1_643_1 = 0x7FFFFFFFFFFFFFFF,
+    en1_643_2 = 0xFFFFFFFFFFFFFFFF
+} enum1_u643;
 
 typedef enum {
     x = 1UI64 << 30,
@@ -140,6 +206,28 @@ int main( int argc, char **argv )
 #endif
     if( TEST_SIGNED( en323_1 ) ) fail(__LINE__);
     if( TEST_SIGNED( en643_1 ) ) fail(__LINE__);
+
+// test signed values
+
+    if( TEST_UNSIGNED( en1_81_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_82_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_161_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_162_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_321_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_322_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_641_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en1_642_1 ) ) fail(__LINE__);
+#if !defined( __I86__ )
+    if( TEST_UNSIGNED( en1_163_1 ) ) fail(__LINE__);
+#endif
+
+// test unsigned values
+
+#if defined( __I86__ )
+    if( TEST_SIGNED( en1_163_1 ) ) fail(__LINE__);
+#endif
+    if( TEST_SIGNED( en1_323_1 ) ) fail(__LINE__);
+    if( TEST_SIGNED( en1_643_1 ) ) fail(__LINE__);
 
     _PASS;
 }

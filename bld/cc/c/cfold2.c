@@ -1031,24 +1031,7 @@ void FoldExprTree( TREEPTR tree )
 bool BoolConstExpr( void )
 {
     const_val   val;
-    uint64      tmp;
-    bool        ret;
-   
+
     ConstExprAndType( &val );
-    //Must be int
-    if( val.type == TYPE_LONG64 || val.type == TYPE_ULONG64 ){
-        U32ToU64( 0, &tmp );
-        if( U64Cmp( &tmp, &val.val64 ) != 0 ) {
-            ret = TRUE;
-        } else {
-            ret = FALSE;
-        }
-    } else {
-        if( val.val32 != 0 ) {
-            ret = TRUE;
-        }else{
-            ret = FALSE;
-        }
-    }
-    return( ret );
+    return( U64Test( &val.value ) );
 }

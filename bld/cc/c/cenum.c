@@ -108,7 +108,7 @@ static uint64 const RangeTable[ENUM_SIZE][2] =
     { i64val( 0x80000000, 0x00000000 ),i64val( 0x7FFFFFFF, 0xFFFFFFFF ) },//s64
     { i64val( 0x00000000, 0x00000000 ),i64val( 0xFFFFFFFF, 0xFFFFFFFF ) },//u64
 };
-static uint64 const Inc[1] = i64val( 0x00000000, 0x00000001 );
+
 struct { DATA_TYPE decl_type; int size; } ItypeTable[ENUM_SIZE] =
 {
     { TYPE_CHAR, TARGET_CHAR  },    //S8
@@ -172,14 +172,15 @@ TYPEPTR EnumDecl( int flags )
         enum enum_rng   index;
         enum enum_rng   const_index;
         uint64          n;
-        bool            sign;
+        uint64          Inc;
         bool            minus;
-        ENUM_HANDLE    *prev_lnk;
+        bool            has_sign;
+        ENUM_HANDLE     *prev_lnk;
         ENUM_HANDLE     esym;
 
         if( CompFlags.make_enums_an_int ) {
             index = ENUM_INT;
-        }else{
+        } else {
             index = ENUM_S8;
         }
         const_index = ENUM_INT;
@@ -187,9 +188,10 @@ TYPEPTR EnumDecl( int flags )
         if( CurToken == T_RIGHT_BRACE ) {
             CErr1( ERR_EMPTY_ENUM_LIST );
         }
-        U32ToU64( 0, &n );
-        sign = FALSE;
+        U32ToU64( 1, &Inc );
+        U64Clear( n );
         minus = FALSE;
+        has_sign = FALSE;
         prev_lnk = &esym;
         esym = NULL;
         while( CurToken == T_ID ) {
@@ -200,45 +202,39 @@ TYPEPTR EnumDecl( int flags )
             if( CurToken == T_EQUAL ) {
                 NextToken();
                 ConstExprAndType( &val );
+                minus = FALSE;
                 switch( val.type ){
-                default:
-                    I32ToI64( val.val32, &val.val64 );
-                case TYPE_LONG64:
-                    if( val.val64.u.sign.v ){
-                        minus = TRUE;
-                        sign = TRUE;
-                    }else{
-                        minus = FALSE;
-                    }
-                    break;
                 case TYPE_ULONG:
                 case TYPE_UINT:
-                    U32ToU64( val.val32, &val.val64 );
                 case TYPE_ULONG64:
-                    minus = FALSE;
+                    break;
+                default:
+                    if( val.value.u.sign.v ) {
+                        if( !has_sign && ( index & 1 ) )
+                            index++;
+                        minus = TRUE;
+                        has_sign = TRUE;
+                    }
                     break;
                 }
-                n = val.val64;
+                n = val.value;
+            } else if( minus ) {
+                if( n.u.sign.v == 0 ) {
+                    minus = FALSE;
+                }
             }
-            if( sign ) {
-                if( ( ( index & 1 ) == 0 )
-                    || ( I64Cmp( &n, &(RangeTable[ index - 1 ][LOW] )) < 0 ) ) {
-                    index = ( index + 1 ) & ~1;
-                    for( ; index < ENUM_SIZE; index += 2 ) {
-                        if( minus ){
-                            if( I64Cmp( &n, &(RangeTable[ index ][LOW] )) >= 0 ) break;
-                        } else {
-                            if( U64Cmp( &n, &(RangeTable[ index ][HIGH]) ) <= 0 ) break;
-                        }
-                    }
-                    if( index == ENUM_SIZE ) {
-                        index = ENUM_U64;
-                    }
+            for( ; index < ENUM_SIZE; index++ ) {
+                if( minus ) {
+                    if( I64Cmp( &n, &( RangeTable[ index ][LOW] ) ) >= 0 ) break;
+                } else {
+                    if( U64Cmp( &n, &( RangeTable[ index ][HIGH]) ) <= 0 ) break;
                 }
-            } else {
-                for( ; index < ENUM_SIZE; index += 1 ) {
-                    if( U64Cmp( &n, &(RangeTable[ index ][HIGH]) ) <= 0 ) break;
+                if( has_sign ) {
+                    index++;
                 }
+            }
+            if( index >= ENUM_SIZE ) {
+                CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
             }
             EnumTable[ esym->hash ] = esym;             /* 08-nov-94 */
             if( index > const_index ){ // change type of enum to fit const
@@ -252,7 +248,7 @@ TYPEPTR EnumDecl( int flags )
             }
             esym->value = n;
             if( CurToken == T_RIGHT_BRACE ) break;
-            U64Add( &n,Inc,&n);
+            U64Add( &n, &Inc, &n );
             MustRecog( T_COMMA );
             if( CurToken == T_RIGHT_BRACE ) {
                 if( !CompFlags.extensions_enabled ) {
