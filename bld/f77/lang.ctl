@@ -42,8 +42,8 @@ cdsay .
     #intel link utilities
     <CPCMD> <devdir>/f77/wfl/dosi86.i86/wfl.exe <relroot>/rel2/binw/wfl.exe
     <CPCMD> <devdir>/f77/wfl/dosi86.i86/wfl.sym <relroot>/rel2/binw/wfl.sym
-    <CPCMD> <devdir>/f77/wfl/dos386.386/wfl386.exe <relroot>/rel2/binw/wfl386.exe
-    <CPCMD> <devdir>/f77/wfl/dos386.386/wfl386.sym <relroot>/rel2/binw/wfl386.sym
+    <CPCMD> <devdir>/f77/wfl/dosi86.386/wfl386.exe <relroot>/rel2/binw/wfl386.exe
+    <CPCMD> <devdir>/f77/wfl/dosi86.386/wfl386.sym <relroot>/rel2/binw/wfl386.sym
     <CPCMD> <devdir>/f77/wfl/nt386.i86/wfl.exe <relroot>/rel2/binnt/wfl.exe
     <CPCMD> <devdir>/f77/wfl/nt386.i86/wfl.sym <relroot>/rel2/binnt/wfl.sym
     <CPCMD> <devdir>/f77/wfl/nt386.386/wfl386.exe <relroot>/rel2/binnt/wfl386.exe
@@ -59,7 +59,7 @@ cdsay .
 #    <CPCMD> <devdir>/f77/wfl/ntaxp.axp/wflaxp.exe <relroot>/rel2/axpnt/wflaxp.exe
 
 
-    # Libraries, lots and lots of libraries, basic platforms are OS/2, DOS, NT. NEC, NETWARE, WIN
+    # Libraries, lots and lots of libraries, basic platforms are OS/2, DOS, NT, NETWARE, WIN
 
     # 32-bit Libraries
     # 32-bit DOS Libraries
@@ -84,7 +84,7 @@ cdsay .
     <CPCMD> <devdir>/f77/cg86/rt/23s/flibs.lib          <relroot>/rel2/lib386/os2/flibs.lib
     <CPCMD> <devdir>/f77/cg86/rt/23s7/flib7s.lib        <relroot>/rel2/lib386/os2/flib7s.lib
 
-    # 32-bit Windoes Libraries
+    # 32-bit Windows Libraries
     <CPCMD> <devdir>/f77/cg86/rt/w386/flib.lib          <relroot>/rel2/lib386/win/flib.lib
     <CPCMD> <devdir>/f77/cg86/rt/w387/flib7.lib         <relroot>/rel2/lib386/win/flib7.lib
     <CPCMD> <devdir>/f77/cg86/rt/w386s/flibs.lib        <relroot>/rel2/lib386/win/flibs.lib
