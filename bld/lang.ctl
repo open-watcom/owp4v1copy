@@ -171,3 +171,5 @@ echo Bootstrapping compiler using GNU tools...
 # Do CDSAY to see end time
 cdsay .
 
+# clean build tools, must be last item
+[ INCLUDE <DEVDIR>/builder/clean.ctl ]

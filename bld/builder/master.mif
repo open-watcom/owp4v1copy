@@ -8,7 +8,7 @@ name = builder
 !ifdef __UNIX__
 cpcmd = cp $^. $(bld_bin)/$^&
 !else ifdef __NT__
-cpcmd = copy $^. $(bld_bin)\$^&.exe > nulldevice # command is noisy by default in MS-produced "shells"
+cpcmd = copy $^. $(bld_bin)\$^&.exe > $(nulldevice) # command is noisy by default in MS-produced "shells"
 !else
 cpcmd = copy $^. $(bld_bin)\$^&.exe
 !endif
