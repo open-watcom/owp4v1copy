@@ -1974,17 +1974,18 @@ typedef struct _POINTERINFO {
     HBITMAP hbmMiniColor;
 } POINTERINFO, *PPOINTERINFO;
 
-BOOL     APIENTRY WinDestroyPointer(HPOINTER hptrPointer);
-HBITMAP  APIENTRY WinGetSysBitmap(HWND hwndDesktop, ULONG ibm);
-HPOINTER APIENTRY WinLoadPointer(HWND hwndDeskTop, HMODULE Resource, ULONG idPointer);
-HPOINTER APIENTRY WinQueryPointer(HWND hwndDeskTop);
-BOOL     APIENTRY WinQueryPointerInfo(HPOINTER hptr, PPOINTERINFO pptriPointerInfo);
-BOOL     APIENTRY WinQueryPointerPos(HWND hwndDeskTop, PPOINTL pptlPoint);
-HPOINTER APIENTRY WinQuerySysPointer(HWND hwndDeskTop, LONG lIdentifier, BOOL fCopy);
-BOOL     APIENTRY WinSetPointer(HWND hwndDeskTop, HPOINTER hptrNewPointer);
-BOOL     APIENTRY WinSetPointerOwner(HPOINTER hptr, PID pid, BOOL fDestroy);
-BOOL     APIENTRY WinSetPointerPos(HWND hwndDeskTop, LONG lx, LONG ly);
-BOOL     APIENTRY WinShowPointer(HWND hwndDeskTop, BOOL fShow);
+HPOINTER APIENTRY WinCreatePointer(HWND,HBITMAP,BOOL,LONG,LONG);
+BOOL     APIENTRY WinDestroyPointer(HPOINTER);
+HBITMAP  APIENTRY WinGetSysBitmap(HWND,ULONG);
+HPOINTER APIENTRY WinLoadPointer(HWND,HMODULE,ULONG);
+HPOINTER APIENTRY WinQueryPointer(HWND);
+BOOL     APIENTRY WinQueryPointerInfo(HPOINTER,PPOINTERINFO);
+BOOL     APIENTRY WinQueryPointerPos(HWND,PPOINTL);
+HPOINTER APIENTRY WinQuerySysPointer(HWND,LONG,BOOL);
+BOOL     APIENTRY WinSetPointer(HWND,HPOINTER);
+BOOL     APIENTRY WinSetPointerOwner(HPOINTER,PID,BOOL);
+BOOL     APIENTRY WinSetPointerPos(HWND,LONG,LONG);
+BOOL     APIENTRY WinShowPointer(HWND,BOOL);
 
 #endif
 
@@ -2471,14 +2472,13 @@ typedef struct _PRESPARAMS {
     PARAM aparam[1];
 } PRESPARAMS, *PPRESPARAMS;
 
-ULONG  APIENTRY WinQueryPresParam(HWND hwnd, ULONG idAttrType1, ULONG idAttrType2,
-                   PULONG pidAttrTypeFound, ULONG cbAttrValueLen,
-                   PPVOID pAttrValue, ULONG flOptions);
-LONG   APIENTRY WinQuerySysValue(HWND hwndDeskTop, LONG iSysValue);
-BOOL   APIENTRY WinRemovePresParam(HWND hwnd, ULONG idAttrType);
-BOOL   APIENTRY WinSetPresParam(HWND hwnd, ULONG idAttrType,
-                   ULONG cbAttrValueLen, PVOID pAttrValue);
-BOOL   APIENTRY WinSetSysValue(HWND hwndDeskTop, LONG iSysValue, LONG lValue);
+ULONG  APIENTRY WinQueryPresParam(HWND,ULONG,ULONG,PULONG,ULONG,PPVOID,ULONG);
+LONG   APIENTRY WinQuerySysColor(HWND,LONG,LONG);
+LONG   APIENTRY WinQuerySysValue(HWND,LONG);
+BOOL   APIENTRY WinRemovePresParam(HWND,ULONG);
+BOOL   APIENTRY WinSetPresParam(HWND,ULONG,ULONG,PVOID);
+BOOL   APIENTRY WinSetSysColors(HWND,ULONG,ULONG,LONG,ULONG,PLONG);
+BOOL   APIENTRY WinSetSysValue(HWND,LONG,LONG);
 
 #endif
 
