@@ -24,20 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  New Executable (NE) format structures and constants. Used
+*               by 16-bit Windows and OS/2.
 *
 ****************************************************************************/
 
 
 #ifndef _EXEOS2_H
 
-#if defined( __WATCOMC__ )
-#pragma pack(push,1);
-#endif
+#pragma pack(push, 1)
 
-/* OS2 EXE file header and various tables */
-/* ====================================== */
+/* OS/2 EXE file header and various tables */
+/* ======================================= */
 
 typedef struct os2_exe_header {
     unsigned_16         signature;      /* signature to mark valid EXE file */
@@ -262,9 +260,7 @@ typedef struct resource_record {
 #define REL_IMPORTED_NAME       0x0002
 #define REL_ADDITIVE            0x0004
 
-#if defined( __WATCOMC__ )
-#pragma pack(pop);
-#endif
+#pragma pack(pop)
 
 #define _EXEOS2_H
 #endif
