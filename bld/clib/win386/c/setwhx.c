@@ -32,7 +32,7 @@
 
 #include "cover.h"
 
-HHOOK PASCAL _Cover_SetWindowsHookEx(int idHook, HOOKPROC lpfn,
+HHOOK PASCAL _Cover_SetWindowsHookEx(short idHook, HOOKPROC lpfn,
                                         HINSTANCE hInstance, HTASK hTask)
 {
     return( SetWindowsHookEx( idHook, SetProc( lpfn, GETPROC_SETWINDOWSHOOK ),
