@@ -1,6 +1,6 @@
 * MTHREAD.FOR
-
-*$pragma aux DosSleep parm( value*4 ) [] caller
+c$define INCL_DOS
+c$include os2.fap
 
       integer NumThreads
       logical HoldThreads
