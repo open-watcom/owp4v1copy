@@ -1,16 +1,5 @@
 #pmake: all cpu_i86 os_qnx
-CC = wpp
-CFLAGS = -d2-w4-zq-ml-bt=QNX
-OBJS = rcsdll.obj inifile.obj
+host_OS = qnx
+host_CPU = i86
 
-.EXTENSIONS:
-.EXTENSIONS: .obj
-.EXTENSIONS: .cpp
-
-rcsdll.lib : $(OBJS)
-    wlib $^*.lib -+ $(OBJS)
-
-.cpp : ..
-
-.cpp.obj : .AUTODEPEND
-    $(CC) $< $(CFLAGS)
+!include ../master.mif

@@ -1,17 +1,7 @@
 #pmake: all build cpu_i86 os_win
-CC = wpp
-CFLAGS = -d1-w4-bd-zw-zq-zu-ml-bt=windows -i=$(lang_root)\h\win;..
-OBJS = rcsdll.obj mkssi.obj inifile.obj
+host_OS = win
+host_CPU = i86
 
-.EXTENSIONS:
-.EXTENSIONS: .obj
-.EXTENSIONS: .cpp
+sys_dll = 1
 
-rcsdll.dll : $(OBJS)
-    wlink op map d all system windows_dll fi { $(OBJS) } lib windows
-    wlib -b -n rcsdll.lib +rcsdll.dll
-
-.cpp : ..;..\mkssi
-
-.cpp.obj : .AUTODEPEND
-    $(CC) $< $(CFLAGS)
+!include ../master.mif

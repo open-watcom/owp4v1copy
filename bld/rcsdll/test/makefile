@@ -5,8 +5,8 @@ res1_flags = -bt=windows -i..\..\h;..
 name = test
 CDIR = .;..\c
 
-$(name).exe : $(name).obj $(name).res ..\objwin\rcsdll.lib
-    wlink debug all name $(name) file $(name) sys windows lib { windows commdlg ..\objwin\rcsdll } op map op stack=16k
+$(name).exe : $(name).obj $(name).res ..\wini86\rcsdll.lib
+    wlink debug all name $(name) file $(name) sys windows lib { windows commdlg ..\wini86\rcsdll } op map op stack=16k
     wrc $(name).res
 
 $(name).obj : $(name).c
@@ -14,3 +14,6 @@ $(name).obj : $(name).c
 
 $(name).res : $(name).rc $(resources)
     wrc -r -i=.. -i$(win_h) -fo=.\$(name).res $(res1_flags) $[@
+
+clean : .SYMBOLIC
+    rm -f *.obj *.exe *.map *.res *.err

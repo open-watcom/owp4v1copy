@@ -1,0 +1,43 @@
+proj_name = rcsdll
+
+!ifndef rcsdll_autodepends
+rcsdll_autodepends = .AUTODEPEND
+!endif
+
+suppress_zc = 1
+
+!include cproj.mif
+!include defrule.mif
+!include deftarg.mif
+
+OBJS = rcsdll.obj inifile.obj $(extra_objs)
+!ifeq host_OS nt
+OBJS += mkssi.obj
+!ifeq host_CPU 386
+OBJS += objcycle.obj
+!endif
+!else ifeq host_OS win
+OBJS += mkssi.obj
+!endif
+
+.cpp : ..;../mkssi;../ocycle
+
+inc_dirs = ..
+
+!ifeq host_CPU 386
+extra_c_flags_dos = -D__PHAR__
+!endif
+extra_c_flags_win = -zw-zu
+
+extra_l_flags_os2 = initinstance terminstance pm op manyautodata
+
+!ifdef sys_dll
+rcsdll.lib: rcsdll.dll
+    $(librarian) -b -n $^@ +$[@
+!else
+rcsdll.lib: $(OBJS)
+    $(librarian) -b -n $^@ $(OBJS)
+!endif
+
+rcsdll.dll : $(OBJS)
+    $(linker) $(lflags) name $^@ file {$(OBJS)}
