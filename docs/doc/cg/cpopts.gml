@@ -4161,6 +4161,22 @@ The "common epilogue" optimization is lost.
 The linker "OPTION ELIMINATE" must be specified when linking an
 application to take advantage of the granularity inherent in object
 files/libraries compiled with this option.
+.point
+Any assumptions about relative position of functions are
+invalid. Consider the following code which attempts to determine
+the size of a code region by subtracting function addresses:
+.exam begin
+region_size = (unsigned long)&function2 - (unsigned long)function1;
+.exam end
+When "zm" is in effect,
+.id region_size
+may be extremely large or even
+a negative value. For the above code to work as intended, both
+.id function1
+and
+.id function2
+(and every function intended to be located between them) must reside
+ in a single code segment.
 .endpoint
 .np
 This option can be used in paging environments where special segment
