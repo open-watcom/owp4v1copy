@@ -48,8 +48,8 @@ extern foff CheckSumOld( foff );
 extern void FileCheck(int, char *);
 extern void SeekCheck(long, char *);
 
-extern PatchError( int, ... );
-extern FilePatchError( int, ... );
+extern void PatchError( int, ... );
+extern void FilePatchError( int, ... );
 
 PATCH_RET_CODE OpenNew( foff len )
 {

@@ -35,8 +35,8 @@
 
 extern  void    Message( int, ... );
 
-extern PatchError( int, ... );
-extern FilePatchError( int, ... );
+extern void PatchError( int, ... );
+extern void FilePatchError( int, ... );
 extern void PatchingFile( char *patchname, char *filename );
 
 static char CurrLevel[ sizeof( LEVEL )  ];

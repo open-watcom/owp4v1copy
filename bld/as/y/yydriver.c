@@ -71,7 +71,7 @@ static void dump_rule( unsigned rule )
 }
 #endif
 
-yyparse()
+int yyparse( void )
 {
   short yypnum;
   short yyi, yyk, yylhs, yyaction;

@@ -100,6 +100,7 @@ void __based(__segname("_TEXT")) __raise_fpe(void) {
 }
 
 extern void __far _fpmath();
+#pragma aux _fpmath "__fpmath";
 
 unsigned int win87em_get_sw(void);
 #pragma aux win87em_get_sw = \

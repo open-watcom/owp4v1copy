@@ -76,7 +76,7 @@ static void endClog( void )
     _dos_setvect( 0x21, OldInt21 );
 }
 
-main()
+int main( void )
 {
     char        buff[512];
     char        names[2*_MAX_PATH+2];
@@ -185,5 +185,4 @@ main()
     VxDUnLink();
 
     return( 0 );
-
 }
