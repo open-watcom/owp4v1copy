@@ -511,6 +511,11 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     }
                     *owner = new;
                     continue_how = DBG_EXCEPTION_NOT_HANDLED;
+                    /*
+                     *  Carl Young 8-Jun-2004
+                     *  Ensure we clear the trap flag so we don't single step the exception handler...
+                     */
+                    setTBit( T_OFF );
                 } else {
                     LastExceptionCode = code;
                     returnCode = COND_EXCEPTION;
