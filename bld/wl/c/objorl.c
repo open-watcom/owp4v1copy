@@ -391,7 +391,7 @@ static void AllocSeg( void *_snode, void *dummy )
         snode->entry->u.leader->info |= SEG_LXDATA_SEEN;
         if( !sdata->isdead ) {
             ORLSecGetContents( snode->handle, &snode->contents );
-            if( !sdata->iscdat ) {
+            if( !sdata->iscdat && ( snode->contents != NULL )) {
                 PutInfo( sdata->data, snode->contents, sdata->length );
             }
         }
@@ -407,7 +407,7 @@ static void DefNosymComdats( void *_snode, void *dummy )
     dummy = dummy;
     sdata = snode->entry;
     if( sdata == NULL || snode->info & SEG_DEAD ) return;
-    if( sdata->iscdat && !sdata->hascdatsym && snode->contents != NULL ) {
+    if( sdata->iscdat && !sdata->hascdatsym && ( snode->contents != NULL )) {
         sdata->data = AllocStg( sdata->length );
         PutInfo( sdata->data, snode->contents, sdata->length );
     }
