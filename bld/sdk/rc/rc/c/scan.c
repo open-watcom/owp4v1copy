@@ -759,7 +759,7 @@ extern void ScanInitStatics( void )
 extern char *FindAndReplace( char* stringFromFile, FRStrings *frStrings )
 /***********************************************************************/
 {
-    char                *replacedString;
+    char                *replacedString = NULL;
     char                *foundString;
     int                 lenOfStringFromFile;
     int                 lenOfFindString;
@@ -825,6 +825,7 @@ extern char *FindAndReplace( char* stringFromFile, FRStrings *frStrings )
         }
         frStrings =  frStrings->next;
     }
+
     if( replacedString != NULL ) {
         RcMemFree( stringFromFile );
         return replacedString;
