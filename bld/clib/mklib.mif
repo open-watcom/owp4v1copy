@@ -12,7 +12,6 @@ all : $(objfiles) $(libname).lib .symbolic
 
 $(libname).lib : $(objs) .precious
     $(librarian) $(lib_flags) $(lib_flags_new) $^@ $(objs)
-    wtouch compile.tim
 
 .cpp.obj :
     $(cpp) $[@ $(include_c_path) $(build_target) $($[&_opts) $(cpp_flags) $($[&_postopts)

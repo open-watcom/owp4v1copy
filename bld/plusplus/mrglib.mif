@@ -68,7 +68,6 @@ $(target_lib) : $(source_libs) $(__MAKEFILES__)
 !ifeq linkage dynamic
     $(vi) -s $(plusplus_cpplib_dir)/export.vi $(export_name)
 !endif
-    wtouch compile.tim
 
 !ifdef target_lib_x
 $(target_lib_x) : $(source_libs_x) $(__MAKEFILES__)
@@ -81,7 +80,6 @@ $(target_lib_x) : $(source_libs_x) $(__MAKEFILES__)
 !ifeq linkage dynamic
     $(vi) -s $(plusplus_cpplib_dir)/export.vi $(exportx_name)
 !endif
-    wtouch compile.tim
 !endif
 
 reference : .symbolic $(target_lib)

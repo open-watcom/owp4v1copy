@@ -25,7 +25,6 @@ $(libname).lib : $(objs) $(libs) .precious
     if exist 386sqrt.obj $(librarian) $(lib_flags) $^@ -+386sqrt.obj
     if exist e86sqrt.obj $(librarian) $(lib_flags) $^@ -+e86sqrt.obj
 !endif
-    wtouch compile.tim
 
 .cpp.obj :
     *$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)

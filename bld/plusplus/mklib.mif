@@ -95,7 +95,6 @@ $(target_lib) : $(target_objs)
     @rm -f __wrk__.obj
     @*trunc -q $(target_objs)
 !endif
-    wtouch compile.tim
 
 !ifdef target_lib_x
 $(target_lib_x) : $(target_xbjs)
@@ -110,7 +109,6 @@ $(target_lib_x) : $(target_xbjs)
     $(librarian) $(lib_flags) $^@ -+__wrk__.obj
     @rm -f __wrk__.obj
     @*trunc -q $(target_xbjs)
-    wtouch compile.tim
 !endif
 !endif
 

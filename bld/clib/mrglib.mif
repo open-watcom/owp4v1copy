@@ -47,7 +47,6 @@ $(libname).lib : $(libs)
 !endif
     @rm -f tmp.lbc
     @rm -f timstamp.obj
-    wtouch compile.tim
 
 all : $(libname).lib .symbolic
     @%null
