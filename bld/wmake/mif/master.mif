@@ -111,15 +111,16 @@ wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
         $(rc_aui) -zk0 $[@ -fo=$^@
 
 usage.rc : ../h/usage.sp
-        wsplice -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc
+        @%write usage.tmp -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< -o "%n%n%n%n" $^@
+        wsplice @usage.tmp
 
 usagej.rc : ../h/usage.sp
-        wsplice -kIS_RC -kJAPANESE -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../h/usage.sp usagej.rc
+        @%write usage.tmp -kIS_RC -kJAPANESE -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< -o "%n%n%n%n" $^@
+        wsplice @usage.tmp
 
 usageend.gh : usage.rc usagej.rc
-        wsplice usage.rc -o "%n%n%n%n" usage.rcp
-        wsplice -f "%+" usage.rcp -o "$#define USAGE_LAST (USAGE_BASE+%$#)%n" usageend.gh
-        rm -f usage.rcp
+        @%write usage.tmp -f "%+" usage.rc -o "$#define USAGE_LAST (USAGE_BASE+%$#)%n" $^@
+        wsplice @usage.tmp
 
 # usage.h : ..\h\usage.sp
 # I want the usage message codes to be generated on the fly, and also
@@ -130,7 +131,6 @@ usageend.gh : usage.rc usagej.rc
 #       wsplice -k$(OS) -kENGLISH -f "%s"..\h\usage.sp -o "%n%n%n%n%n%n%n%n%n%n" usage.h
 #       wsplice -f "$#define USAGE_LN_%$# (USAGE_BASE+%$#)%+" usage.h usage.h
 #       wsplice -f "%s%+"usage.h -o "$#define USAGE_LAST (USAGE_BASE+%$#)" usage.h
-
 
 ##############################################################################
 # special case targets
