@@ -79,7 +79,7 @@ static bool CheckEntry( dr_handle abbrev, dr_handle mod, mod_scan_info *minfo,
     return sinfo->callback( &symctxt, sinfo->data );
 }
 
-extern bool DRSymSearch( dr_search search, dr_depth depth, regexp * name,
+extern bool DRSymSearch( dr_search search, dr_depth depth, void * _name,
                          void * data,
                 int (*callback)(dr_sym_context *, void *) )
 /******************************************************************************/
@@ -89,6 +89,7 @@ extern bool DRSymSearch( dr_search search, dr_depth depth, regexp * name,
 {
     sym_search_data info;
     bool            done = FALSE;
+    regexp          *name = _name;
 
     if( search == DR_SEARCH_MACROS || search == DR_SEARCH_ALL ) {
         done |= DRSearchMacro( name, data, callback );
@@ -107,7 +108,7 @@ extern bool DRSymSearch( dr_search search, dr_depth depth, regexp * name,
 }
 
 extern bool DRResumeSymSearch( dr_search_context * ctxt, dr_search search,
-                               dr_depth depth, regexp * name,
+                               dr_depth depth, void * _name,
                                void * data,
                                int (*callback)(dr_sym_context *, void *) )
 /******************************************************************************/
@@ -115,6 +116,7 @@ extern bool DRResumeSymSearch( dr_search_context * ctxt, dr_search search,
 {
     sym_search_data info;
     bool            done = FALSE;
+    regexp          *name = _name;
 
     if( search == DR_SEARCH_MACROS || search == DR_SEARCH_ALL ) {
         done |= DRSearchMacro( name, data, callback );

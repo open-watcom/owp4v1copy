@@ -21,7 +21,7 @@ lib_osi_386     = $(watcom_dir)\lib\dwarfrpd.lib
 lib_qnx_386     = $(watcom_dir)\lib\dwarfrps.lib
 lib_osi_axp     = $(watcom_dir)\lib\draxp.lib
 
-copts = -s-w4-zq        #default warning, quiet
+copts = -s-wx-we-zq        #default warning, warnings are errors, quiet
 !ifdef dbg
 copts += -$(dbg)-hw #use a debug option
 !else

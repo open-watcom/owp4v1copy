@@ -45,7 +45,7 @@ typedef struct {
 } mod_scan_info;
 
 /* function prototypes */
-typedef bool (*DWRCUWLK) (dr_handle, dr_handle,mod_scan_info *, void  *);
+typedef bool (*DWRCUWLK) (dr_handle, dr_handle,mod_scan_info *, void *);
 extern long DWRInfoLength( dr_handle  );
 extern bool DWRScanCompileUnit( dr_search_context *,
                            DWRCUWLK,

@@ -44,12 +44,14 @@
 file_info               FileNameTable;
 
 static bool GrabLineAddr( dr_handle abbrev, dr_handle mod, mod_scan_info *x,
-                          long * data )
+                          void *_data )
 /***************************************************************************/
 /* this is called by ScanCompileUnit with abbrevptr and dataptr pointing at
  * the start of a compile unit die.  This picks out the line number info.
  * offset, and stores it in data */
 {
+    long    *data = _data;
+
     x=x;        // to avoid a warning
     if( DWRScanForAttrib( &abbrev, &mod, DW_AT_stmt_list ) != 0 ) {
         *data = DWRReadConstant( abbrev, mod );

@@ -73,10 +73,12 @@ static dr_language GetLanguage( dr_handle abbrev, dr_handle mod )
     return( result );
 }
 
-static bool CheckLanguage( dr_handle abbrev, dr_handle mod, void *x,
-                           dr_language * data )
+static bool CheckLanguage( dr_handle abbrev, dr_handle mod, mod_scan_info *x,
+                           void *_data )
 /******************************************************************/
 {
+    dr_language *data = _data;
+
     x=x;
     *data = GetLanguage( abbrev, mod );
     return FALSE;       // do not continue processing
@@ -496,10 +498,11 @@ struct wlk_wlk {
 };
 
 static bool CheckAFunc( dr_handle abbrev, dr_handle mod, mod_scan_info *x,
-                           struct wlk_wlk *d )
+                        void *_d )
 /******************************************************************/
 {
-    int ret;
+    int     ret;
+    struct  wlk_wlk *d = _d;
     abbrev = abbrev;
 
     mod = x->handle;
