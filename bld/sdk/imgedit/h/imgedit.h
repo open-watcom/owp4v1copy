@@ -85,7 +85,10 @@ typedef enum {
 
 #define BORDER_WIDTH    12      /* size of the border around the view area */
 
+#ifndef FILE_OPENED             // this pre
 #define FILE_OPENED     1
+#endif
+
 #define FILE_SAVE       2
 #define DIM_DEFAULT     32              // This is temporarily the default
 #define UNDEF_IMG       0
