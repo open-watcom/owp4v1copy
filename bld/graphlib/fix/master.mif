@@ -4,20 +4,20 @@
 
 !ifeq host_CPU i86
 
-graph98.lib : ../../dosi86.nec/graphs.lib ../../../pgchart/dosi86/charts.lib
-    cp ../../dosi86.nec/graphs.lib graph98.lib
-    $(librarian) -b graph98.lib +../../dosi86.nec/dummy.obj +../../dosi86.nec/fsmath.obj +../../../pgchart/dosi86/charts.lib
+graph.lib : ../../dosi86.nec/graphs.lib ../../../pgchart/dosi86/charts.lib
+    cp ../../dosi86.nec/graphs.lib graph.lib
+    $(librarian) -b graph.lib +../../dosi86.nec/dummy.obj +../../dosi86.nec/fsmath.obj +../../../pgchart/dosi86/charts.lib
 
 !else
 
-graph983.lib : ../../dos386s.nec/graph3s.lib ../../dos386r.nec/graph3r.lib &
+graph386.lib : ../../dos386s.nec/graph3s.lib ../../dos386r.nec/graph3r.lib &
                ../../../pgchart/dos386r/chart3r.lib ../../../pgchart/dos386s/chart3s.lib
-    cp ../../dos386s.nec/graph3s.lib graph983.lib
-    $(librarian) -b graph983.lib -globals -bit -sqrtf -std -necutils -font8x8
-    $(librarian) -b graph983.lib +../../dos386r.nec/graph3r.lib
+    cp ../../dos386s.nec/graph3s.lib graph386.lib
+    $(librarian) -b graph386.lib -globals -bit -sqrtf -std -necutils -font8x8
+    $(librarian) -b graph386.lib +../../dos386r.nec/graph3r.lib
     cp ../../../pgchart/dos386r/chart3r.lib chart.lib
     $(librarian) -b chart.lib +../../../pgchart/dos386s/chart3s.lib
-    $(librarian) -b graph983.lib +../../dos386r.nec/dummy.obj +../../dos386r.nec/fsmath.obj +chart.lib
+    $(librarian) -b graph386.lib +../../dos386r.nec/dummy.obj +../../dos386r.nec/fsmath.obj +chart.lib
     rm -f chart.lib
 
 !endif
@@ -50,21 +50,21 @@ graph386.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
 
 !ifeq host_CPU i86
 
-graphq.lib : ../../qnxi86/graphs.lib ../../../pgchart/dosi86/charts.lib
-    cp ../../qnxi86/graphs.lib graphq.lib
-    $(librarian) -b graphq.lib +../../qnxi86/dummy.obj +../../qnxi86/fsmath.obj +../../../pgchart/dosi86/charts.lib
+graph.lib : ../../qnxi86/graphs.lib ../../../pgchart/dosi86/charts.lib
+    cp ../../qnxi86/graphs.lib graph.lib
+    $(librarian) -b graph.lib +../../qnxi86/dummy.obj +../../qnxi86/fsmath.obj +../../../pgchart/dosi86/charts.lib
 
 !else
 
-all: graphq3r.lib graphq3s.lib
+all: graph3r.lib graph3s.lib
 
-graphq3r.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386r/chart3r.lib
-    cp ../../qnx386r/graph3r.lib graphq3r.lib
-    $(librarian) -b graphq3r.lib +../../../pgchart/dos386r/chart3r.lib
+graph3r.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386r/chart3r.lib
+    cp ../../qnx386r/graph3r.lib graph3r.lib
+    $(librarian) -b graph3r.lib +../../../pgchart/dos386r/chart3r.lib
 
-graphq3s.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386s/chart3s.lib
-    cp ../../qnx386s/graph3s.lib graphq3s.lib
-    $(librarian) -b graphq3s.lib +../../../pgchart/dos386s/chart3s.lib
+graph3s.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386s/chart3s.lib
+    cp ../../qnx386s/graph3s.lib graph3s.lib
+    $(librarian) -b graph3s.lib +../../../pgchart/dos386s/chart3s.lib
 
 !endif
 
