@@ -23,6 +23,8 @@ extra_cflags = -dDOS4G -dDOSXHELP -zdp -zu
 extra_incs = $(trap_dir)\lcl\dos\h
 extra_srcs = $(trap_dir)\lcl\dos\c;$(rsilib)
 
+extra_aflags_rsi87 = -fpi87
+
 !define substitute_linker
 
 !include $(trap_dir)\lcl\dos\dosx\dosx.mif
