@@ -135,7 +135,6 @@ static void OutMsg( cmsg_info  *info ){
         fputc( '\n', ErrFile );
         CompFlags.errfile_written = 1;
     }
-    SymLoc = NULL;
 }
 
 void CErr1( int msgnum )
@@ -182,6 +181,7 @@ void CErr( int msgnum, ... ){
         va_end( args1 );
         CSuicide();
     }
+    SymLoc = NULL;
 }
 
 

@@ -2223,19 +2223,14 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
     }
     NextToken();                                /* skip over '(' */
     if( CurToken != T_RIGHT_PAREN ) {
-        if( *plistptr != NULL ) { //if nested push previous plist
-            struct nested_parm_lists *npl;
-            npl = CMemAlloc( sizeof( struct nested_parm_lists ) );
-            npl->prev_list = NestedParms;           /* 17-dec-89 */
-            npl->next_parm_type = *plistptr;
-            NestedParms = npl;
-            *plistptr = NULL;
-        }
-        if( typ->u.parms != NULL ){
-            *plistptr = typ->u.parms;
-        }else{
-            *plistptr = &DotType; //need a plist to push
-        }
+        // push previous plist for nested calls
+        struct nested_parm_lists *npl;
+        npl = CMemAlloc( sizeof( struct nested_parm_lists ) );
+        npl->prev_list = NestedParms;           /* 17-dec-89 */
+        npl->next_parm_type = *plistptr;
+        NestedParms = npl;
+
+        *plistptr = typ->u.parms;
         ++Level;
         ValueStack[ Level ] = tree;
         Class[ Level ] = TC_PARM_LIST;

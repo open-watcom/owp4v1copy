@@ -544,6 +544,7 @@ static void CompareParms( TYPEPTR *master,
         // has already been generated
         if( typ2 != NULL ) {
             /* check compatibility of parms */
+            SetDiagType2 ( typ2, typ );
             cmp = CompatibleType( typ, typ2, 1 );
             switch( cmp ){
             case NO:
@@ -588,6 +589,7 @@ static void CompareParms( TYPEPTR *master,
                 }
                 break;
             }
+        SetDiagPop();
         }
         ++master;
         typ = *master;
@@ -658,12 +660,11 @@ extern void ChkCallParms( void )
                         actualparmlist[j] = tmp;
                     }
                 }
-        // Do not know when this function is called to check it :-(
-        //      SetDiagSymbol( &sym, callsite->op.sym_handle );
+                SetDiagSymbol( &sym, callsite->op.sym_handle );
                 CompareParms( typ->u.parms, actualparmlist,
                                     nextcall->source_fno,
                                     nextcall->srclinenum );
-        //      SetDiagPop();
+                SetDiagPop();
             }
         }
         next = nextcall->next;
