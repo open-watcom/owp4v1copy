@@ -30,12 +30,8 @@
 *
 ****************************************************************************/
 
-
 #ifndef _COMPFLAG_H_
 #define _COMPFLAG_H_
-// COMPFLAG.H -- C++ Compiler flags
-//
-// 91/06/07 -- J.W.Welch        -- extracted from CTYPES.H
 
 typedef struct comp_flags {
 /*****************************************************************************
@@ -244,8 +240,8 @@ typedef struct comp_flags {
     unsigned obfuscate_typesig_names: 1;    // mangle type sig names
     unsigned dont_autogen_ext_inc   : 1;    // don't convert #include <string> to <string.h> or <string.hpp>
     unsigned dont_autogen_ext_src   : 1;
-    unsigned anyfiller03            : 1;
-    unsigned anyfiller04            : 1;
+    unsigned use_old_for_scope      : 1;
+    unsigned no_alternative_tokens  : 1;    // disable alternative tokens
     unsigned anyfiller05            : 1;
     
 

@@ -1300,6 +1300,12 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->xto ) {
         CompFlags.obfuscate_typesig_names = 1;
     }
+    if( data->zat ) {
+        CompFlags.no_alternative_tokens = 1;
+    }
+    if( data->zf ) {
+        CompFlags.use_old_for_scope = 1;
+    }
     if( data->zg ) {
         CompFlags.use_base_types = 1;
     }

@@ -291,6 +291,9 @@ void MiscMacroDefs(             // PREDEFINE MISCELLANEOUS MACROS
         defineStringMacro( "_CPPRTTI" );
     }
     defineFeatureMacros();
+    if( ! CompFlags.no_alternative_tokens ) {
+        DefineAlternativeTokens();
+    }
     PreDefineStringMacro( "__WATCOMC__=" BANSTR( _BANVER ) );
     PreDefineStringMacro( "__WATCOM_CPLUSPLUS__=" BANSTR( _BANVER ) );
     // #if __WATCOM_REVISION__ >= 8

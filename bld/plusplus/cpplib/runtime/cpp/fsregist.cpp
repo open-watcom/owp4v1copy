@@ -160,7 +160,8 @@ unsigned FS_REGISTRATION_CONVENTION CPPLIB( fs_handler_rtn ) // HANDLER FOR FS R
         if( dispatch->fnexc_skip == rw ) {
             dispatch->fnexc_skip = NULL;
         }
-        for( _EXC_PR* srch_ctl = dispatch->srch_ctl
+        _EXC_PR* srch_ctl;
+        for( srch_ctl = dispatch->srch_ctl
            ; NULL != srch_ctl && srch_ctl->_rw == rw
            ; srch_ctl = srch_ctl->_prev ) {
             if( NULL == dispatch->fnexc_skip ) {

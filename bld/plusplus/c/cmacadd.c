@@ -102,7 +102,7 @@ static void macroAllocSegment(   // ALLOCATE MACRO SEGMENT
     ExtraRptIncrementCtr( macro_segments );
 }
 
-static void storageInitialize(       // INITIALIZE STORAGE DATA
+static void storageInitialize(  // INITIALIZE STORAGE DATA
     void )
 {
     macroAllocSegment( HASH_TABLE_SIZE );
@@ -593,7 +593,8 @@ MEPTR MacroDefine(              // DEFINE A NEW MACRO
 
 MEPTR MacroSpecialAdd(          // ADD A SPECIAL MACRO
     char *name,                 // - macro name
-    unsigned value )            // - value for special macro
+    unsigned value,             // - value for special macro
+    unsigned flags )            // - macro flags
 {
     size_t len;
     size_t reqd;
@@ -608,7 +609,12 @@ MEPTR MacroSpecialAdd(          // ADD A SPECIAL MACRO
     mentry->macro_len = reqd;
     mentry->parm_count = value;
     memcpy( mentry->macro_name, name, len + 1 );
-    return( MacroDefine( mentry, reqd, len ) );
+
+    mentry = MacroDefine( mentry, reqd, len );
+    if( mentry != NULL ) {
+        mentry->macro_flags |= flags;
+    }
+    return mentry;
 }
 
 
@@ -633,7 +639,7 @@ boolean MacroExists(        // TEST IF MACRO EXISTS
     mac = macroFind( macname, len, &hash );
     if( mac != NULL ) {
         mac->macro_flags |= MACRO_REFERENCED;
-        exists = TRUE;
+        exists = ( mac->macro_flags & MACRO_SPECIAL ) ? FALSE : TRUE;
     } else {
         exists = FALSE;
     }

@@ -900,7 +900,6 @@ static void dataInitStartLocal( INITIALIZE_DATA *init, DECL_INFO *dinfo,
     currInit->initted = initializer;
     currInit->no_size = 0;
     currInit->const_object = 0;
-    currInit->const_object = 0;
     currInit->simple_set = 0;
     currInit->use_simple = 0;
 

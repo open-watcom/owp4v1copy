@@ -1,16 +1,3 @@
-:cmt **********************************************************************
-:cmt *       Copyright by WATCOM International Corporation, 1987, 1992.   *
-:cmt *       All rights reserved. No part of this software may be         *
-:cmt *       reproduced in any form or by any means - graphic, electronic,*
-:cmt *       mechanical or otherwise, including, without limitation,      *
-:cmt *       photocopying, recording, taping or information storage and   *
-:cmt *       retrieval systems - except with the written permission of    *
-:cmt *       WATCOM International Corporation.                            *
-:cmt **********************************************************************
-:cmt
-:cmt Modified        By                 Reason
-:cmt --------        --                 ------
-:cmt 95/04/02        A.F.Scian          defined during AXP port
 :cmt
 :cmt GML Macros used:
 :cmt
@@ -1062,6 +1049,11 @@
 :usage. disable extensions (i.e., accept only ISO/ANSI C++)
 :jusage. 拡張機能を使用不可にします(つまり, ISO/ANSI C++のみ受け付けます)
 
+:option. zat
+:target. any
+:usage. disable alternative tokens (e.g. and, or, not)
+:jusage.
+
 :option. zc
 :target. i86 386
 :usage. place const data into the code segment
@@ -1089,6 +1081,11 @@
 :enumerate. iso
 :usage. enable extensions (i.e., near, far, export, etc.)
 :jusage. 拡張機能を使用可能にします(つまり, near, far, export, 等.)
+
+:option. zf
+:target. any
+:usage. scope of for loop initializer extends beyond loop
+:jusage. FIX ME
 
 :option. zff
 :target. i86 386

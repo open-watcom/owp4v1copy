@@ -83,7 +83,7 @@ static CNV_DIAG diagExplicit =  // DIAGNOSIS FOR EXPLICIT CAST
 , dfnCAST_RESULT( CAST_CTOR_RV )    /* ctor making rvalue            */ \
 , dfnCAST_RESULT( CAST_UDCF_LV )    /* udcf making lvalue            */ \
 , dfnCAST_RESULT( CAST_UDCF_RV )    /* udcf making rvalue            */ \
-, dfnCAST_RESULT( CAST_COMPARE_TO_ZERO )  /* compare to zero         */ \
+, dfnCAST_RESULT( CAST_CONVERT_TO_BOOL )  /* convert to bool         */ \
 , dfnCAST_RESULT( CAST_REPLACE_INTEGRAL)  /* replace with integral # */ \
                                                                         \
   /* ERRORS */                                                          \
@@ -205,6 +205,7 @@ static PTREE stripOffCast       // STRIP CAST NODES
             ctl->expr = right;
         }
         PTreeFree( old->u.subtree[0] );
+        old->u.subtree[0] = NULL;
         PTreeFree( old );
     }
     return ctl->expr;
@@ -778,6 +779,7 @@ static boolean castCtor         // APPLY CTOR
                     ctl->conv_fun = NULL;
                     inp_node = NodeRvalue( inp_node->u.subtree[1] );
                     PTreeFree( ctl->expr->u.subtree[1] );
+                    ctl->expr->u.subtree[1] = NULL;
                     node = NodeCopyClassObject( temp, inp_node );
                 } else {
                     temp = NodeArg( temp );
@@ -811,6 +813,7 @@ static boolean castCtor         // APPLY CTOR
             } else {
                 inp_node = inp_node->u.subtree[1];
                 PTreeFree( ctl->expr->u.subtree[1] );
+                ctl->expr->u.subtree[1] = NULL;
                 node = CopyOptimize( src_node
                                    , inp_node
                                    , temp
@@ -1347,11 +1350,11 @@ static PTREE doReintPtrToArith  // DO REINTERPRET: PTR -> ARITH
 }
 
 
-static PTREE compareToZero          // COMPARE TO ZERO
+static PTREE convertToBool          // CONVERT TO BOOL
     ( CONVCTL* ctl )                // - cast info
 {
     stripOffCastOrig( ctl );
-    return NodeCompareToZero( ctl->expr );
+    return NodeConvertToBool( ctl->expr );
 }
 
 
@@ -1364,7 +1367,7 @@ static CAST_RESULT arithToArith     // EXPLICIT, IMPLICIT ARITH->ARITH
      && NULL == IntegralType( ctl->src.unmod ) ) {
         result = DIAG_CAST_ILLEGAL;
     } else if( ctl->tgt.unmod->id == TYP_BOOL ) {
-        result = CAST_COMPARE_TO_ZERO;
+        result = CAST_CONVERT_TO_BOOL;
     } else {
         if( ctl->clscls_explicit ) {
             result = CAST_DO_CGCONV;
@@ -1725,8 +1728,8 @@ static PTREE doCastResult           // DO CAST RESULT
       case CAST_UDCF_RV :
         expr = castUdcfRv( ctl );
         break;
-      case CAST_COMPARE_TO_ZERO :
-        expr = compareToZero( ctl );
+      case CAST_CONVERT_TO_BOOL :
+        expr = convertToBool( ctl );
         break;
       case CAST_REPLACE_INTEGRAL :
       { expr = PTreeOp( &ctl->expr->u.subtree[1] );
@@ -2561,7 +2564,7 @@ PTREE CastExplicit              // EXPLICIT CASTE: ( TYPE )( EXPR )
             break;
           case  4 : // (arith)ptr
             if( ctl.tgt.unmod->id == TYP_BOOL ) {
-                result = CAST_COMPARE_TO_ZERO;
+                result = CAST_CONVERT_TO_BOOL;
             } else {
                 result = CAST_REINT_PTR_TO_ARITH;
             }
@@ -2800,7 +2803,7 @@ static PTREE doCastImplicit     // DO AN IMPLICIT CAST
             break;
           case  4 : // (arith)ptr
             if( ctl.tgt.unmod->id == TYP_BOOL ) {
-                result = CAST_COMPARE_TO_ZERO;
+                result = CAST_CONVERT_TO_BOOL;
             } else {
                 result = DIAG_CAST_ILLEGAL;
             }
@@ -2839,7 +2842,7 @@ static PTREE doCastImplicit     // DO AN IMPLICIT CAST
             // drops thru
           case 13 : // enum -> arith
             if( ctl.tgt.unmod->id == TYP_BOOL ) {
-                result = CAST_COMPARE_TO_ZERO;
+                result = CAST_CONVERT_TO_BOOL;
             } else {
                 result = CAST_DO_CGCONV;
             }
@@ -3002,6 +3005,7 @@ static PTREE commonCastEx       // EXPLICIT CAST FOR COMMON
         if( NodeIsBinaryOp( expr, CO_CONVERT )
          && final_type == NodeType( expr->u.subtree[1] ) ) {
             PTreeFree( expr->u.subtree[0] );
+            expr->u.subtree[0] = NULL;
             retn = expr->u.subtree[1];
             PTreeFree( expr );
         } else {

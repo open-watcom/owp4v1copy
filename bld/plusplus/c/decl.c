@@ -151,10 +151,16 @@ boolean DeclNoInit( DECL_INFO *dinfo )
         /* "int C::a;" instead of "static int a;" in "class C" */
         CompFlags.external_defn_found = TRUE;
         if( SymIsInitialized( sym ) ) {
-            if( ! TemplateMemberCanBeIgnored() ) {
-                CErr2p( ERR_CANNOT_INIT_AGAIN, sym );
+            if( ! ( sym->flag & SF_IN_CLASS_INIT ) ) {
+                if( ! TemplateMemberCanBeIgnored() ) {
+                    CErr2p( ERR_CANNOT_INIT_AGAIN, sym );
+                }
+                return( FALSE );
+            } else {
+                /* reset in-class initialization flag to get the
+                 * symbol exported */
+                sym->flag &= ~SF_IN_CLASS_INIT;
             }
-            return( FALSE );
         }
         if( ! TypeDefined( type ) ) {
             CErr2p( ERR_CANNOT_DEFINE_VARIABLE, sym );
@@ -196,7 +202,8 @@ boolean DeclNoInit( DECL_INFO *dinfo )
         CErr1( ERR_REFERENCE_MUST_BE_INITIALIZED );
         return( FALSE );
     case IS_CONST:
-        if( ConstNeedsExplicitInitializer( type ) ) {
+        if( ConstNeedsExplicitInitializer( type )
+          && ! SymIsInitialized( sym ) ) {
             CErr1( ERR_CONST_MUST_BE_INITIALIZED );
             return( FALSE );
         }

@@ -3112,14 +3112,14 @@ start_opac_string:
             continue;
           case CONV_CMP_ZERO_LEFT :
             left = expr->u.subtree[0];
-            left = NodeCompareToZero( left );
+            left = NodeConvertToBool( left );
             expr->u.subtree[0] = left;
             if( left->op != PT_ERROR ) continue;
             PTreeErrorNode( expr );
             break;
           case CONV_CMP_ZERO_RIGHT :
             right = expr->u.subtree[1];
-            right = NodeCompareToZero( right );
+            right = NodeConvertToBool( right );
             expr->u.subtree[1] = right;
             if( right->op != PT_ERROR ) continue;
             PTreeErrorNode( expr );
@@ -4273,7 +4273,7 @@ PTREE AnalyseBoolExpr(      // ANALYZE A BOOLEAN EXPRESSION
             if( 0 == ( expr->flags & PTF_BOOLEAN ) ) {
                 warnBoolAssignment( expr );
             }
-            expr = NodeCompareToZero( expr );
+            expr = NodeConvertToBool( expr );
         }
     }
     return expr;

@@ -63,7 +63,8 @@
 //
 // UNARY OPERATORS
 //
-{   OPBASIC( SINT,       MAX,        OPM_I  | OPM_A                 )
+{   OPBASIC( BOOL,       MAX,        OPM_B  | OPM_I  | OPM_A        )
+,   OPBASIC( SINT,       MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( UINT,       MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( SLONG,      MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( ULONG,      MAX,        OPM_I  | OPM_A                 )
@@ -76,6 +77,7 @@
 //
 // BINARY OPERATORS
 //
+,   OPBASIC( BOOL,       BOOL,       OPM_BB                         )
 ,   OPBASIC( CHAR,       CHAR,       OPM_RA | OPM_RI | OPM_ASSIGN   )
 ,   OPBASIC( SCHAR,      SCHAR,      OPM_RA | OPM_RI | OPM_ASSIGN   )
 ,   OPBASIC( UCHAR,      UCHAR,      OPM_RA | OPM_RI | OPM_ASSIGN   )
@@ -171,6 +173,7 @@
 //
 #ifdef OPPRO
 {   OPPRO( AA )                         // ( arith, arith )
+,   OPPRO( BB )                         // ( boolean, boolean )
 ,   OPPRO( II )                         // ( integer, integer )
 ,   OPPRO( PP )                         // ( ptr, ptr )
 ,   OPPRO( A  )                         // ( arith )
@@ -182,6 +185,7 @@
 ,   OPPRO( IP )                         // ( integer, ptr )
 ,   OPPRO( PI )                         // ( ptr, integer )
 ,   OPPRO( RPI )                        // ( ptr &, integer )
+,   OPPRO( B  )                         // ( boolean )
 ,   OPPRO( MM )                         // ( ptr-memb, ptr-memb )
 ,   OPPRO( PM )                         // ( ptr, ptr-memb )
 ,   OPPRO( FUN )                        // function call
@@ -220,8 +224,8 @@
 //  OPCNV( COLON,     OPM_AA | OPM_PP | OPM_MM | OPM_RR ) // : (in ?)
 ,   OPCNV( NOT_USED,  OPM_AA | OPM_PP | OPM_MM | OPM_RR ) // : (in ?)
 ,   OPCNV( RELN,      OPM_AA | OPM_PP                   ) // >=, <=, >, <
-,   OPCNV( LOG1,      OPM_A  | OPM_P                    ) // logical op
-,   OPCNV( LOG2,      OPM_AA | OPM_PI | OPM_IP | OPM_PP | OPM_NV ) // op logical op
+,   OPCNV( LOG1,      OPM_B                             ) // logical op
+,   OPCNV( LOG2,      OPM_BB                            ) // op logical op
 ,   OPCNV( SUBSCR,    OPM_PI | OPM_IP | OPM_SUB | OPM_NV) // subscript
 ,   OPCNV( PTR,       OPM_P                             ) // one pointer
 ,   OPCNV( FUNCTION,  OPM_FUN | OPM_LT                  ) // function call

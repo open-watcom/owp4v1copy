@@ -1028,7 +1028,7 @@ static void defineInlineFuncsAndDefArgExprs( CLASS_DATA *data )
     SCOPE save_scope;
     PTREE defarg_expr;
 
-    if( CurToken != T_RIGHT_BRACE ) {
+    if( ( CurToken != T_RIGHT_BRACE ) && ( CurToken != T_ALT_RIGHT_BRACE ) ) {
         Expecting( Tokens[ T_RIGHT_BRACE ] );
     }
     SrcFileGetTokenLocn( &locn );

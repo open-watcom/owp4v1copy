@@ -29,12 +29,27 @@
 ****************************************************************************/
 
 
-pick( "__LINE__",       MACRO_LINE )
-pick( "__FILE__",       MACRO_FILE )
-pick( "__DATE__",       MACRO_DATE )
-pick( "__TIME__",       MACRO_TIME )
-pick( "__cplusplus",    MACRO_CPLUSPLUS )
-pick( "__FUNCTION__",   MACRO_FUNCTION )
-// Can't have the following here because the IDs need to be unique!
-// pick( "__func__",       MACRO_FUNCTION )
+pick( "__LINE__",       MACRO_LINE,        0 )
+pick( "__FILE__",       MACRO_FILE,        0 )
+pick( "__DATE__",       MACRO_DATE,        0 )
+pick( "__TIME__",       MACRO_TIME,        0 )
+pick( "__cplusplus",    MACRO_CPLUSPLUS,   0 )
+pick( "__FUNCTION__",   MACRO_FUNCTION,    MACRO_CAN_BE_REDEFINED )
+
+// __func__ shouldn't be a macro, define it special for now
+pick( "__func__",       MACRO_FUNC,        MACRO_CAN_BE_REDEFINED | MACRO_SPECIAL )
+
+// alternative tokens for C++
+pick( NULL,             MACRO_ALT_MARKER,  0 )
+pick( "and",            MACRO_ALT_AND,     MACRO_SPECIAL )
+pick( "bitand",         MACRO_ALT_BITAND,  MACRO_SPECIAL )
+pick( "and_eq",         MACRO_ALT_AND_EQ,  MACRO_SPECIAL )
+pick( "or",             MACRO_ALT_OR,      MACRO_SPECIAL )
+pick( "bitor",          MACRO_ALT_BITOR,   MACRO_SPECIAL )
+pick( "or_eq",          MACRO_ALT_OR_EQ,   MACRO_SPECIAL )
+pick( "xor",            MACRO_ALT_XOR,     MACRO_SPECIAL )
+pick( "xor_eq",         MACRO_ALT_XOR_EQ,  MACRO_SPECIAL )
+pick( "not",            MACRO_ALT_NOT,     MACRO_SPECIAL )
+pick( "not_eq",         MACRO_ALT_NOT_EQ,  MACRO_SPECIAL )
+pick( "compl",          MACRO_ALT_COMPL,   MACRO_SPECIAL )
 #undef pick

@@ -83,6 +83,7 @@ PCH_struct template_info {
     TYPE                unbound_type;   // type to use in unbound circumstances
     TYPE                *type_list;     // template argument types
     char                **arg_names;    // argument names
+    REWRITE             **defarg_list;  // default arguments
     SYMBOL              sym;            // template symbol
     unsigned            corrupted : 1;  // template def'n contained errors
     unsigned            defn_found : 1; // a template defn has been found

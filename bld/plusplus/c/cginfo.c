@@ -355,7 +355,12 @@ fe_attr FEAttr(                 // GET SYMBOL ATTRIBUTES
             attr |= FE_UNIQUE;
         }
         if( SymIsInitialized( sym ) ) {
-            attr |= FE_STATIC | FE_GLOBAL;
+            attr |= FE_STATIC;
+            /* only set FE_GLOBAL if it's not an in-class
+	     * initialization of a const static member */
+            if( ! ( sym->flag & SF_IN_CLASS_INIT ) ) {
+                attr |= FE_GLOBAL;
+            }
         } else {
             attr |= FE_STATIC | FE_GLOBAL | FE_IMPORT ;
         }

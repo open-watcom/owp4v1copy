@@ -719,6 +719,9 @@ typedef enum                            // flags for symbol.flag
 ,   SF_ANONYMOUS        = 0x08000000    // - - member of an anonymous union
 ,   SF_RETN_OPT         = 0x04000000    // - - optimized away by return opt.
 ,   SF_CATCH_ALIAS      = 0x02000000    // - - catch variable alias
+,   SF_IN_CLASS_INIT    = 0x01000000    // - - in-class initialization
+                                        //     of const static integral
+                                        //     member
 
                                         // - function
 ,   SF_DONT_INLINE      = 0x08000000    // - - don't inline this function!
@@ -1512,6 +1515,7 @@ extern DECL_INFO *AddArgument( DECL_INFO *, DECL_INFO * );
 extern DECL_INFO *AddEllipseArg( DECL_INFO * );
 extern void FreeDeclInfo( DECL_INFO * );
 extern void FreeArgs( DECL_INFO * );
+extern void FreeArgsDefaultsOK( DECL_INFO * );
 extern boolean ProcessTemplateArgs( DECL_INFO * );
 extern DECL_INFO *InsertDeclInfo( SCOPE, DECL_INFO * );
 extern void ProcessDefArgs( DECL_INFO * );
@@ -1541,7 +1545,7 @@ extern PTREE MakeNewExpr( PTREE, PTREE, DECL_INFO *, PTREE );
 extern void CheckNewModifier( type_flag );
 extern TYPE MakeVFTableFieldType( boolean );
 extern TYPE MakeVBTableFieldType( boolean );
-extern void VerifyPureFunction( DECL_INFO *, PTREE );
+extern boolean VerifyPureFunction( DECL_INFO * );
 extern void VerifyMemberFunction( DECL_SPEC *, DECL_INFO * );
 extern void TypedefReset( SYMBOL, TYPE );
 extern void *TypeHasPragma( TYPE );

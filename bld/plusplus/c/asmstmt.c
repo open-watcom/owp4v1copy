@@ -71,6 +71,7 @@ static boolean endOfAsmStmt( void )
     if( CurToken == T_NULL ) return( TRUE );
     if( CurToken == T___ASM ) return( TRUE );
     if( CurToken == T_RIGHT_BRACE ) return( TRUE );
+    if( CurToken == T_ALT_RIGHT_BRACE ) return( TRUE );
     if( CurToken == T_SEMI_COLON ) return( TRUE );
     return( FALSE );
 }
@@ -164,6 +165,7 @@ PTREE AsmStmt( void )
     boolean uses_auto;
     void *aux_info;
     unsigned skip_token;
+    unsigned skip_alt_token;
     PTREE expr;
     TYPE fn_type;
     TYPE ret_type;
@@ -178,11 +180,12 @@ PTREE AsmStmt( void )
         advancePastT_NULL();
     }
     AsmSysInit();
-    if( CurToken == T_LEFT_BRACE ) {
+    if( ( CurToken == T_LEFT_BRACE ) || ( CurToken == T_ALT_LEFT_BRACE ) ) {
         NextToken();
         for(;;) {
             getAsmLine( &code_buffer );
             if( CurToken == T_RIGHT_BRACE ) break;
+            if( CurToken == T_ALT_RIGHT_BRACE ) break;
             if( CurToken == T_EOF ) break;
             if( CurToken == T_NULL ) {
                 advancePastT_NULL();
@@ -191,12 +194,13 @@ PTREE AsmStmt( void )
             }
         }
         skip_token = T_RIGHT_BRACE;
+        skip_alt_token = T_ALT_RIGHT_BRACE;
     } else {
         getAsmLine( &code_buffer );
-        skip_token = T_NULL;
+        skip_token = skip_alt_token = T_NULL;
     }
     PPState = PPS_NORMAL;
-    if( CurToken == skip_token ) {
+    if( ( CurToken == skip_token ) || ( CurToken == skip_alt_token ) ) {
         NextToken();
     }
     if( AsmSysAddress() != 0 ) {

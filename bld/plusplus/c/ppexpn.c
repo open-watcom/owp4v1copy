@@ -866,6 +866,7 @@ static boolean CUnary() // reduce +a or -a or !a or ~a
             U64Neg( &((p).uval), &((p).uval ) );
             break;
           case T_EXCLAMATION:
+          case T_ALT_EXCLAMATION:
             if( I64Zero( p ) ) {
                 I32ToI64( 1, &(p.sval) );
             } else {
@@ -874,6 +875,7 @@ static boolean CUnary() // reduce +a or -a or !a or ~a
             p.no_sign = 0;
             break;
           case T_TILDE:
+          case T_ALT_TILDE:
             U64Not( &(p.sval), &(p.sval) );
             break;
           DbgDefault( "Default in CUnary\n" );

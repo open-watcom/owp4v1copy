@@ -79,6 +79,8 @@ typedef enum {
     SCAN_DELIM12EQ2EQ,  // @, @@, @=, or @@= token
     SCAN_DELIM1EQ,      // @ or @= token
     SCAN_SLASH,         // /, /=, // comment, or /* comment */
+    SCAN_LT,            // <, <=, <<, <<=, <%, <:
+    SCAN_PERCENT,       // %, %=, %>, %:, %:%:
     SCAN_COLON,         // :, ::, or :>
     SCAN_MINUS,         // -, -=, --, ->, or ->*
     SCAN_FLOAT,         // .
@@ -120,12 +122,12 @@ static char InitClassTable[] = {
     '=',        SCAN_DELIM1EQ,          // = ==
     '^',        SCAN_DELIM1EQ,          // ^ ^=
     '!',        SCAN_DELIM1EQ,          // ! !=
-    '%',        SCAN_DELIM1EQ,          // % %=
+    '%',        SCAN_PERCENT,           // % %= %> %: %:%:
     '*',        SCAN_DELIM1EQ,          // * *=
     '&',        SCAN_DELIM12EQ,         // & &= &&
     '|',        SCAN_DELIM12EQ,         // | |= ||
     '+',        SCAN_DELIM12EQ,         // + += ++
-    '<',        SCAN_DELIM12EQ2EQ,      // < <= << <<=
+    '<',        SCAN_LT,                // < <= << <<= <% <:
     '>',        SCAN_DELIM12EQ2EQ,      // > >= >> >>=
     '-',        SCAN_MINUS,             // - -= -- -> ->*
     '/',        SCAN_SLASH,             // / /=    // /**/
@@ -1324,6 +1326,89 @@ static int scanSlash( int expanding )   // /, /=, // comment, or /*comment*/
     return( tok );
 }
 
+static int scanLT( int expanding ) // <, <=, <<, <<=, <%, <:
+{
+    int nc;
+    int tok;
+    int token_len;
+
+    expanding = expanding;
+    SrcFileCurrentLocation();
+    Buffer[0] = '<';
+    tok = T_LT;
+    token_len = 1;
+    nc = NextChar();
+    Buffer[1] = nc;
+    if( nc == '=' ) {
+        ++tok;
+        ++token_len;
+        NextChar();
+    } else if( nc == '<' ) {
+        tok += 2;
+        ++token_len;
+        if( NextChar() == '=' ) {
+            ++tok;
+            ++token_len;
+            Buffer[2] = '=';
+            NextChar();
+        }
+    } else if( nc == '%' ) {
+        tok = T_ALT_LEFT_BRACE;
+        ++token_len;
+        NextChar();
+    } else if( nc == ':' ) {
+        tok = T_ALT_LEFT_BRACKET;
+        ++token_len;
+        NextChar();
+    }
+    Buffer[ token_len ] = '\0';
+    TokenLen = token_len;
+    return( tok );
+}
+
+static int scanPercent( int expanding ) // %, %=, %>, %:, %:%:
+{
+    int nc;
+    int tok;
+    int token_len;
+
+    expanding = expanding;
+    SrcFileCurrentLocation();
+    Buffer[0] = '%';
+    tok = T_PERCENT;
+    token_len = 1;
+    nc = NextChar();
+    Buffer[1] = nc;
+    if( nc == '=' ) {
+        ++tok;
+        ++token_len;
+        NextChar();
+    } else if( nc == '>' ) {
+        tok = T_ALT_RIGHT_BRACE;
+        ++token_len;
+        NextChar();
+    } else if( nc == ':' ) {
+        ++token_len;
+        tok = T_ALT_SHARP;
+        if( NextChar() == '%' ) {
+            Buffer[2] = '%';
+            ++token_len;
+            if( NextChar() == ':' ) {
+                ++token_len;
+                tok = T_ALT_SHARP_SHARP;
+                Buffer[3] = ':';
+                NextChar();
+            } else {
+                unGetChar( CurrChar );
+                CurrChar = '%';
+            }
+        }
+    }
+    Buffer[ token_len ] = '\0';
+    TokenLen = token_len;
+    return( tok );
+}
+
 static int scanColon( int expanding )   // :, ::, or :>
 {
     int nc;
@@ -1342,6 +1427,8 @@ static int scanColon( int expanding )   // :, ::, or :>
         NextChar();
         ++token_len;
     } else if( nc == '>' ) {
+        // TODO: according to the standard, ":>" should be an
+        // alternative token (digraph) for "]" (T_RIGHT_BRACKET)...
         tok = T_SEG_OP;
         NextChar();
         ++token_len;
@@ -1569,6 +1656,8 @@ static int (*scanFunc[])( int ) = {
     scanDelim12EQ2EQ,
     scanDelim1EQ,
     scanSlash,
+    scanLT,
+    scanPercent,
     scanColon,
     scanMinus,
     scanFloat,

@@ -456,7 +456,6 @@ PTREE NodeCompareToZero(        // MAKE A COMPARE-TO-ZERO NODE, IF REQ'D
     type = TypedefModifierRemoveOnly( type );
     if( type->id == TYP_VOID ) {
         PTreeErrorExpr( expr, ERR_EXPR_IS_VOID );
-#if 1
     } else {
         if( ( NULL == StructType( type ) )
           &&( NULL == MemberPtrType( type ) ) ) {
@@ -474,21 +473,37 @@ PTREE NodeCompareToZero(        // MAKE A COMPARE-TO-ZERO NODE, IF REQ'D
         expr = PTreeCopySrcLocation( expr, operand );
         expr = NodeSetBooleanType( expr );
         expr = ConvertBoolean( expr );
-#else
-    // test bitset, rogue wave test streams before checking this in
-    } else if( type->id == TYP_CLASS && ! CompFlags.extensions_enabled ) {
+    }
+    return expr;
+}
+
+
+PTREE NodeConvertToBool(        // MAKE A CONVERT-TO-BOOL NODE, IF REQ'D
+    PTREE expr )
+{
+    PTREE zero;                 // - constant node (contains zero)
+    PTREE operand;              // - operand to be compared
+    TYPE type;                  // - expression type, unmodified
+
+    if( expr->flags & PTF_BOOLEAN ) {
+        return expr;
+    }
+    if( PTreeOpFlags( expr ) & PTO_BOOLEAN ) {
+        return expr;
+    }
+    type = TypeReferenced( expr->type );
+    type = TypedefModifierRemoveOnly( type );
+    if( type->id == TYP_VOID ) {
+        PTreeErrorExpr( expr, ERR_EXPR_IS_VOID );
+    } else if( type->id == TYP_CLASS ) {
         TYPE bool_type = GetBasicType( TYP_BOOL );
         expr = CastImplicit( expr, bool_type, CNV_EXPR, NULL );
-        #if 0
-        PTreeErrorExpr( expr, ERR_NOT_BOOLEAN );
-        #endif
     } else {
         operand = expr;
         zero = NodeIntegralConstant( 0, GetBasicType( TYP_SINT ) );
         expr = NodeBinary( CO_NE, expr, zero );
         expr = PTreeCopySrcLocation( expr, operand );
         expr = AnalyseOperator( expr );
-#endif
     }
     return expr;
 }

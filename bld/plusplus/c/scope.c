@@ -310,7 +310,7 @@ extern SCOPE    SetCurrScope(SCOPE newScope)
     g_CurrScope = newScope;
 
 #ifndef NDEBUG
-    if( PragDbgToggle.dump_scopes ) 
+    if( PragDbgToggle.dump_scopes )
     {
         printf("Set new scope to 0x%.08X\n", newScope);
         if(newScope)
@@ -1426,7 +1426,7 @@ void ScopeJumpBackward( SCOPE scope )
 }
 
 static void scopeWalkSymbolNameSymbols( SYMBOL_NAME name, void *data )
-/***************************************************************/
+/********************************************************************/
 {
     SYMBOL sym;
     void (*rtn)( SYMBOL ) = data;

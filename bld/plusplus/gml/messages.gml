@@ -11795,3 +11795,12 @@ struct D {
     char a[];
 };
 :eerrbad.
+
+:MSGSYM. ERR_MUST_BE_CONST_STATIC_INTEGRAL
+:MSGTXT. in-class initialization is only allowed for const static integral members
+:MSGJTXT.
+:errbad.
+struct A {
+    static int i = 0;
+};
+:eerrbad.
