@@ -183,7 +183,7 @@ unsigned LocalDateTime( sys_handle fh, int *time, int *date, int set )
     tiny_file_stamp_t *file_stamp;
 
     ptime = (tiny_ftime_t *)time;
-    pdate = (tiny_ftime_t *)date;
+    pdate = (tiny_fdate_t *)date;
     if( set ) {
         rc = TinySetFileStamp( fh, *ptime, *pdate );
     } else {
