@@ -176,7 +176,11 @@ struct  exception {
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
 :: The 'auto' keyword was added to work around W604/W594 in the C++ compiler
+#ifdef __cplusplus
 _WMRTLINK void _set_matherr( auto int (*rtn)( struct _exception * ) );
+#else
+_WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) );
+#endif
 :segment !SNAP & !SNAPDRV
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
