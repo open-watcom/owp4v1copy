@@ -1503,13 +1503,11 @@ bool SymUserModLoad( char *fname, address *loadaddr )
     if( !( fname_len = strlen( fname ) ) )
         return( TRUE );
 
-    memcpy( TxtBuff, fname, fname_len );
-    TxtBuff[ fname_len ] = '\0';
-    image = DoCreateImage( fname, TxtBuff );
+    image = DoCreateImage( fname, fname );
     image->mapper = MapAddrUsrMod;
     if( !ProcSymInfo( image ) ) {
         FreeImage( image );
-        Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), TxtBuff );
+        Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), fname );
     }
     owner = &image->map_list;
 
