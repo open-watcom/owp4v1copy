@@ -70,7 +70,7 @@ libs += $(imp_libs)
 
 ##################
 
-inc_dirs=../h;../../h;$(dig_dir)/h;$(dis_includes);$(extra_incs)
+inc_dirs = -I"../h" -I"../../h" -I"$(dig_dir)/h" $(dis_includes) $(extra_incs)
 
 .c: ../c;../../c;$(dis_srcs);$(extra_srcs)
 

@@ -1,5 +1,5 @@
 dis_srcs        = $(disasm_dir)/core/c
-dis_includes    = $(disasm_dir)/core/h
+dis_includes    = -I"$(disasm_dir)/core/h"
 dis_prereq      = distbls.gh
 
 #                    axp ppc x86 jvm sparc all

@@ -69,7 +69,7 @@ wlib_objs += $(trmem_objs)
 # cflags
 
 !ifeq release 0
-extra_c_flags += -d__DEBUG__
+extra_c_flags += -D__DEBUG__
 !endif
 
 extra_c_flags_ntdll    = -bd
@@ -106,11 +106,11 @@ exe_lflags_os2_386 = sys os2v2
 ###########
 # rc flags
 
-extra_rc_flags_qnx = -d__UNIX__
-extra_rc_flags_linux = -d__UNIX__
+extra_rc_flags_qnx = -D__UNIX__
+extra_rc_flags_linux = -D__UNIX__
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
-inc_dirs = ../h;$(orl_dir)/h;$(lib_misc_dir)/h;$(watcom_dir)/h
+inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(watcom_dir)/h"
 
 !ifeq bootstrap 1
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h
@@ -156,4 +156,4 @@ msg.gh : ./mkstr.exe
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
     @set include=$(inc_path)
-    $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@
+    $(rc_aui) $(extra_rc_flags) -I"$(watcom_dir)/h" $[@ -fo=$^@
