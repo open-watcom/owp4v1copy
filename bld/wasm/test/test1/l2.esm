@@ -231,9 +231,9 @@ L$25:
     DB	63H, 20H, 74H, 6fH, 20H, 62H, 6fH, 6fH
     DB	74H, 20H, 61H, 6cH, 74H, 65H, 72H, 6eH
     DB	61H, 74H, 65H, 20H, 4fH, 53H, 0
-    add         byte ptr [bx+si],al
-L$26:
     DB	0
+L$26:
+    DB	0, 0
 L$27:
     DB	46H
 L$28:

@@ -1,7 +1,7 @@
 .387
 text2		SEGMENT	BYTE PRIVATE USE16 'code'
 		ASSUME CS:text2, DS:DGROUP, SS:DGROUP
-_abcd:
+`_abcd@6`:
     push        bp
     mov         bp,sp
     sub         sp,4
@@ -18,6 +18,6 @@ _abcd:
 text2		ENDS
 text		SEGMENT	PARA PRIVATE USE16 'code'
 		ASSUME CS:text, DS:DGROUP, SS:DGROUP
-    call        far ptr _abcd
+    call        far ptr `_abcd@6`
 text		ENDS
 		END

@@ -235,7 +235,7 @@ __exit_with_msg_:
     push        bx
     push        ax
     push        dx
-    mov         dx,seg _startup_
+    mov         dx,_TEXT
     mov         ds,dx
     mov         dx,offset L$3
     mov         ax,3d01H
