@@ -46,13 +46,38 @@
         #define CMP_FUNC        strncmp
     #endif
 #else
-    #ifdef __WIDECHAR__
-        #define CMP_FUNC        _wcsnicmp
-    #else
-        #define CMP_FUNC        _mbsnicmp
-    #endif
+    #define CMP_FUNC        _wcsnicmp
 #endif
 
+#if !defined(__UNIX__) && !defined(__WIDECHAR__) && !defined(__NETWARE__)
+
+_WCRTLINK char *getenv( const char *name )
+{
+    char **         envp;
+    char *          p;
+
+    /*** Find the environment string ***/
+    __ptr_check( name, 0 );
+    envp = _RWD_environ;
+    if( envp != NULL  &&  name != NULL ) {
+        for( ; p = *envp; ++envp ) {
+            const char *s = name;
+            while( *p != '\0' /* simple check is sufficient for p, not s */ ) {
+                if ( _mbterm(s) ) {
+                    if( *p == '=' )  return( p + 1 );
+                    break;
+                }
+                if ( _mbctoupper( _mbsnextc(p) ) != _mbctoupper( _mbsnextc(s) ) )
+                    break;
+                p = _mbsinc( p );  /* skip over character */
+                s = _mbsinc( s );  /* skip over character */
+            }
+        }
+    }
+    return( NULL );                /* not found */
+}
+
+#else
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
     {
@@ -82,3 +107,4 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
         return( NULL );                 /* not found */
     }
 
+#endif
