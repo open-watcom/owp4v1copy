@@ -92,7 +92,8 @@ sw_c_necdos_086   = -oax
 sw_c_necwin_086   = -oax
 sw_c_necdos_386   = -oaxt
 sw_c_necwin_386   = -oaxt-d__CALL21__
-sw_c_netware_386  = -oaxt-bm -d__far= -d__near=
+sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB
+sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC
 sw_c_os2_286      = -oax
 sw_c_os2_386      = -oaxt-bm
 sw_c_os2_ppc      = -oaxt-bm
@@ -116,7 +117,8 @@ sw_a_necdos_086   =
 sw_a_necdos_386   =
 sw_a_necwin_086   =
 sw_a_necwin_386   =
-sw_a_netware_386  =
+sw_a_nw_clib_386  = -d_NETWARE_CLIB
+sw_a_nw_libc_386  = -d_NETWARE_LIBC
 sw_a_os2_286      =
 sw_a_os2_386      = -d__MT__
 sw_a_os2_ppc      = -d__MT__
@@ -140,7 +142,8 @@ sw_l_necdos_086   =
 sw_l_necdos_386   =
 sw_l_necwin_086   =
 sw_l_necwin_386   =
-sw_l_netware_386  =
+sw_l_nw_clib_386  =
+sw_l_nw_libc_386  =
 sw_l_os2_286      =
 sw_l_os2_386      = sys os2v2 dll initinstance terminstance op manyautodata
 sw_l_os2_387      = sys os2v2 dll initinstance terminstance op manyautodata
