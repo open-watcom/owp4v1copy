@@ -1,6 +1,6 @@
 include $(DEVDIR)/build/mif/master.mk
 
-vpath %.c c
+vpath %.c c ../watcom/c
 
 all: $(OBJDIR) $(OBJDIR)/wmake
 
