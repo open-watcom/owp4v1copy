@@ -118,7 +118,7 @@ br_flags=
 etp_flags=-d1-hd-etp
 !endif
 
-comp_flags += -I"$(lib_misc_dir)/h" $(inc_dirs) -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
+comp_flags += -I"$(lib_misc_dir)/h" $(inc_dirs) -I"$(hdr_dir)/dos" -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
 
 !ifndef runtime_library_source
 
@@ -153,7 +153,7 @@ asm_flags += -bt=generic
 !endif
 
 !ifeq target_system qnx
-comp_flags += -bt=qnx $(inc_dirs_lang_qnx)
+comp_flags += -bt=qnx -I"$(hdr_dir)/qnx"
 asm_flags += -bt=qnx
 !endif
 
@@ -190,7 +190,7 @@ asm_flags += -bt=generic
 !endif
 
 !ifeq target_system qnx
-comp_flags += -bt=qnx $(inc_dirs_lang_qnx)
+comp_flags += -bt=qnx -I"$(hdr_dir)/qnx"
 asm_flags += -bt=qnx
 !endif
 
