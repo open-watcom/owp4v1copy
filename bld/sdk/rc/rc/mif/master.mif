@@ -68,8 +68,7 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 
 # lflags stuff
 ###############
-extra_l_flags += libpath $(watcom_dir)/lib &
-                lib $(WRES_LIB) option map
+extra_l_flags += lib $(wres_lib) option map
 
 !ifeq sys_dll 1
 !ifeq host_os nt
@@ -93,9 +92,9 @@ inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 # explicit rules
 
 !ifeq sys_dll 1
-$(name).dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(WRES_LIB)
+$(name).dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !else
-$(name).exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(WRES_LIB)
+$(name).exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !endif
         $(linker) $(lflags) name $@ file { $(objs) }
         @%make bindit

@@ -79,8 +79,7 @@ extra_c_flags += -s
 
 lbcfile = tmp.lbc
 
-inc_dirs_NT = $(watcom_dir)/h/nt;
-inc_dirs = ../h;$(inc_dirs_$(NT))
+inc_dirs = ../h;
 
 .BEFORE
         @set include=$(inc_path)
@@ -91,10 +90,6 @@ inc_dirs = ../h;$(inc_dirs_$(NT))
         %create $(lbcfile)
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
         $(librarian) -n -b $^@ @$(lbcfile)
-!ifeq release 1
-        cp $^@ $(watcom_dir)/lib
-!endif
-        @rm -f $(lbcfile)
 
 clean : .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.err *.trk ../lib/$(name).lib

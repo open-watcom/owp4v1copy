@@ -26,10 +26,10 @@ cdsay .
 
     <CPCMD> <DEVDIR>/misc/watcom.ico <RELROOT>/rel2/
 
-    <CPCMD> <DEVDIR>/watcom/lib/wresf.lib <RELROOT>/rel2/lib386/
-    <CPCMD> <DEVDIR>/watcom/lib/wresfs.lib <RELROOT>/rel2/lib386/
-    <CPCMD> <DEVDIR>/watcom/lib/wresm.lib <RELROOT>/rel2/lib286/
-    <CPCMD> <DEVDIR>/watcom/lib/wresl.lib <RELROOT>/rel2/lib286/
+    <CPCMD> <DEVDIR>/sdk/rc/wres/lib/wresf.lib <RELROOT>/rel2/lib386/
+    <CPCMD> <DEVDIR>/sdk/rc/wres/lib/wresfs.lib <RELROOT>/rel2/lib386/
+    <CPCMD> <DEVDIR>/sdk/rc/wres/lib/wresm.lib <RELROOT>/rel2/lib286/
+    <CPCMD> <DEVDIR>/sdk/rc/wres/lib/wresl.lib <RELROOT>/rel2/lib286/
 
     <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binl/
 
