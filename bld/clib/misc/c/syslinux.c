@@ -226,3 +226,8 @@ _WCRTLINK int ptrace(int request, int pid, int addr, int data)
 	return -1;
 }
 
+int readlink(const char * path, char *buf, size_t bufsiz)
+{
+    u_long res = sys_call3(SYS_readlink, (u_long)path, (u_long)buf, bufsiz);
+    __syscall_return(int,res);
+}
