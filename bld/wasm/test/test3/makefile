@@ -14,6 +14,7 @@ testequ
 
 dev_objs = &
 irpexitm &
+jmpshrt &
 lea &
 lsxxx &
 retiret
