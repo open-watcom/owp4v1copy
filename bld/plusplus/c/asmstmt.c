@@ -44,10 +44,6 @@
 #include "scan.h"
 #include "asmstmt.h"
 
-#if _CPU == 8086 || _CPU == 80386
-#include "asmsym.h"
-#endif
-
 #ifdef DISABLE_ASM_STMT
 
 PTREE AsmStmt( void )
