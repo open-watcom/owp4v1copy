@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap shrinking routines - return near heap memory to OS.
 *
 ****************************************************************************/
 
@@ -52,6 +51,10 @@
 #endif
 #if defined(__CALL21__)
  #include "tinyio.h"
+#endif
+#if defined(__SNAP__)
+ #include <libc/init.h>
+ #include <libc/alloc.h>
 #endif
 
 #if defined(__SMALL_DATA__)

@@ -24,43 +24,29 @@
 *
 *  ========================================================================
 *
-* Description:  Signal table definitions.
+* Description:  Fatal runtime error handler for SNAP.
 *
 ****************************************************************************/
 
 
-#ifndef _SIGDEFN_H_INCLUDED
-#define _SIGDEFN_H_INCLUDED
-
-#if !defined(__NT__) && !defined(__OS2__) && !defined(__NETWARE__) && !defined(__GENERIC__) && !defined(__SNAP__)
-#error Must be bt=NT or bt=OS2 or bt=NETWARE or bt=GENERIC of bt=SNAP
-#endif
-
 #include "variety.h"
-#include <signal.h>
+#include <unistd.h>
+#include <string.h>
+#include "exitwmsg.h"
 
-#define __SIGLAST       _SIGMAX
+#include <libc/init.h>
+#include <libc/exit.h>
 
-// note that __NT__, __NETWARE__ and __SNAP__ are always 32bit
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #if defined(__NETWARE__)
-        typedef void (*sigtab)( int );
-    #else
-        typedef struct sigtab {
-            void    (* func)(int);      /* user signal handler */
-            int     os_sig_code;        /* OS signal code */
-        } sigtab;
-    #endif
-#else
-    // 16 bit OS/2 1.x
-    #define INCL_DOSEXCEPTIONS
-    #include <wos2.h>
+_WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
+{
+    write(1,msg,strlen(msg));
+    xexit( retcode );
+}
 
-    typedef struct      sigtab {
-        void (* func)(int);     /* user signal handler */
-        VOID (_WCI86FAR PASCAL *os_func)(USHORT, USHORT);
-        USHORT  prev_action;    /* previous action */
-        int     os_sig_code;    /* OS/2 1.x signal code */
-    } sigtab;
-#endif
-#endif
+_WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
+{
+    if( !__EnterWVIDEO( msg ) ) {
+        __exit_with_msg( msg, retcode );
+    }
+}
+

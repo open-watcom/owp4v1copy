@@ -10,7 +10,7 @@ libs = $+ &
 #    $(pfx__)environ$(__sfx) &
 #    $(pfx__)file$(__sfx) &
 #    $(pfx__)handleio$(__sfx) &
-#    $(pfx__)heap$(__sfx) &
+    $(pfx__)heap$(__sfx) &
 #    $(pfx__)intel$(__sfx) &
 #    $(pfx__)kanji$(__sfx) &
     $(pfx__)math$(__sfx) &
@@ -18,7 +18,7 @@ libs = $+ &
     $(pfx__)memory$(__sfx) &
 #    $(pfx__)misc$(__sfx) &
     $(pfx__)search$(__sfx) &
-#    $(pfx__)startup$(__sfx) &
+    $(pfx__)startup$(__sfx) &
 #    $(pfx__)streamio$(__sfx) &
     $(pfx__)string$(__sfx) &
 #    $(pfx__)time$(__sfx) &
