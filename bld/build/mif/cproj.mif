@@ -24,7 +24,7 @@ librarian_i86   = *wlib
 librarian_axp   = *wlib
 librarian_ppc   = *wlib
 
-as_386          = *wasm -3
+as_386          = *wasm
 as_i86          = *wasm
 as_axp          = *wasaxp
 as_ppc          = *wasppc
@@ -57,16 +57,20 @@ ldebug_386      = debug all
 ldebug_axp      = debug dwarf
 ldebug_ppc      = debug dwarf
 
-mode_cflags_r   = -oaxt -d1
+mode_cflags_r   = -oaxt -d1-dNDEBUG
 mode_lflags_r   = $(ldebug_$(host_cpu))
+mode_aflags_r   = -dNDEBUG
 mode_cflags_d   = -od -d2
 mode_lflags_d   = $(ldebug_$(host_cpu))
+mode_aflags_d   = -d1
 !ifeq release 1
 mode_cflags     = $(mode_cflags_r)
 mode_lflags     = $(mode_lflags_r)
+mode_aflags     = $(mode_aflags_r)
 !else
 mode_cflags     = $(mode_cflags_d)
 mode_lflags     = $(mode_lflags_d)
+mode_aflags     = $(mode_aflags_d)
 !endif
 
 !ifndef $(proj_name)_nosymfile
@@ -93,11 +97,7 @@ model_switch_386        = -m$(memory_model_386)
 memory_model_386 = f
 !endif
 
-
 cflags_all      =-w4-we
-!ifeq release 1
-cflags_all      +=-dNDEBUG
-!endif
 !ifdef __LINUX__
 cflags_all      += -fo=.obj
 !endif
@@ -139,6 +139,16 @@ cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mo
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
 
+aflags_all      =-w4
+!ifdef __LINUX__
+aflags_all      += -fo=.obj
+!endif
+
+aflags_386      = -3
+aflags_i86      =
+aflags_axp      =
+aflags_ppc      =
+
 aflags_nt       = -bt=nt
 aflags_win      = -bt=windows
 aflags_os2      = -bt=os2
@@ -147,6 +157,9 @@ aflags_osi      = -bt=osi
 aflags_dos      = -bt=dos
 aflags_nov      = -bt=netware
 aflags_linux    = -bt=linux
+
+proj_a_flags     = $(extra_a_flags) $(extra_a_flags_$(host_cpu)) $(extra_a_flags_$(host_os))
+aflags           = $(aflags_all) $(aflags_$(host_cpu)) $(aflags_$(host_os)) $(mode_aflags) $(proj_a_flags)
 
 lflags_dos_i86   = sys dos
 lflags_nt_axp    = sys ntaxp

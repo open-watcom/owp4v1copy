@@ -76,6 +76,8 @@ inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
 pre_deps_wasm = inlnops.gh
+extra_a_flags_codei86 = -i"$(watcom_dir)/h"
+extra_a_flags_code386 = -i"$(watcom_dir)/h"
 !endif
 !endif
 
@@ -327,7 +329,7 @@ code$(target_cpu).s: ../a/code$(target_cpu).asm ../asm2s.sed
         sed -f ../asm2s.sed $[@ > $@
 
 ./mkcod$(target_cpu).exe: ../a/code$(target_cpu).asm ../a/mkcode.c
-        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
+        $(as) $(aflags) $(extra_a_flags_$[&) $[@
 !ifeq target_cpu i86
         wcc -zq -ox $]@ @ipaths -fo=.obj
 !ifdef __OS2__

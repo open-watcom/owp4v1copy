@@ -1,3 +1,15 @@
+#global definition which tool is quiet
+cc         += -zq
+cpp        += -zq
+linker     += op q
+librarian  += -q
+as         += -q
+rc         += -q
+
+bld_cl     += -zq
+bld_cc     += -zq
+bld_link   += op q
+
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
 !else
@@ -50,18 +62,6 @@ extra_l_flags_nt = lib $(watcom_dir)/lib/ld.lib
 !ifeq host_CPU axp
 def_targ        = wcc$(target_CPU)c.exe
 !endif
-
-#global definition which tool is quiet
-cc         += -zq
-cpp        += -zq
-linker     += op q
-librarian  += -q
-as         += -q
-rc         += -q
-
-bld_cl     += -zq
-bld_cc     += -zq
-bld_link   += op q
 
 # options for single source utility compilations
 wcl_util_opts = -ox -fe=$^@

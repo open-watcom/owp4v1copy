@@ -1,5 +1,7 @@
-.EXTENSIONS:
-.EXTENSIONS: .exe .exp .lib .obj .cpp .c .h .asm .psm
+#.EXTENSIONS:
+#.EXTENSIONS: .exe .exp .lib .obj .cpp .c .h .asm .psm
+.EXTENSIONS: .psm
+
 .ERASE
 .DEFAULT
         @%null
@@ -25,7 +27,7 @@ extra_c_flags_memwrap   = $(track_flags_$(host_cpu))
 extra_c_flags_trmem     = $(track_flags_$(host_cpu))
 !endif
 
-wlib_parms      = -q -b
+wlib_parms      = -b
 
 !ifdef on_build_machine
 std_defines = -dNDEBUG
@@ -49,9 +51,6 @@ inc_dirs        = .;$(include_path);$(dwarf_dir)/dw/h;$(watcom_dir)/h;$(mem_incl
 .c: $(src_path);$(trmem_dir)
 .h: $(include_path)
 .psm: $(asm_path)
-
-.c.obj: $(cg_autodepends)
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@
 
 .psm.obj:
         $(as) $(aflags) $(extra_a_flags_$[&) $[@
