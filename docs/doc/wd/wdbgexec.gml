@@ -236,7 +236,7 @@ all Undo and Unwind operations.
 .*
 .section *refid=wndrep The Replay Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgrep' The Replay Window
+.figure *depth='1.50' *scale=65 *file='dbgrep' The Replay Window
 .np
 Choose
 .menuref 'Replay' 'Code'
@@ -289,7 +289,7 @@ Show the assembly code for the selected line.
 .*
 .section *refid=wndcall The Calls Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgcall' The Calls Window
+.figure *depth='3.00' *scale=70 *file='dbgcall' The Calls Window
 .np
 .ix 'calls' 'displaying stack'
 Choose
@@ -327,7 +327,7 @@ Execute until the program returns from the selected call.
 .section *refid=wndthrd The Thread Window
 .*
 .np
-.figure *depth='3.22' *scale=140 *file='dbgthrd' The Thread Window
+.figure *depth='1.50' *scale=70 *file='dbgthrd' The Thread Window
 .ix 'threads' 'displaying'
 Choose
 .menuref 'Thread' 'Code'

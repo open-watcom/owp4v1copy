@@ -41,7 +41,7 @@ you type each character.  Press ESC to leave this mode.
 .*
 .ix 'search' 'entering strings'
 .ix 'strings' 'entering search'
-.figure *depth='3.00' *scale=150 *file='dlgsrch' Entering a search string
+.figure *depth='2.70' *scale=60 *file='dlgsrch' Entering a search string
 .np
 When you choose
 .menuref 'Find' 'Search'
@@ -73,7 +73,7 @@ regardless of case.
 .*
 .section *refid=wndsrc The Source Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgsrc' The Source Window
+.figure *depth='2.80' *scale=70 *file='dbgsrc' The Source Window
 .np
 The
 .wnddef Source
@@ -167,7 +167,7 @@ are not available.
 .*
 .section *refid=wndmod The Modules Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgmod' The Modules Window
+.figure *depth='2.80' *scale=70 *file='dbgmod' The Modules Window
 .np
 The
 .wnddef Modules
@@ -213,7 +213,7 @@ with full debugging information (d2).
 .*
 .section *refid=wndglob The Globals Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgglob' The Globals Window
+.figure *depth='2.20' *scale=70 *file='dbgglob' The Globals Window
 .np
 .ix 'global variables' 'showing list'
 You can open the
@@ -242,7 +242,7 @@ Variables from the C/C++ library and assembly code are suppressed.
 .*
 .section *refid=wndfunc The Functions Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgfunc' The Functions Window
+.figure *depth='2.40' *scale=70 *file='dbgfunc' The Functions Window
 .np
 .ix 'functions' 'showing list of'
 The
@@ -273,7 +273,7 @@ Variables from the C/C++ library and assembly code are suppressed.
 .*
 .section *refid=wndimg The Images Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgimg' The Images Window
+.figure *depth='2.00' *scale=70 *file='dbgimg' The Images Window
 .np
 .ix 'DLL' 'showing list of'
 .ix 'DLL' 'debugging'

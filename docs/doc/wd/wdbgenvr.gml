@@ -559,7 +559,7 @@ Close the debugger.
 .section *refid=dlgopt The Options Dialog
 .*
 .ix 'options' 'dialog'
-.figure *depth='4.60' *scale=90 *file='dlgopt' The Options Dialog
+.figure *depth='3.0' *scale=60 *file='dlgopt' The Options Dialog
 .np
 The Options
 dialog allows you to change the following settings:

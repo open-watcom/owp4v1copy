@@ -250,7 +250,7 @@ Restore a set of breakpoints that were saved by using
 .section *refid=wndbrk The Break Window
 .*
 .ix 'breakpoint' 'window'
-.figure *depth='3.42' *scale=140 *file='dbgbrk' The Break Window
+.figure *depth='2.50' *scale=65 *file='dbgbrk' The Break Window
 .np
 The
 .wnddef Break
@@ -317,7 +317,7 @@ operation only makes sense for break-on-execute breakpoints.
 .*
 .section *refid=dlgbrk The Breakpoint Dialog
 .*
-.figure *depth='4.05' *scale=125 *file='dlgbrk' The Breakpoint Dialog
+.figure *depth='3.70' *scale=70 *file='dlgbrk' The Breakpoint Dialog
 .np
 The breakpoint dialog appears when you select
 .menuref 'At Cursor' 'Break'

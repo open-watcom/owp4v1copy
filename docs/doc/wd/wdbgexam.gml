@@ -11,7 +11,7 @@ The following topics are discussed:
 .*
 .section *refid=wndvar Variable and Watch Windows
 .*
-.figure *depth='3.66' *scale=150 *file='dbgvar' The Watch and Variable Window
+.figure *depth='2.10' *scale=70 *file='dbgvar' The Watch and Variable Window
 .np
 Windows that display variables come in several different varieties.  They
 are:
@@ -314,7 +314,7 @@ variables declared within the member function.
 .*
 .section *refid=wndmem The Memory and Stack Windows
 .*
-.figure *depth='3.66' *scale=150 *file='dbgmem' The Memory Window
+.figure *depth='2.50' *scale=58 *file='dbgmem' The Memory Window
 .np
 Use the
 .wnddef Memory

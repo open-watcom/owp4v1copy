@@ -21,7 +21,7 @@ features:
 .*
 .section *refid=wndreg The CPU Register Window
 .*
-.figure *depth='1.31' *scale=100 *file='dbgreg' The CPU Register Window
+.figure *depth='1.70' *scale=70 *file='dbgreg' The CPU Register Window
 .*
 .*
 .np
@@ -60,7 +60,7 @@ Displays the Extended 386 register set.
 .*
 .section *refid=wndasm The Assembly Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgass' The Assembly Window
+.figure *depth='3.66' *scale=60 *file='dbgass' The Assembly Window
 .np
 You can open the
 .wnddef Assembly
@@ -118,7 +118,7 @@ Toggle the Assembly window display between hexadecimal and decimal.
 .*
 .section *refid=wndio The I/O Ports Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbgio' The I/O Window
+.figure *depth='1.50' *scale=70 *file='dbgio' The I/O Window
 .np
 Use the
 .wnddef I/O
@@ -169,7 +169,7 @@ how much is read from or written to the I/O port.
 .*
 .section *refid=wndfpu The FPU Registers Window
 .*
-.figure *depth='1.28' *scale=100 *file='dbgfpu' The FPU Registers Window
+.figure *depth='1.20' *scale=48 *file='dbgfpu' The FPU Registers Window
 .np
 .ix '8087' 'examining'
 .ix '8087' 'modifying'
@@ -200,7 +200,7 @@ Toggle the FPU window display between hexadecimal and floating-point display.
 .*
 .section *refid=wndmmx The MMX Registers Window
 .*
-.figure *depth='1.74' *scale=100 *file='dbgmmxb' The MMX Registers Window
+.figure *depth='1.80' *scale=70 *file='dbgmmxb' The MMX Registers Window
 .np
 .ix 'MMX' 'examining'
 .ix 'MMX' 'modifying'
@@ -250,7 +250,7 @@ single-precision floating-point values.
 .*
 .section *refid=wndxmm The XMM Registers Window
 .*
-.figure *depth='1.74' *scale=100 *file='dbgxmmb' The XMM Registers Window
+.figure *depth='1.74' *scale=55 *file='dbgxmmb' The XMM Registers Window
 .np
 .ix 'XMM' 'examining'
 .ix 'XMM' 'modifying'
