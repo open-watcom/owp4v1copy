@@ -25,7 +25,7 @@ mstools_objs        = cmdline.obj cmdscan.obj context.obj error.obj file.obj mem
 .c :  ../c;../../c
 .h :  ../h;../../h
 
-inc_dirs = -I"../h" -I"../../h"
+inc_dirs = -I"../h" -I"../../h" -I"../c"
 
 #
 # Include standard .mif files to do the work.

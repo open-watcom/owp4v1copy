@@ -35,8 +35,7 @@ parse = ..\dlgprs\o\dlgprs $[@ ..\bnd\$[&.bnd $[&.gh $^@
 .extensions:
 .extensions: .gpp .gh .dlg .bnd
 
-compile.tim : $(dialog_source) $(dialog_headers)
-    wtouch $^@
+all : $(dialog_source) $(dialog_headers)
 
 .dlg: $(dlg_dir)
 .dlg.gpp:

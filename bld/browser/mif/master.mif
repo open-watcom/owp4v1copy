@@ -39,45 +39,42 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
 
-inc_dirs_nt  = $(guitools_dir)/win95
-inc_dirs_win = $(guitools_dir)/win
-inc_dirs_dos = $(guitools_dir)/os2
-inc_dirs_os2 = $(guitools_dir)/os2
+inc_dirs_nt  = -I"$(guitools_dir)/win95"
+inc_dirs_win = -I"$(guitools_dir)/win"
+inc_dirs_dos = -I"$(guitools_dir)/os2"
+inc_dirs_os2 = -I"$(guitools_dir)/os2"
 
-inc_dirs = ../h;../brg/h;../gen;$(wclass_inc_dirs);$(dwarf_dir)/dr/h;$(posix_dir)/h;$(editdll_dir)
-
-.before:
-    @set include=$(inc_path)
+inc_dirs = -I"../h" -I"../brg/h" -I"../gen" $(wclass_inc_dirs) -I"$(dwarf_dir)/dr/h" -I"$(posix_dir)/h" -I$(editdll_dir)
 
 extra_c_flags_i86 = -zc -zm
 !ifdef DBG
 extra_c_flags_i86 += -zw
 !else
 extra_c_flags_i86 += -zW
-extra_c_flags_386_os2 = -dNDEBUG=1
+extra_c_flags_386_os2 = -DNDEBUG=1
 !endif
 !ifndef NOASSERT
-extra_c_flags_386_dos = -dDEBUG=1
+extra_c_flags_386_dos = -DDEBUG=1
 !endif
 extra_c_flags_386 = $(extra_c_flags_386_$(host_OS))
 
-extra_c_flags   = -dSTANDALONE_RX=1
+extra_c_flags   = -DSTANDALONE_RX=1
 !ifeq release 0
-extra_c_flags   += -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
+extra_c_flags   += -DDEBUG=1 -DDEBUG_ASSERT=1 -DDEBUGTREE=1
 !endif
-extra_cpp_flags = -ew -xs -dNOPERSIST=1
+extra_cpp_flags = -ew -xs -DNOPERSIST=1
 !ifdef gen_browse_file
 extra_cpp_flags += -db
 !endif
 
-extra_c_flags_trmem = -i="$(trmem_dir)"
-extra_c_flags_regexp = -i="$(posix_dir)/h" -dALLOC=WBRAlloc -fi="../h/mem.h"
-extra_c_flags_demangle = -i="$(lib_misc_dir)/h"
-!ifneq host_OS axp
+extra_c_flags_trmem = -I"$(trmem_dir)"
+extra_c_flags_regexp = -I"$(posix_dir)/h" -DALLOC=WBRAlloc -fi="../h/mem.h"
+extra_c_flags_demangle = -I"$(lib_misc_dir)/h"
+!ifneq host_os axp
 mem_flag = -of+
 !endif
 !ifeq browse_trmem 1
-extra_c_flags_dmem = $(mem_flag) -i="$(trmem_dir)"
+extra_c_flags_dmem = $(mem_flag) -I"$(trmem_dir)"
 !endif
 
 rc_flags_nt  = -bt=nt -k
@@ -94,11 +91,11 @@ rc_file     = $(rc_file_$(host_OS))
 LIBS_win    = $(gui_dir)/win/wini86/gui.lib
 LIBS_nt_axp = $(gui_dir)/win/ntaxp/gui.lib
 LIBS_nt_386 = $(gui_dir)/win/nt386/gui.lib
-LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
+LIBS_nt     = $(LIBS_nt_$(host_cpu))
 LIBS_os2    = $(gui_dir)/win/os2386/gui.lib
 LIBS_dos    = $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 
-LIBS    = $(LIBS_$(host_OS)) $(dwarf_dr_lib) $(wclass_lib)
+LIBS    = $(LIBS_$(host_os)) $(dwarf_dr_lib) $(wclass_lib)
 
 lflags_win_i86  = sys windows font mem
 lflags_dos_386  = sys pharlap
@@ -112,12 +109,12 @@ extra_l_flags_dos = op stub=$(pharlap)stub386.exe op eliminate
 extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
-extra_l_flags_nt = $(extra_l_flags_nt_$(host_CPU))
+extra_l_flags_nt = $(extra_l_flags_nt_$(host_cpu))
 extra_l_flags_os2 =
 
 exe_ext_osi = .rex
-!ifdef exe_ext_$(host_OS)
-exe_ext = $(exe_ext_$(host_OS))
+!ifdef exe_ext_$(host_os)
+exe_ext = $(exe_ext_$(host_os))
 !else
 exe_ext = exe
 !endif
@@ -142,8 +139,7 @@ $(name).exe : $(OBJECTS) $(LIBS)
 !endif
 
 .gpp.obj: .AUTODEPEND
-    @set include=$(inc_path)
-    $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $[@
+    $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $(inc_path) $[@
 
 dmem.obj : mem.cpp
 

@@ -1,11 +1,11 @@
-!ifneq host_OS nt
+!ifneq host_os nt
 !   error Unknown OS.
 !endif
 
 #
 # Define the name(s) of the program(s) to build.
 #
-!ifeq      host_OS nt
+!ifeq      host_os nt
 !   define link_stub link.exe
 !else
 !   define link_stub
@@ -28,7 +28,7 @@ link_common_libs    = $(orl_lib)
 .c :  ../c;../../c;$(lib_misc_dir)/c
 .h :  ../h;../../h;$(lib_misc_dir)/h;$(orl_dir)/h
 
-inc_dirs            += ;$(lib_misc_dir)/h;$(orl_dir)/h
+inc_dirs += -I"$(lib_misc_dir)/h" -I"$(orl_dir)/h"
 
 #
 # Instructions for building the executables.

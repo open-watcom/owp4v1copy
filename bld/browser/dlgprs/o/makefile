@@ -4,16 +4,16 @@ proj_name = dlgprs
 dlgprs_autodepends=.AUTODEPEND
 !endif
 
-host_CPU = 386
+host_cpu = 386
 
 !ifdef __LINUX__
-host_OS = linux
+host_os = linux
 !else ifdef __NT__
-host_OS = nt
+host_os = nt
 !else ifdef __OS2__
-host_OS = os2
+host_os = os2
 !else
-host_OS = dos
+host_os = dos
 !endif
 
 .IGNORE
@@ -46,10 +46,7 @@ extra_c_flags=-xs
 extra_l_flags=op map
 
 #Note that this project includes windows.h on every platform
-inc_dirs = $(browse_dir)/h;../h;$(inc_dirs_sys_win)
-
-compile.tim : dlgprs.exe
-    wtouch $^@
+inc_dirs = -I"$(browse_dir)/h" -I"../h" $(inc_dirs_sys_win)
 
 dlgprs.exe : prsdlg.gh prsbnd.gh $(c_objs) $(browse_objs)
     $(linker) $(lflags) name $^@ file {$(c_objs)}
@@ -75,5 +72,4 @@ prsbnd.gh prsbnd_c.gh : ../y/prsbnd.y ../cpp/yydriver.cpp
 .cpp: ../cpp;$(browse_dir)/cpp
 
 .gh.obj: $(dlgprs_autodepends)
-    @set include=$(inc_path)
-    $(cpp) $(cflags) $[@
+    $(cpp) $(cflags) $(inc_path) $[@
