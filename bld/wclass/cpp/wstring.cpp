@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WString class implementation.
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@ extern "C" {
     #include <malloc.h>
 };
 
-#define MAX_BUFFER 500
+#define DEF_BUFFER 500
 
 #define MALLOC(s) (char*)malloc(s)
 #define REALLOC(p,s) (char*)realloc(p,s)
@@ -217,12 +216,24 @@ void WEXPORT WString::puts( const char* str )
 
 void WEXPORT WString::printf( const char* parms... )
 {
-    char* buffer = new char[ MAX_BUFFER+1 ];
+    char*   buffer;
     va_list args;
-    va_start( args, parms );
-    vsprintf( buffer, parms, args );
-    (*this) = buffer;
-    delete [] buffer;
+    int     bufsize = DEF_BUFFER;
+
+    buffer = MALLOC( bufsize );
+    if( buffer != NULL ) {
+        va_start( args, parms );
+        while( _vbprintf( buffer, bufsize, parms, args ) == bufsize - 1) {
+            bufsize *= 2;
+            FREE( buffer );
+            buffer = MALLOC( bufsize );
+            if( buffer == NULL )
+                return;
+            va_start( args, parms );
+            }
+        (*this) = buffer;
+        FREE( buffer );
+    }
 }
 
 void WEXPORT WString::concat( char chr )
@@ -254,12 +265,24 @@ void WEXPORT WString::concat( const char* str )
 
 void WEXPORT WString::concatf( const char* parms... )
 {
-    char* buffer = new char[ MAX_BUFFER+1 ];
+    char*   buffer;
     va_list args;
-    va_start( args, parms );
-    vsprintf( buffer, parms, args );
-    concat( buffer );
-    delete [] buffer;
+    int     bufsize = DEF_BUFFER;
+
+    buffer = MALLOC( bufsize );
+    if( buffer != NULL ) {
+        va_start( args, parms );
+        while( _vbprintf( buffer, bufsize, parms, args ) == bufsize - 1) {
+            bufsize *= 2;
+            FREE( buffer );
+            buffer = MALLOC( bufsize );
+            if( buffer == NULL )
+                return;
+            va_start( args, parms );
+            }
+        concat( buffer );
+        FREE( buffer );
+    }
 }
 
 void WEXPORT WString::truncate( int count )
