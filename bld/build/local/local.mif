@@ -15,15 +15,25 @@ libaxp          = *$(nlang_bin)\wlib
 bld_cl          = $(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
 bld_cc          = *$(nlang_bin)\wccaxp -zq -i$(bld_incs)
 !else
-!ifdef __OS2__
-bld_cl          = $(lang_root)\binw\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-!else
-bld_cl          = $(nlang_bin)\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-!endif
+bld_cl          = wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
 bld_cc          = *$(nlang_bin)\wcc386 -zq -i$(bld_incs)
 
+use_bld_incs    = 0
+!ifeq host_CPU axp
+use_bld_incs    = 1
+!endif
+!ifeq proj_name ochook
+use_bld_incs    = 1
+!endif
+!ifeq $(proj_name)_rtdll 1
+use_bld_incs    = 1
+!endif
 !ifdef clib_rtdll
 # C runtime library must compile against local headers!!!!
+use_bld_incs    = 0
+!endif
+
+!ifeq use_bld_incs 0
 cc_386          = *$(nlang_bin)\wcc386 -zq
 cpp_386         = *$(nlang_bin)\wpp386 -zq
 !else
