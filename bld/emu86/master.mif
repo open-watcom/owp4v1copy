@@ -40,8 +40,11 @@ extra_a_flags_qnx = -DQNX$(cpu_size)
 
 extra_c_flags_qnx = -oais -s -i"$(new_qnx_h)" -DQNX$(cpu_size) -fpc
 
-objs_dos = initemu.obj emu8087.obj dosinit.obj
-objs_os2 = initemu2.obj emu8087.obj
+extra_c_flags_hk87 = -I"$(lib_misc_dir)/h"
+extra_c_flags_hk87o16 = -I"$(lib_misc_dir)/h"
+
+objs_dos = initemu.obj emu8087.obj dosinit.obj hk87.obj
+objs_os2 = initemu2.obj emu8087.obj hk87o16.obj
 objs_win = initemuw.obj
 
 !ifeq host_OS qnx
