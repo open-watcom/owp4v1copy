@@ -56,7 +56,6 @@ struct handle_blk {
 
 #ifndef NDEBUG
 #include <stdio.h>
-#include <process.h>
 
 static struct {
     unsigned    dump_handle : 1;

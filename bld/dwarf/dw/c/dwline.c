@@ -32,6 +32,11 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <limits.h>
+
+#ifndef _MAX_PATH
+#define _MAX_PATH (PATH_MAX+1)
+#endif
 
 #include "dwpriv.h"
 #include "dwutils.h"

@@ -38,6 +38,7 @@
 #include "dwutils.h"
 #include "dwabbrev.h"
 #include "dwmem.h"
+#include "dwcnf.h"
 #include "dwinfo.h"
 
 
