@@ -4,6 +4,7 @@ host_os    = nt
 host_cpu   = 386
 target_cpu = i86
 release_cc = 0
-debug = 1
+debug_cg   = 1
+debug      = 1
 
 !include ../master.mif
