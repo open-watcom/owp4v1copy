@@ -73,10 +73,10 @@ int __is_nonIBM( void )
     p = MK_FP( __F000, 0xfff5 );
     CHECK_IT
 #elif defined(__WINDOWS__)
-    extern char _WCFAR  _F000h[];
+    extern char _WCFAR  _F000H[];
     char _WCFAR *       p;
 
-    p = MK_FP( _F000h, 0xfff5 );
+    p = MK_FP( _F000H, 0xfff5 );
     CHECK_IT
 #elif defined(__OS2_286__)
     char _WCFAR *p;
