@@ -47,14 +47,6 @@ extern code_lbl *GetWeirdPPCDotDotLabel( code_lbl *lbl ) {
     return( lbl );
 }
 
-extern void     LookupConvertRoutine( instruction *ins ) {
-/********************************************************/
-
-    ins = ins;
-    RoutineNum = RT_NOP;
-    _Zoiks( ZOIKS_101 );
-}
-
 void StartBlockProfiling( block *blk ) {
 /**************************************/
 
