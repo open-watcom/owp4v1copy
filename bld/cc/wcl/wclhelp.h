@@ -39,8 +39,10 @@ J("Usage:  wcl386 [options] file(s)")
 E("Usage:  wcl [options] file(s)")
 J("Usage:  wcl [options] file(s)")
 #endif
+#ifndef __UNIX__
 E("Options:  ( /option is also accepted )")
 J("Options:  ( /option is also accepted )")
+#endif
 E("-c    compile only, no link")
 J("-c    compile only, no link")
 E("-cc   treat source files as C code")

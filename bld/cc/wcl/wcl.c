@@ -343,7 +343,9 @@ static char *ScanFName( char *end, int len )
         if( *end == '\0' ) break;
         if( *end == ' '  ) break;
         if( *end == '\t'  ) break;                  /* 16-mar-91 */
+#ifndef __UNIX__
         if( *end == Switch_Chars[1] ) break;
+#endif
         Word[ len ] = *end;
         ++len;
         ++end;
@@ -420,7 +422,9 @@ static  int  Parse( void )
                 if( *end == '\0' ) break;
                 if( *end == ' '  ) break;
                 if( *end == '\t'  ) break;              /* 16-mar-91 */
+#ifndef __UNIX__
                 if( *end == Switch_Chars[1] ) break;
+#endif
                 if( opt == '-'  ||  opt == Switch_Chars[1] ) {
                     /* if we are processing a switch, stop at a '-' */
                     if( *end == '-' ) break;
@@ -1079,6 +1083,7 @@ static  void  Usage( void )
                 if( *list[n] == '[' ) break;
             }
             n = (n+1) / 2;                      /* half way through list */
+#if 0
             if( isatty( fileno( stdout ) ) ) {
                 if( lines_printed != 0 ) {
                     if( lines_printed + n > 25 ) {
@@ -1090,6 +1095,7 @@ static  void  Usage( void )
                     }
                 }
             }
+#endif
             puts( buf );
             lines_printed++;
             for(;;) {
