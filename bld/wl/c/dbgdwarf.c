@@ -88,7 +88,7 @@ enum {
     SECT_NUM_SECTIONS
 };
 
-#pragma pack( 1 );
+#pragma pack( 1 )
 
 // die information
 
@@ -182,7 +182,7 @@ static char FlatStandardAbbrevs[] = {
     DW_AT_name,         DW_FORM_string,
     0,                  0
 };
-#pragma pack();
+#pragma pack()
 
 static void DwarfAddLines( segdata *, void *, unsigned, bool );
 
@@ -832,7 +832,11 @@ extern void DwarfWriteDBI( void )
 
     memcpy( elf_header.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN );
     elf_header.e_ident[EI_CLASS] = ELFCLASS32;
+#ifdef __BIG_ENDIAN__
+    elf_header.e_ident[EI_DATA] = ELFDATA2MSB;
+#else
     elf_header.e_ident[EI_DATA] = ELFDATA2LSB;
+#endif
     elf_header.e_ident[EI_VERSION] = EV_CURRENT;
     memset( &elf_header.e_ident[EI_PAD], 0, EI_NIDENT - EI_PAD );
     elf_header.e_type = ET_EXEC;

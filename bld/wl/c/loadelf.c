@@ -141,7 +141,11 @@ static void SetHeaders( ElfHdr *hdr )
 {
     memcpy( hdr->eh.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN );
     hdr->eh.e_ident[EI_CLASS] = ELFCLASS32;
+#ifdef __BIG_ENDIAN__
+    hdr->eh.e_ident[EI_DATA] = ELFDATA2MSB;
+#else
     hdr->eh.e_ident[EI_DATA] = ELFDATA2LSB;
+#endif
     hdr->eh.e_ident[EI_VERSION] = EV_CURRENT;
     memset( &hdr->eh.e_ident[EI_PAD], 0, EI_NIDENT - EI_PAD );
     hdr->eh.e_type = ET_EXEC;
