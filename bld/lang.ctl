@@ -119,6 +119,7 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\browser\lang.ctl ]
 [ INCLUDE <devdir>\idebatch\lang.ctl ]
 [ INCLUDE <devdir>\viper\lang.ctl ]
+[ INCLUDE <devdir>\viper\bviper\lang.ctl ]
 [ INCLUDE <devdir>\mstools\lang.ctl ]
 [ INCLUDE <devdir>\viprdemo\lang.ctl ]
 [ INCLUDE <devdir>\online\lang.ctl ]

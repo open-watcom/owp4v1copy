@@ -11,19 +11,19 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
     cdsay threed\os2
-    viperb -r os2_3d.tgt
+    bviper -r os2_3d.tgt
     wmake -i -h -f project.mk
 
     cdsay ..\win
-    viperb -r win_3d.tgt
+    bviper -r win_3d.tgt
     wmake -i -h -f project.mk
 
     cdsay ..\nt
-    viperb -r nt_3d.tgt
+    bviper -r nt_3d.tgt
     wmake -i -h -f project.mk
 
     cdsay ..\..\src\os2
-    viperb -r drawos2.tgt
+    bviper -r drawos2.tgt
     rem copy <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f drawos2.mk1 <devdir>\viprdemo\src\os2\box.obj
     wmake -i -h -f drawos2.mk1 <devdir>\viprdemo\src\os2\drawroom.obj
@@ -31,7 +31,7 @@ cdsay .
     rem del wpp386.exe
 
     cdsay ..\win
-    viperb -r draw16.tgt
+    bviper -r draw16.tgt
     rem copy <devdir>\plusplus\bin\rppi8610.exe wpp.exe
     wmake -i -h -f draw16.mk1 <devdir>\viprdemo\src\win\box.obj
     wmake -i -h -f draw16.mk1 <devdir>\viprdemo\src\win\drawroom.obj
@@ -39,7 +39,7 @@ cdsay .
     rem del wpp.exe
 
     cdsay ..\win386
-    viperb -r draw.tgt
+    bviper -r draw.tgt
     rem copy <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw.mk1 <devdir>\viprdemo\src\win386\box.obj
     wmake -i -h -f draw.mk1 <devdir>\viprdemo\src\win386\drawroom.obj
@@ -47,7 +47,7 @@ cdsay .
     rem del wpp386.exe
 
     cdsay ..\win32
-    viperb -r draw32.tgt
+    bviper -r draw32.tgt
     rem copy <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw32.mk1 <devdir>\viprdemo\src\win32\box.obj
     wmake -i -h -f draw32.mk1 <devdir>\viprdemo\src\win32\drawroom.obj
