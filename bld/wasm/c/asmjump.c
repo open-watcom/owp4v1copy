@@ -405,7 +405,7 @@ int jmp( int i )                // Bug: can't handle indirect jump
                         Code->info.opnd_type[Opnd_Count] = OP_J48;
                         #ifdef _WASM_
                         if( !old_use32 ) {
-                            Code->opsiz = NOT_EMPTY;
+                            Code->prefix.opsiz = TRUE;
                         }
                         #endif
                     } else {
@@ -413,7 +413,7 @@ int jmp( int i )                // Bug: can't handle indirect jump
                         Code->info.opnd_type[Opnd_Count] = OP_J32;
                         #ifdef _WASM_
                         if( old_use32 ) {
-                            Code->opsiz = NOT_EMPTY;
+                            Code->prefix.opsiz = TRUE;
                         }
                         #endif
                     }
@@ -591,7 +591,7 @@ int operator( int mem_type, uint_8 fix_mem_type )
                 case T_LEA:
                     break;
                 default:
-                    Code->opsiz = NOT_EMPTY;
+                    Code->prefix.opsiz = TRUE;
                     break;
                 }
             }
@@ -624,7 +624,7 @@ int operator( int mem_type, uint_8 fix_mem_type )
                         break;
                     default:
                         // OPSIZ prefix
-                        Code->opsiz = NOT_EMPTY;
+                        Code->prefix.opsiz = TRUE;
                     }
                 }
             } else {
@@ -635,7 +635,7 @@ int operator( int mem_type, uint_8 fix_mem_type )
             }
         } else if( !Code->use32 &&
                 (Code->mem_type == T_FWORD || Code->mem_type == T_PWORD) ) {
-            Code->opsiz = NOT_EMPTY;
+            Code->prefix.opsiz = TRUE;
         }
     } else if( mem_type == T_FAR || mem_type == T_NEAR || mem_type == T_SHORT ){
         Code->distance = mem_type;

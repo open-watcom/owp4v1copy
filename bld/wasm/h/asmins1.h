@@ -62,23 +62,21 @@ struct asm_ins {
 #endif
 
 struct asm_code {
-        signed short    prefix;         // prefix before instruction, e.g. lock
-        // #ifdef _WASM_
-        #if 0
-            enum asm_token  mem_type;   /* byte / word / etc. NOT near/far */
-        #else
-            signed short    mem_type;   /* byte / word / etc. NOT near/far */
-        #endif
-        long            data[2];
-        struct asm_ins  info;
-        signed char     seg_prefix;
-        signed char     extended_ins;
-        signed char     adrsiz;
-        signed char     opsiz;
-        unsigned char   sib;
-        unsigned char   use32;
-        signed short    distance;       /* short / near / far / empty */
-        unsigned        mem_type_fixed:1;
+    struct {
+        signed short ins;           // prefix before instruction, e.g. lock
+        signed char  seg;           // segment register override
+        unsigned     adrsiz:1;      // address size prefix
+        unsigned     opsiz:1;       // operand size prefix
+    } prefix;
+    int             mem_type;       // byte / word / etc. NOT near/far
+    long            data[2];
+    struct asm_ins  info;
+    signed char     extended_ins;
+    unsigned char   sib;
+    signed short    distance;       // short / near / far / empty
+    unsigned        use32:1;
+    unsigned        indirect:1;     // CALL/JMP indirect jump
+    unsigned        mem_type_fixed:1;
 };
 
 #define NO_PREFIX   0x00

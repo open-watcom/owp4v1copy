@@ -94,7 +94,7 @@ int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secon
     if( ins->token == T_FWAIT ) {
         patch = FPP_WAIT;
     } else {
-        switch( Code->seg_prefix ) {
+        switch( Code->prefix.seg ) {
         case EMPTY:
             patch = FPP_NORMAL;
             break;
