@@ -59,7 +59,7 @@ $(hbook).ipf : $(hbook).whp
     copy sysusr02.gml $*.h
     del  sysusr02.gml
 !endif
-    $(%WHPCVT) -ipf $(whp_opts) -i -hn -tl "$(book_title)" $* | tee /a $(hbook).log
+    whpcvt -ipf $(whp_opts) -i -hn -tl "$(book_title)" $* | tee /a $(hbook).log
     @%create $^*.tbl
 
 clean : .symbolic

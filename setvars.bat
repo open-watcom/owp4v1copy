@@ -74,7 +74,6 @@ set doc_root=%owroot%\docs
 set whelp=%doc_root%\doc\whelp
 set gml_root=%doc_root%\gml\dos
 set gmllib=%doc_root%\gml\syslib
-set whpcvt=%doc_root%\cmds\whpcvt32
 set hcdos=%doc_root%\cmds\hcdos32
 set hlpdir=%devdir%\online\hlp
 

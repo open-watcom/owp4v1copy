@@ -78,7 +78,6 @@ set doc_root=%owroot%\docs
 set whelp=%doc_root%\doc\whelp
 set gml_root=%doc_root%\gml\os2
 set gmllib=%doc_root%\gml\syslib
-set whpcvt=%doc_root%\cmds\whpcvto2
 set hcdos=%doc_root%\cmds\hcdosos2
 set hlpdir=%devdir%\online\hlp
 set ipfc=%os2tkroot%\ipfc

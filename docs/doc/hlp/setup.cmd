@@ -5,8 +5,6 @@ rem set GMLLIB=d:\gml\syslib
 set GMLLIB=
 set WHELP=s:\jack\doc\whelp
 set TEMP2=C:\TEMP
-rem set WHPCVT=c:\cmds\whpcvto2
-set WHPCVT=
 set OS2_TK=c:\wc\binp
 set IPFC=s:\jack\TOOLKT2X\IPFC
 for %%i in (*.whp) do wtouch %%i

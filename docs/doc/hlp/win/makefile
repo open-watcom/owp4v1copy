@@ -164,7 +164,7 @@ $(hbook).rtf : $(hbook).whp
     copy sysusr02.gml $*.h
     del  sysusr02.gml
 !endif
-    $(%WHPCVT) -rtf $(whp_opts) -i -hh -k -b -up -t -e -lk $*
+    whpcvt -rtf $(whp_opts) -i -hh -k -b -up -t -e -lk $*
     if exist $(hbook).rtf copy $(hbook).rtf $(%HLPDIR)\win > nul
 
 clean : .symbolic

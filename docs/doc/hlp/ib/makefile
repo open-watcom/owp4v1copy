@@ -22,8 +22,8 @@ $(hbook).ihp : $(hbook).ib
 
 
 $(hbook).ib : $(hbook).whp
-    $(%WHPCVT) -ib -i -ix -h -hn -t -tc -e -lk -br -kb -kw -up -dt "Table of Contents" -ds "$(book_title)" $* | tee $(hbook).log
-#   $(%WHPCVT) -ib -i -ix -h -hn -t -tc -e -lk -br -kb -kw -up -dt "Table of Contents" -ds "$(book_title)" $*
+    whpcvt -ib -i -ix -h -hn -t -tc -e -lk -br -kb -kw -up -dt "Table of Contents" -ds "$(book_title)" $* | tee $(hbook).log
+#   whpcvt -ib -i -ix -h -hn -t -tc -e -lk -br -kb -kw -up -dt "Table of Contents" -ds "$(book_title)" $*
 
 clean : .symbolic
     if exist $(hbook).whp   erase $(hbook).whp > nul
