@@ -1,4 +1,4 @@
-#pmake:alpha winnt threading dll axp static os_nt cpu_axp
+#pmake:all build alpha winnt threading dll axp static os_nt cpu_axp
 processor=axp
 system=winnt
 linkage=static

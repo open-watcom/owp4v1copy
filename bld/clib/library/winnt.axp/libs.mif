@@ -34,7 +34,7 @@ libs = $+ &
 pfx__ =
 __sfx =
 
-libs += $+ &
-    ..\..\..\alpha\bin\dots.lib &
-    $-
-#    ..\..\..\alpha\bin\stjmpaxp.obj &
+#libs += $+ &
+#    ..\..\..\alpha\bin\dots.lib &
+#    $-
+##    ..\..\..\alpha\bin\stjmpaxp.obj &
