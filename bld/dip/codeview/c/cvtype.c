@@ -74,25 +74,25 @@ static dip_status TypeVMGetName( imp_image_handle *ii, virt_mem base,
     case LF_CLASS:
     case LF_STRUCTURE:
         name = GetNumLeaf( &p->class_ + 1, &dummy );
-        skip = name - (unsigned_8 *)p;
+        skip = name - (char *)p;
         break;
     case LF_UNION:
         name = GetNumLeaf( &p->union_ + 1, &dummy );
-        skip = name - (unsigned_8 *)p;
+        skip = name - (char *)p;
         break;
     case LF_ENUM:
         skip = sizeof( lf_enum );
         break;
     case LF_ENUMERATE:
         name = GetNumLeaf( &p->enumerate + 1, &dummy );
-        skip = name - (unsigned_8 *)p;
+        skip = name - (char *)p;
         break;
     case LF_FRIENDFCN:
         skip = sizeof( lf_friendfcn );
         break;
     case LF_MEMBER:
         name = GetNumLeaf( &p->member + 1, &dummy );
-        skip = name - (unsigned_8 *)p;
+        skip = name - (char *)p;
         break;
     case LF_STMEMBER:
         skip = sizeof( lf_stmember );

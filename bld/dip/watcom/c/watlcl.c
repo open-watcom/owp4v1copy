@@ -185,7 +185,7 @@ static byte *ProcBlock( byte *ptr, lcl_defn *defn )
  */
 static byte *ProcDefn( byte *ptr, lcl_defn *defn )
 {
-    char        *end;
+    byte        *end;
     int         parms;
 
     end = ptr + *ptr;

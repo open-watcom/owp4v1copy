@@ -24,21 +24,56 @@
 *
 *  ========================================================================
 *
-* Description:  MAD module loader.
+* Description:  Load a DIP which is a UNIX shared library.
 *
 ****************************************************************************/
 
 
-#ifdef __WATCOMC__
-
-/* At this point Linux is sharing the DIP loader with 32-bit DOS. This is
- * not the final solution (should be real ELF shared lib).
- */
-#include "../dsx/madld.c"
-
-#else
-
-/* Use real shared libs when building with GCC */
-#include "madld_so.c"
-
+#include <string.h>
+#include <stdio.h>
+#include <dlfcn.h>
+#include "dip.h"
+#include "dipimp.h"
+#include "dipcli.h"
+#ifndef __WATCOMC__
+    #include "clibext.h"
 #endif
+
+
+dip_status DIPSysLoad( char *path, dip_client_routines *cli,
+                       dip_imp_routines **imp, unsigned long *sys_hdl )
+{
+    void                *shlib;
+    dip_imp_routines    *(*init_func)( dip_status *, dip_client_routines * );
+    char                newpath[PATH_MAX];
+    char                full_path[PATH_MAX];
+    dip_status          status;
+
+    strcpy( newpath, path );
+    strcat( newpath, ".so" );
+    shlib = dlopen( newpath, RTLD_NOW );
+    if( shlib == NULL ) {
+        _searchenv( newpath, "PATH", full_path );
+        shlib = dlopen( full_path, RTLD_NOW );
+        if( shlib == NULL ) {
+            return( DS_ERR | DS_FOPEN_FAILED );
+        }
+    }
+    init_func = dlsym( shlib, "DIPLOAD" );
+    if( init_func == NULL ) {
+        dlclose( shlib );
+        return( DS_ERR | DS_INVALID_DIP );
+    }
+    *imp = init_func( &status, cli );
+    if( *imp == NULL ) {
+        dlclose( shlib );
+        return( status );
+    }
+    *sys_hdl = (unsigned long)shlib;
+    return( DS_OK );
+}
+
+void DIPSysUnload( unsigned long sys_hdl )
+{
+    dlclose( (void *)sys_hdl );
+}

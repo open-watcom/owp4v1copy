@@ -499,7 +499,7 @@ static void InitNameState( struct name_state *state )
     memset( state, 0, sizeof( *state ) );
 }
 
-static byte *FindAName( struct name_state *state, char *p,
+static byte *FindAName( struct name_state *state, byte *p,
                         type_or_enum which, lookup_item *li )
 {
     byte        *name;

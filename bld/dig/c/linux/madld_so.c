@@ -24,21 +24,56 @@
 *
 *  ========================================================================
 *
-* Description:  MAD module loader.
+* Description:  Load a MAD which is a UNIX shared library.
 *
 ****************************************************************************/
 
 
-#ifdef __WATCOMC__
-
-/* At this point Linux is sharing the DIP loader with 32-bit DOS. This is
- * not the final solution (should be real ELF shared lib).
- */
-#include "../dsx/madld.c"
-
-#else
-
-/* Use real shared libs when building with GCC */
-#include "madld_so.c"
-
+#include <string.h>
+#include <stdio.h>
+#include <dlfcn.h>
+#include "mad.h"
+#include "madimp.h"
+#include "madcli.h"
+#ifndef __WATCOMC__
+    #include "clibext.h"
 #endif
+
+
+mad_status MADSysLoad( char *path, mad_client_routines *cli,
+                       mad_imp_routines **imp, unsigned long *sys_hdl )
+{
+    void                *shlib;
+    mad_imp_routines    *(*init_func)( mad_status *, mad_client_routines * );
+    char                newpath[PATH_MAX];
+    char                full_path[PATH_MAX];
+    mad_status          status;
+
+    strcpy( newpath, path );
+    strcat( newpath, ".so" );
+    shlib = dlopen( newpath, RTLD_NOW );
+    if( shlib == NULL ) {
+        _searchenv( newpath, "PATH", full_path );
+        shlib = dlopen( full_path, RTLD_NOW );
+        if( shlib == NULL ) {
+            return( MS_ERR | MS_FOPEN_FAILED );
+        }
+    }
+    init_func = dlsym( shlib, "MADLOAD" );
+    if( init_func == NULL ) {
+        dlclose( shlib );
+        return( MS_ERR | MS_INVALID_MAD );
+    }
+    *imp = init_func( &status, cli );
+    if( *imp == NULL ) {
+        dlclose( shlib );
+        return( status );
+    }
+    *sys_hdl = (unsigned long)shlib;
+    return( MS_OK );
+}
+
+void MADSysUnload( unsigned long sys_hdl )
+{
+    dlclose( (void *)sys_hdl );
+}

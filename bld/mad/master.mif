@@ -1,5 +1,5 @@
 #
-# Master makefile for creating MAD's
+# Master makefile for creating MADs (Machine Architecture Descriptions)
 #
 
 proj_name = mad
@@ -22,18 +22,22 @@ fpu_flags_qnx_386   = -fpc
 fpu_flags_linux_386 = -fpc
 
 name = mad$(target_cpu)
-mad_os2_i86   = $(name).dll
-mad_os2_386   = $(name).d32
-mad_qnx_386   = $(name).mad
-mad_linux_386 = $(name).mad
-mad_win_i86   = $(name).dll
-mad_dos_386   = $(name).mad
-mad_nt_386    = $(name).dll
-mad_nt_axp    = $(name).dll
+ext_os2_i86   = .dll
+ext_os2_386   = .d32
+ext_qnx_386   = .mad
+ext_linux_386 = .mad
+ext_win_i86   = .dll
+ext_dos_386   = .mad
+ext_nt_386    = .dll
+ext_nt_axp    = .dll
 
-exe_name = $(mad_$(host_os)_$(host_cpu))
+!ifdef bootstrap
+lib_name = $(name).so
+!else
+lib_name = $(name)$(ext_$(host_os)_$(host_cpu))
+!endif
 
-all: $(exe_name) .SYMBOLIC
+all: $(lib_name) .SYMBOLIC
 
 additional_cleanup = *.d32 *.mad
 
@@ -45,11 +49,15 @@ additional_cleanup = *.d32 *.mad
 
 # cflags stuff
 ###############
-extra_c_flags = -DMD_$(target_cpu) -DNDIS_$(target_cpu) -s
+extra_c_flags = -DMD_$(target_cpu) -DNDIS_$(target_cpu)
 
+!ifdef bootstrap
+extra_c_flags += -fPIC
+!else
+extra_c_flags += -s
 extra_c_flags_i86 = -zu
-
 extra_c_flags_win = -zc
+!endif
 
 # lflags stuff
 ###############
@@ -68,6 +76,7 @@ extra_l_flags_os2  = export MADLOAD op modname=$(name)
 extra_l_flags_nt   = export MADLOAD op modname=$(name)
 extra_l_flags_win  = op modname=$(name)
 
+!ifndef bootstrap
 libs = clib3r
 !ifeq host_os linux
 !ifdef __LINUX__
@@ -79,10 +88,11 @@ libs = clib$(memory_model_i86)
 libs = clib
 !endif
 libs += $(imp_libs)
+!endif
 
 ##################
 
-inc_dirs = -I"../h" -I"../../h" -I"$(dig_dir)/h" $(dis_includes) $(extra_incs)
+inc_dirs = -I. -I"../h" -I"../../h" -I"$(dig_dir)/h" $(dis_includes) $(extra_incs)
 
 .c: ../c;../../c;$(dis_srcs);$(extra_srcs)
 
@@ -90,5 +100,10 @@ objs =  madimp.obj $(dis_objs) $(imp_objs)
 
 # explicit rules
 ##################
-$(exe_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
+!ifdef bootstrap
+$(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
+        $(cl) -shared -fPIC $(clflags) $(objs) $(cl_libs)
+!else
+$(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
         $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
+!endif

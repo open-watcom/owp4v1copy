@@ -29,7 +29,16 @@
 ****************************************************************************/
 
 
+#ifdef __WATCOMC__
+
 /* At this point Linux is sharing the DIP loader with 32-bit DOS. This is
  * not the final solution (should be real ELF shared lib).
  */
 #include "../dsx/dipld.c"
+
+#else
+
+/* Use real shared libs when building with GCC */
+#include "dipld_so.c"
+
+#endif

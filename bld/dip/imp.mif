@@ -1,5 +1,5 @@
 #
-# Master makefile for creating DIP's
+# Master makefile for creating DIPs
 #
 
 proj_name = dip
@@ -37,16 +37,21 @@ sys_dos_386     = pharlap rex disable 1023,1014
 sys_nt_386      = nt_dll export DIPLOAD op modname=$(name) $(sys_nt_386_$(name))
 sys_nt_axp      = ntaxp_dll export DIPLOAD op modname=$(name)
 
-dip_os2_i86     = $(name).dll
-dip_os2_386     = $(name).d32
-dip_qnx_i86     = $(name).dip
-dip_qnx_386     = $(name).dip
-dip_linux_386   = $(name).dip
-dip_win_i86     = $(name).dll
-dip_dos_386     = $(name).dip
-dip_nt_386      = $(name).dll
-dip_nt_axp      = $(name).dll
-exe_name = $(dip_$(host_os)_$(host_cpu))
+ext_os2_i86     = .dll
+ext_os2_386     = .d32
+ext_qnx_i86     = .dip
+ext_qnx_386     = .dip
+ext_linux_386   = .dip
+ext_win_i86     = .dll
+ext_dos_386     = .dip
+ext_nt_386      = .dll
+ext_nt_axp      = .dll
+
+!ifdef bootstrap
+lib_name = $(name).so
+!else
+lib_name = $(name)$(extp_$(host_os)_$(host_cpu))
+!endif
 
 clib_os2_i86    = clibl
 clib_os2_386    = clib3r
@@ -63,19 +68,28 @@ clib_dos_386    = clib3r
 clib_nt_386     = clib3r
 clib_nt_axp     = clib
 
-extra_c_flags     = -s -D__DIP__ $(extra_cflags)
-
+extra_c_flags   = -s -D__DIP__ $(extra_cflags)
+!ifdef bootstrap
+extra_c_flags += -fPIC
+!else
+extra_c_flags += -s
 extra_c_flags_i86 = -zc -zu
+!endif
 
-inc_dirs = $(extra_incs) -I"$(dig_dir)/h"
+inc_dirs = -I"../h" $(extra_incs) -I"$(dig_dir)/h"
 
 .c: ../c;../../c;$(extra_srcs)
 
 objs = dipimp.obj $(imp_objs)
 
-$(exe_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
+!ifdef bootstrap
+$(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
+        $(cl) -shared $(clflags) $(objs) $(imp_libs) $(cl_libs)
+!else
+$(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
         $(linker) op map, symfile debug all &
                 sys $(sys_$(host_os)_$(host_cpu)) &
                 name $^@ &
                 file {$(objs)} &
                 library {$(clib_$(host_os)_$(host_cpu)) $(imp_libs)}
+!endif
