@@ -573,10 +573,10 @@ static void _InitVariables( void )
     _CurrPos_w.wy = 0.0;
 
     _Window.invert = TRUE;          /* window coordinates defaults  */
-    _Window.xleft = 0.0;
-    _Window.ybottom = 0.0;
-    _Window.xright = 1.0;
-    _Window.ytop = 1.0;
+    _Window.xleft = 0.0f;
+    _Window.ybottom = 0.0f;
+    _Window.xright = (float)1.0;
+    _Window.ytop = (float)1.0;
 
     _CurrState->clip_def.xmin = 0;               /* graphics window */
     _CurrState->clip_def.xmax = _CurrState->vc.numxpixels - 1;

@@ -134,7 +134,7 @@ static float scale_ticinterval( axistype _WCI86FAR *axis, float max, float min )
     axis->ticdecimals = tic_decimals( interval[ s ] );
 
     /* set step increment (adjust to precision) */
-    ds = 1.0;
+    ds = (float)1.0;
     for( i = 0; i < axis->ticdecimals; ++i ) {
         ds = ds * 10;
     }
