@@ -161,65 +161,65 @@ _stuff:
         extsh       r31,r1
         extsh.      r2,r3
 _float:
-        fabs        f1,f2
-        fabs.       f3,f4
-        fadd        f5,f6,f7
-        fadd.       f8,f9,f10
-        fcmpo       cr0,f11,f12
-        fcmpu       cr1,f13,f14
-        fctiw       f15,f16
-        fctiw.      f17,f18
-        fctiwz      f19,f20
-        fctiwz.     f21,f22
-        fdiv        f23,f24,f25
-        fdiv.       f25,f26,f27
-        fdivs       f27,f28,f29
-        fdivs.      f29,f30,f31
-        fmadd       f31,f1,f2,f3
-        fmadd.      f4,f5,f6,f7
-        fmadds      f8,f9,f10,f11
-        fmadds.     f12,f13,f14,f15
-        fmr         f16,f17
-        fmr.        f18,f19
-        fmsub       f20,f21,f22,f23
-        fmsub.      f24,f25,f26,f27
-        fmsubs      f28,f29,f30,f31
-        fmsubs.     f1,f2,f3,f4
-        fmul        f5,f6,f7
-        fmul.       f8,f9,f10
-        fmuls       f11,f12,f13
-        fmuls.      f14,f15,f16
-        fnabs       f17,f18
-        fnabs.      f19,f20
-        fneg        f21,f22
-        fneg.       f23,f24
-        fnmadd      f25,f26,f27,f28
-        fnmadd.     f29,f30,f31,f1
-        fnmadds     f2,f3,f4,f5
-        fnmadds.    f6,f7,f8,f9
-        fnmsub      f10,f11,f12,f13
-        fnmsub.     f14,f15,f16,f17
-        fnmsubs     f18,f19,f20,f21
-        fnmsubs.    f22,f23,f24,f25
-        frsp        f26,f27
-        frsp.       f28,f29
-        fsub        f30,f31,f1
-        fsub.       f2,f3,f4
-        fsubs       f4,f5,f6
-        fsubs.      f6,f7,f8
+        fabs        fr1,fr2
+        fabs.       fr3,fr4
+        fadd        fr5,fr6,fr7
+        fadd.       fr8,fr9,fr10
+        fcmpo       cr0,fr11,fr12
+        fcmpu       cr1,fr13,fr14
+        fctiw       fr15,fr16
+        fctiw.      fr17,fr18
+        fctiwz      fr19,fr20
+        fctiwz.     fr21,fr22
+        fdiv        fr23,fr24,fr25
+        fdiv.       fr25,fr26,fr27
+        fdivs       fr27,fr28,fr29
+        fdivs.      fr29,fr30,fr31
+        fmadd       fr31,fr1,fr2,fr3
+        fmadd.      fr4,fr5,fr6,fr7
+        fmadds      fr8,fr9,fr10,fr11
+        fmadds.     fr12,fr13,fr14,fr15
+        fmr         fr16,fr17
+        fmr.        fr18,fr19
+        fmsub       fr20,fr21,fr22,fr23
+        fmsub.      fr24,fr25,fr26,fr27
+        fmsubs      fr28,fr29,fr30,fr31
+        fmsubs.     fr1,fr2,fr3,fr4
+        fmul        fr5,fr6,fr7
+        fmul.       fr8,fr9,fr10
+        fmuls       fr11,fr12,fr13
+        fmuls.      fr14,fr15,fr16
+        fnabs       fr17,fr18
+        fnabs.      fr19,fr20
+        fneg        fr21,fr22
+        fneg.       fr23,fr24
+        fnmadd      fr25,fr26,fr27,fr28
+        fnmadd.     fr29,fr30,fr31,fr1
+        fnmadds     fr2,fr3,fr4,fr5
+        fnmadds.    fr6,fr7,fr8,fr9
+        fnmsub      fr10,fr11,fr12,fr13
+        fnmsub.     fr14,fr15,fr16,fr17
+        fnmsubs     fr18,fr19,fr20,fr21
+        fnmsubs.    fr22,fr23,fr24,fr25
+        frsp        fr26,fr27
+        frsp.       fr28,fr29
+        fsub        fr30,fr31,fr1
+        fsub.       fr2,fr3,fr4
+        fsubs       fr4,fr5,fr6
+        fsubs.      fr6,fr7,fr8
 _load:
         lbz         r1,0x47(r2)
         lbzu        r3,0x378(r4)
         lbzux       r5,r6,r7
         lbzx        r8,r9,r10
-        lfd         f11,0x837(r12)
-        lfdu        f13,0x3727(r14)
-        lfdux       f15,r16,r17
-        lfdx        f18,r19,r20
-        lfs         f21,0x273(r22)
-        lfsu        f23,-0x78ce(r24)
-        lfsux       f25,r26,r27
-        lfsx        f27,r28,r29
+        lfd         fr11,0x837(r12)
+        lfdu        fr13,0x3727(r14)
+        lfdux       fr15,r16,r17
+        lfdx        fr18,r19,r20
+        lfs         fr21,0x273(r22)
+        lfsu        fr23,-0x78ce(r24)
+        lfsux       fr25,r26,r27
+        lfsx        fr27,r28,r29
         lha         r30,0x873(r31)
         lhau        r1,0x872(r2)
         lhaux       r3,r4,r5
@@ -250,8 +250,8 @@ _move:
         mcrfs       cr2,cr3
         mcrxr       cr4
         mfcr        r5
-        mffs        f1
-        mffs.       f2
+        mffs        fr1
+        mffs.       fr2
         mfmsr       r3
         mfspr       r4,0x000003f2
         mfsr        r5,0x0000000c
@@ -261,7 +261,7 @@ _move:
         mtfsb0.     crb10
         mtfsb1      crb11
         mtfsb1.     crb12
-        mtfsf       0x00000083,f13
+        mtfsf       0x00000083,fr13
         mtfsfi      cr7,0x00000005
         mtmsr       r14
         mtspr       0x00000214,r15
@@ -363,14 +363,14 @@ _store:
         stbu        r3,0x847(r4)
         stbux       r5,r6,r7
         stbx        r8,r9,r10
-        stfd        f11,0x837(r12)
-        stfdu       f14,0x4728(r15)
-        stfdux      f16,r17,r18
-        stfdx       f19,r20,r21
-        stfs        f22,-0x7d8d(r23)
-        stfsu       f25,0x251(r26)
-        stfsux      f27,r28,r29
-        stfsx       f30,r31,r1
+        stfd        fr11,0x837(r12)
+        stfdu       fr14,0x4728(r15)
+        stfdux      fr16,r17,r18
+        stfdx       fr19,r20,r21
+        stfs        fr22,-0x7d8d(r23)
+        stfsu       fr25,0x251(r26)
+        stfsux      fr27,r28,r29
+        stfsx       fr30,r31,r1
         sth         r2,0x2347(r3)
         sthbrx      r3,r4,r5
         sthu        r6,0x892(r7)
