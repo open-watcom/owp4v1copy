@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C/C++ Compile and Link utility.
 *
 ****************************************************************************/
 
 
-#include <sys\types.h>
+#include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -56,21 +55,21 @@
   #define CCXX        "wppaxp"          /* WATCOM C++ compiler             */
   #define WCLENV      "WCLAXP"          /* name of environment variable    */
   #define STACKSIZE   "8192"            /* default stack size              */
-  #define _NAME_      "Watcom C/C++ Alpha AXP "
+  #define _NAME_      "C/C++ Alpha AXP "
 #elif defined(WCL386)
   #define WCLNAME     "wcl386"          /* Name of Compile and Link Utility*/
   #define CC          "wcc386"          /* WATCOM C compiler               */
   #define CCXX        "wpp386"          /* WATCOM C++ compiler             */
   #define WCLENV      "WCL386"          /* name of environment variable    */
-  #define STACKSIZE   "4096"            /* default stack size              */
-  #define _NAME_      "Watcom C/C++32 "
+  #define STACKSIZE   "8192"            /* default stack size              */
+  #define _NAME_      "C/C++32 "
 #else
   #define WCLNAME     "wcl"             /* Name of Compile and Link Utility*/
   #define CC          "wcc"             /* WATCOM C compiler               */
   #define CCXX        "wpp"             /* WATCOM C++ compiler             */
   #define WCLENV      "WCL"             /* name of environment variable    */
-  #define STACKSIZE   "2048"            /* default stack size              */
-  #define _NAME_      "Watcom C/C++16 "
+  #define STACKSIZE   "4096"            /* default stack size              */
+  #define _NAME_      "C/C++16 "
 #endif
 #define OBJ_EXT     ".obj"
 #define LINK        "wlink"             /* WATCOM linker                   */
@@ -235,7 +234,7 @@ void print_banner( void )
     static int done;
 
     if( done ) return;
-    puts( banner1( _NAME_ "Compile and Link Utility",_WCL_VERSION_) );
+    puts( banner1w( _NAME_ "Compile and Link Utility",_WCL_VERSION_) );
     puts( banner2( "1988" ) );
     puts( banner3 );
     done = 1;
@@ -753,7 +752,11 @@ static  int  CompLink( void )
         } else if( Flags.link_for_os2 ) {
             Fputnl( "system os2", Fp );
         } else {
+#if defined(__OS2)
+            Fputnl( "system os2", Fp );
+#else
             Fputnl( "system dos", Fp );
+#endif
         }
 #endif
     }
