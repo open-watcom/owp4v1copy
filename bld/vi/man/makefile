@@ -1,8 +1,13 @@
 wgml = $(%gml_path)\wgml
+optsfile=wgmlopts.tmp
 
 .before
     set gmlinc=pict;$(%doc_root)\doc\gml
     set gmlpag=%TEMP%
+
+all : vi.ps .SYMBOLIC
+#all : vi.ps vi.hlp .SYMBOLIC
+    %null
 
 vi.ps : vi.gml settings.gml intro.gml basic.gml &
         inter.gml advan.gml vipref.gml &
@@ -12,14 +17,19 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
         spmapkey.gml &
         oper.gml worddef.gml speckeys.gml &
         a_errcod.gml a_cmdmod.gml a_symkey.gml
+    @%create $(optsfile)
+    @%append $(optsfile) ( file nb7x9ps
+    @%append $(optsfile) ( index
+    @%append $(optsfile) ( passes 3
+    @%append $(optsfile) ( cpinch 20
+    @%append $(optsfile) ( verbose
+    @%append $(optsfile) ( statistics
+    -$(wgml) vi ( file $(optsfile)
 
 #    -wgml stat.vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -wgml vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -wgml vi.gml (file nb7x9ps pass 1 cpi 20 stat verb
-    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb dev term nopause out *.res
-
-full : .SYMBOLIC
-    -$(wgml) vi.gml (file nb7x9ps index pass 3 cpi 20 stat verb
+#    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb dev term nopause out *.res
 
 vi.hlp: wgmlst.cop vihelp.src toc vihlp
         @erase vitoc.hlp
@@ -32,8 +42,17 @@ vi.hlp: wgmlst.cop vihelp.src toc vihlp
         @%null
 
 vihelp.src: vi.gml .SYMBOLIC
-   -$(wgml) 'vi' ( line verbose stat pass 2 cpi 10 &
-        out vihelp.src proc vihelp file help
+    @%create $(optsfile)
+    @%append $(optsfile) ( linemode
+    @%append $(optsfile) ( verbose
+    @%append $(optsfile) ( statistics
+    @%append $(optsfile) ( passes 2
+    @%append $(optsfile) ( cpinch 10
+    @%append $(optsfile) ( output vihelp.src
+    @%append $(optsfile) ( setsymbol dohelp 1
+    @%append $(optsfile) ( process vihelp
+    @%append $(optsfile) ( file help
+   -$(wgml) vi ( file $(optsfile)
     vi -q -sremtoc.vi vihelp.src
     @copy toc.src vitoc.src
 
@@ -60,7 +79,7 @@ wgmlst.cop: help.cop helpdrv.cop
     %null
 
 help.cop: .SYMBOLIC
-    gendev help
+    $(%gml_path)\gendev help
 
 helpdrv.cop: .SYMBOLIC
-    gendev helpdrv
+    $(%gml_path)\gendev helpdrv
