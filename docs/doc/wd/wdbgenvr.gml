@@ -213,7 +213,7 @@ help you to use the debugger more effectively.
 .*
 .section The Toolbar
 .*
-.figure *depth='3.66' *scale=150 *file='dbgshot' The Debugger Window
+.figure *depth='3.40' *scale=65 *file='dbgshot' The Debugger Window
 .np
 The
 .wnddef Toolbar
@@ -248,7 +248,7 @@ See the sections entitled :HDREF refid='menurun'. and
 .section Dialogs
 .*
 .ix 'dialogs' 'general description'
-.figure *depth='3.66' *scale=113 *file='dlgbrk' A Typical Dialog
+.figure *depth='3.66' *scale=65 *file='dlgbrk' A Typical Dialog
 .np
 Dialogs appear when you choose a menu item that does not perform an
 immediate action. They allow you to make choices and set options.
@@ -559,7 +559,7 @@ Close the debugger.
 .section *refid=dlgopt The Options Dialog
 .*
 .ix 'options' 'dialog'
-.figure *depth='4.60' *scale=200 *file='dlgopt' The Options Dialog
+.figure *depth='4.60' *scale=90 *file='dlgopt' The Options Dialog
 .np
 The Options
 dialog allows you to change the following settings:
@@ -626,7 +626,7 @@ if you are having trouble with double clicks.
 .section *refid=dlgwopt The Window Options Dialog
 .*
 .ix 'window' 'options'
-.figure *depth='3.57' *scale=100 *file='dlgwopt' The Window Options Dialog
+.figure *depth='3.57' *scale=60 *file='dlgwopt' The Window Options Dialog
 .np
 Use the Window Options dialog to define options related to the
 debugger's various windows.
@@ -1003,7 +1003,7 @@ messages also appear in the Status window.
 .*
 .section *refid=wndlog The Log Window
 .*
-.figure *depth='3.66' *scale=150 *file='dbglog' The Log Window
+.figure *depth='2.5' *scale=64 *file='dbglog' The Log Window
 .np
 Choose
 .menuref 'Log' 'Data'
@@ -1031,7 +1031,7 @@ This allows you to save a window's contents and review it later.
 .ix 'accelerators'
 .ix 'shortcuts'
 .ix 'keyboard equivalents'
-.figure *depth='3.66' *scale=150 *file='dbgacc' The Accelerator Window
+.figure *depth='3.50' *scale=65 *file='dbgacc' The Accelerator Window
 .np
 The
 .wnddef Accelerator
