@@ -76,9 +76,7 @@ sys_x86_qnx  = sys pharlap rex disable 1014, 1023
 # this under Linux already. Eventually it should be an ELF shared library.
 
 sys_x86_linux = form windows nt dll op nodefaultlibs &
-            export TrapInit_.1 &
-            export TrapFini_.2 &
-            export TrapRequest_.3 &
+            export TrapLoad_.1 &
             option description $(description)
 
 sys_axp_nt   = sys ntaxp_dll initinstance &

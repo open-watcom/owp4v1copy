@@ -32,12 +32,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <signal.h>
 #include "trpimp.h"
 #include "tcerr.h"
 #include "peloader.h"
+#include "trpqimp.h"
 
+static const trap_requests      *TrapFuncs;
 static PE_MODULE *TrapFile;
-static trap_version (TRAPENTRY *InitFunc)();
 static void (TRAPENTRY *FiniFunc)();
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx_entry * );
@@ -45,12 +47,24 @@ extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx
 extern  int      PathOpen(char *,unsigned, char *);
 extern  int      GetSystemHandle(int);
 
+const static trap_callbacks TrapCallbacks = {
+    sizeof( trap_callbacks ),
+
+    &environ,
+    NULL,
+
+    malloc,
+    realloc,
+    free,
+    getenv,
+    signal,
+};
+
 void KillTrap()
 {
     ReqFunc = NULL;
     if( FiniFunc != NULL ) FiniFunc();
     FiniFunc = NULL;
-    InitFunc = NULL;
     if( TrapFile != 0 ) PE_freeLibrary( TrapFile );
     TrapFile = 0;
 }
@@ -61,6 +75,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     int                 filehndl;
     char                *ptr;
     char                *parm;
+    const trap_requests *(*ld_func)( const trap_callbacks * );
 
     if( trapbuff == NULL ) trapbuff = "std";
     for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr ) ;
@@ -74,15 +89,19 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
-    InitFunc = PE_getProcAddress( TrapFile, "TrapInit_" );
-    FiniFunc = PE_getProcAddress( TrapFile, "TrapFini_" );
-    ReqFunc  = PE_getProcAddress( TrapFile, "TrapRequest_" );
+    ld_func  = PE_getProcAddress( TrapFile, "TrapLoad_" );
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
-    if( InitFunc == NULL || FiniFunc == NULL || ReqFunc == NULL) {
+    if( ld_func == NULL ) {
         KillTrap();
         return( buff );
     }
-    *trap_ver = InitFunc( parm, init_error, trap_ver->remote );
+    TrapFuncs = ld_func( &TrapCallbacks );
+    if( TrapFuncs == NULL ) {
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
+        return( buff );
+    }
+    *trap_ver = TrapFuncs->init_func( parm, init_error, trap_ver->remote );
+    FiniFunc = TrapFuncs->fini_func;
     if( init_error[0] != '\0' ) {
         KillTrap();
         strcpy( buff, init_error );
@@ -93,6 +112,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         return( buff );
     }
     TrapVer = *trap_ver;
+    ReqFunc = TrapFuncs->req_func;
     return( NULL );
 }
 
