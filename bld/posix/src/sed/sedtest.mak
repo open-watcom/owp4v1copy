@@ -198,6 +198,7 @@ brace: .symbolic
     > xpect echo hello
     $(sed) -n 1{p;} afore > after
     diff after xpect
+    $(sed) -n 1,2!{p;};p afore | diff afore -
     > xpect echo world
     $(sed) -n 1!{p;} afore > after
     diff after xpect

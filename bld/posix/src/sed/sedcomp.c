@@ -366,7 +366,7 @@ static int cmdcomp( register char cchar ) /* character name of command */
             ABORT( AD1NG );             /* no addresses allowed */
         if( --bdepth < 0 )
             ABORT( TMRBR );             /* too many right braces */
-        *cmpstk[bdepth] = cmdp;         /* set the jump address */
+        *cmpstk[bdepth] = cmdp - 1;     /* set the jump address - (-1) to allow increment */
         return( 1 );
 
     case '=':                           /* print current source line number */
