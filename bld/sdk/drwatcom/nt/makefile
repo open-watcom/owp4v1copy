@@ -3,10 +3,10 @@ lnk = $(name).lnk
 
 msgh = rcstr.h
 mastermsg = rcstr.msg
-msgfiles = drnt.msg ..\..\misc\about.msg ..\..\misc\savelbox.msg &
-           ..\..\misc\memwnd.msg
+msgfiles = drnt.msg ../../misc/about.msg ../../misc/savelbox.msg &
+           ../../misc/memwnd.msg
 
-cflags= -zq-oaxt-s-fpc-w4 -mf-4-bt=nt-fo=obj\.obj
+cflags= -zq-oaxt-s-fpc-w4 -mf-4-bt=nt-fo=obj/.obj
 
 !ifndef on_build_machine
 cflags += -d2
@@ -18,10 +18,10 @@ link = $(linker)
 cc = $(comp286)
 cc386 = $(comp386)
 
-disasm = $(build_root)\wdisasm\vid\ofw
+disasm = $(build_root)/wdisasm/vid/ofw
 
 .BEFORE
-        set include=..;..\..\misc;$(wdisasmdir)h;$(watcom_nt_h);$(dip_dir)\h;$(%include)
+        set include=..;../../misc;$(wdisasmdir)h;$(watcom_nt_h);$(dip_dir)/h;$(%include)
 
 .EXTENSIONS:
 .EXTENSIONS: .exe
@@ -44,10 +44,10 @@ objs = global.obj param.obj procctl.obj dipcli.obj memory.obj&
 dumobjs = dummy.obj
 
 resources = thrdctl.dlg procctl.dlg notelog.dlg thrdctl.dlg &
-            priority.dlg retcode.dlg log.dlg memory.dlg ..\stat.dlg&
+            priority.dlg retcode.dlg log.dlg memory.dlg ../stat.dlg&
             memdmp.dlg $(mastermsg) &
-            ..\..\misc\about.dlg ..\..\misc\mark.rc &
-            ..\intdlg.dlg
+            ../../misc/about.dlg ../../misc/mark.rc &
+            ../intdlg.dlg
 
 ###########################################################################
 #
@@ -63,10 +63,10 @@ $(msgh) : $(mastermsg)
         del obj\*.obj
 
 $(mastermsg) : $(msgfiles)
-        $(comp286) -p -i=..\..\misc drnt.msg > $(mastermsg)
+        $(comp286) -p -i="../../misc" drnt.msg > $(mastermsg)
 
 $(name).res : $(name).rc $(resources)
-    $(RC) -r $(name).rc  -d__NT__ -fo=$(name).res -i=..\..\misc;..\ -bt=nt
+    $(RC) -r $(name).rc  -d__NT__ -fo=$(name).res -i="../../misc;.." -bt=nt
 
 $(lnk) : makefile
         %create $(lnk)
@@ -78,14 +78,14 @@ $(lnk) : makefile
         @%append $(lnk) option map
         @%append $(lnk) option stack=9k
         @%append $(lnk) option heapsize=2k
-        @for %i in ($(objs)) do @%append $(lnk) file obj\%i
-        @%append $(lnk) path $(disasm) @$(disasm)\o2a.lnk
+        @for %i in ($(objs)) do @%append $(lnk) file obj/%i
+        @%append $(lnk) path $(disasm) @$(disasm)/o2a.lnk
 
 .obj : obj
-.c : .;..;..\..\misc;$(dip_dir)\c
+.c : .;..;../../misc;$(dip_dir)/c
 
 sym.obj : sym.c
-        $(cc386) $[* -ot-i=$(build_root)\wv\h $(cflags)
+        $(cc386) $[* -ot-i="$(build_root)/wv/h" $(cflags)
 
 mem.obj : mem.c
        $(cc386) $[* $(cflags) -dWANT_MSGS -dNO_WPI

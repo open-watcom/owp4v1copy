@@ -40,9 +40,9 @@
 #include "img_os2.h"
 #else
 #include "img_win.h"
-#include "..\..\misc\bitmap.h"
-#include "..\..\misc\palette.h"
-#include "..\..\misc\ctl3d.h"
+#include "bitmap.h"
+#include "palette.h"
+#include "ctl3d.h"
 #include "wrdll.h"
 #endif
 
@@ -68,9 +68,9 @@ typedef enum {
 #include "dialogs.h"
 #include "icon.h"
 #include "menuids.h"
-#include "..\..\misc\mem.h"
-#include "..\..\misc\wstatus.h"
-#include "..\..\misc\wptoolbr.h"
+#include "mem.h"
+#include "wstatus.h"
+#include "wptoolbr.h"
 
 #define MAX_DIM         512
 #define MIN_DIM         0

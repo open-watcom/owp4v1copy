@@ -26,5 +26,5 @@
 #==================================
     cdsay <PROJDIR>/linux386
     wmake -h
-    <CPCMD> ssl.exe <owroot>\bld\build\binl\ssl
+    <CPCMD> ssl.exe <owroot>/bld/build/binl/ssl
     cdsay <PROJDIR>

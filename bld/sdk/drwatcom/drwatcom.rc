@@ -3,7 +3,7 @@
 #include "intdlg.h"
 #include "stat.h"
 #include "stackt.h"
-#include "..\misc\memwnd.h"
+#include "memwnd.h"
 #include "log.h"
 #include "dmptask.h"
 #include "taskctl.h"

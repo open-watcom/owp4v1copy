@@ -112,12 +112,12 @@ kernel32.lib: kernel32.lbc
         $(librarian) -b -c -n -io -ii $@ @$<
 
 dinput.lib: dinput.lbc dinput.obj
-        $(librarian) -b -c -n -io -ii $@ @$*
-        $(librarian) -b -c $@ +$*
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
-        $(librarian) -b -c -n -io -ii $@ @$*
-        $(librarian) -b -c $@ +$*
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ +$]@
 
 uuid.lib: uuid.obj mshtml-u.obj
 
