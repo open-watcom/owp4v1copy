@@ -173,7 +173,7 @@ void DelErrFile() {
 void OpenErrFile()
 /****************/
 {
-    if( !isatty( fileno( errout ) ) ) return;
+//    if( !isatty( fileno( errout ) ) ) return;
     if( AsmFiles.fname[ERR] != NULL ) {
         ErrFile = fopen( AsmFiles.fname[ERR], "w" );
     }
