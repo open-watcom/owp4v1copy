@@ -1,6 +1,6 @@
 .func _set_matherr
 #include <math.h>
-void _set_matherr( int (*rtn)( struct exception *err_info ) )
+void _set_matherr( int (*rtn)( struct _exception *err_info ) )
 .ixfunc2 '&Errs' &func
 .ixfunc2 '&Math' &func
 .funcend
@@ -40,10 +40,10 @@ detected.
 .pp
 When called, the user-written math error handler is passed a pointer
 to a structure of type
-.id struct exception
+.id struct _exception
 which contains information about the error that has been detected:
 .blkcode begin
-struct exception
+struct _exception
 { int type;      /* TYPE OF ERROR                */
   char *name;    /* NAME OF FUNCTION             */
   double arg1;   /* FIRST ARGUMENT TO FUNCTION   */
@@ -105,7 +105,7 @@ The &func function returns no value.
 /* Demonstrate error routine in which negative */
 /* arguments to "sqrt" are treated as positive */
 
-static int my_matherr( struct exception *err );
+static int my_matherr( struct _exception *err );
 .exmp break
 void main()
   {
@@ -114,7 +114,7 @@ void main()
     exit( 0 );
   }
 .exmp break
-int my_matherr( struct exception *err )
+int my_matherr( struct _exception *err )
   {
     if( strcmp( err->name, "sqrt" ) == 0 ) {
       if( err->type == DOMAIN ) {
