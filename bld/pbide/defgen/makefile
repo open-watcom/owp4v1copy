@@ -2,6 +2,7 @@
 name = defgen
 lnk = $(name).lnk
 
+!include deftarg.mif
 
 objs = ytab.obj main.obj scan.obj error.obj semantic.obj output.obj
 
