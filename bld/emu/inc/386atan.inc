@@ -325,7 +325,7 @@ __fpatan endp
 
 ;;            x = _OddPoly( x, AtanPoly, 8 );
           mov   EAX,EDI                 ; - x
-          _mova EDX,AtanPoly            ; - polynomial
+          lea   EDX,AtanPoly            ; - polynomial
           mov   EBX,8                   ; - degree
           call  __OddPoly               ; - evaluate polynomial
 

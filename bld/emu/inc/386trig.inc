@@ -249,12 +249,7 @@ index   equ     iflag-4
             mov   EBX,8                 ; - - calc. 8 - index
             sub   EBX,ECX               ; - - ...
             lea   ECX,[ECX+ECX*4]       ; - - index * 5
-ifdef __WIN387__
-            add   ecx,ecx               ; - - index *= 2
-            add   ECX,OFFSET32 __cospoly
-else
-            lea   ECX,__cospoly[ECX*2]  ; - - point to start of polynomial
-endif
+            lea   ECX,__cospoly[ECX*2]  ; - - index * 2, point to start of polynomial
             call  __poly                ; - - evaluate polynomial
             mov   cosy[EBP],EAX         ; - - save cosy
             mov   cosy+4[EBP],EDX       ; - - ...
@@ -276,9 +271,7 @@ endif
             mov   EBX,8                 ; - - calc. 8 - index
             sub   EBX,ECX               ; - - ...
             lea   ECX,[ECX+ECX*4]       ; - - index * 5
-            add   ECX,ECX               ; - - index * 2
-            _mova EDX,__sinpoly
-            add   EDX,ECX               ; - - point to start of poly.
+            lea   EDX,__sinpoly[ECX*2]  ; - - index * 2, point to start of poly.
             call  __OddPoly             ; - - evaluate polynomial
 ;;            }
           _endguess                     ; - endguess

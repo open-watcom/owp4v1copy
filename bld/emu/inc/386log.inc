@@ -218,7 +218,7 @@ __fyl2x endp
 
 ;;        x = z + z * x * _EvalPoly( x, APoly, 2 ) / _EvalPoly( x, BPoly, 3 );
         mov     EBX,3                           ; degree
-        _mova   ECX,BPoly                       ; polynomial
+        lea     ECX,BPoly                       ; polynomial
         call    __poly                          ; evaluate polynomial
         push    EAX                             ; save result
         push    EDX                             ; ...
@@ -226,7 +226,7 @@ __fyl2x endp
         mov     EAX,[EDI]                       ; load x
         mov     EDX,4[EDI]                      ; ...
         mov     SI,8[EDI]                       ; ...
-        _mova   ECX,APoly                       ; polynomial
+        lea     ECX,APoly                       ; polynomial
         mov     EBX,2                           ; degree
         call    __poly                          ; evaluate polynomial
         pop     ECX                             ; load __poly(x,BPoly,3)
