@@ -67,7 +67,11 @@ extra_cflags += -fo=.obj
 !endif
 
 compiler_i86    =$(comp286) -ml -fpc
+!ifeq host_OS linux
+compiler_386    =$(comp386) -mf -fpi87
+!else
 compiler_386    =$(comp386) -mf -fpc
+!endif
 compiler_axp    =wccaxp
 
 resname_win_gui         = wvwin
