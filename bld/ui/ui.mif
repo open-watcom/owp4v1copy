@@ -1,23 +1,25 @@
 .mif: $(mif_path);..
+
 !include cproj.mif
+!include deftarg.mif
 
-system_nt_386   = nt
-system_nt_axp   = ntaxp
+system_nt_386    = nt
+system_nt_axp    = ntaxp
 
-compiler_i86    = $(comp286)
-compiler_386    = $(comp386)
-compiler_axp    = wccaxp
+compiler_i86     = $(comp286)
+compiler_386     = $(comp386)
+compiler_axp     = wccaxp
 
-librarian_i86   = wlib
-librarian_386   = $(librarian_i86)
-librarian_axp   = wlib
+librarian_i86    = wlib
+librarian_386    = $(librarian_i86)
+librarian_axp    = wlib
 
-includes_nt_386 = $(lang_root)\h\nt;$(lang_root)\h
-includes_nt_axp = $(lang_root)\h\nt;$(lang_root)\h
-includes_os2_i86= $(watcom_dir)\os21x_h;$(lang_root)\h
-includes_os2_386= $(watcom_dir)\os220_h;$(lang_root)\h
-includes_qnx_i86= $(lang_root)\qh
-includes_qnx_386= $(lang_root)\qh
+includes_nt_386  = $(lang_root)\h\nt;$(lang_root)\h
+includes_nt_axp  = $(lang_root)\h\nt;$(lang_root)\h
+includes_os2_i86 = $(inc_dirs_sys_os2);$(lang_root)\h
+includes_os2_386 = $(inc_dirs_sys_os2);$(lang_root)\h
+includes_qnx_i86 = $(lang_root)\qh
+includes_qnx_386 = $(lang_root)\qh
 
 # database team uses fpi87 as default in 6.0
 !ifdef wsqlver

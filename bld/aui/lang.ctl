@@ -22,8 +22,8 @@ cdsay .
     wmake /h /i
     cdsay ..\ol
     wmake /h /i
-    cdsay ..\pm
-    wmake /h /i
+#    cdsay ..\pm
+#    wmake /h /i
     cdsay ..\pmf
     wmake /h /i
     cdsay ..\o32s
@@ -47,8 +47,8 @@ cdsay .
     wmake /h /i clean
     cdsay ..\ol
     wmake /h /i clean
-    cdsay ..\pm
-    wmake /h /i clean
+#    cdsay ..\pm
+#    wmake /h /i clean
     cdsay ..\o32s
     wmake /h /i clean
     cd <PROJDIR>

@@ -18,4 +18,4 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
