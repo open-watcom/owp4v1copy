@@ -1,6 +1,7 @@
 plustest_name = yacl
 !include ..\..\environ.mif
 
+!ifneq arch i86
 exes = &
 bittest.$(exe) &
 btreetst.$(exe) &
@@ -19,6 +20,7 @@ strtest.$(exe) &
 treeprnt.$(exe) &
 treetest.$(exe) &
 wordcnt.$(exe)
+!endif
 
 !ifdef test1
 cflags = -op-d2
@@ -43,6 +45,7 @@ test : .symbolic ex.lnk $(exes)
     del ..\base.lib
     del ..\io.lib
     %create test.out
+!ifneq arch i86
     %append test.out bittest.$(exe)
     $(run) bittest.$(exe) >>test.out
     %append test.out btreetst.$(exe)
@@ -82,6 +85,7 @@ test : .symbolic ex.lnk $(exes)
     %append test.out wordcnt.$(exe)
     $(run) wordcnt.$(exe) <wordcnt.cpp >>test.out
     diff test.out test.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     

@@ -15,7 +15,7 @@ cflags_i86 = -os-d1-xss-xr
 cflags_axp = -os-d1-xss-xr
 !else ifdef test4
 cflags_386 = -ot-d1-3r-fpd-xs -oe1000
-cflags_i86 = -ot-d1-fpd-xs -oe1000
+cflags_i86 = -ot-d1-fpd-xs -oe100
 cflags_axp = -ot-d1-xs -oe1000
 !else ifdef test5
 cflags_386 = -d2-br-xs
