@@ -357,6 +357,8 @@ bool VpeMain::reallyClose()
         itoa( rect.y(), buff, 10 );
         MyWriteProfileString( IDE_INI_DIR, IDE_INI_FILENAME, IDE_INI_IDENTIFIER,
                               IDE_INI_Y, buff );
+        MyCloseCurrentProfile();
+
         if( _otherhelp != NULL ) {
             delete _otherhelp;
             _otherhelp = NULL;
