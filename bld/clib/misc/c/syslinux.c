@@ -136,6 +136,12 @@ _WCRTLINK void (*signal(int signum, void (*sighandler)(int)))(int)
     __syscall_return(void (*)(int),res);
 }
 
+_WCRTLINK unsigned alarm( unsigned int __seconds )
+{
+    u_long res = sys_call1(SYS_alarm, __seconds);
+    __syscall_return(unsigned,res);
+}
+
 _WCRTLINK int unlink( const char *filename )
 {
     u_long res = sys_call1(SYS_unlink, (u_long)filename);
