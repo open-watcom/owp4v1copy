@@ -1,3 +1,7 @@
+#pmake: all build cpu_i86 os_os2
+host_CPU = i86
+host_OS = os2
+
 os = os2
 build_target = os2
 compiler = comp286
