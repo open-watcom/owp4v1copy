@@ -91,6 +91,9 @@ is the &cmppname compiler for DEC Alpha AXP platforms.
 .note file_spec
 is the file name specification of
 one or more files to be compiled.
+If file_spec is specified as the single character ".", an input file
+is read from standard input and the output file name defaults to
+stdin.obj.
 .if '&target' ne 'QNX' .do begin
 .np
 If no drive is specified, the default drive is assumed.

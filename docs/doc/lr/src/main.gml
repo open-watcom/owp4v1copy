@@ -45,6 +45,10 @@ within double quote characters (which are removed from that element in
 the
 .arg argv
 vector.
+A literal double quote character can be passed by preceding it with a
+backslash.
+A literal backslash followed by an enclosing double quote character can
+be passed as a pair of backslash characters and a double quote character.
 .np
 The command line arguments can also be obtained in its original
 format by using the
