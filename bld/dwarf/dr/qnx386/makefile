@@ -1,7 +1,8 @@
-#pmake: build cpu_386 os_qnx
+#pmake: os_qnx cpu_386
 
-host_OS = qnx
-host_CPU = 386
-inline_vmem=yes
+host_os  = qnx
+host_cpu = 386
+
+inline_vmem = yes
 
 !include ..\dr.mif

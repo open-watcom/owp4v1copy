@@ -48,10 +48,10 @@ cdsay .
 #nlm
     <CPCMD> <devdir>\bin\nlm\*.nlm <relroot>\rel2\nlm\
 #qnx
-    <CPCMD> <devdir>\bin\qnx\*.trp <relroot>\rel2\qnx\watcom\wd\
-    <CPCMD> <devdir>\bin\qnx\parserv.qnx <relroot>\rel2\qnx\binq\parserv
-    <CPCMD> <devdir>\bin\qnx\serserv.qnx <relroot>\rel2\qnx\binq\serserv
-    <CPCMD> <devdir>\bin\qnx\tcpserv.qnx <relroot>\rel2\qnx\binq\tcpserv
+#    <CPCMD> <devdir>\bin\qnx\*.trp <relroot>\rel2\qnx\watcom\wd\
+#    <CPCMD> <devdir>\bin\qnx\parserv.qnx <relroot>\rel2\qnx\binq\parserv
+#    <CPCMD> <devdir>\bin\qnx\serserv.qnx <relroot>\rel2\qnx\binq\serserv
+#    <CPCMD> <devdir>\bin\qnx\tcpserv.qnx <relroot>\rel2\qnx\binq\tcpserv
 # NT parallel port device driver and installer
     <CPCMD> <devdir>\trap\par\ntsupp\dbgport.sys <relroot>\rel2\binnt\
     <CPCMD> <devdir>\trap\par\ntsupp\dbginst.exe <relroot>\rel2\binnt\
