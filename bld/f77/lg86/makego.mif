@@ -75,43 +75,18 @@ dep_list += $(watcom_dir)\lib\xmeml.lib $(wl95_dir)\watfor\wlink.lib
 $(exename) : $(dep_list)
 !ifeq form dos
     @set link=$(linker) name $(exename) @$(exe).lnk
-!ifdef on_build_machine
-    @%make all.osz
-!endif
     $(%link)
 !else ifeq form pharlap
 $(exename) :
     @set link=$(linker) name $(exedir)\$(exe) @$(exe).lnk
-!ifdef on_build_machine
-    @%make all.osz
-!endif
     $(%link)
-!ifdef on_build_machine
-    @set OLD_CWD=$+$(%cwd)$-
-    @cd $(exedir)
-    $(pharlap)bind386 $(pharlap)run386b.exe $(exedir)\$(exe) -exe $(exedir)\$(exe)
-    $(pharlap)cfig386 $^@ -win30grow -win30limit +524228 -minreal 4000h
-    @cd $(%OLD_CWD)
-    del $(exedir)\$(exe).exp
-!endif
 !else ifeq form dos4g
 $(exename) :
     @set link=$(linker) name $(exedir)\$(exe) @$(exe).lnk
-!ifdef on_build_machine
-    @%make all.osz
-!endif
     $(%link)
-!ifdef on_build_machine
-    @$(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe $(exename) $(exedir)\$(exe).rsi
-    @del $(exename)
-    @ren $(exedir)\$(exe).rsi $(exe).exe
-!endif
 !else
 $(exename) :
     @set link=$(linker) name $(exename) @$(exe).lnk
-!ifdef on_build_machine
-    @%make all.osz
-!endif
     $(%link)
 !endif
 !ifdef resource_file
@@ -229,15 +204,4 @@ $(womp_dir)\watfor\obj386\wompobj.lib : $(womp_srcs)
 !else
 $(womp_dir)\watfor\obj\wompobj.lib : $(womp_srcs)
     @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__)
-!endif
-
-
-!ifdef on_build_machine
-#
-# all.osz file
-#
-all.osz :
-    @$(%link)
-    objsize @map $(exe).map > all.osz
-    objpad all.osz
 !endif
