@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of remote access routines.
 *
 ****************************************************************************/
 
@@ -479,21 +478,21 @@ int FindFilePath( char *pgm, char *buffer, char *ext_list )
     return( -1 );
 }
 
-unsigned ReqSplit_cmd( void )
+unsigned ReqSplit_cmd()
 {
     char                *cmd;
     char                *start;
     split_cmd_ret       *ret;
     unsigned            len;
 
-    cmd = GetInPtr( sizeof( split_cmd_req ) );
-    ret = GetOutPtr( 0 );
+    cmd = GetInPtr(sizeof(split_cmd_req));
+    len = GetTotalSize() - sizeof(split_cmd_req);
     start = cmd;
-    len = GetTotalSize() - sizeof( split_cmd_req );
-    for( ;; ) {
-        if( len == 0 )
-            goto done;
-        switch( *cmd ) {
+    ret = GetOutPtr(0);
+    ret->parm_start = 0;
+    for ( ; ; ) {
+        if (len == 0) goto done;
+        switch (*cmd) {
         case '/':
         case '=':
         case '(':
@@ -503,9 +502,8 @@ unsigned ReqSplit_cmd( void )
         case '\0':
         case ' ':
         case '\t':
-            ret->parm_start = cmd - start + 1;
-            ret->cmd_end = cmd - start;
-            return( sizeof( *ret ) );
+            ret->parm_start = 1;
+            goto done;
         case '\"':
             while( --len && ( *++cmd != '\"' ) )
                 ;
@@ -518,9 +516,9 @@ unsigned ReqSplit_cmd( void )
         --len;
     }
 done:
-    ret->parm_start = cmd - start;
+    ret->parm_start += cmd - start;
     ret->cmd_end = cmd - start;
-    return( sizeof( *ret ) );
+    return sizeof(*ret);
 }
 
 unsigned ReqRead_io()
