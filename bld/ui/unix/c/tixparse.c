@@ -548,6 +548,15 @@ int ti_read_tix( char *termname )
         TrieAdd( EV_CTRL_CURSOR_LEFT, "\033[O5D" );
         TrieAdd( EV_CTRL_HOME, "\033[O5H" );
         TrieAdd( EV_CTRL_END, "\033[O5F" );
+
+        /* Red Hat 8 xterm has yet different sequences. Does
+         * not differentiate between Home/End and Ctrl + Home/End,
+         * but does for PgUp/PgDn (same codes as newer xterms above)
+         */
+        TrieAdd( EV_CTRL_CURSOR_UP, "\033O5A" );
+        TrieAdd( EV_CTRL_CURSOR_DOWN, "\033O5B" );
+        TrieAdd( EV_CTRL_CURSOR_RIGHT, "\033O5C" );
+        TrieAdd( EV_CTRL_CURSOR_LEFT, "\033O5D" );
     }
     return( ret );
 }
