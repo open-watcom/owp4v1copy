@@ -757,7 +757,11 @@ static cg_name DoIndirection( OPNODE *node, cg_name name )
     typ = node->result_type;
 #if _CPU == 386
     if( Far16Pointer( node->flags ) ) {
-        name = CGUnary( O_PTR_TO_NATIVE, name, T_POINTER );
+        // Do NOT convert __far16 function pointers to flat because the
+        // thunk routine expects 16:16 pointers!
+        if( ( typ->object != NULL ) &&
+            ( typ->object->decl_type != TYPE_FUNCTION ) )
+            name = CGUnary( O_PTR_TO_NATIVE, name, T_POINTER );
     }
 #endif
     if( node->flags & OPFLAG_UNALIGNED ) {
