@@ -46,8 +46,8 @@
 /*
 //  Shouldn't do this, but I'm going to have to for now.
 */
-#include "..\..\mthread\h\trdlist.h"
-#include "..\..\mthread\h\nw_libc.h"
+#include "../../mthread\h\trdlist.h"
+#include "../../mthread\h\nw_libc.h"
 
 /*****************************************************************************
 //  TLS slot key
@@ -61,7 +61,7 @@ extern "C" {
         void
         );
 
-    extern void     __InitMultipleThread( 
+    extern void     __InitMultipleThread(
         void
         );
 
@@ -71,25 +71,25 @@ extern "C" {
     /*
     //  Called from LibC startup / termination code in libcpre.obj
     */
-    extern int      __init_environment( 
+    extern int      __init_environment(
         void *  reserved
         );
-    extern int     __deinit_environment( 
+    extern int     __deinit_environment(
         void *  reserved
         );
 
     /*
     //  LibC exports
     */
-    char *      getnlmloadpath( 
+    char *      getnlmloadpath(
         char *  loadpath );
 
     void *      getnlmhandle(
-        void 
+        void
         );
 
-    char *      getnlmname( 
-        void *  handle, 
+    char *      getnlmname(
+        void *  handle,
         char *  name );
 
     /*
@@ -99,20 +99,20 @@ extern "C" {
     extern long AllocateResourceTag(
         void *  __NLMHandle,
         char *  __descriptionString,
-        long    __resourceType 
+        long    __resourceType
         );
 
-    extern void *Alloc( 
-        long    __numberOfBytes, 
-        long    __resourceTag 
+    extern void *Alloc(
+        long    __numberOfBytes,
+        long    __resourceTag
         );
 
-    extern long SizeOfAllocBlock( 
-        void * 
+    extern long SizeOfAllocBlock(
+        void *
         );
 
-    extern void Free( 
-        void *  __address 
+    extern void Free(
+        void *  __address
         );
 
     /*
@@ -133,7 +133,7 @@ extern "C" {
     /*
     //  global library support functions
     */
-    extern unsigned short __DS( 
+    extern unsigned short __DS(
         void );
 
 #ifdef __cplusplus
@@ -165,22 +165,22 @@ static long                 AllocRTag = 0;
 static void *               NLMHandle = NULL;
 
 /*****************************************************************************
-//  These are essentially NULL functions setup before initialising 
+//  These are essentially NULL functions setup before initialising
 //  multithreading support is enabled
 *****************************************************************************/
-static void __NullSema4Rtn(semaphore_object *p) 
-{ 
-    p = p; 
+static void __NullSema4Rtn(semaphore_object *p)
+{
+    p = p;
 }
 
 #if !defined (_THIN_LIB)
-static void __NullAccessRtn( int hdl ) 
-{ 
-    hdl = hdl; 
+static void __NullAccessRtn( int hdl )
+{
+    hdl = hdl;
 }
 #endif
 
-static void __NullRtn( void ) 
+static void __NullRtn( void )
 {
 }
 
@@ -223,7 +223,7 @@ int     __init_environment( void *  reserved )
     _saved_DS = __DS();
 
     /*
-    //  Call initialisation routines where priority is <= 1 and set the 
+    //  Call initialisation routines where priority is <= 1 and set the
     //  initialisation finish level to 1
     */
     __InitRtns( 1 );
@@ -244,7 +244,7 @@ int     __init_environment( void *  reserved )
         //  Environment initialised.
         */
         rc = 0;
-    } 
+    }
     return( rc );
 }
 
@@ -309,7 +309,7 @@ extern void *realloc(void *old, size_t size)
 #endif
 
 /*
-//  These are the lib_* allocation functions as defined in 
+//  These are the lib_* allocation functions as defined in
 //  $(BLD)\lib_misc\liballoc.h. They use the NetWare server allocation
 //  routines directly (not LibC or CLIB) as the heap will not be fully ready
 //  yet.
@@ -344,22 +344,22 @@ void *_NW_realloc( void *old, size_t size)
     void *  new_blk;
     size_t  mem_size = 0;
 
-    if( old == NULL ) 
+    if( old == NULL )
        return( _NW_malloc( size ) );
 
-    if( size == 0 ) 
+    if( size == 0 )
     {
        _NW_free( old );
        return( NULL );
     }
 
-    if( size <= (mem_size = SizeOfAllocBlock(old))) 
+    if( size <= (mem_size = SizeOfAllocBlock(old)))
         return( old );
 
     if(NULL == (new_blk = _NW_malloc( size )))
        return( NULL );
-    
-    if( size < mem_size ) 
+
+    if( size < mem_size )
         mem_size = size;
 
     memcpy( new_blk, old, mem_size );
