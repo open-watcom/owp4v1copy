@@ -30,6 +30,6 @@ extra_linker = &
         imp DoWriteWord_ wdsplice, DoClose_ wdsplice   &
         imp DoOpen_ wdsplice, DoWritePgmScrn_ wdsplice &
         imp _XferBuff wdsplice, DoDupFile_ wdsplice    &
-        lib os2386,$(lang_root)\lib286\os2\os2.lib
+        lib $(os2386),$(os2286)
 
 !include $(trap_dir)\trap.mif
