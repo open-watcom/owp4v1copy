@@ -39,7 +39,7 @@ int     __near  _fmode;
 
 main( int argc, char *argv[] )
 {
-    char        *av[3];
+    const char  *av[3];
     auto char   cmdline[128];
 
     av[0] = PGM_NAME;                   /* name of executable to run */
@@ -54,7 +54,10 @@ main( int argc, char *argv[] )
     exit( 1 );                  /* indicate error */
 }
 
-void puts( char *msg )          /* override function in library */
+
+int puts(const char *msg )          /* override function in library */
 {
-    cputs( msg );
+    if (cputs( msg ) != 0)
+      return EOF;
+    return strlen(msg);             /* Newline not appended by cputs */
 }
