@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger lexical scanner.
 *
 ****************************************************************************/
 
@@ -614,7 +613,10 @@ unsigned NameLen()
             --end;
         }
     }
-    return( end - start );
+    if( start >= end)
+        return( 0 );
+    else
+        return( end - start );
 }
 
 /*
