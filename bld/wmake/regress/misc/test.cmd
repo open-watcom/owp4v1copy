@@ -9,10 +9,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 1
 echo # ---------------------------
 
-%1 -c -h -f MISC01 > tmp.out 2>&1
-diff -b MISC01.CMP tmp.out
+%1 -c -h -f misc01 > tmp.out 2>&1
+diff -b misc01.cmp tmp.out
 if errorlevel 1 goto err1
-    @echo # MISC01 successful
+    @echo # misc01 successful
     goto test2
 :err1
     @echo ## MISC ## >> %2
@@ -24,10 +24,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 2
 echo # ---------------------------
 
-%1 -c -h -f MISC02 > tmp.out 2>&1
-diff -b MISC02.CMP tmp.out
+%1 -c -h -f misc02 > tmp.out 2>&1
+diff -b misc02.cmp tmp.out
 if errorlevel 1 goto err2
-    @echo # MISC02 successful
+    @echo # misc02 successful
     goto test3
 :err2
     @echo ## MISC ## >> %2
@@ -39,10 +39,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 3
 echo # ---------------------------
 
-%1 -a -c -h -f MISC03 > tmp.out 2>&1
-diff -b MISC03.CMP tmp.out
+%1 -a -c -h -f misc03 > tmp.out 2>&1
+diff -b misc03.cmp tmp.out
 if errorlevel 1 goto err3
-    @echo # MISC03 successful
+    @echo # misc03 successful
     goto test4
 :err3
     @echo ## MISC ## >> %2
@@ -54,10 +54,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 4
 echo # ---------------------------
 
-%1 -a -c -h -f MISC04 > tmp.out 2>&1
-diff -b MISC04.CMP tmp.out
+%1 -a -c -h -f misc04 > tmp.out 2>&1
+diff -b misc04.cmp tmp.out
 if errorlevel 1 goto err4
-    @echo # MISC04 successful
+    @echo # misc04 successful
     goto test5
 :err4
     @echo ## MISC ## >> %2
@@ -69,10 +69,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 5
 echo # ---------------------------
 
-%1 -a -c -h -f MISC05 test1 test2 test3 > tmp.out 2>&1
-diff -b MISC05.CMP tmp.out
+%1 -a -c -h -f misc05 test1 test2 test3 > tmp.out 2>&1
+diff -b misc05.cmp tmp.out
 if errorlevel 1 goto err5
-    @echo # MISC05 successful
+    @echo # misc05 successful
     goto test6
 :err5
     @echo ## MISC ## >> %2
@@ -84,10 +84,10 @@ echo # ---------------------------
 echo #   Miscellaneous Test 6
 echo # ---------------------------
 
-%1 -a -c -h -f MISC06 > tmp.out 2>&1
-diff -b MISC06.CMP tmp.out
+%1 -a -c -h -f misc06 > tmp.out 2>&1
+diff -b misc06.cmp tmp.out
 if errorlevel 1 goto err6
-    @echo # MISC06 successful
+    @echo # misc06 successful
     goto test7
 :err6
     @echo ## MISC ## >> %2
