@@ -179,6 +179,7 @@ unsigned RemoteGet( char *rec, unsigned len )
     if( FullGet( &rec_len, sizeof( rec_len ) ) != sizeof( rec_len ) ) {
         return( REQUEST_FAILED );
     }
+    CONV_LE_16( rec_len );
     if( rec_len != 0 ) {
         if( FullGet( rec, rec_len ) != rec_len ) {
             return( REQUEST_FAILED );
@@ -195,6 +196,7 @@ unsigned RemotePut( char *rec, unsigned len )
     _DBG_NET(("RemotePut\r\n"));
 
     send_len = len;
+    CONV_LE_16( send_len );
     if( die || send( data_socket, (void *)&send_len, sizeof( send_len ), 0 ) == -1 ) {
         return( REQUEST_FAILED );
     }

@@ -37,7 +37,9 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <sys/time.h>
-#include <process.h>
+#if defined(__WATCOMC__)
+    #include <process.h>
+#endif
 #include "trpimp.h"
 
 extern char RWBuff[];
@@ -104,7 +106,7 @@ int KeyGet()
 
 static char *StrCopy( char *src, char *dst )
 {
-    while( *dst = *src ) {
+    while( (*dst = *src) ) {
         ++src;
         ++dst;
     }

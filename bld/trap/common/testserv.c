@@ -30,7 +30,9 @@
 
 
 #include <stdlib.h>
-#include <conio.h>
+#if defined(__WATCOMC__)
+    #include <conio.h>
+#endif
 #include <stdio.h>
 #include "testlink.h"
 #include "packet.h"
@@ -94,7 +96,7 @@ void RunTime()
     }
 }
 
-int main( unsigned argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     char        *err;
     unsigned    len;
@@ -113,7 +115,10 @@ int main( unsigned argc, char *argv[] )
     printf( "server running\n" );
     for( ;; ) {
         NothingToDo();
+#if defined(__WATCOMC__)
+        // How to do the equivalent of kbhit()?
         if( kbhit() && getch() == 'q' ) break;
+#endif
         if( RemoteConnect() ) {
             printf( "\nCONNECT\n" );
             for( ;; ) {

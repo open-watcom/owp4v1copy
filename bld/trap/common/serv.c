@@ -33,7 +33,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <process.h>
+#if defined(__WATCOMC__)
+    #include <process.h>
+#endif
 #if defined(__AXP__) && defined(__NT__)
     #include <windows.h>
 #endif
