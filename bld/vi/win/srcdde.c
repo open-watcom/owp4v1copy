@@ -114,7 +114,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         len = DdeQueryString( DDEInstId, hdl, NULL, 0, CP_WINANSI )+1;
         ptr = MemAlloc( len  );
         DdeQueryString( DDEInstId, hdl, ptr, len, CP_WINANSI );
-        VarAdd( tmp1, ptr, vl );
+        VarAddStr( tmp1, ptr, vl );
         MemFree( ptr );
         break;
 
@@ -164,7 +164,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         if( !CreateStringHandle( tmp2, &hdl ) ) {
             rc = ERR_DDE_FAIL;
         } else {
-            VarAdd( tmp1, ltoa( (long) hdl, tmp2, 10 ), vl );
+            VarAddStr( tmp1, ltoa( (long) hdl, tmp2, 10 ), vl );
         }
         break;
 
@@ -196,7 +196,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         len = DdeGetData( data, NULL, 0, 0 );
         ptr = MemAlloc( len );
         DdeGetData( data, ptr, len, 0 );
-        VarAdd( tmp1, ptr,  vl );
+        VarAddStr( tmp1, ptr,  vl );
         MemFree( ptr );
 //      DdeFreeDataHandle( data );
         break;
@@ -224,7 +224,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         if( data == NULL ) {
             rc = ERR_DDE_FAIL;
         } else {
-            VarAdd( tmp1, ltoa( (long) data, tmp2, 10 ), vl );
+            VarAddStr( tmp1, ltoa( (long) data, tmp2, 10 ), vl );
         }
         break;
 
@@ -249,7 +249,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         if( hconv == NULL ) {
             rc = ERR_DDE_FAIL;
         } else {
-            VarAdd( tmp1, ltoa( (long) hconv, tmp2, 10 ), vl );
+            VarAddStr( tmp1, ltoa( (long) hconv, tmp2, 10 ), vl );
         }
         break;
     case T_DDEDISCONNECT:
@@ -289,7 +289,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
             len = DdeGetData( data, NULL, 0, 0 )+1;
             ptr = MemAlloc( len );
             DdeGetData( data, ptr, len, 0 );
-            VarAdd( tmp1, ptr,  vl );
+            VarAddStr( tmp1, ptr,  vl );
             MemFree( ptr );
             DdeFreeDataHandle( data );
         }
