@@ -5,11 +5,11 @@ proj_name = docs
 
 .mif : ..\mif
 
-!include depends.mif
-!include books.mif
-
 # location of documentation sources
 docsrc_dir=..\doc
+
+!include depends.mif
+!include books.mif
 
 #############################################################
 #
@@ -451,7 +451,7 @@ compile_cnt : .PROCEDURE
 ####################################################
 compile_cnt_cp : .PROCEDURE
     @copy $(docsrc_dir)\gs\$(hbook).cnt $(hbook).cnt > nul
-    @!vi -d -q -k ":/^1/d\n:wq\n" $(hbook).cnt
+    @!vi -d -q -k "/^1\ndd\n:wq\n" $(hbook).cnt
     @echo Done with vi scripts
 
 ####################################################
