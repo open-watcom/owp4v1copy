@@ -114,7 +114,7 @@ extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
 extra_l_flags_nt += runtime windows=4.0
 !endif
 !endif
-extra_l_flags_win = op rwr,stack=16k
+extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 #extra_l_flags_win += segment  _TEXT PRELOAD FIXED
 #extra_l_flags_win += segment  CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
 #extra_l_flags_win += segment  CLASS 'CODE' PRELOAD

@@ -3,7 +3,7 @@
 host_cpu = i86
 host_os  = win
 
-op_sys=windows dll libfile libentry.obj
+op_sys=windows dll libfile libentry.obj export WEP RESIDENT
 os=windows
 ccopt = -zw -ml -zu -bd -d__DLL__
 name=pbide

@@ -35,3 +35,4 @@ file keybd
 library %WATCOM%\lib286\win\windows
 library %WATCOM%\lib286\win\clibl
 #@exports
+export WEP RESIDENT

@@ -67,7 +67,7 @@ int WINAPI LibMain( HANDLE inst, WORD wDataSeg, WORD wHeapSize,
     return( 1 );
 }
 
-int __export WINAPI WEP( int res )
+int WINAPI WEP( int res )
 /***************************/
 {
     res = res;

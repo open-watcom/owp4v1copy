@@ -67,7 +67,7 @@ int WINAPI LibMain( HINSTANCE hinst, WORD dataseg, WORD heapsize, LPSTR cmdline 
     return( 1 );
 }
 
-int __export WINAPI WEP( int res )
+int WINAPI WEP( int res )
 {
     res = res;
     return( 1 );

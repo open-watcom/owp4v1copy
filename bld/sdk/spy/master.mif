@@ -94,6 +94,7 @@ wspy_dll_lflags_wini86 = $(dll_debug_$(host_CPU)) &
                          lib windows.lib &
                          option map &
                          segment CLASS 'CODE' PRELOAD FIXED &
+                         export WEP RESIDENT &
                          file { $(dllobjs) }
 
 wspy_dll_lflags_nt386  = $(dll_debug_$(host_CPU)) &

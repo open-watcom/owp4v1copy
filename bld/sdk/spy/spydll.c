@@ -105,7 +105,7 @@ int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
     return( 1 );
 }
 
-int CALLBACK WEP( int res )
+int WINAPI WEP( int res )
 {
     res = res;
 

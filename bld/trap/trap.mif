@@ -35,37 +35,59 @@ TRAP_remote_objs =
 !else
 
 sys_x86_os2  = sys os2 dll initinstance &
-            exp TrapInit_.1,TrapRequest_.3,TrapFini_.2 &
+            export TrapInit_.1 &
+            export TrapFini_.2 &
+            export TrapRequest_.3 &
             op modname=$^& &
             lib $(os2286)
 sys_x86_os2v2  = sys os2v2 dll initinstance terminstance &
-            exp TrapInit_.1,TrapRequest_.3,TrapFini_.2 &
+            export TrapInit_.1 &
+            export TrapFini_.2 &
+            export TrapRequest_.3 &
             op modname=$^&
 sys_x86_win  = sys windows dll &
-            exp WEP.1 resident &
-            exp TRAPINIT.2,TRAPREQUEST.4,TRAPFINI.3 &
-            exp INPUTHOOK.5,INFOFUNCTION.6,HARDMODECHECK.7 &
-            exp GETHWNDFUNC.8,SETHARDMODE.12,UNLOCKINPUT.13 &
+            export WEP.1 RESIDENT &
+            export TRAPINIT.2 &
+            export TRAPFINI.3 &
+            export TRAPREQUEST.4 &
+            export INPUTHOOK.5 &
+            export INFOFUNCTION.6 &
+            export HARDMODECHECK.7 &
+            export GETHWNDFUNC.8 &
+            export SETHARDMODE.12 &
+            export UNLOCKINPUT.13 &
             op modname=$^& &
             option description 'WATCOM Debugger Trap File' &
             file $(lang_root)\lib286\win\libentry.obj
 sys_x86_nt   = sys nt_dll initinstance &
-            exp TrapInit_.1,TrapRequest_.3,TrapFini_.2,InfoFunction_.4, &
-                InterruptProgram_.5,Terminate_.6 &
+            export TrapInit_.1 &
+            export TrapFini_.2 &
+            export TrapRequest_.3 &
+            export InfoFunction_.4 &
+            export InterruptProgram_.5 &
+            export Terminate_.6 &
             option description 'WATCOM Debugger Trap File' &
             op offset=0x6e900000, modname=$^&
 sys_x86_dos  = sys dos
 sys_x86_qnx  = sys pharlap rex disable 1014, 1023
 
 sys_axp_nt   = sys ntaxp_dll initinstance &
-            exp TrapInit.1,TrapRequest.3,TrapFini.2,InfoFunction.4, &
-                InterruptProgram.5,Terminate.6 &
+            export TrapInit.1 &
+            export TrapFini.2 &
+            export TrapRequest.3 &
+            export InfoFunction.4 &
+            export InterruptProgram.5 &
+            export Terminate.6 &
             option description 'WATCOM Debugger Trap File' &
             op modname=$^&
 
 sys_ppc_nt   = sys ntppc_dll initinstance &
-            exp TrapInit.1,TrapRequest.3,TrapFini.2,InfoFunction.4, &
-                InterruptProgram.5,Terminate.6 &
+            export TrapInit.1 &
+            export TrapFini.2 &
+            export TrapRequest.3 &
+            export InfoFunction.4 &
+            export InterruptProgram.5 &
+            export Terminate.6 &
             option description 'WATCOM Debugger Trap File' &
             op modname=$^&
 

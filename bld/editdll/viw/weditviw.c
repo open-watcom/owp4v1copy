@@ -307,7 +307,7 @@ int WINAPI LibMain( HINSTANCE hInst, WORD wDataSeg, WORD wHeapSize,
     return( 1 );
 }
 
-int __export WINAPI WEP( int q )
+int WINAPI WEP( int q )
 {
     q = q;
     return( 1);

@@ -10,6 +10,7 @@ option   stack=8k
 option 	 symfile
 segment  _TEXT PRELOAD FIXED
 segment  CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
+export   WEP RESIDENT
 
 file	 %WATCOM%\lib286\win\libentry.obj
 file	 weditcw.obj

@@ -39,20 +39,20 @@ extra_objs = &
         supp.obj &
         core.obj
 
-#       exp ENUMTASKWINDOWSFUNC.10 &
+#       export ENUMTASKWINDOWSFUNC.10 &
 extra_linker = &
-        imp SETEVENTHOOK USER.321 &
-        imp ToolHelpHook KERNEL &
-        exp NOTIFYHANDLER.9 &
-        exp DEBUGHOOK.11 &
+        import SETEVENTHOOK USER.321 &
+        import ToolHelpHook KERNEL &
+        export NOTIFYHANDLER.9 &
+        export DEBUGHOOK.11 &
+        export WEP RESIDENT &
         lib toolhelp &
         option heapsize=1k &
         segment CLASS 'CODE' PRELOAD FIXED &
         segment CLASS 'FAR_DATA' PRELOAD FIXED &
         segment CLASS 'DATA' MOVEABLE &
         segment CLASS 'BEGDATA' MOVEABLE &
-        segment CLASS 'BSS' MOVEABLE &
-
+        segment CLASS 'BSS' MOVEABLE
 
 extra_srcs = $(trap_dir)\lcl\dos\c;$(sdk_dir)\misc
 extra_incs = $(trap_dir)\lcl\dos\h;$(sdk_dir)\misc

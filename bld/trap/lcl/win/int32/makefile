@@ -29,7 +29,7 @@ $(LNK) : $(__MAKEFILES__)
         @%append $(LNK) option heapsize=1k
         @for %i in ($(objs)) do @%append $(LNK) file %i
         @%append $(LNK) libfile libentry.obj
-        @%append $(LNK) exp WEP.1 resident
+        @%append $(LNK) export WEP.1 RESIDENT
         @%append $(LNK) segment CLASS 'CODE' PRELOAD FIXED
         @%append $(LNK) segment CLASS 'FAR_DATA' PRELOAD FIXED
         @%append $(LNK) segment CLASS 'BEGDATA' PRELOAD FIXED

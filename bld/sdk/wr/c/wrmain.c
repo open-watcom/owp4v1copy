@@ -142,7 +142,7 @@ int WINAPI LibMain( HINSTANCE inst, WORD dataseg,
     return( TRUE );
 }
 
-int CALLBACK WEP( int parm )
+int WINAPI WEP( int parm )
 {
     _wtouch(parm);
 
