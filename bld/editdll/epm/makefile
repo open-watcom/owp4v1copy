@@ -24,6 +24,7 @@ description = 'Open Watcom Editor DLL for EPM'
 extra_l_flags_os2 = initinstance terminstance pm
 extra_l_flags_os2 += op description $(description)
 extra_l_flags_os2 += op manyautodata
+extra_l_flags_os2 += op map
 
 all: epmlink.dll wedit.dll .SYMBOLIC
 
@@ -35,7 +36,7 @@ wedit.dll: epmlink.obj
     $(librarian) -n -b -c $^*.lib +$^*.dll
 
 epmtest.exe : epmtest.obj
-    $(linker) d a op st=16k, case sys os2v2_pm file epmtest.obj lib wedit.lib
+    $(linker) d a op st=32k, case sys os2v2_pm file epmtest.obj lib wedit.lib
 
 epmspy.exe : epmspy.obj
     $(linker) sys os2v2_pm file epmspy.obj
