@@ -26,9 +26,6 @@ Windows NT (Win32).
 You should read the entire contents of this booklet, as it contains
 information on new programs and modifications that have been made
 since the previous release.
-:cmt. .np
-:cmt. Please note: &product &ver..&rev has been tested on a beta release of
-:cmt. Windows 95. You may obtain different results.
 .np
 .abox begin
 .bd Special NOTE to users of previous versions!
@@ -36,17 +33,6 @@ since the previous release.
 :HDREF refid='diffs'
 .bd to determine if you need to recompile your application.
 .abox end
-:cmt. .abox begin
-:cmt. .np
-:cmt. .bd The software in this package is revision level A.
-:cmt. .bd If you have installed the previous release of 10.0,
-:cmt. .bd you can bring the installed software up to level A by applying the
-:cmt. .bd patches that are supplied on the CD-ROM.
-:cmt. .bd Alternately, you can re-install the software on the CD-ROM.
-:cmt. .bd See the section entitled
-:cmt. :HDREF refid='patches'
-:cmt. .bd for information on patching the software.
-:cmt. .abox end
 .*
 .section What is in version &ver..&rev of &product?
 .*
@@ -100,8 +86,6 @@ OS/2 1.x
 .bull
 Extended DOS
 .bull
-Windows 3.x using our 32-bit extender technology
-.bull
 Win32s
 .bull
 Windows 95
@@ -111,8 +95,6 @@ Windows NT
 32-bit OS/2
 .bull
 Novell NLMs
-.bull
-AutoCAD ADS
 .endbull
 .endnote
 .point Cross-Platform Development Tools
@@ -180,8 +162,9 @@ The development tools include:
 .note Resource Editors
 .ix 'resource editors'
 Enable you to create resources for your 16-bit and 32-bit Windows
-applications. For 32-bit OS/2 PM development, &product includes IBM's
-resource editors. These tools have been seamlessly integrated into the
+applications. For 32-bit OS/2 PM development, &product interoperates
+with IBM's OS/2 Developer's Toolkit (available from IBM).
+These tools have been seamlessly integrated into the
 IDE. The resource compiler allows you to incorporate these resources
 into your application.
 .note Resource Compiler
@@ -205,43 +188,9 @@ Enables you to debug your program by examining both the program and
 the system after an exception occurs; monitors native applications
 running under Windows 3.x, Windows 95 or Windows NT.
 .endnote
-:cmt..point Improved Optimizations for Faster Applications
-:cmt.&product raises the bar in optimization strategy with improved local, global and
-:cmt.Pentium optimizations. Version &ver..&rev supports more than 20 optimizations allowing
-:cmt.you to
-:cmt..point Build Applications Faster
-:cmt.Using precompiled headers and improved linker performance, &product &ver..&rev
-:cmt.significantly speeds up the process of building an application. From within the
-:cmt.integrated development environment, builds can be moved to the background
-:cmt.allowing you to keep working while building sophisticated applications.
 .point Assembler
 An assembler is now included in the package.
 It is compatible with a subset of the Microsoft assembler.
-.if '&lang' eq 'C/C++' .do begin
-.point MFC Support
-.ix 'MFC'
-&product allows you to recompile existing MFC applications for use
-under Windows 3.x, Windows NT and Win32s.
-&mfc32 is supported for 32-bit applications under Windows NT,
-Windows 95 and Win32s.
-&mfc16 is supported for 16-bit applications under Windows 3.x.
-.do end
-.point Licensed components of OS/2 2.1 Toolkit
-.ix 'SDK'
-.ix 'toolkit'
-Includes the full OS/2 2.1 Presentation manager and character mode
-APIs, on-line help and example programs.
-.point Licensed components of Windows 3.1 Toolkit
-Includes the full Windows 3.1 API libraries and on-line help.
-.point Licensed components of Windows NT Toolkit
-Includes the full Windows NT API libraries and on-line help.
-.point Licensed components of Novell NLM SDK 4.0
-Includes all header and import files needed to create an NLM.
-.if '&lang' eq 'C/C++' .do begin
-.point Licensed components of the SOMobject's Developer Toolkit for OS/2
-&product supports native binding for both C and C++ applications.
-.ix 'SOM'
-.do end
 .if '&lang' eq 'C/C++' .do begin
 .point C++ Class Libraries
 .ix 'class libraries'
@@ -468,33 +417,6 @@ just applied.
 .*
 .endlevel
 .*
-.if &e'&readme ne 0 .do begin
-:cmt. .*
-:cmt. .section *refid=patches Patching Release &pver..&prev using the &ver..&rev CD-ROM
-:cmt. .*
-:cmt. .np
-:cmt. If you have already installed the previous release of the software,
-:cmt. version &pver..&prev, you can upgrade the installed software to release
-:cmt. &ver..&rev by applying a series of patches.
-:cmt. You may do this instead of installing &ver..&rev from the CD-ROM.
-:cmt. The patches and a batch command file are stored in the directory
-:cmt. .mono X:\A_LEVEL
-:cmt. where "X" is the drive letter of your CD-ROM drive.
-:cmt. .np
-:cmt. Do not apply the patches if you have just installed &ver..&rev from the
-:cmt. CD-ROM.
-:cmt. To apply the patches, change your current directory to
-:cmt. .mono X:\A_LEVEL
-:cmt. and enter the batch command:
-:cmt. .millust begin
-:cmt. applya c:&pathnam
-:cmt. .millust end
-:cmt. .pc
-:cmt. where
-:cmt. .mono c:&pathnam
-:cmt. is the path where you previously installed the software.
-.*
-.do end
 .*
 .section Third-party Support
 .*

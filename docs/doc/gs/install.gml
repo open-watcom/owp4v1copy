@@ -7,28 +7,7 @@ The package contains the following components:
 .us &product CD-ROM
 .bull
 .us This manual
-.if &e'&beta eq 0 .do begin
-.bull
-.us Registration Card
-.bull
-.us Envelope containing important information
-.do end
-.bull
-.us Customer Services Reference Guide
 .endbull
-.*
-.if &e'&beta eq 0 .do begin
-.section Send in Your Registration Card
-.*
-.np
-You should fill out and mail your registration card as soon as
-possible to ensure you are informed of future upgrades and other
-special offers to registered users.
-Your registration number is printed on the registration card.
-.bd Retain the other portion of the registration card for your records.
-.bd Your registration number is printed on it. You will need this number
-.bd when you contact Technical Support.
-.do end
 .*
 .section Hardware and Software Requirements
 .*
@@ -43,19 +22,7 @@ An 80386 or higher processor
 .bull
 &minram of memory
 .bull
-.if &e'&readme ne 0 .do begin
-&diskspace of disk space.
-.np
-Note that the disk space requirement varies with the disk cluster
-size. The larger the cluster size, the greater the disk requirement.
-If your hard disk has &clusspace., a complete installation will
-require &diskspace megabytes of disk space. If your hard disk has
-&clusspc16., a complete installation will require &diskspc16
-megabytes. A selective install will require considerably less space.
-.do end
-.el .do begin
-Hard disk with enough space available to install the software you require.
-.do end
+Hard disk with enough space available to install the components you require.
 .bull
 A CD-ROM disk drive
 .endbull
@@ -69,7 +36,7 @@ DOS version 5.0 or higher
 .bull
 Microsoft Windows version 3.1 running in enhanced mode
 .bull
-Microsoft Windows 95
+Microsoft Windows 95 or higher
 .bull
 Microsoft Windows NT version 3.1 or higher
 .bull
@@ -77,21 +44,10 @@ IBM OS/2 2.1 or higher
 .endbull
 .np
 .ix 'CD-ROM'
-.ix 'diskettes'
 You must install the software from a CD-ROM drive.
 Unlike earlier releases, it is now no longer possible to copy the
 installation files to diskettes and install the software from your
 diskette drive.
-:CMT. We recommend that you install the software from a CD-ROM drive.
-:CMT. If your system does not contain a CD-ROM drive, but you have access
-:CMT. to a computer that does contain a CD-ROM drive, it is possible to
-:CMT. transfer the CD-ROM contents to 3.5-inch diskettes and install the
-:CMT. software from diskettes.
-:CMT. The first panel of the installation program contains an option to
-:CMT. create a set of 3.5-inch installation diskettes.
-:CMT. The number of diskettes required will depend on the features that you
-:CMT. select (if you select everything, you may need over &disknum
-:CMT. diskettes).
 .*
 .section The README File
 .*
@@ -183,7 +139,6 @@ SET INCLUDE=...;D:\WATCOM\H\OS2;D:\WATCOM\H;
 SET IPFC=D:\WATCOM\TOOLKT2X\IPFC
 SET WATCOM=D:\WATCOM
 SET EDPATH=D:\WATCOM\EDDAT
-RUN=D:\WATCOM\BINP\BATSERV.EXE
 RUN=D:\WATCOM\BINP\NMPBIND.EXE
 .exam end
 .np
@@ -380,17 +335,6 @@ the Enhanced Editor by running the OS/2 Setup and Installation program
 (Selective Install) and choosing "Enhanced Editor" from the "Tools and
 Games" detail page.
 .note
-.ix 'BATSERV'
-.ix '&vip'
-.ix 'CONFIG.SYS'
-The &ide (&vip.) requires that the
-.fi BATSERV.EXE
-program be started during OS/2 initialization.
-If you plan to use the &vip, do not remove the "RUN=" line for this
-file from your
-.fi CONFIG.SYS
-file.
-.note
 .ix 'UNDELETE'
 On some systems with limited memory that use the UNDELETE feature of
 OS/2, compile times may be slow because OS/2 is saving copies of
@@ -414,37 +358,9 @@ SET OLD_DEL_DIR=
 If you plan to use the Named Pipe Remote Debugging support of the
 &dbgname then the
 .fi NMPSERV.EXE.
-program must be started during OS/2 initialization.
-If you plan to use this feature, do not remove the "RUN=" line for
-this file from your
+program must be running. It may be started during OS/2 initialization via
+a "RUN=" statement in your
 .fi CONFIG.SYS
-file.
+file or manually at a later time through the DETACH command.
 .endnote
-.*
-.section Installation Notes for Win32s
-.*
-.np
-.ix 'Win32s'
-There is a directory called WIN32S in the SDK directory of the CD-ROM.
-It contains the entire Win32s directory structure.  The &product install
-program will install Win32s onto your computer system, but it will not
-install the debug version of Win32s.  If you want to use the debug
-version of Win32s, type the commands:
-.millust begin
-X:
-cd \sdk\win32s
-install D:
-.millust end
-.pc
-where "X" is the drive letter of your CD-ROM drive, and "D" is the
-drive you want to install Win32s on.
-Once you have done this, you can use
-.fi SWITCH.BAT
-in the
-.fi WIN32S\BIN
-directory to switch between the debug and non-debug versions of
-Win32s.
-.np
-As an alternative to installing Win32s using the &product install
-program, you can run
-.fi x:\sdk\win32s\disks\disk1\setup.exe.
+

@@ -13,18 +13,18 @@
 :set symbol="pcompany"  value="Sybase".
 :set symbol="spcompany" value="Sybase, Inc.".
 .do end
-:set symbol="cpyyear"   value="1997".
+:set symbol="cpyyear"   value="2002".
 .dm cpyrit begin
 Copyright by WATCOM International Corp. &*, &cpyyear.. All rights reserved.
 .dm cpyrit end
 .dm trdmrk begin
 WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 .dm trdmrk end
-:set symbol="ver"       value="11".
+:set symbol="ver"       value="1".
 :set symbol="rev"       value="0".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="110".
+:set symbol="version"   value="10".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".
