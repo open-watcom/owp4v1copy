@@ -31,6 +31,7 @@
 
 
 #ifndef _TARG_INCLUDED
+#define _TARG_INCLUDED
 
 /*  target processors (_HOST) */
 #define   _TARG_IAPX86   1
@@ -109,7 +110,5 @@
     #define T_WORD              T_UINT_4
     #define STACK_ALIGNMENT     16
 #endif
-
-#define _TARG_INCLUDED
 
 #endif

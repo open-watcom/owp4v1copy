@@ -60,6 +60,7 @@ static void pragmaFini(         // FINISH PRAGMAS
     AsmFini();
     CgInfoFreeLibs();
     CgInfoFreeImports();
+    CgInfoFreeImportsS();
 }
 
 

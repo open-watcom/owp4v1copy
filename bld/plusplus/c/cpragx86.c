@@ -326,6 +326,7 @@ static void pragmaFini(         // FINISH PRAGMAS
     AuxList = NULL;
     CgInfoFreeLibs();
     CgInfoFreeImports();
+    CgInfoFreeImportsS();
 }
 
 

@@ -65,6 +65,13 @@ typedef enum {
         FE_NAKED        = 0x00100000,   /* naked function - ie no prolog/epilogue */
 } fe_attr;
 
+typedef enum {
+/*  request values for FEExtName() */
+        EXTN_BASENAME,   /* return symbol base name */
+        EXTN_PATTERN,    /* return symbol name pattern */
+        EXTN_PRMSIZE     /* return symbol parameters size */
+} extn_request;
+
 typedef void *          cg_name;        /* retval for CGName(),CGUnary()*/
 typedef void *          call_handle;    /* retval for CGInitCall(), etc. */
 #ifdef BY_C_FRONT_END

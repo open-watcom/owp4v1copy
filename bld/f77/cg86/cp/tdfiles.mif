@@ -44,7 +44,6 @@ tdovl1 += &
     $(inline_objs)
 
 tdovl2 = &
-    bldobj.obj &
     fccall.obj &
     fcdata.obj &
     fcfield.obj &

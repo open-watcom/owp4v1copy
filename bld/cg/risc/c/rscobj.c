@@ -222,16 +222,33 @@ static  void    DefaultLibs( void ){
 }
 #endif
 
+static void stringOut( char *name, void *data )
+/*********************************************/
+{
+    *(char **)data = name;
+}
+
 static  void    EmitImports( void ) {
 /***********************************/
 
     void        *auto_import;
+    char        *name;
 
     auto_import = NULL;
     for(;;) {
         auto_import = FEAuxInfo( auto_import, NEXT_IMPORT );
-        if( auto_import == NULL ) break;
+        if( auto_import == NULL )
+            break;
         OWLEmitImport( owlFile, FEAuxInfo( auto_import, IMPORT_NAME ) );
+    }
+    auto_import = NULL;
+    for(;;) {
+        auto_import = FEAuxInfo( auto_import, NEXT_IMPORT_S );
+        if( auto_import == NULL )
+            break;
+        DoOutObjectName( FEAuxInfo( auto_import, IMPORT_NAME_S ),
+                         stringOut, &name, NORMAL );
+        OWLEmitImport( owlFile, name );
     }
 }
 

@@ -111,6 +111,7 @@ extern  char            *STExtractName(sym_id,char *);
 extern  void            Suicide(void);
 extern  intstar4        GetComBlkSize(sym_id);
 extern  aux_info        *AuxLookup(sym_id);
+extern  aux_info        *AuxLookupName(char *,int);
 extern  void            Error(uint,...);
 extern  void            Warning(uint,...);
 extern  cg_type         MkCGType(uint);
@@ -118,8 +119,6 @@ extern  int             ParmType(int,int);
 extern  void            SendBlip(void);
 extern  void            SendStd(char *);
 extern  char            *STFieldName(sym_id,char *);
-extern  uint            BldObjName(sym_id,char *,uint);
-extern  uint            BldObjSym(sym_id,char *,uint);
 extern  char            *ErrorInitializer(void);
 extern  bool            ForceStatic(unsigned_16);
 extern  sym_id          FindArgShadow(sym_id);
@@ -1212,21 +1211,70 @@ static char *GetName( sym_id sym ) {
     return( SymBuff );
 }
 
-
-char *FEExtName( sym_id sym ) {
-//=============================================
-
-// Return symbol name for object file.
-
+static char *GetBaseName( sym_id sym )
+{
     int         len;
-    char *      buff;
+    char        *buff;
 
     _UnShadow( sym );
     buff = StackBuffer( &len );
-    BldObjSym( sym, buff, len );
+    strncpy( buff, sym->ns.name, sym->ns.name_len );
+    buff[ sym->ns.name_len ] = 0;
     return( buff );
 }
 
+static char *GetNamePattern( sym_id sym )
+{
+    aux_info    *aux;
+
+    _UnShadow( sym );
+    aux = AuxLookup( sym );
+    return( aux->object_name );
+}
+
+static int GetParmsSize( sym_id sym )
+{
+    int         args_size;
+    pass_by     *arg;
+    aux_info    *aux;
+
+    _UnShadow( sym );
+    aux = AuxLookup( sym );
+    args_size = 0;
+    for( arg = aux->arg_info; arg != NULL; arg = arg->link ) {
+        if( arg->info & ARG_SIZE_1 ) {
+            args_size += 1;
+        } else if( arg->info & ARG_SIZE_2 ) {
+            args_size += 2;
+        } else if( arg->info & ARG_SIZE_4 ) {
+            args_size += 4;
+        } else if( arg->info & ARG_SIZE_8 ) {
+            args_size += 8;
+        } else if( arg->info & ARG_SIZE_16 ) {
+            args_size += 16;
+        } else if( arg->info & PASS_BY_REFERENCE ) {
+            args_size += BETypeLength( T_POINTER );
+        }
+    }
+    return( args_size );
+}
+
+extern char *FEExtName( sym_id sym, int request ) {
+//=================================================
+
+// Return symbol name related info for object file.
+
+    switch( request ) {
+    case EXTN_BASENAME:
+        return( GetBaseName( sym ) );
+    case EXTN_PATTERN:
+        return( GetNamePattern( sym ) );
+    case EXTN_PRMSIZE:
+        return( (char *)GetParmsSize( sym ) );
+    default:
+        return( NULL );
+    }
+}
 
 char    *FEName( sym_id sym ) {
 //=============================
@@ -1915,19 +1963,24 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
     case NEXT_IMPORT :
         switch( (int)aux ) {
         case 0:
-            if( CGFlags & CG_HAS_PROGRAM ) return( (void *)1 );
+            if( CGFlags & CG_HAS_PROGRAM )
+                return( (void *)1 );
 #if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
-            if( CGOpts & CGOPT_BD ) return( (void *)1 );
+            if( CGOpts & CGOPT_BD )
+                return( (void *)1 );
 #endif
         case 1:
 #if _TARGET == _80386 || _TARGET == _8086
-            if( ( CGFlags & CG_FP_MODEL_80x87 ) &&
-                ( CGFlags & CG_USED_80x87 ) ) return( (void *)2 );
+            if(( CGFlags & CG_FP_MODEL_80x87 )
+              && ( CGFlags & CG_USED_80x87 ))
+                return( (void *)2 );
         case 2:
 #if _TARGET == _80386
-            if( CPUOpts & CPUOPT_FPI ) return( (void *)3 );
+            if( CPUOpts & CPUOPT_FPI )
+                return( (void *)3 );
         case 3:
-            if( CGOpts & CGOPT_BW ) return( (void *)4 );
+            if( CGOpts & CGOPT_BW )
+                return( (void *)4 );
         case 4:
 #endif
 #endif
@@ -1935,37 +1988,46 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         case 5:
             return( (void *)6 );
         case 6:
-            if( Options & OPT_UNIT_6_CC ) return( (void *)7 );
+            if( Options & OPT_UNIT_6_CC )
+                return( (void *)7 );
         case 7:
-            if( Options & OPT_LF_WITH_FF ) return( (void *)8 );
+            if( Options & OPT_LF_WITH_FF )
+                return( (void *)8 );
         case 8:
 #if _TARGET == _80386 || _TARGET == _PPC || _TARGET == _AXP
-            if( CGOpts & (CGOPT_BM | CGOPT_BD) ) return( (void *)9 );
+            if( CGOpts & ( CGOPT_BM | CGOPT_BD ) )
+                return( (void *)9 );
         case 9:
 #endif
-            if( Options & OPT_COMMA_SEP ) return( (void *)10 );
-        case 10:
-            ImpSym = GList;
+            if( Options & OPT_COMMA_SEP )
+                return( (void *)10 );
+        default:
             break;
-        case 11:
+        }
+        return( (void *)0 );
+    case NEXT_IMPORT_S :
+        if( aux == NULL ) {
+            ImpSym = GList;
+        } else {
             ImpSym = ImpSym->ns.link;
         }
         for(;;) {
-            if( ImpSym == NULL ) return( (void *)0 );
+            if( ImpSym == NULL )
+                return( (void *)0 );
             flags = ImpSym->ns.flags;
-            if( ( ( flags & SY_CLASS ) == SY_SUBPROGRAM ) &&
-                ( flags & SY_EXTERNAL ) &&
-                ( ( flags & ( SY_SUB_PARM |
-                              SY_REFERENCED |
-                              SY_RELAX_EXTERN ) ) == 0 ) ) break;
+            if(( ( flags & SY_CLASS ) == SY_SUBPROGRAM )
+              && ( flags & SY_EXTERNAL )
+              && ( ( flags & ( SY_SUB_PARM | SY_REFERENCED | SY_RELAX_EXTERN ) ) == 0 ))
+                break;
             ImpSym = ImpSym->ns.link;
         }
-        return( (void *)11 );
+        return( (void *)1 );
     case IMPORT_NAME :
         switch( (int)aux ) {
         case 1:
 #if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
-            if( CGOpts & CGOPT_BD ) return( ForceDLLStartup );
+            if( CGOpts & CGOPT_BD )
+                return( ForceDLLStartup );
 #endif
             return( ForceStartup );
 #if _TARGET == _8086 || _TARGET == _80386
@@ -1996,10 +2058,9 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 #endif
         case 10:
             return( ForceCommaSep );
-        case 11:
-            BldObjName( ImpSym, &SymBuff, MAX_SYMLEN );
-            return( &SymBuff );
         }
+    case IMPORT_NAME_S :
+        return( ImpSym );
     case NEXT_LIBRARY :
         if( aux == NULL ) {
             return( DefaultLibs );
@@ -2025,8 +2086,8 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
                 ptr += fn - ObjName;
             }
             fe = SDExtn( fn, ObjExtn );
-            if( ( *fn == NULLCHAR ) ||
-                ( ( *fn == '*' ) && ( fn[1] == NULLCHAR ) ) ) {
+            if(( *fn == NULLCHAR )
+              || (( *fn == '*' ) && ( fn[1] == NULLCHAR ))) {
                 fn = SDFName( SrcName );
             }
             MakeName( fn, fe, ptr );
@@ -2046,16 +2107,18 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 #if _TARGET == _8086 || _TARGET == _80386
     case CLASS_NAME :
         for( sym = GList; sym != NULL; sym = sym->ns.link ) {
-            if( ( sym->ns.flags & SY_CLASS ) != SY_COMMON ) continue;
+            if( ( sym->ns.flags & SY_CLASS ) != SY_COMMON )
+                continue;
             idx = 0;
             com_size = GetComBlkSize( sym );
             for(;;) {
-                if( com_size <= MaxSegSize ) break;
+                if( com_size <= MaxSegSize )
+                    break;
                 com_size -= MaxSegSize;
                 idx++;
             }
-            if( ( (segment_id)aux >= sym->ns.si.cb.seg_id ) &&
-                ( (segment_id)aux <= sym->ns.si.cb.seg_id + idx ) ) {
+            if(( (segment_id)aux >= sym->ns.si.cb.seg_id )
+              && ( (segment_id)aux <= sym->ns.si.cb.seg_id + idx )) {
                 MangleCommonBlockName( sym, MangleSymBuff, TRUE );
                 return( &MangleSymBuff );
             }
@@ -2104,7 +2167,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 #endif
     case UNROLL_COUNT:
         return( 0 );
-    default :
+    default:
         return( NULL );
     }
 }

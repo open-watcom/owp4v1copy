@@ -1529,7 +1529,7 @@ static dw_handle dwarfFunctionDefine( SYMBOL sym, CGFILE *file_ctl )
                    dummyLoc,
                    class_dh,
                    dummyLoc,
-                   CppMangleName( NULL, sym ),
+                   GetMangledName( sym ),
                    0,
                    flags );
     if( file_ctl != NULL ) {

@@ -42,6 +42,8 @@
         __UNUSED_AUX_CLASS_29,
         IMPORT_NAME,
         NEXT_IMPORT,
+        IMPORT_NAME_S,
+        NEXT_IMPORT_S,
         IMPORT_TYPE,
 #define IMPORT_IS_WEAK              0
 #define IMPORT_IS_LAZY              1

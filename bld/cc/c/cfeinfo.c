@@ -40,6 +40,10 @@
 #include "compcfg.h"
 #include <sys/stat.h>
 #include "autodept.h"
+#include "langenv.h"
+
+#define TRUNC_SYMBOL_HASH_LEN        4
+#define TRUNC_SYMBOL_LEN_WARN        120
 
 static unsigned char VarFuncWeights[] = {
 //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
@@ -170,10 +174,7 @@ static struct inline_funcs __FAR *Flat( struct inline_funcs __FAR *ifunc )
   #endif
     return( ifunc );
 }
-#endif
 
-
-#if ( _CPU == 8086 ) || ( _CPU == 386 )
 struct inline_funcs __FAR *IF_Lookup( char *name )
 {
     struct inline_funcs __FAR *    ifunc;
@@ -353,9 +354,9 @@ struct aux_info *ModifyLookup( SYMPTR sym )
 
 struct aux_info *InfoLookup( SYMPTR sym )
 {
-    char *                name;
-    struct aux_info *    inf;
-    struct aux_entry *    ent;
+    char                  *name;
+    struct aux_info       *inf;
+    struct aux_entry      *ent;
 
     name = sym->name;
     inf = &DefaultInfo;         /* assume default */
@@ -380,11 +381,19 @@ struct aux_info *InfoLookup( SYMPTR sym )
             ifunc = IF_Lookup( name );
             if( ifunc == NULL )
                 return( inf );
+  #if ( _CPU == 8086 )
             if( HW_CEqual( ifunc->returns, HW_DX_AX )
               || HW_CEqual( ifunc->returns, HW_DS_SI )
               || HW_CEqual( ifunc->returns, HW_ES_DI )
               || HW_CEqual( ifunc->returns, HW_CX_DI ) ) {
                 if( SizeOfArg( sym->sym_type->object ) != 4 ) {
+  #else
+            if( HW_CEqual( ifunc->returns, HW_DX_AX )
+              || HW_CEqual( ifunc->returns, HW_DS_ESI )
+              || HW_CEqual( ifunc->returns, HW_ES_EDI )
+              || HW_CEqual( ifunc->returns, HW_CX_DI ) ) {
+                if( SizeOfArg( sym->sym_type->object ) != 6 ) {
+  #endif
                     return( inf );
                 }
             }
@@ -393,8 +402,13 @@ struct aux_info *InfoLookup( SYMPTR sym )
             inf->code = ifunc->code;
             inf->parms = ifunc->parms;
             inf->returns = ifunc->returns;
+  #if ( _CPU == 8086 )
             if( !HW_CEqual( inf->returns, HW_AX )
               && !HW_CEqual( inf->returns, HW_EMPTY ) ) {
+  #else
+            if( !HW_CEqual( inf->returns, HW_EAX )
+              && !HW_CEqual( inf->returns, HW_EMPTY ) ) {
+  #endif
                 inf->class |= SPECIAL_RETURN;
             }
             HW_CAsgn( inf->streturn, HW_EMPTY );
@@ -523,8 +537,7 @@ void GetCallClass( SYM_HANDLE sym_handle )
                     CallClass = PascalInfo.class;
                 }
 #if _CPU == 8086                        /* 21-jan-93 */
-                if( TargSys == TS_WINDOWS )
-                {       /* 01-mar-91 */
+                if( TargSys == TS_WINDOWS ) {       /* 01-mar-91 */
                     CallClass |= FAT_WINDOWS_PROLOG;
                 }
 #endif
@@ -587,6 +600,10 @@ void GetCallClass( SYM_HANDLE sym_handle )
         }
         if( VarFunc( &sym ) ) {               /* 19-dec-88*/
             CallClass |= CALLER_POPS | HAS_VARARGS;
+            if( inf == &FastcallInfo ) {
+            } else if( inf == &StdcallInfo ) {
+            } else {
+            }
         }
     }
 #ifdef REVERSE
@@ -747,20 +764,22 @@ static VOIDPTR NextLibrary( int index, aux_class request )
     return( (char *)index );
 }
 
-static int GetParmsSize( SYM_ENTRY sym )
+static int GetParmsSize( CGSYM_HANDLE sym_handle )
 {
     int         total_parm_size = 0;
     int         parm_size;
     TYPEPTR     fn_typ;
     TYPEPTR     *parm;
     TYPEPTR     typ;
+    SYM_ENTRY   sym;
 
+    SymGet( &sym, sym_handle );
     fn_typ = sym.sym_type;
     while( fn_typ->decl_type == TYPE_TYPEDEF )
         fn_typ = fn_typ->object;
     parm = fn_typ->u.parms;
     if( parm != NULL ) {
-        for(; (typ = *parm); ++parm ) {
+        for( ; (typ = *parm); ++parm ) {
             if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
                 total_parm_size = -1;
                 break;
@@ -779,83 +798,59 @@ static int GetParmsSize( SYM_ENTRY sym )
     return( total_parm_size );
 }
 
-static int GetExtName( SYM_ENTRY sym, char *pattern, char *Buffer )
-{
-    char                 *src;
-    char                 *dst;
-
-    dst = Buffer;
-    for( ; *pattern != '\0'; pattern++ ) {
-        switch( *pattern ) {
-        case '*':
-            for( src = sym.name; *src != '\0'; ++src )
-                *dst++ = *src;
-            break;
-        case '!':
-            for( src = sym.name; *src != '\0'; ++src )
-                *dst++ = tolower( *src );
-            break;
-        case '^':
-            for( src = sym.name; *src != '\0'; ++src )
-                *dst++ = toupper( *src );
-            break;
-        case '#':
-            {
-                int     size;
-
-                size = GetParmsSize( sym );
-                itoa( size, dst, 10 );
-                dst += strlen( dst );
-            }
-            break;
-        case '\\':
-            pattern++;
-            // fall through
-        default:
-            *dst++ = *pattern;
-            break;
-        }
-    }    
-    *dst = '\0';
-    return( 0 );
-}
-
 /*
-//    Return external name of symbol
+//    Return external name of symbol plus a pattern manipulator string
 */
-extern char *FEExtName( CGSYM_HANDLE sym_handle )
+static char *GetNamePattern( CGSYM_HANDLE sym_handle )
 {
     char                 *pattern;
     SYM_ENTRY            sym;
     struct aux_info      *inf;
 
     inf = FindInfo( &sym, sym_handle );
-#ifdef __SEH__
-    if( sym_handle == SymTryInit
-      || sym_handle == SymTryFini
-      || sym_handle == SymTryUnwind
-      || sym_handle == SymExcept ) {
+  #ifdef __SEH__
+    if(( sym_handle == SymTryInit )
+      || ( sym_handle == SymTryFini )
+      || ( sym_handle == SymTryUnwind )
+      || ( sym_handle == SymExcept )) {
         pattern = "*";
     } else {
-#endif
+  #endif
         inf = LangInfo( sym.attrib, inf );
         if( inf->objname != NULL ) {
             pattern = inf->objname;
-#if ( _CPU == 8086 ) || ( _CPU == 386 )
         } else if( sym.flags & SYM_FUNCTION ) {
-            pattern =  "*_";     /* for function names */
+            pattern =  TS_CODE_MANGLE;
         } else {
-            pattern =  "_*";
-#else
-        } else {
-            pattern =  "*";
-#endif
+            pattern =  TS_DATA_MANGLE;
         }
-#ifdef __SEH__
+  #ifdef __SEH__
     }       // close that else
-#endif
-    GetExtName( sym, pattern, Buffer );
-    return( Buffer );
+  #endif
+    return( pattern );
+}
+
+static char *GetBaseName( CGSYM_HANDLE sym_handle )
+{
+    SYM_ENTRY            sym;
+
+    SymGet( &sym, sym_handle );
+    return( sym.name );
+}
+
+extern char *FEExtName( CGSYM_HANDLE sym_handle, int request )
+/************************************************************/
+{
+    switch( request ) {
+    case EXTN_BASENAME:
+        return( GetBaseName( sym_handle ) );
+    case EXTN_PATTERN:
+        return( GetNamePattern( sym_handle ) );
+    case EXTN_PRMSIZE:
+        return( (char *)GetParmsSize( sym_handle ) );
+    default:
+        return( NULL );
+    }
 }
 
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
@@ -924,7 +919,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         }
   #if _CPU == 8086
         /* is target windows AND symbol (w)main is defined */
-        if( TargetSwitches & WINDOWS && CompFlags.has_main )
+        if(( TargetSwitches & WINDOWS ) && CompFlags.has_main )
             break;
   #endif
         /* wide char or MBCS entry */
@@ -1064,8 +1059,9 @@ static VOIDPTR NextImport( int index, aux_class request )
     case 9:
         /* is profiling enabled (-et)? */
         name = "__p5_profile";
-        if( TargetSwitches & P5_PROFILING )
+        if( TargetSwitches & P5_PROFILING ) {
             break;
+        }
 
     /*-----------------------------------------------------------------------
     //    handle 'new' profiling
@@ -1073,8 +1069,9 @@ static VOIDPTR NextImport( int index, aux_class request )
     case 10:
         /* is profiling enabled (-etp)? */
         name = "__new_p5_profile";
-        if( TargetSwitches & NEW_P5_PROFILING )
+        if( TargetSwitches & NEW_P5_PROFILING ) {
             break;
+        }
 
     /*-----------------------------------------------------------------------
     //    unknown / fallthrough
@@ -1095,6 +1092,15 @@ static VOIDPTR NextImport( int index, aux_class request )
     //    return the index
     */
     return( (char *)index );
+}
+
+static VOIDPTR NextImportS( int index, aux_class request )
+{
+    if( request == IMPORT_NAME_S ) {
+        return( NULL );
+    } else {
+        return( NULL );
+    }
 }
 
 /*
@@ -1170,6 +1176,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
     case NEXT_IMPORT:
     case IMPORT_NAME:
         return( NextImport( (int)sym_handle, request ) );
+    case NEXT_IMPORT_S:
+    case IMPORT_NAME_S:
+        return( NextImportS( (int)sym_handle, request ) );
     case TEMP_LOC_NAME:
         return( (char *)TEMP_LOC_QUIT );
     case TEMP_LOC_TELL:
@@ -1214,10 +1223,10 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
         return( inf->code );
     case PARM_REGS:
   #ifdef __SEH__
-        if( sym_handle == SymTryInit
-          || sym_handle == SymTryFini
-          || sym_handle == SymTryUnwind
-          || sym_handle == SymExcept ) {
+        if(( sym_handle == SymTryInit )
+          || ( sym_handle == SymTryFini )
+          || ( sym_handle == SymTryUnwind )
+          || ( sym_handle == SymExcept )) {
             return( TryParms );
         }
   #endif
@@ -1358,6 +1367,15 @@ static VOIDPTR NextImport( int index, aux_class request )
     return( (char *)index );
 }
 
+static VOIDPTR NextImportS( int index, aux_class request )
+{
+    if( request == IMPORT_NAME_S ) {
+        return( NULL );
+    } else {
+        return( NULL );
+    }
+}
+
 /*
 //    pass auxiliary information to back end
 */
@@ -1392,6 +1410,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
     case NEXT_IMPORT:
     case IMPORT_NAME:
         return( NextImport( (int)sym_handle, request ) );
+    case NEXT_IMPORT_S:
+    case IMPORT_NAME_S:
+        return( NextImportS( (int)sym_handle, request ) );
     case FREE_SEGMENT:
         return( NULL );
     case TEMP_LOC_NAME:

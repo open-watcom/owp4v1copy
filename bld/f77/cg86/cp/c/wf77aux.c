@@ -222,7 +222,7 @@ static  char            _wresppc[] = { "wresppc" };
                                     "parm reverse routine []"
                                     "value struct float struct caller []"
                                     "modify [eax ebx ecx edx]" };
-    static      char    __Stdcall[] = { "aux __stdcall \"_*@#\""
+    static      char    __Stdcall[] = { "aux __stdcall \"_*#\""
                                     "parm routine []"
                                     "value struct []"
                                     "modify [eax ecx edx]" };
