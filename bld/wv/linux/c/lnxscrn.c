@@ -153,7 +153,7 @@ static bool TryXWindows()
     end = p;
     _AllocA( argv, (argc + 10) * sizeof( *argv ) );
 
-    argv[0] = "/usr/X11R6/bin/xterm";
+    argv[0] = "xterm";
     argv[1] = "-T";
     argv[2] = "Open Watcom Debugger";
 
@@ -178,7 +178,7 @@ static bool TryXWindows()
     fcntl( slavefd, F_SETFD, FD_CLOEXEC );
     XTermPid = fork();
     if (XTermPid == 0) { /* child */
-        execve( argv[0], (const char **)argv, (const char **)environ );
+        execvp( argv[0], (const char **)argv );
         exit( 1 );
     }
     if( XTermPid == (pid_t)-1 ) {
