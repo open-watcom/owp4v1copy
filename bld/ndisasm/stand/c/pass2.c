@@ -341,33 +341,50 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
 static void FmtSizedHexNum( char *buff, dis_dec_ins *ins, unsigned op_num )
 {
     unsigned            size;
-    unsigned            i;
     unsigned            len;
+    unsigned            i;
 
     static const unsigned long mask[] = {
         0x00000000, 0x000000ff, 0x0000ffff, 0x00ffffff, 0xffffffff
     };
 
-    size = 0;
-    for( i = 0; i < ins->num_ops; ++i ) {
-        switch( ins->op[i].ref_type ) {
-        case DRT_X86_BYTE:
-            len = 1;
-            break;
-        case DRT_X86_WORD:
-            len = 2;
-            break;
-        case DRT_X86_DWORD:
-        case DRT_X86_DWORDF:
-            len = 4;
-            break;
-        default:
-            len = 0;
-            break;
+    switch( ins->op[op_num].ref_type ) {
+    case DRT_X86_BYTE:
+        size = 1;
+        break;
+    case DRT_X86_WORD:
+        size = 2;
+        break;
+    case DRT_X86_DWORD:
+    case DRT_X86_DWORDF:
+        size = 4;
+        break;
+    default:
+        size = 0;
+        for ( i = 0; i < ins->num_ops; i++ ) {
+            switch( ins->op[i].ref_type ) {
+            case DRT_X86_BYTE:
+                len = 1;
+                break;
+            case DRT_X86_WORD:
+                len = 2;
+                break;
+            case DRT_X86_DWORD:
+            case DRT_X86_DWORDF:
+                len = 4;
+                break;
+            default:
+                len = 0;
+            }
+            if ( len > size ) {
+                size = len;
+            }
         }
-        if( len > size ) size = len;
+        if ( size == 0 ) {
+            size = 4;
+        }
+        break;
     }
-    if( size == 0 ) size = 4;
     FmtHexNum( buff, size * 2, mask[size] & ins->op[op_num].value );
 }
 

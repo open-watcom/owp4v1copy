@@ -1,46 +1,46 @@
 add al,0fH
 add al,7fH
 add al,0ffH
-add ax,000fH
-add ax,007fH
-add ax,00ffH
+add ax,0fH
+add ax,7fH
+add ax,0ffH
 add ax,7fffH
 add ax,0ffffH
-add eax,0000000fH
-add eax,0000007fH
-add eax,000000ffH
-add eax,00007fffH
-add eax,0000ffffH
+add eax,0fH
+add eax,7fH
+add eax,0ffH
+add eax,7fffH
+add eax,0ffffH
 add eax,7fffffffH
 add eax,0ffffffffH
 add dl,0fH
 add dl,7fH
 add dl,0ffH
-add dx,000fH
-add dx,007fH
-add dx,00ffH
+add dx,0fH
+add dx,7fH
+add dx,0ffH
 add dx,7fffH
 add dx,0ffffH
-add edx,0000000fH
-add edx,0000007fH
-add edx,000000ffH
-add edx,00007fffH
-add edx,0000ffffH
+add edx,0fH
+add edx,7fH
+add edx,0ffH
+add edx,7fffH
+add edx,0ffffH
 add edx,7fffffffH
 add edx,0ffffffffH
 add byte ptr x,0fH
 add byte ptr x,7fH
 add byte ptr x,0ffH
-add word ptr x,000fH
-add word ptr x,007fH
-add word ptr x,00ffH
+add word ptr x,0fH
+add word ptr x,7fH
+add word ptr x,0ffH
 add word ptr x,7fffH
 add word ptr x,0ffffH
-add dword ptr x,0000000fH
-add dword ptr x,0000007fH
-add dword ptr x,000000ffH
-add dword ptr x,00007fffH
-add dword ptr x,0000ffffH
+add dword ptr x,0fH
+add dword ptr x,7fH
+add dword ptr x,0ffH
+add dword ptr x,7fffH
+add dword ptr x,0ffffH
 add dword ptr x,7fffffffH
 add dword ptr x,0ffffffffH
 add byte ptr x,dl
@@ -96,7 +96,7 @@ add eax,dword ptr 7fH[edx]
 add eax,dword ptr 7fffH[edx]
 add eax,dword ptr 0ffffH[edx]
 add eax,dword ptr 7fffffffH[edx]
-add eax,dword ptr -1H[edx]
+add eax,dword ptr -1[edx]
 add edx,dword ptr [eax]
 add edx,dword ptr [edx]
 add edx,dword ptr [ebx]
@@ -110,7 +110,7 @@ add edx,dword ptr 7fH[edx]
 add edx,dword ptr 7fffH[edx]
 add edx,dword ptr 0ffffH[edx]
 add edx,dword ptr 7fffffffH[edx]
-add edx,dword ptr -1H[edx]
+add edx,dword ptr -1[edx]
 add edx,dword ptr [eax+esi]
 add edx,dword ptr [edx+esi]
 add edx,dword ptr [ebx+esi]
@@ -124,7 +124,7 @@ add edx,dword ptr 7fH[edx+esi]
 add edx,dword ptr 7fffH[edx+esi]
 add edx,dword ptr 0ffffH[edx+esi]
 add edx,dword ptr 7fffffffH[edx+esi]
-add edx,dword ptr -1H[edx+esi]
+add edx,dword ptr -1[edx+esi]
 add edx,dword ptr -0fH[edx+esi*2]
 add edx,dword ptr -7fffH[edx+esi*4]
 add edx,dword ptr [edx+esi*8]

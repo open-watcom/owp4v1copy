@@ -8,18 +8,18 @@ imul si,bx
 imul di,word ptr x
 imul esi,edx
 imul edx,dword ptr x
-imul cx,dx,000fH
-imul cx,dx,007fH
-imul cx,dx,00ffH
-imul cx,word ptr x,000fH
-imul cx,word ptr x,007fH
-imul cx,word ptr x,00ffH
-imul bx,000fH
-imul bx,007fH
-imul bx,00ffH
-imul ebx,0000000fH
-imul ebx,0000007fH
-imul ebx,000000ffH
+imul cx,dx,0fH
+imul cx,dx,7fH
+imul cx,dx,0ffH
+imul cx,word ptr x,0fH
+imul cx,word ptr x,7fH
+imul cx,word ptr x,0ffH
+imul bx,0fH
+imul bx,7fH
+imul bx,0ffH
+imul ebx,0fH
+imul ebx,7fH
+imul ebx,0ffH
 imul di,dx,7fffH
 imul di,dx,0ffffH
 imul di,word ptr x,7fffH

@@ -933,11 +933,11 @@ static void X86GetUImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
             ins->op[oper].value = GetULong(d,ins->size);
             ins->size   += 4;
         } else {
-            ins->op[oper].value = GetUShort(d,ins->size);
+            ins->op[oper].value = 0 | GetUShort(d,ins->size);
             ins->size   += 2;
         }
     } else {
-        ins->op[oper].value = GetUByte(d,ins->size);
+        ins->op[oper].value = 0 | GetUByte(d,ins->size);
         ins->size   += 1;
     }
 }
@@ -1441,9 +1441,11 @@ dis_handler_return X86ImmAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_X86_in:
         X86GetReg(code.type1.w, REG_AX, ins);
         X86GetUImmedVal( S_BYTE, code.type1.w, d, ins);
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
         break;
     case DI_X86_out:
         X86GetUImmedVal( S_BYTE, code.type1.w, d, ins);
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
         X86GetReg(code.type1.w, REG_AX, ins);
         break;
     default:
@@ -1529,7 +1531,7 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins)
     switch( ins->type ) {
     case DI_X86_int:
         if( code.type3.w ) {
-            ins->op[0].value = GetUByte( d, ins->size );
+            ins->op[0].value = 0 | GetUByte( d, ins->size );
             ins->size += 1;
         } else {
             ins->op[0].value = 3;
@@ -1538,7 +1540,7 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins)
         break;
     case DI_X86_ret2:
     case DI_X86_retf2:
-        ins->op[0].value = GetUShort( d, ins->size );
+        ins->op[0].value = 0 | GetUShort( d, ins->size );
         ins->size += 2;
         ++ins->num_ops;
         break;
@@ -1585,11 +1587,13 @@ dis_handler_return X86ImmImm_8( dis_handle *h, void *d, dis_dec_ins * ins)
 {
     ins->num_ops = 2;
     ins->size   += 1;
-    ins->op[0].value = GetUShort( d,ins->size );
+    ins->op[0].value = 0 | GetUShort( d,ins->size );
     ins->op[0].type = DO_IMMED;
+    ins->op[0].ref_type = DRT_X86_WORD;
     ins->size   += 2;
-    ins->op[1].value = GetUByte( d,ins->size );
+    ins->op[1].value = 0 | GetUByte( d,ins->size );
     ins->op[1].type = DO_IMMED;
+    ins->op[1].ref_type = DRT_X86_BYTE;
     ins->size   += 1;
     return( DHR_DONE );
 }
@@ -2352,7 +2356,7 @@ dis_handler_return X86RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
         X86GetModRM(W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
                                X86GetRefType( W_DEFAULT ,ins ) );
         X86GetReg( W_DEFAULT, code.type1.reg, ins );
-        ins->op[ins->num_ops].value = GetUByte(d, ins->size);
+        ins->op[ins->num_ops].value = 0 | GetUByte(d, ins->size);
         ins->op[ins->num_ops].type = DO_IMMED;
         ++ins->size;
         ++ins->num_ops;
@@ -3313,4 +3317,3 @@ const dis_cpu_data X86Data = {
 
 const dis_cpu_data X86Data;
 #endif
-ndif

@@ -1,5 +1,5 @@
-enter   000007ffH,00000000H
-enter   0ffffffffH,00000001H
-enter   0000000fH,0000000fH
-enter   0000000fH,0000007fH
-enter   0000000fH,0ffffffffH
+enter   7ffH,0
+enter   0ffffH,1
+enter   0fH,0fH
+enter   0fH,7fH
+enter   0fH,0ffH

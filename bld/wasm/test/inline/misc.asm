@@ -26,8 +26,8 @@ hlt
 insb
 insw
 insd
-int 00000003H
-int 00000012H
+int 3
+int 12H
 into
 invd
 invlpg word ptr x

@@ -10,7 +10,7 @@ lsl bx,word ptr x
 lsl eax,dword ptr x
 nop
 ret
-ret 0004H
+ret 4
 sahf
 sgdt x
 sidt x

@@ -1,46 +1,46 @@
 xor al,0fH
 xor al,7fH
 xor al,0ffH
-xor ax,000fH
-xor ax,007fH
-xor ax,00ffH
+xor ax,0fH
+xor ax,7fH
+xor ax,0ffH
 xor ax,7fffH
 xor ax,0ffffH
-xor eax,0000000fH
-xor eax,0000007fH
-xor eax,000000ffH
-xor eax,00007fffH
-xor eax,0000ffffH
+xor eax,0fH
+xor eax,7fH
+xor eax,0ffH
+xor eax,7fffH
+xor eax,0ffffH
 xor eax,7fffffffH
 xor eax,0ffffffffH
 xor dl,0fH
 xor dl,7fH
 xor dl,0ffH
-xor dx,000fH
-xor dx,007fH
-xor dx,00ffH
+xor dx,0fH
+xor dx,7fH
+xor dx,0ffH
 xor dx,7fffH
 xor dx,0ffffH
-xor edx,0000000fH
-xor edx,0000007fH
-xor edx,000000ffH
-xor edx,00007fffH
-xor edx,0000ffffH
+xor edx,0fH
+xor edx,7fH
+xor edx,0ffH
+xor edx,7fffH
+xor edx,0ffffH
 xor edx,7fffffffH
 xor edx,0ffffffffH
 xor byte ptr x,0fH
 xor byte ptr x,7fH
 xor byte ptr x,0ffH
-xor word ptr x,000fH
-xor word ptr x,007fH
-xor word ptr x,00ffH
+xor word ptr x,0fH
+xor word ptr x,7fH
+xor word ptr x,0ffH
 xor word ptr x,7fffH
 xor word ptr x,0ffffH
-xor dword ptr x,0000000fH
-xor dword ptr x,0000007fH
-xor dword ptr x,000000ffH
-xor dword ptr x,00007fffH
-xor dword ptr x,0000ffffH
+xor dword ptr x,0fH
+xor dword ptr x,7fH
+xor dword ptr x,0ffH
+xor dword ptr x,7fffH
+xor dword ptr x,0ffffH
 xor dword ptr x,7fffffffH
 xor dword ptr x,0ffffffffH
 xor byte ptr x,dl
@@ -96,7 +96,7 @@ xor eax,dword ptr 7fH[edx]
 xor eax,dword ptr 7fffH[edx]
 xor eax,dword ptr 0ffffH[edx]
 xor eax,dword ptr 7fffffffH[edx]
-xor eax,dword ptr -1H[edx]
+xor eax,dword ptr -1[edx]
 xor edx,dword ptr [eax]
 xor edx,dword ptr [edx]
 xor edx,dword ptr [ebx]
@@ -110,7 +110,7 @@ xor edx,dword ptr 7fH[edx]
 xor edx,dword ptr 7fffH[edx]
 xor edx,dword ptr 0ffffH[edx]
 xor edx,dword ptr 7fffffffH[edx]
-xor edx,dword ptr -1H[edx]
+xor edx,dword ptr -1[edx]
 xor edx,dword ptr [eax+esi]
 xor edx,dword ptr [edx+esi]
 xor edx,dword ptr [ebx+esi]
@@ -124,7 +124,7 @@ xor edx,dword ptr 7fH[edx+esi]
 xor edx,dword ptr 7fffH[edx+esi]
 xor edx,dword ptr 0ffffH[edx+esi]
 xor edx,dword ptr 7fffffffH[edx+esi]
-xor edx,dword ptr -1H[edx+esi]
+xor edx,dword ptr -1[edx+esi]
 xor edx,dword ptr -0fH[edx+esi*2]
 xor edx,dword ptr -7fffH[edx+esi*4]
 xor edx,dword ptr [edx+esi*8]

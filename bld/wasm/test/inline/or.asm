@@ -1,46 +1,46 @@
 or al,0fH
 or al,7fH
 or al,0ffH
-or ax,000fH
-or ax,007fH
-or ax,00ffH
+or ax,0fH
+or ax,7fH
+or ax,0ffH
 or ax,7fffH
 or ax,0ffffH
-or eax,0000000fH
-or eax,0000007fH
-or eax,000000ffH
-or eax,00007fffH
-or eax,0000ffffH
+or eax,0fH
+or eax,7fH
+or eax,0ffH
+or eax,7fffH
+or eax,0ffffH
 or eax,7fffffffH
 or eax,0ffffffffH
 or dl,0fH
 or dl,7fH
 or dl,0ffH
-or dx,000fH
-or dx,007fH
-or dx,00ffH
+or dx,0fH
+or dx,7fH
+or dx,0ffH
 or dx,7fffH
 or dx,0ffffH
-or edx,0000000fH
-or edx,0000007fH
-or edx,000000ffH
-or edx,00007fffH
-or edx,0000ffffH
+or edx,0fH
+or edx,7fH
+or edx,0ffH
+or edx,7fffH
+or edx,0ffffH
 or edx,7fffffffH
 or edx,0ffffffffH
 or byte ptr x,0fH
 or byte ptr x,7fH
 or byte ptr x,0ffH
-or word ptr x,000fH
-or word ptr x,007fH
-or word ptr x,00ffH
+or word ptr x,0fH
+or word ptr x,7fH
+or word ptr x,0ffH
 or word ptr x,7fffH
 or word ptr x,0ffffH
-or dword ptr x,0000000fH
-or dword ptr x,0000007fH
-or dword ptr x,000000ffH
-or dword ptr x,00007fffH
-or dword ptr x,0000ffffH
+or dword ptr x,0fH
+or dword ptr x,7fH
+or dword ptr x,0ffH
+or dword ptr x,7fffH
+or dword ptr x,0ffffH
 or dword ptr x,7fffffffH
 or dword ptr x,0ffffffffH
 or byte ptr x,dl
@@ -96,7 +96,7 @@ or eax,dword ptr 7fH[edx]
 or eax,dword ptr 7fffH[edx]
 or eax,dword ptr 0ffffH[edx]
 or eax,dword ptr 7fffffffH[edx]
-or eax,dword ptr -1H[edx]
+or eax,dword ptr -1[edx]
 or edx,dword ptr [eax]
 or edx,dword ptr [edx]
 or edx,dword ptr [ebx]
@@ -110,7 +110,7 @@ or edx,dword ptr 7fH[edx]
 or edx,dword ptr 7fffH[edx]
 or edx,dword ptr 0ffffH[edx]
 or edx,dword ptr 7fffffffH[edx]
-or edx,dword ptr -1H[edx]
+or edx,dword ptr -1[edx]
 or edx,dword ptr [eax+esi]
 or edx,dword ptr [edx+esi]
 or edx,dword ptr [ebx+esi]
@@ -124,7 +124,7 @@ or edx,dword ptr 7fH[edx+esi]
 or edx,dword ptr 7fffH[edx+esi]
 or edx,dword ptr 0ffffH[edx+esi]
 or edx,dword ptr 7fffffffH[edx+esi]
-or edx,dword ptr -1H[edx+esi]
+or edx,dword ptr -1[edx+esi]
 or edx,dword ptr -0fH[edx+esi*2]
 or edx,dword ptr -7fffH[edx+esi*4]
 or edx,dword ptr [edx+esi*8]
