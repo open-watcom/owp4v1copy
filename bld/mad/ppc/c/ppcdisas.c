@@ -282,7 +282,7 @@ static mad_disasm_control Cond( mad_disasm_data *dd, mad_registers const *mr,
     }
 }
 
-#define TRANS_REG( mr, r ) (*(unsigned_64 *)((unsigned_8*)(mr) + RegTrans[r]))
+#define TRANS_REG( mr, r ) (*(unsigned_64 *)((unsigned_8*)(mr) + RegTrans[r - DR_PPC_FIRST]))
 
 static unsigned TrapTest( mad_disasm_data *dd, mad_registers const *mr )
 {
