@@ -11,6 +11,11 @@ book_title=Open Watcom Developer's Guide
 book_name=devguide
 book_incs=..\..\devguide;..\..\cmn;..\..\gml
 
+!else ifeq hbook cw
+book_title=CauseWay User's Guide
+book_name=cw
+book_incs=..\..\cw;..\..\cmn;..\..\gml
+
 !else ifeq hbook cbooks
 book_title=Watcom C/C++ On-line Documentation
 book_name=cbooks

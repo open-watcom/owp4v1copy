@@ -1,4 +1,7 @@
 .*
+.* Macros for API heading boxes, api:eapi for API name, dsc:edsc for 
+.* description.
+.*
 .dm @api begin
 :HP2.&*.
 .dm @api end
@@ -19,6 +22,48 @@
 :eHP0.&*
 .dm @edsc end
 .gt edsc add @edsc cont
+.*
+.*
+.*
+.* Error message macros.
+.*
+.dm errnote begin
+.se *ttl$=&'substr(&*,&'pos(' ',&*)+1)
+.se *pos=0
+.if &e'&dohelp. eq 0 .do begin
+.   .note Error &*1
+.   .bd &*ttl$
+.   .ix 'Error' '&*1'
+.do end
+.el .do begin
+:ZH2.&*
+.   .cntents &*
+.   .pu 1 .ixsect &*
+:ZI1.&*ttl$
+.   .pu 1 .ixline `&*ttl$`
+.   .se *ctxn=&'substr(&*,2,&'pos(' ',&*)-2)
+.   .se *pos=&'pos(',',&*1)
+.   .if &*pos. ne 0 .do begin
+.   .   .se *ctxn=&'substr(&*,2,&*pos.-2)
+.   .   .se *ttl$=&'substr(&*,&*pos.+1)
+:ZI1.&*ttl$
+.   .   .pu 1 .ixline `&*ttl$`
+.   .do end
+.   .if '&dotarget' eq 'os2' .do begin
+.   .   .if &'length(&*ctxn.) eq 3 .do begin
+.   .   .   .se *ctxn='20&*ctxn.'
+.   .   .do end
+.   .   .el .do begin
+.   .   .   .se *ctxn='2&*ctxn.'
+.   .   .do end
+.   .do end
+.   .ctxstr &*
+.   .pu 2 #define HLP_&'upper(&ctx_str.) &*ctxn
+.*  .np
+.*  .us &*
+.do end
+.dm errnote end
+.*
 .*
 .*
 .chap CauseWay Services
@@ -1465,114 +1510,116 @@ when a CauseWay application is running and encounters a serious problem
 that it cannot recover from.  The DOS extender then terminates the
 application with the appropriate return code, displaying a dump of
 register values, and writing system information to the file CW.ERR.
-
-01 - Unable to resize program memory block.
-
+.np
+.begnote
+.errnote 01 Unable to resize program memory block.
+.np
 Generated if DOS reports an error when CauseWay tries to resize
 its real mode memory block.  As the block is always shrunk, the only
 possible cause of this is corrupted memory control blocks (MCBs).
 Reboot the system to correct this error.
-
-02 - 386 or better required.
-
+.np
+.errnote 02 386 or better required.
+.np
 Generated if CauseWay is run on any machine with a processor
 below a 386SX.  To correct this error, run the application on another
 machine or upgrade the machine's processor.
-
-03 - Non-standard protected mode program already active.
-
+.np
+.errnote 03 Non-standard protected mode program already active.
+.np
 Generated if the system is already operating under the control
 of another protected mode program which doesn't conform to either VCPI
 or DPMI standards.  Identify and remove the other application before
 running the CauseWay application.
-
-04 - DOS 3.1 or better required.
-
+.np
+.errnote 04 DOS 3.1 or better required.
+.np
 Generated if DOS version is less than 3.1.  You need to upgrade
 the machine's DOS version or use another machine to operate the CauseWay
 application.
-
-05 - Not enough memory for CauseWay.
-
+.np
+.errnote 05 Not enough memory for CauseWay.
+.np
 Generated if the system doesn't have enough free physical
 memory to initialize the CauseWay kernel code and data. Free additional
 memory before running the CauseWay application.  The memory can be any
 of the extended or conventional types supported by CauseWay.
-
-06 - VCPI failed to switch into protected mode.
-
+.np
+.errnote 06 VCPI failed to switch into protected mode.
+.np
 Generated if a VCPI server is detected and the server fails to
 switch into protected mode when requested.  The only likely cause of
 this error is a corrupted system.  Reboot the system and try again.
-
-07 - Unable to control A20.
-
+.np
+.errnote 07 Unable to control A20.
+.np
 Generated if CauseWay detects an A20 line that doesn't respond
 to the normal control methods.  This may indicate either a hardware
 fault or a nonstandard system.  There is no software solution for these
 hardware problems.  Installing an XMS driver such as HIMEM.SYS should
 address nonstandard systems.
-
-08 - Selector allocation error.
-
+.np
+.errnote 08 Selector allocation error.
+.np
 Generated if DPMI refuses to allocate enough selectors for
 CauseWay to function.  Remove one or more programs that are also using DPMI.
-
-09 - Unrecoverable exception. Program terminated.
-
+.np
+.errnote 09 Unrecoverable exception. Program terminated.
+.np
 This is the standard General Protection Fault, or GPF,
 message.  It is generated if a nonrecoverable exception occurs which
 suggests a bug in the application.  Use the register dump displayed with
 this message along with the information in CW.ERR and the program's .MAP
 file to help track down the location and cause of the problem.
-
-10 - Unable to find application to load.
-
+.np
+.errnote 10 Unable to find application to load.
+.np
 Generated if CauseWay is unable to find the application within
 the executable .EXE file.  This situation indicates a corrupted file.
 Rebuild or obtain another copy of the application.
-
-11 - DOS reported error while accessing application.
-
+.np
+.errnote 11 DOS reported error while accessing application.
+.np
 Generated if any kind of error is detected while accessing the
 CauseWay application executable file.  This situation indicates a
 corrupted or missing file.  Rebuild or obtain another copy of the
 application.
-
-12 - Not enough memory to load application.
-
+.np
+.errnote 12 Not enough memory to load application.
+.np
 Generated if CauseWay is unable to provide enough memory to
 load the application.  Free additional memory and/or disk space before
 running the application.  Check for CAUSEWAY=SWAP, TEMP and TMP
 environment variables that point to a disk with little free space.  If
 running under an operating system that provides DPMI per application,
 increase the application's DPMI allocation.
-
-13 - DPMI failed to switch to protected mode.
-
+.np
+.errnote 13 DPMI failed to switch to protected mode.
+.np
 Generated if the machine is using a DPMI server and it fails to
 switch to protected mode.  If the DPMI server only supports multiple
 clients of the same type (either 16- or 32-bit) then the problem is
 probably that different types of applications are already being run.
 Remove the other type of DPMI application(s) before running the CauseWay
 application.
-
-14 - Memory structures destroyed. Program terminated.
-
+.np
+.errnote 14 Memory structures destroyed. Program terminated.
+.np
 Generated if internal memory management structures become
 corrupted.  This is caused by the CauseWay application writing to memory
 regions that have not been allocated to it and is a bug in the
 application.  Obtain a corrected version of the application to fix this
 error.
-
-15 - DOS reported an error while accessing swap file. Program terminated.
-
+.np
+.errnote 15 DOS reported an error while accessing swap file. Program terminated.
+.np
 Generated if any level of error is detected while accessing the
 swap file.  The swap file has probably been deleted inadvertently by the
 application or perhaps marked as read-only.
-
-16 - Unsupported DOS function call. Program terminated.
-
+.np
+.errnote 16 Unsupported DOS function call. Program terminated.
+.np
 The CauseWay application attempted to use an obsolete DOS
 function which used file control blocks (FCBs).  Use the file handle DOS
 functions in the application instead.
+.endnote
