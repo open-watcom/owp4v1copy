@@ -527,8 +527,13 @@ static void dumpInfo( const char *input, uint length ) {
                     printf( "\t\"%s\"\n", p );
                     p += strlen( p ) + 1;
                     break;
-                case DW_FORM_strp:
-                    abort();
+                case DW_FORM_strp:  /* 4 byte index into .debug_str */
+                    #if 0
+                    // printf_debug_str(*(unsigned long *)p);
+                    #else
+                    printf("\tstring @ .debug_str+%u\n", *(unsigned long *)p);
+                    #endif
+                    p += 4;
                     break;
                 case DW_FORM_udata:
                 case DW_FORM_ref_udata:
@@ -554,6 +559,9 @@ extern void dumpAbbrevs( const char *input, uint length ) {
     const uint_8 *p;
     uint_32     tmp;
     uint_32     attr;
+
+    if( (NULL == input) || (0 == length) )
+        return;
 
     p = input;
     for(;;) {
