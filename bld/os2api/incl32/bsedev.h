@@ -1,5 +1,5 @@
 /*
-    Description:  OS/2 Base Devices file for 32-bit development.
+    Description:  OS/2 Base Devices include file for 32-bit development.
 */
 
 
