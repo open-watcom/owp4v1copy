@@ -41,7 +41,7 @@
  #include "ostype.h"
 #endif
 
-#include "cmdlnprs.gh"
+#include "cmdlnpr1.gh"
 #include "cmdlnsys.h"
 
 typedef enum {                  // flags to control memory model settings

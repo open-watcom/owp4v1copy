@@ -38,7 +38,7 @@
 // 91/06/04 -- J.W.Welch        -- defined
 
 #include <stdarg.h>
-#include "errmsgs.gh"
+#include "errmsgs2.gh"
 #include "srcfile.h"
 #include "vbuf.h"
 #include "idedll.h"

@@ -52,7 +52,7 @@
 #include "vstk.h"
 #include "vbuf.h"
 
-#include "cmdlnprs.gh"
+#include "cmdlnpr1.gh"
 #include "cmdlnsys.h"
 
 static  RINGNAMECTL undef_names =       // #UNDEF NAMES LIST

@@ -7,9 +7,9 @@ suppress_zc = 1
 
 # Extra files to delete on clean
 !ifdef refcomp
-additional_cleanup = *.c *.u *.int y.out ../bin/$(exe_ref_name).$(exe)
+additional_cleanup = *.u *.int y.out ytab.c ../bin/$(exe_ref_name).$(exe)
 !else
-additional_cleanup = *.c *.u *.int y.out
+additional_cleanup = *.u *.int y.out ytab.c
 !endif
 
 !include cproj.mif
@@ -33,7 +33,7 @@ xlibs = $(dwarf_dw_lib) $(asminline_lib)
 !include ../verify.mif
 
 #pre_obj_deps must be defined before ppobjs.mif is included
-pre_obj_deps = errmsgs.gh ic_mask.gh weights.gh keywords.gh yylex.gh
+pre_obj_deps = errmsgs1.gh ic_mask.gh weights.gh keywords.gh yylex.gh cmdlnpr1.gh
 # international data files
 pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
 
@@ -650,8 +650,8 @@ wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
-errmsgs.c errmsgs.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
-    $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs.c errmsgs.gh errlevel.gh
+errmsgs1.gh errmsgs2.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
+    $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs1.gh errmsgs2.gh errlevel.gh
 
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
     $(bld_cl) $[@ $(wcl_util_opts)
@@ -693,8 +693,8 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
-cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
-    $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnprs.gh cmdlnprs.c cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))
+cmdlnpr1.gh cmdlnpr2.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
+    $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnpr1.gh cmdlnpr2.gh cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))
 
 ./icmask.exe: ../c/icmask.c
     $(bld_cl) $< $(wcl_util_opts)
