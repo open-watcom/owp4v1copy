@@ -565,7 +565,7 @@ static orl_return       writeAndFixupLIData( omf_file_handle ofh,
                 }
                 ofh->lidata->last_fixup = ntr;
 
-                ftr = findMatchingFixup( ftr, lo, hi );
+                ftr = findMatchingFixup( ftr->next, lo, hi );
             }
 
             ofh->lidata->offset += tmp;
