@@ -1,11 +1,5 @@
 
-!ifeq host_OS nt
-!   ifeq host_CPU 386
-!       define lib_common_libs $(orl_dir)/o/orl.lib
-!   else ifeq host_CPU axp
-!       define lib_common_libs $(orl_dir)/axp/orl.lib
-!   endif
-!else
+!ifneq host_OS nt
 !   error Unknown OS.
 !endif
 
@@ -22,12 +16,15 @@ done: $(lib_stub) lib386.exe libaxp.exe libppc.exe
 
 !include ../../master.mif
 
+!include orl.mif
+
 libstub_objs        = libstub.obj $(mstools_stub_obj) $(mstools_objs)
 lib_common_objs     = demangle.obj dlltool.obj fuzzy.obj hash.obj parse.obj $(mstools_objs)
 lib386_objs         = deff386.obj lib386.obj mesg386.obj xlate386.obj $(lib_common_objs)
 libaxp_objs         = deffaxp.obj libaxp.obj mesgaxp.obj xlateaxp.obj $(lib_common_objs)
 libppc_objs         = deffppc.obj libppc.obj mesgppc.obj xlateppc.obj $(lib_common_objs)
 lib_hdrs            = optparsh.gh
+lib_common_libs     = $(orl_lib)
 
 .c :  ../c;../../c;$(lib_misc_dir)/c
 .h :  ../h;../../h;$(lib_misc_dir)/h;$(orl_dir)/h

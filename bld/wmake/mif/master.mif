@@ -34,6 +34,7 @@ wmake_autodepends = .AUTODEPEND
 .inc    : .
 .inc    : ../h
 
+!include orl.mif
 !include wres.mif
 
 echo    = echo
@@ -85,13 +86,7 @@ extra_l_flags_dos = option stack=4k
 !endif
 extra_l_flags = NAME $(xname).$(ext) OPTION MAP
 
-libs_nt_386     = $(orl_dir)/o/orl.lib
-libs_nt_axp     = $(orl_dir)/axp/orl.lib
-libs_os2_386    = $(orl_dir)/os2/orl.lib
-libs_qnx_386    = $(orl_dir)/o/orl.lib
-libs_linux_386  = $(orl_dir)/o/orl.lib
-libs_dos_386    = $(orl_dir)/o/orl.lib
-libs            = $(libs_$(host_OS)_$(host_CPU))
+libs            = $(orl_lib)
 
 $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(__MAKEFILES__)
         $(linker) $(lflags) FILE {$(objs) } LIBRARY { $(wres_lib) $(libs) }

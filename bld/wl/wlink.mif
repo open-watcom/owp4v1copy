@@ -20,6 +20,7 @@ suppress_bd = 1
 !include defrule.mif
 !include deftarg.mif
 
+!include orl.mif
 !include wres.mif
 
 .ERASE
@@ -138,7 +139,7 @@ stub_objs = dlldrvr.obj stubidedrv.obj idemsgfm.obj drvmsgpr.obj
 libs += &
 $(wres_lib) &
 $(dwarf_lib) &
-$(orl_dir)/$(obj_dir)/orl.lib
+$(orl_lib)
 
 !ifeq host_os dos
 extra_objs = linkio.obj virtmem.obj
