@@ -226,7 +226,7 @@ static drive_type doGetDriveType( int drv )
 static void doDF( int drive )
 {
     struct diskfree_t   df;
-    long                cl_bytes;
+    unsigned long long  cl_bytes;
     long                total;
     long                avail;
     long                used;
@@ -244,7 +244,7 @@ static void doDF( int drive )
         total = (long)df.total_clusters * cl_bytes / 1024L;
         avail = (long)df.avail_clusters * cl_bytes / 1024L;
         used = total-avail;
-        printf( "  %c     %6ld  %6ld  %6ld    %2d%%\n",
+        printf( " %c   %10ld  %10ld  %10ld    %2d%%\n",
             toupper( drive ), total, used, avail, (100L*used)/total );
     }
 
@@ -270,14 +270,14 @@ void main( int argc, char *argv[] )
         }
     }
 
-    printf( "Drive   kbytes    used   avail capacity\n" );
+    printf( "drive  KBytes        used       avail   capacity\n" );
     if( argc > 1 ) {
         includeNetwork = 1;
-        for( i=1;i<argc;i++ ) {
+        for( i = 1; i < argc; i++ ) {
             doDF( argv[i][0] );
         }
     } else {
-        for( i='C';i<='Z';i++ ) {
+        for( i = 'C'; i <= 'Z'; i++ ) {
             doDF( i );
         }
     }

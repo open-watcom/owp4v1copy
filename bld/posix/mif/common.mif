@@ -24,6 +24,9 @@
 #
 #       some people don't have the linker variable in their makeinit
 #
+
+!include cproj.mif
+
 !ifndef linker
 linker=wlink
 !endif
@@ -85,10 +88,12 @@ obj_dir = $(posix_dir)\src\$(name)\$(targos)
 librarian       = wlib
 
 !ifeq           targos  dosos2
+host_os         = os2
+host_cpu        = i86
 compiler        = $(comp286)
 env_variable    = wcc
 targos_cflags   = -m$(model)-bt=os2
-include_dirs    = $(lang_root)\h;$(lang_root)\h\os21x;$(watcom_h)
+include_dirs    = $(lang_root)\h;$(inc_dirs_sys_os2);$(watcom_h)
 
 !else ifeq      targos  dos
 compiler        = $(comp286)
@@ -97,10 +102,12 @@ targos_cflags   = -m$(model)-bt=dos
 include_dirs    = $(lang_root)\h;$(watcom_h)
 
 !else ifeq      targos  os2386
+host_os         = os2
+host_cpu        = 386
 compiler        = $(comp386)
 env_variable    = wcc386
 targos_cflags   = -mf-bt=os2
-include_dirs    = $(lang_root)\h\os2;$(lang_root)\h;$(watcom_h)
+include_dirs    = $(lang_root)\h;$(inc_dirs_sys_os2);$(watcom_h)
 
 !else ifeq      targos  pharlap
 compiler        = $(comp386)
