@@ -93,7 +93,11 @@ mode_clflags  = $(cldebug_fmt)
 
 !ifndef $(proj_name)_nosymfile
 mode_lflags    += option symfile
+!ifdef __UNIX__
+mode_clflags   += -\"option symfile\"
+!else
 mode_clflags   += -"option symfile"
+!endif
 !endif
 
 !ifndef memory_model_i86
