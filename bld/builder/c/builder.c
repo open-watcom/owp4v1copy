@@ -287,6 +287,7 @@ static char *SubstOne( const char **inp, char *out )
             if (stricmp( starpos, "*" ) == 0 ) {
                 rep = NULL;
                 p = out;
+                sscanf( out, "%u", &parm );
                 for( ; parm <= ParmCount; ++parm ) {
                     sprintf( out, "%d", parm );
                     rep = getenv( out );
