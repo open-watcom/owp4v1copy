@@ -19,7 +19,7 @@
 #include <cool/Matrix.C>
 
 Boolean Vector_is_data_equal (const int& i1, const int& i2) {
-  return ((fabs(i1 - i2) < 1.0e-12) ? TRUE : FALSE);
+  return ((fabs(double(i1 - i2)) < 1.0e-12) ? TRUE : FALSE);
 }
 
 void test_int () {

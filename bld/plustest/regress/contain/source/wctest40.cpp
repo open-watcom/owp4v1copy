@@ -2,11 +2,10 @@
 // cannot delete items allocated from the stack
 
 
-extern "C" {
-        #include <stdio.h>
-        #include <stdlib.h>
-        #include <time.h>
-}
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #include <wclistit.h>
 #include <iostream.h>
 

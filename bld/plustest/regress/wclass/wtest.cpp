@@ -23,11 +23,9 @@
 
 #include "wwinmain.hpp"
 
-extern "C" {
-	#include "stdio.h"
-	#include "stdlib.h"
-	#include "time.h"
-}
+#include "stdio.h"
+#include "stdlib.h"
+#include "time.h"
 
 UINT _A_wmain( LPSTR cmd, HANDLE inst )
 {

@@ -76,7 +76,7 @@ CoolBignum_Init::CoolBignum_Init() {
   if ((count++ == 0) ||                         // from bignum_init1_s
       (((double)(max_double_s)) == 0.0)) {              // from bignum_init2_s
     data_bits_s   = BITS(Data);                 // This initializer creates
-    radix_s       = long(pow(2,data_bits_s));   // correct values for
+    radix_s       = long(pow(2.0,data_bits_s)); // correct values for
     zero_s       = CoolBignum();                // above global objects,
     one_s        = CoolBignum(long(1));         // as soon as Bignum.h is
     eight_s      = CoolBignum(long(8));         // included as header in
@@ -170,7 +170,7 @@ CoolBignum::CoolBignum (const double inval) {
 #if 1
   // need to assign 'double' return value to temporary because of small error
   const double LOG10_MAXDOUBLE = log10(MAXDOUBLE);
-  const double LOG10_RADIX_S = log10(radix_s);
+  const double LOG10_RADIX_S = log10(double(radix_s));
   const int buf_size_s = int(LOG10_MAXDOUBLE/LOG10_RADIX_S);
   if (buf_size_s==63 && d==MAXDOUBLE) {
     printf("buf_size_s is 63 for MAXDOUBLE!\n");

@@ -89,7 +89,7 @@ void test_switches()
             cout << " -> |";
             cout << a.Str(l);
             cout << '|' << endl;
-            l += i / pow(10, i);
+            l += i / pow(10.0, i);
         }
         l = -1;
         for (i = 0; i < max_sig; i++) {
@@ -105,7 +105,7 @@ void test_switches()
             cout << " -> |";
             cout << a.Str(l);
             cout << '|' << endl;
-            l -= i / pow(10, i);
+            l -= i / pow(10.0, i);
         }
         l = 9.1;
         for (i = 2; i < max_sig; i++) {
@@ -114,7 +114,7 @@ void test_switches()
             cout << a.Str(l);
             cout << '|' << endl;
             int d = ( 2 * i + 1 ) % 10;
-            l += d / pow(10, i);
+            l += d / pow(10.0, i);
         }
         l = .1;
         for (i = 2; i < max_sig; i++) {
@@ -122,7 +122,7 @@ void test_switches()
             cout << " -> |";
             cout << a.Str(l);
             cout << '|' << endl;
-            l = i / pow(10, i);
+            l = i / pow(10.0, i);
         }
 
     }
