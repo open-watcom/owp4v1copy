@@ -1,0 +1,3 @@
+eraseall.obj : $(wdisasmdir)compile.gbl
+    if exist *.?bj erase *.?bj
+    wtouch eraseall.obj
