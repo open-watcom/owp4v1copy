@@ -118,7 +118,7 @@ void SeekCheck( long pos, char *name )
         NumHoles++;
     }
 
-    int HoleCompare( save_hole *h1, save_hole *h2 )
+    int HoleCompare( const save_hole *h1, const save_hole *h2 )
     {
         if( h1->offset < h2->offset ) return( -1 );
         if( h1->offset > h2->offset ) return( 1 );
@@ -183,7 +183,7 @@ void SeekCheck( long pos, char *name )
     #define DOPROMPT    1
     #define DOBACKUP    1
 
-#else
+#else  /* Not BDIFF */
 
     char            *PatchName;
     char            *NewName;
@@ -281,9 +281,9 @@ PATCH_RET_CODE Execute()
 
 #if defined(__386__)
 
-    extern byte         *NewFile;
 
 #if defined(_WPATCH)
+    extern MY_FILE NewFile;
     #define InNew( offset )             ( Input( &NewFile, tmp, offset, \
                                                  sizeof(hole)), \
                                           *(hole*)tmp )
@@ -291,6 +291,7 @@ PATCH_RET_CODE Execute()
                                                  Output( &NewFile, tmp, \
                                                          off, sizeof( type ) );
 #else
+  extern byte         *NewFile;
   #define OutNew( off, x, type )      *(type*)(NewFile+off) = (x);
   #define InNew( off )                *(hole*)(NewFile+off)
 #endif
@@ -455,7 +456,9 @@ extern PATCH_RET_CODE DoPatch( char *patchname,
                    char *outfilename )
 {
     char        buffer[ sizeof( LEVEL ) ];
+#ifndef _WPATCH
     char        *target = NULL;
+#endif
     PATCH_RET_CODE  ret;
 
     outfilename=outfilename;

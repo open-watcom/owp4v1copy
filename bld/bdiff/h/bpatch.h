@@ -93,8 +93,15 @@
 #define MSG_USE_E_BASE  (MSG_USAGE_LN_1 + RLE_ENGLISH*MSG_LANG_SPACING)
 #define MSG_USE_J_BASE  (MSG_USAGE_LN_1 + RLE_JAPANESE*MSG_LANG_SPACING)
 
+/* Function prototypes */
+
+/* From msg.c */
 int MsgInit();
 void MsgFini();
+
+/* From myio.c */
+void Input( MY_FILE *file, void *tmp, foff off, size_t len );
+void Output( MY_FILE *file, void *tmp, foff off, size_t len );
 
 typedef enum { PATCH_RET_OKAY,
             PATCH_NO_MEMORY,

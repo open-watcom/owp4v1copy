@@ -34,6 +34,8 @@
 
 #pragma off(unreferenced);
 
+byte *NewFile;
+
 void OpenNew( foff len )
 {
 }
