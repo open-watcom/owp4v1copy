@@ -81,6 +81,9 @@ extern  void            __FiniThreadProcessing(void);
     _WCRTLINK void (*__AccessSema4)( semaphore_object *) = &nullSema4Rtn;
     _WCRTLINK void (*__ReleaseSema4)( semaphore_object *) = &nullSema4Rtn;
     _WCRTLINK void (*__CloseSema4)( semaphore_object *) = &nullSema4Rtn;
+    #if !defined( __NETWARE__ )
+        static void __NullAccHeapRtn(void) {}
+    #endif
 #endif
 
 extern  int             __Sema4Fini;            // in finalizer segment
@@ -776,6 +779,21 @@ static void __FiniSema4s()              // called from finalizer
     #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
     _CloseSemaphore( &TDListSemaphore );
     _CloseSemaphore( &InitSemaphore );
+
+    // After closing InitSemaphore, we need to reset the sem access routines to
+    // the dummy ones; someone may still want semaphore protection during shutdown
+    // processing but since threading is gone now, there should be no reentrancy
+    // problems
+    __AccessSema4  = &nullSema4Rtn;
+    __ReleaseSema4 = &nullSema4Rtn;
+    __CloseSema4   = &nullSema4Rtn;
+    #if !defined( __NETWARE__ )
+        _AccessNHeap  = &__NullAccHeapRtn;
+        _AccessFHeap  = &__NullAccHeapRtn;
+        _ReleaseNHeap = &__NullAccHeapRtn;
+        _ReleaseFHeap = &__NullAccHeapRtn;
+    #endif
+
         #if defined( __NT__ )
         __NTDeleteCriticalSection();
         __NTThreadFini();
