@@ -116,15 +116,21 @@ STRING_LITERAL *GetLiteral()
     unsigned            len, len2;
     STRING_LITERAL      *str_lit;
     STRING_LITERAL      *p;
+    int                 is_wide;
 
     len = RemoveEscapes( NULL );
     str_lit = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL ) + len );
     RemoveEscapes( str_lit->literal );
+    is_wide = CompFlags.wide_char_string;
     NextToken();
     while( CurToken == T_STRING ) {
         len2 = RemoveEscapes( NULL );
         --len;
-        if( CompFlags.wide_char_string && len != 0 ) --len;
+        if( CompFlags.wide_char_string ) {
+            if( len != 0 ) --len;
+            /* if one component is wide then the whole string is wide */
+            is_wide = 1;
+        }
         p = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL )
                                      + len + len2 );
         memcpy( p->literal, str_lit->literal, len );
@@ -134,6 +140,7 @@ STRING_LITERAL *GetLiteral()
         str_lit = p;
         NextToken();
     }
+    CompFlags.wide_char_string = is_wide;
     CLitLength = len;
     str_lit->length = len;
     str_lit->flags = 0;
