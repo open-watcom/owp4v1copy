@@ -2815,6 +2815,9 @@ dis_handler_return X86FType1( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_X86_fldcw00:
     case DI_X86_fldcw01:
     case DI_X86_fldcw10:
+    case DI_X86_fnstsw00:
+    case DI_X86_fnstsw01:
+    case DI_X86_fnstsw10:
         X86GetModRM(W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_WORD);
         break;
     default:
