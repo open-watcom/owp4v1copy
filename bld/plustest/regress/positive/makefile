@@ -96,7 +96,7 @@ cflags_386 += $(add_br_$(no_br_$^*))
 .c.obj:
     @set error_msg=failure to compile $^@
     $(wpp_$(arch)) $[@ $(cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*))
-    
+
 .obj.$(exe):
     @set error_msg=failure to link $^@
     $(linker) @test.lnk $(opt_link_$^*) FILE $[@
@@ -105,7 +105,7 @@ cflags_386 += $(add_br_$(no_br_$^*))
     $(run) $^@ >>exec.out
     del $[@
     wstrip -q $^@
-    
+
 test : .symbolic actual_test
     @set error_file=error.out
     @set error_msg=failure to complete test stream
@@ -126,97 +126,97 @@ link3.$(exe) : link3a.obj link3b.obj
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link4.$(exe) : link4a.obj link4b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link5.$(exe) : link5a.obj link5b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link6.$(exe) : link6a.obj link6b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link7.$(exe) : link7a.obj link7b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link8.$(exe) : link8a.obj link8b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link9.$(exe) : link9a.obj link9b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link11.$(exe) : link11a.obj link11b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link14.$(exe) : link14a.obj link14b.obj link14c.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE { $< }
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 link15.$(exe) : link15a.obj link15b.obj link15c.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE { $< }
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 exc01.$(exe) : exc01a.obj exc01b.obj
     @set error_msg=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    
+
 start_test : .symbolic test.lnk
     %create exec.out
     @set error_file=exec.out
-    
+
 test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION stack=8k, quiet, caseexact, noredef
-    
+    @%append $^@ OPTION quiet, noredef
+
 save : .symbolic
     if exist exec.out copy exec.out s$(arch)_$(alt_error).sav
-    
+
 global : .symbolic
     @if exist failure del failure
     @%make common_clean
