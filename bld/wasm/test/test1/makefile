@@ -105,7 +105,7 @@ xx
 asm_flags_x = -c
 
 !ifndef asm
-asm=wasm -q
+asm=wasm -q -zld
 !endif 
 
 count=1
@@ -131,9 +131,9 @@ $(objs) : .SYMBOLIC
         @%append $(cmd_file) @diff -b $^@.dis $^@.esm
 	@%append $(cmd_file) :next$^@b
 	@%append $(cmd_file) @dmpobj -q -l -rec=FIXUPP $^@.obj
-	@%append $(cmd_file) @if not exist $^@.emp goto next$^@c
+	@%append $(cmd_file) @if not exist $^@.emp goto next$^@d
         @%append $(cmd_file) @diff -b $^@.lst $^@.emp
-	@%append $(cmd_file) :next$^@c
+	@%append $(cmd_file) :next$^@d
 
 clean : .SYMBOLIC
 	rm -f *.obj *.err *.dis *.lst *.tmp test_tmp.cmd mem.trk
