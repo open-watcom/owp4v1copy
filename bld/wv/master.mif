@@ -671,7 +671,7 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
 ./mkstr.exe : $(cdir)/mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
-        $(bld_cl) -I$(hdir) -I"$(dig_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(hdir)" -I"$(dig_dir)/h" $(wcl_util_opts) $[@
 
 litdef.gh : ./mkstr.exe
         $[@ $^@

@@ -50,7 +50,7 @@ ext_nt_axp      = .dll
 !ifdef bootstrap
 lib_name = $(name).so
 !else
-lib_name = $(name)$(extp_$(host_os)_$(host_cpu))
+lib_name = $(name)$(ext_$(host_os)_$(host_cpu))
 !endif
 
 clib_os2_i86    = clibl
