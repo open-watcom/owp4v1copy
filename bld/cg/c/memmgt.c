@@ -119,7 +119,7 @@ extern  mem_out_action    SetMemOut( mem_out_action what ) {
     return( old );
 }
 
-extern  pointer CGAlloc( int size ) {
+extern  pointer CGAlloc( unsigned size ) {
 /***********************************/
 
     pointer     chunk;

@@ -213,10 +213,10 @@ enum {
 
 /* the client supplied functions */
 typedef struct {
-    void                (*reloc)( uint, dw_relocs, ... );
-    void                (*write)( uint, const void *, dw_size_t );
-    void                (*seek)( uint, long, uint );
-    long                (*tell)( uint );
+    void                (*reloc)( dw_sectnum, dw_relocs, ... );
+    void                (*write)( dw_sectnum, const void *, dw_size_t );
+    void                (*seek)( dw_sectnum, long, uint );
+    long                (*tell)( dw_sectnum );
     void *              (*alloc)( size_t );
     void                (*free)( void * );
 } dw_funcs;

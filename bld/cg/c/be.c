@@ -58,7 +58,7 @@ extern  char            *Label(l *);
 extern  void            Action(char *,... );
 extern  void            Code(char *,... );
 extern  segment_id      SetFile(segment_id );
-extern  pointer         CGAlloc(int );
+extern  pointer         CGAlloc(unsigned );
 extern  void            CGError(char *,... );
 extern  void            VerBack(b *);
 extern  int             FCreate(char *);

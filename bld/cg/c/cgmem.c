@@ -38,7 +38,7 @@
 extern  pointer         MemAlloc(int);
 extern  void            MemFree(pointer);
 
-extern  pointer CGAlloc( int size ) {
+extern  pointer CGAlloc( unsigned size ) {
 /***********************************/
 
     pointer     chunk;
@@ -50,7 +50,7 @@ extern  pointer CGAlloc( int size ) {
     return( chunk );
 }
 
-extern  pointer DoCGAlloc( int size, pointer ra ) {
+extern  pointer DoCGAlloc( unsigned size, pointer ra ) {
 /*************************************************/
     ra=ra;
     return( CGAlloc( size ) );

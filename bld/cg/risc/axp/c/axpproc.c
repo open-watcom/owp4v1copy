@@ -57,7 +57,7 @@ extern  hw_reg_set      *ParmRegs();
 extern  hw_reg_set      SaveRegs();
 extern  void            GenMEMINS( uint_8, uint_8, uint_8, signed_16 );
 extern  void            GenOPINS( uint_8, uint_8, uint_8, uint_8, uint_8 );
-extern  pointer         CGAlloc( int );
+extern  pointer         CGAlloc( unsigned );
 extern  void            CGFree( pointer );
 extern  hw_reg_set      StackReg();
 extern  hw_reg_set      ScratchReg();

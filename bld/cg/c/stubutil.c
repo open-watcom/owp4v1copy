@@ -49,7 +49,7 @@
 
 #include "stubdata.h"
 
-extern  pointer         CGAlloc(int );
+extern  pointer         CGAlloc(unsigned );
 
 extern  type_def        *TypeAddress(cg_type);
 extern  void            DumpTree(n *);

@@ -33,6 +33,6 @@
 #define         _Alloc( stg, size )     stg = CGAlloc( size )
 #define         _Free( stg, size )      CGFreeSize( stg, size )
 
-extern pointer CGAlloc( int size );
+extern pointer CGAlloc( unsigned size );
 extern void CGFreeSize( pointer, int );
 extern void CGFree( pointer );
