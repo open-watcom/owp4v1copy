@@ -1152,7 +1152,9 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
             sym->sym_type->u.tag = struct_typ->u.tag;
             struct_typ = sym->sym_type;
             /* Create new array types as necessary */
-            while( typ->decl_type == TYPE_ARRAY ) {
+            for(;;) {
+                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+                if( typ->decl_type != TYPE_ARRAY )  break;
                 sym->sym_type = ArrayNode( sym->sym_type );
                 sym->sym_type->u.array->unspecified_dim = TRUE;
                 typ = typ->object;
