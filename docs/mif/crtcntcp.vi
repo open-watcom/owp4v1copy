@@ -1,9 +1,0 @@
-#
-# create contents file
-#
-# remove first topic link on first level
-#
-execute /^1\ndd
-w! %1
-q!
-
