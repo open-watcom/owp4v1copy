@@ -46,6 +46,11 @@
             return &_RWD_iob[handle];
         }
     }
+
+    _WCRTLINK FILE *__get_std_file( unsigned handle ) 
+    {
+        return(__get_std_stream(handle));
+    }
 #else
 
     #include <io.h>
