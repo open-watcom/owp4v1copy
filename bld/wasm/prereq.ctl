@@ -9,7 +9,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    mkdir -p <PROJDIR>\<OBJDIR>
+    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../dos386/makefile name=bwasm
     <CPCMD> bwasm.exe <DEVDIR>/build/bin/
@@ -17,7 +17,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    mkdir -p <PROJDIR>\<OBJDIR>
+    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../os2386/makefile name=bwasm
     <CPCMD> bwasm.exe <DEVDIR>/build/binp/
@@ -25,7 +25,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    mkdir -p <PROJDIR>\<OBJDIR>
+    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../nt386/makefile name=bwasm
     <CPCMD> bwasm.exe <DEVDIR>/build/binnt/
@@ -50,7 +50,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> clean ]
 #==================
-    rm -f <PROJDIR>/<OBJDIR>/*.*
+    rm -f -r <PROJDIR>/<OBJDIR>
     @rm -f <RELROOT>/bld/build/bin/bwasm.*
     @rm -f <RELROOT>/bld/build/binp/bwasm.*
     @rm -f <RELROOT>/bld/build/binnt/bwasm.*
