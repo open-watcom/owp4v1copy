@@ -51,10 +51,7 @@ wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
 .c: ../c
 
 pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
-        @set oinc=$(%include)
-        @set include=$(inc_dirs_sys_os2);../h;$(%include)
-        $(rc_os2) -r ..\h\pmhelp.rc .\pmhelp.res
-        @set include=$(%oinc)
+        $(rc_os2) -i $(lang_root)/h/os2 -r ..\h\pmhelp.rc .\pmhelp.res
 
 _err.gh : ./mkstr.exe
         $[@ $^@
