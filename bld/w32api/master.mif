@@ -3,8 +3,7 @@ proj_name = w32api
 !include cproj.mif
 !include defrule.mif
 
-.EXTENSIONS :
-.EXTENSIONS : .lib .wlc .def
+.EXTENSIONS : .lbc .def
 
 libs =               &
         advapi32.lib &
@@ -83,16 +82,16 @@ libs =               &
 
 .def: ..\lib
 
-.def.wlc:
-        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2wlc.vi $*\n"
+.def.lbc:
+        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
 
-.wlc.lib:
+.lbc.lib:
         $(lib) -q -n -io -ii $@ @$<
 
 $(libs):
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.wlc @del *.wlc
+        @if exist *.lbc @del *.lbc
         @if exist *.lib @del *.lib
         @if exist *.bak @del *.bak
 
