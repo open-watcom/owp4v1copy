@@ -12,8 +12,12 @@ obj_ext = xbj
 xbjs = $+ $(objs_asm) $(objs_c) $(objs_cpp) $-
 files = $+ $(static_objs) $-
 
+!ifdef objs_asm
 !undef objs_asm
+!endif
+!ifdef objs_c
 !undef objs_c
+!endif
 !undef objs_cpp
 !undef obj_ext
 

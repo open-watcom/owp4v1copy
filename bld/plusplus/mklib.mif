@@ -209,7 +209,7 @@ comp_flags += -i$(lib_misc_dir)\h;$(inc_dirs);$(bld_h);$(watcom_dir)\h;$(comp_cf
 !endif
 
 .before
-    set compflags=$(comp_flags)
+    @set compflags=$(comp_flags)
 !ifndef on_build_machine
     @echo asm_flags = $(asm_flags)
 !endif
