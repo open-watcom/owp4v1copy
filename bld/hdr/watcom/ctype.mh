@@ -28,7 +28,6 @@
 // C99 functions in ctype.h
 using std::isalnum;
 using std::isalpha;
-using std::isblank;
 using std::iscntrl;
 using std::isdigit;
 using std::isgraph;
@@ -40,6 +39,12 @@ using std::isupper;
 using std::isxdigit;
 using std::tolower;
 using std::toupper;
+
+:: Now the extensions section.
+:include ext.sp
+// C99 functions in ctype.h that are currently considered extensions.
+using std::isblank;
+#endif
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in ctype.h
@@ -67,7 +72,6 @@ namespace std {
 :endsegment
 _WCRTLINK extern int    isalnum(int);
 _WCRTLINK extern int    isalpha(int);
-_WCRTLINK extern int    isblank(int);
 _WCRTLINK extern int    iscntrl(int);
 _WCRTLINK extern int    isdigit(int);
 _WCRTLINK extern int    isgraph(int);
@@ -79,12 +83,17 @@ _WCRTLINK extern int    isupper(int);
 _WCRTLINK extern int    isxdigit(int);
 _WCRTLINK extern int    tolower(int);
 _WCRTLINK extern int    toupper(int);
+
+:include ext.sp
+/* These names are in ctype.h according to C99. */
+_WCRTLINK extern int    isblank(int);
+#endif
 :segment CNAME
 }
 :endsegment
 
 :segment !SNAP & !SNAPDRV
-_WCRTLINK extern int    isleadbyte(int);
+/* These names are not in ctype.h according to C99. */
 _WCRTLINK extern int    _tolower(int);
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
@@ -92,6 +101,7 @@ _WCRTLINK extern int    __iscsym(int);
 :endsegment
 
 :include ext.sp
+ _WCRTLINK extern int   isleadbyte(int);
  _WCRTLINK extern int   isascii(int);
  _WCRTLINK extern int   __isascii(int);
  #if !defined(__FUNCTION_DATA_ACCESS)
@@ -110,7 +120,6 @@ _WCRTLINK extern const char _WCDATA _IsTable[257];
 :segment !CNAME
 #define isalnum(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER|_DIGIT))
 #define isalpha(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER))
-#define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
 #define iscntrl(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _CNTRL)
 #define isdigit(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _DIGIT)
 #define isgraph(__c) (((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_PRINT|_SPACE))==_PRINT)
@@ -120,6 +129,11 @@ _WCRTLINK extern const char _WCDATA _IsTable[257];
 #define isspace(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _SPACE)
 #define isupper(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _UPPER)
 #define isxdigit(__c) ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _XDIGT)
+
+:include ext.sp
+#define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
+#endif
+
 :endsegment
 :segment !SNAP & !SNAPDRV
 #define __iscsymf(__c) (isalpha(__c)||((__c)=='_'))

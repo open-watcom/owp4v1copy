@@ -37,7 +37,6 @@ using std::wctype_t;
 // C99 functions in wctype.h
 using std::iswalnum;
 using std::iswalpha;
-using std::iswblank;
 using std::iswcntrl;
 using std::iswdigit;
 using std::iswgraph;
@@ -51,6 +50,12 @@ using std::iswctype;
 using std::wctype;
 using std::towlower;
 using std::towupper;
+
+:: Now the extensions section.
+:include ext.sp
+// C99 functions in ctype.h that are currently considered extensions.
+using std::iswblank;
+#endif
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in wctype.h
@@ -81,7 +86,6 @@ namespace std {
 _WCRTLINK extern int      iswalnum( wint_t __wc );
 _WCRTLINK extern int      iswalpha( wint_t __wc );
 _WCRTLINK extern int      iswascii( wint_t __wc );
-_WCRTLINK extern int      iswblank( wint_t __wc );
 _WCRTLINK extern int      iswcntrl( wint_t __wc );
 _WCRTLINK extern int      iswdigit( wint_t __wc );
 _WCRTLINK extern int      iswgraph( wint_t __wc );
@@ -95,6 +99,11 @@ _WCRTLINK extern int      iswctype( wint_t __wc, wctype_t __desc );
 _WCRTLINK extern wctype_t wctype( const char *__property );
 _WCRTLINK extern wint_t   towlower( wint_t __wc );
 _WCRTLINK extern wint_t   towupper( wint_t __wc );
+
+:include ext.sp
+/* These names are in ctype.h according to C99. */
+_WCRTLINK extern int      iswblank( wint_t __wc );
+#endif
 :segment CNAME
 }
 :endsegment
