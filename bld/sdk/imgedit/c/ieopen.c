@@ -548,6 +548,30 @@ BOOL CALLBACK OpenHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
 
 } /* OpenHook */
 
+static int getImageTypeFromFilename(char *fname)
+{
+    char                ext[ _MAX_EXT ];
+    char                drive[ _MAX_DRIVE ];
+    char                path[ _MAX_PATH ];
+
+    _splitpath( fname, drive, path, NULL, ext );
+    strcpy( initialDir, drive );
+    strcat( initialDir, path );
+    initialDir[ strlen(initialDir)-1 ] = '\0';
+
+    if( !stricmp(ext, ".bmp") ) {
+        return BITMAP_IMG;
+    } else if( !stricmp(ext, ".ico") ) {
+        return ICON_IMG;
+    } else if( !stricmp(ext, ".cur") ) {
+        return CURSOR_IMG;
+    } else if( !stricmp(ext, ".res") || !stricmp(ext, ".exe") ||
+               !stricmp(ext, ".dll") ) {
+        return RESOURCE_IMG;
+    } else {
+        return UNDEF_IMG;
+    }
+}
 /*
  * getOpenFName - let the user select a file name for an open operation
  *                fname must point to a buffer of length at least _MAX_PATH
@@ -557,9 +581,6 @@ static BOOL getOpenFName( char *fname )
 {
     static OPENFILENAME of;
     char                szFileTitle[_MAX_PATH];
-    char                ext[ _MAX_EXT ];
-    char                drive[ _MAX_DRIVE ];
-    char                path[ _MAX_PATH ];
     int                 rc;
 
     fname[ 0 ] = 0;
@@ -584,28 +605,8 @@ static BOOL getOpenFName( char *fname )
     #endif
 
     if( rc ) {
-        _splitpath( fname, drive, path, NULL, ext );
-        strcpy( initialDir, drive );
-        strcat( initialDir, path );
-        initialDir[ strlen(initialDir)-1 ] = '\0';
-
-        if( !stricmp(ext, ".bmp") ) {
-            imgType = BITMAP_IMG;
-            return( TRUE );
-        } else if( !stricmp(ext, ".ico") ) {
-            imgType = ICON_IMG;
-            return( TRUE );
-        } else if( !stricmp(ext, ".cur") ) {
-            imgType = CURSOR_IMG;
-            return( TRUE );
-        } else if( !stricmp(ext, ".res") || !stricmp(ext, ".exe") ||
-                   !stricmp(ext, ".dll") ) {
-            imgType = RESOURCE_IMG;
-            return( TRUE );
-        } else {
-            imgType = UNDEF_IMG;
-            return( TRUE );
-        }
+        imgType = getImageTypeFromFilename(fname);
+        return( TRUE );
     } else {
         return( FALSE );
     }
@@ -679,24 +680,10 @@ static BOOL readInResourceFile( char *fullname )
     return( ok );
 }
 
-/*
- * OpenImage - Get the filename of the file to open.  Depending on the
- *              extension set the type (.ico, .bmp, .cur) and call the
- *              appropriate function to open it.
- */
-int OpenImage( void )
+static int ReallyOpenImage(char *fname)
 {
-    char                fname[ _MAX_PATH ];
     char                filename[ _MAX_FNAME + _MAX_EXT ];
-
-    if (!getOpenFName( &fname )) {
-        if ( CommDlgExtendedError() == FNERR_INVALIDFILENAME ) {
-            WImgEditError( WIE_ERR_BAD_FILENAME, fname );
-            return( FALSE );
-        }
-        return( FALSE );
-    }
-
+    
     switch( imgType ) {
     case BITMAP_IMG:
         if( !readInBitmapFile( fname ) ) {
@@ -726,11 +713,53 @@ int OpenImage( void )
         break;
     }
 
-    SetupMenuAfterOpen();
-
     return( imgType );
-} /* OpenImage */
+} /* ReallyOpenImage */
 
+/*
+ * OpenImage - Get the filename of the file to open.  Depending on the
+ *              extension set the type (.ico, .bmp, .cur) and call the
+ *              appropriate function to open it.
+ */
+int OpenImage( HANDLE hDrop )
+{
+    char                fname[ _MAX_PATH ];
+    int                 rv  = FALSE;
+
+    if (NULL==hDrop) {
+        /*
+         * Not doing a drag-drop
+         */
+        if (!getOpenFName( &fname )) {
+            if ( CommDlgExtendedError() == FNERR_INVALIDFILENAME ) {
+                WImgEditError( WIE_ERR_BAD_FILENAME, fname );
+                return( FALSE );
+            }
+            return( FALSE );
+        }
+        rv = ReallyOpenImage(fname);
+        
+    } else {
+        /*
+         * hDrop is only ever !NULL when we're dealing with a WM_DROPFILES
+         * message, and that only happens with __NT__
+         */
+#ifdef __NT__
+        int     nFiles = DragQueryFile(hDrop,0xFFFFFFFF,NULL,0),i;
+        
+        for(i=0,rv=TRUE; rv && i<nFiles; i++) {
+            DragQueryFile(hDrop,i,fname,_MAX_PATH-1);
+            imgType = getImageTypeFromFilename(fname);
+            rv = ReallyOpenImage(fname);
+        }
+#endif
+    }
+    
+    if (rv)
+        SetupMenuAfterOpen();
+    
+    return rv;
+} /* OpenImage */
 /*
  * getOpenPalName - let the user select a palette file name to load
  */

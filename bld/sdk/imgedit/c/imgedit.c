@@ -281,6 +281,9 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
     InitTools( HMainWindow );
     GrayEditOptions();
 
+#ifdef __NT__
+    DragAcceptFiles(HMainWindow,TRUE);
+#endif
     //SetActiveWindow( HMainWindow );
     BringWindowToTop( HMainWindow );
     return( TRUE );

@@ -279,7 +279,7 @@ void PushToolButton( WORD cmdid );
 
 /* ieopen.c */
 void SetupMenuAfterOpen( void );
-int OpenImage( void );
+int OpenImage( HANDLE hDrop );
 BOOL LoadColourPalette( void );
 void SetInitialOpenDir( char *new_dir );
 char *GetInitOpenDir( void );
