@@ -88,7 +88,7 @@ static long res_seek( int handle, long position, int where )
 #ifndef NETWARE
 WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
 #else
-WResSetRtns( open, close, ( int (*)( WResFileID, void *, int)) read, ( int (*)( WResFileID, const void *, int)) write, res_seek, tell, malloc, free );
+WResSetRtns( open, close, ( int (*)( WResFileID, void *, size_t)) read, ( int (*)( WResFileID, const void *, size_t)) write, res_seek, tell, malloc, free );
 #endif
 
 int MsgInit()
