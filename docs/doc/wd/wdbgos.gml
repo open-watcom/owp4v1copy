@@ -400,6 +400,8 @@ current configuration.
 The following section entitled :HDREF refid='vidlinuxs'. describes the
 search order for debugger files under Linux.
 .*
+.beglevel
+.*
 .section *refid=vidlinuxs Search Order for &dbgname Support Files under Linux
 .*
 .np
@@ -437,7 +439,12 @@ environment variable,
 .point
 the path listed in the
 .ev HOME
-environment variable, and, finally,
+environment variable
+.point
+the directory where &dbgname was started from
+.point
+"../wd" directory relative to the directory where &dbgname was started
+from, and, finally,
 .point
 the "/opt/watcom/wd" directory.
 .endpoint
@@ -448,6 +455,8 @@ When the
 .sy REMotefiles
 option is specified, the debugger also attempts to locate the &dbgname's
 support files (command files, trap files, etc.) on the task machine.
+.*
+.endlevel
 .*
 .section *refid=vidqnx Debugging Under QNX
 .*
