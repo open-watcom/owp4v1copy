@@ -30,7 +30,7 @@ appui.res appuij.res : $(rcfiles) ..\h\appui.rc
 
 apppm.res apppmj.res : $(rcfiles) ..\h\apppm.rc
         @set oinc=$(%include)
-        set include=$(auidir)\pm;$(%include);$(watcom_dir)\os21x_h
+        set include=$(auidir)\pm;$(%include);$(lang_root)\h\os21x
         wpp -p -fo=apppm.i ..\h\apppm.rc
         wpp -dJAPANESE_MESSAGES -p -fo=apppmj.i ..\h\apppm.rc
         set opath=$(%path)
