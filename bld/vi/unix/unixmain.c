@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
 #ifdef __WATCOMC__
     InitialStack();
 #endif
-    VarAddGlobalStr( "OS", "linux" );
+    VarAddGlobalStr( "OS", "unix" );
     Comspec = getenv( "SHELL" );
     InitializeEditor();
 #ifdef __WATCOMC__
