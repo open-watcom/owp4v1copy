@@ -1,0 +1,13 @@
+LIBRARY STRESS
+EXPORTS
+    AllocMem           @2
+    FreeAllMem         @3
+    AllocFileHandles   @6
+    UnAllocFileHandles @7
+    GetFreeFileHandles @8
+    AllocDiskSpace     @10
+    UnAllocDiskSpace   @11
+    AllocUserMem       @12
+    FreeAllUserMem     @13
+    AllocGDIMem        @14
+    FreeAllGDIMem      @15

@@ -1,0 +1,4 @@
+LIBRARY WIN87EM
+EXPORTS
+    __fpmath                       @1   
+    WEP                            @2   

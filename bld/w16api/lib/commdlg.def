@@ -1,0 +1,28 @@
+LIBRARY COMMDLG
+EXPORTS
+    GetOpenFileName      @1
+    GetSaveFileName      @2
+
+    ChooseColor          @5
+    FileOpenDlgProc      @6
+    FileSaveDlgProc      @7
+    ColorDlgProc         @8
+    LoadAlterBitMap      @9
+
+    FindText             @11
+    ReplaceText          @12
+    FindTextDlgProc      @13
+    ReplaceTextDlgProc   @14
+    ChooseFont           @15
+    FormatCharDlgProc    @16
+    FontStyleEnumProc    @18
+    FontFamilyEnumProc   @19
+    PrintDlg             @20
+    PrintDlgProc         @21
+    PrintSetupDlgProc    @22
+    EditIntegerOnly      @23
+
+    WantArrows           @25
+    CommDlgExtendedError @26
+    GetFileTitle         @27
+    WEP                  @28
