@@ -44,6 +44,7 @@ tests = &
         lim01.$(exe)    &
         numer01.$(exe)  &
         string01.$(exe) &
+        string02.$(exe) &
         util01.$(exe)   &
         vector01.$(exe) &
 
@@ -74,6 +75,8 @@ test : .symbolic test.lnk $(tests)
     $(run) numer01 >> test.out
     @echo ----------string01---------->> test.out
     $(run) string01 >> test.out
+    @echo ----------string02---------->> test.out
+    $(run) string02 >> test.out
     @echo ----------util01---------->> test.out
     $(run) util01 >> test.out
     @echo ----------vector01---------->> test.out
