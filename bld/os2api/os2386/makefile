@@ -1,10 +1,10 @@
-#pmake: all build os_os2 cpu_386
+#pmake: build os_os2 cpu_386
 
 host_os  = os2
 host_cpu = 386
 
 srcdir = lib386
 
-all: os2386.lib opengl.lib glut.lib libtk.lib
+all: os2386.lib tcpip32.lib opengl.lib glut.lib libtk.lib
 
 !include ..\master.mif

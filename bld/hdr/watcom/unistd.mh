@@ -16,6 +16,10 @@
  #include <io.h>
 #endif
 
+#if defined(__OS2__) && defined(__386__) && defined(__TCPIP_HEADERS)
+ #include <tcpustd.h>   /* unistd.h conflicts with OS/2 TCP/IP headers */
+#endif
+
 :endsegment
 :include wchar_t.sp
 
