@@ -49,7 +49,7 @@
 #ifndef O_BINARY
     #define O_BINARY  0
 #endif
-#ifdef SH_DENYWR
+#if defined(SH_DENYWR) && !defined(SOPEN_DEFINED)
     #define sopen4 sopen
 #else
     #define sopen4(a,b,c,d) open((a),(b),(d))

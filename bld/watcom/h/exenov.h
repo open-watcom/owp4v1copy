@@ -32,7 +32,7 @@
 
 #ifndef _EXENOV_H
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 #define MAX_DESCRIPTION_LENGTH			127
 #define MAX_SCREEN_NAME_LENGTH			71
@@ -186,7 +186,7 @@ typedef struct nov_dbg_info {
 
 #define NOV_EXP_ISCODE			0x80000000
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #define _EXENOV_H
 #endif

@@ -146,6 +146,9 @@ char *PP_FindInclude( char *filename, char *path, char *buffer )
             for(;;) {
                 c = *path++;
                 if( c == ';' ) break;
+#ifdef UNIX
+                if( c == ':' ) break;
+#endif
                 if( c == '\0' ) break;
                 buffer[len++] = c;
             }

@@ -32,7 +32,7 @@
 
 typedef unsigned long reg_32;
 
-#if __WATCOMC__ < 1100
+#if defined(__WATCOMC__) && __WATCOMC__ < 1100
 typedef struct __int64 {
     long                lo;
     unsigned long       hi;

@@ -1309,8 +1309,7 @@ local TYPEPTR *GetProtoType( decl_info *first )
             char buffer[20];
             char *name;
             if( sym->name[0] == '\0' ) {
-                strcpy( buffer, "Parm " );
-                itoa( parm_count, &buffer[5], 10 );
+                sprintf( buffer, "Parm %d", parm_count );
                 name = buffer;
             }else{
                 name = sym->name;

@@ -155,7 +155,7 @@
 # os2i86 -- OS/2 1.x .EXE
 #
 !ifndef targ_env_386
-!  ifdef __DOS__
+!  ifdef __MSDOS__
 !    define targ_env_386 d4g386
 !  else ifdef __OS2__
 !    define targ_env_386 os2386
@@ -165,7 +165,7 @@
 !endif
 
 !ifndef targ_env_i86
-!  ifdef __DOS__
+!  ifdef __MSDOS__
 !    define targ_env_i86 dosi86
 !  else ifdef __OS2__
 !    define targ_env_i86 os2i86
@@ -175,7 +175,7 @@
 !endif
 
 !ifndef targ_env_axp
-!  ifdef __DOS__
+!  ifdef __MSDOS__
 !    define targ_env_axp dosaxp
 !  else ifdef __OS2__
 !    define targ_env_axp os2axp
@@ -294,7 +294,7 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 
 !ifndef wpp_386
 !  ifdef dev
-!    ifdef __DOS__
+!    ifdef __MSDOS__
 !      define wpp_386 run386 $(plusplus_dir)\dos386\wcpp386d
 !    else ifdef __OS2__
 !      define wpp_386 $(plusplus_dir)\os2386\wcpp386d
@@ -309,7 +309,7 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !endif
 !ifndef wpp_i86
 !  ifdef dev
-!    ifdef __DOS__
+!    ifdef __MSDOS__
 !      define wpp_i86 run386 $(plusplus_dir)\dosi86\wcppi86d
 !    else ifdef __OS2__
 !      define wpp_i86 $(plusplus_dir)\os2i86\wcppi86d
@@ -324,7 +324,7 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !endif
 !ifndef wpp_axp
 !  ifdef dev
-!    ifdef __DOS__
+!    ifdef __MSDOS__
 !      define wpp_axp run386 $(plusplus_dir)\dosaxp\wcppaxpd
 !    else ifdef __OS2__
 !      define wpp_axp $(plusplus_dir)\os2axp\wcppaxpd
@@ -398,7 +398,7 @@ wpp_axp += $(targ_bld_$(targ_env_axp))
 #
 proj_name = plustest
 host_CPU = $(arch)
-!ifdef __DOS__
+!ifdef __MSDOS__
 !  define host_OS dos
 !else ifdef __OS2__
 !  define host_OS os2
