@@ -23,7 +23,9 @@ md %relroot%\%defrel%\h\nt\GL
 md %relroot%\%defrel%\h\os2
 md %relroot%\%defrel%\h\os2\arpa
 md %relroot%\%defrel%\h\os2\machine
+md %relroot%\%defrel%\h\os2\net
 md %relroot%\%defrel%\h\os2\netinet
+md %relroot%\%defrel%\h\os2\protocol
 md %relroot%\%defrel%\h\os2\sys
 md %relroot%\%defrel%\h\os2\GL
 md %relroot%\%defrel%\h\os21x
