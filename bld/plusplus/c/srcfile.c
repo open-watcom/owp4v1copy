@@ -1505,7 +1505,8 @@ SRCFILE SrcFileGetPrimary(      // GET PRIMARY SOURCE FILE
 void SrcFileCommand(            // MARK CURRENT SOURCE FILE AS A COMMAND FILE
     void )
 {
-    srcFile->cmdline = TRUE;
+    srcFile->cmdline   = TRUE;
+    srcFile->read_only = TRUE;  // To exclude file from dependency list
 }
 
 
