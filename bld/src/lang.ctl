@@ -150,8 +150,6 @@ cdsay .
     <CPCMD> <DEVDIR>/src/win/watzee/win386/*.*  <RELROOT>/rel2/samples/win/watzee/win386/
 #    <CPCMD> <DEVDIR>/src/win/watzee/winaxp/*.* <RELROOT>/rel2/samples/win/watzee/winaxp/
 
-    if exist <RELROOT>\rel2\src\__wprj__.del del <RELROOT>\rel2\src\__wprj__.del
-
 [ BLOCK <1> clean ]
 #==================
     sweep killobjs
