@@ -24,25 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Autodependancy functions
+* Description:  conversion function for autodependency date/time stamps
 *
 ****************************************************************************/
 
-#ifndef _INCLUDE_AUTODEP_H
-#define _INCLUDE_AUTODEP_H
+#ifndef _AUTODEPT_H
+#define _AUTODEPT_H
 
 #include <time.h>
 
-typedef struct  fname_list {
-        struct  fname_list *next;
-        time_t  mtime;
-        char    *name;
-} FNAME, *FNAMEPTR;
-
-extern FNAMEPTR FNames;
-
-char *FilenameFullPath( char *buff, char const *name, size_t max );
-void AddFlist( char const *filename );
+time_t _timet2dos(time_t x);
+time_t _dos2timet(time_t x);
+time_t _DOSStampToTime( unsigned short date, unsigned short time );
+void _TimeToDOSStamp( time_t datetime, unsigned short *date, unsigned short *time );
+char *_getFilenameFullPath( char *buff, char const *name, size_t max );
+time_t _getFilenameTimeStamp( char const *filename );
 
 #endif
-

@@ -53,6 +53,7 @@
 #include "preproc.h"
 #include "pcheader.h"
 #include "stats.h"
+#include "srcfile.h"
 
 typedef enum {                  // type mangling control
     TM_INCLUDE_FIRST_DIM= 0x01, // - include first dimension in array type mangling
@@ -1081,12 +1082,12 @@ char *CppNameUniqueNS(          // NAME OF UNIQUE NAMESPACE
     h = TimeOfCompilation();
     appendBase36Int( h );
     src = locn->src_file;
-    h ^= *SrcFileTimeStamp( src );
+    h ^= SrcFileTimeStamp( src );
     h ^= locn->line;
     h ^= locn->column;
     primary = SrcFileEnclosingPrimary( src );
     if( primary != src ) {
-        h ^= *SrcFileTimeStamp( primary );
+        h ^= SrcFileTimeStamp( primary );
     }
     h = objNameHash( h, SrcFileFullName( primary ) );
     appendBase36Int( h );

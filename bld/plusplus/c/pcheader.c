@@ -214,7 +214,7 @@ static void* readFileString( char *buff )
 static void dumpCheckData( char *include_file )
 {
     SRCFILE src;
-    time_t *stamp;
+    time_t stamp;
     auto char buff[_MAX_PATH];
 
     PCHWrite( &GenSwitches, sizeof( GenSwitches ) );
@@ -240,7 +240,7 @@ static void dumpCheckData( char *include_file )
         if( ! IsSrcFilePrimary( src ) ) {
             dumpFileString( SrcFileName( src ) );
             stamp = SrcFileTimeStamp( src );
-            PCHWrite( stamp, sizeof( *stamp ) );
+            PCHWrite( &stamp, sizeof( stamp ) );
         }
         src = SrcFileNotReadOnly( SrcFileWalkNext( src ) );
     }

@@ -38,6 +38,7 @@
 #include "cgdefs.h"
 #include "cgswitch.h"
 #include "cgprotos.h"
+#include "autodept.h"
 #include <stdarg.h>
 #include <signal.h>
 #include <ctype.h>
@@ -871,18 +872,6 @@ int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
     return( 0 );
 }
 
-int SrcFileTime( char const *filename, time_t *mtime )
-{
-    struct stat statbuf;
-
-    if( stat( filename, &statbuf ) == 0 ) {
-        *mtime = statbuf.st_mtime;
-        return( 0 );
-    }
-    *mtime = 0;
-    return( -1 );
-}
-
 static FNAMEPTR FindFlist( char const *filename )
 { // find a flist
     FNAMEPTR    flist;
@@ -918,7 +907,7 @@ FNAMEPTR AddFlist( char const *filename )
         flist->fullpath = NULL;
         strcpy( flist->name, filename );
         *lnk = flist;
-        SrcFileTime( filename, &flist->mtime );
+        flist->mtime = _getFilenameTimeStamp( filename );
     }
     return( flist );
 }

@@ -157,7 +157,7 @@ void SrcFileReadOnlyFile(       // SPECIFY FILE AS READ-ONLY
 void SrcFileReadOnlyDir(        // SPECIFY DIRECTORY AS READ-ONLY
     char const *dir )           // - the directory
 ;
-time_t *SrcFileTimeStamp(       // GET TIME STAMP FOR FILE
+time_t SrcFileTimeStamp(        // GET TIME STAMP FOR FILE
     SRCFILE srcfile )           // - source file
 ;
 void SrcFileTraceBack(          // INDICATE SRCFILE USED IN TRACE-BACK

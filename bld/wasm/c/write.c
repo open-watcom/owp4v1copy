@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <limits.h>
+#include <time.h>
 
 #include "myassert.h"
 #include "watcom.h"
@@ -55,7 +56,7 @@
 #include "pcobj.h"
 #include "fixup.h"
 #include "queue.h"
-#include "autodep.h"
+#include "autodept.h"
 
 #define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
 
@@ -110,7 +111,44 @@ extern uint             extdefidx;      // Number of Extern definition
 
 char                    **NameArray;
 
+typedef struct  fname_list {
+        struct  fname_list *next;
+        time_t  mtime;
+        char    *name;
+} FNAME, *FNAMEPTR;
+
 global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
+
+static FNAMEPTR FNames = NULL;
+
+void AddFlist( char const *filename )
+{
+    FNAMEPTR    flist;
+    FNAMEPTR    last;
+    int         index;
+    char        *fname;
+    char        buff[2*_MAX_PATH];
+        
+    index = 0;
+    last = FNames;
+    for( flist = last; flist != NULL; flist = flist->next ) {
+        if( strcmp( filename, flist->name ) == 0 ) return;
+        index++;
+        last = flist;
+    }
+    fname = _getFilenameFullPath( buff, filename, sizeof(buff) );
+    flist = (FNAMEPTR)AsmAlloc( sizeof( FNAME ) );
+    flist->name = (char*)AsmAlloc( strlen( fname ) + 1 );
+    strcpy( flist->name, fname );
+    flist->mtime = _getFilenameTimeStamp( fname );
+    flist->next = NULL;
+    if( FNames == NULL ) {
+        FNames = flist;
+    } else {
+        last->next = flist;
+    }
+    return;
+}
 
 static void write_init( void )
 {
@@ -625,7 +663,7 @@ static void write_header( void )
     if( Options.module_name != NULL ) {
         name = Options.module_name;
     } else {
-        name = FilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
+        name = _getFilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
     }
     objr->is_32 = Use32;
     len = strlen( name );
@@ -661,7 +699,7 @@ static int write_autodep( void )
         objr->d.coment.class = CMT_DEPENDENCY;
 
         len = strlen(curr->name);
-        *((time_t*)buff) = curr->mtime;
+        *((time_t*)buff) = _timet2dos(curr->mtime);
         *(buff + 4) = (unsigned char)len;
         strcpy(buff + 5, curr->name);
         len += 5;
@@ -1128,3 +1166,4 @@ void WriteObjModule( void )
     write_fini();
     AsmEvalFini();
 }
+

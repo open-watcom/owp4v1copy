@@ -48,6 +48,7 @@ common_objs = &
         dwarf.obj  &
         browsio.obj  &
         intlload.obj  &
+        autodept.obj  &
         $(inline_objs)
 
 

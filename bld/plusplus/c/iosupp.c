@@ -50,8 +50,9 @@
 #include "pcheader.h"
 #include "ring.h"
 #include "brinfo.h"
+#include "autodept.h"
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
  #include <dirent.h>
 #else
  #include <direct.h>
@@ -128,7 +129,7 @@ static char* extsOut[] =        // extensions for output files
 #define PATH_SEP                '\\'
 #define INC_PATH_SEP            ';'
 
-#elif defined(__QNX__)
+#elif defined(__UNIX__)
 
 static char* pathSrc[] =        // paths for source file
     {   "../C"
@@ -784,8 +785,6 @@ char *IoSuppFullPath(           // GET FULL PATH OF FILE NAME (ALWAYS USE RET VA
     char *buff,                 // - output buffer
     unsigned size )             // - output buffer size
 {
-    char *p;
-
     DbgAssert( size >= _MAX_PATH );
 #ifndef NDEBUG
     // caller should use return value only!
@@ -794,23 +793,7 @@ char *IoSuppFullPath(           // GET FULL PATH OF FILE NAME (ALWAYS USE RET VA
     ++buff;
     --size;
 #endif
-    p = _fullpath( buff, name, size );
-    if( p == NULL ) p = name;
-    #if defined(__QNX__)
-        if( p[0] == '/' && p[1] == '/' ) {
-            if( name[0] != '/' || name[1] != '/' ) {
-                /*
-                   if the _fullpath result has a node number and
-                   the user didn't specify one, strip the node number
-                   off before returning
-                */
-                for( p += 2; *p != '/'; ++p ) {
-                    if( *p == '\0' ) break;
-                }
-            }
-        }
-    #endif
-    return( p );
+    return _getFilenameFullPath( buff, name, size );
 }
 
 

@@ -215,6 +215,9 @@ common_objs += vstk.obj
 common_objs += watcom.obj
 common_objs += ytab.obj
 
+# watcom files
+common_objs += autodept.obj
+
 # fe_misc files
 common_objs += intlload.obj
 

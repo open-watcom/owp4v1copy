@@ -47,13 +47,13 @@
 #include "asmalloc.h"
 #include "condasm.h"
 #include "expand.h"
-#include "autodep.h"
 #endif
 
 
 extern int              AsmScan( char *, char * );
 extern int              AsmParse();
 extern void             AsmInit();
+extern void             AddFlist( char const *filename );
 
 char *ScanLine( char *, int );
 

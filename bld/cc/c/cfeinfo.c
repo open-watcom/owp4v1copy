@@ -39,6 +39,7 @@
 #include "iopath.h"
 #include "compcfg.h"
 #include <sys/stat.h>
+#include "autodept.h"
 
 #ifdef NEWCFE
 extern  TREEPTR FirstStmt;
@@ -703,43 +704,16 @@ void GetCallClass( SYM_HANDLE sym_handle )
     #endif
 }
 
-enum
+static time_t *getFileDepTimeStamp( FNAMEPTR flist )
 {
-    TIME_SEC_B  = 0,
-    TIME_MIN_B  = 5,
-    TIME_HOUR_B = 11,
-};
-
-enum
-{
-    DATE_DAY_B  = 0,
-    DATE_MON_B  = 5,
-    DATE_YEAR_B = 9,
-};
-
-static unsigned long *GetTimeStamp( FNAMEPTR flist )
-{
-#if _MACHINE == _PC && COMP_CFG_COFF == 0
-    struct tm *                ltime;
-    unsigned short            dos_date;
-    unsigned short            dos_time;
-    static unsigned long    dos_stamp;
-
-    ltime = localtime( &(flist->mtime) );
-    dos_date = (( ltime->tm_year - 80 ) << DATE_YEAR_B )
-             | (( ltime->tm_mon + 1 ) << DATE_MON_B )
-             | (( ltime->tm_mday ) << DATE_DAY_B );
-    dos_time = (( ltime->tm_hour ) << TIME_HOUR_B )
-             | (( ltime->tm_min ) << TIME_MIN_B )
-             | (( ltime->tm_sec / 2 ) << TIME_SEC_B );
-    dos_stamp = dos_time | ( dos_date << 16 );
-    return( &dos_stamp );
-#else
     static time_t            stamp;
 
+#if _MACHINE == _PC && COMP_CFG_COFF == 0
+    stamp = _timet2dos( flist->mtime );
+#else
     stamp = flist->mtime;
-    return( &stamp );
 #endif
+    return( &stamp );
 }
 
 #ifdef __LARGE__
@@ -750,21 +724,17 @@ static unsigned long *GetTimeStamp( FNAMEPTR flist )
 
 static FNAMEPTR NextDependency( FNAMEPTR curr )
 {
-    if( curr == NULL )
-    {
-        curr = FNames;
+    if( !CompFlags.emit_dependencies ) {
+        return( NULL );
     }
-    else
-    {
+    if( curr == NULL ) {
+        curr = FNames;
+    } else {
         curr = curr->next;
     }
-    while( curr != NULL )
-    {
-        if( curr->rwflag )
-        {
-            if( !SrcFileInRDir( curr ) )
-                break;
-        }
+    while( curr != NULL ) {
+        if( curr->rwflag && !SrcFileInRDir( curr ) )
+            break;
         curr = curr->next;
     }
     return( curr );
@@ -1210,10 +1180,9 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
 */
 VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 {
-    SYM_HANDLE            sym_handle = cgsym_handle;
+    SYM_HANDLE           sym_handle = cgsym_handle;
     struct aux_info *    inf;
-    FNAMEPTR            flist;
-    auto SYM_ENTRY        sym;
+    auto SYM_ENTRY       sym;
     static hw_reg_set    save_set;
 
     switch( request )
@@ -1305,23 +1274,14 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
         return( NULL );
 
     case NEXT_DEPENDENCY:                               /* 03-dec-92 */
-        if( !CompFlags.emit_dependencies )
-        {
-            return( NULL );
-        }
-        else
-        {
-            return( NextDependency( (FNAMEPTR) cgsym_handle ) );
-        }
+        return( NextDependency( (FNAMEPTR) cgsym_handle ) );
         break;
 
     case DEPENDENCY_TIMESTAMP:
-        flist = (FNAMEPTR) cgsym_handle;
-        return( GetTimeStamp( flist ) );
+        return( getFileDepTimeStamp( (FNAMEPTR) cgsym_handle ) );
 
     case DEPENDENCY_NAME:
-        flist = (FNAMEPTR) cgsym_handle;
-        return( FNameFullPath( flist ) );
+        return( FNameFullPath( (FNAMEPTR) cgsym_handle ) );
 
     case PEGGED_REGISTER:
         return( SegPeggedReg( (unsigned)cgsym_handle ) );
@@ -1567,7 +1527,6 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 {
     SYM_HANDLE            sym_handle = cgsym_handle;
     struct aux_info *    inf;
-    FNAMEPTR            flist;
     auto SYM_ENTRY        sym;
     static hw_reg_set    save_set;
 
@@ -1617,23 +1576,14 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
         return( NULL );
 
     case NEXT_DEPENDENCY:                               /* 03-dec-92 */
-        if( !CompFlags.emit_dependencies )
-        {
-            return( NULL );
-        }
-        else
-        {
-            return( NextDependency( (FNAMEPTR) cgsym_handle ) );
-        }
+        return( NextDependency( (FNAMEPTR) cgsym_handle ) );
         break;
 
     case DEPENDENCY_TIMESTAMP:
-        flist = (FNAMEPTR) cgsym_handle;
-        return( GetTimeStamp( flist ) );
+        return( getFileDepTimeStamp( (FNAMEPTR) cgsym_handle ) );
 
     case DEPENDENCY_NAME:
-        flist = (FNAMEPTR) cgsym_handle;
-        return( SrcFullPath( Buffer, flist->name, 512 ) );
+        return( FNameFullPath( (FNAMEPTR) cgsym_handle ) );
     }
 
     inf = FindInfo( &sym, sym_handle );
@@ -1678,23 +1628,5 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 
 extern char *SrcFullPath( char *buff, char const *name, unsigned max )
 {
-    char        *p;
-
-    p = _fullpath( buff, name, max );
-    if( p == NULL )
-        p = (char *)name;
-
-    #if (_OS == _QNX) || (_OS == _LINUX)
-    if( (p[0] == '/' && p[1] == '/') && (name[0] != '/' || name[1] != '/') ) {
-        /*
-           if the _fullpath result has a node number and
-           the user didn't specify one, strip the node number
-           off before returning
-        */
-        p += 2;
-        while( *p != '/' )
-            ++p;
-    }
-    #endif
-    return( p );
+    return _getFilenameFullPath( buff, name, max );
 }

@@ -32,6 +32,7 @@
 
 #include "cvars.h"
 #include "pragdefn.h"
+#include "autodept.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -971,7 +972,8 @@ static int VerifyIncludes()
             }
         }
         if( flist->rwflag ){
-            if( (SrcFileTime( flist->name, &mtime ) != 0 ) || flist->mtime != mtime ){
+            mtime = _getFilenameTimeStamp( flist->name );
+            if( flist->mtime != mtime || mtime == 0 ){
                 PCHNote( PCHDR_INCFILE_CHANGED, flist->name  );
           #if 0
                 printf( "%s old %d new %d\n",flist->name, flist->mtime, mtime );

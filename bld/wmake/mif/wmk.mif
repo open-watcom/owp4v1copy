@@ -33,6 +33,7 @@ msuffix.obj     &
 msysdep.obj     &
 mtarget.obj     &
 mupdate.obj     &
+autodept.obj    &
 mvecstr.obj
 
 !ifeq host_OS nt

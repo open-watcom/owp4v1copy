@@ -1576,10 +1576,10 @@ void SrcFilePoint(              // SET CURRENT SRCFILE
 }
 
 
-time_t *SrcFileTimeStamp(       // GET TIME STAMP FOR FILE
+time_t SrcFileTimeStamp(       // GET TIME STAMP FOR FILE
     SRCFILE srcfile )           // - source file
 {
-    return &srcfile->time_stamp;
+    return srcfile->time_stamp;
 }
 
 

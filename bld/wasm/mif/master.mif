@@ -38,7 +38,7 @@ extra_c_flags_386 += -of
 extra_l_flags = option map,symfile,stack=12k
 extra_l_flags_qnx = option offset=16k, res=usage.u
 
-.c : $(proj_path)/c;$(womp_dir)/c;$(wres_dir)/c;$(trmem_dir)
+.c : $(proj_path)/c;$(womp_dir)/c;$(wres_dir)/c;$(trmem_dir);$(watcom_dir)/c
 
 
 proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
@@ -80,7 +80,7 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     asmdata.obj         &
     insthash.obj        &
     asmjump.obj         &
-    autodep.obj         &
+    autodept.obj        &
     finger.obj
 
 wres_obj =              &
