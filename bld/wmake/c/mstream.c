@@ -234,7 +234,7 @@ extern RET_T InsFile( const char *name, BOOLEAN envsearch )
     if( TrySufPath( path, name, NULL, envsearch ) == RET_SUCCESS ) {
         PrtMsg( DBG|INF|LOC| ENTERING_FILE, path );
 
-        fh = sopen( path, O_RDONLY | O_TEXT, SH_DENYWR );       // 04-jan-94 AFS
+        fh = sopen( path, O_RDONLY | O_BINARY, SH_DENYWR );    // 04-jan-94 AFS, 13-sep-03 BEO
         if( fh == -1 ) {
             return( RET_ERROR );
         }
@@ -341,12 +341,19 @@ extern STRM_T GetCHR( void )
             }
             result = *(head->data.file.cur++);
             if( isbarf( result ) ) {
-                PrtMsg( FTL|LOC| BARF_CHARACTER, result );
+                /* ignore \r in \r\n */
+                if( result == '\r' && head->data.file.cur[0] == EOL )
+                    result = *(head->data.file.cur++);
+                else
+                    PrtMsg( FTL|LOC| BARF_CHARACTER, result );
             }
             if( result == '\f' ) {
                 result = EOL;
             }
             if( result == EOL ) {
+                /* ignore \r in \n\r */
+                if( head->data.file.cur[0] == '\r' )
+                    head->data.file.cur++;
                 head->data.file.line++;
             }
             return( result );
