@@ -13,7 +13,7 @@ cpcmd = copy $^. $(bld_bin)\$^&.exe > nulldevice # command is noisy by default i
 cpcmd = copy $^. $(bld_bin)\$^&.exe
 !endif
 
-all: $(name).exe langdat.exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
+all: $(name).exe langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
 
 inc_dirs = -I"../../pmake"
 
@@ -33,6 +33,10 @@ $(name).exe : $(OBJS)
 
 langdat.exe : $(l_objs)
         $(cl) $(clflags) $(l_objs)
+        $(cpcmd)
+
+mksetup.exe : mksetup.obj
+        $(cl) $(clflags) $<
         $(cpcmd)
 
 cdsay.exe : cdsay.obj
