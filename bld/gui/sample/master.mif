@@ -10,7 +10,7 @@ name = sample
 !ifeq type win
 rcopt += -i=$(guidir)\$(type);$(guidir)\h;$(sdk_dir)\misc;$(inc_dirs_sys)
 !else
-rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win
+rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win;$(guidir)\h
 !endif
 
 inc_dirs = $(guidir)\h;$(guidir)\$(type)\h
