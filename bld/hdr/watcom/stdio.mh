@@ -255,10 +255,14 @@ _WCRTLINK extern int    vfscanf( FILE *__fp, const char *__format,
 _WCRTLINK extern int    vscanf( const char *__format, __va_list __arg );
 _WCRTLINK extern int    vsscanf( const char *__s, const char *__format,
                                  __va_list __arg );
+_WCRTLINK extern int    snprintf( char *__buf, size_t __bufsize,
+                                  const char *__fmt, ... );
 _WCRTLINK extern int    _bprintf( char *__buf, size_t __bufsize,
                                   const char *__fmt, ... );
 _WCRTLINK extern int    _snprintf( char *__buf, size_t __bufsize,
                                    const char *__fmt, ... );
+_WCRTLINK extern int    vsnprintf( char *__s, size_t __bufsize,
+                                   const char *__format, __va_list __arg );
 _WCRTLINK extern int    _vbprintf( char *__s, size_t __bufsize,
                                    const char *__format, __va_list __arg );
 _WCRTLINK extern int    _vsnprintf( char *__s, size_t __bufsize,

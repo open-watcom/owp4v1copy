@@ -24,19 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Non-exhaustive test of the C library string functions.
 *
 ****************************************************************************/
 
-
-/*
- *  STRTEST.C
- *  Non-exhaustive test of the C library string functions.
- *
- *  12 January 1995
- *  By Matthew Hildebrand
- */
 
 #include <errno.h>
 #include <locale.h>
@@ -69,6 +60,7 @@ void TestFormatted( void );
 void Test__vbprintf( char *buf, char *format, ... );
 int  Test_vsscanf( char *buf, char *format, ... );
 void Test_vsprintf( char *buf, char *format, ... );
+int  Test_vsnprintf( char *buf, char *format, ... );
 
 #if !defined(__AXP__)
 void TestCompareF( void );
@@ -634,7 +626,7 @@ void TestError( void )
 void TestFormatted( void )
 {
     char            buf[80];
-    int             status;
+    int             status, len;
     int             numA, numB;
 
     status = _bprintf( buf, 3, "%d", 12345 );   /* try to print too much */
@@ -663,6 +655,13 @@ void TestFormatted( void )
     VERIFY( status == 2 );
     VERIFY( numA == 101 );
     VERIFY( numB == 37 );
+
+    len = Test_vsnprintf( buf, "%d %d", 101, 37 );    /* try to print too much */
+    status = Test_vsscanf( buf, "%d", &numA );
+    VERIFY( status == 1 );
+    VERIFY( numA == 101 );
+    /* make sure that we get back the same length for zero size buffer */
+    VERIFY( len == snprintf( NULL, 0, "%d %d", 101, 37 ) );
 }
 
 
@@ -675,6 +674,21 @@ void Test__vbprintf( char *buf, char *format, ... )
     status = _vbprintf( buf, 80, format, args );    /* print some stuff */
     VERIFY( status <= 80 );
     va_end( args );
+}
+
+int Test_vsnprintf( char *buf, char *format, ... )
+{
+    va_list         args;
+    int             len;
+
+    va_start( args, format );
+    memset( buf, 0, 10 );
+    len = vsnprintf( buf, 4, format, args );    /* print some stuff */
+    VERIFY( len > 4 );
+    VERIFY( buf[4] == '\0' );   /* ensure we're not overflowing the buffer */
+    VERIFY( buf[5] == '\0' );
+    va_end( args );
+    return len;
 }
 
 

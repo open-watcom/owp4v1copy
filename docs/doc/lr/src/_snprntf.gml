@@ -1,15 +1,15 @@
-.func snprintf snwprintf
-.funcw snwprintf
+.func _snprintf _snwprintf
+.funcw _snwprintf
 #include <stdio.h>
-int snprintf( char *buf,
-              size_t count,
-              const char *format, ... );
+int _snprintf( char *buf,
+               size_t count,
+               const char *format, ... );
 .ixfunc2 '&String' &func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
-int snwprintf( wchar_t *buf,
-               size_t count,
-               const wchar_t *format, ... );
+int _snwprintf( wchar_t *buf,
+                size_t count,
+                const wchar_t *format, ... );
 .ixfunc2 '&String' &wfunc
 .ixfunc2 '&Wide &wfunc
 .do end
@@ -46,45 +46,49 @@ The &wfunc function accepts a wide-character string argument for
 .do end
 .desc end
 .return begin
-The &func function returns the number of characters that would have been
-written had
+The &func function returns the number of characters written into the
+array, not counting the terminating null character, or a negative
+value if
 .arg count
-been sufficiently large, not counting the terminating null
-character, or a negative value if an encoding error occurred.
-Thus, the null-terminated output has been completely written if and only
-if the returned value is nonnegative and less than
-.arg count.
+or more characters were requested to be generated.
+An error can occur while converting a value for output.
 .if &'length(&wfunc.) ne 0 .do begin
-The &wfunc function returns the number of wide characters that would have
-been written had
+The &wfunc function returns the number of wide characters written into
+the array, not counting the terminating null wide character, or a
+negative value if
 .arg count
-been sufficiently large, not counting the terminating null wide character,
-or a negative value if an encoding error occurred.
-Thus, the null-terminated output has been completely written if and only
-if the returned value is nonnegative and less than
-.arg count.
+or more wide characters were requested to be generated.
 .do end
 .im errnoref
 .return end
 .see begin
-.im seeprtf snprintf
+.im seeprtf _snprintf
 .see end
 .exmp begin
 #include <stdio.h>
-#include <stdlib.h>
 
-/* Format output into a buffer after determining its size */
+/* Create temporary file names using a counter */
 
+char namebuf[13];
+int  TempCount = 0;
+.exmp break
+char *make_temp_name()
+  {
+    _snprintf( namebuf, 13, "ZZ%.6o.TMP", TempCount++ );
+    return( namebuf );
+  }
+.exmp break
 void main()
   {
-    int     bufsize;
-    char    *buffer;
-
-    bufsize = snprintf( NULL, 0, "%3d %P", 42, 42 );
-    buffer  = malloc( bufsize + 1 );
-    snprintf( buffer, bufsize + 1, "%3d %P", 42, 42 );
-    free( buffer );
+    FILE *tf1, *tf2;
+.exmp break
+    tf1 = fopen( make_temp_name(), "w" );
+    tf2 = fopen( make_temp_name(), "w" );
+    fputs( "temp file 1", tf1 );
+    fputs( "temp file 2", tf2 );
+    fclose( tf1 );
+    fclose( tf2 );
   }
 .exmp end
-.class ANSI
+.class WATCOM
 .system

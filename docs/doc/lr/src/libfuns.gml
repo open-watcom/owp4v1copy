@@ -1143,8 +1143,10 @@
 .fnm sisinit                    sisinit.gml     DOS       WIN32
 .fnc sleep                      sleep.gml       DOS QNX W WIN32
 .fnc _smalloc                   _smalloc.gml
-.fnc _snprintf                  snprintf.gml    DOS QNX W WIN32
-.fnc _snwprintf                 snprintf.gml    DOS QNX W WIN32
+.fnc _snprintf                  _snprntf.gml    DOS QNX W WIN32
+.fnc _snwprintf                 _snprntf.gml    DOS QNX W WIN32
+.fnc snprintf                   snprintf.gml    DOS QNX W WIN32
+.fnc snwprintf                  snprintf.gml    DOS QNX W WIN32
 .fnc sopen                      sopen.gml       DOS QNX W WIN32
 .fnw _wsopen                    sopen.gml       DOS       WIN32
 .fnu _usopen                    sopen.gml       DOS       WIN32
@@ -1534,8 +1536,10 @@
 .fnc vscanf                     vscanf.gml      DOS QNX W WIN32
 .fnw vwscanf                    vscanf.gml      DOS QNX W WIN32
 .fnu _uvscanf                   vscanf.gml      DOS       WIN32
-.fnc _vsnprintf                 vsnprint.gml    DOS QNX W WIN32
-.fnc _vsnwprintf                vsnprint.gml    DOS QNX W WIN32
+.fnc _vsnprintf                 _vsnprnt.gml    DOS QNX W WIN32
+.fnc _vsnwprintf                _vsnprnt.gml    DOS QNX W WIN32
+.fnc vsnprintf                  vsnprint.gml    DOS QNX W WIN32
+.fnc vsnwprintf                 vsnprint.gml    DOS QNX W WIN32
 .fnc vsprintf                   vsprintf.gml    DOS QNX W WIN32
 .fnw vswprintf                  vsprintf.gml    DOS QNX W WIN32
 .fnu _uvsprintf                 vsprintf.gml    DOS QNX W WIN32

@@ -47,6 +47,7 @@
 !inject rstrupr.obj                         nta ntp
 !inject selptr.obj   d16 d32             nt nta ntp nv o16 o32         w16 w32 osi
 !inject sneptr.obj   d16 d32             nt nta ntp nv o16 o32         w16 w32 osi
+!inject snprintf.obj d16 d32             nt nta ntp nv o16 o32 q16 q32 w16 w32 osi
 !inject sprintf.obj  d16 d32             nt nta ntp nv o16 o32 q16 q32 w16 w32 osi
 !inject sscanf.obj   d16 d32             nt nta ntp nv o16 o32 q16 q32 w16 w32 osi
 !inject strcat.obj   d16 d32             nt nta ntp nv o16 o32 q16 q32 w16 w32 osi
