@@ -53,8 +53,7 @@
  #include "tinyio.h"
 #endif
 #if defined(__SNAP__)
- #include <libc/init.h>
- #include <libc/alloc.h>
+ #include <os/imports.h>
 #endif
 
 #if defined(__SMALL_DATA__)

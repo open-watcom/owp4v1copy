@@ -57,8 +57,7 @@
  extern void * pascal DPMIAlloc(unsigned long);
 #endif
 #if defined(__SNAP__)
- #include <libc/init.h>
- #include <libc/alloc.h>
+ #include <os/imports.h>
 #endif
 
 
@@ -500,7 +499,8 @@ static int __AdjustAmount( unsigned *amount )
     #if ! ( defined(__WINDOWS_286__) || \
             defined(__WINDOWS_386__) || \
             defined(__WARP__)        || \
-            defined(__NT__)             \
+            defined(__NT__)          || \
+            defined(__SNAP__)           \
         )
         unsigned last_free_amt;
     #endif
@@ -513,7 +513,8 @@ static int __AdjustAmount( unsigned *amount )
     #if ! ( defined(__WINDOWS_286__) || \
             defined(__WINDOWS_386__) || \
             defined(__WARP__)        || \
-            defined(__NT__)             \
+            defined(__NT__)          || \
+            defined(__SNAP__)           \
         )
         #if defined(__DOS_EXT__)
             if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
@@ -558,6 +559,7 @@ static int __AdjustAmount( unsigned *amount )
     #if defined(__WINDOWS_386__) || \
         defined(__WARP__)        || \
         defined(__NT__)          || \
+        defined(__SNAP__)        || \
         defined(__CALL21__)      || \
         defined(__DOS_EXT__)
         /* make sure amount is a multiple of 4k */
@@ -569,3 +571,4 @@ static int __AdjustAmount( unsigned *amount )
     *amount = amt;
     return( *amount != 0 );
 }
+
