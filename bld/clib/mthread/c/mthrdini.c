@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Thread data allocation/initialization/freeing.
 *
 ****************************************************************************/
 
@@ -63,3 +62,36 @@ void __InitThreadData( thread_data *tdata )
     #endif
     }
 }
+
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+
+thread_data *__AllocInitThreadData( thread_data *tdata )
+/******************************************************/
+{
+    if( tdata == NULL ) {
+        tdata = lib_calloc( 1, __ThreadDataSize );
+        if( tdata != NULL ) {
+            tdata->__allocated = 1;
+            tdata->__data_size = __ThreadDataSize;
+        }
+    }
+    __InitThreadData( tdata );
+    return( tdata );
+}
+
+void __FreeInitThreadData( thread_data *tdata )
+/******************************************************/
+{
+    if( tdata != NULL ) {
+        int     alloced = tdata->__allocated;
+        // We need to check tdata->__allocated first and _then_
+        // overwrite tdata, not the other way round. Note that
+        // 0xDEADDEAD ends up as 0xADADADAD pattern in memory
+        // because memset() only does chars.
+//      memset( tdata, 0xdeaddead, tdata->__data_size );
+        if( alloced )
+            lib_free( tdata );
+    }
+}
+
+#endif
