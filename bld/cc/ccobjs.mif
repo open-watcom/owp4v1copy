@@ -98,7 +98,7 @@ cr_objs = &
         slack2.obj
 dll_objs = &
         slackdat.obj &
-        cdata.cbj &
+        cdata.obj &
         idedll.obj &
         idemsgpr.obj &
         $(common_objs) &

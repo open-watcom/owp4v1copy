@@ -1,8 +1,8 @@
 .continue
 .erase
 
-.extensions:
-.extensions: .qnx .exe .exp .obj .cbj .c .asm .h .gh .mif
+.EXTENSIONS:
+.EXTENSIONS:  .exe .exp .lib .obj .cpp .c .asm .h .gh .mif
 
 .mif: $(mif_path)
 
@@ -10,12 +10,20 @@ proj_name = cc
 
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
+
 !include mlibs.mif
 !include binname.mif
 
 # CODEGEN stuff
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
+
+!ifdef bootstrap
+cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
+  -I../../cg/h -I../../cg/intel/h -I../../cg/intel/$(target_CPU)/h
+!endif
+
 
 !ifndef cc_version
 cc_version      = tree
@@ -25,7 +33,7 @@ cc_version      = tree
 patch_level=0
 !endif
 
-extra_c_flags_386= -3r -fpc -zc
+extra_c_flags_386= -3r -fpc
 
 !ifeq cg_dll 1
 extra_c_flags = -D_CGDLL
@@ -40,17 +48,20 @@ intname = wcc$(target_cpu)
 !ifndef bootstrap
 !ifeq release 1
 opts_cscan_386  = -5r
-extra_opts_cscan = $(opts_cscan_$(host_cpu)) -oaxt
+extra_c_flags_cscan = $(opts_cscan_$(host_cpu))
 !endif
 !endif
-extra_opts_cgen386 = -DBY_C_FRONT_END
-extra_opts_idedll  = -bd
+extra_c_flags_cgen386 = -DBY_C_FRONT_END
+extra_c_flags_idedll  = -bd
 !ifdef __LINUX__
-extra_opts_intlload = -D__header=\"fesupp.h\"
+extra_c_flags_intlload = -D__header=\"fesupp.h\"
 !else
-extra_opts_intlload = -D__header="fesupp.h"
+extra_c_flags_intlload = -D__header="fesupp.h"
 !endif
-extra_opts_cmsg = -D__target_CPU=$(intname)
+extra_c_flags_cmsg = -D__target_CPU=$(intname)
+opts_cdata_nt = -DLARGEST_QUAD_INDEX=500
+opts_cdata_os2 = -DLARGEST_QUAD_INDEX=500
+extra_c_flag_cdata = $(opts_cdata_$(host_OS))
 
 # WASM stuff
 !ifeq target_cpu axp
@@ -64,7 +75,7 @@ inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
 !include $(wasm_dir)/mif/inline.mif
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
-pre_deps_wasm = $(wasm_dir)/h/inlnops.h
+pre_deps_wasm = inlnops.gh
 !endif
 !endif
 
@@ -82,21 +93,19 @@ pre_deps_qnx = wcc.u
 pre_deps_osi = $(tools_root)/os2ldr.exe
 
 # other goofy stuff
-pre_obj_deps = $(pre_deps_wasm) $(pre_deps_$(host_os)) $(cc_dir)/h/code$(target_cpu).gh usage.gh msgtxt.gh msgdefs.gh msgattr.gh
+pre_obj_deps = $(pre_deps_wasm) $(pre_deps_$(host_os)) code$(target_cpu).gh &
+        usage.gh msgtxt.gh msgdefs.gh msgattr.gh weights.gh keywords.gh
 
 pre_obj_deps += $(intname)01.int
 
 #
 # NOTE: "op off=?" must be 8K bigger than the stack size in wlink_sys_qnx_f
 #
-extra_l_flags_qnx= OPTION stack=16k,offset=24k, res=wcc.u, priv=3
-extra_l_flags_nt = OPTION stack=1024k COMMIT stack=32k
-extra_l_flags_dos = OPTION stack=32k
+extra_l_flags_qnx= option stack=16k,offset=24k, res=wcc.u, priv=3
+extra_l_flags_nt = option stack=1024k commit stack=32k
+extra_l_flags_dos = option stack=32k
 
-extra_l_flags = OPTION map, caseexact, quiet
-
-# options for single source utility compilations
-wcl_util_opts = -zq-ox -fe=$@
+extra_l_flags = option map
 
 # final executable extensions for the various hosts
 final_exe_dos   = exe
@@ -127,12 +136,38 @@ cxname = $(bin_dir)/wcc$(target_cpu)s.$(final_exe_$(host_os))
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
 
-inc_dirs =
+!ifdef bootstrap
+inc_dirs = -I. -I../h
+inc_dirs += -I$(cc_dir)/h $(cg_inc_dirs)
+inc_dirs += -I$(inline_asm_h)
+inc_dirs += -I$(dwarf_dir)/dw/h
+inc_dirs += -I$(comp_cfg_dir)/h
+inc_dirs += -I$(fe_misc_dir)/h
+
+cc = cc
+bld_cl = cc
+
+CPPFLAGS = $(inc_dirs) -DNDEBUG -Dlocal=static -D__UNIX__ -D__LINUX__ -D__SMALL__ -D_M_IX86
+CFLAGS = $(CPPFLAGS) -c -funsigned-char -pipe -std=gnu99 -O -o $@
+LDFLAGS = -L$(cg_dir)/intel/$(target_CPU)/$(%OBJDIR) -L$(dwarf_dir)/dw/$(%OBJDIR) &
+-L$(cfloat_dir)/$(%OBJDIR) -L$(owl_dir)/$(%OBJDIR) -L$(clib_dir)/$(%OBJDIR) &
+-L$(wres_dir)/$(%OBJDIR)
+LIBS = -lcg$(target_cpu) -ldwarf -lcfloat -lowl -lwatcom -lwres
+
+# options for single source utility compilations
+wcl_util_opts = $(inc_dirs) $(LDFLAGS) -o $[&.exe -D__UNIX__ $(LIBS)
+
+!else
+inc_dirs =.;
 inc_dirs +=$(cc_dir)/h;$(cg_inc_dirs);
 inc_dirs +=$(inline_asm_h);
 inc_dirs +=$(dwarf_dir)/dw/h;
 inc_dirs +=$(comp_cfg_dir)/h;
 inc_dirs +=$(fe_misc_dir)/h
+
+# options for single source utility compilations
+wcl_util_opts = -ox -fe=$@
+!endif
 
 .BEFORE
         @set INCLUDE=$(inc_path)
@@ -141,12 +176,11 @@ inc_dirs +=$(fe_misc_dir)/h
 .h: $(cc_dir)/h;$(inline_asm_h);$(watcom_dir)/h
 .gh: $(cc_dir)/h
 
-.c.obj:
-        $(cc) $(cflags) $(defines) $(extra_opts_$[&) $[@
+extra_c_flags += $(defines)
 
-.c.cbj:
-        $(cc) $(cflags) $(defines) $(extra_opt_$[&) -fo=.cbj -DLARGEST_QUAD_INDEX=500 $[@
-
+!ifdef bootstrap
+def_targ = wcc$(target_CPU)
+!endif
 !ifndef def_targ
 !ifdef on_build_machine
 def_targ_os2    = $(dllexe).exe
@@ -168,6 +202,11 @@ target: $(def_targ) .SYMBOLIC
 # Our stuff
 !include $(cc_dir)/deps.mif
 !include $(cc_dir)/ccobjs.mif
+
+!ifdef bootstrap
+wcc$(target_CPU): code$(target_CPU).gh weights.gh keywords.gh msgtxt.gh msgdefs.gh msgattr.gh errors01.int $(intname)01.int usage.gh $(cc_objs)
+	$(cc) $(LDFLAGS) -o $@ $(cc_objs) $(LIBS)
+!endif
 
 $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
@@ -269,8 +308,17 @@ linkfile: .procedure
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 
-$(cc_dir)/h/codei86.gh : ../a/codei86.asm ../a/mkcode.c
-        $(as) -i="$(watcom_dir)/h" $[@
+codei86.s: ../a/codei86.asm ../asm2s.sed
+        sed -f ../asm2s.sed $[@ > $@
+
+!ifdef bootstrap
+codei86.gh : codei86.s ../a/mkcode.c
+        $(CC) -D__i86__ $(INCLUDE) ../a/mkcode.c codei86.s -o mkcode
+        ./mkcode $^@
+	rm -f mkcode
+!else
+codei86.gh : ../a/codei86.asm ../a/mkcode.c
+        $(as) -i"$(watcom_dir)/h" $[@
         wcc -zq -ox $]@ @ipaths
 !ifdef __OS2__
         wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
@@ -281,8 +329,18 @@ $(cc_dir)/h/codei86.gh : ../a/codei86.asm ../a/mkcode.c
         rm -f mkcode.obj
         rm -f mkcode.exe
         rm -f codei86.obj
+!endif
 
-$(cc_dir)/h/code386.gh : ../a/code386.asm ../a/mkcode.c
+code386.s: ../a/code386.asm ../asm2s.sed
+        sed -f ../asm2s.sed $[@ > $@
+
+!ifdef bootstrap
+code386.gh : code386.s ../a/mkcode.c
+        $(CC) -D__386__ $(INCLUDE) ../a/mkcode.c code386.s -o mkcode
+        ./mkcode $^@
+	rm -f mkcode
+!else
+code386.gh : ../a/code386.asm ../a/mkcode.c
         $(as) -i"$(watcom_dir)/h" $[@
         wcc386 -zq $(popt) -ox $]@ @ipaths
         wcl386 mkcode.obj code386.obj -fe=mkcode -zq
@@ -290,11 +348,12 @@ $(cc_dir)/h/code386.gh : ../a/code386.asm ../a/mkcode.c
         rm -f mkcode.obj
         rm -f mkcode.exe
         rm -f code386.obj
+!endif
 
-$(cc_dir)/h/codeaxp.gh :
+codeaxp.gh :
         echo // Dummy file > $@
 
-$(cc_dir)/h/codeppc.gh :
+codeppc.gh :
         echo // Dummy file > $@
 
 usage.gh: ../usage.sp
@@ -307,8 +366,8 @@ wcc.u: ../usage.sp msgencod.exe intlbin.exe
         $(bld_cl) $[@ $(wcl_util_opts)
 
 usage01.int : ./usageenc.exe ../jusage.sp
-        wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.in
-        $[@ usageenc.in usage01.int
+        wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.int
+        $[@ usageenc.int usage01.int
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
         $(bld_cl) $[@ $(wcl_util_opts)
@@ -327,14 +386,27 @@ $(intname)01.int : ./intlbin.exe errors01.int usage01.int
 
 cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
-        rm -f genverrc.*
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $[@ $(wcl_util_opts)
 
-$(wasm_dir)/h/inlnops.h: ./mkopcode.exe $(wasm_dir)/inlnops.tok
+inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
-        rm -f mkopcode.*
+
+key_objs = ../h/c.key ../h/pc.key ../h/seh.key ../h/dummy.key
+
+./findhash.exe : ../../fe_misc/c/findhash.c
+        $(bld_cl) $[@ $(wcl_util_opts)
+
+!ifdef bootstrap
+weights.gh keywords.gh : $(key_objs)
+	$(CC) $(INCLUDE) ../../fe_misc/c/findhash.c -o findhash
+	./findhash -q $<
+	rm -f findhash
+!else
+weights.gh keywords.gh : ./findhash.exe $(key_objs)
+        $[@ -q $(key_objs)
+!endif
 
 eraseall.obj : ../compile.gbl
         rm -f *.?bj
