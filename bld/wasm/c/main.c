@@ -514,7 +514,7 @@ static void do_init_stuff( char **cmdline )
         if( isdigit( src[2] ) ) dst[0] = src[2];
     }
     add_constant( buff );
-    do_envvar_cmdline( "WASM", 0 );
+    do_envvar_cmdline( "WASM" );
     parse_cmdline( cmdline );
     set_build_target();
     get_os_include();

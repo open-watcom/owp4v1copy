@@ -210,7 +210,7 @@ static void seg_override( int seg_reg )
     }
     if( Code->prefix.seg == EMPTY ) {
         if( Label_Idx != -1 ) {
-            check_assume( default_seg, 0 );
+            check_assume( default_seg );
         }
     } else {
         if( Label_Idx != -1 ) {
