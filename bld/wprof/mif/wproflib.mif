@@ -2,16 +2,16 @@ memory_model_i86 = l
 !include wres.mif
 
 aui_dir_nt_axp  = ntaxp
-aui_dir_nt_386  = nt
+aui_dir_nt_386  = nt386
 aui_dir_nt      = $(aui_dir_nt_$(host_CPU))
-aui_dir_dos     = of
+aui_dir_dos     = dos386
 !ifeq PM 1
-aui_dir_os2     = pmf
+aui_dir_os2     = os2386.pm
 !else
-aui_dir_os2     = of
+aui_dir_os2     = os2386
 !endif
-aui_dir_qnx     = o32s
-aui_dir_win     = win
+aui_dir_qnx     = qnx386
+aui_dir_win     = wini86
 
 aui_lib = $(aui_dir)\$(aui_dir_$(host_OS))\aui.lib
 

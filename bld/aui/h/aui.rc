@@ -1,7 +1,7 @@
 #include "gui.rc"
 #include "dlgrx.h"
 #include "dlgsrch.h"
-#include "auistr.h"
+#include "auistr.gh"
 #include "auistr.rc"
 #ifdef JAPANESE_MESSAGES
 #include "japrx.dlg"

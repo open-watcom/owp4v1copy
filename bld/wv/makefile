@@ -320,17 +320,17 @@ engine_objs += &
 !endif
 
 
-libs_win_i86_char       = $(aui_dir)\win\aui.lib $(gui_dir)\ui\guiwinl.lib $(ui_dir)\$(machine)win\uilibl.lib $(wres_dir)\lib\wreslw.lib
-libs_win_i86_gui        = $(aui_dir)\win\aui.lib $(gui_dir)\win\guiwinl.lib
-libs_nt_386_char        = $(aui_dir)\nt\aui.lib $(gui_dir)\ui\guintf.lib $(ui_dir)\nt\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_nt_386_gui         = $(aui_dir)\nt\aui.lib $(gui_dir)\win\guintf.lib
-libs_os2_i86_char       = $(aui_dir)\ol\aui.lib $(gui_dir)\ui\guios2l.lib $(ui_dir)\os2\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_os2_i86_gui        = $(aui_dir)\pm\aui.lib $(gui_dir)\win\guios2l.lib $(os2286)
-libs_os2_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guios2f.lib $(ui_dir)\os2\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_os2_386_gui        = $(aui_dir)\pmf\aui.lib $(gui_dir)\win\guios2f.lib
-libs_dos_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\$(machine)dos\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_qnx_i86_char       = $(aui_dir)\ol\aui.lib $(gui_dir)\ui\guiqnxl.lib $(ui_dir)\qnx\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_qnx_386_char       = $(aui_dir)\o32s\aui.lib $(gui_dir)\ui\guiqnxs.lib $(ui_dir)\qnx\uilibs.lib $(wres_dir)\lib\wressqnx.lib
+libs_win_i86_char       = $(aui_dir)\wini86\aui.lib $(gui_dir)\ui\guiwinl.lib $(ui_dir)\$(machine)win\uilibl.lib $(wres_dir)\lib\wreslw.lib
+libs_win_i86_gui        = $(aui_dir)\wini86\aui.lib $(gui_dir)\win\guiwinl.lib
+libs_nt_386_char        = $(aui_dir)\nt386\aui.lib $(gui_dir)\ui\guintf.lib $(ui_dir)\nt\uilibf.lib $(wres_dir)\lib\wresf.lib
+libs_nt_386_gui         = $(aui_dir)\nt386\aui.lib $(gui_dir)\win\guintf.lib
+libs_os2_i86_char       = $(aui_dir)\os2i86\aui.lib $(gui_dir)\ui\guios2l.lib $(ui_dir)\os2\uilibl.lib $(wres_dir)\lib\wresl.lib
+libs_os2_i86_gui        = $(aui_dir)\os2i86.pm\aui.lib $(gui_dir)\win\guios2l.lib $(os2286)
+libs_os2_386_char       = $(aui_dir)\os2386\aui.lib $(gui_dir)\ui\guios2f.lib $(ui_dir)\os2\uilibf.lib $(wres_dir)\lib\wresf.lib
+libs_os2_386_gui        = $(aui_dir)\os2386.pm\aui.lib $(gui_dir)\win\guios2f.lib
+libs_dos_386_char       = $(aui_dir)\dos386\aui.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\$(machine)dos\uilibf.lib $(wres_dir)\lib\wresf.lib
+libs_qnx_i86_char       = $(aui_dir)\qnxi86\aui.lib $(gui_dir)\ui\guiqnxl.lib $(ui_dir)\qnx\uilibl.lib $(wres_dir)\lib\wresl.lib
+libs_qnx_386_char       = $(aui_dir)\qnx386\aui.lib $(gui_dir)\ui\guiqnxs.lib $(ui_dir)\qnx\uilibs.lib $(wres_dir)\lib\wressqnx.lib
 libs_nt_axp_char        = $(aui_dir)\ntaxp\aui.lib $(gui_dir)\ui\guintaxp.lib $(uidir)\nt\uilibaxp.lib $(wres_dir)\lib\wresaxp.lib
 libs_nt_axp_gui         = $(aui_dir)\ntaxp\aui.lib $(gui_dir)\win\guintaxp.lib
 
@@ -612,23 +612,23 @@ $(litdef) : wd.str wdengin.str menu.str $(cdir)\mkstr.c $(dig_dir)\h\mad.str
         del mkstr.obj
         del mkstr.exe
 
-wvui.res : $(hdir)\wvui.rc $(rcfiles) .autodepend
+wvui.res : auistr.gh $(hdir)\wvui.rc $(rcfiles) .autodepend
         *wrc -r -q -bt=windows -i=$(rcinclude);$(lang_root)\h\win $(hdir)\wvui.rc /fo=wvui.res
 
 wvntdll.res : $(hdir)\strings.rc .autodepend
         *wrc -r -q -bt=nt -i=$(rcinclude);$(lang_root)\h\win $(hdir)\strings.rc /fo=wvntdll.res
 
-wvwin.res : $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
+wvwin.res : auistr.gh $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
         *wrc -k -r -bt=windows -i=$(rcinclude);$(lang_root)\h\win $(hdir)\wvwin.rc /fo=wvwin.res
 
-wvnt.res : $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
+wvnt.res : auistr.gh $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
         *wrc -k -r -bt=nt -i=$(rcinclude);$(lang_root)\h\nt $(hdir)\wvwin.rc /fo=wvnt.res
 
-wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
+wvpm.res wvpmj.res : auistr.gh $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
         set include=$(inc_dirs_sys);$(rcinclude);$(%include)
-        *wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
-        *wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
+        *wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
+        *wcc -dRC -i$(aui_dir)\os2386.pm;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
 
 !ifndef %use_os2tk_stuff
 
@@ -782,3 +782,8 @@ japstk.dlg : $(hdir)\japstk.dlg
 japhis.dlg : $(hdir)\japhis.dlg
         parsedlg $(pmfontj) $(hdir)\japhis.dlg japhis.dlg
 !endif
+
+auistr.gh : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
+        $(bld_cl) -i"$(auidir)\h" $]@
+        mkstr $^@
+        @rm -f mkstr.*

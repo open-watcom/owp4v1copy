@@ -34,7 +34,7 @@
 #define _AUIPVT_H_INCLUDED
 
 #include "aui.h"
-#include "auistr.h"
+#include "auistr.gh"
 
 extern void             WndLitInit();
 extern void             WndLitFini();
