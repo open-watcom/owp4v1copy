@@ -64,6 +64,8 @@ bool            Quiet;
 unsigned        ParmCount;
 unsigned        LogBackup;
 
+int MatchFound(char *p);
+
 static void PutNumber( char *src, char *dst, unsigned num )
 {
     char        dig;
@@ -221,6 +223,7 @@ static void PushInclude( const char *name )
     new = Alloc( sizeof( *new ) );
     new->prev = IncludeStk;
     new->skipping = 0;
+    new->ifdefskipping = 0;
     new->reset_abit = NULL;
     IncludeStk = new;
     new->fp = fopen( name, "r" );
@@ -276,9 +279,14 @@ static char *SubstOne( const char **inp, char *out )
         switch( *in ) {
         case '>':
             *p = '\0';
-            if( stricmp( out, "*" ) == 0 ) {
+            // If the parameter is a number (n) followed by an asterisk,
+            // copy from parameter n to the end to out. E.g. <2*>
+            parm = 1;
+            if( sscanf(out, "%u*", &parm) == 1
+             || stricmp( out, "*" ) == 0 ) {
+                rep = NULL;
                 p = out;
-                for( parm = 1; parm <= ParmCount; ++parm ) {
+                for( ; parm <= ParmCount; ++parm ) {
                     sprintf( out, "%d", parm );
                     rep = getenv( out );
                     if( rep != NULL ) {
@@ -334,8 +342,10 @@ static void SubstLine( const char *in, char *out )
                  break;
              }
              break;
-        case '[':
+        case '[':                           // Surround special chars with a space
         case ']':
+        case '(':
+        case ')':
             if( !first) *out++= ' ';
             *out++ = *in++;
             *out++= ' ';
@@ -419,21 +429,18 @@ static void ProcessCtlFile( const char *name )
                     }
                 }
             } else if( stricmp( p, "BLOCK" ) == 0 ) {
-                IncludeStk->skipping = 0;   // New block: reset skip flag
+                IncludeStk->skipping = 0;   // New block: reset skip flags
+                IncludeStk->ifdefskipping = 0;
                 if (!MatchFound(p))
                     IncludeStk->skipping++;
                 break;
-            } else if( stricmp( p, "IFEQU" ) == 0 ) {
+            } else if( stricmp( p, "IFDEF" ) == 0 ) {
+                if( IncludeStk->ifdefskipping != 0 ) IncludeStk->ifdefskipping--;
                 if (!MatchFound(p))
-                    IncludeStk->skipping++;
-                break;
-            } else if( stricmp( p, "ELSEIFEQU" ) == 0 ) {
-                if( IncludeStk->skipping != 0 ) IncludeStk->skipping--;
-                if (!MatchFound(p))
-                    IncludeStk->skipping++;
+                    IncludeStk->ifdefskipping++;
                 break;
             } else if( stricmp( p, "ENDIF" ) == 0 ) {
-                if( IncludeStk->skipping != 0 ) IncludeStk->skipping--;
+                if( IncludeStk->ifdefskipping != 0 ) IncludeStk->ifdefskipping--;
                 break;
             } else {
                 Fatal( "Unknown directive '%s'\n", p );
@@ -446,7 +453,7 @@ static void ProcessCtlFile( const char *name )
                 logit = FALSE;
                 p = SkipBlanks( p + 1 );
             }
-            if( IncludeStk->skipping == 0 ) {
+            if( IncludeStk->skipping == 0 && IncludeStk->ifdefskipping == 0 ) {
                 if( logit ) {
                     Log( FALSE, "+++<%s>+++\n", p );
                 }
@@ -539,26 +546,60 @@ int main( int argc, char *argv[] )
 
 /****************************************************************************
 *
-* MatchFound. Examines a string of space separated words. If the first
-* word matches any of the words following it, returns 1. If not, returns 0.
-* String is terminated ny 0 or ']'.
+* MatchFound. Examines a string of space separated words. If the first word or
+* words (between parentheses) matches any of the words following it, returns 1.
+* If not, returns 0. String is terminated by 0 or ']'.
 * If there isn't at least one word in the string, terminates program.
 *
 ***************************************************************************/
 int MatchFound(char *p)
 {
-    char   *match;
+    char   *Match[20];                     // 20 is enough for builder
+    int     MatchWords = 0;
+    int     i;
+    int     EmptyOk = FALSE;
+    int     WordsExamined = 0;
 
     p = NextWord( p );
-    if( p == NULL ) {
+    if( p == NULL )
         Fatal( "Missing match word\n" );
+
+    if (*p == '(') {                        // Multiple match words, store them
+        p = NextWord(p);
+        for (; MatchWords < 20; ) {
+            if( p == NULL )
+                Fatal( "Missing match word\n" );
+            if (stricmp( p, "\"\"") == 0)   // 'No parameter' indicator
+                EmptyOk = TRUE;
+            else
+                Match[MatchWords++] = p;
+            p = NextWord(p);
+            if (strcmp(p, ")") == 0) {
+                p = NextWord(p);
+                break;
+            }
+         }
     }
-    match = p;
-    for( ;; ) {
+    else {
+        Match[MatchWords++] = p;
         p = NextWord( p );
-        if( p == NULL || strcmp( p, "]" ) == 0 )    // End of string
-            return 0;
-        if( stricmp( match, p ) == 0 )
-            return 1;
+    }
+
+    // At this point, p must point to the first word after the (last) match word
+
+    for( ;; ) {
+        if( p == NULL || strcmp( p, "]" ) == 0 ) {   // End of string
+            if (WordsExamined == 0
+             && EmptyOk)
+                return 1;
+             else
+                return 0;
+        }
+        WordsExamined++;
+        for( i = 0; i < MatchWords; i++)
+            if( stricmp( Match[i], p ) == 0 )
+                return 1;
+        p = NextWord( p );
     }
 }
+

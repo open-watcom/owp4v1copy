@@ -46,6 +46,7 @@ struct include {
     include     *prev;
     FILE        *fp;
     unsigned    skipping;
+    unsigned    ifdefskipping;
     char        name[_MAX_PATH];
     char        cwd[_MAX_PATH];
     copy_entry  *reset_abit;
