@@ -13,18 +13,14 @@ cflags = -w4 -mf -d2 -fo=obj\$[&.obj
 
 $(name).exe : $(objs) $(lnk)
         wlink @$(lnk)
-        $(pharlap)bind386 $(pharlap)run386b.exe $^*.exp -exe $^@
-        @del $^*.exp
 
 $(name).lnk : makefile
         %create $(lnk)
 !ifndef on_build_machine
         @%append $(lnk) debug all
 !endif
-        @%append $(lnk) system pharlap
-        @%append $(lnk) runtime maxreal=640k
-        @%append $(lnk) op maxdata=1024K
-        @%append $(lnk) name $(name).exp
+        @%append $(lnk) system dos4g
+        @%append $(lnk) name $(name).exe
         @%append $(lnk) option map
         @for %i in ($(objs)) do @%append $(lnk) file obj\%i
 

@@ -1,4 +1,4 @@
-op_sys=phar
+op_sys=dos4g
 os=dos
 bind=1
 name=wig

@@ -14,7 +14,7 @@ ccopt += -w4 -oaxt -zq -fpc /bt=$(os)
 ext = exe
 !endif
 
-yacc=..\yacc.exe
+yacc = yacc
 
 objs += &
     sruparse.obj &
@@ -37,9 +37,6 @@ ccopt += -d2 -dDEBUG
 
 $(name).$(ext) : $(objs) $(lnk)
         $(linker) debug all sys $(op_sys) option map name $(name) @$(lnk)
-!ifdef bind
-        $(pharlap)bind386 $(pharlap)run386b.exe $(name).exp -exe $(name).exe
-!endif
 
 $(lnk) : ..\mif\master.mif makefile
         %create $(lnk)
