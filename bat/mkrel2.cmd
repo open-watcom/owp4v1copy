@@ -31,6 +31,8 @@ md %relroot%\%defrel%\h\os2\GL
 md %relroot%\%defrel%\h\os21x
 md %relroot%\%defrel%\qh
 md %relroot%\%defrel%\qh\sys
+md %relroot%\%defrel%\lh
+md %relroot%\%defrel%\lh\sys
 md %relroot%\%defrel%\lib286
 md %relroot%\%defrel%\lib386
 md %relroot%\%defrel%\nlm
