@@ -372,7 +372,7 @@ lflags_dll = $(mode_lflags) $(lflags_$(host_OS)_$(host_CPU)) dll initinstance te
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
 
-build : .symbolic $(exe_bld_name).exe $(dll_bld_name).dll
+build : .symbolic $(exe_bld_name).exe #$(dll_bld_name).dll
     @%null
 
 $(exe_bld_name).exe : $(depends_drv) pdrvbld.lnk $(dll_bld_name).lib
@@ -509,9 +509,9 @@ wpp$(target_CPU)01.int : $(fe_misc_dir)\c\intlbin.c errors01.int usage01.int
     intlbin.exe wpp$(target_CPU)
     del intlbin.*
 
-!ifdef plusplus_release
-msgencod_opts = -w
-!endif
+#!ifdef plusplus_release
+#msgencod_opts = -w
+#!endif
 
 errmsgs.c errmsgs.gh errlevel.gh errors01.int : $(fe_misc_dir)\c\msgencod.c ..\gml\messages.gml
     $(bld_cl) $[@ $(wcl_util_opts)
