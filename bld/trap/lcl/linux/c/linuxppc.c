@@ -62,23 +62,7 @@ static void ReadCPU( struct ppc_mad_registers *r )
     regs.xer  = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
     regs.ccr  = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
     regs.mq   = ptrace( PTRACE_PEEKUSER, pid, PT_MQ  * REGSIZE, 0 );
-    CONV_LE_32( regs.nip );
-    CONV_LE_32( regs.msr );
-    CONV_LE_32( regs.ctr );
-    CONV_LE_32( regs.link );
-    CONV_LE_32( regs.xer );
-    CONV_LE_32( regs.ccr );
-    CONV_LE_32( regs.mq );
-    CONV_LE_32( regs.gpr[0] );
-    CONV_LE_32( regs.gpr[1] );
-    CONV_LE_32( regs.gpr[2] );
-    CONV_LE_32( regs.gpr[3] );
-    CONV_LE_32( regs.gpr[4] );
-    CONV_LE_32( regs.gpr[5] );
-    CONV_LE_32( regs.gpr[6] );
-    CONV_LE_32( regs.gpr[7] );
-    CONV_LE_32( regs.gpr[8] );
-    CONV_LE_32( regs.gpr[9] );
+    /* Copy to MAD structure */
     r->r0.u._32[0]  = regs.gpr[0];
     r->r1.u._32[0]  = regs.gpr[1];
     r->r2.u._32[0]  = regs.gpr[2];
@@ -127,7 +111,7 @@ static void ReadCPU( struct ppc_mad_registers *r )
 unsigned ReqRead_cpu( void )
 {
 //    ReadCPU( GetOutPtr( 0 ) );
-//    return( sizeof( struct x86_cpu ) );
+//    return( sizeof( mr->ppc ) );
     return( 0 );
 }
 
@@ -145,11 +129,9 @@ unsigned ReqRead_regs( void )
     return( sizeof( mr->ppc ) );
 }
 
-#if 0
-static void WriteCPU( struct x86_cpu *r )
+static void WriteCPU( struct ppc_mad_registers *r )
 {
-    user_regs_struct    regs;
-
+#if 0
     /* the kernel uses an extra register orig_eax
        If orig_eax >= 0 then it will check eax for
        certain values to see if it needs to restart a
@@ -160,14 +142,6 @@ static void WriteCPU( struct x86_cpu *r )
     */
 
     regs.eax = r->eax;
-    regs.ebx = r->ebx;
-    regs.ecx = r->ecx;
-    regs.edx = r->edx;
-    regs.esi = r->esi;
-    regs.edi = r->edi;
-    regs.ebp = r->ebp;
-    regs.esp = r->esp;
-    regs.eip = r->eip;
     if( regs.eip != last_eip ) {
         /* eip is actually changed! This means that
            the orig_eax value does not make sense;
@@ -176,17 +150,16 @@ static void WriteCPU( struct x86_cpu *r )
         last_eip = regs.eip;
     }
     regs.orig_eax = orig_eax;
-    regs.eflags = r->efl;
-    regs.cs = r->cs;
-    regs.ds = r->ds;
-    regs.ss = r->ss;
-    regs.es = r->es;
-    regs.fs = r->fs;
-    regs.gs = r->gs;
-    ptrace( PTRACE_SETREGS, pid, NULL, &regs );
-}
-
 #endif
+    ptrace( PTRACE_POKEUSER, pid, PT_NIP * REGSIZE, (void *)(r->iar.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_MSR * REGSIZE, (void *)(r->msr.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_CTR * REGSIZE, (void *)(r->ctr.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_LNK * REGSIZE, (void *)(r->lr.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_CCR * REGSIZE, (void *)r->cr );
+    ptrace( PTRACE_POKEUSER, pid, PT_XER * REGSIZE, (void *)r->xer );
+    ptrace( PTRACE_POKEUSER, pid, 0 * REGSIZE, (void *)(r->r0.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, 1 * REGSIZE, (void *)(r->r1.u._32[0]) );
+}
 
 unsigned ReqWrite_cpu( void )
 {
@@ -204,7 +177,7 @@ unsigned ReqWrite_regs( void )
     mad_registers   *mr;
 
     mr = GetInPtr( sizeof( write_regs_req ) );
-//    WriteCPU( &mr->x86.cpu );
+    WriteCPU( &mr->ppc );
     return( 0 );
 }
 
