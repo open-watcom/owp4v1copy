@@ -62,7 +62,7 @@ uncompressed data.
 
 If the help file is compiled with compression set to MEDIUM or HIGH,
 everything in each page except the 12-byte header is compressed via
-the LZ77 algorithm described in compress.doc.  If a page is not full
+the LZ77 algorithm described in compress.txt.  If a page is not full
 (and is not the last page) the entire 4084 bytes will still be in
 compressed format.  Each page must be decompressed before anything can
 be read, including the linked list structures and formatting directives.
@@ -74,7 +74,7 @@ This complicates things for the compiler; see the section on offsets.
 
 Phrase replacement is handled differently; a byte with a value between 0x01
 and 0x0A in the uncompressed help text is always the first byte of a two
-byte code referring to some phrase from the |Phrases file.  See phrases.doc
+byte code referring to some phrase from the |Phrases file.  See phrases.txt
 for more info on that.
 
 So just to sum up so far, the algorithm for reading all of the text stored
@@ -289,7 +289,7 @@ in order that they appear in the text.  Known changes are:
 
 	0x80 -- Font change.  Followed immediately by a WORD index, which
 		refers to one of the font attributes in the |FONT file
-		(see font.doc).
+		(see font.txt).
 	0x81 -- New Line.
 	0x82 -- New paragraph.
 	0x83 -- Horizontal tab.
@@ -300,7 +300,7 @@ in order that they appear in the text.  Known changes are:
 	0xE2, 0xE3 -- start of a pop-up and jump hotlink, respectively.
 	        Each is followed immediately by a 4-byte hash value
 		used to 'dereference' the hotlink via the |CONTEXT table.
-		(see context.doc)
+		(see context.txt)
 	0xEA, 0xEB -- start of a "complex" popup or jump hotlink respectively.
 	        By "complex" I mean a jump involving another file or a
 		secondary window.  These flags are followed by a two-byte
@@ -331,7 +331,7 @@ raw ASCII text with certain additional bytes inserted:
 	   sure how this works in 0x23 records; they have multiple sets
 	   of text attributes but only one second data area.)
 	-- A byte between 0x01 and 0x0A is the first byte of a two-byte
-	   phrase code.  See phrases.doc.
+	   phrase code.  See phrases.txt.
 	   
 
 Offsets within the |TOPIC file
@@ -367,4 +367,4 @@ that page, but ignored everything that wasn't text.  Here, 'text' refers to
 the actual help text AFTER decompression but BEFORE phrase replacement and
 BEFORE processing formatting codes (see the section on Data Blocks) -- in
 short, the text as it appears in the uncompressed page.  'Text' does NOT
-include the linked list structures and other internal gobbledigook.
+include the linked list structures and other internal gobbledygook.

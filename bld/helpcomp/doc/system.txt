@@ -54,7 +54,7 @@ Known flag values, and the associated data, are:
  the data area will contain a single zero byte.
  
  0x0003 -- Contents Record.  The data area will contain the 'table of
- contents' topic as a 4-byte 'Character' offset (see topic.doc for info
+ contents' topic as a 4-byte 'Character' offset (see topic.txt for info
  on the two kinds of topic file offsets) .
  
  0x0004	-- Macro Record.  The data area will contain a zero-terminated ASCII

@@ -2,7 +2,7 @@ THE WINHELP |CONTEXT INTERNAL FILE
 ==================================
 
 The |CONTEXT file is used by WinHelp as a lookup table to obtain the offset
-of a topic based on a hash value.  See b_tree.doc for a general discussion
+of a topic based on a hash value.  See b_tree.txt for a general discussion
 of b-trees.  The |CONTEXT file is used to resolve hotlinks.
 
 Hash Values
@@ -48,4 +48,4 @@ values.
 The leaf pages of the tree store 8-byte records.  The first four bytes
 are a hash value; the last four bytes are the offset of the corresponding
 topic within the |TOPIC file.  These offsets are in the form of "Character"
-offsets; see topic.doc.
+offsets; see topic.txt.

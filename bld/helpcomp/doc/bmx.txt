@@ -2,7 +2,7 @@ GRAPHICS IN WINHELP INTERNAL FILES
 ==================================
 
 Any files specified in the [BITMAP] section of a .HPJ file will be copied
-into the .HLP file like baggage files (see baggage.doc) but with
+into the .HLP file like baggage files (see baggage.txt) but with
 significantly more modifications than normal baggage.  The most obvious
 modification is the name; graphics files are renamed |bm0, |bm1, |bm2, and
 so forth when transformed into WinHelp internal files.  The more significant
@@ -16,7 +16,7 @@ The .SHG Structure
 ------------------
 NOTE:  Not all of the information here is 100% solid.  The .SHG format is
 almost entirely undocumented, and almost everything I know about it is
-from an article by Pete Davis in Windows/Dos Developers Journal (Feb 1994).
+from an article by Pete Davis in Windows/DOS Developers Journal (Feb 1994).
 Also, the format listed here differs slightly from the format for "pure"
 .SHG files created by Microsoft's Hot spot Editor.  Finally, most of the info
 here applies equally to Microsoft's Multi-Resolution Bitmap or .MRB format,
@@ -62,7 +62,7 @@ Not So Silly Compression Tricks
 -------------------------------
 
 Pixel data in a .SHG file will occasionally be compressed in a format
-different from the one described in compress.doc, so I had better explain
+different from the one described in compress.txt, so I had better explain
 it here.  There is a simplified form of the standard bitmap RLE compression
 used in .SHG files, which is best described by the decompression algorithm:
 
@@ -119,7 +119,7 @@ Nevertheless, it could happen.
 'Compression type' refers to how the pixel data is stored in the data
 section to follow.  0x00 means no compression of the pixel data, 0x01 means
 RLE compression, and 0x02 means LZ77 compression (or rather, the version
-of LZ77 compression used in help files; see compress.doc).  Whether
+of LZ77 compression used in help files; see compress.txt).  Whether
 the help file text is compressed has no bearing on how bitmaps are
 compressed; it seems to be up to the help compiler.
 

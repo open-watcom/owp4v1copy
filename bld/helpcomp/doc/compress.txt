@@ -4,7 +4,7 @@ COMPRESSION IN WINHELP FILES
 In Windows 3.1 helpfiles, the actual help text (stored in the |TOPIC file)
 is usually compressed two ways:  first with phrase replacement, then with
 a simplified LZ77 algorithm.  Note that the level of compression used in
-a help file is given in the |SYSTEM internal file; see system.doc.
+a help file is given in the |SYSTEM internal file; see system.txt.
 
 Phrase Replacement
 ------------------
@@ -12,7 +12,7 @@ Phrase Replacement
 When reading the help text in the |TOPIC file, if WinHelp sees a byte in the
 range 0x01 to 0x0E, it is interpreted as the first byte of a two byte
 phrase index.  The phrase index refers to one of the phrases in the |Phrases
-internal file (see phrases.doc).  However, the index of the phrase to be
+internal file (see phrases.txt).  However, the index of the phrase to be
 substituted is stored in an unusual way: high-byte first, then low-byte, not
 using the last bit. That is, the formula for the index of the phrase given
 the two-byte code X,Y is:   (((X-1)*265)+Y)/2.  Because of the restriction on
@@ -32,7 +32,7 @@ following description is from the decompresser's point of view.
 A compressed block of data is divided into smaller blocks of between 9 and
 17 bytes.  The first byte of data is a bitmask saying which of the rest of
 the bytes are plain data and which are two-byte codes.  Bit 0 of the bitmask
-refers to the byte immedietly following the bitmask.  In each bit, 0 means
+refers to the byte immediately following the bitmask.  In each bit, 0 means
 a plain byte while 1 means a code.
 
 A two-byte code is interpreted as a reference to a string of bytes that

@@ -2,7 +2,7 @@ THE WINHELP |KWBTREE INTERNAL FILE
 ==================================
 
 The |KWBTREE file acts as an index to the |KWDATA file, and is arranged as
-a b-tree.  See b-tree.doc for a general discussion of b-trees.  This file
+a b-tree.  See b-tree.txt for a general discussion of b-trees.  This file
 along with the |KWDATA and |KWMAP files are used by WinHelp for keyword
 searching.
 

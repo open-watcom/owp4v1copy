@@ -6,7 +6,7 @@ Introduction
 
 Quite simply, a Windows help file consists of a series of consecutive blocks
 of data, where each block represents a 'file' that serves some specific
-purpose.  (See files.doc for a list of possible 'files'.)  In addition,
+purpose.  (See files.txt for a list of possible 'files'.)  In addition,
 a simple 'file system' is included to make it easier to locate specific
 files.  The file system has three components:
 
@@ -57,4 +57,4 @@ zero terminated filename strings followed by their (long int) offsets within
 the .hlp file.  Like other internal files, the directory has a 9-byte file
 header as described above.
 
-See b_tree.doc for more information about the structure of WinHelp B-trees.
+See b_tree.txt for more information about the structure of WinHelp B-trees.
