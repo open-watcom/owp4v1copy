@@ -36,5 +36,5 @@
 
 _WCRTLINK int _mbdtoupper( unsigned int ch )
 {
-    return( _ismbdlower( ch )  ?  ( ch - 0x21 )  :  ch );
+    return( ch >= 0x8281  &&  ch <= 0x829A  ?  ( ch - 0x21 )  :  ch );
 }
