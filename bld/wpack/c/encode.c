@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  wpack routines used to encode files.
 *
 ****************************************************************************/
 
-
-/*
- * ENCODE.C : wpack routines used to encode files.
- */
 
 #include <stdio.h>
 #include <string.h>
@@ -278,9 +273,12 @@ static uchar p_code[64] = {
     0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
 };
 
-static int CompLen( const int *left, const int *right )
+static int CompLen( const void *_left, const void *_right )
 /******************************************/
 {
+    const int *left  = _left;
+    const int *right = _right;
+
     return( (int)len[ *left ] - (int)len[ *right ] );
 }
 

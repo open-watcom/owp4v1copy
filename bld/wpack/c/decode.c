@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  wpack routines used to decode files.
 *
 ****************************************************************************/
 
-
-/*
- * DECODE.C : wpack routines used to decode files.
- */
 
 #include <stdlib.h>
 #include <string.h>
@@ -561,7 +556,7 @@ static int FileExists( char *name, file_info *info )            /* 26-may-90 */
     return( 0 );    /* file does not exist, or it has different date or size */
 }
 
-extern int Decode( arccmd *cmd )
+extern void Decode( arccmd *cmd )
 /*******************************/
 {
     file_info **    currfile;
@@ -575,14 +570,14 @@ extern int Decode( arccmd *cmd )
     if( filedata == NULL ) {
         msg = LookupText( NULL, TXT_ARC_NOT_EXIST );
         Error( TXT_ARC_NOT_EXIST, msg );
-        return( FALSE );
+        return; //FALSE;
     }
     if( cmd->files == NULL  ||  cmd->files->filename == NULL ) {
 //      BufSeek( sizeof( arc_header ) );    // skip header.
         for( currfile = filedata; *currfile != NULL; currfile++ ) {
             if( BufSeek( (*currfile)->disk_addr ) != -1 ) {
                 if( !DecodeFile( *currfile, cmd ) ) {
-                    return( FALSE );
+                    return; //FALSE;
                 }
             }
         }
@@ -594,7 +589,7 @@ extern int Decode( arccmd *cmd )
                     memicmp(currname->filename, (*currfile)->name, namelen) == 0 ) {
                     if( BufSeek( (*currfile)->disk_addr ) != -1 ) {
                         if( !DecodeFile( *currfile, cmd ) ) {
-                            return( FALSE );
+                            return; //FALSE;
                         }
                     }
                     break;
@@ -610,5 +605,5 @@ extern int Decode( arccmd *cmd )
     } // end if
     QClose( infile );       // close the archive file.
     FreeHeader( filedata );
-    return( TRUE );
+    return; // TRUE;
 }
