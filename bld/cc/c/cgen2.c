@@ -77,7 +77,6 @@ static temp_handle     SSVar;
 static SYM_HANDLE      Saved_CurFunc;
 
 extern  int     LabelIndex;
-extern  TREEPTR FirstStmt;
 static  int     InLineDepth;
 
 struct func_save {

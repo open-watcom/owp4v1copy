@@ -205,7 +205,6 @@ global  SYM_HANDLE SymCover;    /* sym handle for '__COVERAGE' */
 global  SYM_HANDLE SymDFAbbr;   /* sym handle for '__DFABBREV' */
 global  SYM_HANDLE SymChipBug;  /* sym handle for '__chipbug' */
 global  FIELDPTR ErrSym;
-global  unsigned QuadIndex;
 
 #if _CPU == 386
 global  void     *FunctionProfileBlock; /* handle for profiling data block */
@@ -263,7 +262,9 @@ global  int     Level;
 
 global  struct  segment_list *SegListHead;
 global  int     SegImport;              /* next segment # for import sym */
-global  int     SegData; ;              /* datra segment # for -nd option */
+global  int     SegData;                /* data segment # for -nd option */
+
+global TREEPTR  FirstStmt;              /* root of expression tree */
 
 global dbug_type ScopeStruct;
 global dbug_type ScopeUnion;

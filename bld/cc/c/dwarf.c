@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF debug support.
 *
 ****************************************************************************/
 
@@ -605,8 +604,6 @@ void dwarfDumpNode( TREEPTR node )
     }
 }
 
-
-extern  TREEPTR FirstStmt;
 
 void dwarfEmitFunctions()
 {

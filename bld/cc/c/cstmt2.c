@@ -58,12 +58,11 @@ struct return_info {
 };
 
 extern int          NodeCount;
-TREEPTR             FirstStmt;
-TREEPTR             LastStmt;
 TREEPTR             CurFuncNode;
 int                 LabelIndex;
 SYM_LISTS           *SymListHeads;
 
+static TREEPTR      LastStmt;
 static BLOCKPTR     BlockStack;
 static BLOCKPTR     LoopStack;
 static SWITCHPTR    SwitchStack;

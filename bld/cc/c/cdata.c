@@ -129,7 +129,6 @@ void InitGlobalVars( void ){
     SymDFAbbr               = 0;    /* sym handle for '__DFABBREV' */
     SymChipBug              = 0;    /* sym handle for '__chipbug' */
     ErrSym                  = NULL;
-    QuadIndex               = 0;
 
 #if _CPU == 386
     FunctionProfileBlock    = NULL; /* handle for profiling data block */

@@ -41,8 +41,6 @@
 #include <sys/stat.h>
 #include "autodept.h"
 
-extern  TREEPTR FirstStmt;
-
 static unsigned char VarFuncWeights[] = {
 //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
   0, 0,13, 0, 2, 1, 0, 0, 0, 0, 0,12, 0,14, 4,10, 0, 0, 6, 0, 0, 0, 0, 0, 0,0

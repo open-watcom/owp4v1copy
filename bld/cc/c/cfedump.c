@@ -128,8 +128,6 @@ static char *_Ops[] = {
 
 char    *CCOps[] = { "==", "!=", "<", "<=", ">", ">=" };
 
-extern  TREEPTR FirstStmt;
-
 static void DumpAString( STR_HANDLE str_handle )
 {
     unsigned    len;
