@@ -386,7 +386,6 @@ static void ProcessCtlFile( const char *name )
 {
     char        *p;
     char        *log_name;
-    char        *match;
     unsigned    res;
     bool        logit;
 
@@ -420,22 +419,22 @@ static void ProcessCtlFile( const char *name )
                     }
                 }
             } else if( stricmp( p, "BLOCK" ) == 0 ) {
+                IncludeStk->skipping = 0;   // New block: reset skip flag
+                if (!MatchFound(p))
+                    IncludeStk->skipping++;
+                break;
+            } else if( stricmp( p, "IFEQU" ) == 0 ) {
+                if (!MatchFound(p))
+                    IncludeStk->skipping++;
+                break;
+            } else if( stricmp( p, "ELSEIFEQU" ) == 0 ) {
                 if( IncludeStk->skipping != 0 ) IncludeStk->skipping--;
-                p = NextWord( p );
-                if( p == NULL ) {
-                    Fatal( "Missing match word\n" );
-                }
-                match = p;
-                for( ;; ) {
-                    p = NextWord( p );
-                    if( p == NULL || strcmp( p, "]" ) == 0 ) {
-                        IncludeStk->skipping++;
-                        break;
-                    }
-                    if( stricmp( match, p ) == 0 ) {
-                        break;
-                    }
-                }
+                if (!MatchFound(p))
+                    IncludeStk->skipping++;
+                break;
+            } else if( stricmp( p, "ENDIF" ) == 0 ) {
+                if( IncludeStk->skipping != 0 ) IncludeStk->skipping--;
+                break;
             } else {
                 Fatal( "Unknown directive '%s'\n", p );
             }
@@ -536,4 +535,30 @@ int main( int argc, char *argv[] )
     }
     if( LogFile != NULL ) fclose( LogFile );
     return( 0 );
+}
+
+/****************************************************************************
+*
+* MatchFound. Examines a string of space separated words. If the first
+* word matches any of the words following it, returns 1. If not, returns 0.
+* String is terminated ny 0 or ']'.
+* If there isn't at least one word in the string, terminates program.
+*
+***************************************************************************/
+int MatchFound(char *p)
+{
+    char   *match;
+
+    p = NextWord( p );
+    if( p == NULL ) {
+        Fatal( "Missing match word\n" );
+    }
+    match = p;
+    for( ;; ) {
+        p = NextWord( p );
+        if( p == NULL || strcmp( p, "]" ) == 0 )    // End of string
+            return 0;
+        if( stricmp( match, p ) == 0 )
+            return 1;
+    }
 }
