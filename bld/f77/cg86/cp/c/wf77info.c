@@ -150,22 +150,8 @@ static  void            DefDbgStruct( sym_id sym );
 #define BLANK_COM_LEN           6
 
 static  char            GData[] = { "GDATA@" };
-static  char            ForceStartup[] = { "_cstart_" };
-static  char            ForceUnit6CC[] = { "__unit_6_cc" };
-static  char            ForceLFwithFF[] = { "__lf_with_ff" };
-static  char            ForceCommaSep[] = { "__comma_inp_sep" };
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
-static  char            ForceThread[] = { "__fthread_init" };
-static  char            ForceDLLStartup[] = { "__DLLstart_" };
-#if _TARGET == _80386
-static  char            ForceInitEmulator[] = { "__init_387_emulator" };
-static  char            ForceDefaultWin[] = { "__init_default_win" };
-#endif
-#endif
 #if _TARGET == _8086 || _TARGET == _80386
 static  char            *CSSuff = TS_SEG_CODE;
-static  char            ForceInit8087[] = { "__8087" };
-static  char            ForceOldInit8087[] = { "__old_8087" };
 static  BYTE_SEQ(2)     CodeAlignSeq = { 2, sizeof( inttarg ), 1 };
 static  BYTE_SEQ(1)     DefCodeAlignSeq = { 1, 1 };
 #endif
@@ -2027,37 +2013,37 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         case 1:
 #if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
             if( CGOpts & CGOPT_BD )
-                return( ForceDLLStartup );
+                return( "__DLLstart_" );
 #endif
-            return( ForceStartup );
+            return( "_cstart_" );
 #if _TARGET == _8086 || _TARGET == _80386
         case 2:
             if( CPUOpts & CPUOPT_FPR ) {
-                return( ForceOldInit8087 );
+                return( "__old_8087" );
             } else {
-                return( ForceInit8087 );
+                return( "__8087" );
             }
 #endif
 #if _TARGET == _80386
         case 3:
-            return( ForceInitEmulator );
+            return( "__init_387_emulator" );
         case 4:
-            return( ForceDefaultWin );
+            return( "__init_default_win" );
 #endif
         case 5:
             return( CharSetInfo.initializer );
         case 6:
             return( ErrorInitializer() );
         case 7:
-            return( ForceUnit6CC );
+            return( "__unit_6_cc" );
         case 8:
-            return( ForceLFwithFF );
+            return( "__lf_with_ff" );
 #if _TARGET == _80386 || _TARGET == _PPC || _TARGET == _AXP
         case 9:
-            return( ForceThread );
+            return( "__fthread_init" );
 #endif
         case 10:
-            return( ForceCommaSep );
+            return( "__comma_inp_sep" );
         }
     case IMPORT_NAME_S :
         return( ImpSym );
@@ -2183,6 +2169,10 @@ int     FECodeBytes( const char *buffer, int len )
 char    *FEGetEnv( char const *name ) {
 //=====================================
 // do a getenv
+
+    return( getenv( name ) );
+}
+nv
 
     return( getenv( name ) );
 }
