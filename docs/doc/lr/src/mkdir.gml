@@ -1,5 +1,5 @@
 .func mkdir _mkdir _wmkdir _umkdir
-.if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
 int mkdir( const char *path, mode_t mode );
@@ -88,7 +88,6 @@ The &func function returns zero if successful, and a non-zero value
 otherwise.
 .return end
 .error begin
-.if '&machsys' ne 'PP' .do begin
 .begterm 12
 .termhd1 Constant
 .termhd2 Meaning
@@ -97,9 +96,9 @@ Search permission is denied for a component of
 .arg path
 or write permission is denied on the parent directory of the
 directory to be created.
-.if '&machsys' eq 'QNX' .do begin
 .term EEXIST
 The named file exists.
+.if '&machsys' eq 'QNX' .do begin
 .term EMLINK
 The link count of the parent directory would exceed {LINK_MAX}.
 .term ENAMETOOLONG
@@ -130,7 +129,6 @@ The parent directory of the directory being created resides on a
 read-only file system.
 .do end
 .endterm
-.do end
 .error end
 .see begin
 .seelist &function. chdir chmod getcwd mkdir mknod rmdir stat umask
@@ -138,12 +136,7 @@ read-only file system.
 .exmp begin
 .blktext begin
 To make a new directory called
-.if '&machsys' eq 'PP' .do begin
-.filename myapp
-in the directory
-.filename \\foo\penpoint\app
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 .filename /watcom
 on node 2
 .do end
@@ -154,7 +147,7 @@ on drive
 .do end
 .blktext end
 .blkcode begin
-.if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
 .do end
@@ -165,13 +158,7 @@ on drive
 
 void main()
   {
-.if '&machsys' eq 'PP' .do begin
-    mkdir( "\\\\foo\\penpoint\\app\\myapp",
-           S_IRWXU |
-           S_IRGRP | S_IXGRP |
-           S_IROTH | S_IXOTH );
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
     mkdir( "//2/hd/watcom",
            S_IRWXU |
            S_IRGRP | S_IXGRP |
