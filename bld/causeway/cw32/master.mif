@@ -8,7 +8,7 @@ causeway_autodepends = .AUTODEPEND
 
 extra_a_flags = -DENGLISH=1 -i="../inc"
 
-extra_l_flags = op map, verbose
+extra_l_flags = op map, verbose, statics
 
 .asm : ../asm;../asm/loadle
 
