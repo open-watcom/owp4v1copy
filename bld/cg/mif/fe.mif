@@ -21,17 +21,19 @@ obj_dir = $(host_os)$(host_cpu).rtd
 !ifdef debug_cg
 o_dir_386 = $(cg_dir)/intel/386/$(obj_dir).dbg
 o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir).dbg
+o_dir_axp = $(cg_dir)/risc/axp/$(obj_dir).dbg
+o_dir_ppc = $(cg_dir)/risc/ppc/$(obj_dir).dbg
 !else
 o_dir_386 = $(cg_dir)/intel/386/$(obj_dir)
 o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir)
+o_dir_axp = $(cg_dir)/risc/axp/$(obj_dir)
+o_dir_ppc = $(cg_dir)/risc/ppc/$(obj_dir)
 !endif
 i_path_386 = -I"$(cg_dir)/intel/386/h" -I"$(cg_dir)/intel/h"
 i_path_i86 = -I"$(cg_dir)/intel/i86/h" -I"$(cg_dir)/intel/h"
 
-o_dir_axp  = $(cg_dir)/risc/axp/$(obj_dir)
 i_path_axp = -I"$(cg_dir)/risc/axp/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 
-o_dir_ppc  = $(cg_dir)/risc/ppc/$(obj_dir)
 i_path_ppc = -I"$(cg_dir)/risc/ppc/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 
 !ifndef o_dir_$(target_cpu)
