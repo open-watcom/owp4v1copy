@@ -16,11 +16,11 @@ inc_dirs=$(f77_dir)\cg86\cp\h;$(f77_dir)\cg86\h;$(cg_inc_dirs);$(f77_dir)\h;$(dw
 !ifeq target_CPU 386
 inc_dirs+=;$(wasm_dir)\h
 inline_asm_lib=
-pre_deps_wasm = $(wasm_dir)/h/inlnops.h $(wasm_dir)/h/msg.gh
+pre_deps_wasm = inlnops.gh msg.gh
 !else ifeq target_CPU i86
 inc_dirs+=;$(wasm_dir)\h
 inline_asm_lib=
-pre_deps_wasm = $(wasm_dir)/h/inlnops.h $(wasm_dir)/h/msg.gh
+pre_deps_wasm = inlnops.gh msg.gh
 !else ifeq target_CPU axp
 inc_dirs+=;$(as_dir)\h
 inline_asm_lib=$(as_dir)\alpha\inline\o.$(host_CPU)\asinline.lib
@@ -111,11 +111,10 @@ errmsg.res : ..\c\errmsg.rc ..\h\errmsgi.rc ..\h\errmsg3.rc ..\h\errcod.h ..\h\e
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $[@ -fe=$@
 
-$(wasm_dir)/h/inlnops.h: ./mkopcode.exe $(wasm_dir)/inlnops.tok
+inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
-        rm -f mkopcode.*
 
-$(wasm_dir)/h/msg.gh : $(wasm_dir)/h/asmshare.msg
+msg.gh : $(wasm_dir)/h/asmshare.msg
 !ifdef __LINUX__
         perl ../../sdk/misc/msgtoh.pl < $[@ > t.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@

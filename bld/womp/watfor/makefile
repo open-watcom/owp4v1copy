@@ -1,6 +1,7 @@
 !include $(womp_dir)\watfor\files.mif
 
 .c: $(womp_dir)\c
+
 !ifdef __386__
 .c.obj
     $(libcomp386) $[@ /mf/d1/oax/w4/zq/zl/fo=$^@
@@ -13,9 +14,9 @@
     set include=$(wf)lg86\h;$(womp_dir)\h;$(bld_h);$(watcom_dir)\h;$(wf)h
 
 !ifdef __386__
-$(womp_dir)\watfor\obj386\wompobj.lib : $(womp_dir)\h\wmpmsg.h $(womp_objs)
+$(womp_dir)\watfor\obj386\wompobj.lib : wmpmsg.gh $(womp_objs)
 !else
-$(womp_dir)\watfor\obj\wompobj.lib : $(womp_dir)\h\wmpmsg.h $(womp_objs)
+$(womp_dir)\watfor\obj\wompobj.lib : wmpmsg.gh $(womp_objs)
 !endif
     %create tmp.lbc
     @for %i in ($(womp_objs)) do @%append tmp.lbc -+%i

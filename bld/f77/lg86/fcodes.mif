@@ -11,39 +11,40 @@ fctab_c = $(f77_dir)\lg86\cp\c\fctab.c
 
 fcode_headers = $(fcodes_h) $(fcodes_inc)
 
-fcbuild = $(f77_dir)\lg86\utils\fcbuild.exe
+#fcbuild = $(f77_dir)\lg86\utils\fcbuild.exe
 
 #
 # The fcinfo.dat processing utility
 #
-$(fcbuild) : $(f77_dir)\lg86\utils\fcbuild.obj
-!ifdef __OS2__
-    wlink sys os2 debug all option quiet name $(fcbuild) file $[@
-!else
-    *wlink sys dos debug all option quiet name $(fcbuild) file $[@
-!endif
+./fcbuild.exe : fcbuild.c
+    $(bld_cl) $[@ -oailt -s -w4 -d1 -i$(c_dir)h -fe=$@
+#!ifdef __OS2__
+#    wlink sys os2 debug all option quiet name $(fcbuild) file $[@
+#!else
+#    *wlink sys dos debug all option quiet name $(fcbuild) file $[@
+#!endif
 
-$(f77_dir)\lg86\utils\fcbuild.obj : fcbuild.c
-    $(comp286) $[@/zq/oailt/s/w4/d1/i$(c_dir)h/fo=$(f77_dir)\lg86\utils\
+#$(f77_dir)\lg86\utils\fcbuild.obj : fcbuild.c
+#    $(comp286) $[@/zq/oailt/s/w4/d1/i$(c_dir)h/fo=$(f77_dir)\lg86\utils\
 
 
 #
 # Special files which fcbuild.exe creates
 #
 fcinfo = $(f77_dir)\lg86\fcinfo.dat
-$(fcodes_h) : $(fcinfo) $(fcbuild)
-    $(fcbuild) $[@ $^@ e
+$(fcodes_h) : $(fcinfo) ./fcbuild.exe
+    $]@ $[@ $^@ e
 
-$(fcodes_inc) : $(fcinfo) $(fcbuild)
-    $(fcbuild) $[@ $^@ i
+$(fcodes_inc) : $(fcinfo) ./fcbuild.exe
+    $]@ $[@ $^@ i
 
-$(fctab_c) : $(fcinfo) $(fcbuild)
-    $(fcbuild) $[@ $^@ t
+$(fctab_c) : $(fcinfo) ./fcbuild.exe
+    $]@ $[@ $^@ t
 
 !ifeq form dos
-$(fcnovect_lnk) : $(fcinfo) $(fcbuild)
-    $(fcbuild) $[@ $^@ v
+$(fcnovect_lnk) : $(fcinfo) ./fcbuild.exe
+    $]@ $[@ $^@ v
 !endif
 
-$(fcnames_inc) : $(fcinfo) $(fcbuild)
-    $(fcbuild) $[@ $^@ n
+$(fcnames_inc) : $(fcinfo) ./fcbuild.exe
+    $]@ $[@ $^@ n

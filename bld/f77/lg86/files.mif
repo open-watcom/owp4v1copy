@@ -6,7 +6,7 @@
 #               changing two numbers near the top of the file...)  You
 #               will then have to recompile wrtexe.obj and wrtexef.obj
 #
-#       See comp.mif for an explanation of .obj and .XBJ
+#       See comp.mif for an explanation of .obj and .xbj
 #
 
 #
@@ -54,7 +54,7 @@ errrsrc.obj
 # The following are SYSTEM DEPENDENT files used BOTH
 # at compile-time and run-time.
 obj_0 += &
-btraps.JBJ &
+btraps.jbj &
 global.obj &
 intarith.obj &
 fciftbl.obj &
@@ -70,15 +70,15 @@ sdfile.obj
 !ifdef __386__
 obj_0 += &
 wf77main.obj &
-posput.XBJ &
+posput.xbj &
 spawn.obj
 !else
-# We include posput.XBJ here because it calls write which calls _STK
+# We include posput.xbj here because it calls write which calls _STK
 # which imports _STK into the root.  Otherwise distribution would not
 # be possible, its kludgy, but it works
 root = $(obj_rt_0) &
 wf77main.obj &
-posput.XBJ &
+posput.xbj &
 spawn.obj
 !endif
 
@@ -189,9 +189,9 @@ lfio.obj &
 posback.obj &
 posrew.obj &
 postrunc.obj &
-rtinit.XBJ &
-rtsysutl.XBJ &
-rttraps.XBJ &
+rtinit.xbj &
+rtsysutl.xbj &
+rttraps.xbj &
 sysinq.obj
 
 !ifdef __386__
@@ -227,7 +227,7 @@ flushuni.obj &
 fspawn.obj &
 fsystem.obj &
 getdat.obj &
-gettim.XBJ &
+gettim.xbj &
 urand.obj &
 filesize.obj &
 seekunit.obj &
@@ -235,7 +235,7 @@ fgrowhdl.obj &
 fargs.obj &
 fexit.obj
 !ifeq host_OS dos
-obj_1 += fintr.XBJ
+obj_1 += fintr.xbj
 !endif
 
 #
@@ -265,16 +265,16 @@ showopts.obj
 
 # sysdep
 obj_3 += &
-cptraps.XBJ &
+cptraps.xbj &
 docle.obj &
-inout.XBJ &
+inout.xbj &
 ifaddr.obj &
-mainline.XBJ &
+mainline.xbj &
 objutil.obj &
-sdcio.XBJ &
+sdcio.xbj &
 tdlreloc.obj &
-filescan.XBJ &
-sdcline.XBJ &
+filescan.xbj &
+sdcline.xbj &
 ifargct.obj &
 genfixup.obj
 
@@ -286,7 +286,7 @@ editcomp.obj
 obj_3 += &
 gedit3.obj
 !ifneq form os2v2
-obj_3 += editcomp.XBJ
+obj_3 += editcomp.xbj
 !endif
 !endif
 
@@ -417,7 +417,7 @@ volatile.obj
 obj_4 += &
 asgnop.obj &
 binops.obj &
-cmdparms.XBJ &
+cmdparms.xbj &
 csdep.obj &
 emit.obj &
 exprutil.obj &
@@ -440,12 +440,12 @@ iftable.obj &
 initopt.obj &
 libsupp.obj &
 logops.obj &
-option.XBJ &
+option.xbj &
 relops.obj &
 stkctrl.obj &
 stkops.obj &
 tddump.obj &
-tdinit.XBJ &
+tdinit.xbj &
 auxlook.obj &
 regs.obj &
 wf77aux.obj
@@ -467,7 +467,7 @@ $(dwarf_dir)\dw\ol\dwl.lib
 !endif
 
 obj_4 += &
-ufns.XBJ
+ufns.xbj
 
 #
 # OVERLAY 5: This overlay contain a compile-time, and a debugger module

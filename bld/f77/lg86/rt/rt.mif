@@ -3,7 +3,7 @@
 #
 # note that because wlib doesn't have support for finding files in a
 # different directory, all the .objs here have to have $(indep) in
-# front of them.  The XBJ files should not have this prefix.
+# front of them.  The xbj files should not have this prefix.
 #
 !ifdef in_sa_library
 indep=$(share_objs)
@@ -13,7 +13,7 @@ indep=
 
 obj_rt_0 = &
 $+$(indep)$-insertxt.obj &
-lgtraps.XBJ &
+lgtraps.xbj &
 $+$(indep)$-rtglob.obj
 
 !ifeq fp_model i87
@@ -22,7 +22,7 @@ $+$(indep)$-chk8087.obj
 !endif
 
 obj_rt_1 = &
-fptraps.XBJ &
+fptraps.xbj &
 $+$(indep)$-fcifprlg.obj &
 $+$(indep)$-ifalog.obj &
 $+$(indep)$-ifalog10.obj &
