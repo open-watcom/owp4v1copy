@@ -41,6 +41,8 @@
 #include "sigtab.h"
 #include "initfini.h"
 
+extern void __InitThreadData( thread_data * );
+
 #ifdef __SW_BR
     _WCRTLINK extern    void    (*__process_fini)(unsigned,unsigned);
     _WCRTLINK extern    int     ___Argc;        /* argument count */
@@ -95,6 +97,7 @@ void __F_NAME(__NTMain,__wNTMain)( void )
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;
 
+        __InitThreadData( tdata );
         __NTMainInit( &rr, tdata );
         __F_NAME(__CMain,__wCMain)();
     }
