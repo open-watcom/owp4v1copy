@@ -82,7 +82,7 @@ typedef struct data_quad_list {
 #define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
 
 static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
-static DATA_QUAD_LIST  *LastDataQuad;
+static DATA_QUAD_LIST  *CurDataQuad;
 static int             DataQuadIndex;
 
 local int CharArray( TYPEPTR typ );
@@ -113,7 +113,7 @@ void FreeDataQuads()
 int StartDataQuadAccess()
 {
     if( DataQuadSegIndex != -1 ) {
-        LastDataQuad = DataQuadSegs[ 0 ];
+        CurDataQuad = DataQuadSegs[ 0 ];
         return( 1 );                    // indicate data quads exist
     }
     return( 0 );                        // indicate no data quads
@@ -123,10 +123,10 @@ DATA_QUAD *NextDataQuad()
 {
     DATA_QUAD   *dq_ptr;
 
-    if( LastDataQuad == NULL )
+    if( CurDataQuad == NULL )
         return NULL;
-    dq_ptr = &LastDataQuad->dq;
-    LastDataQuad = LastDataQuad->next;
+    dq_ptr = &CurDataQuad->dq;
+    CurDataQuad = CurDataQuad->next;
     return( dq_ptr );
 }
 
@@ -155,12 +155,12 @@ local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 {
     DATA_QUAD_LIST *dql = NewDataQuad();
     memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
-    if (LastDataQuad != NULL)
-        LastDataQuad->next = dql;
-    dql->prev = LastDataQuad;
+    if (CurDataQuad != NULL)
+        CurDataQuad->next = dql;
+    dql->prev = CurDataQuad;
     dql->next = NULL;
     dql->size = size;
-    LastDataQuad = dql;
+    CurDataQuad = dql;
 }
 
 local void ZeroBytes( long n )
@@ -197,7 +197,7 @@ local void ChkConstant( unsigned long value, unsigned long max_value )
 local void StoreIValue( TOKEN int_type, unsigned long value,
                         unsigned long size )
 {
-    static DATA_QUAD_LIST *PrevLastDataQuad;
+    static DATA_QUAD_LIST *LastCurDataQuad;
 
     DATA_QUAD           *dq_ptr;
     auto DATA_QUAD      dq;
@@ -205,14 +205,14 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
     dq.flags = 0;
     dq.opr = 0;
     dq_ptr = &dq;
-    if( PrevLastDataQuad == LastDataQuad ) {
-        dq_ptr = &LastDataQuad->dq;
+    if( LastCurDataQuad == CurDataQuad ) {
+        dq_ptr = &CurDataQuad->dq;
     }
     if( dq_ptr->opr == int_type  &&             /* 06-apr-92 */
         dq_ptr->flags == (Q_DATA | Q_REPEATED_DATA)  &&
         dq_ptr->u.long_values[0] == value ) {
         dq_ptr->u.long_values[1]++;             /* increment repeat count */
-        LastDataQuad->size += size;
+        CurDataQuad->size += size;
     } else if( dq_ptr->opr == int_type  &&  dq_ptr->flags == Q_DATA ) {
         if( dq_ptr->u.long_values[0] == value ) {
             dq_ptr->flags |= Q_REPEATED_DATA;
@@ -221,14 +221,14 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
             dq_ptr->flags |= Q_2_INTS_IN_ONE;
             dq_ptr->u.long_values[1] = value;
         }
-        LastDataQuad->size += size;
+        CurDataQuad->size += size;
     } else {
         dq.opr = int_type;
         dq.flags = Q_DATA;
         dq.u.long_values[0] = value;
         if( value != 0 ) CompFlags.non_zero_data = 1;
         GenDataQuad( &dq, size );
-        PrevLastDataQuad = LastDataQuad;
+        LastCurDataQuad = CurDataQuad;
     }
 }
 
