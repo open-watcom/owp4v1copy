@@ -79,7 +79,7 @@ typedef unsigned long   virt_mem;
 typedef unsigned        f_handle;
 
 #ifndef __386__
-#define UNALIGN __unaligned
+#define UNALIGN _WCUNALIGNED
 #else
 #define UNALIGN
 #endif

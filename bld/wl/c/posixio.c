@@ -410,10 +410,7 @@ extern bool QHavePath( char *name )
 extern bool QSysHelp( char **cmd_ptr )
 /************************************/
 {
-#ifdef __386__
-    cmd_ptr = cmd_ptr;
-    return FALSE;
-#else
+#if defined( __I86__ ) && defined( __QNX__ )
     extern  struct _proc_spawn *__cmd;
     char    *p;
 
@@ -421,6 +418,9 @@ extern bool QSysHelp( char **cmd_ptr )
     p = __cmd->data;
     while( *p ) ++p; /* skip over executable name */
     return( p[1] == '?' );
+#else
+    cmd_ptr = cmd_ptr;
+    return FALSE;
 #endif
 }
 
