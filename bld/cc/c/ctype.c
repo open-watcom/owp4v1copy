@@ -1315,19 +1315,30 @@ void VfyNewSym( int hash_value, char *name )
     SYM_HANDLE  sym_handle;
     auto SYM_ENTRY sym;
     auto struct enum_info ei;
+    int         do_diag_pop = 0;
 
     enum_var = EnumLookup( hash_value, name, &ei );
     if( enum_var ) {
-        if( ei.level != SymLevel )      enum_var = 0;
+        if( ei.level != SymLevel )
+            enum_var = 0;
+        // Unfortunately we don't seem to have any easy way
+        // to diagnose where an enum was defined
     }
     sym_handle = SymLook( hash_value, name );
     if( sym_handle != 0 ) {
         SymGet( &sym, sym_handle );
-        if( sym.level != SymLevel )  sym_handle = 0;
+        if( sym.level != SymLevel )
+            sym_handle = 0;
+        else {
+            SetDiagSymbol( &sym, sym_handle );
+            ++do_diag_pop;
+        }
     }
     if( sym_handle != 0  ||  enum_var != 0 ) {
         CErr2p( ERR_SYM_ALREADY_DEFINED, name );
     }
+    while( do_diag_pop-- )
+        SetDiagPop();
 }
 
 
