@@ -23,15 +23,6 @@ lib_flags     =-b -c
 lib_flags    +=-s -t
 !endif
 !endif
-!ifeq release 1
-!ifdef profile
-lib_flags    +=-p=32
-!else
-lib_flags    +=-p=16
-!endif
-!else
-lib_flags    +=-p=64
-!endif
 
 lib_flags_new =-n
 
