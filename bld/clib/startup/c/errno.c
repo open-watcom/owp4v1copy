@@ -37,7 +37,7 @@
 #include <sys/magic.h>
 #include <errno.h>
 
-_WCRTLINK int *__get_errno_ptr()
+_WCRTLINK int *__get_errno_ptr( void )
 {
 #if defined(__386__)
     void        *err_ptr;
@@ -57,7 +57,7 @@ _WCRTLINK int *__get_errno_ptr()
     _WCRTLINK int               errno;
 #endif
 
-_WCRTLINK int *__get_errno_ptr()
+_WCRTLINK int *__get_errno_ptr( void )
 {
     return( &_RWD_errno );
 }
@@ -71,12 +71,12 @@ _WCRTLINK int *__get_errno_ptr()
     _WCRTLINK int               _doserrno;
 #endif
 
-_WCRTLINK int *__get_errno_ptr()
+_WCRTLINK int *__get_errno_ptr( void )
 {
     return( &_RWD_errno );
 }
 
-_WCRTLINK int *__get_doserrno_ptr()
+_WCRTLINK int *__get_doserrno_ptr( void )
 {
     return( &_RWD_doserrno );
 }
