@@ -256,6 +256,25 @@ _WCRTLINK int readlink( const char *__path, char *__buf, size_t __bufsiz )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int link( const char *__path1, const char *__path2 )
+{
+    u_long res = sys_call2(SYS_link, (u_long)__path1, (u_long)__path2);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int symlink( const char *__pname, const char *__slink )
+{
+    u_long res = sys_call2(SYS_symlink, (u_long)__pname, (u_long)__slink);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int mknod( const char *__path, mode_t __mode, int __dev )
+{
+    u_long res = sys_call3(SYS_mknod, (u_long)__path, __mode, __dev);
+    __syscall_return(int,res);
+}
+
+
 _WCRTLINK int chdir( const char *__path )
 {
     u_long res = sys_call1(SYS_chdir, (u_long)__path);
@@ -370,6 +389,12 @@ _WCRTLINK int fchown( int __fd, uid_t __owner, gid_t __group )
 {
     u_long res = sys_call3(SYS_fchown, __fd, __owner, __group);
     __syscall_return(int,res);
+}
+
+_WCRTLINK mode_t umask( mode_t __cmask )
+{
+    u_long res = sys_call1(SYS_umask, __cmask);
+    __syscall_return(mode_t,res);
 }
 
 _WCRTLINK pid_t getpid( void )
