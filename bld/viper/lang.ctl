@@ -14,7 +14,6 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> getviper.bat <relroot>\rel2\getviper.bat
     <CPCMD> viper.doc <relroot>\rel2\ide.doc
     <CPCMD> viper\ide.cfg <relroot>\rel2\binw\ide.cfg
     <CPCMD> viper\idedos.cfg <relroot>\rel2\binw\idedos.cfg
