@@ -176,7 +176,7 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
         if( dr != DR_OK ) return( dr );
-        h->d->bswap_hook( h, d, ins );
+        h->d->preproc_hook( h, d, ins );
         page = 0;
         for( pos = h->d->range_pos ; *pos != -1 ; ++pos, ++page ) {
             if( h->d->decode_check( page, ins ) != DHR_DONE )
@@ -279,7 +279,8 @@ dis_return DisFormat( dis_handle *h, void *d, dis_dec_ins *ins_p,
         p = opers;
         for( i = 0; i < ins.num_ops; ++i ) {
             if( !(ins.op[i].type & DO_HIDDEN) ) {
-                if( p != opers ) *p++ = ',';
+                if( p != opers )
+                    *p++ = ',';
                 len = h->d->op_hook( h, d, &ins, flags, i, p );
                 p += len;
                 if( len == 0 ) {
@@ -287,6 +288,10 @@ dis_return DisFormat( dis_handle *h, void *d, dis_dec_ins *ins_p,
                 }
             }
         }
+        if( p != opers )
+            *p++ = ' ';
+        len = h->d->post_op_hook( h, d, &ins, flags, i, p );
+        p += len;
         *p = '\0';
     }
     return( DR_OK );

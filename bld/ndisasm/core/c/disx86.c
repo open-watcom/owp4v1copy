@@ -1654,7 +1654,24 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )
     switch( ins->type ) {
     case DI_X86_int:
         if( code.type3.w ) {
-            ins->op[0].value = GetUByte( d, ins->size );
+
+            char intno = GetUByte( d, ins->size );
+
+            if( ( intno >= 0x34 ) && ( intno <= 0x3D ) ) {
+                ins->flags |= DIF_X86_EMU_INT;
+                ins->op[ MAX_NUM_OPERANDS - 1 ].value = intno;
+                ins->op[ MAX_NUM_OPERANDS - 1 ].type = DO_IMMED;
+                ins->op[ MAX_NUM_OPERANDS - 1 ].ref_type = DRT_X86_BYTE;
+                if( intno == 0x3C ) {
+                    ins->size += 1;
+                    ins->flags ^= DIF_X86_FWAIT;
+                } else if( intno == 0x3D ) {
+                } else {
+                    ins->flags ^= DIF_X86_FWAIT;
+                }
+                return( DHR_CONTINUE );
+            }
+            ins->op[0].value = intno;
             ins->size += 1;
         } else {
             ins->op[0].value = 3;
@@ -3974,6 +3991,7 @@ static unsigned X86OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
 }
 
 static dis_handler_return X86DecodeTableCheck( int page, dis_dec_ins *ins )
+/*************************************************************************/
 {
     switch( page ) {
     case 0:
@@ -4007,11 +4025,65 @@ static dis_handler_return X86DecodeTableCheck( int page, dis_dec_ins *ins )
     }
 }
 
-static void X86ByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+static void process87EMUIns( dis_dec_ins *ins )
+/*********************************************/
+{
+    if( ins->op[ MAX_NUM_OPERANDS - 1 ].value == 0x3C ) {
+        switch( ins->opcode & 0xC0 ) {
+        case 0xC0:
+            ins->flags |= DIF_X86_ES;
+            break;
+        case 0x80:
+            ins->flags |= DIF_X86_CS;
+            break;
+        case 0x40:
+            ins->flags |= DIF_X86_SS;
+            break;
+        case 0:
+            ins->flags |= DIF_X86_DS;
+            break;
+        }
+        ins->opcode |= 0xC0;  // restore FP opcode D8-DF
+    } else if( ins->op[ MAX_NUM_OPERANDS - 1 ].value == 0x3D ) {
+        ins->opcode = 0x90;   // NOP
+    } else {
+        ins->opcode += 0xA4;  // restore FP opcode D8-DF
+    }
+}
+
+static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
+/**************************************************************/
 {
     // Nothing to do here - instruction will be decoded byte by byte
 }
 
+static void X86PreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
+/********************************************************************/
+{
+    ByteSwap( h, d, ins );
+    if( ins->flags & DIF_X86_EMU_INT ) {
+        process87EMUIns( ins );
+    }
+}
+
+static unsigned X86PostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
+        dis_format_flags flags, unsigned op_num, char *op_buff )
+/**********************************************************************/
+{
+    unsigned len = 0;
+
+    if( ins->flags & DIF_X86_EMU_INT ) {
+        #define EMU_INT        "; int "
+        memcpy( op_buff, EMU_INT, sizeof( EMU_INT ) - 1 );
+        len += sizeof( EMU_INT ) - 1;
+        op_buff[ len ] = 0;
+        if( flags & DFF_INS_UP )
+            strupr( op_buff );
+        len += DisCliValueString( d, ins, MAX_NUM_OPERANDS - 1, op_buff + len );
+    }
+    return( len );
+}
+
 const dis_cpu_data X86Data = {
-    X86RangeTable, X86RangeTablePos, X86ByteSwapHook, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
+    X86RangeTable, X86RangeTablePos, X86PreprocHook, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, X86PostOpHook, &X86MaxInsName, 1
 };

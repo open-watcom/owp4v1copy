@@ -335,7 +335,7 @@ static dis_handler_return SPARCDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-static void SPARCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     if( h->need_bswap ) {
 #ifdef __BIG_ENDIAN__
@@ -346,6 +346,18 @@ static void SPARCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
     }
 }
 
+static void SPARCPreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    ByteSwap( h, d, ins );
+}
+
+static unsigned SPARCPostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
+        dis_format_flags flags, unsigned op_num, char *op_buff )
+{
+    // Nothing to do
+    return( 0 );
+}
+
 const dis_cpu_data SPARCData = {
-    SPARCRangeTable, SPARCRangeTablePos, SPARCByteSwapHook, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
+    SPARCRangeTable, SPARCRangeTablePos, SPARCPreprocHook, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, SPARCPostOpHook, &SPARCMaxInsName, 4
 };

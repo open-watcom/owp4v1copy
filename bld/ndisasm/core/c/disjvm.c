@@ -269,11 +269,23 @@ static dis_handler_return JVMDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-static void JVMByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     // FIXME !!!!
 }
 
+static void JVMPreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    ByteSwap( h, d, ins );
+}
+
+static unsigned JVMPostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
+        dis_format_flags flags, unsigned op_num, char *op_buff )
+{
+    // Nothing to do
+    return( 0 );
+}
+
 const dis_cpu_data JVMData = {
-    JVMRangeTable, JVMRangeTablePos, JVMByteSwapHook, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, &JVMMaxInsName, 1
+    JVMRangeTable, JVMRangeTablePos, JVMPreprocHook, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, JVMPostHook, &JVMMaxInsName, 1
 };

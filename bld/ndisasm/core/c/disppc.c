@@ -1439,7 +1439,7 @@ static dis_handler_return PPCDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-static void PPCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     if( h->need_bswap ) {
 #ifdef __BIG_ENDIAN__
@@ -1450,6 +1450,18 @@ static void PPCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
     }
 }
 
+static void PPCPreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    ByteSwap( h, d, ins );
+}
+
+static unsigned PPCPostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
+        dis_format_flags flags, unsigned op_num, char *op_buff )
+{
+    // Nothing to do
+    return( 0 );
+}
+
 const dis_cpu_data PPCData = {
-    PPCRangeTable, PPCRangeTablePos, PPCByteSwapHook, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
+    PPCRangeTable, PPCRangeTablePos, PPCPreprocHook, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, PPCPostOpHook, &PPCMaxInsName, 4
 };

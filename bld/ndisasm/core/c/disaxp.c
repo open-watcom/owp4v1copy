@@ -571,7 +571,7 @@ static dis_handler_return AXPDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-static void AXPByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     if( h->need_bswap ) {
 #ifdef __BIG_ENDIAN__
@@ -582,6 +582,18 @@ static void AXPByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
     }
 }
 
+static void AXPPreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    ByteSwap( h, d, ins );
+}
+
+static unsigned AXPPostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
+        dis_format_flags flags, unsigned op_num, char *op_buff )
+{
+    // Nothing to do
+    return( 0 );
+}
+
 const dis_cpu_data AXPData = {
-    AXPRangeTable, AXPRangeTablePos, AXPByteSwapHook, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
+    AXPRangeTable, AXPRangeTablePos, AXPPreprocHook, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, AXPPostOpHook, &AXPMaxInsName, 4
 };
