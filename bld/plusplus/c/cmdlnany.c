@@ -1112,6 +1112,24 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->fi ) {
         SetStringOption( &ForceInclude, &(data->fi_value) );
     }
+    if( data->ad ) {
+        SetStringOption( &DependFileName, &(data->ad_value) );
+        CompFlags.generate_auto_depend = 1;
+    }
+    if( data->adt ) {
+        SetStringOption( &TargetFileName, &(data->adt_value) );
+        CompFlags.generate_auto_depend = 1;
+    }
+    if( data->add ) {
+        SetStringOption( &SrcDepFileName, &(data->add_value) );
+        CompFlags.generate_auto_depend = 1;
+    }
+    if( data->adfs ) {
+        ForceSlash = '/';
+    }
+    if( data->adbs ) {
+        ForceSlash = '\\';
+    }
     if( data->fo ) {
         SetStringOption( &ObjectFileName, &(data->fo_value) );
         CompFlags.cpp_output_to_file = 1;   /* in case '-p' option */

@@ -64,6 +64,7 @@
 #include "cusage.h"
 #include "brinfo.h"
 #include "idedrv.h"
+#include "autodep.h"
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -358,7 +359,14 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                     DwarfBrowseEmit();
                     ScopeCreatePCHDebugSym(); // must be done before cg dwarf init
                     CgBackEnd();
+                    if( CompFlags.generate_auto_depend ) {
+                        AdOpen();
+                        AdDump();
+                        AdClose( FALSE );
+                    }
                 }
+                else
+                    AdClose( TRUE );
                 CtxSetContext( CTX_FINI );
                 ExitPointRelease( cpp_object );
             }

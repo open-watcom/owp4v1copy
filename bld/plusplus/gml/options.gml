@@ -38,7 +38,7 @@
 :cmt    :jusage. <text>                         Japanese usage text
 :cmt    :title.                                 English title usage text
 :cmt    :jtitle.                                Japanese title usage text
-:cmt	:page.					text for paging usage message
+:cmt    :page.                  text for paging usage message
 :cmt    :timestamp.                             kludge to record "when" an option
 :cmt                                            is set so that dependencies
 :cmt                                            between options can be simulated
@@ -46,8 +46,8 @@
 :cmt    where:
 :cmt        <arch>:     i86, 386, axp, any, dbg, qnx
 
-:cmt	Translations are required for the :jtitle. and :jusage. tags
-:cmt	if there is no text associated with the tag.
+:cmt    Translations are required for the :jtitle. and :jusage. tags
+:cmt    if there is no text associated with the tag.
 
 :title. Usage: wpp [options] file [options]
 :jtitle. 使用方法: wpp [options] file [options]
@@ -793,6 +793,37 @@
 :target. any
 :usage. NULL points to valid memory in the target environment
 :jusage. NULLは、ターゲット環境内の有効なメモリを指します
+
+:option. ad
+:target. any
+:file.
+:optional.
+:usage. generate makefile style auto depend file
+:jusage. generate makefile style auto depend file
+
+:option. adbs
+:target. any
+:usage. force slashes to back-slashes in auto dep file
+:jusage. force slashes to back-slashes in auto dep file
+
+:option. adfs
+:target. any
+:usage. force slashes to fore-slashes in auto dep file
+:jusage. force slashes to fore-slashes in auto dep file
+
+:option. add
+:target. any
+:file.
+:optional.
+:usage. specify first dependancy in make-style auto depend file
+:jusage. specify first dependancy in make-style auto depend file
+
+:option. adt
+:target. any
+:file.
+:optional.
+:usage. specify target in make-style auto depend file
+:jusage. specify target in make-style auto depend file
 
 :option. p
 :target. any

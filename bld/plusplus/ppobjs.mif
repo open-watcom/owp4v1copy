@@ -42,6 +42,7 @@ common_objs += analyse.obj
 common_objs += arglist.obj
 common_objs += ascii.obj
 common_objs += asmstmt.obj
+common_objs += autodep.obj
 
 !ifeq release 0
 common_objs += b_write.obj

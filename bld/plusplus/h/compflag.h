@@ -283,6 +283,8 @@ typedef struct comp_flags {
     unsigned i86filler07            : 1;
     unsigned i86filler08            : 1;
 
+/* 184 */
+    unsigned generate_auto_depend   : 1;
 } COMP_FLAGS;
 
 #ifdef OPT_BR

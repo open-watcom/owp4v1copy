@@ -121,6 +121,8 @@ static char* extsOut[] =        // extensions for output files
 #ifdef OPT_BR
     ,   ".brm"
 #endif
+    ,   ".d"
+    ,   ".obj"
     };
 
 #define IS_DIR_SEP( c )         ((c)=='/'||(c)=='\\')
@@ -177,6 +179,8 @@ static char* extsOut[] =        // extensions for output files
 #ifdef OPT_BR
     ,   ".brm"
 #endif
+    ,   ".d"
+    ,   ".o"
     };
 
 #define IS_DIR_SEP( c )         ((c)=='/')
@@ -199,6 +203,7 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
     char *dir;
     char *fname;
     char *ext;
+    char *extsrc;
     char *path;
     int use_defaults;
     unsigned mask;
@@ -214,10 +219,35 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
         path = WholeFName;
         use_defaults = TRUE;
         break;
+      case OFT_DEP:
+        path = DependFileName;
+        if( path == NULL ) {
+            use_defaults = TRUE;
+            path = WholeFName;
+        }
+        break;
       case OFT_ERR:
         if( ErrorFileName == NULL ) return( NULL );
         path = ErrorFileName;
         break;
+      case OFT_SRCDEP:
+        outFileChecked |= 1 << typ;
+        if( !(path = SrcDepFileName ) ) {
+            use_defaults = TRUE;
+            path = WholeFName;
+        }
+        else 
+        {
+            auto char buff[ _MAX_PATH2 ];
+            char *drive;
+            char *dir;
+            char *fname;
+            _splitpath2( WholeFName, buff, &drive, &dir, &fname, &extsrc );
+        }
+        break;
+      case OFT_TRG:
+        outFileChecked |= 1 << typ; // don't create a file. it's just a name.
+        if( path = TargetFileName ) break;
       case OFT_PPO:
       case OFT_OBJ:
       case OFT_MBR:
@@ -232,6 +262,10 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
     switch( typ ) {
       case OFT_MBR:
         ext = "";       // don't override extension
+        break;
+      case OFT_SRCDEP:
+        if( !ext || !ext[0] )
+            ext = extsrc;
         break;
     }
     if( use_defaults || ext[0] == '\0' ) {

@@ -55,6 +55,9 @@ enum out_file_type              // TYPES OF OUTPUT FILES
 #ifdef OPT_BR
 ,   OFT_BRI                     // - new browser: module information
 #endif
+,   OFT_DEP                     // make-style auto-depend filename
+,   OFT_TRG                     // target filename
+,   OFT_SRCDEP                  // name of first depend(source) in autodep file
 ,   OFT_MAX
 };
 
