@@ -32,7 +32,9 @@
 #define STRICT
 #include <windows.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
+#include <malloc.h>
 #include "wrglbl.h"
 #include "wrmemi.h"
 #include "wrmem.h"

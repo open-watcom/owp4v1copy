@@ -44,12 +44,13 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
 
 msgfiles = $(wrc_dir)/h/rc.msg ../h/wr.msg
 
-extra_c_flags     = -DWIN_GUI -s
+extra_c_flags     = -DWIN_GUI -DWR_COMPILED -s
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 extra_c_flags_win = -zu-zw-zc
 
 # wr objects
+extra_c_flags_rcerrprt = -fh
 extra_c_flags_wrmain = -fh
 extra_c_flags_wrmem = -bd $(trmem_cover_cflags)
 extra_c_flags_wrmsg = -fh
@@ -85,41 +86,12 @@ extra_c_flags_wrhash = -fh
 extra_c_flags_wredit = -fh
 extra_c_flags_wrutil = -fh
 
-# preprocessor objects
-extra_c_flags_preproc = -zm
-extra_c_flags_ppexpr = -zm
-extra_c_flags_ppmacro = -zm
-
 # misc objects
-extra_c_flags_ldstr = -zm -DWR_NO_RCFPRINTF
-extra_c_flags_palette = -zm -fh
-extra_c_flags_jdlg = -zm -fh
+extra_c_flags_ldstr = -DWR_NO_RCFPRINTF
+extra_c_flags_jdlg = -fh
+extra_c_flags_palette = -fh
 
-# wrc objects
-extra_c_flags_pass2 = -zm -DWR_COMPILED
-extra_c_flags_exeseg = -zm -DWR_COMPILED
-extra_c_flags_exeres = -zm -DWR_COMPILED
-extra_c_flags_rcstr = -zm -DWR_COMPILED
-extra_c_flags_ppalloc = -zm -DWR_COMPILED
-extra_c_flags_exeutil = -zm -DWR_COMPILED
-extra_c_flags_exeobj = -zm -DWR_COMPILED
-extra_c_flags_exerespe = -zm -DWR_COMPILED
-extra_c_flags_rcio = -zm -DWR_COMPILED
-extra_c_flags_global = -zm -DWR_COMPILED
-extra_c_flags_semstr = -zm -DWR_COMPILED
-extra_c_flags_semsingl = -zm -DWR_COMPILED
-extra_c_flags_semantic = -zm -DWR_COMPILED
-extra_c_flags_semraw = -zm -DWR_COMPILED
-extra_c_flags_errors = -zm -DWR_COMPILED
-extra_c_flags_tmpctl = -zm -DWR_COMPILED
-extra_c_flags_autodep = -zm -DWR_COMPILED
-extra_c_flags_layer0 = -zm -DWR_COMPILED
-extra_c_flags_param = -zm -DWR_COMPILED
-extra_c_flags_dbtable = -zm -DWR_COMPILED
-extra_c_flags_swchar = -zm -DWR_COMPILED
-extra_c_flags_sharedio = -zm -DWR_COMPILED
-
-extra_c_flags_trmem     = $(trmem_cflags)
+extra_c_flags_trmem = $(trmem_cflags)
 
 .c:   ../c;$(trmem_dir);$(misc_dir);$(cpp_dir);$(wrc_dir)/c
 
