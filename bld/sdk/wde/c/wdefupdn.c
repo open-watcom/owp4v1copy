@@ -255,7 +255,7 @@ Bool WdeUpDnInit( Bool first )
     SETCTL_SIZEW( WdeDefaultUpDn, 0 );
     SETCTL_SIZEH( WdeDefaultUpDn, 0 );
     SETCTL_TEXT( WdeDefaultUpDn, NULL );
-    SETCTL_CLASSID( WdeDefaultUpDn, WdeStrDup( WUPDOWN_CLASS ) );
+    SETCTL_CLASSID( WdeDefaultUpDn, WdeStrToControlClass( WUPDOWN_CLASS ) );
 
     WdeUpDnDispatch = MakeProcInstance((FARPROC)WdeUpDnDispatcher,
                                            WdeGetAppInstance());

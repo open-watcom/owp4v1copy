@@ -255,7 +255,7 @@ Bool WdeProgInit( Bool first )
     SETCTL_SIZEW( WdeDefaultProg, 0 );
     SETCTL_SIZEH( WdeDefaultProg, 0 );
     SETCTL_TEXT( WdeDefaultProg, NULL );
-    SETCTL_CLASSID( WdeDefaultProg, WdeStrDup( WPROGRESS_CLASS ) );
+    SETCTL_CLASSID( WdeDefaultProg, WdeStrToControlClass( WPROGRESS_CLASS ) );
 
     WdeProgDispatch = MakeProcInstance((FARPROC)WdeProgDispatcher,
                                            WdeGetAppInstance());

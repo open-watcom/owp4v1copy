@@ -852,14 +852,14 @@ Bool WdeWriteDlgControl( WdeResInfo *rinfo, WdeDialogBoxControl *control,
     if( ok ) {
         class_type = 0;
         if( control_class ) {
-            if (*((uint_8 *)control_class) & 0x80) {
-                class_type = *((uint_8 *)control_class);
+            if( control_class->Class & 0x80 ) {
+                class_type = control_class->Class;
             }
         }
         if (class_type) {
             ok = WdeSetControlFlagText( class_type, GETCTL_STYLE(control), &cstyle );
         } else {
-            ok = WdeSetCommControlFlagText( control_class, GETCTL_STYLE(control), &cstyle );
+            ok = WdeSetCommControlFlagText( control_class->ClassName, GETCTL_STYLE(control), &cstyle );
         }
         ok = ok && cstyle;
     }

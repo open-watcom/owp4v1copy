@@ -255,7 +255,7 @@ Bool WdeHdrInit( Bool first )
     SETCTL_SIZEW( WdeDefaultHdr, 0 );
     SETCTL_SIZEH( WdeDefaultHdr, 0 );
     SETCTL_TEXT( WdeDefaultHdr, NULL );
-    SETCTL_CLASSID( WdeDefaultHdr, WdeStrDup( WWC_HEADER ) );
+    SETCTL_CLASSID( WdeDefaultHdr, WdeStrToControlClass( WWC_HEADER ) );
 
     WdeHdrDispatch = MakeProcInstance((FARPROC)WdeHdrDispatcher,
                                            WdeGetAppInstance());

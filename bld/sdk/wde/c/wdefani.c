@@ -255,7 +255,7 @@ Bool WdeAniCInit( Bool first )
     SETCTL_SIZEW( WdeDefaultAniC, 0 );
     SETCTL_SIZEH( WdeDefaultAniC, 0 );
     SETCTL_TEXT( WdeDefaultAniC, NULL );
-    SETCTL_CLASSID( WdeDefaultAniC, WdeStrDup( WANIMATE_CLASS ) );
+    SETCTL_CLASSID( WdeDefaultAniC, WdeStrToControlClass( WANIMATE_CLASS ) );
 
     WdeAniCDispatch = MakeProcInstance((FARPROC)WdeAniCDispatcher,
                                            WdeGetAppInstance());

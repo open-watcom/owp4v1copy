@@ -255,7 +255,7 @@ Bool WdeTabCInit( Bool first )
     SETCTL_SIZEW( WdeDefaultTabC, 0 );
     SETCTL_SIZEH( WdeDefaultTabC, 0 );
     SETCTL_TEXT( WdeDefaultTabC, NULL );
-    SETCTL_CLASSID( WdeDefaultTabC, WdeStrDup( WWC_TABCONTROL ) );
+    SETCTL_CLASSID( WdeDefaultTabC, WdeStrToControlClass( WWC_TABCONTROL ) );
 
     WdeTabCDispatch = MakeProcInstance((FARPROC)WdeTabCDispatcher,
                                            WdeGetAppInstance());

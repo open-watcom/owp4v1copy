@@ -300,21 +300,15 @@ ResNameOrOrdinal *WdeCopyResNameOr ( ResNameOrOrdinal *src )
 ControlClass *WdeCopyControlClass ( ControlClass *src )
 {
     ControlClass *dest;
-    int length;
 
     if ( src == NULL ) {
         return ( NULL );
     }
 
     if (src->Class & 0x80) {
-        dest = ResNumToControlClass ( src->Class );
+        dest = ResNumToControlClass( src->Class );
     } else {
-        length = strlen(src->ClassName);
-        dest = (ControlClass *) WdeMemAlloc ( sizeof(ControlClass)+length );
-        if ( dest == NULL ) {
-            return ( NULL );
-        }
-        memcpy( dest->ClassName, src->ClassName, length + 1 );
+        dest = WdeStrToControlClass( src->ClassName );
     }
 
     return ( dest );

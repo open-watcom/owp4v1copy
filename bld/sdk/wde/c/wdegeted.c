@@ -244,12 +244,7 @@ ControlClass *WdeGetControlClassFromEdit ( HWND hDlg, int id, Bool *mod )
         } else if ( class = WdeGetClassFromClassName(cp) ) {
             cc = ResNumToControlClass ( (uint_8) class );
         } else {
-            cc = (ControlClass *)
-                        WdeMemAlloc ( sizeof(ControlClass) + strlen(cp) );
-            if (cc == NULL) {
-                return ( NULL );
-            }
-            strcpy( cc->ClassName, cp);
+            cc = WdeStrToControlClass( cp );
         }
     }
 

@@ -255,7 +255,7 @@ Bool WdeLViewInit( Bool first )
     SETCTL_SIZEW( WdeDefaultLView, 0 );
     SETCTL_SIZEH( WdeDefaultLView, 0 );
     SETCTL_TEXT( WdeDefaultLView, NULL );
-    SETCTL_CLASSID( WdeDefaultLView, WdeStrDup( WWC_LISTVIEW ) );
+    SETCTL_CLASSID( WdeDefaultLView, WdeStrToControlClass( WWC_LISTVIEW ) );
 
     WdeLViewDispatch = MakeProcInstance((FARPROC)WdeLViewDispatcher,
                                            WdeGetAppInstance());

@@ -255,7 +255,7 @@ Bool WdeTViewInit( Bool first )
     SETCTL_SIZEW( WdeDefaultTView, 0 );
     SETCTL_SIZEH( WdeDefaultTView, 0 );
     SETCTL_TEXT( WdeDefaultTView, NULL );
-    SETCTL_CLASSID( WdeDefaultTView, WdeStrDup( WWC_TREEVIEW ) );
+    SETCTL_CLASSID( WdeDefaultTView, WdeStrToControlClass( WWC_TREEVIEW ) );
 
     WdeTViewDispatch = MakeProcInstance((FARPROC)WdeTViewDispatcher,
                                            WdeGetAppInstance());

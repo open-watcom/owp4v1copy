@@ -255,7 +255,7 @@ Bool WdeHtKyInit( Bool first )
     SETCTL_SIZEW( WdeDefaultHtKy, 0 );
     SETCTL_SIZEH( WdeDefaultHtKy, 0 );
     SETCTL_TEXT( WdeDefaultHtKy, NULL );
-    SETCTL_CLASSID( WdeDefaultHtKy, WdeStrDup( WHOTKEY_CLASS ) );
+    SETCTL_CLASSID( WdeDefaultHtKy, WdeStrToControlClass( WHOTKEY_CLASS ) );
 
     WdeHtKyDispatch = MakeProcInstance((FARPROC)WdeHtKyDispatcher,
                                            WdeGetAppInstance());

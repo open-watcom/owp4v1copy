@@ -255,7 +255,7 @@ Bool WdeTrakInit( Bool first )
     SETCTL_SIZEW( WdeDefaultTrak, 0 );
     SETCTL_SIZEH( WdeDefaultTrak, 0 );
     SETCTL_TEXT( WdeDefaultTrak, NULL );
-    SETCTL_CLASSID( WdeDefaultTrak, WdeStrDup( WTRACKBAR_CLASS ) );
+    SETCTL_CLASSID( WdeDefaultTrak, WdeStrToControlClass( WTRACKBAR_CLASS ) );
 
     WdeTrakDispatch = MakeProcInstance((FARPROC)WdeTrakDispatcher,
                                            WdeGetAppInstance());

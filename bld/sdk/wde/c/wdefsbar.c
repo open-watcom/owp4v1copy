@@ -292,7 +292,7 @@ Bool WdeSBarInit( Bool first )
     SETCTL_SIZEW( WdeDefaultSBar, 0 );
     SETCTL_SIZEH( WdeDefaultSBar, 0 );
     SETCTL_TEXT( WdeDefaultSBar, NULL );
-    SETCTL_CLASSID( WdeDefaultSBar, WdeStrDup( WSTATUSCLASSNAME ) );
+    SETCTL_CLASSID( WdeDefaultSBar, WdeStrToControlClass( WSTATUSCLASSNAME ) );
 
     WdeSBarDispatch = MakeProcInstance((FARPROC)WdeSBarDispatcher,
                                            WdeGetAppInstance());
