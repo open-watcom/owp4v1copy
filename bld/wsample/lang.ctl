@@ -1,5 +1,5 @@
-# SAMP Builder Control file
-# =========================
+# WSAMPLE Builder Control file
+# ============================
 
 set PROJDIR=<CWD>
 
@@ -13,19 +13,18 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-#   <CPCMD> bin/wsampecs.exe <relroot>/rel2/binw/wsampecs.exe
-    <CPCMD> dos386/wsample.exe <relroot>/rel2/binw/wsample.exe
-    <CPCMD> rsii86/wsamprsi.exe <relroot>/rel2/binw/wsamprsi.exe
-    <CPCMD> pls386/wsamppls.exp <relroot>/rel2/binw/wsamppls.exp
-    <CPCMD> wini86/wsamplew.exe <relroot>/rel2/binw/wsamplew.exe
-#    <CPCMD> os2i86/wsampos2.exe <relroot>/rel2/binp/wsampos2.exe
-    <CPCMD> os2386/wsmpos22.exe <relroot>/rel2/binp/wsmpos22.exe
-    <CPCMD> nt386/wsmpnt.exe <relroot>/rel2/binnt/wsample.exe
-#    <CPCMD> ntaxp/wsmpaxp.exe <relroot>/rel2/axpnt/wsample.exe
-    <CPCMD> nlm/wsample.nlm <relroot>/rel2/nlm/wsample.nlm
-#    <CPCMD> dosi86.nec/wsample.exe <relroot>/rel2/n98bw/wsample.exe
-    <CPCMD> rsii86.nec/wsamprsi.exe <relroot>/rel2/n98bw/wsamprsi.exe
-    <CPCMD> pls386.nec/wsamppls.exp <relroot>/rel2/n98bw/wsamppls.exp
+    <CPCMD> <PROJDIR>/dosi86/wsample.exe      <RELROOT>/rel2/binw/wsample.exe
+    <CPCMD> <PROJDIR>/rsii86/wsamprsi.exe     <RELROOT>/rel2/binw/wsamprsi.exe
+    <CPCMD> <PROJDIR>/pls386/wsamppls.exp     <RELROOT>/rel2/binw/wsamppls.exp
+    <CPCMD> <PROJDIR>/wini86/wsamplew.exe     <RELROOT>/rel2/binw/wsamplew.exe
+#    <CPCMD> <PROJDIR>/os2i86/wsampos2.exe     <RELROOT>/rel2/binp/wsampos2.exe
+    <CPCMD> <PROJDIR>/os2386/wsmpos22.exe     <RELROOT>/rel2/binp/wsmpos22.exe
+    <CPCMD> <PROJDIR>/nt386/wsmpnt.exe        <RELROOT>/rel2/binnt/wsample.exe
+#    <CPCMD> <PROJDIR>/ntaxp/wsmpaxp.exe      <RELROOT>/rel2/axpnt/wsample.exe
+    <CPCMD> <PROJDIR>/nlm/wsample.nlm         <RELROOT>/rel2/nlm/wsample.nlm
+#    <CPCMD> <PROJDIR>/dosi86.nec/wsample.exe  <RELROOT>/rel2/n98bw/wsample.exe
+    <CPCMD> <PROJDIR>/rsii86.nec/wsamprsi.exe <RELROOT>/rel2/n98bw/wsamprsi.exe
+    <CPCMD> <PROJDIR>/pls386.nec/wsamppls.exp <RELROOT>/rel2/n98bw/wsamppls.exp
 
 [ BLOCK <1> clean ]
 #==================
