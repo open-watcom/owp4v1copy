@@ -119,7 +119,7 @@ inc_dirs = $(wspy_dir);$(sdk_dir)\misc;$(watcom_dir)\h
 
 wspy_to_build_win = rcstr.gh spymsgs.dlg spymsg.gh $(dllname).dll $(name).exe
 
-wspy_to_build_nt = rcstr.gh spymsgnt.dlg spymsgnt.h $(dllname).dll $(name).exe
+wspy_to_build_nt = rcstr.gh spymsgnt.dlg spymsgnt.gh $(dllname).dll $(name).exe
 
 all : $(wspy_to_build_$(host_OS)) .SYMBOLIC
         @%null
@@ -143,8 +143,8 @@ rcstrmsg.gh : $(msgfiles)
 spymsgs.dlg spymsg.gh: spyarray.h ./mkdlg.exe
         $]@ spymsgs.dlg spymsg.gh
 
-spymsgnt.dlg spymsgnt.h: spyarray.h ./mkdlgnt.exe
-        $]@ spymsgnt.dlg spymsgnt.h
+spymsgnt.dlg spymsgnt.gh: spyarray.h ./mkdlgnt.exe
+        $]@ spymsgnt.dlg spymsgnt.gh
 
 ./mkdlg.exe : ../utils/mkdlg.c
         $(bld_cl) $[@ -fe=$@ -I".." -d__NOSPYMSGS__

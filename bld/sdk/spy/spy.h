@@ -138,7 +138,7 @@
 #include "..\misc\savelbox.h"
 #include "..\misc\log.h"
 #ifdef __NT__
-#include "spymsgnt.h"
+#include "spymsgnt.gh"
 #else
 #include "spymsg.gh"
 #endif
