@@ -47,8 +47,6 @@ void MkMkDependency( char *filename, char *fullname, char *delim )
 
 main( int argc, char *argv[] )
 {
-    int         c;
-
     if( argc < 2 ) {
         cprintf( "Usage: mkmk filename\r\n" );
         exit( 1 );
