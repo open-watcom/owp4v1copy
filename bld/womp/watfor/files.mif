@@ -17,7 +17,7 @@ $(womp_des_dir)/genutil.obj  &
 $(womp_des_dir)/memutil.obj  &
 $(womp_des_dir)/fixup.obj    &
 $(womp_des_dir)/cmdline.obj  &
-$(womp_des_dir)/wpmsg.obj    &
+$(womp_des_dir)/wpmsgfor.obj &
 $(womp_des_dir)/can2ms0.obj  &
 $(womp_des_dir)/can2ms1.obj  &
 $(womp_des_dir)/can2ms2.obj  &
@@ -52,7 +52,7 @@ $(womp_dir)/c/genutil.c  &
 $(womp_dir)/c/memutil.c  &
 $(womp_dir)/c/fixup.c    &
 $(womp_dir)/c/cmdline.c  &
-$(womp_dir)/c/wpmsg.c    &
+$(womp_dir)/c/wpmsgfor.c &
 $(womp_dir)/c/can2ms0.c  &
 $(womp_dir)/c/can2ms1.c  &
 $(womp_dir)/c/can2ms2.c  &
