@@ -8,7 +8,7 @@ libname_mf =mathf
 libname_   =math
 libname =$(libname_$(model))
 
-lib_flags =-b -c -p=16 -q
+lib_flags =-b -c -p=16
 !ifdef on_build_machine
 !ifeq processor axp
 !else

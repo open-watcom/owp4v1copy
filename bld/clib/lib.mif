@@ -8,7 +8,7 @@ libname_mf =clibf
 libname_   =clib
 libname =$(libname_$(model))
 
-lib_flags     =-b -c -q
+lib_flags     =-b -c 
 !ifdef on_build_machine
 !ifeq processor axp
 !else
