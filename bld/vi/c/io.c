@@ -176,7 +176,7 @@ info *cinfo;
  */
 FILE *GetFromEnvAndOpen( char *path )
 {
-    char        tmppath[_MAX_PATH];
+    char        tmppath[FILENAME_MAX];
 
     GetFromEnv( path, tmppath );
     if( tmppath[0] != 0 ) {
@@ -230,7 +230,7 @@ void VerifyTmpDir( void )
     env_tmpdir = getenv( "tmp" );
     if( env_tmpdir != NULL ) {
         if( env_tmpdir[strlen(env_tmpdir)-1] == '\\' ) {
-            char buf[_MAX_PATH];
+            char buf[FILENAME_MAX];
             strcpy( buf, env_tmpdir );
             buf[strlen(buf)-1] = '\0';
             AddString2( &TmpDir, buf );
@@ -268,7 +268,7 @@ void MakeTmpPath( char *out, char *in )
  */
 int TmpFileOpen( char *inname, int *_handle )
 {
-    char        file[_MAX_PATH];
+    char        file[FILENAME_MAX];
 
     tmpnam( inname );
     MakeTmpPath( file, inname );
@@ -282,7 +282,7 @@ int TmpFileOpen( char *inname, int *_handle )
  */
 void TmpFileClose( int handle, char *name )
 {
-    char        file[_MAX_PATH];
+    char        file[FILENAME_MAX];
 
     if( handle < 0 ) {
         return;

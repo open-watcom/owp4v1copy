@@ -109,7 +109,7 @@ int DoHelp( char *data )
     char        *tstr;
     int         token;
     int         rc;
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     char        tmp[MAX_STR];
     int         i;
 

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vi.h"
+#include "posix.h"
 
 extern char  _NEAR * _NEAR ExeExtensions[];
 extern int ExeExtensionCount;
@@ -44,7 +45,7 @@ void GetSpawnCommandLine( char *path, char *cmdl, cmd_struct *cmds )
 {
     char        orgcmd[ MAX_INPUT_LINE ];
     char        cmd[ MAX_INPUT_LINE ];
-    char        full[_MAX_PATH];
+    char        full[FILENAME_MAX];
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
     char        ext[_MAX_EXT];
     int         i;

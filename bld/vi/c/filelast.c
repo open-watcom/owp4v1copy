@@ -46,7 +46,7 @@ void UpdateLastFileList( char *fname )
     history_data        *h;
     int                 i;
     char                *root;
-    char                buff[_MAX_PATH];
+    char                buff[FILENAME_MAX];
 
     // don't add viw-generated filenames
     if( !strcmp( fname, "no_name" ) || !strncmp( fname, "untitled", 8 ) ) {
@@ -68,7 +68,7 @@ void UpdateLastFileList( char *fname )
     }
 
 
-    _fullpath(buff,fname,_MAX_PATH);
+    _fullpath(buff,fname,FILENAME_MAX);
 
 
     // if name already in list, dont add it.

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vi.h"
+#include "posix.h"
 #include "source.h"
 #include "parsecl.h"
 #include "menu.h"
@@ -58,7 +59,7 @@ int Source( char *fn, char *data, int *ln )
     files       fi;
     sfile       *sf,*curr;
     char        tmp[MAX_SRC_LINE];
-    char        sname[_MAX_PATH];
+    char        sname[FILENAME_MAX];
     int         i,rc;
     bool        sicmp,wfb,ssa,exm;
     resident    *res;
@@ -395,7 +396,7 @@ static void finiSource( labels *lab, vlist *vl, sfile *sf, undo_stack *atomic )
  */
 void FileSPVAR( void )
 {
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     char        drive[_MAX_DRIVE],dir[_MAX_DIR],fname[_MAX_FNAME],ext[_MAX_EXT];
     int         i;
 
@@ -423,7 +424,7 @@ void FileSPVAR( void )
     if( CurrentFile != NULL ) {
         PushDirectory( path );
         ChangeDirectory( path );
-        GetCWD2( path, _MAX_PATH );
+        GetCWD2( path, FILENAME_MAX );
         PopDirectory();
     } else {
         path[0] = 0;
@@ -469,7 +470,7 @@ void SourceError( char *msg )
 static void finiSourceErrFile( char *fn )
 {
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     char        tmp[MAX_SRC_LINE];
 
     if( !EditFlags.CompileScript ) {
@@ -498,7 +499,7 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
     sfile       *curr;
     FILE        *foo;
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     char        tmp[MAX_SRC_LINE],*tmp2;
     int         i,k,rc;
 

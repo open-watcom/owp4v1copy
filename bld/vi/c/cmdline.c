@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Editor command line processing.
 *
 ****************************************************************************/
 
@@ -282,7 +281,7 @@ int RunCommandLine( char *cl )
     int         n2f,n1f,dmt,tkn,flag;
     bool        test1;
     linenum     n1,n2;
-    char        st[_MAX_PATH];
+    char        st[FILENAME_MAX];
     info        *cinfo;
     long        val;
     jmp_buf     jmpaddr;
@@ -676,7 +675,7 @@ int RunCommandLine( char *cl )
             #if defined( __NT__ ) && !defined( __WIN__ )
             ExecCmd( NULL, NULL, NULL );
             #else
-            char foo[_MAX_PATH];
+            char foo[FILENAME_MAX];
 
             strcpy( foo, Comspec );
             ExecCmd( NULL, NULL, foo );
@@ -774,7 +773,7 @@ int RunCommandLine( char *cl )
                         fancy_find      *ff;
                         /* ff will be set to point at a static fancy find struct
                          * in the snoop module */
-                        char snoopbuf[_MAX_PATH];
+                        char snoopbuf[FILENAME_MAX];
 
                         if( !GetSnoopStringDialog( &ff ) ) {
                             return( ERR_NO_ERR );
@@ -902,7 +901,7 @@ int RunCommandLine( char *cl )
             #endif
             if( RCSQuerySystem( r ) != 0 ) {
                 if( GenericQueryBool( "File is read only, check out?" ) ) {
-                    char full1[_MAX_PATH];
+                    char full1[FILENAME_MAX];
                     #ifdef __WINDOWS__
                         void WinGetFullPath( char *filename, char *full );
                         WinGetFullPath( CurrentFile->name, full1 );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Expand file name to a list.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@ int ExpandFileNames( char *p, char ***argv )
 {
     int         argc,i;
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
-    char        extin[_MAX_EXT], pathin[_MAX_PATH];
+    char        extin[_MAX_EXT], pathin[FILENAME_MAX];
     char        *start,*new;
     bool        wildcard;
 

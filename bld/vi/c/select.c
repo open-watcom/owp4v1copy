@@ -42,7 +42,7 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
                                 bool makelower )
 {
     int         j,boff,i,k;
-    char        dd[_MAX_PATH];
+    char        dd[FILENAME_MAX];
 
     /*
      * allocate temporary file structures

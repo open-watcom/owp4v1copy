@@ -355,7 +355,7 @@ void displayFiles( void )
  */
 static void displayFiles( void )
 {
-    char        tmp[_MAX_PATH],tmp2[_MAX_PATH],dirc;
+    char        tmp[FILENAME_MAX],tmp2[FILENAME_MAX],dirc;
     int         j,i,k,hilite=-1,z;
     int         st,end,l=1;
 

@@ -63,7 +63,7 @@ int GetCurrentTag( void )
  */
 int TagHunt( char *str )
 {
-    char        buff[MAX_STR],file[_MAX_PATH];
+    char        buff[MAX_STR],file[FILENAME_MAX];
     int         num,rc=ERR_NO_ERR;
 
     rc = LocateTag( str, file, buff );
@@ -243,11 +243,11 @@ static int selectTag( FILE *f, char *str, char *buff, char *fname )
  */
 FILE *SearchForTags(void)
 {
-    char  path[_MAX_PATH];
+    char  path[FILENAME_MAX];
     char *eop;
 
     if (CurrentFile && CurrentFile->name) {
-        _fullpath(path, CurrentFile->name, _MAX_PATH);
+        _fullpath(path, CurrentFile->name, FILENAME_MAX);
 
         /*
          * Remove trailing filename.
@@ -257,7 +257,7 @@ FILE *SearchForTags(void)
             *eop = 0x00;
         }
     } else {
-        GetCWD2(&path, _MAX_PATH);
+        GetCWD2(&path, FILENAME_MAX);
     }
 
     eop = &path[strlen(path) - 1];

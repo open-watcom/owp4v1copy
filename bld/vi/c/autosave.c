@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 #ifdef __WATCOMC__
   #include <process.h>
   #include <share.h>
@@ -114,7 +115,7 @@ void GetCurrentFilePath( char *path )
  */
 static void getTmpName( char *path, char *tmpname )
 {
-    char        tmp[_MAX_PATH];
+    char        tmp[FILENAME_MAX];
     int         i;
 
     while( 1 ) {
@@ -140,9 +141,9 @@ static void getTmpName( char *path, char *tmpname )
  */
 void DoAutoSave( void )
 {
-    char        path[_MAX_PATH];
-    char        path2[_MAX_PATH];
-    char        tmp[_MAX_PATH];
+    char        path[FILENAME_MAX];
+    char        path2[FILENAME_MAX];
+    char        tmp[FILENAME_MAX];
     bool        quiet;
     FILE        *f;
     int         rc;
@@ -225,7 +226,7 @@ static bool handleKey( char ch )
  */
 bool LostFileCheck( void )
 {
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     int         ch;
     int         off;
     int         handle;
@@ -290,10 +291,10 @@ bool LostFileCheck( void )
  */
 void AutoSaveInit( void )
 {
-    char        path[_MAX_PATH];
-    char        path2[_MAX_PATH];
-    char        as_path[_MAX_PATH];
-    char        asl_path[_MAX_PATH];
+    char        path[FILENAME_MAX];
+    char        path2[FILENAME_MAX];
+    char        as_path[FILENAME_MAX];
+    char        asl_path[FILENAME_MAX];
     int         len;
     int         cnt;
     FILE        *f;
@@ -352,7 +353,7 @@ void AutoSaveInit( void )
             }
             f = fdopen( handle, "r" );
             if( f != NULL ) {
-                while( fgets( path2, _MAX_PATH, f ) != NULL ) {
+                while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
                     path2[ strlen( path2 ) - 1 ] = 0;
                     NextWord1( path2, path );
                     RemoveLeadingSpaces( path2 );
@@ -410,7 +411,7 @@ void AutoSaveInit( void )
  */
 void AutoSaveFini( void )
 {
-    char        path[_MAX_PATH];
+    char        path[FILENAME_MAX];
     info        *cinfo;
 
     if( !AutoSaveInterval ) {
@@ -449,11 +450,11 @@ void SetNextAutoSaveTime( void )
 void RemoveFromAutoSaveList( void )
 {
     FILE        *f,*f2;
-    char        as_path[_MAX_PATH];
-    char        as2_path[_MAX_PATH];
-    char        path[_MAX_PATH];
-    char        path2[_MAX_PATH];
-    char        data[_MAX_PATH];
+    char        as_path[FILENAME_MAX];
+    char        as2_path[FILENAME_MAX];
+    char        path[FILENAME_MAX];
+    char        path2[FILENAME_MAX];
+    char        data[FILENAME_MAX];
     bool        found;
 
     if( !AutoSaveInterval ) {
@@ -481,7 +482,7 @@ void RemoveFromAutoSaveList( void )
         fclose( f );
         return;
     }
-    while( fgets( path2, _MAX_PATH, f ) != NULL ) {
+    while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
         path2[ strlen(path2) - 1 ] = 0;
         NextWord1( path2, data );
         RemoveLeadingSpaces( path2 );
@@ -490,7 +491,7 @@ void RemoveFromAutoSaveList( void )
             if( !strcmp( data, path2 ) ) {
                 found = TRUE;
                 remove( path2 );
-                while( fgets( data, _MAX_PATH, f ) != NULL ) {
+                while( fgets( data, FILENAME_MAX, f ) != NULL ) {
                     MyFprintf( f2, "%s", data );
                 }
                 break;

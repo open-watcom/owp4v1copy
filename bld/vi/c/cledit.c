@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vi.h"
+#include "posix.h"
 #include "keys.h"
 #include "win.h"
 #ifdef __WIN__
@@ -127,15 +128,15 @@ int EditFile( char *name, int dammit )
     int         rc=ERR_NO_ERR,i,cnt,ocnt;
     int         j,len;
     window_id   wn;
-    char        cdir[_MAX_PATH];
+    char        cdir[FILENAME_MAX];
     info        *ci,*il;
     bool        usedir = FALSE;
-    char        mask[_MAX_PATH];
+    char        mask[FILENAME_MAX];
     bool        reset_dir;
     int         index;
     char        *altname = NULL;
 
-    fn = MemAlloc( _MAX_PATH );
+    fn = MemAlloc( FILENAME_MAX );
 
     /*
      * get file name
@@ -281,7 +282,7 @@ int EditFile( char *name, int dammit )
                     /* directory has changed -- check with full path
                      * note that this will fail if an absolute path
                      * was specified thus we do the regular check first */
-                    char path[_MAX_PATH];
+                    char path[FILENAME_MAX];
                     char drive[_MAX_DRIVE];
                     char dir[_MAX_DIR];
                     char fname[_MAX_FNAME];

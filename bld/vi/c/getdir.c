@@ -57,8 +57,8 @@ static int getDir( char *dname, bool want_all_dirs )
     struct dirent       *nd;
     direct_ent          *tmp;
     int                 i,j,len;
-    char                wild[_MAX_PATH];
-    char                path[_MAX_PATH];
+    char                wild[FILENAME_MAX];
+    char                path[FILENAME_MAX];
     char                ch;
     bool                is_subdir;
 

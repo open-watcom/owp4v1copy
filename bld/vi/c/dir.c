@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Directory change functions.
 *
 ****************************************************************************/
 
@@ -46,9 +45,9 @@
  */
 void GetCWD1( char **str )
 {
-    char        bob[_MAX_PATH];
+    char        bob[FILENAME_MAX];
 
-    GetCWD2( bob, _MAX_PATH );
+    GetCWD2( bob, FILENAME_MAX );
     AddString( str, bob );
 
 } /* GetCWD1 */

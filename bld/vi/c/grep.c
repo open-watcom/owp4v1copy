@@ -441,8 +441,8 @@ static int doGREP( char *dirlist )
  */
 static void fileGrep( char *dir, char **list, int *clist, window_id wn )
 {
-    char        fn[_MAX_PATH],data[_MAX_PATH],ts[_MAX_PATH];
-    char        path[_MAX_PATH];
+    char        fn[FILENAME_MAX],data[FILENAME_MAX],ts[FILENAME_MAX];
+    char        path[FILENAME_MAX];
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
     char        ext[_MAX_EXT];
     int         i,j;

@@ -55,8 +55,8 @@ int SameFile( char *f1, char *f2 )
     }
 
 {
-    char        full1[_MAX_PATH];
-    char        full2[_MAX_PATH];
+    char        full1[FILENAME_MAX];
+    char        full2[FILENAME_MAX];
 
 #ifndef __WINDOWS__
     DosGetFullPath( f1, full1 );

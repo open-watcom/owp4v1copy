@@ -71,4 +71,19 @@
   #define STDERR_FILENO   2
 #endif
 
+#ifndef O_BINARY
+  #define O_BINARY 0
+#endif
+
+#ifndef O_TEXT
+  #define O_TEXT 0
+#endif
+
+#ifndef _MAX_DRIVE
+  #define _MAX_DRIVE    3
+  #define _MAX_DIR      260
+  #define _MAX_FNAME    256
+  #define _MAX_EXT      256
+#endif
+
 #endif

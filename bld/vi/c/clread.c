@@ -50,7 +50,7 @@ int ReadAFile( linenum afterwhich, char *name )
     long        bytecnt=0;
     linenum     lnecnt=0;
     int         lastst;
-    char        *fn = MemAlloc(_MAX_PATH);
+    char        *fn = MemAlloc(FILENAME_MAX);
 
     /*
      * get file name
