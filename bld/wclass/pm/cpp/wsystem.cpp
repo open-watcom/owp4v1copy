@@ -43,6 +43,39 @@
 #define WINOS2_PARM     "/K"
 
 
+// Build an environment array suitable for DosExecPgm
+char    *build_exec_env( char **env )
+{
+    char    **s;
+    int     len;
+    char    *env_copy;
+    char    *d;
+
+    if( env == NULL ) {
+        return( NULL );
+    }
+    s = env;
+    // figure out how much memory we need
+    while( *s != NULL ) {
+        len += strlen( *s ) + 1;
+        ++s;
+    }
+    ++len;  // for terminating NUL
+    env_copy = (char *)malloc( len );
+    if( env_copy == NULL ) {
+        return( NULL );
+    }
+    // copy the environment strings
+    s = env;
+    d = env_copy;
+    while( *s != NULL ) {
+        d = strcpy( d, *s ) + strlen( *s ) + 1;
+        ++s;
+    }
+    *d = '\0';  // terminate array
+    return( env_copy );
+}
+
 int WEXPORT WSystemService::sysExec( const char *cmd,
                                      WWindowState state,
                                      WWindowType typ,
@@ -53,6 +86,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
     const char  *arg_pgm;
     const char  *pgm;
     char        pgm_buf[_MAX_PATH];
+    char        searchenv_buf[_MAX_PATH];
     char        *cmdline;
     APIRET      rc;
     RESULTCODES returncodes;
@@ -78,6 +112,13 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
     } else {
         pgm = arg_pgm;
     }
+
+    // Try to determine full pathname; the process PATH may not be what
+    // we started with
+    _searchenv( pgm, "PATH", searchenv_buf );
+    if( searchenv_buf[0] != '\0' )
+        pgm = searchenv_buf;
+
     pgm_starter = PGM_DOSSTARTSESSION;
     sess_type = SSF_TYPE_DEFAULT;
     rc = DosQueryAppType( (char const *)pgm, &app_type );
@@ -142,7 +183,10 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
     if( *fn.ext() == NULLCHAR ) {
         fn.setExt( "exe" );
     }
+
     if( pgm_starter == PGM_DOSEXECPGM ) {
+        char    *exec_env;
+
         exec_state = EXEC_ASYNC;
         if( background ) {
             exec_state = EXEC_BACKGROUND;
@@ -153,8 +197,12 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
             cmdline = (char *)args.cString();
             cmdline[ strlen( pgm ) ] = '\0';
         }
-        rc = DosExecPgm( (char *)NULL, 0, exec_state, (char const *)cmdline, (char const *)NULL,
+        exec_env = build_exec_env( environ );
+        rc = DosExecPgm( (char *)NULL, 0, exec_state, (char const *)cmdline, (char const *)exec_env,
                          &returncodes, (char *)(const char *)fn );
+        if( exec_env != NULL ) {
+            free( exec_env );
+        }
         if( rc != 0 ) return( -1 );
         return( returncodes.codeTerminate );    // process id of child
     } else { // pgm_starter == PGM_DOSSTARTSESSION
