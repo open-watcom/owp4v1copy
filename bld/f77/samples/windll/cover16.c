@@ -55,15 +55,15 @@ long FAR PASCAL __export Function2( long var1, long var2 )
 }
 
 #pragma off (unreferenced);
-BOOL FAR PASCAL LibMain( HANDLE hInstance, WORD wDataSegment,
+BOOL FAR PASCAL LibMain( HINSTANCE hInstance, WORD wDataSegment,
                          WORD wHeapSize, LPSTR lpszCmdLine )
 #pragma on (unreferenced);
 {
-    HANDLE hlib;
+    HINSTANCE hlib;
 
     /* Do our DLL initialization */
     hlib = LoadLibrary( "vbdll32.dll" );
-    if( hlib < 32 ) {
+    if( (UINT)hlib < 32 ) {
         MessageBox( NULL,
                     "Make sure your PATH contains VBDLL32.DLL",
                     "COVER16", MB_OK | MB_ICONEXCLAMATION );
