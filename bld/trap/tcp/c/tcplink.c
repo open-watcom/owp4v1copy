@@ -100,7 +100,7 @@ bool Terminate( void )
     die = TRUE;
     linger.l_onoff = 1;
     linger.l_linger = 0;
-    setsockopt( data_socket, SOL_SOCKET, SO_LINGER, (void*)&linger, sizeof( linger ) );
+    setsockopt( data_socket, (int)SOL_SOCKET, SO_LINGER, (void*)&linger, sizeof( linger ) );
     soclose( data_socket );
     data_socket = -1;
     return( TRUE );
