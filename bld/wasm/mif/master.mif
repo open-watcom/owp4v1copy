@@ -16,7 +16,7 @@ cflags = -funsigned-char -c -D_WASM_ -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__
 force_include = -include
 bld_cl = cc
 mkopcode_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
-LIBS = -L../../clib/bootstrp -lwatcom  # -L../../sdk/rc/wres/bootstrp -lwres 
+LIBS = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres 
 !else
 exc_name = $(proj_name).exe
 !endif
@@ -132,7 +132,7 @@ usagej.rc : $(proj_path)/h/usage.sp
 
 $(proj_path)/h/msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
-        perl ../../sdk/misc/msgtoh.pl < $[@ > t.msg
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
 !else
@@ -141,7 +141,7 @@ $(proj_path)/h/msg.gh : $(proj_path)/h/asmshare.msg
 
 $(proj_path)/h/wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 !ifdef __LINUX__
-        perl ../../sdk/misc/msgtoh.pl < $[@ > t.msg
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
 !else
