@@ -1776,7 +1776,7 @@ The system dependent reason is also displayed in the message.
 The compiler does not have any segment registers available to access the
 desired far memory location.
 :MSGSYM. ERR_NO_MACRO_ID_COMMAND_LINE
-:MSGTXT. No identifier provided for "-D" option
+:MSGTXT. No identifier provided for '-D' option
 :MSGJTXT. /Dオプションに対する識別子がありません
 .np
 The command line option "-D" must be followed by the name of the macro
