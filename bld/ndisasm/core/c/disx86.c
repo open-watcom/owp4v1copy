@@ -1516,6 +1516,10 @@ dis_handler_return X86MemAbsAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
 dis_handler_return X86Abs_8( dis_handle *h, void *d, dis_dec_ins *ins)
 /**********************************************************************/
 {
+    if( ins->size == 1 ) {
+        ins->flags ^= (DIF_X86_OPND_LONG | DIF_X86_OPND_SIZE);
+        ins->flags ^= (DIF_X86_ADDR_LONG | DIF_X86_ADDR_SIZE);
+    }
     ins->size   += 1;
     ins->num_ops = 0;
     X86GetAbsVal(d, ins);
