@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
 #ifndef __NT__
 #include "toolhelp.h"

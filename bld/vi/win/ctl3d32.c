@@ -49,7 +49,7 @@ BOOL Init32Ctl3d( void )
     LPVOID      ptr;
 
     dllCtl3d = LoadLibrary( "ctl3d.dll" );
-    if( dllCtl3d < 32 ) {
+    if( dllCtl3d < (HANDLE)32 ) {
         return( FALSE );
     }
 
@@ -97,7 +97,7 @@ BOOL Init32Ctl3d( void )
  */
 void Fini32Ctl3d( void )
 {
-    if( dllCtl3d >= 32 ) {
+    if( dllCtl3d >= (HANDLE)32 ) {
         FreeLibrary( dllCtl3d );
     }
 

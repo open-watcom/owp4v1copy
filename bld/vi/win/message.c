@@ -65,7 +65,7 @@ static BOOL Init( window *w, void *parm )
     msgString2[ 0 ] = 0;
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = MessageWindowProc;
+    wc.lpfnWndProc = (WNDPROC)MessageWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;

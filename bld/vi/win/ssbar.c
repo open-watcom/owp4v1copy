@@ -329,7 +329,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     return( 0L );
 }
 
-long WINEXP StaticSubclassProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
+long WINEXP StaticSubclassProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     switch( msg ) {
     case WM_NCHITTEST:
@@ -349,13 +349,13 @@ void addSubclasses( HWND hwnd )
 {
     int     i;
     for( i = SS_FIRST_CONTENT; i <= SS_LAST_CONTENT; i++ ) {
-        SubclassGenericAdd( GetDlgItem( hwnd, i ), StaticSubclassProc );
+        SubclassGenericAdd( GetDlgItem( hwnd, i ), (WNDPROC)StaticSubclassProc );
     }
     for( i = SS_FIRST_ALIGNMENT; i <= SS_LAST_ALIGNMENT; i++ ) {
-        SubclassGenericAdd( GetDlgItem( hwnd, i ), StaticSubclassProc );
+        SubclassGenericAdd( GetDlgItem( hwnd, i ), (WNDPROC)StaticSubclassProc );
     }
     for( i = SS_FIRST_COMMAND; i <= SS_LAST_COMMAND; i++ ) {
-        SubclassGenericAdd( GetDlgItem( hwnd, i ), StaticSubclassProc );
+        SubclassGenericAdd( GetDlgItem( hwnd, i ), (WNDPROC)StaticSubclassProc );
     }
 }
 

@@ -133,7 +133,7 @@ static void finiHDC( HDC hdc )
 /*
  * StatusWndCallback - handle messages for
  */
-LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
+LONG CB StatusWndCallback( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam  )
 {
     PAINTSTRUCT ps;
     RECT        r;
@@ -199,7 +199,7 @@ int StatusWndInit( HINSTANCE hinstance, statushook hook, int extra,
     rc = TRUE;
     if( !GetClassInfo( hinstance, className, &wc ) ) {
         wc.style = CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc = StatusWndCallback;
+        wc.lpfnWndProc = (WNDPROC)StatusWndCallback;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = extra;
         wc.hInstance = hinstance;

@@ -72,7 +72,9 @@ int MySpawn( char *cmd )
     HANDLE              inst;
     cmd_struct          cmds;
     char                path[ _MAX_PATH ];
+#ifndef __WINDOWS_386__
     char                buffer[ _MAX_PATH ];
+#endif
     int                 rc;
 
     GetSpawnCommandLine( path, cmd, &cmds );

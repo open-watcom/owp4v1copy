@@ -18,7 +18,7 @@ cdsay .
     <CPCMD> <devdir>/vi/dos386/vi386.exe <relroot>/rel2/binw/vi.exe
     <CPCMD> <devdir>/vi/wini86/viw.exe <relroot>/rel2/binw/viw.exe
 #    <CPCMD> <devdir>/vi/obj286v/viv.exe <relroot>/rel2/binw/vir.exe
-#    <CPCMD> <devdir>/vi/win386/viwp.exe <relroot>/rel2/binw/viwp.exe
+    <CPCMD> <devdir>/vi/win386/viwp.exe <relroot>/rel2/binw/viwp.exe
     <CPCMD> <devdir>/vi/nt386/vint.exe <relroot>/rel2/binnt/vi.exe
     <CPCMD> <devdir>/vi/nt386.win/vintw.exe <relroot>/rel2/binnt/viw.exe
 #    <CPCMD> <devdir>/vi/ntaxp/viaxp.exe <relroot>/rel2/axpnt/vi.exe

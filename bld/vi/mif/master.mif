@@ -1,11 +1,5 @@
 proj_name = vi
 
-
-msgcheckviw = 1
-msgcheckviwp = 1
-msgcheckvintw = 1
-msgcheckviaxpw = 1
-
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .obj .ybj .ubj
@@ -21,6 +15,9 @@ msgcheckviaxpw = 1
 PROJECT : $(name) .symbolic
 
 !include cproj.mif
+#!include deftarg.mif
+!include defrule.mif
+
 !include rcsdll.mif
 !include include.mif
 !include objects.mif
@@ -54,25 +51,21 @@ bindextra = -d$(vi_dir)\dat\winbind.dat
 
 $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mif $(mifdep)
         $(cc) $(cflags) version.c -fo=.ybj
-        -$(linker) $(lflags) name $^@ file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
+        $(linker) $(lflags) name $(lname) file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq ED vi386
 #        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
 !endif
-!ifeq ED viwp
-        wbind $(name) -s $(lang_root)\binw\win386.ext -R viwp.res
-        @erase $(ED).rex
-!endif
-!ifeq ED viw
-        $(rc) -k -zk0 -bt=windows viw.res
-!endif
-!ifeq ED vintw
-        $(rc) -bt=NT -zk0 vintw.res
-!endif
-!ifeq ED viaxpw
-        $(rc) -bt=NT -zk0 viaxpw.res
-!endif
-!ifdef bind
 !ifdef sys_windowed
+!ifeq host_os win
+!ifeq host_cpu 386
+        wbind $(lname) -s $(lang_root)\binw\win386.ext -R $(ED).res
+        @erase $(lname)
+!else
+        $(rc) -k -zk0 -bt=windows $(ED).res
+!endif
+!else ifeq host_os nt
+        $(rc) -bt=NT -zk0 $(ED).res
+!endif
         # don't bind - it screws up everything - BBB
 !else
         set edpath=$(vi_dir)/dat
@@ -87,16 +80,16 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
         $(vi_dir)\bind\nt386\edbind $(bindextra) -q $(name)
 !endif
 !endif
-!endif
-
 
 !ifeq ED viw
-tags : ..\win\tags .SYMBOLIC
+tags : ../win/tags .SYMBOLIC
 
-..\win\tags: vi.tag
-    ctags @vi.tag -f..\win\tags
+../win/tags: vi.tag
+    ctags @vi.tag -f$^@
 !endif
 
 
 clean: .SYMBOLIC .EXPLICIT
-        @rm -f *.?bj *.lnk *.exe *.dll *.res *.clb *.err *.map *.sym *.dh *.ch *.h *.msg
+        rm -f *.?bj *.o 
+        rm -f *.lnk *.exe *.dll *.res *.clb *.gh 
+        rm -f *.err *.map *.sym *.dh *.ch *.msg *.rex

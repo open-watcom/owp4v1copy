@@ -1,5 +1,4 @@
-extra_l_flags = option map,quiet
-extra_l_flags += option symfile
+extra_l_flags = option map, symfile
 
 extra_l_flags_os2_386 = op newfiles,stack=20k
 extra_l_flags_os2_i86 = op newfiles,stack=1k
@@ -18,7 +17,7 @@ extra_l_flags_win = $(extra_l_flags_win_$(host_CPU))
 extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k
 extra_l_flags_nt += alias _WinMain='_WinMain@16'
 ! else
-extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k op caseexact
+extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k
 ! endif
 !else
 extra_l_flags_nt = runtime console op stack=20k

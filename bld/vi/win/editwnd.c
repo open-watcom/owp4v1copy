@@ -73,7 +73,7 @@ static BOOL Init( window *w, void *parm )
     parm = parm;
 
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-    wc.lpfnWndProc = EditWindowProc;
+    wc.lpfnWndProc = (WNDPROC)EditWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID ) * WIN_LAST;
     wc.hInstance = InstanceHandle;
@@ -539,7 +539,7 @@ void PositionVerticalScrollThumb( window_id id, linenum top, linenum last )
 
     /* Reduce number of redraws by checking current range and position
     */
-    GetScrollRange( id, SB_VERT, &min, &max );
+    GetScrollRange( id, SB_VERT, (LPINT)&min, (LPINT)&max );
 
     newlast = last/VScrollBarScale;
     newtop = top/VScrollBarScale;

@@ -31,7 +31,7 @@
 
 
 #include <string.h>
-//#define INCLUDE_COMMDLG_H
+#define INCLUDE_COMMDLG_H
 #include "winvi.h"
 #include <commdlg.h>
 #include <dlgs.h>
@@ -47,7 +47,7 @@ static char *FileNameList;
 
 typedef UINT (WINEXP * OPENHOOKTYPE)( HWND, UINT, WPARAM, LPARAM );
 
-UINT WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
+BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     int len;
     static OPENFILENAME *of;
@@ -118,7 +118,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     #endif
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK |
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY;
-        of.lpfnHook = (OPENHOOKTYPE) MakeProcInstance( (FARPROC) OpenHook,
+        of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
                           InstanceHandle );
     #ifdef __NT__
     }
@@ -176,7 +176,7 @@ int SelectFileSave( char *result )
     of.lpstrInitialDir = CurrentFile->home;
     of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN;
-    of.lpfnHook = (OPENHOOKTYPE) MakeProcInstance( (FARPROC) OpenHook,
+    of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
                       InstanceHandle );
     doit = GetSaveFileName( &of );
     #ifndef __NT__

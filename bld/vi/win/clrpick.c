@@ -380,7 +380,7 @@ void InitClrPick( void )
     }
 
     wndclass.style              = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc        = ClrPickProc;
+    wndclass.lpfnWndProc        = (WNDPROC)ClrPickProc;
     wndclass.cbClsExtra         = 0;
     wndclass.cbWndExtra         = 0;
     wndclass.hInstance          = InstanceHandle;

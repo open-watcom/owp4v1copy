@@ -52,7 +52,7 @@ BOOL RegisterMainWindow( HANDLE inst )
     WNDCLASS    wc;
 
     wc.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = MainWindowProc;
+    wc.lpfnWndProc = (WNDPROC)MainWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = inst;
@@ -240,7 +240,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         buff = alloca( _MAX_PATH );
         if( buff != NULL ) {
             for( i=0;i<cnt;i++ ) {
-                if( DragQueryFile( hfileinfo, i, buff, _MAX_PATH ) == -1 ) {
+                if( DragQueryFile( hfileinfo, i, buff, _MAX_PATH ) == (UINT)-1 ) {
                     break;
                 }
                 rc = EditFile( buff, FALSE );

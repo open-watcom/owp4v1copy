@@ -73,9 +73,9 @@ typedef void __far *REALFARPROC;
 
 #define API WINAPI
 #ifndef NOKERNEL
-FARPROC API _16MakeProcInstance(FARPROC, HANDLE);
+FARPROC API _16MakeProcInstance(FARPROC, HINSTANCE);
 #if !defined(NOAUTOPROCS) && defined(__WINDOWS_386__)
-FARPROC API _Cover_MakeProcInstance(REALFARPROC, HANDLE);
+FARPROC API _Cover_MakeProcInstance(REALFARPROC, HINSTANCE);
 #endif
 void    API _16FreeProcInstance(FARPROC);
 void    API _Cover_FreeProcInstance(FARPROC);
@@ -356,13 +356,20 @@ LONG API _Cover_GetClassLong(HWND, int);
 LONG API _Cover_SetClassLong(HWND, int, LONG);
 #endif /* NOWINOFFSETS */
 HWND   API _16FindWindow(LPSTR, LPSTR);
-BOOL   API _16EnumWindows(FARPROC, LONG);
-BOOL   API _Cover_EnumWindows(FARPROC, LONG);
 BOOL   API _16EnumTaskWindows(HANDLE, FARPROC, LONG);
 BOOL   API _Cover_EnumTaskWindows(HANDLE, FARPROC, LONG);
+int    API _16GetClassName(HWND, LPSTR, int);
+#ifdef STRICT
+BOOL   API _16EnumWindows(WNDENUMPROC, LPARAM);
+BOOL   API _Cover_EnumWindows(WNDENUMPROC, LPARAM);
+BOOL   API _16EnumChildWindows(HWND, WNDENUMPROC, LPARAM);
+BOOL   API _Cover_EnumChildWindows(HWND, WNDENUMPROC, LPARAM);
+#else
+BOOL   API _16EnumWindows(FARPROC, LONG);
+BOOL   API _Cover_EnumWindows(FARPROC, LONG);
 BOOL   API _16EnumChildWindows(HWND, FARPROC, LONG);
 BOOL   API _Cover_EnumChildWindows(HWND, FARPROC, LONG);
-int    API _16GetClassName(HWND, LPSTR, int);
+#endif
 #ifndef NOWH
 FARPROC API _16SetWindowsHook(int, FARPROC);
 FARPROC API _Cover_SetWindowsHook(int, FARPROC);

@@ -24,12 +24,18 @@ name_nt_axp = viaxp
 name_qnx_i86 = viq
 name_linux_386 = vil
 
-!ifneq host_OS qnx
-name = $(name_$(host_OS)_$(host_CPU)).exe
-!else
-name = $(name_$(host_OS)_$(host_CPU)).qnx
-!endif
-
 lnk = $(name_$(host_OS)_$(host_CPU)).lnk
 
 ED = $(name_$(host_OS)_$(host_CPU))
+
+name = $(ED).exe
+!ifeq host_OS qnx
+name = $(ED).qnx
+!endif
+
+lname = $(name)
+!ifeq host_OS win
+!ifeq host_CPU 386
+lname = $(ED).rex
+!endif
+!endif

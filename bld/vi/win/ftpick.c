@@ -233,7 +233,7 @@ void InitFtPick( void )
     }
 
     wndclass.style              = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc        = FtPickProc;
+    wndclass.lpfnWndProc        = (WNDPROC)FtPickProc;
     wndclass.cbClsExtra         = 0;
     wndclass.cbWndExtra         = 0;
     wndclass.hInstance          = InstanceHandle;
