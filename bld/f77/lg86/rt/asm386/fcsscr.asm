@@ -271,10 +271,10 @@ defn    GetNElts                ; get the number of elements in an array
         movzx   ecx,byte ptr adv_numss[ebx]; get the number of subscripts
         mov     eax,1           ; init number of elements count
         and     cl,ADV_SUBSCRS  ; setup ecx properly
-repeat:                         ; loop
+loop1:                          ; loop
           mul   dword ptr [edi] ; - update running total
           add   edi,8           ; - point at next (hi-lo)
-        loop    repeat          ; - dec #sub's left to do, loop if more
+        loop    loop1           ; - dec #sub's left to do, loop if more
         mov     adv_elnum[ebx],eax; set the # of elements in the array
         ret
 endproc GetNElts
