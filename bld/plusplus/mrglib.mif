@@ -87,12 +87,6 @@ reference : .symbolic $(target_lib)
     cp $(target_lib_x) $(plusplus_dir)/bin
 !endif
 
-update : .symbolic $(target_lib)
-    $(librarian) -b -c -n -s -t $(lang_root)/$(production_lib)/$(target_lib) +$(target_lib)
-!ifdef target_lib_x
-    $(librarian) -b -c -n -s -t $(lang_root)/$(production_lib)/$(target_lib_x) +$(target_lib_x)
-!endif
-
 .EXTENSIONS:
 .EXTENSIONS: .lib
 

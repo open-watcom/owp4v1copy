@@ -9,9 +9,7 @@ suffix = mt3r
 linkage=dynamic
 profile = 1
 target_system = nt
-target_lib = $(prefix)$(suffix).lib
-production_lib = lib386
+text = -D__USE_FS
 define_library_include = $(plusplus_runtime_dir)/plib.mif
 define_target_include = $(plusplus_dir)/lib$(suffix).mif
-text = -D__USE_FS
 !include $(plusplus_dir)/mklib.mif

@@ -6,10 +6,8 @@ host_cpu = 386
 
 suffix = 3s
 target_system = generic
-target_lib = $(prefix)7$(suffix).lib
-production_lib = lib386
+fp_option = -fpi
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif
 define_target_include = $(plusplus_dir)/lib32$(suffix).mif
-fp_option = -fpi
 !include $(plusplus_dir)/mklib.mif

@@ -6,11 +6,9 @@ host_cpu = i86
 
 suffix = s
 target_system = windows
-target_lib = $(prefix)7$(suffix).lib
-production_lib = lib286\win
+text = -zW
+fp_option = -fpi
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif
 define_target_include = $(plusplus_dir)/lib16$(suffix).mif
-text = -zW
-fp_option = -fpi
 !include $(plusplus_dir)/mklib.mif

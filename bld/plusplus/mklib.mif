@@ -207,9 +207,6 @@ asm_flags += -bt=qnx
 reference : .symbolic $(target_lib)
     cp $(target_lib) $(plusplus_dir)/bin
 
-update : .symbolic $(target_lib)
-    $(librarian) -b -c -n -s -t $(lang_root)/$(production_lib)/$(target_lib) +$(target_lib)
-
 .EXTENSIONS:
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm
 
