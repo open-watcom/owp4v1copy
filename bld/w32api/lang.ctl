@@ -18,9 +18,12 @@ set PROJDIR=<CWD>
     <CPCMD> README.w32api                 <RELROOT>/rel2/readme.w32
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt386/include/*.h             <RELROOT>/rel2/h/nt/
-    <CPCMD> nt386/include/directx/*.h     <RELROOT>/rel2/h/nt/
     <CPCMD> nt386/include/GL/*.h          <RELROOT>/rel2/h/nt/GL/
-    <CPCMD> nt386/*.lib                   <RELROOT>/rel2/lib386/nt/
+    <CPCMD> nt386/include/ddk/*.h         <RELROOT>/rel2/h/nt/ddk/
+    <CPCMD> nt386/include/directx/*.h     <RELROOT>/rel2/h/nt/directx/
+    <CPCMD> nt386/base/*.lib              <RELROOT>/rel2/lib386/nt/
+    <CPCMD> nt386/ddk/*.lib               <RELROOT>/rel2/lib386/nt/ddk/
+    <CPCMD> nt386/directx/*.lib           <RELROOT>/rel2/lib386/nt/directx/
 
 [ BLOCK <1> clean ]
 #==================

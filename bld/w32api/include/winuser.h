@@ -670,6 +670,12 @@ extern "C" {
 #define MIM_MENUDATA 8
 #define MIM_STYLE 16
 #define MIM_APPLYTOSUBMENUS 0x80000000L
+#define MNS_NOCHECK 0x80000000
+#define MNS_MODELESS 0x40000000
+#define MNS_DRAGDROP 0x20000000
+#define MNS_AUTODISMISS 0x10000000
+#define MNS_NOTIFYBYPOS 0x08000000
+#define MNS_CHECKORBMP 0x04000000
 #endif
 #define MFT_BITMAP 4
 #define MFT_MENUBARBREAK 32
@@ -1123,6 +1129,11 @@ extern "C" {
 #define HSHELL_WINDOWACTIVATED 4
 #define HSHELL_WINDOWCREATED 1
 #define HSHELL_WINDOWDESTROYED 2
+#define HSHELL_FLASH 32774
+#if (WINVER >= 0x0500)
+#define SPI_SETFOREGROUNDLOCKTIMEOUT 0x2001
+#define SPI_GETFOREGROUNDLOCKTIMEOUT 0x2000
+#endif
 #define SPI_GETACCESSTIMEOUT 60
 #define SPI_GETACTIVEWNDTRKTIMEOUT 8194
 #define SPI_GETANIMATION 72
@@ -1344,7 +1355,11 @@ extern "C" {
 #define WM_MDITILE 550
 #define WM_MEASUREITEM 44
 #if (WINVER >= 0x0500)
+#define WM_UNINITMENUPOPUP 0x0125
 #define WM_MENURBUTTONUP 290
+#define WM_MENUCOMMAND 0x0126
+#define WM_MENUGETOBJECT 0x0124
+#define WM_MENUDRAG 0x0123
 #endif
 #define WM_MENUCHAR 288
 #define WM_MENUSELECT 287
@@ -1366,6 +1381,8 @@ extern "C" {
 #define WM_NCXBUTTONDOWN 171
 #define WM_NCXBUTTONUP 172
 #define WM_NCXBUTTONDBLCLK 173
+#define WM_NCMOUSEHOVER 0x02A0
+#define WM_NCMOUSELEAVE 0x02A2
 #endif
 #define WM_NCMOUSEMOVE 160
 #define WM_NCPAINT 133
@@ -3876,13 +3893,8 @@ WINUSERAPI BOOL WINAPI WinHelpA(HWND,LPCSTR,UINT,DWORD);
 WINUSERAPI BOOL WINAPI WinHelpW(HWND,LPCWSTR,UINT,DWORD);
 WINUSERAPI int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 WINUSERAPI int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
 WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
-#else
-WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);
-WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);
-#endif
 #if (_WIN32_WINNT >= 0x0500 || _WIN32_WINDOWS >= 0x0490)
 WINUSERAPI BOOL WINAPI AllowSetForegroundWindow(DWORD);
 WINUSERAPI BOOL WINAPI LockSetForegroundWindow(UINT);
@@ -4050,11 +4062,7 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExW
 #define WinHelp WinHelpW
 #define wsprintf wsprintfW
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfW
-#else
-#define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))
-#endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSW NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
@@ -4219,11 +4227,7 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExA
 #define WinHelp WinHelpA
 #define wsprintf wsprintfA
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfA
-#else
-#define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))
-#endif
 #ifndef NOGDI
 typedef ICONMETRICSA ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSA NONCLIENTMETRICS,*LPNONCLIENTMETRICS;

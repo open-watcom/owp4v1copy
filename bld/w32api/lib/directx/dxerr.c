@@ -81,14 +81,8 @@ static Error Errors[] = {
 	DXERROR(0x8781210, "DMUS_S_STRING_TRUNCATED", "Returned string has been truncated to fit the buffer size.")
 	DXERROR(0x8781211, "DMUS_S_LAST_TOOL", "Returned from IDirectMusicGraph::StampPMsg() this indicates that the PMsg is already stamped with the last tool in the graph. The returned PMsg's tool pointer is now NULL.")
 	DXERROR(0x8781212, "DMUS_S_OVER_CHORD", "Returned from IDirectMusicPerformance::MusicToMIDI() this indicates  that no note has been calculated because the music value has the note  at a position higher than the top note of the chord. This applies only to DMUS_PLAYMODE_NORMALCHORD play mode. This success code indicates that the caller should not do anything with the note. It is not meant to be played against this chord.")
-#if defined(__WATCOMC__) && __WATCOMC__ < 1230 
-/* work around a bug in earlier versions */
-	DXERROR(0x8781213, "DMUS_S_UP_OCTAVE", "Returned from IDirectMusicPerformance::MIDIToMusic()  and IDirectMusicPerformance::MusicToMIDI() this indicates  that the note conversion generated a note value that is below 0,  so it has been bumped up one or more octaves to be in the proper MIDI range of 0 through 127.  " TEXT("Note that this is valid for MIDIToMusic() when using play modes DMUS_PLAYMODE_FIXEDTOCHORD and DMUS_PLAYMODE_FIXEDTOKEY, both of which store MIDI values in wMusicValue. With MusicToMIDI() it is valid for all play modes. Ofcourse, DMUS_PLAYMODE_FIXED will never return this success code."))
-	DXERROR(0x8781214, "DMUS_S_DOWN_OCTAVE", "Returned from IDirectMusicPerformance::MIDIToMusic()  and IDirectMusicPerformance::MusicToMIDI() this indicates  that the note conversion generated a note value that is above 127, so it has been bumped down one or more octaves to be in the proper MIDI range of 0 through 127.  " TEXT("Note that this is valid for MIDIToMusic() when using play modes DMUS_PLAYMODE_FIXEDTOCHORD and DMUS_PLAYMODE_FIXEDTOKEY, both of which store MIDI values in wMusicValue. With MusicToMIDI() it is valid for all play modes. Ofcourse, DMUS_PLAYMODE_FIXED will never return this success code."))
-#else
 	DXERROR(0x8781213, "DMUS_S_UP_OCTAVE", "Returned from IDirectMusicPerformance::MIDIToMusic()  and IDirectMusicPerformance::MusicToMIDI() this indicates  that the note conversion generated a note value that is below 0,  so it has been bumped up one or more octaves to be in the proper MIDI range of 0 through 127.  Note that this is valid for MIDIToMusic() when using play modes DMUS_PLAYMODE_FIXEDTOCHORD and DMUS_PLAYMODE_FIXEDTOKEY, both of which store MIDI values in wMusicValue. With MusicToMIDI() it is valid for all play modes. Ofcourse, DMUS_PLAYMODE_FIXED will never return this success code.")
 	DXERROR(0x8781214, "DMUS_S_DOWN_OCTAVE", "Returned from IDirectMusicPerformance::MIDIToMusic()  and IDirectMusicPerformance::MusicToMIDI() this indicates  that the note conversion generated a note value that is above 127, so it has been bumped down one or more octaves to be in the proper MIDI range of 0 through 127.  Note that this is valid for MIDIToMusic() when using play modes DMUS_PLAYMODE_FIXEDTOCHORD and DMUS_PLAYMODE_FIXEDTOKEY, both of which store MIDI values in wMusicValue. With MusicToMIDI() it is valid for all play modes. Ofcourse, DMUS_PLAYMODE_FIXED will never return this success code.")
-#endif
 	DXERROR(0x8781215, "DMUS_S_NOBUFFERCONTROL", "Although the audio output from the port will be routed to the same device as the given DirectSound buffer, buffer controls such as pan and volume will not affect the output.")
 	DXERROR(0x8781216, "DMUS_S_GARBAGE_COLLECTED", "The requested operation was not performed because during CollectGarbage the loader determined that the object had been released.")
 	DXERROR(0x8000000a, "E_PENDING", "The data necessary to complete this operation is not yet available.")
@@ -766,14 +760,8 @@ HRESULT __stdcall DXTrace(char *strFile, DWORD dwLine, HRESULT hr,
 	{
 	    int Result;
 		wsprintf(DebugMessage, 
-#if defined(__WATCOMC__) && __WATCOMC__ < 1230 
-/* work around a bug in earlier versions */
-		   TEXT("File: %hs\nLine: %Lu\nError Code: %s(0x%Lx)\nCalling: %s\n")
-		   TEXT("Do you want to debug the application?"), strFile, dwLine,
-#else
 		   TEXT("File: %hs\nLine: %Lu\nError Code: %s(0x%Lx)\nCalling: %s\n"
 		   "Do you want to debug the application?"), strFile, dwLine,
-#endif
 		   ErrorName, hr, (strMsg ? strMsg : TEXT("")));		
 		Result = MessageBox(0, DebugMessage, TEXT("Unexpected error encountred"), MB_YESNO | MB_ICONERROR);
 		if (Result == IDYES)

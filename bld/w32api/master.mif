@@ -1,4 +1,4 @@
-proj_name = w32api
+#proj_name = w32api
 
 !include cproj.mif
 
@@ -123,15 +123,32 @@ vfw32_libs = &
         avicap32.lbc &
         avifil32.lbc
 
+ddk_libs = &
+        apcups.lib &
+        cfgmgr32.lib &
+        dxapi.lib &
+        hal.lib &
+        hid.lib &
+        hidparse.lib &
+        mcd.lib &
+        ndis.lib &
+        ntoskrnl.lib &
+        scsiport.lib &
+        tdi.lib &
+        usbcamd.lib &
+        usbcamd2.lib &
+        videoprt.lib &
+        win32k.lib
 
-libs = $(base_libs) $(directx_libs)
+#libs = $(base_libs) $(ddk_libs) $(directx_libs)
+libs = $($(proj_name)_libs)
 
-.def: ../lib;../lib/directx
+.def: ../../lib;../../lib/directx;../../lib/ddk;
 
-.c: ../lib;../lib/directx
+.c: ../../lib;../../lib/directx;../../lib/ddk;
 
 .def.lbc:
-        $(vi) -s ../def2lbc.vi -p"$[@ $*"
+        $(vi) -s ../../def2lbc.vi -p"$[@ $*"
 
 .lbc.lib:
         $(librarian) -b -c -p=16 -n -io -ii $@ @$<
@@ -146,18 +163,17 @@ libs = $(base_libs) $(directx_libs)
 # wmake exploits the special WATCOM readdir(wildcard) property...
 all: $(libs) .SYMBOLIC
 !ifdef __UNIX__
-        /bin/sh -c 'for i in ../include/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
-        /bin/sh -c 'for i in ../include/directx/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
-        /bin/sh -c 'for i in ../include/GL/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../../include/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../../include/ddk/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../../include/directx/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../../include/GL/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
 !else
-        @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
-        @for %i in (../include/directx/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
-        @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+        @for %i in (../../include/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+        @for %i in (../../include/ddk/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+        @for %i in (../../include/directx/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+        @for %i in (../../include/GL/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
 !endif
-        $(vi) -s ../fix/fix_h.vi
-
-kernel32.lib: kernel32.lbc
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
+        $(vi) -s ../../fix/fix_h.vi
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
@@ -196,4 +212,4 @@ uuid.lib: uuid.obj mshtml-u.obj
 
 clean : .SYMBOLIC
         @rm -f *.?bj *.lib *.lbc 
-        @rm -f include/*.h include/GL/*.h
+        @rm -f ../include/*.h ../include/ddk/*.h ../include/directx/*.h ../include/GL/*.h

@@ -405,16 +405,11 @@ WINSHLWAPI HRESULT WINAPI HashData(LPBYTE,DWORD,LPBYTE,DWORD);
 WINSHLWAPI HPALETTE WINAPI SHCreateShellPalette(HDC);
 WINSHLWAPI COLORREF WINAPI ColorHLSToRGB(WORD,WORD,WORD);
 WINSHLWAPI COLORREF WINAPI ColorAdjustLuma(COLORREF,int,BOOL);
-WINSHLWAPI void WINAPI ColorRGBToHLS(COLORREF,WORD*,WORD*,WORD*);
+WINSHLWAPI void WINAPI ColorRGBToHLS(COLORREF,WORD*,WORD*,WORD*);  
 WINSHLWAPI int __cdecl wnsprintfA(LPSTR,int,LPCSTR,...);
 WINSHLWAPI int __cdecl wnsprintfW(LPWSTR,int,LPCWSTR,...);
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 WINSHLWAPI int WINAPI wvnsprintfA(LPSTR,int,LPCSTR,va_list);
 WINSHLWAPI int WINAPI wvnsprintfW(LPWSTR,int,LPCWSTR,va_list);
-#else
-WINSHLWAPI int WINAPI wvnsprintfA(LPSTR,int,LPCSTR,char *);
-WINSHLWAPI int WINAPI wvnsprintfW(LPWSTR,int,LPCWSTR,char *);
-#endif
 
 HINSTANCE WINAPI MLLoadLibraryA(LPCSTR,HANDLE,DWORD,LPCSTR,BOOL);
 HINSTANCE WINAPI MLLoadLibraryW(LPCWSTR,HANDLE,DWORD,LPCWSTR,BOOL);
@@ -562,11 +557,7 @@ HRESULT WINAPI DllInstall(BOOL,LPCWSTR);
 #define SHRegSetUSValue SHRegSetUSValueW
 #define SHRegWriteUSValue SHRegWriteUSValueW
 #define wnsprintf wnsprintfW
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvnsprintf wvnsprintfW
-#else
-#define wvnsprintf(a,b,c,d) wvnsprintfW(a,b,c,*(d))
-#endif
 #else /* UNICODE */
 #define ChrCmpI ChrCmpIA
 #define IntlStrEqN IntlStrEqNA
@@ -708,11 +699,7 @@ HRESULT WINAPI DllInstall(BOOL,LPCWSTR);
 #define SHRegSetUSValue SHRegSetUSValueA
 #define SHRegWriteUSValue SHRegWriteUSValueA
 #define wnsprintf wnsprintfA
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvnsprintf wvnsprintfA
-#else
-#define wvnsprintf(a,b,c,d) wvnsprintfA(a,b,c,*(d))
-#endif
 #endif /* UNICODE */
 
 #define StrToLong StrToInt

@@ -70,12 +70,4 @@ extern GUID GUID_Slider;
 extern GUID GUID_Key;
 extern GUID GUID_POV;
 
-#ifdef __GNUC__
-#define SECTION_TEXT __attribute__ ((section(".text")))
-#define SECTION_RDATA __attribute__ ((section(".rdata")))
-#else
-#define SECTION_TEXT
-#define SECTION_RDATA
-#endif
-
 #endif

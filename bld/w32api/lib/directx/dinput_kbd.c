@@ -12,7 +12,7 @@
 
 #include "dinput_private.h"
 
-static DIOBJECTDATAFORMAT c_rgodfDIKeyboard[] SECTION_TEXT =
+static DIOBJECTDATAFORMAT c_rgodfDIKeyboard[] =
 {
 	{&GUID_Key,0x0,DIDFT_BUTTON|DIDFT_MAKEINSTANCE(0x0)|DIDFT_OPTIONAL,0x0},
 	{&GUID_Key,0x1,DIDFT_BUTTON|DIDFT_MAKEINSTANCE(0x1)|DIDFT_OPTIONAL,0x0},
@@ -272,4 +272,4 @@ static DIOBJECTDATAFORMAT c_rgodfDIKeyboard[] SECTION_TEXT =
 	{&GUID_Key,0xff,DIDFT_BUTTON|DIDFT_MAKEINSTANCE(0xff)|DIDFT_OPTIONAL,0x0}
 };
 
-DIDATAFORMAT c_dfDIKeyboard SECTION_RDATA = {sizeof(DIDATAFORMAT),sizeof(DIOBJECTDATAFORMAT),DIDF_RELAXIS,256,sizeof(c_rgodfDIKeyboard)/sizeof(c_rgodfDIKeyboard[0]),c_rgodfDIKeyboard};
+DIDATAFORMAT c_dfDIKeyboard = {sizeof(DIDATAFORMAT),sizeof(DIOBJECTDATAFORMAT),DIDF_RELAXIS,256,sizeof(c_rgodfDIKeyboard)/sizeof(c_rgodfDIKeyboard[0]),c_rgodfDIKeyboard};

@@ -1,10 +1,22 @@
 set norc
-source ../getmodn.vi %1
+source ../../getmodn.vi %1
 r %1
 set nomagic
 %s/^LIBRARY.*$//g
 %s/^EXPORTS.*$//g
 %s/[ \t]//g
+#
+# process fastcall symbols "@symbol@size"
+#
+%s/^@\([A-Za-z0-9_]*\)\([@0-9]*\)$/++'__imp_@\1\2'.'%(ModuleName)'.'@\1\2'.'\1'/g
+#
+# TODO: remove symbols ???? probably C++ ???? they are mangled, should be converted
+# to OW mangling
+#
+%s/^\([A-Za-z0-9_]*\)\([@0-9]*\)=\([A-Za-z0-9_]*\)$//g
+#
+# process stdcall symbols "symbol@size"
+#
 %s/^\([A-Za-z0-9_]*\)\([@0-9]*\)$/++'__imp__\1\2'.'%(ModuleName)'.'_\1\2'.'\1'/g
 %s/^\+\+'__imp__'.*$//g
 %s/\(%(ModuleName)\)/\u\1/g
