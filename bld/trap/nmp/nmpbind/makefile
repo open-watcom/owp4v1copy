@@ -53,13 +53,13 @@ $(bin_root)/binp/dnmpbind.exe : _err.gh _jerr.gh $(objs)
 inc_dirs = $(trap_dir)/h
 
 _err.gh : ./mkstr.exe
-        mkstr $^@
+        $[@ $^@
 
-_jerr.gh : ./mkstrj.exe
-        mkstr $^@
+_jerr.gh : ./jmkstr.exe
+        $[@ $^@
 
 ./mkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -i"$(trap_dir)/h"
+        $(bld_cl) $[@ $(wcl_util_opts) -i"$(trap_dir)/h"
 
-./mkstrj.exe: $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
+./jmkstr.exe: $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
+        $(bld_cl) $[@ $(wcl_util_opts) -dJAPANESE_MESSAGES -i"$(trap_dir)/h"

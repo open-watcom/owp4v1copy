@@ -53,7 +53,7 @@ dos16m.obj : dos16m.asm
 all : w32bindnt.exe ntrunner.exe
 
 w32bindnt.exe : w32bind.c
-  $(bld_cl) $[@ -fe=$^@ -ox
+  $(bld_cl) $[* $(wcl_util_opts)
 
 dbgntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk debug all
@@ -65,14 +65,14 @@ ntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk sys nt name ntrun file cstrtwnt.obj,ntrun.obj,int21.obj,int21nt.obj opt map,stack=64k,stub=ntstub.exe
   @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
-  del tmp.lnk
+  @rm -f tmp.lnk
   for %i in ( $(nt_exes) ) do cp ntrun.exe nt/%i
 
 ntrunner.exe : ntrunner.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk sys nt name ntrunner.exe file cstrtwnt.obj, ntrunner.obj,int21.obj,int21nt.obj opt map,stack=64k,stub=ntstub.exe
   @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
-  del tmp.lnk
+  @rm -f tmp.lnk
 
 ntstub.exe : ntstub.obj
   $(linker) system dos file ntstub.obj option map
@@ -89,7 +89,11 @@ ntrunner.obj : loader.c loader.h
 all: w32bind.exe os2ldr.exe
 
 w32bind.exe : w32bind.c
-  $(bld_cl) $< -ox -"option stub=wstubq.exe"
+!ifdef __LINUX__
+  $(bld_cl) $[* $(wcl_util_opts) -\"option stub=wstubq.exe\"
+!else
+  $(bld_cl) $[* $(wcl_util_opts) -"option stub=wstubq.exe"
+!endif
 
 os2ldr.exe : cstrtos2.obj loader.obj int21.obj int21os2.obj tnk.obj os2stub.exe
   $(linker) system os2v2 pmc name os2ldr file cstrtos2.obj,loader.obj,int21.obj,int21os2.obj,tnk.obj lib os2386 opt map,stack=32k,stub=os2stub.exe
@@ -108,10 +112,5 @@ int21win.obj : int21win.asm
         $(as_i86) -q -d2 $< -fo=$@
 
 clean: .SYMBOLIC
-        @if exist *.exe @del *.exe
-        @if exist *.exp @del *.exp
-        @if exist *.obj @del *.obj
-        @if exist *.map @del *.map
-        @if exist *.gh @del *.gh
-        @if exist mkdginfo.bat @del mkdginfo.bat
-        @if exist a*. @del a*.
+        @rm -f *.exe *.exp *.obj *.map *.gh
+        @rm -f mkdginfo.bat a*.

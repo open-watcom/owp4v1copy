@@ -156,7 +156,7 @@ inc_dirs += $(posix_dir)/h;$(gui_dir)/ui/h;$(help_dir)/h
     @set include = $(inc_path)
 
 compile  = *$(compiler_$(host_CPU)) $[* $(cflags)
-assemble = wasm $(extra_aflags) $[@ -fo=$^@
+assemble = $(as) $(extra_aflags) $[@ -fo=$^@
 
 dig_os_dos_386  = dsx
 
@@ -377,7 +377,7 @@ wd.lib : eraseall.obj $(engine_objs) $(sysobjs)
         rm -f tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
         $(librarian) -b -n wd.lib @tmp.lbc
-        del tmp.lbc
+        @rm -f tmp.lbc
 
 $(bdir)/wv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
 !ifndef on_build_machine
@@ -790,7 +790,7 @@ japhis.dlg : $(hdir)/japhis.dlg
 !endif
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)/h" $]@ -fe=$^@
+        $(bld_cl) -i"$(aui_dir)/h" $]@ $(wcl_util_opts)
 
 auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
         $]@ $^@

@@ -3,10 +3,10 @@
 .SUFFIXES:
 .SUFFIXES: .res .rc .lst .obj .c .asm .hlp .itl .ipf
 
-CC         = wcc386 -d2 -i$(lang_root)\h\os2
+CC         = wcc386 -d2 -i"$(lang_root)/h/os2"
 
-AFLAGS  = /Mx -t -z
-ASM     = ml /c /Zm
+AFLAGS  = -Mx -t -z
+ASM     = ml -c -Zm
 LFLAGS  =
 LINK    = WLINK  $(LFLAGS)
 
@@ -20,7 +20,7 @@ LINK    = WLINK  $(LFLAGS)
     $(ASM)   $*.asm
 
 .ipf.hlp:
-        ipfc $*.ipf /W3
+        ipfc $*.ipf -W3
 
 .itl.hlp:
         cc  -P $*.itl
@@ -46,7 +46,7 @@ hello.obj: hello.c $(HEADERS)
 dbg.obj: dbg.c $(HEADERS)
 
 try.exe : try.c
-    wcc386 try /bw /d2 /i$(lang_root)\h\os2
+    wcc386 try -bw -d2 -i"$(lang_root)/h/os2"
     wlink sys os2v2_pm @try
 
 hello.exe: hello.obj  hello.lnk hello.res

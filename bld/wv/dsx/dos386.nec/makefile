@@ -7,7 +7,7 @@ host_OS=dos
 host_CPU=386
 display=char
 machine = nec
-syshdir = ..\h;..\..\dos\h
+syshdir = ../h;../../dos/h
 
 sysobjs =   &
     dsxfork.obj &

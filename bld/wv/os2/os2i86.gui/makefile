@@ -7,8 +7,8 @@
 host_OS  = os2
 host_CPU = i86
 display  = gui
-syshdir  = $(mdir)\$(sysdir)\h;$(inc_dirs_sys_os2)
-extra_cflags = /zc /zu
+syshdir  = $(mdir)/$(sysdir)/h;$(inc_dirs_sys_os2)
+extra_cflags = -zc -zu
 
 #add '16' suffix to avoid conflicts
 tail_gui_os2 = w16

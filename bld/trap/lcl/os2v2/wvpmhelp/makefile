@@ -38,7 +38,7 @@ $(bdir)/dll/wdpmhook.dll: pmhook.obj
     @%write  $(tmplnk) name $^@ sys os2v2 dll
     @%append $(tmplnk) debug all op symf
     @%append $(tmplnk) option map
-    @%append $(tmplnk) file pmhook
+    @%append $(tmplnk) file pmhook.obj
     @%append $(tmplnk) library $(os2386)
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
     $(linker) @$(tmplnk)
@@ -49,7 +49,7 @@ $(bdir)/wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     @%append $(tmplnk) option map
     @%append $(tmplnk) import WinLockInput PMMERGE.5225
     @%append $(tmplnk) import WinThreadAssocQueue PMMERGE.5398
-    @%append $(tmplnk) file pmhelp
+    @%append $(tmplnk) file pmhelp.obj
     @%append $(tmplnk) library os2386.lib
     @%append $(tmplnk) option modname=wdpmhelp
     @%append $(tmplnk) option description $(description)
@@ -64,12 +64,14 @@ pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
         $(rc_os2) -r ..\h\pmhelp.rc .\pmhelp.res
         @set include=$(%oinc)
 
-_err.gh : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -i"$(trap_dir)/h"
-        mkstr $^@
-        @rm -f mkstr.*
+_err.gh : ./mkstr.exe
+        $[@ $^@
 
-_jerr.gh : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
-        mkstr $^@
-        @rm -f mkstr.*
+_jerr.gh : ./jmkstr.exe
+        $[@ $^@
+
+./mkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
+        $(bld_cl) $[@ $(wcl_util_opts) -i"$(trap_dir)/h"
+
+./jmkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
+        $(bld_cl) $[@ $(wcl_util_opts) -dJAPANESE_MESSAGES -i"$(trap_dir)/h"

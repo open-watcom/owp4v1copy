@@ -36,14 +36,13 @@ extra_a_flags_fldenv = -i"$(watcomdir)h"
 
 all : conv.exe win386.lib
 
-conv.exe : conv.c makefile
+./conv.exe : conv.c makefile
     $(bld_cl) $[* $(wcl_util_opts)
 
-win386.lib : $(def_files) ../def/win386 conv.exe fldenv.obj _call16.obj
-    conv ../def/win386 ../def -s -q
+win386.lib : ./conv.exe $(def_files) ../def/win386 fldenv.obj _call16.obj
+    $[@ ../def/win386 ../def -s -q
     ls -1 win*.obj >tmp.lbc
     $(librarian) -n -b -p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
-    @erase tmp.lbc
     @cp winglue.asm ../../asm >$(nulldevice)
     @cp dllthunk.c ../../c >$(nulldevice)
     @cp dllthk.asm ../../asm >$(nulldevice)

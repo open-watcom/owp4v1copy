@@ -292,4 +292,3 @@ void TaskPrint(char *ptr, unsigned len)
     TaskExecute(DoWritePgmScrn);
     WriteRegs(&save);
 }
-
