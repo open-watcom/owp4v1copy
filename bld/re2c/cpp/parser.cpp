@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#ifndef lint
-static char yysccsid[] = "@(#)yaccpar   1.8 (Berkeley) 01/20/90";
-#endif
 #define YYBYACC 1
 #line 2 "parser.y"
 
@@ -269,7 +266,7 @@ yyparse()
     *yyssp = yystate = 0;
 
 yyloop:
-    if (yyn = yydefred[yystate]) goto yyreduce;
+    if ((yyn = yydefred[yystate]) != NULL) goto yyreduce;
     if (yychar < 0)
     {
         if ((yychar = yylex()) < 0) yychar = 0;
@@ -284,7 +281,7 @@ yyloop:
         }
 #endif
     }
-    if ((yyn = yysindex[yystate]) && (yyn += yychar) >= 0 &&
+    if (((yyn = yysindex[yystate]) != NULL) && (yyn += yychar) >= 0 &&
             yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
     {
 #if YYDEBUG
@@ -302,22 +299,14 @@ yyloop:
         if (yyerrflag > 0)  --yyerrflag;
         goto yyloop;
     }
-    if ((yyn = yyrindex[yystate]) && (yyn += yychar) >= 0 &&
+    if (((yyn = yyrindex[yystate]) != NULL) && (yyn += yychar) >= 0 &&
             yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
     {
         yyn = yytable[yyn];
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-#ifdef lint
-    goto yynewerror;
-#endif
-yynewerror:
     yyerror("syntax error");
-#ifdef lint
-    goto yyerrlab;
-#endif
-yyerrlab:
     ++yynerrs;
 yyinrecovery:
     if (yyerrflag < 3)
@@ -325,7 +314,7 @@ yyinrecovery:
         yyerrflag = 3;
         for (;;)
         {
-            if ((yyn = yysindex[*yyssp]) && (yyn += YYERRCODE) >= 0 &&
+            if (((yyn = yysindex[*yyssp]) != NULL) && (yyn += YYERRCODE) >= 0 &&
                     yyn <= YYTABLESIZE && yycheck[yyn] == YYERRCODE)
             {
 #if YYDEBUG
@@ -460,7 +449,7 @@ case 16:
 break;
 case 17:
 #line 103 "parser.y"
-{ yyval.op = (yyvsp[-1].op == yyvsp[0].op) ? yyvsp[-1].op : '*'; }
+{ yyval.op = ((yyvsp[-1].op == yyvsp[0].op) != NULL) ? yyvsp[-1].op : '*'; }
 break;
 case 18:
 #line 107 "parser.y"
@@ -513,7 +502,7 @@ break;
         if (yychar == 0) goto yyaccept;
         goto yyloop;
     }
-    if ((yyn = yygindex[yym]) && (yyn += yystate) >= 0 &&
+    if (((yyn = yygindex[yym]) != NULL) && (yyn += yystate) >= 0 &&
             yyn <= YYTABLESIZE && yycheck[yyn] == yystate)
         yystate = yytable[yyn];
     else

@@ -186,7 +186,7 @@ void genGoTo(ostream &o, State *to){
 
 void genIf(ostream &o, char *cmp, uint v){
     o << "\tif(yych " << cmp << " '";
-    prtCh(o, v);
+    prtCh(o, (uchar)v);
     o << "')";
 }
 
@@ -238,7 +238,7 @@ Move::Move(State *s) : Action(s) {
 }
 
 void Move::emit(ostream &o){
-    ;
+    o = o;
 }
 
 Accept::Accept(State *x, uint n, uint *s, State **r)
@@ -308,7 +308,7 @@ void Go::genLinear(ostream &o, State *next){
 void genCases(ostream &o, uint lb, Span *s){
     if(lb < s->ub){
         for(;;){
-            o << "\tcase '"; prtCh(o, lb); o << "':";
+            o << "\tcase '"; prtCh(o, (uchar)lb); o << "':";
             if(++lb == s->ub)
                 break;
             o << "\n";

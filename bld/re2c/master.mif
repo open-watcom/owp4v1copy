@@ -9,11 +9,6 @@ inc_dirs = -I"$(re2c_dir)/h"
 
 .cpp: ../cpp
 
-# This project SUCKS! Getting rid of all the warnings would take
-# a lot of time which I don't have right now.
-
-cppflags += -w1
-
 objs =                  &
        actions.obj      &
        code.obj         &

@@ -38,7 +38,7 @@
 #include "dfa.h"
 
 inline char octCh(uint c){
-    return '0' + c%8;
+    return '0' + (char)c%8;
 }
 
 void prtCh(ostream &o, uchar c){
@@ -66,11 +66,11 @@ void printSpan(ostream &o, uint lb, uint ub){
     o << "*";
     o << "[";
     if((ub - lb) == 1){
-    prtCh(o, lb);
+    prtCh(o, (uchar)lb);
     } else {
-    prtCh(o, lb);
+    prtCh(o, (uchar)lb);
     o << "-";
-    prtCh(o, ub-1);
+    prtCh(o, (uchar)ub-1);
     }
     o << "]";
 }
@@ -146,15 +146,16 @@ DFA::DFA(Ins *ins, uint ni, uint lb, uint ub, Char *rep)
     State *s = toDo;
     toDo = s->link;
 
-    Ins **cP, **iP, *i;
+    Ins **cP, **iP;
+    Ins *i;
     uint nGoTos = 0, j;
 
     s->rule = NULL;
-    for(iP = s->kernel; i = *iP; ++iP){
+    for(iP = s->kernel; (i = *iP) != NULL; ++iP){
         if(i->i.tag == CHAR){
         for(Ins *j = i + 1; j < (Ins*) i->i.link; ++j){
-            if(!(j->c.link = goTo[j->c.value - lb].to))
-            goTo[nGoTos++].ch = j->c.value;
+            if((j->c.link = goTo[j->c.value - lb].to) == 0)
+            goTo[nGoTos++].ch = (Char)j->c.value;
             goTo[j->c.value - lb].to = j;
         }
         } else if(i->i.tag == TERM){
@@ -196,7 +197,7 @@ DFA::DFA(Ins *ins, uint ni, uint lb, uint ub, Char *rep)
 
 DFA::~DFA(){
     State *s;
-    while(s = head){
+    while((s = head) != NULL){
     head = s->next;
     delete s;
     }
@@ -211,13 +212,14 @@ void DFA::addState(State **a, State *s){
 }
 
 State *DFA::findState(Ins **kernel, uint kCount){
-    Ins **cP, **iP, *i;
+    Ins **cP, **iP;
+    Ins *i;
     State *s;
 
     kernel[kCount] = NULL;
 
     cP = kernel;
-    for(iP = kernel; i = *iP; ++iP){
+    for(iP = kernel; (i = *iP) != NULL; ++iP){
      if(i->i.tag == CHAR || i->i.tag == TERM){
          *cP++ = i;
     } else {
@@ -229,7 +231,7 @@ State *DFA::findState(Ins **kernel, uint kCount){
 
     for(s = head; s; s = s->next){
      if(s->kCount == kCount){
-         for(iP = s->kernel; i = *iP; ++iP)
+         for(iP = s->kernel; (i = *iP) != 0; ++iP)
          if(!isMarked(i))
              goto nextState;
          goto unmarkAll;
@@ -246,7 +248,7 @@ State *DFA::findState(Ins **kernel, uint kCount){
     toDo = s;
 
 unmarkAll:
-    for(iP = kernel; i = *iP; ++iP)
+    for(iP = kernel; (i = *iP) != NULL; ++iP)
      unmark(i);
 
     return s;

@@ -38,6 +38,10 @@
 #include "parser.h"
 #include "ytab.h"
 
+#ifdef __WATCOM_CPLUSPLUS__
+    #pragma warning 17 10
+#endif
+
 extern YYSTYPE yylval;
 
 #define BSIZE   8192
@@ -421,7 +425,6 @@ yy74:   ++YYCURSOR;
 comment:
 {
         YYCTYPE yych;
-        unsigned int yyaccept;
         goto yy75;
 yy76:   ++YYCURSOR;
 yy75:

@@ -58,7 +58,7 @@ void showIns(ostream &o, const Ins &i, const Ins &base){
     case CHAR: {
         o << "match ";
         for(const Ins *j = &(&i)[1]; j < (Ins*) i.i.link; ++j)
-            prtCh(o, j->c.value);
+            prtCh(o, (uchar)j->c.value);
         break;
     } case GOTO:
         o << "goto " << ((Ins*) i.i.link - &base);
@@ -100,15 +100,16 @@ void NullOp::split(CharSet&){
 
 ostream& operator<<(ostream &o, const Range &r){
     if((r.ub - r.lb) == 1){
-        prtCh(o, r.lb);
+        prtCh(o, (uchar)r.lb);
     } else {
-        prtCh(o, r.lb); o << "-"; prtCh(o, r.ub-1);
+        prtCh(o, (uchar)r.lb); o << "-"; prtCh(o, (uchar)(r.ub-1));
     }
     return o << r.next;
 }
 
 Range *doUnion(Range *r1, Range *r2){
-    Range *r, **rP = &r;
+    Range *r;
+    Range **rP = &r;
     for(;;){
         Range *s;
         if(r1->lb <= r2->lb){
@@ -124,7 +125,7 @@ Range *doUnion(Range *r1, Range *r2){
                     break;
                 if(r1->ub > s->ub)
                     s->ub = r1->ub;
-                if(!(r1 = r1->next)){
+                if((r1 = r1->next) == NULL){
                     uint ub = 0;
                     for(; r2 && r2->lb <= s->ub; r2 = r2->next)
                         ub = r2->ub;
@@ -138,7 +139,7 @@ Range *doUnion(Range *r1, Range *r2){
                     break;
                 if(r2->ub > s->ub)
                     s->ub = r2->ub;
-                if(!(r2 = r2->next)){
+                if((r2 = r2->next) == NULL){
                     uint ub = 0;
                     for(; r1 && r1->lb <= s->ub; r1 = r1->next)
                         ub = r1->ub;
@@ -150,12 +151,11 @@ Range *doUnion(Range *r1, Range *r2){
             }
         }
     }
-    *rP = NULL;
-    return r;
 }
 
 Range *doDiff(Range *r1, Range *r2){
-    Range *r, *s, **rP = &r;
+    Range *r, *s;
+    Range **rP = &r;
     for(; r1; r1 = r1->next){
         uint lb = r1->lb;
         for(; r2 && r2->ub <= r1->lb; r2 = r2->next);
@@ -209,8 +209,8 @@ void MatchOp::compile(Char *rep, Ins *i){
     for(Range *r = match; r; r = r->next){
         for(uint c = r->lb; c < r->ub; ++c){
             if(rep[c] == c){
-                j->c.value = c;
-                j->c.bump = --bump;
+                j->c.value = (uchar)c;
+                j->c.bump = (uchar)--bump;
                 j++;
             }
         }
@@ -225,7 +225,7 @@ void MatchOp::split(CharSet &s){
                 if(x->card == 1)
                     continue;
                 x->nxt = a = s.freeHead;
-                if(!(s.freeHead = s.freeHead->nxt))
+                if((s.freeHead = s.freeHead->nxt) == NULL)
                     s.freeTail = &s.freeHead;
                 a->nxt = NULL;
                 x->fix = s.fix;
@@ -246,9 +246,9 @@ void MatchOp::split(CharSet &s){
 
 RegExp *mkDiff(RegExp *e1, RegExp *e2){
     MatchOp *m1, *m2;
-    if(!(m1 = (MatchOp*) e1->isA(MatchOp::type)))
+    if((m1 = (MatchOp*) e1->isA(MatchOp::type)) == NULL)
         return NULL;
-    if(!(m2 = (MatchOp*) e2->isA(MatchOp::type)))
+    if((m2 = (MatchOp*) e2->isA(MatchOp::type)) == NULL)
         return NULL;
     Range *r = doDiff(m1->match, m2->match);
     return r? (RegExp*) new MatchOp(r) : (RegExp*) new NullOp;
@@ -265,16 +265,16 @@ RegExp *doAlt(RegExp *e1, RegExp *e2){
 RegExp *mkAlt(RegExp *e1, RegExp *e2){
     AltOp *a;
     MatchOp *m1, *m2;
-    if(a = (AltOp*) e1->isA(AltOp::type)){
-        if(m1 = (MatchOp*) a->exp1->isA(MatchOp::type))
+    if((a = (AltOp*) e1->isA(AltOp::type)) != NULL){
+        if((m1 = (MatchOp*) a->exp1->isA(MatchOp::type)) != NULL)
             e1 = a->exp2;
-    } else if(m1 = (MatchOp*) e1->isA(MatchOp::type)){
+    } else if((m1 = (MatchOp*) e1->isA(MatchOp::type)) != NULL){
             e1 = NULL;
     }
-    if(a = (AltOp*) e2->isA(AltOp::type)){
-        if(m2 = (MatchOp*) a->exp1->isA(MatchOp::type))
+    if((a = (AltOp*) e2->isA(AltOp::type)) != NULL){
+        if((m2 = (MatchOp*) a->exp1->isA(MatchOp::type)) != NULL)
             e2 = a->exp2;
-    } else if(m2 = (MatchOp*) e2->isA(MatchOp::type)){
+    } else if((m2 = (MatchOp*) e2->isA(MatchOp::type)) != NULL){
             e2 = NULL;
     }
     return doAlt(merge(m1, m2), doAlt(e1, e2));
