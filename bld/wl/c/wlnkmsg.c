@@ -38,7 +38,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 
 #include "linkstd.h"
 #include "dbginfo.h"
@@ -187,10 +189,10 @@ static void Msg_Add_Args( MSG_ARG *arginfo, char typech, va_list *args )
             break;
         case 'x':
         case 'd':
-            arginfo->int_16 = va_arg( *args, unsigned_16 );
+            arginfo->int_16 = va_arg( *args, unsigned int );
             break;
         case 'l':
-            arginfo->int_32 = va_arg( *args, unsigned_32 );
+            arginfo->int_32 = va_arg( *args, unsigned long );
             break;
         case 'a':
             arginfo->address = va_arg( *args, targ_addr * );

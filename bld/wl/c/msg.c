@@ -129,7 +129,7 @@ extern unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                 } else {
                     str = va_arg( *args, symbol * )->name;
                 }
-#if _LINKER != _WATFOR77
+#if _LINKER != _WATFOR77 && defined(__WATCOMC__)
                 if( !(LinkFlags & DONT_UNMANGLE) ) {
                     size = __demangle_l( str, 0, dest, len );
                     if( size > (len-1) ) size = len - 1;
@@ -174,7 +174,7 @@ extern unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                 len -= num;
                 break;
             case 'c' :
-                *dest++ = va_arg( *args, char );
+                *dest++ = va_arg( *args, int );
                 len--;
                 break;
             case 'x' :
@@ -182,7 +182,7 @@ extern unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                     num = MsgArgInfo.arg[MsgArgInfo.index].int_16;
                     IncremIndex();
                 } else {
-                    num = va_arg( *args, unsigned_16 );
+                    num = va_arg( *args, unsigned int );
                 }
                 if( len < 4 ) return( dest - buff );    //NOTE: premature return
                 dest += 4;
@@ -210,7 +210,7 @@ extern unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                     num = MsgArgInfo.arg[MsgArgInfo.index].int_16;
                     IncremIndex();
                 } else {
-                    num = va_arg( *args, unsigned_16 );
+                    num = va_arg( *args, unsigned int );
                 }
                 utoa( num, dest, 10 );
                 size = strlen( dest );
@@ -571,7 +571,7 @@ extern bool SkipSymbol( symbol * sym )
 /************************************/
 {
     if( sym->info & SYM_STATIC && !(MapFlags & MAP_STATICS) ) return TRUE;
-#if _LINKER != _WATFOR77
+#if _LINKER != _WATFOR77 && defined(__WATCOMC__)
     { int art;
 
     art = __is_mangled_internal( sym->name, 0 ); // KLUDGE: it doesn't need len
@@ -595,7 +595,7 @@ extern int SymAlphaCompare( const void *a, const void *b )
 
     left = *((symbol **) a);
     right = *((symbol **) b);
-#if _LINKER != _WATFOR77
+#if _LINKER != _WATFOR77 && defined(__WATCOMC__)
     if( !(LinkFlags & DONT_UNMANGLE) ) {
         __unmangled_name( left->name, 0, &leftname, &leftsize );
         __unmangled_name( right->name, 0, &rightname, &rightsize );

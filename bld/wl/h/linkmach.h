@@ -47,3 +47,4 @@
 #define _PHAROS         6
 #define _NT             7
 #define _OS2V2          8
+#define _LINUX          9

@@ -30,10 +30,12 @@
 
 
 #include <string.h>
-#include <process.h>
 #include <malloc.h>
 #include <stdlib.h>
 #include "linkstd.h"
+#if _OS != _LINUX
+#include <process.h>
+#endif
 #include "ring.h"
 #include "pcobj.h"
 #include "newmem.h"
@@ -141,7 +143,7 @@ extern void FiniLoadFile( void )
     DoCVPack();
 }
 
-#if _OS == LINUX
+#if _OS == _LINUX
 static void DoCVPack( void ) {}
 #else
 static void DoCVPack( void )
@@ -675,7 +677,7 @@ static void ExecWlib( void )
     }
     _LnkFree( cmdline );
 }
-#elif _OS == LINUX
+#elif _OS == _LINUX
 static void ExecWlib( void ) {}
 #else
 static void ExecWlib( void )
@@ -743,7 +745,7 @@ extern void AddImpLibEntry( char *intname, char *extname, unsigned ordinal )
         currpos += otherlen;
         *currpos++ = '\'';
     } else {
-        ultoa( ordinal, currpos, 10 );
+        utoa( ordinal, currpos, 10 );
         currpos += strlen( currpos );
     }
 #if _OS != _QNX
