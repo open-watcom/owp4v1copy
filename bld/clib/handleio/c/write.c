@@ -55,7 +55,9 @@
 
 
 #ifdef __NT__
+#ifndef INVALID_SET_FILE_POINTER
 #define INVALID_SET_FILE_POINTER 0xFFFFFFFF
+#endif
 #endif
 
 #if defined( DEFAULT_WINDOWING ) && defined( __WINDOWS__ )

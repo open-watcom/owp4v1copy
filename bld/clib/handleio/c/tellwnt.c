@@ -47,7 +47,9 @@
     );
  */
 
+#ifndef INVALID_SET_FILE_POINTER
 #define INVALID_SET_FILE_POINTER 0xFFFFFFFF
+#endif
 
 #ifdef __INT64__
  _WCRTLINK __int64 _telli64( int hid )
