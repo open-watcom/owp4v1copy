@@ -1,3 +1,15 @@
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fldm086, word
+
+
+endif
+
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
 ;<>     long double math library
@@ -410,3 +422,10 @@ endif
 
         endproc ___LDM
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

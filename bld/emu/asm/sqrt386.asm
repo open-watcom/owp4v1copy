@@ -24,11 +24,49 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  sqrt function for long double argument
 ;*
 ;*****************************************************************************
 
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+
+        xref    __iFDLD
+        xref    __iLDFD
+
+        modstart  sqrt386
+
+        xdefp   __sqrtd
+
+;
+;      double __sqrtd( double EDX EAX );
+;
+
+        defp    __sqrtd
+        push    EDX                     ; make double parm addressable
+        push    EAX                     ; ...
+        mov     EAX,ESP                 ; get address of first parm
+        sub     ESP,12                  ; allocate space for long double
+        mov     EDX,ESP                 ; point EDX to long double
+        call    __iFDLD                 ; convert double to long double
+        mov     EAX,ESP                 ; point to long double
+        call    __sqrt                  ; calculate square root
+        mov     EAX,ESP                 ; point to long double
+        mov     EDX,ESP                 ; get address of double
+        add     EDX,12                  ; ...
+        call    __iLDFD                 ; convert it to double
+        add     ESP,12                  ; remove long double from stack
+        pop     EAX                     ; pop double into return regs
+        pop     EDX                     ; ...
+        ret                             ; return
+        endproc __sqrtd
+
+include xception.inc
+include fstatus.inc
+
+endif
 
         xdefp   __sqrt
 ;
@@ -138,3 +176,10 @@ sqrt9:  pop     EBX             ; restore EBX
         pop     EDI             ; restore EDI
         ret                     ; return to caller
         endproc __sqrt
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

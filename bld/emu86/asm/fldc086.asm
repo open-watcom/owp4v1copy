@@ -1,3 +1,15 @@
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fldc086, word
+
+
+endif
+
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
 ;<> __FLDC - long double comparison
@@ -118,3 +130,10 @@ endif
 
         endproc __FLDC
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

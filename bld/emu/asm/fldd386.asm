@@ -24,11 +24,23 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  long double math library - divide  __FLDD, ___LDD
 ;*
 ;*****************************************************************************
 
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8DivZero
+        xref    F8InvalidOp
+
+        modstart    fldd386, dword
+
+endif
 
         xdefp   __FLDD
         xdefp   ___LDD
@@ -365,3 +377,10 @@ _divret:
 
         endproc ___LDD
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

@@ -24,11 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  long double math library - multiply  __FLDM, ___LDM
 ;*
 ;*****************************************************************************
 
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fldm386, dword
+
+endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
@@ -298,3 +307,10 @@ mul_oflow:                      ; overflow
         sub     EAX,EAX         ; ...
         jmp     short _mulret   ; return
         endproc ___LDM
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

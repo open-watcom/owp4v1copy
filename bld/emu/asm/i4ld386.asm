@@ -24,11 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  convert long into long double  __I4LD, __U4LD
 ;*
 ;*****************************************************************************
 
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    i4ld386, dword
+
+endif
 
         xdefp   __I4LD
         xdefp   __U4LD
@@ -81,3 +90,9 @@ __U4LD:
         ret                             ; return
 __I4LD  endp
 
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

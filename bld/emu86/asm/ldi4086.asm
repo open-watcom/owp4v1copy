@@ -1,3 +1,16 @@
+
+ifdef _BUILDING_MATHLIB
+
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    ldi4086, word
+
+
+endif
+
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
 ;<> __LDI4 - convert long double to 4-byte integer
@@ -93,3 +106,10 @@ endif
         endproc __LDU4
         endproc __LDI4
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

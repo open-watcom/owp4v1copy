@@ -1,5 +1,23 @@
-
+ifdef EMUL_VERSION
+else
 ifdef _BUILDING_MATHLIB
+EMUL_VERSION equ 0
+else
+EMUL_VERSION equ 1
+endif
+endif
+
+if EMUL_VERSION eq 0
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8InvalidOp
+
+        modstart    fdld086, word
+
+
         xdefp   __iFDLD
 else
         xdefp   __EmuFDLD
@@ -7,7 +25,7 @@ endif
 
 ;       convert double to long double
 ; input:
-;ifdef _BUILDING_MATHLIB
+;if EMUL_VERSION eq 0
 ;       SS:AX           pointer to double
 ;       SS:DX           pointer to long double to be filled in
 ;else
@@ -15,7 +33,7 @@ endif
 ;       DS:SI           pointer to long double to be filled in
 ;endif
 
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
 __iFDLD  proc
         push    BX              ; save BX
         push    CX              ; save CX
@@ -118,7 +136,7 @@ endif
             dec   DI            ; - - decrement exponent
           _endloop              ; - endloop
         _endguess               ; endguess
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
         pop     BP              ; fetch return pointer
         mov     0[BP],DX        ; store number
         mov     2[BP],CX        ; ...
@@ -140,4 +158,11 @@ else
         pop     DI              ; restore DI
         ret                     ; return
 __EmuFDLD  endp
+endif
+
+if EMUL_VERSION eq 0
+
+        endmod
+        end
+
 endif

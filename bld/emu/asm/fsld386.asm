@@ -24,13 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  convert float to long double  __iFSLD and __EmuFSLD
 ;*
 ;*****************************************************************************
 
 
 ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fsld386, dword
+
+
         xdefp   __iFSLD
 else
         xdefp   __EmuFSLD
@@ -85,4 +92,11 @@ ifdef _BUILDING_MATHLIB
 __iFSLD endp
 else
 __EmuFSLD endp
+endif
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
 endif

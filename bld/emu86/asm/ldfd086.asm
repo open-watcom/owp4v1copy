@@ -1,11 +1,30 @@
+ifdef EMUL_VERSION
+else
 ifdef _BUILDING_MATHLIB
+EMUL_VERSION equ 0
+else
+EMUL_VERSION equ 1
+endif
+endif
+
+if EMUL_VERSION eq 0
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8OverFlow
+
+        modstart    ldfd086, word
+
+
         xdefp   __iLDFD
 else
         xdefp   __EmuLDFD
 endif
 
 ;       convert long double to double
-;ifdef _BUILDING_MATHLIB
+;if EMUL_VERSION eq 0
 ; input:
 ;       SS:AX - pointer to long double
 ;       SS:DX - pointer to double
@@ -16,7 +35,7 @@ endif
 ;       AX:BX:CX:DX - double
 ;endif
 ;
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
 __iLDFD proc
         push    BX              ; save registers
         push    CX              ; ...
@@ -89,7 +108,7 @@ endif
           _endif                ; - endif
           and   AL,0FH          ; - get rid of implied one bit
           or    AX,DI           ; - merge in exponent
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
           jmp   _ret_ldfd       ; - return
 else
           pop   DI              ; - restore di
@@ -123,7 +142,7 @@ endif
               rcr   DX,1        ; - - - ...
               inc   DI          ; - - - increment exponent
             _endloop            ; - - endloop
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
             jmp   _ret_ldfd     ; - - return
 else
             pop   DI            ; - - restore di
@@ -134,7 +153,7 @@ endif
           sub   BX,BX           ; - ...
           sub   CX,CX           ; - ...
           sub   DX,DX           ; - ...
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
           jmp   _ret_ldfd       ; - return
 else
           pop   DI              ; - restore di
@@ -154,7 +173,7 @@ endif
           pop   DX              ; - restore it
           pop   AX              ; - restore it
         _endif                  ; endif
-ifdef _BUILDING_MATHLIB
+if EMUL_VERSION eq 0
 _ret_ldfd:                      ; function epilogue
         pop     BP              ; fetch return pointer
         mov     6[BP],AX        ; store return value
@@ -171,4 +190,11 @@ else
         pop     DI              ; restore di
         ret                     ; return
 __EmuLDFD  endp
+endif
+
+if EMUL_VERSION eq 0
+
+        endmod
+        end
+
 endif

@@ -24,11 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  long double math library - comparison  __FLDC
 ;*
 ;*****************************************************************************
 
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fldc386, dword
+
+endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
@@ -119,3 +128,10 @@ chkfor0:or      EDI,[EAX]       ; see if both operands are 0
 
         endproc __FLDC
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

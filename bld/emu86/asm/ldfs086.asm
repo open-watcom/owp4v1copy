@@ -1,4 +1,15 @@
+
 ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8OverFlow
+
+        modstart    ldfs086, word
+
+
         xdefp   __iLDFS
 else
         xdefp   __EmuLDFS
@@ -117,4 +128,11 @@ __iLDFS endp
 else
         ret                     ; return
 __EmuLDFS endp
+endif
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
 endif

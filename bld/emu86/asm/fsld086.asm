@@ -1,5 +1,13 @@
 
 ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    fsld086, word
+
+
         xdefp   __iFSLD
 else
         xdefp   __EmuFSLD
@@ -75,4 +83,11 @@ else
         pop     CX              ; ...
         ret                     ; return
 __EmuFSLD endp
+endif
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
 endif

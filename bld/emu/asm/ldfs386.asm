@@ -24,14 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  convert long double to float  __iLDFS,  __EmuLDFS
 ;*
 ;*****************************************************************************
 
 
-
 ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    ldfs386, dword
+
+
         xdefp   __iLDFS
 else
         xdefp   __EmuLDFS
@@ -114,4 +120,11 @@ __iLDFS endp
 else
         ret                             ; return
 __EmuLDFS endp
+endif
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
 endif

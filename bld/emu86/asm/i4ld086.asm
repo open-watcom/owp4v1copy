@@ -1,3 +1,15 @@
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    i4ld086, word
+
+
+endif
+
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
 ;<> __I4LD - convert 32-bit integer to long double
@@ -73,3 +85,10 @@ endif
         ret                     ; return
 __I4LD  endp
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

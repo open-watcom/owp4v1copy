@@ -1,4 +1,19 @@
 
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8DivZero
+        xref    F8InvalidOp
+
+        modstart    fldd086, word
+
+
+endif
+
+
         xdefp   __FLDD
         xdefp   ___LDD
 
@@ -472,3 +487,10 @@ normalize_opnd proc     near
         ret                     ; return
 normalize_opnd endp
 
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

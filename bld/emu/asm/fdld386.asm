@@ -24,13 +24,20 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  convert double to long double, __iFDLD and __EmuFDLD
 ;*
 ;*****************************************************************************
 
-
 ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        xref    F8InvalidOp
+
+        modstart    fdld386, dword
+
         xdefp   __iFDLD
 else
         xdefp   __EmuFDLD
@@ -118,4 +125,11 @@ else
         pop     ECX                     ; restore ECX
         ret                             ; return
 __EmuFDLD endp
+endif
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
 endif

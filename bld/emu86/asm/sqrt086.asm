@@ -1,3 +1,37 @@
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+
+        modstart  sqrt086
+
+        xdefp   __sqrtd
+
+;
+;      double __sqrtd( double AX BX CX DX );
+;
+        defp    __sqrtd
+        push    SI                      ; save SI
+        push    DS                      ; save DS
+        sub     SP,10                   ; allocate space for long double
+        mov     SI,SS                   ; set DS=SS
+        mov     DS,SI                   ; ...
+        mov     SI,SP                   ; point DS:SI to long double
+        call    __EmuFDLD               ; convert double to long double
+        mov     AX,SP                   ; point to long double
+        call    __sqrt                  ; calculate square root
+        mov     BX,SP                   ; point to long double
+        call    __EmuLDFD               ; convert it to double
+        add     SP,10                   ; remove long double from stack
+        pop     DS                      ; restore DS
+        pop     SI                      ; restore SI
+        ret                             ; return
+        endproc __sqrtd
+
+
+endif
+
         xdefp   __sqrt
 ;
 ;       __sqrt( long double *AX );
@@ -300,3 +334,20 @@ sqrt9:  pop     BX              ; restore BX
         ret                     ; return to caller
         endproc __sqrt
 
+ifdef _BUILDING_MATHLIB
+
+EMUL_VERSION equ 1
+
+include xception.inc
+include fstatus.inc
+
+        xref    F8InvalidOp
+        xref    F8OverFlow
+
+include ldfd086.asm
+include fdld086.asm
+
+        endmod
+        end
+
+endif

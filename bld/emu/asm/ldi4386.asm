@@ -24,12 +24,21 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  convert long double into integer
 ;*
 ;*****************************************************************************
 
 
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    ldi4386, dword
+
+endif
 
         xdefp   __LDI4
 
@@ -169,3 +178,9 @@ DIzero: sub     EAX,EAX         ; set result to zero
         endproc __RLDI4
         endproc __RLDU4
 
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif

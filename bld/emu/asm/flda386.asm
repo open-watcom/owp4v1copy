@@ -24,11 +24,26 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  long double math library - add and subtract
+;*
+;*        __FLDA          add real*10 to real*10
+;*        __FLDAC         add real*10 to real*10 (opnd 2 on stack)
+;*        __FLDS          subtract real*10 from real*10
+;*        ___LDA          long double add routine
 ;*
 ;*****************************************************************************
 
+
+
+ifdef _BUILDING_MATHLIB
+
+include mdef.inc
+include struct.inc
+include xception.inc
+
+        modstart    flda386, dword
+
+endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
@@ -389,3 +404,11 @@ add_oflow:                      ; handle overflow
 ;;      jmp     F8OverFlow      ; handle overflow
         endproc ___LDA
 
+
+
+ifdef _BUILDING_MATHLIB
+
+        endmod
+        end
+
+endif
