@@ -35,7 +35,7 @@
 #include <windows.h>
 #include "winext.h"
 
-char MsgTitle[] = "WATCOM Win386";
+char MsgTitle[] = "Open WATCOM Win386";
 
 WORD    DPL,Has87,HasWGod;
 DWORD   SaveSP=0;

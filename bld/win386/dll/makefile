@@ -33,7 +33,6 @@ extralink : .SYMBOLIC
     @%create $(EXTRALNK)
     @%append $(EXTRALNK) name w386dll.ext
     @%append $(EXTRALNK) sys windows dll initinstance memory
-    @%append $(EXTRALNK) option heapsize=8K,stack=8K
-    @%append $(EXTRALNK) option align=9
+    @%append $(EXTRALNK) option heapsize=8K,stack=8K,align=512
     @%append $(EXTRALNK) segment CLASS 'EMU' PRELOAD MOVEABLE
     @%append $(EXTRALNK) @..\exports.lnk

@@ -1,38 +1,28 @@
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 .EXTENSIONS:
-.EXTENSIONS: .exe
-.EXTENSIONS: .obj .dbj .nbj .cbj
-.EXTENSIONS: .def .asm .c
+.EXTENSIONS: .obj .dbj .nbj .cbj .c .asm
 
 .before
-        @set INCLUDE = $(win31_hdrs);$(bld_h);..\h;$(watcom_h)
-
-CC = $(comp286)
+    @set INCLUDE = $(win31_hdrs);$(bld_h);..\h;$(watcom_h)
 
 EXTRALNK = extra.lnk
 LNK = lnk.lnk
 
-MINCLUDE = ..\h
-CFLAGS = -oalrt-s-d1-ms-2-w4-fpc-zq
-CFLAGSSIZE = -oas-s-d1-ms-2-w4-fpc-zq
+CFLAGS = -oalrt-s-d1-ms-2-w4-fpc
+CFLAGSSIZE = -oas-s-d1-ms-2-w4-fpc
 
 $(EXTNAME).ext : $(OBJS) ..\win386.mif $(LNK)
     $(linker) @$(LNK)
 
-dbg90: .SYMBOLIC
-    erase ..\obj\begin.obj
-    erase ..\obj\winext.obj
-
 $(LNK) : makefile ..\win386.mif
     @%create $(LNK)
-    @%append $(LNK) path ..\obj
     @%append $(LNK) debug all
     @%append $(LNK) @$(EXTRALNK)
     @%append $(LNK) option modname=win38600
     @%append $(LNK) option desc '                                                                                '
-    @%append $(LNK) option nocaseexact
     @%append $(LNK) option map,nodefault
     @%append $(LNK) option symf=$(EXTNAME).sym
     @%append $(LNK) library clibs
@@ -42,24 +32,20 @@ $(LNK) : makefile ..\win386.mif
     @%append $(LNK) segment CLASS 'BSS' PRELOAD MOVEABLE
     @for %i in ($(OBJS)) do @%append $(LNK) file %i
     @%append $(LNK) @..\imports.lnk
-    %make extralink
+    @%make extralink
 
 .asm : ..\asm
 .c : ..\c
-.cbj : ..\obj
-.dbj : ..\obj
-.nbj : ..\obj
-.obj : ..\obj
 
 .c.cbj :
-        $(CC) $[* $(CFLAGSSIZE) -DDLL32 -zu -fo=..\obj\$^&.cbj
+        $(cc) $[* $(CFLAGSSIZE) -DDLL32 -zu -fo=$^&.cbj
 .c.dbj :
-        $(CC) $[* $(CFLAGS) -DDLL32 -zu -fo=..\obj\$^&.dbj
+        $(cc) $[* $(CFLAGS) -DDLL32 -zu -fo=$^&.dbj
 .c.nbj :
-        $(CC) $[* $(CFLAGSSIZE) -fo=..\obj\$^&.nbj
+        $(cc) $[* $(CFLAGSSIZE) -fo=$^&.nbj
 .c.obj :
-        $(CC) $[* $(CFLAGS) -fo=..\obj\$^&.obj
+        $(cc) $[* $(CFLAGS) -fo=$^&.obj
 .asm.obj :
-        $(as) -i=$(MINCLUDE) $[* -fo=..\obj\$^&.obj
+        $(as) $[* -fo=$^&.obj
 .asm.dbj :
-        $(as) -i=$(MINCLUDE) -dDLL32 $[* -fo=..\obj\$^&.dbj
+        $(as) $[* -dDLL32 -fo=$^&.dbj

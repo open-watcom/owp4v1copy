@@ -24,8 +24,9 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  WIN386 floating point function to save/restore WIN386 
+;*                  floating point environment before/after calling 
+;*                  16-bit Windows function
 ;*
 ;*****************************************************************************
 

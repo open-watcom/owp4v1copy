@@ -4,8 +4,7 @@ proj_name = emu
 !include deftarg.mif
 !include defrule.mif
 
-.EXTENSIONS:
-.EXTENSIONS: .exp .lib .pl3 .obj .qbj .asm .psm .c .inc
+.EXTENSIONS: .psm
 
 INCS = &
  386flda.inc 386fldc.inc 386fldm.inc 386fldd.inc 386ldi4.inc &
@@ -21,46 +20,41 @@ INCS = &
 .psm : ..\asm
 .asm : ..\asm
 
-cflags = -oais -s -zq -w3
-
-as_flags = -zq -i$(mathlib_dir)\h -bt=$(host_OS) $[@
-
-.psm.obj:
-    $(as) -mf $(as_flags) -i$(watcom_dir)\h\;$(comp_cfg_dir)\h
+as_flags = -i$(mathlib_dir)\h;$(emu386)\inc
 
 !ifeq host_OS dos
 
-extra_as_flags = /d_OS=_PLDT
+extra_as_flags = -d_OS=_PLDT -dSEGMENTED
 
 emu387.lib: emu387.obj 386inite.obj
-    $(librarian) /q /s /t /n /b $@ +emu387.obj +386inite.obj
+    $(librarian) -s -t -n -b $@ +emu387.obj +386inite.obj
 
 !else ifeq host_OS qnx
 
-extra_as_flags = /d_OS=_QNX
+extra_as_flags = -d_OS=_QNX -dSEGMENTED
+objs = qnxemu87.obj emu387.obj fpeqnx.obj
 
 .c.obj:
-    $(libcomp386) -r-fpr $[* $(cflags) -i$(new_qnx_h) -DQNX32 -bt=qnx
-
-objs = qnxemu87.obj emu387.obj fpeqnx.obj
+    $(cc) $[* -oais-s-w3 -i$(new_qnx_h) -dQNX32
 
 emu387: $(objs)
     $(linker) $(lflags) name $^@ file { $(objs) } opt priv=0,map,long,quiet,res=..\..\emu86\emu87.u
 
 !else ifeq host_OS win
 
-emu387w.obj: emu387.asm $(INCS) win30vxd.inc
-    $(as) -mf -d_OS=_PLDT -d__WIN387__ -I$(mathlib_dir)\h;$(emu386)\inc -fo=$^@ $[@
+extra_as_flags = -mf -d_OS=_PLDT -d__WIN387__
+INCS += win30vxd.inc
 
 !else
 
 emu387.lib: 386stub.obj
-    $(librarian) /q /s /t /n /b $@ +386stub.obj
+    $(librarian) -s -t -n -b $@ +386stub.obj
 
 !endif
 
-386sqrt.obj: 386sqrt.psm 386sqrt.inc 386fdld.inc 386ldfd.inc xception.inc
+.psm.obj:
+    $(as) $[@ -mf -d_OS=_PLDT $(as_flags) -i$(watcom_dir)\h\;$(comp_cfg_dir)\h
 
-emu387.obj: ..\asm\emu387.asm $(INCS)
-    $(as) $(as_flags) $(extra_as_flags) /dSEGMENTED /I$(emu386)\inc
+emu387.obj: emu387.asm $(INCS)
+    $(as) $[@ $(as_flags) $(extra_as_flags)
     wtouch compile.tim

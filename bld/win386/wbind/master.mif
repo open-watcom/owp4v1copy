@@ -1,20 +1,18 @@
+proj_name = wbind
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-INCLUDE = h
-OPTS = -ols -s
+.c : ..
 
-CFLAGS = $(OPTS) -d1 -3 -fpc -wx -we
-cflags_nt = -ox -bt=NT
-cflags_os2 = -bt=os2 -mc
-cflags_dos = -bt=dos -ms -d_DOS
-lflags_nt = nt option stack=12k,map,symfile
-lflags_dos = dos option stack=8k,symfile
-lflags_os2 = os2 pmc option stack=12k,heap=8k,newfile,map,symfile
+extra_c_flags =-s-fpc
+extra_c_flags_dos =-3-d_DOS
+extra_c_flags_os2 =-3
+extra_l_flags_nt = option stack=12k,map
+extra_l_flags_dos = option stack=8k,map
+extra_l_flags_os2 = option stack=12k,heap=8k,newfile,map
 
 wbind.exe: wbind.obj
-    $(linker) debug all name wbind file wbind system $(lflags_$(host_OS))
-wbind.obj : ..\wbind.c
-    $(cc) $[* $(CFLAGS) $(cflags_$(host_OS))
+    $(linker) $(lflags) file wbind
 

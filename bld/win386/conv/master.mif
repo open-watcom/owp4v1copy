@@ -1,12 +1,10 @@
-#pmake/50: all build os_win cpu_i86 cpu_386
-
-.mif: $(mif_path)
+proj_name = conv
 
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
-.EXTENSIONS:
-.EXTENSIONS: .exe .obj .asm .def .c .h .mif
+.EXTENSIONS: .def
 
 .def : ..\def
 .asm : ..\asm
@@ -37,20 +35,21 @@ conv.exe : conv.c makefile
     $(bld_cl) $[* $(wcl_util_opts)
 
 win386.lib : $(def_files) ..\def\win386 conv.exe fldenv.obj _call16.obj
-        conv ..\def\win386 ..\def -s -q
-        ls -1 win*.obj >tmp.lbc
-        wlib /n /b /p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
-        @erase tmp.lbc
-        @copy winglue.asm ..\..\asm
-        @copy dllthunk.c ..\..\c
-        @copy dllthk.asm ..\..\asm
-        @copy winglue.inc ..\..\h
-        @erase winglue.asm
-        @erase dllthk.asm
-        @erase dllthunk.c
-        @erase winglue.inc
+    conv ..\def\win386 ..\def -s -q
+    ls -1 win*.obj >tmp.lbc
+    $(librarian) /n /b /p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
+    @erase tmp.lbc
+    @copy winglue.asm ..\..\asm >nul
+    @copy dllthunk.c ..\..\c >nul
+    @copy dllthk.asm ..\..\asm >nul
+    @copy winglue.inc ..\..\h >nul
+    @erase winglue.asm
+    @erase dllthk.asm
+    @erase dllthunk.c
+    @erase winglue.inc
 
 fldenv.obj : fldenv.asm
-        wasm -i$(watcomdir)h $[*
+    $(as) $[* -i$(watcomdir)h
+
 _call16.obj : _call16.asm
-        wasm $[*
+    $(as) $[*

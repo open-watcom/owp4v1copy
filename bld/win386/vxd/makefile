@@ -12,45 +12,26 @@ LNKEMU = wemu387.lnk
 all : wdebug.386 wemu387.386 .SYMBOLIC
         @%null
 
-wdebug.386: wdebug.obj $(emu386)\win386\emu387w.obj $(LNK)
-        wlink @$(LNK)
+wdebug.386: wdebug.obj $(emu386)\win386\emu387.obj $(LNK)
+        $(linker) @$(LNK)
 
-wemu387.386: wdebug.obj $(emu386)\win386\emu387w.obj $(LNKEMU)
-        wlink @$(LNKEMU)
+wemu387.386: wdebug.obj $(emu386)\win386\emu387.obj $(LNKEMU)
+        $(linker) @$(LNKEMU)
 
 $(LNK) : makefile
         %create $(LNK)
-        @%append $(LNK) file wdebug.obj
-        @%append $(LNK) file $(emu386)\win386\emu387w.obj
-        @%append $(LNK) form windows vxd
+        @%append $(LNK) option description 'Win386 WDEBUG Device (Version 1.1 Open Watcom)'
         @%append $(LNK) name WDEBUG.386
-        @%append $(LNK) export WDEBUG_DDB.1
-        @%append $(LNK) option map
-        @%append $(LNK) option description 'Win386 WDEBUG Device  (Version 1.0)'
-        @%append $(LNK) segment '_LTEXT'  preload nondiscardable
-        @%append $(LNK) segment '_LDATA'  preload nondiscardable
-        @%append $(LNK) segment '_ITEXT'  discardable
-        @%append $(LNK) segment '_IDATA'  discardable
-        @%append $(LNK) segment '_TEXT'   nondiscardable
-        @%append $(LNK) segment '_DATA'   nondiscardable
+        @%append $(LNK) file $(emu386)\win386\emu387.obj
+        @%append $(LNK) @..\vxd.lnk
 
 $(LNKEMU) : makefile
         %create $(LNKEMU)
-        @%append $(LNKEMU) file wdebug.obj
-        @%append $(LNKEMU) file $(emu386)\win386\emu387w.obj
-        @%append $(LNKEMU) form windows vxd
+        @%append $(LNKEMU) option description 'Win386 WEMU387 Device (Version 1.1 Open Watcom)'
         @%append $(LNKEMU) name WEMU387.386
-        @%append $(LNKEMU) option modname=WDEBUG
-        @%append $(LNKEMU) export WDEBUG_DDB.1
-        @%append $(LNKEMU) option map
-        @%append $(LNKEMU) option description 'Win386 WEMU387 Device  (Version 1.0)'
-        @%append $(LNKEMU) segment '_LTEXT'  preload nondiscardable
-        @%append $(LNKEMU) segment '_LDATA'  preload nondiscardable
-        @%append $(LNKEMU) segment '_ITEXT'  discardable
-        @%append $(LNKEMU) segment '_IDATA'  discardable
-        @%append $(LNKEMU) segment '_TEXT'   nondiscardable
-        @%append $(LNKEMU) segment '_DATA'   nondiscardable
+        @%append $(LNKEMU) file $(emu386)\win386\emu387.obj
+        @%append $(LNKEMU) @..\vxd.lnk
 
 wdebug.obj : wdebug.asm wdebug.inc $(emu386)\inc\win30vxd.inc
-        $(as) -mf -i..\..\emu\inc $[@
+        $(as) $[@ -mf -i$(emu386)\inc
 

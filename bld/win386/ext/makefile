@@ -32,8 +32,7 @@ OBJS = begin.obj  &
 extralink : .SYMBOLIC
     @%create $(EXTRALNK)
     @%append $(EXTRALNK) name win386.ext
-    @%append $(EXTRALNK) sys windows mem font
-    @%append $(EXTRALNK) option verbose
+    @%append $(EXTRALNK) system windows mem font
     @%append $(EXTRALNK) option rwr
     @%append $(EXTRALNK) option stack=12K,heapsize=8k,align=512
-    @%append $(LNK) segment CLASS 'STACK' PRELOAD
+    @%append $(EXTRALNK) segment CLASS 'STACK' PRELOAD
