@@ -225,7 +225,6 @@ system begin causeway
     op stub=cwstub.exe
     format os2 le ^
 end
-
 system begin cwdlls
     option osname='CauseWay DLL (Stack parameter passing)'
     libpath %WATCOM%\lib386
@@ -234,7 +233,6 @@ system begin cwdlls
     format os2 le dll ^
     libfile dllstrts
 end
-
 system begin cwdllr
     option osname='CauseWay DLL (Register parameter passing)'
     libpath %WATCOM%\lib386
@@ -314,4 +312,18 @@ system begin stub32xc
     op internalrelocs
     op align=16
     format os2 lx
+end
+system begin pmodew
+    option osname='PMODE/W'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\dos
+    op stub=pmodew.exe
+    format os2 le
+end
+system begin zrdx
+    option osname='Zurenava'
+    libpath %WATCOM%\lib386
+    libpath %WATCOM%\lib386\dos
+    op stub= zrdx.exe
+    format os2 le
 end
