@@ -4,7 +4,7 @@ batserv.exe : batserv.obj batpipe.obj
 all : batserv.exe batcli.obj batpipe.obj tst.exe .symbolic
 
 .c.obj:
-        wcc386 $[* -oaxt $(%debug) $(%pch) -w3 -bt=nt -i$(watcomdir)nt_h
+        wcc386 $[* -oaxt $(%debug) $(%pch) -w3 -bt=nt -i$(lang_root)\h\nt
 
 tst.exe : tst.obj batcli.obj batpipe.obj
         wlink sys nt debug all file tst,batcli,batpipe
