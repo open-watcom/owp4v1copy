@@ -33,7 +33,7 @@
 #include <wclistit.h>
 #include "common.hpp"
 #include "cverror.hpp"
-#include "typearray.hpp"
+#include "typearay.hpp"
 
 void GlobalHashContainer::Insert( LFTypeRecord* t )
 /*************************************************/

@@ -32,7 +32,7 @@
 
 #include <wclist.h>
 #include <wcvector.h>
-#include "typerecord.hpp"
+#include "typercrd.hpp"
 
 class GlobalTypeContainer {
 

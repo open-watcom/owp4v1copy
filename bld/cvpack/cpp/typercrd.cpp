@@ -33,7 +33,7 @@
 #include <wclistit.h>
 #include "common.hpp"
 #include "cverror.hpp"
-#include "typerecord.hpp"
+#include "typercrd.hpp"
 #include "subsect.hpp"
 #include "typemap.hpp"
 
