@@ -50,7 +50,7 @@ model=$(modelos)
 memory_model_i86=$(model)
 memory_model_386=$(model)
 
-posixlib=$(posix_dir)/misc/$(targos)/posix$(model).lib
+posixlib=$(posix_dir)/misc/$(targos)/m$(model)/posix$(model).lib
 
 !include cproj.mif
 !include defrule.mif
@@ -79,5 +79,5 @@ extra_cflags   = -DWIN32 -D_WIN32
 !ifndef make_lib
 extra_c_flags = -fo=.obj -D__OS_$(targos)__ -DSTANDALONE_RX -I"$(posix_dir)/src/$(name)" -I"$(posix_dir)/h" $(extra_cflags)
 !else
-extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/.obj" -D__OS_$(targos)__ -DSTANDALONE_RX -I"$(posix_dir)/h" $(extra_cflags)
+extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/m$(model)/.obj" -D__OS_$(targos)__ -DSTANDALONE_RX -I"$(posix_dir)/h" $(extra_cflags)
 !endif

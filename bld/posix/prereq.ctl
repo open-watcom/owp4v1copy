@@ -20,9 +20,9 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>
     echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\bin\ clean_build
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binp\ clean_build
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binnt\ clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\bin clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binp clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binnt clean_build
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]

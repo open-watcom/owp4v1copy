@@ -1,7 +1,5 @@
-targos = qnx
+targos = dos
 
-!ifndef model
 model=s
-!endif
 
 !include $(posix_dir)/mif/makelib.mif
