@@ -37,6 +37,7 @@
 #include "autodep.h"
 #include "asmalloc.h"
 #include "bool.h"
+#include "watcom.h"
 
 FNAMEPTR FNames = NULL;
 
