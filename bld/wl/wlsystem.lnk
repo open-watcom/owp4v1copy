@@ -15,7 +15,7 @@ system begin dos4gnz
     option osname='DOS/4G non-zero base'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    disable 123		# non-64k offset option OK here.
+    disable 123     # non-64k offset option OK here.
     op internalrelocs
     op togglerelocs
     op stub=wstub.exe
@@ -75,6 +75,20 @@ system begin os2
     libpath %WATCOM%/lib286/os2
     format os2 ^
 end
+system begin os2_pm
+    option osname='OS/2 16-bit Presentation Manager'
+    library os2.lib
+    libpath %WATCOM%/lib286
+    libpath %WATCOM%/lib286/os2
+    format os2 pm ^
+end
+system begin os2_dll
+    option osname='OS/2 16-bit'
+    library os2.lib
+    libpath %WATCOM%/lib286
+    libpath %WATCOM%/lib286/os2
+    format os2 dll ^
+end
 system begin windows
     option osname='Windows 16-bit'
     libpath %WATCOM%/lib286
@@ -105,10 +119,16 @@ system begin os2v2
     format os2 lx ^
 end
 system begin os2v2_pm
-    option osname='OS/2 32-bit presentation manager'
+    option osname='OS/2 32-bit Presentation Manager'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/os2
     format os2 lx pm ^
+end
+system begin os2v2_dll
+    option osname='OS/2 32-bit'
+    libpath %WATCOM%/lib386
+    libpath %WATCOM%/lib386/os2
+    format os2 lx dll ^
 end
 system begin novell
     option osname='Novell NLM'
@@ -233,7 +253,7 @@ system begin nt
     runtime console
 end
 system begin tnt
-    option osname='Phar Lap TNT dos style'
+    option osname='Phar Lap TNT DOS style'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
     format windows nt tnt ^
@@ -259,7 +279,7 @@ system begin win95
     runtime windows=4.0
 end
 system begin win32
-    option osname='win32'
+    option osname='Win32'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
     format windows nt ^
@@ -306,18 +326,6 @@ system begin cwdllr
     format os2 le dll ^
     libfile dllstrtr
 end
-###############################################################################
-# DOS/32 Advanced DOS Extender version 7.1 system file for WATCOM Linker.
-#==============================================================================
-# Available DOS/32 Advanced DOS Extender systems (for use with "wcl386.exe"):
-#       -l=dos32a - DOS/32 Advanced DOS Extender                    (LE-style)
-#       -l=dos32x - DOS/32 Advanced DOS Extender                    (LX-style)
-#       -l=stub32a - DOS/32A DOS Extender w/ Standard stub          (LE-style)
-#       -l=stub32x - DOS/32A DOS Extender w/ Standard stub          (LX-style)
-#       -l=stub32ac - DOS/32A DOS Extender w/ Configurable stub     (LE-style)
-#       -l=stub32xc - DOS/32A DOS Extender w/ Configurable stub     (LX-style)
-###############################################################################
-
 system begin dos32a
     option osname='DOS/32 Advanced DOS Extender (LE-style)'
     libpath %WATCOM%/lib386
