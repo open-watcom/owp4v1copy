@@ -402,6 +402,7 @@ static unsigned char default_tix[] = {
 };
 
 static char alt_keys[] = "QWERTYUIOP\0\0\0\0ASDFGHJKL\0\0\0\0\0ZXCVBNM";
+static char alt_num_keys[] = "1234567890-=";
 static char esc_str[] = "\033A";
 
 /* use above table if no .tix file is found */
@@ -435,6 +436,12 @@ static int do_default( void )
             TrieAdd( 0x110 + i, esc_str );
             esc_str[1] += 0x20;
             TrieAdd( 0x110 + i, esc_str );
+        }
+    }
+    for( i = 0; i < sizeof( alt_num_keys ); i++ ) {
+        if ( alt_num_keys[i] ) {
+            esc_str[1] = alt_num_keys[i];
+            TrieAdd( 0x178 + i, esc_str );
         }
     }
     /* sticky function key ^F */
