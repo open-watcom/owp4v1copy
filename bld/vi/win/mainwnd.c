@@ -349,6 +349,28 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         ExitWithPrompt( TRUE );
         PopMode();
         return( 0 );
+#ifdef __NT__        
+    case WM_MOUSEWHEEL:
+        {
+            int i, increment;
+            ULONG linesPerNotch;
+            HWND activeWnd;
+            
+            activeWnd = (HWND)SendMessage( EditContainer, (UINT) WM_MDIGETACTIVE, NULL, NULL );
+            SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &linesPerNotch, 0);
+            
+            increment = GET_WHEEL_DELTA_WPARAM( wparam ) / 120;         // see WM_MOUSEWHEEL-documentation for information about the "120"
+
+            if( increment > 0 )
+                for( i = 0; i < increment*(int)linesPerNotch; i++ )
+                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEUP, NULL );
+            else
+                for( i = 0; i < (-increment)*(int)linesPerNotch; i++ )
+                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEDOWN, NULL );
+        }
+        return( 0 );
+    break;
+#endif
     case WM_DESTROY:
         DestroyToolBar();
         DragAcceptFiles( hwnd, FALSE );
