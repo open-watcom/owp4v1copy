@@ -96,6 +96,7 @@ hlp_os2             - Help files (OS/2 host)
 hlp_nt              - Help files (NT host)
 
 os2api              - OS/2 Toolkit replacement files
+w16api              - Win16 SDK replacement files
 w32api              - Win32 SDK replacement files
 
 
