@@ -44,12 +44,12 @@ inc_dirs = .;$(dig_dir)/h
     $(cc) $(cflags) -zu $(extra_c_flags_NEC) $[@
 
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
-    $(rc_aui) -zk0 -dDOS $(extra_rc_flags_NEC) -fo=$^. $[@
+    $(rc_aui) -dDOS $(extra_rc_flags_NEC) -fo=$^. $[@
 
 wmsg.obj: ../c/wmsg.c ../h/wmsg.h
     @set include=$(inc_path)
     $(cc) $(cflags) $[@
 
 clean : .symbolic
-    @rm -f *.obj *.res *.lnk *.map
-    @rm -f ../bin/$(xname).exe
+    rm -f *.?bj *.res *.lnk *.map *.err
+    rm -f ../bin/$(xname).exe
