@@ -2482,9 +2482,3 @@ void AsmInit( int cpu, int fpu, int use32 )
     }
     make_inst_hash_table();
 }
-( fpu ) Code->info.cpu |= P_387;
-            break;
-        }
-    }
-    make_inst_hash_table();
-}
