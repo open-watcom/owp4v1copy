@@ -1,12 +1,3 @@
-########################################################################
-#       Copyright (C) 1993, by WATCOM International Corp. All rights   #
-#       reserved. No part of this software may be reproduced           #
-#       in any form or by any means - graphic, electronic or           #
-#       mechanical, including photocopying, recording, taping          #
-#       or information storage and retrieval systems - except          #
-#       with the written permission of WATCOM International Corp.      #
-########################################################################
-
 proj_name = wprof
 fname = wprof$(machine)
 
@@ -38,7 +29,7 @@ exe = exe
 !endif
 
 inc_dirs = ..\h;$(wsample_dir)\h;$(aui_dir)\h;$(gui_dir)\h;$(trmem_dir);$(dig_dir)\h
-inc_dirs_os2 = $(watcom_dir)\os21x_h
+inc_dirs_os2 = $(lang_root)\h\os21x
 inc_dirs_nt = $(watcom_dir)\nt_h
 
 .BEFORE:
@@ -79,7 +70,7 @@ extra_c_flags_finger    = -fidginfo.gh
 # remove these lines when the source is fixed
 cflags_all              = -zq -w4
 !ifdef on_build_machine
-cflags_all      += -dNDEBUG
+cflags_all             += -dNDEBUG
 !endif
 
 extra_l_flags_nt        = op stack=30k
@@ -125,7 +116,7 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
 !endif
 
 eraseall.obj : ..\compile.gbl
-    del *.obj
+    @if exist *.obj del *.obj
     wtouch eraseall.obj
 
 !ifeq host_OS os2
