@@ -11,17 +11,15 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
     cdsay ..\f77\samples\windll
-    wmake /h /i cover16.obj
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h cover16.obj
     cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    sweep if exist *.sex ren *.sex *.exe
-    sweep if exist *.sdl ren *.sdl *.dll
     <CPCMD> <devdir>\clib\startup\a\cstrt386.asm <relroot>\rel2\src\startup\386\cstrt386.asm
     <CPCMD> <devdir>\clib\startup\a\cstrtw32.asm <relroot>\rel2\src\startup\386\cstrtw32.asm
     <CPCMD> <devdir>\clib\startup\a\cstrtwnt.asm <relroot>\rel2\src\startup\386\cstrtwnt.asm
-    <CPCMD> <devdir>\clib\startup\a\cstrtwwt.asm <relroot>\rel2\src\startup\386\cstrtwwt.asm
+#    <CPCMD> <devdir>\clib\startup\a\cstrtwwt.asm <relroot>\rel2\src\startup\386\cstrtwwt.asm
     <CPCMD> <devdir>\clib\startup\a\cstrtx32.asm <relroot>\rel2\src\startup\386\cstrtx32.asm
     <CPCMD> <devdir>\clib\startup\c\cmain386.c <relroot>\rel2\src\startup\386\cmain386.c
     <CPCMD> <devdir>\clib\startup\c\wildargv.c <relroot>\rel2\src\startup\wildargv.c
@@ -52,9 +50,7 @@ cdsay .
     <CPCMD> <devdir>\clib\startup\h\initfini.h <relroot>\rel2\src\startup\386\initfini.h
     <CPCMD> <devdir>\clib\startup\h\initfini.h <relroot>\rel2\src\startup\os2\initfini.h
     <CPCMD> <devdir>\watcom\h\wos2.h <relroot>\rel2\src\startup\os2\wos2.h
-    <CPCMD> <devdir>\src\startup\dos\mdef.inc <relroot>\rel2\src\startup\dos\mdef.inc
-    <CPCMD> <devdir>\src\startup\win\mdef.inc <relroot>\rel2\src\startup\win\mdef.inc
-    <CPCMD> <devdir>\src\startup\os2\mdef.inc <relroot>\rel2\src\startup\os2\mdef.inc
+    <CPCMD> <devdir>\watcom\h\mdef.inc <relroot>\rel2\src\startup\mdef.inc
 
     <CPCMD> <devdir>\src\misc\*.* <relroot>\rel2\src\
     <CPCMD> <devdir>\src\os2\pdd\*.*    <relroot>\rel2\src\os2\pdd\
@@ -158,8 +154,6 @@ cdsay .
 #    <CPCMD> <devdir>\src\WIN\WATZEE\WINAXP\*.* <relroot>\rel2\samples\WIN\WATZEE\WINAXP\
 
     if exist <relroot>\rel2\src\__wprj__.del del <relroot>\rel2\src\__wprj__.del
-    sweep if exist *.exe ren *.exe *.sex
-    sweep if exist *.dll ren *.dll *.sdl
 
 [ BLOCK <1> clean ]
 #==================
