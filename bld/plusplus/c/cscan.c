@@ -686,17 +686,27 @@ static int doScanFloat( void )
     }
     one_case = ONE_CASE( c );
     if( one_case == ONE_CASE( 'F' ) ) {
-        NextChar();
+        c = saveNextChar();
         ConstType = TYP_FLOAT;
     } else if( one_case == ONE_CASE( 'L' ) ) {
-        NextChar();
+        c = saveNextChar();
         ConstType = TYP_LONG_DOUBLE;
     } else {
-        --TokenLen;
         ConstType = TYP_DOUBLE;
     }
-    Buffer[TokenLen] = '\0';
-    return( CurToken );
+    if( ( PPState & PPS_ASM ) && (CharSet[c] & (C_AL | C_DI)) ) {
+        for(;;) {
+            c = saveNextChar();
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+        }
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( T_BAD_TOKEN );
+    } else {
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( CurToken );
+    }
 }
 
 static void willContinueStringLater( int string_type )
@@ -967,7 +977,7 @@ static int scanNum( int expanding )
         case '6':
             c = saveNextChar();
             if( c == '4' ) {
-                saveNextChar();
+                c = saveNextChar();
                 if( U64IsI64( Constant64 ) ) {
                     ConstType = TYP_SLONG64;
                 } else {
@@ -983,7 +993,7 @@ static int scanNum( int expanding )
         case '1':
             c = saveNextChar();
             if( c == '6' ) {
-                saveNextChar();
+                c = saveNextChar();
                 msIntSuffix( 0x00007fff, TYP_SSHORT, TYP_USHORT, max_value );
             } else {
                 if( diagnose_lex_error( expanding ) ) {
@@ -994,7 +1004,7 @@ static int scanNum( int expanding )
         case '3':
             c = saveNextChar();
             if( c == '2' ) {
-                saveNextChar();
+                c = saveNextChar();
                 msIntSuffix( 0x7fffffff, TYP_SLONG, TYP_ULONG, max_value );
             } else {
                 if( diagnose_lex_error( expanding ) ) {
@@ -1003,7 +1013,7 @@ static int scanNum( int expanding )
             }
             break;
         case '8':
-            saveNextChar();
+            c = saveNextChar();
             msIntSuffix( 0x0000007f, TYP_SCHAR, TYP_UCHAR, max_value );
             break;
         default:
@@ -1017,12 +1027,12 @@ static int scanNum( int expanding )
         ConstType = TYP_SLONG;
         c = ONE_CASE( saveNextChar() );
         if( c == ONE_CASE( 'u' ) ) {
-            saveNextChar();
+            c = saveNextChar();
             ConstType = TYP_ULONG;
         } else if( c == ONE_CASE( 'L' ) ) {
             c = ONE_CASE( saveNextChar() );
             if( c == ONE_CASE( 'u' ) ) {
-                saveNextChar();
+                c = saveNextChar();
                 ConstType = TYP_ULONG64;
             } else {
                 ConstType = TYP_SLONG64;
@@ -1048,7 +1058,7 @@ static int scanNum( int expanding )
             case '6':
                 c = saveNextChar();
                 if( c == '4' ) {
-                    saveNextChar();
+                    c = saveNextChar();
                 } else {
                     if( diagnose_lex_error( expanding ) ) {
                         CErr1( ERR_INVALID_CONSTANT_SUFFIX );
@@ -1059,7 +1069,7 @@ static int scanNum( int expanding )
             case '1':
                 c = saveNextChar();
                 if( c == '6' ) {
-                    saveNextChar();
+                    c = saveNextChar();
                     msIntSuffix( 0x00007fff, TYP_USHORT, TYP_USHORT, &uintMax );
                 } else {
                     if( diagnose_lex_error( expanding ) ) {
@@ -1071,7 +1081,7 @@ static int scanNum( int expanding )
             case '3':
                 c = saveNextChar();
                 if( c == '2' ) {
-                    saveNextChar();
+                    c = saveNextChar();
                     msIntSuffix( 0x7fffffff, TYP_ULONG, TYP_ULONG, &uintMax );
                 } else {
                     if( diagnose_lex_error( expanding ) ) {
@@ -1081,7 +1091,7 @@ static int scanNum( int expanding )
                 }
                 break;
             case '8':
-                saveNextChar();
+                c = saveNextChar();
                 msIntSuffix( 0x0000007f, TYP_UCHAR, TYP_UCHAR, &uintMax );
                 break;
             default:
@@ -1094,7 +1104,7 @@ static int scanNum( int expanding )
         case ONE_CASE( 'L' ):
             c = ONE_CASE( saveNextChar() );
             if( c == ONE_CASE( 'L' ) ) {
-                saveNextChar();
+                c = saveNextChar();
                 ConstType = TYP_ULONG64;
             } else {
                 ConstType = TYP_ULONG;
@@ -1138,9 +1148,19 @@ static int scanNum( int expanding )
             CErr1( WARN_CONSTANT_TOO_BIG );
         }
     }
-    --TokenLen;
-    Buffer[TokenLen] = '\0';
-    return( T_CONSTANT );
+    if( ( PPState & PPS_ASM ) && (CharSet[c] & (C_AL | C_DI)) ) {
+        for(;;) {
+            c = saveNextChar();
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+        }
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( T_BAD_TOKEN );
+    } else {
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( CurToken );
+    }
 }
 
 static int scanDelim1( int expanding )
