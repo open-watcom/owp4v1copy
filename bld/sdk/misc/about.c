@@ -48,7 +48,7 @@
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
-#if defined( __WINDOWS__ )
+#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
 #pragma library("commdlg.lib")
 #pragma library("toolhelp.lib")
 #endif
