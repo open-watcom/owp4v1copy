@@ -109,6 +109,9 @@ trmem_dir       = $(dev_dir)\trmem
 !ifndef diff_dir
 diff_dir        = $(dev_dir)\diff
 !endif
+!ifndef bdiff_dir
+bdiff_dir        = $(dev_dir)\bdiff
+!endif
 !ifndef cpp_dir
 cpp_dir         = $(dev_dir)\cpp
 !endif
