@@ -439,10 +439,10 @@ dir_node *dir_insert( char *name, int tab )
     new->next = new->prev = NULL;
 
     if( tab != TAB_CLASS_LNAME ) {
-        sym = AsmAdd( (struct asm_sym*)new );
+        sym = AsmAdd( (struct asm_sym *)new );
     } else {
         /* don't put class lnames into the symbol table - separate name space */
-        sym = (struct asm_sym*)new;
+        sym = (struct asm_sym *)new;
     }
 
     /**/myassert( name != NULL );
@@ -730,7 +730,7 @@ direct_idx FindClassLnameIdx( char *name )
     dir_node            *dir;
 
     if( LnameQueue == NULL ) return( LNAME_NULL);
-    for( ptr = LnameQueue->head; ptr != NULL; ptr = *(void**)ptr ) {
+    for( ptr = LnameQueue->head; ptr != NULL; ptr = *(void **)ptr ) {
         node = (queuenode *)ptr;
         dir = (dir_node *)node->data;
         if( dir->sym.state != SYM_CLASS_LNAME ) continue;
@@ -1018,15 +1018,15 @@ int GlobalDef( int i )
 
         sym = AsmGetSymbol( token );
 
-        if( sym != NULL && sym->state != SYM_UNDEFINED ) {
+        if(( sym != NULL ) && ( sym->state != SYM_UNDEFINED )) {
             return( PubDef( 0 ) ); // it is defined here, so make a pubdef
         }
 
         if( sym == NULL ) {
             dir = dir_insert( token, TAB_GLOBAL );
-            sym = (struct asm_sym*)dir;
+            sym = (struct asm_sym *)dir;
         } else {
-            dir = (dir_node*)sym;
+            dir = (dir_node *)sym;
         }
 
         if( dir == NULL ) return( ERROR );
@@ -1329,28 +1329,19 @@ int  SetCurrSeg( int i )
     name = AsmBuffer[i]->string_ptr;
     Use32 = ModuleInfo.use32;
 
-    if( write_to_file ) {
-        switch( AsmBuffer[i+1]->value ) {
-        case T_SEGMENT:
-
-            /* Flushes the data in current segment, then set up the new
-               current segment */
-
-            FlushCurrSeg();
-
-            sym = AsmGetSymbol( name );
-
-            /**/ myassert( sym != NULL );
-            push_seg( (dir_node *)sym );
-
-            break;
-        case T_ENDS:
-            FlushCurrSeg();
-            pop_seg();
-            break;
-        default:
-            break;
-        }
+    switch( AsmBuffer[i+1]->value ) {
+    case T_SEGMENT:
+        FlushCurrSeg();
+        sym = AsmGetSymbol( name );
+        /**/ myassert( sym != NULL );
+        push_seg( (dir_node *)sym );
+        break;
+    case T_ENDS:
+        FlushCurrSeg();
+        pop_seg();
+        break;
+    default:
+        break;
     }
     if( CurrSeg != NULL ) {
         if( CurrSeg->seg->e.seginfo->segrec->d.segdef.class_name_idx
@@ -1417,7 +1408,7 @@ static void find_use32( void )
 int SegDef( int i )
 /*****************/
 {
-    char                defined = FALSE;
+    char                defined;
     char                *token;
     obj_rec             *seg;
     obj_rec             *oldobj;
@@ -1462,6 +1453,8 @@ int SegDef( int i )
                 }
                 dirnode = dir_insert( name, TAB_SEG );
                 seg->d.segdef.idx = ++segdefidx;
+                defined = FALSE;
+                ignore = FALSE;
             }
 
             /* Setting up default values */
@@ -1555,8 +1548,16 @@ int SegDef( int i )
                         dirnode->e.seginfo->ignore = TRUE;
                         break;
                     case TOK_AT:
-                        AsmError( SEGDEF_AT_NOT_SUPPORTED );
-                        return( ERROR );
+                        seg->d.segdef.align = SEGDEF_ALIGN_ABS;
+                        ExpandTheWorld( i + 1, FALSE, TRUE);
+                        if( AsmBuffer[i+1]->token == T_NUM ) {
+                            i++;
+                            seg->d.segdef.abs.frame = AsmBuffer[i]->value;
+                            seg->d.segdef.abs.offset = 0;
+                        } else {
+                            AsmError( UNDEFINED_SEGMENT_OPTION );
+                            return( ERROR );
+                        }
                         break;
                     default:
                         AsmError( UNDEFINED_SEGMENT_OPTION );
