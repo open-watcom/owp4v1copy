@@ -8,9 +8,9 @@ f77_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-!include wres.mif
-!include $(dwarf_dir)/dw/client.mif
 !include $(cg_dir)/mif/fe.mif
+!include $(dwarf_dir)/dw/client.mif
+!include wres.mif
 
 !ifeq release 0
 f77_trmem = 1

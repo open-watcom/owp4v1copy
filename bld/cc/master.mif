@@ -12,6 +12,7 @@ proj_name = cc
 # CODEGEN stuff
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
+!include $(dwarf_dir)/dw/client.mif
 
 !ifdef bootstrap
 cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
@@ -63,9 +64,6 @@ inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
 pre_deps_wasm = inlnops.gh
 !endif
-
-#dwarf stuff
-!include $(dwarf_dir)/dw/client.mif
 
 #dll test driver
 #wcc386t.exe

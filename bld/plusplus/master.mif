@@ -15,10 +15,8 @@ proj_name = plusplus
 
 !include cproj.mif
 
-!include $(as_dir)/mif/client.mif
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
-
 !include $(dwarf_dir)/dw/client.mif
 
 xlibs = $(dwarf_dw_lib) $(asminline_lib)

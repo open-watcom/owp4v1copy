@@ -1,7 +1,5 @@
 # Common objects for AXP (_ALPHA) architecture
 
-!include $(as_dir)/mif/client.mif
-
 common_objs += asmalloc.obj
 common_objs += asmmsg.obj
 
