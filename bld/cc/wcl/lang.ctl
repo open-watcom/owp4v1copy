@@ -14,8 +14,10 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
-    <CPCMD> <devdir>\cc\wcl\wcl.exe <relroot>\rel2\binw\wcl.exe
-    <CPCMD> <devdir>\cc\wcl\wcl386.exe <relroot>\rel2\binw\wcl386.exe
+    <CPCMD> <devdir>\cc\wcl\wcldos.exe <relroot>\rel2\binw\wcl.exe
+    <CPCMD> <devdir>\cc\wcl\wcl386d.exe <relroot>\rel2\binw\wcl386.exe
+    <CPCMD> <devdir>\cc\wcl\wclos2.exe <relroot>\rel2\binp\wcl.exe
+    <CPCMD> <devdir>\cc\wcl\wcl386o2.exe <relroot>\rel2\binp\wcl386.exe
     <CPCMD> <devdir>\cc\wcl\wclnt.exe <relroot>\rel2\binnt\wcl.exe
     <CPCMD> <devdir>\cc\wcl\wcl386nt.exe <relroot>\rel2\binnt\wcl386.exe
 #   <CPCMD> <devdir>\cc\wcl\wclaxpnt.exe <relroot>\rel2\binnt\wclaxp.exe

@@ -1,7 +1,7 @@
-#pmake: all build nomodel cpu_i86 cpu_386
-all: .SYMBOLIC wclnt.exe wcl.exe wcl386nt.exe wcl386.exe
+#pmake: all build nomodel os_dos os_nt os_os2 cpu_i86 cpu_386
+all: .SYMBOLIC wclnt.exe wclos2.exe wcldos.exe wcl386nt.exe wcl386o2.exe wcl386d.exe
 
-#all: .SYMBOLIC wclnt.exe wcl.exe wcl386nt.exe wcl386.exe wclaxpnt.exe wclaxp.exe
+#all: .SYMBOLIC wclnt.exe wclos2.exe wcldos.exe wcl386nt.exe wcl386o2.exe wcl386d.exe wclaxpnt.exe wclaxp.exe
 #       cd ntaxp
 #       wmake
 #       @%null
@@ -23,19 +23,21 @@ wclaxpnt.exe : wcl.c swchar.nbj wclhelp.h wclmsg.h
         $(comp386) wcl /dWCLAXP /fo=wclaxp.nbj /os /s /zq /d1 /d__NT /bt=nt
         wlink $(wl_opt) system nt file wclaxp.nbj,swchar.nbj name wclaxpnt
 
-wcl.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
+wcldos.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp286) wcl /dWCLI86 /os /s /d1 /zq /d__DOS /bt=dos
-        $(comp386) wcl /dWCLI86 /os /s /d1 /zq /d__OS2 /bt=os2 /fo=.2bj
         wlink $(wl_opt) system dos name wcldos file wcl,swchar option map, stack=2K
-        wlink $(wl_opt) system os2v2 pmc file wcl.2bj option stub=wcldos.exe
-        erase wcldos.exe
 
-wcl386.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
+wcl386d.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp286) wcl /dWCL386 /d__DOS /fo=wcl386.obj /os /s /zq /d1 /bt=dos
-        $(comp386) wcl /dWCL386 /d__OS2 /fo=wcl386.2bj /os /s /zq /d1 /bt=os2
         wlink $(wl_opt) system dos name wcl386d file wcl386,swchar option stack=2K
-        wlink $(wl_opt) system os2v2 pmc file wcl386.2bj opt stub=wcl386d.exe
-        erase wcl386d.exe
+
+wclos2.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
+        $(comp386) wcl /dWCLI86 /os /s /d1 /zq /d__OS2 /bt=os2 /fo=.2bj
+        wlink $(wl_opt) system os2v2 pmc file wcl.2bj
+
+wcl386o2.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
+        $(comp386) wcl /dWCL386 /d__OS2 /fo=wcl386.2bj /os /s /zq /d1 /bt=os2
+        wlink $(wl_opt) system os2v2 pmc file wcl386.2bj
 
 wclaxp.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp286) wcl /dWCLAXP /d__DOS /fo=wclaxp.obj /os /s /zq /d1 /bt=dos

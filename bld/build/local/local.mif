@@ -15,11 +15,7 @@ libaxp          = *$(nlang_bin)\wlib
 bld_cl          = $(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
 bld_cc          = *$(nlang_bin)\wccaxp -zq -i$(bld_incs)
 !else
-!ifdef __OS2__
-bld_cl          = $(lang_root)\binw\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-!else
 bld_cl          = $(nlang_bin)\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-!endif
 bld_cc          = *$(nlang_bin)\wcc386 -zq -i$(bld_incs)
 
 !ifdef clib_rtdll
