@@ -29,7 +29,7 @@ winlibs =            &
 .asm: ../asm
 
 .asm.obj:
-        $(as) $[@
+        $(as) $(aflags) $[@ -fo=.obj
 
 .def.lbc:
         $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.

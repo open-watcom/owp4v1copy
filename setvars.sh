@@ -21,6 +21,7 @@ export BATDIR=$OWROOT
 export BUILDER_CTL=lang.ctl
 export BUILD_PLATFORM=linux386
 export build_platform=$BUILD_PLATFORM
+export BLD_VER=11
 export DEFPATH=$PATH
 export DEFREL=rel2
 export DEVDIR=$OWROOT/bld

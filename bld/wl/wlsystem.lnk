@@ -91,7 +91,7 @@ system begin windows_dll
     library windows
     option nocaseexact
     option stack=8k, heapsize=1k
-    libfile libentry
+    libfile libentry.obj
     format windows dll ^
 end
 system begin win_vxd
@@ -203,7 +203,7 @@ system begin com
     option osname='DOS .COM'
     libpath %WATCOM%/lib286
     libpath %WATCOM%/lib286/dos
-    libfile cstart_t
+    libfile cstart_t.obj
     format dos com
 end
 system begin qnx

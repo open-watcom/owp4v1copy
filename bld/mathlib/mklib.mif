@@ -11,9 +11,9 @@ $(libname).lib : $(objs) $(libs) .precious
     cat ../../../export.$(processor) tmp.def > tmp2.def
     sort < tmp2.def > tmp3.def
     uniq tmp3.def > export.def
-    @erase tmp.def
-    @erase tmp2.def
-    @erase tmp3.def
+    @rm -f tmp.def
+    @rm -f tmp2.def
+    @rm -f tmp3.def
 !endif
 !ifdef runtime_library_source
     if exist 386sqrt.obj $(librarian) $(lib_flags) $^@ -+386sqrt.obj

@@ -89,7 +89,7 @@ UPD_DIR = $(%LIBROOT)/wpi
 $(wpi_dir)/lib/$(libname).lib: $(objs)
         ls -1 *.obj > tmp.lbc
         $(librarian) -n -q $^@ @tmp.lbc
-        del tmp.lbc
+        rm -f tmp.lbc
 
 lib :: $(LIB_DIR)/$(libname).lib .SYMBOLIC
     %null

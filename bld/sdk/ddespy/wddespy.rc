@@ -36,7 +36,7 @@ END
 
 #include "msgfilt.dlg"
 #include "cbfilt.dlg"
-#include "..\misc\log.rc"
-#include "..\misc\alias.rc"
-#include "..\misc\mark.rc"
-#include "..\misc\about.dlg"
+#include "log.rc"
+#include "alias.rc"
+#include "mark.rc"
+#include "about.dlg"

@@ -77,7 +77,7 @@ $(name).lib: $(name).dll
 
 $(name).dll: $(object) verimp.obj $(library_files) $(name).res
             $(linker) $(lflags) name $^@ file {$(object) verimp.obj}
-            $(rc) $(rc_flags) $(name).res $(name).dll
+            $(rc) $(rc_flags) -k $(name).res $(name).dll
             $(copy_dll)
 
 $(name).res: fmedit.rc .AUTODEPEND

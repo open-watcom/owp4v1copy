@@ -8,7 +8,7 @@
   $(as_i86) -q -i".." $<
 
 !ifdef __LINUX__
-dos_hdr_inc = -i"$(hdr_dir)/h"
+dos_hdr_inc = -i"$(hdr_dir)/dos"
 !endif
 
 !ifeq host_OS dos

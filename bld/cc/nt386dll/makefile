@@ -4,4 +4,4 @@ host_OS = nt
 target_CPU = 386
 cc_version = tree
 cc_rtdll = 1
-!include ..\master.mif
+!include ../master.mif
