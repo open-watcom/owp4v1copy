@@ -490,7 +490,7 @@ pdlldbg.lnk : pdll.lnk
 # miscellaneous build rules
 #
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
-    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
+    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
 
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
@@ -500,7 +500,7 @@ wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
 #!endif
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
+    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
 
 errmsgs.c errmsgs.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
     $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs.c errmsgs.gh errlevel.gh
@@ -543,19 +543,19 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     rm -f ytab.h
 
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
-    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
+    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path) 
 
 cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
     $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnprs.gh cmdlnprs.c cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))
 
 ./icmask.exe: ../c/icmask.c
-    $(bld_cl) $< $(wcl_util_opts)
+    $(bld_cl) $< $(wcl_util_opts) $(inc_path)
 
 ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $[@ ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
@@ -576,11 +576,11 @@ target_as_386=bwasm -zq -3 -w4
 target_as_ppc=wasmppc -zq -w4
 
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
-        $(target_as_$(target_cpu)) -fo=.obj $[@
+        $(target_as_$(target_cpu)) -fo=.obj -I$(watcom_h) $[@
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
 
 !endif
 
