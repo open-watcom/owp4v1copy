@@ -303,8 +303,8 @@ extern unsigned ReqRfx_findclose(void);
 
 extern unsigned_8       In_Mx_Num;
 extern unsigned_8       Out_Mx_Num;
-extern mx_entry         *In_Mx_Ptr;
-extern mx_entry         *Out_Mx_Ptr;
+extern mx_entry TRAPFAR *In_Mx_Ptr;
+extern mx_entry TRAPFAR *Out_Mx_Ptr;
 
 extern void             *GetInPtr( unsigned );
 extern void             *GetOutPtr( unsigned );
