@@ -24,16 +24,15 @@ link_name = $(proj_name).lnk
 
 .OPTIMIZE
 
-inc_dirs = $(proj_path)/h;$(womp_dir)/h;$(watcom_dir)/h;$(wres_dir)/h;$(trmem_dir)
+inc_dirs = .;$(proj_path)/h;$(womp_dir)/h;$(watcom_dir)/h;$(wres_dir)/h;$(trmem_dir)
 
 #cflags stuff
 #########
-!ifeq release 0
-extra_c_flags =-dTRMEM -dDEBUG_OUT -d_WASM_
-extra_c_flags_386 = -fpc -of
-!else
 extra_c_flags =-d_WASM_
-extra_c_flags_386 = -fpc
+extra_c_flags_386 =-fpc
+!ifeq release 0
+extra_c_flags += -dTRMEM -dDEBUG_OUT
+extra_c_flags_386 += -of
 !endif
 
 #lflags stuff
@@ -129,7 +128,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : $(proj_path)/h/fullops.h $(proj_path)/h/inlnops.h $(womp_dir)/h/wmpmsg.h $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : fullops.h inlnops.h wmpmsg.h $(link_name) $(proj_name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -158,61 +157,57 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
-$(proj_name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc $(proj_path)/h/msg.gh $(proj_path)/h/wasmmsg.gh
+$(proj_name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc msg.gh wasmmsg.gh
         $(rc) -bt=windows -d_WASM_ -r -zk0 -fo=$^@ $[@
 
 usage.rc : $(proj_path)/h/usage.sp
-        wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< usage.rc
+        wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@
 
 usagej.rc : $(proj_path)/h/usage.sp
-        wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< usagej.rc
+        wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@
 
-$(proj_path)/h/msg.gh : $(proj_path)/h/asmshare.msg
+usage.u : $(proj_path)/h/usage.sp
+        $(bld_bin)/wsplice -kENGLISH -k$(host_OS) -t8 -u $[@ $^@
+
+usagej.u : $(proj_path)/h/usage.sp
+        $(bld_bin)/wsplice -kJAPANESE -k$(host_OS) -t8 -u $[@ $^@
+
+msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
 !else
-        vi -q -d -i -s $(proj_path)/h/makemsg.vi -p "$^@" $[@
+        vi -q -d -i -s $(proj_path)/h/makemsg.vi -p"$^@" $[@
 !endif
 
-$(proj_path)/h/wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
+wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
 !else
-        vi -q -d -i -s $(proj_path)/h/makewmsg.vi -p "$^@" $[@
+        vi -q -d -i -s $(proj_path)/h/makewmsg.vi -p"$^@" $[@
 !endif
-
-usage.u : $(proj_path)/h/usage.sp
-        $(bld_bin)/wsplice -kENGLISH -k$(host_OS) -t8 -u $(proj_path)/h/usage.sp usage.u
-
-usagej.u : $(proj_path)/h/usage.sp
-        $(bld_bin)/wsplice -kJAPANESE -k$(host_OS) -t8 -u $(proj_path)/h/usage.sp usagej.u
 
 ###################################################################
 
-$(proj_path)/h/inlnops.h: $(proj_path)/inlnops.tok ./mkopcode.exe
+inlnops.h: $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/inlnops.tok $^@
 
-$(proj_path)/h/fullops.h: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
+fullops.h: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
 
-$(womp_dir)/h/wmpmsg.h : $(womp_dir)/womp.msg
+wmpmsg.h : $(womp_dir)/womp.msg
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p "$^@" $[@
+    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p"$^@" $[@
 !endif
 
 ./mkopcode.exe: $(proj_path)/mkopcode.c
         $(bld_cl) $[@ $(mkopcode_opts)
-        rm -f mkopcode.obj mkopcode.o
 
 clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.lib *.rc *.res *.lst *.err *.pch *.map *.sym *.tmp *.ilk *.gh
-        rm -f ./mkopcode.exe
-        rm -f $(proj_path)/h/inlnops.h $(proj_path)/h/fullops.h
-        rm -f $(proj_path)/h/msg.gh $(proj_path)/h/wasmmsg.gh
-        rm -f $(womp_dir)/h/wmpmsg.h
+        rm -f *.?bj *.lnk *.exe *.lib *.rc *.res *.lst *.err *.pch *.map *.sym
+        rm -f *.tmp *.ilk *.gh *.h
