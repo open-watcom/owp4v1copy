@@ -1,16 +1,6 @@
+include $(DEVDIR)/build/mif/master.mk
+
 SRCDIRS = $(WRES_DIR)/c
-
-DEVDIR = $(PWD)/../../..
-SDK_DIR = $(DEVDIR)/sdk
-WRES_DIR = $(SDK_DIR)/rc/wres
-WATCOMH = $(DEVDIR)/watcom/h
-OBJDIR = bootstrp
-CFLAGS = -funsigned-char -W -Wall -g #-O2
-CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
-DEFS += -D__386__ -DLINUX -DUNIX -D_WCUNALIGNED= -D_LINKER=_WLINK -D__FLAT__
-
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 OBJECTS = 
 # OBJECTS += loadstr.o wresrtns.o wriidfn.o wrfindrs.o wrgetli.o ropenfro.o 

@@ -1,14 +1,12 @@
-vpath %.o: $(OBJDIR)
+include $(DEVDIR)/build/mif/master.mk
+
+vpath %.c c
 
 all: $(OBJDIR) $(OBJDIR)/pmake
 
-CFLAGS = -g
-CPPFLAGS = -I../watcom/h -D__UNIX__ -D__LINUX__
-LDFLAGS = -L../clib/bootstrp
-LDLIBS = -lwatcom
-
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+INCDIRS = $(WATCOMH)
+LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lwatcom
 
 $(OBJDIR)/pmake: $(OBJDIR)/pmake.o $(OBJDIR)/pmkcmd.o
 

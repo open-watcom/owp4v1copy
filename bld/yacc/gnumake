@@ -1,7 +1,6 @@
-vpath %.c c
+include $(DEVDIR)/build/mif/master.mk
 
-$(OBJDIR)/%.o: %.c
-	$(CC) -I$(INCDIRS) $< -c -o $@
+vpath %.c c
 
 SOURCE := 
 SOURCE += c

@@ -1,14 +1,8 @@
-VPATH=$(OBJDIR)
+include $(DEVDIR)/build/mif/master.mk
+
+vpath %.c c
 
 all: $(OBJDIR) $(OBJDIR)/wstrip
-
-sdk_dir = $(DEVDIR)/sdk
-wres_dir = $(DEVDIR)/sdk/rc/wres
-clib_dir = $(DEVDIR)/clib
-dip_dir = $(DEVDIR)/dip
-
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 objs = $(OBJDIR)/strip.o $(OBJDIR)/output.o
 dependants = $(OBJDIR)/msg.gh $(OBJDIR)/qwstrip.res $(objs)
@@ -20,14 +14,19 @@ $(OBJDIR)/qusage.rc : usage.sp
 	wsplice -kIS_RC -kENGLISH -kQNX -t8 -f "%+(MSG_USE_E_BASE+%#-1), \"%s\"" $< $@
 
 $(OBJDIR)/msg.gh : wstrip.msg
-	perl $(sdk_dir)/misc/msgtoh.pl < $< | sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE+1/' > $@
+	perl $(SDK_DIR)/misc/msgtoh.pl < $< | sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE+1/' > $@
 
-CFLAGS = -c -DBOOTSTRAP -D__UNIX__ -D_WCUNALIGNED="__attribute__((packed))" -I$(dip_dir)/watcom/h -I$(PWD)/$(OBJDIR) -I../watcom/h
+INCDIRS = $(DIP_DIR)/watcom/h $(PWD)/$(OBJDIR) $(WATCOMH)
+LIBDIRS = $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lwres -lwatcom
 
 $(OBJDIR)/wstrip: $(dependants)
-	$(CC) $(objs) -L$(wres_dir)/bootstrp -L$(clib_dir)/bootstrp -lwres -lwatcom -o $@
+	$(CC) $(objs) -o $@ $(LIBS)
 	$@ -q -a -r $@ $(OBJDIR)/wstrip2 $(OBJDIR)/qwstrip.res > /dev/null
 	mv $(OBJDIR)/wstrip2 $@
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
+
+clean:
+	rm -rf $(OBJDIR)

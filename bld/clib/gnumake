@@ -1,7 +1,6 @@
-all: $(OBJDIR)/libwatcom.a
+include $(DEVDIR)/build/mif/master.mk
 
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+all: $(OBJDIR)/libwatcom.a
 
 SRCDIRS = convert/c misc/c string/c memory/c handleio/c startup/c environ/c
 
@@ -16,7 +15,8 @@ OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 
 LIBNAME=watcom
 
-CFLAGS = -D_COMDEF_H_INCLUDED -D__WATCOM_INT64__ -D__LINUX__ -D__FLAT__ -D__int64="long long" -D_RWD_errno=errno -D__386__ -Ih -I../watcom/h -I../lib_misc/h -include  ../watcom/h/clibext.h
+DEFS += -D_COMDEF_H_INCLUDED -D__WATCOM_INT64__ -D__int64="long long" -D_RWD_errno=errno -include ../watcom/h/clibext.h
+INCDIRS = h $(WATCOMH) $(LIB_MISC_DIR)/h
 
 $(OBJDIR)/lib$(LIBNAME).a: $(OBJDIR) $(OBJECTS)
 	@rm -f $@

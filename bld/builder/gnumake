@@ -1,13 +1,10 @@
+include $(DEVDIR)/build/mif/master.mk
+
 vpath %.c c
-vpath %.o $(OBJDIR)
-vpath % $(OBJDIR)
 
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
-
-CPPFLAGS = -Ih -I../watcom/h -D__UNIX__ -DUNIX
-LDFLAGS = -L../clib/bootstrp
-LDLIBS = -lwatcom
+INCDIRS = h $(WATCOMH)
+LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lwatcom
 
 UTILS = cdsay sweep wsplice diff comstrip
 UTILS := $(foreach i,$(UTILS),$(OBJDIR)/$i)

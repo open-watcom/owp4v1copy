@@ -1,20 +1,6 @@
+include $(DEVDIR)/build/mif/master.mk
+
 SRCDIRS = ./c $(CPP_DIR)
-
-DEVDIR = $(PWD)/../../..
-SDK_DIR = $(DEVDIR)/sdk
-RC_DIR = $(SDK_DIR)/rc/rc
-WRES_DIR = $(SDK_DIR)/rc/wres
-WCLIB_DIR = $(DEVDIR)/clib
-WATCOMH = $(DEVDIR)/watcom/h
-CPP_DIR = $(DEVDIR)/cpp
-OBJDIR = bootstrp
-CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
-LIBS = $(addprefix -L,$(LIBDIRS))
-CFLAGS = -O2 -Wall -funsigned-char
-DEFS = -D__386__ -DUNIX -D_WCUNALIGNED="__attribute__((packed))" 
-
-$(OBJDIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 vpath %.c $(SRCDIRS)
 
