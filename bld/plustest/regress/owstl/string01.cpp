@@ -49,7 +49,7 @@ bool construct_test( )
       s7             != "xxxxxxxxxxxxxxxx") {
     std::cout << "construct FAIL 0007\n"; rc = false;
   }
-  return rc;
+  return( rc );
 }
 
 bool assign_test( )
@@ -83,7 +83,7 @@ bool assign_test( )
 
   // Need to add tests for the assign() methods as well.
 
-  return rc;
+  return( rc );
 }
 
 bool access_test( )
@@ -103,7 +103,7 @@ bool access_test( )
     std::cout << "access FAIL 0003\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
 }
 
 bool relational_test( )
@@ -173,7 +173,7 @@ bool relational_test( )
     std::cout << "relatioanl FAIL 0015\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
 }
 
 // This function should probably be some kind of template so it can be
@@ -260,7 +260,7 @@ bool iterator_test( )
     std::cout << "iterator FAIL 0016\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
 }
 
 bool append_test( )
@@ -310,7 +310,7 @@ bool append_test( )
     std::cout << "append FAIL 0008\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
 }
 
 bool insert_test( )
@@ -362,7 +362,7 @@ bool insert_test( )
 
   // Need to test other insert methods.
 
-  return rc;
+  return( rc );
 }
 
 bool erase_test( )
@@ -404,7 +404,7 @@ bool erase_test( )
     std::cout << "erase FAIL 0005\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
 }
 
 bool cstr_test( )
@@ -424,7 +424,60 @@ bool cstr_test( )
     std::cout << "cstr FAIL 0002\n"; rc = false;
   }
 
-  return rc;
+  return( rc );
+}
+
+bool find_test( )
+{
+  bool rc = true;
+
+  std::string s1( "Hello, World" );
+  if( s1.find( "Hello", 0 ) != 0 ) {
+    std::cout << "find FAIL 0001\n"; rc = false;
+  }
+  if( s1.find( "Hello", 1 ) != std::string::npos ) {
+    std::cout << "find FAIL 0002\n"; rc = false;
+  }
+  if( s1.find( "World", 0 ) != 7 ) {
+    std::cout << "find FAIL 0003\n"; rc = false;
+  }
+  if( s1.find( "Hello", 11 ) != std::string::npos ) {
+    std::cout << "find FAIL 0004\n"; rc = false;
+  }
+  if( s1.find( "Hello", 12 ) != std::string::npos ) {
+    std::cout << "find FAIL 0005\n"; rc = false;
+  }
+  if( s1.find( "Hello", 13 ) != std::string::npos ) {
+    std::cout << "find FAIL 0006\n"; rc = false;
+  }
+  if( s1.find( "", 12 ) != 12 ) {
+    std::cout << "find FAIL 0007\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+bool rfind_test( )
+{
+  bool rc = true;
+
+  std::string s1( "Hello, World" );
+  if( s1.rfind( "World" ) != 7 ) {
+    std::cout << "rfind FAIL 0001\n"; rc = false;
+  }
+  if( s1.rfind( "Hello" ) != 0 ) {
+    std::cout << "rfind FAIL 0002\n"; rc = false;
+  }
+  if( s1.rfind( "ell", 7 ) != 1 ) {
+    std::cout << "rfind FAIL 0003\n"; rc = false;
+  }
+  if( s1.rfind( "Fizzle" ) != std::string::npos ) {
+    std::cout << "rfind FAIL 0004\n"; rc = false;
+  }
+  if( s1.rfind( "Hello, World..." ) != std::string::npos ) {
+    std::cout << "rfind FAIL 0005\n"; rc = false;
+  }
+  return( rc );
 }
 
 // Main Program
@@ -444,6 +497,8 @@ int main( )
     if( !insert_test( )     ) rc = 1;
     if( !erase_test( )      ) rc = 1;
     if( !cstr_test( )       ) rc = 1;
+    if( !find_test( )       ) rc = 1;
+    if( !rfind_test( )      ) rc = 1;
   }
   catch( out_of_range e ) {
     std::cout << "Unexpected out_of_range exception: " << e.what( ) << "\n";
@@ -458,6 +513,6 @@ int main( )
     rc = 1;
   }
 
-  return rc;
+  return( rc );
 }
 

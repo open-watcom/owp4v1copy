@@ -1020,6 +1020,145 @@ namespace std {
     return( buffer );
   }
 
+  // get_allocator( ) const
+  // **********************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::allocator_type
+    basic_string< CharT, Traits, Allocator >::get_allocator( ) const
+  {
+    return( mem );
+  }
+
+  // find( const basic_string &, size_type ) const
+  // *********************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    // Verify initial bounds.
+    if( filled < pos ) return( npos );
+    if( filled - pos < str.filled ) return( npos );
+    if( filled - pos == 0 ) return( pos );
+
+    while( pos + str.filled <= filled ) {
+      bool found = true;
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[pos + i], str.buffer[i] ) == false ) {
+          found = false;
+          break;
+        }
+      }
+      if( found ) return( pos );
+      ++pos;
+    }
+    return( npos );
+  }
+
+  // find( const CharT *, size_type, size_type ) const
+  // *************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( find( basic_string( s, n ), pos ) );
+  }
+
+  // find( const CharT *, size_type ) const
+  // **************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( find( basic_string( s ), pos ) );
+  }
+
+  // find( CharT, size_type ) const
+  // ******************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find(
+      CharT c,
+      size_type pos ) const
+  {
+    return( find( basic_string( 1, c ), pos ) );
+  }
+
+  // rfind( const basic_string &, size_type ) const
+  // **********************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::rfind(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    if( filled < str.filled ) return( npos );
+    size_type index = filled - str.filled;
+    index = ( pos < index ) ? pos : index;
+    ++index;
+    do {
+      bool found = true;
+      --index;
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[index + i], str.buffer[i] ) == false ) {
+          found = false;
+          break;
+        }
+      }
+      if( found ) return( index );
+    } while( index > 0 );
+
+    return( npos );
+  }
+
+  // rfind( const CharT *, size_type, size_type ) const
+  // **************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::rfind(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( rfind( basic_string( s, n ), pos ) );
+  }
+
+  // rfind( const CharT *, size_type ) const
+  // ***************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::rfind(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( rfind( basic_string( s ), pos ) );
+  }
+
+  // rfind( CharT, size_type ) const
+  // *******************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::rfind(
+      CharT c,
+      size_type pos ) const
+  {
+    return( rfind( basic_string( 1, c ), pos ) );
+  }
+
+
   // ======================================
   // Ordinary functions using basic_string.
   // ======================================

@@ -372,7 +372,7 @@ namespace std {
         pointer ptr;
       };
 
-      static const size_type npos = static_cast<size_type>( -1 );
+      static const size_type npos = static_cast< size_type >( -1 );
 
       // Constructors.
       explicit basic_string( const Allocator &a = Allocator( ) );
@@ -444,6 +444,16 @@ namespace std {
 
       const CharT  *c_str( ) const;
       const CharT  *data( ) const;
+      allocator_type get_allocator( ) const;
+
+      size_type find( const basic_string &str, size_type pos = 0 ) const;
+      size_type find( const CharT *s, size_type pos, size_type n ) const;
+      size_type find( const CharT *s, size_type pos = 0 ) const;
+      size_type find( CharT c, size_type pos = 0 ) const;
+      size_type rfind( const basic_string &str, size_type pos = npos ) const;
+      size_type rfind( const CharT *s, size_type pos, size_type n ) const;
+      size_type rfind( const CharT *s, size_type pos = npos ) const;
+      size_type rfind( CharT c, size_type pos = npos ) const;
 
     private:
       Allocator mem;      // Object used to get and release memory.
