@@ -116,7 +116,7 @@ int __export WINAPI WEP( int res )
 /*
  * CallWndProcFilter - hook for calls to wndprocs
  */
-LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
+DWORD CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
     MSG         msg;
     LPCALLMSG   pcm;
@@ -136,7 +136,7 @@ LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 /*
  * GetMessageFilter - hook for get message
  */
-LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
+DWORD CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
 
     if( ncode >= 0 ) {
