@@ -119,9 +119,11 @@ cd ..
 cd torture
 call testrun.cmd
 cd ..
+if not [%OS%] == [Windows_NT] goto no_winnt_test
 cd winnt
 call testrun.cmd
 cd ..
+:no_winnt_test
 cd yacl
 call testrun.cmd
 cd ..

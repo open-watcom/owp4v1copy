@@ -13,6 +13,8 @@ cflags_386 += $(cflags) -mf-zc
 cflags_i86 += $(cflags) -ml-zc
 cflags_axp += $(cflags)
 
+lnk_i86 += op stack=8K
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
