@@ -1,22 +1,19 @@
 # OWL library finder.  You must define:
 # ~~~~~~~~~~~~~~~~~~
-# 1. host_os and host_cpu
+# 1. host_cpu
 #
-owl_nt_386    = $(owl_dir)/osi386/owl.lib
-owl_osi_386   = $(owl_dir)/osi386/owl.lib
-owl_dos_386   = $(owl_dir)/osi386/owl.lib
-owl_qnx_386   = $(owl_dir)/osi386/owl.lib
-owl_linux_386 = $(owl_dir)/osi386/owl.lib
-owl_nt_axp    = $(owl_dir)/osiaxp/owl.lib
-owl_os2_386   = $(owl_dir)/osi386/owl.lib
-
+owl_386    = $(owl_dir)/osi386/owl.lib
+owl_axp    = $(owl_dir)/osiaxp/owl.lib
 
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
 owl_nt_386  = $(owl_dir)/nt386.dll/owl.lib
 owl_nt_axp  = $(owl_dir)/ntaxp.dll/owl.lib
-owl_os2_386 = $(owl_dir)/os2386.dll/owl.lib
 !endif
 !endif
 
+!ifdef owl_$(host_os)_$(host_cpu)
 owl_lib = $(owl_$(host_os)_$(host_cpu))
+!else
+owl_lib = $(owl_$(host_cpu))
+!endif

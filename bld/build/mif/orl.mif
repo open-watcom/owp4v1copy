@@ -1,15 +1,9 @@
 # ORL library finder.  You must define:
 # ~~~~~~~~~~~~~~~~~~
-# 1. host_os and host_cpu
+# 1. host_cpu
 #
-orl_nt_386    = $(orl_dir)/osi386/orl.lib
-orl_osi_386   = $(orl_dir)/osi386/orl.lib
-orl_dos_386   = $(orl_dir)/osi386/orl.lib
-orl_qnx_386   = $(orl_dir)/osi386/orl.lib
-orl_linux_386 = $(orl_dir)/osi386/orl.lib
-orl_nt_axp    = $(orl_dir)/osiaxp/orl.lib
-orl_os2_386   = $(orl_dir)/osi386/orl.lib
-
+orl_386    = $(orl_dir)/osi386/orl.lib
+orl_axp    = $(orl_dir)/osiaxp/orl.lib
 
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
@@ -19,4 +13,10 @@ orl_os2_386 = $(orl_dir)/os2386.dll/orl.lib
 !endif
 !endif
 
+!ifdef bootstrap
+orl_lib = $(orl_dir)/$(%OBJDIR)/liborl.a
+!else ifdef orl_$(host_os)_$(host_cpu)
 orl_lib = $(orl_$(host_os)_$(host_cpu))
+!else
+orl_lib = $(orl_$(host_cpu))
+!endif
