@@ -154,10 +154,6 @@ extra_c_flags_dbgdwarf = /i=$(dwarf_dir)\dw\h
 extra_c_flags_loadpe = /i=..\h;$(wrc_dir)\h;$(wres_dir)\h /dINSIDE_WLINK
 extra_c_flags_loados2 = /i=$(wres_dir)\h
 
-!ifdef use_os2tk_stuff
-extra_c_flags_loados2 += ;$(inc_dirs_sys)
-!endif
-
 exe_cflags = $+$(cflags)$-
 
 !ifeq sys_dll 1
@@ -203,7 +199,7 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h;$(watcom_dir)\h;$(inc_dirs_sys_$(host_os))
+inc_dirs = ..\h;$(watcom_dir)\h;$(lang_root)\h;$(inc_dirs_sys_$(host_os))
 
 !ifndef execomp
 execomp = $(cc) -i$(inc_dirs)
