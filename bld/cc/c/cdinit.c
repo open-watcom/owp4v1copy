@@ -194,12 +194,24 @@ local void SplitDataQuad( DATA_QUAD_LIST *dql, unsigned long size )
             dq->u.long_values[0] = size;
             ndq->u.long_values[0] -= dq->u.long_values[0];
             size = 0;
+        } else if( dq->opr == T_CONST ) {
+            dq->u.string_leaf->length = size;
+            ndq->u.string_leaf->literal += size;
+            ndq->u.string_leaf->length = oldsize - size;
+            size = 0;
         }
     }
     if( size != 0 ) {
         /* can't happen ! */
         CSuicide();
     }
+}
+
+local void DeleteDataQuad( DATA_QUAD_LIST *dql )
+{
+    dql->prev->next = dql->next;
+    if( dql->next != NULL )
+        dql->next->prev = dql->prev;
 }
 
 local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
@@ -209,6 +221,10 @@ local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
     dql = CurDataQuad->next;
     if( dql != NULL ) {
         /* overwrite the current dataquad */
+        while( size > dql->size && dql->next != NULL ) {
+            dql->size += dql->next->size;
+            DeleteDataQuad( dql->next );
+        }
         if( size < dql->size )
             SplitDataQuad( dql, size );
     } else {
@@ -226,6 +242,7 @@ local void ZeroBytes( long n )
 {
     auto DATA_QUAD dq;
 
+    if( n == 0 ) return;
     dq.opr = T_CONSTANT;
     dq.flags = Q_DATA;
     dq.u.long_values[0] = n;
@@ -238,7 +255,7 @@ local void RelSeekBytes( long n )
     DATA_QUAD_LIST *dql;
 
     dql = CurDataQuad;
-    while( n < 0 && n <= -dql->size ) {
+    while( n < 0 && n <= -(long)dql->size ) {
         n += dql->size;
         dql = dql->prev;
     }
@@ -310,10 +327,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
             SplitDataQuad( dql, size );
         }
         /* no need to "free" the next one, just remove it from the list */
-        CurDataQuad->next = dql->next;
-        if( dql->next != NULL ) {
-            dql->next->prev = CurDataQuad;
-        }
+        DeleteDataQuad( dql );
     }
 }
 
@@ -895,7 +909,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             } else if( level == 0 ) {
                 CErr1( ERR_NEED_BRACES );
             }
-            if( level == 0 ) { /* top level */
+            if( typ == ctyp ) { /* initialize new current type */
                 /* first zero out the whole array; otherwise
                    overlapping fields caused by designated 
                    initializers will make life very difficult */
@@ -914,7 +928,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         } else if( level == 0 ) {
             CErr1( ERR_NEED_BRACES );
         }
-        if( level == 0 ) { /* top level */
+        if( typ == ctyp ) { /* initialize new current type */
             /* zero out all fields; otherwise overlapping fields caused
                by designated initializers will make life very difficult */
             ZeroBytes( size );
