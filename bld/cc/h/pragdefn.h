@@ -107,7 +107,7 @@ global struct aux_info          FortranInfo;
 global struct aux_info          SyscallInfo;            /* 04-jul-91 */
 global struct aux_info          OptlinkInfo;            /* 04-jul-91 */
 global struct aux_info          StdcallInfo;            /* 08-oct-92 */
-global struct aux_info          FastCallInfo;
+global struct aux_info          FastcallInfo;
 #if _CPU == 386
 global struct aux_info          Far16CdeclInfo;
 global struct aux_info          Far16PascalInfo;

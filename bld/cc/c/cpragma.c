@@ -86,7 +86,7 @@ void CPragmaInit( void ){
 // Init any general pragma things //
 //********************************//
     TextSegList = NULL;
-    PragmaInit(); // call traget specific init
+    PragmaInit(); // call target specific init
 }
 
 void CPragma( void )
@@ -165,18 +165,15 @@ local void EndOfPragma( void )
 
 void PragInit( void )
 {
+    DefaultInfo.use = 2;        /* so they don't get freed */
+
     CdeclInfo   = DefaultInfo;
     PascalInfo  = DefaultInfo;
-    FortranInfo = DefaultInfo;
     SyscallInfo = DefaultInfo;
     StdcallInfo = DefaultInfo;
+    FastcallInfo= DefaultInfo;
     OptlinkInfo = DefaultInfo;
-    DefaultInfo.use = 2;        /* so they don't get freed */
-    CdeclInfo.use   = 2;
-    PascalInfo.use  = 2;
-    SyscallInfo.use = 2;
-    OptlinkInfo.use = 2;
-    FortranInfo.use = 2;
+    FortranInfo = DefaultInfo;
     PackInfo = NULL;
     EnumInfo = NULL;
 }
@@ -328,6 +325,7 @@ enum {
         M_FORTRAN,
         M_SYSTEM,
         M_STDCALL,
+        M_FASTCALL
 };
 
 struct magic_words MagicWords[] = {                     /* 18-aug-90 */
@@ -338,12 +336,14 @@ struct magic_words MagicWords[] = {                     /* 18-aug-90 */
         { "system",     M_SYSTEM },
         { "syscall",    M_SYSTEM },
         { "stdcall",    M_STDCALL },
+        { "fastcall",   M_FASTCALL },
         { "__cdecl",    M_CDECL },
         { "__pascal",   M_PASCAL },
         { "__fortran",  M_FORTRAN },
         { "__system",   M_SYSTEM },
         { "__syscall",  M_SYSTEM },
         { "__stdcall",  M_STDCALL },
+        { "__fastcall", M_FASTCALL },
         { NULL,         M_UNKNOWN }
 };
 
@@ -394,6 +394,9 @@ void SetCurrInfo( void )
     case M_STDCALL:
         CurrInfo = &StdcallInfo;
         break;
+    case M_FASTCALL:
+        CurrInfo = &FastcallInfo;
+        break;
     default:
         CreateAux( Buffer );
     }
@@ -421,6 +424,9 @@ void PragCurrAlias()
         break;
     case M_STDCALL:
         CurrAlias = &StdcallInfo;
+        break;
+    case M_FASTCALL:
+        CurrAlias = &FastcallInfo;
         break;
     default:
         search = AuxLookup( Buffer );

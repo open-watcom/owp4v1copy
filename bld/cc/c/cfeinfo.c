@@ -297,12 +297,12 @@ struct aux_info *LangInfo( int flags, struct aux_info *inf )
         inf = &StdcallInfo;
         break;
 
-    case LANG_OPTLINK:                          /* 08-jan-92 */
-        inf = &OptlinkInfo;
+    case LANG_FASTCALL:
+        inf = &FastcallInfo;
         break;
 
-    case LANG_FASTCALL:                         /* 08-jan-92 */
-        inf = &FastCallInfo;
+    case LANG_OPTLINK:                          /* 08-jan-92 */
+        inf = &OptlinkInfo;
         break;
     }
     return( inf );
@@ -603,6 +603,10 @@ void GetCallClass( SYM_HANDLE sym_handle )
 
             case LANG_STDCALL:
                 CallClass = StdcallInfo.class;
+            break;
+
+            case LANG_FASTCALL:
+                CallClass = FastcallInfo.class;
             break;
 
             case LANG_OPTLINK:

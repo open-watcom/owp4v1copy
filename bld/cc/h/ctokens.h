@@ -48,8 +48,8 @@ enum    token_class {
         TC_FORTRAN,
         TC_SYSCALL,             /* __syscall for OS/2 2.0; 04-jul-91 */
         TC_STDCALL,             /* __stdcall for NT */
-        TC_FASTCALL,             /* __stdcall for NT */
-        TC_OPTLINK,             /* _Optlink  for os2 */
+        TC_FASTCALL,            /* __fastcall for NT */
+        TC_OPTLINK,             /* _Optlink  for OS2 */
         TC_EXPORT,              /* __export, __loadds, __saveregs */
         TC_LOADDS,
         TC_SAVEREGS,

@@ -48,6 +48,7 @@ static  hw_reg_set      AsmRegsSaved = { HW_D( HW_FULL ) };
 static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 #if _CPU == 386
 static  hw_reg_set      OptlinkParms[] = { HW_D( HW_FLTS ),HW_D( HW_EMPTY )};
+static  hw_reg_set      FastParms[]  = { HW_D( HW_ECX ), HW_D( HW_EDX ), HW_D( HW_EMPTY ) };
 #endif
 
 void PragmaInit()
@@ -129,6 +130,21 @@ void PragmaInit()
     memcpy( StdcallInfo.parms, StackParms, sizeof( StackParms ) );
     HW_CAsgn( StdcallInfo.returns, HW_EMPTY );
 
+    FastcallInfo.class =  call_type |
+                         // NO_FLOAT_REG_RETURNS |
+                         // NO_STRUCT_REG_RETURNS |
+                         // ROUTINE_RETURN;
+                         SPECIAL_STRUCT_RETURN;
+    FastcallInfo.objname = CStrSave( "@*@#" );
+#if _CPU == 386
+    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
+    memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
+#else
+    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
+    memcpy( FastcallInfo.parms, StackParms, sizeof( StackParms ) );
+#endif
+    HW_CAsgn( FastcallInfo.returns, HW_EMPTY );
+
     OptlinkInfo.class =  call_type |
                          CALLER_POPS  |
 #ifdef PARMS_STACK_RESERVE
@@ -175,6 +191,12 @@ void PragmaInit()
     HW_CTurnOff( StdcallInfo.save, HW_ECX );
     HW_CTurnOff( StdcallInfo.save, HW_EDX );
 
+/*  HW_CAsgn( FastcallInfo.streturn, HW_EAX ); */
+    HW_CTurnOff( FastcallInfo.save, HW_EAX );
+/*  HW_CTurnOff( FastcallInfo.save, HW_EBX ); */
+    HW_CTurnOff( FastcallInfo.save, HW_ECX );
+    HW_CTurnOff( FastcallInfo.save, HW_EDX );
+
     HW_CTurnOff( SyscallInfo.save, HW_EAX );
     HW_CTurnOn ( SyscallInfo.save, HW_EBX );
     HW_CTurnOff( SyscallInfo.save, HW_ECX );
@@ -204,6 +226,10 @@ void PragmaInit()
     HW_CAsgn( StdcallInfo.streturn, HW_AX );
     HW_CTurnOff( StdcallInfo.save, HW_ABCD );
     HW_CTurnOff( StdcallInfo.save, HW_ES );
+
+    HW_CAsgn( FastcallInfo.streturn, HW_AX );
+    HW_CTurnOff( FastcallInfo.save, HW_ABCD );
+    HW_CTurnOff( FastcallInfo.save, HW_ES );
 
     /* roughly like pascal */
     HW_CTurnOff( SyscallInfo.save, HW_ABCD );

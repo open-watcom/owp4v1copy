@@ -129,7 +129,7 @@ static struct aux_info *BuiltinInfos[] = {
         &SyscallInfo,
         &StdcallInfo,
         &OptlinkInfo,
-        &FastCallInfo,
+        &FastcallInfo,
         NULL
 };
 #endif

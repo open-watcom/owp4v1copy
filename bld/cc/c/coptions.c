@@ -2127,7 +2127,6 @@ void GenCOptions( char **cmdline )
                 HW_CTurnOff( DefaultInfo.save, HW_GS );
             }
         }
-        FastCallInfo = DefaultInfo; // save reg conventions
         #if _CPU == 386
             if( ! CompFlags.register_conventions )  SetStackConventions();
         #endif

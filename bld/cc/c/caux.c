@@ -97,6 +97,8 @@ void PragmaFini()
     FreeInfo( &SyscallInfo );
     FreeInfo( &OptlinkInfo );
     FreeInfo( &FortranInfo );
+    FreeInfo( &StdcallInfo );
+    FreeInfo( &FastcallInfo );
     AuxList = NULL;
     while( HeadLibs != NULL ) {
         junk = HeadLibs;
