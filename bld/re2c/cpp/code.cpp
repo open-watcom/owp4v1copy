@@ -238,7 +238,7 @@ Move::Move(State *s) : Action(s) {
 }
 
 void Move::emit(ostream &o){
-    o = o;
+    (void)o;
 }
 
 Accept::Accept(State *x, uint n, uint *s, State **r)

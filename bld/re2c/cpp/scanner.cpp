@@ -116,7 +116,7 @@ yy3:
 yy4:    yych = *++YYCURSOR;
 yy5:
         { if(cursor == eof) RETURN(0);
-                                  out.write(tok, cursor - tok);
+                                  out.write((char *)tok, cursor - tok);
                                   tok = pos = cursor; cline++;
                                   goto echo; }
 yy6:    yych = *++YYCURSOR;
@@ -137,7 +137,7 @@ yy12:   yych = *++YYCURSOR;
         if(yych != 'c') goto yy8;
 yy13:   yych = *++YYCURSOR;
 yy14:
-        { out.write(tok, &cursor[-7] - tok);
+        { out.write((char *)tok, &cursor[-7] - tok);
                                   tok = cursor;
                                   RETURN(1); }
 }

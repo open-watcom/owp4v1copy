@@ -19,4 +19,9 @@ objs =                  &
        substr.obj       &
        translat.obj
 
+!ifdef bootstrap
+# awful hack to link this executable; if you know how to do this right, please do!
+cl = g++
+!endif
+
 !include exetarg.mif
