@@ -1,4 +1,5 @@
 clean : .SYMBOLIC
+ @if exist *.pdf erase *.pdf
  @if exist *.ps erase *.ps
  @if exist *.ihp erase *.ihp
  @if exist *.htm erase *.htm

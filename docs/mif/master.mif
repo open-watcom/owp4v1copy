@@ -56,7 +56,7 @@ OS2_TK=dummy
 
 .BEFORE
     @echo **************************************************************
-    @echo $(hbook)/$(book_src) : $(book_title)
+    @echo $(dotarget) : $(hbook)/$(book_src) : $(book_title)
     @echo **************************************************************
 
 #
@@ -196,6 +196,21 @@ $(hbook).ps : $(book_objs) $(proj_objs)
     %make prepare_wgml_opts
     -$(gml_path)\wgml $(book_src) ( file $(optfile_wgml)
 
+####################################################
+#
+# make Portable Document Format documentation
+#
+####################################################
+!else ifeq dotarget pdf
+
+.EXTENSIONS: .pdf .ps
+.ps : ../ps
+
+all : $(hbook).pdf .SYMBOLIC
+    @%null
+
+$(hbook).pdf : $(hbook).ps
+    -ps2pdf -r600 $[@ $(hbook).pdf
 
 ####################################################
 #

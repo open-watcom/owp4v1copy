@@ -1,8 +1,6 @@
-#pmake/50: docs ps pdf
+#pmake: docs pdf
 
-# postscript files need to be created before pdf files
-
-dotarget=ps
+dotarget=pdf
 
 .mif :  ..\mif
 
@@ -20,3 +18,5 @@ $(books) : .SYMBOLIC
 
 !include clean.mif
 
+.BEFORE
+    @set path=$(%GHOSTSCRIPT)/bin;$(%GHOSTSCRIPT)/lib;$(%PATH)

@@ -53,6 +53,13 @@ books=c_readme clr cguide pguide lguide &
  f_readme fuguide fpguide ftools f77graph f77lr &
  cguideq clibqnx cw
 
+!else ifeq dotarget pdf
+#### PORTABLE DOCUMENT FORMAT ######
+books=c_readme clr cguide pguide lguide &
+ tools guitool wd clib cpplib &
+ f_readme fuguide fpguide ftools f77graph f77lr &
+ cguideq clibqnx cw
+
 !else
 
 !error Unsuported target for documentation
