@@ -46,7 +46,7 @@ dopt=d1
         $(as) -zq -d_MODEL=_SMALL -d_OS=_OS2 -fo=$^&.cbj $<
 
 .before:
-        set include=$(lang_root)\h;$(watcom_dir)\h;$(lang_root)\h\os21x
+        set include=$(lang_root)\h;$(watcom_dir)\h;$(inc_dirs_sys)
 
 lnk = tmp.lnk
 dolink = $(linker)
