@@ -103,11 +103,7 @@ nlm_imports = &
     ImportSymbol &
     Free
 
-!ifdef __LINUX__
-description = \'Open Watcom Sampler V2.2\'
-!else
 description = 'Open Watcom Sampler V2.2'
-!endif
 
 extra_l_flags = op symfile,map name $(xname)
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
