@@ -8,7 +8,7 @@ srv     = lcl
 cpu     = x86
 name    = std
 
-extra_cflags = -d2
+#extra_cflags = -d2
 
 extra_objs =          &
         accmisc.obj   &

@@ -24,16 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  'Soft mode' OS/2 PM debugging routines. Warning, highly
+*               complex code ahead! Exercise utmost care when modifying.
 *
 ****************************************************************************/
 
 
 #include <stddef.h>
-#include <stdio.h>
 #include <string.h>
-#include <env.h>
 #define INCL_PM
 #define INCL_DOSMODULEMGR
 #define INCL_DOSPROCESS
@@ -43,16 +41,15 @@
 #define INCL_WINMESSAGEMGR
 #include <os2.h>
 #include <os2dbg.h>
-#include <i86.h>
 #include "pmhook.h"
 #include "trpimp.h"
 
-extern BOOL APIENTRY16 WinLockInput(HWND, USHORT);
-extern BOOL APIENTRY16 WinQuerySendMsg(HAB, HMQ, HMQ, PQMSG);
-extern BOOL APIENTRY16 WinReplyMsg(HAB, HMQ, HMQ, MRESULT);
-extern BOOL APIENTRY16 WinWakeThread(HMQ );
-extern HMQ  APIENTRY16 WinQueueFromID(HAB, PID, TID);
-extern BOOL APIENTRY16 WinThreadAssocQueue(HAB, HMQ);
+extern BOOL APIENTRY16 WinLockInput( HWND, USHORT );
+extern BOOL APIENTRY16 WinQuerySendMsg( HAB, HMQ, HMQ, PQMSG );
+extern BOOL APIENTRY16 WinReplyMsg( HAB, HMQ, HMQ, MRESULT );
+extern BOOL APIENTRY16 WinWakeThread( HMQ );
+extern HMQ  APIENTRY16 WinQueueFromID( HAB, USHORT, USHORT );
+extern BOOL APIENTRY16 WinThreadAssocQueue( HAB, HMQ );
 
 
 HAB                     HabDebugger;
@@ -77,66 +74,73 @@ typedef struct {
     HMQ         hmq;
 } thread_data;
 
-static  HMTX            BeginThreadSem = NULL;
-static  thread_data     *BeginThreadArg;
+static  HEV             BeginThreadSem = NULL;
 
 #define STACK_SIZE 32768
 
-void APIENTRY SoftModeThread(thread_data *thread)
+void APIENTRY SoftModeThread( thread_data *thread )
 {
     QMSG        qmsg;
     ULONG       rc;
     RECTL       rcl;
     HPS         ps;
 
-    rc = WinThreadAssocQueue(HabDebugger, thread->hmq);
-    PSetHmqDebugee(thread->hmq, HwndDummy);
-    rc = WinSetHook(HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL);
-    while (WinQuerySendMsg(HabDebugger, NULL, thread->hmq, &qmsg)) {
-        WinReplyMsg(HabDebugger, NULL, thread->hmq, (MRESULT)0);
+    rc = WinThreadAssocQueue( HabDebugger, thread->hmq );
+    PSetHmqDebugee( thread->hmq, HwndDummy );
+    rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    while( WinQuerySendMsg( HabDebugger, NULL, thread->hmq, &qmsg ) ) {
+        WinReplyMsg( HabDebugger, NULL, thread->hmq, (MRESULT)0 );
     }
-    while (WinGetMsg(HabDebugger, &qmsg, 0, 0, 0)) { // handle messages for task
-        switch (qmsg.msg) {
+    while( WinGetMsg( HabDebugger, &qmsg, 0, 0, 0 ) ) { // handle messages for task
+        switch( qmsg.msg ) {
             case WM_PAINT:
                 // don't do any painting
-                ps = WinBeginPaint(qmsg.hwnd, 0, &rcl);
-                WinEndPaint(ps);
+                ps = WinBeginPaint( qmsg.hwnd, 0, &rcl );
+                WinEndPaint( ps );
                 break;
             default:
                 // have the default window procedure handle the rest
-                WinDefWindowProc(qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2);
+                WinDefWindowProc( qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2 );
         }
     }
-    WinReleaseHook(HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL);
-    PSetHmqDebugee(thread->hmq, NULL);
-    WinThreadAssocQueue(HabDebugger, NULL);
-    WinPostMsg(HwndDebugger, WM_QUIT, 0, 0); // tell debugger we're done
+    WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    PSetHmqDebugee( thread->hmq, NULL );
+    WinThreadAssocQueue( HabDebugger, NULL );
+    WinPostMsg( HwndDebugger, WM_QUIT, 0, 0 ); // tell debugger we're done
 }
 
-static void BeginThreadHelper()
+// Here's the deal with BeginThreadHelper() and the event sem: each thread
+// is given its own thread_data structure. BeginThreadHelper() gets a pointer
+// to the data passed in but it has to copy the data to its own (thread
+// specific) stack. The event sem must be used to prevent the creating thread
+// from trashing the data before the thread is done copying it.
+// Note: Currently thread_data only contains a single HMQ field. We could
+// just pass it as a thread argument and skip these shenanigans. But hey,
+// it's fun and it would be needed anyway if thread_data were extended.
+static VOID APIENTRY BeginThreadHelper( ULONG arg )
 {
-    thread_data *_arg;
+    thread_data tdata;
+    thread_data *_arg = (thread_data*)arg;
 
-    _arg = BeginThreadArg;
-    DosReleaseMutexSem(BeginThreadSem);
-    SoftModeThread(_arg);
-    DosExit(EXIT_THREAD, 0);
+    tdata = *_arg;
+    DosPostEventSem( BeginThreadSem );
+    SoftModeThread( &tdata );
+    DosExit( EXIT_THREAD, 0 );
 }
 
 
-void BeginSoftModeThread(thread_data *arglist)
+void BeginSoftModeThread( thread_data *arglist )
 {
     TID         tid;
+    ULONG       ulCount;
 
-    if (BeginThreadSem == NULL)
-        DosCreateMutexSem(NULL, &BeginThreadSem, 0, FALSE);
-
-    DosRequestMutexSem(BeginThreadSem, SEM_INDEFINITE_WAIT);
-    DosCreateThread(&tid, (PFNTHREAD)BeginThreadHelper, (ULONG)arglist, 0, STACK_SIZE);
+    DosResetEventSem( BeginThreadSem , &ulCount );
+    DosCreateThread( &tid, BeginThreadHelper, (ULONG)arglist, 0, STACK_SIZE );
+    DosWaitEventSem( BeginThreadSem, SEM_INDEFINITE_WAIT );
 }
 
 
-char SetHardMode(char hard)
+char SetHardMode( char hard )
 {
     char        old;
 
@@ -147,7 +151,7 @@ char SetHardMode(char hard)
 
 BOOL IsPMDebugger()
 {
-    return (HabDebugger != NULL);
+    return( HabDebugger != NULL );
 }
 
 void CreateDummyWindow()
@@ -155,95 +159,95 @@ void CreateDummyWindow()
     ULONG     flCreate;
     HWND      frame;
 
-    WinRegisterClass(HabDebugger, "Dummy", WinDefWindowProc, CS_SIZEREDRAW, 0);
+    WinRegisterClass( HabDebugger, "Dummy", WinDefWindowProc, CS_SIZEREDRAW, 0 );
     flCreate = FCF_TITLEBAR | FCF_SYSMENU | FCF_SIZEBORDER | FCF_MINMAX;
-    frame = WinCreateStdWindow(HWND_DESKTOP, 0L, &flCreate, "Dummy",
-                               "", 0L, NULL, 99, &HwndDummy);
-    if (frame == NULL) {
+    frame = WinCreateStdWindow( HWND_DESKTOP, 0L, &flCreate, "Dummy",
+                                "", 0L, NULL, 99, &HwndDummy );
+    if( frame == NULL ) {
         HwndDummy = HwndDebugger;
     }
 }
 
-void GrabThreadQueue(PID pid, TID tid)
+void GrabThreadQueue( PID pid, TID tid )
 {
     thread_data         thread;
     int                 i;
 
-    if (HwndDummy == NULL)
+    if( HwndDummy == NULL )
         CreateDummyWindow();
-    thread.hmq = WinQueueFromID(HabDebugger, pid, tid);
-    if (thread.hmq == NULL)
+    thread.hmq = WinQueueFromID( HabDebugger, pid, tid );
+    if( thread.hmq == NULL )
         return;
-    for (i = 0; i < NumAssumedQueues; ++i) {
-        if (thread.hmq == AssumedQueues[i])
+    for( i = 0; i < NumAssumedQueues; ++i ) {
+        if( thread.hmq == AssumedQueues[i] )
             return;
     }
     AssumedQueues[NumAssumedQueues] = thread.hmq;
     ++NumAssumedQueues;
-    BeginSoftModeThread(&thread);
+    BeginSoftModeThread( &thread );
 }
 
-void ReleaseThreadQueue(PID pid, TID tid)
+void ReleaseThreadQueue( PID pid, TID tid )
 {
     HMQ                 hmq;
     int                 i;
 
-    hmq = WinQueueFromID(HabDebugger, pid, tid);
-    if (hmq == NULL)
+    hmq = WinQueueFromID( HabDebugger, pid, tid );
+    if( hmq == NULL )
         return;
-    for (i = 0; i < NumAssumedQueues; ++i) {
-        if (hmq == AssumedQueues[i]) {
-            WinPostQueueMsg(hmq, WM_QUIT, 0, 0); // break one soft mode loop
+    for( i = 0; i < NumAssumedQueues; ++i ) {
+        if( hmq == AssumedQueues[i] ) {
+            WinPostQueueMsg( hmq, WM_QUIT, 0, 0 ); // break one soft mode loop
             AssumedQueues[i] = NULL;
             break;
         }
     }
 }
 
-void ForAllTids(PID pid, void (*rtn)(PID pid, TID tid))
+void ForAllTids( PID pid, void (*rtn)( PID pid, TID tid ) )
 {
     TID tid;
 
-    for (tid = 1; tid <= 256; ++tid) {
-        rtn(pid, tid);
+    for( tid = 1; tid <= 256; ++tid ) {
+        rtn( pid, tid );
     }
 }
 
-void WakeOneThread(PID pid, TID tid)
+void WakeOneThread( PID pid, TID tid )
 {
     HMQ         hmq;
 
-    hmq = WinQueueFromID(HabDebugger, pid, tid);
-    if (hmq != NULL) {
-        WinWakeThread(hmq);
+    hmq = WinQueueFromID( HabDebugger, pid, tid );
+    if( hmq != NULL ) {
+        WinWakeThread( hmq );
     }
 }
 
-VOID WakeThreads(PID pid)
+VOID WakeThreads( PID pid )
 {
-    ForAllTids(pid, WakeOneThread);
+    ForAllTids( pid, WakeOneThread );
 }
 
 void EnterSoftMode( PID pid )
 {
-    if (NumAssumedQueues != 0)
+    if( NumAssumedQueues != 0 )
         return;
-    ForAllTids(pid, GrabThreadQueue);
+    ForAllTids( pid, GrabThreadQueue );
 //    AppFocusWnd = WinQueryFocus( HWND_DESKTOP, 0 );
 //    AppActiveWnd = WinQueryActiveWindow( HWND_DESKTOP, 0 );
 //    if (WinIsWindow(HabDebugger, DBFocusWnd)) WinSetFocus(HWND_DESKTOP, DBFocusWnd);
 //    if (WinIsWindow(HabDebugger, DBActiveWnd)) WinSetActiveWindow(HWND_DESKTOP, DBActiveWnd);
 }
 
-void ExitSoftMode(PID pid)
+void ExitSoftMode( PID pid )
 {
     int         i;
     QMSG        qmsg;
 
-    ForAllTids(pid, ReleaseThreadQueue);
-    for (i = 0; i < NumAssumedQueues; ++i) { // wait for NumAssumedQueues WM_QUIT messages
-        while (WinGetMsg(HabDebugger, &qmsg, 0L, 0, 0)) {
-            WinDispatchMsg(HabDebugger, &qmsg);
+    ForAllTids( pid, ReleaseThreadQueue );
+    for( i = 0; i < NumAssumedQueues; ++i ) { // wait for NumAssumedQueues WM_QUIT messages
+        while( WinGetMsg( HabDebugger, &qmsg, 0L, 0, 0 ) ) {
+            WinDispatchMsg( HabDebugger, &qmsg );
         }
     }
     NumAssumedQueues = 0;
@@ -255,48 +259,49 @@ void ExitSoftMode(PID pid)
 
 void EnterHardMode()
 {
-    if (InHardMode)
+    if( InHardMode )
         return;
-    WinLockInput(0, TRUE);
+    WinLockInput( 0, TRUE );
     InHardMode = TRUE;
 }
 
 void ExitHardMode()
 {
-    if (!InHardMode) return;
-    WinLockInput(0, FALSE);
+    if( !InHardMode )
+        return;
+    WinLockInput( 0, FALSE );
     InHardMode = FALSE;
 }
 
-void AssumeQueue(PID pid, TID tid)
+void AssumeQueue( PID pid, TID tid )
 {
     tid = tid;
-    if (!IsPMDebugger())
+    if( !IsPMDebugger() )
         return;
-    if (NeedHardMode == (char)-1)
+    if( NeedHardMode == (char) - 1 )
         return;
-    if (NeedHardMode) {
+    if( NeedHardMode ) {
         EnterHardMode();
     } else {
-        EnterSoftMode(pid);
+        EnterSoftMode( pid );
     }
 }
 
-void ReleaseQueue(PID pid, TID tid)
+void ReleaseQueue( PID pid, TID tid )
 {
     tid = tid;
-    if (!IsPMDebugger())
+    if( !IsPMDebugger() )
         return;
-    if (NeedHardMode == (char)-1)
+    if( NeedHardMode == (char) - 1 )
         return;
-    if (NeedHardMode) {
+    if( NeedHardMode ) {
         ExitHardMode();
     } else {
-        ExitSoftMode(pid);
+        ExitSoftMode( pid );
     }
 }
 
-void TellSoftModeHandles(HAB hab, HWND hwnd)
+void TellSoftModeHandles( HAB hab, HWND hwnd )
 {
     HabDebugger = hab;
     HwndDebugger = hwnd;
@@ -304,7 +309,9 @@ void TellSoftModeHandles(HAB hab, HWND hwnd)
 
 VOID InitSoftDebug(VOID)
 {
-    DosLoadModule(NULL, 0, HOOKER, &HookDLL);
-    DosQueryProcAddr(HookDLL, 0, "SENDMSGHOOKPROC", &PSendMsgHookProc);
-    DosQueryProcAddr(HookDLL, 0, "SETHMQDEBUGEE", &PSetHmqDebugee);
+    // Create the thread creation event sem and load the queue hook DLL
+    DosCreateEventSem( NULL, &BeginThreadSem, 0, FALSE );
+    DosLoadModule( NULL, 0, HOOKER, &HookDLL );
+    DosQueryProcAddr( HookDLL, 0, "SENDMSGHOOKPROC", &PSendMsgHookProc );
+    DosQueryProcAddr( HookDLL, 0, "SETHMQDEBUGEE", &PSetHmqDebugee );
 }
