@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  IDE main module classes and data.
 *
 ****************************************************************************/
 
@@ -120,6 +119,7 @@ WCLASS VpeMain : public WMdiWindow, public WView
         void    setMksRcs( WMenuItem *);
         void    setMksSi( WMenuItem *);
         void    setObjectCycle( WMenuItem *);
+        void    setPerforce( WMenuItem *);
         void    setPvcs( WMenuItem *);
         void    setOtherRcs( WMenuItem *);
         void    setNoRcs( WMenuItem *);
