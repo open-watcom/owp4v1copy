@@ -1,6 +1,6 @@
-#pmake: all os_nt cpu_axp yacc
+#pmake: os_nt cpu_axp yacc
 
-host_CPU        = axp
-host_OS         = nt
+host_os  = nt
+host_cpu = axp
 
 !include ..\master.mif
