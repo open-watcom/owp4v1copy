@@ -1,7 +1,7 @@
 @echo on
 pushd
-set LABEL=open_watcom_1.0.0
-set PREFIX=open_watcom_1.0.0
+set LABEL=open_watcom_1.0.1
+set PREFIX=open_watcom_1.0.1
 set P4OPT=-f
 set ARCHIVES=c:\archives
 cdd %ARCHIVES%
