@@ -16,3 +16,7 @@ clean killall: .SYMBOLIC .EXPLICIT
     @if exist *.tim @erase *.tim
     @if exist *.tmp @erase *.tmp
     @if exist *.zip @erase *.zip
+    @if exist *.imp @erase *.imp
+    @if exist *.rc  @erase *.rc
+    @if exist *.res @erase *.res
+
