@@ -18,6 +18,7 @@ readout() and memeql() are output and string-comparison utilities.
 */
 
 #include <assert.h>
+#include <io.h>                         /* isatty() */
 #include <stdio.h>                      /* {f}puts, {f}printf, etc. */
 #include <ctype.h>                      /* isprint(), isdigit(), toascii() */
 #include <stdlib.h>                     /* for exit() */
@@ -77,9 +78,12 @@ void execute( const char *file )        /* name of text source file to filter */
     register sedcmd     *ipc;           /* ptr to current command */
     char                *execp;         /* ptr to source */
 
-    if( file != NULL )                  /* filter text from a named file */
+    if( file != NULL ) {                /* filter text from a named file */
         if( freopen( file, "r", stdin ) == NULL )
             fprintf( stderr, "sed: can't open %s\n", file );
+    } else
+        if( isatty( fileno( stdin ) ) ) /* It is easy to be spuriously awaiting input */
+            fprintf( stderr, "sed: reading from terminal\n" );
 
     if( pending ) {                     /* there's a command waiting */
         ipc = pending;                  /* it will be first executed */
@@ -244,8 +248,11 @@ static int advance(
 {
     register char const *curlp;         /* save ptr for closures */
     char                c;              /* scratch character holder */
-    char const          *bbeg;
+    char                *bbeg;
+    char                *tep;
     int                 ct;
+    int                 i1;
+    int                 i2;
 
     for( ;; )
         switch( *ep++ ) {
@@ -296,7 +303,8 @@ static int advance(
 
         case CBACK | STAR:
             bbeg = brastart[*ep];
-            ct = bracend[*ep++] - bbeg;
+            if( ( ct = bracend[*ep++] - bbeg ) <= 0 )
+                break;                  /* zero (or negative ??) length match */
             curlp = lp;
             while( memeql( bbeg, lp, ct ) )
                 lp += ct;
@@ -321,9 +329,7 @@ static int advance(
 
         case CCL | STAR:                /* match [...]* */
             curlp = lp;                 /* save closure start loc */
-            do {
-                c = *lp++ & 0x7F;       /* match any in set */
-            } while( ep[c >> 3] & bits[c & 07] );
+            while( c = *lp++ & 0x7F, ep[c >> 3] & bits[c & 07] ) ;
             ep += 16;                   /* skip past the set */
             goto star;                  /* match followers */
 
@@ -331,37 +337,173 @@ static int advance(
             if( --lp == curlp )         /* 0 matches */
                 break;
 
-            if( *ep == CCHR ) {
-                c = ep[1];
-                do {
-                    if( *lp == c )
+            switch( *ep ) {
+                case CCHR:
+                    c = ep[1];
+                    break;
+                case CBACK:
+                    c = *brastart[ep[1]];
+                    break;
+                default:
+                    do {
+                        if( lp == locs )
+                            break;
                         if( advance( lp, ep ) )
                             return( TRUE );
-                } while( lp-- > curlp );
-                return( FALSE );
-            }
-
-            if( *ep == CBACK ) {
-                c = *( brastart[ep[1]] );
-                do {
-                    if( *lp == c )
-                        if( advance( lp, ep ) )
-                            return( TRUE );
-                } while( lp-- > curlp );
-                return( FALSE );
+                    } while( lp-- > curlp );
+                    return( FALSE );
             }
 
             do {
-                if( lp == locs )
-                    break;
-                if( advance( lp, ep ) )
-                    return( TRUE );
+                if( *lp == c )
+                    if( advance( lp, ep ) )
+                        return( TRUE );
             } while( lp-- > curlp );
             return( FALSE );
 
         default:
             fprintf( stderr, "sed: RE error, %o\n", *--ep );
-        }
+            exit( 2 );
+
+        case CBRA | STAR:               /* start of starred tagged pattern */
+            {
+                int const       tagindex = *ep;
+                int             matched = FALSE;
+
+                curlp = lp;                 /* save closure start loc */
+                ct = ep[1];
+                bracend[tagindex] = bbeg = tep = lp;
+                ep++;
+                while( advance( brastart[tagindex] = bracend[tagindex], ep+1 ) && bracend[tagindex] > brastart[tagindex] )
+                    if( advance( bracend[tagindex], ep + ct ) ) { /* Try to match RE after \(...\) */
+                        matched = TRUE;          /* Remember greediest match */
+                        bbeg = brastart[tagindex];
+                        tep = bracend[tagindex];
+                    }
+
+                if( matched ) {                  /* Did we match RE after \(...\) */
+                    brastart[tagindex] = bbeg;    /* Set details of match */
+                    bracend[tagindex] = tep;
+                    return( TRUE );
+                }
+                
+                return( advance( bracend[tagindex], ep + ct ) ); /* Zero matches */
+            }
+
+        case CBRA | MTYPE:              /* \(...\)\{m,n\} WFB */
+            {
+                int const       tagindex = *ep;
+                int             matched = FALSE;
+
+                curlp = lp;             /* save closure start loc */
+                ct = ep[1];
+                i1 = ep[ct-1] & 0xFF, i2 = ep[ct] & 0xFF;
+                bracend[tagindex] = bbeg = tep = lp;
+
+                while( i1 && advance( lp, ep+2 ) && bracend[tagindex] > lp )
+                    brastart[tagindex] = lp, lp = bracend[tagindex], i1--;
+                if( i1 )
+                    return( FALSE );
+                if( !i2 )
+                    return( advance( bracend[tagindex], ep + ct + 1 ) ); /* Zero matches */
+                if( i2 == 0xFF )
+                    i2 = MAXBUF;
+                
+                while( advance( brastart[tagindex] = bracend[tagindex], ep+2 ) && bracend[tagindex] > brastart[tagindex] && i2 )
+                    if( i2--, advance( bracend[tagindex], ep + ct + 1 ) ) { /* Try to match RE after \(...\) */
+                        matched = TRUE; /* Remember greediest match */
+                        bbeg = brastart[tagindex];
+                        tep = bracend[tagindex];
+                    }
+
+                if( matched ) {         /* Did we match RE after \(...\) */
+                    brastart[tagindex] = bbeg; /* Set details of match */
+                    bracend[tagindex] = tep;
+                    return( TRUE );
+                }
+
+                if( i1 )
+                    return( FALSE );
+                return( advance( bracend[tagindex], ep + ct + 1 ) ); /* Zero matches */
+            }
+
+        case CCHR | MTYPE:              /* Match <literal char>\{...\} */
+            c = *ep++;                  /* Get byte and skip to next element */
+            i1 = *ep++ & 0xFF, i2 = *ep++ & 0xFF;
+            while( c == *lp && i1 )
+                lp++, i1--;
+            if( i1 )
+                return( FALSE );
+            if( !i2 )
+                break;
+            if( i2 == 0xFF )
+                i2 = MAXBUF;
+            curlp = lp;
+            while( c == *lp++ && i2 )
+                i2--;
+            goto star;
+
+        case CKET | STAR:               /* match \(..\)* */
+        case CKET | MTYPE:              /* match \(..\)\{...\} */
+            bracend[*ep] = lp;          /* mark it */
+            return( TRUE );
+
+        case CDOT | MTYPE:              /* match .\{...\} */
+            i1 = *ep++ & 0xFF, i2 = *ep++ & 0xFF;
+            while( *lp && i1 )
+                lp++, i1--;
+            if( i1 )
+                return( FALSE );
+            if( !i2 )
+                break;
+            if( i2 == 0xFF )
+                i2 = MAXBUF;
+            curlp = lp;
+            while( *lp++ && i2 )
+                i2--;
+            goto star;
+
+        case CCL | MTYPE:               /* match [...]\{...\} */
+            tep = ep;
+            ep += 16;
+            i1 = *ep++ & 0xFF, i2 = *ep++ & 0xFF;
+            /* WFB 1 CCL|MTYPE handler must be like CCHR|MTYPE or off by 1 */
+            while( ct = *lp, tep[(unsigned)ct >> 3] & bits[ct & 7] && i1 )
+                lp++, i1--;
+            if( i1 )
+                return( FALSE );
+            if( !i2 )
+                break;
+            if( i2 == 0xFF )
+                i2 = MAXBUF;
+            curlp = lp;
+            while( ct = *lp++ & 0xff, tep[(unsigned)ct >> 3] & bits[ct & 7] && i2 )
+                i2--;
+            goto star;
+
+        case CBACK | MTYPE:             /* e.g. \(.\)\1\{5\} */
+            bbeg = brastart[*ep];
+            ct = bracend[*ep++] - bbeg;
+            i1 = *ep++ & 0xFF, i2 = *ep++ & 0xFF;
+            while( memeql( bbeg, lp, ct ) && i1 )
+                lp += ct, i1--;
+            if( i1 )
+                return( FALSE );
+            if( !i2 )
+                break;
+            if( i2 == 0xFF )
+                i2 = MAXBUF;
+            curlp = lp;
+            while( memeql( bbeg, lp, ct ) && i2 )
+                lp+= ct, i2--;
+            while( lp >= curlp ) {
+                if( advance( lp, ep ) )
+                    return( TRUE );
+                lp -= ct;
+            }
+            return( FALSE );
+
+        } /* switch( *ep++ ) */
 }
 
 /* perform s command */
@@ -671,16 +813,17 @@ static char *getline( register char *buf )  /* where to send the input */
     static char const * const   linebufend = linebuf + MAXBUF + 2;
     int const                   room = linebufend - buf;
     int                         temp;
+    char                        *sbuf = buf;
 
     assert( buf >= linebuf && buf < linebufend );
 
     if (fgets(buf, room, stdin) != NULL) { /* gets() can smash program - WFB */
         lnum++;                         /* note that we got another line */
         while( ( *buf++ ) != 0 ) ;      /* find the end of the input */
-        if( --buf, *--buf != '\n' )
+        if( buf-- - sbuf >= room )
             fprintf( stderr, NOROOM, room, lnum ), buf++;
-        else
-            *buf = 0;
+        if( *--buf != '\n' ) buf++;
+        *buf = 0;
         if( eargc == 0 ) {              /* if no more args */
             lastline = ( ( temp = getc( stdin ) ) == EOF );
             (void)ungetc( temp, stdin );

@@ -70,6 +70,7 @@ typedef struct cmd_t    sedcmd;         /* use this name for declarations */
 #define CLNUM   18      /* numeric-address index follows */
 #define CEND    20      /* symbol for end-of-source */
 #define CEOF    22      /* end-of-field mark */
+#define MTYPE   32      /* multiple counts |'d into RE      \{...\}    */
 
 extern void     execute( const char *file ); /* In sedexec.c */
 

@@ -14,6 +14,8 @@ resolves references at the end.
 
 ==== Written for the GNU operating system by Eric S. Raymond ==== */
 
+#include <assert.h>
+#include <ctype.h>                      /* isdigit() */
 #include <stdio.h>                      /* uses getc, fprintf, fopen, fclose */
 #include <stdlib.h>                     /* uses exit */
 #include <string.h>                     /* imported string functions */
@@ -114,12 +116,14 @@ static char     *ycomp( register char *ep, char delim );
 /* main sequence of the stream editor */
 int main( int argc, char *argv[] )
 {
+    static char dummy_name[] = "progend\n";
+
     if( argc <= 1 )
         return( 0 );            /* exit immediately if no arguments */
     eargc   = argc;             /* set local copy of argument count */
     eargv   = argv;             /* set local copy of argument list */
     cmdp->addr1 = pool;         /* 1st addr expand will be at pool start */
-    lablst->name = "progend\n"; /* Must set so strcmp can be done */
+    lablst->name = dummy_name; /* Must set so strcmp can be done */
     /* scan through the arguments, interpreting each one */
     while( ( --eargc > 0 ) && ( **++eargv == '-' ) )
         switch( eargv[0][1] ) {
@@ -193,7 +197,7 @@ static void compile( void )
 
     for( ;; ) {                         /* main compilation loop */
         if( *cp != ';' )                /* get a new command line */
-            if( cmdline( cp = linebuf ) < 0 )
+            if( !cmdline( cp = linebuf ) )
                 break;
         SKIPWS( cp );
         if( *cp == '\0' || *cp == '#' ) /* a comment */
@@ -467,6 +471,8 @@ static char *recomp(
     char            *brnestp;           /* ptr to current bracket-nest */
     char const      *pp;                /* scratch pointer */
     int             tags;               /* # of closed tags */
+    char            *obr[MAXTAGS] = {0}; /* ep values when \( seen */
+    unsigned        opentags = 0;       /* Used to index obr */
 
     if( *cp == redelim )                /* if first char is RE endmarker */
         return( cp++, expbuf );         /* leave existing RE unchanged */
@@ -488,8 +494,12 @@ static char *recomp(
             *ep++ = CEOF;               /* write end-of-pattern mark */
             return( ep );               /* return ptr to compiled RE */
         }
-        if( c != '*' && c != '+' )      /* if we're a postfix op */
-            lastep = ep;                /*   get ready to match last */
+        if( c == '*'
+        ||  c == '+'
+        ||  c == '\\' && *sp == '{' )   /* if we're a postfix op */
+            ;
+        else
+            lastep = ep;                /* get ready to match last */
 
         switch( c ) {
         case '\\':
@@ -498,6 +508,7 @@ static char *recomp(
                 if( bcount >= MAXTAGS )
                     return( cp = sp, BAD );
                 *brnestp++ = (char)bcount; /* update tag stack */
+                obr[opentags++] = ep;   /* Remember for /(.../)* */
                 *ep++ = CBRA;           /* enter tag-start */
                 *ep++ = (char)bcount++; /* bump tag count */
                 break;
@@ -507,6 +518,7 @@ static char *recomp(
                 *ep++ = CKET;           /* enter end-of-tag */
                 *ep++ = *--brnestp;     /* pop tag stack */
                 tags++;                 /* count closed tags */
+                --opentags;             /* count open tags */
                 break;
             case '\n':                  /* escaped newline no good */
                 return( cp = sp, BAD );
@@ -525,15 +537,46 @@ static char *recomp(
                     break;
                 }
                 goto defchar;           /* else match \c */
+            case '{':                   /* '}' should balance for vi */
+                {
+                    int i1 = 0;
+                    int i2 = 0;
+
+                    if( !lastep )
+                        return( cp = sp, BAD ); /* rep error */
+                    *lastep |= MTYPE;
+                    if( !isdigit( *sp ) )
+                        return( cp = sp, BAD );
+                    while( isdigit( *sp ) )
+                        i1 = i1*10 + *sp++ - '0';
+                    if( i1 > 255 )
+                        return( cp = sp, BAD );
+                    *ep++ = (char)i1;
+                    if( *sp == '\\' && sp[1] == /* '{' vi brace balancing */ '}' )
+                        sp += 2, *ep++ = 0;
+                    else if( *sp == ',' && sp[1] == '\\' && sp[2] == /* '{' vi brace balancing */ '}' )
+                        sp += 3, *ep++ = (char)0xFF;
+                    else if( *sp++ ==',') {
+                      if ( !isdigit( *sp ) )
+                          *ep++ = 255;
+                      else {
+                        while (isdigit( *sp ) )
+                            i2 = i2*10 + *sp++ - '0';
+                        *ep++ = (char)(i2-i1);
+                      }
+                      if( *sp != '\\' || sp[1] != /* '{' vi brace balancing */ '}' || i2 < i1 || i2 > 255 )
+                          return( cp = sp, BAD );
+                      sp += 2;
+                    } else
+                        return( cp = sp, BAD );
+                }
+                goto handle_cket;
             }
             break;
 
-        case '\0':                      /* incomplete regular expression */
-            return( cp = sp, BAD );
-            break;
-
-        case '\n':                      /* missing trailing pattern delimiter */
-            return( cp = sp, BAD );     /* Can not happen? WFB 20040801 */
+        case '\n':                      /* Can not happen? WFB 20040801 */
+        case '\0':
+            return( cp = sp, BAD );     /* incomplete regular expression */
 
         case '.':                       /* match any char except newline */
             *ep++ = CDOT;
@@ -542,8 +585,10 @@ static char *recomp(
         case '+':                       /* 1 to n repeats of previous pattern */
             if( lastep == NULL )        /* if + not first on line */
                 goto defchar;           /*   match a literal + */
+#if 0                                   /* Removed constraint WFB 20040804 */
             if( *lastep == CKET )       /* can't iterate a tag */
                 return( cp = sp, BAD );
+#endif
             pp = ep;                    /* else save old ep */
             while( lastep < pp )        /* so we can blt the pattern */
                 *ep++ = *lastep++;
@@ -553,10 +598,12 @@ static char *recomp(
         case '*':                       /* 0..n repeats of previous pattern */
             if( lastep == NULL )        /* if * isn't first on line */
                 goto defchar;           /*   match a literal * */
+#if 0                                   /* Removed constraint WFB 20040804 */
             if( *lastep == CKET )       /* can't iterate a tag */
                 return( cp = sp, BAD );
+#endif
             *lastep |= STAR;            /* flag previous pattern */
-            break;
+            goto handle_cket;
 
         case '$':                       /* match only end-of-line */
             if( *sp != redelim )        /* if we're not at end of RE */
@@ -582,6 +629,8 @@ static char *recomp(
                     if( uc == '-' && sp > svclass && *sp != ']' ) {
                         unsigned const  lo = (unsigned)*( sp - 2 );
                         unsigned const  hi = (unsigned)*sp;
+                        if(lo > hi)
+                            ABORT( CGMSG );
                         for( uc = lo; uc <= hi; uc++ )
                             ep[uc >> 3] |= bits[uc & 7];
                     }
@@ -609,6 +658,42 @@ static char *recomp(
         default:                        /* which is what we'd do by default */
             *ep++ = CCHR;               /* insert character mark */
             *ep++ = (char)c;
+            break;
+
+        handle_cket:
+            switch( *lastep & ~STAR & ~MTYPE ) {
+            case CCHR:
+            case CDOT:
+            case CCL:
+                break;
+            case CBRA:
+                return( cp = sp, BAD );
+            case CKET: {
+                    /* Make room to insert skip marker in expbuf */
+                    char * const    firstep = obr[opentags];
+                    int const       width = ep - firstep;
+                    int             i = width;
+
+                    if( width >= 256 )
+                        ABORT( REITL ); /* Not exercised by sedtest.mak */
+                    *firstep |= ( *lastep ^ CKET ) ; /* Mark \( as * or \{ terminated */
+                    while( --i >= 2 )
+                        firstep[i+1] = firstep[i];
+                    firstep[2] = (char)width-1;
+                    lastep++;
+                    ep++;
+                }
+            case CBACK:
+                break;
+            case CEOF: /* Can't happen - would require * after end of expression WFB 20040813 */
+            case CNL:  /* Can't happen - * is literal after special ^ */
+            case CDOL: /* Can't happen - $ is literal if not last */
+            case CLNUM:/* Can't happen - * after line number is nonsense */
+            case CEND: /* Can't happen - CEND is always followed by CEOF */
+            default:
+                fprintf( stderr, INERR, "Unexpected symbol in RE" ), exit( 2 );
+            }
+            break;
         } /* switch( c ) */
     } /* for( ;; ) */
 }
@@ -618,6 +703,7 @@ static int cmdline( register char *cbuf ) /* uses eflag, eargc, cmdf */
 {
     register int        inc;            /* not char because must hold EOF */
 
+    assert( cbuf == cp );
     cbuf--;                             /* so pre-increment points us at cbuf */
 
                                         /* e command flag is on */
@@ -635,7 +721,7 @@ static int cmdline( register char *cbuf ) /* uses eflag, eargc, cmdf */
                 if( *cbuf == '\\' ) {   /* Could not sedtest this! WFB 20040802 */
                     if( ( *++cbuf = *p++ ) == '\0' )
 #if 0
-                        return( savep = NULL, -1 ); /* Seizes "sed s/h/b\ afore" */
+                        return( savep = NULL, 0 ); /* Seizes "sed s/h/b\ afore" */
 #else
                         fprintf( stderr, NEEDB, eargv[0] ), exit( 2 );
 #endif
@@ -650,12 +736,12 @@ static int cmdline( register char *cbuf ) /* uses eflag, eargc, cmdf */
         }
 
         if( ( p = savep ) == NULL )
-            return( -1 );
+            return( 0 );
 
         while( ( *++cbuf = *p++ ) != 0 )
             if( *cbuf == '\\' ) {
                 if( ( *++cbuf = *p++ ) == '0' )
-                    return( savep = NULL, -1 );
+                    return( savep = NULL, 0 );
             } else if( *cbuf == '\n' ) {
                 *cbuf = '\0';
                 return( savep = p, 1 );
@@ -666,14 +752,18 @@ static int cmdline( register char *cbuf ) /* uses eflag, eargc, cmdf */
 
                                         /* if no -e flag
                                          * read from command file descriptor */
-    while( ( inc = getc( cmdf ) ) != EOF ) /* get next char */
-        if( ( *++cbuf = (char)inc ) == '\\' ) /* if it's escape */
+    while( ( inc = getc( cmdf ) ) != EOF ) { /* get next char */
+        switch( *++cbuf = (char)inc ) {
+        case '\\':                      /* if it's escape */
             inc = getc( cmdf ),         /* get next char */
             *++cbuf = (char)inc;
-        else if( *cbuf == '\n' )        /* end on newline */
+            break;
+        case '\n':                      /* end on newline */
             return( *cbuf = '\0', 1 );  /* cap the string */
+        }
+    }
 
-    return( *++cbuf = '\0', -1 );       /* end-of-file, no more chars */
+    return( *++cbuf = '\0', cbuf >= cp+1 );       /* end-of-file, no more chars */
 }
 
 /* expand an address at *cp... into expbuf, return ptr at following char */
@@ -717,18 +807,21 @@ static char *gettext( register char *txp ) /* where to put the text */
                                         /* uses global cp */
 {
     register char       *p = cp;        /* this is for speed */
+    char                c;
 
     SKIPWS( p );                        /* discard whitespace */
-    do {
-        if( ( *txp = *p++ ) == '\\' )   /* handle escapes */
-            *txp = *p++;
-        if( *txp == '\0' )              /* we're at end of input */
-            return( cp =--p,++txp );
-        else if( *txp == '\n' )         /* also SKIPWS after newline */
+    while( ( c = *txp++ = *p++ ) != 0 ) {
+        switch( c )
+        {
+        case '\\':                      /* handle escapes */
+            txp[-1] = *p++;
+            break;
+        case '\n':                      /* SKIPWS after newline */
             SKIPWS( p );
-    } while( txp++ );                   /* keep going till we find that nul */
-    fprintf( stderr, INERR, "Fallen out of gettext()" ), exit( 2 );
-    return( NULL );                     /* shouldn't really get here */
+            break;
+        }
+    }
+    return( cp = --p, txp );
 }
 
 /* find the label matching *ptr, return NULL if none */
