@@ -1316,7 +1316,7 @@ static void dwarf_block_open( SYMBOL sym )
         if( IsCppNameInterestingDebug( sym ) ) {
             name = CppNameDebug( sym );
         } else {
-            name = NULL;
+            name = "<unnamed>";
         }
         if( !InDebug ){
             dwarfLocation( sym );
