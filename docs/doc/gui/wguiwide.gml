@@ -345,7 +345,7 @@ in the Target Name field (we suggest
 .mono target1
 .ct ).
 Next, select the appropriate Target Environment (we suggest
-"Win32") and Image Type (we suggest "Windowed Executable").
+"Win32") and Image Type (we suggest "Character-mode Executable").
 Click on OK when completed.
 .figure *depth='2.79' *scale=100 *file='ide5' Select target name, target environment and image type
 .result
@@ -480,6 +480,8 @@ void main()
     {
         printf( "Value is %d\n", ii );
     }
+    printf("Press Enter...\n");
+    getchar();
 }
 .millust end
 .np
@@ -492,6 +494,10 @@ FORTRAN programmers can enter the following lines of code.
       do i = 0, 9
         print *, 'Value is ', ii
       enddo
+
+      print *, 'Press Enter...'
+      read *
+
       end
 .millust end
 .np
@@ -555,17 +561,21 @@ If you are using FORTRAN, the Fortran Compiler Switches dialog appears.
 until the
 .mono 7. CodeGen Strategy Switches
 dialog appears.
-Click on the "Default-window application [-bw]" checkbox to select
+Click on the "Multithreaded application [-bm]" checkbox button to select
 this option.
 .np
 .us FORTRAN programmers:
 Click on the ">>" button until the
 .mono 9. Application Type Switches
 dialog appears.
-Click on the "Default windowed application [-bw]" checkbox to select
+Click on the "Multithreaded application [-bm]" checkbox to select
 this option.
 .result
 A check-mark appears in the checkbox.
+.np
+Note: Selecting this option is for demonstration purposes only, it is not
+required for this simple application.
+.np
 Click OK to close the dialog.
 .step Choose Make
 from the Targets menu.
@@ -608,11 +618,10 @@ from the Targets menu.
 The &vip executes the program
 .fi target1.exe.
 .figure *depth='3.60' *scale=100 *file='ide10' Run from the Targets menu runs the target.
-The program you wrote uses the default Windowing support that is built
-in to the run-time library.
-The output of your program appears in the Standard IO window. You are
-now ready to debug your target program. You probably do not need to
-debug this simple program with the &dbgname but go through the steps
+The program you wrote is a character mode application and its output
+appears in a separate console window.
+You are now ready to debug your target program. You probably do not need
+to debug this simple program with the &dbgname but go through the steps
 so that you know what to do for more complex programs.
 .np
 The &vip has several debugging information options which it uses as
