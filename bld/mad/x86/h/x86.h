@@ -52,6 +52,7 @@ enum toggle_states {
     MT_WORD         = 0x8,
     MT_DWORD        = 0x10,
     MT_QWORD        = 0x20,
+    MT_FLOAT        = 0x40,
 
     //  xmm_toggles;
     XT_HEX          = 0x1,

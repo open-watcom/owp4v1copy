@@ -419,6 +419,7 @@ static const mad_toggle_strings MMXToggleList[] =
     {MSTR_WORD,MSTR_WORD,MSTR_NIL},
     {MSTR_DWORD,MSTR_DWORD,MSTR_NIL},
     {MSTR_QWORD,MSTR_QWORD,MSTR_NIL},
+    {MSTR_FLOAT,MSTR_FLOAT,MSTR_NIL},
     {MSTR_NIL,MSTR_NIL,MSTR_NIL}
 };
 static const mad_toggle_strings XMMToggleList[] =
@@ -586,6 +587,8 @@ unsigned DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
         } else if( MADState->reg_state[MMX_REG_SET] & MT_WORD ) {
             return( 4 );
         } else if( MADState->reg_state[MMX_REG_SET] & MT_DWORD ) {
+            return( 2 );
+        } else if( MADState->reg_state[MMX_REG_SET] & MT_FLOAT ) {
             return( 2 );
         } else {
             return( 1 );
@@ -980,11 +983,11 @@ static mad_status MMXGetPiece(
         &MMX7_q0,
     };
     #define T(t)        X86T_##t
-    static const mad_type_handle type_select[2][2][4] = {
-        { { T(UCHAR),T(USHORT),T(ULONG), T(U64) },      /* decimal, unsigned */
-          { T(CHAR), T(SHORT), T(LONG),  T(I64) } },    /* decimal, signed */
-        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD) },    /* hex, unsigned */
-          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD) } }, /* hex, signed */
+    static const mad_type_handle type_select[2][2][5] = {
+        { { T(UCHAR),T(USHORT),T(ULONG), T(U64),   T(FLOAT) },   /* decimal, unsigned */
+          { T(CHAR), T(SHORT), T(LONG),  T(I64),   T(FLOAT) } }, /* decimal, signed */
+        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD), T(FLOAT) },   /* hex, unsigned */
+          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD),T(FLOAT) } }, /* hex, signed */
     };
     #undef T
 
@@ -1020,6 +1023,11 @@ static mad_status MMXGetPiece(
         list_num = NUM_ELTS( list_dword );
         group = 2;
         type = 2;
+    } else if( MADState->reg_state[MMX_REG_SET] & MT_FLOAT ) {
+        list = list_dword;
+        list_num = NUM_ELTS( list_dword );
+        group = 2;
+        type = 4;
     } else {
         list = list_qword;
         list_num = NUM_ELTS( list_qword );

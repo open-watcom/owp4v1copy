@@ -119,8 +119,13 @@ extern unsigned Is486();
         "and    eax,1"          \
         value [AX] modify [BX]
 
+//
+// Intell
 // CPUID EDX bit 23 - MMX instructions -> MMX registers
 // CPUID EDX bit 25 - SSE instructions -> XMM registers
+//
+// AMD CPUID Enhanced function
+// CPUID EDX bit 31 - 3DNow! instructions -> MMX registers
 extern unsigned CPUId();
 #pragma aux CPUId =             \
         ".586"                  \
@@ -133,6 +138,20 @@ extern unsigned CPUId();
         "shr    edx,3"          \
         "and    edx,0x30"       \
         "or     eax,edx"        \
+        "push   eax"            \
+        "mov    eax,0x80000000" \
+        "cpuid"                 \
+        "cmp    eax,0x80000000" \
+        "jbe    no_amd_3dnow"   \
+        "mov    eax,0x80000001" \
+        "cpuid"                 \
+        "and    edx,0x80000000" \
+        "rol    edx,5"          \
+        "pop    eax"            \
+        "or     eax,edx"        \
+        "push   eax"            \
+"no_amd_3dnow:"                 \
+        "pop    eax"            \
         value [AX] modify [BX CX DX]
 
 unsigned X86CPUType()
