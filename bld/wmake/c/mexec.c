@@ -315,7 +315,11 @@ STATIC char *createTmpFileName( void )
             WriteVec( buf, tmpPath );
             if( tmpPath[strlen( tmpPath )-1] != BACKSLASH ) {
                 buf2 = StartVec();
+#if defined( __UNIX__ )
+                WriteVec( buf2, "/" );
+#else
                 WriteVec( buf2, "\\" );
+#endif
                 CatVec( buf, buf2 );
             }
             buf2 = StartVec();

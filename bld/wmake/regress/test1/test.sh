@@ -33,7 +33,7 @@ echo \# ===========================
 
 TEST=1
 cc -o create create.c
-create 30
+./create 30
 rm -f err1.out
 touch err1.out
 $1 -h -f maketst1 -l err1.out > tst1.out
