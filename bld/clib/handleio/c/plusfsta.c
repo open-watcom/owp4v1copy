@@ -62,6 +62,7 @@ _WCRTLINK int __plusplus_fstat( int handle, int *pios_mode )
     // make a guess
     ios_mode |= __in | __out | __text;
 #elif defined(__QNX__)
+// TODO: Need to port this to Linux
     if( (flags = fcntl( handle, F_GETFL )) == -1 ) {
         return( -1 );
     }

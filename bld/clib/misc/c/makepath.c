@@ -39,7 +39,7 @@
 
 #undef _makepath
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
   #define PC '/'
 #else   /* DOS, OS/2, Windows, Netware */
   #define PC '\\'
@@ -47,9 +47,9 @@
 #endif
 
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
 
-/* create full QNX path name from the components */
+/* create full Unix style path name from the components */
 
 _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
         CHAR_TYPE           *path,
@@ -58,9 +58,6 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
         const CHAR_TYPE  *fname,
         const CHAR_TYPE  *ext )
 {
-#if !defined(__WIDECHAR__) && !defined(__QNX__)
-    char    *pathstart = path;
-#endif
     *path = '\0';
 
     if( node != NULL ) {
@@ -69,25 +66,10 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
             path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
 
             /* if node did not end in '/' then put in a provisional one */
-            #ifdef __WIDECHAR__
-                if( path[-1] == PC )
-                    path--;
-                else
-                    *path = PC;
-            #else
-                #ifdef __QNX__
-                    if( path[-1] == PC ) {
-                        path--;
-                    } else {
-                        *path = PC;
-                    }
-                #else
-                    if( *(_mbsdec(pathstart,path)) == PC )
-                        path--;
-                    else
-                        *path = PC;
-                #endif
-            #endif
+            if( path[-1] == PC )
+                path--;
+            else
+                *path = PC;
         }
     }
     if( dir != NULL ) {
@@ -101,25 +83,10 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
             path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
 
             /* if dir did not end in '/' then put in a provisional one */
-            #ifdef __WIDECHAR__
-                if( path[-1] == PC )
-                    path--;
-                else
-                    *path = PC;
-            #else
-                #ifdef __QNX__
-                    if( path[-1] == PC ) {
-                        path--;
-                    } else {
-                        *path = PC;
-                    }
-                #else
-                    if( *(_mbsdec(pathstart,path)) == PC )
-                        path--;
-                    else
-                        *path = PC;
-                #endif
-            #endif
+            if( path[-1] == PC )
+                path--;
+            else
+                *path = PC;
         }
     }
 
@@ -252,15 +219,11 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
                 #ifdef __WIDECHAR__
                     *path++ = pickup( *dir++, &first_pc );
                 #else
-                    #ifdef __QNX__
-                        *path++ = pickup( *dir++, &first_pc );
-                    #else
-                        ch = pickup( _mbsnextc(dir), &first_pc );
-                        _mbvtop( ch, path );
-                        path[_mbclen(path)] = '\0';
-                        path = _mbsinc( path );
-                        dir = _mbsinc( dir );
-                    #endif
+                    ch = pickup( _mbsnextc(dir), &first_pc );
+                    _mbvtop( ch, path );
+                    path[_mbclen(path)] = '\0';
+                    path = _mbsinc( path );
+                    dir = _mbsinc( dir );
                 #endif
             } while( *dir != '\0' );
             /* if no path separator was specified then pick a default */
@@ -272,18 +235,10 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
                 else
                     *path = first_pc;
             #else
-                #ifdef __QNX__
-                    if( path[-1] == PC ) {
-                        path--;
-                    } else {
-                        *path = first_pc;
-                    }
-                #else
-                    if( *(_mbsdec(pathstart,path)) == first_pc )
-                        path--;
-                    else
-                        *path = first_pc;
-                #endif
+                if( *(_mbsdec(pathstart,path)) == first_pc )
+                    path--;
+                else
+                    *path = first_pc;
             #endif
         }
     }
@@ -295,14 +250,9 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
             if( pickup(*fname,&first_pc) != first_pc  &&  *path == first_pc )
                 path++;
         #else
-            #ifdef __QNX__
-                if( pickup(*fname,&first_pc) != first_pc  &&  *path == first_pc )
-                    path++;
-            #else
-                ch = _mbsnextc( fname );
-                if( pickup(ch,&first_pc) != first_pc  &&  *path == first_pc )
-                    path++;
-            #endif
+            ch = _mbsnextc( fname );
+            if( pickup(ch,&first_pc) != first_pc  &&  *path == first_pc )
+                path++;
         #endif
 
         while (*fname != '\0')
@@ -311,15 +261,11 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
             #ifdef __WIDECHAR__
                 *path++ = pickup( *fname++, &first_pc );
             #else
-                #ifdef __QNX__
-                    *path++ = pickup( *fname++, &first_pc );
-                #else
-                    ch = pickup( _mbsnextc(fname), &first_pc );
-                    _mbvtop( ch, path );
-                    path[_mbclen(path)] = '\0';
-                    path = _mbsinc( path );
-                    fname = _mbsinc( fname );
-                #endif
+                ch = pickup( _mbsnextc(fname), &first_pc );
+                _mbvtop( ch, path );
+                path[_mbclen(path)] = '\0';
+                path = _mbsinc( path );
+                fname = _mbsinc( fname );
             #endif
         } //while( *fname != '\0' );
     } else {
@@ -334,3 +280,4 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
     *path = '\0';
 }
 #endif
+

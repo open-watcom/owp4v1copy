@@ -39,7 +39,7 @@
 #define __INT64__
 #include "int64.h"
 #include <limits.h>
-#ifdef __QNX__
+#ifdef __UNIX__
     #include <unistd.h>
 #else
     #include <io.h>

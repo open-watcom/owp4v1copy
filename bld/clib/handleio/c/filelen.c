@@ -40,7 +40,7 @@
 #endif
 /* most includes should go after this line */
 #include <stdio.h>
-#ifdef __QNX__
+#ifdef __UNIX__
     #include <unistd.h>
 #else
     #include <io.h>
@@ -55,14 +55,14 @@ _WCRTLINK __int64 _filelengthi64( int handle )
 {
     INT_TYPE            retval;
     long                size;
-    
+
     __handle_check( handle, -1 );
     size = filelength( handle );
-    if( size != -1 ) 
+    if( size != -1 )
     {
         _clib_U32ToU64( size, retval ); /* retval = (__int64)size */
-    } 
-    else 
+    }
+    else
     {
         _clib_I32ToI64( -1L, retval );  /* retval = (__int64)-1 */
     }
@@ -84,38 +84,38 @@ _WCRTLINK long filelength( int handle )
     INT_TYPE            zero, minusone;
     REAL_INT_TYPE       retval;
 #endif
-    
+
     __handle_check( handle, -1 );
     _AccessFileH( handle );
-    
+
 #ifdef __INT64__
     _clib_I32ToI64( 0L, zero );
     retval = _lseeki64( handle, GET_REALINT64(zero), SEEK_CUR );
     current_posn = GET_INT64(retval);
     _clib_I32ToI64( -1L, minusone );
-    if( !_clib_U64Cmp(current_posn,minusone) ) 
+    if( !_clib_U64Cmp(current_posn,minusone) )
     {
         _ReleaseFileH( handle );
         RETURN_INT64(minusone);
     }
-    
+
     retval = _lseeki64( handle, GET_REALINT64(zero), SEEK_END );
     file_len = GET_INT64(retval);
-    
+
     _lseeki64( handle, GET_REALINT64(current_posn), SEEK_SET );
-    
+
     _ReleaseFileH( handle );
     RETURN_INT64(file_len);
 #else
     current_posn = lseek( handle, 0L, SEEK_CUR );
-    if( current_posn == -1L ) 
+    if( current_posn == -1L )
     {
         _ReleaseFileH( handle );
         return( -1L );
     }
     file_len = lseek( handle, 0L, SEEK_END );
     lseek( handle, current_posn, SEEK_SET );
-    
+
     _ReleaseFileH( handle );
     return( file_len );
 #endif

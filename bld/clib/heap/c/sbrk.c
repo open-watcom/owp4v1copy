@@ -58,7 +58,7 @@
 
 extern  unsigned                _STACKTOP;
 
-#if !( defined(__OS2__) || defined(__QNX__) || defined(__LINUX__))
+#if !defined(__OS2__) && !defined(__QNX__) && !defined(__LINUX__)
 
 extern  unsigned short SS_Reg( void );
 #pragma aux SS_Reg              = \
@@ -76,8 +76,8 @@ extern  int SetBlock( unsigned short, size_t );
 
 #endif
 
-#if defined(__QNX__) && defined(__386__)
-_WCRTLINK void *sbrk( int increment ) {
+#if (defined(__QNX__) && defined(__386__)) || defined(__LINUX__)
+_WCRTLINK void _WCNEAR *sbrk( int increment ) {
     return( __brk( _curbrk + increment ) );
 }
 

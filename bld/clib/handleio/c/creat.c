@@ -45,11 +45,6 @@
 
 #define _A_RDONLY       0x01
 
-#ifndef __QNX__
-    typedef int mode_t;
-#endif
-
-
 _WCRTLINK int __F_NAME(creat,_wcreat)( const CHAR_TYPE *name, mode_t pmode )
     {
 #ifndef __NETWARE__

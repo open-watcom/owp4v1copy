@@ -46,7 +46,7 @@
     #include <os2.h>
 #endif
 #ifndef __NT__
-    #ifdef __QNX__
+    #ifdef __UNIX__
         #include <unistd.h>
     #else
         #include <io.h>

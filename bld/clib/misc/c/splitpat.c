@@ -39,7 +39,7 @@
 
 #undef _splitpath
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
   #define PC '/'
 #else   /* DOS, OS/2, Windows, Netware */
   #define PC '\\'
@@ -76,7 +76,7 @@ static void copypart( CHAR_TYPE *buf, const CHAR_TYPE *p, int len, int maxlen )
             /*strncpy( buf, p, len ); */
             buf[ len ] = NULLCHAR;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 memcpy( buf, p, len*CHARSIZE );
                 buf[len] = NULLCHAR;
             #else
@@ -126,7 +126,7 @@ CHAR_TYPE           *drive,
     /* take apart specification like -> //0/hd/user/fred/filename.ext for QNX */
     /* take apart specification like -> c:\fred\filename.ext for DOS, OS/2 */
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
 
     /* process node/drive specification */
     startp = path;
@@ -139,7 +139,7 @@ CHAR_TYPE           *drive,
             #ifdef __WIDECHAR__
                 ++path;
             #else
-                #ifdef __QNX__
+                #ifdef __UNIX__
                     path++;
                 #else
                     path = _mbsinc( path );
@@ -154,7 +154,7 @@ CHAR_TYPE           *drive,
     #ifdef __WIDECHAR__
         ptr = wcschr( path, ':' );
     #else
-        #ifdef __QNX__
+        #ifdef __UNIX__
             ptr = strchr( path, ':' );
         #else
             ptr = _mbschr( path, ':' );
@@ -168,7 +168,7 @@ CHAR_TYPE           *drive,
         #ifdef __WIDECHAR__
             path = ptr + 1;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 path = ptr + 1;
             #else
                 path = _mbsinc( ptr );
@@ -205,7 +205,7 @@ CHAR_TYPE           *drive,
         #ifdef __WIDECHAR__
             ch = *path;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 ch = *path;
             #else
                 ch = _mbsnextc( path );
@@ -219,13 +219,13 @@ CHAR_TYPE           *drive,
         #ifdef __WIDECHAR__
             ++path;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 path++;
             #else
                 path = _mbsinc( path );
             #endif
         #endif
-#if defined(__QNX__)
+#if defined(__UNIX__)
         if( ch == PC ) {
 #else /* DOS, OS/2, Windows, Netware */
         if( ch == PC  ||  ch == ALT_PC ) {
@@ -236,7 +236,7 @@ CHAR_TYPE           *drive,
     }
     copypart( dir, startp, fnamep - startp, _MAX_DIR - 1 );
     if( dotp == NULL ) dotp = path;
-#if defined(__QNX__)
+#if defined(__UNIX__)
     if( ext == NULL )  dotp = path;
 #endif
     copypart( fname, fnamep, dotp - fnamep, _MAX_FNAME - 1 );

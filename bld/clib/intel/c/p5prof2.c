@@ -39,7 +39,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
-#ifdef __QNX__
+#ifdef __UNIX__
 #include <sys\stat.h>
 #else
 #include <dos.h>

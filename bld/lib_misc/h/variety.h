@@ -152,6 +152,7 @@
     #endif
 #elif defined(__QNX__)
     #define __PROTECT_MODE__
+    #define __UNIX__
     #if defined(__386__)
         #define __QNX_386__
     #elif defined(M_I86)
@@ -161,6 +162,7 @@
     #endif
 #elif defined(__LINUX__)
     #define __PROTECT_MODE__
+    #define __UNIX__
     #if defined(__386__)
         #define __LINUX_386__
     #else

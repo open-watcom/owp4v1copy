@@ -51,7 +51,7 @@ unsigned __NFiles = _NFILES;            /* maximum # of files we can open */
 #error NO IO MODE MANAGER UNDER NETWARE
 #endif
 
-#if !defined(__QNX__)
+#if !defined(__QNX__) && !defined(__LINUX__)
 
 unsigned _HUGEDATA __init_mode[_NFILES] = { /* file mode information (flags) */
         _READ,          /* stdin */

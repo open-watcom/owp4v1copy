@@ -56,6 +56,12 @@
   #include <unistd.h>
   #define TID                   pid_t
   #define GetCurrentThreadId()  (getpid())
+#elif defined( __LINUX__ )
+  // TODO: Include for Linux threading!
+  #include <sys/types.h>
+  #include <unistd.h>
+  #define TID                   size_t
+  #define GetCurrentThreadId()  (0)
 #else
   #define INCL_DOSSEMAPHORES
   #define INCL_DOSPROCESS
@@ -71,7 +77,7 @@
   #endif
 #endif
 
-#if !defined( __QNX__ )
+#if !defined( __QNX__ ) && !defined(__LINUX__)
 // QNX doesn't maintain a list of allocated thread data blocks
 
 
@@ -99,3 +105,4 @@ void __FreeThreadDataList( void );
 #endif
 
 #endif
+

@@ -39,6 +39,8 @@
 #include <rtinit.h>
 #include "timedata.h"
 
+// TODO: Need to port to Linux!
+
 #define MAX_CLOCK_T   ~((clock_t)0)
 #define MAX_SECONDS   ((time_t)(MAX_CLOCK_T / CLOCKS_PER_SEC) - 1)
 
@@ -97,3 +99,4 @@ static void __clock_init(void)
 } /* __clock_init() */
 
 AXI( __clock_init, INIT_PRIORITY_LIBRARY )
+

@@ -24,25 +24,45 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linux multi-threading functions
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include "widechar.h"
-#ifndef __UNIX__
-    #include <io.h>
-#endif
-#include <stdio.h>
-#ifdef __UNIX__
-    #include <unistd.h>
-#endif
+#include <string.h>
+#include <signal.h>
+#include <float.h>
+#include <unistd.h>
+#include <errno.h>
+#include <process.h>
 
+#include "liballoc.h"
+#include "osthread.h"
+#include "stacklow.h"
+#include "rtdata.h"
+#include "extfunc.h"
+#include "mthread.h"
+#include "seterrno.h"
 
-_WCRTLINK int __F_NAME(remove,_wremove)( CHAR_TYPE const *filename )
+static int begin_thread_helper( void *ptr )
+/*****************************************/
 {
-    __ptr_check( filename, 0 );
-    return( __F_NAME(unlink,_wunlink)( filename ) );
+    // TODO: Implement this for Linux!
+    return( 0 );
 }
+
+int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
+                    unsigned stack_size, void *arglist )
+/******************************************************/
+{
+    // TODO: Implement this for Linux!
+    return( 0 );
+}
+
+void __CEndThread( void )
+/***********************/
+{
+    // TODO: Implement this for Linux!
+}
+

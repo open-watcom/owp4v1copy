@@ -3,13 +3,12 @@
 !inject declthrd.obj                        nta ntp
 !inject declwnt.obj                      nt
 !inject maxthrds.obj                                nvc ncl nvl     o16 o32     q32             l32
-!inject mthread.obj                      nt nta ntp nvc ncl nvl nll o16 o32     q32
-!inject mthrdini.obj                     nt nta ntp nvc ncl nvl nll     o32     q32
-!inject regdata.obj                      nt nta ntp nvc ncl nvl nll     o32     q32
-!inject register.obj                     nt nta ntp nvc ncl nvl         o32     q32
+!inject mthread.obj                      nt nta ntp nvc ncl nvl nll o16 o32     q32             l32
+!inject mthrdini.obj                     nt nta ntp nvc ncl nvl nll     o32     q32             l32
+!inject regdata.obj                      nt nta ntp nvc ncl nvl nll     o32     q32             l32
+!inject register.obj                     nt nta ntp nvc ncl nvl         o32     q32             l32
 !inject registrx.obj                     nt nta ntp
 !inject semaqnx.obj                                                             q32
-!inject semalnx.obj
 !inject tdhdlwnt.obj                     nt nta ntp
 !inject thrdmax.obj                                 nvc ncl nvl     o16 o32     q32             l32
 !inject thrednov.obj                                nvc ncl
@@ -17,7 +16,7 @@
 !inject thredo16.obj                                                o16
 !inject thredo32.obj                                                    o32
 !inject thredqnx.obj                                                            q32
-!inject thredlnx.obj
+!inject thredlnx.obj                                                                            l32
 !inject thredwnt.obj                     nt nta ntp
 !inject thrdxwnt.obj                     nt nta ntp
 !inject trdalloc.obj                     nt nta ntp nvc ncl nvl nll o16 o32
@@ -29,3 +28,4 @@
 mthread_opts  =-d__RUNTIME_CHECKS__
 trdlist_opts  =-d__RUNTIME_CHECKS__
 !endif
+

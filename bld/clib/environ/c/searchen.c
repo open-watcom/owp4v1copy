@@ -35,7 +35,7 @@
 #undef __INLINE_FUNCTIONS__
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(__QNX__)
+#if defined(__UNIX__)
   #include <unistd.h>
 #else
   #include <io.h>
@@ -48,7 +48,7 @@
     #include "wenviron.h"
 #endif
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
     #ifdef __WIDECHAR__
         #define PATH_SEPARATOR L'/'
         #define LIST_SEPARATOR L':'
@@ -82,7 +82,7 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
             for( ;; ) {
                 if( name[0] == PATH_SEPARATOR ) break;
                 if( name[0] == __F_NAME('.',L'.') ) break;
-#ifndef __QNX__
+#ifndef __UNIX__
                 if( name[0] == __F_NAME('/',L'/') ) break;
                 if( name[0] != __F_NAME('\0',L'\0')  &&  name[1] == __F_NAME(':',L':') ) break;
 #endif
@@ -107,7 +107,7 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
                 /* check for zero-length prefix which represents CWD */
                 if( p2 != buffer ) {                    /* JBS 90/3/30 */
                     if( p2[-1] != PATH_SEPARATOR
-#ifndef __QNX__
+#ifndef __UNIX__
                         &&  p2[-1] != __F_NAME('/','/')
                         &&  p2[-1] != __F_NAME(':',':')
 #endif

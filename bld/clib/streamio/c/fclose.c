@@ -96,7 +96,7 @@ int __doclose( FILE *fp, int close_handle )
     }
 
     if( close_handle ) {
-        #if defined(__QNX__) || defined(__NETWARE__)
+        #if defined(__UNIX__) || defined(__NETWARE__)
             // we don't get to implement the close function on these systems
             ret |= close( fileno( fp ) );
         #else
@@ -116,3 +116,4 @@ int __doclose( FILE *fp, int close_handle )
     _ReleaseFile( fp );
     return( ret );
 }
+

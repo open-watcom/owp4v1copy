@@ -177,6 +177,8 @@ _WCRTLINK void __CloseSemaphore( semaphore_object *obj )
                     obj->semaphore = 0;
                 #elif defined( __QNX__ )
                     __qsem_destroy( &obj->semaphore );
+                #elif defined( __LINUX__ )
+                    // TODO: Close the semaphore for Linux!
                 #else
                     DosCloseMutexSem( obj->semaphore );
                 #endif
@@ -215,6 +217,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                             obj->semaphore = __NTGetCriticalSection();
                         #elif defined( __QNX__ )
                             __qsem_init( &obj->semaphore, 1, 1 );
+                        #elif defined( __LINUX__ )
+                            // TODO: Access semaphore under Linux!
                         #else
                             DosCreateMutexSem( NULL, &obj->semaphore, 0, FALSE );
                         #endif
@@ -225,7 +229,7 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 }
             #endif
             #if defined( __NETWARE__ )
-                while( obj->semaphore != 0 ) 
+                while( obj->semaphore != 0 )
                     #if defined (_NETWARE_CLIB)
                     ThreadSwitch();
                     #else
@@ -238,6 +242,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 EnterCriticalSection( obj->semaphore );
             #elif defined( __QNX__ )
                 __qsem_wait( &obj->semaphore );
+            #elif defined( __LINUX__ )
+                // TODO: Wait for semaphore under Linux!
             #else
                 DosRequestMutexSem( obj->semaphore, SEM_INDEFINITE_WAIT );
             #endif
@@ -270,6 +276,8 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
                     LeaveCriticalSection( obj->semaphore );
                 #elif defined( __QNX__ )
                     __qsem_post( &obj->semaphore );
+                #elif defined( __LINUX__ )
+                    // TODO: Relase semaphore under Linux!
                 #else
                     DosReleaseMutexSem( obj->semaphore );
                 #endif
@@ -390,15 +398,15 @@ _WCRTLINK struct thread_data *__MultipleThread()
         int ccode = 0;
 
         thread_data *tdata = NULL;
-        
+
         if(0 != (ccode = NXKeyGetValue(__NXSlotID, (void **) &tdata)))
             tdata = NULL;
 
-        if( tdata == NULL ) 
+        if( tdata == NULL )
         {
             tdata = __GetThreadData();
-        } 
-        else if( tdata->__resize ) 
+        }
+        else if( tdata->__resize )
         {
             tdata = __ReallocThreadData();
         }
@@ -428,6 +436,9 @@ _WCRTLINK struct thread_data *__MultipleThread()
             tdata = __QNXAddThread( tdata );
         }
         return( tdata );
+    #elif defined( __LINUX__ )
+        // TODO: Init multiple threads for Linux!
+        return( NULL );
     #else
         return( __ThreadData[GetCurrentThreadId()].data );
     #endif
@@ -613,6 +624,21 @@ void __QNXRemoveThread( void )
     }
 }
 
+#elif defined( __LINUX__ )
+
+thread_data *__LinuxAddThread( thread_data *tdata )
+/***********************************************/
+{
+    // TODO: Implement this for Linux!
+    return( NULL );
+}
+
+void __LinuxRemoveThread( void )
+/****************************/
+{
+    // TODO: Implement this for Linux!
+}
+
 #endif
 
 void __InitMultipleThread()
@@ -683,6 +709,8 @@ void __InitMultipleThread()
             __qsem_init( &InitSemaphore.semaphore, 1, 1 );
             InitSemaphore.initialized = 1;
             // first thread data already in magic memory
+        #elif defined( __LINUX__ )
+            // TODO: Init semaphores for Linux
         #else
             DosCreateMutexSem( NULL, &InitSemaphore.semaphore, 0, FALSE );
             InitSemaphore.initialized = 1;
@@ -723,7 +751,7 @@ static void __FiniSema4s()              // called from finalizer
     int         i;
 
     _CloseSemaphore( &IOBSemaphore );
-    for( i = 0; i < MAX_SEMAPHORE; i++ ) 
+    for( i = 0; i < MAX_SEMAPHORE; i++ )
     {              /* 17-feb-93 */
         _CloseSemaphore( &FileSemaphores[ i ] );
     }
@@ -759,3 +787,4 @@ static void __FiniSema4s()              // called from finalizer
 }
 
 AYI( __FiniSema4s, INIT_PRIORITY_RUNTIME )
+

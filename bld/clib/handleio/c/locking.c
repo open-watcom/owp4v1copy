@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#ifdef __QNX__
+#ifdef __UNIX__
 #include <fcntl.h>
 #else
 #include <dos.h>
@@ -45,6 +45,8 @@
 #include "rtcheck.h"
 #include "rtdata.h"
 #include "seterrno.h"
+
+// TODO: Need to port this to Linux
 
 #ifdef __QNX__
 _WCRTLINK int (locking)( int handle, int mode, long nbytes )

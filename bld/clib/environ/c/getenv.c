@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of getenv()
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
     #include "wenviron.h"
 #endif
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
     #ifdef __WIDECHAR__
         #define CMP_FUNC        wcsncmp
     #else
@@ -82,3 +81,4 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
 #endif
         return( NULL );                 /* not found */
     }
+

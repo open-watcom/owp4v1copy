@@ -62,6 +62,7 @@
     #include <mbstring.h>
 #endif
 
+// TODO: This will require porting to Linux if we actually need this!
 
 #define _WILL_FIT( c )  if(( (c) + 1 ) > size ) {       \
                             __set_errno( ERANGE );      \
@@ -547,3 +548,4 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_fullpath,_wfullpath)
     }
     return buff;
 }
+

@@ -102,7 +102,7 @@ _WCRTLINK FILE *__F_NAME(fdopen,_wfdopen)( int handle, const CHAR_TYPE *access_m
             fseek( fp, 0L, SEEK_END );
         }
         __chktty( fp );                     /* JBS 31-may-91 */
-#if !defined(__QNX__) && !defined(__NETWARE__)
+#if !defined(__UNIX__) && !defined(__NETWARE__)
         __SetIOMode( handle, flags );
 #endif
     }
@@ -115,6 +115,8 @@ static int __iomode( int handle, int amode )
 {
     int flags;
     int __errno;
+
+// TODO: We need to implement this for Linux!
 
 #if defined(__QNX__)
     if( (flags = fcntl( handle, F_GETFL )) == -1 ) {
@@ -146,3 +148,4 @@ static int __iomode( int handle, int amode )
 }
 
 #endif
+

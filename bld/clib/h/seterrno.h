@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef _SETERNO_H_INCLUDED
 #define _SETERNO_H_INCLUDED
 
@@ -45,8 +44,9 @@ _WCRTLINK extern void __set_errno( unsigned int );
 _WCRTLINK extern int  __set_EINVAL( void );
 _WCRTLINK extern void __set_EDOM( void );
 _WCRTLINK extern void __set_ERANGE( void );
-#if !defined(__QNX__)
+#if !defined(__QNX__) && !defined(__LINUX__)
     _WCRTLINK extern void __set_doserrno( unsigned int );
 #endif
 
 #endif
+
