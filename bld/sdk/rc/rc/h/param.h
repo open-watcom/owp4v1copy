@@ -33,7 +33,7 @@
 #define PARAM_INCLUDED
 
 #include <stdlib.h>
-#include "types.h"
+#include "rctypes.h"
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif

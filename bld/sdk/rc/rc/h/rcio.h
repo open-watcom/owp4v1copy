@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include "watcom.h"
 #include "wresall.h"
-#include "types.h"
+#include "rctypes.h"
 #include "semstr.h"
 #include "semsingl.h"
 #include "sharedio.h"

@@ -36,7 +36,7 @@
 #include "watcom.h"
 #include "wresall.h"
 #include "semantic.h"
-#include "types.h"
+#include "rctypes.h"
 
 typedef struct IcoFileDirEntry {
     IconDirInfo     Info;

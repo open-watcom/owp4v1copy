@@ -35,7 +35,7 @@
 #include <fcntl.h>
 #include <io.h>
 
-#include "types.h"
+#include "rctypes.h"
 
 #include "wresall.h"
 #include "global.h"
@@ -46,7 +46,7 @@
 #include "yydriver.h"
 #include "param.h"
 #include "depend.h"
-#include "ldstr.h"
+#include "rcldstr.h"
 #include "preproc.h"
 #include "dbtable.h"
 #include "rclayer0.h"

@@ -43,7 +43,7 @@
 #include "pass2.h"
 #include "semstr.h"
 #include "rcmem.h"
-#include "types.h"
+#include "rctypes.h"
 #include "errors.h"
 #include "exeutil.h"
 #include "rcio.h"
@@ -54,7 +54,7 @@
 #include "autodep.h"
 #include "errprt.h"
 #include "util.h"
-#include "ldstr.h"
+#include "rcldstr.h"
 #include "iortns.h"
 #ifdef UNIX
     #include <stdlib.h>

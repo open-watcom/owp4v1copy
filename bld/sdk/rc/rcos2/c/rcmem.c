@@ -35,7 +35,7 @@
 #include <string.h>
 #include <assert.h>
 #include <malloc.h>
-#include "types.h"
+#include "rctypes.h"
 #include "errors.h"
 #include "rcmem.h"
 #include "rcalloc0.h"

@@ -43,7 +43,7 @@
 #include "tmpctl.h"
 #include "errors.h"
 #include "layer0.h"
-#include "ldstr.h"
+#include "rcldstr.h"
 #include "scan.h"
 #include "autodep.h"
 #include "dbtable.h"

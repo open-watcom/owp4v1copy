@@ -34,7 +34,7 @@
 #define PARAM_INCLUDED
 
 #include <stdlib.h>
-#include "types.h"
+#include "rctypes.h"
 #ifdef UNIX
     #include "clibext.h"
 #endif

@@ -14,7 +14,7 @@ OBJECTS += semantic.o semdiag.o semmenu.o semver.o semtbar.o
 OBJECTS += semraw.o semsingl.o semstr.o swchar.o dbtable.o
 OBJECTS += preproc.o ppexpr.o ppmacro.o
 OBJECTS += tmpctl.o autodep.o
-OBJECTS += ldstr.o rcalloc1.o rcalloc0.o sharedio.o semresfl.o
+OBJECTS += rcldstr.o rcalloc1.o rcalloc0.o sharedio.o semresfl.o
 
 OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 

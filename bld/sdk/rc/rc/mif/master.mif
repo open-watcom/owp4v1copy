@@ -41,7 +41,7 @@ objs =  ytab.obj &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj&
         semraw.obj semsingl.obj semstr.obj swchar.obj dbtable.obj &
         preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj &
-        ldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
+        rcldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
         leadbyte.obj
 
 !ifeq sys_dll 1

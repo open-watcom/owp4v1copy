@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "watcom.h"
-#include "types.h"
+#include "rctypes.h"
 #include "dbtable.h"
 #include "rcmem.h"
 #include "fcntl.h"
