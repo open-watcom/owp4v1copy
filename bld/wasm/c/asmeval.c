@@ -55,6 +55,13 @@ static int              TokCnt;
 
 static struct asm_tok   Store[ MAX_TOKEN ];
 
+static int              op_sq_bracket_level;
+
+enum process_flag {
+    PROC_BRACKET,
+    PROC_OPERAND
+};
+
 static void init_expr( expr_list *new )
 {
     new->empty    = TRUE;
@@ -115,12 +122,7 @@ static int get_precedence( int i )
 //    13             OR, XOR
 //    14             SHORT, .TYPE
 
-
-    char        token;
-
-    token = AsmBuffer[i]->token;
-
-    switch( token ) {
+    switch( AsmBuffer[i]->token ) {
 #ifdef _WASM_
     case T_UNARY_OPERATOR:
         switch( AsmBuffer[i]->value ) {
@@ -176,9 +178,10 @@ static int get_precedence( int i )
     return( ERROR );
 }
 
-static int get_operand( expr_list *new, int i )
+static int get_operand( expr_list *new, int *start, int end )
 {
     char        *tmp;
+    int         i = *start;
 
     init_expr( new );
     switch( AsmBuffer[i]->token ) {
@@ -192,7 +195,7 @@ static int get_operand( expr_list *new, int i )
         new->type = EXPR_CONST;
         new->string = AsmBuffer[i]->string_ptr;
         new->value = 0;
-        for( tmp = AsmBuffer[i]->string_ptr; *tmp != '\0'; tmp++ ) {
+        for( tmp = new->string; *tmp != '\0'; tmp++ ) {
             new->value <<= 8;
             new->value |= (*tmp);
         }
@@ -201,6 +204,51 @@ static int get_operand( expr_list *new, int i )
         new->empty = FALSE;
         new->type = EXPR_REG;
         new->base_reg = i;
+        if( op_sq_bracket_level > 0 ) {
+            switch( AsmBuffer[i]->value ) {
+            case T_EAX:
+            case T_EBX:
+            case T_ECX:
+            case T_EDX:
+            case T_EDI:
+            case T_ESI:
+            case T_EBP:
+            case T_ESP:
+            case T_BX:
+            case T_BP:
+            case T_DI:
+            case T_SI:
+                break;
+            default:
+                AsmError( ILLEGAL_USE_OF_REGISTER );
+                return( ERROR );
+            }
+            new->indirect = TRUE;
+        } else if( AsmBuffer[i]->value == T_ST ) {
+
+            expr_list   sti;
+
+            // read st(i), put i into idx_reg
+            i++;
+            switch( AsmBuffer[i]->token ) {
+            case T_OP_BRACKET:
+            case T_OP_SQ_BRACKET:
+            case T_NUM:
+                *start = i;
+                init_expr( &sti );
+                if( evaluate( &sti, start, end, FALSE, PROC_OPERAND ) == ERROR )
+                    return( ERROR );
+                if( sti.type != EXPR_CONST ) {
+                    AsmError( CONSTANT_EXPECTED );
+                    return( ERROR );
+                }
+                new->idx_reg = sti.value;
+                return( NOT_ERROR );
+            default:
+                new->idx_reg = 0; // st = st(0)
+                break;
+            }
+        }
         break;
     case T_ID:
         new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
@@ -230,10 +278,11 @@ static int get_operand( expr_list *new, int i )
     default:
         return( ERROR );
     }
+    (*start)++;
     return( NOT_ERROR );
 }
 
-static int_8 is_optr( int i )
+static bool is_optr( int i )
 /* determine if it is an operator */
 {
     switch( AsmBuffer[i]->token ) {
@@ -249,37 +298,29 @@ static int_8 is_optr( int i )
     return( TRUE );
 }
 
-static int_8 is_unary( int i, char sign )
+static bool is_unary( int i, char sign )
 /* determine if it is an unary operand */
 {
-    char        tok;
-
-    tok = AsmBuffer[i]->token;
-
-    if( tok == T_UNARY_OPERATOR  ) {
+    switch( AsmBuffer[i]->token ) {
+    case T_UNARY_OPERATOR:
         return( TRUE );
-    }
-
-    switch( tok ) {
     case T_INSTR:
-        if( AsmBuffer[i]->value == T_NOT ) {
+        if( AsmBuffer[i]->value == T_NOT )
             return( TRUE );
-        }
         break;
     case T_POSITIVE:
     case T_NEGATIVE:
         return( TRUE );
     case '+':
+        if( sign ) {
+            AsmBuffer[i]->token = T_POSITIVE;
+            return( TRUE );
+        }
+        break;
     case '-':
         if( sign ) {
-            // sign operator is allowed
-            if( tok == '+' ) {
-                AsmBuffer[i]->token = T_POSITIVE;
-                return( TRUE );
-            } else if( tok == '-' ) {
-                AsmBuffer[i]->token = T_NEGATIVE;
-                return( TRUE );
-            }
+            AsmBuffer[i]->token = T_NEGATIVE;
+            return( TRUE );
         }
         break;
     default:
@@ -288,22 +329,17 @@ static int_8 is_unary( int i, char sign )
     return( FALSE );
 }
 
-static int_8 cmp_token( int i, long tok )
+static bool cmp_token( int i, enum state tok )
 /* compare AsmBuffer[i] and tok */
 {
-    if( AsmBuffer[i]->token == T_INSTR ) {
-        if( AsmBuffer[i]->value == tok ) {
-            return( TRUE );
-        }
+    if( AsmBuffer[i]->token == tok ) {
+        return( TRUE );
     } else {
-        if( (long)(AsmBuffer[i]->token) == tok ) {
-            return( TRUE );
-        }
+        return( FALSE );
     }
-    return( FALSE );
 }
 
-static int_8 check_same( expr_list *tok_1, expr_list *tok_2, int_8 type )
+static bool check_same( expr_list *tok_1, expr_list *tok_2, int_8 type )
 /* Check if both tok_1 and tok_2 equal type */
 {
     if( tok_1->type == type &&
@@ -314,7 +350,7 @@ static int_8 check_same( expr_list *tok_1, expr_list *tok_2, int_8 type )
     }
 }
 
-static int_8 check_both( expr_list *tok_1, expr_list *tok_2, int_8 type1, int_8 type2 )
+static bool check_both( expr_list *tok_1, expr_list *tok_2, int_8 type1, int_8 type2 )
 /* Check if tok_1 == type1 and tok_2 == type2 or vice versa */
 {
     if( tok_1->type == type1 &&
@@ -335,7 +371,7 @@ static void index_connect( expr_list *tok_1, expr_list *tok_2 )
         if( tok_2->base_reg != EMPTY ) {
             tok_1->base_reg = tok_2->base_reg;
             tok_2->base_reg = EMPTY;
-        } else if( ( tok_2->idx_reg != EMPTY ) && ( tok_2->scale == 1 )) {
+        } else if( ( tok_2->idx_reg != EMPTY ) && ( tok_2->scale == 1 ) ) {
             tok_1->base_reg = tok_2->idx_reg;
             tok_2->idx_reg = EMPTY;
         }
@@ -353,8 +389,10 @@ static void index_connect( expr_list *tok_1, expr_list *tok_2 )
 
 static void MakeConst( expr_list *token )
 {
-    if( token->type != EXPR_ADDR ) return;
-    if( token->sym != NULL ) return;
+    if( token->type != EXPR_ADDR )
+        return;
+    if( token->sym != NULL )
+        return;
     token->label = EMPTY;
     if( token->mbr != NULL ) {
 #ifdef _WASM_
@@ -369,9 +407,12 @@ static void MakeConst( expr_list *token )
         return;
 #endif
     }
-    if( token->base_reg != EMPTY ) return;
-    if( token->idx_reg != EMPTY ) return;
-    if( token->override != EMPTY ) return;
+    if( token->base_reg != EMPTY )
+        return;
+    if( token->idx_reg != EMPTY )
+        return;
+    if( token->override != EMPTY )
+        return;
     token->instr = EMPTY;
     token->type = EXPR_CONST;
     token->indirect = FALSE;
@@ -391,17 +432,24 @@ static void fix_struct_value( expr_list *token )
 #endif
 }
 
-static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
+static int check_direct_reg( expr_list *token_1, expr_list *token_2 )
+{
+    if( ( token_1->type == EXPR_REG ) && ( token_1->indirect == FALSE )
+        || ( token_2->type == EXPR_REG ) && ( token_2->indirect == FALSE ) ) {
+        return( ERROR );
+    } else {
+        return( NOT_ERROR );
+    }
+}
+
+static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
 /* Perform the operation between token_1 and token_2 */
 {
-    char                token;
     struct asm_sym      *sym;
-
-    token = AsmBuffer[index]->token;
 
     token_1->string = NULL;
 
-    switch( token ) {
+    switch( AsmBuffer[index]->token ) {
     case T_POSITIVE:
         /*
          * The only format allowed is:
@@ -441,6 +489,10 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
          *        address  + address        ( only inside [] )
          */
 
+        if( check_direct_reg( token_1, token_2 ) == ERROR ) {
+            AsmError( ILLEGAL_USE_OF_REGISTER );
+            return( ERROR );
+        }
         if( check_same( token_1, token_2, EXPR_CONST ) ) {
 
             token_1->value += token_2->value;
@@ -515,11 +567,15 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
     case T_DOT:
         /*
          * The only formats allowed are:
-         *        register . address
+         *        register . address       ( only inside [] )
          *        address  . address
          *        address  . constant
          */
 
+        if( check_direct_reg( token_1, token_2 ) == ERROR ) {
+            AsmError( ILLEGAL_USE_OF_REGISTER );
+            return( ERROR );
+        }
         if( check_same( token_1, token_2, EXPR_ADDR ) ) {
 
             index_connect( token_1, token_2 );
@@ -590,6 +646,10 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
          *                                    order )
          */
 
+        if( check_direct_reg( token_1, token_2 ) == ERROR ) {
+            AsmError( ILLEGAL_USE_OF_REGISTER );
+            return( ERROR );
+        }
         MakeConst( token_2 );
         if( check_same( token_1, token_2, EXPR_CONST ) ) {
 
@@ -850,9 +910,8 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
         case T_LENGTHOF:
         case T_SIZEOF:
             sym = token_2->sym;
-            if( token_2->mbr != NULL ) {
+            if( token_2->mbr != NULL )
                 sym = token_2->mbr;
-            }
             if( sym == NULL )
                 return( ERROR );
             switch( AsmBuffer[index]->value ) {
@@ -896,14 +955,9 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
     return( NOT_ERROR );
 }
 
-enum process_flag {
-    PROC_BRACKET,
-    PROC_OPERAND
-};
-
-static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enum process_flag proc_flag )
+static int evaluate( expr_list *operand1, int *i, int end, bool flag_msg, enum process_flag proc_flag )
 {
-    expr_list           operand;
+    expr_list           operand2;
     char                token_needed;
     int                 curr_operator;
     int                 next_operator;
@@ -911,25 +965,27 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
 
     token_needed = FALSE;
     curr_operator = EMPTY;
-    op_sq_bracket = 0;
+    op_sq_bracket = op_sq_bracket_level;
 
     /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
     /* Look at first token, which may be an unary operator or an operand */
     /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
-    if( accumulator->empty ) {
+    if( operand1->empty ) {
         if( cmp_token( *i, T_OP_BRACKET ) ) {
             (*i)++;
             if( *i > end ) {
-                if( flag_msg ) AsmError( OPERAND_EXPECTED );
+                if( flag_msg )
+                    AsmError( OPERAND_EXPECTED );
                 return( ERROR );
             }
-            if( evaluate( accumulator, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
+            if( evaluate( operand1, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
                 return( ERROR );
             }
             if( cmp_token( *i, T_CL_SQ_BRACKET ) ) {
                 // error open ( close ]
-                if( flag_msg ) AsmError( BRACKETS_NOT_BALANCED );
+                if( flag_msg )
+                    AsmError( BRACKETS_NOT_BALANCED );
                 return( ERROR );
             }
             (*i)++;
@@ -941,24 +997,27 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
             }
             /**/myassert( !cmp_token( (*i)-1, T_CL_BRACKET ) );
             (*i)++;
-            if( evaluate( accumulator, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
+            if( *i > end ) {
+                if( flag_msg )
+                    AsmError( OPERAND_EXPECTED );
                 return( ERROR );
             }
-            accumulator->indirect = TRUE;
+            op_sq_bracket_level++;
+            if( evaluate( operand1, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
+                return( ERROR );
+            }
             if( cmp_token( *i, T_CL_BRACKET ) ) {
                 // error open [ close )
-                if( flag_msg ) AsmError( BRACKETS_NOT_BALANCED );
+                if( flag_msg )
+                    AsmError( BRACKETS_NOT_BALANCED );
                 return( ERROR );
             }
-            if( !cmp_token( *i, T_CL_SQ_BRACKET ) ) {
-                op_sq_bracket++;
+            if( cmp_token( *i, T_CL_SQ_BRACKET ) ) {
+                op_sq_bracket_level--;
             }
             (*i)++;
-        } else {
-            if( get_operand( accumulator, *i ) == ERROR ) {
-                return( ERROR );
-            }
-            (*i)++;
+        } else if( get_operand( operand1, i, end ) == ERROR ) {
+            return( ERROR );
         }
     } else {
         token_needed = FALSE;
@@ -970,10 +1029,11 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
 
     if( !token_needed ) {
         if( *i > end ) {
-            /* no operator is found; result is in accumulator */
-            if( op_sq_bracket ) {
+            /* no operator is found; result is in operand1 */
+            if( op_sq_bracket_level != op_sq_bracket ) {
                 // error missing ]
-                if( flag_msg ) AsmError( BRACKETS_NOT_BALANCED );
+                if( flag_msg )
+                    AsmError( BRACKETS_NOT_BALANCED );
                 return( ERROR );
             } else {
                 return( NOT_ERROR );
@@ -981,9 +1041,10 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
         }
         /* Read the operator */
         if( cmp_token( *i, T_CL_BRACKET ) ) {
-            if( op_sq_bracket != 0 ) {
+            if( op_sq_bracket_level != op_sq_bracket ) {
                 // error close ) but [ is open
-                if( flag_msg ) AsmError( BRACKETS_NOT_BALANCED );
+                if( flag_msg )
+                    AsmError( BRACKETS_NOT_BALANCED );
                 return( ERROR );
             } else {
                 return( NOT_ERROR );
@@ -992,9 +1053,10 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
             return( NOT_ERROR );
         } else if( cmp_token( *i, T_OP_SQ_BRACKET ) ) {
             AsmBuffer[*i]->token = '+';
-            op_sq_bracket++;
+            op_sq_bracket_level++;
         } else if( !is_optr(*i) ) {
-            if( flag_msg ) AsmError( OPERATOR_EXPECTED );
+            if( flag_msg )
+                AsmError( OPERATOR_EXPECTED );
             return( ERROR );
         }
     }
@@ -1008,37 +1070,36 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
         /*:::::::::::::::::::::::::::*/
 
         if( *i > end ) {
-            if( flag_msg ) AsmError( OPERAND_EXPECTED );
+            if( flag_msg )
+                AsmError( OPERAND_EXPECTED );
             return( ERROR );
         }
 
-        init_expr( &operand );
+        init_expr( &operand2 );
         if( cmp_token( *i, T_OP_BRACKET ) ) {
             (*i)++;
-            if( evaluate( &operand, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
+            if( evaluate( &operand2, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
                 return( ERROR );
             }
             if( cmp_token( *i, T_CL_BRACKET ) ) {
                 (*i)++;
             }
         } else if( cmp_token( *i, T_OP_SQ_BRACKET ) ) {
-            op_sq_bracket++;
+            op_sq_bracket_level++;
             (*i)++;
-            if( evaluate( &operand, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
+            if( evaluate( &operand2, i, end, flag_msg, PROC_BRACKET ) == ERROR ) {
                 return( ERROR );
             }
         } else if( is_unary( *i, TRUE ) ) {
-            if( evaluate( &operand, i, end, flag_msg, PROC_OPERAND ) == ERROR ) {
+            if( evaluate( &operand2, i, end, flag_msg, PROC_OPERAND ) == ERROR ) {
                 return( ERROR );
             }
         } else if( is_optr( *i ) ) {
-            if( flag_msg ) AsmError( OPERAND_EXPECTED );
+            if( flag_msg )
+                AsmError( OPERAND_EXPECTED );
             return( ERROR );
-        } else {
-            if( get_operand( &operand, *i ) == ERROR ) {
-                return( ERROR );
-            }
-            (*i)++;
+        } else if( get_operand( &operand2, i, end ) == ERROR ) {
+            return( ERROR );
         }
 
         /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -1046,10 +1107,10 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
         /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
         while( ( *i <= end )
-            && ( op_sq_bracket > 0 )
+            && ( op_sq_bracket_level > op_sq_bracket )
             && cmp_token( *i, T_CL_SQ_BRACKET ) ) {
             (*i)++;
-            op_sq_bracket--;
+            op_sq_bracket_level--;
         }
 
         /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -1058,9 +1119,11 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
 
         next_operator = FALSE;
         if( *i <= end ) {
-            if( !is_optr( *i ) || is_unary( *i, FALSE ) ||
-                cmp_token( *i, T_OP_BRACKET ) ) {
-                if( flag_msg ) AsmError( OPERATOR_EXPECTED );
+            if( !is_optr( *i )
+                || is_unary( *i, FALSE )
+                || cmp_token( *i, T_OP_BRACKET ) ) {
+                if( flag_msg )
+                    AsmError( OPERATOR_EXPECTED );
                 return( ERROR );
             } else if( !cmp_token( *i, T_CL_BRACKET ) &&
                        !cmp_token( *i, T_CL_SQ_BRACKET ) ) {
@@ -1068,23 +1131,22 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
                     if( ( PLUS_PRECEDENCE <= get_precedence( curr_operator ) )
                         || ( proc_flag == PROC_BRACKET ) ) {
                         AsmBuffer[*i]->token = '+';
-                        op_sq_bracket++;
+                        op_sq_bracket_level++;
                         next_operator = TRUE;
                     }
                 } else {
                     if( get_precedence( *i ) < get_precedence( curr_operator ) ) {
-                        if( evaluate( &operand, i, end, flag_msg, PROC_OPERAND ) == ERROR ) {
+                        if( evaluate( &operand2, i, end, flag_msg, PROC_OPERAND ) == ERROR )
                             return( ERROR );
-                        }
                         while( ( *i <= end )
-                            && ( op_sq_bracket > 0 )
+                            && ( op_sq_bracket_level > op_sq_bracket )
                             && cmp_token( *i, T_CL_SQ_BRACKET ) ) {
                             (*i)++;
-                            op_sq_bracket--;
+                            op_sq_bracket_level--;
                         }
                         if( cmp_token( *i, T_OP_SQ_BRACKET ) ) {
                             AsmBuffer[*i]->token = '+';
-                            op_sq_bracket++;
+                            op_sq_bracket_level++;
                             next_operator = TRUE;
                         }
                     } else if( proc_flag == PROC_BRACKET ) {
@@ -1098,33 +1160,30 @@ static int evaluate( expr_list *accumulator, int *i, int end, bool flag_msg, enu
         /* Now evaluate */
         /*::::::::::::::*/
 
-        if( calculate( accumulator, &operand, curr_operator ) == ERROR ) {
+        if( calculate( operand1, &operand2, curr_operator ) == ERROR ) {
             return( ERROR );
         }
 
     } while ( ( next_operator == TRUE )
         || ( ( proc_flag == PROC_BRACKET ) 
-            && ( !cmp_token( *i, T_CL_BRACKET ) )
-            && ( !cmp_token( *i, T_CL_SQ_BRACKET ) )
+            && !cmp_token( *i, T_CL_BRACKET )
+            && !cmp_token( *i, T_CL_SQ_BRACKET )
             && ( *i < end ) ) );
-    if( op_sq_bracket ) {
-        if( flag_msg ) AsmError( BRACKETS_NOT_BALANCED );
+    if( op_sq_bracket_level != op_sq_bracket ) {
+        if( flag_msg )
+            AsmError( BRACKETS_NOT_BALANCED );
         return( ERROR );
     }
     return( NOT_ERROR );
 }
 
-static int is_expr( int i )
+static bool is_expr( int i )
 /* Check if the token is part of an expression */
 {
     switch( AsmBuffer[i]->token ) {
 #ifdef _WASM_
     case T_INSTR:
-    case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
-        case T_FLAT:
-            DefFlatGroup();
-            /* fall through */
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -1142,35 +1201,44 @@ static int is_expr( int i )
         case T_XOR:
             if( i == 0 ) {
                 /* It is an instruction instead */
-                return( FALSE );
+                break;
             } else if( AsmBuffer[i-1]->token == T_COLON ) {
                 /* It is an instruction instead */
-                return( FALSE );
+                break;
             } else if( AsmBuffer[i-1]->value == T_LOCK ) {
                 /* It is an instruction:
                          lock and dword ptr [ebx], 1
                 */
-                return( FALSE );
+                break;
             } else {
                 return( TRUE );
             }
         default:
-            return( FALSE );
+            break;
         }
+        break;
     case T_UNARY_OPERATOR:
 //        case T_SEG:
 //        case T_OFFSET:
-        if( i+1 < TokCnt ) {
+        if( i+1 < TokCnt )
+            return( TRUE );
+        break;
+    case T_RES_ID:
+        switch( AsmBuffer[i]->value ) {
+        case T_FLAT:
+            DefFlatGroup();
             return( TRUE );
         }
-        return( FALSE );
+        break;
 #endif
     case T_REG:
-        return( AsmBuffer[i]->value != T_ST );
+        return( TRUE );
     case '+':
     case '-':
         /* hack to stop asmeval from hanging on floating point numbers */
-        if( AsmBuffer[i+1]->token == T_FLOAT ) return( FALSE );
+        if( AsmBuffer[i+1]->token == T_FLOAT )
+            break;
+        return( TRUE );
     case '*':
     case '/':
     case T_NUM:
@@ -1184,29 +1252,27 @@ static int is_expr( int i )
         if( i == 1 || ( AsmBuffer[i+1]->token == T_DIRECTIVE &&
                         AsmBuffer[i+1]->value == T_EQU2 ) ) {
             /* It is the colon following the label or it is a := */
-            return( FALSE );
+            break;
         } else {
             return( TRUE );
         }
 #else
         return( TRUE );
 #endif
-    case T_PATH:
-        return( FALSE );
     case T_ID:
-        if( i == 0 ) {
-            /* It is a label */
-            return( FALSE );
-        } else {
+        if( i != 0 )
+            /* It is not a label */
             return( TRUE );
-        }
+        break;
     case T_STRING:
         return( TRUE );
     case T_DOT:
         return( TRUE );
+    case T_PATH:
     default:
-        return( FALSE );
+        break;
     }
+    return( FALSE );
 }
 
 static int fix_parant( void )
@@ -1267,7 +1333,6 @@ static int fix( expr_list *res, int start, int end )
             *(AsmBuffer[start++]) = *(AsmBuffer[res->override]);
             AsmBuffer[start++]->token = T_COLON;
         }
-
         if( res->string == NULL ) {
             AsmBuffer[ start ]->token = T_NUM;
             AsmBuffer[ start ]->value = res->value;
@@ -1287,6 +1352,15 @@ static int fix( expr_list *res, int start, int end )
         AsmBuffer[ start ]->token = T_REG;
         AsmBuffer[ start ]->string_ptr = AsmBuffer[ res->base_reg ]->string_ptr;
         AsmBuffer[ start++ ]->value = AsmBuffer[ res->base_reg ]->value;
+        if( AsmBuffer[ res->base_reg ]->value == T_ST && res->idx_reg > 0 ) {
+//            AsmBuffer[start]->string_ptr = "(";
+//            AsmBuffer[start++]->token = T_OP_BRACKET;
+            AsmBuffer[start]->token = T_NUM;
+            AsmBuffer[start]->value = res->idx_reg;
+            AsmBuffer[start++]->string_ptr = "";
+//            AsmBuffer[start]->string_ptr = ")";
+//            AsmBuffer[start++]->token = T_CL_BRACKET;
+        }
         if( res->override != EMPTY ) {
             AsmBuffer[ start++ ]->token = T_CL_SQ_BRACKET;
         }
@@ -1424,7 +1498,8 @@ static void fix_final( void )
     int         dup_count = 0;
 
     for( i = 0;; i++ ) {
-        if( dup_count == 0 && TakeOut[i] == -1 ) break;
+        if( dup_count == 0 && TakeOut[i] == -1 )
+            break;
         if( TakeOut[i] > 0 ) {
             AsmBuffer[ TakeOut[i] ]->token = T_OP_BRACKET;
             dup_count++;
@@ -1438,8 +1513,10 @@ static void fix_final( void )
     for( start = 0; start < TokCnt; start++ ) {
         if( AsmBuffer[start]->token == T_NOOP ) {
             for( end = start + 1;; end++ ) {
-                if( AsmBuffer[end]->token != T_NOOP ||
-                    end == TokCnt ) break;
+                if( AsmBuffer[end]->token != T_NOOP
+                    || end == TokCnt ) {
+                    break;
+                }
             }
             if( end == TokCnt ) {
                 TokCnt = start;
@@ -1465,7 +1542,8 @@ extern int EvalExpr( int count, int start_tok, int end_tok, bool flag_msg )
     bool        final = FALSE;
     expr_list   result;
 
-    if( AsmBuffer[end_tok]->token == T_FINAL ) final = TRUE;
+    if( AsmBuffer[end_tok]->token == T_FINAL )
+        final = TRUE;
 
     TokCnt = count;
 
@@ -1479,9 +1557,12 @@ extern int EvalExpr( int count, int start_tok, int end_tok, bool flag_msg )
             start = i++;
             num = 0;
             for( ;; ) {
-                if( i >= TokCnt ) break;
-                if( i > end_tok ) break;
-                if( !is_expr(i) ) break;
+                if( i >= TokCnt )
+                    break;
+                if( i > end_tok )
+                    break;
+                if( !is_expr(i) )
+                    break;
                 i++;
                 num++;
             }
@@ -1495,6 +1576,7 @@ extern int EvalExpr( int count, int start_tok, int end_tok, bool flag_msg )
             } else {
                 i = start;
                 init_expr( &result );
+                op_sq_bracket_level = 0;
                 if( evaluate( &result, &i, i + num, flag_msg, PROC_BRACKET ) == ERROR ) {
                     return( ERROR );
                 }
@@ -1517,4 +1599,33 @@ extern int EvalExpr( int count, int start_tok, int end_tok, bool flag_msg )
     }
 
     return( TokCnt );
+}
+
+extern expr_list *EvalOperand( int *start_tok, int count, expr_list *result, bool flag_msg )
+/******************************/
+{
+    int         i = *start_tok;
+    int         num;            // number of tokens in the expression
+
+    init_expr( result );
+    if( AsmBuffer[i]->token == T_FINAL )
+        return( result );
+    if( !is_expr(i) )
+        return( result );
+
+    num = 0;
+    for( ;; ) {
+        i++;
+        if( i >= count )
+            break;
+        if( !is_expr(i) )
+            break;
+        num++;
+    }
+    op_sq_bracket_level = 0;
+    if( evaluate( result, start_tok, *start_tok + num, flag_msg, PROC_BRACKET ) == ERROR ) {
+        return( NULL );
+    } else {
+        return( result );
+    }
 }
