@@ -186,7 +186,7 @@ static CpSegRc copyOneSegment( const segment_record * inseg,
     uint_16 numrelocs;
     uint_32 out_offset;
     uint_32 align_amount;
-    uint_32 seg_len;
+    uint_32 seg_len = 0L;
     char    dum;
 
     dum = 0;
