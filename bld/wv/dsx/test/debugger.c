@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS protected mode debugging test app.
 *
 ****************************************************************************/
 
@@ -121,18 +120,18 @@ extern void far *SwitchStacks( void far *, void far ** );
 
 extern void DoInt66( unsigned, unsigned );
 #pragma aux DoInt66 =   \
-    _XOR_BX_BX          \
-    _PUSH_BP            \
-    _INT 0x66           \
-    _POP_BP             \
+    "xor  bx, bx "      \
+    "push bp     "      \
+    "int  0x66   "      \
+    "pop  bp     "      \
     parm [ax] [dx]      \
     modify exact [ax bx cx dx si di];
 
 extern void DPMIFini( void );
 #pragma aux DPMIFini aborts = \
-    _MOV_AH 0x4c        \
-    _MOV_AL 0x00        \
-    _INT_21             \
+    "mov  ah, 0x4c"     \
+    "mov  al, 0   "     \
+    "int  0x21    "     \
     modify exact [ax];
 
 
@@ -145,7 +144,8 @@ static void save_vects( void far **rmvtable, void far **pmvtable )
         rmvtable[ intnb ] = (void far *)TinyDPMIGetRealVect( intnb );
         pmvtable[ intnb ] = TinyDPMIGetProtectVect( intnb );
     }
-    fhandle = open( "vtable", O_BINARY | O_CREAT | O_TRUNC | O_WRONLY );
+    fhandle = open( "vtable", O_BINARY | O_CREAT | O_TRUNC | O_WRONLY,
+                    S_IREAD | S_IWRITE );
     if( fhandle <= 0 ) {
         _debug16( "error: fhandle <= 0, fhandle=", fhandle );
     } else {
