@@ -673,6 +673,9 @@ void InitSymData( TYPEPTR typ, int level )
             InitArray( typ );
         }
         break;
+    case TYPE_FCOMPLEX:        
+    case TYPE_DCOMPLEX:        
+    case TYPE_LDCOMPLEX:        
     case TYPE_STRUCT:
         if( token != T_LEFT_BRACE  &&  level == 0 ) {
             CErr1( ERR_NEED_BRACES );
@@ -712,10 +715,24 @@ void InitSymData( TYPEPTR typ, int level )
         StoreFloat( T_DOUBLE );
         break;
     case TYPE_LONG_DOUBLE:
+        //StoreFloat( T_LONG_DOUBLE );
         StoreFloat( T_DOUBLE );
         break;
     case TYPE_POINTER:
         StorePointer( typ, T_ID );
+        break;
+    case TYPE_BOOL:
+        StorePointer( typ, T_CHAR );
+        break;
+    case TYPE_FIMAGINARY:
+        StoreFloat( T_FLOAT );
+        break;
+    case TYPE_DIMAGINARY:
+        StoreFloat( T_DOUBLE );
+        break;
+    case TYPE_LDIMAGINARY:
+        //StoreFloat( T_LONG_DOUBLE );
+        StoreFloat( T_DOUBLE );
         break;
     default:
         break;
@@ -724,7 +741,7 @@ void InitSymData( TYPEPTR typ, int level )
         if( CurToken == T_COMMA ) {
             NextToken();
         }
-        if( CurToken != T_RIGHT_BRACE ){
+        if( CurToken != T_RIGHT_BRACE ) {
             CErr1( ERR_TOO_MANY_INITS );
         }
         while( CurToken != T_RIGHT_BRACE ){
@@ -1081,6 +1098,11 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
     case TYPE_FLOAT:
     case TYPE_DOUBLE:
     case TYPE_POINTER:
+    case TYPE_LONG_DOUBLE:
+    case TYPE_FIMAGINARY:
+    case TYPE_DIMAGINARY:
+    case TYPE_LDIMAGINARY:
+    case TYPE_BOOL:
         NextToken();                    // skip over T_LEFT_BRACE
         if( CharArray( typ->object ) ) {
             sym2_handle = MakeNewSym( &sym2, 'X', typ, SC_STATIC );
@@ -1146,6 +1168,9 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
         }
         MustRecog( T_RIGHT_BRACE );
         break;
+    case TYPE_FCOMPLEX:
+    case TYPE_DCOMPLEX:
+    case TYPE_LDCOMPLEX:
     case TYPE_STRUCT:
     case TYPE_UNION:
         if( SimpleStruct( typ2 ) ) {

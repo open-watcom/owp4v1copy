@@ -125,14 +125,14 @@ static  char    CGDataType[] = {
         T_INTEGER       /* TYPE_CLASS  C++ class */
 #endif
         T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
-        TY_DOUBLE,      /* TYPE_LONG_DOUBLE */
-        T_FLOAT,        /* TYPE_FCOMPLEX */
-        TY_DOUBLE,      /* TYPE_DCOMPLEX */
-        TY_DOUBLE,      /* TYPE_LDCOMPLEX */
+        T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
+        T_POINTER,      /* TYPE_FCOMPLEX */
+        T_POINTER,      /* TYPE_DCOMPLEX */
+        T_POINTER,      /* TYPE_LDCOMPLEX */
         T_FLOAT,        /* TYPE_FIMAGINARY */
-        TY_DOUBLE,      /* TYPE_DIMAGINARY */
-        TY_DOUBLE,      /* TYPE_LDIMAGINARY */
-        TY_DOUBLE,      /* TYPE_BOOL */
+        T_DOUBLE,       /* TYPE_DIMAGINARY */
+        T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
+        T_UINT_1,       /* TYPE_BOOL */
         T_INTEGER,      /* TYPE_UNUSED */         
   };
 
@@ -741,6 +741,9 @@ static cg_name PushConstant( OPNODE *node )
     case TYPE_FLOAT:
     case TYPE_DOUBLE:
     case TYPE_LONG_DOUBLE:
+    case TYPE_FIMAGINARY:
+    case TYPE_DIMAGINARY:
+    case TYPE_LDIMAGINARY:
         flt = node->float_value;
         if( flt->len != 0 ) {                   // if still in string form
             name = CGFloat( flt->string, dtype );
@@ -853,6 +856,9 @@ static bool IsStruct( TYPEPTR typ ){
 /*********************************/
     while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
     if( typ->decl_type == TYPE_STRUCT  ||
+        typ->decl_type == TYPE_FCOMPLEX ||
+        typ->decl_type == TYPE_DCOMPLEX ||
+        typ->decl_type == TYPE_LDCOMPLEX ||
         typ->decl_type == TYPE_UNION ) {
             return( TRUE );
     }
@@ -1657,6 +1663,9 @@ local void DoAutoDecl( SYM_HANDLE sym_handle )
             case TYPE_UNION:
             case TYPE_STRUCT:
             case TYPE_ARRAY:
+            case TYPE_FCOMPLEX:
+            case TYPE_DCOMPLEX:
+            case TYPE_LDCOMPLEX:
                 emit_extra_info = 1;
                 break;
             }
@@ -1790,6 +1799,10 @@ int CGenType( TYPEPTR typ )
 
     while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
     switch( typ->decl_type ) {
+
+    case TYPE_FCOMPLEX:
+    case TYPE_DCOMPLEX:
+    case TYPE_LDCOMPLEX:
     case TYPE_STRUCT:
     case TYPE_UNION:
         if( typ->object != NULL ) { /* 15-jun-94 */

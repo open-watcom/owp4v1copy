@@ -278,6 +278,9 @@ dbug_type DBType( TYPEPTR typ )
     case TYPE_DOUBLE:
         ret_val = DBScalar( "double", TY_DOUBLE );
         break;
+    case TYPE_LONG_DOUBLE:
+        ret_val = DBScalar( "long double", TY_DOUBLE );
+        break;
     case TYPE_ARRAY:
         size = TypeSize( typ );
         if( size != 0 ) {

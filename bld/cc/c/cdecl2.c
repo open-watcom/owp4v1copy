@@ -1065,7 +1065,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
 }
 
 
-local FIELDPTR FieldCreate( char *name )
+FIELDPTR FieldCreate( char *name )
 {
     FIELDPTR    field;
 

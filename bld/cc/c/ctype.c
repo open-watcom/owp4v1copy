@@ -1,3 +1,4 @@
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -33,7 +34,10 @@
 
 extern  unsigned SymTypedef;
 
+extern FIELDPTR FieldCreate( char *name );
+
 local TYPEPTR StructDecl(int,int);
+local TYPEPTR ComplexDecl(int,int);
 static void SetPlainCharType( int char_type );
 local void CheckBitfieldType( TYPEPTR typ );
 
@@ -205,7 +209,11 @@ void CTypeInit()
     for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
         CTypeCounts[ base_type ] = 0;
         size = CTypeSizes[ base_type ];
-        if( size != 0  ||  base_type == TYPE_VOID  ||
+        if ( base_type == TYPE_FCOMPLEX || base_type == TYPE_DCOMPLEX
+                            || base_type == TYPE_LDCOMPLEX ) {
+            BaseTypes[ base_type ] = ComplexDecl( TYPE_STRUCT, FALSE );
+            BaseTypes[ base_type ]->decl_type = base_type;
+        } else if( size != 0  ||  base_type == TYPE_VOID  ||
                             base_type == TYPE_DOT_DOT_DOT ) {
             BaseTypes[ base_type ] = TypeNode( base_type, NULL );
         } else {
@@ -1119,6 +1127,108 @@ local TYPEPTR StructDecl( int decl_typ, int packed )
     PackAmount = saved_packamount;                      /* 20-nov-91 */
     return( typ );
 }
+
+/*
+Next three functions descripe a struct that looks like
+struct {
+    double __ow_real;
+    double _Imaginary __ow_imaginary;
+}
+*/
+
+local void GetComplexFieldTypeSpecifier( decl_info *info, DATA_TYPE data_type )
+{
+    info->stg = SC_NULL;      // indicate don't want any storage class specifiers
+    info->mod = FLAG_NONE;
+    info->decl = DECLSPEC_NONE;
+    info->naked = FALSE;
+    info->seg = 0;
+    info->typ = GetType( data_type );
+}
+
+
+local unsigned long GetComplexFields( TYPEPTR decl )
+{
+    unsigned long       start = 0;
+    TYPEPTR             typ;
+    decl_state          state;
+    FIELDPTR            field;
+    unsigned long       struct_size;
+    unsigned long       next_offset;
+    unsigned int        worst_alignment;
+    decl_info           info;
+
+    worst_alignment = 1;
+
+    struct_size = start;
+    next_offset = start;
+
+
+    GetComplexFieldTypeSpecifier( &info, TYPE_DOUBLE );
+
+    field = FieldCreate( "__ow_real" );
+    field->attrib = 0;
+    field->field_type = info.typ;
+
+    field = NewField( field, decl );
+
+    typ = info.typ;
+    state = DECL_STATE_NONE;
+
+    next_offset = FieldAlign( next_offset, field, &worst_alignment );
+    next_offset += SizeOfArg( field->field_type );
+    if( next_offset > struct_size )  struct_size = next_offset;
+
+
+    GetComplexFieldTypeSpecifier( &info, TYPE_DIMAGINARY );
+
+    field = FieldCreate( "__ow_imaginary" );
+    field->attrib = 0;
+    field->field_type = info.typ;
+    field = NewField( field, decl );
+
+    typ = info.typ;
+    state = DECL_STATE_NONE;
+
+    next_offset = FieldAlign( next_offset, field, &worst_alignment );
+    next_offset += SizeOfArg( field->field_type );
+    if( next_offset > struct_size )  struct_size = next_offset;
+
+
+    decl->u.tag->alignment = worst_alignment;
+    struct_size += worst_alignment - 1;
+    struct_size &= - (long)worst_alignment;
+    _CHECK_SIZE( struct_size );
+    return( struct_size );
+}
+
+
+local TYPEPTR ComplexDecl( int decl_typ, int packed )
+{
+    TYPEPTR     typ;
+    TAGPTR      tag;
+    int         saved_packamount;
+    TAGPTR      TagLookup();
+
+    saved_packamount = PackAmount;
+    if( packed )  PackAmount = 1;
+
+    tag = NullTag();
+
+    typ = tag->sym_type;
+    if( typ == NULL ) {
+        typ = TypeNode( decl_typ, NULL );
+        tag->sym_type = typ;
+    }
+
+    typ->u.tag = tag;
+    tag->u.field_list = NULL;
+    tag->size = GetComplexFields( typ );
+    PackAmount = saved_packamount;
+
+    return( typ );
+}
+
 
 
 local void CheckBitfieldType( TYPEPTR typ )

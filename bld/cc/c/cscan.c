@@ -228,6 +228,7 @@ int KwLookup()
         case T__COMPLEX:
         case T__IMAGINARY:
         case T__BOOL:
+        case T___OW_IMAGINARY_UNIT:
             hash = T_ID;
         }
     }
