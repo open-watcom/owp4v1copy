@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Perform runtime file handle checks.
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
 
 #if ( defined(__NT__) || defined(__RUNTIME_HANDLE_CHECKS__) )   \
     && ( !defined(__NETWARE__) && !defined(__QNX__)             \
-    && !defined(__OSI__) )
+    && !defined(__OSI__) && !defined(__SNAP__) )
 
     extern unsigned __NFiles;
 
