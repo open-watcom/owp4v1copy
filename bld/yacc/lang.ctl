@@ -9,10 +9,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
 #=======================
-    set old1=<1>
-    set 1=<BUILD_PLATFORM>
     [ INCLUDE prereq.ctl ]
-    set 1=<old1>
 
 [ BLOCK <1> clean ]
 #==================
