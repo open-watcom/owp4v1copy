@@ -79,6 +79,10 @@ static char *           IncStrTab;
 #define SDATA_CARVE_SIZE        (16*1024)
 #define SYM_CARVE_SIZE          (32*1024)
 
+static void BufWritePermFile( perm_write_info *info, void *data, unsigned len );
+static void DoWritePermFile( perm_write_info *info, char *data, unsigned len,
+                             bool isvmem );
+
 extern void ResetPermData( void )
 /******************************/
 {

@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OVLSUPP -- overlay support routines
 *
 ****************************************************************************/
-
-
-/*
-   OVLSUPP -- overlay support routines
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -65,6 +59,12 @@ static targ_addr    OvlvecAddr;  /* address of overlay vectors */
 static targ_addr    Stash;
 
 unsigned_16     AreaSize;
+
+static void AllocAreas( OVL_AREA *area );
+static void GetVecAddr( int vecnum, targ_addr *addr );
+static void ShortVectors( symbol *loadsym );
+static void LongVectors( symbol *loadsym );
+static void PutOvlInfo( unsigned off, void *src, unsigned len );
 
 extern void ResetOvlSupp( void )
 /******************************/

@@ -88,7 +88,17 @@ extern void     ResetSymTrace( void );
 extern void     ResetLoadFile( void );
 extern void     ResetToc( void );
 
-static  void    LnkInit();
+extern void     InitSubSystems( void );
+extern void     LinkMainLine( char *cmds );
+extern void     FiniSubSystems( void );
+extern void     ResetSubSystems( void );
+extern void     CleanSubSystems( void );
+extern void     DoLink( char * cmdline );
+
+static void     PreAddrCalcFormatSpec( void );
+static void     PostAddrCalcFormatSpec( void );
+static void     DoDefaultSystem( void );
+static void     FindLibPaths( void );
 
 extern int              __nheapblk;
 extern commandflag      CmdFlags;

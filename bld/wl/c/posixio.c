@@ -58,6 +58,8 @@ static bool     CaughtBreak = FALSE;    // set to TRUE if break hit.
 
 #define TOOMANY EMFILE
 
+static void CheckBreak( void );
+
 extern void LnkFilesInit( void )
 /******************************/
 {

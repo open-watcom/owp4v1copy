@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OBJPASS1:  pass 1 of WATFOR-77 linker
 *
 ****************************************************************************/
-
-
-/*
- *  OBJPASS1:  pass 1 of WATFOR-77 linker
- *
- */
 
 #include <string.h>
 #include <stdlib.h>
@@ -64,6 +57,10 @@
 #define MAX_SEGMENT         0x10000
 
 static seg_leader *     LastCodeSeg;    // last code segment in current module
+
+static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info);
+static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info );
+static void DoAllocateSegment( segdata *sdata, char *clname );
 
 void ResetObjPass1( void )
 /************************/

@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMFRELOC:  routines specific processing relocations in OMF
 *
 ****************************************************************************/
-
-
-/*
- *  OMFRELOC:  routines specific processing relocations in OMF
- *
-*/
 
 #include "linkstd.h"
 #include "msg.h"
@@ -80,6 +73,9 @@ static fix_type RelocTypeMap[] = {
     FIX_BASE_OFFSET_32, // LOC_BASE_OFFSET_32
     FIX_OFFSET_16 | FIX_LOADER_RES      // modified loader resolved off_16
 };
+
+static void GetTarget( unsigned loc, frame_spec *targ );
+static void GetFrame( unsigned frame, frame_spec *refframe );
 
 extern void ResetOMFReloc( void )
 /*******************************/

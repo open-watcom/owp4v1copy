@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PROCFILES   : process object file.
 *
 ****************************************************************************/
-
-
-/*
-   PROCFILES   : process object file.
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -67,6 +61,9 @@
 #include "hash.h"
 
 static bool             EndOfLib( file_list *, unsigned long );
+static void             IncLoadObjFiles( void );
+static void             DoPass1( mod_entry *next, file_list *list );
+static void             SkipFile( file_list *list, unsigned long *loc );
 
 extern void ProcObjFiles( void )
 /******************************/

@@ -32,7 +32,7 @@
 
 // linker specific structures for novell load files
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 #ifdef _EXENOV_H
 // this is the portion of the nlm_header which is of a fixed size.
@@ -116,5 +116,5 @@ extern void     FiniNovellLoadFile( void );
 extern void     AddNovImpReloc( symbol *, unsigned_32, bool, bool );
 extern void     FindExportedSyms( void );
 
-#pragma pack(pop);
+#pragma pack(pop)
 

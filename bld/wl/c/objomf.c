@@ -57,6 +57,22 @@
 /* forward declarations */
 
 static void     Pass1Cmd( byte );
+static void     ProcTHEADR( void );
+static void     Comment( void );
+static void     AddNames( void );
+static void     ProcSegDef( void );
+static void     ProcPubdef( bool static_sym );
+static void     UseSymbols( bool static_sym, bool iscextdef );
+static void     DefineGroup( void );
+static void     ProcLinnum( void );
+static void     ProcLxdata( bool islidata );
+static void     ProcLxdata( bool islidata );
+static void     ProcModuleEnd( void );
+static void     ProcAlias( void );
+static void     DoLazyExtdef( bool isweak );
+static void     ProcVFTableRecord( bool ispure );
+static void     ProcVFReference( void );
+static void     GetObject( segdata * seg, unsigned_32 obj_offset, bool lidata );
 
 byte            OMFAlignTab[] = {0,0,1,4,8,2,12};
 

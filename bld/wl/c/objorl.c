@@ -62,7 +62,7 @@ static long             ORLFilePos;
 
 static long             ORLSeek( void *, long, int );
 static void *           ORLRead( void *, size_t );
-static int              IsOrlTocReloc( orl_reloc_type );
+static void             ClearCachedData( file_list *list );
 
 static orl_funcs        ORLFuncs = { ORLRead, ORLSeek, ChkLAlloc, LFree };
 static orl_reloc        SavedReloc;
