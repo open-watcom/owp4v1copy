@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger stub functions.
 *
 ****************************************************************************/
 
@@ -44,6 +43,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <process.h>
 
 extern void             FlushEOC(void);
