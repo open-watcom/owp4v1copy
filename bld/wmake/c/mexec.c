@@ -248,11 +248,9 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
-    "RM",
-#define COM_RM      29
     "RMDIR",
     "SET",
-#define COM_SET     31
+#define COM_SET     30
 #define LEN_SET     3
     "SETLOCAL",
     "SHIFT",
@@ -1445,6 +1443,7 @@ STATIC RET_T handleCHDrive( char *cmd )
 #endif
 
 
+#if !defined( __UNIX__ )
 STATIC RET_T handleRMSyntaxError( void )
 /***************************************/
 {
@@ -1543,6 +1542,7 @@ STATIC RET_T handleRM( char *cmd )
 
     return( rt );
 }
+#endif
 
 STATIC BOOLEAN hasMetas( const char *cmd )
 /*****************************************
@@ -1729,7 +1729,9 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_SET:   my_ret = handleSet( cmd );          break;
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
+#if !defined( __UNIX__ )
         case COM_RM:    my_ret = handleRM( cmd );           break;
+#endif
 #if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
         case COM_CHDIR: my_ret = handleCD( cmd );           break;
