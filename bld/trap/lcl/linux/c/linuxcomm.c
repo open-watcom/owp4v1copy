@@ -33,7 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <termios.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include "linuxcomm.h"
 #include "trpimp.h"
 
@@ -114,58 +116,37 @@ unsigned FindFilePath( int exe, char *name, char *result )
 
 unsigned ReqRead_user_keyboard()
 {
-    // TODO: Implement this for Linux!
-#if 0
-    struct _console_ctrl    *con;
-    unsigned                con_num;
-    int                     con_hdl;
-    int                     con_mode;
-    char                    chr;
-    //NYI: what about QNX windows?
-    static char             con_name[] = "/dev/conXX";
-    unsigned                timeout;
     read_user_keyboard_req  *acc;
     read_user_keyboard_ret  *ret;
-
-#   define FIRST_DIGIT (sizeof( con_name ) - 3)
+    fd_set                  rdfs;
+    struct timeval          tv;
+    struct timeval          *ptv;
+    struct termios          old, new;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    timeout = acc->wait * 10;
-    if( timeout == 0 ) timeout = -1;
+
+    tcgetattr( STDIN_FILENO, &old );
+    new = old;
+    new.c_iflag &= ~(IXOFF | IXON);
+    new.c_lflag &= ~(ECHO | ICANON | NOFLSH);
+    new.c_lflag |= ISIG;
+    new.c_cc[VMIN] = 1;
+    new.c_cc[VTIME] = 0;
+    tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
+    
+    FD_ZERO( &rdfs );
+    FD_SET( STDIN_FILENO, &rdfs );
+    tv.tv_sec = acc->wait;
+    tv.tv_usec = 0;
+    ptv = &tv;
+    if( acc->wait == 0 ) ptv = NULL;
+
     ret->key = '\0';
-    con = console_open( 2, O_WRONLY );
-    if( con == NULL ) {
-        return( sizeof( *ret ) );
-    }
-    con_num = console_active( con, -1 );
-    console_close( con );
-    con_name[ FIRST_DIGIT + 0 ] = (con_num / 10) + '0';
-    con_name[ FIRST_DIGIT + 1 ] = (con_num % 10) + '0';
+    if ( select( 1, &rdfs, NULL, NULL, ptv ) )
+        read( STDIN_FILENO, &ret->key, 1 );
 
-    con_hdl = open( con_name, O_RDONLY );
-    if( con_hdl < 0 ) {
-        if( timeout == -1 ) timeout = 50;
-        sleep( timeout / 10 );
-        return( sizeof( *ret ) );
-    }
-    con_mode = dev_mode( con_hdl, 0, _DEV_MODES );
-    if( dev_read( con_hdl, &chr, 1, 1, 0, timeout, 0, 0 ) == 1 ) {
-        if( chr == 0xff ) {
-            read( con_hdl, &chr, 1 );
-            chr = '\0';
-        }
-        ret->key = chr;
-    }
-    dev_mode( con_hdl, con_mode, _DEV_MODES );
-    close( con_hdl );
-    return( sizeof( *ret ) );
-#endif
-    read_user_keyboard_req  *acc;
-    read_user_keyboard_ret  *ret;
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    ret->key = ' ';
+    tcsetattr( STDIN_FILENO, TCSADRAIN, &old );
     return( sizeof( *ret ) );
 }
 

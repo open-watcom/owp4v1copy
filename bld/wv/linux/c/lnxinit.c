@@ -165,6 +165,7 @@ long _fork( char *cmd, unsigned len )
             dup2( DbgConHandle, 1 );
             dup2( DbgConHandle, 2 );
             close( DbgConHandle );
+            setpgid( 0, 0 );
             execve(shell, argv, (const char **)environ);
             exit( 1 );
     } else {

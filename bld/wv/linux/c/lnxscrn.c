@@ -59,27 +59,47 @@ extern void     StartupErr( char * );
 extern int      GUIInitMouse( int );
 extern void     GUIFiniMouse( void );
 extern char     *Format(char *,char *,... );
-extern void             ReleaseProgOvlay( bool );
-extern void             KillDebugger( int );
+extern void     ReleaseProgOvlay( bool );
+extern void     KillDebugger( int );
 
 extern char     *UITermType;
 extern char     XConfig[];
 extern char     *TxtBuff;
 
-char                *DbgTerminal;
-unsigned            DbgConsole;
-unsigned            PrevConsole;
-unsigned            InitConsole;
-int                 DbgConHandle;
-int                 DbgLines;
-int                 DbgColumns;
-int                 PrevLines;
-int                 PrevColumns;
-struct _console_ctrl *ConCtrl;
+char            *DbgTerminal;
+unsigned        DbgConsole;
+unsigned        PrevConsole;
+unsigned        InitConsole = -1;
+int             DbgConHandle;
+int             DbgLines;
+int             DbgColumns;
+int             PrevLines;
+int             PrevColumns;
 
-pid_t               XTermPid;
+pid_t           XTermPid;
 
-enum { C_XWIN, C_QCON, C_TTY, C_CURTTY } ConMode;
+/* definitions which should be in sys/vt.h */
+#define VT_OPENQRY      0x5600  /* find available vt */
+#define VT_GETSTATE     0x5603  /* get global vt state info */
+#define VT_ACTIVATE     0x5606  /* make vt active */
+#define VT_WAITACTIVE   0x5607  /* wait for vt active */
+#define VT_DISALLOCATE  0x5608  /* free memory associated to vt */
+#define VT_RESIZE       0x5609  /* set kernel's idea of screensize */
+
+struct vt_sizes {
+        unsigned short v_rows;          /* number of rows */
+        unsigned short v_cols;          /* number of columns */
+        unsigned short v_scrollsize;    /* number of lines of scrollback */
+};
+
+struct vt_stat {
+        unsigned short v_active;        /* active vt */
+        unsigned short v_signal;        /* signal to send */
+        unsigned short v_state;         /* vt bitmask */
+};
+/* ... */
+
+enum { C_XWIN, C_VC, C_TTY, C_CURTTY } ConMode;
 
 void RingBell()
 {
@@ -140,7 +160,7 @@ static bool TryXWindows()
     }
     tcgetattr(slavefd, &termio);
     termio.c_lflag &= ~ECHO;
-    tcsetattr(slavefd, TCSADRAIN, &termio);
+    tcsetattr(slavefd, TCSANOW, &termio);
     argc = 0;
     p = XConfig;
     for( ;; ) {
@@ -178,6 +198,7 @@ static bool TryXWindows()
     fcntl( slavefd, F_SETFD, FD_CLOEXEC );
     XTermPid = fork();
     if (XTermPid == 0) { /* child */
+        setpgid( 0, 0 );
         execvp( argv[0], (const char **)argv );
         exit( 1 );
     }
@@ -188,69 +209,53 @@ static bool TryXWindows()
         res = read(slavefd, &buf, 1);
     } while ( res != -1 && buf != '\n' );
     termio.c_lflag |= ECHO;
-    tcsetattr(slavefd, TCSADRAIN, &termio);
+    tcsetattr(slavefd, TCSANOW, &termio);
     
     signal( SIGHUP, &HupHandler );
     return( TRUE );
 }
 
-#if 0
-/* something like what openvt() does can be done for the Linux
-   console. That probably involves some ioctls;
-   see console_ioctls(4)
-*/
-static bool TryQConsole()
+static bool TryVC( void )
 {
-#if 0
     char                        *ptr;
-    char                        *term;
-    char *tty_name;
+    struct vt_stat vt_state;
+    struct winsize winsize;
+    struct vt_sizes vt_sizes;
+    char tty_name[20];
+    int len;
 
-    if( qnx_psinfo( PROC_PID, getpid(), &psinfo, 0, 0 ) != getpid() ) {
-        StartupErr( "unable to obtain process information" );
+    len = readlink( "/proc/self/fd/0", tty_name, sizeof( tty_name ) );
+    if ( len < 0 )
+        return( FALSE );
+    tty_name[ len ] = '\0';
+    if( DbgConsole == 0 ) {
+        DbgConHandle = open( tty_name, O_RDWR );
+        if( DbgConHandle == -1 )
+            return( FALSE );
+        if( ioctl( DbgConHandle, VT_OPENQRY, &DbgConsole ) )
+            return( FALSE );
+        close( DbgConHandle );
     }
-    if( qnx_sid_query( PROC_PID, psinfo.sid, &info ) != psinfo.sid ) {
-        StartupErr( "unable to obtain console name" );
-    }
-    tty_name =
-    ptr = &tty_name[ strlen( tty_name ) ];
+    ptr = &tty_name[ len ];
     for( ;; ) {
         --ptr;
         if( *ptr < '0' || *ptr > '9' ) break;
     }
-    if( DbgConsole != 0 ) {
-        ptr[ 1 ] = '0' + DbgConsole / 10;
-        ptr[ 2 ] = '0' + DbgConsole % 10;
-        ptr += 2;
-    }
-    ptr[1] = NULLCHAR;
+    sprintf ( ptr + 1, "%d", DbgConsole );
     DbgConHandle = open( tty_name, O_RDWR );
-    if( DbgConHandle == -1 ) {
-        StartupErr( "unable to open system console" );
-    }
-    term = getenv( "TERM" );
-    if( term != NULL && strcmp( term, "qnxw" ) == 0 ) {
-        /* in QNX windows */
-#define PROP_STRING     "\033\"pwd\""
-        write( DbgConHandle, PROP_STRING, sizeof( PROP_STRING ) - 1 );
-    }
-
-    ConCtrl = console_open( DbgConHandle, O_WRONLY );
-    if( ConCtrl == NULL ) {
-        close( DbgConHandle );
+    if ( DbgConHandle == -1 )
         return( FALSE );
-    }
-    if( dev_info( DbgConHandle, &dev ) == -1 ) {
-        StartupErr( "unable to obtain console information" );
-    }
-    DbgConsole = dev.unit;
-    console_size( ConCtrl, DbgConsole, 0, 0, &PrevLines, &PrevColumns );
-    console_size( ConCtrl, DbgConsole, DbgLines, DbgColumns, 0, 0 );
-    InitConsole = console_active( ConCtrl, -1 );
-#endif
-    return( FALSE );
+    if( ioctl( DbgConHandle, VT_GETSTATE, &vt_state ) )
+        return( FALSE );
+    InitConsole = vt_state.v_active;
+    ioctl( DbgConHandle, TIOCGWINSZ, &winsize );
+    PrevLines = winsize.ws_row;
+    PrevColumns = winsize.ws_col;
+    vt_sizes.v_rows = DbgLines;
+    vt_sizes.v_cols = DbgColumns;
+    ioctl( DbgConHandle, VT_RESIZE, &vt_sizes );
+    return( TRUE );
 }
-#endif
 
 static bool TryTTY()
 {
@@ -286,10 +291,8 @@ void InitScreen()
     }
     if( TryTTY() ) {
         ConMode = C_TTY;
-#if 0
-    } else if( TryQConsole() ) {
-        ConMode = C_QCON;
-#endif
+    } else if( TryVC() ) {
+        ConMode = C_VC;
     } else if( TryXWindows() ) {
         ConMode = C_XWIN;
     } else {
@@ -343,6 +346,7 @@ static int DebugPutc( int c )
 bool DebugScreen()
 {
     extern bool UserForcedTermRefresh;
+    struct vt_stat vt_state;
     
     switch( ConMode ) {
     case C_TTY:
@@ -352,11 +356,12 @@ bool DebugScreen()
         UserForcedTermRefresh = TRUE;
         tputs( enter_ca_mode, 1, DebugPutc );
         break;
-#if 0
-    case C_QCON:
-        PrevConsole = console_active( ConCtrl, DbgConsole );
+    case C_VC:
+        ioctl( 0, VT_GETSTATE, &vt_state );
+        PrevConsole = vt_state.v_active;
+        ioctl( 0, VT_ACTIVATE, DbgConsole );
+        ioctl( 0, VT_WAITACTIVE, DbgConsole );
         break;
-#endif
     }
     return( FALSE );
 }
@@ -379,11 +384,10 @@ bool UserScreen()
     case C_CURTTY:
         tputs( exit_ca_mode, 1, DebugPutc );
         break;
-#if 0
-    case C_QCON:
-        console_active( ConCtrl, PrevConsole );
+    case C_VC:
+        ioctl( 0, VT_ACTIVATE, PrevConsole );
+        ioctl( 0, VT_WAITACTIVE, PrevConsole );
         break;
-#endif
     }
     return( FALSE );
 }
@@ -394,16 +398,19 @@ void SaveMainWindowPos()
 
 void FiniScreen()
 {
+    struct vt_sizes vt_sizes;
+    
     if( _IsOn( SW_USE_MOUSE ) ) GUIFiniMouse();
     uistop();
     switch( ConMode ) {
-#if 0
-    case C_QCON:
-        console_active( ConCtrl, InitConsole );
-        console_size( ConCtrl, DbgConsole, PrevLines, PrevColumns, NULL, NULL );
-        console_close( ConCtrl );
+    case C_VC:
+        ioctl( 0, VT_ACTIVATE, InitConsole );
+        ioctl( 0, VT_WAITACTIVE, InitConsole );
+        vt_sizes.v_rows = PrevLines;
+        vt_sizes.v_cols = PrevColumns;
+        ioctl( 0, VT_RESIZE, &vt_sizes );
+        ioctl( 0, VT_DISALLOCATE, DbgConsole );
         break;
-#endif
     case C_XWIN:
         signal( SIGHUP, SIG_IGN );
         kill( XTermPid, SIGTERM );
@@ -415,7 +422,7 @@ void ScrnSpawnStart( void )
 {
     char        *term;
 
-    if( ConCtrl == NULL && UITermType != NULL ) {
+    if( InitConsole == -1 && UITermType != NULL ) {
         term = getenv( "TERM" );
         if( term == NULL ) term = "";
         strcpy( TxtBuff, term );
@@ -425,7 +432,7 @@ void ScrnSpawnStart( void )
 
 void ScrnSpawnEnd( void )
 {
-    if( ConCtrl == NULL && UITermType != NULL ) {
+    if( InitConsole == -1 && UITermType != NULL ) {
         setenv( "TERM", TxtBuff, 1 );
     }
 }

@@ -29,7 +29,14 @@
 ****************************************************************************/
 
 /* started by Kendall Bennett
-   continued by Bart Oldeman -- thanks to Andi Kleen's stepper.c example */
+   continued by Bart Oldeman -- thanks to Andi Kleen's stepper.c example
+
+   still to do:
+   * complete watchpoints
+   * combine global into a struct (like the QNX trap file ) to make it a little
+     clearer what is global and what not.
+   * implement thread support
+*/
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -60,6 +67,8 @@ static pid_t        pid;
 static int          attached;
 static u_short      flatCS;
 static u_short      flatDS;
+static int          last_sig;
+static int          at_end;
 
 #if 0
 void Out( char *str )
@@ -575,6 +584,8 @@ unsigned ReqProg_load()
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
 
+    last_sig = -1;
+    at_end = FALSE;
     parms = (char *)GetInPtr( sizeof( *acc ) );
     parm_start = parms;
     len = GetTotalSize() - sizeof( *acc );
@@ -673,7 +684,7 @@ unsigned ReqProg_kill()
 {
     prog_kill_ret   *ret;
 
-    if ( pid != 0 ) {
+    if ( pid != 0 && !at_end ) {
         if ( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
         } else {            
@@ -682,6 +693,7 @@ unsigned ReqProg_kill()
             waitpid( pid, &status, 0 );
         }
     }
+    at_end = FALSE;
     ret = GetOutPtr( 0 );
     ret->err = 0;
     return( sizeof( *ret ) );
@@ -850,16 +862,26 @@ static unsigned ProgRun( int step )
     user_regs_struct    regs;
     int                 status;
     prog_go_ret         *ret;
+    void                (*old)(int);
     
     if ( pid == 0 )
         return 0;
     ret = GetOutPtr( 0 );
+
+    if ( at_end ) {
+        ret->conditions = COND_TERMINATE;
+        goto end;
+    }
+    
+    /* we only want child-generated SIGINTs now */
+    old = signal( SIGINT, SIG_IGN );
     if ( step ) {
         sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
     } else {
         sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
     }
     waitpid ( pid, &status, WUNTRACED );
+    signal( SIGINT, old );
     if ( WIFSTOPPED( status ) ) {
         switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
         case SIGSEGV:
@@ -869,10 +891,13 @@ static unsigned ProgRun( int step )
         case SIGBUS:
         case SIGQUIT:
         case SIGSYS:
+            last_sig = ptrace_sig;
             ret->conditions = COND_EXCEPTION;
+            ptrace_sig = 0;
             break;
         case SIGINT:
             ret->conditions = COND_USER;
+            ptrace_sig = 0;
             break;
         case SIGTRAP:
             if ( !step ) {
@@ -889,9 +914,10 @@ static unsigned ProgRun( int step )
             break;
         }
     } else if ( WIFEXITED( status ) ) {
+        at_end = TRUE;
         ret->conditions = COND_TERMINATE;
-        return( sizeof( *ret ) );
-    }
+        goto end;
+    }    
     if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
         Out( " eip " );
         OutNum( regs.eip );
@@ -902,6 +928,7 @@ static unsigned ProgRun( int step )
         ret->stack_pointer.segment = regs.ss;
         ret->conditions |= COND_CONFIG;
     }
+ end:
     return( sizeof( *ret ) );
 }
 
@@ -960,12 +987,53 @@ unsigned ReqGet_message_text()
 {
     get_message_text_ret    *ret;
     char                    *err_txt;
+    static const char *const ExceptionMsgs[] = {
+        "",
+        TRP_QNX_hangup,
+        TRP_QNX_user_interrupt,
+        TRP_QNX_quit,
+        TRP_EXC_illegal_instruction,
+        TRP_QNX_trap,
+        TRP_QNX_abort,
+        TRP_QNX_bus_error,
+        TRP_QNX_floating_point_error,
+        TRP_QNX_process_killed,
+        TRP_QNX_user_signal_1,
+        TRP_EXC_access_violation "(SIGSEGV)",
+        TRP_QNX_user_signal_2,
+        TRP_QNX_broken_pipe,
+        TRP_QNX_alarm,
+        TRP_QNX_process_termination,
+        TRP_EXC_floating_point_stack_check,
+        TRP_QNX_child_stopped,
+        TRP_QNX_process_continued,
+        TRP_QNX_process_stopped,
+        "", /* sigtstp */
+        "", /* sigttin */
+        "", /* sigttou */
+        TRP_QNX_urgent,
+        "", /* sigxcpu */
+        "", /* sigxfsz */
+        "", /* sigvtalarm */
+        "", /* sigprof */
+        TRP_QNX_winch,
+        TRP_QNX_poll,
+        TRP_QNX_power_fail,
+        TRP_QNX_sys,
+        ""
+    };
 
-    // TODO: Eventually need to get OS exception error information here
-    //       so we can display for the user in the debugger!
     ret = GetOutPtr( 0 );
     err_txt = GetOutPtr( sizeof(*ret) );
-    err_txt[0] = '\0';
+    if( last_sig == -1 ) {
+        err_txt[0] = '\0';
+    } else if( last_sig > ( (sizeof(ExceptionMsgs) / sizeof(char *) - 1) ) ) {
+        strcpy( err_txt, TRP_EXC_unknown );
+    } else {
+        strcpy( err_txt, ExceptionMsgs[ last_sig ] );
+        last_sig = -1;
+        ret->flags = MSG_NEWLINE | MSG_ERROR;
+    }
     return( sizeof( *ret ) + strlen( err_txt ) + 1 );
 }
 
@@ -1008,25 +1076,6 @@ unsigned ReqGet_lib_name( void )
     return( sizeof( *ret ) );
 }
 
-static int last_sig;
-
-static void sighand(int s)
-{
-    last_sig = s;
-}
-
-/* Usable sigaction wrapper */
-static int setsignal(int sig, void (*hand)(int), int flags, sigset_t *mask)
-{
-    struct sigaction sa = {0};
-
-    sa.sa_handler = hand;
-    if (mask) 
-        sa.sa_mask = *mask;
-    sa.sa_flags = flags;
-    return sigaction(sig, &sa, NULL); 
-}
-
 trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 {
     trap_version ver;
@@ -1040,17 +1089,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 
     OrigPGrp = getpgrp();
 
-    setsignal(SIGTRAP, sighand, 0, NULL); 
-    setsignal(SIGCHLD, sighand, 0, NULL); 
-    setsignal(SIGSYS, sighand, 0, NULL); 
-    setsignal(SIGQUIT, sighand, 0, NULL); 
-    setsignal(SIGBUS, sighand, 0, NULL); 
-    setsignal(SIGABRT, sighand, 0, NULL); 
-    setsignal(SIGFPE, sighand, 0, NULL); 
-    setsignal(SIGSEGV, sighand, 0, NULL); 
-    setsignal(SIGILL, sighand, 0, NULL); 
-    setsignal(SIGINT, sighand, 0, NULL); 
-    
     return( ver );
 }
 
