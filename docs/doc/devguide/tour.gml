@@ -1,4 +1,4 @@
-.chap Introduction
+.chap Project Overview
 
 This document serves as an introduction and a guide for developers of
 the Open Watcom compilers and tools. It is not particularly useful for
@@ -334,3 +334,106 @@ contain specific documentation pertaining to them, usually located
 in a directory called 'doc' or somesuch. For the most
 part, the truly uptodate and comprehensive documentation is the
 source code.
+
+
+.chap First Steps
+
+This chapter briefly describes the prerequisite steps necessary
+to build and/or contribute to the Open Watcom project &mdash how
+to get the source code and how to set up the build environment.
+
+.section Connecting up
+.*
+.np
+.ix 'Perforce'
+The most uptodate version of the Open Watcom source code lives on the
+Open Watcom Perforce server. It is possible to go straight to the
+Perforce repository but most people will find it much easier to
+get a source archive first. The source archives can be found
+at the Open Watcom web site,
+.id http://www.openwatcom.org/
+along with latest information on Perforce setup. You will need
+working installation of Watcom C/C++ 11.0c or later and some
+free disk space (one gigabyte should do).
+.np
+The Open Watcom source tree can be located in any directory
+on any drive. After extracting the source archive you will find
+a very important batch file called
+.us setvars
+in your Open Watcom root directory. This will set up a bunch of
+necessary environment variables but first you'll have to edit it
+to reflect your directory structure etc. It also contains the
+necessary Perforce settings.
+.np
+When you think you have set up things correctly, try running
+the
+.us mkrel2
+batch file (located in the
+.us bat
+subdirectory). If you did everything right, you'll end up with
+a ton of empty directories under the
+.us rel2
+directory. These are where the built binaries and other stuff
+end up.
+.np
+Now is the time to connect to Perforce. Again, most uptodate
+information can be found on the Open Watcom web site. If you followed
+the instructions correctly, no servers are down and no other unpredictable
+(or maybe predictable) things happened, you will have brought your source
+tree to the latest revision (aka tip revision).
+
+.section Gearing up for Building
+.*
+.np
+.ix 'builder'
+.ix 'pmake'
+Before you start building the Open Watcom tools proper, you will need to
+build several helper tools:
+.us builder, pmake, cdsay
+and at least some of the POSIX tools. These tools are not part of the
+regular build process because they don't change very often at all and
+because the build process won't work without them.
+.np
+The tools can be found in appropriately named subdirectories of the
+.us bld
+directory:
+.us builder
+and
+.us cdsay
+live in the
+.us builder
+directory,
+.us pmake
+can be found under
+.us pmake
+and POSIX tools under
+.us posix.
+It is so simple that it seems almost pointless to point out the obvious.
+.np
+To build executables, go to a subdirectory of the project directory which sounds
+like it might be appropriate for your platform and run
+.us wmake.
+If you set up everything correctly, you will end up with working binaries.
+If not, it's back to square one &mdash the most likely source of problems
+is incorrectly set up
+.us setvars
+batch file.
+.np
+Now that you have the tools binaries, you need to copy them to a directory
+on your
+.id PATH.
+The
+.us bin
+or
+.us binp
+(for OS/2 binaries) subdirectory in the Open Watcom root is usually a good
+place, but don't feel too constrained in your choice.
+.np
+If you've got this far &mdash congratulations, you've finished the one-time
+steps. You shouldn't need to redo them unless you decide to start from scratch,
+your harddrive decides to die or some similarly catastrophic event decides
+to happen.
+.np
+You should now read the next chapter that describes the build architecture
+and also lists the magic incantations necessary to invoke builds.
+

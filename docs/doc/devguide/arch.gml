@@ -480,3 +480,116 @@ host_CPU=Y
 .np
 That's it! The only downside is that sticking to these guidelines will make
 everyone's life less exciting.
+
+.chap Build Process
+
+We use the (Open) Watcom C/C++ compilers and Watcom
+.us wmake
+to build our tools, but at the top level we have a custom tool which oversees
+traversing the build tree, deciding which projects to build for what platforms,
+logging the results to a file, and copying the finished software into the
+release tree (rel2), making fully automated builds a possibility. If nothing
+goes wrong that is.
+
+.section Builder
+.*
+.np
+.ix 'builder'
+This wondrous tool is called
+.us builder.
+You can see
+.us bld\builder\builder.doc
+for detailed info on the tool and/or look at the source if the documentation
+doesn't satisfy you.
+.np
+So how does builder work? Each project has a
+.us lang.ctl
+builder script file. If you go to a project directory and run builder, it will
+make only that project; if you go to
+.us bld
+and run builder, it will build everything under the sun. The overall build uses
+.us bat\lang.ctl
+which includes all of the individual project
+.us lang.ctl
+files that we use. Note that if you run builder, it will traverse directories upwards
+until it finds a
+.us lang.ctl
+(or it hits the root and still doesn't find anything, but then you must have
+surely done something wrong). Results are logged to
+.us build.log
+in the current project directory and the previous
+.us build.log
+file is copied to
+.us build.lo1.
+The log file contains captured console output (both stdout and stderr).
+.np
+Common commands:
+.begnote
+.note builder build
+&mdash build the software
+.note builder rel2
+&mdash build the software, and copy it into the "rel2" release tree
+.note builder clean
+&mdash erase object files, executables, etc. so you can build from scratch
+.endnote
+
+.section Pmake
+.*
+.np
+.ix 'pmake'
+Many of the projects use the "pmake" features of builder (see
+.us builder.doc
+) or standalone pmake tool. If you want to see its guts, the
+.us pmake
+source is in
+.us bld\pmake.
+.np
+Each makefile has a comment line at the top of the file which is read by
+.us pmake.
+Most of our
+.us lang.ctl
+files will have a line similar to this:
+.millust begin
+pmake -d build -h ...
+.millust end
+this will cause
+.us wmake
+to be run in every subdirectory where the makefile contains
+.id "build"
+on the
+.id #pmake
+line. See for instance the C compiler makefiles (in
+.us bld\cc)
+for an example.
+.np
+You can also specify more parmeters to build a smaller subset of files. This
+is especially useful if you do not have all required tools/headers/libraries
+for all target platforms.
+.np
+For example:
+.millust begin
+builder rel2 os_nt
+.millust end
+will (generally) build only the NT version of the tools.
+.np
+A word of warning: running a full build may take upwards of two hours on
+a ~1GHz machine. There is a LOT to build! This is not your ol' OS kernel
+or a single-host, single-target C/C++ compiler.
+.np
+It is generally possible to build specific binaries/libraries by going to
+their directory and running
+.us wmake.
+For instance to build the OS/2 version of
+.us wlink
+you can go to
+.us bld\wl\os2386
+and run
+.us wmake
+there (note that the process won't successfully finish unless several
+required libraries had been built). Builder is useful for making full
+"release" builds while running
+.us wmake
+in the right spot is the thing to do during development.
+.np
+Happy Building!
+

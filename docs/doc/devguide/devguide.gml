@@ -39,7 +39,7 @@
 :include file='&book..kw'
 .do end
 .*
-.sepsect Overview
+.sepsect Introduction
 :INCLUDE file='TOUR'.
 .*
 .sepsect Building
