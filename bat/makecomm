@@ -20,7 +20,6 @@ $# just in case anyone is curious ...
 
 # don't ask, just nuke the files
 .ERASE
-.CONTINUE
 
 # if you wish to build debug version
 !ifdef %DEBUG_BUILD
