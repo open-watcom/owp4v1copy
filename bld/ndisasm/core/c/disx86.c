@@ -1158,6 +1158,8 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
     case DI_X86_stmxcsr01:
     case DI_X86_stmxcsr10:
         return( DRT_X86_XMM32 );
+    default:
+        break;
     }
 
     if( w == W_FULL ) {
@@ -1224,7 +1226,7 @@ dis_ref_type X86FGetRefType( MF_BITS mf, dis_dec_ins * ins )
     case MF_1: return( DRT_X86_DWORD );
     case MF_2: return( DRT_X86_QWORDF );
     case MF_3: return( DRT_X86_WORD );
-    default:  return( DRT_X86_WORD );
+    default:   return( DRT_X86_WORD );
     }
 }
 
@@ -1396,6 +1398,8 @@ dis_handler_return X86SReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
     X86GetSReg(W_DEFAULT, code.sreg.sreg, ins);
     switch( ins->type ) {
@@ -1407,6 +1411,8 @@ dis_handler_return X86SReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 #if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
@@ -1415,11 +1421,15 @@ dis_handler_return X86SReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_push3:
                 ins->type = DI_X86_pushd;
                 break;
+            default:
+                break;
             }
         } else {
             switch( ins->type ) {
             case DI_X86_push3:
                 ins->type = DI_X86_pushw;
+                break;
+            default:
                 break;
             }
         }
@@ -1459,6 +1469,8 @@ dis_handler_return X86NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 
     if( ins->flags & DIF_X86_OPND_LONG ) {
@@ -1483,6 +1495,8 @@ dis_handler_return X86NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
             break;
         case DI_X86_pushf:
             ins->type = DI_X86_pushfd;
+            break;
+        default:
             break;
         }
     }
@@ -1546,6 +1560,8 @@ dis_handler_return X86String_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
         ins->op[0].ref_type = X86GetRefType( code.type1.w, ins );
         ins->num_ops = 1;
+        break;
+    default:
         break;
     }
     return( DHR_DONE );
@@ -1772,6 +1788,8 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
     X86GetReg( W_DEFAULT, code.type2.reg, ins );
     switch( ins->type ) {
@@ -1781,6 +1799,8 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 #if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
@@ -1789,11 +1809,15 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
             case DI_X86_push2:
                 ins->type = DI_X86_pushd;
                 break;
+            default:
+                break;
             }
         } else {
             switch( ins->type ) {
             case DI_X86_push2:
                 ins->type = DI_X86_pushw;
+                break;
+            default:
                 break;
             }
         }
@@ -1827,6 +1851,8 @@ dis_handler_return X86AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
         ++ins->num_ops;
         X86GetReg( code.type1.w, REG_AX, ins );
         break;
+    default:
+        break;
     }
     return( DHR_DONE );
 }
@@ -1850,6 +1876,8 @@ dis_handler_return X86JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )
             ins->type = DI_X86_jecxz;
         }
         return( DHR_DONE );
+    default:
+        break;
     }
 
     if( ins->flags & DIF_X86_ADDR_SIZE ) {
@@ -1864,6 +1892,8 @@ dis_handler_return X86JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_loopnz:
                 ins->type = DI_X86_loopnzd;
                 break;
+            default:
+                break;
             }
         } else {
             switch( ins->type ) {
@@ -1875,6 +1905,8 @@ dis_handler_return X86JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )
                 break;
             case DI_X86_loopnz:
                 ins->type = DI_X86_loopnzw;
+                break;
+            default:
                 break;
             }
         }
@@ -1969,6 +2001,8 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 
     switch( code.sreg.sreg ) {
@@ -1989,6 +2023,8 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 #if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
@@ -2000,6 +2036,8 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_push4g:
                 ins->type = DI_X86_pushd;
                 break;
+            default:
+                break;
             }
         } else {
             switch( ins->type ) {
@@ -2008,6 +2046,8 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins )
                 break;
             case DI_X86_push4g:
                 ins->type = DI_X86_pushw;
+                break;
+            default:
                 break;
             }
         }
@@ -2043,6 +2083,8 @@ dis_handler_return X86ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 
     ins->size += 2;
@@ -2058,6 +2100,8 @@ dis_handler_return X86ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[ins->num_ops].ref_type = X86GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
         break;
+    default:
+        break;
     }
 #if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
@@ -2066,11 +2110,15 @@ dis_handler_return X86ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_push:
                 ins->type = DI_X86_pushd;
                 break;
+            default:
+                break;
             }
         } else {
             switch( ins->type ) {
             case DI_X86_push:
                 ins->type = DI_X86_pushw;
+                break;
+            default:
                 break;
             }
         }
@@ -2201,6 +2249,8 @@ dis_handler_return X86RegModRM_16B( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_call4:
         case DI_X86_jmp4:
             return( DHR_INVALID );
+        default:
+            break;
         }
     }
 
@@ -2221,6 +2271,8 @@ dis_handler_return X86RegModRM_16B( dis_handle *h, void *d, dis_dec_ins *ins )
         break;
     case DI_X86_lea:
         ins->op[1].type = DO_ABSOLUTE;
+        break;
+    default:
         break;
     }
     return( DHR_DONE );
@@ -2476,6 +2528,8 @@ dis_handler_return X86ModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_sidt10:
         case DI_X86_cmpxchg8b:
             return( DHR_INVALID );
+        default:
+            break;
         }
     }
     X86GetModRM( W_DEFAULT, code.type1.mod,code.type1.rm, d, ins,
@@ -2517,6 +2571,8 @@ dis_handler_return X86RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_lss:
         case DI_X86_lfs:
             return( DHR_INVALID );
+        default:
+            break;
         }
     }
 
@@ -2691,13 +2747,15 @@ dis_handler_return X86FType3( dis_handle *h, void *d, dis_dec_ins *ins )
     }
 
     // Change the type of instruction used
-    if( !code.type3.d && code.type3.r || code.type3.d && !code.type3.r ) {
+    if( (!code.type3.d && code.type3.r) || (code.type3.d && !code.type3.r) ) {
         switch( ins->type ) {
         case DI_X86_fdiv11:
             ins->type = DI_X86_fdivr11;
             break;
         case DI_X86_fsub11:
             ins->type = DI_X86_fsubr11;
+            break;
+        default:
             break;
         }
     } else {
@@ -2707,6 +2765,8 @@ dis_handler_return X86FType3( dis_handle *h, void *d, dis_dec_ins *ins )
             break;
         case DI_X86_fsubr11:
             ins->type = DI_X86_fsub11;
+            break;
+        default:
             break;
         }
     }
@@ -2819,6 +2879,8 @@ dis_handler_return X86FType4( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_fninit:
             ins->type = DI_X86_finit;
             break;
+        default:
+            break;
         }
     }
     return( DHR_DONE );
@@ -2889,6 +2951,8 @@ dis_handler_return X86FType1( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_fnstsw10:
             ins->type = DI_X86_fstsw;
             break;
+        default:
+            break;
         }
     }
     return( DHR_DONE );
@@ -2940,6 +3004,8 @@ dis_handler_return X86FTypeEnv( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_fnstenv10:
                 ins->type = DI_X86_fnstenvd;
                 break;
+            default:
+                break;
             }
         } else {
             switch(ins->type) {
@@ -2962,6 +3028,8 @@ dis_handler_return X86FTypeEnv( dis_handle *h, void *d, dis_dec_ins *ins )
             case DI_X86_fnstenv01:
             case DI_X86_fnstenv10:
                 ins->type = DI_X86_fnstenvw;
+                break;
+            default:
                 break;
             }
         }
@@ -2989,6 +3057,8 @@ dis_handler_return X86FTypeEnv( dis_handle *h, void *d, dis_dec_ins *ins )
             break;
         case DI_X86_fnstenvd:
             ins->type = DI_X86_fstenvd;
+            break;
+        default:
             break;
         }
     }
@@ -3269,6 +3339,8 @@ dis_handler_return X86MMRegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins 
     case DI_X86_movd_1:     // mm,r32/m32
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
+    default:
+        break;
     }
     X86XMMResetPrefixes();
     return( DHR_DONE );
@@ -3295,6 +3367,8 @@ dis_handler_return X86MMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *i
     case DI_X86_pinsrw11_1: // mm,r32,imm
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
+    default:
+        break;
     }
     X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
@@ -3315,6 +3389,8 @@ dis_handler_return X86MMRegModRMMixed_Rev( dis_handle *h, void *d, dis_dec_ins *
     switch( ins->type ) {
     case DI_X86_movd_3:     // r32/m32,mm
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
+        break;
+    default:
         break;
     }
     X86GetMM( code.type1.mm, ins );
@@ -3345,6 +3421,8 @@ dis_handler_return X86XMMRegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins
     case DI_X86_movd_2:     // x,r32/m32
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
+    default:
+        break;
     }
     X86XMMResetPrefixes();
     return( DHR_DONE );
@@ -3371,6 +3449,8 @@ dis_handler_return X86XMMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *
     case DI_X86_pinsrw11_2: // x,r32,imm
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
+    default:
+        break;
     }
     X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
@@ -3391,6 +3471,8 @@ dis_handler_return X86XMMRegModRMMixed_Rev( dis_handle *h, void *d, dis_dec_ins 
     switch( ins->type ) {
     case DI_X86_movd_4:     // r32/m32,x
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
+        break;
+    default:
         break;
     }
     X86GetXMM( code.type1.mm, ins );
@@ -3425,6 +3507,8 @@ dis_handler_return X86RegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_X86_pmovmskb_1: // r32,mm
         X86MMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_MM64 );
         break;
+    default:
+        break;
     }
     X86XMMResetPrefixes();
     return( DHR_DONE );
@@ -3448,6 +3532,8 @@ dis_handler_return X86RegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *ins
         break;
     case DI_X86_pextrw_1:   // r32,mm,imm
         X86MMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_MM64 );
+        break;
+    default:
         break;
     }
     X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
@@ -3573,6 +3659,8 @@ static unsigned AddRefType( char *p, unsigned len, dis_ref_type ref_type )
     case DRT_X86_DWORDF:
         p[len++] = 'l';
         break;
+    default:
+        break;
     }
     return( len );
 }
@@ -3592,13 +3680,15 @@ static dis_ref_type GetRefType( dis_dec_ins *ins, unsigned op )
         break;
     case DO_MEMORY_ABS:
         return( ins->op[op].ref_type );
+    default:
+        break;
     }
     return( DRT_NONE );
 }
 
 static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
 {
-    dis_ref_type        ref_type;
+    dis_ref_type        ref_type = DRT_NONE;
     unsigned            i;
 
     switch( ins->type ) {
@@ -3759,6 +3849,8 @@ static unsigned X86InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
                 case DRT_X86_DWORD:
                     *p++ = 'd';
                     break;
+                default:
+                    break;
                 }
             }
             ins->op[0].type |= DO_HIDDEN;
@@ -3767,6 +3859,8 @@ static unsigned X86InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         case DI_X86_xlat:
             *p++ = 'b';
             ins->op[0].type |= DO_HIDDEN;
+            break;
+        default:
             break;
         }
     }
@@ -3799,6 +3893,8 @@ static char *DisOpUnixFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
     case DI_X86_jmp4:
         /* indirect call/jump instructions */
         *p++ = '*';
+        break;
+    default:
         break;
     }
     switch( ins->op[i].type & DO_MASK ) {
@@ -3893,6 +3989,8 @@ static int NeedSizing( dis_dec_ins *ins, dis_format_flags flags, unsigned op_num
     case DI_X86_outs:
         /* these always need sizing */
         return( TRUE );
+    default:
+        break;
     }
     for( i = 0; i < ins->num_ops; ++i ) {
         switch( ins->op[i].type & DO_MASK ) {
@@ -3951,6 +4049,8 @@ static unsigned X86OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
             case DIF_X86_SS:
                 over = 's';
                 break;
+            default:
+                over = '\0';
             }
             ins_flags &= ~SEGOVER;
             if( flags & DFF_X86_UNIX ) *p++ = '%';
@@ -3979,6 +4079,8 @@ static unsigned X86OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
                 #define FAR_PTR "far ptr "
                 memcpy( p, FAR_PTR, sizeof( FAR_PTR ) - 1 );
                 p += sizeof( FAR_PTR ) - 1;
+                break;
+            default:
                 break;
             }
         }
