@@ -390,7 +390,7 @@ static void WriteDataPages( pe_header *header, pe_object *object )
     }
 }
 
-static void WalkImportsMods( void (*action)(dll_sym_info *, void*),
+static void WalkImportsMods( void (*action)(dll_sym_info *, unsigned*),
                              void *cookie )
 /****************************************************************/
 {
@@ -905,9 +905,11 @@ static void SwapDesc( virt_mem a, virt_mem b )
     PutInfo( b, &tmp, sizeof(procedure_descriptor) );
 }
 
-static bool SetPDataArray( segdata *sdata, virt_mem **array )
-/***********************************************************/
+static bool SetPDataArray( void *_sdata, void *_array )
+/*****************************************************/
 {
+    segdata    *sdata = _sdata;
+    virt_mem  **array = _array;
     offset      size;
     virt_mem    data;
 

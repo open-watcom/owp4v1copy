@@ -260,7 +260,8 @@ unsigned StringHashFunc( char *s, unsigned size ) {
 }
 
 /* ----------------------------------------------------------------------- */
-unsigned StringiHashFunc( char *s, unsigned size ) {
+unsigned StringiHashFunc( void *_s, unsigned size ) {
+    char *s = _s;
     enum { b = 101 };
     unsigned long key = 0;
     int i;

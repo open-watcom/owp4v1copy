@@ -1123,6 +1123,11 @@ extern outfilelist * NewOutFile( char * filename )
     return( fnode );
 }
 
+int stricmp_wrapper( const void *s1, const void *s2 )
+{
+    return stricmp( s1, s2 );
+}
+
 extern section * NewSection( void )
 /*********************************/
 {
@@ -1134,7 +1139,7 @@ extern section * NewSection( void )
     sect->classlist = NULL;
     sect->areas = NULL;
     sect->files = NULL;
-    sect->modFilesHashed = CreateHTable( 256, StringiHashFunc, stricmp,
+    sect->modFilesHashed = CreateHTable( 256, StringiHashFunc, stricmp_wrapper,
                                         ChkLAlloc, LFree );
     sect->mods = NULL;
     sect->reloclist = NULL;

@@ -222,9 +222,11 @@ static unsigned_32 WriteNovModules( fixed_header *header )
     return( wrote );
 }
 
-extern void NovDBIAddGlobal( symbol * sym )
-/*****************************************/
+extern void NovDBIAddGlobal( void * _sym )
+/****************************************/
 {
+    symbol *sym = _sym;
+        
     if( !IS_SYM_A_REF(sym)
             && !IS_SYM_ALIAS(sym)
             && sym->p.seg != NULL

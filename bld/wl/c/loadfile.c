@@ -249,8 +249,8 @@ extern void DefBSSSyms( void )
     DefABSSSym( BSS_EndSym );
 }
 
-static bool CompSymPtr( symbol *sym, symbol *chk )
-/************************************************/
+static bool CompSymPtr( void *sym, void *chk )
+/********************************************/
 {
     return chk == sym;
 }
@@ -773,7 +773,7 @@ static void BufImpWrite( char *buffer, int len )
     }
 }
 
-extern void WriteLoad3( void* dummy, void *buff, unsigned size )
+extern void WriteLoad3( void* dummy, char *buff, unsigned size )
 /**************************************************************/
 /* write a buffer out to the load file (useful as a callback) */
 {
@@ -824,9 +824,11 @@ extern unsigned long OffsetAlign( unsigned long off, unsigned long align )
     return( off + pad );
 }
 
-static bool WriteSegData( segdata *sdata, unsigned long *start )
-/**************************************************************/
+static bool WriteSegData( void *_sdata, void *_start )
+/****************************************************/
 {
+    segdata *sdata = _sdata;
+    unsigned long *start = _start;
     unsigned long newpos;
     signed long pad;
 
@@ -847,16 +849,16 @@ static void DoWriteLeader( seg_leader *seg, unsigned long start )
     RingLookup( seg->pieces, WriteSegData, &start );
 }
 
-extern void WriteLeaderLoad( seg_leader *seg )
-/********************************************/
+extern void WriteLeaderLoad( void *seg )
+/**************************************/
 {
     DoWriteLeader( seg, PosLoad() );
 }
 
-static bool DoGroupLeader( seg_leader *seg, unsigned long *start )
-/****************************************************************/
+static bool DoGroupLeader( void *seg, void *start )
+/*************************************************/
 {
-    DoWriteLeader( seg, *start + GetLeaderDelta( seg ) );
+    DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
     return FALSE;
 }
 

@@ -149,7 +149,7 @@ unsigned StringHashFunc( char *s, unsigned size );
 /*  StringiHashFunc -- Hash function for null-terminated strings.
     The same as StringHashFunc, but ignore the case. Size must be a power of 2.
 */
-unsigned StringiHashFunc( char *s, unsigned size );
+unsigned StringiHashFunc( void *s, unsigned size );
 
 /* Hash a pointer. Size must be a power of 2. */
 unsigned PtrHashFunc(void *p, unsigned size);

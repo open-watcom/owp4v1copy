@@ -980,9 +980,10 @@ extern void FreeImpNameTab( void )
 #define DEF_SEG_ON (SEG_PURE|SEG_READ_ONLY|SEG_CONFORMING|SEG_MOVABLE|SEG_DISCARD|SEG_RESIDENT|SEG_CONTIGUOUS)
 #define DEF_SEG_OFF (SEG_PRELOAD|SEG_INVALID)
 
-static void CheckGrpFlags( seg_leader *leader )
-/*********************************************/
+static void CheckGrpFlags( void *_leader )
+/****************************************/
 {
+    seg_leader     *leader = _leader;
     unsigned_16     sflags;
 
     sflags = leader->segflags;

@@ -171,10 +171,11 @@ static bool ReadARDict( file_list *list, unsigned long *loc, unsigned *numdicts,
 
 static ar_dict_entry *ARDict;   /* pointer to AR dictionary structures */
 
-static int ARCompI( const unsigned_16 *index1, const unsigned_16 *index2 )
-/************************************************************************/
+static int ARCompI( const void *index1, const void *index2 )
+/**********************************************************/
 {
-    return stricmp( ARDict->fnametab[ *index1 ], ARDict->fnametab[ *index2 ] );
+    return stricmp( ARDict->fnametab[ *(unsigned_16 *)index1 ],
+                    ARDict->fnametab[ *(unsigned_16 *)index2 ] );
 }
 
 extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)

@@ -87,8 +87,8 @@ static int ResClose( int handle )
     return close( handle );
 }
 
-static int ResRead( int handle, char * buffer, int len )
-/******************************************************/
+static int ResRead( int handle, void * buffer, size_t len )
+/*********************************************************/
 {
     return( QRead( handle, buffer, len, NULL ) );
 }
@@ -250,8 +250,8 @@ static void WalkClass( class_entry *class, void (*rtn)(seg_leader *) )
     RingWalk( class->segs, (void (*)(void *))rtn );
 }
 
-extern void SectWalkClass( section *sect, void (*rtn)(seg_leader *) )
-/*******************************************************************/
+extern void SectWalkClass( section *sect, void *rtn )
+/***************************************************/
 {
     class_entry *       class;
 
@@ -277,10 +277,10 @@ static void WalkList( node *list, void (*fn)( void * ) )
     }
 }
 
-static bool CmpSegName( seg_leader *leader, char *name )
-/******************************************************/
+static bool CmpSegName( void *leader, void *name )
+/************************************************/
 {
-    return stricmp( leader->segname, name ) == 0;
+    return stricmp( ((seg_leader *)leader)->segname, name ) == 0;
 }
 
 extern seg_leader * FindSegment( char *name )

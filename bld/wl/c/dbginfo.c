@@ -411,10 +411,10 @@ extern void ODBIAddrSectStart( section *sect )
     AllocDBIClasses( sect->classlist );
 }
 
-static bool AllocASeg( seg_leader *leader, group_entry *group )
-/*************************************************************/
+static bool AllocASeg( void *leader, void *group )
+/************************************************/
 {
-    leader->group = group;
+    ((seg_leader *)leader)->group = group;
     return FALSE;
 }
 
@@ -518,9 +518,12 @@ static int CmpLn286( const void *a, const void *b )
     return ((ln_off_286 *)a)->off - ((ln_off_286 *)b)->off;
 }
 
-static bool CheckFirst( segdata *seg, segdata **firstseg )
-/********************************************************/
+static bool CheckFirst( void *_seg, void *_firstseg )
+/***************************************************/
 {
+    segdata *seg = _seg;
+    segdata **firstseg = _firstseg;
+        
     if( seg->a.delta < (*firstseg)->a.delta
             && seg->o.addrinfo == (*firstseg)->o.addrinfo ) {
         *firstseg = seg;
@@ -615,7 +618,7 @@ static void ODBIAddAddrInit( segdata *sdata, void *cookie )
 
 static void ODBIAddAddrAdd( segdata *sdata, offset delta, offset size,
                             void *cookie, bool isnewmod )
-/********************************************************************/
+/*******************************************************/
 {
     cookie = cookie;
     delta = delta;
@@ -635,8 +638,8 @@ extern void ODBIAddAddrInfo( seg_leader *seg )
     }
 }
 
-static void ODBIGenAddrInit( segdata *sdata, unsigned_32 *prevaddroff )
-/*********************************************************************/
+static void ODBIGenAddrInit( segdata *sdata, void *prevaddroff )
+/**************************************************************/
 {
     segheader   seghdr;
     seg_leader *seg;
@@ -646,12 +649,12 @@ static void ODBIGenAddrInit( segdata *sdata, unsigned_32 *prevaddroff )
     seghdr.seg = seg->seg_addr.seg;
     seghdr.num = seg->num;
     DumpInfo( CurrSect->dbg_info, &seghdr, sizeof(segheader) );
-    *prevaddroff = ((debug_info *)CurrSect->dbg_info)->DBIWrite;
+    prevaddroff = (void *)(((debug_info *)CurrSect->dbg_info)->DBIWrite);
 }
 
 static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
-                            unsigned_32 *prevaddroff, bool isnewmod )
-/********************************************************************/
+                            void *prevaddroff, bool isnewmod )
+/************************************************************/
 {
     addrinfo    addr;
     debug_info *dptr;
@@ -663,8 +666,8 @@ static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
         addr.mod_idx = sdata->o.mod->d.o->modnum;
         DumpInfo( dptr, &addr, sizeof(addrinfo) );
     }
-    sdata->o.addrinfo = *prevaddroff - dptr->addr.init;
-    *prevaddroff = dptr->DBIWrite;
+    sdata->o.addrinfo = *(unsigned_32 *)prevaddroff - dptr->addr.init;
+    prevaddroff = (void *)(dptr->DBIWrite);
 }
 
 static void ODBIGenAddrInfo( seg_leader *seg )

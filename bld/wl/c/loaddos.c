@@ -205,9 +205,11 @@ static unsigned long WriteDOSData()
 
 static unsigned long COMAmountWritten;
 
-static bool WriteSegData( segdata *sdata, signed long *start )
-/************************************************************/
+static bool WriteSegData( void *_sdata, void *_start )
+/****************************************************/
 {
+    segdata *sdata = _sdata;
+    signed long *start = _start;
     signed long newpos;
     signed long pad;
 
@@ -226,12 +228,13 @@ static bool WriteSegData( segdata *sdata, signed long *start )
     return FALSE;
 }
 
-static bool DoCOMGroup( seg_leader *seg, signed long *chop )
+static bool DoCOMGroup( void *_seg, void *chop )
 /**********************************************************/
 {
+    seg_leader *seg = _seg;
     signed long newstart;
-
-    newstart = *chop + GetLeaderDelta( seg );
+    
+    newstart = *(signed long *)chop + GetLeaderDelta( seg );
     RingLookup( seg->pieces, WriteSegData, &newstart );
     return FALSE;
 }

@@ -201,9 +201,11 @@ extern void WriteGroups( void )
     }
 }
 
-static void WriteAbsSeg( seg_leader *leader )
-/*******************************************/
+static void WriteAbsSeg( void *_leader )
+/**************************************/
 {
+    seg_leader *leader = _leader;
+    
     if( leader->info & SEG_ABSOLUTE ) {
         WriteFormat( 0, leader->segname );
         WriteFormat( 24, leader->class->name );
@@ -229,9 +231,11 @@ static void WriteAbsSegs( class_entry *cl )
     }
 }
 
-static void WriteNonAbsSeg( seg_leader *seg )
-/*******************************************/
+static void WriteNonAbsSeg( void *_seg )
+/**************************************/
 {
+    seg_leader *seg = _seg;
+    
     if( !(seg->info & SEG_ABSOLUTE) ) {
         WriteFormat( 0, seg->segname );
         WriteFormat( 23, seg->class->name );
@@ -344,10 +348,11 @@ static void WriteImports( void )
     }
 }
 
-static void WriteVerbSeg( segdata *seg )
-/**************************************/
-// NYI: complelety broken for absolute segments
+static void WriteVerbSeg( void *_seg )
+/************************************/
+// NYI: completely broken for absolute segments
 {
+    segdata    *seg = _seg;
     char        star;
     char        bang;
     char        see;
@@ -396,9 +401,11 @@ extern void WriteModSegs( void )
     WalkMods( WriteVerbMod );
 }
 
-static bool CheckSymRecList( symrecinfo *info, symbol *sym )
-/**********************************************************/
+static bool CheckSymRecList( void *_info, void *sym )
+/***************************************************/
 {
+    symrecinfo *info = _info;
+    
     return sym == info->sym && CurrMod == info->mod;
 }
 
@@ -431,9 +438,10 @@ extern void RecordTracedSym( symbol *sym )
     }
 }
 
-static void PrintUndefined( symrecinfo *info )
-/********************************************/
+static void PrintUndefined( void *_info )
+/***************************************/
 {
+    symrecinfo *info = _info;
     mod_entry * mod;
 
     mod = info->mod;
@@ -444,9 +452,11 @@ static void PrintUndefined( symrecinfo *info )
     WriteMapNL( 1 );
 }
 
-static void PrintSymTrace( symrecinfo *info )
-/*******************************************/
+static void PrintSymTrace( void *_info )
+/**************************************/
 {
+    symrecinfo * info = _info;
+    
     LnkMsg( MAP+MSG_MOD_TRACE, "Ss", info->sym, info->mod->name );
 }
 

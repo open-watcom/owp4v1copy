@@ -564,18 +564,20 @@ extern void CVAddAddrInfo( seg_leader *seg )
     DBIAddrInfoScan( seg, CVAddAddrInit, CVAddAddrAdd, NULL );
 }
 
-static void CVGenAddrInit( segdata *sdata, cv_seginfo *info )
-/***********************************************************/
+static void CVGenAddrInit( segdata *sdata, void *_info )
+/******************************************************/
 {
+    cv_seginfo *info = _info;
     info->Seg = GetCVSegment( sdata->u.leader );
     info->pad = 0;
     info->offset = sdata->u.leader->seg_addr.off + sdata->a.delta;
 }
 
 static void CVGenAddrAdd( segdata *sdata, offset delta, offset size,
-                          cv_seginfo *info, bool isnewmod )
+                          void *_info, bool isnewmod )
 /******************************************************************/
 {
+    cv_seginfo *info = _info;
     if( !isnewmod ) return;
     info->cbSeg = size;
     PutInfo( sdata->o.mod->d.cv->segloc, info, sizeof(cv_seginfo) );
@@ -604,10 +606,11 @@ extern void CVDefClass( class_entry *class, unsigned_32 size )
     group->grp_addr.seg = 0;
 }
 
-static void DefLocal( segdata *sdata )
-/************************************/
+static void DefLocal( void *_sdata )
+/**********************************/
 /* NOTE: this assumes that codeview segments are byte aligned! */
 {
+    segdata    *sdata = _sdata;
     seg_leader *leader;
     sst         sect;
 
@@ -626,9 +629,11 @@ static void DefLocal( segdata *sdata )
     }
 }
 
-static bool DefLeader( seg_leader *leader, group_entry *group )
-/*************************************************************/
+static bool DefLeader( void *_leader, void *group )
+/*************************************************/
 {
+    seg_leader *leader = _leader;
+        
     leader->group = group;
     RingWalk( leader->pieces, DefLocal );
     return FALSE;

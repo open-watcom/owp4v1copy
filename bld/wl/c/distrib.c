@@ -128,9 +128,11 @@ extern void InitArcBuffer( mod_entry * mod )
     }
 }
 
-static void MarkDead( segdata *seg )
-/**********************************/
+static void MarkDead( void *_seg )
+/********************************/
 {
+    segdata *seg = _seg;
+        
     if( seg->isrefd ) return;
     if( seg->isdead ) return;
 
@@ -148,9 +150,10 @@ static void MarkDead( segdata *seg )
     }
 }
 
-static void KillUnrefedSyms( symbol *sym )
-/****************************************/
+static void KillUnrefedSyms( void *_sym )
+/***************************************/
 {
+    symbol  *sym = _sym;
     segdata *seg;
 
     seg = sym->p.seg;

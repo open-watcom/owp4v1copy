@@ -373,9 +373,10 @@ extern void DwarfGenModule( void )
     PutInfo( CurrMod->d.d->pubsym.addr, &nulldie, sizeof(unsigned_8) );
 }
 
-static void DefAClass( seg_leader *seg )
-/**************************************/
+static void DefAClass( void *_seg )
+/*********************************/
 {
+    seg_leader  *seg = _seg;
     int         index;
 
     seg->group = AllocGroup( AutoGrpName, &DBIGroups );
@@ -579,7 +580,7 @@ static void DwarfAddAddrInit( segdata *sdata, void *cookie )
 
 static void DwarfAddAddrAdd( segdata *sdata, offset delta, offset size,
                              void *cookie, bool isnewmod )
-/*********************************************************************/
+/********************************************************/
 {
     delta = delta;
     size = size;
@@ -615,9 +616,11 @@ static offset GetNewAddrOffset( segdata *sdata, offset delta )
     return off;
 }
 
-static void DwarfGenAddrInit( segdata *sdata, arange_tuple *tuple )
-/*****************************************************************/
+static void DwarfGenAddrInit( segdata *sdata, void *_tuple )
+/**********************************************************/
 {
+    arange_tuple *tuple = _tuple;
+    
     if( FmtData.type & MK_SEGMENTED ) {
         tuple->s.segment = sdata->u.leader->seg_addr.seg;
         tuple->s.offset = sdata->u.leader->seg_addr.off + sdata->a.delta;
@@ -627,9 +630,10 @@ static void DwarfGenAddrInit( segdata *sdata, arange_tuple *tuple )
 }
 
 static void DwarfGenAddrAdd( segdata *sdata, offset delta, offset size,
-                             arange_tuple *tuple, bool isnewmod )
+                             void *_tuple, bool isnewmod )
 /*********************************************************************/
 {
+    arange_tuple *tuple = _tuple;
     mod_entry * mod;
     unsigned    tup_size;
 
@@ -755,11 +759,11 @@ static unsigned_32 WriteELFSections( unsigned_32 file_off, unsigned_32 curr_off,
     return curr_off;
 }
 
-static bool CheckDBISeg( seg_leader *seg, int *num )
-/**************************************************/
+static bool CheckDBISeg( void *seg, void *num )
+/*********************************************/
 {
-    if( seg->size != 0 ) {
-        (*num)++;
+    if( ((seg_leader *)seg)->size != 0 ) {
+        (*(int *)num)++;
     }
     return FALSE;
 }

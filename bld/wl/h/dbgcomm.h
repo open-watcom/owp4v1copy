@@ -61,10 +61,11 @@ typedef struct lineinfo {
 
 
 extern virt_mem DBIAlloc( unsigned long );
-extern void     DBIModGlobal( symbol * );
-extern void     DBIAddrInfoScan( seg_leader *, void (*)(segdata *, void *),
-                             void (*)(segdata *, offset, offset, void *, bool),
-                             void * );
+extern void     DBIModGlobal( void * );
+extern void     DBIAddrInfoScan( seg_leader *,
+                      void (*)(segdata *, void *),
+                      void (*)(segdata *, offset, offset, void *, bool),
+                      void * );
 extern void     DBILineWalk( void *, void (*)(segdata *,void*,unsigned,bool) );
 extern unsigned CalcLineQty( unsigned, bool );
 

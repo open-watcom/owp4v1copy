@@ -60,7 +60,7 @@
 char *          SymFileName;
 group_entry *   DBIGroups;
 
-static void     DBIGenLocal( segdata * );
+static void     DBIGenLocal( void * );
 
 extern void ResetDBI( void )
 /**************************/
@@ -359,8 +359,8 @@ extern void DBIAddLocal( unsigned_16 info, offset length )
     }
 }
 
-static void DBIGenLocal( segdata *sdata )
-/***************************************/
+static void DBIGenLocal( void *sdata )
+/************************************/
 // called during pass 2 segment processing
 {
     if( LinkFlags & OLD_DBI_FLAG ) {
@@ -368,9 +368,11 @@ static void DBIGenLocal( segdata *sdata )
     }
 }
 
-extern void DBIModGlobal( symbol *sym )
-/*************************************/
+extern void DBIModGlobal( void *_sym )
+/************************************/
 {
+    symbol *sym = _sym;
+        
     if( !IS_SYM_ALIAS(sym) && !(sym->info & SYM_DEAD) ) {
         if( IS_SYM_IMPORTED(sym) ||
             ( sym->p.seg != NULL
@@ -440,10 +442,11 @@ extern unsigned CalcLineQty( unsigned size, bool is32bit )
     return size;
 }
 
-static bool DoLineWalk( lineinfo *info,
-                         void (*cbfn)(segdata *,void*,unsigned,bool) )
-/********************************************************************/
+static bool DoLineWalk( void *_info, void *_cbfn )
+/************************************************/
 {
+    void        (*cbfn)(segdata *,void*,unsigned,bool) = _cbfn;
+    lineinfo    *info = _info;
     unsigned    size;
     bool        is32bit;
 

@@ -109,7 +109,7 @@ typedef struct nov_import {
 #define NOV_EXE_FLAG_MASK       0x1F
 
 
-extern void     NovDBIAddGlobal( symbol * );
+extern void     NovDBIAddGlobal( void * );
 extern void     NovDBIAddrStart( void );
 extern void     NovDBIGenGlobal( symbol * );
 extern void     FiniNovellLoadFile( void );

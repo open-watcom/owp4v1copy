@@ -42,7 +42,7 @@ extern group_entry *    FindGroup( segment );
 extern offset           FindLinearAddr( targ_addr * );
 extern offset           FindLinearAddr2( targ_addr * );
 extern void             WalkLeaders( void (*rtn)( seg_leader * ) );
-extern void             SectWalkClass( section *sect, void (*)(seg_leader *) );
+extern void             SectWalkClass( section *sect, void * );
 extern void             WalkMods( void (*rtn)( mod_entry * ) );
 extern void             LinkList( void **, void * );
 extern void             FreeList( void * );

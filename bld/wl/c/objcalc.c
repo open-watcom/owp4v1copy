@@ -65,7 +65,7 @@ static char *   IgnoreNames[] = { "FJCRQQ", "FJSRQQ", "FJARQQ" };
 static unsigned long NumMapSyms;
 
 static seg_leader *     FindASeg( class_entry *, char * );
-static void             AllocSeg( seg_leader * );
+static void             AllocSeg( void * );
 
 extern void CheckClassOrder( void )
 /*********************************/
@@ -203,9 +203,11 @@ static void ReOrderClasses( section *sec )
     }
 }
 
-static bool CheckLxdataSeen( seg_leader *seg, void *dummy )
-/*********************************************************/
+static bool CheckLxdataSeen( void *_seg, void *dummy )
+/****************************************************/
 {
+    seg_leader *seg = _seg;
+    
     dummy = dummy;
     if( seg->info & SEG_LXDATA_SEEN ) {
         seg->class->flags |= CLASS_LXDATA_SEEN;
@@ -323,9 +325,10 @@ extern bool IsStackClass( char *name, unsigned namelen )
 
 /* -----------------------Allocating Segments-------------------------------- */
 
-static void AddUpSegData( segdata *sdata )
-/****************************************/
+static void AddUpSegData( void *_sdata )
+/**************************************/
 {
+    segdata    *sdata = _sdata;
     seg_leader *leader;
     offset      align_size;
 
@@ -351,9 +354,12 @@ extern void CalcSegSizes( void )
     WalkLeaders( CalcSeg );
 }
 
-static bool SetGroupInitSize( segdata *sdata, offset *delta )
-/***********************************************************/
+static bool SetGroupInitSize( void *_sdata, void *_delta )
+/********************************************************/
 {
+    segdata    *sdata = _sdata;
+    offset     *delta = _delta;
+    
     if( !sdata->isuninit && sdata->length > 0 && !sdata->isdead ) {
         sdata->u.leader->group->size = *delta + sdata->a.delta + sdata->length;
     }
@@ -484,9 +490,11 @@ static void AllocFileSegs( void )
     }
 }
 
-static void SetLeaderSeg( seg_leader *seg )
+static void SetLeaderSeg( void *_seg )
 /*****************************************/
 {
+    seg_leader *        seg = _seg;
+    
     if( !(seg->info & SEG_ABSOLUTE) ) {
         seg->seg_addr.seg = seg->group->grp_addr.seg;
     }
@@ -559,9 +567,11 @@ typedef struct  {
 } grpaddrinfo;
 
 
-static bool FindEndAddr( seg_leader *seg, grpaddrinfo *info )
-/***********************************************************/
+static bool FindEndAddr( void *_seg, void *_info )
+/************************************************/
 {
+    seg_leader  *seg  = _seg;
+    grpaddrinfo *info = _info;
     unsigned_32 seg_addr;
 
     if( FmtData.type & MK_REAL_MODE ) {
@@ -635,10 +645,12 @@ extern void AllocClasses( class_entry *class )
 }
 
 
-static void AllocSeg( seg_leader *seg )
-/*************************************/
+static void AllocSeg( void *_seg )
+/********************************/
 /* Allocate a segment (process all segments in a given class) */
 {
+    seg_leader *seg = _seg;
+    
     if( !(seg->info & SEG_ABSOLUTE) ) {
         if( IS_DBG_DWARF( seg ) ) {
             CurrLoc.off = 0;
@@ -798,9 +810,11 @@ typedef struct {
     unsigned    first : 1;
 } pubdefinfo;
 
-static bool DefPubSym( symbol *pub, pubdefinfo *info )
-/****************************************************/
+static bool DefPubSym( void *_pub, void *_info )
+/**********************************************/
 {
+    symbol *    pub = _pub;
+    pubdefinfo *info = _info;
     segdata *   seg;
     seg_leader *leader;
     offset      off;
@@ -875,9 +889,11 @@ extern void DoPubs( section *sect )
     }
 }
 
-static void SetReadOnly( seg_leader *seg )
-/****************************************/
+static void SetReadOnly( void *_seg )
+/***********************************/
 {
+    seg_leader *    seg = _seg;
+    
     if( seg->class->flags & CLASS_READ_ONLY ) {
         seg->segflags |= SEG_READ_ONLY;
     }
@@ -927,10 +943,10 @@ extern void SetSegFlags( seg_flags * flag_list )
     }
 }
 
-static bool SegNameCmp( seg_leader *seg, char *seg_name )
-/*******************************************************/
+static bool SegNameCmp( void *seg, void *seg_name )
+/*************************************************/
 {
-    return stricmp( seg->segname, seg_name ) == 0;
+    return stricmp( ((seg_leader *)seg)->segname, seg_name ) == 0;
 }
 
 static seg_leader * FindASeg( class_entry *class, char *seg_name )
@@ -946,10 +962,10 @@ static seg_leader * FindASeg( class_entry *class, char *seg_name )
     return( NULL );
 }
 
-static bool SetClassFlag( seg_leader *seg, unsigned_16 *flags )
-/*************************************************************/
+static bool SetClassFlag( void *seg, void *flags )
+/************************************************/
 {
-    seg->segflags = *flags;
+    ((seg_leader *)seg)->segflags = *(unsigned_16 *)flags;
     return FALSE;
 }
 

@@ -153,9 +153,11 @@ static void SetVerifyInfo( void (*wrfn)(char *, virt_mem, unsigned long),
     wrfn( targ, data, length );
 }
 
-static bool WriteSegData( segdata *sdata, unsigned long *start )
-/**************************************************************/
+static bool WriteSegData( void *_sdata, void *_start )
+/****************************************************/
 {
+    segdata *sdata = _sdata;
+    unsigned long *start = _start;
     unsigned long newpos;
     signed long pad;
 
@@ -177,10 +179,11 @@ static bool WriteSegData( segdata *sdata, unsigned long *start )
     return FALSE;
 }
 
-static void DoGroupLeader( seg_leader *seg )
-/******************************************/
+static void DoGroupLeader( void *_seg )
+/*************************************/
 {
     offset      start;
+    seg_leader *seg = _seg;
 
     start = GetLeaderDelta( seg );
     RingLookup( seg->pieces, WriteSegData, &start );
@@ -412,9 +415,11 @@ extern unsigned_16 ToQNXIndex( unsigned_16 sel )
     return( QNX_SEL_NUM( sel ) );
 }
 
-static bool CheckQNXGrpFlag( seg_leader *seg, group_entry *grp )
+static bool CheckQNXGrpFlag( void *_seg, void *_grp )
 /**************************************************************/
 {
+    seg_leader     *seg = _seg;
+    group_entry    *grp = _grp;
     unsigned_16     sflags;
 
     sflags = seg->segflags;
