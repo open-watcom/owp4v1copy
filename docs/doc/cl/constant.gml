@@ -160,6 +160,14 @@ in which its value can be accurately represented.
 .monoon
 ›:HP0.suffixes:eHP0. U :HP0.and:eHP0. L›unsigned long
 .monooff
+.boxline
+.monoon
+›:HP0.suffix:eHP0. LL :HP0.only:eHP0.        ›long long:HP0.,:eHP0. unsigned long long
+.monooff
+.boxline
+.monoon
+›:HP0.suffixes:eHP0. U :HP0.and:eHP0. LL›unsigned long long
+.monooff
 .boxend
 .do end
 .el .do begin
@@ -177,6 +185,10 @@ suffix U only           unsigned int, unsigned long
 suffix L only           long, unsigned long
 
 suffixes U and L        unsigned long
+
+suffix LL only          long long, unsigned long long
+
+suffixes U and LL       unsigned long long
 .millust end
 .do end
 .keep begin

@@ -399,8 +399,12 @@ and has a number of variations including
 .kw unsigned int
 ..ct ,
 .kw long signed int
-and
+..ct ,
 .kw long unsigned int
+..ct ,
+.kw long long signed int
+and
+.kw long long unsigned int
 ..ct ..li .
 .*
 .note integral promotion
@@ -743,8 +747,10 @@ may be used with the types
 .kw short int
 ..ct ,
 .kw int
-and
+..ct ,
 .kw long int
+and
+.kw long long int
 ..ct ..li .
 .*
 .note statement
@@ -866,8 +872,10 @@ may be used with the types
 .kw short int
 ..ct ,
 .kw int
-and
+..ct ,
 .kw long int
+and
+.kw long long int
 ..ct ..li .
 .*
 .note variable

@@ -1,10 +1,10 @@
 ..if '&format' eq '7x9' ..th ..do begin
-.  ..sr numboxcol1=15
-.  ..sr numboxcol2=13
+.  ..sr numboxcol1=17
+.  ..sr numboxcol2=22
 ..do end
 ..el ..do begin
-.  ..sr numboxcol1=18
-.  ..sr numboxcol2=15
+.  ..sr numboxcol1=19
+.  ..sr numboxcol2=27
 ..do end
 .*
 .dm numboxbeg begin
@@ -313,6 +313,33 @@ the maximum value for an object of type
 .ansi  >= 4294967295
 .bothc 4294967295
 .wlooc 4294967295
+.numboxend
+.keep break
+.bull
+the minimum value for an object of type
+.kw long long int
+.numboxbeg LLONG_MIN
+.ansi  <= -9223372036854775807
+.bothc -9223372036854775808
+.wlooc -9223372036854775808
+.numboxend
+.keep break
+.bull
+the maximum value for an object of type
+.kw long long int
+.numboxbeg LLONG_MAX
+.ansi  >= 9223372036854775807
+.bothc 9223372036854775807
+.wlooc 9223372036854775807
+.numboxend
+.keep break
+.bull
+the maximum value for an object of type
+.kw unsigned long long int
+.numboxbeg ULLONG_MAX
+.ansi  >= 18446744073709551615
+.bothc 18446744073709551615
+.wlooc 18446744073709551615
 .numboxend
 .keep end
 .endbull

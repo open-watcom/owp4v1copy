@@ -7,6 +7,8 @@
 .kw unsigned int
 .kw long int
 .kw unsigned long int
+.kw long long int
+.kw unsigned long long int
 .kw float
 .kw double
 .kw long double

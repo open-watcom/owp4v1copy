@@ -27,7 +27,7 @@ or not the value is to be considered as signed
 (negative and positive values)
 or unsigned (non-negative values), character (holds one character of
 the character set), short
-(small range) or long (large range).
+(small range), long (large range) or long long (very large range).
 .pp
 Just specifying the type
 .kw int
@@ -183,7 +183,20 @@ to
 .* .mono LONG_MAX
 .* in
 .* .hdr <limits.h>
-.* ..ct ..li .
+.* ..ct ).
+.*
+A signed long long integer has a minimum range of
+.mono -9223372036854775807
+to
+.mono 9223372036854775807
+..ct ..li .
+.* (as defined by
+.* .mono LLONG_MIN
+.* and
+.* .mono LLONG_MAX
+.* in
+.* .hdr <limits.h>
+.* ..ct ).
 .*
 .************************************************************************
 .*
@@ -204,6 +217,14 @@ has a range of
 .mono -2147483648
 to
 .mono 2147483647
+..ct ,
+and
+.ix 'type' 'long long'
+.kw long long int
+has a range of
+.mono -9223372036854775808
+to
+.mono 9223372036854775807
 ..ct ..li .
 .shade end
 ..do end
@@ -290,13 +311,13 @@ storage size.
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin
 .  .boxcol 16
-.  .boxcol 11
-.  .boxcol 11
+.  .boxcol 19
+.  .boxcol 18
 ..do end
 ..el ..do begin
-.  .boxcol 19
-.  .boxcol 12
-.  .boxcol 12
+.  .boxcol 18
+.  .boxcol 21
+.  .boxcol 20
 ..do end
 .boxbeg
 ›                  ›Minimum    ›Maximum
@@ -341,34 +362,46 @@ storage size.
 .monooff
 .boxline
 .monoon
-›unsigned long int ›0          ›4294967295
+›unsigned long int ›0          ›18446744073709551615
+.monooff
+.boxline
+.monoon
+›long long int     ›-92233720368547758078›9223372036854775807
+.monooff
+.boxline
+.monoon
+›unsigned long long›0     ›18446744073709551615
 .monooff
 .boxend
 .do end
 .el .do begin
 .millust begin
-                          Minimum    Maximum
-Type                      Value      Value
---------------------- ----------- ----------
-signed char                  -128        127
+                      Minimum               Maximum
+Type                  Value                 Value
+--------------------- --------------------- --------------------
+signed char                            -128                  127
 
-unsigned char                   0        255
+unsigned char                             0                  255
 
-char                            0        255
+char                                      0                  255
 
-short int                  -32768      32767
+short int                            -32768                32767
 
-unsigned short int              0      65535
+unsigned short int                        0                65535
 
-int (&c286.)                 -32768      32767
-int (&c386.)            -2147483648 2147483647
+int (&c286.)                           -32768                32767
+int (&c386.)                      -2147483648           2147483647
 
-unsigned int (&c286.)             0      65535
-unsigned int (&c386.)             0 4294967295
+unsigned int (&c286.)                       0                65535
+unsigned int (&c386.)                       0           4294967295
 
-long int              -2147483648 2147483647
+long int               -2147483648                    2147483647
 
-unsigned long int               0 4294967295
+unsigned long int                         0           4294967295
+
+long long int          -9223372036854775808  9223372036854775807
+
+unsigned long long int                    0 18446744073709551615
 .millust end
 .do end
 .* .us &wcboth. integer types and ranges
@@ -473,5 +506,8 @@ unsigned int       f;
 long               g;
 signed long        h;
 unsigned long int  i;
+long long          j;
+unsigned long long k;
+long long int      l;
 .millust end
 .keep end

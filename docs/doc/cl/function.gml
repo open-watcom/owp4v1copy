@@ -495,8 +495,10 @@ is the type of argument expected.
 The types expected should only be those that result from the default
 argument promotions (
 ..ct .kw int
-and
+..ct ,
 .kw long int
+and
+.kw long long int
 and their unsigned varieties,
 .kw double
 and

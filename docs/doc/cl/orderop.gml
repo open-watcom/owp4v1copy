@@ -8,34 +8,29 @@
 .if &e'&nobox eq 0 .do begin
 ..fk begin
 ..sr *start=&SYSIN.+1
-..bx on  &*start. +11 +24
+..bx on  &*start. +13 +24
 ..sr *start=&*start.+1
-..tb     &*start. +11 +6 +6 +6 +6 +6
+..tb     &*start. +13 +6 +6 +6 +6 +6
 ..tb set ›
 :SF font=13.
 ›Expression Type›Operators
 :eSF.
 ..bx
 :SF font=13.
-›primary       ›identifier
-›              ›constant
-›              ›string
-›              ›(expression)
+›primary       ›identifier  ››constant
+›              ›string      ››(expression)
 :eSF.
 ..bx
 :SF font=14.
-›:SF font=13.postfix:eSF.›a[b]
+›:SF font=13.postfix:eSF.›a[b] ›f()
 :eSF.:SF font=14.
-››f()
-››a.b   ›a->b
-››a++   ›a--
+››a.b   ›a->b›a++   ›a--
 :eSF.
 ..bx
 :SF font=14.
 ›:SF font=13.unary:eSF.›sizeof u   ›sizeof( a )
 :eSF.:SF font=14.
-››++a  ›--a
-››&a   ›*a
+››++a  ›--a  ›&a    ›*a
 ››+a   ›-a   ›~~a   ›!a
 :eSF.
 ..bx
@@ -88,12 +83,10 @@
 :eSF.
 ..bx
 :SF font=14.
-›:SF font=13.assignment &dagger.:eSF.›a = b
+›:SF font=13.assignment &dagger.:eSF.›a = b ›a += b ›a -= b ›a *= b
 :eSF.:SF font=14.
-››a += b  ›a -= b
-››a *= b  ›a /= b  ›a %= b
-››a &= b  ›a ^= b  ›a |= b
-››a <<= b ›a >>= b
+››a /= b  ›a %= b  ›a &= b  ›a ^= b
+››a |= b  ›a <<= b ›a >>= b
 :eSF.
 ..bx
 :SF font=14.

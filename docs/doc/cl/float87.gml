@@ -15,6 +15,7 @@
 .  .boxcol 8
 .  .boxcol 8
 ..do end
+.keep break
 .boxbeg
 ›           ›Smallest›Largest ›Digits  ›80x87
 ›           ›Absolute›Absolute›Of      ›Type

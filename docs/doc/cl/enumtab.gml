@@ -1,14 +1,14 @@
 .if &e'&nobox eq 0 .do begin
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin
-.  .boxcol 13
-.  .boxcol 11
-.  .boxcol 11
+.  .boxcol 16
+.  .boxcol 18
+.  .boxcol 18
 ..do end
 ..el ..do begin
-.  .boxcol 15
-.  .boxcol 12
-.  .boxcol 12
+.  .boxcol 18
+.  .boxcol 20
+.  .boxcol 20
 ..do end
 .boxbeg
 ›Type          ›Smallest Value›Largest Value
