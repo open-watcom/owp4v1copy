@@ -155,6 +155,9 @@ _small_code_    equ 0
 extrn LibMain:NEAR
 PUBLIC LibEntry
 LibEntry PROC FAR
+__DLLstart_:
+        public  __DLLstart_
+
         mov     ax,ds
         nop
         inc     bp
