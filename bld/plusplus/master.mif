@@ -32,7 +32,7 @@ proj_name = plusplus
 !include ..\verify.mif
 !include ..\ppobjs.mif
 
-inc_dirs =
+inc_dirs =.;
 !ifdef plusplus_include
 inc_dirs += $+$(plusplus_include)$-;
 !endif
@@ -553,7 +553,7 @@ ic_mask.gh : ..\h\ic.h ..\c\dwarf.c ..\c\cgbkcgrf.c ..\c\cgio.c ..\c\brmwrite.c
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $[@ $(wcl_util_opts)
 
-$(wasm_dir)/h/inlnops.h: ./mkopcode.exe $(wasm_dir)/inlnops.tok
+inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
         rm -f mkopcode.*
 
