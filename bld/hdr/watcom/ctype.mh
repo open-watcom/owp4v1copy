@@ -12,10 +12,12 @@
  #include <_comdef.h>
 #endif
 
+:segment !NO_WIDECHAR
 :include wchar_t.sp
 
 :include wctypet.sp
 
+:endsegment
 #define _LOWER  0x80
 #define _UPPER  0x40
 #define _DIGIT  0x20
@@ -43,6 +45,7 @@ _WCRTLINK extern int    toupper(int);
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
+:segment !NO_WIDECHAR
 
 _WCRTLINK extern int    iswalpha(wint_t);
 _WCRTLINK extern int    iswalnum(wint_t);
@@ -62,6 +65,7 @@ _WCRTLINK extern int    iswctype(wint_t,wctype_t);
 
 _WCRTLINK extern wint_t towlower(wint_t);
 _WCRTLINK extern wint_t towupper(wint_t);
+:endsegment
 
 :include ext.sp
  _WCRTLINK extern int   isascii(int);

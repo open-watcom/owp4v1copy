@@ -13,10 +13,12 @@
 #endif
 
 :include pshpackl.sp
+:segment !NO_WIDECHAR
 
 :include wchar_t.sp
 
 :include wctypet.sp
+:endsegment
 
 :include sizet.sp
 
@@ -270,6 +272,7 @@ _WCRTLINK extern int    _vbprintf( char *__s, size_t __bufsize,
                                    const char *__format, __va_list __arg );
 _WCRTLINK extern int    _vsnprintf( char *__s, size_t __bufsize,
                                     const char *__format, __va_list __arg );
+:segment !NO_WIDECHAR
 
 _WCRTLINK extern FILE   *_wfopen( const wchar_t *, const wchar_t * );
 _WCRTLINK extern int    fwprintf( FILE *, const wchar_t *, ... );
@@ -321,6 +324,7 @@ _WCRTLINK extern int    _vsnwprintf( wchar_t *, size_t, const wchar_t *,
                                     __va_list );
 _WCRTLINK extern int    _wrename( const wchar_t *, const wchar_t * );
 _WCRTLINK extern FILE * _wpopen( const wchar_t *__command, const wchar_t *__mode );
+:endsegment
 
 :segment QNX
 #ifdef _this_belongs_in_a_private_qnx_header

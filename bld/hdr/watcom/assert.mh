@@ -3,6 +3,13 @@
  *
 :include crwat.sp
  */
+:segment SNAP
+
+/* We don't support assertions in BPD's. Use the CHECK() macro instead */
+
+#undef assert   /* remove existing definition */
+#define assert(test)    ((void)0)
+:elsesegment
 :include readonly.sp
 :include cpluspro.sp
 
@@ -34,3 +41,5 @@
 #endif
 #endif
 :include cplusepi.sp
+:endsegment
+

@@ -13,8 +13,10 @@
 #endif
 
 :include pshpackl.sp
+:segment !NO_WIDECHAR
 
 :include wchar_t.sp
+:endsegment
 
 #define LC_CTYPE        0
 #define LC_NUMERIC      1
@@ -49,8 +51,11 @@ struct lconv {
 
 _WCRTLINK extern char *setlocale(int __category,const char *__locale);
 _WCRTLINK extern struct lconv *localeconv(void);
+:segment !NO_WIDECHAR
 
 _WCRTLINK extern wchar_t *_wsetlocale(int __category,const wchar_t *__locale);
+:endsegment
+
 :include poppack.sp
 :include cplusepi.sp
 #endif

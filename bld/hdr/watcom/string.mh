@@ -61,6 +61,7 @@ _WCRTLINK extern char *strtok( char *__s1, const char *__s2 );
 
 :include ext.sp
 
+:segment !SNAP
 /* WATCOM's Additional Functions (non-ANSI, non-POSIX) */
 
 #if !defined(_fmemccpy) || !defined(_INC_WINDOWSX)
@@ -153,6 +154,7 @@ _WCRTLINK extern char _WCFAR *_fstrtok( char _WCFAR *__s1, const char _WCFAR *__
 #if !defined(_fstrupr) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern char _WCFAR *_fstrupr( char _WCFAR *__string );
 #endif
+:endsegment
 _WCIRTLINK extern void movedata( unsigned __srcseg, unsigned __srcoff, unsigned __tgtseg, unsigned __tgtoff, unsigned __len );
 _WCRTLINK extern int bcmp( const void *__s1, const void *__s2, size_t __n );
 _WCRTLINK extern void bcopy( const void *__s1, void *__s2, size_t __n );
@@ -178,9 +180,11 @@ _WCRTLINK extern char *strset( char *__string, int __c );
 _WCRTLINK extern char *_strset( char *__string, int __c );
 _WCRTLINK extern char *strupr( char *__string );
 _WCRTLINK extern char *_strupr( char *__string );
+:segment !SNAP
 #if defined(__NT__)
 _WCRTLINK extern char *_doserror( int __oserrnum );
 #endif
+:endsegment
 
 _WCRTLINK extern size_t wcslen( const wchar_t * );
 _WCRTLINK extern wchar_t *_wcsnset( wchar_t *, int, size_t );
@@ -221,9 +225,11 @@ _WCRTLINK extern wchar_t *wcsrchr( const wchar_t *, wint_t );
 _WCRTLINK extern int wcscmpi( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t *wcserror( int );
 _WCRTLINK extern wchar_t *_wcserror( const wchar_t * );
+:segment !SNAP
 #if defined(__NT__)
 _WCRTLINK extern wchar_t *_wdoserror( int __errnum );
 #endif
+:endsegment
 
 _WCRTLINK extern wchar_t *_ustrtok( wchar_t *, const wchar_t * );
 

@@ -13,8 +13,10 @@
 #endif
 
 :include sizet.sp
+:segment !NO_WIDECHAR
 
 :include wchar_t.sp
+:endsegment
 
 :include null.sp
 

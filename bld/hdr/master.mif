@@ -1,6 +1,4 @@
 proj_name=hdr
-host_CPU=386
-host_OS=nt
 
 !include cproj.mif
 
@@ -217,6 +215,32 @@ LINUX_files = &
         netinet/in.h &
         netinet/tcp.h &
         arpa/inet.h
+
+SNAP_files = &
+        _comdef.h &
+        assert.h &
+        ctype.h &
+        errno.h &
+        float.h &
+        limits.h &
+        locale.h &
+        malloc.h &
+        math.h &
+        setjmp.h &
+        share.h &
+        signal.h &
+        stdarg.h &
+        stddef.h &
+        stdio.h &
+        stdlib.h &
+        string.h &
+        time.h &
+        sys/types.h
+
+!if 0
+# Potentially needed:
+        process.h &
+!endif
 
 all : $($(system)_files) .symbolic
     @%null

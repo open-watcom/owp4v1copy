@@ -23,7 +23,7 @@ include_c_qnx      =;$(hdr_dir)/qnx
 include_c_linux    =;$(hdr_dir)/linux
 include_c_windows  =;$(hdr_dir)/dos/win;$(inc_dirs_sys_win);$(hdr_dir)/dos
 include_c_winnt    =;$(inc_dirs_sys_nt);$(hdr_dir)/dos
-include_c_snap     =;$(hdr_dir)/dos;$(%SCITECH)/include/clib
+include_c_snap     =;$(hdr_dir)/snap;$(%SCITECH)/include/clib
 !else
 include_c_generic  =;$(%WATCOM)/h
 include_c_kanji    =;$(%WATCOM)/h
@@ -47,7 +47,7 @@ include_c_winnt_386=$(inc_dirs_sys_nt)
 include_c_winnt_axp=$(inc_dirs_sys_nt)
 include_c_winnt_ppc=$(inc_dirs_sys_nt)
 include_c_winnt    =$(inc_dirs_sys_nt);$(%WATCOM)/h
-include_c_snap     =;$(%WATCOM)/h;$(%SCITECH)/include/clib
+include_c_snap     =;$(%WATCOM)/snaph;$(%SCITECH)/include/clib
 !endif
 
 include_c_path =-i"$(include_default)$(include_c_$(system))$(include_watcom)"
