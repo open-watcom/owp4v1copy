@@ -308,7 +308,7 @@ inspick( verw,          "verw",         0x0028000f,     0x0038ffff,     X86ModRM
 //inspick( wait,                "wait",         0x0000009b,     0x000000ff,     X86NoOp_8)
 inspick( wbinvd,        "wbinvd",       0x0000090f,     0x0000ffff,     X86NoOp_16)
 inspick( wrmsr,         "wrmsr",        0x0000300f,     0x0000ffff,     X86NoOp_16)
-inspick( xadd,          "xadd",         0x0000c00f,     0x0000ffff,     X86RegModRM_24B)
+inspick( xadd,          "xadd",         0x0000c00f,     0x0000feff,     X86ModRM_16)
 inspick( xchg,          "xchg",         0x00000086,     0x000000fe,     X86RegModRM_16)
 inspick( xchg2,         "xchg",         0x00000090,     0x000000f8,     X86Reg_8)
 inspick( xlat,          "xlat",         0x000000d7,     0x000000ff,     X86NoOp_8)
