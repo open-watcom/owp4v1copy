@@ -33,7 +33,9 @@
 #include "variety.h"
 #include "widechar.h"
 #include <ctype.h>
-#include <wchar.h>
+#ifdef __WIDECHAR__
+ #include <wchar.h>
+#endif
 
 #ifdef __NETWARE__
  #ifndef _WCTYPE_T_DEFINED
