@@ -116,14 +116,15 @@ typedef struct streamEntry {
 STATIC SENT *headSent;      /* stack of sents in use    */
 STATIC SENT *freeSent;      /* stack of free sents      */
 
-STATIC int flagEOF;
+STATIC int  flagEOF;
 
 STATIC SENT *getSENT( STYPE_T type )
 /***********************************
  * get a free sent, and push it into stack.  Determines next char of input.
  */
 {
-    SENT *d;
+    SENT    *d;
+
     if( freeSent != NULL ) {    /* check if any free SENTs lying around */
         d = freeSent;
         freeSent = freeSent->next;
@@ -142,7 +143,7 @@ STATIC void popSENT( void )
  * pop top SENT off stack.  If necessary, close or free the apropriate things.
  */
 {
-    SENT *tmp;
+    SENT    *tmp;
 
     assert( headSent != NULL );
 
@@ -152,14 +153,14 @@ STATIC void popSENT( void )
     case SENT_FILE:
         if( tmp->free ) {
             close( tmp->data.file.fh );
-            PrtMsg( DBG|INF|LOC| FINISHED_FILE, tmp->data.file.name );
+            PrtMsg( DBG | INF | LOC | FINISHED_FILE, tmp->data.file.name );
         }
         FreeSafe( tmp->data.file.buf );
-        FreeSafe( (void *) headSent->data.file.name );
+        FreeSafe( (void *)headSent->data.file.name );
         break;
     case SENT_STR:
         if( tmp->free ) {
-            FreeSafe( (void *) headSent->data.str.str );
+            FreeSafe( (void *)headSent->data.str.str );
         }
         break;
     case SENT_CHAR:
@@ -167,7 +168,6 @@ STATIC void popSENT( void )
     }
 
     headSent = tmp->next;       /* advance to next SENT */
-
     tmp->next = freeSent;       /* push onto free stack */
     freeSent = tmp;
 }
@@ -204,19 +204,22 @@ STATIC BOOLEAN fillBuffer( void )
 
     tmp = headSent;
 
-    if ( tmp->data.file.nestLevel == -1 ) tmp->data.file.nestLevel = GetNestLevel();
+    if( tmp->data.file.nestLevel == -1 )
+        tmp->data.file.nestLevel = GetNestLevel();
 
     tmp->data.file.cur = tmp->data.file.buf;
 
     max = read( tmp->data.file.fh, tmp->data.file.buf, FILE_BUFFER_SIZE - 1 );
     if( max < 0 ) {     /* 31-jul-91 DJG */
-        PrtMsg( ERR| READ_ERROR, tmp->data.file.name );
+        PrtMsg( ERR | READ_ERROR, tmp->data.file.name );
         max = 0;
-    } else if ( max > 0 && tmp->data.file.buf[max - 1] == '\r' ) {
+    } else if( max > 0 && tmp->data.file.buf[max - 1] == '\r' ) {
         /* read one more character if it ends in \r (possibly CRLF) */
-        int max2 = read( tmp->data.file.fh, &tmp->data.file.buf[max], 1 );
+        int     max2;
+
+        max2 = read( tmp->data.file.fh, &tmp->data.file.buf[max], 1 );
         if( max2 < 0 ) {     /* 13-sep-03 BEO */
-            PrtMsg( ERR| READ_ERROR, tmp->data.file.name );
+            PrtMsg( ERR | READ_ERROR, tmp->data.file.name );
             max2 = 0;
         }
         max += max2;
@@ -226,7 +229,9 @@ STATIC BOOLEAN fillBuffer( void )
 }
 
 
+#ifdef __WATCOMC__
 #pragma on (check_stack);
+#endif
 extern RET_T InsFile( const char *name, BOOLEAN envsearch )
 /**********************************************************
  * Open file named name, and push it into stream.  If can't find name, it
@@ -235,12 +240,12 @@ extern RET_T InsFile( const char *name, BOOLEAN envsearch )
 {
     SENT    *tmp;
     int     fh;
-    char    path[ _MAX_PATH ];
+    char    path[_MAX_PATH];
 
     assert( name != NULL );
 
     if( TrySufPath( path, name, NULL, envsearch ) == RET_SUCCESS ) {
-        PrtMsg( DBG|INF|LOC| ENTERING_FILE, path );
+        PrtMsg( DBG | INF |LOC | ENTERING_FILE, path );
 
         fh = sopen( path, O_RDONLY | O_BINARY, SH_DENYWR );    // 04-jan-94 AFS, 13-sep-03 BEO
         if( fh == -1 ) {
@@ -264,8 +269,9 @@ extern RET_T InsFile( const char *name, BOOLEAN envsearch )
     }
     return( RET_ERROR );
 }
+#ifdef __WATCOMC__
 #pragma off(check_stack);
-
+#endif
 
 extern void InsOpenFile( int fh )
 /********************************
@@ -291,7 +297,7 @@ extern void InsString( const char *str, BOOLEAN weFree )
  * If weFree then, it will be FreeSafe'd when it is done.
  */
 {
-    SENT *tmp;
+    SENT    *tmp;
 
     assert( str != NULL );
 
@@ -307,7 +313,7 @@ extern void UnGetCH( STRM_T c )
  * Push back a single character
  */
 {
-    SENT *tmp;
+    SENT    *tmp;
 
     assert( isascii( c ) || c == STRM_END || c == STRM_MAGIC ||
             c == TMP_EOL || c == TMP_LEX_START);
@@ -322,12 +328,11 @@ extern STRM_T GetCHR( void )
  * Get single next character of input
  */
 {
-    SENT   *head;  /* this is just here for optimizing purposes */
-    STRM_T result;
+    SENT    *head;  /* this is just here for optimizing purposes */
+    STRM_T  result;
 
     flagEOF = 0;
-    for(;;) {
-
+    for( ;; ) {
         head = headSent;
 
         if( head == NULL ) {
@@ -339,8 +344,8 @@ extern STRM_T GetCHR( void )
             /* GetFileLine() depends on the order of execution here */
             if( head->data.file.cur == head->data.file.max ) {
                 if( !fillBuffer() ) {
-                    if ( head->data.file.nestLevel != GetNestLevel() ) {
-                        PrtMsg( WRN|EOF_BEFORE_ENDIF, "endif" );
+                    if( head->data.file.nestLevel != GetNestLevel() ) {
+                        PrtMsg( WRN | EOF_BEFORE_ENDIF, "endif" );
                     }
                     popSENT();
                     flagEOF = 1;
@@ -353,7 +358,7 @@ extern STRM_T GetCHR( void )
                 if( result == '\r' && head->data.file.cur[0] == EOL )
                     result = *(head->data.file.cur++);
                 else
-                    PrtMsg( FTL|LOC| BARF_CHARACTER, result );
+                    PrtMsg( FTL | LOC | BARF_CHARACTER, result );
             }
             if( result == '\f' ) {
                 result = EOL;
@@ -362,21 +367,18 @@ extern STRM_T GetCHR( void )
                 head->data.file.line++;
             }
             return( result );
-            break;
         case SENT_STR:
             result = *(head->data.str.cur++);
             if( result == NULLCHAR ) {
                 popSENT();
-/* try again */ continue;
+                continue;   /* try again */
             }
             return( result );
-            break;
         case SENT_CHAR:
             result = head->data.ch;
             popSENT();
             return( result );
         }
-
         assert( FALSE );    /* should never get here */
     }
 }
@@ -437,15 +439,17 @@ extern RET_T GetFileLine( const char **pname, UINT16 *pline )
  * FALSE - no files in stack; TRUE - returned data from top file
  */
 {
-    SENT *cur;
+    SENT    *cur;
 
     cur = headSent;
     while( cur != NULL ) {
-        if( cur->type == SENT_FILE ) break;
+        if( cur->type == SENT_FILE )
+            break;
         cur = cur->next;
     }
 
-    if( cur == NULL ) return( RET_ERROR );
+    if( cur == NULL )
+        return( RET_ERROR );
 
     /*
      * Because we do a line++ when we return a {nl}, we have to check if
@@ -466,8 +470,10 @@ extern RET_T GetFileLine( const char **pname, UINT16 *pline )
     return( RET_SUCCESS );
 }
 
-extern int IsStreamEOF( void ) {
-    return ( flagEOF );
+
+extern int IsStreamEOF( void )
+{
+    return( flagEOF );
 }
 
 
@@ -480,7 +486,7 @@ extern void dispSENT( void )
     SENT    *cur;
 
     if( headSent ) {
-        PrtMsg( INF| PRNTSTR, "\n[stream contents:]" );
+        PrtMsg( INF | PRNTSTR, "\n[stream contents:]" );
         cur = headSent;
         while( cur ) {
             pos = FmtStr( buf, "[type %d, ", cur->type );
@@ -488,30 +494,24 @@ extern void dispSENT( void )
             case SENT_FILE:
                 if( cur->data.file.cur == cur->data.file.max ) {
                     pos += FmtStr( &buf[pos], "fh %d, buffer empty, line %d",
-                        cur->data.file.fh,
-                        cur->data.file.line
-                        );
+                        cur->data.file.fh, cur->data.file.line );
                 } else {
                     pos += FmtStr( &buf[pos],
                         "fh %d, in buf %d, next 0x%x, line %d",
-                        cur->data.file.fh,
-                        cur->data.file.max - cur->data.file.cur,
-                        *(cur->data.file.cur),
-                        cur->data.file.line
-                        );
+                        cur->data.file.fh, cur->data.file.max - cur->data.file.cur,
+                        *(cur->data.file.cur), cur->data.file.line );
                 }
                 if( cur->data.file.name ) {
-                    pos += FmtStr( &buf[pos], ", name %s",
-                        cur->data.file.name );
+                    pos += FmtStr( &buf[pos], ", name %s", cur->data.file.name );
                 }
                 pos += FmtStr( &buf[pos], "]" );
-                PrtMsg( INF| PRNTSTR, buf );
+                PrtMsg( INF | PRNTSTR, buf );
                 break;
             case SENT_STR:
                 pos += FmtStr( &buf[pos], "(" );
-                PrtMsg( INF|NEOL| PRNTSTR, buf );
-                PrtMsg( INF|NEOL| PRNTSTR, cur->data.str.cur );
-                PrtMsg( INF| PRNTSTR, ")]" );
+                PrtMsg( INF | NEOL | PRNTSTR, buf );
+                PrtMsg( INF | NEOL | PRNTSTR, cur->data.str.cur );
+                PrtMsg( INF | PRNTSTR, ")]" );
                 break;
             case SENT_CHAR:
                 pos += FmtStr( &buf[pos], "character 0x%x]", cur->data.ch );
@@ -521,8 +521,7 @@ extern void dispSENT( void )
             cur = cur->next;
         }
     } else {
-        PrtMsg( INF| PRNTSTR, "[stream empty]" );
+        PrtMsg( INF | PRNTSTR, "[stream empty]" );
     }
 }
 #endif
-

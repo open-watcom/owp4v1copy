@@ -58,7 +58,7 @@ void AutoDepInit( void )
 {
     const auto_dep_info * const *pcurr;
 
-    for( pcurr = &AutoDepTypes[ 0 ]; *pcurr != NULL; pcurr++ ) {
+    for( pcurr = &AutoDepTypes[0]; *pcurr != NULL; pcurr++ ) {
         if( (*pcurr)->init != NULL ) {
             (*pcurr)->init();
         }
@@ -84,7 +84,7 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), t
 
     flag.out_of_date = FALSE;
     max_time = *pmax_time;
-    for( pcurr = &AutoDepTypes[ 0 ]; *pcurr != NULL; pcurr++ ) {
+    for( pcurr = &AutoDepTypes[0]; *pcurr != NULL; pcurr++ ) {
         curr = *pcurr;
         hdl = curr->init_file( name );
         if( hdl != NULL ) {
@@ -113,7 +113,7 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), t
                     }
                 }
                 if( Glob.debug ) {
-                    char        time_buff[ 32 ];    /* large enough for date + flag */
+                    char        time_buff[32];  /* large enough for date + flag */
                     struct tm   *tm;
 
                     if( !flag.exists ) {
@@ -123,18 +123,19 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), t
                     } else {
                         tm = localtime( &curr_dep_time );
                         FmtStr( time_buff, "%D-%s-%D  %D:%D:%D ",
-                                tm->tm_mday, MonthNames[ tm->tm_mon ], tm->tm_year,
+                                tm->tm_mday, MonthNames[tm->tm_mon], tm->tm_year,
                                 tm->tm_hour, tm->tm_min, tm->tm_sec
                             );
                     }
                     if( flag.this_caused_it ) {
-                        unsigned len = strlen( time_buff );
-                        time_buff[len-1] = '*';
+                        unsigned    len = strlen( time_buff );
+                        time_buff[len - 1] = '*';
                     }
-                    PrtMsg( DBG|INF| GETDATE_MSG, time_buff, dep_name );
+                    PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
                 }
                 /* may not need to calculate real max time */
-                if( flag.out_of_date && !Glob.rcs_make ) break;
+                if( flag.out_of_date && !Glob.rcs_make )
+                    break;
                 dep_hdl = curr->next_dep( dep_hdl );
             }
             curr->fini_file( hdl );
@@ -151,7 +152,7 @@ void AutoDepFini( void )
 {
     const auto_dep_info * const *pcurr;
 
-    for( pcurr = &AutoDepTypes[ 0 ]; *pcurr != NULL; pcurr++ ) {
+    for( pcurr = &AutoDepTypes[0]; *pcurr != NULL; pcurr++ ) {
         if( (*pcurr)->fini != NULL ) {
             (*pcurr)->fini();
         }

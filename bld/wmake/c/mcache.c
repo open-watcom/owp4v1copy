@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#if !defined(__UNIX__)
+#if !defined( __UNIX__ )
     #include <direct.h>
     #include <dos.h>
 #endif
@@ -61,7 +61,7 @@
  */
 
 
-#if defined(__NT__)
+#if defined( __NT__ )
 /*
     Windows NT makes us call an expensive convert GMT to local function
     for each time-stamp we want to look at!
@@ -99,7 +99,7 @@ enum cacheRet {
 typedef struct cacheEntry FAR *CENTRYPTR;
 struct cacheEntry {
     CENTRYPTR   ce_next;
-    char        ce_name[ NAME_MAX + 1 ];
+    char        ce_name[NAME_MAX + 1];
     time_t      ce_tt;
 };
 
@@ -113,20 +113,20 @@ struct cacheEntry {
 typedef struct directHead FAR *DHEADPTR;
 struct directHead {
     DHEADPTR    dh_next;
-    char        dh_name[ _MAX_PATH ];
-    CENTRYPTR   dh_table[ HASH_PRIME ];
+    char        dh_name[_MAX_PATH];
+    CENTRYPTR   dh_table[HASH_PRIME];
 };
 
 STATIC DHEADPTR cacheHead;
 
 #ifdef USE_FAR
-#   define  myMalloc(size)      FarMaybeMalloc(size)
-#   define  myFree(ptr)         FarFree(ptr)
-#   define  myCmp(f,n)          _fFNameCmp(f,n)
+#   define  myMalloc( size )    FarMaybeMalloc( size )
+#   define  myFree( ptr )       FarFree( ptr )
+#   define  myCmp( f, n )       _fFNameCmp( f, n )
 #else
-#   define  myMalloc(size)      MallocUnSafe(size)
-#   define  myFree(ptr)         FreeSafe(ptr)
-#   define  myCmp(f,n)          FNameCmp(f,n)
+#   define  myMalloc( size )    MallocUnSafe( size )
+#   define  myFree( ptr )       FreeSafe( ptr )
+#   define  myCmp( f, n )       FNameCmp( f, n )
 #endif
 
 
@@ -145,7 +145,7 @@ STATIC void freeDirectList( DHEADPTR dhead )
         dcur = dhead;
         dhead = dhead->dh_next;
         for( h = 0; h < HASH_PRIME; h++ ) {
-            cwalk = dcur->dh_table[ h ];
+            cwalk = dcur->dh_table[h];
             while( cwalk != NULL ) {
                 ccur = cwalk;
                 cwalk = cwalk->ce_next;
@@ -162,7 +162,7 @@ STATIC void freeDirectList( DHEADPTR dhead )
     }
 #ifdef CACHE_STATS
     if( Glob.cachestat ) {
-        PrtMsg( INF| CACHE_FREED_BYTES, bytes );
+        PrtMsg( INF | CACHE_FREED_BYTES, bytes );
     }
 #endif
 }
@@ -181,23 +181,23 @@ STATIC enum cacheRet cacheDir( DHEADPTR *pdhead, char *path )
     DIR             *entry;     /* current directory entry */
     HASH_T          h;          /* hash value */
     size_t          len;
-#   ifdef CACHE_STATS
-        UINT32          bytes = 0;  /* counter */
-        UINT32          files = 0;  /* counter */
-        UINT32          hits = 0;   /* counter */
+#ifdef CACHE_STATS
+    UINT32          bytes = 0;  /* counter */
+    UINT32          files = 0;  /* counter */
+    UINT32          hits = 0;   /* counter */
 
-        if( Glob.cachestat ) {
-            PrtMsg( INF| CACHING_DIRECTORY, path );
-        }
-#   endif
+    if( Glob.cachestat ) {
+        PrtMsg( INF | CACHING_DIRECTORY, path );
+    }
+#endif
 
     *pdhead = myMalloc( sizeof( **pdhead ) );
     if( *pdhead == NULL ) {
         return( CACHE_NOT_ENUF_MEM );
     }
-#   ifdef CACHE_STATS
-        bytes += sizeof( **pdhead );
-#   endif
+#ifdef CACHE_STATS
+    bytes += sizeof( **pdhead );
+#endif
 
                                     /* clear the memory */
     _fmemset( *pdhead, 0, sizeof( **pdhead ) );
@@ -208,63 +208,62 @@ STATIC enum cacheRet cacheDir( DHEADPTR *pdhead, char *path )
     strcpy( &path[len], "*.*" );
     parent = opendir( path );
     if( parent == NULL ) {
-#       ifdef CACHE_STATS
-            if( Glob.cachestat ) {
-                PrtMsg( INF|NEOL| CACHE_FILES_BYTES, files, bytes, hits );
-            }
-#       endif
+#ifdef CACHE_STATS
+        if( Glob.cachestat ) {
+            PrtMsg( INF | NEOL | CACHE_FILES_BYTES, files, bytes, hits );
+        }
+#endif
         return( CACHE_OK );     /* an empty, or nonexistent directory */
     }
 
     entry = readdir( parent );
     while( entry != NULL ) {
-        if( !( entry->d_attr & IGNORE_MASK ) ) {
+        if( !(entry->d_attr & IGNORE_MASK) ) {
                         /* we tromp on entry, and get hash value */
             h = Hash( FixName( entry->d_name ), HASH_PRIME );
             cnew = myMalloc( sizeof( *cnew ) );
             if( cnew == NULL ) {
                 freeDirectList( *pdhead );  /* roll back, and abort */
                 *pdhead = NULL;
-#           ifdef CACHE_STATS
+#ifdef CACHE_STATS
                 if( Glob.cachestat ) {
                     if( hits % 8 != 0 ) {
-                        PrtMsg( INF| NEWLINE );
+                        PrtMsg( INF | NEWLINE );
                     }
-                    PrtMsg( INF| CACHE_MEM );
+                    PrtMsg( INF | CACHE_MEM );
                 }
-#           endif
+#endif
                 return( CACHE_NOT_ENUF_MEM );
             }
-#           ifdef CACHE_STATS
-                bytes += sizeof( *cnew );
-                ++files;
-#           endif
+#ifdef CACHE_STATS
+            bytes += sizeof( *cnew );
+            ++files;
+#endif
 
             cnew->ce_tt = _DOSStampToTime( entry->d_date, entry->d_time );
             ConstMemCpy( cnew->ce_name, entry->d_name, NAME_MAX + 1 );
 
-            cnew->ce_next = (*pdhead)->dh_table[ h ];
-            (*pdhead)->dh_table[ h ] = cnew;
-#           ifdef CACHE_STATS
-                if( Glob.cachestat && cnew->ce_next != NULL ) {
-                    ++hits;
-                    PrtMsg( INF|( ( hits % 8 == 0 ) ? 0 : NEOL )| HIT_ON_HASH,
-                                                            h );
-                }
-#           endif
+            cnew->ce_next = (*pdhead)->dh_table[h];
+            (*pdhead)->dh_table[h] = cnew;
+#ifdef CACHE_STATS
+            if( Glob.cachestat && cnew->ce_next != NULL ) {
+                ++hits;
+                PrtMsg( INF | ((hits % 8 == 0) ? 0 : NEOL) | HIT_ON_HASH, h );
+            }
+#endif
         }
         entry = readdir( parent );
     }
     closedir( parent );
 
-#   ifdef CACHE_STATS
-        if( Glob.cachestat ) {
-            if( hits % 8 != 0 ) {
-                PrtMsg( INF| NEWLINE );
-            }
-            PrtMsg( INF| CACHE_FILES_BYTES, files, bytes, hits );
+#ifdef CACHE_STATS
+    if( Glob.cachestat ) {
+        if( hits % 8 != 0 ) {
+            PrtMsg( INF | NEWLINE );
         }
-#   endif
+        PrtMsg( INF | CACHE_FILES_BYTES, files, bytes, hits );
+    }
+#endif
 
     return( CACHE_OK );
 }
@@ -286,8 +285,8 @@ STATIC DHEADPTR findDir( const char *path )
     dlast = NULL;
     dcur = cacheHead;
     first = path[0];
-    while( dcur != NULL && ( first != dcur->dh_name[0] ||
-                            myCmp( dcur->dh_name, path ) != 0 ) ) {
+    while( dcur != NULL && (first != dcur->dh_name[0] ||
+                            myCmp( dcur->dh_name, path ) != 0) ) {
         dlast = dcur;
         dcur = dcur->dh_next;
     }
@@ -314,7 +313,7 @@ STATIC CENTRYPTR findFile( DHEADPTR dir, const char *name )
 
     h = Hash( name, HASH_PRIME );
 
-    ccur = dir->dh_table[ h ];
+    ccur = dir->dh_table[h];
     while( ccur != NULL ) {
         if( myCmp( ccur->ce_name, name ) == 0 ) {
             return( ccur );
@@ -343,7 +342,7 @@ extern void CacheRelease( void )
 {
 #ifdef CACHE_STATS
     if( Glob.cachestat ) {
-        PrtMsg( INF| CACHERELEASE );
+        PrtMsg( INF | CACHERELEASE );
     }
 #endif
 
@@ -374,8 +373,8 @@ STATIC RET_T regStat( const char *filename, time_t *ptime )
  * not quite a regular stat(), but functional for what we need
  */
 {
-    DIR *parent;
-    DIR *entry;
+    DIR     *parent;
+    DIR     *entry;
 
     parent = opendir( filename );
     if( parent == NULL ) {
@@ -414,15 +413,17 @@ STATIC void splitFullPath( const char *fullpath, char *pathbuf, char *filebuf )
 }
 
 
+#ifdef __WATCOMC__
 #pragma on (check_stack);
+#endif
 STATIC enum cacheRet maybeCache( const char *fullpath, CENTRYPTR *pc )
 /********************************************************************/
 {
-    char        path[ _MAX_PATH ];
-    char        name[ NAME_MAX + 1 ];
-    DHEADPTR    dcur;
-    CENTRYPTR   centry;
-    enum cacheRet ret;
+    char            path[_MAX_PATH];
+    char            name[NAME_MAX + 1];
+    DHEADPTR        dcur;
+    CENTRYPTR       centry;
+    enum cacheRet   ret;
 
     assert( fullpath != NULL );
 
@@ -454,7 +455,9 @@ STATIC enum cacheRet maybeCache( const char *fullpath, CENTRYPTR *pc )
 
     return( CACHE_OK );
 }
+#ifdef __WATCOMC__
 #pragma off(check_stack);
+#endif
 
 
 /*

@@ -51,7 +51,7 @@ typedef struct {
 } omf_info;
 
 static omf_info fileHandle;
-static char     nameBuffer[ _MAX_PATH2 + 1 ];
+static char     nameBuffer[_MAX_PATH2 + 1];
 
 #pragma pack( push, 1 )
 typedef struct {
@@ -74,13 +74,13 @@ static BOOLEAN verifyObjFile( int fh )
     if( lseek( fh, 0, SEEK_SET ) < 0 ) {
         return( FALSE );
     }
-    if( read( fh, &theadr, sizeof(theadr) ) != sizeof(theadr) ) {
+    if( read( fh, &theadr, sizeof( theadr ) ) != sizeof( theadr ) ) {
         return( FALSE );
     }
     if( theadr.header.command != CMD_THEADR ) {
         return( FALSE );
     }
-    if(( theadr.name.len + 2 ) != theadr.header.length ) {
+    if( (theadr.name.len + 2) != theadr.header.length ) {
         return( FALSE );
     }
     if( lseek( fh, 0, SEEK_SET ) < 0 ) {
@@ -89,9 +89,10 @@ static BOOLEAN verifyObjFile( int fh )
     return( TRUE );
 }
 
-STATIC handle OMFInitFile( const char *name ) {
-/*********************************************/
 
+STATIC handle OMFInitFile( const char *name )
+/*******************************************/
+{
     int         handl;
     handle      ret_val;
 
@@ -108,36 +109,42 @@ STATIC handle OMFInitFile( const char *name ) {
     return( ret_val );
 }
 
-static BOOLEAN getOMFCommentRecord( omf_info *info ) {
-/*************************************************/
 
+static BOOLEAN getOMFCommentRecord( omf_info *info )
+/**************************************************/
+{
     obj_record          header;
     obj_comment         comment;
     int                 hdl;
     unsigned            len;
 
     hdl = info->handle;
-    for(;;) {
-        if( read( hdl, &header, sizeof( header ) ) != sizeof( header ) ) break;
+    for( ;; ) {
+        if( read( hdl, &header, sizeof( header ) ) != sizeof( header ) )
+            break;
         if( header.command != CMD_COMENT ) {
-            // first LNAMES record means objfile has no dependancy info
-            if( header.command == CMD_LNAMES ) break;
+            // first LNAMES record means objfile has no dependency info
+            if( header.command == CMD_LNAMES )
+                break;
             lseek( hdl, header.length, SEEK_CUR );
             continue;
         }
-        if( read( hdl, &comment, sizeof( comment ) ) != sizeof( comment ) ) break;
+        if( read( hdl, &comment, sizeof( comment ) ) != sizeof( comment ) )
+            break;
         if( comment.type != CMT_DEPENDENCY ) {
             lseek( hdl, header.length - sizeof( comment ), SEEK_CUR );
             continue;
         }
         // NULL dependency means end of dependency info
-        if( header.length < sizeof( comment ) ) break;
-        // we have a dependency comment!
+        if( header.length < sizeof( comment ) )
+            break;
+        // we have a dependency comment! hooray!
         len = comment.name_len + 1;
-        if( read( hdl, &nameBuffer, len ) != len ) break;
-        nameBuffer[ len - 1 ] = '\0';
+        if( read( hdl, &nameBuffer, len ) != len )
+            break;  // darn, it's broke
+        nameBuffer[len - 1] = '\0';
         info->time_stamp = _DOSStampToTime( comment.dos_date, comment.dos_time );
-        info->name = &nameBuffer[ 0 ];
+        info->name = &nameBuffer[0];
         return( TRUE );
     }
     return( FALSE );
@@ -152,18 +159,20 @@ STATIC dep_handle OMFNextDep( dep_handle info ) {
     return( NULL );
 }
 
-STATIC void OMFTransDep( dep_handle info, char **name, time_t *stamp ) {
-/**********************************************************************/
-
-    *name = ((omf_info *)info)->name;
+STATIC void OMFTransDep( dep_handle info, char **name, time_t *stamp )
+/********************************************************************/
+{
+    *name  = ((omf_info *)info)->name;
     *stamp = ((omf_info *)info)->time_stamp;
 }
 
-STATIC void OMFFiniFile( handle info ) {
-/**************************************/
 
+STATIC void OMFFiniFile( handle info )
+/************************************/
+{
     close( ((omf_info *)info)->handle );
 }
+
 
 const auto_dep_info OMFAutoDepInfo = {
     NULL,

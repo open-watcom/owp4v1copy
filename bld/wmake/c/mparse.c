@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 
 #include "massert.h"
@@ -49,9 +50,7 @@
 
 
 UINT16          inlineLevel;
-STATIC TLIST   *firstTarget;       /* first set of targets parsed
-                                           this invocation */
-
+STATIC TLIST    *firstTarget;   /* first set of targets parsed this invocation */
 
 
 STATIC void ignoring( TOKEN_T t, BOOLEAN freelex )
@@ -72,17 +71,17 @@ STATIC void ignoring( TOKEN_T t, BOOLEAN freelex )
     case TOK_PATH:      y = M_PATH;         break;
     default:
 #ifdef DEVELOPMENT
-        PrtMsg( FTL|LOC| INVALID_TOKEN_IN, t, "ignoring" );
+        PrtMsg( FTL | LOC | INVALID_TOKEN_IN, t, "ignoring" );
 #else
         y = M_UNKNOWN_TOKEN;
 #endif
         break;
     }
 
-    PrtMsg( ERR|LOC| IGNORE_OUT_OF_PLACE_M, y );
+    PrtMsg( ERR | LOC | IGNORE_OUT_OF_PLACE_M, y );
 
     if( freelex ) {
-        LexMaybeFree( (TOKEN_T) y );
+        LexMaybeFree( (TOKEN_T)y );
     }
 }
 
@@ -95,11 +94,11 @@ STATIC TOKEN_T buildTargs( TLIST **dest, TOKEN_T t )
  * returns: token it terminates on
  */
 {
-    char    dotname[ MAX_DOT_NAME ];
+    char    dotname[MAX_DOT_NAME];
 
     assert( dest != NULL );
 
-    for(;;) {                       /* read till SCOLON or DCOLON */
+    for( ;; ) {                     /* read till SCOLON or DCOLON */
         switch( t ) {
         case TOK_SCOLON:            /* fall through */
         case TOK_DCOLON:
@@ -108,10 +107,10 @@ STATIC TOKEN_T buildTargs( TLIST **dest, TOKEN_T t )
             return( t );
         case TOK_SUFSUF:
             if( !SufBothExist( CurAttr.ptr ) ) {
-                PrtMsg( ERR|LOC| SUFFIX_DOESNT_EXIST, CurAttr.ptr );
+                PrtMsg( ERR | LOC | SUFFIX_DOESNT_EXIST, CurAttr.ptr );
             } else {
                 AddCreator( CurAttr.ptr );
-                WildTList( dest, CurAttr.ptr, TRUE , TRUE);
+                WildTList( dest, CurAttr.ptr, TRUE, TRUE);
             }
             FreeSafe( CurAttr.ptr );
             break;
@@ -119,12 +118,12 @@ STATIC TOKEN_T buildTargs( TLIST **dest, TOKEN_T t )
             if( !IsDotWithCmds( CurAttr.num ) ) {
                 ignoring( TOK_DOTNAME, TRUE );
             } else {
-                FmtStr( dotname, ".%s", DotNames[ CurAttr.num ] );
-                WildTList( dest, dotname, TRUE , TRUE);
+                FmtStr( dotname, ".%s", DotNames[CurAttr.num] );
+                WildTList( dest, dotname, TRUE, TRUE);
             }
             break;
         case TOK_FILENAME:
-            WildTList( dest, CurAttr.ptr, TRUE , TRUE);
+            WildTList( dest, CurAttr.ptr, TRUE, TRUE);
             FreeSafe( CurAttr.ptr );
             break;
         default:
@@ -145,14 +144,14 @@ STATIC void setSColon( const TLIST *tlist, BOOLEAN scolon )
 {
                                 /* set up scolon or dcolon */
     for( ; tlist != NULL; tlist = tlist->next ) {
-        TARGET * const curtarg = tlist->target;
+        TARGET * const  curtarg = tlist->target;
 
         if( !curtarg->special ) {
             if( curtarg->depend == NULL ) {
-                    /* initial declaration of target */
+                /* initial declaration of target */
                 curtarg->scolon = scolon;
             } else if( scolon != curtarg->scolon ) {
-                PrtMsg( ERR|LOC| TARGET_ALREADY_M, curtarg->node.name,
+                PrtMsg( ERR | LOC | TARGET_ALREADY_M, curtarg->node.name,
                     curtarg->scolon ? M_SCOLON : M_DCOLON );
             }
         }
@@ -188,16 +187,14 @@ STATIC void linkDepend( const TLIST *tlist, DEPEND *dep, TATTR attr )
                  * and create a new Depend
                  */
 
-                if (!curtarg->before_after && !curtarg->sufsuf) {
-                    FreeDepend(curtarg->depend);
+                if( !curtarg->before_after && !curtarg->sufsuf ) {
+                    FreeDepend( curtarg->depend );
                     curtarg->depend = NewDepend();
-                    if (curtarg->dot_default) {
-                        PrtMsg( WRN|LOC| DOT_DEFAULT_REDEFINITION);
+                    if( curtarg->dot_default ) {
+                        PrtMsg( WRN | LOC | DOT_DEFAULT_REDEFINITION );
                     }
                 }
             }
-
-
         } else {
             lastnext = &curtarg->depend;
             targdep = *lastnext;
@@ -228,11 +225,11 @@ STATIC void linkDepend( const TLIST *tlist, DEPEND *dep, TATTR attr )
                     tmpdep->targs = NULL;       /* free useless dep */
                     FreeDepend( tmpdep );
                 } else if( targdep->clist != NULL || targdep->targs != NULL ) {
-                        /* target isn't a place holder, link new one in */
+                    /* target isn't a place holder, link new one in */
                     targdep->next = dep;
                     dep = DupDepend( dep );
                 } else {
-                        /* target is a place holder, free it, and link  */
+                    /* target is a place holder, free it, and link  */
                     FreeDepend( targdep );
                     *lastnext = dep;
                     dep = DupDepend( dep );
@@ -263,7 +260,7 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
     *pattr = FalseAttr;
     list = &dep->targs;
 
-    for(;;) {
+    for( ;; ) {
         t = LexToken( LEX_PARSER );
 
         if( t == EOL || t == STRM_END ) {
@@ -319,7 +316,7 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
 }
 
 
-STATIC void checkFirstTarget ( void )
+STATIC void checkFirstTarget( void )
 {
     TLIST  *head;
     TLIST  *current;
@@ -335,9 +332,9 @@ STATIC void checkFirstTarget ( void )
         /* Go through all the targets to see check if all targets are
             still okay */
         current = head;
-        while (current != NULL) {
+        while( current != NULL ) {
             if( !current->target->attr.explicit &&
-                !current->target->special) {
+                !current->target->special ) {
                 /* still valid targets */
                 temp = okayList;
                 okayList = current;
@@ -351,18 +348,17 @@ STATIC void checkFirstTarget ( void )
                 notOkayList->next = temp;
             }
         }
-        FreeTList(notOkayList);
+        FreeTList( notOkayList );
         head = NULL;
 
         /* Reverse the list back */
-        while (okayList != NULL) {
+        while( okayList != NULL ) {
              temp = head;
              head = okayList;
              okayList = okayList->next;
              head->next = temp;
         }
         firstTarget = head;
-
     }
 }
 
@@ -371,7 +367,7 @@ STATIC void setFirstTarget( const TLIST *tlist )
 {
     /* Check to see if first targets are still valid */
     checkFirstTarget();
-    if (firstTarget == NULL) {
+    if( firstTarget == NULL ) {
         firstTarget = DupTList( tlist );
         /* Check to see if any of the new targets are valid */
         checkFirstTarget();
@@ -387,8 +383,7 @@ STATIC void parseTargWarning( const TLIST *walk )
 {
     while( walk != NULL ) {
         if( !walk->target->special ) {
-            PrtMsg( DBG|WRN|LOC| ASSUMING_SYMBOLIC,
-                walk->target->node.name );
+            PrtMsg( DBG | WRN | LOC | ASSUMING_SYMBOLIC, walk->target->node.name );
             break;
         }
         walk = walk->next;
@@ -419,7 +414,7 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
     nodep = t == EOL || t == STRM_END;  /* check if there wasn't a colon */
 
         /* set the scolon attribute for each of these targets */
-    setSColon( *btlist, (int) ( t == TOK_SCOLON || nodep ) );
+    setSColon( *btlist, (int)(t == TOK_SCOLON || nodep) );
 
     if( !nodep ) {
         dep = buildDepend( &attr );
@@ -449,10 +444,11 @@ STATIC void parseExtensions( void )
     TOKEN_T     t;
     BOOLEAN     any;
 
-    for(;;) {
+    for( ;; ) {
         t = LexToken( LEX_PARSER );
-        if( t == EOL || t == STRM_END || t == TOK_SCOLON ) break;
-        PrtMsg( ERR|LOC| EXPECTING_M, M_SCOLON );
+        if( t == EOL || t == STRM_END || t == TOK_SCOLON )
+            break;
+        PrtMsg( ERR | LOC | EXPECTING_M, M_SCOLON );
         LexMaybeFree( t );
     }
     if( t == EOL || t == STRM_END ) {
@@ -460,7 +456,7 @@ STATIC void parseExtensions( void )
         return;
     }
     any = FALSE;
-    for(;;) {
+    for( ;; ) {
         t = LexToken( LEX_PARSER );
         if( t == EOL || t == STRM_END ) break;
         if( t == TOK_SUF ) {
@@ -473,7 +469,7 @@ STATIC void parseExtensions( void )
             } else if( Glob.microsoft | Glob.unix ) {
                 FreeSafe( CurAttr.ptr );
             } else {
-                PrtMsg( ERR|LOC| REDEF_OF_SUFFIX, CurAttr.ptr );
+                PrtMsg( ERR | LOC | REDEF_OF_SUFFIX, CurAttr.ptr );
                 FreeSafe( CurAttr.ptr );
             }
             any = TRUE;
@@ -500,7 +496,7 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
         parseExtensions();
         return;
     }
-    for(;;) {
+    for( ;; ) {
         switch( CurAttr.num ) {
         case DOT_BLOCK:         Glob.block = TRUE;              break;
         case DOT_CONTINUE:      Glob.cont = TRUE;               break;
@@ -516,7 +512,7 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
             ignoring( TOK_DOTNAME, TRUE );
             break;
         }
-        for(;;) {
+        for( ;; ) {
             t = LexToken( LEX_PARSER );
             if( t == EOL || t == STRM_END ) return;
             if( t != TOK_DOTNAME ) {
@@ -528,18 +524,17 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
 
 
 /* links the clist to the sufsuf target */
-STATIC void linkClistSufsuf( const TARGET *curtarg,
-                             const CLIST  *clist,
-                             const char   *cur_target_path,
-                             const char   *cur_depend_path )
+STATIC void linkClistSufsuf( const TARGET *curtarg, const CLIST *clist,
+                             const char *cur_target_path,
+                             const char *cur_depend_path )
 {
-    DEPEND *walk;
-    SLIST  *slist;
+    DEPEND  *walk;
+    SLIST   *slist;
 
-    assert(curtarg != NULL && curtarg->depend != NULL);
+    assert( curtarg != NULL && curtarg->depend != NULL );
 
     walk = curtarg->depend;
-    while (walk->next != NULL) {
+    while( walk->next != NULL ) {
         walk = walk->next;
     }
 
@@ -550,16 +545,16 @@ STATIC void linkClistSufsuf( const TARGET *curtarg,
      * current clist if not we have to create an SLIST that contains
      * both the new targ_path and  new dep_path
      */
-    if (cur_depend_path == NULL && cur_target_path == NULL ) {
-        if (walk->clist != NULL ){
-            FreeSafe ( walk->clist );
+    if( cur_depend_path == NULL && cur_target_path == NULL ) {
+        if( walk->clist != NULL ) {
+            FreeSafe( walk->clist );
         }
 
         walk->clist = DupCList( clist );
 
     } else {
 
-        if (walk->slist == NULL ) {
+        if( walk->slist == NULL ) {
             walk->slist = NewSList ();
             walk->slist->targ_path = StrDupSafe( cur_target_path );
             walk->slist->dep_path  = StrDupSafe( cur_depend_path );
@@ -573,23 +568,21 @@ STATIC void linkClistSufsuf( const TARGET *curtarg,
             slist->next      = walk->slist;
             walk->slist      = slist;
         }
-
     }
-
 }
 
-STATIC void linkCList( TLIST *btlist, CLIST *bclist ,
+STATIC void linkCList( TLIST *btlist, CLIST *bclist,
                        const char  *cur_target_path, const char *cur_depend_path)
 /********************************************************************************
  * attach bclist to each target in btlist
  */
 {
-    CLIST             *clisthead;
-    CLIST             *clistcur;
-    TLIST const        *tlist;
-    DEPEND * const     *walk;
-    CLIST             **walkClist;
-    TARGET const      *curtarg;
+    CLIST               *clisthead;
+    CLIST               *clistcur;
+    TLIST const         *tlist;
+    DEPEND * const      *walk;
+    CLIST               **walkClist;
+    TARGET const        *curtarg;
 
     assert( btlist != NULL );
 
@@ -623,16 +616,16 @@ STATIC void linkCList( TLIST *btlist, CLIST *bclist ,
             /* check if it's an scolon, and attempt more than one clist */
             if( clisthead != NULL && (*walk)->clist != NULL ) {
                 if( Glob.microsoft | Glob.unix ) {
-                    PrtMsg( WRN|LOC| MORE_THAN_ONE_CLIST, curtarg->node.name );
+                    PrtMsg( WRN | LOC | MORE_THAN_ONE_CLIST, curtarg->node.name );
                 } else {
-                    PrtMsg( ERR|LOC| MORE_THAN_ONE_CLIST, curtarg->node.name );
+                    PrtMsg( ERR | LOC | MORE_THAN_ONE_CLIST, curtarg->node.name );
                 }
             } else if( clisthead != NULL ) {
                 /* this is the first clist for this scolon */
                 (*walk)->clist = clisthead;
                 clisthead = DupCList( clisthead );
             }
-        } else if ( curtarg->sufsuf ) {
+        } else if( curtarg->sufsuf ) {
             /* special processing is needed for sufsuf */
             linkClistSufsuf(curtarg,
                             clisthead,
@@ -645,19 +638,19 @@ STATIC void linkCList( TLIST *btlist, CLIST *bclist ,
                 walk = &(*walk)->next;
             }
 
-            if (curtarg->before_after) {
+            if( curtarg->before_after ) {
                 walkClist = &(*walk)->clist;
                 /* if the clist being appended is null then clear the list */
                 /* just like .SUFFIXES                                     */
-                if (clisthead != NULL) {
+                if( clisthead != NULL ) {
                     // for .AFTER and .BEFORE we need to add to the end of the
                     // clist the new clists
-                    while ( (*walkClist) != NULL) {
+                    while( (*walkClist) != NULL ) {
                         walkClist = &(*walkClist)->next;
                     }
                     *walkClist = clisthead;
                 } else {
-                    FreeCList(*walkClist);
+                    FreeCList( *walkClist );
                     *walkClist = NULL;
                 }
             } else {
@@ -688,11 +681,12 @@ STATIC void parseSuf( void )
 
     t = TOK_SUF;
 
-    for(;;) {
-        if( t == EOL || t == STRM_END || t == TOK_SCOLON ) break;
+    for( ;; ) {
+        if( t == EOL || t == STRM_END || t == TOK_SCOLON )
+            break;
         if( t == TOK_SUF ) {
             if( !SufExists( CurAttr.ptr ) ) {
-                PrtMsg( ERR|LOC| SUFFIX_DOESNT_EXIST, CurAttr.ptr );
+                PrtMsg( ERR | LOC | SUFFIX_DOESNT_EXIST, CurAttr.ptr );
                 FreeSafe( CurAttr.ptr );
             } else {
                 cur = MallocSafe( sizeof( *cur ) );
@@ -720,8 +714,9 @@ STATIC void parseSuf( void )
         }
     }
 
-    for(;;) {
-        if( t == STRM_END || t == EOL ) break;
+    for( ;; ) {
+        if( t == STRM_END || t == EOL )
+            break;
         ignoring( t, TRUE );
         t = LexToken( LEX_PATH );
     }
@@ -739,7 +734,6 @@ STATIC void parseSuf( void )
 }
 
 
-
 STATIC char *getFileName( const char* intext, int *offset )
 /**********************************************************
  * get the filename from the given text
@@ -751,67 +745,65 @@ STATIC char *getFileName( const char* intext, int *offset )
  * the temp file anyway
  */
 {
-    VECSTR  tempStr;
-    char*   ret;
-    BOOLEAN doubleQuote;    //are there double quotes
+    VECSTR      tempStr;
+    char        *ret;
+    BOOLEAN     doubleQuote;    //are there double quotes
 
     assert( intext != NULL && offset != NULL );
 
     *offset     = 0;
     doubleQuote = FALSE;
 
-    if (intext[*offset] == DOUBLEQUOTE) {
+    if( intext[*offset] == DOUBLEQUOTE ) {
         doubleQuote = TRUE;
         *offset     = 1;
     }
     for( ;; ) {
-        if (intext[*offset] == NULLCHAR) {
+        if( intext[*offset] == NULLCHAR ) {
             break;
-        } else if ((isws(intext[*offset])          ||
+        } else if( (isws( intext[*offset] )        ||
                     intext[*offset]== LESSTHAN     ||
                     intext[*offset]== GREATERTHAN) &&
-                    !doubleQuote){
+                    !doubleQuote ) {
             break;
-        } else if (doubleQuote && intext[*offset] == BACKSLASH) {
-            if (intext[*offset + 1] == DOUBLEQUOTE ) {
+        } else if( doubleQuote && intext[*offset] == BACKSLASH ) {
+            if( intext[*offset + 1] == DOUBLEQUOTE ) {
                 *offset = *offset + 1;
             }
-        } else if (doubleQuote && intext[*offset] == DOUBLEQUOTE) {
+        } else if( doubleQuote && intext[*offset] == DOUBLEQUOTE ) {
             ++(*offset);
             break;
         }
         ++(*offset);
     }
 
-    if (intext[(*offset)-1] != DOUBLEQUOTE && doubleQuote ||
-        *offset == 1                       && doubleQuote) {
+    if( (intext[(*offset) - 1] != DOUBLEQUOTE && doubleQuote) ||
+        (*offset == 1                         && doubleQuote) ) {
         /* error */
-        PrtMsg(ERR|LOC|NON_MATCHING_QUOTE);
+        PrtMsg( ERR | LOC | NON_MATCHING_QUOTE );
         ret = NULL;
-        return (ret);
+        return( ret );
     }
 
-
-    if ( !doubleQuote && *offset > 0 ||
-         doubleQuote  && *offset > 1) {
+    if( !doubleQuote && *offset > 0 ||
+         doubleQuote && *offset > 1 ) {
         tempStr = StartVec();
-        if (doubleQuote) {
-            WriteNVec(tempStr,intext+1,*offset-2);
+        if( doubleQuote ) {
+            WriteNVec( tempStr, intext + 1, *offset - 2 );
         } else {
-            WriteNVec(tempStr,intext,*offset);
+            WriteNVec( tempStr, intext, *offset );
         }
-        ret = FinishVec(tempStr);
-        return (ret);
+        ret = FinishVec( tempStr );
+        return( ret );
 
     } else {
         // if we need a temporary file then give back << as a filename
         tempStr = StartVec();
-        WriteVec(tempStr,INLINE_SYMBOL);
-        ret = FinishVec(tempStr);
-        return (ret);
+        WriteVec( tempStr, INLINE_SYMBOL );
+        ret = FinishVec( tempStr );
+        return( ret );
     }
 }
-
 
 
 STATIC void getBody( FLIST *head )
@@ -819,72 +811,72 @@ STATIC void getBody( FLIST *head )
  * get the body of the file from the input stream
  */
 {
-    FLIST      *current;
-
+    FLIST       *current;
     TOKEN_T     t;
     VECSTR      buf;
     VECSTR      bufTemp;
-    char       *temp;
-    char const *currChar;
+    char        *temp;
+    char const  *currChar;
 
     current = head;
-    if (current == NULL) {
+    if( current == NULL ) {
         return;
     }
 
     /* Inlinelevel == the number of inline files we need to create */
     while( inlineLevel > 0 && current != NULL ) {
         buf = StartVec();
-        WriteVec(buf,"");
+        WriteVec( buf, "" );
         for( ;; ) {
             t = PreGetCH();
-            if (t == STRM_END) {
-                UnGetCH(t);
-                PrtMsg(ERR|LOC|UNEXPECTED_EOF);
+            if( t == STRM_END ) {
+                UnGetCH( t );
+                PrtMsg( ERR | LOC | UNEXPECTED_EOF );
                 return;
             }
-            UnGetCH(t);
-            temp = ignoreWSDeMacro(TRUE,ForceDeMacro());
-            if (temp[0] == LESSTHAN) {
-                if (temp[1] == LESSTHAN) {
+            UnGetCH( t );
+            temp = ignoreWSDeMacro( TRUE, ForceDeMacro() );
+            if( temp[0] == LESSTHAN ) {
+                if( temp[1] == LESSTHAN ) {
                     /* terminator of inline file is found when first
                      * two characters are <<
                      */
-                     currChar = temp+2;
-                     while (*currChar != NULLCHAR && isws(*currChar)) {
+                     currChar = temp + 2;
+                     while( *currChar != NULLCHAR && isws( *currChar ) ) {
                          ++currChar;
                      }
-                     if (*currChar == NULLCHAR) {
+                     if( *currChar == NULLCHAR ) {
                          current->keep = FALSE;
-                     } else if (strnicmp(currChar,NOKEEP,6)== 0) {
+                     } else if( strnicmp( currChar, NOKEEP, 6 ) == 0 ) {
                          current->keep = FALSE;
-                     } else if (strnicmp(currChar,KEEP,4) == 0) {
+                     } else if( strnicmp( currChar, KEEP, 4 ) == 0 ) {
                          current->keep = TRUE;
                      } else {
                          /* error only expecting (NO)KEEP */
-                         PrtMsg(ERR|LOC|NOKEEP_ONLY);
+                         PrtMsg( ERR | LOC | NOKEEP_ONLY );
                      }
 
-                     FreeSafe(temp);
+                     FreeSafe( temp );
                      break;
                 }
             }
             bufTemp = StartVec();
-            WriteVec(bufTemp,temp);
-            FreeSafe(temp);
-            CatVec(buf,bufTemp);
+            WriteVec( bufTemp, temp );
+            FreeSafe( temp );
+            CatVec( buf, bufTemp );
             bufTemp = StartVec();
-            WriteVec(bufTemp,"\n");
-            CatVec(buf,bufTemp);
+            WriteVec( bufTemp, "\n" );
+            CatVec( buf, bufTemp );
         }
-        current->body = FinishVec(buf);
+        current->body = FinishVec( buf );
         current       = current->next;
         --inlineLevel;
     }
-    if (inlineLevel > 0) {
-        PrtMsg(ERR|LOC|UNEXPECTED_EOF);
+    if( inlineLevel > 0 ) {
+        PrtMsg( ERR | LOC | UNEXPECTED_EOF );
     }
 }
+
 
 /*
  * this returns the head of the flist and modifies the command text to
@@ -894,19 +886,19 @@ STATIC void getBody( FLIST *head )
  * cmdText is also modified it removes the file name information and
  * substitutes it with the actual file name that is going to be used
  */
-STATIC FLIST* GetInlineFile( char** commandIn )
+STATIC FLIST *GetInlineFile( char **commandIn )
 {
     int     offset;
     int     index;
-    FLIST*  head;
-    FLIST*  current;
-    char*   cmdText;
+    FLIST   *head;
+    FLIST   *current;
+    char    *cmdText;
     int     start;       // start of cmdText to copy into newCommand
     VECSTR  newCommand;  // stores the new command built by replacing << with
                          // the actual file name
 
     /* inlinelevel must be initially zero when processing */
-    assert(inlineLevel == 0 && commandIn != NULL);
+    assert( inlineLevel == 0 && commandIn != NULL );
 
     cmdText = *commandIn;
     head    = NULL;
@@ -925,15 +917,15 @@ STATIC FLIST* GetInlineFile( char** commandIn )
      * this part will remove the << from the command text if the inline file
      * is explicitly defined
      */
-    while (cmdText[index] != NULLCHAR) {
-        if (cmdText[index] == LESSTHAN) {
-            if (cmdText[index+1] == LESSTHAN) {
+    while( cmdText[index] != NULLCHAR ) {
+        if( cmdText[index] == LESSTHAN ) {
+            if( cmdText[index + 1] == LESSTHAN ) {
 
                 // Add the current vector into the new command
-                WriteNVec(newCommand,cmdText+start,index-start);
+                WriteNVec( newCommand, cmdText + start, index - start );
 
                 ++inlineLevel;
-                if (head == NULL) {
+                if( head == NULL ) {
                     current = NewFList();
                     head    = current;
                 } else {
@@ -943,19 +935,19 @@ STATIC FLIST* GetInlineFile( char** commandIn )
                 }
 
                 // Add file Name into new command text
-                current->fileName = getFileName (cmdText+2+index,&offset);
+                current->fileName = getFileName( cmdText + 2 + index, &offset );
 
                 // Check for long file name
-                if (*(cmdText+2+index) == DOUBLEQUOTE) {
-                    WriteVec( newCommand, "\"");
-                    WriteVec( newCommand, current->fileName);
-                    WriteVec( newCommand, "\"");
+                if( *(cmdText + 2 + index) == DOUBLEQUOTE ) {
+                    WriteVec( newCommand, "\"" );
+                    WriteVec( newCommand, current->fileName );
+                    WriteVec( newCommand, "\"" );
                 } else {
-                    WriteVec( newCommand, current->fileName);
+                    WriteVec( newCommand, current->fileName );
                 }
 
-                current->body     = NULL;
-                current->next     = NULL;
+                current->body = NULL;
+                current->next = NULL;
                 index = index + offset;
                 start = index + 2;
 
@@ -964,54 +956,51 @@ STATIC FLIST* GetInlineFile( char** commandIn )
         }
         ++index;
     }
-    WriteNVec( newCommand, cmdText+start,index-start);
-    FreeSafe (cmdText);
-    *commandIn = FinishVec(newCommand);
-    getBody(head);
-    return(head);
+    WriteNVec( newCommand, cmdText + start, index - start );
+    FreeSafe( cmdText );
+    *commandIn = FinishVec( newCommand );
+    getBody( head );
+    return( head );
 }
 
 STATIC char *formatPathName( const char *inPath )
 {
-    char   buf [_MAX_PATH];
+    char    buf[_MAX_PATH];
 
-    if (inPath != NULL) {
-        _makepath ( buf , NULL, inPath, NULL, NULL );
-        return (StrDupSafe(buf));
+    if( inPath != NULL ) {
+        _makepath( buf, NULL, inPath, NULL, NULL );
+        return( StrDupSafe( buf ) );
     } else {
-        return (NULL);
+        return( NULL );
     }
 }
 
 
-
-
-STATIC void getCurTargDepPath( char **cur_targ_path,
-                               char **cur_dep_path )
+STATIC void getCurTargDepPath( char **cur_targ_path, char **cur_dep_path )
 /*
  * this is to get the current target path and dependent path
  * when sufsuf is created
  */
 {
-    if (*cur_targ_path != NULL) {
-        FreeSafe (*cur_targ_path);
+    if( *cur_targ_path != NULL ) {
+        FreeSafe( *cur_targ_path );
     }
-    if (*cur_dep_path != NULL) {
-        FreeSafe (*cur_dep_path);
+    if( *cur_dep_path != NULL ) {
+        FreeSafe( *cur_dep_path );
     }
-    if (targ_path != NULL ) {
-        *cur_targ_path = formatPathName ( targ_path );
+    if( targ_path != NULL ) {
+        *cur_targ_path = formatPathName( targ_path );
     } else {
-        *cur_targ_path = StrDupSafe("");
+        *cur_targ_path = StrDupSafe( "" );
     }
-    if (dep_path != NULL ) {
-        *cur_dep_path  = formatPathName ( dep_path );
+    if( dep_path != NULL ) {
+        *cur_dep_path  = formatPathName( dep_path );
     } else {
-        *cur_dep_path = StrDupSafe("");
+        *cur_dep_path = StrDupSafe( "" );
     }
 
-    FreeSafe ( targ_path );
-    FreeSafe ( dep_path );
+    FreeSafe( targ_path );
+    FreeSafe( dep_path );
     targ_path = NULL;
     dep_path  = NULL;
 }
@@ -1028,8 +1017,8 @@ TLIST *Parse( void )
     TLIST   *btlist;
     BOOLEAN clist_warning_given;
     BOOLEAN token_filename;
-    char* cur_depend_path;
-    char* cur_target_path;
+    char    *cur_depend_path;
+    char    *cur_target_path;
 
     firstTarget = NULL;
 
@@ -1042,16 +1031,14 @@ TLIST *Parse( void )
     clist_warning_given = FALSE;
     token_filename      = FALSE;
 
-
-    for(;;) {
-
+    for( ;; ) {
         /*
          * If the current target is a sufsuf then
          * we must demacro the text later
          * when the actual filenames are resolved
          */
-        if (btlist != NULL) {
-            ImplicitDeMacro = ( Glob.microsoft | Glob.unix ) && btlist->target->sufsuf;
+        if( btlist != NULL ) {
+            ImplicitDeMacro = (Glob.microsoft | Glob.unix) && btlist->target->sufsuf;
         }
         t = LexToken( LEX_PARSER );
         ImplicitDeMacro = FALSE;
@@ -1059,21 +1046,18 @@ TLIST *Parse( void )
         if( t != TOK_CMD && t != EOL ) {
             if( btlist != NULL ) {
                     /* link the commands to the targets */
-                linkCList( btlist,
-                           bclist,
-                           cur_target_path,
-                           cur_depend_path );
+                linkCList( btlist, bclist, cur_target_path, cur_depend_path );
                 bclist = NULL;
                 btlist = NULL;
-                if(cur_depend_path != NULL) {
-                    FreeSafe(cur_depend_path);
+                if( cur_depend_path != NULL ) {
+                    FreeSafe( cur_depend_path );
                 }
-                if(cur_target_path != NULL) {
+                if( cur_target_path != NULL ) {
                     FreeSafe(cur_target_path);
                 }
                 cur_target_path = NULL;
                 cur_depend_path = NULL;
-                if( ( Glob.microsoft | Glob.unix ) && token_filename == TRUE )  {
+                if( (Glob.microsoft | Glob.unix) && token_filename == TRUE ) {
                     exPop();
                     token_filename = FALSE;
                 }
@@ -1081,7 +1065,8 @@ TLIST *Parse( void )
             clist_warning_given = FALSE;
         }
 
-        if( t == STRM_END ) break;
+        if( t == STRM_END )
+            break;
 
         switch( t ) {
         case EOL:
@@ -1093,7 +1078,7 @@ TLIST *Parse( void )
             } else {
                 if( btlist == NULL ) {
                     if( !clist_warning_given ) {
-                        PrtMsg( WRN|LOC| CLIST_HAS_NO_OWNER );
+                        PrtMsg( WRN | LOC | CLIST_HAS_NO_OWNER );
                         clist_warning_given = TRUE;
                     }
                     FreeSafe( CurAttr.ptr );
@@ -1109,11 +1094,10 @@ TLIST *Parse( void )
                      *       rule we must deMacro the text the same
                      *       way as wmake does for microsoft option
                      */
-                    ImplicitDeMacro = ( Glob.microsoft | Glob.unix ) && btlist->target->sufsuf;
-                    newclist->inlineHead = GetInlineFile(&(newclist->text));
+                    ImplicitDeMacro = (Glob.microsoft | Glob.unix) && btlist->target->sufsuf;
+                    newclist->inlineHead = GetInlineFile( &(newclist->text) );
                     ImplicitDeMacro = FALSE;
                     bclist = newclist;
-
                 }
             }
             break;
@@ -1122,17 +1106,16 @@ TLIST *Parse( void )
             break;
         case TOK_SUFSUF:
             parseTargDep( t, &btlist );
-            getCurTargDepPath (&cur_target_path,
-                               &cur_depend_path);
-            if (btlist != NULL) {
+            getCurTargDepPath( &cur_target_path, &cur_depend_path );
+            if( btlist != NULL ) {
                 btlist->target->sufsuf = TRUE;
             }
             break;
         case TOK_FILENAME:
             parseTargDep( t, &btlist );
-            if( ( Glob.microsoft | Glob.unix ) && btlist != NULL ) {
-                if (btlist->target != NULL && btlist->target->depend != NULL) {
-                    exPush(btlist->target,btlist->target->depend,NULL);
+            if( (Glob.microsoft | Glob.unix) && btlist != NULL ) {
+                if( btlist->target != NULL && btlist->target->depend != NULL ) {
+                    exPush( btlist->target, btlist->target->depend, NULL );
                     token_filename = TRUE;
                 }
             }
@@ -1142,9 +1125,9 @@ TLIST *Parse( void )
             break;
         default:
 #ifdef DEVELOPMENT
-            PrtMsg( FTL| INVALID_TOKEN_IN, "Parse" );
+            PrtMsg( FTL | INVALID_TOKEN_IN, "Parse" );
 #else
-            PrtMsg( WRN| LOC| IGNORE_OUT_OF_PLACE_M, M_UNKNOWN_TOKEN );
+            PrtMsg( WRN | LOC | IGNORE_OUT_OF_PLACE_M, M_UNKNOWN_TOKEN );
 #endif
         }
     }
@@ -1165,4 +1148,3 @@ void ParseFini( void )
 /********************/
 {
 }
-

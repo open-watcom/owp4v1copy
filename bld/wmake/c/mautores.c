@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource file autodependency information processing.
 *
 ****************************************************************************/
+
 
 #include "watcom.h"
 #include "mtypes.h"
@@ -57,7 +57,7 @@ STATIC handle RESInitFile( const char *name )
     ret_val = NULL;
     old_shift = FileShift;
     FileShift = 0;
-    depends = WResGetAutoDep( (char*) name );
+    depends = WResGetAutoDep( (char *)name );
     FileShift = old_shift;
     if( depends != NULL ) {
         ResInfo.first = depends;
@@ -67,6 +67,7 @@ STATIC handle RESInitFile( const char *name )
     return( ret_val );
 }
 
+
 STATIC dep_handle RESFirstDep( dep_handle file )
 /**********************************************/
 {
@@ -74,14 +75,16 @@ STATIC dep_handle RESFirstDep( dep_handle file )
     return( file );
 }
 
+
 STATIC void RESTransDep( dep_handle f, char **name, time_t *stamp )
 /*****************************************************************/
 {
     res_info    *file = f;
 
-    *name = &file->curr->name[ 0 ];
+    *name = &file->curr->name[0];
     *stamp = file->curr->time;
 }
+
 
 STATIC handle RESNextDep( dep_handle f )
 /**************************************/
@@ -99,12 +102,14 @@ STATIC handle RESNextDep( dep_handle f )
     return( file );
 }
 
+
 STATIC void RESFiniFile( handle file )
 /***************************************/
 {
 
     WResFreeAutoDep( ((res_info *)file)->first );
 }
+
 
 const auto_dep_info RESAutoDepInfo = {
     NULL,

@@ -28,7 +28,8 @@
 *
 ****************************************************************************/
 
-#if defined(__UNIX__)
+
+#if defined( __UNIX__ )
     #include <dirent.h>
 #else
     #include <direct.h>
@@ -45,7 +46,7 @@
 #include "mtypes.h"
 #include "mlex.h"
 
-static ENV_TRACKER *envList;
+static ENV_TRACKER  *envList;
 
 extern char *SkipWS( const char *p )
 /**********************************/
@@ -62,35 +63,34 @@ extern char *FindNextWS( char *str )
  * be used to specify strings with white spaces.
  */
 {
-    char string_open = 0;
+    char    string_open = 0;
 
     while( *str != NULLCHAR ) {
-        if ( *str == BACKSLASH ) {
+        if( *str == BACKSLASH ) {
             str++;
-            if (*str != NULLCHAR)
-            {
-                if ( !string_open && isws ( *str ) ) {
+            if( *str != NULLCHAR ) {
+                if( !string_open && isws ( *str ) ) {
                     break;
                 }
                 str++;
             }
-        } else
-        {
-            if ( *str == DOUBLEQUOTE ) {
+        } else {
+            if( *str == DOUBLEQUOTE ) {
                 string_open = !string_open;
                 str++;
             } else {
-                if ( string_open ) {
+                if( string_open ) {
                     str++;
                 } else {
-                    if ( isws( *str ) ) break;
+                    if( isws( *str ) )
+                        break;
                     str++;
                 }
             }
         }
     }
 
-    return str;
+    return( str );
 }
 
 extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
@@ -100,10 +100,10 @@ extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
  * including terminating NUL character.
  */
 {
-    char *orgdst = dst;
-    char string_open = 0;
-    int pos = 0;
-    int t;
+    char    *orgdst = dst;
+    char    string_open = 0;
+    int     pos = 0;
+    int     t;
 
     assert( maxlen );
 
@@ -113,32 +113,33 @@ extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
     while( pos < ( maxlen - 1 ) ) {
         t = *src++;
 
-        if ( t == NULLCHAR ) break;
+        if( t == NULLCHAR )
+            break;
 
-        if ( t == BACKSLASH ) {
+        if( t == BACKSLASH ) {
             t = *src++;
 
-            if ( t == DOUBLEQUOTE ) {
+            if( t == DOUBLEQUOTE ) {
                 *dst++ = DOUBLEQUOTE;
                 pos++;
             } else {
                 *dst++ = BACKSLASH;
                 pos++;
 
-                if ( pos < ( maxlen - 1 ) ) {
+                if( pos < ( maxlen - 1 ) ) {
                     *dst++ = t;
                     pos++;
                 }
             }
         } else {
-            if ( t == DOUBLEQUOTE ) {
+            if( t == DOUBLEQUOTE ) {
                 string_open = !string_open;
             } else {
-                if ( string_open ) {
+                if( string_open ) {
                     *dst++ = t;
                     pos++;
                 } else
-                if ( isws( t ) ) {
+                if( isws( t ) ) {
                     break;
                 } else {
                     *dst++ = t;
@@ -150,7 +151,7 @@ extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
 
     *dst = NULLCHAR;
 
-    return orgdst;
+    return( orgdst );
 }
 
 #if defined( __DOS__ )
@@ -160,15 +161,16 @@ extern char *FixName( char *name )
  * Down case all filenames, converting fwd-slash to back-slash
  */
 {
-    char *ptr;
-    char hold;
+    char    *ptr;
+    char    hold;
 
     assert( name != NULL );
 
     ptr = name;
     hold = *ptr;
-    for(;;) {
-        if( hold == NULLCHAR ) break;
+    for( ;; ) {
+        if( hold == NULLCHAR )
+            break;
         if( hold == '/' ) {
             *ptr = '\\';
         } else if( ( hold -= 'A' ) < 26 ) {     /* SIDE EFFECT!!! */
@@ -216,14 +218,14 @@ extern char *FixName( char *name )
  * convert fwd-slash to back-slash
  */
 {
-    char *ptr;
-    char hold;
+    char    *ptr;
+    char    hold;
 
     assert( name != NULL );
 
     ptr = name;
     hold = *ptr;
-    for(;;) {
+    for( ;; ) {
         if( hold == NULLCHAR ) break;
         if( hold == '/' ) {
             *ptr = '\\';
@@ -293,11 +295,11 @@ extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 #endif
 
 
-#define IS_WILDCARD_CHAR( x ) ( ( *x == '*' ) || ( *x == '?' ) )
+#define IS_WILDCARD_CHAR( x ) ((*x == '*') || (*x == '?'))
 
 int __fnmatch( char *pattern, char *string )
 /******************************************/
-// OS specific compare function FNameCmpChr 
+// OS specific compare function FNameCmpChr
 // must be used for file names
 {
     char    *p;
@@ -320,7 +322,7 @@ int __fnmatch( char *pattern, char *string )
         pattern++;
     }
     if( *pattern == 0 ) {
-        if( ( *string == 0 ) || star_char ) {
+        if( (*string == 0) || star_char ) {
             return( 1 );
         } else {
             return( 0 );
@@ -334,7 +336,7 @@ int __fnmatch( char *pattern, char *string )
     len = 0;
     do {
         if( star_char ) {
-            if( string[ len ] == 0 )
+            if( string[len] == 0 )
                 return( 0 );
             len++;
         } else {
@@ -356,7 +358,7 @@ int __fnmatch( char *pattern, char *string )
         while( *string ) {
             if( FNameCmpChr( *p, *string ) == 0 ) {
                 for( i = 1; i < len; i++ ) {
-                    if( FNameCmpChr( *( p + i ), *( string + i ) ) != 0 ) {
+                    if( FNameCmpChr( *(p + i), *(string + i) ) != 0 ) {
                         break;
                     }
                 }
@@ -480,6 +482,7 @@ extern const char *DoWildCard( const char *base )
 
     return( path );
 }
+
 
 extern void DoWildCardClose( void )
 /*********************************/

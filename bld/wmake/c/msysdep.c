@@ -54,7 +54,7 @@ int __far critical_error_handler( unsigned deverr,
                                   unsigned errcode,
                                   unsigned far *devhdr )
 {
-    deverr=deverr;errcode=errcode;devhdr=devhdr;
+    deverr = deverr; errcode = errcode; devhdr = devhdr;
     return( _HARDERR_FAIL );
 }
 
@@ -123,7 +123,7 @@ extern int OSCorrupted( void )
         return( 1 );
     }
     chain_seg = first_MCB[-1];
-    for(;;) {
+    for( ;; ) {
         chain = MK_FP( chain_seg, 0 );
         if( chain->id == 'Z' ) {
             break;
@@ -160,12 +160,12 @@ extern RET_T TouchFile( const char *name )
     ret = TinyOpen( name, TIO_WRITE );
     if( TINY_OK( ret ) ) {
         dt = TinyGetDate();
-        p_ymd.year = dt.year + ( 1900 - 1980 );
+        p_ymd.year  = dt.year + (1900 - 1980);
         p_ymd.month = dt.month;
-        p_ymd.day = dt.day_of_month;
+        p_ymd.day   = dt.day_of_month;
 
         tm = TinyGetTime();
-        p_hms.hours = tm.hour;
+        p_hms.hours   = tm.hour;
         p_hms.minutes = tm.minutes;
         p_hms.twosecs = tm.seconds / 2;
 
@@ -194,7 +194,7 @@ extern RET_T TouchFile( const char *name )
 extern RET_T TouchFile( const char *name )
 /****************************************/
 {
-    int fh;
+    int     fh;
 
     if( utime( name, 0 ) < 0 ) {
         fh = creat( name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
@@ -212,7 +212,7 @@ extern RET_T TouchFile( const char *name )
 BOOLEAN IdenticalAutoDepTimes( time_t in_obj, time_t stamp )
 /**********************************************************/
 {
-    time_t diff_time;
+    time_t  diff_time;
 
     /* in_obj can be a DOS time so we need to round to the nearest two-second */
     if( in_obj == stamp || in_obj == (stamp & ~1) ) {
@@ -235,52 +235,53 @@ BOOLEAN IdenticalAutoDepTimes( time_t in_obj, time_t stamp )
 
 #include "idedrv.h"
 
-static DLL_CMD *dllCommandList;
+static DLL_CMD  *dllCommandList;
 
 void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name )
 /**************************************************************/
 {
-    DLL_CMD *n;
+    DLL_CMD     *n;
 
     // we want newer !loaddlls to take precedence
     n = MallocSafe( sizeof( *n ) );
     n->cmd_name = StrDupSafe( cmd_name );
     n->next = dllCommandList;
     dllCommandList = n;
-    IdeDrvInit( &n->inf
-              , StrDupSafe( dll_name )
-              , ( ent_name == NULL ) ? NULL : StrDupSafe( ent_name ) );
+    IdeDrvInit( &n->inf, StrDupSafe( dll_name ),
+                (ent_name == NULL) ? NULL : StrDupSafe( ent_name ) );
 }
 
-DLL_CMD* OSFindDLL( char const *cmd_name )
+DLL_CMD *OSFindDLL( char const *cmd_name )
 /****************************************/
 {
-    DLL_CMD* n;
+    DLL_CMD     *n;
+
     for( n = dllCommandList; n != NULL; n = n->next ) {
         if( 0 == stricmp( cmd_name, n->cmd_name ) ) break;
     }
-    return n;
+    return( n );
 }
 
-#define DLL_PREFIX "DLL:"
-#define DLL_PSIZE sizeof( DLL_PREFIX ) - 1
+#define DLL_PREFIX  "DLL:"
+#define DLL_PSIZE   sizeof( DLL_PREFIX ) - 1
 
 int OSExecDLL( DLL_CMD* dll, char const* cmd_args )
 /*************************************************
  * Returns the error code returned by IdeDrvDLL
  */
 {
-    int retcode = IdeDrvExecDLL( &dll->inf, cmd_args );
+    int     retcode = IdeDrvExecDLL( &dll->inf, cmd_args );
+
     setmode( STDOUT_FILENO, O_TEXT );
-    return retcode;
+    return( retcode );
 }
 #else
 
-DLL_CMD* OSFindDLL( char const *cmd_name )
+DLL_CMD *OSFindDLL( char const *cmd_name )
 /****************************************/
 {
     cmd_name = cmd_name;
-    return NULL;
+    return( NULL );
 }
 
 void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name )
@@ -302,64 +303,72 @@ int OSExecDLL( DLL_CMD* dll, char const* cmd_args )
 #endif
 
 #ifndef NDEBUG
-STATIC void cleanDLLCmd ( void ) {
+STATIC void cleanDLLCmd( void )
+{
 #ifdef DLLS_IMPLEMENTED
-    DLL_CMD* n;
-    DLL_CMD* temp;
+    DLL_CMD     *n;
+    DLL_CMD     *temp;
+
     n  = dllCommandList;
-    while ( n != NULL) {
-        FreeSafe ((char*) n->cmd_name);
-        if (n->inf.dll_name != NULL) {
+    while( n != NULL ) {
+        FreeSafe( (char *)n->cmd_name );
+        if( n->inf.dll_name != NULL ) {
             FreeSafe( (char*) n->inf.dll_name );
         }
-        if (n->inf.ent_name != NULL ) {
-            FreeSafe ( (char*) n->inf.ent_name );
+        if( n->inf.ent_name != NULL ) {
+            FreeSafe( (char *)n->inf.ent_name );
         }
         temp = n;
         n = n->next;
-        FreeSafe (temp);
+        FreeSafe( temp );
     }
 #endif
 }
 #endif
 
 
-
 #ifndef NDEBUG
-extern void DLLFini ( void ) {
+extern void DLLFini( void )
+{
     cleanDLLCmd();
 }
 #endif
 
-static sig_atomic_t sig_count;
+static sig_atomic_t     sig_count;
 
-void CheckForBreak( void ) {
+void CheckForBreak( void )
+{
     if( sig_count > 0 ) {
         sig_count = 0;
-        PrtMsg(ERR|USER_BREAK_ENCOUNTERED);
-        exit( ExitSafe(EXIT_ERROR) );
+        PrtMsg( ERR | USER_BREAK_ENCOUNTERED );
+        exit( ExitSafe( EXIT_ERROR ) );
     }
 }
 
-static void passOnBreak( void ) {
+
+static void passOnBreak( void )
+{
 #ifdef DLLS_IMPLEMENTED
-    DLL_CMD* n;
+    DLL_CMD     *n;
 
     for( n = dllCommandList; n != NULL; n = n->next ) {
         IdeDrvStopRunning( &n->inf );
     }
 #endif
 }
-static void breakHandler (int  sig_number) {
+
+
+static void breakHandler( int sig_number )
+{
     sig_count = 1;
     passOnBreak();
 }
 
 extern void InitSignals( void ) {
     sig_count = 0;
-    DoingUpdate= FALSE;
+    DoingUpdate = FALSE;
 #ifndef __UNIX__
-    signal ( SIGBREAK, breakHandler);
+    signal( SIGBREAK, breakHandler );
 #endif
-    signal ( SIGINT, breakHandler);
+    signal( SIGINT, breakHandler );
 }

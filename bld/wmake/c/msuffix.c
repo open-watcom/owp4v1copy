@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Suffix (extension) management.
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -47,10 +47,10 @@
 
 
 #define HASH_PRIME  13
-#define CASESENSITIVE FALSE //Is suffix name case insensitive
+#define CASESENSITIVE FALSE // Is suffix name case insensitive
 STATIC HASHTAB  *sufTab;
 STATIC UINT16   nextId;
-STATIC UINT16   prevId;  //Has to be one less than nextId
+STATIC UINT16   prevId;     // Has to be one less than nextId
 
 
 STATIC void freePathRing( PATHRING *pring )
@@ -73,14 +73,12 @@ STATIC void freePathRing( PATHRING *pring )
 }
 
 
-#pragma off(unreferenced);
 STATIC BOOLEAN freeSuffix( void *node, void *ptr )
-#pragma on (unreferenced);
 /*************************************************/
 {
-    SUFFIX *suf = node;
-    CREATOR *ccur;
-    CREATOR *cwalk;
+    SUFFIX      *suf = node;
+    CREATOR     *ccur;
+    CREATOR     *cwalk;
 
     FreeSafe( suf->node.name );
     freePathRing( suf->first );
@@ -112,7 +110,9 @@ extern void ClearSuffixes( void )
 }
 
 
+#ifdef __WATCOMC__
 #pragma on (check_stack);
+#endif
 STATIC SUFFIX *findSuffixNode( const char *name, const char **p )
 /****************************************************************
  * returns: pointer to SUFFIX named name, or NULL.  If p != NULL, then
@@ -123,7 +123,7 @@ STATIC SUFFIX *findSuffixNode( const char *name, const char **p )
  *          .src or src returns SUFFIX src, and p = NULL
  */
 {
-    char        sufname[ MAX_SUFFIX ];
+    char        sufname[MAX_SUFFIX];
     const char  *s;
     char        *d;
 
@@ -150,9 +150,11 @@ STATIC SUFFIX *findSuffixNode( const char *name, const char **p )
 
     FixName( sufname );
 
-    return( (SUFFIX *) FindHashNode( sufTab, sufname, CASESENSITIVE ) );
+    return( (SUFFIX *)FindHashNode( sufTab, sufname, CASESENSITIVE ) );
 }
+#ifdef __WATCOMC__
 #pragma off(check_stack);
+#endif
 
 
 extern SUFFIX *FindSuffix( const char *name )
@@ -170,6 +172,7 @@ extern BOOLEAN SufExists( const char *name )    /* with . */
     return( FindSuffix( name ) != NULL );
 }
 
+
 STATIC void AddFrontSuffix( char const *name )
 /*********************************************
  * pass name with leading .; adds name to suffix table and assigns id
@@ -180,46 +183,45 @@ STATIC void AddFrontSuffix( char const *name )
 {
     SUFFIX  *new;
 
-    assert( (name+1) != NULL && name[0] == DOT && !SufExists( name ) );
+    assert( (name + 1) != NULL && name[0] == DOT && !SufExists( name ) );
 
     new = CallocSafe( sizeof( *new ) );
-    new->node.name = FixName( StrDupSafe( name+1 ) );
+    new->node.name = FixName( StrDupSafe( name + 1 ) );
     new->id = prevId;
     --prevId;
 
-    AddHashNode( sufTab, (HASHNODE *) new );
+    AddHashNode( sufTab, (HASHNODE *)new );
 }
 
 
 extern BOOLEAN SufBothExist( const char *sufsuf )   /* .src.dest */
-/***********************************************
- *  for MS-Option it only check's if the dependent suffix is defined
+/************************************************
+ *  for MS-Option it only checks if the dependent suffix is defined
  *  so no need for checking the target suffix if it exists
  */
 {
-    char const *ptr;
+    char const  *ptr;
 
     assert( sufsuf != NULL && sufsuf[0] == DOT &&
-        strchr( sufsuf+1, DOT ) != NULL );
+        strchr( sufsuf + 1, DOT ) != NULL );
 
     if( findSuffixNode( sufsuf, &ptr ) == NULL ) {
         return( FALSE );
     }
 
-    if (FindSuffix( ptr ) == NULL) {
-        if (Glob.microsoft == TRUE) {
-            AddFrontSuffix(ptr);
-            return (TRUE);
+    if( FindSuffix( ptr ) == NULL ) {
+        if( Glob.microsoft == TRUE ) {
+            AddFrontSuffix( ptr );
+            return( TRUE );
         } else {
-            return (FALSE);
+            return( FALSE );
         }
 
     } else {
-        return (TRUE);
+        return( TRUE );
     }
 
 }
-
 
 
 extern void AddSuffix( char *name )
@@ -248,7 +250,7 @@ extern void AddSuffix( char *name )
     new->id = nextId;
     ++nextId;
 
-    AddHashNode( sufTab, (HASHNODE *) new );
+    AddHashNode( sufTab, (HASHNODE *)new );
 }
 
 
@@ -278,7 +280,7 @@ STATIC void ringPath( PATHRING **pring, const char *path )
         len = p - path;                         /* get length of sub-path */
         new->name = MallocSafe( len + 1 );      /* make copy of sub-path */
         memcpy( new->name, path, len );
-        new->name[ len ] = NULLCHAR;
+        new->name[len] = NULLCHAR;
         FixName( new->name );
 
         *tail = new;        /* link into ring - but don't close ring yet */
@@ -322,7 +324,7 @@ extern void SetSufPath( const char *name, const char *path )
 STATIC CREATOR *newCreator( void )
 /********************************/
 {
-    return( (CREATOR *) CallocSafe( sizeof( CREATOR ) ) );
+    return( (CREATOR *)CallocSafe( sizeof( CREATOR ) ) );
 }
 
 
@@ -331,11 +333,11 @@ extern void AddCreator( const char *sufsuf )
  * add the creation .src.dest
  */
 {
-    SUFFIX  *src;
-    SUFFIX  *dest;
-    char const *ptr;
-    CREATOR *new;
-    CREATOR **cur;
+    SUFFIX      *src;
+    SUFFIX      *dest;
+    char const  *ptr;
+    CREATOR     *new;
+    CREATOR     **cur;
 
     assert( sufsuf != NULL && sufsuf[0] == DOT &&
         strchr( sufsuf + 1, DOT ) != NULL );
@@ -346,11 +348,12 @@ extern void AddCreator( const char *sufsuf )
     assert( src != NULL && dest != NULL );
 
     if( src->id < dest->id ) {
-        PrtMsg( ERR|LOC| EXTENSIONS_REVERSED );
+        PrtMsg( ERR | LOC | EXTENSIONS_REVERSED );
     }
     cur = &dest->creator;
     while( *cur != NULL ) {
-        if( src->id <= (*cur)->suffix->id ) break;
+        if( src->id <= (*cur)->suffix->id )
+            break;
         cur = &(*cur)->next;
     }
 
@@ -371,9 +374,7 @@ extern void AddCreator( const char *sufsuf )
 }
 
 
-#pragma off(unreferenced);
 STATIC BOOLEAN printSuf( void *node, void *ptr )
-#pragma on (unreferenced);
 /**********************************************/
 {
     SUFFIX      *suf = node;
@@ -383,11 +384,11 @@ STATIC BOOLEAN printSuf( void *node, void *ptr )
     CLIST       *cmds;
     BOOLEAN     printed;
 
-    PrtMsg( INF| PSUF_SUFFIX, suf->node.name );
+    PrtMsg( INF | PSUF_SUFFIX, suf->node.name );
     if( suf->pathring != NULL ) {
         pring = suf->pathring;
         do {
-            PrtMsg( INF| PSUF_FOUND_IN, pring->name );
+            PrtMsg( INF | PSUF_FOUND_IN, pring->name );
             pring = pring->next;
         } while( pring != suf->pathring );
         printed = TRUE;
@@ -396,24 +397,24 @@ STATIC BOOLEAN printSuf( void *node, void *ptr )
     }
     cur = suf->creator;
     if( cur != NULL && printed ) {
-        PrtMsg( INF| NEWLINE );
+        PrtMsg( INF | NEWLINE );
     }
     while( cur != NULL ) {
-        PrtMsg( INF|NEOL| PSUF_MADE_FROM, cur->suffix->node.name );
+        PrtMsg( INF | NEOL | PSUF_MADE_FROM, cur->suffix->node.name );
         targ = cur->cretarg;
         PrintTargFlags( targ );
-        PrtMsg( INF| NEWLINE );
+        PrtMsg( INF | NEWLINE );
         cmds = targ->depend->clist;
         if( cmds != NULL ) {
-            PrtMsg( INF| PSUF_USING_CMDS );
+            PrtMsg( INF | PSUF_USING_CMDS );
             PrintCList( cmds );
         }
         cur = cur->next;
         if( cur != NULL ) {
-            PrtMsg( INF| NEWLINE );
+            PrtMsg( INF | NEWLINE );
         }
     }
-    PrtMsg( INF| NEWLINE );
+    PrtMsg( INF | NEWLINE );
 
     return( FALSE );
 }
@@ -454,7 +455,7 @@ STATIC RET_T tryPathRing( PATHRING **pring, char *buffer,
  */
 {
     PATHRING    *cur;
-    auto char fake_name[_MAX_PATH];
+    char        fake_name[_MAX_PATH];
 
     assert( pring != NULL );
     if( *pring == NULL ) {
@@ -500,7 +501,7 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
         *chktarg = NULL;
     }
 
-                    /* check if filename given exists */
+    /* check if filename given exists */
     if( filename != buffer ) {
         strcpy( buffer, filename );
     }
@@ -508,7 +509,7 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
         return( RET_SUCCESS );
     }
 
-                    /* split up filename */
+    /* split up filename */
     pg = SplitPath( filename );
 
     if( pg->drive[0] != NULLCHAR || isdirc( pg->dir[0] ) ) {
@@ -575,6 +576,5 @@ extern void SuffixFini( void )
 #else
     WalkHashTab( sufTab, freeSuffix, NULL );
     FreeHashTab( sufTab );
-#endif    
+#endif
 }
-
