@@ -1,3 +1,334 @@
+2003-08-18  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (TB_*) Group defines together. 
+
+2003-08-18  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/winuser.h (ICON_SMALL2): Define.
+	* include/commctrl.h (TB_SETBUTTONWIDTH, TB_SETDRAWTEXTFLAGS):
+	Define.
+	* include/shlobj.h (SHDRAGIMAGE): Define structure.
+	(IDragSourceHelper) Define interface.
+  	(IDropTargetHelper): Likewise.
+	(IExtractIcon): Unicode it.
+	(ICommDlgBrowser): Use IShellView type as param in OnDefaultCommand,
+	OnStateChange and IncludeObject methods.
+
+2003-08-17  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/commctrl.h (TreeView_GetScrollTime,
+	TreeView_SetScrollTime): Define macros.
+	* include/winuser.h (GetShellWindow): Add prototype.
+	* include/objidl.h (STGMEDIUM): Correct lpszFileName type.
+
+2003-08-15  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/shguid.h (CLSID_DragDropHelper, IID_IDropTargetHelper,
+	IID_IDragSourceHelper): Declare.
+	* lib/shell32.c (CLSID_DragDropHelper, IID_IDropTargetHelper,
+	IID_IDragSourceHelper): Define.
+
+2003-08-15  Andrew Greenwood  <lists@silverblade.co.uk>
+
+	* include/wingdi.h (DEVMODE[AW]) Correct structure definition.
+	* include/ddk/ntapi.h (LPC_TYPE): Add LPC_CONNECTION_REFUSED.
+	* include/ddk/winddk.h (IRP_*): Add constants as anonymous enum.
+
+2003-08-10  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* lib/uuid.c (CGID_Explorer, CGID_ShellDocView,
+	CGID_ShellServiceObject): Remove definitions.
+	* lib/shell32.c (CGID_ShellServiceObject): Add definition.
+
+2003-08-10  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (SHELLSTATE): Add structure.
+	(SHGetSetSettings): Add prototype.
+	(SHGetSettings): Add prototype.
+	* lib/shell32.def (SHGetSetSettings): Add stub.
+
+2003-08-10  Phil Krylov  <likewolf@users.sourceforge.net>
+
+	* include/commctrl.h (HDM_ORDERTOINDEX): Add define.
+	(Header_OrderToIndex): Add macro.
+	(Header_GetOrderArray): Add macro.
+
+	* include/commdlg.h (FR_MATCHALEFHAMZA,
+	FR_MATCHDIAC, FR_MATCHKASHIDA): Add defines.
+
+2003-08-10  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/commctrl.h (TVM_GETSCROLLTIME,
+	TVM_SETSCROLLTIME): Add defines.
+
+2003-08-01  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (SHELLFLAGSTATE): Add structure.
+	(SHGetInstanceExplorer): Correct return type.
+	(SHGetFolderPath[AW]): Likewise.
+	Thanks to Magnus Olsen  <greatlord@sourceforge.users.net>
+	for report.
+
+2003-08-01  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* lib/test.c: Include winldap.h, ntldap.h, winber.h.
+
+2003-08-01  Filip Navara  <xnavara@volny.cz>
+
+	* include/winldap.h: New file.
+	* include/ntldap.h: New file.
+	* include/winber.h: New file.
+	* lib/winldap32.def: New file.
+
+2003-08-01  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/ddk/atm.h: Remove stray '.';
+
+2003-08-01  Gisle Vanem  <gvanem@broadpark.no>
+
+	* include/ddk/winddk.h; Remove trailing ';' from macros,
+	throughout. Add () around defines with cast returns, throughout.
+
+2003-07-31  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/shlobj.h (SFGAO_COMPRESSED): Add define.
+	(SFGAOF, SHGDNF): Add typedef's. 
+	(SHCONTF): Extend enum.
+
+2003-07-31  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/shellapi.h: Include all structs within pshpack2.h/
+	poppack.h block.
+
+2003-07-26  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (ASFW_ANY, LSFW_LOCK, LSFW_UNLOCK,
+	LWA_COLORKEY, LWA_ALPHA): Guard with _WIN32_WINNT,
+	_WIN32_WINDOWS, not WINVER.
+	(AllowSetForegroundWindow,LockSetForegroundWindow,
+	SetLayeredWindowAttributes): Likewise.
+	(GetLayeredWindowAttributes,UpdateLayeredWindow): Add prototypes.
+	* lib/user32.def (GetLayeredWindowAttributes,UpdateLayeredWindow):
+	Add stubs.
+
+2003-07-26  Eric R. Krause  <ekrause_98@users.sourceforge.net>
+
+	* include/objidl.h (IMalloc): Fix typo.
+
+2003-07-24  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/dkk/ntifs.h: Fix typo in guard for
+	#pragma GCC system_header.
+
+2003-07-22  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/objidl.h (PropVariant): Add CHAR cVal field
+	to union.
+	(FMTID_SummaryInformation, FMTID_DocSummaryInformation,
+	FMTID_UserDefinedProperties): Declare.
+
+2003-07-22  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (GetModuleHandleEx[AW]): Add prototypes.
+
+2003-07-22  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (DUPLICATE_CLOSE_SOURCE,
+	DUPLICATE_SAME_ACCESS): Remove defines.
+	(HANDLE_FLAG_INHERIT, HANDLE_FLAG_PROTECT_FROM_CLOSE): Sync with
+	ddk/ntapi.h defines.
+	(SEM_*) : Likewise.
+	* include/winnt.h (COMPRESSION_*, ACCESS_*, SYSTEM_*): Sync with 
+	ddk/ntifs.h defines.
+	(FILE_*): Likewise.
+	(MEM_IMAGE, SEC_*): Likewise. 
+	(DUPLICATE_CLOSE_SOURCE, DUPLICATE_SAME_ACCESS, 
+	DUPLICATE_SAME_ATTRIBUTES): Sync with ddk/winddk.h defines.
+	(TOKEN_*): Sync with ddk/ntifs.h defines. 
+	* include/ddk/ntapi.h: Add comments noting definitions in
+	winbase.h.
+	* include/ddk/ntifs.h: Add comments noting definitions in
+	winnt.h.
+	* include/ddk/winddk.h: Add comments noting definitions in
+	winnt.h.
+ 
+2003-07-18  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (FILE_*): Sync with ddk/winddk.h.
+	* include/winioctl.h (FILE_*): Sync with ddk/winddk.h.
+
+2003-07-17  Pierre Humblet  <pierre.humblet@ieee.org>
+
+	* include/mmsystem.h (TIME_KILL_SYNCHRONOUS): Add define.
+
+2003-07-17  Danny Smith <dannysmith@users.sourceforge.net>
+
+	Clean up warnings in ddk.
+
+	* include/ddk/atm.h (_ATM_AAL_OOB_INFO): Add _ANONYMOUS_UNION,
+	conditional on  __cplusplus.
+	* include/ddk/scsi.h: Add _ANONYMOUS_UNION and _ANONYMOUS_STRUCT
+	defines, throughout.
+	(_CDB): Add _ANONYMOUS_UNION, conditional on __cplusplus.
+	* include/ddk/cfg.h (_PNP_VETO_TYPE): Remove extra comma.
+	* include/ddk/cfgmgr32.h: Change C++ comment style to ISO C.
+	* include/ddk/ddkmapi.h (_DDLOCKOUT): Add _ANONYMOUS_UNION defines.
+	* include/ddk/hidpi.h: Add _ANONYMOUS_UNION and _ANONYMOUS_STRUCT
+	defines, throughout.
+	* include/ddk/ndis.h: Add _ANONYMOUS_UNION and _ANONYMOUS_STRUCT
+	defines, throughout. Remove trailing semicolon from *_S 'structure'
+	macro expansion, throughout. Remove trailing semicolon from
+	DECLARE_UNKNOWN_STRUCT macro expansion.
+	* include/ddk/ndiswan.h (_NDIS_WAN_COMPRESS_INFO): Add
+	_ANONYMOUS_UNION.
+	* include/ddk/ntapi.h (_PROCESS_DEVICEMAP_INFORMATION,
+	_PROCESS_SESSION_INFORMATION): Add _ANONYMOUS_UNION.
+	* include/ddk/ntddcdrm.h (CDROM_TOC_CD_TEXT_DATA_BLOCK): 
+	Add _ANONYMOUS_UNION.
+	* include/ddk/ntdddisk.h: Add _ANONYMOUS_UNION, throughout.
+	* include/ddk/ntddmou.h:  Add _ANONYMOUS_UNION, throughout.
+	* include/ddk/ntifs.h:  Add _ANONYMOUS_UNION, throughout.
+	(ZwQueryObject): Change 2nd param to OBJECT_INFORMATION_CLASS, to
+	match proto in ntapi.h.
+	(ZwSetInformationObject): Likewise.
+	* include/ddk/srb.h (SCSI_REQUEST_BLOCK): Add _ANONYMOUS_UNION.
+	(SCSI_ADAPTER_CONTROL_TYPE): Add __extension__.
+	* include/ddk/tdikrnl.h (TDI20_CLIENT_INTERFACE_INFO): Add
+	_ANONYMOUS_UNION and _ANONYMOUS_STRUCT.
+	* include/ddk/usb.h (USB): Add _ANONYMOUS_UNION.
+	* include/ddk/usbcamdi.h (USBCAMD_CamControlFlags): Remove
+	last comma.
+	* include/ddk/video.h (STATUS_BLOCK): Add _ANONYMOUS_UNION.
+	* include/ddk/winddk.h (DECLARE_INTERNAL_OBJECT): Remove
+	trailing semicolon when expanding macro.
+	(GENERAL_LOOKASIDE_S): Likewise.
+	Add _ANONYMOUS_UNION and _ANONYMOUS_STRUCT, throughout.
+	Change inline to __inline, throughout.
+	* include/ddk/winnt4.h: Change inline to __inline, throughout.
+
+2003-07-13  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/ddk/ntifs.h (KeInsertQueueApc): Make return type
+	BOOLEAN. Name parameter 4 PriorityBoost and make it of type
+	KPRIORITY.
+	* include/ddk/winddk.h (_KPCR): Put IDT field on next line.
+	* include/ddk/winddk.h (_IO_STATUS_BLOCK, _IRP, _OWNER_ENTRY,
+	_ERESOURCE, _IMAGE_INFO, _CREATE_DISK, _DISK_SIGNATURE, _KPCR_TIB):
+	Apply _ANONYMOUS_UNION to anonymous unions and _ANONYMOUS_STRUCT
+	to anonymous structs.
+
+2003-07-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (PVOID): Move to before HANDLE typedef.
+
+	* include/winuser.h (mouse_event): Correct type of fifth param,
+	Thanks to: Andrew Jones <guln at users dot sourceforge dot net>
+
+2003-07-11  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/winnt.h (HANDLE): Define based on STRICT filter.
+	(THREAD_BASE_PRIORITY_MIN): Use parens around negative value.
+	(THREAD_BASE_PRIOIRTY_IDLE): Ditto.
+
+2003-07-08  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (NMTVDISPINFO[AW]): Replace obsolete struct
+	names _TV_DISPINFO[AW] and typedefs. Add defines for backward
+	compatability. Thanks to Magnus Olsen <greatlord@users.sf.net>
+	for report.
+
+2003-07-03  Earnie Boyd  <earnie@users.sf.net>
+
+	* config.guess, config.sub: Update with new versions from ftp.gnu.org.
+
+2003-07-03  Luke Dunstan  <infidel@users.sf.net>
+
+	* include/commdlg.h (CommDlg_OpenSave_*): Add parentheses around
+	macro arguments. Thanks to Tom Bishop <tombishop@users.sf.net>.
+	* include/winuser.h (MONITOR_DEFAULTTONULL, MONITOR_DEFAULTTOPRIMARY,
+	MONITOR_DEFAULTTONEAREST, MONITORINFOF_PRIMARY): Add defines.
+	(TPM_RECURSE): Add guard for Win98/Win2K.
+	Thanks to Magnus Olsen <greatlord@users.sf.net>.
+
+2003-07-01  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/basetyps.h (small, hyper): Change to __small and __hyper to
+	avoid user namespace conflicts.
+
+2003-07-01  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/w32api.h (_NT4, _W98, _WME, _NT5, _W2000, _WXP, _W2003,
+	_IE3, _IE4, _IE5, _IE6): Add definitions.
+	* include/winbase.h (GetLongPathName[AW]): Add guard for OS >= NT5 or
+	>= Win98.
+	Change existing guards to use the above macro names as appropriate.
+	* include/basetyps.h (__int32, __int16, __int8, small, hyper): Define.
+	Note: Also added to mingw/include/_mingw.h.
+
+2003-06-28  Steven Edwards  <Steven_Ed4153@yahoo.com>
+
+	* include/shlwapi.h (UrlGetLocationA, UrlGetLocationW,
+	PathFindSuffixArrayA, PathFindSuffixArrayW,
+	PathFindExtensionA, PathFindExtensionW, StrStrW
+	StrStrA): Change unicode-macro'd LP[C]TSTR return values to
+	explicit type.
+
+2003-06-26  Mattia Barbon  <mbarbon@dsi.unive.it>
+
+	* include/richedit.h (PARAFORMAT2): Add definition.
+	* include/richedit.h (PFA_*, PFE_*, PFM_*): Add some
+	missing constants.
+
+2003-06-17  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shellapi.h (SHQUERYRBINFO): Add structure,
+	(SHQueryRecycleBin[AW]. SHEmptyRecycleBin[AW]):Add prototypes.
+	(SHERB_NOCONFIRMATION, SHERB_NOPROGRESSUI, SHERB_NOSOUND):
+	Add defines. Thanks to Brett Hart <brett at ncubedtech dot com>
+
+2003-06-17  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (GlobalCompact, GlobalFix, GlobalFlags,
+	GlobalUnfix, GlobalUnWire, GlobalWire, LocalCompact,
+	LocalFlags, LocalShrink, LockSegment, UnlockSegment): Add comment
+	that these are obsolete no-ops.
+
+2003-06-17  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* include/winbase.h (GetProcessWorkingSetSize,
+	GlobalCompact, LocalAlloc, LocalCompact, LocalReAlloc,
+	LocalShrink, SignalObjectAndWait, WriteProcessMemory):
+	Correct prototypes.
+
+2003-06-18  Steven Edwards  <Steven_Ed4153@yahoo.com>
+
+	* include/winuser.h (TPM_RECURSE): Add define.
+
+2003-06-06  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/test.c: #include <powrprof.h>.
+
+2003-06-06  James E. Lucas  <xelloss@sourceforge.net>
+
+	* include/powerprof.h: New file.
+	* lib/powerprof.def: New file.
+
+2003-06-06  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt (SLIST_HEADER): Add C90 anonymous struct
+	protection.
+
+2003-06-05  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/winuser.h (WNDCLASS[AW], WNDCLASSEX[AW]): Change type of
+	hInstance members to HINSTANCE.
+	Thanks to: Brenden T. <brenden@rcsis.com>
+
+2003-06-05  Bart Oldeman  <bartoldeman@users.sourceforge.net>
+
+	* include/lmaccess.h (UF_MNS_LOGON_ACCOUNT): Add define.
+	* include/wingdi.h (LPRGBTRIPLE, LPRGBQUAD): Add typedefs.
+
 2003-06-02  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/ddk/ntpoapi.h (POWER_INFORMATION_LEVEL): Remove.

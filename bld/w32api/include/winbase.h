@@ -129,8 +129,6 @@ extern "C" {
 #define COPY_FILE_FAIL_IF_EXISTS	1
 #define COPY_FILE_RESTARTABLE	2
 #define OFS_MAXPATHNAME 128
-#define DUPLICATE_CLOSE_SOURCE  1
-#define DUPLICATE_SAME_ACCESS   2
 #define FILE_MAP_ALL_ACCESS     0xf001f
 #define FILE_MAP_READ   4
 #define FILE_MAP_WRITE  2
@@ -192,7 +190,7 @@ extern "C" {
 #define FILE_FLAG_POSIX_SEMANTICS	16777216
 #define FILE_FLAG_OPEN_REPARSE_POINT	2097152
 #define FILE_FLAG_OPEN_NO_RECALL	1048576
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define FILE_FLAG_FIRST_PIPE_INSTANCE	524288
 #endif
 #define CLRDTR 6
@@ -231,8 +229,10 @@ extern "C" {
 #define FILE_TYPE_CHAR 2
 #define FILE_TYPE_PIPE 3
 #define FILE_TYPE_REMOTE 0x8000
-#define HANDLE_FLAG_INHERIT 1
-#define HANDLE_FLAG_PROTECT_FROM_CLOSE 2
+/* also in ddk/ntapi.h */
+#define HANDLE_FLAG_INHERIT		0x01
+#define HANDLE_FLAG_PROTECT_FROM_CLOSE	0x02
+/* end ntapi.h */
 #define STD_INPUT_HANDLE (DWORD)(0xfffffff6)
 #define STD_OUTPUT_HANDLE (DWORD)(0xfffffff5)
 #define STD_ERROR_HANDLE (DWORD)(0xfffffff4)
@@ -409,10 +409,12 @@ extern "C" {
 #define EV_RXCHAR 1
 #define EV_RXFLAG 2
 #define EV_TXEMPTY 4
-#define SEM_FAILCRITICALERRORS 1
-#define SEM_NOALIGNMENTFAULTEXCEPT 4
-#define SEM_NOGPFAULTERRORBOX 2
-#define SEM_NOOPENFILEERRORBOX 32768
+/* also in ddk/ntapi.h */
+#define SEM_FAILCRITICALERRORS		0x0001
+#define SEM_NOGPFAULTERRORBOX		0x0002
+#define SEM_NOALIGNMENTFAULTEXCEPT	0x0004
+#define SEM_NOOPENFILEERRORBOX		0x8000
+/* end ntapi.h */
 #define SLE_ERROR 1
 #define SLE_MINORERROR 2
 #define SLE_WARNING 3
@@ -865,7 +867,7 @@ typedef struct _MEMORYSTATUS {
 	DWORD dwTotalVirtual;
 	DWORD dwAvailVirtual;
 } MEMORYSTATUS,*LPMEMORYSTATUS;
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 typedef struct _MEMORYSTATUSEX {
 	DWORD dwLength;
 	DWORD dwMemoryLoad;
@@ -968,7 +970,7 @@ BOOL WINAPI AccessCheckAndAuditAlarmA(LPCSTR,LPVOID,LPSTR,LPSTR,PSECURITY_DESCRI
 BOOL WINAPI AccessCheckAndAuditAlarmW(LPCWSTR,LPVOID,LPWSTR,LPWSTR,PSECURITY_DESCRIPTOR,DWORD,PGENERIC_MAPPING,BOOL,PDWORD,PBOOL,PBOOL);
 BOOL WINAPI AddAccessAllowedAce(PACL,DWORD,DWORD,PSID);
 BOOL WINAPI AddAccessDeniedAce(PACL,DWORD,DWORD,PSID);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI AddAccessAllowedAceEx(PACL,DWORD,DWORD,DWORD,PSID);
 BOOL WINAPI AddAccessDeniedAceEx(PACL,DWORD,DWORD,DWORD,PSID);
 #endif
@@ -1036,12 +1038,12 @@ HANDLE WINAPI CreateFileA(LPCSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES,DWORD,DWORD,H
 HANDLE WINAPI CreateFileW(LPCWSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES,DWORD,DWORD,HANDLE);
 HANDLE WINAPI CreateFileMappingA(HANDLE,LPSECURITY_ATTRIBUTES,DWORD,DWORD,DWORD,LPCSTR);
 HANDLE WINAPI CreateFileMappingW(HANDLE,LPSECURITY_ATTRIBUTES,DWORD,DWORD,DWORD,LPCWSTR);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI CreateHardLinkA(LPCSTR,LPCSTR,LPSECURITY_ATTRIBUTES);
 BOOL WINAPI CreateHardLinkW(LPCWSTR,LPCWSTR,LPSECURITY_ATTRIBUTES);
 #endif
 HANDLE WINAPI CreateIoCompletionPort(HANDLE,HANDLE,DWORD,DWORD);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 HANDLE WINAPI CreateJobObjectA(LPSECURITY_ATTRIBUTES,LPCSTR);
 HANDLE WINAPI CreateJobObjectW(LPSECURITY_ATTRIBUTES,LPCWSTR);
 BOOL WINAPI TerminateJobObject(HANDLE,UINT);
@@ -1077,7 +1079,7 @@ void WINAPI DeleteCriticalSection(PCRITICAL_SECTION);
 void WINAPI DeleteFiber(PVOID);
 BOOL WINAPI DeleteFileA(LPCSTR);
 BOOL WINAPI DeleteFileW(LPCWSTR);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI DeleteVolumeMountPointA(LPCSTR);
 BOOL WINAPI DeleteVolumeMountPointW(LPCWSTR);
 #endif
@@ -1128,7 +1130,7 @@ HANDLE WINAPI FindFirstFileW(LPCWSTR,LPWIN32_FIND_DATAW);
 HANDLE WINAPI FindFirstFileExA(LPCSTR,FINDEX_INFO_LEVELS,PVOID,FINDEX_SEARCH_OPS,PVOID,DWORD);
 HANDLE WINAPI FindFirstFileExW(LPCWSTR,FINDEX_INFO_LEVELS,PVOID,FINDEX_SEARCH_OPS,PVOID,DWORD);
 BOOL WINAPI FindFirstFreeAce(PACL,PVOID*);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 HANDLE WINAPI FindFirstVolumeA(LPCSTR,DWORD);
 HANDLE WINAPI FindFirstVolumeW(LPCWSTR,DWORD);
 HANDLE WINAPI FindFirstVolumeMountPointA(LPSTR,LPSTR,DWORD);
@@ -1137,7 +1139,7 @@ HANDLE WINAPI FindFirstVolumeMountPointW(LPWSTR,LPWSTR,DWORD);
 BOOL WINAPI FindNextChangeNotification(HANDLE);
 BOOL WINAPI FindNextFileA(HANDLE,LPWIN32_FIND_DATAA);
 BOOL WINAPI FindNextFileW(HANDLE,LPWIN32_FIND_DATAW);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI FindNextVolumeA(HANDLE,LPCSTR,DWORD);
 BOOL WINAPI FindNextVolumeW(HANDLE,LPWSTR,DWORD);
 BOOL WINAPI FindNextVolumeMountPointA(HANDLE,LPSTR,DWORD);
@@ -1227,13 +1229,19 @@ void WINAPI GetLocalTime(LPSYSTEMTIME);
 DWORD WINAPI GetLogicalDrives(void);
 DWORD WINAPI GetLogicalDriveStringsA(DWORD,LPSTR);
 DWORD WINAPI GetLogicalDriveStringsW(DWORD,LPWSTR);
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _W98)
 DWORD WINAPI GetLongPathNameA(LPCSTR,LPSTR,DWORD);
 DWORD WINAPI GetLongPathNameW(LPCWSTR,LPWSTR,DWORD);
+#endif
 BOOL WINAPI GetMailslotInfo(HANDLE,PDWORD,PDWORD,PDWORD,PDWORD);
 DWORD WINAPI GetModuleFileNameA(HINSTANCE,LPSTR,DWORD);
 DWORD WINAPI GetModuleFileNameW(HINSTANCE,LPWSTR,DWORD);
 HMODULE WINAPI GetModuleHandleA(LPCSTR);
 HMODULE WINAPI GetModuleHandleW(LPCWSTR);
+#if (_WIN32_WINNT >= _NT5)
+BOOL WINAPI GetModuleHandleExA(DWORD, LPCSTR, HMODULE*);
+BOOL WINAPI GetModuleHandleExW(DWORD, LPCWSTR, HMODULE*);
+#endif
 BOOL WINAPI GetNamedPipeHandleStateA(HANDLE,PDWORD,PDWORD,PDWORD,PDWORD,LPSTR,DWORD);
 BOOL WINAPI GetNamedPipeHandleStateW(HANDLE,PDWORD,PDWORD,PDWORD,PDWORD,LPWSTR,DWORD);
 BOOL WINAPI GetNamedPipeInfo(HANDLE,PDWORD,PDWORD,PDWORD,PDWORD);
@@ -1261,7 +1269,7 @@ BOOL WINAPI GetProcessShutdownParameters(PDWORD,PDWORD);
 BOOL WINAPI GetProcessTimes(HANDLE,LPFILETIME,LPFILETIME,LPFILETIME,LPFILETIME);
 DWORD WINAPI GetProcessVersion(DWORD);
 HWINSTA WINAPI GetProcessWindowStation(void);
-BOOL WINAPI GetProcessWorkingSetSize(HANDLE,PDWORD,PDWORD);
+BOOL WINAPI GetProcessWorkingSetSize(HANDLE,PSIZE_T,PSIZE_T);
 UINT WINAPI GetProfileIntA(LPCSTR,LPCSTR,INT);
 UINT WINAPI GetProfileIntW(LPCWSTR,LPCWSTR,INT);
 DWORD WINAPI GetProfileSectionA(LPCSTR,LPSTR,DWORD);
@@ -1289,7 +1297,7 @@ UINT WINAPI GetSystemDirectoryW(LPWSTR,UINT);
 VOID WINAPI GetSystemInfo(LPSYSTEM_INFO);
 BOOL WINAPI GetSystemPowerStatus(LPSYSTEM_POWER_STATUS);
 VOID WINAPI GetSystemTime(LPSYSTEMTIME);
-#if (_WIN32_WINNT >= 0x0501)
+#if (_WIN32_WINNT >= _WXP)
 BOOL WINAPI GetSystemTimes(LPFILETIME,LPFILETIME,LPFILETIME);
 #endif
 BOOL WINAPI GetSystemTimeAdjustment(PDWORD,PDWORD,PBOOL);
@@ -1316,7 +1324,7 @@ BOOL WINAPI GetVersionExA(LPOSVERSIONINFOA);
 BOOL WINAPI GetVersionExW(LPOSVERSIONINFOW);
 BOOL WINAPI GetVolumeInformationA(LPCSTR,LPSTR,DWORD,PDWORD,PDWORD,PDWORD,LPSTR,DWORD);
 BOOL WINAPI GetVolumeInformationW(LPCWSTR,LPWSTR,DWORD,PDWORD,PDWORD,PDWORD,LPWSTR,DWORD);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI GetVolumeNameForVolumeMountPointA(LPCSTR,LPSTR,DWORD);
 BOOL WINAPI GetVolumeNameForVolumeMountPointW(LPCWSTR,LPWSTR,DWORD);
 BOOL WINAPI GetVolumePathNameA(LPCSTR,LPSTR,DWORD);
@@ -1330,28 +1338,28 @@ DWORD WINAPI GetWindowThreadProcessId(HWND,PDWORD);
 ATOM WINAPI GlobalAddAtomA(LPCSTR);
 ATOM WINAPI GlobalAddAtomW( LPCWSTR);
 HGLOBAL WINAPI GlobalAlloc(UINT,DWORD);
-UINT WINAPI GlobalCompact(DWORD);
+SIZE_T WINAPI GlobalCompact(DWORD); /* Obsolete: Has no effect. */
 ATOM WINAPI GlobalDeleteAtom(ATOM);
 HGLOBAL GlobalDiscard(HGLOBAL);
 ATOM WINAPI GlobalFindAtomA(LPCSTR);
 ATOM WINAPI GlobalFindAtomW(LPCWSTR);
-VOID WINAPI GlobalFix(HGLOBAL);
-UINT WINAPI GlobalFlags(HGLOBAL);
+VOID WINAPI GlobalFix(HGLOBAL); /* Obsolete: Has no effect. */
+UINT WINAPI GlobalFlags(HGLOBAL); /* Obsolete: Has no effect. */
 HGLOBAL WINAPI GlobalFree(HGLOBAL);
 UINT WINAPI GlobalGetAtomNameA(ATOM,LPSTR,int);
 UINT WINAPI GlobalGetAtomNameW(ATOM,LPWSTR,int);
 HGLOBAL WINAPI GlobalHandle(PCVOID);
 LPVOID WINAPI GlobalLock(HGLOBAL);
 VOID WINAPI GlobalMemoryStatus(LPMEMORYSTATUS);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI GlobalMemoryStatusEx(LPMEMORYSTATUSEX);
 #endif
 HGLOBAL WINAPI GlobalReAlloc(HGLOBAL,DWORD,UINT);
 DWORD WINAPI GlobalSize(HGLOBAL);
-VOID WINAPI GlobalUnfix(HGLOBAL);
-BOOL WINAPI GlobalUnlock(HGLOBAL);
-BOOL WINAPI GlobalUnWire(HGLOBAL);
-PVOID WINAPI GlobalWire(HGLOBAL);
+VOID WINAPI GlobalUnfix(HGLOBAL); /* Obsolete: Has no effect. */
+BOOL WINAPI GlobalUnlock(HGLOBAL); 
+BOOL WINAPI GlobalUnWire(HGLOBAL); /* Obsolete: Has no effect. */
+PVOID WINAPI GlobalWire(HGLOBAL); /* Obsolete: Has no effect. */
 #define HasOverlappedIoCompleted(lpOverlapped)  ((lpOverlapped)->Internal != STATUS_PENDING)
 PVOID WINAPI HeapAlloc(HANDLE,DWORD,DWORD);
 SIZE_T WINAPI HeapCompact(HANDLE,DWORD);
@@ -1370,10 +1378,8 @@ BOOL WINAPI ImpersonateSelf(SECURITY_IMPERSONATION_LEVEL);
 BOOL WINAPI InitAtomTable(DWORD);
 BOOL WINAPI InitializeAcl(PACL,DWORD,DWORD);
 VOID WINAPI InitializeCriticalSection(LPCRITICAL_SECTION);
-#if (_WIN32_WINNT >= 0x0403) /* Needs NT4, SP3 or later.  */
 BOOL WINAPI InitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION,DWORD);
 DWORD WINAPI SetCriticalSectionSpinCount(LPCRITICAL_SECTION,DWORD);
-#endif
 BOOL WINAPI InitializeSecurityDescriptor(PSECURITY_DESCRIPTOR,DWORD);
 BOOL WINAPI InitializeSid (PSID,PSID_IDENTIFIER_AUTHORITY,BYTE);
 #ifndef __INTERLOCKED_DECLARED
@@ -1411,22 +1417,22 @@ HINSTANCE WINAPI LoadLibraryExW(LPCWSTR,HANDLE,DWORD);
 HINSTANCE WINAPI LoadLibraryW(LPCWSTR);
 DWORD WINAPI LoadModule(LPCSTR,PVOID);
 HGLOBAL WINAPI LoadResource(HINSTANCE,HRSRC);
-HLOCAL WINAPI LocalAlloc(UINT,UINT);
-UINT WINAPI LocalCompact(UINT);
+HLOCAL WINAPI LocalAlloc(UINT,SIZE_T);
+SIZE_T WINAPI LocalCompact(UINT); /* Obsolete: Has no effect. */
 HLOCAL LocalDiscard(HLOCAL);
 BOOL WINAPI LocalFileTimeToFileTime(CONST FILETIME *,LPFILETIME);
-UINT WINAPI LocalFlags(HLOCAL);
+UINT WINAPI LocalFlags(HLOCAL); /* Obsolete: Has no effect. */
 HLOCAL WINAPI LocalFree(HLOCAL);
 HLOCAL WINAPI LocalHandle(LPCVOID);
 PVOID WINAPI LocalLock(HLOCAL);
-HLOCAL WINAPI LocalReAlloc(HLOCAL,UINT,UINT);
-UINT WINAPI LocalShrink(HLOCAL,UINT);
+HLOCAL WINAPI LocalReAlloc(HLOCAL,SIZE_T,UINT);
+SIZE_T WINAPI LocalShrink(HLOCAL,UINT);  /* Obsolete: Has no effect. */
 UINT WINAPI LocalSize(HLOCAL);
 BOOL WINAPI LocalUnlock(HLOCAL);
 BOOL WINAPI LockFile(HANDLE,DWORD,DWORD,DWORD,DWORD);
 BOOL WINAPI LockFileEx(HANDLE,DWORD,DWORD,DWORD,DWORD,LPOVERLAPPED);
 PVOID WINAPI LockResource(HGLOBAL);
-#define LockSegment(w) GlobalFix((HANDLE)(w))
+#define LockSegment(w) GlobalFix((HANDLE)(w)) /* Obsolete: Has no effect. */
 BOOL WINAPI LogonUserA(LPSTR,LPSTR,LPSTR,DWORD,DWORD,PHANDLE);
 BOOL WINAPI LogonUserW(LPWSTR,LPWSTR,LPWSTR,DWORD,DWORD,PHANDLE);
 BOOL WINAPI LookupAccountNameA(LPCSTR,LPCSTR,PSID,PDWORD,LPSTR,PDWORD,PSID_NAME_USE);
@@ -1486,7 +1492,7 @@ HANDLE WINAPI OpenProcess(DWORD,BOOL,DWORD);
 BOOL WINAPI OpenProcessToken(HANDLE,DWORD,PHANDLE);
 HANDLE WINAPI OpenSemaphoreA(DWORD,BOOL,LPCSTR);
 HANDLE WINAPI OpenSemaphoreW(DWORD,BOOL,LPCWSTR);
-#if (_WIN32_WINNT >= 0x0500) || (_WIN32_WINDOWS >= 0x0490)
+#if (_WIN32_WINNT >= _NT5) || (_WIN32_WINDOWS >= _WME)
 HANDLE WINAPI OpenThread(DWORD,BOOL,DWORD);
 #endif
 BOOL WINAPI OpenThreadToken(HANDLE,DWORD,BOOL,PHANDLE);
@@ -1592,12 +1598,12 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCE
 BOOL WINAPI SetupComm(HANDLE,DWORD,DWORD);
 BOOL WINAPI SetVolumeLabelA(LPCSTR,LPCSTR);
 BOOL WINAPI SetVolumeLabelW(LPCWSTR,LPCWSTR);
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI SetVolumeMountPointA(LPCSTR,LPCSTR);
 BOOL WINAPI SetVolumeMountPointW(LPCWSTR,LPCWSTR);
 #endif
 BOOL WINAPI SetWaitableTimer(HANDLE,const LARGE_INTEGER*,LONG,PTIMERAPCROUTINE,PVOID,BOOL);
-BOOL WINAPI SignalObjectAndWait(HANDLE,HANDLE,DWORD,BOOL);
+DWORD WINAPI SignalObjectAndWait(HANDLE,HANDLE,DWORD,BOOL);
 DWORD WINAPI SizeofResource(HINSTANCE,HRSRC);
 void WINAPI Sleep(DWORD);
 DWORD WINAPI SleepEx(DWORD,BOOL);
@@ -1619,7 +1625,7 @@ LONG WINAPI UnhandledExceptionFilter(LPEXCEPTION_POINTERS);
 BOOL WINAPI UnlockFile(HANDLE,DWORD,DWORD,DWORD,DWORD);
 BOOL WINAPI UnlockFileEx(HANDLE,DWORD,DWORD,DWORD,LPOVERLAPPED);
 #define UnlockResource(h) (h)
-#define UnlockSegment(w) GlobalUnfix((HANDLE)(w))
+#define UnlockSegment(w) GlobalUnfix((HANDLE)(w)) /* Obsolete: Has no effect. */
 BOOL WINAPI UnmapViewOfFile(PVOID);
 BOOL WINAPI UpdateResourceA(HANDLE,LPCSTR,LPCSTR,WORD,PVOID,DWORD);
 BOOL WINAPI UpdateResourceW(HANDLE,LPCWSTR,LPCWSTR,WORD,PVOID,DWORD);
@@ -1653,14 +1659,14 @@ BOOL WINAPI WritePrivateProfileStringA(LPCSTR,LPCSTR,LPCSTR,LPCSTR);
 BOOL WINAPI WritePrivateProfileStringW(LPCWSTR,LPCWSTR,LPCWSTR,LPCWSTR);
 BOOL WINAPI WritePrivateProfileStructA(LPCSTR,LPCSTR,LPVOID,UINT,LPCSTR);
 BOOL WINAPI WritePrivateProfileStructW(LPCWSTR,LPCWSTR,LPVOID,UINT,LPCWSTR);
-BOOL WINAPI WriteProcessMemory(HANDLE,PVOID,PVOID,DWORD,PDWORD);
+BOOL WINAPI WriteProcessMemory(HANDLE,LPVOID,LPCVOID,SIZE_T,SIZE_T*);
 BOOL WINAPI WriteProfileSectionA(LPCSTR,LPCSTR);
 BOOL WINAPI WriteProfileSectionW(LPCWSTR,LPCWSTR);
 BOOL WINAPI WriteProfileStringA(LPCSTR,LPCSTR,LPCSTR);
 BOOL WINAPI WriteProfileStringW(LPCWSTR,LPCWSTR,LPCWSTR);
 DWORD WINAPI WriteTapemark(HANDLE,DWORD,DWORD,BOOL);
 #define Yield()
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 BOOL WINAPI AllocateUserPhysicalPages(HANDLE,PULONG_PTR,PULONG_PTR);
 BOOL WINAPI FreeUserPhysicalPages(HANDLE,PULONG_PTR,PULONG_PTR);
 BOOL WINAPI MapUserPhysicalPages(PVOID,ULONG_PTR,PULONG_PTR);
@@ -1699,7 +1705,7 @@ typedef HW_PROFILE_INFOW HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define CreateEvent CreateEventW
 #define CreateFile CreateFileW
 #define CreateFileMapping CreateFileMappingW
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define CreateHardLink CreateHardLinkW
 #define CreateJobObject CreateJobObjectW
 #endif
@@ -1712,7 +1718,7 @@ typedef HW_PROFILE_INFOW HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define CreateWaitableTimer CreateWaitableTimerW
 #define DefineDosDevice DefineDosDeviceW
 #define DeleteFile DeleteFileW
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define DeleteVolumeMountPoint DeleteVolumeMountPointW
 #endif
 #define EncryptFile EncryptFileW
@@ -1727,12 +1733,12 @@ typedef HW_PROFILE_INFOW HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define FindFirstChangeNotification FindFirstChangeNotificationW
 #define FindFirstFile FindFirstFileW
 #define FindFirstFileEx FindFirstFileExW
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define FindFirstVolume FindFirstVolumeW
 #define FindFirstVolumeMountPoint FindFirstVolumeMountPointW
 #endif
 #define FindNextFile FindNextFileW
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define FindNextVolume FindNextVolumeW
 #define FindNextVolumeMountPoint  FindNextVolumeMountPointW
 #endif
@@ -1757,9 +1763,14 @@ typedef HW_PROFILE_INFOW HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define GetFileAttributesEx GetFileAttributesExW
 #define GetFullPathName GetFullPathNameW
 #define GetLogicalDriveStrings GetLogicalDriveStringsW
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _W98)
 #define GetLongPathName GetLongPathNameW
+#endif
 #define GetModuleFileName GetModuleFileNameW
 #define GetModuleHandle GetModuleHandleW
+#if (_WIN32_WINNT >= _NT5)
+#define GetModuleHandleEx GetModuleHandleExW
+#endif
 #define GetNamedPipeHandleState GetNamedPipeHandleStateW
 #define GetPrivateProfileInt GetPrivateProfileIntW
 #define GetPrivateProfileSection GetPrivateProfileSectionW
@@ -1855,7 +1866,7 @@ typedef HW_PROFILE_INFOA HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define CreateEvent CreateEventA
 #define CreateFile CreateFileA
 #define CreateFileMapping CreateFileMappingA
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define CreateHardLink CreateHardLinkA
 #define CreateJobObject CreateJobObjectA
 #endif
@@ -1868,7 +1879,7 @@ typedef HW_PROFILE_INFOA HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define CreateWaitableTimer CreateWaitableTimerA
 #define DefineDosDevice DefineDosDeviceA
 #define DeleteFile DeleteFileA
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define DeleteVolumeMountPoint DeleteVolumeMountPointA
 #endif
 #define EncryptFile EncryptFileA
@@ -1883,12 +1894,12 @@ typedef HW_PROFILE_INFOA HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define FindFirstChangeNotification FindFirstChangeNotificationA
 #define FindFirstFile FindFirstFileA
 #define FindFirstFileEx FindFirstFileExA
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define FindFirstVolume FindFirstVolumeA
 #define FindFirstVolumeMountPoint FindFirstVolumeMountPointA
 #endif
 #define FindNextFile FindNextFileA
-#if (_WIN32_WINNT >= 0x0500)
+#if (_WIN32_WINNT >= _NT5)
 #define FindNextVolume FindNextVolumeA
 #define FindNextVolumeMountPoint FindNextVolumeMountPointA
 #endif
@@ -1912,9 +1923,14 @@ typedef HW_PROFILE_INFOA HW_PROFILE_INFO,*LPHW_PROFILE_INFO;
 #define GetFileAttributesEx GetFileAttributesExA
 #define GetFullPathName GetFullPathNameA
 #define GetLogicalDriveStrings GetLogicalDriveStringsA
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _W98)
 #define GetLongPathName GetLongPathNameA
+#endif
 #define GetNamedPipeHandleState GetNamedPipeHandleStateA
 #define GetModuleHandle GetModuleHandleA
+#if (_WIN32_WINNT >= _NT5)
+#define GetModuleHandleEx GetModuleHandleExA
+#endif
 #define GetModuleFileName GetModuleFileNameA
 #define GetPrivateProfileInt GetPrivateProfileIntA
 #define GetPrivateProfileSection GetPrivateProfileSectionA

@@ -85,6 +85,7 @@ libs =               &
         winmm.lib &
         winspool.lib &
         winstrm.lib &
+        wldap32.lib &
         wow32.lib &
         ws2_32.lib &
         wsock32.lib &

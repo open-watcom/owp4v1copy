@@ -1749,6 +1749,9 @@ extern "C" {
 #define TPM_BOTTOMALIGN 32
 #define TPM_NONOTIFY 128
 #define TPM_RETURNCMD 256
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _W98)
+#define TPM_RECURSE 1
+#endif
 #define HELP_COMMAND 0x102
 #define HELP_CONTENTS 3
 #define HELP_CONTEXT 1
@@ -1955,6 +1958,9 @@ extern "C" {
 #define WA_CLICKACTIVE 2
 #define ICON_SMALL 0
 #define ICON_BIG 1
+#if _WIN32_WINNT >= 0x0501
+#define ICON_SMALL2 2
+#endif
 #define HBMMENU_CALLBACK ((HBITMAP) -1)
 #define HBMMENU_SYSTEM ((HBITMAP)1)
 #define HBMMENU_MBAR_RESTORE ((HBITMAP)2)
@@ -1990,16 +1996,24 @@ extern "C" {
 #if(WINVER >= 0x0400)
 #define ENDSESSION_LOGOFF    0x80000000
 #endif /* WINVER >= 0x0400 */
-#if(WINVER >= 0x0500)
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _WME)
 #define ASFW_ANY ((DWORD)-1)
 #define LSFW_LOCK 1
 #define LSFW_UNLOCK 2
+#endif
+#if(_WIN32_WINNT >= _NT5)
 #define LWA_COLORKEY 1
 #define LWA_ALPHA 2
 #endif
 #define GA_PARENT 1
 #define GA_ROOT 2
 #define GA_ROOTOWNER 3
+#if (_WIN32_WINNT >= _NT5 || _WIN32_WINDOWS >= _W98)
+#define MONITOR_DEFAULTTONULL 0 
+#define MONITOR_DEFAULTTOPRIMARY 1 
+#define MONITOR_DEFAULTTONEAREST 2 
+#define MONITORINFOF_PRIMARY 1 
+#endif
 
 #ifndef RC_INVOKED
 typedef BOOL(CALLBACK *DLGPROC)(HWND,UINT,WPARAM,LPARAM);
@@ -2208,7 +2222,7 @@ typedef struct _WNDCLASSA {
 	WNDPROC lpfnWndProc;
 	int cbClsExtra;
 	int cbWndExtra;
-	HANDLE hInstance;
+	HINSTANCE hInstance;
 	HICON hIcon;
 	HCURSOR hCursor;
 	HBRUSH hbrBackground;
@@ -2220,7 +2234,7 @@ typedef struct _WNDCLASSW {
 	WNDPROC lpfnWndProc;
 	int cbClsExtra;
 	int cbWndExtra;
-	HANDLE hInstance;
+	HINSTANCE hInstance;
 	HICON hIcon;
 	HCURSOR hCursor;
 	HBRUSH hbrBackground;
@@ -2233,7 +2247,7 @@ typedef struct _WNDCLASSEXA {
 	WNDPROC lpfnWndProc;
 	int cbClsExtra;
 	int cbWndExtra;
-	HANDLE hInstance;
+	HINSTANCE hInstance;
 	HICON hIcon;
 	HCURSOR hCursor;
 	HBRUSH hbrBackground;
@@ -2247,7 +2261,7 @@ typedef struct _WNDCLASSEXW {
 	WNDPROC lpfnWndProc;
 	int cbClsExtra;
 	int cbWndExtra;
-	HANDLE hInstance;
+	HINSTANCE hInstance;
 	HICON hIcon;
 	HCURSOR hCursor;
 	HBRUSH hbrBackground;
@@ -3049,6 +3063,9 @@ DWORD WINAPI GetQueueStatus(UINT);
 BOOL WINAPI GetScrollInfo(HWND,int,LPSCROLLINFO);
 int WINAPI GetScrollPos(HWND,int);
 BOOL WINAPI GetScrollRange(HWND,int,LPINT,LPINT);
+#if (_WIN32_WINNT >= _NT5)
+HWND WINAPI GetShellWindow(VOID);
+#endif
 HMENU WINAPI GetSubMenu(HMENU,int);
 DWORD WINAPI GetSysColor(int);
 HBRUSH WINAPI GetSysColorBrush(int);
@@ -3177,7 +3194,7 @@ int WINAPI MessageBoxIndirectA(CONST MSGBOXPARAMSA*);
 int WINAPI MessageBoxIndirectW(CONST MSGBOXPARAMSW*);
 BOOL WINAPI ModifyMenuA(HMENU,UINT,UINT,UINT,LPCSTR);
 BOOL WINAPI ModifyMenuW(HMENU,UINT,UINT,UINT,LPCWSTR);
-void WINAPI mouse_event(DWORD,DWORD,DWORD,DWORD,DWORD);
+void WINAPI mouse_event(DWORD,DWORD,DWORD,DWORD,ULONG_PTR);
 BOOL WINAPI MoveWindow(HWND,int,int,int,int,BOOL);
 DWORD WINAPI MsgWaitForMultipleObjects(DWORD,CONST HANDLE*,BOOL,DWORD,DWORD);
 DWORD WINAPI MsgWaitForMultipleObjectsEx(DWORD,CONST HANDLE*,DWORD,DWORD,DWORD);
@@ -3351,12 +3368,17 @@ int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
 int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
 int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
-#if(WINVER >= 0x0500)
+#if(_WIN32_WINNT >= _NT5  || _WIN32_WINDOWS >= _WME)
 BOOL WINAPI AllowSetForegroundWindow(DWORD);
 BOOL WINAPI LockSetForegroundWindow(UINT);
-BOOL WINAPI SetLayeredWindowAttributes(HWND,COLORREF,BYTE,DWORD);
 #endif
-
+#if(_WIN32_WINNT >= _NT5)
+BOOL WINAPI SetLayeredWindowAttributes(HWND,COLORREF,BYTE,DWORD);
+BOOL WINAPI UpdateLayeredWindow(HWND,HDC,POINT*,SIZE*,HDC,POINT*,COLORREF,BLENDFUNCTION*,DWORD);
+#endif
+#if(_WIN32_WINNT >= _WXP)
+BOOL WINAPI GetLayeredWindowAttributes(HWND,COLORREF*,BYTE*,DWORD*);
+#endif
 #ifdef UNICODE
 #define EDITWORDBREAKPROC EDITWORDBREAKPROCW
 #define PROPENUMPROC PROPENUMPROCW
