@@ -117,7 +117,7 @@ namespace std {
   void advance( InputIterator &it, Distance n )
   {
     advance(
-      it, n, /* typename */ iterator_traits< InputIterator >::iterator_catagory( )
+      it, n, typename iterator_traits< InputIterator >::iterator_catagory( )
     );
   }
 
