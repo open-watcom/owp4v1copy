@@ -76,7 +76,7 @@ inc_dirs = ../h;
 ../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
         %create $(name).lbc
         @for %i in ($(OBJS)) do @%append $(name).lbc +%i
-        $(librarian) -n -b $^@ @ $(name).lbc
+        $(librarian) -n -b $^@ @$(name).lbc
 
 clean : .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.err *.trk *.lbc ../lib/$(name).lib
