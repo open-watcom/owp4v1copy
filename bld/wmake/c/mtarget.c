@@ -244,7 +244,7 @@ STATIC FLIST *DupFList( FLIST *old )
 {
     FLIST *new;
     FLIST *cur;
-    FLIST *head;
+    FLIST *head;   // resulting FLIST
 
     if( old == NULL ) {
         return( NULL );
@@ -255,7 +255,7 @@ STATIC FLIST *DupFList( FLIST *old )
     if (old->body != NULL) {
         head->body     = StrDupSafe( old->body );
     } else {
-        new->body      = NULL;
+        head->body     = NULL;
     }
     head->keep     = old->keep;
 
