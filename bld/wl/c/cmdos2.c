@@ -296,7 +296,7 @@ extern bool ProcObjAlign( void )
     if( ret != ST_IS_ORDINAL || value == 0 ) {
         return( FALSE );
     }                                            /* value not a power of 2 */
-    if( value < 512 || value > (256*1024UL*1024) || (value & (value-1)) ) {
+    if( value < 16 || value > (256*1024UL*1024) || (value & (value-1)) ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "objalign" );
         value = 64*1024;
     }

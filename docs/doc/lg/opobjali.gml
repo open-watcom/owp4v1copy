@@ -13,7 +13,7 @@ The format of the "OBJALIGN" option (short form "OBJA") is as follows.
 .im lnkvalue
 .np
 .id n
-must be a value that is a power of 2 and is between 512 bytes and 256
+must be a value that is a power of 2 and is between 16 bytes and 256
 megabytes inclusive.
 The default is 64k.
 .esynote
