@@ -20,8 +20,8 @@ cdsay .
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/rsi/dos.trp/rsi.trp <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/rsi/dos.srv/rsihelp.exp <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dos.trp/pls.trp <RELROOT>/rel2/binw/
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dos.srv/plshelp.exe <RELROOT>/rel2/binw/
-    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dosped.srv/pedhelp.exe <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dos.srv/plshelp.exp <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dosped.srv/pedhelp.exp <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/cw/dos.trp/cw.trp <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/cw/dos.srv/cwhelp.exe <RELROOT>/rel2/binw/
     <CPCMD> <DEVDIR>/trap/net/dos.trp/net.trp <RELROOT>/rel2/binw/

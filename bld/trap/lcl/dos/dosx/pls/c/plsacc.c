@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap file for debugging PharLap DOS extended apps.
 *
 ****************************************************************************/
 
@@ -701,7 +700,7 @@ unsigned ReqProg_load()
         ret->task_id = 4;
         CheckForPE( name );
     } else {
-        _DBG(("Not Protected mode?????!!!!!!\r\n"));
+        _DBG(("Not Protected mode?!!!\r\n"));
         ret->flags = LD_FLAG_IS_32;
         ret->task_id = Mach.msb_ds;
     }
