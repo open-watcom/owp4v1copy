@@ -8,7 +8,7 @@ name = builder
 !include cproj.mif
 !include defrule.mif
 
-all: $(name).exe cdsay.exe sweep.exe wsplice.exe
+all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe
 
 extra_c_flags = -i..\..\pmake
 
@@ -20,16 +20,24 @@ SOBJS = sweep.obj
 WOBJS = wsplice.obj
 
 $(name).exe : $(OBJS)
-        wlink $(lflags) name $^@ op map file {$(OBJS)}
+        wlink $(lflags) name $^@ op map,quiet file {$(OBJS)}
+        @copy $^. $(bld_bin)
 
-cdsay.exe : $(COBJS)
-        wlink $(lflags) name $^@ op map file {$(COBJS)}
+cdsay.exe : cdsay.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
 
-sweep.exe : $(SOBJS)
-        wlink $(lflags) name $^@ op map file {$(SOBJS)}
+sweep.exe : sweep.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
 
-wsplice.exe : $(WOBJS)
-        wlink $(lflags) name $^@ op map file {$(WOBJS)}
+wsplice.exe : wsplice.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
+
+diff.exe : diff.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj
