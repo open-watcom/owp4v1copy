@@ -228,7 +228,7 @@ global  SYM_HASHPTR __FAR *HashTab;
 global  TYPEPTR BaseTypes[TYPE_LAST_ENTRY];
 global  int     CTypeCounts[TYPE_LAST_ENTRY];
 
-#define BUF_SIZE 512
+#define BUF_SIZE 4096
 global  char Buffer[BUF_SIZE+16];
 global  char TokenBuf[ BUF_SIZE ];
 
