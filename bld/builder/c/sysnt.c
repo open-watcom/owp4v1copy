@@ -66,30 +66,51 @@ void SysInit( int argc, char *argv[] )
     }
 }
 
+/* #define OS_LEVEL_PIPES doesn't seem to work for NT? */
+#ifdef OS_LEVEL_PIPES
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int         rc;
     HANDLE      pipe_input;
     HANDLE      pipe_output;
-    HANDLE      std_output;
-    HANDLE      std_error;
-        
-    if( !CreatePipe( &pipe_input, &pipe_output, NULL, 0 ) ) {
+    HANDLE      pipe_input_dup;
+    SECURITY_ATTRIBUTES sa;
+
+    sa.nLength = sizeof(sa);
+    sa.lpSecurityDescriptor = NULL;
+    sa.bInheritHandle = TRUE;
+    if( !CreatePipe( &pipe_input, &pipe_output, &sa, 0 ) ) {
         return( GetLastError() );
     }
-    DuplicateHandle( GetCurrentProcess(), pipe_output, GetCurrentProcess(), &std_output,
-                0, TRUE, DUPLICATE_SAME_ACCESS );
-    DuplicateHandle( GetCurrentProcess(), pipe_output, GetCurrentProcess(), &std_error,
-                0, TRUE, DUPLICATE_SAME_ACCESS );
-    SetStdHandle( STD_OUTPUT_HANDLE, std_output );
-    SetStdHandle( STD_ERROR_HANDLE, std_error );
-    CloseHandle( pipe_output );
+    SetStdHandle( STD_OUTPUT_HANDLE, pipe_output );
+    SetStdHandle( STD_ERROR_HANDLE, pipe_output );
+    DuplicateHandle( GetCurrentProcess(), pipe_input,
+                GetCurrentProcess(), &pipe_input_dup , 0, FALSE,
+                DUPLICATE_SAME_ACCESS);
+    CloseHandle( pipe_input );
     rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
-    CloseHandle( std_output );
-    CloseHandle( std_error );
-    *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
+    CloseHandle( pipe_output );
+    *readpipe = _hdopen( (int) pipe_input_dup, O_RDONLY );
     return rc;
 }
+#else
+unsigned SysRunCommandPipe(const char *cmd, int *readpipe)
+{
+    int rc;
+    int pipe_fd[2];
+
+    if ( _pipe( pipe_fd, 0, 0 ) == -1 )
+        return( errno );
+    if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
+        return( errno );
+    if ( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
+        return( errno );
+    close( pipe_fd[1] );
+    rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
+    *readpipe = pipe_fd[0];
+    return rc;
+}
+#endif
 
 unsigned SysChdir( char *dir )
 {
