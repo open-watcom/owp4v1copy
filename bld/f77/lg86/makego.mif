@@ -93,7 +93,6 @@ $(exe).lnk : $(f77_dir)/lg86/files.mif $(f77_dir)/lg86/rt/rt.mif $(f77_dir)/lg86
 !endif
 !endif
     @%append $^@ debug all option symfile
-    @%append $^@ disable 1027 $# PObjRegList_, PObjUnRegList_, and _WResRtns in wompobj.lib are ignored
     @for %i in ($(libs)) do @%append $^@ lib %i
 !ifeq form dos
     @%append $^@ option stack=8k
