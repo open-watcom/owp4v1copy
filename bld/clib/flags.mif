@@ -1,4 +1,4 @@
-sw_c_common = -w4-zl-zld-zq
+sw_c_common = -w4-zl-zld-zq-d__EXPOSE_STREAM_INTERNALS
 sw_a_common = -zq
 sw_l_common = option quiet,impfile,caseexact reference __DLLstart_ disable 121
 !ifndef on_build_machine
@@ -15,7 +15,7 @@ sw_c_stack    = -5s
 sw_c_bigcode  = -nt=_TEXT
 sw_c_bigdata  = -zu
 
-sw_c_intel    = -r-fpr-fpc
+sw_c_intel    = -fpr-fpc
 
 sw_c_086 = $(sw_c_intel)-0
 sw_c_286 = $(sw_c_intel)-2
@@ -82,29 +82,29 @@ sw_a_axp_   =
 sw_a_ppc_   =
 
 # sw_c_(system)_(processor)
-sw_c_generic_086  = -oax
-sw_c_generic_286  = -oax
-sw_c_generic_386  = -oaxt
-sw_c_msdos_086    = -oax
-sw_c_msdos_286    = -oax
-sw_c_msdos_386    = -oaxt
-sw_c_necdos_086   = -oax
-sw_c_necwin_086   = -oax
-sw_c_necdos_386   = -oaxt
-sw_c_necwin_386   = -oaxt-d__CALL21__
-sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB
-sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC
-sw_c_os2_286      = -oax
-sw_c_os2_386      = -oaxt-bm
+sw_c_generic_086  = -oax-r
+sw_c_generic_286  = -oax-r
+sw_c_generic_386  = -oaxt-r
+sw_c_msdos_086    = -oax-r
+sw_c_msdos_286    = -oax-r
+sw_c_msdos_386    = -oaxt-r
+sw_c_necdos_086   = -oax-r
+sw_c_necwin_086   = -oax-r
+sw_c_necdos_386   = -oaxt-r
+sw_c_necwin_386   = -oaxt-d__CALL21__-r
+sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB -d2
+sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC -d_NETWARE_LIBC_THIN -d2
+sw_c_os2_286      = -oax-r
+sw_c_os2_386      = -oaxt-bm-r
 sw_c_os2_ppc      = -oaxt-bm
-sw_c_osi_386      = -oaxt-d__CALL21__
-sw_c_qnx_286      = -oax
-sw_c_qnx_386      = -oaxt-bm
-sw_c_windows_086  = -oax
-sw_c_windows_386  = -oaxt-d__CALL21__
-sw_c_winnt_386    = -oaxt-bm
-sw_c_winnt_axp    = -oaxt-bm-dWIN32-d_WIN32
-sw_c_winnt_ppc    = -oaxt-bm-dWIN32-d_WIN32
+sw_c_osi_386      = -oaxt-d__CALL21__-r
+sw_c_qnx_286      = -oax-r
+sw_c_qnx_386      = -oaxt-bm-r
+sw_c_windows_086  = -oax-r
+sw_c_windows_386  = -oaxt-d__CALL21__-r
+sw_c_winnt_386    = -oaxt-bm-r
+sw_c_winnt_axp    = -oaxt-bm-dWIN32
+sw_c_winnt_ppc    = -oaxt-bm-dWIN32
 
 # sw_a_(system)_(processor)
 sw_a_generic_086  =
@@ -117,8 +117,8 @@ sw_a_necdos_086   =
 sw_a_necdos_386   =
 sw_a_necwin_086   =
 sw_a_necwin_386   =
-sw_a_nw_clib_386  = -d_NETWARE_CLIB
-sw_a_nw_libc_386  = -d_NETWARE_LIBC
+sw_a_nw_clib_386  = -d_NETWARE_CLIB -we
+sw_a_nw_libc_386  = -d_NETWARE_LIBC -we
 sw_a_os2_286      =
 sw_a_os2_386      = -d__MT__
 sw_a_os2_ppc      = -d__MT__
