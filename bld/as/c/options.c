@@ -157,6 +157,7 @@ extern bool OptionsInit( int argc, char **argv ) {
                 _SetOption( PRINT_HELP );
                 break;
             case 'i':
+            case 'I':
                 s = &argv[0][2];
                 if( *s == '=' ) {
                     ++s;
