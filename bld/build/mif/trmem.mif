@@ -1,0 +1,8 @@
+trmem_cflag_i86 = -of+
+trmem_cflag_386 = -of+
+
+!ifeq $(proj_name)_trmem 1
+!ifeq release 0
+trmem_cflags = -dTRMEM $(trmem_cflag_$(host_cpu))
+!endif
+!endif
