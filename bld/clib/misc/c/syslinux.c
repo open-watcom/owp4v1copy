@@ -360,6 +360,18 @@ _WCRTLINK int fchmod( int __fd, mode_t __mode )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int chown( const char *__path, uid_t __owner, gid_t __group )
+{
+    u_long res = sys_call3(SYS_chown, (u_long)__path, __owner, __group);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int fchown( int __fd, uid_t __owner, gid_t __group )
+{
+    u_long res = sys_call3(SYS_fchown, __fd, __owner, __group);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK pid_t getpid( void )
 {
     u_long res = sys_call0(SYS_getpid);
