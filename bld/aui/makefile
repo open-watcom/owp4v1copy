@@ -125,28 +125,30 @@ aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) /q /b /n aui @tmp.lbc
 
+parsedlg = $(dev_dir)\browser\bin\parsedlg.exe
+
 .rc: ..\h
 !ifdef pm
 $(auirc) : $(auidir)\h\aui.rc
     copy $(auidir)\h\aui.rc
 
 dlgrx.dlg : ..\h\dlgrx.dlg
-    parsedlg -font ..\h\dlgrx.dlg dlgrx.dlg
+    $(parsedlg) -font ..\h\dlgrx.dlg dlgrx.dlg
 
 dlgsrch.dlg : ..\h\dlgsrch.dlg
-    parsedlg -font ..\h\dlgsrch.dlg dlgsrch.dlg
+    $(parsedlg) -font ..\h\dlgsrch.dlg dlgsrch.dlg
 
 dlgsrcha.dlg : ..\h\dlgsrcha.dlg
-    parsedlg -font ..\h\dlgsrcha.dlg dlgsrcha.dlg
+    $(parsedlg) -font ..\h\dlgsrcha.dlg dlgsrcha.dlg
 
 japrx.dlg : ..\h\japrx.dlg
-    parsedlg -font ..\h\japrx.dlg japrx.dlg
+    $(parsedlg) -font ..\h\japrx.dlg japrx.dlg
 
 japsrch.dlg : ..\h\japsrch.dlg
-    parsedlg -font ..\h\japsrch.dlg japsrch.dlg
+    $(parsedlg) -font ..\h\japsrch.dlg japsrch.dlg
 
 japsrcha.dlg : ..\h\japsrcha.dlg
-    parsedlg -font ..\h\japsrcha.dlg japsrcha.dlg
+    $(parsedlg) -font ..\h\japsrcha.dlg japsrcha.dlg
 !else
 .dlg : ..\h
 !endif
