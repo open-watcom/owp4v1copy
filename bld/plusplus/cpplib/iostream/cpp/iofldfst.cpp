@@ -72,11 +72,7 @@ void __LDFloatToString( char *buf, double const *f, int precision,
 
     /* convert this double into a long double */
     double_value = *f;
-#ifdef __FPI__
-    __iFDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
-#else
-    __EFG_FDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
-#endif
+    __EFG__FDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
 #else
     ld.value = *f;
 #endif

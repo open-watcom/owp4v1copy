@@ -26,6 +26,7 @@
 !inject ceil.obj     d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject clear87.obj  d16c d16i d32c d32i n32c n32i wnc wni
 !inject cnvd2f.obj   d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
+!inject cnvd2ld.obj  d16c d16i d32c d32i n32c n32i wnc wni
 !inject cnvs2d.obj   d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject cosh.obj     d16c      d32c      n32c      wnc     axp ntp op
 !inject cotan387.obj      d16i      d32i      n32i     wni

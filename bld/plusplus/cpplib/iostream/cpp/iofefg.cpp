@@ -60,8 +60,8 @@ static void __setiofEFGfmt() {
         __EFG_cnvd2f = __cnvd2f;
         __EFG_LDcvt  = __LDcvt;
         __EFG_fcvt   = _fcvt;
-#if defined( _LONG_DOUBLE_ ) && !defined( __FPI__ )
-        __EFG_FDLD   = (_type_EFG_FDLD)__iFDLD;
+#ifdef _LONG_DOUBLE_
+        __EFG__FDLD   = __cnvd2ld;
 #endif
     #endif
 }
