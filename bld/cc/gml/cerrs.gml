@@ -376,8 +376,8 @@ of one size to another, different size. For instance, you may be
 losing precision by passing a long argument to a function that
 takes a short.
 This warning is initially disabled. It must be explicitly enabled with
-.us #pragma enable_message(130).
-It can be disabled later by using
+.us #pragma enable_message(130)
+or option "-wce=130". It can be disabled later by using
 .us #pragma disable_message(130).
 :MSGSYM. ERR_ASSUMED_IMPORT
 :MSGTXT. No prototype found for function '%s'
@@ -504,8 +504,8 @@ You can prevent the message from being issued through use of
 .us #pragma off(unreferenced).
 .np
 This warning is initially disabled. It must be specifically enabled with
-.us #pragma enable_message(303).
-It can be disabled later by using
+.us #pragma enable_message(303)
+or option "-wce=303". It can be disabled later by using
 .us #pragma disable_message(303).
 :MSGSYM. ERR_NO_RET_TYPE_GIVEN
 :MSGTXT. Return type 'int' assumed for function '%s'
@@ -985,7 +985,7 @@ Make sure that the file name is spelled correctly, or that the
 appropriate path for the file is included in the list of paths
 specified in the
 .id &incvarup
-environment variable or the "i=" option on the command line.
+environment variable or the "-I" option on the command line.
 :MSGSYM. ERR_TOO_MANY_MACRO_PARMS
 :MSGTXT. Too many parameters given for macro '%s'
 :MSGJTXT. マクロ'%s'に与えられたパラメータが多すぎます
@@ -1059,8 +1059,8 @@ Do not
 header files that are not required.
 .np
 For the 16-bit C compiler,
-the "/d2" switch causes the compiler to use more memory.
-Try compiling with the "/d1" switch instead.
+the "-d2" option causes the compiler to use more memory.
+Try compiling with the "-d1" option instead.
 :MSGSYM. ERR_INV_CHAR_CONSTANT
 :MSGTXT. Invalid character constant
 :MSGJTXT. 不適切な文字定数です
@@ -1776,10 +1776,10 @@ The system dependent reason is also displayed in the message.
 The compiler does not have any segment registers available to access the
 desired far memory location.
 :MSGSYM. ERR_NO_MACRO_ID_COMMAND_LINE
-:MSGTXT. No identifier provided for /D option
+:MSGTXT. No identifier provided for "-D" option
 :MSGJTXT. /Dオプションに対する識別子がありません
 .np
-The command line option /D must be followed by the name of the macro
+The command line option "-D" must be followed by the name of the macro
 to be defined.
 :MSGSYM. ERR_BAD_PEG_REG
 :MSGTXT. Invalid register pegged to a segment in '%s'
