@@ -2933,7 +2933,7 @@ update    output.obj
 etc.
 .code end
 .pc
-Notice that &maksname checked the sub-directory "..\&srcup\PRORGAM" for
+Notice that &maksname checked the sub-directory "..\&srcup\PROGRAM" for
 the files "INPUT.&langsuffup" and "OUTPUT.&langsuffup".
 &maksname optionally may use a circular path specification search which
 may save on disk activity for large makefiles.
