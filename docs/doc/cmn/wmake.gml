@@ -113,6 +113,8 @@ Surround the definition with quotes (") if it contains blanks (e.g.,
 "debug_opt=&wlinkdebug").
 The macro definitions specified on the command line supersede any
 macro definitions defined in makefiles.
+Macro names are case-insensitive unless the "ms" option is used to
+select Microsoft NMAKE mode.
 .ix '&makcmdup command line' 'targets'
 .note targets
 is one or more targets described in the makefile.
@@ -1759,6 +1761,41 @@ example : .SYMBOLIC
 and still produce the same results.
 The shorthand notation "+=" supported by &maksname provides a quick way
 to add more text to macros.
+.pc
+&maksname provides the "!inject" preprocessor directive to append
+a "word" (one or more graphic characters) to one or more macros.
+The previous makefile is adapted to show the usage:
+.ix '&makcmdup preprocessing' '!inject'
+.ix '&makcmdup directives' '.SYMBOLIC'
+.ix 'SYMBOLIC' '&makcmdup directive'
+.millust begin
+#
+# macro construction with !inject
+#
+!inject file1.obj objs objs12 objs13 objs14 objs15
+!inject file2.obj objs objs12 objs13 objs14 objs15
+!inject file3.obj objs        objs13 objs14 objs15
+!inject file4.obj objs               objs14 objs15
+!inject file5.obj objs                      objs15
+
+example : .SYMBOLIC
+        echo $(objs)
+        echo $(objs12)
+        echo $(objs13)
+        echo $(objs14)
+        echo $(objs15)
+.millust end
+This makefile would produce the following output:
+.exam begin
+file1.obj file2.obj file3.obj file4.obj file5.obj
+file1.obj file2.obj
+file1.obj file2.obj file3.obj
+file1.obj file2.obj file3.obj file4.obj
+file1.obj file2.obj file3.obj file4.obj file5.obj
+.exam end
+.pc
+The "!inject" preprocessor directive supported by &maksname 
+provides a way to append a word to several macros.
 .np
 There are instances when it is useful to have macro identifiers that
 have macro references contained in them.
