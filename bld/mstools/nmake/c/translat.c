@@ -85,6 +85,8 @@ static void unsupported_opts( OPT_STORAGE *cmdOpts )
     if( cmdOpts->C )  append_unsupported( opts, "C" );
     if( cmdOpts->E )  append_unsupported( opts, "E" );
     if( cmdOpts->R )  append_unsupported( opts, "R" );
+    if( cmdOpts->U )  append_unsupported( opts, "U" );
+    if( cmdOpts->Y )  append_unsupported( opts, "Y" );
     if( cmdOpts->X )  append_unsupported( opts, "X" );
     /*** If an unsupported option was used, give a warning ***/
     if( opts[0] != '\0' ) {

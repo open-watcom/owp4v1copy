@@ -67,28 +67,33 @@
 :cmt     A
 :option. A
 :target. any
+:immediate. parse_combining
 :usage. build all evaluated targets
 
 :cmt     B
 :option. B
 :target. any
+:immediate. parse_combining
 :internal.
 :usage. forces build even if timestamps are equal
 
 :cmt     C
 :option. C
 :target. any
+:immediate. parse_combining
 :internal.
 :usage. suppress output messages
 
 :cmt     D
 :option. D
 :target. any
+:immediate. parse_combining
 :usage. display build information
 
 :cmt     E
 :option. E
 :target. any
+:immediate. parse_combining
 :internal.
 :usage. override env-var macros
 
@@ -111,16 +116,26 @@
 :cmt     I
 :option. I
 :target. any
+:immediate. parse_combining
 :usage. ignore exit codes from commands
 
 :cmt     K
 :option. K
 :target. any
+:immediate. parse_combining
 :usage. build unrelated targets on error
+
+:cmt     L
+:option. L
+:target. any
+:immediate. parse_combining
+:internal.
+:usage. don't display copyright banner
 
 :cmt     N
 :option. N
 :target. any
+:immediate. parse_combining
 :usage. display commands but do not execute
    
 :option. noinvoke
@@ -128,35 +143,54 @@
 :usage. don't invoke the Watcom tool
 
 :cmt     NOLOGO
-:option. NOLOGO L
+:option. NOLOGO
 :target. any
 :usage. don't display copyright banner
 
 :cmt     P
 :option. P
 :target. any
+:immediate. parse_combining
 :usage. display MAKE information
 
 :cmt     Q
 :option. Q
 :target. any
+:immediate. parse_combining
 :usage. check time stamps but do not build
 
 :cmt     R
 :option. R
 :target. any
+:immediate. parse_combining
 :internal.
 :usage. ignore predefined rules/macros
 
 :cmt     S
 :option. S
 :target. any
+:immediate. parse_combining
 :usage. suppress executed-commands display
 
 :cmt     T
 :option. T
 :target. any
+:immediate. parse_combining
 :usage. change time stamps but do not build
+
+:cmt     U
+:option. U
+:target. any
+:immediate. parse_combining
+:internal.
+:usage. dump inline files
+
+:cmt     Y
+:option. Y
+:target. any
+:immediate. parse_combining
+:internal.
+:usage. disable batch-mode
 
 :cmt     X
 :option. X

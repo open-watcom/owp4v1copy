@@ -87,7 +87,15 @@ void CmdStringParse( OPT_STORAGE *cmdOpts, int *itemsParsed )
         /*** Handle switches, command files, and input files ***/
         if( ch == '-'  ||  ch == '/' ) {        /* switch */
             if( OPT_PROCESS( cmdOpts ) != 0 ) {
-                cmd_line_error();
+                /*
+                 * Switch didn't match, if user entered empty switch,
+                 * just be silent like MS's nmake does.
+                 */
+
+                ch = GetCharContext();
+                if( ch != '\0' && !isspace(ch)) {
+                    cmd_line_error();
+                }
             }
         } else if( ch == '@' ) {                /* command file */
             filename = CmdScanFileName();
@@ -152,6 +160,51 @@ static int parse_X( OPT_STRING **p )
     return( do_string_parse( p, "X", 1, 0 ) );
 }
 
+/*
+ * Parse combining parameters
+ */
+static int parse_combining( OPT_STORAGE *cmdOpts, int x )
+/******************************************/
+{
+    int                 ch;
+
+    x = x;
+
+    /* scan for combined options */
+    do {
+        /* get next character */
+        ch = toupper( GetCharContext() );
+
+        switch( ch ) {
+        case 'A':  cmdOpts->A = 1; break;      /* gml-option: A */
+        case 'B':  cmdOpts->B = 1; break;      /* gml-option: B */
+        case 'C':  cmdOpts->C = 1; break;      /* gml-option: C */
+        case 'D':  cmdOpts->D = 1; break;      /* gml-option: D */
+        case 'E':  cmdOpts->E = 1; break;      /* gml-option: E */
+        case 'I':  cmdOpts->I = 1; break;      /* gml-option: I */
+        case 'K':  cmdOpts->K = 1; break;      /* gml-option: K */
+        case 'L':  cmdOpts->NOLOGO = 1; break; /* gml-option: L */
+        case 'N':  cmdOpts->N = 1; break;      /* gml-option: N */
+        case 'P':  cmdOpts->P = 1; break;      /* gml-option: P */
+        case 'Q':  cmdOpts->Q = 1; break;      /* gml-option: Q */
+        case 'R':  cmdOpts->R = 1; break;      /* gml-option: R */
+        case 'S':  cmdOpts->S = 1; break;      /* gml-option: S */
+        case 'T':  cmdOpts->T = 1; break;      /* gml-option: T */
+        case 'U':  cmdOpts->U = 1; break;      /* gml-option: U */
+        case 'Y':  cmdOpts->Y = 1; break;      /* gml-option: Y */
+        case '\0': break;
+        default:
+            /* if character is space, return without an error */
+            if( isspace( ch ) )
+                return 1;
+
+            return 0;
+        }
+    } while( ch != '\0' );
+
+    /* all went nicely, return success */
+    return 1;
+}
 
 /*
  * Parse the /passwopts option.

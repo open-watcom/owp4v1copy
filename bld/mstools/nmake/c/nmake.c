@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <direct.h>
 #include "cmdline.h"
 #include "context.h"
 #include "error.h"
@@ -121,6 +122,33 @@ static int nmake( const OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
     char **             args;
     int                 rc;
     int                 count;
+    char *              cwd;
+    char                flagstmp[32] = {0};
+
+    /*** get value for MAKEDIR field ***/
+    cwd = getcwd( NULL, 0 );
+
+    /*** construct MAKEFLAGS field ***/
+    if( cmdOpts->A )      strcat(flagstmp, "A");
+    if( cmdOpts->C )      strcat(flagstmp, "C");
+    if( cmdOpts->D )      strcat(flagstmp, "D");
+    if( cmdOpts->E )      strcat(flagstmp, "E");
+    if( cmdOpts->NOLOGO ) strcat(flagstmp, "L");
+    if( cmdOpts->N )      strcat(flagstmp, "N");
+    if( cmdOpts->P )      strcat(flagstmp, "P");
+    if( cmdOpts->R )      strcat(flagstmp, "R");
+    if( cmdOpts->S )      strcat(flagstmp, "S");
+    if( cmdOpts->U )      strcat(flagstmp, "U");
+    if( cmdOpts->Y )      strcat(flagstmp, "Y");
+
+    /*** pass builtin macros to wmake, so nmake wrapper gets called in recursive actions ***/
+
+    /* For MAKE use full path to make sure proper nmake get's run, MSVC's nmake only uses executable name
+     * without .exe extension. This change shouldn't cause any problems.
+     */
+    AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKE=\"%s\"", __argv[0] );
+    AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKEDIR=\"%s\"", cwd );
+    AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKEFLAGS=\"%s\"", flagstmp );
 
     /*** merge commands ***/
     AppendCmdLine( cmdLine, NMAKE_PROGNAME_SECTION, MAKE );
