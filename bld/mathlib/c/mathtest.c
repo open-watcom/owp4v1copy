@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Math library verification test.
 *
 ****************************************************************************/
 
@@ -74,7 +73,7 @@ void my_handler( int sig, int fpe ) {
 
 volatile int my_matherrno;
 
-int matherr( struct exception *err )
+int matherr( struct _exception *err )
 {
     if( strcmp( err->name, "sqrt" ) == 0 ) {
         if( err->type == DOMAIN ) {
@@ -245,7 +244,7 @@ void test_fp_and_80x87_math( void )
     VERIFY( CompDbl( log2( 0.25 ), -2.0 ) );
     VERIFY( CompDbl( sqrt( 99980001.0 ), 9999.0 ) );
     dnum = 1.0/DBL_MIN;
-    VERIFY( CompDbl( 1.0 / dnum, DBL_MIN, __LINE__ ) );
+    VERIFY( CompDbl( 1.0 / dnum, DBL_MIN ) );
     VERIFY( CompDbl( modf( PI, &dnum ), PI - 3.0 ) );
     VERIFY( dnum == 3.0 );
     VERIFY( CompDbl( modf( -PI, &dnum ) , - PI + 3.0 ) );
