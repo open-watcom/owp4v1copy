@@ -34,13 +34,9 @@
 #include "mrcmsg.h"
 #include "msg.h"
 
-#pragma off(unreferenced);
 extern int MyAssert( const char *expr, const char *file, int line )
-#pragma on (unreferenced);
 /*****************************************************************/
 {
-#ifndef NDEBUG
     PrtMsg( FTL| ASSERTION_FAILED, expr, file, line );
-#endif
     return(1);
 }

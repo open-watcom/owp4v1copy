@@ -7,16 +7,23 @@
 proj_name   = wmake
 xname       = wmk
 
+!ifndef wmake_autodepends
+wmake_autodepends = .AUTODEPEND
+!endif
+
+# DOS code will not fit in 64k with /d2
+#!ifeq host_OS dos
+#!ifeq host_CPU i86
+#release_wmake = 1
+#!endif
+#!endif
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
 .ERASE
 .CONTINUE
-
-!ifdef __LINUX__
-extra_c_flags += -fo=.obj
-!endif
 
 .h      : ../h
 .h      : $(watcom_dir)/h
@@ -57,11 +64,6 @@ extra_c_flags_dos += -DNEC_98_BUG
 mem_model_i86 = -ms
 !endif
 
-# DOS code will not fit in 64k with /d2
-!ifeq host_OS dos
-mode_cflags = -oaxs -d1
-!endif
-
 inc_dirs = $(wmake_dir)/h;$(watcom_dir)/h;$(orl_dir)/h;$(trmem_dir);
 
 !ifdef cachestat
@@ -69,9 +71,6 @@ extra_c_flags += -dCACHE_STATS
 !endif
 
 !include ../mif/wmk.mif                    #   get our objs macro
-
-.BEFORE
-        set INCLUDE=$(inc_path)
 
 ##############################################################################
 
@@ -110,18 +109,18 @@ libs_dos_386    = $(orl_dir)/o/orl.lib
 libs            = $(libs_$(host_OS)_$(host_CPU))
 
 $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(__MAKEFILES__)
-    $(linker) $(lflags) FILE {$(objs) } LIBRARY { $(wres_lib) $(libs) }
+        $(linker) $(lflags) FILE {$(objs) } LIBRARY { $(wres_lib) $(libs) }
 #
 # If the linker files were different (i.e. if we needed a QNX version),
 # the copy would be replaced by a separate link. CSK
 !ifeq host_OS win
 #    wstrip  wmk.exe . x.sym
-    rc wmk
-    rc wmkj
+        rc wmk
+        rc wmkj
 #    copy /b wmk.exe+x.sym
 #    erase x.sym
 !endif
-    wstrip -q -a -r $(xname).$(ext) . wmake.res
+        wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
         $(rc) -bt=windows -zk0 -q -r -fo=$^@ $[@
@@ -155,9 +154,10 @@ isarray.gh : ./cretype.exe
     $< > $@
 
 ./cretype.exe : cretype.c
-    $(bld_cl) -fe=$@ -d2 -zq -w4 $[@
+    $(bld_cl) -fe=$@ -d2 -w4 $[@
 
-!include ../mif/makedeps.mif               # dependencies on .h files
+# dependencies on .h files
+mglob.obj : isarray.gh .AUTODEPEND
 
 
 ##############################################################################
