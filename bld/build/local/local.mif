@@ -1,4 +1,4 @@
-#global definition which tool is quiet
+# global definition which tool is quiet
 cl         += -zq
 cc         += -zq
 cpp        += -zq
@@ -89,7 +89,7 @@ inc_dirs_lang_osi =
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
 -D__SMALL__ -DUNIX -DLINUX -D__FLAT__ $(cppflags_$(host_cpu)) &
 -D_WCUNALIGNED="__attribute__((packed))"
-cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -pipe -O -o $@
+cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -fno-asm -pipe -O -o $@
 
 # options for single source utility compilations
 wcl_util_opts = -funsigned-char -Wall $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines) $(libs)
