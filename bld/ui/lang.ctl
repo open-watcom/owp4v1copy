@@ -14,6 +14,8 @@ cdsay .
     wmake /h /i
     cdsay ..\..\os2\olw
     wmake /h /i
+    cdsay ..\..\os2\ofw
+    wmake /h /i
     cdsay ..\..\qnx\olwq
     wmake /h /i
     cdsay ..\os32q

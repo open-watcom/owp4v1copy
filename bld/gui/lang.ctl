@@ -20,6 +20,8 @@ cdsay .
     wmake /h /i
     cdsay ..\obj2
     wmake /h /i
+    cdsay ..\obj2f
+    wmake /h /i
     cdsay ..\objf
     wmake /h /i
     cdsay ..\objnt
