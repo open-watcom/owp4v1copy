@@ -1925,18 +1925,6 @@ item: Install File
   Description=Core C compiler files
   Flags=0000000100000010
 end
-item: Install File
-  Source=wise\clib_samples\*.*
-  Destination=%MAINDIR%
-  Description=Sample programs
-  Flags=0000000100000010
-end
-item: Install File
-  Source=wise\cm_samples\*.*
-  Destination=%MAINDIR%
-  Description=Sample programs
-  Flags=0000000100000010
-end
 item: If/While Statement
   Variable=HOST_OS
   Value=AB
@@ -2122,6 +2110,12 @@ item: Install File
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
+item: Install File
+  Source=wise\w32api\*.*
+  Destination=%MAINDIR%
+  Description=Minimal Win32 SDK
+  Flags=0000000100000010
+end
 item: End Block
 end
 item: If/While Statement
@@ -2139,6 +2133,19 @@ item: Install File
   Source=wise\clib_o32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=TARGET_OS
+  Value=EF
+  Flags=00001010
+end
+item: Install File
+  Source=wise\os2api\*.*
+  Destination=%MAINDIR%
+  Description=Minimal OS/2 SDK
   Flags=0000000100000010
 end
 item: End Block
@@ -2167,12 +2174,6 @@ item: If/While Statement
   Variable=COMPONENTS
   Value=B
   Flags=00001010
-end
-item: Install File
-  Source=wise\plib_samples\*.*
-  Destination=%MAINDIR%
-  Description=C++ sample programs
-  Flags=0000000100000010
 end
 item: If/While Statement
   Variable=HOST_OS
@@ -2533,246 +2534,272 @@ item: End Block
 end
 item: Remark
 end
-remarked item: Remark
+item: Remark
   Text=Integrated Development Environment
 end
-remarked item: If/While Statement
+item: If/While Statement
   Variable=COMPONENTS
   Value=D
   Flags=00001010
 end
-remarked item: Install File
-  Source=wise\ide_all\*.*
+item: Install File
+  Source=wise\cm_ide_all\*.*
   Destination=%MAINDIR%
   Description=IDE core files
   Flags=0000000100000010
 end
-remarked item: If/While Statement
-  Variable=HOST_OS
-  Value=AB
-  Flags=00001010
-end
-remarked item: Install File
-  Source=wise\ide_binw\*.*
-  Destination=%MAINDIR%
-  Description=Windows 3.1/DOS hosted IDE 
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: If/While Statement
-  Variable=HOST_OS
-  Value=C
-  Flags=00001010
-end
-remarked item: Install File
-  Source=wise\ide_binnt\*.*
-  Destination=%MAINDIR%
-  Description=Windows NT hosted IDE 
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: If/While Statement
-  Variable=HOST_OS
-  Value=D
-  Flags=00001010
-end
-remarked item: Install File
-  Source=wise\ide_binp\*.*
-  Destination=%MAINDIR%
-  Description=OS/2 hosted debugger IDE
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: End Block
-end
-remarked item: Remark
-end
-remarked item: Remark
-  Text=Sample source code
-end
-remarked item: If/While Statement
-  Variable=COMPONENTS
-  Value=E
-  Flags=00001010
-end
-remarked item: Install File
-  Source=wise\samples\*.*
-  Destination=%MAINDIR%
-  Description=Sample source code
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\samples_goodies\*.*
-  Destination=%MAINDIR%
-  Description=Sample source code
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: Remark
-end
-remarked item: Remark
-  Text=Online help files
-end
-remarked item: If/While Statement
-  Variable=COMPONENTS
-  Value=F
-  Flags=00001010
-end
-remarked item: If/While Statement
+item: If/While Statement
   Variable=HOST_OS
   Value=A
   Flags=00001010
 end
-remarked item: Install File
-  Source=wise\core_hlp_dos\*.*
+item: Install File
+  Source=wise\cm_ide_dos\*.*
   Destination=%MAINDIR%
-  Description=DOS hosted help files
+  Description=DOS hosted IDE 
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\c_hlp_dos\*.*
-  Destination=%MAINDIR%
-  Description=DOS hosted help files
-  Flags=0000000100000010
+item: End Block
 end
-remarked item: Install File
-  Source=wise\cpp_hlp_dos\*.*
-  Destination=%MAINDIR%
-  Description=DOS hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\cm_dbg_hlp_dos\*.*
-  Destination=%MAINDIR%
-  Description=DOS hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\ide_hlp_dos\*.*
-  Destination=%MAINDIR%
-  Description=DOS hosted help files
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: If/While Statement
+item: If/While Statement
   Variable=HOST_OS
   Value=B
   Flags=00001010
 end
-remarked item: Install File
-  Source=wise\core_hlp_win\*.*
+item: Install File
+  Source=wise\cm_ide_win\*.*
   Destination=%MAINDIR%
-  Description=Windows 3.1 hosted help files
+  Description=Windows 3.1 hosted IDE 
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\c_hlp_win\*.*
-  Destination=%MAINDIR%
-  Description=Windows 3.1 hosted help files
-  Flags=0000000100000010
+item: End Block
 end
-remarked item: Install File
-  Source=wise\cpp_hlp_win\*.*
-  Destination=%MAINDIR%
-  Description=Windows 3.1 hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\cm_dbg_hlp_win\*.*
-  Destination=%MAINDIR%
-  Description=Windows 3.1 hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\ide_hlp_win\*.*
-  Destination=%MAINDIR%
-  Description=Windows 3.1 hosted help files
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: If/While Statement
+item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-remarked item: Install File
-  Source=wise\core_hlp_nt\*.*
+item: Install File
+  Source=wise\cm_ide_nt\*.*
   Destination=%MAINDIR%
-  Description=Windows NT hosted help files
+  Description=Windows NT hosted IDE 
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\c_hlp_nt\*.*
-  Destination=%MAINDIR%
-  Description=Windows NT hosted help files
-  Flags=0000000100000010
+item: End Block
 end
-remarked item: Install File
-  Source=wise\cpp_hlp_nt\*.*
-  Destination=%MAINDIR%
-  Description=Windows NT hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\cm_dbg_hlp_nt\*.*
-  Destination=%MAINDIR%
-  Description=Windows NT hosted help files
-  Flags=0000000100000010
-end
-remarked item: Install File
-  Source=wise\ide_hlp_nt\*.*
-  Destination=%MAINDIR%
-  Description=Windows NT hosted help files
-  Flags=0000000100000010
-end
-remarked item: End Block
-end
-remarked item: If/While Statement
+item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-remarked item: Install File
-  Source=wise\core_hlp_os2\*.*
+item: Install File
+  Source=wise\cm_ide_os2\*.*
+  Destination=%MAINDIR%
+  Description=OS/2 hosted debugger IDE
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: End Block
+end
+item: Remark
+end
+item: Remark
+  Text=Sample source code
+end
+item: If/While Statement
+  Variable=COMPONENTS
+  Value=E
+  Flags=00001010
+end
+item: Install File
+  Source=wise\cm_samples\*.*
+  Destination=%MAINDIR%
+  Description=Sample programs
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\clib_samples\*.*
+  Destination=%MAINDIR%
+  Description=Sample programs
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\plib_samples\*.*
+  Destination=%MAINDIR%
+  Description=C++ sample programs
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\win_samples\*.*
+  Destination=%MAINDIR%
+  Description=Windows sample programs
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\ide_samples\*.*
+  Destination=%MAINDIR%
+  Description=IDE sample files
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\misc_src\*.*
+  Destination=%MAINDIR%
+  Description=Misc sample programs
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: Remark
+end
+item: Remark
+  Text=Online help files
+end
+item: If/While Statement
+  Variable=COMPONENTS
+  Value=F
+  Flags=00001010
+end
+item: If/While Statement
+  Variable=HOST_OS
+  Value=A
+  Flags=00001010
+end
+item: Install File
+  Source=wise\cm_hlp_dos\*.*
+  Destination=%MAINDIR%
+  Description=DOS hosted help files
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\hlp_dos\*.*
+  Destination=%MAINDIR%
+  Description=DOS hosted help files
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=HOST_OS
+  Value=B
+  Flags=00001010
+end
+item: Install File
+  Source=wise\cm_hlp_win\*.*
+  Destination=%MAINDIR%
+  Description=Windows 3.1 hosted help files
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\hlp_win\*.*
+  Destination=%MAINDIR%
+  Description=Windows 3.1 hosted help files
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=HOST_OS
+  Value=C
+  Flags=00001010
+end
+item: Install File
+  Source=wise\cm_hlp_nt\*.*
+  Destination=%MAINDIR%
+  Description=Windows NT hosted help files
+  Flags=0000000100000010
+end
+item: Install File
+  Source=wise\hlp_nt\*.*
+  Destination=%MAINDIR%
+  Description=Windows NT hosted help files
+  Flags=0000000100000010
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=HOST_OS
+  Value=D
+  Flags=00001010
+end
+item: Install File
+  Source=wise\cm_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\c_hlp_os2\*.*
+item: Install File
+  Source=wise\hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\cpp_hlp_os2\*.*
+item: End Block
+end
+item: End Block
+end
+item: Remark
+end
+item: Remark
+  Text=Install the DOS extenders
+end
+item: Set Variable
+  Variable=INST_DOSEXT
+  Value=0
+end
+item: If/While Statement
+  Variable=HOST_OS
+  Value=AB
+  Flags=00001010
+end
+item: Set Variable
+  Variable=INST_DOSEXT
+  Value=1
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=TARGET_OS
+  Value=AB
+  Flags=00001010
+end
+item: Set Variable
+  Variable=INST_DOSEXT
+  Value=1
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=INST_DOSEXT
+  Value=1
+end
+item: Install File
+  Source=wise\ext_causeway\*.*
   Destination=%MAINDIR%
-  Description=OS/2 hosted help files
+  Description=Causeway DOS extender
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\cm_dbg_hlp_os2\*.*
+item: Install File
+  Source=wise\ext_dos4gw\*.*
   Destination=%MAINDIR%
-  Description=OS/2 hosted help files
+  Description=DOS/4GW DOS extender
   Flags=0000000100000010
 end
-remarked item: Install File
-  Source=wise\ide_hlp_os2\*.*
+item: Install File
+  Source=wise\ext_dos32a\*.*
   Destination=%MAINDIR%
-  Description=OS/2 hosted help files
+  Description=DOS32/A DOS extender
   Flags=0000000100000010
 end
-remarked item: End Block
+item: Install File
+  Source=wise\ext_pmodew\*.*
+  Destination=%MAINDIR%
+  Description=PMODE/W DOS extender
+  Flags=0000000100000010
 end
-remarked item: End Block
+item: End Block
 end
-remarked item: Remark
+item: Remark
 end
 item: Remark
   Text=Install the WiseUpdate installer
