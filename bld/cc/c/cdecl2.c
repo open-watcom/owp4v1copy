@@ -349,8 +349,10 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
         SymGet( &old_sym, old_sym_handle );
         if( old_sym.level == SymLevel ) {
             if( old_sym.stg_class == SC_EXTERN  &&  stg_class == SC_EXTERN ) {
+                SetDiagSymbol( &old_sym, old_sym_handle );
                 if( ! IdenticalType( old_sym.sym_type, sym->sym_type ) ) {
                     CErr2p( ERR_TYPE_DOES_NOT_AGREE, sym->name );
+                SetDiagPop();
                 }
             }
         }
@@ -360,6 +362,7 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
     }
     if( old_sym_handle != 0 ) {
         SymGet( &old_sym, old_sym_handle );
+        SetDiagSymbol( &old_sym, old_sym_handle );
         if( old_sym.level == SymLevel           /* 28-mar-88 */
         ||      stg_class == SC_EXTERN ) {              /* 12-dec-88 */
             if( (sym->attrib & ATTRIB_MASK) !=
@@ -389,6 +392,7 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
                 }
             }
         }
+        SetDiagPop();
     }
     if( ( old_sym_handle != 0 )  &&
         ( stg_class == SC_NULL || stg_class == SC_EXTERN ||
@@ -396,7 +400,9 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
 
 /*              make sure sym->sym_type same type as old_sym->sym_type */
 
+        SetDiagSymbol( &old_sym, old_sym_handle );
         which = VerifyType( sym->sym_type, old_sym.sym_type, sym );
+        SetDiagPop();
         if( which == 0 && old_sym.level == SymLevel ) { /* 06-jul-88 AFS */
             /* new symbol's type supersedes old type */
             old_sym.sym_type = sym->sym_type;
