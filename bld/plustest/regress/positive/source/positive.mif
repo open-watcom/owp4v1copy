@@ -540,6 +540,12 @@ positive_tests = &
     ns31.$(ext) &
     ns32.$(ext) &
     ns33.$(ext) &
+    ns34.$(ext) &
+    ns35.$(ext) &
+    ns36.$(ext) &
+    ns37.$(ext) &
+    ns38.$(ext) &
+    ns39.$(ext) &
     offset01.$(ext) &
     opeq01.$(ext) &
     opeq02.$(ext) &
@@ -687,6 +693,7 @@ positive_tests = &
     pp34.$(ext) &
     pp35.$(ext) &
     pp36.$(ext) &
+    pp37.$(ext) &
     prag01.$(ext) &
     quest01.$(ext) &
     quest02.$(ext) &

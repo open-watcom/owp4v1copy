@@ -13,20 +13,10 @@ int A<T>::f() {
 }
 }
 
-#if 0
-// doesn't work with OW 1.3
 template< class T >
 int ns::A<T>::g() {
     return 1;
 }
-#else
-namespace ns {
-template< class T >
-int A<T>::g() {
-    return 1;
-}
-}
-#endif
 
 int main()
 {
