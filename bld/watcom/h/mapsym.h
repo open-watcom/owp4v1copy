@@ -39,8 +39,13 @@
 
 #define SYM_PTR_TO_OFS( a )     ( a * 16 )
 
+/* MAPSYM version 5.1 - all IBM releases of MAPSYM at least since 1991 */
 #define SYM_VERSION_MAJOR       5
 #define SYM_VERSION_MINOR       1
+
+/* MAPSYM version 4.0 - Microsoft release from 1985 */
+#define SYM_VERSION_MAJOR_OLD   4
+#define SYM_VERSION_MINOR_OLD   0
 
 #pragma pack( 1 )
 
@@ -67,7 +72,7 @@ typedef struct {
 } sym_endmap;
 
 typedef struct {
-    unsigned_16     next_ptr;           /* next segdef, 0 if last */
+    unsigned_16     next_ptr;           /* next segdef, 0 if last; may be circular */
     unsigned_16     num_syms;           /* number of symbols in segment */
     unsigned_16     sym_tab_ofs;        /* offset of symbol table from segdef */
     unsigned_16     load_addr;          /* segment load address */
