@@ -18,7 +18,7 @@ OBJECTS += ldstr.o rcalloc1.o rcalloc0.o sharedio.o semresfl.o
 
 OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 
-GENERATED_FILES = ytab.gh usage.h rcmsg.h weights1.gh weights2.gh
+GENERATED_FILES = ytab.gh usage.h rcmsg.gh weights1.gh weights2.gh
 GENERATED_FILES := $(foreach i,$(GENERATED_FILES),$(OBJDIR)/$i) 
 
 INCDIRS += $(RC_DIR)/h
@@ -61,8 +61,8 @@ $(OBJDIR)/lib$(LIBNAME).a : $(GENERATED_FILES) $(OBJECTS)
 
 $(OBJECTS)	: $(GENERATED_FILES)
 
-$(OBJDIR)/rcmsg.h: $(RC_DIR)/h/rc.msg
-	perl $(SDK_DIR)/misc/msgtoh.pl <$(RC_DIR)/h/rc.msg >$(OBJDIR)/rcmsg.h
+$(OBJDIR)/rcmsg.gh: $(RC_DIR)/h/rc.msg
+	perl $(SDK_DIR)/misc/msgtoh.pl <$(RC_DIR)/h/rc.msg >$(OBJDIR)/rcmsg.gh
 
 $(OBJDIR)/rc.res: rc.rc
 	rc -r -i=/src/cproj/rc/h\;/src/watcom/h rc.rc -fo=$(OBJDIR)/rc.res

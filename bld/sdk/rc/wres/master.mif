@@ -6,11 +6,17 @@
 proj_name = wres
 name = wres$(libname)
 
+!ifndef wres_autodepends
+wres_autodepends = .AUTODEPEND
+!endif
+
+!include cproj.mif
+!include defrule.mif
+#!include deftarg.mif
+
 # where to look for various files
-.c : $(wres_dir)/c
 
-.mif: $(mif_path)
-
+.c : ../c
 
 OBJS = &
  loadstr.obj &
@@ -59,6 +65,7 @@ extra_c_flags += -r
 mem_model_i86 = -m$(MODEL)
 mem_model_386 = -m$(MODEL)
 !endif
+
 !ifdef CONV
 extra_c_flags += -3$(CONV)
 !endif
@@ -78,27 +85,21 @@ extra_c_flags += -s
 lbcfile = tmp.lbc
 
 inc_dirs_NT = $(watcom_dir)/h/nt;
-inc_dirs = $(watcom_dir)/h;$(wres_dir)/h;$(inc_dirs_$(NT))
-
-!include cproj.mif
-!include defrule.mif
+inc_dirs = ../h;$(inc_dirs_$(NT))
 
 .BEFORE
-        set INCLUDE=$(inc_path)
+        @set INCLUDE=$(inc_path)
 
 # explicit rules
-
-all : ../lib/$(name).lib .SYMBOLIC
-        @%null
 
 ../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
         %create $(lbcfile)
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
-        $(librarian) -n -b -q $^@ @$(lbcfile)
+        $(librarian) -n -b $^@ @$(lbcfile)
 !ifdef on_build_machine
         cp $^@ $(watcom_dir)/lib
 !endif
         @rm -f $(lbcfile)
 
 clean : .SYMBOLIC .EXPLICIT
-    -@rm -f *.?bj *.err *.trk $(wres_dir)/lib/$(name).lib
+        rm -f *.?bj *.err *.trk ../lib/$(name).lib

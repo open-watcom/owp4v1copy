@@ -40,7 +40,7 @@
 #include "reg.h"
 #include "machtype.h"
 #include "mem.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "ldstr.h"
 #include "rvalue.h"
 #include "madregs.h"

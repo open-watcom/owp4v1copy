@@ -17,7 +17,7 @@
 #endif
 #include "memwnd.h"
 #include "memdmp.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "dipload.h"
 #include "banner.h"
 
@@ -41,7 +41,7 @@
 
 STRINGTABLE
 BEGIN
-    #include "rcstr.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "procctl.dlg"

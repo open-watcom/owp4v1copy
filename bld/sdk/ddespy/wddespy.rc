@@ -30,7 +30,7 @@
 
 STRINGTABLE
 BEGIN
-    #include "rcstr.msg"
+    #include "rcstrmsg.gh"
 END
 
 

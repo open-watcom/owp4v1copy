@@ -55,7 +55,7 @@
 #include "di386.h"
 #include "memwnd.h"
 #include "listbox.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "ldstr.h"
 #include "dbgopt.h"
 #include "rvalue.h"

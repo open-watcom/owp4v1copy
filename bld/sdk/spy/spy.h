@@ -35,7 +35,7 @@
 #endif
 #include <windows.h>
 #define MSG_RC_BASE     0
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "ldstr.h"
 #include "hint.h"
 

@@ -16,7 +16,7 @@
 #include "ftbar.h"
 #include "ssbar.h"
 #include "repdlg.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "..\ctl\setfs.h"
 #include "..\ctl\setscr.h"
 #include "..\ctl\setgen.h"
@@ -50,7 +50,7 @@ DROPSS          CURSOR  dropss.cur
 #define pick( a, b, c )  a b
 STRINGTABLE PRELOAD DISCARDABLE
 BEGIN
-    #include "rcstr.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "filelist.dlg"

@@ -42,7 +42,7 @@
 #endif
 #include "win1632.h"
 #include "ldstr.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 
 #define CONST_LEN       15
 

@@ -38,7 +38,7 @@
 #include "watcom.h"
 #include "mem.h"
 #include "config.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "ldstr.h"
 
 

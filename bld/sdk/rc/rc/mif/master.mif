@@ -1,6 +1,10 @@
 proj_name = wrc
 name = wrc
 
+!ifndef wrc_autodepends
+wrc_autodepends = .AUTODEPEND
+!endif
+
 !ifdef __LINUX__
 nuldevice = /dev/null
 !else
@@ -50,6 +54,8 @@ objs += trmem.obj
 !endif
 !endif
 
+# cflags stuff
+###############
 extra_c_flags     = -dYYDEBUG -dSCANDEBUG
 !ifeq host_os nt
 extra_c_flags    += -dNT_HOSTED
@@ -57,22 +63,26 @@ extra_c_flags    += -dNT_HOSTED
 
 !ifeq sys_dll 1
 extra_c_flags    += -dDLL_COMPILE
-!ifeq host_os nt
-extra_l_flags    += option offset=0x69800000
-!endif
 !endif
 
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
 
 extra_c_flags_rcalloc0 = $(TRACK_MEM_OPTS)
 extra_c_flags_rcalloc1 = $(TRACK_MEM_OPTS)
 extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
-
+# lflags stuff
+###############
 extra_l_flags += libpath $(watcom_dir)/lib &
-                lib $(WRES_LIB) &
-                option map
+                lib $(WRES_LIB) option map
+
+!ifeq sys_dll 1
+!ifeq host_os nt
+extra_l_flags += option offset=0x69800000
+!endif
+!endif
+
 extra_l_flags_osi += option symfile
 
 # where to look for various files
@@ -98,7 +108,7 @@ $(name).exe : $(name).res $(objs) $(WRES_LIB)
         @%make bindit
 !ifeq sys_dll 1
         wstrip -q -a -r $(name).dll . $(name).res
-        rm -f $(name).lib > $(nuldevice)
+        @rm -f $(name).lib
         $(librarian) $(name).lib +$(name).dll
 !else
         wstrip -q -a -r $(name).exe . $(name).res
@@ -125,7 +135,7 @@ ytab.obj : ytab.c param.h ytab.gh
 #!endif
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
-        $(yacc) -d -b $[@ $[:yydriver.c > $(nuldevice)
+        $(yacc) -d -b $[@ $[:yydriver.c >$(nuldevice)
         @cp ytab.h ytab.gh
         @rm -f ytab.h
 
@@ -133,23 +143,23 @@ ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(bld_cl) $< $(wcl_util_opts) -fe=$@
 
 weights1.gh keyword1.gh : rc1.key ./findhash.exe
-        $]@ $[@ > $(nuldevice)
+        $]@ -q $[@
         @cp keywords.gh keyword1.gh
         @cp weights.gh weights1.gh
         @rm -f keywords.gh
         @rm -f weights.gh
 
 weights2.gh keyword2.gh : rc2.key ./findhash.exe
-        $]@ $[@ > $(nuldevice)
+        $]@ -q $[@
         @cp keywords.gh keyword2.gh
         @cp weights.gh weights2.gh
         @rm -f keywords.gh
         @rm -f weights.gh
 
-$(name).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
+$(name).res : rcmsg.gh usage.rc usagej.rc $(wrc_dir)/rc.rc
         $(rc) -bt=windows -r $]@ -fo=$(name).res
 
-rcmsg.h : ../h/rc.msg
+rcmsg.gh : ../h/rc.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ > $^@
 !else
@@ -162,10 +172,7 @@ usage.rc : $(wrc_dir)/usage.sp
 usagej.rc : $(wrc_dir)/usage.sp
         wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
-hash1.obj : hash1.c weights1.gh
-hash2.obj : hash2.c weights2.gh
-
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
-        rm -f *.sym *.tmp *.ilk *.lst *.err *.trk
-        rm -f ytab.* *.gh rcmsg.h
+        rm -f *.sym *.tmp *.ilk *.lst *.err *.trk *.gh
+        rm -f ytab.*

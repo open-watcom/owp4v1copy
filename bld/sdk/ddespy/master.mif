@@ -3,11 +3,8 @@ name = wddespy
 sys_windowed = 1
 
 !include cproj.mif
-#!include deftarg.mif
+!include deftarg.mif
 !include defrule.mif
-
-# Got rid of "-we" switch because FreeProcInstance() gives warning.
-cflags_all      = -zq -w4
 
 objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
         pushwin.obj alias.obj toolbr.obj mark.obj ldstr.obj hint.obj &
@@ -17,11 +14,11 @@ objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
 
 
 extra_c_flags_mem = -DNO_WPI
+extra_c_flags_nt = -dNOUSE3D
+
 extra_l_flags_win = option stack=7k option heapsize=2k lib windows.lib &
                     lib toolhelp.lib lib ddeml.lib lib commdlg.lib &
                     lib $(misc_dir)\ctl3d.lib
-
-extra_c_flags_nt = -dNOUSE3D
 
 extra_l_flags_nt_axp  = lib ctl3d32.lib
 
@@ -35,8 +32,6 @@ inc_dirs        = $(wddespy_dir);$(sdk_dir)\misc;$(watcom_dir)\h
 .c: $(wddespy_dir);$(sdk_dir)\misc
 .h: $(wddespy_dir);$(sdk_dir)\misc
 
-msgh = rcstr.h
-mastermsg = rcstr.msg
 msgfiles  = $(wddespy_dir)\ddespy.msg $(sdk_dir)\misc\about.msg $(sdk_dir)\misc\log.msg &
             $(sdk_dir)\misc\savelbox.msg $(sdk_dir)\misc\alias.msg
 
@@ -48,7 +43,7 @@ resources = $(sdk_dir)\misc\log.rc $(sdk_dir)\misc\mark.rc &
 rcopts1 = -r -zk0
 rcopts2 = -k
 
-$(name).exe : $(msgh) $(objs) $(name).res
+$(name).exe : rcstr.gh $(objs) $(name).res
         $(LINKER) $(lflags) name $(name).exe file { $(objs) }
 !ifeq host_CPU axp
 !ifndef on_build_machine
@@ -58,24 +53,11 @@ $(name).exe : $(msgh) $(objs) $(name).res
 !endif
         $(RC) $(rc_flags) $(rcopts2) $(name).res
 
-$(msgh) : $(mastermsg)
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
+rcstr.gh : rcstrmsg.gh
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-$(mastermsg) : $(msgfiles)
-        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wddespy_dir)\ddespy.msg -fo=$(mastermsg)
+rcstrmsg.gh : $(msgfiles)
+        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wddespy_dir)\ddespy.msg -fo=$^@
 
 $(name).res : $(wddespy_dir)\$(name).rc $(resources)
         $(RC) $(rc_flags) $(wddespy_dir)\$(name).rc -fo=$(name).res $(rcopts1) $(resinc)
-
-clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj @del *.?bj
-        @if exist *.lnk @del *.lnk
-        @if exist *.exe @del *.exe
-        @if exist *.lib @del *.lib
-        @if exist *.res @del *.res
-        @if exist *.clb @del *.clb
-        @if exist *.err @del *.err
-        @if exist *.sym @del *.sym
-        @if exist $(name).map @del $(name).map
-        @if exist $(msgh) @del $(msgh)
-        @if exist $(mastermsg) @del $(mastermsg)

@@ -8,7 +8,7 @@
 #include "dmptask.h"
 #include "taskctl.h"
 #include "about.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "dbgopt.h"
 #include "segmap.h"
 #include "dipload.h"
@@ -54,7 +54,7 @@ END
 #define pick( a, b ) a, b
 STRINGTABLE
 BEGIN
-    #include "rcstr.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "about.dlg"

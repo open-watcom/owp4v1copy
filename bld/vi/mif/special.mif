@@ -17,12 +17,12 @@ viw.res : $(vi_dir)\win\viw.rc $(rc_deps)
 
 
 !ifdef msgcheck$(ED)
-$(msgh) : $(mastermsg)
-        vi -i -q -s $(sdk_dir)\misc\msgtoh.vi -p"$(msgh)" $(mastermsg)
+rcstr.gh : rcstrmsg.gh
+        vi -i -q -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
         @if exist about.obj erase about.obj
 
-$(mastermsg) : $(msgfiles)
-        $(bld_cc) -p -i=$(sdk_dir)\misc -zk0 $(vi_dir)\vi.msg >$(mastermsg)
+rcstrmsg.gh : $(msgfiles)
+        $(bld_cc) -p -i=$(sdk_dir)\misc -zk0 $(vi_dir)\vi.msg >$^@
 
 setfs.ybj : setfs.c setfs.ch setfs.dh
 setfs.ch : setfs.ctl

@@ -15,7 +15,9 @@ name = wre
 .mif: $(mif_path)
 
 sys_windowed = 1
+
 !include cproj.mif
+
 MODEL = l
 WINDOWS = 1
 !include wres.mif
@@ -42,13 +44,9 @@ TRMEM           += -of+
 !endif
 !endif
 
-extra_c_flags           = -s -DWIN_GUI -we
+extra_c_flags           = -s -DWIN_GUI
 extra_c_flags_i86       = -fpc-zu-zw-zc
 extra_c_flags_386       = -fpc
-!ifeq host_OS nt
-# -we will die under NT on lots of calls involving instances
-cflags_all      = -zq-w4
-!endif
 
 OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wregetfn.obj wrestrdp.obj wreselft.obj wreres.obj wrehints.obj &
@@ -78,7 +76,7 @@ inc_dirs = h;..\h;$(watcom_dir)\h;$(wstring_dir)\h;$(wmenu_dir)\h;$(wacc_dir)\h;
 inc_dirs += $(wr_dir)\h;$(trmem_dir);$(wres_dir)\h;$(cpp_dir);$(misc_dir)
 
 .BEFORE
-        set INCLUDE=$(inc_path)
+        @set INCLUDE=$(inc_path)
 
 relib_nt_386    = nt
 relib_nt_axp    = axp
@@ -88,7 +86,7 @@ relib           = $(relib_$(host_OS)_$(host_CPU))
 resedit_libs    = $(wacc_dir)\$(relib)\wacc.lib $(wmenu_dir)\$(relib)\wmenu.lib $(wstring_dir)\$(relib)\wstring.lib
 wr_lib          = $(wr_dir)\$(relib)\wr.lib
 
-extra_l_flags = name $(name) debug all library $(wres_lib) op map,v
+extra_l_flags = name $(name) library $(wres_lib) op map,v
 extra_l_flags += library {$(resedit_libs) $(wr_lib)}
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
 !ifndef TOOLS_10_0
@@ -101,7 +99,7 @@ extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 # explicit rules
 
 $(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
-        *$(linker) $(lflags) file {$(OBJS)}
+        $(linker) $(lflags) file {$(OBJS)}
         $(rc) $(rc_opts) -k $(name).res $(name).exe
 !ifdef TOOLS_10_0
 !ifeq host_OS nt
@@ -140,14 +138,14 @@ clean : .SYMBOLIC
         $(cc) $(cflags) -fhq ..\c\$^&
 
 .c.pp:
-        $(cc) -p$(cflags) ..\c\$^& > $^&.pp
+        $(cc) -p$(cflags) ..\c\$^& -fo=$^&.pp
 
 .rc.res:
-        $(rc) $(rc_opts) -r -fo=.\$^&.res ..\h\$^&.rc
+        $(rc) $(rc_opts) -r -fo=./$^&.res ../h/$^&.rc
 
 wremsgs.h: wretemp.h
-        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"wremsgs.h" wretemp.h
+        vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
-wretemp.h: wre.msg
-        $(cc) $(cflags) -p ..\h\wre.msg > wretemp.h
+wretemp.h: ../h/wre.msg
+        $(cc) $(cflags) -p $[@ -fo=$^@
 

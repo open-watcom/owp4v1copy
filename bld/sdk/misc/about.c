@@ -44,7 +44,7 @@
 #include "ctl3d.h"
 #endif
 #include "ldstr.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 
 /*
  * AboutProc - callback routine for settings dialog

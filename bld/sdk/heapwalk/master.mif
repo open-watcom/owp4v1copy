@@ -1,32 +1,27 @@
 proj_name = wheapwlk
 name = wheapwlk
+
 sys_windowed=1
 
-!include cproj.mif
-#!include deftarg.mif
-!include defrule.mif
-
-wheapwlk_ob_dir = $+ $(%cdrive):$(%cwd) $-
-
-msgh = rcstr.h
-mastermsg = rcstr.msg
-msgfiles = $(wheapwlk_dir)\heapwalk.msg $(sdk_dir)\misc\savelbox.msg &
-           $(sdk_dir)\misc\memwnd.msg $(sdk_dir)\misc\about.msg
- 
-lnk = $(name).lnk
-cflags= -zq-2-s-zu-d1-zW-fpc-w4 -fo=$[&.obj -i=$(sdk_dir)\misc;$(wdisasmdir)h;$(win31_hdrs)
-!ifndef on_build_machine
-cflags += -d2
+!ifndef wheapwlk_autodepends
+wheapwlk_autodepends = .AUTODEPEND
 !endif
 
-rc = wrc
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
-.EXTENSIONS:
-.EXTENSIONS: .exe
-.EXTENSIONS: .obj
-.EXTENSIONS: .asm .c .h .dlg
+.EXTENSIONS: .dlg
 
-inc_dirs        = $(wheapwlk_dir);$(sdk_dir)\misc;$(watcom_dir)\h
+msgfiles = ../heapwalk.msg $(sdk_dir)/misc/savelbox.msg &
+           $(sdk_dir)/misc/memwnd.msg $(sdk_dir)/misc/about.msg
+ 
+lnk = $(name).lnk
+extra_c_flags= -s-zu-zW-fpc
+extra_c_flags_ldstr = -dSPECIAL_STRING_LOADING 
+extra_c_flags_mem = -dNO_WPI
+
+inc_dirs = ..;$(sdk_dir)/misc;$(watcom_dir)/h;$(wdisasm_dir)/h;$(win31_hdrs)
 
 .before:
         @set INCLUDE=$(inc_path)
@@ -41,19 +36,19 @@ objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
  
 objs = $(objs_$(host_OS))
 
-!include $(wdisasmdir)mif\disasm.mif
+!include $(wdisasm_dir)/mif/disasm.mif
 
-resources = $(wheapwlk_dir)\10hw.ico $(wheapwlk_dir)\heapwlk.dlg $(sdk_dir)\misc\memwnd.rc &
-            $(wheapwlk_dir)\heapinfo.dlg $(wheapwlk_dir)\memman.dlg $(wheapwlk_dir)\lclinfo.dlg &
-            $(wheapwlk_dir)\add.dlg config.dlg $(wheapwlk_dir)\freen.dlg $(wheapwlk_dir)\alloc.dlg &
-            $(wheapwlk_dir)\code.dlg $(wheapwlk_dir)\config.dlg $(sdk_dir)\misc\about.dlg
+resources = ../10hw.ico ../heapwlk.dlg $(sdk_dir)/misc/memwnd.rc &
+            ../heapinfo.dlg ../memman.dlg ../lclinfo.dlg &
+            ../add.dlg config.dlg ../freen.dlg ../alloc.dlg &
+            ../code.dlg ../config.dlg $(sdk_dir)/misc/about.dlg
 
-$(name).exe : $(msgh) $(objs) $(disasm) $(lnk) $(name).res
+$(name).exe : rcstr.gh $(objs) $(disasm) $(lnk) $(name).res
 	wlink @$(lnk)
         $(RC) -k $(name).res
 
-$(name).res : $(wheapwlk_dir)\$(name).rc $(resources) $(msgh)
-    $(RC) -zk0 -r -bt=windows $(wheapwlk_dir)\$(name).rc -i=$(sdk_dir)\misc -fo=.\$^.
+$(name).res : ../$(name).rc $(resources) rcstr.gh
+        $(RC) -zk0 -r -bt=windows ../$(name).rc -i=$(sdk_dir)/misc -fo=./$^.
 
 $(lnk) : makefile
         %create $(lnk)
@@ -66,40 +61,24 @@ $(lnk) : makefile
         @%append $(lnk) library toolhelp.lib
         @%append $(lnk) library commdlg.lib
         @%append $(lnk) library stress.lib
-        @%append $(lnk) library $(misc_dir)\ctl3d.lib
+        @%append $(lnk) library $(misc_dir)/ctl3d.lib
         @%append $(lnk) option map
         @%append $(lnk) option stack=7k
         @%append $(lnk) option heapsize=2k
         @for %i in ($(objs)) do @%append $(lnk) file %i
         @for %i in ($(disasm)) do @%append $(lnk) file %i
 
-$(msgh) : $(mastermsg)
-       vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
-        -del *.obj
+rcstr.gh : rcstrmsg.gh
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-$(mastermsg) : $(msgfiles)
-        $(comp286) -zk0 -p -i=$(sdk_dir)\misc $(wheapwlk_dir)\heapwalk.msg >$(mastermsg)
-
-ldstr.obj : ldstr.c
-        $(comp286) $[* -ml$(cflags) -dSPECIAL_STRING_LOADING
+rcstrmsg.gh : $(msgfiles)
+        $(cc) -zk0 -p -i="$(sdk_dir)/misc" "../heapwalk.msg" -fo=$^@
 
 .obj : obj
 
-.c : $(wheapwlk_dir);$(sdk_dir)\misc;$(wdisasmdir)c
-.asm : $(wheapwlk_dir);$(sdk_dir)\misc
-.dlg : $(wheapwlk_dir);$(sdk_dir)\misc
+.c : ..;$(sdk_dir)/misc;$(wdisasm_dir)/c
+.asm : ..;$(sdk_dir)/misc
+.dlg : ..;$(sdk_dir)/misc
 
-mem.obj : mem.c
-        $(comp286) $[* -ml$(cflags) -dNO_WPI
-
-.c.obj :
-        $(comp286) $[* -ml$(cflags)
 .asm.obj:
-        $(as) $[* /fo=$[&.obj
-
-clean : .symbolic
-    @rm -f *.exe *.res *.lnk *.map
-    @rm -f $(msgh)
-    @rm -f $(mastermsg)
-    @rm -f *.obj
-
+        $(as) $(aflags) $[* /fo=$[&.obj

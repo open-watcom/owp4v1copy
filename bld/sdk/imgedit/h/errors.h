@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include "rcstr.h"
+#include "rcstr.gh"
 
                                    //1234567890123456789012345678901234567890
 #define WIE_INTERNAL_001            "Internal Error 001- No active image."

@@ -37,7 +37,7 @@
 #include "dip.h"
 #include "dipload.h"
 #include "ldstr.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "mem.h"
 #include "jdlg.h"
 

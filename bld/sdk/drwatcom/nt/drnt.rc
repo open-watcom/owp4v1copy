@@ -13,7 +13,7 @@
 #include "memory.h"
 #include "memwnd.h"
 #include "memdmp.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "dipload.h"
 
 "APPLICON" ICON "..\\drwatcom.ico"
@@ -59,7 +59,7 @@ END
 #define pick( a, b ) a, b
 STRINGTABLE
 BEGIN
-    #include "rcstr.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "procctl.dlg"

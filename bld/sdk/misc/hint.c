@@ -33,7 +33,7 @@
 #define STRICT
 #include "windows.h"
 #include "hint.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "mem.h"
 #include "ldstr.h"
 #include "win1632.h"

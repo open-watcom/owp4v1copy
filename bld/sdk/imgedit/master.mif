@@ -1,17 +1,15 @@
 proj_name = wimgedit
 name = wimgedit
+
 sys_windowed = 1
 
 !include cproj.mif
-#!include deftarg.mif
+!include deftarg.mif
 !include defrule.mif
 
 WINDOWS=1
 MODEL=l
 !include wres.mif
-
-# Got rid of "-we" switch because FreeProcInstance() gives warning.
-cflags_all      = -zq -w4
 
 .JUST_ENOUGH
 
@@ -43,9 +41,7 @@ objs =  imgedit.obj ieproc.obj ieclrpal.obj ieglob.obj pmcreate.obj &
 .EXTENSIONS: .obj
 .EXTENSIONS: .asm .pp .c .h .dlg
 
-msgh            = rcstr.h
-mastermsg       = rcstr.msg
-msgfiles        = $(wimgedit_dir)\h\wimgedit.msg $(sdk_dir)\misc\about.msg
+msgfiles = $(wimgedit_dir)\h\wimgedit.msg $(sdk_dir)\misc\about.msg
 
 resdir = $(wimgedit_dir)\res
 rcdeps = $(resdir)\$(name).rc $(resdir)\wimgedit.ico $(resdir)\selimg.dlg &
@@ -133,7 +129,7 @@ $(name).res : $(rcdeps)
         -DMISC_DIR=$(sdk_dir)\misc $(resinc) &
         $(wimgedit_dir)\objos2\res\$(name).rc $(name).res
 !else
-$(name).exe : $(msgh) $(objs) $(name).res
+$(name).exe : rcstr.gh $(objs) $(name).res
         *$(linker) $(lflags) name $(name).exe file { $(objs) }
         $(RC) $(rc_flags) $(rcopts2) $(name).res
 !ifdef TOOLS_10_0
@@ -144,11 +140,11 @@ $(name).exe : $(msgh) $(objs) $(name).res
 !endif
 !endif
 
-$(msgh) : $(mastermsg)
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
+rcstr.gh : rcstrmsg.gh
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-$(mastermsg) : $(msgfiles)
-        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wimgedit_dir)\h\wimgedit.msg -fo=$(mastermsg)
+rcstrmsg.gh : $(msgfiles)
+        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wimgedit_dir)\h\wimgedit.msg -fo=$^@
 
 $(name).res : $(rcdeps)
         $(RC) $(rc_flags) $(resdir)\$(name).rc -fo=$(name).res $(rcopts1) $(resinc)
@@ -164,20 +160,4 @@ about.obj : .AUTODEPEND
 !ifndef host_OS os2
 .c.pp : #.AUTODEPEND
         $(cc) $[* $(cflags) $(extra_c_flags_$[&) -p -fo=$^&.pp
-!endif
-
-clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj @del *.?bj
-        @if exist *.lnk @del *.lnk
-        @if exist *.exe @del *.exe
-        @if exist *.dll @del *.dll
-        @if exist *.lib @del *.lib
-        @if exist *.res @del *.res
-        @if exist *.clb @del *.clb
-        @if exist *.err @del *.err
-        @if exist *.map @del *.map
-        @if exist *.sym @del *.sym
-!ifdef msgh
-        @if exist $(msgh) @del $(msgh)
-        @if exist $(mastermsg) @del $(mastermsg)
 !endif

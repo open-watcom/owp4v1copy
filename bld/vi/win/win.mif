@@ -1,7 +1,5 @@
-msgh = rcstr.h
-mastermsg = rcstr.msg
 msgfiles = ..\vi.msg $(sdk_dir)\misc\about.msg
-special = $(msgh)
+special = rcstr.gh
 
 objwiny  =  main.ybj mainwnd.ybj editwnd.ybj dosdir.ybj time.ybj &
                 stubs.ybj color.ybj wstatus.ybj font.ybj &

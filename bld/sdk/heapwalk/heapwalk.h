@@ -53,7 +53,7 @@
 #include "memman.h"
 #include "heapinfo.h"
 #include "lclinfo.h"
-#include "rcstr.h"
+#include "rcstr.gh"
 #include "ldstr.h"
 #include "config.h"
 #include "menu.h"

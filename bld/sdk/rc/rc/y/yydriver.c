@@ -42,7 +42,7 @@
 #include "yydriver.h"
 #include "scan.h"
 #include "errprt.h"
-#include "rcmsg.h"
+#include "rcmsg.gh"
 
 typedef uint_16         YYCHKTYPE;
 typedef uint_16         YYACTTYPE;
