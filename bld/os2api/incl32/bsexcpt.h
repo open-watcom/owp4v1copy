@@ -120,10 +120,11 @@ struct _EXCEPTIONREGISTRATIONRECORD;
 
 typedef ULONG APIENTRY _ERR(PEXCEPTIONREPORTRECORD, struct _EXCEPTIONREGISTRATIONRECORD *,
                             PCONTEXTRECORD, PVOID);
+typedef _ERR *ERR;
 
 typedef struct _EXCEPTIONREGISTRATIONRECORD {
-    struct _EXCEPTIONREGISTRATIONRECORD *prev_structure;
-    _ERR                                *ExceptionHandler;
+    struct _EXCEPTIONREGISTRATIONRECORD * volatile prev_structure;
+    _ERR                                * volatile ExceptionHandler;
 } EXCEPTIONREGISTRATIONRECORD, *PEXCEPTIONREGISTRATIONRECORD;
 
 #endif
