@@ -189,6 +189,11 @@ APIRET APIENTRY DosWaitThread(PTID ptid, ULONG option);
 
 #if defined(INCL_DOSFILEMGR)
 
+#define DosQFileInfo    DosQueryFileInfo
+#define DosQFHandState  DosQueryFHState
+#define DosQHandType    DosQueryHType
+#define DosQPathInfo    DosQueryPathInfo
+
 #define FILE_BEGIN    0
 #define FILE_CURRENT  1
 #define FILE_END      2
@@ -244,6 +249,14 @@ APIRET APIENTRY DosWaitThread(PTID ptid, ULONG option);
 #define SEARCH_ENVIRONMENT   2
 #define SEARCH_IGNORENETERRS 4
 
+#define FIL_STANDARD           1
+#define FIL_QUERYEASIZE        2
+#define FIL_QUERYEASFROMLIST   3
+#define FIL_QUERYFULLNAME      5
+#define FIL_STANDARDL         11
+#define FIL_QUERYEASIZEL      12
+#define FIL_QUERYEASFROMLISTL 13
+
 #define FIO_LOCK      0
 #define FIO_UNLOCK    1
 #define FIO_SEEK      2
@@ -281,6 +294,12 @@ APIRET APIENTRY DosWaitThread(PTID ptid, ULONG option);
 #define FSAT_PSEUDODEV  2
 #define FSAT_LOCALDRV   3
 #define FSAT_REMOTEDRV  4
+
+#define HANDTYPE_FILE       0x0000
+#define HANDTYPE_DEVICE     0x0001
+#define HANDTYPE_PIPE       0x0002
+#define HANDTYPE_PROTECTED  0x4000
+#define HANDTYPE_NETWORK    0x8000
 
 #define EAT_APPTYP_PMAPI    0x00
 #define EAT_APPTYP_DOS      0x01
@@ -1076,4 +1095,3 @@ APIRET APIENTRY DosTmrQueryFreq(PULONG pulTmrFreq);
 APIRET APIENTRY DosTmrQueryTime(PQWORD pqwTmrTime);
 
 #endif
-

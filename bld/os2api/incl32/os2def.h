@@ -41,6 +41,13 @@
 #define FALSE 0
 #endif
 
+#define FIELDOFFSET(type, field)    ((SHORT)&(((type *)0)->field))
+
+#define MAKEULONG(l, h)  ((ULONG)(((USHORT)(l)) | ((ULONG)((USHORT)(h))) << 16))
+#define MAKELONG(l, h)   ((LONG)MAKEULONG(l, h))
+#define MAKEUSHORT(l, h) (((USHORT)(l)) | ((USHORT)(h)) << 8)
+#define MAKESHORT(l, h)  ((SHORT)MAKEUSHORT(l, h))
+
 #define NULLHANDLE  ((LHANDLE)0)
 
 #define APIENTRY16 _Far16 _Pascal
