@@ -248,7 +248,8 @@ typedef VOID    *MRESULT, **PMRESULT;
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
 
-typedef MRESULT (APIENTRY *PFNWP)(HWND, ULONG, MPARAM, MPARAM);
+typedef MRESULT (APIENTRY FNWP)(HWND, ULONG, MPARAM, MPARAM);
+typedef FNWP *PFNWP;
 
 typedef struct _MATRIXLF {
     FIXED fxM11;
