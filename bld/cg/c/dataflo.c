@@ -52,6 +52,10 @@ extern  bool            BlockByBlock;
 extern  proc_def        *CurrProc;
 extern  global_bit_set  MemoryBits;
 
+static  void            PropagateConflicts( void );
+static  void            LiveAnalysis( block *tail, global_bit_set memory_bits );
+extern  void            SetInOut( block *blk );
+
 static  bool            MoreUseInOtherTemps;
 
 static  void    AddTempSave( name *op, block *blk ) {
@@ -241,8 +245,8 @@ extern  bool    MoreConflicts() {
 
 
 
-static  void    PropagateConflicts() {
-/************************************/
+static  void    PropagateConflicts( void ) {
+/******************************************/
 
     block       *blk;
 

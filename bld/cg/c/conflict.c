@@ -48,6 +48,10 @@ extern  name            *DeAlias(name*);
 extern  conflict_node   *ConfList;
 static  pointer         ConfFrl;
 
+/* forward declarations */
+extern  void    MarkPossible( instruction *ins,
+                              name *opnd, reg_set_index idx );
+extern  void    FreeAConflict( conflict_node *conf );
 
 extern  conflict_node   *AddConflictNode( name *opnd ) {
 /******************************************************/

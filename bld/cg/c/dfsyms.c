@@ -102,6 +102,9 @@ extern    source_line_number    SrcLine;
 extern    proc_def              *CurrProc;
 extern    struct opcode_entry   DbgInfo[];
 
+extern  void            DFBlkBeg( dbg_block *blk, offset lc );
+static  void            DumpLocals( dbg_local *local );
+
 #define CurrProc_debug ((dbg_rtn *)CurrProc->targ.debug)
 
 dw_client                  Client;

@@ -99,6 +99,14 @@ extern  byte            Inst[];  /* template for instructions*/
 extern  int             ILen;
 extern  proc_def        *CurrProc;
 
+/* forward declarations */
+extern  void            DoRelocConst( name *op, type_class_def kind );
+extern  void            DoMAddr( name *op );
+static  void            Add32Displacement( signed_32 val );
+static  void            LayIdxModRM( name *op );
+        void            doProfilingCode( char *fe_name, label_handle *data,
+                                         bool prolog );
+
 #define RMR_MOD_IND     0x80
 #define RMR_MOD_DIR     5
 #define RMR_MOD_SIB     4

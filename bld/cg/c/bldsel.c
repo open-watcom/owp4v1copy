@@ -66,6 +66,12 @@ extern  void            MkSelOp( name *idx, cg_type tipe );
 
 extern    type_def      *TypeInteger;
 
+/* forward declarations */
+extern  void    BGSelRange( select_node *s_node, signed_32 lo,
+                            signed_32 hi, label_handle label );
+static  void    ScanBlock( tbl_control *table, an node, cg_type tipe,
+                           label_handle other );
+static  void    SelectBlock( tbl_control *table, an node, label_handle other );
 
 static  select_list *NewCase( signed_32 lo, signed_32 hi, label_handle label ) {
 /******************************************************************************/

@@ -100,7 +100,11 @@ extern  int             GetLog2(unsigned_32);
 extern  bool            IsSegReg(hw_reg_set);
 extern  void            FindReferences(void);
 
-
+/* forward declarations */
+static  void            TreeBits( block *root );
+static  void            DeleteFromList( instruction **owner,
+                                        instruction *ins, instruction *new );
+static  void            CleanTableEntries( block *root );
 
 /* Borrow a few fields and bits to label trees with bits and link stuff */
 

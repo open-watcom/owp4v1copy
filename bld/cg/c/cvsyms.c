@@ -99,6 +99,8 @@ extern    uint                  TypeIdx;
 global    seg_id                CVSyms;
 global    seg_id                CVTypes;
 
+static  void             DumpLocals( dbg_local *local );
+
 typedef struct block_patch {
     struct block_patch  *link;
     dbg_patch_handle    handle;

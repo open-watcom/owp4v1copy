@@ -49,6 +49,8 @@ extern  block           *NewBlock(label_handle,bool);
 extern  label_handle    AskForNewLabel();
 extern  bool            FloodForward( block *, bool (*)( block *, void * ), void * );
 
+static  void            NewInterval( block *blk, int level );
+
 static    interval_def  *Intervals;
 
 

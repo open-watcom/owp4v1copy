@@ -110,6 +110,10 @@ extern    source_line_number    SrcLine;
 extern    proc_def              *CurrProc;
 extern    struct opcode_entry   DbgInfo[];
 
+static  void    EmitDbg( byte class, pointer ptr );
+static  void    MkBlock( void );
+static  void    AddBlockInfo( dbg_block *blk, bool start );
+
 cue_ctl     LineInfo;
 fname_ctl   DBFiles;
 
@@ -702,8 +706,8 @@ extern  void _CGAPI     DBBegBlock() {
 }
 
 
-static  void    MkBlock() {
-/*************************/
+static  void    MkBlock( void ) {
+/********************************/
 
 
     dbg_block   *new;

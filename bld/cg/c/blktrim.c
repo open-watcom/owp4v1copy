@@ -48,6 +48,9 @@ extern  void            FreeABlock(block*);
 extern  instruction_id  Renumber(void);
 extern  void            RemoveEdge( block_edge * );
 
+/* forward declarations */
+extern  void    RemoveInputEdge( block_edge *edge );
+extern  void    BlockTrim( void );
 
 static  instruction     *FindOneCond( block *blk ) {
 /**************************************************/
@@ -377,8 +380,8 @@ static  bool    SameTarget( block *blk ) {
 }
 
 
-static  void    DoBlockTrim() {
-/*****************************/
+static  void    DoBlockTrim( void ) {
+/***********************************/
 
     block       *blk;
     block       *next;
@@ -494,8 +497,8 @@ extern  bool    DeadBlocks() {
 }
 
 
-extern  void    BlockTrim() {
-/***************************/
+extern  void    BlockTrim( void ) {
+/**********************************/
 
     if( ( CurrProc->state.attr & ROUTINE_WANTS_DEBUGGING ) == 0 ) {
         DoBlockTrim();
