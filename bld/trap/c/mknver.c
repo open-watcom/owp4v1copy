@@ -24,70 +24,33 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate netware version file.
 *
 ****************************************************************************/
 
+#include <stdio.h>
+#include <banner.h>
 
-#include "miniproc.h"
-#include "debugme.h"
-#include <string.h>
-#undef POP_UP_SCREEN
-#define ConsolePrintf _
-//#include <conio.h>
-#undef ConsolePrintf
-#include "nw3to4.h"
+int     bannerver = _BANVER;
+char *  bannerstr = banner2a();
 
-#include <ecb.h>
-#if defined ( __NW50__ )
-void  NXVmExit( int status ) ;
+int main ( int argc, char *argv[] )
+{
+    int majorver, minorver, revision;
+
+    if( argc <= 1 || freopen( argv[1], "w", stdout ) != stdout ) {
+        fprintf( stderr, "Can't open output file\n" );
+        return 1;
+    }
+
+    majorver = bannerver / 1000;
+    minorver = ( bannerver / 10 ) - ( majorver * 100 );
+    revision = bannerver - ( ( bannerver / 10 ) * 10 );
+#ifdef _BETAVER
+    revision = 'b' - 'a' + 1;   /* 2 = b for beta */
 #endif
 
-extern struct ScreenStruct                     *screenID;
-extern struct LoadDefinitionStruct             *MyNLMHandle;
-
-void Output( char *str )
-{
-    ActivateScreen( screenID );
-    OutputToScreen( screenID, "%s", str );
-    SetInputToOutputCursorPosition( screenID );
+    printf( "OP VERSION = %u.%u.%u\n", majorver, minorver, revision);
+    printf( "OP COPYRIGHT '%s'\n", bannerstr);
+    return( 0 );
 }
-
-void StartupErr( char *err )
-{
-    OutputToScreen( systemConsoleScreen, "%s\r\n", err );
-    SayGNiteGracey( 1 );
-}
-
-
-void SayGNiteGracey( int return_code )
-{
-    return_code = return_code;
-    KillMe( MyNLMHandle );
-#if defined ( __NW50__ )
-    NXVmExit(return_code);
-#else
-    CDestroyProcess( CGetMyProcessID() );
-#endif
-}
-
-int KeyPress()
-{
-   return( CheckKeyStatus( screenID ) ); /* RELINQUISH ? */
-}
-
-int KeyGet()
-{
-   BYTE value, scanCode, type;
-
-   SetInputToOutputCursorPosition( screenID );
-   GetKey( screenID, &type, &value, NULL, &scanCode, 0); /* RELINQUISH ? */
-   return( value );
-}
-
-int WantUsage( char *ptr )
-{
-    return( *ptr == '?' );
-}
-

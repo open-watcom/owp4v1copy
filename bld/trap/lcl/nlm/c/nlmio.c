@@ -41,11 +41,12 @@
 #undef NULL
 
 #include "miniproc.h"
-#ifdef __NW40__
+#if defined ( __NW40__ )
     #include "datamig.h"
-#else
+#elif defined ( __NW30__ )
     #include "cconfig.h"
 #endif
+
 #include "locks.h"
 #include "bits.h"
 

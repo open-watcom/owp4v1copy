@@ -33,10 +33,31 @@ sys_x86_nt      = sys nt_win op st=20k, modname=$^&, desc $^&
 !endif
 !endif
 !endif
+
+#
+#   NW 4 and 3 are CLIB, 5 and later is LIBC
+#   it looks for math3s.lib but doesn't need it. should I remove deflib info?
+#
+!ifeq nwlib libc
 sys_x86_nlm     = form novell nlm $(description) &
                         libpath $(lang_root)/lib386 &
                         op st=8k &
-                        import @$(trap_dir)/common/nlm/trap.imp op nodef
+                        import @$(trap_dir)/common/nlm/traplibc.imp &
+                        op nodef &
+                        op pseudopreemption &
+                        op start = _PreludeHook &
+                        op exit = _LibCPostlude &
+                        op screenname 'none' &
+                        @./nversion.tmp &
+                        file $(%NOVELLNDK)/../libc/imports/libcpre.obj
+!else
+sys_x86_nlm     = form novell nlm $(description) &
+                        libpath $(lang_root)/lib386 &
+                        op st=8k &
+                        @./nversion.tmp &
+                        import @$(trap_dir)/common/nlm/trap.imp &
+                        op nodef
+!endif
 sys_x86_penpoint= sys penpoint op st=8k, modname=$^&, desc $^&
 
 sys_axp_nt      = sys ntaxp op st=16k, modname=$^&, desc $^&
@@ -75,7 +96,11 @@ targ_axp_nt     = $(name).exe
 
 targ_ppc_nt     = $(name).exe
 
+!ifeq nwlib libc
+objs_nlm        = libcstrt.obj
+!else
 objs_nlm        = nlmstrt.obj
+!endif
 
 dig_os = $(os)
 !include $(dig_dir)/mif/trpcli.mif

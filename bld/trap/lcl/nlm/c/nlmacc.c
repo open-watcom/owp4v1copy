@@ -171,10 +171,25 @@ extern void                     UnBoobyTrapPID(pPID);
 extern char                     *GetPIDName(pPID);
 extern int                      ValidatePID(pPID);
 extern void                     SetupPIDForACleanExit(pPID);
-extern void                     ImportCLIBSymbols();
+#if defined ( __NW40__ )
+extern int                      ImportCLIBSymbols();
+#endif
 
-/* from CLIB */
+/* Must be CLIB! */
 void  _exit( int __status );
+#if defined ( __NW50__ )
+void  NXVmExit( int status ) ;
+
+int   get_app_type       ( void );
+
+/* return flags for get_app_type()... */
+#define LIBRARY_UNKNOWN      0x01  /* thread has default library context     */
+#define LIBRARY_LIBC         0x02  /* thread has specific NKS/LibC context   */
+#define LIBRARY_CLIB         0x04  /* thread has CLib context                */
+#define LIBRARY_JAVA         0x08  /* thread belongs to Java Virtual Machine */
+
+#endif
+
 
 /* from SERVNAME.C */
 extern char ServPref[];
@@ -375,12 +390,11 @@ bool CheckIfBreakOKInOS( LONG eip )
 
 int NPX()
 {
-    if( ( GetCR0() & CR0_EM ) == 0 ) return( RealNPXType );
-    #ifdef __NW40__
-    {
-        return( X86_EMU );
-    }
-    #else
+    if( ( GetCR0() & CR0_EM ) == 0 ) 
+        return( RealNPXType );
+#if defined ( __NW50__ ) || defined ( __NW40__ )
+    return( X86_EMU );
+#elif defined ( __NW30__ )
     {
         struct ExternalPublicDefinitionStructure    *epd;
 
@@ -396,7 +410,7 @@ int NPX()
         }
         return( RealNPXType );
     }
-    #endif
+#endif
 }
 
 
@@ -681,22 +695,48 @@ void BigKludge( msb *m )
                 _DBG_EVENT(( "  NLMState = NLM_FORCED_INIT_FAILURE\r\n" ));
             }
         } else if( m->clib_created ) {
-            //_DBG_THREAD(( "     Warping off to _exit!!!\r\n" ));
+#if defined ( __NW50__ )
+            int type = get_app_type();
+
+            if( type & LIBRARY_CLIB ){
+                _DBG_THREAD(( "     Warping off to _exit!!!\r\n" ));
+                m->cpu.EIP = (dword)_exit;
+            } else if( type & LIBRARY_LIBC){
+                _DBG_THREAD(( "     Warping off to NXVMExit!!!\r\n" ));
+                m->cpu.EIP = (dword)NXVmExit;
+            } else {
+                _DBG_THREAD(( "     Warping off to suicide!!!\r\n" ));
+                m->cpu.EIP = (dword)Suicide;
+            }
+#else
+            _DBG_THREAD(( "     Warping off to _exit!!!\r\n" ));
             m->cpu.EIP = (dword)_exit;
+#endif
         } else {
-            //_DBG_THREAD(( "     Suicide!!!\r\n" ));
+            _DBG_THREAD(( "     Suicide!!!\r\n" ));
             m->cpu.EIP = (dword)Suicide;
         }
     }
     JumpTo( m );
 }
 
-#ifdef __NW40__
+#if defined ( __NW50__ )    /* This is duplicate to 4.0 but I want to change soon */
     static struct debuggerStructure DbgStruct = {
-        NULL, NULL,
-        (LONG(*)(StackFrame *))DebugEntry, AT_FIRST, TSS_FRAME_BIT
+        NULL, 
+        NULL,
+        (LONG(*)(StackFrame *))DebugEntry, 
+        AT_FIRST, 
+        TSS_FRAME_BIT
     };
-#else
+#elif defined ( __NW40__ )
+    static struct debuggerStructure DbgStruct = {
+        NULL,
+        NULL,
+        (LONG(*)(StackFrame *))DebugEntry, 
+        AT_FIRST, 
+        TSS_FRAME_BIT
+    };
+#elif defined ( __NW30__ )
     static T_DebuggerStruct DbgStruct = { NULL, NULL, DebugEntry };
 #endif
 
@@ -1028,6 +1068,93 @@ static void LoadHelper()
     StringToNLMPath( src, nlm_name );
     dst = CmdLine;
     len = LoadLen;
+
+    for( ;; ) {
+        if( len == 0 ) 
+            break;
+        ch = *src;
+        if( ch == '\0' ) 
+            ch = ' ';
+        *dst = ch;
+        ++dst;
+        ++src;
+        --len;
+    }
+
+    if( dst > CmdLine && src[-1] == '\0' ) 
+        --dst;
+    *dst = '\0';
+    LoadRet->err = 0;
+    NLMState = NLM_PRELOADING;
+    _DBG_EVENT(( "*LoadHelper: NLMState = NLM_PRELOADING\r\n" ));
+    ExpectingEvent = TRUE;
+
+    if( nlm_name[0] == '\0'
+     || ( handle = IOOpen( nlm_name, O_RDONLY ) ) == -1
+     || IOSeek( handle, SEEK_SET, offsetof( nlm_header, moduleName ) )
+                != offsetof( nlm_header, moduleName )
+     || IORead( handle, NLMName, 14 ) != 14
+     || IOClose( handle ) != 0 ) 
+    {
+        NLMState = NLM_NONE;
+        _DBG_EVENT(( "  NLMState = NLM_NONE\r\n" ));
+        DebuggerLoadedNLM = NULL;
+        if( LoadRet != NULL ) LoadRet->err = 2;
+        _DBG_EVENT(( "  Waking up the debugger for noopen event\r\n" ));
+        WakeDebugger();
+    } 
+    else 
+    {
+        _DBG_EVENT(( "  Name is '%S'\r\n", NLMName ));
+        err = LoadModule( systemConsoleScreen, CmdLine, LO_DEBUG );
+        _DBG_EVENT(( "  Load ret code %d\r\n", err ));
+        if( err != 0 ) 
+        {
+            NLMState = NLM_NONE;
+            _DBG_EVENT(( "    NLMState = NLM_NONE\r\n" ));
+            DebuggerLoadedNLM = NULL;
+            if( LoadRet != NULL ) 
+                LoadRet->err = err;
+            _DBG_EVENT(( "    Waking up the debugger for noload event\r\n" ));
+            WakeDebugger();
+        }
+    }
+    FreeThread( LocateThread( RunningProcess ) );
+
+    if( NLMState != NLM_NONE)
+    {
+        NLMState = NLM_LOADED;
+        _DBG_EVENT(( "LoadHelper: NLMState = NLM_LOADED\r\n" ));
+        CPSemaphore( HelperSem );
+        _DBG_EVENT(( "LoadHelper: Helper awake -- calling KillMe NLM=%8x!\r\n", DebuggerLoadedNLM ));
+        NLMState = NLM_NONE;
+        _DBG_EVENT(( "LoadHelper: NLMState = NLM_NONE\r\n" ));
+        if( DebuggerLoadedNLM ) 
+            KillMe( DebuggerLoadedNLM );
+    }
+    DebuggerLoadedNLM = NULL;
+    _DBG_EVENT(( "LoadHelper: Helper killing itself\r\n" ));
+    Suicide();
+}
+
+#if 0
+static void LoadHelper()
+{
+    int         err;
+    int         handle;
+    char        *src, *dst;
+    char        nlm_name[256];
+    char        ch;
+    unsigned    len;
+
+    Enable();
+    MSBHead = NULL;
+    ThreadId = 0;
+    MSB = NULL;
+    src = LoadName;
+    StringToNLMPath( src, nlm_name );
+    dst = CmdLine;
+    len = LoadLen;
     for( ;; ) {
         if( len == 0 ) break;
         ch = *src;
@@ -1080,7 +1207,7 @@ static void LoadHelper()
     _DBG_EVENT(( "LoadHelper: Helper killing itself\r\n" ));
     Suicide();
 }
-
+#endif
 
 static char    helper_stack[8192]; /* We may return before thread dies! */
 
@@ -1709,7 +1836,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     trap_version        ver;
     extern              struct LoadDefinitionStructure *MyNLMHandle;
 
-#ifdef __NW40__
+#if defined ( __NW40__ )
     ImportCLIBSymbols();
 #endif
     remote = remote; parm = parm;
