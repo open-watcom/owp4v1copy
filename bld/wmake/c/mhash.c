@@ -80,6 +80,10 @@ extern HASH_T Hash( const char *s, HASH_T prime )
 #else
     for(;;) {
         w = *p;
+#ifdef __BIG_ENDIAN__
+        /* we have to swap the bytes! */
+        w = ((w & 0xff) << 8) + (w >> 8);
+#endif
         ++p;
         if( ( w & 0xff ) == NULLCHAR ) break;
         h += w | ( ( ' '<< 8 ) | ' ');  /* convert to upper case */
