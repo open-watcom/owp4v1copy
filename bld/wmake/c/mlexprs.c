@@ -147,7 +147,7 @@ extern TOKEN_T LexPath( STRM_T t )
         while( pos < _MAX_PATH ) {
             if (string_open) {
                 if (t == '\"') {
-                    stringOpen = 0;
+                    string_open = 0;
                 } else
                 {
                     path[pos++] = t;
@@ -155,7 +155,7 @@ extern TOKEN_T LexPath( STRM_T t )
             } else
             {
                 if ( t == '\"' ) {
-                    stringOpen = 1;
+                    string_open = 1;
                 } else
                 if ( !isfilec( t ) ) {
                     break;
