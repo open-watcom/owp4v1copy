@@ -33,6 +33,7 @@
 #include <string.h>
 #include "winvi.h"
 #include "startup.h"
+#include "banner.h"
 
 /*
  * StartupProc - callback routine for startup modeless dialog
@@ -44,6 +45,7 @@ BOOL WINEXP StartupProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     int     width;
     int     height;
     int     newx,newy;
+    static char    vers[] = banner1p2( _VI_VERSION_ );
 
     lparam = lparam;
     wparam = wparam;
@@ -59,6 +61,7 @@ BOOL WINEXP StartupProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     newy = (maxy - height)/2;
     SetWindowPos( hwnd, HWND_TOPMOST,newx,newy,0,0,
                 SWP_NOSIZE );
+    SetDlgItemText( hwnd, STARTUP_VERSION, vers);
         SetDlgItemText( hwnd, STARTUP_EDITORNAME, WATCOM_ABOUT_EDITOR );
     return( TRUE );
     }
