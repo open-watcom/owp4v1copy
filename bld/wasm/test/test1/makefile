@@ -81,7 +81,6 @@ stos &
 strmang &
 struct &
 structjn &
-testing &
 tmp &
 tn &
 wincall &
