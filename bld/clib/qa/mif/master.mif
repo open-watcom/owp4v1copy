@@ -64,9 +64,9 @@ link_opts = NAME $^* OPTION quiet
 
 dosexes = &
     dos_s.exe dos_c.exe dos_m.exe dos_l.exe dos_h.exe &
-    pls_3s.exe pls_3r.exe &
+#   pls_3s.exe pls_3r.exe &
     rsi_3s.exe rsi_3r.exe &
-    x32_3s.exe x32_3r.exe
+#   x32_3s.exe x32_3r.exe
 
 winexes = &
     win_s.exe win_c.exe win_m.exe win_l.exe &
@@ -76,7 +76,7 @@ os2exes = &
     os2_s.exe os2_c.exe os2_m.exe os2_l.exe os2_h.exe os2_mt.exe
 
 os3exes = &
-    os3_3r.exe os3_3s.exe os3pm_3r.exe os3pm_3s.exe
+    os3_3r.exe os3_3s.exe # os3pm_3r.exe os3pm_3s.exe
 
 wntexes = &
     wnt_3s.exe wnt_3r.exe
@@ -85,10 +85,10 @@ wntwexes = &
     wntw_3s.exe wntw_3r.exe
 
 wntaxpexes = &
-    wnt_axp.exe wntw_axp.exe
+    wnt_axp.exe # wntw_axp.exe
 
 exes = &
-    $(dosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntwexes) $(wntaxpexes)
+    $(dosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
 
 all : .symbolic $(exes)
     @%null
@@ -99,7 +99,7 @@ underos2 : .symbolic $(dosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes)
 underdos : .symbolic $(dosexes) $(winexes) $(os2exes) $(wntexes)
     @%null
 
-underwnt : .symbolic $(dosexes) $(winexes) $(os2exes) $(wntexes) $(wntwexes)
+underwnt : .symbolic $(dosexes) $(winexes) $(os2exes) $(wntexes) # $(wntwexes)
     @%null
 
 underwntaxp : .symbolic $(wntaxpexes)

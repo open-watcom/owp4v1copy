@@ -49,8 +49,8 @@ win_c
 win_l
 win32_3r
 win32_3s
-wntw_3r
-wntw_3s
+rem wntw_3r
+rem wntw_3s
 cat tmp.log
 erase tmp.log>nul
 wnt_3r
