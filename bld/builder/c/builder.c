@@ -223,7 +223,7 @@ static void PushInclude( const char *name )
     new->ifdefskipping = 0;
     new->reset_abit = NULL;
     IncludeStk = new;
-    new->fp = fopen( name, "r" );
+    new->fp = fopen( name, "rb" );      // We will cook (handle \r) internally
     if( new->fp == NULL ) {
         Fatal( "Could not open '%s': %s\n", name, strerror( errno ) );
     }
@@ -335,18 +335,19 @@ static void SubstLine( const char *in, char *out )
     in = SkipBlanks( in );
     for( ;; ) {
         switch( *in ) {
-        case '^':
+        case '^':                       // Escape next byte special meaning
             ++in;
             switch( *in ) {
             case '\n':
             case '\0':
+            case '\r':                  // Allow DOS line in UNIX port
                 break;
             default:
                 *out++ = *in++;
                 break;
             }
             break;
-        case '[':                           // Surround special chars with a space
+        case '[':                       // Surround special chars with a space
         case ']':
         case '(':
         case ')':
@@ -361,6 +362,7 @@ static void SubstLine( const char *in, char *out )
             break;
         case '\n':
         case '\0':
+        case '\r':                      // Allow DOS line in UNIX port
             *out = '\0';
             return;
         default:
