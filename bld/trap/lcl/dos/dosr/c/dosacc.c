@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS standard debugger access functions.
 *
 ****************************************************************************/
 
@@ -197,13 +196,14 @@ struct {
 
 
 #ifdef DEBUG_ME
-void out( char * str )
+int out( char * str )
 {
     char *p;
 
     p = str;
     while( *p ) ++p;
     TinyWrite( 1, str, p - str );
+    return 0;
 }
 
 static char hexbuff[80];
@@ -230,7 +230,7 @@ char * hex( unsigned long num )
 #endif
 }
 #else
-    #define out( s )
+    #define out( s ) 0
     #define put( s )
     #define hex( n ) 1
 #endif
@@ -1031,23 +1031,28 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     trap_version ver;
 
 out( "in TrapInit\r\n" );
+out( "    checking environment:\r\n" );
     if( parm[0] == 'D' || parm[0] == 'd' ) {
         Flags.DRsOn = FALSE;
         ++parm;
-    } else if( X86CPUType() < 3 ) {
+    } else if( out( "    CPU type\r\n" ) || X86CPUType() < 3 ) {
         Flags.DRsOn = FALSE;
-    } else if( EnhancedWinCheck() & 0x7f ) {
+    } else if( out( "    WinEnh\r\n" ) || ( EnhancedWinCheck() & 0x7f ) ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */
         Flags.DRsOn = FALSE;
-    } else if( DOSEMUCheck() ) {
+// Bombs on DOS and OS/2 VDM!  - MN
+#if 0
+    } else if( out( "    DOSEMU\r\n" ) || DOSEMUCheck() ) {
         /* no fiddling with debug regs in Linux DOSEMU either */
-        Flags.DRsOn = FALSE;        
+        Flags.DRsOn = FALSE;
+#endif
     } else {
         Flags.DRsOn = TRUE;
     }
     if( parm[0] == 'O' || parm[0] == 'o' ) {
         Flags.NoOvlMgr = TRUE;
     }
+out( "    done checking environment\r\n" );
     err[0] = '\0'; /* all ok */
     /* NPXType initializes '87, so check for it before a program
        starts using the thing */

@@ -24,35 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Varoius environment checks for the DOS debugger.
 *
 ****************************************************************************/
 
 
 extern byte EnhancedWinCheck(void);
-#pragma aux EnhancedWinCheck = \
-        "mov    ax, 1600H" \
-        "int    2fH" \
+#pragma aux EnhancedWinCheck =     \
+        "mov    ax, 1600H"         \
+        "int    2fH"               \
         value [al];
 
 extern unsigned DPMIVersion();
-#pragma aux DPMIVersion = \
-        "       mov     ax,1687h" \
-        "       int     2fh" \
-        "       test    ax,ax" \
-        "       je      l1" \
-        "       xor     dx,dx" \
-        "l1:    " \
+#pragma aux DPMIVersion =          \
+        "       mov     ax,1687h"  \
+        "       int     2fh"       \
+        "       test    ax,ax"     \
+        "       je      l1"        \
+        "       xor     dx,dx"     \
+        "l1:    "                  \
         value [dx] modify [ ax bx cx dx si es di ]
 
 extern int DOSEMUCheck(void);
-#pragma aux DOSEMUCheck = \
-        "       xor    ax, ax" \
-        "       int    0e6h" \
+#pragma aux DOSEMUCheck =          \
+        "       xor    ax, ax"     \
+        "       int    0e6h"       \
         "       cmp    ax, 0aa55h" \
-        "       mov    ax, 0" \
-        "       jne    l1" \
-        "       inc    ax" \
-        "l1:" \
+        "       mov    ax, 0"      \
+        "       jne    l1"         \
+        "       inc    ax"         \
+        "l1:"                      \
         value [ax] modify [ bx cx dx si es di ]
