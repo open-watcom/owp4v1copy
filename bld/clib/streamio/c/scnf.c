@@ -259,6 +259,14 @@ static const CHAR_TYPE *get_opt( opt_str, specs )
             ++opt_str;
             break;
         case 'l':
+  #if defined(__LONG_LONG_SUPPORT__)
+            if ( opt_str[1] == 'l' ) {
+                specs->long_double_var = 1;
+                opt_str += 2;
+                break;
+            }
+  #endif
+        /* fall through */
         case 'w':
             specs->long_var = 1;
             ++opt_str;
