@@ -21,7 +21,3 @@ c_codech.exe : $(cobjs)
 
 j_codech.exe : $(jobjs)
         $(linker) option quiet $(lflags) name $^. file { $< }
-
-.cpp.obj: .AUTODEPEND
-        @set include=$(inc_path)
-        $(comp386plus) $(cflags) $(extra_c_flags_$[&) $[@
