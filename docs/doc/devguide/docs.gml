@@ -8,7 +8,7 @@ serve as an example of the documentation system usage.
 It is useful to note that the online documentation is almost, but not quite,
 independent of the rest of the Open Watcom compilers and tools. One
 important exception is online help files for Open Watcom GUI tools. Formatting
-online documentation generates include files containing #defines
+online documentation generates include files containing symbolic constants
 designating help entries. These are used during building of the tools
 binaries. If the binaries are not built with the right header files, the
 online help will be out of sync and not all that helpful.
@@ -28,19 +28,11 @@ A Win32 or OS/2 system can be used to produce most of the documentation.
 OS/2 Warp is required for the final step in producing the OS/2 online help
 files and Win32 system is needed for producing Windows help files (unless
 you can run the required help compilers on your host platform). DOS may
-work but is untested at this time.
+work for producing some of the documentation but is untested at this time.
 .np
 The environment variable
 .id doc_root
-must point to the root of the doc
-tree (the place where cmds, doc, gml, and Hlp directories are located).
-If you're wondering where the Hlp directory is, run
-.id mkall.bat/mkall.cmd
-located in the bat directory. But first you'll need to do something like
-.millust begin
- set doc_root=d:\OpenWatcom\docs
-.millust end
-.np
+must point to the root of the docunmentation tree.
 Add
 .id %doc_root%\cmds
 to your
@@ -64,8 +56,8 @@ help compilers.
 Here are the steps to formatting a book for printing on a PostScript
 printer.
 .millust begin
-cd %doc_root%\doc
-fmt <bn> pass 2
+cd %doc_root%\ps
+wmake hbook=<bn>
 .millust end
 .np
 where
@@ -76,37 +68,22 @@ devguide    Developer's Guide (this document)
 c_readme    C/C++ Read Me First
 cguide      C/C++ User's Guide
 cguideq     C/C++ User's Guide for QNX
-clib_dos    C Library Reference (for all systems except QNX)
-clib_fox    C Library Reference for FoxPro (obsolete)
-clib_nec    C Library Reference Kanji Functions subset
-clib_nt     C Library Reference for Win32 (Power++)
-clib_pp     C Library Reference for PenPoint (obsolete)
-clib_qnx    C Library Reference for QNX (stale)
-clib_tst    C Library Reference (for testing a subset of doc)
-clslib      C++ Class Library Reference (obsolete)
-cpplib      C++ Class Library Reference (current)
+clib        C Library Reference (for all systems except QNX)
+clibqnx     C Library Reference for QNX (stale)
+cpplib      C++ Class Library Reference
 ctools      C/C++ Tools User's Guide
+cw          CauseWay User's Guide
 f77graph    F77 Graphics Library Reference
 f_readme    F77 Read Me First
 fpguide     F77 Programmer's Guide
 ftools      F77 Tools User's Guide
 fuguide     F77 User's Guide
 guitool     Graphical Tools User's Guide
+ide         IDE User's Guide
 lguide      Linker User's Guide
 pguide      C/C++ Programmer's Guide
-rcerrs      Resource Compiler Diagnostic Messages (obsolete)
-wasaxp      AXP Assembler User's Guide (obsolete)
-wdbg        Debugger User's Guide
-wlinkerr    Linker Error Messages (obsolete)
+wd          Debugger User's Guide
 .millust end
-.np
-Two passes (i.e.,
-.id pass 2
-) should be enough to format most books so that
-the table of contents is placed at the front and cross-references are
-resolved.  If a message appears that says more passes are required to
-resolve things then specify
-.id pass 3.
 .np
 The output file is of type
 .id .ps.
@@ -114,54 +91,51 @@ You should be able to send this file to any PostScript printer or view
 it in GhostScript or convert it to PDF or do whatever it is you do with
 PostScript files.
 
-
+.*
 .section Building Online Help Documentation
 .*
 .np
-For Microsoft Help format (both old and new help formats):
+For Microsoft Help format (old Windows 3.x help format):
 .begbull
 .bull
 Switch to the appropriate directory:
 .millust begin
-cd %doc_root%\doc\hlp\win
+cd %doc_root%\win
 .millust end
 .bull
 Run
-.id mkall.bat
+.id wmake
 to create all online help.
-.np
-Look at
-.id mk.bat
-for a hint on how to do one document at a time. Or read on
-if you're lazy.
-.np
-The Win16 format help files (*.hlp) are copied to the
-.id %doc_root%\Hlp\win
-directory. The Win32 format help files (*.hlp, *.cnt) are copied to the
-.id %doc_root%\Hlp\win95
-directory.
+.bull
+Note that you must have the Microsoft Help Compiler (HC) installed.
 .endbull
 .np
-For Watcom Help format (for Watcom WHELP command):
+For Microsoft Help format ("new" Windows NT/95 help format):
 .begbull
 .bull
 Switch to the appropriate directory:
 .millust begin
-cd %doc_root%\doc\hlp\ib
+cd %doc_root%\nt
 .millust end
 .bull
 Run
-.id mkall.bat
+.id wmake
 to create all online help.
+.bull
+Note that you must have the Microsoft Help Compiler (HCRTF) installed.
+.endbull
 .np
-Look at
-.id mk.bat
-for a hint on how to do one document at a time.
-Or read on if you're lazy.
-.np
-The WHELP format help files (*.ihp) are copied to the
-.id %doc_root%\Hlp\ib
-directory.
+For Watcom Help format (for the WHELP command):
+.begbull
+.bull
+Switch to the appropriate directory:
+.millust begin
+cd %doc_root%\dos
+.millust end
+.bull
+Run
+.id wmake
+to create all online help.
 .endbull
 .np
 For OS/2 Help format:
@@ -169,57 +143,26 @@ For OS/2 Help format:
 .bull
 Switch to the appropriate directory:
 .millust begin
-cd %doc_root%\doc\hlp\os2
+cd %doc_root%\os2
 .millust end
 .bull
 Run
-.id mkall.bat
-to create all the IPF files for the OS/2 IPF compiler.
-.np
-Look at
-.id mk.bat
-for a hint on how to do one document at a time. Or read on
-if you're lazy.
+.id wmake
+to create all OS/2 online help.
 .bull
-Transfer the IPF files, bitmap files, etc. to an OS/2 system.
-.np
-Look at
-.id cpos2.bat
-for an example of what needs to be copied and what
-directories are set up.
-.endbull
-.np
-Under OS/2:
-.begbull
-.bull
-Define the
-.id doc_root
-environment variable.
-.bull
-Run
-.id doit.cmd
-under OS/2 to produce the INF and HLP files.
-.np
-Look at
-.id doit.cmd
-for a hint on how to do one document at a time.
-Or read on if you're lazy.
-.np
-The OS/2 format help files (*.INF, *.HLP) should be moved to the
-.id %doc_root%\Hlp\os2
-directory on the Win32 platform.
+Note that this will only work on an OS/2 system with the IBM IPF
+Compiler (IPFC) installed.
 .endbull
 .np
 To format one document at a time, go to the appropriate directory
 (for instance
-.id docs\doc\hlp\os2
+.id docs\os2
 ) and run wmake with argument
 .id hbook=<book_name>
 where
 .id <book_name>
 is one of the online books listed above.
-
-
+.*
 .section Editing the Documentation
 .*
 .np
@@ -346,7 +289,7 @@ of controlling every pixel &mdash it never works right anyway. Instead
 of saying "this is Arial 10pt Bold" you will say "this is a keyword"
 or "this is a code example" and let the machine worry about
 formatting.
-
+.*
 .section Diagnostic Messages
 .*
 .np
@@ -359,7 +302,3 @@ If you see
 messages, you cannot ignore them and have to fix them before any
 output is produced.
 
-.* Get text in a neat frame
-.*.remark
-.*Kevin Goodman describes "unwinds" in his article.
-.*.eremark
