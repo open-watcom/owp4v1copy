@@ -12,7 +12,7 @@ librarian       = *$(nlang_bin)\wlib
 libaxp          = *$(nlang_bin)\wlib
 # this is since the path stuff above doesn't appear to work at the moment
 !ifdef __NTAXP__
-bld_cl          = *$(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cl          = $(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
 bld_cc          = *$(nlang_bin)\wccaxp -zq -i$(bld_incs)
 !else
 !ifdef __OS2__
