@@ -98,12 +98,65 @@ bool traits_test( )
   return( rc );
 }
 
+bool advance_test( )
+{
+  bool rc = true;
+
+  char *p = raw_array;
+  std::advance( p, 2 );
+  if( *p != 'c' ) {
+    std::cout << "advance FAIL 0001\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+#ifdef _NEVER
+bool distance_test( )
+{
+  bool rc = true;
+
+  std::ptrdiff_t d =  std::distance( raw_array, raw_array + 2 );
+  if( d != 2 ) {
+    std::cout << "distance FAIL 0001\n"; rc = false;
+  }
+
+  return( rc );
+}
+#endif
+
+char reverse_array[] = { 'a', 'b', 'c', 'd' };
+
+bool reverse_test( )
+{
+  bool rc = true;
+
+  std::reverse_iterator< char * > p1( reverse_array + 2 );
+  std::reverse_iterator< char * > p2( reverse_array );
+  if( *p1 != 'b' ) {
+    std::cout << "reverse FAIL 0001\n"; rc = false;
+  }
+
+  ++p1;
+  if( *p1 != 'a' ) {
+    std::cout << "reverse FAIL 0002\n"; rc = false;
+  }
+
+  ++p1;
+  if( p1 != p2 ) {
+    std::cout << "reverse FAIL 0003\n"; rc = false;
+  }
+  return( rc );
+}
 
 int main( )
 {
   int rc = 0;
   try {
     if( !traits_test( )       ) rc = 1;
+    if( !advance_test( )      ) rc = 1;
+    // if( !distance_test( )     ) rc = 1;
+    if( !reverse_test( )      ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";
