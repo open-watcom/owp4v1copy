@@ -445,6 +445,7 @@ extern bool ProcOS2( void )
         }
     } else if( FmtData.type & MK_WIN_VXD ) {
         ProcOne( VXDFormatKeywords, SEP_NO, FALSE );
+        FmtData.dll = TRUE;
     } else {
         ProcOne( OS2FormatKeywords, SEP_NO, FALSE );
         if( FmtData.type & MK_OS2_LX ) {
