@@ -55,7 +55,7 @@ int             c;
         return (strchr(s, c));
 }
 
-getopt(nargc, nargv, ostr)
+int getopt(nargc, nargv, ostr)
 int             nargc;
 char          **nargv, *ostr;
 {
