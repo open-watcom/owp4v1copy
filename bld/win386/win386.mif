@@ -1,3 +1,5 @@
+!include deftarg.mif
+
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .obj .dbj .nbj .cbj
