@@ -366,8 +366,7 @@ ifdef OVL_MULTITHREAD
 endif
         mov     DS,DX           ; set ds to rt_seg
 ifdef OVL_MULTITHREAD
-;        mov     BX,rt_traps     ; initialize to point to first trap
-        mov     BX,offset rt_traps     ; initialize to point to first trap
+        mov     BX,rt_traps     ; initialize to point to first trap
         mov     byte ptr DS:rt_call_far,CALL_FAR
         mov     word ptr DS:rt_entry,offset __OVLRETTRAP__
         mov     word ptr DS:rt_entry+2,seg __OVLRETTRAP__
@@ -473,8 +472,7 @@ ifdef OVL_MULTITHREAD
         push    SI
         push    DS
         mov     DS,AX           ; get segment of trap
-;        mov     BX,rt_traps     ; start at first trap
-        mov     BX,offset rt_traps     ; start at first trap
+        mov     BX,rt_traps     ; start at first trap
         xor     SI,SI           ; used = FALSE
         _loop                   ; loop for each context
           mov   CX,te_stack_trap[BX]
@@ -611,15 +609,13 @@ __NCheckRetAddr__ proc near
           mov   AX,DI           ; save overlay number in ax
           shl   DI,CL           ; . . . multiply
           pop   CX              ; restore CX
-;          test  byte ptr CS:ENTRIES_M_1 + ove_flags_anc + 1[DI],10H
-          test  byte ptr CS:(__OVLTAB__.ov_entries - size OVLTAB_ENTRY) + ove_flags_anc + 1[DI],10H
+          test  byte ptr CS:ENTRIES_M_1 + ove_flags_anc + 1[DI],10H
                                 ; check if FLAG_RET_TRAP set
           _quif e               ; . . .
           inc   DX              ; this is a return trap
           mov   4[BX],AX        ; set the overlay number
 ifdef OVL_MULTITHREAD
-;          mov   AX,10H + rt_traps; find the active context
-          mov   AX,10H + offset rt_traps; find the active context
+          mov   AX,10H + rt_traps; find the active context
           _loop                 ; (assume return trap is in active stack)
             mov DI,AX           ; save pointer
             mov DI,ES:te_context[DI]
@@ -677,8 +673,7 @@ do_ret_trap proc near
         dec     AX                      ; get the overlay number and
         mov     DS,AX                   ; get return offset
 ifdef OVL_MULTITHREAD
-;        mov     AX,10H + rt_traps
-        mov     AX,10H + offset rt_traps
+        mov     AX,10H + rt_traps
         _loop
           mov   BX,AX
           add   AX,size TRAP_ENTRY      ; (note that loop must end)
