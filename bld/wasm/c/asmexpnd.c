@@ -66,7 +66,7 @@ static label_list *label_cmp( char *name, label_list *head )
 }
 
 
-void AddTokens( struct asm_tok **buffer, int start, int count )
+void AddTokens( ASM_TOK **buffer, int start, int count )
 /************************************************************/
 {
     int i;

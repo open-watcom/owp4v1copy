@@ -193,6 +193,8 @@ typedef struct global_vars{
 
 extern global_vars Globals;
 
+typedef struct asm_tok ASM_TOK;
+
 #endif
 
 #endif
