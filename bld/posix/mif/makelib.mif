@@ -18,12 +18,12 @@ make_lib = 1
 #
 lib=posix$(model).lbc
 posix$(model).lib : $(libobjs) $(lib)
-        $(librarian) /b posix$(model).lib @$(lib)
+        $(librarian) -b posix$(model).lib @$(lib)
 
 #
 #       create the lbc file
 #
-$(lib) : makefile $(posix_dir)\mif\lib.mif
+$(lib) : makefile $(posix_dir)/mif/lib.mif
         @%create $(LIB)
         @for %i in ($(LIBOBJS)) do @%append $(lib) -+%i
 
