@@ -83,7 +83,7 @@ static BOOL     WdeTrakGetWindowClass   ( WdeTrakObject *, char **, void *);
 static BOOL     WdeTrakDefine           ( WdeTrakObject *, POINT *, void *);
 static void     WdeTrakSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeTrakGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeTrakDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeTrakDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -494,7 +494,7 @@ void WdeTrakGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeTrakDefineHook( HWND hDlg, WORD message,
+BOOL WdeTrakDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
 #ifdef __NT__XX

@@ -83,7 +83,7 @@ static BOOL     WdeUpDnGetWindowClass   ( WdeUpDnObject *, char **, void *);
 static BOOL     WdeUpDnDefine           ( WdeUpDnObject *, POINT *, void *);
 static void     WdeUpDnSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeUpDnGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeUpDnDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeUpDnDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -464,7 +464,7 @@ void WdeUpDnGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeUpDnDefineHook( HWND hDlg, WORD message,
+BOOL WdeUpDnDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

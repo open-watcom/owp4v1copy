@@ -83,7 +83,7 @@ static BOOL     WdeHtKyGetWindowClass   ( WdeHtKyObject *, char **, void *);
 static BOOL     WdeHtKyDefine           ( WdeHtKyObject *, POINT *, void *);
 static void     WdeHtKySetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeHtKyGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeHtKyDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeHtKyDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -401,7 +401,7 @@ void WdeHtKyGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
     WdeEXGetDefineInfo ( o_info, hDlg );
 }
 
-BOOL WdeHtKyDefineHook( HWND hDlg, WORD message,
+BOOL WdeHtKyDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     /* touch unused vars to get rid of warning */

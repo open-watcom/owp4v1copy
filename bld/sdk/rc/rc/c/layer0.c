@@ -236,7 +236,7 @@ extern int RcClose( int fileno )
     return( close( fileno ) );
 } /* RcClose */
 
-extern int RcWrite( int fileno, const void * out_buff, int size )
+extern int RcWrite( int fileno, const void * out_buff, size_t size )
 /***************************************************************/
 {
     RcBuffer *  buff;
@@ -298,7 +298,7 @@ static int FillRcBuffer( int fileno, RcBuffer * buff )
     return( buff->Count );
 } /* FillRcBuffer */
 
-int RcRead( int fileno, void * in_buff, int size )
+int RcRead( int fileno, void * in_buff, size_t size )
 /*******************************************************/
 {
     RcBuffer *  buff;

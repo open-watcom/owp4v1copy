@@ -85,7 +85,7 @@ static BOOL     WdeScrollGetWindowClass ( WdeScrollObject *, char **, void *);
 static BOOL     WdeScrollDefine         ( WdeScrollObject *, POINT *, void *);
 static void     WdeScrollSetDefineInfo  ( WdeDefineObjectInfo *, HWND );
 static void     WdeScrollGetDefineInfo  ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeScrollDefineHook     ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeScrollDefineHook     ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 /****************************************************************************/
 /* static variables                                                         */
@@ -625,7 +625,7 @@ void WdeScrollGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
     return;
 }
 
-BOOL WdeScrollDefineHook ( HWND hDlg, WORD message,
+BOOL WdeScrollDefineHook ( HWND hDlg, UINT message,
                            WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

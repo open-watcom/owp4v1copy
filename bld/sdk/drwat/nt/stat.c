@@ -280,8 +280,8 @@ static void InitStatDialog( HWND hwnd )
 } /* InitStatDialog */
 
 #ifndef __NT__
-BOOL __export FAR PASCAL SegMapDlgProc( HWND hwnd, UINT msg, UINT wparam,
-                                    DWORD lparam )
+BOOL __export FAR PASCAL SegMapDlgProc( HWND hwnd, UINT msg, WPARAM wparam,
+                                    LPARAM lparam )
 {
     char        buff[128];
     WORD        i;

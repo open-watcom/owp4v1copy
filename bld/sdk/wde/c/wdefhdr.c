@@ -83,7 +83,7 @@ static BOOL     WdeHdrGetWindowClass    ( WdeHdrObject *, char **, void *);
 static BOOL     WdeHdrDefine            ( WdeHdrObject *, POINT *, void *);
 static void     WdeHdrSetDefineInfo     ( WdeDefineObjectInfo *, HWND );
 static void     WdeHdrGetDefineInfo     ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeHdrDefineHook        ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeHdrDefineHook        ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -423,7 +423,7 @@ void WdeHdrGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeHdrDefineHook( HWND hDlg, WORD message,
+BOOL WdeHdrDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

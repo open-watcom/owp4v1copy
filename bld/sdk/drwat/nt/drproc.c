@@ -68,7 +68,7 @@ void SaveExtra( FILE *f )
  * QueryEnddlgProc
  */
 
-BOOL CALLBACK QueryEndDlgProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
+BOOL CALLBACK QueryEndDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     WORD        cmd;
     char        buf[100];
@@ -143,7 +143,7 @@ static void setupSystemMenu( HWND hwnd ) {
 /*
  * WindowProc - main window message handler
  */
-LONG CALLBACK MainWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
+LONG CALLBACK MainWindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     WORD                        cmd;
     about_info                  ai;

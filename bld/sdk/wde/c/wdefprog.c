@@ -83,7 +83,7 @@ static BOOL     WdeProgGetWindowClass   ( WdeProgObject *, char **, void *);
 static BOOL     WdeProgDefine           ( WdeProgObject *, POINT *, void *);
 static void     WdeProgSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeProgGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeProgDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeProgDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -401,7 +401,7 @@ void WdeProgGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
     WdeEXGetDefineInfo ( o_info, hDlg );
 }
 
-BOOL WdeProgDefineHook( HWND hDlg, WORD message,
+BOOL WdeProgDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     /* touch unused vars to get rid of warning */

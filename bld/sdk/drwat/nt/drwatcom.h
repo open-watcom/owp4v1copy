@@ -160,7 +160,7 @@ extern system_config    SysConfig;
 extern HANDLE           ProcessHdl;
 
 /* drproc.c */
-LONG CALLBACK MainWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam );
+LONG CALLBACK MainWindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam );
 void ClearAlert( void );
 void Alert( void );
 
@@ -230,7 +230,7 @@ void CheckLogSize( void );
 void AnotateLog( HWND hwnd, HANDLE Instance, void (*fn)(char *)  );
 
 /* thrdctl.c */
-BOOL CALLBACK ThreadCtlProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam );
+BOOL CALLBACK ThreadCtlProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam );
 BOOL GetRetCode( HWND parent, RetCodeTypes type, DWORD id, DWORD *rc );
 BOOL ParseNumeric( char *buf, BOOL signed_val, DWORD *val );
 

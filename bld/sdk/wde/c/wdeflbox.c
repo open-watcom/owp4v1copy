@@ -82,7 +82,7 @@ static BOOL     WdeLBoxGetWindowClass   ( WdeLBoxObject *, char **, void *);
 static BOOL     WdeLBoxDefine           ( WdeLBoxObject *, POINT *, void *);
 static void     WdeLBoxSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeLBoxGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeLBoxDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeLBoxDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 /****************************************************************************/
 /* static variables                                                         */
@@ -593,7 +593,7 @@ void WdeLBoxGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
     return;
 }
 
-BOOL WdeLBoxDefineHook ( HWND hDlg, WORD message,
+BOOL WdeLBoxDefineHook ( HWND hDlg, UINT message,
                          WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

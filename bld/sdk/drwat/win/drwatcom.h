@@ -203,7 +203,7 @@ BOOL DoGlobalEntryHandle( GLOBALENTRY *ge, HANDLE hmem );
 void Death( DWORD msgid, ... );
 
 /* winproc.c */
-extern LONG __export FAR PASCAL WindowProc( HWND, int, WORD, LONG );
+extern LONG __export FAR PASCAL WindowProc( HWND, UINT, WPARAM, LPARAM );
 
 /* drwatcom.c */
 void Alert( void );

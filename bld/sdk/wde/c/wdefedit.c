@@ -82,7 +82,7 @@ static BOOL     WdeEditGetWindowClass   ( WdeEditObject *, char **, void *);
 static BOOL     WdeEditDefine           ( WdeEditObject *, POINT *, void *);
 static void     WdeEditSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeEditGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeEditDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeEditDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 /****************************************************************************/
 /* static variables                                                         */
@@ -562,7 +562,7 @@ void WdeEditGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
     return;
 }
 
-BOOL WdeEditDefineHook ( HWND hDlg, WORD message,
+BOOL WdeEditDefineHook ( HWND hDlg, UINT message,
                          WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

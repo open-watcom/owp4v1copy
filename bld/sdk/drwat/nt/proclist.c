@@ -548,7 +548,7 @@ static void fillTaskListBox( HWND hwnd, char *buf ) {
 /*
  * ProcPriorityDlg
  */
-BOOL CALLBACK ProcPriorityDlg( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
+BOOL CALLBACK ProcPriorityDlg( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     WORD                cmd;
     ProcNode            *ownedinfo;
@@ -677,7 +677,7 @@ void AddRunningErrMsg( void *_info ) {
 /*
  * ProcListProc
  */
-BOOL CALLBACK ProcListProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
+BOOL CALLBACK ProcListProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     char                buf[200];
     char                action[ ACTION_BUFSIZE ];

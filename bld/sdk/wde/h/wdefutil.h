@@ -75,7 +75,7 @@ extern void     WdeGetDefineObjectSymbolInfo ( WdeDefineObjectInfo *, HWND );
 extern void     WdeGetDefineObjectHelpSymbolInfo ( WdeDefineObjectInfo *, HWND );
 extern void     WdeMapWindowRect         ( HWND, HWND, RECT *);
 extern Bool     WdeIsStrSpace            ( char * );
-extern Bool     WdeWinStylesHook         ( HWND, WORD, WPARAM, LPARAM,
+extern Bool     WdeWinStylesHook         ( HWND, UINT, WPARAM, LPARAM,
                                            DialogStyle );
 extern void     WdeAddSymbolToObjectHashTable ( WdeResInfo *, char *,
                                                 WdeHashValue );

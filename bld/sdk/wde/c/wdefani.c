@@ -83,7 +83,7 @@ static BOOL     WdeAniCGetWindowClass   ( WdeAniCObject *, char **, void *);
 static BOOL     WdeAniCDefine           ( WdeAniCObject *, POINT *, void *);
 static void     WdeAniCSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeAniCGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeAniCDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeAniCDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -436,7 +436,7 @@ void WdeAniCGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeAniCDefineHook( HWND hDlg, WORD message,
+BOOL WdeAniCDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     /* touch unused vars to get rid of warning */

@@ -85,7 +85,7 @@ static BOOL     WdeSBarGetWindowClass   ( WdeSBarObject *, char **, void *);
 static BOOL     WdeSBarDefine           ( WdeSBarObject *, POINT *, void *);
 static void     WdeSBarSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeSBarGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeSBarDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeSBarDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -483,7 +483,7 @@ void WdeSBarGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeSBarDefineHook( HWND hDlg, WORD message,
+BOOL WdeSBarDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

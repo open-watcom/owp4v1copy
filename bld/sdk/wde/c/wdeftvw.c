@@ -83,7 +83,7 @@ static BOOL     WdeTViewGetWindowClass  ( WdeTViewObject *, char **, void *);
 static BOOL     WdeTViewDefine          ( WdeTViewObject *, POINT *, void *);
 static void     WdeTViewSetDefineInfo   ( WdeDefineObjectInfo *, HWND );
 static void     WdeTViewGetDefineInfo   ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeTViewDefineHook      ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeTViewDefineHook      ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -454,7 +454,7 @@ void WdeTViewGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeTViewDefineHook( HWND hDlg, WORD message,
+BOOL WdeTViewDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     BOOL processed;

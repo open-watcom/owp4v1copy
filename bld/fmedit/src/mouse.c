@@ -50,11 +50,11 @@
 
 // mouse press actions
 static void ActionBegin( POINT, WORD, OBJPTR );
-static void ResizeBegin( POINT, WORD, void * );
-static void BeginPaste( POINT, BOOL, void * );
-static void ResetEdit( POINT, WORD, void * );
+static void ResizeBegin( POINT, WORD, OBJPTR );
+static void BeginPaste( POINT, WORD, OBJPTR );
+static void ResetEdit( POINT, WORD, OBJPTR );
 static void IgnoreMousePress( POINT, WORD, OBJPTR );
-static void UnexpectedPressStateRecover( POINT, WORD, void * );
+static void UnexpectedPressStateRecover( POINT, WORD, OBJPTR );
 
 // mouse move and release actions
 static void CheckMousePosn( POINT );
@@ -147,7 +147,7 @@ extern void ProcessDBLCLK( POINT point )
   }
 
 
-static void ResizeBegin( POINT pt, WORD ks, void * d )
+static void ResizeBegin( POINT pt, WORD ks, OBJPTR d )
 /****************************************************/
 
 /* Begin a resizing operation */
@@ -196,7 +196,7 @@ static void ResizeBegin( POINT pt, WORD ks, void * d )
   }
 
 
-static void ResetEdit( POINT pt, WORD keystate, void * d )
+static void ResetEdit( POINT pt, WORD keystate, OBJPTR d )
 /********************************************************/
 
 /*  Reset the previous editing operation and proceed with the default
@@ -234,7 +234,7 @@ static void UnexpectedStateRecover( POINT pt )
 #endif
    }
 
-static void UnexpectedPressStateRecover( POINT pt, WORD ks, void * d )
+static void UnexpectedPressStateRecover( POINT pt, WORD ks, OBJPTR d )
 /********************************************************************/
 
 /*  A mouse press was received in a state where it should be impossible to
@@ -739,7 +739,7 @@ extern void ProcessMouseMove( POINT point )
     }
   }
 
-static void BeginPaste( POINT pt, BOOL keystate, void * d )
+static void BeginPaste( POINT pt, WORD keystate, OBJPTR d )
 /*********************************************************/
 
 /* begin a paste operation */

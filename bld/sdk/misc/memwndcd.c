@@ -152,16 +152,16 @@ char *MemWndToBrStr( unsigned long value, DWORD addr ) {
 /*
  * ToIndex - convert value to a hex string with a + or - at the begining
  */
-char *MemWndToIndex( long value, unsigned long addr ) {
+char *MemWndToIndex( unsigned long value, unsigned long addr ) {
 
     char        sign[2];
 
     addr = addr;
-    if( value >= 0 ) {
-        sign[0] = '+';
-    } else if( value < 0 ) {
+    if( (long)value < 0 ) {
         sign[0] = '-';
-        value = -value;
+        value = -(long)value;
+    } else {
+        sign[0] = '+';
     }
     sign[1] = '\0';
     sprintf( StatBuf, "%s%lX", sign, value );

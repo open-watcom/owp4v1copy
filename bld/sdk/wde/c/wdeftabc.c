@@ -83,7 +83,7 @@ static BOOL     WdeTabCGetWindowClass   ( WdeTabCObject *, char **, void *);
 static BOOL     WdeTabCDefine           ( WdeTabCObject *, POINT *, void *);
 static void     WdeTabCSetDefineInfo    ( WdeDefineObjectInfo *, HWND );
 static void     WdeTabCGetDefineInfo    ( WdeDefineObjectInfo *, HWND );
-static BOOL     WdeTabCDefineHook       ( HWND, WORD, WPARAM, LPARAM,
+static BOOL     WdeTabCDefineHook       ( HWND, UINT, WPARAM, LPARAM,
                                           DialogStyle );
 
 /****************************************************************************/
@@ -504,7 +504,7 @@ void WdeTabCGetDefineInfo ( WdeDefineObjectInfo *o_info, HWND hDlg )
 #endif
 }
 
-BOOL WdeTabCDefineHook( HWND hDlg, WORD message,
+BOOL WdeTabCDefineHook( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
 #ifdef __NT__XX

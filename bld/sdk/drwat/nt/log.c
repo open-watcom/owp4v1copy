@@ -476,7 +476,7 @@ static void logDumpMemItem( HANDLE prochdl, MEMORY_BASIC_INFORMATION *mbi ) {
     }
 }
 
-BOOL CALLBACK MemDmpDlgProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
+BOOL CALLBACK MemDmpDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     char                        buf[150];
     SelMemDlgInfo               *info;
@@ -912,7 +912,7 @@ static BOOL getNewLogName( HWND parent, char *buf, char *title, BOOL outfile ) {
 /*
  * LogOptsDlgProc
  */
-BOOL CALLBACK LogOptsDlgProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
+BOOL CALLBACK LogOptsDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     WORD                cmd;
     char                buf[BUF_SIZE];

@@ -1156,7 +1156,7 @@ BOOL WINEXPORT WdeControlDefineProc ( HWND hDlg, UINT message,
 }
 
 
-Bool WdeWinStylesHook ( HWND hDlg, WORD message,
+Bool WdeWinStylesHook ( HWND hDlg, UINT message,
                         WPARAM wParam, LPARAM lParam, DialogStyle mask )
 {
     DialogStyle  tstyle;
