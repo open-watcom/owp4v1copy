@@ -558,7 +558,9 @@ extern void InitSignals( void ) {
     sig_count = 0;
     DoingUpdate= FALSE;
 #ifndef NEC_98_BUG
+#ifndef __UNIX__
     signal ( SIGBREAK, breakHandler);
+#endif
     signal ( SIGINT, breakHandler);
 #endif
 }
