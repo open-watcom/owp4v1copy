@@ -265,14 +265,14 @@ typedef struct  opnode {
             SYM_HANDLE      sym_handle;// OPR_FUNCTION
             func_flags      flags;
         }func;
-        struct  try_info {
+        struct { /* try_info */
             union {
                 SYM_HANDLE      try_sym_handle; // OPR_EXCEPT, OPR_FINALLY
                 short           try_index;      // OPR_TRY
             };
             short       parent_scope;
         };
-        struct  ptr_conv_info {         // OPR_CONVERT_PTR
+        struct { /* ptr_conv_info */        // OPR_CONVERT_PTR
             char        oldptr_class;
             char        newptr_class;
         };

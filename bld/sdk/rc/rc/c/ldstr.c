@@ -36,7 +36,7 @@
 #include "global.h"
 #include "fcntl.h"
 #include "ldstr.h"
-#ifndef __UNIX__
+#if !defined( __UNIX__ ) || defined( __WATCOMC__ )
 #include "process.h"
 #endif
 #include "wreslang.h"

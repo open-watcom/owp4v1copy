@@ -43,7 +43,7 @@ dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $[@
 !ifeq bootstrap 1
 
 inc_dirs = -I$(watcom_dir)/h -I. -I../h
-dwtjbflags = -c $(cflags) -o $@
+dwtjbflags = -c $(cflags)
 dwmakeabflags = dwmakeab.tbj dwutils.tbj -o $<
 
 !else
