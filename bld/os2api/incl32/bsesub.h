@@ -222,8 +222,8 @@ typedef struct _SCALEFACT {
 typedef _Packed struct _MOUEVENTINFO {
     USHORT fs;
     ULONG  time;
-    USHORT row;
-    USHORT col;
+    SHORT  row;
+    SHORT  col;
 } MOUEVENTINFO, *PMOUEVENTINFO;
 
 typedef struct _NOPTRRECT {
