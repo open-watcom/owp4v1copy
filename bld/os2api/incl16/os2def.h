@@ -29,7 +29,7 @@ typedef unsigned int    UINT;
 typedef unsigned long   ULONG;
 
 typedef unsigned short  SHANDLE;
-typedef void _far       *LHANDLE;
+typedef void FAR        *LHANDLE;
 
 typedef SHANDLE    HFILE;
 typedef HFILE FAR  *PHFILE;
@@ -50,6 +50,25 @@ typedef BOOL FAR        *PBOOL;
 #ifndef FALSE
 #define FALSE  0
 #endif
+
+#define MAKEP(sel, off)  ((PVOID)MAKEULONG(off, sel))
+
+#define SELECTOROF(p)    (((PUSHORT)&(p))[1])
+#define OFFSETOF(p)      (((PUSHORT)&(p))[0])
+
+#define MAKETYPE(v, type) (*((type far *)&v))
+
+#define FIELDOFFSET(type, field) ((SHORT)&(((type *)0)->field))
+
+#define MAKEULONG(l, h)  ((ULONG)(((USHORT)(l)) | ((ULONG)((USHORT)(h))) << 16))
+#define MAKELONG(l, h)   ((LONG)MAKEULONG(l, h))
+#define MAKEUSHORT(l, h) (((USHORT)(l)) | ((USHORT)(h)) << 8)
+
+#define LOUCHAR(w)  ((UCHAR)(w))
+#define HIUCHAR(w)  ((UCHAR)(((USHORT)(w) >> 8) & 0xff))
+#define LOUSHORT(l) ((USHORT)(l))
+#define HIUCHAR(w)  ((UCHAR)(((USHORT)(w) >> 8) & 0xff))
+#define HIUSHORT(l) ((USHORT)(((ULONG)(l) >> 16) & 0xffff))
 
 typedef CHAR FAR     *PCHAR;
 typedef SHORT FAR    *PSHORT;
@@ -78,3 +97,127 @@ typedef USHORT       TID;
 typedef TID FAR      *PTID;
 typedef VOID FAR     *HSEM;
 typedef HSEM FAR     *PHSEM;
+
+typedef LHANDLE   HPS, FAR *PHPS;
+typedef LHANDLE   HDC, FAR *PHDC;
+typedef LHANDLE   HRGN, FAR *PHRGN;
+typedef LHANDLE   HBITMAP, FAR *PHBITMAP;
+typedef LHANDLE   HMF, FAR *PHMF;
+typedef LONG      COLOR, FAR *PCOLOR;
+
+typedef struct _POINTL {
+    LONG x;
+    LONG y;
+} POINTL, FAR  *PPOINTL, NEAR *NPPOINTL;
+
+typedef struct _POINTS {
+    SHORT x;
+    SHORT y;
+} POINTS, FAR *PPOINTS;
+
+typedef struct _RECTL {
+    LONG xLeft;
+    LONG yBottom;
+    LONG xRight;
+    LONG yTop;
+} RECTL, FAR  *PRECTL, NEAR *NPRECTL;
+
+typedef CHAR STR8[8], FAR *PSTR8;
+
+#define FATTR_SEL_ITALIC            0x0001
+#define FATTR_SEL_UNDERSCORE        0x0002
+#define FATTR_SEL_OUTLINE           0x0008
+#define FATTR_SEL_STRIKEOUT         0x0010
+#define FATTR_SEL_BOLD              0x0020
+#define FATTR_TYPE_KERNING          0x0004
+#define FATTR_TYPE_MBCS             0x0008
+#define FATTR_TYPE_DBCS             0x0010
+#define FATTR_TYPE_ANTIALIASED      0x0020
+#define FATTR_FONTUSE_NOMIX         0x0002
+#define FATTR_FONTUSE_OUTLINE       0x0004
+#define FATTR_FONTUSE_TRANSFORMABLE 0x0008
+
+#define FACESIZE 32
+
+typedef struct _FATTRS {
+    USHORT usRecordLength;
+    USHORT fsSelection;
+    LONG   lMatch;
+    CHAR   szFacename[FACESIZE];
+    USHORT idRegistry;
+    USHORT usCodePage;
+    LONG   lMaxBaselineExt;
+    LONG   lAveCharWidth;
+    USHORT fsType;
+    USHORT fsFontUse;
+} FATTRS, FAR *PFATTRS;
+
+#define FM_TYPE_FIXED     0x0001
+#define FM_TYPE_LICENSED  0x0002
+#define FM_TYPE_KERNING   0x0004
+#define FM_TYPE_DBCS      0x0010
+#define FM_TYPE_MBCS      0x0018
+#define FM_TYPE_64K       0x8000
+#define FM_DEFN_OUTLINE   0x0001
+#define FM_DEFN_GENERIC   0x8000
+#define FM_SEL_ITALIC     0x0001
+#define FM_SEL_UNDERSCORE 0x0002
+#define FM_SEL_NEGATIVE   0x0004
+#define FM_SEL_OUTLINE    0x0008
+#define FM_SEL_STRIKEOUT  0x0010
+#define FM_SEL_BOLD       0x0020
+#define FM_CAP_NOMIX      0x0001
+
+typedef struct _FONTMETRICS {
+    CHAR   szFamilyname[FACESIZE];
+    CHAR   szFacename[FACESIZE];
+    USHORT idRegistry;
+    USHORT usCodePage;
+    LONG   lEmHeight;
+    LONG   lXHeight;
+    LONG   lMaxAscender;
+    LONG   lMaxDescender;
+    LONG   lLowerCaseAscent;
+    LONG   lLowerCaseDescent;
+    LONG   lInternalLeading;
+    LONG   lExternalLeading;
+    LONG   lAveCharWidth;
+    LONG   lMaxCharInc;
+    LONG   lEmInc;
+    LONG   lMaxBaselineExt;
+    SHORT  sCharSlope;
+    SHORT  sInlineDir;
+    SHORT  sCharRot;
+    USHORT usWeightClass;
+    USHORT usWidthClass;
+    SHORT  sXDeviceRes;
+    SHORT  sYDeviceRes;
+    SHORT  sFirstChar;
+    SHORT  sLastChar;
+    SHORT  sDefaultChar;
+    SHORT  sBreakChar;
+    SHORT  sNominalPointSize;
+    SHORT  sMinimumPointSize;
+    SHORT  sMaximumPointSize;
+    USHORT fsType;
+    USHORT fsDefn;
+    USHORT fsSelection;
+    USHORT fsCapabilities;
+    LONG   lSubscriptXSize;
+    LONG   lSubscriptYSize;
+    LONG   lSubscriptXOffset;
+    LONG   lSubscriptYOffset;
+    LONG   lSuperscriptXSize;
+    LONG   lSuperscriptYSize;
+    LONG   lSuperscriptXOffset;
+    LONG   lSuperscriptYOffset;
+    LONG   lUnderscoreSize;
+    LONG   lUnderscorePosition;
+    LONG   lStrikeoutSize;
+    LONG   lStrikeoutPosition;
+    SHORT  sKerningPairs;
+    SHORT  sFamilyClass;
+    LONG   lMatch;
+} FONTMETRICS, FAR *PFONTMETRICS;
+
+
