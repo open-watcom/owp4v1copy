@@ -633,6 +633,11 @@ static msg_status_t doError(    // ISSUE ERROR
         unsigned too_many : 1;  // - TRUE ==> too many messages
     } flag;
 
+#ifndef NDEBUG
+    fflush(stdout);
+    fflush(stderr);
+#endif
+
     retn = MS_NULL;
     if( ! errLimitExceeded ) {
         flag.too_many = TRUE;

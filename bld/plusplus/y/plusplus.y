@@ -503,6 +503,20 @@ goal-symbol
         $$ = (PTREE) $2;
         t = YYEOFTOKEN;
     }
+    /* I have included this as a stack reset leaves us open to abuse now we fixed bug 218       */
+    /* All linkage gets reset when we have a syntax error earlier in the file which screws up   */
+    /* closing of the parser. We only issue an error if we have not reported any earlier errors */
+    /* as this error comes out badly at the end of a file                                       */
+    | Y_RIGHT_BRACE
+    {
+        error_state_t save;
+        CErrCheckpoint(&save);
+        if(0 == save){
+            SetErrLoc( &yylp[1] );
+            CErr1( ERR_MISPLACED_RIGHT_BRACE );
+            what = P_DIAGNOSED;
+        }
+    }
     ;
 
 expr-decl-stmt
