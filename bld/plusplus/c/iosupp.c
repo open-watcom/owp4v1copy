@@ -233,7 +233,6 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
       case OFT_SRCDEP:
         outFileChecked |= 1 << typ;
         if( !(path = SrcDepFileName ) ) {
-            use_defaults = TRUE;
             path = WholeFName;
         }
         else 
