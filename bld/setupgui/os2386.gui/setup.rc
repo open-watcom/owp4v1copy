@@ -3,3 +3,5 @@
 
 ICON ICON_SETUP setup.ico
 BITMAP BITMAP_SPLASH "../splash.bmp"
+
+#include "gui.rc"
