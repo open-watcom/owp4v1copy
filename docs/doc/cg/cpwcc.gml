@@ -1055,7 +1055,7 @@ DOS         __DOS__, MSDOS
 .do end
 OS/2        __OS2__
 :CMT. PenPoint    __PENPOINT__
-QNX         __QNX__
+QNX         __QNX__, __UNIX__
 Netware     __NETWARE__, __NETWARE_386__
 NT          __NT__
 .if &version ge 107 .do begin
@@ -1064,6 +1064,7 @@ Windows     __WINDOWS__, _WINDOWS, __WINDOWS_386__
 .el .do begin
 Windows     __WINDOWS__, __WINDOWS_386__
 .do end
+Linux       __LINUX__, __UNIX__
 .millust end
 .autonote Notes:
 .note
@@ -1087,7 +1088,9 @@ OS/2).
 .note
 The
 .kwm __QNX__
-macro is defined when the build target is "QNX" (16-bit or 32-bit
+and
+.kwm __UNIX__
+macros are defined when the build target is "QNX" (16-bit or 32-bit
 QNX).
 .note
 The
@@ -1121,6 +1124,12 @@ The
 macro is defined when the build target is "WINDOWS" or the "zw" option
 is specified and you are using a 32-bit compiler (identifies the
 target operating system as 32-bit extended Windows).
+.note
+The
+.kwm __LINUX__
+and
+.kwm __UNIX__
+macros are defined when the build target is "LINUX" (32-bit Linux).
 .endnote
 .np
 The following macros are defined for the indicated options.

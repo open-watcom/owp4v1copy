@@ -99,6 +99,9 @@
 :SET symbol='mkwLINE'       value='__LINE__'.
 :SET symbol='mkwLINE_sp'    value='_&SYSRB._LINE_&SYSRB._'.
 :CMT.
+:SET symbol='mkwLINUX'        value='__LINUX__'.
+:SET symbol='mkwLNX_sp'     value='_&SYSRB._LINUX_&SYSRB._'.
+:CMT.
 :SET symbol='mkwMEDIUM'     value='__MEDIUM__'.
 :SET symbol='mkwMED_sp'     value='_&SYSRB._MEDIUM_&SYSRB._'.
 :CMT.

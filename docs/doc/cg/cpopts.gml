@@ -1297,9 +1297,11 @@ when the host operating system is DOS,
 when the host operating system is OS/2,
 .note NT
 when the host operating system is Windows NT (including Windows 95),
-or
 .note QNX
 when the host operating system is QNX.
+or
+.note LINUX
+when the host operating system is Linux.
 .endnote
 .np
 It also prevents the compiler from defining the default target macro.
@@ -1331,9 +1333,13 @@ if the compiler was being run under DOS,
 if using the OS/2 hosted compiler,
 .kwm __NT__
 if using the Windows NT or Windows 95 hosted compiler,
-or
 .kwm __QNX__
+.kwm __UNIX__
 if using the QNX hosted version.
+or
+.kwm __LINUX__
+.kwm __UNIX__
+if using the Linux hosted version.
 Any string consisting of letters, digits, and the underscore character
 may be used for the target name.
 .np
@@ -1390,6 +1396,12 @@ Defines the macro
 Causes the compiler to use stack-based calling conventions.
 Also defines the macro
 .kwm __NETWARE_386__.
+.note QNX
+Defines the macro
+.kwm __UNIX__.
+.note LINUX
+Defines the macro
+.kwm __UNIX__.
 :cmt. .note penpoint
 :cmt. (32-bit only)
 :cmt. Causes the compiler to use stack-based calling conventions unless

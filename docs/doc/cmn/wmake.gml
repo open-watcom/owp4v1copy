@@ -460,6 +460,7 @@ __NT__ = defined if Windows NT version
 __NT386__ = defined if 32-bit Windows NT version
 __OS2__ = defined if OS/2 version
 __QNX__ = defined if QNX version
+__LINUX__ = defined if Linux version
 #endif
 # clear &sysper.EXTENSIONS list
 &sysper.EXTENSIONS:
