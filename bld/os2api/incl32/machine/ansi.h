@@ -34,7 +34,7 @@
 #ifndef _MACHINE_ANSI_H_
 #define _MACHINE_ANSI_H_
 
-#ifndef __size_t
+#if !defined(__size_t) && !defined(_SIZE_T_DEFINED)
 #define __size_t
 #define _BSD_SIZE_T_    unsigned int
 #endif
