@@ -3,6 +3,7 @@
 #
 
 !include cproj.mif
+!include deftarg.mif
 !include defrule.mif
 
 !ifndef bin_root
