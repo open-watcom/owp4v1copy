@@ -38,11 +38,16 @@ cpp_386         = *$(nlang_bin)\wpp386 -zq -i$(bld_incs)
 !loaddll wppaxp $(nlang_dll)\wppdaxp.dll
 !loaddll wlink  $(nlang_dll)\wlink.dll
 !loaddll wlib   $(nlang_dll)\wlibd.dll
+!loaddll wcc386 $(nlang_dll)\wccd386.dll
+!loaddll $(nlang_bin)\wcc386 $(nlang_dll)\wccd386.dll
 !loaddll $(nlang_bin)\wlib   $(nlang_dll)\wlibd.dll
 !loaddll $(nlang_bin)\wccaxp $(nlang_dll)\wccdaxp.dll
 !loaddll $(nlang_bin)\wppaxp $(nlang_dll)\wppdaxp.dll
 !loaddll $(nlang_bin)\wlink  $(nlang_dll)\wlink.dll
+!loaddll $(nlang_bin)\wcc    $(nlang_dll)\wccd.dll
 !loaddll $(nlang_bin)\wcc386 $(nlang_dll)\wccd386.dll
+!loaddll $(nlang_bin)\wpp    $(nlang_dll)\wppdi86.dll
+!loaddll $(nlang_bin)\wpp386 $(nlang_dll)\wppd386.dll
 !endif
 
 !ifeq proj_name cc
