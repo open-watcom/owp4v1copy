@@ -421,7 +421,7 @@ static int far_strlen( FAR_STRING s, int precision )
     register int len;
 
     len = 0;
-    while( *s++ != NULLCHAR  &&  len != precision )  ++len;
+    while( len != precision  &&  *s++ != NULLCHAR )  ++len;
     return( len );
 }
 
