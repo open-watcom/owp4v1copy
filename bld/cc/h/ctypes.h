@@ -710,6 +710,7 @@ enum {
     TS_WINDOWS,
     TS_CHEAP_WINDOWS,
     TS_NETWARE,
+    TS_OS2,
     TS_QNX,
     TS_NETWARE5,
     TS_LINUX

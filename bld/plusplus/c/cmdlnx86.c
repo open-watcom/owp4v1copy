@@ -214,6 +214,8 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
             }
         #elif defined( __QNX__ )
             SetTargetLiteral( &target_name, "QNX" );
+        #elif defined( __LINUX__ )
+            SetTargetLiteral( &target_name, "LINUX" );
         #elif defined( __OS2__ )
             SetTargetLiteral( &target_name, "OS2" );
         #elif defined( __NT__ )
@@ -244,6 +246,12 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
         TargetSystem = TS_NT;
     } else if( 0 == strcmp( target_name, "OS2" ) ) {
         TargetSystem = TS_OS2;
+    } else if( 0 == strcmp( target_name, "QNX" ) ) {
+        TargetSystem = TS_QNX;
+        PreDefineStringMacro( "__UNIX__" );
+    } else if( 0 == strcmp( target_name, "LINUX" ) ) {
+        TargetSystem = TS_LINUX;
+        PreDefineStringMacro( "__UNIX__" );
 #endif
     } else if( 0 == strcmp( target_name, "WINDOWS" ) ) {
         TargetSystem = TS_WINDOWS;

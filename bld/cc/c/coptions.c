@@ -265,6 +265,10 @@ local void SetTargSystem()                               /* 07-aug-90 */
     {
         TargSys = TS_QNX;
     }
+    else if( strcmp( SwData.sys_name, "OS2" ) == 0 )
+    {
+        TargSys = TS_OS2;
+    }
     else
     {
         TargSys = TS_OTHER;
@@ -1755,6 +1759,7 @@ static void InitCPUModInfo()
     CodeClassName = NULL;
     PCH_FileName  = NULL;
     TargetSwitches = 0;
+    TargSys = TS_OTHER;
 #if _MACHINE == _ALPHA | _MACHINE == _PPC | _MACHINE == _SPARC
     TextSegName   = ".text";
     DataSegName   = ".data";
@@ -1767,7 +1772,6 @@ static void InitCPUModInfo()
     TextSegName   = "";
     DataSegName   = "";
     GenCodeGroup  = "";
-    TargSys = TS_OTHER;
     CompFlags.register_conv_set = 0;
     CompFlags.register_conventions = 1;
     GenSwitches = MEMORY_LOW_FAILS;

@@ -894,6 +894,10 @@ static int set_build_target( void )
         } else {
             /* do nothing ... __WINDOWS__ already defined */
         }
+    } else if( stricmp( Options.build_target, "QNX" ) == 0 ) {
+        add_constant( "__UNIX__" );
+    } else if( stricmp( Options.build_target, "LINUX" ) == 0 ) {
+        add_constant( "__UNIX__" );
     }
     return( NOT_ERROR );
 }
