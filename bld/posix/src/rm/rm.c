@@ -70,8 +70,8 @@ typedef struct dd {
   char          name[1];
 }                       iolist;
 
-void DoRM( char *f );
-void RecursiveRM( char *dir );
+void DoRM( const char *f );
+void RecursiveRM( const char *dir );
 
 /* start of mainline */
 int main( int argc, char *argv[] )
@@ -128,7 +128,7 @@ int main( int argc, char *argv[] )
 }
 
 /* DoRM - perform RM on a specified file */
-void DoRM( char *f )
+void DoRM( const char *f )
 {
     iolist              *fhead = NULL;
     iolist              *ftail = NULL;
@@ -163,7 +163,7 @@ void DoRM( char *f )
             i = -1;
         }
     }
-    d = OpenDirAll( f, wild );
+    d = OpenDirAll( (char*)f, wild );
     if( d == NULL ) {
         PrintALineThenDrop( "File (%s) not found.", f );
         return;
@@ -256,7 +256,7 @@ void DoRM( char *f )
     }
 
     /* process any directories found */
-    if( rflag && ( tmp= dhead ) != NULL ) {
+    if( rflag && ( tmp = dhead ) != NULL ) {
         while( tmp != NULL ) {
             RecursiveRM( tmp->name );
             dtail = tmp;
@@ -267,7 +267,7 @@ void DoRM( char *f )
 }
 
 /* DoRMdir - perform RM on a specified directory */
-void DoRMdir( char *dir )
+void DoRMdir( const char *dir )
 {
     unsigned    attribute;
     int         rc;
@@ -289,7 +289,7 @@ void DoRMdir( char *dir )
 }
 
 /* RecursiveRM - do an RM recursively on all files */
-void RecursiveRM( char *dir )
+void RecursiveRM( const char *dir )
 {
     int         i;
     char        fname[_MAX_PATH];
