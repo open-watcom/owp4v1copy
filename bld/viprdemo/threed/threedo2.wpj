@@ -19,8 +19,8 @@ MCommand
 1
 5
 WFileName
-12
-nt\nt_3d.tgt
+14
+os2\os2_3d.tgt
 6
 WVList
 1
@@ -31,13 +31,13 @@ WRect
 0
 0
 5700
-4280
+4293
 0
 0
 9
 WFileName
-12
-nt\nt_3d.tgt
+14
+os2\os2_3d.tgt
 0
 -1
 7

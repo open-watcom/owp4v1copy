@@ -84,6 +84,11 @@ md %relroot%\%defrel%\samples\ide\os2
 md %relroot%\%defrel%\samples\ide\win
 md %relroot%\%defrel%\samples\ide\win32
 md %relroot%\%defrel%\samples\ide\win386
+md %relroot%\%defrel%\samples\ide\fortran
+md %relroot%\%defrel%\samples\ide\fortran\os2
+md %relroot%\%defrel%\samples\ide\fortran\win
+md %relroot%\%defrel%\samples\ide\fortran\win32
+md %relroot%\%defrel%\samples\ide\fortran\win386
 md %relroot%\%defrel%\samples\win\alarm
 md %relroot%\%defrel%\samples\win\datactl
 md %relroot%\%defrel%\samples\win\edit

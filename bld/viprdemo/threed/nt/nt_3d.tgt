@@ -12,7 +12,7 @@ NDLL
 3
 WString
 5
-n_2dn
+n_2do
 0
 0
 0
@@ -83,8 +83,8 @@ n????Include directories:
 0
 21
 WString
-34
-$(watcom_dir)\h;$(watcom_dir)\nt_h
+31
+$(watcom_dir)\h;$(%watcom)\h\nt
 0
 22
 MRState

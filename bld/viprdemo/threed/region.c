@@ -498,7 +498,7 @@ HANDLE rgn_end(
 
         /* copy the pieces */
         if( hld != NULL ) {
-            ptr = GlobalLock( hld );
+            ptr = (char far *)GlobalLock( hld );
             tag = (rgn_tag_def *) ptr;
             ptr += sizeof(rgn_tag_def);
             tag->set_coll_offset = _get_offset( tag, ptr );
