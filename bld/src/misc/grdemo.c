@@ -108,7 +108,7 @@ static void DrawText( short width, short y )
     xc = VC.numxpixels / 2;
     _setcharsize( width, width * 3 / 2 );
     _settextalign( _CENTER, _BOTTOM );
-    _grtext( xc, y, "Open WATCOM C" );
+    _grtext( xc, y, "Open Watcom C" );
     _setcharsize( width, width );
     _settextalign( _CENTER, _TOP );
     _grtext( xc, VC.numypixels - y, "GRAPHICS" );
