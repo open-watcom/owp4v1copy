@@ -183,7 +183,6 @@ system begin netware_clib
     option caseexact
     option start=_Prelude
     option exit=_Stop
-    file %NOVELLNDK%/imports/clibpre.obj
     library %WATCOM%/lib386/netware/clib3s.lib
     import @%NOVELLNDK%/imports/clib.imp
 end
