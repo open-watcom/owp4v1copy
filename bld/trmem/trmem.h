@@ -44,7 +44,7 @@ typedef void (*_trmem_who)( void );  /* generic pointer to code */
 #define _TRMEM_NO_ROUTINE   ((_trmem_who)0)
 
 /* generic pointer to code with realloc signature */
-typedef void (*_trmem_realloc_who)(void*,size_t);
+typedef void *(*_trmem_realloc_who)(void*,size_t);
 #define _TRMEM_NO_REALLOC ((_trmem_realloc_who)0)
 
 /*
