@@ -1300,7 +1300,7 @@ designed to be included for other make files.
 #
 target : .symbolic .explicit
         @echo updating first target
-	
+
 next : .symbolic
         @echo updating next target
 .millust end
@@ -1539,7 +1539,7 @@ directive.
 The
 .id &sysper.JUST_ENOUGH
 directive is equivalent to the "j" command line option.
-The timestamps of created targets are set to be the same as those of their 
+The timestamps of created targets are set to be the same as those of their
 youngest dependendents.
 .millust begin
 #
@@ -2494,14 +2494,14 @@ The construct $(macroname:string1=string2) substitutes macroname with
 each occurrence of string1 replaced by string2. We have already seen that
 it can be useful for a macro to be a set of object file names separated
 by spaces. The file directive in &lnkcmd can accept a set of names separated
-by commas. It is useful not to require a second macro for this purpose.
+by commas.
 .millust begin
 #
 # programming example
 # (macro substitution)
 #
 
-.c.obj:
+&sysper.c.obj:
         &compcmd -zq $*.c
 
 object_files = main.obj input.obj calc.obj output.obj
@@ -2511,20 +2511,26 @@ plot&exe : $(object_files)
 
 .millust end
 .np
-Macro substitution does not work with special macros because they can not
-(yet) be invoked with parentheses. The following does not work:
+Note that macro substitution cannot be used with special macros.
+.np
+It is also worth noting that although the above example shows a valid
+approach, the same problem, that is, providing a list of object files
+to &lnkcmd, can be solved without macro subsitutions. The solution is
+using the {} syntax of &lnkcmd, as shown in the following example.
+Refer to the &lnkname Guide for details.
 .millust begin
 #
-# programming example - does not work
-# (macro substitution)
+# programming example
+# (not using macro substitution)
 #
 
-.c.obj:
-        wcc386 -zq $*.c
+&sysper.c.obj:
+        &compcmd -zq $*.c
 
-plot.exe : main.obj input.obj calc.obj output.obj
-        @echo linking $(<)
-        &lnkcmd name $@ op q file $(<: =,)
+object_files = main.obj input.obj calc.obj output.obj
+
+plot&exe : $(object_files)
+        &lnkcmd name $@ file { $(object_files) }
 
 .millust end
 .*
