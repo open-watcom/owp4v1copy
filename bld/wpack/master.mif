@@ -1,0 +1,24 @@
+proj_name = wpack
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = $(wpack_dir)\h;$(wtouch_dir);$(wtouch_dir)\$(host_os)$(host_cpu)
+
+.c: ..\c;$(wtouch_dir)
+
+objs =               &
+        common.obj   &
+        decode.obj   &
+        dtparse.obj  &
+        encode.obj   &
+        io.obj       &
+        lookup.obj   &
+        message.obj  &
+        qsort.obj    &
+        wildargv.obj &
+        wpack.obj
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet,map $(lflags) name $^. file { $< }
