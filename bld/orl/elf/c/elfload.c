@@ -161,6 +161,9 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
     case ET_DYN:
         elf_file_hnd->type = ORL_FILE_TYPE_SHARED_OBJECT;
         break;
+    case ET_CORE:
+        elf_file_hnd->type = ORL_FILE_TYPE_CORE;
+        break;
     default:
         elf_file_hnd->type = ORL_FILE_TYPE_NONE;
         break;

@@ -104,7 +104,8 @@ typedef enum {
     ORL_FILE_TYPE_EXECUTABLE,
     ORL_FILE_TYPE_SHARED_OBJECT,
     ORL_FILE_TYPE_DLL,
-    ORL_FILE_TYPE_IMPORT
+    ORL_FILE_TYPE_IMPORT,
+    ORL_FILE_TYPE_CORE
 } orl_file_type;
 
 typedef enum {
