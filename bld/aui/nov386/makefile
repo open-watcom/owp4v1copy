@@ -1,2 +1,6 @@
-compile = $(comp386) $[* -w4 -ms -4s -s -fpc -dNLM -ot -bt=nlm
-!include ../makefile
+#pmake: os_nov cpu_386
+host_OS = nov
+host_CPU = 386
+memory_model_386 = s
+extra_c_flags = -4s -s -dNLM -ot
+!include ../master.mif
