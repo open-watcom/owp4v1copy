@@ -29,8 +29,10 @@
 *
 ****************************************************************************/
 
-
 #include <wlib.h>
+
+#include "trmemcvr.h"
+
 static MemPtr   *memPtr;
 void InitMem( void )
 {
