@@ -6,7 +6,7 @@ causeway_autodepends = .AUTODEPEND
 !include defrule.mif
 !include deftarg.mif
 
-extra_a_flags = -DENGLISH=1 -i="../inc"
+extra_a_flags = -DENGLISH=1 -I"../inc"
 
 extra_l_flags = op map, verbose, statics
 
