@@ -1,7 +1,5 @@
-#pmake: all flops float small msvc
+#pmake: flops float small msvc
 
-host_os  = nt
-host_cpu = 386
 compiler = msvc
 
 !include ..\flops.mif

@@ -6,7 +6,13 @@
 extra_includes	= $(bench_dir)\support
 extra_cflags	=
 
+!ifeq host_os nt
 obj_files = timer.obj report.obj
+!else ifeq host_os os2
+obj_files = timero32.obj report.obj
+!else
+!error Unsupported host_os
+!endif
 
 support.lib : $(obj_files)
 	%make lib
