@@ -901,6 +901,12 @@ STATIC int intSystem( const char *cmd )
                 continue;
             }
             status = -1;
+        } else if( WIFSIGNALED( status ) ) {
+            if( WTERMSIG( status ) > 0 && WTERMSIG( status ) <= 15 ) {
+                PrtMsg( INF| (SIG_ERR_0 + WTERMSIG( status ) ) );
+            } else {
+                PrtMsg( INF| SIG_ERR_0, WTERMSIG( status ) );
+            }
         }
         CheckForBreak();
         return status;
