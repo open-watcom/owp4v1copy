@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Profiler support functions dealing with executable formats.
 *
 ****************************************************************************/
 
@@ -49,9 +48,6 @@
 #include "ovltab.h"
 #include "msg.h"
 
-//#include "support.def"
-//#include "msg.def"
-//#include "memutil.def"
 extern void *ProfAlloc(size_t size);
 extern void ProfFree(void *ptr);
 extern void *ProfRealloc(void *p,size_t new_size);
@@ -983,7 +979,7 @@ STATIC bint LoadOverlayInfo()
         /* segments being base zero values */
         entry->base_para = entry->start_para + base_segment + 1;
         entry->disk_addr  = formal_entry.disk_addr;
-        if( formal_entry.fname & EXE_FILENAME ) {
+        if( formal_entry.fname & OVE_EXE_FILENAME ) {
             ovl_name = image->name;
             entry->separate_overlay = B_FALSE;
         } else {
