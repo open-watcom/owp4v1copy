@@ -11820,3 +11820,27 @@ void fn()
     bool b = T;
 }
 :eerrbad.
+
+:MSGSYM. ERR_UNKNOWN_TEMPLATE_SPECIALIZATION
+:MSGTXT. unknown template specialization of '%S'
+:MSGJTXT.
+:errbad.
+template<class T>
+struct A { };
+
+template<class T>
+void A<T *>::f() {
+}
+:eerrbad.
+
+:MSGSYM. ERR_WRONG_NR_TEMPLATE_ARGUMENTS
+:MSGTXT. wrong number of template arguments for '%S'
+:MSGJTXT.
+:errbad.
+template<class T>
+struct A { };
+
+template<class T, class U>
+struct A<T, U> { };
+}
+:eerrbad.
