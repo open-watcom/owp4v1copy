@@ -49,7 +49,7 @@
 #include "cvdbg.h"
 #include "dbcue.h"
 #include "owl.h"
-#include "rscobj.h"
+#include "owlobj.h"
 
 extern  seg_id            DbgSegDef( char *name );
 extern owl_section_handle DbgSectDefComdat( char *str );

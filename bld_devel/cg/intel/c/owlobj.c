@@ -42,7 +42,6 @@
 #include "optlbl.h"
 #include "ocentry.h"
 #include "sysmacro.h"
-#include "reloc.h"
 #include "cgswitch.h"
 #include "model.h"
 #include "dbcue.h"
