@@ -31,13 +31,7 @@
 
 
 #ifndef _CG_SWITCH_INCLUDED
-/*
-    The target independant switches start at the top of the long and grow
-    down, while the target dependant switches grow up. That way we can add
-    switches to either set without having to do a global re-compile.
 
-    Sadly these values have now met in the middle.
-*/
 #define NO_OPTIMIZATION         0x80000000L
 #define NUMBERS                 0x40000000L
 #define FORTRAN_ALIASING        0x20000000L
@@ -66,6 +60,11 @@
 #define MICROSOFT_COMPATIBLE    0x00000400L
 #define POSITION_INDEPENDANT    0x00000200L
 #define DLL_RESIDENT_CODE       0x00000100L
+
+#define OBJ_ELF                 0x00000080L
+#define OBJ_COFF                0x00000040L
+#define OBJ_OWL                 (OBJ_COFF | OBJ_ELF)
+#define OBJ_ENDIAN_BIG          0x00000020L
 
 #define _TARG_CGSWITCH_SHIFT     0
 

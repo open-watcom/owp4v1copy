@@ -582,6 +582,11 @@ static void MacroDefs()
         Define_Macro( "__SW_OF" );
     }
 #endif
+#if _CPU == _AXP || _CPU == _PPC
+    if( GenSwitches & OBJ_ENDIAN_BIG ) {
+        Define_Macro( "__BIG_ENDIAN__" );
+    }
+#endif
     if( GenSwitches & SUPER_OPTIMAL ) {
         Define_Macro( "__SW_OH" );
     }
@@ -628,13 +633,13 @@ static void MacroDefs()
     if( CompFlags.unique_functions ) {
         Define_Macro( "__SW_OU" );
     }
-    #if _CPU == 386
-        if( CompFlags.register_conventions ) {
-            Define_Macro( "__SW_3R" );
-        } else {
-            Define_Macro( "__SW_3S" );
-        }
-    #endif
+#if _CPU == 386
+    if( CompFlags.register_conventions ) {
+        Define_Macro( "__SW_3R" );
+    } else {
+        Define_Macro( "__SW_3S" );
+    }
+#endif
     if( CompFlags.emit_names ) {
         Define_Macro( "__SW_EN" );
     }
@@ -970,6 +975,18 @@ static void Set_ESP()          { TargetSwitches |= STATEMENT_COUNTING; }
 
 #if _CPU == 386
 static void Set_EZ()           { TargetSwitches |= EZ_OMF; }
+static void Set_OMF()          { TargetSwitches &= ~(OBJ_ELF | OBJ_COFF); }
+#endif
+
+#if /*_CPU == 386 || */_CPU == _AXP || _CPU == _PPC
+static void Set_ELF()          { GenSwitches &= ~OBJ_OWL;
+                                 GenSwitches |= OBJ_ELF; }
+static void Set_COFF()         { GenSwitches &= ~OBJ_OWL;
+                                 GenSwitches |= OBJ_COFF; }
+#endif
+#if _CPU == _AXP || _CPU == _PPC
+static void Set_EndianLittle() { GenSwitches &= ~OBJ_ENDIAN_BIG; }
+static void Set_EndianBig()    { GenSwitches |= OBJ_ENDIAN_BIG; }
 #endif
 
 static void Set_EP()
@@ -1506,7 +1523,16 @@ static struct option const CFE_Options[] = {
     { "etp",    0,              Set_ETP },
     { "esp",    0,              Set_ESP },
 #endif
+#if /*_CPU == 386 ||*/ _CPU == _AXP || _CPU == _PPC
+    { "eoe",    0,              Set_ELF },
+    { "eoc",    0,              Set_COFF },
+#endif
+#if _CPU == _AXP || _CPU == _PPC
+    { "el",     0,              Set_EndianLittle },
+    { "eb",     0,              Set_EndianBig },
+#endif
 #if _CPU == 386
+    { "eoo",    0,              Set_OMF },
     { "ez",     0,              Set_EZ },
 #endif
     { "e=#",    0,              SetErrorLimit },

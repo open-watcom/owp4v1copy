@@ -73,9 +73,21 @@ Options:
 -en           emit routine names in the code segment
 -ep[=<num>]   call prologue hook routine with <num> stack bytes available
 :endsegment
+:segment Taxp | Tppc
+-eb           emit big-endian object files
+-el           emit little-endian object files
+:endsegment
+:: add T386 later
+:segment Taxp | Tppc
+-eoc          emit COFF object files
+-eoe          emit ELF object files
+:endsegment
+:segment HIDDEN
+-eoo          emit OMF object files
+:endsegment
 -eq           do not display error messages (they are still written to a file)
 :segment T386
--et           P5 profiling
+-et           Pentium profiling
 -ez           generate PharLap EZ-OMF object files
 :endsegment
 -fh[=<file>]  use pre-compiled headers

@@ -440,17 +440,25 @@ extern  void    InitSegDefs() {
 
     // fixme - should use routines with some error checking
     owl_client_funcs    funcs = { PutBytes, NULL, NULL, CGAlloc, CGFree };
+    owl_format          format;
 
     owlHandle = OWLInit( &funcs,
-    #if _TARGET & _TARG_AXP
+#if _TARGET & _TARG_AXP
         OWL_CPU_ALPHA
-    #elif _TARGET & _TARG_PPC
+#elif _TARGET & _TARG_PPC
         OWL_CPU_PPC
-    #else
-        #error Unknown RISC target
-    #endif
+#else
+    #error Unknown RISC target
+#endif
         );
-    owlFile = OWLFileInit( owlHandle, FEAuxInfo( NULL, SOURCE_NAME ), (owl_client_file)MAGIC_FLAG, OWL_FORMAT_COFF, OWL_FILE_OBJECT );
+
+    if( _IsModel( OBJ_ELF ) ) {
+        format = OWL_FORMAT_ELF;
+    } else {
+        format = OWL_FORMAT_COFF;
+    }
+
+    owlFile = OWLFileInit( owlHandle, FEAuxInfo( NULL, SOURCE_NAME ), (owl_client_file)MAGIC_FLAG, format, OWL_FILE_OBJECT );
     if( _IsTargetModel( OWL_LOGGING ) ) {
         OWLLogEnable( owlFile, (void *)STDOUT_FILENO );
     }

@@ -65,13 +65,21 @@ structure, defined below.
 :DD.Generate line number debugging information.
 :DT.FORTRAN_ALIASING
 :DD.Assume pointers are only used for parameter passing.
+:DT.DBG_DF
+:DD.Generate debugging information in DWARF format.
+:DT.DBG_CV
+:DD.Generate debugging information in CodeView format. If neither
+DBG_DF nor DBG_CV is set, debugging information (if any) is
+generated in the Watcom format.
 :DT.RELAX_ALIAS
 :DD.Assume that a static/extern variable and a pointer to that same
 variable are not used within the same routine.
 :DT.DBG_LOCALS
-:DD.Generate local symbol information for use by the WATCOM debugger.
+:DD.Generate local symbol information for use by a debugger.
 :DT.DBG_TYPES
-:DD.Generate typing information for use by the WATCOM debugger.
+:DD.Generate typing information for use by a debugger.
+:DT.LOOP_UNROLLING
+:DD.Turn on loop unrolling.
 :DT.LOOP_OPTIMIZATION
 :DD.Turn on loop optimizations.
 :DT.INS_SCHEDULING
@@ -85,6 +93,25 @@ register).
 mathematically correct, but are numerically unstable.
 E.g.
 converting division by a constant to a multiplication by the reciprocal.
+:DT.NULL_DEREF_OK
+:DD.NULL points to valid memory and may be dereferenced.
+:DT.FPU_ROUNDING_INLINE
+:DD.Inline floating-point value rounding (actually truncation) routine
+when converting floating-point values to integers.
+:DT.FPU_ROUNDING_OMIT
+:DD.Omit floating-point value rounding entirely and use FPU default. Results
+will not be ISO C compliant.
+:DT.ECHO_API_CALLS
+:DD.Log each call to the code generator with its arguments and return value.
+Only available in debug builds.
+:DT.OBJ_ELF
+:DD.Emit ELF object files.
+:DT.OBJ_COFF
+:DD.Emit COFF object files. For Intel compilers, OMF object files will
+be emitted in the absence of either switch.
+:DT.OBJ_ENDIAN_BIG
+:DD.Emit big-endian object files (COFF or ELF). If OBJ_ENDIAN_BIG is not
+set, little-endian objects will be generated.
 :eDL.
 :DL tsize='2i' break.
 :DTHD.x86 Switch
@@ -2638,7 +2665,7 @@ that has a low part.
 :XMP.
 hw_reg_set low16( hw_reg_set reg )
 {
-    hw_reg_set	low;
+    hw_reg_set  low;
 
     HW_CAsgn( low, HW_EMPTY );
     HW_CTurnOn( low, HW_AX );
@@ -2646,7 +2673,7 @@ hw_reg_set low16( hw_reg_set reg )
     HW_CTurnOn( low, HW_CX );
     HW_CTurnOn( low, HW_DX );
     if( HW_Ovlap( reg, low ) ) {
-	HW_OnlyOn( reg, low );
+    HW_OnlyOn( reg, low );
     }
 }
 :eXMP.
