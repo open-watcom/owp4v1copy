@@ -116,7 +116,7 @@ int SelectItem( selectitem *si )
     rc = SelectLineInFile( &sfd );
     si->event = sfd.event;
     if( !rc ) {
-        if( sfd.sl == -1 ) {
+        if( sfd.sl == -1 || sfd.sl == 0 ) {
             if( si->result != NULL ) {
                 si->result[0] = 0;
             }
