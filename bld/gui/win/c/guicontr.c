@@ -387,7 +387,7 @@ WPI_MRESULT CALLBACK GUIEditFunc( HWND hwnd, WPI_MSG message, WPI_PARAM1 wparam,
         _wpi_subclasswindow( hwnd, call_back );
         break;
     }
-    return( (WPI_MRESULT)_wpi_callwindowproc( call_back, hwnd, message, wparam, lparam ) );
+    return( (WPI_MRESULT)_wpi_callwindowproc( (WPI_WNDPROC)call_back, hwnd, message, wparam, lparam ) );
 }
 
 /*
@@ -425,7 +425,7 @@ WPI_MRESULT CALLBACK GUIGroupBoxFunc( HWND hwnd, WPI_MSG message, WPI_PARAM1 wpa
         _wpi_releasepres( hwnd, hdc );
         break;
     }
-    return( (WPI_MRESULT)_wpi_callwindowproc( call_back, hwnd, message, wparam, lparam ) );
+    return( (WPI_MRESULT)_wpi_callwindowproc( (WPI_WNDPROC)call_back, hwnd, message, wparam, lparam ) );
 }
 
 WPI_PROC GUIDoSubClass( HWND hwnd, gui_control_class class )

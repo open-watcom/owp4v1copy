@@ -40,7 +40,6 @@
 #define GET_CLASS_STYLE(hwnd)   GetClassLong( hwnd, GCL_STYLE )
 
 #define __FAR
-#define HOOKPROC        PROC
 #define WINMAINENTRY    WINAPI
 #define GET_EM_SETSEL_MPS(iStart, iEnd) (UINT)(iStart), (LONG)(iEnd)
 #define GET_WM_COMMAND_CMD(wp, lp)      HIWORD(wp)
