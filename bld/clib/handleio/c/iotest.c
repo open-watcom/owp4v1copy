@@ -325,8 +325,6 @@ void TestLocking( void )
 {
     int                 handle;
     int                 status;
-    int                 count;
-    char                ch;
 
     handle = open( "test.fil", O_RDWR );
     VERIFY( handle != -1 );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap management functions test.
 *
 ****************************************************************************/
 
@@ -36,6 +35,10 @@
 #include <time.h>
 #include <string.h>
 #include <dos.h>
+
+#ifdef __SW_BW
+ #include <wdefwin.h>
+#endif
 
 #define MAX_ITER        5000
 

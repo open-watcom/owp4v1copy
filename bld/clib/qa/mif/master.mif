@@ -66,7 +66,7 @@ defwin=-bw
 
 comp_i86  = -fpc
 comp_axp  =
-comp_opts = -oaxt -d1 -zq -fo=$^*.obj
+comp_opts = -wx -we -oaxt -d1 -zq -fo=$^*.obj
 link_i86  = DEBUG dwarf
 link_axp  = DEBUG codeview
 link_opts = NAME $^* OPTION quiet
