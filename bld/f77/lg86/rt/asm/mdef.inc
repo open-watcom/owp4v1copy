@@ -45,7 +45,7 @@ _MEDIUM         =       ( _BIG_CODE   or _SMALL_DATA )
 _LARGE          =       ( _BIG_CODE   or _BIG_DATA )
 _HUGE           =       ( _BIG_CODE   or _HUGE_DATA )
 
-include         .\model.inc     ; defines _MODEL symbol
+include         ./model.inc     ; defines _MODEL symbol
 
 ifdef _MASM
                 offset32 equ <offset FLAT:>
