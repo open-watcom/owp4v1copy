@@ -12,6 +12,7 @@ components286 =      &
         msg.lbc      &
         nampipes.lbc &
         nls.lbc      &
+        os2sm.lbc    &
         pmgpi.lbc    &
         pmshapi.lbc  &
         pmwin.lbc    &
