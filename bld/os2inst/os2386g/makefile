@@ -22,12 +22,13 @@ all: install.exe # uninstal.exe
 
 install.exe: $(inst_obj) ..\install.rc
     $(linker) $(lflags) f { $(inst_obj) }
-    rc -i $(%watcom)\h\os2 -i ..\h ..\install.rc -r install.res
+    cp ..\install.rc # because stupid old versions of RC can't handle this
+    rc -i $(%watcom)\h\os2 -i ..\h install.rc
     rc install.res
 
 uninstal.exe: $(uninst_obj) ..\uninstal.rc
     $(linker) $(lflags) f { $(uninst_obj) }
-    rc -i $(%watcom)\h\os2 -i ..\h ..\uninstal.rc uninstal.exe
+    rc -i $(%watcom)\h\os2 -i ..\h uninstal.rc
 
 !include cproj.mif
 !include defrule.mif
