@@ -618,8 +618,8 @@ int main( void )
     for( i = 0, mach = AMachine ; i < NUM_ELTS( AMachine ); ++i, ++mach ) {
         insnames = mach->ins_names;
         num_ins = mach->num_ins;
+        max_name = sizeof( INVALID_INS ) - 1;
         for( ; *insnames != NULL ; ) {
-            max_name = sizeof( INVALID_INS ) - 1;
             for( j = 0; j < *num_ins; ++j ) {
                 len = AddString( &(*insnames)[j] );
                 if( len > max_name ) max_name = len;
