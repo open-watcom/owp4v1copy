@@ -209,7 +209,7 @@ static  void    ScoreAdd( score *p, int i, score_info *info ) {
         score       *first;
         score       *curr;
 
-        if( info->class == N_INDEXED ) {
+        if( (info->class == N_INDEXED) && (info->index_reg != NO_INDEX) ) {
             first = &p[ info->index_reg ];
             curr = first;
             for(;;) {
