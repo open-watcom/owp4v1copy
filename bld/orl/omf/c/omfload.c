@@ -55,6 +55,7 @@ static void             setInitialData( omf_file_handle ofh )
     ofh->flags = 0;
     ofh->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
     ofh->flags |= ORL_FILE_FLAG_16BIT_MACHINE;
+    ofh->debug_style = OMF_DBG_STYLE_CODEVIEW;
 }
 
 
