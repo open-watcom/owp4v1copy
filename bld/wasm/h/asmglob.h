@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WASM globals and limits.
 *
 ****************************************************************************/
 
@@ -35,8 +34,8 @@
 #include <watcom.h>
 
 #define MAX_TOKEN               100     // there is no restriction for this number
-#define MAX_LINE_LEN            256     // there is no restriction for this number
-#define MAX_TOK_LEN             80
+#define MAX_LINE_LEN            512     // there is no restriction for this number
+#define MAX_TOK_LEN             256
 #define MAX_FILE_NAME           30
 #define MAX_ID_LEN              247
 #define MAX_MEMORY              1024

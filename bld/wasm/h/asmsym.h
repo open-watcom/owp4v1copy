@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assmebler symbols internal structures and definitions.
 *
 ****************************************************************************/
 
@@ -105,10 +104,10 @@ typedef struct asm_sym {
         uint            segidx;
         uint_32         offset;
         uint_8          public;
-        uint_8          first_size;   /* size of 1st initializer in bytes */
-        uint_8          first_length; /* size of 1st initializer--elts. dup'd */
-        uint_8          total_size;   /* total number of bytes (sizeof) */
-        uint_8          total_length; /* total number of elements (lengthof) */
+        uint_32         first_size;   /* size of 1st initializer in bytes */
+        uint_32         first_length; /* size of 1st initializer--elts. dup'd */
+        uint_32         total_size;   /* total number of bytes (sizeof) */
+        uint_32         total_length; /* total number of elements (lengthof) */
         char            *(*mangler)( struct asm_sym *sym, char *buffer );
 #else
         long            addr;
