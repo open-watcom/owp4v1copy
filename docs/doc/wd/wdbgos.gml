@@ -15,6 +15,8 @@ See the section entitled :HDREF refid='vidwin3'..
 See the section entitled :HDREF refid='viddll'..
 .note Disabling 386/486 debug registers
 See the section entitled :HDREF refid='viddosd'..
+.note Linux debugging
+See the section entitled :HDREF refid='vidlinux'..
 .note QNX debugging
 See the section entitled :HDREF refid='vidqnx'..
 .endnote
@@ -346,6 +348,106 @@ file parameter.
 .exam begin
 C>&dbgcmd /trap=std;d calendar
 .exam end
+.*
+.section *refid=vidlinux Debugging Under Linux
+.*
+.np
+.ix 'debugging under Linux'
+.ix 'Linux' 'debugging'
+.ix '.wdrc'
+.ix 'Linux' 'customization'
+When the debugger starts up, it will attempt to open the
+initialization file
+.mono .wdrc
+provided that you have not specified the
+.sy Invoke
+command line option.
+It looks for this file in all the usual places (
+.ct
+.ev CWD,
+.ev WD_PATH,
+.mono /opt/watcom/wd
+.ct ).
+This file normally contains your customization commands.
+If it is found, it is processed as the default configuration file.
+You would normally place this file in your home directory.
+.np
+If the file does not exist, the debugger then looks for
+the
+.mono &dbgcmd..&dbgsuff
+file.
+.np
+If you do not want the debugger to use the
+.mono .wdrc
+file then you can do one of two things &mdash. make sure that it
+cannot be located (e.g., delete it) or use the
+.sy Invoke
+command line option (you could specify the
+.mono &dbgcmd..&dbgsuff
+file as the target).
+.np
+The supplied version of the
+.mono &dbgcmd..&dbgsuff
+file contains an "invoke" command referencing the file
+.mono setup..&dbgsuff.
+This file, in turn, contains a "configfile" command and "invoke"
+commands referencing other command files.
+The "configfile" command marks
+.mono setup.&dbgsuff
+as the default file name to use when the debugger writes out the
+current configuration.
+.np
+The following section entitled :HDREF refid='vidlinuxs'. describes the
+search order for debugger files under Linux.
+.*
+.section *refid=vidlinuxs Search Order for &dbgname Support Files under Linux
+.*
+.np
+There are several supporting files provided with the &dbgname..
+These files fall into five categories.
+.ix 'support files' 'dbg'
+.ix 'support files' 'trp'
+.ix 'support files' 'prs'
+.ix 'support files' 'hlp'
+.ix 'support files' 'sym'
+.autonote
+.note
+&dbgname command files (files with the ".&dbgsuff" suffix).
+.note
+&dbgname trap files (files with the ".trp" suffix).
+.note
+&dbgname parser files (files with the ".prs" suffix).
+.note
+&dbgname help files (files with the ".hlp" suffix).
+.note
+&dbgname symbolic debugging information files (files with the ".sym"
+suffix).
+.endnote
+.np
+.ix 'support files' 'search order'
+.ix 'search order' 'Linux'
+The search order for &dbgname support files is as follows:
+.autopoint
+.point
+the current directory,
+.point
+the paths listed in the
+.ev &dbgcmdup._PATH
+environment variable,
+.point
+the path listed in the
+.ev HOME
+environment variable, and, finally,
+.point
+the "/opt/watcom/wd" directory.
+.endpoint
+.np
+You should note the following when using the remote debugging feature
+of the &dbgname..
+When the
+.sy REMotefiles
+option is specified, the debugger also attempts to locate the &dbgname's
+support files (command files, trap files, etc.) on the task machine.
 .*
 .section *refid=vidqnx Debugging Under QNX
 .*

@@ -14,6 +14,8 @@ The following topics are discussed:
 .bull
 :HDREF refid='winopt'.
 .bull
+:HDREF refid='linuxopt'.
+.bull
 :HDREF refid='qnxopt'.
 .bull
 :HDREF refid='videvar'.
@@ -39,7 +41,8 @@ This is the OS/2 character-mode debugger.
 .note binp&pc.&dbgcmd.w.exe
 This is the OS/2 windowed (GUI) debugger.
 .note wd
-This is the name of the debugger included with QNX.
+This is the name of the debugger included with QNX, as well as the
+name of the Linux version.
 .endnote
 .np
 See the sections entitled
@@ -497,6 +500,59 @@ with all video adapters.
 
 .endnote
 .*
+.section *refid=linuxopt Linux Options
+.*
+.np
+You can use the following switch for the Linux debugger.
+.begnote $break
+
+.note -Console=console_spec
+.ix 'options' 'Console'
+.ix 'Console option'
+specifies the virtual console to use for debugger windows.
+This may be a console number as in the following example.
+.exam begin
+-console=2
+.exam end
+.np
+You may also use a full device name.
+.exam begin
+-console=/dev/tty
+.exam end
+.np
+In this case, the debugger will use that device for its input and
+output. The debugger/application screen flipping features will be
+disabled.
+.np
+You can also optionally follow the device name with a colon and a
+terminal type.
+.exam begin
+-con=/dev/tty:vt240
+.exam end
+.pc
+This will let the debugger know what kind of terminal it's talking to
+so it can initialize the user interface appropriately.
+
+.note -COlumns=n
+.ix 'options' 'COlumns'
+.ix 'COlumns option'
+specifies the number of columns of the screen/window that the debugger
+should attempt to establish.
+
+.note -XConfig=string
+.ix 'options' 'XConfig'
+.ix 'XConfig option'
+specifies a set of X Windows configuration options to pass to
+.bd xterm.
+The following example sets the
+.bd xterm
+font size to 12 point.
+.exam begin
+-xc=-fs -xc=12
+.exam end
+
+.endnote
+.*
 .section *refid=qnxopt QNX Options
 .*
 .np
@@ -517,7 +573,7 @@ You may also use a full device name.
 -console=//23/dev/ser1
 .exam end
 .np
-In this case, the debugger will use that device for it's input and
+In this case, the debugger will use that device for its input and
 output. The debugger/application screen flipping features will be
 disabled.
 .np
@@ -570,6 +626,22 @@ debugger:
 .exam begin
 C>set &dbgcmd=/swap/lines#50
 .exam end
+.*
+.section &dbgcmdup Environment Variable in Linux
+.*
+.np
+.ix 'environment variables' '&dbgcmdup'
+.ix '&dbgcmdup environment variable'
+.ix 'options' 'default'
+The following example illustrates how to define default options for the
+debugger under Linux:
+.exam begin
+$ export &dbgcmdup="-rows=50 -cols=100"
+.exam end
+.pc
+Under Linux, care must be taken to specify the environment variable name
+entirely in uppercase letters.
+.np
 .*
 .section &dbgcmdup Environment Variable in QNX
 .*

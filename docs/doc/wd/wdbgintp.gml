@@ -98,6 +98,13 @@ On the NetWare file server console, press ALT-ESCAPE while holding down
 both SHIFT keys. In some instances, this may cause the system debugger
 to become active instead of the &dbgname..
 .*
+.section Linux
+.*
+.np
+Switch focus to the debugger console and press CTRL-C.
+Alternatively, you may send any unhandled signal to the application
+being debugged. Consult your Linux documentation for details.
+.*
 .section QNX
 .*
 .np

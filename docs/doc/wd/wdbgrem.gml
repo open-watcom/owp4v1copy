@@ -229,7 +229,7 @@ Supported under DOS, OS/2, Windows 3.x, and NetWare.
 This link supports communication using the parallel or printer port.
 Several different cable configurations are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2000/XP, NetWare and QNX.
+Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2000/XP, NetWare, Linux and QNX.
 .note SER
 This link uses a serial port to communicate. Rates of up to 115K
 BAUD are supported.
@@ -256,7 +256,7 @@ applications).
 .note TCP
 This link will use TCP/IP to communicate internally or over a network
 between sessions.
-Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP and QNX.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP, Linux and QNX.
 .endnote
 .np
 Communication parameters may be passed to the remote trap file and the
@@ -769,7 +769,7 @@ the operating system.
 .note OS/2
 .mono d:\TCPIP\ETC\SERVICES
 depending on the drive where TCP/IP is installed
-.note QNX
+.note Linux and QNX
 .mono /etc/services
 .note Windows 9x
 .mono d:\windows\SERVICES

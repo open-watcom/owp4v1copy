@@ -476,10 +476,14 @@ Windows 3.x from Microsoft Corporation
 .ix 'Windows 95'
 .ix 'Microsoft Corp.'
 Windows NT/2000/XP or Windows 9x from Microsoft Corporation
+.note 13
+.ix 'Linux'
+.ix 'GNU/Linux'
+GNU/Linux
 .endnote
 .ix 'predefined symbol' 'dbg$pid'
 .mnote dbg$pid
-(OS/2, NetWare 386, QNX, Windows NT, Windows 95 only)
+(OS/2, NetWare 386, Linux, QNX, Windows NT, Windows 95 only)
 This debugger symbol contains the process identification value for the
 program being debugged.
 .ix 'predefined symbol' 'dbg$psp'
