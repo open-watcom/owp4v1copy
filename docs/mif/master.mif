@@ -302,6 +302,7 @@ $(hbook).ps : $(book_objs) $(proj_objs)
 ####################################################
 
 .EXTENSIONS: .hlp .inf .ipf .h
+.IGNORE
 
 all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
     @copy $(hbook).h $(guitools_dir)\os2 > nul
