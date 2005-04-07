@@ -31,7 +31,6 @@
 
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "macros.h"
 #include "make.h"
@@ -67,13 +66,13 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
     /* \" is considered a double quote character                         */
     /* and if a double quote is found again then we break out as the end */
     /* of the filename                                                   */
-    while( pos < _MAX_PATH ) {
-        if( t == DOUBLEQUOTE || t == EOL || t == STRM_END ) {
-            break;
-        }
+    while( pos < _MAX_PATH - 1 && t != DOUBLEQUOTE && t != EOL && t != STRM_END ) {
         file[pos++] = t;
         t = PreGetCH();
         if( t == BACKSLASH ) {
+            if( pos >= _MAX_PATH ) {
+                break;
+            }
             t = PreGetCH();
             if( t == DOUBLEQUOTE ) {
                 file[pos++] = t;
@@ -84,8 +83,9 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
         }
     }
 
-    if( pos == _MAX_PATH ) {
+    if( pos >= _MAX_PATH ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
+        return( 0 );    // not reached
     }
     file[pos] = NULLCHAR;
 
@@ -173,8 +173,7 @@ extern TOKEN_T LexPath( STRM_T t )
                     } else if( isfilec( t ) ) {
                         path[pos++] = t;
                     } else {
-                        // not valid path character, break out.
-                        break;
+                        break; // not valid path character, break out.
                     }
                 }
             }
@@ -190,6 +189,7 @@ extern TOKEN_T LexPath( STRM_T t )
         if( pos == _MAX_PATH ) {
             FreeSafe( FinishVec( vec ) );
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
+            return( 0 );    // not reached
         }
 
         path[pos] = NULLCHAR;
@@ -241,6 +241,7 @@ STATIC TOKEN_T lexFileName( STRM_T t )
     }
     if( pos == _MAX_PATH ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
+        return( 0 );    // not reached
     }
     file[pos] = NULLCHAR;
     UnGetCH( t );
@@ -277,7 +278,7 @@ STATIC BOOLEAN checkDotName( const char *str )
  */
 {
     char        **key;
-    const char  *ptr;
+    char const  *ptr;
 
     assert( str[0] == DOT );
 
@@ -318,7 +319,7 @@ STATIC char *getCurlPath( void )
             UnGetCH( EOL );
             PrtMsg( ERR | LOC | NON_MATCHING_CURL_PAREN);
         } else if( pos == _MAX_PATH ) {
-            PrtMsg( WRN | LOC| PATH_TOO_LONG );
+            PrtMsg( WRN | LOC | PATH_TOO_LONG );
         }
         return( StrDupSafe( path ) );
 
@@ -359,6 +360,7 @@ STATIC TOKEN_T lexDotName( void )
     t = PreGetCH();
     if( t != DOT ) {
         PrtMsg( ERR | LOC | INVALID_SUFSUF );
+        return( t );
     } else {
         ext[pos++] = DOT;
         t = PreGetCH();
@@ -389,6 +391,7 @@ STATIC TOKEN_T lexDotName( void )
         }
         if( pos == MAX_SUFFIX ) {
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 );
+            return( 0 );
         }
         ext[pos] = NULLCHAR;
     }
@@ -408,13 +411,14 @@ STATIC TOKEN_T lexDotName( void )
         }
         if( pos == MAX_SUFFIX ) {
             PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 );
+            return( 0 );    // not reached
         }
         ext[pos] = NULLCHAR;
 
         ret = TOK_SUFSUF;
     } else {
         if( targ_path != NULL && dep_path != NULL ) {
-            PrtMsg( ERR | LOC | INVALID_SUFSUF);
+            PrtMsg( ERR | LOC | INVALID_SUFSUF );
         }
         ret = TOK_SUF;
     }
@@ -467,6 +471,7 @@ STATIC BOOLEAN checkMacro( TOKEN_T t )
     }
     if( pos == MAX_MAC_NAME ) {
         PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_MAC_NAME - 1 );
+        return( 0 );
     }
     mac[pos] = NULLCHAR;
     ws = isws( t );
@@ -533,6 +538,12 @@ STATIC char *DeMacroDoubleQuote( BOOLEAN IsDoubleQuote )
             buffer[pos++] = t;
             t = PreGetCH();
         }
+
+        if( pos >= _MAX_PATH ) {
+            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
+            return( 0 );    // not reached
+        }
+
         buffer[pos] = NULLCHAR;
         p = StrDupSafe( buffer );
     } else {
