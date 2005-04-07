@@ -673,9 +673,8 @@ unsigned ReqSplit_cmd( void )
     ret = GetOutPtr( 0 );
     ret->parm_start = 0;
     for( ;; ) {
-        if( len == 0 ) {
+        if( len == 0 )
             goto done;
-        }
         switch( *cmd ) {
         case '/':
         case '=':
@@ -689,8 +688,8 @@ unsigned ReqSplit_cmd( void )
             ret->parm_start = 1;
             goto done;
         case '\"':
-            while( --len && (*++cmd != '\"') ) {
-            }
+            while( --len && (*++cmd != '\"') )
+                ;
             if( len == 0 ) {
                 ret->parm_start = 1;
                 goto done;
