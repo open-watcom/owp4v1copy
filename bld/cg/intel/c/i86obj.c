@@ -2680,9 +2680,12 @@ static  void    OutName( char *name, void *dst )
     array_control *dest = dst;
 
     len = Length( name );
-    assert( len < 256 );
-    if( len >= 256 )
+    if( len >= 256 ) {
         len = 255;
+        FEMessage( MSG_INFO_PROC, "Code generator truncated name, because it's length "
+            "overflows allowed maximum." );
+        FEMessage( MSG_INFO_PROC, name );
+    }
     NeedMore( dest, len + 1 );
     _ARRAY( dest, char ) = len;
     dest->used++;
