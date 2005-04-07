@@ -89,6 +89,8 @@ as_trmem                = -DTRMEM -of+
 as_trmem                = -DTRMEM
 !endif
 as_yydebug              = -DYYDEBUG=1
+!else
+dbg_extra_defines       = -DNDEBUG
 !endif
 
 extra_c_flags_asitest   = $(as_trmem)
@@ -192,7 +194,7 @@ $(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res
 
 !ifndef inline_as
 $(name).res : as.rc msg.gh
-        $(rc_aui) $(as_extra_defines) -DNDEBUG $[@ -fo=$^@
+        $(rc_aui) $(as_extra_defines) $(dbg_extra_defines) $[@ -fo=$^@
 !else
 $(asi_objs) : msg.gh
 !endif
@@ -201,7 +203,7 @@ msg.gh : ./mkstrid.exe
         $[@ $^@
 
 ./mkstrid.exe : mkstrid.c as.msg
-        $(bld_cl) $(wcl_util_opts) $(as_extra_defines) $(as_incs) $[@
+        $(bld_cl) $(wcl_util_opts) $(as_extra_defines) $(dbg_extra_defines) $(as_incs) $[@
 
 $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
         wsplice $(splice_opts) $[@ $^@
