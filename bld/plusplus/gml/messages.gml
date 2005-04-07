@@ -2157,9 +2157,9 @@ small (switch -ms), since the memory model for data is near.
 :MSGSYM. ERR_NO_TYPE_DEFAULTS
 :MSGTXT. template type argument cannot have a default argument
 :MSGJTXT. テンプレート型引数はデフォルト引数を持つことができません
-Currently, the C++ language does not allow template type arguments
-to have a default type.  There is neither syntax to express the notion
-nor semantics defined for its meaning.
+This message was produced by earlier versions of the Open Watcom C++
+compiler. Support for default template arguments was added in version
+1.3 and this message was removed at that time.
 
 :MSGSYM. ERR_DLT_OBJ_MEM_MODEL
 :MSGTXT. attempt to delete a far object when the data model is near
