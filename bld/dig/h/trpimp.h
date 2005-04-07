@@ -34,14 +34,10 @@
 
 #define TRPIMP_H
 
-#if defined(__386__)
-    #define TRAPFAR
-#elif defined(__ALPHA__) || defined(__PPC__)
-    #define TRAPFAR
-#elif defined(M_I86)
+#if defined(M_I86)
     #define TRAPFAR __far
 #else
-    #error TRAPFAR macro not configured
+    #define TRAPFAR
 #endif
 
 #if defined(__DOS__) || defined(__DSX__)
@@ -160,15 +156,6 @@
     #undef      WANT_RFX        // TODO: Want this later for Linux!
     #define     TRAPENTRY TRAPFAR
 #elif defined(__NETWARE__)
-    #undef      WANT_FILE_INFO
-    #undef      WANT_ENV
-    #undef      WANT_ASYNC
-    #define     WANT_FILE
-    #undef      WANT_OVL
-    #define     WANT_THREAD
-    #undef      WANT_RFX
-    #define     TRAPENTRY TRAPFAR
-#elif defined(__PENPOINT__)
     #undef      WANT_FILE_INFO
     #undef      WANT_ENV
     #undef      WANT_ASYNC
