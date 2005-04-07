@@ -24,14 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NT trap dll internal interfaces
 *
 ****************************************************************************/
 
 
 //#define WOW
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 #include "trpimp.h"
 #include "packet.h"
 #include "exepe.h"
@@ -50,12 +51,12 @@
 #define EXE_MZ  DOS_SIGNATURE
 
 typedef struct {
-    WORD        sig;
+    WORD                sig;
     union {
         pe_header       peh;
         os2_exe_header  neh;
     };
-    char        modname[16];
+    char                modname[16];
 } header_info;
 
 #ifdef WOW
@@ -174,7 +175,7 @@ struct msg_list {
 
 /* accmap.c */
 BOOL FindExceptInfo( addr_off off, LPVOID *base, addr_off *size );
-void FixUpDLLNames();
+void FixUpDLLNames( void );
 void RemoveModuleFromLibList( char *module, char *filename );
 BOOL IsMagicalFileHandle( HANDLE h );
 HANDLE GetMagicalFileHandle( char *name );
@@ -201,8 +202,8 @@ void AddMessagePrefix( char *buff, int len );
 
 /* accrun.c */
 int DebugExecute( DWORD state, int *tsc, bool );
-void InterruptProgram(void);
-void InterruptProgram(void);
+void InterruptProgram( void );
+void InterruptProgram( void );
 bool Terminate( void );
 
 /* misc.c */
@@ -244,13 +245,11 @@ BOOL FindBreak( WORD segment, DWORD offset, BYTE *ch );
 extern DWORD StartControlThread( char *name, DWORD *pid, DWORD cr_flags );
 BOOL MyWaitForDebugEvent( void );
 void MyContinueDebugEvent( int );
-extern void StopControlThread();
-extern void ProcessQueuedRepaints();
+extern void StopControlThread( void );
+extern void ProcessQueuedRepaints( void );
 extern void ParseServiceStuff( char *name,
-                        char **pdll_name,
-                        char **pservice_name,
-                        char **pdll_destination,
-                        char **pservice_parm );
+    char **pdll_name, char **pservice_name,
+    char **pdll_destination, char **pservice_parm );
 
 /* accregs.c */
 extern DWORD AdjustIP( CONTEXT *, int );
