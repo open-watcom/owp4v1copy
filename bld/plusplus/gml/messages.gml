@@ -78,7 +78,7 @@
 :MSGTXT. internal compiler error
 :MSGJTXT. 内部のコンパイラ・エラー
 If this message appears, please report the problem directly to the
-OpenWatcom development team. See http://www.openwatcom.org/.
+Open Watcom development team. See http://www.openwatcom.org/.
 
 :MSGSYM. WARN_ASSIGN_CONST_IN_BOOL_EXPR
 :MSGTXT. assignment of constant found in boolean expression
@@ -227,7 +227,7 @@ since there was no file name after it (i.e., "-fo=my.obj" ).
 :MSGJTXT. asm擬似命令が無視されました
 :WARNING. 1
 The asm directive (e.g., asm( "mov r0,1" ); ) is a non-portable construct.
-The OpenWatcom C++ compiler treats all asm directives like comments.
+The Open Watcom C++ compiler treats all asm directives like comments.
 
 :MSGSYM. WARN_ALL_PRIVATE_IN_CLASS
 :MSGTXT. all members are private
@@ -1381,7 +1381,7 @@ The type of error is displayed in the message.
 :MSGJTXT. コンパイラ内部エラー %d
 A bug has been encountered in the compiler.
 Please report the specified internal compiler error number and any other
-helpful details about the program being compiled to the OpenWatcom
+helpful details about the program being compiled to the Open Watcom
 development team so that we
 can fix the problem. See http://www.openwatcom.org/.
 
@@ -1399,11 +1399,11 @@ returned by the function.
 :MSGSYM. ERR_BAD_SAVE
 :MSGTXT. illegal register modified by '%s' #pragma
 :MSGJTXT. '%s'#pragmaによって違法なレジスタが修正されています
-.us For the 16-bit OpenWatcom C/C++ compiler:
+.us For the 16-bit Open Watcom C/C++ compiler:
 The BP, CS, DS, and SS registers cannot be modified in small data models.
 The BP, CS, and SS registers cannot be modified in large data models.
 .np
-.us For the 32-bit OpenWatcom C/C++ compiler:
+.us For the 32-bit Open Watcom C/C++ compiler:
 The EBP, CS, DS, ES, and SS registers cannot be modified in flat
 memory models.
 The EBP, CS, DS, and SS registers cannot be modified in small data
@@ -1416,7 +1416,9 @@ The EBP, CS, and SS registers cannot be modified in large data models.
 :ANSIERR.
 Every file must contain at least one global object, (either a data variable
 or a function).
-This message is only issued in strict ISO/ANSI mode (-za).
+.np
+Note: This message has been disabled starting with Open Watcom v1.4. The
+ISO 1998 C++ standard allows empty translation units.
 
 :MSGSYM. ERR_OUT_OF_MACRO_MEMORY
 :MSGTXT. out of macro space
@@ -1565,7 +1567,7 @@ such errors.
 :MSGSYM. ERR_UNKNOWN_LINKAGE
 :MSGTXT. unknown linkage '%s'
 :MSGJTXT. 未知のリンク'%s'です
-Only the linkages "C" and "C++" are supported by OpenWatcom C++.
+Only the linkages "C" and "C++" are supported by Open Watcom C++.
 :errbad.
 extern "APL" void AplFunc( int* );
 :eerrbad.
@@ -1627,7 +1629,7 @@ it is difficult for a compiler to correct the error itself.
 :MSGTXT. parser stack corrupted
 :MSGJTXT. 構文解析プログラムのスタックが壊れています
 The C++ parser has detected an internal problem that usually indicates
-a compiler problem.  Please report this directly to the OpenWatcom
+a compiler problem.  Please report this directly to the Open Watcom
 development team. See http://www.openwatcom.org/.
 
 :MSGSYM. ERR_NO_NESTED_TEMPLATES
@@ -1757,7 +1759,7 @@ correct and execute properly.  This message is purely informational
 :MSGSYM. ERR_EXCEEDED_LIMIT
 :MSGTXT. too many errors: compilation aborted
 :MSGJTXT. エラーが多すぎます：コンパイルは中止しました
-The OpenWatcom C++ compiler sets a limit to the number of error messages
+The Open Watcom C++ compiler sets a limit to the number of error messages
 it will issue.
 Once the number of messages reaches the limit the above message is issued.
 This limit can be changed via the "/e" command line option.
@@ -1786,7 +1788,7 @@ Combine the pragmas into one pragma and apply it once.
 :MSGSYM. ERR_MUST_BE_ZERO
 :MSGTXT. pure member function constant must be '0'
 :MSGJTXT. 純粋メンバ関数定数は'0'でなければなりません
-The constant must be changed to '0' in order for the OpenWatcom C++ compiler
+The constant must be changed to '0' in order for the Open Watcom C++ compiler
 to accept the pure virtual member function declaration.
 :errbad.
 struct S {
@@ -1972,7 +1974,7 @@ The compiler also requires that
 members be accessed through a derived class to ensure that
 an unrelated base class cannot be quietly modified.
 This is a fairly recent change to the C++ language that may
-cause OpenWatcom C++ to not accept older C++ code.
+cause Open Watcom C++ to not accept older C++ code.
 See Section 11.5 in the ARM for a discussion of protected access.
 :errbad.
 struct Top { int t; };
@@ -2289,7 +2291,7 @@ of typedefs ending in a final declaration.
 :MSGSYM. ERR_FLOATING_CONSTANT_OVERFLOW
 :MSGTXT. floating-point constant too large to represent
 :MSGJTXT. 浮動小数点定数が大きすぎます
-The OpenWatcom C++ compiler cannot represent the floating-point
+The Open Watcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the positive exponent is too large.
 :errbad.
 float f = 1.2e78965;
@@ -2298,7 +2300,7 @@ float f = 1.2e78965;
 :MSGSYM. ERR_FLOATING_CONSTANT_UNDERFLOW
 :MSGTXT. floating-point constant too small to represent
 :MSGJTXT. 浮動小数点定数が小さすぎます
-The OpenWatcom C++ compiler cannot represent the floating-point
+The Open Watcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the negative exponent is too large.
 :errbad.
 float f = 1.2e-78965;
@@ -3427,7 +3429,7 @@ void fun( C* p )
 Qualified identifiers in a class context are allowed for declaring
 .kw friend
 member functions.
-The OpenWatcom C++ compiler also allows code that is qualified with its own
+The Open Watcom C++ compiler also allows code that is qualified with its own
 class so that declarations can be moved in and out of class definitions
 easily.
 :errbad.
@@ -4081,11 +4083,11 @@ void foo( int *p )
 :MSGSYM. ERR_OPERATOR_AMBIGUOUS_OVERLOAD
 :MSGTXT. overloaded operator is ambiguous for operands used
 :MSGJTXT. 使われているオペランドのため，オーバーロード演算子が曖昧です
-The OpenWatcom C++ compiler performs exhaustive analysis using formalized
+The Open Watcom C++ compiler performs exhaustive analysis using formalized
 techniques in order to decide what implicit conversions should be
-applied for overloading operators.  Because of this, OpenWatcom C++
+applied for overloading operators.  Because of this, Open Watcom C++
 detects ambiguities that may escape other C++ compilers.
-The most common ambiguity that OpenWatcom C++ detects involves
+The most common ambiguity that Open Watcom C++ detects involves
 classes having constructors with single arguments and
 a user-defined conversion.
 :errbad.
@@ -4146,7 +4148,7 @@ friend void foo();
 :MSGJTXT. クラス・フレンド宣言は，'class'か'struct'キーワードを必要とします
 :ANSI. 4
 The C++ language has evolved to require that all friend class declarations
-be of the form "class S" or "struct S".  The OpenWatcom C++ compiler accepts
+be of the form "class S" or "struct S".  The Open Watcom C++ compiler accepts
 the older syntax with a warning but rejects the syntax in pure ISO/ANSI
 C++ mode.
 :errbad.
@@ -4513,7 +4515,7 @@ void foo()
 :MSGJTXT. 関数の中の名前なし共用体は'static'または'auto'でなければんりません
 The current C++ language definition only allows
 .kw auto
-anonymous unions.  The OpenWatcom C++ compiler allows
+anonymous unions.  The Open Watcom C++ compiler allows
 .kw static
 anonymous unions.
 Any other storage class is not allowed.
@@ -4638,7 +4640,7 @@ private:
 :MSGTXT. *** FATAL *** internal error in front end
 :MSGJTXT. *** 致命的 *** フロントエンドの中で内部エラー
 If this message appears, please report the problem directly to the
-OpenWatcom development team. See http://www.openwatcom.org/.
+Open Watcom development team. See http://www.openwatcom.org/.
 
 :MSGSYM. ERR_PARM_IMPOSSIBLE
 :MSGTXT. cannot convert argument to type specified in function prototype
@@ -5176,7 +5178,7 @@ void goop( int d )
 :MSGJTXT. switch '%s'のサポートは実装されていません
 :WARNING. 1
 Actions for the indicated switch have not been implemented.
-The switch is supported for compatibility with the OpenWatcom C compiler.
+The switch is supported for compatibility with the Open Watcom C compiler.
 
 :MSGSYM. WARN_IF_ALWAYS_TRUE
 :MSGTXT. conditional expression in if statement is always true
@@ -6796,7 +6798,7 @@ at this point in the code.  This may be the cause of the syntax error.
 :MSGTXT. implementation restriction: cannot generate thunk from '%S'
 :MSGJTXT. 実装制限: '%S'からサンクを生成できません
 This implementation restriction is due to the use of a shared code generator
-between OpenWatcom compilers.
+between Open Watcom compilers.
 The virtual
 .kw this
 adjustment thunks are generated as functions linked into the virtual
@@ -7334,7 +7336,7 @@ with the same name will occur.
 :MSGSYM. ERR_MAX_CMD_INDIRECTION
 :MSGTXT. more than 5 indirections during command line processing
 :MSGJTXT. コマンドライン処理中に6個以上のネストされた間接参照があります
-The OpenWatcom C++ compiler only allows a fixed number nested indirections using
+The Open Watcom C++ compiler only allows a fixed number nested indirections using
 files or environment variables,
 to prevent runaway chains of indirections.
 
@@ -7646,7 +7648,7 @@ analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct could not be resolved by the compiler.
-Please report this to the OpenWatcom developement team so that the
+Please report this to the Open Watcom developement team so that the
 problem can be analysed. See http://www.openwatcom.org/.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_AGAIN
@@ -7758,7 +7760,7 @@ argument) is evaluated.
 :MSGTXT. #pragma aux must reference a "C" linkage function '%S'
 :MSGJTXT. #pragma auxは，"Ｃ"リンケージ関数'%S'を参照しなければなりません
 The method of assigning pragma information via the #pragma syntax
-is provided for compatibility with OpenWatcom C.  Because C only
+is provided for compatibility with Open Watcom C.  Because C only
 allows one function per name, this was adequate for the C language.
 Since C++ allows functions to be overloaded, a new method of
 referencing pragmas has been introduced.
@@ -8475,7 +8477,7 @@ In the example, the attempt to subscript a function is illegal.
 :MSGTXT. define this function inside its class definition (may improve code quality)
 :MSGJTXT. そのクラス定義の内側でこの関数を定義します（コード品質を改善するかもしれません）
 :WARNING. 5
-The OpenWatcom C++ compiler has found a constructor or destructor with
+The Open Watcom C++ compiler has found a constructor or destructor with
 an empty function body.  An empty function body can usually provide
 optimization opportunities so the compiler is indicating that by
 defining the function inside its class definition,
@@ -8493,7 +8495,7 @@ S::~S() {
 :MSGTXT. define this function inside its class definition (could have improved code quality)
 :MSGJTXT. そのクラス定義の内側でこの関数を定義します（コード品質を改善できたかもしれません）
 :WARNING. 5
-The OpenWatcom C++ compiler has found a constructor or destructor with
+The Open Watcom C++ compiler has found a constructor or destructor with
 an empty function body.  An empty function body can usually provide
 optimization opportunities so the compiler is indicating that by
 defining the function inside its class definition,
@@ -8643,7 +8645,7 @@ bound to the non-const reference argument of the copy constructor.
 :MSGJTXT. 一時オブジェクトは，非定数の参照を初期するために使われました
 :ANSI. 1
 Ordinarily, a temporary value cannot be bound to a non-constant
-reference.  There is enough legacy code present that the OpenWatcom C++
+reference.  There is enough legacy code present that the Open Watcom C++
 compiler issues a warning in cases that should be errors.  This
 may change in the future so it is advisable to correct the code
 as soon as possible.
@@ -8653,7 +8655,7 @@ as soon as possible.
 :MSGJTXT. 暗黙の単項の'operator &'は'%T'型でオーバーロードされません
 :WARNING. 3
 An explicit address operator can be applied to a reference
-to an undefined class.  The OpenWatcom C++ compiler will assume
+to an undefined class.  The Open Watcom C++ compiler will assume
 that the address is required but it does not know whether
 this was the programmer's intention because the class definition
 has not been seen.
@@ -8733,7 +8735,7 @@ void fn( S c, ... )
 {
     va_list args;
 
-    // OpenWatcom C++ passes a pointer to
+    // Open Watcom C++ passes a pointer to
     // the temporary created for passing
     // 'c' rather than pushing 'c' on the
     // stack so 'va_start' will not work
@@ -9498,7 +9500,7 @@ struct Y : X {
 :MSGJTXT. __declspec('%N'）はサポートされていません
 The identifier used in the
 .kw __declspec
-declaration modifier is not supported by OpenWatcom C++.
+declaration modifier is not supported by Open Watcom C++.
 
 :MSGSYM. ERR_CTOR_OBJ_MEM_MODEL
 :MSGTXT. attempt to construct a far object when data model is near
@@ -9883,7 +9885,7 @@ C a[10];
 :MSGSYM. ERR_INVALID_NEW_MODIFIER
 :MSGTXT. invalid 'new' modifier
 :MSGJTXT. 'new'に対して不適切な修飾子です
-The OpenWatcom C++ compiler does not support new expression modifiers
+The Open Watcom C++ compiler does not support new expression modifiers
 but allows them to match the ambient memory model for compatibility.
 Invalid memory model modifiers are also rejected by the compiler.
 :errbad.

@@ -338,9 +338,6 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                         DumpHashStats();
                     }
                 #endif
-                if( CompFlags.external_defn_found == 0 ) {
-                    CErr1( ANSIERR_NO_EXTERNAL_DEFNS_FOUND );
-                }
                 PragmaExtrefsValidate();
                 BrinfWrite();
                 ExitPointRelease( cpp_analysis );
