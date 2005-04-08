@@ -38,7 +38,7 @@
 #include "dbgmem.h"
 #include "dui.h"
 
-extern handle   FullPathOpen( char *name, char *ext, char *result, unsigned max_result );
+extern handle   LocalFullPathOpen( char *name, char *ext, char *result, unsigned max_result );
 extern char     *StrCopy( char *src, char *dst );
 extern int      DUIEnvLkup(char *,char *,int);
 
@@ -51,7 +51,7 @@ extern a_window         *WndMain;
 
 void InitHelp()
 {
-    Handle = GUIHelpInit( WndGui( WndMain ), HELPNAME ".hlp", "WATCOM Debugger Help" );
+    Handle = GUIHelpInit( WndGui( WndMain ), HELPNAME ".hlp", "Open Watcom Debugger Help" );
 }
 
 void FiniHelp()
@@ -69,7 +69,7 @@ static void LocateHelpFile()
     char                buff[1024];
 #endif
 
-    h = FullPathOpen( HELPNAME, "ihp", TxtBuff, TXT_LEN );
+    h = LocalFullPathOpen( HELPNAME, "ihp", TxtBuff, TXT_LEN );
     if( h != NIL_HANDLE ) {
         FileClose( h );
         return;

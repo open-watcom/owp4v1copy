@@ -57,7 +57,7 @@ extern void             AddrFloat( address * );
 
 extern void             ScanExpr(void *);
 extern bool             ScanEOC(void);
-extern handle           PathOpen(char *,unsigned,char *);
+extern handle           LocalPathOpen( char *, unsigned, char * );
 extern int              SSLWalk(char *,unsigned,void **,unsigned int );
 extern unsigned         SetCurrRadix( unsigned );
 
@@ -324,7 +324,7 @@ bool LangLoad( char *lang, int langlen )
     handle      filehndl;
     bool        ret;
 
-    filehndl = PathOpen( lang, langlen, "prs" );
+    filehndl = LocalPathOpen( lang, langlen, "prs" );
     if( filehndl == NIL_HANDLE ) return( FALSE );
     ret = ReadAllSections( filehndl );
     FileClose( filehndl );

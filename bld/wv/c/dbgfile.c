@@ -466,8 +466,8 @@ handle LclStringToFullName( char *name, unsigned len, char *full )
 /*
  *
  */
-
-handle FullPathOpen( char const *name, char *ext, char *result, unsigned max_result )
+static handle FullPathOpenInternal( char const *name, char *ext, char *result,
+                                    unsigned max_result, bool force_local )
 {
     char        buffer[TXT_LEN];
     char        *p;
@@ -482,6 +482,10 @@ handle FullPathOpen( char const *name, char *ext, char *result, unsigned max_res
     name = p;
     have_ext = FALSE;
     have_path = FALSE;
+    if( force_local ) {
+        loc &= ~OP_REMOTE;
+        loc |= OP_LOCAL;
+    }
     if( loc & OP_LOCAL ) {
         file = &LclFile;
     } else {
@@ -523,6 +527,16 @@ handle FullPathOpen( char const *name, char *ext, char *result, unsigned max_res
         memmove( result, p, strlen( p ) + 1 );
     }
     return( f );
+}
+
+handle FullPathOpen( char const *name, char *ext, char *result, unsigned max_result )
+{
+    return( FullPathOpenInternal( name, ext, result, max_result, FALSE ) );
+}
+
+handle LocalFullPathOpen( char const *name, char *ext, char *result, unsigned max_result )
+{
+    return( FullPathOpenInternal( name, ext, result, max_result, TRUE ) );
 }
 
 #if !defined( BUILD_RFX )
@@ -577,7 +591,7 @@ bool FindWritable( char const *src, char *dst )
 }
 #endif
 
-handle PathOpen( char const *name, unsigned len, char *ext )
+static handle PathOpenInternal( char const *name, unsigned len, char *ext, bool force_local )
 {
     char        result[TXT_LEN];
     char        *p;
@@ -585,7 +599,20 @@ handle PathOpen( char const *name, unsigned len, char *ext )
     _AllocA( p, len + 1 );
     memcpy( p, name, len );
     p[ len ] = '\0';
-    return( FullPathOpen( p, ext, result, TXT_LEN ) );
+    if( force_local )
+        return( LocalFullPathOpen( p, ext, result, TXT_LEN ) );
+    else
+        return( FullPathOpen( p, ext, result, TXT_LEN ) );
+}
+
+handle PathOpen( char const *name, unsigned len, char *ext )
+{
+    return( PathOpenInternal( name, len, ext, FALSE ) );
+}
+
+handle LocalPathOpen( char const *name, unsigned len, char *ext )
+{
+    return( PathOpenInternal( name, len, ext, TRUE ) );
 }
 
 void SysFileInit()

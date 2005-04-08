@@ -51,7 +51,7 @@ extern bool             ScanItem(bool ,char **,unsigned int *);
 extern bool             ScanEOC(void);
 extern bool             SwitchOnOff();
 extern void             ShowSwitch(bool);
-extern handle           FullPathOpen( char *name, char *ext, char *result, unsigned max_result );
+extern handle           LocalFullPathOpen( char *name, char *ext, char *result, unsigned max_result );
 extern void             PushInpStack(void *,bool (*)(),bool );
 extern void             TypeInpStack(input_type);
 extern char             *ReScan(char *);
@@ -279,7 +279,7 @@ void Invoke( char *invfile, int len, char_ring *parmlist )
     _AllocA( invname, len + 1 );
     memcpy( invname, invfile, len );
     invname[ len ] = '\0';
-    hndl = FullPathOpen( invname, "dbg", TxtBuff, TXT_LEN );
+    hndl = LocalFullPathOpen( invname, "dbg", TxtBuff, TXT_LEN );
     if( hndl == NIL_HANDLE ) {
         MakeFileName( TxtBuff, invname, "dbg", 0 );
         FreeRing( parmlist );
@@ -314,7 +314,7 @@ void ProfileInvoke( char *name )
         strcpy( &name[1], EXENAME );
         strcat( name, "rc" );
         strlwr( name );
-        hndl = FullPathOpen( name, LIT( Empty ), TxtBuff, TXT_LEN );
+        hndl = LocalFullPathOpen( name, LIT( Empty ), TxtBuff, TXT_LEN );
         if( hndl != NIL_HANDLE ) {
             DoInvoke( hndl, TxtBuff, NULL );
             return;
