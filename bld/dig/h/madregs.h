@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MAD CPU registers structure.
 *
 ****************************************************************************/
 
@@ -47,6 +46,10 @@
 #include "madppc.h"
 #endif
 
+#ifdef MD_mips
+#include "madmips.h"
+#endif
+
 #ifdef MD_jvm
 #include "madjvm.h"
 #endif
@@ -61,6 +64,9 @@ union mad_registers {
 #endif
 #ifdef MD_ppc
     struct ppc_mad_registers    ppc;
+#endif
+#ifdef MD_mips
+    struct mips_mad_registers   mips;
 #endif
 #ifdef MD_jvm
     struct jvm_mad_registers    jvm;
