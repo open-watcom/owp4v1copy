@@ -30,8 +30,8 @@ wdpick( STARTUP_Invalid_Option,
     "jInvalid option '%t'" )
 
 wdpick( STARTUP_Loading_PRS,
-    "Cannot load expression syntax file (CPP.PRS)",
-    "jCannot load expression syntax file (CPP.PRS)" )//dbgmain
+    "Cannot load expression syntax file 'cpp.prs'",
+    "jCannot load expression syntax file 'cpp.prs'" )//dbgmain
 
 wdpick( STARTUP_DIP_Not_Init,
        "Cannot initalize symbolic debugging interface",
@@ -709,5 +709,5 @@ wdpick( ERR_WANT_MODULE,
 wdpick( ERR_BAD_PARSE_VERSION,
        "Incorrect version of parse file",
        "jIncorrect version of parse file" )
-    
+
 #include "mad.str"
