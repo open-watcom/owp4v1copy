@@ -422,8 +422,10 @@ This form of the &fn. creates a &obj.:PERIOD.
 :SNPFLF          .                            unsigned char *pstart = NULL );
 :eSNPL.
 :SMTICS.
-This form of the &fn. creates a &obj. that does not use dynamic allocation.
-The &obj. is said to be using static allocation. The
+This form of the &fn. creates a &obj. that does not use dynamic
+allocation (unless
+:ARG.str
+is &null.). The &obj. is said to be using static allocation. The
 :ARG.str
 and
 :ARG.len
@@ -433,13 +435,17 @@ parameters specify the bounds of the &rsvarea.:PERIOD.
 If the &getarea. is exhausted and characters have been written to the
 &putarea., the &getarea. is extended to include the &putarea.:PERIOD.
 :P.
-Note that the &getptr. and &putptr. do not necessarily point at the
+The &getptr. and &putptr. do not necessarily point at the
 same position in the &rsvarea., so a read followed by a write does not
 imply that the write stores following the last character read.
 The &getptr. is positioned following the last read operation, and
 the &putptr. is positioned following the last write operation, unless the
 :MONO.seekoff
 member function has been used to reposition the pointer(s).
+:P.
+Note that if
+:ARG.str
+is &null. the effect is to create an empty dynamic &obj.:PERIOD.
 :RSLTS.
 This form of the &fn. creates a &obj.:PERIOD.
 :SALSO.
