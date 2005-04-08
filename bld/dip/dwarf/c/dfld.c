@@ -173,12 +173,10 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
         DCSeek( f, elf_head.e_shoff + i * elf_head.e_shentsize + start, DIG_ORG );
         DCRead( f, &elf_sec, sizeof( Elf32_Shdr ) );
         ByteSwapShdr( &elf_sec, *byteswap );
-        if( elf_sec.sh_type == SHT_PROGBITS ){
-            sect = Lookup_section_name( &string_table[elf_sec.sh_name] );
-            if ( sect < DR_DEBUG_NUM_SECTS ){
-                bases[sect] = elf_sec.sh_offset + start;
-                sizes[sect] = elf_sec.sh_size;
-            }
+        sect = Lookup_section_name( &string_table[elf_sec.sh_name] );
+        if ( sect < DR_DEBUG_NUM_SECTS ){
+            bases[sect] = elf_sec.sh_offset + start;
+            sizes[sect] = elf_sec.sh_size;
         }
     }
     DCFree( string_table );
