@@ -34,6 +34,10 @@ hw_reg_set DefaultParms[] = {
         HW_D( HW_EMPTY )
 };
 
+hw_reg_set DefaultVarParms[] = {
+        HW_D( HW_EMPTY )
+};
+
 hw_reg_set DefaultLinkage[] = {
         HW_D( HW_R16 ),
         HW_D( HW_R17 ),
@@ -41,8 +45,4 @@ hw_reg_set DefaultLinkage[] = {
         HW_D( HW_R19 ),
         HW_D( HW_R20 ),
         HW_D( HW_R21 ),
-};
-
-hw_reg_set DefaultVarParms[] = {
-        HW_D( HW_EMPTY )
 };

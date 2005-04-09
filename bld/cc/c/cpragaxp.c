@@ -48,8 +48,7 @@ extern void AsmFree( void *ptr );
 void AsmWarning( char *msg )
 /**************************/
 {
-// CC provides this
-
+    CWarn( WARN_ASSEMBLER_WARNING, ERR_ASSEMBLER_WARNING, msg );
 }
 
 uint_32 AsmQuerySPOffsetOf( char *name )
