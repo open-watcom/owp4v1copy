@@ -1495,6 +1495,7 @@ TYPE MakeFnType( DECL_INFO **arg_decls, specifier_t cv, PTREE exception_spec )
     currarg = args->type_list;
     RingIterBeg( *arg_decls, curr ) {
         *currarg = curr->type;
+        TypeStripTdMod( ( *currarg ) );
         currarg++;
     } RingIterEnd( curr )
     fntype = MakeType( TYP_FUNCTION );
@@ -7385,7 +7386,6 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
     PTREE a;
     TYPE p_type;
     TYPE a_type;
-    TYPE refed_type;
 
     for( i = 0;
          ( p_args != NULL ) && ( a_args != NULL );
@@ -7395,8 +7395,6 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
 
         if( p->op == PT_TYPE ) {
             p_type = p->type;
-
-            TypeStripTdMod( p_type );
             if( p_type->id == TYP_DOT_DOT_DOT ) {
                 /* anything after the ... cannot participate in binding */
                 break;
@@ -7407,8 +7405,6 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
 
         if( a->op == PT_TYPE ) {
             a_type = a->type;
-
-            TypeStripTdMod( a_type );
         } else {
             a_type = NULL;
         }
@@ -7420,53 +7416,6 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
                 DumpFullType( p_type );
             }
             printf( "a_arg #%u\n", i + 1 );
-            if( a->op == PT_TYPE ) {
-                DumpFullType( a_type );
-            }
-        }
-#endif
-        if( ( a->op == PT_TYPE ) && ( p->op == PT_TYPE ) ) {
-            /*
-                has reference &?
-                     \ arg
-                proto \     Y           N
-                ------+------------------------
-                  Y   | strip both  strip proto
-                  N   | strip arg       _
-
-            */
-            refed_type = TypeReference( a_type );
-            if( refed_type != NULL ) {
-                a_type = refed_type;
-                refed_type = TypeReference( p_type );
-                if( refed_type != NULL ) {
-                    p_type = refed_type;
-                } else {
-                    // prototype had no reference so modifiers must be removed
-                    TypeStripTdMod( a_type );
-                    a_type = adjustParmType( a_type );
-                }
-            } else {
-                refed_type = TypeReference( p_type );
-                if( refed_type != NULL ) {
-                    p_type = refed_type;
-                } else {
-                    a_type = adjustParmType( a_type );
-                }
-            }
-        }
-
-        if( a->op == PT_TYPE ) {
-            // if we follow the WP, this should not be here but the WP breaks
-            // working code with string literals; we might want to special case
-            // string literals (decay to char *) and remove this line
-            a_type = adjustParmType( a_type );
-        }
-#ifndef NDEBUG
-        if( PragDbgToggle.dump_types ) {
-            if( p->op == PT_TYPE ) {
-                DumpFullType( p_type );
-            }
             if( a->op == PT_TYPE ) {
                 DumpFullType( a_type );
             }
@@ -8237,12 +8186,6 @@ static unsigned typesBind_ptree( type_bind_info *data )
             if( u_unmod_type->id != TYP_GENERIC ) {
                 return( TB_NULL );
             }
-#if 0       // screws up STL binding (explicit binding of refs!)
-            if( TypeReference( b_unmod_type ) != NULL ) {
-                /* a reference cannot be bound to a generic type */
-                return( TB_NULL );
-            }
-#endif
             /* we don't want any extra mem-model flags */
             b_unmod_type = TypeModExtract( b_type, &b_flags, &b_base,
                                            TC1_NOT_ENUM_CHAR );
@@ -8312,7 +8255,8 @@ static unsigned typesBind_ptree( type_bind_info *data )
                 /* generic type was bound; check the bound type */
                 t_unmod_type = TypeModExtract( match, &t_flags, &t_base,
                                                TC1_NOT_ENUM_CHAR );
-                if( ! TypesIdentical( b_unmod_type, t_unmod_type ) ) {
+                if( ! TypeCompareExclude( b_unmod_type, t_unmod_type,
+                                          TC1_NOT_ENUM_CHAR ) ) {
                     /* unmodified types are different */
                     return( TB_NULL );
                 }
@@ -8372,9 +8316,11 @@ static unsigned typesBind_ptree( type_bind_info *data )
                 }
             }
             u_unmod_type->of = b_unmod_type;
-            //PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
             break;
         case TYP_POINTER:
+            if( ( b_unmod_type->flag ^ u_unmod_type->flag ) & TF1_REFERENCE ) {
+                return( TB_NULL );
+            }
             if( flags.arg_1st_level ) {
                 status |= handle1stLevelPtr( data, b_unmod_type, u_unmod_type );
             } else {
@@ -8421,7 +8367,8 @@ static unsigned typesBind_ptree( type_bind_info *data )
             PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
             break;
         default:
-            if( ! TypesIdentical( b_unmod_type, u_unmod_type ) ) {
+            if( ! TypeCompareExclude( b_unmod_type, t_unmod_type,
+                                      TC1_NOT_ENUM_CHAR ) ) {
                 return( TB_NULL );
             }
         }
