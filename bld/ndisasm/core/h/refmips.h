@@ -30,7 +30,7 @@
 
 
 refpick( BYTE, "" )
-refpick( HALF, "" )
+refpick( HWORD, "" )
 refpick( WORD, "" )
 refpick( DWORD, "" )
 refpick( SFLOAT, "" )

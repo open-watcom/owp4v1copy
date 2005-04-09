@@ -263,9 +263,10 @@ typedef enum {
 #if DISCPU & DISCPU_sparc
     DIF_SPARC_ANUL      = 0x01<<0,      /* for branch instructions - next ins anul'd */
 #endif
-#if DISCPU & DISCPU_sparc
+#if DISCPU & DISCPU_mips
     DIF_MIPS_NULLIFD    = 0x01<<0,      /* for branch instructions - next ins nullified */
-    DIF_MIPS_LK         = 0x01<<1,
+    DIF_MIPS_LINK       = 0x01<<1,
+    DIF_MIPS_LIKELY     = 0x01<<2,
 #endif
     DIF_NONE            = 0
 } dis_inst_flags;

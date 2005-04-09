@@ -119,9 +119,11 @@ dis_handler_return MIPSJType( dis_handle *h, void *d, dis_dec_ins *ins )
     mips_ins    code;
 
     code.full = ins->opcode;
-    ins->op[0].type = DO_IMMED;
-    ins->op[0].value = code.jtype.target;
+    ins->op[0].type = DO_ABSOLUTE;
+    ins->op[0].value = code.jtype.target << 2;
     ins->num_ops = 1;
+    if( code.jtype.op & 1 )
+        ins->flags |= DIF_MIPS_LINK;
     return( DHR_DONE );
 }
 
@@ -336,6 +338,7 @@ dis_handler_return MIPSJump2( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.rtype.rs + DR_MIPS_r0;
     ins->num_ops = 2;
+    ins->flags |= DIF_MIPS_LINK;
     return( DHR_DONE );
 }
 
@@ -349,6 +352,10 @@ dis_handler_return MIPSBranch1( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_RELATIVE;
     ins->op[1].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 2;
+    if( code.itype.rt & 0x10 )
+        ins->flags |= DIF_MIPS_LINK;
+    if( code.itype.rt & 0x02 )
+        ins->flags |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
 
@@ -364,8 +371,26 @@ dis_handler_return MIPSBranch2( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].type = DO_RELATIVE;
     ins->op[2].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 3;
+    if( code.itype.op & 0x10 )
+        ins->flags |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
+
+dis_handler_return MIPSBranch3( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.itype.rs + DR_MIPS_r0;
+    ins->op[1].type = DO_RELATIVE;
+    ins->op[1].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
+    ins->num_ops = 2;
+    if( code.itype.op & 0x10 )
+        ins->flags |= DIF_MIPS_LIKELY;
+    return( DHR_DONE );
+}
+
 
 static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, char *name )
@@ -382,6 +407,8 @@ static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         }
         break;
     case DI_MIPS_OR:
+    case DI_MIPS_ADD:
+    case DI_MIPS_ADDU:
         if( ins->op[2].base == DR_MIPS_r0 ) {
             new = "move";
             ins->num_ops = 2;
