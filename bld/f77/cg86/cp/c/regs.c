@@ -235,7 +235,7 @@ aux_info                DefaultInfo = {
         &FortranParms,
         NULL,
         HW_D( HW_SI ),
-        "*",
+        "^",
         NULL,
         0 };
 
@@ -437,7 +437,7 @@ aux_info                DefaultInfo = {
         &FortranParms,
         NULL,
         HW_D( HW_ESI ),
-        "*",
+        "^",
         NULL,
         0 };
 
@@ -568,7 +568,7 @@ aux_info                DefaultInfo = {
         &FortranParms,
         NULL,
         HW_D( HW_EMPTY ),
-        "*",
+        "^",
         NULL,
         0 };
 
