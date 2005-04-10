@@ -82,7 +82,7 @@ void AssignSeg( SYM_ENTRY *sym )
 void SetFarHuge( SYMPTR sym, int report )
 {
     TYPEPTR             typ;
-    unsigned            attrib;
+    type_modifiers      attrib;
     auto unsigned long  size;
 
     report = report; /* in case not used */
@@ -107,10 +107,9 @@ void SetFarHuge( SYMPTR sym, int report )
                 }
             } else if( size > DataThreshold ) {
                 attrib |= FLAG_FAR;
-            } else if( (/* sym->stg_class == SC_STATIC || 17-may-91 */
-                    CompFlags.strings_in_code_segment ) /*JD: 29-oct-90*/
-                    && sym->attrib & FLAG_CONST ) {
-                    attrib |= FLAG_FAR;
+            } else if( CompFlags.strings_in_code_segment
+                       && ( sym->attrib & FLAG_CONST ) ) {
+                attrib |= FLAG_FAR;
             }
             #if _CPU == 8086
                 if( (attrib & FLAG_FAR) && size > 0x10000 ) {

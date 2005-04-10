@@ -1018,7 +1018,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
                 type_list = MakeParmList( NewParm(parm_type,NULL), 1, 0 );
             }
             typ = FuncNode( typ, info.modifier, type_list );
-            typ = PtrNode( typ, 0, SEG_DATA );
+            typ = PtrNode( typ, FLAG_NONE, SEG_DATA );
             MustRecog( T_RIGHT_PAREN );
         } else {
             if( (state & DECL_STATE_ISPARM) && TokenClass[ CurToken ] == TC_STG_CLASS ) {

@@ -435,8 +435,8 @@ enum sym_state AsmQueryExternal( char *name )
     #define SYM_DNEAR   SYM_INT4
 #endif
 
-static int CodePtrType( int flags )
-/*********************************/
+static int AsmCodePtrType( type_modifiers flags )
+/***********************************************/
 {
     if( flags & FLAG_FAR ) {
         return( SYM_FFAR );
@@ -450,12 +450,12 @@ static int CodePtrType( int flags )
 }
 
 
-static int PtrType( TYPEPTR typ, int flags )
-/******************************************/
+static int AsmPtrType( TYPEPTR typ, type_modifiers flags )
+/********************************************************/
 {
     while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
     if( typ->decl_type == TYPE_FUNCTION ) {
-        return( CodePtrType( flags ) );
+        return( AsmCodePtrType( flags ) );
     } else if( flags & (FLAG_FAR|FLAG_HUGE) ) {
         return( SYM_DFAR );
     } else if( flags & FLAG_NEAR ) {
@@ -519,9 +519,9 @@ local int AsmType( TYPEPTR typ, int flags )
     case TYPE_UFIELD:
         return( AsmDataType[ typ->u.f.field_type ] );
     case TYPE_FUNCTION:
-        return( CodePtrType( flags ) );
+        return( AsmCodePtrType( flags ) );
     case TYPE_POINTER:
-        return( PtrType( typ->object, typ->u.p.decl_flags ) );
+        return( AsmPtrType( typ->object, typ->u.p.decl_flags ) );
     case TYPE_ENUM:
         typ = typ->object;
         /* fall through */

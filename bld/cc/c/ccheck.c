@@ -538,9 +538,7 @@ static void CompareParms( TYPEPTR *master,
         if( typ->decl_type == TYPE_FUNCTION ) {
             typ = PtrNode( typ, FLAG_NONE, SEG_CODE );
         } else if( typ->decl_type == TYPE_ARRAY ) {
-            typ = PtrNode( typ->object,
-                            FLAG_WAS_ARRAY,
-                           SEG_DATA );
+            typ = PtrNode( typ->object, FLAG_WAS_ARRAY, SEG_DATA );
         }
         parm = *passed;
         typ2 = parm->expr_type;

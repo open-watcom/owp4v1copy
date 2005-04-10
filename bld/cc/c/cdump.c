@@ -207,10 +207,10 @@ static TYPEPTR Object( TYPEPTR typ )
 }
 
 static void DumpPointer( TYPEPTR typ, STRCHUNK *pch )      ;
-static void DumpTail( TYPEPTR typ, SYMPTR funcsym, int pointer_flags, STRCHUNK *pch );
+static void DumpTail( TYPEPTR typ, SYMPTR funcsym, type_modifiers pointer_flags, STRCHUNK *pch );
 static void DumpDecl( TYPEPTR typ, SYMPTR funcsym, STRCHUNK *pch );
 static void put_keyword( int keyword, STRCHUNK *pch );
-static void DumpFlags( int flags, TYPEPTR typ, STRCHUNK *fp );
+static void DumpFlags( type_modifiers flags, TYPEPTR typ, STRCHUNK *fp );
 static void DumpBaseType( TYPEPTR typ, STRCHUNK *pch );
 static void DumpArray( TYPEPTR typ, STRCHUNK *pch );
 static void DumpParmTags( TYPEPTR *parm, FILE *fp );
@@ -265,7 +265,7 @@ static void DumpPointer( TYPEPTR typ, STRCHUNK *pch )        /* 26-may-89 */
 }
 
 
-static void DumpTail( TYPEPTR typ, SYMPTR funcsym, int pointer_flags, STRCHUNK *pch )
+static void DumpTail( TYPEPTR typ, SYMPTR funcsym, type_modifiers pointer_flags, STRCHUNK *pch )
 {
     TYPEPTR     top_typ;
     TYPEPTR     obj;
@@ -307,8 +307,8 @@ static void DumpTail( TYPEPTR typ, SYMPTR funcsym, int pointer_flags, STRCHUNK *
 
 static void DumpDecl( TYPEPTR typ, SYMPTR funcsym, STRCHUNK *pch )
 {
-    TYPEPTR     obj;
-    int         flags;
+    TYPEPTR         obj;
+    type_modifiers  flags;
 
     switch( typ->decl_type ) {
     case TYPE_FUNCTION:
@@ -323,7 +323,7 @@ static void DumpDecl( TYPEPTR typ, SYMPTR funcsym, STRCHUNK *pch )
             ChunkSaveStr( pch, funcsym->name );
         }
     case TYPE_ARRAY:
-        DumpTail( typ, funcsym, 0, pch );
+        DumpTail( typ, funcsym, FLAG_NONE, pch );
         break;
     case TYPE_POINTER:
         obj = Object( typ );
@@ -355,7 +355,7 @@ static void put_keyword( int keyword, STRCHUNK *pch )
 }
 
 
-static void DumpFlags( int flags, TYPEPTR typ, STRCHUNK *fp )
+static void DumpFlags( type_modifiers flags, TYPEPTR typ, STRCHUNK *fp )
 {
     SYM_NAMEPTR p;
     SYM_ENTRY   sym;

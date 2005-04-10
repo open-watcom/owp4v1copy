@@ -179,7 +179,7 @@ signed char Valid_Types[] = {
         -1,             // M_UNSIGNED M_SIGNED M_LONG M_SHORT M_INT M_CHAR
 };
 
-void InitTypeHashTables()
+void InitTypeHashTables( void )
 {
     int         index;
     int         base_type;
@@ -199,7 +199,7 @@ void InitTypeHashTables()
     }
 }
 
-void CTypeInit()
+void CTypeInit( void )
 {
     DATA_TYPE   base_type;
     int         size;
@@ -309,19 +309,19 @@ static void SetPlainCharType( int char_type )
     typ = TypeNode( char_type, NULL );
     typ->type_flags = TF2_TYPE_PLAIN_CHAR;
     BaseTypes[ TYPE_PLAIN_CHAR ] = typ;
-    StringType = PtrNode( typ, 0, SEG_DATA );
+    StringType = PtrNode( typ, FLAG_NONE, SEG_DATA );
     ConstCharType =  typ;
 }
 
-void SetSignedChar()
+void SetSignedChar( void )
 {
     SetPlainCharType( TYPE_CHAR );
 }
 
 
-int TypeQualifier()
+int TypeQualifier( void )
 {
-    int         flags, bit;
+    type_modifiers   flags, bit;
 
     flags = 0;
     bit = 0;
@@ -426,7 +426,7 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
 }
 
 
-local void AdvanceToken()
+local void AdvanceToken( void )
 {
     if( CurToken == T_SAVED_ID ) {
         CMemFree( SavedId );
@@ -437,13 +437,12 @@ local void AdvanceToken()
     }
 }
 
-static void DeclSpecifiers( char    *plain_int,
-                              decl_info *info   )
+static void DeclSpecifiers( char *plain_int, decl_info *info )
 {
     TYPEPTR             typ;
     int                 bmask;
     int                 bit;
-    int                 flags;
+    type_modifiers      flags;
     int                 packed;
     SYM_HANDLE          sym_handle;
     stg_classes         stg_class;
@@ -718,7 +717,7 @@ void FullDeclSpecifier( decl_info *info )
     DeclSpecifiers( &plain_int, info );
 }
 
-TYPEPTR TypeDefault()
+TYPEPTR TypeDefault( void )
 {
     return( GetType( TYPE_INT ) );
 }
@@ -739,7 +738,7 @@ static TAGPTR NewTag( char *name, int hash )
 }
 
 
-TAGPTR NullTag()
+TAGPTR NullTag( void )
 {
     return( NewTag( "", TAG_HASH_SIZE ) );
 }
@@ -1118,7 +1117,7 @@ local TYPEPTR StructDecl( int decl_typ, int packed )
     TYPEPTR     typ;
     TAGPTR      tag;
     int         saved_packamount;
-    TAGPTR      TagLookup();
+    TAGPTR      TagLookup( void );
 
     saved_packamount = PackAmount;                      /* 20-nov-91 */
     if( packed )  PackAmount = 1;
@@ -1255,7 +1254,7 @@ local TYPEPTR ComplexDecl( int decl_typ, int packed )
     TYPEPTR     typ;
     TAGPTR      tag;
     int         saved_packamount;
-    TAGPTR      TagLookup();
+    TAGPTR      TagLookup( void );
 
     saved_packamount = PackAmount;
     if( packed )  PackAmount = 1;
@@ -1342,7 +1341,7 @@ void VfyNewSym( int hash_value, char *name )
 }
 
 
-TAGPTR TagLookup()
+TAGPTR TagLookup( void )
 {
     TAGPTR      tag;
     int         hash;
@@ -1356,7 +1355,7 @@ TAGPTR TagLookup()
     return( NewTag( Buffer, hash ) );
 }
 
-void FreeTags()
+void FreeTags( void )
 {
     TAGPTR      tag;
     int         hash;
@@ -1454,12 +1453,12 @@ local TYPEPTR MkPtrNode( TYPEPTR typ, type_modifiers flags,
     return( ptrtyp );
 }
 
-TYPEPTR PtrNode( TYPEPTR typ, int flags, int segid )
+TYPEPTR PtrNode( TYPEPTR typ, type_modifiers flags, int segid )
 {
     return( MkPtrNode( typ, flags, segid, 0, BASED_NONE ) );
 }
 
-TYPEPTR BPtrNode( TYPEPTR typ, int flags, int segid,
+TYPEPTR BPtrNode( TYPEPTR typ, type_modifiers flags, int segid,
                   SYM_HANDLE base, BASED_KIND kind )
 {
     return( MkPtrNode( typ, flags, segid, base, kind  ) );
@@ -1595,7 +1594,7 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
 }
 
 
-void TypesPurge()
+void TypesPurge( void )
 {
 #if 0
     /* The type entries are in permanent memory, so they can't be freed */

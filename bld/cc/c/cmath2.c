@@ -1843,8 +1843,8 @@ TREEPTR UComplement( TREEPTR opnd )
 
 local TYPEPTR MergedType( TYPEPTR typ1, TYPEPTR typ2 )  /* 25-jul-90 */
 {
-    int         flags, new_flags;
-    TYPEPTR     typ;
+    type_modifiers  flags, new_flags;
+    TYPEPTR         typ;
 /*
 (type huge *) : (type *)                        -> (type huge *)
 (type *) : (type huge *)                        -> (type huge *)

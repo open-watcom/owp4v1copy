@@ -41,7 +41,7 @@
 #include <malloc.h>
 
 extern  void    InitExpressCode(int,int);
-    extern      void    GenNewProc(cg_sym_handle);
+extern  void    GenNewProc(cg_sym_handle);
 extern  TREEPTR GenExpressCode(TREEPTR,int,TREEPTR);
 extern  void    EmptyQueue(void);
 extern  int     StartWCG();
@@ -52,8 +52,7 @@ local void      FreeLocalVars( SYM_HANDLE sym_list );
 static void     FreeTrySymBackInfo( void );
 static void     FreeTryTableBackHandles( void );
 static void     FreeTrySymBackInfo( void );
-extern int      PtrType( TYPEPTR typ, int flags );
-local int       CodePtrType( int flags );
+local int       CodePtrType( type_modifiers flags );
 local int       DoFuncDefn( SYM_HANDLE funcsym_handle );
 static void     CallTryFini( void );
 local void      EmitSyms( void );
@@ -562,7 +561,7 @@ static cg_name PushSymAddr( OPNODE *node )
     if( sym.flags & SYM_FUNCTION ){
         dtype = CodePtrType( sym.attrib );
     }else{
-         dtype = CGenType( typ );
+        dtype = CGenType( typ );
     }
     if( sym.flags & SYM_FUNC_RETURN_VAR ) {
         name = CGTempName( sym.info.return_var, dtype );
@@ -1811,7 +1810,7 @@ int CGenType( TYPEPTR typ )
 }
 
 
-local int CodePtrType( int flags )
+local int CodePtrType( type_modifiers flags )
 {
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
     int         dtype;
@@ -1830,7 +1829,7 @@ local int CodePtrType( int flags )
 }
 
 
-extern int PtrType( TYPEPTR typ, int flags )
+extern int PtrType( TYPEPTR typ, type_modifiers flags )
 {
     int         dtype;
 

@@ -246,7 +246,7 @@ struct inline_funcs __FAR *IF_Lookup( char *name )
 /*
 //    return language specific info
 */
-struct aux_info *LangInfo( int flags, struct aux_info *inf )
+static struct aux_info *LangInfo( type_modifiers flags, struct aux_info *inf )
 {
     if( inf != &DefaultInfo )
         return( inf );

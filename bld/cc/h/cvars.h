@@ -620,6 +620,7 @@ extern  void    EmitSym(SYMPTR,SYM_HANDLE);
 extern  int     CGenType(TYPEPTR);
 extern  void    GenInLineFunc( SYM_HANDLE sym_handle );
 extern  bool    IsInLineFunc( SYM_HANDLE sym_handle );
+extern  int     PtrType( TYPEPTR typ, type_modifiers flags );
 
 extern  void    EmitDataQuads(void);            /* cgendata */
 extern  void    EmitZeros(unsigned long);       /* cgendata */
@@ -837,8 +838,8 @@ extern  TYPEPTR GetType(DATA_TYPE);
 extern  TYPEPTR ArrayNode(TYPEPTR);
 extern  TYPEPTR FuncNode(TYPEPTR, int, TYPEPTR *);
 extern  TYPEPTR TypeDefault(void);
-extern  TYPEPTR PtrNode(TYPEPTR,int,int);
-extern  TYPEPTR BPtrNode(TYPEPTR,int,int,SYM_HANDLE, BASED_KIND);
+extern  TYPEPTR PtrNode(TYPEPTR,type_modifiers,int);
+extern  TYPEPTR BPtrNode(TYPEPTR,type_modifiers,int,SYM_HANDLE, BASED_KIND);
 extern  TYPEPTR TypeNode(DATA_TYPE,TYPEPTR);
 extern  int     TypeQualifier(void);
 extern  void    TypeSpecifier( decl_info *info );

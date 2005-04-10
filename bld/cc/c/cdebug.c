@@ -43,7 +43,6 @@ static void InitDBType( void );
 
 //void RevTypeList();
 extern  int     CGenType( TYPEPTR );
-extern  int     PtrType( TYPEPTR typ, int flags );
 extern  void    SymGet(SYMPTR,SYM_HANDLE);
 extern  SYMPTR  SymGetPtr(SYM_HANDLE);
 

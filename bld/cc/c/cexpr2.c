@@ -525,7 +525,7 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
 
         if( tree->op.opr == OPR_PUSHSTRING ) {
             if( typ->object->decl_type == TYPE_USHORT ) { /* 02-aug-91 */
-                typ = PtrNode( typ->object, 0, SEG_DATA );
+                typ = PtrNode( typ->object, FLAG_NONE, SEG_DATA );
             } else {
                 StringArrayType = typ;
                 typ = StringType;
@@ -699,7 +699,7 @@ static TREEPTR AddrOp( TREEPTR tree )
             leaf->op.ulong_value += tree->right->op.ulong_value;
             tree->left = NULL;
             FreeExprTree( tree );
-            leaf->expr_type = PtrNode( typ, 0, SEG_DATA );
+            leaf->expr_type = PtrNode( typ, FLAG_NONE, SEG_DATA );
             return( leaf );
         }
     }
@@ -2024,7 +2024,7 @@ local TREEPTR GenAllocaNode( TREEPTR size_parm )
 
     if( Token[Level] == T_LEFT_PAREN ) {
         tree = ExprNode( 0, OPR_ALLOCA, size_parm );
-        tree->expr_type = PtrNode( GetType( TYPE_VOID ), 0, SEG_STACK );
+        tree->expr_type = PtrNode( GetType( TYPE_VOID ), FLAG_NONE, SEG_STACK );
     } else {
         // error
         tree = 0;

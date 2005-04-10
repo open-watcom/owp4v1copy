@@ -1885,8 +1885,8 @@ static  void    AddSCons( name *op, type_class_def kind ) {
 }
 
 
-static  void    GenRegOp( hw_reg_set dst, type_length value, int op ) {
-/*********************************************************************/
+static  void    GenRegOp( hw_reg_set dst, type_length value, unsigned op ) {
+/**************************************************************************/
 
     type_class_def      kind;
 

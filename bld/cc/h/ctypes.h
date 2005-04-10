@@ -57,7 +57,8 @@ typedef unsigned_64     uint64;
 /* CONST, VOLATILE can appear in typ->decl_flags and leaf->leaf_flags.
 *  NEAR, FAR, HUGE can appear in typ->decl_flags, leaf->leaf_flags,
 *                               and sym->attrib.
-*  CDECL,PASCAL,FORTRAN,SYSCALL can appear in typ->decl_flags and sym->attrib.
+*  CDECL,PASCAL,FORTRAN,SYSCALL,STDCALL,OPTLINK,FASTCALL,WATCOM
+*                       can appear in typ->decl_flags and sym->attrib.
 *  LVALUE, CONSTANT, VOID will only appear in leaf->leaf_flags.
 *
 * freed by CFOLD
@@ -66,39 +67,41 @@ typedef enum    type_modifiers {    /* type   leaf   sym   */
     FLAG_NONE       = 0x0000,
     FLAG_CONST      = 0x0001,       /* Y0001  Y0001        */
     FLAG_VOLATILE   = 0x0002,       /* Y0002  Y0002        */
-    FLAG_RESTRICT   = 0x10000,      /* see how this flies  */
+    FLAG_RESTRICT   = 0x0004,       /* see how this flies  */
 
-    FLAG_NEAR       = 0x0004,       /* Y0004  Y0004  Y0004 */
-    FLAG_FAR        = 0x0008,       /* Y0008  Y0008  Y0008 */
-    FLAG_HUGE       = 0x0010,       /* Y0010  Y0010  Y0010 */
+    FLAG_NEAR       = 0x0008,       /* Y0008  Y0008  Y0008 */
+    FLAG_FAR        = 0x0010,       /* Y0010  Y0010  Y0010 */
+    FLAG_HUGE       = 0x0020,       /* Y0020  Y0020  Y0020 */
     FLAG_MEM_MODEL  = FLAG_NEAR | FLAG_FAR| FLAG_HUGE,
 
 
-    LANG_CDECL      = 0x0020,       /* Y0020         Y0020 */
-    LANG_PASCAL     = 0x0040,       /* Y0040         Y0040 */
-    LANG_FORTRAN    = 0x0060,       /* Y0060         Y0060 */
-    LANG_SYSCALL    = 0x0080,       /* Y0080         Y0080 */     /* 04-jul-91 */
-    LANG_STDCALL    = 0x00A0,       /* Y00A0         Y00A0 */     /* 08-jan-92 */
-    LANG_OPTLINK    = 0x00C0,       /* Y00C0         Y00C0 */
-    LANG_FASTCALL   = 0x00E0,
+    LANG_CDECL      = 0x0040,       /* Y0040         Y0040 */
+    LANG_PASCAL     = 0x0080,       /* Y0080         Y0080 */
+    LANG_FORTRAN    = 0x00C0,       /* Y00C0         Y00C0 */
+    LANG_SYSCALL    = 0x0100,       /* Y0100         Y0100 */     /* 04-jul-91 */
+    LANG_STDCALL    = 0x0140,       /* Y0140         Y0140 */     /* 08-jan-92 */
+    LANG_OPTLINK    = 0x0180,       /* Y0180         Y0180 */
+    LANG_FASTCALL   = 0x01C0,       /* Y01C0         Y01C0 */
+    LANG_WATCOM     = 0x0200,       /* Y0200         Y0200 */
     FLAG_LANGUAGES  = (LANG_CDECL  |
                        LANG_PASCAL |
                        LANG_FORTRAN|
                        LANG_SYSCALL|
                        LANG_STDCALL|
                        LANG_OPTLINK|
-                       LANG_FASTCALL),
+                       LANG_FASTCALL|
+                       LANG_WATCOM ),
     FLAG_INTERRUPT  = (FLAG_NEAR+FLAG_FAR), /* interrupt function */
     /* FLAG_NEAR + FLAG_FAR both on ==> interrupt far */
-    FLAG_SAVEREGS   = 0x0100,       /* Y0100         Y0100 */
-    FLAG_LOADDS     = 0x0200,       /* Y0200         Y0200 */
-    FLAG_EXPORT     = 0x0400,       /* Y0400         Y0400 */
-    FLAG_BASED      = 0x0800,       /* Y0800         Y0800 _based ptr or var */
-    FLAG_SEGMENT    = 0x1000,       /* Y1000         Y1000 __segment type */
-    FLAG_FAR16      = 0x2000,       /* Y2000         Y2000 __far16 modifier */
-    FLAG_UNALIGNED  = 0x4000,       /*                     _Packed structures */
-    FLAG_INLINE     = 0x8000,       /* Y8000               _inline keyword */
-    FLAG_WAS_ARRAY  = 0x8000,       /* Y8000               for "char *argv[]" */
+    FLAG_SAVEREGS   = 0x0400,       /* Y0400         Y0400 */
+    FLAG_LOADDS     = 0x0800,       /* Y0800         Y0800 */
+    FLAG_EXPORT     = 0x1000,       /* Y1000         Y1000 */
+    FLAG_BASED      = 0x2000,       /* Y2000         Y2000 _based ptr or var */
+    FLAG_SEGMENT    = 0x4000,       /* Y4000         Y4000 __segment type */
+    FLAG_FAR16      = 0x8000,       /* Y8000         Y8000 __far16 modifier */
+    FLAG_UNALIGNED  =0x10000,       /*                     _Packed structures */
+    FLAG_INLINE     =0x20000,       /* Y20000              _inline keyword */
+    FLAG_WAS_ARRAY  =0x20000,       /* Y20000              for "char *argv[]" */
 } type_modifiers;
 
 typedef enum sym_flags {
