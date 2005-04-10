@@ -14,9 +14,18 @@
 :include readonly.sp
 
 #ifndef _STREAMBUF_INCLUDED
-  #include <streambu>
+  #include <streambuf>
 #endif
 using std::streambuf;
+
+// All included names should also be in the global namespace.
+#ifndef _STDDEF_H_INCLUDED
+  #include <stddef.h>
+#endif
+
+#ifndef _STRING_H_INCLUDED
+  #include <string.h>
+#endif
 
 #endif
 :elsesegment
@@ -29,13 +38,15 @@ using std::streambuf;
 #endif
 
 #ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
+  #include <_comdef.h>
 #endif
-#ifndef _STDDEF_H_INCLUDED
- #include <stddef.h>
+
+#ifndef _CSTDDEF_INCLUDED
+  #include <cstddef>
 #endif
-#ifndef _STRING_H_INCLUDED
- #include <string.h>
+
+#ifndef _CSTRING_INCLUDED
+  #include <cstring>
 #endif
 
 :include cpplock.sp
@@ -237,7 +248,7 @@ namespace std {
   inline int streambuf::sgetn( char *__buf, int __len ) {
     __lock_it( __b_lock );
     if( __len < (int)(__get_end - __get_ptr) ) {
-        ::memcpy( __buf, __get_ptr, __len );
+        memcpy( __buf, __get_ptr, __len );
         gbump( __len );
         return( __len );
     }
@@ -273,7 +284,7 @@ namespace std {
   inline int streambuf::sputn( char const *__buf, int __len ) {
     __lock_it( __b_lock );
     if( __len < (int)(__put_end - __put_ptr) ) {
-        ::memcpy( __put_ptr, __buf, __len );
+        memcpy( __put_ptr, __buf, __len );
         pbump( __len );
         return( __len );
     }
