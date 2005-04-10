@@ -61,6 +61,8 @@ extern char *FindNextWS( char *str )
 /***********************************
  * Finds next free white space character, allowing doublequotes to
  * be used to specify strings with white spaces.
+ *
+ * str is not const because the return value is usually used to write data.
  */
 {
     char    string_open = 0;
@@ -156,13 +158,12 @@ extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
     return( orgdst );
 }
 
-#if defined( __DOS__ )
-
 extern char *FixName( char *name )
+{
+#if defined( __DOS__ )
 /*********************************
  * Down case all filenames, converting fwd-slash to back-slash
  */
-{
     char    *ptr;
     char    hold;
 
@@ -192,37 +193,10 @@ extern char *FixName( char *name )
     }
 
     return( name );
-}
-
-
-extern int FNameCmp( const char *a, const char *b )
-/*************************************************/
-{
-    return( strcmp( a, b ) );
-}
-
-extern int FNameCmpChr( char a, char b )
-/*************************************************/
-{
-    return( a - b );
-}
-
-
-#ifdef USE_FAR
-extern int _fFNameCmp( const char FAR *a, const char FAR *b )
-/***********************************************************/
-{
-    return( _fstrcmp( a, b ) );
-}
-#endif
-
 #elif defined( __OS2__ ) || defined( __NT__ )
-
-extern char *FixName( char *name )
 /*********************************
  * convert fwd-slash to back-slash
  */
-{
     char    *ptr;
     char    hold;
 
@@ -248,65 +222,50 @@ extern char *FixName( char *name )
     }
 
     return( name );
-}
-
-
-extern int FNameCmp( const char *a, const char *b )
-/*************************************************/
-{
-    return( stricmp( a, b ) );
-}
-
-extern int FNameCmpChr( char a, char b )
-/*************************************************/
-{
-    return( tolower( a ) - tolower( b ) );
-}
-
-
-#ifdef USE_FAR
-extern int _fFNameCmp( const char FAR *a, const char FAR *b )
-/***********************************************************/
-{
-    return( _fstricmp( a, b ) );
-}
-#endif
-
 #else
-
-extern char *FixName( char *name )
-/********************************/
-{
     return( name );
+#endif
 }
 
 
 extern int FNameCmp( const char *a, const char *b )
 /*************************************************/
 {
+#if defined( __OS2__ ) || defined( __NT__ )
+    return( stricmp( a, b ) );
+#else
     return( strcmp( a, b ) );
+#endif
 }
 
-extern int FNameCmpChr( char a, char b )
-/*************************************************/
+
+static int FNameCmpChr( char a, char b )
+/**************************************/
 {
+#if defined( __OS2__ ) || defined( __NT__ )
+    return( tolower( a ) - tolower( b ) );
+#else
     return( a - b );
+#endif
 }
+
 
 #ifdef USE_FAR
 extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 /***********************************************************/
 {
+#if defined( __OS2__ ) || defined( __NT__ )
+    return( _fstricmp( a, b ) );
+#else
     return( _fstrcmp( a, b ) );
-}
 #endif
-
+}
 #endif
 
 
 #define IS_WILDCARD_CHAR( x ) ((*x == '*') || (*x == '?'))
 
-int __fnmatch( char *pattern, char *string )
+static int __fnmatch( char *pattern, char *string )
 /******************************************/
 // OS specific compare function FNameCmpChr
 // must be used for file names
@@ -531,18 +490,17 @@ extern int PutEnvSafe( ENV_TRACKER *env )
     int         rc;
     size_t      len;
 
-                                /* upper case the name */
     p = env->value;
+                                // upper case the name
     while( *p != '=' && *p != NULLCHAR ) {
         *p = toupper( *p );
         ++p;
     }
-    rc = putenv( env->value );  /* put into environment */
+    rc = putenv( env->value );  // put into environment
     if( p[0] == '=' && p[1] == '\0' ) {
-        // we are deleting the envvar, ignore errors
-        rc = 0;
+        rc = 0;                 // we are deleting the envvar, ignore errors
     }
-    len = p - env->value + 1;   /* len including '=' */
+    len = p - env->value + 1;   // len including '='
     walk = &envList;
     while( *walk != NULL ) {
         if( strncmp( (*walk)->value, env->value, len ) == 0 ) {
@@ -552,20 +510,20 @@ extern int PutEnvSafe( ENV_TRACKER *env )
     }
     old = *walk;
     if( old != NULL ) {
-        *walk = old->next;      /* unlink from chain */
+        *walk = old->next;      // unlink from chain
         FreeSafe( old );
     }
-    if( p[1] != 0 ) {           /* we're giving it a new value */
-        env->next = envList;    /* save the memory since putenv keeps a */
-        envList = env;          /* pointer to it... */
-    } else {                    /* we're deleting an old value */
+    if( p[1] != 0 ) {           // we're giving it a new value
+        env->next = envList;    // save the memory since putenv keeps a
+        envList = env;          // pointer to it...
+    } else {                    // we're deleting an old value
         FreeSafe( env );
     }
     return( rc );
 }
 
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(DEVELOPMENT)
 extern void PutEnvFini( void )
 /****************************/
 {

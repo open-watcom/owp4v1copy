@@ -66,7 +66,7 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
     /* \" is considered a double quote character                         */
     /* and if a double quote is found again then we break out as the end */
     /* of the filename                                                   */
-    while( pos < _MAX_PATH - 1 && t != DOUBLEQUOTE && t != EOL && t != STRM_END ) {
+    while( pos < _MAX_PATH && t != DOUBLEQUOTE && t != EOL && t != STRM_END ) {
         file[pos++] = t;
         t = PreGetCH();
         if( t == BACKSLASH ) {
@@ -84,8 +84,7 @@ STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
     }
 
     if( pos >= _MAX_PATH ) {
-        PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-        return( 0 );    // not reached
+        PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 ); // NOTREACHED
     }
     file[pos] = NULLCHAR;
 
@@ -188,8 +187,7 @@ extern TOKEN_T LexPath( STRM_T t )
 
         if( pos == _MAX_PATH ) {
             FreeSafe( FinishVec( vec ) );
-            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-            return( 0 );    // not reached
+            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 ); // NOTREACHED
         }
 
         path[pos] = NULLCHAR;
@@ -240,8 +238,7 @@ STATIC TOKEN_T lexFileName( STRM_T t )
         t = PreGetCH();
     }
     if( pos == _MAX_PATH ) {
-        PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-        return( 0 );    // not reached
+        PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 ); // NOTREACHED
     }
     file[pos] = NULLCHAR;
     UnGetCH( t );
@@ -410,8 +407,7 @@ STATIC TOKEN_T lexDotName( void )
             t = PreGetCH();
         }
         if( pos == MAX_SUFFIX ) {
-            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 );
-            return( 0 );    // not reached
+            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, MAX_SUFFIX - 1 ); //NOTREACHED
         }
         ext[pos] = NULLCHAR;
 
@@ -540,8 +536,7 @@ STATIC char *DeMacroDoubleQuote( BOOLEAN IsDoubleQuote )
         }
 
         if( pos >= _MAX_PATH ) {
-            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
-            return( 0 );    // not reached
+            PrtMsg( FTL | LOC | MAXIMUM_TOKEN_IS, _MAX_PATH - 1 ); // NOTREACHED
         }
 
         buffer[pos] = NULLCHAR;

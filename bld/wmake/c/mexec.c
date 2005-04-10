@@ -120,7 +120,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "RMDIR",
     "SET",
 #define COM_SET     26  /* index of the set keyword */
-#define LEN_SET     3   /* strlen( "SET" ) */
     "TIME",
     "TYPE",
     "VER",
@@ -217,7 +216,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "RMDIR",
     "SET",
 #define COM_SET     30
-#define LEN_SET     3
     "SETLOCAL",
     "SHIFT",
     "START",
@@ -366,11 +364,12 @@ STATIC RET_T processInlineFile( int handle, const char *body,
             DeMacroBody = ignoreWSDeMacro( FALSE, ForceDeMacro() );
             currentSent = index + 1;
             if( writeToFile ) {
-                if( strlen( DeMacroBody ) !=
-                        write( handle, DeMacroBody, strlen( DeMacroBody ) ) ) {
+                size_t  bytes = strlen( DeMacroBody );
+
+                if( bytes != write( handle, DeMacroBody, bytes ) ) {
                     ret = RET_ERROR;
                 }
-                if( write( handle, "\n", 1 ) != 1 ) {
+                if( 1 != write( handle, "\n", 1 ) ) {
                     ret = RET_ERROR;
                 }
             } else {
@@ -380,7 +379,7 @@ STATIC RET_T processInlineFile( int handle, const char *body,
                 outText = StartVec();
                 WriteVec( outText, "echo." );
                 if( DeMacroBody != NULL ) {
-                    if( strlen( DeMacroBody ) > 0 ) {
+                    if( *DeMacroBody != 0 ) {
                         WriteVec( outText, DeMacroBody );
                     }
                     FreeSafe( DeMacroBody );
@@ -519,8 +518,8 @@ STATIC RET_T writeInlineFiles( FLIST *head, char **commandIn )
     FLIST   *current;
     RET_T   ret;
     VECSTR  newCommand;
-    int     start;  // start of cmdText to be copied into newCommand;
-    int     index;  // current index of cmdText
+    size_t  start;  // start of cmdText to be copied into newCommand;
+    size_t  index;  // current index of cmdText
     NKLIST  *temp;
 
     assert( *commandIn != NULL );
@@ -627,7 +626,8 @@ STATIC RET_T percentMake( char *arg )
     TARGET      *calltarg;
     RET_T       ret;
     char        *buf;
-    char        *start, *finish;
+    char        *start;
+    char        *finish;
     BOOLEAN     newtarg;
     BOOLEAN     more_targets;
 
@@ -987,7 +987,7 @@ STATIC RET_T handleSet( const char *cmd )
     ++p;                        /* advance to character after '=' */
 
                         /* +1 for '=' (already +1 for '\0' in ENV_TRACKER) */
-    env = MallocSafe( sizeof( ENV_TRACKER )+ 1 +( endname - name ) + strlen( p ) );
+    env = MallocSafe( sizeof( *env ) + 1 + (endname - name) + strlen( p ) );
     FmtStr( env->value, "%s=%s", name, p );
     retcode = PutEnvSafe( env );
     if( retcode != 0 ) {
@@ -1346,7 +1346,6 @@ STATIC RET_T handleFor( const char *line )
     while( hold != NULLCHAR ) {
         subst = set;        /* remember start of subst string */
 
-        //while( *set != NULLCHAR && !isws( *set ) ) ++set;
         set = FindNextWS( set );
 
         hold = *set;
@@ -1394,8 +1393,12 @@ STATIC RET_T handleFor( const char *line )
 STATIC RET_T handleCD( char *cmd )
 /********************************/
 {
-    char        *p;     /* pointer to walk with */
+    char        *p;     // pointer to walk with
     char const  *s;
+
+#ifdef DEVELOPMENT
+    PrtMsg( DBG | INF | INTERPRETING, dosInternals[COM_CD] );
+#endif
 
     closeCurrentFile();
     p = cmd;
@@ -1431,7 +1434,11 @@ STATIC RET_T handleChangeDrive( const char *cmd )
     unsigned    total;
     unsigned    curr_drive;
 
-    drive_index = ( toupper( *cmd ) - 'A' ) + 1;
+#ifdef DEVELOPMENT
+    PrtMsg( DBG | INF | INTERPRETING, dosInternals[CNUM] );
+#endif
+
+    drive_index = (unsigned)(toupper( *cmd ) - 'A' + 1);
     if( drive_index == 0 || drive_index > 26 ) {
         return( RET_ERROR );
     }
@@ -1464,7 +1471,7 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
  * returns RET_WARN when there are no more arguments
  */
 {
-    static char     *p  = NULL;
+    static char *p  = NULL;
 
                             /* first run? */
     if( line ) {
@@ -1529,10 +1536,10 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
         rv = 0;
     }
     if( 0 != rv ) {
-        PrtMsg( ERR| SYSERR_DELETING_FILE, file );
+        PrtMsg( ERR | SYSERR_DELETING_FILE, file );
     }
     else if( flags->bVerbose && ENOENT != errno ) {
-        PrtMsg( INF| DELETING_FILE, file );
+        PrtMsg( INF | DELETING_FILE, file );
     }
 
     CacheRelease();     /* so that the cache is updated */
@@ -1540,8 +1547,8 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
     return( 0 == rv );
 }
 
-STATIC RET_T handleRM( const char *cmdname, const char *cmd )
-/************************************************************
+STATIC RET_T handleRM( const char *cmd )
+/***************************************
  * RM [-f -v] <file> ...
  *
  * -f   Force deletion of read-only files.
@@ -1552,6 +1559,10 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
     rm_flags    flags;
     RET_T       rt;
     const char  *pfname;
+
+#ifdef DEVELOPMENT
+    PrtMsg( DBG | INF | INTERPRETING, dosInternals[COM_RM] );
+#endif
 
     rt = getRMArgs( cmd, &flags, &pfname );
 
@@ -1619,7 +1630,7 @@ static void dumpCommand( char *cmd )
     char    *p;
     char    *z;
 
-    // trim trailing white space before executing
+    // trim trailing white space before printing
     z = cmd;
     for( p = cmd; *p; ++p ) {
         if( !isws( *p ) ) {
@@ -1684,8 +1695,16 @@ STATIC void killTmpEnv( UINT16 tmp )
     PutEnvSafe( env );
 }
 #else
-STATIC UINT16 makeTmpEnv( const char *cmd ) { return( 0 ); }
-STATIC void killTmpEnv( UINT16 tmp ) {}
+STATIC UINT16 makeTmpEnv( const char *cmd )
+{
+    (void)cmd; // Unused
+    return( 0 );
+}
+
+STATIC void killTmpEnv( UINT16 tmp )
+{
+    (void)tmp; // Unused
+}
 #endif
 
 #ifdef __WATCOMC__
@@ -1693,18 +1712,15 @@ STATIC void killTmpEnv( UINT16 tmp ) {}
 #endif
 STATIC RET_T shellSpawn( char *cmd, int flags )
 {
-    BOOLEAN percent_cmd;/* is this a percent cmd? */
-    int     comnum;     /* index into dosInternals */
-    char    cmdname[_MAX_PATH];
-#if defined( __DOS__ )
-    char    ext[_MAX_EXT];
-#endif
-    char    *arg;
-    char const *argv[3];/* for spawnvp */
-    int     retcode;    /* from spawnvp */
-    UINT16  tmp_env = 0;/* for * commands */
-    RET_T   my_ret;     /* return code for this function */
-    int     quote;      /* true if inside quotes */
+    BOOLEAN     percent_cmd;        // is this a percent cmd?
+    int         comnum;             // index into dosInternals
+    char        cmdname[_MAX_PATH]; // copied from cmd
+    char        *arg;               // used in parsing cmd into "words"
+    char const  *argv[3];           // for spawnvp
+    int         retcode;            // from spawnvp
+    UINT16      tmp_env = 0;        // for * commands
+    RET_T       my_ret;             // return code for this function
+    int         quote;              // true if inside quotes
 
     assert( cmd != NULL );
 
@@ -1733,16 +1749,21 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     cmdname[arg - cmd] = NULLCHAR;      /* null terminate it */
 
     /* skip whitespace between the command and the argument */
-    for( ; isws( *arg ); arg++ ) {
+    while( isws( *arg ) ) {
+        arg++;
     }
 
 #if defined( __DOS__ )
-    _splitpath( cmdname, NULL, NULL, NULL, ext );
-    if( ext[0] == '.' ) {
-        FixName( ext );
-        /* if the extension is specified let the shell handle it (26-apr-91) */
-        if( FNameCmp( ext, ".exe" ) != 0 && FNameCmp( ext, ".com" ) != 0 ) {
-            flags |= FLAG_SHELL; /* .bat and .cmd need the shell anyway */
+    {
+        char    ext[_MAX_EXT];
+
+        _splitpath( cmdname, NULL, NULL, NULL, ext );
+        if( ext[0] == '.' ) {
+            FixName( ext );
+            /* if extension specified let the shell handle it (26-apr-91) */
+            if( FNameCmp( ext, ".exe" ) != 0 && FNameCmp( ext, ".com" ) != 0 ) {
+                flags |= FLAG_SHELL; /* .bat and .cmd need the shell anyway */
+            }
         }
     }
 #endif
@@ -1778,7 +1799,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
 #if !defined( __UNIX__ )
-        case COM_RM:    my_ret = handleRM( cmdname, cmd );  break;
+        case COM_RM:    my_ret = handleRM( cmd );           break;
 #endif
 #if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
@@ -1864,6 +1885,7 @@ STATIC RET_T execLine( char *line )
     int     flags;
     RET_T   rc;
 
+    assert( line != NULL );
 
     CheckForBreak();
     /* make a copy of global flags */
