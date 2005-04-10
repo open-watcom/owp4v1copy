@@ -60,7 +60,7 @@ extern  void            PointEdge( block_edge *, block * );
 
 static  name            *ReturnValue;
 
-#define _TR_LINK( x )   x->u.parm_list
+#define _TR_LINK( x )   x->u2.parm_list
 #define _PROC_LINK( x ) x->parms_list
 
 

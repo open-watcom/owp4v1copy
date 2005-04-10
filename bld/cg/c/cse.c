@@ -110,7 +110,7 @@ static  void            CleanTableEntries( block *root );
 
 #define _INSBITS( ins )   _LBitScalar((ins)->head.live.within_block)
 #define _BLKBITS( blk )   _LBitScalar((blk)->available_bit)
-#define _INSLINK( ins )   (*(instruction **)&(ins)->u.cse_link)
+#define _INSLINK( ins )   (*(instruction **)&(ins)->u2.cse_link)
 #define _NAMELINK( op )   (*(instruction **)&(op)->v.conflict)
 #define PARTITION_ROOT    BLOCK_VISITED
 #define INS_DEFINES_OWN_OPERAND INS_MARKED

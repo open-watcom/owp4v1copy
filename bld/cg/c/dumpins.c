@@ -82,9 +82,9 @@ extern  void    DumpInsOffsets() {
     DoOffset( "head.opcode", offsetof( instruction, head.opcode ) );
     DoOffset( "head.state", offsetof( instruction, head.state ) );
     DoOffset( "table\t", offsetof( instruction, table ) );
-    DoOffset( "u.cse_link", offsetof( instruction, u.cse_link ) );
     DoOffset( "u.gen_table", offsetof( instruction, u.gen_table ) );
-    DoOffset( "u.parm_list", offsetof( instruction, u.parm_list ) );
+    DoOffset( "u2.cse_link", offsetof( instruction, u2.cse_link ) );
+    DoOffset( "u2.parm_list", offsetof( instruction, u2.parm_list ) );
     DoOffset( "zap\t", offsetof( instruction, zap ) );
     DoOffset( "result\t", offsetof( instruction, result ) );
     DoOffset( "id\t", offsetof( instruction, id ) );

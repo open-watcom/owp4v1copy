@@ -99,10 +99,12 @@ typedef struct instruction {
         struct ins_header       head;
         struct opcode_entry     *table;
         union {
-            struct opcode_entry *gen_table;
+            struct opcode_entry *gen_table;     /*  do not merge this one! */
+        } u;
+        union {
             struct instruction  *parm_list;
             struct instruction  *cse_link;
-        } u;
+        } u2;
         struct register_name    *zap;
         union name              *result;        /*  result location */
         instruction_id          id;
