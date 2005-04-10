@@ -317,8 +317,14 @@ void ClassInitState( type_flag class_variant, CLASS_INIT extra, TYPE class_mod_l
     }
     prev_data = data->next;
     if( prev_data != NULL ) {
-        /* our inline fns go where any previous class' inline fns go */
-        data->inline_data = prev_data->inline_data;
+        if( ( prev_data->info != NULL ) && prev_data->info->defined ) {
+            data->inline_data = NULL;
+        } else {
+            /* our inline fns go where any previous class' inline fns
+             * go, but only if the previous class isn't already fully
+             * defined */
+            data->inline_data = prev_data->inline_data;
+        }
     } else {
         data->inline_data = NULL;
     }

@@ -288,6 +288,7 @@ positive_tests = &
     defarg03.$(ext) &
     defarg04.$(ext) &
     defarg05.$(ext) &
+    defarg06.$(ext) &
     deftemp01.$(ext) &
     deftemp02.$(ext) &
     deftemp03.$(ext) &
