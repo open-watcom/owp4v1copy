@@ -34,6 +34,8 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/mad/axp/os2386/madaxp.sym   <RELROOT>/rel2/binp/
     <CPCMD> <DEVDIR>/mad/ppc/os2386/madppc.d32   <RELROOT>/rel2/binp/
     <CPCMD> <DEVDIR>/mad/ppc/os2386/madppc.sym   <RELROOT>/rel2/binp/
+    <CPCMD> <DEVDIR>/mad/mips/os2386/madmips.d32 <RELROOT>/rel2/binp/
+    <CPCMD> <DEVDIR>/mad/mips/os2386/madmips.sym <RELROOT>/rel2/binp/
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/nt386/madx86.dll    <RELROOT>/rel2/binnt/
@@ -42,9 +44,12 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/mad/axp/nt386/madaxp.sym    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/ppc/nt386/madppc.dll    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/ppc/nt386/madppc.sym    <RELROOT>/rel2/binnt/
+    <CPCMD> <DEVDIR>/mad/mips/nt386/madmips.dll  <RELROOT>/rel2/binnt/
+    <CPCMD> <DEVDIR>/mad/mips/nt386/madmips.sym  <RELROOT>/rel2/binnt/
 #    <CPCMD> <DEVDIR>/mad/x86/ntaxp/madx86.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/axp/ntaxp/madaxp.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/ppc/ntaxp/madppc.dll    <RELROOT>/rel2/axpnt/
+#    <CPCMD> <DEVDIR>/mad/mips/ntaxp/madmips.dll  <RELROOT>/rel2/axpnt/
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/qnx386/madx86.mad   <RELROOT>/rel2/qnx/watcom/wd/
@@ -52,12 +57,14 @@ set PROJDIR=<CWD>
 #    <CPCMD> <DEVDIR>/mad/ppc/qnx386/madppc.mad   <RELROOT>/rel2/qnx/watcom/wd/
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.mad <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.sym <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.mad <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.sym <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.mad <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.sym <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.mad    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/x86/linux386/madx86.sym    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.mad    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/axp/linux386/madaxp.sym    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.mad    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/ppc/linux386/madppc.sym    <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/mips/linux386/madmips.mad  <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/mad/mips/linux386/madmips.sym  <RELROOT>/rel2/binl/
 
 
 [ BLOCK <1> clean ]
