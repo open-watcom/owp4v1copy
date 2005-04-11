@@ -1,7 +1,8 @@
-The following header files are supplied with the C++ class library. When
-a class or function from the library is used, the related header file
-should be included in the source file. The header files can be included
-multiple times and in any order with no ill effect.
+The following header files are supplied with the Open Watcom C++
+library. When a class or function from the library is used in a source
+file the related header file should be included in that source file. The
+header files can be included multiple times and in any order with no ill
+effect.
 :P.
 The facilities of the C standard library can be used in C++ programs by
 including the appropriate "cname" header. In that case all of the C
@@ -10,62 +11,74 @@ standard library functions are in namespace
 For example, to use function
 :MONO.std::printf
 one should include the header cstdio. Note that the cname headers
-continue to declare any non-standard names they contain as extensions in
-the global namespace. It is also possible to include in a C++ program
-the same headers used by C programs. In that case, the standard
-functions are in the global namespace.
+declare in the global namespace any non-standard names they contain as
+extensions. It is also possible to include in a C++ program the same
+headers used by C programs. In that case, the standard functions are in
+both the global namespace as well as in namespace
+:MONO.std.
 :P.
 Some of C++ standard library headers described below come in a form with
 a .h extension and in a form without an extension. The extensionless
 headers declare their library classes and functions in namespace
 :MONO.std.
 The headers with a .h extension declare their library classes and
-functions in the global namespace as well as in namespace
+functions in both the global namespace and in namespace
 :MONO.std.
 Such headers are provided as a convenience and for compatibility with
 legacy code. Programs that intend to conform to the ISO C++ standard
-should use only the extensionless headers to access the facilities of
-the standard C++ library.
+should use the extensionless headers to access the facilities of the C++
+standard library.
 :P.
 Certain headers defined by the ISO C++ standard have names that are
 longer than the 8.3 limit imposed by the FAT16 filesystem. Such headers
 are provided with names that are truncated to eight characters so they
 can be used with the DOS host. However, one can still refer to them in
 #include directives using their full names as defined by the standard.
-If Open Watcom is unable to open a header with the long name, it will
-truncate the name and try again.
+If the Open Watcom C++ compiler is unable to open a header with the long
+name, it will truncate the name and try again.
+:P.
+The Open Watcom C++ library contains some components that were developed
+before C++ was standardized. These legacy components continue to be
+supported and are described in this documentation.
 :P.
 The header files are all located in the
 :MONO.\WATCOM\H
-or
-:MONO./usr/include
-(QNX only)
 directory.
 :DL termhi=2.
-:DT.complex.h
+:DT.algorithm
+:DD.
+.ix 'header files' 'algorithm'
+This header file defines the standard algorithm templates.
+:DT.complex
 :DD.
 .ix 'header files' 'complex'
 This header file defines the
+:MONO.std::complex
+class template and related function templates. This template can be
+instantiated for the three different floating point types. It can be
+used to represent complex numbers and to perform complex arithmetic.
+:DT.complex.h
+:DD.
+.ix 'header files' 'complex'
+This header file defines the legacy
 :MONO.Complex
-class. The
-:MONO.Complex
-class is used to perform complex arithmetic. The
-:MONO.Complex
-member functions are declared. The related functions that manipulate
-:MONO.Complex
-objects are declared. Inline member functions for the
-:MONO.Complex
-class are defined.
-:P.
-Note that this class is not the ISO C++
+class. This class is used to represent complex numbers and to perform
+complex arithmetic. The class defined in this header is not the Standard
+C++
 :MONO.std::complex
 class template.
-:DT.except.h (exception.h)
+:DT.exceptio/exceptio.h (exception/exception.h)
 :DD.
 .ix 'header files' 'exception'
 .ix 'exception handling'
-This header file provides declarations to be used with the
-exception handling mechanism.
+This header file defines components to be used with
+the exception handling mechanism. It defines the base class of the
+standard exception hierarchy.
+:DT.function (functional)
+:DD.
+.ix 'header files' 'functional'
+This header file defines the standard functional templates. This
+includes the functors and binders described by Standard C++.
 :DT.fstream/fstream.h
 :DD.
 .ix 'header files' 'fstream'
@@ -86,9 +99,9 @@ the classes are defined.
 :DT.generic.h
 :DD.
 .ix 'header files' 'generic'
-This header file is part of the macro support required prior to the
-implementation of templates in the C++ language.  It is retained for
-backwards compatibility.
+This header file is part of the macro support required to implement
+generic containers prior to the introduction of templates in the C++
+language. It is retained for backwards compatibility.
 :DT.iomanip/iomanip.h
 :DD.
 .ix 'header files' 'iomanip'
@@ -149,13 +162,18 @@ It also defines their associated parameterless manipulators.
 This header file defines several templates to facilitate the handling of
 iterators. In particular, it defines the
 :MONO.std::iterator_traits
-template.
+template as well as several other supporting iterator related templates.
+:DT.limits
+:DD.
+.ix 'header files' 'limits'
+This header file defines the
+:MONO.std::numeric_limits
+template and provides specializations of that template for each of the
+built-in types.
 :P.
-Note that Open Watcom's
-:MONO.std::iterator_traits
-does not currently support pointers. However, pointers to
-:MONO.char
-are supported as a special case.
+Note that this header is not directly related to the header limits.h
+from the C standard library (or to the C++ form of that header,
+climits).
 :DT.memory
 :DD.
 .ix 'header files' 'memory'
@@ -170,7 +188,7 @@ Note that the header
 :MONO.memory.h
 is part of the Open Watcom C library and is unrelated to
 :MONO.memory.
-:DT.new.h
+:DT.new/new.h
 :DD.
 .ix 'header files' 'new'
 This header file provides declarations to be used with the
@@ -179,10 +197,15 @@ intrinsic
 and
 :MONO.operator~bdelete
 memory management functions.
+:DT.numeric
+:DD.
+.ix 'header files' 'numeric'
+This header file defines several standard algorithm templates pertaining
+to numerical computation.
 :DT.ostream/ostream.h
 :DD.
 .ix 'header files' 'ostream'
-This header files defines class
+This header file defines class
 :MONO.ostream.
 It also defines its associated parameterless manipulators.
 :DT.stdiobuf.h
@@ -192,44 +215,39 @@ This header file defines the
 :MONO.stdiobuf
 class which provides the support for the C++ input and output operations to
 standard input, standard output, and standard error streams.
-The various class members are declared and
-inline member functions for the classes are defined.
-:DT.streambu/streambu.h (streambuf)
+:DT.streambu/streambu.h (streambuf/streambuf.h)
 :DD.
 .ix 'header files' 'streambuf'
 This header file defines the
 :MONO.streambuf
-class which provides the support for buffering of input and output operations.
-The various class members are declared and
-inline member functions for the classes are defined.
-This header file is automatically included by the
+class which provides the support for buffering of input and output
+operations. This header file is automatically included by the
 :MONO.iostream.h
 header file.
-:DT.string.hpp
+:DT.string
 :DD.
 .ix 'header files' 'string'
 This header file defines the
+:MONO.std::basic_string
+class template. It also contains the type definitions for
+:MONO.std::string
+and
+:MONO.std::wstring.
+In addition, this header contains specializations of the
+:MONO.std::char_traits
+template for both characters and wide characters.
+:DT.string.hpp
+:DD.
+.ix 'header files' 'string'
+This header file defines the legacy
 :MONO.String
-class.
-The
+class. The
 :MONO.String
-class is used to manipulate character strings.
-The
-:MONO.String
-member functions are declared.
-The related functions that manipulate
-:MONO.String
-objects are declared.
-Inline member functions for the
-:MONO.String
-class are defined.
-:P.
-Note that the
+class is used to manipulate character strings. Note that the
 :MONO.hpp
-extension is used to avoid colliding with the ISO C
+extension is used to avoid colliding with the Standard C
 :MONO.string.h
-header file. Note also that the class defined in this header is not
-the ISO C++
+header file. The class defined in this header is not the Standard C++
 :MONO.std::string
 class.
 :DT.strstrea/strstrea.h (strstream)
@@ -245,16 +263,24 @@ This header files defines the
 :MONO.ostrstream
 :CONT., and
 :MONO.strstream
-classes.
-These classes are used to perform C++ in-memory formatting.
-The various class members are declared and
-inline member functions for the classes are defined.
+classes. These classes are used to perform C++ in-memory formatting. The
+various class members are declared and inline member functions for the
+classes are defined.
+:DT.vector
+:DD.
+.ix 'header files' 'vector'
+This header contains the
+:MONO.std::vector
+class template.
 :DT.wcdefs.h
 :DD.
 .ix 'header files' 'wcdefs'
-This header file contains definitions used by the container libraries.
-If a container class needs any of these definitions, the file is
-automatically included.
+This header file contains definitions used by the Open Watcom legacy
+container libraries. If a container class needs any of these
+definitions, the file is automatically included.
+:P.
+Note that all headers having names that start with "wc" are related to
+the legacy container libraries.
 :DT.wclbase.h
 :DD.
 .ix 'header files' 'wclbase'

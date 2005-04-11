@@ -12,6 +12,11 @@ and
 (polar coordinates). Each object stores exactly one complex number.
 An object may be used in expressions in the same manner as floating-point
 values.
+:P.
+The class documented here is the Open Watcom legacy complex class. It
+is not the
+:MONO.std::complex
+class template specified by Standard C++.
 .*
 :CLFNM.Complex
 :CMT.========================================================================

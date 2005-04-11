@@ -5,6 +5,12 @@ Objects of this type may be concatenated, substringed, compared and
 searched without the need for memory management by the user.
 Unlike a C string, this object has no delimiting character, so any character
 in the collating sequence, or character set, may be stored in an object.
+:P.
+The class documented here is the Open Watcom legacy string class. It
+is not related to the
+:MONO.std::basic_string
+class template nor to its corresponding specialization
+:MONO.std::string.
 .*
 :CLFNM.String
 :CMT.========================================================================
