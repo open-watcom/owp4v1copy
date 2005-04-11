@@ -48,13 +48,15 @@
 
 static ENV_TRACKER  *envList;
 
-extern char *SkipWS( const char *p )
-/**********************************/
+extern char *SkipWS( char *p )
+/*****************************
+ * p is not const because the return value is usually used to write data.
+ */
 {
     while( isws( *p ) ) {
         ++p;
     }
-    return( (char *)p );
+    return( p );
 }
 
 extern char *FindNextWS( char *str )
@@ -97,7 +99,7 @@ extern char *FindNextWS( char *str )
 }
 
 extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
-/***********************************************************************
+/************************************************************************
  * Removes doublequote characters from string and copies other content
  * from src to dst. Only maxlen number of characters are copied to dst
  * including terminating NUL character.
@@ -266,9 +268,10 @@ extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 #define IS_WILDCARD_CHAR( x ) ((*x == '*') || (*x == '?'))
 
 static int __fnmatch( char *pattern, char *string )
-/******************************************/
-// OS specific compare function FNameCmpChr
-// must be used for file names
+/**************************************************
+ * OS specific compare function FNameCmpChr
+ * must be used for file names
+ */
 {
     char    *p;
     int     len;
@@ -369,16 +372,15 @@ static int __fnmatch( char *pattern, char *string )
  *
  */
 
-static DIR      *parent = NULL;  /* we need this across invocations */
-static char     *path = NULL;
-static char     *pattern = NULL;
+static DIR  *parent = NULL;  /* we need this across invocations */
+static char *path = NULL;
+static char *pattern = NULL;
 
 extern const char *DoWildCard( const char *base )
 /***********************************************/
 {
     PGROUP          *pg;
     struct dirent   *entry;
-
 
     if( base != NULL ) {
         if( path != NULL ) {        /* clean up from previous invocation */
@@ -481,8 +483,9 @@ extern int KWCompare( const char **p1, const char **p2 )    /* for bsearch */
 
 
 extern int PutEnvSafe( ENV_TRACKER *env )
-/***************************************/
-/* This function takes over responsibility for freeing env */
+/****************************************
+ * This function takes over responsibility for freeing env
+ */
 {
     char        *p;
     ENV_TRACKER **walk;

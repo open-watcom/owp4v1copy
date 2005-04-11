@@ -69,22 +69,22 @@
 #include "mupdate.h"
 #include "mvecstr.h"
 
-STATIC  UINT8           lastErrorLevel;
-STATIC  UINT16          tmpFileNumber;          /* temp file number         */
-STATIC  char            tmpFileChar  ;          /* temp file number chari   */
-STATIC  int             currentFileHandle;      /* %write, %append, %create */
-STATIC  char            *currentFileName;
+STATIC  UINT8   lastErrorLevel;
+STATIC  UINT16  tmpFileNumber;          /* temp file number         */
+STATIC  char    tmpFileChar  ;          /* temp file number chari   */
+STATIC  int     currentFileHandle;      /* %write, %append, %create */
+STATIC  char    *currentFileName;
 
 enum {
-    FLAG_SHELL          = 0x01,
-    FLAG_SILENT         = 0x02,
-    FLAG_ENV_ARGS       = 0x04,
-    FLAG_IGNORE         = 0x08
+    FLAG_SHELL      = 0x01,
+    FLAG_SILENT     = 0x02,
+    FLAG_ENV_ARGS   = 0x04,
+    FLAG_IGNORE     = 0x08
 };
 
-#define COM_MAX_LEN     16              /* must be able to hold any OS cmdname */
+#define COM_MAX_LEN 16              /* must be able to hold any OS cmdname */
 
-STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
+STATIC const char * const   dosInternals[] = {   /* COMMAND.COM commands */
 
 #if defined( __DOS__ )
 
@@ -231,7 +231,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
 #define CNUM    (sizeof( dosInternals ) / sizeof( char * ))
 
 
-static const char * const percentCmds[] = {
+static const char * const   percentCmds[] = {
     "ABORT",
     "APPEND",
     "CREATE",
@@ -271,7 +271,7 @@ STATIC NKLIST   *noKeepList;            /* contains the list of files that
                                            exits */
 
 STATIC char *createTmpFileName( void )
-/*
+/*************************************
  * create file name for temporary file
  */
 {
@@ -341,6 +341,7 @@ STATIC char *createTmpFileName( void )
 
 STATIC RET_T processInlineFile( int handle, const char *body,
     const char *fileName, BOOLEAN writeToFile )
+/***********************************************************/
 {
     int         index;
     RET_T       ret;
@@ -402,12 +403,13 @@ STATIC RET_T processInlineFile( int handle, const char *body,
 }
 
 STATIC RET_T writeLineByLine( int handle, const char *body )
+/**********************************************************/
 {
     return( processInlineFile( handle, body, NULL, TRUE ) );
 }
 
 
-STATIC char* RemoveBackSlash( const char* inString )
+STATIC char *RemoveBackSlash( const char *inString )
 /***************************************************
  * remove backslash from \"
  */
@@ -438,9 +440,10 @@ STATIC char* RemoveBackSlash( const char* inString )
 
 
 STATIC RET_T VerbosePrintTempFile( const FLIST *head )
+/****************************************************/
 {
-    FLIST const         *current;
-    RET_T               ret = RET_SUCCESS; // success if list empty
+    FLIST const *current;
+    RET_T       ret = RET_SUCCESS; // success if list empty
 
     current = head;
     while( current != NULL ) {
@@ -508,11 +511,13 @@ STATIC RET_T createFile( const FLIST *head )
 }
 
 
-// This part writes the inline files
-// modifies the command text to show the temporary file names
-// assumption is that all << are removed for explicitly defined
-// file names so the only << left are for temporary files
 STATIC RET_T writeInlineFiles( FLIST *head, char **commandIn )
+/*************************************************************
+ * This part writes the inline files
+ * modifies the command text to show the temporary file names
+ * assumption is that all << are removed for explicitly defined
+ * file names so the only << left are for temporary files
+ */
 {
     char    *cmdText;
     FLIST   *current;
@@ -696,8 +701,8 @@ STATIC void closeCurrentFile( void )
 }
 
 
-STATIC RET_T percentWrite( const char *arg, enum write_type type )
-/****************************************************************/
+STATIC RET_T percentWrite( char *arg, enum write_type type )
+/**********************************************************/
 {
     char        *p;
     char const  *text;
@@ -880,7 +885,9 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
 
 #ifdef __LINUX__
 STATIC int intSystem( const char *cmd )
-/* interruptable "system" (so that ctrl-c works) */
+/**************************************
+ * interruptable "system" (so that ctrl-c works)
+ */
 {
     pid_t   pid = fork();
     int     status;
@@ -916,7 +923,7 @@ STATIC RET_T mySystem( const char *cmdname, const char *cmd )
  * execute a command using system()
  */
 {
-    int     retcode;
+    int retcode;
 
     assert( cmd != NULL );
 
@@ -941,8 +948,8 @@ STATIC RET_T mySystem( const char *cmdname, const char *cmd )
 }
 
 
-STATIC RET_T handleSet( const char *cmd )
-/****************************************
+STATIC RET_T handleSet( char *cmd )
+/**********************************
  * "SET" {ws}* <name> {ws}* "="[<value>]
  */
 {
@@ -1022,8 +1029,8 @@ STATIC RET_T handleEcho( const char *cmd )
     return( RET_SUCCESS );
 }
 
-STATIC RET_T handleIf( const char *cmd )
-/***************************************
+STATIC RET_T handleIf( char *cmd )
+/*********************************
  *          { ERRORLEVEL <number> }
  * IF [NOT] { <str1> == <str2>    } <command>
  *          { EXIST <file>        }
@@ -1163,9 +1170,9 @@ STATIC RET_T handleForSyntaxError( void )
 }
 
 
-STATIC RET_T getForArgs( const char *line, const char **pvar, char **pset,
+STATIC RET_T getForArgs( char *line, const char **pvar, char **pset,
     const char **pcmd )
-/************************************************************************/
+/******************************************************************/
 {
     char    *p;
 
@@ -1290,25 +1297,24 @@ STATIC void doForSubst( const char *var, size_t varlen,
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-STATIC RET_T handleFor( const char *line )
-/*****************************************
+STATIC RET_T handleFor( char *line )
+/***********************************
  * "FOR" {ws}* "%"["%"]<var> {ws}+ "IN" {ws}+ "("<set>")" {ws}+ "DO" {ws}+ <cmd>
  */
 {
     static BOOLEAN  busy = FALSE;   /* recursion protection */
-
-    const char  *var;       /* loop variable name incl. %           */
-    char        *set;       /* set of values for looping            */
-    const char  *cmd;       /* command to execute                   */
-    const char  *p;         /* working pointer                      */
-    char        hold;       /* final character of set during loop   */
-    const char  *subst;     /* pointer to the element to substitute */
-    size_t      varlen;     /* strlen( var )                        */
-    unsigned    numsubst;   /* number of substitutions per cmd      */
-    size_t      cmdlen;     /* strlen( cmd ) - numsubst * varlen    */
-    size_t      newlen;     /* size of memory we need               */
-    size_t      lastlen;    /* last size of memory we asked for     */
-    char        *exec;      /* line to execute                      */
+    const char      *var;           /* loop variable name incl. %           */
+    char            *set;           /* set of values for looping            */
+    const char      *cmd;           /* command to execute                   */
+    const char      *p;             /* working pointer                      */
+    char            hold;           /* final character of set during loop   */
+    const char      *subst;         /* pointer to the element to substitute */
+    size_t          varlen;         /* strlen( var )                        */
+    unsigned        numsubst;       /* number of substitutions per cmd      */
+    size_t          cmdlen;         /* strlen( cmd ) - numsubst * varlen    */
+    size_t          newlen;         /* size of memory we need               */
+    size_t          lastlen;        /* last size of memory we asked for     */
+    char            *exec;          /* line to execute                      */
 
     assert( line != NULL );
 
@@ -1393,7 +1399,7 @@ STATIC RET_T handleFor( const char *line )
 STATIC RET_T handleCD( char *cmd )
 /********************************/
 {
-    char        *p;     // pointer to walk with
+    char const  *p;     // pointer to walk with
     char const  *s;
 
 #ifdef DEVELOPMENT
@@ -1406,13 +1412,13 @@ STATIC RET_T handleCD( char *cmd )
         ++p;     /* advance past command name */
     }
 
-    p = SkipWS( p );
+    p = SkipWS( (char *)p );
     if( *p == NULLCHAR ) {          /* no args - just print the cd */
         return( mySystem( cmd, cmd ) );
     }
 
     if( p[1] == ':' ) {             /* just a drive: arg, print the cd */
-        s = SkipWS( p+2 );
+        s = SkipWS( (char *)p+2 );
         if( *s == NULLCHAR ) {
             return( mySystem( cmd, cmd ) );
         }
@@ -1455,7 +1461,7 @@ STATIC RET_T handleChangeDrive( const char *cmd )
 
 #if !defined( __UNIX__ )
 STATIC RET_T handleRMSyntaxError( void )
-/***************************************/
+/**************************************/
 {
     PrtMsg( ERR | SYNTAX_ERROR_IN, dosInternals[COM_RM] );
     return( RET_ERROR );
@@ -1466,8 +1472,8 @@ typedef struct {
     BIT bVerbose : 1;
 } rm_flags;
 
-STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
-/******************************************************************************
+STATIC RET_T getRMArgs( char *line, rm_flags *flags, const char **pfile )
+/************************************************************************
  * returns RET_WARN when there are no more arguments
  */
 {
@@ -1520,7 +1526,7 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
 STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
 /************************************************************/
 {
-    int     rv;
+    int rv;
 
     rv = unlink( file );
     if( 0 != rv && flags->bForce && EACCES == errno ) {
@@ -1547,8 +1553,8 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
     return( 0 == rv );
 }
 
-STATIC RET_T handleRM( const char *cmd )
-/***************************************
+STATIC RET_T handleRM( char *cmd )
+/*********************************
  * RM [-f -v] <file> ...
  *
  * -f   Force deletion of read-only files.
@@ -1625,6 +1631,7 @@ STATIC BOOLEAN hasMetas( const char *cmd )
 }
 
 static void dumpCommand( char *cmd )
+/**********************************/
 {
     char    c;
     char    *p;
@@ -1650,11 +1657,11 @@ static void dumpCommand( char *cmd )
 
 #if defined( __DOS__ )
 STATIC UINT16 makeTmpEnv( char *arg )
-/*
-    Copy arg into an environment var if possible.  If succeeds, then changes
-    arg to just "@WMAKExxxxx", and returns non-zero.  Otherwise leaves
-    arg alone and returns zero.
-*/
+/************************************
+ * Copy arg into an environment var if possible.
+ * If succeeds, then changes arg to just "@WMAKExxxxx", and returns non-zero.
+ * Otherwise leaves arg alone and returns zero.
+ */
 {
     UINT16      tmp;
     char        buf[20];    /* "WMAKExxxxx=" + '\0' = 11 + room for FmtStr */
@@ -1684,6 +1691,7 @@ STATIC UINT16 makeTmpEnv( char *arg )
 }
 
 STATIC void killTmpEnv( UINT16 tmp )
+/**********************************/
 {
     ENV_TRACKER *env;
 
@@ -1696,12 +1704,14 @@ STATIC void killTmpEnv( UINT16 tmp )
 }
 #else
 STATIC UINT16 makeTmpEnv( const char *cmd )
+/*****************************************/
 {
     (void)cmd; // Unused
     return( 0 );
 }
 
 STATIC void killTmpEnv( UINT16 tmp )
+/**********************************/
 {
     (void)tmp; // Unused
 }
@@ -1711,6 +1721,7 @@ STATIC void killTmpEnv( UINT16 tmp )
 #pragma on (check_stack);
 #endif
 STATIC RET_T shellSpawn( char *cmd, int flags )
+/*********************************************/
 {
     BOOLEAN     percent_cmd;        // is this a percent cmd?
     int         comnum;             // index into dosInternals
@@ -1930,9 +1941,9 @@ STATIC RET_T execLine( char *line )
 RET_T ExecCList( CLIST *clist )
 /*****************************/
 {
-    char                *line;
-    RET_T               ret = RET_SUCCESS;
-    FLIST const         *currentFlist;
+    char        *line;
+    RET_T       ret = RET_SUCCESS;
+    FLIST const *currentFlist;
 
     assert( clist != NULL );
 
@@ -1964,13 +1975,14 @@ RET_T ExecCList( CLIST *clist )
 }
 
 
-// deletes the file specified in the nokeeplist
 STATIC void destroyNKList( void )
-/*******************************/
+/********************************
+ * deletes the file specified in the nokeeplist
+ */
 {
-    NKLIST const        *temp;
-    VECSTR              outText;
-    char                *tempstr;
+    NKLIST const    *temp;
+    VECSTR          outText;
+    char            *tempstr;
 
     temp = noKeepList;
     while( temp != NULL ) {
