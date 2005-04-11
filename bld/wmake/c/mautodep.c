@@ -40,11 +40,11 @@
 #include <malloc.h>
 #include <assert.h>
 
-extern auto_dep_info OMFAutoDepInfo;
-extern auto_dep_info ORLAutoDepInfo;
-extern auto_dep_info RESAutoDepInfo;
+extern auto_dep_info const OMFAutoDepInfo;
+extern auto_dep_info const ORLAutoDepInfo;
+extern auto_dep_info const RESAutoDepInfo;
 
-static const auto_dep_info *AutoDepTypes[] = {
+static auto_dep_info const *AutoDepTypes[] = {
     &OMFAutoDepInfo,
 #if !defined( M_I86 )
     &ORLAutoDepInfo,
@@ -65,25 +65,25 @@ void AutoDepInit( void )
     }
 }
 
-BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t),
-    time_t *pmax_time )
-/****************************************************************************/
+BOOLEAN AutoDepCheck( char *name, time_t stamp,
+    BOOLEAN (*chk)( time_t, time_t ), time_t *pmax_time )
+/*******************************************************/
 {
-    const auto_dep_info *curr;
+    const auto_dep_info         *curr;
     const auto_dep_info * const *pcurr;
-    char                *dep_name;
-    time_t              dep_time;       /* time stamp for dependant file
-                                         * buried in auto-depends info */
-    time_t              curr_dep_time;  /* current date on dependent file
-                                         * (if it exists) */
-    time_t              max_time;
-    void                *hdl;
-    void                *dep_hdl;
+    char                        *dep_name;
+    time_t                      dep_time;       /* time stamp for dependent file
+                                                 * buried in auto-depend info */
+    time_t                      curr_dep_time;  /* current date on dependent file
+                                                 * (if it exists) */
+    time_t                      max_time;
+    void                        *hdl;
+    void                        *dep_hdl;
     struct {
         unsigned out_of_date    : 1;
         unsigned exists         : 1;
         unsigned this_caused_it : 1;
-    } flag;
+    }                           flag;
 
     flag.out_of_date = FALSE;
     max_time = *pmax_time;
@@ -131,7 +131,8 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t),
                             );
                     }
                     if( flag.this_caused_it ) {
-                        unsigned    len = strlen( time_buff );
+                        size_t  len = strlen( time_buff );
+
                         time_buff[len - 1] = '*';
                     }
                     PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
