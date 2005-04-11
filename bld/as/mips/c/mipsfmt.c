@@ -53,7 +53,7 @@ typedef void (*fmt_func)( ins_table *, instruction *, uint_32 *, asm_reloc * );
 
 typedef struct {
     fmt_func    func;
-    op_type     ops[ MAX_OPERANDS ];
+    op_type     ops[MAX_OPERANDS];
 } mips_format;
 
 typedef enum {
@@ -78,15 +78,16 @@ typedef op_type ot_array[MAX_VARIETIES][3];
 #define _LIT_unshifted( x )     ( _LIT_value( x ) | _LIT_bit )
 
 #define _Opcode( x )            ( _SixBits( x )       << 26 )
-#define _Ra( x )                ( _FiveBits( x )      << 21 )
-#define _Rb( x )                ( _FiveBits( x )      << 16 )
-#define _Rc( x )                ( _FiveBits( x )      << 0  )
+#define _Rs( x )                ( _FiveBits( x )      << 21 )
+#define _Rt( x )                ( _FiveBits( x )      << 16 )
+#define _Rd( x )                ( _FiveBits( x )      << 11 )
 #define _Memory_disp( x )       ( _SixteenBits( x )   << 0  )
 #define _Mem_Func( x )          ( _SixteenBits( x )   << 0  )
 #define _Branch_disp( x )       ( _TwentyOneBits( x ) << 0  )
-#define _Op_Func( x )           ( _SevenBits( x )     << 5  )
+#define _Op_Func( x )           ( _SixBits( x )       << 0  )
 #define _FP_Op_Func( x )        ( _ElevenBits( x )    << 5  )
 #define _LIT( x )               ( _LIT_unshifted( x ) << 12 )
+#define _IMMED( x )             ( _SixteenBits( x )   << 0  )
 
 #define _Longword_offset( x )   ( (x) >> 2 )
 
@@ -94,10 +95,10 @@ typedef op_type ot_array[MAX_VARIETIES][3];
                                     // 21 dwords for an ins that emits multiple
                                     // instructions. (eg. ldb)
 
-#define RA_REG_IDX              26
-#define SP_REG_IDX              30
-#define FP_REG_IDX              15
-#define ZERO_REG_IDX            31
+#define ZERO_REG_IDX            0
+#define SP_REG_IDX              29
+#define FP_REG_IDX              30
+#define RA_REG_IDX              31
 // Check if ".set noat" is in effect before using this
 #define AT_REG_IDX              RegIndex( AT_REG )
 
@@ -112,7 +113,7 @@ typedef op_type ot_array[MAX_VARIETIES][3];
 #define OP_RELOC_NAMED( op )    ((op)->flags & RELOC)
 
 static unsigned numExtendedIns = 0;  // >= 1 when we use extendedIns
-static uint_32 result[ MAX_EXTENDED_INS + 1 ];
+static uint_32 result[MAX_EXTENDED_INS + 1];
 
 static owl_reloc_type reloc_translate[] = {
     OWL_RELOC_ABSOLUTE,     // Corresponds to ASM_RELOC_UNSPECIFIED
@@ -123,9 +124,9 @@ static owl_reloc_type reloc_translate[] = {
     OWL_RELOC_JUMP_REL,     // jump hint
 };
 
-static bool ensureOpAbsolute( ins_operand *op, uint_8 opIdx ) {
-//*************************************************************
-
+static bool ensureOpAbsolute( ins_operand *op, uint_8 opIdx )
+//***********************************************************
+{
     if( OP_HAS_RELOC( op ) ) {
         Error( RELOC_NOT_ALLOWED, opIdx );
         return( FALSE );
@@ -133,9 +134,9 @@ static bool ensureOpAbsolute( ins_operand *op, uint_8 opIdx ) {
     return( TRUE );
 }
 
-static void addReloc( asm_reloc *reloc, op_reloc_target target, owl_reloc_type type, unsigned loc, bool is_named ) {
-//******************************************************************************************************************
-
+static void addReloc( asm_reloc *reloc, op_reloc_target target, owl_reloc_type type, unsigned loc, bool is_named )
+//****************************************************************************************************************
+{
     reloc_list  new_entry;
 
     new_entry = MemAlloc( sizeof( struct reloc_entry ) );
@@ -153,9 +154,9 @@ static void addReloc( asm_reloc *reloc, op_reloc_target target, owl_reloc_type t
     reloc->last = new_entry;
 }
 
-static owl_reloc_type relocType( asm_reloc_type type, owl_reloc_type default_type ) {
-//***********************************************************************************
-
+static owl_reloc_type relocType( asm_reloc_type type, owl_reloc_type default_type )
+//*********************************************************************************
+{
     owl_reloc_type  ret;
 
     if( type == ASM_RELOC_UNSPECIFIED ) {
@@ -190,9 +191,9 @@ static owl_reloc_type relocType( asm_reloc_type type, owl_reloc_type default_typ
     return( ret );
 }
 
-static void doReloc( asm_reloc *reloc, ins_operand *op, owl_reloc_type rtype, uint_32 *offset ) {
-//***********************************************************************************************
-
+static void doReloc( asm_reloc *reloc, ins_operand *op, owl_reloc_type rtype, uint_32 *offset )
+//*********************************************************************************************
+{
     if( op == NULL ) return;
     if( !( OP_HAS_RELOC( op ) ) ) return;
     addReloc( reloc, op->reloc.target, relocType( op->reloc.type, rtype ),
@@ -211,14 +212,15 @@ static void doReloc( asm_reloc *reloc, ins_operand *op, owl_reloc_type rtype, ui
         QF_M..........-0x040
         QF_D..........+0x040
 */
-static ins_funccode getFuncCode( ins_table *table, instruction *ins ) {
-//*********************************************************************
-
+static ins_funccode getFuncCode( ins_table *table, instruction *ins )
+//*******************************************************************
+{
     ins_funccode fc;
 
     fc = table->funccode;
     switch( table->template ) {
     case IT_OPERATE:
+    case IT_OPERATE_IMM:
     case IT_PSEUDO_NOT:
         if( ins->format->flags & QF_V ) {
             fc += 0x40;
@@ -243,32 +245,50 @@ static ins_funccode getFuncCode( ins_table *table, instruction *ins ) {
     return( fc );
 }
 
-static void doOpcodeRaRb( uint_32 *buffer, ins_opcode opcode, uint_8 ra, uint_8 rb, uint_32 remain ) {
-//****************************************************************************************************
-
-    *buffer = _Opcode( opcode ) | _Ra( ra ) | _Rb( rb ) | remain;
+static void doOpcodeRsRt( uint_32 *buffer, ins_opcode opcode, uint_8 ra, uint_8 rb, uint_32 remain )
+//**************************************************************************************************
+{
+    *buffer = _Opcode( opcode ) | _Rs( ra ) | _Rt( rb ) | remain;
 }
 
-static void doOpcodeFcRaRc( uint_32 *buffer, ins_opcode opcode, ins_funccode fc, uint_8 ra, uint_8 rc, uint_32 extra ) {
-//**********************************************************************************************************************
+static void doOpcodeFcRsRt( uint_32 *buffer, ins_opcode opcode, ins_funccode fc, uint_8 ra, uint_8 rc, uint_32 extra )
+//********************************************************************************************************************
 // This procedure doesn't fill in all the bits (missing bits 20-12).
 // But we can fill it in using extra.
-
-    *buffer = _Opcode( opcode ) | _Op_Func( fc ) | _Ra( ra ) | _Rc( rc ) |
+{
+    *buffer = _Opcode( opcode ) | _Op_Func( fc ) | _Rs( ra ) | _Rt( rc ) |
               extra;
 }
 
-static void doFPInst( uint_32 *buffer, ins_opcode opcode, uint_8 ra, uint_8 rb, uint_8 rc, uint_32 remain ) {
-//***********************************************************************************************************
+static void doOpcodeFcRsRtImm( uint_32 *buffer, ins_opcode opcode, ins_funccode fc, uint_8 ra, uint_8 rc, uint_32 imm )
+//*********************************************************************************************************************
+// This procedure doesn't fill in all the bits (missing bits 20-12).
+// But we can fill it in using extra.
+{
+    *buffer = _Opcode( opcode ) | _Op_Func( fc ) | _Rs( ra ) | _Rt( rc ) |
+              _IMMED( imm );
+}
 
-    *buffer = _Opcode( opcode ) | _Ra( ra ) | _Rb( rb ) |
-              _FP_Op_Func( remain ) | _Rc( rc );
+static void doOpcodeFcRsRtRd( uint_32 *buffer, ins_opcode opcode, ins_funccode fc, uint_8 rs, uint_8 rt, uint_8 rd, uint_32 extra )
+//*********************************************************************************************************************************
+// This procedure doesn't fill in all the bits (missing bits 10-6).
+// But we can fill it in using extra.
+{
+    *buffer = _Opcode( opcode ) | _Op_Func( fc ) | _Rs( rs ) | _Rt( rt ) | _Rd( rd ) |
+              extra;
+}
+
+static void doFPInst( uint_32 *buffer, ins_opcode opcode, uint_8 ra, uint_8 rb, uint_8 rc, uint_32 remain )
+//*********************************************************************************************************
+{
+    *buffer = _Opcode( opcode ) | _Rs( ra ) | _Rt( rb ) |
+              _FP_Op_Func( remain ) | _Rd( rc );
 }
 
 #ifndef _STANDALONE_
-static void doAutoVar( asm_reloc *reloc, op_reloc_target targ, uint_32 *buffer, ins_table *table, instruction *ins ) {
-//********************************************************************************************************************
-
+static void doAutoVar( asm_reloc *reloc, op_reloc_target targ, uint_32 *buffer, ins_table *table, instruction *ins )
+//******************************************************************************************************************
+{
     ins_operand *op;
 
     op = ins->operands[1];
@@ -277,19 +297,19 @@ static void doAutoVar( asm_reloc *reloc, op_reloc_target targ, uint_32 *buffer, 
         return;
     }
     addReloc( reloc, targ, OWL_RELOC_FP_OFFSET, (unsigned)buffer - (unsigned)&result[ 0 ], TRUE );
-    doOpcodeRaRb( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
+    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
                   FP_REG_IDX, 0 );
 }
 #endif
 
-static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_operand *op, op_const c, asm_reloc *reloc, bool force_pair ) {
-//*****************************************************************************************************************************************
+static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_operand *op, op_const c, asm_reloc *reloc, bool force_pair )
+//***************************************************************************************************************************************
 // LDA-LDAH sequence for 32-bit constants
 // Given: lda $d_reg, foobar+c($s_reg)
 //        info for foobar is stored in op
 //        c should be passed in also
 // Returns # of ins generated
-
+{
     int_32              tmp;
     int                 ctr;
     unsigned            ret = 1;
@@ -321,7 +341,7 @@ static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_ope
     for( ctr = 0; ctr < 2; ctr++ ) {
         if( high[ctr] != 0 ) {
             base_reg = ( ctr == 0 ? s_reg : d_reg );
-            doOpcodeRaRb( buffer, OPCODE_LDAH,
+            doOpcodeRsRt( buffer, OPCODE_LDAH,
                           d_reg, base_reg, _Memory_disp( high[ctr] ) );
             if( reloc && !hi_reloc_emitted ) {
                 type = relocType( op->reloc.type, OWL_RELOC_HALF_HI );
@@ -342,14 +362,14 @@ static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_ope
     if( !hi_reloc_emitted && force_pair ) { // no LDAH has been generated yet
         // force_pair => no modifier should've been specified
         // We are asked to force one, so here
-        doOpcodeRaRb( buffer, OPCODE_LDAH, d_reg, s_reg,
+        doOpcodeRsRt( buffer, OPCODE_LDAH, d_reg, s_reg,
                       _Memory_disp( 0 ) );
         doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
         ++buffer;
         ++ret;
     }
     base_reg = ( ret == 1 ? s_reg : d_reg );
-    doOpcodeRaRb( buffer, OPCODE_LDA, d_reg, base_reg,
+    doOpcodeRsRt( buffer, OPCODE_LDA, d_reg, base_reg,
                   _Memory_disp( low ) );
     if( reloc ) {
         doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
@@ -366,11 +386,11 @@ static unsigned forceLoadAddressComplete( uint_8 d_reg, uint_8 s_reg, ins_operan
         LDA     $d_reg, l^foo+c($d_reg)
        store them in buffer[0], buffer[1]
     */
-    doOpcodeRaRb( buffer, OPCODE_LDAH, d_reg, s_reg,
+    doOpcodeRsRt( buffer, OPCODE_LDAH, d_reg, s_reg,
                   _Memory_disp( 0 ) );
     doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
     buffer++;
-    doOpcodeRaRb( buffer, OPCODE_LDA, d_reg, d_reg,
+    doOpcodeRsRt( buffer, OPCODE_LDA, d_reg, d_reg,
                   _Memory_disp( op->constant ) );
     doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
     return( 2 );
@@ -378,9 +398,9 @@ static unsigned forceLoadAddressComplete( uint_8 d_reg, uint_8 s_reg, ins_operan
 #endif
 
 
-static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand *op1, domov_option m_opt ) {
-//***********************************************************************************************************
-
+static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand *op1, domov_option m_opt )
+//*********************************************************************************************************
+{
     op_const        val;
 
     if( m_opt == DOMOV_ABS ) {
@@ -392,9 +412,9 @@ static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand
                         op0, val, NULL, FALSE ) );
 }
 
-static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt ) {
-//*********************************************************************************
-
+static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt )
+//*******************************************************************************
+{
     ins_operand     *op0, *op1;
     uint_32         extra;
     uint_32         abs_val;
@@ -403,7 +423,7 @@ static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt 
     op0 = operands[0];
     op1 = operands[1];
     if( op0->type == OP_GPR ) {
-        extra = _Rb( RegIndex( op0->reg ) );
+        extra = _Rt( RegIndex( op0->reg ) );
     } else if( ( op0->constant & 0xff ) == op0->constant ) { // OP_IMMED implied
         extra = _LIT( op0->constant ); // this lit is between 0..255
         (void)ensureOpAbsolute( op0, 0 );
@@ -415,7 +435,7 @@ static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt 
         ready = FALSE;
     }
     if( ready ) {
-        doOpcodeFcRaRc( buffer, OPCODE_BIS, FUNCCODE_BIS,
+        doOpcodeFcRsRt( buffer, OPCODE_BIS, FUNCCODE_BIS,
                         ZERO_REG_IDX, RegIndex( op1->reg ), extra );
         return;
     }
@@ -425,9 +445,9 @@ static void doMov( uint_32 *buffer, ins_operand *operands[], domov_option m_opt 
     numExtendedIns += load32BitLiteral( buffer, op0, op1, m_opt ) - 1;
 }
 
-static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**************************************************************************************************
-
+static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//************************************************************************************************
+{
     ins_operand         *op;
     ins_operand         *ops[2];
     unsigned            inc;
@@ -453,7 +473,7 @@ static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, 
         return;
     }
     if( OP_HAS_RELOC( op ) ) {
-        #ifndef _STANDALONE_
+#ifndef _STANDALONE_
         if( OP_RELOC_NAMED( op ) ) {
             char        *name;
 
@@ -463,7 +483,7 @@ static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, 
                 return;
             }
         }
-        #endif
+#endif
         if( op->reloc.type == ASM_RELOC_UNSPECIFIED ) {
             // Then we should emit LDA-LDAH pair.
             inc = ldaConst32( buffer, RegIndex( ins->operands[0]->reg ),
@@ -476,34 +496,14 @@ static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, 
                       op->constant, reloc, FALSE );
     numExtendedIns += inc - 1;
 /*
-    doOpcodeRaRb( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
+    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
                   s_reg, _Memory_disp( val ) );
     doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );*/
 }
 
-#if 0
-static void ITMemLDAH( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**********************************************************************************************
-
-    ins_operand *op;
-
-    assert( table->opcode == OPCODE_LDAH );
-    op = ins->operands[1];
-    // If op is IMMED foo, it's actually REG_INDIRECT that we want: foo($zero)
-    if( op->type == OP_IMMED ) {
-        op->type = OP_REG_INDIRECT;
-        op->reg = ZERO_REG;
-    }
-    assert( op->type == OP_REG_INDIRECT );
-    doOpcodeRaRb( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
-                  RegIndex( op->reg ), _Memory_disp( op->constant ) );
-    doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
-}
-#endif
-
-static void ITMemAll( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*********************************************************************************************
-
+static void ITMemAll( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*******************************************************************************************
+{
     ins_operand     *op;
     owl_reloc_type  type;
     ins_opcode      opcode;
@@ -516,7 +516,7 @@ static void ITMemAll( ins_table *table, instruction *ins, uint_32 *buffer, asm_r
         op->reg = ZERO_REG;
     }
     assert( op->type == OP_REG_INDIRECT );
-    #ifndef _STANDALONE_
+#ifndef _STANDALONE_
     if( OP_RELOC_NAMED( op ) ) {
         char    *name;
 
@@ -526,47 +526,47 @@ static void ITMemAll( ins_table *table, instruction *ins, uint_32 *buffer, asm_r
             return;
         }
     }
-    #endif
+#endif
     opcode = table->opcode;
-    doOpcodeRaRb( buffer, opcode, RegIndex( ins->operands[0]->reg ),
+    doOpcodeRsRt( buffer, opcode, RegIndex( ins->operands[0]->reg ),
                   RegIndex( op->reg ), _Memory_disp( op->constant ) );
     type = ( opcode == OPCODE_LDAH ) ? OWL_RELOC_HALF_HI : OWL_RELOC_HALF_LO;
     doReloc( reloc, op, type, buffer );
 }
 
-static void ITMemA( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*******************************************************************************************
-
+static void ITMemA( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*****************************************************************************************
+{
     assert( ins->num_operands == 1 );
     reloc = reloc;
-    doOpcodeRaRb( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
+    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
                   31, _Mem_Func( table->funccode ) );
 }
 
-static void ITMemB( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*******************************************************************************************
-
+static void ITMemB( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*****************************************************************************************
+{
     assert( ins->num_operands == 1 );
     reloc = reloc;
-    doOpcodeRaRb( buffer, table->opcode, 31, RegIndex( ins->operands[0]->reg ),
+    doOpcodeRsRt( buffer, table->opcode, 31, RegIndex( ins->operands[0]->reg ),
                   _Mem_Func( table->funccode ) );
 }
 
-static void doMemJump( uint_32 *buffer, ins_table *table, uint_8 ra, uint_8 rb, ins_operand *addr_op, uint_32 hint, asm_reloc *reloc ) {
-//**************************************************************************************************************************************
-
+static void doMemJump( uint_32 *buffer, ins_table *table, uint_8 ra, uint_8 rb, ins_operand *addr_op, uint_32 hint, asm_reloc *reloc )
+//************************************************************************************************************************************
+{
     // Note that addr_op maybe NULL. If not, addr_op->constant == hint.
     assert( addr_op == NULL || addr_op->constant == hint );
     assert( addr_op == NULL || addr_op->type == OP_IMMED );
-    doOpcodeRaRb( buffer, table->opcode, ra, rb,
+    doOpcodeRsRt( buffer, table->opcode, ra, rb,
                   (table->funccode << 14) | _FourteenBits(hint) );
     doReloc( reloc, addr_op, OWL_RELOC_JUMP_REL, buffer );
 }
 
-static void opError( instruction *ins, op_type actual, op_type wanted, int i ) {
-//******************************************************************************
+static void opError( instruction *ins, op_type actual, op_type wanted, int i )
+//****************************************************************************
 // Stuff out an error message.
-
+{
     ins = ins;
     actual = actual;
     wanted = wanted;    // it's a set of flags
@@ -577,9 +577,9 @@ static void opError( instruction *ins, op_type actual, op_type wanted, int i ) {
     }
 }
 
-static bool opValidate( ot_array *verify, instruction *ins, ins_opcount num_op, unsigned num_var ) {
-//**************************************************************************************************
-
+static bool opValidate( ot_array *verify, instruction *ins, ins_opcount num_op, unsigned num_var )
+//************************************************************************************************
+{
     int             ctr, var, lasterr;
     op_type         actual, wanted;
 
@@ -604,10 +604,10 @@ static bool opValidate( ot_array *verify, instruction *ins, ins_opcount num_op, 
     return( TRUE );
 }
 
-static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op ) {
-//***********************************************************************
+static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op )
+//*********************************************************************
 // Used by jmp, jsr
-
+{
     static op_type  verify1[][3] = { { OP_REG_INDIRECT, OP_NOTHING, OP_NOTHING },
                                      { OP_IMMED, OP_NOTHING, OP_NOTHING } };
     static op_type  verify2[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_NOTHING },
@@ -632,9 +632,9 @@ static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op ) {
     return( opValidate( verify, ins, num_op, num_var ) );
 }
 
-static void stdMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//***********************************************************************************************
-
+static void stdMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*********************************************************************************************
+{
     ins_operand *op1, *op2;
 
     op1 = ins->operands[1];
@@ -647,9 +647,9 @@ static void stdMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm
                RegIndex( op1->reg ), op2, op2->constant, reloc );
 }
 
-static void ITMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**********************************************************************************************
-
+static void ITMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
     ins_operand *op0, *op1;
     ins_opcount num_op;
     int         inc;
@@ -714,10 +714,10 @@ static void ITMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_
 
 }
 
-static bool retOperandsValidate( instruction *ins, ins_opcount num_op ) {
-//***********************************************************************
+static bool retOperandsValidate( instruction *ins, ins_opcount num_op )
+//*********************************************************************
 // Can be used by ret, jsr_coroutine
-
+{
     static op_type  verify1[][3] = { { OP_GPR, OP_NOTHING, OP_NOTHING },
                                      { OP_IMMED, OP_NOTHING, OP_NOTHING } };
     static op_type  verify2[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_NOTHING },
@@ -742,10 +742,10 @@ static bool retOperandsValidate( instruction *ins, ins_opcount num_op ) {
     return( opValidate( verify, ins, num_op, num_var ) );
 }
 
-static void ITRet( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//******************************************************************************************
+static void ITRet( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//****************************************************************************************
 // Both ret and jsr coroutine use this
-
+{
     ins_operand     *op0, *op1;
     ins_opcount     num_op;
     uint_8          d_reg_idx;  // default d_reg if not specified
@@ -798,52 +798,59 @@ static void ITRet( ins_table *table, instruction *ins, uint_32 *buffer, asm_relo
     doMemJump( buffer, table, d_reg_idx, RA_REG_IDX, NULL, 1, reloc );
 }
 
-static void ITMemNone( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**********************************************************************************************
-
+static void ITMemNone( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
     assert( ins->num_operands == 0 );
     reloc = reloc;
-    doOpcodeRaRb( buffer, table->opcode, 31, 31, _Mem_Func( table->funccode ) );
+    doOpcodeRsRt( buffer, table->opcode, 31, 31, _Mem_Func( table->funccode ) );
 }
 
-static void ITBranch( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*********************************************************************************************
-
+static void ITBranch( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*******************************************************************************************
+{
     ins_operand *op;
 
     assert( ins->num_operands == 2 );
     op = ins->operands[1];
-    doOpcodeRaRb( buffer, table->opcode, RegIndex( ins->operands[0]->reg ), 0,
+    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ), 0,
                   _Branch_disp( _Longword_offset( op->constant ) ) );
     doReloc( reloc, op, OWL_RELOC_BRANCH_REL, buffer );
 }
 
-static void ITOperate( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**********************************************************************************************
-
+static void ITOperate( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
     ins_funccode    fc;
-    ins_operand     *op;
-    uint_32         extra;
+    uint_32         extra = 0;
 
     assert( ins->num_operands == 3 );
     reloc = reloc;
-    op = ins->operands[1];
-    if( op->type == OP_GPR ) {
-        extra = _Rb( RegIndex( op->reg ) );
-    } else {    // OP_IMMED
-        assert( op->type == OP_IMMED );
-        extra = _LIT( op->constant );
-        (void)ensureOpAbsolute( op, 1 );
-    }
     fc = getFuncCode( table, ins );
-    doOpcodeFcRaRc( buffer, table->opcode, fc,
-                    RegIndex( ins->operands[0]->reg ),
-                    RegIndex( ins->operands[2]->reg ), extra );
+    doOpcodeFcRsRtRd( buffer, table->opcode, fc,
+                      RegIndex( ins->operands[1]->reg ),
+                      RegIndex( ins->operands[2]->reg ),
+                      RegIndex( ins->operands[0]->reg ), extra );
 }
 
-static void ITFPOperate( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
+static void ITOperateImm( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
+    ins_funccode    fc;
+    ins_operand     *op;
 
+    assert( ins->num_operands == 3 );
+    reloc = reloc;
+    op = ins->operands[2];
+    fc = getFuncCode( table, ins );
+    doOpcodeFcRsRtImm( buffer, table->opcode, fc,
+                       RegIndex( ins->operands[0]->reg ),
+                       RegIndex( ins->operands[1]->reg ), op->constant );
+}
+
+static void ITFPOperate( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     ins_funccode    fc;
 
     assert( ins->num_operands == 3 );
@@ -854,9 +861,9 @@ static void ITFPOperate( ins_table *table, instruction *ins, uint_32 *buffer, as
               RegIndex( ins->operands[2]->reg ), fc );
 }
 
-static void ITFPConvert( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
-
+static void ITFPConvert( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     ins_funccode    fc;
 
     assert( ins->num_operands == 2 );
@@ -866,9 +873,9 @@ static void ITFPConvert( ins_table *table, instruction *ins, uint_32 *buffer, as
               RegIndex( ins->operands[1]->reg ), fc );
 }
 
-static void ITBr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*****************************************************************************************
-
+static void ITBr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***************************************************************************************
+{
     ins_operand *op0, *op1;
     assert( ins->num_operands == 1 || ins->num_operands == 2 );
     op0 = ins->operands[0];
@@ -877,7 +884,7 @@ static void ITBr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc
             Error( IMPROPER_OPERAND, 0 );
             return;
         }
-        doOpcodeRaRb( buffer, table->opcode, 31, 0,
+        doOpcodeRsRt( buffer, table->opcode, 31, 0,
                       _Branch_disp( _Longword_offset( op0->constant ) ) );
         doReloc( reloc, op0, OWL_RELOC_BRANCH_REL, buffer );
         return;
@@ -895,9 +902,9 @@ static void ITBr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc
     ITBranch( table, ins, buffer, reloc );
 }
 
-static void ITMTMFFpcr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//***********************************************************************************************
-
+static void ITMTMFFpcr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*********************************************************************************************
+{
     assert( ins->num_operands == 1 || ins->num_operands == 3 );
     if( ins->num_operands == 1 ) {
         uint_8          reg_num;
@@ -910,36 +917,36 @@ static void ITMTMFFpcr( ins_table *table, instruction *ins, uint_32 *buffer, asm
     ITFPOperate( table, ins, buffer, reloc );
 }
 
-static void ITPseudoClr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
-
+static void ITPseudoClr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     assert( ins->num_operands == 1 );
     reloc = reloc;
-    doOpcodeFcRaRc( buffer, table->opcode, table->funccode, 31,
-                    RegIndex( ins->operands[0]->reg ), _Rb( 31 ) );
+    doOpcodeFcRsRt( buffer, table->opcode, table->funccode, 31,
+                    RegIndex( ins->operands[0]->reg ), _Rd( 31 ) );
 }
 
-static void ITPseudoFclr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*************************************************************************************************
-
+static void ITPseudoFclr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
     assert( ins->num_operands == 1 );
     reloc = reloc;
     doFPInst( buffer, table->opcode, 31, 31,
               RegIndex( ins->operands[0]->reg ), table->funccode );
 }
 
-static void ITPseudoMov( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
-
+static void ITPseudoMov( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     assert( ins->num_operands == 2 );
     table = table;
     reloc = reloc;
     doMov( buffer, ins->operands, DOMOV_ORIGINAL );
 }
 
-static void ITPseudoFmov( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*************************************************************************************************
-
+static void ITPseudoFmov( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
     uint_8          reg_idx0;
 
     assert( ins->num_operands == 2 );
@@ -949,9 +956,9 @@ static void ITPseudoFmov( ins_table *table, instruction *ins, uint_32 *buffer, a
               RegIndex( ins->operands[1]->reg ), table->funccode );
 }
 
-static void ITPseudoNot( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
-
+static void ITPseudoNot( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     ins_funccode    fc;
     ins_operand     *op;
     uint_32         extra;
@@ -961,20 +968,20 @@ static void ITPseudoNot( ins_table *table, instruction *ins, uint_32 *buffer, as
 
     op = ins->operands[0];
     if( op->type == OP_GPR ) {
-        extra = _Rb( RegIndex( op->reg ) );
+        extra = _Rt( RegIndex( op->reg ) );
     } else {    // OP_IMMED
         assert( op->type == OP_IMMED );
         extra = _LIT( op->constant );
         (void)ensureOpAbsolute( op, 0 );
     }
     fc = getFuncCode( table, ins );
-    doOpcodeFcRaRc( buffer, table->opcode, fc, 31,
+    doOpcodeFcRsRt( buffer, table->opcode, fc, 31,
                     RegIndex( ins->operands[1]->reg ), extra );
 }
 
-static void ITPseudoNegf( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*************************************************************************************************
-
+static void ITPseudoNegf( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
     ins_funccode    fc;
 
     assert( ins->num_operands == 2 );
@@ -984,9 +991,9 @@ static void ITPseudoNegf( ins_table *table, instruction *ins, uint_32 *buffer, a
               RegIndex( ins->operands[1]->reg ), fc );
 }
 
-static void ITPseudoFneg( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//*************************************************************************************************
-
+static void ITPseudoFneg( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
     uint_8          reg_idx0;
 
     assert( ins->num_operands == 2 );
@@ -996,9 +1003,9 @@ static void ITPseudoFneg( ins_table *table, instruction *ins, uint_32 *buffer, a
               RegIndex( ins->operands[1]->reg ), table->funccode );
 }
 
-static void ITPseudoAbs( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//************************************************************************************************
-
+static void ITPseudoAbs( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
     uint_8          s_reg_idx, d_reg_idx, rc_reg_idx;
     ins_operand     *src_op;
     bool            same_reg;
@@ -1033,8 +1040,8 @@ static void ITPseudoAbs( ins_table *table, instruction *ins, uint_32 *buffer, as
     } else {
         rc_reg_idx = d_reg_idx;
     }
-    doOpcodeFcRaRc( buffer, table->opcode, table->funccode, 31,
-                    rc_reg_idx, _Rb( s_reg_idx ) );
+    doOpcodeFcRsRt( buffer, table->opcode, table->funccode, 31,
+                    rc_reg_idx, _Rt( s_reg_idx ) );
     // So buffer gets ins #1. Now do ins #2.
     ++buffer;
 #define OPCODE_CMOVGT           0x11
@@ -1042,20 +1049,20 @@ static void ITPseudoAbs( ins_table *table, instruction *ins, uint_32 *buffer, as
 #define FUNCCODE_CMOVGT         0x0066
 #define FUNCCODE_CMOVLT         0x0044
     if( same_reg ) {
-        doOpcodeFcRaRc( buffer, OPCODE_CMOVLT,
+        doOpcodeFcRsRt( buffer, OPCODE_CMOVLT,
                         FUNCCODE_CMOVLT, s_reg_idx, s_reg_idx,
-                        _Rb( AT_REG_IDX ) );
+                        _Rt( AT_REG_IDX ) );
     } else {
-        doOpcodeFcRaRc( buffer, OPCODE_CMOVGT,
+        doOpcodeFcRsRt( buffer, OPCODE_CMOVGT,
                         FUNCCODE_CMOVGT, s_reg_idx, d_reg_idx,
-                        _Rb( s_reg_idx ) );
+                        _Rt( s_reg_idx ) );
     }
     ++numExtendedIns;
 }
 
-static void ITCallPAL( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc ) {
-//**********************************************************************************************
-
+static void ITCallPAL( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
     ins_operand     *op;
     op_const        constant;
     uint_32         opcode;
@@ -1076,12 +1083,12 @@ mips_format MIPSFormatTable[] = {
     #undef PICK
 };
 
-bool MIPSValidate( instruction *ins ) {
-//**************************************
+bool MIPSValidate( instruction *ins )
+//***********************************
 // Make sure that all operands of the given instruction
 // are of the type we are expecting. If not, we print
 // out an error message.
-
+{
     int                 i;
     mips_format         *fmt;
     ins_operand         *op;
@@ -1105,30 +1112,30 @@ bool MIPSValidate( instruction *ins ) {
 }
 
 #ifdef _STANDALONE_
-static void emitIns( owl_section_handle hdl, char *inscode, int size ) {
-//**********************************************************************
-
+static void emitIns( owl_section_handle hdl, char *inscode, int size )
+//********************************************************************
+{
     ObjEmitData( hdl, inscode, size, TRUE );
 }
 #else
-static void emitIns( char *inscode, int size ) {
-//**********************************************
-
+static void emitIns( char *inscode, int size )
+//********************************************
+{
     ObjEmitData( inscode, size, TRUE );
 }
 #endif
 
 #ifdef _STANDALONE_
-void MIPSEmit( owl_section_handle hdl, instruction *ins ) {
-//**********************************************************
+void MIPSEmit( owl_section_handle hdl, instruction *ins )
+//*******************************************************
 #else
-void MIPSEmit( instruction *ins ) {
-//**********************************
+void MIPSEmit( instruction *ins )
+//*******************************
 #endif
 // Encode the given instruction (including emitting any
 // relocs to the appropriate places), and emit the code
 // to the given section.
-
+{
     int             ctr;
     ins_table       *table;
     asm_reloc       reloc = { NULL, NULL };

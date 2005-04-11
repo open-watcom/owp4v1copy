@@ -290,6 +290,28 @@ ppchar"line "[0-9]*     { newlineno = atoi( yytext()+6 ); goto getfname; }
 "$f"[0-9]               { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
 "$f"[1-2][0-9]          { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
 "$f"[3][0-1]            { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
+:elsesegment AS_MIPS
+"$"[0-9]                { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+1 ) ); return( T_REGISTER ); }
+"$"[1-2][0-9]           { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+1 ) ); return( T_REGISTER ); }
+"$"[3][0-1]             { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+1 ) ); return( T_REGISTER ); }
+
+"$zero"                 { asyylval.reg = MakeReg( RC_GPR, 0 ); return( T_REGISTER ); }
+"$at"                   { asyylval.reg = MakeReg( RC_GPR, 1 ); return( T_REGISTER ); }
+"$v"[0-1]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 2 ); return( T_REGISTER ); }
+"$a"[0-3]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 4 ); return( T_REGISTER ); }
+"$t"[0-7]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 8 ); return( T_REGISTER ); }
+"$s"[0-7]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 16 ); return( T_REGISTER ); }
+"$t"[8-9]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 24 ); return( T_REGISTER ); }
+"$k"[0-1]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+2 ) + 26 ); return( T_REGISTER ); }
+"$gp"                   { asyylval.reg = MakeReg( RC_GPR, 28 ); return( T_REGISTER ); }
+"$sp"                   { asyylval.reg = MakeReg( RC_GPR, 29 ); return( T_REGISTER ); }
+"$s8"                   { asyylval.reg = MakeReg( RC_GPR, 30 ); return( T_REGISTER ); }
+"$fp"                   { asyylval.reg = MakeReg( RC_GPR, 30 ); return( T_REGISTER ); }
+"$ra"                   { asyylval.reg = MakeReg( RC_GPR, 31 ); return( T_REGISTER ); }
+
+"$f"[0-9]               { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
+"$f"[1-2][0-9]          { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
+"$f"[3][0-1]            { asyylval.reg = MakeReg( RC_FPR, atoi( yytext()+2 ) ); return( T_REGISTER ); }
 :elsesegment AS_PPC
 [rR][0-9]               { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+1 ) ); return( T_REGISTER ); }
 [rR][1-2][0-9]          { asyylval.reg = MakeReg( RC_GPR, atoi( yytext()+1 ) ); return( T_REGISTER ); }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MIPS architecture register name formatting.
 *
 ****************************************************************************/
 
@@ -35,8 +34,8 @@
 #ifndef NDEBUG
 static char buffer[ 10 ];
 
-extern char *RegName( reg r ) {
-
+extern char *RegName( reg r )
+{
     char        *s;
 
     memset( buffer, 0, sizeof( buffer ) );

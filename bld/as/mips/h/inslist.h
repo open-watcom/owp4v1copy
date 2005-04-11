@@ -32,8 +32,7 @@ v*  ========================================================================
 /* MIPS specific junk */
 #include "mipsfmt.h"
 
-#define INS_NOP         0x47ff041f      /* BIS R31,R31,R31 */
-#define INS_FNOP        0x5fff041f      /* CPYS F31,F31,F31 */
+#define INS_NOP         0x00000000      /* sll $zero,$zero,0 - neat! */
 
 typedef enum {
     QF_NONE     = 0x00,

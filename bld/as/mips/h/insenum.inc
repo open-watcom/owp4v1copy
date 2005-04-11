@@ -37,7 +37,3 @@ PICK( ENUM_IEEE_ADDS,   enum_IEEE_ADDS_or_CVTTQ )   // IEEE FP instructions such
 PICK( ENUM_IEEE_CMPTEQ, enum_IEEE_CMPTEQ )          // IEEE FP instructions such as CMPTEQ
 PICK( ENUM_IEEE_CVTQS,  enum_IEEE_CVTQS )           // IEEE FP instructions such as CVTQS
 PICK( ENUM_IEEE_CVTTQ,  enum_IEEE_ADDS_or_CVTTQ )   // IEEE FP instructions such as CVTTQ
-PICK( ENUM_VAX_ADDF,    enum_VAX_ADDF_or_CVTGQ )    // VAX FP instructions such as ADDF
-PICK( ENUM_VAX_CMPGEQ,  enum_VAX_CMPGEQ )           // VAX FP instructions such as CMPGEQ
-PICK( ENUM_VAX_CVTQF,   enum_VAX_CVTQF )            // VAX FP instructions such as CVTQF
-PICK( ENUM_VAX_CVTGQ,   enum_VAX_ADDF_or_CVTGQ )    // VAX FP instructions such as CVTGQ

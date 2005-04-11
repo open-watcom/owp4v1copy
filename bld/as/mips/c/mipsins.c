@@ -71,7 +71,6 @@ ins_table MIPSTable[] = {
  // Memory Branch Instructions
     INS( "jmp",     0x1A,   0x0000,     IT_MEMORY_JUMP,         ENUM_NONE ),
     INS( "jsr",     0x1A,   0x0001,     IT_MEMORY_JUMP,         ENUM_NONE ),
-    INS( "jsr_coroutine", 0x1A, 0x0003, IT_RET,                 ENUM_NONE ),
     INS( "ret",     0x1A,   0x0002,     IT_RET,                 ENUM_NONE ),
  // Branch Format Instructions
     INS( "br",      0x30,   0x0000,     IT_BR,                  ENUM_NONE ),
@@ -91,8 +90,10 @@ ins_table MIPSTable[] = {
     INS( "bge",     0x3E,   0x0000,     IT_BRANCH,              ENUM_NONE ),
     INS( "bgt",     0x3F,   0x0000,     IT_BRANCH,              ENUM_NONE ),
  // Operate Format Instructions
-    INS( "addl",    0x10,   0x0000,     IT_OPERATE,             ENUM_OF_ADDL ),
-    INS( "addq",    0x10,   0x0020,     IT_OPERATE,             ENUM_OF_ADDL ),
+    INS( "add",     0x00,   0x0020,     IT_OPERATE,             ENUM_OF_ADDL ),
+    INS( "addu",    0x10,   0x0020,     IT_OPERATE,             ENUM_OF_ADDL ),
+    INS( "addi",    0x08,   0x0000,     IT_OPERATE_IMM,         ENUM_NONE ),
+    INS( "addiu",   0x09,   0x0000,     IT_OPERATE_IMM,         ENUM_NONE ),
     INS( "cmpbge",  0x10,   0x000F,     IT_OPERATE,             ENUM_NONE ),
     INS( "cmpeq",   0x10,   0x002D,     IT_OPERATE,             ENUM_NONE ),
     INS( "cmple",   0x10,   0x006D,     IT_OPERATE,             ENUM_NONE ),
@@ -183,35 +184,15 @@ ins_table MIPSTable[] = {
     INS( "subs",    0x16,   0x0081,     IT_FP_OPERATE,          ENUM_IEEE_ADDS ),
     INS( "subt",    0x16,   0x00A1,     IT_FP_OPERATE,          ENUM_IEEE_ADDS ),
     INS( "cvttq",   0x16,   0x00AF,     IT_FP_CONVERT,          ENUM_IEEE_CVTTQ ),
- // Floating-Point Operate Format Instructions - VAX
-    INS( "addf",    0x15,   0x0080,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "cvtdg",   0x15,   0x009E,     IT_FP_CONVERT,          ENUM_VAX_ADDF ),
-    INS( "addg",    0x15,   0x00A0,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "cmpgeq",  0x15,   0x00A5,     IT_FP_OPERATE,          ENUM_VAX_CMPGEQ ),
-    INS( "cmpglt",  0x15,   0x00A6,     IT_FP_OPERATE,          ENUM_VAX_CMPGEQ ),
-    INS( "cmpgle",  0x15,   0x00A7,     IT_FP_OPERATE,          ENUM_VAX_CMPGEQ ),
-    INS( "cvtgf",   0x15,   0x00AC,     IT_FP_CONVERT,          ENUM_VAX_ADDF ),
-    INS( "cvtgd",   0x15,   0x00AD,     IT_FP_CONVERT,          ENUM_VAX_ADDF ),
-    INS( "cvtqf",   0x15,   0x00BC,     IT_FP_CONVERT,          ENUM_VAX_CVTQF ),
-    INS( "cvtqg",   0x15,   0x00BE,     IT_FP_CONVERT,          ENUM_VAX_CVTQF ),
-    INS( "divf",    0x15,   0x0083,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "divg",    0x15,   0x00A3,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "mulf",    0x15,   0x0082,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "mulg",    0x15,   0x00A2,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "subf",    0x15,   0x0081,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "subg",    0x15,   0x00A1,     IT_FP_OPERATE,          ENUM_VAX_ADDF ),
-    INS( "cvtgq",   0x15,   0x00AF,     IT_FP_CONVERT,          ENUM_VAX_CVTGQ ),
  // PALcode
     INS( "call_pal",0x00,   0x0000,     IT_CALL_PAL,            ENUM_NONE ),
  // Stylized Code Forms
-    // nop and fnop are in directiv.c since they don't require much parsing
+    // nop is in directiv.c since it doesn't require much parsing
     INS( "clr",     0x11,   0x0020,     IT_PSEUDO_CLR,          ENUM_NONE ),
     INS( "fclr",    0x17,   0x0020,     IT_PSEUDO_FCLR,         ENUM_NONE ),
     INS( "fmov",    0x17,   0x0020,     IT_PSEUDO_FMOV,         ENUM_NONE ),
     INS( "negl",    0x10,   0x0009,     IT_PSEUDO_NOT,          ENUM_OF_ADDL ),
     INS( "negq",    0x10,   0x0029,     IT_PSEUDO_NOT,          ENUM_OF_ADDL ),
-    INS( "negf",    0x15,   0x0081,     IT_PSEUDO_NEGF,         ENUM_VAX_ADDF ),
-    INS( "negg",    0x15,   0x00A1,     IT_PSEUDO_NEGF,         ENUM_VAX_ADDF ),
     INS( "negs",    0x16,   0x0081,     IT_PSEUDO_NEGF,         ENUM_IEEE_ADDS ),
     INS( "negt",    0x16,   0x00A1,     IT_PSEUDO_NEGF,         ENUM_IEEE_ADDS ),
     INS( "fneg",    0x17,   0x0021,     IT_PSEUDO_FNEG,         ENUM_NONE ),
@@ -249,27 +230,16 @@ ins_table MIPSTable[] = {
     INS( "ustw",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
     INS( "ustl",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
     INS( "ustq",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    // Integer divide and remainder instructions that are unsupported in
-    // hardward level.
-    // (MS asaxp does this by generating bsr to some _div function elsewhere)
-    INS( "divl",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "divlu",   0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "divq",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "divqu",   0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "reml",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "remlu",   0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "remq",    0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
-    INS( "remqu",   0x??,   0x????,     IT_PSEUDO_????,         ENUM_NONE ),
 #endif
 };
 
-#define MAX_NAME_LEN    20  // maximum length of an MIPS instruction mnemonic
+#define MAX_NAME_LEN    20  // maximum length of a MIPS instruction mnemonic (TODO)
 
-static void addInstructionSymbol( qualifier_flags flags, ins_table *table_entry ) {
-//*********************************************************************************
+static void addInstructionSymbol( qualifier_flags flags, ins_table *table_entry )
+//*******************************************************************************
 // Given an instruction name for which the optional bits in flags
 // are turned on, add a symbol for it to the symbol table.
-
+{
     sym_handle  sym;
     ins_symbol  *entry;
     char        buffer[ MAX_NAME_LEN ];
@@ -301,18 +271,18 @@ static void addInstructionSymbol( qualifier_flags flags, ins_table *table_entry 
     SymSetLink( sym, (void *)entry );
 }
 
-static void enum_NONE( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//********************************************************************************************************************************
-
+static void enum_NONE( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//***********************************************************************************************************************************
+{
     method = method;
     level = level;
     mask = mask;
     func( QF_NONE, parm );
 }
 
-static void enum_OF_ADDL( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//***********************************************************************************************************************************
-
+static void enum_OF_ADDL( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//**************************************************************************************************************************************
+{
     method = method;
     level = level;
     mask = mask;
@@ -320,9 +290,9 @@ static void enum_OF_ADDL( ins_enum_method method, uint_32 mask, uint_8 level, vo
     func( QF_V, parm );
 }
 
-static void enum_DTI_CVTQL( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//*************************************************************************************************************************************
-
+static void enum_DTI_CVTQL( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//****************************************************************************************************************************************
+{
     method = method;
     level = level;
     mask = mask;
@@ -331,9 +301,9 @@ static void enum_DTI_CVTQL( ins_enum_method method, uint_32 mask, uint_8 level, 
     func( QF_S | QF_V, parm );
 }
 
-static void enum_IEEE_CMPTEQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//***************************************************************************************************************************************
-
+static void enum_IEEE_CMPTEQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//******************************************************************************************************************************************
+{
     method = method;
     level = level;
     mask = mask;
@@ -341,9 +311,9 @@ static void enum_IEEE_CMPTEQ( ins_enum_method method, uint_32 mask, uint_8 level
     func( QF_S | QF_U, parm );
 }
 
-static void enum_IEEE_CVTQS( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//**************************************************************************************************************************************
-
+static void enum_IEEE_CVTQS( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//*****************************************************************************************************************************************
+{
     assert( level < 2 );
     switch( level ) {
     case 0:
@@ -365,52 +335,9 @@ static void enum_IEEE_CVTQS( ins_enum_method method, uint_32 mask, uint_8 level,
     }
 }
 
-static void enum_VAX_ADDF_or_CVTGQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//*********************************************************************************************************************************************
-
-    assert( level < 3 );
-    switch( level ) {
-    case 0:
-        enum_VAX_ADDF_or_CVTGQ( method, mask, level + 1, func, parm );
-        mask |= QF_S;
-        enum_VAX_ADDF_or_CVTGQ( method, mask, level + 1, func, parm );
-        break;
-    case 1:
-        enum_VAX_ADDF_or_CVTGQ( method, mask, level + 1, func, parm );
-        mask |= ( ( method == ENUM_VAX_ADDF ) ? QF_U : QF_V );
-        enum_VAX_ADDF_or_CVTGQ( method, mask, level + 1, func, parm );
-        break;
-    case 2:
-        func( mask, parm );
-        mask |= QF_C;
-        func( mask, parm );
-        break;
-    }
-}
-
-static void enum_VAX_CMPGEQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//**************************************************************************************************************************************
-
-    method = method;
-    level = level;
-    mask = mask;
-    func( QF_NONE, parm );
-    func( QF_S, parm );
-}
-
-static void enum_VAX_CVTQF( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//*************************************************************************************************************************************
-
-    method = method;
-    level = level;
-    mask = mask;
-    func( QF_NONE, parm );
-    func( QF_C, parm );
-}
-
-static void enum_IEEE_ADDS_or_CVTTQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm ) {
-//**********************************************************************************************************************************************
-
+static void enum_IEEE_ADDS_or_CVTTQ( ins_enum_method method, uint_32 mask, uint_8 level, void (*func)( qualifier_flags, ins_table * ), void *parm )
+//*************************************************************************************************************************************************
+{
     assert( level < 4 );
     switch( level ) {
     case 0:
@@ -454,12 +381,12 @@ static enumFunc_t enumFunc[] = {
 };
 #undef PICK
 
-static void enumInstructions( ins_enum_method method, void (*func)( qualifier_flags set, ins_table *parm ), void *parm ) {
-//************************************************************************************************
+static void enumInstructions( ins_enum_method method, void (*func)( qualifier_flags set, ins_table *parm ), void *parm )
+//**********************************************************************************************************************
 // Depending on which enum_method it belongs to, different instruction-
 // enumeration functions will be called to generate all the possible
 // instructions with the different qualifiers attached.
-
+{
     enumFunc[method]( method, QF_NONE, 0, func, parm );
 }
 
@@ -471,7 +398,8 @@ static char *itStrings[] = {
 #undef PICK
 };
 
-extern void DumpITString( ins_template template ) {
+extern void DumpITString( ins_template template )
+{
     printf( itStrings[ template ] );
 }
 
@@ -481,15 +409,15 @@ static char *insEnumStrings[] = {
 #undef PICK
 };
 
-extern void DumpInsEnumMethod( ins_enum_method method ) {
-//*******************************************************
-
+extern void DumpInsEnumMethod( ins_enum_method method )
+//*****************************************************
+{
     printf( insEnumStrings[ method ] );
 }
 
-extern void DumpInsTableEntry( ins_table *table_entry ) {
-//*******************************************************
-
+extern void DumpInsTableEntry( ins_table *table_entry )
+//*****************************************************
+{
     ins_symbol  *symbol;
 
     printf( "%s: 0x%x(0x%x) ", table_entry->name, table_entry->opcode, table_entry->funccode );
@@ -505,9 +433,9 @@ extern void DumpInsTableEntry( ins_table *table_entry ) {
     printf( "\n" );
 }
 
-extern void DumpInsTables() {
-//***************************
-
+extern void DumpInsTables()
+//*************************
+{
     ins_table   *curr;
     int         i, n;
 
@@ -520,9 +448,9 @@ extern void DumpInsTables() {
 #endif
 #endif
 
-extern void InsInit() {
-//*********************
-
+extern void InsInit()
+//*******************
+{
     ins_table   *curr;
     int         i, n;
 
@@ -539,10 +467,10 @@ extern void InsInit() {
 #endif
 }
 
-extern instruction *InsCreate( sym_handle op_sym ) {
-//**************************************************
+extern instruction *InsCreate( sym_handle op_sym )
+//************************************************
 // Allocate an instruction and initialize it.
-
+{
     instruction *ins;
 
     ins = MemAlloc( sizeof( instruction ) );
@@ -552,10 +480,10 @@ extern instruction *InsCreate( sym_handle op_sym ) {
     return( ins );
 }
 
-extern void InsAddOperand( instruction *ins, ins_operand *op ) {
-//**********************************************************
+extern void InsAddOperand( instruction *ins, ins_operand *op )
+//************************************************************
 // Add an operand to the given instruction.
-
+{
     if( ins->num_operands == MAX_OPERANDS ) {
         if( !insErrFlag ) {
             Error( MAX_NUMOP_EXCEEDED );
@@ -568,12 +496,12 @@ extern void InsAddOperand( instruction *ins, ins_operand *op ) {
     ins->operands[ ins->num_operands++ ] = op;
 }
 
-extern void InsEmit( instruction *ins ) {
-//***************************************
+extern void InsEmit( instruction *ins )
+//*************************************
 // Check an instruction to make sure operands match
 // and encode it. The encoded instruction is emitted
 // to the current OWL section.
-
+{
 #ifndef NDEBUG
     #ifdef _STANDALONE_
     if( _IsOption( DUMP_INSTRUCTIONS ) ) {
@@ -590,11 +518,11 @@ extern void InsEmit( instruction *ins ) {
     }
 }
 
-extern void InsDestroy( instruction *ins ) {
-//******************************************
+extern void InsDestroy( instruction *ins )
+//****************************************
 // Free up an instruction and all operands which
 // are hanging off of it.
-
+{
     int         i;
 
     for( i = 0; i < ins->num_operands; i++ ) {
@@ -603,9 +531,9 @@ extern void InsDestroy( instruction *ins ) {
     MemFree( ins );
 }
 
-extern void InsFini() {
-//*********************
-
+extern void InsFini()
+//*******************
+{
     ins_table   *curr;
     ins_symbol  *next;
     ins_symbol  *entry;
@@ -629,9 +557,9 @@ extern void InsFini() {
 
 #ifdef _STANDALONE_
 #ifndef NDEBUG
-extern void DumpIns( instruction *ins ) {
-//***************************************
-
+extern void DumpIns( instruction *ins )
+//*************************************
+{
     int         i;
 
     printf( "%-11s", SymName( ins->opcode_sym ) );

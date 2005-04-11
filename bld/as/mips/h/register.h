@@ -44,8 +44,8 @@ typedef enum {
 
 #define NULL_REG        ( MakeReg( RC_NOTHING, 0 ) )
 
-// $28 is the assembler temp reg in Alpha
-#define AT_REG          ( MakeReg( RC_GPR, 28 ) )
+// $1 is the assembler temp reg in MIPS
+#define AT_REG          ( MakeReg( RC_GPR, 1 ) )
 
 extern char *AsRegName( reg );
 

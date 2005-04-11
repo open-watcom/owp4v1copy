@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Object file output using OWL.
 *
 ****************************************************************************/
 
@@ -34,12 +33,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#ifdef AS_PPC
-  #define OBJ_OWL_CPU   OWL_CPU_PPC
-#else
-  #define OBJ_OWL_CPU   OWL_CPU_ALPHA
-#endif
 
 #if defined( __UNIX__ )
   #define OBJ_EXT        ".o"

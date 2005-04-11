@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MIPS instruction formats.
 *
 *****************************************************************************/
 
@@ -40,7 +39,8 @@ PICK( IT_MEMORY_NONE,   ITMemNone,      OP_NOTHING, OP_NOTHING, OP_NOTHING )    
 PICK( IT_MEMORY_JUMP,   ITMemJump,      (OP_GPR | OP_REG_INDIRECT | OP_IMMED), (OP_REG_INDIRECT | OP_NOTHING | OP_IMMED), (OP_IMMED | OP_NOTHING) ) /* jmp */
 PICK( IT_BRANCH,        ITBranch,       (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* bsr     */
 PICK( IT_FP_BRANCH,     ITBranch,       OP_FPR, OP_IMMED, OP_NOTHING )                                  /* fbeq    */
-PICK( IT_OPERATE,       ITOperate,      OP_GPR, (OP_GPR | OP_IMMED), OP_GPR )                           /* addl    */
+PICK( IT_OPERATE,       ITOperate,      OP_GPR, OP_GPR, (OP_GPR | OP_IMMED) )                           /* add     */
+PICK( IT_OPERATE_IMM,   ITOperateImm,   OP_GPR, OP_GPR, OP_IMMED )                                      /* addi    */
 PICK( IT_FP_OPERATE,    ITFPOperate,    OP_FPR, OP_FPR, OP_FPR )                                        /* cpys    */
 PICK( IT_FP_CONVERT,    ITFPConvert,    OP_FPR, OP_FPR, OP_NOTHING )                                    /* cvtqs   */
 PICK( IT_BR,            ITBr,           (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* br      */
