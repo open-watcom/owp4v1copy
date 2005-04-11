@@ -31,7 +31,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <dos.h>
 #include "stdnt.h"
 
 /*
@@ -41,7 +40,7 @@ static DWORD getRealBase( WORD seg, DWORD base, DWORD *limit )
 {
 #if defined( MD_axp ) || defined( MD_ppc )
 
-    *limit = -( DWORD ) 1;
+    *limit = -( DWORD )1;
     return( base );
 
 #elif defined( MD_x86 )
@@ -93,7 +92,7 @@ DWORD ReadMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
     LONG        bytes;
     DWORD       limit;
 #ifdef DEBUGGING_THIS_DAMN_WIN95_PROBLEM
-    static      bool first = TRUE;
+    static bool first = TRUE;
     DWORD       oldbase;
 #endif
 
@@ -126,7 +125,7 @@ DWORD ReadMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
     fclose( io );
 #endif
     ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID ) base, buff,
-                        size, ( LPDWORD ) & bytes );
+                        size, ( LPDWORD )&bytes );
 #ifdef DEBUGGING_THIS_DAMN_WIN95_PROBLEM
     if( first ) {
         remove( "t.t" );
@@ -142,7 +141,6 @@ DWORD ReadMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
         bytes = 0;
     }
     return( bytes );
-
 }
 
 /*
@@ -150,8 +148,8 @@ DWORD ReadMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
  */
 DWORD WriteMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
 {
-    LONG        bytes;
-    DWORD       limit;
+    LONG    bytes;
+    DWORD   limit;
 
     if( DebugeePid == NULL ) {
         return( 0 );
@@ -162,7 +160,7 @@ DWORD WriteMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
             size = limit - base;
         }
     }
-    WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID ) base, buff,
+    WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID )base, buff,
                         size, ( LPDWORD ) & bytes );
     GetLastError();
     if( bytes < 0 ) {
@@ -174,11 +172,11 @@ DWORD WriteMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
 
 unsigned ReqRead_mem( void )
 {
-    WORD                seg;
-    DWORD               offset;
-    DWORD               length;
-    LPSTR               data;
-    read_mem_req        *acc;
+    WORD            seg;
+    DWORD           offset;
+    DWORD           length;
+    LPSTR           data;
+    read_mem_req    *acc;
 
     acc = GetInPtr( 0 );
 
@@ -197,12 +195,12 @@ unsigned ReqRead_mem( void )
 
 unsigned ReqWrite_mem( void )
 {
-    WORD                seg;
-    DWORD               offset;
-    DWORD               length, len;
-    LPSTR               data;
-    write_mem_req       *acc;
-    write_mem_ret       *ret;
+    WORD            seg;
+    DWORD           offset;
+    DWORD           length;
+    LPSTR           data;
+    write_mem_req   *acc;
+    write_mem_ret   *ret;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -214,7 +212,7 @@ unsigned ReqWrite_mem( void )
 
     seg = acc->mem_addr.segment;
     offset = acc->mem_addr.offset;
-    len = length = GetTotalSize() -sizeof( *acc );
+    length = GetTotalSize() - sizeof( *acc );
     data = ( LPSTR ) GetInPtr( sizeof( *acc ) );
 
     ret->len = WriteMem( seg, offset, data, length );
@@ -224,7 +222,8 @@ unsigned ReqWrite_mem( void )
 unsigned ReqChecksum_mem( void )
 {
     DWORD               offset;
-    WORD                length, value;
+    WORD                length;
+    WORD                value;
     WORD                segment;
     DWORD               sum;
     checksum_mem_req    *acc;

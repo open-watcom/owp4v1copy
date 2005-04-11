@@ -31,14 +31,15 @@
 
 #include "stdnt.h"
 
-unsigned ReqFileInfo_getdate()
+unsigned ReqFileInfo_getdate( void )
 {
-    file_info_get_date_req      *req;
-    file_info_get_date_ret      *ret;
-    static WIN32_FIND_DATA      ffb;
-    char                        *name;
-    HANDLE                      h;
-    WORD                        md, mt;
+    file_info_get_date_req  *req;
+    file_info_get_date_ret  *ret;
+    static WIN32_FIND_DATA  ffb;
+    char                    *name;
+    HANDLE                  h;
+    WORD                    md;
+    WORD                    mt;
 
     req = GetInPtr( 0 );
     name = GetInPtr( sizeof( *req ) );
@@ -55,14 +56,15 @@ unsigned ReqFileInfo_getdate()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFileInfo_setdate()
+unsigned ReqFileInfo_setdate( void )
 {
-    file_info_set_date_req      *req;
-    file_info_set_date_ret      *ret;
-    char                        *name;
-    HANDLE                      h;
-    WORD                        md, mt;
-    FILETIME                    ft;
+    file_info_set_date_req  *req;
+    file_info_set_date_ret  *ret;
+    char                    *name;
+    HANDLE                  h;
+    WORD                    md;
+    WORD                    mt;
+    FILETIME                ft;
 
     req = GetInPtr( 0 );
     name = GetInPtr( sizeof( *req ) );

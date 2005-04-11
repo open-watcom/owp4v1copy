@@ -34,15 +34,14 @@
 #include <string.h>
 #include <stddef.h>
 #include "stdnt.h"
-#include "watcom.h"
 
 /*
  * SeekRead - seek to a specified spot in the file, and read some data
  */
 BOOL SeekRead( HANDLE handle, DWORD newpos, void *buff, WORD size )
 {
-    int         rc;
-    DWORD       bytes;
+    int     rc;
+    DWORD   bytes;
 
     rc = SetFilePointer( handle, newpos, 0, SEEK_SET );
     if( rc == -1 ) {
@@ -64,9 +63,9 @@ BOOL SeekRead( HANDLE handle, DWORD newpos, void *buff, WORD size )
  */
 int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
 {
-    WORD                data;
-    WORD                sig;
-    DWORD               nh_offset;
+    WORD    data;
+    WORD    sig;
+    DWORD   nh_offset;
 
     if( !SeekRead( handle, 0x00, &data, sizeof( data ) ) ) {
         return( FALSE );
@@ -86,8 +85,9 @@ int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
         return( FALSE );
     }
 
-    if( !SeekRead( handle, nh_offset, &sig, sizeof( sig ) ) )
+    if( !SeekRead( handle, nh_offset, &sig, sizeof( sig ) ) ) {
         sig = 0;
+    }
     hi->sig = sig;
     if( sig == EXE_PE ) {
         if( !SeekRead( handle, nh_offset, &hi->peh, sizeof( pe_header ) ) ) {
@@ -102,13 +102,15 @@ int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
     }
 #if defined( MD_x86 )
     if( sig == EXE_NE ) {
-        if( !SeekRead( handle, nh_offset, &hi->neh, sizeof( os2_exe_header ) ) ) {
+        if( !SeekRead( handle, nh_offset, &hi->neh, sizeof( os2_exe_header ) ) )
+        {
             return( FALSE );
         }
         if( hi->neh.target == TARGET_WINDOWS ) {
             DWORD       off;
             char        len;
             DWORD       bytes;
+            DWORD       pos;
 
             off = nh_offset + hi->neh.resident_off;
             if( SetFilePointer( handle, off, 0, SEEK_SET ) == -1 ) {
@@ -124,12 +126,10 @@ int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
                 return( FALSE );
             }
             hi->modname[len] = 0;
-            if( !SeekRead( handle,
-                            nh_offset +
-                            hi->neh.segment_off +
-                            ( hi->neh.adsegnum - 1 ) * sizeof( segment_record ) +
-                            offsetof( segment_record, min ),
-                            stack, sizeof( *stack ) ) ) {
+            pos = nh_offset + hi->neh.segment_off + 
+                ( hi->neh.adsegnum - 1 ) * sizeof( segment_record ) +
+                offsetof( segment_record, min );
+            if( !SeekRead( handle, pos, stack, sizeof( *stack ) ) ) {
                 return( FALSE );
             }
             *stack += hi->neh.stack;
@@ -157,22 +157,29 @@ int GetModuleName( HANDLE fhdl, char *name )
     char                buf[_MAX_PATH];
     WORD                stack;
 
-    if( !GetEXEHeader( fhdl, &hi, &stack ) )
+    if( !GetEXEHeader( fhdl, &hi, &stack ) ) {
         return( FALSE );
-    if( hi.sig != EXE_PE )
+    }
+    if( hi.sig != EXE_PE ) {
         return( FALSE );
+    }
     export_rva = hi.peh.table[PE_TBL_EXPORT].rva;
+    if( hi.peh.num_objects == 0 ) {
+        return( FALSE );
+    }
     for( i = 0; i < hi.peh.num_objects; i++ ) {
         if( !ReadFile( fhdl, &obj, sizeof( obj ), &lenread, NULL )
             || lenread != sizeof( obj ) ) {
             return( FALSE );
         }
-        if( export_rva >= obj.rva && export_rva < obj.rva + obj.physical_size ) {
+        if( export_rva >= obj.rva && export_rva < obj.rva + obj.physical_size )
+        {
             break;
         }
     }
-    if( i == hi.peh.num_objects )
+    if( i == hi.peh.num_objects ) {
         return( FALSE );
+    }
     if( !SeekRead( fhdl, obj.physical_offset + export_rva - obj.rva,
                    &expdir, sizeof( expdir ) ) ) {
         return( FALSE );
@@ -196,16 +203,17 @@ int GetModuleName( HANDLE fhdl, char *name )
 #if 0
 int CpFile( HANDLE in )
 {
-    HANDLE      out;
-    char        buff[1024];
-    DWORD       lenread;
-    DWORD       old;
-    int         rc;
+    HANDLE  out;
+    char    buff[1024];
+    DWORD   lenread;
+    DWORD   old;
+    int     rc;
 
     out = CreateFile( ( LPTSTR ) "CP.OUT", GENERIC_WRITE, FILE_SHARE_READ, 0,
                 CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
-    if( out == 0 )
+    if( out == 0 ) {
         return( 1 );
+    }
     old = SetFilePointer( in, 0, NULL, FILE_CURRENT );
     SetFilePointer( in, 0, NULL, FILE_BEGIN );
     rc = 0;
@@ -214,8 +222,9 @@ int CpFile( HANDLE in )
             rc = 2;
             break;
         }
-        if( lenread == 0 )
+        if( lenread == 0 ) {
             break;
+        }
         if( !WriteFile( out, buff, lenread, &lenread, NULL ) ) {
             rc = 3;
             break;

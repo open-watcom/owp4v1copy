@@ -31,7 +31,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "stdnt.h"
 
 unsigned ReqRedirect_stdin( void )

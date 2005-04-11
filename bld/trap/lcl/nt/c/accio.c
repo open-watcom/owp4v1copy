@@ -33,12 +33,9 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include "stdnt.h"
 
-#define OP_TRUNC        0x08
-
-unsigned ReqFile_get_config()
+unsigned ReqFile_get_config( void )
 {
     file_get_config_ret *ret;
 
@@ -55,9 +52,9 @@ unsigned ReqFile_get_config()
 
 unsigned ReqRead_user_keyboard( void )
 {
-    read_user_keyboard_req      *acc;
-    read_user_keyboard_ret      *ret;
-    DWORD                       delay;
+    read_user_keyboard_req  *acc;
+    read_user_keyboard_ret  *ret;
+    DWORD                   delay;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -73,12 +70,12 @@ unsigned ReqRead_user_keyboard( void )
 
 unsigned ReqFile_open( void )
 {
-    HANDLE              h;
-    file_open_req       *acc;
-    file_open_ret       *ret;
-    void                *buff;
-    unsigned            mode;
-    static int          mapAcc[] = { 0, 1, 2 };
+    HANDLE                  h;
+    file_open_req           *acc;
+    file_open_ret           *ret;
+    void                    *buff;
+    unsigned                mode;
+    static unsigned const   mapAcc[] = { 0, 1, 2 };
 
     acc = GetInPtr( 0 );
     buff = GetInPtr( sizeof( *acc ) );
@@ -102,7 +99,9 @@ unsigned ReqFile_open( void )
         extern void __GetNTAccessAttr( int rwmode, LPDWORD desired_access,
                                         LPDWORD attr );
         extern void __GetNTShareAttr( int share, LPDWORD share_mode );
-        DWORD   share_mode, desired_access, attr;
+        DWORD   share_mode;
+        DWORD   desired_access;
+        DWORD   attr;
         DWORD   create_disp;
 
         mode = mapAcc[ ( 0x3 & acc->mode ) - 1];
@@ -127,9 +126,9 @@ unsigned ReqFile_open( void )
 
 unsigned ReqFile_seek( void )
 {
-    DWORD               rc;
-    file_seek_req       *acc;
-    file_seek_ret       *ret;
+    DWORD           rc;
+    file_seek_req   *acc;
+    file_seek_ret   *ret;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -146,12 +145,12 @@ unsigned ReqFile_seek( void )
 
 unsigned ReqFile_write( void )
 {
-    DWORD               bytes;
-    BOOL                rc;
-    file_write_req      *acc;
-    file_write_ret      *ret;
-    int                 len;
-    void                *buff;
+    DWORD           bytes;
+    BOOL            rc;
+    file_write_req  *acc;
+    file_write_ret  *ret;
+    DWORD           len;
+    void            *buff;
 
     acc = GetInPtr( 0 );
     buff = GetInPtr( sizeof( *acc ) );
@@ -159,7 +158,7 @@ unsigned ReqFile_write( void )
 
     len = GetTotalSize() - sizeof( *acc );
 
-    rc = WriteFile( ( HANDLE ) acc->handle, buff, len, &bytes, NULL );
+    rc = WriteFile( ( HANDLE )acc->handle, buff, len, &bytes, NULL );
     if( !rc ) {
         ret->err = GetLastError();
         bytes = 0;
@@ -172,13 +171,13 @@ unsigned ReqFile_write( void )
 
 unsigned ReqFile_write_console( void )
 {
-    DWORD                       bytes;
-    BOOL                        rc;
-    file_write_console_req      *acc;
-    file_write_console_ret      *ret;
-    int                         len;
-    void                        *buff;
-    HANDLE                      handle;
+    DWORD                   bytes;
+    BOOL                    rc;
+    file_write_console_req  *acc;
+    file_write_console_ret  *ret;
+    DWORD                   len;
+    void                    *buff;
+    HANDLE                  handle;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -203,11 +202,11 @@ unsigned ReqFile_write_console( void )
 
 unsigned ReqFile_read( void )
 {
-    DWORD               bytes;
-    BOOL                rc;
-    file_read_req       *acc;
-    file_read_ret       *ret;
-    void                *buff;
+    DWORD           bytes;
+    BOOL            rc;
+    file_read_req   *acc;
+    file_read_ret   *ret;
+    void            *buff;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -224,9 +223,9 @@ unsigned ReqFile_read( void )
 
 unsigned ReqFile_close( void )
 {
-    file_close_req      *acc;
-    file_close_ret      *ret;
-    BOOL                rc;
+    file_close_req  *acc;
+    file_close_ret  *ret;
+    BOOL            rc;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -247,8 +246,8 @@ unsigned ReqFile_close( void )
 
 unsigned ReqFile_erase( void )
 {
-    file_erase_ret      *ret;
-    char                *buff;
+    file_erase_ret  *ret;
+    char            *buff;
 
     buff = GetInPtr( sizeof( file_erase_req ) );
     ret = GetOutPtr( 0 );

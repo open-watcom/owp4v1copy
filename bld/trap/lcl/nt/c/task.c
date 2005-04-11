@@ -36,9 +36,9 @@
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
-    trap_version        ver;
-    OSVERSIONINFO       osver;
-    HANDLE              dll;
+    trap_version    ver;
+    OSVERSIONINFO   osver;
+    HANDLE          dll;
 
     osver.dwOSVersionInfoSize = sizeof( osver );
     GetVersionEx( &osver );
@@ -59,18 +59,26 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     if( IsWinNT ) {
         dll = LoadLibrary( "VDMDBG.DLL" );
         if( dll != NULL ) {
-            pVDMSetThreadContext = ( LPVOID ) GetProcAddress( dll, "VDMSetThreadContext" );
-            pVDMModuleFirst = ( LPVOID ) GetProcAddress( dll, "VDMModuleFirst" );
-            pVDMModuleNext = ( LPVOID ) GetProcAddress( dll, "VDMModuleNext" );
-            pVDMEnumProcessWOW = ( LPVOID ) GetProcAddress( dll, "VDMEnumProcessWOW" );
-            pVDMProcessException = ( LPVOID ) GetProcAddress( dll, "VDMProcessException" );
-            pVDMGetModuleSelector = ( LPVOID ) GetProcAddress( dll, "VDMGetModuleSelector" );
-            pVDMGetThreadContext = ( LPVOID ) GetProcAddress( dll, "VDMGetThreadContext" );
+            pVDMSetThreadContext    = (LPVOID)GetProcAddress( dll,
+                                          "VDMSetThreadContext" );
+            pVDMModuleFirst         = (LPVOID)GetProcAddress( dll,
+                                          "VDMModuleFirst" );
+            pVDMModuleNext          = (LPVOID)GetProcAddress( dll,
+                                          "VDMModuleNext" );
+            pVDMEnumProcessWOW      = (LPVOID)GetProcAddress( dll,
+                                          "VDMEnumProcessWOW" );
+            pVDMProcessException    = (LPVOID)GetProcAddress( dll,
+                                          "VDMProcessException" );
+            pVDMGetModuleSelector   = (LPVOID)GetProcAddress( dll,
+                                          "VDMGetModuleSelector" );
+            pVDMGetThreadContext    = (LPVOID)GetProcAddress( dll,
+                                          "VDMGetThreadContext" );
         }
     }
     dll = LoadLibrary( "KERNEL32.DLL" );
     if( dll != NULL ) {
-        pOpenThread = ( LPVOID ) GetProcAddress( dll, "OpenThread" );
+        pOpenThread                 = (LPVOID)GetProcAddress( dll,
+                                          "OpenThread" );
     }
     //say( "base address=%8.8x", ((char*)&GetInPtr)-0x2f );
     DLLPath = LocalAlloc( LMEM_FIXED | LMEM_ZEROINIT, strlen( err ) + 1 );

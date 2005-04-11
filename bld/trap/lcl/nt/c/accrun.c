@@ -33,24 +33,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <direct.h>
-#include <ctype.h>
-#include <dos.h>
 #include "madregs.h"
 #include "stdnt.h"
-#include "trperr.h"
 
 typedef enum {
     T_OFF,
     T_ON_CURR,
     T_ON_NEXT
-}       set_t;
+}   set_t;
 
 /*
  * setATBit - control if we are tracing
  */
 static void setATBit( thread_info *ti, set_t set )
 {
-    CONTEXT     con;
+    CONTEXT con;
 
     con.ContextFlags = CONTEXT_CONTROL;
     MyGetThreadContext( ti, &con );
@@ -71,14 +68,20 @@ static void setATBit( thread_info *ti, set_t set )
             ti->brk_addr = AdjustIP( &con, 0 );
             if( set == T_ON_NEXT )
                 ti->brk_addr += 4;
-            ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & ti->brk_opcode, sizeof( ti->brk_opcode ), ( LPDWORD ) & bytes );
+                ReadProcessMemory( ProcessInfo.process_handle,
+                    ( LPVOID )ti->brk_addr, ( LPVOID )&ti->brk_opcode,
+                    sizeof( ti->brk_opcode ), ( LPDWORD )&bytes );
             if( ti->brk_opcode != brk ) {
-                WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & brk, sizeof( brk ), ( LPDWORD ) & bytes );
+                WriteProcessMemory( ProcessInfo.process_handle,
+                    ( LPVOID )ti->brk_addr, ( LPVOID )&brk, sizeof( brk ),
+                    ( LPDWORD )&bytes );
             } else {
                 ti->brk_addr = 0;
             }
         } else if( ti->brk_addr != 0 ) {
-            WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & ti->brk_opcode, sizeof( ti->brk_opcode ), ( LPDWORD ) & bytes );
+            WriteProcessMemory( ProcessInfo.process_handle,
+                ( LPVOID )ti->brk_addr, ( LPVOID )&ti->brk_opcode,
+                sizeof( ti->brk_opcode ), ( LPDWORD )&bytes );
             ti->brk_addr = 0;
         }
     }
@@ -137,7 +140,7 @@ void InterruptProgram()
 
 bool Terminate( void )
 {
-    HANDLE      hp;
+    HANDLE  hp;
 
     hp = OpenProcess( PROCESS_ALL_ACCESS, FALSE, DebugeePid );
     if( hp != NULL ) {
@@ -173,7 +176,6 @@ static BOOL WINAPI consoleHandler( DWORD type )
 }
 
 
-
 /*
  * setTBit - control if we are tracing
  */
@@ -198,12 +200,14 @@ static int handleInt3( DWORD state )
     thread_info *ti;
     CONTEXT     con;
 
+    (void)state; // Unused
     ti = FindThread( DebugeeTid );
     if( ti == NULL ) {
         HANDLE  th;
 
-        if( pOpenThread == NULL )
+        if( pOpenThread == NULL ) {
             return( 0 );
+        }
         th = pOpenThread( DebugeeTid );
         AddThread( DebugeeTid, th, NULL );
         ti = FindThread( DebugeeTid );
@@ -266,7 +270,6 @@ static int handleInt1( DWORD state )
 
 #if defined( MD_x86 )
     if( state & STATE_WATCH_386 ) {
-
         if( GetDR6() & 0xf ) {
             return( COND_WATCH );
         }
@@ -278,16 +281,18 @@ static int handleInt1( DWORD state )
         }
     } else {
 #if defined( MD_x86 )
-        HANDLE          proc;
-        DWORD           written;
-        brkpnt_type     ch;
+        HANDLE      proc;
+        DWORD       written;
+        brkpnt_type ch;
         thread_info *ti;
 
-        if( BreakFixed == 0 )
+        if( BreakFixed == 0 ) {
             return( COND_TRACE );
+        }
         ti = FindThread( DebugeeTid );
-        if( !ti->is_foreign )
+        if( ti && !ti->is_foreign ) {
             return( COND_TRACE );
+        }
         ch = BRK_POINT;
         proc = OpenProcess( PROCESS_ALL_ACCESS, FALSE, DebugeePid );
         WriteProcessMemory( proc, ( LPVOID ) BreakFixed, &ch, 1, &written );
@@ -323,7 +328,8 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
     msg_list    **owner;
     msg_list    *new;
     int         cond;
-    char        *p, *q;
+    char        *p;
+    char        *q;
     bool        rc;
 #ifdef WOW
     thread_info *ti;
@@ -362,15 +368,16 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                if a conditional branch is going to happen or not.
             */
             {
-                DWORD           bytes;
-                DWORD           addr;
-                DWORD           opcode;
-                CONTEXT         con;
+                DWORD   bytes;
+                DWORD   addr;
+                DWORD   opcode;
+                CONTEXT con;
 
                 con.ContextFlags = CONTEXT_CONTROL;
                 MyGetThreadContext( FindThread( DebugeeTid ), &con );
                 addr = AdjustIP( &con, 0 );
-                ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID ) addr, ( LPVOID ) & opcode, sizeof( opcode ), ( LPDWORD ) & bytes );
+                ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID )addr,
+                    ( LPVOID )&opcode, sizeof( opcode ), ( LPDWORD )&bytes );
                 opcode &= 0xfc000000;
                 if( opcode == ( 0x1a << 26 ) || opcode >= ( 0x30 << 26 ) ) {
                     returnCode = COND_WATCH;
@@ -494,14 +501,17 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                 DebugeeTid = DebugEvent.dwThreadId;
                 if( DebugEvent.u.Exception.dwFirstChance &&
                   !( state & STATE_EXPECTING_FAULT ) ) {
-                    char buff[20];
+                    char    buff[20];
+                    void    *a;
+
                     new = LocalAlloc( LMEM_FIXED, 80 );
                     new->next = NULL;
                     strcpy( new->msg, "First chance exception: 0x" );
-                    itoa( code, buff, 16 );
+                    ultoa( code, buff, 16 );
                     strcat( new->msg, buff );
                     strcat( new->msg, " at 0x" );
-                    itoa( ( DWORD ) DebugEvent.u.Exception.ExceptionRecord.ExceptionAddress, buff, 16 );
+                    a = DebugEvent.u.Exception.ExceptionRecord.ExceptionAddress;
+                    ultoa( (DWORD)a, buff, 16 );
                     strcat( new->msg, buff );
                     owner = &DebugString;
                     for( ;; ) {
@@ -513,7 +523,8 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     continue_how = DBG_EXCEPTION_NOT_HANDLED;
                     /*
                      *  Carl Young 8-Jun-2004
-                     *  Ensure we clear the trap flag so we don't single step the exception handler...
+                     *  Ensure we clear the trap flag so we don't single step
+                     *  the exception handler...
                      */
                     setTBit( T_OFF );
                 } else {
@@ -566,16 +577,18 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
             }
             break;
         case OUTPUT_DEBUG_STRING_EVENT:
-            if( state & ( STATE_IGNORE_DEBUG_OUT | STATE_WAIT_FOR_VDM_START ) ) {
+            if( state & ( STATE_IGNORE_DEBUG_OUT | STATE_WAIT_FOR_VDM_START ) )
+            {
                 break;
             }
             len = DebugEvent.u.DebugString.nDebugStringLength;
             p = LocalAlloc( LMEM_FIXED, len + 1 );
-            ReadMem( FlatDS, ( DWORD ) DebugEvent.u.DebugString.lpDebugStringData,
-                        p, len );
+            ReadMem( FlatDS,
+                ( DWORD )DebugEvent.u.DebugString.lpDebugStringData, p, len );
             p[len] = '\0';
             #define GOOFY_NT_MESSAGE "LDR: LdrpMapDll Relocating:"
-            if( strncmp( p, GOOFY_NT_MESSAGE, sizeof( GOOFY_NT_MESSAGE ) - 1 ) == 0 ) {
+            if( !strncmp( p, GOOFY_NT_MESSAGE, sizeof( GOOFY_NT_MESSAGE ) - 1 )
+                    ) {
                 LocalFree( p );
                 break;
             }
@@ -588,16 +601,19 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     new->msg[q - p] = '\0';
                     owner = &DebugString;
                     for( ;; ) {
-                        if( *owner == NULL )
+                        if( *owner == NULL ) {
                             break;
+                        }
                         owner = &( *owner )->next;
                     }
                     *owner = new;
-                    if( q[0] == '\0' )
+                    if( q[0] == '\0' ) {
                         break;
+                    }
                     ++q;
-                    if( q[0] == '\n' )
+                    if( q[0] == '\n' ) {
                         ++q;
+                    }
                     p = q;
                 } else {
                     ++q;
@@ -606,7 +622,6 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
             LocalFree( p );
             returnCode = 0;
             goto done;
-            break;
         default:
             break;
         }

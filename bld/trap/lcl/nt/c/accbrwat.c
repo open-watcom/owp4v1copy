@@ -31,10 +31,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <direct.h>
-#include <ctype.h>
-#include <dos.h>
 #include "stdnt.h"
 #if defined( MD_x86 )
   #include "dbg386.h"
@@ -43,34 +40,35 @@
 #define MAX_WP  32
 
 typedef struct {
-    addr48_ptr  loc;
-    DWORD       value;
-    DWORD       linear;
-    unsigned short len;
-    unsigned short dregs;
-}                       watch_point;
+    addr48_ptr      loc;
+    DWORD           value;
+    DWORD           linear;
+    unsigned short  len;
+    unsigned short  dregs;
+}                   watch_point;
 
-static watch_point      wpList[MAX_WP];
+static watch_point  wpList[MAX_WP];
 
 typedef struct break_point {
     struct break_point  *next;
-    addr48_ptr  addr;
-    BYTE        byte;
+    addr48_ptr          addr;
+    BYTE                byte;
 }                       break_point;
 
-break_point             *Breaks = NULL;
+static break_point      *Breaks = NULL;
 
 unsigned ReqSet_break( void )
 {
-    brkpnt_type         ch;
-    set_break_req       *acc;
-    set_break_ret       *ret;
-    break_point         *new;
+    brkpnt_type     ch;
+    set_break_req   *acc;
+    set_break_ret   *ret;
+    break_point     *new;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
 
-    ReadMem( acc->break_addr.segment, acc->break_addr.offset, &ch, sizeof( ch ) );
+    ReadMem( acc->break_addr.segment, acc->break_addr.offset, &ch,
+        sizeof( ch ) );
     ret->old = ch;
     new = LocalAlloc( LMEM_FIXED, sizeof( *new ) );
     new->byte = ch;
@@ -78,15 +76,17 @@ unsigned ReqSet_break( void )
     new->next = Breaks;
     Breaks = new;
     ch = BRK_POINT;
-    WriteMem( acc->break_addr.segment, acc->break_addr.offset, &ch, sizeof( ch ) );
+    WriteMem( acc->break_addr.segment, acc->break_addr.offset, &ch,
+        sizeof( ch ) );
     return( sizeof( *ret ) );
 }
 
 unsigned ReqClear_break( void )
 {
-    brkpnt_type         ch;
-    clear_break_req     *acc;
-    break_point         *brk, *next;
+    brkpnt_type     ch;
+    clear_break_req *acc;
+    break_point     *brk;
+    break_point     *next;
 
     // we can assume all breaks are cleared at once
 
@@ -97,7 +97,8 @@ unsigned ReqClear_break( void )
     Breaks = NULL;
     acc = GetInPtr( 0 );
     ch = acc->old;
-    WriteMem( acc->break_addr.segment, acc->break_addr.offset, &ch, sizeof( ch ) );
+    WriteMem( acc->break_addr.segment, acc->break_addr.offset, &ch,
+        sizeof( ch ) );
     return( 0 );
 }
 
@@ -106,10 +107,12 @@ BOOL FindBreak( WORD segment, DWORD offset, BYTE *ch )
     break_point *brk;
 
     for( brk = Breaks; brk != NULL; brk = brk->next ) {
-        if( brk->addr.segment != segment )
+        if( brk->addr.segment != segment ) {
             continue;
-        if( brk->addr.offset != offset )
+        }
+        if( brk->addr.offset != offset ) {
             continue;
+        }
         *ch = brk->byte;
         return( TRUE );
     }
@@ -141,8 +144,9 @@ void SetDR7( DWORD tmp )
     //char buff[256];
 
     ti = FindThread( DebugeeTid );
-    if( ti == NULL )
+    if( ti == NULL ) {
         return;
+    }
     MyGetThreadContext( ti, &con );
     con.Dr7 = tmp;
     //sprintf( buff, "tid=%8.8x, dr7=%8.8x", DebugeeTid, tmp );
@@ -205,7 +209,9 @@ void ClearDebugRegs( void )
 BOOL SetDebugRegs( void )
 {
 #if defined( MD_x86 )
-    int         needed, i, dr;
+    int         needed;
+    int         i;
+    int         dr;
     DWORD       dr7;
     watch_point *wp;
 
@@ -223,7 +229,8 @@ BOOL SetDebugRegs( void )
         dr7 |= setDRn( dr, wp->linear, DRLen( wp->len ) | DR7_BWR );
         dr++;
         if( wp->dregs == 2 ) {
-            dr7 |= setDRn( dr, wp->linear + wp->len, DRLen( wp->len ) | DR7_BWR );
+            dr7 |= setDRn( dr, wp->linear + wp->len,
+                DRLen( wp->len ) | DR7_BWR );
             dr++;
         }
     }
@@ -241,8 +248,8 @@ BOOL SetDebugRegs( void )
  */
 BOOL CheckWatchPoints( void )
 {
-    DWORD       value;
-    int         i;
+    DWORD   value;
+    int     i;
 
     for( i = 0; i < WPCount; i++ ) {
         ReadMem( wpList[i].loc.segment, wpList[i].loc.offset, &value,
@@ -255,7 +262,7 @@ BOOL CheckWatchPoints( void )
 }
 
 #if defined( MD_x86 )
-DWORD CalcLinear( WORD segment, DWORD offset )
+static DWORD CalcLinear( WORD segment, DWORD offset )
 {
     LDT_ENTRY   sel;
     thread_info *ti;
@@ -277,12 +284,12 @@ DWORD CalcLinear( WORD segment, DWORD offset )
 
 unsigned ReqSet_watch( void )
 {
-    set_watch_req       *acc;
-    set_watch_ret       *ret;
-    DWORD               value;
-    watch_point         *curr;
+    set_watch_req   *acc;
+    set_watch_ret   *ret;
+    DWORD           value;
+    watch_point     *curr;
 #if defined( MD_x86 )
-    DWORD               linear;
+    DWORD           linear;
 #endif
 
     acc = GetInPtr( 0 );
@@ -294,23 +301,27 @@ unsigned ReqSet_watch( void )
         curr = wpList + WPCount;
         curr->loc.segment = acc->watch_addr.segment;
         curr->loc.offset = acc->watch_addr.offset;
-        ReadMem( acc->watch_addr.segment, acc->watch_addr.offset, &value, sizeof( dword ) );
+        ReadMem( acc->watch_addr.segment, acc->watch_addr.offset, &value,
+            sizeof( dword ) );
         curr->value = value;
         curr->len = acc->size;
         WPCount++;
 #if defined( MD_x86 )
-        curr->linear = linear = CalcLinear( acc->watch_addr.segment, acc->watch_addr.offset );
+        linear = CalcLinear( acc->watch_addr.segment, acc->watch_addr.offset );
+        curr->linear = linear;
         curr->linear &= ~( curr->len - 1 );
         curr->dregs = ( linear & ( curr->len - 1 ) ) ? 2 : 1;
         {
-            unsigned            i, needed;
+            unsigned    i;
+            unsigned    needed;
 
             needed = 0;
             for( i = 0; i < WPCount; ++i ) {
                 needed += wpList[i].dregs;
             }
-            if( needed <= 4 )
+            if( needed <= 4 ) {
                 ret->multiplier |= USING_DEBUG_REG;
+            }
         }
 #endif
     }
@@ -319,16 +330,16 @@ unsigned ReqSet_watch( void )
 
 unsigned ReqClear_watch( void )
 {
-    clear_watch_req     *acc;
-    watch_point         *dst;
-    watch_point         *src;
-    int                 i;
+    clear_watch_req *acc;
+    watch_point     *dst;
+    watch_point     *src;
+    int             i;
 
     acc = GetInPtr( 0 );
     dst = src = wpList;
     for( i = 0; i < WPCount; i++ ) {
         if( src->loc.segment != acc->watch_addr.segment
-         || src->loc.offset != acc->watch_addr.offset ) {
+        ||  src->loc.offset != acc->watch_addr.offset ) {
             dst->loc.offset = src->loc.offset;
             dst->loc.segment = src->loc.segment;
             dst->value = src->value;

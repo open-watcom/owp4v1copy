@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "stdnt.h"
-#include "watcom.h"
 #include "trperr.h"
 #include "srvcdbg.h"
 #define ERR_CODES
@@ -49,7 +48,7 @@
  */
 static BOOL executeUntilStart( BOOL was_running )
 {
-    HANDLE      ph, th;
+    HANDLE      ph;
     brkpnt_type old;
     brkpnt_type brk = BRK_POINT;
     LPVOID      base;
@@ -58,15 +57,16 @@ static BOOL executeUntilStart( BOOL was_running )
     thread_info *ti;
 
     ph = DebugEvent.u.CreateProcessInfo.hProcess;
-    th = DebugEvent.u.CreateProcessInfo.hThread;
     if( !was_running ) {
         /*
          * if we are not debugging an already running app, then we
          * plant a breakpoint at the first instruction of our new app
          */
         base = DebugEvent.u.CreateProcessInfo.lpStartAddress;
-        ReadProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ), ( LPDWORD ) & bytes );
-        WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & brk, sizeof( brk ), ( LPDWORD ) & bytes );
+        ReadProcessMemory( ph, ( LPVOID )base, ( LPVOID )&old, sizeof( old ),
+            ( LPDWORD )&bytes );
+        WriteProcessMemory( ph, ( LPVOID )base, ( LPVOID )&brk, sizeof( brk ),
+            ( LPDWORD )&bytes );
     } else {
         // a trick to make app execute long enough to hit a breakpoint
         PostMessage( HWND_TOPMOST, WM_TIMECHANGE, 0, 0 );
@@ -91,8 +91,8 @@ static BOOL executeUntilStart( BOOL was_running )
                  * the user has asked us to stop before any DLL's run
                  * their startup code (";dll"), so we do.
                  */
-                WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ),
-                                        ( LPDWORD ) & bytes );
+                WriteProcessMemory( ph, ( LPVOID )base, ( LPVOID )&old,
+                    sizeof( old ), ( LPDWORD )&bytes );
                 AdjustIP( &con, sizeof( brk ) );
                 MySetThreadContext( ti, &con );
                 return( TRUE );
@@ -102,8 +102,8 @@ static BOOL executeUntilStart( BOOL was_running )
                  * we stopped at the applications starting address,
                  * so we can offically declare that the app has loaded
                  */
-                WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ),
-                                        ( LPDWORD ) & bytes );
+                WriteProcessMemory( ph, ( LPVOID )base, ( LPVOID )&old,
+                    sizeof( old ), ( LPDWORD )&bytes );
                 return( TRUE );
             }
             /*
@@ -213,7 +213,7 @@ static BOOL executeUntilVDMStart( void )
 /*
  * EnumWOWProcessFunc - callback for each WOW process in the system
  */
-BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
+static BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
 {
     if( attrib & WOW_SYSTEM ) {
         *( DWORD * ) lparam = pid;
@@ -223,9 +223,10 @@ BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
 
 }
 #else
-BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
+static BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
 {
-    *( DWORD * ) lparam = 0;
+    (void)pid, (void)attrib; // Unused
+    *( DWORD *)lparam = 0;
     return( FALSE );
 }
 #endif
@@ -235,24 +236,31 @@ BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
  */
 unsigned ReqProg_load( void )
 {
-    char                *parm, *src, *dst, *endsrc;
-    char                exe_name[PATH_MAX];
-    char                ch;
-    BOOL                rc;
-    int                 len;
-    CONTEXT             con;
-    thread_info         *ti;
-    HANDLE              handle;
-    prog_load_req       *acc;
-    prog_load_ret       *ret;
-    header_info         hi;
-    WORD                stack;
-    WORD                version;
-    DWORD               pid, pid_started;
-    DWORD               cr_flags;
-    char                * buff = NULL;
-    size_t              nBuffRequired = 0;
-    char                *dll_name, *service_name, *dll_destination, *service_parm;
+    char            *parm;
+    char            *src;
+    char            *dst;
+    char            *endsrc;
+    char            exe_name[PATH_MAX];
+    char            ch;
+    BOOL            rc;
+    int             len;
+    CONTEXT         con;
+    thread_info     *ti;
+    HANDLE          handle;
+    prog_load_req   *acc;
+    prog_load_ret   *ret;
+    header_info     hi;
+    WORD            stack;
+    WORD            version;
+    DWORD           pid;
+    DWORD           pid_started;
+    DWORD           cr_flags;
+    char            *buff = NULL;
+    size_t          nBuffRequired = 0;
+    char            *dll_name;
+    char            *service_name;
+    char            *dll_destination;
+    char            *service_parm;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -273,7 +281,8 @@ unsigned ReqProg_load( void )
     /*
      * check if pid is specified
      */
-    ParseServiceStuff( parm, &dll_name, &service_name, &dll_destination, &service_parm );
+    ParseServiceStuff( parm, &dll_name, &service_name, &dll_destination,
+        &service_parm );
     pid = 0;
     src = parm;
 
@@ -289,8 +298,9 @@ unsigned ReqProg_load( void )
     if( *src == '#' ) {
         src++;
         pid = strtoul( src, &endsrc, 16 );
-        if( pid == 0 )
+        if( pid == 0 ) {
             pid = -1;
+        }
         strcpy( buff, endsrc );
     } else {
         while( *src ) {
@@ -352,8 +362,9 @@ unsigned ReqProg_load( void )
         }
         len = &parm[GetTotalSize() -sizeof( *acc )] - src;
         for( ;; ) {
-            if( len == 0 )
+            if( len == 0 ) {
                 break;
+            }
             ch = *src;
             if( ch == 0 ) {
                 ch = ' ';
@@ -393,7 +404,9 @@ unsigned ReqProg_load( void )
                             TRP_The_WATCOM_Debugger,
                         MB_APPLMODAL + MB_YESNO );
                     if( kill == IDYES ) {
-                        HANDLE hprocess = OpenProcess( PROCESS_TERMINATE + STANDARD_RIGHTS_REQUIRED, FALSE, pid );
+                        DWORD axs = PROCESS_TERMINATE+STANDARD_RIGHTS_REQUIRED;
+                        HANDLE hprocess = OpenProcess( axs, FALSE, pid );
+
                         if( hprocess != 0 && TerminateProcess( hprocess, 0 ) ) {
                             CloseHandle( hprocess );
                             pid = 0;
@@ -507,7 +520,7 @@ unsigned ReqProg_load( void )
         MyGetThreadContext( ti, &con );
         WOWAppInfo.segment = ( WORD ) con.SegCs;
         WOWAppInfo.offset = ( WORD ) con.Eip;
-        con.SegSs = con.SegDs; // Wow lies to us about the stack segment.  Reset it
+        con.SegSs = con.SegDs; // Wow lies about the stack segment.  Reset it
         con.Esp = stack;
         MySetThreadContext( ti, &con );
     } else
@@ -536,8 +549,9 @@ unsigned ReqProg_load( void )
             ti = FindThread( DebugeeTid );
             MyGetThreadContext( ti, &con );
             old = AdjustIP( &con, 0 );
-            if( base != 0 )
+            if( base != 0 ) {
                 SetIP( &con, base );
+            }
             MySetThreadContext( ti, &con );
             SetIP( &con, old );
             MySetThreadContext( ti, &con );
@@ -565,7 +579,7 @@ unsigned ReqProg_load( void )
 
 unsigned ReqProg_kill( void )
 {
-    prog_kill_ret       *ret;
+    prog_kill_ret   *ret;
 
     ret = GetOutPtr( 0 );
     ret->err = 0;

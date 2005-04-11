@@ -33,8 +33,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stdnt.h"
-#include "watcom.h"
-#include "exepe.h"
 
 typedef struct lli {
     HANDLE      file_handle;
@@ -69,7 +67,7 @@ static lib_list_info    *listInfoTail;
 /*
  * freeListItem - free an individual lib list item
  */
-void freeListItem( lib_list_info *curr )
+static void freeListItem( lib_list_info *curr )
 {
     LocalFree( curr->filename );
     LocalFree( curr->modname );
@@ -82,8 +80,8 @@ void freeListItem( lib_list_info *curr )
  */
 void FreeLibList( void )
 {
-    lib_list_info       *curr;
-    lib_list_info       *next;
+    lib_list_info   *curr;
+    lib_list_info   *next;
 
     curr = listInfoHead;
     while( curr != NULL ) {
@@ -102,8 +100,8 @@ void FreeLibList( void )
  */
 static void addModuleToLibList( DWORD module )
 {
-    lib_list_info       *curr;
-    lib_load_info       *lli;
+    lib_list_info   *curr;
+    lib_load_info   *lli;
 
     lli = &moduleInfo[module];
     curr = listInfoHead;
@@ -150,14 +148,14 @@ static void addModuleToLibList( DWORD module )
  */
 void RemoveModuleFromLibList( char *module, char *filename )
 {
-    lib_list_info       *curr;
-    lib_list_info       *prev;
+    lib_list_info   *curr;
+    lib_list_info   *prev;
 
     curr = listInfoHead;
     prev = NULL;
     while( curr != NULL ) {
         if( !stricmp( module, curr->modname ) &&
-            !stricmp( filename, curr->filename ) ) {
+                !stricmp( filename, curr->filename ) ) {
             if( prev == NULL ) {
                 listInfoHead = curr->next;
             } else {
@@ -206,16 +204,17 @@ static void addSegmentToLibList( DWORD module, WORD seg, DWORD off )
 
 BOOL FindExceptInfo( addr_off off, LPVOID *base, addr_off *size )
 {
-    unsigned            i;
-    lib_load_info       *lli;
+    unsigned        i;
+    lib_load_info   *lli;
 
     for( i = 0; i < ModuleTop; ++i ) {
         lli = &moduleInfo[0];
         if( off >= ( addr_off ) lli->base
          && off < ( addr_off ) lli->base + lli->code_size ) {
             /* this is the image */
-            if( lli->except_size == 0 )
+            if( lli->except_size == 0 ) {
                 return( FALSE );
+            }
             *base = lli->except_base;
             *size = lli->except_size;
             return( TRUE );
@@ -237,7 +236,8 @@ static void FillInExceptInfo( lib_load_info *lli )
                 ( LPVOID ) ( ( DWORD ) lli->base + pe_off ), &hdr,
                 sizeof( hdr ), &bytes );
     lli->code_size = hdr.code_base + hdr.code_size;
-    lli->except_base = ( LPVOID ) ( ( DWORD ) lli->base + hdr.table[PE_TBL_EXCEPTION].rva );
+    lli->except_base = ( LPVOID ) ( ( DWORD ) lli->base +
+        hdr.table[PE_TBL_EXCEPTION].rva );
     lli->except_size = hdr.table[PE_TBL_EXCEPTION].size;
 }
 
@@ -246,7 +246,7 @@ static void FillInExceptInfo( lib_load_info *lli )
  */
 void AddProcess( header_info *hi )
 {
-    lib_load_info       *lli;
+    lib_load_info   *lli;
 
     moduleInfo = LocalAlloc( LMEM_FIXED, sizeof( lib_load_info ) );
     memset( moduleInfo, 0, sizeof( lib_load_info ) );
@@ -265,9 +265,10 @@ void AddProcess( header_info *hi )
         lli->has_real_filename = FALSE;
         lli->is_16 = FALSE;
         lli->file_handle = DebugEvent.u.CreateProcessInfo.hFile;
-        if( lli->file_handle == 0 ) { // kludge - NT doesn't give us a handle sometimes
-            lli->file_handle = CreateFile( ( LPTSTR ) CurrEXEName, GENERIC_READ, FILE_SHARE_READ,
-                            NULL, OPEN_EXISTING, 0, 0 );
+        // kludge - NT doesn't give us a handle sometimes
+        if( lli->file_handle == 0 ) {
+            lli->file_handle = CreateFile( ( LPTSTR )CurrEXEName, GENERIC_READ,
+                FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0 );
         }
         lli->base = DebugEvent.u.CreateProcessInfo.lpBaseOfImage;
         FillInExceptInfo( lli );
@@ -281,7 +282,7 @@ void AddProcess( header_info *hi )
  */
 void AddLib( BOOL is_16, IMAGE_NOTE *im )
 {
-    lib_load_info       *lli;
+    lib_load_info   *lli;
 
     ModuleTop++;
     lli = LocalAlloc( LMEM_FIXED, ModuleTop*sizeof( lib_load_info ) );
@@ -291,7 +292,9 @@ void AddLib( BOOL is_16, IMAGE_NOTE *im )
     moduleInfo = lli;
     lli = &moduleInfo[ModuleTop - 1];
 
-#ifdef WOW
+#ifndef WOW
+    (void)im, (void)is_16; // Unused
+#else
     if( is_16 ) {
         lli->is_16 = TRUE;
         lli->has_real_filename = TRUE;
@@ -317,7 +320,7 @@ void AddLib( BOOL is_16, IMAGE_NOTE *im )
         if( !GetModuleName( lli->file_handle, lli->filename ) ) {
             lastLib++;
             strcpy( lli->filename, libPrefix );
-            ltoa( lastLib, &lli->filename[sizeof( libPrefix ) - 1], 16 );
+            ultoa( lastLib, &lli->filename[sizeof( libPrefix ) - 1], 16 );
             strcat( lli->filename, ".dll" );
         }
         FillInExceptInfo( lli );
@@ -354,18 +357,22 @@ void DelProcess( BOOL closeHandles )
     }
 }
 
-#define INS_BYTES 7
 /*
  * force16SegmentLoad - force a wow app to access its segment so that it
  *                      will be loaded into memory.
  */
 #ifdef WOW
+
+#define INS_BYTES 7
+
 static void force16SegmentLoad( thread_info *ti, WORD sel )
 {
-    static char         getMemIns[INS_BYTES] = { 0x8e, 0xc0, 0x26,0xa1,0x00,0x00,0xcc };
+    static char const   getMemIns[INS_BYTES] =
+    { 0x8e, 0xc0, 0x26,0xa1,0x00,0x00,0xcc };
     static char         origBytes[INS_BYTES];
     static BOOL         gotOrig;
-    auto   CONTEXT      con, oldcon;
+    auto   CONTEXT      con;
+    auto   CONTEXT      oldcon;
 
     if( !UseVDMStuff ) {
         return;
@@ -391,16 +398,16 @@ static void force16SegmentLoad( thread_info *ti, WORD sel )
 
 unsigned ReqMap_addr( void )
 {
-    int                 i;
-    HANDLE              handle;
-    DWORD               bytes;
-    pe_object           obj;
-    WORD                seg;
-    map_addr_req        *acc;
-    map_addr_ret        *ret;
-    header_info         hi;
-    lib_load_info       *lli;
-    WORD                stack;
+    int             i;
+    HANDLE          handle;
+    DWORD           bytes;
+    pe_object       obj;
+    WORD            seg;
+    map_addr_req    *acc;
+    map_addr_ret    *ret;
+    header_info     hi;
+    lib_load_info   *lli;
+    WORD            stack;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -420,9 +427,9 @@ unsigned ReqMap_addr( void )
 
 #ifdef WOW
     if( lli->is_16 ) {
-        LDT_ENTRY       ldt;
-        WORD            sel;
-        thread_info     *ti;
+        LDT_ENTRY   ldt;
+        WORD        sel;
+        thread_info *ti;
         /*
          * much simpler for a WOW app.  We just ask for the selector that
          * maps to the given segment number.
@@ -473,7 +480,8 @@ unsigned ReqMap_addr( void )
             return( 0 );
         }
     }
-    addSegmentToLibList( acc->handle, ret->out_addr.segment, ret->out_addr.offset );
+    addSegmentToLibList( acc->handle, ret->out_addr.segment,
+         ret->out_addr.offset );
     ret->out_addr.offset += acc->in_addr.offset;
     ret->lo_bound = 0;
     ret->hi_bound = ~( addr48_off ) 0;
@@ -489,7 +497,6 @@ unsigned ReqGet_lib_name( void )
     get_lib_name_ret    *ret;
     char                *name;
     unsigned            i;
-
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -524,7 +531,7 @@ unsigned ReqGet_lib_name( void )
  */
 HANDLE GetMagicalFileHandle( char *name )
 {
-    int i;
+    DWORD i;
 
     for( i = 0; i < ModuleTop; i++ ) {
         if( !stricmp( name, moduleInfo[i].filename ) ) {
@@ -543,7 +550,7 @@ HANDLE GetMagicalFileHandle( char *name )
  */
 BOOL IsMagicalFileHandle( HANDLE h )
 {
-    int i;
+    DWORD i;
 
     for( i = 0; i < ModuleTop; i++ ) {
         if( moduleInfo[i].file_handle == h ) {
@@ -552,7 +559,6 @@ BOOL IsMagicalFileHandle( HANDLE h )
     }
     return( FALSE );
 }
-
 
 #if 0
 static lib_list_info    *currInfo;
@@ -605,7 +611,7 @@ static void formatSel( char *buff, int verbose )
 int DoListLibs( char *buff, int is_first, int want_16, int want_32,
                                         int verbose, int sel )
 {
-    BOOL        done;
+    BOOL    done;
 
     sel = sel;
     verbose = verbose;
@@ -619,10 +625,12 @@ int DoListLibs( char *buff, int is_first, int want_16, int want_32,
         if( currInfo == NULL ) {
             return( FALSE );
         }
-        if( ( currInfo->is_16 && want_16 ) || ( !currInfo->is_16 && want_32 ) ) {
+        if( (  currInfo->is_16 && want_16 )
+        ||  ( !currInfo->is_16 && want_32 ) ) {
             done = TRUE;
             if( currSeg == -1 ) {
-                wsprintf( buff, "%s (%s):", currInfo->modname, currInfo->filename );
+                wsprintf( buff, "%s (%s):", currInfo->modname,
+                    currInfo->filename );
             } else {
                 formatSel( buff, verbose );
             }

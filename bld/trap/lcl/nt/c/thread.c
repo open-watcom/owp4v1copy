@@ -42,8 +42,9 @@ void AddThread( DWORD tid, HANDLE th, LPVOID sa )
     thread_info *ti;
 
     ti = LocalAlloc( LMEM_FIXED | LMEM_ZEROINIT, sizeof( thread_info ) );
-    if( ti == NULL )
+    if( ti == NULL ) {
         return;
+    }
     ti->tid = tid;
     ti->start_addr = sa;
     ti->thread_handle = th;
@@ -95,7 +96,8 @@ void DeadThread( DWORD tid )
  */
 void RemoveAllThreads( void )
 {
-    thread_info *ti, *next;
+    thread_info *ti;
+    thread_info *next;
 
     ti = ProcessInfo.thread_list;
     while( ti != NULL ) {
@@ -141,10 +143,10 @@ unsigned ReqThread_freeze( void )
 
 unsigned ReqThread_thaw( void )
 {
-    thread_thaw_req     *acc;
-    thread_thaw_ret     *ret;
-    thread_info         *ti;
-    int                 rc;
+    thread_thaw_req *acc;
+    thread_thaw_ret *ret;
+    thread_info     *ti;
+    int             rc;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -168,9 +170,9 @@ unsigned ReqThread_thaw( void )
 
 unsigned ReqThread_set( void )
 {
-    thread_set_req      *acc;
-    thread_set_ret      *ret;
-    thread_info         *ti;
+    thread_set_req  *acc;
+    thread_set_ret  *ret;
+    thread_info     *ti;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -240,9 +242,9 @@ unsigned ReqThread_get_next( void )
 
 unsigned ReqThread_get_extra( void )
 {
-    thread_get_extra_req        *acc;
-    char                        *name;
-    thread_info                 *ti;
+    thread_get_extra_req    *acc;
+    char                    *name;
+    thread_info             *ti;
 
     acc = GetInPtr( 0 );
     name = GetOutPtr( 0 );

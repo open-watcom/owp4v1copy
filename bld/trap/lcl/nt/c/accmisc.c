@@ -440,16 +440,16 @@ static int tryPath( char *name, char *end, char *ext_list )
 
 int FindFilePath( char *pgm, char *buffer, char *ext_list )
 {
-    char        *p;
-    char        *p2;
-    char        *p3;
-    BOOL        have_ext;
-    BOOL        have_path;
-    char        envbuf[512];
+    char    *p;
+    char    *p2;
+    char    *p3;
+    BOOL    have_ext;
+    BOOL    have_path;
+    char    envbuf[512];
 
     have_ext = FALSE;
     have_path = FALSE;
-    for( p = pgm, p2 = buffer; *p2 = *p; ++p,++p2 ) {
+    for( p = pgm, p2 = buffer; (*p2 = *p) != 0; ++p, ++p2 ) {
         switch( *p ) {
         case '\\':
         case '/':
@@ -487,7 +487,7 @@ int FindFilePath( char *pgm, char *buffer, char *ext_list )
         if( p2[ -1] != '\\' && p2[ -1] != '/' ) {
             *p2++ = '\\';
         }
-        for( p3 = pgm; *p2 = *p3; ++p2,++p3 ) {
+        for( p3 = pgm; (*p2 = *p3) != 0; ++p2, ++p3 ) {
         }
         if( !tryPath( buffer, p2, ext_list ) ) {
             return( 0 );
@@ -513,9 +513,8 @@ unsigned ReqSplit_cmd( void )
     ret = GetOutPtr( 0 );
     ret->parm_start = 0;
     for( ;; ) {
-        if( len == 0 ) {
+        if( len == 0 )
             goto done;
-        }
         switch( *cmd ) {
         case '/':
         case '=':
@@ -529,8 +528,8 @@ unsigned ReqSplit_cmd( void )
             ret->parm_start = 1;
             goto done;
         case '\"':
-            while( --len && (*++cmd != '\"') ) {
-            }
+            while( --len && (*++cmd != '\"') )
+                ;
             if( len == 0 ) {
                 ret->parm_start = 1;
                 goto done;

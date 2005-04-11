@@ -32,15 +32,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <dos.h>
 #include "stdnt.h"
 #include "madregs.h"
 
 // position in Windows CONTEXT, 
 // it is offset in FXSAVE/FXRSTOR memory structure
 #define CONTEXT_MXCSR    24
-#define CONTEXT_XMM      10*16 
+#define CONTEXT_XMM      (10 * 16) 
 
 #if defined( MD_x86 )
 static void ReadCPU( struct x86_cpu *r, CONTEXT *con )
@@ -87,9 +85,9 @@ static void WriteCPU( struct x86_cpu *r, CONTEXT *con )
 unsigned ReqRead_cpu( void )
 {
 #if defined( MD_x86 )
-    trap_cpu_regs       *regs;
-    CONTEXT             con;
-    thread_info         *ti;
+    trap_cpu_regs   *regs;
+    CONTEXT         con;
+    thread_info     *ti;
 
     regs = GetOutPtr( 0 );
 
@@ -97,7 +95,7 @@ unsigned ReqRead_cpu( void )
     if( DebugeePid != NULL ) {
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
-        ReadCPU( ( struct x86_cpu * ) regs, &con );
+        ReadCPU( ( void * ) regs, &con );
     }
     return( sizeof( *regs ) );
 #else
@@ -108,9 +106,9 @@ unsigned ReqRead_cpu( void )
 unsigned ReqRead_fpu( void )
 {
 #if defined( MD_x86 )
-    CONTEXT     con;
-    read_fpu_ret        *ret;
-    thread_info *ti;
+    CONTEXT         con;
+    read_fpu_ret    *ret;
+    thread_info     *ti;
 
     ret = GetOutPtr( 0 );
 
@@ -129,9 +127,9 @@ unsigned ReqRead_fpu( void )
 unsigned ReqWrite_cpu( void )
 {
 #if defined( MD_x86 )
-    CONTEXT     con;
-    thread_info *ti;
-    trap_cpu_regs       *regs;
+    CONTEXT         con;
+    thread_info     *ti;
+    trap_cpu_regs   *regs;
 
     if( DebugeePid == NULL ) {
         return( 0 );
@@ -140,7 +138,7 @@ unsigned ReqWrite_cpu( void )
 
     ti = FindThread( DebugeeTid );
     MyGetThreadContext( ti, &con );
-    WriteCPU( ( struct x86_cpu * ) regs, &con );
+    WriteCPU( ( void * )regs, &con );
     MySetThreadContext( ti, &con );
 #endif
     return( 0 );
@@ -149,9 +147,9 @@ unsigned ReqWrite_cpu( void )
 unsigned ReqWrite_fpu( void )
 {
 #if defined( MD_x86 )
-    trap_fpu_regs       *fpu;
-    CONTEXT     con;
-    thread_info *ti;
+    trap_fpu_regs   *fpu;
+    CONTEXT         con;
+    thread_info     *ti;
 
     if( DebugeePid == NULL ) {
         return( 0 );
@@ -167,9 +165,9 @@ unsigned ReqWrite_fpu( void )
 
 unsigned ReqRead_regs( void )
 {
-    mad_registers       _WCUNALIGNED *mr;
-    CONTEXT             con;
-    thread_info         *ti;
+    mad_registers   _WCUNALIGNED *mr;
+    CONTEXT         con;
+    thread_info     *ti;
 
     mr = GetOutPtr( 0 );
 
@@ -188,8 +186,8 @@ unsigned ReqRead_regs( void )
 #if defined( MD_x86 )
         ReadCPU( &mr->x86.cpu, &con );
         memcpy( &mr->x86.fpu, &con.FloatSave, sizeof( mr->x86.fpu ) );
-        memcpy( &mr->x86.xmm.xmm,
-                &con.ExtendedRegisters[ CONTEXT_XMM ], sizeof( mr->x86.xmm.xmm ) );
+        memcpy( mr->x86.xmm.xmm, &con.ExtendedRegisters[ CONTEXT_XMM ],
+            sizeof( mr->x86.xmm.xmm ) );
         mr->x86.xmm.mxcsr = con.ExtendedRegisters[ CONTEXT_MXCSR ];
 #elif defined( MD_axp )
         memcpy( &mr->axp.r, &con, sizeof( mr->axp.r ) );
@@ -238,7 +236,7 @@ unsigned ReqRead_regs( void )
         mr->ppc.msr.u._32[0] = con.Msr;
         mr->ppc.cr = con.Cr;
         mr->ppc.xer = con.Xer;
-        mr->ppc.fpscr = *( unsigned_32 * ) & con.Fpscr;     //NYI: is this right?
+        mr->ppc.fpscr = *( unsigned_32 * ) & con.Fpscr; //NYI: is this right?
 #else
         #error ReqRead_regs not configured
 #endif
@@ -256,9 +254,9 @@ unsigned ReqRead_regs( void )
 
 unsigned ReqWrite_regs( void )
 {
-    CONTEXT             con;
-    thread_info         *ti;
-    mad_registers       _WCUNALIGNED *mr;
+    CONTEXT         con;
+    thread_info     *ti;
+    mad_registers   _WCUNALIGNED *mr;
 
     if( DebugeePid == NULL ) {
         return( 0 );
@@ -271,7 +269,7 @@ unsigned ReqWrite_regs( void )
     WriteCPU( &mr->x86.cpu, &con );
     memcpy( &con.FloatSave, &mr->x86.fpu, sizeof( mr->x86.fpu ) );
     memcpy( &con.ExtendedRegisters[ CONTEXT_XMM ], 
-            &mr->x86.xmm.xmm, sizeof( mr->x86.xmm.xmm ) );
+            mr->x86.xmm.xmm, sizeof( mr->x86.xmm.xmm ) );
     con.ExtendedRegisters[ CONTEXT_MXCSR ] = mr->x86.xmm.mxcsr;
 #elif defined( MD_axp )
     memcpy( &con, &mr->axp.r, sizeof( mr->axp.r ) );
