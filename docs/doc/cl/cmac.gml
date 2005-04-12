@@ -213,7 +213,7 @@
 .dm shade begin
 .   .if '&*' eq 'begin' .do begin
 .   .   .sr shadeing=1
-.   .   :I1.implementation-specific behaviour
+.   .   :I1.implementation-specific behavior
 .   .   ..br
 .   .   .keep begin
 .   .   :LQ.
