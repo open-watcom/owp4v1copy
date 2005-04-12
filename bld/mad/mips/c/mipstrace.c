@@ -72,6 +72,7 @@ mad_trace_how DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_
 {
     mad_disasm_control  dc;
     addr_off            ra;
+    mad_trace_how       how = MTRH_BREAK;
 
     dc = DisasmControl( dd, mr );
     ra = td->ra;
@@ -88,6 +89,7 @@ mad_trace_how DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_
         case MDC_RET:
             return( MTRH_SIMULATE );
         }
+        how = MTRH_STEPBREAK;
         break;
     case MTRK_OVER:
         switch( dc & MDC_TYPE_MASK ) {
@@ -97,12 +99,13 @@ mad_trace_how DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_
         case MDC_CALL:
             td->ra += sizeof( unsigned_32 );    // set bp after delay slot
         }
+        how = MTRH_STEPBREAK;
         break;
     }
     /* break next */
     memset( brk, 0, sizeof( *brk ) );
     brk->mach.offset = td->ra;
-    return( MTRH_BREAK );
+    return( how );
 }
 
 /* This had better be consistent with DisasmControl() in mipsdisas.c */
