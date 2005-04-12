@@ -40,7 +40,7 @@
 #include "madimp.h"
 #include "madcli.h"
 
-#if defined( __386__ ) || defined( __I86__ ) || defined( __ALPHA__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __I86__ ) || defined( __ALPHA__ ) || defined( __PPC__ ) || defined( __MIPS__ )
    #define MNR_HOST_SIGNED      MNR_TWOS_COMP
    #define FLOAT_IEEE
 #else
@@ -187,6 +187,7 @@ mad_status      MADInit( void )
         { MAD_X86,      "madx86",       "Intel Architecture [80(x)86]" },
         { MAD_AXP,      "madaxp",       "Alpha Architecture" },
         { MAD_PPC,      "madppc",       "PowerPC Architecture" },
+        { MAD_MIPS,     "madmips",      "MIPS Architecture" },
         { MAD_MSJ,      "msj",          "Java Virtual Machine (Microsoft)" }
     };
 
