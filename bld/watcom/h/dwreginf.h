@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF x86 register definitions.
 *
 ****************************************************************************/
 
 
-/* pc reg defn */
     DW_REG( eax )
     DW_REG( ecx )
     DW_REG( edx )

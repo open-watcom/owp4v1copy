@@ -358,6 +358,87 @@ static ppcreg_entry const CLRegPPC[DW_PPC_MAX] = {
     { CI_PPC_f31, 0, 64 },  //DW_PPC_f31
 };
 
+typedef enum {
+    #define DW_REG( __n  )   DW_MIPS_##__n,
+    #include "dwregmips.h"
+    DW_REG( MAX )
+    #undef DW_REG
+} dw_mips_regs;
+
+typedef struct {
+    unsigned    ci      : 8;
+    unsigned    start   : 8;
+    unsigned    len     : 8;
+} mipsreg_entry;
+
+static mipsreg_entry const CLRegMIPS[DW_MIPS_MAX] = {
+    /* MIPS architecture */
+    { CI_MIPS_r0,  0, 32 }, //DW_MIPS_r0
+    { CI_MIPS_r1,  0, 32 }, //DW_MIPS_r1
+    { CI_MIPS_r2,  0, 32 }, //DW_MIPS_r2
+    { CI_MIPS_r3,  0, 32 }, //DW_MIPS_r3
+    { CI_MIPS_r4,  0, 32 }, //DW_MIPS_r4
+    { CI_MIPS_r5,  0, 32 }, //DW_MIPS_r5
+    { CI_MIPS_r6,  0, 32 }, //DW_MIPS_r6
+    { CI_MIPS_r7,  0, 32 }, //DW_MIPS_r7
+    { CI_MIPS_r8,  0, 32 }, //DW_MIPS_r8
+    { CI_MIPS_r9,  0, 32 }, //DW_MIPS_r9
+    { CI_MIPS_r10, 0, 32 }, //DW_MIPS_r10
+    { CI_MIPS_r11, 0, 32 }, //DW_MIPS_r11
+    { CI_MIPS_r12, 0, 32 }, //DW_MIPS_r12
+    { CI_MIPS_r13, 0, 32 }, //DW_MIPS_r13
+    { CI_MIPS_r14, 0, 32 }, //DW_MIPS_r14
+    { CI_MIPS_r15, 0, 32 }, //DW_MIPS_r15
+    { CI_MIPS_r16, 0, 32 }, //DW_MIPS_r16
+    { CI_MIPS_r17, 0, 32 }, //DW_MIPS_r17
+    { CI_MIPS_r18, 0, 32 }, //DW_MIPS_r18
+    { CI_MIPS_r19, 0, 32 }, //DW_MIPS_r19
+    { CI_MIPS_r20, 0, 32 }, //DW_MIPS_r20
+    { CI_MIPS_r21, 0, 32 }, //DW_MIPS_r21
+    { CI_MIPS_r22, 0, 32 }, //DW_MIPS_r22
+    { CI_MIPS_r23, 0, 32 }, //DW_MIPS_r23
+    { CI_MIPS_r24, 0, 32 }, //DW_MIPS_r24
+    { CI_MIPS_r25, 0, 32 }, //DW_MIPS_r25
+    { CI_MIPS_r26, 0, 32 }, //DW_MIPS_r26
+    { CI_MIPS_r27, 0, 32 }, //DW_MIPS_r27
+    { CI_MIPS_r28, 0, 32 }, //DW_MIPS_r28
+    { CI_MIPS_r29, 0, 32 }, //DW_MIPS_r29
+    { CI_MIPS_r30, 0, 32 }, //DW_MIPS_r30
+    { CI_MIPS_r31, 0, 32 }, //DW_MIPS_r31
+    { CI_MIPS_f0,  0, 64 }, //DW_MIPS_f0
+    { CI_MIPS_f1,  0, 64 }, //DW_MIPS_f1
+    { CI_MIPS_f2,  0, 64 }, //DW_MIPS_f2
+    { CI_MIPS_f3,  0, 64 }, //DW_MIPS_f3
+    { CI_MIPS_f4,  0, 64 }, //DW_MIPS_f4
+    { CI_MIPS_f5,  0, 64 }, //DW_MIPS_f5
+    { CI_MIPS_f6,  0, 64 }, //DW_MIPS_f6
+    { CI_MIPS_f7,  0, 64 }, //DW_MIPS_f7
+    { CI_MIPS_f8,  0, 64 }, //DW_MIPS_f8
+    { CI_MIPS_f9,  0, 64 }, //DW_MIPS_f9
+    { CI_MIPS_f10, 0, 64 }, //DW_MIPS_f10
+    { CI_MIPS_f11, 0, 64 }, //DW_MIPS_f21
+    { CI_MIPS_f12, 0, 64 }, //DW_MIPS_f22
+    { CI_MIPS_f13, 0, 64 }, //DW_MIPS_f23
+    { CI_MIPS_f14, 0, 64 }, //DW_MIPS_f24
+    { CI_MIPS_f15, 0, 64 }, //DW_MIPS_f25
+    { CI_MIPS_f16, 0, 64 }, //DW_MIPS_f26
+    { CI_MIPS_f17, 0, 64 }, //DW_MIPS_f27
+    { CI_MIPS_f18, 0, 64 }, //DW_MIPS_f28
+    { CI_MIPS_f19, 0, 64 }, //DW_MIPS_f29
+    { CI_MIPS_f20, 0, 64 }, //DW_MIPS_f20
+    { CI_MIPS_f21, 0, 64 }, //DW_MIPS_f21
+    { CI_MIPS_f22, 0, 64 }, //DW_MIPS_f22
+    { CI_MIPS_f23, 0, 64 }, //DW_MIPS_f23
+    { CI_MIPS_f24, 0, 64 }, //DW_MIPS_f24
+    { CI_MIPS_f25, 0, 64 }, //DW_MIPS_f25
+    { CI_MIPS_f26, 0, 64 }, //DW_MIPS_f26
+    { CI_MIPS_f27, 0, 64 }, //DW_MIPS_f27
+    { CI_MIPS_f28, 0, 64 }, //DW_MIPS_f28
+    { CI_MIPS_f29, 0, 64 }, //DW_MIPS_f29
+    { CI_MIPS_f30, 0, 64 }, //DW_MIPS_f30
+    { CI_MIPS_f31, 0, 64 }, //DW_MIPS_f31
+};
+
 /*
     Stuff dealing with evaluating dwarf location expr's
 */
@@ -411,25 +492,37 @@ static int Ref( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
         kind =  DCCurrMAD();
         switch( kind ){
         case MAD_X86:
-            areg = CLRegX86[ offset ].ci;
-            start = CLRegX86[ offset ].start;
+            areg = CLRegX86[offset].ci;
+            start = CLRegX86[offset].start;
             break;
         case MAD_AXP:
-            areg = CLRegAXP[ offset ];
+            areg = CLRegAXP[offset];
             start = 0;
             break;
         case MAD_PPC:
-            areg  = CLRegPPC[ offset ].ci;
+            areg  = CLRegPPC[offset].ci;
             // This should really be dynamic; anyway the registers are really
             // stored as 64-bit values, so if we want to get at the lower 32
             // bits only, we need to start 32 bits into the storage.
 #if defined( __BIG_ENDIAN__ )
-            if( CLRegPPC[ offset ].len == 32 )
+            if( CLRegPPC[offset].len == 32 )
                 start = 32;
             else
                 start = 0;
 #else
-            start = CLRegPPC[ offset ].start;
+            start = CLRegPPC[offset].start;
+#endif
+            break;
+        case MAD_MIPS:
+            areg  = CLRegMIPS[offset].ci;
+            // See PowerPC comments above
+#if defined( __BIG_ENDIAN__ )
+            if( CLRegMIPS[offset].len == 32 )
+                start = 32;
+            else
+                start = 0;
+#else
+            start = CLRegMIPS[offset].start;
 #endif
             break;
         case MAD_NIL:
@@ -534,12 +627,12 @@ static int Reg( void *_d, uint_32 *where, uint_16 reg )
     kind =  DCCurrMAD();
     switch( kind ){
     case MAD_X86:
-        areg = CLRegX86[ reg ].ci;
-        start = CLRegX86[ reg ].start;
-        size = CLRegX86[ reg ].len;
+        areg = CLRegX86[reg].ci;
+        start = CLRegX86[reg].start;
+        size = CLRegX86[reg].len;
         break;
     case MAD_AXP:
-        areg = CLRegAXP[ reg ];
+        areg = CLRegAXP[reg];
         start = 0;
         /* a massive kludge here */
         if( areg >= CI_AXP_f0 && areg <= CI_AXP_f31 ) {
@@ -549,17 +642,30 @@ static int Reg( void *_d, uint_32 *where, uint_16 reg )
         }
         break;
     case MAD_PPC:
-        areg  = CLRegPPC[ reg ].ci;
+        areg  = CLRegPPC[reg].ci;
         /* yep, another and even worse kludge */
 #if defined( __BIG_ENDIAN__ )
-        if( CLRegPPC[ reg ].len == 32 )
+        if( CLRegPPC[reg].len == 32 )
             start = 32;
         else
             start = 0;
 #else
-        start = CLRegPPC[ reg ].start;
+        start = CLRegPPC[reg].start;
 #endif
-        size  = CLRegPPC[ reg ].len;
+        size  = CLRegPPC[reg].len;
+        break;
+    case MAD_MIPS:
+        areg  = CLRegMIPS[reg].ci;
+        /* just as bad as PPC */
+#if defined( __BIG_ENDIAN__ )
+        if( CLRegMIPS[reg].len == 32 )
+            start = 32;
+        else
+            start = 0;
+#else
+        start = CLRegMIPS[reg].start;
+#endif
+        size  = CLRegMIPS[reg].len;
         break;
     case MAD_NIL:
     default:
@@ -762,7 +868,7 @@ static int RegOnlyRef( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind 
     }else{
         reg_entry  clreg;
 
-        clreg = CLRegX86[ offset ];
+        clreg = CLRegX86[offset];
         d->ret = SafeDCItemLocation( d->lc, clreg.ci, &tmp );
         if( d->ret != DS_OK ){
             DCStatus( d->ret );

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  DWARF Alpha AXP register definitions.
+* Description:  DWARF MIPS register definitions.
 *
 ****************************************************************************/
 
