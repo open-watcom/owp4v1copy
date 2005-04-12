@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Executable and Linkable Format (ELF) definitions.
 *
 ****************************************************************************/
 
@@ -38,9 +37,7 @@ extern "C" {
 
 #include <watcom.h>
 
-#pragma pack(push,1)
-
-// elf scalar data types
+// ELF scalar data types
 
 typedef unsigned_32     Elf32_Addr;
 typedef unsigned_16     Elf32_Half;
@@ -658,8 +655,6 @@ typedef struct {
 typedef struct {
     Elf32_Word  lib_name;
 } Elf32_Library;
-
-#pragma pack(pop)
 
 #ifdef __cplusplus
 };
