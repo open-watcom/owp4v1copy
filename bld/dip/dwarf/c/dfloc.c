@@ -969,6 +969,7 @@ static dr_loc_callbck_def const AdjBck = {
     ACon,
     Live
 };
+
 extern dip_status EvalLocAdj( imp_image_handle *ii,
                                location_context *lc,
                                dr_handle         sym,
@@ -991,9 +992,27 @@ extern dip_status EvalLocAdj( imp_image_handle *ii,
             d.ret = DS_FAIL;
         }
     }
+    /* DWARF V2 spec is unclear at best, but DWARF V3 spells out that
+     * DW_AT_data_member_location may be a location expression, in which
+     * case the address of the "base" needs to be pushed on the stack and
+     * the expression is expected to include a plus operator to add to it.
+     * Alternatively, a constant may be specified for DW_AT_data_member_location
+     * and in that case it represents an offset from the base and must be
+     * explicitly added. Since I don't feel like ripping up the location
+     * expression processing right now, this is the easiest place to take
+     * care of it - if the location "stack" contains two entries, it means
+     * we have a base (which we pushed on the stack ourselves) and an
+     * offset (attribute value from DIE) that we must add to the base.
+     * Note: Open Watcom as well as GCC on x86 and PowerPC never seem to
+     * use constants, always location expressions. However GCC on MIPS
+     * uses constants.
+     */
+    if( (ll.num == 2) && (ll.e[0].type == LT_ADDR) && (ll.e[1].type == LT_ADDR) ) {
+        ll.e[0].u.addr.mach.offset += ll.e[1].u.addr.mach.offset;
+        ll.num = 1;
+    }
     *addr = ll.e[0].u.addr;
     return( d.ret );
-
 }
 
 static int Val( void *_d, uint_32 offset, uint_32 size, dr_loc_kind kind )
