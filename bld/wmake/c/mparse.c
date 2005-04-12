@@ -317,6 +317,7 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
 
 
 STATIC void checkFirstTarget( void )
+/**********************************/
 {
     TLIST  *head;
     TLIST  *current;
@@ -530,6 +531,7 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
 /* links the clist to the sufsuf target */
 STATIC void linkClistSufsuf( const TARGET *curtarg, const CLIST *clist,
     const char *cur_target_path, const char *cur_depend_path )
+/*********************************************************************/
 {
     DEPEND  *walk;
     SLIST   *slist;
@@ -665,7 +667,7 @@ STATIC void linkCList( TLIST *btlist, CLIST *bclist, const char *cur_target_path
 
 
 STATIC void parseSuf( void )
-/****************************
+/***************************
  * parse {TOK_SUF}+ : TOK_PATH
  *   or  {TOK_SUF}+ :
  *   or  {TOK_SUF}+
@@ -735,8 +737,8 @@ STATIC void parseSuf( void )
 }
 
 
-STATIC char *getFileName( const char* intext, int *offset )
-/**********************************************************
+STATIC char *getFileName( const char *intext, size_t *offset )
+/*************************************************************
  * get the filename from the given text
  * if there is no file name then get the text body
  * offset - how long after the << is the file name
@@ -878,7 +880,8 @@ STATIC void getBody( FLIST *head )
 }
 
 
-/*
+STATIC FLIST *GetInlineFile( char **commandIn )
+/**********************************************
  * this returns the head of the flist and modifies the command text to
  * change << to the actual file name to be used
  * also returns an offset so that the calling program would know
@@ -886,14 +889,13 @@ STATIC void getBody( FLIST *head )
  * cmdText is also modified it removes the file name information and
  * substitutes it with the actual file name that is going to be used
  */
-STATIC FLIST *GetInlineFile( char **commandIn )
 {
-    int     offset;
-    int     index;
+    size_t  offset;
+    size_t  index;
     FLIST   *head;
     FLIST   *current;
     char    *cmdText;
-    int     start;       // start of cmdText to copy into newCommand
+    size_t  start;       // start of cmdText to copy into newCommand
     VECSTR  newCommand;  // stores the new command built by replacing << with
                          // the actual file name
 
@@ -962,6 +964,7 @@ STATIC FLIST *GetInlineFile( char **commandIn )
 }
 
 STATIC char *formatPathName( const char *inPath )
+/***********************************************/
 {
     char    buf[_MAX_PATH];
 
@@ -975,7 +978,7 @@ STATIC char *formatPathName( const char *inPath )
 
 
 STATIC void getCurTargDepPath( char **cur_targ_path, char **cur_dep_path )
-/*
+/*************************************************************************
  * this is to get the current target path and dependent path
  * when sufsuf is created
  */

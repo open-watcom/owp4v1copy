@@ -78,6 +78,7 @@ STATIC TOKEN_T lexFormQualifier( TOKEN_T tok )
 
 
 extern void GetModifier( void )
+/*****************************/
 {
     STRM_T  t;
 
@@ -114,7 +115,6 @@ STATIC char *CatModifier( char *inString, BOOLEAN destroy )
  *  it then returns the modified string with the right format
  */
 {
-    int     modifier;
     STRM_T  t;
     VECSTR  output;
     char    buffer[2];
@@ -122,7 +122,6 @@ STATIC char *CatModifier( char *inString, BOOLEAN destroy )
 
     assert( inString != NULL );
 
-    modifier = 0;
     t = PreGetCH();
 
     if( ismsmodifier( t ) ) {

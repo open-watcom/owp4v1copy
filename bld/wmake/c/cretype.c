@@ -24,19 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  This program builds the IsArray table for mglobs.c.
 *
 ****************************************************************************/
 
-/*
- *  This program can be used to rebuild the IsArray table in mglobs.c.
- *
- */
 
 #include <ctype.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
     /* foreign language support */

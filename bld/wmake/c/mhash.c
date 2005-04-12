@@ -49,7 +49,7 @@ extern HASH_T Hash( const char *s, HASH_T prime )
     UINT16          w;
 
     h = 0;
-    p = (const UINT16 *)s;
+    p = (const void *)s;
 #if 0
     /* I compared this hash (pjw) with the simple hash that follows using
        wfc386, watfor77, codegen, and nethack.  In all cases the simple hash
@@ -174,27 +174,22 @@ extern void FreeHashTab( HASHTAB *tab )
 
 
 extern HASHNODE *FindHashNode( HASHTAB *tab, const char *name,
-                               BOOLEAN caseSensitive )
-/**************************************************************
+    BOOLEAN caseSensitive )
+/*************************************************************
  * Find node named name
  */
 {
     HASH_T      h;
     HASHNODE    *cur;
+    int         (*cmp)( const char *s1, const char *s2 );
 
+    cmp = ( caseSensitive ) ? strcmp : stricmp;
     h = Hash( name, tab->prime );
-    cur = tab->nodes[h];
-    while( cur != NULL ) {
-        if( caseSensitive ) {
-            if( strcmp( cur->name, name ) == 0 ) {
-                return( cur );
-            }
-        } else {
-            if( stricmp( cur->name, name ) == 0 ) {
-                return( cur );
-            }
+    
+    for( cur = tab->nodes[h]; cur != NULL; cur = cur->next ) {
+        if( cmp( cur->name, name ) == 0 ) {
+            return( cur );
         }
-        cur = cur->next;
     }
     return( NULL );
 }
@@ -202,7 +197,7 @@ extern HASHNODE *FindHashNode( HASHTAB *tab, const char *name,
 
 extern HASHNODE *RemHashNode( HASHTAB *tab, const char *name,
                               BOOLEAN caseSensitive)
-/*************************************************************
+/************************************************************
  * unlink a node named name, and return pointer to unlinked node.
  * return NULL if node doesn't exist.
  */
@@ -210,21 +205,16 @@ extern HASHNODE *RemHashNode( HASHTAB *tab, const char *name,
     HASH_T      h;
     HASHNODE    **cur;
     HASHNODE    *old;
+    int         (*cmp)( const char *s1, const char *s2 );
+
+    cmp = ( caseSensitive ) ? strcmp : stricmp;
 
     h = Hash( name, tab->prime );
 
-    cur = &(tab->nodes[h]);
-    while( *cur != NULL ) {
-        if( caseSensitive ) {
-            if( strcmp( (*cur)->name, name ) == 0 ) {
-                break;
-            }
-        } else {
-            if( stricmp( (*cur)->name, name ) == 0 ) {
-                break;
-            }
+    for( cur = &(tab->nodes[h]); *cur != NULL; cur = &(*cur)->next ) {
+        if( cmp( (*cur)->name, name ) == 0 ) {
+            break;
         }
-        cur = &(*cur)->next;
     }
 
     if( *cur == NULL ) {

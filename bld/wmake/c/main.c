@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__DOS__)
    #include <stdio.h>
 #endif
 #ifdef __WATCOMC__
@@ -203,15 +203,13 @@ STATIC void handleTarg( const char *buf )
 STATIC void checkCtrl( const char *p )
 /************************************/
 {
-    assert( p != NULL );
-
-    if( p )
-        while( *p ) {          /* scan for control characters */
-            if( !isprint( *p ) ) {
-                PrtMsg( FTL | CTRL_CHAR_IN_CMD, *p );
-            }
-            ++p;
+    // p != NULL is checked by caller
+    while( *p ) {          // scan for control characters
+        if( !isprint( *p ) ) {
+            PrtMsg( FTL | CTRL_CHAR_IN_CMD, *p );
         }
+        ++p;
+    }
 }
 
 

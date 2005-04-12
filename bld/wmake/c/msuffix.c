@@ -74,12 +74,13 @@ STATIC void freePathRing( PATHRING *pring )
 
 
 STATIC BOOLEAN freeSuffix( void *node, void *ptr )
-/*************************************************/
+/************************************************/
 {
-    SUFFIX      *suf = node;
-    CREATOR     *ccur;
-    CREATOR     *cwalk;
+    SUFFIX  *suf = node;
+    CREATOR *ccur;
+    CREATOR *cwalk;
 
+    (void)ptr; // Unused
     FreeSafe( suf->node.name );
     freePathRing( suf->first );
 
@@ -387,6 +388,7 @@ STATIC BOOLEAN printSuf( void *node, void *ptr )
     CLIST       *cmds;
     BOOLEAN     printed;
 
+    (void)ptr; // Unused
     PrtMsg( INF | PSUF_SUFFIX, suf->node.name );
     if( suf->pathring != NULL ) {
         pring = suf->pathring;
@@ -484,9 +486,9 @@ STATIC RET_T tryPathRing( PATHRING **pring, char *buffer,
 }
 
 
-extern RET_T TrySufPath( char *buffer, const char *filename,
-    TARGET **chktarg, BOOLEAN tryenv )
-/***********************************************************
+extern RET_T TrySufPath( char *buffer, const char *filename, TARGET **chktarg,
+    BOOLEAN tryenv )
+/*****************************************************************************
  * it is NOT necessary that filename != buffer
  * the contents of buffer may be destroyed even if RET_ERROR is returned
  * first checks current directory, then any in suffix path
@@ -531,11 +533,11 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
             env = getenv( "PATH" );
         } else {
             /*
-                This is an incredible kludge so that Brian could build
-                the header project from one makefile without making
-                many changes to the makefile.   Some people are soooo
-                lazy :)  DJG
-            */
+             *  This is an incredible kludge so that Brian could build
+             *  the header project from one makefile without making
+             *  many changes to the makefile.   Some people are soooo
+             *  lazy :)  DJG
+             */
             env = getenv( "__SEARCH_PATH__" );
         }
         if( env != NULL ) {
@@ -543,15 +545,15 @@ extern RET_T TrySufPath( char *buffer, const char *filename,
             ringPath( &envpath, env );
 
             Glob.cachedir = FALSE;      /* never cache %path */
-            ret = tryPathRing( &envpath, buffer,
-                pg->dir, pg->fname, pg->ext, chktarg );
+            ret = tryPathRing( &envpath, buffer, pg->dir, pg->fname, pg->ext,
+                chktarg );
             Glob.cachedir = TRUE;
 
             freePathRing( envpath );
         }
     } else {
-        ret = tryPathRing( &suffix->pathring, buffer,
-            pg->dir, pg->fname, pg->ext, chktarg );
+        ret = tryPathRing( &suffix->pathring, buffer, pg->dir, pg->fname,
+            pg->ext, chktarg );
     }
 
     DropPGroup( pg );
