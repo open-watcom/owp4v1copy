@@ -38,12 +38,13 @@ improperly-aligned object.
 .*
 .shade begin
 ..if '&target' eq 'PC' ..th ..do begin
-The &wcboth. compilers do not align objects by default.
+The &wcboth. compilers align structure members by default.
 A command line switch, or the
 .mono pack
-pragma, may be used to force the compiler to align objects.
+pragma, may be used to control this behavior. Other objects may also
+be aligned by default.
 .pp
-See the &pragma. for details.
+See the &userguide. for default values and other details.
 ..do end
 ..if '&target' eq 'PC 370' ..th ..do begin
 By default, the &wcall. compilers do not align objects.
