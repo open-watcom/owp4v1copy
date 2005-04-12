@@ -127,7 +127,7 @@ typedef struct {
     unsigned_32     line_offset;        /* offset within file; may be -1 */
 } sym_linerec;
 
-typedef enum {
+enum {
     SYM_FLAG_32BIT = 1,                 /* symbols are 32-bit */
     SYM_FLAG_ALPHA = 2                  /* alphasorted symbol table included */
 };
