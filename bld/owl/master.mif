@@ -1,4 +1,5 @@
 proj_name       = owl
+owl_autodepends = .autodepend
 
 inc_dirs        = -I"../h"
 
