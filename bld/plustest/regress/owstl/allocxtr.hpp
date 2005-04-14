@@ -24,53 +24,51 @@
 *
 *  ========================================================================
 *
-* Description: This file contains helper function/macros to facilitate
-*              sanity checks in the other OWSTL test programs. The
-*              facilities defined here are facilities of interest to
-*              all programs in the test suite.
-*
-*              This file is intended to be #included into the other test
-*              files (it contains macros).
+* Description:  This file additional/specialised allocators to be used for 
+*               testing the Open Watcom conatainer templates
 ****************************************************************************/
+#include<memory>
+#include<new>
 
-#if defined(__WATCOMC__)
-
-  #include <malloc.h>
-
-  #define INSANE(x) ( !( x )._Sane( ) )
-
-  bool heap_ok( const char *msg )
-  {
-    bool rc = true;
-    if( _heapchk( ) != _HEAPOK ) {
-      std::cout << "!!! HEAP CONSISTENCY FAILURE: " << msg << "\n";
-      rc = false;
+/* ==================================================================
+ * LowMemAllocator class
+ * Simulates low memory by throwing an exception after a set
+ * number of allocations.  Can be used to check number of 
+ * allocs/constructs are equal to number of deallocs/destructs.
+ * !FIX ME!
+ */
+template< class Type >
+class LowMemAllocator : public std::allocator< Type >{
+public:
+    LowMemAllocator(size_t al) : max_allocs(al), num_alloc(0), num_construct(0) { }
+    
+    pointer allocate( size_type n, allocator< void >::const_pointer = 0 )
+    {
+        ++num_alloc;
+        if( num_alloc > max_size ) throw std::bad_alloc;
+        return( reinterpret_cast< Type * >( operator new( n * sizeof( Type ) ) ) ); 
     }
-    return( rc );
-  }
 
-  int heap_count( )
-  {
-    int count = 0;
-    struct _heapinfo info;
+    void deallocate( pointer p, size_type )
+    {
+        --num_alloc;
+        operator delete( reinterpret_cast< unsigned char * >( p ) ); 
+    }
 
-    info._pentry = NULL;
-    while( _heapwalk( &info ) != _HEAPEND ) ++count;
-    return( count );
-  }
+    void construct( pointer p, const Type &value )
+    {
+        ++num_construct;
+        new ( ( void * )p ) Type( value ); 
+    }
 
-#else
-
-  #define INSANE(x) false
-
-  bool heap_ok( const char * )
-  {
-    return( true );
-  }
-
-  int heap_count( )
-  {
-    return( 0 );
-  }
-
-#endif
+    void destroy( pointer p )
+    {
+        --num_construct;
+        ( ( Type * )p )->~Type( ); 
+    }
+    
+    int num_alloc;
+    int num_construct;
+private:
+    size_t max_size;
+};

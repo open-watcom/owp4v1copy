@@ -174,6 +174,12 @@ built-in types.
 Note that this header is not directly related to the header limits.h
 from the C standard library (or to the C++ form of that header,
 climits).
+:DT.map
+:DD.
+.ix 'header files' 'map'
+This header file defines the
+:MONO.std::map
+class template. It provides a way to associate values to keys.
 :DT.memory
 :DD.
 .ix 'header files' 'memory'
@@ -208,6 +214,12 @@ to numerical computation.
 This header file defines class
 :MONO.ostream.
 It also defines its associated parameterless manipulators.
+:DT.set
+:DD.
+.ix 'header files' 'set'
+This header file defines the
+:MONO.std::set
+class template. It provides a way to make ordered collections of objects.
 :DT.stdiobuf.h
 :DD.
 .ix 'header files' 'stdiobuf'

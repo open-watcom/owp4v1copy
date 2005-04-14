@@ -71,6 +71,7 @@ common_no_ext = &
 common = &
         $(common_no_ext) &
         _comdef.h &
+        _rbtree.h &
         _strdef.h &
         assert.h &
         complex.h &

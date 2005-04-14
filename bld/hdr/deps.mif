@@ -114,6 +114,7 @@ vector       : $(vector_deps)
 # The follow describe the dependences for the various *.h files.
 
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
+_rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwat.sp
 _strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwat.sp
 assert.h        : $(assert_deps)
 bios.h          : ../watcom/bios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp

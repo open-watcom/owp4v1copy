@@ -1,5 +1,6 @@
 # Manifest file for C++ runtime library header files
 
+h\_rbtree.h
 h\_strdef.h
 h\algorith
 h\bitset

@@ -57,7 +57,7 @@ namespace std {
     Type1 first;
     Type2 second;
 
-    pair( ) { }
+    pair( ) : first( Type1( ) ), second( Type2( ) ) { }
     pair( const Type1 &x, const Type2 &y ) : first(x), second(y) { }
   };
 
