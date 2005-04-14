@@ -9,7 +9,6 @@ echo # ---------------------------
 echo #   PreProcess Test 1
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f prep01 > tmp.out 2>&1
 diff -b prep01.cmp tmp.out
 if errorlevel 1 goto err1
@@ -25,8 +24,10 @@ echo # ---------------------------
 echo #   PreProcess Test 2
 echo # ---------------------------
 
-rm tmp.out
-%1 -h -f prep02 -ms -m > tmp.out 2>&1
+%1 -h -f prep02 -m -ms > tmp.out 2>&1
+diff prep02.cmp tmp.out
+if errorlevel 1 goto err2
+%1 -h -f prep02 -m     > tmp.out 2>&1
 diff prep02.cmp tmp.out
 if errorlevel 1 goto err2
     @echo # prep02 successful
@@ -36,6 +37,21 @@ if errorlevel 1 goto err2
     @echo Error: PREPROCESS #2 unsuccessful!!! | tee -a %2
 
 :test3
+
+echo # ---------------------------
+echo #   PreProcess Test 3
+echo # ---------------------------
+
+%1 -h -f prep03 > tmp.out 2>&1
+diff -b prep03.cmp tmp.out
+if errorlevel 1 goto err3
+    @echo # prep03 successful
+    goto test4
+:err3
+    @echo ## PREPROCESS ## >> %2
+    @echo Error: PREPROCESS #3 unsuccessful!!! | tee -a %2
+
+:test4
 
 goto done
 :usage

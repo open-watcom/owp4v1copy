@@ -30,12 +30,8 @@
 
 
 #include <unistd.h>
-#include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef __UNIX__
-#include <direct.h>
-#endif
 
 #include "macros.h"
 #include "massert.h"
@@ -51,26 +47,23 @@
 #include "mtypes.h"
 
 /*
- * This module presents a stream of characters to mlex.c.  Stripped from
- * the stream are all comments, and preprocessing directives.  Preprocessing
- * directives are handled invisibly to mlex.c.  This module also handles
- * line continuation.
+ * This module presents a stream of characters to mlex.c.  Stripped from the
+ * stream are comments, and preprocessing directives.  Preprocessing directives
+ * are handled invisibly to mlex.c.  Also handles line continuation.
  *
  */
 
-#define MAX_PRE_TOK     8       /* chars needed for maximum keyword */
-#define INCLUDE      "INCLUDE"  /* include directory for include file
-                                    search*/
+#define MAX_PRE_TOK     8       // chars needed for maximum keyword
+#define INCLUDE      "INCLUDE"  // include directory for include file search
 
 
-enum directiveTok {             /* must be kept in sync with directives */
-    D_BLANK = -1,               /* a blank line */
+enum directiveTok {             // must be kept in sync with directives
+    D_BLANK = -1,               // a blank line
     D_DEFINE,
     D_ELSE,
     D_ENDIF,
     D_ERROR,
-    D_IF,   /* New Directive for MS Compatability adds binary and
-             string operations present in NMAKE */
+    D_IF,   // MS Compatibility Directive.  NMAKE binary and string operations.
     D_IFDEF,
     D_IFEQ,
     D_IFEQI,
@@ -85,7 +78,7 @@ enum directiveTok {             /* must be kept in sync with directives */
     D_MAX
 };
 
-STATIC const char * const directives[] = {   /* table must be sorted */
+STATIC const char * const directives[] = {   // table must be lexically sorted.
     "define",
     "else",
     "endif",
@@ -105,31 +98,23 @@ STATIC const char * const directives[] = {   /* table must be sorted */
 };
 #define NUM_DIRECT      (sizeof( directives ) / sizeof( char * ))
 
-#define MAX_DIR_LEN     8           /* num chars incl null-terminator */
+#define MAX_DIR_LEN     8       // num chars incl null-terminator
 
-/*
-    atStartOfLine == EOL if we are at the start of a line... otherwise
-    it can have any other value.  This is a slight optimization for the
-    critical code in PreGetCH().  DJG
-*/
-STATIC char     atStartOfLine;
+STATIC char     atStartOfLine;  /* EOL at the start of a line...
+ * This is a slight optimization for the critical code in PreGetCH().  DJG
+ */
 STATIC STRM_T   lastChar;
-STATIC BOOLEAN  doingPreProc;   /* are we doing some preprocessing? */
+STATIC BOOLEAN  doingPreProc;   // are we doing some preprocessing?
 
 
 /*
  * MS Compatability extension to add the if (expression) functionality
  */
- // directory separators
-#define isdir(_c) ((_c) == '/' || (_c) == BACKSLASH || (_c) == COLON)
 
-
-
-STATIC int_32 makeHexNumber ( char* inString, int*  stringLength );
 STATIC void doElIf( BOOLEAN (*logical)(void), enum directiveTok tok );
 
 // local functions
-STATIC void parseExpr ( DATAVALUE *leftVal, char* inString );
+STATIC void parseExpr ( DATAVALUE *leftVal, char *inString );
 STATIC void logorExpr ( DATAVALUE *leftVal );
 STATIC void logandExpr( DATAVALUE *leftVal );
 STATIC void bitorExpr ( DATAVALUE *leftVal );
@@ -167,11 +152,11 @@ struct nestIf {
     BIT elseFound : 1;
 };
 
-#define MAX_NEST    32                  /* maximum depth of if nesting */
+#define MAX_NEST    32                  // maximum depth of if nesting
 
-STATIC struct nestIf nest[MAX_NEST];    /* stack for nesting */
-STATIC size_t nestLevel;                /* items on stack */
-STATIC struct nestIf curNest;           /* current skip info */
+STATIC struct nestIf nest[MAX_NEST];    // stack for nesting
+STATIC size_t nestLevel;                // items on stack
+STATIC struct nestIf curNest;           // current skip info
 
 
 extern void PreProcInit( void )
@@ -303,9 +288,9 @@ STATIC BOOLEAN ifDef( void )
  * returns: TRUE if macro is defined, FALSE otherwise
  */
 {
-    char        *name;
-    char        *value;
-    BOOLEAN     ret;
+    char    *name;
+    char    *value;
+    BOOLEAN ret;
 
     assert( !curNest.skip2endif );
 
@@ -341,24 +326,19 @@ STATIC void chopTrailWS( char *str )
  */
 {
     char    *p;
-    char    *last;  /* last non-whitespace char */
 
-    last = NULL;
-    p = str;
-    while( *p ) {
-        if( !isws( *p ) ) {
-            last = p;
-        }
-        ++p;
-    }
-    if( last != NULL ) {
-        last[1] = NULLCHAR;
+    for( p = str + strlen( str ) - 1; p >= str && isws( *p ); --p ) {
+        *p = NULLCHAR;
     }
 }
 
 
-// process the operands found in %f
-STATIC BOOLEAN ifOpProcess( void )
+STATIC BOOLEAN ifOp( void )
+/**************************
+ * MS Compatability  -
+ * Allows for NMAKE compatability in binary and string operators
+ * process the operands found in !if
+ */
 {
     char        *test;
     DATAVALUE   temp;
@@ -368,19 +348,10 @@ STATIC BOOLEAN ifOpProcess( void )
     test = DeMacro( EOL );
     (void)eatToEOL();
 
-    parseExpr(&temp,test);
+    parseExpr( &temp, test );
 
     FreeSafe( test );
     return( (BOOLEAN)temp.data.number );
-}
-
-
-/* MS Compatability  -
- * Allows for NMAKE compatability in binary and string operators
- */
-STATIC BOOLEAN ifOp( void )
-{
-    return( ifOpProcess() );
 }
 
 
@@ -394,7 +365,7 @@ STATIC void ifEqProcess( char const **v1, char **v2 )
     char        *name;
     char        *test;
     char        *value;
-    char        *beg;
+    char const  *beg;
 
     assert( !curNest.skip2endif );
 
@@ -412,22 +383,22 @@ STATIC void ifEqProcess( char const **v1, char **v2 )
     }
 
     value = WrnGetMacroValue( name );
+
+    FreeSafe( name );               /* don't need name any more */
+
     if( value == NULL ) {
-        FreeSafe( name );
         FreeSafe( test );
         return;
     }
-
-    FreeSafe( name );               /* don't need name any more */
 
     UnGetCH( EOL );
     InsString( value, TRUE );
     value = DeMacro( EOL );
     (void)eatToEOL();
 
-    beg = SkipWS( test );           /* find first non-ws */
+    chopTrailWS( test );            /* chop trailing ws */
 
-    chopTrailWS( beg );             /* chop trailing ws */
+    beg = SkipWS( test );           /* find first non-ws */
 
     *v1 = value;
     *v2 = StrDupSafe( beg );        /* 18-nov-91 */
@@ -503,26 +474,24 @@ STATIC void bangIf( BOOLEAN (*logical)(void), enum directiveTok tok )
  * pre:
  * post:    nestLevel > old(nestLevel); skip if false logical, or currently
  *          skipping; !elseFound
- * aborts:  if nestLevel == MAX_NEST
+ * aborts:  if nestLevel >= MAX_NEST
  */
 {
-    if( nestLevel == MAX_NEST ) {
+    if( nestLevel >= MAX_NEST ) {
         PrtMsg( FTL | LOC | IF_NESTED_TOO_DEEP );
     }
 
-    /* save old nesting on the stack */
-    nest[nestLevel++] = curNest;
+    nest[nestLevel++] = curNest; // save old nesting on the stack
 
-        /* remember that curNest still contains info from previous level */
-    curNest.skip2endif = curNest.skip || curNest.skip2endif;
+        // remember that curNest still contains info from previous level
+    curNest.skip2endif = (curNest.skip || curNest.skip2endif);
     curNest.skip = FALSE;
     curNest.elseFound = FALSE;
 
-    if( !curNest.skip2endif ) {
-        /* it is ok to interpret arguments to if */
+    if( !curNest.skip2endif ) { // ok to interpret if arguments?
         curNest.skip = !logical();
     } else {
-        /* this entire block is to be skipped, don't interpret args to if */
+        // this block is to be skipped, don't interpret args to if
         curNest.skip = TRUE;
         (void)eatToEOL();
     }
@@ -568,9 +537,7 @@ STATIC void doElse( void )
     if( curNest.elseFound ) {
         PrtMsg( WRN | LOC | SKIPPING_AFTER_ELSE, directives[D_ELSE],
             directives[D_ELSE] );
-        /* we have to set these because we may not have been skipping the
-         * previous block
-         */
+        // must set these because we may not have been skipping previous block
         curNest.skip2endif = TRUE;
         curNest.skip = TRUE;
         return;
@@ -578,17 +545,13 @@ STATIC void doElse( void )
     curNest.elseFound = TRUE;
 
     if( !curNest.skip2endif ) {
-        /* check if we're not skipping. if !skip then we should skip the
-         * else part
-         */
+        // check we're not skipping. if !skip then we should skip the else part.
         if( !curNest.skip ) {
-            /* skip to the end - we've done a block in this nesting */
+            // skip to the end - we've done a block in this nesting
             curNest.skip = TRUE;
             curNest.skip2endif = TRUE;
         } else {
-            /* we still haven't done a block in this nesting, so do the
-             * else portion
-             */
+            // we still haven't done block in this nesting, do the else portion
             curNest.skip = FALSE;
         }
     }
@@ -621,9 +584,7 @@ STATIC void doElIf( BOOLEAN (*logical)(void), enum directiveTok tok )
 
     if( curNest.elseFound ) {
         PrtMsg( WRN | LOC | SKIPPING_AFTER_ELSE, buf, directives[D_ELSE] );
-        /* we have to set these because we may not have been skipping the
-         * previous block
-         */
+        // must set these because we may not have been skipping previous block
         curNest.skip2endif = TRUE;
         curNest.skip = TRUE;
         (void)eatToEOL();
@@ -631,18 +592,14 @@ STATIC void doElIf( BOOLEAN (*logical)(void), enum directiveTok tok )
     }
 
     if( !curNest.skip2endif ) {
-        /* check if we're not skipping. if !skip then we should skip the
-         * else if part
-         */
+        // check we're not skipping. if !skip, we should skip the else if part
         if( !curNest.skip ) {
-            /* skip to the end - we've done a block in this nesting */
+            // skip to the end - we've done a block in this nesting
             curNest.skip = TRUE;
             curNest.skip2endif = TRUE;
             (void)eatToEOL();
         } else {
-            /* we still haven't done a block in this nesting, so try this
-             * logical
-             */
+            // we still haven't done block in this nesting, try this logical.
             curNest.skip = !logical();
         }
     } else {
@@ -712,29 +669,27 @@ STATIC void bangDefine( void )
 
 
 static char *skipWhileWS( char *p )
+/*********************************/
 {
-    for( ; *p != '\0'; ++p ) {
-        if( !isws( *p ) ) {
-            break;
-        }
+    while( *p != '\0' && isws( *p ) ) {
+        ++p;
     }
     return( p );
 }
 
 static char *skipUntilWS( char *p )
+/*********************************/
 {
-    for( ; *p != '\0'; ++p ) {
-        if( isws( *p ) ) {
-            break;
-        }
+    while( *p != '\0' && !isws( *p ) ) {
+        ++p;
     }
     return( p );
 }
 
 
-// !inject <text> <mac-name1> <mac-name2> ... <mac-nameN>
 STATIC void bangInject( void )
 /*****************************
+ * !inject <text> <mac-name1> <mac-name2> ... <mac-nameN>
  * post:    atStartOfLine == EOL
  * errors:  none
  */
@@ -786,9 +741,9 @@ STATIC void bangInject( void )
 }
 
 
-// !loaddll <cmd-name> <dll-name> [<entry-pt>]
 STATIC void bangLoadDLL( void )
 /******************************
+ * !loaddll <cmd-name> <dll-name> [<entry-pt>]
  * post:    atStartOfLine == EOL
  * errors:  none
  */
@@ -877,6 +832,7 @@ STATIC void bangUnDef( void )
 }
 
 STATIC char *formatLongFileName( char *text )
+/*******************************************/
 {
     char    *ret;
     char    *currentRet;
@@ -987,6 +943,7 @@ STATIC void bangInclude( void )
     FreeSafe( text );
 }
 
+
 STATIC void bangMessage( void )
 /******************************
  * post:    atStartOfLine == EOL
@@ -1083,8 +1040,7 @@ extern STRM_T PreGetCH( void )
     }
 
     for( ;; ) {
-        if( (!doingPreProc)
-                && (atStartOfLine == EOL || t == TMP_EOL) ) {
+        if( !doingPreProc && (atStartOfLine == EOL || t == TMP_EOL) ) {
             if( t == TMP_EOL ) {
                 // Throw away the unwanted TMP character
                 t = GetCHR();
@@ -1116,7 +1072,9 @@ extern STRM_T PreGetCH( void )
         }
         if( t == COMMENT && lastChar != DOLLAR ) {
             t = GetCHR();
-            while( t != EOL && t != STRM_END ) t = GetCHR();
+            while( t != EOL && t != STRM_END ) {
+                t = GetCHR();
+            }
             if( temp == TMP_EOL ) {
                 t = TMP_EOL;
             }
@@ -1213,10 +1171,12 @@ extern STRM_T PreGetCH( void )
 }
 
 
-// Finds the next character that has no white space
 STATIC char *removeWhiteSP( char *inString )
+/*******************************************
+ * Finds the next character that has no white space
+ */
 {
-    int     index = 0;
+    int index = 0;
 
     while( inString[index] == SPACE || inString[index] == TAB ) {
         ++index;
@@ -1226,6 +1186,7 @@ STATIC char *removeWhiteSP( char *inString )
 
 
 STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index )
+/************************************************************************/
 {
     switch( type ) {
         case OP_COMPLEMENT:
@@ -1264,12 +1225,41 @@ STATIC void makeToken( enum Tokens type, TOKEN_TYPE *current, int *index )
 }
 
 
-STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
+STATIC int_32 makeHexNumber( char *inString, int *stringLength )
+/**************************************************************/
 {
-    int_32      value;
-    char        *currentChar;
-    char        c;
-    int         hexLength;
+    int_32  value;
+    char    c;
+    char    *currentChar;
+
+    value = 0;
+    currentChar = inString;
+    for( ;; ) {
+        c = currentChar[0];
+        if( c >= '0' && c <= '9' ) {
+            c = c - '0';
+        } else if( c >= 'a' && c <= 'f' ) {
+            c = c - 'a' + 10;
+        } else if( c >= 'A' && c <= 'F' ) {
+            c = c - 'A' + 10;
+        } else {
+            break;
+        }
+        value = value * 16 + c;
+        ++currentChar;
+    }
+    *stringLength = currentChar - inString;
+    return( value );
+}
+
+
+STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
+/****************************************************************************/
+{
+    int_32  value;
+    char    *currentChar;
+    char    c;
+    int     hexLength;
 
     currentChar = inString;
     value       = 0;
@@ -1303,34 +1293,8 @@ STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
 }
 
 
-STATIC int_32 makeHexNumber( char *inString, int *stringLength )
-{
-    int_32      value;
-    char        c;
-    char        *currentChar;
-
-    value = 0;
-    currentChar = inString;
-    for( ;; ) {
-        c = currentChar[0];
-        if( c >= '0' && c <= '9' ) {
-            c = c - '0';
-        } else if( c >= 'a' && c <= 'f' ) {
-            c = c - 'a' + 10;
-        } else if( c >= 'A' && c <= 'F' ) {
-            c = c - 'A' + 10;
-        } else {
-            break;
-        }
-        value = value * 16 + c;
-        ++currentChar;
-    }
-    *stringLength = currentChar - inString;
-    return( value );
-}
-
-
 STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
+/****************************************************************************/
 {
     int     inIndex;
     int     currentIndex;
@@ -1356,7 +1320,7 @@ STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
                 current->type = OP_ERROR;
                 break;
             default:
-            current->data.string[currentIndex] = inString[inIndex];
+                current->data.string[currentIndex] = inString[inIndex];
         }
 
         if( current->type == OP_ERROR ) {
@@ -1370,37 +1334,36 @@ STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
     *index = inIndex;
 }
 
-STATIC void makeAlphaToken(char *inString, TOKEN_TYPE *current, int *index)
+STATIC void makeAlphaToken( char *inString, TOKEN_TYPE *current, int *index )
+/***************************************************************************/
 {
-    int     inIndex;
-    int     currentIndex;
+    char const  *r;
+    char        *pwrite;
+    char const  *pwritelast;
 
-    inIndex      = 0;
-    currentIndex = 0;
-    current->type= OP_STRING;
+    r = inString;
+    pwrite = current->data.string;
+    pwritelast = pwrite + sizeof( current->data.string ) - 1; 
+    current->type = OP_STRING;
 
-    // Note that in this case we are looking at a string that has no
-    // quotations
-    while( inString[inIndex]!= PAREN_RIGHT &&
-           inString[inIndex]!= PAREN_LEFT  &&
-           !isws(inString[inIndex]) ) {
-
-        if( currentIndex >= MAX_STRING ) {
-            current->type = OP_ENDOFSTRING;
+    // Note that in this case we are looking at a string that has no quotations
+    // nmake gives expected error with exists(a(b) but also with exists("a(b")
+    while( *r != PAREN_RIGHT && *r != PAREN_LEFT && !isws( *r ) ) {
+        if( pwrite >= pwritelast ) {
+            // VC++ 6 nmake allows 512 or more bytes here. We limit to 255.
+            current->type = OP_ENDOFSTRING; // This truncates.
             break;
         }
-        current->data.string[currentIndex] = inString[inIndex];
-
-        ++inIndex;
-        ++currentIndex;
+        *pwrite++ = *r++;
     }
 
-    current->data.string[currentIndex] = NULLCHAR;
-    *index = inIndex;
+    *pwrite = NULLCHAR;
+    *index = r - inString;
 }
 
 
-STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength)
+STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
+/****************************************************************************/
 {
     char    *currentString;
     int     index = 0;
@@ -1529,8 +1492,10 @@ STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength)
 }
 
 
-// Get the next token
-STATIC void nextToken()
+STATIC void nextToken( void )
+/****************************
+ * Get the next token
+ */
 {
     int     tokenLength;
 
@@ -1546,27 +1511,29 @@ STATIC void nextToken()
 }
 
 
-// Taking a peek at the next token
 STATIC enum Tokens preToken( void )
+/**********************************
+ * Taking a peek at the next token
+ */
 {
     int         tokenLength;
-    DATAVALUE   nextToken;
+    DATAVALUE   next_token;
 
     if( *currentPtr != NULLCHAR ) {
-        ScanToken( currentPtr, &nextToken, &tokenLength );
+        ScanToken( currentPtr, &next_token, &tokenLength );
     } else {
-        nextToken.type = OP_ERROR;  // no more tokens
+        next_token.type = OP_ERROR;  // no more tokens
     }
-    return( nextToken.type );
+    return( next_token.type );
 }
 
 
-/*
+STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
+/**********************************************************
  * Calls functions that parses and evaluates the given expression
  * contained in global variables currentPtr (pointer to the string to be
  * parsed)
  */
-STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
 {
     assert( inString != NULL && leftVal != NULL );
     currentPtr = inString;
@@ -1579,6 +1546,7 @@ STATIC void parseExpr( DATAVALUE *leftVal, char *inString )
 
 
 STATIC void logorExpr( DATAVALUE *leftVal )
+/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1600,6 +1568,7 @@ STATIC void logorExpr( DATAVALUE *leftVal )
 
 
 STATIC void logandExpr( DATAVALUE *leftVal )
+/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1621,6 +1590,7 @@ STATIC void logandExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitorExpr( DATAVALUE *leftVal )
+/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1642,6 +1612,7 @@ STATIC void bitorExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitxorExpr( DATAVALUE *leftVal )
+/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1663,6 +1634,7 @@ STATIC void bitxorExpr( DATAVALUE *leftVal )
 
 
 STATIC void bitandExpr( DATAVALUE *leftVal )
+/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1684,6 +1656,7 @@ STATIC void bitandExpr( DATAVALUE *leftVal )
 
 
 STATIC void equalExpr( DATAVALUE *leftVal )
+/*****************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1739,6 +1712,7 @@ STATIC void equalExpr( DATAVALUE *leftVal )
 
 
 STATIC void relateExpr( DATAVALUE *leftVal )
+/******************************************/
 {
     DATAVALUE   rightVal;
 
@@ -1749,15 +1723,6 @@ STATIC void relateExpr( DATAVALUE *leftVal )
             break;
         }
         if( currentToken.type == OP_LESSTHAN ) {
-            nextToken();
-            shiftExpr( &rightVal );
-            if( rightVal.type == OP_INTEGER ) {
-                leftVal->data.number = leftVal->data.number < rightVal.data.number;
-            }
-            else {
-                leftVal->type = OP_ERROR;
-            }
-        } else if( currentToken.type == OP_LESSTHAN ) {
             nextToken();
             shiftExpr( &rightVal );
             if( rightVal.type == OP_INTEGER ) {
@@ -1801,10 +1766,13 @@ STATIC void relateExpr( DATAVALUE *leftVal )
 
 
 STATIC void shiftExpr( DATAVALUE *leftValue )
+/*******************************************/
 {
     DATAVALUE   rightValue;
+    unsigned_32 *leftNumber;
 
     addExpr( leftValue );
+    leftNumber = (void *)&leftValue->data.number;
     while( leftValue->type != OP_ERROR && leftValue->type != OP_STRING ) {
         if( leftValue->type != OP_INTEGER ) {
             leftValue->type = OP_ERROR;
@@ -1814,7 +1782,7 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
             nextToken();
             addExpr( &rightValue );
             if( rightValue.type == OP_INTEGER ) {
-                leftValue->data.number <<= rightValue.data.number;
+                *leftNumber <<= rightValue.data.number;
             } else {
                 leftValue->type = OP_ERROR;
             }
@@ -1822,7 +1790,7 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
             nextToken();
             addExpr( &rightValue );
             if( rightValue.type == OP_INTEGER ) {
-                leftValue->data.number >>= rightValue.data.number;
+                *leftNumber >>= rightValue.data.number;
             } else {
                 leftValue->type = OP_ERROR;
             }
@@ -1834,6 +1802,7 @@ STATIC void shiftExpr( DATAVALUE *leftValue )
 
 
 STATIC void addExpr( DATAVALUE *leftValue )
+/*****************************************/
 {
     DATAVALUE   rightValue;
 
@@ -1868,6 +1837,7 @@ STATIC void addExpr( DATAVALUE *leftValue )
 
 
 STATIC void multExpr( DATAVALUE *leftValue )
+/******************************************/
 {
     DATAVALUE   rightValue;
 
@@ -1909,9 +1879,11 @@ STATIC void multExpr( DATAVALUE *leftValue )
 }
 
 
-// This function is to determine whether or not a particular
-// filename / directory exists  (for use with EXIST())
 extern BOOLEAN existFile( char *inPath )
+/***************************************
+ * This function is to determine whether or not a particular
+ * filename / directory exists  (for use with EXIST())
+ */
 {
      if( access( inPath, F_OK ) == 0 ) {
          return( TRUE );
@@ -1920,9 +1892,11 @@ extern BOOLEAN existFile( char *inPath )
 }
 
 
-// handles the unary expressions, strings and numbers
-// identifies the logical functions EXIST and DEFINED
 STATIC void unaryExpr( DATAVALUE *leftValue )
+/********************************************
+ * handles the unary expressions, strings and numbers
+ * identifies the logical functions EXIST and DEFINED
+ */
 {
     enum Tokens     type;
     char            *value;
@@ -1957,7 +1931,10 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
         nextToken();
         unaryExpr( leftValue );
         if( leftValue->type == OP_INTEGER ) {
-            leftValue->data.number = ~(leftValue->data.number);
+            unsigned_32 *leftNumber;
+
+            leftNumber = (void *)&leftValue->data.number;
+            *leftNumber = ~*leftNumber;
         } else {
             leftValue->type = OP_ERROR;
         }
@@ -1972,8 +1949,7 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
         }
         break;
     case OP_STRING:
-        // check to see if the next token is a parenthesis
-        // without changing the value of currentToken
+        // check that the next token is a '(' without changing currentToken
         if( preToken() == OP_PAREN_LEFT ) {
             if( strcmpi( currentToken.data.string, DEFINED ) == 0 ) {
                 type = OP_DEFINED;
@@ -1984,13 +1960,12 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
                 leftValue->type = OP_ERROR;
                 break;
             }
-            nextToken();
-            nextToken();
+            nextToken();                // Swallow OP_PAREN_LEFT
+            nextToken();                // Get macro or file name
             if( currentToken.type == OP_STRING ) {
                 if( preToken() == OP_PAREN_RIGHT ) {
                     switch( type ) {
-                        // Check if macro is defined
-                    case OP_DEFINED:
+                    case OP_DEFINED:    // Check if macro is defined
                         if( !IsMacroName( currentToken.data.string ) ) {
                             leftValue->type        = OP_INTEGER;
                             leftValue->data.number = FALSE;
@@ -2005,8 +1980,7 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
                             }
                         }
                         break;
-                    case OP_EXIST:
-                        // check if the input file is defined
+                    case OP_EXIST:      // check if the input file is defined
                         leftValue->type = OP_INTEGER;
                         leftValue->data.number =
                                         existFile( currentToken.data.string );
@@ -2045,6 +2019,7 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
 
 
 size_t GetNestLevel( void )
+/*************************/
 {
     return( nestLevel );
 }

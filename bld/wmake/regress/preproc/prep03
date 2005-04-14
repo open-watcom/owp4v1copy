@@ -1,0 +1,16 @@
+#
+#  Preprocessor Test 3
+#  - test mpreproc@makeAlphaToken() fills current->data.string only to capacity
+#
+module=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz_063_bytes
+max=$(module)$(module)$(module)$(module)255
+!ifdef AS # This is a proxy for !if microsoft
+all:
+!else 
+all: .symbolic
+!endif
+!if exist($(max)) # This fills datum
+!endif
+!if exist(o$(max)) # This gives a parse error because we overfill
+!endif
+    @echo failed
