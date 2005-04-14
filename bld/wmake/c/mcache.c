@@ -34,7 +34,6 @@
     #include <stdlib.h>
     #include <string.h>
     #include "autodept.h"
-    #include "massert.h"
     #include "mpathgrp.h"
 #endif
 #include <unistd.h>
@@ -44,6 +43,7 @@
 #include <sys/types.h>
 
 #include "make.h"
+#include "massert.h"
 #include "mhash.h"
 #include "mmemory.h"
 #if !defined( __UNIX__ )
