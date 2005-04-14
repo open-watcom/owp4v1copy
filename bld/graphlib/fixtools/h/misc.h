@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  misc.c interfaces. - Note it is not mmisc.c
+* Description:  misc.c interfaces ( file search wildard function ).
 *
 ****************************************************************************/
 
