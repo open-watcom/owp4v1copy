@@ -1,0 +1,6 @@
+set nomagic
+%delete
+read %1
+%substitute/^\(.+\)$/*\1.obj/
+write!
+quit!

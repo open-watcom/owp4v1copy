@@ -1,3 +1,13 @@
+additional_cleanup = *.mod *.ref *.stb
+
+!ifeq host_os qnx
+clibdir = $(build_root)\clib\library\qnx.286\ms\clibs.lib
+!else ifeq host_cpu i86
+clibdir = $(build_root)\clib\library\msdos.086\ms\clibs.lib
+!else
+clibdir = $(build_root)\clib\library\msdos.386\ms_r\clib3r.lib
+!endif
+
 !ifeq host_os dos
 
 !ifeq host_cpu i86
@@ -5,18 +15,20 @@
 graph.lib : ../../dosi86/graphs.lib ../../../pgchart/dosi86/charts.lib
     cp ../../dosi86/graphs.lib graph.lib
     $(librarian) -b graph.lib +../../dosi86/dummy.obj +../../dosi86/fsmath.obj +../../../pgchart/dosi86/charts.lib
+    %make fixlib
 
 !else
 
-graph386.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
+graph.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
                ../../../pgchart/dos386r/chart3r.lib ../../../pgchart/dos386s/chart3s.lib
-    cp ../../dos386s/graph3s.lib graph386.lib
-    $(librarian) -b graph386.lib -globals -bit -sqrtf -std -hercfont -cgautils -egautils -vgautils -hgcutils -svgautil -font8x8
-    $(librarian) -b graph386.lib +../../dos386r/graph3r.lib
+    cp ../../dos386s/graph3s.lib graph.lib
+    $(librarian) -b graph.lib -globals -bit -sqrtf -std -hercfont -cgautils -egautils -vgautils -hgcutils -svgautil -font8x8
+    $(librarian) -b graph.lib +../../dos386r/graph3r.lib
     cp ../../../pgchart/dos386r/chart3r.lib chart.lib
     $(librarian) -b chart.lib +../../../pgchart/dos386s/chart3s.lib
-    $(librarian) -b graph386.lib +../../dos386r/dummy.obj +../../dos386r/fsmath.obj +chart.lib
+    $(librarian) -b graph.lib +../../dos386r/dummy.obj +../../dos386r/fsmath.obj +chart.lib
     rm -f chart.lib
+    %make fixlib
 
 !endif
 
@@ -27,6 +39,7 @@ graph386.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
 graph.lib : ../../qnxi86/graphs.lib ../../../pgchart/dosi86/charts.lib
     cp ../../qnxi86/graphs.lib graph.lib
     $(librarian) -b graph.lib +../../qnxi86/dummy.obj +../../qnxi86/fsmath.obj +../../../pgchart/dosi86/charts.lib
+    %make fixlib
 
 !else
 
@@ -48,6 +61,49 @@ graphp.obj : ../../c/seginit.c
     $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[*
 
 !endif
+
+fixlib: .procedure
+    rm -f *.obj
+  # find external references - and check for double precision usage
+    objxref -e=..\except graph.lib | sort >graph.ref
+    egrep __FD graph.ref >x.x
+    diff x.x ../fd.ok
+    @if errorlevel 1 echo ERROR - double precision floating point used
+    rm -f x.x
+  # find all modules in clib which are referenced from graph.lib
+    objfind -i=graph.ref $(clibdir) >clib.mod
+  # extract all modules from clib which are referenced from graph.lib
+    $(vi) -s ../fix1.vi -p"clib.mod" clibget.lbc
+    $(librarian) -b $(clibdir) @clibget.lbc
+  # get all public symbols in extracted modules from clib, fsmath and dummy
+!ifeq host_os qnx
+    objxdef *.obj ../../qnxi86/fsmath.obj ../../qnxi86/dummy.obj >graph.stb
+!else ifeq host_cpu i86
+    objxdef *.obj ../../dosi86/fsmath.obj ../../dosi86/dummy.obj >graph.stb
+!else
+    objxdef *.obj ../../dos386r/dummy.obj ../../dos386r/fsmath.obj >graph.stb
+!endif
+!ifeq host_cpu i86
+  # extract all modules from graph.lib library
+    $(librarian) -b -x graph.lib
+  # modify modules as needed
+  # add _GR to names of all symbols in extracted files and fsmath, dummy
+  # change _TEXT segment to GRAPH_TEXT
+    objchg -l=_TEXT=GRAPH_TEXT -m=_GR* -s=graph.stb *.obj
+!else
+  # extract all modules from graph.lib library, use alias for 8.3 format
+    objlist graph.lib >graph.mod
+    $(vi) -s ../fix2.vi -p"g graph.mod" graph.lbc
+    $(librarian) -b graph.lib @graph.lbc
+  # modify modules as needed
+  # add _GR to names of all symbols in extracted files and fsmath, dummy
+    objchg -m=_GR* -s=graph.stb *.obj
+!endif
+  # put all modules together into new library
+    %create modput.lbc
+    @for %i in (*.obj) do @%append modput.lbc +%i
+    $(librarian) -b -n graph.lib @modput.lbc
+    rm -f *.obj
 
 graphics_prefix = ../
 !include ../../dosi86/makefile
