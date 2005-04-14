@@ -21,9 +21,6 @@ wmake_autodepends = .AUTODEPEND
 !include defrule.mif
 !include deftarg.mif
 
-.ERASE
-.CONTINUE
-
 .h      : ../h
 .h      : $(watcom_dir)/h
 .h      : $(trmem_dir)
