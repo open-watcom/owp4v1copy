@@ -34,7 +34,7 @@
 #include <iostream>
 #include <string>
 
-// using namespace std;
+#include "sanity.cpp"
 
 bool construct_test( )
 {
@@ -47,38 +47,25 @@ bool construct_test( )
   std::string s6( s2, 7, 1024 );
   std::string s7( 16, 'x' );
 
-  if( s1.size( ) != 0 ||
-      s1         != "") {
+  if( s1.size( ) != 0 || s1 != "" || INSANE( s1 ) ) {
     std::cout << "construct FAIL 0001\n"; rc = false;
   }
-  if( s2.size( )     != 12         ||
-      s2.capacity( ) <  s2.size( ) ||
-      s2             != "Hello, World" ) {
+  if( s2.size( ) != 12  || s2 != "Hello, World" || INSANE( s2 ) ) {
     std::cout << "construct FAIL 0002\n"; rc = false;
   }
-  if( s3.size( )     != 3         ||
-      s3.capacity( ) < s3.size( ) ||
-      s3             != "Hel" ) {
+  if( s3.size( ) != 3 || s3 != "Hel" || INSANE( s3 ) ) {
     std::cout << "construct FAIL 0003\n"; rc = false;
   }
-  if( s4.size( )     != 12        ||
-      s4.capacity( ) < s4.size( ) ||
-      s4             != "Hello, World" ) {
+  if( s4.size( ) != 12 || s4 != "Hello, World" || INSANE( s4 ) ) {
     std::cout << "construct FAIL 0004\n"; rc = false;
   }
-  if( s5.size( )     != 2         ||
-      s5.capacity( ) < s5.size( ) ||
-      s5             != "Wo" ) {
+  if( s5.size( ) != 2 || s5 != "Wo" || INSANE( s5 ) ) {
     std::cout << "construct FAIL 0005\n"; rc = false;
   }
-  if( s6.size( )     != 5         ||
-      s6.capacity( ) < s6.size( ) ||
-      s6             != "World" ) {
+  if( s6.size( ) != 5 || s6 != "World" || INSANE( s6 ) ) {
     std::cout << "construct FAIL 0006\n"; rc = false;
   }
-  if( s7.size( )     != 16        ||
-      s7.capacity( ) < s7.size( ) ||
-      s7             != "xxxxxxxxxxxxxxxx") {
+  if( s7.size( ) != 16 || s7 != "xxxxxxxxxxxxxxxx" || INSANE( s7 ) ) {
     std::cout << "construct FAIL 0007\n"; rc = false;
   }
   return( rc );
@@ -87,8 +74,9 @@ bool construct_test( )
 bool assign_test( )
 {
   bool rc = true;
-  std::string s1( 16, 'x' );
+  std::string s1( 15, 'x' );
   std::string s2( "Hello" );
+  std::string s3( "This string is longer than 15 characters" );
 
   s1 = s2;
   if( s1.size( )     != 5          ||
@@ -97,20 +85,27 @@ bool assign_test( )
     std::cout << "assign FAIL 0001\n"; rc = false;
   }
 
-  std::string s3( 'x', 16 );
-  s3 = "This string is longer than 16 characters";
-  if( s3.size( )     != 40         ||
-      s3.capacity( ) <  s3.size( ) ||
-      s3             != "This string is longer than 16 characters" ) {
+  s1 = s3;
+  if( s1.size( )     != 40         ||
+      s1.capacity( ) < s1.size( )  ||
+      s1             != "This string is longer than 15 characters" ) {
     std::cout << "assign FAIL 0002\n"; rc = false;
   }
 
-  std::string s4( 'x', 16 );
-  s4 = 'y';
-  if( s4.size( )     != 1          ||
+  std::string s4( 'x', 15 );
+  s4 = "This string is longer than 15 characters";
+  if( s4.size( )     != 40         ||
       s4.capacity( ) <  s4.size( ) ||
-      s4             != "y" ) {
+      s4             != "This string is longer than 15 characters" ) {
     std::cout << "assign FAIL 0003\n"; rc = false;
+  }
+
+  std::string s5( 'x', 15 );
+  s5 = 'y';
+  if( s5.size( )     != 1          ||
+      s5.capacity( ) <  s5.size( ) ||
+      s5             != "y" ) {
+    std::cout << "assign FAIL 0004\n"; rc = false;
   }
 
   // Need to add tests for the assign() methods as well.
@@ -883,29 +878,30 @@ bool substr_test()
 int main( )
 {
   int rc = 0;
+  int original_count = heap_count( );
 
   try {
-    if( !construct_test( )         ) rc = 1;
-    if( !assign_test( )            ) rc = 1;
-    if( !access_test( )            ) rc = 1;
-    if( !relational_test( )        ) rc = 1;
-    if( !capacity_test( )          ) rc = 1;
-    if( !iterator_test( )          ) rc = 1;
-    if( !append_test( )            ) rc = 1;
-    if( !insert_test( )            ) rc = 1;
-    if( !erase_test( )             ) rc = 1;
-    if( !replace_test( )           ) rc = 1;
-    if( !iterator_replace_test( )  ) rc = 1;
-    if( !copy_test( )              ) rc = 1;
-    if( !swap_test( )              ) rc = 1;
-    if( !cstr_test( )              ) rc = 1;
-    if( !find_test( )              ) rc = 1;
-    if( !rfind_test( )             ) rc = 1;
-    if( !find_first_of_test( )     ) rc = 1;
-    if( !find_last_of_test( )      ) rc = 1;
-    if( !find_first_not_of_test( ) ) rc = 1;
-    if( !find_last_not_of_test( )  ) rc = 1;
-    if( !substr_test( )            ) rc = 1;
+    if( !construct_test( )         || !heap_ok( "t01" ) ) rc = 1;
+    if( !assign_test( )            || !heap_ok( "t02" ) ) rc = 1;
+    if( !access_test( )            || !heap_ok( "t03" ) ) rc = 1;
+    if( !relational_test( )        || !heap_ok( "t04" ) ) rc = 1;
+    if( !capacity_test( )          || !heap_ok( "t05" ) ) rc = 1;
+    if( !iterator_test( )          || !heap_ok( "t06" ) ) rc = 1;
+    if( !append_test( )            || !heap_ok( "t07" ) ) rc = 1;
+    if( !insert_test( )            || !heap_ok( "t08" ) ) rc = 1;
+    if( !erase_test( )             || !heap_ok( "t09" ) ) rc = 1;
+    if( !replace_test( )           || !heap_ok( "t10" ) ) rc = 1;
+    if( !iterator_replace_test( )  || !heap_ok( "t11" ) ) rc = 1;
+    if( !copy_test( )              || !heap_ok( "t12" ) ) rc = 1;
+    if( !swap_test( )              || !heap_ok( "t13" ) ) rc = 1;
+    if( !cstr_test( )              || !heap_ok( "t14" ) ) rc = 1;
+    if( !find_test( )              || !heap_ok( "t15" ) ) rc = 1;
+    if( !rfind_test( )             || !heap_ok( "t16" ) ) rc = 1;
+    if( !find_first_of_test( )     || !heap_ok( "t17" ) ) rc = 1;
+    if( !find_last_of_test( )      || !heap_ok( "t18" ) ) rc = 1;
+    if( !find_first_not_of_test( ) || !heap_ok( "t19" ) ) rc = 1;
+    if( !find_last_not_of_test( )  || !heap_ok( "t20" ) ) rc = 1;
+    if( !substr_test( )            || !heap_ok( "t21" ) ) rc = 1;
   }
   catch( std::out_of_range e ) {
     std::cout << "Unexpected out_of_range exception: " << e.what( ) << "\n";
@@ -920,6 +916,9 @@ int main( )
     rc = 1;
   }
 
+  if( heap_count( ) != original_count ) {
+    std::cout << "Possible memory leak!\n";
+    rc = 1;
+  }
   return( rc );
 }
-

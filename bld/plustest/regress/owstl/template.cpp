@@ -45,13 +45,19 @@ bool some_test( )
 int main( )
 {
   int rc = 0;
+  int original_count = heap_count( );
+
   try {
-    if( !some_test( )    || !heap_ok( "t1" ) ) rc = 1;
+    if( !some_test( )    || !heap_ok( "t01" ) ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";
     rc = 1;
   }
 
+  if( heap_count( ) != original_count ) {
+    std::cout << "Possible memory leak!\n";
+    rc = 1;
+  }
   return( rc );
 }

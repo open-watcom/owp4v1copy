@@ -341,18 +341,21 @@ namespace std {
 
       basic_string substr( size_type pos = 0, size_type n = npos ) const;
 
+      bool _Sane( ) const;  // Check invariants.
+
     private:
-      // 1. buffer has size total.
-      // 2. buffer never shrinks.
-      // 3. total >= filled + 1. The extra space is for a O(1) c_str().
-      // 4. total is a power of two.
+      // Invariants:
+      // 1. buffer has size buf_length.
+      // 2. buf_length is a power of two.
+      // 3. buf_length >= str_length + 1. Extra space for an O(1) c_str().
+      // 4. buffer never shrinks.
       // 5. buffer allocated with mem or a copy of mem.
       // 6. Every string has its own buffer (no reference counting).
       //
-      Allocator mem;      // Object used to get and release memory.
-      pointer   buffer;   // Points at start of string.
-      size_type filled;   // Number of buffer slots with characters.
-      size_type total;    // Total number of buffer slots.
+      Allocator mem;         // Object used to get and release memory.
+      pointer   buffer;      // Points at start of string.
+      size_type str_length;  // Number of buffer slots with characters.
+      size_type buf_length;  // Total number of buffer slots.
 
       // This method encapsulates the memory allocation policy.
       pointer alloc( size_type required, size_type &found );
@@ -388,6 +391,21 @@ namespace std {
     return( result );
   }
 
+  template< class CharT, class Traits, class Allocator >
+  bool basic_string< CharT, Traits, Allocator >::_Sane( ) const
+  {
+    if( buf_length == 0 ) return( false );
+    if( buf_length <= str_length ) return( false );
+
+    // Is buf_length a power of 2?
+    size_type temp = buf_length;
+    while( temp != 1 ) {
+      if( temp & 0x1 ) return( false );
+      temp >>= 1; 
+    }
+    return( true );
+  }
+
 
   // basic_string( const Allocator & )
   // *********************************
@@ -395,8 +413,8 @@ namespace std {
   basic_string< CharT, Traits, Allocator >::basic_string(
     const Allocator &a ) : mem( a )
   {
-    buffer = alloc(1, total);
-    filled = 0;
+    buffer = alloc(1, buf_length);
+    str_length = 0;
   }
 
 
@@ -406,9 +424,9 @@ namespace std {
   basic_string< CharT, Traits, Allocator >::basic_string(
     const basic_string &other ) : mem( other.mem )
   {
-    buffer = alloc( other.filled + 1, total );
-    Traits::copy( buffer, other.buffer, other.filled );
-    filled = other.filled;
+    buffer = alloc( other.str_length + 1, buf_length );
+    Traits::copy( buffer, other.buffer, other.str_length );
+    str_length = other.str_length;
   }
 
 
@@ -416,13 +434,13 @@ namespace std {
   // ************************************************
   template< class CharT, class Traits, class Allocator >
   basic_string< CharT, Traits, Allocator >::basic_string(
-    const CharT     *s,
+    const CharT     *other,
     const Allocator &a ) : mem( a )
   {
-    size_type result_length = Traits::length( s );
-    buffer = alloc( result_length + 1, total );
-    Traits::copy( buffer, s, result_length );
-    filled = result_length;
+    size_type other_length = Traits::length( other );
+    buffer = alloc( other_length + 1, buf_length );
+    Traits::copy( buffer, other, other_length );
+    str_length = other_length;
   }
 
 
@@ -432,7 +450,7 @@ namespace std {
   basic_string< CharT, Traits, Allocator >::~basic_string( )
   {
     // No need to destroy characters. CharT must be POD type.
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
   }
 
 
@@ -445,15 +463,22 @@ namespace std {
   {
     if( this == &other ) return *this;
 
-    // Prepare new buffer.
-    pointer new_buffer = mem.allocate( other.total );
-    Traits::copy( new_buffer, other.buffer, other.filled );
+    if( buf_length > other.str_length ) {
+      Traits::copy( buffer, other.buffer, other.str_length );
+      str_length = other.str_length;
+    }
+    else {
+      // Prepare new buffer.
+      size_type new_length;
+      pointer new_buffer = alloc( other.str_length + 1, new_length );
+      Traits::copy( new_buffer, other.buffer, other.str_length );
 
-    // Commit.
-    mem.deallocate( buffer, total );
-    buffer = new_buffer;
-    total  = other.total;
-    filled = other.filled;
+      // Commit.
+      mem.deallocate( buffer, buf_length );
+      buffer = new_buffer;
+      buf_length = new_length;
+      str_length = other.str_length;
+    }
     return( *this );
   }
 
@@ -464,8 +489,7 @@ namespace std {
   inline
   const CharT *basic_string< CharT, Traits, Allocator >::c_str( ) const
   {
-    // Problematic if 'pointer' is an unusual type. (Not supposed to happen).
-    buffer[filled] = CharT();
+    buffer[str_length] = CharT();
     return( buffer );
   }
 

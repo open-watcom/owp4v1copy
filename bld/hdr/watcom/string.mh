@@ -419,7 +419,9 @@ namespace std {
 #endif
 
 :: The header <_strdef.h> is indirectly included below.
-#include <stdexcep>
+#ifndef _STDEXCEPT_INCLUDED
+  #include <stdexcept>
+#endif
 
 namespace std {
 
@@ -436,15 +438,15 @@ namespace std {
     size_type  n,
     const Allocator &a ) : mem( a )
   {
-    if( pos > other.filled )
+    if( pos > other.str_length )
       throw out_of_range( "basic_string::basic_string" );
 
-    size_type tail_length = other.filled - pos;
+    size_type tail_length = other.str_length - pos;
     size_type result_length = ( tail_length <= n ) ? tail_length : n;
 
-    buffer = alloc( result_length + 1, total );
+    buffer = alloc( result_length + 1, buf_length );
     Traits::copy( buffer, other.buffer + pos, result_length );
-    filled = result_length;
+    str_length = result_length;
   }
 
   // basic_string( const CharT *, size_type, const Allocator & )
@@ -458,9 +460,9 @@ namespace std {
     if( n == npos )
       throw length_error( "basic_string::basic_string" );
 
-    buffer = alloc( n + 1, total );
+    buffer = alloc( n + 1, buf_length );
     Traits::copy( buffer, s, n );
-    filled = n;
+    str_length = n;
   }
 
   // basic_string( size_type, CharT, const Allocator & )
@@ -474,9 +476,9 @@ namespace std {
     if( n == npos )
       throw length_error( "basic_string::basic_string" );
 
-    buffer = alloc( n + 1, total );
+    buffer = alloc( n + 1, buf_length );
     Traits::assign( buffer, n, c );
-    filled = n;
+    str_length = n;
   }
 
   // operator=( const CharT * )
@@ -488,15 +490,15 @@ namespace std {
   {
     // Prepare new buffer.
     size_type result_length = Traits::length( s );
-    size_type new_total;
-    pointer new_buffer = alloc( result_length + 1, new_total );
+    size_type new_length;
+    pointer new_buffer = alloc( result_length + 1, new_length );
     Traits::copy( new_buffer, s, result_length );
 
     // Commit.
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
-    total  = new_total;
-    filled = result_length;
+    buf_length  = new_length;
+    str_length = result_length;
     return( *this );
   }
 
@@ -508,15 +510,15 @@ namespace std {
       CharT c )
   {
     // Prepare a new buffer.
-    size_type new_total;
-    pointer new_buffer = alloc( 1 + 1, new_total );
+    size_type new_length;
+    pointer new_buffer = alloc( 1 + 1, new_length );
     Traits::assign( *new_buffer, c );
 
     // Commit.
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
-    total  = new_total;
-    filled = 1;
+    buf_length  = new_length;
+    str_length = 1;
     return( *this );
   }
 
@@ -599,7 +601,7 @@ namespace std {
   basic_string< CharT, Traits, Allocator >::iterator
     basic_string< CharT, Traits, Allocator >::end( )
   {
-    return iterator( buffer + filled );
+    return iterator( buffer + str_length );
   }
 
   // const_iterator end( ) const
@@ -609,7 +611,7 @@ namespace std {
   basic_string< CharT, Traits, Allocator >::const_iterator
     basic_string< CharT, Traits, Allocator >::end( ) const
   {
-    return const_iterator( buffer + filled );
+    return const_iterator( buffer + str_length );
   }
 
   // size( ) const
@@ -619,7 +621,7 @@ namespace std {
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::size( ) const
   {
-    return( filled );
+    return( str_length );
   }
 
   // length( ) const
@@ -629,7 +631,7 @@ namespace std {
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::length( ) const
   {
-    return( filled );
+    return( str_length );
   }
 
   // capacity( ) const
@@ -639,7 +641,7 @@ namespace std {
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::capacity( ) const
   {
-    return( total );
+    return( buf_length );
   }
 
   // max_size( ) const
@@ -659,25 +661,25 @@ namespace std {
     size_type n,
     CharT c )
   {
-    if( n <= filled ) {
-      filled = n;
+    if( n <= str_length ) {
+      str_length = n;
       return;
     }
 
-    if( n < total ) {
-      Traits::assign( buffer + filled, n - filled, c );
-      filled = n;
+    if( n < buf_length ) {
+      Traits::assign( buffer + str_length, n - str_length, c );
+      str_length = n;
       return;
     }
 
-    size_type new_total;
-    pointer new_buffer = alloc( n + 1, new_total );
-    Traits::copy( new_buffer, buffer, filled );
-    Traits::assign( new_buffer + filled, n - filled, c );
-    mem.deallocate( buffer, total );
+    size_type new_length;
+    pointer new_buffer = alloc( n + 1, new_length );
+    Traits::copy( new_buffer, buffer, str_length );
+    Traits::assign( new_buffer + str_length, n - str_length, c );
+    mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
-    total  = new_total;
-    filled = n;
+    buf_length  = new_length;
+    str_length = n;
   }
 
   // reserve( size_type )
@@ -686,14 +688,14 @@ namespace std {
   void basic_string< CharT, Traits, Allocator >::reserve(
     size_type new_capacity )
   {
-    if( new_capacity <= total ) return;
+    if( new_capacity <= buf_length ) return;
 
-    size_type new_total;
-    pointer new_buffer = alloc( new_capacity + 1, new_total );
-    Traits::copy( new_buffer, buffer, filled );
-    mem.deallocate( buffer, total );
+    size_type new_length;
+    pointer new_buffer = alloc( new_capacity + 1, new_length );
+    Traits::copy( new_buffer, buffer, str_length );
+    mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
-    total  = new_total;
+    buf_length  = new_length;
   }
 
   // clear( )
@@ -702,7 +704,7 @@ namespace std {
   inline
   void basic_string< CharT, Traits, Allocator >::clear( )
   {
-    filled = 0;
+    str_length = 0;
   }
 
   // empty( ) const
@@ -711,7 +713,7 @@ namespace std {
   inline
   bool basic_string< CharT, Traits, Allocator >::empty( ) const
   {
-    return( filled == 0 );
+    return( str_length == 0 );
   }
 
   // operator[]( size_type ) const
@@ -741,7 +743,7 @@ namespace std {
   typename basic_string< CharT, Traits, Allocator >::const_reference
     basic_string< CharT, Traits, Allocator >::at( size_type pos ) const
   {
-    if( pos >= filled )
+    if( pos >= str_length )
       throw out_of_range( "basic_string::at" );
 
     return( buffer[pos] );
@@ -754,7 +756,7 @@ namespace std {
   typename basic_string< CharT, Traits, Allocator >::reference
     basic_string< CharT, Traits, Allocator >::at( size_type pos )
   {
-    if( pos >= filled )
+    if( pos >= str_length )
       throw out_of_range( "basic_string::at" );
 
     return( buffer[pos] );
@@ -806,26 +808,26 @@ namespace std {
     size_type tail_length = str.size( ) - pos;
     size_type append_length = ( tail_length <= n ) ? tail_length : n;
 
-    if( filled >= npos - append_length - 1 )
+    if( str_length >= npos - append_length - 1 )
       throw length_error( "basic_string::append" );
 
-    if( append_length <= total - filled - 1) {
-      Traits::copy( buffer + filled, str.buffer + pos, append_length );
-      filled += append_length;
+    if( append_length <= buf_length - str_length - 1) {
+      Traits::copy( buffer + str_length, str.buffer + pos, append_length );
+      str_length += append_length;
     }
     else {
       // Prepare new buffer.
-      size_type result_length = filled + append_length;
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
-      Traits::copy( new_buffer, buffer, filled );
-      Traits::copy( new_buffer + filled, str.buffer + pos, append_length );
+      size_type result_length = str_length + append_length;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
+      Traits::copy( new_buffer, buffer, str_length );
+      Traits::copy( new_buffer + str_length, str.buffer + pos, append_length );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
 
     return( *this );
@@ -839,26 +841,26 @@ namespace std {
       const CharT *s,
       size_type n )
   {
-    if( filled >= npos - n - 1)
+    if( str_length >= npos - n - 1)
       throw length_error( "basic_string::append" );
 
-    if( n <= total - filled - 1) {
-      Traits::copy( buffer + filled, s, n );
-      filled += n;
+    if( n <= buf_length - str_length - 1) {
+      Traits::copy( buffer + str_length, s, n );
+      str_length += n;
     }
     else {
       // Prepare new buffer.
-      size_type result_length = filled + n;
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
-      Traits::copy( new_buffer, buffer, filled );
-      Traits::copy( new_buffer + filled, s, n );
+      size_type result_length = str_length + n;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
+      Traits::copy( new_buffer, buffer, str_length );
+      Traits::copy( new_buffer + str_length, s, n );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
 
     return( *this );
@@ -880,26 +882,26 @@ namespace std {
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::append( size_type n, CharT c )
   {
-    if( filled >= npos - n - 1 )
+    if( str_length >= npos - n - 1 )
       throw length_error( "basic_string::append" );
 
-    if( n <= total - filled - 1 ) {
-      Traits::assign( buffer + filled, n, c );
-      filled += n;
+    if( n <= buf_length - str_length - 1 ) {
+      Traits::assign( buffer + str_length, n, c );
+      str_length += n;
     }
     else {
       // Prepare new buffer.
-      size_type result_length = filled + n;
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
-      Traits::copy( new_buffer, buffer, filled );
-      Traits::assign( new_buffer + filled, n, c );
+      size_type result_length = str_length + n;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
+      Traits::copy( new_buffer, buffer, str_length );
+      Traits::assign( new_buffer + str_length, n, c );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
 
     return( *this );
@@ -924,36 +926,36 @@ namespace std {
       size_type pos2,
       size_type n )
   {
-    if( pos1 > filled || pos2 > str.filled )
+    if( pos1 > str_length || pos2 > str.str_length )
       throw out_of_range( "basic_string::insert" );
 
-    size_type tail_length = str.filled - pos2;
+    size_type tail_length = str.str_length - pos2;
     size_type insert_length = ( tail_length <= n ) ? tail_length : n;
 
-    if( filled >= npos - insert_length - 1)
+    if( str_length >= npos - insert_length - 1)
       throw length_error( "basic_string::insert" );
 
-    if( insert_length <= total - filled - 1) {
+    if( insert_length <= buf_length - str_length - 1) {
       Traits::move(
-        buffer + pos1 + insert_length, buffer + pos1, filled - pos1 );
+        buffer + pos1 + insert_length, buffer + pos1, str_length - pos1 );
       Traits::copy(buffer + pos1, str.buffer + pos2, insert_length );
-      filled += insert_length;
+      str_length += insert_length;
     }
     else {
       // Prepare new buffer.
-      size_type result_length = filled + insert_length;
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
+      size_type result_length = str_length + insert_length;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
       Traits::copy( new_buffer, buffer, pos1 );
       Traits::copy( new_buffer + pos1, str.buffer + pos2, insert_length );
       Traits::copy(
-        new_buffer + pos1 + insert_length, buffer + pos1, filled - pos1 );
+        new_buffer + pos1 + insert_length, buffer + pos1, str_length - pos1 );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
 
     return( *this );
@@ -1017,29 +1019,29 @@ namespace std {
     size_type insert_length = n;
     size_type pos = p - buffer;
 
-    if( filled >= npos - insert_length - 1)
+    if( str_length >= npos - insert_length - 1)
       throw length_error( "basic_string::insert" );
 
-    if( insert_length <= total - filled - 1) {
-      Traits::move( buffer + pos + insert_length, buffer + pos, filled - pos );
+    if( insert_length <= buf_length - str_length - 1) {
+      Traits::move( buffer + pos + insert_length, buffer + pos, str_length - pos );
       Traits::assign( buffer + pos, insert_length, c );
-      filled += insert_length;
+      str_length += insert_length;
     }
     else {
       // Prepare new buffer.
-      size_type result_length = filled + insert_length;
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
+      size_type result_length = str_length + insert_length;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
       Traits::copy( new_buffer, buffer, pos );
       Traits::assign( new_buffer + pos, insert_length, c );
       Traits::copy(
-        new_buffer + pos + insert_length, buffer + pos, filled - pos );
+        new_buffer + pos + insert_length, buffer + pos, str_length - pos );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
   }
 
@@ -1051,13 +1053,13 @@ namespace std {
       size_type pos,
       size_type n )
   {
-    if( pos > filled )
+    if( pos > str_length )
       throw out_of_range( "basic_string::erase" );
 
-    size_type tail_length = filled - pos;
+    size_type tail_length = str_length - pos;
     size_type erase_length = ( n < tail_length ) ? n : tail_length;
     Traits::move( buffer + pos, buffer + pos + n, tail_length - erase_length );
-    filled -= erase_length;
+    str_length -= erase_length;
     return( *this );
   }
 
@@ -1109,40 +1111,40 @@ namespace std {
       size_type pos2,
       size_type n2 )
   {
-    if( pos1 > filled || pos2 > str.filled )
+    if( pos1 > str_length || pos2 > str.str_length )
       throw out_of_range( "basic_string::replace" );
 
-    size_type tail_length1 = filled - pos1;
-    size_type tail_length2 = str.filled - pos2;
+    size_type tail_length1 = str_length - pos1;
+    size_type tail_length2 = str.str_length - pos2;
     size_type remove_length = (n1 < tail_length1) ? n1 : tail_length1;
     size_type insert_length = (n2 < tail_length2) ? n2 : tail_length2;
 
-    if( filled - remove_length > npos - insert_length )
+    if( str_length - remove_length > npos - insert_length )
       throw length_error( "basic_string::replace" );
 
-    size_type result_length = filled - remove_length + insert_length;
-    if( total > result_length ) {
+    size_type result_length = str_length - remove_length + insert_length;
+    if( buf_length > result_length ) {
       Traits::move( buffer + pos1 + insert_length,
                     buffer + pos1 + remove_length,
-                    filled - pos1 - remove_length );
+                    str_length - pos1 - remove_length );
       Traits::copy( buffer + pos1, str.buffer + pos2, insert_length );
-      filled = result_length;
+      str_length = result_length;
     }
     else {
       // Prepare new buffer.
-      size_type new_total;
-      pointer new_buffer = alloc( result_length + 1, new_total );
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
       Traits::copy( new_buffer, buffer, pos1 );
       Traits::copy( new_buffer + pos1, str.buffer + pos2, insert_length );
       Traits::copy( new_buffer + pos1 + insert_length,
                     buffer + pos1 + remove_length,
-                    filled - pos1 - remove_length );
+                    str_length - pos1 - remove_length );
 
       // Commit.
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      total  = new_total;
-      filled = result_length;
+      buf_length  = new_length;
+      str_length = result_length;
     }
 
     return( *this );
@@ -1255,10 +1257,10 @@ namespace std {
       size_type n,
       size_type pos ) const
   {
-    if( pos > filled )
+    if( pos > str_length )
       throw out_of_range( "basic_string::copy" );
 
-    size_type tail_length = filled - pos;
+    size_type tail_length = str_length - pos;
     size_type copy_length = (n < tail_length) ? n : tail_length;
     Traits::copy( s, buffer + pos, copy_length );
     return( copy_length );
@@ -1278,13 +1280,13 @@ namespace std {
     buffer     = str.buffer;
     str.buffer = ptemp;
 
-    stemp      = total;
-    total      = str.total;
-    str.total  = stemp;
+    stemp      = buf_length;
+    buf_length      = str.buf_length;
+    str.buf_length  = stemp;
 
-    stemp      = filled;
-    filled     = str.filled;
-    str.filled = stemp;
+    stemp      = str_length;
+    str_length     = str.str_length;
+    str.str_length = stemp;
 
     atemp      = mem;
     mem        = str.mem;
@@ -1320,13 +1322,13 @@ namespace std {
       size_type pos ) const
   {
     // Verify initial bounds.
-    if( filled < pos ) return( npos );
-    if( filled - pos < str.filled ) return( npos );
-    if( filled - pos == 0 ) return( pos );
+    if( str_length < pos ) return( npos );
+    if( str_length - pos < str.str_length ) return( npos );
+    if( str_length - pos == 0 ) return( pos );
 
-    while( pos + str.filled <= filled ) {
+    while( pos + str.str_length <= str_length ) {
       bool found = true;
-      for( size_type i = 0; i < str.filled; ++i ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[pos + i], str.buffer[i] ) == false ) {
           found = false;
           break;
@@ -1383,14 +1385,14 @@ namespace std {
       const basic_string &str,
       size_type pos ) const
   {
-    if( filled < str.filled ) return( npos );
-    size_type index = filled - str.filled;
+    if( str_length < str.str_length ) return( npos );
+    size_type index = str_length - str.str_length;
     index = ( pos < index ) ? pos : index;
     ++index;
     do {
       bool found = true;
       --index;
-      for( size_type i = 0; i < str.filled; ++i ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[index + i], str.buffer[i] ) == false ) {
           found = false;
           break;
@@ -1449,10 +1451,10 @@ namespace std {
   {
     size_type index = pos;
 
-    if( filled < index ) return( npos );
+    if( str_length < index ) return( npos );
 
-    while( index < filled ) {
-      for( size_type i = 0; i < str.filled; ++i ) {
+    while( index < str_length ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
           return( index );
         }
@@ -1510,10 +1512,10 @@ namespace std {
   {
     size_type index = pos;
 
-    if( filled < index ) index = filled - 1;
+    if( str_length < index ) index = str_length - 1;
 
     while( index != npos ) {
-      for( size_type i = 0; i < str.filled; ++i ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
           return( index );
         }
@@ -1571,11 +1573,11 @@ namespace std {
   {
     size_type index = pos;
 
-    if( filled <= index ) return( npos );
+    if( str_length <= index ) return( npos );
 
-    while( index < filled ) {
+    while( index < str_length ) {
       bool found = false;
-      for( size_type i = 0; i < str.filled; ++i ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
           found = true;
           break;
@@ -1635,11 +1637,11 @@ namespace std {
   {
     size_type index = pos;
 
-    if( filled <= index ) index = filled - 1;
+    if( str_length <= index ) index = str_length - 1;
 
     while( index != npos ) {
       bool found = false;
-      for( size_type i = 0; i < str.filled; ++i ) {
+      for( size_type i = 0; i < str.str_length; ++i ) {
         if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
           found = true;
           break;
@@ -1697,10 +1699,10 @@ namespace std {
       size_type pos,
       size_type n ) const
   {
-    if( pos > filled )
+    if( pos > str_length )
       throw out_of_range( "basic_string::substr" );
 
-    size_type sublength = (n < filled - pos) ? n : filled - pos;
+    size_type sublength = (n < str_length - pos) ? n : str_length - pos;
     return( basic_string( buffer + pos, sublength ) );
   }
 
@@ -1774,8 +1776,8 @@ namespace std {
   bool operator==( const basic_string< CharT, Traits, Allocator > &left,
                    const basic_string< CharT, Traits, Allocator > &right )
   {
-    if( left.filled != right.filled ) return false;
-    return( Traits::compare( left.buffer, right.buffer, left.filled ) == 0 );
+    if( left.str_length != right.str_length ) return false;
+    return( Traits::compare( left.buffer, right.buffer, left.str_length ) == 0 );
   }
 
   // operator==( const CharT *, const basic_string & )
@@ -1784,8 +1786,8 @@ namespace std {
   bool operator==( const CharT *left,
                    const basic_string< CharT, Traits, Allocator > &right )
   {
-    if( Traits::length( left ) != right.filled ) return false;
-    return( Traits::compare( left, right.buffer, right.filled ) == 0 );
+    if( Traits::length( left ) != right.str_length ) return false;
+    return( Traits::compare( left, right.buffer, right.str_length ) == 0 );
   }
 
   // operator==( const basic_string &, const CharT * )
@@ -1794,8 +1796,8 @@ namespace std {
   bool operator==( const basic_string< CharT, Traits, Allocator > &left,
                    const CharT *right )
   {
-    if( left.filled != Traits::length( right ) ) return false;
-    return( Traits::compare( left.buffer, right, left.filled ) == 0 );
+    if( left.str_length != Traits::length( right ) ) return false;
+    return( Traits::compare( left.buffer, right, left.str_length ) == 0 );
   }
 
   // operator!=( const basic_string &, const basic_string & )
@@ -1834,11 +1836,11 @@ namespace std {
   bool operator<( const basic_string< CharT, Traits, Allocator > &left,
                   const basic_string< CharT, Traits, Allocator > &right )
   {
-    Allocator::size_type common_length = left.filled;
-    if( right.filled < common_length ) common_length = right.filled;
+    Allocator::size_type common_length = left.str_length;
+    if( right.str_length < common_length ) common_length = right.str_length;
     int result = Traits::compare( left.buffer, right.buffer, common_length );
     if( result < 0 ) return true;
-    if( result == 0 && left.filled < right.filled ) return true;
+    if( result == 0 && left.str_length < right.str_length ) return true;
     return( false );
   }
 
@@ -1850,10 +1852,10 @@ namespace std {
   {
     Allocator::size_type raw_length = Traits::length( left );
     Allocator::size_type common_length = raw_length;
-    if( right.filled < common_length ) common_length = right.filled;
+    if( right.str_length < common_length ) common_length = right.str_length;
     int result = Traits::compare( left, right.buffer, common_length );
     if( result < 0 ) return true;
-    if( result == 0 && raw_length < right.filled ) return true;
+    if( result == 0 && raw_length < right.str_length ) return true;
     return( false );
   }
 
@@ -1864,11 +1866,11 @@ namespace std {
                   const CharT *right )
   {
     Allocator::size_type raw_length = Traits::length( right );
-    Allocator::size_type common_length = left.filled;
+    Allocator::size_type common_length = left.str_length;
     if( raw_length < common_length ) common_length = raw_length;
     int result = Traits::compare( left.buffer, right, common_length );
     if( result < 0 ) return true;
-    if( result == 0 && left.filled < raw_length ) return true;
+    if( result == 0 && left.str_length < raw_length ) return true;
     return( false );
   }
 

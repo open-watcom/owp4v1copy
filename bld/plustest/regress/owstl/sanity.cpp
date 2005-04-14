@@ -39,7 +39,7 @@
 
   #define INSANE(x) ( !x._Sane( ) )
 
-  static bool heap_ok( const char *msg )
+  bool heap_ok( const char *msg )
   {
     bool rc = true;
     if( _heapchk( ) != _HEAPOK ) {
@@ -49,13 +49,28 @@
     return( rc );
   }
 
+  int heap_count( )
+  {
+    int count = 0;
+    struct _heapinfo info;
+
+    info._pentry = NULL;
+    while( _heapwalk( &info ) != _HEAPEND ) ++count;
+    return( count );
+  }
+
 #else
 
   #define INSANE(x) false
 
-  static bool heap_ok( const char * )
+  bool heap_ok( const char * )
   {
     return( true );
+  }
+
+  int heap_count( )
+  {
+    return( 0 );
   }
 
 #endif

@@ -24,19 +24,202 @@
 *
 *  ========================================================================
 *
-* Description:  Use this file as a template for creating new tests.
+* Description:  This file contains "exotic" instantiation tests for the
+*               basic_string template. Most users won't do stuff like
+*               this, but it's supposed to work anyway.
 *
 ****************************************************************************/
 
 #include <iostream>
+#include <limits>
+#include <string>
 
 #include "sanity.cpp"
 
-bool some_test( )
+namespace std {
+
+  // Character traits specialization for type double as "characters."
+  template< >
+  struct char_traits< double > {
+    typedef double  char_type;
+    typedef double  int_type;
+
+    static void assign( char_type &c1, const char_type &c2 )
+      { c1 = c2; }
+
+    static bool eq( const char_type &c1, const char_type &c2 )
+      { return( c1 == c2 ); }
+
+    static bool lt( const char_type &c1, const char_type &c2 )
+      { return( c1 < c2 ); }
+
+    static int compare( const char_type *s1, const char_type *s2, size_t n )
+    {
+      for( size_t i = 0; i < n; ++i ) {
+        if( *s1 < *s2 ) return( -1 );
+        if( *s1 > *s2 ) return(  1 );
+        ++s1; ++s2;
+      }
+      return( 0 );
+    }
+
+    static size_t length( const char_type *s )
+    {
+      size_t count = 0;
+      while( *s != double( ) ) { ++count; ++s; }
+      return( count );
+    }
+
+    static const char_type *find( const char_type *s, size_t n, const char_type &a )
+    {
+      const char_type *result = 0;
+      for( size_t i = 0; i < n; ++i ) {
+        if( *s == a ) {
+          result = s;
+          break;
+        }
+        ++s;
+      }
+      return( result );
+    }
+
+    static char_type *move( char_type *s1, const char_type *s2, size_t n )
+    {
+      return( static_cast< char_type * >
+              ( memmove(s1, s2, n * sizeof( char_type ) ) ) );
+    }
+
+    static char_type *copy( char_type *s1, const char_type *s2, size_t n )
+    {
+      return( static_cast< char_type * >
+              ( memcpy(s1, s2, n * sizeof( char_type ) ) ) );
+    }
+
+    static char_type *assign( char_type *s, size_t n, char_type a )
+    {
+      char_type *p = s;
+      for( size_t i = 0; i < n; ++i ) {
+        *p = a;
+        ++p;
+      }
+      return( s );
+    }
+
+    static int_type not_eof( const int_type &c )
+      { return( (c != std::numeric_limits< double >::max( ) ) ?
+          c : static_cast< int_type >( 0.0 ) ); }
+
+    static char_type to_char_type( const int_type &c )
+      { return( static_cast< char_type >(c) ); }
+
+    static int_type to_int_type( const char_type &c )
+      { return( static_cast< int_type >(c) ); }
+
+    static bool eq_int_type( const int_type &c1, const int_type &c2 )
+      { return( c1 == c2 ); }
+
+    static int_type eof( )
+      { return( std::numeric_limits< double >::max( ) ); }
+  };
+
+} // End of namespace std.
+
+typedef std::basic_string< double > dstring;
+
+bool wstring_test( )
 {
   bool rc = true;
 
-  // Exercise some facility here.
+  // This test is designed to exercise wstring where the traits template
+  // is used. The idea is to make sure the traits specialization is
+  // reasonable and to spot check basic_string functionality for
+  // wchar_t. This test is not intended to be an exhaustive functional
+  // test for wstring.
+
+  std::wstring s1( 10, L'x' );
+  std::wstring s2( s1 );
+
+  if( s1.size( ) != 10 || INSANE( s1 ) ) {
+    std::cout << "wstring FAIL 0001\n"; rc = false;
+  }
+  if( s2.size( ) != 10 || s1 != s2 || INSANE( s2 ) ) {
+    std::cout << "wstring FAIL 0002\n"; rc = false;
+  }
+
+  s2 = L"This is a wide character string";
+  if( s2.size( ) != 31 ||
+      s2 != L"This is a wide character string" || INSANE( s2 ) ) {
+    std::cout << "wstring FAIL 0003\n"; rc = false;
+  }
+
+  s2 = L'z';
+  if( s2.size( ) != 1 || s2 != L"z" || INSANE( s2 ) ) {
+    std::cout << "wstring FAIL 0004\n"; rc = false;
+  }
+
+  std::wstring s3( 3, L'x' ); s3[2] = L'z';
+  std::wstring s4( 1, L'y' );
+  s3.insert( 1, s4 );
+  if( s3.size( ) != 4 || s3 != L"xyxz" || INSANE( s3 ) ) {
+    std::cout << "wstring FAIL 0005\n"; rc = false;
+  }
+
+  std::wstring s5( L"Hello, World" );
+  std::wstring s6( L"ell" );
+  if( s5.find( s6 ) != 1 ) {
+    std::cout << "wstring FAIL 0006\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+bool dstring_test( )
+{
+  bool rc = true;
+
+  double raw_string[] = {
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, double( )
+  };
+  double raw_value[] = { -1.0, double( ) };
+
+  dstring s1( 10, 1.0 );
+  dstring s2( s1 );
+
+  if( s1.size( ) != 10 || INSANE( s1 ) ) {
+    std::cout << "dstring FAIL 0001\n"; rc = false;
+  }
+  if( s2.size( ) != 10 || s1 != s2 || INSANE( s2 ) ) {
+    std::cout << "dstring FAIL 0002\n"; rc = false;
+  }
+
+  s2 = raw_string;
+  if( s2.size( ) != 12 ||
+      s2 != raw_string || INSANE( s2 ) ) {
+    std::cout << "dstring FAIL 0003\n"; rc = false;
+  }
+
+  s2 = -1.0;
+  if( s2.size( ) != 1 || s2 != raw_value || INSANE( s2 ) ) {
+    std::cout << "dstring FAIL 0004\n"; rc = false;
+  }
+
+  dstring s3( 3, 1.0 ); s3[2] = 2.0;
+  dstring s4( 1, 3.0 );
+  double result[] = { 1.0, 3.0, 1.0, 2.0, double( ) };
+
+  s3.insert( 1, s4 );
+  if( s3.size( ) != 4 || s3 != result || INSANE( s3 ) ) {
+    std::cout << "dstring FAIL 0005\n"; rc = false;
+  }
+
+  double haystack[] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, double( ) };
+  double needle[] = { 2.0, 3.0, 4.0, double( ) };
+
+  dstring s5( haystack );
+  dstring s6( needle );
+  if( s5.find( s6 ) != 1 ) {
+    std::cout << "dstring FAIL 0006\n"; rc = false;
+  }
 
   return( rc );
 }
@@ -45,13 +228,20 @@ bool some_test( )
 int main( )
 {
   int rc = 0;
+  int original_count = heap_count( );
+
   try {
-    if( !some_test( )    || !heap_ok( "t1" ) ) rc = 1;
+    if( !wstring_test( )    || !heap_ok( "t01" ) ) rc = 1;
+    if( !dstring_test( )    || !heap_ok( "t02" ) ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";
     rc = 1;
   }
 
+  if( heap_count( ) != original_count ) {
+    std::cout << "Possible memory leak!\n";
+    rc = 1;
+  }
   return( rc );
 }
