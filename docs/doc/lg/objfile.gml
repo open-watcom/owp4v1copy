@@ -12,6 +12,6 @@ the &lnkname..
 Also, if you are running a DOS, OS/2 or Windows-hosted version of
 the &lnkname, the object file specification can contain wild cards
 (*, ?).
-A file extension of "o" is assumed if you are running a QNX-hosted
+A file extension of "o" is assumed if you are running a UNIX-hosted
 version of the &lnkname..
 .do end

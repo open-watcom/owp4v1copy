@@ -85,7 +85,7 @@ the library file "&pc.utility&pc.graph.lib"
 If a library file specified in a "OPTLIB" directive contains an
 absolute path specification, the &lnkname will not search any of the
 paths specified in the "LIB" environment string for the library file.
-On QNX-hosted systems, an absolute path specification is one that
+On UNIX-hosted systems, an absolute path specification is one that
 begins the "/" character.
 On all other hosts, an absolute path specification is one that begins
 with a drive specification or the "\" character.

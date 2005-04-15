@@ -12,7 +12,7 @@ The format of the "NAME" directive (short form "N") is as follows.
 .synote
 .mnote exe_file
 is a file specification for the name of the executable file.
-Under QNX, no file extension is appended.
+Under UNIX, no file extension is appended.
 For all other operating systems, a file extension suitable for the
 current executable file format is appended if no file extension is
 specified.
@@ -26,7 +26,7 @@ Consider the following example.
 The linker is instructed to generate an executable file called
 "myprog.&exeextn" if you are running a DOS, OS/2 or Windows-hosted
 version of the linker.
-If you are running a QNX-hosted version of the linker, an executable
+If you are running a UNIX-hosted version of the linker, an executable
 file called "myprog" will be generated.
 .autonote Notes:
 .note
@@ -34,7 +34,7 @@ No file extension was given when the executable file name was
 specified.
 The linker assumes a file extension that depends on the format of the
 executable file being generated.
-If you are running a QNX-hosted version of the linker, no file
+If you are running a UNIX-hosted version of the linker, no file
 extension will be assumed.
 The section entitled :HDREF refid='xformat'. describes the
 "FORMAT" directive and how the file extension is chosen for each
@@ -46,6 +46,6 @@ If the first object file processed is called "test.&obj" and no "NAME"
 directive is specified, an executable file called "test.&exeextn" will
 be generated if you are running a DOS or OS/2-hosted version of the
 linker.
-If you are running a QNX-hosted version of the linker, an executable
+If you are running a UNIX-hosted version of the linker, an executable
 file called "test" will be generated.
 .endnote

@@ -45,7 +45,7 @@ If unsuccessful, the linker will attempt to load the file
 It is possible to override the path specified in a "PATH" directive
 by preceding the object file name in a "FILE" directive with an absolute
 path specification.
-On QNX-hosted systems, an absolute path specification is one that
+On UNIX-hosted systems, an absolute path specification is one that
 begins the "/" character.
 On all other hosts, an absolute path specification is one that begins
 with a drive specification or the "\" character.

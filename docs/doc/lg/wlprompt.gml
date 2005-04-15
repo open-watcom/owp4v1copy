@@ -46,6 +46,6 @@ Press "Ctrl/Z" followed by the "Enter" key to terminate the input of
 directive information if you are running a DOS, OS/2 or Windows
 NT-hosted version of the &lnkname..
 Press "Ctrl/D" to terminate the input of directive information if you
-are running a QNX-hosted version of the &lnkname..
+are running a UNIX-hosted version of the &lnkname..
 .do end
 .endnote
