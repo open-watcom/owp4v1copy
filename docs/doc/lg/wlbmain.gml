@@ -140,6 +140,25 @@ Hence,
 should not have a file extension of "bak".
 .ix '&libcmdup ' 'operations'
 .*
+.section &libname Module Commands
+.*
+.np
+Bellow is list of &libname module base commands:
+.begnote $break $compact
+.note +
+add module to library
+.note -
+remove module from library
+.note * or :
+extract module from library.
+.bd :
+is used on UNIX system otherwise
+.bd *
+is used
+.note ++
+add import library entry
+.endnote
+.*
 .section Adding Modules to a Library File
 .*
 .np
@@ -255,14 +274,14 @@ Otherwise, the &libname will assume you are replacing an object module.
 A module can be extracted from a library file by specifying a
 .if '&target' eq 'QNX' .do begin
 .bd :mod_name
-command.
+[=file_name] command.
 .do end
 .el .do begin
 .bd *mod_name
-command for a DOS, OS/2 or Windows-hosted version of the &libname
+[=file_name] command for a DOS, OS/2 or Windows-hosted version of the &libname
 or a
 .bd :mod_name
-command for a QNX-hosted version of the &libname..
+[=file_name] command for a QNX-hosted version of the &libname..
 .do end
 The module
 .bd mod_name
@@ -312,6 +331,20 @@ extension of "o" will be used.
 .pc
 In the above example, the module "myobj" will be extracted from the
 library file "mylib.lib" and placed in the file "myobj.out"
+.np
+Next form is possible if you need to use file name 
+different from module name.
+.np
+.exam begin
+.if '&target' eq 'QNX' .do begin
+&libcmd mylib :myobj=newmyobj.out
+.do end
+.el .do begin
+&libcmd mylib *myobj=newmyobj.out    DOS, OS/2 or Windows-hosted
+    or
+&libcmd mylib :myobj=newmyobj.out    QNX-hosted
+.do end
+.exam end
 .np
 You can extract a module from a file and have that module deleted from
 the library file by specifying a
