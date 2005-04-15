@@ -82,7 +82,10 @@ static void ProcessOneObject( arch_header *arch, libfile io )
             {
                 if ((cmd->ops & OP_EXTRACT) && !(cmd->ops & OP_EXTRACTED))
                 {
-                    ExtractObj(io, cmd->name, arch->size, arch);
+                    if( cmd->fname != NULL )
+                        ExtractObj(io, cmd->fname, arch->size, arch);
+                    else
+                        ExtractObj(io, cmd->name, arch->size, arch);
                     cmd->ops |= OP_EXTRACTED;
                 }
             }

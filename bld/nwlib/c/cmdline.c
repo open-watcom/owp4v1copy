@@ -325,14 +325,23 @@ static bool ParseOption( char **pc, char *buff )
 
 void AddCommand( operation ops, char *name )
 {
-    lib_cmd     *new;
+    lib_cmd         *new;
 
-    new = MemAllocGlobal( sizeof( *new ) + strlen( name ) );
+    new = MemAllocGlobal( sizeof( lib_cmd ) + strlen( name ) );
     strcpy( new->name, name );
+    new->fname = NULL;
+    if( ops == OP_EXTRACT ) {
+        char    *p;
+
+        p = strchr( new->name, '=' );
+        if( p != NULL ) {
+            *p = '\0';
+            new->fname = p + 1;
+        }
+    }
     new->next = CmdList;
     new->ops = ops;
     CmdList = new;
-
 }
 
 static void FreeCommands()

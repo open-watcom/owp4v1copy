@@ -49,6 +49,7 @@ typedef enum {
 typedef struct lib_cmd {
     struct      lib_cmd *next;
     operation   ops;
+    char        *fname;
     char        name[1];
 } lib_cmd;
 

@@ -143,24 +143,24 @@ pick( USAGE_WLIB_40,        "                | -+<object_file_name>     (replace
 pick( USAGE_WLIB_41,        "                | +-<object_file_name>     (replace)" ,
                 "                | +-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (入れ替え)" )
 #ifdef __UNIX__
-pick( USAGE_WLIB_42,        "                | :<object_file_name>      (extract)" ,
+pick( USAGE_WLIB_42,        "                | :<module_name>[=<object_file_name>]  (extract)" ,
                 "                | *<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>       (取り出し)" )
 #else
-pick( USAGE_WLIB_42,        "                | *<object_file_name>      (extract)" ,
+pick( USAGE_WLIB_42,        "                | *<module_name>[=<object_file_name>]  (extract)" ,
                 "                | *<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>       (取り出し)" )
 #endif
 #ifdef __UNIX__
-pick( USAGE_WLIB_43,        "                | -:<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_43,        "                | -:<module_name>[=<object_file_name>] (extract and delete)" ,
                 "                | -*<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #else
-pick( USAGE_WLIB_43,        "                | -*<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_43,        "                | -*<module_name>[=<object_file_name>] (extract and delete)" ,
                 "                | -*<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #endif
 #ifdef __UNIX__
-pick( USAGE_WLIB_44,        "                | :-<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_44,        "                | :-<module_name>[=<object_file_name>] (extract and delete)" ,
                 "                | *-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #else
-pick( USAGE_WLIB_44,        "                | *-<object_file_name>     (extract and delete)" ,
+pick( USAGE_WLIB_44,        "                | *-<module_name>[=<object_file_name>] (extract and delete)" ,
                 "                | *-<ｵﾌﾞｼﾞｪｸﾄ･ﾌｧｲﾙ名>      (取り出しと削除)" )
 #endif
 pick( USAGE_WLIB_45,        "" ,
