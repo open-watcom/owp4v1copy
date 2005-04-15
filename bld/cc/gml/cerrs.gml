@@ -412,6 +412,13 @@ However,
 i;
 .exam end
 is not a correctly formed declaration.
+:MSGSYM. ERR_SYMBOL_NAME_TOO_LONG
+:MSGTXT. Symbol name has been truncated for '%s'.
+:MSGJTXT.
+:WARNING. 1
+.np
+Symbol is too long to generate proper name in output object file.
+Maximum length is 255 characters for OMF and 1024 characters for COFF or ELF.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
@@ -457,13 +464,6 @@ may be required for the symbol, or you may have forgotten
 to include the file which contains a
 .id #define
 for the symbol.
-:MSGSYM. ERR_SYMBOL_NAME_TOO_LONG
-:MSGTXT. Symbol '%s' is too long.
-:MSGJTXT.
-:WARNING. 2
-.np
-Symbol is too long to generate proper name in output object file.
-Maximum length is 255 characters for OMF and 1024 characters for COFF or ELF.
 :eMSGGRP. Warn2
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn3

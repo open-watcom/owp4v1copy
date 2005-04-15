@@ -668,7 +668,13 @@ void FEMessage( msg_class class, void *parm )
 
     switch( class ) {
     case MSG_SYMBOL_TOO_LONG:
-        /*  symbol too long, truncated (sym) */
+        {
+            SYM_ENTRY   *sym;
+
+            sym = SymGetPtr( (SYM_HANDLE)parm );
+            SetSymLoc( sym );
+            CWarn( WARN_SYMBOL_NAME_TOO_LONG, ERR_SYMBOL_NAME_TOO_LONG, sym->name );
+        }
         break;
     case MSG_BLIP:
         if( ! CompFlags.quiet_mode ) {
