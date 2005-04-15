@@ -9,7 +9,7 @@ including the appropriate "cname" header. In that case all of the C
 standard library functions are in namespace
 :MONO.std.
 For example, to use function
-:MONO.std::printf
+:MONO.std::~printf
 one should include the header cstdio. Note that the cname headers
 declare in the global namespace any non-standard names they contain as
 extensions. It is also possible to include in a C++ program the same
@@ -25,11 +25,11 @@ The headers with a .h extension declare their library classes and
 functions in both the global namespace and in namespace
 :MONO.std.
 Such headers are provided as a convenience and for compatibility with
-legacy code. Programs that intend to conform to the ISO C++ standard
-should use the extensionless headers to access the facilities of the C++
-standard library.
+legacy code. Programs that intend to conform to Standard C++ should use
+the extensionless headers to access the facilities of the C++ standard
+library.
 :P.
-Certain headers defined by the ISO C++ standard have names that are
+Certain headers defined by Standard C++ have names that are
 longer than the 8.3 limit imposed by the FAT16 filesystem. Such headers
 are provided with names that are truncated to eight characters so they
 can be used with the DOS host. However, one can still refer to them in
@@ -53,7 +53,7 @@ This header file defines the standard algorithm templates.
 :DD.
 .ix 'header files' 'complex'
 This header file defines the
-:MONO.std::complex
+:MONO.std::~complex
 class template and related function templates. This template can be
 instantiated for the three different floating point types. It can be
 used to represent complex numbers and to perform complex arithmetic.
@@ -65,7 +65,7 @@ This header file defines the legacy
 class. This class is used to represent complex numbers and to perform
 complex arithmetic. The class defined in this header is not the Standard
 C++
-:MONO.std::complex
+:MONO.std::~complex
 class template.
 :DT.exceptio/exceptio.h (exception/exception.h)
 :DD.
@@ -161,13 +161,13 @@ It also defines their associated parameterless manipulators.
 .ix 'header files' 'iterator'
 This header file defines several templates to facilitate the handling of
 iterators. In particular, it defines the
-:MONO.std::iterator_traits
+:MONO.std::~iterator_traits
 template as well as several other supporting iterator related templates.
 :DT.limits
 :DD.
 .ix 'header files' 'limits'
 This header file defines the
-:MONO.std::numeric_limits
+:MONO.std::~numeric_limits
 template and provides specializations of that template for each of the
 built-in types.
 :P.
@@ -178,16 +178,16 @@ climits).
 :DD.
 .ix 'header files' 'map'
 This header file defines the
-:MONO.std::map
-class template. It provides a way to associate values to keys.
+:MONO.std::~map
+class template. It provides a way to associate keys to values.
 :DT.memory
 :DD.
 .ix 'header files' 'memory'
 This header file defines the default allocator template,
-:MONO.std::allocator,
+:MONO.std::~allocator,
 as well as several function templates for manipulating raw
 (uninitialized) memory regions. In addition this header defines the
-:MONO.std::auto_ptr
+:MONO.std::~auto_ptr
 template.
 :P.
 Note that the header
@@ -218,7 +218,7 @@ It also defines its associated parameterless manipulators.
 :DD.
 .ix 'header files' 'set'
 This header file defines the
-:MONO.std::set
+:MONO.std::~set
 class template. It provides a way to make ordered collections of objects.
 :DT.stdiobuf.h
 :DD.
@@ -240,13 +240,13 @@ header file.
 :DD.
 .ix 'header files' 'string'
 This header file defines the
-:MONO.std::basic_string
+:MONO.std::~basic_string
 class template. It also contains the type definitions for
-:MONO.std::string
+:MONO.std::~string
 and
-:MONO.std::wstring.
+:MONO.std::~wstring.
 In addition, this header contains specializations of the
-:MONO.std::char_traits
+:MONO.std::~char_traits
 template for both characters and wide characters.
 :DT.string.hpp
 :DD.
@@ -260,7 +260,7 @@ class is used to manipulate character strings. Note that the
 extension is used to avoid colliding with the Standard C
 :MONO.string.h
 header file. The class defined in this header is not the Standard C++
-:MONO.std::string
+:MONO.std::~string
 class.
 :DT.strstrea/strstrea.h (strstream)
 :DD.
@@ -282,7 +282,7 @@ classes are defined.
 :DD.
 .ix 'header files' 'vector'
 This header contains the
-:MONO.std::vector
+:MONO.std::~vector
 class template.
 :DT.wcdefs.h
 :DD.
