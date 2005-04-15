@@ -1530,8 +1530,8 @@ or as the destination of an assignment operation.
 :DL.
 :DT.Returns
 :DD.The address of the bit field.
-To reference field2 in the following C structure, use strt=7, len=5,
-and tipe=T_INT_2.
+To reference field2 in the following C structure for a little endian target,
+use start=4, len=5, and type=T_INT_2. For a big endian target, start=7.
 :eDL.
 :XMP.
 typedef struct {
