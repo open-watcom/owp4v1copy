@@ -1400,6 +1400,9 @@ void    FEMessage( msg_class tipe, void *x ) {
         exit( 1 );
     }
     switch( tipe ) {
+    case MSG_SYMBOL_TOO_LONG:
+        /*  symbol too long, truncated (sym) */
+        break;
     case MSG_CODE_SIZE :
 #if _TARGET == _8086
         CodeSize = (unsigned short)x;

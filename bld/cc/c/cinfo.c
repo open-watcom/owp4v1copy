@@ -667,6 +667,9 @@ void FEMessage( msg_class class, void *parm )
     char  msgbuf[MAX_MSG_LEN];
 
     switch( class ) {
+    case MSG_SYMBOL_TOO_LONG:
+        /*  symbol too long, truncated (sym) */
+        break;
     case MSG_BLIP:
         if( ! CompFlags.quiet_mode ) {
             ConBlip();

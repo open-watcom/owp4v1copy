@@ -116,7 +116,10 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
     void *parm )                // - parameter
 {
     switch( class ) {
-      case MSG_BLIP:
+    case MSG_SYMBOL_TOO_LONG:
+        CErr2p( WARN_MANGLED_NAME_TOO_LONG, (SYMBOL)parm );
+        break;
+    case MSG_BLIP:
         if( CompFlags.ide_console_output ) {
             if( ! CompFlags.quiet_mode ) {
                 putchar( '.' );
@@ -124,15 +127,15 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
             }
         }
         break;
-      case MSG_INFO_FILE:
-      case MSG_INFO_PROC:
+    case MSG_INFO_FILE:
+    case MSG_INFO_PROC:
         if( CompFlags.ide_console_output ) {
             if( ! CompFlags.quiet_mode ) {
                 MsgDisplayLine( parm );
             }
         }
         break;
-      case MSG_CODE_SIZE:
+    case MSG_CODE_SIZE:
         if( CompFlags.ide_console_output ) {
             if( ! CompFlags.quiet_mode ) {
                 char buffer[16];
@@ -143,24 +146,24 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
             }
         }
         break;
-      case MSG_DATA_SIZE:
+    case MSG_DATA_SIZE:
         break;
-      case MSG_ERROR:
+    case MSG_ERROR:
         CErr2p( ERR_USER_ERROR_MSG, parm );
         break;
-      case MSG_FATAL:
+    case MSG_FATAL:
         CErr2p( ERR_FATAL_ERROR, parm );
         CppExit( 1 );         /* exit to DOS do not pass GO */
         break;
-      case MSG_BAD_PARM_REGISTER:
+    case MSG_BAD_PARM_REGISTER:
         CErr2( ERR_BAD_PARM_REGISTER, (int)parm );
         break;
-      case MSG_BAD_RETURN_REGISTER:
+    case MSG_BAD_RETURN_REGISTER:
         CErr2p( ERR_BAD_RETURN_REGISTER, FEName( (SYMBOL)parm ) );
         break;
-      case MSG_SCHEDULER_DIED:
-      case MSG_REGALLOC_DIED:
-      case MSG_SCOREBOARD_DIED:
+    case MSG_SCHEDULER_DIED:
+    case MSG_REGALLOC_DIED:
+    case MSG_SCOREBOARD_DIED:
         if( ! (GenSwitches & NO_OPTIMIZATION) ) {
             if( lastFunctionOutOfMem != parm ) {
                 lastFunctionOutOfMem = parm;
@@ -168,7 +171,7 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
             }
         }
         break;
-      case MSG_PEEPHOLE_FLUSHED:
+    case MSG_PEEPHOLE_FLUSHED:
         if( ! (GenSwitches & NO_OPTIMIZATION) ) {
             if( ! CompFlags.low_on_memory_printed ) {
                 CompFlags.low_on_memory_printed = TRUE;
@@ -176,13 +179,13 @@ void FEMessage(                 // MESSAGES FROM CODE-GENERATOR
             }
         }
         break;
-      case MSG_BACK_END_ERROR:
+    case MSG_BACK_END_ERROR:
         CErr2( ERR_BACK_END_ERROR, (int)parm );
         break;
-      case MSG_BAD_SAVE:
+    case MSG_BAD_SAVE:
         CErr2p( ERR_BAD_SAVE, FEName( (SYMBOL)parm ) );
         break;
-      case MSG_NO_SEG_REGS:
+    case MSG_NO_SEG_REGS:
         CErr2p( ERR_NO_SEG_REGS, FEName( (SYMBOL)parm ) );
         break;
     }

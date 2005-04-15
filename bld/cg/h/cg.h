@@ -185,7 +185,8 @@ typedef enum {
         MSG_BAD_LINKAGE,        /*  cannot resolve linkage conventions (sym) */
         MSG_SCHEDULER_DIED,     /*  ins scheduler ran out of mem (sym) */
         MSG_NO_SEG_REGS,        /*  accessing far memory with no seg regs */
-        MSG_BAD_PEG_REG         /*  bad register pegged to a segment */
+        MSG_BAD_PEG_REG,        /*  bad register pegged to a segment */
+        MSG_SYMBOL_TOO_LONG     /*  symbol too long, truncated (sym) */
 } msg_class;                    /*  fatal cg error message */
 
 #define DBG_NIL_TYPE    0

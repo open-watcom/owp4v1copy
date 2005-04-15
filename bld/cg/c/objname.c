@@ -248,9 +248,7 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
         // copy + truncate base symbol name
         len = copyBaseName( c, dst, dst_len, src, base_len );
         if( len < 0 ) {
-            FEMessage( MSG_INFO_PROC, "Code generator truncated symbol name, because it's length "
-                "overflows allowed maximum." );
-            FEMessage( MSG_INFO_PROC, src );
+            FEMessage( MSG_SYMBOL_TOO_LONG, sym );
         } else {
             // shift sufix to the end of symbol name
             memcpy( dst + len, sufix, sufix_len + 1 );
