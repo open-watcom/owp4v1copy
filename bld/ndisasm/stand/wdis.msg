@@ -66,8 +66,8 @@ pick( WHERE_INIT_HASH_TABLES,   "initializing hash tables",
                                 "ハッシュ・テーブルを初期化します" )
 pick( WHERE_OBJ_ZERO_LEN,       "The object is zero length",
                                 "オブジェクトの長さが0です" )
-pick( WHERE_NOT_COFF_ELF,       "The object file is not in OMF, Elf or Coff format",
-                                "オブジェクト・ファイルは、OMF, Dlf, Coff形式ではありません:" )
+pick( WHERE_NOT_COFF_ELF,       "The object file is not in OMF, ELF or COFF format",
+                                "オブジェクト・ファイルは、OMF, ELF, COFF形式ではありません:" )
 pick( WHERE_UNSUPPORTED_PROC,   "Unsupported processor type.",
                                 "サポートしていないプロセッサです。" )
 pick( WHERE_BIG_ENDIAN,         "The object file is not in little-endian byte format.",
@@ -98,8 +98,8 @@ pick( USAGE_10,                 "        -s[=src_file]   include source lines",
                                 "        -s[=src_file]   ソース行を含めて表示する" )
 pick( USAGE_11,                 "        -fp             do not use instruction name pseudonyms",
                                 "        -fp             命令名として擬似ニーモニックを使用しない" )
-pick( USAGE_12,                 "        -fr             do not use register name pseudonyms [Alpha only]",
-                                "        -fr             レジスタ名として擬似ニーモニックを使用しない[Alphaのみ]" )
+pick( USAGE_12,                 "        -fr             do not use register name pseudonyms [RISC only]",
+                                "        -fr             レジスタ名として擬似ニーモニックを使用しない[RISCのみ]" )
 pick( USAGE_13,                 "        -fi             use alternate indexing format [80(x)86 only]",
                                 "        -fi             別のインデクシング形式を使用する[80(x)86のみ]" )
 pick( USAGE_LAST,               "        -fu             instructions/registers in upper case",
