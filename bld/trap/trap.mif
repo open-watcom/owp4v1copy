@@ -32,6 +32,7 @@ targ_x86_nt    = $(name)cli.exe
 targ_axp_nt    = $(name)cli.exe
 
 targ_ppc_linux = $(name)cli.exe
+targ_mips_linux = $(name)cli.exe
 
 TRAP_objs     = testcli.obj
 TRAP_remote_objs =
@@ -120,6 +121,7 @@ targ_axp_nt     = $(name).dll
 targ_ppc_nt     = $(name).dll
 
 targ_ppc_linux  = $(name).so
+targ_mips_linux = $(name).so
 
 TRAP_objs   = $(os)strt.obj
 TRAP_remote_objs = remote.obj

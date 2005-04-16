@@ -148,6 +148,7 @@ typedef struct {
 
 typedef unsigned char bp_t;
 
+/* 'int 3' instruction */
 #define BRK_POINT       0xCC
 
 #endif
@@ -184,16 +185,16 @@ struct pt_regs {
 
 typedef struct user {
     struct pt_regs  regs;           /* entire machine state */
-    size_t      u_tsize;            /* text size (pages) */
-    size_t      u_dsize;            /* data size (pages) */
-    size_t      u_ssize;            /* stack size (pages) */
+    size_t          u_tsize;        /* text size (pages) */
+    size_t          u_dsize;        /* data size (pages) */
+    size_t          u_ssize;        /* stack size (pages) */
     unsigned long   start_code;     /* text starting address */
     unsigned long   start_data;     /* data starting address */
     unsigned long   start_stack;    /* stack starting address */
-    long int    signal;             /* signal causing core dump */
+    long int        signal;         /* signal causing core dump */
     struct regs *   u_ar0;          /* help gdb find registers */
     unsigned long   magic;          /* identifies a core file */
-    char        u_comm[32];         /* user command name */
+    char            u_comm[32];     /* user command name */
 } user_struct;
 
 typedef unsigned long bp_t;
@@ -203,6 +204,53 @@ typedef unsigned long bp_t;
 
 #define REGSIZE         sizeof( unsigned long )
 #define PTRACE_SETREGS  13
+
+#endif
+
+#if defined( MD_mips )
+
+typedef struct {
+    unsigned long eax;
+    unsigned long eip;
+    unsigned long orig_eax;
+    unsigned long cs;
+    unsigned long ss;
+    unsigned long esp;
+} user_regs_struct;
+
+/* from /usr/include/asm/reg.h */
+#define EF_SIZE                 180
+
+/* from /usr/include/asm/user.h */
+typedef struct user {
+    unsigned long   regs[EF_SIZE/4+64];     /* integer and fp regs */
+    size_t          u_tsize;                /* text size (pages) */
+    size_t          u_dsize;                /* data size (pages) */
+    size_t          u_ssize;                /* stack size (pages) */
+    unsigned long   start_code;             /* text starting address */
+    unsigned long   start_data;             /* data starting address */
+    unsigned long   start_stack;            /* stack starting address */
+    long int        signal;                 /* signal causing core dump */
+#if 0
+    struct regs *   u_ar0;                  /* help gdb find registers */
+#else
+    void *          u_ar0;
+#endif
+    unsigned long   magic;                  /* identifies a core file */
+    char            u_comm[32];             /* user command name */
+} user_struct;
+
+typedef unsigned_32     bp_t;
+
+/* 'break' instruction */
+#define BRK_POINT       0x0000000D
+
+#define REGSIZE         sizeof( unsigned long )
+
+#define FPR_BASE        32
+#define PC              64
+#define MMHI            67
+#define MMLO            68
 
 #endif
 

@@ -200,10 +200,8 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
 }
 #elif defined( M_I86 )
 #pragma aux MADLOAD "*" loadds
-#elif defined( __AXP__ ) || defined( __PPC__ )
-  /* nothing to do */
 #else
-#error madimp.c not configured for system
+/* nothing to do for Alpha, PowerPC etc. */
 #endif
 
 #if defined( __DOS__ ) || defined( __UNIX__ )

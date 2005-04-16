@@ -253,8 +253,8 @@ unsigned ReqMap_addr( void )
     errno = 0;
     if( (val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, start_code ), &val )) == -1 ) {
         if( errno ) {
-            Out( "ReqMap_addr: PTRACE_PEEKUSER failed!\n" );
-            return( sizeof( *ret ) );
+            Out( "ReqMap_addr: first PTRACE_PEEKUSER failed!\n" );
+            val = 0;
         }
     }
     ret->out_addr.offset = acc->in_addr.offset + val;
@@ -274,7 +274,12 @@ unsigned ReqMap_addr( void )
     OutNum( acc->handle );
     if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
         acc->in_addr.segment == flatDS ) {
-        val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, u_tsize ), &val );
+        if( (val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, u_tsize ), &val )) == -1 ) {
+            if( errno ) {
+                Out( "ReqMap_addr: second PTRACE_PEEKUSER failed!\n" );
+                val = 0;
+            }
+        }
         ret->out_addr.offset += val;
         ret->out_addr.segment = flatDS;
     } else {

@@ -10,6 +10,7 @@
 #-----------------------------------------
 #  linux     386   Linux on IA-32
 #  linux     ppc   Linux on 32-bit PowerPC
+#  linux     mips  Linux on 32-bit MIPS
 # 
 set PROJDIR=<CWD>
 

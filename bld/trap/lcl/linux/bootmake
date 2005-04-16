@@ -27,6 +27,9 @@ extra_objs += linuxx86.obj x86cpu.obj squish87.obj
 !else ifeq host_cpu ppc
 cpu     = ppc
 extra_objs += linuxppc.obj
+!else ifeq host_cpu mips
+cpu     = mips
+extra_objs += linuxmips.obj
 !else
 !error Unknown CPU architecture
 !endif

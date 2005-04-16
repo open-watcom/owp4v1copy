@@ -30,4 +30,8 @@ set PROJDIR=<CWD>
     cdsay <PROJDIR>/export/<OBJDIR>
     wmake -h -f ../bootmake
     <CPCMD> <PROJDIR>/export/<OBJDIR>/export.so <DEVDIR>/build/bin/
+    mkdir <PROJDIR>/mapsym/<OBJDIR>
+    cdsay <PROJDIR>/mapsym/<OBJDIR>
+    wmake -h -f ../bootmake
+    <CPCMD> <PROJDIR>/mapsym/<OBJDIR>/mapsym.so <DEVDIR>/build/bin/
     cdsay <PROJDIR>

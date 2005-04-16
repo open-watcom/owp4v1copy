@@ -22,4 +22,8 @@ set PROJDIR=<CWD>
     cdsay <PROJDIR>/ppc/<OBJDIR>
     wmake -h -f ../../bootmake
     <CPCMD> <PROJDIR>/ppc/<OBJDIR>/madppc.so <DEVDIR>/build/bin/
+    mkdir <PROJDIR>/mips/<OBJDIR>
+    cdsay <PROJDIR>/mips/<OBJDIR>
+    wmake -h -f ../../bootmake
+    <CPCMD> <PROJDIR>/mips/<OBJDIR>/madmips.so <DEVDIR>/build/bin/
     cdsay <PROJDIR>

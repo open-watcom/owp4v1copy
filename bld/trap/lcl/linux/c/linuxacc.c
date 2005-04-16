@@ -422,9 +422,13 @@ static unsigned ProgRun( int step )
     do {
         old = setsig( SIGINT, SIG_IGN );
         if( step ) {
-            ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)ptrace_sig );
+            Out( "PTRACE_SINGLESTEP\n" );
+            if( ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)ptrace_sig ) == -1 )
+                perror( "PTRACE_SINGLESTEP" );
         } else {
-            ptrace( PTRACE_CONT, pid, NULL, (void *)ptrace_sig );
+            Out( "PTRACE_CONT\n" );
+            if( ptrace( PTRACE_CONT, pid, NULL, (void *)ptrace_sig ) == -1 )
+                perror( "PTRACE_CONT" );
         }
         waitpid( pid, &status, 0 );
         setsig( SIGINT, old );
@@ -434,6 +438,9 @@ static unsigned ProgRun( int step )
 #elif defined( MD_ppc )
         regs.eip = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_NIP, NULL );
         regs.esp = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_R1, NULL );
+#elif defined( MD_mips )
+        regs.eip = ptrace( PTRACE_PEEKUSER, pid, PC, NULL );
+        regs.esp = ptrace( PTRACE_PEEKUSER, pid, 29, NULL );
 #endif
         Out( " eip " );
         OutNum( regs.eip );
@@ -485,7 +492,7 @@ static unsigned ProgRun( int step )
     if( ret->conditions == COND_BREAK ) {
 #if defined( MD_x86 )
         if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
-#elif defined( MD_ppc )
+#elif defined( MD_ppc ) || defined( MD_mips )
         if( regs.eip == rdebug.r_brk ) {
 #endif
             int         psig = 0;

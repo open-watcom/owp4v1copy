@@ -214,6 +214,7 @@ int Get_ld_info( pid_t pid, Elf32_Dyn *dbg_dyn, struct r_debug *debug_ptr, struc
     while( loc_dyn.d_tag != DT_NULL ) {
         if( loc_dyn.d_tag == DT_DEBUG ) {
             rdebug = (struct r_debug *)loc_dyn.d_un.d_ptr;
+            Out( "Get_ld_info: DT_DEBUG entry found\n" );
             break;
         }
         dbg_dyn++;
@@ -223,7 +224,7 @@ int Get_ld_info( pid_t pid, Elf32_Dyn *dbg_dyn, struct r_debug *debug_ptr, struc
         }
     }
     if( rdebug == NULL ) {
-        Out( "Get_ld_info: failed to find DT_DEBUG entry\n" );
+        Out( "Get_ld_info: DT_DEBUG entry not found or not set\n" );
         return( FALSE );
     }
     read_len = sizeof( *debug_ptr );

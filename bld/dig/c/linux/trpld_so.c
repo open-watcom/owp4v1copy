@@ -37,6 +37,10 @@
 #include "tcerr.h"
 #include "trpqimp.h"
 
+#if defined( BUILTIN_TRAP_FILE )
+extern const trap_requests *TrapLoad( const trap_callbacks *client );
+#endif
+
 extern char          **environ;
 
 extern trap_version  TrapVer;
@@ -101,6 +105,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
+#if !defined( BUILTIN_TRAP_FILE )
     TrapFile = dlopen( trap_name, RTLD_NOW );
     if( TrapFile == NULL ) {
 	puts( dlerror() );
@@ -108,6 +113,9 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         return( buff );
     }
     ld_func = dlsym( TrapFile, "TrapLoad" );
+#else
+    ld_func = TrapLoad;
+#endif
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
     if( ld_func == NULL ) {
         KillTrap();

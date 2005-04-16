@@ -80,8 +80,9 @@ bld_cc = $(cc) $(bld_incs)
 bld_link = $(cc)
 librarian += -fa
 
-cppflags_386 = -D_M_IX86 -D__386__
-cppflags_ppc = -D__PPC__
+cppflags_386  = -D_M_IX86 -D__386__
+cppflags_ppc  = -D__PPC__
+cppflags_mips = -D__MIPS__ -Umips
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_linux =
