@@ -226,3 +226,9 @@ wdpick( MSTR_SIGNED,
 wdpick( MSTR_INT,
     "&Int",
     "j&Int" )
+wdpick( MSTR_HALF,
+    "&Halfword",
+    "j&Halfword" )
+wdpick( MSTR_DBLW,
+    "&Doubleword",
+    "j&Doubleword" )

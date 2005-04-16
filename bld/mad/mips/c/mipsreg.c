@@ -49,9 +49,7 @@ enum {
     RS_DWORD,
     RS_WORD,
     RS_DOUBLE,
-    RS_MSR,
-    RS_XER,
-    RS_PCSCR,
+    RS_FPCSR,
     RS_NUM,
 };
 
@@ -63,7 +61,7 @@ typedef struct {
     mad_type_handle     mth;
 } sublist_data;
 
-static const sublist_data IntRegSubData[] = {
+static const sublist_data DwordRegSubData[] = {
         { "b0",  0, MIPST_BYTE },
         { "b1",  8, MIPST_BYTE },
         { "b2", 16, MIPST_BYTE },
@@ -72,10 +70,10 @@ static const sublist_data IntRegSubData[] = {
         { "b5", 40, MIPST_BYTE },
         { "b6", 48, MIPST_BYTE },
         { "b7", 56, MIPST_BYTE },
-        { "h0",  0, MIPST_HWORD },
-        { "h1", 16, MIPST_HWORD },
-        { "h2", 32, MIPST_HWORD },
-        { "h3", 48, MIPST_HWORD },
+        { "h0",  0, MIPST_HALF },
+        { "h1", 16, MIPST_HALF },
+        { "h2", 32, MIPST_HALF },
+        { "h3", 48, MIPST_HALF },
         { "w0",  0, MIPST_WORD },
         { "w1", 32, MIPST_WORD },
 };
@@ -88,16 +86,54 @@ static const sublist_data IntRegSubData[] = {
             1 },                        \
             reg_set##_REG_SET, RS_NONE },
 
-static const mips_reg_info       *SubList[] =
+REG_NAME( rm );
+REG_NAME( fi );
+REG_NAME( fu );
+REG_NAME( fo );
+REG_NAME( fz );
+REG_NAME( fv );
+REG_NAME( ei );
+REG_NAME( eu );
+REG_NAME( eo );
+REG_NAME( ez );
+REG_NAME( ev );
+REG_NAME( ci );
+REG_NAME( cu );
+REG_NAME( co );
+REG_NAME( cz );
+REG_NAME( cv );
+REG_NAME( cn );
+REG_NAME( c );
+
+static const mips_reg_info      FPCSRSubList[] = {
+    sublist( rm, BYTE, FPU, fpcsr,  0, 2 )
+    sublist( fi, BYTE, FPU, fpcsr,  2, 1 )
+    sublist( fu, BYTE, FPU, fpcsr,  3, 1 )
+    sublist( fo, BYTE, FPU, fpcsr,  4, 1 )
+    sublist( fz, BYTE, FPU, fpcsr,  5, 1 )
+    sublist( fv, BYTE, FPU, fpcsr,  6, 1 )
+    sublist( ei, BYTE, FPU, fpcsr,  7, 1 )
+    sublist( eu, BYTE, FPU, fpcsr,  8, 1 )
+    sublist( eo, BYTE, FPU, fpcsr,  9, 1 )
+    sublist( ez, BYTE, FPU, fpcsr, 10, 1 )
+    sublist( ev, BYTE, FPU, fpcsr, 11, 1 )
+    sublist( ci, BYTE, FPU, fpcsr, 12, 1 )
+    sublist( cu, BYTE, FPU, fpcsr, 13, 1 )
+    sublist( co, BYTE, FPU, fpcsr, 14, 1 )
+    sublist( cz, BYTE, FPU, fpcsr, 15, 1 )
+    sublist( cv, BYTE, FPU, fpcsr, 16, 1 )
+    sublist( cn, BYTE, FPU, fpcsr, 17, 1 )
+    sublist( c,  BYTE, FPU, fpcsr, 23, 1 )
+    { NULL }
+};
+
+static const mips_reg_info      *SubList[] =
 {
-    //NYI:
     NULL,
     NULL,
     NULL,
     NULL,
-    NULL,
-    NULL,
-    NULL,
+    FPCSRSubList,
 };
 
 #define MIPST_U32               MIPST_WORD
@@ -108,6 +144,12 @@ static const mips_reg_info       *SubList[] =
 #define REG_BITS_WORD   32
 #define REG_BITS_DWORD  64
 #define REG_BITS_DOUBLE 64
+#define REG_BITS_FPCSR  REG_BITS_WORD
+
+#define RT_DOUBLE       MIPST_DOUBLE
+#define RT_DWORD        MIPST_DWORD
+#define RT_WORD         REG_TYPE( REG_BITS_WORD )
+#define RT_FPCSR        RT_WORD
 
 /* to avoid relocations to R/W data segments */
 #define regpick( name, type, s ) REG_NAME( name );
@@ -116,7 +158,7 @@ static const mips_reg_info       *SubList[] =
 
 #define regpick( name, type, reg_set )  \
         { { NAME_##name,                \
-            MIPST_##type,               \
+            RT_##type,                  \
             BIT_OFF( name ),            \
             REG_BITS_##type,            \
             1 },                        \
@@ -127,7 +169,7 @@ const mips_reg_info RegList[] = {
 };
 
 // For 64-bit registers displayed as 32-bit - 32GPRs + pc
-// NB: Relies on the fact that all the DWORD registers are grouped together
+// NB: Relies on the fact that all the 64-bit registers are grouped together
 // in a single block.
 static mips_reg_info    RegListHalf[32 + 32 + 1];
 
@@ -135,15 +177,16 @@ static mips_reg_info    **RegSubList;
 
 static const mad_toggle_strings CPUToggleList[] =
 {
-    {MSTR_MHEX,MSTR_HEX,MSTR_DECIMAL},
-    {MSTR_MEXTENDED,MSTR_REG_EXTENDED,MSTR_REG_NORMAL},
-    {MSTR_NIL,MSTR_NIL,MSTR_NIL}
+    { MSTR_MHEX,        MSTR_HEX,           MSTR_DECIMAL },
+    { MSTR_MEXTENDED,   MSTR_REG_EXTENDED,  MSTR_REG_NORMAL },
+    { MSTR_MSYMBOLIC,   MSTR_REG_SYMBOLIC,  MSTR_REG_NUMERIC },
+    { MSTR_NIL,         MSTR_NIL,           MSTR_NIL }
 };
 
 static const mad_toggle_strings FPUToggleList[] =
 {
-    {MSTR_MHEX,MSTR_HEX,MSTR_DECIMAL},
-    {MSTR_NIL,MSTR_NIL,MSTR_NIL}
+    { MSTR_MHEX,        MSTR_HEX,           MSTR_DECIMAL},
+    { MSTR_NIL,         MSTR_NIL,           MSTR_NIL}
 };
 
 struct mad_reg_set_data {
@@ -171,18 +214,18 @@ static const mad_reg_set_data RegSet[] = {
     { FPUGetPiece, FPUToggleList, MSTR_FPU },
 };
 
-unsigned        DIGENTRY MIRegistersSize( void )
+unsigned DIGENTRY MIRegistersSize( void )
 {
     return( sizeof( struct mips_mad_registers ) );
 }
 
-mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
+mad_status DIGENTRY MIRegistersHost( mad_registers *mr )
 {
 #if defined( __BIG_ENDIAN__ )
     unsigned_32     temp;
     int             i;
 
-    // Currently harcoded for big endian targets - should be dynamic
+    // Currently harcoded for little endian targets - should be dynamic
     // And we really ought to have a 64-bit byte swap routine...
 
     // Convert GPRs
@@ -210,12 +253,13 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
 
     CONV_BE_32( mr->mips.lo );
     CONV_BE_32( mr->mips.hi );
-
+    CONV_BE_32( mr->mips.fpcsr );
+    CONV_BE_32( mr->mips.fpivr );
 #endif
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
+mad_status DIGENTRY MIRegistersTarget( mad_registers *mr )
 {
 #if defined( __BIG_ENDIAN__ )
     unsigned_32     temp;
@@ -246,11 +290,13 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
 
     CONV_BE_32( mr->mips.lo );
     CONV_BE_32( mr->mips.hi );
+    CONV_BE_32( mr->mips.fpcsr );
+    CONV_BE_32( mr->mips.fpivr );
 #endif
     return( MS_OK );
 }
 
-walk_result     DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void *d )
+walk_result DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void *d )
 {
     walk_result wr;
 
@@ -265,12 +311,12 @@ walk_result     DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, 
     return( WR_CONTINUE );
 }
 
-mad_string      DIGENTRY MIRegSetName( const mad_reg_set_data *rsd )
+mad_string DIGENTRY MIRegSetName( const mad_reg_set_data *rsd )
 {
     return( rsd->name );
 }
 
-unsigned        DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char *buff )
+unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char *buff )
 {
     char        str[80];
     unsigned    len;
@@ -306,7 +352,7 @@ unsigned        DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned ma
     return( len );
 }
 
-unsigned        DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
+unsigned DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
 {
     return( 0 );
 }
@@ -349,7 +395,7 @@ static int FindEntry( const reg_display_entry *tbl, unsigned piece,
 }
 
 
-static mad_status       CPUGetPiece( unsigned piece,
+static mad_status CPUGetPiece( unsigned piece,
                                 char **descript,
                                 unsigned *max_descript,
                                 const mad_reg_info **reg,
@@ -389,12 +435,14 @@ static mad_status       CPUGetPiece( unsigned piece,
     return( MS_OK );
 }
 
+// NYI: FPUs with real 64-bit registers
 static const reg_display_entry FPUList[] = {
-    { IDX_f0,           32, MIPST_DOUBLE },
+    { IDX_f0,           16, MIPST_DOUBLE },
+    { IDX_fpcsr,         1, RT_WORD },
     { 0,                 0, 0 }
 };
 
-static mad_status       FPUGetPiece( unsigned piece,
+static mad_status FPUGetPiece( unsigned piece,
                                 char **descript,
                                 unsigned *max_descript,
                                 const mad_reg_info **reg,
@@ -419,7 +467,7 @@ static mad_status       FPUGetPiece( unsigned piece,
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
+mad_status DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
                                 mad_registers const *mr,
                                 unsigned piece,
                                 char **descript,
@@ -436,7 +484,7 @@ static const mad_modify_list    WordReg = { NULL, MIPST_WORD, MSTR_NIL };
 static const mad_modify_list    DWordReg = { NULL, MIPST_DWORD, MSTR_NIL };
 static const mad_modify_list    FltReg = { NULL, MIPST_DOUBLE, MSTR_NIL };
 
-mad_status      DIGENTRY MIRegSetDisplayModify( const mad_reg_set_data *rsd, const mad_reg_info *ri, const mad_modify_list **possible_p, unsigned *num_possible_p )
+mad_status DIGENTRY MIRegSetDisplayModify( const mad_reg_set_data *rsd, const mad_reg_info *ri, const mad_modify_list **possible_p, unsigned *num_possible_p )
 {
     *num_possible_p = 1;
     switch( ri->type ) {
@@ -487,7 +535,7 @@ mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_in
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, mad_registers const *mr, address *a )
+mad_status DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, mad_registers const *mr, address *a )
 {
     unsigned    bit_start;
     unsigned_64 *p;
@@ -511,7 +559,7 @@ const mad_toggle_strings *DIGENTRY MIRegSetDisplayToggleList( const mad_reg_set_
     return( rsd->togglelist );
 }
 
-unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, unsigned on, unsigned off )
+unsigned DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, unsigned on, unsigned off )
 {
     unsigned    toggle;
     unsigned    *bits;
@@ -534,7 +582,7 @@ unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, uns
     return( *bits );
 }
 
-walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_info *ri, MI_REG_WALKER *wk, void *d )
+walk_result DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_info *ri, MI_REG_WALKER *wk, void *d )
 {
     const mips_reg_info *curr;
     walk_result         wr;
@@ -543,8 +591,8 @@ walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_i
     if( ri != NULL ) {
         switch( ((mips_reg_info *)ri)->sublist_code ) {
         case RS_DWORD:
-           curr = RegSubList[ ri->bit_start / (sizeof( unsigned_64 )*BITS_PER_BYTE) ];
-           break;
+            curr = RegSubList[ri->bit_start / (sizeof( unsigned_64 ) * BITS_PER_BYTE)];
+            break;
         default:
             curr = SubList[((mips_reg_info *)ri)->sublist_code];
             break;
@@ -570,7 +618,7 @@ walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_i
     return( WR_CONTINUE );
 }
 
-void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers const *mr, addr_ptr *ma )
+void DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers const *mr, addr_ptr *ma )
 {
     ma->segment = 0;
     switch( sr ) {
@@ -587,7 +635,7 @@ void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers cons
     }
 }
 
-void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, addr_ptr const *ma )
+void DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, addr_ptr const *ma )
 {
     switch( sr ) {
     case MSR_IP:
@@ -603,7 +651,7 @@ void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr,
     }
 }
 
-unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers const *mr, mad_address_format af, unsigned max, char *buff )
+unsigned DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers const *mr, mad_address_format af, unsigned max, char *buff )
 {
     unsigned    idx;
     unsigned    len;
@@ -614,7 +662,7 @@ unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers con
         idx = IDX_pc;
         break;
     case MSR_SP:
-        idx = IDX_r29;
+        idx = IDX_sp;
         break;
     case MSR_FP:
         idx = IDX_r30;
@@ -660,11 +708,11 @@ const mad_reg_info *DIGENTRY MIRegFromContextItem( context_item ci )
     return( reg );
 }
 
-void            DIGENTRY MIRegUpdateStart( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
+void DIGENTRY MIRegUpdateStart( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
 {
 }
 
-void            DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
+void DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
 {
     unsigned    i;
     unsigned    bit_end;
@@ -714,7 +762,7 @@ static mad_status AddSubList( unsigned idx, const sublist_data *sub, unsigned nu
     return( MS_OK );
 }
 
-mad_status RegInit()
+mad_status RegInit( void )
 {
     unsigned    i;
     unsigned    max;
@@ -747,7 +795,7 @@ mad_status RegInit()
     for( i = 0; i < NUM_ELTS( RegList ); ++i ) {
         switch( RegList[i].sublist_code ) {
         case RS_DWORD:
-            ms = AddSubList( i, IntRegSubData, NUM_ELTS( IntRegSubData ) );
+            ms = AddSubList( i, DwordRegSubData, NUM_ELTS( DwordRegSubData ) );
             if( ms != MS_OK )
                 return( ms );
             break;
@@ -756,7 +804,7 @@ mad_status RegInit()
     return( MS_OK );
 }
 
-void RegFini()
+void RegFini( void )
 {
     unsigned    i;
     unsigned    max;

@@ -36,9 +36,9 @@ enum {
 #endif
     /* integers */
     pick( BYTE,         BYTE,           1, U1 )
-    pick( HWORD,        HWORD,          1, U2 )
+    pick( HALF,         HALF,           1, U2 )
     pick( WORD,         WORD,           1, U4 )
-    pick( DWORD,        DWORD,          1, U8 )
+    pick( DWORD,        DBLW,           1, U8 )
     pick( CHAR,         CHAR,           0, I1 )
     pick( SHORT,        SHORT,          0, I2 )
     pick( LONG,         LONG,           0, I4 )

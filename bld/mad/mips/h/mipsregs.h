@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#if !defined(regpick)
+#if !defined( regpick )
 #define regpick( name, type, s )        IDX_##name,
 #define defining_enums
 enum {
@@ -136,8 +136,10 @@ enum {
     regpick( pc, DWORD, CPU )
     regpick( lo, WORD, CPU )
     regpick( hi, WORD, CPU )
+    regpick( fpcsr, FPCSR, FPU )
+    regpick( fpivr, WORD, FPU )
 
-#if defined(defining_enums)
+#if defined( defining_enums )
 IDX_LAST_ONE };
 #undef regpick
 #undef defining_enums

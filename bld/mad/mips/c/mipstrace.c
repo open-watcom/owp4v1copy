@@ -171,8 +171,8 @@ void DIGENTRY MITraceFini( mad_trace_data *td )
     /* nothing to do */
 }
 
-#define JMP_SHORT       0x4800000c      // 'b' (to 3rd next instruction)    // TODO
-#define BRK_POINT       0x00000034      // 'teq $zero,$zero'
+#define JMP_SHORT       0x10000003      // 'beq $zero,$zero' (3 instructions forward)
+#define BRK_POINT       0x0000000D      // 'break' (with code of 0)
 
 
 mad_status DIGENTRY MIUnexpectedBreak( mad_registers *mr, unsigned *maxp, char *buff )
@@ -180,7 +180,8 @@ mad_status DIGENTRY MIUnexpectedBreak( mad_registers *mr, unsigned *maxp, char *
     address     a;
     struct {
         unsigned_32     brk;
-        unsigned_32     br;
+        unsigned_32     beq;
+        unsigned_32     nop;
         unsigned_8      name[8];
     }           data;
     char        ch;
@@ -196,7 +197,7 @@ mad_status DIGENTRY MIUnexpectedBreak( mad_registers *mr, unsigned *maxp, char *
     MCReadMem( a, sizeof( data ), &data );
     if( data.brk != BRK_POINT ) return( MS_FAIL );
     mr->mips.pc.u._32[I64LO32] += sizeof( unsigned_32 );
-    if( data.br != JMP_SHORT ) return( MS_OK );
+    if( data.beq != JMP_SHORT ) return( MS_OK );
     if( memcmp( data.name, "WVIDEO\0\0", 8 ) != 0 ) return( MS_OK );
     a.mach.offset = mr->mips.a0.u._32[I64LO32];
     len = 0;

@@ -95,7 +95,7 @@ typedef struct mad_type_data {
 extern imp_mad_state_data       *MADState;
 
 extern const mips_reg_info      RegList[];
-extern const unsigned_8         RegTrans[];
+extern const unsigned_16         RegTrans[];
 extern const mad_type_data      TypeArray[];
 
 #define TRANS_REG( mr, r )  (*(unsigned_64 *)((unsigned_8*)(mr) + RegTrans[r - DR_MIPS_FIRST]))
