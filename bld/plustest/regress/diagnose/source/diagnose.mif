@@ -396,6 +396,7 @@ diags_0399_defn = &
     diag0302$(err_sin) &
     diag0303$(err_sin) &
     diag0304$(err_sin) &
+    diag0305$(err_sin) &
     
     
 err_sin = .err

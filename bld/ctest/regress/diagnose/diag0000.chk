@@ -2,3 +2,13 @@ source\diag0001.c(4): Error! E1128: Enum constant too large
 source\diag0001.c(6): Error! E1128: Enum constant too large
 source\diag0001.c(10): Error! E1128: Enum constant too large
 source\diag0001.c(12): Error! E1128: Enum constant too large
+source\diag0002.c(9): Warning! W133: Symbol name has been truncated for '__CPR305___Y_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_t
+source\diag0002.c(12): Warning! W133: Symbol name has been truncated for '__CPR305___M_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_t
+source\diag0002.c(15): Warning! W133: Symbol name has been truncated for '__CPR305___N_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_t
+source\diag0002.c(18): Warning! W133: Symbol name has been truncated for '__CPR305___Q_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_t
+source\diag0002.c(21): Warning! W133: Symbol name has been truncated for '__CPR305___O_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_t
+source\diag0002.c(7): Warning! W133: Symbol name has been truncated for 'y0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+source\diag0002.c(11): Warning! W133: Symbol name has been truncated for 'p0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+source\diag0002.c(14): Warning! W133: Symbol name has been truncated for 's0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+source\diag0002.c(17): Warning! W133: Symbol name has been truncated for 'q0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+source\diag0002.c(20): Warning! W133: Symbol name has been truncated for 'r0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345

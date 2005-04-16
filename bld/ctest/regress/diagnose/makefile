@@ -10,18 +10,15 @@ archdep_opts = -dARCH=$(arch) -fr=.ser
 
 .c: $(diagnose_dir)
 .c.err:
-    -$(wcc_$(arch)) $[@ @diag $(opt_$^&)
+    -$(wcc_$(arch)) $[@ $(diagnose_opts) $(opt_$^&)
     @if not exist $^&.err echo I did not generate errors for $^& > $^&.err
 .c.ser:
-    -$(wcc_$(arch)) $[@ @diag $(opt_$^&) $(archdep_opts)
+    -$(wcc_$(arch)) $[@ $(diagnose_opts) $(opt_$^&) $(archdep_opts)
     @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
 
-test : .symbolic initopts test0000
+test : .symbolic test0000
     %make global
     %append $(log_file) PASS $(%__CWD__)
-
-initopts : .symbolic
-    set diag=$(diagnose_opts)
 
 test0000 : .symbolic diag0000.out
     -diff -b diag0000.out diag0000.chk >diff0000.out

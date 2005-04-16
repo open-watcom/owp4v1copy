@@ -2,9 +2,11 @@
 # extra options
 #
 opt_diag0001  = 
+opt_diag0002  = 
 
 diags_0099_defn = &
-    diag0001$(err_sin)
+    diag0001$(err_sin) &
+    diag0002$(err_sin)
     
 err_sin = .err
 err_sys = .ser
