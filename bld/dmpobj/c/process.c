@@ -820,12 +820,14 @@ static void idBlock( unsigned indent, unsigned_16 first_block_offset )
     unsigned_32 rpt_count;
     unsigned_16 blk_count;
     byte        data_count;
+    data_ptr    next_block;
 
     rpt_count = IsMS386 ? GetLInt() : GetUInt();
     Output( "%>Repeated %X times" CRLF, indent, rpt_count );
     blk_count = GetUInt();
     if( blk_count == 0 ) {
         data_count = GetByte();
+        next_block = RecPtr + data_count;
         OutputData( (unsigned_32)( RecOffset() - first_block_offset ),
             (uint_32)data_count );
 #if 0
@@ -840,6 +842,7 @@ static void idBlock( unsigned indent, unsigned_16 first_block_offset )
             Output( CRLF );
         }
 #endif
+        RecPtr = next_block;
     } else {
         while( blk_count != 0 ) {
             idBlock( indent + (INDWIDTH/2), first_block_offset );
