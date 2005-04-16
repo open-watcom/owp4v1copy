@@ -264,9 +264,15 @@ typedef enum {
     DIF_SPARC_ANUL      = 0x01<<0,      /* for branch instructions - next ins anul'd */
 #endif
 #if DISCPU & DISCPU_mips
-    DIF_MIPS_NULLIFD    = 0x01<<0,      /* for branch instructions - next ins nullified */
-    DIF_MIPS_LINK       = 0x01<<1,
-    DIF_MIPS_LIKELY     = 0x01<<2,
+    DIF_MIPS_NULLIFD    = 0x0001,       /* for branch instructions - next ins nullified */
+    DIF_MIPS_LINK       = 0x0002,       /* linked jump/branch (ie. a call) */
+    DIF_MIPS_LIKELY     = 0x0004,       /* branch instruction likely */
+    DIF_MIPS_FF_S       = 0x0008,       /* single precision floating point */
+    DIF_MIPS_FF_D       = 0x0010,       /* double precision floating point */
+    DIF_MIPS_FF_W       = 0x0020,       /* fixed point, word sized */
+    DIF_MIPS_FF_L       = 0x0040,       /* fixed point, doubleword sized */
+    DIF_MIPS_FF_PS      = 0x0080,       /* paired single precision floating point */
+    DIF_MIPS_FF_FLAGS   = DIF_MIPS_FF_S | DIF_MIPS_FF_D | DIF_MIPS_FF_W | DIF_MIPS_FF_L | DIF_MIPS_FF_PS,
 #endif
     DIF_NONE            = 0
 } dis_inst_flags;

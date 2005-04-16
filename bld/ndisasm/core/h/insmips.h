@@ -33,9 +33,13 @@
 #define b( p, c )           ((p##ul << 26) + (c##ul << 16))
 #define s( p, c )           ((p##ul << 26) + (c##ul))
 #define d( p, c )           ((p##ul << 26) + (c##ul << 21))
+#define cb( c, p, s )       (((0x10ul + c) << 26) + (p##ul << 21) + (s##ul << 16))
+#define cop( c, o )         (((0x10ul + c) << 26) + (0x10ul << 21) + (o##ul))
+
 /*
       Idx,              Name,           Opcode,             Mask,           Handler
 */
+// Integer opcodes first
 inspick( ADD,           "add",          o(0x00,0x00,0x20),  0xfc0007ff,     MIPSReg3 )
 inspick( ADDI,          "addi",         0x20000000,         0xfc000000,     MIPSImmed2 )
 inspick( ADDIU,         "addiu",        0x24000000,         0xfc000000,     MIPSImmed2 )
@@ -92,22 +96,26 @@ inspick( J,             "j",            s(0x02,0x00),       0xfc000000,     MIPS
 inspick( JAL,           "jal",          s(0x03,0x00),       0xfc000000,     MIPSJType )
 inspick( JALR,          "jalr",         s(0x00,0x09),       0xfc1f07ff,     MIPSJump2 )
 inspick( JR,            "jr",           s(0x00,0x08),       0xfc1fffff,     MIPSJump1 )
+
+// All load instructions bunched together
 inspick( LB,            "lb",           s(0x20,0x00),       0xfc000000,     MIPSMemory )
 inspick( LBU,           "lbu",          s(0x24,0x00),       0xfc000000,     MIPSMemory )
 inspick( LD,            "ld",           s(0x37,0x00),       0xfc000000,     MIPSMemory )
-// LDCz
 inspick( LDL,           "ldl",          s(0x1a,0x00),       0xfc000000,     MIPSMemory )
 inspick( LDR,           "ldr",          s(0x1b,0x00),       0xfc000000,     MIPSMemory )
 inspick( LH,            "lh",           s(0x21,0x00),       0xfc000000,     MIPSMemory )
 inspick( LHU,           "lhu",          s(0x25,0x00),       0xfc000000,     MIPSMemory )
 inspick( LL,            "ll",           s(0x30,0x00),       0xfc000000,     MIPSMemory )
 inspick( LLD,           "lld",          s(0x34,0x00),       0xfc000000,     MIPSMemory )
-inspick( LUI,           "lui",          s(0x0f,0x00),       0xffe00000,     MIPSImmed1 )
 inspick( LW,            "lw",           s(0x23,0x00),       0xfc000000,     MIPSMemory )
-// LWCz
 inspick( LWL,           "lwl",          s(0x22,0x00),       0xfc000000,     MIPSMemory )
 inspick( LWR,           "lwr",          s(0x26,0x00),       0xfc000000,     MIPSMemory )
 inspick( LWU,           "lwu",          s(0x27,0x00),       0xfc000000,     MIPSMemory )
+inspick( LDC1,          "ldc1",         s(0x35,0x00),       0xfc000000,     MIPSFPUMemory )
+inspick( LWC1,          "lwc1",         s(0x31,0x00),       0xfc000000,     MIPSFPUMemory )
+// Other LWCz/LDCz instructions
+
+inspick( LUI,           "lui",          s(0x0f,0x00),       0xffe00000,     MIPSImmed1 )
 inspick( MFC0,          "mfc0",         d(0x10,0x00),       0xffe007ff,     MIPSReg2 )
 // MFCz
 inspick( MFHI,          "mfhi",         s(0x00,0x10),       0xffff07ff,     MIPSReg1 )
@@ -121,14 +129,22 @@ inspick( MULTU,         "multu",        s(0x00,0x19),       0xfc00ffff,     MIPS
 inspick( NOR,           "nor",          s(0x00,0x27),       0xfc0007ff,     MIPSReg3 )
 inspick( OR,            "or",           s(0x00,0x25),       0xfc0007ff,     MIPSReg3 )
 inspick( ORI,           "ori",          s(0x0d,0x00),       0xfc000000,     MIPSImmed2 )
+
+// All store instructions
 inspick( SB,            "sb",           s(0x28,0x00),       0xfc000000,     MIPSMemory )
 inspick( SC,            "sc",           s(0x38,0x00),       0xfc000000,     MIPSMemory )
 inspick( SCD,           "scd",          s(0x3c,0x00),       0xfc000000,     MIPSMemory )
 inspick( SD,            "sd",           s(0x3f,0x00),       0xfc000000,     MIPSMemory )
-// SDCz
 inspick( SDL,           "sdl",          s(0x2c,0x00),       0xfc000000,     MIPSMemory )
 inspick( SDR,           "sdr",          s(0x2d,0x00),       0xfc000000,     MIPSMemory )
 inspick( SH,            "sh",           s(0x29,0x00),       0xfc000000,     MIPSMemory )
+inspick( SW,            "sw",           s(0x2b,0x00),       0xfc000000,     MIPSMemory )
+inspick( SWL,           "swl",          s(0x2a,0x00),       0xfc000000,     MIPSMemory )
+inspick( SWR,           "swr",          s(0x2e,0x00),       0xfc000000,     MIPSMemory )
+inspick( SDC1,          "sdc1",         s(0x3d,0x00),       0xfc000000,     MIPSFPUMemory )
+inspick( SWC1,          "swc1",         s(0x39,0x00),       0xfc000000,     MIPSFPUMemory )
+// Other SWCz/SDCz instructions
+
 inspick( SLL,           "sll",          s(0x00,0x00),       0xffe0003f,     MIPSShift )
 inspick( SLLV,          "sllv",         s(0x00,0x04),       0xfc0007ff,     MIPSReg3 )
 inspick( SLT,           "slt",          s(0x00,0x2a),       0xfc0007ff,     MIPSReg3 )
@@ -141,11 +157,8 @@ inspick( SRL,           "srl",          s(0x00,0x02),       0xffe0003f,     MIPS
 inspick( SRLV,          "srlv",         s(0x00,0x06),       0xfc0007ff,     MIPSReg3 )
 inspick( SUB,           "sub",          s(0x00,0x22),       0xfc0007ff,     MIPSReg3 )
 inspick( SUBU,          "subu",         s(0x00,0x23),       0xfc0007ff,     MIPSReg3 )
-inspick( SW,            "sw",           s(0x2b,0x00),       0xfc000000,     MIPSMemory )
-// SWCz
-inspick( SWL,           "swl",          s(0x2a,0x00),       0xfc000000,     MIPSMemory )
-inspick( SWR,           "swr",          s(0x2e,0x00),       0xfc000000,     MIPSMemory )
-inspick( SYNC,          "sync",         0x0000000f,         0xffffffff,     MIPSNull )
+// Note extra spaces to get longer max instruction length (for FPU instructions)
+inspick( SYNC,          "sync     ",    0x0000000f,         0xffffffff,     MIPSNull )
 inspick( SYSCALL,       "syscall",      s(0x00,0x0c),       0xfc00003f,     MIPSCode )
 inspick( TEQ,           "teq",          s(0x00,0x34),       0xfc00003f,     MIPSTrap2 )
 inspick( TEQI,          "teqi",         b(0x01,0x0c),       0xfc1f0000,     MIPSTrap1 )
@@ -166,7 +179,42 @@ inspick( TNEI,          "tnei",         b(0x01,0x0e),       0xfc1f0000,     MIPS
 inspick( XOR,           "xor",          s(0x00,0x26),       0xfc0007ff,     MIPSReg3 )
 inspick( XORI,          "xori",         s(0x0e,0x00),       0xfc000000,     MIPSImmed2 )
 
+// Floating point opcodes (ie. Coprocessor 1)
+inspick( ABS_f,         "abs",          cop(1,0x05),        0xfe00003f,     MIPSFPUOp2 )
+inspick( ADD_f,         "add",          cop(1,0x00),        0xfe00003f,     MIPSFPUOp3 )
+inspick( BC1F,          "bc1f",         cb(1,0x08,0x00),    0xffff0000,     MIPSBranchFPU )
+inspick( BC1FL,         "bc1fl",        cb(1,0x08,0x02),    0xffff0000,     MIPSBranchFPU )
+inspick( BC1T,          "bc1t",         cb(1,0x08,0x01),    0xffff0000,     MIPSBranchFPU )
+inspick( BC1TL,         "bc1tl",        cb(1,0x08,0x03),    0xffff0000,     MIPSBranchFPU )
+// C.cond.fmt
+inspick( CEIL_L_f,      "ceil.l",       cop(1,0x0a),        0xfe00003f,     MIPSFPUOp3 )
+inspick( CEIL_W_f,      "ceil.w",       cop(1,0x0e),        0xfe00003f,     MIPSFPUOp3 )
+inspick( CFC1,          "cfc1",         cb(1,0x02,0x00),    0xffe007ff,     MIPSFGMove )
+inspick( CTC1,          "ctc1",         cb(1,0x06,0x00),    0xffe007ff,     MIPSFGMove )
+inspick( CVT_D_f,       "cvt.d",        cop(1,0x21),        0xfe00003f,     MIPSFPUOp2 )
+inspick( CVT_L_f,       "cvt.l",        cop(1,0x25),        0xfe00003f,     MIPSFPUOp2 )
+inspick( CVT_S_f,       "cvt.s",        cop(1,0x20),        0xfe00003f,     MIPSFPUOp2 )
+inspick( CVT_W_f,       "cvt.w",        cop(1,0x24),        0xfe00003f,     MIPSFPUOp2 )
+inspick( DIV_f,         "div",          cop(1,0x03),        0xfe00003f,     MIPSFPUOp3 )
+inspick( DMFC1,         "dmfc1",        d(0x11,0x01),       0xffe007ff,     MIPSReg2 )
+inspick( DMTC1,         "dmtc1",        d(0x11,0x05),       0xffe007ff,     MIPSReg2 )
+inspick( FLOOR_L_f,     "floor.l",      cop(1,0x0b),        0xfe00003f,     MIPSFPUOp2 )
+inspick( FLOOR_W_f,     "floor.w",      cop(1,0x0f),        0xfe00003f,     MIPSFPUOp2 )
+inspick( MFC1,          "mfc1",         cb(1,0x00,0x00),    0xffe007ff,     MIPSFGMove )
+inspick( MOV_f,         "mov",          cop(1,0x06),        0xfe00003f,     MIPSFPUOp2 )
+inspick( MTC1,          "mtc1",         cb(1,0x04,0x00),    0xffe007ff,     MIPSFGMove )
+inspick( MUL_f,         "mul",          cop(1,0x02),        0xfe00003f,     MIPSFPUOp3 )
+inspick( NEG_f,         "neg",          cop(1,0x07),        0xfe00003f,     MIPSFPUOp2 )
+inspick( ROUND_L_f,     "round.l",      cop(1,0x08),        0xfe00003f,     MIPSFPUOp2 )
+inspick( ROUND_W_f,     "round.w",      cop(1,0x0c),        0xfe00003f,     MIPSFPUOp2 )
+inspick( SQRT_f,        "sqrt",         cop(1,0x04),        0xfe00003f,     MIPSFPUOp2 )
+inspick( SUB_f,         "sub",          cop(1,0x01),        0xfe00003f,     MIPSFPUOp3 )
+inspick( TRUNC_L_f,     "trunc.l",      cop(1,0x09),        0xfe00003f,     MIPSFPUOp2 )
+inspick( TRUNC_W_f,     "trunc.w",      cop(1,0x0d),        0xfe00003f,     MIPSFPUOp2 )
+
 #undef o
 #undef b
 #undef s
 #undef d
+#undef cb
+#undef cop

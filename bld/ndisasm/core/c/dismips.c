@@ -63,6 +63,14 @@ typedef union {
     }           rtype;
     struct {
         unsigned_32 op          : 6;
+        unsigned_32 fmt         : 5;
+        unsigned_32 ft          : 5;
+        unsigned_32 fs          : 5;
+        unsigned_32 fd          : 5;
+        unsigned_32 funct       : 6;
+    }           frtype;
+    struct {
+        unsigned_32 op          : 6;
         unsigned_32 code        : 20;
         unsigned_32 funct       : 6;
     }           break_t;
@@ -94,6 +102,14 @@ typedef union {
     }           rtype;
     struct {
         unsigned_32 funct       : 6;
+        unsigned_32 fd          : 5;
+        unsigned_32 fs          : 5;
+        unsigned_32 ft          : 5;
+        unsigned_32 fmt         : 5;
+        unsigned_32 op          : 6;
+    }           frtype;
+    struct {
+        unsigned_32 funct       : 6;
         unsigned_32 code        : 20;
         unsigned_32 op          : 6;
     }           break_t;
@@ -107,6 +123,32 @@ typedef union {
 #endif
 } mips_ins;
 
+
+static dis_format_flags MIPSFloatFmt( unsigned_32 fmt )
+{
+    dis_format_flags    flags;
+
+    switch( fmt ) {
+    case 16:
+        flags = DIF_MIPS_FF_S;
+        break;
+    case 17:
+        flags = DIF_MIPS_FF_D;
+        break;
+    case 20:
+        flags = DIF_MIPS_FF_W;
+        break;
+    case 21:
+        flags = DIF_MIPS_FF_L;
+        break;
+    case 22:
+        flags = DIF_MIPS_FF_PS;
+        break;
+    default:
+        flags = 0;
+    }
+    return( flags );
+}
 
 dis_handler_return MIPSNull( dis_handle *h, void *d, dis_dec_ins *ins )
 {
@@ -290,30 +332,21 @@ dis_handler_return MIPSMemory( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].value = SEX( code.itype.immediate, 15 );
     ins->op[1].base = code.itype.rs + DR_MIPS_r0;
     ins->num_ops = 2;
-#if 0
-    switch( code.memory.opcode & 0x0b ) {
-    case 0x00:
-        ins->op[1].ref_type = DRT_AXP_FFLOAT;
+    switch( code.itype.op & 0x07 ) {
+    case 0x0:
+    case 0x4:
+        ins->op[1].ref_type = DRT_MIPS_BYTE;
         break;
-    case 0x01:
-        ins->op[1].ref_type = DRT_AXP_GFLOAT;
+    case 0x1:
+    case 0x5:
+        ins->op[1].ref_type = DRT_MIPS_HALF;
         break;
-    case 0x02:
-        ins->op[1].ref_type = DRT_AXP_SFLOAT;
-        break;
-    case 0x03:
-        ins->op[1].ref_type = DRT_AXP_TFLOAT;
-        break;
-    case 0x08:
-    case 0x0a:
-        ins->op[1].ref_type = DRT_AXP_LWORD;
-        break;
-    case 0x09:
-    case 0x0b:
-        ins->op[1].ref_type = DRT_AXP_QWORD;
+    case 0x3:
+    case 0x2:  // Left
+    case 0x6:  // Right
+        ins->op[1].ref_type = DRT_MIPS_WORD;
         break;
     }
-#endif
     return( DHR_DONE );
 }
 
@@ -391,6 +424,79 @@ dis_handler_return MIPSBranch3( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return MIPSFGMove( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.frtype.ft + DR_MIPS_r0;
+    ins->op[1].type = DO_REG;
+    ins->op[1].base = code.frtype.fs + DR_MIPS_f0;
+    ins->num_ops = 2;
+    return( DHR_DONE );
+}
+
+dis_handler_return MIPSFPUOp2( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.frtype.fd + DR_MIPS_f0;
+    ins->op[1].type = DO_REG;
+    ins->op[1].base = code.frtype.fs + DR_MIPS_f0;
+    ins->num_ops = 2;
+    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    return( DHR_DONE );
+}
+
+dis_handler_return MIPSFPUOp3( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.frtype.fd + DR_MIPS_f0;
+    ins->op[1].type = DO_REG;
+    ins->op[1].base = code.frtype.fs + DR_MIPS_f0;
+    ins->op[2].type = DO_REG;
+    ins->op[2].base = code.frtype.ft + DR_MIPS_f0;
+    ins->num_ops = 3;
+    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    return( DHR_DONE );
+}
+
+dis_handler_return MIPSFPUMemory( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.itype.rt + DR_MIPS_f0;
+    ins->op[1].type = DO_MEMORY_ABS;
+    ins->op[1].value = SEX( code.itype.immediate, 15 );
+    ins->op[1].base = code.itype.rs + DR_MIPS_r0;
+    ins->num_ops = 2;
+    if( (ins->type == DI_MIPS_LDC1) || (ins->type == DI_MIPS_SDC1) )
+        ins->op[1].ref_type = DRT_MIPS_DFLOAT;
+    else
+        ins->op[1].ref_type = DRT_MIPS_SFLOAT;
+    return( DHR_DONE );
+}
+
+dis_handler_return MIPSBranchFPU( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_RELATIVE;
+    ins->op[0].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
+    ins->num_ops = 1;
+    if( code.itype.rt & 0x10 )
+        ins->flags |= DIF_MIPS_LIKELY;
+    return( DHR_DONE );
+}
 
 static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, char *name )
@@ -442,25 +548,19 @@ static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
 static unsigned MIPSFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, char *name )
 {
-#if 0
     char        *p;
 
     p = name;
-    if( ins->flags != DIF_NONE ) {
-        *p++ = '/';
-        if( ins->flags & DIF_AXP_C ) *p++ = 'c';
-        if( ins->flags & DIF_AXP_D ) *p++ = 'd';
-        if( ins->flags & DIF_AXP_I ) *p++ = 'i';
-        if( ins->flags & DIF_AXP_M ) *p++ = 'm';
-        if( ins->flags & DIF_AXP_S ) *p++ = 's';
-        if( ins->flags & DIF_AXP_U ) *p++ = 'u';
-        if( ins->flags & DIF_AXP_V ) *p++ = 'v';
+    if( ins->flags & DIF_MIPS_FF_FLAGS ) {
+        *p++ = '.';
+        if( ins->flags & DIF_MIPS_FF_S ) *p++ = 's';
+        if( ins->flags & DIF_MIPS_FF_D ) *p++ = 'd';
+        if( ins->flags & DIF_MIPS_FF_W ) *p++ = 'w';
+        if( ins->flags & DIF_MIPS_FF_L ) *p++ = 'l';
+        if( ins->flags & DIF_MIPS_FF_PS ) *p++ = 'p'; *p++ = 's';
         *p = '\0';
     }
     return( p - name );
-#else
-    return( NULL );
-#endif
 }
 
 static unsigned MIPSOpHook( dis_handle *h, void *d, dis_dec_ins *ins,

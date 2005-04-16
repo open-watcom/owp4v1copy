@@ -422,7 +422,7 @@ struct string_list {
     unsigned            len;
 };
 
-#define MAX_ENTRIES     32*1024
+#define MAX_ENTRIES     96*1024
 string_list     *Strings;
 char            StringTable[MAX_ENTRIES];
 unsigned        StringIndex;
@@ -652,6 +652,10 @@ static int BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
                 }
             }
             SelIndex += shifted_mask + 1;
+            if( SelIndex >= MAX_ENTRIES ) {
+                fprintf( stderr, "internal error (MAX_ENTRIES may need increasing)\n" );
+                exit( 1 );
+            }
         } else {
             /* multiple opcode/mask pairs going to same bit pattern */
             fprintf( stderr, "internal error constructing range table\n" );

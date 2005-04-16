@@ -30,8 +30,12 @@
 
 
 refpick( BYTE, "" )
-refpick( HWORD, "" )
-refpick( WORD, "" )
-refpick( DWORD, "" )
+refpick( HALF, "" )     // 16 bits
+refpick( WORD, "" )     // word is 32 bits
+refpick( WORDL, "" )    // unaligned left
+refpick( WORDR, "" )    // unaligned right
+refpick( DWORD, "" )    // dword is 64 bits
+refpick( DWORDL, "" )   // unaligned left
+refpick( DWORDR, "" )   // unaligned left
 refpick( SFLOAT, "" )
 refpick( DFLOAT, "" )
