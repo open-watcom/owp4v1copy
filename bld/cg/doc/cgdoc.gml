@@ -2030,6 +2030,10 @@ The cg_switches did not allow any segment registers to float, but the
 user has requested a far pointer indirection.
 Extra (cg_sym_handle) is the procedure which contained the far pointer
 usage.
+:DT.MSG_SYMBOL_TOO_LONG
+:DD.Given symbol is too long and is truncated to maximum permited
+length for current module output format.
+Extra (cg_sym_handle) is the symbol which was truncated.
 :eDL.
 .section void *FEAuxInfo( void *extra, aux_class class )
 :I1.FEAuxInfo
