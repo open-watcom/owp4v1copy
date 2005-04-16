@@ -1052,22 +1052,9 @@ local unsigned long GetFields( TYPEPTR decl )
                     bits_total = bits_available;
                 }
                 if( field != NULL ) {
-                    if( unqualified_type == TYPE_LONG64 ){
-                        int bit_offset = bits_total - bits_available;
-
-                        if( bit_offset >= 32 ){
-                            field->offset = next_offset+4;
-                            bit_offset -= 32;
-                        }else{
-                            field->offset = next_offset;
-                        }
-                        field->field_type = EnumFieldType( GetType( TYPE_LONG ), plain_int,
-                                  bit_offset, width );
-                    }else{
-                        field->offset = next_offset;
-                        field->field_type = EnumFieldType( typ, plain_int,
-                                  bits_total - bits_available, width );
-                    }
+                    field->offset = next_offset;
+                    field->field_type = EnumFieldType( typ, plain_int,
+                              bits_total - bits_available, width );
                 }
                 bits_available -= width;
             } else {

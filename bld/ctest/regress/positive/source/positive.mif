@@ -85,6 +85,7 @@ positive_tests = &
     based02.$(ext) &
     bf01.$(ext) &
     bf02.$(ext) &
+    bf03.$(ext) &
     conv02.$(ext) &
     conv03.$(ext) &
     conv04.$(ext) &

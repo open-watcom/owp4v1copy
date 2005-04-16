@@ -71,13 +71,13 @@
 #include "treefold.h"
 #include "typemap.h"
 #include "types.h"
+#include "i64.h"
 
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
     #include "i86segs.h"
 #endif
 
 static  void    FreeTreeNode( tn node );
-static  void    DoAnd( an left, unsigned_32 mask, tn node );
 static  void    Control( cg_op op, tn node, label_handle lbl, bool gen );
 
 static  pointer TreeFrl;
@@ -368,8 +368,8 @@ extern  tn  TGCompare(  cg_op op,  tn left,  tn rite,  type_def  *tipe )
 #if _TARGET & _TARG_AXP
     // FIXME: bad assumption being covered here
     if( tipe->length < 4 ) {
-    tipe = TypeAddress( T_INTEGER );
-    can_demote = FALSE;
+        tipe = TypeAddress( T_INTEGER );
+        can_demote = FALSE;
     }
 #endif
     if( ( left->tipe == rite->tipe )
@@ -414,9 +414,34 @@ extern  unsigned_32    Mask( btn node )
     len = node->len;
     mask = 0;
     bit = (unsigned_32)1 << node->start;
-    for(;;) {
+    for( ;; ) {
         mask |= bit;
         bit <<= 1;
+        if( --len == 0 ) break;
+    }
+    return( mask );
+}
+
+
+static  unsigned_64    Mask64( btn node )
+/****************************************
+    like Mask(), only 64-bit
+*/
+{
+    unsigned_64     mask;
+    uint            len;
+    unsigned_64     bit;
+    unsigned_64     tmp;
+
+    len = node->len;
+    U32ToU64( 0, &mask );
+    U32ToU64( 1, &tmp );
+    U64ShiftL( &tmp, node->start, &bit );
+    for( ;; ) {
+        U64Or( &mask, &bit, &tmp );
+        mask = tmp;
+        U64ShiftL( &bit, 1, &tmp );
+        bit = tmp;
         if( --len == 0 ) break;
     }
     return( mask );
@@ -1607,7 +1632,7 @@ static  uint    LShift( btn node )
     how far would a bit field need to be shifted to get the sign bit into the real sign bit?
 */
 {
-    return( ( node->tipe->length << 3 ) - ( node->start + node->len ) );
+    return( ( node->tipe->length * 8 ) - ( node->start + node->len ) );
 }
 #endif
 
@@ -1642,7 +1667,7 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
 #ifdef JUST_USE_SHIFTS
     if( !node->is_signed && node->start == 0 ) {
         if( !already_masked ) {
-        retv = BGBinary( O_AND, retv, Int( mask ), tipeu, TRUE );
+            retv = BGBinary( O_AND, retv, Int( mask ), tipeu, TRUE );
         }
     } else {
         retv = BGBinary( O_LSHIFT, retv,
@@ -1654,7 +1679,6 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
     }
 #else
     if( node->is_signed ) {
-
         retv = BGBinary( O_RSHIFT, retv, Int( node->start ), tipeu, TRUE );
         mask >>= node->start;
         retv = BGBinary( O_AND, retv, Int( mask ), tipeu, TRUE );
@@ -1713,6 +1737,17 @@ static  an  TNBitRVal( an retv, btn node )
     return( retv );
 }
 
+
+static  void    DoAnd( an left, unsigned_64 mask, tn node )
+/**********************************************************
+Turn off bits "mask" in address name "left"
+*/
+{
+    BGDone( BGOpGets( O_AND, AddrCopy( left ), Int( ~(mask.u._32[I64LO32]) ),
+              node->tipe, node->tipe ) );
+}
+
+
 static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
 /***********************************************************************
     Do a bit field assgnment, like a += b, or a = b or b++.  If
@@ -1731,8 +1766,8 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
     an          free_retv;
     btn         lhs;
     uint        shift;
-    unsigned_32 mask;
-    unsigned_32 shiftmask;
+    unsigned_64 mask;
+    unsigned_64 shiftmask;
 
     lhs = (btn)node->u.left;
     left = AddrGen( lhs->u.left );
@@ -1748,13 +1783,13 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
         after_value = rite;
     }
     after_value = BGConvert( after_value, node->tipe );
-    mask = Mask( lhs );
+    mask = Mask64( lhs );
     shift = lhs->start;
     FreeTreeNode( (tn)lhs );
-    shiftmask = mask >> shift;
+    U64ShiftR( &mask, shift, &shiftmask );  // shiftmask = mask >> shift;
     if( after_value->format == NF_CONS && after_value->class == CL_CONS2 ) {
-        retv = Int( shiftmask & after_value->u.name->c.int_value );
-        if( retv->u.name->c.int_value != shiftmask ) {
+        retv = Int( shiftmask.u._64[0] & after_value->u.name->c.int_value );
+        if( retv->u.name->c.int_value != shiftmask.u._64[0] ) {
             DoAnd( left, mask, node );
         }
         if( retv->u.name->c.int_value != 0 ) {
@@ -1767,7 +1802,7 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
         }
         BGDone( retv );
     } else {
-        retv = BGBinary( O_AND, AddrCopy(after_value), Int(shiftmask),
+        retv = BGBinary( O_AND, AddrCopy( after_value ), Int( shiftmask.u._32[I64LO32] ),
                   node->tipe, TRUE );
         DoAnd( left, mask, node );
         retv = BGBinary( O_LSHIFT, retv, Int( shift ), node->tipe, TRUE );
@@ -1779,7 +1814,7 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
         retv = before_value;
     } else {
         BGDone( before_value );
-        retv = BGBinary( O_AND, after_value, Int( shiftmask ), node->tipe, TRUE );
+        retv = BGBinary( O_AND, after_value, Int( shiftmask.u._32[I64LO32] ), node->tipe, TRUE );
     }
     return( retv );
 }
@@ -2079,16 +2114,6 @@ static  an  TNWarp( tn node )
     dst = MakeTempAddr( BGNewTemp( node->tipe ), node->tipe );
     src = NotAddrGen( node->rite );
     return( BGAssign( dst, src, node->tipe ) );
-}
-
-
-static  void    DoAnd( an left, unsigned_32 mask, tn node )
-/**********************************************************
-Turn off bits "mask" in address name "left"
-*/
-{
-    BGDone( BGOpGets( O_AND, AddrCopy( left ), Int( ~mask ),
-              node->tipe, node->tipe ) );
 }
 
 
