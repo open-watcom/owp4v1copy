@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Basic target types.
 *
 ****************************************************************************/
 
@@ -45,6 +44,7 @@ extern  void            InitTyping();
 extern    type_def      *TypeInteger;
 extern    type_def      *TypeHugeInteger;
 extern    type_def      *TypeLongInteger;
+extern    type_def      *TypeLongLongInteger;
 extern    type_def      *TypeNearInteger;
 extern    type_def      *TypeUnsigned;
 extern    type_def      *TypePtr;
@@ -53,15 +53,16 @@ extern    type_def      *TypeNone;
 extern    type_def      *TypeProcParm;
 
 
-extern  void    TypeInit() {
-/**************************/
-
+extern  void    TypeInit( void )
+/******************************/
+{
     InitTyping();
     TargTypeInit();
     TypeProcParm = TypeAddress( T_PROC_PARM );
     TypeInteger = TypeAddress( T_INTEGER );
     TypeHugeInteger = TypeAddress( T_HUGE_INTEGER );
     TypeLongInteger = TypeAddress( T_LONG_INTEGER );
+    TypeLongLongInteger = TypeAddress( T_INT_8 );   // should be something else perhaps?
     TypeNearInteger = TypeAddress( T_NEAR_INTEGER );
     TypeUnsigned = TypeAddress( T_UNSIGNED );
     TypeBoolean = TypeAddress( T_BOOLEAN );

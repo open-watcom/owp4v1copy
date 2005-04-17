@@ -402,6 +402,14 @@ static  an  Int( unsigned_32 num )
 }
 
 
+static  an  Int64( unsigned_64 num )
+/***********************************
+    return an address name for a 64-bit integer
+*/
+{
+    return( BGInt64( num, TypeLongLongInteger ) );
+}
+
 extern  unsigned_32    Mask( btn node )
 /**************************************
     return a mask of 1's in the positions a bit field occupies.
@@ -1747,6 +1755,17 @@ Turn off bits "mask" in address name "left"
               node->tipe, node->tipe ) );
 }
 
+static  void    DoAnd64( an left, unsigned_64 mask, tn node )
+/************************************************************
+Turn off bits "mask" in address name "left"
+*/
+{
+    unsigned_64     tmp;
+
+    U64Not( &mask, &tmp );
+    BGDone( BGOpGets( O_AND, AddrCopy( left ), Int64( tmp ),
+              node->tipe, node->tipe ) );
+}
 
 static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
 /***********************************************************************
@@ -1802,9 +1821,9 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
         }
         BGDone( retv );
     } else {
-        retv = BGBinary( O_AND, AddrCopy( after_value ), Int( shiftmask.u._32[I64LO32] ),
+        retv = BGBinary( O_AND, AddrCopy( after_value ), Int64( shiftmask ),
                   node->tipe, TRUE );
-        DoAnd( left, mask, node );
+        DoAnd64( left, mask, node );
         retv = BGBinary( O_LSHIFT, retv, Int( shift ), node->tipe, TRUE );
         retv = BGOpGets( O_OR, left, retv, node->tipe, node->tipe );
         BGDone( retv );
@@ -1814,7 +1833,7 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
         retv = before_value;
     } else {
         BGDone( before_value );
-        retv = BGBinary( O_AND, after_value, Int( shiftmask.u._32[I64LO32] ), node->tipe, TRUE );
+        retv = BGBinary( O_AND, after_value, Int64( shiftmask ), node->tipe, TRUE );
     }
     return( retv );
 }

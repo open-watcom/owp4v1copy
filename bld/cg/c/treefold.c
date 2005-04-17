@@ -121,7 +121,7 @@ static signed_64 CFGetInteger64Value( cfloat *cf )
 }
 
 static  cfloat  *IntToCF( signed_64 value, type_def *tipe ) {
-/**********************************************************/
+/*********************************************************/
 
     signed_8    s8;
     unsigned_8  u8;
@@ -176,6 +176,13 @@ static  tn      IntToType( signed_32 value, type_def *tipe ) {
 
     I32ToI64( value, &temp );
     return( TGConst( IntToCF( temp, tipe ), tipe ) );
+}
+
+
+static  tn      Int64ToType( signed_64 value, type_def *tipe )
+/************************************************************/
+{
+    return( TGConst( IntToCF( value, tipe ), tipe ) );
 }
 
 
@@ -487,7 +494,6 @@ extern  tn      FoldAnd( tn left, tn rite, type_def *tipe ) {
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
-    unsigned_32 and;
 
     if( left->class == TN_CONS ) {
         fold = left;
@@ -499,13 +505,28 @@ extern  tn      FoldAnd( tn left, tn rite, type_def *tipe ) {
         lv = left->u.name->c.value;
         rv = rite->u.name->c.value;
         if( CFIs32( lv ) && CFIs32( rv ) ) {
+            unsigned_32     and;
+
             and = CFConvertByType( rv, tipe ) & CFConvertByType( lv, tipe );
             fold = IntToType( and, tipe );
+            BurnTree( left );
+            BurnTree( rite );
+        } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+            unsigned_64     and;
+            unsigned_64     li;
+            unsigned_64     ri;
+
+            li = CFGetInteger64Value( lv );
+            ri = CFGetInteger64Value( rv );
+
+            U64And( &li, &ri, &and );
+            fold = Int64ToType( and, tipe );
             BurnTree( left );
             BurnTree( rite );
         }
     } else if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
+        /* For any X: X & 0 = 0, and X & ~0 = X */
         if( CFTest( rv ) == 0 ) {
             left = TGTrash( left );
             fold = TGBinary( O_COMMA, left, IntToType( 0, tipe ), tipe );
@@ -525,7 +546,6 @@ extern  tn      FoldOr( tn left, tn rite, type_def *tipe ) {
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
-    unsigned_32 or;
 
     if( left->class == TN_CONS ) {
         fold = left;
@@ -537,13 +557,28 @@ extern  tn      FoldOr( tn left, tn rite, type_def *tipe ) {
         lv = left->u.name->c.value;
         rv = rite->u.name->c.value;
         if( CFIs32( lv ) && CFIs32( rv ) ) {
+            unsigned_32     or;
+
             or = CFConvertByType( rv, tipe ) | CFConvertByType( lv, tipe );
             fold = IntToType( or, tipe );
+            BurnTree( left );
+            BurnTree( rite );
+        } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+            unsigned_64     or;
+            unsigned_64     li;
+            unsigned_64     ri;
+
+            li = CFGetInteger64Value( lv );
+            ri = CFGetInteger64Value( rv );
+
+            U64Or( &li, &ri, &or );
+            fold = Int64ToType( or, tipe );
             BurnTree( left );
             BurnTree( rite );
         }
     } else if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
+        /* For any X: X | 0 = X, and X | ~0 = ~0 */
         if( CFTest( rv ) == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
@@ -563,8 +598,6 @@ extern  tn      FoldXor( tn left, tn rite, type_def *tipe ) {
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
-    unsigned_32 li;
-    unsigned_32 ri;
 
     if( left->class == TN_CONS ) {
         fold = left;
@@ -576,15 +609,31 @@ extern  tn      FoldXor( tn left, tn rite, type_def *tipe ) {
         lv = left->u.name->c.value;
         rv = rite->u.name->c.value;
         if( CFIs32( lv ) && CFIs32( rv ) ) {
+            unsigned_32     li;
+            unsigned_32     ri;
+
             li = CFConvertByType( lv, tipe );
             ri = CFConvertByType( rv, tipe );
             ri = li ^ ri;
             fold = IntToType( ri, tipe );
             BurnTree( left );
             BurnTree( rite );
+        } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+            unsigned_64     xor;
+            unsigned_64     li;
+            unsigned_64     ri;
+
+            li = CFGetInteger64Value( lv );
+            ri = CFGetInteger64Value( rv );
+
+            U64Xor( &li, &ri, &xor );
+            fold = Int64ToType( xor, tipe );
+            BurnTree( left );
+            BurnTree( rite );
         }
     } else if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
+        /* For any X: X ^ 0 = X, and X ^ ~0 = ~X */
         if( CFTest( rv ) == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );

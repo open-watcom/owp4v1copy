@@ -24,15 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  header file for data.c
+* Description:  Global code generator data (defined in data.c).
 *
 ****************************************************************************/
+
 
 #include "ptrint.h"
 #include "typedef.h"
 
-extern  block *                 HeadBlock;
-extern  block *                 BlockList;
+extern  block                   *HeadBlock;
+extern  block                   *BlockList;
 extern  int                     InsId;
 extern  int                     TempId;
 extern  pointer                 ConfList;
@@ -48,15 +49,16 @@ extern  global_bit_set          MemoryBits;
 extern  type_class_def          ClassPointer;
 extern  bool                    BlockByBlock;
 extern  type_length             MaxStack;
-extern  type_def               *TypeBoolean;
-extern  type_def               *TypeInteger;
-extern  type_def               *TypeUnsigned;
-extern  type_def               *TypePtr;
-extern  type_def               *TypeNone;
-extern  type_def               *TypeProcParm;
-extern  type_def               *TypeNearInteger;
-extern  type_def               *TypeLongInteger;
-extern  type_def               *TypeHugeInteger;
+extern  type_def                *TypeBoolean;
+extern  type_def                *TypeInteger;
+extern  type_def                *TypeUnsigned;
+extern  type_def                *TypePtr;
+extern  type_def                *TypeNone;
+extern  type_def                *TypeProcParm;
+extern  type_def                *TypeNearInteger;
+extern  type_def                *TypeLongInteger;
+extern  type_def                *TypeLongLongInteger;
+extern  type_def                *TypeHugeInteger;
 extern  hw_reg_set              GivenRegisters;
 extern  bool                    BlocksUnTrimmed;
 extern  pointer                 AddrList;
