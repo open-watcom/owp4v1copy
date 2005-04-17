@@ -25,21 +25,21 @@ __err : errsrc.exe .symbolic
         $(%check_out) $(f77_dir)\f77lib\c\errmsg.rc
         $(%check_out) $(f77_dir)\f77lib\c\errgrp.c
 #       $(%check_out) $(f77_dir)\f77lib\c\jerrmsg.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\errcodi.h
-        $(%check_out) $(f77_dir)\cg86\cp\h\errgrpi.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsgi.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsgi.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\errcod3.h
-        $(%check_out) $(f77_dir)\cg86\cp\h\errgrp3.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsg3.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsg3.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\errcodr.h
-        $(%check_out) $(f77_dir)\cg86\cp\h\errgrpr.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsgr.c
-        $(%check_out) $(f77_dir)\cg86\cp\h\errmsgr.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsgi.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsg3.rc
-        $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsgr.rc
+        $(%check_out) $(f77_dir)\wfc\h\errcodi.h
+        $(%check_out) $(f77_dir)\wfc\h\errgrpi.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsgi.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsgi.rc
+        $(%check_out) $(f77_dir)\wfc\h\errcod3.h
+        $(%check_out) $(f77_dir)\wfc\h\errgrp3.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsg3.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsg3.rc
+        $(%check_out) $(f77_dir)\wfc\h\errcodr.h
+        $(%check_out) $(f77_dir)\wfc\h\errgrpr.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsgr.c
+        $(%check_out) $(f77_dir)\wfc\h\errmsgr.rc
+        $(%check_out) $(f77_dir)\wfc\h\jerrmsgi.rc
+        $(%check_out) $(f77_dir)\wfc\h\jerrmsg3.rc
+        $(%check_out) $(f77_dir)\wfc\h\jerrmsgr.rc
         $(%check_out) $(f77_dir)\wfl\h\errcodi.h
         $(%check_out) $(f77_dir)\wfl\h\errmsgi.c
         $(%check_out) $(f77_dir)\wfl\h\errmsgi.rc
@@ -67,33 +67,33 @@ __err : errsrc.exe .symbolic
         del errgrp.c
         del errmsg.msg
         errsrc eoic
-        cp errcod.h $(f77_dir)\cg86\cp\h\errcodi.h
+        cp errcod.h $(f77_dir)\wfc\h\errcodi.h
         del errcod.h
-        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsgi.c
+        cp errmsg.c $(f77_dir)\wfc\h\errmsgi.c
         del errmsg.c
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsgi.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\errmsgi.rc
         del errmsg.rc
-        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrpi.c
+        cp errgrp.c $(f77_dir)\wfc\h\errgrpi.c
         del errgrp.c
         del errmsg.msg
         errsrc eo3c
-        cp errcod.h $(f77_dir)\cg86\cp\h\errcod3.h
+        cp errcod.h $(f77_dir)\wfc\h\errcod3.h
         del errcod.h
-        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsg3.c
+        cp errmsg.c $(f77_dir)\wfc\h\errmsg3.c
         del errmsg.c
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsg3.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\errmsg3.rc
         del errmsg.rc
-        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrp3.c
+        cp errgrp.c $(f77_dir)\wfc\h\errgrp3.c
         del errgrp.c
         del errmsg.msg
         errsrc eorc
-        cp errcod.h $(f77_dir)\cg86\cp\h\errcodr.h
+        cp errcod.h $(f77_dir)\wfc\h\errcodr.h
         del errcod.h
-        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsgr.c
+        cp errmsg.c $(f77_dir)\wfc\h\errmsgr.c
         del errmsg.c
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsgr.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\errmsgr.rc
         del errmsg.rc
-        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrpr.c
+        cp errgrp.c $(f77_dir)\wfc\h\errgrpr.c
         del errgrp.c
         del errmsg.msg
         errsrc elic
@@ -134,21 +134,21 @@ __err : errsrc.exe .symbolic
 #       del errgrp.c
 #       del errmsg.msg
         errsrc joic
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgi.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\jerrmsgi.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jo3c
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsg3.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\jerrmsg3.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jorc
-        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgr.rc
+        cp errmsg.rc $(f77_dir)\wfc\h\jerrmsgr.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
