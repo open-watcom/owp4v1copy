@@ -438,6 +438,13 @@ extern  cf_bool CFIs32( cfloat * cf ) {
     return( CF_FALSE );
 }
 
+extern  cf_bool CFIs64( cfloat * cf ) {
+/*************************************/
+
+    if( CFIsI64( cf ) ) return( CF_TRUE );
+    if( CFIsU64( cf ) ) return( CF_TRUE );
+    return( CF_FALSE );
+}
 
 extern  cf_bool CFIsSize( cfloat *f, uint size ) {
 /************************************************/
