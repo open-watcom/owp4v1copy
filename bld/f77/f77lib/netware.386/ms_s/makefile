@@ -1,4 +1,4 @@
-#pmake: build os_nov cpu_386
+#pmake: buildlib os_nov cpu_386
 processor  = 386
 system     = netware
 model      = ms

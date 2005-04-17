@@ -27,14 +27,14 @@ host_os = $(f77lib_host_os_$(system))
 
 #-------------------------------------------------------------------------------
 
-asm_src_i86 = $(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
-asm_src_386 = $(f77_dir)/cg86/rt/386asm;$(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
-asm_src_axp = $(f77_dir)/cg86/rt/axpasm;$(f77_dir)/cg86/axpasm
-asm_src_ppc = $(f77_dir)/cg86/rt/ppcasm;$(f77_dir)/cg86/ppcasm
+asm_src_i86 = ../../asmi86;../../../cg86/asm
+asm_src_386 = ../../asm386;../../../asm386
+asm_src_axp = ../../asmaxp;../../../cg86/axpasm
+asm_src_ppc = ../../asmppc;../../../asmppc
 
 .asm: $(asm_src_$(host_cpu))
 
-.c: $(f77_dir)/cg86/rt/c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
+.c: ../../c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
 
 #-------------------------------------------------------------------------------
 

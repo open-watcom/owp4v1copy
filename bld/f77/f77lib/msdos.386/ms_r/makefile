@@ -1,4 +1,4 @@
-#pmake: build os_dos cpu_386
+#pmake: buildlib os_dos cpu_386
 processor  = 386
 system     = msdos
 model      = mf

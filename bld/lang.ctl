@@ -107,8 +107,9 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/plusplus/lang.ctl ]
 [ INCLUDE <DEVDIR>/fe_misc/lang.ctl ]
 #        FORTRAN 77 compilers must be built after code generators
-#        flib & flib286 get built with f77
 [ INCLUDE <DEVDIR>/f77/lang.ctl ]
+#        FORTRAN 77 libraries
+[ INCLUDE <DEVDIR>/f77/f77lib/lang.ctl ]
 [ INCLUDE <DEVDIR>/f77/samples/lang.ctl ]
 [ INCLUDE <DEVDIR>/wl/lang.ctl ]
 #

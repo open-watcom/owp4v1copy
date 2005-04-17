@@ -1,4 +1,4 @@
-#pmake: build os_win cpu_386
+#pmake: buildlib os_win cpu_386
 processor  = 387
 system     = windows
 model      = mf
