@@ -42,9 +42,6 @@
     #pragma aux if_va  "IF@*" parm caller [];
     #pragma aux xf_rtn "IF@*";
     #if defined( __3S__ )
-      #pragma aux (if_rtn) if_rtn modify [8087];
-      #pragma aux (if_va)  if_va  modify [8087];
-      #pragma aux (xf_rtn) xf_rtn modify [8087];
       #if defined( __FLAT__ )
         #pragma aux (if_rtn) if_rtn modify [8087 gs];
         #pragma aux (if_va)  if_va  modify [8087 gs];
