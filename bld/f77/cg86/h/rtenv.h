@@ -41,20 +41,14 @@
     #pragma aux co_rtn "RT@*" parm routine [eax ebx ecx edx 8087];
     #pragma aux va_rtn "RT@*" parm caller [];
     #if defined( __3S__ )
-      #if __WATCOMC__ < 900
-        #pragma aux (rt_rtn) rt_rtn modify [8087 fs gs];
-        #pragma aux (co_rtn) co_rtn modify [8087 fs gs];
-        #pragma aux (va_rtn) va_rtn modify [8087 fs gs];
+      #if defined( __FLAT__ )
+        #pragma aux (rt_rtn) rt_rtn modify [8087 gs];
+        #pragma aux (co_rtn) co_rtn modify [8087 gs];
+        #pragma aux (va_rtn) va_rtn modify [8087 gs];
       #else
-        #if defined( __FLAT__ )
-          #pragma aux (rt_rtn) rt_rtn modify [8087 gs];
-          #pragma aux (co_rtn) co_rtn modify [8087 gs];
-          #pragma aux (va_rtn) va_rtn modify [8087 gs];
-        #else
-          #pragma aux (rt_rtn) rt_rtn modify [8087 es fs gs];
-          #pragma aux (co_rtn) co_rtn modify [8087 es fs gs];
-          #pragma aux (va_rtn) va_rtn modify [8087 es fs gs];
-        #endif
+        #pragma aux (rt_rtn) rt_rtn modify [8087 es fs gs];
+        #pragma aux (co_rtn) co_rtn modify [8087 es fs gs];
+        #pragma aux (va_rtn) va_rtn modify [8087 es fs gs];
       #endif
       #if defined( __FPI__ )
         #pragma aux (rt_rtn) flt_rt_rtn value [8087];
