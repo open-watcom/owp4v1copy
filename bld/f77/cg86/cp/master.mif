@@ -16,7 +16,7 @@ f77_autodepends = .AUTODEPEND
 f77_trmem = 1
 !endif
 
-inc_dirs=-I"$(f77_dir)/cg86/cp/h" -I"$(f77_dir)/cg86/h" $(cg_inc_dirs) -I"$(f77_dir)/h" -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h"
+inc_dirs=-I"../h" -I"../../h" $(cg_inc_dirs) -I"../../../h" -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h"
 
 !ifeq target_cpu 386
 inc_dirs+= -I"$(wasm_dir)/h"
@@ -35,12 +35,12 @@ extra_c_flags = -D_USE_RESOURCES_
 extra_c_flags_i86 = -zp1
 extra_c_flags_386 = -zp1
 
-.h: $(f77_dir)/h;$(f77_dir)/cg86/h;$(f77_dir)/cg86/cp/h
-.c: $(f77_dir)/cg86/cp/c;$(f77_dir)/cg86/c;$(f77_dir)/cp;$(f77_dir)/c;$(wasm_dir)/c;$(trmem_dir);
+.h: ../../../h;../../h;../h
+.c: ../c;../../c;../../../c;$(wasm_dir)/c;$(trmem_dir);
 
 !ifeq host_cpu axp
-asm_opts  = -oc -zq -we -I"$(f77_dir)/cg86/inc"
-.asm: $(f77_dir)/cg86/axpasm
+asm_opts  = -oc -zq -we -I"../../inc"
+.asm: ../../../asmaxp
 .asm.obj:
     $(as) $[* $(asm_opts)
 !endif
@@ -92,7 +92,7 @@ $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
 option.obj : option.c optinfo.h
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -I"$(f77_dir)/h" -I"$(f77_dir)/cg86/h" -I"$(wasm_dir)/h" $[@ -fo=$^@
+    $(rc_aui) -I"../../../h" -I"../../h" -I"$(wasm_dir)/h" $[@ -fo=$^@
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
     $(bld_cl) $[@ $(wcl_util_opts)

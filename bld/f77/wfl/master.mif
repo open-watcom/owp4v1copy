@@ -6,11 +6,11 @@ proj_name = f77
 
 !include wres.mif
 
-inc_dirs=-I"../h" -I"$(f77_dir)/cg86/cp/h" -I"$(f77_dir)/cg86/h" -I"$(f77_dir)/h"
+inc_dirs=-I"../h" -I"../../cg86/cp/h" -I"../../cg86/h" -I"../../h"
 
 extra_c_flags = -d__WFL__ -d__RT__
 
-.c: ../c;$(f77_dir)/cg86/cp/c;$(f77_dir)/cp;$(f77_dir)/c
+.c: ../c;../../cg86/cp/c;../../c
 
 files = &
     blderr.obj &
@@ -31,4 +31,4 @@ $(target_exe).exe : $(files) $(wres_lib) errmsg.res
     wstrip -q -a -r $^@ . errmsg.res
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -I"$(f77_dir)/h" -I"$(f77_dir)/cg86/h" $[@ -fo=$^@
+    $(rc_aui) -I"../../h" -I"../../cg86/h" $[@ -fo=$^@
