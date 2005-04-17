@@ -1286,8 +1286,8 @@ STATIC void makeNumberToken( char *inString, TOKEN_TYPE *current, int *index )
             c = currentChar[0];
         }
     }
-    current->data.number= value;
-    current->type= OP_INTEGER;
+    current->data.number = value;
+    current->type = OP_INTEGER;
 
     *index = currentChar - inString;
 }
@@ -1299,9 +1299,9 @@ STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
     int     inIndex;
     int     currentIndex;
 
-    inIndex      = 1;   // skip initial DOUBLEQUOTE
-    currentIndex = 0;
-    current->type= OP_STRING;
+    inIndex       = 1;   // skip initial DOUBLEQUOTE
+    currentIndex  = 0;
+    current->type = OP_STRING;
     for( ;; ) {
         if( inString[inIndex] == DOUBLEQUOTE ) {
             //skip the second double quote
@@ -1361,6 +1361,8 @@ STATIC void makeAlphaToken( char *inString, TOKEN_TYPE *current, int *index )
     *index = r - inString;
 }
 
+
+STATIC void makeFuncToken( char *inString, TOKEN_TYPE *current, int *index );
 
 STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
 /****************************************************************************/
@@ -1475,12 +1477,7 @@ STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
             if( currentString[index] >= '0' && currentString[index] <= '9') {
                 makeNumberToken( currentString, current, &index );
             } else {
-                // parses only to get alphanumeric characters for
-                // purpose of getting special functions ie. EXIST,
-                // defined
-                // if special characters are needed
-                // enclose in quotes
-                makeAlphaToken( currentString, current, &index );
+                makeFuncToken( currentString, current, &index );
             }
             break;
         }
@@ -1497,7 +1494,7 @@ STATIC void nextToken( void )
  * Get the next token
  */
 {
-    int     tokenLength;
+    int tokenLength;
 
     if( *currentPtr != NULLCHAR ) {
         ScanToken( currentPtr, &currentToken, &tokenLength );
@@ -1508,23 +1505,6 @@ STATIC void nextToken( void )
     } else {
         currentToken.type = OP_ERROR;  // no more tokens
     }
-}
-
-
-STATIC enum Tokens preToken( void )
-/**********************************
- * Taking a peek at the next token
- */
-{
-    int         tokenLength;
-    DATAVALUE   next_token;
-
-    if( *currentPtr != NULLCHAR ) {
-        ScanToken( currentPtr, &next_token, &tokenLength );
-    } else {
-        next_token.type = OP_ERROR;  // no more tokens
-    }
-    return( next_token.type );
 }
 
 
@@ -1879,8 +1859,8 @@ STATIC void multExpr( DATAVALUE *leftValue )
 }
 
 
-extern BOOLEAN existFile( char *inPath )
-/***************************************
+extern BOOLEAN existFile( char const *inPath )
+/*********************************************
  * This function is to determine whether or not a particular
  * filename / directory exists  (for use with EXIST())
  */
@@ -1895,12 +1875,8 @@ extern BOOLEAN existFile( char *inPath )
 STATIC void unaryExpr( DATAVALUE *leftValue )
 /********************************************
  * handles the unary expressions, strings and numbers
- * identifies the logical functions EXIST and DEFINED
  */
 {
-    enum Tokens     type;
-    char            *value;
-
     switch( currentToken.type ) {
     case OP_ADD:
         nextToken();
@@ -1949,62 +1925,9 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
         }
         break;
     case OP_STRING:
-        // check that the next token is a '(' without changing currentToken
-        if( preToken() == OP_PAREN_LEFT ) {
-            if( strcmpi( currentToken.data.string, DEFINED ) == 0 ) {
-                type = OP_DEFINED;
-            } else if (strcmpi(currentToken.data.string, EXIST) == 0
-            ||         strcmpi(currentToken.data.string, EXISTS) == 0) {
-                type = OP_EXIST;
-            } else {
-                leftValue->type = OP_ERROR;
-                break;
-            }
-            nextToken();                // Swallow OP_PAREN_LEFT
-            nextToken();                // Get macro or file name
-            if( currentToken.type == OP_STRING ) {
-                if( preToken() == OP_PAREN_RIGHT ) {
-                    switch( type ) {
-                    case OP_DEFINED:    // Check if macro is defined
-                        if( !IsMacroName( currentToken.data.string ) ) {
-                            leftValue->type        = OP_INTEGER;
-                            leftValue->data.number = FALSE;
-                        } else {
-                            leftValue->type        = OP_INTEGER;
-                            value = GetMacroValue( currentToken.data.string );
-                            if( value != NULL ) {
-                                leftValue->data.number = TRUE;
-                                FreeSafe( value );
-                            } else {
-                                leftValue->data.number = FALSE;
-                            }
-                        }
-                        break;
-                    case OP_EXIST:      // check if the input file is defined
-                        leftValue->type = OP_INTEGER;
-                        leftValue->data.number =
-                                        existFile( currentToken.data.string );
-                        break;
-                    default:
-                        leftValue->type = OP_ERROR;
-                        break;
-                    }
-                    nextToken();
-                    nextToken();
-                } else {
-                    currentToken.type = OP_ERROR;
-                }
-            } else {
-                leftValue->type = OP_ERROR;
-            }
-        // If the following token is not an open parenthesis then
-        // the string is just a normal string
-        //
-        } else {
-            leftValue->type = currentToken.type;
-            strcpy( leftValue->data.string, currentToken.data.string );
-            nextToken();
-        }
+        leftValue->type = currentToken.type;
+        strcpy( leftValue->data.string, currentToken.data.string );
+        nextToken();
         break;
     case OP_INTEGER:
         leftValue->type        = currentToken.type;
@@ -2022,4 +1945,90 @@ size_t GetNestLevel( void )
 /*************************/
 {
     return( nestLevel );
+}
+
+
+STATIC char *probeToken( char *probe )
+/**********************************
+ * Taking a peek at the next "token"
+ */
+{
+    while( isws( *probe ) ) {
+        ++probe;
+    }
+    return( probe );
+}
+
+
+STATIC BOOLEAN IsMacro( char const *name )
+/****************************************/
+{
+    char    *value;
+
+    // Seemingly redundant but GetMacroValue() needs plausible name
+    if( !IsMacroName( name ) ) {
+       return( FALSE );
+    }
+    value = GetMacroValue( name );
+
+    if( value == NULL ) {
+        return( FALSE );
+    }
+    FreeSafe( value );
+    return( TRUE );
+}
+
+
+STATIC BOOLEAN name2function( TOKEN_TYPE const *current, char const *criterion,
+    BOOLEAN (*action)( const char * ) , BOOLEAN (**pquestion)( const char * ) )
+/*****************************************************************************/
+{
+    if( strcmpi( current->data.string, criterion ) != 0 ) {
+        return( FALSE );
+    }
+    *pquestion = action;
+    return( TRUE );
+}
+
+STATIC void makeFuncToken( char *inString, TOKEN_TYPE *current, int *index )
+/***************************************************************************
+ * parses only to get alphanumeric characters for special functions
+ * ie. EXIST, defined.  if special characters are needed enclose in quotes
+ */
+{
+    char    *probe;
+    
+    makeAlphaToken( inString, current, index );
+    // check that the next token is a '(', swallow it, and check we have more.
+    probe = probeToken( currentPtr + *index );
+    if( *probe != PAREN_LEFT
+    || (probe = probeToken( probe + 1), *probe == NULLCHAR) ) {
+        current->type = OP_ERROR;
+    } else {
+        BOOLEAN (*is)( const char * );
+
+        if( name2function( current, DEFINED, IsMacro,   &is )
+        ||  name2function( current, EXIST,   existFile, &is )
+        ||  name2function( current, EXISTS,  existFile, &is ) ) {
+            if( *probe == DOUBLEQUOTE ) {   // Get macro or file name
+                makeStringToken( probe, current, index );
+            } else {
+                makeAlphaToken( probe, current, index );
+            }
+            probe += *index;
+            if( current->type == OP_STRING ) {
+                probe = probeToken( probe );
+                if( *probe != PAREN_RIGHT ) {
+                    current->type = OP_ERROR;
+                } else {
+                    current->type          = OP_INTEGER;
+                    current->data.number   = is( current->data.string );
+                    ++probe;    // Swallow OP_PAREN_RIGHT
+                    *index = probe - currentPtr;
+                }
+            }
+        } else {
+            current->type = OP_ERROR;
+        }
+    }
 }
