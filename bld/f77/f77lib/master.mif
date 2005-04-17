@@ -34,7 +34,7 @@ asm_src_ppc = ../../asmppc;../../../asmppc
 
 .asm: $(asm_src_$(host_cpu))
 
-.c: ../../c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
+.c: ../../c;$(f77_dir)/cg86/c;../../c/math;../../c/ifns;$(f77_dir)/c;../../c/ufns
 
 #-------------------------------------------------------------------------------
 

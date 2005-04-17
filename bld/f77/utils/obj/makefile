@@ -20,11 +20,11 @@ checked_out : .symbolic
         @%make __err
 
 __err : errsrc.exe .symbolic
-        $(%check_out) $(f77_dir)\cg86\rt\h\errcod.h
-        $(%check_out) $(f77_dir)\cg86\rt\c\errmsg.c
-        $(%check_out) $(f77_dir)\cg86\rt\c\errmsg.rc
-        $(%check_out) $(f77_dir)\cg86\rt\c\errgrp.c
-#       $(%check_out) $(f77_dir)\cg86\rt\c\jerrmsg.rc
+        $(%check_out) $(f77_dir)\f77lib\h\errcod.h
+        $(%check_out) $(f77_dir)\f77lib\c\errmsg.c
+        $(%check_out) $(f77_dir)\f77lib\c\errmsg.rc
+        $(%check_out) $(f77_dir)\f77lib\c\errgrp.c
+#       $(%check_out) $(f77_dir)\f77lib\c\jerrmsg.rc
         $(%check_out) $(f77_dir)\cg86\cp\h\errcodi.h
         $(%check_out) $(f77_dir)\cg86\cp\h\errgrpi.c
         $(%check_out) $(f77_dir)\cg86\cp\h\errmsgi.c
@@ -57,13 +57,13 @@ __err : errsrc.exe .symbolic
         $(%check_out) $(f77_dir)\wfl\h\jerrmsgr.rc
 !ifndef checkin
         errsrc eo r
-        cp errcod.h $(f77_dir)\cg86\rt\h\errcod.h
+        cp errcod.h $(f77_dir)\f77lib\h\errcod.h
         del errcod.h
-        cp errmsg.c $(f77_dir)\cg86\rt\c\errmsg.c
+        cp errmsg.c $(f77_dir)\f77lib\c\errmsg.c
         del errmsg.c
-        cp errmsg.rc $(f77_dir)\cg86\rt\c\errmsg.rc
+        cp errmsg.rc $(f77_dir)\f77lib\c\errmsg.rc
         del errmsg.rc
-        cp errgrp.c $(f77_dir)\cg86\rt\c\errgrp.c
+        cp errgrp.c $(f77_dir)\f77lib\c\errgrp.c
         del errgrp.c
         del errmsg.msg
         errsrc eoic
@@ -127,7 +127,7 @@ __err : errsrc.exe .symbolic
         del errgrp.c
         del errmsg.msg
 #       errsrc jo r
-#       cp errmsg.rc $(f77_dir)\cg86\rt\c\jerrmsg.rc
+#       cp errmsg.rc $(f77_dir)\f77lib\c\jerrmsg.rc
 #       del errmsg.rc
 #       del errcod.h
 #       del errmsg.c
