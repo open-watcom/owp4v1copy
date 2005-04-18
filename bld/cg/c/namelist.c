@@ -554,7 +554,7 @@ extern  name    *AllocRegName( hw_reg_set regs ) {
     new_r = AllocName( N_REGISTER, RegClass( regs ), 0 );
     new_r->r.reg = regs;
     new_r->r.reg_index = -1;
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
     new_r->r.arch_index = RegTrans( regs );
 #endif
     return( new_r );

@@ -233,7 +233,7 @@ static  instruction *DoParmDef( name *result, type_class_def class ) {
     return( parm_def );
 }
 
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
 
 #if _TARGET & _TARG_AXP
 #define BASE_TYPE       U8
@@ -333,7 +333,7 @@ extern  name    *DoParmDecl( sym_handle sym, type_def *tipe, hw_reg_set reg ) {
         BGDone( MakeAddrName( CG_FE, sym, tipe ) );
     }
     temp->v.usage |= USE_IN_ANOTHER_BLOCK;
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
     if( class == XX ) {
         return( DoAlphaParmDecl( reg, sym, tipe, temp ) );
     }
@@ -436,7 +436,7 @@ extern  void    AddCallIns( instruction *ins, cn call ) {
         attr = 0;
         if( call_name->m.memory_type == CG_FE ) {
             attr = FEAttr( call_name->v.symbol );
-            #if _TARGET & (_TARG_AXP|_TARG_PPC)
+            #if _TARGET & _TARG_RISC
             // in case the inline assembly code references a local variable
             if( FEAuxInfo( call_name->v.symbol, CALL_BYTES ) != NULL ) {
                 CurrProc->targ.base_is_fp = TRUE;
@@ -731,7 +731,7 @@ extern  void    BGReturn( an retval, type_def *tipe ) {
     TargetModel = SaveModel;
 }
 
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
 
 static pn   BustUpStruct( pn parm, type_class_def from, type_class_def using ) {
 /******************************************************************************/
@@ -837,7 +837,7 @@ extern  bool        AssgnParms( cn call, bool in_line ) {
     state = call->state;
     call_ins = call->ins;
     parms = 0;
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
     SplitStructParms( &call->parms, state );
     parm = call->parms;
 #endif

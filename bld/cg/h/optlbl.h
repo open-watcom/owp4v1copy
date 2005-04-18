@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Structures and functions to manipulate labels.
 *
 ****************************************************************************/
 
@@ -72,7 +71,7 @@ typedef struct code_lbl {
 #if  OPTIONS & SHORT_JUMPS
         struct code_lbl         *redirect;
 #endif
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
         struct code_lbl         *ppc_alt_name;
         void                    *owl_symbol;
 #endif

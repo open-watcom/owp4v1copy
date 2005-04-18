@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Code generator type system.
 *
 ****************************************************************************/
 
@@ -222,7 +221,7 @@ extern  type_def        *TypeDef( cg_type refno, type_length length, type_length
     list->tipe.type_def.refno  =  refno;
     list->tipe.type_def.length = length;
     list->tipe.type_def.attr   = 0;
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+#if _TARGET & _TARG_RISC
     list->tipe.type_def.align  = align;
 #endif
     return( &list->tipe.type_def );

@@ -320,7 +320,7 @@ static  void            PostOptimize() {
         LdStAlloc();
         Score();
         if( !BlockByBlock ) LoopRegInvariant();
-    #if !( _TARGET & ( _TARG_AXP | _TARG_PPC ) )
+    #if !(_TARGET & _TARG_RISC)
         if( _IsntTargetModel( STATEMENT_COUNTING ) ) {
             Conditions();
         }
@@ -713,7 +713,7 @@ extern  void    Generate( bool routine_done ) {
     if( BGInInline() ) return;
     HaveLiveInfo = FALSE;
     HaveDominatorInfo = FALSE;
-    #if ( _TARGET & ( _TARG_370 | _TARG_AXP | _TARG_PPC ) ) == 0
+    #if ( _TARGET & ( _TARG_370 | _TARG_RISC ) ) == 0
         /* if we want to go fast, generate statement at a time */
         if( _IsModel( NO_OPTIMIZATION ) ) {
             if( !BlockByBlock ) {

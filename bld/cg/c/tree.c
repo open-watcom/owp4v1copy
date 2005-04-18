@@ -1562,7 +1562,7 @@ static  an  AddrGen( tn node )
     base = TNFindBase( node );
     flags = node->flags;
     alignment = node->alignment;
-#if _TARGET & (_TARG_PPC | _TARG_AXP)
+#if _TARGET & _TARG_RISC
     if( alignment == 0 ) {
         if( node->tipe->refno >= T_FIRST_FREE ) {
             // it's a user-defined struct/type
