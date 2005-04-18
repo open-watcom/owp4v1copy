@@ -691,19 +691,34 @@ extern  tn      FoldLShift( tn left, tn rite, type_def *tipe ) {
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
-    signed_32   li;
     signed_32   ri;
 
-    if( _HasBigConst( tipe ) ) return( NULL );
     fold = NULL;
     if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
-        ri = CFConvertByType( rv, tipe );
+        if( CFIs32( rv ) ) {
+            ri = CFConvertByType( rv, tipe );
+        } else if( CFIs64( rv ) ) {
+            /* If shift amount won't fit into 32 bits, anything big enough will do */
+            ri = 0xffff;
+        }
         if( left->class == TN_CONS ) {
             lv = left->u.name->c.value;
-            if( CFIs32( lv ) && CFIs32( rv ) ) {
+            if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+                signed_32       li;
+
                 li = CFConvertByType( lv, tipe );
                 fold = IntToType( li << ri, tipe );
+                BurnTree( left );
+                BurnTree( rite );
+            } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+                signed_64       lsh;
+                signed_64       li;
+
+                li = CFGetInteger64Value( lv );
+
+                U64ShiftL( &li, ri, &lsh );
+                fold = Int64ToType( lsh, tipe );
                 BurnTree( left );
                 BurnTree( rite );
             }
