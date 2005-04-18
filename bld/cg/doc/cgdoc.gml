@@ -1871,7 +1871,7 @@ If an '\' is present, the character following is used literally.
 :DT.EXTN_PRMSIZE
 :DD.Returns int value which represent size of all parameters when symbol is function.
 :eDL.
-.section cg_type FEParmType( cg_type type )
+.section cg_type FEParmType( cg_sym_handle func, cg_sym_handle parm, cg_type type )
 :I1.FEParmType
 :DL.
 :DT.Returns
