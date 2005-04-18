@@ -51,12 +51,16 @@
 
   int heap_count( )
   {
-    int count = 0;
+    int used_size = 0;
     struct _heapinfo info;
 
     info._pentry = NULL;
-    while( _heapwalk( &info ) != _HEAPEND ) ++count;
-    return( count );
+    while( _heapwalk( &info ) != _HEAPEND ) {
+      if( info._useflag == _USEDENTRY ) {
+        used_size += info._size;
+      }
+    }
+    return( used_size );
   }
 
 #else

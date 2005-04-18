@@ -224,6 +224,7 @@ bool string_test( )
     if( INSANE(m1) || !m1.empty() || m1.size() ){
         std::cout << "map<string> failure 0006\n"; pass = false;
     }
+    delete &m1;
     return( pass );
 }
 

@@ -199,6 +199,7 @@ bool string_test( )
     if( INSANE(s1) || !s1.empty() || s1.size() ){
         std::cout << "set<string> failure 0006\n"; pass = false;
     }
+    delete &s1;
     return( pass );
 }
 
