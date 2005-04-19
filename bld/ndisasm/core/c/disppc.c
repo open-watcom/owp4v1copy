@@ -43,8 +43,6 @@ extern const unsigned short     DisRegisterTable[];
 
 #define MK_SPR(a,b) (((a)<<5)|(b))
 
-#pragma pack( push, 1 )
-
 #ifdef __BIG_ENDIAN__
 
 typedef union {
@@ -262,8 +260,6 @@ typedef union {
 } ppc_ins;
 
 #endif
-
-#pragma pack( pop )
 
 dis_handler_return PPCMath( dis_handle *h, void *d, dis_dec_ins *ins )
 {
