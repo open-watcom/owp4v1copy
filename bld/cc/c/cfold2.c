@@ -38,26 +38,26 @@ extern  int     __Strtold(char *,long_double *,char **);
 
 uint_32 DoOp32( uint_32 left, opr_code opr, uint_32 right, bool sign )
 {
-    uint_32              value;
+    uint_32         value;
 
     switch( opr ) {
     case OPR_ADD:
-        value =  left + right;
+        value = left + right;
         break;
     case OPR_SUB:
-        value =  left - right;
+        value = left - right;
         break;
     case OPR_MUL:
-        value =  left * right;
+        value = left * right;
         break;
     case OPR_DIV:
         if( right == 0 ) {                 /* 10-mar-90 */
             value = 0;
         } else {
-            if( sign ){
-                value =  (int_32)left / (int_32)right;
-            }else{
-                value =  left / right;
+            if( sign ) {
+                value = (int_32)left / (int_32)right;
+            } else {
+                value = left / right;
             }
         }
         break;
@@ -65,17 +65,17 @@ uint_32 DoOp32( uint_32 left, opr_code opr, uint_32 right, bool sign )
         if( right == 0 ) {                 /* 10-mar-90 */
             value = 0;
         } else {
-            if( sign ){
+            if( sign ) {
                 value = (int_32)left % (int_32)right;
-            }else{
+            } else {
                 value = left % right;
             }
         }
         break;
     case OPR_RSHIFT:
-        if( sign ){
+        if( sign ) {
             value = (int_32)left >> (int_32)right;
-        }else{
+        } else {
             value = left >> right;
         }
         break;
@@ -112,11 +112,12 @@ uint_32 DoOp32( uint_32 left, opr_code opr, uint_32 right, bool sign )
     return( value );
 }
 
+
 uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
 {
-    uint64              tmp;
-    uint64              value;
-    int                 shift;
+    uint64          tmp;
+    uint64          value;
+    int             shift;
 
     switch( opr ) {
     case OPR_ADD:
@@ -130,20 +131,20 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
         break;
     case OPR_DIV:
         U32ToU64( 0, &value );
-        if( U64Cmp( &right, &value ) != 0 ){
-            if( sign ){
+        if( U64Cmp( &right, &value ) != 0 ) {
+            if( sign ) {
                 I64Div( &left, &right, &value, &tmp );
-            }else{
+            } else {
                 U64Div( &left, &right, &value, &tmp );
             }
         }
         break;
     case OPR_MOD:
         U32ToU64( 0, &value );
-        if( U64Cmp( &right, &value ) != 0 ){
-            if( sign ){
+        if( U64Cmp( &right, &value ) != 0 ) {
+            if( sign ) {
                 I64Div( &left, &right, &tmp, &value );
-            }else{
+            } else {
                 U64Div( &left, &right, &tmp, &value );
             }
         }
@@ -155,13 +156,13 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
     case OPR_RSHIFT:
         shift = right.u._32[L];
     do_shift:
-        if( shift > 0 ){
-            if( sign ){
+        if( shift > 0 ) {
+            if( sign ) {
                 I64ShiftR( &left, shift, &value );
-            }else{
+            } else {
                 U64ShiftR( &left, shift, &value );
             }
-        }else{
+        } else {
             shift = -shift;
             U64ShiftL( &left, shift, &value );
         }
@@ -173,7 +174,7 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
         break;
     case OPR_OR_OR:
         U32ToU64( 0, &value );
-        if( U64Cmp( &left, &value ) || U64Cmp( &right, &value ) ){
+        if( U64Cmp( &left, &value ) || U64Cmp( &right, &value ) ) {
             U32ToU64( 1, &value );
         }
         break;
@@ -184,7 +185,7 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
         break;
     case OPR_AND_AND:
         U32ToU64( 0, &value );
-        if( U64Cmp( &left, &value ) && U64Cmp( &right, &value ) ){
+        if( U64Cmp( &left, &value ) && U64Cmp( &right, &value ) ) {
             U32ToU64( 1, &value );
         }
         break;
@@ -203,7 +204,7 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
         break;
     case OPR_NOT:
         U32ToU64( 0, &value );
-        if( U64Cmp( &right, &value ) == 0 ){
+        if( U64Cmp( &right, &value ) == 0 ) {
             U32ToU64( 1, &value );
         }
         break;
@@ -216,40 +217,40 @@ uint64 DoOp64( uint64 left, opr_code opr, uint64 right, bool sign )
 int DoSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 /******************************************************/
 {
-    int_32        value;
-    int_32        left;
-    int_32        right;
-    DATA_TYPE   const_type;
+    int_32          value;
+    int_32          left;
+    int_32          right;
+    DATA_TYPE       const_type;
 
     const_type = tree->expr_type->decl_type;
-    if( op1 != NULL ){
+    if( op1 != NULL ) {
         left = op1->op.long_value;
     }
     right = op2->op.long_value;
     if( tree->op.opr == OPR_CMP ) {
         switch( tree->op.cc ) {
         case CC_EQ:
-            value = ( left == right );
+            value = (left == right);
             break;
         case CC_NE:
-            value = ( left != right );
+            value = (left != right);
             break;
         case CC_GT:
-            value = ( left > right );
+            value = (left > right);
             break;
         case CC_GE:
-            value = ( left >= right );
+            value = (left >= right);
             break;
         case CC_LT:
-            value = ( left < right );
+            value = (left < right);
             break;
         case CC_LE:
-            value = ( left <= right );
+            value = (left <= right);
             break;
         }
         const_type = TYPE_INT;
         tree->op.long_value = (target_int)value;
-    }else{
+    } else {
         value = DoOp32( left, tree->op.opr, right, TRUE );
         if( const_type == TYPE_LONG ) {
             tree->op.long_value = value;
@@ -270,40 +271,40 @@ int DoSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 /********************************************************/
 {
-    uint_32       value;
-    uint_32       left;
-    uint_32       right;
-    DATA_TYPE           const_type;
+    uint_32         value;
+    uint_32         left;
+    uint_32         right;
+    DATA_TYPE       const_type;
 
     const_type = tree->expr_type->decl_type;
-    if( op1 != NULL ){
+    if( op1 != NULL ) {
         left = op1->op.ulong_value;
     }
     right = op2->op.ulong_value;
     if( tree->op.opr == OPR_CMP ) {
         switch( tree->op.cc ) {
         case CC_EQ:
-            value = ( left == right );
+            value = (left == right);
             break;
         case CC_NE:
-            value = ( left != right );
+            value = (left != right);
             break;
         case CC_GT:
-            value = ( left > right );
+            value = (left > right);
             break;
         case CC_GE:
-            value = ( left >= right );
+            value = (left >= right);
             break;
         case CC_LT:
-            value = ( left < right );
+            value = (left < right);
             break;
         case CC_LE:
-            value = ( left <= right );
+            value = (left <= right);
             break;
         }
         const_type = TYPE_INT;
         tree->op.long_value = (target_int)value;
-    }else{
+    } else {
         value = DoOp32( left, tree->op.opr, right, FALSE );
         if( const_type == TYPE_ULONG ) {
             tree->op.long_value = value;
@@ -320,14 +321,15 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     return( 1 );
 }
 
+
 static int64  LongValue64( TREEPTR leaf )
 {
-    int64        value;
-    int_32       val32;
-    FLOATVAL     *flt;
-    char         *endptr;
-    long_double  ld;
-    bool         sign;
+    int64           value;
+    int_32          val32;
+    FLOATVAL        *flt;
+    char            *endptr;
+    long_double     ld;
+    bool            sign;
 
     switch( leaf->op.const_type ) {
     case TYPE_CHAR:
@@ -387,9 +389,9 @@ static int64  LongValue64( TREEPTR leaf )
         val32 = 0;
         break;
     }
-    if( sign ){
+    if( sign ) {
         I32ToI64( val32, &value );
-    }else{
+    } else {
         U32ToU64( val32, &value );
     }
     return( value );
@@ -397,7 +399,7 @@ static int64  LongValue64( TREEPTR leaf )
 
 
 int DoUnSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
-/********************************************************/
+/**********************************************************/
 {
     uint64          value;
     uint64          left;
@@ -405,7 +407,7 @@ int DoUnSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     int             tmp;
     DATA_TYPE       const_type;
 
-    if( op1 != NULL ){
+    if( op1 != NULL ) {
         left =  LongValue64( op1 );
     }
     right = LongValue64( op2 );
@@ -434,11 +436,11 @@ int DoUnSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
         }
         const_type = TYPE_INT;
         tree->op.long_value = (target_int)tmp;
-    }else{
+    } else {
         value = DoOp64( left, tree->op.opr, right, FALSE );
-        if( const_type  == TYPE_ULONG64 ){
+        if( const_type  == TYPE_ULONG64 ) {
             tree->op.long64_value = value;
-        }else{
+        } else {
             tree->op.ulong_value = value.u._32[L];
         }
     }
@@ -451,6 +453,7 @@ int DoUnSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     return( 1 );
 }
 
+
 int DoSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 /********************************************************/
 {
@@ -460,7 +463,7 @@ int DoSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     int             tmp;
     DATA_TYPE       const_type;
 
-    if( op1 != NULL ){
+    if( op1 != NULL ) {
         left =  LongValue64( op1 );
     }
     right = LongValue64( op2 );
@@ -489,11 +492,11 @@ int DoSignedOp64( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
         }
         const_type = TYPE_INT;
         tree->op.long_value = (target_int)tmp;
-    }else{
+    } else {
         value = DoOp64( left, tree->op.opr, right, TRUE );
-        if( const_type  == TYPE_LONG64 ){
+        if( const_type  == TYPE_LONG64 ) {
             tree->op.long64_value = value;
-        }else{
+        } else {
             tree->op.long_value = value.u._32[L];
         }
     }
@@ -570,6 +573,7 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
     flt->string[0] = '\0';
 }
 
+
 void MakeBinaryFloat( TREEPTR opnd )
 {
     FLOATVAL    *flt;
@@ -588,6 +592,7 @@ void MakeBinaryFloat( TREEPTR opnd )
     }
 }
 
+
 int FltCmp( long_double near *ld1, long_double near *ld2 )
 {
 #ifdef _LONG_DOUBLE_
@@ -598,6 +603,7 @@ int FltCmp( long_double near *ld1, long_double near *ld2 )
     return( 1 );
 #endif
 }
+
 
 int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 /*****************************************************/
@@ -721,7 +727,7 @@ int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 
 static int_32 LongValue( TREEPTR leaf )
 {
-    int_32        value;
+    int_32      value;
     FLOATVAL    *flt;
     char        *endptr;
     long_double ld;
@@ -781,7 +787,6 @@ static int_32 LongValue( TREEPTR leaf )
 }
 
 
-
 void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
 {
     int_32      val32;
@@ -791,13 +796,13 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
     oldtyp = leaf->op.const_type;
 
     if( (newtyp == TYPE_DOUBLE || newtyp == TYPE_FLOAT)
-     && (oldtyp == TYPE_DOUBLE || oldtyp == TYPE_FLOAT) ){
+     && (oldtyp == TYPE_DOUBLE || oldtyp == TYPE_FLOAT) ) {
         CastFloatValue( leaf, newtyp );  // float to float
         return;
-    }else if( newtyp == TYPE_LONG64 || newtyp == TYPE_ULONG64 ){
+    } else if( newtyp == TYPE_LONG64 || newtyp == TYPE_ULONG64 ) {
         val64 = LongValue64( leaf );
         leaf->op.ulong64_value = val64;
-    }else{
+    } else {
         val32 = LongValue( leaf );
         switch( newtyp ) {
         case TYPE_CHAR:
@@ -836,6 +841,7 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
     leaf->op.const_type = newtyp;
 }
 
+
 void FoldQuestionTree( TREEPTR tree )
 {
     TREEPTR     node;
@@ -859,8 +865,8 @@ void FoldQuestionTree( TREEPTR tree )
     *tree = *node;
     node->op.opr = OPR_NOP;
     FreeExprNode( node );
-    if( ops & OPFLAG_RVALUE ){
-        if( tree->op.opr == OPR_PUSHADDR ){
+    if( ops & OPFLAG_RVALUE ) {
+        if( tree->op.opr == OPR_PUSHADDR ) {
           tree->op.opr = OPR_PUSHSYM;
           ops &= ~OPFLAG_RVALUE;
         }
@@ -873,10 +879,11 @@ static bool ConstantLeaf( TREEPTR opnd )
 {
     if( opnd->op.opr == OPR_PUSHINT  || opnd->op.opr == OPR_PUSHFLOAT ) {
         return( TRUE );
-    }else{
+    } else {
         return( FALSE );
     }
 }
+
 
 static bool FoldableTree( TREEPTR tree )
 {
@@ -964,9 +971,9 @@ typedef enum {
     UNSIGNED_INT64,
     FLOATING,
     NOT_A_NUMBER
-}arithmetic_type;
+} arithmetic_type;
 
-static  arithmetic_type ArithmeticType( DATA_TYPE decl_type )
+static arithmetic_type ArithmeticType( DATA_TYPE decl_type )
 {
     switch( decl_type ) {
     case TYPE_CHAR:
@@ -991,19 +998,21 @@ static  arithmetic_type ArithmeticType( DATA_TYPE decl_type )
     return( NOT_A_NUMBER );
 }
 
+
 void DoConstFold( TREEPTR tree )
 {
     DATA_TYPE   decl_type;
 
-    if( FoldableTree( tree ) ){
-        arithmetic_type    con;
-        if( tree->op.opr == OPR_CMP ){
+    if( FoldableTree( tree ) ) {
+        arithmetic_type     con;
+
+        if( tree->op.opr == OPR_CMP ) {
             decl_type = tree->op.compare_type->decl_type;
-        }else{
+        } else {
             decl_type = tree->expr_type->decl_type;
         }
         con = ArithmeticType( decl_type );
-        switch( con ){
+        switch( con ) {
         case SIGNED_INT:
             DoSignedOp( tree->left, tree, tree->right );
             break;
@@ -1011,8 +1020,8 @@ void DoConstFold( TREEPTR tree )
             DoSignedOp64( tree->left, tree, tree->right );
             break;
         case UNSIGNED_INT:
-              DoUnSignedOp( tree->left, tree, tree->right );
-              break;
+            DoUnSignedOp( tree->left, tree, tree->right );
+            break;
         case UNSIGNED_INT64:
             DoUnSignedOp64( tree->left, tree, tree->right );
             break;
@@ -1023,10 +1032,12 @@ void DoConstFold( TREEPTR tree )
     }
 }
 
+
 void FoldExprTree( TREEPTR tree )
 {
     WalkExprTree( tree, NoOp, NoOp, NoOp, DoConstFold );
 }
+
 
 bool BoolConstExpr( void )
 {
