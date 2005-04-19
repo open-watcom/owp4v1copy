@@ -999,10 +999,74 @@ static arithmetic_type ArithmeticType( DATA_TYPE decl_type )
 }
 
 
+/* Check values of constant operands of certain operators. Needs to be done
+ * after all sub-trees are folded (the checked operands may be result of
+ * constant folding) but before potentially constant folding the examined
+ * operator.
+ */
+static void CheckOpndValues( TREEPTR tree )
+{
+#if 0
+    TYPEPTR             type;
+    TREEPTR             opnd;
+    arithmetic_type     con;
+
+    switch( tree->op.opr ) {
+    case OPR_LSHIFT:
+    case OPR_RSHIFT:
+    case OPR_LSHIFT_EQUAL:
+    case OPR_RSHIFT_EQUAL:
+        if( ConstantLeaf( tree->right ) ) {
+            bool    shift_too_big = FALSE;
+            bool    shift_negative = FALSE;
+
+            type = tree->expr_type;
+            opnd = tree->right;
+            con = ArithmeticType( type->decl_type );
+            switch( con ) {
+            case SIGNED_INT: {
+                int_32      left;
+
+                left = opnd->op.long_value;
+                if( left < 0 )
+                    shift_negative = TRUE;
+                else if( left > SizeOfArg( type ) * 8 )
+                    shift_too_big = TRUE;
+                }
+                break;
+            case SIGNED_INT64:
+//                DoSignedOp64( tree->left, tree, tree->right );
+                break;
+            case UNSIGNED_INT:
+                if( (uint_32)opnd->op.long_value > SizeOfArg( type ) * 8 )
+                    shift_too_big = TRUE;
+                break;
+            case UNSIGNED_INT64:
+//                DoUnSignedOp64( tree->left, tree, tree->right );
+                break;
+            default:
+                // Not supposed to happen
+                break;
+            }
+            if( shift_negative ) {
+                CWarn1( WARN_SHIFT_AMOUNT_NEGATIVE, ERR_SHIFT_AMOUNT_NEGATIVE );
+            } else if( shift_too_big ) {
+                CWarn1( WARN_SHIFT_AMOUNT_TOO_BIG, ERR_SHIFT_AMOUNT_TOO_BIG );
+            }
+        }
+        break;
+    default:
+        break;
+    }
+#endif
+}
+
+
 void DoConstFold( TREEPTR tree )
 {
     DATA_TYPE   decl_type;
 
+    CheckOpndValues( tree );
     if( FoldableTree( tree ) ) {
         arithmetic_type     con;
 

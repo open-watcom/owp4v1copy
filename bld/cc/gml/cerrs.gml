@@ -413,12 +413,28 @@ i;
 .exam end
 is not a correctly formed declaration.
 :MSGSYM. ERR_SYMBOL_NAME_TOO_LONG
-:MSGTXT. Symbol name has been truncated for '%s'.
+:MSGTXT. Symbol name truncated for '%s'
 :MSGJTXT.
 :WARNING. 1
 .np
-Symbol is too long to generate proper name in output object file.
-Maximum length is 255 characters for OMF and 1024 characters for COFF or ELF.
+Symbol is longer than the object file format allows and has been truncated
+to fit. Maximum length is 255 characters for OMF and 1024 characters for
+COFF or ELF object files.
+:MSGSYM. ERR_SHIFT_AMOUNT_NEGATIVE
+:MSGTXT. Shift amount negative
+:MSGJTXT.
+:WARNING. 1
+.np
+The right operand of a left or right shift operator is a negative value.
+The result of the shift operation is undefined.
+:MSGSYM. ERR_SHIFT_AMOUNT_TOO_BIG
+:MSGTXT. Shift amount too large
+:MSGJTXT.
+:WARNING. 1
+.np
+The right operand of a left or right shift operator is a value greater than
+or equal to the width in bits of the type of the promoted left operand.
+The result of the shift operation is undefined.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
