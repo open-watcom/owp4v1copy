@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support for C syntax.
 *
 ****************************************************************************/
 
@@ -104,8 +103,14 @@ static void getHex( ss_block *ss_new, char *start )
         if( tolower( *text ) == 'l' ) {
             text++;
         }
+        if( tolower( *text ) == 'l' ) {
+            text++;
+        }
     } else if( lastc == 'l' ) {
         text++;
+        if( tolower( *text ) == 'l' ) {
+            text++;
+        }
         if( tolower( *text ) == 'u' ) {
             text++;
         }
@@ -214,10 +219,18 @@ static void getNumber( ss_block *ss_new, char *start, char top )
     if( lastc == 'u' ) {
         ss_new->len++;
         if( tolower( *( text + 1 ) ) == 'l' ) {
+            text++;
+            ss_new->len++;
+        }
+        if( tolower( *( text + 1 ) ) == 'l' ) {
             ss_new->len++;
         }
     } else if( lastc == 'l' ) {
         ss_new->len++;
+        if( tolower( *( text + 1 ) ) == 'l' ) {
+            text++;
+            ss_new->len++;
+        }
         if( tolower( *( text + 1 ) ) == 'u' ) {
             ss_new->len++;
         }
