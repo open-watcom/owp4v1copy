@@ -11,6 +11,10 @@ echo # ---------------------------
 
 %1 -h -f upd01
 if errorlevel 1 goto err1
+%1 -h -f upd01 -m -sn -y > tmp.out
+if errorlevel 1 goto err1
+diff upd01.out tmp.out
+if errorlevel 1 goto err1
     @echo # UPD01 successful
     goto test2
 :err1
@@ -45,8 +49,6 @@ if errorlevel 1 goto err3
 echo # ---------------------------
 echo #   Test 4
 echo # ---------------------------
-set TRMEM_CODE=3
-rm test4.out
 %1 -h -f upd04 > tmp.out 2>&1
 diff -b upd04.out tmp.out
 if errorlevel 1 goto err4
@@ -57,11 +59,9 @@ if errorlevel 1 goto err4
     @echo # Error: UPD04 unsuccessful!!! | tee -a %2
 
 :test5
-set TRMEM_CODE=1
 echo # ---------------------------
 echo #   Test 5
 echo # ---------------------------
-rm test5.out
 %1 -h -s -f upd05 > tmp.out 2>&1
 diff -b upd05.out tmp.out
 if errorlevel 1 goto err5
@@ -75,7 +75,6 @@ if errorlevel 1 goto err5
 echo # ---------------------------
 echo #   Test 6
 echo # ---------------------------
-rm test6.out
 %1 -h -f upd06 > tmp.out 2>&1
 diff upd06.out tmp.out
 if errorlevel 1 goto err6
@@ -89,7 +88,6 @@ if errorlevel 1 goto err6
 echo # ---------------------------
 echo #   Test 7
 echo # ---------------------------
-rm test7.out
 %1 -h -f upd07 > tmp.out 2>&1
 diff upd07.out tmp.out
 if errorlevel 1 goto err7

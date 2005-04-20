@@ -38,6 +38,10 @@ TEST=1
 print_header
 $1 -h -f upd01
 do_check
+$1 -h -f upd01 -m -sn -y > tmp.out
+do_check
+diff upd01.out tmp.out
+do_check
 
 TEST=2
 print_header
