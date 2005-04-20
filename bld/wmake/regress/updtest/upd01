@@ -36,9 +36,9 @@ all: first upd01xa.ee last  .symbolic
     @%null
 
 first: .symbolic
-    @-if exist upd01x*.* @rm upd01x*.*
+    @-if exist upd01x*.* @rm upd01x*.* # Handled internally, not by shell.
     @wtouch upd01xa.aa
 
 last: .symbolic
-    @rem upd01x*.*
+    @rm upd01x*.*
     @%null
