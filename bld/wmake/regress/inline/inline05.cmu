@@ -1,7 +1,0 @@
-inline05(14): Warning(W18): Unrecognized or out of place character '<'
-inline05(14): Warning(W18): Unrecognized or out of place character '<'
-diff "temp.1 <<temp.2"
-diff: missing operand after `temp.1 <<temp.2'
-diff: Try `diff --help' for more information.
-Error(F38): (test) does not exist and cannot be made from existing files
-Error(E02): Make execution terminated

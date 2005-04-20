@@ -9,14 +9,10 @@ echo # ---------------------------
 echo #   Inline File Test 1
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline01 > tmp.out 2>&1
 diff inline01.cmp tmp.out
 if errorlevel 1 goto err1
-rm tmp.out
-%1 -h -f inln01b > tmp.out 2>&1
-diff inline01.cmp tmp.out
-if errorlevel 1 goto err1
+for %%e in (1 2 3) do if not exist test.%%e goto err1
     @echo # inline01 successful
     goto test2
 :err1
@@ -29,14 +25,10 @@ echo # ---------------------------
 echo #   Inline File Test 2
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline02 > tmp.out 2>&1
 diff inline02.cmp tmp.out
 if errorlevel 1 goto err2
-rm tmp.out
-%1 -h -f inln02b > tmp.out 2>&1
-diff inln02b.cmp tmp.out
-if errorlevel 1 goto err2
+for %%e in (1 2 3) do if exist test.%%e goto err2
     @echo # inline02 successful
     goto test3
 :err2
@@ -48,8 +40,6 @@ if errorlevel 1 goto err2
 echo # ---------------------------
 echo #   Inline File Test 3
 echo # ---------------------------
-set TRMEM_CODE=3;
-rm tmp.out
 %1 -h -f inline03 > tmp.out 2>&1
 diff inline03.cmp tmp.out
 if errorlevel 1 goto err3
@@ -60,12 +50,10 @@ if errorlevel 1 goto err3
     @echo Error: INLINE #3 unsuccessful!!! | tee -a %2
 
 :test4
-set TRMEM_CODE=1;
 echo # ---------------------------
 echo #   Inline File Test 4
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline04 > tmp.out 2>&1
 diff inline04.cmp tmp.out
 if errorlevel 1 goto err4
@@ -81,7 +69,6 @@ echo # ---------------------------
 echo #   Inline File Test 5
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline05 > tmp.out 2>&1
 diff inline05.cmp tmp.out
 if errorlevel 1 goto err5
@@ -97,7 +84,6 @@ echo # ---------------------------
 echo #   Inline File Test 6
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline06 > tmp.out 2>&1
 diff inline06.cmp tmp.out
 if errorlevel 1 goto err6
@@ -113,7 +99,6 @@ echo # ---------------------------
 echo #   Inline File Test 7
 echo # ---------------------------
 
-rm tmp.out
 %1 -h -f inline07 > tmp.out 2>&1
 diff inline07.cmp tmp.out
 if errorlevel 1 goto err7
