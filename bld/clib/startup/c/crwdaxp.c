@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C runtime read/write data (Alpha AXP version).
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <ctype.h>
+#include <wctype.h>
 
 _WCRTLINK unsigned int   _dynend;       // top of dynamic data area
 _WCRTLINK unsigned int   _curbrk;       // top of usable memory
@@ -45,9 +44,9 @@ _WCRTLINK unsigned int   _STACKLOW;     // lowest address in stack
 _WCRTLINK unsigned int   _STACKTOP;     // highest address in stack
 _WCRTLINK void *         __ASTACKSIZ;   // alternate stack size
 _WCRTLINK void *         __ASTACKPTR;   // alternate stack pointer
-_WCRTLINK unsigned int   _cbyte;                // used by getch, getche
+_WCRTLINK unsigned int   _cbyte;        // used by getch, getche
 _WCRTLINK unsigned int   _cbyte2;       // used by getch, getche
-_WCRTLINK unsigned int   _child;                // non-zero => a spawned process is running
+_WCRTLINK unsigned int   _child;        // non-zero => a spawned process is running
 _WCRTLINK char *         _Envptr;       // offset part of environment pointer
 _WCRTLINK unsigned short _Envseg;       // segment containing environment strings
 _WCRTLINK unsigned char  _osmajor;      // major OS version number
