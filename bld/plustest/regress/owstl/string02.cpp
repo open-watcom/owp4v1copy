@@ -130,40 +130,6 @@ namespace std {
 } // End of namespace std.
 typedef std::basic_string< double > dstring;
 
-// ****************************************************************
-// Character traits specialization for case insensitive comparisons.
-// ****************************************************************
-struct itraits : std::char_traits< char > {
-
-  static bool eq( const char_type &c1, const char_type &c2 )
-    { return( std::toupper( c1 ) == std::toupper( c2 ) ); }
-
-  static bool lt( const char_type &c1, const char_type &c2 )
-    { return( std::toupper( c1 ) < std::toupper( c2 ) ); }
-
-  static int compare( const char_type *s1, const char_type *s2, size_t n )
-    { return( memicmp( s1, s2, n ) ); }
-
-  // Too bad there's no memichr.
-  static const char_type *find( const char_type *s, size_t n, const char_type &a )
-  {
-    const char_type *result = 0;
-    for( size_t i = 0; i < n; ++i ) {
-      if( std::toupper( *s ) == std::toupper( a ) ) {
-        result = s;
-        break;
-      }
-      ++s;
-    }
-    return( result );
-  }
-
-  static bool eq_int_type( const int_type &c1, const int_type &c2 )
-    { return( std::toupper( c1 ) == std::toupper( c2 ) ); }
-
-};
-typedef std::basic_string< char, itraits > istring;
-
 
 // ***************************************************************
 // Character traits specialization for a structured character type.
@@ -357,6 +323,8 @@ bool dstring_test( )
 
 bool istring_test( )
 {
+  using watcom::istring;
+
   bool rc = true;
 
   istring s1( 10, 'x' );

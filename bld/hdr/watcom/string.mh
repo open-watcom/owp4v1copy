@@ -418,10 +418,53 @@ namespace std {
 #error The header string requires C++
 #endif
 
+#ifndef _CCTYPE_INCLUDED
+  #include <cctype>
+#endif
+
 :: The header <_strdef.h> is indirectly included below.
 #ifndef _STDEXCEPT_INCLUDED
   #include <stdexcept>
 #endif
+
+namespace _watcom {
+
+  // ============================================================
+  // Character traits specialization for case insensitive strings
+  // ============================================================
+
+  struct itraits : std::char_traits< char > {
+
+    static bool eq( const char_type &c1, const char_type &c2 )
+      { return( std::tolower( c1 ) == std::tolower( c2 ) ); }
+
+    static bool lt( const char_type &c1, const char_type &c2 )
+      { return( std::tolower( c1 ) < std::tolower( c2 ) ); }
+
+    static int compare( const char_type *s1, const char_type *s2, size_t n )
+      { return( _memicmp( s1, s2, n ) ); }
+
+    // Too bad there's no _memichr.
+    static const char_type *find( const char_type *s, size_t n, const char_type &a )
+    {
+      const char_type *result = 0;
+      for( size_t i = 0; i < n; ++i ) {
+        if( std::tolower( *s ) == std::tolower( a ) ) {
+          result = s;
+          break;
+        }
+        ++s;
+      }
+      return( result );
+    }
+
+    static bool eq_int_type( const int_type &c1, const int_type &c2 )
+      { return( std::tolower( c1 ) == std::tolower( c2 ) ); }
+
+  };
+  typedef std::basic_string< char, itraits > istring;
+}
+:include namwat.sp
 
 namespace std {
 
