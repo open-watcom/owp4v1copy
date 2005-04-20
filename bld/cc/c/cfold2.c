@@ -1006,8 +1006,7 @@ static arithmetic_type ArithmeticType( DATA_TYPE decl_type )
  */
 static void CheckOpndValues( TREEPTR tree )
 {
-#if 0
-    TYPEPTR             type;
+    TYPEPTR             r_type;
     TREEPTR             opnd;
     arithmetic_type     con;
 
@@ -1019,33 +1018,54 @@ static void CheckOpndValues( TREEPTR tree )
         if( ConstantLeaf( tree->right ) ) {
             bool    shift_too_big = FALSE;
             bool    shift_negative = FALSE;
+            int     max_shift;
 
-            type = tree->expr_type;
             opnd = tree->right;
-            con = ArithmeticType( type->decl_type );
+            r_type = opnd->expr_type;
+            con = ArithmeticType( r_type->decl_type );
+            // shift arguments undergo integral promotion; 'char c = 1 << 10;'
+            // is not undefined, though it will overflow
+            max_shift = max( SizeOfArg( tree->left->expr_type ),
+                        SizeOfArg( GetType( TYPE_INT ) ) ) * 8;
             switch( con ) {
             case SIGNED_INT: {
-                int_32      left;
+                int_32      right;
 
-                left = opnd->op.long_value;
-                if( left < 0 )
+                right = opnd->op.long_value;
+                if( right < 0 )
                     shift_negative = TRUE;
-                else if( left > SizeOfArg( type ) * 8 )
+                else if( right >= max_shift )
                     shift_too_big = TRUE;
+                break;
                 }
-                break;
-            case SIGNED_INT64:
-//                DoSignedOp64( tree->left, tree, tree->right );
-                break;
-            case UNSIGNED_INT:
-                if( (uint_32)opnd->op.long_value > SizeOfArg( type ) * 8 )
+            case SIGNED_INT64: {
+                int64       right;
+                int64       big_shift;
+
+                right = LongValue64( opnd );
+                I32ToI64( max_shift, &big_shift );
+                if( I64Test( &right ) < 0 )
+                    shift_negative = TRUE;
+                else if( I64Cmp( &right, &big_shift ) >= 0 )
                     shift_too_big = TRUE;
                 break;
-            case UNSIGNED_INT64:
-//                DoUnSignedOp64( tree->left, tree, tree->right );
+                }
+            case UNSIGNED_INT:
+                if( (uint_32)opnd->op.long_value >= max_shift )
+                    shift_too_big = TRUE;
                 break;
+            case UNSIGNED_INT64: {
+                uint64      right;
+                uint64      big_shift;
+
+                right = LongValue64( opnd );
+                U32ToU64( max_shift, &big_shift );
+                if( U64Cmp( &right, &big_shift ) >= 0 )
+                    shift_too_big = TRUE;
+                break;
+                }
             default:
-                // Not supposed to happen
+                // Not supposed to happen!
                 break;
             }
             if( shift_negative ) {
@@ -1058,7 +1078,6 @@ static void CheckOpndValues( TREEPTR tree )
     default:
         break;
     }
-#endif
 }
 
 

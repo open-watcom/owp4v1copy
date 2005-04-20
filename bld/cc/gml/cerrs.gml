@@ -427,6 +427,10 @@ COFF or ELF object files.
 .np
 The right operand of a left or right shift operator is a negative value.
 The result of the shift operation is undefined.
+:errbad.
+int a = 1 << -2;
+:eerrbad.
+The value of 'a' in the above example is undefined.
 :MSGSYM. ERR_SHIFT_AMOUNT_TOO_BIG
 :MSGTXT. Shift amount too large
 :MSGJTXT.
@@ -435,6 +439,10 @@ The result of the shift operation is undefined.
 The right operand of a left or right shift operator is a value greater than
 or equal to the width in bits of the type of the promoted left operand.
 The result of the shift operation is undefined.
+:errbad.
+int a = 1 >> 123;
+:eerrbad.
+The value of 'a' in the above example is undefined.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
