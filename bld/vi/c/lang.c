@@ -60,11 +60,12 @@ static lang_info    langInfo[ LANG_MAX ] = {
  */
 int hashpjw( char *s )
 {
-    unsigned h = 0, g;
+    unsigned long   h = 0, g;
+    
     while( *s != '\0' ) {
-        h = ( h << 4 ) + (toupper(*s));
+        h = (h << 4) + toupper(*s);
         if( g = h & 0xf0000000 ) {
-            h = h ^ ( g >> 24 );
+            h = h ^ (g >> 24);
             h = h ^ g;
         }
         s++;

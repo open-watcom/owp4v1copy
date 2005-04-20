@@ -137,14 +137,14 @@ typedef unsigned_64     signed_64;
 
 #if defined( __BIG_ENDIAN__ )
     /* Macros to get little endian data */
-    #define GET_LE_16(w)    ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
-    #define GET_LE_32(w)    ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    #define GET_LE_16(w)    ((((w) & 0xFFUL) << 8) | (((w) & 0xFF00UL) >> 8))
+    #define GET_LE_32(w)    ((((w) & 0xFFUL) << 24) | (((w) & 0xFF00UL) << 8) | (((w) & 0xFF0000UL) >> 8) | (((w) & 0xFF000000UL) >> 24))
     /* Macros to get big endian data */
     #define GET_BE_16(w)    (w)
     #define GET_BE_32(w)    (w)
     /* Macros to convert little endian data in place */
-    #define CONV_LE_16(w)   (w) = ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
-    #define CONV_LE_32(w)   (w) = ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    #define CONV_LE_16(w)   (w) = ((((w) & 0xFFUL) << 8) | (((w) & 0xFF00UL) >> 8))
+    #define CONV_LE_32(w)   (w) = ((((w) & 0xFFUL) << 24) | (((w) & 0xFF00UL) << 8) | (((w) & 0xFF0000UL) >> 8) | (((w) & 0xFF000000UL) >> 24))
     /* Macros to convert big endian data in place */
     #define CONV_BE_16(w)
     #define CONV_BE_32(w)
@@ -156,14 +156,14 @@ typedef unsigned_64     signed_64;
     #define GET_LE_16(w)    (w)
     #define GET_LE_32(w)    (w)
     /* Macros to get big endian data */
-    #define GET_BE_16(w)    ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
-    #define GET_BE_32(w)    ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    #define GET_BE_16(w)    ((((w) & 0xFFUL) << 8) | (((w) & 0xFF00UL) >> 8))
+    #define GET_BE_32(w)    ((((w) & 0xFFUL) << 24) | (((w) & 0xFF00UL) << 8) | (((w) & 0xFF0000UL) >> 8) | (((w) & 0xFF000000UL) >> 24))
     /* Macros to convert little endian data in place */
     #define CONV_LE_16(w)
     #define CONV_LE_32(w)
     /* Macros to convert big endian data in place */
-    #define CONV_BE_16(w)   (w) = ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
-    #define CONV_BE_32(w)   (w) = ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    #define CONV_BE_16(w)   (w) = ((((w) & 0xFFUL) << 8) | (((w) & 0xFF00UL) >> 8))
+    #define CONV_BE_32(w)   (w) = ((((w) & 0xFFUL) << 24) | (((w) & 0xFF00UL) << 8) | (((w) & 0xFF0000UL) >> 8) | (((w) & 0xFF000000UL) >> 24))
     /* Macros to swap byte order */
     #define SWAP_16     CONV_BE_16
     #define SWAP_32     CONV_BE_32
