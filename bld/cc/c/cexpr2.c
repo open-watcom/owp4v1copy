@@ -1962,7 +1962,7 @@ local int IntrinsicMathFunc( SYM_NAMEPTR sym_name, int i, int n, SYMPTR sym )
     return( 0 );        /* indicate not a math intrinsic function */
 }
 
-#if ( _CPU == _AXP ) || ( _CPU == _PPC )
+#if (_CPU == _AXP) || (_CPU == _PPC) || (_CPU == _MIPS)
 local TREEPTR GenVaStartNode( TREEPTR last_parm )
 {
     // there should be 3 parms __builtin_va_start( list, parm_name, stdarg )
@@ -2180,7 +2180,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
                         }
                     }
                 }
-#if _CPU == _AXP  || _CPU == _PPC
+#if (_CPU == _AXP)  || (_CPU == _PPC) || (_CPU == _MIPS)
                 if( far_strcmp( sym_name, "__builtin_va_start", n ) == 0 ) {
                     tree = GenVaStartNode( last_parm );
                     goto done_call;

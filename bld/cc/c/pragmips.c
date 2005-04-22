@@ -24,23 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  Define macros for C compiler target configuration.
+* Description:  MIPS pragma definitions.
 *
 ****************************************************************************/
 
 
-/*      for VERSION macro */
+#define global
+#include "target.h"
+#include "pragdefn.h"
+#include "toggle.h"
 
-#define PRODUCTION      0
-#define LOAD_N_GO       1
 
-/*      for _CPU macro
-
-        8086    on an 8086 machine running DOS
-        286     on a 286 (or 386) running OS/2 or DOS/16M
-        386     on a 386 running Phar Lap DOS Extender
-        370     on a IBM S370 */
-#define _AXP            1
-#define _PPC            2
-#define _SPARC          3
-#define _MIPS           4
+#include "pdefnaxp.h"

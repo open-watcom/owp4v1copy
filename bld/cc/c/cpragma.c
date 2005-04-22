@@ -501,7 +501,7 @@ local void CopyParms( void )
     CurrInfo->parms = regs;
 }
 
-#if _CPU == _AXP || _CPU == _PPC
+#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
 local void CopyCode( void )
 {
     risc_byte_seq    *code;

@@ -59,6 +59,9 @@ void CBanner()
 #elif _CPU == _PPC
     BannerMsg( banner1w( "C PowerPC Optimizing Compiler",
                                                 _WCC_VERSION_ ) );
+#elif _CPU == _MIPS
+    BannerMsg( banner1w( "C MIPS Optimizing Compiler",
+                                                _WCC_VERSION_ ) );
 #else
     BannerMsg( banner1w( "C" _386 _COMPILER, _WCC_VERSION_ ) );
 #endif

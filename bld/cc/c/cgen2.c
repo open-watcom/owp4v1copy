@@ -516,6 +516,15 @@ local void GenVaStart( cg_name op1, cg_name offset )
     name = CGUnary( O_VA_START, op1, T_POINTER );
     CGDone( name );
 }
+#elif _CPU == _MIPS
+local void GenVaStart( cg_name op1, cg_name offset )
+{
+    cg_name     name;
+
+    offset = offset;
+    name = CGUnary( O_VA_START, op1, T_POINTER );
+    CGDone( name );
+}
 #endif
 
 static cg_name PushSym( OPNODE *node )
@@ -1132,7 +1141,7 @@ local void EmitNodes( TREEPTR tree )
             PushCGName( TryAbnormalTermination() );
             break;
 #endif
-#if _CPU == _AXP  || _CPU == _PPC
+#if (_CPU == _AXP)  || (_CPU == _PPC) || (_CPU == _MIPS)
         case OPR_VASTART:
             op2 = PopCGName();          // - get offset of parm
             op1 = PopCGName();          // - get address of va_list

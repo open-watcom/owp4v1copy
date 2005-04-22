@@ -158,7 +158,7 @@ static fe_attr FESymAttr( SYMPTR sym )
     }
     if( sym->flags & SYM_FUNCTION ) {
         attr |= FE_PROC | FE_STATIC;
-        #if _CPU == _AXP || _CPU == _PPC
+        #if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
             if( VarFunc( sym ) ) attr |= FE_VARARGS;
         #endif
         if( CompFlags.unique_functions ) {
@@ -898,7 +898,7 @@ int FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, int tipe )
 
     parm = parm;
     switch( tipe ) {
-#if _CPU == 386 || _CPU == 370 || _CPU == _PPC
+#if _CPU == 386 || _CPU == 370 || _CPU == _PPC || _CPU == _MIPS
     case T_UINT_2:
     case T_INT_2:
 #endif

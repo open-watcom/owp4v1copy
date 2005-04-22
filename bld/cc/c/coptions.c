@@ -227,6 +227,10 @@ local void SetTargSystem()                               /* 07-aug-90 */
     PreDefine_Macro( "__POWERPC__" );
     PreDefine_Macro( "__PPC__" );
     PreDefine_Macro( "_PPC_" );
+#elif _CPU == _MIPS
+    PreDefine_Macro( "M_MRX000" );
+    PreDefine_Macro( "_M_MRX000" );
+    PreDefine_Macro( "__MIPS__" );
 #elif _CPU == 386
     PreDefine_Macro( "M_I386" );                    /* 03-jul-91 */
     PreDefine_Macro( "__386__" );
@@ -277,7 +281,7 @@ local void SetTargSystem()                               /* 07-aug-90 */
             #else
                 #error "Target OS not defined"
             #endif
-        #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC
+        #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC || _CPU == _MIPS
             /* we only have NT libraries for Alpha right now */
             _SetConstTarg( "nt" );
         #else
@@ -582,7 +586,7 @@ static void MacroDefs()
         Define_Macro( "__SW_OF" );
     }
 #endif
-#if _CPU == _AXP || _CPU == _PPC
+#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
     if( GenSwitches & OBJ_ENDIAN_BIG ) {
         Define_Macro( "__BIG_ENDIAN__" );
     }
@@ -978,13 +982,13 @@ static void Set_EZ()           { TargetSwitches |= EZ_OMF; }
 static void Set_OMF()          { TargetSwitches &= ~(OBJ_ELF | OBJ_COFF); }
 #endif
 
-#if /*_CPU == 386 || */_CPU == _AXP || _CPU == _PPC
+#if /*_CPU == 386 || */_CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
 static void Set_ELF()          { GenSwitches &= ~OBJ_OWL;
                                  GenSwitches |= OBJ_ELF; }
 static void Set_COFF()         { GenSwitches &= ~OBJ_OWL;
                                  GenSwitches |= OBJ_COFF; }
 #endif
-#if _CPU == _AXP || _CPU == _PPC
+#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
 static void Set_EndianLittle() { GenSwitches &= ~OBJ_ENDIAN_BIG; }
 static void Set_EndianBig()    { GenSwitches |= OBJ_ENDIAN_BIG; }
 #endif
@@ -1523,11 +1527,11 @@ static struct option const CFE_Options[] = {
     { "etp",    0,              Set_ETP },
     { "esp",    0,              Set_ESP },
 #endif
-#if /*_CPU == 386 ||*/ _CPU == _AXP || _CPU == _PPC
+#if /*_CPU == 386 ||*/ _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
     { "eoe",    0,              Set_ELF },
     { "eoc",    0,              Set_COFF },
 #endif
-#if _CPU == _AXP || _CPU == _PPC
+#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
     { "el",     0,              Set_EndianLittle },
     { "eb",     0,              Set_EndianBig },
 #endif
@@ -1950,7 +1954,7 @@ static void InitCPUModInfo()
     PCH_FileName  = NULL;
     TargetSwitches = 0;
     TargSys = TS_OTHER;
-#if _CPU == _AXP | _CPU == _PPC | _CPU == _SPARC
+#if _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC || _CPU == _MIPS
     TextSegName   = ".text";
     DataSegName   = ".data";
     GenCodeGroup  = "";
@@ -2081,7 +2085,7 @@ local void Define_Memory_Model()
             }
             EmuLib_Name = "9noemu387";
         }
-    #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC
+    #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC || _CPU == _MIPS
         if( CompFlags.br_switch_used ) {                /* 15-may-95 */
             strcpy( CLIB_Name, "1clbdll" );
             strcpy( MATHLIB_Name, "8mthdll" );
@@ -2134,6 +2138,8 @@ void GenCOptions( char **cmdline )
     ProcOptions( FEGetEnv( "WCCAXP" ) );
 #elif _CPU == _PPC
     ProcOptions( FEGetEnv( "WCCPPC" ) );
+#elif _CPU == _MIPS
+    ProcOptions( FEGetEnv( "WCCMIPS" ) );
 #elif _CPU == _SPARC
     ProcOptions( FEGetEnv( "WCCSPC" ) );
 #else
