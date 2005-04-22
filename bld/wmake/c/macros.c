@@ -84,9 +84,7 @@ STATIC char     *dirBuf;
  * for ms-option.  This is needed by the inference rules
  * in ms nmake at which it deMacros the macros latter on in time
  */
-
 BOOLEAN         ImplicitDeMacro;
-
 
 /*
  *   Only Useful in ms option if it is partDeMacro then we only deMacro
@@ -112,6 +110,7 @@ STATIC char *getDirBuf( void )
     }
     return( dirBuf );
 }
+
 
 static void massageDollarOctothorpe( char *p )
 /********************************************/
@@ -201,15 +200,18 @@ STATIC const char *specialValue( TOKEN_T t )
  * returns: pointer to a static buffer
  */
 {
-    assert( (t == MAC_CUR || t == MAC_FIRST || t == MAC_LAST) &&
-            (FORM_MIN < CurAttr.num && CurAttr.num < FORM_MAX) );
+    char const  *dirBuf;
+
+    assert( t == MAC_CUR || t == MAC_FIRST || t == MAC_LAST );
+    assert( FORM_MIN < CurAttr.num && CurAttr.num < FORM_MAX );
 
     switch( t ) {
-        case MAC_CUR:       return( procPath( GetCurTarg() ) );
-        case MAC_FIRST:     return( procPath( GetFirstDep() ) );
-        case MAC_LAST:      return( procPath( GetLastDep() ) );
+    case MAC_CUR:       dirBuf = GetCurTarg();  break;
+    case MAC_FIRST:     dirBuf = GetFirstDep(); break;
+    case MAC_LAST:      dirBuf = GetLastDep();  break;
+    default:            return( NULL );
     }
-    return( NULL );
+    return( procPath( dirBuf ) );
 }
 
 
@@ -269,6 +271,7 @@ STATIC char *findEqual( char *inString )
     return( ret );
 }
 
+
 STATIC RET_T getOldNewString( char *inString, char **oldString,
     char **newString )
 /*************************************************************/
@@ -287,6 +290,7 @@ STATIC RET_T getOldNewString( char *inString, char **oldString,
     }
 }
 
+
 STATIC char *doStringSubstitute( const char *name, const char *oldString,
     const char *newString )
 /************************************************************************
@@ -303,7 +307,6 @@ STATIC char *doStringSubstitute( const char *name, const char *oldString,
 
     output = StartVec();
     WriteVec( output, "" );
-
 
     assert( name != NULL && oldString != NULL && newString != NULL );
 
@@ -530,39 +533,27 @@ extern BOOLEAN IsMacroName( const char *inName )
  * an error message
  */
 {
-    char    buffer[MAX_MAC_NAME + 1];   // contains the macro name and string
-                                        // substitution character ":" removed
-    char    *name;
-    char    *current;
+    char const  *current = inName;
+    int         pos = 0;
 
     assert( inName != NULL );
 
-    current = (char *)inName;
-    name    = buffer;
-
-    while( *current          != NULLCHAR     &&
-           *current          != COLON        &&
-           (current - inName) <  MAX_MAC_NAME ) {
-        name[current - inName] = *current;
-        ++current;
+    while( pos < MAX_MAC_NAME && *current != NULLCHAR && *current != COLON ) {
+        if( !ismacc( *current ) ) {
+            PrtMsg( ERR | LOC | INVALID_MACRO_NAME, inName );
+            return( FALSE );
+        }
+        pos++, current++;
     }
-    name[current-inName] = NULLCHAR;
-
-    if( strlen( name ) >= MAX_MAC_NAME ) {
-        PrtMsg( ERR | LOC | MAXIMUM_TOKEN_IS, MAX_MAC_NAME );
-        return( FALSE );
-    }
-    if( *name == NULLCHAR ) {
-        PrtMsg( ERR | LOC | INVALID_MACRO_NAME, name );
-        return( FALSE );
-    }
-    while( ismacc( *name ) ) {
-        ++name;
-    }
-    if( *name != NULLCHAR ) {
+    if( pos == 0 ) {
         PrtMsg( ERR | LOC | INVALID_MACRO_NAME, inName );
         return( FALSE );
     }
+    if( pos >= MAX_MAC_NAME ) {
+        PrtMsg( ERR | LOC | MAXIMUM_TOKEN_IS, MAX_MAC_NAME - 1 );
+        return( FALSE );
+    }
+
     return( TRUE );
 }
 
@@ -602,6 +593,7 @@ extern void UnDefMacro( const char *name )
 #pragma off(check_stack);
 #endif
 
+
 extern char *WrnGetMacroValue( const char *name )
 /***********************************************/
 {
@@ -619,6 +611,7 @@ extern char *WrnGetMacroValue( const char *name )
     /* note we return NULL if it was undefined! */
 }
 
+
 extern char *DeMacroSpecial( char *InString)
 /*******************************************
  * This function is to specially handle the special macros
@@ -632,7 +625,7 @@ extern char *DeMacroSpecial( char *InString)
     char    buffer[6];
     int     pos;
 
-    assert( InString != NULL);
+    assert( InString != NULL );
     current = InString;
     old     = InString;
 
@@ -705,7 +698,6 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
     int     pos;
     char    *p;
     char    *p2;
-
 
     switch( t ) {
     case MAC_START:                     /* recurse, get macro name */
@@ -849,6 +841,7 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
     return( NULL );
 }
 
+
 STATIC char *deMacroToEnd( int depth, TOKEN_T end1, TOKEN_T end2 )
 /*****************************************************************
  * post:    0 or more characters removed from input; next character of
@@ -936,7 +929,6 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
 
     result = deMacroToEnd( depth, end1, end2 );
     while( strchr( result, DOLLAR ) != NULL ) {
-
         UnGetCH( STRM_MAGIC );
         InsString( result, TRUE );
 
@@ -985,10 +977,9 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
             ++p;
         }
     }
-
-
     return( result );
 }
+
 
 extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
 /*************************************************************************
@@ -1065,6 +1056,7 @@ extern char *DeMacro( TOKEN_T end1 )
     return( deMacroText( 0, end1, STRM_END ) );
 }
 
+
 STATIC char *PartDeMacroProcess( void )
 /**************************************
  * Partially DeMacro until EOL.  Copies verbatim, only expanding
@@ -1073,7 +1065,6 @@ STATIC char *PartDeMacroProcess( void )
 {
     VECSTR  vec;               /* vector for macro defn                */
     VECSTR  wsvec = NULL;      /* vector to hold ws                    */
-    BOOLEAN holdws;            /* holding ws from last time through    */
     BOOLEAN leadingws;         /* still trimming leading ws            */
     TOKEN_T t;
     char    *text;
@@ -1081,7 +1072,6 @@ STATIC char *PartDeMacroProcess( void )
     vec = StartVec();
 
     leadingws = TRUE;
-    holdws = FALSE;
 
     t = LexToken( LEX_MAC_DEF );
     while( t != STRM_END && t != EOL ) {
@@ -1095,8 +1085,7 @@ STATIC char *PartDeMacroProcess( void )
             break;
         case MAC_WS:
             if( !leadingws ) {
-                if( !holdws ) {
-                    holdws = TRUE;
+                if( wsvec == NULL ) {
                     wsvec = StartVec();
                 }
                 WriteVec( wsvec, CurAttr.ptr );
@@ -1104,9 +1093,9 @@ STATIC char *PartDeMacroProcess( void )
             FreeSafe( CurAttr.ptr );
             break;
         case MAC_TEXT:
-            if( holdws && !leadingws ) {
+            if( wsvec != NULL && !leadingws ) {
                 CatVec( vec, wsvec );
-                holdws = FALSE;
+                wsvec = NULL;
             }
             leadingws = FALSE;
             WriteVec( vec, CurAttr.ptr );
@@ -1123,7 +1112,7 @@ STATIC char *PartDeMacroProcess( void )
         t = LexToken( LEX_MAC_DEF );
     }
 
-    if( holdws ) {          /* trim trailing ws */
+    if( wsvec != NULL ) {       /* trim trailing ws */
         FreeVec( wsvec );
     }
 
@@ -1144,6 +1133,7 @@ extern BOOLEAN ForceDeMacro ( void )
     return( Glob.microsoft && !ImplicitDeMacro );
 }
 
+
 extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
 /************************************************
  * the addition of microsoft option needs this option
@@ -1159,8 +1149,8 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
     }
     if( ForcedDeMacro ) {
         //remove white spaces at the beginning
-        while( isws( t = PreGetCH() ) )
-            ;
+        while( isws( t = PreGetCH() ) ) {
+        }
         UnGetCH(t);
         temp = DeMacro( EOL );
         t = PreGetCH();
@@ -1371,6 +1361,7 @@ extern void PrintMacros( void )
     PrtMsg( INF | NEWLINE );
 }
 
+
 #ifdef CLEAN_ENVIRONMENT_VAR
 STATIC void restoreEnvironment( void )
 /************************************/
@@ -1389,6 +1380,7 @@ STATIC void restoreEnvironment( void )
     }
 }
 #endif
+
 
 extern void MacroInit( void )
 /***************************/

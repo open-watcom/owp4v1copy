@@ -52,8 +52,8 @@ extern char         *PartDeMacro( BOOLEAN ForceDeMacro );
 extern void         UnDefMacro( const char *name );
 extern BOOLEAN      IsMacroName( const char *name );
 extern void         PrintMacros( void );
-extern char         *ignoreWSDeMacro (BOOLEAN partDeMacro, BOOLEAN ForceDeMacro);
+extern char         *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForceDeMacro );
 extern const char   *procPath( const char *fullpath );
-extern char         *DeMacroSpecial ( char* InString) ;
+extern char         *DeMacroSpecial( char *InString );
 
 #endif  /* !_MACROS_H */
