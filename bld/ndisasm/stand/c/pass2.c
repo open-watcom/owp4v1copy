@@ -179,7 +179,7 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                     frame = "ds:";
                 sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
                 break;
-                
+
             default:
                 sprintf( buff, "%s%s%s%c$%d", int_pref, frame, sep,
                          LabelChar, l_entry->label.number );
@@ -253,6 +253,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
         case ORL_RELOC_TYPE_REL_24:
         case ORL_RELOC_TYPE_WORD_14:
         case ORL_RELOC_TYPE_WORD_24:
+        case ORL_RELOC_TYPE_WORD_26:
             nvalue &= ~0x3;
         case ORL_RELOC_TYPE_WORD_16:
         case ORL_RELOC_TYPE_WORD_32:

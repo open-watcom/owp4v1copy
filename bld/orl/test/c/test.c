@@ -164,6 +164,7 @@ static char *relocTypes[] = {
     "SEGMENT",          // 16-bit segment relocation
     "WORD14",           // a direct ref to a 14-bit address shifted 2
     "WORD24",           // a direct ref to a 24-bit address shifted 2
+    "WORD26",           // a direct ref to a 28-bit address shifted 2
     "REL14",            // relative ref to a 14-bit address shifted 2
     "REL24",            // relative ref to a 24-bit address shifted 2
     "REL32",            // relative ref to a 32-bit address
@@ -184,7 +185,7 @@ static char *relocTypes[] = {
     "PLT16HA",          // ditto adjusted for signed low 16 bits
     "PLT16LO",          // direct ref to lo 16 bits of offset from PLT base
     "IFGLUE",           // substitute TOC restore instruction iff symbol is glue code
-    "IMGLUE",           // symbol is glue code; VA is TOC restore instruction 
+    "IMGLUE",           // symbol is glue code; VA is TOC restore instruction
 };
 
 orl_return PrintRelocInfo( orl_reloc *reloc )

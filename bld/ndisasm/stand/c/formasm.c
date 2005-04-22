@@ -291,6 +291,9 @@ dis_value HandleAddend( ref_entry r_entry )
     case ORL_RELOC_TYPE_PLTREL_24:
         bits = 24;
         break;
+    case ORL_RELOC_TYPE_WORD_26:
+        bits = 26;
+        break;
     case ORL_RELOC_TYPE_REL_16:
     case ORL_RELOC_TYPE_WORD_16:
     case ORL_RELOC_TYPE_HALF_HI:
@@ -363,6 +366,7 @@ orl_sec_offset RelocSize( ref_entry r_entry )
     case ORL_RELOC_TYPE_SEC_REL:
     case ORL_RELOC_TYPE_REL_21_SH:
     case ORL_RELOC_TYPE_WORD_24:
+    case ORL_RELOC_TYPE_WORD_26:
     case ORL_RELOC_TYPE_REL_24:
     case ORL_RELOC_TYPE_REL_32:
     case ORL_RELOC_TYPE_REL_32_NOADJ:
@@ -788,7 +792,7 @@ static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
                 BufferConcatNL();
                 BufferPrint();
             }
-            
+
             switch( l_entry->type ) {
             case LTYP_UNNAMED:
                 BufferStore("%c$%d", LabelChar, l_entry->label.number );
@@ -798,7 +802,7 @@ static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
                 BufferStore("%s", l_entry->label.name );
                 break;
             }
-            
+
             BufferConcat( "    LABEL\tBYTE" );
             BufferConcatNL();
             BufferPrint();
@@ -818,7 +822,7 @@ static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
         BufferConcatNL();
         BufferPrint();
     }
-    
+
     PrintTail( sec );
 
     BufferConcatNL();

@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions for CPU specific relocations.
 *
 ****************************************************************************/
 
-
-/* Functions for CPU specific relocations */
 
 #include "owlpriv.h"
 #include "owreloc.h"
@@ -100,6 +97,22 @@ static Elf32_Word elfRelocTypesPPC[] = {
     R_PPC_NONE,
 };
 
+static Elf32_Word elfRelocTypesMIPS[] = {
+    R_MIPS_NONE,                /* OWL_RELOC_ABSOLUTE */
+    R_MIPS_32,                  /* OWL_RELOC_WORD */
+    R_MIPS_HI16,                /* OWL_RELOC_HALF_HI */
+    R_MIPS_NONE,                /* OWL_RELOC_PAIR */
+    R_MIPS_LO16,                /* OWL_RELOC_HALF_LO */
+    R_MIPS_PC16,                /* OWL_RELOC_BRANCH_REL */
+    R_MIPS_NONE,                /* OWL_RELOC_BRANCH_ABS */
+    R_MIPS_NONE,                /* OWL_RELOC_JUMP_REL */
+    R_MIPS_26,                  /* OWL_RELOC_JUMP_ABS */
+    R_MIPS_NONE,                /* OWL_RELOC_SECTION_INDEX */
+    R_MIPS_NONE,                /* OWL_RELOC_SECTION_OFFSET */
+    R_MIPS_GOT16,               /* OWL_RELOC_TOC_OFFSET */
+    R_MIPS_NONE,                /* OWL_RELOC_GLUE */
+};
+
 // Someone should really make these up...
 static Elf32_Word elfRelocTypesAlpha[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
 
@@ -127,6 +140,9 @@ Elf32_Word OWLENTRY ElfRelocType( owl_reloc_type reloc_type, owl_cpu cpu ) {
     switch( cpu ) {
     case OWL_CPU_PPC:
         elf_relocs = elfRelocTypesPPC;
+        break;
+    case OWL_CPU_MIPS:
+        elf_relocs = elfRelocTypesMIPS;
         break;
     case OWL_CPU_ALPHA:
         elf_relocs = elfRelocTypesAlpha;
@@ -177,6 +193,22 @@ static unsigned ppcMasks[] = {
     0xffffffff,         /* OWL_RELOC_GLUE */
 };
 
+static unsigned mipsMasks[] = {
+    0xffffffff,         /* OWL_RELOC_ABSOLUTE */
+    0xffffffff,         /* OWL_RELOC_WORD */
+    0x0000ffff,         /* OWL_RELOC_HALF_HI */
+    0x00000000,         /* OWL_RELOC_PAIR */
+    0x0000ffff,         /* OWL_RELOC_HALF_LO */
+    0x0000ffff,         /* OWL_RELOC_BRANCH_REL */
+    0x0000ffff,         /* OWL_RELOC_BRANCH_ABS */
+    0x03ffffff,         /* OWL_RELOC_JUMP_REL */
+    0x03ffffff,         /* OWL_RELOC_JUMP_ABS */
+    0x0000ffff,         /* OWL_RELOC_SECTION_INDEX */
+    0xffffffff,         /* OWL_RELOC_SECTION_OFFSET */
+    0x0000ffff,         /* OWL_RELOC_TOC_OFFSET */
+    0xffffffff,         /* OWL_RELOC_GLUE */
+};
+
 static unsigned alphaMasks[] = {
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
@@ -209,6 +241,9 @@ unsigned OWLENTRY OWLRelocBitMask( owl_file_handle file, owl_reloc_info *reloc )
     case OWL_CPU_INTEL:
         return 0xffffffff;
     case OWL_CPU_MIPS:
+        mask_array = &mipsMasks;
+        break;
+    default:
         assert( 0 );
     }
     return( mask_array[ reloc->type ] );
