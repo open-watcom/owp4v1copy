@@ -190,7 +190,7 @@ extern const char *procPath( const char *fullpath )
 
     DropPGroup( pg );
     massageDollarOctothorpe( dirBuf );
-    return( (const char *)dirBuf );
+    return( dirBuf );
 }
 
 
@@ -1149,8 +1149,8 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
     }
     if( ForcedDeMacro ) {
         //remove white spaces at the beginning
-        while( isws( t = PreGetCH() ) ) {
-        }
+        while( isws( t = PreGetCH() ) )
+            ;
         UnGetCH(t);
         temp = DeMacro( EOL );
         t = PreGetCH();
@@ -1375,7 +1375,7 @@ STATIC void restoreEnvironment( void )
         WriteVec( EnvString, current->envVarName );
         WriteVec( EnvString, "=" );
         WriteVec( EnvString, current->envOldVal );
-        putenv( (const char *)FinishVec( EnvString ) );
+        putenv( FinishVec( EnvString ) );
         current = current->next;
     }
 }
