@@ -447,6 +447,8 @@ extern  void    InitSegDefs() {
         OWL_CPU_ALPHA
 #elif _TARGET & _TARG_PPC
         OWL_CPU_PPC
+#elif _TARGET & _TARG_MIPS
+        OWL_CPU_MIPS
 #else
     #error Unknown RISC target
 #endif

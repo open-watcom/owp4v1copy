@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CodeView debugging infromation types.
 *
 ****************************************************************************/
 
@@ -33,8 +32,8 @@
 #define CV_MAX_REC 256
 #if _TARGET & _TARG_IAPX86
     #define CVSIZE 16  // 16:16 compiler
-#elif _TARGET & (_TARG_80386 | _TARG_AXP | _TARG_PPC )
-    #define CVSIZE 32  // 16:32 compiler
+#elif _TARGET & (_TARG_80386 | _TARG_AXP | _TARG_PPC | _TARG_MIPS)
+    #define CVSIZE 32  // 16:32 or 0:32 compiler
 #endif
 typedef struct cv_out {
     char       *beg;    /* where to start writting from */

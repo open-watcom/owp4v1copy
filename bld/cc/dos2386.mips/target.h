@@ -24,56 +24,23 @@
 *
 *  ========================================================================
 *
-* Description:  Definition of basic types used in generated code.
+* Description:  Configuration for OS/2 host, MIPS target.
 *
 ****************************************************************************/
 
 
-typedef enum {
-        U1,
-        I1,
-        U2,
-        I2,
-        U4,
-        I4,
-        U8,
-        I8,
-        CP,
-        PT,
-        FS,
-        FD,
-        FL,
-        XX,
-        X8,
-/*  following included for use only by GENTYPE.WSL */
-        ER
-} type_class_def;
+/*  size of data types on target machine */
 
-#define _IsI64( c ) ( (c) >= U8 && (c) <= I8 )
-#define _IsFloating( c ) ( (c) >= FS && (c) <= FL )
-#define _IsPointer( c ) ( (c) == PT || (c) == CP )
-#define _IsIntegral( c ) ( (c) >= U1 && (c) <= PT )
+#ifndef _TARGET_INCLUDED
+#define _TARGET_INCLUDED
+#include "target32.h"
+#include "targdef.h"
+#include "langenvd.h"
 
-#include "targsys.h"
+#define VERSION         PRODUCTION
 
-#if _TARGET & _TARG_80386
-    typedef signed_32     type_length;
-    #define MAX_TYPE_LENGTH 0x7fffffff
-#elif _TARGET & _TARG_IAPX86
-    typedef signed_16     type_length;
-    #define MAX_TYPE_LENGTH 0x7fff
-#elif _TARGET & _TARG_370
-    typedef signed_32     type_length;
-    #define MAX_TYPE_LENGTH 0x7fffffff
-#elif _TARGET & _TARG_PPC
-    typedef signed_32     type_length;
-    #define MAX_TYPE_LENGTH 0x7fffffff
-#elif _TARGET & _TARG_AXP
-    typedef signed_32     type_length;
-    #define MAX_TYPE_LENGTH 0x7fffffff
-#elif _TARGET & _TARG_MIPS
-    typedef signed_32     type_length;
-    #define MAX_TYPE_LENGTH 0x7fffffff
-#else
-    #error Unknown target
+#define _CPU            _MIPS
+
+#define __TGT_SYS       __TGT_SYS_AXP_NT
+
 #endif

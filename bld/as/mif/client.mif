@@ -4,11 +4,14 @@
 #
 # AS in-line library
 #
-asminline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
-asminline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
+asminline_axp_lib_386  = $(as_dir)/alpha/inline/osi386/asinline.lib
+asminline_axp_lib_axp  = $(as_dir)/alpha/inline/osiaxp/asinline.lib
 
-asminline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
-asminline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib
+asminline_ppc_lib_386  = $(as_dir)/ppc/inline/osi386/asinline.lib
+asminline_ppc_lib_axp  = $(as_dir)/ppc/inline/osiaxp/asinline.lib
+
+asminline_mips_lib_386 = $(as_dir)/mips/inline/osi386/asinline.lib
+asminline_mips_lib_axp = $(as_dir)/mips/inline/osiaxp/asinline.lib
 
 #
 # AS in-line run-time DLL used
@@ -28,5 +31,11 @@ asminline_lib = $(asminline_axp_lib_$(host_cpu))
 asminline_lib = $(asminline_ppc_lib_$(host_os)_$(host_cpu))
 !else
 asminline_lib = $(asminline_ppc_lib_$(host_cpu))
+!endif
+!else ifeq target_cpu mips
+!ifdef asminline_mips_lib_$(host_os)_$(host_cpu)
+asminline_lib = $(asminline_mips_lib_$(host_os)_$(host_cpu))
+!else
+asminline_lib = $(asminline_mips_lib_$(host_cpu))
 !endif
 !endif

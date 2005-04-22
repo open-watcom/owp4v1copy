@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Inline assembler support for various front ends.
 *
 ****************************************************************************/
 
@@ -103,23 +102,26 @@ static owl_offset relocTargetDisp( owl_offset from, owl_offset to ) {
 
     owl_offset  ret;
 
-    #ifdef AS_ALPHA
+#ifdef AS_ALPHA
     from += 4;  // Alpha uses updated PC
-    #endif // PPC & MIPS uses current PC
+#endif // PPC & MIPS uses current PC
     assert( ( to % 4 ) == 0 );
     assert( ( from % 4 ) == 0 );
     ret = to - from;
-    #if defined(AS_PPC)
+#if defined( AS_PPC )
     return( ret );
-    #elif defined(AS_ALPHA)
+#elif defined( AS_ALPHA )
     return( ret >> 2 );
-    #else
+#elif defined( AS_MIPS )
+    // TODO
+    return( ret >> 2 );
+#else
     #error Unknown CPU type for assembler!
-    #endif
+#endif
 }
 
 static unsigned relocMasks[] = {
-#ifdef AS_PPC
+#if defined( AS_PPC )
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
     0x0000ffff,         /* OWL_RELOC_HALF_HI */
@@ -131,7 +133,20 @@ static unsigned relocMasks[] = {
     0x03fffffc,         /* OWL_RELOC_JUMP_ABS */
     0x0000ffff,         /* OWL_RELOC_SECTION_INDEX */
     0xffffffff,         /* OWL_RELOC_SECTION_OFFSET */
-#else
+#elif defined( AS_ALPHA )
+    0xffffffff,         /* OWL_RELOC_ABSOLUTE */
+    0xffffffff,         /* OWL_RELOC_WORD */
+    0x0000ffff,         /* OWL_RELOC_HALF_HI */
+    0x00000000,         /* OWL_RELOC_PAIR */
+    0x0000ffff,         /* OWL_RELOC_HALF_LO */
+    0x001fffff,         /* OWL_RELOC_BRANCH_REL */
+    0x001fffff,         /* OWL_RELOC_BRANCH_ABS, unused */
+    0x00003fff,         /* OWL_RELOC_JUMP_REL */
+    0x00003fff,         /* OWL_RELOC_JUMP_ABS, unused */
+    0x0000ffff,         /* OWL_RELOC_SECTION_INDEX */
+    0xffffffff,         /* OWL_RELOC_SECTION_OFFSET */
+#elif defined( AS_MIPS )
+    // TODO
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
     0x0000ffff,         /* OWL_RELOC_HALF_HI */

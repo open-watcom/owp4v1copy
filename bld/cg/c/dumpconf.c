@@ -101,7 +101,7 @@ extern  void    DumpRegName( hw_reg_set regname ) {
         if( Check(&name,HW_Y4) ) { DumpLiteral( "Y4" ); continue; }
         if( Check(&name,HW_Y6) ) { DumpLiteral( "Y6" ); continue; }
 #endif
-#if _TARGET & ( _TARG_PPC | _TARG_AXP )
+#if _TARGET & (_TARG_PPC | _TARG_AXP | _TARG_MIPS)
         if( Check(&name,HW_R0) ) { DumpLiteral( "R0" ); continue; }
         if( Check(&name,HW_R1) ) { DumpLiteral( "R1" ); continue; }
         if( Check(&name,HW_R2) ) { DumpLiteral( "R2" ); continue; }
