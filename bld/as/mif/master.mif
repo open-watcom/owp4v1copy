@@ -171,7 +171,7 @@ curr_dir=$+$(%cwd)$-
 !endif
 
 !ifdef asi_build_lib
-all_lib : $(asi_lib) $(asi_lib_j) .symbolic
+all_lib : msg.gh $(asi_lib) $(asi_lib_j) .symbolic
 
 $(asi_lib) : $(asi_objs)
         @rm -f $^&.lbc
@@ -195,8 +195,6 @@ $(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res
 !ifndef inline_as
 $(name).res : as.rc msg.gh
         $(rc_aui) $(as_extra_defines) $(dbg_extra_defines) $[@ -fo=$^@
-!else
-$(asi_objs) : msg.gh
 !endif
 
 msg.gh : ./mkstrid.exe
