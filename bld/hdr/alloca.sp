@@ -2,15 +2,7 @@
  _WCRTLINK extern void  *alloca(_w_size_t __size);
  _WCRTLINK extern void  *_alloca(_w_size_t __size);
  _WCRTLINK extern unsigned stackavail( void );
- #if defined(__AXP__) || defined(__PPC__)
-  extern void *__builtin_alloca(_w_size_t __size);
-  #pragma intrinsic(__builtin_alloca);
-
-  #define __alloca( s )  (__builtin_alloca(s))
-
-  #define alloca( s )   ((s<stackavail())?__alloca(s):NULL)
-  #define _alloca( s )  ((s<stackavail())?__alloca(s):NULL)
- #else
+ #if defined(__X86__)
   extern void  *__doalloca(_w_size_t __size);
   #pragma aux stackavail __modify __nomemory;
 
@@ -46,5 +38,14 @@
             "mov dx,ss"     \
             __parm __nomemory [__ax] __value [__dx __ax] __modify __exact __nomemory [__dx __ax __sp];
   #endif
+ #else
+:: All non-x86 platforms
+  extern void *__builtin_alloca(_w_size_t __size);
+  #pragma intrinsic(__builtin_alloca);
+
+  #define __alloca( s )  (__builtin_alloca(s))
+
+  #define alloca( s )   ((s<stackavail())?__alloca(s):NULL)
+  #define _alloca( s )  ((s<stackavail())?__alloca(s):NULL)
  #endif
 #endif
