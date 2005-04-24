@@ -312,9 +312,17 @@ static void emitReloc( owl_section_handle sec, owl_reloc_info *reloc, Elf32_Rela
 
     elf_reloc->r_offset = reloc->location;
     elf_reloc->r_info = ELF32_R_INFO( reloc->symbol->index, ElfRelocType( reloc->type, sec->file->info->cpu ) );
+    bit_mask = OWLRelocBitMask( sec->file, reloc );
+#ifdef __BIG_ENDIAN__ //TODO check target, not host
+    // When targeting big endian machines, halfword relocs do not start
+    // where the instruction starts because high bits are stored first and
+    // reloc is in the low bits. Adjust the location of the reloc for those.
+    // Bit of a hack really, but this is the easiest place to do it.
+    if( !(bit_mask & 0xffff0000) )
+        elf_reloc->r_offset += 2;
+#endif
     if( useRela ) {
         // dig up the embedded addend within the object and put it here
-        bit_mask = OWLRelocBitMask( sec->file, reloc );
         old_loc = OWLBufferTell( sec->buffer );
         OWLBufferSeek( sec->buffer, reloc->location );
         data = 0;
