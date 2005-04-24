@@ -54,4 +54,4 @@ PICK( IT_PSEUDO_NOT,    ITPseudoNot,    (OP_GPR | OP_IMMED), OP_GPR, OP_NOTHING 
 PICK( IT_PSEUDO_NEGF,   ITPseudoNegf,   OP_FPR, OP_FPR, OP_NOTHING )                                    /* negf    */
 PICK( IT_PSEUDO_FNEG,   ITPseudoFneg,   OP_FPR, OP_FPR, OP_NOTHING )                                    /* fneg    */
 PICK( IT_PSEUDO_ABS,    ITPseudoAbs,    (OP_GPR | OP_IMMED), OP_GPR, OP_NOTHING )                       /* absl    */
-PICK( IT_CALL_PAL,      ITCallPAL,      OP_IMMED, OP_NOTHING, OP_NOTHING )
+PICK( IT_SYSCODE,       ITSysCode,      (OP_IMMED | OP_NOTHING), OP_NOTHING, OP_NOTHING )

@@ -23,7 +23,7 @@ extra_c_flags_mipsins = -fh
 #!ifdef __UNIX__
 asi_dir = $(as_dir)/mips/inline/osi$(host_cpu)
 #!else
-#asi_dir = $(as_dir)\mips\inline\osi$(host_cpu)
+asi_dir = $(as_dir)\mips\inline\osi$(host_cpu)
 #!endif
 
 !include $(as_dir)/mif/master.mif
