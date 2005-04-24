@@ -37,7 +37,6 @@
 #include "asmstmt.h"
 #include "scan.h"
 
-static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
 
@@ -94,10 +93,11 @@ local void FreeAsmFixups( void )
 static byte_seq_reloc *GetFixups( void )
 /**************************************/
 {
-    asmreloc       *reloc;
-    byte_seq_reloc  *head,*new;
-    byte_seq_reloc **lnk;
-    SYM_HANDLE     sym_handle;
+    asmreloc        *reloc;
+    byte_seq_reloc  *head;
+    byte_seq_reloc  *new;
+    byte_seq_reloc  **lnk;
+    SYM_HANDLE      sym_handle;
 
     head = NULL;
     lnk = &head;
@@ -118,7 +118,7 @@ static byte_seq_reloc *GetFixups( void )
 local int GetByteSeq( void )
 /**************************/
 {
-    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
+    unsigned char       buff[MAXIMUM_BYTESEQ + 32];
     int                 code_length;
     int                 uses_auto;
     char                too_many_bytes;
@@ -130,7 +130,7 @@ local int GetByteSeq( void )
     uses_auto = 0;
     AsmSysSetCodeBuffer( buff );
     code_length = 0;
-    for(;;) {
+    for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
             AsmSysSetCodeAddr( code_length );
             AsmSysParseLine( Buffer );
@@ -140,7 +140,7 @@ local int GetByteSeq( void )
                 NextToken();
             }
         } else if( CurToken == T_CONSTANT ) {
-            buff[ code_length++ ] = Constant;
+            buff[code_length++] = Constant;
             NextToken();
         } else {
             break;
@@ -150,7 +150,7 @@ local int GetByteSeq( void )
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
-            code_length = 0;          // reset index to we don't overrun buffer
+            code_length = 0;          // reset index so we don't overrun buffer
         }
     }
     if( too_many_bytes ) {
@@ -212,6 +212,32 @@ static int GetAliasInfo( void )
 }
 
 
+static void GetParmInfo( void )
+/*****************************/
+{
+    if( PragSet() != T_NULL ) {
+        PragManyRegSets();
+    }
+}
+
+
+static void GetSaveInfo( void )
+/*****************************/
+{
+    hw_reg_set      reg;
+
+    reg = PragRegList();
+    HW_TurnOff( CurrInfo->save, reg );
+}
+
+
+static void GetRetInfo( void )
+/****************************/
+{
+    CurrInfo->returns = PragRegList();
+}
+
+
 void PragAux( void )
 /******************/
 {
@@ -246,16 +272,16 @@ void PragAux( void )
             CurrInfo->class |= DLL_EXPORT;
             have.f_export = 1;
         } else if( !have.f_parm && PragRecog( "parm" ) ) {
-//          GetParmInfo();
+            GetParmInfo();
             have.f_parm = 1;
         } else if( !have.f_value && PragRecog( "value" ) ) {
-//          GetRetInfo();
+            GetRetInfo();
             have.f_value = 1;
         } else if( !have.f_value && PragRecog( "aborts" ) ) {
             CurrInfo->class |= SUICIDAL;
             have.f_value = 1;
         } else if( !have.f_modify && PragRecog( "modify" ) ) {
-//          GetSaveInfo();
+            GetSaveInfo();
             have.f_modify = 1;
         } else if( !have.f_frame && PragRecog( "frame" ) ) {
 //          CurrInfo->class |= GENERATE_STACK_FRAME;
@@ -279,7 +305,27 @@ void PragAux( void )
 hw_reg_set PragRegName( char *str )
 /*********************************/
 {
-    return( StackParms[ 0 ] );
+    int         i;
+    char        *p;
+    hw_reg_set  name;
+
+    if( *str == '_' ) {
+        ++str;
+        if( *str == '_' ) {
+            ++str;
+        }
+    }
+    i = 0;
+    p = Registers;
+    while( *p != '\0' ) {
+        if( stricmp( p, str ) == 0 )
+            return( RegBits[ i ] );
+        i++;
+        while( *p++ != '\0' )
+            ;
+    }
+    HW_CAsgn( name, HW_EMPTY );
+    return( name );
 }
 
 
@@ -346,9 +392,9 @@ void AsmSysMakeInlineAsmFunc( int too_many_bytes )
         if( too_many_bytes ) {
             uses_auto = 0;
         } else {
-            risc_byte_seq *seq;
+            risc_byte_seq   *seq;
 
-            seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + code_length );
+            seq = (risc_byte_seq *)CMemAlloc( sizeof( risc_byte_seq ) + code_length );
             seq->relocs = GetFixups();
             seq->length = code_length;
             memcpy( &seq->data[0], AsmCodeBuffer, code_length );
