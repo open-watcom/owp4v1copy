@@ -286,6 +286,8 @@ static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type ) {
         return( ORL_RELOC_TYPE_GOT_16 );
     case R_MIPS_26:
         return( ORL_RELOC_TYPE_WORD_26 );
+    case R_MIPS_PC16:
+        return( ORL_RELOC_TYPE_REL_16 );
     default:
         assert( 0 );
     }
