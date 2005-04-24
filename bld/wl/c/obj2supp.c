@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include "linkstd.h"
 #include "reloc.h"
@@ -1239,13 +1240,16 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         && !fix->imported )
         return;
     ftype = fix->type & ( FIX_OFFSET_MASK | FIX_BASE );
-    if( ( FmtData.type & ( MK_PHAR_SIMPLE | MK_PHAR_FLAT ) )
-        || ( FmtData.type & ( MK_NOVELL | MK_ELF ) )
-            && ( ftype != FIX_OFFSET_32 )
-        || ( FmtData.type & MK_PE ) && ( ( ftype & FIX_BASE )
-            || ( ftype == FIX_OFFSET_8 ) || ( ftype == FIX_HIGH_OFFSET_8 ) )
-        || ( FmtData.type & MK_PHAR_REX ) && ( ftype != FIX_OFFSET_16 )
-            && ( ftype != FIX_OFFSET_32 ) ) {
+    if( (FmtData.type & (MK_PHAR_SIMPLE | MK_PHAR_FLAT))
+        || ((FmtData.type & (MK_NOVELL | MK_ELF))
+            && (LinkState & HAVE_I86_CODE) && (ftype != FIX_OFFSET_32))
+        || ((FmtData.type & MK_ELF) && !(LinkState & HAVE_I86_CODE)
+            && ((ftype & FIX_BASE) || (ftype == FIX_OFFSET_8)
+            || (ftype == FIX_HIGH_OFFSET_8)))
+        || ((FmtData.type & MK_PE) && ((ftype & FIX_BASE)
+            || (ftype == FIX_OFFSET_8) || (ftype == FIX_HIGH_OFFSET_8)))
+        || ((FmtData.type & MK_PHAR_REX) && (ftype != FIX_OFFSET_16)
+            && (ftype != FIX_OFFSET_32)) ) {
         LnkMsg( LOC+ERR+MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
         return;
     }
@@ -1264,7 +1268,8 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
             return;
         }
     }
-    if( ( fix->type & FIX_HIGH ) && !( FmtData.type & MK_PE ) ) {
+    if( (fix->type & FIX_HIGH) && !(FmtData.type & MK_PE)
+        && !(FmtData.type & MK_ELF) ) {
         LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
         return;
     }
@@ -1522,10 +1527,25 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
     } else if( FmtData.type & MK_ELF ) {
         symbol *sym;
 
-        if( fix->type & FIX_REL ) {
-            new_reloc.item.elf.info = R_386_PC32;
-        } else {
-            new_reloc.item.elf.info = R_386_32;
+        if( LinkState & HAVE_I86_CODE ) {
+            if( fix->type & FIX_REL ) {
+                new_reloc.item.elf.info = R_386_PC32;
+            } else {
+                new_reloc.item.elf.info = R_386_32;
+            }
+        } else if( LinkState & HAVE_PPC_CODE ) {
+            if( fix->type & FIX_HIGH ) {
+                new_reloc.item.elf.info = R_PPC_ADDR16_HI;
+                new_reloc.item.elf.addend = (unsigned_16)targ.off;
+            } else if( ftype == FIX_OFFSET_16 ) {
+                new_reloc.item.elf.info = R_PPC_ADDR16_LO;
+                if( !(FmtData.objalign & 0xFFFF) ) {
+                    save = FALSE;
+                }
+            } else {
+                new_reloc.item.elf.info = R_PPC_REL32;
+                LnkMsg( LOC + ERR + MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
+            }
         }
         sym = tthread->u.sym;
         if( IS_SYM_ALIAS( sym ) && ( sym->info & SYM_WAS_LAZY ) ) {
