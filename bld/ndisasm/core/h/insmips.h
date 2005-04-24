@@ -45,7 +45,7 @@ inspick( ADDI,          "addi",         0x20000000,         0xfc000000,     MIPS
 inspick( ADDIU,         "addiu",        0x24000000,         0xfc000000,     MIPSImmed2 )
 inspick( ADDU,          "addu",         o(0x00,0x00,0x21),  0xfc0007ff,     MIPSReg3 )
 inspick( AND,           "and",          o(0x00,0x00,0x24),  0xfc0007ff,     MIPSReg3 )
-inspick( ANDI,          "andi",         0x30000000,         0xfc000000,     MIPSImmed2 )
+inspick( ANDI,          "andi",         0x30000000,         0xfc000000,     MIPSImmed2U )
 // BCz*
 inspick( BEQ,           "beq",          0x10000000,         0xfc000000,     MIPSBranch2 )
 inspick( BEQL,          "beql",         0x50000000,         0xfc000000,     MIPSBranch2 )
@@ -128,7 +128,7 @@ inspick( MULT,          "mult",         s(0x00,0x18),       0xfc00ffff,     MIPS
 inspick( MULTU,         "multu",        s(0x00,0x19),       0xfc00ffff,     MIPSMulDiv )
 inspick( NOR,           "nor",          s(0x00,0x27),       0xfc0007ff,     MIPSReg3 )
 inspick( OR,            "or",           s(0x00,0x25),       0xfc0007ff,     MIPSReg3 )
-inspick( ORI,           "ori",          s(0x0d,0x00),       0xfc000000,     MIPSImmed2 )
+inspick( ORI,           "ori",          s(0x0d,0x00),       0xfc000000,     MIPSImmed2U )
 
 // All store instructions
 inspick( SB,            "sb",           s(0x28,0x00),       0xfc000000,     MIPSMemory )
@@ -177,7 +177,7 @@ inspick( TLTU,          "tltu",         s(0x00,0x33),       0xfc00003f,     MIPS
 inspick( TNE,           "tne",          s(0x00,0x36),       0xfc00003f,     MIPSTrap2 )
 inspick( TNEI,          "tnei",         b(0x01,0x0e),       0xfc1f0000,     MIPSTrap1 )
 inspick( XOR,           "xor",          s(0x00,0x26),       0xfc0007ff,     MIPSReg3 )
-inspick( XORI,          "xori",         s(0x0e,0x00),       0xfc000000,     MIPSImmed2 )
+inspick( XORI,          "xori",         s(0x0e,0x00),       0xfc000000,     MIPSImmed2U )
 
 // Floating point opcodes (ie. Coprocessor 1)
 inspick( ABS_f,         "abs",          cop(1,0x05),        0xfe00003f,     MIPSFPUOp2 )

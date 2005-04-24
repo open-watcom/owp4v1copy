@@ -208,6 +208,21 @@ dis_handler_return MIPSImmed2( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return MIPSImmed2U( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.itype.rt + DR_MIPS_r0;
+    ins->op[1].type = DO_REG;
+    ins->op[1].base = code.itype.rs + DR_MIPS_r0;
+    ins->op[2].type = DO_IMMED;
+    ins->op[2].value = code.itype.immediate;
+    ins->num_ops = 3;
+    return( DHR_DONE );
+}
+
 dis_handler_return MIPSShift( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     mips_ins    code;
@@ -518,9 +533,15 @@ static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         if( ins->op[2].base == DR_MIPS_r0 ) {
             new = "move";
             ins->num_ops = 2;
+        } else if( ins->op[1].base == DR_MIPS_r0 ) {
+            new = "move";
+            ins->op[1].type  = ins->op[2].type;
+            ins->op[1].base  = ins->op[2].base;
+            ins->num_ops = 2;
         }
         break;
     case DI_MIPS_ADDIU:
+    case DI_MIPS_ORI:
         if( ins->op[1].base == DR_MIPS_r0 ) {
             new = "li";
             ins->op[1].type  = ins->op[2].type;
@@ -532,6 +553,15 @@ static unsigned MIPSInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         if( ins->op[0].base == DR_MIPS_r31 ) {
             ins->op[0].type = ins->op[1].type;
             ins->op[0].base = ins->op[1].base;
+            ins->num_ops = 1;
+        }
+        break;
+    case DI_MIPS_BEQ:
+        if( ins->op[0].base == DR_MIPS_r0 && ins->op[0].base == DR_MIPS_r0 ) {
+            new = "b";
+            ins->op[0].type  = ins->op[2].type;
+            ins->op[0].base  = ins->op[2].base;
+            ins->op[0].value = ins->op[2].value;
             ins->num_ops = 1;
         }
         break;
@@ -557,7 +587,7 @@ static unsigned MIPSFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
         if( ins->flags & DIF_MIPS_FF_D ) *p++ = 'd';
         if( ins->flags & DIF_MIPS_FF_W ) *p++ = 'w';
         if( ins->flags & DIF_MIPS_FF_L ) *p++ = 'l';
-        if( ins->flags & DIF_MIPS_FF_PS ) *p++ = 'p'; *p++ = 's';
+        if( ins->flags & DIF_MIPS_FF_PS ) { *p++ = 'p'; *p++ = 's'; }
         *p = '\0';
     }
     return( p - name );
