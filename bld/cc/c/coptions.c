@@ -1174,7 +1174,7 @@ static void Set_WCD()          { EnableDisableMessage( 0, OptValue ); }
 static void Set_WCE()          { EnableDisableMessage( 1, OptValue ); }
 
 #if _CPU == 386
-static void Set_XGV()          { GenSwitches |= INDEXED_GLOBALS; }
+static void Set_XGV()          { TargetSwitches |= INDEXED_GLOBALS; }
 #endif
 
 static void Set_XBSA()
