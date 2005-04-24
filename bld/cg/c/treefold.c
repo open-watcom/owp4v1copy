@@ -133,17 +133,17 @@ static  cfloat  *IntToCF( signed_64 value, type_def *tipe ) {
     if( tipe->attr & TYPE_SIGNED ) {
         switch( tipe->length ) {
         case 1:
-            s8 = value.u._8[0];
+            s8 = value.u._8[I64LO8];
             return( CFCnvI32F( s8 ) );
         case 2:
-            s16 = value.u._16[0];
+            s16 = value.u._16[I64LO16];
             return( CFCnvI32F( s16 ) );
         case 4:
         case 6:
-            s32 = value.u._32[0];
+            s32 = value.u._32[I64LO32];
             return( CFCnvI32F( s32 ) );
         case 8:
-            return( CFCnvI64F( value.u._32[0], value.u._32[1] ) );
+            return( CFCnvI64F( value.u._32[I64LO32], value.u._32[I64HI32] ) );
         default:
             _Zoiks( ZOIKS_112 );
             return( NULL );
@@ -151,17 +151,17 @@ static  cfloat  *IntToCF( signed_64 value, type_def *tipe ) {
     } else {
         switch( tipe->length ) {
         case 1:
-            u8 = value.u._8[0];
+            u8 = value.u._8[I64LO8];
             return( CFCnvU32F( u8 ) );
         case 2:
-            u16 = value.u._16[0];
+            u16 = value.u._16[I64LO16];
             return( CFCnvU32F( u16 ) );
         case 4:
         case 6:
-            u32 = value.u._32[0];
+            u32 = value.u._32[I64LO32];
             return( CFCnvU32F( u32 ) );
         case 8:
-            return( CFCnvU64F( value.u._32[0], value.u._32[1] ) );
+            return( CFCnvU64F( value.u._32[I64LO32], value.u._32[I64HI32] ) );
         default:
             _Zoiks( ZOIKS_112 );
             return( NULL );
