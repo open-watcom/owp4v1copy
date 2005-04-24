@@ -36,6 +36,18 @@
 
 #include "sanity.cpp"
 
+#define FAIL { std::cout << "FAIL! Line: " << __LINE__ << "\n"; rc = false; }
+
+// The size at when a std::string first has to reallocate. Many of the
+// tests below "hard code" this value in the sense that test string
+// literals are used that are just smaller or just larger than this
+// size. It would be better to generate those test strings at run time
+// after looking up the target string's capacity. That way changes to
+// std::string's memory allocation policy would not require changes to
+// this test program (at least, that would be the hope).
+//
+const std::string::size_type base_size = 8;
+
 bool construct_test( )
 {
   bool rc = true;
@@ -45,163 +57,153 @@ bool construct_test( )
   std::string s4( s2 );
   std::string s5( s2, 7, 2 );
   std::string s6( s2, 7, 1024 );
-  std::string s7( 16, 'x' );
+  std::string s7( s2, 1 );
+  std::string s8( 16, 'x' );
 
-  if( s1.size( ) != 0 || s1 != "" || INSANE( s1 ) ) {
-    std::cout << "construct FAIL 0001\n"; rc = false;
-  }
-  if( s2.size( ) != 12  || s2 != "Hello, World" || INSANE( s2 ) ) {
-    std::cout << "construct FAIL 0002\n"; rc = false;
-  }
-  if( s3.size( ) != 3 || s3 != "Hel" || INSANE( s3 ) ) {
-    std::cout << "construct FAIL 0003\n"; rc = false;
-  }
-  if( s4.size( ) != 12 || s4 != "Hello, World" || INSANE( s4 ) ) {
-    std::cout << "construct FAIL 0004\n"; rc = false;
-  }
-  if( s5.size( ) != 2 || s5 != "Wo" || INSANE( s5 ) ) {
-    std::cout << "construct FAIL 0005\n"; rc = false;
-  }
-  if( s6.size( ) != 5 || s6 != "World" || INSANE( s6 ) ) {
-    std::cout << "construct FAIL 0006\n"; rc = false;
-  }
-  if( s7.size( ) != 16 || s7 != "xxxxxxxxxxxxxxxx" || INSANE( s7 ) ) {
-    std::cout << "construct FAIL 0007\n"; rc = false;
-  }
+  if( s1.size( ) !=  0 || s1 != ""             || INSANE( s1 ) ) FAIL
+  if( s2.size( ) != 12 || s2 != "Hello, World" || INSANE( s2 ) ) FAIL
+  if( s3.size( ) !=  3 || s3 != "Hel"          || INSANE( s3 ) ) FAIL
+  if( s4.size( ) != 12 || s4 != "Hello, World" || INSANE( s4 ) ) FAIL
+  if( s5.size( ) !=  2 || s5 != "Wo"           || INSANE( s5 ) ) FAIL
+  if( s6.size( ) !=  5 || s6 != "World"        || INSANE( s6 ) ) FAIL
+  if( s7.size( ) != 11 || s7 != "ello, World"  || INSANE( s7 ) ) FAIL
+  if( s8.size( ) != 16 || s8 != "xxxxxxxxxxxxxxxx" || INSANE( s8 ) ) FAIL
+
   return( rc );
 }
+
 
 bool assign_test( )
 {
   bool rc = true;
-  std::string s1( 15, 'x' );
-  std::string s2( "Hello" );
-  std::string s3( "This string is longer than 15 characters" );
+  std::string s1( 5, 'x' );
+  const char *shrt_string = "Shorty";
+  const char *long_string = "This string is longer than 8 characters";
+  const std::string s2( shrt_string );
+  const std::string s3( long_string );
+  std::string s4( 5, 'x' );
+  std::string s5( 5, 'x' );
+  std::string s6( 5, 'x' );
+  std::string s7( 5, 'x' );
+  std::string s8( 5, 'x' );
+  std::string s9( 5, 'x' );
+  const char *raw = "This is a very, very long string";
 
   s1 = s2;
-  if( s1.size( )     != 5          ||
-      s1.capacity( ) <  s1.size( ) ||
-      s1             != "Hello" ) {
-    std::cout << "assign FAIL 0001\n"; rc = false;
-  }
+  if( s1.size( ) !=  6 || s1 != shrt_string || INSANE( s1 ) ) FAIL
 
   s1 = s3;
-  if( s1.size( )     != 40         ||
-      s1.capacity( ) < s1.size( )  ||
-      s1             != "This string is longer than 15 characters" ) {
-    std::cout << "assign FAIL 0002\n"; rc = false;
-  }
+  if( s1.size( ) != 39 || s1 != long_string || INSANE( s1 ) ) FAIL
 
-  std::string s4( 'x', 15 );
-  s4 = "This string is longer than 15 characters";
-  if( s4.size( )     != 40         ||
-      s4.capacity( ) <  s4.size( ) ||
-      s4             != "This string is longer than 15 characters" ) {
-    std::cout << "assign FAIL 0003\n"; rc = false;
-  }
+  s4 = shrt_string;
+  if( s4.size( ) !=  6 || s4 != shrt_string || INSANE( s4 ) ) FAIL
 
-  std::string s5( 'x', 15 );
+  s4 = long_string;
+  if( s4.size( ) != 39 || s4 != long_string || INSANE( s4 ) ) FAIL
+
   s5 = 'y';
-  if( s5.size( )     != 1          ||
-      s5.capacity( ) <  s5.size( ) ||
-      s5             != "y" ) {
-    std::cout << "assign FAIL 0004\n"; rc = false;
-  }
+  if( s5.size( ) !=  1 || s5 != "y" || INSANE( s5 ) ) FAIL
 
-  // Need to add tests for the assign() methods as well.
+  s6.assign( s3, 35, 5 );
+  if( s6.size( ) !=  4 || s6 != "ters" || INSANE( s6 ) ) FAIL
+
+  s6.assign( s3, 5, 16 );
+  if( s6.size( ) != 16 || s6 != "string is longer" || INSANE( s6 ) ) FAIL
+
+  s7.assign( raw, 4 );
+  if( s7.size( ) !=  4 || s7 != "This" || INSANE( s7 ) ) FAIL
+
+  s7.assign( raw, 10 );
+  if( s7.size( ) != 10 || s7 != "This is a " || INSANE( s7 ) ) FAIL
+
+  s8.assign( "Shorty" );
+  if( s8.size( ) !=  6 || s8 != "Shorty" || INSANE( s8 ) ) FAIL
+
+  s8.assign( long_string );
+  if( s8.size( ) != 39 || s8 != long_string || INSANE( s8 ) ) FAIL
+
+  s9.assign( 7, 'x' );
+  if( s9.size( ) !=  7 || s9 != "xxxxxxx" || INSANE( s9 ) ) FAIL
+
+  s9.assign( 8, 'y' );
+  if( s9.size( ) !=  8 || s9 != "yyyyyyyy" || INSANE( s9 ) ) FAIL
 
   return( rc );
 }
+
 
 bool access_test( )
 {
   bool rc = true;
   std::string s1( "Hello, World" );
+  std::string s2( "Hello, World" );
 
-  if( s1[0] != 'H' ) {
-    std::cout << "access FAIL 0001\n"; rc = false;
-  }
-  if( s1[11] != 'd' ) {
-    std::cout << "access FAIL 0002\n"; rc = false;
-  }
+  if( s1[ 0] != 'H' ) FAIL
+  if( s1[11] != 'd' ) FAIL
 
-  s1[0] = 'x';
-  if( s1 != "xello, World" ) {
-    std::cout << "access FAIL 0003\n"; rc = false;
+  s1[ 0] = 'x';
+  s1[11] = 'y';
+  if( s1 != "xello, Worly" ) FAIL
+
+  if( s2.at(  0 ) != 'H' ) FAIL
+  if( s2.at( 11 ) != 'd' ) FAIL
+
+  s2.at(  0 ) = '-';
+  s2.at( 11 ) = '+';
+  if( s2 != "-ello, Worl+" ) FAIL
+
+  try {
+    char ch = s2.at( 12 );
+    FAIL
+  }
+  catch( std::out_of_range ) {
+    // Okay
   }
 
   return( rc );
 }
+
 
 bool relational_test( )
 {
   bool rc = true;
-  std::string s1( "abcd" );
-  std::string s2( "abcd" );
-  std::string s3( "abcc" );
-  std::string s4( "abce" );
-  std::string s5( "abc" );
+  std::string s1( "abcd"  );
+  std::string s2( "abcd"  );
+  std::string s3( "abcc"  );
+  std::string s4( "abce"  );
+  std::string s5( "abc"   );
   std::string s6( "abcde" );
 
   // Operator==
-  if( !( s1 == s2 ) ) {
-    std::cout << "relational FAIL 0001\n"; rc = false;
-  }
-  if(  ( s1 == s5 ) ) {
-    std::cout << "relational FAIL 0002\n"; rc = false;
-  }
+  if( !( s1 == s2 ) ) FAIL
+  if(  ( s1 == s5 ) ) FAIL
 
   // Operator !=
-  if(  ( s1 != s2 ) ) {
-    std::cout << "relational FAIL 0003\n"; rc = false;
-  }
-  if( !( s5 != s1 ) ) {
-    std::cout << "relational FAIL 0004\n"; rc = false;
-  }
+  if(  ( s1 != s2 ) ) FAIL
+  if( !( s5 != s1 ) ) FAIL
 
   // Operator<
-  if(  ( s1 < s2 ) ) {
-    std::cout << "relational FAIL 0005\n"; rc = false;
-  }
-  if( !( s3 < s1 ) ) {
-    std::cout << "relational FAIL 0006\n"; rc = false;
-  }
-  if(  ( s4 < s1 ) ) {
-    std::cout << "relational FAIL 0007\n"; rc = false;
-  }
-  if( !( s5 < s1 ) ) {
-    std::cout << "relational FAIL 0008\n"; rc = false;
-  }
-  if(  ( s4 < s6 ) ) {
-    std::cout << "relational FAIL 0009\n"; rc = false;
-  }
+  if(  ( s1 < s2 ) ) FAIL
+  if( !( s3 < s1 ) ) FAIL
+  if(  ( s4 < s1 ) ) FAIL
+  if( !( s5 < s1 ) ) FAIL
+  if(  ( s4 < s6 ) ) FAIL
 
   // Operator>
-  if( !( s4 > s3 ) ) {
-    std::cout << "relational FAIL 0010\n"; rc = false;
-  }
-  if(  ( s1 > s6 ) ) {
-    std::cout << "relational FAIL 0011\n"; rc = false;
-  }
+  if( !( s4 > s3 ) ) FAIL
+  if(  ( s1 > s6 ) ) FAIL
   
   // Operator <=
-  if( !( s1 <= s2 && s3 <= s2 ) ) {
-    std::cout << "relational FAIL 0012\n"; rc = false;
-  }
-  if(  ( s2 <= s3 || s6 <= s5 ) ) {
-    std::cout << "relational FAIL 0013\n"; rc = false;
-  }
+  if( !( s1 <= s2 && s3 <= s2 ) ) FAIL
+  if(  ( s2 <= s3 || s6 <= s5 ) ) FAIL
 
   // Operator>=
-  if( !( s2 >= s1 && s6 >= s5 ) ) {
-    std::cout << "relational FAIL 0014\n"; rc = false;
-  }
-  if(  ( s3 >= s4 || s5 >= s4 ) ) {
-    std::cout << "relatioanl FAIL 0015\n"; rc = false;
-  }
+  if( !( s2 >= s1 && s6 >= s5 ) ) FAIL
+  if(  ( s3 >= s4 || s5 >= s4 ) ) FAIL
 
   return( rc );
 }
+
 
 bool capacity_test( )
 {
@@ -210,49 +212,34 @@ bool capacity_test( )
   std::string s1;
   std::string s2("Hello, World!");
 
-  if( s1.capacity( ) == 0) {
-    std::cout << "capacity FAIL 0001\n"; rc = false;
-  }
-  if( s2.size( ) > s2.capacity( ) ) {
-    std::cout << "capacity FAIL 0002\n"; rc = false;
-  }
-  if( s1.empty( ) == false ) {
-    std::cout << "capacity FAIL 0003\n"; rc = false;
-  }
-  if( s2.empty( ) == true ) {
-    std::cout << "capacity FAIL 0004\n"; rc = false;
-  }
+  if( s1.capacity( ) == 0) FAIL
+  if( s2.size( ) > s2.capacity( ) ) FAIL
+  if( s1.empty( )    == false ) FAIL
+  if( s2.empty( )    == true  ) FAIL
 
   s2.clear( );
-  if( s2.empty( ) == false ) {
-    std::cout << "capacity FAIL 0005\n"; rc = false;
-  }
+  if( s2.empty( ) == false ) FAIL
 
   std::string s3("Hello");
   s3.resize( 2 );
-  if( s3.size( ) != 2 || s3 != "He" ) {
-    std::cout << "capacity FAIL 0006\n"; rc = false;
-  }
+  if( s3.size( ) != 2 || s3 != "He" ) FAIL
+
   s3.resize( 5, 'x' );
-  if( s3.size( ) != 5 || s3 != "Hexxx" ) {
-    std::cout << "capacity FAIL 0007\n"; rc = false;
-  }
+  if( s3.size( ) != 5 || s3 != "Hexxx" ) FAIL
+
   s3.resize( 40, 'y' );
   if( s3.size( ) != 40 ||
-      s3 != "Hexxxyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" ) {
-    std::cout << "capacity FAIL 0008\n"; rc = false;
-  }
+      s3 != "Hexxxyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" ) FAIL
 
   std::string s4("Hello");
   std::string::size_type new_s4capacity = ( 7 * s4.capacity( ) ) / 2;
   s4.reserve( new_s4capacity );
-  if( s4.capacity( ) < new_s4capacity ||
-      s4.size( ) != 5 ||
-      s4 != "Hello" ) {
-    std::cout << "capacity FAIL 0009\n"; rc = false;
+  if( s4.capacity( ) < new_s4capacity || s4.size( ) != 5 || s4 != "Hello" ) {
+    FAIL
   }
   return( rc );
 }
+
 
 // This function should probably be some kind of template so it can be
 // readily used to check iterators from any kind of sequence container.
@@ -265,131 +252,123 @@ bool iterator_test( )
   std::string::iterator p2;
 
   p1 = s1.begin( );
-  if( *p1 != 'H' ) {
-    std::cout << "iterator FAIL 0001\n"; rc = false;
-  }
+  if( *p1 != 'H' ) FAIL
+
   ++p1;
-  if( *p1 != 'e' ) {
-    std::cout << "iterator FAIL 0002\n"; rc = false;
-  }
+  if( *p1 != 'e' ) FAIL
+
   --p1;
-  if( *p1 != 'H' ) {
-    std::cout << "iterator FAIL 0003\n"; rc = false;
-  }
+  if( *p1 != 'H' ) FAIL
+
   p1++;
-  if( *p1 != 'e' ) {
-    std::cout << "iterator FAIL 0004\n"; rc = false;
-  }
+  if( *p1 != 'e' ) FAIL
+
   p1--;
-  if( *p1 != 'H' ) {
-    std::cout << "iterator FAIL 0005\n"; rc = false;
-  }
+  if( *p1 != 'H' ) FAIL
 
   p2 = s1.end( );
   --p2;
-  if( *p2 != 'd' ) {
-    std::cout << "iterator FAIL 0006\n"; rc = false;
-  }
-  ++p2;
-  if( p2 != s1.end( ) ) {
-    std::cout << "iterator FAIL 0007\n"; rc = false;
-  }
+  if( *p2 != 'd' ) FAIL
 
-  if ( p2 < p1 ) {
-    std::cout << "iterator FAIL 0008\n"; rc = false;
-  }
+  ++p2;
+  if( p2 != s1.end( ) ) FAIL
+
+  if ( p2 < p1 ) FAIL
 
   const std::string s2( "Hello, World" );
   std::string::const_iterator p3;
   std::string::const_iterator p4;
 
   p3 = s2.begin( );
-  if( *p3 != 'H' ) {
-    std::cout << "iterator FAIL 0009\n"; rc = false;
-  }
+  if( *p3 != 'H' ) FAIL
+
   ++p3;
-  if( *p3 != 'e' ) {
-    std::cout << "iterator FAIL 0010\n"; rc = false;
-  }
+  if( *p3 != 'e' ) FAIL
+
   --p3;
-  if( *p3 != 'H' ) {
-    std::cout << "iterator FAIL 0011\n"; rc = false;
-  }
+  if( *p3 != 'H' ) FAIL
+
   p3++;
-  if( *p3 != 'e' ) {
-    std::cout << "iterator FAIL 0012\n"; rc = false;
-  }
+  if( *p3 != 'e' ) FAIL
+
   p3--;
-  if( *p3 != 'H' ) {
-    std::cout << "iterator FAIL 0013\n"; rc = false;
-  }
+  if( *p3 != 'H' ) FAIL
 
   p4 = s2.end( );
   --p4;
-  if( *p4 != 'd' ) {
-    std::cout << "iterator FAIL 0014\n"; rc = false;
-  }
-  ++p4;
-  if( p4 != s2.end( ) ) {
-    std::cout << "iterator FAIL 0015\n"; rc = false;
-  }
+  if( *p4 != 'd' ) FAIL
 
-  if ( p4 < p3 ) {
-    std::cout << "iterator FAIL 0016\n"; rc = false;
-  }
+  ++p4;
+  if( p4 != s2.end( ) ) FAIL
+
+  if ( p4 < p3 ) FAIL
 
   return( rc );
 }
+
 
 bool append_test( )
 {
   bool rc = true;
-  std::string s1( "Hello" );
-  std::string s2( "World" );
 
+  // The sizes of the test strings used here are intended to explore
+  // both appending without reallocation and appending with re-
+  // allocation. A string can not be reused between tests because
+  // an enlarged capacity is never reduced.
+
+  std::string s1( "123456" );
+  std::string s2( "x" );
   s1 += s2;
-  if( s1         != "HelloWorld" ||
-      s1.size( ) != 10 ) {
-    std::cout << "append FAIL 0001\n"; rc = false;
-  }
-  s1 += "x";
-  if( s1         != "HelloWorldx" ||
-      s1.size( ) != 11 ) {
-    std::cout << "append FAIL 0002\n"; rc = false;
-  }
-  s1 += 'x';
-  if( s1         != "HelloWorldxx" ||
-      s1.size( ) != 12 ) {
-    std::cout << "append FAIL 0003\n"; rc = false;
-  }
-  s1.append( s2, 2, 2 );
-  if( s1         != "HelloWorldxxrl" ||
-      s1.size( ) != 14 ) {
-    std::cout << "append FAIL 0004\n"; rc = false;
-  }
-  s1.append( "fizzle", 4 );
-  if( s1         != "HelloWorldxxrlfizz" ||
-      s1.size( ) != 18 ) {
-    std::cout << "append FAIL 0005\n"; rc = false;
-  }
-  s1.append( "fizzle" );
-  if( s1         != "HelloWorldxxrlfizzfizzle" ||
-      s1.size( ) != 24 ) {
-    std::cout << "append FAIL 0006\n"; rc = false;
-  }
-  s1.append( 16, 'x' );
-  if( s1         != "HelloWorldxxrlfizzfizzlexxxxxxxxxxxxxxxx" ||
-      s1.size( ) != 40 ) {
-    std::cout << "append FAIL 0007\n"; rc = false;
-  }
-  s1.push_back( 'z' );
-  if( s1         != "HelloWorldxxrlfizzfizzlexxxxxxxxxxxxxxxxz" ||
-      s1.size( ) != 41 ) {
-    std::cout << "append FAIL 0008\n"; rc = false;
-  }
+  if( s1 != "123456x"  || s1.size( ) != 7 || INSANE( s1 ) ) FAIL
+  s1 += s2;
+  if( s1 != "123456xx" || s1.size( ) != 8 || INSANE( s1 ) ) FAIL
+
+  std::string s3( "123456" );
+  s3 += "x";
+  if( s3 != "123456x"  || s3.size( ) != 7 || INSANE( s3 ) ) FAIL
+  s3 += "y";
+  if( s3 != "123456xy" || s3.size( ) != 8 || INSANE( s3 ) ) FAIL
+
+  std::string s4( "123456" );
+  s4 += 'x';
+  if( s4 != "123456x"  || s4.size( ) != 7 || INSANE( s4 ) ) FAIL
+  s4 += 'z';
+  if( s4 != "123456xz" || s4.size( ) != 8 || INSANE( s4 ) ) FAIL
+
+  std::string s5( "123456" );
+  std::string s6( "Hello, World!" );
+  s5.append( s6, 12, 1 );
+  if( s5 != "123456!"  || s5.size( ) != 7 || INSANE( s5 ) ) FAIL
+  s5.append( s6, 0, 3 );
+  if( s5 != "123456!Hel" || s5.size( ) != 10 || INSANE( s5 ) ) FAIL
+
+  std::string s7( "123456" );
+  s7.append( "fizzle", 1 );
+  if( s7 != "123456f"  || s7.size( ) != 7 || INSANE( s7 ) ) FAIL
+  s7.append( "fizzle", 3 );
+  if( s7 != "123456ffiz" || s7.size( ) != 10 || INSANE( s7 ) ) FAIL
+
+  std::string s8( "123456" );
+  s8.append( "x" );
+  if( s8 != "123456x"  || s8.size( ) != 7 || INSANE( s8 ) ) FAIL
+  s8.append( "abc" );
+  if( s8 != "123456xabc" || s8.size( ) != 10 || INSANE( s8 ) ) FAIL
+
+  std::string s9( "123456" );
+  s9.append( 1, 'x' );
+  if( s9 != "123456x" || s9.size( ) != 7 || INSANE( s9 ) ) FAIL
+  s9.append( 3, 'y' );
+  if( s9 != "123456xyyy" || s9.size( ) != 10 || INSANE( s9 ) ) FAIL
+
+  std::string s10( "123456" );
+  s10.push_back( 'z' );
+  if( s10 != "123456z" || s10.size( ) != 7 || INSANE( s10 ) ) FAIL
+  s10.push_back( 'a' );
+  if( s10 != "123456za" || s10.size( ) != 8 || INSANE( s10 ) ) FAIL
 
   return( rc );
 }
+
 
 bool insert_test( )
 {
@@ -398,44 +377,44 @@ bool insert_test( )
   std::string s0( "INSERTED" );
   std::string s1( "Hello, World!" );
   s1.insert( 2, s0 );
-  if( s1         != "HeINSERTEDllo, World!" ||
-      s1.size( ) != 21 ) {
-    std::cout << "insert FAIL 0001\n"; rc = false;
+  if( s1 != "HeINSERTEDllo, World!" || s1.size( ) != 21 || INSANE( s1 ) ) {
+    FAIL
   }
 
   std::string s2( "Hello, World!" );
   s2.insert( 0, s0 );
-  if( s2         != "INSERTEDHello, World!" ||
-      s2.size( ) != 21 ) {
-    std::cout << "insert FAIL 0002\n"; rc = false;
+  if( s2 != "INSERTEDHello, World!" || s2.size( ) != 21 || INSANE( s2 ) ) {
+    FAIL
   }
 
   std::string s3( "Hello, World!" );
   s3.insert( 13, s0 );
-  if( s3         != "Hello, World!INSERTED" ||
-      s3.size( ) != 21 ) {
-    std::cout << "insert FAIL 0003\n"; rc = false;
+  if( s3 != "Hello, World!INSERTED" || s3.size( ) != 21 || INSANE( s3 ) ) {
+    FAIL
   }
 
   std::string s4( "Hello, World!" );
   s4.insert( 0, s0, 2, 2 );
-  if( s4         != "SEHello, World!" ||
-      s4.size( ) != 15 ) {
-    std::cout << "insert FAIL 0004\n"; rc = false;
+  if( s4 != "SEHello, World!" || s4.size( ) != 15 || INSANE( s4 ) ) {
+    FAIL
   }
 
   std::string s5( "Hello, World!" );
   s5.insert( 0, s0, 2, 128 );
-  if( s5         != "SERTEDHello, World!" ||
-      s5.size( ) != 19 ) {
-    std::cout << "insert FAIL 0005\n"; rc = false;
+  if( s5 != "SERTEDHello, World!" || s5.size( ) != 19 || INSANE( s5 ) ) {
+    FAIL
   }
 
   std::string s6( "Hello, World!" );
-  s6.insert( s6.begin( ), 2, 'x' );
-  if( s6         != "xxHello, World!" ||
-      s6.size( ) != 15 ) {
-    std::cout << "insert FAIL 0006\n"; rc = false;
+  s6.insert( s6.begin( ), 'x' );
+  if( s6 != "xHello, World!" || s6.size( ) != 14 || INSANE( s6 ) ) {
+    FAIL
+  }
+
+  std::string s7( "Hello, World!" );
+  s7.insert( s7.end( ), 3, 'z' );
+  if( s7 != "Hello, World!zzz" || s7.size( ) != 16 || INSANE( s7 ) ) {
+    FAIL
   }
 
   // Need to test other insert methods.
@@ -443,47 +422,34 @@ bool insert_test( )
   return( rc );
 }
 
+
 bool erase_test( )
 {
   bool rc = true;
 
   std::string s1( "Hello, World!" );
   s1.erase( );
-  if( s1         != "" ||
-      s1.size( ) != 0 ) {
-    std::cout << "erase FAIL 0001\n"; rc = false;
-  }
+  if( s1 != "" || s1.size( ) != 0 || INSANE( s1 ) ) FAIL
 
   std::string s2( "Hello, World!" );
   s2.erase( 2, 3 );
-  if( s2         != "He, World!" ||
-      s2.size( ) != 10 ) {
-    std::cout << "erase FAIL 0002\n"; rc = false;
-  }
+  if( s2 != "He, World!" || s2.size( ) != 10 || INSANE( s2 ) ) FAIL
 
   std::string s3( "Hello, World!" );
   s3.erase( 7, 6 );
-  if( s3         != "Hello, " ||
-      s3.size( ) != 7 ) {
-    std::cout << "erase FAIL 0003\n"; rc = false;
-  }
+  if( s3 != "Hello, " || s3.size( ) != 7 || INSANE( s3 ) ) FAIL
 
   std::string s4( "Hello, World!" );
   s4.erase( s4.begin( ) );
-  if( s4         != "ello, World!" ||
-      s4.size( ) != 12 ) {
-    std::cout << "erase FAIL 0004\n"; rc = false;
-  }
+  if( s4 != "ello, World!" || s4.size( ) != 12 || INSANE( s4 ) ) FAIL
 
   std::string s5( "Hello, World!" );
   s5.erase( s5.begin( ) + 2, s5.begin( ) + 5 );
-  if( s5         != "He, World!" ||
-      s5.size( ) != 10 ) {
-    std::cout << "erase FAIL 0005\n"; rc = false;
-  }
+  if( s5 != "He, World!" || s5.size( ) != 10 || INSANE( s5 ) ) FAIL
 
   return( rc );
 }
+
 
 bool replace_test( )
 {
@@ -492,36 +458,33 @@ bool replace_test( )
 
   std::string t1( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t1.replace( 0, std::string::npos, s1, 0, std::string::npos );
-  if( t1 != "Insert me!" ) {
-    std::cout << "replace FAIL 0001\n"; rc = false;
-  }
+  if( t1 != "Insert me!" || INSANE( t1 ) ) FAIL
 
   std::string t2( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t2.replace( 0, 1, s1, 0, std::string::npos );
-  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
-    std::cout << "replace FAIL 0002\n"; rc = false;
-  }
+  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" || INSANE( t2 ) ) FAIL
 
   std::string t3( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t3.replace( 1, 0, s1, 0, 1 );
-  if( t3 != "AIBCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
-    std::cout << "replace FAIL 0003\n"; rc = false;
-  }
+  if( t3 != "AIBCDEFGHIJKLMNOPQRSTUVWXYZ" || INSANE( t3 ) ) FAIL
 
   std::string t4( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t4.replace( 26, 0, s1, 0, std::string::npos );
-  if( t4 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" ) {
-    std::cout << "replace FAIL 0004\n"; rc = false;
-  }
+  if( t4 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" || INSANE( t4 ) ) FAIL
 
   std::string t5( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t5.replace( 4, 3, s1, 2, 5 );
-  if (t5 != "ABCDsert HIJKLMNOPQRSTUVWXYZ" ) {
-    std::cout << "replace FAIL 0005\n"; rc = false;
-  }
+  if( t5 != "ABCDsert HIJKLMNOPQRSTUVWXYZ" || INSANE( t5 ) ) FAIL
+
+  std::string t6( "Shorty" );
+  t6.replace( 1, 2, s1, 0, 2 );
+  if( t6 != "SInrty" || INSANE( t6 ) ) FAIL
+
+  // Need to test other replace methods.
 
   return( rc );
 }
+
 
 bool iterator_replace_test( )
 {
@@ -530,30 +493,29 @@ bool iterator_replace_test( )
 
   std::string t1( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t1.replace( t1.begin( ), t1.end( ), s1 );
-  if( t1 != "Insert me!" ) {
-    std::cout << t1.c_str( ) << "\n";
-    std::cout << "iterator_replace FAIL 0001\n"; rc = false;
-  }
+  if( t1 != "Insert me!" || INSANE( t1 ) ) FAIL
 
   std::string t2( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t2.replace( t2.begin( ), t2.begin( ) + 1, s1 );
-  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
-    std::cout << "iterator_replace FAIL 0002\n"; rc = false;
-  }
+  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" || INSANE( t2 ) ) FAIL
 
   std::string t3( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t3.replace( t3.end( ), t3.end( ), s1 );
-  if( t3 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" ) {
-    std::cout << "iterator_replace FAIL 0003\n"; rc = false;
-  }
+  if( t3 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" || INSANE( t3 ) ) FAIL
 
   std::string t4( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
   t4.replace( t4.begin( ) + 4, t4.begin( ) + 7, s1 );
-  if (t4 != "ABCDInsert me!HIJKLMNOPQRSTUVWXYZ" ) {
-    std::cout << "iterator_replace FAIL 0004\n"; rc = false;
-  }
+  if( t4 != "ABCDInsert me!HIJKLMNOPQRSTUVWXYZ" || INSANE( t4 ) ) FAIL
+
+  std::string t5( "Shorty" );
+  t5.replace( t5.begin( ), t5.begin( ) + 2, 2, 'x' );
+  if( t5 != "xxorty" || INSANE( t5 ) ) FAIL
+
+  // Need to test other iterator replace methods.
+
   return( rc );
 }
+
 
 bool copy_test( )
 {
@@ -563,39 +525,30 @@ bool copy_test( )
   std::string s1( "Hello, World!" );
 
   buffer[ s1.copy( buffer, 2, 0 ) ] = '\0';
-  if( std::strcmp( buffer, "He" ) != 0 ) {
-    std::cout << "copy FAIL 0001\n"; rc = false;
-  }
+  if( std::strcmp( buffer, "He" ) != 0 ) FAIL
 
   buffer[ s1.copy( buffer, s1.size( ), 0 ) ] = '\0';
-  if( std::strcmp( buffer, "Hello, World!" ) != 0 ) {
-    std::cout << "copy FAIL 0002\n"; rc = false;
-  }
+  if( std::strcmp( buffer, "Hello, World!" ) != 0 ) FAIL
 
   buffer[ s1.copy( buffer, 3, 2 ) ] = '\0';
-  if( std::strcmp( buffer, "llo" ) != 0 ) {
-    std::cout << "copy FAIL 0003\n"; rc = false;
-  }
+  if( std::strcmp( buffer, "llo" ) != 0 ) FAIL
 
   buffer[ s1.copy( buffer, 10, 7 ) ] = '\0';
-  if( std::strcmp( buffer, "World!" ) != 0 ) {
-    std::cout << "copy FAIL 0004\n"; rc = false;
-  }
+  if( std::strcmp( buffer, "World!" ) != 0 ) FAIL
 
   buffer[ s1.copy( buffer, 0, 13 ) ] = '\0';
-  if( std::strcmp( buffer, "" ) != 0 ) {
-    std::cout << "copy FAIL 0005\n"; rc = false;
-  }
+  if( std::strcmp( buffer, "" ) != 0 ) FAIL
 
   try {
     buffer[ s1.copy( buffer, 1, 14 ) ] = '\0';
-    std::cout << "copy FAIL 0006\n"; rc = false;
+    FAIL
   }
   catch( std::out_of_range ) {
     // Okay
   }
   return( rc );
 }
+
 
 bool swap_test( )
 {
@@ -605,19 +558,16 @@ bool swap_test( )
   std::string s2("XYZ");
 
   s1.swap( s2 );
-  if( s1 != "XYZ" || s2 != "ABC" ) {
-    std::cout << "swap FAIL 0001\n"; rc = false;
-  }
+  if( s1 != "XYZ" || s2 != "ABC" ) FAIL
 
   #ifdef __NEVER
   std::swap( s1, s2 );
-  if( s1 != "ABC" || s2 != "XYZ" ) {
-    std::cout << "swap FAIL 0002\n"; rc = false;
-  }
+  if( s1 != "ABC" || s2 != "XYZ" ) FAIL
   #endif
 
   return( rc );
 }
+
 
 bool cstr_test( )
 {
@@ -626,165 +576,102 @@ bool cstr_test( )
 
   std::string s1( "Hello, World!" );
   p = s1.c_str( );
-  if( std::strcmp( p, "Hello, World!" ) != 0 ) {
-    std::cout << "cstr FAIL 0001\n"; rc = false;
-  }
+  if( std::strcmp( p, "Hello, World!" ) != 0 ) FAIL
 
   std::string s2;
   p = s2.c_str( );
-  if ( std::strcmp( p, "" ) != 0 ) {
-    std::cout << "cstr FAIL 0002\n"; rc = false;
-  }
+  if ( std::strcmp( p, "" ) != 0 ) FAIL
 
   return( rc );
 }
+
 
 bool find_test( )
 {
   bool rc = true;
 
-  std::string s1( "Hello, World" );
-  if( s1.find( "Hello", 0 ) != 0 ) {
-    std::cout << "find FAIL 0001\n"; rc = false;
-  }
-  if( s1.find( "Hello", 1 ) != std::string::npos ) {
-    std::cout << "find FAIL 0002\n"; rc = false;
-  }
-  if( s1.find( "World", 0 ) != 7 ) {
-    std::cout << "find FAIL 0003\n"; rc = false;
-  }
-  if( s1.find( "Hello", 11 ) != std::string::npos ) {
-    std::cout << "find FAIL 0004\n"; rc = false;
-  }
-  if( s1.find( "Hello", 12 ) != std::string::npos ) {
-    std::cout << "find FAIL 0005\n"; rc = false;
-  }
-  if( s1.find( "Hello", 13 ) != std::string::npos ) {
-    std::cout << "find FAIL 0006\n"; rc = false;
-  }
-  if( s1.find( "", 12 ) != 12 ) {
-    std::cout << "find FAIL 0007\n"; rc = false;
-  }
+  const std::string s1( "Hello, World" );
+  if( s1.find( "Hello",  0 ) != 0                 ) FAIL
+  if( s1.find( "Hello",  1 ) != std::string::npos ) FAIL
+  if( s1.find( "World",  0 ) != 7                 ) FAIL
+  if( s1.find( "Hello", 11 ) != std::string::npos ) FAIL
+  if( s1.find( "Hello", 12 ) != std::string::npos ) FAIL
+  if( s1.find( "Hello", 13 ) != std::string::npos ) FAIL
+  if( s1.find( "",      12 ) != 12                ) FAIL
 
   return( rc );
 }
+
 
 bool rfind_test( )
 {
   bool rc = true;
 
-  std::string s1( "Hello, World" );
-  if( s1.rfind( "World" ) != 7 ) {
-    std::cout << "rfind FAIL 0001\n"; rc = false;
-  }
-  if( s1.rfind( "Hello" ) != 0 ) {
-    std::cout << "rfind FAIL 0002\n"; rc = false;
-  }
-  if( s1.rfind( "ell", 7 ) != 1 ) {
-    std::cout << "rfind FAIL 0003\n"; rc = false;
-  }
-  if( s1.rfind( "Fizzle" ) != std::string::npos ) {
-    std::cout << "rfind FAIL 0004\n"; rc = false;
-  }
-  if( s1.rfind( "Hello, World..." ) != std::string::npos ) {
-    std::cout << "rfind FAIL 0005\n"; rc = false;
-  }
+  const std::string s1( "Hello, World" );
+  if( s1.rfind( "World" ) != 7 ) FAIL
+  if( s1.rfind( "Hello" ) != 0 ) FAIL
+  if( s1.rfind( "ell", 7 ) != 1 ) FAIL
+  if( s1.rfind( "Fizzle" ) != std::string::npos ) FAIL
+  if( s1.rfind( "Hello, World..." ) != std::string::npos ) FAIL
+
   return( rc );
 }
+
 
 bool find_first_of_test()
 {
   bool rc = true;
-  std::string s1( "Hello, World!" );
-  if( s1.find_first_of( "eoW" ) != 1 ) {
-    std::cout << "find_first_of FAIL 0001\n"; rc = false;
-  }
-  if( s1.find_first_of( "eoW", 1 ) != 1 ) {
-    std::cout << "find_first_of FAIL 0002\n"; rc = false;
-  }
-  if( s1.find_first_of( "eoW", 2 ) != 4 ) {
-    std::cout << "find_first_of FAIL 0003\n"; rc = false;
-  }
-  if( s1.find_first_of( "!" ) != 12 ) {
-    std::cout << "find_first_of FAIL 0004\n"; rc = false;
-  }
-  if( s1.find_first_of( "!", 13 ) != std::string::npos ) {
-    std::cout << "find_first_of FAIL 0005\n"; rc = false;
-  }
-  if( s1.find_first_of( "z#+" ) != std::string::npos ) {
-    std::cout << "find_first_of FAIL 0006\n"; rc = false;
-  }
+
+  const std::string s1( "Hello, World!" );
+  if( s1.find_first_of( "eoW" )    !=  1 ) FAIL
+  if( s1.find_first_of( "eoW", 1 ) !=  1 ) FAIL
+  if( s1.find_first_of( "eoW", 2 ) !=  4 ) FAIL
+  if( s1.find_first_of( "!" )      != 12 ) FAIL
+  if( s1.find_first_of( "!", 13 )  != std::string::npos ) FAIL
+  if( s1.find_first_of( "z#+" )    != std::string::npos ) FAIL
 
   return( rc );
 }
+
 
 bool find_last_of_test()
 {
   bool rc = true;
-  std::string s1( "Hello, World!" );
-  if( s1.find_last_of( "eoW" ) != 8 ) {
-    std::cout << "find_last_of FAIL 0001\n"; rc = false;
-  }
-  if( s1.find_last_of( "eoW", 1 ) != 1 ) {
-    std::cout << "find_last_of FAIL 0002\n"; rc = false;
-  }
-  if( s1.find_last_of( "oWe", 2 ) != 1 ) {
-    std::cout << "find_last_of FAIL 0003\n"; rc = false;
-  }
-  if( s1.find_last_of( "!" ) != 12 ) {
-    std::cout << "find_last_of FAIL 0004\n"; rc = false;
-  }
-  if( s1.find_last_of( "!", 13 ) != 12 ) {
-    std::cout << "find_last_of FAIL 0005\n"; rc = false;
-  }
-  if( s1.find_last_of( "z#+" ) != std::string::npos ) {
-    std::cout << "find_last_of FAIL 0006\n"; rc = false;
-  }
+
+  const std::string s1( "Hello, World!" );
+  if( s1.find_last_of( "eoW" )    !=  8 ) FAIL
+  if( s1.find_last_of( "eoW", 1 ) !=  1 ) FAIL
+  if( s1.find_last_of( "oWe", 2 ) !=  1 ) FAIL
+  if( s1.find_last_of( "!" )      != 12 ) FAIL
+  if( s1.find_last_of( "!", 13 )  != 12 ) FAIL
+  if( s1.find_last_of( "z#+" )    != std::string::npos ) FAIL
 
   return( rc );
 }
+
 
 bool find_first_not_of_test()
 {
   bool rc = true;
 
-  std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  std::string s1("xAWQKSMQIFJJWXGV"); // Be sure both 'A' and 'Z' represented.
-  std::string s2("KFNNAWEZxZNEKGDW");
-  std::string s3("QMVVXZKRIGJJWTAx");
-  std::string s4("UUDHHAKVVLZVFLQP");
-  std::string s5("");
+  const std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  const std::string s1("xAWQKSMQIFJJWXGV"); // Be sure both 'A' and 'Z'.
+  const std::string s2("KFNNAWEZxZNEKGDW");
+  const std::string s3("QMVVXZKRIGJJWTAx");
+  const std::string s4("UUDHHAKVVLZVFLQP");
+  const std::string s5("");
 
-  if( s1.find_first_not_of( good_chars ) != 0 ) {
-    std::cout << "find_first_not_of FAIL 0001\n"; rc = false;
-  }
-  if( s2.find_first_not_of( good_chars ) != 8 ) {
-    std::cout << "find_first_not_of FAIL 0002\n"; rc = false;
-  }
-  if( s3.find_first_not_of( good_chars ) != 15 ) {
-    std::cout << "find_first_not_of FAIL 0003\n"; rc = false;
-  }
-  if( s4.find_first_not_of( good_chars ) != std::string::npos ) {
-    std::cout << "find_first_not_of FAIL 0004\n"; rc = false;
-  }
-  if( s2.find_first_not_of( good_chars, 8 ) != 8 ) {
-    std::cout << "find_first_not_of FAIL 0005\n"; rc = false;
-  }
-  if( s3.find_first_not_of( good_chars, 15) != 15 ) {
-    std::cout << "find_first_not_of FAIL 0006\n"; rc = false;
-  }
-  if( s3.find_first_not_of( good_chars, 16) != std::string::npos ) {
-    std::cout << "find_first_not_of FAIL 0007\n"; rc = false;
-  }
-  if( s3.find_first_not_of( good_chars, 17) != std::string::npos ) {
-    std::cout << "find_first_not_of FAIL 0008\n"; rc = false;
-  }
-  if( s5.find_first_not_of( good_chars ) != std::string::npos ) {
-    std::cout << "find_first_not_of FAIL 0009\n"; rc = false;
-  }
-  if( s4.find_first_not_of( s5 ) != 0 ) {
-    std::cout << "find_first_not_of FAIL 0010\n"; rc = false;
-  }
+  if( s1.find_first_not_of( good_chars )     !=  0 ) FAIL
+  if( s2.find_first_not_of( good_chars )     !=  8 ) FAIL
+  if( s3.find_first_not_of( good_chars )     != 15 ) FAIL
+  if( s4.find_first_not_of( good_chars )     != std::string::npos ) FAIL
+  if( s2.find_first_not_of( good_chars,  8 ) !=  8 ) FAIL
+  if( s3.find_first_not_of( good_chars, 15 ) != 15 ) FAIL
+  if( s3.find_first_not_of( good_chars, 16 ) != std::string::npos ) FAIL
+  if( s3.find_first_not_of( good_chars, 17 ) != std::string::npos ) FAIL
+  if( s5.find_first_not_of( good_chars )     != std::string::npos ) FAIL
+  if( s4.find_first_not_of( s5 )             != 0 ) FAIL
+
   return( rc );
 }
 
@@ -793,80 +680,46 @@ bool find_last_not_of_test()
 {
   bool rc = true;
 
-  std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  std::string s1("xAWQKSMQIFJJWXGV");  // Be sure both 'A' and 'Z' represented.
-  std::string s2("KFNNAWEZxZNEKGDW");
-  std::string s3("QMVVXZKRIGJJWTAx");
-  std::string s4("UUDHHAKVVLZVFLQP");
-  std::string s5("");
+  const std::string good_chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  const std::string s1("xAWQKSMQIFJJWXGV");  // Be sure both 'A' and 'Z'.
+  const std::string s2("KFNNAWEZxZNEKGDW");
+  const std::string s3("QMVVXZKRIGJJWTAx");
+  const std::string s4("UUDHHAKVVLZVFLQP");
+  const std::string s5("");
 
-  if( s1.find_last_not_of( good_chars ) != 0 ) {
-    std::cout << "find_last_not_of FAIL 0001\n"; rc = false;
-  }
-  if( s2.find_last_not_of( good_chars ) != 8 ) {
-    std::cout << "find_last_not_of FAIL 0002\n"; rc = false;
-  }
-  if( s3.find_last_not_of( good_chars ) != 15 ) {
-    std::cout << "find_last_not_of FAIL 0003\n"; rc = false;
-  }
-  if( s4.find_last_not_of( good_chars ) != std::string::npos ) {
-    std::cout << "find_last_not_of FAIL 0004\n"; rc = false;
-  }
-  if( s2.find_last_not_of( good_chars, 8 ) != 8 ) {
-    std::cout << "find_last_not_of FAIL 0005\n"; rc = false;
-  }
-  if( s3.find_last_not_of( good_chars, 15) != 15 ) {
-    std::cout << "find_last_not_of FAIL 0006\n"; rc = false;
-  }
-  if( s3.find_last_not_of( good_chars, 16) != 15 ) {
-    std::cout << "find_last_not_of FAIL 0007\n"; rc = false;
-  }
-  if( s3.find_last_not_of( good_chars, 17) != 15 ) {
-    std::cout << "find_last_not_of FAIL 0008\n"; rc = false;
-  }
-  if( s5.find_last_not_of( good_chars ) != std::string::npos ) {
-    std::cout << "find_last_not_of FAIL 0009\n"; rc = false;
-  }
-  if( s4.find_last_not_of( s5 ) != 15 ) {
-    std::cout << "find_last_not_of FAIL 0010\n"; rc = false;
-  }
+  if( s1.find_last_not_of( good_chars )     !=  0 ) FAIL
+  if( s2.find_last_not_of( good_chars )     !=  8 ) FAIL
+  if( s3.find_last_not_of( good_chars )     != 15 ) FAIL
+  if( s4.find_last_not_of( good_chars )     != std::string::npos ) FAIL
+  if( s2.find_last_not_of( good_chars,  8 ) !=  8 ) FAIL
+  if( s3.find_last_not_of( good_chars, 15 ) != 15 ) FAIL
+  if( s3.find_last_not_of( good_chars, 16 ) != 15 ) FAIL
+  if( s3.find_last_not_of( good_chars, 17 ) != 15 ) FAIL
+  if( s5.find_last_not_of( good_chars )     != std::string::npos ) FAIL
+  if( s4.find_last_not_of( s5 )             != 15 ) FAIL
+
   return( rc );
 }
+
 
 bool substr_test()
 {
   bool rc = true;
 
-  std::string s1("Hello, World!");
+  const std::string s1("Hello, World!");
 
-  if( s1.substr( ) != "Hello, World!" ) {
-    std::cout << "substr FAIL 0001\n"; rc = false;
-  }
-  if( s1.substr( 1 ) != "ello, World!" ) {
-    std::cout << "substr FAIL 0002\n"; rc = false;
-  }
-  if( s1.substr( 0, 1 ) != "H" ) {
-    std::cout << "substr FAIL 0003\n"; rc = false;
-  }
-  if( s1.substr( 0, 0 ) != "" ) {
-    std::cout << "substr FAIL 0004\n"; rc = false;
-  }
-  if( s1.substr( 12 ) != "!" ) {
-    std::cout << "substr FAIL 0005\n"; rc = false;
-  }
-  if( s1.substr( 3, 4 ) != "lo, " ) {
-    std::cout << "substr FAIL 0006\n"; rc = false;
-  }
-  if( s1.substr( 13 ) != "" ) {
-    std::cout << "substr FAIL 0007\n"; rc = false;
-  }
+  if( s1.substr( )      != "Hello, World!" ) FAIL
+  if( s1.substr( 1 )    != "ello, World!"  ) FAIL
+  if( s1.substr( 0, 1 ) != "H"             ) FAIL
+  if( s1.substr( 0, 0 ) != ""              ) FAIL
+  if( s1.substr( 12 )   != "!"             ) FAIL
+  if( s1.substr( 3, 4 ) != "lo, "          ) FAIL
+  if( s1.substr( 13 )   != ""              ) FAIL
   try {
-    if( s1.substr( 14 ) != "" ) {
-      std::cout << "substr FAIL 0008\n"; rc = false;
-    }
+    if( s1.substr( 14 ) != "" ) FAIL
   }
   catch( std::out_of_range ) {
-    // Ok.
+    // Okay.
   }
   return( rc );
 }

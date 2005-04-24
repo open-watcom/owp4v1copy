@@ -433,8 +433,9 @@ namespace _watcom {
   // Character traits specialization for case insensitive strings
   // ============================================================
 
-  struct itraits : std::char_traits< char > {
+  struct ichar_traits : std::char_traits< char > {
 
+    // Use tolower for compatibility with _memicmp.
     static bool eq( const char_type &c1, const char_type &c2 )
       { return( std::tolower( c1 ) == std::tolower( c2 ) ); }
 
@@ -462,7 +463,7 @@ namespace _watcom {
       { return( std::tolower( c1 ) == std::tolower( c2 ) ); }
 
   };
-  typedef std::basic_string< char, itraits > istring;
+  typedef std::basic_string< char, ichar_traits > istring;
 }
 :include namwat.sp
 
@@ -500,7 +501,7 @@ namespace std {
     size_type        n,
     const Allocator &a ) : mem( a )
   {
-    if( n == npos )
+    if( n > max_size( ) )
       throw length_error( "basic_string::basic_string" );
 
     buffer = alloc( n + 1, buf_length );
@@ -516,7 +517,7 @@ namespace std {
           CharT      c,
     const Allocator &a ) : mem( a )
   {
-    if( n == npos )
+    if( n > max_size( ) )
       throw length_error( "basic_string::basic_string" );
 
     buffer = alloc( n + 1, buf_length );
@@ -531,17 +532,15 @@ namespace std {
     basic_string< CharT, Traits, Allocator >::operator=(
       const CharT *s )
   {
-    // Prepare new buffer.
-    size_type result_length = Traits::length( s );
-    size_type new_length;
-    pointer new_buffer = alloc( result_length + 1, new_length );
-    Traits::copy( new_buffer, s, result_length );
+    size_type other_length = Traits::length( s );
 
-    // Commit.
-    mem.deallocate( buffer, buf_length );
-    buffer = new_buffer;
-    buf_length  = new_length;
-    str_length = result_length;
+    if( buf_length > other_length ) {
+      Traits::copy( buffer, s, other_length );
+      str_length = other_length;
+    }
+    else {
+      replace_buffer( s, other_length );
+    }
     return( *this );
   }
 
@@ -552,15 +551,7 @@ namespace std {
     basic_string< CharT, Traits, Allocator >::operator=(
       CharT c )
   {
-    // Prepare a new buffer.
-    size_type new_length;
-    pointer new_buffer = alloc( 1 + 1, new_length );
-    Traits::assign( *new_buffer, c );
-
-    // Commit.
-    mem.deallocate( buffer, buf_length );
-    buffer = new_buffer;
-    buf_length  = new_length;
+    Traits::assign( *buffer, c );
     str_length = 1;
     return( *this );
   }
@@ -617,86 +608,6 @@ namespace std {
     return( *this );
   }
 
-  // iterator begin( )
-  // *****************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  basic_string< CharT, Traits, Allocator >::iterator
-    basic_string< CharT, Traits, Allocator >::begin( )
-  {
-    return iterator( buffer );
-  }
-
-  // const_iterator begin( ) const
-  // *****************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  basic_string< CharT, Traits, Allocator >::const_iterator
-    basic_string< CharT, Traits, Allocator >::begin( ) const
-  {
-    return const_iterator( buffer );
-  }
-
-  // iterator end( )
-  // *****************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  basic_string< CharT, Traits, Allocator >::iterator
-    basic_string< CharT, Traits, Allocator >::end( )
-  {
-    return iterator( buffer + str_length );
-  }
-
-  // const_iterator end( ) const
-  // ***************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  basic_string< CharT, Traits, Allocator >::const_iterator
-    basic_string< CharT, Traits, Allocator >::end( ) const
-  {
-    return const_iterator( buffer + str_length );
-  }
-
-  // size( ) const
-  // *************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::size( ) const
-  {
-    return( str_length );
-  }
-
-  // length( ) const
-  // ***************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::length( ) const
-  {
-    return( str_length );
-  }
-
-  // capacity( ) const
-  // *****************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::capacity( ) const
-  {
-    return( buf_length );
-  }
-
-  // max_size( ) const
-  // *****************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::max_size( ) const
-  {
-    return npos; // This is probably not correct.
-  }
-
   // resize( size_type, CharT )
   // **************************
   template< class CharT, class Traits, class Allocator >
@@ -721,7 +632,7 @@ namespace std {
     Traits::assign( new_buffer + str_length, n - str_length, c );
     mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
-    buf_length  = new_length;
+    buf_length = new_length;
     str_length = n;
   }
 
@@ -731,7 +642,7 @@ namespace std {
   void basic_string< CharT, Traits, Allocator >::reserve(
     size_type new_capacity )
   {
-    if( new_capacity <= buf_length ) return;
+    if( new_capacity < buf_length ) return;
 
     size_type new_length;
     pointer new_buffer = alloc( new_capacity + 1, new_length );
@@ -739,44 +650,6 @@ namespace std {
     mem.deallocate( buffer, buf_length );
     buffer = new_buffer;
     buf_length  = new_length;
-  }
-
-  // clear( )
-  // ********
-  template< class CharT, class Traits, class Allocator >
-  inline
-  void basic_string< CharT, Traits, Allocator >::clear( )
-  {
-    str_length = 0;
-  }
-
-  // empty( ) const
-  // **************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  bool basic_string< CharT, Traits, Allocator >::empty( ) const
-  {
-    return( str_length == 0 );
-  }
-
-  // operator[]( size_type ) const
-  // *********************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::const_reference
-    basic_string< CharT, Traits, Allocator >::operator[]( size_type pos ) const
-  {
-    return( buffer[pos] );
-  }
-
-  // operator[]( size_type )
-  // ***************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::reference
-    basic_string< CharT, Traits, Allocator >::operator[]( size_type pos )
-  {
-    return( buffer[pos] );
   }
 
   // at( size_type ) const
@@ -845,35 +718,13 @@ namespace std {
       size_type pos,
       size_type n )
   {
-    if( pos > str.size( ) )
+    if( pos > str.str_length )
       throw out_of_range( "basic_string::append" );
 
-    size_type tail_length = str.size( ) - pos;
+    size_type tail_length = str.str_length - pos;
     size_type append_length = ( tail_length <= n ) ? tail_length : n;
 
-    if( str_length >= npos - append_length - 1 )
-      throw length_error( "basic_string::append" );
-
-    if( append_length <= buf_length - str_length - 1) {
-      Traits::copy( buffer + str_length, str.buffer + pos, append_length );
-      str_length += append_length;
-    }
-    else {
-      // Prepare new buffer.
-      size_type result_length = str_length + append_length;
-      size_type new_length;
-      pointer new_buffer = alloc( result_length + 1, new_length );
-      Traits::copy( new_buffer, buffer, str_length );
-      Traits::copy( new_buffer + str_length, str.buffer + pos, append_length );
-
-      // Commit.
-      mem.deallocate( buffer, buf_length );
-      buffer = new_buffer;
-      buf_length  = new_length;
-      str_length = result_length;
-    }
-
-    return( *this );
+    return( append( str.buffer + pos, append_length ) );
   }
 
   // append( const CharT *, size_type )
@@ -884,10 +735,10 @@ namespace std {
       const CharT *s,
       size_type n )
   {
-    if( str_length >= npos - n - 1)
+    if( str_length > max_size( ) - n )
       throw length_error( "basic_string::append" );
 
-    if( n <= buf_length - str_length - 1) {
+    if( n < buf_length - str_length ) {
       Traits::copy( buffer + str_length, s, n );
       str_length += n;
     }
@@ -902,7 +753,7 @@ namespace std {
       // Commit.
       mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      buf_length  = new_length;
+      buf_length = new_length;
       str_length = result_length;
     }
 
@@ -922,32 +773,11 @@ namespace std {
   // append( size_type, CharT )
   // **************************
   template< class CharT, class Traits, class Allocator >
+  inline
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::append( size_type n, CharT c )
   {
-    if( str_length >= npos - n - 1 )
-      throw length_error( "basic_string::append" );
-
-    if( n <= buf_length - str_length - 1 ) {
-      Traits::assign( buffer + str_length, n, c );
-      str_length += n;
-    }
-    else {
-      // Prepare new buffer.
-      size_type result_length = str_length + n;
-      size_type new_length;
-      pointer new_buffer = alloc( result_length + 1, new_length );
-      Traits::copy( new_buffer, buffer, str_length );
-      Traits::assign( new_buffer + str_length, n, c );
-
-      // Commit.
-      mem.deallocate( buffer, buf_length );
-      buffer = new_buffer;
-      buf_length  = new_length;
-      str_length = result_length;
-    }
-
-    return( *this );
+    return( append( basic_string( n, c ) ) );
   }
 
   // push_back( CharT )
@@ -956,7 +786,7 @@ namespace std {
   inline
   void basic_string< CharT, Traits, Allocator >::push_back( CharT c )
   {
-    append( 1, c );
+    append( &c, 1 );
   }
 
   // insert( size_type, const basic_string &, size_type, size_type )
@@ -969,39 +799,13 @@ namespace std {
       size_type pos2,
       size_type n )
   {
-    if( pos1 > str_length || pos2 > str.str_length )
+    if( pos2 > str.str_length )
       throw out_of_range( "basic_string::insert" );
 
     size_type tail_length = str.str_length - pos2;
     size_type insert_length = ( tail_length <= n ) ? tail_length : n;
 
-    if( str_length >= npos - insert_length - 1)
-      throw length_error( "basic_string::insert" );
-
-    if( insert_length <= buf_length - str_length - 1) {
-      Traits::move(
-        buffer + pos1 + insert_length, buffer + pos1, str_length - pos1 );
-      Traits::copy(buffer + pos1, str.buffer + pos2, insert_length );
-      str_length += insert_length;
-    }
-    else {
-      // Prepare new buffer.
-      size_type result_length = str_length + insert_length;
-      size_type new_length;
-      pointer new_buffer = alloc( result_length + 1, new_length );
-      Traits::copy( new_buffer, buffer, pos1 );
-      Traits::copy( new_buffer + pos1, str.buffer + pos2, insert_length );
-      Traits::copy(
-        new_buffer + pos1 + insert_length, buffer + pos1, str_length - pos1 );
-
-      // Commit.
-      mem.deallocate( buffer, buf_length );
-      buffer = new_buffer;
-      buf_length  = new_length;
-      str_length = result_length;
-    }
-
-    return( *this );
+    return( insert( pos1, str.buffer + pos2, insert_length ) );
   }
 
   // insert( size_type, const CharT *, size_type )
@@ -1013,12 +817,39 @@ namespace std {
       const CharT *s,
       size_type n )
   {
-    return( insert( pos, basic_string( s, n ) ) );
+    if( pos > str_length )
+      throw out_of_range( "basic_string::insert" );
+
+    if( str_length > max_size( ) - n )
+      throw length_error( "basic_string::insert" );
+
+    if( n < buf_length - str_length ) {
+      Traits::move( buffer + pos + n, buffer + pos, str_length - pos );
+      Traits::copy( buffer + pos, s, n );
+      str_length += n;
+    }
+    else {
+      // Prepare new buffer.
+      size_type result_length = str_length + n;
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
+      Traits::copy( new_buffer, buffer, pos );
+      Traits::copy( new_buffer + pos, s, n );
+      Traits::copy( new_buffer + pos + n, buffer + pos, str_length - pos );
+
+      // Commit.
+      mem.deallocate( buffer, buf_length );
+      buffer = new_buffer;
+      buf_length = new_length;
+      str_length = result_length;
+    }
+    return( *this );
   }
 
   // insert( size_type const CharT * )
   // *********************************
   template< class CharT, class Traits, class Allocator >
+  inline
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::insert(
       size_type pos,
@@ -1031,6 +862,7 @@ namespace std {
   // insert( size_type size_type CharT )
   // ***********************************
   template< class CharT, class Traits, class Allocator >
+  inline
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::insert(
       size_type pos,
@@ -1062,11 +894,12 @@ namespace std {
     size_type insert_length = n;
     size_type pos = p - buffer;
 
-    if( str_length >= npos - insert_length - 1)
+    if( str_length > max_size( ) - insert_length )
       throw length_error( "basic_string::insert" );
 
-    if( insert_length <= buf_length - str_length - 1) {
-      Traits::move( buffer + pos + insert_length, buffer + pos, str_length - pos );
+    if( insert_length < buf_length - str_length ) {
+      Traits::move(
+        buffer + pos + insert_length, buffer + pos, str_length - pos );
       Traits::assign( buffer + pos, insert_length, c );
       str_length += insert_length;
     }
@@ -1083,7 +916,7 @@ namespace std {
       // Commit.
       mem.deallocate( buffer, buf_length );
       buffer = new_buffer;
-      buf_length  = new_length;
+      buf_length = new_length;
       str_length = result_length;
     }
   }
@@ -1100,7 +933,7 @@ namespace std {
       throw out_of_range( "basic_string::erase" );
 
     size_type tail_length = str_length - pos;
-    size_type erase_length = ( n < tail_length ) ? n : tail_length;
+    size_type erase_length = ( n <= tail_length ) ? n : tail_length;
     Traits::move( buffer + pos, buffer + pos + n, tail_length - erase_length );
     str_length -= erase_length;
     return( *this );
@@ -1154,49 +987,18 @@ namespace std {
       size_type pos2,
       size_type n2 )
   {
-    if( pos1 > str_length || pos2 > str.str_length )
+    if( pos2 > str.str_length )
       throw out_of_range( "basic_string::replace" );
 
-    size_type tail_length1 = str_length - pos1;
-    size_type tail_length2 = str.str_length - pos2;
-    size_type remove_length = (n1 < tail_length1) ? n1 : tail_length1;
-    size_type insert_length = (n2 < tail_length2) ? n2 : tail_length2;
+    size_type tail_length = str.str_length - pos2;
+    size_type insert_length = (n2 <= tail_length) ? n2 : tail_length;
 
-    if( str_length - remove_length > npos - insert_length )
-      throw length_error( "basic_string::replace" );
-
-    size_type result_length = str_length - remove_length + insert_length;
-    if( buf_length > result_length ) {
-      Traits::move( buffer + pos1 + insert_length,
-                    buffer + pos1 + remove_length,
-                    str_length - pos1 - remove_length );
-      Traits::copy( buffer + pos1, str.buffer + pos2, insert_length );
-      str_length = result_length;
-    }
-    else {
-      // Prepare new buffer.
-      size_type new_length;
-      pointer new_buffer = alloc( result_length + 1, new_length );
-      Traits::copy( new_buffer, buffer, pos1 );
-      Traits::copy( new_buffer + pos1, str.buffer + pos2, insert_length );
-      Traits::copy( new_buffer + pos1 + insert_length,
-                    buffer + pos1 + remove_length,
-                    str_length - pos1 - remove_length );
-
-      // Commit.
-      mem.deallocate( buffer, buf_length );
-      buffer = new_buffer;
-      buf_length  = new_length;
-      str_length = result_length;
-    }
-
-    return( *this );
+    return( replace( pos1, n1, str.buffer + pos2, insert_length ) );
   }
 
   // replace( size_type, size_type, const CharT *, size_type )
   // *********************************************************
   template< class CharT, class Traits, class Allocator >
-  inline
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::replace(
       size_type pos,
@@ -1204,7 +1006,41 @@ namespace std {
       const CharT *s,
       size_type n2 )
   {
-    return( replace( pos, n1, basic_string( s, n2 ) ) );
+    if( pos > str_length )
+      throw out_of_range( "basic_string::replace" );
+
+    size_type tail_length = str_length - pos;
+    size_type remove_length = (n1 <= tail_length) ? n1 : tail_length;
+
+    if( str_length - remove_length > max_size( ) - n2 )
+      throw length_error( "basic_string::replace" );
+
+    size_type result_length = str_length - remove_length + n2;
+    if( buf_length > result_length ) {
+      Traits::move( buffer + pos + n2,
+                    buffer + pos + remove_length,
+                    str_length - pos - remove_length );
+      Traits::copy( buffer + pos, s, n2 );
+      str_length = result_length;
+    }
+    else {
+      // Prepare new buffer.
+      size_type new_length;
+      pointer new_buffer = alloc( result_length + 1, new_length );
+      Traits::copy( new_buffer, buffer, pos );
+      Traits::copy( new_buffer + pos, s, n2 );
+      Traits::copy( new_buffer + pos + n2,
+                    buffer + pos + remove_length,
+                    str_length - pos - remove_length );
+
+      // Commit.
+      mem.deallocate( buffer, buf_length );
+      buffer = new_buffer;
+      buf_length = new_length;
+      str_length = result_length;
+    }
+
+    return( *this );
   }
 
   // replace( size_type, size_type, const CharT * )
@@ -1217,7 +1053,7 @@ namespace std {
       size_type n1,
       const CharT *s )
   {
-    return( replace( pos, n1, basic_string( s ) ) );
+    return( replace( pos, n1, s, Traits::length( s ) ) );
   }
 
   // replace( size_type, size_type, size_type, CharT )
@@ -1244,10 +1080,7 @@ namespace std {
       iterator i2,
       const basic_string &str )
   {
-    size_type pos           = &*i1 - buffer;
-    size_type remove_length = &*i2 - &*i1;
-
-    return( replace( pos, remove_length, str, 0, npos ) );
+    return( replace( i1, i2, str.buffer, str.str_length ) );
   }
 
   // replace( iterator, iterator, const CharT *s, size_type n )
@@ -1261,7 +1094,10 @@ namespace std {
       const CharT *s,
       size_type n )
   {
-    return( replace( i1, i2, basic_string( s, n ) ) );
+    size_type pos           = &*i1 - buffer;
+    size_type remove_length = &*i2 - &*i1;
+
+    return( replace( pos, remove_length, s, n ) );
   }
 
   // replace( iterator i1, iterator i2, const CharT * )
@@ -1274,7 +1110,7 @@ namespace std {
       iterator i2,
       const CharT *s )
   {
-    return( replace( i1, i2, basic_string( s ) ) );
+    return( replace( i1, i2, s, Traits::length( s ) ) );
   }
 
   // replace( iterator i1, iterator i2, size_type n, CharT c )
@@ -1304,7 +1140,7 @@ namespace std {
       throw out_of_range( "basic_string::copy" );
 
     size_type tail_length = str_length - pos;
-    size_type copy_length = (n < tail_length) ? n : tail_length;
+    size_type copy_length = (n <= tail_length) ? n : tail_length;
     Traits::copy( s, buffer + pos, copy_length );
     return( copy_length );
   }
@@ -1336,43 +1172,35 @@ namespace std {
     str.mem    = atemp;
   }
 
-  // data( ) const
-  // *************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  const CharT *basic_string< CharT, Traits, Allocator >::data( ) const
-  {
-    // Problematic if 'pointer' is an unusual type.
-    return( buffer );
-  }
-
-  // get_allocator( ) const
-  // **********************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::allocator_type
-    basic_string< CharT, Traits, Allocator >::get_allocator( ) const
-  {
-    return( mem );
-  }
-
   // find( const basic_string &, size_type ) const
   // *********************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::find(
       const basic_string &str,
       size_type pos ) const
   {
-    // Verify initial bounds.
-    if( str_length < pos ) return( npos );
-    if( str_length - pos < str.str_length ) return( npos );
-    if( str_length - pos == 0 ) return( pos );
+    return( find( str.buffer, pos, str.str_length ) );
+  }
 
-    while( pos + str.str_length <= str_length ) {
+  // find( const CharT *, size_type, size_type ) const
+  // *************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    if( str_length < pos      ) return( npos );
+    if( str_length - pos < n  ) return( npos );
+    if( str_length - pos == 0 ) return( pos  );  // ?
+
+    while( pos + n <= str_length ) {
       bool found = true;
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[pos + i], str.buffer[i] ) == false ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[pos + i], s[i] ) == false ) {
           found = false;
           break;
         }
@@ -1381,19 +1209,6 @@ namespace std {
       ++pos;
     }
     return( npos );
-  }
-
-  // find( const CharT *, size_type, size_type ) const
-  // *************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::find(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( find( basic_string( s, n ), pos ) );
   }
 
   // find( const CharT *, size_type ) const
@@ -1405,7 +1220,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( find( basic_string( s ), pos ) );
+    return( find( s, pos, Traits::length( s ) ) );
   }
 
   // find( CharT, size_type ) const
@@ -1423,20 +1238,33 @@ namespace std {
   // rfind( const basic_string &, size_type ) const
   // **********************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::rfind(
       const basic_string &str,
       size_type pos ) const
   {
-    if( str_length < str.str_length ) return( npos );
-    size_type index = str_length - str.str_length;
+    return( rfind( str.buffer, pos, str.str_length ) );
+  }
+
+  // rfind( const CharT *, size_type, size_type ) const
+  // **************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::rfind(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    if( str_length < n ) return( npos );
+    size_type index = str_length - n;
     index = ( pos < index ) ? pos : index;
     ++index;
     do {
       bool found = true;
       --index;
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[index + i], str.buffer[i] ) == false ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[index + i], s[i] ) == false ) {
           found = false;
           break;
         }
@@ -1445,19 +1273,6 @@ namespace std {
     } while( index > 0 );
 
     return( npos );
-  }
-
-  // rfind( const CharT *, size_type, size_type ) const
-  // **************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::rfind(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( rfind( basic_string( s, n ), pos ) );
   }
 
   // rfind( const CharT *, size_type ) const
@@ -1469,7 +1284,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( rfind( basic_string( s ), pos ) );
+    return( rfind( s, pos, Traits::length( s ) ) );
   }
 
   // rfind( CharT, size_type ) const
@@ -1487,18 +1302,31 @@ namespace std {
   // find_first_of( const basic_string &, size_type ) const
   // ******************************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::find_first_of(
       const basic_string &str,
       size_type pos ) const
+  {
+    return( find_first_of( str.buffer, pos, str.str_length ) );
+  }
+
+  // find_first_of( const CharT *, size_type, size_type ) const
+  // **********************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
   {
     size_type index = pos;
 
     if( str_length < index ) return( npos );
 
     while( index < str_length ) {
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[index], s[i] ) == true ) {
           return( index );
         }
       }
@@ -1506,19 +1334,6 @@ namespace std {
     }
 
     return( npos );
-  }
-
-  // find_first_of( const CharT *, size_type, size_type ) const
-  // **********************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::find_first_of(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( find_first_of( basic_string( s, n ), pos ) );
   }
 
   // find_first_of( const CharT *, size_type ) const
@@ -1530,7 +1345,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( find_first_of( basic_string( s ), pos ) );
+    return( find_first_of(  s, pos, Traits::length( s ) ) );
   }
 
   // find_first_of( CharT, size_type ) const
@@ -1548,18 +1363,31 @@ namespace std {
   // find_last_of( const basic_string &, size_type ) const
   // *****************************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::find_last_of(
       const basic_string &str,
       size_type pos ) const
+  {
+    return( find_last_of( str.buffer, pos, str.str_length ) );
+  }
+
+  // find_last_of( const CharT *, size_type, size_type ) const
+  // *********************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
   {
     size_type index = pos;
 
     if( str_length < index ) index = str_length - 1;
 
     while( index != npos ) {
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[index], s[i] ) == true ) {
           return( index );
         }
       }
@@ -1567,19 +1395,6 @@ namespace std {
     }
 
     return( npos );
-  }
-
-  // find_last_of( const CharT *, size_type, size_type ) const
-  // *********************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::find_last_of(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( find_last_of( basic_string( s, n ), pos ) );
   }
 
   // find_last_of( const CharT *, size_type ) const
@@ -1591,7 +1406,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( find_last_of( basic_string( s ), pos ) );
+    return( find_last_of( s, pos, Traits::length( s ) ) );
   }
 
   // find_last_of( CharT, size_type ) const
@@ -1609,10 +1424,23 @@ namespace std {
   // find_first_not_of( const basic_string &, size_type ) const
   // **********************************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::find_first_not_of(
       const basic_string &str,
       size_type pos ) const
+  {
+    return( find_first_not_of( str.buffer, pos, str.str_length ) );
+  }
+
+  // find_first_not_of( const CharT *, size_type, size_type ) const
+  // **************************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_not_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
   {
     size_type index = pos;
 
@@ -1620,8 +1448,8 @@ namespace std {
 
     while( index < str_length ) {
       bool found = false;
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[index], s[i] ) == true ) {
           found = true;
           break;
         }
@@ -1633,19 +1461,6 @@ namespace std {
     return( npos );
   }
 
-  // find_first_not_of( const CharT *, size_type, size_type ) const
-  // **************************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::find_first_not_of(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( find_first_not_of( basic_string( s, n ), pos ) );
-  }
-
   // find_first_not_of( const CharT *, size_type ) const
   // ***************************************************
   template< class CharT, class Traits, class Allocator >
@@ -1655,7 +1470,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( find_first_not_of( basic_string( s ), pos ) );
+    return( find_first_not_of( s, pos, Traits::length( s ) ) );
   }
 
   // find_first_not_of( CharT, size_type ) const
@@ -1673,10 +1488,23 @@ namespace std {
   // find_last_not_of( const basic_string &, size_type ) const
   // *********************************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   typename basic_string< CharT, Traits, Allocator >::size_type
     basic_string< CharT, Traits, Allocator >::find_last_not_of(
       const basic_string &str,
       size_type pos ) const
+  {
+    return( find_last_not_of( str.buffer, pos, str.str_length ) );
+  }
+
+  // find_last_not_of( const CharT *, size_type, size_type ) const
+  // *************************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_last_not_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
   {
     size_type index = pos;
 
@@ -1684,8 +1512,8 @@ namespace std {
 
     while( index != npos ) {
       bool found = false;
-      for( size_type i = 0; i < str.str_length; ++i ) {
-        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+      for( size_type i = 0; i < n; ++i ) {
+        if( Traits::eq( buffer[index], s[i] ) == true ) {
           found = true;
           break;
         }
@@ -1697,19 +1525,6 @@ namespace std {
     return( npos );
   }
 
-  // find_last_not_of( const CharT *, size_type, size_type ) const
-  // *************************************************************
-  template< class CharT, class Traits, class Allocator >
-  inline
-  typename basic_string< CharT, Traits, Allocator >::size_type
-    basic_string< CharT, Traits, Allocator >::find_last_not_of(
-      const CharT *s,
-      size_type pos,
-      size_type n ) const
-  {
-    return( find_last_not_of( basic_string( s, n ), pos ) );
-  }
-
   // find_last_not_of( const CharT *, size_type ) const
   // **************************************************
   template< class CharT, class Traits, class Allocator >
@@ -1719,7 +1534,7 @@ namespace std {
       const CharT *s,
       size_type pos ) const
   {
-    return( find_last_not_of( basic_string( s ), pos ) );
+    return( find_last_not_of( s, pos, Traits::length( s ) ) );
   }
 
   // find_last_not_of( CharT, size_type ) const

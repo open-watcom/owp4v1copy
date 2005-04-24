@@ -32,6 +32,10 @@
   #include <cwchar>
 #endif
 
+#ifndef _ITERATOR_INCLUDED
+  #include <iterator>
+#endif
+
 #ifndef _MEMORY_INCLUDED
   #include <memory>
 #endif
@@ -227,8 +231,10 @@ namespace std {
       typedef typename Allocator::pointer         pointer;
       typedef typename Allocator::const_pointer   const_pointer;
 
-      typedef pointer iterator;
-      typedef const_pointer const_iterator;
+      typedef pointer                                 iterator;
+      typedef const_pointer                           const_iterator;
+      typedef std::reverse_iterator< iterator >       reverse_iterator;
+      typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
 
       static const size_type npos = static_cast< size_type >( -1 );
 
@@ -251,22 +257,37 @@ namespace std {
       basic_string &assign( const CharT *s );
       basic_string &assign( size_type n, CharT c );
 
-      iterator       begin( );
-      const_iterator begin( ) const;
-      iterator       end( );
-      const_iterator end( ) const;
+      iterator       begin( )         { return( buffer ); }
+      const_iterator begin( ) const   { return( buffer ); }
+      iterator       end( )           { return( buffer + str_length ); }
+      const_iterator end( )   const   { return( buffer + str_length ); }
 
-      size_type size( ) const;
-      size_type length( ) const;
-      size_type capacity( ) const;
-      size_type max_size( ) const;
-      void      resize( size_type n, CharT c = CharT( ) );
+      reverse_iterator rbegin( )
+          { return( reverse_iterator( buffer ) ); }
+      const_reverse_iterator rbegin( ) const
+          { return( const_reverse_iterator( buffer ) ); }
+      reverse_iterator rend( )
+          { return( reverse_iterator( buffer + str_length ) ); }
+      const_reverse_iterator rend( ) const
+          { return( const_reverse_iterator( buffer + str_length ) ); }
+
+      size_type size( )     const  { return( str_length ); }
+      size_type length( )   const  { return( str_length ); }
+      size_type capacity( ) const  { return( buf_length - 1 ); }
+      size_type max_size( ) const  { return( npos - 1 ); } // ?
+
+      void      resize( size_type n, CharT c );
+      void      resize( size_type n ) { resize( n, CharT( ) ); }
       void      reserve( size_type new_capacity );
-      void      clear( );
-      bool      empty( ) const;
 
-      const_reference operator[]( size_type pos ) const;
-      reference       operator[]( size_type pos );
+      void      clear( )       { str_length = 0;            }
+      bool      empty( ) const { return( str_length == 0 ); }
+
+      const_reference operator[]( size_type pos ) const
+          { return( buffer[pos] ); }
+      reference operator[]( size_type pos )
+          { return( buffer[pos] ); }
+
       const_reference at( size_type pos ) const;
       reference       at( size_type pos );
 
@@ -305,9 +326,9 @@ namespace std {
       size_type     copy( CharT *s, size_type n, size_type pos = 0 ) const;
       void          swap( basic_string &str );
 
-      const CharT   *c_str( ) const;
-      const CharT   *data( ) const;
-      allocator_type get_allocator( ) const;
+      const CharT   *c_str( )         const;
+      const CharT   *data( )          const  { return( buffer ); }
+      allocator_type get_allocator( ) const  { return( mem);     }
 
       size_type find( const basic_string &str, size_type pos = 0 ) const;
       size_type find( const CharT *s, size_type pos, size_type n ) const;
@@ -341,13 +362,13 @@ namespace std {
 
       basic_string substr( size_type pos = 0, size_type n = npos ) const;
 
-      bool _Sane( ) const;  // Check invariants.
+      bool _Sane( ) const;  // Check invariants (approximately).
 
     private:
       // Invariants:
       // 1. buffer has size buf_length.
       // 2. buf_length is a power of two.
-      // 3. buf_length >= str_length + 1. Extra space for an O(1) c_str().
+      // 3. buf_length > str_length. Extra space for an O(1) c_str().
       // 4. buffer never shrinks.
       // 5. buffer allocated with mem or a copy of mem.
       // 6. Every string has its own buffer (no reference counting).
@@ -359,6 +380,9 @@ namespace std {
 
       // This method encapsulates the memory allocation policy.
       pointer alloc( size_type required, size_type &found );
+
+      // This method replaces current text with other text.
+      void replace_buffer( const_pointer other_buf, size_type other_length );
   };
 
 
@@ -374,7 +398,7 @@ namespace std {
   // ================================================================
 
   template< class CharT, class Traits, class Allocator >
-  basic_string< CharT, Traits, Allocator >::pointer
+  typename basic_string< CharT, Traits, Allocator >::pointer
     basic_string< CharT, Traits, Allocator >::alloc(
       size_type required,
       size_type &found )
@@ -390,6 +414,24 @@ namespace std {
     found = length;
     return( result );
   }
+
+
+  template< class CharT, class Traits, class Allocator >
+  void basic_string< CharT, Traits, Allocator >::replace_buffer(
+    const_pointer other_buffer,
+    size_type other_length )
+  {
+    size_type new_length;
+    pointer new_buffer = alloc( other_length + 1, new_length );
+    Traits::copy( new_buffer, other_buffer, other_length );
+
+    // Commit.
+    mem.deallocate( buffer, buf_length );
+    buffer = new_buffer;
+    buf_length = new_length;
+    str_length = other_length;
+  }
+
 
   template< class CharT, class Traits, class Allocator >
   bool basic_string< CharT, Traits, Allocator >::_Sane( ) const
@@ -468,16 +510,7 @@ namespace std {
       str_length = other.str_length;
     }
     else {
-      // Prepare new buffer.
-      size_type new_length;
-      pointer new_buffer = alloc( other.str_length + 1, new_length );
-      Traits::copy( new_buffer, other.buffer, other.str_length );
-
-      // Commit.
-      mem.deallocate( buffer, buf_length );
-      buffer = new_buffer;
-      buf_length = new_length;
-      str_length = other.str_length;
+      replace_buffer( other.buffer, other.str_length );
     }
     return( *this );
   }
