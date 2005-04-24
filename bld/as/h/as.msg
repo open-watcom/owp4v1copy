@@ -92,8 +92,8 @@ PICK( INVALID_OPTION,       "invalid option %s",
                 "(J)invalid option %s" )
 PICK( ABORT_PARSE,      "too many errors - aborted",
                 "(J)too many errors - aborted" )
-PICK( AS_ERROR_REPORT,      "%s: %d lines, %d warnings, %d errors",
-                "(J)%s: %d lines, %d warnings, %d errors" )
+PICK( AS_ERROR_REPORT,      "%s: %d lines, %d warnings, %d errors\n",
+                "(J)%s: %d lines, %d warnings, %d errors\n" )
 PICK( INTERNAL_UNKNOWN_SECTYPE, "internal - unknown section type",
                 "(J)internal - unknown section type" )
 PICK( INVALID_SECT_ATTR,    "invalid section attribute '%c'",
