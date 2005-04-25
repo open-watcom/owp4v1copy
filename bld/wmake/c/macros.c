@@ -29,29 +29,31 @@
 ****************************************************************************/
 
 
-#if !defined( __UNIX__ )
-    #include <direct.h> // NAME_MAX clashes with that in UNIX <limits.h>
+#if !defined( __UNIX__ )    // NAME_MAX clashes with that in UNIX <limits.h>
+    #include <direct.h>     // Needed for getcwd()
+#else
+    #include <sys/types.h>  // Implicitly included by <direct.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #ifdef __WATCOMC__
-    #include <env.h>
+    #include <env.h>        // For setenv()
 #endif
 
+#include "massert.h"
+#include "mtypes.h"
+#include "mstream.h"
+#include "mlex.h"
+#include "mhash.h"
 #include "macros.h"
 #include "make.h"
-#include "massert.h"
 #include "mmemory.h"
-#include "mhash.h"
+
 #include "mmisc.h"
-#include "mlex.h"
 #include "mpathgrp.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"
-#include "mstream.h"
-#include "mtypes.h"
 #include "mupdate.h"
 #include "mvecstr.h"
 
@@ -200,18 +202,17 @@ STATIC const char *specialValue( TOKEN_T t )
  * returns: pointer to a static buffer
  */
 {
-    char const  *dirBuf;
+    char const  *dirBufGot = NULL;
 
     assert( t == MAC_CUR || t == MAC_FIRST || t == MAC_LAST );
     assert( FORM_MIN < CurAttr.num && CurAttr.num < FORM_MAX );
 
     switch( t ) {
-    case MAC_CUR:       dirBuf = GetCurTarg();  break;
-    case MAC_FIRST:     dirBuf = GetFirstDep(); break;
-    case MAC_LAST:      dirBuf = GetLastDep();  break;
-    default:            return( NULL );
+    case MAC_CUR:       dirBufGot = GetCurTarg();  break;
+    case MAC_FIRST:     dirBufGot = GetFirstDep(); break;
+    case MAC_LAST:      dirBufGot = GetLastDep();  break;
     }
-    return( procPath( dirBuf ) );
+    return( procPath( dirBufGot ) );
 }
 
 
@@ -224,16 +225,13 @@ STATIC void makeMacroName( char *buffer, const char *name )
 {
     assert( IsMacroName( name ) );
 
-    while( *name != NULLCHAR ) {
-        if( Glob.microsoft ) {
-            *buffer = *name;
-        } else {
-            *buffer = toupper( *name );
+    if( Glob.microsoft ) {
+        strcpy( buffer, name );
+    } else {
+        while( (*buffer = toupper( *name )) != NULLCHAR ) {
+            ++buffer, ++name;
         }
-        ++name;
-        ++buffer;
     }
-    *buffer = NULLCHAR;
 }
 
 
@@ -283,7 +281,7 @@ STATIC RET_T getOldNewString( char *inString, char **oldString,
     if( equal == NULL ) {
         return( RET_ERROR );
     } else {
-        *oldString = (char *)inString;
+        *oldString = inString;
         *equal     = NULLCHAR;
         *newString = equal + 1;
         return( RET_SUCCESS );
@@ -301,26 +299,21 @@ STATIC char *doStringSubstitute( const char *name, const char *oldString,
     VECSTR      output;
     char const  *current;
     char const  *start;
-
-    current = name;
-    start   = name;
+    size_t      old_len;
 
     output = StartVec();
     WriteVec( output, "" );
 
     assert( name != NULL && oldString != NULL && newString != NULL );
 
-    for( ;; ) {
-        if( *current == NULLCHAR ) {
-            break;
-        }
-        if( strncmp( current, oldString, strlen( oldString ) ) == 0 ) {
+    old_len = strlen( oldString );
+    for( start = current = name; *current != NULLCHAR; current++ ) {
+        if( strncmp( current, oldString, old_len ) == 0 ) {
             CatNStrToVec( output, start, current - start );
             CatStrToVec( output, newString );
-            start   = current + strlen( oldString );
+            start   = current + old_len;
             current = start - 1;
         }
-        current ++;
     }
     CatStrToVec( output, start );
 
@@ -692,12 +685,13 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
  * Processes the tokens returned from lexToken in deMacroToEnd
  */
 {
-    STRM_T  temp;
-    char    temp_str[2];
-    char    macname[MAX_TOK_SIZE];
-    int     pos;
-    char    *p;
-    char    *p2;
+    STRM_T      temp;
+    char        temp_str[2];
+    char        macname[MAX_TOK_SIZE];
+    int         pos;
+    char        *p;
+    char        *p2;
+    char const  *cp2;
 
     switch( t ) {
     case MAC_START:                     /* recurse, get macro name */
@@ -801,9 +795,9 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
     case MAC_FIRST:
     case MAC_LAST:
         /* static pointer returned so we need to duplicate string */
-        p2 = (char*) specialValue( t );
-        if( p2 != NULL ) {
-            return( StrDupSafe( p2 ) );
+        cp2 = specialValue( t );
+        if( cp2 != NULL ) {
+            return( StrDupSafe( cp2 ) );
         }
         return( NULL );
 
@@ -946,17 +940,16 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
         result = deMacroToEnd( depth, STRM_MAGIC, STRM_MAGIC );
         (void)LexToken( LEX_MAC_SUBST );      /* eat STRM_MAGIC */
     }
-    p = result;
 
     /*
      * when it is in part demacro do not change the dollar and the comments
      * yet wait until the deMacro is called
      */
     if( !IsPartDeMacro ) {
-        while( *p != NULLCHAR ) {
+        for( p = result; *p != NULLCHAR; ++p ) {
             switch( *p ) {
-            case TMP_DOL_C:     *p = DOLLAR;    break;
-            case TMP_COMMENT_C: *p = COMMENT;   break;
+            case TMP_DOL_C:         *p = DOLLAR;    break;
+            case TMP_COMMENT_C:     *p = COMMENT;   break;
 #if 0
             case SPECIAL_TMP_DOL_C:
                   if( Glob.microsoft ) {
@@ -967,14 +960,12 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
                   break;
 #endif
             }
-            ++p;
         }
     } else {
-        while( *p != NULLCHAR ) {
+        for( p = result; *p != NULLCHAR; ++p ) {
             switch( *p ) {
-            case SPECIAL_TMP_DOL_C:     *p = DOLLAR;    break;
+            case SPECIAL_TMP_DOL_C: *p = DOLLAR;    break;
             }
-            ++p;
         }
     }
     return( result );
@@ -983,8 +974,8 @@ STATIC char *deMacroText( int depth, TOKEN_T end1, TOKEN_T end2 )
 
 extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
 /*************************************************************************
- * This is the same as deMacro however if the string has leading and trailing
- * ws then leave it in.
+ * This is the same as deMacro except that we retain any leading or trailing
+ * ws. Ws is quietly truncated from pathologically long lines.
  * Boolean = TRUE when you want partDeMacro
  */
 {
@@ -995,56 +986,56 @@ extern char *ignoreWSDeMacro( BOOLEAN partDeMacro, BOOLEAN ForcedDeMacro )
     char    *TrailSpace;
     char    *DeMacroStr;
     char    *current;
+    char    *current_max;
     TOKEN_T t;
+    char    *result;
 
-
-    t = PreGetCH();
+    // Set leadingSpace - leave t set to first non-whitespace byte
     current = leadingSpace;
-    while( isws( t ) && current - leadingSpace < MAX_COMMANDLINE -1 ) {
+    current_max = current + MAX_COMMANDLINE - 1;
+    for( ; isws( t = PreGetCH() ) && current < current_max; ++current ) {
         *current = t;
-        ++current;
-        t = PreGetCH();
     }
     *current = NULLCHAR;
 
-    current = text;
-    TrailSpace = text + strlen( text );
-    while( current - text < MAX_COMMANDLINE - 1 ) {
-        if( t == STRM_END   ||
-            t == STRM_MAGIC ||
-            t == EOL ) {
+    // set text to non-whitespace string and TrailSpace to next character.
+    current_max = text + MAX_COMMANDLINE - 1;
+    for( TrailSpace = current = text; current < current_max; ++current ) {
+        if( t == STRM_END || t == STRM_MAGIC || t == EOL ) {
             break;
-        } else if( !isws( t ) ) {
+        }
+        if( !isws( t ) ) {
             TrailSpace = current + 1;
         }
         *current = t;
         t = PreGetCH();
-        ++current;
     }
     *current = NULLCHAR;
-    UnGetCH( t );
+    UnGetCH( t );                           // Put back last byte read
 
     DeMacroText = StartVec();
     WriteNVec( DeMacroText, text, TrailSpace - text );
-    InsString( FinishVec( DeMacroText ), TRUE );
+    result = FinishVec( DeMacroText );
+    InsString( result, TRUE );              // Push graphic string to the stream
 
-    if( !partDeMacro ) {
-        DeMacroStr = DeMacro( EOL );
-    } else {
+    if( partDeMacro ) {                     // Expand as far as EOL
         DeMacroStr = PartDeMacro( ForcedDeMacro );
+    } else {
+        DeMacroStr = DeMacro( EOL );
     }
 
     DeMacroText = StartVec();
-    WriteVec( DeMacroText, leadingSpace );
+    WriteVec( DeMacroText, leadingSpace );  // Write copy of leading whitespace
     temp        = StartVec();
     WriteVec( temp, DeMacroStr );
     FreeSafe( DeMacroStr );
-    CatVec( DeMacroText, temp );
+    CatVec( DeMacroText, temp );            // Write graphic string expansion
     temp        = StartVec();
     WriteVec( temp, TrailSpace );
-    CatVec( DeMacroText, temp );
+    CatVec( DeMacroText, temp );            // Write copy of trailing whitespace
 
-    return( FinishVec( DeMacroText ) );
+    result = FinishVec( DeMacroText );
+    return( result );                       // macro-expanded, whitespaced line
 }
 
 
@@ -1073,9 +1064,7 @@ STATIC char *PartDeMacroProcess( void )
 
     leadingws = TRUE;
 
-    t = LexToken( LEX_MAC_DEF );
-    while( t != STRM_END && t != EOL ) {
-
+    while( ( t = LexToken( LEX_MAC_DEF ) ) != STRM_END && t != EOL ) {
         switch( t ) {
         case STRM_MAGIC:        /* we ignore these */
             break;
@@ -1108,8 +1097,6 @@ STATIC char *PartDeMacroProcess( void )
             PrtMsg( WRN | LOC | IGNORE_OUT_OF_PLACE_M, M_UNKNOWN_TOKEN );
 #endif
         }
-
-        t = LexToken( LEX_MAC_DEF );
     }
 
     if( wsvec != NULL ) {       /* trim trailing ws */
@@ -1149,8 +1136,8 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
     }
     if( ForcedDeMacro ) {
         //remove white spaces at the beginning
-        while( isws( t = PreGetCH() ) )
-            ;
+        while( isws( t = PreGetCH() ) ) {
+        }
         UnGetCH(t);
         temp = DeMacro( EOL );
         t = PreGetCH();
@@ -1178,8 +1165,8 @@ STATIC int CompareNMacroName( const char *name1, const char *name2, size_t len )
 }
 
 
-STATIC char *DeMacroName( char *text, const char *name )
-/*******************************************************
+STATIC char *DeMacroName( const char *text, const char *name )
+/*************************************************************
  * Tries to find if there are occurrences of name in text
  * this is only for ms-option fix because nmake relies on this
  * functionality to function correctly
@@ -1189,13 +1176,13 @@ STATIC char *DeMacroName( char *text, const char *name )
  * $HELLO is synonymous to $(HELLO)
  */
 {
-    char    *current;
-    char    *oldptr;
-    char    *temp;
-    char    *macronameStr;
-    VECSTR  outtext;
-    VECSTR  macroname;
-    size_t  lengthToClose;
+    char const  *current;
+    char const  *oldptr;
+    char        *temp;
+    char        *macronameStr;
+    VECSTR      outtext;
+    VECSTR      macroname;
+    size_t      lengthToClose;
 
     assert( name != NULL && text != NULL );
 
@@ -1209,7 +1196,8 @@ STATIC char *DeMacroName( char *text, const char *name )
             if( text <= current - 2 ) {
                 // Checks if the MacroName match is preceded by
                 // MAC_OPEN
-                if( *(current - 1) == '(' && *(current - 2) == DOLLAR ) {
+                if( *(current - 1) == '(' && *(current - 2) == DOLLAR &&
+                        (text == current - 2 || current[-3] != DOLLAR) ) {
                     // Check if ended by MAC_CLOSE
                     // or ended by :   if we have string substitution
                     if( *(current + strlen(name)) == ')' ||
@@ -1241,7 +1229,8 @@ STATIC char *DeMacroName( char *text, const char *name )
             // Microsoft name without parenthesis is only of length 1
             if( text <= current - 1 && strlen( name ) == 1 ) {
                 // Checks if the MacroName is preceded by just a dollar sign
-                if( current[-1] == DOLLAR ) {
+                if( current[-1] == DOLLAR &&
+                        (text == current - 1 || current[-2] != DOLLAR) ) {
                     CatNStrToVec( outtext, oldptr, current - 1 - oldptr );
                     if( IsMacroName( name ) ) {
                         temp = GetMacroValue( name );
@@ -1337,9 +1326,9 @@ extern void DefMacro( const char *name )
 static BOOLEAN printMac( const void *node, const void *ptr )
 /**********************************************************/
 {
-    MACRO   *mac = (void *)node;
-    char    buff1[MAX_RESOURCE_SIZE];
-    char    buff2[MAX_RESOURCE_SIZE];
+    MACRO const *mac = node;
+    char        buff1[MAX_RESOURCE_SIZE];
+    char        buff2[MAX_RESOURCE_SIZE];
 
     (void)ptr; // Unused
     /* mac->node.name is used as a parameter twice in this module because
@@ -1369,14 +1358,12 @@ STATIC void restoreEnvironment( void )
     ELIST   *current;
     VECSTR  EnvString;
 
-    current = OldEnvValues;
-    while( current!= NULL ) {
+    for( current = OldEnvValues; current != NULL; current = current->next ) {
         EnvString = StartVec();
         WriteVec( EnvString, current->envVarName );
         WriteVec( EnvString, "=" );
         WriteVec( EnvString, current->envOldVal );
         putenv( FinishVec( EnvString ) );
-        current = current->next;
     }
 }
 #endif

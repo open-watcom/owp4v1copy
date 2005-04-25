@@ -2,3 +2,7 @@ echo HELLO
 HELLO
 echo HE2
 HE2
+echo $(mac)=macac(mac)helloheo$(mac)mac
+$(mac)=macac(mac)helloheo$(mac)mac
+echo $h=hhello(h)helloheo$hh
+$h=hhello(h)helloheo$hh
