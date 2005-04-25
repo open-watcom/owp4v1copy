@@ -153,8 +153,12 @@ static  void    doInfo( any_oc *oc ) {
         if( _IsModel( DBG_LOCALS ) ) {
             DbgRtnEnd( oc->oc_debug.ptr, AskLocation() );
         }
-        lc = AskLocation();
-        OutPDataRec( procLabel, lc - procStart, prologueEnd - procStart );
+        if( _IsModel( OBJ_COFF ) ) {
+            // Only emit .pdata section into COFF objects; there might be some
+            // better mechanism to decide whether .pdata should be emitted.
+            lc = AskLocation();
+            OutPDataRec( procLabel, lc - procStart, prologueEnd - procStart );
+        }
         break;
     }
 }
