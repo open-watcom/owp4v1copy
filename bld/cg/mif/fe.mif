@@ -1,6 +1,6 @@
 # This file is designed to be included by users of the cg library
 
-# target_cpu = 386 | i86 | ppc | axp | mips
+# target_cpu = 386 | i86 | ppc | axp | mps
 # host_cpu = 386 | ppc | axp
 # host_os  = nt | os2 | qnx | dos | linux
 
@@ -23,19 +23,19 @@ o_dir_386    = $(cg_dir)/intel/386/$(obj_dir).dbg
 o_dir_i86    = $(cg_dir)/intel/i86/$(obj_dir).dbg
 o_dir_axp    = $(cg_dir)/risc/axp/$(obj_dir).dbg
 o_dir_ppc    = $(cg_dir)/risc/ppc/$(obj_dir).dbg
-o_dir_mips   = $(cg_dir)/risc/mips/$(obj_dir).dbg
+o_dir_mps    = $(cg_dir)/risc/mps/$(obj_dir).dbg
 !else
 o_dir_386    = $(cg_dir)/intel/386/$(obj_dir)
 o_dir_i86    = $(cg_dir)/intel/i86/$(obj_dir)
 o_dir_axp    = $(cg_dir)/risc/axp/$(obj_dir)
 o_dir_ppc    = $(cg_dir)/risc/ppc/$(obj_dir)
-o_dir_mips   = $(cg_dir)/risc/mips/$(obj_dir)
+o_dir_mps    = $(cg_dir)/risc/mps/$(obj_dir)
 !endif
 i_path_386   = -I"$(cg_dir)/intel/386/h" -I"$(cg_dir)/intel/h"
 i_path_i86   = -I"$(cg_dir)/intel/i86/h" -I"$(cg_dir)/intel/h"
 i_path_axp   = -I"$(cg_dir)/risc/axp/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 i_path_ppc   = -I"$(cg_dir)/risc/ppc/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
-i_path_mips  = -I"$(cg_dir)/risc/mips/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
+i_path_mps   = -I"$(cg_dir)/risc/mps/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 
 !ifndef o_dir_$(target_cpu)
 !error unsupported target_cpu
@@ -54,7 +54,7 @@ cg_host = $(host_os)
 
 use_owl_lib_axp   = 1
 use_owl_lib_ppc   = 1
-use_owl_lib_mips  = 1
+use_owl_lib_mps   = 1
 use_owl_lib_386   = 0
 use_owl_lib_i86   = 0
 

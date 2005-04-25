@@ -66,7 +66,7 @@ cc_objs_i86   = cpragx86.obj pragi86.obj
 cc_objs_386   = cpragx86.obj prag386.obj
 cc_objs_axp   = cpragaxp.obj pragaxp.obj
 cc_objs_ppc   = cpragppc.obj pragppc.obj
-cc_objs_mips  = cpragmips.obj pragmips.obj
+cc_objs_mps   = cpragmips.obj pragmips.obj
 cc_objs_sparc = cpragspc.obj pragspc.obj stubspc.obj
 
 cc_objs = &

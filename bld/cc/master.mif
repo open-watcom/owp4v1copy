@@ -52,10 +52,10 @@ inline_asm_inc_dirs = -I"$(as_dir)/alpha/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
 inline_asm_inc_dirs = -I"$(as_dir)/ppc/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
-!else ifeq target_cpu mips
+!else ifeq target_cpu mps
 inline_asm_dir = $(as_dir)
-inline_asm_h = $(as_dir)/mips/h;$(as_dir)/h;$(owl_dir)/h
-inline_asm_inc_dirs = -I"$(as_dir)/mips/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
+inline_asm_h = $(as_dir)/mps/h;$(as_dir)/h;$(owl_dir)/h
+inline_asm_inc_dirs = -I"$(as_dir)/mps/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
 !else # target_cpu x86
 !include $(wasm_dir)/mif/inline.mif
 inline_asm_dir = $(wasm_dir)
@@ -105,7 +105,7 @@ wlink_opt_nt_axp_dll    = sys ntaxp_dll
 # 1 if we use asminline_lib to do inline assembly
 use_asminline_lib_ppc      = 1
 use_asminline_lib_axp      = 1
-use_asminline_lib_mips     = 1
+use_asminline_lib_mps      = 1
 
 !ifdef bootstrap
 !ifeq use_asminline_lib_$(target_cpu) 1
@@ -123,6 +123,7 @@ xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
 dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
 dllexet = wcc$(target_cpu)t
 dllexe = wcc$(target_cpu)e
+# base DLL name needs to be 8 chars or less on OS/2, argh!
 dllname = wccd$(target_cpu)e
 cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
 
@@ -279,9 +280,9 @@ codeaxp.gh :
 codeppc.gh :
         echo // Dummy file > $@
 
-!else ifeq target_cpu mips
+!else ifeq target_cpu mps
 
-codemips.gh :
+codemps.gh :
         echo // Dummy file > $@
 
 !else  # Intel i86 or 386
@@ -294,7 +295,7 @@ target_as_axp   = wasaxp -zq -w4
 target_as_i86   = bwasm -zq -w4
 target_as_386   = bwasm -zq -w4 -3
 target_as_ppc   = wasppc -zq -w4
-target_as_mips  = wasmips -zq -w4
+target_as_mps   = wasmps -zq -w4
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(target_as_$(target_cpu)) -I"$(watcom_h)" -fo=.obj $[@
