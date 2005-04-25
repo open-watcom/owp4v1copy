@@ -108,7 +108,11 @@ use_asminline_lib_axp      = 1
 use_asminline_lib_mips     = 1
 
 !ifdef bootstrap
+!ifeq use_asminline_lib_$(target_cpu) 1
+xlibs = $(dwarf_dw_lib) $(asminline_lib)
+!else
 xlibs = $(dwarf_dw_lib)
+!endif
 !else ifeq use_asminline_lib_$(target_cpu) 1
 xlibs = $(dwarf_dw_lib) $(asminline_lib)
 !else

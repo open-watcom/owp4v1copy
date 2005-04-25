@@ -2,8 +2,12 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 #
-# AS in-line library
+# 'as' in-line library finder
 #
+
+!ifdef bootstrap
+asminline_lib = $(as_dir)/$(host_cpu)/inline/$(%OBJDIR)/asinline.lib
+!else
 asminline_axp_lib_386  = $(as_dir)/alpha/inline/osi386/asinline.lib
 asminline_axp_lib_axp  = $(as_dir)/alpha/inline/osiaxp/asinline.lib
 
@@ -37,5 +41,6 @@ asminline_lib = $(asminline_ppc_lib_$(host_cpu))
 asminline_lib = $(asminline_mips_lib_$(host_os)_$(host_cpu))
 !else
 asminline_lib = $(asminline_mips_lib_$(host_cpu))
+!endif
 !endif
 !endif
