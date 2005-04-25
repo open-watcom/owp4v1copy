@@ -1183,69 +1183,52 @@ STATIC char *DeMacroName( const char *text, const char *name )
     VECSTR      outtext;
     VECSTR      macroname;
     size_t      lengthToClose;
+    size_t      len;
 
     assert( name != NULL && text != NULL );
 
-    current = text;
-    oldptr  = text;
+    len = strlen( name );
+    oldptr = current = text;
 
     outtext = StartVec();
-    while( *current != NULLCHAR ) {
-
-        if( CompareNMacroName( current, name, strlen( name ) ) == 0 ) {
-            if( text <= current - 2 ) {
-                // Checks if the MacroName match is preceded by
-                // MAC_OPEN
-                if( *(current - 1) == '(' && *(current - 2) == DOLLAR &&
-                        (text == current - 2 || current[-3] != DOLLAR) ) {
-                    // Check if ended by MAC_CLOSE
-                    // or ended by :   if we have string substitution
-                    if( *(current + strlen(name)) == ')' ||
-                        *(current + strlen(name)) == ':' ) {
-                        lengthToClose = 0;
-                        while( *(current +
-                               strlen( name ) + lengthToClose) != ')' ) {
-                            ++lengthToClose;
-                        }
-                        CatNStrToVec( outtext, oldptr, current - 2 - oldptr );
-                        macroname = StartVec();
-                        CatNStrToVec( macroname, current,
-                                      strlen( name ) + lengthToClose );
-                        macronameStr = FinishVec( macroname );
-                        if( IsMacroName( macronameStr ) ) {
-                            temp = GetMacroValue( macronameStr );
-                            if( temp != NULL ) {
-                                CatStrToVec( outtext, temp );
-                                FreeSafe( temp );
-                            }
-                        }
-                        FreeSafe( macronameStr );
-                        oldptr  = current + strlen( name ) + 1 + lengthToClose;
-                        current = oldptr;
-                        continue;
-                    }
+    while( (current = strchr( current, DOLLAR )) != NULL ) {
+        switch( *++current )    // Swallow that DOLLAR
+        {
+        case '$':               // Swallow literal DOLLAR.
+            current++;     
+            break;
+        case '(':               // Possible regular substitution
+            current++;
+            // bracket or colon (for string substitution) after matching name?
+            if( (current[len] == ')' || current[len] == ':') &&
+                    CompareNMacroName( current, name, len ) == 0 ) {
+                lengthToClose = len;
+                while( current[lengthToClose] != ')' ) {
+                    ++lengthToClose;
                 }
-            }
-            // Microsoft name without parenthesis is only of length 1
-            if( text <= current - 1 && strlen( name ) == 1 ) {
-                // Checks if the MacroName is preceded by just a dollar sign
-                if( current[-1] == DOLLAR &&
-                        (text == current - 1 || current[-2] != DOLLAR) ) {
-                    CatNStrToVec( outtext, oldptr, current - 1 - oldptr );
-                    if( IsMacroName( name ) ) {
-                        temp = GetMacroValue( name );
-                        if( temp != NULL ) {
-                            CatStrToVec( outtext, temp );
-                            FreeSafe( temp );
-                        }
-                    }
-                    oldptr  = current + strlen( name );
-                    current = oldptr;
-                    continue;
+                CatNStrToVec( outtext, oldptr, current - 2 - oldptr );
+                macroname = StartVec();
+                CatNStrToVec( macroname, current, lengthToClose );
+                macronameStr = FinishVec( macroname );
+                if( (temp = GetMacroValue( macronameStr )) != NULL ) {
+                    CatStrToVec( outtext, temp );
+                    FreeSafe( temp );
                 }
+                FreeSafe( macronameStr );
+                current = oldptr = current + 1 + lengthToClose;
             }
+            break;
+        default:                // Possible Microsoft name without parenthesis
+            if( len == 1 && CompareNMacroName( current, name, 1 ) == 0 ) {
+                CatNStrToVec( outtext, oldptr, current - 1 - oldptr );
+                if( (temp = GetMacroValue( name )) != NULL ) {
+                    CatStrToVec( outtext, temp );
+                    FreeSafe( temp );
+                }
+                current = oldptr = current + 1;
+            }
+            break;
         }
-        ++current;
     }
     CatStrToVec( outtext, oldptr );
     return( FinishVec( outtext ) );
