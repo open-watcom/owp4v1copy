@@ -230,9 +230,6 @@ extern  void GenLOADS32( signed_32 value, uint_8 reg )
  * Load a signed 32-bit constant 'value' into register 'reg'
  */
 {
-    uint_8              curr;
-
-    curr = MIPS_ZERO_SINK;
     if( (value < 32768) && (value > -32769) ) {
         // Only need sign extended low 16 bits - 'addiu rt,$zero,value'
         GenIType( 0x09, reg, MIPS_ZERO_SINK, (unsigned_16)value );

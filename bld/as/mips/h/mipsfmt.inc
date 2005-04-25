@@ -46,12 +46,14 @@ PICK( IT_FP_CONVERT,    ITFPConvert,    OP_FPR, OP_FPR, OP_NOTHING )            
 PICK( IT_BR,            ITBr,           (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* br      */
 PICK( IT_MT_MF_FPCR,    ITMTMFFpcr,     OP_FPR, (OP_FPR | OP_NOTHING), OP_FPR )                         /* mf_fpcr */
 PICK( IT_RET,           ITRet,          (OP_GPR | OP_NOTHING | OP_REG_INDIRECT | OP_IMMED), (OP_REG_INDIRECT | OP_NOTHING | OP_IMMED), (OP_IMMED | OP_NOTHING) ) /* ret */
+PICK( IT_PSEUDO_LIMM,   ITPseudoLImm,   OP_GPR, OP_IMMED, OP_NOTHING )                                  /* li      */
+PICK( IT_PSEUDO_LADDR,  ITPseudoLAddr,  OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* la      */
 PICK( IT_PSEUDO_CLR,    ITPseudoClr,    OP_GPR, OP_NOTHING, OP_NOTHING )                                /* clr     */
 PICK( IT_PSEUDO_FCLR,   ITPseudoFclr,   OP_FPR, OP_NOTHING, OP_NOTHING )                                /* fclr    */
-PICK( IT_PSEUDO_MOV,    ITPseudoMov,    (OP_GPR | OP_IMMED), OP_GPR, OP_NOTHING )                       /* mov     */
+PICK( IT_PSEUDO_MOV,    ITPseudoMov,    OP_GPR, OP_GPR, OP_NOTHING )                                    /* move    */
 PICK( IT_PSEUDO_FMOV,   ITPseudoFmov,   OP_FPR, OP_FPR, OP_NOTHING )                                    /* fmov    */
-PICK( IT_PSEUDO_NOT,    ITPseudoNot,    (OP_GPR | OP_IMMED), OP_GPR, OP_NOTHING )                       /* not     */
+PICK( IT_PSEUDO_NOT,    ITPseudoNot,    OP_GPR, (OP_GPR | OP_IMMED), OP_NOTHING )                       /* not     */
 PICK( IT_PSEUDO_NEGF,   ITPseudoNegf,   OP_FPR, OP_FPR, OP_NOTHING )                                    /* negf    */
 PICK( IT_PSEUDO_FNEG,   ITPseudoFneg,   OP_FPR, OP_FPR, OP_NOTHING )                                    /* fneg    */
 PICK( IT_PSEUDO_ABS,    ITPseudoAbs,    (OP_GPR | OP_IMMED), OP_GPR, OP_NOTHING )                       /* absl    */
-PICK( IT_SYSCODE,       ITSysCode,      (OP_IMMED | OP_NOTHING), OP_NOTHING, OP_NOTHING )
+PICK( IT_SYSCODE,       ITSysCode,      (OP_IMMED | OP_NOTHING), OP_NOTHING, OP_NOTHING )               /* syscall */
