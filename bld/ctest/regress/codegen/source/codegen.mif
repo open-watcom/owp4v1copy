@@ -1,0 +1,59 @@
+#
+# special options
+#
+opt_cmdln01 = /d+XXX=0+1
+opt_cmdln02 = /d+ /dXXX=0+1
+opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
+opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
+opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
+opt_opt09 = -za
+opt_opt41 = -ot -ol+
+opt_pack04 = -wx
+opt_pch01 = -fhq
+opt_pch02 = -fhq
+# pch03,04,05 are same test
+opt_pch03 =             # (1) no PCH
+opt_pch04 = -fhq        # (2) write PCH
+opt_pch05 = -fhq        # (3) read PCH
+opt_pch06 = -fhq
+opt_pch07 = -fhq
+# pch08,09,10,11 use the same PCH
+opt_pch08 = -fhq -dAFS_CM
+opt_pch09 = -fhq -dAFS_CM
+opt_pch10 = -fhq -dAFS_CM
+opt_pch11 = -fhq -dAFS_CM
+opt_pp08 = -w0
+opt_thread01 = -i$(lang_root)\h\nt
+
+#
+# architecture specific options
+#
+!ifeq arch axp
+# AXP specific
+!else ifeq arch 386
+# 386 specific
+opt_opt13 = -fpd
+opt_opt42 = -ms
+!else ifeq arch i86
+# i86 specific
+opt_opt13 = -fpd
+opt_opt29 = -3 -zff
+opt_opt31 = -zff
+opt_opt42 = -2
+!endif
+
+codegen_tests = &
+    op_add.$(ext) &
+    op_sub.$(ext) &
+    op_mul.$(ext) &
+    op_div.$(ext) &
+    op_mod.$(ext) &
+    op_and.$(ext) &
+    op_or.$(ext) &
+    op_xor.$(ext) &
+    op_rshift.$(ext) &
+    op_lshift.$(ext) &
+
+
+ext = $(ext_$(arch))
+codegen_exes = $+ $(codegen_tests) $-
