@@ -50,6 +50,7 @@ static auto_dep_info const *AutoDepTypes[] = {
     NULL
 };
 
+
 void AutoDepInit( void )
 /**********************/
 {
@@ -62,85 +63,82 @@ void AutoDepInit( void )
     }
 }
 
+
+static BOOLEAN isTargObsolete( char const *name, time_t stamp,
+    BOOLEAN (*chk)( time_t, time_t ), time_t *pmax_time,
+    auto_dep_info const *curr, void *dep )
+/************************************************************/
+{
+    char        *dep_name;
+    time_t      auto_dep_time;  // time stamp in auto-depend info
+    time_t      curr_dep_time;  // time stamp in dependent file (if it exists)
+    BOOLEAN     exists;
+    BOOLEAN     obsolete;
+
+    exists = TRUE, obsolete = FALSE;
+    curr->trans_dep( dep, &dep_name, &auto_dep_time );
+    if( CacheTime( dep_name, &curr_dep_time ) != RET_SUCCESS ) {
+        exists = FALSE, obsolete = TRUE;
+    } else {
+        if( !IdenticalAutoDepTimes( auto_dep_time, curr_dep_time ) ||
+                (*chk)( stamp, curr_dep_time ) ) {
+            obsolete = TRUE;
+        }
+        if( curr_dep_time > *pmax_time ) {
+            *pmax_time = curr_dep_time; // Glob.all should not affect comparison
+        }
+    }
+    if( Glob.debug ) {
+        char        time_buff[32] = "?";// for date + flag
+        struct tm   *tm;
+
+        if( exists ) {
+            tm = localtime( &curr_dep_time );
+            FmtStr( time_buff, "%D-%s-%D  %D:%D:%D",
+                    tm->tm_mday, MonthNames[tm->tm_mon], tm->tm_year,
+                    tm->tm_hour, tm->tm_min, tm->tm_sec );
+        }
+        strcat( time_buff, ( obsolete ) ? "*" : " " );
+        PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
+    } else if( obsolete && Glob.show_offenders ) {
+        PrtMsg( INF | WILL_BE_BUILT_BECAUSE_OF, name, dep_name );
+    }
+    return( obsolete );
+}
+
+
 BOOLEAN AutoDepCheck( char *name, time_t stamp,
     BOOLEAN (*chk)( time_t, time_t ), time_t *pmax_time )
 /*******************************************************/
 {
     BOOLEAN                     quick_logic;
-    const auto_dep_info         *curr;
-    const auto_dep_info * const *pcurr;
-    char                        *dep_name;
-    time_t                      dep_time;       /* time stamp for dependent file
-                                                 * buried in auto-depend info */
-    time_t                      curr_dep_time;  /* current date on dependent file
-                                                 * (if it exists) */
-    time_t                      max_time;
+    auto_dep_info const * const *pcurr;
+    auto_dep_info const         *curr;
     void                        *hdl;
-    void                        *dep_hdl;
-    struct {
-        unsigned out_of_date    : 1;
-        unsigned exists         : 1;
-        unsigned this_caused_it : 1;
-    }                           flag;
+    void                        *dep;
+    BOOLEAN                     obs;
 
     quick_logic = !(Glob.rcs_make | Glob.debug | Glob.show_offenders);
-    flag.out_of_date = FALSE;
-    max_time = *pmax_time;
-    for( pcurr = &AutoDepTypes[0]; *pcurr != NULL; pcurr++ ) {
-        curr = *pcurr;
-        hdl = curr->init_file( name );
-        if( hdl != NULL ) {
-            dep_hdl = curr->first_dep( hdl );
-            while( dep_hdl != NULL ) {
-                curr->trans_dep( dep_hdl, &dep_name, &dep_time );
-                /* logic having to do with dep_name and dep_time */
-                flag.exists = FALSE;
-                flag.this_caused_it = FALSE;
-                if( CacheTime( dep_name, &curr_dep_time ) != RET_SUCCESS ) {
-                    /* doesn't exist anymore so rebuild file */
-                    flag.out_of_date = TRUE;
-                    flag.this_caused_it = TRUE;
-                } else {
-                    flag.exists = TRUE;
-                    if( !IdenticalAutoDepTimes( dep_time, curr_dep_time ) ) {
-                        flag.out_of_date = TRUE;
-                        flag.this_caused_it = TRUE;
-                    } else if( (*chk)( stamp, curr_dep_time ) ) {
-                        flag.out_of_date = TRUE;
-                        flag.this_caused_it = TRUE;
-                    }
-                    /* don't want Glob.all affecting the comparison */
-                    if( curr_dep_time > max_time ) {
-                        max_time = curr_dep_time;
-                    }
-                }
-                if( Glob.debug ) {
-                    char        time_buff[32] = "?";  /* for date + flag */
-                    struct tm   *tm;
+    obs = FALSE;
 
-                    if( flag.exists ) {
-                        tm = localtime( &curr_dep_time );
-                        FmtStr( time_buff, "%D-%s-%D  %D:%D:%D",
-                                tm->tm_mday, MonthNames[tm->tm_mon], tm->tm_year,
-                                tm->tm_hour, tm->tm_min, tm->tm_sec );
-                    }
-                    strcat( time_buff, ( flag.this_caused_it ) ? "*" : " " );
-                    PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
-                } else if( flag.this_caused_it && Glob.show_offenders ) {
-                    PrtMsg( INF | WILL_BE_BUILT_BECAUSE_OF, name, dep_name );
+    for( pcurr = &AutoDepTypes[0]; (curr = *pcurr) != NULL; pcurr++ ) {
+        if( (hdl = curr->init_file( name )) != NULL ) {
+            dep_handle (* const first_dep)( handle )    = curr->first_dep;
+            dep_handle (* const next_dep)( dep_handle ) = curr->next_dep;
+
+            for( dep = first_dep( hdl ); dep != NULL; dep = next_dep( hdl ) ) {
+                obs |= isTargObsolete(name, stamp, chk, pmax_time, curr, dep );
+                if( obs && quick_logic ) {
+                    break; // No need to calculate real max time
                 }
-                if( flag.out_of_date && quick_logic ) {
-                    break; /* No need to calculate real max time */
-                }
-                dep_hdl = curr->next_dep( dep_hdl );
             }
             curr->fini_file( hdl );
-            *pmax_time = max_time;
-            return( flag.out_of_date );
+            return( obs );
         }
     }
-    return( flag.out_of_date );
+    return( FALSE );
 }
+
 
 void AutoDepFini( void )
 /**********************/
