@@ -37,9 +37,6 @@
 #include "mupdate.h"
 #include "mautodep.h"
 
-#include <malloc.h>
-#include <assert.h>
-
 extern auto_dep_info const OMFAutoDepInfo;
 extern auto_dep_info const ORLAutoDepInfo;
 extern auto_dep_info const RESAutoDepInfo;
@@ -69,6 +66,7 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp,
     BOOLEAN (*chk)( time_t, time_t ), time_t *pmax_time )
 /*******************************************************/
 {
+    BOOLEAN                     quick_logic;
     const auto_dep_info         *curr;
     const auto_dep_info * const *pcurr;
     char                        *dep_name;
@@ -85,6 +83,7 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp,
         unsigned this_caused_it : 1;
     }                           flag;
 
+    quick_logic = !(Glob.rcs_make | Glob.debug | Glob.show_offenders);
     flag.out_of_date = FALSE;
     max_time = *pmax_time;
     for( pcurr = &AutoDepTypes[0]; *pcurr != NULL; pcurr++ ) {
@@ -116,36 +115,27 @@ BOOLEAN AutoDepCheck( char *name, time_t stamp,
                     }
                 }
                 if( Glob.debug ) {
-                    char        time_buff[32];  /* large enough for date + flag */
+                    char        time_buff[32] = "?";  /* for date + flag */
                     struct tm   *tm;
 
-                    if( !flag.exists ) {
-                        time_buff[0] = '?';
-                        time_buff[1] = ' ';
-                        time_buff[2] = '\0';
-                    } else {
+                    if( flag.exists ) {
                         tm = localtime( &curr_dep_time );
-                        FmtStr( time_buff, "%D-%s-%D  %D:%D:%D ",
+                        FmtStr( time_buff, "%D-%s-%D  %D:%D:%D",
                                 tm->tm_mday, MonthNames[tm->tm_mon], tm->tm_year,
-                                tm->tm_hour, tm->tm_min, tm->tm_sec
-                            );
+                                tm->tm_hour, tm->tm_min, tm->tm_sec );
                     }
-                    if( flag.this_caused_it ) {
-                        size_t  len = strlen( time_buff );
-
-                        time_buff[len - 1] = '*';
-                    }
+                    strcat( time_buff, ( flag.this_caused_it ) ? "*" : " " );
                     PrtMsg( DBG | INF | GETDATE_MSG, time_buff, dep_name );
+                } else if( flag.this_caused_it && Glob.show_offenders ) {
+                    PrtMsg( INF | WILL_BE_BUILT_BECAUSE_OF, name, dep_name );
                 }
-                /* may not need to calculate real max time */
-                if( flag.out_of_date && !Glob.rcs_make ) {
-                    break;
+                if( flag.out_of_date && quick_logic ) {
+                    break; /* No need to calculate real max time */
                 }
                 dep_hdl = curr->next_dep( dep_hdl );
             }
             curr->fini_file( hdl );
             *pmax_time = max_time;
-            assert( _heapchk() == _HEAPOK );
             return( flag.out_of_date );
         }
     }

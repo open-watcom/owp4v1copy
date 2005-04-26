@@ -44,7 +44,6 @@ TEST=2A
 print_header
 sleep 1
 touch hello.h
-rm -f tst1.out
 $1 -h -c -f imp02a > tst1.out
 diff imp02.cmp tst1.out
 do_check
@@ -53,7 +52,6 @@ TEST=2B
 print_header
 sleep 1
 touch hello.h
-rm -f tst1.out
 $1 -c -h -f imp02b > tst1.out
 diff imp02.cmp tst1.out
 do_check
@@ -62,15 +60,16 @@ TEST=2C
 print_header
 sleep 1
 touch hello.h
-rm -f tst1.out
 $1 -h -c -f imp02c -ms > tst1.out
 diff imp02.cmp tst1.out
 do_check
 
-rm -f *.obj
-rm -f err1.out
-rm -f tst1.out
-rm -f tst2.out
-rm -f app.exe
-rm -f hello.cpp
-rm -f hello.h
+TEST=2D
+print_header
+rm -f hello.obj
+$1 -f imp02d -h > tst1.out
+sed "s:of .*[\\/]:of :" tst1.out | diff imp02d.cmp -
+do_check
+
+# hello.* hello?.* uses OW and Linux rm compatible wildcards. hello* no go
+rm -f *.obj err1.out tst1.out tst2.out app.lnk app.exe hello.* hello?.*
