@@ -1104,6 +1104,18 @@ char *PP_ScanToken( char *p, char *token )
             c = PPT_OTHER;
         }
         break;
+    case '#':
+        if( PPFlags & PPFLAG_ASM_COMMENT ) {
+            p2 = PP_SkipComment( p, &white_space );
+            if( white_space ) {
+                c = PPT_COMMENT;
+            } else {
+                p2 = PPScanOther( p );
+                c = PPT_OTHER;
+            }
+            break;
+        }
+        // Fall through!
     default:
         if( c == PreProcChar ) {
             if( p[1] == PreProcChar ) {
