@@ -32,21 +32,22 @@
 
 #include <stdlib.h>
 
+#include "massert.h"
+#include "mtypes.h"
+#include "mlex.h"
 #include "macros.h"
 #include "make.h"
-#include "massert.h"
 #include "mmemory.h"
 #include "mmisc.h"
-#include "mlex.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"
-#include "mtypes.h"
 #include "mvecstr.h"
 
 
 char    *targ_path;
 char    *dep_path;
+
 
 STATIC TOKEN_T lexLongFilePathName( STRM_T t, TOKEN_T tok )
 /**********************************************************
@@ -120,7 +121,8 @@ extern TOKEN_T LexPath( STRM_T t )
 
         if( t == STRM_MAGIC ) {
             InsString( DeMacro( EOL ), TRUE );
-        } else if( !isfilec( t ) && t != PATH_SPLIT && t != ';' && t != '\"' && !isws( t ) ) {
+        } else if( !isfilec( t ) && t != PATH_SPLIT && t != ';' && t != '\"' &&
+                !isws( t ) ) {
             PrtMsg( ERR | LOC | EXPECTING_M, M_PATH );
         } else if( !isws( t ) ) {
             break;
@@ -136,20 +138,17 @@ extern TOKEN_T LexPath( STRM_T t )
     pos = 0;
     for( ;; ) {
         /*
-         Extract path from stream. If double quote is found, start string mode
-         and ignore all filename character specifiers and just copy all characters.
-         String mode ends with another double quote. Backslash can be used to
-         escape only double quotes, otherwise they are recognized as path seperators.
-         If we are not in string mode character validity is checked against isfilec().
+         * Extract path from stream. If double quote is found, start string mode
+         * and ignore all filename character specifiers and just copy all
+         * characters. String mode ends with another double quote. Backslash can
+         * be used to escape only double quotes, otherwise they are recognized
+         * as path seperators.  If we are not in string mode character validity
+         * is checked against isfilec().
          */
 
         string_open = 0;
 
-        while( pos < _MAX_PATH ) {
-            if( t == EOL || t == STRM_END ) {
-                break;
-            }
-
+        while( pos < _MAX_PATH && t != EOL && t != STRM_END ) {
             if( t == BACKSLASH ) {
                 t = PreGetCH();
 
@@ -211,6 +210,7 @@ extern TOKEN_T LexPath( STRM_T t )
 #pragma off(check_stack);
 #endif
 
+
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
@@ -232,8 +232,8 @@ STATIC TOKEN_T lexFileName( STRM_T t )
     }
 
     pos = 0;
-    while( pos < _MAX_PATH && (isfilec( t )
-        || t == SPECIAL_TMP_DOL_C && Glob.microsoft) ) {
+    while( pos < _MAX_PATH && (isfilec( t ) ||
+            t == SPECIAL_TMP_DOL_C && Glob.microsoft) ) {
         file[pos++] = t;
         t = PreGetCH();
     }
@@ -294,8 +294,10 @@ STATIC BOOLEAN checkDotName( const char *str )
     return( TRUE );
 }
 
-/* get the path between  { and } */
 STATIC char *getCurlPath( void )
+/*******************************
+ * get the path between  { and }
+ */
 {
     TOKEN_T t;
     char    path[_MAX_PATH + 1];
@@ -325,6 +327,7 @@ STATIC char *getCurlPath( void )
         return( NULL );
     }
 }
+
 
 #ifdef __WATCOMC__
 #pragma on (check_stack);
@@ -363,7 +366,7 @@ STATIC TOKEN_T lexDotName( void )
         t = PreGetCH();
     }
 
-    if( isdirc( t ) || t == PATH_SPLIT || t == ';' ) {  /* check for "."{dirc} */
+    if( isdirc( t ) || t == PATH_SPLIT || t == ';' ) {  // check for "."{dirc}
         UnGetCH( t );
         if( dep_path != NULL ) {
             PrtMsg( ERR | LOC | INVALID_SUFSUF );
@@ -374,7 +377,7 @@ STATIC TOKEN_T lexDotName( void )
     if( t == DOT ) {        /* check if ".."{extc} or ".."{dirc} */
         t2 = PreGetCH();    /* probe one character */
         UnGetCH( t2 );
-        if( isdirc( t2 ) || t2 == PATH_SPLIT || t2 == ';' ) {    /* is ".."{dirc} */
+        if( isdirc( t2 ) || t2 == PATH_SPLIT || t2 == ';' ) {   // is ".."{dirc}
             UnGetCH( t );
             if( dep_path != NULL ) {
                 PrtMsg( ERR | LOC | INVALID_SUFSUF );
@@ -639,7 +642,9 @@ extern TOKEN_T LexParser( TOKEN_T t )
             if( *p == NULLCHAR ) {  /* already at ws */
                 FreeSafe( p );
                 t = PreGetCH();     /* eat the ws */
-                while( isws( t ) ) t = PreGetCH();
+                while( isws( t ) ) {
+                    t = PreGetCH();
+                }
                 if( t == EOL || t == STRM_END ) {
                     atstart = TRUE;
                     return( t );
@@ -662,7 +667,9 @@ extern TOKEN_T LexParser( TOKEN_T t )
             break;                  /* try again */
         case COLON:
             t = PreGetCH();
-            if( t == COLON ) return( TOK_DCOLON );
+            if( t == COLON ) {
+                return( TOK_DCOLON );
+            }
             UnGetCH( t );
             return( TOK_SCOLON );
         default:

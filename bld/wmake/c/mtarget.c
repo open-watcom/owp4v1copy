@@ -44,7 +44,7 @@
 
 
 /* just for people to copy in */
-const TATTR FalseAttr = { FALSE, FALSE, FALSE, FALSE };
+const TATTR FalseAttr = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
 
 #define HASH_PRIME    211
 #define CASESENSITIVE FALSE  // Is Target Name case sensitive
@@ -73,6 +73,7 @@ FLIST *NewFList( void )
     }
     return( (FLIST *)CallocSafe( sizeof( FLIST ) ) );
 }
+
 
 NKLIST *NewNKList( void )
 /************************
@@ -221,9 +222,10 @@ CLIST *NewCList( void )
 }
 
 
-// Duplicate the inline file information of the CLIST
 STATIC FLIST *DupFList( const FLIST *old )
-/****************************************/
+/*****************************************
+ * Duplicate the inline file information of the CLIST
+ */
 {
     FLIST   *new;
     FLIST   *cur;
@@ -354,8 +356,9 @@ TLIST *DupTList( const TLIST * old )
 
 
 DEPEND *DupDepend( const DEPEND *old )
-/************************************/
-/* doesn't recursively descend old->next, or old->targs->target->depend */
+/*************************************
+ * doesn't recursively descend old->next, or old->targs->target->depend
+ */
 {
     DEPEND  *new;
 
@@ -421,9 +424,10 @@ void FreeSList( SLIST *slist )   /* non-recursive */
 }
 
 
-/* frees the inline file information for the clist */
 void FreeFList( FLIST *flist )   /* non-recursive */
-/****************************/
+/*****************************
+ * frees the inline file information for the clist
+ */
 {
     FLIST   *cur;
 
@@ -454,8 +458,10 @@ void FreeCList( CLIST *clist )
 }
 
 
-void FreeDepend( DEPEND *dep )   /* frees tlist, and clist */
-/****************************/
+void FreeDepend( DEPEND *dep )
+/*****************************
+ * frees tlist, and clist
+ */
 {
     DEPEND  *cur;
 
@@ -488,11 +494,11 @@ void KillTarget( const char *name )
  * function that the target is not a member of some TLIST
  */
 {
-    TARGET  *kill;
+    void    *mykill;
 
-    kill = (TARGET *)RemHashNode( targTab, name, CASESENSITIVE );
-    if( kill != NULL ) {
-        freeTarget( kill );
+    mykill = RemHashNode( targTab, name, CASESENSITIVE );
+    if( mykill != NULL ) {
+        freeTarget( mykill );
     }
 }
 
@@ -624,12 +630,13 @@ void PrintTargFlags( const TARGET *targ )
 
 
 STATIC BOOLEAN printTarg( void *node, void *ptr )
-/************************************************/
+/***********************************************/
 {
     TARGET const * const    targ = node;
     DEPEND const            *curdep;
     TLIST const             *curtlist;
 
+    (void)ptr; // Unused
     if( targ->special ) {
         return( FALSE );             /* don't print special targets */
     } else {
@@ -654,7 +661,7 @@ STATIC BOOLEAN printTarg( void *node, void *ptr )
                 }
             }
             if( curdep->clist ) {
-                PrtMsg( INF| PTARG_WOULD_EXECUTE_CMDS );
+                PrtMsg( INF | PTARG_WOULD_EXECUTE_CMDS );
                 PrintCList( curdep->clist );
             }
             curdep = curdep->next;
@@ -732,6 +739,7 @@ void TargOrAttr( TARGET *targ, TATTR attr )
 STATIC BOOLEAN resetEx( void *targ, void *ptr )
 /*********************************************/
 {
+    (void)ptr; // Unused
     ((TARGET *)targ)->executed = TRUE;
     return( FALSE );
 }
@@ -824,10 +832,12 @@ void TargetInit( void )
 #endif
 }
 
+
 #ifndef NDEBUG
 STATIC BOOLEAN walkFree( void *targ, void *ptr )
 /**********************************************/
 {
+    (void)ptr; // Unused
     freeTarget( (TARGET*)targ );
     return( FALSE );
 }
