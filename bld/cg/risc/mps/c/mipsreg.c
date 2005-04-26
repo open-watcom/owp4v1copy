@@ -37,6 +37,7 @@
 #include "sysmacro.h"
 #include "typedef.h"
 #include "feprotos.h"
+#include "optlbl.h"
 
 extern  proc_def        *CurrProc;
 
@@ -51,7 +52,7 @@ extern  int             SizeDisplayReg();
 extern  hw_reg_set      ReturnAddrReg( void );
 extern  hw_reg_set      VarargsHomePtr( void );
 extern  sym_handle      AskForLblSym( label_handle );
-
+extern  bool            AskIfRTLabel( code_lbl * );
 
 extern hw_reg_set SavedRegs( void )
 /*********************************/
@@ -96,18 +97,32 @@ extern  type_class_def CallState( aux_handle aux,
     hw_reg_set          *pregs;
     call_class          cclass;
     call_class          *pcclass;
+    risc_byte_seq       *code;
+    bool                have_aux_code = FALSE;
 
     state->unalterable = FixedRegs();
     if( FEAttr( AskForLblSym( CurrProc->label ) ) & FE_VARARGS ) {
         HW_TurnOn( state->unalterable, VarargsHomePtr() );
     }
+
+    // For code bursts only, query the #pragma aux instead of using
+    // hardcoded calling convention. If it ever turns out that we need
+    // to support more than a single calling convention, this will need
+    // to change to work more like x86
+    if( !AskIfRTLabel( CurrProc->label ) ) {
+        code = FEAuxInfo( aux, CALL_BYTES );
+        if( code != NULL ) {
+            have_aux_code = TRUE;
+        }
+    }
+
     pregs = FEAuxInfo( aux, SAVE_REGS );
     HW_CAsgn( state->modify, HW_FULL );
-#if 0
-    HW_TurnOff( state->modify, *pregs );
-#else
-    HW_TurnOff( state->modify, SavedRegs() );
-#endif
+    if( have_aux_code ) {
+        HW_TurnOff( state->modify, *pregs );
+    } else {
+        HW_TurnOff( state->modify, SavedRegs() );
+    }
     HW_CTurnOff( state->modify, HW_UNUSED );
     state->used = state->modify;    /* anything not saved is used */
     state->attr = 0;
@@ -126,7 +141,12 @@ extern  type_class_def CallState( aux_handle aux,
         state->attr |= ROUTINE_READS_NO_MEMORY;
     }
     i = 0;
-    parm_src = ParmRegs();  //FEAuxInfo( aux, PARM_REGS );
+    if( have_aux_code ) {
+        parm_src = FEAuxInfo( aux, PARM_REGS );
+    } else {
+        parm_src = ParmRegs();
+    }
+
     parm_dst = &parms[0];
 
     for( ;; ) {
