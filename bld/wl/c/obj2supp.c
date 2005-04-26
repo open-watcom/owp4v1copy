@@ -165,7 +165,7 @@ extern void RelocStartMod( void )
     LastSegData = NULL;
 }
 
-static byte     OffsetSizes[] = { 0, 1, 2, 4, 4, 4 };
+static byte     OffsetSizes[] = { 0, 1, 2, 4, 4, 4, 4 };
 
 static unsigned CalcFixupSize( fix_type type )
 /********************************************/
@@ -718,8 +718,8 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
         val &= 0x001FFFFF;
         PUT_U32( code, oldval | val );
         break;
-    case FIX_OFFSET_24:     // in FIX_OFFSET_24 the lowest two bits aren't
-    case FIX_OFFSET_26:     // part of the reloc, but calculation is the same
+    case FIX_OFFSET_26:     // Processing is the same, except FIX_OFFSET_26
+    case FIX_OFFSET_24:     // uses FIX_SHIFT (it's really a 28-bit offset)
         oldval = GET_U32( code );
         val += oldval;
         oldval &= 0xFC000000;

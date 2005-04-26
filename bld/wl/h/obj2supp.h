@@ -52,9 +52,9 @@ typedef enum {
     FIX_SEC_REL         = 0x00008000,
 
     FIX_NO_OFFSET       = 0,
-    FIX_OFFSET_8        = 0x00010000,
-    FIX_OFFSET_16       = 0x00020000,
-    FIX_OFFSET_21       = 0x00030000,
+    FIX_OFFSET_8        = 0x00010000,   // If a new FIX_OFFSET constant is
+    FIX_OFFSET_16       = 0x00020000,   // added, the OffsetSizes array in
+    FIX_OFFSET_21       = 0x00030000,   // obj2supp.c also has to be updated!
     FIX_OFFSET_32       = 0x00040000,
     FIX_OFFSET_24       = 0x00050000,
     FIX_OFFSET_26       = 0x00060000,

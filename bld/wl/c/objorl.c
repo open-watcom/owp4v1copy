@@ -680,7 +680,7 @@ static orl_return DoReloc( orl_reloc *reloc )
         type = FIX_OFFSET_16;
         break;
     case ORL_RELOC_TYPE_WORD_26:
-        type = FIX_OFFSET_26;
+        type = FIX_OFFSET_26 | FIX_SHIFT;
         break;
     case ORL_RELOC_TYPE_TOCREL_14:  // relative ref to 14-bit offset from TOC base.
         type = FIX_SHIFT;           // NOTE fall through
