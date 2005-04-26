@@ -107,8 +107,9 @@ typedef unsigned long stateflag;
 #define INTERNAL_DEBUG          0x00200000
 #define GOT_PREV_STRUCTS        0x00400000
 #define DOSSEG_FLAG             0x00800000
+#define HAVE_MIPS_CODE          0x01000000
 
-#define HAVE_MACHTYPE_MASK      (HAVE_I86_CODE | HAVE_ALPHA_CODE | HAVE_PPC_CODE)
+#define HAVE_MACHTYPE_MASK      (HAVE_I86_CODE | HAVE_ALPHA_CODE | HAVE_PPC_CODE | HAVE_MIPS_CODE)
 #define CLEAR_ON_INC    (STOP_WORKING | INTERNAL_DEBUG | GOT_PREV_STRUCTS | MAKE_RELOCS | RUNNING_OS2_FLAG | FMT_SPECIFIED | FMT_DECIDED | FMT_INITIALIZED)
 
 // this used for ID splits.
@@ -167,9 +168,9 @@ enum {
     E_LAN,
     E_DSK,
     E_NAM,
-	E_NOV_MSL,
-	E_NOV_HAM,
-	E_NOV_CDM,
+    E_NOV_MSL,
+    E_NOV_HAM,
+    E_NOV_CDM,
     E_COM,
     E_REX,
     E_QNX,

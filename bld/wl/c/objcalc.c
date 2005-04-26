@@ -410,6 +410,8 @@ extern void CalcAddresses( void )
         } else if( FmtData.type & MK_ELF ) {
             if( LinkState & HAVE_PPC_CODE )
                 FmtData.base = 0x10000000;
+            else if( LinkState & HAVE_MIPS_CODE )
+                FmtData.base = 0x00400000;
             else
                 FmtData.base = 0x08048000;
         } else {

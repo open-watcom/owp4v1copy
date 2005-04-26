@@ -222,6 +222,9 @@ static bool CheckFlags( orl_file_handle filehdl )
     case ORL_MACHINE_TYPE_PPC601:
         typemask = HAVE_PPC_CODE;
         break;
+    case ORL_MACHINE_TYPE_R3000:
+        typemask = HAVE_MIPS_CODE;
+        break;
     case ORL_MACHINE_TYPE_NONE:
         typemask = 0;
         break;
@@ -667,9 +670,6 @@ static orl_return DoReloc( orl_reloc *reloc )
     istoc = FALSE;
     type = 0;
     switch( reloc->type ) {
-    case ORL_RELOC_TYPE_NONE:
-        LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
-        break;
     case ORL_RELOC_TYPE_PAIR:
         skip = TRUE;
         break;
@@ -678,6 +678,9 @@ static orl_return DoReloc( orl_reloc *reloc )
         break;
     case ORL_RELOC_TYPE_WORD_16:
         type = FIX_OFFSET_16;
+        break;
+    case ORL_RELOC_TYPE_WORD_26:
+        type = FIX_OFFSET_26;
         break;
     case ORL_RELOC_TYPE_TOCREL_14:  // relative ref to 14-bit offset from TOC base.
         type = FIX_SHIFT;           // NOTE fall through
@@ -743,6 +746,10 @@ static orl_return DoReloc( orl_reloc *reloc )
             reloc = &SavedReloc;
             type = FIX_HIGH_OFFSET_16;
         }
+        break;
+    case ORL_RELOC_TYPE_NONE:
+    default:
+        LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
         break;
     }
     if( !skip ) {

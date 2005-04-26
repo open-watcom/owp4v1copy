@@ -718,7 +718,8 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
         val &= 0x001FFFFF;
         PUT_U32( code, oldval | val );
         break;
-    case FIX_OFFSET_24:
+    case FIX_OFFSET_24:     // in FIX_OFFSET_24 the lowest two bits aren't
+    case FIX_OFFSET_26:     // part of the reloc, but calculation is the same
         oldval = GET_U32( code );
         val += oldval;
         oldval &= 0xFC000000;
@@ -1544,6 +1545,21 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 }
             } else {
                 new_reloc.item.elf.info = R_PPC_REL32;
+                LnkMsg( LOC + ERR + MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
+            }
+        } else if( LinkState & HAVE_MIPS_CODE ) {
+            if( fix->type & FIX_HIGH ) {
+                new_reloc.item.elf.info = R_MIPS_HI16;
+                new_reloc.item.elf.addend = (unsigned_16)targ.off;
+            } else if( ftype == FIX_OFFSET_16 ) {
+                new_reloc.item.elf.info = R_MIPS_LO16;
+                if( !(FmtData.objalign & 0xFFFF) ) {
+                    save = FALSE;
+                }
+            } else if( ftype == FIX_OFFSET_26 ) {
+                new_reloc.item.elf.info = R_MIPS_26;
+            } else {
+                new_reloc.item.elf.info = R_MIPS_REL32;
                 LnkMsg( LOC + ERR + MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
             }
         }

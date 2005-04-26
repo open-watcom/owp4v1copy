@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definitions for obj2supp module - dealing with relocations.
 *
 ****************************************************************************/
 
@@ -58,6 +57,7 @@ typedef enum {
     FIX_OFFSET_21       = 0x00030000,
     FIX_OFFSET_32       = 0x00040000,
     FIX_OFFSET_24       = 0x00050000,
+    FIX_OFFSET_26       = 0x00060000,
     FIX_OFFSET_SHIFT    = 16,
     FIX_OFFSET_MASK     = 0x00070000,
 
