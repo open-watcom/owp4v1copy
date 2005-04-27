@@ -218,11 +218,9 @@ static bool dirFuncSetOption( directive_t *dir, dir_table_enum parm ) {
         } else if( optionString( str, "nomacro" ) ) {
             _DirUnSet( MACRO );
         } else if( optionString( str, "reorder" ) ) {
-            // ignore this for now
-            // _DirSet( REORDER );
+            _DirSet( REORDER );
         } else if( optionString( str, "noreorder" ) ) {
-            // ignore this for now
-            // _DirUnSet( REORDER );
+            _DirUnSet( REORDER );
         } else if( optionString( str, "volatile" ) ) {
             // ignore this for now
             // _DirSet( VOLATILE );
@@ -849,6 +847,7 @@ static dir_table asm_directives[] = {
     { ".little_endian", dirFuncIgnore,      DT_NOPARM,      LINE },
     { ".big_endian",    dirFuncUnsupported, DT_NOPARM,      LINE },
     #elif defined( AS_MIPS )
+    { ".word",      dirFuncValues,          DT_VAL_INT32,   INT | RINT | SYM },
     #endif
 };
 
@@ -919,6 +918,7 @@ extern void DirInit( void ) {
     AsDirSetOptions = NONE;
     _DirSet( AT );
     _DirSet( MACRO );
+    _DirSet( REORDER );
 }
 
 extern void DirSetNextScanState( sym_handle sym ) {

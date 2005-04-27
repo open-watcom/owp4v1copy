@@ -90,6 +90,13 @@ typedef mips_template ins_template;
 struct ins_symbol;
 typedef struct ins_symbol ins_symbol;
 
+typedef enum {
+    MIPS_ISA1           = 0x01,
+    MIPS_ISA2           = 0x02,
+    MIPS_ISA3           = 0x03,
+    MIPS_ISA4           = 0x04
+} ins_level;
+
 typedef struct ins_table {
     const char          *name;
     ins_opcode          opcode;
@@ -97,6 +104,7 @@ typedef struct ins_table {
     ins_template        template;       /* used to check operand types and encode the instruction */
     ins_enum_method     method;         /* which enumeration method to list all the possible instructions */
     ins_symbol          *symbols;
+    ins_level           level;          /* MIPS ISA level required */
 } ins_table;
 
 /*

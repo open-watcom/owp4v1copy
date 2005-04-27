@@ -36,7 +36,7 @@ PICK( IT_MEMORY_A,      ITMemA,         OP_GPR, OP_NOTHING, OP_NOTHING )        
 PICK( IT_MEMORY_B,      ITMemB,         OP_REG_INDIRECT, OP_NOTHING, OP_NOTHING )                       /* fetch   */
 PICK( IT_MEMORY_NONE,   ITMemNone,      OP_NOTHING, OP_NOTHING, OP_NOTHING )                            /* mb      */
 PICK( IT_REG_JUMP,      ITRegJump,      OP_GPR, (OP_GPR | OP_NOTHING), OP_NOTHING )                     /* jalr    */
-PICK( IT_JUMP,          ITJump,         OP_IMMED, OP_NOTHING, OP_NOTHING )                              /* j       */
+PICK( IT_JUMP,          ITJump,         (OP_GPR | OP_IMMED), (OP_GPR | OP_NOTHING), OP_NOTHING )        /* j       */
 PICK( IT_BRANCH,        ITBranch,       (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* bsr     */
 PICK( IT_BRANCH_TWO,    ITBranchTwo,    OP_GPR, OP_GPR, OP_IMMED )                                      /* beq     */
 PICK( IT_FP_BRANCH,     ITBranch,       OP_FPR, OP_IMMED, OP_NOTHING )                                  /* fbeq    */

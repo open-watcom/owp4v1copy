@@ -97,10 +97,13 @@ typedef op_type ot_array[MAX_VARIETIES][3];
 
 #define ZERO_REG                MakeReg( RC_GPR, MIPS_ZERO_SINK )
 
+#define OPCODE_NOP      0x00
 #define OPCODE_ADDIU    0x09
 #define OPCODE_ORI      0x0d
 #define OPCODE_LUI      0x0f
 #define FNCCODE_OR      0x25
+#define FNCCODE_JR      0x08
+#define FNCCODE_JALR    0x09
 
 // TODO: kill off these macros
 #define OPCODE_BIS      0x11
@@ -714,12 +717,26 @@ static void doMemJump( uint_32 *buffer, ins_table *table, uint_8 ra, uint_8 rb, 
 }
 
 
-static void doAbsJump( uint_32 *buffer, ins_table *table, uint_8 ra, uint_8 rb, ins_operand *addr_op, asm_reloc *reloc )
-//**********************************************************************************************************************
+static int doDelaySlotNOP( uint_32 *buffer )
+//******************************************
+{
+    int     inc = 0;
+
+    if( _DirIsSet( REORDER ) ) {
+        buffer += sizeof( uint_32 );
+        *buffer = OPCODE_NOP;
+        inc = 1;
+    }
+    return( inc );
+}
+
+
+static void doAbsJump( uint_32 *buffer, ins_table *table, ins_operand *addr_op, asm_reloc *reloc )
+//************************************************************************************************
 {
     assert( addr_op == NULL || addr_op->type == OP_IMMED );
     doOpcodeJType( buffer, table->opcode );
-    doReloc( reloc, addr_op, OWL_RELOC_JUMP_REL, buffer );
+    doReloc( reloc, addr_op, OWL_RELOC_JUMP_ABS, buffer );
 }
 
 
@@ -766,29 +783,30 @@ static bool opValidate( ot_array *verify, instruction *ins, ins_opcount num_op, 
 }
 
 
-static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op )
-//*********************************************************************
-// Used by jmp, jsr
+static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op, bool link )
+//********************************************************************************
+// Used by j, jal
 {
     static op_type  verify1[][3] = { { OP_REG_INDIRECT, OP_NOTHING, OP_NOTHING },
+                                     { OP_GPR, OP_NOTHING, OP_NOTHING },
                                      { OP_IMMED, OP_NOTHING, OP_NOTHING } };
     static op_type  verify2[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_NOTHING },
-                                     { OP_GPR, OP_IMMED, OP_NOTHING },
-                                     { OP_REG_INDIRECT, OP_IMMED, OP_NOTHING }};
-    static op_type  verify3[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_IMMED } };
+                                     { OP_GPR, OP_GPR, OP_NOTHING },
+                                     { OP_GPR, OP_IMMED, OP_NOTHING }};
     ot_array        *verify;
-    ot_array        *verify_table[3] = { &verify1, &verify2, &verify3 };
+    ot_array        *verify_table[2] = { &verify1, &verify2 };
     unsigned        num_var;
 
-    if( num_op == 0 ) return( TRUE );
-    assert( num_op <= 3 );
+    if( num_op == 0 )
+        return( FALSE );
+    assert( num_op <= 2 );
     verify = verify_table[num_op - 1];
     if( num_op == 1 ) {
         num_var = sizeof( verify1 ) / sizeof( **verify1 ) / 3;
-    } else if( num_op == 2 ) {
-        num_var = sizeof( verify2 ) / sizeof( **verify2 ) / 3;
     } else {
-        num_var = sizeof( verify3 ) / sizeof( **verify3 ) / 3;
+        if( !link ) // two-operand from only valid for 'jal', not 'j'
+            return( FALSE );
+        num_var = sizeof( verify2 ) / sizeof( **verify2 ) / 3;
     }
     assert( num_var <= MAX_VARIETIES );
     return( opValidate( verify, ins, num_op, num_var ) );
@@ -831,67 +849,40 @@ static void ITJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_rel
 {
     ins_operand *op0, *op1;
     ins_opcount num_op;
-    int         inc;
-    uint_8      d_reg_idx;      // default d_reg if not specified
+    bool        link;
 
+    // 'j' and 'jal' may both be used with the jump target given as either
+    // an expression or a GPR; this means the instructions will end up being
+    // encoded as j/jal or jr/jalr depending on operands.
     num_op = ins->num_operands;
+    link   = table->opcode & 1;
     // First check if the operands are of the right types
-    if( !jmpOperandsValidate( ins, num_op ) ) return;
-    if( num_op == 3 ) {
-        stdMemJump( table, ins, buffer, reloc );
-        doAbsJump( buffer, table, 0, 0, NULL, NULL );
+    if( !jmpOperandsValidate( ins, num_op, link ) )
         return;
-    }
-    if( table->funccode == 0x0001 ) { // jsr
-        // This is according to the MS asaxp documentation.
-        d_reg_idx = MIPS_RETURN_ADDR;
-    } else {
-        assert( table->funccode == 0x0000 ); // jmp
-        d_reg_idx = 31; // $zero
-    }
-    if( num_op == 2 ) {
-        if( (op0 = ins->operands[0])->type == OP_GPR ) {
-            if( (op1 = ins->operands[1])->type == OP_REG_INDIRECT ) {
-                doMemJump( buffer, table, RegIndex( op0->reg ),
-                           RegIndex( op1->reg ), NULL, 0, reloc );
-                return;
-            }
-            assert( op1->type == OP_IMMED );
-            if( !_DirIsSet( AT ) ) {
-                Warning( INS_USES_AT_REG );
-            }
-            /* load addr to $at (as s_reg) from op1 */
-            inc = ldaConst32( buffer, AT_REG_IDX, MIPS_ZERO_SINK, op1,
-                              op1->constant, reloc, TRUE );
-            doMemJump( buffer + inc, table, RegIndex( op0->reg ), AT_REG_IDX,
-                       NULL, 0, reloc );
-            numExtendedIns += inc;  // total # of instructions = inc + 1
-            return;
-        }
-        assert( op0->type == OP_REG_INDIRECT );
-        op1 = ins->operands[1];
-        assert( op1->type == OP_IMMED );
-        doMemJump( buffer, table, d_reg_idx, RegIndex( op0->reg ),
-                   op1, op1->constant, reloc );
-        return;
-    }
-    assert( num_op == 1 );
-    if( (op0 = ins->operands[0])->type == OP_REG_INDIRECT ) {
-        doMemJump( buffer, table, d_reg_idx, RegIndex( op0->reg ),
-                   NULL, 0, reloc );
-        return;
-    }
-    assert( op0->type == OP_IMMED );
-    if( !_DirIsSet( AT ) ) {
-        Warning( INS_USES_AT_REG );
-    }
-    /* Gen code to load addr to $at (as s_reg) from op1 */
-    inc = ldaConst32( buffer, AT_REG_IDX, MIPS_ZERO_SINK, op0, op0->constant, reloc, TRUE );
-    doMemJump( buffer + inc, table, d_reg_idx, AT_REG_IDX,
-               NULL, 0, reloc );
-    numExtendedIns += inc;  // total # of instructions = inc + 1
-    return;
 
+    op0 = ins->operands[0];
+    if( op0->type == OP_IMMED ) {   // real j/jal (to absolute address)
+        doAbsJump( buffer, table, op0, reloc );
+    } else if( num_op == 1 ) {
+        if( link ) {    // jalr $ra,rs
+            if( op0->reg == MIPS_RETURN_ADDR ) {
+                // TODO: warn - non-restartable instruction
+            }
+            doOpcodeRType( buffer, 0, FNCCODE_JALR, RegIndex( MIPS_RETURN_ADDR ),
+                RegIndex( op0->reg ), 0 );
+        } else {        // jr rs
+            doOpcodeRType( buffer, 0, FNCCODE_JR, 0, RegIndex( op0->reg ), 0 );
+        }
+    } else {    // jalr rd,rs
+        op1 = ins->operands[1];
+        if( op0->reg == op0->reg ) {
+            // TODO: warn - non-restartable instruction
+        }
+        doOpcodeRType( buffer, 0, FNCCODE_JALR, RegIndex( op1->reg ),
+            RegIndex( op0->reg ), 0 );
+    }
+    numExtendedIns += doDelaySlotNOP( buffer );
+    return;
 }
 
 
@@ -1067,16 +1058,10 @@ static void ITMovSpecial( ins_table *table, instruction *ins, uint_32 *buffer, a
 static void ITMovFP( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //******************************************************************************************
 {
-    ins_funccode    fc = 0;
-    uint_32         extra = 0;
-
     assert( ins->num_operands == 2 );
     reloc = reloc;
-//    fc = getFuncCode( table, ins );
-    doOpcodeFcRsRtRd( buffer, table->opcode, fc,
-                      RegIndex( ins->operands[0]->reg ),
-                      RegIndex( ins->operands[0]->reg ),
-                      RegIndex( ins->operands[0]->reg ), extra );
+    doOpcodeRType( buffer, table->opcode, 0, RegIndex( ins->operands[1]->reg ),
+        table->funccode, RegIndex( ins->operands[0]->reg ) );
 }
 
 
