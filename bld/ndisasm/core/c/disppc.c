@@ -43,6 +43,15 @@ extern const unsigned short     DisRegisterTable[];
 
 #define MK_SPR(a,b) (((a)<<5)|(b))
 
+// Macro to sort out operand position depending on endianness (needed to
+// get disassembler to correctly process relocations - in big endian object
+// files, 16-bit relocs are located two bytes past instruction start)
+#ifdef __BIG_ENDIAN__
+    #define     OP_POS( l, b )  (h->need_bswap ? l : b)
+#else
+    #define     OP_POS( l, b )  (h->need_bswap ? b : l)
+#endif
+
 #ifdef __BIG_ENDIAN__
 
 typedef union {
@@ -364,6 +373,7 @@ dis_handler_return PPCImmediate( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_IMMED;
+    ins->op[2].op_position = OP_POS( 0, 2 );
     switch( ins->type ) {
     case DI_PPC_andi_dot:
     case DI_PPC_andis_dot:
