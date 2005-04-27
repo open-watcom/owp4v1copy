@@ -326,24 +326,25 @@ static void DoDFSegRange( void ) {
     currSection = old;
 }
 
-extern  void    ObjFini() {
-/**************************/
+extern  void    ObjFini( void )
+/*****************************/
+{
+    offset          code_size;
+    section_def     *curr;
 
-    if( _IsModel( DBG_DF ) ){
-        if( _IsModel( DBG_LOCALS | DBG_TYPES ) ){
-            offset        codesize;
-            section_def  *curr;
+    curr = FindSection( codeSection );
+    code_size = OWLTellSize( curr->owl_handle  );
 
-            curr = FindSection( codeSection );
-            codesize = OWLTellSize( curr->owl_handle  );
+    if( _IsModel( DBG_DF ) ) {
+        if( _IsModel( DBG_LOCALS | DBG_TYPES ) ) {
             DoDFSegRange();
-            DFObjFiniDbgInfo( codesize );
+            DFObjFiniDbgInfo( code_size );
 #if 0 // save for jimr
-        }else if( _IsModel( NUMBERS ) ){
+        } else if( _IsModel( NUMBERS ) ) {
             DFObjLineFiniDbgInfo();
 #endif
         }
-    }else if( _IsModel( DBG_CV ) ){
+    } else if( _IsModel( DBG_CV ) ) {
         CVObjFiniDbgInfo();
     }
     DefaultLibs();
@@ -353,6 +354,8 @@ extern  void    ObjFini() {
     OWLFini( owlHandle );
     DeleteSections();
     CloseObj();
+    FEMessage( MSG_CODE_SIZE, (pointer)code_size );
+//    FEMessage( MSG_DATA_SIZE, (pointer)data_size );
 }
 
 // FIXME: This sucks - but time runneth out
