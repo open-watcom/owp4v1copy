@@ -8,6 +8,7 @@ targets = mkerr.exe envarg.exe ifeq.exe
 
 !ifdef __UNIX__
 targets += rem
+additional_cleanup = rem
 !endif
 
 all: $(targets) .SYMBOLIC
@@ -24,4 +25,3 @@ ifeq.exe: ifeq.c
 
 rem: rem.c
         $(bld_cl) $[@ $(wcl_util_opts)
-        mv rem.exe rem
