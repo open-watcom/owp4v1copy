@@ -133,12 +133,16 @@ static void composeFileNames( bool list_file )
 
     // object file name
     _splitpath2( ObjFileName, path, &drive, &dir, &file_name, &extension );
+#ifndef __UNIX__
+    // tacking on an extension is self-defeating on UNIX, and the extra
+    // dot at end trick doesn't work either
     if( strlen( extension ) == 0 ) {
         length = strlen( ObjFileName );
         MemFree( ObjFileName );
         ObjFileName = (char *) MemAlloc( length + strlen( OBJ_FILE_EXTENSION ) + 1 );
         _makepath( ObjFileName, drive, dir, file_name, OBJ_FILE_EXTENSION );
     } // else file name has an extension - leave as is
+#endif    
     if( list_file ) {
         if( ListFileName == NULL ) {
             length = strlen( drive ) + strlen( dir ) + strlen( dir ) +
