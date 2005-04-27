@@ -43,6 +43,34 @@ static  hw_reg_set      Empty[] = {
     EMPTY
 };
 
+static  hw_reg_set      Reg64Order[] = {
+    HW_D_1( HW_D2 ),
+    HW_D_1( HW_D3 ),
+    HW_D_1( HW_D4 ),
+    HW_D_1( HW_D5 ),
+    HW_D_1( HW_D6 ),
+    HW_D_1( HW_D7 ),
+    HW_D_1( HW_D8 ),
+    HW_D_1( HW_D9 ),
+    HW_D_1( HW_D10 ),
+    HW_D_1( HW_D11 ),
+    HW_D_1( HW_D12 ),
+    HW_D_1( HW_D13 ),
+    HW_D_1( HW_D14 ),
+    HW_D_1( HW_D15 ),
+    HW_D_1( HW_D16 ),
+    HW_D_1( HW_D17 ),
+    HW_D_1( HW_D18 ),
+    HW_D_1( HW_D19 ),
+    HW_D_1( HW_D20 ),
+    HW_D_1( HW_D21 ),
+    HW_D_1( HW_D22 ),
+    HW_D_1( HW_D23 ),
+    HW_D_1( HW_D24 ),
+    HW_D_1( HW_D25 ),
+    HW_D_1( HW_EMPTY )
+};
+
 static  hw_reg_set      ByteRegs[] = {
     HW_D_1( HW_B0 ),
     HW_D_1( HW_B1 ),
@@ -151,39 +179,13 @@ static  hw_reg_set      DWordRegs[] = {
     HW_D_1( HW_EMPTY )
 };
 
+/* 64-bit "double" registers for MIPS32 */
 static  hw_reg_set      QWordRegs[] = {
-    HW_D_1( HW_R0 ),
-    HW_D_1( HW_R1 ),
-    HW_D_1( HW_R2 ),
-    HW_D_1( HW_R3 ),
-    HW_D_1( HW_R4 ),
-    HW_D_1( HW_R5 ),
-    HW_D_1( HW_R6 ),
-    HW_D_1( HW_R7 ),
-    HW_D_1( HW_R8 ),
-    HW_D_1( HW_R9 ),
-    HW_D_1( HW_R10 ),
-    HW_D_1( HW_R11 ),
-    HW_D_1( HW_R12 ),
-    HW_D_1( HW_R13 ),
-    HW_D_1( HW_R14 ),
-    HW_D_1( HW_R15 ),
-    HW_D_1( HW_R16 ),
-    HW_D_1( HW_R17 ),
-    HW_D_1( HW_R18 ),
-    HW_D_1( HW_R19 ),
-    HW_D_1( HW_R20 ),
-    HW_D_1( HW_R21 ),
-    HW_D_1( HW_R22 ),
-    HW_D_1( HW_R23 ),
-    HW_D_1( HW_R24 ),
-    HW_D_1( HW_R25 ),
-    HW_D_1( HW_R26 ),
-    HW_D_1( HW_R27 ),
-    HW_D_1( HW_R28 ),
-    HW_D_1( HW_R29 ),
-    HW_D_1( HW_R30 ),
-    HW_D_1( HW_R31 ),
+    HW_D_1( HW_Q2 ),
+    HW_D_1( HW_Q4 ),
+    HW_D_1( HW_Q6 ),
+    HW_D_1( HW_Q8 ),
+    HW_D_1( HW_Q10 ),
     HW_D_1( HW_EMPTY )
 };
 
@@ -270,6 +272,8 @@ static  hw_reg_set      AllParmRegs[] = {
     HW_D_1( HW_R5 ),
     HW_D_1( HW_R6 ),
     HW_D_1( HW_R7 ),
+    HW_D_1( HW_Q4 ),
+    HW_D_1( HW_Q6 ),
     HW_D_1( HW_F12 ),
     HW_D_1( HW_F14 ),
     HW_D_1( HW_EMPTY )
@@ -277,10 +281,8 @@ static  hw_reg_set      AllParmRegs[] = {
 
 
 static  hw_reg_set      Parm8Regs[] = {
-    HW_D_1( HW_R4 ),
-    HW_D_1( HW_R5 ),
-    HW_D_1( HW_R6 ),
-    HW_D_1( HW_R7 ),
+    HW_D_1( HW_Q4 ),
+    HW_D_1( HW_Q6 ),
     HW_D_1( HW_EMPTY )
 };
 
@@ -290,7 +292,7 @@ static  hw_reg_set      Parm8Regs2[] = {
 };
 
 static  hw_reg_set      Return8[] = {
-    HW_D_1( HW_R2 ),
+    HW_D_1( HW_Q2 ),
     HW_D_1( HW_EMPTY )
 };
 
@@ -442,7 +444,7 @@ extern  hw_reg_set ReturnReg( type_class_def class )
         return( HW_D2 );
     case U8:
     case I8:
-        return( HW_R2 );
+        return( HW_Q2 );
     default:
         return( HW_R2 );
     }
@@ -550,6 +552,24 @@ extern  bool IsSegReg( hw_reg_set regs )
 }
 
 
+extern  type_class_def RegClass( hw_reg_set regs )
+/************************************************/
+{
+    hw_reg_set          test;
+
+    if( HW_COvlap( regs, HW_FPR ) ) return( FD );
+    HW_CAsgn( test, HW_BREGS );
+    if( HW_Subset( test, regs ) ) return( U1 );
+    HW_CAsgn( test, HW_WREGS );
+    if( HW_Subset( test, regs ) ) return( U2 );
+    HW_CAsgn( test, HW_DREGS );
+    if( HW_Subset( test, regs ) ) return( U4 );
+    HW_CAsgn( test, HW_QREGS );
+    if( HW_Subset( test, regs ) ) return( U8 );
+    return( U4 );   // would be different for MIPS64
+}
+
+
 extern  hw_reg_set Low16Reg( hw_reg_set regs )
 /********************************************/
 {
@@ -598,35 +618,71 @@ extern  hw_reg_set Low48Reg( hw_reg_set regs )
 }
 
 
-extern  hw_reg_set High64Reg( hw_reg_set regs )
-/*********************************************/
+extern  hw_reg_set Low64Reg( hw_reg_set regs )
+/*********************************************
+ * return the low order part of 64 bit register "regs"
+ */
 {
-    regs = regs;
-    return( HW_EMPTY );
+    hw_reg_set  low;
+    hw_reg_set  *order;
+
+    if( HW_CEqual( regs, HW_EMPTY ) )
+        return( HW_EMPTY );
+    order = &Reg64Order;
+    for( ;; ) {
+        if( HW_Ovlap( *order, regs ) ) break;
+        ++order;
+    }
+    low = regs;
+    HW_OnlyOn( low, *order );
+    if( HW_Equal( low, regs ) ) {
+        low = HW_EMPTY;
+    }
+    return( low );
 }
 
 
-extern  hw_reg_set Low64Reg( hw_reg_set regs )
-/********************************************/
-{
-    regs = regs;
-    return( HW_EMPTY );
+extern  hw_reg_set High64Reg( hw_reg_set regs )
+/**********************************************
+ * return the high order part of 64 bit register "regs"
+ */
+ {
+    hw_reg_set  high;
+
+    high = Low64Reg( regs );
+    if( !HW_CEqual( high, HW_EMPTY ) ) {
+        HW_TurnOff( regs, high );
+        return( regs );
+    }
+    return( high );
 }
 
 
 extern  hw_reg_set HighReg( hw_reg_set regs )
 /*******************************************/
 {
-    regs = regs;
-    return( HW_EMPTY );
+    switch( RegClass( regs ) ) {
+    case FD:
+    case U8:
+    case I8:
+        return( High64Reg( regs ) );
+    default:
+        return( HW_EMPTY );
+    }
 }
 
 
 extern  hw_reg_set LowReg( hw_reg_set regs )
 /******************************************/
 {
-    regs = regs;
-    return( HW_EMPTY );
+    switch( RegClass( regs ) ) {
+    case U8:
+    case I8:
+    case FD:
+        return( Low64Reg( regs ) );
+    default:
+        return( HW_EMPTY );
+    }
 }
 
 
@@ -635,22 +691,6 @@ extern  hw_reg_set FullReg( hw_reg_set regs )
 {
     regs = regs;
     return( regs );
-}
-
-
-extern  type_class_def RegClass( hw_reg_set regs )
-/************************************************/
-{
-    hw_reg_set          test;
-
-    if( HW_COvlap( regs, HW_FPR ) ) return( FD );
-    HW_CAsgn( test, HW_BREGS );
-    if( HW_Subset( test, regs ) ) return( U1 );
-    HW_CAsgn( test, HW_WREGS );
-    if( HW_Subset( test, regs ) ) return( U2 );
-    HW_CAsgn( test, HW_DREGS );
-    if( HW_Subset( test, regs ) ) return( U4 );
-    return( U4 );   // would be different for MIPS64
 }
 
 
@@ -803,6 +843,9 @@ extern  uint_8 RegTrans( hw_reg_set reg )
      */
     for( i = 0; i < sizeof( GeneralRegs ) / sizeof( GeneralRegs[0] ); i++ ) {
         if( HW_Subset( GeneralRegs[i], reg ) ) return( i );
+    }
+    for( i = 0; i < sizeof( QWordRegs ) / sizeof( QWordRegs[0] ); i++ ) {
+        if( HW_Subset( QWordRegs[i], reg ) ) return( i * 2 + 2 );
     }
     for( i = 0; i < sizeof( FloatRegs ) / sizeof( FloatRegs[0] ); i++ ) {
         if( HW_Equal( reg, FloatRegs[i] ) ) return( i );

@@ -836,6 +836,7 @@ static  void Encode( instruction *ins )
         }
         break;
     case G_BYTE_CONST:
+        // TODO: this may not be needed on MIPS (since we can easily load 16-bit const)?
         assert( ins->operands[0]->n.class == N_CONSTANT );
         assert( ins->result->n.class == N_REGISTER );
         // 'addiu rt,$zero,immed'
@@ -845,9 +846,15 @@ static  void Encode( instruction *ins )
     case G_MOVE:
         assert( ins->operands[0]->n.class == N_REGISTER );
         assert( ins->result->n.class == N_REGISTER );
-        // generate a "BIS R31,Rn,Rm" instruction
         // 'or rd,rs,$zero'
-        GenRType( 0x00, 0x25, _NameReg( ins->result ), _NameReg( ins->operands[0] ), MIPS_ZERO_SINK );
+        GenRType( 0x00, 0x25, _NameReg( ins->result ),
+            _NameReg( ins->operands[0] ), MIPS_ZERO_SINK );
+        if( TypeClassSize[ins->type_class] == 8 ) {
+            // Move the odd register, too
+            // TODO: there should probably be a separate G_MOVE8?
+            GenRType( 0x00, 0x25, _NameReg( ins->result ) + 1,
+                _NameReg( ins->operands[0] ) + 1, MIPS_ZERO_SINK );
+        }
         break;
     case G_LEA_HIGH:
         assert( ins->operands[0]->n.class == N_CONSTANT );

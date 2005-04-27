@@ -304,6 +304,20 @@ HW_D29_##x = (hw_reg_part)(HW_W29_##x+HW_hw29_##x),             \
 HW_D30_##x = (hw_reg_part)(HW_W30_##x+HW_hw30_##x),             \
 HW_D31_##x = (hw_reg_part)(HW_W31_##x+HW_hw31_##x),             \
                                                                 \
+/* quadword sized registers (doubleword in MIPS parlance) */    \
+HW_Q2_##x = (hw_reg_part)(HW_D2_##x+HW_hd2_##x),                \
+HW_Q4_##x = (hw_reg_part)(HW_D4_##x+HW_hd4_##x),                \
+HW_Q6_##x = (hw_reg_part)(HW_D6_##x+HW_hd6_##x),                \
+HW_Q8_##x = (hw_reg_part)(HW_D8_##x+HW_hd8_##x),                \
+HW_Q10_##x = (hw_reg_part)(HW_D10_##x+HW_hd10_##x),             \
+HW_Q12_##x = (hw_reg_part)(HW_D12_##x+HW_hd12_##x),             \
+HW_Q14_##x = (hw_reg_part)(HW_D14_##x+HW_hd14_##x),             \
+HW_Q16_##x = (hw_reg_part)(HW_D16_##x+HW_hd16_##x),             \
+HW_Q18_##x = (hw_reg_part)(HW_D18_##x+HW_hd18_##x),             \
+HW_Q20_##x = (hw_reg_part)(HW_D20_##x+HW_hd20_##x),             \
+HW_Q22_##x = (hw_reg_part)(HW_D22_##x+HW_hd22_##x),             \
+HW_Q24_##x = (hw_reg_part)(HW_D12_##x+HW_hd24_##x),             \
+                                                                \
 HW_R0_##x = (hw_reg_part)(HW_W0_##x+HW_hw0_##x),                \
 HW_R1_##x = (hw_reg_part)(HW_W1_##x+HW_hw1_##x),                \
 HW_R2_##x = (hw_reg_part)(HW_W2_##x+HW_hw2_##x),                \
@@ -356,26 +370,23 @@ HW_FD28_##x = (hw_reg_part)(HW_F28_##x+HW_F29_##x),             \
 HW_FD30_##x = (hw_reg_part)(HW_F30_##x+HW_F31_##x),             \
                                                                 \
                                                                 \
-HW_QREGS_##x  = (hw_reg_part)(HW_R0_##x+HW_R1_##x+HW_R2_##x+HW_R3_##x+\
-        HW_R4_##x+HW_R5_##x+HW_R6_##x+HW_R7_##x+HW_R8_##x+HW_R9_##x+\
-        HW_R10_##x+HW_R11_##x+HW_R12_##x+HW_R13_##x+HW_R14_##x+HW_R15_##x+\
-        HW_R16_##x+HW_R17_##x+HW_R18_##x+HW_R19_##x+HW_R20_##x+HW_R21_##x+\
-        HW_R22_##x+HW_R23_##x+HW_R24_##x+HW_R25_##x+HW_R26_##x+HW_R27_##x+\
-        HW_R28_##x+HW_R29_##x+HW_R30_##x ),           \
+HW_QREGS_##x  = (hw_reg_part)(HW_Q2_##x+HW_Q4_##x+HW_Q6_##x+HW_Q8_##x+\
+        HW_Q10_##x+HW_Q12_##x+HW_Q14_##x+HW_Q16_##x+HW_Q18_##x+ \
+        HW_Q20_##x+HW_Q22_##x+HW_Q24_##x ),                     \
                                                                 \
 HW_DREGS_##x  = (hw_reg_part)(HW_D0_##x+HW_D1_##x+HW_D2_##x+HW_D3_##x+\
         HW_D4_##x+HW_D5_##x+HW_D6_##x+HW_D7_##x+HW_D8_##x+HW_D9_##x+\
         HW_D10_##x+HW_D11_##x+HW_D12_##x+HW_D13_##x+HW_D14_##x+HW_D15_##x+\
         HW_D16_##x+HW_D17_##x+HW_D18_##x+HW_D19_##x+HW_D20_##x+HW_D21_##x+\
         HW_D22_##x+HW_D23_##x+HW_D24_##x+HW_D25_##x+HW_D26_##x+HW_D27_##x+\
-        HW_D28_##x+HW_D29_##x+HW_D30_##x ),           \
+        HW_D28_##x+HW_D29_##x+HW_D30_##x ),                     \
                                                                 \
 HW_WREGS_##x  = (hw_reg_part)(HW_W0_##x+HW_W1_##x+HW_W2_##x+HW_W3_##x+\
         HW_W4_##x+HW_W5_##x+HW_W6_##x+HW_W7_##x+HW_W8_##x+HW_W9_##x+\
         HW_W10_##x+HW_W11_##x+HW_W12_##x+HW_W13_##x+HW_W14_##x+HW_W15_##x+\
         HW_W16_##x+HW_W17_##x+HW_W18_##x+HW_W19_##x+HW_W20_##x+HW_W21_##x+\
         HW_W22_##x+HW_W23_##x+HW_W24_##x+HW_W25_##x+HW_W26_##x+HW_W27_##x+\
-        HW_W28_##x+HW_W29_##x+HW_W30_##x ),           \
+        HW_W28_##x+HW_W29_##x+HW_W30_##x ),                     \
                                                                 \
 HW_BREGS_##x  = (hw_reg_part)(HW_B0_##x+HW_B1_##x+HW_B2_##x+HW_B3_##x+\
         HW_B4_##x+HW_B5_##x+HW_B6_##x+HW_B7_##x+HW_B8_##x+HW_B9_##x+\
@@ -433,6 +444,19 @@ HW_DEFINE_GLOBAL_CONST( HW_R28 );
 HW_DEFINE_GLOBAL_CONST( HW_R29 );
 HW_DEFINE_GLOBAL_CONST( HW_R30 );
 HW_DEFINE_GLOBAL_CONST( HW_R31 );
+
+HW_DEFINE_GLOBAL_CONST( HW_Q2 );
+HW_DEFINE_GLOBAL_CONST( HW_Q4 );
+HW_DEFINE_GLOBAL_CONST( HW_Q6 );
+HW_DEFINE_GLOBAL_CONST( HW_Q8 );
+HW_DEFINE_GLOBAL_CONST( HW_Q10 );
+HW_DEFINE_GLOBAL_CONST( HW_Q12 );
+HW_DEFINE_GLOBAL_CONST( HW_Q14 );
+HW_DEFINE_GLOBAL_CONST( HW_Q16 );
+HW_DEFINE_GLOBAL_CONST( HW_Q18 );
+HW_DEFINE_GLOBAL_CONST( HW_Q20 );
+HW_DEFINE_GLOBAL_CONST( HW_Q22 );
+HW_DEFINE_GLOBAL_CONST( HW_Q24 );
 
 HW_DEFINE_GLOBAL_CONST( HW_D0 );
 HW_DEFINE_GLOBAL_CONST( HW_D1 );
