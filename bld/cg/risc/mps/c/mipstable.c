@@ -152,16 +152,16 @@ MOVE_TABLE( Move8, QWORD, G_LOAD, G_STORE );
 #define BINARY_TABLE( name, reg ) \
 opcode_entry    name[] = {                                                              \
 /***************************/                                                           \
-/*       op1   op2   res   eq      verify          gen           reg            fu */         \
-_Bin(    R,    R,    R,    NONE ), V_NO,           G_BINARY,     RG_##reg,      FU_ALU,      \
-_Bin(    R,    C,    R,    NONE ), V_BYTECONST2,   G_BINARY_IMM, RG_##reg,      FU_ALU,      \
-_Bin(    R,    C,    R,    NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,       \
-_Bin(    C,    C,    R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,       \
-_Bin(    C,    ANY,  R,    NONE ), V_SYMMETRIC,    R_SWAPOPS,    RG_##reg,      FU_NO,       \
-_Bin(    C,    ANY,  R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,       \
-_Bin(    M,    ANY,  ANY,  NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,       \
-_Bin(    ANY,  M,    ANY,  NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,       \
-_Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      FU_NO,       \
+/*       op1   op2   res   eq      verify          gen           reg            fu */   \
+_Bin(    R,    R,    R,    NONE ), V_NO,           G_BINARY,     RG_##reg,      FU_ALU, \
+_Bin(    R,    C,    R,    NONE ), V_HALFWORDCONST2,G_BINARY_IMM,RG_##reg,      FU_ALU, \
+_Bin(    R,    C,    R,    NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,  \
+_Bin(    C,    C,    R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
+_Bin(    C,    ANY,  R,    NONE ), V_SYMMETRIC,    R_SWAPOPS,    RG_##reg,      FU_NO,  \
+_Bin(    C,    ANY,  R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
+_Bin(    M,    ANY,  ANY,  NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
+_Bin(    ANY,  M,    ANY,  NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,  \
+_Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      FU_NO,  \
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED, FU_NO,\
 };
 

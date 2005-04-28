@@ -49,7 +49,6 @@ extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskCodeSeg( void );
 extern  unsigned        DepthAlign( unsigned );
 extern  void            CodeLabelLinenum( label_handle, unsigned, cg_linenum );
-extern  void            CodeLabel( label_handle, unsigned );
 extern  hw_reg_set      *GPRegs();
 extern  hw_reg_set      *FPRegs();
 extern  hw_reg_set      *ParmRegs();

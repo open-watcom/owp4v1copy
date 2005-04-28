@@ -2139,7 +2139,7 @@ void GenCOptions( char **cmdline )
 #elif _CPU == _PPC
     ProcOptions( FEGetEnv( "WCCPPC" ) );
 #elif _CPU == _MIPS
-    ProcOptions( FEGetEnv( "WCCMIPS" ) );
+    ProcOptions( FEGetEnv( "WCCMPS" ) );
 #elif _CPU == _SPARC
     ProcOptions( FEGetEnv( "WCCSPC" ) );
 #else

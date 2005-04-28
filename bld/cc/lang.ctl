@@ -52,6 +52,11 @@ set PROJDIR=<CWD>
     <CPCMD> os2386.ppc/wccdppce.dll <RELROOT>/rel2/binp/dll/wccdppc.dll
     <CPCMD> os2386.ppc/wccdppce.sym <RELROOT>/rel2/binp/dll/wccdppc.sym
     <CPCMD> os2386.ppc/wccppc01.int <RELROOT>/rel2/binp/wccppc01.int
+    <CPCMD> os2386.mps/wccmpse.exe <RELROOT>/rel2/binp/wccmps.exe
+    <CPCMD> os2386.mps/wccmpse.sym <RELROOT>/rel2/binp/wccmps.sym
+    <CPCMD> os2386.mps/wccdmpse.dll <RELROOT>/rel2/binp/dll/wccdmps.dll
+    <CPCMD> os2386.mps/wccdmpse.sym <RELROOT>/rel2/binp/dll/wccdmps.sym
+    <CPCMD> os2386.mps/wccmps01.int <RELROOT>/rel2/binp/wccmps01.int
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt386.386/wcc386e.exe <RELROOT>/rel2/binnt/wcc386.exe
@@ -116,6 +121,17 @@ set PROJDIR=<CWD>
 #    <CPCMD> ntppc.ppc/wccdppce.dll <RELROOT>/rel2/ppcnt/wccdppc.dll
 #    <CPCMD> ntppc.ppc/wccdppce.sym <RELROOT>/rel2/ppcnt/wccdppc.sym
 #    <CPCMD> ntppc.ppc/wccppc01.int <RELROOT>/rel2/ppcnt/wccppc01.int
+
+  [ IFDEF (cpu_mps) <2*> ]          # MIPS target from 386 hosts
+#    <CPCMD> nt386.mps/wccmpse.exe   <RELROOT>/rel2/binnt/wccmps.exe
+#    <CPCMD> nt386.mps/wccmpse.sym   <RELROOT>/rel2/binnt/wccmps.sym
+#    <CPCMD> nt386.mps/wccdmpse.dll  <RELROOT>/rel2/binnt/wccdmps.dll
+#    <CPCMD> nt386.mps/wccdmpse.sym  <RELROOT>/rel2/binnt/wccdmps.sym
+#    <CPCMD> nt386.mps/wccmps01.int  <RELROOT>/rel2/binnt/wccmps01.int
+    <CPCMD> os2386.mps/wccmpse.exe  <RELROOT>/rel2/binp/wccmps.exe
+    <CPCMD> os2386.mps/wccmpse.sym  <RELROOT>/rel2/binp/wccmps.sym
+    <CPCMD> os2386.mps/wccdmpse.dll <RELROOT>/rel2/binp/dll/wccdmps.dll
+    <CPCMD> os2386.mps/wccdmpse.sym <RELROOT>/rel2/binp/dll/wccdmps.sym
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> qnx386.i86/wcci86c.qnx  <RELROOT>/rel2/qnx/binq/wcc.

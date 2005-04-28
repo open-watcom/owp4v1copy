@@ -45,12 +45,8 @@ extern    int   RoutineNum;
 
 rtn_info RTInfo[] = {
 /* name                 op              class   left      right  result*/
-"_OtsDivide32",         OP_DIV,         I4,     RL_PARM_4,RL_PARM2_4,RL_RET_4,
-"_OtsDivide32Unsigned", OP_DIV,         U4,     RL_PARM_4,RL_PARM2_4,RL_RET_4,
 "_OtsDivide64",         OP_DIV,         I8,     RL_PARM_8,RL_PARM2_8,RL_RET_8,
 "_OtsDivide64Unsigned", OP_DIV,         U8,     RL_PARM_8,RL_PARM2_8,RL_RET_8,
-"_OtsRemainder32",      OP_MOD,         I4,     RL_PARM_4,RL_PARM2_4,RL_RET_4,
-"_OtsRemainder32Unsigned",OP_MOD,       U4,     RL_PARM_4,RL_PARM2_4,RL_RET_4,
 "_OtsRemainder64",      OP_MOD,         I8,     RL_PARM_8,RL_PARM2_8,RL_RET_8,
 "_OtsRemainder64Unsigned",OP_MOD,       U8,     RL_PARM_8,RL_PARM2_8,RL_RET_8,
 "_WtcMemCopy",          OP_MOV,         XX,     RL_PARM_4,RL_PARM2_4,RL_RET_4,

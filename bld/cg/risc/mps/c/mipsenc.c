@@ -62,22 +62,16 @@ extern void DumpPtr( void *ptr );
 
 extern void             ObjBytes( char *buffer, int size );
 extern uint_8           RegTrans( hw_reg_set );
-extern void             OutLabel( label_handle );
-extern void             OutReloc( label_handle, mips_reloc, unsigned );
 extern pointer          AskForSymLabel( pointer, cg_class );
-extern hw_reg_set       StackReg( void );
-extern hw_reg_set       FrameReg( void );
 extern name             *DeAlias( name * );
 extern void             TryScrapLabel( code_lbl * );
-extern  offset          AskLocation();
-extern  void            OutLineNum( unsigned_16 line, bool label_line );
 extern void             EmitDbgInfo( instruction * );
-extern  void            ObjEmitSeq( risc_byte_seq * );
-extern  bool            AskIfRTLabel( code_lbl * );
-extern  void            InputOC( any_oc * );
-extern  opcode_defs     FlipOpcode( opcode_defs );
-extern  void            FactorInt32( signed_32 val, signed_16 *, signed_16 *, signed_16 * );
-extern  label_handle    RTLabel( int );
+extern void             ObjEmitSeq( risc_byte_seq * );
+extern bool             AskIfRTLabel( code_lbl * );
+extern void             InputOC( any_oc * );
+extern opcode_defs      FlipOpcode( opcode_defs );
+extern void             FactorInt32( signed_32 val, signed_16 *, signed_16 *, signed_16 * );
+extern label_handle     RTLabel( int );
 
 extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];
@@ -100,7 +94,6 @@ extern proc_def         *CurrProc;
 // matter, we can just use the _BinaryOpcode macro to create
 // identical cases, otherwise we give each pair explicitly.
 
-
 static  uint_8  BinaryOpcodes4[][2][2] = {
         _BinaryOpcode( 0x00, 0x21 ),                    /* OP_ADD */
         _BinaryOpcode( 0x00, 0x21 ),                    /* OP_EXT_ADD */
@@ -108,8 +101,8 @@ static  uint_8  BinaryOpcodes4[][2][2] = {
         _BinaryOpcode( 0x00, 0x23 ),                    /* OP_EXT_SUB */
         _SignedOpcode( 0x00, 0x19, 0x00, 0x18 ),        /* OP_MUL */
         _SignedOpcode( 0x00, 0x19, 0x00, 0x18 ),        /* OP_EXT_MUL */
-        _BinaryOpcode( 0x00, 0x00 ),                    /* OP_DIV */
-        _BinaryOpcode( 0x00, 0x00 ),                    /* OP_MOD */
+        _SignedOpcode( 0x00, 0x1b, 0x00, 0x1a ),        /* OP_DIV */
+        _SignedOpcode( 0x00, 0x1b, 0x00, 0x1a ),        /* OP_MOD */
         _BinaryOpcode( 0x00, 0x24 ),                    /* OP_AND */
         _BinaryOpcode( 0x00, 0x25 ),                    /* OP_OR */
         _BinaryOpcode( 0x00, 0x26 ),                    /* OP_XOR */
@@ -314,7 +307,7 @@ static  uint_8 FindFloatingOpcodes( instruction *ins )
 
 
 extern  void GenMEMINSRELOC( uint_8 opcode, uint_8 rt, uint_8 rs, signed_16 displacement, pointer lbl, owl_reloc_type type )
-/************************************************************************************************************************/
+/**************************************************************************************************************************/
 {
     mips_ins            encoding;
 
@@ -652,6 +645,8 @@ static  void doSignExtend( instruction *ins, type_class_def from )
     }
 }
 
+// This is NT stuff - probably irreleveant unless someone wanted to
+// support the MIPS version of NT!
 #define RDTEB_ENCODING          0x000000ab
 #define RDTEB_MAGIC_CONST       0x2c
 #define V0                      0
@@ -804,8 +799,32 @@ static  void Encode( instruction *ins )
         assert( ins->operands[1]->n.class == N_REGISTER );
         assert( ins->result->n.class == N_REGISTER );
         opcodes = FindOpcodes( ins );
-        GenRType( opcodes[0], opcodes[1], _NameReg( ins->result ),
-                  _NameReg( ins->operands[0] ), _NameReg( ins->operands[1] ) );
+        switch( ins->head.opcode ) {
+        case OP_MUL:
+            GenRType( opcodes[0], opcodes[1], 0, _NameReg( ins->operands[0] ),
+                _NameReg( ins->operands[1] ) );
+            // 'mflo rd'
+            GenRType( 0, 0x12, _NameReg( ins->result ), 0, 0 );
+            break;
+        case OP_DIV:
+            // TODO: do something if divisor is zero
+            GenRType( opcodes[0], opcodes[1], 0, _NameReg( ins->operands[0] ),
+                _NameReg( ins->operands[1] ) );
+            // 'mflo rd'
+            GenRType( 0, 0x12, _NameReg( ins->result ), 0, 0 );
+            break;
+        case OP_MOD:
+            // TODO: do something if divisor is zero
+            GenRType( opcodes[0], opcodes[1], 0, _NameReg( ins->operands[0] ),
+                _NameReg( ins->operands[1] ) );
+            // 'mfhi rd'
+            GenRType( 0, 0x10, _NameReg( ins->result ), 0, 0 );
+            break;
+        default:
+            GenRType( opcodes[0], opcodes[1], _NameReg( ins->result ),
+                _NameReg( ins->operands[0] ), _NameReg( ins->operands[1] ) );
+            break;
+        }
         break;
     case G_BINARY_IMM:
         assert( ins->operands[0]->n.class == N_REGISTER );
@@ -815,7 +834,7 @@ static  void Encode( instruction *ins )
         case OP_LSHIFT:
             // 'sll rd,rs,n'
             GenIShift( 0x00, _NameReg( ins->result ),
-                    _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
+                _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
             break;
         case OP_RSHIFT:
             if( _IsSigned( ins->type_class ) ) {
