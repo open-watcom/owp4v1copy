@@ -36,8 +36,6 @@
 
 #if defined(__NT__)
 _WCRTLINK unsigned _WCNEAR _amblksiz = 64*1024;
-#elif defined(__SNAP__)
-_WCRTLINK unsigned _WCNEAR _amblksiz = 64*1024;
 #elif defined(__WINDOWS_386__)
 _WCRTLINK unsigned _WCNEAR _amblksiz = 32*1024;
 #elif defined(__WINDOWS__)

@@ -1,38 +1,38 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==========================================================================================================
-!inject assert.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
-!inject assert99.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
-!inject dbgbreak.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject dbgdata.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject dbgrpt.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject dbgrptfi.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject dbgrptho.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject dbgrptmo.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject demangl.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32
-!inject fullpath.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32     l32
+!inject assert.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject assert99.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject dbgbreak.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject dbgdata.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject dbgrpt.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject dbgrptfi.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject dbgrptho.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject dbgrptmo.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject demangl.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject fullpath.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject fpathosi.obj                                                                        osi
 !inject hostwin.obj                      nt                                         w16 w32
 !inject kernel.obj                                                          q16 q32
-!inject locale.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject localeco.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject lrotl.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32
-!inject lrotr.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32
-!inject makepath.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32
-!inject rotl.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
-!inject rotr.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
-!inject setlocal.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject split2.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32
-!inject splitpat.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32
+!inject locale.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject localeco.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject lrotl.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc lmp
+!inject lrotr.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc lmp
+!inject makepath.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject rotl.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject rotr.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject setlocal.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject split2.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject splitpat.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject syslinux.obj                                                                            l32
-!inject uassert.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject uassrt99.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject udivdi3.obj                                                                             l32
+!inject uassert.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject uassrt99.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject udivdi3.obj                                                                             l32 lpc lmp
 !inject ufulpath.obj d16 d32             nt nta ntp                 o16 o32         w16 w32
-!inject umkpath.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
+!inject umkpath.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject umoddi3.obj                                                                             l32
-!inject usplit2.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject uspltpat.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
-!inject ustlocal.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
+!inject usplit2.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject uspltpat.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject ustlocal.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 
 !include ../../../../objlist.mif
 

@@ -172,7 +172,7 @@ Previously Implemented Changes:
     <system> is one of:
         msdos|qnx|os2|windows|winnt|netware|kanji|linux
     <processor> is one of
-        086|286|386|axp|ppc|...
+        086|286|386|axp|ppc|mps|...
     <model> is one of:
         tiny            - mt
         small           - ms
@@ -281,7 +281,7 @@ Previously Implemented Changes:
             16bit,32bit                                 - code target
             stack,register                              - calling convention
             inline,calls                                - floating point
-            heap,_dos,nec,string,streamio,handleio,
+            heap,_dos,string,streamio,handleio,
             filesys,startup,process,cgsupp, kanji,mbyte,
             mthread,defwin,qnx                          - component of library
             overlay                                     - overlay libraries

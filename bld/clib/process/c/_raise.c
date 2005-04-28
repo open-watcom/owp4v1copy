@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _raise().
 *
 ****************************************************************************/
 
@@ -34,15 +33,15 @@
 
 extern int raise(int sig);
 
-#if defined(__AXP__)
-#elif defined(__PPC__)
-#elif defined(__386__)
-#pragma aux     _raise  "_*" parm caller [eax];
-#else
-#pragma aux     _raise  "_*" parm caller [ax];
+#if defined(M_IX86)
+    #if defined(__386__)
+        #pragma aux     _raise  "_*" parm caller [eax];
+    #else
+        #pragma aux     _raise  "_*" parm caller [ax];
+    #endif
 #endif
 
 int _raise( int sig )
-    {
-        return( raise( sig ) );
-    }
+{
+    return( raise( sig ) );
+}

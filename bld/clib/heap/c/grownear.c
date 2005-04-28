@@ -53,9 +53,6 @@
 #if defined(__WINDOWS_386__)
  extern void * pascal DPMIAlloc(unsigned long);
 #endif
-#if defined(__SNAP__)
- #include <os/imports.h>
-#endif
 
 static frlptr __LinkUpNewMHeap( mheapptr );
 
@@ -296,8 +293,7 @@ static void *RationalAlloc( size_t size )
     defined(__WARP__)        || \
     defined(__NT__)          || \
     defined(__CALL21__)      || \
-    defined(__DOS_EXT__)     || \
-    defined(__SNAP__)
+    defined(__DOS_EXT__)
 static int __CreateNewNHeap( unsigned amount )
 {
     mheapptr        p1;
@@ -330,11 +326,6 @@ static int __CreateNewNHeap( unsigned amount )
     brk_value = (unsigned) VirtualAlloc( NULL, amount, MEM_COMMIT,
                                         PAGE_EXECUTE_READWRITE );
     //brk_value = (unsigned) LocalAlloc( LMEM_FIXED, amount );
-    if( brk_value == 0 ) {
-        return( 0 );
-    }
-#elif defined(__SNAP__)
-    brk_value = (unsigned) xmalloc( amount );
     if( brk_value == 0 ) {
         return( 0 );
     }
@@ -401,8 +392,7 @@ int __ExpandDGROUP( unsigned amount )
         defined(__WINDOWS_386__) || \
         defined(__WARP__)        || \
         defined(__NT__)          || \
-        defined(__CALL21__)      || \
-        defined(__SNAP__)
+        defined(__CALL21__)
         // first try to free any available storage
         _nheapshrink();
         return( __CreateNewNHeap( amount ) );
@@ -495,8 +485,7 @@ static int __AdjustAmount( unsigned *amount )
     #if ! ( defined(__WINDOWS_286__) || \
             defined(__WINDOWS_386__) || \
             defined(__WARP__)        || \
-            defined(__NT__)          || \
-            defined(__SNAP__)           \
+            defined(__NT__)             \
         )
         unsigned last_free_amt;
     #endif
@@ -509,8 +498,7 @@ static int __AdjustAmount( unsigned *amount )
     #if ! ( defined(__WINDOWS_286__) || \
             defined(__WINDOWS_386__) || \
             defined(__WARP__)        || \
-            defined(__NT__)          || \
-            defined(__SNAP__)           \
+            defined(__NT__)             \
         )
         #if defined(__DOS_EXT__)
             if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
@@ -555,7 +543,6 @@ static int __AdjustAmount( unsigned *amount )
     #if defined(__WINDOWS_386__) || \
         defined(__WARP__)        || \
         defined(__NT__)          || \
-        defined(__SNAP__)        || \
         defined(__CALL21__)      || \
         defined(__DOS_EXT__)
         /* make sure amount is a multiple of 4k */
@@ -567,4 +554,3 @@ static int __AdjustAmount( unsigned *amount )
     *amount = amt;
     return( *amount != 0 );
 }
-

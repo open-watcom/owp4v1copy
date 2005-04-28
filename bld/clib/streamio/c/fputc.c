@@ -79,7 +79,7 @@ _WCRTLINK int fputc( int c, FILE *fp )
     flags = _IONBF;
     if( c == '\n' ) {
         flags = _IONBF | _IOLBF;
-        #if !defined(__UNIX__) && !defined(__SNAP__)
+        #if !defined(__UNIX__)
             if( !(fp->_flag & _BINARY) ) {
                 fp->_flag |= _DIRTY;
                 *(char*)fp->_ptr = '\r';   /* '\n' -> '\r''\n' */

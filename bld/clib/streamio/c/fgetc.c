@@ -33,7 +33,7 @@
 #include "widechar.h"
 #include <stdio.h>
 #include <unistd.h>
-#if !defined(__UNIX__) && !defined(__SNAP__)
+#if !defined(__UNIX__)
 #include <conio.h>
 #endif
 #include "fileacc.h"
@@ -109,7 +109,7 @@ _WCRTLINK int fgetc( FILE *fp )
             fp->_ptr++;
         }
     }
-    #if !defined(__UNIX__) && !defined(__SNAP__)
+    #if !defined(__UNIX__)
         if( ! (fp->_flag & _BINARY) )
         {
             if( c == '\r' )
@@ -252,7 +252,7 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
     }
     fp->_flag &= ~_UNGET;                           /* 10-mar-90 */
     fp->_ptr = _FP_BASE(fp);
-#if defined(__UNIX__) || defined(__SNAP__)
+#if defined(__UNIX__)
     fp->_cnt = __qread( fileno( fp ), fp->_ptr,
         (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
 #else

@@ -32,12 +32,7 @@
 #include "variety.h"
 
 #if defined(_M_IX86)
-#if defined(__SNAP__)
-  unsigned short FP_SEG( const volatile void __far * );
-  #pragma aux    FP_SEG = __parm __caller [eax dx] __value [dx];
-#else
-#include <i86.h>
-#endif
+    #include <i86.h>
 #endif
 
 #if !defined(__DOS_EXT__)
@@ -47,9 +42,7 @@
    !defined(__OS2__) &&                 \
    !defined(__NT__) &&                  \
    !defined(__OSI__) &&                 \
-   !defined(__QNX__) &&                 \
-   !defined(__LINUX__) &&               \
-   !defined(__SNAP__)
+   !defined(__UNIX__)
 #define __DOS_EXT__
 #endif
 #endif
@@ -156,10 +149,10 @@ extern int __HeapSet( __segment seg, unsigned fill );
 
 _WCRTLINK extern void _WCNEAR *__brk( unsigned );
 
-#if defined(__AXP__) || defined(__PPC__)
- #define _DGroup()      0
-#else
+#if defined(_M_IX86)
  #define _DGroup()      FP_SEG((&__nheapbeg))
+#else
+ #define _DGroup()      0
 #endif
 // __IsCtsNHeap() is used to determine whether the operating system provides
 // a continuous near heap block. __ExpandDGroup should slice for more near
@@ -175,28 +168,26 @@ _WCRTLINK extern void _WCNEAR *__brk( unsigned );
  #define __IsCtsNHeap() 1
 #endif
 
-extern  unsigned __MemAllocator( unsigned __sz, unsigned __seg, unsigned __off);
+extern  unsigned __MemAllocator( unsigned __sz, unsigned __seg, unsigned __off );
 extern  void     __MemFree( unsigned __ptr, unsigned __seg, unsigned __off );
-#if defined(__AXP__) || defined(__PPC__)
- // not needed for alpha
-#elif defined(__386__)
- #pragma aux __MemAllocator "*" parm [eax] [edx] [ebx];
- #pragma aux __MemFree      "*" parm [eax] [edx] [ebx];
-#else
- #pragma aux __MemAllocator "*" parm [ax] [dx] [bx];
- #pragma aux __MemFree      "*" parm [ax] [dx] [bx];
+#if defined(_M_IX86)
+ #if defined(__386__)
+  #pragma aux __MemAllocator "*" parm [eax] [edx] [ebx];
+  #pragma aux __MemFree      "*" parm [eax] [edx] [ebx];
+ #else
+  #pragma aux __MemAllocator "*" parm [ax] [dx] [bx];
+  #pragma aux __MemFree      "*" parm [ax] [dx] [bx];
+ #endif
 #endif
 
 #define PARAS_IN_64K    (0x1000)
 #define END_TAG         (~0)
 
 #define TAG_SIZE        (sizeof(tag))
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #define ROUND_SIZE  (TAG_SIZE+TAG_SIZE-1)
-#elif defined(M_I86)
+#if defined(M_I86)
     #define ROUND_SIZE  (TAG_SIZE-1)
 #else
-    #error platform not supported
+    #define ROUND_SIZE  (TAG_SIZE+TAG_SIZE-1)
 #endif
 #define FRL_SIZE        ((sizeof(frl)+ROUND_SIZE)&~ROUND_SIZE)
 

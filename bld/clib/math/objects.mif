@@ -1,6 +1,6 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
-!inject abs.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject abs.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject div.obj      d16                    nta ntp           o16   q16     w16
 !inject fpe387.obj       d32
 !inject fpedos4g.obj     d32
@@ -8,15 +8,15 @@
 #fixme: should fpeinth.obj be in the netware library?
 !inject fpeinth.obj      d32
 !inject fpephar.obj      d32
-!inject hvalptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject hugeval.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject imaxabs.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject imaxdiv.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject labs.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject hvalptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject hugeval.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject imaxabs.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject imaxdiv.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject labs.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ldiv.obj                            nta ntp
-!inject max.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject min.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject rand.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject max.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject min.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject rand.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 
 !include ../../../../objlist.mif
 
@@ -25,6 +25,7 @@
 386_fpi87_postopts=-fpi87
 axp_fpi87_postopts=
 ppc_fpi87_postopts=
+mps_fpi87_postopts=
 fpi87_postopts=$($(processor)_fpi87_postopts)
 
 fpe387_postopts=$(fpi87_postopts)

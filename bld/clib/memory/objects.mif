@@ -1,8 +1,8 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
-!inject bcmp.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject bcopy.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject bzero.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject bcmp.obj     d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject bcopy.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject bzero.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject fmemccpy.obj d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
 !inject fmemchr.obj  d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
 !inject fmemcmp.obj  d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
@@ -10,13 +10,13 @@
 !inject fmemicmp.obj d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
 !inject fmemmove.obj d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
 !inject fmemset.obj  d16 d32             nt                 o16 o32 q16 q32 w16 w32 osi l32
-!inject memccpy.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject memchr.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject memcmp.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject memcpy.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject memicmp.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject memmove.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject memset.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject memccpy.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memchr.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memcmp.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memcpy.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memicmp.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memmove.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject memset.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject movedata.obj d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject rmemccpy.obj                        nta ntp
 !inject rmemchr.obj                         nta ntp
@@ -26,7 +26,7 @@
 !inject rmemmove.obj                        nta ntp
 !inject rmemset.obj                         nta ntp
 !inject rswab.obj                           nta ntp
-!inject swab.obj     d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject swab.obj     d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 
 !include ../../../../objlist.mif
 

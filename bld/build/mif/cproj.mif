@@ -8,31 +8,37 @@ cc_386          = *wcc386
 cc_i86          = *wcc
 cc_axp          = *wccaxp
 cc_ppc          = *wccppc
+cc_mps          = *wccmps
 
 cl_386          = *wcl386
 cl_i86          = *wcl
 cl_axp          = *wclaxp
 cl_ppc          = *wclppc
+cl_mps          = *wclmps
 
 cpp_386         = *wpp386
 cpp_i86         = *wpp
 cpp_axp         = *wppaxp
 cpp_ppc         = *wppppc
+cpp_mps         = *wppmps
 
 linker_386      = *wlink
 linker_i86      = *wlink
 linker_axp      = *wlink
 linker_ppc      = *wlink
+linker_mps      = *wlink
 
 librarian_386   = *wlib
 librarian_i86   = *wlib
 librarian_axp   = *wlib
 librarian_ppc   = *wlib
+librarian_mps   = *wlib
 
 as_386          = *wasm
 as_i86          = *wasm
 as_axp          = *wasaxp
 as_ppc          = *wasppc
+as_mps          = *wasmps
 
 !ifndef %use_os2tk_stuff
 rc_os2_path = $(lang_root)\binp

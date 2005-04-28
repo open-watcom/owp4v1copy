@@ -36,8 +36,13 @@ lib_linkage_flags_dynamic=
 lib_linkage_flags_static=
 lib_linkage_flags_dynamic=
 !else
+!ifeq processor mps
+lib_linkage_flags_static=
+lib_linkage_flags_dynamic=
+!else
 lib_linkage_flags_static=-z
 lib_linkage_flags_dynamic=-z=export.def
+!endif
 !endif
 !endif
 lib_flags_linkage=$(lib_linkage_flags_$(linkage))

@@ -6,8 +6,6 @@ include_watcom = -I"$(watcom_dir)/h"
 include_c_generic  = -I"$(hdr_dir)/dos"
 include_c_kanji    = -I"$(hdr_dir)/dos"
 include_c_msdos    = -I"$(hdr_dir)/dos"
-include_c_necdos   = -I"$(hdr_dir)/dos"
-include_c_necwin   = $(inc_dirs_sys_win) -I"$(hdr_dir)/dos"
 include_c_nw_clib  = $(inc_dirs_lang_netware) -I"$(hdr_dir)/dos"
 include_c_nw_clibl = $(inc_dirs_lang_netware) -I"$(hdr_dir)/dos"
 # we need to include libc path below
@@ -23,14 +21,10 @@ include_c_qnx      = -I"$(hdr_dir)/qnx"
 include_c_linux    = -I"$(hdr_dir)/linux"
 include_c_windows  = -I"$(hdr_dir)/dos/win" $(inc_dirs_sys_win)  -I"$(hdr_dir)/dos"
 include_c_winnt    = $(inc_dirs_sys_nt) -I"$(hdr_dir)/dos"
-include_c_snap     = -I"$(hdr_dir)/snap" -I"$(%SCITECH)/include/clib"
-include_c_snapdrv  = -I"$(hdr_dir)/snapdrv" -I"$(%SCITECH)/include/clib"
 !else
 include_c_generic  = -I"$(%WATCOM)/h"
 include_c_kanji    = -I"$(%WATCOM)/h"
 include_c_msdos    = -I"$(%WATCOM)/h"
-include_c_necdos   = -I"$(%WATCOM)/h"
-include_c_necwin   = $(inc_dirs_sys_win) -I"$(%WATCOM)/h"
 include_c_nw_clib  = $(inc_dirs_lang_netware) -I"$(%WATCOM)/h"
 include_c_nw_clibl = $(inc_dirs_lang_netware) -I"$(%WATCOM)/h"
 # we need to include libc path below
@@ -48,8 +42,6 @@ include_c_winnt_386= $(inc_dirs_sys_nt)
 include_c_winnt_axp= $(inc_dirs_sys_nt)
 include_c_winnt_ppc= $(inc_dirs_sys_nt)
 include_c_winnt    = $(inc_dirs_sys_nt) -I"$(%WATCOM)/h"
-include_c_snap     = -I"$(%WATCOM)/snaph"  -I"$(%SCITECH)/include/clib"
-include_c_snapdrv  = -I"$(%WATCOM)/drvh" -I"$(%SCITECH)/include/clib"
 !endif
 
 include_c_path = $(include_default) $(include_c_$(system)) $(include_watcom)
@@ -58,8 +50,6 @@ include_c_path = $(include_default) $(include_c_$(system)) $(include_watcom)
 include_a_generic  =
 include_a_kanji    =
 include_a_msdos    =
-include_a_necdos   =
-include_a_necwin   =
 include_a_nw_clib  =
 include_a_nw_clibl =
 include_a_nw_libc  =
@@ -70,7 +60,5 @@ include_a_qnx      =
 include_a_windows  =
 include_a_winnt    =
 include_a_linux    =
-include_a_snap     =
-include_a_snapdrv  =
 
 include_a_path = $(include_default) $(include_a_$(system)) $(include_watcom)

@@ -19,9 +19,9 @@
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   WIN-32
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   OSI
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   LINUX
-#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   SNAP
-#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
-#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   SNAPDRV
+#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   LINUX-PPC
+#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   LINUX-MIPS
+#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
 #######################################################################################################################
 access          access          _access         d16 d32 nt  nta ntp         o16 o32         w16 w32
@@ -106,9 +106,9 @@ putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 strdup          __clib_strdup   _strdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-cstrdu          __clib_strdup   strdup          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+cstrdu          __clib_strdup   strdup          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 cwcsdu          __clib_wcsdup   _wcsdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-strcmp          stricmp         strcmpi         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+strcmp          stricmp         strcmpi         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 stricm          stricmp         _stricmp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strico          stricmp         _stricoll       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strlwr          strlwr          _strlwr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32

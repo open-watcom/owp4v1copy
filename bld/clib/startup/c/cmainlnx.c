@@ -29,11 +29,7 @@
 ****************************************************************************/
 
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <i86.h>
-#include <limits.h>
-#include <malloc.h>
 #include "exitwmsg.h"
 #include "initfini.h"
 #include "thread.h"

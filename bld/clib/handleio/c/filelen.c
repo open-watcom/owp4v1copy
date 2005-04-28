@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  implements POSIX filelength() function and Watcom
-*               _filelength64()
+* Description:  Implements POSIX filelength() function and Watcom
+*               _filelength64().
 *
 ****************************************************************************/
 
@@ -40,11 +40,7 @@
 #endif
 /* most includes should go after this line */
 #include <stdio.h>
-#if defined(__UNIX__) || defined(__SNAP__)
-    #include <unistd.h>
-#else
-    #include <io.h>
-#endif
+#include <unistd.h>
 #include "fileacc.h"
 #include "rtcheck.h"
 #include "lseek.h"

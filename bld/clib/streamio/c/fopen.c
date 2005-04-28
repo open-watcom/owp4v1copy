@@ -42,9 +42,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#ifndef __SNAP__
-    #include <sys/stat.h>
-#endif
+#include <sys/stat.h>
 #include "fileacc.h"
 #include "fmode.h"
 #include "openmode.h"
@@ -52,9 +50,7 @@
 #include "seterrno.h"
 #include "defwin.h"
 
-#if defined(__SNAP__)
- #define PMODE ( 0666 )
-#elif defined(__UNIX__)
+#if defined(__UNIX__)
  #define PMODE ( S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH )
 #else
  #define PMODE ( S_IREAD | S_IWRITE )

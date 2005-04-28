@@ -32,24 +32,19 @@
 #include "variety.h"
 #include <stdio.h>
 #include <malloc.h>
-#if defined(__UNIX__) || defined(__SNAP__)
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
 #include "rtdata.h"
 #include "fileacc.h"
 
 void __chktty( FILE  *fp )
-    {
-        /* if we have not determined that we've got a tty then check for one */
-        if( !(fp->_flag & _ISTTY) ) {
-            if( isatty( fileno( fp ) ) ) {
-                fp->_flag |= _ISTTY;
-                if( ( fp->_flag & ( _IONBF | _IOLBF | _IOFBF ) ) == 0 ) {
-                    fp->_flag |= _IOLBF;
-                }
+{
+    /* if we have not determined that we've got a tty then check for one */
+    if( !(fp->_flag & _ISTTY) ) {
+        if( isatty( fileno( fp ) ) ) {
+            fp->_flag |= _ISTTY;
+            if( ( fp->_flag & ( _IONBF | _IOLBF | _IOFBF ) ) == 0 ) {
+                fp->_flag |= _IOLBF;
             }
         }
     }
-
+}

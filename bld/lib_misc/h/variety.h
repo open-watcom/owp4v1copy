@@ -63,7 +63,7 @@
 #elif defined(__HUGE__)
     #define __BIG_DATA__
     #define __BIG_CODE__
-#elif defined(__AXP__) || defined(__PPC__)
+#elif defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     // these effectively use near data references
     #define __SMALL_DATA__
     #define __SMALL_CODE__
@@ -115,14 +115,8 @@
     #define __PROTECT_MODE__
     #if defined(__386__)
         #define __WINDOWS__
-        #if defined(__NEC98__)
-            #define __NECWIN_386__
-        #endif
     #elif defined(M_I86)
         #define __WINDOWS_286__
-        #if defined(__NEC98__)
-            #define __NECWIN_286__
-        #endif
     #else
         #error unrecognized processor for WINDOWS
     #endif
@@ -130,15 +124,9 @@
     #if defined(__386__)
         #define __PROTECT_MODE__
         #define __DOS_386__
-        #if defined(__NEC98__)
-            #define __NECDOS_386__
-        #endif
     #elif defined(M_I86)
         #define __REAL_MODE__
         #define __DOS_086__
-        #if defined(__NEC98__)
-            #define __NECDOS_086__
-        #endif
     #else
         #error unrecognized processor for DOS
     #endif
@@ -148,13 +136,6 @@
         #define __OSI_386__
     #else
         #error unrecognized processor for OSI
-    #endif
-#elif defined(__SNAP__)
-    #if defined(__386__)
-        #define __PROTECT_MODE__
-        #define __SNAP_386__
-    #else
-        #error unrecognized processor for SNAP
     #endif
 #elif defined(__QNX__)
     #define __PROTECT_MODE__
@@ -173,6 +154,8 @@
         #define __LINUX_386__
     #elif defined(__PPC__)
         #define __LINUX_PPC__
+    #elif defined(__MIPS__)
+        #define __LINUX_MIPS__
     #else
         #error unrecognized processor for Linux
     #endif

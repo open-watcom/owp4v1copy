@@ -1,9 +1,9 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
-!inject bsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject lfind.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject lsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject qsort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject bsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject lfind.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject lsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject qsort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 
 !include ../../../../objlist.mif
 
@@ -11,6 +11,8 @@
 286_sub_opt =-of
 386_sub_opt =
 axp_sub_opt =
+ppc_sub_opt =
+mps_sub_opt =
 bsearch_opts=$($(processor)_sub_opt)
 lfind_opts  =$($(processor)_sub_opt)
 lsearch_opts=$($(processor)_sub_opt)

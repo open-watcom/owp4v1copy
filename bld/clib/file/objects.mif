@@ -1,4 +1,4 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
 !inject 64findfi.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject 64findne.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
@@ -6,7 +6,6 @@
 !inject 64stawnt.obj                     nt nta ntp
 !inject accss.obj    d16 d32                                                w16 w32 osi
 !inject accssos2.obj                                        o16 o32
-!inject accsssnp.obj                                                                        snp drv
 !inject accsswnt.obj                     nt nta ntp
 !inject chmod.obj    d16 d32                                                w16 w32 osi
 !inject chmodos2.obj                                        o16 o32
@@ -17,17 +16,15 @@
 !inject findnext.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject __fn2mbs.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mktemp.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject remove.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject removsnp.obj                                                                        snp drv
+!inject remove.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject renam.obj    d16 d32                                                w16 w32 osi
 !inject renamos2.obj                                        o16 o32
-!inject renamsnp.obj                                                                        snp drv
 !inject renamwnt.obj                     nt nta ntp
 !inject stat.obj     d16 d32                                                w16 w32 osi
 !inject statos2.obj                                         o16 o32
 !inject statwnt.obj                      nt nta ntp
 !inject tempnam.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject tmpnm.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject tmpnm.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject u64findf.obj d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject u64findn.obj d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject u64stat.obj  d16 d32                                o16 o32         w16 w32

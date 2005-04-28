@@ -14,17 +14,17 @@ sw_l_common += option map,mangle,artificial,verbose
 !endif
 
 !ifeq default_windowing 1
-def_windowing = -dDEFWIN
+def_windowing = -DDEFWIN
 !else ifeq system windows
 default_windowing = 1
-def_windowing = -dDEFWIN
+def_windowing = -DDEFWIN
 !else
 def_windowing =
 !endif
 
 # sw_c_(linkage)
 sw_c_static  =
-sw_c_dynamic = -d__MAKE_DLL_CLIB
+sw_c_dynamic = -D__MAKE_DLL_CLIB
 
 # sw_c_(processor)_(model)
 sw_c_register = -5r
@@ -39,14 +39,15 @@ sw_c_286 = $(sw_c_intel)-2
 sw_c_386 = $(sw_c_intel)-zc
 sw_c_axp =
 sw_c_ppc =
+sw_c_mps =
 
 !ifdef profile
 sw_c_386 += -d1-hd-etp
 !endif
 
 !ifeq release 0
-sw_c_common += -d__RUNTIME_HANDLE_CHECKS__
-sw_c_axp += -fiaxpnf.h
+sw_c_common += -D__RUNTIME_HANDLE_CHECKS__
+sw_c_axp += -finonx86.h
 !endif
 
 sw_c_386_ms_generic = -r
@@ -67,10 +68,11 @@ sw_c_386_ms = -ms$(sw_c_$(convention))$(sw_c_386_ms_$(system))
 sw_c_386_mf = -mf$(sw_c_$(convention))
 sw_c_axp_   =
 sw_c_ppc_   =
+sw_c_mps_   =
 
 # sw_a_(linkage)
 sw_a_static  =
-sw_a_dynamic = -d__MAKE_DLL_CLIB -d_EXPORT
+sw_a_dynamic = -D__MAKE_DLL_CLIB -D_EXPORT
 
 # sw_a_(processor)_(model)
 sw_a_register = -5r
@@ -81,9 +83,10 @@ sw_a_286 = -e -fpc-2 -w4
 sw_a_386 = -e -fpc -w4
 sw_a_axp =
 sw_a_ppc =
+sw_a_mps =
 
 !ifdef profile
-sw_a_386 += -d_PROFILE
+sw_a_386 += -D_PROFILE
 !endif
 
 sw_a_086_ms = -ms
@@ -101,6 +104,7 @@ sw_a_386_mf = -mf$(sw_a_$(convention))
 sw_a_386_   =
 sw_a_axp_   =
 sw_a_ppc_   =
+sw_a_mps_   =
 
 # sw_c_(system)_(processor)
 sw_c_generic_086  = -oax
@@ -109,28 +113,24 @@ sw_c_generic_386  = -oaxt
 sw_c_msdos_086    = -oax
 sw_c_msdos_286    = -oax
 sw_c_msdos_386    = -oaxt
-sw_c_necdos_086   = -oax
-sw_c_necwin_086   = -oax
-sw_c_necdos_386   = -oaxt
-sw_c_necwin_386   = -oaxt-d__CALL21__
-sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB
-sw_c_nw_clibl_386 = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB -d_THIN_LIB
-sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC
-sw_c_nw_libcl_386 = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC -d_THIN_LIB
+sw_c_nw_clib_386  = -oaxt-bm -D__far= -D__near= -D_NETWARE_CLIB
+sw_c_nw_clibl_386 = -oaxt-bm -D__far= -D__near= -D_NETWARE_CLIB -D_THIN_LIB
+sw_c_nw_libc_386  = -oaxt-bm -D__far= -D__near= -D_NETWARE_LIBC
+sw_c_nw_libcl_386 = -oaxt-bm -D__far= -D__near= -D_NETWARE_LIBC -D_THIN_LIB
 sw_c_os2_286      = -oax $(def_windowing)
 sw_c_os2_386      = -oaxt-bm $(def_windowing)
 sw_c_os2_ppc      = -oaxt-bm $(def_windowing)
-sw_c_osi_386      = -oaxt-d__CALL21__
+sw_c_osi_386      = -oaxt-D__CALL21__
 sw_c_qnx_286      = -oax
 sw_c_qnx_386      = -oaxt-bm
 sw_c_windows_086  = -oax $(def_windowing)
-sw_c_windows_386  = -oaxt-d__CALL21__ $(def_windowing)
+sw_c_windows_386  = -oaxt-D__CALL21__ $(def_windowing)
 sw_c_winnt_386    = -oaxt-bm $(def_windowing)
-sw_c_winnt_axp    = -oaxt-bm-dWIN32-d_WIN32 $(def_windowing)
-sw_c_winnt_ppc    = -oaxt-bm-dWIN32-d_WIN32 $(def_windowing)
+sw_c_winnt_axp    = -oaxt-bm-DWIN32-D_WIN32 $(def_windowing)
+sw_c_winnt_ppc    = -oaxt-bm-DWIN32-D_WIN32 $(def_windowing)
 sw_c_linux_386    = -oaxt
-sw_c_snap_386     = -oaxt
-sw_c_snapdrv_386  = -oaxt
+sw_c_linux_ppc    = -oaxt
+sw_c_linux_mps    = -oaxt -eoe
 
 # sw_a_(system)_(processor)
 sw_a_generic_086  =
@@ -139,28 +139,24 @@ sw_a_generic_386  =
 sw_a_msdos_086    =
 sw_a_msdos_286    =
 sw_a_msdos_386    =
-sw_a_necdos_086   =
-sw_a_necdos_386   =
-sw_a_necwin_086   =
-sw_a_necwin_386   =
-sw_a_nw_clib_386  = -d_NETWARE_CLIB -d__MT__
-sw_a_nw_clibl_386 = -d_NETWARE_CLIB -d__MT__ -d_THIN_LIB
-sw_a_nw_libc_386  = -d_NETWARE_LIBC -d__MT__
-sw_a_nw_libc_386  = -d_NETWARE_LIBC -d__MT__ -d_THIN_LIB
+sw_a_nw_clib_386  = -D_NETWARE_CLIB -D__MT__
+sw_a_nw_clibl_386 = -D_NETWARE_CLIB -D__MT__ -D_THIN_LIB
+sw_a_nw_libc_386  = -D_NETWARE_LIBC -D__MT__
+sw_a_nw_libc_386  = -D_NETWARE_LIBC -D__MT__ -D_THIN_LIB
 sw_a_os2_286      =
-sw_a_os2_386      = -d__MT__
-sw_a_os2_ppc      = -d__MT__
-sw_a_osi_386      = -d__MT__
+sw_a_os2_386      = -D__MT__
+sw_a_os2_ppc      = -D__MT__
+sw_a_osi_386      = -D__MT__
 sw_a_qnx_286      =
-sw_a_qnx_386      = -d__MT__
+sw_a_qnx_386      = -D__MT__
 sw_a_windows_086  =
 sw_a_windows_386  =
-sw_a_winnt_386    = -d__MT__
-sw_a_winnt_axp    = -d__MT__ -dWIN32 -d_WIN32
-sw_a_winnt_ppc    = -oc -d__MT__ -dWIN32 -d_WIN32
+sw_a_winnt_386    = -D__MT__
+sw_a_winnt_axp    = -D__MT__ -DWIN32 -D_WIN32
+sw_a_winnt_ppc    = -oc -D__MT__ -DWIN32 -D_WIN32
 sw_a_linux_386    =
-sw_a_snap_386     =
-sw_a_snapdrv_386  =
+sw_a_linux_ppc    =
+sw_a_linux_ppc    =
 
 # sw_l_(system)_(processor)
 sw_l_generic_086  =
@@ -169,10 +165,6 @@ sw_l_generic_386  =
 sw_l_msdos_086    =
 sw_l_msdos_286    =
 sw_l_msdos_386    =
-sw_l_necdos_086   =
-sw_l_necdos_386   =
-sw_l_necwin_086   =
-sw_l_necwin_386   =
 sw_l_nw_clib_386  =
 sw_l_nw_clibl_386 =
 sw_l_nw_libc_386  =
@@ -191,8 +183,8 @@ sw_l_winnt_387    = sys nt_dll initinstance terminstance
 sw_l_winnt_axp    = sys ntaxp_dll initinstance terminstance
 sw_l_winnt_ppc    = sys ntppc_dll initinstance terminstance
 sw_l_linux_386    =
-sw_l_snap_386     =
-sw_l_snapdrv_386  =
+sw_l_linux_ppc    =
+sw_l_linux_mps    =
 
 #make bug
 !ifndef extra_c_flags
@@ -216,17 +208,17 @@ c_flags += -of
 !endif
 !ifdef dll16
 c_flags += -bd-bm
-a_flags += -d__MT__
+a_flags += -D__MT__
 !endif
 !ifdef share
-c_flags += -d__SHARE__ -dIN_SLIB -d_NO_SLIB
+c_flags += -D__SHARE__ -DIN_SLIB -D_NO_SLIB
 !endif
 !ifdef debug
 c_flags += -en
 !endif
 !ifdef threading16
 c_flags += -bm
-a_flags += -d__MT__
+a_flags += -D__MT__
 !endif
 
 # debug flags need to be last to override optimization flags

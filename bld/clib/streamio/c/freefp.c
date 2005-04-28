@@ -38,9 +38,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#ifndef __SNAP__
 #include <sys/stat.h>
-#endif
 #include "liballoc.h"
 #include "fileacc.h"
 #include "rtdata.h"

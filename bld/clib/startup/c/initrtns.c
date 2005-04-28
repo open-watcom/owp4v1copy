@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Initialization and termination of clib.
 *
 ****************************************************************************/
 
@@ -38,7 +37,7 @@
 #define PFAR  ((__type_rtp)1)
 #define PDONE ((__type_rtp)2)
 
-#if ( COMP_CFG_COFF == 1 ) || defined(__AXP__)
+#if ( COMP_CFG_COFF == 1 ) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     // following is an attempt to drop the need for an assembler
     // segment definitions file
     // unfortunately, the use of XIB,XIE,YIB,YIE doesn't get the
@@ -66,7 +65,7 @@ typedef void (*pfn)(void);
 typedef void (_WCI86FAR * _WCI86FAR fpfn)(void);
 typedef void (_WCI86NEAR * _WCI86NEAR npfn)(void);
 
-#if defined(__AXP__) || defined(__PPC__) || defined(__SNAP__)
+#if defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     #define __GETDS()
     #define save_ds()
     #define restore_ds()
@@ -114,17 +113,7 @@ typedef void (_WCI86NEAR * _WCI86NEAR npfn)(void);
     #error unsupported platform
 #endif
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-static void callit( pfn *f ) {
-    // don't call a null pointer
-    if( *f ) {
-        // QNX need es==ds
-        setup_es();
-        // call function
-        (void)(**f)();
-    }
-}
-#elif defined(M_I86)
+#if defined(M_I86)
 static void callit_near( npfn *f ) {
     // don't call a null pointer
     if( *f ) {
@@ -146,7 +135,15 @@ static void callit_far( fpfn _WCI86NEAR *f ) {
     }
 }
 #else
-    #error unsupported platform
+static void callit( pfn *f ) {
+    // don't call a null pointer
+    if( *f ) {
+        // QNX needs es==ds
+        setup_es();
+        // call function
+        (void)(**f)();
+    }
+}
 #endif
 
 /*
@@ -201,17 +198,15 @@ void __InitRtns( unsigned limit ) {
                 break;
             }
         }
-        #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-            callit( &pnext->rtn );
-        #elif defined(M_I86)
-            if( pnext->rtn_type == PNEAR ) {
-                callit_near( (npfn *)&pnext->rtn );
-            } else {
-                callit_far( (fpfn _WCI86NEAR *)&pnext->rtn );
-            }
-        #else
-            #error unsupported platform
-        #endif
+#if defined(M_I86)
+        if( pnext->rtn_type == PNEAR ) {
+            callit_near( (npfn *)&pnext->rtn );
+        } else {
+            callit_far( (fpfn _WCI86NEAR *)&pnext->rtn );
+        }
+#else
+        callit( &pnext->rtn );
+#endif
         // mark entry as invoked
         pnext->rtn_type = PDONE;
     }
@@ -274,17 +269,15 @@ void __FiniRtns( unsigned min_limit, unsigned max_limit ) {
             }
         }
         if( pnext->priority <= local_max_limit ) {
-            #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-                callit( &pnext->rtn );
-            #elif defined(M_I86)
-                if( pnext->rtn_type == PNEAR ) {
-                    callit_near( (npfn *)&pnext->rtn );
-                } else {
-                    callit_far( (fpfn _WCI86NEAR *)&pnext->rtn );
-                }
-            #else
-                #error unsupported platform
-            #endif
+#if defined(M_I86)
+            if( pnext->rtn_type == PNEAR ) {
+                callit_near( (npfn *)&pnext->rtn );
+            } else {
+                callit_far( (fpfn _WCI86NEAR *)&pnext->rtn );
+            }
+#else
+            callit( &pnext->rtn );
+#endif
         }
         // mark entry as invoked even if we don't call it
         // if we didn't call it, it is because we don't want to

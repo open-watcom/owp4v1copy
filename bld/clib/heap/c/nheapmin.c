@@ -52,9 +52,6 @@
 #if defined(__CALL21__)
  #include "tinyio.h"
 #endif
-#if defined(__SNAP__)
- #include <os/imports.h>
-#endif
 
 #if defined(__SMALL_DATA__)
 
@@ -79,8 +76,7 @@ _WCRTLINK int _nheapmin( void )
     defined(__WINDOWS_286__) || \
     defined(__WINDOWS_386__) || \
     defined(__NT__)          || \
-    defined(__CALL21__)      || \
-    defined(__SNAP__)
+    defined(__CALL21__)
 static int __ReturnMemToSystem( mheapptr mhp )
 {
         mheapptr pnext;
@@ -99,8 +95,6 @@ static int __ReturnMemToSystem( mheapptr mhp )
 #elif defined(__CALL21__)
         // No way to free storage under OSI
         if( mhp ) return( -1 );
-#elif defined(__SNAP__)
-        xfree( (void *)mhp );
 #endif
         if( __MiniHeapRover == mhp ) {  // Update rovers
             if( pnext ) {
@@ -142,8 +136,7 @@ _WCRTLINK int _nheapshrink( void )
     !defined(__WINDOWS_286__) && \
     !defined(__WINDOWS_386__) && \
     !defined(__NT__)          && \
-    !defined(__CALL21__)      && \
-    !defined(__SNAP__)
+    !defined(__CALL21__)
     // Shrink by adjusting _curbrk
 
     frlptr last_free;

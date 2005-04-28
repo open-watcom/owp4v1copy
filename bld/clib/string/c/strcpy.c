@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of strcpy().
 *
 ****************************************************************************/
 
@@ -115,12 +114,8 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
         "       pop     ds"       \
         parm [es di] [dx si] value [dx ax] modify exact [si di];
  #endif
-#elif defined(__AXP__)
- // no pragma
-#elif defined(__PPC__)
- // no pragma
 #else
- #error platform not supported
+ /* currently no pragma for non-x86 */
 #endif
 
 
@@ -131,14 +126,15 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
 #else
  _WCRTLINK CHAR_TYPE *__F_NAME(strcpy,wcscpy)( CHAR_TYPE *s, const CHAR_TYPE *t )
 #endif
-    {
-
+{
 #if !defined(__WIDECHAR__) && defined(_M_IX86)
-        return( __strcpy( s, t ) );
+    return( __strcpy( s, t ) );
 #else
-        CHAR_TYPE *dst;
-        dst = s;
-        while( *dst++ = *t++ );
-        return( s );
+    CHAR_TYPE *dst;
+
+    dst = s;
+    while( *dst++ = *t++ )
+        ;
+    return( s );
 #endif
-    }
+}

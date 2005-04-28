@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines to grow heap (allocate memory from OS).
 *
 ****************************************************************************/
 
@@ -42,7 +41,6 @@
     #include "tinyos2.h"
     #define INCL_DOSMEMMGR
     #include <wos2.h>
-#elif defined(__SNAP__)
 #elif defined(_M_IX86)
     #include "tinyio.h"
 #endif
@@ -78,7 +76,7 @@ _WCRTLINK void _heapgrow( void )
 
 _WCRTLINK void _nheapgrow( void )
     {
-#if defined(__WINDOWS_286__) || defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__WINDOWS_286__) || defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
         _nfree( _nmalloc( 1 ) );        /* get something into the heap */
 #else
         unsigned max_paras;

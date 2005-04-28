@@ -1,23 +1,17 @@
 # bt_(system)
 bt_generic    =-bt=DOS
 bt_msdos      =-bt=DOS
-bt_necdos     =-d__NEC98__ -bt=DOS
-bt_necwin_086 =
-bt_necwin_386 =-d__WIN386__
-bt_necwin     =$(bt_windows_$(processor)) -d__NEC98__ -bt=WINDOWS
 bt_nw_clib    =-bt=NETWARE
 bt_nw_clibl   =-bt=NETWARE
 bt_nw_libc    =-bt=NETWARE5
 bt_nw_libcl   =-bt=NETWARE5
 bt_os2        =-bt=OS2
-bt_osi        =-d__OSI__ -bt=DOS
+bt_osi        =-D__OSI__ -bt=DOS
 bt_qnx        =-bt=QNX
 bt_windows_086=
-bt_windows_386=-d__WIN386__
+bt_windows_386=-D__WIN386__
 bt_windows    =$(bt_windows_$(processor)) -bt=WINDOWS -DSTRICT
 bt_winnt      =-bt=NT
 bt_linux      =-bt=linux
-bt_snap       =-bt=SNAP
-bt_snapdrv    =-bt=SNAP -D__SNAPDRV__
 
 build_target = $(bt_$(system))

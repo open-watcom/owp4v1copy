@@ -35,20 +35,18 @@
 #include "variety.h"
 #include "rtinit.h"
 
-#if defined(__AXP__) || defined(__PPC__)
-  #define __PARMREG1
-  #define __PARMREG2
-#elif defined(__386__)
-  #define __PARMREG1    eax
-  #define __PARMREG2    edx
+#if defined(__386__)
+    #define __PARMREG1      eax
+    #define __PARMREG2      edx
 #elif defined(M_I86)
-  #define __PARMREG1    ax
-  #define __PARMREG2    dx
+    #define __PARMREG1      ax
+    #define __PARMREG2      dx
 #else
-  #error unrecognized platform
+    #define __PARMREG1
+    #define __PARMREG2
 #endif
 
-extern void __InitRtns(unsigned);
+extern void __InitRtns( unsigned );
 // - takes priority limit parm in __PARMREG1
 //      code will run init routines whose
 //      priority is <= __PARMREG1 (really [0-255])
@@ -73,7 +71,7 @@ extern void __FiniRtns(unsigned,unsigned);
 #if defined(_M_IX86)
   #pragma aux __FiniRtns "*" parm [__PARMREG1] [__PARMREG2]
   #if !defined(__386__)
-    extern void _WCI86FAR __FFiniRtns(unsigned,unsigned);
+    extern void _WCI86FAR __FFiniRtns( unsigned, unsigned );
     #pragma aux __FFiniRtns "*" parm [__PARMREG1] [__PARMREG2]
   #endif
 #endif

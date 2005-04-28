@@ -99,7 +99,7 @@ _WCRTLINK int __flush( FILE *fp )
     }
     fp->_ptr = _FP_BASE(fp);   /* reset ptr to start of buffer */
     fp->_cnt = 0;
-    #if !defined(__NETWARE__) && !defined(__OSI__) && !defined(__SNAP__)
+    #if !defined(__NETWARE__) && !defined(__OSI__)
         if( ret == 0  &&  ( _FP_EXTFLAGS(fp) & _COMMIT ) ) {
             if( fsync( fileno( fp ) ) == -1 )  ret = EOF;
         }

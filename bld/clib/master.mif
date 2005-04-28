@@ -7,12 +7,11 @@ clib_host_cpu_386=386
 clib_host_cpu_387=386
 clib_host_cpu_axp=axp
 clib_host_cpu_ppc=ppc
+clib_host_cpu_mps=mps
 host_cpu = $(clib_host_cpu_$(processor))
 
 clib_host_os_generic    =dos
 clib_host_os_msdos      =dos
-clib_host_os_necdos     =dos
-clib_host_os_necwin     =dos
 clib_host_os_nw_clib    =nov_clib
 clib_host_os_nw_clibl   =nov_clibl
 clib_host_os_nw_libc    =nov_libc
@@ -23,8 +22,6 @@ clib_host_os_qnx        =qnx
 clib_host_os_windows    =win
 clib_host_os_winnt      =nt
 clib_host_os_linux      =linux
-clib_host_os_snap       =snap
-clib_host_os_snapdrv    =snapdrv
 host_os=$(clib_host_os_$(system))
 
 !include cproj.mif
