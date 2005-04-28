@@ -256,10 +256,10 @@ owl_offset OWLENTRY OWLRelocTargetDisp( owl_section_handle section, owl_offset f
     owl_cpu     cpu;
 
     cpu = section->file->info->cpu;
-    if( cpu == OWL_CPU_ALPHA || cpu == OWL_CPU_INTEL ) {
-        from += 4;  // Intel and Alpha use updated PC
-    } // PPC & MIPS uses current PC
-    if (cpu != OWL_CPU_INTEL) { // no alignment restrictions for INTEL
+    if( cpu == OWL_CPU_ALPHA || cpu == OWL_CPU_INTEL || cpu == OWL_CPU_MIPS ) {
+        from += 4;  // Intel, Alpha and MIPS use updated PC
+    } // PowerPC uses current PC
+    if( cpu != OWL_CPU_INTEL ) {    // no alignment restrictions for Intel
         assert( ( to % 4 ) == 0 );
         assert( ( from % 4 ) == 0 );
     }
@@ -267,7 +267,7 @@ owl_offset OWLENTRY OWLRelocTargetDisp( owl_section_handle section, owl_offset f
     if( cpu == OWL_CPU_PPC || cpu == OWL_CPU_INTEL) {
         return( ret );
     }
-    return( ret >> 2 );
+    return( ret >> 2 ); // Alpha and MIPS chop off the low two bits
 }
 
 uint_8 OWLENTRY OWLRelocIsRelative( owl_file_handle file, owl_reloc_info *reloc ) {
