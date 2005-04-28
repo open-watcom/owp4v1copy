@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -24,51 +24,31 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getcwd() for Linux. 
+* Description:  Linux ptrace() implementation.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include <string.h>
+#include <unistd.h>
+#include <sys/ptrace.h>
 #include <errno.h>
-#include "seterrno.h"
-#include "liballoc.h"
+#include "syslinux.h"
 
-#include "../../linux/h/syslinux.h"
-
-_WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
+_WCRTLINK long ptrace( int request, int pid, void *addr, void *data )
 {
-    char path[_MAX_PATH];
-    long realsize;
-    CHAR_TYPE *out;
-    char *in;
-    CHAR_TYPE ch;
+    long    res, ret;
 
-    realsize = sys_call2(SYS_getcwd, (u_long)path, _MAX_PATH);
-
-    if( realsize < 0 ) {
-        __set_errno(- realsize);
-        return( NULL );
-    }
-    if( buf == NULL ) {
-        buf = lib_malloc( max(size,realsize+1) * CHARSIZE );
-        if( buf == NULL ) {
-            __set_errno( ENOMEM );
-            return( NULL );
-        }
-    } else {
-        if( realsize > size ) {
-            __set_errno( ERANGE );
-            return( NULL );
+    /* Someone thought having ptrace() behave differently for the PEEK
+     * requests was a clever idea. Instead of error code, ptrace()
+     * returns the actual value and errno must be checked.
+     */
+    if( (request >= PTRACE_PEEKTEXT) && (request <= PTRACE_PEEKUSER) )
+        *((long**)&data) = &ret;
+    res = sys_call4( SYS_ptrace, request, pid, (u_long)addr, (u_long)data );
+    if( res >= 0 ) {
+        if( (request >= PTRACE_PEEKTEXT) && (request <= PTRACE_PEEKUSER) ) {
+            return( ret );
         }
     }
-    in = path;
-    out = buf;
-    do {
-        ch = *(in++);
-        *(out++) = ch;
-    } while( ch );
-    return( buf );
+    __syscall_return( long, res );
 }

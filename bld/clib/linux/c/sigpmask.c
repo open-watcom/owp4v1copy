@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -24,51 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getcwd() for Linux. 
+* Description:  Linux sigprocmask() implementation.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include <string.h>
+#include <signal.h>
 #include <errno.h>
-#include "seterrno.h"
-#include "liballoc.h"
+#include "syslinux.h"
 
-#include "../../linux/h/syslinux.h"
-
-_WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
+_WCRTLINK int sigprocmask( int __how, const sigset_t *__set, sigset_t *__oldset )
 {
-    char path[_MAX_PATH];
-    long realsize;
-    CHAR_TYPE *out;
-    char *in;
-    CHAR_TYPE ch;
-
-    realsize = sys_call2(SYS_getcwd, (u_long)path, _MAX_PATH);
-
-    if( realsize < 0 ) {
-        __set_errno(- realsize);
-        return( NULL );
-    }
-    if( buf == NULL ) {
-        buf = lib_malloc( max(size,realsize+1) * CHARSIZE );
-        if( buf == NULL ) {
-            __set_errno( ENOMEM );
-            return( NULL );
-        }
-    } else {
-        if( realsize > size ) {
-            __set_errno( ERANGE );
-            return( NULL );
-        }
-    }
-    in = path;
-    out = buf;
-    do {
-        ch = *(in++);
-        *(out++) = ch;
-    } while( ch );
-    return( buf );
+    u_long res = sys_call3( SYS_sigprocmask, __how, (u_long)__set,
+                           (u_long)__oldset );
+    __syscall_return( int, res );
 }
