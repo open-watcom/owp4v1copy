@@ -1,0 +1,21 @@
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+#==========================================================================================================
+!inject access.obj                                                                              l32 lpc lmp
+!inject alarm.obj                                                                               l32 lpc lmp
+!inject close.obj                                                                               l32 lpc lmp
+!inject fcntl.obj                                                                               l32 lpc lmp
+!inject fork.obj                                                                                l32 lpc lmp
+!inject getdents.obj                                                                            l32 lpc lmp
+!inject ioctl.obj                                                                               l32 lpc lmp
+!inject lseek.obj                                                                               l32 lpc lmp
+!inject lstat.obj                                                                               l32 lpc lmp
+!inject read.obj                                                                                l32 lpc lmp
+!inject sockcall.obj                                                                            l32 lpc lmp
+!inject sys_brk.obj                                                                             l32 lpc lmp
+!inject sys_exit.obj                                                                            l32 lpc lmp
+!inject sys_open.obj                                                                            l32 lpc lmp
+!inject time.obj                                                                                l32 lpc lmp
+!inject unlink.obj                                                                              l32 lpc lmp
+!inject write.obj                                                                               l32 lpc lmp
+
+!include ../../../../objlist.mif
