@@ -185,6 +185,10 @@ static  void    DoCondJump( instruction *cond ) {
 #else
         assert( cond->operands[ 0 ]->n.class == N_REGISTER );
         temp.index = cond->operands[ 0 ]->r.arch_index;
+        if( cond->operands[1]->n.class == N_REGISTER )
+            temp.index2 = cond->operands[1]->r.arch_index;
+        else
+            temp.index2 = -1;
         if( _IsFloating( cond->type_class ) ) {
             temp.op.class |= ATTR_FLOAT;
         }

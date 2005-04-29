@@ -132,11 +132,14 @@ static  uint_8  BinaryOpcodes8[][2][2] = {
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_FMOD */
 };
 
+/* MIPS only has slt/sltu - every other operation needs to be
+ * reduced to something else.
+ */
 static  uint_8  SetOpcodes[][2][2] = {
-        _BinaryOpcode( 0x10, 0x2d ),                    /* OP_SET_EQUAL */
+        _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_EQUAL */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_NOT_EQUAL */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_GREATER */
-        _SignedOpcode( 0x10, 0x3d, 0x10, 0x6d ),        /* OP_SET_LESS_EQUAL */
+        _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_LESS_EQUAL */
         _SignedOpcode( 0x00, 0x2a, 0x00, 0x2b ),        /* OP_SET_LESS */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_GREATER_EQUAL */
 };
@@ -256,6 +259,7 @@ static  uint_8  *FindOpcodes( instruction *ins )
     } else {
         assert( 0 );
     }
+    assert( opcodes[0] || opcodes[1] );
     return( opcodes );
 }
 
@@ -302,6 +306,7 @@ static  uint_8 FindFloatingOpcodes( instruction *ins )
     } else {
         assert( 0 );
     }
+    assert( opcode );
     return( opcode );
 }
 
@@ -965,21 +970,6 @@ extern  void GenObjCode( instruction *ins )
     _AlignmentCheck( ins, 4 );
     Encode( ins );
 }
-
-
-#if 0
-extern  void GenJumpIf( instruction *ins, pointer label )
-/*******************************************************/
-{
-    GenBRANCH( BranchOpcodes[ins->head.opcode - FIRST_COMPARISON][_IsFloating( ins->type_class )],
-                _NameReg( ins->operands[0] ), label );
-    if( _IsTargetModel( ASM_OUTPUT ) ) {
-        DumpString( "Jcc L" );
-        DumpPtr( label );
-        DumpNL();
-    }
-}
-#endif
 
 
 extern  void GenLabelReturn( void )

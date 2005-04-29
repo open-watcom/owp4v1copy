@@ -85,6 +85,7 @@ extern  instruction     *rMOVEXX_8(instruction*);
 extern  instruction     *rMOVEXX_4(instruction*);
 extern  instruction     *rMOD2DIV(instruction*);
 extern  instruction     *rALLOCA(instruction*);
+extern instruction      *rM_SPLITCMP( instruction * );
 
 extern  hw_reg_set      StackReg();
 extern  hw_reg_set      ReturnAddrReg();

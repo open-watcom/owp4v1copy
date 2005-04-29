@@ -125,6 +125,7 @@ typedef struct oc_jcond {
         cond_no                 cond;
 #if _TARGET & _TARG_RISC
         int                     index;
+        int                     index2; // MIPS can do reg/reg cond branches
 #endif
 } oc_jcond;
 

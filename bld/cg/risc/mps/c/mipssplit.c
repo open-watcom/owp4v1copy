@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  MIPS load/store splitting.
+* Description:  MIPS specific instruction reductions.
 *
 ****************************************************************************/
 
@@ -71,6 +71,8 @@ extern  instruction     *NewIns( int );
 
 extern  void            UpdateLive( instruction *, instruction * );
 extern  name            *OffsetMem( name *, type_length, type_class_def );
+
+extern  opcode_entry    *OpcodeTable( table_def );
 
 extern  type_length     TypeClassSize[];
 extern  type_class_def  Unsigned[];
@@ -178,23 +180,6 @@ extern  instruction *rMOVEXX_8( instruction *ins )
 }
 
 
-#if 0
-extern instruction *rCONSTLOAD( instruction *ins )
-/************************************************/
-{
-    signed_16           high;
-    signed_16           low;
-    signed_16           extra;
-
-    assert( ins->operands[0]->n.class == N_CONSTANT );
-    assert( ins->operands[0]->c.const_type == CONS_ABSOLUTE );
-
-    first = NULL;
-    FactorInt32( ins->operands[0]->c.int_value, &high, &extra, &low );
-    // work to be done here - need some way of accurately representing
-    // the ldah rn,extra(rn) instruction
-}
-#else
 extern instruction *rCONSTLOAD( instruction *ins )
 /************************************************/
 {
@@ -259,7 +244,6 @@ extern instruction *rCONSTLOAD( instruction *ins )
     }
     return( first_ins );
 }
-#endif
 
 
 static instruction *CheapCall( instruction *ins, int rt_call, name *p1, name *p2 )
@@ -282,6 +266,7 @@ static instruction *CheapCall( instruction *ins, int rt_call, name *p1, name *p2
     call->num_operands = 2;     /* special case for OP_CALL*/
     HW_TurnOn( reg, ReturnAddrReg() );
     HW_TurnOn( reg, ScratchReg() );
+    // TODO: these regs are most likely wrong for MIPS
     HW_CTurnOn( reg, HW_R1 );   // know this is only other reg modified!
     HW_CTurnOn( reg, HW_R2 );   // and this one two!
     HW_CTurnOn( reg, HW_R3 );   // and this one three!
@@ -291,8 +276,9 @@ static instruction *CheapCall( instruction *ins, int rt_call, name *p1, name *p2
     return( call );
 }
 
+
 static void CopyStack( instruction *ins, name *alloc_size, type_length arg_size )
-/*&*****************************************************************************/
+/*******************************************************************************/
 {
     instruction         *new_ins;
     name                *p1;
@@ -306,6 +292,7 @@ static void CopyStack( instruction *ins, name *alloc_size, type_length arg_size 
     PrefixIns( ins, new_ins );
     CheapCall( ins, RT_STK_COPY, p1, p2 );
 }
+
 
 extern instruction *rALLOCA( instruction *ins )
 /*********************************************/
@@ -365,4 +352,78 @@ extern instruction *rALLOCA( instruction *ins )
     ReplIns( ins, last );
     UpdateLive( first, last );
     return( first );
+}
+
+
+/* MIPS is a little weird - it only has 'set' instruction for
+ * 'less than' (reg/reg and reg/imm variants). Conditional branch
+ * instructions can't take an immediate operand (except $zero of course)
+ * and there isn't a full set of reg/reg conditional branches. So we
+ * have to carefully reduce the instructions here...
+ * NB: This is a clone of rSPLITCMP from rscsplit.c
+ */
+extern instruction      *rM_SPLITCMP( instruction *ins )
+/******************************************************/
+{
+    instruction         *new;
+    opcode_defs         opcode;
+    bool                reverse;
+
+    reverse = FALSE;
+    assert( ins->result == NULL );
+    switch( ins->head.opcode ) {
+    case OP_CMP_NOT_EQUAL:
+        reverse = TRUE;
+        /* fall through */
+    case OP_CMP_EQUAL:
+        opcode = OP_SET_EQUAL;
+        break;
+    case OP_CMP_GREATER:
+        reverse = TRUE;
+        /* fall through */
+    case OP_CMP_LESS_EQUAL:
+        opcode = OP_SET_LESS_EQUAL;
+        /* Special reduction: use OP_SET_LESS but increment constant */
+        if( (ins->operands[1]->n.class == N_CONSTANT)
+            && (ins->operands[1]->c.const_type == CONS_ABSOLUTE) ) {
+            opcode = OP_SET_LESS;
+            // TODO: is it safe to increment constant? Should we copy it first?
+            ins->operands[1]->c.int_value++;
+        }
+        break;
+    case OP_CMP_GREATER_EQUAL:
+        reverse = TRUE;
+        /* fall through */
+    case OP_CMP_LESS:
+        opcode = OP_SET_LESS;
+        break;
+    }
+    ins->result = AllocTemp( ins->type_class );
+    switch( ins->type_class ) {
+    case I4:
+    case U4:
+        ins->table = OpcodeTable( BIN4 );
+        break;
+    case I8:
+    case U8:
+        ins->table = OpcodeTable( BIN8 );
+        break;
+    case FS:
+        ins->table = OpcodeTable( FBINS );
+        break;
+    case FD:
+    case FL:
+        ins->table = OpcodeTable( FBIND );
+        break;
+    default:
+        _Zoiks( ZOIKS_096 );
+    }
+    ins->head.opcode = opcode;
+    opcode = OP_CMP_NOT_EQUAL;
+    if( reverse ) {
+        opcode = OP_CMP_EQUAL;
+    }
+    new = MakeCondition( opcode, ins->result, AllocS32Const( 0 ), _TrueIndex( ins ), _FalseIndex( ins ), ins->type_class );
+    SuffixIns( ins, new );
+    return( new );
 }

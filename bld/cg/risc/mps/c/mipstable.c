@@ -269,12 +269,17 @@ opcode_entry    Test4[] = {
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,      R_DOTEST,     RG_,        FU_ALU,
 };
 
+/* V_MIPSBRANCH is true if condition is OP_CMP_NOT_EQUAL or OP_CMP_EQUAL.
+ * Such condition can be encoded as beq/bne using registers as operands.
+ */
 opcode_entry    Cmp4[] = {
 /************************/
 /*      op1   op2       verify          gen             reg             fu */
+_Side(  R,    R ),      V_MIPSBRANCH,   G_CONDBR,       RG_DWORD,       FU_NO,
 _Side(  R,    R ),      V_NO,           R_SPLITCMP,     RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_DWORD,       FU_NO,
-_Side(  R,    C ),      V_NO,           R_SPLITCMP,     RG_DWORD,       FU_NO,
+_Side(  R,    C ),      V_MIPSBRANCH,   R_MOVOP2TEMP,   RG_DWORD,       FU_NO,
+_Side(  R,    C ),      V_NO,           R_M_SPLITCMP,   RG_DWORD,       FU_NO,
 _Side(  C,    C ),      V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,
 _Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_DWORD,       FU_NO,
 _Side(  M,    ANY ),    V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,

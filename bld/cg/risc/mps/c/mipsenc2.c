@@ -59,10 +59,10 @@ void EncodeRet( oc_ret *oc )
 }
 
 
-static void doBranch( mips_ins opcode, pointer lbl, uint reg )
-/************************************************************/
+static void doBranch( mips_ins opcode, pointer lbl, uint reg1, uint reg2 )
+/************************************************************************/
 {
-    opcode = _Opcode( opcode ) | _Rs( reg ) | _Rt( MIPS_ZERO_SINK );
+    opcode = _Opcode( opcode ) | _Rs( reg1 ) | _Rt( reg2 );
     OutReloc( lbl, OWL_RELOC_BRANCH_REL, 0 );
     ObjBytes( (char *)&opcode, sizeof( opcode ) );
     // TODO: Handle delay slot better
@@ -74,7 +74,7 @@ static void doBranch( mips_ins opcode, pointer lbl, uint reg )
 void EncodeJump( oc_handle *oc )
 /******************************/
 {
-    doBranch( 0x04, oc->handle, MIPS_ZERO_SINK );
+    doBranch( 0x04, oc->handle, MIPS_ZERO_SINK, MIPS_ZERO_SINK );
 }
 
 
@@ -98,9 +98,9 @@ void EncodeCall( oc_handle *oc )
 static  uint_8  BranchOpcodes[][2] = {
     { 0x04, 0x31 },                     /* OP_CMP_EQUAL */
     { 0x05, 0x35 },                     /* OP_CMP_NOT_EQUAL */
-    { 0x07, 0x37 },                     /* OP_CMP_GREATER */
-    { 0x06, 0x33 },                     /* OP_CMP_LESS_EQUAL */
-    { 0x01, 0x32 },                     /* OP_CMP_LESS */
+    { 0x00, 0x37 },                     /* OP_CMP_GREATER */
+    { 0x00, 0x33 },                     /* OP_CMP_LESS_EQUAL */
+    { 0x00, 0x32 },                     /* OP_CMP_LESS */
     { 0x00, 0x36 },                     /* OP_CMP_GREATER_EQUAL */
 };
 
@@ -109,11 +109,14 @@ void EncodeCond( oc_jcond *oc )
 {
     mips_ins    opcode;
     int         floating;
+    uint        reg2;
 
     floating = 0;
     if( oc->op.class & ATTR_FLOAT ) {
         floating = 1;
     }
+    reg2 = oc->index2 == -1 ? 0 : oc->index2;
     opcode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating];
-    doBranch( opcode, oc->handle, oc->index );
+    assert( opcode );
+    doBranch( opcode, oc->handle, oc->index, reg2 );
 }
