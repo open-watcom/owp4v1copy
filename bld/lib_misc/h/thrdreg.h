@@ -33,7 +33,7 @@
 #ifndef _THRDREG_H_INCLUDED
 #define _THRDREG_H_INCLUDED
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     #include "extfunc.h"
     typedef void thread_fn( void * );
     #if defined(_M_IX86)

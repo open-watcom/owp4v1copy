@@ -1,10 +1,9 @@
-#pmake: 32bit linux threading convert mips static os_linux cpu_mps
+#pmake: 32bit linux threading posix ppc static os_linux cpu_ppc
 
-processor = mps
+processor = ppc
 system    = linux
 linkage   = static
 
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
 !include $(clib_dir)/mklib.mif
-!include ../../../deps.mif

@@ -55,7 +55,7 @@
 #endif
 
 extern  void            __FiniThreadProcessing(void);
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
   extern void           (*_AccessFileH)(int);
   extern void           (*_ReleaseFileH)(int);
   extern void           (*_AccessIOB)(void);
@@ -76,7 +76,7 @@ extern  void            __FiniThreadProcessing(void);
   #endif
 #endif
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
     void static nullSema4Rtn( semaphore_object *p ) { p = p; }
     _WCRTLINK void (*__AccessSema4)( semaphore_object *) = &nullSema4Rtn;
     _WCRTLINK void (*__ReleaseSema4)( semaphore_object *) = &nullSema4Rtn;
@@ -105,7 +105,7 @@ static semaphore_object FileSemaphores[ MAX_SEMAPHORE ];
 
 static semaphore_object IOBSemaphore;
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
   static semaphore_object InitSemaphore;
   static semaphore_object TDListSemaphore;
 #endif
@@ -175,7 +175,7 @@ _WCRTLINK void __CloseSemaphore( semaphore_object *obj )
         }
     #endif
     #if !defined( __NT__ )
-        #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+        #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
             if( obj->initialized != 0 ) {
                 #if defined( __NETWARE__ )
                     obj->semaphore = 0;
@@ -207,7 +207,7 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
         if( tid == 0 ) return;
     #endif
     if( obj->owner != tid ) {
-        #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+        #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
             #if !defined( __NETWARE__ )
                 if( obj->initialized == 0 ) {
                     #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )
@@ -273,7 +273,7 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
         }
         if( --obj->count == 0 ) {
             obj->owner = 0;
-            #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+            #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
                 #if defined( __NETWARE__ )
                     obj->semaphore = 0;
                 #elif defined( __NT__ )
@@ -346,7 +346,7 @@ void    __ReleaseFHeap()
 }
 #endif
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
 
 void    __AccessTDList()
 /*********************/
@@ -448,7 +448,7 @@ _WCRTLINK struct thread_data *__MultipleThread()
     #endif
 }
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
 
 thread_data *__AllocInitThreadData( thread_data *tdata )
 /******************************************************/
@@ -777,7 +777,7 @@ static void __FiniSema4s()              // called from finalizer
     _CloseSemaphore( &NHeapSemaphore );
     _CloseSemaphore( &FHeapSemaphore );
     #endif
-    #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+    #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
     _CloseSemaphore( &TDListSemaphore );
     _CloseSemaphore( &InitSemaphore );
 

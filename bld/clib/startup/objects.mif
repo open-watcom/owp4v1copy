@@ -26,6 +26,7 @@
 !inject cstrt386.obj     d32
 !inject cstrtaxp.obj                        nta
 !inject cstrtl32.obj                                                                            l32
+!inject cstrtlmp.obj                                                                                    lmp
 !inject cstrto16.obj                                                o16
 !inject cstrto32.obj                                                    o32
 !inject cstrtosi.obj                                                                  osi
@@ -88,7 +89,7 @@
 !inject main2wnt.obj                     nt nta ntp
 !inject main4wnt.obj                     nt nta ntp
 !inject maino16.obj                                                 o16
-!inject mainlnx.obj                                                                             l32
+!inject mainlnx.obj                                                                             l32 lpc lmp
 !inject maino32.obj                                                     o32
 !inject mainqnx.obj                                                             q32
 !inject mainwnt.obj                      nt nta ntp

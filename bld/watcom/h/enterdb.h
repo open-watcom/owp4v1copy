@@ -151,6 +151,20 @@ _WCRTLINK extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
 
     #define EnterDebuggerWithMessage( s )       EnterDebugger()
 
+#elif defined(__MIPS__)
+
+    extern void EnterDebugger( void );
+    #pragma aux EnterDebugger = "break"
+
+    extern void EnterDebuggerWithMessage( const char * );
+    #pragma aux EnterDebuggerWithMessage =      \
+                   "break"                      \
+                   "beq $0,$0,1f"               \
+                   "nop"                        \
+                   ".byte 0x57,0x56,0x49,0x44"  \
+                   ".byte 0x45,0x4f,0,0"        \
+                   "1:"
+
 #else
    #error enterdb.h not configured for CPU
 #endif

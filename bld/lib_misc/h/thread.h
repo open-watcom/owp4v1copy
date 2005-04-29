@@ -96,7 +96,7 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object * );
 _WCRTLINK void __CloseSemaphore( semaphore_object * );
 
 // the following is for the C++ library
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     _WCRTLINK extern void (*__AccessSema4)( semaphore_object *);
     _WCRTLINK extern void (*__ReleaseSema4)( semaphore_object *);
     _WCRTLINK extern void (*__CloseSema4)( semaphore_object *);
@@ -177,7 +177,7 @@ typedef struct thread_data {
 }   /* extern "C" */
 #endif
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 
     // define thread registration function
     #include "thrdreg.h"

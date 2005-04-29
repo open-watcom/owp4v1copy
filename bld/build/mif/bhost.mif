@@ -78,6 +78,8 @@ bld_link        = *wlink sys $(bld_sys)
 bas             = $(as)
 !else ifeq host_cpu ppc
 bas             = $(as)
+!else ifeq host_cpu mps
+bas             = $(as)
 !else ifdef __LINUX__
 bas             = *$(bld_bin)/bwasm
 !else

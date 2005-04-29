@@ -60,52 +60,47 @@ unsigned __udiv( unsigned, unsigned _WCNEAR * );
         parm caller [ax] [bx] \
         modify exact [ax dx] \
         value [dx];
-#elif defined(__AXP__)
-    // no pragma
-#elif defined(__PPC__)
-    // no pragma
-#else
-    #error missing __udiv #pragma
 #endif
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(utoa,_utow)( unsigned value, CHAR_TYPE *buffer, int radix )
-    {
-        CHAR_TYPE *p = buffer;
-        char *q;
-        unsigned rem;
-        unsigned quot;
-        auto char buf[34];      // only holds ASCII so 'char' is OK
+{
+    CHAR_TYPE   *p = buffer;
+    char        *q;
+    unsigned    rem;
+    unsigned    quot;
+    char        buf[34];    // only holds ASCII so 'char' is OK
 
-        buf[0] = '\0';
-        q = &buf[1];
-        do {
-            #if defined(__AXP__) || defined(__PPC__) || !defined(__WATCOMC__)
-                rem = value % radix;
-                quot = value / radix;
-            #else
-                quot = radix;
-                rem = __udiv( value, (unsigned _WCNEAR *) &quot );
-            #endif
-            *q = __Alphabet[ rem ];
-            ++q;
-            value = quot;
-        } while( value != 0 );
-        while( (*p++ = (CHAR_TYPE)*--q) );
-        return( buffer );
-    }
+    buf[0] = '\0';
+    q = &buf[1];
+    do {
+#if defined(M_IX86) && defined(__WATCOMC__)
+        quot = radix;
+        rem = __udiv( value, (unsigned _WCNEAR *) &quot );
+#else
+        rem = value % radix;
+        quot = value / radix;
+#endif
+        *q = __Alphabet[rem];
+        ++q;
+        value = quot;
+    } while( value != 0 );
+    while( (*p++ = (CHAR_TYPE)*--q) )
+        ;
+    return( buffer );
+}
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(itoa,_itow)( int value, CHAR_TYPE *buffer, int radix )
-    {
-        register CHAR_TYPE *p = buffer;
+{
+    CHAR_TYPE   *p = buffer;
 
-        if( radix == 10 ) {
-            if( value < 0 ) {
-                *p++ = '-';
-                value = - value;
-            }
+    if( radix == 10 ) {
+        if( value < 0 ) {
+            *p++ = '-';
+            value = - value;
         }
-        __F_NAME(utoa,_utow)( value, p, radix );
-        return( buffer );
     }
+    __F_NAME(utoa,_utow)( value, p, radix );
+    return( buffer );
+}

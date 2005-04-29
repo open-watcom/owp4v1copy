@@ -1,7 +1,7 @@
-proj_name = wasmips
+proj_name = wasmps
 
-!ifndef wasmips_autodepends
-wasmips_autodepends = .AUTODEPEND
+!ifndef wasmps_autodepends
+wasmps_autodepends = .AUTODEPEND
 !endif
 
 splice_opts = -kAS_MIPS

@@ -33,7 +33,7 @@
 #ifndef _MTHREAD_H_INCLUDED
 #define _MTHREAD_H_INCLUDED
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
   thread_data *__AllocInitThreadData( thread_data *tdata );
   thread_data   *__AllocThreadData( void );
   void          __InitThreadData( thread_data * );
