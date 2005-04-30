@@ -29,7 +29,7 @@
 *****************************************************************************/
 
 
-PICK( IT_MEMORY_LDA,    ITLoadAddress,  OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* lda     */
+PICK( IT_MEMORY_LDA,    ITLoadAddress,  OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* la      */
 PICK( IT_MEMORY_ALL,    ITMemAll,       OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* ldl     */
 PICK( IT_FP_MEMORY_ALL, ITMemAll,       OP_FPR, OP_REG_INDIRECT, OP_NOTHING )                           /* ldf     */
 PICK( IT_MEMORY_A,      ITMemA,         OP_GPR, OP_NOTHING, OP_NOTHING )                                /* rpcc    */
@@ -40,11 +40,13 @@ PICK( IT_JUMP,          ITJump,         (OP_GPR | OP_IMMED), (OP_GPR | OP_NOTHIN
 PICK( IT_BRANCH,        ITBranch,       (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* bsr     */
 PICK( IT_BRANCH_TWO,    ITBranchTwo,    OP_GPR, OP_GPR, OP_IMMED )                                      /* beq     */
 PICK( IT_FP_BRANCH,     ITBranch,       OP_FPR, OP_IMMED, OP_NOTHING )                                  /* fbeq    */
-PICK( IT_MOV_SPECIAL,   ITMovSpecial,   OP_GPR, OP_NOTHING, OP_NOTHING )                                /* mflo    */
+PICK( IT_MF_SPECIAL,    ITMovFromSpc,   OP_GPR, OP_NOTHING, OP_NOTHING )                                /* mflo    */
+PICK( IT_MT_SPECIAL,    ITMovToSpc,     OP_GPR, OP_NOTHING, OP_NOTHING )                                /* mflo    */
 PICK( IT_MOV_FP,        ITMovFP,        OP_GPR, OP_FPR, OP_NOTHING )                                    /* mtc1    */
 PICK( IT_MUL_DIV,       ITMulDiv,       OP_GPR, OP_GPR, OP_NOTHING )                                    /* mult    */
 PICK( IT_OPERATE,       ITOperate,      OP_GPR, OP_GPR, (OP_GPR | OP_IMMED) )                           /* add     */
 PICK( IT_OPERATE_IMM,   ITOperateImm,   OP_GPR, OP_GPR, OP_IMMED )                                      /* addi    */
+PICK( IT_OPERATE_SHF,   ITShiftImm,     OP_GPR, OP_GPR, OP_IMMED )                                      /* sll     */
 PICK( IT_FP_OPERATE,    ITFPOperate,    OP_FPR, OP_FPR, OP_FPR )                                        /* cpys    */
 PICK( IT_FP_CONVERT,    ITFPConvert,    OP_FPR, OP_FPR, OP_NOTHING )                                    /* cvtqs   */
 PICK( IT_BR,            ITBr,           (OP_GPR | OP_IMMED), (OP_IMMED | OP_NOTHING), OP_NOTHING )      /* br      */
