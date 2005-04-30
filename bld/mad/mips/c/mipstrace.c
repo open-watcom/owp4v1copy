@@ -149,9 +149,9 @@ mad_status DIGENTRY MITraceSimulate( mad_trace_data *td, mad_disasm_data *dd, ma
             else
                 base = DR_MIPS_r31;         // everything else updates r31
             if( base != DR_MIPS_r0 ) {
-                reg = &TRANS_REG( out, dd->ins.op[0].base );
+                reg = &TRANS_REG( out, base );
                 *reg = out->mips.pc;
-                reg->u._32[I64LO32] += sizeof( unsigned_32 );
+                reg->u._32[I64LO32] += sizeof( unsigned_32 ) * 2;
             }
         }
         out->mips.pc.u._32[I64LO32] = new;

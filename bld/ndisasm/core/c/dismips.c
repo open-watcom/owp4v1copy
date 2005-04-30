@@ -176,7 +176,10 @@ dis_handler_return MIPSCode( dis_handle *h, void *d, dis_dec_ins *ins )
     code.full = ins->opcode;
     ins->op[0].type = DO_IMMED;
     ins->op[0].value = code.break_t.code;
-    ins->num_ops = 1;
+    if( code.break_t.code )     // hide zero "opcode"
+        ins->num_ops = 1;
+    else
+        ins->num_ops = 0;
     return( DHR_DONE );
 }
 
