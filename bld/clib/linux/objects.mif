@@ -27,7 +27,7 @@
 !inject getppid.obj                                                                             l32 lpc lmp
 !inject gettmofd.obj                                                                            l32 lpc lmp
 !inject getuid.obj                                                                              l32 lpc lmp
-!inject ioctl.obj                                                                               l32
+!inject ioctl.obj                                                                               l32 lpc lmp
 !inject ioperm.obj                                                                              l32 lpc lmp
 !inject iopl.obj                                                                                l32
 !inject kill.obj                                                                                l32 lpc lmp

@@ -24,49 +24,49 @@
 *
 *  ========================================================================
 *
-* Description:  Macros causing function calls on initialization, etc.
+* Description:  Structures for run-time initialization/finalization.
 *
 ****************************************************************************/
+
 
 #ifndef __RTINIT_H__
 #define __RTINIT_H__
 
-// RTINIT.H -- structure for run-time initialization/finalization
-//
-// 93/01/22     -- J.W.Welch        -- defined
-// 95/03/07     -- Greg Bentz       -- generalize for AXP
-// 95/12/01     -- Greg Bentz       -- categorize shutdown sequencing
-
 #include "langenvd.h"
 #if defined( __PPC__ )
-  #define   __TGT_SYS   __TGT_SYS_AXP_PPC
-typedef unsigned        __type_rtp;
-typedef unsigned        __type_pad;
-typedef void(           *__type_rtn ) ( void );
+     #define   __TGT_SYS    __TGT_SYS_AXP_PPC
+    typedef unsigned        __type_rtp;
+    typedef unsigned        __type_pad;
+    typedef void(           *__type_rtn ) ( void );
 #elif defined( __AXP__ )
-  #define   __TGT_SYS   __TGT_SYS_AXP_NT
-typedef unsigned        __type_rtp;
-typedef unsigned        __type_pad;
-typedef void(           *__type_rtn ) ( void );
+    #define   __TGT_SYS     __TGT_SYS_AXP_NT
+    typedef unsigned        __type_rtp;
+    typedef unsigned        __type_pad;
+    typedef void(           *__type_rtn ) ( void );
+#elif defined( __MIPS__ )
+    #define   __TGT_SYS     __TGT_SYS_MIPS
+    typedef unsigned        __type_rtp;
+    typedef unsigned        __type_pad;
+    typedef void(           *__type_rtn ) ( void );
 #else
-  #define   __TGT_SYS   __TGT_SYS_X86
-typedef unsigned char   __type_rtp;
-typedef unsigned short  __type_pad;
+    #define   __TGT_SYS   __TGT_SYS_X86
+    typedef unsigned char   __type_rtp;
+    typedef unsigned short  __type_pad;
   #if defined( __386__ )
-typedef void __near(    *__type_rtn ) ( void );
+    typedef void __near(    *__type_rtn ) ( void );
   #else
-typedef void(           *__type_rtn ) ( void );
-  #endif
+    typedef void(           *__type_rtn ) ( void );
+   #endif
 #endif
 #include "langenv.h"
 
 #if defined( __MEDIUM__ ) || defined( __LARGE__ ) || defined( __HUGE__ )
-  #define __LARGE_CODE__
+    #define __LARGE_CODE__
 #endif
 
 // initialization progresses from highest priority to lowest
 // finalization progresses from lowest to highest
-#pragma pack(1);
+#pragma pack( 1 )
 struct rt_init // structure placed in XI/YI segment
 {
     __type_rtp  rtn_type; // - near=0/far=1 routine indication
@@ -79,20 +79,22 @@ struct rt_init // structure placed in XI/YI segment
                           //   or when risc cpu
 #endif
 };
-#pragma pack();
+#pragma pack()
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-  #define YIXI( seg, label, routine, priority )             \
-    struct rt_init __based( __segname( seg ) ) label =      \
-    { 0, priority, routine };
-#elif defined( __LARGE_CODE__ )
-  #define YIXI( seg, label, routine, priority )             \
-    struct rt_init __based( __segname( seg ) ) label =      \
-    { 1, priority, routine };
-#else
-  #define YIXI( seg, label, routine, priority )             \
-    struct rt_init __based( __segname( seg ) ) label =      \
-    { 0, priority, routine, 0 };
+#if defined( _M_I86 )
+  #if defined( __LARGE_CODE__ ) /* segmented large code models */
+    #define YIXI( seg, label, routine, priority )               \
+        struct rt_init __based( __segname( seg ) ) label =      \
+        { 1, priority, routine };
+  #else                         /* other segmented models */
+    #define YIXI( seg, label, routine, priority )               \
+        struct rt_init __based( __segname( seg ) ) label =      \
+        { 0, priority, routine, 0 };
+  #endif
+#else                           /* non-segmented architectures */
+    #define YIXI( seg, label, routine, priority )               \
+        struct rt_init __based( __segname( seg ) ) label =      \
+        { 0, priority, routine };
 #endif
 
 /*
@@ -124,6 +126,6 @@ enum {
 };
 
 /* have to turn off, or we get unref'd warnings for AXI & AYI stuff */
-#pragma off(unreferenced)
+#pragma off( unreferenced )
 
 #endif

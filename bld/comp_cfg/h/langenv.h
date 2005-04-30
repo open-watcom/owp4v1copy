@@ -74,7 +74,7 @@
     #define TS_DATA_MANGLE      "_*"
     #define TS_CODE_MANGLE      "*_"
 
-#elif __TGT_SYS == __TGT_SYS_AXP_NT || __TGT_SYS == __TGT_SYS_PPC_NT
+#elif __TGT_SYS == __TGT_SYS_AXP_NT || __TGT_SYS == __TGT_SYS_PPC_NT || __TGT_SYS == __TGT_SYS_MIPS
 
     #define TS_SEG_CODE     ".text"
     #define TS_SEG_CONST    ".const"
