@@ -71,11 +71,11 @@ static void ReadCPU( struct mips_mad_registers *r )
     }
     /* Read special registers */
     r->pc.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, PC, 0 );
-    r->lo                 = ptrace( PTRACE_PEEKUSER, pid, MMHI, 0 );
-    r->hi                 = ptrace( PTRACE_PEEKUSER, pid, MMLO, 0 );
+    r->lo                 = ptrace( PTRACE_PEEKUSER, pid, MMLO, 0 );
+    r->hi                 = ptrace( PTRACE_PEEKUSER, pid, MMHI, 0 );
     r->fpcsr              = ptrace( PTRACE_PEEKUSER, pid, FPC_CSR, 0 );
     r->fpivr              = ptrace( PTRACE_PEEKUSER, pid, FPC_EIR, 0 );
-    
+
     last_eip = r->pc.u._32[I64LO32];
 }
 
