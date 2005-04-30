@@ -34,6 +34,13 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     <CPCMD> yacc.exe <OWROOT>\bld\build\binnt\yacc.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>\ntaxp
+    wmake -h
+    <CPCMD> yacc.exe <OWROOT>\bld\build\axpnt\yacc.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     cdsay <PROJDIR>

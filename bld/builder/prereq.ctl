@@ -31,6 +31,12 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     wmake -h
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>/ntaxp
+    wmake -h
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     cdsay <PROJDIR>

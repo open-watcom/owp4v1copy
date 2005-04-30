@@ -75,6 +75,21 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> vi.exe <DEVDIR>/build/binnt/bvi.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>\ctl\ntaxp
+    wmake -h
+    <CPCMD> parsectl.exe <DEVDIR>\build\axpnt\
+    <CPCMD> parsedyn.exe <DEVDIR>\build\axpnt\
+    cdsay <PROJDIR>\bind\ntaxp
+    wmake -h
+    cdsay <PROJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
+    wmake -h -f ../ntaxp/makefile prebuild=1
+    <CPCMD> vi.exe <DEVDIR>/build/axpnt/bvi.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #===============================
     cdsay <PROJDIR>/ctl/linux386

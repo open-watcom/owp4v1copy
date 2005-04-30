@@ -34,6 +34,13 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     <CPCMD> pmake.exe <OWROOT>\bld\build\binnt\pmake.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>\ntaxp
+    wmake -h
+    <CPCMD> pmake.exe <OWROOT>\bld\build\axpnt\pmake.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #==========================================
     cdsay <PROJDIR>

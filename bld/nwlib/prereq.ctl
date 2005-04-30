@@ -43,6 +43,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> wlib.exe <DEVDIR>/build/binnt/bwlib.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
+    wmake -h -f ../ntaxp/makefile prebuild=1
+    <CPCMD> wlib.exe <DEVDIR>/build/axpnt/bwlib.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #==========================================
     echo Building the wlib bootstrap

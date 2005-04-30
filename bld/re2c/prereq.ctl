@@ -28,6 +28,13 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> re2c.exe <DEVDIR>\build\binnt\re2c.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>\ntaxp
+    wmake -h
+    <CPCMD> re2c.exe <DEVDIR>\build\axpnt\re2c.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #===============================
     cdsay <PROJDIR>/linux386

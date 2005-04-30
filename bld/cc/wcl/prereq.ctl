@@ -43,6 +43,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> wcl386.exe <DEVDIR>/build/binnt/bwcl386.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
+    wmake -h -f ../ntaxp.axp/makefile
+    <CPCMD> wclaxp.exe <DEVDIR>/build/binnt/bwclaxp.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     echo Building the wcl bootstrap

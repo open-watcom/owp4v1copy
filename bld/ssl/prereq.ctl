@@ -28,6 +28,13 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> ssl.exe <DEVDIR>\build\binnt\ssl.exe
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    cdsay <PROJDIR>\ntaxp
+    wmake -h
+    <CPCMD> ssl.exe <DEVDIR>\build\axpnt\ssl.exe
+    cdsay <PROJDIR>
+
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     cdsay <PROJDIR>/linux386

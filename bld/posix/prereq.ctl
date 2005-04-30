@@ -48,6 +48,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <CPCMD> *.exe <OWROOT>\bld\build\binnt\
     cdsay <PROJDIR>
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
+    wmake -h -f ../systems/ntaxp/makefile prebuild=1
+    <CPCMD> *.exe <OWROOT>\bld\build\axpnt\
+    cdsay <PROJDIR>
+
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>

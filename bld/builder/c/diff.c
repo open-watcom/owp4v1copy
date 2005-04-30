@@ -1167,7 +1167,7 @@ char *myalloc( ULONG amount, char *why )
 {
     char        *pointer;
 
-#if !defined( __386__ )
+#if defined( _M_I86 )
     if( amount > UINT_MAX )
         noroom( why );
 #endif
@@ -1186,7 +1186,7 @@ char *compact( char *pointer, ULONG new_amount, char *why )
 {
     char        *new_pointer;
 
-#if !defined( __386__ )
+#if defined( _M_I86 )
     if( new_amount > UINT_MAX )
         noroom( why );
 #endif
