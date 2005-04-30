@@ -67,12 +67,10 @@ typedef enum {
 typedef op_type ot_array[MAX_VARIETIES][3];
 
 // TODO: kill off all these once the axp residue is gone
-#define _SevenBits( x )         ( (x) & 0x007f )
 #define _EightBits( x )         ( (x) & 0x00ff )
 #define _ElevenBits( x )        ( (x) & 0x07ff )
 #define _FourteenBits( x )      ( (x) & 0x3fff )
 #define _TwentyBits( x    )     ( (x) & 0x000fffff )
-#define _TwentyOneBits( x )     ( (x) & 0x001fffff )
 
 #define _LIT_value( x )         ( _EightBits( x )     << 1  )
 #define _LIT_bit                1
@@ -80,11 +78,14 @@ typedef op_type ot_array[MAX_VARIETIES][3];
 
 #define _Memory_disp( x )       ( _SixteenBits( x )   << 0  )
 #define _Mem_Func( x )          ( _SixteenBits( x )   << 0  )
-#define _Branch_disp( x )       ( _TwentyOneBits( x ) << 0  )
 #define _Op_Func( x )           ( _SixBits( x )       << 0  )
 #define _FP_Op_Func( x )        ( _ElevenBits( x )    << 5  )
 #define _LIT( x )               ( _LIT_unshifted( x ) << 12 )
+
+// This is real MIPS stuff
+#define _TenBits( x )           ( (x) & 0x03ff )
 #define _Code( x )              ( _TwentyBits( x )    << 6  )
+#define _TrapCode( x )          ( _TenBits( x )       << 6  )
 
 #define _Longword_offset( x )   ( (x) >> 2 )
 
@@ -124,6 +125,13 @@ static owl_reloc_type reloc_translate[] = {
     OWL_RELOC_HALF_LO,
     OWL_RELOC_BRANCH_REL,   // j^ reloc
     OWL_RELOC_JUMP_REL,     // jump hint
+};
+
+static uint_32  cop_codes[4] = {
+    0x10,   // COP0
+    0x11,   // COP1
+    0x12,   // COP2
+    0x13    // COP3
 };
 
 
@@ -270,6 +278,16 @@ static void doOpcodeRType( uint_32 *buffer, uint_8 opcode, uint_8 fc, uint_8 rd,
 //*****************************************************************************************************
 {
     *buffer = _Opcode( opcode ) | _Rs( rs ) | _Rt( rt ) | _Rd( rd ) | _Function( fc );
+}
+
+
+static void doOpcodeCopOp( uint_32 *buffer, uint_8 opcode, uint_8 fc, uint_32 extra )
+//***********************************************************************************
+// This procedure doesn't fill in all the bits (missing bits 6-24).
+// But we can fill it in using extra.
+{
+
+    *buffer = _Opcode( opcode ) | (1 << 25) | extra | _Function( fc );
 }
 
 #if 0
@@ -648,12 +666,61 @@ static void ITSysCode( ins_table *table, instruction *ins, uint_32 *buffer, asm_
     reloc = reloc;
     if( ins->num_operands > 0 ) {
         op = ins->operands[0];
-        (void)ensureOpAbsolute( op, 0 );
+        ensureOpAbsolute( op, 0 );
         constant = op->constant;
     } else {
         constant = 0;
     }
     *buffer = _Opcode( table->opcode ) | _Code( constant ) | _Op_Func( table->funccode );
+}
+
+
+static void ITTrap( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*****************************************************************************************
+{
+    ins_operand     *op;
+    op_const        code;
+
+    reloc = reloc;
+    if( ins->num_operands > 2 ) {
+        op = ins->operands[2];
+        ensureOpAbsolute( op, 2 );
+        code = op->constant;
+    } else {
+        code = 0;
+    }
+    *buffer = _Opcode( table->opcode ) |
+              _Rs( RegIndex( ins->operands[0]->reg ) ) |
+              _Rt( RegIndex( ins->operands[1]->reg ) ) |
+              _TrapCode( code ) | _Op_Func( table->funccode );
+}
+
+
+static void ITLoadUImm( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*********************************************************************************************
+{
+    ins_operand     *op;
+
+    reloc = reloc;
+    assert( ins->num_operands == 2 );
+    op = ins->operands[1];
+    ensureOpAbsolute( op, 1 );
+    doOpcodeIType( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
+                   0, op->constant );
+}
+
+
+static void ITTrapImm( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
+    ins_operand     *op;
+
+    reloc = reloc;
+    assert( ins->num_operands == 2 );
+    op = ins->operands[1];
+    ensureOpAbsolute( op, 1 );
+    doOpcodeIType( buffer, table->opcode, table->funccode,
+                   RegIndex( ins->operands[0]->reg ), op->constant );
 }
 
 
@@ -838,14 +905,24 @@ static void stdMemJump( ins_table *table, instruction *ins, uint_32 *buffer, asm
 static void ITRegJump( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //********************************************************************************************
 {
-    ins_operand     *op0;
-    ins_opcount     num_op;
+    int     targ_idx;
+    int     retn_idx;
 
-    num_op = ins->num_operands;
-    assert( num_op < 3 );
-    op0 = ins->operands[0];
+    assert( ins->num_operands < 3 );
+    if( ins->num_operands == 2 ) {
+        targ_idx = RegIndex( ins->operands[1]->reg );
+        retn_idx = RegIndex( ins->operands[0]->reg );
+    } else {
+        targ_idx = RegIndex( ins->operands[0]->reg );
+        if( table->funccode & 1 )
+            retn_idx = MIPS_RETURN_ADDR;    // jalr
+        else
+            retn_idx = 0;                   // jr
+    }
     doOpcodeRType( buffer, table->opcode, table->funccode,
-                    0, RegIndex( op0->reg ), 0 );
+                   retn_idx, targ_idx, 0 );
+
+    numExtendedIns += doDelaySlotNOP( buffer );
     return;
 }
 
@@ -995,8 +1072,9 @@ static void ITBranch( ins_table *table, instruction *ins, uint_32 *buffer, asm_r
     assert( ins->num_operands == 2 );
     op = ins->operands[1];
     doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ), 0,
-                  _Branch_disp( _Longword_offset( op->constant ) ) );
+                  _Immed( _Longword_offset( op->constant ) ) );
     doReloc( reloc, op, OWL_RELOC_BRANCH_REL, buffer );
+    numExtendedIns += doDelaySlotNOP( buffer );
 }
 
 
@@ -1006,10 +1084,54 @@ static void ITBranchTwo( ins_table *table, instruction *ins, uint_32 *buffer, as
     ins_operand     *op;
 
     assert( ins->num_operands == 3 );
-    op = ins->operands[1];
-    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ), 0,
-                  _Branch_disp( _Longword_offset( op->constant ) ) );
+    op = ins->operands[2];
+    doOpcodeIType( buffer, table->opcode, RegIndex( ins->operands[1]->reg ),
+                   RegIndex( ins->operands[0]->reg ),
+                  _Immed( _Longword_offset( op->constant ) ) );
     doReloc( reloc, op, OWL_RELOC_BRANCH_REL, buffer );
+    numExtendedIns += doDelaySlotNOP( buffer );
+}
+
+
+static void ITBranchZero( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//***********************************************************************************************
+{
+    ins_operand     *op;
+
+    assert( ins->num_operands == 2 );
+    op = ins->operands[1];
+    doOpcodeIType( buffer, table->opcode, table->funccode,
+                   RegIndex( ins->operands[0]->reg ),
+                  _Immed( _Longword_offset( op->constant ) ) );
+    doReloc( reloc, op, OWL_RELOC_BRANCH_REL, buffer );
+    numExtendedIns += doDelaySlotNOP( buffer );
+}
+
+
+static void ITBranchCop( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//**********************************************************************************************
+{
+    ins_operand     *op;
+    uint_32         opcode;
+
+    assert( ins->num_operands == 1 );
+    opcode = cop_codes[table->opcode >> 8];
+    op = ins->operands[0];
+    doOpcodeIType( buffer, opcode, table->funccode, table->opcode & 0xff,
+                  _Immed( _Longword_offset( op->constant ) ) );
+    doReloc( reloc, op, OWL_RELOC_BRANCH_REL, buffer );
+    numExtendedIns += doDelaySlotNOP( buffer );
+}
+
+
+static void ITCop0Spc( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//********************************************************************************************
+{
+    uint_32         opcode;
+
+    assert( ins->num_operands == 0 );
+    opcode = cop_codes[0];
+    doOpcodeCopOp( buffer, opcode, table->opcode, 0 );
 }
 
 
@@ -1046,29 +1168,25 @@ static void ITMulDiv( ins_table *table, instruction *ins, uint_32 *buffer, asm_r
 static void ITMovFromSpc( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //***********************************************************************************************
 {
-    uint_32         extra = 0;
-
     assert( ins->num_operands == 1 );
     reloc = reloc;
-    doOpcodeFcRsRtRd( buffer, table->opcode, table->funccode, 0, 0,
-                      RegIndex( ins->operands[0]->reg ), extra );
+    doOpcodeRType( buffer, table->opcode, table->funccode,
+                   RegIndex( ins->operands[0]->reg ), 0, 0 );
 }
 
 
 static void ITMovToSpc( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //*********************************************************************************************
 {
-    uint_32         extra = 0;
-
     assert( ins->num_operands == 1 );
     reloc = reloc;
-    doOpcodeFcRsRtRd( buffer, table->opcode, table->funccode,
-                      RegIndex( ins->operands[0]->reg ), 0, 0, extra );
+    doOpcodeRType( buffer, table->opcode, table->funccode, 0,
+                   RegIndex( ins->operands[0]->reg ), 0 );
 }
 
 
-static void ITMovFP( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
-//******************************************************************************************
+static void ITMovCop( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
+//*******************************************************************************************
 {
     assert( ins->num_operands == 2 );
     reloc = reloc;
@@ -1144,7 +1262,7 @@ static void ITBr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc
             return;
         }
         doOpcodeRsRt( buffer, table->opcode, 31, 0,
-                      _Branch_disp( _Longword_offset( op0->constant ) ) );
+                      _Immed( _Longword_offset( op0->constant ) ) );
         doReloc( reloc, op0, OWL_RELOC_BRANCH_REL, buffer );
         return;
     }

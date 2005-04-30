@@ -271,13 +271,24 @@ dis_handler_return MIPSTrap2( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-dis_handler_return MIPSReg1( dis_handle *h, void *d, dis_dec_ins *ins )
+dis_handler_return MIPSRegD( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     mips_ins    code;
 
     code.full = ins->opcode;
     ins->op[0].type = DO_REG;
     ins->op[0].base = code.rtype.rd + DR_MIPS_r0;
+    ins->num_ops = 1;
+    return( DHR_DONE );
+}
+
+dis_handler_return MIPSRegS( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.rtype.rs + DR_MIPS_r0;
     ins->num_ops = 1;
     return( DHR_DONE );
 }
@@ -503,7 +514,7 @@ dis_handler_return MIPSFPUMemory( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-dis_handler_return MIPSBranchFPU( dis_handle *h, void *d, dis_dec_ins *ins )
+dis_handler_return MIPSBranchCop( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     mips_ins    code;
 

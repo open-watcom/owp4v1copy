@@ -46,7 +46,10 @@ inspick( ADDIU,         "addiu",        0x24000000,         0xfc000000,     MIPS
 inspick( ADDU,          "addu",         o(0x00,0x00,0x21),  0xfc0007ff,     MIPSReg3 )
 inspick( AND,           "and",          o(0x00,0x00,0x24),  0xfc0007ff,     MIPSReg3 )
 inspick( ANDI,          "andi",         0x30000000,         0xfc000000,     MIPSImmed2U )
-// BCz*
+inspick( BC0F,          "bc0f",         cb(0,0x08,0x00),    0xffff0000,     MIPSBranchCop )
+inspick( BC0FL,         "bc0fl",        cb(0,0x08,0x02),    0xffff0000,     MIPSBranchCop )
+inspick( BC0T,          "bc0t",         cb(0,0x08,0x01),    0xffff0000,     MIPSBranchCop )
+inspick( BC0TL,         "bc0tl",        cb(0,0x08,0x03),    0xffff0000,     MIPSBranchCop )
 inspick( BEQ,           "beq",          0x10000000,         0xfc000000,     MIPSBranch2 )
 inspick( BEQL,          "beql",         0x50000000,         0xfc000000,     MIPSBranch2 )
 inspick( BGEZ,          "bgez",         b(0x01,0x01),       0xfc1f0000,     MIPSBranch1 )
@@ -91,7 +94,7 @@ inspick( DSRLV,         "dsrlv",        s(0x00,0x16),       0xfc0007ff,     MIPS
 inspick( DSRL32,        "dsrl32",       s(0x00,0x3e),       0xffe0003f,     MIPSShift )
 inspick( DSUB,          "dsub",         s(0x00,0x2e),       0xfc0007ff,     MIPSReg3 )
 inspick( DSUBU,         "dsubu",        s(0x00,0x2f),       0xfc0007ff,     MIPSReg3 )
-inspick( ERET,          "eret",         0x4200001e,         0xffffffff,     MIPSNull )
+inspick( ERET,          "eret",         0x42000018,         0xffffffff,     MIPSNull )
 inspick( J,             "j",            s(0x02,0x00),       0xfc000000,     MIPSJType )
 inspick( JAL,           "jal",          s(0x03,0x00),       0xfc000000,     MIPSJType )
 inspick( JALR,          "jalr",         s(0x00,0x09),       0xfc1f07ff,     MIPSJump2 )
@@ -114,16 +117,13 @@ inspick( LWU,           "lwu",          s(0x27,0x00),       0xfc000000,     MIPS
 inspick( LDC1,          "ldc1",         s(0x35,0x00),       0xfc000000,     MIPSFPUMemory )
 inspick( LWC1,          "lwc1",         s(0x31,0x00),       0xfc000000,     MIPSFPUMemory )
 // Other LWCz/LDCz instructions
-
 inspick( LUI,           "lui",          s(0x0f,0x00),       0xffe00000,     MIPSImmed1 )
 inspick( MFC0,          "mfc0",         d(0x10,0x00),       0xffe007ff,     MIPSReg2 )
-// MFCz
-inspick( MFHI,          "mfhi",         s(0x00,0x10),       0xffff07ff,     MIPSReg1 )
-inspick( MFLO,          "mflo",         s(0x00,0x12),       0xffff07ff,     MIPSReg1 )
+inspick( MFHI,          "mfhi",         s(0x00,0x10),       0xffff07ff,     MIPSRegD )
+inspick( MFLO,          "mflo",         s(0x00,0x12),       0xffff07ff,     MIPSRegD )
 inspick( MTC0,          "mtc0",         d(0x10,0x04),       0xffe007ff,     MIPSReg2 )
-// MTCz
-inspick( MTHI,          "mthi",         s(0x00,0x11),       0xffff07ff,     MIPSReg1 )
-inspick( MTLO,          "mtlo",         s(0x00,0x13),       0xffff07ff,     MIPSReg1 )
+inspick( MTHI,          "mthi",         s(0x00,0x11),       0xfc1fffff,     MIPSRegS )
+inspick( MTLO,          "mtlo",         s(0x00,0x13),       0xfc1fffff,     MIPSRegS )
 inspick( MULT,          "mult",         s(0x00,0x18),       0xfc00ffff,     MIPSMulDiv )
 inspick( MULTU,         "multu",        s(0x00,0x19),       0xfc00ffff,     MIPSMulDiv )
 inspick( NOR,           "nor",          s(0x00,0x27),       0xfc0007ff,     MIPSReg3 )
@@ -145,6 +145,7 @@ inspick( SDC1,          "sdc1",         s(0x3d,0x00),       0xfc000000,     MIPS
 inspick( SWC1,          "swc1",         s(0x39,0x00),       0xfc000000,     MIPSFPUMemory )
 // Other SWCz/SDCz instructions
 
+inspick( RFE,           "rfe",          0x42000010,         0xffffffff,     MIPSNull )
 inspick( SLL,           "sll",          s(0x00,0x00),       0xffe0003f,     MIPSShift )
 inspick( SLLV,          "sllv",         s(0x00,0x04),       0xfc0007ff,     MIPSReg3 )
 inspick( SLT,           "slt",          s(0x00,0x2a),       0xfc0007ff,     MIPSReg3 )
@@ -172,7 +173,7 @@ inspick( TLBWI,         "tlbwi",        0x42000002,         0xffffffff,     MIPS
 inspick( TLBWR,         "tlbwr",        0x42000006,         0xffffffff,     MIPSNull )
 inspick( TLT,           "tlt",          s(0x00,0x32),       0xfc00003f,     MIPSTrap2 )
 inspick( TLTI,          "tlti",         b(0x01,0x0a),       0xfc1f0000,     MIPSTrap1 )
-inspick( TLTIU,         "tltiu",        b(0x01,0x0d),       0xfc1f0000,     MIPSTrap1 )
+inspick( TLTIU,         "tltiu",        b(0x01,0x0b),       0xfc1f0000,     MIPSTrap1 )
 inspick( TLTU,          "tltu",         s(0x00,0x33),       0xfc00003f,     MIPSTrap2 )
 inspick( TNE,           "tne",          s(0x00,0x36),       0xfc00003f,     MIPSTrap2 )
 inspick( TNEI,          "tnei",         b(0x01,0x0e),       0xfc1f0000,     MIPSTrap1 )
@@ -182,10 +183,10 @@ inspick( XORI,          "xori",         s(0x0e,0x00),       0xfc000000,     MIPS
 // Floating point opcodes (ie. Coprocessor 1)
 inspick( ABS_f,         "abs",          cop(1,0x05),        0xfe00003f,     MIPSFPUOp2 )
 inspick( ADD_f,         "add",          cop(1,0x00),        0xfe00003f,     MIPSFPUOp3 )
-inspick( BC1F,          "bc1f",         cb(1,0x08,0x00),    0xffff0000,     MIPSBranchFPU )
-inspick( BC1FL,         "bc1fl",        cb(1,0x08,0x02),    0xffff0000,     MIPSBranchFPU )
-inspick( BC1T,          "bc1t",         cb(1,0x08,0x01),    0xffff0000,     MIPSBranchFPU )
-inspick( BC1TL,         "bc1tl",        cb(1,0x08,0x03),    0xffff0000,     MIPSBranchFPU )
+inspick( BC1F,          "bc1f",         cb(1,0x08,0x00),    0xffff0000,     MIPSBranchCop )
+inspick( BC1FL,         "bc1fl",        cb(1,0x08,0x02),    0xffff0000,     MIPSBranchCop )
+inspick( BC1T,          "bc1t",         cb(1,0x08,0x01),    0xffff0000,     MIPSBranchCop )
+inspick( BC1TL,         "bc1tl",        cb(1,0x08,0x03),    0xffff0000,     MIPSBranchCop )
 // C.cond.fmt
 inspick( CEIL_L_f,      "ceil.l",       cop(1,0x0a),        0xfe00003f,     MIPSFPUOp3 )
 inspick( CEIL_W_f,      "ceil.w",       cop(1,0x0e),        0xfe00003f,     MIPSFPUOp3 )
