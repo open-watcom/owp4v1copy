@@ -386,6 +386,7 @@ static void prepareRelocSections( owl_file_handle file ) {
 
     switch( file->info->cpu ) {
     case OWL_CPU_INTEL:
+    case OWL_CPU_MIPS:    // MIPS SysV ABI supplement says so
         useRela = FALSE;
         break;
     default:
