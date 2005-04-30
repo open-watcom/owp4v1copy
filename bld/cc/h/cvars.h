@@ -150,7 +150,7 @@ global  int     NestLevel;      /* pre-processing level of #if */
 global  int     SkipLevel;      /* pre-processing level of #if to skip to */
 global  int     SymLevel;       /* current lex level (# of nested {) */
 global  int     HashValue;      /* hash value for identifier */
-global  int     KwHashValue;    /* hash value for keyword */
+global enum TOKEN KwHashValue;    /* hash value for keyword */
 global  int     MacHashValue;   /* hash value for macro name */
 global  char    *SavedId;       /* saved id when doing look ahead */
 global  int     SavedHash;      /* hash value for saved id */

@@ -24,30 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  keywords hash function, must correspond with findhash.c
 *
 ****************************************************************************/
 
 
-#include <stddef.h>
-#include "weights.gh"           // -- .gh means "generated H file"
-
-unsigned keyword_hash( void )
+static unsigned keyword_hash( unsigned char *name, const unsigned char *weights, unsigned len )
 {
-    extern char id[];
-    extern unsigned char weight[];
-    size_t len;
     unsigned hash;
 
-    hash = len + ( weight[ id[ FIRST_INDEX ] ] * FIRST_SCALE );
-#if LAST_INDEX == 0
-    hash += weight[ id[ len - ( LAST_INDEX + 1 ) ] ] * LAST_SCALE;
-#else
-    if( len >= LAST_INDEX + 1 ) {
-        hash += weight[ id[ len - ( LAST_INDEX + 1 ) ] ] * LAST_SCALE;
+    hash = len + name[ LEN_MIN ];
+    if( len > FIRST_INDEX ) {
+        hash += weights[ name[ FIRST_INDEX ] ] * FIRST_SCALE;
+    } else {
+        hash += weights[ name[ len - 1 ] ] * FIRST_SCALE;
     }
-#endif
+    if( len > LAST_INDEX ) {
+        hash += weights[ name[ len - ( LAST_INDEX + 1 ) ] ] * LAST_SCALE;
+    } else {
+        hash += weights[ name[ 0 ] ] * LAST_SCALE;
+    }
 #ifdef KEYWORD_HASH_MASK
     hash &= KEYWORD_HASH_MASK;
 #ifdef KEYWORD_HASH_EXTRA

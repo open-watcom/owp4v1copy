@@ -341,7 +341,7 @@ cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
 
-key_objs = ../h/c.key ../h/pc.key ../h/seh.key ../h/dummy.key
+key_objs = ../h/c.key ../h/pc.key ../h/seh.key
 
 ./findhash.exe : ../../fe_misc/c/findhash.c
         $(bld_cl) $[@ $(wcl_util_opts)

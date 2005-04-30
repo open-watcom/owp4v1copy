@@ -28,9 +28,7 @@
    C.KEY     - normal standard C keywords
    SEH.KEY   - keywords for structured exception handling
    PC.KEY    - keywords generally associated with PC implementations
-   DUMMY.KEY - some extra dummy keywords to make total number of
-               keywords a power of 2. These keywords start with a
-               digit which is an impossible keyword.
+
    e.g. to add __int64 as a keyword
    - add entry to PC.KEY
      The second column indicates what token class this new token

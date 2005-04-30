@@ -89,7 +89,7 @@ extra_l_flags_osi = option symfile
 .key : $(wrc2_dir)/hash
 .h : $(wrc2_dir)/h;$(trmem_dir)
 
-inc_dirs = -I. -I"$(wrc2_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -I$(cpp_dir) -I$(trmem_dir)
+inc_dirs = -I. -I"$(wrc2_dir)/h" -I"$(wres_dir)/h" -I"$(fe_misc_dir)/h" -I"$(watcom_dir)/h" -I$(cpp_dir) -I$(trmem_dir)
 
 # explicit rules
 

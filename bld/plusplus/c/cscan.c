@@ -1187,7 +1187,7 @@ static int scanDelim1( int expanding )
 
     SrcFileCurrentLocation();
     expanding = expanding;
-    token = TokValue[ CurrChar - ' ' ];
+    token = TokValue[ CurrChar ];
     Buffer[0] = CurrChar;
     Buffer[1] = '\0';
     TokenLen = 1;
@@ -1206,7 +1206,7 @@ static int scanDelim12( int expanding )         // @ or @@ token
     SrcFileCurrentLocation();
     c = CurrChar;
     Buffer[0] = c;
-    tok = TokValue[ c - ' ' ];
+    tok = TokValue[ c ];
     token_len = 1;
     chr2 = NextChar();
     Buffer[1] = chr2;
@@ -1231,7 +1231,7 @@ static int scanDelim12EQ( int expanding )       // @, @@, or @= token
     SrcFileCurrentLocation();
     c = CurrChar;
     Buffer[0] = c;
-    tok = TokValue[ c - ' ' ];
+    tok = TokValue[ c ];
     token_len = 1;
     chr2 = NextChar();
     Buffer[1] = chr2;
@@ -1260,7 +1260,7 @@ static int scanDelim12EQ2EQ( int expanding )    // @, @@, @=, or @@= token
     SrcFileCurrentLocation();
     c = CurrChar;
     Buffer[0] = c;
-    tok = TokValue[ c - ' ' ];
+    tok = TokValue[ c ];
     token_len = 1;
     chr2 = NextChar();
     Buffer[1] = chr2;
@@ -1294,7 +1294,7 @@ static int scanDelim1EQ( int expanding )        // @ or @= token
     SrcFileCurrentLocation();
     c = CurrChar;
     Buffer[0] = c;
-    tok = TokValue[ c - ' ' ];
+    tok = TokValue[ c ];
     token_len = 1;
     chr2 = NextChar();
     Buffer[1] = chr2;

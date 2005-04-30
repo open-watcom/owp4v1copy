@@ -376,13 +376,15 @@ void init_tokens( char **input_file )
             if( c == '#' ) {
                 for(;;) {
                     c = fgetc( fp );
-                    if( c == EOF ) break;
-                    if( c == '\n' ) break;
+                    if( ( c == EOF ) || ( c == '\n' ) ) {
+                        break;
+                    }
                 }
                 continue;
             }
             ungetc( c, fp );
-            if( fscanf( fp, "%s %s\n", keyword, class ) != 2 ) break;
+            if( fscanf( fp, "%s %s\n", keyword, class ) != 2 )
+                break;
             if( size > MAX_KEYWORDS ) {
                 fatal( "too many keywords" );
             }
@@ -417,7 +419,9 @@ void init_tokens( char **input_file )
     qsort( &position[1], num_keywords, sizeof( int ), cmptok );
     for( i = 1; i < num_keywords; ++i ) {
         for( j = i; j < num_keywords; ++j ) {
-            if( position[j] == i ) break;
+            if( position[j] == i ) {
+                break;
+            }
         }
         k = position[i];
         swap( &tokens[k], &tokens[i] );
@@ -448,13 +452,21 @@ void init_arrays( size_t first_index, size_t last_index )
     }
     for( i = 1; i <= num_keywords; ++i ) {
         len[ i ] = strlen( tokens[ i ] );
-        first[i] = make_letter( tokens[i][first_index] );
-        last[i] = make_letter( tokens[i][ len[i] - ( last_index + 1 ) ] );
+        if( len[i] > first_index ) {
+            first[i] = make_letter( tokens[i][first_index] );
+        } else {
+            first[i] = make_letter( tokens[i][ len[i] - 1 ] );
+        }
+        if( len[i] > last_index ) {
+            last[i] = make_letter( tokens[i][ len[i] - ( last_index + 1 ) ] );
+        } else {
+            last[i] = make_letter( tokens[i][0] );
+        }
         done[ i ] = 0;
         // these improve the hash function
-        //init_hash[ i ] = len[ i ] + tokens[i][ min_len ];
+        init_hash[ i ] = len[ i ] + tokens[i][ min_len ];
         //init_hash[ i ] = len[ i ] + tokens[i][ len[i] >> 1 ];
-        init_hash[ i ] = len[ i ];
+        //init_hash[ i ] = len[ i ];
         hash[ i ] = init_hash[ i ];
         ++freq[ first[ i ] ];
         ++freq[ last[ i ] ];
@@ -484,7 +496,8 @@ void sort_frequency( void )
     /* find the alphabetic character that occurs the most in the keywords */
     most_used_character = LETTER_MIN;
     for( c = LETTER_MIN; c <= LETTER_MAX; ++c ) {
-        if( c == LETTER__ ) continue;
+        if( c == LETTER__ )
+            continue;
         if( freq[ c ] > freq[ most_used_character ] ) {
             most_used_character = c;
         }
@@ -502,7 +515,8 @@ void sort_frequency( void )
             previous = c;
             c = next[ previous ];
             after_c = next[ c ];
-            if( after_c == most_used_character ) break;
+            if( after_c == most_used_character )
+                break;
             if( freq[ c ] < freq[ after_c ] ) {
                 /* exchange 'c' and 'after_c' */
                 next[ c ] = next[ after_c ];
@@ -520,7 +534,8 @@ void sort_frequency( void )
             previous = c;
             c = next[ previous ];
             after_c = next[ c ];
-            if( after_c == most_used_character ) break;
+            if( after_c == most_used_character )
+                break;
             if( freq[ c ] == freq[ after_c ] ) {
                 if( c > after_c ) {
                     /* exchange 'c' and 'after_c' */
@@ -554,7 +569,8 @@ void sort_frequency( void )
 unsigned do_hash( unsigned x )
 {
     x &= hashmask-1;
-    if( x >= hashsize ) x -= hashsize;
+    if( x >= hashsize )
+        x -= hashsize;
     return x;
 }
 
@@ -734,14 +750,17 @@ void try_for_hash( void )
             ++count;
             if( count == 1 ) {
                 for( i = most_used_character; ; i = next[i] ) {
-                    if( i == c ) break;
+                    if( i == c ) {
+                        break;
+                    }
                 }
                 count = 0;
             }
             available[ weights[ c ] ] = FALSE;
             c = next[ c ];
             search = next_weight();
-            if( search == 0 ) break;
+            if( search == 0 )
+                break;
             weights[ c ] = search;
         } else {
             do {
@@ -750,14 +769,16 @@ void try_for_hash( void )
                     available[ weights[c] ] = TRUE;
                     undo( c, num_keywords );
                 }
-                if( c == most_used_character ) break;
+                if( c == most_used_character )
+                    break;
                 weights[ c ]++;
             } while( ! available[ weights[c] ] );
         }
     } while( ( freq[ c ] != 0 ) && ( c != most_used_character ) );
     while( c != most_used_character ) { /* initialize rest of weights */
         search = next_weight();
-        if( search == 0 ) break;
+        if( search == 0 )
+            break;
         available[ search ] = FALSE;
         weights[ c ] = 0;
         c = next[ c ];
@@ -921,7 +942,6 @@ unsigned dump_token_name( keyword_t k )
     if( k == 0 ) {
         n = sprintf( buff, "__EXTRA%03u", extra );
         tok = buff;
-        ++extra;
     } else {
         n = len[ k ];
         tok = tokens[ k ];
@@ -946,6 +966,7 @@ void dump_n_blanks( int n )
 }
 
 unsigned dump_string( char *s )
+/*****************************/
 {
     unsigned b;
     unsigned n;
@@ -982,6 +1003,7 @@ void dump_hash( void )
 
     init_ordered();
     outfile = fopen( "keywords.gh", "w" );
+    extra = 0;
     for( i = 1; i <= hashsize; ++i ) {
         ord = ordered[i];
         fputs( "pick( T_", outfile );
@@ -992,6 +1014,7 @@ void dump_hash( void )
             continue;
         }
         j = dump_token_name( ord );
+        ++extra;
         fputc( ',', outfile );
         dump_n_blanks( 15 - j );
         if( ord != 0 ) {
@@ -1054,6 +1077,7 @@ void dump_tiny( size_t first_index, size_t last_index )
     }
     fputs( "};\n", outfile );
     fputs( "#define TINY_DEFS \\\n", outfile );
+    extra = 0;
     for( i = 1; i <= hashsize; ++i ) {
         ord = ordered[ i ];
         fputs( "TINY_DEF( ", outfile );
@@ -1062,6 +1086,7 @@ void dump_tiny( size_t first_index, size_t last_index )
         } else {
             dump_token_name( ord );
         }
+        ++extra;
         fputs( " ) \\\n", outfile );
     }
     fputs( "/* TINY_DEFS */\n", outfile );
@@ -1082,8 +1107,8 @@ boolean hash_search( void )
         hashsize = hashmask;
     }
     do {
-        for( i = 0; i < min_len; ++i ) {
-            for( j = 0; j < min_len + 1; ++j ) {
+        for( i = 0; i < max_len; ++i ) {
+            for( j = 0; j < max_len + 1; ++j ) {
                 ok = hash_func( j, i );
                 if( ok ) {
                     if( hashsize == num_keywords ) {
@@ -1101,7 +1126,8 @@ boolean hash_search( void )
                 }
             }
         }
-        if( ! flags.imperfect ) break;
+        if( ! flags.imperfect )
+            break;
         ++hashsize;
     } while( hashsize <= hashmask );
     return( FALSE );

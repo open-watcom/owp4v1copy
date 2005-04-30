@@ -35,6 +35,8 @@
 #include "asciiout.h"
 #include "i64.h"
 
+#include "kwhash.h"
+
 enum scan_class {
     SCAN_NAME = 0,      // identifier
     SCAN_WIDE,          // L"abc" or L'a' or Lname
@@ -175,21 +177,7 @@ int CalcHash( char *id, int len )
 {
     unsigned    hash;
 
-    hash = len + TokValue[ id[ FIRST_INDEX ] - ' ' ] * FIRST_SCALE;
-#if LAST_INDEX > 0
-    if( len >= LAST_INDEX+1 ) {
-        hash += TokValue[ id[len-(LAST_INDEX+1)] - ' ' ] * LAST_SCALE;
-    }
-#else
-    hash += TokValue[ id[len-(LAST_INDEX+1)] - ' ' ] * LAST_SCALE;
-#endif
-    hash &= KEYWORD_HASH_MASK;
-#ifdef KEYWORD_HASH_EXTRA
-    if( hash >= KEYWORD_HASH ) {
-        hash -= KEYWORD_HASH;
-    }
-#endif
-    KwHashValue = hash;
+    KwHashValue = keyword_hash( id, TokValue, len ) + FIRST_KEYWORD;
     hash = hashpjw( id );
     HashValue = hash % SYM_HASH_SIZE;
 #if ( MACRO_HASH_SIZE > 0x0ff0 ) && ( MACRO_HASH_SIZE < 0x0fff )
@@ -211,7 +199,7 @@ int KwLookup( const char *buf )
     char        *keyword;
     /*  lookup id in keyword table */
 
-    hash = KwHashValue + FIRST_KEYWORD;
+    hash = KwHashValue;
 
     if( hash == T_INLINE && !CompFlags.extensions_enabled && !CompFlags.c99_extensions )
         hash = T_ID;
@@ -1051,7 +1039,7 @@ int ScanDelim1()
 
     Buffer[0] = CurrChar;
     Buffer[1] = '\0';
-    token = TokValue[ CurrChar - ' ' ];
+    token = TokValue[ CurrChar ];
     c = *ScanCharPtr++;
     if( CharSet[c] & C_EX ) {
         c = GetCharCheck( c );
@@ -1149,7 +1137,7 @@ int ScanDelim2()
     c = CurrChar;
     Buffer[0] = c;
     Buffer[1] = '\0';
-    chrclass = TokValue[ c - ' ' ];
+    chrclass = TokValue[ c ];
     tok = chrclass & C_MASK;
     chr2 = NextChar();          // can't inline this copy of NextChar
     if( chr2 == '=' ) {         /* if second char is an = */

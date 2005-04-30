@@ -8,6 +8,7 @@ H_DIR = $(DEVDIR)/watcom/h
 CPP_DIR = $(DEVDIR)/cpp
 DWARF_DIR = $(DEVDIR)/dwarf
 DIP_DIR = $(DEVDIR)/dip
+FE_MISC_DIR = $(DEVDIR)/fe_misc
 LIB_MISC_DIR = $(DEVDIR)/lib_misc
 ORL_DIR = $(DEVDIR)/orl
 CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)

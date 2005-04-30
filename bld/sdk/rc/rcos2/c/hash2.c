@@ -33,6 +33,8 @@
 #include "hash2.h"
 #include "weights2.gh"
 
+#include "kwhash.h"
+
 /* This array is intended to be accessed by ASCII values of a char */
 static const unsigned char Weights[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    /* 0x00 to 0x0f */
@@ -113,29 +115,8 @@ static const unsigned char Weights[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,    /* 0xf0 to 0xff */
 };
 
-unsigned KeywordHash2( unsigned length, char name[] )
-/***************************************************/
+unsigned KeywordHash2( unsigned length, char *name )
+/**************************************************/
 {
-    unsigned        hash;
-
-    hash = length + ( Weights[ (unsigned char)name[ FIRST_INDEX ] ] * FIRST_SCALE );
-#if LAST_INDEX == 0 || defined(OK_TO_ACCESS_OUTSIDE_ID)
-    hash += Weights[ (unsigned char)name[ length - ( LAST_INDEX + 1 ) ] ] * LAST_SCALE;
-#else
-    if( length >= LAST_INDEX + 1 ) {
-        hash += Weights[ (unsigned char)name[ length - ( LAST_INDEX + 1 ) ] ] * LAST_SCALE;
-    }
-#endif
-#ifdef KEYWORD_HASH_MASK
-    hash &= KEYWORD_HASH_MASK;
-#ifdef KEYWORD_HASH_EXTRA
-    if( hash >= KEYWORD_HASH ) {
-        hash -= KEYWORD_HASH;
-    }
-#endif
-#else
-    hash %= KEYWORD_HASH;
-#endif
-
-    return( hash );
+    return( keyword_hash( name, Weights, length ) );
 }
