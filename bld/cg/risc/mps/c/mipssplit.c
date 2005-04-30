@@ -41,33 +41,34 @@
 #include "procdef.h"
 #include <assert.h>
 
-extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
-extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
-extern  name            *AllocS32Const(signed_32);
-extern  name            *AllocRegName(hw_reg_set);
-extern  name            *AllocTemp(type_class_def);
-extern  name            *AllocAddrConst(name*,int,constant_class,type_class_def);
-extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  name            *STempOffset(name*,type_length,type_class_def,type_length);
+extern  name            *AllocMemory( pointer, type_length, cg_class, type_class_def );
+extern  name            *AllocIndex( name *, name *, type_length, type_class_def );
+extern  name            *AllocS32Const( signed_32 );
+extern  name            *AllocRegName( hw_reg_set );
+extern  name            *AllocTemp( type_class_def );
+extern  name            *AllocAddrConst( name *, int, constant_class, type_class_def );
+extern  name            *ScaleIndex( name *, name *, type_length, type_class_def, type_length, int, i_flags );
+extern  name            *STempOffset( name *, type_length, type_class_def, type_length );
 
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      ScratchReg();
-extern  hw_reg_set      ReturnAddrReg();
+extern  hw_reg_set      StackReg( void );
+extern  hw_reg_set      ScratchReg( void );
+extern  hw_reg_set      ReturnAddrReg( void );
 
-extern  void            SuffixIns(instruction*,instruction*);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  void            ReplIns(instruction*,instruction*);
-extern  label_handle    RTLabel(int);
-extern  void            ChangeType(instruction*,type_class_def);
+extern  void            SuffixIns( instruction *, instruction * );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  void            ReplIns( instruction *, instruction * );
+extern  label_handle    RTLabel( int );
+extern  void            ChangeType( instruction *, type_class_def );
 extern  void            FreeIns( instruction * );
 
-extern  instruction     *MakeNary(opcode_defs,name*,name*,name*,type_class_def,type_class_def,int);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
+extern  instruction     *MakeNary( opcode_defs, name *, name *, name *, type_class_def, type_class_def, int );
+extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
+extern  instruction     *MakeMove( name*, name *, type_class_def );
+extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  instruction     *MakeCondition( opcode_defs, name *, name *, int, int, type_class_def );
 extern  instruction     *NewIns( int );
+extern  instruction     *rSWAPCMP( instruction * );
 
 extern  void            UpdateLive( instruction *, instruction * );
 extern  name            *OffsetMem( name *, type_length, type_class_def );
@@ -389,6 +390,11 @@ extern instruction      *rM_SPLITCMP( instruction *ins )
             opcode = OP_SET_LESS;
             // TODO: is it safe to increment constant? Should we copy it first?
             ins->operands[1]->c.int_value++;
+        }
+        if( ins->operands[1]->n.class == N_REGISTER ) {
+            // Swap operands and reverse condition - we can do slt/sltu but
+            // nothing else
+            return( rSWAPCMP( ins ) );
         }
         break;
     case OP_CMP_GREATER_EQUAL:

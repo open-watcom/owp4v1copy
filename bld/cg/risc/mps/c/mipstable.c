@@ -61,11 +61,11 @@ _Side(  ANY,  ANY ),            V_NO,          G_NO,         RG_DWORD,      FU_N
 #define LOAD_TABLE( name, reg ) \
 static  opcode_entry    name[] = {                                                      \
 /********************************/                                                      \
-/*      op    res   eq          verify         gen             reg             fu */               \
-_UnPP(  M,    R,    NONE ),     V_NO,          G_LOAD_ADDR,    RG_##reg,       FU_ALU,                \
-_Un(    M,    M,    NONE ),     V_NO,          R_MOVRESTEMP,   RG_##reg,       FU_NO,         \
-_Un(    M,    ANY,  NONE ),     V_NO,          G_UNKNOWN,      RG_##reg##_NEED,FU_NO,  \
-_Un(    ANY,  ANY,  NONE ),     V_NO,          R_FORCEOP1MEM,  RG_##reg,       FU_NO,         \
+/*      op    res   eq          verify         gen             reg             fu */    \
+_UnPP(  M,    R,    NONE ),     V_NO,          G_LOAD_ADDR,    RG_##reg,       FU_ALU,  \
+_Un(    M,    M,    NONE ),     V_NO,          R_MOVRESTEMP,   RG_##reg,       FU_NO,   \
+_Un(    M,    ANY,  NONE ),     V_NO,          G_UNKNOWN,      RG_##reg##_NEED,FU_NO,   \
+_Un(    ANY,  ANY,  NONE ),     V_NO,          R_FORCEOP1MEM,  RG_##reg,       FU_NO,   \
 };
 
 LOAD_TABLE( LoadAddr2, WORD );
@@ -276,7 +276,7 @@ opcode_entry    Cmp4[] = {
 /************************/
 /*      op1   op2       verify          gen             reg             fu */
 _Side(  R,    R ),      V_MIPSBRANCH,   G_CONDBR,       RG_DWORD,       FU_NO,
-_Side(  R,    R ),      V_NO,           R_SPLITCMP,     RG_DWORD,       FU_NO,
+_Side(  R,    R ),      V_NO,           R_M_SPLITCMP,   RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_MIPSBRANCH,   R_MOVOP2TEMP,   RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_NO,           R_M_SPLITCMP,   RG_DWORD,       FU_NO,
@@ -315,39 +315,39 @@ _Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_FLOAT_NEED,  FU_NO,
 
 opcode_entry    Call[] = {
 /************************/
-/*       op    op2,  res   eq          verify     gen             reg  fu */
+/*      op    op2,  res   eq          verify      gen             reg  fu */
 _Bin(   ANY,  ANY,  ANY,  NONE ),     V_NO,       G_CALL,         RG_, FU_NO,
 };
 
 opcode_entry    CallI[] = {
 /*************************/
-/*       op    op2,  res   eq          verify     gen             reg  fu */
+/*      op    op2,  res   eq          verify      gen             reg  fu */
 _Bin(   ANY,  ANY,  ANY,  NONE ),     V_NO,       G_CALLI,        RG_, FU_NO,
 };
 
 opcode_entry    Rtn[] = {
 /***********************/
-/*       op    op2,  res   eq          verify     gen             reg  fu */
+/*      op    op2,  res   eq          verify      gen             reg  fu */
 _Bin(   ANY,  ANY,  ANY,  NONE ),     V_NO,       R_MAKECALL,     RG_, FU_NO,
 };
 
 static  opcode_entry    UnaryRtn[] = {
 /************************************/
-/**/
+/*      op    op2,  res               verify      gen             reg  fu */
 _Un(    ANY,  ANY,  NONE   ),         V_NO,       R_MAKECALL,     RG_, FU_NO,
 };
 
 
 opcode_entry    Promote[] = {
 /***************************/
-/*       op    op2,  res   eq          verify     gen             reg  fu */
+/*      op    op2,  res   eq          verify      gen             reg  fu */
 _Bin(   ANY,  ANY,  ANY,  NONE ),     V_NO,       R_BIN2INT,      RG_, FU_NO,
 };
 
 opcode_entry    Promote8[] = {
 /****************************/
-/*       op    op2,  res   eq          verify     gen             reg  fu */
-_Bin(   ANY,  ANY,  ANY,  NONE ),     V_NO,       R_BIN2QUAD,     RG_, FU_NO,
+/*      op    op2,  res   eq           verify     gen             reg  fu */
+_Bin(   ANY,  ANY,  ANY,  NONE ),      V_NO,      R_BIN2QUAD,     RG_, FU_NO,
 };
 
 static  opcode_entry    *OpcodeList[] = {

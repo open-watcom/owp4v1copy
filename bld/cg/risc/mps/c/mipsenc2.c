@@ -59,10 +59,10 @@ void EncodeRet( oc_ret *oc )
 }
 
 
-static void doBranch( mips_ins opcode, pointer lbl, uint reg1, uint reg2 )
-/************************************************************************/
+static void doBranch( mips_ins opcode, uint_8 cc, pointer lbl, uint reg1, uint reg2 )
+/***********************************************************************************/
 {
-    opcode = _Opcode( opcode ) | _Rs( reg1 ) | _Rt( reg2 );
+    opcode = _Opcode( opcode ) | _Rs( reg1 ) | _Rt( reg2 ) | _Rt( cc );
     OutReloc( lbl, OWL_RELOC_BRANCH_REL, 0 );
     ObjBytes( (char *)&opcode, sizeof( opcode ) );
     // TODO: Handle delay slot better
@@ -74,7 +74,8 @@ static void doBranch( mips_ins opcode, pointer lbl, uint reg1, uint reg2 )
 void EncodeJump( oc_handle *oc )
 /******************************/
 {
-    doBranch( 0x04, oc->handle, MIPS_ZERO_SINK, MIPS_ZERO_SINK );
+    // 'beq $zero,$zero,displacement'
+    doBranch( 0x04, 0x00, oc->handle, MIPS_ZERO_SINK, MIPS_ZERO_SINK );
 }
 
 
@@ -95,19 +96,20 @@ void EncodeCall( oc_handle *oc )
 }
 
 
-static  uint_8  BranchOpcodes[][2] = {
-    { 0x04, 0x31 },                     /* OP_CMP_EQUAL */
-    { 0x05, 0x35 },                     /* OP_CMP_NOT_EQUAL */
-    { 0x00, 0x37 },                     /* OP_CMP_GREATER */
-    { 0x00, 0x33 },                     /* OP_CMP_LESS_EQUAL */
-    { 0x00, 0x32 },                     /* OP_CMP_LESS */
-    { 0x00, 0x36 },                     /* OP_CMP_GREATER_EQUAL */
+static  uint_8  BranchOpcodes[][2][2] = {
+    { { 0x04, 0x00 }, { 0, 0 } },         /* OP_CMP_EQUAL */
+    { { 0x05, 0x00 }, { 0, 0 } },         /* OP_CMP_NOT_EQUAL */
+    { { 0x07, 0x00 }, { 0, 0 } },         /* OP_CMP_GREATER */
+    { { 0x06, 0x00 }, { 0, 0 } },         /* OP_CMP_LESS_EQUAL */
+    { { 0x01, 0x00 }, { 0, 0 } },         /* OP_CMP_LESS */
+    { { 0x01, 0x01 }, { 0, 0 } },         /* OP_CMP_GREATER_EQUAL */
 };
 
 void EncodeCond( oc_jcond *oc )
 /*****************************/
 {
     mips_ins    opcode;
+    uint_8      cncode;
     int         floating;
     uint        reg2;
 
@@ -116,7 +118,12 @@ void EncodeCond( oc_jcond *oc )
         floating = 1;
     }
     reg2 = oc->index2 == -1 ? 0 : oc->index2;
-    opcode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating];
+    opcode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating][0];
+    cncode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating][1];
+    if( (oc->cond != OP_CMP_EQUAL) && (oc->cond != OP_CMP_NOT_EQUAL) ) {
+        // Only beq/bne can do reg/reg comparisons
+        assert( reg2 == MIPS_ZERO_SINK );
+    }
     assert( opcode );
-    doBranch( opcode, oc->handle, oc->index, reg2 );
+    doBranch( opcode, cncode, oc->handle, oc->index, reg2 );
 }

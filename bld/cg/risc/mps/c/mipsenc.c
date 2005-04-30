@@ -163,12 +163,15 @@ static  uint_8  BinaryImmedOpcodes[] = {
         0,                                              /* OP_FMOD */
 };
 
+/* Note - 'reg SET_LESS_EQUAL imm' will be converted to 'reg SET_LESS (imm + 1)'
+ * inside FindImmedOpcode. That's why the opcodes are the same as for SET_LESS.
+ */
 static  uint_8  SetImmedOpcodes[][2] = {
         _BinaryImmOpcode( 0x00 ),                       /* OP_SET_EQUAL */
         _BinaryImmOpcode( 0x00 ),                       /* OP_SET_NOT_EQUAL */
         _BinaryImmOpcode( 0x00 ),                       /* OP_SET_GREATER */
-        _SignedImmOpcode( 0x0a, 0x0b ),                 /* OP_SET_LESS_EQUAL */
-        _SignedImmOpcode( 0x0a, 0x0b ),                 /* OP_SET_LESS */
+        _SignedImmOpcode( 0x0b, 0x0a ),                 /* OP_SET_LESS_EQUAL */
+        _SignedImmOpcode( 0x0b, 0x0a ),                 /* OP_SET_LESS */
         _BinaryImmOpcode( 0x00 ),                       /* OP_SET_GREATER_EQUAL */
 };
 
@@ -598,10 +601,12 @@ static  void GenCallIndirect( instruction *call )
     case N_TEMP:
     case N_INDEXED:
         getMemEncoding( addr, &mem_index, &mem_offset );
-        GenMEMINS( 0x28, reg_index, mem_index, mem_offset );
+        GenMEMINS( 0x23, reg_index, mem_index, mem_offset );
         break;
     }
-    GenMEMINS( 0x1a, MIPS_RETURN_ADDR, reg_index, 0x4000 );
+    GenRType( 0x00, 0x09, MIPS_RETURN_ADDR, reg_index, 0 );
+    // TODO: Handle delay slot better
+    EmitIns( MIPS_NOP );
 }
 
 
@@ -892,8 +897,8 @@ static  void Encode( instruction *ins )
         assert( ins->result->n.class == N_REGISTER );
         switch( ins->operands[0]->c.const_type ) {
         case CONS_ABSOLUTE:
-            // 'ori rt,$zero,immed'
-            GenIType( 0x0d, _NameReg( ins->result ), MIPS_ZERO_SINK, ins->operands[0]->c.int_value );
+            // 'addiu rt,$zero,immed'
+            GenIType( 0x09, _NameReg( ins->result ), MIPS_ZERO_SINK, ins->operands[0]->c.int_value );
             break;
         case CONS_LOW_ADDR:
         case CONS_HIGH_ADDR:
