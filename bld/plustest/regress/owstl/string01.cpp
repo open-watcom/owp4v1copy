@@ -36,8 +36,6 @@
 
 #include "sanity.cpp"
 
-#define FAIL { std::cout << "FAIL! Line: " << __LINE__ << "\n"; rc = false; }
-
 // The size at when a std::string first has to reallocate. Many of the
 // tests below "hard code" this value in the sense that test string
 // literals are used that are just smaller or just larger than this

@@ -33,6 +33,10 @@
 *              files (it contains macros).
 ****************************************************************************/
 
+#define FAIL \
+    { std::cout << "FAIL! Line: " << __LINE__ << "\n"; return( false ); }
+
+
 #if defined(__WATCOMC__)
 
   #include <malloc.h>
