@@ -6289,7 +6289,12 @@ static void verifySpecialFunction( SCOPE scope, DECL_INFO *dinfo )
         }
         if( ! arrowReturnOK( fn_type->of, name, TRUE ) ) {
             if( ! TypeIsClassInstantiation( scope_type ) ) {
-                CErr1( WARN_OPERATOR_ARROW_WONT_WORK );
+                // CErr1( WARN_OPERATOR_ARROW_WONT_WORK );
+                //   This warns (inappropriately) when a class nested
+                //   inside a class template defines an operator->(). I
+                //   question the value of this warning in general, but
+                //   I won't remove it for now in case we want to add it
+                //   again later. --PeterC
             }
         }
         break;
