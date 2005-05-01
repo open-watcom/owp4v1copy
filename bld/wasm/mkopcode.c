@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +50,8 @@ int main( int argc, char *argv[] )
 
     out_name = argv[argc-1];
     --argc;
+
+    // Count the words in all the input files
     count = 0;
     for( idx = 1; idx < argc; ++idx ) {
         in = fopen( argv[idx], "r" );
@@ -77,8 +80,7 @@ int main( int argc, char *argv[] )
         }
         for( ;; ) {
             if( fgets( buf, 80, in ) == NULL ) break;
-            for( i = 0; buf[i]; i++ ) {
-                if( buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t' ) break;
+            for( i = 0; buf[i] && !isspace( buf[i] ); i++ ) {
             }
             buf[i] = '\0';
             Words[index].word = strdup( buf );
