@@ -398,6 +398,7 @@ string                  {
 
 [Ll]"^"                 { asyylval.rtype = ASM_RELOC_HALF_LO; return( T_RELOC_MODIFIER ); }
 [Hh]"^"                 { asyylval.rtype = ASM_RELOC_HALF_HI; return( T_RELOC_MODIFIER ); }
+[Hh][Aa]"^"             { asyylval.rtype = ASM_RELOC_HALF_HA; return( T_RELOC_MODIFIER ); }
 [Jj]"^"                 { asyylval.rtype = ASM_RELOC_JUMP; return( T_RELOC_MODIFIER ); }
 :segment !AS_ALPHA
 [Bb]"^"                 { asyylval.rtype = ASM_RELOC_BRANCH; return( T_RELOC_MODIFIER ); }

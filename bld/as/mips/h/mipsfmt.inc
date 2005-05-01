@@ -29,7 +29,6 @@
 *****************************************************************************/
 
 
-PICK( IT_MEMORY_LDA,    ITLoadAddress,  OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* la      */
 PICK( IT_MEMORY_ALL,    ITMemAll,       OP_GPR, (OP_REG_INDIRECT | OP_IMMED), OP_NOTHING )              /* lw      */
 PICK( IT_FP_MEMORY_ALL, ITMemAll,       OP_FPR, OP_REG_INDIRECT, OP_NOTHING )                           /* ldf     */
 PICK( IT_MEMORY_A,      ITMemA,         OP_GPR, OP_NOTHING, OP_NOTHING )                                /* rpcc    */

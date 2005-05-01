@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP instruction formats and encodings.
 *
 ****************************************************************************/
 
@@ -119,6 +118,7 @@ static owl_reloc_type reloc_translate[] = {
     OWL_RELOC_ABSOLUTE,     // Corresponds to ASM_RELOC_UNSPECIFIED
     OWL_RELOC_WORD,
     OWL_RELOC_HALF_HI,
+    OWL_RELOC_HALF_HA,
     OWL_RELOC_HALF_LO,
     OWL_RELOC_BRANCH_REL,   // j^ reloc
     OWL_RELOC_JUMP_REL,     // jump hint

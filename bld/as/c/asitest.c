@@ -110,6 +110,7 @@ static char *typeName[] = {             // types from owl.h
     "OWL_RELOC_ABSOLUTE",               // ref to a 32-bit absolute address
     "OWL_RELOC_WORD",                   // a direct ref to a 32-bit address
     "OWL_RELOC_HALF_HI",                // ref to high half of 32-bit address
+    "OWL_RELOC_HALF_HA",                // ditto adjusted for signed low 16 bits
     "OWL_RELOC_PAIR",                   // pair - used to indicate prev hi and next lo linked
     "OWL_RELOC_HALF_LO",                // ref to low half of 32-bit address
     "OWL_RELOC_BRANCH_REL",             // relative branch (Alpha: 21-bit; PPC: 14-bit)

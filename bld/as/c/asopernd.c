@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler instruction operand parsing.
 *
 ****************************************************************************/
 
@@ -213,6 +212,7 @@ static char *reloc_modifier[] = {
     "",
     "",
     "h^",
+    "ha^",
     "l^",
     "j^",
     "b^"

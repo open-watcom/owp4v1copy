@@ -122,6 +122,7 @@ static owl_reloc_type reloc_translate[] = {
     OWL_RELOC_ABSOLUTE,     // Corresponds to ASM_RELOC_UNSPECIFIED
     OWL_RELOC_WORD,
     OWL_RELOC_HALF_HI,
+    OWL_RELOC_HALF_HA,
     OWL_RELOC_HALF_LO,
     OWL_RELOC_BRANCH_REL,   // j^ reloc
     OWL_RELOC_JUMP_REL,     // jump hint
@@ -178,19 +179,19 @@ static owl_reloc_type relocType( asm_reloc_type type, owl_reloc_type default_typ
     switch( default_type ) {
     case OWL_RELOC_HALF_HI:
     case OWL_RELOC_HALF_LO:
-        if( ( ret = reloc_translate[type] ) != OWL_RELOC_HALF_HI &&
+        if( (ret = reloc_translate[type]) != OWL_RELOC_HALF_HI &&
             ret != OWL_RELOC_HALF_LO ) {
             Error( INVALID_RELOC_MODIFIER );
         }
         break;
     case OWL_RELOC_BRANCH_REL:  // j^ reloc
-        if( ( ret = reloc_translate[type] ) != default_type ) {
+        if( (ret = reloc_translate[type]) != default_type ) {
             Error( INVALID_RELOC_MODIFIER );
         }
         break;
     case OWL_RELOC_JUMP_REL:    // jump hint
         // we accept j^ to be specified for jump hint for now.
-        if( ( ret = reloc_translate[type] ) != OWL_RELOC_JUMP_REL &&
+        if( (ret = reloc_translate[type]) != OWL_RELOC_JUMP_REL &&
             ret != OWL_RELOC_BRANCH_REL ) {
             Error( INVALID_RELOC_MODIFIER );
         }
@@ -352,16 +353,6 @@ static void doOpcodeFcRdRtSa( uint_32 *buffer, ins_opcode opcode, ins_funccode f
 }
 
 
-static void doOpcodeFcRsRtRd( uint_32 *buffer, ins_opcode opcode, ins_funccode fc, uint_8 rs, uint_8 rt, uint_8 rd, uint_32 extra )
-//*********************************************************************************************************************************
-// This procedure doesn't fill in all the bits (missing bits 10-6).
-// But we can fill it in using extra.
-{
-    *buffer = _Opcode( opcode ) | _Op_Func( fc ) | _Rs( rs ) | _Rt( rt ) | _Rd( rd ) |
-              extra;
-}
-
-
 static void doFPInst( uint_32 *buffer, ins_opcode opcode, uint_8 ra, uint_8 rb, uint_8 rc, uint_32 remain )
 //*********************************************************************************************************
 {
@@ -388,21 +379,16 @@ static void doAutoVar( asm_reloc *reloc, op_reloc_target targ, uint_32 *buffer, 
 #endif
 
 
-static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_operand *op, op_const c, asm_reloc *reloc, bool force_pair )
-//***************************************************************************************************************************************
-// LDA-LDAH sequence for 32-bit constants
-// Given: lda $d_reg, foobar+c($s_reg)
+static unsigned loadConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_operand *op, op_const c, asm_reloc *reloc, bool force_pair )
+//****************************************************************************************************************************************
+// load sequence for 32-bit constants
+// Given: la $d_reg, foobar+c($s_reg)
 //        info for foobar is stored in op
 //        c should be passed in also
 // Returns # of ins generated
 {
-    int_32              tmp;
-    int                 ctr;
     unsigned            ret = 1;
-    int_16              low, high[2];
-    uint_8              base_reg;
-    owl_reloc_type      type;
-    bool                hi_reloc_emitted = FALSE;
+    int_16              low, high;
 
     if( force_pair ) {
         assert( reloc != NULL );
@@ -411,78 +397,29 @@ static unsigned ldaConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_ope
             return( ret );
         }
     }
-    low = ( c & 0xffff );
-    tmp = c - (int_32)low;
-    high[0] = ( ( tmp & 0xffff0000 ) >> 16 );
-    if( c >= 0x7fff8000 ) {
-        // if c is in range 0x7FFF8000..0x7FFFFFFF, tmp = 0x80000000
-        // => high[0] = 0x8000 => negative! So we need to split high[0]
-        // up to high[0] + high[1] and load them up in different LDAH's.
-        high[1] = 0x4000;
-        tmp -= 0x40000000;
-        high[0] = ( ( tmp & 0xffff0000 ) >> 16 );
+    low  = c & 0xffff;
+    high = (c & 0xffff0000) >> 16;
+
+    if( !force_pair && (c < 32768) && ((int_32)c > -32769) ) {
+        // Only need sign extended low 16 bits - 'addiu rt,$zero,value'
+        doOpcodeIType( buffer, OPCODE_ADDIU, d_reg, MIPS_ZERO_SINK, low );
+        doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
+    } else if( !force_pair && !high ) {
+        // Only need high 16 bits - 'lui rt,$zero,(value >> 16)'
+        doOpcodeIType( buffer, OPCODE_LUI, d_reg, MIPS_ZERO_SINK, high );
+        doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
     } else {
-        high[1] = 0;
-    }
-    for( ctr = 0; ctr < 2; ctr++ ) {
-        if( high[ctr] != 0 ) {
-            base_reg = ( ctr == 0 ? s_reg : d_reg );
-            doOpcodeRsRt( buffer, OPCODE_LDAH,
-                          d_reg, base_reg, _Memory_disp( high[ctr] ) );
-            if( reloc && !hi_reloc_emitted ) {
-                type = relocType( op->reloc.type, OWL_RELOC_HALF_HI );
-                if( type == OWL_RELOC_HALF_HI ) {
-                    doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
-                    hi_reloc_emitted = TRUE; // only need to generate h^ once
-                } else {
-                    assert( type == OWL_RELOC_HALF_LO );
-                    // a l^ modifier was specified explicitly
-                    // Do the reloc at the end (lda)
-                    // Doing it in ldah will be wrong.
-                }
-            }
-            ++ret;
-            ++buffer;
-        }
-    }
-    if( !hi_reloc_emitted && force_pair ) { // no LDAH has been generated yet
-        // force_pair => no modifier should've been specified
-        // We are asked to force one, so here
-        doOpcodeRsRt( buffer, OPCODE_LDAH, d_reg, s_reg,
-                      _Memory_disp( 0 ) );
+        // Need two instructions: 'lui rt,$zero,(value >> 16)'
+        doOpcodeIType( buffer, OPCODE_LUI, d_reg, MIPS_ZERO_SINK, high );
         doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
         ++buffer;
-        ++ret;
-    }
-    base_reg = ( ret == 1 ? s_reg : d_reg );
-    doOpcodeRsRt( buffer, OPCODE_LDA, d_reg, base_reg,
-                  _Memory_disp( low ) );
-    if( reloc ) {
+        // followed by 'ori rt,$zero,(value & 0xffff)'
+        doOpcodeIType( buffer, OPCODE_ORI, d_reg, MIPS_ZERO_SINK, low );
         doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
+        ++ret;
     }
     return( ret );
 }
-
-
-#if 0
-static unsigned forceLoadAddressComplete( uint_8 d_reg, uint_8 s_reg, ins_operand *op, uint_32 *buffer, asm_reloc *reloc ) {
-//***********************************************************************************************************************
-
-    /* Generate:
-        LDAH    $d_reg, h^foo($s_reg)
-        LDA     $d_reg, l^foo+c($d_reg)
-       store them in buffer[0], buffer[1]
-    */
-    doOpcodeRsRt( buffer, OPCODE_LDAH, d_reg, s_reg,
-                  _Memory_disp( 0 ) );
-    doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
-    buffer++;
-    doOpcodeRsRt( buffer, OPCODE_LDA, d_reg, d_reg,
-                  _Memory_disp( op->constant ) );
-    doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
-    return( 2 );
-}
-#endif
 
 
 static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand *op1, domov_option m_opt )
@@ -495,8 +432,8 @@ static unsigned load32BitLiteral( uint_32 *buffer, ins_operand *op0, ins_operand
     } else {
         val = op0->constant;
     }
-    return( ldaConst32( buffer, RegIndex( op1->reg ), MIPS_ZERO_SINK,
-                        op0, val, NULL, FALSE ) );
+    return( loadConst32( buffer, RegIndex( op1->reg ), MIPS_ZERO_SINK,
+                         op0, val, NULL, FALSE ) );
 }
 
 
@@ -544,6 +481,7 @@ static void doLoadImm( uint_32 *buffer, ins_operand *operands[] )
 
     op0 = operands[0];
     op1 = operands[1];
+    ensureOpAbsolute( op1, 1 );
     reg = RegIndex( op0->reg );
     value = op1->constant;
 
@@ -565,94 +503,6 @@ static void doLoadImm( uint_32 *buffer, ins_operand *operands[] )
             (unsigned_16)value );
         ++numExtendedIns;
     }
-}
-
-
-static void doLoadAddress( uint_32 *buffer, ins_operand *operands[] )
-//*******************************************************************
-{
-    ins_operand     *op0, *op1;
-    uint_32         extra;
-//    uint_32         abs_val;
-    bool            ready = TRUE;
-
-    // TODO!!
-    op0 = operands[0];
-    op1 = operands[1];
-    if( op1->type == OP_GPR ) {
-        extra = _Rt( RegIndex( op1->reg ) );
-    } else if( ( op0->constant & 0xff ) == op0->constant ) { // OP_IMMED implied
-        extra = _LIT( op0->constant ); // this lit is between 0..255
-        (void)ensureOpAbsolute( op0, 0 );
-    } else {
-        ready = FALSE;
-    }
-    if( ready ) {
-        doOpcodeFcRsRt( buffer, OPCODE_BIS, FUNCCODE_BIS,
-                        MIPS_ZERO_SINK, RegIndex( op1->reg ), extra );
-        return;
-    }
-    // Otherwise it's OP_IMMED with a greater than 8-bit literal.
-    // We'll then use multiple LDA, LDAH instructions to load the literal.
-    if( !ensureOpAbsolute( op0, 0 ) ) return;
-    numExtendedIns += load32BitLiteral( buffer, op0, op1, 0 ) - 1;
-}
-
-
-static void ITLoadAddress( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
-//************************************************************************************************
-{
-    ins_operand         *op;
-    ins_operand         *ops[2];
-    unsigned            inc;
-    op_const            val;
-    uint_8              s_reg;
-
-    assert( ins->num_operands == 2 );
-    assert( table->opcode == OPCODE_LDA );
-    op = ins->operands[1];
-    // If op is IMMED foo, it's actually REG_INDIRECT that we want: foo($zero)
-    if( op->type == OP_IMMED ) {
-        op->type = OP_REG_INDIRECT;
-        op->reg = ZERO_REG;
-    }
-    assert( op->type == OP_REG_INDIRECT );
-    val = op->constant;
-    s_reg = RegIndex( op->reg );
-    if( !OP_HAS_RELOC( op ) && s_reg == MIPS_ZERO_SINK ) {
-        // doMov() can only be called when op->reg is ZERO_REG and no reloc
-        ops[0] = op;
-        ops[1] = ins->operands[0];
-        doMov( buffer, ops, DOMOV_ORIGINAL );
-        return;
-    }
-    if( OP_HAS_RELOC( op ) ) {
-#ifndef _STANDALONE_
-        if( OP_RELOC_NAMED( op ) ) {
-            char        *name;
-
-            name = SymName( op->reloc.target.ptr );
-            if( AsmQueryExternal( name ) == SYM_STACK ) {
-                doAutoVar( reloc, op->reloc.target, buffer, table, ins );
-                return;
-            }
-        }
-#endif
-        if( op->reloc.type == ASM_RELOC_UNSPECIFIED ) {
-            // Then we should emit LDA-LDAH pair.
-            inc = ldaConst32( buffer, RegIndex( ins->operands[0]->reg ),
-                              s_reg, op, op->constant, reloc, TRUE );
-            numExtendedIns += inc - 1;
-            return;
-        }
-    }
-    inc = ldaConst32( buffer, RegIndex( ins->operands[0]->reg ), s_reg, op,
-                      op->constant, reloc, FALSE );
-    numExtendedIns += inc - 1;
-/*
-    doOpcodeRsRt( buffer, table->opcode, RegIndex( ins->operands[0]->reg ),
-                  s_reg, _Memory_disp( val ) );
-    doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );*/
 }
 
 
@@ -1138,30 +988,23 @@ static void ITCop0Spc( ins_table *table, instruction *ins, uint_32 *buffer, asm_
 static void ITOperate( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //********************************************************************************************
 {
-    ins_funccode    fc;
-    uint_32         extra = 0;
-
     assert( ins->num_operands == 3 );
     reloc = reloc;
-    fc = getFuncCode( table, ins );
-    doOpcodeFcRsRtRd( buffer, table->opcode, fc,
-                      RegIndex( ins->operands[1]->reg ),
-                      RegIndex( ins->operands[2]->reg ),
-                      RegIndex( ins->operands[0]->reg ), extra );
+    doOpcodeRType( buffer, table->opcode, table->funccode,
+                   RegIndex( ins->operands[0]->reg ),
+                   RegIndex( ins->operands[1]->reg ),
+                   RegIndex( ins->operands[2]->reg ) );
 }
 
 
 static void ITMulDiv( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //*******************************************************************************************
 {
-    uint_32         extra = 0;
-
     assert( ins->num_operands == 2 );
     reloc = reloc;
-    doOpcodeFcRsRtRd( buffer, table->opcode, table->funccode,
-                      RegIndex( ins->operands[0]->reg ),
-                      RegIndex( ins->operands[1]->reg ),
-                      0, extra );
+    doOpcodeRType( buffer, table->opcode, table->funccode, 0,
+                   RegIndex( ins->operands[0]->reg ),
+                   RegIndex( ins->operands[1]->reg ) );
 }
 
 
@@ -1203,6 +1046,7 @@ static void ITOperateImm( ins_table *table, instruction *ins, uint_32 *buffer, a
     assert( ins->num_operands == 3 );
     reloc = reloc;
     op = ins->operands[2];
+    ensureOpAbsolute( op, 2 );
     doOpcodeFcRsRtImm( buffer, table->opcode, table->funccode,
                        RegIndex( ins->operands[1]->reg ),
                        RegIndex( ins->operands[0]->reg ), op->constant );
@@ -1329,10 +1173,52 @@ static void ITPseudoLImm( ins_table *table, instruction *ins, uint_32 *buffer, a
 static void ITPseudoLAddr( ins_table *table, instruction *ins, uint_32 *buffer, asm_reloc *reloc )
 //************************************************************************************************
 {
+    ins_operand         *op;
+    ins_operand         *ops[2];
+    unsigned            inc;
+    op_const            val;
+    uint_8              s_reg;
+
     assert( ins->num_operands == 2 );
-    table = table;
-    reloc = reloc;
-    doLoadAddress( buffer, ins->operands );
+    op = ins->operands[1];
+    // If op is IMMED foo, it's actually REG_INDIRECT that we want: foo($zero)
+    if( op->type == OP_IMMED ) {
+        op->type = OP_REG_INDIRECT;
+        op->reg = ZERO_REG;
+    }
+    assert( op->type == OP_REG_INDIRECT );
+    val = op->constant;
+    s_reg = RegIndex( op->reg );
+    if( !OP_HAS_RELOC( op ) && s_reg == MIPS_ZERO_SINK ) {
+        // doMov() can only be called when op->reg is ZERO_REG and no reloc
+        ops[0] = op;
+        ops[1] = ins->operands[0];
+        doMov( buffer, ops, DOMOV_ORIGINAL );
+        return;
+    }
+    if( OP_HAS_RELOC( op ) ) {
+#ifndef _STANDALONE_
+        if( OP_RELOC_NAMED( op ) ) {
+            char        *name;
+
+            name = SymName( op->reloc.target.ptr );
+            if( AsmQueryExternal( name ) == SYM_STACK ) {
+                doAutoVar( reloc, op->reloc.target, buffer, table, ins );
+                return;
+            }
+        }
+#endif
+        if( op->reloc.type == ASM_RELOC_UNSPECIFIED ) {
+            // We should emit lui/ori pair.
+            inc = loadConst32( buffer, RegIndex( ins->operands[0]->reg ),
+                               s_reg, op, op->constant, reloc, TRUE );
+            numExtendedIns += inc - 1;
+            return;
+        }
+    }
+    inc = loadConst32( buffer, RegIndex( ins->operands[0]->reg ), s_reg, op,
+                       op->constant, reloc, FALSE );
+    numExtendedIns += inc - 1;
 }
 
 

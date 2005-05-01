@@ -125,6 +125,7 @@ static unsigned relocMasks[] = {
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
     0x0000ffff,         /* OWL_RELOC_HALF_HI */
+    0x0000ffff,         /* OWL_RELOC_HALF_HA */
     0x00000000,         /* OWL_RELOC_PAIR */
     0x0000ffff,         /* OWL_RELOC_HALF_LO */
     0x0000fffc,         /* OWL_RELOC_BRANCH_REL */
@@ -137,6 +138,7 @@ static unsigned relocMasks[] = {
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
     0x0000ffff,         /* OWL_RELOC_HALF_HI */
+    0x0000ffff,         /* OWL_RELOC_HALF_HA, unused */
     0x00000000,         /* OWL_RELOC_PAIR */
     0x0000ffff,         /* OWL_RELOC_HALF_LO */
     0x001fffff,         /* OWL_RELOC_BRANCH_REL */
@@ -150,6 +152,7 @@ static unsigned relocMasks[] = {
     0xffffffff,         /* OWL_RELOC_ABSOLUTE */
     0xffffffff,         /* OWL_RELOC_WORD */
     0x0000ffff,         /* OWL_RELOC_HALF_HI */
+    0x0000ffff,         /* OWL_RELOC_HALF_HA, unused? */
     0x00000000,         /* OWL_RELOC_PAIR */
     0x0000ffff,         /* OWL_RELOC_HALF_LO */
     0x001fffff,         /* OWL_RELOC_BRANCH_REL */

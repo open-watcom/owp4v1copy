@@ -65,7 +65,6 @@ ins_table MIPSTable[] = {
     INS( "ulhu",    0x00,   0x03,   IT_MEMORY_ALL,      ENUM_NONE,  MIPS_ISA1 ),
     INS( "ulw",     0x00,   0x04,   IT_MEMORY_ALL,      ENUM_NONE,  MIPS_ISA1 ),
 
-    INS( "lda",     0x08,   0x00,   IT_MEMORY_LDA,      ENUM_NONE,  MIPS_ISA1 ),
     INS( "ldf",     0x20,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA1 ),
  // Memory Format Instructions with a function code
     INS( "fetch",   0x18,   0x80,   IT_MEMORY_B,        ENUM_NONE,  MIPS_ISA1 ),

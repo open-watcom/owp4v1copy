@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of externally callable OWL emit routines.
 *
 ****************************************************************************/
 
@@ -102,6 +101,11 @@ void OWLENTRY OWLEmitReloc( owl_section_handle section, owl_offset offset, owl_s
 
     _Log(( section->file, "OWLEmitReloc( %x, %x, %x, %x )\n",
                 section, offset, sym, type ));
+    if( section->file->format == OWL_FORMAT_ELF && type == OWL_RELOC_PAIR ) {
+        // ELF has no pair relocs and they wreak havoc later on. It's easiest
+        // to get rid of them right here.
+        return;
+    }
     doNewReloc( section, sym, offset, type );
 }
 

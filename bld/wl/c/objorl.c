@@ -734,6 +734,7 @@ static orl_return DoReloc( orl_reloc *reloc )
         type = FIX_OFFSET_32 | FIX_TOC;
         break;
     case ORL_RELOC_TYPE_HALF_HI:
+    case ORL_RELOC_TYPE_HALF_HA:
         SavedReloc = *reloc;
         skip = TRUE;
         break;

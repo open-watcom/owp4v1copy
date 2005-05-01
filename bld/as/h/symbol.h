@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler symbol table interface.
 *
 ****************************************************************************/
 
@@ -89,6 +88,7 @@ typedef enum {
     ASM_RELOC_UNSPECIFIED,
     ASM_RELOC_WORD,
     ASM_RELOC_HALF_HI,
+    ASM_RELOC_HALF_HA,                  // high half adjusted for signed addition
     ASM_RELOC_HALF_LO,
     ASM_RELOC_JUMP,                     // j^ reloc
     ASM_RELOC_BRANCH,                   // PPC: 14-bit reloc; Alpha: jump hint

@@ -564,6 +564,7 @@ static bool assignRelocType( owl_reloc_type *owlrtype, asm_reloc_type artype, di
         OWL_RELOC_ABSOLUTE,         // ASM_RELOC_UNSPECIFIED
         OWL_RELOC_WORD,
         OWL_RELOC_HALF_HI,
+        OWL_RELOC_HALF_HA,
         OWL_RELOC_HALF_LO,
     };
 
@@ -572,6 +573,7 @@ static bool assignRelocType( owl_reloc_type *owlrtype, asm_reloc_type artype, di
         reloc_translate[ ASM_RELOC_UNSPECIFIED ] = OWL_RELOC_HALF_LO; //default
         switch( artype ) {
         case ASM_RELOC_HALF_HI:
+        case ASM_RELOC_HALF_HA:
         case ASM_RELOC_HALF_LO:
         case ASM_RELOC_UNSPECIFIED:
             *owlrtype = reloc_translate[ artype ];

@@ -242,7 +242,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
                              flags );
             break;
         case ORL_RELOC_TYPE_HALF_HA:
-            referenceString( *r_entry, sec_size, "h^", "h^", "@ha", buff,
+            referenceString( *r_entry, sec_size, "ha^", "ha^", "@ha", buff,
                              flags );
             break;
         case ORL_RELOC_TYPE_HALF_LO:
