@@ -179,7 +179,7 @@ typedef unsigned_64     signed_64;
     /* Macros to swap byte order */
     #define SWAP_16     CONV_LE_16
     #define SWAP_32     CONV_LE_32
-    #define SWAP_32     CONV_LE_64
+    #define SWAP_64     CONV_LE_64
 #else
     /* Macros to get little endian data */
     #define GET_LE_16(w)    (w)
