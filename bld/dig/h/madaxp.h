@@ -162,7 +162,8 @@ enum {
     AR_t12      = AR_r27,
     AR_at       = AR_r28,
     AR_gp       = AR_r29,
-    AR_sp       = AR_r30
+    AR_sp       = AR_r30,
+    AR_zero     = AR_r31
 };
 
 
