@@ -370,7 +370,6 @@ diags_0299_defn = &
     diag0278$(err_sin) &
     diag0279$(err_sin) &
     diag0280$(err_sin) &
-    diag0281$(err_sin) &
     diag0282$(err_sin) &
     diag0283$(err_sin) &
     diag0284$(err_sin) &

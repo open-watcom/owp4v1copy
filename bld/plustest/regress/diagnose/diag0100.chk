@@ -205,15 +205,7 @@ File: source\diag0119.c
 (16,25): Error! E648: cannot #define '__cplusplus'
 (17,25): Error! E648: cannot #define 'defined'
 File: source\diag0120.c
-(16,30): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(16,32): Warning! W594: construct resolved as a declaration/type
-(18,30): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(18,32): Warning! W594: construct resolved as a declaration/type
-(19,27): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(19,29): Warning! W594: construct resolved as a declaration/type
 (19,32): Error! E058: expression must be a constant
-(21,20): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(21,21): Warning! W595: construct resolved as an expression
 (21,33): Error! E058: expression must be a constant
 (21,50): Error! E058: expression must be a constant
 (22,11): Error! E545: cannot create an undefined type with 'operator new'
@@ -279,8 +271,6 @@ File: source\diag0126.c
 (49,1): Warning! W656: define this function inside its class definition (may improve code quality)
 (71,1): Warning! W657: define this function inside its class definition (could have improved code quality)
 (73,1): Warning! W657: define this function inside its class definition (could have improved code quality)
-(88,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(88,21): Warning! W594: construct resolved as a declaration/type
 (88,19): Error! E811: cannot cast to a function type
   target conversion type is 'X56 ( void )'
 File: source\diag0127.c
@@ -320,8 +310,6 @@ File: source\diag0139.h
   included from source\diag0139.c(2)
 (2,2): Error! E080: should print twice
 File: source\diag0140.c
-(6,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(6,14): Warning! W595: construct resolved as an expression
 (30,8): Error! E227: overloaded function is ambiguous for arguments used in call
   ambiguous function template: void foo( ? ) defined at: (15,10)
   ambiguous function template: char foo( SS<?> ) defined at: (18,10)
@@ -402,20 +390,12 @@ File: source\diag0142.c
   source conversion type is 'X1'
   target conversion type is 'X1 (lvalue)'
 File: source\diag0143.c
-(19,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(19,15): Warning! W594: construct resolved as a declaration/type
-(23,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(23,15): Warning! W594: construct resolved as a declaration/type
-(27,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(27,16): Warning! W594: construct resolved as a declaration/type
 (30,19): Error! E149: access to protected member 'Z7::s' is not allowed
   definition: 'int Z7::s'
 (31,25): Error! E149: access to protected member 'Z7::i' is not allowed
   definition: 'int Z7::i'
   source conversion type is 'int Z7::*'
   target conversion type is 'int Z7::*'
-(32,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(32,15): Warning! W594: construct resolved as a declaration/type
 (32,30): Error! E149: access to protected member 'Z7::foo' is not allowed
   definition: 'void Z7::foo( void )'
   source conversion type is 'void (Z7::* )( void )'
@@ -426,8 +406,6 @@ File: source\diag0143.c
   definition: 'int Z7::pi'
   source conversion type is 'int Z7::*'
   target conversion type is 'int Z7::*'
-(36,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(36,15): Warning! W594: construct resolved as a declaration/type
 (36,31): Error! E148: access to private member 'Z7::pfoo' is not allowed
   definition: 'void Z7::pfoo( void )'
   source conversion type is 'void (Z7::* )( void )'
@@ -438,8 +416,6 @@ File: source\diag0143.c
   definition: 'int Z7::i'
   source conversion type is 'int Z7::*'
   target conversion type is 'int Z11::*'
-(40,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(40,16): Warning! W594: construct resolved as a declaration/type
 (40,33): Error! E149: access to protected member 'Z7::foo' is not allowed
   definition: 'void Z7::foo( void )'
   source conversion type is 'void (Z7::* )( void )'
@@ -580,11 +556,7 @@ File: source\diag0147.c
   source conversion type is 'S'
   target conversion type is 'S (lvalue)'
 File: source\diag0148.c
-(28,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(28,10): Warning! W595: construct resolved as an expression
 (28,10): Error! E340: cannot construct object from argument(s)
-(29,7): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(29,8): Warning! W595: construct resolved as an expression
 (29,8): Error! E340: cannot construct object from argument(s)
 (47,32): Error! E216: wide character string concatenated with a simple character string
 (48,33): Error! E216: wide character string concatenated with a simple character string
@@ -592,8 +564,6 @@ File: source\diag0148.c
 File: source\diag0149.c
 (5,6): Warning! W667: 'va_start' macro will not work without an argument before '...'
 (17,6): Warning! W668: 'va_start' macro will not work with a reference argument before '...'
-(27,8): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(27,10): Warning! W595: construct resolved as an expression
 (27,10): Error! E340: cannot construct object from argument(s)
   'X15' defined at: (21,8)
   definition: 'X15::X15( int, int *, int, char * )'
@@ -1020,8 +990,6 @@ File: source\diag0155.c
 File: source\diag0156.c
 (10,1): Warning! W726: no reference to formal parameter 'bar'
   definition: 'B<A> * bar' in 'void X::foo( B<A> * )'
-(16,19): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(16,30): Warning! W594: construct resolved as a declaration/type
 (18,1): Warning! W726: no reference to formal parameter 'f'
   definition: 'void (* f)( void )' in 'void S::foo( void (* )( void ), int )'
 (18,1): Warning! W726: no reference to formal parameter 'x'
@@ -1112,8 +1080,6 @@ File: source\diag0163.c
 File: foo.c
 (30,2): Error! E080: should be "foo.c" line 30
 File: source\diag0164.c
-(25,14): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(25,25): Warning! W594: construct resolved as a declaration/type
 (29,8): Error! E473: function argument(s) do not match those in prototype
   definition: 'void vio( unsigned char * )'
   cannot convert argument 1 defined at: (29,10)
@@ -4246,10 +4212,7 @@ File: source\diag0194.c
 (27,12): Warning! W836: symbol has different type than previous symbol in same declaration
   companion definition is 'e'
   definition: 'int e'
-(32,7): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
 (34,23): Warning! W597: encountered another ambiguous construct during disambiguation
-(34,27): Warning! W594: construct resolved as a declaration/type
-(34,27): Warning! W594: construct resolved as a declaration/type
 (34,12): Error! E498: syntax error before 'T2'; probable cause: incorrectly spelled type name
 (38,12): Error! E498: syntax error before 'X2'; probable cause: incorrectly spelled type name
 (45,16): Warning! W015: nested comment found in comment started on line 44

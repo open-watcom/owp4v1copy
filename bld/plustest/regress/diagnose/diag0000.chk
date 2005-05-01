@@ -65,10 +65,6 @@ File: source\diag0009.c
 File: source\diag0010.c
 (12,18): Error! E085: maximum class size has been exceeded
 File: source\diag0011.c
-(3,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(3,20): Warning! W594: construct resolved as a declaration/type
-(4,8): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(5,1): Warning! W594: construct resolved as a declaration/type
 (5,1): Warning! W014: no reference to symbol 'fp'
   definition: 'void (* fp)( int, int )' in 'void foo( void )'
 (5,1): Warning! W014: no reference to symbol 'a'
@@ -91,10 +87,7 @@ File: source\diag0011.c
   definition: 'int a' in 'void decl( void )'
 (21,1): Warning! W014: no reference to symbol 'c'
   definition: 'int c[1]' in 'void decl( void )'
-(25,8): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
 (25,17): Warning! W597: encountered another ambiguous construct during disambiguation
-(25,21): Warning! W594: construct resolved as a declaration/type
-(25,34): Warning! W594: construct resolved as a declaration/type
 (25,12): Warning! W836: symbol has different type than previous symbol in same declaration
   companion definition is 'a'
   definition: 'int a' in 'void expr_decl( void )'
@@ -1871,10 +1864,6 @@ File: source\diag0090.c
   definition: 'T'
 (41,23): Error! E409: template argument 'W' is not used in the function argument list
   definition: 'W'
-(44,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(44,18): Warning! W594: construct resolved as a declaration/type
-(47,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(47,18): Warning! W594: construct resolved as a declaration/type
 (60,1): Error! E454: function template 'f9' already has a definition
   template function 'void f9( ? *, ? *, ? *, ? * )' defined at: (56,10)
 File: source\diag0091.c
@@ -1995,8 +1984,6 @@ File: source\diag0098.c
   target conversion type is 'X const (lvalue)'
   class 'X' has not been defined
 File: source\diag0099.c
-(18,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(18,18): Warning! W594: construct resolved as a declaration/type
 (28,14): Error! E331: access permission of nested class 'X23::N' conflicts with previous declaration
 (25,26): Warning! W726: no reference to formal parameter 'n'
   definition: 'int n' in 'X23::X23( int )'

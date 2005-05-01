@@ -121,8 +121,6 @@ File: source\diag0080.c
 (127,13): Error! E228: declared 'operator new' is ambiguous for arguments used
   ambiguous function: void * CC::operator new( unsigned, char ) defined at: (107,11)
   ambiguous function: void * CC::operator new( unsigned, signed char ) defined at: (108,11)
-(129,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(129,10): Warning! W595: construct resolved as an expression
 (136,6): Error! E230: expression on left is an array
   operand type is 'int [10] (lvalue)'
 (137,5): Error! E230: expression on left is an array
@@ -342,8 +340,6 @@ File: source\diag0080.c
   'S327' defined at: (331,8)
   left operand type is 'S327'
   right operand type is 'int'
-(413,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(413,10): Warning! W595: construct resolved as an expression
 (413,10): Error! E899: cannot convert expression to target type
   source conversion type is 'S327 (lvalue)'
   target conversion type is 'bool'
@@ -386,8 +382,6 @@ File: source\diag0080.c
 (458,5): Warning! W013: unreachable code
 (463,40): Error! E197: type cannot be defined in this context
 (465,14): Error! E089: ## must not be at start or end of replacement tokens
-(491,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(491,18): Warning! W594: construct resolved as a declaration/type
 (498,11): Warning! W007: '&array' may not produce intended result
 (503,5): Error! E006: syntax error; probable cause: missing ';'
 (504,1): Warning! W726: no reference to formal parameter 'n'
@@ -460,8 +454,6 @@ File: source\diag0105.c
 (103,2): Error! E080: <custcntl.h>
 (105,2): Error! E080: <dde.h>
 (111,5): Error! E611: 'catch' does not immediately follow a 'try' or 'catch'
-(115,15): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(115,26): Warning! W594: construct resolved as a declaration/type
 (117,12): Error! E492: delete expression is not a pointer to data
 (118,12): Error! E490: delete expression is a pointer to a function
 (122,22): Warning! W300: function 'x54' has already been declared as a friend

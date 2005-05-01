@@ -217,8 +217,6 @@ File: source\diag0208.c
   target conversion type is 'S const volatile'
 File: source\diag0209.c
 (1,2): Error! E053: unknown preprocessing directive '#ackbar'
-(15,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(15,27): Warning! W595: construct resolved as an expression
 (58,17): Error! E306: cannot convert expression to type of cast
   source conversion type is 'void *'
   target conversion type is 'double'
@@ -783,8 +781,6 @@ File: source\diag0223.c
 (419,6): Error! E336: declaration specifiers are required to declare 'S23'
 (419,5): Error! E498: syntax error before 'c'; probable cause: incorrectly spelled type name
 (460,8): Error! E006: syntax error; probable cause: missing ';'
-(461,7): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(467,5): Warning! W594: construct resolved as a declaration/type
 (467,11): Error! E041: expression for '->' must be pointer to class, struct or union
   operand type is 'int'
 (469,17): Error! E178: const object must be initialized
@@ -1023,10 +1019,6 @@ File: source\diag0225.c
   operand type is 'void ( char * ) (lvalue)'
 (138,10): Error! E196: 'sizeof' is not allowed for type void
 (139,11): Error! E195: 'sizeof' is not allowed for a function
-(142,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(142,22): Warning! W594: construct resolved as a declaration/type
-(143,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(143,22): Warning! W594: construct resolved as a declaration/type
 (144,20): Error! E326: defining 'c5_4' is not possible because its type has unknown size
   definition: 'C5_4 c5_4' in 'C5_5 main( void )'
 (146,9): Error! E166: cannot convert right pointer to type of left operand
@@ -1039,11 +1031,7 @@ File: source\diag0225.c
   class 'C5_4' has not been defined
   target conversion type is 'C5_4'
 (151,16): Error! E591: operand must be an lvalue (cast produces rvalue)
-(160,13): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(160,20): Warning! W594: construct resolved as a declaration/type
 (160,43): Error! E029: symbol 'f' has not been declared
-(161,13): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(161,24): Warning! W594: construct resolved as a declaration/type
 (162,17): Error! E530: function accessed with '.*' or '->*' can only be called
 (163,17): Error! E530: function accessed with '.*' or '->*' can only be called
 (166,20): Error! E777: expecting 'id' after '::' but found '*'
@@ -1576,14 +1564,10 @@ File: source\diag0230.c
   definition: 'void x58( char * )'
 (61,26): Error! E229: function 'x58' has already been defined
   definition: 'void x58( char * )'
-(63,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(63,18): Warning! W594: construct resolved as a declaration/type
 (64,34): Error! E229: function 'x63' has already been defined
   definition: 'void x63( char (* )[10])'
 (65,34): Error! E229: function 'x63' has already been defined
   definition: 'void x63( char (* )[10])'
-(66,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(66,18): Warning! W594: construct resolved as a declaration/type
 (79,14): Error! E473: function argument(s) do not match those in prototype
   definition: 'int X67::D::f( char * )'
   cannot convert argument 1 defined at: (79,16)
@@ -1656,8 +1640,6 @@ File: source\diag0230.c
   ambiguous function: y285 operator +( y285, y285 ) defined at: (289,10)
   'int' operator can be used
 (301,20): Error! E400: cannot convert right expression for initialization
-(308,24): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(308,26): Warning! W594: construct resolved as a declaration/type
 (311,22): Error! E400: cannot convert right expression for initialization
   source conversion type is 'int (* )( int, ... )'
   target conversion type is 'int (* )( int, int )'
@@ -2118,20 +2100,12 @@ File: source\diag0239.c
   class 'x118' has not been defined
   target conversion type is 'x118'
   class 'x118' has not been defined
-(132,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(132,10): Warning! W595: construct resolved as an expression
 (133,13): Error! E437: cannot construct an undefined class
   'x118' defined at: (118,8)
-(133,13): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(133,14): Warning! W595: construct resolved as an expression
 (134,21): Error! E437: cannot construct an undefined class
   'x118' defined at: (118,8)
-(134,21): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(134,22): Warning! W595: construct resolved as an expression
 (135,29): Error! E437: cannot construct an undefined class
   'x118' defined at: (118,8)
-(135,29): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(135,30): Warning! W595: construct resolved as an expression
 (136,1): Error! E437: cannot construct an undefined class
   'x118' defined at: (118,8)
 (143,38): Error! E324: conversion of return value is impossible
@@ -2140,12 +2114,8 @@ File: source\diag0239.c
   class 'x131' has not been defined
   target conversion type is 'x132 const (lvalue)'
   class 'x132' has not been defined
-(149,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(149,10): Warning! W595: construct resolved as an expression
 (151,9): Error! E437: cannot construct an undefined class
   'x131' defined at: (137,7)
-(151,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(151,10): Warning! W595: construct resolved as an expression
 (153,10): Error! E437: cannot construct an undefined class
   'x132' defined at: (138,7)
 (153,18): Error! E326: defining 'q' is not possible because its type has unknown size
@@ -2168,19 +2138,11 @@ File: source\diag0239.c
 (214,3): Error! E121: syntax error
 (224,32): Warning! W744: 'operator =' does not have a return type specified (int assumed)
 (225,33): Warning! W744: 'operator +=' does not have a return type specified (int assumed)
-(261,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(261,25): Warning! W594: construct resolved as a declaration/type
-(262,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(262,25): Warning! W594: construct resolved as a declaration/type
 (262,45): Error! E676: number of arguments in function call is incorrect
   function has type 'double ( char *, double )'
-(263,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(263,25): Warning! W594: construct resolved as a declaration/type
 (263,46): Error! E333: cannot convert argument to type specified in function prototype
   source conversion type is 'double'
   target conversion type is 'char *'
-(264,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(264,25): Warning! W594: construct resolved as a declaration/type
 (264,45): Error! E191: expression must be a pointer or a zero constant
   expression type is 'double'
 (277,14): Warning! W060: too many parameters given for macro 'x268'
@@ -2209,26 +2171,14 @@ File: source\diag0240.c
   rejected function template: void x29( X26<?> const * * * ) defined at: (29,10)
   rejected function template: void x29( X26<?> const * ) defined at: (32,10)
   rejected function: void x29( X26<int> const * ) defined at: (39,10)
-(70,15): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(70,20): Warning! W594: construct resolved as a declaration/type
 (70,9): Warning! W750: function prototype in block scope missing 'extern'
   function prototype is 'X67 ( int )'
-(71,15): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(71,19): Warning! W594: construct resolved as a declaration/type
 (71,9): Warning! W750: function prototype in block scope missing 'extern'
   function prototype is 'X67 ( int (* )( void ))'
-(72,22): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(72,27): Warning! W594: construct resolved as a declaration/type
 (72,16): Error! E337: static function declared in block scope
   function prototype is 'X67 ( int )'
-(73,22): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(73,26): Warning! W594: construct resolved as a declaration/type
 (73,16): Error! E337: static function declared in block scope
   function prototype is 'X67 ( int (* )( void ))'
-(75,24): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(75,29): Warning! W594: construct resolved as a declaration/type
-(76,24): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(76,28): Warning! W594: construct resolved as a declaration/type
 (77,1): Warning! W726: no reference to formal parameter 'a'
   definition: 'double a' in 'void x70( double )'
 (96,33): Error! E380: 'offsetof' is not allowed for a function
@@ -2978,18 +2928,10 @@ File: source\diag0258.c
 (17,1): Error! E254: 'S::f' has not been declared as a member
   definition: 'void S::f( int )'
 File: source\diag0259.c
-(15,11): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(15,13): Warning! W595: construct resolved as an expression
-(16,11): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(16,13): Warning! W595: construct resolved as an expression
 (16,19): Error! E676: number of arguments in function call is incorrect
   function has type 'void ( int )'
-(17,11): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(17,13): Warning! W595: construct resolved as an expression
 (17,21): Error! E676: number of arguments in function call is incorrect
   function has type 'void ( int, int )'
-(18,11): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(18,13): Warning! W595: construct resolved as an expression
 (19,19): Error! E676: number of arguments in function call is incorrect
   function has type 'void ( int, int )'
 (22,21): Error! E676: number of arguments in function call is incorrect
@@ -3293,9 +3235,6 @@ File: source\diag0280.c
 (33,9): Warning! W389: integral value may be truncated during assignment or initialization
 (34,9): Warning! W389: integral value may be truncated during assignment or initialization
 (35,9): Warning! W716: integral value may be truncated
-File: source\diag0281.c
-(10,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression
-(10,20): Warning! W594: construct resolved as a declaration/type
 File: source\diag0282.c
 (6,22): Error! E587: conversion of expression for default argument is impossible
   source conversion type is 'char'
