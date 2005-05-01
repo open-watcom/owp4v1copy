@@ -68,7 +68,7 @@ $(OBJDIR)/rcmsg.gh: $(RC_DIR)/h/rc.msg
 $(OBJDIR)/rc.res: rc.rc
 	rc -r -i=/src/cproj/rc/h\;/src/watcom/h rc.rc -fo=$(OBJDIR)/rc.res
 
-$(OBJDIR)/ytab.c $(OBJDIR)ytab.h: y/rc.y y/yydriver.c
+$(OBJDIR)/ytab.c $(OBJDIR)/ytab.h: y/rc.y y/yydriver.c
 	cd $(OBJDIR);wyacc $(WACC_FLAGS) $(RC_DIR)/y/rc.y $(RC_DIR)/y/yydriver.c >out
 
 $(OBJDIR)/ytab.gh: $(OBJDIR)/ytab.h
