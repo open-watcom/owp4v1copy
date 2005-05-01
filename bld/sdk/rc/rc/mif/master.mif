@@ -38,7 +38,7 @@ splice_opts = -kDEBUG
 
 objs =  ytab.obj &
         errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj &
-        exeseg.obj exeutil.obj global.obj hash1.obj hash2.obj &
+        exeseg.obj exeutil.obj global.obj &
         keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj &
         rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj&
@@ -124,19 +124,8 @@ ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
         $(bld_cl) $(wcl_util_opts) $<
 
-weights1.gh keyword1.gh : rc1.key ./findhash.exe
-        $]@ -q $[@
-        @cp keywords.gh keyword1.gh
-        @cp weights.gh weights1.gh
-        @rm -f keywords.gh
-        @rm -f weights.gh
-
-weights2.gh keyword2.gh : rc2.key ./findhash.exe
-        $]@ -q $[@
-        @cp keywords.gh keyword2.gh
-        @cp weights.gh weights2.gh
-        @rm -f keywords.gh
-        @rm -f weights.gh
+weights.gh keywords.gh : ./findhash.exe ../hash/rc1.key ../hash/rc2.key
+        $[@ -q ../hash/rc1.key ../hash/rc2.key
 
 $(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
@@ -150,6 +139,4 @@ usage.rc : $(wrc_dir)/usage.sp
 usagej.rc : $(wrc_dir)/usage.sp
         wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
-hash1.obj : hash1.c weights1.gh .AUTODEPEND
-
-hash2.obj : hash2.c weights2.gh .AUTODEPEND
+keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND

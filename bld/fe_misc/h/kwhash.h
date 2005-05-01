@@ -29,11 +29,16 @@
 ****************************************************************************/
 
 
-static unsigned keyword_hash( unsigned char *name, const unsigned char *weights, unsigned len )
+static unsigned keyword_hash( unsigned char *name, const unsigned char *weights,
+    unsigned len )
 {
     unsigned hash;
 
+#ifdef IGNORE_CASE
+    hash = len + tolower( name[ LEN_MIN ] );
+#else
     hash = len + name[ LEN_MIN ];
+#endif
     if( len > FIRST_INDEX ) {
         hash += weights[ name[ FIRST_INDEX ] ] * FIRST_SCALE;
     } else {
