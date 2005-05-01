@@ -261,8 +261,8 @@ Modified        By              Reason
 %token Y_EXCEPTION_SPECIAL
 %token Y_MEM_INIT_SPECIAL
 %token Y_DEFARG_SPECIAL
-%token Y_TEMPLATE_INT_DEFARG_SPECIAL    /*  experimental */
-%token Y_TEMPLATE_TYPE_DEFARG_SPECIAL   /*  experimental */
+%token Y_TEMPLATE_INT_DEFARG_SPECIAL
+%token Y_TEMPLATE_TYPE_DEFARG_SPECIAL
 %token Y_CLASS_INST_SPECIAL
 
 /*** terminator tokens for "special" parsing ***/
@@ -317,6 +317,8 @@ Modified        By              Reason
 %type <token> class-key
 %type <token> template-typename-key
 %type <token> operator-function-type
+%type <token> template-arg-declaration-list
+%type <token> template-abstract-args
 
 %type <type> class-mod-opt
 %type <type> class-mod-seq
@@ -379,14 +381,12 @@ Modified        By              Reason
 %type <dinfo> special-new-actual-abstract-declarator
 %type <dinfo> actual-abstract-declarator
 %type <dinfo> abstract-args
-%type <dinfo> template-abstract-args
 %type <dinfo> simple-arg-declaration
 %type <dinfo> simple-template-arg-declaration
 %type <dinfo> arg-declaration
 %type <dinfo> template-arg-declaration
 %type <dinfo> type-parameter
 %type <dinfo> arg-declaration-list
-%type <dinfo> template-arg-declaration-list
 %type <dinfo> actual-exception-declaration
 %type <dinfo> exception-declaration
 %type <dinfo> member-declaring-declarator
@@ -2166,7 +2166,6 @@ abstract-args
 
 template-abstract-args
     : /* nothing */
-    { $$ = NULL; }
     | template-arg-declaration-list
     ;
 
@@ -2180,11 +2179,11 @@ arg-declaration-list
 template-arg-declaration-list
     : template-arg-declaration
     { 
-        $$ = AddArgument( NULL, $1 ); 
+        TemplateDeclAddArgument( $1 ); 
     }
     | template-arg-declaration-list Y_COMMA template-arg-declaration
     { 
-        $$ = AddArgument( $1, $3 ); 
+        TemplateDeclAddArgument( $3 ); 
     }
     ;
 
@@ -2833,10 +2832,18 @@ mem-initializer-item
 
 /*** template syntax ***/
 template-declaration
-    : template-key Y_LT template-argument-decl Y_GT template-def
+    : template-key Y_LT template-declaration-init template-argument-decl Y_GT template-def
     {
         RewriteFree( ParseGetRecordingInProgress( NULL ) );
         state->template_decl = FALSE;
+    }
+    ;
+
+template-declaration-init
+    : /* nothing */
+    {
+        GStackPush( &(state->gstack), GS_TEMPLATE_DATA );
+        TemplateDeclInit( &(state->gstack->u.templatedata) );
     }
     ;
 
@@ -2855,8 +2862,6 @@ template-key
 template-argument-decl
     : template-abstract-args
     {
-        GStackPush( &(state->gstack), GS_TEMPLATE_DATA );
-        TemplateDeclInit( &(state->gstack->u.templatedata), $1 );
         pushDefaultDeclSpec( state );
         state->template_record_tokens = RewriteRecordInit( &(state->template_record_locn) );
     }

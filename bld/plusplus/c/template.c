@@ -267,39 +267,14 @@ static TYPE setArgIndex( SYMBOL sym, unsigned index )
     return type;
 }
 
-static void injectParameterDecls( DECL_INFO *args )
-{
-    char *name;
-    DECL_INFO *curr;
-    SYMBOL sym;
-    unsigned index;
-
-    index = 0;
-    RingIterBeg( args, curr ) {
-        ++index;
-        name = curr->name;
-        sym = curr->generic_sym;
-        if( sym != NULL ) {
-            curr->type = setArgIndex( sym, index );
-            DbgAssert( name != NULL );
-            sym = ScopeInsert( GetCurrScope(), sym, name );
-        } else if( ( name != NULL ) && ( curr->type != NULL ) ) {
-            sym = ScopeInsert( GetCurrScope(), AllocTypedSymbol( curr->type ), name );
-        }
-    } RingIterEnd( curr )
-}
-
-void TemplateDeclInit( TEMPLATE_DATA *data, DECL_INFO *args )
+void TemplateDeclInit( TEMPLATE_DATA *data )
 /***********************************************************/
 {
     StackPush( &currentTemplate, data );
     CErrCheckpoint( &(data->errors) );
-    if( ProcessTemplateArgs( args ) ) {
-        data->all_generic = TRUE;
-    } else {
-        data->all_generic = FALSE;
-    }
-    data->args = args;
+    data->all_generic = TRUE;
+    data->args = NULL;
+    data->nr_args = 0;
     data->spec_args = NULL;
     data->unbound_type = NULL;
     data->decl_scope = ScopeBegin( SCOPE_TEMPLATE_DECL );
@@ -311,7 +286,29 @@ void TemplateDeclInit( TEMPLATE_DATA *data, DECL_INFO *args )
     data->defn_found = FALSE;
     data->member_found = FALSE;
     data->defn_added = FALSE;
-    injectParameterDecls( args );
+}
+
+void TemplateDeclAddArgument( DECL_INFO *new_dinfo )
+{
+    SYMBOL sym;
+    char *name;
+
+    currentTemplate->args = AddArgument( currentTemplate->args, new_dinfo );
+    currentTemplate->nr_args++;
+
+    name = new_dinfo->name;
+    sym = new_dinfo->generic_sym;
+
+    if( sym != NULL ) {
+        new_dinfo->type = setArgIndex( sym, currentTemplate->nr_args );
+        DbgAssert( name != NULL );
+        sym = ScopeInsert( GetCurrScope(), sym, name );
+    } else if( ( name != NULL ) && ( new_dinfo->type != NULL ) ) {
+        currentTemplate->all_generic = FALSE;
+        sym = ScopeInsert( GetCurrScope(),
+                           AllocTypedSymbol( new_dinfo->type ), name );
+    }
+
 }
 
 static unsigned getArgList( DECL_INFO *args, TYPE *type_list, char **names, REWRITE **defarg_list )
@@ -1556,7 +1553,24 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 
         for( i = 0; ; list = list->u.subtree[0] ) {
             arg_type = TypedefRemove( tprimary->type_list[i] );
-            if( arg_type->id == TYP_GENERIC || arg_type->id == TYP_CLASS ) {
+            if( arg_type->id == TYP_GENERIC ) {
+                if( ! inside_decl_scope ) {
+                    /* a generic type might have already been bound - we
+                     * should take that into account */
+                    SEARCH_RESULT *result;
+
+                    result = ScopeFindMember( parm_scope,
+                                              tprimary->arg_names[arg_type->u.g.index - 1] );
+                    if( result != NULL ) {
+                        arg_type = TypedefRemove( result->sym_name->name_type->sym_type );
+                        ScopeFreeResult( result );
+                    } else {
+                        arg_type = NULL;
+                    }
+                } else {
+                    arg_type = NULL;
+                }
+            } else if( arg_type->id == TYP_CLASS ) {
                 arg_type = NULL;
             }
 
@@ -1568,7 +1582,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 
                 if( tinfo->defarg_list[i] == NULL ) {
                     /* the rewrite stuff would have killed our location so approximate */
-                    SetErrLoc(&start_locn);
+                    SetErrLoc( &start_locn );
                     CErr1( ERR_TOO_FEW_TEMPLATE_PARAMETERS );
                     something_went_wrong = TRUE;
                     break;  /* from for loop */
@@ -1637,15 +1651,15 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 
             if( ! inside_decl_scope ) {
                 injectTemplateParm( parm_scope, parm, tprimary->arg_names[i] );
+                arg_type = TypedefRemove( tprimary->type_list[i] );
             }
 
             ++i;
             if( i >= tprimary->num_args )
                 break;
 
-            if( list->u.subtree[0] == NULL )
-            {
-              list->u.subtree[0] = PTreeBinary( CO_LIST, NULL, NULL );
+            if( list->u.subtree[0] == NULL ) {
+                list->u.subtree[0] = PTreeBinary( CO_LIST, NULL, NULL );
             }
         }
 
@@ -1657,6 +1671,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
             ScopeBurn( parm_scope );
         }
     }
+
     if( something_went_wrong ) {
         NodeFreeDupedExpr( parms );
         parms = NULL;
@@ -2535,7 +2550,7 @@ void TemplateFunctionInstantiate( SYMBOL fn_sym, SYMBOL fn_template, void *hdl )
 
     /* all of the TYP_GENERIC types have their '->of' set to the proper type */
     save_scope = GetCurrScope();
-    SetCurrScope (SymScope( fn_template ));
+    SetCurrScope( SymScope( fn_template ) );
     parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
     ScopeSetParmFn( parm_scope, fn_template->u.defn );
     injectFunctionTemplateArgs( fn_template );
@@ -2549,7 +2564,7 @@ void TemplateFunctionInstantiate( SYMBOL fn_sym, SYMBOL fn_template, void *hdl )
     ParseFunctionInstantiation( fn_template->u.defn->defn );
     popInstContext();
     templateData.translate_fn = save_fn;
-    SetCurrScope (save_scope);
+    SetCurrScope( save_scope );
 }
 
 static void processFunctionTemplateDefns( void )
@@ -2754,7 +2769,7 @@ void TemplateSpecificDefnStart( PTREE tid, PTREE parms )
         inst_scope = findInstScope( tprimary, parms, &instance );
         if( inst_scope != NULL ) {
             instance->specific = TRUE;
-            SetCurrScope (inst_scope);
+            SetCurrScope( inst_scope );
         } else {
             parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
             ScopeSetParmClass( parm_scope, tinfo );

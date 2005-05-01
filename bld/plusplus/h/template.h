@@ -39,6 +39,7 @@ typedef struct template_data TEMPLATE_DATA;
 struct template_data {
     TEMPLATE_DATA       *next;          // (stack)
     DECL_INFO           *args;          // template arguments
+    unsigned            nr_args;        // number of template arguments
     PTREE               spec_args;      // template specialization arguments
     TYPE                unbound_type;   // unbound class type
     SCOPE               decl_scope;     // template decl scope
@@ -133,7 +134,8 @@ typedef enum tc_fn_control {
     TCF_NULL            = 0x00
 } tc_fn_control;
 
-extern void TemplateDeclInit( TEMPLATE_DATA *, DECL_INFO * );
+extern void TemplateDeclInit( TEMPLATE_DATA * );
+extern void TemplateDeclAddArgument( DECL_INFO *new_dinfo );
 extern void TemplateDeclFini( void );
 extern void TemplateFunctionCheck( SYMBOL, DECL_INFO * );
 extern void TemplateFunctionAttachDefn( DECL_INFO * );
