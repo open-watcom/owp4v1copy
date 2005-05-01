@@ -602,6 +602,20 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         }
         DisFormat( &DHnd, &data, &decoded, DFormat, name, ops );
         if( !(DFormat & DFF_ASM) ) {
+             static unsigned_64 *tmp_64;
+             static unsigned_32 *tmp_32;
+             static unsigned_16 *tmp_16;
+             tmp_64 = (unsigned_64 *)(contents+data.loop);
+             tmp_32 = (unsigned_32 *)(contents+data.loop);
+             tmp_16 = (unsigned_16 *)(contents+data.loop);
+             if( DHnd.need_bswap ) {
+                switch( DisInsSizeInc( &DHnd ) ) {
+                   //case 8: SWAP_64(*tmp_64); break;
+                   case 4: SWAP_32(*tmp_32); break;
+                   case 2: SWAP_16(*tmp_16); break;
+                   default: break;
+                }
+            }
              PrintLinePrefix( contents, data.loop, size,
                                 DisInsSizeInc( &DHnd ), decoded.size );
         }
