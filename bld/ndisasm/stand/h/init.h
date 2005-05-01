@@ -42,5 +42,8 @@ extern orl_machine_type         GetMachineType();
 extern orl_file_format          GetFormat();
 extern int                      IsIntelx86();
 extern void                     LeaveProgram( return_val, int );
+extern unsigned_16              FileU16toHostU16(unsigned_16);
+extern unsigned_32              FileU32toHostU32(unsigned_32);
+extern unsigned_64              FileU64toHostU64(unsigned_64);
 
 #endif

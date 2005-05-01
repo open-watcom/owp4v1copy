@@ -576,6 +576,46 @@ orl_machine_type GetMachineType()
     return( ORLFileGetMachineType( ObjFileHnd ) );
 }
 
+/*
+ *  Functions to convert data from the file format to the host format where the data may be byte swapped.
+ *  If the ORL file is not marked as the opposite endianness as that of the host, then the data will
+ *  not be byte swapped. This may not always be the correct behaviour, but if the data is not marked as
+ *  a particular endianness, what are we to do about it?
+ */
+
+#ifdef __BIG_ENDIAN__
+#define ENDIANNESS_TEST     ORL_FILE_FLAG_LITTLE_ENDIAN
+#else
+#define ENDIANNESS_TEST     ORL_FILE_FLAG_BIG_ENDIAN
+#endif 
+ 
+unsigned_16 FileU16toHostU16(unsigned_16 value)
+{
+    orl_file_flags  flags = ORLFileGetFlags( ObjFileHnd );
+    if( flags & ENDIANNESS_TEST )
+        return ( SWAPNC_16( value ) );
+    return value;
+}
+
+unsigned_32 FileU32toHostU32(unsigned_32 value)
+{
+    orl_file_flags  flags = ORLFileGetFlags( ObjFileHnd );
+    if( flags & ENDIANNESS_TEST )
+        return ( SWAPNC_32( value ) );
+    return value;
+}
+
+unsigned_64 FileU64toHostU64(unsigned_64 value)
+{
+    orl_file_flags  flags = ORLFileGetFlags( ObjFileHnd );
+    if( flags & ENDIANNESS_TEST ){
+        unsigned_64 new_value;        
+        new_value.u._64[0] = SWAPNC_64( value.u._64[0] );
+        return new_value;
+    }
+    return value;
+}
+
 static return_val initORL( void )
 {
     orl_file_flags      flags;
