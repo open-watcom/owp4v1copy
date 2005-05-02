@@ -32,77 +32,67 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-    // foreign language support
+    /* foreign language support */
 #define islang(__c)     ( ( (__c) >= 0x80 && (__c) <= 0xa7 ) || \
                         ( (__c) >= 0xe0 && (__c) <= 0xee ) )
 
-    // macro identifiers
+    /* macro identifiers */
 #define ismacc(__c)     ( isalnum(__c) || (__c) == '_' || \
                         islang(__c) || (__c) == '%' )
 
-    // extension characters
+    /* extension characters */
 #define isextc(__c)     ( isalnum(__c) || (__c) == '_' || islang(__c) || \
-                        strchr( "-*?&$!#%\\()^`{}~@", __c ) != NULL )
+                        (__c) == '-' || (__c) == '*' || (__c) == '?' || \
+                        (__c) == '&' || (__c) == '$' || (__c) == '!' || \
+                        (__c) == '#' || (__c) == '%' || (__c) == '\'' || \
+                        (__c) == '(' || (__c) == ')' || (__c) == '^' || \
+                        (__c) == '`' || (__c) == '{' || (__c) == '}' || \
+                        (__c) == '~' || (__c) == '@' \
+                        )
 
-    // directory separator
+    /* directory separator */
 #define isdirc(__c2)    ( (__c2) == '/' || (__c2) == '\\' || (__c2) == ':' )
 
-    // filename character
+    /* filename character */
 #define isfilec(__c3)   ( isextc(__c3) || isdirc(__c3) || (__c3) == '.' )
 
-    // not quite isspace - renamed to make sure you realize difference
+    /* not quite isspace - renamed to make sure you realize difference */
 #define isws(__c)       ( (__c) == ' ' || (__c) == '\t' )
 
 
 #define isprt(__c)      ( (__c) >= 32 && (__c) <= 255 )
 
-    // is an illegal character in a file
+    /* is an illegal character in a file */
 #define isbarf(__c)     ( !isprt(__c) && (__c) != '\t' && (__c) != '\a' && \
                             (__c) != '\f' && (__c) != '\n' )
 
 
-    // this macro is used to make coding easier below
-#define BAR( stuff )    printf( (something_output++) ? " | " #stuff : #stuff )
+    /* this macro is used to make coding easier below */
+#define BAR( stuff )    {                   \
+    if( noneyet )   printf( #stuff );       \
+    else            printf( " | " #stuff ); \
+    noneyet = 0;                            \
+}
 
 
 void main( void )
 /***************/
 {
-    int                 i;
-    int                 something_output;
-    static char const   *names[] = {              // four byte names.
-        "NUL ",  "SOH ",  "STX ",  "ETX ",  "EOT ",  "ENQ ",  "ACK ",  "'\\a'",
-        "'\\b'", "'\\t'", "'\\n'", "'\\v'", "'\\f'", "'\\r'", "SO  ",  "SI  ",
-        "DLE ",  "DC1 ",  "DC2 ",  "DC3 ",  "DC4 ",  "NAK ",  "SYN ",  "ETB ",
-        "CAN ",  "EM  ",  "SUB ",  "ESC ",  "FS  ",  "GS  ",  "RS  ",  "US  "
-    };
+    int     i;
+    int     noneyet;
 
     /*printf( "extern UINT8 IsArray[] = {\n" );*/
-    printf( "/*   STRM_MAGIC  */  0,\n" );
-    printf( "/*   STRM_END    */  0" );         // no ",\n" - supplied below
+    printf( "/*STRM_MAGIC*/  0,\n" );
+    printf( "/*STRM_END  */  0" );      /* note: no ",\n" !! */
 
     for( i = 0; i <= 255; i++ ) {
-        something_output = 0;
+        noneyet = 1;
 
-        printf( ",\n/*   0x%02x ", i );         // Write character value
         if( isprint( i ) ) {
-            printf( "'%c'    */  ", i );        // Character known printable
-        } else if( i < 32 ) {
-            printf( "%s   */  ", names[i] );    // Control character names
-        } else if( i == 127 ) {
-            printf( "%s   */  ", "DEL " );      // Control character name
-	}
-#ifndef __UNIX__
-	else if( i >= 128 && i <= 160 ) {
-            printf( "'%c'    */  ", i );        // !isprint but graphic glyphs
-        }
-#endif
-	else if( i >= 161 && i < 255 ) {
-            printf( "'%c'    */  ", i );        // !isprint but graphic glyphs
+            printf( ",\n/*   '%c'    */  ", i );
         } else {
-            printf( "%s", "       */  " );      // Nothing worth saying
+            printf( ",\n/*   0x%02x   */  ", i );
         }
 
         if( isws( i ) ) {
@@ -130,7 +120,7 @@ void main( void )
             BAR( IS_BARF );
         }
 
-        if( !something_output ) {
+        if( noneyet ) {
             printf( "0" );
         }
     }
