@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  List of instruction reduction tables. See mipstable.c.
 *
 ****************************************************************************/
 
@@ -37,6 +36,10 @@ typedef enum {
         BIN2,
         BIN4,
         BIN8,
+        BINU1,
+        BINU2,
+        BINU4,
+        BINU8,
         UN1,
         UN2,
         UN4,

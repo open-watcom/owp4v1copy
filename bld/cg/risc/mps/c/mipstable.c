@@ -149,12 +149,12 @@ MOVE_TABLE( Move2, WORD,  G_LOAD, G_STORE );
 MOVE_TABLE( Move4, DWORD, G_LOAD, G_STORE );
 MOVE_TABLE( Move8, QWORD, G_LOAD, G_STORE );
 
-#define BINARY_TABLE( name, reg ) \
+#define BINARY_TABLE( name, reg, const_verify ) \
 opcode_entry    name[] = {                                                              \
 /***************************/                                                           \
 /*       op1   op2   res   eq      verify          gen           reg            fu */   \
 _Bin(    R,    R,    R,    NONE ), V_NO,           G_BINARY,     RG_##reg,      FU_ALU, \
-_Bin(    R,    C,    R,    NONE ), V_HALFWORDCONST2,G_BINARY_IMM,RG_##reg,      FU_ALU, \
+_Bin(    R,    C,    R,    NONE ), const_verify,   G_BINARY_IMM, RG_##reg,      FU_ALU, \
 _Bin(    R,    C,    R,    NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,  \
 _Bin(    C,    C,    R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
 _Bin(    C,    ANY,  R,    NONE ), V_SYMMETRIC,    R_SWAPOPS,    RG_##reg,      FU_NO,  \
@@ -165,10 +165,20 @@ _Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED, FU_NO,\
 };
 
-BINARY_TABLE( Binary1, BYTE  );
-BINARY_TABLE( Binary2, WORD  );
-BINARY_TABLE( Binary4, DWORD );
-BINARY_TABLE( Binary8, QWORD );
+/* Why two binary operator reduction tables? Some instructions are
+ * hardcoded to take signed immediate operands and others only take
+ * unsigned. Separate tables were deemed less error prone than having
+ * to check for operand signedness in the verification code.
+ */
+BINARY_TABLE( BinaryUC1, BYTE,  V_UHALFWORDCONST2 );
+BINARY_TABLE( BinaryUC2, WORD,  V_UHALFWORDCONST2 );
+BINARY_TABLE( BinaryUC4, DWORD, V_UHALFWORDCONST2 );
+BINARY_TABLE( BinaryUC8, QWORD, V_UHALFWORDCONST2 );
+
+BINARY_TABLE( Binary1, BYTE,  V_HALFWORDCONST2 );
+BINARY_TABLE( Binary2, WORD,  V_HALFWORDCONST2 );
+BINARY_TABLE( Binary4, DWORD, V_HALFWORDCONST2 );
+BINARY_TABLE( Binary8, QWORD, V_HALFWORDCONST2 );
 
 opcode_entry    Push[] = {
 /************************/
@@ -351,54 +361,58 @@ _Bin(   ANY,  ANY,  ANY,  NONE ),      V_NO,      R_BIN2QUAD,     RG_, FU_NO,
 };
 
 static  opcode_entry    *OpcodeList[] = {
-        StubUnary,              /* NO */
-        StubUnary,              /* NYI */
-        Binary1,                /* BIN1 */
-        Binary2,                /* BIN2 */
-        Binary4,                /* BIN4 */
-        Binary8,                /* BIN8 */
-        Un1,                    /* UN1  */
-        Un2,                    /* UN2  */
-        Un4,                    /* UN4  */
-        Un8,                    /* UN8  */
-        Move1,                  /* MOV1 */
-        Move2,                  /* MOV2 */
-        Move4,                  /* MOV4 */
-        Move8,                  /* MOV8 */
+        StubUnary,              /* NO    */
+        StubUnary,              /* NYI   */
+        Binary1,                /* BIN1  */
+        Binary2,                /* BIN2  */
+        Binary4,                /* BIN4  */
+        Binary8,                /* BIN8  */
+        BinaryUC1,              /* BINU1 */
+        BinaryUC2,              /* BINU2 */
+        BinaryUC4,              /* BINU4 */
+        BinaryUC8,              /* BINU8 */
+        Un1,                    /* UN1   */
+        Un2,                    /* UN2   */
+        Un4,                    /* UN4   */
+        Un8,                    /* UN8   */
+        Move1,                  /* MOV1  */
+        Move2,                  /* MOV2  */
+        Move4,                  /* MOV4  */
+        Move8,                  /* MOV8  */
         MoveXX,                 /* MOVXX */
-        Conv,                   /* CONV */
+        Conv,                   /* CONV  */
         Conv,                   /* FCONV */
-        Call,                   /* CALL */
+        Call,                   /* CALL  */
         CallI,                  /* CALLI */
-        Push,                   /* PUSH */
-        Pop,                    /* POP */
-        LoadAddr2,              /* LA2 */
-        LoadAddr4,              /* LA4 */
-        LoadAddr8,              /* LA8 */
+        Push,                   /* PUSH  */
+        Pop,                    /* POP   */
+        LoadAddr2,              /* LA2   */
+        LoadAddr4,              /* LA4   */
+        LoadAddr8,              /* LA8   */
 #if 0   // Maybe for MIPS64?
-        StubBinary,             /* CMP4 */
-        Cmp8,                   /* CMP8 */
+        StubBinary,             /* CMP4  */
+        Cmp8,                   /* CMP8  */
 #else
-        Cmp4,                   /* CMP4 */
-        Cmp8,                   /* CMP8 */
+        Cmp4,                   /* CMP4  */
+        Cmp8,                   /* CMP8  */
 #endif
         Test4,                  /* TEST4 */
         Test4,                  /* TEST8 */
-        Set4,                   /* SET4 */
-        Set4,                   /* SET8 */
-        Binary4,                /* ZAP */
-        Binary4,                /* EXT4 */
-        LoadUnaligned,          /* LDQU */
-        StoreUnaligned,         /* STQU */
+        Set4,                   /* SET4  */
+        Set4,                   /* SET8  */
+        Binary4,                /* ZAP   */
+        Binary4,                /* EXT4  */
+        LoadUnaligned,          /* LDQU  */
+        StoreUnaligned,         /* STQU  */
         FloatBinary,            /* FBINS */
         FloatBinary,            /* FBIND */
-        MoveF,                  /* MOVS */
-        MoveF,                  /* MOVD */
-        CmpF,                   /* CMPS */
-        CmpF,                   /* CMPD */
-        Rtn,                    /* RTN  */
-        NegF,                   /* NEGF */
-        Promote,                /* PROM */
+        MoveF,                  /* MOVS  */
+        MoveF,                  /* MOVD  */
+        CmpF,                   /* CMPS  */
+        CmpF,                   /* CMPD  */
+        Rtn,                    /* RTN   */
+        NegF,                   /* NEGF  */
+        Promote,                /* PROM  */
         Promote8,               /* PROM8 */
         Rtn,                    /* BFUNS */
         Rtn,                    /* BFUND */
@@ -406,9 +420,9 @@ static  opcode_entry    *OpcodeList[] = {
         UnaryRtn,               /* UFUNS */
         UnaryRtn,               /* UFUND */
         UnaryRtn,               /* UFUNL */
-        Alloca4,                /* STK4 */
+        Alloca4,                /* STK4  */
         DoNop,                  /* DONOTHING */
-        NULL                    /* BAD*/
+        NULL                    /* BAD   */
 };
 
 extern  opcode_entry    *OpcodeTable( table_def i )
