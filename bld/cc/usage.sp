@@ -187,7 +187,7 @@ Options:
 -sg           generate calls to grow the stack
 -st           touch stack through SS first
 :endsegment
-:segment Taxp
+:segment Taxp | Tmps
 -si           initialize stack frame storage with pattern
 :endsegment
 -tp=<id>      set #pragma on( <id> )

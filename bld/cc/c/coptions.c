@@ -1142,7 +1142,7 @@ static void Set_R()            { CompFlags.save_restore_segregs = 1; }
 static void Set_SG()           { CompFlags.sg_switch_used = 1; }
 static void Set_ST()           { CompFlags.st_switch_used = 1; }
 #endif
-#if _CPU == _AXP
+#if _CPU == _AXP || _CPU == _MIPS
 static void Set_SI()           { TargetSwitches |= STACK_INIT; }
 #endif
 static void Set_S()            { Toggles &= ~TOGGLE_CHECK_STACK; }
@@ -1586,7 +1586,7 @@ static struct option const CFE_Options[] = {
     { "sg",     0,              Set_SG },
     { "st",     0,              Set_ST },
 #endif
-#if _CPU == _AXP
+#if _CPU == _AXP || _CPU == _MIPS
     { "si",     0,              Set_SI },
 #endif
     { "s",      0,              Set_S },
