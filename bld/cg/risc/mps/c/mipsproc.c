@@ -69,6 +69,7 @@ extern  void            OutFileStart( int line );
 extern  void            OutFuncEnd( offset end );
 extern  uint_8          RegTrans( hw_reg_set );
 extern  void            GenCallLabel( label_handle lbl );
+extern  void            GenCallLabelReg( pointer label, uint reg );
 extern  label_handle    RTLabel( int );
 extern  type_length     TempLocation( name * );
 extern  hw_reg_set      ReturnAddrReg( void );
@@ -236,15 +237,15 @@ static  void initSavedRegs( stack_record *saved_regs, type_length *offset )
 }
 
 #define STORE_DBLWORD   0x2b    // sw
-#define STORE_DOUBLE    0x27    // TODO
 #define LOAD_DBLWORD    0x23    // lw
 #define LOAD_DOUBLE     0x23    // TODO
-#define LEA_OPCODE      0x09    // addiu
+#define STORE_DOUBLE    0x27    // TODO
+#define ADDIU_OPCODE    0x09
+#define NOP_OPCODE      0x00
 
-#define VARARGS_PTR     14
-#define RT_PARM2        2
-#define RT_PARM1        1
-#define RT_RET_REG      0
+#define VARARGS_PTR     14      // TODO
+#define RT_PARM1        8       // $t0
+#define RT_RET_REG      2       // $v0
 
 
 static  void genMove( uint_32 src, uint_32 dst )
@@ -255,10 +256,17 @@ static  void genMove( uint_32 src, uint_32 dst )
 }
 
 
-static  void genLea( uint_32 src, signed_16 disp, uint_32 dst )
-/*************************************************************/
+static  void genLoadImm( uint_32 src, signed_16 disp, uint_32 dst )
+/******************************************************************/
 {
-    GenIType( LEA_OPCODE, dst, src, disp );
+    GenIType( ADDIU_OPCODE, dst, src, disp );
+}
+
+
+static  void genNOP( void )
+/*************************/
+{
+    GenRType( NOP_OPCODE, 0, 0, 0, 0 );
 }
 
 
@@ -519,7 +527,7 @@ static  void SetupVarargsReg( stack_map *map )
             // TODO
             GenRType( 0x10, 0x00, MIPS_STACK_REG, VARARGS_PTR, VARARGS_PTR );
         } else {
-            genLea( MIPS_STACK_REG, offset, VARARGS_PTR );
+            genLoadImm( MIPS_STACK_REG, offset, VARARGS_PTR );
         }
     }
 }
@@ -533,19 +541,20 @@ static  void emitProlog( stack_map *map )
     frame_size = frameSize( map );
     if( frame_size != 0 ) {
         if( frame_size <= MIPS_MAX_OFFSET ) {
-            genLea( MIPS_STACK_REG, -frame_size, MIPS_STACK_REG );
+            genLoadImm( MIPS_STACK_REG, -frame_size, MIPS_STACK_REG );
         } else {
             GenLOADS32( frame_size, MIPS_GPR_SCRATCH );
             // 'subu sp,sp,at'
             GenRType( 0x00, 0x23, MIPS_STACK_REG, MIPS_STACK_REG, MIPS_GPR_SCRATCH );
         }
         if( frame_size >= PAGE_SIZE ) {
+            GenCallLabelReg( RTLabel( RT_STK_CRAWL_SIZE ), RT_RET_REG );
+            // Next instruction will be in delay slot!
             if( frame_size <= MIPS_MAX_OFFSET ) {
-                genLea( MIPS_ZERO_SINK, frame_size, RT_PARM1 );
+                genLoadImm( MIPS_ZERO_SINK, frame_size, RT_PARM1 );
             } else {
                 genMove( MIPS_GPR_SCRATCH, RT_PARM1 );
             }
-            GenCallLabel( RTLabel( RT_STK_CRAWL_SIZE ) );
         }
     }
     if( map->locals.size != 0 || map->parm_cache.size != 0 ) {
@@ -555,10 +564,13 @@ static  void emitProlog( stack_map *map )
             size = map->locals.size + map->parm_cache.size;
             if( size > MIPS_MAX_OFFSET ) {
                 GenLOADS32( size, RT_PARM1 );
+                GenCallLabelReg( RTLabel( RT_STK_STOMP ), RT_RET_REG );
+                genNOP();   // could split LOADS32 call to fill in delay slot...
             } else {
-                genLea( MIPS_ZERO_SINK, map->locals.size + map->parm_cache.size, RT_PARM1 );
+                GenCallLabelReg( RTLabel( RT_STK_STOMP ), RT_RET_REG );
+                // Next instruction will be in delay slot!
+                genLoadImm( MIPS_ZERO_SINK, map->locals.size + map->parm_cache.size, RT_PARM1 );
             }
-            GenCallLabel( RTLabel( RT_STK_STOMP ) );
         }
     }
     emitVarargsProlog( &map->varargs );
@@ -591,7 +603,7 @@ static  void emitEpilog( stack_map *map )
     frame_size = frameSize( map );
     if( frame_size != 0 ) {
         if( frame_size <= MIPS_MAX_OFFSET ) {
-            genLea( MIPS_STACK_REG, frame_size, MIPS_STACK_REG );
+            genLoadImm( MIPS_STACK_REG, frame_size, MIPS_STACK_REG );
         } else {
             GenLOADS32( frame_size, MIPS_GPR_SCRATCH );
             // 'addu sp,sp,at'

@@ -1,5 +1,5 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+#==================================================================================================
 !inject __copy.obj                   g32
 !inject __stos.obj                   g32
 !inject 7fu8086.obj              g16                                        w16
@@ -71,6 +71,9 @@
 !inject shrd.obj                 g16                                        w16
 !inject stkaxp.obj                          nta
 !inject stkppc.obj                              ntp
+!inject stksmps.obj                                                                             lmp
+!inject stkcmps.obj                                                                             lmp
+!inject stkwmps.obj                                                                             lmp
 !inject u64add.obj               g16                                        w16
 !inject u64div.obj               g16                                        w16
 !inject u64mul.obj               g16                                        w16

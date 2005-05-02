@@ -304,12 +304,13 @@ static  uint_8 FindFloatingOpcodes( instruction *ins )
     assert( _IsFloating( ins->type_class ) );
     if( _OpIsBinary( ins->head.opcode ) ) {
         opcode = FloatingBinaryOpcodes[ins->head.opcode - FIRST_BINARY_OP];
+        /* NB: this opcode may legitimately be zero - that's 'add' */
     } else if( _OpIsSet( ins->head.opcode ) ) {
         opcode = FloatingSetOpcodes[ins->head.opcode - FIRST_SET_OP][0];
+        assert( opcode );
     } else {
         assert( 0 );
     }
-    assert( opcode );
     return( opcode );
 }
 
@@ -477,6 +478,27 @@ extern  type_length TempLocation( name *temp )
 }
 
 
+extern  void GenCallLabelReg( pointer label, uint reg )
+/*****************************************************/
+{
+    // This is used for calling into certain cg support routines. We'd
+    // kinda like to use 'jal', except we must use something other
+    // than ra for the return address. So 'jalr' it is...
+
+    // Load address into $at (lui/ori)
+    // TODO: This should be different for PIC
+    GenMEMINSRELOC( 0x0f, MIPS_GPR_SCRATCH, MIPS_ZERO_SINK, 0,
+                label, OWL_RELOC_HALF_HI );
+    GenMEMINSRELOC( 0x0d, MIPS_GPR_SCRATCH, MIPS_ZERO_SINK, 0,
+                label, OWL_RELOC_HALF_LO );
+
+    // 'jalr reg,$at'
+    GenRType( 0x00, 0x09, reg, MIPS_GPR_SCRATCH, 0 );
+    // WARNING! WARNING! WARNING!
+    // There's no delay slot here. Caller must handle that.
+}
+
+
 extern  void GenCallLabel( pointer label )
 /****************************************/
 {
@@ -604,6 +626,7 @@ static  void GenCallIndirect( instruction *call )
         GenMEMINS( 0x23, reg_index, mem_index, mem_offset );
         break;
     }
+    // 'jalr ra,reg_index'
     GenRType( 0x00, 0x09, MIPS_RETURN_ADDR, reg_index, 0 );
     // TODO: Handle delay slot better
     EmitIns( MIPS_NOP );
@@ -924,8 +947,10 @@ static  void Encode( instruction *ins )
                 _Zoiks( ZOIKS_132 );
             }
             if( !encodeThreadDataRef( ins ) ) {
+                // 'lui rt,immed'
                 GenMEMINSRELOC( 0x0f, _NameReg( ins->result ), MIPS_ZERO_SINK, high,
                             symLabel( ins->operands[0] ), OWL_RELOC_HALF_HI );
+                // 'addiu rt,rs,immed'
                 GenMEMINSRELOC( 0x09, _NameReg( ins->result ), _NameReg( ins->result ), low,
                             symLabel( ins->operands[0] ), OWL_RELOC_HALF_LO );
             }
