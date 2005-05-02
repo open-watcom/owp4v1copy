@@ -1,0 +1,17 @@
+!include $(bench_dir)\mif\bench.mif
+
+.cpp: $(bench_dir)\owstl
+.h: $(bench_dir)\owstl
+
+extra_w_opts = -xs -d2
+extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
+
+obj_files = strcopy.obj
+
+run: strcopy.exe .SYMBOLIC
+	strcopy
+    
+build: strcopy.exe .SYMBOLIC
+
+strcopy.exe : $(obj_files)
+	$(deflink)
