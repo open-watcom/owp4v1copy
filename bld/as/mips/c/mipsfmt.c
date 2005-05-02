@@ -1229,7 +1229,7 @@ static void ITPseudoMov( ins_table *table, instruction *ins, uint_32 *buffer, as
     reloc = reloc;
 
     doOpcodeRType( buffer, 0, FNCCODE_OR, RegIndex( ins->operands[0]->reg ),
-        RegIndex( ins->operands[0]->reg ), MIPS_ZERO_SINK );
+        RegIndex( ins->operands[1]->reg ), MIPS_ZERO_SINK );
 }
 
 
