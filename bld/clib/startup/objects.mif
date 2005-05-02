@@ -119,6 +119,7 @@
 !inject seterrno.obj d16 d32 dpm         nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject stack086.obj d16                                            o16     q16     w16
 !inject stack386.obj     d32                                            o32     q32     w32 osi l32
+!inject stacklnx.obj                                                                                lpc lmp
 !inject stackwnt.obj                     nt nta ntp
 !inject stjmpaxp.obj                        nta
 !inject stjmp086.obj d16                                            o16     q16     w16
