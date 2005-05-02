@@ -1558,6 +1558,8 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 }
             } else if( ftype == FIX_OFFSET_26 ) {
                 new_reloc.item.elf.info = R_MIPS_26;
+            } else if( ftype == FIX_OFFSET_32 ) {
+                new_reloc.item.elf.info = R_MIPS_REL32;
             } else {
                 new_reloc.item.elf.info = R_MIPS_REL32;
                 LnkMsg( LOC + ERR + MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
