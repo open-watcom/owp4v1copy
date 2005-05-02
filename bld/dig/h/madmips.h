@@ -172,6 +172,7 @@ struct mips_mad_registers {
     };
     union {
         unsigned_64     r30;
+        unsigned_64     fp;
         unsigned_64     s8;
     };
     union {

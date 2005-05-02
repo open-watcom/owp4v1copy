@@ -130,7 +130,7 @@ enum {
     regpick( k1, DWORD, CPU )
     regpick( gp, DWORD, CPU )
     regpick( sp, DWORD, CPU )
-    regpick( s8, DWORD, CPU )
+    regpick( fp, DWORD, CPU )
     regpick( ra, DWORD, CPU )
 
     regpick( pc, DWORD, CPU )
