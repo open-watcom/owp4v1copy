@@ -22,13 +22,13 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/builder/boot.ctl ]
 [ INCLUDE <DEVDIR>/pmake/lang.ctl ]
 [ INCLUDE <DEVDIR>/yacc/boot.ctl ]
-[ INCLUDE <DEVDIR>/re2c/boot.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/boot.ctl ]
 [ INCLUDE <DEVDIR>/orl/boot.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/boot.ctl ]
 [ INCLUDE <DEVDIR>/wmake/boot.ctl ]
 
 # compiled using wmake + gcc
+[ INCLUDE <DEVDIR>/re2c/boot.ctl ]
 [ INCLUDE <DEVDIR>/nwlib/boot.ctl ]
 
 # compiled using wmake + gcc + wlib
