@@ -413,8 +413,8 @@ static unsigned loadConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_op
         doOpcodeIType( buffer, OPCODE_LUI, d_reg, MIPS_ZERO_SINK, high );
         doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
         ++buffer;
-        // followed by 'ori rt,$zero,(value & 0xffff)'
-        doOpcodeIType( buffer, OPCODE_ORI, d_reg, MIPS_ZERO_SINK, low );
+        // followed by 'ori rt,rt,(value & 0xffff)'
+        doOpcodeIType( buffer, OPCODE_ORI, d_reg, d_reg, low );
         doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
         ++ret;
     }
