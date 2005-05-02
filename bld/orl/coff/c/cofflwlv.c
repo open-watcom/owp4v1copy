@@ -299,6 +299,33 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
             default:
                 return( ORL_RELOC_TYPE_NONE );
         }
+    } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_R3000
+            || coff_file_hnd->machine_type == ORL_MACHINE_TYPE_R4000 ) {
+        switch( coff_type ) {
+            case IMAGE_REL_MIPS_ABSOLUTE:   // NOP
+                return( ORL_RELOC_TYPE_ABSOLUTE );
+            case IMAGE_REL_MIPS_REFWORD:    // 32-bit address
+                return( ORL_RELOC_TYPE_WORD_32 );
+            case IMAGE_REL_MIPS_JMPADDR:    // 26-bit absolute address (j/jal)
+                return( ORL_RELOC_TYPE_WORD_26 );
+            case IMAGE_REL_MIPS_REFHI:
+                return( ORL_RELOC_TYPE_HALF_HI );
+            case IMAGE_REL_MIPS_REFLO:
+                return( ORL_RELOC_TYPE_HALF_LO );
+            case IMAGE_REL_MIPS_PAIR:
+                return( ORL_RELOC_TYPE_PAIR );
+            case IMAGE_REL_MIPS_GPREL:      // 16-bit offset from GP register
+            case IMAGE_REL_MIPS_LITERAL:
+                return( ORL_RELOC_TYPE_TOCREL_16 );
+            case IMAGE_REL_MIPS_SECREL:
+                return( ORL_RELOC_TYPE_SEC_REL );
+            case IMAGE_REL_MIPS_SECTION:
+                return( ORL_RELOC_TYPE_SEGMENT );
+            case IMAGE_REL_MIPS_REFWORDNB:  // 32-bit addr w/o image base
+                return( ORL_RELOC_TYPE_WORD_32_NB );
+            default:
+                return( ORL_RELOC_TYPE_NONE );
+        }
     }
     return( 0 );
 }

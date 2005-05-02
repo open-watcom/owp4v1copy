@@ -50,6 +50,23 @@ static uint_32 coffRelocTypesPPC[] = {
     IMAGE_REL_PPC_IFGLUE,       /* OWL_RELOC_GLUE */
 };
 
+static uint_32 coffRelocTypesMIPS[] = {
+    IMAGE_REL_MIPS_ABSOLUTE,    /* OWL_RELOC_ABSOLUTE */
+    IMAGE_REL_MIPS_REFWORD,     /* OWL_RELOC_WORD */
+    IMAGE_REL_MIPS_REFHI,       /* OWL_RELOC_HALF_HI */
+    0,                          /* OWL_RELOC_HALF_HA, unused */
+    IMAGE_REL_MIPS_PAIR,        /* OWL_RELOC_PAIR */
+    IMAGE_REL_MIPS_REFLO,       /* OWL_RELOC_HALF_LO */
+    IMAGE_REL_MIPS_REFLO,       /* OWL_RELOC_BRANCH_REL */  // Is this right??
+    0,                          /* OWL_RELOC_BRANCH_ABS, unused */
+    0,                          /* OWL_RELOC_JUMP_REL, unused */
+    IMAGE_REL_MIPS_JMPADDR,     /* OWL_RELOC_JUMP_ABS */
+    IMAGE_REL_MIPS_SECTION,     /* OWL_RELOC_SECTION_INDEX */
+    IMAGE_REL_MIPS_SECREL,      /* OWL_RELOC_SECTION_OFFSET */
+    IMAGE_REL_MIPS_GPREL,       /* OWL_RELOC_TOC_OFFSET */
+    0,                          /* OWL_RELOC_GLUE, unused */
+};
+
 static uint_32 coffRelocTypesAlpha[] = {
     IMAGE_REL_ALPHA_ABSOLUTE,   /* OWL_RELOC_ABSOLUTE */
     IMAGE_REL_ALPHA_REFLONG,    /* OWL_RELOC_WORD */
@@ -170,6 +187,9 @@ uint_32 OWLENTRY CoffRelocType( owl_reloc_type reloc_type, owl_cpu cpu ) {
     switch( cpu ) {
     case OWL_CPU_PPC:
         coff_relocs = coffRelocTypesPPC;
+        break;
+    case OWL_CPU_MIPS:
+        coff_relocs = coffRelocTypesMIPS;
         break;
     case OWL_CPU_ALPHA:
         coff_relocs = coffRelocTypesAlpha;
