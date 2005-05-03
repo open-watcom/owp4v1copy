@@ -24,34 +24,17 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Stack crawler for MIPS.
+;* Description:  MIPS implementation of _WtcMemCopy
 ;*
 ;*****************************************************************************
 
 
 .text
 
-.globl  _WtcStkCrawl
+.globl  _WtcMemCopy
+.extern memcpy
 
-.set noat
-.set noreorder
+/* This could really be better than this sleazy hack! */
 
-/* _WtcStkCrawl touches newly allocated stack area page by page.
- * This is required on operating systems that use the guard page
- * mechanism. Note that _WtcStkCrawl is used for alloca() support
- * and can use return address in $ra, unlike _WtcStkCrawlSize.
- *
- * Input:
- * $fp  - frame pointer (known to point to valid page)
- * $sp  - stack pointer (bottom of dynamic local storage)
- */
-_WtcStkCrawl:
-        slt     $t1,$sp,$fp     /* check if we need to do anything */
-        beq     $t1,$zero,done
-        move    $t0,$fp         /* start at frame pointer (in delay slot) */
-L1:     addiu   $t0,$t0,-4096   /* go down a page */
-        slt     $t1,$t0,$sp     /* see if t0 < sp */
-        beq     $t1,$zero,L1    /* if not, loop */
-        lw      $zero,4092($t0) /* touch memory (in delay slot) */
-done:   jr      $ra             /* return whence we came */
-        nop
+_WtcMemCopy:
+        j       memcpy
