@@ -44,22 +44,10 @@ bool construct_test( )
     std::set< char* > s3;
     seti_t *s4 = new seti_t();
     
-    if( INSANE(s1) || s1.size() || !s1.empty() ){
-        std::cout << "construct fail 0001\n";
-        pass = false;
-    }
-    if( INSANE(s2) || s2.size() || !s2.empty() ){
-        std::cout << "construct fail 0002\n";
-        pass = false;
-    }
-    if( INSANE(s3) || s3.size() || !s3.empty() ){
-        std::cout << "construct fail 0003\n";
-        pass = false;
-    }
-    if( INSANE(*s4) || s4->size() || !s4->empty() ){
-        std::cout << "construct fail 0004\n";
-        pass = false;
-    }
+    if( INSANE(s1) || s1.size() || !s1.empty() ) FAIL
+    if( INSANE(s2) || s2.size() || !s2.empty() ) FAIL
+    if( INSANE(s3) || s3.size() || !s3.empty() ) FAIL
+    if( INSANE(*s4) || s4->size() || !s4->empty() ) FAIL
     delete s4;
     
     return( pass );
@@ -67,8 +55,6 @@ bool construct_test( )
 
 bool access_test( )
 {
-    bool pass = true;
-
     // todo... choose an array of numbers that excercise all the different
     // interals of insert and delete (eg different tree transforms)
     int num[] = {10,5,3,4,6,2,7,8,11,12,14,13,19,17,16}; 
@@ -82,38 +68,26 @@ bool access_test( )
     for( int i = 0; i < (sizeof( num ) / sizeof( int )); i++ ){
         std::pair< std::set< int >::iterator, bool > ans;
         ans = s1.insert( num[i] );
-        if( INSANE( s1 ) || s1.size() != (i+1) || s1.empty() || !ans.second ){
-            std::cout << "access failure 0001 insert " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( s1 ) || s1.size() != (i+1) || s1.empty() || !ans.second ) FAIL
     }
     //find inserted
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         std::set< int >::iterator it = s1.find( num[i] );
         if( INSANE( s1 ) || s1.size() != (sizeof( num ) / sizeof( int )) ||
-            s1.empty() || it == s1.end() ){
-            std::cout << "access failure 0002 find " << i << "\n";
-            pass = false;
-        }
+            s1.empty() || it == s1.end() ) FAIL
     }
     //find not inserted
     for( int i = 0; i < (sizeof(notnum) / sizeof(int)); i++){
         std::set< int >::iterator it = s1.find( notnum[i] );
         if( INSANE( s1 ) || s1.size() != (sizeof( num ) / sizeof( int )) ||
-            s1.empty() || it != s1.end() ){
-            std::cout << "access failure 0003 find " << i << "\n";
-            pass = false;
-        }
+            s1.empty() || it != s1.end() ) FAIL
     }
     //insert again
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         std::pair< std::set< int >::iterator, bool > ans;
         ans = s1.insert( num[i] );
         if( INSANE( s1 ) || s1.size() != (sizeof(num) / sizeof(int)) ||
-            s1.empty() || ans.second ){
-            std::cout << "access failure 0004 insert again " << i << "\n";
-            pass = false;
-        }
+            s1.empty() || ans.second ) FAIL
     }
     //insert all
     size = sizeof( num ) / sizeof( int );
@@ -125,40 +99,28 @@ bool access_test( )
             if( notnum[j] == i ) should_have_inserted = true;
         if( should_have_inserted ){
             ++size;
-            if( !ans.second ) pass = false;
+            if( !ans.second ) FAIL
         }else{ // shouldn't have inserted
-            if( ans.second ) pass = false;
+            if( ans.second ) FAIL
         }
-        if( !pass || INSANE( s1 ) || s1.size() != size || s1.empty() ){
-            std::cout << "access failure 0005 insert all " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( s1 ) || s1.size() != size || s1.empty() ) FAIL
     }
     //delete the elements
     size = totsize;
     for( int i = 0; i < (sizeof( delnum ) / sizeof( int )); i++){
         s1.erase( delnum[i] );
         --size;
-        if( INSANE( s1 ) || s1.size() != size ){
-            std::cout << "access failure 0006 erase " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( s1 ) || s1.size() != size ) FAIL
     }
-    if( !s1.empty() ){
-        std::cout << "access failure 0007\n";
-        pass = false;
-    }
+    if( !s1.empty() ) FAIL
     //try finding the elements now they are deleted
     size = totsize;
     for( int i = 0; i < totsize; i++){
         std::set< int >::iterator it = s1.find( i );
-        if( INSANE( s1 ) || s1.size() || !s1.empty() || it != s1.end() ){
-            std::cout << "access failure 0008 find after erase " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( s1 ) || s1.size() || !s1.empty() || it != s1.end() ) FAIL
     }
 
-    return( pass );
+    return( true );
 }
 
 /* ------------------------------------------------------------------
@@ -166,41 +128,29 @@ bool access_test( )
  */
 bool string_test( )
 {
-    bool pass = true;
     using namespace std;
     typedef set< string > s_t;
     string eejit = "Dan";
     string place = "here";
     s_t &s1 = *(new s_t);
 
-    if( INSANE(s1) || !s1.empty() ){
-        std::cout << "set<string> failure 0001\n"; pass = false;
-    }
+    if( INSANE(s1) || !s1.empty() ) FAIL
     s1.insert( eejit );
-    if( INSANE(s1) || s1.empty() || s1.size() != 1){
-        std::cout << "set<string> failure 0002\n"; pass = false;
-    }
+    if( INSANE(s1) || s1.empty() || s1.size() != 1) FAIL
     s1.insert( "here" );
-    if( INSANE(s1) || s1.empty() || s1.size() != 2){
-        std::cout << "set<string> failure 0003\n"; pass = false;
-    }
+    if( INSANE(s1) || s1.empty() || s1.size() != 2) FAIL
     s1.insert( place );
-    if( INSANE(s1) || s1.empty() || s1.size() != 2){
-        std::cout << "set<string> failure 0004\n"; pass = false;
-    }
+    if( INSANE(s1) || s1.empty() || s1.size() != 2) FAIL
+    
     if( s1.find( "Dan" ) == s1.end() || s1.find( "here" ) == s1.end() ||
         *s1.find( eejit ) != "Dan" || *s1.find( place ) != place ||
-        INSANE(s1) || s1.empty() || s1.size() != 2 ){
-        std::cout << "set<string> failure 0005\n"; pass = false;
-    }
+        INSANE(s1) || s1.empty() || s1.size() != 2 ) FAIL
     s1.erase( s1.find("Dan") );
     s1.erase( "was" );
     s1.erase( "here" );
-    if( INSANE(s1) || !s1.empty() || s1.size() ){
-        std::cout << "set<string> failure 0006\n"; pass = false;
-    }
+    if( INSANE(s1) || !s1.empty() || s1.size() ) FAIL
     delete &s1;
-    return( pass );
+    return( true );
 }
 
 /* ------------------------------------------------------------------
@@ -236,16 +186,14 @@ bool torturer( int maxsize )
         }
         if( !heap_ok( "x" ) ) { cout<<"heap err\n"; return false;}
         if( INSANE(s) || s.size() != size ){
-        std::cout << "torture failure 0001 count " << c << 
-                     " maxsize " << maxsize << " error " << s.mError <<"\n";
-        return( false );
+            std::cout << "torture failure 0001 count " << c << 
+                         " maxsize " << maxsize << " error " << s.mError <<"\n";
+            FAIL
         }
         ++c;
     }
-    if( INSANE(s) || s.size() || !s.empty() ){
-        std::cout << "torture failure 0002\n" ;
-        return( false );
-    }
+    if( INSANE(s) || s.size() || !s.empty() ) FAIL
+    
     return( true );
 }
 /* ------------------------------------------------------------------
@@ -266,11 +214,37 @@ bool torture_test( )
     // tested under map
     int const biggest = 256; 
     for( int i = 1; i <= biggest; i *= 2 ){
-        //std::cout<<i<<", ";
         if( !torturer( i ) ) return false;
     }
     return( true );
 }
+
+/* ------------------------------------------------------------------
+ * clear_test( )
+ * this was triggering the memory leak detection system due to a 
+ * silly mistake added to rbtree when moving from delete to allocator
+ */
+bool clear_test( )
+{
+    typedef std::set< int > s_t;
+    s_t s1;
+    int i;
+    for( i = 0; i < 2 ; i++ ){
+        s1.insert( i );
+    }
+    s1.clear( );
+    if( INSANE(s1) || s1.size() || !s1.empty() ) FAIL
+    //check clearing a empty container
+    s1.clear( );
+    if( INSANE(s1) || s1.size() || !s1.empty() ) FAIL
+    
+    s_t s2;
+    for( i = 0; i < 2 ; i++ ){
+        s2.insert( i );
+    }// let the destructor clear this one, and trip the leak detector if problem
+    return true;
+}
+
 
 /* ------------------------------------------------------------------
  * iterator_test( )
@@ -281,7 +255,91 @@ bool iterator_test( )
     typedef std::set< int > s_t;
     s_t s1;
     s_t::iterator it;
-    //to do
+    s_t::const_iterator cit;
+    //use nums[] so numbers are not inserted in simple order
+    int nums[] = { 2,1,5,6,7,8,4,9,3,0 };   
+    const int nums_len = sizeof( nums ) / sizeof( int );
+    for( int i = 0; i < nums_len; i++ ){
+        s1.insert( nums[i] );
+    }
+    //test increment and dereferencing ( will be sorted by std::less<int> )
+    it = s1.begin();
+    int ans = *it;
+    for( int i = 0; i < nums_len ; i++ ){
+        if( INSANE( s1 ) || ans != i || *it != i ) FAIL
+        if( i%2 ) ans = *(it++) + 1;
+        else ans = *(++it);
+    }
+    //and again with const iterator
+    cit = s1.begin();
+    ans = *cit;
+    for( int i = 0; i < nums_len ; i++ ){
+        if( INSANE( s1 ) || ans != i || *cit != i ) FAIL
+        if( i%2 ) ans = *(cit++) + 1;
+        else ans = *(++cit);
+    }
+    //test decrement ( will be sorted by std::less<int> )
+    it = s1.end();
+    for( int i = 9; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = *(--it);
+        else ans = *(it--) - 1;
+        if( INSANE( s1 ) || ans != i || *it != i ) FAIL
+    }
+    //and again with const iterator
+    cit = s1.end( );
+    for( int i = 9; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = *(--cit);
+        else ans = *(cit--) - 1;
+        if( INSANE( s1 ) || ans != i || *cit != i ) FAIL
+    }
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * copy_test( )
+ * Test all things plagiarised
+ */
+bool copy_test( )
+{
+    typedef std::set< int > s_t;
+    s_t s1;
+    int i;
+    for( i=0; i<10; i++ ){
+        s1.insert( i );
+    }
+    s_t s1cpy( s1 );
+    if( INSANE( s1cpy ) || s1cpy.size( ) != 10 ) FAIL
+    //check it copied to new one ok
+    for( i = 0; i < 10; i++ ){  
+        if( s1cpy.find( i ) == s1cpy.end() ) FAIL
+    }
+    s1cpy.erase( 1 );
+    s1cpy.erase( 0 );
+    s1cpy.insert( 1979 );
+    if( INSANE( s1cpy ) || s1cpy.size( ) != 9 ) FAIL
+    //check it is a copy and old not effecting new one
+    if( INSANE( s1 ) || s1.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( s1.find( i ) == s1.end() ) FAIL
+    }
+    //assignment style
+    s_t s1cpy2 = s1;
+    if(  INSANE( s1cpy2 ) || s1cpy2.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( s1cpy2.find( i ) == s1cpy2.end() ) FAIL
+    }
+    //check assignment
+    s1.erase( 5 );
+    s1.insert( 11 );
+    s1 = s1cpy = s1cpy2;
+    if( INSANE( s1cpy ) || s1cpy.size( ) != 10 ) FAIL
+    if( INSANE( s1 ) || s1.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( s1cpy.find( i ) == s1cpy.end() ) FAIL
+        if( s1.find( i ) == s1.end() ) FAIL
+    }
+    
     return( true );
 }
 
@@ -295,7 +353,9 @@ int main( )
         if( !access_test( )     || !heap_ok( "t2" ) ) rc = 1;
         if( !string_test( )     || !heap_ok( "t3" ) ) rc = 1;
         if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
-        if( !iterator_test( )   || !heap_ok( "t5" ) ) rc = 1;
+        if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
+        if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t6" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

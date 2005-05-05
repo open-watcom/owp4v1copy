@@ -35,6 +35,7 @@
 #include <cstdlib>
 #include "allocxtr.hpp"
 
+
 /* ------------------------------------------------------------------
  * To do:
  *      * user allocator - low memory allocator
@@ -56,22 +57,10 @@ bool construct_test( )
     std::map< char*, double > m3;
     mapii_t *m4 = new mapii_t();
     
-    if( INSANE(m1) || m1.size() || !m1.empty() ){
-        std::cout << "construct fail 0001\n";
-        pass = false;
-    }
-    if( INSANE(m2) || m2.size() || !m2.empty() ){
-        std::cout << "construct fail 0002\n";
-        pass = false;
-    }
-    if( INSANE(m3) || m3.size() || !m3.empty() ){
-        std::cout << "construct fail 0003\n";
-        pass = false;
-    }
-    if( INSANE(*m4) || m4->size() || !m4->empty() ){
-        std::cout << "construct fail 0004\n";
-        pass = false;
-    }
+    if( INSANE(m1) || m1.size() || !m1.empty() ) FAIL
+    if( INSANE(m2) || m2.size() || !m2.empty() ) FAIL
+    if( INSANE(m3) || m3.size() || !m3.empty() ) FAIL
+    if( INSANE(*m4) || m4->size() || !m4->empty() ) FAIL
     delete m4;
     
     return( pass );
@@ -84,7 +73,6 @@ bool construct_test( )
  */
 bool access_test( )
 {
-    bool pass = true;
     // todo... choose an array of numbers that excercise all the different
     // interals of insert and delete (eg different tree transforms)
     int num[] = {10,5,3,4,6,2,7,8,11,12,14,13,19,17,16}; 
@@ -98,46 +86,31 @@ bool access_test( )
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         std::pair< std::map< int, int >::iterator, bool > ans;
         ans = m1.insert( std::map< int, int >::value_type( num[i], num[i]*num[i] ) );
-        if( INSANE( m1 ) || m1.size() != (i+1) || m1.empty() || !ans.second){
-            std::cout << "access failure 0001 insert " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( m1 ) || m1.size() != (i+1) || m1.empty() || !ans.second) FAIL
     }
     //find inserted
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         std::map< int, int >::iterator it = m1.find( num[i] );
         if( INSANE( m1 ) || m1.size() != (sizeof(num) / sizeof(int)) ||
-            m1.empty() || it == m1.end() ){
-            std::cout << "access failure 0002 find " << i << "\n";
-            pass = false;
-        }
+            m1.empty() || it == m1.end() ) FAIL
     }
     //find not inserted
     for( int i = 0; i < (sizeof(notnum) / sizeof(int)); i++){
         std::map< int, int >::iterator it = m1.find( notnum[i] );
         if( INSANE( m1 ) || m1.size() != (sizeof(num) / sizeof(int)) ||
-            m1.empty() || it != m1.end() ){
-            std::cout << "access failure 0003 find " << i << "\n";
-            pass = false;
-        }
+            m1.empty() || it != m1.end() ) FAIL
     }
     //insert again
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         std::pair< std::map< int, int >::iterator, bool > ans;
         ans = m1.insert( std::map< int, int >::value_type( num[i], -1 ) );
         if( INSANE( m1 ) || m1.size() != (sizeof(num) / sizeof(int)) ||
-            m1.empty() || ans.second ){
-            std::cout << "access failure 0004 insert again " << i << "\n";
-            pass = false;
-        }
+            m1.empty() || ans.second ) FAIL
     }
     //use subscript to find inserted again: shouldn't have been over-written
     for( int i = 0; i < (sizeof(num) / sizeof(int)); i++){
         if( INSANE( m1 ) || m1.size() != (sizeof(num) / sizeof(int)) ||
-            m1.empty() || m1[num[i]] != num[i]*num[i] ){
-            std::cout << "access failure 0005 subscript find " << i << "\n";
-            pass = false;
-        }
+            m1.empty() || m1[num[i]] != num[i]*num[i] ) FAIL
     }
     //use subscript to insert
     size = sizeof(num) / sizeof(int);
@@ -145,43 +118,28 @@ bool access_test( )
         m1[i] = -i;
         for( int j = 0; j < (sizeof(notnum) / sizeof(int)); j++)
             if( notnum[j] == i ) ++size;
-        if( INSANE( m1 ) || m1.size() != size || m1.empty() ){
-            std::cout << "access failure 0006 subscript insert " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( m1 ) || m1.size() != size || m1.empty() ) FAIL
     }
     //use subscript to find: should have been over-written this time
     for( int i = 0; i < totsize; i++){
         if( INSANE( m1 ) || m1.size() != totsize || m1.empty() ||
-            m1[i] != -i ){
-            std::cout << "access failure 0007 subscript find all " << i << "\n";
-            pass = false;
-        }
+            m1[i] != -i ) FAIL
     }
     //delete the elements
     size = totsize;
     for( int i = 0; i < (sizeof(delnum) / sizeof(int)); i++){
         m1.erase( delnum[i] );
         --size;
-        if( INSANE( m1 ) || m1.size() != size ){
-            std::cout << "access failure 0008 erase " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( m1 ) || m1.size() != size ) FAIL
     }
-    if( !m1.empty() ){
-        std::cout << "access failure 0010\n";
-        pass = false;
-    }
+    if( !m1.empty() ) FAIL
     //try finding the elements now they are deleted
     size = totsize;
     for( int i = 0; i < totsize; i++){
         std::map< int, int >::iterator it = m1.find( i );
-        if( INSANE( m1 ) || m1.size() || !m1.empty() || it != m1.end() ){
-            std::cout << "access failure 0011 find after erase " << i << "\n";
-            pass = false;
-        }
+        if( INSANE( m1 ) || m1.size() || !m1.empty() || it != m1.end() ) FAIL
     }
-    return( pass );
+    return( true );
 }
 
 /* ------------------------------------------------------------------
@@ -190,42 +148,32 @@ bool access_test( )
  */
 bool string_test( )
 {
-    bool pass = true;
     using namespace std;
     typedef map< string, __int64 > m_t;
     string eejit = "Dan";
     string place = "here";
     m_t &m1 = *(new m_t);
-
-    if( INSANE(m1) || !m1.empty() ){
-        std::cout << "map<string> failure 0001\n"; pass = false;
-    }
+    if( INSANE(m1) || !m1.empty() ) FAIL
+    
     m1.insert( m_t::value_type(eejit,0x123456789abcdefUI64) );
-    if( INSANE(m1) || m1.empty() || m1.size() != 1){
-        std::cout << "map<string> failure 0002\n"; pass = false;
-    }
+    if( INSANE(m1) || m1.empty() || m1.size() != 1) FAIL
+    
     m1.insert( m_t::value_type("was",0x123456789abcdef0UI64) );
-    if( INSANE(m1) || m1.empty() || m1.size() != 2){
-        std::cout << "map<string> failure 0003\n"; pass = false;
-    }
+    if( INSANE(m1) || m1.empty() || m1.size() != 2) FAIL
+    
     m1.insert( m_t::value_type(place,0x5a5a5a5a5a5a5a5aUI64) );
-    if( INSANE(m1) || m1.empty() || m1.size() != 3){
-        std::cout << "map<string> failure 0004\n"; pass = false;
-    }
+    if( INSANE(m1) || m1.empty() || m1.size() != 3) FAIL
+    
     __int64 sum = (*m1.find( "Dan" )).second +
                   (*m1.find( "was" )).second + m1["here"];
     if( INSANE(m1) || m1.empty() || m1.size() != 3 ||
-        sum != 0x6db1f63a7ec30739ui64){
-        std::cout << "map<string> failure 0005\n"; pass = false;
-    }
+        sum != 0x6db1f63a7ec30739ui64) FAIL
     m1.erase( m1.find("Dan") );
     m1.erase( m1.find("was") );
     m1.erase( m1.find("here") );
-    if( INSANE(m1) || !m1.empty() || m1.size() ){
-        std::cout << "map<string> failure 0006\n"; pass = false;
-    }
-    delete &m1;
-    return( pass );
+    if( INSANE(m1) || !m1.empty() || m1.size() ) FAIL
+    delete &m1 ;
+    return( true );
 }
 
 /* ------------------------------------------------------------------
@@ -262,16 +210,13 @@ bool torturer( int maxsize )
         }
         if( !heap_ok( "x" ) ) { cout<<"heap err\n"; return false;}
         if( INSANE(m) || m.size() != size ){
-        std::cout << "torture failure 0001 count " << c << 
-                     " maxsize " << maxsize << " error " << m.mError <<"\n";
-        return( false );
+            std::cout << "torture count " << c << " maxsize " << maxsize <<
+                         " error " << m.mError <<"\n";
+            FAIL
         }
         ++c;
     }
-    if( INSANE(m) || m.size() || !m.empty() ){
-        std::cout << "torture failure 0002\n" ;
-        return( false );
-    }
+    if( INSANE(m) || m.size() || !m.empty() ) FAIL
     return( true );
 }
 /* ------------------------------------------------------------------
@@ -291,11 +236,34 @@ bool torture_test( )
 {
     int const biggest = 2048; //65536
     for( int i = 1; i <= biggest; i *= 2 ){
-        //std::cout<<i<<", ";
         if( !torturer( i ) ) return false;
     }
     return( true );
 }
+
+/* ------------------------------------------------------------------
+ * clear_test( )
+ * this was triggering the memory leak detection system due to a 
+ * silly mistake added to rbtree when moving from delete to allocator
+ */
+bool clear_test( )
+{
+    typedef std::map< int, int > m_t;
+    m_t m1;
+    int i;
+    for( i = 0; i < 2 ; i++ ){
+        m1.insert( m_t::value_type( i, i*i ) );
+    }
+    m1.clear( );
+    if( INSANE(m1) || m1.size() || !m1.empty() ) FAIL
+        
+    m_t m2;
+    for( i = 0; i < 2 ; i++ ){
+        m2.insert( m_t::value_type( i, i*i ) );
+    }// let the destructor clear this one, and trip the leak detector if problem
+    return true;
+}
+
 
 /* ------------------------------------------------------------------
  * iterator_test( )
@@ -306,30 +274,122 @@ bool iterator_test( )
     typedef std::map< int, int > m_t;
     m_t m1;
     m_t::iterator it;
-    //to do
+    m_t::const_iterator cit;
+    //use nums[] so numbers are not inserted in simple order
+    int nums[] = { 2,1,5,6,7,8,4,9,3,0 };   
+    const int nums_len = sizeof( nums ) / sizeof( int );
+    for( int i = 0; i < nums_len; i++ ){
+        m1[nums[i]] = nums[i]*nums[i];
+    }
+    //test increment and dereferencing ( will be sorted by std::less<int> )
+    it = m1.begin( );
+    int ans = (*it).first;
+    for( int i = 0; i < nums_len ; i++ ){
+        if( INSANE( m1 ) || ans != i || it->second != i*i ) FAIL
+        it->second = -i;
+        if( i%2 ) ans = (*(it++)).first + 1;
+        else ans = (*(++it)).first;
+    }
+    //and again with const iterator
+    cit = m1.begin( );
+    ans = (*cit).first;
+    for( int i = 0; i < nums_len ; i++ ){
+        if( INSANE( m1 ) || ans != i || cit->second != -i ) FAIL
+        if( i%2 ) ans = (*(cit++)).first + 1;
+        else ans = (*(++cit)).first;
+    }
+    //test decrement ( will be sorted by std::less<int> )
+    it = m1.end( );
+    for( int i = 9; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = (*(--it)).first;
+        else ans = (*(it--)).first - 1;
+        if( INSANE( m1 ) || ans != i || it->second != -i ) FAIL
+        (*it).second = i*i;
+    }
+    //and again with const iterator
+    cit = m1.end( );
+    for( int i = 9; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = (*(--cit)).first;
+        else ans = (*(cit--)).first - 1;
+        if( INSANE( m1 ) || ans != i || cit->second != i*i ) FAIL
+    }
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * copy_test( )
+ * Test all things plagiarised
+ */
+bool copy_test( )
+{
+    typedef std::map< int, int > m_t;
+    m_t m1;
+    int i;
+    for( i=0; i<10; i++ ){
+        m1.insert( m_t::value_type( i, -i ) );
+    }
+    m_t m1cpy( m1 );
+    if(  INSANE( m1cpy ) || m1cpy.size( ) != 10 ) FAIL
+    //check it copied to new one ok
+    for( i = 0; i < 10; i++ ){  
+        if( m1cpy[i] != -i ) FAIL
+        m1cpy[i] = i*2;
+    }
+    m1cpy.erase( 1 );
+    if(  INSANE( m1cpy ) || m1cpy.size( ) != 9 ) FAIL
+    //check it is a copy and old not effecting new one
+    if(  INSANE( m1 ) || m1.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( m1[i] != -i ) FAIL
+    }
+    if(  INSANE( m1 ) || m1.size( ) != 10 ) FAIL
+    
+    m_t m1cpy2 = m1;    //assignment style construct
+    if(  INSANE( m1cpy2 ) || m1cpy2.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( m1cpy2[i] != -i ) FAIL
+    }
+    //check assignment
+    m1.erase( 5 );
+    m1.insert( m_t::value_type( 11, -11 ));
+    m1 = m1cpy = m1cpy2;
+    if(  INSANE( m1cpy ) || m1cpy.size( ) != 10 ) FAIL
+    if(  INSANE( m1 ) || m1.size( ) != 10 ) FAIL
+    for( i = 0; i < 10; i++ ){
+        if( m1cpy[i] != -i ) FAIL
+        if( m1[i] != -i ) FAIL
+    }
+    
     return( true );
 }
 
 int main( )
 {
     int rc = 0;
+    //heap_dump();
     int original_count = heap_count( );
-
+    
     try {
         if( !construct_test( )  || !heap_ok( "t1" ) ) rc = 1;
         if( !access_test( )     || !heap_ok( "t2" ) ) rc = 1;
         if( !string_test( )     || !heap_ok( "t3" ) ) rc = 1;
         if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
-        if( !iterator_test( )   || !heap_ok( "t5" ) ) rc = 1;
+        if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
+        if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t6" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
         rc = 1;
     }
-
-    if( heap_count( ) != original_count ) {
-        std::cout << "Possible memory leak!\n";
+    int heap_diff = heap_count( ) - original_count;
+    if( heap_diff ) {
+        heap_dump();
+        std::cout << "Possible memory leak! " << heap_diff << " " << original_count << "\n";
         rc = 1;
     }
+    
     return( rc );
 }

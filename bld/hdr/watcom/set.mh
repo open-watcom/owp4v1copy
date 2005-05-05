@@ -58,10 +58,9 @@ public:
         set(InputIterator first, InputIterator last,
             const Compare& comp = Compare(), const Allocator& = Allocator());
     */
-    set(const set<Key, Compare, Allocator, Implementation>& x);
+    set(const set& x) : Implementation( x ){};
     ~set(){}
-    set<Key, Compare, Allocator, Implementation>&
-        operator=(const set< Key, Compare, Allocator, Implementation>& x);
+    set& operator=( set const & x){Implementation::operator=( x ); return( *this );}
    
     typedef Implementation::iterator iterator;
 }; //template class set

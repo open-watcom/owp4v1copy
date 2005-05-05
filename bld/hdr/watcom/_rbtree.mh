@@ -68,76 +68,107 @@ template< class Key, class Type, class Compare = less< Key >,
           class ValueWrapper = TreePairWrapper< Key, Type > >
 class RedBlackTree{
 public:
-    typedef unsigned int size_type;
     typedef ValueWrapper::value_type value_type;
+    typedef unsigned int size_type;
 
 protected:
     struct Node{
-        friend class RedBlackTree;
         value_type value;
         Node* parent;
         Node* left;
         Node* right;
         enum chroma{red,black} colour;
-        Node(const value_type& v, Node* const p=0) : 
-            value(v), parent(p), left(0), right(0){} 
+        Node(const value_type& v, Node* const p = 0, chroma c = red) : 
+            value(v), parent(p), left(0), right(0), colour(c){} 
     };
-    
+
 public:
+    //ctors and dtor
     RedBlackTree() : mRoot(0), mFirst(0), mLast(0), mSize(0), mError(0){}
+    RedBlackTree( RedBlackTree const & );
+    RedBlackTree& operator=( RedBlackTree const & );
     ~RedBlackTree();
-    
-    //it seems the compiler cant cope with the nested class definition being 
-    //outside of the class in which it is defined at the mo or did I do 
-    //something wrong?
-    //i.e. we cant do template<...> class tree<...>::iterator{};
-    class iterator;
-    friend class iterator;
-    class iterator : public std::iterator< std::bidirectional_iterator_tag,
+
+    /* ------------------------------------------------------------------
+     * iterators
+     */
+    class iterator_base : public std::iterator< std::bidirectional_iterator_tag,
                                            value_type>{
+        friend class RedBlackTree;
         typedef RedBlackTree<Key, Type, Compare, Allocator, ValueWrapper> rbt_type;
     public:
-        iterator() : self(0){}
-        iterator(rbt_type* rb, Node* n) : self(n), rbt(rb){}
-        RedBlackTree::value_type& operator*(){return self->value;}
-        bool operator==(iterator i){return (self==i.self);}
-        bool operator!=(iterator i){return (self!=i.self);}
-        iterator& operator++(){self = rbt->walkRight(self); return *this;}
-        iterator operator++(int){iterator i = *this; self = rbt->walkRight(self); return i;}
-        iterator& operator--(){self ? rbt->walkLeft(self) : self=rbt->mLast; return *this;} 
-        iterator operator--(int){iterator i = *this; self = rbt->walkLeft(self); return i;}
+        bool operator==( iterator_base i ) {return( self==i.self );}
+        bool operator!=( iterator_base i ) {return( self!=i.self );}
+        iterator_base& operator++() {self = rbt->walkRight( self ); return *this;}
+        iterator_base& operator--() {self ? self = rbt->walkLeft( self ) : self = rbt->mLast; return *this;}
     protected:
-        friend class RedBlackTree;
-        Node* getNodePtr(){return self;}
+        iterator_base( iterator_base const & i ) : self(i.self), rbt(i.rbt) {}
+        iterator_base() : self(0),rbt(0) {}
+        iterator_base(rbt_type const * rb, Node* n) : self(n), rbt(rb) {}
+        Node* getNodePtr() {return self;}
         Node* self;
-        rbt_type*  rbt;
+        rbt_type const * rbt;
+    };
+    class const_iterator;
+    class iterator : public iterator_base{
+        friend class const_iterator;
+    public:
+        iterator( iterator const & i ) : iterator_base( i ) {}
+        iterator() : iterator_base() {}
+        iterator( rbt_type const * rb, Node* n ) : iterator_base( rb, n ) {}
+        RedBlackTree::value_type& operator*() {return self->value;}
+        RedBlackTree::value_type* operator->() {return &(self->value);}
+        iterator& operator++() {return( (iterator&)iterator_base::operator++( ) );}
+        iterator operator++( int ) {iterator i = *this; self = rbt->walkRight(self); return i;}
+        iterator& operator--() {return( (iterator&)iterator_base::operator--( ) );} 
+        iterator operator--(int) {iterator i = *this; self ? self = rbt->walkLeft(self) : self=rbt->mLast; return i;}
     };
     
-    pair<iterator,bool> insert(value_type const &);
-    void erase(iterator);
-    size_type erase(const Key&);
+    class const_iterator : public iterator_base{
+    public:
+        const_iterator( iterator const & i ) : iterator_base( i.rbt, i.self ) {}
+        const_iterator() : iterator_base(){}
+        const_iterator( rbt_type const* rb, Node* n ) : iterator_base( rb, n ) {}
+        RedBlackTree::value_type const& operator*() {return self->value;}
+        RedBlackTree::value_type const* operator->() {return &(self->value);}
+        const_iterator& operator++() {return( (const_iterator&)iterator_base::operator++());}
+        const_iterator operator++( int ) {const_iterator i = *this; self = rbt->walkRight(self); return i;}
+        const_iterator& operator--() {return( (const_iterator&)iterator_base::operator--());} 
+        const_iterator operator--(int) {const_iterator i = *this; self ? self = rbt->walkLeft(self) : self=rbt->mLast; return i;}
+    };
+    friend class iterator_base;
+    friend class iterator;
+    friend class const_iterator;
+    /*
+     * end of iterators
+     * ------------------------------------------------------------------ */
+    
+    iterator end() {return iterator( this, (Node*) 0 );}
+    iterator begin() {return iterator( this, mFirst );}
+    const_iterator end() const {return const_iterator( this, (Node*) 0 );}
+    const_iterator begin() const {return const_iterator( this, mFirst );}
+    
+    pair< iterator, bool > insert( value_type const & );
+    void erase( iterator );
+    size_type erase( Key const & );
     //void erase(iterator first, iterator last);
     void clear();
-    
-    iterator find(Key const &);
-    iterator end(){return iterator(this, (Node*) 0 );}
-    iterator begin(){return iterator(this, mFirst);}
-    
+    iterator find( Key const & );
     bool empty() const {return mSize==0;}
     size_type size() const {return mSize;}
     size_type max_size() const;
-    
-    bool _Sane( );
+
+    bool _Sane();
     int mError;
-    
+
 protected:
     void doubleBlackTransform(Node* parent, bool lefty);
     void insBalTransform(Node* inserted);
     std::pair<iterator,bool> unbalancedInsert(value_type const &);
     int blackHeight( iterator );
     int height( iterator );
-    Node* walkRight(Node*);
-    Node* walkLeft(Node*);
+    Node* walkRight( Node* ) const;
+    Node* walkLeft( Node* ) const;
     int mSize;
     Node* mRoot;
     Node* mFirst;
@@ -159,7 +190,7 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::unbalancedInsert(va
 {
     if( mRoot==0 ){                 //special case nothing exists yet
         mRoot = mem.allocate( 1 );
-        mem.construct( mRoot, Node(v) );       // ? to do catch exceptions?
+        mem.construct( mRoot, Node(v, 0, Node::black) );       // ? to do catch exceptions?
         mFirst = mRoot;
         mLast = mRoot;
         mSize++;
@@ -192,10 +223,8 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::unbalancedInsert(va
             return std::pair<iterator,bool>(iterator(this, notLT), false);
     }
     // else insert the new node with parent as last node travelled to
-    //Node* newnode = new Node(v, last);
-
     Node* newnode = mem.allocate( 1 );
-    mem.construct( newnode, Node(v, last) );   // ?to do catch exceptions?
+    mem.construct( newnode, Node(v, last, Node::red) );   // ?to do catch exceptions?
     
     mSize++;
     if( LtLast ){
@@ -216,17 +245,15 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::unbalancedInsert(va
 //template<class Key, class Type, class Compare, class Allocator, class Allocator, class ValueWrapper>
 std::pair< RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::iterator, bool >
 RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::insert(value_type const & v)
-//insert(const Key& k, const Type& t)
 {
     pair< iterator, bool > inserted = unbalancedInsert(v);
     if( inserted.second ){ 
         Node* n = inserted.first.getNodePtr();
-        if( n==mRoot ) n->colour = Node::black;
-        else{
-            n->colour = Node::red;    
+        if( n!=mRoot ) {
             //do some operations to keep rb tree valid
             insBalTransform(n);
-        }
+        }//else if n==mRoot it has been inserted as single black node
+         //and there is nothing else to do
     }
     return inserted;
 }
@@ -237,14 +264,86 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::insert(value_type c
 /* ==================================================================
  * Red-Black Tree Functions
  */
-
+/* ------------------------------------------------------------------
+ * Copy Ctor
+ */
+template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::RedBlackTree(
+    RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper > const & that)
+{
+    //copy allocator ?
+    //copy comparator ? 
+    //other bits?
+    mSize = that.mSize;
+    //copy nodes
+    //special case node
+    if( !that.mRoot ){  // no root, therefore first and last don't exist either
+        mFirst = 0;
+        mLast = 0;
+        mRoot = 0;
+        cout<<"no root\n";
+        return;
+    }
+    mRoot = mem.allocate( 1 );
+    mem.construct( mRoot, Node(that.mRoot->value,0,that.mRoot->colour) );
+    
+    Node* n;
+    Node* o;
+    
+    o = that.mRoot;
+    n = mRoot;
+    for(;;){
+        //check to see if reached first/last and fix up
+        if( o == that.mFirst ){
+            mFirst = n;
+        }
+        if( o == that.mLast ){
+            mLast = n;
+        }
+        //logic for tree traverse and copy
+        if( o->left && !n->left ){
+            //copy left node if we can/haven't already
+            o = o->left;
+            n->left = mem.allocate( 1 );
+            mem.construct( n->left, Node( o->value, n, o->colour ) );
+            n = n->left;
+        }else if( o->right && !n->right ){
+            //or copy right node if we can/haven't already
+            o = o->right;
+            n->right = mem.allocate( 1 );
+            mem.construct( n->right, Node( o->value, n, o->colour ) );
+            n = n->right;
+        }else if( o->parent ){
+            //no children nodes left to copy, move back up
+            o = o->parent;
+            n = n->parent;
+        }else{
+            //no children nodes left to copy and we are root
+            //therefore finished
+            return;
+        }
+    }//end for( ;; )
+}
+/* ------------------------------------------------------------------
+ * operator=
+ */
+template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >&
+RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::operator=(
+    RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper > const & that )
+{
+    //cout<<"rbt operator=\n";
+    clear();
+    new ( this ) RedBlackTree( that );  //call copy ctor to do the copy
+    return( *this );
+}
 /* ------------------------------------------------------------------
  * Dtor
  */
 template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
 RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::~RedBlackTree()
 {
-    clear( );
+    clear();
 }
 /* ------------------------------------------------------------------
  * clear()
@@ -255,24 +354,27 @@ template< class Key, class Type, class Compare, class Allocator, class ValueWrap
 void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::clear( )
 {
     Node* n = mFirst;
-    while(n){
+    while( n ){
         if( n->left ) n = n->left;
         else if( n->right ) n = n->right;
         else{
-            // delete it when all children gone
-            if( !n->parent ){
-                //delete n;
+            //delete it when all children gone
+            if( !n->parent ){ 
+                //if no parent then root, therefore finished
                 mem.destroy( n );
                 mem.deallocate( n, 1 );
-                return; // if no parent then root, therefore finished
+                mSize = 0;
+                mRoot = 0;
+                mFirst = 0;
+                mLast = 0;
+                return; 
             }
             if( n == n->parent->left ) n->parent->left = 0;
             else n->parent->right = 0;
             Node* delme = n;
             n = n->parent;
-            //delete delme;
-            mem.destroy( n );
-            mem.deallocate( n, 1 );
+            mem.destroy( delme );
+            mem.deallocate( delme, 1 );
         }
     }
 }
@@ -306,7 +408,7 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::find(Key const& fin
  */
 template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
 RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::Node*
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkRight(Node* n)
+RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkRight(Node* n) const
 {
     if( n->right){
         n = n->right;
@@ -323,7 +425,7 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkRight(Node* n)
  */
 template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
 RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::Node*
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkLeft(Node* n)
+RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkLeft(Node* n) const
 {
     if( n->left){
         n = n->left;
@@ -369,15 +471,16 @@ int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::height(iterator
  * Ref: Chris Okasaki paper (2005?) proposing simple transform for insert ballance
  * and Lyn Turbak CS231 handout #21 (2001)
  * 
- * if uncle is red we just do a colour change, if uncle is black we do a rotate
+ * if uncle is red we just do a colour change, if uncle is black we do a transform
  * in summary 4 cases transform to this:
- *     y
- *    / \
- *   x   z
- *  / \ / \
- *  a b c d
+ *        y(b)          
+ *      /     \         
+ *    x(r)    z(r)      
+ *  /   \     /   \     
+ * a(b) b(b) c(b) d(b)  
  *
  * case 1:          case 2:        case 3:         case 4:
+ * (insert x)      (insert y)     (insert z)      (insert y)
  *       z             z             x                x
  *      / \           / \           / \              / \
  *     y   d         x   d         a   y            a   z
@@ -385,104 +488,111 @@ int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::height(iterator
  *   x   c         a   y             b   z            y   d
  *  / \               / \               / \          / \
  * a   b             b   c             c   d        b   c
-*/
+ */
 template<class Key, class Type, class Compare, class Allocator, class ValueWrapper>
 void RedBlackTree<Key, Type, Compare, Allocator, ValueWrapper>::insBalTransform(Node* inserted)
 {
-    //inserted->colour = red;
-    if( inserted->parent == 0 ||
-        inserted->parent->parent == 0 ||
-        inserted->parent->colour == Node::black )
-        return;
-    
-    //so at this point parent must also be red, and grandparent must be black
-    //therefore our sibling must be black (our children are black by definition)
-    //leaving two main cases : our uncle can black or red
-    
-    Node* parent = inserted->parent;
-    Node* grandparent = inserted->parent->parent;
-    Node* uncle;
-    Node* next;
-    //find uncle
-    if( parent == grandparent->left ) uncle = grandparent->right;
-    else uncle = grandparent->left;
-    
-    if( uncle && (uncle->colour == Node::red) ){ // main case a: red uncle
-        //now we propergate grandparents blackness between parent and uncle (without need to rotate)
-        grandparent->colour = Node::red;
-        parent->colour = Node::black;
-        uncle->colour = Node::black;
-        mRoot->colour = Node::black;        // just in case grandparent was root
-        next = grandparent;
-    }else{ //main case b:  black uncle
-        Node *x,*y,*z,*b,*c;
-        //case 1
-        if( (inserted == parent->left) && (parent == grandparent->left) ){
-            x = inserted;
-            y = parent;
-            z = grandparent;
-            b = x->right;
-            c = y->right;
-        }
-        //case 2 
-        else if( (inserted == parent->right) && (parent == grandparent->left) ){
-            x = parent;
-            y = inserted;
-            z = grandparent;
-            b = y->left;
-            c = y->right;
-        }
-        //case 3
-        else if( (inserted == parent->right) && (parent == grandparent->right) ){
-            x = grandparent;
-            y = parent;
-            z = inserted;
-            b = y->left;
-            c = z->left;
-        }
-        //case4
-        else if( (inserted == parent->left) && (parent == grandparent->right) ){
-            x = grandparent;
-            y = inserted;
-            z = parent;
-            b = y->left;
-            c = y->right;
-        }
-        
-        //recolour - can use this order becase all leafs a,b,c,d must be black (uncle is black)
-        //this will stop red-red violation from propergating
-        y->colour = Node::black;
-        x->colour = Node::red;
-        z->colour = Node::red;
-        
-        //transform to balanced structure
-        if( grandparent==mRoot ){
-            mRoot = y;
-            y->parent = 0;
-            //y->colour = Node::black;
-        }else{
-            if (grandparent->parent->left == grandparent)
-                grandparent->parent->left = y;
-            else 
-                grandparent->parent->right = y;
+    // at this point inserted->colour == red;
+    for( ;; ){ 
+    /* terminating case
+     * 1. we have moved up the tree and are now the root
+     * 2. our parent is the root (therefore must be black)
+     * 3. our parent is black (no red-red problem any more)
+     */
+        if( inserted->parent == 0 ||
+            inserted->parent->parent == 0 ||
+            inserted->parent->colour == Node::black )
+            return;
+
+    /* so at this point parent must also be red, and grandparent must be black
+     * therefore our sibling must be black (our children are black by definition)
+     * leaving two main cases : our uncle can black or red
+     */
+        Node* parent = inserted->parent;
+        Node* grandparent = inserted->parent->parent;
+        Node* uncle;
+        //find uncle
+        if( parent == grandparent->left ) uncle = grandparent->right;
+        else uncle = grandparent->left;
+
+        if( uncle && (uncle->colour == Node::red) ){    // main case a: red uncle
+            // now we propergate grandparents blackness between parent and uncle
+            // (without need to rotate)
+            grandparent->colour = Node::red;
+            parent->colour = Node::black;
+            uncle->colour = Node::black;
+            mRoot->colour = Node::black;    //just in case grandparent was root
+            inserted = grandparent;         //prepare to propergate red-red up tree
+            //the execusion flow now jumps back to the for loop instead
+            //of recursive insBalTransform( inserted );
+        }else{ //main case b:  black uncle
+            Node *x,*y,*z,*b,*c;
+            //case 1
+            if( (inserted == parent->left) && (parent == grandparent->left) ){
+                x = inserted;
+                y = parent;
+                z = grandparent;
+                b = x->right;
+                c = y->right;
+            }
+            //case 2 
+            else if( (inserted == parent->right) && (parent == grandparent->left) ){
+                x = parent;
+                y = inserted;
+                z = grandparent;
+                b = y->left;
+                c = y->right;
+            }
+            //case 3
+            else if( (inserted == parent->right) && (parent == grandparent->right) ){
+                x = grandparent;
+                y = parent;
+                z = inserted;
+                b = y->left;
+                c = z->left;
+            }
+            //case4
+            else if( (inserted == parent->left) && (parent == grandparent->right) ){
+                x = grandparent;
+                y = inserted;
+                z = parent;
+                b = y->left;
+                c = y->right;
+            }
             
-            y->parent = grandparent->parent;
-        }
-        
-        y->left = x;
-        y->right = z;
-        x->parent = y;
-        z->parent = y;
-        x->right = b;
-        z->left = c;
-        if(b) b->parent = x;
-        if(c) c->parent = z;
-        //a and d are always already linked to the right parent
-        next = grandparent;
-    }// end main case uncle black
-    
-    //todo: replace with loop 
-    insBalTransform(next);
+            //recolour - can use this order becase all leafs a,b,c,d must
+            //be black (uncle is black)
+            //this will stop red-red violation from propergating
+            y->colour = Node::black;
+            x->colour = Node::red;
+            z->colour = Node::red;
+            
+            //transform to balanced structure
+            if( grandparent==mRoot ){
+                mRoot = y;
+                y->parent = 0;
+            }else{
+                if (grandparent->parent->left == grandparent){
+                    grandparent->parent->left = y;
+                }else{ //grandparent is righty
+                    grandparent->parent->right = y;
+                }
+                y->parent = grandparent->parent;
+            }
+            
+            y->left = x;
+            y->right = z;
+            x->parent = y;
+            z->parent = y;
+            x->right = b;
+            z->left = c;
+            if(b) b->parent = x;
+            if(c) c->parent = z;
+            //a and d are always already linked to the right parent
+            //in this case we have fixed the red-red violation so finish
+            return;
+        }//end main case uncle black
+    }//end for( ever )
 }
 /* ------------------------------------------------------------------
  * _Sane( )
@@ -516,6 +626,10 @@ bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
     if( n->left ){              //begining element cant have a left node
         mError = 20;
         return false;
+    }
+    if( mRoot->colour != Node::black ){
+        mError = 25;
+        return false;           //root should always be black
     }
     
     do{
@@ -553,7 +667,7 @@ bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
         }
         if( !n->parent && n!=mRoot){
             mError = 90;
-            return false;
+            return false;               //no parent but not root
         }
         //keep track of the lowest key we come across
         if( cmp( keyGetter(n->value), *lowkey) ){
@@ -569,26 +683,26 @@ bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
             int bh = blackHeight(it);
             if( bheight == -1 ) bheight = bh;
             else if(bheight != bh){
-                mError |= 16;
+                mError = 100;
                 return false;           //black height to leaves not same
             }
         }
-        int h = height(it);            //keep track of deepest node depth
+        int h = height(it);             //keep track of deepest node depth
         if( h > maxheight ) maxheight = h;
         
     }while( ++it != end() );
     
     if( count != size() ){
-        mError = 4342;
+        mError = 110;
         return false;
     }        
     if( n->right ){ // end element cant have a right node
-        mError = 0x2000;
+        mError = 120;
         return false;
     }
     if( (highN != (--end()).getNodePtr()) ||
         (lowN != begin().getNodePtr()) ){
-        mError |= 64;
+        mError = 130;
         return false;
     }
     return true;
@@ -732,213 +846,215 @@ void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::erase(iterator
 template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
 void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::doubleBlackTransform(Node* parent, bool lefty)
 {
-    Node* sibling;
-    Node *x,*y,*z,*b,*c;
-    if( lefty ){
-        sibling = parent->right;
-    }else{ //righty
-        sibling = parent->left;
-    }
-    
-    if( sibling->colour == Node::black ){
-        if( ( sibling->right && (sibling->right->colour == Node::red) ) ||
-            ( sibling->left && (sibling->left->colour == Node::red) ) ){
-    //main case 1 sibling black, at least one nephew red
-    //we can fix this case
-    /*
-     *     case a               case b        case c              case d    
-     *      Z(*)                 Z(*)          X(*)                X(*)     
-     *     /   \\               /   \\       //    \             //    \    
-     *   X(b)   d(bb)         Y(b)   d(bb)  a(bb)   Y(b)       a(bb)   Z(b) 
-     *  /    \               /    \                 /  \              /  \  
-     * a(*)   Y(r)          X(r)  c(*)            b(*) Z(r)         Y(r) d(*)
-     *       /   \         /   \                       /   \       /   \    
-     *     b(b)   c(b)   a(b)  b(b)                   c(b) d(b)   b(b) c(b) 
-     *
-     * Transform to this:
-     *       Y(*)
-     *      /     \
-     *   X(b)      Z(b)
-     *  /   \     /   \
-     * a(*) b(*) c(*) d(*)
-     *
-     * where double black goes black & new root takes old root colour
-     * note nodes a,b,c may be null (leafs)
-     */
-            if( sibling->right && (sibling->right->colour == Node::red) ){
-                if( lefty ){        // case 1 c
-                    x = parent;
-                    y = sibling;
-                    z = sibling->right;
-                    b = y->left;
-                    c = z->left;
-                }else{              // case 1 a
-                    z = parent;
-                    x = sibling;
-                    y = sibling->right;
-                    b = y->left;
-                    c = y->right;
-                }
-            }else{ // sibling->left && sibling->left->colour == red 
-                if( lefty ){        // case 1 d
-                    x = parent;
-                    z = sibling;
-                    y = sibling->left;
-                    b = y->left;
-                    c = y->right;
-                }else{              // case 1 b
-                    z = parent;
-                    y = sibling;
-                    x = sibling->left;
-                    b = x->right;
-                    c = y->right;
-                }
-            }
-            // finish off case 1 by relinking to correct sturcture
-            y->parent = parent->parent;
-            if( parent == mRoot ) mRoot = y;
-            else{    //link grandparent back to y;
-                if( parent == parent->parent->left ) 
-                    parent->parent->left = y;
-                else parent->parent->right = y;
-            }
-            y->colour = parent->colour;
-            y->left = x;
-            y->right = z;
-            x->parent = y;
-            x->colour = Node::black;
-            x->right = b;       // x->left is unchanged as a
-            if( b ) b->parent = x;
-            z->parent = y;
-            z->colour = Node::black;
-            z->left = c;        // z->right is unchanged as d
-            if( c ) c->parent = z;
-            return;
-        }else{  //nephews both black
-            if( parent->colour == Node::red){
-    //main case 2: sibling black, two black nephews, parent red
-    //we can fix this case
-    /*
-     *      case a           case b         
-     *       Z(r)             X(r)          
-     *      /   \\           //   \         
-     *    X(b)   d(bb)     a(bb)  Z(b)      
-     *   /    \                  /    \     
-     *  a(b)   b(b)             b(b)  d(b)  
-     * 
-     * Recolour to this:
-     *        Z(b)              X(b)        
-     *       /    \            /    \       
-     *    X(r)    d(b)       a(b)   Z(r)    
-     *   /   \                     /    \   
-     *  a(b) b(b)                b(b)   d(b)
-     *
-     */
-                parent->colour = Node::black;
-                sibling->colour = Node::red;
-                return;
-            }else{ //parent black
-    //main case 3: sibling black, two black nephews, parent black
-    /*
-     *        case a           case b       
-     *         Z(b)             X(b)        
-     *        /   \\           //   \       
-     *      X(b)   d(bb)     a(bb)  Z(b)    
-     *     /    \                  /    \   
-     *    a(b)   b(b)             b(b)  d(b)
-     * 
-     * Recolour to propergate double black:
-     *        ||                ||          
-     *       Z(bb)             X(bb)        
-     *      /     \           /    \        
-     *   X(r)      d(b)     a(b)   Z(r)     
-     *  /   \                     /    \    
-     * a(b) b(b)                b(b)   d(b) 
-     *
-     * Not much we can do - propergate double black
-     * If double black has properaged to to root just set it black 
-     * as we have acheived balance
-     * (higher order special cases may be possible eg node a has two red children
-     * but probably not worth the extra code to check?)
-     */
-                sibling->colour = Node::red;
-                if( parent == mRoot ){
-                    parent->colour = Node::black;
-                    return;
-                }
-                //todo: replace recursion with loop
-                Node* grandparent = parent->parent;
-                if( parent == grandparent->left) lefty = true;
-                else lefty = false;
-                doubleBlackTransform(grandparent, lefty);
-                return;
-            }
-        } //end main case 2/3
-    }else{
-    //main case 4: red sibling
-    /*
-     *        case a           case b       
-     *         Z(b)             X(b)        
-     *        /   \\           //   \       
-     *      X(r)   d(bb)     a(bb)  Z(r)    
-     *     /    \                  /    \   
-     *    a(b)   b(b)             c(b)  d(b)
-     * 
-     * Recolour to propergate double black:
-     *       X(b)                   Z(b)    
-     *      /    \                 /    \   
-     *   a(b)     Z(r)           X(r)   d(b)
-     *           /   \\         //  \       
-     *         b(b)  d(bb)   a(bb)  c(b)    
-     *
-     * This is an annoying one!
-     * Note, a and b must have children (ie a/b can't be null/leaves) or the 
-     * black height doesn't add up.
-     * Double black stays with the same node but restructure so we can 
-     * use one of the previous cases (1 or 2) where the sibling is black.
-     */
-        //common bits
-        if( parent == mRoot ){
-            mRoot = sibling;
-            sibling->parent = 0;
-        }else if ( parent == parent->parent->left ){
-            parent->parent->left = sibling;
-            sibling->parent = parent->parent;
-        }else{//parent is a righty
-            parent->parent->right = sibling;
-            sibling->parent = parent->parent;
-        }
-        parent->colour = Node::red;
-        sibling->colour = Node::black;
-        
+    for( ;; ){
+        Node* sibling;
+        Node *x,*y,*z,*b,*c;
         if( lefty ){
-            //case b
-            x = parent;
-            c = sibling->left;
-            z = sibling;
-            x->right = c;      
-            c->parent = x;
-            x->parent = z;
-            z->left = x;
-            //a & d stay linked to the same nodes
-        }else{  //righty
-            //case a
-            z = parent;
-            b = sibling->right;
-            x = sibling;
-            z->left = b;
-            b->parent = z;
-            z->parent = x;
-            x->right = z;
-            //a & d stay linked to the same nodes
+            sibling = parent->right;
+        }else{ //righty
+            sibling = parent->left;
         }
-        //now try again and case will be 1, 2, or 3
-        //note old parent is still parent of double black
-        //and left/right position of double black hasn't changed
-        // !to do : replace with loop!
-        doubleBlackTransform(parent,lefty);
-        return;
-    }
+        
+        if( sibling->colour == Node::black ){
+            if( ( sibling->right && (sibling->right->colour == Node::red) ) ||
+                ( sibling->left && (sibling->left->colour == Node::red) ) ){
+        //main case 1 sibling black, at least one nephew red
+        //we can fix this case
+        /*
+         *     case a               case b        case c              case d    
+         *      Z(*)                 Z(*)          X(*)                X(*)     
+         *     /   \\               /   \\       //    \             //    \    
+         *   X(b)   d(bb)         Y(b)   d(bb)  a(bb)   Y(b)       a(bb)   Z(b) 
+         *  /    \               /    \                 /  \              /  \  
+         * a(*)   Y(r)          X(r)  c(*)            b(*) Z(r)         Y(r) d(*)
+         *       /   \         /   \                       /   \       /   \    
+         *     b(b)   c(b)   a(b)  b(b)                   c(b) d(b)   b(b) c(b) 
+         *
+         * Transform to this:
+         *       Y(*)
+         *      /     \
+         *   X(b)      Z(b)
+         *  /   \     /   \
+         * a(*) b(*) c(*) d(*)
+         *
+         * where double black goes black & new root takes old root colour
+         * note nodes a,b,c may be null (leafs)
+         */
+                if( sibling->right && (sibling->right->colour == Node::red) ){
+                    if( lefty ){        // case 1 c
+                        x = parent;
+                        y = sibling;
+                        z = sibling->right;
+                        b = y->left;
+                        c = z->left;
+                    }else{              // case 1 a
+                        z = parent;
+                        x = sibling;
+                        y = sibling->right;
+                        b = y->left;
+                        c = y->right;
+                    }
+                }else{ // sibling->left && sibling->left->colour == red 
+                    if( lefty ){        // case 1 d
+                        x = parent;
+                        z = sibling;
+                        y = sibling->left;
+                        b = y->left;
+                        c = y->right;
+                    }else{              // case 1 b
+                        z = parent;
+                        y = sibling;
+                        x = sibling->left;
+                        b = x->right;
+                        c = y->right;
+                    }
+                }
+                // finish off case 1 by relinking to correct sturcture
+                y->parent = parent->parent;
+                if( parent == mRoot ) mRoot = y;
+                else{    //link grandparent back to y;
+                    if( parent == parent->parent->left ) 
+                        parent->parent->left = y;
+                    else parent->parent->right = y;
+                }
+                y->colour = parent->colour;
+                y->left = x;
+                y->right = z;
+                x->parent = y;
+                x->colour = Node::black;
+                x->right = b;       // x->left is unchanged as a
+                if( b ) b->parent = x;
+                z->parent = y;
+                z->colour = Node::black;
+                z->left = c;        // z->right is unchanged as d
+                if( c ) c->parent = z;
+                return;
+            }else{  //nephews both black
+                if( parent->colour == Node::red){
+        //main case 2: sibling black, two black nephews, parent red
+        //we can fix this case
+        /*
+         *      case a           case b         
+         *       Z(r)             X(r)          
+         *      /   \\           //   \         
+         *    X(b)   d(bb)     a(bb)  Z(b)      
+         *   /    \                  /    \     
+         *  a(b)   b(b)             b(b)  d(b)  
+         * 
+         * Recolour to this:
+         *        Z(b)              X(b)        
+         *       /    \            /    \       
+         *    X(r)    d(b)       a(b)   Z(r)    
+         *   /   \                     /    \   
+         *  a(b) b(b)                b(b)   d(b)
+         *
+         */
+                    parent->colour = Node::black;
+                    sibling->colour = Node::red;
+                    return;
+                }else{ //parent black
+        //main case 3: sibling black, two black nephews, parent black
+        /*
+         *        case a           case b       
+         *         Z(b)             X(b)        
+         *        /   \\           //   \       
+         *      X(b)   d(bb)     a(bb)  Z(b)    
+         *     /    \                  /    \   
+         *    a(b)   b(b)             b(b)  d(b)
+         * 
+         * Recolour to propergate double black:
+         *        ||                ||          
+         *       Z(bb)             X(bb)        
+         *      /     \           /    \        
+         *   X(r)      d(b)     a(b)   Z(r)     
+         *  /   \                     /    \    
+         * a(b) b(b)                b(b)   d(b) 
+         *
+         * Not much we can do - propergate double black
+         * If double black has properaged to to root just set it black 
+         * as we have acheived balance
+         * (higher order special cases may be possible eg node a has two 
+         * red children but probably not worth the extra code to check?)
+         */
+                    sibling->colour = Node::red;
+                    if( parent == mRoot ){
+                        parent->colour = Node::black;
+                        return;
+                    }
+                    Node* grandparent = parent->parent;
+                    if( parent == grandparent->left) lefty = true;
+                    else lefty = false;
+                    //loop to top of doubleBlackTransform with new parent
+                    //(replaces recursion)
+                    //doubleBlackTransform(grandparent, lefty); return;
+                    parent = grandparent;
+                }
+            } //end main case 2/3
+        }else{
+        //main case 4: red sibling
+        /*
+         *        case a           case b       
+         *         Z(b)             X(b)        
+         *        /   \\           //   \       
+         *      X(r)   d(bb)     a(bb)  Z(r)    
+         *     /    \                  /    \   
+         *    a(b)   b(b)             c(b)  d(b)
+         * 
+         * Recolour to propergate double black:
+         *       X(b)                   Z(b)    
+         *      /    \                 /    \   
+         *   a(b)     Z(r)           X(r)   d(b)
+         *           /   \\         //  \       
+         *         b(b)  d(bb)   a(bb)  c(b)    
+         *
+         * This is an annoying one!
+         * Note, a and b must have children (ie a/b can't be null/leaves) or the 
+         * black height doesn't add up.
+         * Double black stays with the same node but restructure so we can 
+         * use one of the previous cases (1 or 2) where the sibling is black.
+         */
+            //common bits
+            if( parent == mRoot ){
+                mRoot = sibling;
+                sibling->parent = 0;
+            }else if ( parent == parent->parent->left ){
+                parent->parent->left = sibling;
+                sibling->parent = parent->parent;
+            }else{//parent is a righty
+                parent->parent->right = sibling;
+                sibling->parent = parent->parent;
+            }
+            parent->colour = Node::red;
+            sibling->colour = Node::black;
+            
+            if( lefty ){
+                //case b
+                x = parent;
+                c = sibling->left;
+                z = sibling;
+                x->right = c;      
+                c->parent = x;
+                x->parent = z;
+                z->left = x;
+                //a & d stay linked to the same nodes
+            }else{  //righty
+                //case a
+                z = parent;
+                b = sibling->right;
+                x = sibling;
+                z->left = b;
+                b->parent = z;
+                z->parent = x;
+                x->right = z;
+                //a & d stay linked to the same nodes
+            }
+            //now try again and case will be 1, 2, or 3
+            //note old parent is still parent of double black
+            //and left/right position of double black hasn't changed
+            //recursion has been replaced with the for loop
+            //doubleBlackTransform(parent,lefty); return;
+        }
+    }//end for( ever )
 }
 
 }; //namespace _ow

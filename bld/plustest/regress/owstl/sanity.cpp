@@ -67,6 +67,44 @@
     return( used_size );
   }
 
+void heap_dump()
+{
+    struct _heapinfo h_info;
+    int heap_status;
+
+    h_info._pentry = NULL;
+    for(;;) {
+        heap_status = _heapwalk( &h_info );
+        if( heap_status != _HEAPOK ) break;
+        std::cout << (h_info._useflag == _USEDENTRY ? "USED" : "FREE")<<
+            " block at " << reinterpret_cast<int>(h_info._pentry) <<
+            " of size " << h_info._size << "\n" ;
+    }
+
+    switch( heap_status ) {
+    case _HEAPEND:
+      std::cout << "OK - end of heap\n" ;
+      break;
+    case _HEAPEMPTY:
+      std::cout << "OK - heap is empty\n" ;
+      break;
+    case _HEAPBADBEGIN:
+      std::cout << "ERROR - heap is damaged\n" ;
+      break;
+    case _HEAPBADPTR:
+      std::cout << "ERROR - bad pointer to heap\n" ;
+      break;
+    case _HEAPBADNODE:
+      std::cout << "ERROR - bad node in heap\n" ;
+      break;
+    default:
+      std::cout << "unexpected!\n";
+    }
+}
+
+  
+  
+  
 #else
 
   #define INSANE(x) false
@@ -79,6 +117,10 @@
   int heap_count( )
   {
     return( 0 );
+  }
+  
+  heap_dump( )
+  {
   }
 
 #endif

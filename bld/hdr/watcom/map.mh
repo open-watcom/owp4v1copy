@@ -66,15 +66,14 @@ public:
     //ctors
     explicit map( const Compare& comp = Compare(),
                   const Allocator& = Allocator() );
+    map( map const & x ) : Implementation( x ) { };
     /*
     template<class InputIterator>
         map(InputIterator first, InputIterator last,
             const Compare& comp = Compare(), const Allocator& = Allocator());
     */
-    map(const map<Key, Type, Compare, Allocator, Implementation>& x);
     ~map(){}
-    map<Key, Type, Compare, Allocator, Implementation>&
-        operator=(const map<Key,Type,Compare,Allocator, Implementation>& x);
+    map& operator=( map const & x ){Implementation::operator=( x ); return( *this );}
 
     allocator_type get_allocator() const;
     
@@ -82,7 +81,7 @@ public:
     Type& operator[](Key const &);
     
     //iterators
-    typedef Implementation::iterator iterator;
+    //typedef Implementation::iterator iterator;
     //typedef something const_iterator;
     //typedef something size_type;
     //typedef something difference_type;
