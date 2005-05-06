@@ -1,5 +1,5 @@
 
-FIXUPP(9c) recnum:1, offset:00000295h, len:0041h, chksum:aeh(ae)
+FIXUPP(9c) recnum:16, offset:00000295h, len:0041h, chksum:aeh(ae)
     001eh Seg   OFFSET       Frame: TARGET    Target: SI(1)
     0029h Seg   OFFSET       Frame: TARGET    Target: SI(1)
     0036h Seg   OFFSET       Frame: TARGET    Target: SI(1)

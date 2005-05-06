@@ -1,12 +1,12 @@
 
-FIXUPP386(9d) recnum:1, offset:00000052h, len:0005h, chksum:18h(18)
+FIXUPP386(9d) recnum:7, offset:00000052h, len:0005h, chksum:18h(18)
     0004h Seg   POINTER386   Frame: TARGET    Target: SI(2)
 
-FIXUPP(9c) recnum:2, offset:000001bfh, len:0009h, chksum:f3h(f3)
+FIXUPP(9c) recnum:9, offset:000001bfh, len:0009h, chksum:f3h(f3)
     0012h Seg   BASE         Frame: TARGET    Target: SI(2)
     001bh Seg   BASE         Frame: TARGET    Target: SI(1)
 
-FIXUPP386(9d) recnum:3, offset:000001cbh, len:0019h, chksum:d9h(d9)
+FIXUPP386(9d) recnum:10, offset:000001cbh, len:0019h, chksum:d9h(d9)
     000ah Seg   POINTER386   Frame: TARGET    Target: SI(1)
     0015h Seg   OFFSET386    Frame: TARGET    Target: SI(2)
     001eh Seg   OFFSET386    Frame: TARGET    Target: SI(1)

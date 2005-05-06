@@ -1,5 +1,5 @@
 
-FIXUPP386(9d) recnum:1, offset:000000a5h, len:0011h, chksum:bch(bc)
+FIXUPP386(9d) recnum:8, offset:000000a5h, len:0011h, chksum:bch(bc)
     0008h Seg   POINTER386   Frame: TARGET    Target: SI(1)
     0019h Seg   POINTER386   Frame: TARGET    Target: SI(1)
     0030h Seg   POINTER386   Frame: TARGET    Target: SI(1)
