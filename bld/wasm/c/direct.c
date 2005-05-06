@@ -602,7 +602,8 @@ void FreeInfo( dir_node *dir )
         }
         break;
     case SYM_SEG:
-        ObjKillRec( dir->e.seginfo->segrec );
+        if( dir->e.seginfo->segrec != NULL )
+            ObjKillRec( dir->e.seginfo->segrec );
         AsmFree( dir->e.seginfo );
         break;
     case SYM_EXTERNAL:
@@ -1604,7 +1605,7 @@ int SegDef( int i )
         
         sym = AsmGetSymbol( name );
         if( sym == NULL ) {
-            AsmError( SEG_NOT_DEFINED );
+            AsmErr( SEG_NOT_DEFINED, name );
             return( ERROR );
         }
         if( (struct dir_node *)sym != CurrSeg->seg ) {
@@ -2274,7 +2275,7 @@ int SetAssume( int i )
             if( sym == NULL )
                 return( ERROR );
             if ( ( Parse_Pass != PASS_1 ) && ( sym->state == SYM_UNDEFINED ) ) {
-                AsmErr( SYMBOL_S_NOT_DEFINED, segloc );
+                AsmErr( SYMBOL_NOT_DEFINED, segloc );
                 return( ERROR );
             }
             info->symbol = sym;

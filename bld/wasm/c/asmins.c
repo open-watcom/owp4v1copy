@@ -1521,7 +1521,7 @@ static int process_address( expr_list *opndx )
 #ifdef _WASM_
                 if( ( opndx->sym->state == SYM_UNDEFINED ) && !opndx->explicit ) {
                     if( Parse_Pass != PASS_1 ) {
-                        AsmErr( SYMBOL_S_NOT_DEFINED, opndx->sym->name );
+                        AsmErr( SYMBOL_NOT_DEFINED, opndx->sym->name );
                         return( ERROR );
                     }
                     // undefined symbol, it is not possible to determine

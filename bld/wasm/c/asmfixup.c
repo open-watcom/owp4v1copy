@@ -395,7 +395,7 @@ struct fixup *CreateFixupRec( int index )
     /*------------------------------------*/
     
     if( sym->state == SYM_UNDEFINED ) {
-        AsmErr( SYMBOL_S_NOT_DEFINED, sym->name );
+        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
         return( NULL );
     } else if( sym->state == SYM_GRP ) {
         

@@ -334,7 +334,7 @@ static void write_grp( void )
             segminfo = (dir_node *)(seg->seg);
             if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segment == NULL ) ) {
                 LineNumber = curr->line;
-                AsmError( SEG_NOT_DEFINED );
+                AsmErr( SEG_NOT_DEFINED, segminfo->sym.name );
                 write_to_file = FALSE;
                 LineNumber = line;
             } else {
@@ -345,6 +345,8 @@ static void write_grp( void )
         if( write_to_file ) {
             ObjTruncRec( grp );
             write_record( grp, TRUE );
+        } else {
+            ObjKillRec( grp );
         }
     }
 }
@@ -357,8 +359,12 @@ static void write_seg( void )
     uint        seg_index;
     uint        total_segs = 0;
 
-    for( curr = Tables[TAB_SEG].head; curr; curr = curr->next )
+    for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
+        if( ( curr->sym.segment == NULL ) 
+          && ( curr->e.seginfo->group == NULL ) )
+            AsmErr( SEG_NOT_DEFINED, curr->sym.name );
         total_segs++;
+    }
 
     curr = Tables[TAB_SEG].head;
     for( seg_index = 1; seg_index <= total_segs; seg_index++ ) {
@@ -370,8 +376,10 @@ static void write_seg( void )
                 }
             }
         }
-        if( curr == NULL || curr->sym.state != SYM_SEG ) {
-            AsmError( SEG_NOT_DEFINED );
+        if( curr == NULL )
+            continue;
+        if( curr->sym.state != SYM_SEG ) {
+            AsmErr( SEG_NOT_DEFINED, curr->sym.name );
             curr = Tables[TAB_SEG].head;
             continue;
         }
@@ -448,6 +456,8 @@ static dir_node *write_extdef( dir_node *start )
     if( num != 0 ) {
         objr->d.extdef.num_names = num;
         write_record( objr, TRUE );
+    } else {
+        ObjKillRec( objr );
     }
     return( curr );
 }
@@ -589,6 +599,8 @@ static dir_node *write_comdef( dir_node *start )
     if( num != 0 ) {
         objr->d.comdef.num_names = num;
         write_record( objr, TRUE );
+    } else {
+        ObjKillRec( objr );
     }
     return( curr );
 }
@@ -986,10 +998,8 @@ static void reset_seg_len( void )
     dir_node    *curr;
 
     for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-        if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segment == NULL ) ) {
-            AsmError( SEG_NOT_DEFINED );
+        if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segment == NULL ) )
             continue;
-        }
         if( curr->e.seginfo->segrec->d.segdef.combine != COMB_STACK ) {
             curr->e.seginfo->segrec->d.segdef.seg_length = 0;
         }

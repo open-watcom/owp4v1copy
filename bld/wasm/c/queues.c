@@ -127,7 +127,7 @@ uint GetPublicData(
     *cmd = CMD_PUBDEF;
     sym = (asm_sym *)start->data;
     if( sym->state == SYM_UNDEFINED ) {
-        AsmErr( SYMBOL_S_NOT_DEFINED, sym->name );
+        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
         return( 0 );
     }
     curr_seg = sym->segment;

@@ -35,8 +35,8 @@ pick( LNAME_USED_ALREADY,
                                 "Lname is used already" ,
                                 "Lnameは既に使用されています" )
 pick( SEG_NOT_DEFINED,
-                                "Segment is not defined" ,
-                                "セグメントが未定義です" )
+                                "Segment %s is not defined" ,
+                                "Segment %s is not defined" )
 pick( PUBLIC_NOT_DEFINED,
                                 "Public is not defined" ,
                                 "パブリックが未定義です" )
@@ -152,8 +152,8 @@ pick( NESTING_LEVEL_TOO_DEEP,
                                 "Nesting level too deep" ,
                                 "ネスト・レベルが深すぎます" )
 pick( SYMBOL_NOT_DEFINED,
-                                "Symbol not defined" ,
-                                "シンボルが定義されていません" )
+                                "Symbol %s is not defined" ,
+                                "Symbol %s is not defined" )
 pick( INSERT_STUPID_WARNING_1_HERE,
                                 "Insert Stupid warning #1 here" ,
                                 "無意味な警告#1をここに挿入します" )
@@ -278,7 +278,7 @@ pick( NOTE_MACRO_CALLED_FROM,
                                 "macro called from file %s(%d)" ,
                                 "ファイル %s(%d) から呼ばれるマクロです" )
 pick( SYMBOL_S_NOT_DEFINED,
-                                "Symbol %s not defined" ,
+                                "Symbol %s is not defined" ,
                                 "シンボルが定義されていません ( %s )" ) /* fixme */
 pick( EXTENDING_JUMP,
                                 "Extending jump" ,
