@@ -6,12 +6,19 @@
 extra_w_opts = -xs -d2
 extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
 
-obj_files = strcopy.obj
+exe_files = strcopyl.exe strcopys.exe strpass.exe
 
-run: strcopy.exe .SYMBOLIC
-	strcopy
+run: $(exe_files) .SYMBOLIC
+	echo Compilation complete. Run test programs individually.
     
-build: strcopy.exe .SYMBOLIC
+build: $(exe_files) .SYMBOLIC
 
-strcopy.exe : $(obj_files)
+strcopyl.exe : strcopyl.obj
 	$(deflink)
+
+strcopys.exe : strcopys.obj
+        $(deflink)
+
+strpass.exe : strpass.obj
+        $(deflink)
+

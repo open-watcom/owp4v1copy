@@ -25,6 +25,8 @@
 *  ========================================================================
 *
 * Description: Benchmark program that does a lot of std::string copying.
+*              This program passes strings (by value) in and out of a
+*              function.
 *
 ****************************************************************************/
 
@@ -32,60 +34,29 @@
 #include <string>
 #include "timer.h"
 
-#define LONG_SIZE     1000    // Base size of a 'long' string.
-#define LONGDUMP_SIZE 1000    // Number of strings in long string dump.
-#define LONG_COUNT    10000   // Number of times long string loop executes.
+#define SIZE   40        // Base size. Use something 'typical'
+#define COUNT  10000000  // Number of times main loop executes.
 
-#define SHRT_SIZE     3       // Same as above except for short strings.
-#define SHRTDUMP_SIZE 10000
-#define SHRT_COUNT    10000
-
-std::string long_dump[LONGDUMP_SIZE];
-std::string shrt_dump[SHRTDUMP_SIZE];
-
-std::string long_f( std::string v )
+std::string f( std::string v )
 {
-  v.append( LONG_SIZE, 'y' );  // Cause reallocation.
-  return( v );
-}
-
-std::string shrt_f( std::string v )
-{
-  v.append( SHRT_SIZE, 'y' );  // No reallocation.
+  v.append( 1, 'y' );  // Do something with the string to change its value.
   return( v );
 }
 
 int main( )
 {
   TimerOn( );
-  for( int i = 0; i < LONG_COUNT; ++i ) {
-    std::string long_s( LONG_SIZE, 'x' );
-    long_s = long_f( long_s );
-    if( long_s.size( ) != 2*LONG_SIZE ) {
+  for( int i = 0; i < COUNT; ++i ) {
+    std::string s( SIZE, 'x' );
+    s = f( s );
+    if( s.size( ) != SIZE + 1 ) {
       std::cout << "Internal error!\n";
-    }
-    for( int j = 0; j < LONGDUMP_SIZE; ++j ) {
-      long_dump[j] = long_s;
     }
   }
   TimerOff( );
-  std::cout << "Average time per pass of long string loop: ";
-  std::cout << ( TimerElapsed( )/LONG_COUNT ) * 1000 << " ms\n\n";
-
-  TimerOn();
-  for( int i = 0; i < SHRT_COUNT; ++i ) {
-    std::string shrt_s( SHRT_SIZE, 'x' );
-    shrt_s = shrt_f( shrt_s );
-    if( shrt_s.size( ) != 2*SHRT_SIZE ) {
-      std::cout << "Internal error!\n";
-    }
-    for( int j = 0; j < SHRTDUMP_SIZE; ++j ) {
-      shrt_dump[j] = shrt_s;
-    }
-  }
-  TimerOff();
-  std::cout << "Average time per pass of short string loop: ";
-  std::cout << ( TimerElapsed( )/SHRT_COUNT ) * 1000 << " ms\n\n";
+  std::cout << "\n";
+  std::cout << "loop: ";
+  std::cout << ( TimerElapsed( )/COUNT ) * 1000 << " ms/pass\n";
 
   return( 0 );
 }
