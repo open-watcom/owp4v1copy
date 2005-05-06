@@ -98,9 +98,16 @@ static void output_float( char index, char no_of_bytes, char negative )
         if( negative )
             double_value *= -1;
         switch( no_of_bytes ) {
+        case BYTE_1:
+        case BYTE_2:
+#ifdef _WASM_
+            AsmWarn( 4, FLOAT_OPERAND );
+#endif
+            char_ptr = (char *)&AsmBuffer[index]->value;
+            break;
         case BYTE_4:
             float_value = double_value;
-            char_ptr = (char*)&float_value;
+            char_ptr = (char *)&float_value;
             break;
         case BYTE_8:
             char_ptr = (char *)&double_value;
