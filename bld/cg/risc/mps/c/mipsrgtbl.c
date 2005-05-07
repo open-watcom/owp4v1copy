@@ -407,10 +407,10 @@ extern  reg_list *ParmChoices( type_class_def class )
     case U4:
     case CP:
     case PT:
+    case XX:
         return( RegSets[RL_PARM_4] );
     case I8:
     case U8:
-    case XX:
         return( RegSets[RL_PARM_8] );
     case FS:
     case FD:

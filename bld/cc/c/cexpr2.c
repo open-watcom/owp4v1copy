@@ -1963,6 +1963,12 @@ local int IntrinsicMathFunc( SYM_NAMEPTR sym_name, int i, int n, SYMPTR sym )
 }
 
 #if (_CPU == _AXP) || (_CPU == _PPC) || (_CPU == _MIPS)
+// This really ought to be defined somewhere else...
+#if (_CPU == _AXP)
+    #define REG_SIZE    8
+#else
+    #define REG_SIZE    4
+#endif
 local TREEPTR GenVaStartNode( TREEPTR last_parm )
 {
     // there should be 3 parms __builtin_va_start( list, parm_name, stdarg )
@@ -1984,7 +1990,7 @@ local TREEPTR GenVaStartNode( TREEPTR last_parm )
         offset = 0;
         if( last_parm->op.opr == OPR_PUSHINT &&
             last_parm->op.long_value == 0 ) {           // varargs.h
-            offset = -8;
+            offset = -REG_SIZE;
         }
         parmsym = ValueStack[Level];            // get name of parameter
         parm_list = 0;
@@ -1992,7 +1998,7 @@ local TREEPTR GenVaStartNode( TREEPTR last_parm )
             parm_list = CurFunc->u.func.parms;
             while( parm_list != 0 ) {
                 sym = SymGetPtr( parm_list );
-                offset += (SizeOfArg( sym->sym_type ) + 7) & -8;
+                offset += (SizeOfArg( sym->sym_type ) + (REG_SIZE-1)) & -REG_SIZE;
                 if( parm_list == parmsym->op.sym_handle ) break;
                 parm_list = sym->handle;
             }

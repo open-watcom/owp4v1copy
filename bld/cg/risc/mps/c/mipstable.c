@@ -122,9 +122,9 @@ _Un(    M|U,  M|U,  EQ_R1 ),       NVI(V_NO),      G_NO,         RG_,           
 _UnPP(  M,    M,    NONE  ),       V_SAME_LOCN,    G_NO,         RG_,           FU_NO,
 _Un(    U,    ANY,  NONE ),        V_NO,           R_FORCEOP1MEM,RG_,           FU_NO,
 _Un(    ANY,  U,    NONE ),        V_NO,           R_FORCERESMEM,RG_,           FU_NO,
-_Un(    ANY,  ANY,  NONE ),        V_OP1_RES_AL8,  R_MOVEXX_8,   RG_QWORD_NEED, FU_NO,
+//_Un(    ANY,  ANY,  NONE ),        V_OP1_RES_AL8,  R_MOVEXX_8,   RG_QWORD_NEED, FU_NO,
 _Un(    ANY,  ANY,  NONE ),        V_OP1_RES_AL4,  R_MOVEXX_4,   RG_DWORD_NEED, FU_NO,
-_Un(    ANY,  ANY,  NONE ),        V_NO,           R_MOVEXX,     RG_QWORD_NEED, FU_NO,
+_Un(    ANY,  ANY,  NONE ),        V_NO,           R_MOVEXX,     RG_DWORD_NEED, FU_NO,
 };
 
 #define MOVE_TABLE( t_name, reg, load, store ) \
@@ -165,10 +165,11 @@ _Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED, FU_NO,\
 };
 
-/* Why two binary operator reduction tables? Some instructions are
+/* Why three binary operator reduction tables? Some instructions are
  * hardcoded to take signed immediate operands and others only take
  * unsigned. Separate tables were deemed less error prone than having
- * to check for operand signedness in the verification code.
+ * to check for operand signedness in the verification code. Finally
+ * some operators (mul/div/mod) can't take immediate operands at all.
  */
 BINARY_TABLE( BinaryUC1, BYTE,  V_UHALFWORDCONST2 );
 BINARY_TABLE( BinaryUC2, WORD,  V_UHALFWORDCONST2 );
@@ -179,6 +180,12 @@ BINARY_TABLE( Binary1, BYTE,  V_HALFWORDCONST2 );
 BINARY_TABLE( Binary2, WORD,  V_HALFWORDCONST2 );
 BINARY_TABLE( Binary4, DWORD, V_HALFWORDCONST2 );
 BINARY_TABLE( Binary8, QWORD, V_HALFWORDCONST2 );
+
+// Instead of V_OP2ZERO this should just forbid the reduction completely
+BINARY_TABLE( BinaryNI1, BYTE,  V_OP2ZERO );
+BINARY_TABLE( BinaryNI2, WORD,  V_OP2ZERO );
+BINARY_TABLE( BinaryNI4, DWORD, V_OP2ZERO );
+BINARY_TABLE( BinaryNI8, QWORD, V_OP2ZERO );
 
 opcode_entry    Push[] = {
 /************************/
@@ -371,6 +378,10 @@ static  opcode_entry    *OpcodeList[] = {
         BinaryUC2,              /* BINU2 */
         BinaryUC4,              /* BINU4 */
         BinaryUC8,              /* BINU8 */
+        BinaryNI1,              /* BINN1 */
+        BinaryNI2,              /* BINN2 */
+        BinaryNI4,              /* BINN4 */
+        BinaryNI8,              /* BINN8 */
         Un1,                    /* UN1   */
         Un2,                    /* UN2   */
         Un4,                    /* UN4   */

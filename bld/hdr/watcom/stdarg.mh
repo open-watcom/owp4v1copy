@@ -78,6 +78,16 @@ typedef __va_list va_list;
   #define va_start(ap,pn) (__builtin_va_start(&ap,pn))
   #define va_arg(ap,type) (__builtin_va_arg(&ap,type))
  #endif
+#elif defined(__MIPS__)
+ #define _MIPS_WORD_SIZE     4
+ extern void *__builtin_va_start(__va_list*, ...);
+ #pragma intrinsic(__builtin_va_start);
+ #define va_start(ap,pn) (__builtin_va_start(&ap,pn,1))
+ #define va_arg(ap,type) ((ap).__offset+=\
+     ((sizeof(type)+_MIPS_WORD_SIZE-1)&~(_MIPS_WORD_SIZE-1)),\
+     (*(type *)((ap).__base+(ap).__offset-\
+       (((sizeof(type)+_MIPS_WORD_SIZE-1)&~(_MIPS_WORD_SIZE-1))))))
+ #define va_end(ap)      ((void)0)
 #else
  #if defined(__HUGE__) || defined(__SW_ZU)
   #define va_start(ap,pn) ((ap)[0]=(char _WCFAR*)&pn+\

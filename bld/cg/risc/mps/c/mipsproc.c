@@ -133,9 +133,13 @@ static  void initParmCache( stack_record *pc, type_length *offset )
 {
     pc->start = *offset;
     pc->size = MaxStack;
-    if( MaxStack > 0 ) {
-        *offset += MaxStack;
-    }
+//    if( MaxStack > 0 ) {
+        /* Stack space must always be allocated even for parameters
+         * passed in registers!
+         */
+        pc->size += 4 * REG_SIZE;
+        *offset += pc->size;
+//    }
 }
 
 
@@ -388,7 +392,7 @@ static  void initVarargs( stack_record *varargs, type_length *offset )
     sym = AskForLblSym( CurrProc->label );
     attr = FEAttr( sym );
     if( attr & FE_VARARGS ) {
-        varargs->size = 12 * REG_SIZE;
+        varargs->size = 4 * REG_SIZE;
         *offset += varargs->size;
     }
 }
@@ -403,9 +407,10 @@ static  void emitVarargsProlog( stack_record *varargs )
     if( varargs->size != 0 ) {
         index_reg = addressableRegion( varargs, &offset );
         offset += varargs->size;
-        saveRegSet( index_reg, 0x3f << 16, offset, FALSE );
-        offset -= 6 * REG_SIZE;
-        saveRegSet( index_reg, 0x3f << 16, offset, TRUE );
+        // four registers starting at $4 (ie. $a0-$a3)
+        saveRegSet( index_reg, 0x0f << 4, offset, FALSE );
+//        offset -= 6 * REG_SIZE;
+//        saveRegSet( index_reg, 0x3f << 16, offset, TRUE );
     }
 }
 
@@ -493,7 +498,7 @@ static  signed_32 frameSize( stack_map *map )
 {
     signed_32           size;
 
-    size = map->slop.size + map->varargs.size + map->frame_save.size + map->saved_regs.size +
+    size = map->slop.size + /*map->varargs.size + */map->frame_save.size + map->saved_regs.size +
                 map->locals.size + map->parm_cache.size;
     assert( ( size & ( STACK_ALIGNMENT - 1 ) ) == 0 );
     return( size );
@@ -521,7 +526,7 @@ static  void SetupVarargsReg( stack_map *map )
     if( map->varargs.size != 0 ) {
         type_length     offset;
 
-        offset = map->varargs.start + 6 * REG_SIZE;
+        offset = map->varargs.start /* + 6 * REG_SIZE*/;
         if( offset > MIPS_MAX_OFFSET ) {
             GenLOADS32( offset, VARARGS_PTR );
             // TODO

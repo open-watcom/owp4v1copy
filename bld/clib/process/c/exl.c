@@ -43,7 +43,7 @@ _WCRTLINK int __F_NAME((execl),_wexecl)( const CHAR_TYPE *path, const CHAR_TYPE 
 
         arg0 = arg0;
         va_start( ap, path );
-        #if defined(__AXP__)
+        #if defined(__AXP__) || defined(__MIPS__)
             #ifdef __WIDECHAR__
                 return( _wexecve( path, (const CHAR_TYPE**)ap.__base,
                         (const CHAR_TYPE **)_RWD_wenviron ) );

@@ -17,6 +17,11 @@
     char *__base;
     int   __offset;
   } __va_list;
+#elif defined(__MIPS__)
+  typedef struct {
+    char *__base;
+    int   __offset;
+  } __va_list;
 #elif defined(__HUGE__) || defined(__SW_ZU)
   typedef char _WCFAR *__va_list[1];
 #else

@@ -783,9 +783,13 @@ static void SplitStructParms( pn *parm_list, call_state *state ) {
 #if _TARGET & _TARG_PPC
     if( _IsTargetModel( CG_OS2_CC ) ) return;
     tipe = U4;
-#else
+#elif _TARGET & _TARG_AXP
     state = state;
     tipe = U8;
+#elif _TARGET & _TARG_MIPS
+    tipe = U4;
+#else
+    #error Unknown RISC CPU
 #endif
     last_parm = parm_list;
     parm = *last_parm;
