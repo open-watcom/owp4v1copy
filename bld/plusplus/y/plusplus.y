@@ -282,20 +282,26 @@ Modified        By              Reason
 /*** PC-specific keywords ***/
 %token Y___ASM
 %token Y___BASED
+%token Y__CDECL
 %token Y___CDECL
 %token Y___DECLSPEC
+%token Y__EXPORT
 %token Y___EXPORT
 %token Y___FAR
+%token Y__FAR16
 %token Y___FAR16
+%token Y__FASTCALL
 %token Y___FASTCALL
 %token Y___FORTRAN
 %token Y___HUGE
+%token Y___INLINE
 %token Y___INT64
 %token Y___INTERRUPT
 %token Y___LOADDS
 %token Y___NEAR
 %token Y__OPTLINK
 %token Y__PACKED
+%token Y__PASCAL
 %token Y___PASCAL
 %token Y___PRAGMA
 %token Y___SAVEREGS
@@ -305,6 +311,9 @@ Modified        By              Reason
 %token Y___SELF
 %token Y___STDCALL
 %token Y__SYSCALL
+%token Y___SYSCALL
+%token Y__SYSTEM
+%token Y___WATCALL
 %token Y___UNALIGNED
 
 %type <flags> modifier
@@ -1529,6 +1538,8 @@ storage-class-specifier
 function-specifier
     : Y_INLINE
     { $$ = PTypeSpecifier( STY_INLINE ); }
+    | Y___INLINE
+    { $$ = PTypeSpecifier( STY_INLINE ); }
     | Y_VIRTUAL
     { $$ = PTypeSpecifier( STY_VIRTUAL ); }
     | Y_FRIEND
@@ -1900,10 +1911,14 @@ modifier
     { $$ = TF1_NEAR; }
     | Y___FAR
     { $$ = TF1_FAR; }
+    | Y__FAR16
+    { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
     | Y___FAR16
     { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
     | Y___HUGE
     { $$ = TF1_SET_HUGE;        /* equals TF1_FAR on the 386 */ }
+    | Y__EXPORT
+    { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
     | Y___EXPORT
     { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
     | Y___LOADDS
@@ -1939,20 +1954,32 @@ pragma-modifier
         StringTrash( $3->u.string );
         PTreeFree( $3 );
     }
+    | Y__CDECL
+    { $$ = MakeIndexPragma( M_CDECL ); }
     | Y___CDECL
     { $$ = MakeIndexPragma( M_CDECL ); }
-    | Y___PASCAL
-    { $$ = MakeIndexPragma( M_PASCAL ); }
-    | Y___FORTRAN
-    { $$ = MakeIndexPragma( M_FORTRAN ); }
-    | Y__SYSCALL
-    { $$ = MakeIndexPragma( M_SYSCALL ); }
-    | Y__OPTLINK
-    { $$ = MakeIndexPragma( M_OPTLINK ); }
-    | Y___STDCALL
-    { $$ = MakeIndexPragma( M_STDCALL ); }
+    | Y__FASTCALL
+    { $$ = MakeIndexPragma( M_FASTCALL ); }
     | Y___FASTCALL
     { $$ = MakeIndexPragma( M_FASTCALL ); }
+    | Y___FORTRAN
+    { $$ = MakeIndexPragma( M_FORTRAN ); }
+    | Y__OPTLINK
+    { $$ = MakeIndexPragma( M_OPTLINK ); }
+    | Y__PASCAL
+    { $$ = MakeIndexPragma( M_PASCAL ); }
+    | Y___PASCAL
+    { $$ = MakeIndexPragma( M_PASCAL ); }
+    | Y___STDCALL
+    { $$ = MakeIndexPragma( M_STDCALL ); }
+    | Y__SYSCALL
+    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    | Y___SYSCALL
+    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    | Y__SYSTEM
+    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    | Y___WATCALL
+    { $$ = MakeIndexPragma( M_WATCALL ); }
     ;
 
 pragma-id

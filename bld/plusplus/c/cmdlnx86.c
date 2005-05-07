@@ -887,8 +887,8 @@ static void macroDefs( void )
     PreDefineStringMacro( "_STDCALL_SUPPORTED" );
     PreDefineStringMacro( "_INTEGRAL_MAX_BITS=64" );
     if( CompFlags.extensions_enabled ) {
-        PreDefineStringMacro( "SOMLINK=__syscall" );
-        PreDefineStringMacro( "SOMDLINK=__syscall" );
+        PreDefineStringMacro( "SOMLINK=_Syscall" );
+        PreDefineStringMacro( "SOMDLINK=_Syscall" );
     }
 #endif
 #if _CPU == 8086

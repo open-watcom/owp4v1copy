@@ -180,9 +180,7 @@ static void defineKeywordMacros(   // PREDEFINE KEYWORD MACROS
     void )
 {
     static char *mac_table[] =  // - predefined macros
-    { "_far16=__far16"
-    , "_Far16=__far16"
-    , "near=__near"
+    { "near=__near"
     , "far=__far"
     , "huge=__huge"
     , "cdecl=__cdecl"
@@ -191,6 +189,7 @@ static void defineKeywordMacros(   // PREDEFINE KEYWORD MACROS
     , "interrupt=__interrupt"
     , "_near=__near"
     , "_far=__far"
+    , "_far16=__far16"
     , "_huge=__huge"
     , "_cdecl=__cdecl"
     , "_pascal=__pascal"
@@ -203,11 +202,7 @@ static void defineKeywordMacros(   // PREDEFINE KEYWORD MACROS
     , "_self=__self"
     , "_segname=__segname"
     , "_segment=__segment"
-    , "_syscall=_Syscall"
-    , "__syscall=_Syscall"
-    , "_System=_Syscall"
-    , "_Cdecl=__cdecl"
-    , "_Pascal=__pascal"
+    , "_syscall=__syscall"
     , "__inline=inline"
     , "_inline=inline"
     , "_stdcall=__stdcall"
