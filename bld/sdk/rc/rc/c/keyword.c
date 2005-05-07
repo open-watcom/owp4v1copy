@@ -128,6 +128,8 @@ typedef struct HashEntry {
     int     token;
 } HashEntry;
 
+#define TC_UNKNOWN -1
+
 /* create the hash table by using the a pick macro and the keywords?.gh files */
 #define pick( a, b, c ) {b, c}
 
@@ -143,7 +145,9 @@ int LookupKeyword( ScanString newstring )
     int     hash;
 
     hash = keyword_hash( newstring.string, Weights, newstring.length );
-    if (! stricmp( newstring.string, HashTable[ hash ].keyword) ) {
+    if( HashTable[ hash ].token == TC_UNKNOWN ) {
+        return( Y_NAME );
+    } else if (! stricmp( newstring.string, HashTable[ hash ].keyword) ) {
         return( HashTable[ hash ].token );
     } else {
         return( Y_NAME );

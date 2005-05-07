@@ -526,7 +526,7 @@ void sort_frequency( void )
             }
         }
     } while( change );
-    /* sort lists of equal frequency characters in descending order */
+    /* sort lists of equal frequency characters in ascending order */
     do {
         change = FALSE;
         c = most_used_character;
@@ -734,30 +734,20 @@ unsigned next_weight( void )
 void try_for_hash( void )
 /***********************/
 {
-    boolean works;
-    char c;
-    keyword_t search;
-    letter_t i;
-    unsigned count;
+    boolean     works;
+    char        c;
+    keyword_t   search;
 
     c = most_used_character;
     weights[ c ] = 1;
     available[ weights[c] ] = FALSE;
-    count = 0;
     do {
         works = try_hash( c );
         if( works ) {
-            ++count;
-            if( count == 1 ) {
-                for( i = most_used_character; ; i = next[i] ) {
-                    if( i == c ) {
-                        break;
-                    }
-                }
-                count = 0;
-            }
             available[ weights[ c ] ] = FALSE;
             c = next[ c ];
+            if( c == most_used_character )
+                break;
             search = next_weight();
             if( search == 0 )
                 break;

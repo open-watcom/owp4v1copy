@@ -11,8 +11,11 @@ xname = $(name).exe
 wrc_autodepends = .AUTODEPEND
 !endif
 
+additional_cleanup = ytab.*
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 #always use the most up to date wres library
 !include wres.mif
@@ -22,11 +25,11 @@ wrc_autodepends = .AUTODEPEND
 !ifeq release 0
 !ifeq host_os nt
 !ifneq host_cpu axp
-TRACK_MEM_OPTS = -dRCMEM_DEBUG
-!else   # axp: -dRCMEM_DEBUG version is NOT working! Fix me!
+TRACK_MEM_OPTS = -DRCMEM_DEBUG
+!else   # axp: -DRCMEM_DEBUG version is NOT working! Fix me!
 !endif
 !else
-TRACK_MEM_OPTS = -dRC_USE_TRMEM -of+
+TRACK_MEM_OPTS = -DRC_USE_TRMEM -of+
 WRC_USE_TRMEM = 1
 !endif
 !endif
@@ -35,7 +38,7 @@ splice_opts = -kDEBUG
 
 objs =  ytab.obj &
         errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
-        exeseg.obj exeutil.obj global.obj hash1.obj hash2.obj           &
+        exeseg.obj exeutil.obj global.obj                               &
         keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj      &
         rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj           &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj     &
@@ -58,13 +61,13 @@ objs += trmem.obj
 
 # cflags stuff
 ###############
-extra_c_flags     = -dYYDEBUG -dSCANDEBUG
+extra_c_flags     = -DYYDEBUG -DSCANDEBUG
 !ifeq host_os nt
-extra_c_flags    += -dNT_HOSTED
+extra_c_flags    += -DNT_HOSTED
 !endif
 
 !ifeq sys_dll 1
-extra_c_flags    += -dDLL_COMPILE
+extra_c_flags    += -DDLL_COMPILE
 !endif
 
 extra_c_flags_rcalloc0 = $(TRACK_MEM_OPTS)
@@ -89,7 +92,7 @@ extra_l_flags_osi = option symfile
 .key : $(wrc2_dir)/hash
 .h : $(wrc2_dir)/h;$(trmem_dir)
 
-inc_dirs = -I. -I"$(wrc2_dir)/h" -I"$(wres_dir)/h" -I"$(fe_misc_dir)/h" -I"$(watcom_dir)/h" -I$(cpp_dir) -I$(trmem_dir)
+inc_dirs = -I. -I"$(wrc2_dir)/h" -I"$(wres_dir)/h" -I$(cpp_dir) -I"$(fe_misc_dir)/h" -I"$(watcom_dir)/h" -I$(trmem_dir)
 
 # explicit rules
 
@@ -123,19 +126,8 @@ ytab.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
         $(bld_cl) $(wcl_util_opts) $<
 
-weights1.gh keyword1.gh : rc1.key ./findhash.exe
-        $]@ -q $[@
-        @cp keywords.gh keyword1.gh
-        @cp weights.gh weights1.gh
-        @rm -f keywords.gh
-        @rm -f weights.gh
-
-weights2.gh keyword2.gh : rc2.key ./findhash.exe
-        $]@ -q $[@
-        @cp keywords.gh keyword2.gh
-        @cp weights.gh weights2.gh
-        @rm -f keywords.gh
-        @rm -f weights.gh
+weights.gh keywords.gh : ./findhash.exe ../hash/rc.key
+        $[@ -q -m ../hash/rc.key
 
 $(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
@@ -149,11 +141,4 @@ usage.rc : $(wrc2_dir)/usage.sp
 usagej.rc : $(wrc2_dir)/usage.sp
         wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
-hash1.obj : hash1.c weights1.gh .AUTODEPEND
-
-hash2.obj : hash2.c weights2.gh .AUTODEPEND
-
-clean: .SYMBOLIC .EXPLICIT
-       rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
-       rm -f *.sym *.tmp *.ilk *.lst *.err *.trk *.gh
-       rm -f ytab.*
+keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND

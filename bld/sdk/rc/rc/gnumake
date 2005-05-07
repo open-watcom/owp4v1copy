@@ -81,10 +81,10 @@ $(OBJDIR)/usage.h: usage.sp gnumake
 #
 # Note: "findhash" is compiled from //lang/fe_misc/c/findhash.c
 #
-$(OBJDIR)/weights.gh $(OBJDIR)/keywords.gh: hash/rc1.key hash/rc2.key
+$(OBJDIR)/weights.gh $(OBJDIR)/keywords.gh: hash/rc.key
 	$(CC) ../../../fe_misc/c/findhash.c -o $(OBJDIR)/findhash
 	@rm -f $(OBJDIR)/weights.gh $(OBJDIR)/keywords.gh
-	cd $(OBJDIR);./findhash ../hash/rc1.key ../hash/rc2.key >/dev/null
+	cd $(OBJDIR);./findhash -m ../hash/rc.key >/dev/null
 	@rm $(OBJDIR)/findhash
 
 clean	:

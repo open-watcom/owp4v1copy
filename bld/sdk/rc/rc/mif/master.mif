@@ -124,8 +124,8 @@ ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
         $(bld_cl) $(wcl_util_opts) $<
 
-weights.gh keywords.gh : ./findhash.exe ../hash/rc1.key ../hash/rc2.key
-        $[@ -q ../hash/rc1.key ../hash/rc2.key
+weights.gh keywords.gh : ./findhash.exe ../hash/rc.key
+        $[@ -q -m ../hash/rc.key
 
 $(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
