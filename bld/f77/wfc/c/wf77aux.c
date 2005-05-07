@@ -486,10 +486,18 @@ static  void    AddDefaultLib( char *lib_ptr, int lib_len, char priority ) {
     default_lib         **lib;
     default_lib         *new_lib;
 
-    if( !( Options & OPT_DFLT_LIB ) ) return;
+    if( !( Options & OPT_DFLT_LIB ) )
+        return;
+    if( ( *lib_ptr == '"' ) && ( lib_ptr[lib_len - 1] == '"' ) ) {
+        lib_len -= 2;
+        ++lib_ptr;
+    }
     for( lib = &DefaultLibs; *lib != NULL; lib = &(*lib)->link ) {
-        if( strlen( &(*lib)->lib[1] ) != lib_len ) continue;
-        if( memcmp( &(*lib)->lib[1], lib_ptr, lib_len ) == 0 ) return;
+        if( strlen( &(*lib)->lib[1] ) != lib_len )
+            continue;
+        if( memcmp( &(*lib)->lib[1], lib_ptr, lib_len ) == 0 ) {
+            return;
+        }
     }
     new_lib = FMemAlloc( sizeof( default_lib ) + lib_len );
     new_lib->link = NULL;
@@ -665,6 +673,17 @@ static  bool    RecToken( char *tok ) {
     return( FALSE );
 }
 
+static  bool    RecFnToken( char *tok ) {
+//=======================================
+
+    if( CurrToken( tok ) ) {
+        ScanFnToken();
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+
 
 void            Pragma() {
 //========================
@@ -686,13 +705,13 @@ void            Pragma() {
         unsigned f_modify : 1;
     } have;
 
-    if( RecToken( "LIBRARY" ) ) {
-        if( RecToken( "\0" ) ) {
+    if( RecFnToken( "LIBRARY" ) ) {
+        if( RecFnToken( "\0" ) ) {
             DefaultLibInfo();
         } else {
-            while( !RecToken( "\0" ) ) {
+            while( !RecFnToken( "\0" ) ) {
                 AddDefaultLib( TokStart, TokEnd - TokStart, '9' );
-                ScanToken();
+                ScanFnToken();
             }
         }
 #if ( _TARGET == _8086 || _TARGET == _80386 )
@@ -893,6 +912,45 @@ static  void    ScanToken() {
     TokEnd = ptr;
 }
 
+static  void    ScanFnToken() {
+//===========================
+
+    char    *ptr;
+    int     found_token;
+    int     first;
+
+    ptr = TokEnd;
+    ptr = SkipBlanks( ptr );
+    TokStart = ptr;
+    first = TRUE;
+    for( found_token = FALSE; found_token == FALSE; ) {
+        switch( *ptr ) {
+        case ' ' :
+        case '\t' :
+        case '\0' :
+            found_token = TRUE;
+            break;
+        case '"' :
+            if( first ) {
+                for(;;) {
+                    ++ptr;
+                    if( *ptr == '\0' )
+                        break;
+                    if( *ptr == '"' ) {
+                        ++ptr;
+                        break;
+                    }
+                }
+            }
+            found_token = TRUE;
+            break;
+        default :
+            first = FALSE;
+            ptr++;
+        }
+    }
+    TokEnd = ptr;
+}
 
 #if (( _TARGET == _8086 || _TARGET == _80386))
 static  void    TokUpper() {
