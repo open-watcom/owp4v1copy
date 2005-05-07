@@ -1961,6 +1961,11 @@ static void InitCPUModInfo()
     DataPtrSize   = TARGET_POINTER;
     CodePtrSize   = TARGET_POINTER;
     GenSwitches   = MEMORY_LOW_FAILS;
+  #if _CPU == _AXP
+    GenSwitches  |= OBJ_COFF;
+  #else
+    GenSwitches  |= OBJ_ELF;
+  #endif
 #elif _CPU == 386 || _CPU == 8086
     Stack87 = 8;
     TextSegName   = "";
