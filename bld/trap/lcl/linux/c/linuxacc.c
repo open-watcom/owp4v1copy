@@ -439,8 +439,8 @@ static unsigned ProgRun( int step )
         regs.eip = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_NIP, NULL );
         regs.esp = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_R1, NULL );
 #elif defined( MD_mips )
-        regs.eip = ptrace( PTRACE_PEEKUSER, pid, PC, NULL );
-        regs.esp = ptrace( PTRACE_PEEKUSER, pid, 29, NULL );
+        regs.eip = ptrace( PTRACE_PEEKUSER, pid, (void *)PC, NULL );
+        regs.esp = ptrace( PTRACE_PEEKUSER, pid, (void *)29, NULL );
 #endif
         Out( " eip " );
         OutNum( regs.eip );

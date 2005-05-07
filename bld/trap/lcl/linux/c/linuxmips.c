@@ -34,7 +34,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ptrace.h>
-#include <asm/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "mad.h"
@@ -62,19 +61,19 @@ static void ReadCPU( struct mips_mad_registers *r )
     memset( r, 0, sizeof( *r ) );
     /* Read GPRs */
     for( i = 0; i < 32; ++i ) {
-        TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, i, 0 );
+        TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)i, NULL );
     }
     /* Read FPRs */
     for( i = 0; i < 16; ++i ) {
-        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, FPR_BASE + i * 2, 0 );
-        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, FPR_BASE + i * 2 + 1, 0 );
+        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)(FPR_BASE + i * 2), NULL );
+        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)(FPR_BASE + i * 2 + 1), NULL );
     }
     /* Read special registers */
-    r->pc.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, PC, 0 );
-    r->lo                 = ptrace( PTRACE_PEEKUSER, pid, MMLO, 0 );
-    r->hi                 = ptrace( PTRACE_PEEKUSER, pid, MMHI, 0 );
-    r->fpcsr              = ptrace( PTRACE_PEEKUSER, pid, FPC_CSR, 0 );
-    r->fpivr              = ptrace( PTRACE_PEEKUSER, pid, FPC_EIR, 0 );
+    r->pc.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, (void *)PC, NULL );
+    r->lo                 = ptrace( PTRACE_PEEKUSER, pid, (void *)MMLO, NULL );
+    r->hi                 = ptrace( PTRACE_PEEKUSER, pid, (void *)MMHI, NULL );
+    r->fpcsr              = ptrace( PTRACE_PEEKUSER, pid, (void *)FPC_CSR, NULL );
+    r->fpivr              = ptrace( PTRACE_PEEKUSER, pid, (void *)FPC_EIR, NULL );
 
     last_eip = r->pc.u._32[I64LO32];
 }
@@ -103,17 +102,17 @@ static void WriteCPU( struct mips_mad_registers *r )
     int         i;
 
     /* Write special registers */
-    ptrace( PTRACE_POKEUSER, pid, PC, (void *)(r->pc.u._32[I64LO32]) );
-    ptrace( PTRACE_POKEUSER, pid, MMLO, (void *)r->lo );
-    ptrace( PTRACE_POKEUSER, pid, MMHI, (void *)r->hi );
+    ptrace( PTRACE_POKEUSER, pid, (void *)PC, (void *)(r->pc.u._32[I64LO32]) );
+    ptrace( PTRACE_POKEUSER, pid, (void *)MMLO, (void *)r->lo );
+    ptrace( PTRACE_POKEUSER, pid, (void *)MMHI, (void *)r->hi );
     /* Write GPRs */
     for( i = 0; i < 32; ++i ) {
-        ptrace( PTRACE_POKEUSER, pid, i, (void *)TRANS_GPREG_32( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (void *)i, (void *)TRANS_GPREG_32( r, i ) );
     }
     /* Write FPRs */
     for( i = 0; i < 16; ++i ) {
-        ptrace( PTRACE_POKEUSER, pid, FPR_BASE + i * 2, TRANS_FPREG_LO( r, i ) );
-        ptrace( PTRACE_POKEUSER, pid, FPR_BASE + i * 2 + 1, TRANS_FPREG_HI( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (void *)(FPR_BASE + i * 2), (void *)TRANS_FPREG_LO( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (void *)(FPR_BASE + i * 2 + 1), (void *)TRANS_FPREG_HI( r, i ) );
     }
 }
 

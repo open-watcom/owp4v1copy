@@ -251,6 +251,8 @@ typedef unsigned_32     bp_t;
 #define PC              64
 #define MMHI            67
 #define MMLO            68
+#define FPC_CSR         69
+#define FPC_EIR         70
 
 #endif
 
