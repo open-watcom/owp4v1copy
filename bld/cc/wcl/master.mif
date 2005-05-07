@@ -27,6 +27,9 @@ extra_c_flags += -DWCLAXP
 !else ifeq target_cpu ppc
 name = wclppc.exe
 extra_c_flags += -DWCLPPC
+!else ifeq target_cpu mps
+name = wclmps.exe
+extra_c_flags += -DWCLMPS
 !else
 objs = owcc.obj clcommon.obj getopt.obj quit.obj
 !ifeq host_os linux

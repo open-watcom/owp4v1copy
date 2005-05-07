@@ -63,6 +63,13 @@
   #define WCLENV      "WCLPPC"          /* name of environment variable    */
   #define STACKSIZE   "8192"            /* default stack size              */
   #define _NAME_      "C/C++ PowerPC "
+#elif defined(WCLMPS)
+  #define WCLNAME     "wclmps"          /* Name of Compile and Link Utility*/
+  #define CC          "wccmps"          /* Open Watcom C compiler          */
+  #define CCXX        "wppmps"          /* Open Watcom C++ compiler        */
+  #define WCLENV      "WCLMPS"          /* name of environment variable    */
+  #define STACKSIZE   "8192"            /* default stack size              */
+  #define _NAME_      "C/C++ MIPS "
 #elif defined(WCL386)
   #define WCLNAME     "wcl386"          /* Name of Compile and Link Utility*/
   #define CC          "wcc386"          /* Open Watcom C compiler          */
@@ -695,7 +702,13 @@ static  int  CompLink( void )
 #if defined(WCLAXP)
         Fputnl( "system ntaxp", Fp );
 #elif defined(WCLPPC)
+  #if defined(__LINUX__)
+        Fputnl( "system linuxppc", Fp );
+  #else
         Fputnl( "system ntppc", Fp );
+  #endif
+#elif defined(WCLMPS)
+        Fputnl( "system linuxmips", Fp );
 #elif defined(WCL386)
   #if defined(__OS2__)
         Fputnl( "system os2v2", Fp );           /* 04-feb-92 */

@@ -33,6 +33,8 @@
 "Usage:  wclaxp [options] file(s)",
 #elif defined(WCLPPC)
 "Usage:  wclppc [options] file(s)",
+#elif defined(WCLMPS)
+"Usage:  wclmps [options] file(s)",
 #elif defined(WCL386)
 "Usage:  wcl386 [options] file(s)",
 #else
@@ -48,6 +50,8 @@
 "-y    ignore the WCLAXP environment variable",
 #elif defined(WCLPPC)
 "-y    ignore the WCLPPC environment variable",
+#elif defined(WCLMPS)
+"-y    ignore the WCLMPS environment variable",
 #elif defined(WCL386)
 "-y    ignore the WCL386 environment variable",
 #else

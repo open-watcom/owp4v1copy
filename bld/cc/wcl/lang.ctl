@@ -25,6 +25,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/nt386.386/wcl386.exe      <RELROOT>/rel2/binnt/wcl386.exe
     <CPCMD> <PROJDIR>/nt386.axp/wclaxp.exe      <RELROOT>/rel2/binnt/wclaxp.exe
     <CPCMD> <PROJDIR>/nt386.ppc/wclppc.exe      <RELROOT>/rel2/binnt/wclppc.exe
+    <CPCMD> <PROJDIR>/nt386.mps/wclmps.exe      <RELROOT>/rel2/binnt/wclmps.exe
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386/owcc.exe           <RELROOT>/rel2/binp/owcc.exe
@@ -32,6 +33,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/os2386.386/wcl386.exe     <RELROOT>/rel2/binp/wcl386.exe
     <CPCMD> <PROJDIR>/os2386.axp/wclaxp.exe     <RELROOT>/rel2/binp/wclaxp.exe
     <CPCMD> <PROJDIR>/os2386.ppc/wclppc.exe     <RELROOT>/rel2/binp/wclppc.exe
+    <CPCMD> <PROJDIR>/os2386.mps/wclmps.exe     <RELROOT>/rel2/binp/wclmps.exe
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux386/owcc.elf         <RELROOT>/rel2/binl/owcc
@@ -40,6 +42,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/linux386.386/wcl386.exe   <RELROOT>/rel2/binl/wcl386
     <CPCMD> <PROJDIR>/linux386.386/wcl386.sym   <RELROOT>/rel2/binl/wcl386.sym
     <CPCMD> <PROJDIR>/linux386.axp/wclaxp.exe   <RELROOT>/rel2/binl/wclaxp
+    <CPCMD> <PROJDIR>/linux386.mps/wclmps.exe   <RELROOT>/rel2/binl/wclmps
 
   [ IFDEF (cpu_axp) <2*> ]
 #    <CPCMD> <PROJDIR>/ntaxp.i86/wcl.exe         <RELROOT>/rel2/axpnt/wcl.exe

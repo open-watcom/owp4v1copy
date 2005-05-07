@@ -245,6 +245,14 @@ system begin linux
     op exportall
     op norelocs
 end
+system begin linuxmips
+    option osname='Linux MIPS'
+    libpath %WATCOM%/libmps
+    libpath %WATCOM%/libmps/linux
+    format elf
+    op exportall
+    op norelocs
+end
 system begin nt
     option osname='Windows NT character-mode'
     libpath %WATCOM%/lib386
