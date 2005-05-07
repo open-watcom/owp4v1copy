@@ -352,7 +352,9 @@ static void ReturnStmt( SYM_HANDLE func_result, struct return_info *info )
     }
     block = BlockStack;                                 /* 16-apr-94 */
     while( block != NULL ) {
-        if( block->block_type == T__TRY ) break;
+        if( ( block->block_type == T__TRY )
+          || ( block->block_type == T___TRY ) )
+            break;
         block = block->prev_block;
     }
     if( block != NULL ) {
@@ -529,6 +531,7 @@ void Statement( void )
             continue;
 #ifdef __SEH__
         case T__LEAVE:
+        case T___LEAVE:
             LeaveStmt();
             DeadCode = 1;
             if( BlockStack->block_type != T_LEFT_BRACE ) break;
@@ -583,6 +586,7 @@ void Statement( void )
             break;
 #ifdef __SEH__
         case T__TRY:
+        case T___TRY:
             TryStmt();
             continue;
 #endif
@@ -698,14 +702,18 @@ static void EndOfStmt( void )
             break;
 #ifdef __SEH__
         case T__TRY:
-            if( EndTry() )      return;
+        case T___TRY:
+            if( EndTry() )
+                return;
             break;
         case T__EXCEPT:
+        case T___EXCEPT:
             DropBreakLabel();
             TryScope = BlockStack->parent_index;
             CompFlags.exception_handler = 0;
             break;
-        case T__FINALLY:                                /* 23-mar-94 */
+        case T__FINALLY:
+        case T___FINALLY:
             AddStmt( LeafNode( OPR_END_FINALLY ) );
             CompFlags.in_finally_block = 0;
             TryScope = BlockStack->parent_index;
@@ -777,8 +785,10 @@ static void BreakStmt( void )
     block = BlockStack;
     if( block != NULL ) {
         while( block != LoopStack ) {
-            if( block->block_type == T_SWITCH ) break;
-            if( block->block_type == T__TRY ) {
+            if( block->block_type == T_SWITCH )
+                break;
+            if( ( block->block_type == T__TRY )
+              || ( block->block_type == T___TRY ) ) {
                 try_scope = block->parent_index;
             }
             block = block->prev_block;
@@ -803,7 +813,9 @@ static void LeaveStmt( void )
     NextToken();
     block = BlockStack;
     while( block != NULL ) {
-        if( block->block_type == T__TRY ) break;
+        if( ( block->block_type == T__TRY )
+          || ( block->block_type == T___TRY ) )
+            break;
         block = block->prev_block;
     }
     if( block != NULL ) {
@@ -826,7 +838,8 @@ static void ContinueStmt( void )
             try_scope = -2;
             block = BlockStack;
             while( block != LoopStack ) {
-                if( block->block_type == T__TRY ) {
+                if( ( block->block_type == T__TRY )
+                  || ( block->block_type == T___TRY ) ) {
                     try_scope = block->parent_index;
                 }
                 block = block->prev_block;
@@ -1142,7 +1155,8 @@ static int EndTry( void )
     tree->op.try_index = BlockStack->try_index;
     tree->op.parent_scope = parent_scope;
     AddStmt( tree );
-    if( CurToken == T__EXCEPT ) {
+    if( ( CurToken == T__EXCEPT )
+      || ( CurToken == T___EXCEPT ) ) {
         NextToken();
         BlockStack->block_type = T__EXCEPT;
         BlockStack->break_label = NextLabel();
@@ -1172,7 +1186,8 @@ static int EndTry( void )
         tree->expr_type = GetType( TYPE_VOID );
         AddStmt( tree );
         return( 1 );
-    } else if( CurToken == T__FINALLY ) {
+    } else if( ( CurToken == T__FINALLY )
+      || ( CurToken == T___FINALLY ) ) {
         CompFlags.in_finally_block = 1;
         NextToken();
         BlockStack->block_type = T__FINALLY;

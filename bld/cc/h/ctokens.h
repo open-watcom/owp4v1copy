@@ -38,22 +38,7 @@ extern  char    TokenClass[];
 /* the following table is in order of priority of operators */
 
 enum    token_class {
-        TC_NEAR = 1,            /* __near, __far, __huge, __interrupt */
-        TC_FAR,                 /* __cdecl, __pascal, __fortran */
-        TC_HUGE,
-        TC_FAR16,
-        TC_INTERRUPT,
-        TC_CDECL,
-        TC_PASCAL,
-        TC_FORTRAN,
-        TC_SYSCALL,             /* __syscall for OS/2 2.0; 04-jul-91 */
-        TC_STDCALL,             /* __stdcall for NT */
-        TC_FASTCALL,            /* __fastcall for NT */
-        TC_OPTLINK,             /* _Optlink  for OS2 */
-        TC_EXPORT,              /* __export, __loadds, __saveregs */
-        TC_LOADDS,
-        TC_SAVEREGS,
-        TC_MODIFIER,
+        TC_MODIFIER = 1,
         TC_BASED,
         TC_SEGMENT,
         TC_SEGNAME,
@@ -172,13 +157,9 @@ pick( T_CONSTANT,      "constant",  TC_XX ),
 pick( T_STRING,        "string",    TC_XX ),
 
 #define FIRST_KEYWORD   (T_STRING+1)
-/* start of keywords */
+
 #include "keywords.gh"
 
-#define T_TRY           T__TRY
-#define T_EXCEPT        T__EXCEPT
-#define T_FINALLY       T__FINALLY
-#define T___SYSCALL     T__SYSCALL
 #define LAST_KEYWORD    (T_MACRO_PARM-1)
 
 pick( T_MACRO_PARM,    "macro parm",TC_XX ),

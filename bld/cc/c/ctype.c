@@ -549,26 +549,31 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                 modifier = 0;
                 while( CurToken != T_RIGHT_PAREN ){
                     switch( CurToken ){
+                    case T__CDECL:
                     case T___CDECL:
                         modifier = LANG_CDECL;
                         break;
+                    case T__PASCAL:
                     case T___PASCAL:
                         modifier = LANG_PASCAL;
                         break;
                     case T___FORTRAN:
-                        modifier = LANG_FORTRAN;       // TC_FORTRAN
+                        modifier = LANG_FORTRAN;
                         break;
                     case T__SYSCALL:
-                        modifier = LANG_SYSCALL;       // TC_SYSCALL           /* 04-jul-91 */
+                    case T___SYSCALL:
+                    case T__SYSTEM:
+                        modifier = LANG_SYSCALL;
                         break;
                     case T___STDCALL:
-                        modifier = LANG_STDCALL;       // TC_STDCALL
+                        modifier = LANG_STDCALL;
                         break;
+                    case T__FASTCALL:
                     case T___FASTCALL:
-                        modifier = LANG_FASTCALL;      // TC_FASTCALL
+                        modifier = LANG_FASTCALL;
                         break;
                     case T__OPTLINK:
-                        modifier = LANG_OPTLINK;       // TC_OPTLINK
+                        modifier = LANG_OPTLINK;
                         break;
                     case T_ID:
                         decl = DECLSPEC_NONE;
