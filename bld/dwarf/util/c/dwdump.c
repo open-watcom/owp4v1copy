@@ -163,7 +163,10 @@ orl_return ReadStrSec( orl_sec_handle o_shnd )
 /********************************************/
 {
     sectsizes[DW_DEBUG_STR] = ORLSecGetSize( o_shnd );
-    return( ORLSecGetContents( o_shnd, &sections[DW_DEBUG_STR] ));
+    if( sectsizes[DW_DEBUG_STR] == 0 )
+        return( ORL_OKAY );
+    else
+        return( ORLSecGetContents( o_shnd, &sections[DW_DEBUG_STR] ));
 }
 
 orl_return ReadARSec( orl_sec_handle o_shnd )
