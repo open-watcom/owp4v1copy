@@ -387,9 +387,13 @@ extern instruction      *rM_SPLITCMP( instruction *ins )
         /* Special reduction: use OP_SET_LESS but increment constant */
         if( (ins->operands[1]->n.class == N_CONSTANT)
             && (ins->operands[1]->c.const_type == CONS_ABSOLUTE) ) {
+            signed_32           value;
+
             opcode = OP_SET_LESS;
-            // TODO: is it safe to increment constant? Should we copy it first?
-            ins->operands[1]->c.int_value++;
+            // TODO: we may be leaking memory here by losing track of the
+            // original constant operand
+            value = ins->operands[1]->c.int_value;
+            ins->operands[1] = AllocS32Const( value + 1 );
         }
         if( ins->operands[1]->n.class == N_REGISTER ) {
             // Swap operands and reverse condition - we can do slt/sltu but
