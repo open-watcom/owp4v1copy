@@ -85,13 +85,16 @@ void PragmaFini()
                 next->info->use--;
             } else {
                 FreeInfo( next->info );
-                if( next->info != &DefaultInfo )  CMemFree( next->info );
+                if( next->info != &DefaultInfo ) {
+                    CMemFree( next->info );
+                }
             }
         }
         next = next->next;
         CMemFree( junk );
     }
     FreeInfo( &DefaultInfo );
+    FreeInfo( &WatcallInfo );
     FreeInfo( &CdeclInfo );
     FreeInfo( &PascalInfo );
     FreeInfo( &SyscallInfo );

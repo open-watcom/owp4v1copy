@@ -288,7 +288,7 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, int force_duplicate )
             if( next->decl_type == typ->decl_type  &&
                 next->object    == typ->object     &&
                 next->u.tag     == typ->u.tag      &&
-                next->decl_flags == flags  ) {
+                next->decl_flags == flags ) {
                 return( next );
             }
         }
@@ -478,19 +478,23 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
         case T__BOOL:     bit = M_BOOL;         break;
 
         case T_CONST:
-            if( flags & FLAG_CONST ) CErr1( ERR_REPEATED_MODIFIER );
+            if( flags & FLAG_CONST )
+                CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_CONST;
             break;
         case T_VOLATILE:
-            if( flags & FLAG_VOLATILE ) CErr1( ERR_REPEATED_MODIFIER );
+            if( flags & FLAG_VOLATILE )
+                CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_VOLATILE;
             break;
         case T_RESTRICT:
-            if( flags & FLAG_RESTRICT ) CErr1( ERR_REPEATED_MODIFIER );
+            if( flags & FLAG_RESTRICT )
+                CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_RESTRICT;
             break;
         case T___UNALIGNED:
-            if( flags & FLAG_UNALIGNED )CErr1( ERR_REPEATED_MODIFIER );
+            if( flags & FLAG_UNALIGNED )
+                CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_UNALIGNED;
             break;
         case T_INLINE:
@@ -498,7 +502,8 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
             flags |= FLAG_INLINE;
             break;
         case T__PACKED:
-            if( packed  ) CErr1( ERR_REPEATED_MODIFIER );
+            if( packed )
+                CErr1( ERR_REPEATED_MODIFIER );
             packed = TRUE;
             break;
         case T_EXTERN:
@@ -517,17 +522,20 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
             stg_class = SC_REGISTER;
             break;
         case T_STRUCT:
-            if( typ != NULL )  CErr1( ERR_INV_TYPE );
+            if( typ != NULL )
+                CErr1( ERR_INV_TYPE );
             typ = StructDecl( TYPE_STRUCT, packed );
             packed = 0;
             continue;
         case T_UNION:
-            if( typ != NULL )  CErr1( ERR_INV_TYPE );
+            if( typ != NULL )
+                CErr1( ERR_INV_TYPE );
             typ = StructDecl( TYPE_UNION, packed );
             packed = 0;
             continue;
         case T_ENUM:
-            if( typ != NULL )  CErr1( ERR_INV_TYPE );
+            if( typ != NULL )
+                CErr1( ERR_INV_TYPE );
             typ = EnumDecl( flags );
             continue;
         case T___SEGMENT:                               /* 21-oct-91 */
@@ -536,7 +544,7 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
             break;
 
         case T___DECLSPEC:
-            if( info->stg == 0 ){
+            if( info->stg == 0 ) {
                 CErr1( ERR_INVALID_DECLARATOR );
             }
             AdvanceToken();                   // declspec( dllimport naked )
@@ -547,8 +555,11 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
 
                 decl = DECLSPEC_NONE;
                 modifier = 0;
-                while( CurToken != T_RIGHT_PAREN ){
-                    switch( CurToken ){
+                while( CurToken != T_RIGHT_PAREN ) {
+                    switch( CurToken ) {
+                    case T___WATCALL:
+                        modifier = LANG_WATCALL;
+                        break;
                     case T__CDECL:
                     case T___CDECL:
                         modifier = LANG_CDECL;
@@ -586,18 +597,18 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                         } else if( strcmp( Buffer, "thread" ) == 0 ) {
                             decl = DECLSPEC_THREAD;
                         } else if( strcmp( Buffer, "naked" ) == 0 ) {
-                            if( info->naked ){
+                            if( info->naked ) {
                                 CErr1( ERR_INVALID_DECLSPEC );
-                            }else{
+                            } else {
                                 info->naked = TRUE;
                             }
                         } else {
                             CErr1( ERR_INVALID_DECLSPEC );
                         }
-                        if( decl != DECLSPEC_NONE ){
-                            if( info->decl == DECLSPEC_NONE ){
+                        if( decl != DECLSPEC_NONE ) {
+                            if( info->decl == DECLSPEC_NONE ) {
                                 info->decl = decl;
-                            }else{
+                            } else {
                                 CErr1( ERR_INVALID_DECLSPEC );
                             }
                         }
@@ -606,10 +617,10 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                         CErr1( ERR_INVALID_DECLSPEC );
                         goto done;
                     }
-                    if( modifier & FLAG_LANGUAGES ){
-                        if( flags & FLAG_LANGUAGES ){
+                    if( modifier & FLAG_LANGUAGES ) {
+                        if( flags & FLAG_LANGUAGES ) {
                             CErr1( ERR_INVALID_DECLSPEC );
-                        }else{
+                        } else {
                             flags |= modifier;
                         }
                     }
@@ -644,20 +655,20 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                 CErr1( ERR_INV_TYPE );
             }
             flags |= sym.attrib;
-            if( sym.attrib & FLAG_BASED ){
+            if( sym.attrib & FLAG_BASED ) {
                 info->seg = sym.u.var.segment;
             }
-            if( sym.declspec != DECLSPEC_NONE ){
-                if( info->decl == DECLSPEC_NONE ){
+            if( sym.declspec != DECLSPEC_NONE ) {
+                if( info->decl == DECLSPEC_NONE ) {
                     info->decl = sym.declspec;
-                }else{
+                } else {
                     CErr1( ERR_INVALID_DECLSPEC );
                 }
             }
-            if( sym.naked ){
-                if( info->naked ){
+            if( sym.naked ) {
+                if( info->naked ) {
                     CErr1( ERR_INVALID_DECLSPEC );
-                }else{
+                } else {
                     info->naked = TRUE;
                 }
             }
@@ -691,7 +702,7 @@ got_specifier:
         /* or an ID that was a typedef name */
         if( bmask != 0 )  CErr1( ERR_INV_TYPE );  // picked up an int
     } else {
-        if( flags != FLAG_NONE || bmask != 0 ){  // not just id hanging there
+        if( flags != FLAG_NONE || bmask != 0 ) {  // not just id hanging there
             typ = GetScalarType( plain_int, bmask );
         }
     }
@@ -893,7 +904,7 @@ local unsigned long FieldAlign( unsigned long next_offset,
 
     pack_adjustment = PackAmount;
     align = GetTypeAlignment( field->field_type );
-    if( align > pack_adjustment ){ // can't be any bigger than pack( x )
+    if( align > pack_adjustment ) { // can't be any bigger than pack( x )
         align = pack_adjustment;
     }
     if( align > *worst_alignment ) {    /* 24-jul-91 */
@@ -904,9 +915,9 @@ local unsigned long FieldAlign( unsigned long next_offset,
 
         next_offset += align - 1;
         next_offset &= - (long)align;
-        if( CompFlags.slack_byte_warning && (next_offset - old_offset)  ){
+        if( CompFlags.slack_byte_warning && (next_offset - old_offset) ) {
             CWarn2( WARN_LEVEL_1,
-                    ERR_SLACK_ADDED, (next_offset - old_offset)  );
+                    ERR_SLACK_ADDED, (next_offset - old_offset) );
         }
     }
     field->offset = next_offset;
@@ -993,7 +1004,7 @@ local unsigned long GetFields( TYPEPTR decl )
     struct_size = start;
     next_offset = start;
     for(;;) {
-       if( CurToken == T_SEMI_COLON && CompFlags.extensions_enabled ){
+       if( CurToken == T_SEMI_COLON && CompFlags.extensions_enabled ) {
             NextToken();
             if( CurToken == T_RIGHT_BRACE ) break;
             continue;
@@ -1026,7 +1037,7 @@ local unsigned long GetFields( TYPEPTR decl )
                 field = NewField( field, decl );
             }
             if( CurToken == T_COLON ) {
-                if( field != NULL ){
+                if( field != NULL ) {
                     next_offset = FieldAlign( next_offset, field,
                                               &worst_alignment );
                 }
@@ -1074,7 +1085,7 @@ local unsigned long GetFields( TYPEPTR decl )
                 next_offset += SizeOfArg( field->field_type );
             }
             if( next_offset > struct_size )  struct_size = next_offset;
-            if( decl->decl_type == TYPE_UNION ){
+            if( decl->decl_type == TYPE_UNION ) {
                 next_offset = start;
                 bits_available = bits_total;
             }
@@ -1453,7 +1464,7 @@ TYPEPTR PtrNode( TYPEPTR typ, type_modifiers flags, int segid )
 TYPEPTR BPtrNode( TYPEPTR typ, type_modifiers flags, int segid,
                   SYM_HANDLE base, BASED_KIND kind )
 {
-    return( MkPtrNode( typ, flags, segid, base, kind  ) );
+    return( MkPtrNode( typ, flags, segid, base, kind ) );
 }
 
 int FuncHeadIndex( TYPEPTR *parm_types )
@@ -1477,7 +1488,7 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
     int         index;
 
     index = FuncHeadIndex( parm_types );
-    if( return_typ != NULL ){
+    if( return_typ != NULL ) {
         for( typ = FuncTypeHead[ index ]; typ; typ = typ->next_type ) {
             if( typ->object     == return_typ &&
                 typ->type_flags == flag &&
@@ -1534,9 +1545,9 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
         size = CTypeSizes[ typ->decl_type ];
         break;
     case TYPE_VOID:
-        if( CompFlags.unix_ext ){
+        if( CompFlags.unix_ext ) {
             size = 1;
-        }else{
+        } else {
             size = 0;
         }
         break;
@@ -1575,7 +1586,7 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
     case TYPE_UFIELD:
         size = CTypeSizes[ typ->u.f.field_type ];
         /* CarlYoung 31-Oct-03 */
-        if(pFieldWidth){
+        if( pFieldWidth ) {
             *pFieldWidth = typ->u.f.field_width;
         }
         break;

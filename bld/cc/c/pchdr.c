@@ -60,7 +60,7 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     0x0196
+#define PCH_VERSION     0x0197
 #if defined(__I86__)
 #define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
 #elif defined(__386__)
@@ -106,7 +106,7 @@ static  struct  rdir_list *PCHRDirNames;  /* list of read only directorys */
 
 struct  pheader {
     unsigned long       signature;      //  'WPCH'
-    unsigned            version;
+    unsigned long       version;
     unsigned            size_of_header;
     unsigned            size_of_int;
     unsigned            pack_amount;    // PackAmount
@@ -136,13 +136,14 @@ struct  pheader {
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
 static struct aux_info *BuiltinInfos[] = {
         &DefaultInfo,
+        &WatcallInfo,
         &CdeclInfo,
         &PascalInfo,
         &FortranInfo,
         &SyscallInfo,
         &StdcallInfo,
-        &OptlinkInfo,
         &FastcallInfo,
+        &OptlinkInfo,
         NULL
 };
 #endif
@@ -196,7 +197,8 @@ static int WritePHeader( void *bufptr, unsigned len )
         if( PH_Buffer != NULL ) {
             for(;;) {
                 amt_written = len;
-                if( amt_written > PH_BufSize )  amt_written = PH_BufSize;
+                if( amt_written > PH_BufSize )
+                    amt_written = PH_BufSize;
                 memcpy( PH_BufPtr, buf, amt_written );
                 PH_BufSize -= amt_written;
                 PH_BufPtr += amt_written;
@@ -205,17 +207,21 @@ static int WritePHeader( void *bufptr, unsigned len )
                 if( PH_BufSize == 0 ) {         // if buffer is full
                     PH_BufSize = PH_BUF_SIZE;
                     PH_BufPtr = PH_Buffer;
-                    if( write( PH_handle, PH_Buffer, PH_BUF_SIZE ) !=
-                                        PH_BUF_SIZE ) {
+                    amt_written = write( PH_handle, PH_Buffer, PH_BUF_SIZE );
+                    if( amt_written != PH_BUF_SIZE ) {
                         return( 1 );
                     }
 
                 }
-                if( len == 0 ) break;
+                if( len == 0 ) {
+                    break;
+                }
             }
         } else {
             amt_written = write( PH_handle, buf, len );
-            if( amt_written != len )  return( 1 );
+            if( amt_written != len ) {
+                return( 1 );
+            }
         }
     }
     return( 0 );

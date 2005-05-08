@@ -349,15 +349,17 @@ void InitModInfo( void )
     CompFlags.use_stdcall_at_number = 1;
     CompFlags.rent = 0;
 
-    DefaultInfo.class   = 0;
-    DefaultInfo.code    = NULL;
-    DefaultInfo.parms   = DefaultParms;
+    DftCallConv         = &WatcallInfo;
+
+    WatcallInfo.class   = 0;
+    WatcallInfo.code    = NULL;
+    WatcallInfo.parms   = DefaultParms;
 #if _CPU == 370
-    DefaultInfo.linkage = &DefaultLinkage;
+    WatcallInfo.linkage = &DefaultLinkage;
 #endif
-    HW_CAsgn( DefaultInfo.returns, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.streturn, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.save, HW_FULL );
-    DefaultInfo.use     = 0;
-    DefaultInfo.objname = NULL;      /* DefaultObjName; */
+    HW_CAsgn( WatcallInfo.returns, HW_EMPTY );
+    HW_CAsgn( WatcallInfo.streturn, HW_EMPTY );
+    HW_CAsgn( WatcallInfo.save, HW_FULL );
+    WatcallInfo.use     = 0;
+    WatcallInfo.objname = NULL;      /* DefaultObjName; */
 }

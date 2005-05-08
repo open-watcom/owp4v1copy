@@ -742,7 +742,7 @@ local type_modifiers GetModifiers( void )
         case T__SYSCALL:
         case T___SYSCALL:
         case T__SYSTEM:     modifier |= LANG_SYSCALL;   break;
-//        case T___WATCALL:   modifier |= LANG_WATCALL;   break;
+        case T___WATCALL:   modifier |= LANG_WATCALL;   break;
         case T__EXPORT:
         case T___EXPORT:    modifier |= FLAG_EXPORT;    break;
         case T___LOADDS:    modifier |= FLAG_LOADDS;    break;

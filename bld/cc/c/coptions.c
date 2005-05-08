@@ -960,6 +960,37 @@ static void DefineMacro()      { OptScanPtr = Define_UserMacro( OptScanPtr ); }
 static void SetErrorLimit()    { ErrLimit = OptValue; }
 
 #if _CPU == 8086 || _CPU == 386
+static void SetDftCallConv( void ){
+#if 0
+    switch( OptValue ) {
+    case 1:
+        DftCallConv = &CdeclInfo;
+        break;
+    case 2:
+        DftCallConv = &StdcallInfo;
+        break;
+    case 3:
+        DftCallConv = &FastcallInfo;
+        break;
+    case 4:
+        DftCallConv = &OptlinkInfo;
+        break;
+    case 5:
+        DftCallConv = &PascalInfo;
+        break;
+    case 6:
+        DftCallConv = &SyscallInfo;
+        break;
+    case 7:
+        DftCallConv = &FortranInfo;
+        break;
+    case 8:
+    default:
+        DftCallConv = &WatcallInfo;
+        break;
+    }
+#endif
+}
 static void Set_EC()           { CompFlags.ec_switch_used = 1; }
 #endif
 
@@ -1387,7 +1418,7 @@ static void Set_OF()
 {
     TargetSwitches |= NEED_STACK_FRAME;
     if( OptValue != 0 ) {
-        DefaultInfo.class |= GENERATE_STACK_FRAME;
+        WatcallInfo.class |= GENERATE_STACK_FRAME;
     }
 }
 static void Set_OM()           { TargetSwitches |= I_MATH_INLINE; }
@@ -1521,6 +1552,14 @@ static struct option const CFE_Options[] = {
     { "ei",     0,              Set_EI },
     { "em",     0,              Set_EM },
 #if _CPU == 8086 || _CPU == 386
+    { "ecc",    1,              SetDftCallConv },
+    { "ecd",    2,              SetDftCallConv },
+    { "ecf",    3,              SetDftCallConv },
+    { "eco",    4,              SetDftCallConv },
+    { "ecp",    5,              SetDftCallConv },
+    { "ecs",    6,              SetDftCallConv },
+    { "ecr",    7,              SetDftCallConv },
+    { "ecw",    8,              SetDftCallConv },
     { "ec",     0,              Set_EC },
     { "et",     0,              Set_ET },
     { "eq",     0,              Set_EQ },
@@ -2002,7 +2041,7 @@ local void Define_Memory_Model()
         break;
     case BIG_CODE:                      /* -mm */
         model = 'm';
-        DefaultInfo.class |= FAR;
+        WatcallInfo.class |= FAR;
         CodePtrSize = TARGET_FAR_POINTER;
         Define_Macro( "M_I86MM" );
         Define_Macro( "__MEDIUM__" );
@@ -2016,7 +2055,7 @@ local void Define_Memory_Model()
         DataPtrSize = TARGET_FAR_POINTER;                       /* 04-may-90 */
         break;
     case BIG_CODE | BIG_DATA:
-        DefaultInfo.class |= FAR;
+        WatcallInfo.class |= FAR;
         CodePtrSize = TARGET_FAR_POINTER;                       /* 04-may-90 */
         if( TargetSwitches & CHEAP_POINTER ) {
             model = 'l';
@@ -2110,20 +2149,20 @@ local void Define_Memory_Model()
 #if _CPU == 386
 
 static hw_reg_set MetaWareParms[] = {
-        {0}, {0}
+    HW_D( HW_EMPTY )
 };
 
 local void SetStackConventions( void )
 {
-    DefaultInfo.class &= (GENERATE_STACK_FRAME | FAR); /* 19-nov-93 */
-    DefaultInfo.class |= CALLER_POPS | NO_8087_RETURNS;
-    DefaultInfo.parms = (hw_reg_set *)CMemAlloc( sizeof(MetaWareParms) );
-    memcpy( DefaultInfo.parms, MetaWareParms, sizeof( MetaWareParms ) );
-    HW_CTurnOff( DefaultInfo.save, HW_EAX );
-    HW_CTurnOff( DefaultInfo.save, HW_EDX );
-    HW_CTurnOff( DefaultInfo.save, HW_ECX );
-    HW_CTurnOff( DefaultInfo.save, HW_FLTS );
-    DefaultInfo.objname = CStrSave( "*" );   /* DefaultObjName; */
+    WatcallInfo.class &= (GENERATE_STACK_FRAME | FAR); /* 19-nov-93 */
+    WatcallInfo.class |= CALLER_POPS | NO_8087_RETURNS;
+    WatcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof(MetaWareParms) );
+    memcpy( WatcallInfo.parms, MetaWareParms, sizeof( MetaWareParms ) );
+    HW_CTurnOff( WatcallInfo.save, HW_EAX );
+    HW_CTurnOff( WatcallInfo.save, HW_EDX );
+    HW_CTurnOff( WatcallInfo.save, HW_ECX );
+    HW_CTurnOff( WatcallInfo.save, HW_FLTS );
+    WatcallInfo.objname = CStrSave( "*" );   /* DefaultObjName; */
 }
 #endif
 
@@ -2174,19 +2213,18 @@ void GenCOptions( char **cmdline )
     }
     if( ! CompFlags.save_restore_segregs ) {                /* 11-apr-91 */
         if( TargetSwitches & FLOATING_DS ) {
-            HW_CTurnOff( DefaultInfo.save, HW_DS );
+            HW_CTurnOff( WatcallInfo.save, HW_DS );
         }
         if( TargetSwitches & FLOATING_ES ) {
-            HW_CTurnOff( DefaultInfo.save, HW_ES );
+            HW_CTurnOff( WatcallInfo.save, HW_ES );
         }
         if( TargetSwitches & FLOATING_FS ) {
-            HW_CTurnOff( DefaultInfo.save, HW_FS );
+            HW_CTurnOff( WatcallInfo.save, HW_FS );
         }
         if( TargetSwitches & FLOATING_GS ) {
-            HW_CTurnOff( DefaultInfo.save, HW_GS );
+            HW_CTurnOff( WatcallInfo.save, HW_GS );
         }
     }
-    FastcallInfo = DefaultInfo; // save reg conventions
   #if _CPU == 386
     if( ! CompFlags.register_conventions )
         SetStackConventions();

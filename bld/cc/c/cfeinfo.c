@@ -252,6 +252,9 @@ static struct aux_info *LangInfo( type_modifiers flags, struct aux_info *inf )
         return( inf );
 
     switch( flags & FLAG_LANGUAGES ) {
+    case LANG_WATCALL:
+        inf = &WatcallInfo;
+        break;
     case LANG_CDECL:
         inf = &CdeclInfo;
         break;
@@ -518,6 +521,9 @@ void GetCallClass( SYM_HANDLE sym_handle )
         inf = FindInfo( &sym, sym_handle );
         if( sym.flags & SYM_FUNCTION ) {
             switch( sym.attrib & FLAG_LANGUAGES ) {
+            case LANG_WATCALL:
+                CallClass = WatcallInfo.class;
+                break;
             case LANG_CDECL:
                 if( inf != &DefaultInfo ) {
                     CallClass = inf->class;

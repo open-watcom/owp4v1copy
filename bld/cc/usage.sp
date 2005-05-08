@@ -64,6 +64,14 @@ Options:
 -ec           emit code coverage gear
 :endsegment
 :segment T386 | Ti86
+-ecc          set default calling convention to __cdecl
+-ecd          set default calling convention to __stdcall
+-ecf          set default calling convention to __fastcall
+-eco          set default calling convention to _Optlink
+-ecp          set default calling convention to __pascal
+-ecr          set default calling convention to __fortran
+-ecs          set default calling convention to _Syscall
+-ecw          set default calling convention to __watcall (default)
 -ee           call epilogue hook routine
 -ef           use full pathnames in error and warning messages
 :endsegment

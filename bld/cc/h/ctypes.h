@@ -82,7 +82,7 @@ typedef enum    type_modifiers {    /* type   leaf   sym   */
     LANG_STDCALL    = 0x0140,       /* Y0140         Y0140 */     /* 08-jan-92 */
     LANG_OPTLINK    = 0x0180,       /* Y0180         Y0180 */
     LANG_FASTCALL   = 0x01C0,       /* Y01C0         Y01C0 */
-    LANG_WATCOM     = 0x0200,       /* Y0200         Y0200 */
+    LANG_WATCALL    = 0x0200,       /* Y0200         Y0200 */
     FLAG_LANGUAGES  = (LANG_CDECL  |
                        LANG_PASCAL |
                        LANG_FORTRAN|
@@ -90,7 +90,7 @@ typedef enum    type_modifiers {    /* type   leaf   sym   */
                        LANG_STDCALL|
                        LANG_OPTLINK|
                        LANG_FASTCALL|
-                       LANG_WATCOM ),
+                       LANG_WATCALL ),
     FLAG_INTERRUPT  = (FLAG_NEAR+FLAG_FAR), /* interrupt function */
     /* FLAG_NEAR + FLAG_FAR both on ==> interrupt far */
     FLAG_SAVEREGS   = 0x0400,       /* Y0400         Y0400 */

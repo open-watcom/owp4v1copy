@@ -387,12 +387,15 @@ static void DumpFlags( type_modifiers flags, TYPEPTR typ, STRCHUNK *fp )
         } else {
             put_keyword( T___NEAR, fp );
         }
-    } else if( flags & FLAG_FAR  ) {
+    } else if( flags & FLAG_FAR ) {
         put_keyword( T___FAR, fp );
     }
     if( flags & FLAG_HUGE )
         put_keyword( T___HUGE, fp );
     switch( flags & FLAG_LANGUAGES ) {
+    case LANG_WATCALL:
+        put_keyword( T___WATCALL, fp );
+        break;
     case LANG_CDECL:
         put_keyword( T___CDECL, fp );
         break;

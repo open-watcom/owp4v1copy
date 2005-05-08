@@ -97,8 +97,10 @@ global struct aux_entry         *AuxList;
 global struct aux_info          *CurrAlias;
 global struct aux_entry         *CurrEntry;
 global struct aux_info          *CurrInfo;
+global struct aux_info          *DftCallConv;
 
 global struct aux_info          DefaultInfo;
+global struct aux_info          WatcallInfo;
 global struct aux_info          CdeclInfo;
 global struct aux_info          PascalInfo;
 global struct aux_info          FortranInfo;
