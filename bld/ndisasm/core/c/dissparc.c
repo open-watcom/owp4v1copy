@@ -321,6 +321,7 @@ static unsigned SPARCOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
 {
     dis_operand *op;
 
+    ins->op[op_num].ref_type = DRT_SPARC_WORD;
     if( flags & DFF_SYMBOLIC_REG ) {
         op = &ins->op[op_num];
         if( op->base >= DR_SPARC_r0 && op->base <= DR_SPARC_r31 ) {

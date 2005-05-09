@@ -68,4 +68,4 @@ struct dis_cpu_data {
 
 unsigned        DisGetString( unsigned, char *, int );
 char            *DisAddReg( dis_register, char *, dis_format_flags );
-char            *DisOpFormat( void *, dis_dec_ins *, dis_format_flags, unsigned, char * );
+char            *DisOpFormat( dis_handle *, void *, dis_dec_ins *, dis_format_flags, unsigned, char * );

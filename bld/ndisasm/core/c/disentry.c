@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include "distypes.h"
@@ -235,9 +236,12 @@ char *DisAddReg( dis_register reg, char *dst, dis_format_flags flags )
                         (flags & DFF_REG_UP) ) ] );
 }
 
-char *DisOpFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
+char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags flags,
                         unsigned i, char *p )
 {
+    const char chLbrac = h->cpu == DISCPU_sparc ? '[' : '(';
+    const char chRbrac = h->cpu == DISCPU_sparc ? ']' : ')';
+
     p += DisCliValueString( d, ins, i, p );
     switch( ins->op[i].type & DO_MASK ) {
     case DO_REG:
@@ -248,7 +252,7 @@ char *DisOpFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
     case DO_MEMORY_ABS:
     case DO_MEMORY_REL:
         if( ins->op[i].base != DR_NONE || ins->op[i].index != DR_NONE ) {
-            *p++ = '(';
+            *p++ = chLbrac;
             p = DisAddReg( ins->op[i].base, p, flags );
             if( ins->op[i].index != DR_NONE ) {
                 *p++ = ',';
@@ -258,7 +262,7 @@ char *DisOpFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
                     *p++ = '0' + ins->op[i].scale;
                 }
             }
-            *p++ = ')';
+            *p++ = chRbrac;
         }
         break;
     }
@@ -297,7 +301,7 @@ dis_return DisFormat( dis_handle *h, void *d, dis_dec_ins *ins_p,
                 len = h->d->op_hook( h, d, &ins, flags, i, p );
                 p += len;
                 if( len == 0 ) {
-                    p = DisOpFormat( d, &ins, flags, i, p );
+                    p = DisOpFormat( h, d, &ins, flags, i, p );
                 }
             }
         }
