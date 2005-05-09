@@ -75,7 +75,12 @@ static void fixupLines( char *relocContents, orl_sec_handle sec )
                     for( i=0; i<3; i++ ) {
                         relocContents[i+r_entry->offset] = 0;
                     }
+// Whatever this was supposed to do, it's killing the -s option for object files
+#if 0
                     relocContents[3+r_entry->offset] = 0x80;
+#else
+                    relocContents[3+r_entry->offset] = 0;
+#endif
                 }
                 break;
         }
