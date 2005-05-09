@@ -233,10 +233,12 @@ clflags_dos_386    = -l=dos4g
 clflags_nov_386    = -l=netware
 !ifdef __LINUX__
 clflags_linux_386  = -l=bld_linux
-clflags_linux_ppc  = -l=bld_linux
+clflags_linux_ppc  = -l=bld_linuxppc
+clflags_linux_mps  = -l=bld_linuxmips
 !else
 clflags_linux_386  = -l=linux
-clflags_linux_ppc  = -l=linux
+clflags_linux_ppc  = -l=linuxppc
+clflags_linux_mps  = -l=linuxmips
 !endif
 
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
@@ -283,8 +285,12 @@ lflags_nov_386   = sys novell
 lflags_osi_386   = sys osi
 !ifdef __LINUX__
 lflags_linux_386 = sys bld_linux
+lflags_linux_ppc = sys bld_linuxppc
+lflags_linux_mps = sys bld_linuxmips
 !else
 lflags_linux_386 = sys linux
+lflags_linux_ppc = sys linuxppc
+lflags_linux_mps = sys linuxmips
 !endif
 
 !ifdef sys_windowed

@@ -45,6 +45,9 @@ wres_lib_nt_386 = $(__wres_lib_path)wresfdll.lib
 !endif
 !endif
 
+wres_lib_linux_ppc = $(__wres_lib_path)wresppc.lib
+wres_lib_linux_mps = $(__wres_lib_path)wresmps.lib
+
 !ifdef bootstrap
 wres_lib = $(wres_dir)/$(%OBJDIR)/libwres.a
 !else ifdef wres_lib_$(host_os)_$(host_cpu)

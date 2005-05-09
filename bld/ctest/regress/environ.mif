@@ -14,7 +14,9 @@
 #
 # targ_env_386 = wnt386/d4g386/os2386/linux386 (depends on current OS)
 # targ_env_i86 = os2i86/dosi86 (depends on current OS)
-# targ_env_axp = os2axp/ntaxp (depends on current OS)
+# targ_env_axp = ntaxp (depends on current OS)
+# targ_env_ppc = linuxppc/ntppc (depends on current OS)
+# targ_env_mps = linuxmips (depends on current OS)
 #
 # nb: above directories can have extensions:
 #   .    - Intel 386 hosted compiler
@@ -24,13 +26,19 @@
 # wcc_386 = wcc386
 # wcc_i86 = wcc
 # wcc_axp = wccaxp
+# wcc_ppc = wccppc
+# wcc_mps = wccmps
 # wpp_386 = wpp386
 # wpp_i86 = wpp
 # wpp_axp = wppaxp
+# wpp_ppc = wppppc
+# wpp_mps = wppmps
 # dll_i86 = wppdi86.dll
 # dll_386 = wppd386.dll
 # dll_axp = wppdaxp.dll
-# arch = 386/axp (depends on current hardware)
+# dll_ppc = wppdppc.dll
+# dll_mps = wppdmps.dll
+# arch = 386/axp/ppc/mps (depends on current hardware)
 # linker = wlink
 # log_file = $(ctest_dir)/$(ctest_name).log
 
@@ -64,6 +72,18 @@
 !ifndef wpp_axp
 !  ifdef %ctest_wpp_axp
 !    define wpp_axp $(%ctest_wpp_axp)
+!  endif
+!endif
+
+!ifndef wpp_ppc
+!  ifdef %ctest_wpp_ppc
+!    define wpp_ppc $(%ctest_wpp_ppc)
+!  endif
+!endif
+
+!ifndef wpp_mps
+!  ifdef %ctest_wpp_mps
+!    define wpp_mps $(%ctest_wpp_mps)
 !  endif
 !endif
 
@@ -103,6 +123,18 @@
 !  endif
 !endif
 
+!ifndef targ_env_ppc
+!  ifdef %ctest_targ_env_ppc
+!    define targ_env_ppc $(%ctest_targ_env_ppc)
+!  endif
+!endif
+
+!ifndef targ_env_mps
+!  ifdef %ctest_targ_env_mps
+!    define targ_env_mps $(%ctest_targ_env_mps)
+!  endif
+!endif
+
 !ifndef ctest_name
 !error macro 'ctest_name' has not been set
 !endif
@@ -122,7 +154,7 @@
 .erase
 
 #
-# architectures -- 386, i86, axp
+# architectures -- 386, i86, axp, ppc, mps
 #
 !ifndef arch
 !   ifdef __NTAXP__
@@ -141,7 +173,6 @@
 # os2386 -- OS/2 2.x .EXE
 # lnx386 -- Linux x86 executable
 # wnt386 -- Windows NT x86 .EXE
-# wntaxp -- Windows NT Alpha AXP .EXE
 #
 
 #
@@ -149,6 +180,24 @@
 #
 # dosi86 -- DOS .EXE
 # os2i86 -- OS/2 1.x .EXE
+#
+
+#
+# Alpha AXP environments
+#
+# wntaxp -- Windows NT Alpha AXP .EXE
+#
+
+#
+# PowerPC environments
+#
+# lnxppc -- Linux PowerPC executable
+#
+
+#
+# MIPS environments
+#
+# lnxmps -- Linux MIPS executable
 #
 !ifndef targ_env_386
 !  ifdef __DOS__
@@ -194,12 +243,14 @@ targ_run_wnti86 =
 targ_run_dosi86 =
 targ_run_os2i86 =
 targ_run_wntaxp =
-targ_run_dosaxp =
-targ_run_os2axp =
+targ_run_lnxppc =
+targ_run_lnxmps =
 
 run_386 = $(targ_run_$(targ_env_386))
 run_i86 = $(targ_run_$(targ_env_i86))
 run_axp = $(targ_run_$(targ_env_axp))
+run_ppc = $(targ_run_$(targ_env_ppc))
+run_mps = $(targ_run_$(targ_env_mps))
 
 run = $(run_$(arch))
 
@@ -215,12 +266,12 @@ targ_ext_wnti86 = exe
 targ_ext_dosi86 = exe
 targ_ext_os2i86 = exe
 targ_ext_wntaxp = exe
-targ_ext_dosaxp = exe
-targ_ext_os2axp = exe
 
 ext_386 = $(targ_ext_$(targ_env_386))
 ext_i86 = $(targ_ext_$(targ_env_i86))
 ext_axp = $(targ_ext_$(targ_env_axp))
+ext_ppc = $(targ_ext_$(targ_env_ppc))
+ext_mps = $(targ_ext_$(targ_env_mps))
 
 exe = $(ext_$(arch))
 
@@ -240,8 +291,8 @@ targ_lnk_wnti86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_dosi86 = system dos option stack=3k
 targ_lnk_os2i86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_wntaxp = system ntaxp
-targ_lnk_dosaxp = system ntaxp
-targ_lnk_os2axp = system ntaxp
+targ_lnk_lnxppc = system bld_linuxppc
+targ_lnk_lnxmps = system bld_linuxmps
 
 lnk_any    = # option noundefsok # add once we only use 11.0 linkers
 
@@ -261,12 +312,14 @@ targ_ldb_wnti86 = debug all
 targ_ldb_dosi86 = debug all
 targ_ldb_os2i86 = debug all
 targ_ldb_wntaxp = debug codeview
-targ_ldb_dosaxp = debug codeview
-targ_ldb_os2axp = debug codeview
+targ_ldb_lnxppc = debug all
+targ_ldb_lnxmps = debug all
 
 ldebug_386 = $(targ_ldb_$(targ_env_386))
 ldebug_i86 = $(targ_ldb_$(targ_env_i86))
 ldebug_axp = $(targ_ldb_$(targ_env_axp))
+ldebug_ppc = $(targ_ldb_$(targ_env_ppc))
+ldebug_mps = $(targ_ldb_$(targ_env_mps))
 
 #
 # targ_bld      build options (e.g., -bt=dos)
@@ -287,8 +340,6 @@ targ_bld_os2i86 = -bt=os2
 # these will be empty
 #
 targ_bld_wntaxp = -si
-targ_bld_dosaxp =
-targ_bld_os2axp =
 
 #
 # build environment
@@ -301,6 +352,12 @@ wcc_i86 = wcc $(targ_bld_$(targ_env_i86))
 !endif
 !ifndef wcc_axp
 wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
+!endif
+!ifndef wcc_ppc
+wcc_ppc = wccppc $(targ_bld_$(targ_env_ppc))
+!endif
+!ifndef wcc_mps
+wcc_mps = wccmps $(targ_bld_$(targ_env_mps))
 !endif
 
 !ifndef wpp_386
@@ -406,6 +463,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 wpp_386 += $(targ_bld_$(targ_env_386))
 wpp_i86 += $(targ_bld_$(targ_env_i86))
 wpp_axp += $(targ_bld_$(targ_env_axp))
+wpp_ppc += $(targ_bld_$(targ_env_ppc))
+wpp_mps += $(targ_bld_$(targ_env_mps))
 
 #
 # MAKEINIT vars
