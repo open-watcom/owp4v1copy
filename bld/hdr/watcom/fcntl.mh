@@ -63,7 +63,7 @@
 #define O_NOCTTY    000400  /*  Don't assign a controlling terminal */
 #define O_TRUNC     001000  /*  Open with truncation        */
 
-#define O_TEMP      040000  /*  Temporary file, don't put to disk   */
+#define O_TEMP      000000  /*  Temporary file, don't put to disk (QNX thing) */
 #define O_TEXT      000000  /*  Text file   (DOS thing)     */
 #define O_BINARY    000000  /*  Binary file (DOS thing)     */
 
