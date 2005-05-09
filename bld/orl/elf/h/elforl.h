@@ -67,6 +67,7 @@ elf_sec_handle          ELFENTRY ElfCvtIdxToSecHdl( elf_file_handle,
 
 orl_return              ELFENTRY ElfRelocSecScan( elf_sec_handle, orl_reloc_return_func );
 orl_return              ELFENTRY ElfSymbolSecScan( elf_sec_handle, orl_symbol_return_func );
+orl_return              ELFENTRY ElfNoteSecScan( elf_sec_handle, orl_note_callbacks *, void * );
 
 char *                  ELFENTRY ElfSymbolGetName( elf_symbol_handle );
 orl_symbol_value        ELFENTRY ElfSymbolGetValue( elf_symbol_handle );

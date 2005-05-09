@@ -374,6 +374,16 @@ orl_return ELFENTRY ElfSymbolSecScan( elf_sec_handle elf_sec_hnd, orl_symbol_ret
     return( ORL_OKAY );
 }
 
+orl_return ELFENTRY ElfNoteSecScan( elf_sec_handle hnd,
+                                    orl_note_callbacks *cb, void *cookie )
+/**************************************************************************/
+{
+    if( hnd->type != ORL_SEC_TYPE_NOTE ) return ORL_ERROR;
+    if( strcmp( hnd->name, ".drectve" ) != 0 ) return ORL_OKAY;
+    if( hnd->size == 0 ) return ORL_OKAY;
+    return( ElfParseDrectve( hnd->contents, hnd->size, cb, cookie ) );
+}
+
 char * ELFENTRY ElfSymbolGetName( elf_symbol_handle elf_symbol_hnd )
 {
     return( elf_symbol_hnd->name );

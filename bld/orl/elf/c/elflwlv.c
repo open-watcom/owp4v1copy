@@ -30,6 +30,7 @@
 
 
 #include <assert.h>
+#include <malloc.h>
 #include "elflwlv.h"
 #include "orlhash.h"
 #ifdef _BSD_SOURCE
@@ -174,7 +175,8 @@ orl_return ElfBuildSecNameHashTable( elf_file_handle elf_file_hnd )
 }
 
 
-static orl_reloc_type convertPPCReloc( elf_reloc_type elf_type ) {
+static orl_reloc_type convertPPCReloc( elf_reloc_type elf_type )
+{
     switch( elf_type ) {
     case R_PPC_NONE:
         return( ORL_RELOC_TYPE_ABSOLUTE );
@@ -245,7 +247,8 @@ static orl_reloc_type convertPPCReloc( elf_reloc_type elf_type ) {
 }
 
 
-static orl_reloc_type convert386Reloc( elf_reloc_type elf_type ) {
+static orl_reloc_type convert386Reloc( elf_reloc_type elf_type )
+{
     switch( elf_type ) {
     case R_386_NONE:
         return( ORL_RELOC_TYPE_ABSOLUTE );
@@ -266,7 +269,8 @@ static orl_reloc_type convert386Reloc( elf_reloc_type elf_type ) {
 }
 
 
-static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type ) {
+static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type )
+{
     switch( elf_type ) {
     case R_MIPS_NONE:
         return( ORL_RELOC_TYPE_ABSOLUTE );
@@ -295,7 +299,8 @@ static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type ) {
 }
 
 
-orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type elf_type ) {
+orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type elf_type )
+{
     switch( elf_file_hnd->machine_type ) {
     case ORL_MACHINE_TYPE_PPC601:
         return( convertPPCReloc( elf_type ) );
@@ -366,6 +371,118 @@ orl_return ElfCreateRelocs( elf_sec_handle orig_sec, elf_sec_handle reloc_sec )
         break;
     default:
         break;
+    }
+    return( ORL_OKAY );
+}
+
+static size_t strncspn( char *s, char *charset, int len)
+{
+    char            chartable[32];
+    int             i;
+    unsigned char   ch;
+
+    memset( chartable, 0, sizeof( chartable ) );
+    for( ; *charset != 0; charset++ ) {
+        ch = *charset;
+        chartable[ch / 8] |= 1 << ch % 8;
+    }
+    for (i = 0; i < len; i++) {
+        ch = s[i];
+        if( chartable[ch/8] & (1 << ch % 8) ) {
+            break;
+        }
+    }
+    return( i );
+}
+
+static char *pstrncspn( char *s, char *charset, int *len )
+{
+    int     l = strncspn( s, charset, *len );
+
+    *len -= l;
+    return( s + l );
+}
+
+static void EatWhite( char **contents, int *len )
+/***********************************************/
+{
+    char    ch = **contents;
+
+    while( (ch == ' ' || ch == '\t' || ch == '=' || ch == ',') && *len > 0 ) {
+        (*len)--;
+        *contents += 1;
+        ch = **contents;
+    }
+}
+
+static orl_return ParseExport( char **contents, int *len,
+                               orl_note_callbacks *cb, void *cookie )
+/********************************************************************/
+{
+    char        *arg;
+    int         l;
+
+    l = strncspn( *contents, ", \t", *len );
+    arg = alloca( l + 1 );
+    memcpy(arg, *contents, l);
+    arg[l] = 0;
+    *len -= l;
+    *contents += l;
+    return( cb->export_fn( arg, cookie ) );
+}
+
+
+static orl_return ParseDefLibEntry( char **contents, int *len,
+    orl_return  (*deflibentry_fn)( char *, void * ), void *cookie )
+/*****************************************************************/
+{
+    char        *arg;
+    int         l;
+    orl_return  retval;
+
+    for( ;; ) {
+        l = strncspn( *contents, ", \t", *len );
+        arg = alloca( l + 1 );
+        memcpy(arg, *contents, l);
+        arg[l] = 0;
+        *len -= l;
+        *contents += l;
+
+        retval = deflibentry_fn( arg, cookie );
+        if( retval != ORL_OKAY || **contents != ',' )
+            break;
+        (*contents)++;
+    }
+    return( retval );
+}
+
+orl_return ElfParseDrectve( char *contents, int len, orl_note_callbacks *cb,
+                            void *cookie)
+/**************************************************************************/
+{
+    char        *cmd;
+
+    EatWhite( &contents, &len );
+    while( len > 0 ) {
+        if( *contents != '-' )
+            break;              // - should be start of token
+        contents++; len--;
+        cmd = contents;
+        contents = pstrncspn( contents, ":", &len);
+        if( contents == NULL )
+            break;
+        contents++; len--;
+        if( memicmp( cmd, "export", 6 ) == 0 ) {
+            if( ParseExport( &contents, &len, cb, cookie ) != ORL_OKAY )
+                break;
+        } else if( memicmp( cmd, "defaultlib", 10 ) == 0 ) {
+            if( ParseDefLibEntry( &contents, &len, cb->deflib_fn, cookie )
+                != ORL_OKAY ) break;
+        } else if( memicmp( cmd, "entry", 5 ) == 0 ) {
+            if( ParseDefLibEntry( &contents, &len, cb->entry_fn, cookie )
+                != ORL_OKAY ) break;
+        }
+        EatWhite( &contents, &len );
     }
     return( ORL_OKAY );
 }

@@ -680,7 +680,7 @@ orl_return ORLENTRY ORLNoteSecScan( orl_sec_handle orl_sec_hnd,
 {
     switch( orl_sec_hnd->type ) {
     case( ORL_ELF ):
-        return 0;       // NYI: call to an elf func. here
+        return( ElfNoteSecScan( (elf_sec_handle) orl_sec_hnd, fn, cookie ) );
     case( ORL_COFF ):
         return( CoffNoteSecScan( (coff_sec_handle) orl_sec_hnd, fn, cookie ) );
     case( ORL_OMF ):
