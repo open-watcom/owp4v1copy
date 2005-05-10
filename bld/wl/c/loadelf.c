@@ -380,9 +380,7 @@ extern void FiniELFLoadFile( void )
     hdr.eh.e_shoff = hdr.curr_off;
     WriteLoad( hdr.sh, hdr.sh_size );
     hdr.curr_off += hdr.sh_size;
-    if( INJECT_DEBUG ) {                // Trailer for debug info
-        DwarfWriteTrailer(hdr.curr_off);
-    } else {
+    if( !INJECT_DEBUG ) {
         WriteDBI();
     }
     SeekLoad( 0 );
