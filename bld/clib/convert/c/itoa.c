@@ -74,7 +74,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(utoa,_utow)( unsigned value, CHAR_TYPE *buffer, in
     buf[0] = '\0';
     q = &buf[1];
     do {
-#if defined(M_IX86) && defined(__WATCOMC__)
+#if defined(_M_IX86) && defined(__WATCOMC__)
         quot = radix;
         rem = __udiv( value, (unsigned _WCNEAR *) &quot );
 #else

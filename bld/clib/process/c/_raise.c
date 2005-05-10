@@ -33,7 +33,7 @@
 
 extern int raise(int sig);
 
-#if defined(M_IX86)
+#if defined(_M_IX86)
     #if defined(__386__)
         #pragma aux     _raise  "_*" parm caller [eax];
     #else
