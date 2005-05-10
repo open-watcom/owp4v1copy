@@ -24,11 +24,6 @@ otherwise, the file is created;
 .term O_TRUNC
 causes the file to be truncated to contain no data when the file exists;
 has no effect when the file does not exist.
-.if '&machsys' eq 'PP' .do begin
-.term O_SHRMEM
-allows the file to shared across processes.
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .term O_BINARY
 causes the file to be opened in binary mode which means that data
@@ -42,6 +37,10 @@ reads.
 .term O_NOINHERIT
 indicates that this file is not to be inherited by a child process.
 .do end
+.if '&machsys' eq 'QNX' .do begin
+.term O_TEMP
+indicates that this file is to be treated as "temporary". It is a request
+to keep the data in cache, if possible, for fast access to temporary files.
 .do end
 .term O_EXCL
 indicates that this file is to be opened for exclusive access.
@@ -50,13 +49,7 @@ If the file exists and
 was also specified then the open will fail (i.e., use
 .kw O_EXCL
 to ensure that the file does not already exist).
-.term O_TEMP
-indicates that this file is to be treated as "temporary" in some sense.
-It is only defined in Linux and QNX ports. In Linux, it does nothing.
-In QNX, it is a request to keep the data in cache, if possible, for fast
-access to temporary files.
 .endterm
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .np
 When neither
@@ -68,7 +61,6 @@ are specified, the default value in the global variable
 is used to set the file translation mode.
 When the program begins execution, this variable has a value of
 .kw O_TEXT.
-.do end
 .do end
 .np
 .kw O_CREAT
