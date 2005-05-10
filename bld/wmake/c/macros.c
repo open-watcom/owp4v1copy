@@ -1192,16 +1192,15 @@ STATIC char *DeMacroName( const char *text, const char *name )
 
     outtext = StartVec();
     while( (current = strchr( current, DOLLAR )) != NULL ) {
-        switch( *++current )    // Swallow that DOLLAR
-        {
+        switch( *++current ) {  // Swallow that DOLLAR
         case '$':               // Swallow literal DOLLAR.
-            current++;     
+            current++;
             break;
         case '(':               // Possible regular substitution
             current++;
             // bracket or colon (for string substitution) after matching name?
-            if( (current[len] == ')' || current[len] == ':') &&
-                    CompareNMacroName( current, name, len ) == 0 ) {
+            if( CompareNMacroName( current, name, len ) == 0
+                    && (current[len] == ')' || current[len] == ':') ) {
                 lengthToClose = len;
                 while( current[lengthToClose] != ')' ) {
                     ++lengthToClose;
