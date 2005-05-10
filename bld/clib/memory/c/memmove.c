@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of memmove().
 *
 ****************************************************************************/
 
@@ -65,6 +64,7 @@ extern  void    movebwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len
         0xfc            /* cld */\
         parm [dx edi] [esi] [ecx] \
         modify exact [edi esi ecx];
+#define HAVE_MOVEFWBW
 
 #elif defined(M_I86) && defined(__SMALL_DATA__)
 extern  void    movebwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len);
@@ -90,6 +90,8 @@ extern  void    movefwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len
         0xf3 0xa4       /* rep movsb */\
         parm [es di] [si] [cx] \
         modify exact [di si cx];
+#define HAVE_MOVEFWBW
+
 #elif defined(M_I86) && defined(__BIG_DATA__)
 extern  void    movebwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len);
 #pragma aux     movebwd =  \
@@ -120,46 +122,46 @@ extern  void    movefwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len)
         0x1f            /* pop ds */ \
         parm [es di] [dx si] [cx] \
         modify exact [di si cx];
-#elif defined(__AXP__) || defined(__PPC__)
-// no pragma for these ones
+#define HAVE_MOVEFWBW
+
 #else
-#error unrecognized platform
+// no pragma for non-x86
 #endif
 
 
 _WCRTLINK void *memmove( void *toStart, const void *fromStart, size_t len )
-    {
-        const char *    from = fromStart;
-        char *          to = toStart;
+{
+    const char      *from = fromStart;
+    char            *to = toStart;
 
-        if( from == to ) {
-            return( to );
-        }
-        if( from < to  &&  from + len > to ) {  /* if buffers are overlapped*/
-#if defined(__HUGE__) || defined(__AXP__) || defined(__PPC__)
-            to += len;
-            from += len;
-            while( len != 0 ) {
-                *--to = *--from;
-                len--;
-            }
-#else
-            movebwd(( to + len ) - 1, ( from + len ) - 1, len );
-#endif
-        } else {
-#if defined(__AXP__) || defined(__PPC__)
-            while( len != 0 ) {
-                *to++ = *from++;
-                len--;
-            }
-#else
-            movefwd( to, from, len );
-#endif
-        }
-
-#if defined(__HUGE__) || defined(__AXP__) || defined(__PPC__)
-        return( toStart );
-#else
+    if( from == to ) {
         return( to );
+    }
+    if( from < to  &&  from + len > to ) {  /* if buffers are overlapped*/
+#if defined( __HUGE__ ) || !defined( HAVE_MOVEFWBW )
+        to += len;
+        from += len;
+        while( len != 0 ) {
+            *--to = *--from;
+            len--;
+        }
+#else
+        movebwd(( to + len ) - 1, ( from + len ) - 1, len );
+#endif
+    } else {
+#if !defined( HAVE_MOVEFWBW )
+        while( len != 0 ) {
+            *to++ = *from++;
+            len--;
+        }
+#else
+        movefwd( to, from, len );
 #endif
     }
+
+#if defined(__HUGE__) || !defined( HAVE_MOVEFWBW )
+    return( toStart );
+#else
+    return( to );
+#endif
+}
