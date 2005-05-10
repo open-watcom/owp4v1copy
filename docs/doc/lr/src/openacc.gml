@@ -50,6 +50,11 @@ If the file exists and
 was also specified then the open will fail (i.e., use
 .kw O_EXCL
 to ensure that the file does not already exist).
+.term O_TEMP
+indicates that this file is to be treated as "temporary" in some sense.
+It is only defined in Linux and QNX ports. In Linux, it does nothing.
+In QNX, it is a request to keep the data in cache, if possible, for fast
+access to temporary files.
 .endterm
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
