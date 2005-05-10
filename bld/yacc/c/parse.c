@@ -1102,8 +1102,12 @@ static int eatcrud( void )
 
 static int nextc( void )
 {
-    if( (ch = fgetc( yaccin )) == '\n' )
+    if( (ch = fgetc( yaccin )) == '\r' ) {
+        ch = fgetc( yaccin );
+    }
+    if( ch == '\n' ) {
         ++lineno;
+    }
     return( ch );
 }
 

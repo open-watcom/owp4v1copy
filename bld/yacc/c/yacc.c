@@ -24,17 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  yacc - Yet Another Compiler Compiler - main and close dependents
 *
 ****************************************************************************/
 
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <malloc.h>
 #include <string.h>
+#include <unistd.h> // For isatty
 #include "yacc.h"
 
 #ifdef UNIX
@@ -59,20 +60,24 @@ index_t RR_conflicts;
 index_t SR_conflicts;
 index_t nstate_1_reduce;
 
-static FILE *openr(), *openw();
+static FILE *opena( char const *filename, char const *access );
+static void closec( char const *filename, FILE **fpp );
+static void txfile( char const *filename, FILE *file, int stop );
 static void setoptions( char *p );
+static void checkwarn( void );
 
 static int warnings;
 static int proflag;
+static FILE *stdout_copy;   // stdout may or may not be an lvalue or a constant
 
 int main( int argc, char **argv )
 {
     unsigned i;
-    FILE *skeleton, *temp, *save;
-    int ch;
+    FILE *skeleton, *temp;
+    char *skelname;
 
-    for( i = 1; i < argc; ++i ) {
-        if( argv[i][0] != '-' ) break;
+    stdout_copy = stdout;
+    for( i = 1; i < argc && *argv[i] == '-'; ++i ) {
         setoptions( &argv[i][1] );
     }
     if( i != argc - 1 && i != argc - 2 ) {
@@ -91,11 +96,17 @@ int main( int argc, char **argv )
         puts( "    -w    disable default action type checking" );
         exit( 1 );
     }
-    skeleton = NULL;
     if( i == argc - 2 ) {
-        skeleton = openr( argv[ argc - 1 ] );
+        skelname = argv[argc - 1];
+        skeleton = opena( skelname, "rb" );
         if( !skeleton ) {
             msg( "could not open driver source code '%s'\n", argv[ argc - 1 ] );
+        }
+    } else {
+        skelname = "yydriver.c";
+        skeleton = fpopen( loadpath, skelname );
+        if( !skeleton ) {
+            msg( "Can't find yacc skeleton yydriver.c\n" );
         }
     }
     loadpath = argv[0];
@@ -105,18 +116,15 @@ int main( int argc, char **argv )
         srcname = alloca( strlen( argv[i] )+3 );
         srcname = strcat( strcpy( srcname, argv[i] ), ".y" );
     }
-    yaccin = openr( srcname );
-    actout = openw( "ytab.c" );
-    tokout = openw( "ytab.h" );
-
-    defs();
+    yaccin = opena( srcname,  "rb" );
+    tokout = opena( "ytab.h", "w" );
+    defs();                                 // #define lines -> ytab.h
     if( !(temp = tmpfile()) ) {
-        msg( "Cannot create temporary file\n" );
+        msg( "Can't create temporary file\n" );
     }
-    save = actout;
     actout = temp;
-    rules();
-    actout = save;
+    rules();                                // "case n: ... break;" -> tmpfiles()
+    (void)fseek( actout, 0L, SEEK_SET );    // rewind preserving error indicator
     buildpro();
     CalcMinSentence();
     if( proflag || showflag ) {
@@ -143,65 +151,69 @@ int main( int argc, char **argv )
     if( showflag ) {
         showstates();
     }
-    if( warnings ) {
-        if( warnings == 1 ) {
-            printf( "%s: 1 warning\n", srcname );
-        } else {
-            printf( "%s: %d warnings\n", srcname, warnings );
-        }
-        exit( 1 );
-    }
+    checkwarn();
     parsestats();
     dumpstatistic( "parser states", nstate );
     dumpstatistic( "# states (1 reduce only)", nstate_1_reduce );
     dumpstatistic( "reduce/reduce conflicts", RR_conflicts );
     dumpstatistic( "shift/reduce conflicts", SR_conflicts );
     show_unused();
-    rewind( tokout );
-    while( (ch = fgetc( tokout )) != EOF ) {
-        fputc( ch, actout );
-    }
-    if( !skeleton ) {
-        if( !(skeleton = fpopen( loadpath, "yydriver.c" )) ) {
-            msg( "Can't find yacc skeleton yydriver.c\n" );
-        }
-    }
-    while( (ch = fgetc( skeleton )) != '\f' && ch != EOF ) {
-        fputc( ch, actout );
-    }
-    genobj();
-    while( (ch = fgetc( skeleton )) != '\f' && ch != EOF ) {
-        fputc( ch, actout );
-    }
-    rewind( temp );
-    while( (ch = fgetc( temp )) != EOF ) {
-        fputc( ch, actout );
-    }
-    while( (ch = fgetc( skeleton )) != EOF ) {
-        fputc( ch, actout );
-    }
-    tail();
+    actout = opena( "ytab.c", "w" );
+    txfile( skelname,    skeleton, '\f' );               // skeleton 1st page -> ytab.c
+    genobj();                               // tables            -> ytab.c
+    txfile( skelname,    skeleton, '\f' );               // skeleton 2nd page -> ytab.c
+    txfile( "tmpfile()", temp,     EOF );                    // case n: ... break -> ytab.c
+    txfile( skelname,    skeleton, EOF );                // skeleton rest     -> ytab.c
+    tail();                                 // any utility stuff -> ytab.c
+    closec( skelname,    &skeleton    );
+    closec( srcname,     &yaccin      );
+    closec( "ytab.c",    &actout      );
+    closec( "ytab.h",    &tokout      );
+    closec( "tmpfile()", &temp        );
+    closec( "stdout",    &stdout_copy );
+    // No stderr check! Where would report go?
+    checkwarn();
     return( 0 );
 }
 
-static FILE *openr( char *filename )
+static FILE *opena( char const *filename, char const *access )
 {
-    FILE *file;
+    FILE    *file;
 
-    if( !(file = fopen( filename, "r" )) ) {
-        msg( "Can't open %s.\n", filename );
+    if( !(file = fopen( filename, access )) ) {
+        msg( "Can't open %s for \"%s\" access: %d(%s).\n", filename, access,
+            errno, strerror( errno ) );
     }
     return( file );
 }
 
-static FILE *openw( char *filename )
+static void closec( char const *filename, FILE **fpp )
 {
-    FILE *file;
+    FILE    *fp = *fpp;
+    int     failure;
 
-    if( !(file = fopen( filename, "w" )) ) {
-        msg( "Can't open %s for output.\n", filename );
+    *fpp = NULL;
+    if( fp ) {
+        failure = ferror( fp );
+        failure |= fclose( fp );
+        if( failure ) {
+            warn( "%s I/O bad: %d(%s)\n", filename, errno, strerror( errno ) );
+        }
     }
-    return( file );
+}
+
+static void txfile( char const *filename, FILE *file, int stop )
+{
+    int ch;
+
+    while( (ch = fgetc( file )) != stop && ch != EOF ) {
+        if( ch != '\r' ) {
+            fputc( ch, actout );
+        }
+    }
+    if( ch != stop ) {
+        msg( "Character value %d missing from %s\n", stop, filename );
+    }
 }
 
 static void setoptions( char *p )
@@ -249,16 +261,48 @@ static void setoptions( char *p )
     }
 }
 
+static void checkwarn( void )
+{
+    if( warnings ) {
+        char const  *plural = (warnings == 1) ? "" : "s";
+
+        // yacc ... and yacc ... > foo OK but yacc ... > foo 2>&1 duplicated
+        fprintf( stderr, "%s: %d warning%s\n", srcname, warnings, plural );
+        if( stdout_copy != NULL && !isatty( fileno( stdout ) ) ) {
+            fprintf( stdout, "%s: %d warning%s\n", srcname, warnings, plural );
+        }
+        exit( 1 );
+    }
+}
+
+static void diag( FILE *fp, char const *text, char const *fmt, va_list arg_ptr )
+{
+    if( srcname != NULL ) {
+        fprintf( fp, "%s(%d): ", srcname, lineno );
+    }
+    fprintf( fp, "%s! ", text );
+    vfprintf( fp, fmt, arg_ptr );
+}
+
+static void doublewrite( char const *text, char const *fmt, va_list arg_ptr )
+{
+    va_list arg_cpy;
+
+    // yacc ... and yacc ... > foo OK but yacc ... > foo 2>&1 duplicated
+    va_copy( arg_cpy, arg_ptr );
+    diag( stderr, text, fmt, arg_cpy );
+    va_end( arg_cpy );
+    if( stdout_copy != NULL && !isatty( fileno( stdout ) ) ) {
+        diag( stdout, text, fmt, arg_ptr );
+    }
+}
+
 void warn( char *fmt, ... )
 {
     va_list arg_ptr;
 
-    if( srcname != NULL ) {
-        printf( "%s(%d): ", srcname, lineno );
-    }
-    printf( "Warning! " );
     va_start( arg_ptr, fmt );
-    vprintf( fmt, arg_ptr );
+    doublewrite( "Warning", fmt, arg_ptr );
     va_end( arg_ptr );
     ++warnings;
 }
@@ -267,12 +311,8 @@ void msg( char *fmt, ... )
 {
     va_list arg_ptr;
 
-    if( srcname != NULL ) {
-        printf( "%s(%d): ", srcname, lineno );
-    }
-    printf( "Error! " );
     va_start( arg_ptr, fmt );
-    vprintf( fmt, arg_ptr );
+    doublewrite( "Error", fmt, arg_ptr );
     va_end( arg_ptr );
     exit( 1 );
 }
