@@ -407,6 +407,8 @@ void RemoteUnLink( void )
 {
 #ifdef SERVER
     soclose( control_socket );
+#else
+    Terminate();
 #endif
 #if defined(__NT__) || defined(__WINDOWS__)
     WSACleanup();
