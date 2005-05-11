@@ -287,7 +287,7 @@ static  hw_reg_set      Parm8Regs[] = {
 };
 
 static  hw_reg_set      Parm8Regs2[] = {
-    HW_D_1( HW_R17 ),
+    HW_D_1( HW_Q6 ),
     HW_D_1( HW_EMPTY )
 };
 
