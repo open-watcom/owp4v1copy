@@ -4,8 +4,8 @@
 set PROJDIR=<CWD>
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
-set EXENAME=
-set SYMNAME=
+set EXENAME=yacc.exe
+set SYMNAME=yacc.sym
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
