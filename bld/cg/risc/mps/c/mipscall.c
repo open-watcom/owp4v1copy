@@ -139,12 +139,16 @@ extern void BGProcDecl( sym_handle sym, type_def *tipe )
     SaveModel = TargetModel;
     if( tipe != TypeNone ) {
         if( class == XX ) {
-            reg = HW_D16;
+            // Handle structure returns - we need to "eat up" the first
+            // register used for argument passing here, so that it isn't
+            // used for passing actual arguments.
+            reg = HW_D4;
             temp = AllocTemp( WD );
             temp->v.usage |= USE_IN_ANOTHER_BLOCK;
             AddIns( MakeMove( AllocRegName( reg ), temp, WD ) );
             HW_TurnOn( CurrProc->state.parm.used, reg );
-            HW_CTurnOn( CurrProc->state.parm.used, HW_F16 );
+// TODO: need to do anything here?
+//            HW_CTurnOn( CurrProc->state.parm.used, HW_F16 );
             CurrProc->targ.return_points = temp;
         }
     }
@@ -202,7 +206,12 @@ extern void InitTargProc( void )
 /******************************/
 {
     CurrProc->targ.debug = NULL;
-    CurrProc->targ.base_is_fp = FALSE;
+    // For d1+ or higher, force accesses to locals to go through $fp since frame
+    // pointer is what the DWARF debug info is currently referencing.
+    if( _IsModel( DBG_LOCALS ) )
+        CurrProc->targ.base_is_fp = TRUE;
+    else
+        CurrProc->targ.base_is_fp = FALSE;
 }
 
 

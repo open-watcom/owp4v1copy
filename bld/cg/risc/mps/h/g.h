@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Codegen instructions specific to MIPS.
 *
 ****************************************************************************/
 
@@ -39,6 +38,7 @@ _G_( G_UNARY ),
 _G_( G_LOAD ),
 _G_( G_LEA_HIGH ),
 _G_( G_LEA ),
+_G_( G_MOVE_UI ),
 _G_( G_LOAD_ADDR ),
 _G_( G_STORE ),
 _G_( G_MOVE ),

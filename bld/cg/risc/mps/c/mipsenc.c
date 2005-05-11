@@ -140,7 +140,7 @@ static  uint_8  SetOpcodes[][2][2] = {
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_NOT_EQUAL */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_GREATER */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_LESS_EQUAL */
-        _SignedOpcode( 0x00, 0x2a, 0x00, 0x2b ),        /* OP_SET_LESS */
+        _SignedOpcode( 0x00, 0x2b, 0x00, 0x2a ),        /* OP_SET_LESS */
         _BinaryOpcode( 0x00, 0x00 ),                    /* OP_SET_GREATER_EQUAL */
 };
 
@@ -675,7 +675,7 @@ static  void doSignExtend( instruction *ins, type_class_def from )
         // MIPS32 ISA Release 2 has 'seb'/'seh' instructions for this
         shift_amt = (REG_SIZE - from_size) * 8;
         // 'sll rd,rs,n'
-        GenIShift( 0x03, res_index, src_index, shift_amt );
+        GenIShift( 0x00, res_index, src_index, shift_amt );
         // 'sra rd,rs,n'
         GenIShift( 0x03, res_index, res_index, shift_amt );
     }
@@ -744,6 +744,7 @@ static  void Encode( instruction *ins )
     signed_16           high;
     signed_16           extra;
     signed_16           low;
+    signed_16           imm_value;
 
     switch( ins->u.gen_table->generate ) {
     case G_CALL:
@@ -866,27 +867,33 @@ static  void Encode( instruction *ins )
         assert( ins->operands[0]->n.class == N_REGISTER );
         assert( ins->operands[1]->n.class == N_CONSTANT );
         assert( ins->result->n.class == N_REGISTER );
+        imm_value = ins->operands[1]->c.int_value;
         switch( ins->head.opcode ) {
         case OP_LSHIFT:
             // 'sll rd,rs,n'
             GenIShift( 0x00, _NameReg( ins->result ),
-                _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
+                _NameReg( ins->operands[0] ), imm_value );
             break;
         case OP_RSHIFT:
             if( _IsSigned( ins->type_class ) ) {
                 // 'sra rd,rs,n'
                 GenIShift( 0x03, _NameReg( ins->result ),
-                    _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
+                    _NameReg( ins->operands[0] ), imm_value );
             } else {
                 // 'srl rd,rs,n'
                 GenIShift( 0x02, _NameReg( ins->result ),
-                    _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
+                    _NameReg( ins->operands[0] ), imm_value );
             }
             break;
+        case OP_SUB:
+        case OP_EXT_SUB:
+            // Have to flip sign since there's no 'subiu'
+            imm_value = -imm_value;
+            // Fall through
         default:
             opcode = FindImmedOpcode( ins );
             GenIType( opcode, _NameReg( ins->result ),
-                    _NameReg( ins->operands[0] ), ins->operands[1]->c.int_value );
+                    _NameReg( ins->operands[0] ), imm_value );
             break;
         }
         break;
@@ -961,6 +968,11 @@ static  void Encode( instruction *ins )
         default:
             _Zoiks( ZOIKS_078 );
         }
+        break;
+    case G_MOVE_UI:
+        // a load of an unsigned 16-bit immediate
+        // 'ori rt,rs,immed'
+        GenIType( 0x0d, _NameReg( ins->result ), MIPS_ZERO_SINK, ins->operands[0]->c.int_value );
         break;
     case G_LOAD_UA:
     case G_LOAD:

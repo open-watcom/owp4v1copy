@@ -184,65 +184,29 @@ extern  instruction *rMOVEXX_8( instruction *ins )
 extern instruction *rCONSTLOAD( instruction *ins )
 /************************************************/
 {
-    instruction         *new_ins;
-    instruction         *first_ins;
-    name                *high_part;
-    name                *low_part;
-    name                *temp;
-    name                *cons;
-    unsigned_32         high;
     unsigned_32         low;
-    unsigned_32         k;
+    unsigned_32         high;
     unsigned_32         c;
-    type_class_def      index_class;
-    bool                cruft_in_high_dword;
+    name                *high_part;
+    name                *temp;
+    instruction         *first_ins;
+    instruction         *new_ins;
+    type_class_def      class;
 
     assert( ins->operands[0]->n.class == N_CONSTANT );
     assert( ins->operands[0]->c.const_type == CONS_ABSOLUTE );
 
-    cons = ins->operands[0];
-    c = cons->c.int_value;
-    k = 65536U;
-    high = c / k;
-    low = c % k;
-    if( low >= ( k / 2 ) ) {
-        high += 1;
-        low -= k;
-    }
-    assert( ((signed_16)high * k + (signed_16)low) == c );
-    high_part = AllocAddrConst( NULL, high, CONS_HIGH_ADDR, ins->type_class );
-    if( low == 0 ) {
-        first_ins = MakeMove( high_part, ins->result, ins->type_class );
-        ReplIns( ins, first_ins );
-        if( (c & 0x80000000) &&
-            (first_ins->type_class == Unsigned[first_ins->type_class]) ) {
-            new_ins = MakeBinary( OP_ZAP_NOT, first_ins->result, AllocS32Const( 0x0f ), first_ins->result, first_ins->type_class );
-            SuffixIns( first_ins, new_ins );
-            UpdateLive( first_ins, new_ins );
-        }
-    } else {
-        index_class = I4;
-        temp = AllocTemp( index_class );
-        first_ins = MakeMove( high_part, temp, index_class );
-        PrefixIns( ins, first_ins );
-        low_part = AllocIndex( temp, NULL, low, ins->type_class );
-        new_ins = MakeUnary( OP_LA, low_part, ins->result, ins->type_class );
-        PrefixIns( ins, new_ins );
-        cruft_in_high_dword = FALSE;
-        if( c >= 0x7fff8000 && c <= 0x7fffffff ) {
-            cruft_in_high_dword = TRUE;
-        }
-        if( (c & 0x80000000) &&
-            (ins->type_class == Unsigned[ins->type_class]) ) {
-            cruft_in_high_dword = TRUE;
-        }
-        if( cruft_in_high_dword ) {
-            new_ins = MakeBinary( OP_ZAP_NOT, ins->result, AllocS32Const( 0x0f ), ins->result, ins->type_class );
-            PrefixIns( ins, new_ins );
-        }
-        FreeIns( ins );
-        UpdateLive( first_ins, new_ins );
-    }
+    class = ins->type_class;
+    c = ins->operands[0]->c.int_value;
+    high = ( c >> 16 ) & 0xffff;
+    low  = c & 0xffff;
+    high_part = AllocAddrConst( NULL, high, CONS_HIGH_ADDR, class );
+    temp = AllocTemp( class );
+    first_ins = MakeMove( high_part, temp, class );
+    PrefixIns( ins, first_ins );
+    new_ins = MakeBinary( OP_OR, temp, AllocS32Const( low ), ins->result, class );
+    ReplIns( ins, new_ins );
+    UpdateLive( first_ins, new_ins );
     return( first_ins );
 }
 

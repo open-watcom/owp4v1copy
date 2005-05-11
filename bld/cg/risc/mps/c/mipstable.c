@@ -139,6 +139,7 @@ _Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_##reg,FU_NO,
 _Un(     M,    R,    NONE ),       V_NO,           load,         RG_##reg,FU_MEM,       \
 _Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,        \
 _Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_##reg,FU_NO,        \
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_##reg,FU_NO,        \
 _Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_##reg,FU_NO,        \
 _Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,        \
 _Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_##reg##_NEED,FU_NO, \

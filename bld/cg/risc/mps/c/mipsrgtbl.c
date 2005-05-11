@@ -305,12 +305,12 @@ static  hw_reg_set      Parm4Regs[] = {
 };
 
 static  hw_reg_set      Parm4Regs2[] = {
-    HW_D_1( HW_D17 ),
+    HW_D_1( HW_D5 ),
     HW_D_1( HW_EMPTY )
 };
 
 static  hw_reg_set      Parm4Regs3[] = {
-    HW_D_1( HW_D18 ),
+    HW_D_1( HW_D6 ),
     HW_D_1( HW_EMPTY )
 };
 
@@ -762,11 +762,11 @@ extern  hw_reg_set FrameBaseReg( void )
 extern  hw_reg_set FrameReg( void )
 /**********************************/
 {
-    /* MJC should be up to linkage conventions */
+    /* should be up to linkage conventions? */
     if( CurrProc->targ.base_is_fp ) {
-        return( HW_R15 );
+        return( HW_R30 );
     }
-    return( HW_R30 );
+    return( HW_R29 );
 }
 
 
