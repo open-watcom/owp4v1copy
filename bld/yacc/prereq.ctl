@@ -15,30 +15,28 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\dos386
-    wmake -h
-    <CPCMD> yacc.exe <OWROOT>\bld\build\bin\yacc.exe
-    cdsay <PROJDIR>
+    set TARGDIR=bin
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
+    set TARGDIR=binl
+    set EXENAME=wyacc
+    set SYMNAME=wyacc.sym
+
+[ BLOCK <BUILD_PLATFORM> nt386 ]
+#================================
+    set TARGDIR=binnt
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\os2386
-    wmake -h
-    <CPCMD> yacc.exe <OWROOT>\bld\build\binp\yacc.exe
-    cdsay <PROJDIR>
+    set TARGDIR=binp
 
-[ BLOCK <BUILD_PLATFORM> nt386 ]
-#===============================
-    cdsay <PROJDIR>\nt386
+[ BLOCK <BUILD_PLATFORM> dos386 linux386 nt386 os2386 ]
+#======================================================
+    cdsay <PROJDIR>/<BUILD_PLATFORM>
     wmake -h
-    <CPCMD> yacc.exe <OWROOT>\bld\build\binnt\yacc.exe
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> ntaxp ]
-#===============================
-    cdsay <PROJDIR>\ntaxp
-    wmake -h
-    <CPCMD> yacc.exe <OWROOT>\bld\build\axpnt\yacc.exe
+    <CPCMD> yacc.exe <OWROOT>/bld/build/<TARGDIR>/<EXENAME>
+    <CPCMD> yacc.sym <OWROOT>/bld/build/<TARGDIR>/<SYMNAME>
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -46,13 +44,6 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>
     <MAKE> -f gnumake
     <CPCMD> bootstrp/yacc <OWROOT>/bld/build/binl/wyacc
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> linux386 ]
-#==================================
-    cdsay <PROJDIR>/linux386
-    wmake -h
-    <CPCMD> yacc.exe <OWROOT>/bld/build/binl/wyacc
     cdsay <PROJDIR>
 
 [ BLOCK . . ]
