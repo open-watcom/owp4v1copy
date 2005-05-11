@@ -86,6 +86,7 @@ extern  instruction     *rMOVEXX_4(instruction*);
 extern  instruction     *rMOD2DIV(instruction*);
 extern  instruction     *rALLOCA(instruction*);
 extern instruction      *rM_SPLITCMP( instruction * );
+extern instruction      *rSPLITMOVE( instruction * );
 
 extern  hw_reg_set      StackReg();
 extern  hw_reg_set      ReturnAddrReg();
@@ -757,4 +758,3 @@ extern  instruction     *rMOVEXX_4( instruction *ins ) {
     UpdateLive( first_ins, last_ins );
     return( first_ins );
 }
-

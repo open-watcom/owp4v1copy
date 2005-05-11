@@ -148,7 +148,14 @@ _Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_##reg##_NEED
 MOVE_TABLE( Move1, BYTE,  G_LOAD, G_STORE );
 MOVE_TABLE( Move2, WORD,  G_LOAD, G_STORE );
 MOVE_TABLE( Move4, DWORD, G_LOAD, G_STORE );
-MOVE_TABLE( Move8, QWORD, G_LOAD, G_STORE );
+
+static  opcode_entry    Move8[] = {
+/**************************/
+/*       op    res   eq        verify           gen             reg      fu */
+_Un(     ANY,  ANY,  EQ_R1 ),  NVI(V_NO),       G_NO,           RG_,     FU_NO,        \
+_UnPP(   M,    M,    NONE  ),  NVI(V_SAME_LOCN),G_NO,           RG_,     FU_NO,        \
+_Un(     ANY,  ANY,  NONE ),   V_NO,            R_SPLITMOVE,    RG_QWORD,FU_NO,
+};
 
 #define BINARY_TABLE( name, reg, const_verify ) \
 opcode_entry    name[] = {                                                              \

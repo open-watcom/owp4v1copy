@@ -401,3 +401,63 @@ extern instruction      *rM_SPLITCMP( instruction *ins )
     SuffixIns( ins, new );
     return( new );
 }
+
+
+extern  name            *LowPart( name *, type_class_def );
+extern  name            *HighPart( name *, type_class_def );
+extern  void            CnvOpToInt( instruction *, int );
+extern  void            HalfType( instruction * );
+extern  bool            SameThing( name *, name * );
+
+static bool IndexOverlaps( instruction *ins, int i )
+/**************************************************/
+{
+    if( ins->operands[ i ]->n.class != N_INDEXED ) return( FALSE );
+    if( SameThing( ins->operands[ i ]->i.index, ins->result ) ) return( TRUE );
+    return( FALSE );
+}
+
+
+/* Split a multi-word move instruction. This is a clone of the Intel
+ * version but with all segment related junk stripped off.
+ */
+extern instruction *rSPLITMOVE( instruction *ins )
+/************************************************/
+{
+    instruction *new_ins;
+    instruction *ins2;
+    name        *temp;
+
+//    CnvOpToInt( ins, 0 );
+    if( IndexOverlaps( ins, 0 ) ) {
+        temp = AllocTemp( U8 );
+        new_ins = MakeMove( LowPart( ins->operands[0], U4 ),
+                             LowPart( temp, U4 ), U4 );
+        ins2 = MakeMove( HighPart( ins->operands[0], U4 ),
+                             HighPart( temp, U4 ), U4 );
+        ins->operands[0] = temp;
+        PrefixIns( ins, new_ins );
+        PrefixIns( ins, ins2 );
+        ins2 = MakeMove( LowPart( temp, U4 ), LowPart( ins->result, U4 ), U4 );
+        PrefixIns( ins, ins2 );
+        ins2 = MakeMove( HighPart( temp, U4 ),
+                          HighPart( ins->result, U4 ), U4 );
+        ReplIns( ins, ins2 );
+    } else {
+        HalfType( ins );
+        new_ins = MakeMove( LowPart( ins->operands[0], ins->type_class ),
+                             LowPart( ins->result, ins->type_class ),
+                             ins->type_class );
+        ins->operands[0] = HighPart( ins->operands[0], ins->type_class );
+        ins->result = HighPart( ins->result, ins->type_class );
+        if( new_ins->result->n.class == N_REGISTER
+         && ins->operands[0]->n.class == N_REGISTER
+         && HW_Ovlap( new_ins->result->r.reg, ins->operands[0]->r.reg ) ) {
+            SuffixIns( ins, new_ins );
+            new_ins = ins;
+        } else {
+            PrefixIns( ins, new_ins );
+        }
+    }
+    return( new_ins );
+}
