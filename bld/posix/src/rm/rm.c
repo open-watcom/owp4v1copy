@@ -114,7 +114,7 @@ int main( int argc, char *argv[] )
                         closedir( d );
                         RecursiveRM( argv[i] );
                     }
-                } else
+                } else if( !fflag )
                     PrintALineThenDrop( "Directory %s not found.", argv[i] );
             }
         }
