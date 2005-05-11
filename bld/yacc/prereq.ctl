@@ -4,6 +4,8 @@
 set PROJDIR=<CWD>
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+set EXENAME=
+set SYMNAME=
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
@@ -50,3 +52,6 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+set TARGDIR=
+set EXENAME=
+set SYMNAME=
