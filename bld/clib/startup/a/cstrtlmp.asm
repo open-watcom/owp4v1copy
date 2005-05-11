@@ -74,3 +74,5 @@ _cstart_:
 ;
         .asciiz "Open Watcom C/C++ MIPS Run-Time system."
 
+.new_section .drectve, "iRr0"
+             .asciiz "-entry:_cstart_"

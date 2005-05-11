@@ -58,5 +58,8 @@ wmake_trmem = 1
 
 !ifeq wmake_trmem 1
 objs += trmem.obj
-extra_c_flags_memory += -dTRACK -of+
+extra_c_flags_memory += -DTRACK
+!ifeq host_cpu 386
+extra_c_flags += -of+
+!endif
 !endif

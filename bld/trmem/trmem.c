@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory tracker library.
 *
 ****************************************************************************/
 
@@ -747,7 +746,7 @@ unsigned long _trmem_get_peak_usage( _trmem_hdl hdl ) {
     return hdl->max_mem;
 }
 
-#ifdef __AXP__
+#ifndef _M_IX86
 _trmem_who  _trmem_guess_who( void )
 /**********************************/
 /* NYI: stubbed for now */

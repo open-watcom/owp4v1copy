@@ -1,7 +1,7 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
 !inject abs.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject div.obj      d16                    nta ntp           o16   q16     w16
+!inject div.obj      d16                    nta ntp           o16   q16     w16             lpc lmp
 !inject fpe387.obj       d32
 !inject fpedos4g.obj     d32
 !inject fpeint.obj   d16 d32                                                w16 w32
