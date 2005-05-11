@@ -67,7 +67,7 @@ using std::ptrdiff_t;
 #endif
 :elsesegment DOS
 :include ext.sp
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
  _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
  #define _threadid (__threadid())
  #if defined(__NT__)

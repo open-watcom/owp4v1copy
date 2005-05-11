@@ -17,7 +17,7 @@
 :: it's much like a 386."
  /*          char | short | int | long | long long                        */
  /* 16 bit : 8      16      16    32     64     All 16 bit targets.       */
- /* 32 bit : 8      16      32    32     64     __386__, __AXP__, __PPC__ */
+ /* 32 bit : 8      16      32    32     64     386, AXP, PPC, MIPS       */
  /* 64 bit : 8      16      32    64     64     No targets implemented.   */
 
 /* Exact-width types. */
@@ -61,7 +61,7 @@ typedef unsigned long      uint_fast32_t;
 typedef unsigned long long uint_fast64_t;
 
 /* Integer types able to hold *object* pointers. */
-#if defined(__386__) || defined(__AXP__) || defined (__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
 #if defined(__COMPACT__) || defined(__LARGE__)
 typedef long long intptr_t;
 typedef unsigned long long uintptr_t;
@@ -98,7 +98,7 @@ typedef unsigned long long uintmax_t;
 #define INT64_MAX  9223372036854775807LL
 
 #define UINT8_MAX   255
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define UINT16_MAX  65535
 #else
 #define UINT16_MAX  65535U
@@ -117,7 +117,7 @@ typedef unsigned long long uintmax_t;
 #define INT_LEAST64_MAX  9223372036854775807LL
 
 #define UINT_LEAST8_MAX   255
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define UINT_LEAST16_MAX  65535
 #else
 #define UINT_LEAST16_MAX  65535U
@@ -126,7 +126,7 @@ typedef unsigned long long uintmax_t;
 #define UINT_LEAST64_MAX  18446744073709551615ULL
 
 /* Fast minimum-width types. */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define INT_FAST8_MIN   (-2147483647-1)
 #define INT_FAST8_MAX   2147483647
 #define INT_FAST16_MIN  (-2147483647-1)
@@ -142,7 +142,7 @@ typedef unsigned long long uintmax_t;
 #define INT_FAST64_MIN  (-9223372036854775807LL-1)
 #define INT_FAST64_MAX  9223372036854775807LL
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define UINT_FAST8_MAX   4294967295U
 #define UINT_FAST16_MAX  4294967295U
 #else
@@ -153,7 +153,7 @@ typedef unsigned long long uintmax_t;
 #define UINT_FAST64_MAX  18446744073709551615ULL
 
 /* Integer types able to hold object pointers. */
-#if defined(__386__) || defined(__AXP__) || defined (__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #if defined(__COMPACT__) || defined(__LARGE__)
 #define INTPTR_MIN   (-9223372036854775807LL-1)
 #define INTPTR_MAX   9223372036854775807LL
@@ -181,7 +181,7 @@ typedef unsigned long long uintmax_t;
 #define UINTMAX_MAX  18446744073709551615ULL
 
 /* Limits of other integer types. */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define PTRDIFF_MIN     (-2147483647-1)
 #define PTRDIFF_MAX     2147483647
 #define SIG_ATOMIC_MIN  (-2147483647-1)
