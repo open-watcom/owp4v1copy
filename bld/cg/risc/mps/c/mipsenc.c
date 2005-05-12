@@ -837,6 +837,12 @@ static  void Encode( instruction *ins )
         assert( ins->result->n.class == N_REGISTER );
         opcodes = FindOpcodes( ins );
         switch( ins->head.opcode ) {
+        case OP_LSHIFT:
+        case OP_RSHIFT:
+            // 'sllv', 'srlv' and 'srav' have the operands backwards
+            GenRType( opcodes[0], opcodes[1], _NameReg( ins->result ),
+                _NameReg( ins->operands[1] ), _NameReg( ins->operands[0] ) );
+            break;
         case OP_MUL:
             GenRType( opcodes[0], opcodes[1], 0, _NameReg( ins->operands[0] ),
                 _NameReg( ins->operands[1] ) );
