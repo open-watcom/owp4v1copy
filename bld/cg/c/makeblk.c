@@ -176,6 +176,7 @@ extern  void    AddIns( instruction *ins ) {
     CurrBlock->ins.hd.prev->head.next = ins;
     CurrBlock->ins.hd.prev = ins;
     ins->head.line_num = SrcLine;
+    _INS_NOT_BLOCK( ins );
     ins->id = ++ InsId;
     SrcLine = 0;
 }
@@ -502,6 +503,7 @@ extern  bool    BlkTooBig() {
     if( !HaveCurrBlock ) return( FALSE );
     if( CurrBlock == NULL ) return( FALSE );
     if( CurrBlock->ins.hd.next == (instruction *)&CurrBlock->ins ) return( FALSE );
+    _INS_NOT_BLOCK( CurrBlock->ins.hd.next );
     if( (InsId - CurrBlock->ins.hd.next->id) < INS_PER_BLOCK ) return( FALSE );
     if( CurrBlock->targets != 0 ) return( FALSE );
     blk = AskForNewLabel();

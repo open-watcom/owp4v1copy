@@ -39,6 +39,7 @@
 #include "model.h"
 #include "freelist.h"
 #include "feprotos.h"
+#include "zoiks.h"
 
 extern  reg_set_index   IndexIntersect(reg_set_index,type_class_def,bool);
 extern  reg_set_index   RegIntersect(reg_set_index,reg_set_index);
@@ -136,6 +137,8 @@ static  conflict_node   *FindConf( name *opnd,
     if( conf == NULL ) return( AddOne( opnd, blk ) );
     if( conf->start_block == NULL ) return( conf ); /* not filled in yet */
     for(;;) {                                       /* find the right one */
+        _INS_NOT_BLOCK( conf->ins_range.first );
+        _INS_NOT_BLOCK( conf->ins_range.last );
         if( conf->start_block != NULL
          && ins->id >= conf->ins_range.first->id
          && ins->id <= conf->ins_range.last->id ) return( conf );
@@ -168,6 +171,7 @@ extern  conflict_node   *FindConflictNode( name *opnd,
     } else if( ( opnd->n.class != N_MEMORY || _IsntModel( RELAX_ALIAS ) ) ) {
         return( NULL );
     }
+    _INS_NOT_BLOCK( ins );
     conf = FindConf( opnd, blk, ins );
     if( conf == NULL ) return( NULL );
     if( conf->start_block == NULL ) {
@@ -215,8 +219,11 @@ extern  conflict_node   *NameConflict( instruction *ins, name *opnd ) {
     } else if( opnd->n.class != N_MEMORY ) {
         return( NULL );
     }
+    _INS_NOT_BLOCK( ins );
     conf = opnd->v.conflict;
     while( conf != NULL ) {
+        _INS_NOT_BLOCK( conf->ins_range.first );
+        _INS_NOT_BLOCK( conf->ins_range.last );
         if( conf->ins_range.first->id <= ins->id
          && conf->ins_range.last->id  >= ins->id ) return( conf );
         conf = conf->next_for_name;

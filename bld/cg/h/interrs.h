@@ -172,5 +172,6 @@ typedef enum {
     ZOIKS_139,  /*  struct type in loop comparison */
     ZOIKS_140,  /*  too many blocks to calculate dominators */
     ZOIKS_141,  /*  regalloc - missed last instruction in conflict block */
+    ZOIKS_142,  /*  attempt to use OP_BLOCK as usual instruction */
     ZOIKS_LAST
 } internal_errors;

@@ -75,6 +75,7 @@ extern  label_handle    AskForNewLabel();
 extern  bool            SameThing(name*,name*);
 extern  void            RevCond(instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
+extern  void            PrefixInsRenum(instruction*,instruction*,bool);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            FreeIns(instruction*);
@@ -1576,6 +1577,8 @@ static  void    MergeVars() {
             ins = other->ins;
             while( ins->head.opcode != OP_BLOCK ) ins = ins->head.next;
             if( _BLOCK( ins ) != varblock ) continue;
+            _INS_NOT_BLOCK( var->ins );
+            _INS_NOT_BLOCK( other->ins );
             if( var->ins->id < other->ins->id ) {
                 if( !BasicNotRedefined( var, other->ins ) ) continue;
                 AdjustIndex( other, var );
@@ -2129,7 +2132,8 @@ static  void    MarkWillExecBlocks() {
 
     if( Head->ins.hd.prev == Head->ins.hd.next ) {
         nop = MakeNop();
-        PrefixIns( Head->ins.hd.next, nop ); // so PathFrom works
+        // Must (can hit block) and Ok to (ins killed) not renumber
+        PrefixInsRenum( Head->ins.hd.next, nop, FALSE ); // so PathFrom works
     } else {
         nop = NULL;
     }

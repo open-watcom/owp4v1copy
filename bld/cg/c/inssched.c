@@ -243,6 +243,8 @@ static  bool    ReallyDefinedBy( instruction *ins_i, instruction *ins_j,
 
     redefd = ReDefinedBy( ins_i, op );
     if( redefd != MAYBE || !ins_linked ) return( redefd );
+    _INS_NOT_BLOCK( ins_i );
+    _INS_NOT_BLOCK( ins_j );
     if( ins_i->id > ins_j->id ) {
         ins = ins_i;
         ins_i = ins_j;
@@ -722,6 +724,7 @@ static void FixIndexAdjust( instruction *adj, bool forward )
     bias = adj->operands[1]->c.int_value;
     if( adj->head.opcode == OP_SUB ) bias = -bias;
     if( forward ) bias = -bias;
+    _INS_NOT_BLOCK( adj );
     reg = adj->result->r.reg;
     chk = adj;
     for( ;; ) {
@@ -855,6 +858,8 @@ static void ScheduleIns()
                             // try to avoid fxch instructions
                             MARK_BEST;
                         } else {
+                            _INS_NOT_BLOCK( curr->ins );
+                            _INS_NOT_BLOCK( best->ins );
                             if( curr->ins->id > best->ins->id ) {
                                 MARK_BEST;
                             }

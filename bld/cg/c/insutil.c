@@ -173,14 +173,19 @@ static  void    MakeConflictInfo( instruction *ins1, instruction *ins2 ) {
 }
 
 
-extern  void    PrefixIns( instruction *ins, instruction *pref ) {
+extern  void    PrefixInsRenum( instruction *ins, instruction *pref, bool renum ) {
 /*****************************************************************/
 
     conflict_info       *info;
     conflict_node       *conf;
+    block               *blk;
+    instruction         *next;
 
 /*   Link the new instruction into the instruction ring*/
+/*   If renum = true, assign id and renumber. renum can be false only */
+/*   if you're going to call Renumber() manually. */
 
+    _INS_NOT_BLOCK( pref );
     pref->head.prev = ins->head.prev;
     pref->head.prev->head.next = pref;
     pref->head.next = ins;
@@ -188,17 +193,43 @@ extern  void    PrefixIns( instruction *ins, instruction *pref ) {
     if( ins->head.opcode != OP_BLOCK ) {
         pref->head.line_num = ins->head.line_num;
         ins->head.line_num = 0;
-    } else {
-        pref->head.line_num = 0;
-    }
-    pref->id = ins->id;
-    if( ins->head.opcode != OP_BLOCK ) {
+
         pref->stk_entry = ins->stk_entry;
         pref->stk_exit = ins->stk_entry;
         // pref->s.stk_extra = ins->s.stk_extra;
         pref->sequence = ins->sequence;
+
+        pref->id = ins->id;
+    } else {
+        pref->head.line_num = 0;
+
+        if ( renum ) {
+             /*
+             * Oops. There is no id in OP_BLOCK and assigned id will be invalid.
+             * This condition happens sometimes in loop optimizer.
+             * NOTE: this case can be a bug. It means that we're trying to add
+             * last instruction to the block. But other code can expect that
+             * last instruction is NOP, but it'll not.
+             * Currently we'll try to find next instruction with valid id.
+             */
+            next = ins;
+            for (;;) {
+                blk = _BLOCK( next )->next_block;
+                if( blk == NULL ) {
+                    Zoiks( ZOIKS_141 );
+                    break;
+                }
+                next = blk->ins.hd.next;
+                if ( next->head.opcode != OP_BLOCK ) break;
+            }
+            pref->id = next->id;
+        }
     }
-    RenumFrom( pref );
+
+    if ( renum ) {
+        RenumFrom( pref );
+    }
+
     if( HaveLiveInfo ) {
 
 /*      move the first/last pointers of any relevant conflict nodes */
@@ -232,6 +263,13 @@ extern  void    PrefixIns( instruction *ins, instruction *pref ) {
 }
 
 
+extern  void    PrefixIns( instruction *ins, instruction *pref ) {
+/****************************************************************/
+
+    PrefixInsRenum( ins, pref, TRUE );
+}
+
+
 extern  void    SuffixIns( instruction *ins, instruction *suff ) {
 /****************************************************************/
 
@@ -245,6 +283,12 @@ extern  void    SuffixIns( instruction *ins, instruction *suff ) {
     suff->head.prev = ins;
     ins->head.next = suff;
     suff->head.line_num = 0;
+    _INS_NOT_BLOCK( suff );
+    /*
+     * A little dirty, but check of OP_BLOCK can be skipped - in this case
+     * we'll just Renumber() everything from scratch.
+     */
+    /* _INS_NOT_BLOCK( ins ); */
     suff->id = ins->id;
     if( ins->head.opcode == OP_NOP ) {
         /* get rid of the little bugger so it doesn't mess up our optimizing */
@@ -325,6 +369,8 @@ extern  void    ReplIns( instruction *ins, instruction *new ) {
     // new->s.stk_extra = ins->s.stk_extra;
     new->sequence = ins->sequence;
 
+    _INS_NOT_BLOCK( new );
+    _INS_NOT_BLOCK( ins );
     new->head.line_num = ins->head.line_num;
     new->id = ins->id;
     new->head.state = INS_NEEDS_WORK;

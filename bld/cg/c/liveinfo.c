@@ -35,10 +35,12 @@
 #include "opcodes.h"
 #include "conflict.h"
 #include "procdef.h"
+#include "zoiks.h"
 
 extern  conflict_node   *FindConflictNode(name*,block*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
+extern  void            PrefixInsRenum(instruction*,instruction*,bool);
 extern  instruction     *MakeNop();
 extern  void            Renumber(void);
 extern  int             NumOperands(instruction*);
@@ -111,6 +113,10 @@ static  void    ExtendConflicts( block *blk, conflict_node *first_global ) {
         if( !( conf->name->v.usage & USE_IN_ANOTHER_BLOCK ) ) break;
         if( _GBitOverlap( conf->id.out_of_block, flow->out ) ) {
             last_ins = blk->ins.hd.prev;
+            if( conf->ins_range.last != NULL ) {
+                _INS_NOT_BLOCK( conf->ins_range.last );
+                _INS_NOT_BLOCK( last_ins );
+            }
             if( conf->ins_range.last == NULL
              || conf->ins_range.last->id <= last_ins->id ) {
                 if( last_ins->head.opcode != OP_NOP ) {
@@ -135,6 +141,10 @@ static  void    ExtendConflicts( block *blk, conflict_node *first_global ) {
         }
         if( _GBitOverlap( conf->id.out_of_block, flow->in ) ) {
             first_ins = blk->ins.hd.next;
+            if( conf->ins_range.first != NULL) {
+                _INS_NOT_BLOCK( conf->ins_range.first );
+                _INS_NOT_BLOCK( first_ins );
+            }
             if( conf->ins_range.first == NULL
              || conf->ins_range.first->id >= first_ins->id ) {
                 if( first_ins->head.opcode != OP_NOP ) {
@@ -324,7 +334,7 @@ extern  void    MakeLiveInfo() {
     HaveLiveInfo = FALSE;
     for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
         if( blk->ins.hd.prev->head.opcode != OP_NOP ) {
-            PrefixIns( (instruction *)&blk->ins, MakeNop() );
+            PrefixInsRenum( (instruction *)&blk->ins, MakeNop(), FALSE );
         }
     }
     HaveLiveInfo = havelive;

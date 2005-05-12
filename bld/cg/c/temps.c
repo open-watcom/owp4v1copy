@@ -37,6 +37,7 @@
 #include "sysmacro.h"
 #include "cgaux.h"
 #include "feprotos.h"
+#include "zoiks.h"
 
 typedef struct stack_temp {
         struct stack_temp       *others;
@@ -188,6 +189,7 @@ static bool SetLastUse( name *op, name *temp,
     }
     if( op->n.class == N_TEMP ) {
         if( DeAlias( op ) == temp ) {
+            _INS_NOT_BLOCK ( ins );
             new->last = ins->id;
             return( TRUE );
         }

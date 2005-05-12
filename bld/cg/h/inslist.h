@@ -154,3 +154,5 @@ typedef struct instruction {
 #define _OpClass( ins )              ( _IsConvert( ins ) \
                                        ? (ins)->base_type_class \
                                        : (ins)->type_class )
+
+#define _INS_NOT_BLOCK( ins )        if ( (ins)->head.opcode == OP_BLOCK ) Zoiks( ZOIKS_142 )

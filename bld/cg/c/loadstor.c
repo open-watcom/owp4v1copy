@@ -34,6 +34,7 @@
 #include "conflict.h"
 #include "opcodes.h"
 #include "stackok.h"
+#include "zoiks.h"
 
 extern  conflict_node   *NameConflict(instruction*,name*);
 extern  bool            NameIsConstant(name*);
@@ -264,6 +265,8 @@ static  void    CalculateLoadStore( conflict_node *conf ) {
             _GBitTurnOff( flow->need_store, id );
         }
         if( blk->ins.hd.prev != (instruction *)&blk->ins ) {
+            _INS_NOT_BLOCK( blk->ins.hd.prev );
+            _INS_NOT_BLOCK( conf->ins_range.last );
             if( blk->ins.hd.prev->id >= conf->ins_range.last->id) break;
         }
         blk = blk->next_block;

@@ -827,6 +827,7 @@ static  void    NeighboursUse( conflict_node *conf ) {
     HW_CAsgn( conf->with.regs, HW_EMPTY );
     _GBitInit( conf->with.out_of_block, EMPTY );
     _LBitInit( conf->with.within_block, EMPTY );
+    _INS_NOT_BLOCK ( last );
     if( ins != last ) {
         _NameSetInit( no_conflict );
         for(;;) {
