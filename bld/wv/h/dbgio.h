@@ -43,6 +43,7 @@ typedef unsigned_8 open_access; enum {
     OP_CREATE       = 0x04,
     OP_TRUNC        = 0x08,
     OP_APPEND       = 0x10,
+    OP_EXEC         = 0x10, // only valid with OP_CREATE - ran out of bits
     OP_REMOTE       = 0x20,
     OP_LOCAL        = 0x40,
     OP_SEARCH       = 0x80

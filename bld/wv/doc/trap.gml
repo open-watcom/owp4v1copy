@@ -1316,10 +1316,14 @@ file. The following bits are defined:
     Bit 0      :  TF_READ
     Bit 1      :  TF_WRITE
     Bit 2      :  TF_CREATE
-    Bit 3 - 7  :  not used
+    Bit 3      :  TF_EXEC
+    Bit 4 - 7  :  not used
 :eXMP.
 :PC.
 For read/write mode, turn both :F.TF_READ:eF. and :F.TF_WRITE:eF. bits on.
+The :F.TF_EXEC:eF. bit should only be used together with :F.TF_CREATE:eF. and
+indicates that the created file needs executable permission (if relevant on
+the target platform).
 :P.
 Return message:
 :XMP.

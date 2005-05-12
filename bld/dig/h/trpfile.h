@@ -73,7 +73,8 @@ typedef struct {
 enum {
     TF_READ     = 0x1,
     TF_WRITE    = 0x2,
-    TF_CREATE   = 0x4
+    TF_CREATE   = 0x4,
+    TF_EXEC     = 0x8
 };
 
 typedef struct {

@@ -127,7 +127,7 @@ extern void             FreeRing( char_ring *p );
 extern char_ring        **RingEnd( char_ring **owner );
 
 extern void             WndSetCmdPmt(char *,char *,unsigned int ,void (*)());
-bool                    CopyToRemote( char *local, char *remote, bool strip, void *cookie );
+static bool             CopyToRemote( char *local, char *remote, bool strip, void *cookie );
 char                    *RealFName( char *name, open_access *loc );
 
 extern void             DUIImageLoaded( image_entry*, bool, bool, bool* );
@@ -1148,7 +1148,7 @@ extern void LoadNewProg( char *cmd, char *parms )
 
 
 static long SizeMinusDebugInfo( handle floc, bool strip )
-/************************************************/
+/*******************************************************/
 {
     TISTrailer          trailer;
     long                copylen;
@@ -1162,8 +1162,8 @@ static long SizeMinusDebugInfo( handle floc, bool strip )
 }
 
 
-bool CopyToRemote( char *local, char *remote, bool strip, void *cookie )
-/**********************************************************************/
+static bool CopyToRemote( char *local, char *remote, bool strip, void *cookie )
+/*****************************************************************************/
 {
     handle              floc;
     handle              frem;
@@ -1194,7 +1194,7 @@ bool CopyToRemote( char *local, char *remote, bool strip, void *cookie )
         Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), local );
         return( FALSE );
     }
-    frem = FileOpen( remote, OP_REMOTE | OP_WRITE | OP_CREATE | OP_TRUNC );
+    frem = FileOpen( remote, OP_REMOTE | OP_WRITE | OP_CREATE | OP_TRUNC | OP_EXEC );
     if( frem == NIL_HANDLE ) {
         Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), remote );
         FileClose( floc );

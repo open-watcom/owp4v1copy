@@ -222,9 +222,15 @@ sys_handle RemoteOpen( char *name, open_access mode )
 
     SUPP_FILE_SERVICE( acc, REQ_FILE_OPEN );
     acc.mode = 0;
-    if( mode & OP_READ )        acc.mode |= TF_READ;
-    if( mode & OP_WRITE )       acc.mode |= TF_WRITE;
-    if( mode & OP_CREATE )      acc.mode |= TF_CREATE;
+    if( mode & OP_READ )
+        acc.mode |= TF_READ;
+    if( mode & OP_WRITE )
+        acc.mode |= TF_WRITE;
+    if( mode & OP_CREATE ) {
+        acc.mode |= TF_CREATE;
+        if( mode & OP_EXEC )
+            acc.mode |= TF_EXEC;
+    }
     in[0].ptr = &acc;
     in[0].len = sizeof( acc );
     in[1].ptr = name;
@@ -275,7 +281,7 @@ static unsigned DoAWrite( unsigned req, sys_handle hdl, void *ptr, unsigned len 
         in[0].len = sizeof( acc.con );
     } else {
         acc.file.handle = hdl;
-	CONV_LE_32( acc.file.handle );
+    CONV_LE_32( acc.file.handle );
         in[0].len = sizeof( acc.file );
     }
     in[0].ptr = &acc;

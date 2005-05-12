@@ -57,13 +57,19 @@ unsigned ReqFile_open()
     int                 handle;
     static const int    MapAcc[] = { O_RDONLY, O_WRONLY, O_RDWR };
     int                 mode;
+    int                 access;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     mode = MapAcc[ (acc->mode & (TF_READ|TF_WRITE)) - 1];
-    if( acc->mode & TF_CREATE ) mode |= O_CREAT | O_TRUNC;
+    access = S_IRUSR|S_IWUSR | S_IRGRP|S_IWGRP | S_IROTH|S_IWOTH;
+    if( acc->mode & TF_CREATE ) {
+        mode |= O_CREAT | O_TRUNC;
+        if( acc->mode & TF_EXEC )
+            access |= S_IXUSR | S_IXGRP | S_IXOTH;
+    }
     handle = open( (char *)GetInPtr( sizeof( *acc ) ), mode,
-                    S_IRUSR|S_IWUSR | S_IRGRP|S_IWGRP | S_IROTH|S_IWOTH );
+                    access );
     if( handle != -1 ) {
         fcntl( handle, F_SETFD, (int)FD_CLOEXEC );
         errno = 0;
@@ -257,7 +263,7 @@ unsigned ReqFile_run_cmd()
     }
     if ( (pid = fork()) == 0 ) { /* child */
         pid_t pgrp;
-	
+    
         setpgid( 0, 0 );
         pgrp = getpgrp();
         tcsetpgrp( 0, pgrp );
