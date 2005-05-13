@@ -243,7 +243,7 @@ sys/stat.h      : ../watcom/stat.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp
 !ifeq system LINUX
 dirent.h        : ../watcom/linux/dirent.mh ../poppack.sp ../pshpackl.sp ../lnxkpack.sp
 termios.h       : ../watcom/linux/termios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
-sys/ioctl.h     : ../watcom/linux/ioctl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
+sys/ioctl.h     : ../watcom/linux/ioctl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp ../incdir.sp
 sys/ptrace.h    : ../watcom/linux/ptrace.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
 sys/utsname.h   : ../watcom/linux/utsname.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
 sys/wait.h      : ../watcom/linux/wait.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp

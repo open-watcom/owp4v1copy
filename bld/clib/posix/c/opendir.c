@@ -34,16 +34,14 @@
 
 #include "dirstrea.h"
 
-#define O_DIRECTORY  0200000
-
 _WCRTLINK DIR *opendir( const char *__dirname )
 {
     DIR *dir = malloc( sizeof( *dir ) );
 
     dir->fd = open( __dirname, O_RDONLY | O_NONBLOCK | O_DIRECTORY );
     if (dir->fd == -1)
-        return NULL;
+        return( NULL );
     dir->bufofs = 0;
 
-    return dir;
+    return( dir );
 }

@@ -125,6 +125,11 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/valarray     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/vector       <RELROOT>/rel2/lh/
 
+    <CPCMD> <PROJDIR>/linux/arch/i386/*.h       <RELROOT>/rel2/lh/arch/i386/
+    <CPCMD> <PROJDIR>/linux/arch/i386/sys/*.h   <RELROOT>/rel2/lh/arch/i386/sys/
+    <CPCMD> <PROJDIR>/linux/arch/mips/*.h       <RELROOT>/rel2/lh/arch/mips/
+    <CPCMD> <PROJDIR>/linux/arch/mips/sys/*.h   <RELROOT>/rel2/lh/arch/mips/sys/
+
 #    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 

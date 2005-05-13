@@ -285,6 +285,7 @@ LINUX_files = &
         sys/mman.h &
         sys/mount.h &
         sys/ptrace.h &
+        sys/sysmips.h &
         sys/utsname.h &
         sys/wait.h &
         sys/socket.h &
