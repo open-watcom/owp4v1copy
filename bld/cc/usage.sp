@@ -5,6 +5,8 @@
 Usage: wccaxp [options] file [options]
 :elsesegment Tppc
 Usage: wccppc [options] file [options]
+:elsesegment Tmis
+Usage: wccmps [options] file [options]
 :elsesegment T386
 Usage: wcc386 [options] file [options]
 :elsesegment
@@ -81,12 +83,12 @@ Options:
 -en           emit routine names in the code segment
 -ep[=<num>]   call prologue hook routine with <num> stack bytes available
 :endsegment
-:segment Taxp | Tppc
+:segment Taxp | Tppc | Tmps
 -eb           emit big-endian object files
 -el           emit little-endian object files
 :endsegment
 :: add T386 later
-:segment Taxp | Tppc
+:segment Taxp | Tppc | Tmps
 -eoc          emit COFF object files
 -eoe          emit ELF object files
 :endsegment
@@ -145,8 +147,8 @@ Options:
 :segment T386 | Ti86
 -nt=<id>      set name of text segment
 :endsegment
-:segment Taxp
--o{a,b,d,e,h,i,k,l,n,o,r,s,t,u,x,z} control optimization
+:segment Taxp | Tppc | Tmps
+-o{a,b,d,e,h,i,k,h,l,n,o,p,r,s,t,u,x,z} control optimization
 :elsesegment
 -o{a,b,c,d,e,f[+],h,i,k,l,m,n,o,p,r,s,t,u,x,z} control optimization
 :endsegment
@@ -176,7 +178,7 @@ Options:
   s           -> favor code size over execution time in optimizations
   t           -> favor execution time over code size in optimizations
   u           -> all functions must have unique addresses
-:segment Taxp
+:segment Taxp | Tppc | Tmps
   x           -> equivalent to -obiler -s
 :elsesegment
   x           -> equivalent to -obmiler -s

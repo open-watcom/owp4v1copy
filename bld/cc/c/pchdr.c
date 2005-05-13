@@ -71,8 +71,10 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 #define PCH_VERSION_HOST ( ( 4L << 16 ) | PCH_VERSION )
 #elif defined(__SPARC__)
 #define PCH_VERSION_HOST ( ( 5L << 16 ) | PCH_VERSION )
-#else
+#elif defined(__MIPS__)
 #define PCH_VERSION_HOST ( ( 6L << 16 ) | PCH_VERSION )
+#else
+#define PCH_VERSION_HOST ( ( 128L << 16 ) | PCH_VERSION )
 #endif
 
 static  jmp_buf         PH_jmpbuf;
