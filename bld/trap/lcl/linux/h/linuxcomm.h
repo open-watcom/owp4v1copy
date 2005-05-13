@@ -359,6 +359,8 @@ extern pid_t    pid;
 extern long     orig_eax;
 extern long     last_eip;
 
+/* Table of signal descriptions */
+extern const char *const ExceptionMsgs[33];
 
 /* Internal debugging functions */
 

@@ -227,3 +227,40 @@ unsigned ReqMachine_data( void )
     *data = 0;
     return( sizeof( *ret ) + sizeof( *data ) );
 }
+
+// TODO: fix up ordering/contents
+const char *const ExceptionMsgs[33] = {
+    "",
+    TRP_QNX_hangup,
+    TRP_QNX_user_interrupt,
+    TRP_QNX_quit,
+    TRP_EXC_illegal_instruction,
+    TRP_QNX_trap,
+    TRP_QNX_abort,
+    TRP_QNX_bus_error,
+    TRP_QNX_floating_point_error,
+    TRP_QNX_process_killed,
+    TRP_QNX_user_signal_1,
+    TRP_EXC_access_violation "(SIGSEGV)",
+    TRP_QNX_user_signal_2,
+    TRP_QNX_broken_pipe,
+    TRP_QNX_alarm,
+    TRP_QNX_process_termination,
+    TRP_EXC_floating_point_stack_check,
+    TRP_QNX_child_stopped,
+    TRP_QNX_process_continued,
+    TRP_QNX_process_stopped,
+    "", /* sigtstp */
+    "", /* sigttin */
+    "", /* sigttou */
+    TRP_QNX_urgent,
+    "", /* sigxcpu */
+    "", /* sigxfsz */
+    "", /* sigvtalarm */
+    "", /* sigprof */
+    TRP_QNX_winch,
+    TRP_QNX_poll,
+    TRP_QNX_power_fail,
+    TRP_QNX_sys,
+    ""
+};
