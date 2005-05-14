@@ -228,7 +228,6 @@ File: source\diag0018.c
 File: source\diag0019.c
 (27,1): Warning! W744: 'operator ->' does not have a return type specified (int assumed)
 (27,1): Error! E266: 'operator ->' must be a non-static member function
-(27,1): Warning! W730: return type of 'operator ->' will not allow '->' to be applied
 (32,30): Error! E267: 'operator ->' must have one argument
   argument count is 2 since there is an implicit 'this' argument
 (34,25): Error! E267: 'operator ->' must have one argument
@@ -236,7 +235,6 @@ File: source\diag0019.c
 (35,29): Error! E267: 'operator ->' must have one argument
   argument count is 2 since there is an implicit 'this' argument
 (36,18): Warning! W744: 'operator ->' does not have a return type specified (int assumed)
-(36,18): Warning! W730: return type of 'operator ->' will not allow '->' to be applied
 File: source\diag0020.c
 (3,25): Error! E272: 'operator new' must have a return type of pointer to void
 (3,25): Error! E273: the first argument of 'operator new' must be of type size_t

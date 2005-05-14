@@ -1842,8 +1842,6 @@ File: source\diag0233.c
   left operand type is 'int [10] (lvalue)'
   right operand type is 'int'
 File: source\diag0234.c
-(8,25): Warning! W730: return type of 'operator ->' will not allow '->' to be applied
-(21,21): Warning! W730: return type of 'operator ->' will not allow '->' to be applied
 (31,6): Error! E277: return type of 'S::operator ->' must allow the '->' operator to be applied
   definition: 'void * S::operator ->( void )'
 (32,6): Error! E277: return type of 'S::operator ->' must allow the '->' operator to be applied
@@ -2214,16 +2212,8 @@ File: source\diag0240.c
   definition: 'int x205'
 (208,40): Error! E754: '__declspec(thread)' data 'x210' must be link-time initialized
   definition: 'x193 x210' in 'void x209( void )'
-(223,1): Error! E226: function 'x219::x219' is not distinct
-  definition: 'x219::x219( unsigned const )'
-(223,1): Error! E254: 'x219::x219' has not been declared as a member
-  definition: 'x219::x219( unsigned )'
 (224,1): Warning! W726: no reference to formal parameter 'handle'
   definition: 'unsigned handle' in 'x219::x219( unsigned )'
-(227,1): Error! E226: function 'x219::x219' is not distinct
-  definition: 'x219::x219( x216 const )'
-(227,1): Error! E254: 'x219::x219' has not been declared as a member
-  definition: 'x219::x219( x216 )'
 (228,1): Warning! W726: no reference to formal parameter 'handle'
   definition: 'x216 handle' in 'x219::x219( x216 )'
 (245,9): Error! E173: floating-point constant too small to represent
@@ -2854,20 +2844,20 @@ File: source\diag0256.c
   source conversion type is 'int * * * * *'
   target conversion type is 'int const volatile * const volatile * volatile * const volatile * const volatile *'
 (29,7): Error! E473: function argument(s) do not match those in prototype
-  definition: 'void f1( int * const * const volatile * * const volatile )'
+  definition: 'void f1( int * const * const volatile * * )'
   cannot convert argument 1 defined at: (29,9)
   source conversion type is 'int * const * volatile * * volatile (lvalue)'
-  target conversion type is 'int * const * const volatile * * const volatile'
+  target conversion type is 'int * const * const volatile * *'
 (30,7): Error! E473: function argument(s) do not match those in prototype
   definition: 'void f2( int volatile * const * const volatile * volatile * )'
   cannot convert argument 1 defined at: (30,9)
   source conversion type is 'int volatile * const * volatile * volatile * volatile (lvalue)'
   target conversion type is 'int volatile * const * const volatile * volatile *'
 (31,7): Error! E473: function argument(s) do not match those in prototype
-  definition: 'void f3( int volatile * const volatile * volatile * const * const volatile )'
+  definition: 'void f3( int volatile * const volatile * volatile * const * )'
   cannot convert argument 1 defined at: (31,9)
   source conversion type is 'int volatile * const * volatile * * volatile (lvalue)'
-  target conversion type is 'int volatile * const volatile * volatile * const * const volatile'
+  target conversion type is 'int volatile * const volatile * volatile * const *'
 (32,7): Error! E473: function argument(s) do not match those in prototype
   definition: 'void f4( int volatile * const * const volatile * * )'
   cannot convert argument 1 defined at: (32,9)

@@ -100,9 +100,11 @@ File: source\diag0080.c
   right operand type is 'int (RFG::* )( void ) (lvalue)'
 (76,5): Warning! W203: declaration statement follows a switch statement
 (78,5): Warning! W201: declaration statement follows an if statement
+(79,9): Warning! W128: initializer for variable 'z' cannot be bypassed
+  definition: 'int z' in 'void x72( void )'
+(79,15): Error! E042: symbol 'z' already defined
+  definition: 'int z' in 'void x72( void )'
 (80,5): Warning! W202: declaration statement follows an else statement
-(82,19): Error! E042: symbol 'i' already defined
-  definition: 'int i' in 'void x72( void )'
 (83,5): Warning! W207: declaration statement cannot follow a for statement
 (85,5): Warning! W205: declaration statement cannot follow a while statement
 (87,5): Warning! W206: declaration statement cannot follow a do statement
@@ -462,8 +464,10 @@ File: source\diag0105.c
 (128,9): Error! E029: symbol 'b' has not been declared
 (129,9): Error! E019: 'break' may only appear in a for, do, while, or switch statement
 (130,5): Error! E020: 'case' may only appear in a switch statement
+(131,13): Error! E029: symbol 'b' has not been declared
 (132,13): Error! E021: 'continue' may only appear in a for, do, or while statement
 (134,5): Error! E022: 'default' may only appear in a switch statement
+(135,13): Error! E029: symbol 'b' has not been declared
 (138,32): Error! E182: invalid storage class for an argument
 (139,1): Error! E037: invalid storage class for function
 (139,1): Error! E238: 'x81' is not a function

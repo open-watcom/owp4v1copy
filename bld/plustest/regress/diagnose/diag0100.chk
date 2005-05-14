@@ -1,6 +1,4 @@
 File: source\diag0100.c
-(5,21): Error! E226: function 'foo' is not distinct
-  definition: 'void foo( X1 )'
 (27,10): Error! E148: access to private member 'Z2::a' is not allowed
   definition: 'int Z2<float>::a'
 (59,16): Error! E121: syntax error
@@ -210,6 +208,10 @@ File: source\diag0120.c
 (21,50): Error! E058: expression must be a constant
 (22,11): Error! E545: cannot create an undefined type with 'operator new'
 (38,5): Warning! W201: declaration statement follows an if statement
+(39,9): Warning! W128: initializer for variable 'dummy' cannot be bypassed
+  definition: 'int dummy' in 'void f33( int )'
+(39,19): Error! E042: symbol 'dummy' already defined
+  definition: 'int dummy' in 'void f33( int )'
 (40,5): Warning! W202: declaration statement follows an else statement
 (42,5): Warning! W203: declaration statement follows a switch statement
 (40,11): Warning! W893: switch statement has no case labels
@@ -242,10 +244,7 @@ File: source\diag0123.c
 (99,1): Error! E028: expecting ';' but found '}'
 (100,0): Error! E199: premature end-of-file encountered during compilation
 File: source\diag0124.c
-(2,19): Error! E498: syntax error before 'T'; probable cause: incorrectly spelled type name
-(9,6): Error! E336: declaration specifiers are required to declare 'Range'
-(9,6): Error! E121: syntax error
-(11,28): Error! E241: class or namespace 'T' has not been declared
+(9,22): Error! E390: cannot generate default constructor to initialize 'Range<int,1,10>' since constructors were declared
 (23,6): Error! E336: declaration specifiers are required to declare 'FooCB'
 (23,6): Error! E121: syntax error
 (34,36): Error! E641: cannot inherit a partially defined base class 'Vector<int>'
@@ -277,14 +276,11 @@ File: source\diag0127.c
 (4,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0128.c
 (4,2): Error! E080: one error for DIAGNOSE test stream
-End of file
-Error! E099: file must contain at least one external definition
+I did not generate errors for diag0129 
 End of file
 Warning! W014: no reference to symbol 'foo'
   definition: 'void foo( void )'
-Error! E099: file must contain at least one external definition
-End of file
-Error! E099: file must contain at least one external definition
+I did not generate errors for diag0131 
 File: source\diag0132.c
 (7,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0133.c
@@ -296,13 +292,11 @@ Warning! W014: no reference to symbol 'x'
   definition: 'int x'
 Warning! W014: no reference to symbol 'y'
   definition: 'int y'
-Error! E099: file must contain at least one external definition
 File: source\diag0136.c
 (5,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0137.c
 (5,2): Error! E080: one error for DIAGNOSE test stream
-End of file
-Error! E099: file must contain at least one external definition
+I did not generate errors for diag0138 
 File: source\diag0139.h
   included from source\diag0139.c(1)
 (2,2): Error! E080: should print twice
@@ -1269,7 +1263,7 @@ File: source\diag0177.c
   target conversion type is 'void (S::* )( char * )'
 (19,20): Error! E030: left expression must be a function or a function pointer
 File: source\diag0178.c
-(11,13): Error! E210: returning reference to function argument or to auto or register variable
+(11,16): Error! E210: returning reference to function argument or to auto or register variable
   'S' defined at: (3,8)
 (21,15): Error! E210: returning reference to function argument or to auto or register variable
   'S' defined at: (3,8)

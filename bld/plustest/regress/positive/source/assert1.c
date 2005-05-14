@@ -7,7 +7,7 @@ struct A {
     static_assert( val != 0, "message" );
 };
 
-static_assert( true, "false" );
+static_assert( true, "message" );
 
 namespace ns {
     static_assert( 1 + 1 == 2, "message" );
