@@ -211,6 +211,29 @@ extern instruction *rCONSTLOAD( instruction *ins )
 }
 
 
+extern instruction *rLOAD_4U( instruction *ins )
+/**********************************************/
+{
+    instruction         *first_ins;
+    instruction         *new_ins;
+    name                *mem_1;
+    name                *mem_2;
+    name                *temp;
+
+    mem_1 = OffsetMem( ins->operands[0], 3, U4 );
+    mem_2 = OffsetMem( ins->operands[0], 0, U4 );
+    temp = AllocTemp( U4 );
+    first_ins = MakeUnary( OP_LOAD_UNALIGNED, mem_1, temp, U4 );
+    PrefixIns( ins, first_ins );
+    new_ins = MakeUnary( OP_LOAD_UNALIGNED, mem_2, temp, U4 );
+    PrefixIns( ins, new_ins );
+    new_ins = MakeMove( temp, ins->result, U4 );
+    ReplIns( ins, new_ins );
+    UpdateLive( first_ins, new_ins );
+    return( first_ins );
+}
+
+
 static instruction *CheapCall( instruction *ins, int rt_call, name *p1, name *p2 )
 /********************************************************************************/
 {

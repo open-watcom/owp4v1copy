@@ -24,42 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linux sysmips() implementation (MIPS architecture only).
 *
 ****************************************************************************/
 
 
-_R_( R_SWAPOPS,         rSWAPOPS ),
-_R_( R_MOVOP1TEMP,      rMOVOP1TEMP ),
-_R_( R_MOVOP2TEMP,      rMOVOP2TEMP ),
-_R_( R_MOVOP1REG,       rOP1REG ),
-_R_( R_MOVOP2REG,       rOP2REG ),
-_R_( R_MOVRESREG,       rMOVRESREG ),
-_R_( R_DOCVT,           rDOCVT ),
-_R_( R_MOVRESTEMP,      rMOVRESTEMP ),
-_R_( R_PUSHTOMOV,       rPUSHTOMOV ),
-_R_( R_POPTOMOV,        rPOPTOMOV ),
-_R_( R_FORCEOP1MEM,     rOP1MEM ),
-_R_( R_FORCEOP2MEM,     rOP2MEM ),
-_R_( R_CONSTLOAD,       rCONSTLOAD ),
-_R_( R_SWAPCMP,         rSWAPCMP ),
-_R_( R_SPLITCMP,        rSPLITCMP ),
-_R_( R_M_SPLITCMP,      rM_SPLITCMP ),
-_R_( R_DOSET,           rDOSET ),
-_R_( R_FORCEOP1CMEM,    rOP1CMEM ),
-_R_( R_FORCEOP2CMEM,    rOP2CMEM ),
-_R_( R_MAKECALL,        rMAKECALL ),
-_R_( R_DOTEST,          rDOTEST ),
-_R_( R_CHANGETYPE,      rCHANGETYPE ),
-_R_( R_MOVEXX,          rMOVEXX ),
-_R_( R_FORCERESMEM,     rFORCERESMEM ),
-_R_( R_MOVEINDEX,       rMOVEINDEX ),
-_R_( R_BIN2INT,         rBIN2INT ),
-_R_( R_BIN2QUAD,        rBIN2QUAD ),
-_R_( R_SHR,             rSHR ),
-_R_( R_LOAD_4U,         rLOAD_4U ),
-_R_( R_MOVEXX_8,        rMOVEXX_8 ),
-_R_( R_MOVEXX_4,        rMOVEXX_4 ),
-_R_( R_SPLITMOVE,       rSPLITMOVE ),
-_R_( R_ALLOCA,          rALLOCA ),
+#include <stdlib.h>
+#include <sys/sysmips.h>
+#include <errno.h>
+#include "syslinux.h"
+
+_WCRTLINK int sysmips( const int cmd, const int arg1, const int arg2, const int arg3 )
+{
+    u_long res = sys_call4( SYS_sysmips, cmd, arg1, arg2, arg3 );
+    __syscall_return( int, res );
+}

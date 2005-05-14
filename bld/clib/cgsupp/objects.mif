@@ -48,6 +48,8 @@
 !inject i4m.obj                  g16                                        w16
 !inject i8d.obj                      g32
 !inject i8d086.obj               g16                                        w16
+!inject i8dmps.obj                                                                              lmp
+!inject i8rmps.obj                                                                              lmp
 !inject i8fs086.obj              g16                                        w16
 !inject i8fs386.obj                  g32
 !inject i8fd086.obj              g16                                        w16

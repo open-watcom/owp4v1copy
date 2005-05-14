@@ -587,25 +587,51 @@ static  void doLoadStore( instruction *ins, bool load )
     uint_8      index;
     int_16      offset;
 
-    // TODO: handle unaligned loads/stores properly (via lwl/lwr)
     if( load ) {
         mem = ins->operands[0];
         reg = ins->result;
         opcode = loadOpcodes[_OpClass( ins )];
-        if( ins->head.opcode == OP_LOAD_UNALIGNED ) {
-            opcode = 0x0b;
-        }
     } else {
         reg = ins->operands[0];
         mem = ins->result;
         opcode = storeOpcodes[ins->type_class];
-        if( ins->head.opcode == OP_STORE_UNALIGNED ) {
-            opcode = 0x0f;
-        }
     }
     assert( reg->n.class == N_REGISTER );
     getMemEncoding( mem, &index, &offset );
     GenMEMINS( opcode, _NameReg( reg ), index, offset );
+}
+
+
+static  void doLoadStoreUnaligned( instruction *ins, bool load )
+/**************************************************************/
+{
+#if 0
+    name        *mem;
+    name        *reg;
+    uint_8      opcode1;
+    uint_8      opcode2;
+    uint_8      index;
+    int_16      offset;
+
+    if( load ) {
+        mem = ins->operands[0];
+        reg = ins->result;
+        // 'lwl', 'lwr'
+        opcode1 = 0x22; opcode2 = 0x26;
+    } else {
+        reg = ins->operands[0];
+        mem = ins->result;
+        // 'swl', 'swr'
+        opcode1 = 0x2a; opcode2 = 0x2e;
+    }
+    assert( reg->n.class == N_REGISTER );
+    getMemEncoding( mem, &index, &offset );
+    // TODO: make sure offset can't overflow
+    GenMEMINS( opcode1, _NameReg( reg ), index, offset + 3 );
+    GenMEMINS( opcode2, _NameReg( reg ), index, offset );
+#else
+    doLoadStore( ins, load );
+#endif
 }
 
 
@@ -981,10 +1007,14 @@ static  void Encode( instruction *ins )
         GenIType( 0x0d, _NameReg( ins->result ), MIPS_ZERO_SINK, ins->operands[0]->c.int_value );
         break;
     case G_LOAD_UA:
+        doLoadStoreUnaligned( ins, TRUE );
+        break;
     case G_LOAD:
         doLoadStore( ins, TRUE );
         break;
     case G_STORE_UA:
+        doLoadStoreUnaligned( ins, FALSE );
+        break;
     case G_STORE:
         doLoadStore( ins, FALSE );
         break;

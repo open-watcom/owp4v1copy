@@ -1,6 +1,10 @@
+#if 0 // This blows up in sigaction() for some reason
 #define _NSIG       128
 #define _NSIG_BPW   (sizeof(unsigned long) * 8)
 #define _NSIG_WORDS (_NSIG / _NSIG_BPW)
+#else
+#define _NSIG_WORDS 2
+#endif
 
 typedef struct {
     unsigned long sig[_NSIG_WORDS];

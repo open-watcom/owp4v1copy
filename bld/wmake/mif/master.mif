@@ -75,7 +75,7 @@ extra_l_flags_dos = option stack=16k
 !else
 extra_l_flags_dos = option stack=4k
 !endif
-extra_l_flags = NAME $(xname).$(ext) OPTION MAP
+extra_l_flags = NAME $(xname).$(ext) OPTION MAP,statics sort
 
 libs = $(wres_lib) $(orl_lib)
 

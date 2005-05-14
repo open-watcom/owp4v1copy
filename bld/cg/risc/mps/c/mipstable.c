@@ -90,19 +90,19 @@ _Un(     ANY,  ANY, NONE ),        V_NO,       R_DOCVT,      RG_,           FU_N
 opcode_entry    LoadUnaligned[] = {
 /*********************************/
 /*       op1   res   eq            verify      gen           reg            fu */
-_Un(     M,    R,    NONE ),       V_NO,       G_LOAD_UA,    RG_QWORD,      FU_NO,
-_Un(     M,    M,    NONE ),       V_NO,       R_MOVRESTEMP, RG_QWORD,      FU_NO,
-_Un(     U,    ANY,  NONE ),       V_NO,       R_FORCEOP1MEM,RG_QWORD,      FU_NO,
-_Un(     ANY,  ANY,  NONE ),       V_NO,       G_UNKNOWN,    RG_QWORD_NEED, FU_NO,
+_Un(     M,    R,    NONE ),       V_NO,       G_LOAD_UA,    RG_DWORD,      FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,       R_MOVRESTEMP, RG_DWORD,      FU_NO,
+_Un(     U,    ANY,  NONE ),       V_NO,       R_FORCEOP1MEM,RG_DWORD,      FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,       G_UNKNOWN,    RG_DWORD_NEED, FU_NO,
 };
 
 opcode_entry    StoreUnaligned[] = {
 /**********************************/
 /*       op1   res   eq            verify      gen           reg            fu */
-_Un(     R,    M,    NONE ),       V_NO,       G_STORE_UA,   RG_QWORD,      FU_NO,
-_Un(     M,    M,    NONE ),       V_NO,       R_MOVOP1TEMP, RG_QWORD,      FU_NO,
-_Un(     ANY,  U,    NONE ),       V_NO,       R_FORCERESMEM,RG_QWORD,      FU_NO,
-_Un(     ANY,  ANY,  NONE ),       V_NO,       G_UNKNOWN,    RG_QWORD_NEED, FU_NO,
+_Un(     R,    M,    NONE ),       V_NO,       G_STORE_UA,   RG_DWORD,      FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,       R_MOVOP1TEMP, RG_DWORD,      FU_NO,
+_Un(     ANY,  U,    NONE ),       V_NO,       R_FORCERESMEM,RG_DWORD,      FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,       G_UNKNOWN,    RG_DWORD_NEED, FU_NO,
 };
 
 opcode_entry    NegF[] = {
@@ -127,34 +127,81 @@ _Un(    ANY,  ANY,  NONE ),        V_OP1_RES_AL4,  R_MOVEXX_4,   RG_DWORD_NEED, 
 _Un(    ANY,  ANY,  NONE ),        V_NO,           R_MOVEXX,     RG_DWORD_NEED, FU_NO,
 };
 
-#define MOVE_TABLE( t_name, reg, load, store ) \
-opcode_entry    t_name[] = {                                                            \
-/**************************/                                                            \
-/*       op1   res   eq            verify          gen           reg      fu */         \
-_Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,        \
-_UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,        \
-_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_##reg,FU_NO,        \
-_Un(     R,    M,    NONE ),       V_NO,           store,        RG_##reg,FU_MEM,       \
-_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_##reg,FU_NO,        \
-_Un(     M,    R,    NONE ),       V_NO,           load,         RG_##reg,FU_MEM,       \
-_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,        \
-_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_##reg,FU_NO,        \
-_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_##reg,FU_NO,        \
-_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_##reg,FU_NO,        \
-_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,        \
-_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_##reg##_NEED,FU_NO, \
+// TODO: 1- and 2- byte loads ought to be conversions, not moves
+opcode_entry    Move1[] = {
+/**************************/
+/*       op1   res   eq            verify          gen           reg      fu */
+_Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
+_UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_BYTE ,FU_NO,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE,      RG_BYTE ,FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_BYTE ,FU_NO,
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_BYTE ,FU_MEM,
+_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_BYTE ,FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_BYTE ,FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_BYTE ,FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_BYTE_NEED,FU_NO,
 };
 
-MOVE_TABLE( Move1, BYTE,  G_LOAD, G_STORE );
-MOVE_TABLE( Move2, WORD,  G_LOAD, G_STORE );
-MOVE_TABLE( Move4, DWORD, G_LOAD, G_STORE );
-
-static  opcode_entry    Move8[] = {
+opcode_entry    Move2[] = {
 /**************************/
-/*       op    res   eq        verify           gen             reg      fu */
-_Un(     ANY,  ANY,  EQ_R1 ),  NVI(V_NO),       G_NO,           RG_,     FU_NO,        \
-_UnPP(   M,    M,    NONE  ),  NVI(V_SAME_LOCN),G_NO,           RG_,     FU_NO,        \
-_Un(     ANY,  ANY,  NONE ),   V_NO,            R_SPLITMOVE,    RG_QWORD,FU_NO,
+/*       op1   res   eq            verify          gen           reg      fu */
+_Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
+_UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_WORD ,FU_NO,
+_Un(     R,    M,    NONE ),       V_RES_AL2,      G_STORE,      RG_WORD ,FU_MEM,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE_UA,   RG_WORD ,FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_WORD ,FU_NO,
+_Un(     M,    R,    NONE ),       V_OP1_AL4,      G_LOAD,       RG_WORD ,FU_MEM,
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD_UA,    RG_WORD ,FU_MEM,
+_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_WORD ,FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_WORD ,FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_WORD ,FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_WORD_NEED,FU_NO,
+};
+
+opcode_entry    Move4[] = {
+/**************************/
+/*       op1   res   eq            verify          gen           reg      fu */
+_Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
+_UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_DWORD,FU_NO,
+_Un(     R,    M,    NONE ),       V_RES_AL4,      G_STORE,      RG_DWORD,FU_MEM,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE_UA,   RG_DWORD,FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_DWORD,FU_NO,
+#if 0
+_Un(     M,    R,    NONE ),       V_OP1_AL4,      G_LOAD,       RG_DWORD,FU_MEM,
+_Un(     M,    R,    NONE ),       V_NO,           R_LOAD_4U,    RG_DWORD,FU_MEM,
+#else
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_DWORD,FU_MEM,
+#endif
+_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_DWORD,FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_DWORD_NEED,FU_NO,
+};
+
+opcode_entry    Move8[] = {
+/**************************/
+/*       op1   res   eq            verify          gen           reg      fu */
+_Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
+_UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_QWORD,FU_NO,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE,      RG_QWORD,FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_QWORD,FU_NO,
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_QWORD,FU_MEM,
+_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_DWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_QWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_QWORD,FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_QWORD,FU_NO,
+_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_QWORD_NEED,FU_NO,
 };
 
 #define BINARY_TABLE( name, reg, const_verify ) \
