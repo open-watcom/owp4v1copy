@@ -126,6 +126,8 @@ File: source\diag0013.c
   rejected function: void ff( double ) defined at: (17,6)
 (37,5): Error! E229: function 'foo' has already been defined
   definition: 'int foo( int )'
+(43,24): Error! E907: redeclaration of member function 'A::operator int ' not allowed
+  definition: 'A::operator int ()'
 (44,30): Error! E226: function 'A::operator int ' is not distinct
   definition: 'A::operator int ()'
 (51,23): Error! E226: function 'bar' is not distinct
@@ -779,6 +781,8 @@ File: source\diag0049.c
   target conversion type is 'void *'
 (16,9): Error! E418: destructor is not declared in its proper class
 (17,9): Error! E418: destructor is not declared in its proper class
+(17,9): Error! E907: redeclaration of member function 'X::~X' not allowed
+  definition: 'X::~X( void )'
 (21,10): Error! E359: union 'U' referenced as a class
 (24,19): Error! E125: invalid redefinition of the typedef name 'colour'
   definition: 'colour'

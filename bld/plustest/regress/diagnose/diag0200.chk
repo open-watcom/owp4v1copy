@@ -1693,12 +1693,18 @@ File: source\diag0231.c
 (85,20): Error! E148: access to private member 'priv_dtor::~priv_dtor' is not allowed
   definition: 'priv_dtor::~priv_dtor( void )'
 File: source\diag0232.c
-(5,25): Error! E226: function 'x1::fi' is not distinct
+(4,20): Error! E907: redeclaration of member function 'x1::fi' not allowed
   definition: 'void x1::fi( int )'
-(6,28): Error! E226: function 'x1::fi' is not distinct
-  definition: 'void x1::fi( int const )'
+(5,25): Error! E907: redeclaration of member function 'x1::fi' not allowed
+  definition: 'void x1::fi( int )'
+(6,28): Error! E907: redeclaration of member function 'x1::fi' not allowed
+  definition: 'void x1::fi( int )'
 (9,22): Error! E226: function 'x1::fri' is not distinct
   definition: 'void x1::fri( int )'
+(12,23): Error! E907: redeclaration of member function 'x1::fpi' not allowed
+  definition: 'void x1::fpi( int * )'
+(15,27): Error! E907: redeclaration of member function 'x1::fa' not allowed
+  definition: 'void x1::fa( int (* )[10])'
 (18,27): Error! E385: attempt to overload function 'x1::fb' with a different return type
   definition: 'float x1::fb( char, int )'
 (37,10): Error! E227: overloaded function is ambiguous for arguments used in call
@@ -2732,6 +2738,8 @@ File: source\diag0248.c
   ambiguous function: void f3( A * ) defined at: (20,6)
   ambiguous function: void f3( B * ) defined at: (21,6)
 File: source\diag0249.c
+(10,35): Error! E907: redeclaration of member function 'A::foo' not allowed
+  definition: 'void A::foo( int ) const volatile'
 (20,11): Error! E473: function argument(s) do not match those in prototype
   definition: 'void A::bar1( void (A::* )( int ) const)'
   cannot convert argument 1 defined at: (20,13)
@@ -2880,16 +2888,28 @@ File: source\diag0257.c
 (11,35): Error! E029: symbol 'operator ()' has not been declared
 (18,49): Warning! W248: using default arguments would be overload ambiguous with 'B::operator ()'
   definition: 'void B::operator ()( int, int )'
+(20,41): Error! E907: redeclaration of member function 'B::operator ()' not allowed
+  definition: 'void B::operator ()( int, int )'
+(29,41): Error! E907: redeclaration of member function 'C::operator ()' not allowed
+  definition: 'void C::operator ()( int, int )'
 (30,49): Warning! W248: using default arguments would be overload ambiguous with 'C::operator ()'
   definition: 'void C::operator ()( int, int )'
 (37,49): Warning! W248: using default arguments would be overload ambiguous with 'D::operator ()'
   definition: 'void D::operator ()( int, int )'
+(38,37): Error! E907: redeclaration of member function 'D::operator ()' not allowed
+  definition: 'void D::operator ()( int, int )'
+(45,37): Error! E907: redeclaration of member function 'E::operator ()' not allowed
+  definition: 'void E::operator ()( int, int )'
 (46,49): Warning! W248: using default arguments would be overload ambiguous with 'E::operator ()'
   definition: 'void E::operator ()( int, int )'
 (53,41): Warning! W618: function will be overload ambiguous with 'F::operator ()' using default arguments
   definition: 'void F::operator ()( int, int [, int ])'
+(54,37): Error! E907: redeclaration of member function 'F::operator ()' not allowed
+  definition: 'void F::operator ()( int, int )'
 (61,37): Warning! W618: function will be overload ambiguous with 'G::operator ()' using default arguments
   definition: 'void G::operator ()( int, int [, int ])'
+(62,41): Error! E907: redeclaration of member function 'G::operator ()' not allowed
+  definition: 'void G::operator ()( int, int )'
 (75,8): Error! E227: overloaded function is ambiguous for arguments used in call
   ambiguous function: void foo( int, int ) defined at: (1,6)
   ambiguous function: void foo( int, int [, int ]) defined at: (2,33)
@@ -3444,6 +3464,8 @@ File: source\diag0292.c
 (232,11): Error! E498: syntax error before 'x232'; probable cause: incorrectly spelled type name
 (248,33): Warning! W248: using default arguments would be overload ambiguous with 'A::f2'
   definition: 'void x244::A::f2( int )'
+(251,35): Error! E907: redeclaration of member function 'A::f4' not allowed
+  definition: 'void x244::A::f4( int, char )'
 (256,19): Warning! W618: function will be overload ambiguous with 'A::f1' using default arguments
   definition: 'void x244::A::f1( int [, bool ])'
 (256,19): Error! E254: 'A::f1' has not been declared as a member

@@ -11907,3 +11907,13 @@ export template< class T >
 struct A {
 };
 :eerrbad.
+
+:MSGSYM. ERR_CANNOT_REDECLARE_MEMBER_FUNCTION
+:MSGTXT. redeclaration of member function '%S' not allowed
+:MSGJTXT.
+:errbad.
+struct A {
+    void f();
+    void f();
+};
+:eerrbad.

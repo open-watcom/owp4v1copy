@@ -72,7 +72,11 @@ File: source\diag0106.c
 (22,13): Error! E374: object (or object pointer) required to access non-static data member
 (30,20): Error! E632: redeclaration of 'X28::~X28' has different attributes
   definition: 'X28::~X28( void )'
+(30,20): Error! E907: redeclaration of member function 'X28::~X28' not allowed
+  definition: 'X28::~X28( void )'
 (33,20): Warning! W621: pure virtual destructors must have a definition
+(34,20): Error! E907: redeclaration of member function 'X32::~X32' not allowed
+  definition: 'X32::~X32( void )'
 (38,8): Error! E431: defining 'x38' is not possible because 'X32' is an abstract class
   definition: 'X32 x38'
   'X32' contains the following pure virtual functions
