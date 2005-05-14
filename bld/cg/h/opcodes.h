@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Code generator opcodes and their classification.
 *
 ****************************************************************************/
 
@@ -102,11 +101,11 @@ FIRST_CSE_OP = FIRST_ARITH_OP,
 
     FIRST_MOVE_OP,
         OP_CONVERT = FIRST_MOVE_OP,
-#if ( _TARGET & _TARG_AXP ) == 0
+#if ( _TARGET & _TARG_RISC ) == 0
 LAST_CSE_OP = OP_CONVERT,
 #endif
         OP_LA,
-#if _TARGET & _TARG_AXP
+#if _TARGET & _TARG_RISC
 LAST_CSE_OP = OP_LA,
 #endif
         OP_CAREFUL_LA,
