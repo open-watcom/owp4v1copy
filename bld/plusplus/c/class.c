@@ -486,7 +486,7 @@ static boolean handleAccessDeclaration( PTREE id_tree )
                 }
             }
         }
-        if( sym->id != SC_STATIC ) {
+        if( ! SymIsStatic( sym ) ) {
             /* we don't want static member function ambiguity to save us */
             check_sym = sym;
         }
@@ -829,8 +829,6 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
     if( id->op == PT_ID ) {
         name = id->u.id.name;
     } else {
-        boolean ClassTypeName( SYMBOL_NAME sym_name );
-
         sym_name = id->sym_name;
         DbgAssert( sym_name != NULL );
 
@@ -2066,7 +2064,7 @@ static void handleFunctionMember( CLASS_DATA *data, SYMBOL sym, char *name )
     is_pure = ( fn_type->flag & TF1_PURE ) != 0;
     is_virtual = ( fn_type->flag & TF1_VIRTUAL ) != 0;
     if( is_virtual ) {
-        if( sym->id == SC_STATIC ) {
+        if( SymIsStatic( sym ) ) {
             CErr1( ERR_NO_STATIC_VIRTUAL );
             is_virtual = FALSE;
         }
@@ -2086,7 +2084,7 @@ static void handleFunctionMember( CLASS_DATA *data, SYMBOL sym, char *name )
     }
     /* used to have "|| data->is_union" here; why? */
     /* deleted it 93/04/22 AFS because unions with dtor/assign didn't work */
-    if( sym->id == SC_STATIC ) {
+    if( SymIsStatic( sym ) ) {
         /* operator new/delete are static member functions */
         if( is_pure ) {
             CErr1( ERR_PURE_VIRTUAL_FUNCTIONS_ONLY );
@@ -2311,6 +2309,11 @@ void ClassMember( SCOPE scope, SYMBOL sym )
             CErr2p( ERR_TYPEDEF_SAME_NAME_AS_CLASS, name );
         }
         return;
+    case SC_CLASS_TEMPLATE:
+        if( ! data->allow_typedef && name == scope_name ) {
+            CErr2p( ERR_TYPEDEF_SAME_NAME_AS_CLASS, name );
+        }
+        return;
     case SC_ENUM:
         if( name == scope_name ) {
             CErr2p( ERR_ENUM_SAME_NAME_AS_CLASS, name );
@@ -2319,6 +2322,7 @@ void ClassMember( SCOPE scope, SYMBOL sym )
     case SC_ACCESS:
         return;
     case SC_STATIC:
+    case SC_STATIC_FUNCTION_TEMPLATE:
         flags.static_member = TRUE;
         if( name == scope_name ) {
             CErr2p( ERR_STATIC_SAME_NAME_AS_CLASS, name );

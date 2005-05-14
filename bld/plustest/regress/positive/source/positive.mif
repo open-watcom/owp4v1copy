@@ -102,7 +102,9 @@ no_br_except30 = no
 #
 # special options
 #
+opt_assert1 = -za0x
 opt_cdisp13 = -xr
+opt_cltemp17 = -za0x
 opt_cmdln01 = /d+XXX=0+1
 opt_cmdln02 = /d+ /dXXX=0+1
 opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
@@ -191,6 +193,7 @@ positive_tests = &
     asm06.$(ext) &
     asm07.$(ext) &
     asm08.$(ext) &
+    assert1.$(ext) &
     alttok1.$(ext) &
     based01.$(ext) &
     based02.$(ext) &
@@ -230,6 +233,8 @@ positive_tests = &
     cltemp13.$(ext) &
     cltemp14.$(ext) &
     cltemp15.$(ext) &
+    cltemp16.$(ext) &
+    cltemp17.$(ext) &
     cmdln01.$(ext) &
     cmdln02.$(ext) &
     cmdln03.$(ext) &

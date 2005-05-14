@@ -1306,6 +1306,9 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->zat ) {
         CompFlags.no_alternative_tokens = 1;
     }
+    if( data->za0x ) {
+        CompFlags.enable_std0x = 1;
+    }
     if( data->zf ) {
         CompFlags.use_old_for_scope = 1;
     }

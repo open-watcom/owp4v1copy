@@ -57,7 +57,7 @@
 #define SymIsTypedef(s)     ( (s)->id == SC_TYPEDEF )
 #define SymIsDefArg(s)      ( (s)->id == SC_DEFAULT )
 #define SymIsEnumeration(s) ( (s)->id == SC_ENUM )
-#define SymIsFunctionTemplateModel(s) ( (s)->id == SC_FUNCTION_TEMPLATE )
+#define SymIsFunctionTemplateModel(s) ( ( (s)->id == SC_FUNCTION_TEMPLATE ) || ( (s)->id == SC_STATIC_FUNCTION_TEMPLATE ) )
 #define SymIsClassTemplateModel(s) ( (s)->id == SC_CLASS_TEMPLATE )
 #define SymIsNameSpace(s)   ( (s)->id == SC_NAMESPACE )
 

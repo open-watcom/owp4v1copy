@@ -297,6 +297,7 @@ SYMBOL DFAbbrevSym;
 SYMBOL PCHDebugSym;
 
 static char bool_zapped_char;
+static char static_assert_zapped_char;
 
 extern SCOPE    GetCurrScope(void)
 {
@@ -793,6 +794,7 @@ static void scopeInit(          // SCOPES INITIALIZATION
 {
     defn = defn;
     DbgStmt( bool_zapped_char = '\0' );
+    DbgStmt( static_assert_zapped_char = '\0' );
     PCHActivate();
     carveSYM_REGION = CarveCreate( sizeof( SYM_REGION ), BLOCK_SYM_REGION );
     carveUSING_NS = CarveCreate( sizeof( USING_NS ), BLOCK_USING_NS );
@@ -832,6 +834,9 @@ static void scopeInit(          // SCOPES INITIALIZATION
     injectChipBug();
     injectDwarfAbbrev();
     injectBool();
+    if( ! CompFlags.enable_std0x ) {
+        static_assert_zapped_char = KwDisable( T_STATIC_ASSERT );
+    }
     ExtraRptRegisterCtr( &syms_defined, "symbols defined" );
     ExtraRptRegisterCtr( &scopes_alloced, "scopes allocated" );
     ExtraRptRegisterCtr( &scopes_kept, "scopes kept" );
@@ -858,6 +863,9 @@ static void scopeFini(          // SCOPES COMPLETION
 #endif
     if( CompFlags.extensions_enabled ) {
         KwEnable( T_BOOL, bool_zapped_char );
+    }
+    if( ! CompFlags.enable_std0x ) {
+        KwEnable( T_STATIC_ASSERT, static_assert_zapped_char );
     }
     CarveDestroy( carveSYM_REGION );
     CarveDestroy( carveUSING_NS );
@@ -3850,7 +3858,7 @@ static void differentCopiesAmbiguity( lookup_walk *data )
     flag.static_found = FALSE;
     flag.nonstatic_found = FALSE;
     RingIterBeg( sym_name->name_syms, sym ) {
-        if( sym->id == SC_STATIC ) {
+        if( SymIsStatic( sym ) ) {
             flag.static_found = TRUE;
         } else {
             flag.nonstatic_found = TRUE;
@@ -6533,7 +6541,7 @@ boolean ScopeAmbiguousSymbol( SEARCH_RESULT *result, SYMBOL sym )
     /* report ambiguity error */
     if( result->mixed_static ) {
         /* fn overload isn't ambiguous provided static member fn is chosen */
-        if( sym->id != SC_STATIC ) {
+        if( ! SymIsStatic( sym ) ) {
             result->ambiguous = TRUE;
         }
     }
@@ -6753,6 +6761,18 @@ SCOPE ScopeNearestFile( SCOPE scope )
     for(;;) {
         if( scope == NULL ) break;
         if( _IsFileScope( scope ) ) break;
+        scope = scope->enclosing;
+    }
+    return( scope );
+}
+
+SCOPE ScopeNearestFileOrClass( SCOPE scope )
+/***********************************/
+{
+    for(;;) {
+        if( scope == NULL ) break;
+        if( _IsFileScope( scope ) ) break;
+        if( _IsClassScope( scope ) ) break;
         scope = scope->enclosing;
     }
     return( scope );
@@ -7469,6 +7489,7 @@ static void saveSymbol( void *e, carve_walk_base *d )
         s->u.tinfo = TemplateClassInfoGetIndex( save_u_tinfo );
         break;
     case SC_FUNCTION_TEMPLATE:
+    case SC_STATIC_FUNCTION_TEMPLATE:
         save_u_defn = s->u.defn;
         s->u.defn = TemplateFunctionInfoGetIndex( save_u_defn );
         break;
@@ -7509,6 +7530,7 @@ static void saveSymbol( void *e, carve_walk_base *d )
         s->u.tinfo = save_u_tinfo;
         break;
     case SC_FUNCTION_TEMPLATE:
+    case SC_STATIC_FUNCTION_TEMPLATE:
         s->u.defn = save_u_defn;
         break;
     case SC_DEFAULT:
@@ -7776,6 +7798,7 @@ static void readSymbols( void )
             sym->u.tinfo = TemplateClassInfoMapIndex( pch->u.tinfo );
             break;
         case SC_FUNCTION_TEMPLATE:
+        case SC_STATIC_FUNCTION_TEMPLATE:
             sym->u.defn = TemplateFunctionInfoMapIndex( pch->u.defn );
             break;
         case SC_DEFAULT:

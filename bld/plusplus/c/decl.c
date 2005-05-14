@@ -289,6 +289,7 @@ static void handleInlineFunction( SYMBOL sym )
     case SC_STATIC:
     case SC_TYPEDEF:
     case SC_FUNCTION_TEMPLATE:
+    case SC_STATIC_FUNCTION_TEMPLATE:
     case SC_EXTERN:
         return;
     }
@@ -776,6 +777,7 @@ static void verifyMainFunction( SYMBOL sym )
         CErr1( ERR_MAIN_CANNOT_BE_STATIC );
         break;
     case SC_FUNCTION_TEMPLATE:
+    case SC_STATIC_FUNCTION_TEMPLATE:
         CErr1( ERR_MAIN_CANNOT_BE_FN_TEMPLATE );
         break;
     }

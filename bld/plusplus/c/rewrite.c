@@ -628,7 +628,7 @@ REWRITE *RewritePackageDefArg( PTREE multi )
     return( NULL );
 }
 
-REWRITE *RewritePackageTemplateDefArg( void )
+REWRITE *RewritePackageTemplateArgument( void )
 /******************************************/
 {
     REWRITE *r;
@@ -639,8 +639,6 @@ REWRITE *RewritePackageTemplateDefArg( void )
     TOKEN_LOCN locn;
     auto TOKEN_LOCN start_locn;
 
-    DbgAssert( CurToken == T_EQUAL );
-    NextToken();
     SrcFileGetTokenLocn( &start_locn );
     r = newREWRITE( T_DEFARG_END, &locn );
     angle_depth = brace_depth = bracket_depth = paren_depth = 0;
@@ -685,20 +683,35 @@ REWRITE *RewritePackageTemplateDefArg( void )
             /* for non-type template arguments this should always be
              * parsed as less-than */
             if( ( brace_depth == 0 ) && ( bracket_depth == 0 )
-              && ( paren_depth == 0 ) ) {
+             && ( paren_depth == 0 ) ) {
                 ++angle_depth;
             }
             break;
         case T_COMMA:
         case T_GT:
             if( ( brace_depth == 0 ) && ( bracket_depth == 0 )
-              && ( paren_depth == 0 ) ) {
+             && ( paren_depth == 0 ) ) {
                 if( angle_depth == 0 ) {
-                    UndoNextToken();
                     return( r );
                 }
                 else if( CurToken == T_GT ) {
                     --angle_depth;
+                }
+            }
+            break;
+        case T_RSHIFT:
+            // see Right Angle Brackets (N1757/05-0017)
+            if( CompFlags.enable_std0x
+             && ( brace_depth == 0 ) && ( bracket_depth == 0 )
+             && ( paren_depth == 0 ) ) {
+                if( angle_depth == 1 ) {
+                    CurToken = T_GT;
+                    saveToken( r, &locn );
+                    return( r );
+                } else if( angle_depth == 0 ) {
+                    return( r );
+                } else {
+                    angle_depth -= 2;
                 }
             }
             break;
@@ -707,6 +720,20 @@ REWRITE *RewritePackageTemplateDefArg( void )
         NextToken();
     }
     return( NULL );
+}
+
+REWRITE *RewritePackageTemplateDefArg( void )
+/******************************************/
+{
+    REWRITE *r;
+
+    if( CurToken != T_EQUAL ) {
+        return( NULL );
+    }
+    NextToken();
+    r = RewritePackageTemplateArgument();
+    UndoNextToken();
+    return( r );
 }
 
 static REWRITE *templateError( REWRITE *r, TOKEN_LOCN *locn )

@@ -27,6 +27,7 @@ YYDRIVER: driver code to make use of YACC generated parser tables and support
 #include "stats.h"
 #include "codegen.h"
 #include "namspace.h"
+#include "memmgr.h"
 #ifndef NDEBUG
 #include "pragdefn.h"
 #endif
@@ -112,6 +113,7 @@ struct parse_stack {
     unsigned            look_ahead_index;
     TOKEN_LOCN          template_record_locn;
     REWRITE             *template_record_tokens;
+    VSTK_CTL            angle_stack;
     unsigned            no_super_tokens : 1;
     unsigned            use_saved_tokens : 1;
     unsigned            favour_reduce : 1;
@@ -119,9 +121,9 @@ struct parse_stack {
     unsigned            look_ahead_stack : 1;
     unsigned            look_ahead_active : 1;
     unsigned            template_decl : 1;
-    unsigned            template_args : 1;
     unsigned            template_class_inst_defer : 1;
     unsigned            special_colon_colon : 1;
+    unsigned            special_gt_gt : 1;
 };
 
 typedef struct {
@@ -129,6 +131,10 @@ typedef struct {
     TOKEN_LOCN          yylocation;
     YYTOKENTYPE         yytok;
 } look_ahead_storage;
+
+typedef struct {
+    unsigned            paren_depth;
+} angle_bracket_stack;
 
 static YYSTYPE yylval;
 static TOKEN_LOCN yylocation;
@@ -493,6 +499,12 @@ static void nextYYLexToken( PARSE_STACK *state )
         }
         state->use_saved_tokens = FALSE;
     }
+    if( state->special_gt_gt ) {
+        state->special_gt_gt = FALSE;
+        CurToken = T_GT;
+        SrcFileGetTokenLocn( &yylocation );
+        return;
+    }
     nextRecordedToken( state );
 }
 
@@ -665,6 +677,7 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
 
 static int templateScopedChain( PARSE_STACK *state )
 {
+    lk_result id_check;
     PTREE scope_tree;
     PTREE curr;
     PTREE id;
@@ -709,8 +722,11 @@ static int templateScopedChain( PARSE_STACK *state )
                 /* template instantiation errors may have occured */
                 if( template_class_type != NULL ) {
                     scope = template_class_type->u.c.scope;
-                    if( lexCategory( scope, id, LK_NULL,
-                                     &yylval.tree->sym_name ) != LK_ID ) {
+                    id_check = lexCategory( scope, id, LK_NULL,
+                                            &yylval.tree->sym_name );
+                    if( id_check == LK_TEMPLATE ) {
+                        return( Y_TEMPLATE_SCOPED_TEMPLATE_NAME );
+                    } else if( id_check == LK_TYPE ) {
                         return( Y_TEMPLATE_SCOPED_TYPE_NAME );
                     }
                 }
@@ -797,7 +813,7 @@ static int globalChain( PARSE_STACK *state )
     return( Y_IMPOSSIBLE );
 }
 
-int yylex( PARSE_STACK *state )
+static int yylex( PARSE_STACK *state )
 /*****************************/
 {
     lk_result id_check;
@@ -805,6 +821,7 @@ int yylex( PARSE_STACK *state )
     STRING_CONSTANT literal;
     PTREE tree;
     look_ahead_storage *saved_token;
+    angle_bracket_stack *angle_state;
     struct {
         unsigned no_super_token : 1;
         unsigned special_colon_colon : 1;
@@ -926,6 +943,42 @@ int yylex( PARSE_STACK *state )
     default:
         token = yytranslate[ CurToken ];
     }
+
+    angle_state = VstkTop( &(state->angle_stack) );
+    if( angle_state != NULL ) {
+        if( token == Y_GT ) {
+            if( angle_state->paren_depth == 0 ) {
+                VstkPop( &(state->angle_stack) );
+                token = Y_GT_SPECIAL;
+            }
+        } else if( CompFlags.enable_std0x && ( token == Y_RSHIFT ) ) {
+            // see Right Angle Brackets (N1757/05-0017)
+            if( angle_state->paren_depth == 0 ) {
+                VstkPop( &(state->angle_stack) );
+                token = Y_GT_SPECIAL;
+                state->special_gt_gt = TRUE;
+            }
+        } else if( token == Y_LEFT_BRACE ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_BRACE ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        } else if( token == Y_LEFT_BRACKET ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_BRACKET ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        } else if( token == Y_LEFT_PAREN ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_PAREN ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        }
+    }
+
     currToken = token;
     return( token );
 }
@@ -1053,6 +1106,7 @@ static DECL_SPEC *sendType( PTREE tree )
     }
     if( type == NULL ) {
         type = TypeError;
+        // TODO: add typename support
     }
     dspec = PTypeActualTypeName( type, tree );
     if( scope != NULL ) {
@@ -1182,6 +1236,7 @@ static void commonInit( PARSE_STACK *stack )
     stack->look_ahead_index = 0;
     stack->template_record_tokens = NULL;
     stack->class_colon = NULL;
+    VstkOpen( &(stack->angle_stack), sizeof(angle_bracket_stack), 16 );
     stack->no_super_tokens = FALSE;
     stack->use_saved_tokens = FALSE;
     stack->favour_reduce = FALSE;
@@ -1189,9 +1244,9 @@ static void commonInit( PARSE_STACK *stack )
     stack->look_ahead_stack = FALSE;
     stack->look_ahead_active = FALSE;
     stack->template_decl = FALSE;
-    stack->template_args = FALSE;
     stack->template_class_inst_defer = FALSE;
     stack->special_colon_colon = FALSE;
+    stack->special_gt_gt = FALSE;
 }
 
 static void restartInit( PARSE_STACK *stack )
@@ -1201,6 +1256,7 @@ static void restartInit( PARSE_STACK *stack )
     DbgAssert( stack->look_ahead_count == 0 );
     DbgAssert( stack->look_ahead_index == 0 );
     DbgAssert( stack->template_record_tokens == NULL );
+    DbgAssert( VstkTop( &(stack->angle_stack) ) == NULL );
     DbgAssert( stack->no_super_tokens == FALSE );
     DbgAssert( stack->use_saved_tokens == FALSE );
     DbgAssert( stack->favour_reduce == FALSE );
@@ -1208,9 +1264,9 @@ static void restartInit( PARSE_STACK *stack )
     DbgAssert( stack->look_ahead_stack == FALSE );
     DbgAssert( stack->look_ahead_active == FALSE );
     DbgAssert( stack->template_decl == FALSE );
-    DbgAssert( stack->template_args == FALSE );
     DbgAssert( stack->template_class_inst_defer == FALSE );
     DbgAssert( stack->special_colon_colon == FALSE );
+    DbgAssert( stack->special_gt_gt == FALSE );
 }
 
 static void newLookAheadStack( PARSE_STACK *stack, PARSE_STACK *prev_stack )

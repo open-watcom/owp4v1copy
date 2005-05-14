@@ -664,6 +664,7 @@ typedef enum {
 ,SC_DEF(SC_NAMESPACE           )/* symbol is a namespace id             */\
 ,SC_DEF(SC_CLASS_TEMPLATE      )/* symbol is a class template           */\
 ,SC_DEF(SC_FUNCTION_TEMPLATE   )/* symbol is a function template        */\
+,SC_DEF(SC_STATIC_FUNCTION_TEMPLATE)/* symbol is a function template    */\
                                 /* **** used only in Code Generation:   */\
 ,SC_DEF(SC_VIRTUAL_FUNCTION    )/* indirect symbol for a virt. fn call  */\
                                 /* **** only in template instantiation  */\
@@ -735,8 +736,6 @@ typedef enum                            // flags for symbol.flag
     /* multi-bit constants */
 ,   SF_ACCESS           = ( SF_PRIVATE  // - - access for member
                           | SF_PROTECTED )
-,   SF_FN_TEMPLATE_COPY = ( SF_PLUSPLUS // - - flags that need to be copied
-                          )             //     when a function is instantiated
 ,   SF_FN_LONGJUMP      = ( SF_LONGJUMP // - - decidable if function can
                           | SF_NO_LONGJUMP ) //throw, longjump, etc
 
@@ -1237,6 +1236,7 @@ extern SYMBOL ScopeOrderedLast( SCOPE );
 extern SCOPE ScopeEnclosingId( SCOPE, scope_type_t );
 extern SCOPE ScopeNearestNonClass( SCOPE );
 extern SCOPE ScopeNearestFile( SCOPE );
+extern SCOPE ScopeNearestFileOrClass( SCOPE );
 extern SCOPE ScopeFunctionScopeInProgress();
 extern SYMBOL ScopeFunctionScope( SCOPE );
 extern void ScopeMemberModuleFunction( SCOPE, SCOPE );
@@ -1277,6 +1277,8 @@ extern void ScopeAddFriend( SCOPE, SYMBOL );
 extern SYMBOL AllocSymbol( void );
 extern SYMBOL AllocTypedSymbol( TYPE );
 extern SYMBOL_NAME AllocSymbolName( char *, SCOPE );
+boolean EnumTypeName( SYMBOL_NAME sym_name );
+boolean ClassTypeName( SYMBOL_NAME sym_name );
 extern void FreeSymbol( SYMBOL );
 extern void FreeSymbolName( SYMBOL_NAME );
 extern void ScopeBurn( SCOPE );

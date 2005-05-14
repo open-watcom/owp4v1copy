@@ -11890,3 +11890,20 @@ struct A<T, U *> { };
 
 A<int *, int *> a;
 :eerrbad.
+
+:MSGSYM. ERR_STATIC_ASSERTION_FAILURE
+:MSGTXT. static assertion failed '%s'
+:MSGJTXT.
+:errbad.
+static_assert( false, "false" );
+:eerrbad.
+
+:MSGSYM. WARN_UNSUPPORTED_TEMPLATE_EXPORT
+:MSGTXT. Exported templates are not supported by Open Watcom C++
+:MSGJTXT.
+:WARNING. 1
+:errbad.
+export template< class T >
+struct A {
+};
+:eerrbad.

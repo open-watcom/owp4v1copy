@@ -1056,6 +1056,11 @@
 :usage. disable extensions (i.e., accept only ISO/ANSI C++)
 :jusage. 拡張機能を使用不可にします(つまり, ISO/ANSI C++のみ受け付けます)
 
+:option. za0x
+:target. any
+:usage. enable some features of the upcoming ISO C++0x standard
+:jusage.
+
 :option. zat
 :target. any
 :usage. disable alternative tokens (e.g. and, or, not)

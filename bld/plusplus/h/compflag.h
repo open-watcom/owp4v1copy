@@ -242,7 +242,7 @@ typedef struct comp_flags {
     unsigned dont_autogen_ext_src   : 1;
     unsigned use_old_for_scope      : 1;
     unsigned no_alternative_tokens  : 1;    // disable alternative tokens
-    unsigned anyfiller05            : 1;
+    unsigned enable_std0x           : 1;    // enable some C++0x features
     
 
 /*****************************************************************************

@@ -444,16 +444,21 @@ SYMBOL ClassTemplateLookup( SCOPE scope, char *name )
     SYMBOL_NAME sym_name;
     SYMBOL sym;
 
-    file_scope = ScopeNearestFile( scope );
-    result = ScopeFindNaked( file_scope, name );
-    if( result != NULL ) {
-        sym_name = result->sym_name;
-        ScopeFreeResult( result );
-        sym = sym_name->name_type;
-        if( sym != NULL && SymIsClassTemplateModel( sym ) ) {
-            return( sym );
+    file_scope = ScopeNearestFileOrClass( scope );
+
+    while( file_scope != NULL ) {
+        result = ScopeFindNaked( file_scope, name );
+        if( result != NULL ) {
+            sym_name = result->sym_name;
+            ScopeFreeResult( result );
+            sym = sym_name->name_type;
+            if( sym != NULL && SymIsClassTemplateModel( sym ) ) {
+                return( sym );
+            }
         }
+        file_scope = ScopeNearestFileOrClass( file_scope->enclosing );
     }
+
     return( NULL );
 }
 
@@ -1101,7 +1106,9 @@ void TemplateDeclFini( void )
     name = data->template_name;
     sym = NULL;
     tspec = NULL;
-    if( name != NULL && ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
+    if( ( name != NULL )
+     && ( ScopeType( GetCurrScope(), SCOPE_FILE )
+       || ScopeType( GetCurrScope(), SCOPE_CLASS ) ) ) {
         DbgAssert( data->template_scope != NULL );
         sym = ClassTemplateLookup( data->template_scope, name );
         if( ( sym != NULL )
@@ -1162,7 +1169,11 @@ void TemplateFunctionCheck( SYMBOL sym, DECL_INFO *dinfo )
     if( ! data->all_generic ) {
         CErr1( ERR_FUNCTION_TEMPLATE_ONLY_GENERICS );
     } else if( FunctionUsesAllTypes( sym, GetCurrScope(), diagnoseUnusedArg ) ) {
-        sym->id = SC_FUNCTION_TEMPLATE;
+        if( sym->id != SC_STATIC ) {
+            sym->id = SC_FUNCTION_TEMPLATE;
+        } else {
+            sym->id = SC_STATIC_FUNCTION_TEMPLATE;
+        }
         sym->u.defn = NULL;
         sym->sym_type = MakePlusPlusFunction( sym->sym_type );
     }
@@ -1250,18 +1261,24 @@ static TYPE attemptGen( arg_list *args, SYMBOL fn_template, TOKEN_LOCN *locn,
 
 static SYMBOL buildTemplateFn( TYPE bound_type, SYMBOL fn_template, TOKEN_LOCN *locn )
 {
+    SCOPE scope;
     SYMBOL new_sym;
     symbol_flag new_flags;
 
     if( bound_type == NULL ) {
         return( NULL );
     }
-    new_flags = ( fn_template->flag & SF_FN_TEMPLATE_COPY );
+    scope = SymScope( fn_template );
+    if( ScopeType( scope, SCOPE_CLASS ) ) {
+        new_flags = ( fn_template->flag & SF_ACCESS );
+    } else {
+        new_flags = ( fn_template->flag & SF_PLUSPLUS );
+    }
     new_sym = SymCreateAtLocn( bound_type
-                             , 0
+                             , SymIsStatic( fn_template ) ? SC_STATIC : 0
                              , new_flags | SF_TEMPLATE_FN
                              , fn_template->name->name
-                             , SymScope( fn_template )
+                             , scope
                              , locn );
     new_sym->u.alias = fn_template;
     return new_sym;
@@ -1289,7 +1306,8 @@ unsigned TemplateFunctionGenerate( SYMBOL *psym, arg_list *args, TOKEN_LOCN *loc
     ambigs[1] = (SYMBOL)-1;
 #endif
     syms = *psym;
-    if( ! ScopeType( SymScope( syms ), SCOPE_FILE ) ) {
+    if( ! ScopeType( SymScope( syms ), SCOPE_FILE )
+     && ! ScopeType( SymScope( syms ), SCOPE_CLASS ) ) {
         return( FNOV_NO_MATCH );
     }
     bind_control = BGT_EXACT;
@@ -1586,8 +1604,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
                     CErr1( ERR_TOO_FEW_TEMPLATE_PARAMETERS );
                     something_went_wrong = TRUE;
                     break;  /* from for loop */
-                }
-                else {
+                } else {
                     void (*last_source)( void );
                     REWRITE *save_token;
                     REWRITE *last_rewrite;
@@ -1601,8 +1618,7 @@ static PTREE processClassTemplateParms( TEMPLATE_INFO *tinfo, PTREE parms )
 
                     if( arg_type != NULL ) {
                         parm = ParseTemplateIntDefArg();
-                    }
-                    else {
+                    } else {
                         parm = ParseTemplateTypeDefArg();
                     }
 
@@ -2131,6 +2147,7 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
     TEMPLATE_SPECIALIZATION *tspec;
 
     type_instantiated = TypeError;
+    class_template = NULL;
 
     if( tid->op == PT_ID ) {
         template_name = tid->u.id.name;
@@ -2328,7 +2345,7 @@ void TemplateHandleClassMember( DECL_INFO *dinfo )
     data->member_found = TRUE;
     data->template_name = SimpleTypeName( dinfo->id->u.subtree[0]->type );
     data->template_scope =
-        ScopeNearestFile( TypeScope( dinfo->id->u.subtree[0]->type ) );
+        ScopeNearestFileOrClass( TypeScope( dinfo->id->u.subtree[0]->type )->enclosing );
     data->unbound_type = dinfo->id->u.subtree[0]->type;
     FreeDeclInfo( dinfo );
 }

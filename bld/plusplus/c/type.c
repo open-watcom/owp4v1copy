@@ -6464,7 +6464,11 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
     boolean is_redefined;
     boolean is_block_sym;
 
-    verifySpecialFunction( insert_scope, dinfo );
+    scope = insert_scope;
+    if( ScopeType( scope, SCOPE_TEMPLATE_DECL ) ) {
+        scope = ScopeNearestFileOrClass( scope );
+    }
+    verifySpecialFunction( scope, dinfo );
     complainAboutMemInit( dinfo );
     sym = dinfo->sym;
     is_block_sym = FALSE;
@@ -6497,7 +6501,7 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
             scope = dinfo->friend_scope;
         } else if( ScopeId( scope ) == SCOPE_TEMPLATE_DECL ) {
             TemplateFunctionCheck( sym, dinfo );
-            scope = ScopeNearestFile( GetCurrScope() );
+            scope = ScopeNearestFileOrClass( GetCurrScope() );
         } else if( ScopeId( scope ) == SCOPE_BLOCK ||
                    ScopeId( scope ) == SCOPE_FUNCTION ) {
             /* handle promotions from local scope to file scope */
@@ -8547,6 +8551,7 @@ static boolean performBinding( VSTK_CTL *stk, TOKEN_LOCN *locn )
             break;
         case TYP_FUNCTION:
             new_type = dupFunction( old_type, DF_NULL );
+            // TODO: add typename support (new_type->of == TypeError)
             old_args = TypeArgList( old_type );
             old_arg = old_args->type_list;
             new_args = TypeArgList( new_type );

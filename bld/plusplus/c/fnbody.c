@@ -941,8 +941,8 @@ static void parseReturnStmt( SYMBOL func )
     } else {
         currFunction->ret_reqd = TRUE;
         expr = safeParseExpr( T_SEMI_COLON );
-        if( expecting_return ) {
-            if( expr != NULL ) {
+        if( expr != NULL ) {
+            if( expecting_return ) {
                 if( expr->op == PT_ERROR ) {
                     PTreeFreeSubtrees( expr );
                 } else {
@@ -953,10 +953,10 @@ static void parseReturnStmt( SYMBOL func )
                     emitCodeExpr( AnalyseReturnExpr( func, expr ) );
                     return_operand = return_sym;
                 }
+            } else {
+                PTreeErrorExpr( expr, ERR_NOT_EXPECTING_RETURN_VALUE );
+                PTreeFreeSubtrees( expr );
             }
-        } else {
-            PTreeErrorExpr( expr, ERR_NOT_EXPECTING_RETURN_VALUE );
-            PTreeFreeSubtrees( expr );
         }
     }
     CgFrontReturnSymbol( return_operand );

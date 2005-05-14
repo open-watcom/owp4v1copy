@@ -411,35 +411,29 @@ void DumpCgFront(               // DUMP GENERATED CODE
 
 static void dumpTemplateInfo( TEMPLATE_INFO *tinfo )
 {
-#if 0
+    TEMPLATE_SPECIALIZATION *tprimary;
     VBUF prefix, suffix;
     int i;
-#endif
     char delim;
 
+    tprimary = RingFirst( tinfo->specializations );
     printf( "    TEMPLATE_INFO" F_BADDR
-#if 0
             " defn"         F_PTR
             " num_args"     F_HEX_4
-#endif
                             F_EOL
           , tinfo
-#if 0
-          , tinfo->defn
-          , tinfo->num_args
-#endif
+          , tprimary->defn
+          , tprimary->num_args
           );
     printf( "  " );
     delim = '<';
-#if 0
-    for( i = 0; i < tinfo->num_args; ++i ) {
-        FormatType( tinfo->type_list[i], &prefix, &suffix );
+    for( i = 0; i < tprimary->num_args; ++i ) {
+        FormatType( tprimary->type_list[i], &prefix, &suffix );
         printf( "%c %s<id> %s", delim, prefix.buf, suffix.buf );
         VbufFree( &prefix );
         VbufFree( &suffix );
         delim = ',';
     }
-#endif
     printf( ">\n" );
 }
 
