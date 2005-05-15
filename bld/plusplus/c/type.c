@@ -6463,7 +6463,8 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
     boolean is_block_sym;
 
     scope = insert_scope;
-    if( ScopeType( scope, SCOPE_TEMPLATE_DECL ) ) {
+    if( ScopeType( scope, SCOPE_TEMPLATE_DECL )
+     || ScopeType( scope, SCOPE_TEMPLATE_INST ) ) {
         scope = ScopeNearestFileOrClass( scope );
     }
     verifySpecialFunction( scope, dinfo );
