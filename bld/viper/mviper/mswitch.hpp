@@ -58,8 +58,6 @@ WCLASS MSwitch : public WObject
         MSwitch* addSwitch( WVList& list, const char* mask );
         virtual void getText( WString& str, WVList* states, SwMode mode ) = 0;
         virtual void getText( WString& str, MState* state ) = 0;
-        virtual void readSelf( WObjectFile& );
-        virtual void writeSelf( WObjectFile& );
         virtual WString& on() =0;
     protected:
         void findStates( WVList* states, WVList& found );
