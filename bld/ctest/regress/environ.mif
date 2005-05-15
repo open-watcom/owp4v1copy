@@ -262,18 +262,14 @@ targ_ext_tnt386 = exe
 targ_ext_os2386 = exe
 targ_ext_wnt386 = exe
 targ_ext_lnx386 = exe
-targ_ext_wnti86 = exe
-targ_ext_dosi86 = exe
-targ_ext_os2i86 = exe
-targ_ext_wntaxp = exe
 
 ext_386 = $(targ_ext_$(targ_env_386))
-ext_i86 = $(targ_ext_$(targ_env_i86))
-ext_axp = $(targ_ext_$(targ_env_axp))
-ext_ppc = $(targ_ext_$(targ_env_ppc))
-ext_mps = $(targ_ext_$(targ_env_mps))
 
+!ifdef ext_$(arch)
 exe = $(ext_$(arch))
+!else
+exe = exe
+!endif
 
 #
 # targ_lnk      linker directives (e.g., system pharlap option offset=64k)

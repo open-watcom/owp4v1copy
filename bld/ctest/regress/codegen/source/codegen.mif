@@ -43,17 +43,15 @@ opt_opt42 = -2
 !endif
 
 codegen_tests = &
-    op_add.$(ext) &
-    op_sub.$(ext) &
-    op_mul.$(ext) &
-    op_div.$(ext) &
-    op_mod.$(ext) &
-    op_and.$(ext) &
-    op_or.$(ext) &
-    op_xor.$(ext) &
-    op_rshift.$(ext) &
-    op_lshift.$(ext) &
+    op_add.$(exe) &
+    op_sub.$(exe) &
+    op_mul.$(exe) &
+    op_div.$(exe) &
+    op_mod.$(exe) &
+    op_and.$(exe) &
+    op_or.$(exe) &
+    op_xor.$(exe) &
+    op_rshift.$(exe) &
+    op_lshift.$(exe) &
 
-
-ext = $(ext_$(arch))
 codegen_exes = $+ $(codegen_tests) $-
