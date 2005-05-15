@@ -77,6 +77,9 @@ namespace std {
     typedef void       *pointer;
     typedef const void *const_pointer;
     typedef void        value_type;
+
+    template< class Other >
+    struct rebind { typedef allocator< Other > other; };
   };
 
   // Default allocator template.
@@ -90,7 +93,9 @@ namespace std {
     typedef       Type          &reference;
     typedef const Type          &const_reference;
     typedef       Type           value_type;
-    // template< class U > struct rebind { typedef allocator< U > other; };
+
+    template< class Other >
+    struct rebind { typedef allocator< Other > other; };
 
     allocator( )
       { }
@@ -98,7 +103,9 @@ namespace std {
     allocator( const allocator & )
       { }
 
-    // template< class U > allocator( const allocator< U > & )
+    template< class Other >
+    allocator( const allocator< Other > & )
+      { }
 
    ~allocator( )
       { }
@@ -220,25 +227,32 @@ namespace std {
   }
 
 
-  // Auto_ptr template.
+  // Auto_ptr support.
+
+  template< class Type > struct auto_ptr_ref { };
+
   template< class Type >
   class auto_ptr {
-    // template< class U > struct auto_ptr_ref { };
   public:
     typedef Type element_type;
 
     explicit auto_ptr( Type *p = 0 ) : ptr( p )
       { }
 
-    auto_ptr( auto_ptr &other ) : ptr( other.release() )
+    auto_ptr( auto_ptr &other ) : ptr( other.release( ) )
       { }
 
-    // template< class U > auto_ptr( auto_ptr< U > & );
+    template< class Other >
+    auto_ptr( auto_ptr< Other > &other ) :
+      ptr( static_cast< Type * >( other.release( ) )
+      { }
 
     auto_ptr &operator=( auto_ptr &other )
-      { reset( other.release() ); return( *this ); }
+      { reset( other.release( ) ); return( *this ); }
 
-    // template< class U > auto_ptr &operator=( auto_ptr< U > & );
+    template< class Other >
+    auto_ptr &operator=( auto_ptr< Other > &other )
+      { reset( static_cast< Type * >( other.release( ) ); return ( *this ); }
 
    ~auto_ptr( ) _WCTHROWS( )
       { delete ptr; }
