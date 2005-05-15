@@ -49,8 +49,9 @@ mem_flags = -of+
 !endif
     
 !ifdef DBG
-extra_cpp_flags     = -xs-ew-DSTANDALONE_MERGER -DDEBUG=0 -DINSTRUMENTS=1
+extra_cpp_flags     = -xs-ew-DSTANDALONE_MERGER -DDEBUG=1 -DINSTRUMENTS=1
 extra_c_flags_dwmerger = -xs-ew-DSTANDALONE_MERGER -DINSTRUMENTS=1 -DDEBUG=1 -DMINALLOC=0
+OBJECTS += debuglog.obj
 !else
 extra_cpp_flags     = -xs-ew-DSTANDALONE_MERGER -DDEBUG=0 -DINSTRUMENTS=0
 !endif
