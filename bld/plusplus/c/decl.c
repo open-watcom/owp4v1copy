@@ -759,7 +759,7 @@ static SYMBOL combineFunctions( SYMBOL prev_fn, SYMBOL curr_fn )
     if( SymIsClassMember( curr_fn ) &&
         SymScope( curr_fn ) == ScopeNearestFileOrClass( GetCurrScope() ) ) {
         // see C++98 9.3 (2)
-        CErr2p( ERR_CANNOT_REDECLARE_MEMBER_FUNCTION, curr_fn );
+        CErr2p( ERR_CANNOT_REDECLARE_MEMBER_FUNCTION, prev_fn );
     }
     prev_fn->sym_type = MakeCombinedFunctionType( prev_type, curr_type, new_flags );
     if( ! SymIsInitialized( prev_fn ) ) {
