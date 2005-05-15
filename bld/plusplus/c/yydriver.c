@@ -2099,7 +2099,8 @@ static void syntaxError( void )
     }
 }
 
-static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token )
+static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token,
+                               MSG_NUM err_msg )
 {
     int t;
     PARSE_STACK expr_state;
@@ -2125,7 +2126,7 @@ static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token )
                 syntaxError();
                 break;
             case P_OVERFLOW:
-                CErr1( ERR_COMPLICATED_EXPRESSION );
+                CErr1( err_msg );
                 break;
             }
             makeStable( end_token );
@@ -2144,32 +2145,38 @@ static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token )
 
 PTREE ParseExpr( int end_token )
 {
-    return genericParseExpr( Y_EXPRESSION_SPECIAL, end_token );
+    return genericParseExpr( Y_EXPRESSION_SPECIAL, end_token,
+                             ERR_COMPLICATED_EXPRESSION );
 }
 
 PTREE ParseExprDecl( void )
 {
-    return genericParseExpr( Y_EXPR_DECL_SPECIAL, T_SEMI_COLON );
+    return genericParseExpr( Y_EXPR_DECL_SPECIAL, T_SEMI_COLON,
+                             ERR_COMPLICATED_STATEMENT );
 }
 
 PTREE ParseMemInit( void )
 {
-    return genericParseExpr( Y_MEM_INIT_SPECIAL, T_LEFT_BRACE );
+    return genericParseExpr( Y_MEM_INIT_SPECIAL, T_LEFT_BRACE,
+                             ERR_COMPLICATED_EXPRESSION );
 }
 
 PTREE ParseDefArg( )
 {
-    return genericParseExpr( Y_DEFARG_SPECIAL, T_DEFARG_END );
+    return genericParseExpr( Y_DEFARG_SPECIAL, T_DEFARG_END,
+                             ERR_COMPLICATED_EXPRESSION );
 }
 
 PTREE ParseTemplateIntDefArg( )
 {
-    return genericParseExpr( Y_TEMPLATE_INT_DEFARG_SPECIAL, T_DEFARG_END );
+    return genericParseExpr( Y_TEMPLATE_INT_DEFARG_SPECIAL, T_DEFARG_END,
+                             ERR_COMPLICATED_EXPRESSION );
 }
 
 PTREE ParseTemplateTypeDefArg( )
 {
-    return genericParseExpr( Y_TEMPLATE_TYPE_DEFARG_SPECIAL, T_DEFARG_END );
+    return genericParseExpr( Y_TEMPLATE_TYPE_DEFARG_SPECIAL, T_DEFARG_END,
+                             ERR_COMPLICATED_EXPRESSION );
 }
 
 DECL_INFO *ParseException( void )

@@ -85,6 +85,7 @@ PCH_struct template_specialization {
     REWRITE             *defn;          // template def'n (may be NULL)
     TEMPLATE_MEMBER     *member_defns;  // external member defns
     SCOPE               decl_scope;     // template declaration scope
+    TOKEN_LOCN          locn;           // location of class template id
     unsigned            num_args;       // number of template arguments
     TYPE                *type_list;     // template argument types
     char                **arg_names;    // argument names

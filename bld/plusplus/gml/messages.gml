@@ -11917,3 +11917,8 @@ struct A {
     void f();
 };
 :eerrbad.
+
+:MSGSYM. INF_CANDIATE_DEFINITION
+:MSGTXT. candidate defined %L
+:MSGJTXT.
+:INFO.

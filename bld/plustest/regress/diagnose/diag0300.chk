@@ -86,3 +86,16 @@ File: source\diag0307.c
 (2,13): Error! E121: syntax error
 (3,1): Error! E028: expecting ';' but found '}'
 (4,0): Error! E199: premature end-of-file encountered during compilation
+File: source\diag0308.c
+(20,2): Error! E181: class template 'B' is already defined
+  definition: '<class template> B'
+(23,9): Error! E006: syntax error; probable cause: missing ';'
+(27,9): Error! E006: syntax error; probable cause: missing ';'
+(36,2): Error! E903: specialization arguments for 'E' match primary template
+  definition: '<class template> E'
+(40,13): Error! E904: partial template specialization for 'A' ambiguous
+  definition: '<class template> A'
+  candidate defined at: (6,8)
+  candidate defined at: (10,8)
+(40,13): Warning! W014: no reference to symbol 'a'
+  definition: 'A<1,1> a' in 'int main( void )'

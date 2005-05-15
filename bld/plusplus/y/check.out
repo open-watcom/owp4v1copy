@@ -436,8 +436,7 @@ Sample sentence(s) for reduce of rule 585:
 Y_CLASS Y_LEFT_BRACE Y_STRUCT 
 Sample sentence(s) for shift to state 713:
   Y_TEMPLATE Y_LT .
-Y_CLASS Y_DEFARG_GONE_SPECIAL Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE 
-Y_UNION 
+Y_CLASS Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE Y_UNION 
 ---
 
 s/r conflict in state 590 on Y_TIMES:
@@ -483,7 +482,7 @@ s/r conflict in state 644 on Y_TEMPLATE_SCOPED_TIMES:
 Sample sentence(s) for reduce of rule 373:
   Y_TEMPLATE_INT_DEFARG_SPECIAL Y_GLOBAL_NEW Y_LEFT_PAREN Y_INT 
 Y_LEFT_PAREN Y_TEMPLATE_NAME Y_LT Y_GT_SPECIAL .
-Y_TEMPLATE_SCOPED_TIMES Y_EQUAL Y_STRING Y_RIGHT_PAREN 
+Y_TEMPLATE_SCOPED_TIMES Y_RIGHT_PAREN 
 Sample sentence(s) for shift to state 258:
   Y_TEMPLATE_INT_DEFARG_SPECIAL Y_GLOBAL_NEW Y_LEFT_PAREN Y_INT 
 Y_LEFT_PAREN Y_TEMPLATE_NAME Y_LT Y_GT_SPECIAL .
@@ -525,8 +524,7 @@ s/r conflict in state 712 on Y_TEMPLATE_NAME:
 
 Sample sentence(s) for reduce of rule 536:
   Y_UNION Y_LEFT_BRACE Y_TEMPLATE Y_LT Y_TYPENAME .
-Y_TEMPLATE_NAME Y_DEFARG_GONE_SPECIAL Y_GT_SPECIAL Y_CLASS 
-Y_LEFT_BRACE Y_STRUCT 
+Y_TEMPLATE_NAME Y_GT_SPECIAL Y_CLASS Y_LEFT_BRACE Y_STRUCT 
 Sample sentence(s) for shift to state 155:
   Y_UNION Y_LEFT_BRACE Y_TEMPLATE Y_LT Y_TYPENAME .
 Y_TEMPLATE_NAME Y_LT Y_GT_SPECIAL Y_TEMPLATE_SCOPED_TYPE_NAME Y_EQUAL 
@@ -542,8 +540,7 @@ Sample sentence(s) for reduce of rule 585:
 Y_CLASS Y_LEFT_BRACE Y_STRUCT 
 Sample sentence(s) for shift to state 713:
   Y_EXPORT Y_TEMPLATE Y_LT .
-Y_CLASS Y_DEFARG_GONE_SPECIAL Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE 
-Y_UNION 
+Y_CLASS Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE Y_UNION 
 ---
 
 s/r conflict in state 828 on Y_CLASS:
@@ -555,8 +552,7 @@ Sample sentence(s) for reduce of rule 585:
 Y_CLASS Y_LEFT_BRACE Y_STRUCT 
 Sample sentence(s) for shift to state 713:
   Y_TEMPLATE Y_LT Y_INT Y_COMMA .
-Y_CLASS Y_DEFARG_GONE_SPECIAL Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE 
-Y_UNION 
+Y_CLASS Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE Y_UNION 
 ---
 
 s/r conflict in state 885 on Y_TIMES:
@@ -703,8 +699,7 @@ Sample sentence(s) for reduce of rule 585:
 Y_CLASS Y_LEFT_BRACE Y_STRUCT 
 Sample sentence(s) for shift to state 713:
   Y_UNION Y_LEFT_BRACE Y_TEMPLATE Y_LT .
-Y_CLASS Y_DEFARG_GONE_SPECIAL Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE 
-Y_UNION 
+Y_CLASS Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE Y_UNION 
 ---
 
 unit reduction states removed:              99
@@ -715,5 +710,5 @@ parser states:                             943
 reduce/reduce conflicts:                    20
 shift/reduce conflicts:                     34
 number of rules not reduced:                 0
-bytes used in tables:                    36230
+bytes used in tables:                    36235
 table space utilization:                    55

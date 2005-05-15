@@ -249,6 +249,7 @@ File: source\diag0123.c
 (100,0): Error! E199: premature end-of-file encountered during compilation
 File: source\diag0124.c
 (9,22): Error! E390: cannot generate default constructor to initialize 'Range<int,1,10>' since constructors were declared
+(11,35): Error! E012: template argument cannot be type 'void (<member pointer>::* )( void )'
 (23,6): Error! E336: declaration specifiers are required to declare 'FooCB'
 (23,6): Error! E121: syntax error
 (34,36): Error! E641: cannot inherit a partially defined base class 'Vector<int>'

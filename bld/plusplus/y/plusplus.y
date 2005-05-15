@@ -2269,7 +2269,11 @@ defarg-check
             what = P_SYNTAX;
             $$ = NULL;
         } else {
-            if( state->template_decl ) {
+            angle_bracket_stack *angle_state;
+
+            angle_state = VstkTop( &(state->angle_stack) );
+            if( state->template_decl && ( angle_state != NULL )
+             && ( angle_state->paren_depth == 0 ) ) {
                 $$ = RewritePackageTemplateDefArg();
                 t = Y_DEFARG_GONE_SPECIAL;
             } else if( ClassOKToRewrite() ) {

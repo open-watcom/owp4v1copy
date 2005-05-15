@@ -1728,18 +1728,15 @@ File: source\diag0082.c
   definition: 'priv_dtor::~priv_dtor( void )'
 File: source\diag0083.c
 (6,17): Warning! W066: 'delete' expression size is not allowed
-(10,11): Error! E016: template argument list cannot be empty
+(10,24): Error! E016: template argument list cannot be empty
 (11,40): Error! E084: function templates can only have type arguments
-(21,8): Error! E241: class or namespace 'T' has not been declared
-(22,1): Error! E012: template argument cannot be type 'double'
-(22,1): Error! E012: template argument cannot be type 'int X::*'
-(22,1): Error! E180: template arguments must be named
+(16,9): Error! E012: template argument cannot be type 'double'
+(18,9): Error! E012: template argument cannot be type 'int X::*'
+(22,1): Error! E012: template argument cannot be type 'int <member pointer>::*'
 (24,27): Error! E176: 'S' cannot be in the same scope as a class template
   definition: 'S'
-(30,5): Error! E121: syntax error
-(33,2): Error! E121: syntax error
+(33,1): Warning! W011: all members are private
 File: source\diag0084.c
-(1,30): Error! E180: template arguments must be named
 (3,16): Error! E179: declaration cannot be in the same scope as class template 'TC1'
   definition: '<class template> TC1'
 (5,8): Error! E179: declaration cannot be in the same scope as class template 'TC2'
