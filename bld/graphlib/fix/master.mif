@@ -57,6 +57,8 @@ graph3s.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386s/chart3s.lib
 
 !else ifeq host_os os2
 
+#extra_c_flags_seginit = -DDOSX286
+
 graphp.obj : ../../c/seginit.c
     $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[*
 

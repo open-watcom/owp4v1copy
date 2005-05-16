@@ -174,9 +174,9 @@ inc_dirs += -I"$(hdr_dir)/dos"
 
 .c: ../c
 
-extra_c_flags = -zl -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
+extra_c_flags = -os -s -zl -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
 
-extra_c_flags_i86 = -D_CGRAPH=_loadds
+extra_c_flags_i86 = -nt=GRAPH_TEXT -D_CGRAPH=_loadds
 extra_c_flags_386_register = -3r
 extra_c_flags_386_stack = -3s -d__STACK
 extra_c_flags_386 = $(extra_c_flags_386_$(convention)) -D_CGRAPH=
@@ -185,7 +185,7 @@ extra_c_flags_qnx = -bt=dos # ?????
 
 extra_a_flags = -ms -i"../inc" $(extra_a_flags_$(machine)) -fo=$@
 
-extra_a_flags_i86 =
+extra_a_flags_i86 = -D_TEXT=GRAPH_TEXT
 extra_a_flags_386_register = -3r
 extra_a_flags_386_stack = -3s
 extra_a_flags_386 = $(extra_a_flags_386_$(convention))

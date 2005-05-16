@@ -54,11 +54,11 @@ inc_dirs = -I"../h" -I"$(build_root)/graphlib/h" -I"$(build_root)/watcom/h" -I"$
 
 .c: ../c
 
-extra_c_flags = -zl -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@
+extra_c_flags = -os -s -zl -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@
 
 extra_c_flags_386_register = -3r
 extra_c_flags_386_stack = -3s -d__STACK
-extra_c_flags_386 = $(extra_c_flags_386_$(convention)) -nt=_TEXT -d_CGRAPH=
+extra_c_flags_386 = $(extra_c_flags_386_$(convention)) -d_CGRAPH=
 extra_c_flags_i86 = -nt=GRAPH_TEXT -d_CGRAPH=_loadds
 
 extra_c_flags_win = -zW
