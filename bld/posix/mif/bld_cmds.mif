@@ -58,7 +58,7 @@ COMMANDS += &
     ls &
 #    mkdir &
 #    od &
-    rm &
+#    rm &      # included into builder project
 #    rmdir &
     sleep &
     which

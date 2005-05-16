@@ -4,17 +4,23 @@ proj_name = builder
 !include defrule.mif
 !include deftarg.mif
 
+!ifndef __UNIX__
+rm_exe = rm.exe
+!endif
+
 all : langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe &
-        comstrip.exe builder.exe
+        comstrip.exe $(rm_exe) builder.exe
 
-inc_dirs = -I"../../pmake"
+inc_dirs = -I"../../pmake" -I"../../posix/h"
 
-.c : ../c;../../pmake
+.c : ../c;../../pmake;../../posix/src/rm;../../posix/misc
 
 sys_dos   = sys.obj sysdos.obj sysdoscd.obj
 sys_os2   = sys.obj sysos2.obj sysdoscd.obj
 sys_nt    = sys.obj sysnt.obj  sysdoscd.obj
 sys_linux = sys.obj sysposix.obj
+
+extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 
 .obj.exe :
         $(cl) $(clflags) $<
@@ -28,3 +34,5 @@ sys_linux = sys.obj sysposix.obj
 
 builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj
 langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
+rm.exe: rm.obj getopt.obj quit.obj lineprt.obj alloc.obj filerx.obj &
+        regexp.obj fnlower.obj die.obj isdotdot.obj
