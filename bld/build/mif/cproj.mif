@@ -127,7 +127,7 @@ model_switch_386        = -m$(memory_model_386)
 !endif
 
 cflags_all      =-w4 -we $(mode_cflags)
-!ifdef __LINUX__
+!ifdef __UNIX__
 cflags_all      += -fo=.obj
 !endif
 
@@ -135,6 +135,7 @@ cflags_386      = $(model_switch_$(host_cpu))
 cflags_i86      = $(model_switch_$(host_cpu))
 cflags_axp      =
 cflags_ppc      =
+cflags_mps      =
 
 !ifndef suppress_zc
 cflags_386      += -zc
@@ -252,12 +253,16 @@ aflags_all      =
 !ifdef __UNIX__
 aflags_386      = -3-w4-fo=.obj
 aflags_i86      = -w4-fo=.obj
+aflags_axp      = -we-fo=.obj
+aflags_ppc      = -we-fo=.obj
+aflags_mps      = -we-fo=.obj
 !else
 aflags_386      = -3-w4
 aflags_i86      = -w4
-!endif
 aflags_axp      = -we
 aflags_ppc      = -we
+aflags_mps      = -we
+!endif
 
 aflags_nt       = -bt=nt
 aflags_win      = -bt=windows
