@@ -51,6 +51,78 @@ bool rebind_test( )
   return( true );
 }
 
+struct Base {
+  int b_member;
+};
+struct Derived : Base {
+  int d_member;
+};
+
+template< typename T >
+bool f( std::auto_ptr< T > arg )
+{
+  if( *arg != 24 ) FAIL
+  return true;
+}
+
+template< typename T >
+void g( const std::auto_ptr< T > &arg )
+{
+  *arg = 42;
+}
+
+bool auto_ptr_test( )
+{
+  bool rc = true;
+
+  // Basic tests
+  // -----------
+
+  std::auto_ptr< int > p1( new int( -2 ) );
+  if( *p1 != -2 ) FAIL
+
+  std::auto_ptr< int > p2( p1 );
+  if(  p1.get( ) !=  0 ) FAIL
+  if( *p2        != -2 ) FAIL
+
+  std::auto_ptr< int > p3;
+  p3 = p2;
+  if(  p2.get( ) !=  0 ) FAIL
+  if( *p3        != -2 ) FAIL
+
+  // Check base/derived conversions
+  // ------------------------------
+
+  std::auto_ptr< Derived > pder( new Derived );
+  pder->b_member = -2;
+
+  std::auto_ptr< Base > pbas;
+  #ifdef _NEVER
+  std::auto_ptr< Base > pbas( pder );
+  if( pder.get( )    !=  0 ) FAIL
+  if( pbas->b_member != -2 ) FAIL
+  #endif
+
+  pder.reset( new Derived );
+  pder->b_member = -3;
+  pbas = pder;
+  if( pder.get( )    !=  0 ) FAIL
+  if( pbas->b_member != -3 ) FAIL
+
+  // Check auto_ptr as function argument type or return type
+  // -------------------------------------------------------
+
+  std::auto_ptr< int > arg1( new int( 24 ) );
+  f( arg1 );
+  if( arg1.get( ) != 0 ) FAIL
+
+  const std::auto_ptr< int > arg2( new int( 24 ) );
+  g( arg2 );
+  if( *arg2 != 42 ) FAIL
+
+  return( rc );
+}
+
 
 int main( )
 {
@@ -58,7 +130,8 @@ int main( )
   int original_count = heap_count( );
 
   try {
-    if( !rebind_test( )  || !heap_ok( "t01" ) ) rc = 1;
+    if( !rebind_test( )   || !heap_ok( "t01" ) ) rc = 1;
+    if( !auto_ptr_test( ) || !heap_ok( "t02" ) ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";

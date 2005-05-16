@@ -70,7 +70,9 @@ namespace std {
 
   template< class Type > class allocator;
 
-  // Allocator specialization for void.
+  // Allocator specialization for void
+  // *********************************
+
   template< >
   class allocator< void > {
   public:
@@ -78,11 +80,13 @@ namespace std {
     typedef const void *const_pointer;
     typedef void        value_type;
 
-    template< class Other >
-    struct rebind { typedef allocator< Other > other; };
+    template< class Type2 >
+    struct rebind { typedef allocator< Type2 > other; };
   };
 
-  // Default allocator template.
+  // Default allocator template
+  // **************************
+
   template< class Type >
   class allocator {
   public:
@@ -94,8 +98,8 @@ namespace std {
     typedef const Type          &const_reference;
     typedef       Type           value_type;
 
-    template< class Other >
-    struct rebind { typedef allocator< Other > other; };
+    template< class Type2 >
+    struct rebind { typedef allocator< Type2 > other; };
 
     allocator( )
       { }
@@ -103,8 +107,8 @@ namespace std {
     allocator( const allocator & )
       { }
 
-    template< class Other >
-    allocator( const allocator< Other > & )
+    template< class Type2 >
+    allocator( const allocator< Type2 > & )
       { }
 
    ~allocator( )
@@ -133,7 +137,35 @@ namespace std {
       { ( ( Type * )p )->~Type( ); }
   };
 
-  // Templates for initializing blocks of uninitialized memory.
+  // Raw storage iterator
+  // ********************
+
+  template< class OutputIterator, class Type >
+  class raw_storage_iterator
+    : public iterator< output_iterator_tag, void, void, void, void > {
+  public:
+    explicit raw_storage_iterator( OutputIterator it ) : ptr( it )
+      { }
+    raw_storage_iterator &operator*( )
+      { return( *this ); }
+    raw_storage_iterator &operator=( const Type & incoming )
+      { _RawConstruct( ptr, incoming ); return( *this ); }
+    raw_storage_iterator &operator++( )
+      { ++ptr; return( *this ); }
+    raw_storage_iterator  operator++( int )
+      { raw_storage_iterator temp( *this ); ++ptr; return( temp ); }
+  private:
+    OutputIterator ptr;
+  };
+
+
+  // Temporary Buffers
+  // *****************
+
+  // Need compiler support for explicit function template arguments.
+
+  // Templates for initializing blocks of uninitialized memory
+  // *********************************************************
 
   template< class ForwardIterator, class Type >
   void uninitialized_fill(
@@ -227,9 +259,14 @@ namespace std {
   }
 
 
-  // Auto_ptr support.
+  // auto_ptr template
+  // *****************
 
-  template< class Type > struct auto_ptr_ref { };
+  template< class Type >
+  struct auto_ptr_ref {
+    auto_ptr< Type > &ref;
+    auto_ptr_ref( auto_ptr< Type > &r ) : ref( r ) { }
+  };
 
   template< class Type >
   class auto_ptr {
@@ -242,17 +279,17 @@ namespace std {
     auto_ptr( auto_ptr &other ) : ptr( other.release( ) )
       { }
 
-    template< class Other >
-    auto_ptr( auto_ptr< Other > &other ) :
-      ptr( static_cast< Type * >( other.release( ) )
+    template< class Type2 >
+    auto_ptr( auto_ptr< Type2 > &other ) :
+      ptr( static_cast< Type * >( other.release( ) ) )
       { }
 
     auto_ptr &operator=( auto_ptr &other )
       { reset( other.release( ) ); return( *this ); }
 
-    template< class Other >
-    auto_ptr &operator=( auto_ptr< Other > &other )
-      { reset( static_cast< Type * >( other.release( ) ); return ( *this ); }
+    template< class Type2 >
+    auto_ptr &operator=( auto_ptr< Type2 > &other )
+      { reset( static_cast< Type * >( other.release( ) ) ); return ( *this ); }
 
    ~auto_ptr( ) _WCTHROWS( )
       { delete ptr; }
@@ -272,11 +309,16 @@ namespace std {
     void reset( Type *p = 0 ) _WCTHROWS( )
       { if ( ptr != p ) delete ptr; ptr = p; }
 
-    // auto_ptr( auto_ptr_ref< Type > ) _WCTHROWS( );
+    auto_ptr( auto_ptr_ref< Type > r ) : ptr( r.ref.release( ) )
+      { }
 
-    // template< class U > operator auto_ptr_ref< U >( ) _WCTHROWS( );
+    // template< class Type2 > 
+    // operator auto_ptr_ref< Type2 >( )
+    //   { return( auto_ptr_ref< Type2 >( *this ); }
 
-    // template< class U > operator auto_ptr< U >( ) _WCTHROWS( );
+    // template< class Type2 >
+    // operator auto_ptr< Type2 >( )
+    //   { }
 
   private:
     Type *ptr;
