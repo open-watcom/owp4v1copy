@@ -148,7 +148,7 @@ public:
     const_iterator end() const {return const_iterator( this, (Node*) 0 );}
     const_iterator begin() const {return const_iterator( this, mFirst );}
     
-    pair< iterator, bool > insert( value_type const & );
+    // pair< iterator, bool > insert( value_type const & );
     void erase( iterator );
     size_type erase( Key const & );
     //void erase(iterator first, iterator last);
@@ -164,7 +164,7 @@ public:
 protected:
     void doubleBlackTransform(Node* parent, bool lefty);
     void insBalTransform(Node* inserted);
-    std::pair<iterator,bool> unbalancedInsert(value_type const &);
+    // std::pair<iterator,bool> unbalancedInsert(value_type const &);
     int blackHeight( iterator );
     int height( iterator );
     Node* walkRight( Node* ) const;
@@ -238,6 +238,7 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::unbalancedInsert(va
     return std::pair<iterator,bool>(iterator(this, newnode), true);
 }
 
+public:
 /* ------------------------------------------------------------------
  * insert  !!MOVE ME OUTSIDE CLASS!!
  * supports ... operations
