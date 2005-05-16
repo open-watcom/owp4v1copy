@@ -214,6 +214,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
         case ORL_RELOC_TYPE_MAX + 1:
         case ORL_RELOC_TYPE_JUMP:
         case ORL_RELOC_TYPE_REL_21_SH:
+        case ORL_RELOC_TYPE_WORD_26:
             error = referenceString( *r_entry, sec_size, "j^", "", "",
                                      buff, flags );
             if( error != OKAY ) {
@@ -253,7 +254,6 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
         case ORL_RELOC_TYPE_REL_24:
         case ORL_RELOC_TYPE_WORD_14:
         case ORL_RELOC_TYPE_WORD_24:
-        case ORL_RELOC_TYPE_WORD_26:
             nvalue &= ~0x3;
         case ORL_RELOC_TYPE_WORD_16:
         case ORL_RELOC_TYPE_WORD_32:
