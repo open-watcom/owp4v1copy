@@ -16,15 +16,9 @@ make_lib = 1
 #
 #       define the main target
 #
-lib=posix$(model).lbc
-posix$(model).lib : $(libobjs) $(lib) $(__MAKEFILES__)
-        $(librarian) -b posix$(model).lib @$(lib)
-
-#
-#       create the lbc file
-#
-$(lib) : $(__MAKEFILES__)
-        @%create $(LIB)
-        @for %i in ($(LIBOBJS)) do @%append $(lib) -+%i
+posix.lib : $(libobjs) $(__MAKEFILES__)
+        @%create posix.lbc
+        @for %i in ($(libobjs)) do @%append posix.lbc -+%i
+        $(librarian) -b posix.lib @posix.lbc
 
 !include $(posix_dir)/mif/clean.mif

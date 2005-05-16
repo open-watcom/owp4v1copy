@@ -42,7 +42,7 @@ modelos=f
 !else ifeq      targos  nt386
 modelos=f
 !else ifeq      targos  ntaxp
-modelos=f
+modelos=
 !endif
 !ifndef model
 model=$(modelos)
@@ -50,7 +50,11 @@ model=$(modelos)
 memory_model_i86=$(model)
 memory_model_386=$(model)
 
-posixlib=$(posix_dir)/misc/$(targos)/m$(model)/posix$(model).lib
+!ifeq targos ntaxp
+posixlibdir=$(posix_dir)/misc/$(targos)/_s
+!else
+posixlibdir=$(posix_dir)/misc/$(targos)/m$(model)
+!endif
 
 !include cproj.mif
 !include defrule.mif
@@ -63,10 +67,14 @@ posixlib=$(posix_dir)/misc/$(targos)/m$(model)/posix$(model).lib
 #       define options for each specific operating system supported
 #
 
-!ifeq        targos  pharlap
-extra_cflags   = -bt=pharlap $(extra_cflags)
-!else ifeq   targos  ntaxp
-extra_cflags   = -DWIN32 -D_WIN32
+extra_cflags_pharlap = -bt=pharlap
+extra_cflags_ntaxp   = -DWIN32 -D_WIN32
+extra_c_flags = -D__OS_$(targos)__ -DSTANDALONE_RX $(extra_cflags_$(targos)) $(extra_cflags)
+
+!ifndef make_lib
+inc_dirs = -I"$(posix_dir)/src/$(name)" -I"$(posix_dir)/h"
+!else
+inc_dirs = -I"$(posix_dir)/h"
 !endif
 
 !ifndef make_lib
@@ -75,9 +83,3 @@ extra_cflags   = -DWIN32 -D_WIN32
 .c: $(posix_dir)/misc;$(lang_root)/src/startup
 !endif
 
-.before
-!ifndef make_lib
-extra_c_flags = -fo=.obj -D__OS_$(targos)__ -DSTANDALONE_RX -I"$(posix_dir)/src/$(name)" -I"$(posix_dir)/h" $(extra_cflags)
-!else
-extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/m$(model)/.obj" -D__OS_$(targos)__ -DSTANDALONE_RX -I"$(posix_dir)/h" $(extra_cflags)
-!endif

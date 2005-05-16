@@ -13,31 +13,22 @@ clean_build : .symbolic
 !include $(posix_dir)/mif/commands.mif
 !endif
 !include $(posix_dir)/mif/targos.mif
+!include $(posix_dir)/mif/common.mif
+
+altposixlibdir=$(posix_dir)/misc/$(targos)/ms
 
 all : lib $(commands) .symbolic
         @%null
 
 lib : .symbolic $(__MAKEFILES__)
 curr_dir_all=$+ $(%cwd) $-
-!ifdef __UNIX__
-misc_lib_dir=$(posix_dir)/misc/$(targos)/
-!else
-misc_lib_dir=$(posix_dir)\misc\$(targos)\
-!endif
-!ifeq targos dos
-        @cd $(misc_lib_dir)mc
+        @cd $(posixlibdir)
         !@wmake -h
-        @cd $(misc_lib_dir)ms
+!ifeq targos dos
+        @cd $(altposixlibdir)
         !@wmake -h
 !else ifeq targos dosos2
-        @cd $(misc_lib_dir)mc
-        !@wmake -h
-        @cd $(misc_lib_dir)ms
-        !@wmake -h
-!else
-        # Note that this does not cater for qnx nor qnx16.
-        # No testing facilities. W.Briscoe 2004-02-04
-        @cd $(misc_lib_dir)mf
+        @cd $(altposixlibdir)
         !@wmake -h
 !endif
         @cd $(curr_dir_all)
@@ -50,20 +41,15 @@ $(commands) : .symbolic $(__MAKEFILES__)
 !endif
 
 clean : .symbolic
+        !@wmake -h -f $(posixlibdir)/makefile clean clean_dir=$(posixlibdir)
 !ifeq targos dos
-        !@wmake -h -f $(posix_dir)/misc/$(targos)/mc/makefile clean clean_dir=$(posix_dir)/misc/$(targos)/mc
-        !@wmake -h -f $(posix_dir)/misc/$(targos)/ms/makefile clean clean_dir=$(posix_dir)/misc/$(targos)/ms
+        !@wmake -h -f $(altposixlibdir)/makefile clean clean_dir=$(altposixlibdir)
 !else ifeq targos dosos2
-        !@wmake -h -f $(posix_dir)/misc/$(targos)/mc/makefile clean clean_dir=$(posix_dir)/misc/$(targos)/mc
-        !@wmake -h -f $(posix_dir)/misc/$(targos)/ms/makefile clean clean_dir=$(posix_dir)/misc/$(targos)/ms
-!else
-        !@wmake -h -f $(posix_dir)/misc/$(targos)/mf/makefile clean clean_dir=$(posix_dir)/misc/$(targos)/mf
+        !@wmake -h -f $(altposixlibdir)/makefile clean clean_dir=$(altposixlibdir)
 !endif
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err
         @if exist rm.exe erase rm.exe
 
 clean_build : .symbolic
         @for %i in ($(commands)) do @rm -f $(build_path)/%i.exe
-        # The next line is equivalent to the last in a single command
-        # @rm -f $(build_path)/$(commands: =.exe $(build_path)/).exe
 !endif
