@@ -878,7 +878,7 @@ static  void  Usage( void )
     auto        char buf[82];
 #ifndef __UNIX__
     int const   paging = isatty( fileno( stdout ) );
-    int const   height = 25; /* Number of lines assumed on screen */
+    int const   height = 24; /* Number of lines assumed on screen */
 #endif
 
     print_banner();
@@ -895,8 +895,9 @@ static  void  Usage( void )
             }
             n = (n+1) / 2;                      /* half way through list */
 #ifndef __UNIX__
-            if( paging && lines_printed != 0 && lines_printed + n > height ) {
+            if( paging && lines_printed != 0 && lines_printed >= height ) {
                 fputs( WclMsgs[ PRESS_ANY_KEY_TO_CONTINUE ], stdout );
+                fflush( stdout );
                 getch();
                 puts( "" );
                 lines_printed = 0;
@@ -916,6 +917,15 @@ static  void  Usage( void )
                 buf[i] = '\0';
                 puts( buf );
                 lines_printed++;
+#ifndef __UNIX__
+                if( paging && lines_printed != 0 && lines_printed >= height ) {
+                    fputs( WclMsgs[ PRESS_ANY_KEY_TO_CONTINUE ], stdout );
+                    fflush( stdout );
+                    getch();
+                    puts( "" );
+                    lines_printed = 0;
+                }
+#endif
                 p = list[n];
                 if( p == NULL ) break;
                 if( *p == '[' ) break;
