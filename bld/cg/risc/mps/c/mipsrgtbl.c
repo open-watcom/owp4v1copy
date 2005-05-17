@@ -740,7 +740,7 @@ extern  hw_reg_set FixedRegs( void )
 extern  hw_reg_set VarargsHomePtr( void )
 /***************************************/
 {
-    return( HW_R14 );
+    return( HW_R23 );
 }
 
 

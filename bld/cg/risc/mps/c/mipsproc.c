@@ -247,7 +247,7 @@ static  void initSavedRegs( stack_record *saved_regs, type_length *offset )
 #define ADDIU_OPCODE    0x09
 #define NOP_OPCODE      0x00
 
-#define VARARGS_PTR     14      // TODO
+#define VARARGS_PTR     23      // TODO
 #define RT_PARM1        8       // $t0
 #define RT_RET_REG      2       // $v0
 
