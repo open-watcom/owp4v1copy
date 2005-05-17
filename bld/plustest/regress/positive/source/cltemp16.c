@@ -8,8 +8,8 @@ struct A {
         }
 
         template< class U >
-        B( U u ) {
-            val_ = 2 * u;
+        B( U u )
+            : val_( 2 * u ) {
         }
 
         template< class U >

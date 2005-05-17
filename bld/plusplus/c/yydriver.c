@@ -2099,6 +2099,51 @@ static void syntaxError( void )
     }
 }
 
+static void recordTemplateCtorInitializer( PARSE_STACK *state )
+{
+    unsigned paren_depth;
+    unsigned brace_depth;
+
+    brace_depth = 0;
+    paren_depth = 0;
+
+    for(;;) {
+        if( CurToken == T_EOF ) {
+            syntaxError();
+            break;
+        }
+
+        switch( CurToken ) {
+        case T_LEFT_PAREN:
+            ++paren_depth;
+            break;
+        case T_RIGHT_PAREN:
+            if( paren_depth == 0 ) {
+                syntaxError();
+                break;
+            }
+            --paren_depth;
+            break;
+        case T_RIGHT_BRACE:
+        case T_ALT_RIGHT_BRACE:
+            if( brace_depth == 0 ) {
+                syntaxError();
+                break;
+            }
+            --brace_depth;
+            break;
+        case T_LEFT_BRACE:
+        case T_ALT_LEFT_BRACE:
+            if( paren_depth == 0 ) {
+                return;
+            }
+            ++brace_depth;
+            break;
+        }
+        nextRecordedToken( state );
+    }
+}
+
 static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token,
                                MSG_NUM err_msg )
 {

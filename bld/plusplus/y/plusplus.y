@@ -2755,7 +2755,12 @@ base-qualifiers-opt
 ctor-initializer
     : Y_COLON
     {
-        $$ = RewritePackageMemInit( getMultiToken() );
+        if( state->template_record_tokens != NULL ) {
+            recordTemplateCtorInitializer( state );
+            $$ = NULL;
+        } else {
+            $$ = RewritePackageMemInit( getMultiToken() );
+        }
         what = P_RELEX;
     }
     ;
