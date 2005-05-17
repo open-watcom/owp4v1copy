@@ -13,6 +13,8 @@ __owl_suffix=\owl.lib
 #
 owl_lib_386 = $(__owl_prefix)osi386$(__owl_suffix)
 owl_lib_axp = $(__owl_prefix)osiaxp$(__owl_suffix)
+owl_lib_ppc = $(__owl_prefix)osippc$(__owl_suffix)
+owl_lib_mps = $(__owl_prefix)osimps$(__owl_suffix)
 
 #
 # OWL run-time DLL used

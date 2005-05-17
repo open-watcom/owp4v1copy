@@ -16,6 +16,8 @@
  typedef unsigned int jmp_buf[1];
 #elif defined(__AXP__)
  typedef double jmp_buf[24];
+#elif defined(__MIPS__)
+ typedef unsigned long jmp_buf[26];
 #else
  typedef unsigned int jmp_buf[13];
 #endif
@@ -29,6 +31,8 @@ _WCRTLINK extern void longjmp( jmp_buf __env, int __val );
 
 #if defined(__PPC__)
 #elif defined(__AXP__)
+#elif defined(__MIPS__)
+ #pragma aux longjmp __aborts;
 #elif defined(__386__)
  #pragma aux _setjmp __parm __caller [__eax] __modify [__8087];
  #ifndef __SW_3R

@@ -13,6 +13,8 @@ __dwarf_dw_suffix=\dw.lib
 #
 dwarf_dw_lib_386     = $(__dwarf_dw_prefix)osi386$(__dwarf_dw_suffix)
 dwarf_dw_lib_axp     = $(__dwarf_dw_prefix)osiaxp$(__dwarf_dw_suffix)
+dwarf_dw_lib_ppc     = $(__dwarf_dw_prefix)osippc$(__dwarf_dw_suffix)
+dwarf_dw_lib_mps     = $(__dwarf_dw_prefix)osimps$(__dwarf_dw_suffix)
 
 #
 # DWARF run-time DLL used

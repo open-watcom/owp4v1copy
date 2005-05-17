@@ -29,6 +29,50 @@
 ****************************************************************************/
 
 
+/* On MIPS, return values and error numbers are both returned in
+ * register v0 (regular function return register). Register a3
+ * (fourth argument register) specifies whether the return value was an
+ * error or not: zero a3 means valid return value, nonzero a3 means error
+ * number. Don't look at me, I didn't invent this.
+ */
+
+// FIXME: This works fine as long as __syscall_return is called right
+// after the actual syscall. It might be safer to return long long (or
+// perhaps a struct, except struct returns are screwy on MIPS) from the
+// syscall inline assembler and unpack the return in C. That way there
+// would be no risk that a3 gets trashed before __syscall_return.
+
+u_long get_a3( void );
+#pragma aux get_a3 =                            \
+    "move   $v0,$a3"                            \
+    value [r2];
+
+
+#define __syscall_return( type, res )                   \
+    {                                                   \
+        u_long  is_error;                               \
+                                                        \
+        is_error = get_a3();                            \
+        if( is_error ) {                                \
+            errno = res;                                \
+            res = (u_long)-1;                           \
+        }                                               \
+    }                                                   \
+    return( (type)(res) );
+
+#define __syscall_return_pointer( type, res )           \
+    {                                                   \
+        u_long  is_error;                               \
+                                                        \
+        is_error = get_a3();                            \
+        if( is_error ) {                                \
+            errno = res;                                \
+            res = (u_long)-1;                           \
+        }                                               \
+    }                                                   \
+    return( (type)(res) );
+
+
 /*
  * Linux system call numbers
  */

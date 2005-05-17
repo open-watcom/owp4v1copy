@@ -39,23 +39,6 @@
     #include <sys/types.h>
 #endif
 
-/* user-visible error numbers are in the range -1 - -124 */
-
-#define __syscall_return( type, res )                   \
-    if( (u_long)(res) >= (u_long)(-125) ) {             \
-        errno = -(res);                                 \
-        res = (u_long)-1;                               \
-    }                                                   \
-    return( (type)(res) );
-
-#define __syscall_return_pointer( type, res )           \
-    if( (u_long)(res) >= (u_long)(-125) ) {             \
-        errno = -(res);                                 \
-        res = (u_long)0;                                \
-    }                                                   \
-    return( (type)(res) );
-
-
 /* Include architecture specific definitions */
 #if defined( __386__ )
     #include "sys386.h"

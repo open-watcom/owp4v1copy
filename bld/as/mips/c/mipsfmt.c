@@ -414,7 +414,11 @@ static unsigned loadConst32( uint_32 *buffer, uint_8 d_reg, uint_8 s_reg, ins_op
         doReloc( reloc, op, OWL_RELOC_HALF_HI, buffer );
         ++buffer;
         // followed by 'ori rt,rt,(value & 0xffff)'
-        doOpcodeIType( buffer, OPCODE_ORI, d_reg, d_reg, low );
+        // or 'addiu' for the 'la' pseudo-ins
+        if( force_pair )
+            doOpcodeIType( buffer, OPCODE_ADDIU, d_reg, d_reg, low );
+        else
+            doOpcodeIType( buffer, OPCODE_ORI, d_reg, d_reg, low );
         doReloc( reloc, op, OWL_RELOC_HALF_LO, buffer );
         ++ret;
     }
@@ -1209,7 +1213,7 @@ static void ITPseudoLAddr( ins_table *table, instruction *ins, uint_32 *buffer, 
         }
 #endif
         if( op->reloc.type == ASM_RELOC_UNSPECIFIED ) {
-            // We should emit lui/ori pair.
+            // We should emit lui/addiu pair.
             inc = loadConst32( buffer, RegIndex( ins->operands[0]->reg ),
                                s_reg, op, op->constant, reloc, TRUE );
             numExtendedIns += inc - 1;

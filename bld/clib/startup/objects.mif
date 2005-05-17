@@ -78,6 +78,7 @@
 !inject kererr.obj                                                              q32
 !inject lgjmpaxp.obj                        nta
 !inject lgjpxaxp.obj                        nta
+!inject lgjmpmps.obj                                                                                    lmp
 !inject liballoc.obj d16 d32 dpm         nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject libmno16.obj                                                o16
 !inject libmno32.obj                                                    o32
@@ -122,6 +123,7 @@
 !inject stacklnx.obj                                                                                lpc lmp
 !inject stackwnt.obj                     nt nta ntp
 !inject stjmpaxp.obj                        nta
+!inject stjmpmps.obj                                                                                    lmp
 !inject stjmp086.obj d16                                            o16     q16     w16
 !inject stjmp386.obj     d32             nt         nvc     nvl nll     o32     q32     w32 osi l32
 !inject stjpxaxp.obj                        nta

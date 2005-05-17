@@ -20,7 +20,7 @@
 
 :include sizet.sp
 
-:segment LINUX | QNX | SNAP | SNAPDRV
+:segment LINUX | QNX
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
 typedef signed ssize_t;
@@ -32,39 +32,10 @@ typedef signed ssize_t;
  #include <limits.h>
 #endif
 
+:include incdir.sp
+
 /* Define POSIX 1003.1 types */
-
-typedef unsigned short  dev_t;  /* Combination of node and device   */
-#ifndef _GID_T_DEFINED_
- typedef unsigned short gid_t;  /* Used for group IDs               */
- #define _GID_T_DEFINED_
-#endif
-typedef unsigned long   ino_t;  /* Used for file serial numbers     */
-typedef unsigned short  mode_t; /* Used for some file attributes    */
-typedef unsigned short  nlink_t;/* Used for link counts             */
-typedef long            off_t;  /* Used for file sizes, offsets     */
-typedef int             pid_t;  /* Used for process IDs & group IDs */
-#ifndef _UID_T_DEFINED_
- typedef unsigned short uid_t;  /* Used for user IDs                */
- #define _UID_T_DEFINED_
-#endif
-#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-#ifndef _TIMER_T_DEFINED_
- #define _TIMER_T_DEFINED_
-typedef int             timer_t;/* Used for timer IDs               */
-#endif
-#ifndef _CLOCKID_T_DEFINED_
- #define _CLOCKID_T_DEFINED_
-typedef int             clockid_t;/* Used for clock IDs             */
-#endif
-#endif
-
-#define major(device)                   ((int)(((device) >> 8) & 0xFF))
-#define minor(device)                   ((int)((device) & 0xff))
-#define makedev(major,minor)            ((dev_t) (((major) << 8) | (minor)))
-
-typedef char            *caddr_t;
-typedef long            daddr_t;
+#include _ARCH_INCLUDE(sys/types.h)
 
 :: The exact width integer types are shared with stdint.h
 #ifndef _EXACT_WIDTH_INTS
@@ -193,7 +164,7 @@ typedef quad *          qaddr_t;
 typedef unsigned long   fixpt_t;
 typedef int             key_t;
 typedef unsigned short  sel_t;
-:elsesegment DOS | SNAP | SNAPDRV
+:elsesegment DOS
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */

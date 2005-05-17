@@ -29,6 +29,28 @@
 ****************************************************************************/
 
 
+/* On i386, syscall return value and error number are both returned
+ * in eax register. Values between -125 and -1 indicate an error,
+ * everything else is a valid return value.
+ */
+
+/* user-visible error numbers are in the range -1 - -124 */
+
+#define __syscall_return( type, res )                   \
+    if( (u_long)(res) >= (u_long)(-125) ) {             \
+        errno = -(res);                                 \
+        res = (u_long)-1;                               \
+    }                                                   \
+    return( (type)(res) );
+
+#define __syscall_return_pointer( type, res )           \
+    if( (u_long)(res) >= (u_long)(-125) ) {             \
+        errno = -(res);                                 \
+        res = (u_long)0;                                \
+    }                                                   \
+    return( (type)(res) );
+
+
 /*
  * Linux system call numbers
  */

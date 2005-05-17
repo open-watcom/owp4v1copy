@@ -64,8 +64,11 @@ ins_table MIPSTable[] = {
     INS( "ulh",     0x00,   0x02,   IT_MEMORY_ALL,      ENUM_NONE,  MIPS_ISA1 ),
     INS( "ulhu",    0x00,   0x03,   IT_MEMORY_ALL,      ENUM_NONE,  MIPS_ISA1 ),
     INS( "ulw",     0x00,   0x04,   IT_MEMORY_ALL,      ENUM_NONE,  MIPS_ISA1 ),
-
-    INS( "ldf",     0x20,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA1 ),
+ // FPU Memory Format Instructions
+    INS( "lwc1",    0x31,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA1 ),
+    INS( "ldc1",    0x35,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA2 ),
+    INS( "swc1",    0x39,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA1 ),
+    INS( "sdc1",    0x3d,   0x00,   IT_FP_MEMORY_ALL,   ENUM_NONE,  MIPS_ISA2 ),
  // Memory Format Instructions with a function code
     INS( "fetch",   0x18,   0x80,   IT_MEMORY_B,        ENUM_NONE,  MIPS_ISA1 ),
     INS( "fetch_m", 0x18,   0xA0,   IT_MEMORY_B,        ENUM_NONE,  MIPS_ISA1 ),
@@ -130,7 +133,11 @@ ins_table MIPSTable[] = {
     INS( "dmtc0",   0x10,   0x05,   IT_MOV_COP,         ENUM_NONE,  MIPS_ISA3 ),
  // Moves to/from FPU
     INS( "mfc1",    0x11,   0x00,   IT_MOV_FP,          ENUM_NONE,  MIPS_ISA1 ),
+    INS( "dmfc1",   0x11,   0x01,   IT_MOV_FP,          ENUM_NONE,  MIPS_ISA2 ),
+    INS( "cfc1",    0x11,   0x02,   IT_MOV_COP,         ENUM_NONE,  MIPS_ISA1 ),
     INS( "mtc1",    0x11,   0x04,   IT_MOV_FP,          ENUM_NONE,  MIPS_ISA1 ),
+    INS( "dmtc1",   0x11,   0x05,   IT_MOV_FP,          ENUM_NONE,  MIPS_ISA2 ),
+    INS( "ctc1",    0x11,   0x06,   IT_MOV_COP,         ENUM_NONE,  MIPS_ISA1 ),
  // Trap instructions
     INS( "tge",     0x00,   0x30,   IT_TRAP,            ENUM_NONE,  MIPS_ISA2 ),
     INS( "tgeu",    0x00,   0x31,   IT_TRAP,            ENUM_NONE,  MIPS_ISA2 ),
