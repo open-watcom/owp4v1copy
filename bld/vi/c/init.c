@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef __AXP__
+#ifdef _M_IX86
 #ifdef __WATCOMC__
 #include <i86.h>
 #endif

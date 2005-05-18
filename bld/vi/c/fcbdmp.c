@@ -392,7 +392,7 @@ void CheckFcb( fcb *cfcb, int *bcnt, linenum *lnecnt  )
 
 #endif
 
-#ifndef __NT__
+#ifdef __DOS__
 #include "xmem.h"
 #ifndef NOXTD
 extern xtd_struct XMemCtrl;

@@ -34,8 +34,10 @@
 #include <stdlib.h>
 #include <malloc.h>
 #ifdef __WATCOMC__
-#include <process.h>
-#include "stack.h"
+    #include <process.h>
+#endif
+#if defined( __WATCOMC__ ) && defined( __X86__ )
+    #include "stack.h"
 #endif
 #include "vi.h"
 #include "source.h"
@@ -54,13 +56,13 @@ int main( int argc, char *argv[] )
     _argv = argv;
 #endif
     EXEName = _cmdname(buffer);
-#ifdef __WATCOMC__
+#if defined( __WATCOMC__ ) && defined( __X86__ )
     InitialStack();
 #endif
     VarAddGlobalStr( "OS", "unix" );
     Comspec = getenv( "SHELL" );
     InitializeEditor();
-#ifdef __WATCOMC__
+#if defined( __WATCOMC__ ) && defined( __X86__ )
     FinalStack();
 #endif
     EditMain();

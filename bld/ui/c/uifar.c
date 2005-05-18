@@ -149,7 +149,7 @@ intern void cdecl farfill( LPPIXEL start, PIXEL fill, int len, int snow )
 
 intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
 {
-#if defined(__AXP__)
+#if defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     _unused( snow );
     memmove( dst, src, len*sizeof(PIXEL) );
 #elif defined( __386__ ) || defined( UNIX )
