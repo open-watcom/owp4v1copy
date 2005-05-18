@@ -96,12 +96,9 @@ bool auto_ptr_test( )
   std::auto_ptr< Derived > pder( new Derived );
   pder->b_member = -2;
 
-  std::auto_ptr< Base > pbas;
-  #ifdef _NEVER
   std::auto_ptr< Base > pbas( pder );
   if( pder.get( )    !=  0 ) FAIL
   if( pbas->b_member != -2 ) FAIL
-  #endif
 
   pder.reset( new Derived );
   pder->b_member = -3;
