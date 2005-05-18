@@ -1,19 +1,19 @@
 #
 # awaiting bug fixes
 #
-# pch01.$(ext) &    # All of the PCH tests are currently broken!
-# pch02.$(ext) &    # There are at least three distinct problems
-# pch03.$(ext) &    # - Count of SpecialSyms may not match and
-# pch04.$(ext) &    #   PCH will be endlessly regenerated if there
-# pch05.$(ext) &    #   are inlined assembly functions in header
-# pch06.$(ext) &    #   (pch01/02)
-# pch07.$(ext) &    # - Missing CR/LF at the end of precompiled
-# pch08.$(ext) &    #   header throws off the parser (pch03/04)
-# pch09.$(ext) &    # - Expression trees aren't stored in PCH, any
-# pch10.$(ext) &    #   functions defined in headers will screw
-# pch11.$(ext) &    #   things up (pch05/06 and others)
-# init12.$(ext) &   # based pointer problem
-# opt11.$(ext) &    # volatile + post increment problem
+# pch01.$(exe) &    # All of the PCH tests are currently broken!
+# pch02.$(exe) &    # There are at least three distinct problems
+# pch03.$(exe) &    # - Count of SpecialSyms may not match and
+# pch04.$(exe) &    #   PCH will be endlessly regenerated if there
+# pch05.$(exe) &    #   are inlined assembly functions in header
+# pch06.$(exe) &    #   (pch01/02)
+# pch07.$(exe) &    # - Missing CR/LF at the end of precompiled
+# pch08.$(exe) &    #   header throws off the parser (pch03/04)
+# pch09.$(exe) &    # - Expression trees aren't stored in PCH, any
+# pch10.$(exe) &    #   functions defined in headers will screw
+# pch11.$(exe) &    #   things up (pch05/06 and others)
+# init12.$(exe) &   # based pointer problem
+# opt11.$(exe) &    # volatile + post increment problem
 
 !ifdef %ctest_bad_br
 no_br_except30 = no
@@ -74,153 +74,151 @@ bad_on_axp = &
 
 
 positive_tests = &
-    asm01.$(ext) &
-    asm02.$(ext) &
-    asm03.$(ext) &
-    asm04.$(ext) &
-    asm05.$(ext) &
-    asm06.$(ext) &
-    asm07.$(ext) &
-    asm08.$(ext) &
-    based02.$(ext) &
-    bf01.$(ext) &
-    bf02.$(ext) &
-    bf03.$(ext) &
-    conv02.$(ext) &
-    conv03.$(ext) &
-    conv04.$(ext) &
-    enum01.$(ext) &
-    enum02.$(ext) &
-    enum03.$(ext) &
-    expr01.$(ext) &
-    expr02.$(ext) &
-    float01.$(ext) &
-    float03.$(ext) &
-    float04.$(ext) &
-    i64cmp.$(ext) &
-    i64cnv.$(ext) &
-    i64op.$(ext) &
-    i6402.$(ext) &
-    i6402.$(ext) &
-    i6404.$(ext) &
-    i6405.$(ext) &
-    i6407.$(ext) &
-    i6408.$(ext) &
-    init01.$(ext) &
-    init02.$(ext) &
-    init03.$(ext) &
-    init04.$(ext) &
-    init05.$(ext) &
-    init06.$(ext) &
-    init07.$(ext) &
-    init08.$(ext) &
-    init09.$(ext) &
-    init10.$(ext) &
-    init11.$(ext) &
-    init13.$(ext) &
-    init14.$(ext) &
-    init15.$(ext) &
-    init16.$(ext) &
-    init17.$(ext) &
-    init18.$(ext) &
-    init19.$(ext) &
-    init20.$(ext) &
-    inline01.$(ext) &
-    inline04.$(ext) &
-    intel01.$(ext) &
-    opt01.$(ext) &
-    opt02.$(ext) &
-    opt03.$(ext) &
-    opt04.$(ext) &
-    opt05.$(ext) &
-    opt06.$(ext) &
-    opt07.$(ext) &
-    opt08.$(ext) &
-    opt09.$(ext) &
-    opt10.$(ext) &
-    opt12.$(ext) &
-    opt14.$(ext) &
-    opt15.$(ext) &
-    opt16.$(ext) &
-    opt17.$(ext) &
-    opt18.$(ext) &
-    opt19.$(ext) &
-    opt20.$(ext) &
-    opt21.$(ext) &
-    opt24.$(ext) &
-    opt25.$(ext) &
-    opt26.$(ext) &
-    opt27.$(ext) &
-    opt28.$(ext) &
-    opt29.$(ext) &
-    opt30.$(ext) &
-    opt31.$(ext) &
-    opt32.$(ext) &
-    opt34.$(ext) &
-    opt35.$(ext) &
-    opt36.$(ext) &
-    opt37.$(ext) &
-    opt38.$(ext) &
-    opt39.$(ext) &
-    opt40.$(ext) &
-    opt41.$(ext) &
-    opt42.$(ext) &
-    pack01.$(ext) &
-    pack02.$(ext) &
-    pack03.$(ext) &
-    pack04.$(ext) &
-    pack05.$(ext) &
-    parm01.$(ext) &
-    parm02.$(ext) &
-    pp01.$(ext) &
-    pp02.$(ext) &
-    pp03.$(ext) &
-    pp04.$(ext) &
-    pp05.$(ext) &
-    pp06.$(ext) &
-    pp07.$(ext) &
-    pp08.$(ext) &
-    pp09.$(ext) &
-    pp10.$(ext) &
-    pp11.$(ext) &
-    pp12.$(ext) &
-    pp13.$(ext) &
-    pp14.$(ext) &
-    pp15.$(ext) &
-    pp16.$(ext) &
-    pp17.$(ext) &
-    pp18.$(ext) &
-    pp19.$(ext) &
-    pp20.$(ext) &
-    pp21.$(ext) &
-    pp22.$(ext) &
-    pp23.$(ext) &
-    pp24.$(ext) &
-    pp25.$(ext) &
-    pp26.$(ext) &
-    pp27.$(ext) &
-    pp28.$(ext) &
-    pp29.$(ext) &
-    pp30.$(ext) &
-    pp31.$(ext) &
-    quest01.$(ext) &
-    quest02.$(ext) &
-    ret01.$(ext) &
-    ret02.$(ext) &
-    ret03.$(ext) &
-    ret04.$(ext) &
-    sizeof01.$(ext) &
-    sizeof02.$(ext) &
-    src01.$(ext) &
-    str01.$(ext) &
-    str02.$(ext) &
-    switch01.$(ext) &
-    thread01.$(ext) &
-    thread02.$(ext) &
+    asm01.$(exe) &
+    asm02.$(exe) &
+    asm03.$(exe) &
+    asm04.$(exe) &
+    asm05.$(exe) &
+    asm06.$(exe) &
+    asm07.$(exe) &
+    asm08.$(exe) &
+    based02.$(exe) &
+    bf01.$(exe) &
+    bf02.$(exe) &
+    bf03.$(exe) &
+    conv02.$(exe) &
+    conv03.$(exe) &
+    conv04.$(exe) &
+    enum01.$(exe) &
+    enum02.$(exe) &
+    enum03.$(exe) &
+    expr01.$(exe) &
+    expr02.$(exe) &
+    float01.$(exe) &
+    float03.$(exe) &
+    float04.$(exe) &
+    i64cmp.$(exe) &
+    i64cnv.$(exe) &
+    i64op.$(exe) &
+    i6402.$(exe) &
+    i6402.$(exe) &
+    i6404.$(exe) &
+    i6405.$(exe) &
+    i6407.$(exe) &
+    i6408.$(exe) &
+    init01.$(exe) &
+    init02.$(exe) &
+    init03.$(exe) &
+    init04.$(exe) &
+    init05.$(exe) &
+    init06.$(exe) &
+    init07.$(exe) &
+    init08.$(exe) &
+    init09.$(exe) &
+    init10.$(exe) &
+    init11.$(exe) &
+    init13.$(exe) &
+    init14.$(exe) &
+    init15.$(exe) &
+    init16.$(exe) &
+    init17.$(exe) &
+    init18.$(exe) &
+    init19.$(exe) &
+    init20.$(exe) &
+    inline01.$(exe) &
+    inline04.$(exe) &
+    intel01.$(exe) &
+    opt01.$(exe) &
+    opt02.$(exe) &
+    opt03.$(exe) &
+    opt04.$(exe) &
+    opt05.$(exe) &
+    opt06.$(exe) &
+    opt07.$(exe) &
+    opt08.$(exe) &
+    opt09.$(exe) &
+    opt10.$(exe) &
+    opt12.$(exe) &
+    opt14.$(exe) &
+    opt15.$(exe) &
+    opt16.$(exe) &
+    opt17.$(exe) &
+    opt18.$(exe) &
+    opt19.$(exe) &
+    opt20.$(exe) &
+    opt21.$(exe) &
+    opt24.$(exe) &
+    opt25.$(exe) &
+    opt26.$(exe) &
+    opt27.$(exe) &
+    opt28.$(exe) &
+    opt29.$(exe) &
+    opt30.$(exe) &
+    opt31.$(exe) &
+    opt32.$(exe) &
+    opt34.$(exe) &
+    opt35.$(exe) &
+    opt36.$(exe) &
+    opt37.$(exe) &
+    opt38.$(exe) &
+    opt39.$(exe) &
+    opt40.$(exe) &
+    opt41.$(exe) &
+    opt42.$(exe) &
+    pack01.$(exe) &
+    pack02.$(exe) &
+    pack03.$(exe) &
+    pack04.$(exe) &
+    pack05.$(exe) &
+    parm01.$(exe) &
+    parm02.$(exe) &
+    pp01.$(exe) &
+    pp02.$(exe) &
+    pp03.$(exe) &
+    pp04.$(exe) &
+    pp05.$(exe) &
+    pp06.$(exe) &
+    pp07.$(exe) &
+    pp08.$(exe) &
+    pp09.$(exe) &
+    pp10.$(exe) &
+    pp11.$(exe) &
+    pp12.$(exe) &
+    pp13.$(exe) &
+    pp14.$(exe) &
+    pp15.$(exe) &
+    pp16.$(exe) &
+    pp17.$(exe) &
+    pp18.$(exe) &
+    pp19.$(exe) &
+    pp20.$(exe) &
+    pp21.$(exe) &
+    pp22.$(exe) &
+    pp23.$(exe) &
+    pp24.$(exe) &
+    pp25.$(exe) &
+    pp26.$(exe) &
+    pp27.$(exe) &
+    pp28.$(exe) &
+    pp29.$(exe) &
+    pp30.$(exe) &
+    pp31.$(exe) &
+    quest01.$(exe) &
+    quest02.$(exe) &
+    ret01.$(exe) &
+    ret02.$(exe) &
+    ret03.$(exe) &
+    ret04.$(exe) &
+    sizeof01.$(exe) &
+    sizeof02.$(exe) &
+    src01.$(exe) &
+    str01.$(exe) &
+    str02.$(exe) &
+    switch01.$(exe) &
+    thread01.$(exe) &
+    thread02.$(exe) &
 
 
-
-ext = $(ext_$(arch))
 !ifeq arch axp
 positive_exes = $+ $(positive_tests) $-
 !else
