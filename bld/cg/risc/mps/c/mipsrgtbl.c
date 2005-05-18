@@ -732,7 +732,12 @@ extern  hw_reg_set FixedRegs( void )
     HW_CTurnOn( fixed, HW_R1 );     // $at (needed as scratch register)
     HW_CTurnOn( fixed, HW_R28 );    // $gp
     HW_CTurnOn( fixed, HW_R29 );    // $sp
-    HW_CTurnOn( fixed, HW_F30 );    // Used to generate problematic converts (I8->FD and such)
+    // We should be able to use $fp as $s8 in theory, but that isn't working
+    // when alloca() is used for some reason (alloca() will force us to use
+    // a frame pointer separate from $sp). So just make $fp always fixed.
+//    if( CurrProc->targ.base_is_fp )
+        HW_CTurnOn( fixed, HW_R30 );// $fp
+    HW_CTurnOn( fixed, HW_F30 );    // TODO: Used to generate problematic converts (I8->FD and such)
     return( fixed );
 }
 

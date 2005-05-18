@@ -488,11 +488,11 @@ extern  void GenCallLabelReg( pointer label, uint reg )
     // kinda like to use 'jal', except we must use something other
     // than ra for the return address. So 'jalr' it is...
 
-    // Load address into $at (lui/ori)
+    // Load address into $at (lui/addiu)
     // TODO: This should be different for PIC
     GenMEMINSRELOC( 0x0f, MIPS_GPR_SCRATCH, MIPS_ZERO_SINK, 0,
                 label, OWL_RELOC_HALF_HI );
-    GenMEMINSRELOC( 0x0d, MIPS_GPR_SCRATCH, MIPS_ZERO_SINK, 0,
+    GenMEMINSRELOC( 0x09, MIPS_GPR_SCRATCH, MIPS_GPR_SCRATCH, 0,
                 label, OWL_RELOC_HALF_LO );
 
     // 'jalr reg,$at'
@@ -934,7 +934,7 @@ static  void Encode( instruction *ins )
         assert( ins->operands[0]->n.class == N_CONSTANT );
         assert( ins->result->n.class == N_REGISTER );
         // 'addiu rt,$zero,immed'
-        GenIType( 0x0f, _NameReg( ins->result ), MIPS_ZERO_SINK,
+        GenIType( 0x09, _NameReg( ins->result ), MIPS_ZERO_SINK,
                   (uint_8)ins->operands[0]->c.int_value );
         break;
     case G_MOVE:
