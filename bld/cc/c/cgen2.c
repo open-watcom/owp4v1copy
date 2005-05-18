@@ -517,9 +517,9 @@ local void GenVaStart( cg_name op1, cg_name offset )
     CGDone( name );
 }
 #elif _CPU == _MIPS
-/* Currently a clone of Alpha code. We could probably get away with not
- * using builtin va_start if we communicated the offset of the first
- * variable argument to the variadic routine through some other means.
+/* Similar to Alpha, except we point va_list.__base to the first
+ * vararg and va_list.__offset initially to zero. Strictly speaking
+ * we don't need va_list.__offset.
  */
 local void GenVaStart( cg_name op1, cg_name offset )
 {
@@ -527,10 +527,11 @@ local void GenVaStart( cg_name op1, cg_name offset )
     cg_name     baseptr;
 
     baseptr = CGVarargsBasePtr( T_POINTER );
-    name = CGLVAssign( op1, baseptr, T_POINTER );
+    name = CGBinary( O_PLUS, baseptr, offset, T_POINTER );
+    name = CGLVAssign( op1, name, T_POINTER );
     name = CGBinary( O_PLUS, name, CGInteger( TARGET_POINTER, T_INTEGER ),
                                         T_POINTER );
-    name = CGAssign( name, offset, T_INTEGER );
+    name = CGAssign( name, CGInteger( 0, T_INTEGER ), T_INTEGER );
     CGDone( name );
 }
 #endif
