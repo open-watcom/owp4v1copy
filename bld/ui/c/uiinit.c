@@ -42,8 +42,8 @@ void intern DBCSCharacterMap( void );
 bool global uistart( void )
 /*************************/
 {
+    UIMemOpen();
     if( initbios() ) {
-        UIMemOpen();
         DBCSCharacterMap();
         /* need for LUI and DUI apps to avoid divide by zero    */
         /* when no mouse is found                               */
