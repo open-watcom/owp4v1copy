@@ -63,4 +63,4 @@ longjmp:
     lwc1    $f30,0x60($a0)
     lwc1    $f31,0x64($a0)
     jr      $ra
-    li      $v0,1
+    move    $v0,$a1
