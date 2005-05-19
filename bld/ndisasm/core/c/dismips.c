@@ -496,6 +496,20 @@ dis_handler_return MIPSFPUOp3( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return MIPSFPUCmp( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    mips_ins    code;
+
+    code.full = ins->opcode;
+    ins->op[0].type = DO_REG;
+    ins->op[0].base = code.frtype.fs + DR_MIPS_f0;
+    ins->op[1].type = DO_REG;
+    ins->op[1].base = code.frtype.ft + DR_MIPS_f0;
+    ins->num_ops = 2;
+    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    return( DHR_DONE );
+}
+
 dis_handler_return MIPSFPUMemory( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     mips_ins    code;
