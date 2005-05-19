@@ -15,11 +15,11 @@
 !inject kernel.obj                                                          q16 q32
 !inject locale.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject localeco.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject lrotl.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc 
-!inject lrotr.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc 
+!inject lrotl.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc lmp 
+!inject lrotr.obj        d32             nt nta ntp nvc     nvl         o32     q32     w32 osi l32 lpc lmp
 !inject makepath.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject rotl.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc 
-!inject rotr.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc
+!inject rotl.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject rotr.obj     d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject setlocal.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject split2.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject splitpat.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
