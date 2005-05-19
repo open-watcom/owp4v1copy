@@ -65,7 +65,7 @@ extern int              OK_ReplaceRDOnly( char * );
 extern void             LogUnPacking( char * );
 extern int              UnPackHook( char * );
 
-#ifndef __AXP__
+#ifdef __X86__
 #pragma aux DecReadByte parm nomemory modify nomemory;
 #pragma aux DecWriteByte parm nomemory modify nomemory;
 #endif
