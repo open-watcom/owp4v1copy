@@ -87,8 +87,15 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op, char *buff )
         //NYI: 64 bit
         MCAddrToString( val, MIPST_N32_PTR, MLK_CODE, 40, p );
         break;
-    case DO_IMMED:
     case DO_ABSOLUTE:
+        if( dd->ins.type == DI_MIPS_J || dd->ins.type == DI_MIPS_JAL ) {
+            // Handle j/jal as having pointer operand to show target symbol
+            val.mach.offset = ins->op[op].value;
+            MCAddrToString( val, MIPST_N32_PTR, MLK_CODE, 40, p );
+            break;
+        }
+        // Fall through
+    case DO_IMMED:
     case DO_MEMORY_ABS:
         MCTypeInfoForHost( MTK_INTEGER, -sizeof( ins->op[0].value ), &mti );
         max = 40;
@@ -363,6 +370,7 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, mad_registers const *m
 {
     mad_disasm_control  dc;
     addr_off            new;
+    unsigned            op;
     const unsigned_64   *reg;
 
     memset( next, 0, sizeof( *next ) );
@@ -375,12 +383,16 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, mad_registers const *m
     case MDC_JUMP:
     case MDC_CALL:
     case MDC_RET:
-        new = dd->ins.op[1].value;
-        if( dd->ins.op[1].type == DO_RELATIVE ) {
+        if( dd->ins.type == DI_MIPS_J || dd->ins.type == DI_MIPS_JAL || dd->ins.type == DI_MIPS_JR )
+            op = 0; // Target is the first operand, for other instructions it's the second operand
+        else
+            op = 1;
+        new = dd->ins.op[op].value;
+        if( dd->ins.op[op].type == DO_RELATIVE ) {
             new += mr->mips.pc.u._32[I64LO32];
         }
-        if( dd->ins.op[1].base != DR_NONE ) {
-            reg = &TRANS_REG( mr, dd->ins.op[1].base );
+        if( dd->ins.op[op].base != DR_NONE ) {
+            reg = &TRANS_REG( mr, dd->ins.op[op].base );
             new += reg->u._32[0];
         }
         next->mach.offset = new;
