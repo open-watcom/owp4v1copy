@@ -143,7 +143,7 @@ extern int TRMemChkRange( void * start, size_t len )
 
 static void MemTrackInit()
 {
-    char        name[256];
+    char        name[FILENAME_MAX];
 
     TrackFile = STDERR_FILENO;
     if( DUIEnvLkup( "TRMEMFILE", name, sizeof( name ) ) ) {

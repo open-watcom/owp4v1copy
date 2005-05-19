@@ -31,6 +31,7 @@
 
 
 #include <string.h>
+#include <stdio.h>
 #include <limits.h>
 #include "dbglit.h"
 #include "dbgdefn.h"
@@ -1002,7 +1003,7 @@ typedef struct cue_find {
 static walk_result FindCue( cue_handle *ch, void *d )
 {
     cue_find    *cd = d;
-    char        file[256];
+    char        file[FILENAME_MAX];
     unsigned    len;
     unsigned    match;
 

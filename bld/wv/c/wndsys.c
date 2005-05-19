@@ -40,6 +40,7 @@
 #include "dbgadget.h"
 #include "dbghook.h"
 #include "dbgio.h"
+#include <stdio.h>
 #include <ctype.h>
 
 extern screen_state     ScrnState;
@@ -663,7 +664,7 @@ static bool GetInitName( char *name, char *buff, unsigned len )
 void SaveMainScreen( char *name )
 {
     handle      f;
-    char        buff[256];
+    char        buff[FILENAME_MAX];
 
     if( !GetInitName( name, buff, sizeof( buff ) ) ) return;
     f = FileOpen( buff, OP_WRITE|OP_CREATE );
@@ -675,7 +676,7 @@ void SaveMainScreen( char *name )
 void RestoreMainScreen( char *name )
 {
     handle      f;
-    char        buff[256];
+    char        buff[FILENAME_MAX];
 
     if( !GetInitName( name, buff, sizeof( buff ) ) ) return;
     f = FileOpen( buff, OP_READ );

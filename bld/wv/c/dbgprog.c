@@ -30,6 +30,7 @@
 
 
 #include <string.h>
+#include <stdio.h>
 #include "spawn.h"
 #include "dbgdefn.h"
 #include "dbglit.h"
@@ -1132,7 +1133,7 @@ static void DoResNew( bool have_parms, char *cmd,
 extern void LoadNewProg( char *cmd, char *parms )
 {
     unsigned clen,plen;
-    char        prog[256];
+    char        prog[FILENAME_MAX];
 
     clen = strlen( cmd );
     plen = strlen( parms );
@@ -1266,7 +1267,7 @@ static void ResNew( void )
 
 void ReStart()
 {
-    char                prog[256];
+    char                prog[FILENAME_MAX];
     char                args[UTIL_LEN];
 
     if( _IsOff( SW_PROC_ALREADY_STARTED ) && _IsOff( SW_POWERBUILDER ) ) {
