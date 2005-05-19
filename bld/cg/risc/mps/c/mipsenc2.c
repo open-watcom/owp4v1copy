@@ -71,6 +71,25 @@ static void doBranch( mips_ins opcode, uint_8 cc, pointer lbl, uint reg1, uint r
 }
 
 
+static void doCopBranch( mips_ins opcode, uint_8 cc, pointer lbl )
+/****************************************************************/
+{
+    mips_ins    nop_code;
+
+    // TODO: This is lame - there must be at least one instruction
+    // between a FP comparison instruction and a branch testing the result
+    nop_code = MIPS_NOP;
+    ObjBytes( (char *)&nop_code, sizeof( nop_code ) );
+
+    opcode = _Opcode( 0x11 ) | _Rs( opcode ) | _Rt( cc );
+    OutReloc( lbl, OWL_RELOC_BRANCH_REL, 0 );
+    ObjBytes( (char *)&opcode, sizeof( opcode ) );
+    // TODO: Handle delay slot better
+    opcode = MIPS_NOP;
+    ObjBytes( (char *)&opcode, sizeof( opcode ) );
+}
+
+
 void EncodeJump( oc_handle *oc )
 /******************************/
 {
@@ -97,12 +116,12 @@ void EncodeCall( oc_handle *oc )
 
 
 static  uint_8  BranchOpcodes[][2][2] = {
-    { { 0x04, 0x00 }, { 0, 0 } },         /* OP_CMP_EQUAL */
-    { { 0x05, 0x00 }, { 0, 0 } },         /* OP_CMP_NOT_EQUAL */
-    { { 0x07, 0x00 }, { 0, 0 } },         /* OP_CMP_GREATER */
-    { { 0x06, 0x00 }, { 0, 0 } },         /* OP_CMP_LESS_EQUAL */
-    { { 0x01, 0x00 }, { 0, 0 } },         /* OP_CMP_LESS */
-    { { 0x01, 0x01 }, { 0, 0 } },         /* OP_CMP_GREATER_EQUAL */
+    { { 0x04, 0x00 }, { 0x08, 0x01 } },   /* OP_CMP_EQUAL */
+    { { 0x05, 0x00 }, { 0x08, 0x00 } },   /* OP_CMP_NOT_EQUAL */
+    { { 0x07, 0x00 }, { 0x08, 0x00 } },   /* OP_CMP_GREATER */
+    { { 0x06, 0x00 }, { 0x08, 0x01 } },   /* OP_CMP_LESS_EQUAL */
+    { { 0x01, 0x00 }, { 0x08, 0x01 } },   /* OP_CMP_LESS */
+    { { 0x01, 0x01 }, { 0x08, 0x00 } },   /* OP_CMP_GREATER_EQUAL */
 };
 
 void EncodeCond( oc_jcond *oc )
@@ -120,10 +139,16 @@ void EncodeCond( oc_jcond *oc )
     reg2 = oc->index2 == -1 ? 0 : oc->index2;
     opcode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating][0];
     cncode = BranchOpcodes[oc->cond - FIRST_COMPARISON][floating][1];
-    if( (oc->cond != OP_CMP_EQUAL) && (oc->cond != OP_CMP_NOT_EQUAL) ) {
-        // Only beq/bne can do reg/reg comparisons
-        assert( reg2 == MIPS_ZERO_SINK );
+    // Floating conditionals are quite different - we only have bc1f/bc1t
+    // but have a full set of comparison instructions
+    if( floating ) {
+        doCopBranch( opcode, cncode, oc->handle );
+    } else {
+        if( (oc->cond != OP_CMP_EQUAL) && (oc->cond != OP_CMP_NOT_EQUAL) ) {
+            // Only beq/bne can do reg/reg comparisons
+            assert( reg2 == MIPS_ZERO_SINK );
+        }
+        assert( opcode );
+        doBranch( opcode, cncode, oc->handle, oc->index, reg2 );
     }
-    assert( opcode );
-    doBranch( opcode, cncode, oc->handle, oc->index, reg2 );
 }

@@ -192,13 +192,13 @@ static  uint_8 FloatingBinaryOpcodes[] = {
         { 0x03 },                                       /* OP_DIV */
 };
 
-static  uint_16 FloatingSetOpcodes[][1] = {
-        { 0xa5 },                                       /* OP_SET_EQUAL */
-        { 0x00 },                                       /* OP_SET_NOT_EQUAL */
-        { 0x00 },                                       /* OP_SET_GREATER */
-        { 0xa7 },                                       /* OP_SET_LESS_EQUAL */
-        { 0xa6 },                                       /* OP_SET_LESS */
-        { 0x00 },                                       /* OP_SET_GREATER_EQUAL */
+static  uint_8 FloatingSetOpcodes[] = {
+        { 0x32 },                                       /* OP_SET_EQUAL */
+        { 0x32 },                                       /* OP_SET_NOT_EQUAL */
+        { 0x36 },                                       /* OP_SET_GREATER */
+        { 0x36 },                                       /* OP_SET_LESS_EQUAL */
+        { 0x34 },                                       /* OP_SET_LESS */
+        { 0x34 },                                       /* OP_SET_GREATER_EQUAL */
 };
 
 
@@ -306,7 +306,7 @@ static  uint_8 FindFloatingOpcodes( instruction *ins )
         opcode = FloatingBinaryOpcodes[ins->head.opcode - FIRST_BINARY_OP];
         /* NB: this opcode may legitimately be zero - that's 'add' */
     } else if( _OpIsSet( ins->head.opcode ) ) {
-        opcode = FloatingSetOpcodes[ins->head.opcode - FIRST_SET_OP][0];
+        opcode = FloatingSetOpcodes[ins->head.opcode - FIRST_SET_OP];
         assert( opcode );
     } else {
         assert( 0 );
@@ -854,7 +854,8 @@ static  void Encode( instruction *ins )
         assert( ins->operands[1]->n.class == N_REGISTER );
         assert( ins->result->n.class == N_REGISTER );
         function = FindFloatingOpcodes( ins );
-        GenFloatRType( ins->type_class, function, _NameReg( ins->result ),
+        reg_index = _OpIsSet( ins->head.opcode ) ? 0 : _NameReg( ins->result );
+        GenFloatRType( ins->type_class, function, reg_index,
                 _NameReg( ins->operands[0] ), _NameReg( ins->operands[1] ) );
         break;
     case G_BINARY:
