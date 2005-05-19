@@ -51,6 +51,7 @@
  #define TRMemFree(p)           free(p)
 #endif
 #include <stdlib.h>
+#include <stdio.h>
 #include <dip.h>
 
 
