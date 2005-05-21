@@ -44,9 +44,12 @@ _WCRTLINK int eof( int handle )         /* determine if at EOF */
 
     __handle_check( handle, -1 );
     file_len = filelength( handle );
-    if( file_len == -1L ) return( -1 );
+    if( file_len == -1L )
+        return( -1 );
     current_posn = tell( handle );
-    if( current_posn == -1L ) return( -1L );
-    if( current_posn == file_len ) return( 1 );
+    if( current_posn == -1L )
+        return( -1 );
+    if( current_posn == file_len )
+        return( 1 );
     return( 0 );
 }
