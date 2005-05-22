@@ -39,12 +39,14 @@
 #include "liballoc.h"
 #include "tinyio.h"
 #include "seterrno.h"
+#include "msdos.h"
 
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
 static  int     is_directory( const char *name ) {
 /**************************************************/
-    if( name[0] == '\0' )return( 0 );
+    if( name[0] == '\0' )
+        return( 0 );
     while( name[1] != '\0' ){
         if( name[0] == '*' || name[0] == '?' ) {
             return( 0 );
@@ -94,8 +96,10 @@ _WCRTLINK DIR_TYPE *_opendir( const char *name, char attr )
                 }
                 break;
             }
-            if( *name == '*' ) break;
-            if( *name == '?' ) break;
+            if( *name == '*' )
+                break;
+            if( *name == '?' )
+                break;
             ++name;
         }
     }
@@ -122,10 +126,10 @@ _WCRTLINK DIR_TYPE *readdir( DIR_TYPE *parent )
         return( parent );
     }
     rc = TinyFindNextDTA( &parent->d_dta );
-    if( TINY_ERROR( rc ) == 18 ) { // E_nomore files
-        return( NULL );
-    } else if( TINY_ERROR( rc ) ) {
-        __set_errno_dos( TINY_INFO( rc ) );
+    if( TINY_ERROR( rc ) ) {
+        if( TINY_INFO( rc ) != E_nomore ) {
+            __set_errno_dos( TINY_INFO( rc ) );
+        }
         return( NULL );
     }
     return( parent );

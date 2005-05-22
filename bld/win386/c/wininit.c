@@ -168,7 +168,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
     WORD                i,amount,bytes_read,j;
     WORD                sel;
     int                 handle;
-    long                rc;
+    tiny_ret_t          rc;
     DWORD               size,currsize,curroff,minmem,maxmem;
     DWORD               relsize,exelen;
     struct wstart_vars  far *dataptr;
@@ -201,7 +201,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
      */
     GetModuleFileName( thishandle, file, 128 );
     rc = _fTinyOpen( file, TIO_READ );
-    if( rc == -1 ) {
+    if( TINY_ERROR( rc ) ) {
         return( Fini( 2, (char _FAR *)"Error opening file",
                     (char _FAR *)file) );
     }

@@ -245,7 +245,7 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 #else
         rc = TinyWrite( handle, buffer, len );
         *amt = TINY_LINFO( rc );
-        if( !TINY_ERROR( rc ) ) {
+        if( TINY_OK( rc ) ) {
             rc = 0;
         }
 #endif

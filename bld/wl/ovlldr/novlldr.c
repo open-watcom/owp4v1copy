@@ -306,7 +306,9 @@ static unsigned near UnloadNonChained( unsigned amount, unsigned start_ovl )
                 }
             }
         }
-        if( curr_ovl == start_ovl ) break;
+        if( curr_ovl == start_ovl ) {
+            break;
+        }
     }
     __OVLROVER__ = curr_ovl;
     return( NULL_SEG );
@@ -361,10 +363,12 @@ static void near redoRelocs( ovltab_entry_ptr ovl, unsigned startseg )
     unsigned            save_start_para;
 
     status = __OpenOvl__( ovl->fname );
-    if( TINY_ERROR( status ) ) __OvlExit__( OVL_OPEN_ERR );
+    if( TINY_ERROR( status ) )
+        __OvlExit__( OVL_OPEN_ERR );
     fp = TINY_INFO( status );
     status = __OvlSeek__( fp, ovl->disk_addr+((unsigned_32)ovl->num_paras<<4));
-    if( TINY_ERROR( status ) ) __OvlExit__( OVL_IO_ERR );
+    if( TINY_ERROR( status ) )
+        __OvlExit__( OVL_IO_ERR );
     /*
         Fool __OvlRelocLoad__ into relocating section for us by making it
         look like the linker linked things at the current load address.
@@ -584,10 +588,11 @@ void near __LoadSectionCode__( ovltab_entry_ptr ovl )
     desc                tmp;
 
     status = __OpenOvl__( ovl->fname );
-    if( TINY_ERROR( status ) ) __OvlExit__( OVL_OPEN_ERR );
+    if( TINY_ERROR( status ) )
+        __OvlExit__( OVL_OPEN_ERR );
     fp = TINY_INFO( status );
     status = __OvlSeek__( fp, ovl->disk_addr );
-    if( !TINY_OK( status ) ) {
+    if( TINY_ERROR( status ) ) {
         __OvlExit__( OVL_IO_ERR );
     }
     descptr = MK_FP( ovl->code_handle + ovl->num_paras - 1, 0xE );
@@ -810,12 +815,14 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
     /* check return traps */
     for( ovl = &__OVLTAB__.entries[ 0 ];
             FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ); ++ovl ) {
-        if( (ovl->flags_anc & FLAG_RET_TRAP) == 0 ) continue;
+        if( (ovl->flags_anc & FLAG_RET_TRAP) == 0 )
+            continue;
 #ifdef OVL_MULTITHREAD
         rt_seg = ovl->code_handle;
 #else
         rt = MK_FP( ovl->code_handle, 0 );
-        if( rt->stack_trap >= bp_chain ) continue; /* trap safe */
+        if( rt->stack_trap >= bp_chain )
+            continue; /* trap safe */
         if( rt->ret_list < bp_chain ) {
             ovl->flags_anc &= ~FLAG_RET_TRAP;
             FreeSeg( FP_SEG( rt ), 1, __WhichArea__( FP_SEG( rt ) ) );
@@ -841,7 +848,8 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
         __OVLBUILDRETTRAP__( FP_SEG( rt ), FP_SEG( rt ) );
 #endif
     }
-    if( ovl_num == 0 ) return( (unsigned_32)segment << 16 );
+    if( ovl_num == 0 )
+        return( (unsigned_32)segment << 16 );
     segment = __LoadNewOverlay__( ovl_num );
     return( (unsigned_32)segment << 16 );
 }

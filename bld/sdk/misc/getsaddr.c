@@ -50,8 +50,7 @@ static BOOL SeekRead( int handle, DWORD newpos, void *buff, WORD size )
 {
     tiny_ret_t  rc;
 
-    rc = TinySeek( handle, newpos, TIO_SEEK_SET );
-    if( TINY_ERROR( rc ) )
+    if( TINY_ERROR( TinySeek( handle, newpos, TIO_SEEK_SET ) ) )
         return( FALSE );
     rc = TinyRead( handle, buff, size );
     if( TINY_ERROR( rc ) )

@@ -55,7 +55,8 @@ static void ClearInMemFlags( ovltab_entry *loaded_ovl )
     ovl_num = 1;
     ovl = __OVLTAB__.entries;
     for(;;) {
-        if( ovl->flags_anc == OVLTAB_TERMINATOR ) break;
+        if( ovl->flags_anc == OVLTAB_TERMINATOR )
+            break;
         if( ovl->flags_anc & FLAG_INMEM ) {
             if( ovl->start_para < end
                 && ovl->start_para + ovl->num_paras > loaded_ovl->start_para ) {
@@ -67,7 +68,8 @@ static void ClearInMemFlags( ovltab_entry *loaded_ovl )
                 anc = ovl;
                 for( ;; ) {
                     anc_num = anc->flags_anc & OVE_FLAG_ANC_MASK;
-                    if( anc_num == 0 ) break;
+                    if( anc_num == 0 )
+                        break;
                     anc = &__OVLTAB__.entries[ anc_num - 1 ];
                     if( (anc->flags_anc & FLAG_INMEM) == 0 ) {
                         ovl->flags_anc &= ~FLAG_INMEM;
@@ -101,10 +103,11 @@ int near LOADOVERLAY( unsigned int ovl_num )
         if( (ovl->flags_anc & FLAG_INMEM) == 0 ) {
             loaded_something = 1;
             status = __OpenOvl__( ovl->fname );
-            if( TINY_ERROR( status ) ) __OvlExit__( OVL_OPEN_ERR );
+            if( TINY_ERROR( status ) )
+                __OvlExit__( OVL_OPEN_ERR );
             fp = TINY_INFO( status );
             status = __OvlSeek__( fp, ovl->disk_addr );
-            if( !TINY_OK( status ) ) {
+            if( TINY_ERROR( status ) ) {
                 __OvlExit__( OVL_IO_ERR );
             }
             __OvlCodeLoad__( ovl, fp );

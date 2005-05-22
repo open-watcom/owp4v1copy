@@ -43,6 +43,9 @@
 
 #define SIG_OFF         0
 #define SIG_SIZE        4
+
+#define TINY_ERROR(x)  ((signed long)x < 0)
+
 const unsigned short __based(__segname("_CONST")) win386sig[] = { 0xDEAD,0xBEEF };
 const unsigned short __based(__segname("_CONST")) win386sig2[] = { 0xBEEF,0xDEAD };
 
@@ -160,7 +163,7 @@ unsigned ReqProg_load( void )
      * get the file to execute
      */
     if( tid == 0 ) {
-        if( FindFilePath( parm, exe_name, ExtensionList ) != 0 ) {
+        if( TINY_ERROR( FindFilePath( parm, exe_name, ExtensionList ) ) ) {
             exe_name[0] = 0;
         } else {
             _splitpath( exe_name, drive, directory, NULL, NULL );
@@ -175,19 +178,23 @@ unsigned ReqProg_load( void )
          */
 
         src = parm;
-        while( *src != 0 ) ++src;
+        while( *src != 0 )
+            ++src;
         ++src;
         end = GetInPtr( GetTotalSize() - 1 );
         dst = &buff[1];
         for( ;; ) {
-            if( src > end ) break;
+            if( src > end )
+                break;
             ch = *src;
-            if( ch == 0 ) ch = ' ';
+            if( ch == 0 )
+                ch = ' ';
             *dst = ch;
             ++dst;
             ++src;
         }
-        if( dst > &buff[1] ) --dst;
+        if( dst > &buff[1] )
+            --dst;
         *dst = '\0';
         buff[0] = dst-buff-1;
 

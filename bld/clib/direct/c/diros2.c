@@ -45,6 +45,7 @@
 #include "rtdata.h"
 #include "strdup.h"
 #include "seterrno.h"
+#include "msdos.h"
 
 #if defined(__WARP__)
   #define FF_LEVEL      1
@@ -140,11 +141,6 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
 /****************************************************************************/
 {
 
-    USHORT          rc;
-    FF_BUFFER       dir_buff;
-    HFILE           handle;
-    OS_UINT         searchcount;
-
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
     char            mbcsName[MB_CUR_MAX*_MAX_PATH];
@@ -154,8 +150,14 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
 #endif
 
 #if defined(__OS2_286__)
-    if( _RWD_osmode == OS2_MODE ) {
+    if( _RWD_osmode == OS2_MODE )
 #endif
+    {
+        FF_BUFFER       dir_buff;
+        HFILE           handle;
+        OS_UINT         rc;
+        OS_UINT         searchcount;
+
         handle = ~0;            /* we want our own handle */
         searchcount = 1;        /* only one at a time */
 #ifndef __WIDECHAR__
@@ -177,19 +179,20 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
         }
         HANDLE_OF( dirp ) = handle;     /* store our handle     */
         copydir( dirp, &dir_buff );     /* copy in other fields */
-
+    }
 #if defined(__OS2_286__)
-    } else {            /* real mode */
-        DIR_TYPE            buf;
+    else {                              /* real mode */
+        DIR_TYPE        buf;
+        tiny_ret_t      rc;
 
-        TinySetDTA( buf.d_dta );    /* set our DTA */
-#ifndef __WIDECHAR__
+        TinySetDTA( buf.d_dta );        /* set our DTA */
+  #ifndef __WIDECHAR__
         rc = TinyFindFirst( dirname, attr );
-#else
+  #else
         rc = TinyFindFirst( mbcsName, attr );
-#endif
-        if( rc > 0 ) {
-            __set_errno_dos( rc );
+  #endif
+        if( TINY_ERROR( rc ) ) {
+            __set_errno_dos( TINY_INFO( rc ) );
             return( NULL );
         }
         *dirp = buf;                    /* copy to new memory */
@@ -291,8 +294,6 @@ _WCRTLINK DIR_TYPE *__F_NAME(opendir,_wopendir)( const CHAR_TYPE *dirname )
 _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
 /***************************************************************/
 {
-    USHORT  rc;
-
     if( dirp == NULL ) {
         return( NULL );
     }
@@ -304,9 +305,10 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
     }
 
 #if defined(__OS2_286__)
-    if( _RWD_osmode == OS2_MODE )          /* protected mode */
+    if( _RWD_osmode == OS2_MODE )               /* protected mode */
 #endif
     {
+        OS_UINT         rc;
         FF_BUFFER       dir_buff;
         OS_UINT         searchcount = 1;
 
@@ -324,16 +326,18 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
             return( NULL );
         }
         copydir( dirp, &dir_buff );
+
     }
 #if defined(__OS2_286__)
     else {              /* real mode */
-        TinySetDTA( dirp->d_dta );
+        tiny_ret_t      rc;
 
+        TinySetDTA( dirp->d_dta );
         rc = TinyFindNext();
-        if( TINY_ERROR( rc ) == 18 ) { // E_nomore files
-            return( NULL );
-        } else if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
+        if( TINY_ERROR( rc ) ) {
+            if( TINY_INFO( rc ) != E_nomore ) {
+                __set_errno_dos( TINY_INFO( rc ) );
+            }
             return( NULL );
         }
     }
@@ -371,7 +375,8 @@ _WCRTLINK void __F_NAME(rewinddir,_wrewinddir)( DIR_TYPE *dirp )
     DIR_TYPE *          newDirp;
 
     /*** Get the name of the directory before closing it ***/
-    if( dirp->d_openpath == NULL )  return;     /* can't continue if NULL */
+    if( dirp->d_openpath == NULL )
+        return;                         /* can't continue if NULL */
     openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirp->d_openpath ); /* store path */
     if( openpath == NULL ) {
         dirp->d_first = _DIR_CLOSED;    /* so reads won't work any more */

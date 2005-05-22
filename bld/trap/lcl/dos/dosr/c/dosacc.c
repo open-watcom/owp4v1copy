@@ -158,12 +158,12 @@ extern int              NullOvlHdlr(void);
 
 extern word             far SegmentChain;
 
-static tiny_handle_t    EXE;
+static tiny_handle_t    EXEhandle;
 static tiny_ftime_t     EXETime;
 static tiny_fdate_t     EXEDate;
-#define ReadEXE( x )    TinyRead( EXE, &x, sizeof(x) )
-#define WriteEXE( x )   TinyWrite( EXE, &x, sizeof(x) )
-#define SeekEXE( x )    TinySeek( EXE, x, TIO_SEEK_START )
+#define ReadEXE( x )    TinyRead( EXEhandle, &x, sizeof(x) )
+#define WriteEXE( x )   TinyWrite( EXEhandle, &x, sizeof(x) )
+#define SeekEXEset( x ) TinySeek( EXEhandle, x, TIO_SEEK_START )
 static dword            NEOffset;
 static word             NumSegments;
 static dword            SegTable;
@@ -548,15 +548,15 @@ static EXE_TYPE CheckEXEType( char *name )
     static os2_exe_header os2_head;
 
     Flags.com_file = FALSE;
-    EXE = 0;
+    EXEhandle = 0;
     rc = TinyOpen( name, TIO_READ_WRITE );
     if( TINY_ERROR( rc ) )
         return( EXE_UNKNOWN );
-    EXE = rc;
-    exe_time.rc = TinyGetFileStamp( EXE );
+    EXEhandle = rc;
+    exe_time.rc = TinyGetFileStamp( EXEhandle );
     EXETime = exe_time.stamp.time;
     EXEDate = exe_time.stamp.date;
-    if( ReadEXE( head ) < 0 )
+    if( TINY_ERROR( ReadEXE( head ) ) )
         return( EXE_UNKNOWN );    /* MZ Signature */
     switch( head.signature ) {
     case SIMPLE_SIGNATURE: // mp
@@ -566,13 +566,13 @@ static EXE_TYPE CheckEXEType( char *name )
     case DOS_SIGNATURE:
         if( head.reloc_offset != OS2_EXE_HEADER_FOLLOWS )
             return( EXE_DOS );
-        if( SeekEXE( OS2_NE_OFFSET ) < 0 )
+        if( TINY_ERROR( SeekEXEset( OS2_NE_OFFSET ) ) )
             return( EXE_UNKNOWN );/* offset of new exe */
-        if( ReadEXE( NEOffset ) < 0 )
+        if( TINY_ERROR( ReadEXE( NEOffset ) ) )
             return( EXE_UNKNOWN );
-        if( SeekEXE( NEOffset ) < 0 )
+        if( TINY_ERROR( SeekEXEset( NEOffset ) ) )
             return( EXE_UNKNOWN );
-        if( ReadEXE( os2_head ) < 0 )
+        if( TINY_ERROR( ReadEXE( os2_head ) ) )
             return( EXE_UNKNOWN );/* NE Signature */
         if( os2_head.signature == RAT_SIGNATURE_WORD )
             return( EXE_RATIONAL_386 );
@@ -582,13 +582,13 @@ static EXE_TYPE CheckEXEType( char *name )
         SegTable = NEOffset + os2_head.segment_off;
         if( os2_head.align == 0 )
             os2_head.align = 9;
-        SeekEXE( SegTable+(os2_head.entrynum-1)*8 );
+        SeekEXEset( SegTable+(os2_head.entrynum-1)*8 );
         ReadEXE( value );
         StartByte = ( (long)value << os2_head.align ) + os2_head.IP;
-        SeekEXE( StartByte );
+        SeekEXEset( StartByte );
         ReadEXE( SavedByte );
         breakpt = 0xCC;
-        SeekEXE( StartByte );
+        SeekEXEset( StartByte );
         rc = WriteEXE( breakpt );
         return( EXE_OS2 );
     default:
@@ -621,15 +621,17 @@ unsigned ReqProg_load()
     Flags.BoundApp = FALSE;
     psp = DbgPSP();
     parm = GetInPtr( sizeof( prog_load_req ) );
-    if( FindFilePath( parm, exe_name, DosExtList ) != 0 ) {
+    if( TINY_ERROR( FindFilePath( parm, exe_name, DosExtList ) ) ) {
         exe_name[0] = '\0';
     }
-    while( *parm != '\0' ) ++parm;
+    while( *parm != '\0' )
+        ++parm;
     src = ++parm;
     dst = MK_FP( psp, CMD_OFFSET+1 );
     end = (char *)GetInPtr( GetTotalSize()-1 );
     for( ;; ) {
-        if( src > end ) break;
+        if( src > end )
+            break;
         ch = *src;
         if( ch == '\0' )
             ch = ' ';
@@ -650,9 +652,9 @@ unsigned ReqProg_load()
     parmblock.fcb01.offset  = 0X005C;
     parmblock.fcb02.offset  = 0X006C;
     exe = CheckEXEType( exe_name );
-    if( EXE != 0 ) {
-        TinyClose( EXE );
-        EXE = 0;
+    if( EXEhandle != 0 ) {
+        TinyClose( EXEhandle );
+        EXEhandle = 0;
     }
     switch( exe ) {
     case EXE_RATIONAL_386:
@@ -695,13 +697,13 @@ unsigned ReqProg_load()
                 }
                 BoundAppLoading = FALSE;
                 rc = TinyOpen( exe_name, TIO_READ_WRITE );
-                if( !TINY_ERROR( rc ) ) {
-                    EXE = rc;
-                    SeekEXE( StartByte );
+                if( TINY_OK( rc ) ) {
+                    EXEhandle = rc;
+                    SeekEXEset( StartByte );
                     WriteEXE( SavedByte );
-                    TinySetFileStamp( EXE, EXETime, EXEDate );
-                    TinyClose( EXE );
-                    EXE = 0;
+                    TinySetFileStamp( EXEhandle, EXETime, EXEDate );
+                    TinyClose( EXEhandle );
+                    EXEhandle = 0;
                     rc = 0;
                     Flags.BoundApp = TRUE;
                 }

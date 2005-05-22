@@ -147,9 +147,10 @@ static short            _YVecDir = 0;
   #define tiny_ret_t                    int
   #define tiny_handle_t                 int
   #define TINY_ERROR( rc )              ( rc < 0 )
+  #define TINY_OK( rc )                 ( rc >= 0 )
   #define TINY_INFO( rc )               ( rc )
   #define TinyOpen( f, m )              __open_slib( f, O_RDONLY, 0 )
-  #define TinySeek( f, o, p )           ( ( lseek( f, o, SEEK_SET ) == -1 ) ? -1 : 0 )
+  #define FontSeekSet( f, o )           ( ( lseek( f, o, SEEK_SET ) == -1 ) ? -1 : 0 )
   #define TinyRead( f, b, l )           read( f, b, l )
   #define MyTinyFarRead( f, b, l )      read( f, b, l )
   #define TinyClose( f )                close( f )
@@ -160,6 +161,7 @@ static short            _YVecDir = 0;
   #else
     #define MyTinyFarRead( h, b, l )    TinyFarRead( h, b, l )
   #endif
+  #define FontSeekSet( f, o )           TinySeek( f, o, TIO_SEEK_START )
 #endif
 
 
@@ -213,14 +215,13 @@ static void Free( void _WCI86FAR *p )
 
 
 static short seek_and_read( tiny_handle_t handle, long offset,
-/*==============================*/ void _WCI86FAR *buf, unsigned short len )
-
+                     void _WCI86FAR *buf, unsigned short len )
+/*===========================================================*/
 {
     tiny_ret_t          rc;
     short               rlen;
 
-    rc = TinySeek( handle, offset, TIO_SEEK_START );
-    if( TINY_ERROR( rc ) ) {
+    if( TINY_ERROR( FontSeekSet( handle, offset ) ) ) {
         _ErrorStatus = _GRINVALIDFONTFILE;
         TinyClose( handle );
         return( 0 );
@@ -259,8 +260,7 @@ static short addfont( long offset, tiny_handle_t handle, char *font_file )
         return( 0 );
     }
     // read facename, can't use seek_and_read, since it might be at end of file
-    rc = TinySeek( handle, offset + w_font.dfFace, TIO_SEEK_START );
-    if( TINY_ERROR( rc ) ) {
+    if( TINY_ERROR( FontSeekSet( handle, offset + w_font.dfFace ) ) ) {
         _ErrorStatus = _GRINVALIDFONTFILE;
         TinyClose( handle );
         return( 0 );
@@ -485,7 +485,7 @@ short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
                 return( -2 );   // bad font file or out of memory
             }
             rc = TinyFindNext();
-        } while( !TINY_ERROR( rc ) );
+        } while( TINY_OK( rc ) );
     }
 #endif
     count = 0;

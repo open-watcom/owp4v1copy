@@ -76,12 +76,11 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
                                   struct find_t *buf ) {
 /******************************************************/
 
-    APIRET  rc;
-
 #if defined(__OS2_286__)
     if( _RWD_osmode == OS2_MODE ) {
 #endif
-        FF_BUFFER       dir_buff;
+        APIRET      rc;
+        FF_BUFFER   dir_buff;
         HDIR        handle = BAD_HANDLE;
         OS_UINT     searchcount;
 
@@ -99,12 +98,13 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
 
 #if defined(__OS2_286__)
     } else {                    /* real mode */
-        TinySetDTA( buf );      /* set our DTA */
+        tiny_ret_t  rc;
 
+        TinySetDTA( buf );      /* set our DTA */
         rc = TinyFindFirst( path, attr );
-        if( rc > 0 ) {
-            __set_errno_dos( rc );
-            return( rc );
+        if( TINY_ERROR( rc ) ) {
+            __set_errno_dos( TINY_INFO( rc ) );
+            return( TINY_INFO( rc ) );
         }
     }
 #endif
@@ -115,11 +115,11 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
 _WCRTLINK unsigned _dos_findnext( struct find_t *buf ) {
 /*****************************************************/
 
-    APIRET  rc;
-
 #if defined(__OS2_286__)
     if( _RWD_osmode == OS2_MODE ) {        /* protected mode */
 #endif
+        APIRET  rc;
+
         FF_BUFFER       dir_buff;
         OS_UINT         searchcount = 1;
 
@@ -134,11 +134,13 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *buf ) {
 
 #if defined(__OS2_286__)
     } else {            /* real mode */
+        tiny_ret_t      rc;
+
         TinySetDTA( buf );
         rc = TinyFindNext();
-        if( rc > 0 ) {
-            __set_errno_dos( rc );
-            return( rc );
+        if( TINY_ERROR( rc ) ) {
+            __set_errno_dos( TINY_INFO( rc ) );
+            return( TINY_INFO( rc ) );
         }
     }
 #endif

@@ -51,7 +51,8 @@ extern void __buffered_keyboard_input( char * );
 
 static unsigned DOSErrCode( tiny_ret_t rc )
 {
-    if( !TINY_ERROR( rc ) ) return( 0 );
+    if( TINY_OK( rc ) )
+        return( 0 );
     return( StashErrCode( rc, OP_LOCAL ) );
 }
 

@@ -67,7 +67,9 @@ unsigned SysWrite( int handle, void FAR_PTR *buff, unsigned len )
 
 int SysSeek( int handle, unsigned long loc )
 {
-    if( TinySeek( handle, loc, TIO_SEEK_START ) != loc ) return( -1 );
+    if( TINY_ERROR( TinySeek( handle, loc, TIO_SEEK_START ) ) ) {
+        return( -1 );
+    }
     return( 0 );
 }
 

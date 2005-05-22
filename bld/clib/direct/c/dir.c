@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#ifdef __OSI__
-#define __OS2__
-#endif
 #include "variety.h"
 #include "widechar.h"
 #include <stdlib.h>
@@ -43,6 +40,7 @@
 #include "liballoc.h"
 #include "tinyio.h"
 #include "seterrno.h"
+#include "msdos.h"
 
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
@@ -64,18 +62,14 @@ static int is_directory( const CHAR_TYPE *name )
     CHAR_TYPE   curr_ch;
     CHAR_TYPE   prev_ch;
 #endif
-
+    
     curr_ch = NULLCHAR;
     for(;;) {
         prev_ch = curr_ch;
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
         curr_ch = *name;
 #else
-  #ifdef __UNIX__
-        curr_ch = *name;
-  #else
         curr_ch = _mbsnextc( name );
-  #endif
 #endif
         if( curr_ch == NULLCHAR )
             break;
@@ -83,14 +77,10 @@ static int is_directory( const CHAR_TYPE *name )
             break;
         if( prev_ch == '?' )
             break;
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
         ++name;
 #else
-  #ifdef __UNIX__
-        name++;
-  #else
         name = _mbsinc( name );
-  #endif
 #endif
     }
     if( curr_ch == NULLCHAR ) {
@@ -99,7 +89,6 @@ static int is_directory( const CHAR_TYPE *name )
         }
     }
     return( 0 );
-
 }
 
 
@@ -108,7 +97,7 @@ static void filenameToWide( DIR_TYPE *dir )
 /*****************************************/
 {
     wchar_t             wcs[_MAX_PATH];
-
+    
     mbstowcs( wcs, (char*)dir->d_name, _MAX_PATH );     /* convert string */
     wcscpy( dir->d_name, wcs );                         /* copy string */
 }
@@ -117,9 +106,7 @@ static void filenameToWide( DIR_TYPE *dir )
 
 _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char attr )
 {
-#ifndef __OSI__
-        DIR_TYPE        tmp;
-#endif
+    DIR_TYPE    tmp;
     DIR_TYPE    *parent;
     int         i;
     tiny_ret_t  rc;
@@ -132,43 +119,25 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char a
     CHAR_TYPE   curr_ch;
     CHAR_TYPE   prev_ch;
 #endif
-
+    
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
     char            mbcsName[MB_CUR_MAX*_MAX_PATH];
-
+    
     if( wcstombs( mbcsName, name, MB_CUR_MAX*(wcslen(name)+1) ) == (size_t)-1 )
         return( NULL );
 #endif
-
-#ifdef __OSI__
-    parent = lib_malloc( sizeof( *parent ) );
-    if( parent == NULL ) {
-        return( parent );
-    }
-#else
+    
     parent = &tmp;
     TinySetDTA( &(tmp.d_dta) );
-#endif
     if( ! is_directory( name ) ) {
 #ifdef __WIDECHAR__
-  #ifdef __OSI__
-        rc = TinyFindFirstDTA( mbcsName, attr, &parent->d_dta );
-  #else
         rc = TinyFindFirst( mbcsName, attr );
-  #endif
 #else
-  #ifdef __OSI__
-        rc = TinyFindFirstDTA( name, attr, &parent->d_dta );
-  #else
         rc = TinyFindFirst( name, attr );
-  #endif
 #endif
         if( TINY_ERROR( rc ) ) {
             __set_errno_dos( TINY_INFO( rc ) );
-#ifdef __OSI__
-            lib_free( parent );
-#endif
             return( NULL );
         }
     } else {
@@ -177,14 +146,10 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char a
     if( parent->d_attr & _A_SUBDIR ) {                  /* 05-apr-91 */
         prev_ch = NULLCHAR;                             /* 28-oct-98 */
         for( i = 0; i < _MAX_PATH; i++ ) {
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
             curr_ch = *name;
 #else
-  #ifdef __UNIX__
-            curr_ch = *name;
-  #else
             curr_ch = _mbsnextc( name );
-  #endif
 #endif
             pathname[i] = *name;
 #ifndef __WIDECHAR__
@@ -200,26 +165,15 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char a
                 }
 #ifndef __WIDECHAR__
                 strcpy( &pathname[i], "*.*" );
-  #ifdef __OSI__
-                rc = TinyFindFirstDTA( pathname, attr, &parent->d_dta );
-  #else
                 rc = TinyFindFirst( pathname, attr );
-  #endif
 #else
                 wcscpy( &pathname[i], L"*.*" );
                 if( wcstombs( mbcsName, pathname, MB_CUR_MAX*(wcslen(pathname)+1) ) == (size_t)-1 )
                     return( NULL );
-  #ifdef __OSI__
-                rc = TinyFindFirstDTA( mbcsName, attr, &parent->d_dta );
-  #else
                 rc = TinyFindFirst( mbcsName, attr );
-  #endif
 #endif
                 if( TINY_ERROR( rc ) ) {
                     __set_errno_dos( TINY_INFO( rc ) );
-#ifdef __OSI__
-                    lib_free( parent );
-#endif
                     return( NULL );
                 }
                 break;
@@ -231,17 +185,15 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char a
             ++name;
             prev_ch = curr_ch;
         }
-
+        
     }
-#ifndef __OSI__
     parent = lib_malloc( sizeof( *parent ) );
     if( parent == NULL ) {
         return( parent );
     }
     *parent = tmp;
-#endif
     parent->d_first = _DIR_ISFIRST;
-
+    
     if( parent != NULL )
         parent->d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirnameStart );
     return( parent );
@@ -270,19 +222,14 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *parent )
 #endif
         return( parent );
     }
-#ifdef __OSI__
-    rc = TinyFindNextDTA( &parent->d_dta );
-#else
     TinySetDTA( &(parent->d_dta) );
     rc = TinyFindNext();
-#endif
-    if( TINY_ERROR( rc ) == 18 ) { // E_nomore files
-        return( NULL );
-    } else if( TINY_ERROR( rc ) ) {
-        __set_errno_dos( TINY_INFO( rc ) );
+    if( TINY_ERROR( rc ) ) {
+        if( TINY_INFO( rc ) != E_nomore )
+            __set_errno_dos( TINY_INFO( rc ) );
         return( NULL );
     }
-
+    
 #ifdef __WIDECHAR__
     filenameToWide( parent );
 #endif
@@ -295,9 +242,6 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
     if( dirp == NULL || dirp->d_first > _DIR_MAX_FOR_CLOSE_OK ) {
         return( 1 );
     }
-#ifdef __OSI__
-    TinyFindCloseDTA( &dirp->d_dta );
-#endif
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );

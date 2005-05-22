@@ -322,7 +322,7 @@ void BPE_Expand( char *dst, char *src, char *srcend )
 int Init32BitTask( char *file )
 {
     int         handle;
-    long        rc;
+    tiny_ret_t  rc;
     char        *small_chunks;
     DWORD       load_addr;
     DWORD       total_size;
@@ -334,7 +334,7 @@ int Init32BitTask( char *file )
     } u;
 
     rc = TinyOpen( file, TIO_READ );
-    if( rc < 0 ) {
+    if( TINY_ERROR( rc ) ) {
         PrintMsg( PickMsg( LOADER_CANT_OPEN_EXE ), file, rc & 0x7fffffff );
         return( LOADER_CANT_OPEN_EXE );
     }
@@ -434,11 +434,11 @@ typedef struct SysERegRec {
 
 void Fatal( char *what, PCONTEXTRECORD p )
 {
-    long        rc;
+    tiny_ret_t  rc;
 
     DumpContext( what, p );
     rc = TinyCreate( "_watcom_.dmp", 0 );
-    if( rc >= 0 ) {
+    if( TINY_OK( rc ) ) {
         MsgFileHandle = TINY_INFO( rc );
         PrintMsg( "Program: %s\r\n", ProgramName );
         PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
@@ -605,11 +605,11 @@ typedef struct _REGISTRATION_RECORD {
 
 void Fatal( char *what, PCONTEXT p )
 {
-    long        rc;
+    tiny_ret_t  rc;
 
     DumpContext( what, p );
     rc = TinyCreate( "_watcom_.dmp", 0 );
-    if( rc >= 0 ) {
+    if( TINY_OK( rc ) ) {
         MsgFileHandle = TINY_INFO( rc );
         PrintMsg( "Program: %s\r\n", ProgramName );
         PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
