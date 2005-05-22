@@ -165,6 +165,7 @@ positive_tests = &
     opt40.$(exe) &
     opt41.$(exe) &
     opt42.$(exe) &
+    opt43.$(exe) &
     pack01.$(exe) &
     pack02.$(exe) &
     pack03.$(exe) &
