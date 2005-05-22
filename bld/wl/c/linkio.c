@@ -226,15 +226,17 @@ extern void QClose( f_handle file, char *name )
 extern long QLSeek( f_handle file, long position, int start, char *name )
 /***********************************************************************/
 {
-    tiny_ret_t h;
+    tiny_ret_t    rc;
+    unsigned long pos;
 
     CheckBreak();
-    h = TinySeek( file, position, start );
-    if( TINY_ERROR( h ) && name != NULL ) {
-        LnkMsg( ERR+MSG_IO_PROBLEM, "12", name, QErrMsg( TINY_INFO( h ) ) );
-        return( -1 );   /* for xmem checking */
+    rc = TinyLSeek( file, position, start, (void __near *)&pos );
+    if( TINY_ERROR( rc ) ) {
+        if( name != NULL )
+            LnkMsg( ERR+MSG_IO_PROBLEM, "12", name, QErrMsg( TINY_INFO( rc ) ) );
+        return( -1L );   /* for xmem checking */
     }
-    return( h );
+    return( pos );
 }
 
 extern void QSeek( f_handle file, long position, char *name )
@@ -246,8 +248,13 @@ extern void QSeek( f_handle file, long position, char *name )
 extern unsigned long QPos( f_handle file )
 /****************************************/
 {
+    unsigned long pos;
+
     CheckBreak();
-    return( TinySeek( file, 0L, TIO_SEEK_CURR ) );
+    if( TINY_ERROR( TinyLSeek( file, 0L, TIO_SEEK_CURR, (void __near *)&pos ) ) ) {
+        return( -1L );
+    }
+    return( pos );
 }
 
 extern unsigned long QFileSize( f_handle file )
@@ -257,7 +264,8 @@ extern unsigned long QFileSize( f_handle file )
     unsigned long   size;
 
     curpos = QPos( file );
-    size = TinySeek( file, 0L, TIO_SEEK_END );
+    if( TINY_ERROR( TinyLSeek( file, 0L, TIO_SEEK_END, (void __near *)&size ) ) )
+        size = 0;
     TinySeek( file, curpos, TIO_SEEK_START );
     return( size );
 }

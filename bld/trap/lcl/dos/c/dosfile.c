@@ -62,8 +62,8 @@ unsigned ReqFile_open()
     tiny_ret_t      rc;
     int             mode;
     char            *filename;
-    file_open_req       *acc;
-    file_open_ret       *ret;
+    file_open_req   *acc;
+    file_open_ret   *ret;
     static int MapAcc[] = { TIO_READ, TIO_WRITE, TIO_READ_WRITE };
 
     acc = GetInPtr( 0 );
@@ -83,25 +83,26 @@ unsigned ReqFile_open()
 
 unsigned ReqFile_seek()
 {
-    tiny_ret_t     rc;
-    file_seek_req       *acc;
-    file_seek_ret       *ret;
+    tiny_ret_t      rc;
+    file_seek_req   *acc;
+    file_seek_ret   *ret;
+    unsigned long   pos;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    rc = TinySeek( acc->handle, acc->pos, acc->mode );
-    ret->pos = rc;
-    ret->err = TINY_ERROR( rc ) ? TINY_LINFO( rc ) : 0;
+    rc = TinyLSeek( acc->handle, acc->pos, acc->mode, (void __near *)&pos );
+    ret->pos = pos;
+    ret->err = TINY_ERROR( rc ) ? TINY_INFO( rc ) : 0;
     return( sizeof( *ret ) );
 }
 
 unsigned ReqFile_read()
 {
-    tiny_ret_t   rc;
-    file_read_req       *acc;
-    file_read_ret       *ret;
-    char         *buff;
-    unsigned    len;
+    tiny_ret_t      rc;
+    file_read_req   *acc;
+    file_read_ret   *ret;
+    char            *buff;
+    unsigned        len;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -119,9 +120,9 @@ unsigned ReqFile_read()
 
 unsigned ReqFile_write()
 {
-    tiny_ret_t   rc;
-    file_write_req      *acc;
-    file_write_ret      *ret;
+    tiny_ret_t      rc;
+    file_write_req  *acc;
+    file_write_ret  *ret;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -134,8 +135,8 @@ unsigned ReqFile_write()
 
 unsigned ReqFile_write_console()
 {
-    tiny_ret_t   rc;
-    file_write_console_ret      *ret;
+    tiny_ret_t              rc;
+    file_write_console_ret  *ret;
 
     ret = GetOutPtr( 0 );
     rc = TinyWrite( 2, GetInPtr( sizeof( file_write_console_req ) ),
@@ -147,9 +148,9 @@ unsigned ReqFile_write_console()
 
 unsigned ReqFile_close()
 {
-    tiny_ret_t     rc;
-    file_close_req      *acc;
-    file_close_ret      *ret;
+    tiny_ret_t      rc;
+    file_close_req  *acc;
+    file_close_ret  *ret;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -160,8 +161,8 @@ unsigned ReqFile_close()
 
 unsigned ReqFile_erase()
 {
-    tiny_ret_t       rc;
-    file_erase_ret      *ret;
+    tiny_ret_t      rc;
+    file_erase_ret  *ret;
 
     ret = GetOutPtr( 0 );
     rc = TinyDelete( (char *)GetInPtr( sizeof( file_erase_req ) ) );
@@ -185,11 +186,11 @@ static tiny_ret_t TryPath( char *name, char *end, char *ext_list )
         rc = TinyOpen( name, mode );
         if( TINY_OK( rc ) ) {
             TinyClose( rc );
-            return( 0 );
+            return( rc );
         }
         ++ext_list;
     } while( !done );
-    return( TINY_LINFO( rc ) );
+    return( rc );
 }
 
 tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
@@ -216,16 +217,21 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
             break;
         }
     }
-    if( have_ext ) ext_list = "";
+    if( have_ext )
+        ext_list = "";
     rc = TryPath( buffer, p2, ext_list );
-    if( rc == 0 || have_path ) return( rc );
+    if( TINY_OK( rc ) || have_path )
+        return( rc );
     p = DOSEnvFind( "PATH" );
-    if( p == NULL ) return( rc );
+    if( p == NULL )
+        return( rc );
     for(;;) {
-        if( *p == '\0' ) break;
+        if( *p == '\0' )
+            break;
         p2 = buffer;
         while( *p ) {
-            if( *p == ';' ) break;
+            if( *p == ';' )
+                break;
             *p2++ = *p++;
         }
         if( p2[-1] != '\\' && p2[-1] != '/' ) {
@@ -234,8 +240,10 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
         for( p3 = pgm; *p2 = *p3; ++p2, ++p3 )
             {}
         rc = TryPath( buffer, p2, ext_list );
-        if( rc == 0 ) break;
-        if( *p == '\0' ) break;
+        if( TINY_OK( rc ) )
+            break;
+        if( *p == '\0' )
+            break;
         ++p;
     }
     return( rc );
@@ -244,11 +252,12 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
 
 unsigned ReqFile_string_to_fullpath()
 {
-    char               *name;
-    char               *fullname;
+    char                        *name;
+    char                        *fullname;
     char                        *ext_list;
     file_string_to_fullpath_req *acc;
     file_string_to_fullpath_ret *ret;
+    tiny_ret_t                  rc;
 
     acc = GetInPtr( 0 );
     name = GetInPtr( sizeof( *acc ) );
@@ -259,8 +268,13 @@ unsigned ReqFile_string_to_fullpath()
     } else {
         ext_list = "";
     }
-    ret->err = FindFilePath( name, fullname, ext_list );
-    if( ret->err != 0 ) *fullname = '\0';
+    rc = FindFilePath( name, fullname, ext_list );
+    if( TINY_OK( rc ) ) {
+        ret->err = 0;
+    } else {
+        ret->err = TINY_LINFO( rc );
+        *fullname = '\0';
+    }
     return( sizeof( *ret ) + 1 + strlen( fullname ) );
 }
 

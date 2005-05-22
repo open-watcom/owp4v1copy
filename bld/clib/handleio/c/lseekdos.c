@@ -37,41 +37,17 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
-#ifdef __WINDOWS_386__
-  #include <dos.h>
-#endif
-
-
 _WCRTLINK long __lseek( int handle, long offset, int origin )
 {
-    uint_32             pos;
-
-#ifdef __WINDOWS_386__
-    union REGS regs;
-
-    __handle_check( handle, -1 );
-    
-    regs.h.ah = DOS_LSEEK;
-    regs.h.al = origin;
-    regs.w.bx = handle;
-    regs.w.cx = (offset >> 16) & 0xffff;
-    regs.w.dx = offset & 0xffff;
-    intdos( &regs, &regs );
-    pos = (regs.w.dx << 16) | regs.w.ax;
-    if( regs.w.cflag ) {
-        __set_errno_dos( regs.w.ax );
-        return( -1L );
-    }
-#else
-    tiny_ret_t rc;
+    uint_32 __near  pos;
+    tiny_ret_t      rc;
     
     __handle_check( handle, -1 );
     
-    rc = TinyLSeek( handle, offset, origin, (void _WCNEAR *) &pos );
+    rc = TinyLSeek( handle, offset, origin, (void __near *)&pos );
     if( TINY_ERROR(rc) ) {
         __set_errno_dos( TINY_INFO(rc) );
         return( -1L );
     }
-#endif
     return( pos );
 }

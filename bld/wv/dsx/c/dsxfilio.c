@@ -104,14 +104,15 @@ unsigned LocalWrite( sys_handle filehndl, void *ptr, unsigned len )
 
 unsigned long LocalSeek( sys_handle hdl, unsigned long len, unsigned method )
 {
-    tiny_ret_t  ret;
+    tiny_ret_t      ret;
+    unsigned long   pos;
 
-    ret = TinySeek( hdl, len, method );
+    ret = TinyLSeek( hdl, len, method, (void __near *)&pos );
     if( TINY_ERROR( ret ) ) {
         StashErrCode( TINY_INFO( ret ), OP_LOCAL );
         return( -1UL );
     }
-    return( ret );
+    return( pos );
 }
 
 unsigned LocalClose( sys_handle filehndl )

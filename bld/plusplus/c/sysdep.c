@@ -59,7 +59,14 @@ size_t SysRead( int fh, void *buff, size_t amt )
 unsigned long SysTell( int fh )
 /*****************************/
 {
-     return( TinySeek( fh, 0, SEEK_CUR ) );
+    unsigned long pos;
+    tiny_ret_t    rc;
+
+    rc = TinyLSeek( fh, 0, SEEK_CUR, (void __near *)&pos );
+    if( TINY_ERROR( rc ) ) {
+        return( -1L );
+    }
+    return( pos );
 }
 
 void SysSeek( int fh, unsigned long pos )
