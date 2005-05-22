@@ -43,51 +43,56 @@
 #include "lseek.h"
 
 _WCRTLINK int chsize( int handle, long size )
-    {
-        int ret_code = 0;
-        long current_offset, diff;
-        unsigned amount;
-        auto char buff[512];
-        long status;
+{
+    int ret_code = 0;
+    long current_offset, diff;
+    unsigned amount;
+    auto char buff[512];
+    long status;
 
-        __handle_check( handle, -1 );
+    __handle_check( handle, -1 );
 
-        current_offset = __lseek( handle, 0L, SEEK_CUR ); /* remember current */
-        if( current_offset == -1 )  return( -1 );
-        diff = size - __lseek( handle, 0L, SEEK_END );
+    current_offset = __lseek( handle, 0L, SEEK_CUR ); /* remember current */
+    if( current_offset == -1 )
+        return( -1 );
+    diff = size - __lseek( handle, 0L, SEEK_END );
 
-        if( diff > 0 ) {
-            /*** Increase file size ***/
-            memset( buff, 0, 512 );
-            do {
-                amount = 512;
-                if( diff < 512 ) amount = diff;
-                ret_code = write( handle, buff, amount );
-                if( ret_code != amount ) {              /* 09-nov-92 */
-                    if( _RWD_doserrno == 5 )  __set_errno( ENOSPC );
-                    ret_code = -1;
-                    break;
-                }
-                diff -= amount;
-            } while( diff != 0 );
-
-        } else {
-            /*** Shrink the file ***/
-            status = __lseek( handle, size, SEEK_SET );
-            if( status != -1 ) {
-                status = TinyWrite( handle, buff, 0 );
-                if( TINY_ERROR(status) ) {
-                    ret_code = -1;
-                    __set_errno_dos( TINY_INFO(status) );
-                }
-            } else {
+    if( diff > 0 ) {
+        /*** Increase file size ***/
+        memset( buff, 0, 512 );
+        do {
+            amount = 512;
+            if( diff < 512 )
+                amount = diff;
+            ret_code = write( handle, buff, amount );
+            if( ret_code != amount ) {              /* 09-nov-92 */
+                if( _RWD_doserrno == 5 )
+                    __set_errno( ENOSPC );
                 ret_code = -1;
+                break;
             }
-            if( current_offset > size ) current_offset = size;
-        }
+            diff -= amount;
+        } while( diff != 0 );
 
-        status = __lseek( handle, current_offset, SEEK_SET );
-        if( status == -1)  ret_code = -1;
-        if( ret_code != -1 )  ret_code = 0;
-        return( ret_code );
+    } else {
+        /*** Shrink the file ***/
+        status = __lseek( handle, size, SEEK_SET );
+        if( status != -1 ) {
+            status = TinyWrite( handle, buff, 0 );
+            if( TINY_ERROR(status) ) {
+                ret_code = -1;
+                __set_errno_dos( TINY_INFO(status) );
+            }
+        } else {
+            ret_code = -1;
+        }
+        if( current_offset > size ) current_offset = size;
     }
+
+    status = __lseek( handle, current_offset, SEEK_SET );
+    if( status == -1)
+        ret_code = -1;
+    if( ret_code != -1 )
+        ret_code = 0;
+    return( ret_code );
+}

@@ -43,7 +43,6 @@
 #else
 #endif
 
-
 #ifdef __WIDECHAR__
  #ifdef __INT64__
   _WCRTLINK int _wfindnexti64( long handle, struct _wfinddatai64_t *fileinfo )
@@ -58,46 +57,46 @@
  #endif
 #endif
 {
-    #ifdef __NT__
-        WIN32_FIND_DATA ffb;
-        BOOL            rc;
+#ifdef __NT__
+    WIN32_FIND_DATA ffb;
+    BOOL            rc;
 
-        /*** Try to find another matching file ***/
-        #ifdef __WIDECHAR__
-            rc = __lib_FindNextFileW( (HANDLE)handle, &ffb );
-        #else
-            rc = FindNextFileA( (HANDLE)handle, &ffb );
-        #endif
-        if( rc == FALSE ) {
-            __set_errno_nt();
-            return( -1 );
-        }
-        if( !__NTFindNextFileWithAttr( (HANDLE)handle, FIND_ATTR, &ffb ) ) {
-            __set_errno_dos( ERROR_FILE_NOT_FOUND );
-            return( -1 );
-        }
+    /*** Try to find another matching file ***/
+ #ifdef __WIDECHAR__
+    rc = __lib_FindNextFileW( (HANDLE)handle, &ffb );
+ #else
+    rc = FindNextFileA( (HANDLE)handle, &ffb );
+ #endif
+    if( rc == FALSE ) {
+        __set_errno_nt();
+        return( -1 );
+    }
+    if( !__NTFindNextFileWithAttr( (HANDLE)handle, FIND_ATTR, &ffb ) ) {
+        __set_errno_dos( ERROR_FILE_NOT_FOUND );
+        return( -1 );
+    }
 
-        /*** Got one! ***/
-        #ifdef __INT64__
-            __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
-        #else
-            __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
-        #endif
+    /*** Got one! ***/
+ #ifdef __INT64__
+    __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
+ #else
+    __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
+ #endif
+    return( 0 );
+#else
+    DOSFINDTYPE *   findbuf = (DOSFINDTYPE*) handle;
+    unsigned        rc;
+
+    rc = __F_NAME(_dos_findnext,_wdos_findnext)( findbuf );
+    if( rc != 0 ) {
+        return( -1L );
+    } else {
+ #ifdef __INT64__
+        __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
+ #else
+        __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
+ #endif
         return( 0 );
-    #else
-        DOSFINDTYPE *   findbuf = (DOSFINDTYPE*) handle;
-        unsigned        rc;
-
-        rc = __F_NAME(_dos_findnext,_wdos_findnext)( findbuf );
-        if( rc != 0 ) {
-            return( -1L );
-        } else {
-            #ifdef __INT64__
-                __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
-            #else
-                __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
-            #endif
-            return( 0 );
-        }
-    #endif
+    }
+#endif
 }

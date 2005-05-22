@@ -51,10 +51,13 @@ static BOOL SeekRead( int handle, DWORD newpos, void *buff, WORD size )
     tiny_ret_t  rc;
 
     rc = TinySeek( handle, newpos, TIO_SEEK_SET );
-    if( TINY_ERROR( rc ) ) return( FALSE );
+    if( TINY_ERROR( rc ) )
+        return( FALSE );
     rc = TinyRead( handle, buff, size );
-    if( TINY_ERROR( rc ) ) return( FALSE );
-    if( TINY_INFO( rc ) != size ) return( FALSE );
+    if( TINY_ERROR( rc ) )
+        return( FALSE );
+    if( TINY_INFO( rc ) != size )
+        return( FALSE );
     return( TRUE );
 
 } /* SeekRead */
@@ -66,16 +69,23 @@ static BOOL FindNewHeader( int handle, DWORD *nh_offset )
 {
     WORD        data;
 
-    if( !SeekRead( handle, 0x00, &data, sizeof( data ) ) ) return( FALSE );
-    if( data != EXE_MZ ) return( FALSE );
+    if( !SeekRead( handle, 0x00, &data, sizeof( data ) ) )
+        return( FALSE );
+    if( data != EXE_MZ )
+        return( FALSE );
 
-    if( !SeekRead( handle, 0x18, &data, sizeof( data ) ) ) return( FALSE );
-    if( data < 0x40 ) return( FALSE );
+    if( !SeekRead( handle, 0x18, &data, sizeof( data ) ) )
+        return( FALSE );
+    if( data < 0x40 )
+        return( FALSE );
 
-    if( !SeekRead( handle, 0x3c, nh_offset, sizeof( DWORD ) ) ) return( FALSE );
+    if( !SeekRead( handle, 0x3c, nh_offset, sizeof( DWORD ) ) )
+        return( FALSE );
 
-    if( !SeekRead( handle, *nh_offset, &data, sizeof( WORD ) ) ) return( FALSE );
-    if( data != EXE_NE ) return( FALSE );
+    if( !SeekRead( handle, *nh_offset, &data, sizeof( WORD ) ) )
+        return( FALSE );
+    if( data != EXE_NE )
+        return( FALSE );
 
     return( TRUE );
 
@@ -94,7 +104,8 @@ BOOL GetStartAddress( char *path, addr48_ptr *res )
     WORD        object;
 
     rc = TinyOpen( path, TIO_READ );
-    if( TINY_ERROR( rc ) ) return( FALSE );
+    if( TINY_ERROR( rc ) )
+        return( FALSE );
     handle = TINY_INFO( rc );
 
     if( !FindNewHeader( handle, &nh_offset ) ) {

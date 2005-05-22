@@ -260,11 +260,11 @@ unsigned ReqGet_sys_config()
 
 unsigned ReqMap_addr()
 {
-    word        seg;
-    int         count;
-    word        *segment;
-    map_addr_req        *acc;
-    map_addr_ret        *ret;
+    word            seg;
+    int             count;
+    word            *segment;
+    map_addr_req    *acc;
+    map_addr_ret    *ret;
 
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
@@ -318,9 +318,9 @@ unsigned ReqMachine_data()
 
 unsigned ReqChecksum_mem()
 {
-    unsigned_8     *ptr;
-    unsigned long   sum = 0;
-    unsigned        len;
+    unsigned_8          *ptr;
+    unsigned long       sum = 0;
+    unsigned            len;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
@@ -356,14 +356,16 @@ unsigned ReqRead_mem()
     data = GetOutPtr( 0 );
     acc->mem_addr.offset &= 0xffff;
     int_tbl = IsInterrupt( acc->mem_addr, acc->len );
-    if( int_tbl ) SetIntVecs();
+    if( int_tbl )
+        SetIntVecs();
     len = acc->len;
     if( ( acc->mem_addr.offset + len ) > 0xffff ) {
         len = 0x10000 - acc->mem_addr.offset;
     }
     MoveBytes( acc->mem_addr.segment, acc->mem_addr.offset,
                FP_SEG( data ), FP_OFF( data ), len );
-    if( int_tbl ) ClrIntVecs();
+    if( int_tbl )
+        ClrIntVecs();
     return( len );
 }
 
@@ -371,8 +373,8 @@ unsigned ReqRead_mem()
 unsigned ReqWrite_mem()
 {
     bool          int_tbl;
-    write_mem_req       *acc;
-    write_mem_ret       *ret;
+    write_mem_req *acc;
+    write_mem_ret *ret;
     unsigned      len;
     void          *data;
 
@@ -383,13 +385,15 @@ unsigned ReqWrite_mem()
 
     acc->mem_addr.offset &= 0xffff;
     int_tbl = IsInterrupt( acc->mem_addr, len );
-    if( int_tbl ) SetIntVecs();
+    if( int_tbl )
+        SetIntVecs();
     if( ( acc->mem_addr.offset + len ) > 0xffff ) {
         len = 0x10000 - acc->mem_addr.offset;
     }
     MoveBytes( FP_SEG( data ), FP_OFF( data ),
                acc->mem_addr.segment, acc->mem_addr.offset, len );
-    if( int_tbl ) ClrIntVecs();
+    if( int_tbl )
+        ClrIntVecs();
     ret->len = len;
     return( sizeof( *ret ) );
 }
@@ -423,7 +427,7 @@ unsigned ReqWrite_io()
 {
     write_io_req        *acc;
     write_io_ret        *ret;
-    void         *data;
+    void                *data;
     unsigned            len;
 
     acc = GetInPtr(0);
@@ -449,7 +453,7 @@ unsigned ReqWrite_io()
 unsigned ReqRead_cpu()
 {
     void          *regs;
-    read_cpu_ret        *ret;
+    read_cpu_ret  *ret;
 
     ret = GetOutPtr( 0 );
     regs = GetOutPtr( sizeof( *ret ) );
@@ -533,41 +537,51 @@ unsigned ReqWrite_regs( void )
 
 static EXE_TYPE CheckEXEType( char *name )
 {
-    tiny_ret_t  rc;
+    tiny_ret_t            rc;
     union {
-        tiny_ret_t          rc;
-        tiny_file_stamp_t   stamp;
-    }           exe_time;
-    word        value;
-    byte        breakpt;
+        tiny_ret_t        rc;
+        tiny_file_stamp_t stamp;
+    } exe_time;
+    word                  value;
+    byte                  breakpt;
     static dos_exe_header head;
     static os2_exe_header os2_head;
 
     Flags.com_file = FALSE;
     EXE = 0;
     rc = TinyOpen( name, TIO_READ_WRITE );
-    if( TINY_ERROR( rc ) ) return( EXE_UNKNOWN );
+    if( TINY_ERROR( rc ) )
+        return( EXE_UNKNOWN );
     EXE = rc;
     exe_time.rc = TinyGetFileStamp( EXE );
     EXETime = exe_time.stamp.time;
     EXEDate = exe_time.stamp.date;
-    if( ReadEXE( head ) < 0 ) return( EXE_UNKNOWN );    /* MZ Signature */
+    if( ReadEXE( head ) < 0 )
+        return( EXE_UNKNOWN );    /* MZ Signature */
     switch( head.signature ) {
     case SIMPLE_SIGNATURE: // mp
     case REX_SIGNATURE: // mq
     case EXTENDED_SIGNATURE: // 'P3'
         return( EXE_PHARLAP_SIMPLE );
     case DOS_SIGNATURE:
-        if( head.reloc_offset != OS2_EXE_HEADER_FOLLOWS ) return( EXE_DOS );
-        if( SeekEXE( OS2_NE_OFFSET ) < 0 ) return( EXE_UNKNOWN );/* offset of new exe */
-        if( ReadEXE( NEOffset ) < 0 ) return( EXE_UNKNOWN );
-        if( SeekEXE( NEOffset ) < 0 ) return( EXE_UNKNOWN );
-        if( ReadEXE( os2_head ) < 0 ) return( EXE_UNKNOWN );/* NE Signature */
-        if( os2_head.signature == RAT_SIGNATURE_WORD ) return( EXE_RATIONAL_386 );
-        if( os2_head.signature != OS2_SIGNATURE_WORD ) return( EXE_UNKNOWN );
+        if( head.reloc_offset != OS2_EXE_HEADER_FOLLOWS )
+            return( EXE_DOS );
+        if( SeekEXE( OS2_NE_OFFSET ) < 0 )
+            return( EXE_UNKNOWN );/* offset of new exe */
+        if( ReadEXE( NEOffset ) < 0 )
+            return( EXE_UNKNOWN );
+        if( SeekEXE( NEOffset ) < 0 )
+            return( EXE_UNKNOWN );
+        if( ReadEXE( os2_head ) < 0 )
+            return( EXE_UNKNOWN );/* NE Signature */
+        if( os2_head.signature == RAT_SIGNATURE_WORD )
+            return( EXE_RATIONAL_386 );
+        if( os2_head.signature != OS2_SIGNATURE_WORD )
+            return( EXE_UNKNOWN );
         NumSegments = os2_head.segments;
         SegTable = NEOffset + os2_head.segment_off;
-        if( os2_head.align == 0 ) os2_head.align = 9;
+        if( os2_head.align == 0 )
+            os2_head.align = 9;
         SeekEXE( SegTable+(os2_head.entrynum-1)*8 );
         ReadEXE( value );
         StartByte = ( (long)value << os2_head.align ) + os2_head.IP;
@@ -617,12 +631,14 @@ unsigned ReqProg_load()
     for( ;; ) {
         if( src > end ) break;
         ch = *src;
-        if( ch == '\0' ) ch = ' ';
+        if( ch == '\0' )
+            ch = ' ';
         *dst = ch;
         ++dst;
         ++src;
     }
-    if( src > parm ) --dst;
+    if( src > parm )
+        --dst;
     *dst = '\r';
     parm = MK_FP( psp, CMD_OFFSET );
     *parm = FP_OFF( dst ) - (CMD_OFFSET+1);
@@ -749,7 +765,9 @@ unsigned ReqSet_watch()
             for( i = 0; i < WatchCount; ++i ) {
                 needed += WatchPoints[ i ].dregs;
             }
-            if( needed <= 4 ) wr->multiplier |= USING_DEBUG_REG;
+            if( needed <= 4 ) {
+                wr->multiplier |= USING_DEBUG_REG;
+            }
         }
     }
     wr->multiplier |= 200;
@@ -852,7 +870,8 @@ static bool SetDebugRegs()
     watch               *wp;
     bool                watch386;
 
-    if( !Flags.DRsOn ) return( FALSE );
+    if( !Flags.DRsOn )
+        return( FALSE );
     needed = 0;
     for( i = WatchCount, wp = WatchPoints; i != 0; --i, ++wp ) {
         needed += wp->dregs;

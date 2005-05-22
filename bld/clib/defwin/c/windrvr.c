@@ -50,23 +50,25 @@ static long  shiftState = 0;
 int     _SetAboutDlg( char *title, char *text ) {
 //===============================================
 
-        if( title ) {
-            if( DefaultAboutTitle != AboutTitle ) {
-                _MemFree( AboutTitle );
-            }
-            AboutTitle = _MemAlloc( FARstrlen( title ) + 1 );
-            if( !AboutTitle ) return( 0 );
-            FARstrcpy( AboutTitle, title );
+    if( title ) {
+        if( DefaultAboutTitle != AboutTitle ) {
+            _MemFree( AboutTitle );
         }
-        if( text ) {
-            if( DefaultAboutMsg != AboutMsg ) {
-                _MemFree( AboutMsg );
-            }
-            AboutMsg = _MemAlloc( FARstrlen( text ) + 1 );
-            if( !AboutMsg ) return( 0 );
-            FARstrcpy( AboutMsg, text );
+        AboutTitle = _MemAlloc( FARstrlen( title ) + 1 );
+        if( !AboutTitle )
+            return( 0 );
+        FARstrcpy( AboutTitle, title );
+    }
+    if( text ) {
+        if( DefaultAboutMsg != AboutMsg ) {
+            _MemFree( AboutMsg );
         }
-        return( 1 );
+        AboutMsg = _MemAlloc( FARstrlen( text ) + 1 );
+        if( !AboutMsg )
+            return( 0 );
+        FARstrcpy( AboutMsg, text );
+    }
+    return( 1 );
 }
 
 /*
@@ -149,7 +151,8 @@ static long MainWindowProc( HWND hwnd, UINT message, UINT wparam,
         break;
     case WM_KEYDOWN:
         w = _GetActiveWindowData();
-        if( w == NULL )  break;
+        if( w == NULL )
+            break;
         if( wparam == VK_CONTROL ) {
             shiftState |= SS_CTRL;
         } else if( wparam == VK_CANCEL ) {
@@ -281,13 +284,13 @@ long CALLBACK _MainDriver( HWND hwnd, UINT message, UINT wparam, LONG lparam )
         height = HIWORD( lparam );
         width = LOWORD( lparam );
         dc = GetDC( hwnd );
-        #ifndef __NT__
-            UnrealizeObject( w->brush );
-        #endif
+#ifndef __NT__
+        UnrealizeObject( w->brush );
+#endif
         oldbrush = SelectObject( dc, w->brush );
-        #ifdef __NT__
-            SetBrushOrgEx( dc, 0, 0, NULL  );
-        #endif
+#ifdef __NT__
+        SetBrushOrgEx( dc, 0, 0, NULL  );
+#endif
         GetClientRect( hwnd, &rect );
         FillRect( dc, &rect, w->brush );
         SelectObject( dc, oldbrush );
