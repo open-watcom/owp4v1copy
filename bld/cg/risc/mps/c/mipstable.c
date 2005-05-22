@@ -191,16 +191,7 @@ opcode_entry    Move8[] = {
 /*       op1   res   eq            verify          gen           reg      fu */
 _Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
 _UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
-_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_QWORD,FU_NO,
-_Un(     R,    M,    NONE ),       V_NO,           G_STORE,      RG_QWORD,FU_MEM,
-_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_QWORD,FU_NO,
-_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_QWORD,FU_MEM,
-_Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_QWORD,FU_NO,
-_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_QWORD,FU_NO,
-_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_QWORD,FU_NO,
-_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_QWORD,FU_NO,
-_Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
-_Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_QWORD_NEED,FU_NO,
+_Un(     ANY,  ANY,  NONE ),       V_NO,           R_SPLITMOVE,  RG_,     FU_NO,
 };
 
 #define BINARY_TABLE( name, reg, const_verify ) \
@@ -228,18 +219,21 @@ _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED
 BINARY_TABLE( BinaryUC1, BYTE,  V_UHALFWORDCONST2 );
 BINARY_TABLE( BinaryUC2, WORD,  V_UHALFWORDCONST2 );
 BINARY_TABLE( BinaryUC4, DWORD, V_UHALFWORDCONST2 );
-BINARY_TABLE( BinaryUC8, QWORD, V_UHALFWORDCONST2 );
 
 BINARY_TABLE( Binary1, BYTE,  V_HALFWORDCONST2 );
 BINARY_TABLE( Binary2, WORD,  V_HALFWORDCONST2 );
 BINARY_TABLE( Binary4, DWORD, V_HALFWORDCONST2 );
-BINARY_TABLE( Binary8, QWORD, V_HALFWORDCONST2 );
 
 // Instead of V_OP2ZERO this should just forbid the reduction completely
 BINARY_TABLE( BinaryNI1, BYTE,  V_OP2ZERO );
 BINARY_TABLE( BinaryNI2, WORD,  V_OP2ZERO );
 BINARY_TABLE( BinaryNI4, DWORD, V_OP2ZERO );
-BINARY_TABLE( BinaryNI8, QWORD, V_OP2ZERO );
+
+static  opcode_entry    Binary8[] = {
+/***********************************/
+/*       op1   op2   res  eq      verify      gen           reg         fu*/
+_Bin(   ANY,  ANY,  ANY, NONE ),  V_NO,       R_SPLITOP,    RG_QWORD,   FU_NO,
+};
 
 opcode_entry    Push[] = {
 /************************/
@@ -289,10 +283,13 @@ _Un(    ANY,  ANY,  NONE ),        V_NO,      G_UNKNOWN,    RG_DWORD_NEED, FU_NO
 opcode_entry    Un8[] = {
 /***********************/
 /*      op1   res   eq             verify     gen           reg            fu */
-_Un(    R,    R,    NONE ),        V_NO,      G_UNARY,      RG_QWORD,      FU_ALU,
-_Un(    C|M,  ANY,  NONE ),        V_NO,      R_MOVOP1TEMP, RG_QWORD,      FU_NO,
-_Un(    ANY,  M,    NONE ),        V_NO,      R_MOVRESTEMP, RG_QWORD,      FU_NO,
-_Un(    ANY,  ANY,  NONE ),        V_NO,      G_UNKNOWN,    RG_QWORD_NEED, FU_NO,
+_Un(    ANY,  ANY,  NONE ),        V_NO,      R_SPLITUNARY, RG_QWORD,      FU_NO,
+};
+
+opcode_entry    Neg8[] = {
+/***********************/
+/*      op1   res   eq             verify     gen           reg            fu */
+_Un(    ANY,  ANY,  NONE ),        V_NO,      R_SPLITNEG,   RG_QWORD,      FU_NO,
 };
 
 opcode_entry    MoveF[] = {
@@ -347,10 +344,10 @@ opcode_entry    Cmp4[] = {
 /************************/
 /*      op1   op2       verify          gen             reg             fu */
 _Side(  R,    R ),      V_MIPSBRANCH,   G_CONDBR,       RG_DWORD,       FU_NO,
-_Side(  R,    R ),      V_NO,           R_M_SPLITCMP,   RG_DWORD,       FU_NO,
+_Side(  R,    R ),      V_NO,           R_M_SIMPCMP,    RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_MIPSBRANCH,   R_MOVOP2TEMP,   RG_DWORD,       FU_NO,
-_Side(  R,    C ),      V_NO,           R_M_SPLITCMP,   RG_DWORD,       FU_NO,
+_Side(  R,    C ),      V_NO,           R_M_SIMPCMP,    RG_DWORD,       FU_NO,
 _Side(  C,    C ),      V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,
 _Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_DWORD,       FU_NO,
 _Side(  M,    ANY ),    V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,
@@ -361,20 +358,13 @@ _Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_DWORD_NEED,  FU_NO,
 opcode_entry    Cmp8[] = {
 /************************/
 /*      op1   op2       verify          gen             reg             fu */
-_Side(  R,    R ),      V_NO,           R_SPLITCMP,     RG_QWORD,       FU_NO,
-_Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_QWORD,       FU_NO,
-_Side(  R,    C ),      V_NO,           R_SPLITCMP,     RG_QWORD,       FU_NO,
-_Side(  C,    C ),      V_NO,           R_MOVOP1TEMP,   RG_QWORD,       FU_NO,
-_Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_QWORD,       FU_NO,
-_Side(  M,    ANY ),    V_NO,           R_MOVOP1TEMP,   RG_QWORD,       FU_NO,
-_Side(  ANY,  M ),      V_NO,           R_MOVOP2TEMP,   RG_QWORD,       FU_NO,
-_Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_QWORD_NEED,  FU_NO,
+_Side(  ANY,  ANY ),    V_NO,           R_SPLITCMP,     RG_QWORD,       FU_NO,
 };
 
 opcode_entry    CmpF[] = {
 /************************/
 /*      op1   op2       verify          gen             reg             fu */
-_Side(  R,    R ),      V_NO,           R_SPLITCMP,     RG_FLOAT,       FU_NO,
+_Side(  R,    R ),      V_NO,           R_SIMPCMP,      RG_FLOAT,       FU_NO,
 _Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_FLOAT,       FU_NO,
 _Side(  R,    C ),      V_NO,           R_FORCEOP2CMEM, RG_FLOAT,       FU_NO,
 _Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_FLOAT,       FU_NO,
@@ -431,15 +421,16 @@ static  opcode_entry    *OpcodeList[] = {
         BinaryUC1,              /* BINU1 */
         BinaryUC2,              /* BINU2 */
         BinaryUC4,              /* BINU4 */
-        BinaryUC8,              /* BINU8 */
+        Binary8,                /* BINU8 */
         BinaryNI1,              /* BINN1 */
         BinaryNI2,              /* BINN2 */
         BinaryNI4,              /* BINN4 */
-        BinaryNI8,              /* BINN8 */
+        Binary8,                /* BINN8 */
         Un1,                    /* UN1   */
         Un2,                    /* UN2   */
         Un4,                    /* UN4   */
         Un8,                    /* UN8   */
+        Neg8,                   /* NEG8  */
         Move1,                  /* MOV1  */
         Move2,                  /* MOV2  */
         Move4,                  /* MOV4  */

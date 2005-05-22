@@ -48,6 +48,7 @@ typedef enum {
         UN2,
         UN4,
         UN8,
+        NEG8,
         MOV1,
         MOV2,
         MOV4,

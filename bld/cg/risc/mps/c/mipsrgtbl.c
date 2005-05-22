@@ -556,16 +556,24 @@ extern  type_class_def RegClass( hw_reg_set regs )
 /************************************************/
 {
     hw_reg_set          test;
+    hw_reg_set          *possible;
 
-    if( HW_COvlap( regs, HW_FPR ) ) return( FD );
+    if( HW_COvlap( regs, HW_FPR ) )
+        return( FD );
     HW_CAsgn( test, HW_BREGS );
-    if( HW_Subset( test, regs ) ) return( U1 );
+    if( HW_Subset( test, regs ) )
+        return( U1 );
     HW_CAsgn( test, HW_WREGS );
-    if( HW_Subset( test, regs ) ) return( U2 );
-    HW_CAsgn( test, HW_DREGS );
-    if( HW_Subset( test, regs ) ) return( U4 );
-    HW_CAsgn( test, HW_QREGS );
-    if( HW_Subset( test, regs ) ) return( U8 );
+    if( HW_Subset( test, regs ) )
+        return( U2 );
+    // 64-bit registers are really pairs of registers; we must explicitly
+    // check to see if we match a valid pair
+    possible = QWordRegs;
+    while( !HW_CEqual( *possible, HW_EMPTY ) ) {
+        if( HW_Equal( *possible, regs ) )
+            return( U8 );
+        ++possible;
+    }
     return( U4 );   // would be different for MIPS64
 }
 

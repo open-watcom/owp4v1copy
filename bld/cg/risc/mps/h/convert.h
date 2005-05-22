@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Conversion operations for MIPS cg (see mipsconv.c).
 *
 ****************************************************************************/
 
@@ -52,4 +51,5 @@ _C_( FDTOS )
 _C_( FSTOD )
 _C_( FI8TOS )
 _C_( FI8TOD )
+_C_( FDTOI4 )
 _C_( FDTOI8 )
