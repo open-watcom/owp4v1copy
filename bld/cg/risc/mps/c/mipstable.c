@@ -133,13 +133,13 @@ opcode_entry    Move1[] = {
 /*       op1   res   eq            verify          gen           reg      fu */
 _Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
 _UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
-_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_BYTE ,FU_NO,
-_Un(     R,    M,    NONE ),       V_NO,           G_STORE,      RG_BYTE ,FU_MEM,
-_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_BYTE ,FU_NO,
-_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_BYTE ,FU_MEM,
-_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_BYTE ,FU_NO,
-_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_BYTE ,FU_NO,
-_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_BYTE ,FU_NO,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_BYTE, FU_NO,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE,      RG_BYTE, FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_BYTE, FU_NO,
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD,       RG_BYTE, FU_MEM,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_BYTE, FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_BYTE, FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_BYTE, FU_NO,
 _Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
 _Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_BYTE_NEED,FU_NO,
 };
@@ -149,16 +149,16 @@ opcode_entry    Move2[] = {
 /*       op1   res   eq            verify          gen           reg      fu */
 _Un(     ANY,  ANY,  EQ_R1 ),      NVI(V_NO),      G_NO,         RG_,     FU_NO,
 _UnPP(   M,    M,    NONE  ),      NVI(V_SAME_LOCN),G_NO,        RG_,     FU_NO,
-_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_WORD ,FU_NO,
-_Un(     R,    M,    NONE ),       V_RES_AL2,      G_STORE,      RG_WORD ,FU_MEM,
-_Un(     R,    M,    NONE ),       V_NO,           G_STORE_UA,   RG_WORD ,FU_MEM,
-_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_WORD ,FU_NO,
-_Un(     M,    R,    NONE ),       V_OP1_AL4,      G_LOAD,       RG_WORD ,FU_MEM,
-_Un(     M,    R,    NONE ),       V_NO,           G_LOAD_UA,    RG_WORD ,FU_MEM,
+_Un(     R,    R,    NONE ),       V_NO,           G_MOVE,       RG_WORD, FU_NO,
+_Un(     R,    M,    NONE ),       V_RES_AL2,      G_STORE,      RG_WORD, FU_MEM,
+_Un(     R,    M,    NONE ),       V_NO,           G_STORE_UA,   RG_WORD, FU_MEM,
+_Un(     C,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_WORD, FU_NO,
+_Un(     M,    R,    NONE ),       V_OP1_AL4,      G_LOAD,       RG_WORD, FU_MEM,
+_Un(     M,    R,    NONE ),       V_NO,           G_LOAD_UA,    RG_WORD, FU_MEM,
 _Un(     C,    R,    NONE ),       V_OP1HIGHADDR,  G_LEA_HIGH,   RG_WORD, FU_NO,
-_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_WORD ,FU_NO,
-_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_WORD ,FU_NO,
-_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_WORD ,FU_NO,
+_Un(     C,    R,    NONE ),       V_HALFWORDCONST1,G_LEA,       RG_WORD, FU_NO,
+_Un(     C,    R,    NONE ),       V_UHALFWORDCONST1,G_MOVE_UI,  RG_WORD, FU_NO,
+_Un(     C,    R,    NONE ),       V_NO,           R_CONSTLOAD,  RG_WORD, FU_NO,
 _Un(     M,    M,    NONE ),       V_NO,           R_MOVOP1TEMP, RG_,     FU_NO,
 _Un(     ANY,  ANY,  NONE ),       V_NO,           G_UNKNOWN,    RG_WORD_NEED,FU_NO,
 };
@@ -204,7 +204,7 @@ _Bin(    R,    C,    R,    NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      
 _Bin(    C,    C,    R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
 _Bin(    C,    ANY,  R,    NONE ), V_SYMMETRIC,    R_SWAPOPS,    RG_##reg,      FU_NO,  \
 _Bin(    C,    ANY,  R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
-_Bin(    M,    ANY,  ANY,  NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
+_Bin(    M,    ANY,  ANY,  NONE ), V_NO,           R_MOVOP1REG,  RG_##reg,      FU_NO,  \
 _Bin(    ANY,  M,    ANY,  NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,  \
 _Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      FU_NO,  \
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED, FU_NO,\
