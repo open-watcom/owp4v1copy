@@ -191,7 +191,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
     }
     link->load = (INTER_FUNC *)MakeProcInstance( (FARPROC)MADLOAD, this_inst );
     link->unload = (INTER_FUNC *)MakeProcInstance( (FARPROC)MADUNLOAD, this_inst );
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, NULL, 0, 0 ) ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
     }

@@ -32,7 +32,7 @@
 
 #include <string.h>
 #include <i86.h>
-#include <tinyio.h>
+#include "tinyio.h"
 
 extern unsigned       DbgPSP(void);
 

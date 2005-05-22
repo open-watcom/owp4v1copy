@@ -186,7 +186,7 @@ int WindowsInit( HANDLE inst, int showcmd )
     }
     SampSave = MK_FP( handle, 0 );
 
-    wc.style = NULL;
+    wc.style = 0;
     wc.lpfnWndProc = MainDriver;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
@@ -278,8 +278,8 @@ int MessageLoop( void )
     MSG         msg;
     WORD        rc;
 
-    while( PeekMessage( &msg, NULL, NULL, NULL, PM_NOREMOVE | PM_NOYIELD ) ) {
-        rc = GetMessage( &msg, NULL, NULL, NULL );
+    while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD ) ) {
+        rc = GetMessage( &msg, NULL, 0, 0 );
         if( !rc ) {
             return( TRUE );
         }
@@ -415,7 +415,7 @@ int PASCAL WinMain( HINSTANCE inst, HINSTANCE previnst, LPSTR cmd, int show)
     /*
      * main message loop for the second instance
      */
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, NULL, 0, 0 ) ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
     }

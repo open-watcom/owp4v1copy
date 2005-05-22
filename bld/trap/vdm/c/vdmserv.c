@@ -36,8 +36,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <tinyio.h>
-#include <packet.h>
+#include "tinyio.h"
+#include "packet.h"
 #include "watcom.h"
 #include "vdm.h"
 #include "trperr.h"

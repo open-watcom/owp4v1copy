@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tinyio.h>
+#include "tinyio.h"
 
 void Output( char *str )
 {

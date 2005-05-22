@@ -216,7 +216,7 @@ static long MainWindowProc( HWND hwnd, UINT message, UINT wparam,
     default:
         return( DefWindowProc( hwnd, message, wparam, lparam ) );
     }
-    return( NULL );
+    return( 0 );
 } /* MainWindowProc */
 
 /*
@@ -297,7 +297,7 @@ long CALLBACK _MainDriver( HWND hwnd, UINT message, UINT wparam, LONG lparam )
         ReleaseDC( hwnd, dc );
         _ResizeWin( w, rect.left, rect.top, rect.left+width, rect.top+height );
         _DisplayAllLines( w, FALSE );
-        return( NULL );
+        return( 0 );
 
     case WM_VSCROLL:
         ShowCursor( FALSE );
@@ -324,6 +324,6 @@ long CALLBACK _MainDriver( HWND hwnd, UINT message, UINT wparam, LONG lparam )
     default:
         return( DefWindowProc( hwnd, message, wparam, lparam ) );
     }
-    return (NULL);
+    return( 0 );
 
 } /* _MainDriver */

@@ -167,9 +167,11 @@ typedef line_data _WCI86FAR *LPLDATA;
 typedef struct window_data {
     int         *handles;
     int         handle_cnt;
-    DWORD       text_color,background_color;
-    int         x1,y1,x2,y2,width,height;
-    int         xchar,ychar;
+    int         text_color;
+    int         background_color;
+    int         x1, y1, x2, y2;
+    int         width, height;
+    int         xchar, ychar;
 #ifdef _MBCS
     mb_char _WCI86FAR *image;
 #else
@@ -179,8 +181,10 @@ typedef struct window_data {
     HBRUSH      brush;
 #endif
     HWND        hwnd;
-    LPLDATA     LineHead,LineTail;
-    DWORD       LastLineNumber, CurrentLineNumber, TopLineNumber;
+    LPLDATA     LineHead, LineTail;
+    DWORD       LastLineNumber;
+    DWORD       CurrentLineNumber;
+    DWORD       TopLineNumber;
     LPLDATA     tmpbuff;
     int         buffoff;
     int         curr_pos;
@@ -204,7 +208,8 @@ typedef struct window_data {
     char        gphwin:1;
     char        no_advance:1;
     char        destroy:1;
-    char        hold7:1, hold8:1;
+    char        hold7:1;
+    char        hold8:1;
 } window_data;
 
 // LPWDATA is defined in _defwin.h as follows:

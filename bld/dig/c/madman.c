@@ -788,7 +788,8 @@ static mad_status DecomposeAddr( const mad_type_info *mti, const void *d,
     valp = d;
     if( mti->a.seg.pos == 0 ) {
         /* segment is at the low end - offset above it */
-        if( (mti->a.seg.bits % BITS_PER_BYTE) != 0 ) return( MS_UNSUPPORTED );
+        if( (mti->a.seg.bits % BITS_PER_BYTE) != 0 )
+            return( MS_UNSUPPORTED );
         valp = (const unsigned_8 *)d + mti->a.seg.bits / BITS_PER_BYTE;
     }
 // NYI - address endianness translation doesn't work yet
@@ -826,9 +827,11 @@ static mad_status DecomposeAddr( const mad_type_info *mti, const void *d,
     if( mti->a.seg.bits == 0 ) {
         v->a.segment = seg;
     } else {
+        valp = d;
         if( mti->a.seg.pos != 0 ) {
-            /* segment is at the low end - offset above it */
-            if( (mti->a.seg.pos % BITS_PER_BYTE) != 0 ) return( MS_UNSUPPORTED );
+            /* segment is at the high end - offset below it */
+            if( (mti->a.seg.pos % BITS_PER_BYTE) != 0 )
+                return( MS_UNSUPPORTED );
             valp = (const unsigned_8 *)d + mti->a.seg.pos / BITS_PER_BYTE;
         }
         // TODO: byte swap segment also

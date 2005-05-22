@@ -41,6 +41,8 @@ typedef struct res_info {
     DepInfo *curr;
 }           res_info;
 
+extern long FileShift;
+
 static res_info ResInfo;
 
 STATIC handle RESInitFile( const char *name )
@@ -48,8 +50,7 @@ STATIC handle RESInitFile( const char *name )
 {
     DepInfo     *depends;
     res_info    *ret_val;
-    extern long FileShift;
-    int         old_shift;
+    long        old_shift;
 
     ret_val = NULL;
     old_shift = FileShift;
