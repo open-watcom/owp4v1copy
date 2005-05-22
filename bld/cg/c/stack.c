@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Safe recursion routine with explicit stack overflow check.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #include "standard.h"
 #include "hostsys.h"
 
-#if defined( __AXP__ ) || defined( __NT__ ) || !defined( __WATCOMC__ )
+#if defined( __AXP__ ) || defined( __MIPS__ ) || defined( __NT__ ) || !defined( __WATCOMC__ )
 
 pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 /*****************************************************/

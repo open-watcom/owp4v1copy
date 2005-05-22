@@ -7,9 +7,11 @@
 !ifdef __UNIX__
 cfloat_lib_386 = $(cfloat_dir)/osi386/cf.lib
 cfloat_lib_axp = $(cfloat_dir)/osiaxp/cf.lib
+cfloat_lib_mps = $(cfloat_dir)/osimps/cf.lib
 !else
 cfloat_lib_386 = $(cfloat_dir)\osi386\cf.lib
 cfloat_lib_axp = $(cfloat_dir)\osiaxp\cf.lib
+cfloat_lib_mps = $(cfloat_dir)\osimps\cf.lib
 !endif
 
 #

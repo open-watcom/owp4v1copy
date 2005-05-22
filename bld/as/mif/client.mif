@@ -16,6 +16,7 @@ asminline_ppc_lib_axp  = $(as_dir)/ppc/inline/osiaxp/asinline.lib
 
 asminline_mps_lib_386  = $(as_dir)/mips/inline/osi386/asinline.lib
 asminline_mps_lib_axp  = $(as_dir)/mips/inline/osiaxp/asinline.lib
+asminline_mps_lib_mps  = $(as_dir)/mips/inline/osimps/asinline.lib
 
 #
 # AS in-line run-time DLL used
