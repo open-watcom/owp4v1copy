@@ -50,6 +50,30 @@ ABI; it ought to be possible to intermix those freely, just like various
 calling conventions can be mixed on x86. However this is probably an overkill
 and a command line switch to select the ABI should be enough.
 
+ A more detailed description of the MIPS linkage convention follows. The
+convention may seem idiosyncratic, but makes in fact good sense in light of
+its apparent design objective: to support non-portable variadic functions
+which assume that all arguments are passed on stack, as well as support
+calling of unprototyped variadic functions.
+
+ It's easiest to imagine that all arguments are passed on stack, laid out as
+if they were members of a structure with possible gaps due to alignment.
+Up to four first words (16 bytes) of this imaginary structure are passed in
+registers. These registers are $4-$7 ($a0-$a3), or possibly $f12 and $f14
+(note that those are actually doubleword sized floating-point register pairs).
+At most two first consecutive arguments are passed in floating-point
+registers, and if so, the corresponding integer registers will be marked as
+unavailable. In addition, at least four words (16 bytes) will always be
+allocated on the stack (to account for all arguments passed in registers).
+
+ This scheme allows a variadic function to save arguments passed in registers
+on the stack just in front of any "overflow" arguments that did not fit into
+registers, and obtain a consecutive argument area on the stack.
+
+ Only passing at most two first floating-point arguments in registers ensures
+that if an unprototyped function is variadic, the variable arguments will
+be passed in integer registers and can be easily saved on the stack.
+
  Somewhat related is the issue of position independent code (PIC). The cg
 must be able to generate both PIC and non-PIC objects. The PIC generation is
 based on the System V MIPS ABI supplement. This should hopefully cover all
