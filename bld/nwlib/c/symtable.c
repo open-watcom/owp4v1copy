@@ -554,7 +554,7 @@ void WriteFileTable()
     if( Options.coff_found && (Options.libtype == 0 || Options.libtype == WL_TYPE_OMF) ) {
         Options.libtype = WL_TYPE_AR;
     }
-    if( Options.elf_found && Options.libtype == 0 ) {
+    if( Options.elf_found && (Options.libtype == 0 || Options.libtype == WL_TYPE_OMF) ) {
         Options.libtype = WL_TYPE_AR;
     }
     if( Options.libtype == WL_TYPE_AR || Options.libtype == WL_TYPE_MLIB ) {
