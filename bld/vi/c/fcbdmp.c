@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
-#ifdef _M_I86
+#ifdef M_I86
 #include <i86.h>
 #endif
 #include <string.h>
