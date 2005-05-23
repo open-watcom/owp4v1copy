@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnle() for UNIX.
 *
 ****************************************************************************/
 
@@ -38,22 +37,15 @@
 #include <process.h>
 
 
-#ifdef __STDC__
-_WCRTLINK int (spawnle)( mode, path, arg, ... )
-#else
-_WCRTLINK int (spawnle)( mode, path, arg )
-#endif
-    int         mode;   /* wait, nowait or overlay(==exec) */
-    const char  *path;  /* path name of file to be executed */
-    const char  *arg;
+_WCRTLINK int (spawnle)( int mode, const char *path, const char *arg, ... )
 {
-    va_list ap;
-    const char ** _WCNEAR env;
-    char *p;
+    va_list     ap;
+    const char  ** _WCNEAR env;
+    char        *p;
 
     for( va_start( ap, path ); (p = va_arg( ap, char * )) != NULL;  )
         ;
-    env = (const char **) va_arg( ap, char * );
+    env = (const char **)va_arg( ap, char * );
     va_end( ap );
 
     return( spawnve( mode, path, &arg, env ) );

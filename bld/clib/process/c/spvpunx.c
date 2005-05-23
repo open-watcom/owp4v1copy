@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnvp() for UNIX.
 *
 ****************************************************************************/
 
@@ -36,10 +35,8 @@
 #include <sys/types.h>
 #include <process.h>
 
-_WCRTLINK int (spawnvp)( mode, path, argv )
-    int         mode;           /* wait, nowait or overlay(==exec) */
-    const char  *path;          /* path name of file to be executed */
-    const char  *const argv[];  /* Array of pointers to arguments */
+
+_WCRTLINK int (spawnvp)( int mode, const char *path, const char *const argv[] )
 {
     return( spawnvpe( mode, path, argv, (const char **)environ ) );
 }

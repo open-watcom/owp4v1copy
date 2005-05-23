@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnlpe() for UNIX.
 *
 ****************************************************************************/
 
@@ -37,22 +36,15 @@
 #include <stdarg.h>
 
 
-#ifdef __STDC__
-_WCRTLINK int (spawnlpe)( mode, file, arg, ... )
-#else
-_WCRTLINK int (spawnlpe)( mode, file, arg )
-#endif
-    int         mode;   /* wait, nowait or overlay(==exec) */
-    const char  *file;  /* path name of file to be executed */
-    const char  *arg;
+_WCRTLINK int (spawnlpe)( int mode, const char *file, const char *arg, ... )
 {
-    va_list ap;
-    const char **env;
-    char *p;
+    va_list     ap;
+    const char  **env;
+    char        *p;
 
     for( va_start( ap, file ); (p = va_arg( ap, char * )) != NULL;  )
         ;
-    env = (const char **) va_arg( ap, char * );
+    env = (const char **)va_arg( ap, char * );
     va_end( ap );
 
     return( spawnvpe( mode, file, &arg, env ) );

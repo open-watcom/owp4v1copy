@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnlp() for UNIX.
 *
 ****************************************************************************/
 
@@ -35,16 +34,9 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <process.h>
-#include <stdarg.h>
 
-#ifdef __STDC__
-_WCRTLINK int (spawnlp)( mode, path, arg, ... )
-#else
-_WCRTLINK int (spawnlp)( mode, path, arg )
-#endif
-    int         mode;   /* wait, nowait or overlay(==exec) */
-    const char  *path;  /* path name of file to be executed */
-    const char  *arg;
+
+_WCRTLINK int (spawnlp)( int mode, const char *path, const char *arg, ... )
 {
     return( spawnvpe( mode, path, &arg, (const char **)environ ) );
 }

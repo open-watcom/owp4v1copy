@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnve() for Linux.
 *
 ****************************************************************************/
 
@@ -52,29 +51,25 @@
 int __p_overlay = 2; /* defined here because of a trick in DOS version  */
 
 
-_WCRTLINK int (spawnve)( mode, path, argv, envp )
-    int             mode;       /* wait, nowait or overlay(==exec) */
-    const char      *path;      /* path name of file to be executed */
-    const char *const argv[];   /* array of pointers to arguments       */
-    const char *const envp[];   /* array of pointers to environment strings */
+_WCRTLINK int (spawnve)( int mode, const char *path, const char *const argv[], const char *const envp[] )
 {
     pid_t               pid;
     int                 err;
     int                 status;
     struct sigaction    old;
     struct sigaction    new;
-    int status_pipe[2];
+    int                 status_pipe[2];
 
-    if ( mode == P_OVERLAY )
-        return execve( path, argv, envp );
-    
-    if (pipe( status_pipe ) == -1)
-        return -1;
+    if( mode == P_OVERLAY )
+        return( execve( path, argv, envp ) );
 
-    if (fcntl( status_pipe[1], F_SETFD, FD_CLOEXEC )) {
+    if( pipe( status_pipe ) == -1 )
+        return( -1 );
+
+    if( fcntl( status_pipe[1], F_SETFD, FD_CLOEXEC ) ) {
         close( status_pipe[0] );
         close( status_pipe[1] );
-        return -1;
+        return( -1 );
     }
 
     old.sa_handler = SIG_DFL;
@@ -87,18 +82,18 @@ _WCRTLINK int (spawnve)( mode, path, argv, envp )
         }
     }
     err = pid = fork();
-    if ( pid == 0 ) {
+    if( pid == 0 ) {
         close( status_pipe[0] );
         execve( path, argv, envp );
         write( status_pipe[1], &errno, sizeof errno );
-	_exit( 127 );
+        _exit( 127 );
     }
-    close(status_pipe[1]);
+    close( status_pipe[1] );
     /* EXEC's don't return, only SPAWN does */
-    if ( err != -1 )
-        err = read( status_pipe[0], &errno, sizeof errno );
+    if( err != -1 )
+        err = read( status_pipe[0], &errno, sizeof( errno ) );
     if( err != -1 ) {
-        if ( err > 0 ) {
+        if( err > 0 ) {
             err = errno;
             waitpid( pid, NULL, 0 );
             errno = err;
@@ -106,16 +101,16 @@ _WCRTLINK int (spawnve)( mode, path, argv, envp )
         } else if ( mode == P_WAIT ) {
            /* if P_WAIT return invoked task's status otherwise P_NOWAIT so
               return pid and let user do the wait */
-           do {
-               err = waitpid( pid, &status, 0 );
-           } while( err == -1 && errno == EINTR );
-           if( err == pid ) err = WEXITSTATUS(status);
+            do {
+                err = waitpid( pid, &status, 0 );
+            } while( err == -1 && errno == EINTR );
+            if( err == pid )
+                err = WEXITSTATUS( status );
         }
     }
     if( old.sa_handler == SIG_IGN ) {
         sigaction( SIGCHLD, &old, NULL );
     }
-    close(status_pipe[0]);
+    close( status_pipe[0] );
     return( err );
 }
-

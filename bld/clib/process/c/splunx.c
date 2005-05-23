@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnl() for UNIX.
 *
 ****************************************************************************/
 
@@ -37,14 +36,8 @@
 #include <stdarg.h>
 #include <process.h>
 
-#ifdef __STDC__
-_WCRTLINK int (spawnl)( mode, path, arg, ... )
-#else
-_WCRTLINK int (spawnl)( mode, path, arg )
-#endif
-    int         mode;       /* wait, nowait or overlay(==exec) */
-    const char  *path;      /* path name of file to be executed */
-    const char  *arg;
+
+_WCRTLINK int (spawnl)( int mode, const char *path, const char *arg, ... )
 {
     return( spawnve( mode, path, &arg, (const char **)environ ) );
 }
