@@ -33,4 +33,15 @@ system begin bld_linux
     op norelocs
     op caseexact
 end
+system begin bld_linuxmips
+    option osname='Linux MIPS (build)'
+    debug all
+    libpath %DEVDIR%/clib/library/linux.mps/_s
+    libpath %DEVDIR%/plusplus/cpplib/generic.mps/_s
+    libpath %DEVDIR%/mathlib/library/linux.mps/_s
+    format elf
+    op exportall
+    op norelocs
+    op caseexact
+end
 @%DEVDIR%/wl/wlsystem.lnk

@@ -35,7 +35,13 @@ lang_dll        = $(lang_root)\binnt
 nlang_dll       = $(nlang_root)\binnt
 nulldevice      = nul
 !else ifdef __LINUX__
+!ifdef __LINUXPPC__
+bld_sys         = bld_linuxppc
+!else ifdef __LINUXMIPS__
+bld_sys         = bld_linuxmips
+!else
 bld_sys         = bld_linux
+!endif
 bld_bin         = $(build_dir)/binl
 bld_incs        = $(bld_extra_incs) -I$(hdr_dir)/linux -I$(watcom_dir)/h
 lang_bin        = $(lang_root)/binnt
@@ -64,6 +70,10 @@ bld_cc          = *wcc386 $(bld_incs)
 
 !ifdef __NTAXP__
 bcl             = wclaxp
+!else ifdef __LINUXPPC__
+bcl             = wclppc
+!else ifdef __LINUXMIPS__
+bcl             = wclmps
 !else ifdef __LINUX__
 bcl             = $(bld_bin)/bwcl386
 !else

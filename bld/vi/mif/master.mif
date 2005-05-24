@@ -78,6 +78,8 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
         $(vi_dir)\bind\os2386\edbind $(bindextra) -q $(name)
 !else ifdef __MSDOS__
         $(vi_dir)\bind\dosi86\edbind $(bindextra) -q $(name)
+!else ifdef __LINUXMIPS__
+        $(vi_dir)/bind/linuxmps/edbind.exe $(bindextra) -q $(name)
 !else ifdef __LINUX__
         $(vi_dir)/bind/linux386/edbind.exe $(bindextra) -q $(name)
 !else

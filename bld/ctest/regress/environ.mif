@@ -159,6 +159,10 @@
 !ifndef arch
 !   ifdef __NTAXP__
 !       define arch axp
+!   else ifdef __LINUXPPC__
+!       define arch ppc
+!   else ifdef __LINUXMIPS__
+!       define arch mps
 !   else
 !       define arch 386
 !   endif
@@ -231,6 +235,12 @@
 !  endif
 !endif
 
+!ifndef targ_env_mps
+!  ifdef __LINUX__
+!    define targ_env_mps lnxmps
+!  endif
+!endif
+
 #
 # targ_run      name of executable loader (e.g., run386)
 targ_run_pls386 = run386
@@ -288,13 +298,15 @@ targ_lnk_dosi86 = system dos option stack=3k
 targ_lnk_os2i86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_wntaxp = system ntaxp
 targ_lnk_lnxppc = system bld_linuxppc
-targ_lnk_lnxmps = system bld_linuxmps
+targ_lnk_lnxmps = system bld_linuxmips
 
 lnk_any    = # option noundefsok # add once we only use 11.0 linkers
 
 lnk_386 = $(targ_lnk_$(targ_env_386)) $(lnk_any)
 lnk_i86 = $(targ_lnk_$(targ_env_i86)) $(lnk_any)
 lnk_axp = $(targ_lnk_$(targ_env_axp)) $(lnk_any)
+lnk_ppc = $(targ_lnk_$(targ_env_ppc)) $(lnk_any)
+lnk_mps = $(targ_lnk_$(targ_env_mps)) $(lnk_any)
 
 #
 # targ_ldb      linker debug directive (e.g., DEBUG all)
