@@ -243,10 +243,14 @@ objs = $($(which)_objs) mxutil.obj $(extra_dobjs)
 !ifndef substitute_linker
 
 $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__) $(nversion_tmp)
-        $(linker) $(mode_lflags) op map $(sys_$(cpu)_$(os)) name $^@ &
-                file {$(objs)} &
-                library {$(libs_$(cpu)_$(os)) $(extra_libs)} &
-                $(extra_linker)
+        %create $^&.lnk
+        @%append $^&.lnk $(mode_lflags)
+        @%append $^&.lnk op map name $^@
+        @%append $^&.lnk $(sys_$(cpu)_$(os))
+        @for %i in ($(objs)) do @%append $^&.lnk file %i
+        @for %i in ($(libs_$(cpu)_$(os)) $(extra_libs)) do @%append $^&.lnk library %i
+        @%append $^&.lnk $(extra_linker)
+        $(linker) @$^&.lnk 
 !ifdef resource_file
         $(rc) -bt=$(targ) $(resource_file) $^@
 !endif

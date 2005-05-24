@@ -2,13 +2,7 @@
 # Master makefile for creating trap files
 #
 
-!ifdef __LINUX__
-description = \'Open Watcom Debugger Trap File\'
-dllstart = \'_LibMain@12\'
-!else
 description = 'Open Watcom Debugger Trap File'
-dllstart = '_LibMain@12'
-!endif
 
 !ifdef test
 sys_x86_os2   = sys os2
@@ -43,12 +37,14 @@ sys_x86_os2  = sys os2 dll initinstance &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
-            op modname=$^&
+            op modname=$^& &
+            option description $(description)
 sys_x86_os2v2  = sys os2v2 dll initinstance terminstance &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
-            op modname=$^&
+            op modname=$^& &
+            option description $(description)
 sys_x86_win  = sys windows_dll &
             export WEP.1 RESIDENT &
             export TRAPINIT.2 &
@@ -71,9 +67,13 @@ sys_x86_nt   = sys nt_dll initinstance &
             export InterruptProgram_.5 &
             export Terminate_.6 &
 # remove reference to run-time code
-            alias __DLLstart_=$(dllstart) &
+            alias __DLLstart_='_LibMain@12' &
+            op modname=$^& &
             option description $(description) &
-            op offset=0x6e900000, modname=$^&
+!ifneq release 0
+            op offset=0x6e900000
+!endif
+
 sys_x86_dos  = sys dos
 sys_x86_qnx  = sys pharlap rex disable 1014, 1023
 
