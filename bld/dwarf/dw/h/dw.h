@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Public DWARF Writer library interface.
 *
 ****************************************************************************/
 
@@ -37,7 +36,6 @@
 
 #include "dwcnf.h"
 
-#pragma pack(1)
 /*
     Types
 */
@@ -561,5 +559,4 @@ dw_handle DWENTRY DWRefPCH(
     dw_client                   cli,
     uint_32                     ref );
 
-#pragma pack()
 #endif
