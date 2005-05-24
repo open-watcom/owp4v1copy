@@ -1,6 +1,7 @@
 [ DEFAULT ]
 dir="binw"		usr="ms2wlink.exe"					where="c jc f77 jf77 ac"	old="binb"
 dir="binw"		usr="fcenable.exe"					where="c jc f77 jf77 ac"	old="binb"
+dir="binw"		usr="exe2bin.exe"					where="c jc f77 jf77 ac"
 dir="binw"		usr="wlsystem.lnk"					where="c jc f77 jf77 ac"	old="binb"
 
 dir="binw"		usr="wlink.lnk"		cond="doshost winhost |"	where="c jc f77 jf77"		old="bin"
@@ -9,10 +10,11 @@ dir="binnt"		usr="wlink.lnk"		cond="wnthost"			where="c jc f77 jf77 ac"
 dir="axpnt"		usr="wlink.lnk"		cond="alphahost"		where="ac"
 
 dir="binw"		usr="wlink.exe"		cond="doshost winhost |"	where="c jc f77 jf77"		old="bin"
-dir="n98bw"		usr="wlink.exe"		cond="doshost winhost |"	where="jc jf77"
 dir="binp"		usr="wlink.exe"		cond="os2host"			where="c jc f77 jf77"
 dir="binp/dll"		usr="wlink.dll"		cond="os2host"			where="c jc f77 jf77"
+dir="binp"		usr="exe2bin.exe"	cond="os2host"			where="c jc f77 jf77"
 dir="binnt"		usr="wlink.exe"		cond="wnthost"			where="c jc f77 jf77 ac"
+dir="binnt"		usr="exe2bin.exe"	cond="wnthost"			where="c jc f77 jf77 ac"
 dir="binnt"		usr="wlink.dll"		cond="wnthost"			where="c jc f77 jf77 ac"
 dir="axpnt"		usr="wlink.exe"		cond="alphahost"		where="ac"
 dir="axpnt"		usr="wlink.dll"		cond="alphahost"		where="ac"

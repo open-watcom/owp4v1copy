@@ -111,6 +111,7 @@
 #define _WDISASM_VERSION_       BAN_VER_STR
 #define _FCENABLE_VERSION_      BAN_VER_STR
 #define _MS2WLINK_VERSION_      BAN_VER_STR
+#define _EXE2BIN_VERSION_       BAN_VER_STR
 #define _WLIB_VERSION_          BAN_VER_STR
 #define _WMAKE_VERSION_         BAN_VER_STR
 #define _WOMP_VERSION_          BAN_VER_STR
