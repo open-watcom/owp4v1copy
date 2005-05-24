@@ -2,9 +2,9 @@ plustest_name = owstl
 !include ..\environ.mif
 
 !ifdef test1
-test_cflags_386 = -d2-fpd-xs
-test_cflags_i86 = -d2-fpd-xs
-test_cflags_axp = -d2-xs
+test_cflags_386 = -d2-fpd-xs-za
+test_cflags_i86 = -d2-fpd-xs-za
+test_cflags_axp = -d2-xs-za
 !else ifdef test2
 test_cflags_386 = -os-d1-3s-xss-br
 test_cflags_i86 = -os-d1-xss

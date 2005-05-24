@@ -242,6 +242,12 @@ _WCRTLINK extern wchar_t *_wcsset( wchar_t *, wchar_t );
 _WCRTLINK extern wchar_t *_wmktemp( wchar_t *__template );
 _WCRTLINK extern wchar_t *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
 
+:segment CNAME
+#define WEOF ((std::wint_t)(-1))
+:elsesegment
+#define WEOF ((wint_t)(-1))
+:endsegment
+
 :include ext.sp
 
 :segment CNAME
@@ -279,7 +285,6 @@ _WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * 
 _WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
 _WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
 
-#define WEOF ((std::wint_t)(-1))
 :elsesegment
 :: C99 says this function is named mbsinit.
 _WCRTLINK extern int     sisinit( const mbstate_t *__ps );
@@ -292,7 +297,6 @@ _WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * 
 _WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
 _WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, va_list __arg );
 
-#define WEOF ((wint_t)(-1))
 :endsegment
 
 #endif
