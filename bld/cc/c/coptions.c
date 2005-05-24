@@ -233,12 +233,14 @@ local void SetTargSystem()                               /* 07-aug-90 */
     PreDefine_Macro( "__MIPS__" );
 #elif _CPU == 386
     PreDefine_Macro( "M_I386" );                    /* 03-jul-91 */
+    PreDefine_Macro( "_M_I386" );
     PreDefine_Macro( "__386__" );
     PreDefine_Macro( "__X86__" );
     PreDefine_Macro( "_X86_" );
     PreDefine_Macro( "_STDCALL_SUPPORTED" );
 #elif _CPU == 8086
     PreDefine_Macro( "M_I86" );
+    PreDefine_Macro( "_M_I86" );
     PreDefine_Macro( "__I86__" );
     PreDefine_Macro( "__X86__" );
     PreDefine_Macro( "_X86_" );
