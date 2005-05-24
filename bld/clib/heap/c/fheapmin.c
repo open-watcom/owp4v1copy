@@ -34,13 +34,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <malloc.h>
-#if defined(__QNX__)
-    #include <sys/seginfo.h>
-#elif defined(__OS2__)
-    #include <dos.h>
-    #define INCL_DOSMEMMGR
-    #include <wos2.h>
-    #include "tinyos2.h"
+#include "heap.h"
+#include "heapacc.h"
+
+#if defined(__OS2__)
     #if defined(M_I86)
         #if defined(__BIG_DATA__)
             #define MODIFIES ds es
@@ -49,16 +46,8 @@
         #endif
     #endif
 #elif defined(__WINDOWS__)
-    #include <dos.h>
-    #include "windows.h"
     #define MODIFIES es
-#else
-    #include <dos.h>
-    #include "tinyio.h"
 #endif
-#include "heap.h"
-#include "heapacc.h"
-
 
 #if defined(__BIG_DATA__)
 

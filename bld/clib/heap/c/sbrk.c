@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #if defined(__OS2__)
-    #include "tinyos2.h"
     #define INCL_DOSMEMMGR
     #include <wos2.h>
 #elif defined(__QNX__)
