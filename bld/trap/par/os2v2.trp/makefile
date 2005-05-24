@@ -9,5 +9,5 @@ which = TRAP
 
 extra_objs = $(remote_objs) paros22.obj
 
-!include $(trap_dir)/master.mif
 !include ../os2v2.mif
+!include $(trap_dir)/master.mif

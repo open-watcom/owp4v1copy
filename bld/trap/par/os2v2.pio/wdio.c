@@ -35,8 +35,6 @@
 #endif
 #include <conio.h>
 
-#pragma code_seg( "IO_TEXT" )
-
 unsigned far __pascal outport( unsigned port, unsigned value )
 {
     return( outp( port, value ) );

@@ -15,5 +15,7 @@ sys_dll = 1
 !include defrule.mif
 !include deftarg.mif
 
+!include ../os2io.mif
+
 wdio.dll: wdio.obj
-    $(linker) sys os2 dll op map,protmode name $@ f $< segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
+    $(linker) sys os2 dll op map,protmode name $@ f $< $(extra_linker)
