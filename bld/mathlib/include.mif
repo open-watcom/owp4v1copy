@@ -1,5 +1,5 @@
 include_default =$(mathlib_dir)/h
-include_watcom =;$(watcom_dir)/h;$(lib_misc_dir)/h;$(comp_cfg_dir)/h
+include_watcom  =;$(watcom_dir)/h;$(lib_misc_dir)/h;$(comp_cfg_dir)/h
 
 # include_c_(system)
 !ifndef runtime_library_source
@@ -38,5 +38,6 @@ include_a_386 =;$(emu386)/inc
 include_a_387 =
 include_a_axp =
 include_a_ppc =
+include_a_mps =
 
-include_a_path =-i"$(include_default)$(include_watcom)$(include_a_$(processor))"
+include_a_path = -I"$(include_default)$(include_watcom)$(include_a_$(processor))"
