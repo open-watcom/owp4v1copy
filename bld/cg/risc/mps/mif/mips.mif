@@ -14,7 +14,7 @@ mips_objs = &
         mipssplit.obj &
         mipsstub.obj  &
         mipstable.obj &
-        parmreg.obj  &
+        mipsparm.obj  &
         rscconst.obj
 
 src_path        = $(cg_dir)/risc/mps/c

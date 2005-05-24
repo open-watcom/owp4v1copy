@@ -140,7 +140,7 @@ extern  hw_reg_set      ParmReg( type_class_def class, type_length len, type_len
             state->parm.offset += 8;
             parm = floatRegSet( state->parm.fr - 1 );
         }
-    } else if( class == I8 || class == U8 ) {
+    } else if( _IsI64( class ) ) {
         if( state->parm.gr <= (LAST_SCALAR_PARM_REG - 1) ) {
             state->parm.gr += 2;
             state->parm.offset += 8;

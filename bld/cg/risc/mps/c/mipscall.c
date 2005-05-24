@@ -179,10 +179,6 @@ extern instruction *PushOneParm( instruction *ins, name *curr,
 
     state = state;
     stack_reg = AllocRegName( StackReg() );
-    // There is 16 bytes of stack space reserved for arguments, but
-    // not used - varargs routine will store register args there. Just
-    // make sure we skip it here.
-    offset += 4 * REG_SIZE;
     dst = AllocIndex( stack_reg, NULL, offset, class );
     new = MakeMove( curr, dst, class );
     SuffixIns( ins, new );

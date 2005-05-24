@@ -473,9 +473,6 @@ extern  type_length TempLocation( name *temp )
     offset = CurrProc->targ.stack_map.locals.start;
     if( temp->t.temp_flags & STACK_PARM ) {
         offset = CurrProc->targ.frame_size;
-        // Args passed on stack only start 16 bytes past current
-        // procedure's stack frame!
-        offset += 4 * REG_SIZE;
     }
     return( offset + base->t.location + temp->v.offset - base->v.offset );
 }

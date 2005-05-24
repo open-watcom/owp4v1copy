@@ -373,10 +373,15 @@ extern  name    *DoParmDecl( sym_handle sym, type_def *tipe, hw_reg_set reg ) {
         if( temp->n.class == N_TEMP && parm_name->n.class == N_TEMP ) {
             temp->t.location = parm_name->t.location;
         } else {
-        #if _TARGET & _TARG_PPC
-            // for PPC varargs routines, ensure that taking the address of
-            // a parm coming in in a register will force that parm into
-            // the correct location in the caller's frame (yes - it sucks)
+        #if (_TARGET & _TARG_PPC) || (_TARGET & _TARG_MIPS)
+            // for PowerPC varargs routines, ensure that taking the address
+            // of a parm coming in in a register will force that parm into the
+            // correct home location in the caller's frame (yes - it sucks)
+            // For MIPS, ensure that taking the address of a parm passed in
+            // register will always force it to the right home location,
+            // varargs or not. All this is done basically so that crappy code
+            // that doesn't use stdarg.h properly would work - we have some
+            // in our own clib ;-)
             temp->t.location = CurrProc->state.parm.offset - ptipe->length;
         #endif
         }
