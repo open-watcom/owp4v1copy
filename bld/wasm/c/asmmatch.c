@@ -732,6 +732,9 @@ static int match_phase_3( int *i, enum operand_type determinant )
 #endif
                     Code->prefix.opsiz = FALSE;
                     cur_opnd = OP_I8;
+                    if( InsFixups[OPND2] != NULL ) {
+                        InsFixups[OPND2]->fixup_type = FIX_LOBYTE;
+                    }
                 } else if( last_opnd & OP_R16 ) {
                     // 16-bit register, so output 16-bit data
 #if defined(_WASM_)

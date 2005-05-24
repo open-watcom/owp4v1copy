@@ -1571,6 +1571,9 @@ static int process_address( expr_list *opndx )
                     // CODE location is converted to OFFSET symbol
                     type = ( opndx->explicit ) ? opndx->expr_type : opndx->sym->mem_type;
                     switch( type ) {
+                    case T_ABS:
+                        return( idata_fixup( opndx ) );
+                        break;
                     case T_FAR:
                     case T_NEAR:
                     case T_SHORT:

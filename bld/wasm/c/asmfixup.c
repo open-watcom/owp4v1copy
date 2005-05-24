@@ -356,6 +356,9 @@ struct fixup *CreateFixupRec( int index )
     
     if( !Modend ) {
         switch( fixup->fixup_type ) {
+        case FIX_LOBYTE:
+            fixnode->loc_method = FIX_LO_BYTE;
+            break;
         case FIX_RELOFF8:
             fixnode->self_relative = TRUE;
             fixnode->loc_method = FIX_LO_BYTE;

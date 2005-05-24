@@ -73,6 +73,7 @@ enum sym_type {
 
 enum fixup_types {
         FIX_SEG,
+        FIX_LOBYTE,
         FIX_RELOFF8,
         FIX_RELOFF16,
         FIX_RELOFF32,
