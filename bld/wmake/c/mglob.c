@@ -71,7 +71,7 @@ struct Glob Glob;
 const char FAR *BuiltIns = {
     "__MAKEOPTS__=%s\n"
     "__MAKEFILES__=\n"
-    "__VERSION__=12\n"
+    "__VERSION__=14\n"
 #ifdef DLLS_IMPLEMENTED
     "__LOADDLL__=\n"
 #endif
@@ -85,6 +85,8 @@ const char FAR *BuiltIns = {
         "__NT386__=\n"
     #elif defined(__AXP__)
         "__NTAXP__=\n"
+    #else
+        #error Unknown CPU architecture
     #endif
 
 #elif defined( __OS2__ )
@@ -97,6 +99,15 @@ const char FAR *BuiltIns = {
 #elif defined( __LINUX__ )
     "__LINUX__=\n"
     "__UNIX__=\n"
+    #if defined(__386__)
+        "__LINUX386__=\n"
+    #elif defined(__PPC__)
+        "__LINUXPPC__=\n"
+    #elif defined(__MIPS__)
+        "__LINUXMIPS__=\n"
+    #else
+        #error Unknown CPU architecture
+    #endif
 
 #endif
 };

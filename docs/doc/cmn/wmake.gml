@@ -387,9 +387,13 @@ __LOADDLL__= defined if DLL loading supported
 __MSDOS__ =  defined if MS/DOS version
 __NT__ = defined if Windows NT version
 __NT386__ = defined if x86 Windows NT version
+.*__NTAXP__ = defined if Alpha AXP Windows NT version
 __OS2__ = defined if OS/2 version
 __QNX__ = defined if QNX version
 __LINUX__ = defined if Linux version
+__LINUX386__ = defined if x86 Linux version
+.*__LINUXPPC__ = defined if PowerPC Linux version
+.*__LINUXMIPS__ = defined if MIPS Linux version
 __UNIX__ = defined if QNX or Linux version
 MAKE = <name of file containing &makcmdup>
 #endif
