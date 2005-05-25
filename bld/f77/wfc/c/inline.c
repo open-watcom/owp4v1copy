@@ -280,6 +280,8 @@ static  char    __RTIStrBlastNeWin[] =  { "aux __RTIStrBlastNe          \
 static  char    __RTIStrBlastEqSOS[] =  { "aux __RTIStrBlastEq          \
                                         parm    reverse                 \
                                                 [di] [si] [cx] =        \
+                                        \"push  ds\"                    \
+                                        \"pop   es\"                    \
                                         \"rep   movsb\"                 \
                                 " };
 
@@ -290,6 +292,8 @@ static  char    __RTIStrBlastEqSOS[] =  { "aux __RTIStrBlastEq          \
 static  char    __RTIStrBlastNeSOS[] =  { "aux __RTIStrBlastNe          \
                                         parm    reverse                 \
                                                 [di] [ax] [si] [cx] =   \
+                                        \"push  ds\"                    \
+                                        \"pop   es\"                    \
                                         \"rep   movsb\"                 \
                                         \"mov   cx, ax\"                \
                                         \"mov   ax, 0x2020\"            \
@@ -305,6 +309,8 @@ static  char    __RTIStrBlastNeSOS[] =  { "aux __RTIStrBlastNe          \
 static  char    __RTIStrBlastEqS[] =  { "aux __RTIStrBlastEq            \
                                         parm    reverse                 \
                                                 [di] [si] [cx] [ax] =   \
+                                        \"push  ds\"                    \
+                                        \"pop   es\"                    \
                                         \"rep   movsw\"                 \
                                         \"mov   cx, ax\"                \
                                         \"rep   movsb\"                 \
@@ -318,6 +324,8 @@ static  char    __RTIStrBlastNeS[] =  { "aux __RTIStrBlastNe            \
                                         parm    reverse                 \
                                                 [di] [dx] [si] [ax]     \
                                         modify  [cx] =                  \
+                                        \"push  ds\"                    \
+                                        \"pop   es\"                    \
                                         \"mov   cx, ax\"                \
                                         \"shr   cx, 1\"                 \
                                         \"rep   movsw\"                 \
