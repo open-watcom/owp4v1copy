@@ -934,15 +934,14 @@ static char *FixupIncFileList( char *p, unsigned incfile_count )
     IncFileList = NULL;
     if( incfile_count != 0 ) {
         IncFileList = (INCFILE *)p;
-        for(;;) {
+        do {
             ifile = (INCFILE *)p;
             len = sizeof(INCFILE) + ifile->len;
             len = (len + (sizeof(int) - 1)) & - sizeof(int);
             p += len;
-            --incfile_count;
-            if( incfile_count == 0 ) break;
             ifile->nextfile = (INCFILE *)p;
-        }
+        } while( --incfile_count > 0 );
+        ifile->nextfile = NULL;
     }
     return( p );
 }
@@ -955,15 +954,13 @@ static char *FixupIncludes( char *p, unsigned file_count )
     FNameList = NULL;
     if( file_count != 0 ) {
         FNameList = (FNAMEPTR)p;
-        for(;;) {
+        do {
             flist = (FNAMEPTR)p;
             len = flist->fname_len;
             flist->fullpath = NULL;
             p += len;
             flist->next = (FNAMEPTR)p;
-            --file_count;
-            if( file_count == 0 ) break;
-        }
+        } while( --file_count > 0 );
         flist->next = NULL;
     }
     return( p );
