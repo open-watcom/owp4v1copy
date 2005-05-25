@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  utilities for processing creation of DOS EXE file
+* Description:  Routines for creation of DOS EXE and COM files.
 *
 ****************************************************************************/
 
@@ -231,7 +231,7 @@ static bool DoCOMGroup( void *_seg, void *chop )
 {
     seg_leader *seg = _seg;
     signed long newstart;
-    
+
     newstart = *(signed long *)chop + GetLeaderDelta( seg );
     RingLookup( seg->pieces, WriteSegData, &newstart );
     return( FALSE );
@@ -313,7 +313,7 @@ static void WriteCOMFile( void )
 #endif
     }
     root_size = fnode->file_loc;
-    if( root_size > ( 64 * 1024L - 102 ) ) {
+    if( root_size > (64 * 1024L - 0x200) ) {
         LnkMsg( ERR+MSG_COM_TOO_LARGE, NULL );
     }
     WriteDBI();
