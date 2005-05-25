@@ -194,6 +194,7 @@ found:;
 
 
 static void  AddCueBlk( cue_ctl *ctl ){
+/**************************************/
     cue_blk *new;
 
     new = _Alloc( new, sizeof( *new ) );

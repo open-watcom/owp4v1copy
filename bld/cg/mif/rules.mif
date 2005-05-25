@@ -1,6 +1,5 @@
 
 extra_c_flags_386       = -zp4
-extra_c_flags_linux     = -fo=.obj
 
 !ifndef cg_autodepends
 cg_autodepends = .AUTODEPEND
@@ -52,8 +51,11 @@ libfile: .PROCEDURE
 !ifdef bootstrap
 bitset_opts = -o $@ -g
 protos_opts = -E -traditional -o $@
-!else
+!else ifdef __UNIX__
 bitset_opts = -fo=.obj -fe=$@ -d2
+protos_opts = -p -fo=$@
+!else
+bitset_opts = -fe=$@ -d2
 protos_opts = -p -fo=$@
 !endif
 
