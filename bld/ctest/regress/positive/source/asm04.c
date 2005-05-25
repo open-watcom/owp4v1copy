@@ -2,7 +2,7 @@
 
 #define INLINE
 
-#if ! defined(__386__) || ! defined(__I86__)
+#if defined(__386__) || defined(__I86__)
 
 INLINE int sub( int a, int b ) {
     return a - b;

@@ -23,6 +23,14 @@ int testfunc(int a,int b,int c,int d,int e,int f,int g,int h,int i,int j,int k,i
     }
 #define testfuncASM()   _axp
 #endif
+#ifdef __MIPS__
+    int _mips;
+    _asm {
+        lw  $v0,shadow
+        sw  $v0,_mips
+    }
+#define testfuncASM()   _mips
+#endif
 #endif
     return testfuncASM();
 }
