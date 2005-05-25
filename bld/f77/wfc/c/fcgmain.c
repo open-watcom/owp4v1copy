@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  F-Code interpreter (code generation phase)
 *
 ****************************************************************************/
 
-
-//
-// FCGMAIN      : F-Code interpreter (code generation phase)
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -59,9 +54,6 @@ extern  void            BEStop(void);
 extern  void            BEFini(void);
 extern  segment_id      BESetSeg(segment_id);
 extern  void            BEFreeBack(back_handle);
-
-// Remove as soon as possible, see comments where this call is used.
-extern  int             DBSrcFile( char *name );
 
 //=========================================================================
 
@@ -369,12 +361,6 @@ static  void    CGStart() {
         cg_opts |= DBG_DF;
     }
     info = BEInit( cg_opts, cg_target, space_time, cpu );
-
-    // We must now set the source file because the C guys broke the CG and don't
-    // want to fix it.  (See InitDbgInfo() in cg\c\dbsyms.c and FListSrcQue()
-    // in cc\c\ccmain.c to get idea of their kludge)
-    // A kludge to fix a kludge :(
-    DBSrcFile( GetFullSrcName() );
 
     if( info.success != 0 ) {
         if( ( info.version.target == II_TARG_STUB ) ||

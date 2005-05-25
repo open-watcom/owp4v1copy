@@ -142,7 +142,7 @@ void SrcFileNotAFile(           // LABEL SRCFILE AS A DEVICE
 void SrcFilePoint(              // SET CURRENT SRCFILE
     SRCFILE srcfile )           // - source file to be set as current
 ;
-void SrcFilePrimary(            // MARK CURRENT SOURCE FILE AS THE PRIMARY FILE
+void SetSrcFilePrimary(         // MARK CURRENT SOURCE FILE AS THE PRIMARY FILE
     void )
 ;
 SRCFILE SrcFileGetPrimary(      // GET PRIMARY SOURCE FILE

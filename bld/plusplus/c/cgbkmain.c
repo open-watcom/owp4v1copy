@@ -3358,7 +3358,6 @@ void CgBackEnd(                 // BACK-END CONTROLLER
         ExitPointAcquire( cgback );
         SegmentCgInit();
         BEStart();
-        DBSrcFile( SrcFileFullName( CompInfo.primary_srcfile ) );
         CgBackStatHandlesInit();
         thisSym = AllocSymbol();
         thisSym->id = SC_AUTO;

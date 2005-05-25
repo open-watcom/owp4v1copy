@@ -35,6 +35,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include "cg.h"
+#include "cgdefs.h"
+#include "cgswitch.h"
+#include "cgprotos.h"
 #ifdef __WATCOMC__
 #if ! defined( __UNIX__ )
     #include <direct.h>
@@ -60,7 +64,7 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     0x0197
+#define PCH_VERSION     0x0198
 #if defined(__I86__)
 #define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
 #elif defined(__386__)
@@ -1499,6 +1503,9 @@ void FixupFNames( void ){
         lnk  = &flist->next;
     }
     *lnk = FNameList;
+    for( flist = FNameList; flist != NULL; flist = flist->next ) {
+        flist->index = DBSrcFile( FNameFullPath( flist ) );
+    }
 }
 
 int ValidHeader( struct pheader *pch )

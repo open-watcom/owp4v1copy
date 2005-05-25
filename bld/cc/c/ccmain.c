@@ -908,40 +908,44 @@ FNAMEPTR AddFlist( char const *filename )
 {
     FNAMEPTR    flist;
     FNAMEPTR    *lnk;
-    int         index;
+    char        fullbuff[2*PATH_MAX];
 
-    index = 0;
     lnk = &FNames;
     while( (flist = *lnk) != NULL ) {
-        if( strcmp( filename, flist->name ) == 0 ) break;
+        if( strcmp( filename, flist->name ) == 0 )
+            break;
         lnk = &flist->next;
-        index++;
     }
     if( flist == NULL ) {
-        char const *p;
-        for( p = filename; p[0]; p++ )
-            if( IS_PATH_SEP( p[0] ) )
+        char *p;
+        for( p = (char *)filename; p[0]; p++ ) {
+            if( IS_PATH_SEP( p[0] ) ) {
                 break;
-        if( !p[0] && DependHeaderPath )
-        {
+            }
+        }
+        if( !p[0] && DependHeaderPath ) {
             flist = (FNAMEPTR)CMemAlloc( strlen( DependHeaderPath )
                                        + strlen( filename )
                                        + sizeof( struct fname_list ) );
             sprintf( flist->name, "%s%s", DependHeaderPath, filename );
-        }
-        else
-        {
+        } else {
             flist = (FNAMEPTR)CMemAlloc( strlen( filename )
                                        + sizeof( struct fname_list ) );
             strcpy( flist->name, filename );
         }
+        *lnk = flist;
         flist->next = NULL;
-        flist->index = index;
         flist->rwflag = TRUE;
         flist->once   = FALSE;
-        flist->fullpath = NULL;
-        *lnk = flist;
         flist->mtime = _getFilenameTimeStamp( filename );
+        p = SrcFullPath( fullbuff, flist->name, sizeof( fullbuff ) );
+        if( p != NULL ) {
+            flist->fullpath = CStrSave( p );
+            flist->index = DBSrcFile( p );
+        } else {
+            flist->fullpath = NULL;
+            flist->index = DBSrcFile( flist->name );
+        }
     }
     return( flist );
 }
@@ -1133,23 +1137,6 @@ void SrcFileReadOnlyFile( char const *file )
     if( flist  != NULL ) {
         flist->rwflag = FALSE;
     }
-}
-
-int FListSrcQue( void )
-{
-    FNAMEPTR    flist;
-    char       *fullpath;
-    int         count;
-    int         fno;
-    // this is all very kludged in
-    count = 0;
-    flist = FNames;
-    while( flist != NULL ) {
-        fullpath = FNameFullPath( flist );
-        fno = DBSrcFile( fullpath );
-        flist = flist->next;
-    }
-    return( count );
 }
 
 static int FCB_Alloc( FILE *fp, char *filename )

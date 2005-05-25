@@ -1388,7 +1388,6 @@ void DoCompile()
                 EmitSyms();
                 EmitCS_Strings();
                 SrcLineCount = 0;
-                FListSrcQue();
                 EmitDataQuads();
                 FreeDataQuads();
                 #ifdef __SEH__

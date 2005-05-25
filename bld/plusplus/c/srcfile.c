@@ -1485,7 +1485,7 @@ SRCFILE SrcFileEnclosingPrimary(// FIND ENCLOSING PRIMARY SOURCE FILE
 }
 
 
-void SrcFilePrimary(            // MARK CURRENT SOURCE FILE AS THE PRIMARY FILE
+void SetSrcFilePrimary(         // MARK CURRENT SOURCE FILE AS THE PRIMARY FILE
     void )
 {
     srcFile->primary = TRUE;

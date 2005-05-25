@@ -412,7 +412,7 @@ static boolean openSrc(         // ATTEMPT TO OPEN FILE
     } else {
         SrcFileOpen( fp, name );
         if( typ == FT_SRC ) {
-            SrcFilePrimary();
+            SetSrcFilePrimary();
         }
         might_browse = TRUE;
     }
