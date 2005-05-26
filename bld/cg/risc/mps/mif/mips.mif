@@ -11,6 +11,7 @@ mips_objs = &
         mipsreg.obj   &
         mipsrgtbl.obj &
         mipsrtrtn.obj &
+        mipssetc.obj  &
         mipssplit.obj &
         mipsstub.obj  &
         mipstable.obj &

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stub functions for RISC codegens for functionality that
+*               cannot be or isn't implemented.
 *
 ****************************************************************************/
 
@@ -266,6 +266,10 @@ extern  void    ZeroMoves() {
 
 }
 
+#if !(_TARGET & _TARG_MIPS)
+/* Functions from 386setcc.c; MIPS has its own mipssetc.c, Alpha could
+ * have own version as well. Not sure about PowerPC.
+ */
 extern  bool    SetOnCondition() {
 /********************************/
 
@@ -277,6 +281,7 @@ extern  reg_set_index   SpecialPossible( instruction *ins ) {
     ins = ins;
     return( RL_ );
 }
+#endif
 
 extern  void    BuildIndex() {
 /****************************/

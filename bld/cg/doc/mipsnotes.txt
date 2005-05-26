@@ -206,6 +206,32 @@ queue and call into mipsenc2.c to generate the machine code for calls and
 jumps. The OWL (Object Writer Library) is responsible for emitting the final
 object file and also processes relocations.
 
+
+ Miscellaneous notes
+ -------------------
+
+ - We use code cloned from Intel cg to optimize conditional set instructions.
+  It seems like it might be a lot easier to just have the cg generate OP_SET
+  opcodes directly. While that is true and the cg perhaps ought to do that,
+  there are two reasons why additional logic is desirable: One, MIPS only has
+  'set if less' operation available, so extra code is required anyway to
+  reject or massage conditional sets. Two, the optimization code helps in
+  cases where a conditional set can't be generated directly. If we end up
+  for instance with this code:
+  
+  if( a < b )
+      c = 56;
+  else
+      c = 57;
+      
+  it will be generated as
+  
+  slt   c,b,a
+  addiu c,c,56
+  
+  See mipssetc.c, reference 386setcc.c.
+ 
+
  Development tips
  ----------------
  When working on the codegen, here are a few tips to make your life easier:
