@@ -86,14 +86,18 @@ extern  block           *HeadBlock;
 extern  type_length     MaxStack;
 
 
-static  void CalcUsedRegs( void )
-/*******************************/
+static  void calcUsedRegs( void )
+/********************************
+* Figure out which registers a function uses. Note that this is called
+* after the function code was fully generated.
+*/
 {
     block       *blk;
     instruction *ins;
     name        *result;
     hw_reg_set  used;
 
+    CurrProc->targ.leaf = TRUE;
     HW_CAsgn( used, HW_EMPTY );
     blk = HeadBlock;
     while( blk != NULL ) {
@@ -109,6 +113,10 @@ static  void CalcUsedRegs( void )
             /* place holder for big label doesn't really zap anything*/
             if( ins->head.opcode != OP_NOP ) {
                 HW_TurnOn( used, ins->zap->reg );
+            }
+            if( ins->head.opcode == OP_CALL ||
+                ins->head.opcode == OP_CALL_INDIRECT ) {
+                CurrProc->targ.leaf = FALSE;
             }
             ins = ins->head.next;
         }
@@ -133,13 +141,17 @@ static  void initParmCache( stack_record *pc, type_length *offset )
 {
     pc->start = *offset;
     pc->size = MaxStack;
-//    if( MaxStack > 0 ) {
-        /* Stack space must always be allocated even for parameters
-         * passed in registers!
-         */
+    /* If we're calling any functions, we must allocate stack even for
+     * arguments passed in registers (so that callee has space for their home
+     * locations if needed). For leaf functions, this is not needed; leaf
+     * functions are the only ones allowed not to have a stack frame anyway.
+     */
+    if( !CurrProc->targ.leaf ) {
         pc->size += 4 * REG_SIZE;
+    }
+    if( pc->size > 0 ) {
         *offset += pc->size;
-//    }
+    }
 }
 
 
@@ -226,7 +238,6 @@ static  void initSavedRegs( stack_record *saved_regs, type_length *offset )
     unsigned            num_regs;
     hw_reg_set          saved;
 
-    CalcUsedRegs();
     saved = SaveRegs();
     if( FEAttr( AskForLblSym( CurrProc->label ) ) & FE_VARARGS ) {
         HW_TurnOn( saved, VarargsHomePtr() );
@@ -640,6 +651,7 @@ extern  void GenProlog( void )
     CurrProc->locals.size = _RoundUp( CurrProc->locals.size, REG_SIZE );
     CurrProc->parms.base = 0;
     CurrProc->parms.size = CurrProc->state.parm.offset;
+    calcUsedRegs();
     initStackLayout( &CurrProc->targ.stack_map );
     emitProlog( &CurrProc->targ.stack_map );
     EmitProEnd();

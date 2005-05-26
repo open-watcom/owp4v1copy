@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Structures and constant for MIPS linkage conventions.
 *
 ****************************************************************************/
 
@@ -73,4 +72,5 @@ typedef struct target_proc_def {
         uint_32                 pro_size;
         type_length             frame_size;
         bool                    base_is_fp;
+        bool                    leaf;
 } target_proc_def;
