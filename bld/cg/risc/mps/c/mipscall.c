@@ -141,7 +141,9 @@ extern void BGProcDecl( sym_handle sym, type_def *tipe )
         if( class == XX ) {
             // Handle structure returns - we need to "eat up" the first
             // register used for argument passing here, so that it isn't
-            // used for passing actual arguments.
+            // used for passing actual arguments. NB: Must also bump
+            // parm.offset here so that arguments end up in the right
+            // locations.
             reg = HW_D4;
             temp = AllocTemp( WD );
             temp->v.usage |= USE_IN_ANOTHER_BLOCK;
@@ -150,6 +152,7 @@ extern void BGProcDecl( sym_handle sym, type_def *tipe )
 // TODO: need to do anything here?
 //            HW_CTurnOn( CurrProc->state.parm.used, HW_F16 );
             CurrProc->targ.return_points = temp;
+            CurrProc->state.parm.offset += REG_SIZE;
         }
     }
 }
