@@ -397,7 +397,8 @@ FESegID when it is passed the routine symbol handle.
 :DT.Returns
 :DD.The previous current segment.
 :eDL.
-:NOTE.When emitting data into an EXEC or BACK segment, be aware that
+:NOTE.
+When emitting data into an EXEC or BACK segment, be aware that
 the code generator is at liberty to emit code and/or back end data into
 that segment anytime you make a call to a code generation routine
 (CG*).
@@ -2551,8 +2552,8 @@ The structure contains the array low bound (type
 :I1.DBDereference
 :P.declare a type to need an implicit de-reference to retrieve the
 value (for FORTRAN parameters)
-:NOTE.This routine has been superceded by the use of location
-expressions.
+:NOTE.
+This routine has been superceded by the use of location expressions.
 .section extern dbg_loc DBLocInit( void )
 :I1.DBLocInit
 create an initial empty location expression
@@ -2600,6 +2601,16 @@ value of an address.
 .section extern void DBLocFini( dbg_loc loc )
 :I1.DBLocFini
 the given location expression will not be used anymore.
+.section extern unsigned DBSrcFile( char *fname )
+:I1.DBSrcFile
+add the file name into the list of source files for positon info,
+return handle to this name
+:NOTE.
+Handle 0 is reserved for base source file name and is added by BE
+automaticaly during initialization.
+.section extern void DBSrcCue( unsigned fno, unsigned line, unsigned col )
+:I1.DBSrcCue
+add source position info for the appropriate source file
 .chap Registers
 :I1.registers
 :P.The hw_reg_set type is an abstract data type capable of representing
