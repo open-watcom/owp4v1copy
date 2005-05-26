@@ -282,7 +282,7 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::RedBlackTree(
         mFirst = 0;
         mLast = 0;
         mRoot = 0;
-        cout<<"no root\n";
+        //cout<<"no root\n";
         return;
     }
     mRoot = mem.allocate( 1 );
