@@ -35,10 +35,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "cg.h"
-#include "cgdefs.h"
-#include "cgswitch.h"
-#include "cgprotos.h"
 #ifdef __WATCOMC__
 #if ! defined( __UNIX__ )
     #include <direct.h>
@@ -1494,14 +1490,19 @@ static char *FixupPragmaInfo( char *p, unsigned pragma_count )
 void FixupFNames( void ){
     FNAMEPTR    *lnk;
     FNAMEPTR    flist;
+    unsigned    index;
 
+    index = 0;
     lnk = &FNames;
     while( (flist = *lnk) != NULL ){
+        index = flist->index;
         lnk  = &flist->next;
     }
     *lnk = FNameList;
     for( flist = FNameList; flist != NULL; flist = flist->next ) {
-        flist->index = DBSrcFile( FNameFullPath( flist ) );
+        ++index;
+        flist->index = index;
+        flist->index_db = -1;
     }
 }
 

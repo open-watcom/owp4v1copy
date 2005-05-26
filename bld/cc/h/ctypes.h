@@ -293,6 +293,7 @@ typedef struct fname_list {
     };
     time_t   mtime;                 /* from stat.st_mtime */
     unsigned index;
+    unsigned index_db;
     bool     rwflag;
     bool     once;
     char    *fullpath;

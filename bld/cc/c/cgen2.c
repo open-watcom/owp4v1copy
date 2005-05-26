@@ -1221,7 +1221,16 @@ local TREEPTR GenOptimizedCode( TREEPTR tree )
         SrcLineNum = tree->srclinenum;
         if( SrcLineNum != SrcLineCount ) {
             if( Saved_CurFunc == 0 ) {      /* 24-nov-91 */
-                DBSrcCue( SrcFno, SrcLineNum, 1 );
+                FNAMEPTR    flist;
+
+                flist = FileIndexToFName( SrcFno );
+                if( flist->index_db == -1 ) {
+                    char *fullpath;
+
+                    fullpath = FNameFullPath( flist );
+                    flist->index_db = DBSrcFile( fullpath );
+                }
+                DBSrcCue( flist->index_db, SrcLineNum, 1 );
             }
         }
         SrcLineCount = SrcLineNum;      /* for error msgs 14-jul-89 */

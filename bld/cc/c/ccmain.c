@@ -908,17 +908,19 @@ FNAMEPTR AddFlist( char const *filename )
 {
     FNAMEPTR    flist;
     FNAMEPTR    *lnk;
-    char        fullbuff[2*PATH_MAX];
+    unsigned    index;
 
+    index = 0;
     lnk = &FNames;
     while( (flist = *lnk) != NULL ) {
         if( strcmp( filename, flist->name ) == 0 )
             break;
         lnk = &flist->next;
+        index++;
     }
     if( flist == NULL ) {
-        char *p;
-        for( p = (char *)filename; p[0]; p++ ) {
+        char const *p;
+        for( p = filename; p[0]; p++ ) {
             if( IS_PATH_SEP( p[0] ) ) {
                 break;
             }
@@ -935,17 +937,12 @@ FNAMEPTR AddFlist( char const *filename )
         }
         *lnk = flist;
         flist->next = NULL;
+        flist->index = index;
+        flist->index_db = -1;
         flist->rwflag = TRUE;
         flist->once   = FALSE;
+        flist->fullpath = NULL;
         flist->mtime = _getFilenameTimeStamp( filename );
-        p = SrcFullPath( fullbuff, flist->name, sizeof( fullbuff ) );
-        if( p != NULL ) {
-            flist->fullpath = CStrSave( p );
-            flist->index = DBSrcFile( p );
-        } else {
-            flist->fullpath = NULL;
-            flist->index = DBSrcFile( flist->name );
-        }
     }
     return( flist );
 }
@@ -963,8 +960,7 @@ FNAMEPTR FileIndexToFName( unsigned file_index )
 char *FNameFullPath( FNAMEPTR flist )
 {
     char   fullbuff[2*PATH_MAX];
-    char *fullpath;
-
+    char   *fullpath;
 
     if( flist->fullpath == NULL ) {
         fullpath = SrcFullPath( fullbuff, flist->name, sizeof( fullbuff ) );
