@@ -96,8 +96,8 @@ final_exe_qnx   = qnx
 final_exe_linux = elf
 
 # WLINK .DLL options for the various hosts
-wlink_dll_os2           = option manyautodata
-wlink_dll_nt            = option offset=0x69400000
+wlink_dll_os2           = option manyautodata, modname=$(realdllname)
+wlink_dll_nt            = option offset=0x69400000, modname=$(realdllname)
 wlink_opt_os2_386_dll   = sys os2v2 dll
 wlink_opt_nt_386_dll    = sys nt_dll
 wlink_opt_nt_axp_dll    = sys ntaxp_dll
@@ -123,7 +123,13 @@ xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
 dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
 dllexet = wcc$(target_cpu)t
 dllexe = wcc$(target_cpu)e
-# base DLL name needs to be 8 chars or less on OS/2, argh!
+# Base DLL name needs to be 8 chars or less on OS/2, argh! Additionally,
+# internal module name may be required to match file name on some platforms.
+!ifeq target_cpu i86
+realdllname = wccd
+!else
+realdllname = wccd$(target_cpu)
+!endif
 dllname = wccd$(target_cpu)e
 cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
 
