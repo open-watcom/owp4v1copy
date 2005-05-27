@@ -65,7 +65,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
-    <CPCMD> wlib.elf <DEVDIR>/build/binl/bwlib
+    <CPCMD> wlib.exe <DEVDIR>/build/binl/bwlib
     cdsay <PROJDIR>
 
 [ BLOCK . . ]
