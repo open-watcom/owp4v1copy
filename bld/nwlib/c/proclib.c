@@ -36,7 +36,7 @@ extern void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, 
 extern void OMFSkipThisObject(arch_header *, libfile);
 
 static void ExtractObj(libfile io, char *name, file_offset size,
-                       arch_header *arch)
+                       arch_header *arch, char *newname )
 {
     file_offset  pos;
     libfile      out;
@@ -52,7 +52,7 @@ static void ExtractObj(libfile io, char *name, file_offset size,
         LibSeek(io, pos, SEEK_SET);
     }
 
-    obj_name = MakeObjOutputName( name );
+    obj_name = MakeObjOutputName( name, newname );
     unlink(obj_name);
     out = LibOpen( obj_name, LIBOPEN_BINARY_WRITE );
     pos = LibTell( io );
@@ -70,7 +70,7 @@ static void ProcessOneObject( arch_header *arch, libfile io )
     bool      deleted;
 
     if( Options.explode ) {
-        ExtractObj(io, arch->name, arch->size, arch);
+        ExtractObj( io, arch->name, arch->size, arch, Options.explode_ext );
     }
     deleted = FALSE;
     for (cmd = CmdList; cmd != NULL; cmd = cmd->next)
@@ -83,9 +83,9 @@ static void ProcessOneObject( arch_header *arch, libfile io )
                 if ((cmd->ops & OP_EXTRACT) && !(cmd->ops & OP_EXTRACTED))
                 {
                     if( cmd->fname != NULL )
-                        ExtractObj(io, cmd->fname, arch->size, arch);
+                        ExtractObj( io, cmd->name, arch->size, arch, cmd->fname );
                     else
-                        ExtractObj(io, cmd->name, arch->size, arch);
+                        ExtractObj( io, cmd->name, arch->size, arch, EXT_OBJ );
                     cmd->ops |= OP_EXTRACTED;
                 }
             }

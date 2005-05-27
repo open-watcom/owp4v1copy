@@ -92,6 +92,7 @@ char *GetEqual( char **pc, char *buff, char *ext )
     *pc = c;
     return( ret );
 }
+
 static void SetPageSize(unsigned short new_size)
 {
     unsigned int i;
@@ -239,6 +240,9 @@ static bool ParseOption( char **pc, char *buff )
             break;
         case 'x': //                       (explode all objects in library)
             Options.explode = 1;
+            Options.explode_ext = GetEqual( &c, buff, NULL );
+            if( Options.explode_ext == NULL )
+                Options.explode_ext = EXT_OBJ;
             break;
         case 'z':
             if( (*c == 'l') && (*(c + 1) == 'd') ) {

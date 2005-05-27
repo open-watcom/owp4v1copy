@@ -42,7 +42,7 @@ void WriteNew( void *buff, file_offset len )
 
 extern char *MakeTmpName(char *);
 
-void WriteNewLib()
+void WriteNewLib( void )
 {
     char tmp[_MAX_PATH+1];
     char *bak,*lib,*out;
@@ -73,7 +73,7 @@ void WriteNewLib()
     }
     ResetInputLibs();//closes all input libs
     if( out == tmp ) {
-        bak = MakeBakName( lib );
+        bak = MakeBakName();
         if( access( bak, F_OK ) == 0 && remove( bak ) != 0 ) {
             FatalError( ERR_CANT_REMOVE, bak );
         }

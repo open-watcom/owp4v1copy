@@ -139,21 +139,28 @@ void DefaultExtension( char *name, char *def_ext )
     }
 }
 
-char *MakeObjOutputName( char *src )
+char *MakeObjOutputName( char *src, char *new )
 {
-    _splitpath( src, NULL, NULL, fname, fext );
-    _makepath( path, NULL, Options.output_directory, fname, EXT_OBJ );
+    if( new != NULL ) {
+        _splitpath( new, NULL, NULL, fname, fext );
+        if( *fname == 0 )
+            _splitpath( src, NULL, NULL, fname, NULL );
+        _makepath( path, NULL, Options.output_directory, fname, fext );
+    } else {
+        _splitpath( src, NULL, NULL, fname, fext );
+        _makepath( path, NULL, Options.output_directory, fname, EXT_OBJ );
+    }
     return( path );
 }
 
-char *MakeListName()
+char *MakeListName( void )
 {
     _splitpath( Options.input_name, NULL, NULL, fname, fext );
     _makepath( path, NULL, NULL, fname, EXT_LST );
     return( path );
 }
 
-char *MakeBakName()
+char *MakeBakName( void )
 {
     _splitpath( Options.input_name, drive, dir, fname, fext );
     _makepath( path, drive, dir, fname, EXT_BAK );

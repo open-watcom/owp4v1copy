@@ -37,6 +37,7 @@ typedef struct {
         char    *list_file;
         char    *output_name;
         char    *export_list_file;
+        char    *explode_ext;
         unsigned short page_size;
         unsigned no_backup : 1;
         unsigned respect_case : 1;
