@@ -29,22 +29,23 @@
 ;*
 ;*****************************************************************************
 
-    .set noat
-    .text
 
-    .globl      _OtsRemainder32Unsigned
-    .globl      _OtsDivide32Unsigned
-    .globl      _OtsModulus32
-    .globl      _OtsRemainder32
-    .globl      _OtsDivide32Overflow
-    .globl      _OtsDivide32
-    .globl      _OtsDivide64Overflow
-    .globl      _OtsDivide64
-    .globl      _OtsRemainder64
-    .globl      _OtsModulus64
-    .globl      _OtsDivide64Unsigned
-    .globl      _OtsRemainder64Unsigned
-    .extern     _OtsDivData
+.set noat
+.text
+
+.globl      _OtsRemainder32Unsigned
+.globl      _OtsDivide32Unsigned
+.globl      _OtsModulus32
+.globl      _OtsRemainder32
+.globl      _OtsDivide32Overflow
+.globl      _OtsDivide32
+.globl      _OtsDivide64Overflow
+.globl      _OtsDivide64
+.globl      _OtsRemainder64
+.globl      _OtsModulus64
+.globl      _OtsDivide64Unsigned
+.globl      _OtsRemainder64Unsigned
+.extern     _OtsDivData
 
 _OtsRemainder32Unsigned:
     ldah          $t12,h^_OtsDivData($zero)
@@ -66,7 +67,7 @@ _OtsRemainder32Unsigned:
     subl          $a0,$v0,$v0
     ret           $zero,($ra),0x00000001
 X$1:
-    beq           $a1,X$46
+    beq           $a1,divzer
     and           $a0,$t0,$v0
     ret           $zero,($ra),0x00000001
 X$2:
@@ -74,7 +75,7 @@ X$2:
     ret           $zero,($ra),0x00000001
 X$3:
     zap           $a0,0x000000f0,$a0
-    bsr           $at,.text
+    bsr           $at,div32
     addl          $t0,0x00000000,$v0
     ret           $zero,($ra),0x00000001
 X$4:
@@ -90,7 +91,7 @@ _OtsDivide32Unsigned:
     blt           $a1,X$8
     addq          $a1,$a1,$a2
     cmpule        $a1,$a0,$v0
-    beq           $a1,X$46
+    beq           $a1,divzer
     s8addq        $a2,$t12,$t12
     beq           $v0,X$5
     bgt           $at,X$7
@@ -107,7 +108,7 @@ X$6:
     ret           $zero,($ra),0x00000001
 X$7:
     zap           $a0,0x000000f0,$a0
-    bsr           $at,.text
+    bsr           $at,div32
     addl          $v0,0x00000000,$v0
     ret           $zero,($ra),0x00000001
 X$8:
@@ -118,7 +119,7 @@ _OtsModulus32:
     subq          $zero,$a1,$a2
     cmovge        $a1,$a1,$a2
     subq          $a2,0x00000001,$t0
-    beq           $a1,X$46
+    beq           $a1,divzer
     and           $a2,$t0,$v0
     beq           $v0,X$9
     xor           $a0,$a1,$at
@@ -131,7 +132,7 @@ _OtsModulus32:
     cmplt         $t12,$zero,$v0
     sll           $v0,0x0000003f,$v0
     bis           $v0,$a3,$a3
-    bsr           $at,.text
+    bsr           $at,div32
     cmoveq        $t0,$zero,$a3
     addq          $a3,$a3,$a2
     subq          $a3,0x00000001,$at
@@ -171,13 +172,13 @@ _OtsRemainder32:
     ret           $zero,($ra),0x00000001
 X$10:
     and           $a0,$t0,$v0
-    beq           $a1,X$46
+    beq           $a1,divzer
     xor           $v0,$a3,$v0
     subl          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
     nop
 X$11:
-    bsr           $at,.text
+    bsr           $at,div32
     xor           $t0,$a3,$v0
     subl          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
@@ -220,7 +221,7 @@ X$15:
     subl          $a2,$a0,$v0
     ret           $zero,($ra),0x00000001
 X$16:
-    beq           $a1,X$46
+    beq           $a1,divzer
     negl          $a1,$a1
     subq          $zero,$a0,$a0
     bgt           $a1,X$12
@@ -231,10 +232,11 @@ X$16:
 X$17:
     sra           $a0,0x0000003f,$a3
     cmovlt        $a0,$a2,$a0
-    bsr           $at,.text
+    bsr           $at,div32
     xor           $v0,$a3,$v0
     subl          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
+div32:
     cmpule        $a1,$a0,$v0
     sll           $a1,0x00000020,$a2
     sll           $a1,0x00000008,$t0
@@ -310,7 +312,7 @@ X$21:
     blt           $t0,X$22
     umulh         $t0,$a2,$t0
     ldq           $t12,0x8($t12)
-    br            .text
+    br            div32
 X$22:
     umulh         $t0,$a2,$t0
     ldq           $t12,0x8($t12)
@@ -423,7 +425,7 @@ X$29:
 X$30:
     ret           $zero,($ra),0x00000001
 X$31:
-    beq           $a1,X$46
+    beq           $a1,divzer
     subq          $zero,$a1,$a1
     subq          $zero,$a0,$a0
     bgt           $a1,X$27
@@ -432,7 +434,7 @@ X$31:
 X$32:
     sra           $a3,0x0000003f,$a3
     cmovlt        $a0,$a2,$a0
-    bsr           $at,.text
+    bsr           $at,div32
     xor           $v0,$a3,$v0
     subq          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
@@ -466,12 +468,12 @@ X$33:
     subq          $zero,$a0,$a2
     cmovlt        $a0,$a2,$a0
     and           $a0,$t0,$v0
-    beq           $a1,X$46
+    beq           $a1,divzer
     xor           $v0,$a3,$v0
     subq          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
 X$34:
-    bsr           $at,.text
+    bsr           $at,div32
     xor           $t0,$a3,$v0
     subq          $v0,$a3,$v0
     ret           $zero,($ra),0x00000001
@@ -482,7 +484,7 @@ _OtsModulus64:
     subq          $zero,$a1,$a2
     cmovge        $a1,$a1,$a2
     subq          $a2,0x00000001,$t0
-    beq           $a1,X$46
+    beq           $a1,divzer
     and           $a2,$t0,$v0
     beq           $v0,X$35
     xor           $a0,$a1,$at
@@ -495,7 +497,7 @@ _OtsModulus64:
     cmplt         $at,$zero,$v0
     sll           $v0,0x0000003f,$v0
     bis           $v0,$a3,$a3
-    bsr           $at,.text
+    bsr           $at,div32
     cmoveq        $t0,$zero,$a3
     addq          $a3,$a3,$a2
     subq          $a3,0x00000001,$at
@@ -519,7 +521,7 @@ _OtsDivide64Unsigned:
     blt           $a1,X$40
     addq          $a1,$a1,$a2
     srl           $a0,0x00000021,$a3
-    beq           $a1,X$46
+    beq           $a1,divzer
     s8addq        $a2,$t12,$a2
     bgt           $at,X$39
     cmpule        $a1,$a0,$v0
@@ -548,7 +550,7 @@ X$37:
 X$38:
     ret           $zero,($ra),0x00000001
 X$39:
-    bsr           $at,.text
+    bsr           $at,div32
     ret           $zero,($ra),0x00000001
 X$40:
     cmpule        $a1,$a0,$v0
@@ -587,7 +589,7 @@ X$41:
     subq          $a0,$v0,$v0
     ret           $zero,($ra),0x00000001
 X$42:
-    beq           $a1,X$46
+    beq           $a1,divzer
     and           $a0,$t0,$v0
     ret           $zero,($ra),0x00000001
 X$43:
@@ -600,10 +602,10 @@ X$44:
     ret           $zero,($ra),0x00000001
     nop
 X$45:
-    bsr           $at,.text
+    bsr           $at,div32
     mov           $t0,$v0
     ret           $zero,($ra),0x00000001
-X$46:
+divzer:
     mov           0xfffffffe,$a0
     clr           $v0
     clr           $t0
