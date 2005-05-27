@@ -537,11 +537,15 @@ static  void SetupVarargsReg( stack_map *map )
     if( map->varargs.size != 0 ) {
         type_length     offset;
 
-        offset = map->varargs.start /* + 6 * REG_SIZE*/;
+        offset = map->varargs.start;
+        // Skip hidden parameter in first register
+        if( CurrProc->targ.return_points != NULL ) {
+            offset += REG_SIZE;
+        }
         if( offset > MIPS_MAX_OFFSET ) {
             GenLOADS32( offset, VARARGS_PTR );
-            // TODO
-            GenRType( 0x10, 0x00, MIPS_STACK_REG, VARARGS_PTR, VARARGS_PTR );
+            // 'add va_home,va_home,sp'
+            GenRType( 0x00, 0x21, MIPS_STACK_REG, VARARGS_PTR, VARARGS_PTR );
         } else {
             genLoadImm( MIPS_STACK_REG, offset, VARARGS_PTR );
         }
