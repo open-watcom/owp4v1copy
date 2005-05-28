@@ -67,5 +67,9 @@ set CPCMD=acopy
     # with 'cprel2', we want to force the copy to occur
     set CPCMD=copy
 
+[ BLOCK <1> boot ]
+#==================
+    set LOGFNAME=boot
+
 [ BLOCK . . ]
     cdsay <PROJDIR>
