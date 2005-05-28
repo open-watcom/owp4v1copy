@@ -24,4 +24,4 @@ $(xname) : ytab.h ytab.c $(objs) $(__MAKEFILES__)
 .c: ..
 
 ytab.c ytab.h: ../yydriver.c ../defgen.y
-        $(yacc) -d $]@ $[@
+        $(byacc) -d $]@ $[@

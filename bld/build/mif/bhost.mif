@@ -108,3 +108,12 @@ blib            = *$(bld_bin)/bwlib
 !else
 blib            = *$(bld_bin)\bwlib
 !endif
+
+!ifdef __UNIX__
+byacc            = *$(bld_bin)/wyacc
+bre2c            = *$(bld_bin)/re2c
+!else
+byacc            = *$(bld_bin)\yacc
+bre2c            = *$(bld_bin)\re2c
+!endif
+

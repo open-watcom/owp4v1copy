@@ -54,7 +54,7 @@ dlgprs.exe : prsdlg.gh prsbnd.gh $(c_objs) $(browse_objs)
     $(linker) $(lflags) name $^@ file {$(c_objs)}
 
 prsdlg.gh prsdlg_c.gh : ../y/prsdlg.y ../cpp/yydriver.cpp
-    $(yacc) -b $[@ $]@ >$(nulldevice)
+    $(byacc) -b $[@ $]@ >$(nulldevice)
     @rm -f prsdlg.gh
     @cp ytab.h prsdlg.gh >$(nulldevice)
     @rm -f ytab.h
@@ -63,7 +63,7 @@ prsdlg.gh prsdlg_c.gh : ../y/prsdlg.y ../cpp/yydriver.cpp
     @rm -f ytab.c
 
 prsbnd.gh prsbnd_c.gh : ../y/prsbnd.y ../cpp/yydriver.cpp
-    $(yacc) -b $[@ $]@ >$(nulldevice)
+    $(byacc) -b $[@ $]@ >$(nulldevice)
     @rm -f prsbnd.gh
     @cp ytab.h prsbnd.gh >$(nulldevice)
     @rm -f ytab.h

@@ -65,7 +65,7 @@ $(xname) : sruparse.gh ytab.gh $(objs) $(__MAKEFILES__)
 sruparse.gh ytab.gh: sruparse.y ../c/yydriver.c
         @wtouch $^@
         @rm $^@
-        $(yacc) $[@ ../c/yydriver.c > $(nulldevice)
+        $(byacc) $[@ ../c/yydriver.c > $(nulldevice)
         @cp ytab.c $^@
         @cp ytab.h ytab.gh
         @rm ytab.c ytab.h

@@ -7,14 +7,17 @@ set PROJDIR=<CWD>
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+set ODIR=<PREOBJDIR>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
 set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+set ODIR=<OBJDIR>
 
 [ BLOCK <1> clean ]
 #==================
-    rm -f -r <PROJDIR>/<PREOBJDIR>
+    echo rm -f -r <PROJDIR>/<ODIR>
+    rm -f -r <PROJDIR>/<ODIR>
     wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=wyacc
     wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=yacc
     set BUILD_PLATFORM=
@@ -25,7 +28,6 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
     <CPCMD> yacc.exe <OWROOT>\bld\build\bin\yacc.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
@@ -33,7 +35,6 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
     <CPCMD> yacc.exe <OWROOT>\bld\build\binp\yacc.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
@@ -41,7 +42,6 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> yacc.exe <OWROOT>\bld\build\binnt\yacc.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
@@ -49,14 +49,12 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../ntaxp/makefile prebuild=1
     <CPCMD> yacc.exe <OWROOT>\bld\build\axpnt\yacc.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     cdsay <PROJDIR>
     <MAKE> -f gnumake
     <CPCMD> <OBJDIR>/yacc <OWROOT>/bld/build/binl/wyacc
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
@@ -64,9 +62,10 @@ set BUILD_PLATFORM=<BUILD_PLATFORM>boot
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> yacc.exe <OWROOT>/bld/build/binl/wyacc
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

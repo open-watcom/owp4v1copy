@@ -119,7 +119,7 @@ bindit : .PROCEDURE
 !endif
 
 ytab.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
-        $(yacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
+        $(byacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
         @cp ytab.h ytab.gh
         @rm -f ytab.h
 

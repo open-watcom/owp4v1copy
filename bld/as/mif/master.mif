@@ -207,14 +207,14 @@ $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
         wsplice $(splice_opts) $[@ $^@
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
-        $(yacc) $(yacc_flags) $[@ $(as_dir)/y/yydriver.c > $(nulldevice)
+        $(byacc) $(yacc_flags) $[@ $(as_dir)/y/yydriver.c > $(nulldevice)
         $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
         $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
-        # $(yacc) $(yacc_flags) $[@
+        # $(byacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)
         wsplice $(splice_opts) $[@ $^.
 
 .ERASE
 $(lex_out_c).c $(lex_out_h) : $(lex_in)
-        $(re2c) $(lex_flags) $[@ > $^.
+        $(bre2c) $(lex_flags) $[@ > $^.
