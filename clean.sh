@@ -10,5 +10,5 @@ fi
 cd bld
 export BUILDMODE=bootstrap
 builder clean
-unset BUILMODE
+unset BUILDMODE
 
