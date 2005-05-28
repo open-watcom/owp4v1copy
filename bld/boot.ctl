@@ -15,12 +15,13 @@
 set PROJDIR=<CWD>
 
 [ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <DEVDIR>/<LOGFNAME>.<LOGEXT> ]
 
 set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/clib/boot.ctl ]
 [ INCLUDE <DEVDIR>/builder/boot.ctl ]
-[ INCLUDE <DEVDIR>/pmake/lang.ctl ]
+[ INCLUDE <DEVDIR>/pmake/boot.ctl ]
 [ INCLUDE <DEVDIR>/yacc/boot.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/boot.ctl ]
 [ INCLUDE <DEVDIR>/orl/boot.ctl ]
