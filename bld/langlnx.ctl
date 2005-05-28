@@ -10,7 +10,7 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/clib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
 [ INCLUDE <DEVDIR>/pmake/lang.ctl ]
-[ INCLUDE <DEVDIR>/yacc/lang.ctl ]
+[ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
