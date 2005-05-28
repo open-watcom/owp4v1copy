@@ -48,6 +48,8 @@
 #define DEF_BACKUP      1
 #define MAX_BACKUP      9
 
+#define DOS_EOF_CHAR    0x1a
+
 ctl_file        *CtlList;
 include         *IncludeStk;
 FILE            *LogFile;
@@ -341,6 +343,7 @@ static void SubstLine( const char *in, char *out )
             case '\n':
             case '\0':
             case '\r':                  // Allow DOS line in UNIX port
+            case DOS_EOF_CHAR:          // Allow DOS EOF in UNIX port
                 break;
             default:
                 *out++ = *in++;
@@ -363,6 +366,7 @@ static void SubstLine( const char *in, char *out )
         case '\n':
         case '\0':
         case '\r':                      // Allow DOS line in UNIX port
+        case DOS_EOF_CHAR:              // Allow DOS EOF in UNIX port
             *out = '\0';
             return;
         default:
