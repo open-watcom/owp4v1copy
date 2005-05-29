@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic utility functions for cg.
 *
 ****************************************************************************/
 
@@ -97,26 +96,16 @@ extern  uint    Length( char *string ) {
 
 #endif
 
-extern  uint_32 CountBits( uint_32 value ) {
-/******************************************/
+extern  uint_32 CountBits( uint_32 value )
+/****************************************/
+{
+    uint_32     temp;
 
-    uint_32             r, l;
-
-    r = ( value      ) & 0x55555555;
-    l = ( value >> 1 ) & 0x55555555;
-    value = r + l;
-    r = ( value      ) & 0x33333333;
-    l = ( value >> 2 ) & 0x33333333;
-    value = r + l;
-    r = ( value      ) & 0x0f0f0f0f;
-    l = ( value >> 4 ) & 0x0f0f0f0f;
-    value = r + l;
-    r = ( value      ) & 0x00ff00ff;
-    l = ( value >> 8 ) & 0x00ff00ff;
-    value = r + l;
-    r = ( value       ) & 0x0000ffff;
-    l = ( value >> 16 ) & 0x0000ffff;
-    value = r + l;
-    return( value );
+    value = value - ((value >> 1) & 0x55555555);
+    temp  = ((value >> 2) & 0x33333333);
+    value = (value & 0x33333333) + temp;
+    value = (value + (value >> 4)) & 0x0F0F0F0F;
+    value = value + (value << 8);
+    value = value + (value << 16);
+    return( value >> 24 );
 }
-
