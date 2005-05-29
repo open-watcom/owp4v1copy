@@ -4,6 +4,12 @@
 lang_root       = $(lang_root_$(host_cpu))
 !endif
 
+!ifeq %BUILDMODE bootstrap
+bootstrapmode = 1
+!else ifdef %OWLINUXBUILD
+bootstrapmode = 1
+!endif
+
 cc_386          = *wcc386
 cc_i86          = *wcc
 cc_axp          = *wccaxp
@@ -232,7 +238,7 @@ clflags_osi_386    = -l=osi
 clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_nov_386    = -l=netware
-!ifdef __LINUX__
+!ifdef bootstrapmode
 clflags_linux_386  = -l=bld_linux
 clflags_linux_ppc  = -l=bld_linuxppc
 clflags_linux_mps  = -l=bld_linuxmips
@@ -288,7 +294,7 @@ lflags_win_386   = sys win386
 lflags_win_i86   = sys windows
 lflags_nov_386   = sys novell
 lflags_osi_386   = sys osi
-!ifdef __LINUX__
+!ifdef bootstrapmode
 lflags_linux_386 = sys bld_linux
 lflags_linux_ppc = sys bld_linuxppc
 lflags_linux_mps = sys bld_linuxmips
@@ -326,7 +332,9 @@ rc_flags_axp    = -D__AXP__
 
 rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
-!ifdef __LINUX__
+!ifdef __UNIX__
+
+!ifdef bootstrapmode
 
 inc_dirs_sys_os2_386 = -I$(dev_dir)/os2api/incl32
 inc_dirs_sys_os2_i86 = -I$(dev_dir)/os2api/incl16
@@ -349,11 +357,32 @@ inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 inc_dirs_lang   = -I$(hdr_dir)/dos
 !endif
 
+!else
+
+inc_dirs_sys_os2_386 = -I$(lang_root)/h/os2
+inc_dirs_sys_os2_i86 = -I$(lang_root)/h/os21x
+inc_dirs_sys_nt    = -I$(lang_root)/h/nt
+inc_dirs_sys_win   = -I$(lang_root)/h/win
+inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
+inc_dirs_sys_dos   =
+inc_dirs_sys_nov   =
+inc_dirs_sys_qnx   =
+inc_dirs_sys_linux =
+
+inc_dirs_lang_qnx     = -I$(lang_root)/qh
+inc_dirs_lang_linux   = -I$(lang_root)/lh
+inc_dirs_lang_netware = -I$(ow_nwoss_root)/common/h
+
+!ifdef inc_dirs_lang_$(host_os)
+inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
+!else
+inc_dirs_lang   = -I$(lang_root)/h
+!endif
+
+!endif
+
 inc_dirs_sys    = $(inc_dirs_lang) $(inc_dirs_sys_$(host_os))
 inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_dir)/h
-
-yacc            = $(bld_bin)/wyacc
-re2c            = $(bld_bin)/re2c
 
 !else
 
@@ -379,9 +408,6 @@ inc_dirs_lang   = -I$(lang_root)\h
 
 inc_dirs_sys    = $(inc_dirs_lang) $(inc_dirs_sys_$(host_os))
 inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_dir)\h
-
-yacc            = $(bld_bin)\yacc
-re2c            = $(bld_bin)\re2c
 
 !endif
 

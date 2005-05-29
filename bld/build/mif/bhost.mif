@@ -35,7 +35,9 @@ lang_dll        = $(lang_root)\binnt
 nlang_dll       = $(nlang_root)\binnt
 nulldevice      = nul
 !else ifdef __LINUX__
-!ifdef __LINUXPPC__
+!ifndef bootstrapmode
+bld_sys         = linux
+!else ifdef __LINUXPPC__
 bld_sys         = bld_linuxppc
 !else ifdef __LINUXMIPS__
 bld_sys         = bld_linuxmips
