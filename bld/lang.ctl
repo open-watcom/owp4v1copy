@@ -19,7 +19,7 @@ echo Bootstrapping compiler using GNU tools...
 #        First of all build prerequisite utilities used in the build
 #
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
-[ INCLUDE <DEVDIR>/pmake/lang.ctl ]
+[ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/re2c/prereq.ctl ]

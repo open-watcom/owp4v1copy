@@ -9,7 +9,7 @@ set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/clib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
-[ INCLUDE <DEVDIR>/pmake/lang.ctl ]
+[ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
@@ -73,3 +73,11 @@ set OWLINUXBUILD=normal
     rm -rf <DEVDIR>/cc/<OBJDIR>
     rm -rf <DEVDIR>/wasm/<OBJDIR>
     rm -rf <DEVDIR>/wl/<OBJDIR>
+
+    rm -f <DEVDIR>/build/binl/wcl386
+    rm -f <DEVDIR>/build/binl/wcl
+    rm -f <DEVDIR>/build/binl/wcc386
+    rm -f <DEVDIR>/build/binl/wcc
+    rm -f <DEVDIR>/build/binl/wpp386
+    rm -f <DEVDIR>/build/binl/wpp
+    

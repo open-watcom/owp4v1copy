@@ -3,59 +3,68 @@
 
 set PROJDIR=<CWD>
 
+[ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <LOGFNAME>.<LOGEXT> ]
+
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+set ODIR=<PREOBJDIR>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
 set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+set ODIR=<OBJDIR>
 
 [ BLOCK <1> clean ]
 #==================
+    echo rm -f -r <PROJDIR>/<ODIR>
+    rm -f -r <PROJDIR>/<ODIR>
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=pmake
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\dos386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../dos386/makefile prebuild=1
     <CPCMD> pmake.exe <OWROOT>\bld\build\bin\pmake.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\os2386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../os2386/makefile prebuild=1
     <CPCMD> pmake.exe <OWROOT>\bld\build\binp\pmake.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <PROJDIR>\nt386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> pmake.exe <OWROOT>\bld\build\binnt\pmake.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
-    cdsay <PROJDIR>\ntaxp
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../ntaxp/makefile prebuild=1
     <CPCMD> pmake.exe <OWROOT>\bld\build\axpnt\pmake.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #==========================================
     cdsay <PROJDIR>
     <MAKE> -f gnumake
     <CPCMD> <OBJDIR>/pmake <OWROOT>/bld/build/binl/pmake
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #======================================
-    cdsay <PROJDIR>/linux386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> pmake.exe <DEVDIR>/build/binl/pmake
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>
