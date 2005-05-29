@@ -508,7 +508,7 @@ static int do_line( FILE *infile, FILE *miffile, char *outdir )
 /*
  * Program entry point.
  */
-void main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 /*********************************/
 {
     FILE *              infile;
@@ -520,7 +520,7 @@ void main( int argc, char *argv[] )
     /*** Parse the command line ***/
     if( argc != 4 ) {
         printf( "Usage: ALIASGEN <alias_file> <output_dir\\> <objects_mif_file>\n" );
-        exit( EXIT_FAILURE );
+        return( EXIT_FAILURE );
     }
     infile = fopen( argv[1], "rt" );    /* open alias file */
     if( infile == NULL ) {
@@ -552,5 +552,5 @@ void main( int argc, char *argv[] )
     }
     fputc( '\n', stdout );
 
-    exit( EXIT_SUCCESS );
+    return( EXIT_SUCCESS );
 }
