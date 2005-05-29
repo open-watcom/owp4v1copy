@@ -8,7 +8,7 @@
 src = $(lib_misc_dir)/c/aliasgen.c
 
 ./aliasgen.exe : $(src)
-!ifdef __LINUX__
+!ifdef bootstrapmode
     gcc $< -o $@
 !else
     $(bld_cl) $(wcl_util_opts) $<
