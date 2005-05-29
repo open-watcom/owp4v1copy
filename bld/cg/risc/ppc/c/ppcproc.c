@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PowerPC procedure prolog/epilog generation.
 *
 ****************************************************************************/
 
@@ -43,6 +42,7 @@
 #include "ppcparm.h"
 #include "ppcgen.h"
 
+extern  uint_32         CountBits( uint_32 );
 extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskCodeSeg( void );
 extern  unsigned        DepthAlign( unsigned );
@@ -184,29 +184,6 @@ static  uint_32 registerMask( hw_reg_set rs, hw_reg_set *rl ) {
     return( result );
 }
 
-static  uint_32 countBits( uint_32 value ) {
-/******************************************/
-
-    uint_32             r, l;
-
-    r = ( value      ) & 0x55555555;
-    l = ( value >> 1 ) & 0x55555555;
-    value = r + l;
-    r = ( value      ) & 0x33333333;
-    l = ( value >> 2 ) & 0x33333333;
-    value = r + l;
-    r = ( value      ) & 0x0f0f0f0f;
-    l = ( value >> 4 ) & 0x0f0f0f0f;
-    value = r + l;
-    r = ( value      ) & 0x00ff00ff;
-    l = ( value >> 8 ) & 0x00ff00ff;
-    value = r + l;
-    r = ( value       ) & 0x0000ffff;
-    l = ( value >> 16 ) & 0x0000ffff;
-    value = r + l;
-    return( value );
-}
-
 static  void    initSavedRegs( stack_record *saved_regs, type_length *offset ) {
 /******************************************************************************/
 
@@ -226,8 +203,8 @@ static  void    initSavedRegs( stack_record *saved_regs, type_length *offset ) {
 #endif
     CurrProc->targ.gpr_mask = registerMask( saved, GPRegs() );
     CurrProc->targ.fpr_mask = registerMask( saved, FPRegs() );
-    num_regs  = countBits( CurrProc->targ.gpr_mask );
-    num_regs += countBits( CurrProc->targ.fpr_mask );
+    num_regs  = CountBits( CurrProc->targ.gpr_mask );
+    num_regs += CountBits( CurrProc->targ.fpr_mask );
     saved_regs->size = num_regs * REG_SIZE;
     saved_regs->start = *offset;
     *offset += saved_regs->size;
@@ -334,7 +311,7 @@ static  void    emitSavedRegsProlog( stack_record *saved_regs ) {
     if( CurrProc->targ.gpr_mask == 0 ) {
         offset -= regSize( TRUE ) - regSize( FALSE );   // make it sp-8 for first double
     }
-    offset -= countBits( CurrProc->targ.gpr_mask ) * regSize( FALSE );
+    offset -= CountBits( CurrProc->targ.gpr_mask ) * regSize( FALSE );
     saveRegSet( CurrProc->targ.fpr_mask, offset, TRUE );
 }
 
@@ -348,7 +325,7 @@ static  void    emitSavedRegsEpilog( stack_record *saved_regs ) {
     if( CurrProc->targ.fpr_mask == 0 ) {
         offset += regSize( TRUE ) - regSize( FALSE );
     }
-    offset += countBits( CurrProc->targ.fpr_mask ) * regSize( TRUE );
+    offset += CountBits( CurrProc->targ.fpr_mask ) * regSize( TRUE );
     loadRegSet( CurrProc->targ.gpr_mask, offset, FALSE );
 }
 
