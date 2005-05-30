@@ -39,11 +39,12 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref            IF@DATAN2
-        xref            __@DSQRT
         xref            __8087  ; indicate that NDP instructions are present
 
         modstart        asin387
+
+        xref            IF@DATAN2
+        xref            __@DSQRT
 
         xdefp   "C",asin        ; double asin( double x )
 ;
@@ -93,7 +94,7 @@ argx    equ     4
 endif
         prolog
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DASIN        ; calculate asin(x)
+        lcall   IF@DASIN        ; calculate asin(x)
         epilog
 endif
         ret_pop 8               ; return

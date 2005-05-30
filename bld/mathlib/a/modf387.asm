@@ -38,10 +38,11 @@ endif
 include mdef.inc
 include math387.inc
 
-        xref            __CHP
         xref            __8087  ; indicate that NDP instructions are present
 
         modstart        modf387
+
+        xref            __CHP
 
         xdefp   "C",modf        ; double modf( double x, double *iptr )
 

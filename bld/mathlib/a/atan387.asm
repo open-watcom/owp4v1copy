@@ -172,7 +172,7 @@ else
           _endif                ; - endif
         _admit                  ; admit: normal values for X and Y
           fdivp st(1),st        ; - calculate single argument Y/X
-          call  calc_atan       ; - calculate arctan(Y/X)
+          lcall calc_atan       ; - calculate arctan(Y/X)
           ftst                  ; - test result
           fstsw sgnX[_BP]       ; - ...
           mov   AH,sgnY+1[_BP]  ; - get status of Y
@@ -213,7 +213,7 @@ else
         push    BP              ; save BP
         mov     BP,SP           ; get access to parms
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DATAN        ; calculate atan(x)
+        lcall   IF@DATAN        ; calculate atan(x)
         pop     BP              ; restore BP
 endif
         ret_pop 8               ; return
@@ -230,7 +230,7 @@ else
         mov     BP,SP           ; get access to stack
         fld     qword ptr argx+8[BP]; load x
         fld     qword ptr argx[BP]; load y
-        call    IF@DATAN2       ; calculate atan2(y,x)
+        lcall   IF@DATAN2       ; calculate atan2(y,x)
         pop     BP              ; restore BP
 endif
         ret_pop 16              ; return

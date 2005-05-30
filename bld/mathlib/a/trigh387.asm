@@ -40,9 +40,6 @@ include struct.inc
 include math387.inc
 
         extern_chipbug
-        xref            __@DEXP
-        xref            __@DEXP1
-        xref            IF@DEXP
         xref            __8087  ; indicate that NDP instructions are present
 
         modstart        trigh387
@@ -55,6 +52,10 @@ two2neg26 dw    0000h,03280h            ; 2.0**-26
 ifdef __386__
     enddata
 endif
+
+        xref            __@DEXP
+        xref            __@DEXP1
+        xref            IF@DEXP
 
         xdefp   "C",sinh        ; calc sinh(fac1)
         xdefp   "C",cosh        ; calc cosh(fac1)
@@ -209,7 +210,7 @@ else
         push    BP              ; save BP
         mov     BP,SP           ; get access to parms
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DCOSH        ; calculate cosh(x)
+        lcall   IF@DCOSH        ; calculate cosh(x)
         pop     BP              ; restore BP
 endif
         ret_pop 8               ; return
@@ -225,7 +226,7 @@ else
         push    BP              ; save BP
         mov     BP,SP           ; get access to parms
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DSINH        ; calculate sinh(x)
+        lcall   IF@DSINH        ; calculate sinh(x)
         pop     BP              ; restore BP
 endif
         ret_pop 8               ; return
@@ -241,7 +242,7 @@ else
         push    BP              ; save BP
         mov     BP,SP           ; get access to parms
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DTANH        ; calculate tanh(x)
+        lcall   IF@DTANH        ; calculate tanh(x)
         pop     BP              ; restore BP
 endif
         ret_pop 8               ; return

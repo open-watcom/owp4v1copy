@@ -39,10 +39,11 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref    "C",__log87_err
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    acosh387
+
+        xref    "C",__log87_err
 
         xdefp   "C",acosh       ; double acosh( double x )
 ;
@@ -109,7 +110,7 @@ argx    equ     4
 endif
         prolog
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DACOSH       ; calculate acosh(x)
+        lcall   IF@DACOSH       ; calculate acosh(x)
         epilog
 endif
         ret_pop 8               ; return

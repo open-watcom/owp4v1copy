@@ -39,10 +39,11 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref    "C",__log87_err
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    log387
+
+        xref    "C",__log87_err
 
         xdefp   "C",log         ; calc log(fac1)
         xdefp   "C",log2        ; calc log2(fac1)
@@ -138,7 +139,7 @@ ifdef __386__
 else
         prolog
         fld     qword ptr argx[BP]      ; load argument
-        call    IF@DLOG                 ; calculate log(x)
+        lcall   IF@DLOG                 ; calculate log(x)
         epilog
 endif
         ret_pop 8                       ; return
@@ -152,7 +153,7 @@ ifdef __386__
 else
         prolog
         fld     qword ptr argx[BP]      ; load argument
-        call    IF@DLOG10               ; calculate log10(x)
+        lcall   IF@DLOG10               ; calculate log10(x)
         epilog
 endif
         ret_pop 8                       ; return
@@ -167,7 +168,7 @@ ifdef __386__
 else
         prolog
         fld     qword ptr argx[BP]      ; load argument
-        call    IF@DLOG2                ; calculate log2(x)
+        lcall   IF@DLOG2                ; calculate log2(x)
         epilog
 endif
         ret_pop 8                       ; return

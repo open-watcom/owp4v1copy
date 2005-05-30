@@ -39,14 +39,14 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref            IF@DATAN2
-        xref            __@DSQRT
         xref            __8087  ; indicate that NDP instructions are present
 
         modstart        acos387
 
-        xdefp           "C",acos        ; double acos( double x )
+        xref            IF@DATAN2
+        xref            __@DSQRT
 
+        xdefp           "C",acos        ; double acos( double x )
 
 ifdef __386__
     datasegment
@@ -104,7 +104,7 @@ endif
           _if   e               ; - then
             fxch st(1)          ; - - flip arguments
 ;;;;        fpatan              ; - - atan( x / sqrt( 1.0 - x * x ) )
-            call IF@DATAN2      ; - - atan2( x, sqrt( 1.0 - x * x ) );
+            call  IF@DATAN2     ; - - atan2( x, sqrt( 1.0 - x * x ) );
             fld tbyte ptr piby2 ; - - load pi/2
             fsubrp  st(1),st(0) ; - - compute arcos(x)=pi/2-arcsin(x)
           _endif                ; - endif
@@ -134,7 +134,7 @@ argx    equ     4
 endif
         prolog
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DACOS        ; calculate acos(x)
+        lcall   IF@DACOS        ; calculate acos(x)
         epilog
 endif
         ret_pop 8               ; return

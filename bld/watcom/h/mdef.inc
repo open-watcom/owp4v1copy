@@ -186,6 +186,11 @@ xref            macro   p1,p2
                 endif
                 endm
 
+lcall           macro   dest
+                push    cs
+                call    near ptr dest
+                endm
+
 else
 
 modstart        macro   modname,alignment
@@ -280,6 +285,10 @@ xref            macro   p1,p2
                 else
                 extrn "&p1",`p2` : near
                 endif
+                endm
+
+lcall           macro   dest
+                call    dest
                 endm
 
 endif

@@ -39,11 +39,11 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
+        modstart        trigl87
+
         xref            IF@DCOS
         xref            IF@DSIN
         xref            IF@DTAN
-
-        modstart        trigl87
 
         xdefp   "C",_cosl       ; long double _cosl( long double x )
         xdefp   "C",_sinl       ; long double _sinl( long double x )

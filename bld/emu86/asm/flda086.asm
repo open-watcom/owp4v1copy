@@ -7,7 +7,6 @@ include xception.inc
 
         modstart    flda086, word
 
-
 endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -41,7 +40,7 @@ endif
         mov     AX,8[SI]        ; get exponent+sign of op1
         mov     DX,8[DI]        ; get exponent+sign of op2
         xor     DX,8000h        ; flip the sign
-        call    ___LDA          ; do the add
+        lcall   ___LDA          ; do the add
         pop     DI              ; restore pointer to result
         mov     [DI],DX         ; store result
         mov     2[DI],CX        ; ...
@@ -88,7 +87,7 @@ endif
         mov     DI,DX           ; point to op2
         mov     AX,8[SI]        ; get exponent+sign of op1
         mov     DX,8[DI]        ; get exponent+sign of op2
-        call    ___LDA          ; do the add
+        lcall   ___LDA          ; do the add
 _add9:  pop     DI              ; restore pointer to result
         mov     [DI],DX         ; store result
         mov     2[DI],CX        ; ...
@@ -125,7 +124,7 @@ _addc:  push    CS:8[DI]        ; push constant op2 onto stack
         push    CS:[DI]         ; ...
         mov     DI,SP           ; point to op2
         mov     AX,8[SI]        ; get exponent+sign of op1
-        call    ___LDA          ; do the add
+        lcall   ___LDA          ; do the add
         add     SP,10           ; remove constant from stack
         jmp     _add9           ; store result
         endproc __FLDAC

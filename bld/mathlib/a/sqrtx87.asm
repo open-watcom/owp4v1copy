@@ -39,10 +39,11 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref    "C",__math87_err
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    sqrt387
+
+        xref    "C",__math87_err
 
         xdefp   "C",sqrt        ; calc sqrt(fac1)
 

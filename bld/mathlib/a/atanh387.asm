@@ -40,10 +40,11 @@ include struct.inc
 include math387.inc
 
         extern_chipbug
-        xref    "C",__log87_err
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    atanh387
+
+        xref    "C",__log87_err
 
         xdefp   "C",atanh       ; double atanh( double x )
 ;
@@ -120,7 +121,7 @@ argx    equ     4
 endif
         prolog
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DATANH       ; calculate atanh(x)
+        lcall   IF@DATANH       ; calculate atanh(x)
         epilog
 endif
         ret_pop 8               ; return

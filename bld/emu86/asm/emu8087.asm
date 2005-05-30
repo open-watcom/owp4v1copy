@@ -1,5 +1,13 @@
 .286
 
+ifdef __SMALL__
+_SMALL_CODE = 1
+else ifdef __COMPACT__
+_SMALL_CODE = 1
+else
+_SMALL_CODE = 0
+endif
+
 _TEXT   segment word public 'CODE'
 
 modstart        macro   modname
@@ -24,6 +32,15 @@ endproc         macro   dsym
 
 endmod          macro
 _TEXT           ends
+                endm
+
+lcall           macro   dest
+if _SMALL_CODE
+                call    dest
+else
+                push    cs
+                call    near ptr dest
+endif
                 endm
 
 include struct.inc

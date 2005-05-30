@@ -97,7 +97,7 @@ endif
         push    BP              ; save BP
         mov     BP,SP           ; get access to parms
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DASINH       ; calculate asinh(x)
+        lcall   IF@DASINH       ; calculate asinh(x)
         pop     BP              ; restore BP
 endif
         ret_pop 8               ; return

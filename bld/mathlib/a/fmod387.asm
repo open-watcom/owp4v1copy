@@ -95,7 +95,7 @@ else
         mov     BP,SP                   ; get access to stack
         fld     qword ptr argx+8[BP]    ; load y
         fld     qword ptr argx[BP]      ; load x
-        call    IF@DFMOD                ; calculate fmod(x,y)
+        lcall   IF@DFMOD                ; calculate fmod(x,y)
         pop     BP                      ; restore BP
 endif
         ret_pop 16                      ; return

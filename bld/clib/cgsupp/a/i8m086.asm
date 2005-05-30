@@ -114,7 +114,7 @@ odx     equ     -8
         push    es:2[si]
         push    es:[si]
         mov     si,sp
-        call    __U8M
+        lcall   __U8M
         add     sp,4*2
         pop     si
         ret

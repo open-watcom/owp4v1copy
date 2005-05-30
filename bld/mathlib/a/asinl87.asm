@@ -39,9 +39,9 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref            IF@DASIN
-
         modstart        asinl87
+
+        xref            IF@DASIN
 
         xdefp   asinl_          ; long double asinl( long double x )
 

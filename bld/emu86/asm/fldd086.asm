@@ -37,7 +37,7 @@ endif
         mov     DI,DX           ; point to op2
         mov     AX,8[SI]        ; get exponent+sign of op1
         mov     DX,8[DI]        ; get exponent+sign of op2
-        call    ___LDD          ; do the divide
+        lcall   ___LDD          ; do the divide
         pop     DI              ; restore pointer to result
         mov     [DI],DX         ; store result
         mov     2[DI],CX        ; ...

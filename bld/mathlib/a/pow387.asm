@@ -43,11 +43,12 @@ include struct.inc
 include math387.inc
 
         extern_chipbug
-        xref    "C",__pow87_err
-        xref    __@DEXP
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    pow387
+
+        xref    "C",__pow87_err
+        xref    __@DEXP
 
         xdefp   "C",pow ; calc pow(x,y)
 
@@ -249,7 +250,7 @@ else
         prolog
         fld     qword ptr argx+8[BP]    ; load y
         fld     qword ptr argx[BP]      ; load x
-        call    IF@DPOW                 ; calculate pow(x,y)
+        lcall   IF@DPOW                 ; calculate pow(x,y)
         epilog
 endif
         ret_pop 16                      ; return

@@ -38,7 +38,7 @@ endif
         push    BX              ; save pointer to result
         mov     SI,AX           ; point to op1
         mov     DI,DX           ; point to op2
-        call    ___LDM          ; do the multiply
+        lcall   ___LDM          ; do the multiply
         pop     DI              ; restore pointer to result
         mov     [DI],DX         ; store result
         mov     2[DI],CX        ; ...
@@ -72,7 +72,7 @@ endif
         push    CS:2[DI]        ; ...
         push    CS:[DI]         ; ...
         mov     DI,SP           ; point to op2
-        call    ___LDM          ; do the multiply
+        lcall   ___LDM          ; do the multiply
         add     SP,10           ; remove constant from stack
         pop     DI              ; restore pointer to result
         mov     [DI],DX         ; store result

@@ -39,9 +39,9 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref            IF@DACOS
-
         modstart        acosl87
+
+        xref            IF@DACOS
 
         xdefp   acosl_          ; long double acosl( long double x )
 

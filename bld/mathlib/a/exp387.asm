@@ -42,13 +42,14 @@ include mdef.inc
 include struct.inc
 include math387.inc
 
-        xref    "C",__math87_err
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    exp387
 
         ;datasegment
         ;enddata
+
+        xref    "C",__math87_err
 
         xdefp   "C",exp         ; calc exp(fac1)
 
@@ -184,7 +185,7 @@ ifdef __386__
 else
         prolog
         fld     qword ptr argx[BP]; load argument x
-        call    IF@DEXP         ; calculate exp(x)
+        lcall   IF@DEXP         ; calculate exp(x)
         epilog
 endif
         ret_pop 8               ; return
