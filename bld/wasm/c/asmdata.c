@@ -168,7 +168,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
 #ifdef _WASM_
             if( !struct_field ) {
                 ChangeCurrentLocation( TRUE, no_of_bytes, 
-                      ( ( CurrSeg != NULL ) && CurrSeg->seg->e.seginfo->iscode ) );
+                      ( ( CurrSeg != NULL ) && SEGISCODE( CurrSeg ) ) );
             } else {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;

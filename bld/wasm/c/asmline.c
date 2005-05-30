@@ -508,6 +508,8 @@ char *ScanLine( char *string, int len )
 void AsmCodeByte( unsigned char byte )
 /************************************/
 {
+    if( CurrSeg->seg->e.seginfo->iscode == SEGTYPE_UNDEF )
+        CurrSeg->seg->e.seginfo->iscode = SEGTYPE_ISCODE;
     OutSelect( FALSE );
     AsmByte( byte );
 }

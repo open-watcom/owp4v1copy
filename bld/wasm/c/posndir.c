@@ -108,7 +108,7 @@ static void fill_in_objfile_space( uint size )
     int nop_type;
 
     /* first decide whether to output nulls or nops - is it a code seg? */
-    if( !CurrSeg->seg->e.seginfo->iscode ) {
+    if( ! SEGISCODE( CurrSeg ) ) {
         /* just output nulls */
         for( i = 0; i < size; i++ ) {
             AsmByte( 0x00 );

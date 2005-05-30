@@ -272,13 +272,40 @@ static void SetFPU(void)
     }
 }
 
+static char memory_model = 0;
+
+static void SetMM(void)
+/******************************/
+{
+    char buffer[20];
+
+    switch( OptValue ) {
+    case 'c':
+    case 'f':
+    case 'h':
+    case 'l':
+    case 'm':
+    case 's':
+    case 't':
+        break;
+    default:
+        strcpy( buffer, "/m" );
+        strcat( buffer, (char *)&OptValue );
+        MsgPrintf1( MSG_UNKNOWN_OPTION, buffer );
+        exit( 1 );
+    }
+
+    memory_model = OptValue;
+    return;    
+}
+
 static void SetMemoryModel(void)
 /******************************/
 {
     char buffer[20];
     char *model;
 
-    switch( OptValue ) {
+    switch( memory_model ) {
     case 'c':
         model = "COMPACT";
         break;
@@ -301,16 +328,12 @@ static void SetMemoryModel(void)
         model = "TINY";
         break;
     default:
-        strcpy( buffer, "/m" );
-        strcat( buffer, (char *)&OptValue );
-        MsgPrintf1( MSG_UNKNOWN_OPTION, buffer );
-        exit( 1 );
+        return;
     }
 
     strcpy( buffer, ".MODEL " );
     strcat( buffer, model );
     InputQueueLine( buffer );
-
     return;    
 }
 
@@ -405,13 +428,13 @@ static struct option const cmdl_options[] = {
     { "hw",     'w',      Ignore },
     { "i=@",    0,        SetInclude },
     { "j",      0,        Set_S },
-    { "mc",     'c',      SetMemoryModel },
-    { "mf",     'f',      SetMemoryModel },
-    { "mh",     'h',      SetMemoryModel },
-    { "ml",     'l',      SetMemoryModel },
-    { "mm",     'm',      SetMemoryModel },
-    { "ms",     's',      SetMemoryModel },
-    { "mt",     't',      SetMemoryModel },
+    { "mc",     'c',      SetMM },
+    { "mf",     'f',      SetMM },
+    { "mh",     'h',      SetMM },
+    { "ml",     'l',      SetMM },
+    { "mm",     'm',      SetMM },
+    { "ms",     's',      SetMM },
+    { "mt",     't',      SetMM },
     { "nc=$",   'c',      Set_N },
     { "nd=$",   'd',      Set_N },
     { "nm=$",   'm',      Set_N },
@@ -450,7 +473,7 @@ global_options Options = {
 
     /* code_class       */          NULL,
     /* data_seg         */          NULL,
-    /* test_seg         */          NULL,
+    /* text_seg         */          NULL,
     /* module_name      */          NULL,
 
     #ifdef DEBUG_OUT
@@ -591,6 +614,7 @@ int main()
 #else
     do_init_stuff( &argv[1] );
 #endif
+    SetMemoryModel();
     WriteObjModule();           // main body: parse the source file
     if( !Options.quiet ) {
         PrintStats();

@@ -41,18 +41,6 @@ typedef int     direct_idx;     // directive index, such as segment index,
                                 // group index or lname index, etc.
 
 typedef enum {
-    SIM_CODE = 0,
-    SIM_STACK,
-    SIM_DATA,
-    SIM_DATA_UN,            // .DATA?
-    SIM_FARDATA,
-    SIM_FARDATA_UN,         // .FARDATA?
-    SIM_CONST,
-    SIM_NONE,
-    SIM_LAST = SIM_NONE
-} sim_seg;
-
-typedef enum {
     MOD_NONE,
     MOD_TINY,
     MOD_SMALL,
@@ -124,6 +112,12 @@ enum irp_type {
     IRP_REPEAT
 };
 
+typedef enum {
+    SEGTYPE_UNDEF = -1,
+    SEGTYPE_ISDATA,
+    SEGTYPE_ISCODE
+} seg_type;
+
 /*---------------------------------------------------------------------------*/
 
 typedef struct stacknode {
@@ -154,7 +148,7 @@ typedef struct {
     uint_32             start_loc;      // starting offset of current ledata or lidata
     unsigned            readonly:1;     // if the segment is readonly
     unsigned            ignore:1;       // ignore this if the seg is redefined
-    unsigned            iscode:1;       // segment is belonging to "*CODE" class
+    seg_type            iscode;         // segment is belonging to "CODE" or 'DATA' class
     direct_idx          lname_idx;
     uint_32             current_loc;    // current offset in current ledata or lidata
 } seg_info;
@@ -381,6 +375,8 @@ extern uint_32          GetCurrSegStart(void);
 /* Get offset of segment at the start of current LEDATA record */
 
 #define GetSeg( x )     (dir_node *)x->segment
+
+#define SEGISCODE( x )  ( x->seg->e.seginfo->iscode == SEGTYPE_ISCODE )
 
 extern struct asm_sym   *GetGrp( struct asm_sym * );
 

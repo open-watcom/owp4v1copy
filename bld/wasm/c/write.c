@@ -388,6 +388,17 @@ static void write_seg( void )
         objr->d.segdef.ovl_name_idx = 1;
         objr->d.segdef.seg_name_idx = GetLnameIdx( curr->sym.name );
         write_record( objr, FALSE );
+        if( curr->e.seginfo->iscode == SEGTYPE_ISCODE ) {
+            obj_rec     *rec;
+
+            rec = ObjNewRec( CMD_COMENT );
+            rec->d.coment.attr = CMT_TNP;
+            rec->d.coment.class = CMT_LINKER_DIRECTIVE;
+            ObjAllocData( rec, 3  );
+            ObjPut8( rec, LDIR_OPT_FAR_CALLS );
+            ObjPutIndex( rec, seg_index );
+            write_record( rec, TRUE );
+        }
     }
 }
 
