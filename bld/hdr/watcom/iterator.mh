@@ -17,7 +17,9 @@
 #error The header iterator requires C++
 #endif
 
-#include <cstddef>
+#ifndef _CSTDDEF_INCLUDED
+  #include <cstddef>
+#endif
 
 namespace std {
 
@@ -260,6 +262,105 @@ namespace std {
   {
     return( x.base( ) != y.base( ) );
   }
+
+  // back_insert_iterator
+  // ********************
+
+  template< class Container >
+  class back_insert_iterator :
+    public iterator< output_iterator_tag, void, void, void, void > {
+  protected:
+    Container *container;
+
+  public:
+    typedef Container container_type;
+
+    explicit back_insert_iterator( Container &c ) : container( &c )
+      { }
+
+    back_insert_iterator &operator=( typename Container::const_reference value )
+      { container->push_back( value ); return( *this ); }
+
+    back_insert_iterator &operator*( )
+      { return( *this ); }
+
+    back_insert_iterator &operator++( )
+      { return( *this ); }
+
+    back_insert_iterator  operator++( int )
+      { return( *this ); }
+  };
+
+  template< class Container >
+  back_insert_iterator< Container > back_inserter( Container &c )
+    { return( back_insert_iterator< Container >( c ) ); }
+
+  // front_insert_iterator
+  // *********************
+
+  template< class Container >
+  class front_insert_iterator :
+    public iterator< output_iterator_tag, void, void, void, void > {
+  protected:
+    Container *container;
+
+  public:
+    typedef Container container_type;
+
+    explicit front_insert_iterator( Container &c ) : container( &c )
+      { }
+
+    front_insert_iterator &operator=( typename Container::const_reference value )
+      { container->push_front( value ); return( *this ); }
+
+    front_insert_iterator &operator*( )
+      { return( *this ); }
+
+    front_insert_iterator &operator++( )
+      { return( *this ); }
+
+    front_insert_iterator  operator++( int )
+      { return( *this ); }
+  };
+
+  template< class Container >
+  front_insert_iterator< Container > front_inserter( Container &c )
+    { return( front_insert_iterator< Container >( c ) ); }
+
+  // insert_iterator
+  // ***************
+
+  template< class Container >
+  class insert_iterator :
+    public iterator< output_iterator_tag, void, void, void, void > {
+  protected:
+    Container *container;
+    typename Container::iterator iter;
+
+  public:
+    typedef Container container_type;
+
+    insert_iterator( Container &c, typename Container::iterator it )
+      : container( &c ), iter( it )
+      { }
+
+    insert_iterator &operator=( typename Container::const_reference value )
+      { iter = container->insert( iter, value ); ++iter; return( *this ); }
+
+    insert_iterator &operator*( )
+      { return( *this ); }
+
+    insert_iterator &operator++( )
+      { return( *this ); }
+
+    insert_iterator  operator++( int )
+      { return( *this ); }
+  };
+
+  template< class Container, class Inserter >
+  insert_iterator< Container > inserter( Container &c, Inserter it )
+    { return( insert_iterator< Container >
+        ( c, typename Container::iterator( it ) ) ); }
 
 } // namespace std
 

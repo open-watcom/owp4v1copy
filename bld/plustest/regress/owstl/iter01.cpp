@@ -29,8 +29,12 @@
 *
 ****************************************************************************/
 
+#include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <string>
+
+#include "sanity.cpp"
 
 // Use a namespace to exercise that ability.
 namespace xyz {
@@ -70,9 +74,7 @@ bool read_element( Iterator first )
 {
   // Used for exercising partial specialization for pointers to const.
   typename std::iterator_traits< Iterator >::value_type temp( *first );
-  if( temp != 'w' ) {
-    std::cout << "traits FAIL 0003\n"; return false;
-  }
+  if( temp != 'w' ) FAIL
   return true;
 }
 
@@ -85,14 +87,10 @@ bool traits_test( )
   xyz::X = 1;
   xyz::Y = 2;
   exchange( p1, p2 );
-  if( xyz::X != 2 || xyz::Y != 1 ) {
-    std::cout << "traits FAIL 0001\n"; rc = false;
-  }
+  if( xyz::X != 2 || xyz::Y != 1 ) FAIL
 
   exchange( raw_array, raw_array + 3 );
-  if( raw_array[0] != 'd' || raw_array[3] != 'a' ) {
-    std::cout << "traits FAIL 0002\n"; rc = false;
-  }
+  if( raw_array[0] != 'd' || raw_array[3] != 'a' ) FAIL
 
   if( !read_element( const_raw_array ) ) rc = false;
   return( rc );
@@ -104,9 +102,7 @@ bool advance_test( )
 
   char *p = raw_array;
   std::advance( p, 2 );
-  if( *p != 'c' ) {
-    std::cout << "advance FAIL 0001\n"; rc = false;
-  }
+  if( *p != 'c' ) FAIL
 
   return( rc );
 }
@@ -117,9 +113,7 @@ bool distance_test( )
   bool rc = true;
 
   std::ptrdiff_t d =  std::distance( raw_array, raw_array + 2 );
-  if( d != 2 ) {
-    std::cout << "distance FAIL 0001\n"; rc = false;
-  }
+  if( d != 2 ) FAIL
 
   return( rc );
 }
@@ -133,35 +127,70 @@ bool reverse_test( )
 
   std::reverse_iterator< char * > p1( reverse_array + 2 );
   std::reverse_iterator< char * > p2( reverse_array );
-  if( *p1 != 'b' ) {
-    std::cout << "reverse FAIL 0001\n"; rc = false;
-  }
+  if( *p1 != 'b' ) FAIL
 
   ++p1;
-  if( *p1 != 'a' ) {
-    std::cout << "reverse FAIL 0002\n"; rc = false;
-  }
+  if( *p1 != 'a' ) FAIL
 
   ++p1;
-  if( p1 != p2 ) {
-    std::cout << "reverse FAIL 0003\n"; rc = false;
-  }
+  if( p1 != p2 ) FAIL
+  return( rc );
+}
+
+bool back_inserter_test( )
+{
+  bool rc = true;
+  char raw[] = { 'a', 'b', 'c', 'd' };
+
+  std::string s1( "xyz" );
+  std::copy( raw, raw + 4, std::back_inserter( s1 ) );
+  if( s1 != "xyzabcd" ) FAIL
+
+  return( rc );
+}
+
+bool front_inserter_test( )
+{
+  bool rc = true;
+
+  // Finish me once we have a container with pop_front().
+  return( rc );
+}
+
+bool inserter_test( )
+{
+  bool rc = true;
+  char raw[] = { 'a', 'b', 'c', 'd' };
+
+  std::string s1( "xyz" );
+  std::copy( raw, raw + 4, std::inserter( s1, s1.begin( ) + 1 ) );
+  if( s1 != "xabcdyz" ) FAIL
+
   return( rc );
 }
 
 int main( )
 {
   int rc = 0;
+  int original_count = heap_count( );
+
   try {
-    if( !traits_test( )       ) rc = 1;
-    if( !advance_test( )      ) rc = 1;
-    // if( !distance_test( )     ) rc = 1;
-    if( !reverse_test( )      ) rc = 1;
+    if( !traits_test( )         || !heap_ok( "t01" )  ) rc = 1;
+    if( !advance_test( )        || !heap_ok( "t02" )  ) rc = 1;
+    // if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
+    if( !reverse_test( )        || !heap_ok( "t04" )  ) rc = 1;
+    if( !back_inserter_test( )  || !heap_ok( "t05" )  ) rc = 1;
+    if( !front_inserter_test( ) || !heap_ok( "t06" )  ) rc = 1;
+    if( !inserter_test( )       || !heap_ok( "t07" )  ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";
     rc = 1;
   }
 
+  if( heap_count( ) != original_count ) {
+    std::cout << "Possible memory leak!\n";
+    rc = 1;
+  }
   return( rc );
 }
