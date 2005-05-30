@@ -1,4 +1,4 @@
-#pmake: all asaxp nt ppc os_nt cpu_ppc
+#pmake: asaxp nt ppc os_nt cpu_ppc
 
 host_OS     = nt
 host_CPU    = ppc

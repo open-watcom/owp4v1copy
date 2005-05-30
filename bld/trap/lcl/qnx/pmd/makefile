@@ -1,4 +1,4 @@
-#pmake: all lcl pmd os_qnx cpu_i86 cpu_386 trap x86
+#pmake: lcl pmd os_qnx cpu_i86 cpu_386 trap x86
 #
 # Create the QNX PMD.TRP
 #

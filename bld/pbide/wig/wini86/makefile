@@ -1,4 +1,4 @@
-#pmake: all cpu_i86 os_win
+#pmake: cpu_i86 os_win
 host_cpu = i86
 host_os  = win
 

@@ -1,4 +1,4 @@
-#pmake: all build os_nt cpu_386
+#pmake: build os_nt cpu_386
 #
 # Makefile to create NT version of WIC
 #

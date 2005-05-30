@@ -1,4 +1,4 @@
-#pmake: all build os_dos cpu_386
+#pmake: build os_dos cpu_386
 #
 # Makefile to create DOS version of WIC
 #

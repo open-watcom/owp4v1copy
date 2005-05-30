@@ -1,4 +1,4 @@
-#pmake: all cpu_i86 os_qnx
+#pmake: cpu_i86 os_qnx
 host_OS = qnx
 host_CPU = i86
 

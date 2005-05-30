@@ -1,4 +1,4 @@
-#pmake: all build os_dos cpu_386
+#pmake: build os_dos cpu_386
 #
 # WATCOM Presentation Graphics (PGCHART.LIB)
 #

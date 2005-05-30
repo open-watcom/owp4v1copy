@@ -1,4 +1,4 @@
-#pmake: all serv remote os_qnx cpu_i86 cpu_386 par x86
+#pmake: serv remote os_qnx cpu_i86 cpu_386 par x86
 host_CPU = 386
 host_OS = qnx
 

@@ -1,4 +1,4 @@
-#pmake: all build os_linux
+#pmake: build os_linux
 path=..;../watcom/linux;../watcom
 options=-t8 -u
 system=LINUX

@@ -1,4 +1,4 @@
-#pmake: all build serv remote os_nt cpu_i86 cpu_386 ser x86
+#pmake: build serv remote os_nt cpu_i86 cpu_386 ser x86
 host_CPU = 386
 host_OS = nt
 

@@ -1,4 +1,4 @@
-#pmake: all build trap remote os_nt cpu_386 par
+#pmake: build trap remote os_nt cpu_386 par
 host_CPU = 386
 host_OS = nt
 

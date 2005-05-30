@@ -1,4 +1,4 @@
-#pmake: all build lcl os_win cpu_i86 cpu_386 support x86
+#pmake: build lcl os_win cpu_i86 cpu_386 support x86
 host_cpu = i86
 host_os = win
 

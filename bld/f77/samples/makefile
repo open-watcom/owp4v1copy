@@ -1,4 +1,4 @@
-#pmake: all build os_win cpu_i86 cpu_386
+#pmake: build os_win cpu_i86 cpu_386
 
 all: .SYMBOLIC
         @cd windll

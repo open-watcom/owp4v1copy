@@ -1,4 +1,4 @@
-#pmake: all build os_os2 cpu_386
+#pmake: build os_os2 cpu_386
 #
 # Makefile to create OS/2 version of WIC
 #

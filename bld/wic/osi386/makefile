@@ -1,4 +1,4 @@
-#pmake: all os_osi cpu_386
+#pmake: os_osi cpu_386
 #
 # Makefile to create OSI version of WIC
 #

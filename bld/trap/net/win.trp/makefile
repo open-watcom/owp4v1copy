@@ -1,4 +1,4 @@
-#pmake: all build trap remote os_win cpu_i86 cpu_386 net x86
+#pmake: build trap remote os_win cpu_i86 cpu_386 net x86
 host_cpu = i86
 host_OS = win
 

@@ -1,4 +1,4 @@
-#pmake: all bmark bytemark integer int small w106
+#pmake: bmark bytemark integer int small w106
 
 host_os  = nt
 host_cpu = 386

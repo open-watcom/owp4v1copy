@@ -1,4 +1,4 @@
-#pmake: all os_nt cpu_386 dll
+#pmake: os_nt cpu_386 dll
 host_OS = nt
 host_CPU = 386
 sys_dll = 1

@@ -1,4 +1,4 @@
-#pmake: all build os_linux cpu_386 386 intel
+#pmake: build os_linux cpu_386 386 intel
 #
 # Open Watcom Debugger makefile for Linux
 #

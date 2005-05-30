@@ -1,4 +1,4 @@
-#pmake: all build trap remote os_linux cpu_386 tcp x86
+#pmake: build trap remote os_linux cpu_386 tcp x86
 host_CPU = 386
 host_OS = linux
 

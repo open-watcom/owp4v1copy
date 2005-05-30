@@ -1,4 +1,4 @@
-#pmake: all build serv remote os_nov cpu_386 ser x86
+#pmake: build serv remote os_nov cpu_386 ser x86
 
 nlm_ver = 4
 

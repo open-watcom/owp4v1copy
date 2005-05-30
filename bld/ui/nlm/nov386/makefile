@@ -1,4 +1,4 @@
-#pmake: all cpu_386 os_nov
+#pmake: cpu_386 os_nov
 host_CPU = 386
 host_OS = nov
 extra_files = $(nlm)
