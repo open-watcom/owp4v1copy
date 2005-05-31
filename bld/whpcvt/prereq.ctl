@@ -1,23 +1,50 @@
 # WHPCVT Prerequisite Tool Build Control File
 # =========================================
 
+set PROJDIR=<CWD>
+
+[ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <LOGFNAME>.<LOGEXT> ]
+
+cdsay .
+
+set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+
+[ BLOCK <OWLINUXBUILD> bootstrap ]
+#=================================
+    set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+
+[ BLOCK <1> clean ]
+#==================
+    echo rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f -r <PROJDIR>/<PREOBJDIR>
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=whpcvt
+    set BUILD_PLATFORM=
+
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\dos386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../dos386/makefile prebuild=1
     <CPCMD> whpcvt.exe <OWROOT>\bld\build\bin\whpcvt.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\os2386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../os2386/makefile prebuild=1
     <CPCMD> whpcvt.exe <OWROOT>\bld\build\binp\whpcvt.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <PROJDIR>\nt386
-    wmake -h
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> whpcvt.exe <OWROOT>\bld\build\binnt\whpcvt.exe
-    cdsay <PROJDIR>
+
+[ BLOCK . . ]
+#============
+set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
+set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

@@ -1,15 +1,10 @@
 #
 # clean prebuild executable
 #
+!include bhost.mif
+
 clean: .symbolic
-!ifeq platform dos386
-    rm -f $(build_dir)/bin/$(file).exe
-!else ifeq platform os2386
-    rm -f $(build_dir)/binp/$(file).exe
-!else ifeq platform nt386
-    rm -f $(build_dir)/binnt/$(file).exe
-!else ifeq platform linux386
-    rm -f $(build_dir)/binl/$(file)
-!else ifeq platform linux386boot
-    rm -f $(build_dir)/binl/$(file)
+!ifdef __UNIX__
+    rm -f $(bld_bin)/$(file)
 !endif
+    rm -f $(bld_bin)/$(file).*

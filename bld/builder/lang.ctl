@@ -15,3 +15,8 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d all -h clean
+
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>

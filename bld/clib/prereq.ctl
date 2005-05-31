@@ -21,9 +21,10 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #======================================
     echo Building the WATCOM support library
     <MAKE> -f gnumake
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

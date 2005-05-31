@@ -6,6 +6,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 set ODIR=<PREOBJDIR>
 
@@ -18,7 +20,7 @@ set ODIR=<OBJDIR>
 #==================
     echo rm -f -r <PROJDIR>/<ODIR>
     rm -f -r <PROJDIR>/<ODIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=pmake
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=pmake
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]

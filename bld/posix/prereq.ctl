@@ -6,6 +6,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 set ODIR=<PREOBJDIR>
 
@@ -19,9 +21,7 @@ set ODIR=<PREOBJDIR>
     echo rm -f -r <PROJDIR>/<ODIR>
     rm -f -r <PROJDIR>/<ODIR>
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\bin clean_build
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binp clean_build
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binnt clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean_build
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]

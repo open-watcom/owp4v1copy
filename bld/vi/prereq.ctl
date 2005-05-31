@@ -19,15 +19,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/ctl
     pmake -d all -h clean
     cdsay <PROJDIR>/ctl
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=parsectl
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=parsedyn
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=parsectl
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=parsedyn
     cdsay <PROJDIR>/bind
     pmake -d all -h clean
     cdsay <PROJDIR>
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bvi
-    cdsay .
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=bvi
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
@@ -43,7 +42,6 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/bin/bvi.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
@@ -58,7 +56,6 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binp/bvi.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
@@ -73,7 +70,6 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binnt/bvi.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
@@ -88,7 +84,6 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../ntaxp/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/axpnt/bvi.exe
-    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #===============================
@@ -103,9 +98,10 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binl/bvi
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

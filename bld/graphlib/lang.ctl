@@ -6,6 +6,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 [ INCLUDE prereq.ctl ]
 
 [ BLOCK <1> build rel2 ]
@@ -14,7 +16,6 @@ set PROJDIR=<CWD>
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>/fix
     pmake -d buildnext <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -32,4 +33,8 @@ set PROJDIR=<CWD>
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cdsay <PROJDIR>/fix
     pmake -d buildnext <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cd <PROJDIR>
+
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>

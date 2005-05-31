@@ -3,6 +3,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
@@ -15,7 +17,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     rm -f -r <PROJDIR>/wres/<OBJDIR>
     echo rm -f -r <PROJDIR>/rc/<OBJDIR>
     rm -f -r <PROJDIR>/rc/<OBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=wrc
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wrc
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -26,9 +28,10 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay ../rc
     <MAKE> -f gnumake
     <CPCMD> <OBJDIR>/rc <OWROOT>/bld/build/binl/wrc
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

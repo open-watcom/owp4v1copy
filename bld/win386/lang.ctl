@@ -6,9 +6,10 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -37,5 +38,8 @@ set PROJDIR=<CWD>
     @rm -f asm/dllthk.asm c/dllthunk.c asm/winglue.asm h/winglue.inc
     @rm -f ext/win386.ext dll/w386dll.ext
     @rm -f vxd/wdebug.386 vxd/wemu387.386
-    cd <PROJDIR>
 
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>

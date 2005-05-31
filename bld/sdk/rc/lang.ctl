@@ -6,6 +6,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
 
 [ BLOCK <1> build rel2 ]
 #=======================
@@ -17,7 +18,6 @@ set PROJDIR=<CWD>
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>/rc
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -50,9 +50,11 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/rc/linux386/wrc.exe       <RELROOT>/rel2/binl/wrc
     <CPCMD> <PROJDIR>/rc/linux386/wrc.sym       <RELROOT>/rel2/binl/wrc.sym
 
-
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay <PROJDIR>
 
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>

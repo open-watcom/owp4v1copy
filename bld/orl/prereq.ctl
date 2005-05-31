@@ -3,6 +3,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
@@ -20,9 +22,10 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     echo Building the object reading library
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    cdsay <PROJDIR>
 
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
+
+cdsay <PROJDIR>

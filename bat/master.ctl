@@ -72,4 +72,3 @@ set CPCMD=acopy
     set LOGFNAME=boot
 
 [ BLOCK . . ]
-    cdsay <PROJDIR>

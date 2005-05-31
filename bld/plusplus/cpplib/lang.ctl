@@ -6,6 +6,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+cdsay .
+
 set destdir=<RELROOT>/rel2
 
 #
@@ -15,12 +17,13 @@ set destdir=<RELROOT>/rel2
 #=======================
     [ INCLUDE prereq.ctl ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 ]
+#=================
     set destdir=<RELROOT>/rel2
 
 [ BLOCK <1> nlang ]
+#==================
     set destdir=<DWATCOM>
     set CPCMD=copy
 
@@ -132,4 +135,8 @@ set destdir=<RELROOT>/rel2
 #==================
     [ INCLUDE clean.ctl ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay <PROJDIR>
+
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>
