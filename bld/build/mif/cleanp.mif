@@ -6,5 +6,6 @@
 clean: .symbolic
 !ifdef __UNIX__
     rm -f $(bld_bin)/$(file)
+!else    
+    rm -f $(bld_bin)/$(file).exe
 !endif
-    rm -f $(bld_bin)/$(file).*
