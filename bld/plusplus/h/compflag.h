@@ -166,11 +166,12 @@ typedef struct comp_flags {
     unsigned comments_wanted        : 1;    // on => comments wanted
     unsigned undefine_all_macros    : 1;    // on => -u all macros
     unsigned cpp_line_wanted        : 1;    // wcpp - emit #line
+    unsigned cpp_ignore_line        : 1;    /* wcpp - ignore #line */
     unsigned cpp_output             : 1;    // WCC doing CPP output
     unsigned cpp_output_to_file     : 1;    // WCC doing CPP output to?.i
     unsigned cpp_output_requested   : 1;
-    unsigned no_debug_type_names    : 1;
 /*  96  */
+    unsigned no_debug_type_names    : 1;
     unsigned emit_names             : 1;
     unsigned warnings_cause_bad_exit: 1;
     unsigned use_unicode            : 1;
@@ -178,8 +179,8 @@ typedef struct comp_flags {
     unsigned jis_to_unicode         : 1;
     unsigned emit_dependencies      : 1;
     unsigned emit_targimp_symbols   : 1;    // Insert target specific import symbols
-    unsigned emit_browser_info      : 1;
 /*  104 */
+    unsigned emit_browser_info      : 1;
     unsigned excs_enabled           : 1;    // exceptions enabled
     unsigned rtti_enabled           : 1;    // RTTI enabled
     unsigned extended_defines       : 1;    // -d swallows many tokens
@@ -187,8 +188,8 @@ typedef struct comp_flags {
     unsigned returns_promoted       : 1;    // promote arg,return to int
     unsigned all_debug_type_names   : 1;
     unsigned fhw_switch_used        : 1;
-    unsigned fhr_switch_used        : 1;
 /*  112 */
+    unsigned fhr_switch_used        : 1;
     unsigned modifier_bind_compatibility:1; // bind modifiers into generic types
     unsigned prototype_instantiate  : 1;    // instantiate fn prototypes if possible
     unsigned encrypt_preproc_output : 1;    // try to encrypt compiler output
@@ -196,8 +197,8 @@ typedef struct comp_flags {
     unsigned make_enums_an_int      : 1;    // don't overly optimize enum storage
     unsigned use_pcheaders          : 1;    // pre-compiled headers are active
     unsigned no_pch_warnings        : 1;    // don't explain PCH activity
-    unsigned pch_debug_info_opt     : 1;    // optimize dbg info in PCH
 /*  120 */
+    unsigned pch_debug_info_opt     : 1;    // optimize dbg info in PCH
     unsigned pch_min_check          : 1;    // assume PCH header files haven't changed
     unsigned bd_switch_used         : 1;
     unsigned bm_switch_used         : 1;
@@ -205,8 +206,8 @@ typedef struct comp_flags {
     unsigned ee_switch_used         : 1;
     unsigned ep_switch_used         : 1;
     unsigned eq_switch_used         : 1;
-    unsigned ew_switch_used         : 1;
 /*  128 */
+    unsigned ew_switch_used         : 1;
     unsigned op_switch_used         : 1;
     unsigned br_switch_used         : 1;
     unsigned rw_registration        : 1;    // RW-centric function registration
@@ -214,8 +215,8 @@ typedef struct comp_flags {
     unsigned ignore_environment     : 1;    // don't process WPP* and INCLUDE
     unsigned ignore_current_dir     : 1;    // ignore current dir for include search
     unsigned progress_messages      : 1;    // output msgs as compile progresses
-    unsigned no_error_sym_injection : 1;    // don't insert error symbols
 /*  136 */
+    unsigned no_error_sym_injection : 1;    // don't insert error symbols
     unsigned error_use_full         : 1;    // use full path names in error msgs
     unsigned vc_alloca_parm         : 1;    // allow alloca to occur in parms
     unsigned emit_default_libs      : 1;    // emit default libs in .OBJ file
@@ -223,8 +224,8 @@ typedef struct comp_flags {
     unsigned bg_switch_used         : 1;    // building a GUI app
     unsigned optbr_v                : 1;    // browse: variables
     unsigned optbr_f                : 1;    // browse: functions
-    unsigned optbr_t                : 1;    // browse: types
 /*  144 */
+    unsigned optbr_t                : 1;    // browse: types
     unsigned optbr_m                : 1;    // browse: data members
     unsigned optbr_p                : 1;    // browse: preprocessor macros
     unsigned static_inline_fns      : 1;    // emit inline fns in normal code seg
@@ -233,8 +234,8 @@ typedef struct comp_flags {
 
     unsigned overload_13332         : 1;    // implement WP 13.3.3.2 better
     unsigned line_comments          : 1;    // output // #line instead of #line
-    unsigned dont_align_segs        : 1;    // bug fix: don't align segments
 /*  152 */
+    unsigned dont_align_segs        : 1;    // bug fix: don't align segments
     unsigned fixed_name_mangling    : 1;    // bug fix: name mangling
     unsigned plain_char_promotion   : 1;    // char -> int rvalue promotion warning
     unsigned obfuscate_typesig_names: 1;    // mangle type sig names
@@ -242,6 +243,7 @@ typedef struct comp_flags {
     unsigned dont_autogen_ext_src   : 1;
     unsigned use_old_for_scope      : 1;
     unsigned no_alternative_tokens  : 1;    // disable alternative tokens
+/*  160 */
     unsigned enable_std0x           : 1;    // enable some C++0x features
     
 
@@ -250,7 +252,6 @@ typedef struct comp_flags {
 // 'i86' '386' target flags
 //                                                                          //
 *****************************************************************************/
-/*  160 */
     unsigned register_conventions   : 1;    // on for -3r, off for -3s
     unsigned strings_in_code_segment: 1;    // on => put strings in CODE
     unsigned save_restore_segregs   : 1;    // save/restore segment regs
@@ -258,8 +259,8 @@ typedef struct comp_flags {
     unsigned use_stdcall_at_number  : 1;    // mangle __stdcall names as "_*@n"
     unsigned fs_registration        : 1;    // using fs for function registration
     unsigned sg_switch_used         : 1;
-    unsigned st_switch_used         : 1;
 /*  168 */
+    unsigned st_switch_used         : 1;
     unsigned zc_switch_used         : 1;
     unsigned zm_switch_used         : 1;
     unsigned zmf_switch_used        : 1;
@@ -268,8 +269,8 @@ typedef struct comp_flags {
     unsigned zx_switch_used         : 1;
     unsigned mfi_switch_used        : 1;    // flat model interrupts (ss stays same)
 
-    unsigned i86filler00            : 1;
 /*  176 */
+    unsigned i86filler00            : 1;
     unsigned i86filler01            : 1;
     unsigned i86filler02            : 1;
     unsigned i86filler03            : 1;
@@ -277,9 +278,9 @@ typedef struct comp_flags {
     unsigned i86filler05            : 1;
     unsigned i86filler06            : 1;
     unsigned i86filler07            : 1;
+/* 184 */
     unsigned i86filler08            : 1;
 
-/* 184 */
     unsigned generate_auto_depend   : 1;
 } COMP_FLAGS;
 

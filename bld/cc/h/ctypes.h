@@ -594,8 +594,8 @@ struct comp_flags {
     unsigned extra_stats_wanted     : 1;
     unsigned external_defn_found    : 1;
     unsigned scanning_comment       : 1;
-    unsigned initializing_data      : 1;
 
+    unsigned initializing_data      : 1;
     unsigned dump_prototypes        : 1;    /* keep typedefs in prototypes*/
     unsigned non_zero_data          : 1;
     unsigned quiet_mode             : 1;
@@ -603,33 +603,34 @@ struct comp_flags {
     unsigned keep_comments          : 1;    /* wcpp - output comments */
     unsigned cpp_line_wanted        : 1;    /* wcpp - emit #line    */
     unsigned cpp_ignore_line        : 1;    /* wcpp - ignore #line */
+
     unsigned generate_prototypes    : 1;    /* generate prototypes  */
     unsigned no_conmsg              : 1;    /* don't write wng &err to console */
-
     unsigned bss_segment_used       : 1;
     unsigned zu_switch_used         : 1;
     unsigned extended_defines       : 1;
     unsigned errfile_written        : 1;
     unsigned main_has_parms         : 1;    /* on if "main" has parm(s) */
     unsigned pcode_generated        : 1;    /* on if pcode generated */
+
     unsigned register_conventions   : 1;    /* on for -3r, off for -3s */
     unsigned pgm_used_8087          : 1;    /* on => 8087 ins. generated */
-
     unsigned emit_library_with_main : 1;    /* on => put LIB name in obj */
     unsigned strings_in_code_segment: 1;    /* on => put strings in CODE */
     unsigned ok_to_use_precompiled_hdr: 1;  /* on => ok to use PCH */
     unsigned strict_ANSI            : 1;    /* on => strict ANSI C (-zA)*/
     unsigned expand_macros          : 1;    /* on => expand macros in WCPP*/
     unsigned exception_filter_expr  : 1;    /* on => parsing _except(expr)*/
+
     unsigned exception_handler      : 1;    /* on => inside _except block*/
     unsigned comments_wanted        : 1;    /* on => comments wanted     */
-
     unsigned wide_char_string       : 1;    /* on => T_STRING is L"xxx"  */
     unsigned banner_printed         : 1;    /* on => banner printed      */
     unsigned undefine_all_macros    : 1;    /* on => -u all macros       */
     unsigned emit_browser_info      : 1;    /* -db emit broswer info */
     unsigned cppi_segment_used      : 1;    /* C++ initializer segment */
     unsigned rescan_buffer_done     : 1;    /* ## re-scan buffer used up */
+
     unsigned cpp_output             : 1;    /* WCC doing CPP output      */
     unsigned cpp_output_to_file     : 1;    /* WCC doing CPP output to?.i*/
 
@@ -647,56 +648,56 @@ struct comp_flags {
     unsigned cpp_output_requested   : 1;    /* CPP output requested      */
     unsigned warnings_cause_bad_exit: 1;    /* warnings=>non-zero exit   */
     unsigned save_restore_segregs   : 1;    /* save/restore segregs      */
+
     unsigned has_winmain            : 1;    /* WinMain defined           */
     unsigned make_enums_an_int      : 1;    /* force all enums to be int */
     unsigned original_enum_setting  : 1;    /* reset value if pragma used*/
-
     unsigned zc_switch_used         : 1;    /* -zc switch specified   */
     unsigned use_unicode            : 1;    /* use unicode for L"abc" */
     unsigned op_switch_used         : 1;    /* -op force floats to mem */
     unsigned no_debug_type_names    : 1;    /* -d2~ switch specified  */
     unsigned asciiout_used          : 1;    /* (asciiout specified  */
+
     unsigned noxedit_used           : 1;    /* (noxedit specified  */
     unsigned in_pcode_func          : 1;    /* generating Pcode */
     unsigned addr_of_auto_taken     : 1;    /*=>can't opt tail recursion*/
-
     unsigned pcode_was_generated    : 1;    /* some funcs were pcoded */
     unsigned continued_string       : 1;    /* continuing big string */
     unsigned sg_switch_used         : 1;    /* /sg switch used */
     unsigned bm_switch_used         : 1;    /* /bm switch used */
     unsigned bd_switch_used         : 1;    /* /bd switch used */
+
     unsigned bw_switch_used         : 1;    /* /bw switch used */
     unsigned zm_switch_used         : 1;    /* /zm switch used */
     unsigned has_libmain            : 1;    /* LibMain defined */
-
     unsigned ep_switch_used         : 1;    /* emit prolog hooks */
     unsigned ee_switch_used         : 1;    /* emit epilog hooks */
     unsigned dump_types_with_names  : 1;    /* -d3 information */
     unsigned ec_switch_used         : 1;    /* emit coverage hooks */
     unsigned jis_to_unicode         : 1;    /* convert JIS to UNICODE */
+
     unsigned using_overlays         : 1;    /* user doing overlays */
     unsigned unique_functions       : 1;    /* func addrs are unique */
     unsigned st_switch_used         : 1;    /* touch stack through esp */
-
     unsigned make_precompiled_header: 1;    /* make precompiled header */
     unsigned emit_dependencies      : 1;    /* include file dependencies*/
     unsigned multiple_code_segments : 1;    /* more than 1 code seg */
     unsigned returns_promoted       : 1;    /* return char/short as int */
     unsigned pending_dead_code      : 1;    /* aborts func in an expr */
+
     unsigned use_precompiled_header : 1;    /* use precompiled header */
     unsigned doing_macro_expansion  : 1;    /* doing macro expansion */
     unsigned no_pch_warnings        : 1;    /* disable PCH warnings */
-
     unsigned align_structs_on_qwords: 1;    /* for ALPHA */
     unsigned axp_align_emu          : 1;    /* for ALPHA */
     unsigned no_check_inits         : 1;    /* ease init  type checking*/
     unsigned no_check_qualifiers    : 1;    /* ease qualifier mismatch */
     unsigned curdir_inc             : 1;    /* check current dir for include files */
+
     unsigned use_stdcall_at_number  : 1;    /* add @nn thing */
     unsigned rent                   : 1;    /* make re-entrant r/w split thind  */
     unsigned unaligned_segs         : 1;    /* don't align segments */
     unsigned trigraph_alert         : 1;    /* trigraph char alert */
-
     unsigned generate_auto_depend   : 1;    /* Generate make auto depend file */
     unsigned c99_extensions         : 1;    /* C99 extensions enabled */
     unsigned use_long_double        : 1;    /* Make CC send long double types to code gen */

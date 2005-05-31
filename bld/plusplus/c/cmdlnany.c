@@ -1215,6 +1215,9 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->oz ) {
         GenSwitches |= NULL_DEREF_OK;
     }
+    if( data->pil ) {
+        CompFlags.cpp_ignore_line = 1;
+    }
     if( data->p ) {
         CompFlags.cpp_output_requested = 1;
     }
