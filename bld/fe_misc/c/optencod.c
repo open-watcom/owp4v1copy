@@ -207,6 +207,7 @@ struct option {
     unsigned    is_prefix : 1;
     unsigned    is_timestamp : 1;
     unsigned    is_negate : 1;
+    unsigned    nochain : 1;
     char        name[1];
 };
 static OPTION *optionList;
@@ -621,6 +622,17 @@ static void doMULTIPLE( char *p )
     p = p;
     for( o = optionList; o != NULL; o = o->synonym ) {
         o->is_multiple = 1;
+    }
+}
+
+// :nochain.
+static void doNOCHAIN( char *p )
+{
+    OPTION *o;
+
+    p = p;
+    for( o = optionList; o != NULL; o = o->synonym ) {
+        o->nochain = 1;
     }
 }
 
@@ -1175,9 +1187,13 @@ static CODESEQ *addOptionCodeSeq( CODESEQ *code, OPTION *o )
         for( code = *splice; code != NULL; code = *splice ) {
             if( code->sensitive == sensitive ) {
                 if( sensitive ) {
-                    if( code->c == c ) break;
+                    if( code->c == c ) {
+                        break;
+                    }
                 } else {
-                    if( tolower( code->c ) == tolower( c )) break;
+                    if( tolower( code->c ) == tolower( c )) {
+                        break;
+                    }
                 }
             }
             splice = &(code->sibling);
@@ -1404,7 +1420,11 @@ static void emitAcceptCode( CODESEQ *c, unsigned depth, unsigned control )
         --depth;
         emitPrintf( depth, "}\n" );
     }
-    emitSuccessCode( depth, control );
+    if(( control & EC_CONTINUE ) && o->nochain ) {
+        emitSuccessCode( depth, control & ~ EC_CONTINUE );
+    } else {
+        emitSuccessCode( depth, control );
+    }
     if( o->is_prefix ) {
         --depth;
         emitPrintf( depth, "}\n" );
@@ -1572,10 +1592,23 @@ static void outputFN_FINI( void )
 
 static int usageCmp( const void *v1, const void *v2 )
 {
+    int     res;
+
     OPTION *o1 = *(OPTION **) v1;
     OPTION *o2 = *(OPTION **) v2;
 
-    return( stricmp( o1->field_name, o2->field_name ) );
+    res = tolower( *(o1->field_name) ) - tolower( *(o2->field_name) );
+    if( res == 0 ) {
+        res = o1->nochain - o2->nochain;
+        if( res == 0 ) {
+            return( stricmp( o1->field_name, o2->field_name ) );
+        }
+    }
+    if( res < 0 ) {
+        return( -1 );
+    } else {
+        return( 1 );
+    }
 }
 
 static void catArg( char *arg )
@@ -1662,8 +1695,10 @@ static size_t genOptionUsageStart( OPTION *o )
         }
     }
     if( chainOption[ o->name[0] ] & CHAIN_YES ) {
-        tokbuff[0] = ' ';
-        tokbuff[1] = ' ';
+        if( !o->nochain ) {
+            tokbuff[0] = ' ';
+            tokbuff[1] = ' ';
+        }
     }
     len = strlen( tokbuff );
     return( len );
@@ -1732,11 +1767,14 @@ static void createChainHeader( OPTION **o, unsigned language )
             genOptionUsageStart( *o );
             strcat( hdrbuff, &tokbuff[2] );
             ++o;
-            if( *o == NULL || (*o)->name[0] != c ) break;
+            if(( *o == NULL ) || ( (*o)->name[0] != c ) || ( (*o)->nochain ))
+                break;
             strcat( hdrbuff, "," );
         } else {
             ++o;
-            if( *o == NULL || (*o)->name[0] != c ) break;
+            if(( *o == NULL ) || ( (*o)->name[0] != c ) || ( (*o)->nochain )) {
+                break;
+            }
         }
     }
     strcat( hdrbuff, "} " );
@@ -1840,16 +1878,20 @@ static void processUsage( unsigned language, void (*process_line)( void ) )
         o = t[i];
         if( chainOption[ o->name[0] ] & CHAIN_YES ) {
             if(! ( chainOption[ o->name[0] ] & CHAIN_USAGE )) {
-                chainOption[ o->name[0] ] |= CHAIN_USAGE;
-                createChainHeader( &t[i], language );
-                process_line();
+                if( !o->nochain ) {
+                    chainOption[ o->name[0] ] |= CHAIN_USAGE;
+                    createChainHeader( &t[i], language );
+                    process_line();
+                }
             }
         }
         tokbuff[0] = '\0';
         len = genOptionUsageStart( o );
         fillOutSpaces( max - len );
         if( chainOption[ o->name[0] ] & CHAIN_YES ) {
-            strcat( tokbuff, "-> " );
+            if( !o->nochain ) {
+                strcat( tokbuff, "-> " );
+            }
         }
         strcat( tokbuff, o->lang_usage[language] );
         process_line();
