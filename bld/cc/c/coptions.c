@@ -1392,6 +1392,7 @@ static void SetAutoDependBackSlash()
     DependForceSlash = '\\';
 }
 
+static void Set_PIL()          { CompFlags.cpp_ignore_line = 1; }
 static void Set_PL()           { CompFlags.cpp_line_wanted = 1; }
 static void Set_PC()
 {
@@ -1618,6 +1619,7 @@ static struct option const CFE_Options[] = {
     { "nt=$",   0,              SetTextSegName },
 #endif
     { "nm=$",   0,              SetModuleName },
+    { "pil",    0,              Set_PIL },
     { "p*",     0,              SetPreprocessOptions },
     { "rod=@",  0,              SetReadOnlyDir },
 #if _CPU == 8086 || _CPU == 386

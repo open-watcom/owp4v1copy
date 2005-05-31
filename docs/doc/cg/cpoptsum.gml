@@ -692,6 +692,10 @@ control optimization
 :optref refid='SWoa'.
 .do end
 .*
+.note pil
+preprocessor ignores #line directives
+:optref refid='SWpil'.
+.*
 .note p{e,l,c,w=<num>}
 :CMT. .ix 'options' 'pe'
 :CMT. .ix 'options' 'pl'

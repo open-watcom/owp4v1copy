@@ -767,8 +767,10 @@ local void CLine( void )
         ExpectConstant();
         return;
     }
-    src_line = Constant; // stash in case of side effects
-    SrcFile->src_line = src_line - 1; /* don't count this line */
+    if( CompFlags.cpp_ignore_line == 0 ) {
+        src_line = Constant; // stash in case of side effects
+        SrcFile->src_line = src_line - 1; /* don't count this line */
+    }
     PPNextToken();
     if( CurToken != T_NULL ) {
         if( (CurToken != T_STRING) || CompFlags.wide_char_string ) {
@@ -776,20 +778,22 @@ local void CLine( void )
             ExpectString();
             return;
         }
-//      RemoveEscapes( Buffer );                /* 04-apr-91 */
-        flist = AddFlist( Buffer );
-        flist->rwflag = FALSE;  // not a real file so no autodep
-        SrcFile->src_name = flist->name;
-        SrcFile->src_fno  = flist->index;
-        TokenFno = flist->index;
-        SrcFile->src_flist = flist;             /* 21-dec-93 */
-        ErrFName = SrcFile->src_name;
-        if( CompFlags.cpp_output ) {            /* 30-may-95 */
-            EmitLine( src_line, SrcFile->src_name );
+        if( CompFlags.cpp_ignore_line == 0 ) {
+            //          RemoveEscapes( Buffer );                /* 04-apr-91 */
+            flist = AddFlist( Buffer );
+            flist->rwflag = FALSE;  // not a real file so no autodep
+            SrcFile->src_name = flist->name;
+            SrcFile->src_fno  = flist->index;
+            TokenFno = flist->index;
+            SrcFile->src_flist = flist;             /* 21-dec-93 */
+            ErrFName = SrcFile->src_name;
+            if( CompFlags.cpp_output ) {            /* 30-may-95 */
+                EmitLine( src_line, SrcFile->src_name );
+            }
         }
         PPNextToken();
         ChkEOL();
-    } else {
+    } else if( CompFlags.cpp_ignore_line == 0 ) {
         if( CompFlags.cpp_output ) {            /* 30-may-95 */
             EmitLine( src_line, SrcFile->src_name );
         }

@@ -184,6 +184,7 @@ Options:
   x           -> equivalent to -obmiler -s
 :endsegment
   z           -> NULL points to valid memory in the target environment
+-pil          preprocessor ignores #line directive
 -p{c,l,w=<num>} preprocess source file
   c           -> preserve comments
   l           -> insert #line directives

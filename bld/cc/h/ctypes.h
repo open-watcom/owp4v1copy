@@ -602,6 +602,7 @@ struct comp_flags {
     unsigned useful_side_effect     : 1;
     unsigned keep_comments          : 1;    /* wcpp - output comments */
     unsigned cpp_line_wanted        : 1;    /* wcpp - emit #line    */
+    unsigned cpp_ignore_line        : 1;    /* wcpp - ignore #line */
     unsigned generate_prototypes    : 1;    /* generate prototypes  */
     unsigned no_conmsg              : 1;    /* don't write wng &err to console */
 

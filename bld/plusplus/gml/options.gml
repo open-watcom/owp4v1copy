@@ -25,7 +25,8 @@
 :cmt    :jusage. <text>                         Japanese usage text
 :cmt    :title.                                 English title usage text
 :cmt    :jtitle.                                Japanese title usage text
-:cmt    :page.                  text for paging usage message
+:cmt    :page.                                  text for paging usage message
+:cmt    :nochain.                               option isn't chained with other options
 :cmt    :timestamp.                             kludge to record "when" an option
 :cmt                                            is set so that dependencies
 :cmt                                            between options can be simulated
@@ -818,6 +819,12 @@
 :optional.
 :usage. specify target in make-style auto depend file
 :jusage. specify target in make-style auto depend file
+
+:option. pil
+:target. any
+:nochain.
+:usage. preprocessor ignores #line directives
+:jusage. preprocessor ignores #line directives
 
 :option. p
 :target. any

@@ -299,6 +299,11 @@ allow extended "d" macro definitions on command line
 set preprocessor output file name
 :optref refid='SWfo'.
 .do end
+.if &e'&$SWpil eq 1 .do begin
+.note pil
+preprocessor ignores #line directives
+:optref refid='SWpil'.
+.do end
 .if &e'&$SWp eq 1 .do begin
 .note p{e,l,c,w=<num>}
 preprocess file
@@ -2240,7 +2245,15 @@ A default filename extension must be preceded by a period (".").
 &prompt.:SF font=1.compiler_name:eSF. report &sw.p &sw.fo=&dr4.&pc.proj&pc.prep&pc..cpr
 .exam end
 .do end
-
+.if &e'&$SWpil eq 1 .do begin
+:OPT refid='SWpil' name='pil'.
+.ix 'options' 'pil'
+If you are using preprocessed source file than it can contain #line 
+directives which specify position in original source code file.
+If you want to use reference to compiled source file rather then to original
+file then you can use this option and compiler "forget" all references
+to original source code. It can be useful for debugging.
+.do end
 .*
 .if &e'&$SWp eq 1 .do begin
 :OPT refid='SWp' name='p'.{e,l,c,w=<num>}

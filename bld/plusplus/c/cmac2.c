@@ -659,18 +659,22 @@ static void CLine( void )
         line = U32Fetch( Constant64 ); // side effects of NextToken
         NextToken();
         if( CurToken == T_NULL ) {
-            SrcFileAlias( SrcFileNameCurrent(), line, 0 );
+            if( CompFlags.cpp_ignore_line == 0 ) {
+                SrcFileAlias( SrcFileNameCurrent(), line, 0 );
+            }
         } else if( CurToken != T_STRING ) {
             Expecting( "string" );
         } else {
-            if( CurrChar == '\n' ) {
-                // line # has already been incremented
-                adjust = 0;
-            } else {
-                // line # will be incremented
-                adjust = -1;
+            if( CompFlags.cpp_ignore_line == 0 ) {
+                if( CurrChar == '\n' ) {
+                    // line # has already been incremented
+                    adjust = 0;
+                } else {
+                    // line # will be incremented
+                    adjust = -1;
+                }
+                SrcFileAlias( Buffer, line, adjust );
             }
-            SrcFileAlias( Buffer, line, adjust );
             NextToken();        // may clobber Buffer's contents
             ChkEOL();           // will increment line # if CurToken != T_NULL
         }
