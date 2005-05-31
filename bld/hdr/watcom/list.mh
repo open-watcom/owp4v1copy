@@ -15,8 +15,227 @@
 #error The header list requires C++
 #endif
 
+#ifndef _MEMORY_INCLUDED
+    #include <memory>
+#endif
+
+
 namespace std {
 
-} // End of namespace std.
+/* ==================================================================
+ * list class
+ */
+template< class Type, class Allocator = allocator<Type> >
+class list {
+public:
+    typedef Type                            value_type;
+    typedef unsigned int                    size_type;
+    typedef typename Allocator::reference   reference;
+
+private:
+    struct DoubleLink{
+        DoubleLink* fwd;
+        DoubleLink* bwd;
+    };
+    struct Node : public DoubleLink{
+        value_type value;
+        Node( value_type const & v ) : value(v) {}
+    };
+    DoubleLink sentinel;    //sentinel.fwd = first element in list
+                            //sentinel.bwd = last element in list
+public:
+    list() : mSize(0) { sentinel.fwd = sentinel.bwd = &sentinel; }
+    list( list const& );
+    ~list();
+    
+    /* ------------------------------------------------------------------
+     * iterators
+     */
+    class iterator_base : public std::iterator< std::bidirectional_iterator_tag,
+                                                value_type >{
+        friend class list;
+    public:
+        iterator_base( DoubleLink* d ) : self(static_cast<Node*>( d )) {}
+        iterator_base() {}
+        iterator_base( iterator_base const & x ) : self( x.self ) {}
+        bool operator==( iterator_base i ) { return( i.self == self ); }
+        iterator_base& operator++() { self = static_cast<Node*>(self->fwd); return( *this ); }
+        iterator_base& operator--() { self = static_cast<Node*>(self->bwd); return( *this ); }
+    protected:
+        Node* self;
+    };
+    class iterator : public iterator_base{
+    public:
+        iterator( DoubleLink* d ) : iterator_base(d) {}
+        iterator() : iterator_base() {}
+        iterator( iterator const & x ) : iterator_base(x) {}
+        value_type& operator*()     { return( self->value ); }
+        value_type* operator->()    { return( &(self->value) ); }
+        iterator& operator++()      { return( (iterator&)iterator_base::operator++() ); }
+        iterator& operator--()      { return( (iterator&)iterator_base::operator--() ); }
+        iterator  operator++( int ) { iterator i( *this ); operator++(); return( i ); };
+    };
+    class const_iterator : public iterator_base{
+    public:
+        const_iterator( DoubleLink* d ) : iterator_base(d) {}
+        const_iterator() : iterator_base() {}
+        const_iterator( const_iterator const & x ) : iterator_base(x) {}
+        value_type const& operator*() { return( self->value ); }
+        value_type const* operator->() { return( &(self->value) ); }
+        const_iterator& operator++() { return( (const_iterator&)iterator_base::operator++() ); }
+        const_iterator& operator--() { return( (const_iterator&)iterator_base::operator--() ); }
+    };
+    /*
+     * end of iterators
+     * ------------------------------------------------------------------ */
+    
+    iterator        begin()       { return( iterator( sentinel.fwd ) ); }
+    iterator        end()         { return( iterator( &sentinel ) ); }
+    const_iterator  begin() const { return( const_iterator( sentinel.fwd ) ); }
+    const_iterator  end() const   { return( const_iterator( (DoubleLink*)&sentinel ) ); }
+    
+    //capacity
+    size_type   size()     { return( mSize ); };
+    bool        empty() { return( mSize == 0 ); };
+    //element access
+    reference   front() { return( static_cast<Node*>( sentinel.fwd )->value ); }
+    reference   back()  { return( static_cast<Node*>( sentinel.bwd )->value ); }
+    //modifiers
+    iterator    insert( iterator, value_type const & );
+    void        erase( iterator it )             { pop( it.self ); }
+    void        push_front( value_type const & x){ push( static_cast<Node*>( sentinel.fwd ), x ); }
+    void        pop_front()                      { pop( static_cast<Node*>( sentinel.fwd ) ); }
+    void        push_back( value_type const & x) { push( static_cast<Node*>( &sentinel ), x ); }
+    void        pop_back()                       { pop( static_cast<Node*>( sentinel.bwd ) ); }
+    void        clear();
+    //ow extentions
+    bool        _Sane();
+private:
+    inline void pop( Node* );
+    inline Node* push( Node*, value_type const & );
+    //next line is triggering that annoying crash in cgbkobin.c
+    //allocator< Node > m;      //need to rebind
+    int mSize;
+};
+/* ------------------------------------------------------------------
+ * copy ctor
+ */
+template< class Type, class Allocator > 
+list< Type, Allocator >::list( list const& that )
+{
+    allocator< Node > mem; //!!!!!!!!!!
+    
+    DoubleLink const * o = &that.sentinel;
+    DoubleLink* n = &sentinel;
+    while( o->fwd != &that.sentinel ){
+        n->fwd = mem.allocate( 1 );
+        mem.construct( static_cast<Node*>(n->fwd), Node(static_cast<Node*>(o->fwd)->value) );
+        n->fwd->bwd = n;
+        n = n->fwd;
+        o = o->fwd;
+    };
+    n->fwd = &sentinel;
+    sentinel.bwd = n;
+    mSize = that.mSize;
+}
+/* ------------------------------------------------------------------
+ * ~dtor
+ */
+template< class Type, class Allocator >
+list< Type, Allocator >::~list()
+{
+    clear();
+}
+/* ------------------------------------------------------------------
+ * clear
+ * remove all elements
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::clear()
+{
+    allocator< Node > mem;  //fix me - what to do about this?
+    Node* n;
+    Node* delme;
+    n = (Node*)sentinel.fwd;
+    while( n != (Node*)&sentinel ){
+        delme = n;
+        n = (Node*)n->fwd;
+        mem.destroy( delme );
+        mem.deallocate( delme, 1 );
+    };
+    sentinel.fwd = sentinel.bwd = &sentinel;
+    mSize = 0;
+}
+/* ------------------------------------------------------------------
+ * insert(i, x)
+ * insert type x in list just before element identified by iterator i
+ */
+template< class Type, class Allocator >
+list< Type, Allocator >::iterator
+list< Type, Allocator >::insert( iterator it, Type const & x )
+{
+    Node* n = push( static_cast<Node*>( it.self ), x );
+    return iterator( n );
+}
+/* ------------------------------------------------------------------
+ * push( node*, x ) (private)
+ * insert type x in list just before element identified by node* 
+ */
+template< class Type, class Allocator >
+list< Type, Allocator >::Node*
+list< Type, Allocator >::push( Node* o, Type const & x )
+{
+    allocator< Node > mem;          //fixme
+    Node* n = mem.allocate( 1 );    //need to catch exceptions
+    mem.construct( n, Node(x) );
+    n->fwd = o;
+    n->bwd = o->bwd;
+    o->bwd->fwd = n;
+    o->bwd = n;
+    ++mSize;
+    return( n );
+}
+/* ------------------------------------------------------------------
+ * pop( Node* ) (private)
+ * remove (destroy and deallocate) an element
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::pop( Node* n )
+{
+    allocator< Node > mem;  //fixme
+    n->fwd->bwd = n->bwd;
+    n->bwd->fwd = n->fwd;
+    mem.destroy( n );
+    mem.deallocate( n, 1 );
+    --mSize;
+}
+/* ------------------------------------------------------------------
+ * _Sane( )
+ * returns true if invariants check out ok
+ */
+template< class Type, class Allocator >
+bool
+list< Type, Allocator >::_Sane( )
+{
+    if( !sentinel.fwd || !sentinel.bwd ) return( false );   //sentinel can't have null links
+    
+    DoubleLink* d = sentinel.fwd;
+    size_type c = 0;
+    
+    while( d != &sentinel ){
+        c++;
+        if( c > mSize) return( false );                 //exceeded size, something is wrong so abort now
+        if( !(d->fwd) || !(d->bwd) ) return( false );   //can't have null links
+        if( d->bwd->fwd != d ) return( false );         //broken links
+        if( d->fwd->bwd != d ) return( false );         //broken links
+        d = d->fwd;
+    };
+    if( c != mSize ) return( false );                   //check size
+    return( true );
+}
+
+
+
+}; // End of namespace std.
 
 #endif

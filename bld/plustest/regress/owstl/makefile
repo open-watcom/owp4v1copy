@@ -36,16 +36,19 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 tests = &
-	alg01.$(exe)    &
-	alg02.$(exe)    &
-	cmplx01.$(exe)	&
+        alg01.$(exe)    &
+        alg02.$(exe)    &
+        cmplx01.$(exe)  &
         fun01.$(exe)    &
         iter01.$(exe)   &
         lim01.$(exe)    &
+        list01.$(exe)   &
         map01.$(exe)    &
+        map02.$(exe)    &
         mem01.$(exe)    &
         numer01.$(exe)  &
         set01.$(exe)    &
+        set02.$(exe)    &
         string01.$(exe) &
         string02.$(exe) &
         util01.$(exe)   &
@@ -74,14 +77,20 @@ test : .symbolic test.lnk $(tests)
     $(run) iter01 >> test.out
     @echo ----------lim01---------->> test.out
     $(run) lim01 >> test.out
+    @echo ----------list01---------->> test.out
+    $(run) list01 >> test.out
     @echo ----------map01---------->> test.out
     $(run) map01 >> test.out
+    @echo ----------map02---------->> test.out
+    $(run) map02 >> test.out
     @echo ----------mem01---------->> test.out
     $(run) mem01 >> test.out
     @echo ----------numer01---------->> test.out
     $(run) numer01 >> test.out
     @echo ----------set01---------->> test.out
     $(run) set01 >> test.out
+    @echo ----------set02---------->> test.out
+    $(run) set02 >> test.out
     @echo ----------string01---------->> test.out
     $(run) string01 >> test.out
     @echo ----------string02---------->> test.out

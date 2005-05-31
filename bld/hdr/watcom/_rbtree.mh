@@ -25,16 +25,16 @@
 #ifndef _ITERATOR_INCLUDED
     #include <iterator>
 #endif
-#ifdef _FUNCTION_INCLUDED
-    #include <function>
+#ifndef _FUNCTIONAL_INCLUDED
+    #include <functional>
 #endif
-#ifdef _MEMORY_INCLUDED
+#ifndef _MEMORY_INCLUDED
     #include <memory>
 #endif
 
 namespace std{
 namespace _ow{
-    
+
 /* ==================================================================
  * value wrappers
  * Two classes/functors for set and map that allow single keys and 
@@ -60,12 +60,9 @@ struct TreePairWrapper{
  *  * find out what supposed to do with allocator alloc/construct exceptions
  *  * rebind and copy allocator
  *  * finish off all functions so has 14882 style interface
- *  * finish off iterator ( const, operator->, ...)
  *  * check const is used where ever it can/needed
  */
-template< class Key, class Type, class Compare = less< Key >,
-          class Allocator = allocator< TreePairWrapper< Key, Type >::value_type >,
-          class ValueWrapper = TreePairWrapper< Key, Type > >
+template< class Key, class Compare, class Allocator, class ValueWrapper >
 class RedBlackTree{
 public:
     typedef ValueWrapper::value_type value_type;
@@ -95,7 +92,7 @@ public:
     class iterator_base : public std::iterator< std::bidirectional_iterator_tag,
                                            value_type>{
         friend class RedBlackTree;
-        typedef RedBlackTree<Key, Type, Compare, Allocator, ValueWrapper> rbt_type;
+        typedef RedBlackTree<Key, Compare, Allocator, ValueWrapper> rbt_type;
     public:
         bool operator==( iterator_base i ) {return( self==i.self );}
         bool operator!=( iterator_base i ) {return( self!=i.self );}
@@ -184,9 +181,9 @@ protected:
  * unbalancedInsert( value_type const & )
  * like find but create new node after last node visited if cant find an existing key
  */
-//template<class Key, class Type, class Compare, class Allocator, class Allocator, class ValueWrapper>
-std::pair< RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::iterator, bool >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::unbalancedInsert(value_type const & v)
+//template<class Key, class Compare, class Allocator, class Allocator, class ValueWrapper>
+std::pair< RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator, bool >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::unbalancedInsert(value_type const & v)
 {
     if( mRoot==0 ){                 //special case nothing exists yet
         mRoot = mem.allocate( 1 );
@@ -243,9 +240,9 @@ public:
  * insert  !!MOVE ME OUTSIDE CLASS!!
  * supports ... operations
  */
-//template<class Key, class Type, class Compare, class Allocator, class Allocator, class ValueWrapper>
-std::pair< RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::iterator, bool >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::insert(value_type const & v)
+//template<class Key, class Compare, class Allocator, class Allocator, class ValueWrapper>
+std::pair< RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator, bool >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::insert(value_type const & v)
 {
     pair< iterator, bool > inserted = unbalancedInsert(v);
     if( inserted.second ){ 
@@ -268,9 +265,9 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::insert(value_type c
 /* ------------------------------------------------------------------
  * Copy Ctor
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::RedBlackTree(
-    RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper > const & that)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
+    RedBlackTree< Key, Compare, Allocator, ValueWrapper > const & that)
 {
     //copy allocator ?
     //copy comparator ? 
@@ -282,7 +279,6 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::RedBlackTree(
         mFirst = 0;
         mLast = 0;
         mRoot = 0;
-        //cout<<"no root\n";
         return;
     }
     mRoot = mem.allocate( 1 );
@@ -328,10 +324,10 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::RedBlackTree(
 /* ------------------------------------------------------------------
  * operator=
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >&
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::operator=(
-    RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper > const & that )
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >&
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::operator=(
+    RedBlackTree< Key, Compare, Allocator, ValueWrapper > const & that )
 {
     //cout<<"rbt operator=\n";
     clear();
@@ -341,8 +337,8 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::operator=(
 /* ------------------------------------------------------------------
  * Dtor
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::~RedBlackTree()
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::~RedBlackTree()
 {
     clear();
 }
@@ -351,8 +347,8 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::~RedBlackTree()
  * erase all elements. Should be quicker than iterating through each
  * one as we don't have to walk and rebalance
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::clear( )
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::clear( )
 {
     Node* n = mFirst;
     while( n ){
@@ -383,9 +379,9 @@ void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::clear( )
  * Find( )
  * Climb the tree until we get to the key :)
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::iterator 
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::find(Key const& findMe)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator 
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::find(Key const& findMe)
 {
     Node* n=mRoot;
     Node* notLT=0;
@@ -407,9 +403,9 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::find(Key const& fin
  * walkRight( Node* )
  * iterate to next greater node 
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::Node*
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkRight(Node* n) const
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::Node*
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::walkRight(Node* n) const
 {
     if( n->right){
         n = n->right;
@@ -424,9 +420,9 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkRight(Node* n) 
  * walkLeft( Node* )
  * iterate to next node with lower key
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::Node*
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkLeft(Node* n) const
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::Node*
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::walkLeft(Node* n) const
 {
     if( n->left){
         n = n->left;
@@ -441,8 +437,8 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::walkLeft(Node* n) c
  * blackHeight( iterator )
  * calculate black height of node
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::blackHeight(iterator i)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+int RedBlackTree< Key, Compare, Allocator, ValueWrapper >::blackHeight(iterator i)
 {
     Node* n = i.getNodePtr();
     int c = 0;
@@ -456,8 +452,8 @@ int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::blackHeight(ite
  * height( iterator )
  * calculate height of node
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::height(iterator i)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+int RedBlackTree< Key, Compare, Allocator, ValueWrapper >::height(iterator i)
 {
     Node* n = i.getNodePtr();
     int c = 0;
@@ -490,8 +486,8 @@ int RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::height(iterator
  *  / \               / \               / \          / \
  * a   b             b   c             c   d        b   c
  */
-template<class Key, class Type, class Compare, class Allocator, class ValueWrapper>
-void RedBlackTree<Key, Type, Compare, Allocator, ValueWrapper>::insBalTransform(Node* inserted)
+template<class Key, class Compare, class Allocator, class ValueWrapper>
+void RedBlackTree<Key, Compare, Allocator, ValueWrapper>::insBalTransform(Node* inserted)
 {
     // at this point inserted->colour == red;
     for( ;; ){ 
@@ -601,8 +597,8 @@ void RedBlackTree<Key, Type, Compare, Allocator, ValueWrapper>::insBalTransform(
  * test the container hasn't been corrupt
  * return true if everything is ok
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+bool RedBlackTree< Key, Compare, Allocator, ValueWrapper >::_Sane()
 {
     if( !mRoot ){
         //no element in tree
@@ -638,9 +634,9 @@ bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
             mError = 30;                // we could have got trapped in
             return false;               // a loop, cant be more iterations
         }                               // than size
-        value_type v_old = n->value;
+        Node* n_old = n;
         n = it.getNodePtr();
-        if( (it != begin()) && (v_old == n->value) ){
+        if( (it != begin()) && (n_old == n) ){
             mError = 40;                //circular links:
             return false;               //iterating didn't advance
         }
@@ -711,9 +707,9 @@ bool RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::_Sane()
 /* ------------------------------------------------------------------
  * Erase( key )
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::size_type
-RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::erase(const Key& k)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::size_type
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(const Key& k)
 {
     iterator it = find(k);
     if(it == end()) return 0;
@@ -727,8 +723,8 @@ RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::erase(const Key& k)
  * Maybe to do: this isn't the most easy to understand, is there a nicer
  * way of writing it?
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::erase(iterator it)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(iterator it)
 {
     Node* delme = it.getNodePtr();
     Node* child;    //(re)moved endnode child
@@ -844,8 +840,8 @@ void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::erase(iterator
  *  can use one block of code for all template instantiations or does
  *  it need to be coded in a non template base class?)
  */
-template< class Key, class Type, class Compare, class Allocator, class ValueWrapper >
-void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::doubleBlackTransform(Node* parent, bool lefty)
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform(Node* parent, bool lefty)
 {
     for( ;; ){
         Node* sibling;
@@ -1056,6 +1052,307 @@ void RedBlackTree< Key, Type, Compare, Allocator, ValueWrapper >::doubleBlackTra
             //doubleBlackTransform(parent,lefty); return;
         }
     }//end for( ever )
+}
+
+
+
+/* ================================================================== */
+
+
+
+
+/* ==================================================================
+ * MLRBTNode 
+ * sub-node type that forms a linked list and is stored in the 
+ * rbtree node to create the MultiListRBTree
+ */
+template< class ValueType >
+struct MLRBTNode{
+    MLRBTNode* fwd;
+    MLRBTNode* bwd;
+    ValueType value;
+    MLRBTNode() {}
+    MLRBTNode(ValueType v) : value(v) {}
+};
+/* ==================================================================
+ * ValueWrappers for MultiListRBTree
+ * pairs for multimap, plain Keys for multiset
+ * wraps up the rbtree type (pointer to the list) and knows how to
+ * get a key out of it
+ */
+template< class Key, class Type >
+struct ListTreePairWrapper{
+    //this is the rbtree value_type (pointer to list)
+    typedef MLRBTNode< pair< Key const, Type > >* value_type;
+    //this is the value_type actually contained in the container
+    typedef pair< Key const, Type > contained_type;
+    Key const& operator()(value_type const & v) const {return v->value.first;}
+};
+template< class Key, class Type >
+struct ListTreeKeyWrapper{
+    //this is the rbtree value_type (pointer to list)
+    typedef MLRBTNode< Key >* value_type;
+    //this is the value_type actually contained in the container
+    typedef Key contained_type;
+    Key const& operator()(value_type const & v) const {return v->value;}
+};
+/* ==================================================================
+ * MultiListRBTree 
+ * Adds linked list to redblack tree to build a multimap/set.
+ * handles the list operations in this class rather than using a 
+ * full blown (or even a cut down one) list object in tree node.
+ * This should save a little memory.
+ * Note for a low number of repetitions of each key this alogorithm
+ * will use more memory than holding the repeated nodes directly in tree
+ * for this algorithm   p = 4 + 2n ; c = 1
+ * for tree only algo   p = 3n ; c = n
+ * where p is num of pointers, c is num of colour enums, n is num of key repetitions
+ * so if c uses same space as p (likely due to alignment?) this algo is
+ * better if n >=3
+ * This algo should have slightly faster find (+ insert/delete) operations
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+class MultiListRBTree{
+public:
+    typedef ValueWrapper::contained_type    value_type;
+    typedef unsigned int                    size_type;
+    typedef Key                             key_type;
+
+private:
+    typedef RedBlackTree< Key, Compare, Allocator, ValueWrapper > tree_type;
+    typedef MLRBTNode< value_type > node_type;
+    
+public:
+    MultiListRBTree() : mSize(0) {};
+    ~MultiListRBTree();
+    
+    /* ------------------------------------------------------------------
+     * iterators
+     */
+    class iterator_base;
+    friend class iterator_base;
+    class iterator_base{
+    public:
+        iterator_base& operator++() 
+        { 
+            if( self == (*tit)->bwd ){  //if last element in list
+                ++tit;
+                if( tit != mlt->mTree.end() ) self = *tit;  //move on to first list node in next tree node
+                else self = 0;          //signals end iterator
+            }else{
+                self = self->fwd;
+            }
+            return( *this );
+        }
+        iterator_base& operator--()
+        {
+            if( self == (*tit) ){       //if first element in list
+                --tit;                  //move back to last list node in 
+                self = (*tit)->bwd;     //previous tree node
+            }else{
+                self = self->bwd;
+            }
+            return( *this );
+        }
+        value_type& operator*() { return( self->value ); }
+        value_type* operator->() { return( &(self->value) ); }
+        bool operator==( iterator_base const & that ) { return( self == that.self ); }
+        bool operator!=( iterator_base const & that ) { return( self != that.self ); }
+    protected:
+        friend class MultiListRBTree;
+        iterator_base() {}
+        iterator_base( MultiListRBTree const* m, tree_type::iterator const & i) 
+            : mlt(m), tit(i)
+            { ( tit != (mlt->mTree).end() ) ? self = (*tit) : self = 0; }
+        iterator_base( MultiListRBTree const* m,
+                       tree_type::iterator const & i,
+                       node_type* n ) : mlt(m), tit(i), self(n) {}
+        tree_type::iterator tit;
+        MultiListRBTree const* mlt;
+        node_type* self;
+    };
+    class iterator : public iterator_base{
+    public:
+        iterator() : iterator_base() {}
+        iterator( MultiListRBTree const* m, tree_type::iterator const & i) 
+            : iterator_base( m, i ) {}
+        iterator( MultiListRBTree const* m,
+                  tree_type::iterator const & i,
+                  node_type* n ) : iterator_base( m, i, n ) {}
+        iterator& operator++() { return( (iterator&)iterator_base::operator++() ); }
+        iterator& operator--() { return( (iterator&)iterator_base::operator--() ); }
+    };
+    class iterator_const : public iterator_base{
+        public:
+        iterator_const() : iterator_base() {}
+        iterator_const( MultiListRBTree const* m, tree_type::iterator const & i) 
+            : iterator_base( m, i ) {}
+        iterator_const( MultiListRBTree const* m,
+                        tree_type::iterator const & i,
+                        node_type* n ) : iterator_base( m, i, n ) {}
+        iterator_const& operator++() { return( (iterator_const&)iterator_base::operator++() ); }
+        iterator_const& operator--() { return( (iterator_const&)iterator_base::operator--() ); }
+    };
+
+    iterator        begin() { return( iterator( this, mTree.begin() ) ); }
+    iterator        end() { return( iterator( this, mTree.end() ) ); }
+    //iterator_const  begin() const { return( iterator_const( this, mTree.begin() ) ); }
+    //iterator_const  end() const { return( iterator_const( this, mTree.end() ) ); }
+    //capacity
+    size_type   size() { return( mSize ); }
+    bool        empty() { return( !mSize ); }
+    //modifiers
+    iterator    insert( value_type const & );
+    void        erase( iterator );
+    size_type   erase( key_type const & );
+    void        clear();
+    //operations
+    iterator    find( key_type const & );
+    size_type   count( key_type const & );
+
+    //owstl extentions
+    bool _Sane();
+private:
+    size_type mSize;
+    tree_type mTree;            //this is the tree that holds the lists
+    allocator< node_type > mem; //need to do rebind
+};
+
+/* ------------------------------------------------------------------
+ * insert( value_type const & )
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::iterator
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::insert( value_type const & x )
+{
+    node_type* n;
+    n = mem.allocate( 1 );
+    mem.construct( n, node_type(x) );
+    pair< tree_type::iterator, bool > ans = mTree.insert( n );
+    if( ans.second ){   //insert happened
+        n->fwd = n;
+        n->bwd = n;
+    }else{              //already inserted
+        node_type* o = *ans.first;  //get pointer to already inserted node
+        n->bwd = o->bwd;            //fix up links so as to add new node
+        n->fwd = o;                 //to end of list
+        o->bwd->fwd = n;
+        o->bwd = n;
+    }
+    mSize++;
+    return iterator( this, ans.first, n );
+}
+/* ------------------------------------------------------------------
+ * dtor
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::~MultiListRBTree( )
+{
+    clear();
+}
+/* ------------------------------------------------------------------
+ * clear()
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+void MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::clear( )
+{
+    for( tree_type::iterator i = mTree.begin(); i != mTree.end(); ++i ){
+        node_type* n = *i;
+        node_type* delme;
+        node_type* end = n;
+        do{
+            delme = n;
+            n = n->fwd;
+            mem.destroy( delme );
+            mem.deallocate( delme, 1 );
+        }while( n != end );
+    }
+    mTree.clear();
+    mSize = 0;
+}
+
+/* ------------------------------------------------------------------
+ * _Sane()
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+bool MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::_Sane( )
+{
+    if( !mTree._Sane() ) return false;
+    //do more tests here
+    return true;
+}
+/* ------------------------------------------------------------------
+ * find()
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::iterator
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::find( key_type const & k )
+{
+    return iterator( this, mTree.find( k ) );
+}
+/* ------------------------------------------------------------------
+ * count( key_type )
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::size_type
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::count( key_type const & k )
+{
+    tree_type::iterator tit = mTree.find( k );
+    if( tit == mTree.end() ) return 0;
+    node_type* start = *tit;
+    node_type* n = start;
+    size_type c = 0;
+    do{
+        n = n->fwd;
+        ++c;
+    }while( n != start );
+    
+    return c;
+}
+/* ------------------------------------------------------------------
+ * erase( iterator )
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+void
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::erase( iterator it )
+{
+    node_type* n = it.self;
+    if( n == n->fwd ){          //if only element in list 
+        mTree.erase( it.tit );
+    }else if( *(it.tit) == n ){ //if master element in list & >1 element
+        n->bwd->fwd = n->fwd;   //relink to remove n
+        n->fwd->bwd = n->bwd;
+        *(it.tit) = n->fwd;     //set tree to hold new master element
+    }else{                      //if not master element & >1 element
+        n->bwd->fwd = n->fwd;   //relink to remove n
+        n->fwd->bwd = n->bwd;
+    }
+    mem.destroy( n );
+    mem.deallocate( n, 1 );
+    --mSize;
+}
+/* ------------------------------------------------------------------
+ * erase( key_type )
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::size_type
+MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::erase( key_type const & k )
+{
+    iterator it = find( k );
+    node_type* n = it.self;
+    node_type* delme;
+    node_type* end = n;
+    size_type c = 0;
+    do{
+        delme = n;
+        n = n->fwd;
+        mem.destroy( delme );
+        mem.deallocate( delme, 1 );
+        ++c;
+        --mSize;
+    }while( n != end );
+    mTree.erase( it.tit );
+    return( c );
 }
 
 }; //namespace _ow
