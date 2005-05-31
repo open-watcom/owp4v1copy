@@ -702,7 +702,6 @@ int main( int argc, char *argv[] )
         free( CtlList );
         CtlList = next;
     }
-    if( LogFile != NULL )
-        fclose( LogFile );
+    CloseLog();
     return( 0 );
 }
