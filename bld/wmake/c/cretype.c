@@ -76,7 +76,7 @@
 }
 
 
-void main( void )
+int main( void )
 /***************/
 {
     int     i;
@@ -127,5 +127,5 @@ void main( void )
 
     /*printf("\n};\n");*/
     printf( "\n" );
-    exit( 0 );
+    return( 0 );
 }
