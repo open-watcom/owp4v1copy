@@ -11,11 +11,7 @@ host_cpu = 386
 !include defrule.mif
 !include deftarg.mif
 
-!ifdef __LINUX__
-description = \'Open Watcom Debugger PM Helper\'
-!else
 description = 'Open Watcom Debugger PM Helper'
-!endif
 
 extra_c_flags = -s -fpc
 

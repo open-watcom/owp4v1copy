@@ -32,11 +32,7 @@ WINDOWS = 1
 
 !include ../mif/objects.mif
 
-!ifdef __LINUX__
-description = \'Open Watcom IDE\'
-!else
 description = 'Open Watcom IDE'
-!endif
 
 !ifeq host_os win
 extra_c_flags_link      = -dSERVER
@@ -67,11 +63,15 @@ LIBS = &
 all: $(prereq_ide_h) $(name).exe
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
+        %create $(name).lnk
+        %append $(name).lnk $(lflags)
+        %append $(name).lnk op map, de $(description)
+        %append $(name).lnk f {$(OBJECTS)}
+        %append $(name).lnk lib {$(LIBS)}	
+        $(linker) name $(name) @$(name).lnk
 !ifneq host_os os2
-        $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) $(rc_flags) -k viper.res $^@
 !else
-        $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         set opath=$(%path)
 	set path=$(rc_os2_path)
         $(rc_os2) -p -x viper.res $^@
