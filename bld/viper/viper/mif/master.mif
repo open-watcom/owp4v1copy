@@ -102,7 +102,7 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS
 curr_dir=$+$(%cwd)$-
-        @cd $(%DOC_ROOT)\$(host_os)
+        @cd $(%DOC_ROOT)/$(host_os)
         @wmake -h hbook=ide header=1
         @cd $(curr_dir)
 !endif
