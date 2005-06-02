@@ -532,8 +532,14 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
         }
         break;
     case EXE_TYPE_LX:
-        printf("Writing resource data to LX modules not yet supported.\n");
-        return( FALSE );
+        status = SeekRead( info->Handle, info->WinHeadOffset,
+                           &info->u.LXInfo.OS2Head, sizeof(os2_flat_header) );
+        if( status != RS_OK ) {
+            RcError( ERR_NOT_VALID_EXE, filename );
+            return( FALSE );
+        } else {
+            info->DebugOffset = info->WinHeadOffset + sizeof(os2_flat_header);
+        }
         break;
     default:
         RcError( ERR_NOT_VALID_EXE, filename );
@@ -586,6 +592,17 @@ static void FreePEFileInfoPtrs( PEExeInfo * info )
     }
 }
 
+static void FreeLXFileInfoPtrs( LXExeInfo *info )
+/***********************************************/
+{
+    if( info->Objects != NULL ) {
+        RcMemFree( info->Objects );
+    }
+    if( info->Pages != NULL ) {
+        RcMemFree( info->Pages );
+    }
+}
+
 extern void ClosePass2FilesAndFreeMem( void )
 /*******************************************/
 {
@@ -608,6 +625,9 @@ extern void ClosePass2FilesAndFreeMem( void )
     case EXE_TYPE_PE:
         FreePEFileInfoPtrs( &old->u.PEInfo );
         break;
+    case EXE_TYPE_LX:
+        FreeLXFileInfoPtrs( &old->u.LXInfo );
+        break;
     }
 
     if( tmp->IsOpen ) {
@@ -620,6 +640,9 @@ extern void ClosePass2FilesAndFreeMem( void )
         break;
     case EXE_TYPE_PE:
         FreePEFileInfoPtrs( &tmp->u.PEInfo );
+        break;
+    case EXE_TYPE_LX:
+        FreeLXFileInfoPtrs( &tmp->u.LXInfo );
         break;
     }
     CloseResFiles( Pass2Info.ResFiles );

@@ -39,6 +39,7 @@
 #include "exepe.h"
 #include "exeflat.h"
 #include "exerespe.h"
+#include "exereslx.h"
 #include "exeseg.h"
 #include "exeres.h"
 #ifdef UNIX
@@ -74,6 +75,13 @@ typedef struct PEExeInfo {
                                  // WinHead to get at it instead
 } PEExeInfo;
 
+typedef struct LXExeInfo {
+    os2_flat_header OS2Head;
+    object_record   *Objects;
+    lx_map_entry    *Pages;
+    LXResTable      Res;
+} LXExeInfo;
+
 typedef struct ExeFileInfo {
     int             IsOpen;
     int             Handle;
@@ -83,6 +91,7 @@ typedef struct ExeFileInfo {
     union {
         NEExeInfo   NEInfo;
         PEExeInfo   PEInfo;
+        LXExeInfo   LXInfo;
     } u;
     uint_32         DebugOffset;        /* wlink doesn't initialize this */
 } ExeFileInfo;

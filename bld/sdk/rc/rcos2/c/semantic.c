@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Semantic actions called by the YACC generated driver.
 *
 ****************************************************************************/
 
@@ -321,28 +320,42 @@ FullMemFlags SemAddFirstMemOption( uint_8 token )
     return( SemAddMemOption( newflags, token ) );
 }
 
+/* IBM's RC has a tendency to add PURE flag when other memory flags
+ * are specified. The flag will be ignored by OS but we do the same
+ * for compatibility.
+ */
 FullMemFlags SemAddMemOption( FullMemFlags currflags, uint_8 token )
 /******************************************************************/
 {
     switch (token) {
     case Y_PRELOAD:
         currflags.flags |= MEMFLAG_PRELOAD;
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            currflags.flags |= MEMFLAG_PURE;
         currflags.loadOptGiven = TRUE;
         break;
     case Y_LOADONCALL:
         currflags.flags &= ~MEMFLAG_PRELOAD;
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            currflags.flags |= MEMFLAG_PURE;
         currflags.loadOptGiven = TRUE;
         break;
     case Y_FIXED:
         currflags.flags &= ~MEMFLAG_MOVEABLE;
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            currflags.flags |= MEMFLAG_PURE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_MOVEABLE:
         currflags.flags |= MEMFLAG_MOVEABLE;
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            currflags.flags |= MEMFLAG_PURE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_DISCARDABLE:
         currflags.flags |= MEMFLAG_DISCARDABLE;
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            currflags.flags |= MEMFLAG_PURE | MEMFLAG_MOVEABLE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_PURE:
@@ -352,6 +365,9 @@ FullMemFlags SemAddMemOption( FullMemFlags currflags, uint_8 token )
     case Y_IMPURE:
         currflags.flags &= ~MEMFLAG_PURE;
         currflags.purityOptGiven = TRUE;
+        break;
+    case Y_SEGALIGN:    // This one is OS/2 2.x specific
+        currflags.flags |= MEMFLAG_SEGALIGN;
         break;
     }
 

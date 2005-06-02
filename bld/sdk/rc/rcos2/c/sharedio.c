@@ -128,14 +128,22 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
         target = WResGetTargetOS( resfile->Dir );
         switch( type ) {
         case EXE_TYPE_NE:
-            if( target == WRES_OS_WIN32 ) {
-                RcError( ERR_NT_RES_TO_WIN_EXE, resfile->name, exename );
+            if( target != WRES_OS_WIN16 ) {
+                RcError( ERR_NONWIN_RES_TO_WIN_EXE, resfile->name, exename );
                 goto HANDLE_ERROR;
             }
             break;
         case EXE_TYPE_PE:
-            if( target == WRES_OS_WIN16 ) {
-                RcError( ERR_WIN_RES_TO_NT_EXE, resfile->name, exename );
+            if( target != WRES_OS_WIN32 ) {
+                RcError( ERR_NONNT_RES_TO_NT_EXE, resfile->name, exename );
+                goto HANDLE_ERROR;
+            }
+            break;
+        case EXE_TYPE_LX:
+            // The Win16 and OS/2 MS/IBM resource formats are the same (no
+            // wonder, since MS did them both)
+            if( target != WRES_OS_OS2 && target != WRES_OS_WIN16 ) {
+                RcError( ERR_NONOS2_RES_TO_OS2_EXE, resfile->name, exename );
                 goto HANDLE_ERROR;
             }
             break;
@@ -147,6 +155,7 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
 
 HANDLE_ERROR:
     CloseResFiles( *resinfo );
+    *resinfo = NULL;
     return( FALSE );
 }
 

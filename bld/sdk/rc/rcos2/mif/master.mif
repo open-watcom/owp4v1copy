@@ -38,7 +38,7 @@ splice_opts = -kDEBUG
 
 objs =  ytab.obj &
         errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
-        exeseg.obj exeutil.obj global.obj                               &
+        exereslx.obj exelxobj.obj exeseg.obj exeutil.obj global.obj     &
         keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj      &
         rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj           &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj     &

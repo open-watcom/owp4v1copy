@@ -92,7 +92,7 @@ static int Pass1( void )
     int     noerror;
 
     noerror = RcPass1IoInit();
-    if (noerror) {
+    if( noerror ) {
         if( !CmdLineParms.PreprocessOnly ) {
             SetDefLang();
             ParseInit();
@@ -119,13 +119,20 @@ static int Pass2( void )
     int     noerror;
 
     noerror = RcPass2IoInit();
-    if (noerror) {
+    if( noerror ) {
         switch( Pass2Info.OldFile.Type ) {
         case EXE_TYPE_NE:
             noerror = MergeResExeNE();
             break;
         case EXE_TYPE_PE:
             noerror = MergeResExePE();
+            break;
+        case EXE_TYPE_LX:
+            noerror = MergeResExeLX();
+            break;
+        default:
+            RcError( ERR_INTERNAL, INTERR_UNKNOWN_RCSTATUS );
+            noerror = FALSE;
             break;
         }
         RcPass2IoShutdown( noerror );

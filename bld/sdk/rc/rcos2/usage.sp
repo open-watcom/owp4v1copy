@@ -8,22 +8,22 @@ Options: (/option is also accepted)
 -dNAME=value   - behave as if #define NAME value was at top of file
 -ad            - generate auto dependency information for use by WMAKE
 :segment osi
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file
 -bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment nt
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file (default)
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file (default)
 -bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment os2
 -bt=os2        - build an OS/2 resource file (default)
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file
 :elsesegment
--bt=windows    - build a WIN16 resource file (default)
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file (default)
+-bt=nt         - build a Win32 resource file
 -bt=os2        - build an OS/2 resource file
 :endsegment
 :endsegment
@@ -71,22 +71,22 @@ Options: (/option is also accepted)
 -dNAME=value   - behave as if #define NAME value was at top of file
 -ad            - generate auto dependency information for use by WMAKE
 :segment osi
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file
 -bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment nt
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file (default)
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file (default)
 -bt=os2        - build an OS/2 resource file
 :elsesegment
 :segment os2
 -bt=os2        - build an OS/2 resource file (default)
--bt=windows    - build a WIN16 resource file
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file
+-bt=nt         - build a Win32 resource file
 :elsesegment
--bt=windows    - build a WIN16 resource file (default)
--bt=nt         - build a WIN32 resource file
+-bt=windows    - build a Win16 resource file (default)
+-bt=nt         - build a Win32 resource file
 -bt=os2        - build an OS/2 resource file
 :endsegment
 :endsegment

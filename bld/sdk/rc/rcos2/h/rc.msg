@@ -28,11 +28,14 @@ pick(   ERR_NOT_CURSOR_FILE,
 pick(   ERR_NOT_BITMAP_FILE,
         "\"%s\" is not a valid bitmap file.",
         "\"%s\" は無効なビットマップファイルです." )
-pick(   ERR_WIN_RES_TO_NT_EXE,
-        "Trying to add a Windows RES file \"%s\" to an NT executable \"%s\".",
+pick(   ERR_NONNT_RES_TO_NT_EXE,
+        "Trying to add a Win16 or OS/2 RES file \"%s\" to a Win32 executable \"%s\".",
         "ウィンドウズ用 RESファイル \"%s\" をNT実行ファイル \"%s\" に追加しようとしています." )
-pick(   ERR_NT_RES_TO_WIN_EXE,
-        "Trying to add an NT RES file \"%s\" to a Windows executable \"%s\".",
+pick(   ERR_NONWIN_RES_TO_WIN_EXE,
+        "Trying to add a Win32 or OS/2 RES file \"%s\" to a Win16 executable \"%s\".",
+        "NT用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )
+pick(   ERR_NONOS2_RES_TO_OS2_EXE,
+        "Trying to add a Win16 or Win32 RES file \"%s\" to an OS/2 executable \"%s\".",
         "NT用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )
 pick(   ERR_PE_HEADER_SIZE_CHANGE,
         "Object alignment increase required.  Relink with larger object alignment.",
