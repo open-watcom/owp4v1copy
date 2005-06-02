@@ -252,13 +252,9 @@ extern "C"
 #endif
 void __FINI_ARGV( void )
 {
-    int     i;
-
     if( _ARGV != NULL ) {
-        for( i = 1; i < _ARGC; i++ ) {
-            if( _ARGV[i] != NULL ) {
-                free( _ARGV[i] );
-            }
+        if( (_ARGC > 1) && (_ARGV[1] != NULL) ) {
+            free( _ARGV[1] );
         }
         free( _ARGV );
     }
