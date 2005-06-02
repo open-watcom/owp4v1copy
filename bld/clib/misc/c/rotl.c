@@ -45,7 +45,7 @@ extern unsigned int __rotl( unsigned int value, unsigned int shift );
 
 _WCRTLINK unsigned int _rotl( unsigned int value, unsigned int shift )
 {
-#if defined(__386__) || defined(M_I86)
+#if ( defined(__386__) || defined(M_I86) ) && defined(__WATCOMC__)
     return( __rotl( value, shift ) );
 #else
     unsigned int    tmp;
