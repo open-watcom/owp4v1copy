@@ -47,9 +47,10 @@
 
 #define ERR_NONE    0x00        // error-types used by parse_cmdline,
 #define ERR_USAGE   0x01        // copy_bindata
-#define ERR_ALLOC   0x02
-#define ERR_READ    0x03
-#define ERR_WRITE   0x04
+#define ERR_RESTRIC 0x02
+#define ERR_ALLOC   0x03
+#define ERR_READ    0x04
+#define ERR_WRITE   0x05
 
 
 typedef struct reloc_table {
@@ -69,11 +70,12 @@ typedef struct arguments {
     FILE            *ifile;
     FILE            *ofile;
     struct {
-        unsigned        have_l : 1;
-        unsigned        disp_h : 1;
-        unsigned        disp_r : 1;
-        unsigned        quiet  : 1;
-        unsigned_16     lseg;
+        unsigned        be_ext   : 1;       // option 'x'
+        unsigned        be_quiet : 1;       // option 'q'
+        unsigned        disp_h   : 1;       // option 'h'
+        unsigned        disp_r   : 1;       // option 'r'
+        unsigned        have_l   : 1;       // option 'l'
+        unsigned_16     lseg;               // arg to 'l'
     }               opt;
     char            iname[_MAX_PATH];
     char            oname[_MAX_PATH];
@@ -83,12 +85,11 @@ typedef struct arguments {
 // skip over istream's header and copy the binary-data (i.e. everything but
 // the header) to ostream. while doing so, apply any relocations
 
-int copy_bindata( FILE *istream, FILE *ostream, dos_exe_header *header,
-                  reloc_table *reltab )
+int copy_bindata( FILE *istream, FILE *ostream, unsigned_32 bin_size,
+                  unsigned_32 num_skip, reloc_table *reltab )
 {
 
     unsigned_16     addr;               // orig. addr of bin_data to patch
-    unsigned_32     bin_size;           // size of binary data to copy
     unsigned_8      *buffer;            // buffer of len BUF_SIZE for file-i/o
     unsigned_8      *bptr;              // ptr into buffer to (part of) reloc
     unsigned_16     carry;              // carry from lo-part; 0x0100 or 0x0000
@@ -96,11 +97,7 @@ int copy_bindata( FILE *istream, FILE *ostream, dos_exe_header *header,
     unsigned_16     num_read;           // bytes to read; in (0, BUF_SIZE]
     unsigned_32     tot_read;           // total bytes read so far
 
-    bin_size  = header->mod_size + ( (header->file_size - 1) << 9)
-                - (header->hdr_size << 4);
-    bin_size += header->mod_size ? 0: 512;
-
-    if( fseek( istream, header->hdr_size << 4, SEEK_SET ) ) {
+    if( fseek( istream, num_skip, SEEK_SET ) ) {
         return( ERR_READ );
     }
 
@@ -298,30 +295,34 @@ int parse_cmdline( arguments *arg, int argc, char *argv[] )
     char    *ext;
     int     i;
 
-    arg->opt.disp_h = 0;
-    arg->opt.disp_r = 0;
-    arg->opt.have_l = 0;
-    arg->opt.quiet  = 0;
+    arg->opt.be_ext   = 0;
+    arg->opt.be_quiet = 0;
+    arg->opt.disp_h   = 0;
+    arg->opt.disp_r   = 0;
+    arg->opt.have_l   = 0;
 
     // process the passed options
     i = 1;
-    while( (i < argc) && (*argv[i] == '-') ) {
+    while( (i < argc) && ((*argv[i] == '-') || (*argv[i] == '/')) ) {
         switch( argv[i][1] ) {
         case 'q':
-            arg->opt.quiet = 1;
+            arg->opt.be_quiet = 1;
             break;
         case 'h':
-            arg->opt.disp_h = 1;
+            arg->opt.disp_h   = 1;
             break;
         case 'r':
-            arg->opt.disp_r = 1;
+            arg->opt.disp_r   = 1;
             break;
         case 'l':
             if( argv[i][2] != '=' ) {
                 return( ERR_USAGE );
             }
-            arg->opt.lseg   = (unsigned_16)strtol( argv[i] + 3, NULL, 0 );
-            arg->opt.have_l = 1;
+            arg->opt.lseg     = (unsigned_16)strtol( argv[i] + 3, NULL, 0 );
+            arg->opt.have_l   = 1;
+            break;
+        case 'x':
+            arg->opt.be_ext   = 1;
             break;
         default :
             return( ERR_USAGE );
@@ -359,10 +360,12 @@ int main( int argc, char *argv[] )
     arguments       arg;
     dos_exe_header  *header;
     reloc_table     *reltab;
+    unsigned_32     bin_size;
+    unsigned_32     tot_skip;
     int             result;
 
     result = parse_cmdline( &arg, argc, argv );
-    if( !arg.opt.quiet ) {
+    if( !arg.opt.be_quiet ) {
         puts( banner1w( "EXE to Binary Converter", _EXE2BIN_VERSION_ ) );
         puts( banner2( "2001" ) );
         puts( banner3 );
@@ -373,17 +376,13 @@ int main( int argc, char *argv[] )
                "Options: -q        suppress informational messages\n"
                "         -h        display exe-header\n"
                "         -r        display relocations\n"
-               "         -l=<seg>  relocate exe_file to segment <seg>" );
+               "         -l=<seg>  relocate exe_file to segment <seg>\n"
+               "         -x        extended behaviour, e.g. files > 64KB" );
         return( EXIT_FAILURE );
     }
 
     if( (arg.ifile = fopen( arg.iname, "rb" )) == NULL ) {
         printf( "Error opening %s for reading.\n", arg.iname );
-        return( EXIT_FAILURE );
-    }
-
-    if( (arg.ofile = fopen( arg.oname, "wb" )) == NULL ) {
-        printf( "Error opening %s for writing.\n", arg.oname );
         return( EXIT_FAILURE );
     }
 
@@ -416,7 +415,50 @@ int main( int argc, char *argv[] )
         return( EXIT_FAILURE );
     }
 
-    if( (result = copy_bindata( arg.ifile, arg.ofile, header, reltab )) ) {
+    tot_skip  = header->hdr_size << 4;
+    bin_size  = header->mod_size + ( (header->file_size - 1) << 9) - tot_skip;
+    bin_size += header->mod_size ? 0: 512;
+
+    // if we do not operate in extended mode check the various restrictions
+    // of the original exe2bin. For com-files skip another 0x100 bytes.
+    if( !arg.opt.be_ext ) {
+        result = ERR_NONE;
+        if( bin_size > 0x10000 ) {
+            printf( "Error: Binary part exceeds 64 KBytes.\n" );
+            result = ERR_RESTRIC;
+        }
+        if( header->SS_offset || header->SP ) {
+            printf( "Error: Stack segment defined.\n" );
+            result = ERR_RESTRIC;
+        }
+        if( header->CS_offset || (header->IP != 0x0000 && header->IP != 0x0100) ) {
+            printf( "Error: CS:IP neither 0x0000:0x0000 nor 0x0000:0x0100.\n" );
+            result = ERR_RESTRIC;
+        }
+        if( header->IP == 0x0100 && reltab->num != 0 ) {
+            printf( "Error: com-file must not have relocations.\n" );
+            result = ERR_RESTRIC;
+        }
+        if( result != ERR_NONE ) {
+            free( header );
+            free( reltab );
+            return( EXIT_FAILURE );
+        }
+        if( header->IP == 0x0100 ) {
+            tot_skip += 0x100;
+            bin_size -= 0x100;
+        }
+    }
+
+    if( (arg.ofile = fopen( arg.oname, "wb" )) == NULL ) {
+        printf( "Error opening %s for writing.\n", arg.oname );
+        free( header );
+        free( reltab );
+        return( EXIT_FAILURE );
+    }
+
+    if( (result = copy_bindata( arg.ifile, arg.ofile, bin_size, tot_skip,
+                                reltab )) ) {
         switch( result ) {
         case ERR_ALLOC:
             printf( "Error allocating file I/O buffer.\n" );
@@ -430,6 +472,8 @@ int main( int argc, char *argv[] )
         }
         free( header );
         free( reltab );
+        fclose( arg.ofile );
+        remove( arg.oname );
         return( EXIT_FAILURE );
     }
 
