@@ -33,5 +33,5 @@
 #include "variety.h"
 #include "rtdata.h"
 
-unsigned char __8087;
+unsigned char _8087;
 unsigned char _real87;
