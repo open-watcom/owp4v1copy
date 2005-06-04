@@ -99,7 +99,7 @@ gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 #########
 extra_c_flags = -DINSTALL_PROGRAM -DGUISETUP -s
 !ifneq sys_windowed 1
-extra_c_flags += -d_UI
+extra_c_flags += -D_UI
 !endif
 !ifdef patch
 extra_c_flags += -DPATCH
@@ -116,8 +116,8 @@ extra_l_flags = op map op symfile
 
 # rc flags
 ###########
-extra_rc_flags_win = -30 -d_WIN
-extra_rc_flags_nt = -d_WINNT
+extra_rc_flags_win = -30 -D_WIN
+extra_rc_flags_nt = -D_WINNT
 extra_rc_flags = -r $(extra_rc_flags_$(host_os))
 
 res_dir = ../res/$(host_os)
@@ -277,7 +277,7 @@ jcsetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
     $(bld_cc) -p -D_OS2 -DJCSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
     $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -dJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 f77setup.res : setup.rc $(dep_res1) ../res/f77.bmp
