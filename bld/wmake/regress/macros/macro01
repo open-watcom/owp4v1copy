@@ -21,5 +21,10 @@ h=hello
 h=h$h(h)$(h)$(h:l=)$$hh
 
 .after
-   echo $$(mac)=$(mac)
-   echo $$h=$h
+!ifdef __UNIX__
+     @echo '$$(mac)=$(mac)'
+     @echo '$$h=$h'
+!else
+     @echo $$(mac)=$(mac)
+     @echo $$h=$h
+!endif
