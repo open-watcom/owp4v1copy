@@ -39,15 +39,16 @@ _WCRTLINK struct dirent *readdir( DIR *dirp )
 {
     struct dirent *dirent = (struct dirent *)(&dirp->dirent_buf[dirp->bufofs]);
 
-    if (dirp->bufofs == 0) {
+    if( dirp->bufofs == 0 ) {
         dirp->bufsize = sys_getdents( dirp->fd, dirent,
                                         sizeof(struct dirent) * _DIRBUF );
-        if (dirp->bufsize <= 0)
+        if( (signed)dirp->bufsize <= 0 ) {
             return NULL;
+	}
     }
 
     dirp->bufofs += dirent->d_reclen;
-    if (dirp->bufofs >= dirp->bufsize)
+    if( dirp->bufofs >= dirp->bufsize )
         dirp->bufofs = 0;
     
     return dirent;
