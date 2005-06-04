@@ -94,6 +94,7 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     lx_map_entry    *new_page;
     int             obj_num;
     int             old_obj_num;
+    int             first_res_obj;
     int             old_num_objects;
     int             page_num;
     int             old_num_pages;
@@ -141,6 +142,7 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     new->u.LXInfo.Pages   = new_page;
 
     old_obj_num = page_num = 0;
+
     /* Copy object and page records from old executable to new */
     for( obj_num = 0; obj_num < old->u.LXInfo.OS2Head.num_objects; obj_num++ ) {
         if( !(old_obj[ obj_num ].flags & OBJ_RESOURCE) ) {
@@ -154,9 +156,12 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
         }
     }
 
+
     /* Tack on resource objects/pages */
-    for( i = 0; i < new->u.LXInfo.Res.num_objects; ++i ) {
-        memset( &(new_obj[ obj_num ]), 0, sizeof( *new_obj ) );
+    first_res_obj = old_obj_num;
+    for( i = first_res_obj; i < first_res_obj + new->u.LXInfo.Res.num_objects; ++i ) {
+        memset( &(new_obj[i]), 0, sizeof( *new_obj ) );
+        new_obj[i].flags   = OBJ_READABLE | OBJ_SHARABLE | OBJ_BIG | OBJ_RESOURCE;
     }
     return( old_num_objects );
 }
