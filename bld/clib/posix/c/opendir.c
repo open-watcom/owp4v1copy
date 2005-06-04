@@ -39,8 +39,10 @@ _WCRTLINK DIR *opendir( const char *__dirname )
     DIR *dir = malloc( sizeof( *dir ) );
 
     dir->fd = open( __dirname, O_RDONLY | O_NONBLOCK | O_DIRECTORY );
-    if (dir->fd == -1)
+    if( dir->fd == -1 ) {
+        free( dir );
         return( NULL );
+    }
     dir->bufofs = 0;
 
     return( dir );
