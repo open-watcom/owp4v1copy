@@ -25,7 +25,7 @@ cdsay .
   <CPCMD> <PROJDIR>/rc/*.uni                    <RELROOT>/rel2/binl/
 
   [ IFDEF (os_osi) <2*> ]
-    <CPCMD> <PROJDIR>/rc/osi386/wrc.exe         <RELROOT>/rel2/binw/wrc.exe
+#    <CPCMD> <PROJDIR>/rc/osi386/wrc.exe         <RELROOT>/rel2/binw/wrc.exe
 
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/rc/dos386/wrc.exe         <RELROOT>/rel2/binw/wrc.exe
