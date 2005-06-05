@@ -601,6 +601,9 @@ static void FreeLXFileInfoPtrs( LXExeInfo *info )
     if( info->Pages != NULL ) {
         RcMemFree( info->Pages );
     }
+    if( info->Res.resources != NULL ) {
+        RcMemFree( info->Res.resources );
+    }
 }
 
 extern void ClosePass2FilesAndFreeMem( void )

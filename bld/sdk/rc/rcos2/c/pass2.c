@@ -901,7 +901,6 @@ static RcStatus writeLXHeadAndTables( void )
         return( RS_WRITE_ERROR );
 
     return( RS_OK );
-
 } /* writeLXHeadAndTables */
 
 
@@ -911,21 +910,32 @@ static RcStatus writeLXHeadAndTables( void )
  */
 static RcStatus copyLXDebugInfo( void )
 {
-    long            seek_rc;
-    ExeFileInfo *   old;
-    ExeFileInfo *   tmp;
+    long                seek_rc;
+    ExeFileInfo         *old;
+    ExeFileInfo         *tmp;
+    os2_flat_header     *old_head;
+    os2_flat_header     *new_head;
 
     old = &(Pass2Info.OldFile);
     tmp = &(Pass2Info.TmpFile);
+    old_head = &old->u.LXInfo.OS2Head;
+    new_head = &tmp->u.LXInfo.OS2Head;
 
-    seek_rc = RcSeek( old->Handle, old->DebugOffset, SEEK_SET );
+    if( old_head->debug_len == 0 ) {
+        new_head->debug_off = 0;
+        new_head->debug_len = 0;
+        return( RS_OK );
+    }
+    new_head->debug_off = tmp->DebugOffset;
+    new_head->debug_len = old_head->debug_len;
+
+    seek_rc = RcSeek( old->Handle, old_head->debug_off, SEEK_SET );
     if( seek_rc == -1)
         return( RS_READ_ERROR );
     seek_rc = RcSeek( tmp->Handle, tmp->DebugOffset, SEEK_SET );
     if( seek_rc == -1)
         return( RS_WRITE_ERROR );
     return( CopyExeDataTilEOF( old->Handle, tmp->Handle ) );
-
 } /* copyLXDebugInfo */
 
 
@@ -945,6 +955,12 @@ extern int MergeResExeLX( void )
     error = CopyLXExeObjects();
     if( error ) goto HANDLE_ERROR;
     if( StopInvoked ) goto STOP_ERROR;
+
+    error = RcWriteLXResourceObjects();
+    if( error != RS_OK ) {
+        err_code = errno;
+        goto REPORT_ERROR;
+    }
 
     error = copyLXDebugInfo();
     if( error != RS_OK ) {

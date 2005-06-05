@@ -80,6 +80,8 @@ typedef struct LXExeInfo {
     object_record   *Objects;
     lx_map_entry    *Pages;
     LXResTable      Res;
+    uint_32         FirstResObj;
+    uint_32         FirstResPage;
 } LXExeInfo;
 
 typedef struct ExeFileInfo {

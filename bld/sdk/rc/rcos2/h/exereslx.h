@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  LX resource manipulation routines interface.
 *
 ****************************************************************************/
 
@@ -42,6 +41,7 @@ typedef struct LXResEntry {
     flat_res_table  resource;
     WResDirWindow   wind;       /* window into the current WResDir */
     uint_16         mem_flags;
+    uint_16         assigned;
 } LXResEntry;
 
 typedef struct LXResTable {
@@ -59,6 +59,9 @@ int BuildLXResourceObjects( struct ExeFileInfo *exeinfo,
                             struct ResFileInfo *resinfo,
                             object_record *res_obj, unsigned_32 rva,
                             unsigned_32 offset, int writebyfile );
+int WriteLXResourceObjects( struct ExeFileInfo *exe,
+                            struct ResFileInfo *info );
 int RcBuildLXResourceObjects( void );
+int RcWriteLXResourceObjects( void );
 
 #endif

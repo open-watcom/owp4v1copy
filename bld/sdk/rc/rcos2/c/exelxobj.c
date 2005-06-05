@@ -92,11 +92,10 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     object_record   *new_obj;
     lx_map_entry    *old_page;
     lx_map_entry    *new_page;
-    int             obj_num;
-    int             old_obj_num;
-    int             first_res_obj;
+    int             obj_index;
+    int             old_obj_index;
     int             old_num_objects;
-    int             page_num;
+    int             page_index;
     int             old_num_pages;
     int             i;
 
@@ -104,11 +103,11 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     old_page = old->u.LXInfo.Pages;
     old_num_objects = old_num_pages = 0;
     /* Figure out number of old objects/pages */
-    for( obj_num = 0; obj_num < old->u.LXInfo.OS2Head.num_objects; obj_num++ ) {
+    for( obj_index = 0; obj_index < old->u.LXInfo.OS2Head.num_objects; obj_index++ ) {
         /* Simply skip any existing resource objects */
-        if( !(old_obj[ obj_num ].flags & OBJ_RESOURCE) ) {
+        if( !(old_obj[ obj_index ].flags & OBJ_RESOURCE) ) {
             ++old_num_objects;
-            old_num_pages += old_obj[ obj_num ].mapsize;
+            old_num_pages += old_obj[ obj_index ].mapsize;
         }
     }
     if( CmdLineParms.NoResFile ) {
@@ -128,11 +127,13 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     /* Calculate new offset of data pages */
     new_off = new_obj_size + new_page_size - old_obj_size - old_page_size
             + new->u.LXInfo.OS2Head.num_rsrcs * sizeof( flat_res_table )
-            - old->u.LXInfo.OS2Head.num_rsrcs * sizeof( flat_res_table );
+            - old->u.LXInfo.OS2Head.num_rsrcs * sizeof( flat_res_table )
+            + new->u.LXInfo.OS2Head.num_pages * sizeof( uint_32 )
+            - old->u.LXInfo.OS2Head.num_pages * sizeof( uint_32 );
 
     new_off += old->u.LXInfo.OS2Head.page_off;
     align = 1 << old->u.LXInfo.OS2Head.l.page_shift;
-    new_off = (new_off + align - 1) - ~(align - 1);
+    new_off = (new_off + align - 1) & ~(align - 1);
     new->u.LXInfo.OS2Head.page_off = new_off;
 
     /* Allocate new object/page table */
@@ -141,28 +142,25 @@ static int copyObjectAndPageTable( ExeFileInfo *old, ExeFileInfo *new )
     new->u.LXInfo.Objects = new_obj;
     new->u.LXInfo.Pages   = new_page;
 
-    old_obj_num = page_num = 0;
+    old_obj_index = page_index = 0;
 
     /* Copy object and page records from old executable to new */
-    for( obj_num = 0; obj_num < old->u.LXInfo.OS2Head.num_objects; obj_num++ ) {
-        if( !(old_obj[ obj_num ].flags & OBJ_RESOURCE) ) {
-            new_obj[ obj_num ] = old_obj[ old_obj_num ];
-            new_obj[ obj_num ].mapidx = page_num + 1;
-            for( i = 0; i < old_obj[ old_obj_num ].mapsize; ++i ) {
-                new_page[ page_num ] = old_page[ old_obj[ old_obj_num ].mapidx + i - 1 ];
-                ++page_num;
+    for( obj_index = 0; obj_index < old->u.LXInfo.OS2Head.num_objects; obj_index++ ) {
+        if( !(old_obj[ obj_index ].flags & OBJ_RESOURCE) ) {
+            new_obj[ obj_index ] = old_obj[ old_obj_index ];
+            new_obj[ obj_index ].mapidx = page_index + 1;
+            for( i = 0; i < old_obj[ old_obj_index ].mapsize; ++i ) {
+                new_page[ page_index ] = old_page[ old_obj[ old_obj_index ].mapidx + i - 1 ];
+                ++page_index;
             }
-            ++old_obj_num;
+            ++old_obj_index;
         }
     }
 
+    /* Mark the start of resource objects/pages */
+    new->u.LXInfo.FirstResObj  = old_obj_index;
+    new->u.LXInfo.FirstResPage = page_index;
 
-    /* Tack on resource objects/pages */
-    first_res_obj = old_obj_num;
-    for( i = first_res_obj; i < first_res_obj + new->u.LXInfo.Res.num_objects; ++i ) {
-        memset( &(new_obj[i]), 0, sizeof( *new_obj ) );
-        new_obj[i].flags   = OBJ_READABLE | OBJ_SHARABLE | OBJ_BIG | OBJ_RESOURCE;
-    }
     return( old_num_objects );
 }
 
@@ -217,6 +215,7 @@ static int copyHeaderSections( ExeFileInfo *old, ExeFileInfo *new )
 {
     int                 seek_rc;
     int                 ret;
+    uint_32             old_pages;
     uint_32             offset;
     uint_32             length;
     uint_32             lx_off;
@@ -235,7 +234,8 @@ static int copyHeaderSections( ExeFileInfo *old, ExeFileInfo *new )
            + new_head->num_pages * sizeof( lx_map_entry )
            + new_head->num_rsrcs * sizeof( flat_res_table );
     seek_rc = RcSeek( new->Handle, lx_off + offset, SEEK_SET );
-    if( seek_rc == -1 ) return( RS_WRITE_ERROR );
+    if( seek_rc == -1 )
+        return( RS_WRITE_ERROR );
 
     new_head->signature    = old_head->signature;
     new_head->byte_order   = old_head->byte_order;
@@ -251,8 +251,6 @@ static int copyHeaderSections( ExeFileInfo *old, ExeFileInfo *new )
     new_head->esp          = old_head->esp;
     new_head->page_size    = old_head->page_size;
     new_head->l.page_shift = old_head->l.page_shift;
-    new_head->fixup_size   = old_head->fixup_size;
-    new_head->fixup_cksum  = old_head->fixup_cksum;
     new_head->autodata_obj = old_head->autodata_obj;
     new_head->heapsize     = old_head->heapsize;
     new_head->stacksize    = old_head->stacksize;
@@ -302,21 +300,62 @@ static int copyHeaderSections( ExeFileInfo *old, ExeFileInfo *new )
     }
     offset += length;
 
+    // now we can determine loader section size
+    new_head->loader_size  = offset - sizeof( os2_flat_header );
+    new_head->loader_cksum = 0;
+
     // copy fixup section if provided
     if( old_head->fixup_size ) {
         int_32      delta;
+        uint_32     last_fix_pg;
+        uint_32     new_fixpg_length;
+        uint_32     old_fixpg_length;
+        int         i;
+
+        // the fixup page table must be extended if resource pages were added
+        old_pages = new_head->num_pages - new->u.LXInfo.Res.num_pages;
+        length = sizeof( uint_32 ) * old_pages;
+        seek_rc = RcSeek( old->Handle, lx_off + old_head->fixpage_off, SEEK_SET );
+        if( seek_rc == -1 )
+            return( RS_READ_ERROR );
+
+        ret = CopyExeData( old->Handle, new->Handle, length );
+        if( ret != RS_OK )
+            return( ret );
+
+        // read the last entry of fixup page table
+        ret = RcRead( old->Handle, &last_fix_pg, sizeof( last_fix_pg ) );
+        if( ret != sizeof( last_fix_pg ) )
+            return( RS_READ_ERROR );
+
+        // replicate for each added page (plus one for final entry)
+        for( i = 0; i < new->u.LXInfo.Res.num_pages + 1; i++ ) {
+            ret = RcWrite( new->Handle, &last_fix_pg, sizeof( last_fix_pg ) );
+            if( ret != sizeof( last_fix_pg ) )
+                return( RS_READ_ERROR );
+        }
+
+        // calculate new fixup table size
+        old_fixpg_length = (old_head->num_pages + 1) * sizeof( uint_32 );
+        new_fixpg_length = (new_head->num_pages + 1) * sizeof( uint_32 );
+        new_head->fixup_size   = old_head->fixup_size
+                               - old_fixpg_length + new_fixpg_length;
+        new_head->fixup_cksum  = 0;
 
         delta = offset - old_head->fixpage_off;
-        length = old_head->fixup_size;
-        new_head->fixup_size   = old_head->fixup_size;
-        new_head->fixup_cksum  = old_head->fixup_cksum;
         new_head->fixpage_off  = old_head->fixpage_off + delta;
+
+        delta = delta - old_fixpg_length + new_fixpg_length;
         new_head->fixrec_off   = old_head->fixrec_off + delta;
         new_head->impmod_off   = old_head->impmod_off + delta;
         new_head->num_impmods  = old_head->num_impmods;
         new_head->impproc_off  = old_head->impproc_off + delta;
 
-        seek_rc = RcSeek( old->Handle, lx_off + old_head->fixpage_off, SEEK_SET );
+        // copy the rest of fixup section
+        offset += new_fixpg_length;
+        length = old_head->fixup_size - old_fixpg_length;
+        seek_rc = RcSeek( old->Handle, lx_off + old_head->fixpage_off
+                                     + old_fixpg_length, SEEK_SET );
         if( seek_rc == -1 )
             return( RS_READ_ERROR );
 
