@@ -1,5 +1,10 @@
 # IDEB (aka BVIPER) Prerequisite Tool Build Control File
-# =========================================
+# ======================================================
+
+set PROJDIR=<CWD>
+
+[ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
 
@@ -9,29 +14,41 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #=================================
     set BUILD_PLATFORM=<BUILD_PLATFORM>boot
 
+[ BLOCK <1> clean ]
+#==================
+    echo rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f <OWBINDIR>/bviper
+    rm -f <OWBINDIR>/bviper.exe
+    set BUILD_PLATFORM=
+
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\dos386
-    wmake -h
-    <CPCMD> bviper.exe <DEVDIR>\build\bin\bviper.exe
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../dos386/makefile prebuild=1
+    <CPCMD> bviper.exe <OWBINDIR>/bviper.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\os2386
-    wmake -h
-    <CPCMD> bviper.exe <DEVDIR>\build\binp\bviper.exe
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../os2386/makefile prebuild=1
+    <CPCMD> bviper.exe <OWBINDIR>/bviper.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <PROJDIR>\nt386
-    wmake -h
-    <CPCMD> bviper.exe <DEVDIR>\build\binnt\bviper.exe
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../nt386/makefile prebuild=1
+    <CPCMD> bviper.exe <OWBINDIR>/bviper.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
-#===============================
-    cdsay <PROJDIR>/linux386
-    wmake -h
-    <CPCMD> bviper.exe <DEVDIR>/build/binl/bviper
+#==================================
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../linux386/makefile prebuild=1
+    <CPCMD> bviper.exe <OWBINDIR>/bviper
 
 [ BLOCK . . ]
 #============

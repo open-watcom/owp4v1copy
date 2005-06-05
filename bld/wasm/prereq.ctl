@@ -18,29 +18,30 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=bwasm
+    rm -f <OWBINDIR>/bwasm
+    rm -f <OWBINDIR>/bwasm.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> wasm.exe <DEVDIR>/build/bin/bwasm.exe
+    <CPCMD> wasm.exe <OWBINDIR>/bwasm.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
-    <CPCMD> wasm.exe <DEVDIR>/build/binp/bwasm.exe
+    <CPCMD> wasm.exe <OWBINDIR>/bwasm.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
-    <CPCMD> wasm.exe <DEVDIR>/build/binnt/bwasm.exe
+    <CPCMD> wasm.exe <OWBINDIR>/bwasm.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
@@ -48,14 +49,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> wasm.exe <DEVDIR>/build/binl/bwasm
+    <CPCMD> wasm.exe <OWBINDIR>/bwasm
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
-    <CPCMD> wasm.exe <DEVDIR>/build/binl/bwasm
+    <CPCMD> wasm.exe <OWBINDIR>/bwasm
 
 [ BLOCK . . ]
 #============

@@ -17,7 +17,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     rm -f -r <PROJDIR>/wres/<OBJDIR>
     echo rm -f -r <PROJDIR>/rc/<OBJDIR>
     rm -f -r <PROJDIR>/rc/<OBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wrc
+    rm -f <OWBINDIR>/wrc
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -27,7 +27,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     <MAKE> -f gnumake
     cdsay ../rc
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/rc <OWROOT>/bld/build/binl/wrc
+    <CPCMD> <OBJDIR>/rc <OWBINDIR>/wrc
 
 [ BLOCK . . ]
 #============

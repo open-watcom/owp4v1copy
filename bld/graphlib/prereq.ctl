@@ -17,41 +17,46 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 [ BLOCK <1> clean ]
 #==================
     cdsay <PROJDIR>/fixtools
-    pmake -d all -h clean
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=objchg
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=objfind
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=objlist
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=objxdef
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=objxref
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    rm -f <OWBINDIR>/objchg
+    rm -f <OWBINDIR>/objfind
+    rm -f <OWBINDIR>/objlist
+    rm -f <OWBINDIR>/objxdef
+    rm -f <OWBINDIR>/objxref
+    rm -f <OWBINDIR>/objchg.exe
+    rm -f <OWBINDIR>/objfind.exe
+    rm -f <OWBINDIR>/objlist.exe
+    rm -f <OWBINDIR>/objxdef.exe
+    rm -f <OWBINDIR>/objxref.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\fixtools\dos386
+    cdsay <PROJDIR>/fixtools/dos386
     wmake -h
-    <CPCMD> *.exe <DEVDIR>\build\bin\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\fixtools\os2386
+    cdsay <PROJDIR>/fixtools/os2386
     wmake -h
-    <CPCMD> *.exe <DEVDIR>\build\binp\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <PROJDIR>\fixtools\nt386
+    cdsay <PROJDIR>/fixtools/nt386
     wmake -h
-    <CPCMD> *.exe <DEVDIR>\build\binnt\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
-#===============================
+#==================================
     cdsay <PROJDIR>/fixtools/linux386
     wmake -h
-    <CPCMD> objchg.exe <DEVDIR>/build/binl/objchg
-    <CPCMD> objfind.exe <DEVDIR>/build/binl/objfind
-    <CPCMD> objlist.exe <DEVDIR>/build/binl/objlist
-    <CPCMD> objxdef.exe <DEVDIR>/build/binl/objxdef
-    <CPCMD> objxref.exe <DEVDIR>/build/binl/objxref
+    <CPCMD> objchg.exe <OWBINDIR>/objchg
+    <CPCMD> objfind.exe <OWBINDIR>/objfind
+    <CPCMD> objlist.exe <OWBINDIR>/objlist
+    <CPCMD> objxdef.exe <OWBINDIR>/objxdef
+    <CPCMD> objxref.exe <OWBINDIR>/objxref
 
 [ BLOCK . . ]
 #============

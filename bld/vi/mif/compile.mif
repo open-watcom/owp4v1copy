@@ -61,14 +61,7 @@ extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1
 extra_c_flags += -ai
 !endif
 
-!ifdef __LINUX__
 .ctl.ch:
-        $(bld_bin)/parsectl $[@ $[&.ch Ctl_$^&
+        parsectl $[@ $[&.ch Ctl_$^&
 .dyn.dh:
-        $(bld_bin)/parsedyn $[@ $[&.dh Dyn_$^&
-!else
-.ctl.ch:
-        $(bld_bin)\parsectl $[@ $[&.ch Ctl_$^&
-.dyn.dh:
-        $(bld_bin)\parsedyn $[@ $[&.dh Dyn_$^&
-!endif
+        parsedyn $[@ $[&.dh Dyn_$^&

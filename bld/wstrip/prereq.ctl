@@ -15,7 +15,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wstrip
+    rm -f <OWBINDIR>/wstrip
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -23,7 +23,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     echo Building the wstrip bootstrap
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/wstrip <DEVDIR>/build/binl/wstrip
+    <CPCMD> <OBJDIR>/wstrip <OWBINDIR>/wstrip
 
 [ BLOCK . . ]
 #============

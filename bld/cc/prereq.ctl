@@ -15,7 +15,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wcc386
+    rm -f <OWBINDIR>/wcc386
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -25,8 +25,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/<OBJDIR>
     cp -f ../linux386.386/target.h .
     wmake -h -f ../linux386.386/makefile bootstrap=1
-    <CPCMD> wcc386 <DEVDIR>/build/binl/wcc386
-    <CPCMD> <DEVDIR>/misc/unicode.* <DEVDIR>/build/binl/
+    <CPCMD> wcc386 <OWBINDIR>/wcc386
 
 [ BLOCK . . ]
 #============

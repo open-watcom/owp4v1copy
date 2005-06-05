@@ -55,14 +55,16 @@ export BLD_VER=14
 export BLD_VER_STR=1.4
 export BUILDER_CTL=lang.ctl
 export DEVDIR=$OWROOT/bld
-export DISTROOT=%OWROOT%/distrib
+# Subdirectory to be used for bootstrapping/prebuild binaries
+export OWBINDIR=$DEVDIR/build/binl
+export DISTROOT=$OWROOT/distrib
 export RELROOT=$OWROOT
 export DWATCOM=$WATCOM
 export DOC_ROOT=$OWROOT/docs
 export INCLUDE=$WATCOM/lh:$DEVDIR/watcom/h
 export LIB=$OWROOT/bld/watcom/lib
 export EDPATH=$WATCOM/eddat
-export PATH=$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
+export PATH=$OWBINDIR:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
 
 echo Open Watcom compiler build environment
 

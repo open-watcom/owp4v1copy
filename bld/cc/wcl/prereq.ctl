@@ -18,36 +18,38 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=bwcl386
+    rm -f <OWBINDIR>/wcl386
+    rm -f <OWBINDIR>/bwcl386
+    rm -f <OWBINDIR>/bwcl386.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dosi86.386/makefile
-    <CPCMD> wcl386.exe <DEVDIR>/build/bin/bwcl386.exe
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386.386/makefile
-    <CPCMD> wcl386.exe <DEVDIR>/build/binp/bwcl386.exe
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386.386/makefile
-    <CPCMD> wcl386.exe <DEVDIR>/build/binnt/bwcl386.exe
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
-    mkdir <PROJDIR>\<PREOBJDIR>
-    cdsay <PROJDIR>\<PREOBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../ntaxp.axp/makefile
-    <CPCMD> wclaxp.exe <DEVDIR>/build/binnt/bwclaxp.exe
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
@@ -55,15 +57,15 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386.386/makefile
-    <CPCMD> wcl386.exe <DEVDIR>/build/binl/bwcl386
-    <CPCMD> wcl386.exe <DEVDIR>/build/binl/wcl386
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386
+    <CPCMD> wcl386.exe <OWBINDIR>/wcl386
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386.386/makefile
-    <CPCMD> wcl386.exe <DEVDIR>/build/binl/bwcl386
+    <CPCMD> wcl386.exe <OWBINDIR>/bwcl386
 
 [ BLOCK . . ]
 #==================

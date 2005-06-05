@@ -18,7 +18,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=whpcvt
+    rm -f <OWBINDIR>/whpcvt
+    rm -f <OWBINDIR>/whpcvt.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
@@ -26,21 +27,21 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> whpcvt.exe <OWROOT>\bld\build\bin\whpcvt.exe
+    <CPCMD> whpcvt.exe <OWBINDIR>/whpcvt.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
-    <CPCMD> whpcvt.exe <OWROOT>\bld\build\binp\whpcvt.exe
+    <CPCMD> whpcvt.exe <OWBINDIR>/whpcvt.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
-    <CPCMD> whpcvt.exe <OWROOT>\bld\build\binnt\whpcvt.exe
+    <CPCMD> whpcvt.exe <OWBINDIR>/whpcvt.exe
 
 [ BLOCK . . ]
 #============

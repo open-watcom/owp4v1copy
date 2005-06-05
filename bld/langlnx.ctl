@@ -42,12 +42,12 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/cc/wcl/lang.ctl ]
 
 [ BLOCK <1> build cprel2 ]
-    <CPCMD> <DEVDIR>/cc/wcl/linux386.386/wcl386.exe <DEVDIR>/build/binl/wcl386
-    <CPCMD> <DEVDIR>/cc/wcl/linux386.i86/wcl.exe <DEVDIR>/build/binl/wcl
-    <CPCMD> <DEVDIR>/cc/linux386.386/wcc386c.elf <DEVDIR>/build/binl/wcc386
-    <CPCMD> <DEVDIR>/cc/linux386.i86/wcci86c.elf <DEVDIR>/build/binl/wcc
-    <CPCMD> <DEVDIR>/plusplus/linux386.386/wcpp386.elf <DEVDIR>/build/binl/wpp386
-    <CPCMD> <DEVDIR>/plusplus/linux386.i86/wcppi86.elf <DEVDIR>/build/binl/wpp
+    <CPCMD> <DEVDIR>/cc/wcl/linux386.386/wcl386.exe    <OWBINDIR>/wcl386
+    <CPCMD> <DEVDIR>/cc/wcl/linux386.i86/wcl.exe       <OWBINDIR>/wcl
+    <CPCMD> <DEVDIR>/cc/linux386.386/wcc386c.elf       <OWBINDIR>/wcc386
+    <CPCMD> <DEVDIR>/cc/linux386.i86/wcci86c.elf       <OWBINDIR>/wcc
+    <CPCMD> <DEVDIR>/plusplus/linux386.386/wcpp386.elf <OWBINDIR>/wpp386
+    <CPCMD> <DEVDIR>/plusplus/linux386.i86/wcppi86.elf <OWBINDIR>/wpp
 
 [ BLOCK . . ]
 set OWLINUXBUILD=normal
@@ -74,10 +74,10 @@ set OWLINUXBUILD=normal
     rm -rf <DEVDIR>/wasm/<OBJDIR>
     rm -rf <DEVDIR>/wl/<OBJDIR>
 
-    rm -f <DEVDIR>/build/binl/wcl386
-    rm -f <DEVDIR>/build/binl/wcl
-    rm -f <DEVDIR>/build/binl/wcc386
-    rm -f <DEVDIR>/build/binl/wcc
-    rm -f <DEVDIR>/build/binl/wpp386
-    rm -f <DEVDIR>/build/binl/wpp
+    rm -f <OWBINDIR>/wcl386
+    rm -f <OWBINDIR>/wcl
+    rm -f <OWBINDIR>/wcc386
+    rm -f <OWBINDIR>/wcc
+    rm -f <OWBINDIR>/wpp386
+    rm -f <OWBINDIR>/wpp
     

@@ -20,8 +20,8 @@ set ODIR=<OBJDIR>
 #==================
     echo rm -f -r <PROJDIR>/<ODIR>
     rm -f -r <PROJDIR>/<ODIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wyacc
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=yacc
+    rm -f <OWBINDIR>/byacc
+    rm -f <OWBINDIR>/byacc.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
@@ -29,41 +29,41 @@ set ODIR=<OBJDIR>
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> yacc.exe <OWROOT>\bld\build\bin\yacc.exe
+    <CPCMD> yacc.exe <OWBINDIR>/byacc.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
-    <CPCMD> yacc.exe <OWROOT>\bld\build\binp\yacc.exe
+    <CPCMD> yacc.exe <OWBINDIR>/byacc.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
-    <CPCMD> yacc.exe <OWROOT>\bld\build\binnt\yacc.exe
+    <CPCMD> yacc.exe <OWBINDIR>/byacc.exe
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../ntaxp/makefile prebuild=1
-    <CPCMD> yacc.exe <OWROOT>\bld\build\axpnt\yacc.exe
+    <CPCMD> yacc.exe <OWBINDIR>/byacc.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/yacc <OWROOT>/bld/build/binl/wyacc
+    <CPCMD> <OBJDIR>/yacc <OWBINDIR>/byacc
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
-    <CPCMD> yacc.exe <OWROOT>/bld/build/binl/wyacc
+    <CPCMD> yacc.exe <OWBINDIR>/byacc
 
 [ BLOCK . . ]
 #============

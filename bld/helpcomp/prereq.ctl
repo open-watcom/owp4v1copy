@@ -18,7 +18,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=whc
+    rm -f <OWBINDIR>/whc.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
@@ -26,21 +26,21 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> whc.exe <OWROOT>\bld\build\bin\whc.exe
+    <CPCMD> whc.exe <OWBINDIR>/whc.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
-    <CPCMD> whc.exe <OWROOT>\bld\build\binp\whc.exe
+    <CPCMD> whc.exe <OWBINDIR>/whc.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
-    <CPCMD> whc.exe <OWROOT>\bld\build\binnt\whc.exe
+    <CPCMD> whc.exe <OWBINDIR>/whc.exe
 
 [ BLOCK . . ]
 #============

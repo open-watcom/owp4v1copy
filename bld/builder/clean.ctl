@@ -10,14 +10,25 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=langdat
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=mksetup
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=cdsay
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=sweep
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=wsplice
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=diff
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=comstrip
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif file=rm
+    rm -f <OWBINDIR>/langdat
+    rm -f <OWBINDIR>/mksetup
+    rm -f <OWBINDIR>/cdsay
+    rm -f <OWBINDIR>/sweep
+    rm -f <OWBINDIR>/wsplice
+    rm -f <OWBINDIR>/wdiff
+    rm -f <OWBINDIR>/comstrip
+    rm -f <OWBINDIR>/wtouch
+    rm -f <OWBINDIR>/wmake
+    rm -f <OWBINDIR>/langdat.exe
+    rm -f <OWBINDIR>/mksetup.exe
+    rm -f <OWBINDIR>/cdsay.exe
+    rm -f <OWBINDIR>/sweep.exe
+    rm -f <OWBINDIR>/wsplice.exe
+    rm -f <OWBINDIR>/diff.exe
+    rm -f <OWBINDIR>/comstrip.exe
+    rm -f <OWBINDIR>/wtouch.exe
+    rm -f <OWBINDIR>/wmake.exe
+    rm -f <OWBINDIR>/rm.exe
 
 [ BLOCK . . ]
 #============

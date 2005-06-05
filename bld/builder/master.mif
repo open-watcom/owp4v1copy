@@ -27,9 +27,9 @@ extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 !ifndef __$(host_os)__
                                         # No copy where systems differ
 !else ifdef __UNIX__
-        cp   $^. $(bld_bin)/$^&         # Remove .exe from working name
+        cp   $^. $(%OWBINDIR)/$^&       # Remove .exe from working name
 !else
-        copy $^. $(bld_bin) > nul       # MS-influenced command noisy
+        copy $^. $(%OWBINDIR)\ > nul    # MS-influenced command noisy
 !endif
 
 builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj
