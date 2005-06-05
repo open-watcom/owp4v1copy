@@ -41,7 +41,7 @@ _WCRTLINK FILE _WCNEAR __iob[_NFILES] = {
     { NULL, 0, NULL, _READ  ,       0, 0, 0  }  /* stdin */
    ,{ NULL, 0, NULL, _WRITE ,       1, 0, 0  }  /* stdout */
    ,{ NULL, 0, NULL, _WRITE ,       2, 0, 0  }  /* stderr */
-  #if defined(__DOS__) || defined(__WINDOWS__)
+  #if defined(__DOS__) || defined(__WINDOWS__) || defined(__OSI__)
    ,{ NULL, 0, NULL, _READ|_WRITE , 3, 0, 0  }  /* stdaux */
    ,{ NULL, 0, NULL, _WRITE ,       4, 0, 0  }  /* stdprn */
   #endif

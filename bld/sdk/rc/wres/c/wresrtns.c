@@ -47,18 +47,4 @@
     #include <stdlib.h>  // malloc for AIX
 #endif
 
-#if defined( LINUX )
-
-#include <sys/types.h>
-
-// Linux does not have a tell call
-// use this equivelent one instead
-off_t linux_tell( int fd )
-{
-        return( lseek( fd, 0, SEEK_CUR ) );
-}
-
-WResSetRtns( open, close, read, write, lseek, linux_tell, malloc, free );
-#else
 WResSetRtns( open, close, read, write, lseek, tell, malloc, free );
-#endif

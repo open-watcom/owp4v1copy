@@ -42,32 +42,31 @@ inc_dirs = -I"../h"
 
 ##############################################################################
 
-lnk = $(name).lnk
-
 !ifeq host_os osi
-extra_stuff = $(tools_root)\os2ldr.exe
+extra_stuff = $(os2ldr)
 !endif
 
 ##############################################################################
 
-$(name).exe : $(objs) $(lnk) $(extra_stuff) wic.res $(wres_lib)
-        $(linker) $(lflags) @$(lnk)
-!ifeq host_os osi
-        w32bind $(name).rex $(name).exe $(tools_root)\os2ldr.exe
-        erase $(name).rex
-!endif
-        wstrip -a -r -q $(name).exe . wic.res
-
-$(lnk) : $(__MAKEFILES__)
-        %create $(lnk)
-        @%append $(lnk) option map, quiet
-        @%append $(lnk) debug all
+$(name).exe : $(objs) $(extra_stuff) wic.res $(wres_lib)
+        %create $^&.lnk
+        @%append $^&.lnk option map, quiet
+        @%append $^&.lnk debug all
 !ifeq release 1
-        @%append $(lnk) option symfile
+        @%append $^&.lnk option symfile
 !endif
-        @%append $(lnk) name $(name)
-        @%append $(lnk) lib $(wres_lib)
-        @for %i in ($(objs)) do @@%append $(lnk) file %i
+        @%append $^&.lnk lib $(wres_lib)
+        @for %i in ($(objs)) do @@%append $^&.lnk file %i
+!ifeq host_os osi
+        @%append $^&.lnk name $^&.rex
+        $(linker) $(lflags) @$^&.lnk
+        $(w32bind) $^&.rex $@ $(os2ldr)
+        @rm -f $^&.rex
+!else	
+        @%append $^&.lnk name $@
+        $(linker) $(lflags) @$^&.lnk
+!endif
+        wstrip -a -r -q $@ . wic.res
 
 ##############################################################################
 

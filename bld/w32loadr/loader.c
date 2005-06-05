@@ -537,10 +537,8 @@ int __OS2Main( unsigned hmod, unsigned reserved, char *env, char *cmd )
     char        *args;
     char        *pgm;
     int         rc;
-    USHORT      action;
     ULONG       nesting;
     LONG        req_count;
-    ULONG       curr_max_fh;
     struct pgmparms parms;
     auto SYSEREGREC RegRec;
 
@@ -548,9 +546,11 @@ int __OS2Main( unsigned hmod, unsigned reserved, char *env, char *cmd )
     parms.isDBCS = __IsDBCS;
     hmod = hmod;
     reserved = reserved;
-    for( args = cmd; *args != '\0'; ++args ); /* skip over program name */
+    for( args = cmd; *args != '\0'; ++args )
+        ; /* skip over program name */
     ++args;
-    for( pgm = cmd - 2; *pgm != '\0'; --pgm );
+    for( pgm = cmd - 2; *pgm != '\0'; --pgm )
+        ;
     ++pgm;
     ProgramArgs = args;
     ProgramName = pgm;
@@ -879,6 +879,8 @@ void main() {}
 
 //////////////////////////////////////////////////////////////////////
 #else   // __DOS
+
+#include <string.h>
 
 #ifdef __DOS4G
  #include "dginfo.gh"

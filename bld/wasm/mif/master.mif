@@ -144,21 +144,21 @@ $(name).exe : fullops.gh $(name).res $(proj_obj)
 !endif
 !ifdef bootstrap
         @%make usage.u
-        $(cl) -o $^@ $(proj_obj) $(libs)
+        $(cl) -o $@ $(proj_obj) $(libs)
 !else
-        @%write  $(name).lnk $(lflags)
-        @%append $(name).lnk file { $(proj_obj) }
+        @%write  $^&.lnk $(lflags)
+        @%append $^&.lnk file { $(proj_obj) }
 !ifeq host_OS osi
-        @%append $(name).lnk name $(name).rex
-        $(linker) @$(name).lnk
-        $(bld_bin)/w32bind $(name).rex $@ $(tools_root)/os2ldr.exe
-        @rm -f $(name).rex
+        @%append $^&.lnk name $^&.rex
+        $(linker) @$^&.lnk
+        $(w32bind) $^&.rex $@ $(os2ldr)
+        @rm -f $^&.rex
 !else
-        @%append $(name).lnk name $(name).exe
-        $(linker) @$(name).lnk
+        @%append $^&.lnk name $@
+        $(linker) @$^&.lnk
 !endif
 !endif
-        wstrip -a -r -q $^@ . $(name).res
+        wstrip -a -r -q $@ . $^&.res
 
 ###################################################################
 # resource stuff

@@ -235,7 +235,7 @@ _WCRTLINK extern FILE _WCNEAR __iob[];
 :endsegment
 :segment DOS
 #ifndef NO_EXT_KEYS     /* extensions enabled */
-#if defined(__DOS__) || defined(__WINDOWS__)
+#if defined(__DOS__) || defined(__WINDOWS__) || defined(__OSI__)
 :segment CNAME
 #define stdaux  ((std::FILE *)&__iob[3])     /* standard auxiliary file  */
 #define stdprn  ((std::FILE *)&__iob[4])     /* standard printer file  */

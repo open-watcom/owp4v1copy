@@ -33,7 +33,10 @@
 #include <unistd.h>
 #include <limits.h>
 #if defined( __DOS__ ) || defined( __OS2__ ) || defined( __OSI__ ) || defined( __NT__ )
-    #include <process.h>
+  #include <process.h>
+#endif
+#ifdef __OSI__
+  #include "ostype.h"
 #endif
 
 void ResetHandlers()
@@ -46,12 +49,14 @@ char **_argv;
 #endif
 
 #if defined( __DOS__ ) || defined( __OS2__ ) || defined( __OSI__ ) || defined( __NT__ )
-int main()
+int main( void )
     {
         char       *argv[2];
+        int        ret;
+#if !defined( __OSI__ )	
         char       *buffer;
         int        len;
-        int        ret;
+#endif	
 #else
 int main( int argc, char **argv )
     {

@@ -225,7 +225,7 @@ $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
     $(cc) -g -o $@ $(wlib_objs) $(wlib_libs)
 !else ifeq host_os osi
     $(linker) $(lflags) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
-    $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
+    $(w32bind) wlib.rex $@ $(os2ldr)
     erase wlib.rex
 !else ifeq prebuild 1
     $(linker) $(lflags) name $^@ file { $(wlib_objs) }

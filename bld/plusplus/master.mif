@@ -422,13 +422,13 @@ plusplus_dll = 1
 # OS independent executables
 #
 
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(tools_root)/os2ldr.exe
-    $(linker) $(lflags) NAME $^* @pexedbg
+$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(os2ldr)
+    $(linker) $(lflags) name $@ @pexedbg
 
-$(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(tools_root)/os2ldr.exe
-    $(linker) $(lflags) NAME $^* @pexebld
-    w32bind $^&.rex $^&.exe $(tools_root)/os2ldr.exe
-    del $^&.rex
+$(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(os2ldr)
+    $(linker) $(lflags) name $^&.rex @pexebld
+    $(w32bind) $^&.rex $@ $(os2ldr)
+    @rm -f $^&.rex
 
 build : .symbolic $(exe_bld_name).exe
     @%null
@@ -439,7 +439,7 @@ build : .symbolic $(exe_bld_name).exe
 #
 
 $(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
+    $(linker) $(lflags) name $@ @pexebld
 
 !ifeq host_cpu 386
 
@@ -448,10 +448,10 @@ plusplus_dll = 1
 !else
 
 $(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) NAME $^* @pexedbg
+    $(linker) $(lflags) name $@ @pexedbg
 
 $(exe_bld_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
+    $(linker) $(lflags) name $@ @pexebld
 
 build : .symbolic $(exe_bld_name).exe
     @%null
@@ -467,12 +467,12 @@ build : .symbolic $(exe_bld_name).exe
 pre_obj_deps += usage.u
 
 $(exe_dbg_name).qnx : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) NAME $^* @pexedbg
+    $(linker) $(lflags) name $@ @pexedbg
 
 $(exe_bld_name).qnx : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
+    $(linker) $(lflags) name $@ @pexebld
 !ifeq release 1
-    serialize $(exe_bld_name).qnx wpp
+    serialize $@ wpp
 !endif
 
 build : .symbolic $(exe_bld_name).qnx
@@ -484,13 +484,13 @@ build : .symbolic $(exe_bld_name).qnx
 #
 
 $(exe_ref_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^*.elf @pexebld
+    $(linker) $(lflags) name $@ @pexebld
 
 $(exe_dbg_name).elf : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) NAME $^*.elf @pexedbg
+    $(linker) $(lflags) name $@ @pexedbg
 
 $(exe_bld_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^*.elf @pexebld
+    $(linker) $(lflags) name $@ @pexebld
 
 build : .symbolic $(exe_bld_name).elf
     @%null
@@ -517,25 +517,25 @@ build : .symbolic $(exe_bld_name).exe #$(dll_bld_name).dll
     @%null
 
 $(exe_bld_name).exe : $(depends_drv) pdrvbld.lnk $(dll_bld_name).lib
-    $(linker) $(lflags) NAME $^* @pdrvbld
+    $(linker) $(lflags) name $@ @pdrvbld
 
 $(dll_bld_name).lib : $(dll_bld_name).dll
-    $(librarian) -b-q-n $^@ +$[@
+    $(librarian) -b -n $@ +$[@
 
 $(dll_bld_name).dll : $(rc_objs) $(depends_dll) pdllbld.lnk
-    $(linker) $(lflags_dll) NAME $^* @pdllbld
+    $(linker) $(lflags_dll) name $@ @pdllbld
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $^@
+    $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $@
 !endif
 
 $(exe_dbg_name).exe : $(depends_drv) pdrvdbg.lnk $(dll_dbg_name).lib
-    $(linker) $(lflags) NAME $^* @pdrvdbg
+    $(linker) $(lflags) name $@ @pdrvdbg
 
 $(dll_dbg_name).lib : $(dll_dbg_name).dll
-    $(librarian) -b-q-n $^@ +$[@
+    $(librarian) -b-q-n $@ +$[@
 
 $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
-    $(linker) $(lflags_dll) NAME $^* @pdlldbg
+    $(linker) $(lflags_dll) name $@ @pdlldbg
 
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
     $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)

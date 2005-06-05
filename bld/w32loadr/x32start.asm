@@ -96,9 +96,9 @@ DGROUP group BEGTEXT,_TEXT,_NULL,_AFTERNULL,CONST,_DATA,DATA,XIB,XI,XIE,YIB,YI,Y
 ; signal function.
 
 BEGTEXT  segment use32 para public 'CODE'
-if @Version     LT      600     ;If MASM is < 6.0
-        assume  cs:_TEXT
-endif
+;if @Version     LT      600     ;If MASM is < 6.0
+;        assume  cs:_TEXT
+;endif
         jmp     null_error
         nop     ;2
         nop     ;3
@@ -209,9 +209,9 @@ _BSS          segment word public 'BSS'
 _BSS          ends
 
 
-if @Version     LT      600     ;If the MASM is < 6.0
-        assume  cs:_TEXT
-endif
+;if @Version     LT      600     ;If the MASM is < 6.0
+;        assume  cs:_TEXT
+;endif
         assume  ds:DGROUP
 
 ;

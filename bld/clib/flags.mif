@@ -53,6 +53,7 @@ sw_c_axp += -finonx86.h
 sw_c_386_ms_generic = -r
 sw_c_386_ms_msdos   = -r
 sw_c_386_ms_qnx     = -r
+sw_c_386_ms_osi     = -r
 
 sw_c_086_ms = -ms
 sw_c_286_ms = -ms
@@ -146,7 +147,7 @@ sw_a_nw_libc_386  = -D_NETWARE_LIBC -D__MT__ -D_THIN_LIB
 sw_a_os2_286      =
 sw_a_os2_386      = -D__MT__
 sw_a_os2_ppc      = -D__MT__
-sw_a_osi_386      = -D__MT__
+sw_a_osi_386      =
 sw_a_qnx_286      =
 sw_a_qnx_386      = -D__MT__
 sw_a_windows_086  =
@@ -156,7 +157,7 @@ sw_a_winnt_axp    = -D__MT__ -DWIN32 -D_WIN32
 sw_a_winnt_ppc    = -oc -D__MT__ -DWIN32 -D_WIN32
 sw_a_linux_386    =
 sw_a_linux_ppc    =
-sw_a_linux_ppc    =
+sw_a_linux_mps    =
 
 # sw_l_(system)_(processor)
 sw_l_generic_086  =

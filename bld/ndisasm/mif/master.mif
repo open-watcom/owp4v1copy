@@ -37,7 +37,7 @@ inc_dirs  = -I. $(dis_includes) -I"$(disasm_dir)/stand/h"
 inc_dirs += -I"$(disasm_dir)/h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" 
 inc_dirs += -I"$(comp_cfg_dir)/h"
 
-pre_deps_osi = $(tools_root)/os2ldr.exe
+pre_deps_osi = $(os2ldr)
 pre_deps_qnx = wdis.u
 
 .c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(dis_srcs);$(lib_misc_dir)/c
@@ -72,13 +72,13 @@ disasm_objs = $(stand_objs) $(dis_objs) demangle.obj $(trmem_objs)
 $(exe_name) : $(proj_name).res $(dis_prereq) $(disasm_objs) $(pre_deps_$(host_os)) $(xlibs)
         $(cl) $(clflags) $(disasm_objs) $(xlibs) $(cl_libs)
 !ifeq host_os osi
-        w32bind $^&.rex $^@ $(tools_root)/os2ldr.exe
+        $(w32bind) $^&.rex $@ $(os2ldr)
         rm -f $^&.rex
 !endif
-        wstrip -q -a -r $^@ . $(proj_name).res
+        wstrip -q -a -r $@ . $^&.res
 
 $(proj_name).res : wdis.rc msg.gh
-        $(rc_aui) $[@ -fo=$^@
+        $(rc_aui) $[@ -fo=$@
 
 ./mkstr.exe : $(disasm_dir)/stand/mkstr.c
         $(bld_cl) $(wcl_util_opts) -I"$(disasm_dir)/stand" $[@

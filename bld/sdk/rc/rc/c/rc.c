@@ -148,7 +148,7 @@ int main( int argc, char * argv[] )
 #ifndef DLL_COMPILE
     RcMemInit();
     Layer0InitStatics();
-#if !defined( __UNIX__ ) /* _grow_handles doesn't work yet */
+#if !defined(__UNIX__) && !defined(__OSI__) /* _grow_handles doesn't work yet */
     _grow_handles(100);
 #endif
 #endif

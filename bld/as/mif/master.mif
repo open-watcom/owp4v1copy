@@ -187,10 +187,10 @@ $(asi_lib_j) : $(asi_lib) asmsgj.obj
 $(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res
         $(cl) $(clflags) $(as_objs) $(libs) $(owl_lib) $(cl_libs)
 !ifeq host_os osi
-        $(bld_bin)\w32bind $^&.rex $^@ $(bld_bin)\os2ldr.exe
-        erase $^&.rex
+        $(w32bind) $^&.rex $^@ $(os2ldr)
+        @rm -f $^&.rex
 !endif
-        wstrip -q -a -r $^@ . $(name).res
+        wstrip -q -a -r $@ . $(name).res
 
 !ifndef inline_as
 $(name).res : as.rc msg.gh

@@ -63,17 +63,11 @@ extra_c_flags_dmem  = $(mem_flags) -I"$(trmem_dir)"
 extra_l_flags        = op stack=16k, map
 extra_l_flags_nt_axp = op undefsok
 
-exe_ext_osi = rex
-!ifdef exe_ext_$(host_os)
-exe_ext = $(exe_ext_$(host_os))
-!else
-exe_ext = exe
-!endif
-
-
 $(name).exe : $(OBJECTS)
-    $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)}
 !ifeq host_os osi
-    w32bind $^&.rex $^&.exe $(tools_root)\os2ldr.exe
-    @erase $^&.rex
+    $(linker) $(lflags) name $^&.rex file {$(OBJECTS)}
+    $(w32bind) $^&.rex $@ $(os2ldr)
+    @rm -f $^&.rex
+!else    
+    $(linker) $(lflags) name $@ file {$(OBJECTS)}
 !endif

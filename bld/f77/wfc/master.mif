@@ -77,17 +77,20 @@ extra_l_flags_nt = op stack=1024k commit stack=32k
 flibs = $(wres_lib) $(dwarf_dw_lib) $(asminline_lib)
 
 $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
-    @%create $(target_exe).lnk
-    @%append $(target_exe).lnk name $^@
-    @for %i in ($(fobjs)) do @%append $(target_exe).lnk file %i
-    @for %i in ($(flibs)) do @%append $(target_exe).lnk lib %i
-    @%append $(target_exe).lnk $(f77_cg_libs)
-    $(linker) $(lflags) @$(target_exe).lnk
+    %create $^&.lnk
+    @for %i in ($(fobjs)) do @%append $^&.lnk file %i
+    @for %i in ($(flibs)) do @%append $^&.lnk lib %i
+    @%append $^&.lnk $(f77_cg_libs)
 !ifeq host_os osi
-    $(binder)\w32bind $(target_exe).rex $^@ $(binder)\os2ldr.exe
-    erase $(target_exe).rex
+    @%append $^&.lnk name $^&.rex
+    $(linker) $(lflags) @$^&.lnk
+    $(w32bind) $^&.rex $@ $(os2ldr)
+    @rm -f $^&.rex
+!else    
+    @%append $^&.lnk name $@
+    $(linker) $(lflags) @$^&.lnk
 !endif
-    wstrip -q -a -r $^@ . errmsg.res
+    wstrip -q -a -r $@ . errmsg.res
 
 option.obj : option.c optinfo.h
 

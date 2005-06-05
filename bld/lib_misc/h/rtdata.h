@@ -38,7 +38,7 @@
 #include "errorno.h"
 
 /* DOS based platforms have stdaux/stdprn in addition to stdin/out/err */
-#if defined(__DOS__) || defined(__WINDOWS__)
+#if defined(__DOS__) || defined(__WINDOWS__) || defined(__OSI__)
     #define NUM_STD_STREAMS 5
 #else
     #define NUM_STD_STREAMS 3

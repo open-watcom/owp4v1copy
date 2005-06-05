@@ -97,25 +97,16 @@ inc_dirs = -I. -I"$(wrc2_dir)/h" -I"$(wres_dir)/h" -I$(cpp_dir) -I"$(fe_misc_dir
 # explicit rules
 
 $(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
-        $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
-        @%make bindit
-        wstrip -q -a -r $^@ . $(name).res
-!ifeq sys_dll 1
-        @rm -f $(name).lib
-        $(librarian) $(name).lib +$(name).dll
-!endif
-
-bindit : .PROCEDURE
 !ifeq host_os osi
-        w32bind $(name).rex $(name).exe $(tools_root)\os2ldr.exe
-        erase $(name).rex
-        @%null
-!else ifeq host_os dos
-        # Decide on which standard extender to use first...
-#!error NYI
-        @%null
+        $(linker) $(lflags) name $^&.rex file { $(objs) } lib {$(wres_lib)}
+        $(w32bind) $^&.rex $@ $(os2ldr)
+        rm -f $^&.rex
 !else
-        @%null
+        $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
+!endif
+        wstrip -q -a -r $@ . $(name).res
+!ifeq sys_dll 1
+        $(librarian) -n $^&.lib +$^&.dll
 !endif
 
 ytab.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h

@@ -70,7 +70,7 @@ cdrv_objs = cdrvdll.obj
 
 #host dependant goop
 pre_deps_qnx = wcc.u
-pre_deps_osi = $(tools_root)/os2ldr.exe
+pre_deps_osi = $(os2ldr)
 
 # other goofy stuff
 pre_obj_deps = $(pre_deps_wasm) $(pre_deps_$(host_os)) code$(target_cpu).gh &
@@ -187,10 +187,14 @@ $(xname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
 !else
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
-        $(linker) $(lflags) @$^&.lnk
 !ifeq   host_os osi
-        $(bld_bin)/w32bind $^&.rex $^&.exe $(bld_bin)/os2ldr.exe
-        rm -f $^&.rex
+        @%append $^&.lnk name $^&.rex
+        $(linker) $(lflags) @$^&.lnk
+        $(w32bind) $^&.rex $@ $(os2ldr)
+        @rm -f $^&.rex
+!else	
+        @%append $^&.lnk name $@
+        $(linker) $(lflags) @$^&.lnk
 !endif
 !ifeq   host_os qnx
 !ifeq release 1
@@ -202,15 +206,20 @@ $(xname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
 $(dxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_debug_libs)
+        @%append $^&.lnk name $@
         $(linker) $(lflags) @$^&.lnk
 
 $(cxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_stub_libs)
+!ifeq host_os osi
+        @%append $^&.lnk name $^&.rex
         $(linker) $(lflags) @$^&.lnk
-!ifeq   host_os osi
-        $(bld_bin)/w32bind $^&.rex $^&.exe $(tools_root)/os2ldr.exe
-        rm -f $^&.rex
+        $(w32bind) $^&.rex $@ $(os2ldr)
+        @rm -f $^&.rex
+!else	
+        @%append $^&.lnk name $@
+        $(linker) $(lflags) @$^&.lnk
 !endif
 !ifeq   host_os qnx
 !ifeq release 1
@@ -228,14 +237,13 @@ rc_objs = cc.rc
 #
 $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
         @%create $^&.lnk
-        @%append $^&.lnk name $@
-        @%append $^&.lnk OP map
-        @%append $^&.lnk OP SYMFILE
-        @%append $^&.lnk  $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
+        @%append $^&.lnk option map, symfile
+        @%append $^&.lnk $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
         @%append $^&.lnk $(wlink_dll_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
         @for %i in ($(dll_objs)) do @%append $^&.lnk file %i
         @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
+        @%append $^&.lnk name $@
 !ifeq release 1
         @%append $^&.lnk $(cg_libs)
 !else
@@ -247,7 +255,6 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps
 !endif
 
 $(dllname).lib : $(dllname).dll
-        @if exist $(dllname).lib @rm -f $(dllname).lib
         $(librarian) -n -c $(dllname).lib +$(dllname).dll
 
 $(dllexet).exe : $(cdrv_objs) $(dllname).lib
@@ -269,12 +276,11 @@ $(dllexe).exe : $(dlldrv_obj) $(dllname).lib
 
 linkfile: .procedure
         @%create $^&.lnk
-        @%append $^&.lnk name $@
         @%append $^&.lnk $(wlink_opt_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
         @for %i in ($(cc_objs)) do @%append $^&.lnk file %i
         @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
-
+	
 !ifeq target_cpu axp
 
 codeaxp.gh :

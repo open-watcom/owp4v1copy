@@ -20,11 +20,11 @@ cdsay .
 #   <CPCMD> dos386/tntrun.exe   <RELROOT>/rel2/binw/tntrun.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> os2386/w32bind.exe  ../build/binp/w32bind.exe
-    <CPCMD> os2386/os2ldr.exe   ../build/binp/os2ldr.exe
+#    <CPCMD> os2386/w32bind.exe  ../build/binp/w32bind.exe
+#    <CPCMD> os2386/os2ldr.exe   ../build/binp/os2ldr.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> nt386/ntrunner.exe  <RELROOT>/rel2/binnt/w32run.exe
+    <CPCMD> nt386/w32run.exe  <RELROOT>/rel2/binnt/w32run.exe
 #    these are now real NT exe's - don't copy the stub
 #    <CPCMD> nt/*.exe           <RELROOT>/rel2/binnt/
 
