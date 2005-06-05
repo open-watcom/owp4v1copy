@@ -4,68 +4,73 @@
 # path names used in the script
 
 proj_name = wres
-name = wres$(libname)
+name = $(libname)
 
 !ifndef wres_autodepends
 wres_autodepends = .AUTODEPEND
 !endif
 
-additional_cleanup = ../lib/$(name).lib
+!ifeq linkage dynamic
+wres_rtdll = 1
+!endif
 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-OBJS = &
- loadstr.obj &
- loadres.obj &
- wrfree.obj &
- mropnewf.obj mrrdrh.obj ralliae.obj rclosef.obj rdlli.obj &
- rduint16.obj rduint32.obj rduint8.obj resseek.obj &
- restell.obj rillia.obj rillib.obj ropenfro.obj ropenfrw.obj &
- rrdstr.obj rrlli.obj rrnamoor.obj wraddres.obj wrchkwrf.obj wrdelrs.obj &
- wrerror.obj wrfilein.obj wrfindrs.obj wrfirres.obj wrfreedi.obj &
- wrgetli.obj wrgetri.obj wrgetti.obj wrhidcmp.obj wridcmp.obj wridexby.obj &
- wridfnoo.obj wridfree.obj wridfrnu.obj wridfrst.obj &
- wrhidfno.obj wrhidfre.obj wrhidfrn.obj wrhidfrs.obj &
- wridnacm.obj wridnfst.obj wridtnoo.obj wridtonu.obj &
- wridtost.obj wriidfn.obj wrinitdi.obj wrisempt.obj &
- wrihidf.obj &
- wrislr.obj wriswrf.obj wrnextrs.obj wropnewf.obj &
- wrreaddi.obj wrrewrid.obj wrrfrr.obj wrrftr.obj wrrfwrid.obj &
- wrrhr.obj wrrwrid.obj &
- wrwritdi.obj resver.obj wresrtns.obj &
- resaccel.obj resbitmp.obj resdiag.obj resfont.obj resiccu.obj &
- resmenu.obj resnamor.obj resraw.obj resstr.obj varstr.obj write.obj &
- restbar.obj wrauto.obj wrmergdi.obj
+objs = &
+    loadstr.obj &
+    loadres.obj &
+    wrfree.obj &
+    mropnewf.obj mrrdrh.obj ralliae.obj rclosef.obj rdlli.obj &
+    rduint16.obj rduint32.obj rduint8.obj resseek.obj &
+    restell.obj rillia.obj rillib.obj ropenfro.obj ropenfrw.obj &
+    rrdstr.obj rrlli.obj rrnamoor.obj wraddres.obj wrchkwrf.obj wrdelrs.obj &
+    wrerror.obj wrfilein.obj wrfindrs.obj wrfirres.obj wrfreedi.obj &
+    wrgetli.obj wrgetri.obj wrgetti.obj wrhidcmp.obj wridcmp.obj wridexby.obj &
+    wridfnoo.obj wridfree.obj wridfrnu.obj wridfrst.obj &
+    wrhidfno.obj wrhidfre.obj wrhidfrn.obj wrhidfrs.obj &
+    wridnacm.obj wridnfst.obj wridtnoo.obj wridtonu.obj &
+    wridtost.obj wriidfn.obj wrinitdi.obj wrisempt.obj &
+    wrihidf.obj &
+    wrislr.obj wriswrf.obj wrnextrs.obj wropnewf.obj &
+    wrreaddi.obj wrrewrid.obj wrrfrr.obj wrrftr.obj wrrfwrid.obj &
+    wrrhr.obj wrrwrid.obj &
+    wrwritdi.obj resver.obj wresrtns.obj &
+    resaccel.obj resbitmp.obj resdiag.obj resfont.obj resiccu.obj &
+    resmenu.obj resnamor.obj resraw.obj resstr.obj varstr.obj write.obj &
+    restbar.obj wrauto.obj wrmergdi.obj
 
 # removed files: wrrtr.obj wrrwridn.obj
 
 # options to use
-extra_c_flags = -DMICROSOFT -s
-
-!ifdef CONV
-extra_c_flags += -3$(CONV)
-!endif
-!ifdef PEGGED
-extra_c_flags += -zdp
-!endif
-!ifdef WINDOWS
-extra_c_flags += -zw-zu
-!endif
 !ifdef IS_GUI
-extra_c_flags += -DWIN_GUI
+extra_c_flags = -DMICROSOFT -s -DWIN_GUI
+!else
+extra_c_flags = -DMICROSOFT -s
+!endif
+
+!ifeq convention stack
+extra_c_flags_386 = -3s
+!else
+extra_c_flags_386 = -3r
+!endif
+
+!ifeq host_os os2
+extra_c_flags_i86 = -zdp
+!else ifeq host_os win
+extra_c_flags_i86 = -zw-zu
 !endif
 
 # where to look for various files
 
-.c : ../c
+.c : ../../c
 
-inc_dirs = -I"../h"
+inc_dirs = -I"../../h"
 
 # explicit rules
 
-../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
-        %create $(name).lbc
-        @for %i in ($(OBJS)) do @%append $(name).lbc +%i
-        $(librarian) -n -b $^@ @$(name).lbc
+$(name).lib : $(objs) $(__MAKEFILES__) .PRECIOUS
+    %create $^&.lbc
+    @for %i in ($(objs)) do @%append $^&.lbc +%i
+    $(librarian) -n -b $@ @$^&.lbc

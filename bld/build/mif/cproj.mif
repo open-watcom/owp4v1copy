@@ -115,22 +115,22 @@ mode_clflags   += -"option symfile"
 !ifndef memory_model_i86
 memory_model_i86 = l
 !endif
+model_switch_i86 = -m$(memory_model_i86)
 
-!ifdef mem_model_i86
-model_switch_i86        = $(mem_model_i86)
-!else
-model_switch_i86        = -m$(memory_model_i86)
-!endif
+default_memory_model_386_dos   = s
+default_memory_model_386_qnx   = s
+default_memory_model_386_nov   = s
+default_memory_model_386_osi   = s
+default_memory_model_386_win   = f
+default_memory_model_386_os2   = f
+default_memory_model_386_nt    = f
+default_memory_model_386_linux = f
+default_memory_model_386_      = f
 
 !ifndef memory_model_386
-memory_model_386 = f
+memory_model_386 = $(default_memory_model_386_$(host_os))
 !endif
-
-!ifdef mem_model_386
-model_switch_386        = $(mem_model_386)
-!else ifdef memory_model_386
-model_switch_386        = -m$(memory_model_386)
-!endif
+model_switch_386 = -m$(memory_model_386)
 
 cflags_all      =-w4 -we $(mode_cflags)
 !ifdef __UNIX__
