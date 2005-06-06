@@ -33,7 +33,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include "rctypes.h"
 
@@ -64,7 +65,7 @@ static bool CreatePreprocFile( void ) {
     error = FALSE;
     hdl = RcOpen( CmdLineParms.OutResFileName,
                 O_WRONLY | O_TEXT | O_CREAT | O_TRUNC,
-                S_IRWXU | S_IRWXG | S_IRWXO );
+                S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
     if( hdl == -1 ) {
         RcError( ERR_CANT_OPEN_FILE, CmdLineParms.OutResFileName,
                         strerror( errno ) );

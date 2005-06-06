@@ -149,6 +149,7 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
 
 HANDLE_ERROR:
     CloseResFiles( *resinfo );
+    *resinfo = NULL;
     return( FALSE );
 }
 

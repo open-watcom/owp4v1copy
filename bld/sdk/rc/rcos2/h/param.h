@@ -33,8 +33,12 @@
 
 #include <stdlib.h>
 #include "rctypes.h"
-#ifdef UNIX
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
+#endif
+#ifndef _MAX_PATH
+#include <limits.h>
+#define _MAX_PATH PATH_MAX+1
 #endif
 
 #define DB_CHAR         1

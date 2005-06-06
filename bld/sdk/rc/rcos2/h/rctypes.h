@@ -35,7 +35,10 @@
 
 #include <stddef.h>
 
+#ifndef BOOL_DEFINED
+#define BOOL_DEFINED
 typedef int bool;
+#endif
 
 enum {
     false,

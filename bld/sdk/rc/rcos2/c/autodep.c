@@ -32,8 +32,9 @@
 
 #include <stdlib.h>
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "wresall.h"
 #include "watcom.h"
 #include "global.h"
@@ -96,10 +97,17 @@ static void writeOneNode( DepInfo *cur ) {
     item.TmpStr = FALSE;
 
     /* write out time */
+#ifdef __BIG_ENDIAN__
+    item.Item.Num = cur->time >> 16;
+    SemWriteRawDataItem( item );
+    item.Item.Num = cur->time & 0xffff;
+    SemWriteRawDataItem( item );
+#else
     item.Item.Num = cur->time & 0xffff;
     SemWriteRawDataItem( item );
     item.Item.Num = cur->time >> 16;
     SemWriteRawDataItem( item );
+#endif
 
     /* write out len */
     item.Item.Num = cur->len;

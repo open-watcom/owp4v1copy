@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -128,6 +129,8 @@ static int Pass2( void )
             noerror = MergeResExePE();
             break;
         default: //EXE_TYPE_UNKNOWN
+            RcError( ERR_INTERNAL, INTERR_UNKNOWN_RCSTATUS );
+            noerror = FALSE;
             break;
         }
         RcPass2IoShutdown( noerror );

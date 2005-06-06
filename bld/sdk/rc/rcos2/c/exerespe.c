@@ -543,6 +543,7 @@ static RcStatus copyPEResources( ExeFileInfo * tmp, ResFileInfo *resfiles,
         ret = traverseTree( &info->Res, &copy_info, copyDataEntry );
         *errres = copy_info.errres;
     } else {
+        ret = RS_OK;
         while( resfiles != NULL ) {
             copy_info.curres = resfiles;
             if( resfiles->IsOpen ) {
@@ -933,6 +934,7 @@ int RcBuildResourceObject( void ) {
     if( CmdLineParms.NoResFile ) {
         exeinfo->u.PEInfo.WinHead->table[ PE_TBL_RESOURCE ].rva = 0;
         exeinfo->u.PEInfo.WinHead->table[ PE_TBL_RESOURCE ].size = 0;
+        error = RS_OK;
     } else {
         res_obj = exeinfo->u.PEInfo.Objects
                   + exeinfo->u.PEInfo.WinHead->num_objects - 1;
@@ -941,10 +943,13 @@ int RcBuildResourceObject( void ) {
         error = BuildResourceObject( exeinfo, Pass2Info.ResFiles,
                                      res_obj, rva, offset,
                                      !Pass2Info.AllResFilesOpen );
+// use of CmdLineParms.WritableRes has been commented out in param.c
+// removed here too as it wasn't initialised anymore (Ernest ter Kuile 31 aug 2003)
+//        if( CmdLineParms.WritableRes ) {
+//            res_obj->flags |= PE_OBJ_WRITABLE;
+//        }
     }
-    if( CmdLineParms.WritableRes ) {
-        res_obj->flags |= PE_OBJ_WRITABLE;
-    }
+
     return( error );
 }
 #endif

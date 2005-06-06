@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource Compiler pass 2.
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <string.h>
@@ -562,10 +562,9 @@ HANDLE_ERROR:
 
 STOP_ERROR:
     RcFatalError( ERR_STOP_REQUESTED );
-#if defined( __ALPHA__ ) || defined( __UNIX__ ) && !defined( __WATCOMC__ )
+#if !defined( __WATCOMC__ )
     return( FALSE );
 #endif
-
 } /* MergeResExeNE */
 
 extern RcStatus updateDebugDirectory( void ) {
@@ -689,8 +688,7 @@ HANDLE_ERROR:
 
 STOP_ERROR:
     RcFatalError( ERR_STOP_REQUESTED );
-#if defined( __ALPHA__ ) || defined( __UNIX__ )
+#if !defined( __WATCOMC__ )
     return( FALSE );
 #endif
-
 } /* MergeResExePE */

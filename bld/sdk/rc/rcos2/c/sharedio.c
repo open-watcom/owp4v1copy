@@ -265,7 +265,7 @@ void ReportDupResource( WResID *nameid, WResID *typeid, char *file1,
             break;
         default:
             type = typebuf;
-            sprintf( type, "%d", typeid->ID.Num );
+            itoa( typeid->ID.Num, type, 10 );
             break;
         }
     }
@@ -274,7 +274,7 @@ void ReportDupResource( WResID *nameid, WResID *typeid, char *file1,
         name = WResIDToStr( nameid );
     } else {
         name = namebuf;
-        sprintf( name, "%d", nameid->ID.Num );
+        itoa( nameid->ID.Num, name, 10 );
     }
     if( !typeid->IsName && typeid->ID.Num == (uint_16)RT_STRING ) {
         strbase = ( nameid->ID.Num - 1 ) * 16;

@@ -30,13 +30,16 @@
 
 
 #include <stdio.h>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
+#ifndef __UNIX__
 #include <process.h>
+#endif
 #include "watcom.h"
 #include "wresall.h"
 #include "global.h"
@@ -56,11 +59,16 @@
 #include "util.h"
 #include "rcldstr.h"
 #include "iortns.h"
-#ifdef UNIX
-    #include <stdlib.h>
-#endif
 
 #include <time.h>
+
+#ifdef __UNIX__
+#define PATH_SEP '/'
+#define PATH_SPLIT ':'
+#else
+#define PATH_SEP '\\'
+#define PATH_SPLIT ';'
+#endif
 
 #ifdef __OSI__
  extern char    *_Copyright;
@@ -79,14 +87,14 @@ static void MakeTmpInSameDir( const char * dirfile, char * outfile, char * ext )
 {
     char    drive[ _MAX_DRIVE ];
     char    dir[ _MAX_DIR ];
-#ifdef UNIX
+#ifdef __UNIX__
     char    fname[ 32 ];
 #else
     char    *fname = "__TMP__";
 #endif
 
     _splitpath( dirfile, drive, dir, NULL, NULL );
-#ifdef UNIX
+#ifdef __UNIX__
     // Must be able to run several "rc" executables simultaneously
     // in the same directory
     sprintf( fname, "__RCTMP%lu__", (unsigned long)getpid() );
@@ -172,7 +180,7 @@ extern void RcFindResource( char *name, char *fullpath ) {
     //if the filename has a drive or is an absolute path then ignore
     //the include path and just look at the specified location
     _splitpath( name, drive, dir, NULL, NULL );
-    if( drive[0] != '\0' || dir[0] =='\\' ) {
+    if( drive[0] != '\0' || dir[0] ==PATH_SEP ) {
         if( access( name, F_OK ) == 0 ) {
             strcpy( fullpath, name );
         }
@@ -187,15 +195,15 @@ extern void RcFindResource( char *name, char *fullpath ) {
         end = *NewIncludeDirs;
         while( end != '\0' ) {
             dst = fullpath;
-            while( *src != ';' && *src != '\0' ) {
+            while( *src != ';' && *src != PATH_SPLIT && *src != '\0' ) {
                 *dst = *src;
                 dst ++;
                 src ++;
             }
             end = *src;
             src ++;
-            if( *( dst - 1 ) != '\\' ) {
-                *dst = '\\';
+            if( *( dst - 1 ) != PATH_SEP ) {
+                *dst = PATH_SEP;
                 dst++;
             }
             strcpy( dst, name );
@@ -219,9 +227,9 @@ extern void RcTmpFileName( char * tmpfilename )
         strncpy( tmpfilename, tmpdir, _MAX_PATH - L_tmpnam - 1 );
         nextchar = tmpfilename + strlen( tmpfilename ) - 1;
         /* tack a '\' onto the end if it is not there already */
-        if( *nextchar != '\\' ) {
+        if( *nextchar != PATH_SEP ) {
             nextchar++;
-            *nextchar = '\\';
+            *nextchar = PATH_SEP;
         }
         nextchar++;
     } else {
@@ -257,6 +265,8 @@ static int PreprocessInputFile( void )
         PP_Define( rcdefine );
     } else if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
         strcpy( rcdefine, "__NT__" );
+        PP_Define( rcdefine );
+        strcpy( rcdefine, "_WIN32" );
         PP_Define( rcdefine );
     } else if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
         strcpy( rcdefine, "__OS2__" );
@@ -554,7 +564,8 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
 static int openNewExeFileInfo( char *filename, ExeFileInfo *info )
 /******************************************************************/
 {
-    info->Handle = RcOpen( filename, O_RDWR|O_CREAT|O_TRUNC|O_BINARY, S_IRWXU );
+    info->Handle = RcOpen( filename, O_RDWR|O_CREAT|O_TRUNC|O_BINARY,
+                S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
     if( info->Handle == -1 ) {
         RcError( ERR_OPENING_TMP, filename, strerror( errno ) );
         return( FALSE );
@@ -666,8 +677,9 @@ extern int RcPass2IoInit( void )
     if( noerror ) {
         noerror = openNewExeFileInfo( Pass2Info.TmpFileName,
                                       &(Pass2Info.TmpFile) );
-        tmpexe_exists = noerror;
     }
+        tmpexe_exists = noerror;
+
     if( noerror ) {
         Pass2Info.TmpFile.Type = Pass2Info.OldFile.Type;
         Pass2Info.TmpFile.WinHeadOffset = Pass2Info.OldFile.WinHeadOffset;

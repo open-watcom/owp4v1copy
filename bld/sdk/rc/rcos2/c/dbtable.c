@@ -36,11 +36,12 @@
 #include "rctypes.h"
 #include "dbtable.h"
 #include "rcmem.h"
-#include "fcntl.h"
-#include "io.h"
+#include <fcntl.h>
+#include <unistd.h>
 #include "write.h"
 #include "iortns.h"
-#ifdef UNIX
+
+#if defined(__UNIX__) && !defined(__WATCOMC__)
     #include "clibext.h"
 #endif
 

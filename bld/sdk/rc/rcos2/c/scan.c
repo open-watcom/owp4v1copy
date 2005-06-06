@@ -66,6 +66,7 @@ static void PutScanString( const char * string )
 static int      _next;
 static int      LookAhead;
 static int      longString;
+static int      newLineInString = 0;
 
 static int ScanDFA( ScanValue * value );
 
@@ -216,6 +217,7 @@ static int ScanDFA( ScanValue * value )
         } else switch (LookAhead) {
             case '"':
                 newstring = VarStringStart();  /* don't include the " */
+                newLineInString = 0; /* reset newline in string status */
                 do_transition( S_STRING );
             case '.':
                 newstring = VarStringStart();
@@ -434,6 +436,18 @@ static int ScanDFA( ScanValue * value )
             VarStringAddChar( newstring, LookAhead );
             do_transition( S_STRING );
         }
+
+        // if newline in string was detected, remove all whitespace from
+        // begining of the next line
+        if( newLineInString ) {
+            if ( isspace( LookAhead ) ) {
+                do_transition( S_STRING );
+            } else {
+                // non whitespace was detected, reset newline flag, so whitespaces are treated normally
+                newLineInString = 0;
+            }
+        }
+
         switch (LookAhead) {
         case '"':           do_transition( S_STRINGEND );
         case '\\':          do_transition( S_ESCAPE_CHAR );
@@ -443,12 +457,13 @@ static int ScanDFA( ScanValue * value )
                 DEBUGPUTS( "STRING" )
                 return( Y_STRING );
             } else {
-                RcError( ERR_RUNAWAY_STRING );
-                ErrorHasOccured = TRUE;
-                value->string.string = VarStringEnd( newstring,
-                            &(value->string.length) );
-                DEBUGPUTS( value->string.string )
-                return( Y_SCAN_ERROR );
+                // MSVC's RC uses this obscure way of handling newline in strings and we follow.
+                // First store <space> and then <newline character>. Then on next line, all white
+                // spaces from begining of line is removed
+                VarStringAddChar( newstring, ' ' );
+                VarStringAddChar( newstring, LookAhead );
+                newLineInString = 1;
+                do_transition( S_STRING );
             }
         default:
             VarStringAddChar( newstring, LookAhead );
@@ -759,7 +774,7 @@ extern void ScanInitStatics( void )
 extern char *FindAndReplace( char* stringFromFile, FRStrings *frStrings )
 /***********************************************************************/
 {
-    char                *replacedString;
+    char                *replacedString = NULL;
     char                *foundString;
     int                 lenOfStringFromFile;
     int                 lenOfFindString;
@@ -825,6 +840,7 @@ extern char *FindAndReplace( char* stringFromFile, FRStrings *frStrings )
         }
         frStrings =  frStrings->next;
     }
+
     if( replacedString != NULL ) {
         RcMemFree( stringFromFile );
         return replacedString;

@@ -302,11 +302,11 @@ extern FullDialogBoxControl * SemNewDiagCtrl( uint_8 token,
     FullDialogBoxControl *  newctrl;
     uint_32                 style_mask; /* for the style of the control */
     uint_32                 style_value;
-    uint_32                 defstyle_hi;
-    uint_32                 defstyle_lo;
+    uint_32                 defstyle_hi = 0;
+    uint_32                 defstyle_lo = 0;
     uint_32                 style_hi;
     uint_32                 style_lo;
-    uint_16                 class;
+    uint_16                 class = 0;
     uint_16                 tmp_mask;
     ControlClass *          cont_class;
 
@@ -622,7 +622,7 @@ extern void SemWriteDialogBox( WResID *name, ResMemFlags flags,
 {
     ResLocation              loc;
     int                      err_code;
-    int                      error;
+    int                      error = 0;
     FullDialogBoxControl    *travptr;
 
     if(head == NULL) {

@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <io.h>
+#include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include "watcom.h"
@@ -282,6 +282,7 @@ extern int CopyResources( uint_16 sect2mask, uint_16 sect2bits, bool sect2 )
 
     /* walk through the WRes directory */
     wind = WResFirstResource( dir );
+    exe_type = NULL;
     while (!WResIsEmptyWindow( wind )) {
         if (WResIsFirstResOfType( wind )) {
             exe_type = findExeTypeRecord( restab, WResGetTypeInfo( wind ) );

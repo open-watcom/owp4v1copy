@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
@@ -598,9 +598,9 @@ static RcStatus copyOneCursor( const CurFileDirEntry *entry, int handle,
 static RcStatus copyCursors( FullCurDir * dir, int handle,
                              ResMemFlags flags, int *err_code )
 /***********************************************************************/
-/* this function uses the same size of buffers to copy info as for icons */
+/* This function uses the same size of buffers to copy info as for icons */
 {
-    RcStatus            error;
+    RcStatus            error = RS_OK; // should this be RS_PARAM_ERROR ??
     char *              buffer;
     FullCurDirEntry *   entry;
     CurFileDirEntry     fileentry;

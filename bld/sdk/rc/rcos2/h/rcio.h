@@ -41,7 +41,7 @@
 #include "semstr.h"
 #include "semsingl.h"
 #include "sharedio.h"
-#ifdef UNIX
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 

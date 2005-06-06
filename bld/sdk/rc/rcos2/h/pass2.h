@@ -42,7 +42,7 @@
 #include "exereslx.h"
 #include "exeseg.h"
 #include "exeres.h"
-#ifdef UNIX
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 

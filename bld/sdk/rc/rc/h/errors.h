@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #define USAGE_MSG_BASE  500
 
 #ifdef WR_COMPILED
@@ -63,7 +64,7 @@ enum {
 
 extern void RcWarning( unsigned errornum, ... );
 extern void RcError(unsigned int ,... );
-#if !defined(__AXP__) && defined(__WATCOMC__)
+#if defined(__WATCOMC__)
 #pragma aux RcFatalError aborts;
 #endif
 extern void RcFatalError( unsigned int, ... );
