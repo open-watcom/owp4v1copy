@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Validates types of expressions and the resultant types or
-*               error codes
+*               error codes.
 *
 ****************************************************************************/
 
@@ -269,64 +269,64 @@ local  const unsigned char __FAR BinResult[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
 
 
 enum    conv_types {
-        NIL = 0,
-        C2S,    /* char to short    */
-        C2I,    /* char to int      */
-        C2L,    /* char to long     */
-        C2M,    /* char to long64   */
-        C2U,    /* char to unsigned */
-        C2F,    /* char to float    */
-        C2D,    /* char to double   */
-        S2C,    /* short to char    */
-        S2I,    /* short to int     */
-        S2L,    /* short to long    */
-        S2M,    /* short to long64  */
-        S2U,    /* short to unsigned*/
-        S2F,    /* short to float   */
-        S2D,    /* short to double  */
-        I2C,    /* int to char      */
-        I2S,    /* int to short     */
-        I2U,    /* int to unsigned  */
-        I2L,    /* int to long      */
-        I2M,    /* int to long64    */
-        I2F,    /* int to float     */
-        I2D,    /* int to double    */
-        L2C,    /* long to char     */
-        L2S,    /* long to short    */
-        L2I,    /* long to integer  */
-        L2M,    /* long to long64   */
-        L2U,    /* long to unsigned */
-        L2F,    /* long to float    */
-        L2D,    /* long to double   */
-        M2C,    /* long64 to char   */
-        M2S,    /* long64 to short  */
-        M2I,    /* long64 to integer*/
-        M2L,    /* long64 to long   */
-        M2U,    /* long64 to unsigned*/
-        M2F,    /* long64 to float  */
-        M2D,    /* long64 to double */
-        U2C,    /* unsigned to char */
-        U2L,    /* unsigned to long */
-        U2M,    /* unsigned to long64*/
-        U2F,    /* unsigned to float*/
-        U2D,    /* unsigned to double */
-        F2C,    /* float to char    */
-        F2S,    /* float to short   */
-        F2I,    /* float to int     */
-        F2L,    /* float to long    */
-        F2M,    /* float to long64  */
-        F2D,    /* float to double  */
-        D2C,    /* double to char   */
-        D2S,    /* double to short  */
-        D2I,    /* double to int    */
-        D2L,    /* double to long   */
-        D2M,    /* double to long64 */
-        D2F,    /* double to float  */
-        P2P,    /* pointer to pointer*/
-        A2P,    /* arithmetic to pointer*/
-        P2A,    /* pointer to arithmetic*/
-        CER,    /* conversion error  */
- };
+    NIL = 0,
+    C2S,    /* char to short    */
+    C2I,    /* char to int      */
+    C2L,    /* char to long     */
+    C2M,    /* char to long64   */
+    C2U,    /* char to unsigned */
+    C2F,    /* char to float    */
+    C2D,    /* char to double   */
+    S2C,    /* short to char    */
+    S2I,    /* short to int     */
+    S2L,    /* short to long    */
+    S2M,    /* short to long64  */
+    S2U,    /* short to unsigned*/
+    S2F,    /* short to float   */
+    S2D,    /* short to double  */
+    I2C,    /* int to char      */
+    I2S,    /* int to short     */
+    I2U,    /* int to unsigned  */
+    I2L,    /* int to long      */
+    I2M,    /* int to long64    */
+    I2F,    /* int to float     */
+    I2D,    /* int to double    */
+    L2C,    /* long to char     */
+    L2S,    /* long to short    */
+    L2I,    /* long to integer  */
+    L2M,    /* long to long64   */
+    L2U,    /* long to unsigned */
+    L2F,    /* long to float    */
+    L2D,    /* long to double   */
+    M2C,    /* long64 to char   */
+    M2S,    /* long64 to short  */
+    M2I,    /* long64 to integer*/
+    M2L,    /* long64 to long   */
+    M2U,    /* long64 to unsigned*/
+    M2F,    /* long64 to float  */
+    M2D,    /* long64 to double */
+    U2C,    /* unsigned to char */
+    U2L,    /* unsigned to long */
+    U2M,    /* unsigned to long64*/
+    U2F,    /* unsigned to float*/
+    U2D,    /* unsigned to double */
+    F2C,    /* float to char    */
+    F2S,    /* float to short   */
+    F2I,    /* float to int     */
+    F2L,    /* float to long    */
+    F2M,    /* float to long64  */
+    F2D,    /* float to double  */
+    D2C,    /* double to char   */
+    D2S,    /* double to short  */
+    D2I,    /* double to int    */
+    D2L,    /* double to long   */
+    D2M,    /* double to long64 */
+    D2F,    /* double to float  */
+    P2P,    /* pointer to pointer*/
+    A2P,    /* arithmetic to pointer*/
+    P2A,    /* pointer to arithmetic*/
+    CER,    /* conversion error  */
+};
 
 /* matches enum DATA_TYPE in ctypes.h */
 static enum  conv_types const CnvTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
@@ -501,6 +501,7 @@ enum   rel_op {
     REL_LE,    // x <= c
     REL_SIZE
 };
+
 enum  case_range {
     CASE_LOW,         // c < a
     CASE_LOW_EQ,      // c == a
@@ -510,13 +511,13 @@ enum  case_range {
 };
 
 typedef enum{
-    CMP_VOID    = 0,
-    CMP_FALSE   = 1,
-    CMP_TRUE    = 2,
-}cmp_result;
+    CMP_VOID    = 0,    // comparison fine
+    CMP_FALSE   = 1,    // always false
+    CMP_TRUE    = 2,    // always true
+} cmp_result;
 
 static char const Meaningless[REL_SIZE][CASE_SIZE] = {
-//    c < a      c == a     c >b       c==b
+//    c < a      c == a     c > b      c == b
     { CMP_FALSE, CMP_VOID , CMP_FALSE, CMP_VOID },  // x == c
     { CMP_FALSE, CMP_FALSE, CMP_TRUE , CMP_VOID },  // x < c
     { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
@@ -525,9 +526,11 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
 #define NumSign( a )   ((a)&0x80)
 #define NumBits( a )   ((a)&0x7f)
 #define MAXSIZE        (sizeof( long )*8)
-static char NumSize( int op_type ){
+
 // return 0 not a num, else number of bits | 0x80 if signed
-    char size;
+static char NumSize( int op_type )
+{
+    char    size;
 
     size = 0;
     switch( op_type ) {
@@ -562,6 +565,7 @@ static char NumSize( int op_type ){
     return( size );
 }
 
+
 static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, int opr )
 {
     long                high;
@@ -574,15 +578,15 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
     char                rev_ret;
 
     op1_size = NumSize( op1_type );
-    if( op1_size == 0 ){
+    if( op1_size == 0 ) {
         return( CMP_VOID );
     }
     result_size = NumSize( BinResult[ op1_type ][ op2_type ] );
-    if( result_size == 0 ){
+    if( result_size == 0 ) {
         return( CMP_VOID );
     }
     rev_ret = 0;
-    switch( opr ){ // mapped rel ops to equivalent cases
+    switch( opr ) { // mapped rel ops to equivalent cases
     case T_NE:
         rev_ret = 1;
     case T_EQ:
@@ -599,59 +603,61 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
         rel = REL_LE;
         break;
     }
-    if( NumSign(op1_size ) && NumSign(op1_size ) != NumSign(result_size) ){
-        if( NumBits( op1_size) < NumBits( result_size ) ){
+    if( NumSign(op1_size ) && NumSign(op1_size ) != NumSign(result_size) ) {
+        if( NumBits( op1_size) < NumBits( result_size ) ) {
          // signed promoted to bigger unsigned num gets signed extended
         //  could have two ranges unsigned
             return( CMP_VOID ); //TODO: could check == & !=
-        }else if( NumBits( op1_size) == NumBits( result_size ) ){
+        } else if( NumBits( op1_size) == NumBits( result_size ) ) {
           // signed promoted to unsigned use unsigned range
           op1_size &= 0x7f;
         }
     }
-    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ){
+    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ) {
         val &= 0xffff; // num is truncated when compared
     }
-    if( NumSign( op1_size ) ){
+    if( NumSign( op1_size ) ) {
         low = (long)(0x80000000) >> MAXSIZE-NumBits( op1_size );
         high = ~low;
-    }else{
+    } else {
         low = 0;
         high = 0xfffffffful >> MAXSIZE-NumBits( op1_size );
     }
-    if( val == low ){
+    if( val == low ) {
         range = CASE_LOW_EQ;
-    }else if( val == high ){
+    } else if( val == high ) {
         range = CASE_HIGH_EQ;
-    }else if( NumBits( op1_size ) < MAXSIZE ){ // can't be outside range and
-        if( val < low ){                       // don't have to do unsigned compare
+    } else if( NumBits( op1_size ) < MAXSIZE ) {// can't be outside range and
+        if( val < low ) {                       // don't have to do unsigned compare
             range = CASE_LOW;
-        }else if( val > high ){
+        } else if( val > high ) {
             range = CASE_HIGH;
-        }else{
+        } else {
             range = CASE_SIZE;
         }
-    }else{
+    } else {
         range = CASE_SIZE;
     }
-    if( range != CASE_SIZE ){
+    if( range != CASE_SIZE ) {
         ret = Meaningless[rel][range];
-        if( ret != CMP_VOID && rev_ret ){
-            if( ret == CMP_FALSE ){
+        if( ret != CMP_VOID && rev_ret ) {
+            if( ret == CMP_FALSE ) {
                 ret = CMP_TRUE;
-            }else{
+            } else {
                 ret = CMP_FALSE;
             }
         }
-    }else{
+    } else {
         ret = CMP_VOID;
     }
     return( ret );
 }
 
-static int CommRelOp( int opr ){
+
 // map opr to commuted oprand equivelent
-    switch( opr ){
+static int CommRelOp( int opr )
+{
+    switch( opr ) {
     case T_NE:  // a != b => b != a
     case T_EQ:
         break;
@@ -671,39 +677,44 @@ static int CommRelOp( int opr ){
     return( opr );
 }
 
-bool IsZero(  TREEPTR tree ){
-    bool ret;
-    if( tree->op.opr == OPR_PUSHINT && tree->op.long_value == 0 ){
+
+bool IsZero(  TREEPTR tree )
+{
+    bool    ret;
+
+    if( tree->op.opr == OPR_PUSHINT && tree->op.long_value == 0 ) {
         ret = TRUE;
-    }else{
+    } else {
         ret = FALSE;
     }
     return( ret );
 }
 
-static TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2  )
+
+static TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 )
 {
-    TYPEPTR typ2;
+    TYPEPTR         typ2;
     type_modifiers  typ1_flags, typ2_flags;
 
     typ2 =  op2->expr_type;
     typ1 = SkipTypeFluff( typ1 ); // skip typedefs go into enums base
     typ2 = SkipTypeFluff( typ2 );
-    if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER ){
+    if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER ) {
         typ1_flags = typ1->u.p.decl_flags;
         typ2_flags = typ2->u.p.decl_flags;
-        if( ( typ1_flags & FLAG_FAR) && (typ2_flags & FLAG_BASED) ){
+        if( ( typ1_flags & FLAG_FAR) && (typ2_flags & FLAG_BASED) ) {
             op2 = BasedPtrNode( typ2, op2 );
         }
     }
     return( op2 );
 }
 
+
+/*
+ * what's target compatible between default int as ret type
+ * and a later declaration
+ */
 static bool IsInt( DATA_TYPE op )
-    /*
-     * what's target compatible between default int as ret type
-     * and a later declaration
-     */
 {
     bool        ret;
 
@@ -723,6 +734,8 @@ static bool IsInt( DATA_TYPE op )
     }
     return( ret );
 }
+
+
 TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 {
     TYPEPTR         typ1;
@@ -746,7 +759,7 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
     }
     typ1 = TypeOf( op1 );
     typ2 = TypeOf( op2 );
-    if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER  ){
+    if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER ) {
         op2 = BaseConv( typ1, op2 );
         op1 = BaseConv( typ2, op1 );
         typ1 = TypeOf( op1 );
@@ -763,10 +776,10 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         cmp_cc = CMP_VOID;
         if( op2->op.opr == OPR_PUSHINT ) {
             cmp_cc = IsMeaninglessCompare( op2->op.long_value, op1_type, op2_type, opr );
-        }else if( op1->op.opr == OPR_PUSHINT ) {
+        } else if( op1->op.opr == OPR_PUSHINT ) {
             cmp_cc = IsMeaninglessCompare( op1->op.long_value, op2_type, op1_type, CommRelOp( opr ) );
         }
-        if( cmp_cc != CMP_VOID ){
+        if( cmp_cc != CMP_VOID ) {
             int res = cmp_cc == CMP_TRUE;
             CWarn2( WARN_COMPARE_ALWAYS, ERR_COMPARE_ALWAYS, res );
         }
@@ -775,13 +788,13 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         ;           /* do nothing, since error has already been given */
     } else if( op1_type == TYPE_POINTER  &&  op2_type == TYPE_POINTER ) {
          CompatiblePtrType( typ1, typ2 );
-    } else if( (op1_type == TYPE_POINTER  && IsInt( op2_type ) ) ||
-               (op2_type == TYPE_POINTER  && IsInt( op1_type ) ) ){
+    } else if( (op1_type == TYPE_POINTER  && IsInt( op2_type )) ||
+               (op2_type == TYPE_POINTER  && IsInt( op1_type )) ) {
         /* ok to compare pointer with constant 0 */
-        if( opr != T_EQ  &&  opr != T_NE ){
+        if( opr != T_EQ  &&  opr != T_NE ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH,
                     ERR_POINTER_TYPE_MISMATCH );
-        }else if( !( IsZero( op1  )||IsZero( op2) ) ){
+        } else if( !( IsZero( op1  )||IsZero( op2) ) ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH,
                     NON_ZERO_CONST );
         }
@@ -801,10 +814,6 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         } else {
             cmp_type = GetType( result_type );
         }
-#if 0
-        op1 = Convert( op1, op1_type, result_type );
-        op2 = Convert( op2, op2_type, result_type );
-#endif
     }
     tree = ExprNode( op1, OPR_CMP, op2 );
     if( result_type == ERR ) {
@@ -926,8 +935,10 @@ local TREEPTR PtrSubtract( TREEPTR result, unsigned long size,int result_type)
     return( tree );
 }
 
-extern TREEPTR LCastAdj(  TREEPTR tree ){
+
 // Remove the OPR_CONVERT for lcast so it looks like an LVALUE
+extern TREEPTR LCastAdj( TREEPTR tree )
+{
     TREEPTR         opnd;
     TYPEPTR         typ;
     type_modifiers  modifiers;
@@ -939,7 +950,7 @@ extern TREEPTR LCastAdj(  TREEPTR tree ){
     FreeExprTree( tree );
     CWarn1( WARN_LVALUE_CAST, ERR_LVALUE_CAST );
     opnd->op.flags &= ~OPFLAG_RVALUE;
-    if( opnd->op.opr == OPR_PUSHSYM ){
+    if( opnd->op.opr == OPR_PUSHSYM ) {
         opnd->op.opr = OPR_PUSHADDR;
     } else if( opnd->op.opr == OPR_POINTS ) {
         // fix up fred's screw ball pointer op
@@ -949,13 +960,14 @@ extern TREEPTR LCastAdj(  TREEPTR tree ){
     return( opnd );
 }
 
+
 static void CheckAddrOfArray( TREEPTR opnd )
 {
     TYPEPTR     typ;
 
     if( opnd->op.opr == OPR_ADDROF ) {
         typ = opnd->expr_type->object;
-        if( typ != NULL ){
+        if( typ != NULL ) {
             while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
             if( typ->decl_type == TYPE_ARRAY ) {
                 CWarn1( WARN_ADDR_OF_ARRAY, ERR_ADDR_OF_ARRAY );
@@ -964,13 +976,16 @@ static void CheckAddrOfArray( TREEPTR opnd )
     }
 }
 
-static TYPEPTR PtrofSym( SYM_HANDLE sym_handle, TYPEPTR typ ){
+
+static TYPEPTR PtrofSym( SYM_HANDLE sym_handle, TYPEPTR typ )
+{
     SYM_ENTRY   sym;
 
     SymGet( &sym, sym_handle );
     typ = PtrNode( typ, sym.attrib, SEG_DATA );
     return( typ );
 }
+
 
 static TREEPTR ArrayPlusConst( TREEPTR op1, TREEPTR op2 )
 {
@@ -996,6 +1011,7 @@ static TREEPTR ArrayPlusConst( TREEPTR op1, TREEPTR op2 )
     return( 0 );
 }
 
+
 static TREEPTR ArrayMinusConst( TREEPTR op1, TREEPTR op2 )
 {
     TREEPTR     result;
@@ -1019,6 +1035,7 @@ static TREEPTR ArrayMinusConst( TREEPTR op1, TREEPTR op2 )
     }
     return( 0 );
 }
+
 
 TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 {
@@ -1117,7 +1134,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
                 } else if((TargetSwitches & (BIG_DATA|CHEAP_POINTER))
                           == BIG_DATA ) {
                     if(( (op1_tp->u.p.decl_flags & (FLAG_FAR|FLAG_NEAR)) == 0 )
-                    && ((op2_tp->u.p.decl_flags & (FLAG_FAR|FLAG_NEAR)) == 0)){
+                    && ((op2_tp->u.p.decl_flags & (FLAG_FAR|FLAG_NEAR)) == 0)) {
 
                         result_type = LNG;
                     }
@@ -1146,7 +1163,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
                 result = ExprNode( op1, TokenToOperator(opr), op2 );
                 return( PtrSubtract( result, size, result_type ) );
             } else if(( op1_tp->u.p.decl_flags & FLAG_HUGE ) ||
-                      ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA)){
+                      ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA)) {
                 if(( op2_type != LNG )&&( op2_type != ULN )) {
                     op2 = CnvOp( op2, GetType( TYPE_LONG ), 1 );
                 }
@@ -1154,7 +1171,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
             op2 = MulByConst( op2, size );
         }
     } else if( op2_type == PTR ) {      /* &&  op1_type != PTR */
-        if( opr == T_PLUS_EQUAL || opr == T_MINUS_EQUAL || opr == T_MINUS ){
+        if( opr == T_PLUS_EQUAL || opr == T_MINUS_EQUAL || opr == T_MINUS ) {
             CErr2p( ERR_RIGHT_OPERAND_IS_A_POINTER, Tokens[opr] );
         }
         res_type = TypeOf( op2 );
@@ -1167,11 +1184,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
             if(( op2_tp->u.p.decl_flags & FLAG_HUGE ) ||
                (( TargetSwitches & (BIG_DATA|CHEAP_POINTER)) == BIG_DATA )) {
                 if(( op1_type != LNG )&&( op1_type != ULN )) {
-#if 0 /* 29-jul-88 AFS */
-                    op1 = Convert( op1, op1_type, LNG );
-#else
                     op2 = CnvOp( op2, GetType( TYPE_LONG ), 1 );
-#endif
                 }
             }
             op1 = MulByConst( op1, size );
@@ -1275,7 +1288,6 @@ TREEPTR BinOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 }
 
 
-
 local int LValue( TREEPTR op1 )
 {
     TYPEPTR     typ;
@@ -1298,6 +1310,7 @@ local int LValue( TREEPTR op1 )
     return( 0 );
 }
 
+
 local void SetSymAssigned( TREEPTR opnd )
 {
     auto SYM_ENTRY sym;
@@ -1314,13 +1327,14 @@ local void SetSymAssigned( TREEPTR opnd )
     }
 }
 
-TREEPTR InitAsgn( TYPEPTR typ,  TREEPTR op2 )
+
+TREEPTR InitAsgn( TYPEPTR typ, TREEPTR op2 )
 {
     if( op2->op.opr == OPR_ERROR ) {
         return( op2 );
     }
     op2 = RValue( op2 );
-    if( !CompFlags.no_check_inits ){ // else fuck em
+    if( !CompFlags.no_check_inits ) {   // else fuck em
         ParmAsgnCheck( typ, op2, 0 );
     }
     return( op2 );
@@ -1343,13 +1357,13 @@ TREEPTR AsgnOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         return( op2 );
     }
     if(op1->op.flags & OPFLAG_LVALUE_CAST) {       /* 18-aug-95 */
-        if( CompFlags.extensions_enabled ){
+        if( CompFlags.extensions_enabled ) {
             op1->op.flags &= ~(OPFLAG_LVALUE_CAST|OPFLAG_RVALUE);
-            if( op1->op.opr == OPR_PUSHSYM ){
+            if( op1->op.opr == OPR_PUSHSYM ) {
                 op1->op.opr = OPR_PUSHADDR;
             }
             CWarn1( WARN_LVALUE_CAST, ERR_LVALUE_CAST );
-        }else{
+        } else {
             CErr1( ERR_CANT_TAKE_ADDR_OF_RVALUE );
         }
     }
@@ -1646,12 +1660,13 @@ convert:                                /* moved here 30-aug-89 */
             opnd = ExprNode( 0, OPR_CONVERT, opnd );
             opnd->expr_type = newtyp;
             opnd->op.result_type = newtyp;
-        }else{ //NIL convert
+        } else { //NIL convert
             opnd->op.flags |= flags;
         }
     }
     return( opnd );
 }
+
 
 TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp )
 {
@@ -1667,19 +1682,19 @@ TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp )
     typ = SkipTypeFluff( opnd->expr_type );
     decl1 = DataTypeOf( typ->decl_type );
     decl2 = DataTypeOf( newtyp->decl_type );
-    if( decl1 > TYPE_POINTER  || decl2 > TYPE_POINTER ){
+    if( decl1 > TYPE_POINTER  || decl2 > TYPE_POINTER ) {
         return( opnd );
     }
     cnv = CnvTable[ decl1 ][ decl2 ];
     if( cnv == CER ) {
         return(  opnd  );
-    } else if( cnv == P2P  ){
+    } else if( cnv == P2P ) {
         pointer_class     new_class;
         pointer_class     old_class;
 
         new_class = ExprTypeClass( newtyp );
         old_class = ExprTypeClass( typ );
-        if( new_class != old_class  ){
+        if( new_class != old_class ) {
             opnd = ExprNode( NULL, OPR_CONVERT_PTR, opnd );
             opnd->op.oldptr_class = old_class;
             opnd->op.newptr_class = new_class;
@@ -1687,10 +1702,10 @@ TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp )
             opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->op.result_type = newtyp;
         }
-    }else{
+    } else {
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             CastConstValue( opnd, newtyp->decl_type );
-        }else{
+        } else {
             opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->op.result_type = newtyp;
         }
@@ -1705,9 +1720,9 @@ TREEPTR UMinus( TREEPTR opnd )
     DATA_TYPE        t;
 
     opnd = RValue( opnd );
-    if( opnd->op.opr != OPR_ERROR ){
+    if( opnd->op.opr != OPR_ERROR ) {
         t = DataTypeOf( TypeOf( opnd )->decl_type );
-        if( t != TYPE_VOID ){
+        if( t != TYPE_VOID ) {
             if( t >= TYPE_POINTER ) {
                 CErr1( ERR_EXPR_MUST_BE_ARITHMETIC );
                 opnd = ErrorNode( opnd );
@@ -1781,11 +1796,11 @@ TREEPTR UComplement( TREEPTR opnd )
     TYPEPTR     typ;
 
     opnd = RValue( opnd );
-    if( opnd->op.opr != OPR_ERROR ){
+    if( opnd->op.opr != OPR_ERROR ) {
         typ = opnd->expr_type;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
         t = DataTypeOf( typ->decl_type );
-        if( t != TYPE_VOID ){
+        if( t != TYPE_VOID ) {
             if( t >= TYPE_FLOAT ) {
                 CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
                 opnd = ErrorNode( opnd );
@@ -1841,6 +1856,7 @@ TREEPTR UComplement( TREEPTR opnd )
     return( opnd );
 }
 
+
 local TYPEPTR MergedType( TYPEPTR typ1, TYPEPTR typ2 )  /* 25-jul-90 */
 {
     type_modifiers  flags, new_flags;
@@ -1892,14 +1908,14 @@ TYPEPTR TernType( TREEPTR true_part, TREEPTR false_part )
     if( typ1 == typ2 ) return( typ1 );
     dtype1 = DataTypeOf( typ1->decl_type );
     dtype2 = DataTypeOf( typ2->decl_type );
-    if( dtype1 == TYPE_POINTER && false_part->op.opr == OPR_PUSHINT ){
+    if( dtype1 == TYPE_POINTER && false_part->op.opr == OPR_PUSHINT ) {
         if( false_part->op.long_value != 0 ) {
             CWarn1( WARN_NONPORTABLE_PTR_CONV,
                     ERR_NONPORTABLE_PTR_CONV );
         }
         return( typ1 );
     }
-    if( dtype2 == TYPE_POINTER && true_part->op.opr == OPR_PUSHINT ){
+    if( dtype2 == TYPE_POINTER && true_part->op.opr == OPR_PUSHINT ) {
         if( true_part->op.long_value != 0 ) {
             CWarn1( WARN_NONPORTABLE_PTR_CONV,
                     ERR_NONPORTABLE_PTR_CONV );
