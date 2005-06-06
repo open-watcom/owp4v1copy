@@ -2,7 +2,6 @@
 host_OS = win
 host_CPU = 386
 
-libname = wres3r
 linkage = static
 convention = register
 

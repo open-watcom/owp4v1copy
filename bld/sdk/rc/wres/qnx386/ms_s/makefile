@@ -2,7 +2,6 @@
 host_os  = qnx
 host_cpu = 386
 
-libname = wres3s
 linkage = static
 convention = stack
 

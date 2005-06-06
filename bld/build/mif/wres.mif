@@ -7,22 +7,22 @@
 # 5. For large memory model windows version, define 'windows'
 #
 !ifdef stack
-name_model_conv = m$(memory_model_386)_s/wres3s.lib
+name_model_conv = m$(memory_model_386)_s/wres.lib
 !else
-name_model_conv = m$(memory_model_386)_r/wres3r.lib
+name_model_conv = m$(memory_model_386)_r/wres.lib
 !endif
 
-name_i86_s = $(wres_dir)/dosi86/ms/wress.lib
-name_i86_m = $(wres_dir)/dosi86/mm/wresm.lib
-name_i86_c = $(wres_dir)/dosi86/mc/wresc.lib
+name_i86_s = $(wres_dir)/dosi86/ms/wres.lib
+name_i86_m = $(wres_dir)/dosi86/mm/wres.lib
+name_i86_c = $(wres_dir)/dosi86/mc/wres.lib
 !ifdef WINDOWS
-name_i86_l = $(wres_dir)/wini86/ml/wresl.lib
+name_i86_l = $(wres_dir)/wini86/ml/wres.lib
 !else ifdef pegged
-name_i86_l = $(wres_dir)/os2i86/ml/wresl.lib
+name_i86_l = $(wres_dir)/os2i86/ml/wres.lib
 !else
-name_i86_l = $(wres_dir)/dosi86/ml/wresl.lib
+name_i86_l = $(wres_dir)/dosi86/ml/wres.lib
 !endif
-name_i86_h = $(wres_dir)/dosi86/mh/wresh.lib
+name_i86_h = $(wres_dir)/dosi86/mh/wres.lib
 
 name_386_dos      = $(wres_dir)/dos386/$(name_model_conv)
 name_386_osi      = $(wres_dir)/dos386/$(name_model_conv)
@@ -39,9 +39,9 @@ name_386_nt       = $(wres_dir)/nt386/$(name_model_conv)
 
 name_i86 = $(name_i86_$(memory_model_i86))
 name_386 = $(name_386_$(host_os))
-name_axp = $(wres_dir)/$(host_os)axp/_s/wresaxp.lib
-name_ppc = $(wres_dir)/$(host_os)ppc/_s/wresppc.lib
-name_mps = $(wres_dir)/$(host_os)mps/_s/wresmps.lib
+name_axp = $(wres_dir)/$(host_os)axp/_s/wres.lib
+name_ppc = $(wres_dir)/$(host_os)ppc/_s/wres.lib
+name_mps = $(wres_dir)/$(host_os)mps/_s/wres.lib
 
 !ifdef bootstrap
 wres_lib = $(wres_dir)/$(%OBJDIR)/libwres.a

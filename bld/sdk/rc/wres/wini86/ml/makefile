@@ -3,7 +3,7 @@ host_OS = win
 host_CPU = i86
 
 is_gui  = y
-libname = wresl
+model = l
 linkage = static
 
 !include ../../master.mif

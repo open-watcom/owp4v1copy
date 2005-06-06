@@ -3,7 +3,6 @@ host_OS = dos
 host_CPU = i86
 
 model   = l
-libname = wresl
 linkage = static
 
 !include ../../master.mif

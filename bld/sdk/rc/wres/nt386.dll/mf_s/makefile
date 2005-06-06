@@ -2,7 +2,6 @@
 host_os = nt
 host_cpu = 386
 
-libname = wres3s
 linkage = dynamic
 convention = stack
 

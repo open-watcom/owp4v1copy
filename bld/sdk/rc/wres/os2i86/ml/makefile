@@ -4,7 +4,6 @@ host_CPU = i86
 
 pegged  = 1
 model   = l
-libname = wresl
 linkage = static
 
 !include ../../master.mif

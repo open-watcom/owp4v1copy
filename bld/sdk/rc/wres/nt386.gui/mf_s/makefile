@@ -3,7 +3,6 @@ host_OS = nt
 host_CPU = 386
 
 is_gui  = y
-libname = wres3s
 linkage = static
 convention = stack
 

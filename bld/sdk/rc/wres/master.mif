@@ -4,7 +4,6 @@
 # path names used in the script
 
 proj_name = wres
-name = $(libname)
 
 !ifndef wres_autodepends
 wres_autodepends = .AUTODEPEND
@@ -13,6 +12,8 @@ wres_autodepends = .AUTODEPEND
 !ifeq linkage dynamic
 wres_rtdll = 1
 !endif
+
+memory_model_i86 = $(model)
 
 !include cproj.mif
 !include defrule.mif
@@ -70,7 +71,7 @@ inc_dirs = -I"../../h"
 
 # explicit rules
 
-$(name).lib : $(objs) $(__MAKEFILES__) .PRECIOUS
+wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
     %create $^&.lbc
     @for %i in ($(objs)) do @%append $^&.lbc +%i
     $(librarian) -n -b $@ @$^&.lbc

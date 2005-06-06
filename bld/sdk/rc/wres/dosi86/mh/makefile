@@ -3,7 +3,6 @@ host_OS = dos
 host_CPU = i86
 
 model   = h
-libname = wresh
 linkage = static
 
 !include ../../master.mif

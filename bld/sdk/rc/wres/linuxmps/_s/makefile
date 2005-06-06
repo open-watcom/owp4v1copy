@@ -2,7 +2,6 @@
 host_os  = linux
 host_cpu = mps
 
-libname = wresmps
 linkage = static
 
 !include ../../master.mif
