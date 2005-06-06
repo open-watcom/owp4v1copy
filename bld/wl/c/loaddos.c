@@ -212,7 +212,7 @@ static bool WriteSegData( void *_sdata, void *_start )
 
     if( !sdata->isuninit && !sdata->isdead && ( sdata->length > 0 ) ) {
         newpos = *start + sdata->a.delta;
-        if( newpos + sdata->length <= 0 )
+        if( newpos + (signed long)sdata->length <= 0 )
             return( FALSE );
         pad = newpos - COMAmountWritten;
         if( pad > 0 ) {

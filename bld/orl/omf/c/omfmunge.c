@@ -852,7 +852,7 @@ orl_return              OmfAddLIData( omf_file_handle ofh, int is32,
         } else {
             tmpsize = calcLIDataLength( is32, &tmp, &tmplen );
         }
-        if( tmpsize <= 0 ) return( ORL_ERROR );
+        if( tmpsize == 0 ) return( ORL_ERROR );
         size += tmpsize;
     }
 

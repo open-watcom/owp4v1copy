@@ -365,9 +365,13 @@ static boolean dataInitCheckHugeAlign( TYPE type )
     TYPE            base_type;
 
     total_size = CgMemorySize( type );
+    // The following is meaningless when TARGET_UINT_MAX == UINT_MAX
+    // (but this code will only ever get called for i86 target)
+#if _CPU == 8086
     if( total_size <= (TARGET_UINT_MAX+1) ) {
         return( FALSE );
     }
+#endif
     base_type = ArrayType( type );
     while( base_type != NULL ) {
         type = base_type->of;

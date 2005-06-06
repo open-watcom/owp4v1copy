@@ -41,7 +41,7 @@ register        SAREA                   area;
 {
     int diff;
 
-    if( wptr->dirty.height <= 0 ) {
+    if( (int)wptr->dirty.height <= 0 ) {
         wptr->dirty = area;
     } else {
         diff = (int) wptr->dirty.row - (int) area.row;

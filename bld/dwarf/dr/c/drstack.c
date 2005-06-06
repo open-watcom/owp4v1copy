@@ -83,7 +83,7 @@ extern uint_32 DWRStackPop(                 // POP ITEM OFF THE STACK
     dr_stack *stk )                         // -- stack to pop off of
 /*************************/
 {
-    if( stk->free <= 0 ) {
+    if( stk->free == 0 ) {
         DWREXCEPT( DREXCEP_DWARF_LIB_FAIL );
     }
 

@@ -367,7 +367,7 @@ void __loadds __cdecl FaultHandler( volatile fault_frame ff )
     FaultHandlerEntered = TRUE;
     TaskAtFault = GetCurrentTask();
 
-    if( NPXType <= X86_NO ) {
+    if( NPXType == X86_NO ) {
         memset( &FPResult, 0, sizeof( FPResult ) );
     } else if( NPXType < X86_387 ) {
         Read8087( &FPResult );          // in misc.asm

@@ -119,7 +119,7 @@ void SwapAllWindows( void )
     cinfo = InfoHead;
     while( cinfo != NULL ) {
         w = Windows[ cinfo->CurrentWindow ];
-        if( !TestVisible( w ) && !w->isswapped && w->accessed <= 0 ) {
+        if( !TestVisible( w ) && !w->isswapped && w->accessed == 0 ) {
             windowSwap( w );
         }
         cinfo = cinfo->next;

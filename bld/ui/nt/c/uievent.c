@@ -183,7 +183,7 @@ void intern mousespawnend( void )
 
 void uimousespeed( unsigned speed )
 {
-    if( speed <= 0 ) {
+    if( (int)speed <= 0 ) {
         speed = 1;
     }
 }

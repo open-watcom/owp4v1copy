@@ -444,7 +444,7 @@ void RemoteUnLink( void )
     CCancelInterruptTimeCallBack( &Timer );
     CCancelInterruptTimeCallBack( &SAPTimer );
 
-    if (SAPStruct.AS_ECB.status <= 0) {
+    if (SAPStruct.AS_ECB.status == 0) {
         SAPStruct.ASServerIDpacket.interveningNetworks = _SWAPINT( 0x10 );
         CIPXSendPacket( &SAPStruct.AS_ECB );
     }

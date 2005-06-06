@@ -813,7 +813,7 @@ extern unsigned_32 CopyToLoad( f_handle handle, char * name )
     wrote = 0;
     for(;;) {
         amt_read = QRead( handle, TokBuff, TokSize, name );
-        if( amt_read <= 0 ) break;
+        if( amt_read == 0 ) break;
         WriteLoad( TokBuff, amt_read );
         wrote += amt_read;
     }

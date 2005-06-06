@@ -84,7 +84,7 @@ HashTable InitHash( unsigned numbuckets, HashFunction hashfunc,
     Hash *              table;
     unsigned            count;
 
-    if( numbuckets <= 0 )  Zoinks();
+    if( numbuckets == 0 )  Zoinks();
     table = AllocMem( sizeof( Hash ) );
     table->numbuckets = numbuckets;
     table->hashfunc = hashfunc;
