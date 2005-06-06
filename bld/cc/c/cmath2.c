@@ -514,6 +514,7 @@ typedef enum{
     CMP_VOID    = 0,    // comparison fine
     CMP_FALSE   = 1,    // always false
     CMP_TRUE    = 2,    // always true
+    CMP_COMPLEX = 3,    // could be simplified
 } cmp_result;
 
 static char const Meaningless[REL_SIZE][CASE_SIZE] = {
@@ -550,6 +551,14 @@ static char NumSize( int op_type )
     case TYPE_POINTER:
         size |= 32;
         break;
+// FIXME: this ought to be enabled, but the callers of NumSize() need fixing!
+#if 0
+    case TYPE_LONG64:
+        size = 0x80;
+    case TYPE_ULONG64:
+        size |= 64;
+        break;
+#endif
     case TYPE_INT:
     case TYPE_FIELD:
         size = 0x80;
@@ -603,8 +612,8 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
         rel = REL_LE;
         break;
     }
-    if( NumSign(op1_size ) && NumSign(op1_size ) != NumSign(result_size) ) {
-        if( NumBits( op1_size) < NumBits( result_size ) ) {
+    if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
+        if( NumBits( op1_size ) < NumBits( result_size ) ) {
          // signed promoted to bigger unsigned num gets signed extended
         //  could have two ranges unsigned
             return( CMP_VOID ); //TODO: could check == & !=
@@ -646,6 +655,9 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
             } else {
                 ret = CMP_FALSE;
             }
+        } else if( rel == REL_LE && !rev_ret && !NumSign( op1_size ) && val == 0 ) {
+            // special case for unsigned <= 0
+            ret = CMP_COMPLEX;
         }
     } else {
         ret = CMP_VOID;
@@ -780,8 +792,13 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
             cmp_cc = IsMeaninglessCompare( op1->op.long_value, op2_type, op1_type, CommRelOp( opr ) );
         }
         if( cmp_cc != CMP_VOID ) {
-            int res = cmp_cc == CMP_TRUE;
-            CWarn2( WARN_COMPARE_ALWAYS, ERR_COMPARE_ALWAYS, res );
+            if( cmp_cc == CMP_COMPLEX ) {
+                CWarn1( WARN_COMPARE_UNSIGNED_VS_ZERO, ERR_COMPARE_UNSIGNED_VS_ZERO );
+            } else {
+                int res = cmp_cc == CMP_TRUE;
+
+                CWarn2( WARN_COMPARE_ALWAYS, ERR_COMPARE_ALWAYS, res );
+            }
         }
     }
     if( op1_type == TYPE_VOID  ||  op2_type == TYPE_VOID ) {
@@ -794,7 +811,7 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         if( opr != T_EQ  &&  opr != T_NE ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH,
                     ERR_POINTER_TYPE_MISMATCH );
-        } else if( !( IsZero( op1  )||IsZero( op2) ) ) {
+        } else if( !( IsZero( op1 ) || IsZero( op2 ) ) ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH,
                     NON_ZERO_CONST );
         }

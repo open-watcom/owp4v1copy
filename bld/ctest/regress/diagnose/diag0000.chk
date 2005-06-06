@@ -20,3 +20,15 @@ source\diag0003.c(19): Warning! W134: Shift amount negative
 source\diag0003.c(21): Warning! W135: Shift amount too large
 source\diag0003.c(22): Warning! W135: Shift amount too large
 source\diag0003.c(25): Warning! W135: Shift amount too large
+source\diag0004.c(16): Warning! W124: Comparison result always 0
+source\diag0004.c(18): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(20): Warning! W124: Comparison result always 1
+source\diag0004.c(29): Warning! W124: Comparison result always 0
+source\diag0004.c(31): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(33): Warning! W124: Comparison result always 1
+source\diag0004.c(42): Warning! W124: Comparison result always 0
+source\diag0004.c(44): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(46): Warning! W124: Comparison result always 1
+source\diag0004.c(55): Warning! W124: Comparison result always 0
+source\diag0004.c(57): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(59): Warning! W124: Comparison result always 1

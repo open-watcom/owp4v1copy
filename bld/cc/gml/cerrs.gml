@@ -313,7 +313,7 @@ comment end
 :MSGJTXT. ”äŠr‚ÌŒ‹‰Ê‚Íí‚É%d‚Å‚·
 :WARNING. 1
 .np
-The line contains a comparison that is alway true (1) or false (0).
+The line contains a comparison that is always true (1) or false (0).
 For example comparing an unsigned expression to see if it is >= 0 or < 0
 is redundant.
 Check to see if the expression should be signed instead of unsigned.
@@ -443,6 +443,14 @@ The result of the shift operation is undefined.
 int a = 1 >> 123;
 :eerrbad.
 The value of 'a' in the above example is undefined.
+:MSGSYM. ERR_COMPARE_UNSIGNED_VS_ZERO
+:MSGTXT. Comparison equivalent to 'unsigned == 0'
+:MSGJTXT. ”äŠr‚ÌŒ‹‰Ê‚Íí‚É%d‚Å‚·
+:WARNING. 1
+.np
+Comparing an unsigned expression to see whether it is <= 0 is equivalent to
+testing for == 0.
+Check to see if the expression should be signed instead of unsigned.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
