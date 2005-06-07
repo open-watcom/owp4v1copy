@@ -1303,15 +1303,15 @@ control-name
 
 control-stmt
     : Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
-                ctl-class-name
+                ctl-class-name presparam-list
         {
             IntMask mask = {0};
-            $$ = SemOS2SetControlData( $2, $4, $6, $8, mask, NULL );
+            $$ = SemOS2SetControlData( $2, $4, $6, $8, mask, NULL, $9 );
         }
     | Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
-                ctl-class-name comma-opt cntl-style
+                ctl-class-name comma-opt cntl-style presparam-list
         {
-            $$ = SemOS2SetControlData( $2, $4, $6, $8, $10, NULL );
+            $$ = SemOS2SetControlData( $2, $4, $6, $8, $10, NULL, $11 );
         }
     ;
 

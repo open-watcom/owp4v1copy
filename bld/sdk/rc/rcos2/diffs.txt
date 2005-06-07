@@ -18,3 +18,8 @@ Differences between some versions of IBM's RC and WRC
 
    ICON    IDR_ACCEL, -1,  8, 40,   0,  0
 
+ - Using the -zm switch, wrc produces resource files compatible with those
+   that IBM RC produces, however, the files are not always identical. In
+   particular, the ordering of dialog data within binary resource files is not
+   always the same between wrc and IBM RC. This has no effect on the
+   semantics of such resource files.

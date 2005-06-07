@@ -720,7 +720,8 @@ OutputWriteError:
 
 extern FullDialogBoxControlOS2 * SemOS2SetControlData( ResNameOrOrdinal *name,
                     uint_32 id, DialogSizeInfo size, ResNameOrOrdinal * ctlclassname,
-                    IntMask style, FullDiagCtrlListOS2 * childctls )
+                    IntMask style, FullDiagCtrlListOS2 * childctls,
+                    PresParamListOS2 * presparams )
 /***********************************************************************************/
 {
     FullDialogBoxControlOS2 *control;
@@ -734,6 +735,7 @@ extern FullDialogBoxControlOS2 * SemOS2SetControlData( ResNameOrOrdinal *name,
     control->ctrl.Style      = style.Value;
     control->children        = childctls;
     control->ctrl.ExtraBytes = 0;
+    control->presParams      = presparams;
     RcMemFree( ctlclassname );
 
     return( control );
