@@ -2,12 +2,7 @@ bld_ver      = $(%BLD_VER)
 patch_level  = 0
 lang_root    = $(%WATCOM)
 dev_dir      = $(%DEVDIR)
-mif_path     = $(build_dir)/local;$(build_dir)/mif
-!ifdef __LINUX__
-build_dir    = $(%DEVDIR)/build
-!else
-build_dir    = $(%DEVDIR)\build
-!endif
+mif_path     = $(dev_dir)/build/local;$(dev_dir)/build/mif
 
 .mif: $(mif_path)
 !include cdirs.mif

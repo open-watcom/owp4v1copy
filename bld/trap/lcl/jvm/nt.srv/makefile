@@ -2,8 +2,6 @@
 host_CPU = 386
 host_os = nt
 
-!include $(build_dir)/mif/bhost.mif
-
 os = nt
 srv = jvm
 cpu = x86
@@ -32,7 +30,7 @@ wdebug.zip : JVMHelp.java
     rm -rf sun
 
 extra_srcs = $(trap_dir)/lcl/nt/c
-inc_dirs = $(trap_dir)/lcl/nt/h;$(trap_dir)/lcl/dos/h
+inc_dirs = -I"$(trap_dir)/lcl/nt/h" -I"$(trap_dir)/lcl/dos/h"
 extra_objs = $(jvmx_serv_objs) jvmacc.obj &
 
 ji_dll  = 'javai_g.dll'
@@ -52,7 +50,7 @@ imports = EE $(ji_dll) &
         ,monitorEnter $(ji_dll) &
         ,monitorExit $(ji_dll) &
 
-extra_c_flags = -dJVM -dJVMXHELP -bd -i"$(javasdk)/include;$(javasdk)/include/win32;$(java_src_dir)/src/win32/java/include" -fh
+extra_c_flags = -dJVM -dJVMXHELP -bd -I"$(javasdk)/include" -I"$(javasdk)/include/win32" -I"$(java_src_dir)/src/win32/java/include" -fh
 extra_linker = op map,verbose import $(imports)
 
 !include $(trap_dir)/lcl/jvm/jvm.mif
