@@ -1634,17 +1634,6 @@ an  TNFlow( tn node )
     #define JUST_USE_SHIFTS
 #endif
 
-#ifndef JUST_USE_SHIFTS
-static  uint    LShift( btn node )
-/*********************************
-    how far would a bit field need to be shifted to get the sign bit into the real sign bit?
-*/
-{
-    return( ( node->tipe->length * 8 ) - ( node->start + node->len ) );
-}
-#endif
-
-
 static  an  TNBitShift( an retv, btn node, bool already_masked )
 /***************************************************************
     Yield the integer value of the bit field of rvalue "retv" based on
@@ -1654,7 +1643,7 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
 {
     type_def    *tipeu;
     type_def    *tipes;
-    unsigned_32 mask;
+    unsigned_64 mask;
 
     tipeu = node->tipe;
     switch( tipeu->length ) {
@@ -1671,11 +1660,11 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
         tipes = TypeAddress( T_INT_4 );
         break;
     }
-    mask = Mask( node );
+    mask = Mask64( node );
 #ifdef JUST_USE_SHIFTS
     if( !node->is_signed && node->start == 0 ) {
         if( !already_masked ) {
-            retv = BGBinary( O_AND, retv, Int( mask ), tipeu, TRUE );
+            retv = BGBinary( O_AND, retv, Int64( mask ), tipeu, TRUE );
         }
     } else {
         retv = BGBinary( O_LSHIFT, retv,
@@ -1688,15 +1677,16 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
 #else
     if( node->is_signed ) {
         retv = BGBinary( O_RSHIFT, retv, Int( node->start ), tipeu, TRUE );
-        mask >>= node->start;
-        retv = BGBinary( O_AND, retv, Int( mask ), tipeu, TRUE );
-        mask >>= 1;
-        mask = ~mask;
-        mask &= 0xffffffff;
-        if( mask == 0xffffffff ) { /* a one-bit signed bit field */
+        U64ShiftR( &mask, node->start, &mask );
+        retv = BGBinary( O_AND, retv, Int64( mask ), tipeu, TRUE );
+        U64ShiftR( &mask, 1, &mask );
+        U64Not( &mask, &mask );
+        if( mask.u._32[I64LO32] == 0xffffffff ) { /* a one-bit signed bit field */
+			unsigned_64 one;
+			I32ToI64( 1, &one );
             retv = BGUnary( O_COMPLEMENT, retv, tipeu );
-            retv = BGBinary( O_PLUS, retv, Int( 1 ), tipes, TRUE );
-        } else if( mask == 0xffffff80 ) { /* an eight-bit signed bit field */
+            retv = BGBinary( O_PLUS, retv, Int64( one ), tipes, TRUE );
+        } else if( mask.u._32[I64LO32] == 0xfffff80 ) { /* an eight-bit signed bit field */
             switch( tipeu->length ) {
             case 1:
                 break;
@@ -1707,26 +1697,44 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
                 retv = BGConvert( retv, TypeAddress( T_INT_1 ) );
                 retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
                 break;
+            case 8:
+                retv = BGConvert( retv, TypeAddress( T_INT_1 ) );
+                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                break;
             }
             retv = BGConvert( retv, tipes );
-        } else if( mask == 0xffff8000 ) { /* a sixteen-bit signed bit field */
+        } else if( mask.u._32[I64LO32] == 0xffff8000 ) { /* a sixteen-bit signed bit field */
             switch( tipeu->length ) {
             case 2:
                 break;
             case 4:
                 retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
                 break;
+            case 8:
+                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                break;
+            }
+            retv = BGConvert( retv, tipes );
+        } else if( mask.u._32[I64LO32] == 0x80000000 ) { /* a 32-bit signed bit field */
+            switch( tipeu->length ) {
+            case 4:
+                break;
+            case 8:
+                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                break;
             }
             retv = BGConvert( retv, tipes );
         } else {
-            retv = BGBinary( O_XOR, retv, Int( mask ), tipeu, TRUE );
-            retv = BGBinary( O_MINUS, retv, Int( mask ), tipes, TRUE );
+            retv = BGBinary( O_XOR, retv, Int64( mask ), tipeu, TRUE );
+            retv = BGBinary( O_MINUS, retv, Int64( mask ), tipes, TRUE );
         }
     } else {
         retv = BGBinary( O_RSHIFT, retv, Int( node->start ), node->tipe, TRUE );
-        if( !already_masked && LShift( node ) ) {
-            retv = BGBinary( O_AND, retv, Int( Mask(node) >> node->start ),
-                      node->tipe, TRUE );
+        if( !already_masked && ( node->tipe->length * 8 - node->start - node->len != 0 )) {
+            U64ShiftR( &mask, node->start, &mask );
+            retv = BGBinary( O_AND, retv, Int64( mask ), node->tipe, TRUE );
         }
     }
 #endif
