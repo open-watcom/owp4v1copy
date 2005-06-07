@@ -65,7 +65,7 @@ void SemSetGlobalLanguage( WResLangType *newlang ) {
     if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
         curLang = *newlang;
     } else {
-//        RcWarning( ERR_NT_KEYWORD, SemTokenToString( Y_LANGUAGE ) );
+        RcWarning( ERR_NT_KEYWORD, SemTokenToString( Y_LANGUAGE ) );
     }
 }
 
@@ -75,7 +75,7 @@ void SemSetResourceLanguage( WResLangType *newlang, int from_parser ) {
          resourceHasLang = TRUE;
          resourceLang = *newlang;
     } else if( from_parser ) {
-//        RcWarning( ERR_NT_KEYWORD,  SemTokenToString( Y_LANGUAGE ) );
+        RcWarning( ERR_NT_KEYWORD,  SemTokenToString( Y_LANGUAGE ) );
     }
 }
 
@@ -320,42 +320,28 @@ FullMemFlags SemAddFirstMemOption( uint_8 token )
     return( SemAddMemOption( newflags, token ) );
 }
 
-/* IBM's RC has a tendency to add PURE flag when other memory flags
- * are specified. The flag will be ignored by OS but we do the same
- * for compatibility.
- */
 FullMemFlags SemAddMemOption( FullMemFlags currflags, uint_8 token )
 /******************************************************************/
 {
     switch (token) {
     case Y_PRELOAD:
         currflags.flags |= MEMFLAG_PRELOAD;
-        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
-            currflags.flags |= MEMFLAG_PURE;
         currflags.loadOptGiven = TRUE;
         break;
     case Y_LOADONCALL:
         currflags.flags &= ~MEMFLAG_PRELOAD;
-        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
-            currflags.flags |= MEMFLAG_PURE;
         currflags.loadOptGiven = TRUE;
         break;
     case Y_FIXED:
         currflags.flags &= ~MEMFLAG_MOVEABLE;
-        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
-            currflags.flags |= MEMFLAG_PURE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_MOVEABLE:
         currflags.flags |= MEMFLAG_MOVEABLE;
-        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
-            currflags.flags |= MEMFLAG_PURE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_DISCARDABLE:
         currflags.flags |= MEMFLAG_DISCARDABLE;
-        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
-            currflags.flags |= MEMFLAG_PURE | MEMFLAG_MOVEABLE;
         currflags.memOptGiven = TRUE;
         break;
     case Y_PURE:
@@ -365,9 +351,6 @@ FullMemFlags SemAddMemOption( FullMemFlags currflags, uint_8 token )
     case Y_IMPURE:
         currflags.flags &= ~MEMFLAG_PURE;
         currflags.purityOptGiven = TRUE;
-        break;
-    case Y_SEGALIGN:    // This one is OS/2 2.x specific
-        currflags.flags |= MEMFLAG_SEGALIGN;
         break;
     }
 
@@ -484,176 +467,228 @@ extern char *SemTokenToString( uint_8 token )
     case Y_COMMA:
         return( "," );
         break;
-    case Y_ACCELTABLE:
-        return( "ACCELTABLE" );
+    case Y_ACCELERATORS:
+        return( "accelerators" );
         break;
     case Y_ALT:
-        return( "ALT" );
+        return( "alt" );
+        break;
+    case Y_ASCII:
+        return( "ascii" );
+        break;
+    case Y_AUTO3STATE:
+        return( "auto3state" );
         break;
     case Y_AUTOCHECKBOX:
-        return( "AUTOCHECKBOX" );
+        return( "autocheckbox" );
         break;
     case Y_AUTORADIOBUTTON:
-        return( "AUTORADIOBUTTON" );
+        return( "autoradiobutton" );
         break;
     case Y_BEGIN:
-        return( "BEGIN" );
+        return( "begin" );
         break;
     case Y_BITMAP:
-        return( "BITMAP" );
+        return( "bitmap" );
+        break;
+    case Y_BLOCK:
+        return( "block" );
+        break;
+    case Y_BUTTON:
+        return( "button" );
+        break;
+    case Y_CAPTION:
+        return( "caption" );
+        break;
+    case Y_CHARACTERISTICS:
+        return( "characteristics" );
         break;
     case Y_CHECKBOX:
-        return( "CHECKBOX" );
+        return( "checkbox" );
+        break;
+    case Y_CHECKED:
+        return( "checked" );
+        break;
+    case Y_CLASS:
+        return( "class" );
         break;
     case Y_CODEPAGE:
-        return( "CODEPAGE" );
+        return( "code_page" );
         break;
     case Y_COMBOBOX:
-        return( "COMBOBOX" );
-        break;
-    case Y_CONTAINER:
-        return( "CONTAINER" );
+        return( "combobox" );
         break;
     case Y_CONTROL:
-        return( "CONTROL" );
+        return( "control" );
         break;
     case Y_CTEXT:
-        return( "CTEXT" );
-        break;
-    case Y_CTLDATA:
-        return( "CTLDATA" );
+        return( "ctext" );
         break;
     case Y_CURSOR:
-        return( "CURSOR" );
+        return( "cursor" );
         break;
     case Y_DEFPUSHBUTTON:
-        return( "DEFPUSHBUTTON" );
+        return( "defpushbutton" );
         break;
     case Y_DIALOG:
-        return( "DIALOG" );
+        return( "dialog" );
         break;
     case Y_DISCARDABLE:
-        return( "DISCARDABLE" );
+        return( "discardable" );
         break;
+    case Y_EDIT:
+        return( "edit" );
     case Y_EDITTEXT:
-        return( "EDITTEXT" );
+        return( "edittext" );
         break;
     case Y_END:
-       return( "END" );
+        return( "end" );
         break;
-    case Y_ENTRYFIELD:
-       return( "ENTRYFIELD" );
+    case Y_ERRTABLE:
+        return( "errtable" );
+        break;
+    case Y_EXSTYLE:
+        return( "exstyle" );
+        break;
+    case Y_FILEFLAGS:
+        return( "fileflags" );
+        break;
+    case Y_FILEFLAGSMASK:
+        return( "fileflagsmask" );
+        break;
+    case Y_FILEOS:
+        return( "fileos" );
+        break;
+    case Y_FILESUBTYPE:
+        return( "filesubtype" );
+        break;
+    case Y_FILETYPE:
+        return( "filetype" );
+        break;
+    case Y_FILEVERSION:
+        return( "fileversion" );
         break;
     case Y_FIXED:
-        return( "FIXED" );
+        return( "fixed" );
         break;
     case Y_FONT:
-        return( "FONT" );
+        return( "font" );
+        break;
+    case Y_GRAYED:
+        return( "grayed" );
         break;
     case Y_GROUPBOX:
-        return( "GROUPBOX" );
+        return( "groupbox" );
         break;
     case Y_HELP:
-        return( "HELP" );
-        break;
-    case Y_HELPITEM:
-        return( "HELPITEM" );
-        break;
-    case Y_HELPTABLE:
-        return( "HELPTABLE" );
-        break;
-    case Y_HELPSUBITEM:
-        return( "HELPSUBITEM" );
-        break;
-    case Y_HELPSUBTABLE:
-        return( "HELPSUBTABLE" );
+        return( "help" );
         break;
     case Y_ICON:
-        return( "ICON" );
+        return( "icon" );
         break;
     case Y_IMPURE:
-        return( "IMPURE" );
+        return( "impure" );
+        break;
+    case Y_INACTIVE:
+        return( "inactive" );
+        break;
+    case Y_LANGUAGE:
+        return( "language" );
         break;
     case Y_LISTBOX:
-        return( "LISTBOX" );
+        return( "listbox" );
         break;
     case Y_LOADONCALL:
-        return( "LOADONCALL" );
-        break;
-    case Y_LONEKEY:
-        return( "LONEKEY" );
+        return( "loadoncall" );
         break;
     case Y_LTEXT:
-        return( "LTEXT" );
+        return( "ltext" );
         break;
     case Y_MENU:
-        return( "MENU" );
+        return( "menu" );
+        break;
+    case Y_MENUBARBREAK:
+        return( "menubarbreak" );
+        break;
+    case Y_MENUBREAK:
+        return( "menubreak" );
         break;
     case Y_MENUITEM:
-        return( "MENUITEM" );
+        return( "menuitem" );
         break;
     case Y_MESSAGETABLE:
-        return( "MESSAGETABLE" );
-        break;
-    case Y_MLE:
-        return( "MLE" );
+        return( "messagetable" );
         break;
     case Y_MOVEABLE:
-        return( "MOVEABLE" );
+        return( "moveable" );
         break;
-    case Y_NOT_KEYWORD:
-        return( "NOT" );
+    case Y_NOINVERT:
+        return( "noinvert" );
         break;
-    case Y_NOTEBOOK:
-        return( "NOTEBOOK" );
+    case Y_OWNERDRAW:
+        return( "ownerdraw" );
+        break;
+    case Y_POPUP:
+        return( "popup" );
         break;
     case Y_POUND_PRAGMA:
         return( "#pragma" );
         break;
     case Y_PRELOAD:
-        return( "PRELOAD" );
+        return( "preload" );
         break;
-    case Y_PRESPARAMS:
-        return( "PRESPARAMS" );
+    case Y_PRODUCTVERSION:
+        return( "productversion" );
         break;
     case Y_PURE:
-        return( "PURE" );
+        return( "pure" );
         break;
     case Y_PUSHBUTTON:
-        return( "PUSHBUTTON" );
+        return( "pushbutton" );
         break;
     case Y_RADIOBUTTON:
-        return( "RADIOBUTTON" );
+        return( "radiobutton" );
         break;
     case Y_RCDATA:
-        return( "RCDATA" );
+        return( "rcdata" );
         break;
     case Y_RCINCLUDE:
-        return( "RCINCLUDE" );
+        return( "rcinclude" );
         break;
     case Y_RTEXT:
-        return( "RTEXT" );
+        return( "rtext" );
+        break;
+    case Y_SCROLLBAR:
+        return( "scrollbar" );
         break;
     case Y_SEPARATOR:
-        return( "SEPARATOR" );
+        return( "separator" );
         break;
     case Y_SHIFT:
-        return( "SHIFT" );
+        return( "shift" );
         break;
-    case Y_SLIDER:
-        return( "SLIDER" );
+    case Y_STATE3:
+        return( "state3" );
         break;
-    case Y_SPINBUTTON:
-        return( "SPINBUTTON" );
-        break;
+    case Y_STATIC:
+        return( "static" );
     case Y_STRINGTABLE:
-        return( "STRINGTABLE" );
+        return( "stringtable" );
         break;
-    case Y_VALUESET:
-        return( "VALUESET" );
+    case Y_STYLE:
+        return( "style" );
         break;
-    case Y_VIRTUALKEY:
-        return( "VIRTUALKEY" );
+    case Y_VALUE:
+        return( "value" );
+        break;
+    case Y_VERSION:
+        return( "version" );
+        break;
+    case Y_VERSIONINFO:
+        return( "versioninfo" );
+        break;
+    case Y_VIRTKEY:
+        return( "virtkey" );
         break;
     case 0:
         return( "end of file" );

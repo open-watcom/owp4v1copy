@@ -82,8 +82,32 @@ MenuFlags SemAddMenuOption( MenuFlags oldflags, uint_8 token )
 /************************************************************/
 {
     switch (token) {
+    case Y_GRAYED:
+        oldflags |= MENU_GRAYED;
+        break;
+    case Y_INACTIVE:
+        oldflags |= MENU_INACTIVE;
+        break;
     case Y_BITMAP:
         oldflags |= MENU_BITMAP;
+        break;
+    case Y_CHECKED:
+        oldflags |= MENU_CHECKED;
+        break;
+    case Y_POPUP:
+        oldflags |= MENU_POPUP;
+        break;
+    case Y_MENUBARBREAK:
+        oldflags |= MENU_MENUBARBREAK;
+        break;
+    case Y_MENUBREAK:
+        oldflags |= MENU_MENUBREAK;
+        break;
+    case Y_OWNERDRAW:
+        oldflags |= MENU_OWNERDRAWN;
+        break;
+    case Y_HELP:
+        oldflags |= MENU_HELP;
         break;
     }
 
@@ -138,15 +162,21 @@ FullMenu *SemAddMenuItem( FullMenu *currmenu, FullMenuItem curritem )
 static void SemCheckMenuItemPopup( FullMenuItem *item, uint_16 tokentype )
 /************************************************************************/
 {
-//    if( item->item.popup.item.type == MT_MENUEX ) {
-//        RcError( ERR_MENUEX_POPUP_OPTIONS );
-//    }
+    if( tokentype == Y_MENU ) {
+        if( item->item.popup.item.type == MT_MENUEX ) {
+            RcError( ERR_MENUEX_POPUP_OPTIONS );
+        }
+    } else if( tokentype == Y_MENU_EX ) {
+        item->item.popup.item.menuData.ItemFlags = MENUEX_POPUP;
+        if( item->item.popup.item.type == MT_MENU ) {
+            RcError( ERR_MENU_POPUP_OPTIONS );
+        }
+    }
 }
 
 static void SemCheckMenuItemNormal( FullMenuItem *item, uint_16 tokentype )
 /*************************************************************************/
 {
-#if 0
     if( tokentype == Y_MENU ) {
         if( item->item.normal.type == MT_MENUEX ) {
             RcError( ERR_MENUEX_NORMAL_OPTIONS );
@@ -159,7 +189,6 @@ static void SemCheckMenuItemNormal( FullMenuItem *item, uint_16 tokentype )
             RcError( ERR_MENU_NORMAL_OPTIONS );
         }
     }
-#endif
 }
 
 static int SemWriteMenuItem( FullMenuItem *item, int islastitem,
@@ -176,11 +205,11 @@ static int SemWriteMenuItem( FullMenuItem *item, int islastitem,
         if( tokentype == Y_MENU ) {
             error = ResWriteMenuItemPopup( &(item->item.popup.item.menuData),
                             item->UseUnicode, CurrResFile.handle );
-        } //else if( tokentype == Y_MENU_EX ) {
-//            error = ResWriteMenuExItemPopup( &(item->item.popup.item.menuData),
-//                      &(item->item.popup.item.menuExData), item->UseUnicode,
-//                      CurrResFile.handle );
-//        }
+        } else if( tokentype == Y_MENU_EX ) {
+            error = ResWriteMenuExItemPopup( &(item->item.popup.item.menuData),
+                      &(item->item.popup.item.menuExData), item->UseUnicode,
+                      CurrResFile.handle );
+        }
     } else {
         SemCheckMenuItemNormal( item, tokentype );
         if( islastitem ) {
@@ -189,11 +218,11 @@ static int SemWriteMenuItem( FullMenuItem *item, int islastitem,
         if( tokentype == Y_MENU ) {
             error = ResWriteMenuItemNormal( &(item->item.normal.menuData),
                         item->UseUnicode, CurrResFile.handle );
-        } //else if( tokentype == Y_MENU_EX ) {
-//            error = ResWriteMenuExItemNormal( &(item->item.normal.menuData),
-//                         &(item->item.normal.menuExData), item->UseUnicode,
-//                         CurrResFile.handle );
-//        }
+        } else if( tokentype == Y_MENU_EX ) {
+            error = ResWriteMenuExItemNormal( &(item->item.normal.menuData),
+                         &(item->item.normal.menuExData), item->UseUnicode,
+                         CurrResFile.handle );
+        }
     }
     *err_code = LastWresErr();
     return( error );
@@ -268,7 +297,7 @@ void SemWriteMenu( WResID *name, ResMemFlags flags, FullMenu *menu,
     ResLocation     loc;
     int             error = 0;
     int             err_code;
-//    uint_8          headerdata[ RES_HEADER_SIZE ];
+    uint_8          headerdata[ RES_HEADER_SIZE ];
 
 
     if(!ErrorHasOccured) {
@@ -277,14 +306,14 @@ void SemWriteMenu( WResID *name, ResMemFlags flags, FullMenu *menu,
             head.HeaderSize = 0;
             loc.start = SemStartResource();
             error = ResWriteMenuHeader( &head, CurrResFile.handle );
-        } //else if( tokentype == Y_MENU_EX ) {
-//            head.Version = RES_HEADER_VERSION;
-//            head.HeaderSize = RES_HEADER_SIZE;
-//            memset( headerdata, 0, head.HeaderSize );
-//            ResPadDWord( CurrResFile.handle );
-//            loc.start = SemStartResource();
-//            error = ResWriteMenuExHeader( &head, CurrResFile.handle, headerdata );
-//        }
+        } else if( tokentype == Y_MENU_EX ) {
+            head.Version = RES_HEADER_VERSION;
+            head.HeaderSize = RES_HEADER_SIZE;
+            memset( headerdata, 0, head.HeaderSize );
+            ResPadDWord( CurrResFile.handle );
+            loc.start = SemStartResource();
+            error = ResWriteMenuExHeader( &head, CurrResFile.handle, headerdata );
+        }
         if(error) {
             err_code = LastWresErr();
             goto OutputWriteError;

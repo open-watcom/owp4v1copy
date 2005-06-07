@@ -68,7 +68,7 @@ struct DLGTITEM {
 #include "rcmem.h"
 #include "global.h"
 #include "errors.h"
-#include "ytab.gh"
+#include "ytab2.gh"
 #include "semantic.h"
 #include "semdiag.h"
 

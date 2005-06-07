@@ -1,48 +1,18 @@
 
- Binding resources into LX modules
- ---------------------------------
+ Here's what is missing in wrc but doesn't appear to be essential:
+ 
+- Currently wrc stuffs all resources into a single resource object. IBM's RC 
+ puts PRELOAD and LOADONCALL resources into different objects. We also ignore
+ the SEGALIGN attribute, while IBM's RC creates a new object for each
+ SEGALIGNed resource.
+ 
+- Page compression. IBM's RC supports two types of compression: Iterated
+ pages and a proprietary LZSS-ish algorithm. The former algorithm is supported
+ on OS/2 2.0 and later, the latter requires OS/2 Warp. Iterated pages use
+ trivial RLE compression, but the newer compression algorithm is completely
+ undocumented. However, lxLite source code ought to provide the necessary
+ information to anyone who can read Pascal and x86 assembly.
 
-- Zip through the .res file and build a list of resources; this should
- probably be a linked list and we should insert new items so that it's sorted
- (by resource type/ID) which is what OS/2 requires. This list needs to be
- translateable to the LX resource table; it should also keep file offsets and
- sizes of individual resources so that we can spit them out to the resource
- pages easily. We'll also need to store the loader/memory attributes in the
- list.
-
-- Start processing the LX module; copy the stub. Read the LX header, we'll
- probably need to keep it in memory and write it out when we're done because
- we'll need to make several changes to it.
-
-- Copy the object table and add the entries for resource object(s). If there
-  already were resource objects present, we'll need to kick them out! We'll
-  have to look at resource loader and memory attributes here. PRELOAD and
-  LOADONCALL (demand) resources need to go into different page pools (and
-  objects). Within each of these classes we'll need to create separate
-  objects for FIXED/DISCARDABLE resources. Also each SEGALIGN resource will
-  start its own object but other resources without this attribute may follow
-  in that same object. The MOVEABLE attribute can probably be ignored. We
-  might potentially need to create as many objects as there are resources.
-
-- Read and process the object page table; we will need to keep a copy of the
- original table for reference when copying the data pages. We'll need to
- update the table, throw out possible existing resource pages and add new
- resource pages. We'll also need to calculate new page offsets (we should be
- able to do that by now).
-
-- Write out the resource table. By now we should be able to fill out all
- resource table entries easily.
-
-- Copy over all other tables, we shouldn't need to touch any of them except
- possibly the fixup page table to account for inserted pages.
-
-- Now copy all executable module pages; we will need to insert the resource
- pages into the appropriate places as specified by the object page table. We
- will look at the old page table to find where they are in the old executable
- and write them into the new executable.
-
-- If there is debugging information present, copy it across.
-
-- Finish updating the LX header with new table offsets and write it out.
-
-- We're done.
+  If compression were added to wrc, it would probably make good sense to
+ also add it to wlink, or perhaps give wrc the ability to compress
+ non-resource pages.

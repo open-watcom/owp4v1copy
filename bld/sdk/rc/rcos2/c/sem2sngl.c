@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
@@ -37,7 +37,7 @@
 #include "rcmem.h"
 #include "errors.h"
 #include "global.h"
-#include "ytab.gh"
+#include "ytab2.gh"
 #include "semantic.h"
 #include "semsingl.h"
 #include "reserr.h"
@@ -48,20 +48,6 @@
 /**** forward references ****/
 static void AddFontResources( WResID * name, ResMemFlags, char * filename );
 
-extern void ReportCopyError( RcStatus status, int read_msg, char *filename,
-                             int err_code );
-
-extern void SemOS2AddMessageTable( WResID *name, ScanString *filename )
-/*********************************************************************/
-{
-    ResLocation         start;
-
-    start = SemCopyRawFile( filename->string );
-    RcMemFree( filename->string );
-    RcMemFree( filename );
-    SemAddResourceFree( name, WResIDFromNum( (long)RT_MESSAGETABLE ),
-                        MEMFLAG_MOVEABLE | MEMFLAG_PURE, start );
-}
 
 extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
                        FullMemFlags * fullflags, char * filename )
@@ -72,14 +58,14 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
     char        full_filename[ _MAX_PATH ];
     static int  firstIcon = TRUE;
 
-    if (ErrorHasOccured) {
+    if( ErrorHasOccured ) {
         RcMemFree( name );
         RcMemFree( filename );
         return;
     }
 
     RcFindResource( filename, full_filename );
-    if (full_filename[0] == '\0') {
+    if( full_filename[0] == '\0' ) {
         RcError( ERR_CANT_FIND_FILE, filename );
         goto HANDLE_ERROR;
     }
@@ -96,10 +82,9 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
         /* Note the fallthrough! */
     case Y_POINTER:
     case Y_ICON:
-        if (fullflags != NULL) {
-            SemCheckMemFlags( fullflags, 0,
-                              MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
-                              0 );
+        if( fullflags != NULL ) {
+            SemOS2CheckMemFlags( fullflags, 0,
+                              MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, 0 );
             flags = fullflags->flags;
         } else {
             flags = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE | MEMFLAG_PURE;
@@ -108,7 +93,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
         /* Duplicate the first icon encountered as the default icon IFF it
            has resource ID equal to 1
         */
-        if (firstIcon && !name->IsName && (name->ID.Num == 999 || name->ID.Num == 1)) {
+        if( firstIcon && !name->IsName && (name->ID.Num == 999 || name->ID.Num == 1) ) {
             WResID      *id;
 
             id = (WResID*)RcMemMalloc( sizeof( WResID ) );
@@ -134,8 +119,8 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
         break;
 
     case Y_BITMAP:
-        if (fullflags != NULL) {
-            SemCheckMemFlags( fullflags, 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
+        if( fullflags != NULL ) {
+            SemOS2CheckMemFlags( fullflags, 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
             flags = fullflags->flags;
         } else {
             flags = MEMFLAG_MOVEABLE | MEMFLAG_PURE;
@@ -146,8 +131,8 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
         break;
 
     case Y_FONT:
-        if (fullflags != NULL) {
-            SemCheckMemFlags( fullflags, 0,
+        if( fullflags != NULL ) {
+            SemOS2CheckMemFlags( fullflags, 0,
                                 MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                                 MEMFLAG_PURE );
             flags = fullflags->flags;
@@ -176,8 +161,8 @@ static RcStatus readFontInfo( int handle, FontInfo *info, int *err_code )
 {
     int     numread;
 
-    numread = RcRead( handle, info, sizeof(FontInfo) );
-    if( numread != sizeof(FontInfo) ) {
+    numread = RcRead( handle, info, sizeof( FontInfo ) );
+    if( numread != sizeof( FontInfo ) ) {
         *err_code = errno;
         if( numread == -1 ) {
             return( RS_READ_ERROR );
@@ -239,7 +224,7 @@ static void * readString( int handle, long offset, ReadStrErrInfo *err )
 
 
     seekrc = RcSeek( handle, offset, SEEK_SET );
-    if (seekrc == -1) {
+    if( seekrc == -1 ) {
         err->status = RS_READ_ERROR;
         err->err_code = errno;
         return( NULL );
@@ -264,7 +249,7 @@ static FullFontDir * NewFontDir( void )
 {
     FullFontDir *   newdir;
 
-    newdir = RcMemMalloc( sizeof(FullFontDir) );
+    newdir = RcMemMalloc( sizeof( FullFontDir ) );
     newdir->Head = NULL;
     newdir->Tail = NULL;
     newdir->NumOfFonts = 0;
@@ -286,19 +271,19 @@ static FullFontDirEntry * NewFontDirEntry( FontInfo * info, char * devicename,
     structextra = devicelen + facelen;
 
     /* -1 for the 1 char in the struct already */
-    entry = RcMemMalloc( sizeof(FullFontDirEntry) + structextra - 1 );
+    entry = RcMemMalloc( sizeof( FullFontDirEntry ) + structextra - 1 );
     entry->Next = NULL;
     entry->Prev = NULL;
     /* -1 for the 1 char in the struct already */
-    entry->Entry.StructSize = sizeof(FontDirEntry) + structextra - 1;
+    entry->Entry.StructSize = sizeof( FontDirEntry ) + structextra - 1;
     entry->Entry.FontID = fontid->ID.Num;
     entry->Entry.Info = *info;
     memcpy( &(entry->Entry.DevAndFaceName[ 0 ]), devicename, devicelen );
     memcpy( &(entry->Entry.DevAndFaceName[ devicelen ]), facename, facelen );
     /* set dfDevice and dfFace to be the offset of the strings from the start */
     /* of the FontInfo structure (entry->Entry.Info) */
-    entry->Entry.Info.dfDevice = sizeof(FontInfo);
-    entry->Entry.Info.dfFace = sizeof(FontInfo) + devicelen;
+    entry->Entry.Info.dfDevice = sizeof( FontInfo );
+    entry->Entry.Info.dfFace = sizeof( FontInfo ) + devicelen;
 
     return( entry );
 }
@@ -315,8 +300,8 @@ static void AddFontToDir( FontInfo * info, char * devicename, char * facename,
         CurrResFile.FontDir = NewFontDir();
     }
 
-    ResAddLLItemAtEnd( (void **) &(CurrResFile.FontDir->Head),
-                        (void **) &(CurrResFile.FontDir->Tail), entry );
+    ResAddLLItemAtEnd( (void **)&(CurrResFile.FontDir->Head),
+                        (void **)&(CurrResFile.FontDir->Tail), entry );
     CurrResFile.FontDir->NumOfFonts += 1;
 }
 

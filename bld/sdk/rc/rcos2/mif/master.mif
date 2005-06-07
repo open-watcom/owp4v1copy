@@ -7,11 +7,11 @@ xname = $(name).dll
 xname = $(name).exe
 !endif
 
-!ifndef wrc_autodepends
-wrc_autodepends = .AUTODEPEND
+!ifndef wrc2_autodepends
+wrc2_autodepends = .AUTODEPEND
 !endif
 
-additional_cleanup = ytab.*
+additional_cleanup = ytab.* ytab2.* ytabw.c
 
 !include cproj.mif
 !include defrule.mif
@@ -36,18 +36,18 @@ WRC_USE_TRMEM = 1
 
 splice_opts = -kDEBUG
 
-objs =  ytab.obj &
+objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj                    &
         errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
         exereslx.obj exelxobj.obj exeseg.obj exeutil.obj global.obj     &
-        keyword.obj layer0.obj param.obj pass2.obj rc.obj rcio.obj      &
-        rcmem.obj rcstr.obj ppalloc.obj scan.obj semaccel.obj           &
+        layer0.obj param.obj pass2.obj rc.obj rcio.obj                  &
+        rcmem.obj rcstr.obj ppalloc.obj scan.obj scan2.obj semaccel.obj &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj     &
-        sem2diag.obj sem2menu.obj sem2sngl.obj sem2str.obj              &
-        sem2accl.obj sem2help.obj                                       &
+        semantc2.obj  sem2diag.obj sem2menu.obj sem2sngl.obj            &
+        sem2str.obj sem2accl.obj sem2help.obj                           &
         semraw.obj semsingl.obj semstr.obj swchar.obj dbtable.obj       &
         preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj       &
         rcldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
-        leadbyte.obj
+        semutil.obj leadbyte.obj
 
 !ifeq sys_dll 1
 objs += rcdll.obj libmain.obj idemsgpr.obj
@@ -109,9 +109,19 @@ $(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
         $(librarian) -n $^&.lib +$^&.dll
 !endif
 
-ytab.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
+# ytab.c is renamed to ytabw.c to avoid filename conflict
+ytabw.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
         $(byacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
+        @cp ytab.c ytabw.c
+        @rm -f ytab.c
         @cp ytab.h ytab.gh
+        @rm -f ytab.h
+
+ytab2.c ytab2.gh : rcos2.y $(wrc2_dir)/y/yydrivr2.c rcmem.h
+        $(byacc) -d -b $[@ $[:yydrivr2.c >$(nulldevice)
+        @cp ytab.c ytab2.c
+        @rm -f ytab.c
+        @cp ytab.h ytab2.gh
         @rm -f ytab.h
 
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
@@ -119,6 +129,13 @@ ytab.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
 
 weights.gh keywords.gh : ./findhash.exe ../hash/rc.key
         $[@ -q -m ../hash/rc.key
+
+weights2.gh keyword2.gh : ./findhash.exe ../hash/rcos2.key
+        $[@ -q -m ../hash/rcos2.key
+        @cp keywords.gh keyword2.gh
+        @rm -f keyword.gh
+        @cp weights.gh weights2.gh
+        @rm -f weights.gh
 
 $(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
@@ -133,3 +150,5 @@ usagej.rc : $(wrc2_dir)/usage.sp
         wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
 keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
+
+keyword2.obj : keyword2.c keyword2.gh weights2.gh .AUTODEPEND

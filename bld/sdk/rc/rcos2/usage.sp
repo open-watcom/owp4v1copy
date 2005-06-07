@@ -5,8 +5,8 @@ Options: (/option is also accepted)
 -q             - operate quietly
 -30            - stamp file as requiring Windows 3.0
 -31            - stamp file as requiring Windows 3.1 (default)
--dNAME=value   - behave as if #define NAME value was at top of file
--ad            - generate auto dependency information for use by WMAKE
+-DNAME=value   - behave as if #define NAME value was at top of file
+-ad            - generate auto dependency information for use by wmake
 :segment osi
 -bt=windows    - build a Win16 resource file
 -bt=nt         - build a Win32 resource file
@@ -30,15 +30,15 @@ Options: (/option is also accepted)
 :endsegment
 -c=name        - set code page conversion file
 -e             - for a DLL, global memory above EMS line
--fo=name       - set the output RES file to name
--fe=name       - set the output EXE file to name
+-fo=name       - set the output resource file to name
+-fe=name       - set the output executable file to name
 -i=path        - look in path for include files
--k             - don't sort segments (same as /s0)
+-k             - don't sort segments (same as -s0)
 -l             - program uses LIM 3.2 EMS directly
 -m             - each instance of program has its own EMS bank
 -o             - preprocess only
 -p             - private DLL
--r             - only build the RES file
+-r             - only build the resource file
 -s{0,1,2}      - segment and resource sorting method:
                  0: no sorting, leave segments in the linker order
                  1: move preload segments to front and mark for fast load
@@ -58,7 +58,7 @@ Options: (/option is also accepted)
                  1: Chinese (Traditional, CP 950)
                  2: Korean (Wansung, CP 949)
                  3: Chinese (Simplified, CP 936)
--zm            - output Microsoft/IBM format .RES files
+-zm            - output Microsoft/IBM format .res files
 -zn            - don't preprocess the file
 :endsegment
 :segment JAPANESE
@@ -68,8 +68,8 @@ Options: (/option is also accepted)
 -q             - operate quietly
 -30            - stamp file as requiring Windows 3.0
 -31            - stamp file as requiring Windows 3.1 (default)
--dNAME=value   - behave as if #define NAME value was at top of file
--ad            - generate auto dependency information for use by WMAKE
+-DNAME=value   - behave as if #define NAME value was at top of file
+-ad            - generate auto dependency information for use by wmake
 :segment osi
 -bt=windows    - build a Win16 resource file
 -bt=nt         - build a Win32 resource file
@@ -92,15 +92,15 @@ Options: (/option is also accepted)
 :endsegment
 :endsegment
 -e             - for a DLL, global memory above EMS line
--fo=name       - set the output RES file to name
--fe=name       - set the output EXE file to name
+-fo=name       - set the output resource file to name
+-fe=name       - set the output executable file to name
 -i=path        - look in path for include files
--k             - don't sort segments (same as /s0)
+-k             - don't sort segments (same as -s0)
 -l             - program uses LIM 3.2 EMS directly
 -m             - each instance of program has its own EMS bank
 -o             - preprocess only
 -p             - private DLL
--r             - only build the RES file
+-r             - only build the resource file
 -s{0,1,2}      - segment and resource sorting method:
                  0: no sorting, leave segments in the linker order
                  1: move preload segments to front and mark for fast load
@@ -118,7 +118,7 @@ Options: (/option is also accepted)
                  1: Chinese (Traditional, CP 950)
                  2: Korean (Wansung, CP 949)
                  3: Chinese (Simplified, CP 936)
--zm            - output Microsoft/IBM format .RES files
+-zm            - output Microsoft/IBM format .res files
 -zn            - don't preprocess the file
 :endsegment
 .

@@ -355,7 +355,6 @@ extern VerFixedInfo * SemAddVerFixedInfo( VerFixedInfo * info,
                                         VerFixedOption option )
 /*************************************************************/
 {
-#if 0
     switch( option.token ) {
     case Y_FILEFLAGS:
         info->FileFlags = option.u.Option;
@@ -381,7 +380,7 @@ extern VerFixedInfo * SemAddVerFixedInfo( VerFixedInfo * info,
         info->ProdVerLow = MakeVersion( option.u.Version.Low );
         break;
     }
-#endif
+
     return( info );
 }
 

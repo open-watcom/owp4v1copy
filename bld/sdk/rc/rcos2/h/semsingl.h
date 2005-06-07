@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to semantic actions for single-line resources.
 *
 ****************************************************************************/
 
@@ -119,12 +118,8 @@ typedef struct FullFontDir {
 extern void SemAddSingleLineResource( WResID * name, uint_8 type,
                     FullMemFlags * fullflags, char * filename );
 extern void SemWriteFontDir( void );
-extern void ReportCopyError( RcStatus status, int read_msg, char *filename,
-                             int err_code );
+extern void SemOS2WriteFontDir( void );
 extern void SemAddMessageTable( WResID *name, ScanString *filename );
-extern RcStatus CopyData( uint_32 offset, uint_32 length, int handle,
-                          void *buff, int buffsize, int *err_code );
-
 extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
                        FullMemFlags * fullflags, char * filename );
 

@@ -233,6 +233,10 @@ extern void *RCMemLayer1Realloc( void *mem, size_t size )
     DebugMemInfo     *debugmem;
 #endif
 
+    if( mem == NULL ) {     // emulate realloc() behaviour
+        return( RCMemLayer1Malloc( size ) );
+    }
+
     blockptr = (char *)mem - sizeof( HeapId );
     heapid = (HeapId *)blockptr;
     if( heapid->id == BIGLIST_ID ) {
@@ -279,4 +283,3 @@ extern void *RCMemLayer1Realloc( void *mem, size_t size )
     }
     return( mem );
 }
-

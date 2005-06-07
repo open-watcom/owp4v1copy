@@ -35,7 +35,7 @@
 #include "errors.h"
 #include "global.h"
 #include "rcmem.h"
-#include "ytab.gh"
+#include "ytab2.gh"
 #include "semaccel.h"
 
 #include "reserr.h"

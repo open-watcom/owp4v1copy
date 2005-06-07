@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  YACC driver for OS/2 resource script parser.
 *
 ****************************************************************************/
 
@@ -38,11 +37,13 @@
 #include "rcmem.h"
 #include "global.h"
 #include "errors.h"
-#include "ytab.gh"
-#include "yydriver.h"
-#include "scan.h"
+#include "ytab2.gh"
+#include "yydrivr2.h"
+#include "scan2.h"
 #include "errprt.h"
 #include "rcmsg.gh"
+
+#include "os2res.h"
 
 typedef uint_16         YYCHKTYPE;
 typedef uint_16         YYACTTYPE;
@@ -56,23 +57,28 @@ typedef union {
     IntMask                     maskint;
     ScanString                  string;
     WResID *                    resid;
-    FullAccelEntry              accelfullentry;
-    FullAccelFlags              accflags;
+    FullAccelEntryOS2           accelfullentry;
+    FullAccelFlagsOS2           accflags;
+    FullAccelTableOS2 *         acceltable;
     AccelEvent                  accevent;
+    FullHelpTableOS2 *          helptable;
+    FullHelpEntryOS2            helpfullentry;
+    FullHelpSubTableOS2 *       helpsubtable;
     ResLocation                 resloc;
     FullMemFlags                fullmemflags;
     MenuFlags                   menuflags;
-    FullMenuPtr                 menuptr;
-    FullMenuItem                menuitem;
-    FullMenuItemPopup           popupmenuitem;
-    MenuItemNormalData          normalmenuitem;
+    FullMenuPtrOS2              menuptr;
+    FullMenuItemOS2             menufull;
+    MenuItemOS2                 menuitem;
     DialogSizeInfo              sizeinfo;
     FullDialogOptions           diagopts;
     ResNameOrOrdinal *          nameorord;
     FullDialogBoxHeader *       diaghead;
-    FullDialogBoxControl *      diagctrl;
-    FullDiagCtrlList *          diagctrllist;
-    FullDiagCtrlOptions         diagctrlopts;
+    FullDialogBoxControlOS2 *   diagctrl;
+    FullDiagCtrlListOS2 *       diagctrllist;
+    FullDiagCtrlOptionsOS2      diagctrlopts;
+    PresParamsOS2               presparams;
+    PresParamListOS2 *          presparamlist;
     StringItem                  stritem;
     FullStringTable *           strtable;
     RawDataItem                 rawitem;
@@ -85,7 +91,6 @@ typedef union {
     VerFixedInfo *              verinforoot;
     YYCHKTYPE                   token;
     WResLangType                langinfo;
-    DlgHelpId                   dlghelpid;
     DataElemList *              dataelem;
     ToolBar *                   toolbar;
 } YYSTYPE;
@@ -93,7 +98,7 @@ typedef union {
 #ifdef _I86FAR
 #define YYFAR           _I86FAR
 #else
-#if defined( __386__ ) || defined( __PPC__ ) || defined( __AXP__ )
+#ifdef __386__
 #define YYFAR
 #else
 #define YYFAR           __far
@@ -111,8 +116,12 @@ typedef struct {
     YYACTTYPE           *sstack;
 } parse_stack;
 
-YYSTYPE yylval;
-uint_8  yysyntaxerror = FALSE;  /* boolean variable */
+/* This is pretty ugly but... these variables are defined in yydriver.c and
+ * shared between the Windows and OS/2 parsers. It seems safe to assume that
+ * either one or the other will be used, never both at the same time.
+ */
+extern YYSTYPE yylval;
+extern uint_8  yysyntaxerror;  /* boolean variable */
 #define YYERRORTHRESHOLD    5   /* no. of tokens to accept before restarting */
 
 typedef enum {
@@ -166,13 +175,13 @@ static void puts_far( const char YYFAR * string )
 
 #endif
 
-int yylex( void )
-/***************/
+static int yylexOS2( void )
+/*************************/
 {
     int         curtoken;
     ScanValue   value;
 
-    curtoken = Scan( &value );
+    curtoken = ScanOS2( &value );
 
     while (RcIoIsCOrHFile()) {
         switch (curtoken) {
@@ -193,7 +202,7 @@ int yylex( void )
             break;
         }
 
-        curtoken = Scan( &value );
+        curtoken = ScanOS2( &value );
     }
     END_LOOP:
 
@@ -315,14 +324,14 @@ static p_action doAction( YYCHKTYPE t, parse_stack *state )
     }
 }
 
-void ParseInit( void )
-/********************/
+void ParseInitOS2( void )
+/***********************/
 {
-    ScanInit();
+    ScanInitOS2();
 }
 
-void ParseFini( void )
-/********************/
+void ParseFiniOS2( void )
+/***********************/
 {
 }
 
@@ -369,7 +378,7 @@ static void handleError( YYCHKTYPE token, parse_stack * state, int error_state )
         case Y_SCAN_ERROR:
             break;
         default:
-            RcError( ERR_SYNTAX_STR, SemTokenToString( token ) );
+            RcError( ERR_SYNTAX_STR, SemOS2TokenToString( token ) );
             break;
         }
     }
@@ -385,10 +394,9 @@ static p_action doParse( parse_stack * resource_state )
     int         token_count;
 
     error_state = FALSE;
-    token_count = 0;
 
     do {
-        token = yylex();
+        token = yylexOS2();
         if (error_state) {
             token_count++;
             if (token_count >= YYERRORTHRESHOLD) {
@@ -413,8 +421,8 @@ static p_action doParse( parse_stack * resource_state )
     return( what );
 }
 
-bool Parse( void )
-/****************/
+bool ParseOS2( void )
+/*******************/
 {
     parse_stack resource_state;
     p_action    what;
@@ -429,8 +437,9 @@ bool Parse( void )
     return( what != P_ACCEPT );
 }
 
-void ParseInitStatics( void ) {
+void ParseInitStaticsOS2( void )
 /******************************/
+{
     memset( &yylval, 0, sizeof( YYSTYPE ) );
     yysyntaxerror = FALSE;
 }

@@ -37,8 +37,9 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <time.h>
 #ifndef __UNIX__
-#include <process.h>
+    #include <process.h>
 #endif
 #include "watcom.h"
 #include "wresall.h"
@@ -51,7 +52,6 @@
 #include "exeutil.h"
 #include "rcio.h"
 #include "preproc.h"
-#include "banner.h"
 #include "reserr.h"
 #include "tmpctl.h"
 #include "autodep.h"
@@ -59,8 +59,12 @@
 #include "util.h"
 #include "rcldstr.h"
 #include "iortns.h"
+#include <banner.h>
 
-#include <time.h>
+#ifdef _BANEXTRA
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
+#endif
 
 #ifdef __UNIX__
 #define PATH_SEP '/'
@@ -412,7 +416,7 @@ static void WriteOS2Tables( void )
                     WResIDFromNum( OS2_RT_MESSAGE ) );
     }
     if( CurrResFile.FontDir != NULL ) {
-        SemWriteFontDir();
+        SemOS2WriteFontDir();
     }
 }
 
@@ -642,6 +646,8 @@ extern void ClosePass2FilesAndFreeMem( void )
     case EXE_TYPE_LX:
         FreeLXFileInfoPtrs( &old->u.LXInfo );
         break;
+    default: //EXE_TYPE_UNKNOWN
+        break;
     }
 
     if( tmp->IsOpen ) {
@@ -657,6 +663,8 @@ extern void ClosePass2FilesAndFreeMem( void )
         break;
     case EXE_TYPE_LX:
         FreeLXFileInfoPtrs( &tmp->u.LXInfo );
+        break;
+    default: //EXE_TYPE_UNKNOWN
         break;
     }
     CloseResFiles( Pass2Info.ResFiles );

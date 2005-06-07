@@ -79,8 +79,8 @@ extern int ResOS2WriteStringTableBlock( StringTableBlock * currblock,
     return( error );
 } /* ResOS2WriteStringTableBlock */
 
-extern FullStringTable * SemOS2NewStringTable( void )
-/************************************************/
+extern FullStringTable *SemOS2NewStringTable( void )
+/**************************************************/
 {
     FullStringTable *   newtable;
 
@@ -94,7 +94,26 @@ extern FullStringTable * SemOS2NewStringTable( void )
     }
 
     return( newtable );
-} /* SemNewStringTable */
+} /* SemOS2NewStringTable */
+
+extern void SemOS2FreeStringTable( FullStringTable *oldtable )
+/************************************************************/
+{
+    FullStringTableBlock *      currblock;
+    FullStringTableBlock *      oldblock;
+
+    currblock = oldtable->Head;
+    while( currblock != NULL ) {
+        ResFreeStringTableBlock( &(currblock->Block) );
+
+        oldblock = currblock;
+        currblock = currblock->Next;
+
+        RcMemFree( oldblock );
+    }
+
+    RcMemFree( oldtable );
+} /* SemOS2FreeStringTable */
 
 static FullStringTableBlock * findStringTableBlock( FullStringTable * table,
                         uint_16 blocknum )
@@ -204,7 +223,7 @@ static void semMergeStringTables( FullStringTable * currtable,
         oldblock = nextblock;
     }
 
-    SemFreeStringTable( oldtable );
+    SemOS2FreeStringTable( oldtable );
 } /* semMergeStringTables */
 
 static void setStringTableMemFlags( FullStringTable * currtable,
@@ -219,39 +238,26 @@ static void setStringTableMemFlags( FullStringTable * currtable,
     }
 }
 
-static void addTable( FullStringTable **tables, FullStringTable *newtable ) {
-/***************************************************************************/
-
+static void addTable( FullStringTable **tables, FullStringTable *newtable )
+/*************************************************************************/
+{
     while( *tables != NULL ) tables = &( ( *tables )->next );
     *tables = newtable;
     newtable->next = NULL;
 }
 
-static FullStringTable *findTableFromLang( FullStringTable *tables,
-                                           WResLangType *lang ) {
-/****************************************************************/
-
-    FullStringTable     *cur;
-
-    cur = tables;
-    while( cur != NULL ) {
-        if( cur->lang.lang == lang->lang
-            && cur->lang.sublang == lang->sublang ) break;
-        cur = cur->next;
-    }
-    return( cur );
+static FullStringTable *findTable( FullStringTable *tables )
+/**********************************************************/
+{
+    return( tables );
 }
 
 extern void SemOS2MergeStrTable( FullStringTable * currtable, ResMemFlags flags )
 /*******************************************************************************/
 {
     FullStringTable     *table;
-    WResLangType        lang;
 
-    lang = GetResourceLanguage();
-    ClearResourceLanguage();
-    currtable->lang = lang;
-    table = findTableFromLang( CurrResFile.StringTable, &lang );
+    table = findTable( CurrResFile.StringTable );
     if( table == NULL ) {
         setStringTableMemFlags( currtable, flags );
         addTable( &CurrResFile.StringTable, currtable );
@@ -264,13 +270,8 @@ extern void SemOS2MergeMsgTable( FullStringTable * currtable, ResMemFlags flags 
 /*******************************************************************************/
 {
     FullStringTable     *table;
-    WResLangType        lang;
 
-    lang = GetResourceLanguage();
-    ClearResourceLanguage();
-    currtable->lang = lang;
-    table = findTableFromLang( CurrResFile.ErrorTable, &lang );
-
+    table = findTable( CurrResFile.ErrorTable );
     if( table == NULL ) {
         setStringTableMemFlags( currtable, flags );
         addTable( &CurrResFile.ErrorTable, currtable );
@@ -301,7 +302,7 @@ extern void SemOS2WriteStringTable( FullStringTable * currtable, WResID * type )
                 RcError( ERR_WRITTING_RES_FILE, CurrResFile.filename,
                          LastWresErrStr() );
                 ErrorHasOccured = TRUE;
-                SemFreeStringTable( currtable );
+                SemOS2FreeStringTable( currtable );
                 return;
             }
 
@@ -310,14 +311,13 @@ extern void SemOS2WriteStringTable( FullStringTable * currtable, WResID * type )
             /* +1 because WResID's can't be 0
              * ( see Microsoft Internal Res Docs) */
             name = WResIDFromNum( currblock->BlockNum + 1 );
-            SemSetResourceLanguage( &currtable->lang, FALSE );
             SemAddResource( name, type, currblock->Flags, loc );
             RcMemFree( name );
         }
 
         tofree = currtable;
         currtable = currtable->next;
-        SemFreeStringTable( tofree );
+        SemOS2FreeStringTable( tofree );
     }
     RcMemFree( type );
     return;

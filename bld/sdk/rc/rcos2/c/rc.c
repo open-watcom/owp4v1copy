@@ -45,6 +45,7 @@
 #include "errors.h"
 #include "rcio.h"
 #include "yydriver.h"
+#include "yydrivr2.h"
 #include "param.h"
 #include "depend.h"
 #include "rcldstr.h"
@@ -96,8 +97,13 @@ static int Pass1( void )
     if( noerror ) {
         if( !CmdLineParms.PreprocessOnly ) {
             SetDefLang();
-            ParseInit();
-            Parse();
+            if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
+                ParseInitOS2();
+                ParseOS2();
+            } else {
+                ParseInit();
+                Parse();
+            }
             WriteDependencyRes();
         } else {
             CreatePreprocFile();
@@ -131,7 +137,7 @@ static int Pass2( void )
         case EXE_TYPE_LX:
             noerror = MergeResExeLX();
             break;
-        default:
+        default: //EXE_TYPE_UNKNOWN
             RcError( ERR_INTERNAL, INTERR_UNKNOWN_RCSTATUS );
             noerror = FALSE;
             break;

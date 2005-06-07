@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Lexical scanner, OS/2 version.
 *
 ****************************************************************************/
 
@@ -38,9 +37,9 @@
 #include "rcio.h"
 #include "rcmem.h"
 #include "errors.h"
-#include "ytab.gh"
+#include "ytab2.gh"
 #include "scan.h"
-#include "keyword.h"
+#include "keyword2.h"
 #include "depend.h"
 //#include "rcdll.h"
 #include "errprt.h"
@@ -68,7 +67,7 @@ static int      LookAhead;
 static int      longString;
 static int      newLineInString = 0;
 
-static int ScanDFA( ScanValue * value );
+static int scanDFA( ScanValue * value );
 
 static void GetNextChar( void )
 {
@@ -110,7 +109,7 @@ static void AddDigitToInt( long * value, int base, int newchar )
     *value = *value * base + newdigit;
 } /* AddDigitToInt */
 
-static int ScanCPPDirective( ScanValue * value )
+static int scanCPPDirective( ScanValue * value )
 /**********************************************/
 /* This function takes the correct action for the #line directive and returns */
 /* the token following the preprocessor stuff. It uses Scan to do it's */
@@ -124,7 +123,7 @@ static int ScanCPPDirective( ScanValue * value )
         RcFatalError( ERR_STOP_REQUESTED );
     }
     /* get the "line" or "pragma" directive */
-    token = ScanDFA( value );
+    token = scanDFA( value );
     if( token != Y_NAME ) {
         RcFatalError( ERR_INVALID_CPP );
     }
@@ -133,7 +132,7 @@ static int ScanCPPDirective( ScanValue * value )
         RcMemFree( value->string.string );
 
         /* get the line number */
-        token = ScanDFA( value );
+        token = scanDFA( value );
         if( token != Y_INTEGER ) {
             RcFatalError( ERR_INVALID_CPP_LINE );
         }
@@ -142,14 +141,14 @@ static int ScanCPPDirective( ScanValue * value )
         linenum = value->intinfo.val;
 
         /* get the filename if there is one */
-        token = ScanDFA( value );
+        token = scanDFA( value );
         if( token == Y_STRING ) {
             RcIoSetLogicalFileInfo( linenum, value->string.string );
             if( AddDependency( value->string.string ) ) {
                 ErrorHasOccured = TRUE;
             }
             RcMemFree( value->string.string );
-            token = ScanDFA( value );
+            token = scanDFA( value );
         } else {
             RcIoSetLogicalFileInfo( linenum, NULL );
         }
@@ -173,15 +172,15 @@ static int ScanCPPDirective( ScanValue * value )
     }
 
     return( token );
-} /* ScanCPPDirective */
+} /* scanCPPDirective */
 
-extern void ScanInit( void )
-/**************************/
+extern void ScanInitOS2( void )
+/*****************************/
 {
     enter_start_state;
-} /* ScanInit */
+} /* ScanInitOS2 */
 
-static int ScanDFA( ScanValue * value )
+static int scanDFA( ScanValue * value )
 /*************************************/
 {
     long                newint;     /* these are used to accumulate parts of */
@@ -724,7 +723,7 @@ static int ScanDFA( ScanValue * value )
             value->string.string = VarStringEnd( newstring,
                         &(value->string.length) );
             DEBUGPUTS( value->string.string )
-            token = LookupKeyword( value->string );
+            token = LookupKeywordOS2( value->string );
             if( token != Y_NAME ) {
                 /* release the string if it is a keyword */
                 RcMemFree( value->string.string );
@@ -748,104 +747,25 @@ static int ScanDFA( ScanValue * value )
             DEBUGPUTS( value->string.string )
             return( Y_DOS_FILENAME );
         }
-} /* ScanDFA */
+} /* scanDFA */
 
-extern int Scan( ScanValue * value )
-/**********************************/
+extern int ScanOS2( ScanValue * value )
+/*************************************/
 {
     int     token;
 
-    token = ScanDFA( value );
+    token = scanDFA( value );
     while( token == Y_POUND_SIGN ) {
-        token = ScanCPPDirective( value );
+        token = scanCPPDirective( value );
     }
 
     return( token );
 } /* Scan */
 
-extern void ScanInitStatics( void )
-/*********************************/
+extern void ScanInitStaticsOS2( void )
+/************************************/
 {
     _next = 0;
     LookAhead = 0;
     longString = 0;
-}
-
-extern char *FindAndReplace( char* stringFromFile, FRStrings *frStrings )
-/***********************************************************************/
-{
-    char                *replacedString = NULL;
-    char                *foundString;
-    int                 lenOfStringFromFile;
-    int                 lenOfFindString;
-    int                 lenOfReplaceString;
-    int                 diffInLen;
-    int                 newMemSize;
-    int                 i, j, k;
-    int                 noOfInstances; //this is the number of instances
-                                       //of the find string in the string
-                                       //from the file
-
-    while( frStrings != NULL ) {
-        i = 0;
-        j = 0;
-        k = 0;
-        noOfInstances = 0;
-        newMemSize = 0;
-        foundString = NULL;
-        replacedString =  NULL;
-        lenOfFindString = strlen( frStrings->findString );
-        lenOfReplaceString = strlen( frStrings->replaceString );
-        lenOfStringFromFile = strlen( stringFromFile );
-        diffInLen = lenOfReplaceString - lenOfFindString; //used for reallocation
-        if( strstr( stringFromFile, frStrings->findString ) != NULL ) {
-            //checking if a replacement is to be done, then allocating memory
-            replacedString = RcMemMalloc( lenOfStringFromFile+1 );
-            for( k=0; k < lenOfStringFromFile; k++) {
-            replacedString[k] = '\0';
-            }
-            while( i <= lenOfStringFromFile ) {
-                foundString = strstr( stringFromFile+i, frStrings->findString );
-                if( foundString != NULL ) {
-                    while( foundString != &stringFromFile[i] ) {
-                    //while the ptr is not where the replacment string is, copy.
-                        replacedString[j] = stringFromFile[i];
-                        i++;
-                        j++;
-                    }//end of while
-                    if( diffInLen > 0 ) {
-                        //allocating more memory if the string to replace is
-                        //bigger than the string to find
-                        newMemSize = lenOfStringFromFile + 1
-                                     + diffInLen * ( noOfInstances + 1 );
-                        replacedString = RcMemRealloc( replacedString, newMemSize );
-                    }
-                    strcpy( &replacedString[j], frStrings->replaceString );
-                    j = j + lenOfReplaceString;
-                    i = i + lenOfFindString-1;
-                    noOfInstances++;
-                } else {
-                    strcpy( &replacedString[j], &stringFromFile[i] );
-                    break;
-                }//end of if-else
-                i++;
-            }//end of while
-        }
-        if( replacedString != NULL && frStrings->next != NULL ) {
-            stringFromFile = RcMemRealloc( stringFromFile,
-                                           strlen( replacedString ) + 1 );
-            strcpy( stringFromFile, replacedString );
-            RcMemFree( replacedString );
-            replacedString = NULL;
-        }
-        frStrings =  frStrings->next;
-    }
-
-    if( replacedString != NULL ) {
-        RcMemFree( stringFromFile );
-        return replacedString;
-    } else {
-        RcMemFree( replacedString );
-        return stringFromFile;
-    }
 }

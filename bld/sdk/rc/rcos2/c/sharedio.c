@@ -147,6 +147,8 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
                 goto HANDLE_ERROR;
             }
             break;
+        default: // EXE_TYPE_UNKNOWN
+            break;
         }
         resnames = resnames->next;
         rescnt++;

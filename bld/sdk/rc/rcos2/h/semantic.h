@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Semantic actions interface (used by yydriver).
 *
 ****************************************************************************/
 
@@ -74,6 +73,12 @@ extern void             SemCheckMemFlags( FullMemFlags * currflags,
                                 ResMemFlags loadopts, ResMemFlags memopts,
                                 ResMemFlags pureopts );
 extern char             *SemTokenToString( uint_8 token );
+extern FullMemFlags     SemOS2AddFirstMemOption( uint_8 token );
+extern FullMemFlags     SemOS2AddMemOption( FullMemFlags, uint_8 token );
+extern void             SemOS2CheckMemFlags( FullMemFlags * currflags,
+                                ResMemFlags loadopts, ResMemFlags memopts,
+                                ResMemFlags pureopts );
+extern char             *SemOS2TokenToString( uint_8 token );
 extern void             SetDefLang( void );
 extern void             SemSetGlobalLanguage( WResLangType *newlang );
 extern void             SemSetResourceLanguage( WResLangType *newlang,
@@ -81,7 +86,7 @@ extern void             SemSetResourceLanguage( WResLangType *newlang,
 extern WResLangType     GetResourceLanguage( void );
 extern void             ClearResourceLanguage( void );
 extern void             SemUnsupported( uint_8 token );
-extern void SemanticInitStatics( void );
+extern void             SemanticInitStatics( void );
 
 
 /**** include all the semantic structures and routine prototypes for each ****/
@@ -95,5 +100,6 @@ extern void SemanticInitStatics( void );
 #include "semtbar.h"
 #include "semresfl.h"
 #include "semhelp.h"
+#include "semutil.h"
 
 #endif
