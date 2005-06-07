@@ -90,10 +90,14 @@ See http://www.openwatcom.org/ for details.
 :set symbol="libcmd"    value="wlib".
 :set symbol="stripname" value="&company Strip Utility".
 :set symbol="stripcmd"  value="wstrip".
+:set symbol="e2bname"   value="&company Exe2bin".
+:set symbol="e2bcmd"    value="exe2bin".
+:set symbol="e2bcmdu"   value="Exe2bin".
 .if '&target' eq 'QNX' .do begin
 :set symbol="lnkcmdup"  value="wlink".
 :set symbol="m2wcmdup"  value="ms2wlink".
 :set symbol="fcecmdup"  value="fcenable".
+:set symbol="e2bcmdup"  value="exe2bin".
 :set symbol="libcmdup"  value="wlib".
 :set symbol="stripcmdup" value="wstrip".
 :set symbol="libvar"    value="LIB".
@@ -105,6 +109,7 @@ See http://www.openwatcom.org/ for details.
 :set symbol="fcecmdup"  value="FCENABLE".
 :set symbol="libcmdup"  value="WLIB".
 :set symbol="stripcmdup" value="WSTRIP".
+:set symbol="e2bcmdup"  value="EXE2BIN".
 :set symbol="libvar"    value="lib".
 :set symbol="pathvar"   value="watcom".
 .do end

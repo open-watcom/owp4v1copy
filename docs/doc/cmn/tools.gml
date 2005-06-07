@@ -54,6 +54,7 @@
 .se arch='32-bit'
 :INCLUDE file='WDIS'.
 :INCLUDE file='WLFCOPT'.
+:INCLUDE file='EXE2BIN'.
 .*
 .sepsect Executable Image Utilities
 .*

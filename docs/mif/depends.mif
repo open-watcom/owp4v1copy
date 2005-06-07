@@ -147,6 +147,7 @@ $(docsrc_dir)\cmn\complink.gml &
 $(docsrc_dir)\cmn\ctools.gml &
 $(docsrc_dir)\cmn\environ.gml &
 $(docsrc_dir)\cmn\envsetup.gml &
+$(docsrc_dir)\cmn\exe2bin.gml &
 $(docsrc_dir)\cmn\ftools.gml &
 $(docsrc_dir)\cmn\pcbugfrm.gml &
 $(docsrc_dir)\cmn\prag16.gml &
