@@ -2,6 +2,7 @@
 host_os  = qnx
 host_cpu = 386
 
+model = s
 linkage = static
 convention = register
 

@@ -2,6 +2,7 @@
 host_OS = linux
 host_CPU = 386
 
+model = f
 linkage = static
 convention = stack
 

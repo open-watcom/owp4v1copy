@@ -14,6 +14,7 @@ wres_rtdll = 1
 !endif
 
 memory_model_i86 = $(model)
+memory_model_386 = $(model)
 
 !include cproj.mif
 !include defrule.mif

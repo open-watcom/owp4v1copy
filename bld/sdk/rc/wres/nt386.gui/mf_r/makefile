@@ -3,6 +3,7 @@ host_OS = nt
 host_CPU = 386
 
 is_gui = y
+model = f
 linkage = static
 convention = register
 

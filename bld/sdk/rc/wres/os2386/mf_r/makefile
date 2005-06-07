@@ -2,6 +2,7 @@
 host_OS = os2
 host_CPU = 386
 
+model = f
 linkage = static
 convention = register
 
