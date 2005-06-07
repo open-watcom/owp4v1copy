@@ -266,7 +266,7 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND hwnd, unsigned msg,
             EnableMenuItem( (HMENU)wparam, MENU_PRINT_SETUP, state );
 
         }
-        return( NULL );
+        return( 0L );
 
     case WM_QUERYENDSESSION:
         /*

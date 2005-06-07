@@ -81,7 +81,7 @@ HWND MdiReadIcon( FILE *fp, char *title, char *file_name, long flags )
     mdi.cx = (signed short) CW_USEDEFAULT;
     mdi.cy = (signed short) CW_USEDEFAULT;
     mdi.style = flags;
-    mdi.lParam = NULL;
+    mdi.lParam = 0;
 
     hwnd = (HWND) SendMessage( ClientWindow, WM_MDICREATE, 0,
                                 (LONG)(LPSTR)&mdi );

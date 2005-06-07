@@ -103,7 +103,7 @@ extern BOOL _EXPORT FAR PASCAL GetInitialsDialogProc( HWND hdlg,
             PlayerName[player][initial] = (char) cmd;
             if( initial < 2 ) {
                 initial++;
-                PlayerName[player][initial] = NULL;
+                PlayerName[player][initial] = '\0';
             }
             Rectangle( hdc, rect.left, rect.top-2, rect.right, rect.bottom );
             DrawText( hdc,PlayerName[player],-1,&rect,DT_CENTER|DT_VCENTER );
@@ -133,7 +133,7 @@ extern BOOL _EXPORT FAR PASCAL GetInitialsDialogProc( HWND hdlg,
                     GetTextExtentPoint( hdc, PlayerName[player], initial, &sz );
                     if( sz.cx  > 24 ) {
                         PlayerName[player][1] = PlayerName[player][2];
-                        PlayerName[player][2] = NULL;
+                        PlayerName[player][2] = '\0';
                     }
                     player++;
                     initial = 0;

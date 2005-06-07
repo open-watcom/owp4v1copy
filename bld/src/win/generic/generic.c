@@ -29,7 +29,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
     }
     if( !AnyInstance( this_inst, cmdshow, cmdline ) ) return( FALSE );
 
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, NULL, 0, 0 ) ) {
 
         TranslateMessage( &msg );
         DispatchMessage( &msg );
