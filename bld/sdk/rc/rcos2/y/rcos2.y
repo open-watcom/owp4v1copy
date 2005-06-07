@@ -150,8 +150,8 @@
 %type <resid>           name-id
 %type <resid>           type-id
 %type <integral>        id-value
-%type <fullmemflags>    resource-options
-%type <token>           resource-option
+%type <fullresflags>    resource-options
+%type <maskint>         resource-option
 %type <string>          file-name
 %type <acceltable>      acc-section
 %type <accevent>        acc-event
@@ -490,28 +490,30 @@ single-line-resource
 
 resource-options
     : resource-option
-        { $$ = SemOS2AddFirstMemOption( $1 ); }
+        { $$ = SemOS2AddFirstResOption( $1.Mask, $1.Value ); }
     | resource-options resource-option
-        { $$ = SemOS2AddMemOption( $1, $2 ); }
+        { $$ = SemOS2AddResOption( $1, $2.Mask, $2.Value ); }
     ;
 
 resource-option
     : Y_PRELOAD
-        { $$ = Y_PRELOAD; }
+        { $$.Mask = Y_PRELOAD; }
     | Y_LOADONCALL
-        { $$ = Y_LOADONCALL; }
+        { $$.Mask = Y_LOADONCALL; }
     | Y_FIXED
-        { $$ = Y_FIXED; }
+        { $$.Mask = Y_FIXED; }
     | Y_MOVEABLE
-        { $$ = Y_MOVEABLE; }
+        { $$.Mask = Y_MOVEABLE; }
     | Y_PURE
-        { $$ = Y_PURE; }
+        { $$.Mask = Y_PURE; }
     | Y_IMPURE
-        { $$ = Y_IMPURE; }
+        { $$.Mask = Y_IMPURE; }
     | Y_DISCARDABLE
-        { $$ = Y_DISCARDABLE; }
+        { $$.Mask = Y_DISCARDABLE; }
     | Y_SEGALIGN
-        { $$ = Y_SEGALIGN; }
+        { $$.Mask = Y_SEGALIGN; }
+    | Y_INTEGER
+        { $$.Mask = Y_INTEGER; $$.Value = $1.val; }
     ;
 
 file-name
@@ -539,7 +541,7 @@ user-defined-resource
         }
     | Y_RESOURCE type-id comma-opt name-id resource-options user-defined-data
         {
-            SemOS2CheckMemFlags( &($5), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
+            SemOS2CheckResFlags( &($5), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
                     MEMFLAG_PURE );
             SemAddResourceFree( $4, $2, $5.flags, $6 );
         }
@@ -601,7 +603,7 @@ rcdata-resource
         }
     | Y_RCDATA name-id resource-options user-defined-data
         {
-            SemOS2CheckMemFlags( &($3), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
+            SemOS2CheckResFlags( &($3), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
                     MEMFLAG_PURE );
             SemAddResourceFree( $2, WResIDFromNum( RT_RCDATA ), $3.flags, $4 );
         }
@@ -634,13 +636,14 @@ string-table-resource
     : Y_STRINGTABLE string-section
         {
             SemOS2MergeStrTable( $2,
-                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE );
+                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+                SemOS2DefaultCodepage() );
         }
     | Y_STRINGTABLE resource-options string-section
         {
-            SemOS2CheckMemFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+            SemOS2CheckResFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemOS2MergeStrTable( $3, $2.flags );
+            SemOS2MergeStrTable( $3, $2.flags, $2.codePage );
         }
     ;
 
@@ -652,7 +655,7 @@ message-table-resource
         }
     | Y_MESSAGETABLE resource-options string-section
         {
-            SemOS2CheckMemFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+            SemOS2CheckResFlags( &($2), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
             SemOS2MergeMsgTable( $3, $2.flags );
         }
@@ -757,12 +760,13 @@ help-subitem
 accel-table-resource
     : Y_ACCELTABLE name-id acc-section
         {
-            SemOS2WriteAccelTable( $2, MEMFLAG_PURE | MEMFLAG_MOVEABLE, $3 );
+            SemOS2WriteAccelTable( $2, MEMFLAG_PURE | MEMFLAG_MOVEABLE,
+                SemOS2DefaultCodepage(), $3 );
         }
     | Y_ACCELTABLE name-id resource-options acc-section
         {
-            SemOS2CheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
-            SemOS2WriteAccelTable( $2, $3.flags, $4 );
+            SemOS2CheckResFlags( &($3), 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
+            SemOS2WriteAccelTable( $2, $3.flags, $3.codePage, $4 );
         }
     ;
 
@@ -846,7 +850,7 @@ menu-resource
                     $3, Y_MENU ); }
     | Y_MENU name-id resource-options menu-section
         {
-            SemOS2CheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+            SemOS2CheckResFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
             SemOS2WriteMenu( $2, $3.flags, $4, Y_MENU );
         }
@@ -1002,13 +1006,13 @@ dlg-template
         {
             SemOS2WriteDialogTemplate( $2,
                MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
-               $3 );
+               SemOS2DefaultCodepage(), $3 );
         }
     | dialogtemplate name-id resource-options diag-control-section
         {
-            SemOS2CheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+            SemOS2CheckResFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemOS2WriteDialogTemplate( $2, $3.flags, $4 );
+            SemOS2WriteDialogTemplate( $2, $3.flags, $3.codePage, $4 );
         }
     ;
 

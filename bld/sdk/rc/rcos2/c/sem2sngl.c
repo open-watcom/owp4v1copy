@@ -49,14 +49,14 @@
 static void AddFontResources( WResID * name, ResMemFlags, char * filename );
 
 
-extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
-                       FullMemFlags * fullflags, char * filename )
-/******************************************************************/
+extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
+                       FullOptFlagsOS2 *fullflags, char *filename )
+/*****************************************************************/
 {
-    ResLocation start;
-    ResMemFlags flags;
-    char        full_filename[ _MAX_PATH ];
-    static int  firstIcon = TRUE;
+    ResLocation     start;
+    ResMemFlags     flags;
+    char            full_filename[ _MAX_PATH ];
+    static int      firstIcon = TRUE;
 
     if( ErrorHasOccured ) {
         RcMemFree( name );
@@ -72,7 +72,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
 
     if( AddDependency( full_filename ) ) goto HANDLE_ERROR;
 
-    switch (type) {
+    switch( type ) {
     case Y_DEFAULTICON:
         /* DEFAULTICON doesn't have a name, let's make our own */
         name = (WResID*)RcMemMalloc( sizeof( WResID ) );
@@ -83,7 +83,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
     case Y_POINTER:
     case Y_ICON:
         if( fullflags != NULL ) {
-            SemOS2CheckMemFlags( fullflags, 0,
+            SemOS2CheckResFlags( fullflags, 0,
                               MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, 0 );
             flags = fullflags->flags;
         } else {
@@ -120,7 +120,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
 
     case Y_BITMAP:
         if( fullflags != NULL ) {
-            SemOS2CheckMemFlags( fullflags, 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
+            SemOS2CheckResFlags( fullflags, 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
             flags = fullflags->flags;
         } else {
             flags = MEMFLAG_MOVEABLE | MEMFLAG_PURE;
@@ -132,7 +132,7 @@ extern void SemOS2AddSingleLineResource( WResID * name, uint_8 type,
 
     case Y_FONT:
         if( fullflags != NULL ) {
-            SemOS2CheckMemFlags( fullflags, 0,
+            SemOS2CheckResFlags( fullflags, 0,
                                 MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                                 MEMFLAG_PURE );
             flags = fullflags->flags;

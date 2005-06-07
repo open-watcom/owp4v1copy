@@ -43,6 +43,15 @@ typedef struct FullMemFlags {
     uint_8              purityOptGiven      : 1;
 } FullMemFlags;
 
+typedef struct FullOptFlagsOS2 {
+    ResMemFlags         flags;
+    uint_32             codePage;
+    uint_8              loadOptGiven        : 1;
+    uint_8              memOptGiven         : 1;
+    uint_8              purityOptGiven      : 1;
+    uint_8              cpOptGiven          : 1;
+} FullOptFlagsOS2;
+
 typedef uint_32 SemOffset;
 typedef uint_32 SemLength;
 
@@ -73,12 +82,13 @@ extern void             SemCheckMemFlags( FullMemFlags * currflags,
                                 ResMemFlags loadopts, ResMemFlags memopts,
                                 ResMemFlags pureopts );
 extern char             *SemTokenToString( uint_8 token );
-extern FullMemFlags     SemOS2AddFirstMemOption( uint_8 token );
-extern FullMemFlags     SemOS2AddMemOption( FullMemFlags, uint_8 token );
-extern void             SemOS2CheckMemFlags( FullMemFlags * currflags,
+extern FullOptFlagsOS2  SemOS2AddFirstResOption( uint_8 token, uint_32 value );
+extern FullOptFlagsOS2  SemOS2AddResOption( FullOptFlagsOS2, uint_8 token, uint_32 value );
+extern void             SemOS2CheckResFlags( FullOptFlagsOS2 *currflags,
                                 ResMemFlags loadopts, ResMemFlags memopts,
                                 ResMemFlags pureopts );
 extern char             *SemOS2TokenToString( uint_8 token );
+extern uint_32          SemOS2DefaultCodepage( void );
 extern void             SetDefLang( void );
 extern void             SemSetGlobalLanguage( WResLangType *newlang );
 extern void             SemSetResourceLanguage( WResLangType *newlang,

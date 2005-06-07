@@ -38,27 +38,37 @@
 #include "semantic.h"
 
 
-FullMemFlags SemOS2AddFirstMemOption( uint_8 token )
-/**************************************************/
+static uint_32  curCodepage = 850;  // default resource codepage
+
+uint_32 SemOS2DefaultCodepage( void )
+/***********************************/
 {
-    FullMemFlags    newflags;
+    return( curCodepage );
+}
+
+FullOptFlagsOS2 SemOS2AddFirstResOption( uint_8 token, uint_32 value )
+/********************************************************************/
+{
+    FullOptFlagsOS2     newflags;
 
     newflags.flags = 0;
-    newflags.loadOptGiven = FALSE;
-    newflags.memOptGiven = FALSE;
+    newflags.codePage = curCodepage;
+    newflags.loadOptGiven   = FALSE;
+    newflags.memOptGiven    = FALSE;
     newflags.purityOptGiven = FALSE;
+    newflags.cpOptGiven     = FALSE;
 
-    return( SemOS2AddMemOption( newflags, token ) );
+    return( SemOS2AddResOption( newflags, token, value ) );
 }
 
 /* IBM's RC has a tendency to add PURE flag when other memory flags
  * are specified. The flag will be ignored by OS but we do the same
  * for compatibility.
  */
-FullMemFlags SemOS2AddMemOption( FullMemFlags currflags, uint_8 token )
-/*********************************************************************/
+FullOptFlagsOS2 SemOS2AddResOption( FullOptFlagsOS2 currflags, uint_8 token, uint_32 value )
+/******************************************************************************************/
 {
-    switch (token) {
+    switch( token ) {
     case Y_PRELOAD:
         currflags.flags |= MEMFLAG_PRELOAD | MEMFLAG_PURE;
         currflags.loadOptGiven = TRUE;
@@ -92,14 +102,18 @@ FullMemFlags SemOS2AddMemOption( FullMemFlags currflags, uint_8 token )
     case Y_SEGALIGN:    // This one is OS/2 2.x specific
         currflags.flags |= MEMFLAG_SEGALIGN;
         break;
+    case Y_INTEGER:    // Is this OS/2 2.x specific too?
+        currflags.codePage = value;
+        currflags.cpOptGiven = TRUE;
+        break;
     }
 
     return( currflags );
 }
 
-void SemOS2CheckMemFlags( FullMemFlags * currflags, ResMemFlags loadopts,
+void SemOS2CheckResFlags( FullOptFlagsOS2 *currflags, ResMemFlags loadopts,
             ResMemFlags memopts, ResMemFlags pureopts )
-/***********************************************************************/
+/*************************************************************************/
 {
     if( !currflags->loadOptGiven ) {
         currflags->flags |= loadopts;
@@ -111,10 +125,8 @@ void SemOS2CheckMemFlags( FullMemFlags * currflags, ResMemFlags loadopts,
         currflags->flags |= pureopts;
     }
 
-    /* If the user set the resource to be IMPURE but doesn't give a mem option*/
+    /* If the user set the resource to be IMPURE but doesn't give a mem option */
     /* set the resource to be non-discardable. */
-    /* This seems to be what Microsoft is doing (test this with the sample */
-    /* program clock). */
     if( currflags->purityOptGiven && !currflags->memOptGiven ) {
         if( !(currflags->flags & MEMFLAG_PURE) ) {
             currflags->flags &= ~MEMFLAG_DISCARDABLE;
@@ -385,4 +397,10 @@ extern char *SemOS2TokenToString( uint_8 token )
         return( "" );
         break;
     }
+}
+
+extern void SemanticOS2InitStatics( void )
+/****************************************/
+{
+    curCodepage = 850;
 }

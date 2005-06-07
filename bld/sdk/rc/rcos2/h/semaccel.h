@@ -63,15 +63,14 @@ typedef struct FullAccelFlagsOS2 {
 } FullAccelFlagsOS2;
 
 typedef struct FullAccelEntryOS2 {
-    struct FullAccelEntryOS2 *  next;
-    struct FullAccelEntryOS2 *  prev;
+    struct FullAccelEntryOS2    *next;
+    struct FullAccelEntryOS2    *prev;
     AccelTableEntryOS2          entry;
 } FullAccelEntryOS2;
 
 typedef struct FullAccelTableOS2 {
-    struct FullAccelEntryOS2 *  head;
-    struct FullAccelEntryOS2 *  tail;
-    uint_16                     codepage;
+    struct FullAccelEntryOS2    *head;
+    struct FullAccelEntryOS2    *tail;
 } FullAccelTableOS2;
 
 /**** Semantic variables ****/
@@ -85,12 +84,12 @@ extern FullAccelEntry SemMakeAccItem( AccelEvent event, unsigned long idval,
 extern void SemWriteAccelEntry( FullAccelEntry entry );
 extern void SemWriteLastAccelEntry( FullAccelEntry entry );
 
-extern int SemOS2StrToAccelEvent( char * string );
+extern int SemOS2StrToAccelEvent( char *string );
 extern FullAccelTableOS2 *SemOS2NewAccelTable( FullAccelEntryOS2 );
 extern FullAccelTableOS2 *SemOS2AddAccelEntry( FullAccelEntryOS2,
                                                FullAccelTableOS2 * );
 extern FullAccelEntryOS2 SemOS2MakeAccItem( AccelEvent event, unsigned long idval,
                     FullAccelFlagsOS2 flags );
-extern void SemOS2WriteAccelTable( WResID * name, ResMemFlags flags,
-                                    FullAccelTableOS2 * acctable );
+extern void SemOS2WriteAccelTable( WResID *name, ResMemFlags flags,
+                            uint_32 codepage, FullAccelTableOS2 *acctable );
 #endif

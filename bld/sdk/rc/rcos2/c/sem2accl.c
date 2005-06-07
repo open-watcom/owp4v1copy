@@ -37,8 +37,9 @@
 #include "rcmem.h"
 #include "ytab2.gh"
 #include "semaccel.h"
-
 #include "reserr.h"
+
+
 int ResOS2WriteAccelEntry( AccelTableEntryOS2 * currentry, WResFileID handle )
 /**********************************************************************/
 {
@@ -59,15 +60,15 @@ const FullAccelFlagsOS2 DefaultAccelFlagsOS2 = { 0, FALSE };
 int SemOS2StrToAccelEvent( char * string )
 /*************************************/
 {
-    if (*string == '^') {
+    if( *string == '^' ) {
         /* control character requested */
         string++;
-        if (isalpha( *string )) {
+        if( isalpha( *string ) ) {
             return( *string | CTRL_EVENT );
         } else {
             return( 0 );
         }
-    } else if (isprint( *string )) {
+    } else if( isprint( *string ) ) {
         /* only accept printable characters in this position */
         return( *string );
     } else {
@@ -79,15 +80,15 @@ static void CheckAccelFlags( uint_16 * flags, unsigned long idval )
 /********************************************************************/
 {
     /* CHAR is the default */
-    if ( !( *flags & OS2_ACCEL_VIRTUALKEY ) && !( *flags & OS2_ACCEL_CHAR ) )
+    if( !( *flags & OS2_ACCEL_VIRTUALKEY ) && !( *flags & OS2_ACCEL_CHAR ) )
         *flags |= OS2_ACCEL_CHAR;
 #if 0
-    if ( !( *flags & OS2_ACCEL_VIRTUALKEY ) ) {
-        if (*flags & OS2_ACCEL_SHIFT) {
+    if( !( *flags & OS2_ACCEL_VIRTUALKEY ) ) {
+        if( *flags & OS2_ACCEL_SHIFT ) {
             *flags &= ~OS2_ACCEL_SHIFT;
             RcWarning( ERR_ACCEL_KEYWORD_IGNORED, "SHIFT", idval );
         }
-        if (*flags & OS2_ACCEL_CONTROL) {
+        if( *flags & OS2_ACCEL_CONTROL ) {
             *flags &= ~OS2_ACCEL_CONTROL;
             RcWarning( ERR_ACCEL_KEYWORD_IGNORED, "CONTROL", idval );
         }
@@ -101,7 +102,7 @@ FullAccelEntryOS2 SemOS2MakeAccItem( AccelEvent event, unsigned long idval,
 {
     FullAccelEntryOS2      entry;
 
-//    if (event.strevent || flags.typegiven) {
+//    if( event.strevent || flags.typegiven ) {
         CheckAccelFlags( &flags.flags, idval );
         entry.entry.Ascii = event.event;
         entry.entry.Flags = flags.flags;
@@ -140,9 +141,8 @@ FullAccelTableOS2 *SemOS2NewAccelTable( FullAccelEntryOS2 firstentry )
     *newentry = firstentry;
     newtable->head = NULL;
     newtable->tail = NULL;
-    newtable->codepage = 850;   // TODO: get real codepage
 
-    ResAddLLItemAtEnd( (void **) &(newtable->head), (void **) &(newtable->tail), newentry );
+    ResAddLLItemAtEnd( (void **)&(newtable->head), (void **)&(newtable->tail), newentry );
 
     return( newtable );
 }
@@ -183,8 +183,8 @@ static void SemOS2FreeAccelTable( FullAccelTableOS2 * acctable )
     RcMemFree( acctable );
 }
 
-static int SemOS2CountAccelTableEntries( FullAccelTableOS2 * acctable )
-/*********************************************************************/
+static int SemOS2CountAccelTableEntries( FullAccelTableOS2 *acctable )
+/********************************************************************/
 {
     FullAccelEntryOS2   *currentry;
     int                 count = 0;
@@ -197,9 +197,9 @@ static int SemOS2CountAccelTableEntries( FullAccelTableOS2 * acctable )
     return( count );
 }
 
-static int SemOS2WriteAccelTableEntries( FullAccelTableOS2 * acctable,
-                                        WResFileID handle )
-/*********************************************************************/
+static int writeAccelTableEntries( FullAccelTableOS2 *acctable,
+                                   WResFileID handle, uint_32 codepage )
+/**********************************************************************/
 {
     FullAccelEntryOS2   *currentry;
     int                 error;
@@ -208,7 +208,7 @@ static int SemOS2WriteAccelTableEntries( FullAccelTableOS2 * acctable,
     tmp = SemOS2CountAccelTableEntries( acctable );
     error = ResWriteUint16( &tmp, handle );
     if( !error ) {
-        tmp = acctable->codepage;
+        tmp   = codepage;
         error = ResWriteUint16( &tmp, handle );
     }
     currentry = acctable->head;
@@ -219,9 +219,10 @@ static int SemOS2WriteAccelTableEntries( FullAccelTableOS2 * acctable,
     return( error );
 }
 
-extern void SemOS2WriteAccelTable( WResID * name, ResMemFlags flags,
-                                   FullAccelTableOS2 * acctable )
-/******************************************************************/
+extern void SemOS2WriteAccelTable( WResID *name, ResMemFlags flags,
+                                   uint_32 codepage,
+                                   FullAccelTableOS2 *acctable )
+/*****************************************************************/
 {
     ResLocation     loc;
     int             error;
@@ -229,8 +230,8 @@ extern void SemOS2WriteAccelTable( WResID * name, ResMemFlags flags,
 
     if( !ErrorHasOccured ) {
         loc.start = SemStartResource();
-        error = SemOS2WriteAccelTableEntries( acctable, CurrResFile.handle );
-        if(error) {
+        error = writeAccelTableEntries( acctable, CurrResFile.handle, codepage );
+        if( error ) {
             err_code = LastWresErr();
             goto OutputWriteError;
         }
@@ -249,5 +250,4 @@ OutputWriteError:
     ErrorHasOccured = TRUE;
     SemOS2FreeAccelTable( acctable );
     return;
-
 }
