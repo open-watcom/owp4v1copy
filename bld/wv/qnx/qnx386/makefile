@@ -2,11 +2,8 @@
 #
 # Open Watcom Debugger makefile for QNX
 #
-
 host_os  = qnx
 host_cpu = 386
-
-memory_model_386 = s
 
 sysobjs = &
         qnxinit.obj  &

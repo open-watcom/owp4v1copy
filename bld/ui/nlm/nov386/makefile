@@ -3,8 +3,6 @@ host_CPU = 386
 host_OS = nov
 extra_files = $(nlm)
 
-memory_model_386 = s
-
 !include ../nov.mif
 
 sample2.$(EXE) : sample.obj sampdial.obj ui.lib

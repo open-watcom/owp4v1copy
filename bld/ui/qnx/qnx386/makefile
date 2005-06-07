@@ -4,8 +4,6 @@ host_os  = qnx
 host_cpu = 386
 extra_files = $(qnx)
 
-memory_model_386 = s
-
 extra_c_flags += -4r
 
 !include ../qnx.mif

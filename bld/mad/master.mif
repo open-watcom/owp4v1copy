@@ -8,10 +8,6 @@ proj_name = mad
 mad_autodepends = .autodepend
 !endif
 
-!ifeq host_os qnx
-memory_model_386 = s
-!endif
-
 fpu_flags_dos_i86   = -fpc
 fpu_flags_dos_386   = -fpc
 fpu_flags_os2_i86   = -fpc
