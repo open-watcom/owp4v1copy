@@ -23,9 +23,9 @@ errors so you can fix the problems.
 .begnote
 .note Note:
 Use the 16-bit version of &drwc to monitor 16-bit Windows (Win16)
-applications running under Windows 3.1, Windows 95 or Windows NT.
+applications running under Windows 3.1 or Win32 based operating systems.
 Use the 32-bit version of &drwc to monitor Win32 applications running
-under Windows 95 or Windows NT.
+under Win32 based operating systems.
 .endnote
 .*
 .section Using &drwc

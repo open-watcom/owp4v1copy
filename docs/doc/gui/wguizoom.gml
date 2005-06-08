@@ -179,7 +179,7 @@ the Sticky Magnifier feature that is offered in the Configure dialog.
 .np
 .begnote
 .mnote Note:
-The Begin Zoom item is not available in Zoom for Windows NT.
+The Begin Zoom item is not available in Zoom for Win32.
 .endnote
 .np
 To Zoom using the Begin Zoom item:
@@ -248,8 +248,9 @@ area. With this option Configuring Zoom: you are able to drag the magnifier into
 position Configuring Zoom: without holding down the mouse button.
 .begnote
 .note Note:
-.ix 'Windows NT'
-The Sticky Magnifier option Configuring Zoom: is not available in Zoom for Windows NT.
+.ix 'Win32'
+The Sticky Magnifier option Configuring Zoom: is not available in the Win32 version
+of Zoom.
 .endnote
 .*
 .section Configuring Zoom: Auto Refresh

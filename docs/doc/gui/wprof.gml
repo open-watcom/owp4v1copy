@@ -235,7 +235,7 @@ Here are the &smpname executable names provided.
 &smpplsup
 .point Windows 3.x
 &smpwinup
-.point Win32 (Windows NT, Windows 95)
+.point Win32
 &smpntup
 .point NetWare 386
 &smpnovup
@@ -441,12 +441,11 @@ Specify the name of the sample file.
 .section *refid=smpntr Using the Sampler with Win32
 .*
 .np
-.ix 'Windows NT' 'sampler'
-.ix 'sampler' 'Windows NT'
-.ix 'Windows 95' 'sampler'
-.ix 'sampler' 'Windows 95'
+.ix 'Win32' 'sampler'
+.ix 'sampler' 'Win32'
 The Win32 sampler (&smpntup) will only sample Win32 applications
-such as those that run under Windows NT or Windows 95.
+such as those that run under Windows 9x or Windows NT and later
+operating systems.
 It cannot be used to sample 16-bit applications.
 When starting the sampler, you will be presented with a window to
 select the executable and to specify the sampling rate.
@@ -465,7 +464,7 @@ Enter a command in the prompt dialogue box.
 [wsample_options] program [arguments]
 .millust end
 .np
-The following options are available under NT.
+The following options are available under Win32.
 .seesmpopt
 .begnote
 .note /r=<rate>
@@ -998,7 +997,7 @@ Display command line help.
 .np
 The profiler does not run under NetWare.  After you have run
 the sampler under NetWare, you will have to run the profiler
-under DOS, OS/2, Windows or NT.  By default, the sample file will be
+under DOS, OS/2 or Windows.  By default, the sample file will be
 created in the root directory of the file server. Log into
 the file server from a workstation and specify the name of
 the sample file on the server when you start the profiler.

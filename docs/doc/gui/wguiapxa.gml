@@ -7,7 +7,7 @@ that &spy defines for you.
 .np
 Messages followed by (*) are undocumented messages.
 .br
-Messages followed by (**) are available under Windows NT only.
+Messages followed by (**) are available under Win32 only.
 .*
 .beglevel
 .*

@@ -17,7 +17,7 @@ view the contents of memory
 .begnote
 .mnote Note:
 Under Windows NT, the Heap Walker monitors only the memory used by
-Windows applications running under Windows NT.
+16-bit Windows applications.
 .endnote
 .np
 .ix 'Windows NT' 'with Heap Walker'

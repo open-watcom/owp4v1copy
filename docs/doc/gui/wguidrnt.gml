@@ -1,7 +1,7 @@
 :set symbol="msg_list" value="event list"
 :set symbol="mark_menu" value="File"
 .*
-.chap &drnt for Windows 95 and NT
+.chap &drnt for Win32
 .*
 .if &e'&dohelp eq 0 .do begin
 .section Introduction
@@ -10,8 +10,8 @@
 .np
 .ix 'debugger' 'post-mortem'
 .ix '&drnt'
-The 32-bit version of &drnt is a post-mortem debugger for Windows 95
-and NT.
+The 32-bit version of &drnt is a post-mortem debugger for Win32
+applications.
 When an exception occurs in a program, a post-mortem debugger allows
 you, after the fact, to examine the state of both the program and the
 system in order to determine the cause of the exception.
@@ -20,7 +20,7 @@ enables you to examine and modify process information.
 .begnote
 .note Note:
 Use the 32-bit version of &drnt to monitor native (Win32) applications
-running under Windows 95 and NT.
+running under Windows 9x and NT based operating systems.
 Use the 16-bit version of &drnt to monitor 16-bit Windows (Win16)
 applications.
 .endnote
@@ -77,7 +77,7 @@ a file
 .point Log
 Work with the log file
 .point Process
-Work with processes currently running under Windows 95 or NT
+Work with processes currently running under Windows
 .point Help
 Access on-line help information
 .endpoint
@@ -836,7 +836,7 @@ Occasionally, when this feature is active a message box may appear
 saying, "An unexpected failure occurred while processing a
 DebugActiveProcess API request. You may choose OK to terminate the
 process or Cancel to ignore the error". This message results from a
-known limitation in Windows NT. If it appears simply choose Cancel.
+known limitation in Win32. If it appears simply choose Cancel.
 .endnote
 .*
 .section Process Control
@@ -851,7 +851,7 @@ attach &drnt to any process that is currently running in the system.
 from the Process menu or the system menu.
 .result
 This opens the Process Control dialog which lists all processes
-currently running under Windows 95 or NT.
+currently running under Windows.
 .step Click on the process
 to which you want &drnt to attach.
 You can only select one process at a time.
@@ -873,7 +873,7 @@ to it.
 .ix '&drnt' 'performing Process Control'
 Selecting Process Control from the process menu or the system menu
 opens the Process Control dialog. This dialog lists all processes
-currently running under Windows 95 or NT. Any process to which &drnt
+currently running under Windows. Any process to which &drnt
 is attached is marked with an asterisk. When you select a process by
 clicking on it, the Selected Process section of the dialog displays
 its Process ID, Name, and Priority.

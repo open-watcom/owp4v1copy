@@ -13,8 +13,7 @@ file with an existing executable file or dynamic link library. We call
 this process pass two. Pass two may also be run without a ".RES" file
 to set flags or to produce a fastload section.
 .np
-The &wrcname can process resources for the Windows and Windows NT
-operating systems.
+The &wrcname can process Win16, Win32 and OS/2 resources.
 .np
 The &wrcname command line syntax is the following.
 .ix '&wrccmdup' 'command line format'
@@ -73,11 +72,14 @@ generate auto dependency information for use by the &makname utility
 build target is one of the following:
 .begpoint $compact
 .point windows
-build a WIN16 resource file (default for the non-NT hosted resource
+build a Win16 resource file (default for the DOS-hosted resource
 compiler)
 .point nt
-build a WIN32 resource file (default for the Windows NT-hosted or
-Windows 95-hosted resource compiler)
+build a Win32 resource file (default for the Win32-hosted resource
+compiler)
+.point os2
+build an OS/2 resource file (default for the OS/2-hosted resource
+compiler)
 .endpoint
 .point &sw.c=name
 set the code page conversion file
@@ -133,7 +135,7 @@ Chinese/Taiwanese (for Windows only)
 Korean (for Windows only)
 .endpoint
 .point &sw.zm
-output Microsoft format
+output Microsoft/IBM format
 .fi &sysper.RES
 files
 .point &sw.zn
@@ -147,7 +149,7 @@ don't preprocess the file
 .np
 A resource definition file (".RC" file) lists all resources that your
 application will use.
-You should refer to your Windows or Windows NT programmer's
+You should refer to your Windows 3.x, Win32 or OS/2 programmer's
 documentation for information on the script language used in resource
 definition files.
 .*
@@ -242,6 +244,43 @@ statement defines the various menu items that are in the menu, and
 what identifiers are sent to the application when the menu item is
 selected.
 .*
+.section Differences from IBM Resource Compiler
+.*
+.np
+&wrcname is largely compatible with IBM's OS/2 Resource Compiler, but
+there are some differences.
+.*
+.begnote
+.*
+.note Octal constants
+&wrcname recogizes octal constants such as 007, 056 etc. Hence values
+such as 008 are considered to be an error. This is consistent with IBM's RC
+version 5 and also consistent with the C/C++ language. In resource files
+that need to be portable between RC versions, do not use octal constants
+and strip all leading zeros.
+.*
+.note Expression parsing
+There are differences in parsing statements such as
+.tinyexam begin
+#define IDR_ACCEL   1
+ICON    IDR_ACCEL  -1,  8, 40,   0,  0
+.tinyexam end
+Older versions of IBM RC consider 'IDR_ACCEL' and '-1' to be separate tokens
+while &wrcname considers them to be a single arithmetic expression. This is
+consistent with IBM's RC version 5. The correct and unambiguous syntax is as
+follows:
+.tinyexam begin
+ICON    IDR_ACCEL, -1,  8, 40,   0,  0
+.tinyexam end
+.*
+.note Binary resource files
+Using the -zm switch, &wrcname produces resource files compatible with those
+that IBM RC produces, however, the files are not always identical. In
+particular the ordering of dialog data within binary resource files is
+not always the same between &wrcname and IBM RC. This has no effect on the
+semantics of such resource files.
+.endnote
+.*
 .endlevel
 .*
 .section Resource Compiler Options
@@ -280,11 +319,11 @@ Allows the use of the WMAKE .AUTODEPEND directive with your
 .fi &sysper.RES
 files.
 If you do the first and second passes separately and use this option,
-you should specify it for both passes. This options may not be used
+you should specify it for both passes. This option may not be used
 with the -zm switch.
 .*
-.point &sw.dNAME=value
-.ix 'resource compiler options' 'd'
+.point &sw.DNAME=value
+.ix 'resource compiler options' 'D'
 Defines a macro NAME.  This is the same as adding the line
 .millust begin
 #define NAME    value
@@ -297,14 +336,17 @@ one only.
 .ix 'resource compiler options' 'bt'
 This is the build target directive.
 It is used to specify whether you are building a resource file for
-Windows or Windows NT.
+Win16, Win32 or OS/2.
 The target may be one of the following:
 .begpoint
 .point windows
-build a WIN16 (Windows) resource file (default for the non-NT hosted
+build a Win16 resource file (default for the DOS-hosted
 resource compiler)
 .point nt
-build a WIN32 (Windows NT) resource file (default for the NT hosted
+build a Win32 resource file (default for the Win32-hosted
+resource compiler)
+.point os2
+build an OS/2 resource file (default for the OS/2-hosted
 resource compiler)
 .endpoint
 .np
@@ -314,7 +356,7 @@ inferred from the format of the input files.
 .point &sw.e
 Specifies that global memory is above the EMS line in a Windows 3.0
 DLL.
-This option has no effect with Windows 3.1 or Windows NT.  This option
+This option has no effect with Windows 3.1, Win32 or OS/2. This option
 affects pass two only.
 .*
 .point &sw.fe=name
@@ -345,23 +387,23 @@ environment variable.  This option affects pass one only.
 Disables the segment sorting feature (load optimization).
 If this option is not specified, the &wrcname arranges all pre-load
 segments and resources so that they are at the start of the
-executable. This option has no effect with Windows NT. This option
+executable. This option has no effect on Win32 or OS/2. This option
 affects pass two only.
 .*
 .point &sw.l
 Mark the application as using LIM 3.2 EMS directly.
-This option has no effect with Windows 3.1 or Windows NT.
+This option has no effect with Windows 3.1, Win32 or OS/2.
 This option affects pass two only.
 .*
 .point &sw.m
 Each instance of the application has its own EMS bank, when Windows is
 running with EMS 4.0 (by default, all instances share the same EMS
-bank). This option has no effect with Windows 3.1 or Windows NT.
+bank). This option has no effect with Windows 3.1, Win32 or OS/2.
 This option affects pass two only.
 .*
 .point &sw.p
 Mark a dynamic link library as a private DLL that is called by only one
-application. This option has no effect with Windows 3.1 or Windows NT.
+application. This option has no effect with Windows 3.1, Win32 or OS/2.
 This option affects pass two only.
 .*
 .point &sw.r
@@ -384,13 +426,13 @@ Move preload, data, and non-discardable segments to front
 and mark for fast load if possible (the default).
 .endpoint
 .np
-This option has no effect with Windows NT. This option affects pass two
+This option has no effect with Win32 or OS/2. This option affects pass two
 only.
 .*
 .point &sw.t
 Marks the application as able to run in a protected-mode Windows
 environment (standard mode or enhanced mode) only.
-This option has no effect with Windows 3.1 or Windows NT. This option
+This option has no effect with Windows 3.1, Win32 or OS/2. This option
 affects pass two only.
 .*
 .point &sw.v
@@ -439,16 +481,16 @@ Korean (for Windows only)
 .endpoint
 .*
 .point &sw.zm
-This option causes &wrccmdup to output a Microsoft format
+This option causes &wrccmdup to output a Microsoft/IBM format
 .fi &sysper.RES
 file.
 This is useful when using a dialog editor or other resource tool that
-understands Microsoft
+understands Microsoft or IBM
 .fi &sysper.RES
 files.  This option affects pass one only.
 This option may not be specified when creating a
 .fi &sysper.RES
-file for NT (i.e., when the -bt=NT switch has been specified).
+file for Win32 (i.e., when the -bt=nt switch has been specified).
 .*
 .point &sw.zn
 &wrccmdup will not pre-process the
@@ -502,7 +544,7 @@ default extension is not added. If the output-file is not specified
 then its value defaults to the filename specified for the
 resource-definition-file with its extension changed to ".RES".
 .exam begin
-&wrccmd -r -bt=NT life.rc
+&wrccmd -r -bt=nt life.rc
 .exam end
 .bull
 To add a compiled resource file to an executable file.
@@ -535,8 +577,8 @@ a resource definition file and adding the results to an executable.
 .bull
 To compile an application that does not have a resource file.
 .np
-This is useful if you wish to set the Windows or Windows NT version
-number, or sort load the segments (Windows), or use any of the other
+This is useful if you wish to set the Windows 3.x or Win32 version
+number, or sort load the segments (Windows 3.x), or use any of the other
 executable modifying features of &wrcname..
 &wrccmdup is used as follows to accomplish this:
 .millust begin

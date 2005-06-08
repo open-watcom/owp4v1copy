@@ -77,34 +77,34 @@ Make sure the correct file is specified
 .endbull
 .*
 .keep
-.errnote 11 Trying to add a Windows RES file "<file>" to an NT executable "<file>".
+.errnote 11 Trying to add a Win16 or OS/2 RES file "<file>" to a Win32 executable "<file>".
 .np
 This error occurs when you attempt to run pass two of the &wrcname
-with a Windows
+with a Win16 or OS/2
 .fi .RES
-file and an NT executable file. You can do two
+file and a Win32 executable file. You can do two
 things:
 .begbull $compact
 .bull
 Recreate the
 .fi .RES
-file using the -bt=NT switch
+file using the -bt=nt switch
 .bull
 Make sure the correct file is specified.
 .endbull
 .*
 .keep
-.errnote 12 Trying to add an NT RES file "<file>" to a Windows executable "<file>".
+.errnote 12 Trying to add a Win32 or OS/2 RES file "<file>" to a Win16 executable "<file>".
 .np
 This error occurs when you attempt to run pass two of the &wrcname
-with an NT
+with a Win32 or OS/2
 .fi .RES
-file and a Windows executable file. You can do two things:
+file and a Win16 executable file. You can do two things:
 .begbull $compact
 .bull
 Recreate the
 .fi .RES
-file using the -bt=Windows switch
+file using the -bt=windows switch
 .bull
 Make sure the correct file is specified.
 .endbull
@@ -112,17 +112,17 @@ Make sure the correct file is specified.
 .keep
 .errnote 13 Object alignment increase required. Relink with larger object alignment.
 .np
-Each NT EXE file contains an object alignment value that determines
+Each Win32 executable file contains an object alignment value that determines
 the maximum size of the file. This error indicates that in adding
-resources to an NT executable, the size of the EXE increased enough
+resources to a Win32 executable, the size of the executable increased enough
 that its object alignment must be increased. The solution is to
-re-link the EXE file with a larger object alignment. (Refer to the
+re-link the executable file with a larger object alignment. (Refer to the
 &lnkname OBJALIGN option) then run the &wrcname again.
 .*
 .keep
 .errnote 14 EXE contained old resources that could not be removed.
 .np
-The NT EXE that the &wrcname is operating on already contains
+The Win32 executable that the &wrcname is operating on already contains
 resources that the compiler cannot remove. As a result, the produced
 executable will be larger than it needs to be but it will still work.
 The recommended solution is to relink the EXE and run the &wrcname
@@ -455,7 +455,7 @@ environment variable.
 .np
 This message indicates that on the &wrcname command line the -bt=<os>
 option is specified and the compiler does not recognize the specified
-<os>. The valid values for <os> are Windows and NT.
+<os>. The valid values for <os> are windows, nt and os2.
 .*
 .keep
 .errnote 62 <preproc_msg>
@@ -466,11 +466,11 @@ file.
 The text of the message contains information about the error.
 .*
 .keep
-.errnote 63 Keyword "<keyword>" is only valid for Windows NT.
+.errnote 63 Keyword "<keyword>" is only valid for Win32.
 .np
-While creating a non-NT
+While creating a non-Win32
 .fi .RES
-file, the &wrcname encountered a keyword that is only valid for NT.
+file, the &wrcname encountered a keyword that is only valid for Win32.
 .*
 .keep
 .errnote 64 Keyword "<keyword>" not currently being supported.
@@ -491,7 +491,7 @@ Technical Support.
 .errnote 66 Error can't find character translation file "<file>".
 .np
 Character translation files are data files that the &wrcname uses when
-creating an NT
+creating a Win32
 .fi .RES
 file to convert text into UNICODE. This message indicates that the
 &wrcname cannot locate the given translation file that it requires.
@@ -501,7 +501,7 @@ The solution is to find the file and make sure it is in your path.
 .errnote 67 Error opening character translation file "<file>": <reason>.
 .np
 Character translation files are data files that the &wrcname uses when
-creating an NT
+creating a Win32
 .fi .RES
 file to convert text into UNICODE. This message indicates that the
 &wrcname found the character translation file but was unable to access
@@ -516,7 +516,7 @@ it for the given reason.
 .errnote 69 "<file>" is not a valid character translation file.
 .np
 Character translation files are data files that the &wrcname uses when
-creating an NT
+creating a Win32
 .fi .RES
 file to convert text into UNICODE. This error occurs when the &wrcname
 finds a file with the same name as the expected character translation
@@ -536,7 +536,7 @@ Try reinstalling the file from your original distribution disks.
 .errnote 70 Unable to read character translation file "<file>": wrong version.
 .np
 Character translation files are data files that the &wrcname uses when
-creating an NT
+creating a Win32
 .fi .RES
 file to convert text into UNICODE. This error occurs when the &wrcname
 finds a file with the same name as the expected character translation
@@ -553,24 +553,24 @@ Try reinstalling the file from your original distribution disks.
 .endbull
 .*
 .keep
-.errnote 71 Option '<option>' not valid for an NT .RES file.
+.errnote 71 Option '<option>' not valid for a Win32 .RES file.
 .np
-This indicates that while producing an NT
+This indicates that while producing a Win32
 .fi .RES
-file, a command line parameter was specified that is not valid for NT
+file, a command line parameter was specified that is not valid for Win32
 .fi .RES
 files.
 .*
 .keep
-.errnote 72 L"..." construct is not valid for Windows.
+.errnote 72 L"..." construct is not valid for Win16.
 .np
 This error occurs when the user enters a string prefixed by the letter
 (i.e. L"Bob") in an
 .fi .RC
-file being turned into a Windows
+file being turned into a Win16
 .fi .RES
 file.
-The L specifier is meaningless for Windows and will be ignored.
+The L specifier is meaningless for Win16 and will be ignored.
 This is a warning only.
 .*
 .keep
@@ -748,5 +748,21 @@ range.
 Quotations marks may be used on the WRC command line to delimit file
 or path names. This message indicates that a quotation mark was found
 on the command line but no matching quotation mark could be found.
+.*
+.keep
+.errnote 100 Trying to add a Win16 or Win32 RES file "<file>" to an OS/2 executable "<file>".
+.np
+This error occurs when you attempt to run pass two of the &wrcname
+with a Win16 or Win32
+.fi .RES
+file and an OS/2 executable file. You can do two things:
+.begbull $compact
+.bull
+Recreate the
+.fi .RES
+file using the -bt=os2 switch
+.bull
+Make sure the correct file is specified.
+.endbull
 .*
 .eerrsect

@@ -1296,8 +1296,8 @@ The ".cpp" extension invokes the &company C++ compiler.
 The ".for" extension invokes the &company FORTRAN 77 compiler.
 .note xxx.hlp
 .ix 'extensions' '.hlp'
-The ".hlp" extension invokes either the Windows, OS/2, or
-Windows NT Help compiler.
+The ".hlp" extension invokes either the Win16, OS/2, or
+Win32 compiler.
 .note xxx.rc
 .ix 'extensions' '.rc'
 The ".rc" extension invokes the &company resource compiler.
@@ -2595,7 +2595,7 @@ The following sections summarize the choices available.
 .*
 .beglevel
 .*
-.section Win32 (NT/Win95/Win32s) Targets
+.section Win32 Targets
 .*
 .ix 'targets' 'Win32'
 .ix 'Win32 targets'

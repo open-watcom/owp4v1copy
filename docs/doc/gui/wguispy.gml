@@ -19,7 +19,7 @@ messages appropriately.
 When a program does not react as expected, you must spend time
 debugging the program to find and correct the errors. &spy is a tool
 designed to help you debug Windows programs by letting you view the
-messages sent to windows under Windows and Windows NT. By watching how
+messages sent to windows in Win16 and Win32 applications. By watching how
 a program reacts to the messages it receives, you can isolate the
 parts of your code that are causing problems and then make the
 required corrections.
@@ -177,14 +177,14 @@ The numeric identifier of the message.
 Data specific to the message. This is the value that will be passed
 as the wparam parameter of the window's callback function.  To find
 the meaning of this parameter see the section &msg_info for information
-on how to get help on a message or refer to your Windows or Windows
-NT programmer's documentation.
+on how to get help on a message or refer to your Windows 3.x or Win32
+programmer's documentation.
 .point lParam
 Data specific to the message. This is the value that will be passed
 as the lparam parameter of the window's callback function. To find
 the meaning of this parameter see the section &msg_info for information
-on how to get help on a message or refer to your Windows or Windows
-NT programmer's documentation.
+on how to get help on a message or refer to your Windows 3.x or Win32
+programmer's documentation.
 .endpoint
 .np
 Several spy functions affect the appearance or behavior of the &spy
@@ -424,7 +424,7 @@ that &spy defines for you.
 .np
 Messages followed by (*) are undocumented messages.
 .br
-Messages followed by (**) are available under Windows NT only.
+Messages followed by (**) are available under Win32 only.
 .*
 .beglevel
 .*
