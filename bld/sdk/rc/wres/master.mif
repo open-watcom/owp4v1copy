@@ -66,9 +66,9 @@ extra_c_flags_i86 = -zw-zu
 
 # where to look for various files
 
-.c : ../../c
+.c : $(wres_dir)/c
 
-inc_dirs = -I"../../h"
+inc_dirs = -I"$(wres_dir)/h"
 
 # explicit rules
 

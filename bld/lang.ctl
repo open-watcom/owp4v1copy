@@ -32,9 +32,10 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 #        Prebuild new WLIB for build process
 [ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
-#        Prebuild new WRC with OS/2 support for build process
-[ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
+#        Prebuild POSIX tools for build process
 [ INCLUDE <DEVDIR>/posix/prereq.ctl ]
+#        Prebuild wres.lib and new WRC with OS/2 support for build process
+[ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 #
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]

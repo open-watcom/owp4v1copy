@@ -6,4 +6,4 @@ pegged  = 1
 model   = l
 linkage = static
 
-!include ../../master.mif
+!include $(wres_dir)/master.mif

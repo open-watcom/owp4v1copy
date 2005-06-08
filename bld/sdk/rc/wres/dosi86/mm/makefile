@@ -5,4 +5,4 @@ host_CPU = i86
 model   = m
 linkage = static
 
-!include ../../master.mif
+!include $(wres_dir)/master.mif

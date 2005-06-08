@@ -6,25 +6,28 @@ set PROJDIR=<CWD>
 cdsay .
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+set ODIR=<PREOBJDIR>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
     set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+    set ODIR=<OBJDIR>
 
 [ BLOCK <1> clean ]
 #==================
-    echo rm -f -r <PROJDIR>/wres/<OBJDIR>
-    rm -f -r <PROJDIR>/wres/<OBJDIR>
-    echo rm -f -r <PROJDIR>/rc/<OBJDIR>
-    rm -f -r <PROJDIR>/rc/<OBJDIR>
-    echo rm -f -r <PROJDIR>/rc/<PREOBJDIR>
-    rm -f -r <PROJDIR>/rc/<PREOBJDIR>
+    echo rm -f -r <PROJDIR>/wres/<ODIR>
+    rm -f -r <PROJDIR>/wres/<ODIR>
+    echo rm -f -r <PROJDIR>/rc/<ODIR>
+    rm -f -r <PROJDIR>/rc/<ODIR>
     rm -f <OWBINDIR>/wrc
-    rm -f <OWBINDIR>/wrc.exe
+    rm -f <OWBINDIR>/bwrc.exe
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
+    mkdir <PROJDIR>/wres/<PREOBJDIR>
+    cdsay <PROJDIR>/wres/<PREOBJDIR>
+    wmake -h -f ../dos386/ms_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
@@ -32,6 +35,9 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
+    mkdir <PROJDIR>/wres/<PREOBJDIR>
+    cdsay <PROJDIR>/wres/<PREOBJDIR>
+    wmake -h -f ../nt386/mf_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
@@ -39,6 +45,9 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
+    mkdir <PROJDIR>/wres/<PREOBJDIR>
+    cdsay <PROJDIR>/wres/<PREOBJDIR>
+    wmake -h -f ../nt386/mf_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
@@ -46,6 +55,9 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
+    mkdir <PROJDIR>/wres/<PREOBJDIR>
+    cdsay <PROJDIR>/wres/<PREOBJDIR>
+    wmake -h -f ../linux386/mf_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
@@ -53,10 +65,10 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
-    echo Building the resource compiler
+    echo Building the wres library and the resource compiler
     cdsay <PROJDIR>/wres
     <MAKE> -f gnumake
-    cdsay ../rc
+    cdsay <PROJDIR>/rc
     <MAKE> -f gnumake
     <CPCMD> <OBJDIR>/rc <OWBINDIR>/wrc
 

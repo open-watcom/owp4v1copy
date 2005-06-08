@@ -17,8 +17,7 @@ wasm_trmem = 1
 
 !include trmem.mif
 
-# Note the explicit $(watcom_dir)/h; there appear to be clashing headers
-inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h" -I"$(watcom_dir)/h" -I"$(wres_dir)/h"
+inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h"
 
 libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
 
@@ -36,22 +35,14 @@ extra_c_flags_trmem = $(trmem_cflags)
 
 #lflags stuff
 #########
-extra_l_flags = option map,symfile
-!ifndef prebuild
-extra_l_flags += lib $(wres_lib)
-!endif
+extra_l_flags = option map,symfile lib $(wres_lib)
 extra_l_flags_qnx = option offset=16k, res=usage.u, stack=12k
 extra_l_flags_dos_i86 = option stack=6k
 extra_l_flags_dos_386 = option stack=12k
 extra_l_flags_dos = $(extra_l_flags_dos_$(host_cpu))
 extra_l_flags_linux = option stack=12k
 
-!ifdef prebuild
-.c : $(proj_path)/c;$(womp_dir)/c;$(wres_dir)/c;$(trmem_dir);$(watcom_dir)/c
-!else
 .c : $(proj_path)/c;$(womp_dir)/c;$(trmem_dir);$(watcom_dir)/c
-!endif
-
 
 proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     main.obj            &
@@ -93,45 +84,6 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     autodept.obj        &
     queues.obj          &
     finger.obj
-
-!ifdef prebuild
-wres_obj =              &
-    loadstr.obj         &
-    wriidfn.obj         &
-    wrfindrs.obj        &
-    wrgetli.obj         &
-    ropenfro.obj        &
-    wrinitdi.obj        &
-    wrreaddi.obj        &
-    wrfreedi.obj        &
-    rclosef.obj         &
-    wridcmp.obj         &
-    wrerror.obj         &
-    ralliae.obj         &
-    wrrfrr.obj          &
-    wridexby.obj        &
-    wrrewrid.obj        &
-    wrrftr.obj          &
-    wrrhr.obj           &
-    mrrdrh.obj          &
-    wrfree.obj          &
-    wridfnoo.obj        &
-    wraddres.obj        &
-    wriswrf.obj         &
-    wridnacm.obj        &
-    resseek.obj         &
-    rduint32.obj        &
-    rrnamoor.obj        &
-    rduint16.obj        &
-    wridfrst.obj        &
-    wridfrnu.obj        &
-    wrfirres.obj        &
-    rduint8.obj         &
-    rrdstr.obj          &
-    varstr.obj
-
-proj_obj += $(wres_obj)
-!endif
 
 proj_obj += $(trmem_objs)
 

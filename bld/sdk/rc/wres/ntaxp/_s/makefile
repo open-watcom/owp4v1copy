@@ -5,4 +5,4 @@ host_CPU = axp
 #IS_GUI = y
 linkage = static
 
-!include ../../master.mif
+!include $(wres_dir)/master.mif
