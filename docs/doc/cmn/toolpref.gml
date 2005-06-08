@@ -12,7 +12,7 @@ describes how to use &company's software development tools on Intel
 to build QNX applications.
 .do end
 .el .do begin
-with DOS, Windows, Windows NT, or OS/2.
+with DOS, Windows, or OS/2.
 .do end
 .*
 The
@@ -28,6 +28,8 @@ object file library manager
 .bull
 object file disassembler
 .bull
+exe2bin utility
+.bull
 far call optimization utility
 .bull
 patch utility
@@ -38,19 +40,6 @@ make utility
 .bull
 touch utility
 .endbull
-.*
-:cmt. .np
-:cmt. The appendix contains a procedure for reporting a software problem.
-:cmt. .if '&target' ne 'FOX' .do begin
-:cmt. .np
-:cmt. Additional copies of this documentation may be ordered from:
-:cmt. .illust begin
-:cmt.         WATCOM
-:cmt.         415 Phillip St.
-:cmt.         Waterloo, Ontario
-:cmt.         CANADA  N2L 3X2
-:cmt. .illust end
-:cmt. .do end
 .*
 .sect Acknowledgements
 .*
