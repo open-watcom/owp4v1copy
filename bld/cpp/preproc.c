@@ -70,7 +70,7 @@ int     NestLevel;
 int     SkipLevel;
 unsigned PPLineNumber;                  // current line number
 unsigned PPFlags;                       // pre-processor flags
-char    PP__DATE__[] = "\"Dec 31 1992\"";// value for __DATE__ macro
+char    PP__DATE__[] = "\"Dec 31 2005\"";// value for __DATE__ macro
 char    PP__TIME__[] = "\"12:00:00\"";  // value for __TIME__ macro
 char    *PPBufPtr;                      // block buffer pointer
 char    *PPCharPtr;                     // character pointer
@@ -103,6 +103,24 @@ static char *doStrDup( const char *str )
         memcpy( ptr, str, len );
     }
     return( ptr );
+}
+
+/* Determine whether pathname is absolute */
+int isAbsPath( const char *str )
+{
+#ifdef __UNIX__
+    // UNIX is really easy
+    return( str[0] == SLASH_CHAR );
+#else
+    // '\foo.txt' is absolute, so is 'c:\foo.txt', but 'c:foo.txt' is not
+    if( str[0] == SLASH_CHAR ) {
+        return( 1 );
+    }
+    if( str[0] != '\0' && str[1] == ':' && str[2] == SLASH_CHAR ) {
+        return( 1 );
+    }
+    return( 0 );
+#endif
 }
 
 int PP_Open( char *filename )
@@ -158,6 +176,26 @@ char *PP_FindInclude( char *filename, char *path, char *buffer )
     return( NULL );
 }
 
+/* Include search order is intended to be compatible with C/C++ compilers
+ * and is as follows:
+ *
+ * 1) For absolute pathnames, try only that pathname and nothing else
+ *
+ * 2) For includes in double quotes only, search current directory
+ *
+ * 3) For includes in double quotes only, search the directory
+ *    of including file
+ *
+ * 4) Search include directories specified by PPIncludePath (usually command
+ *    line -I argument(s)
+ *
+ * 5) Search INCLUDE path
+ *
+ * 6) Directory 'h' adjacent to current directory (../h)
+ *
+ * Note that some of these steps will be skipped if PPFLAG_IGNORE_CWD and/or
+ * PPGLAG_IGNORE_INCLUDE is set.
+ */
 int PP_OpenInclude( char *filename, char *delim )
 {
     char        *path;
@@ -165,11 +203,15 @@ int PP_OpenInclude( char *filename, char *delim )
     char        pathbuf[ _MAX_PATH ];
     char        drivebuf[ _MAX_DRIVE ];
     char        dirbuf[ _MAX_DIR ];
+    int         sys_include;
 
+    sys_include = !strcmp( delim, "<>" );
     path = filename;
-    if( ( PPFlags & PPFLAG_IGNORE_CWD ) || access( filename, R_OK ) != 0 ) {
-        path = NULL;
-        if( PP_File != NULL ) {
+    if( !isAbsPath( filename ) ) {
+        if( sys_include || (PPFlags & PPFLAG_IGNORE_CWD) || access( filename, R_OK ) != 0 ) {
+            path = NULL;
+        }
+        if( path == NULL && PP_File != NULL && !sys_include ) {
             _splitpath( PP_File->filename, drivebuf, dirbuf, NULL, NULL );
             _makepath( pathbuf, drivebuf, dirbuf, NULL, NULL );
             path = PP_FindInclude( filename, pathbuf, buffer );
@@ -177,14 +219,14 @@ int PP_OpenInclude( char *filename, char *delim )
         if( path == NULL ) {
             path = PP_FindInclude( filename, PPIncludePath, buffer );
         }
-        if( path == NULL  &&  !(PPFlags & PPFLAG_IGNORE_INCLUDE) ) {
+        if( path == NULL && !(PPFlags & PPFLAG_IGNORE_INCLUDE) ) {
             path = PP_FindInclude( filename, getenv( "INCLUDE" ), buffer );
         }
-        if( path == NULL && !( PPFlags & PPFLAG_IGNORE_CWD ) ) {
+        if( path == NULL && !(PPFlags & PPFLAG_IGNORE_CWD) ) {
             sprintf( pathbuf, "..%ch", SLASH_CHAR );
             path = PP_FindInclude( filename, pathbuf, buffer );
         }
-        if( path == NULL && !( PPFlags & PPFLAG_IGNORE_CWD ) ) {
+        if( path == NULL && !(PPFlags & PPFLAG_IGNORE_CWD) ) {
             path = filename;
         }
     }
@@ -211,7 +253,6 @@ static void PP_GenLine()
     while( *p != '\0' ) ++p;
     fname = PP_File->filename;
     while( *fname != '\0' ) {
-//      24-may-94       if( *fname == '\\' )  *p++ = '\\';
 #ifndef __UNIX__
         if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
 #endif
@@ -1226,4 +1267,3 @@ extern void PreprocVarInit( void )
     memset( PPLineBuf, 0, sizeof( PPLineBuf ) );
     PreProcChar = '#';
 }
-
