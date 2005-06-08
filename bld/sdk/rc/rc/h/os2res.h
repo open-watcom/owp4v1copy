@@ -185,6 +185,13 @@
 #define OS2_ACCEL_SYSCOMMAND  0x0100
 #define OS2_ACCEL_HELP        0x0200
 
+/* Hack to get the bootstrap wrc building with gcc; note that the _Packed
+ * keyword is probably not necessary for most of these structs.
+ */
+#ifdef __GNUC__
+    #define _Packed
+#endif
+
 typedef _Packed struct MenuHeaderOS2 {
     uint_32 Size;
     uint_16 Codepage;

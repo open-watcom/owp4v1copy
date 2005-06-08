@@ -10,6 +10,7 @@ OBJECTS += errors.o errprt.o exeobj.o exeres.o exerespe.o
 OBJECTS += exeseg.o exeutil.o global.o
 OBJECTS += keyword.o layer0.o param.o pass2.o rc.o rcio.o
 OBJECTS += rcmem.o rcstr.o ppalloc.o scan.o semaccel.o
+OBJECTS += semutil.o wrstubs.o bootstub.o
 OBJECTS += semantic.o semdiag.o semmenu.o semver.o semtbar.o
 OBJECTS += semraw.o semsingl.o semstr.o swchar.o dbtable.o
 OBJECTS += preproc.o ppexpr.o ppmacro.o
@@ -45,7 +46,7 @@ vpath %.h $(SRCDIRS) $(INCDIRS)
 LIBNAME = rc
 NAME = rc
 
-WACC_FLAGS = -d -b -s
+WYACC_FLAGS = -d -b -s
 
 # host_OS = dos
 # host_CPU = 386
@@ -69,7 +70,7 @@ $(OBJDIR)/rc.res: rc.rc
 	rc -r -i=/src/cproj/rc/h\;/src/watcom/h rc.rc -fo=$(OBJDIR)/rc.res
 
 $(OBJDIR)/ytab.c $(OBJDIR)/ytab.h: y/rc.y y/yydriver.c
-	cd $(OBJDIR);wyacc $(WACC_FLAGS) $(RC_DIR)/y/rc.y $(RC_DIR)/y/yydriver.c >out
+	cd $(OBJDIR);byacc $(WYACC_FLAGS) $(RC_DIR)/y/rc.y $(RC_DIR)/y/yydriver.c >out
 
 $(OBJDIR)/ytab.gh: $(OBJDIR)/ytab.h
 	rm -f $@
