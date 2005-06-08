@@ -85,34 +85,15 @@ $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(ma
 !else ifneq host_os os2
     $(rc) $(rc_flags) -k $(resfile) $^@
 !else
-    $(rc_os2) $(rc_flags) $(resfile) $^@
+    $(brc) -q $(rc_flags) $(resfile) $^@
 !endif
 !endif
 
 !ifeq host_os os2
 wprofgui.res : ../h/wprofgui.rc
-        @set oinc=$(%include)
-        set include=$(lang_root)/h/os2;$(rcinclude);$(%include)
         $(cc) -bt=os2 -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wprof.i $]@
-#       wcc -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc -DJAPANESE_MESSAGES
-
-!ifndef %use_os2tk_stuff
-
-        set opath=$(%path)
-        set path=$(lang_root)/binp
-
-!endif
-
-        $(rc_os2) -i $(lang_root)/h/os2 -r ..\h\foros2pm.rc wprofgui.res
+        $(brc) -q $(rc_flags) -r $(inc_dirs_sys_os2) ../h/foros2pm.rc -fo=wprofgui.res
         @rm -f wprof.i
-
-!ifndef %use_os2tk_stuff
-
-        set path=$(%opath)
-
-!endif
-
-        @set include=$(%oinc)
 !else ifeq host_os nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@

@@ -42,12 +42,12 @@ wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     @%append $(tmplnk) option modname=wdpmhelp
     @%append $(tmplnk) option description $(description)
     $(linker) @$(tmplnk)
-    $(rc_os2) pmhelp.res $^@
+    $(brc) -q pmhelp.res $^@
 
 .c: ../c
 
 pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
-        $(rc_os2) -i $(lang_root)/h/os2 -r ..\h\pmhelp.rc .\pmhelp.res
+        $(brc) -q -bt=os2 -r -fo=./pmhelp.res $<
 
 _err.gh : ./mkstr.exe
         $[@ $^@
@@ -59,4 +59,4 @@ _jerr.gh : ./jmkstr.exe
         $(bld_cl) $[@ $(wcl_util_opts) -I"$(trap_dir)/h"
 
 ./jmkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ $(wcl_util_opts) -dJAPANESE_MESSAGES -I"$(trap_dir)/h"
+        $(bld_cl) $[@ $(wcl_util_opts) -DJAPANESE_MESSAGES -I"$(trap_dir)/h"

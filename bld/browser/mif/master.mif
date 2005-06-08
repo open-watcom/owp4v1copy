@@ -129,8 +129,8 @@ all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
 $(name).exe : $(OBJECTS) $(LIBS)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
-!ifeq host_OS os2
-    $(rc_os2) $(rc_flags) $(rc_file) $^@
+!ifeq host_os os2
+    $(brc) -q $(rc_flags) $(rc_file) $^@
 !else
     $(rc) $(rc_flags) $(rc_file) $^@
 !endif

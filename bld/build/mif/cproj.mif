@@ -335,6 +335,7 @@ lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flag
 
 rc_flags_nt     = -bt=nt
 rc_flags_win    = -bt=windows
+rc_flags_os2    = -bt=os2
 
 rc_flags_axp    = -D__AXP__
 

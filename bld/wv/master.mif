@@ -375,14 +375,7 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
 !else ifneq host_os os2
         $(rc) -k $(rc_flags) $(resfile) $^@
 !else
-!ifndef %use_os2tk_stuff
-        @set opath=$(%path)
-        @set path=$(lang_root)\binp
-!endif
-        $(rc_os2) -p -x $(resfile) $^@
-!ifndef %use_os2tk_stuff
-        @set path=$(%opath)
-!endif
+        $(brc) -q -k $(rc_flags) $(resfile) $^@
 !endif
 !if 0
 !ifdef ovl_dos
@@ -411,7 +404,6 @@ $(lnk) : $(__MAKEFILES__)
 !endif
     @for %i in ($(objs)) do @%append $(lnk) file %i
 
-os2_rcinclude=.;$(hdir);$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(lang_root)/h
 rcinclude=-I. -I"$(hdir)" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I$(gui_dir) -I"$(gui_dir)/h" -I"$(lang_root)/h"
 
 bitmaps = &
@@ -557,7 +549,7 @@ wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
 
 wvpmdll.res : $(hdir)/strings.rc litdef.gh .autodepend
         *wcc -dRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpm.i $[@
-        $(rc_os2) -I $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\wvpmdll.res
+        $(brc) -q $(rc_flags) -r $(inc_dirs_sys_os2) $(hdir)/foros2pm.rc -fo=./wvpmdll.res	
         del wvpm.i
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
@@ -566,38 +558,21 @@ wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autode
 wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
         $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
 
+#wvpm.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
+#        $(brc) -q $(rc_flags) -r -ad -k -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+
+# This complicated crap shouldn't be necessary and we should be able to use
+# the above rule... but there's something wrong with include file order
+# in bwrc right now.
 wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        *wcc -dRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpm.i $[@
-        *wcc -dRC -i"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpmj.i $[@ -dJAPANESE_MESSAGES
-
-        @set oinc=$(%include)
-        @set include=$(os2_rcinclude);$(%include)
-
-!ifndef %use_os2tk_stuff
-        @set opath=$(%path)
-        @set path=$(lang_root)\binp
-!endif
-        $(rc_os2) -i $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\foros2pm.res
+        *wcc -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpm.i $[@
+        *wcc -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpmj.i $[@ -DJAPANESE_MESSAGES
+        $(brc) -q $(rc_flags) -r $(inc_dirs_sys_os2) $(hdir)/foros2pm.rc -fo=./foros2pm.res
         del wvpm.i
-
-!ifndef %use_os2tk_stuff
-        @set path=$(%opath)
-!endif
         cp foros2pm.res wvpm.res
         cp wvpmj.i wvpm.i
-
-!ifndef %use_os2tk_stuff
-        @set opath=$(%path)
-        @set path=$(lang_root)\binp
-!endif
-
-        $(rc_os2) -i $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\foros2pm.res
-
-!ifndef %use_os2tk_stuff
-        @set path=$(%opath)
-!endif
+        $(brc) -q $(rc_flags) -r $(inc_dirs_sys_os2) $(hdir)/foros2pm.rc -fo=./foros2pm.res
         cp foros2pm.res wvpmj.res
-        @set include=$(%oinc)
 
 !ifneq sys_windowed 1
 .dlg : $(hdir)

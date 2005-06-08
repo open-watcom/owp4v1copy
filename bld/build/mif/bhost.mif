@@ -93,6 +93,7 @@ blib            = *bwlib
 bre2c           = re2c
 w32bind         = w32bind
 byacc           = byacc
+brc             = bwrc
 !ifdef __UNIX__
 os2ldr          = $(%OWBINDIR)/os2ldr.exe
 !else

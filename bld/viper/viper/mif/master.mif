@@ -72,25 +72,14 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_os os2
         $(rc) $(rc_flags) -k viper.res $^@
 !else
-        set opath=$(%path)
-	set path=$(rc_os2_path)
-        $(rc_os2) -p -x viper.res $^@
-        set path=$(%opath)
+        $(brc) -q $(rc_flags) -k viper.res $^@
 !endif
 
 viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 !ifneq host_os os2
         $(rc) $(rc_flags) -r -I.. $(inc_path) $]@ -fo=$^@
 !else
-!ifeq host_lang japan
-        $(cc) -zk0 -dJAPANESE_MESSAGES -I.. $(inc_path) -p $]@ -fo=viper.prc
-!else
-        $(cc) -I.. $(inc_path) -p $]@ -fo=viper.prc
-!endif
-        set opath=$(%path)
-	set path=$(rc_os2_path)
-        $(rc_os2) -i ".." -r viper.prc viper.res
-        set path=$(%opath)
+        $(brc) -q $(rc_flags) -r -I.. $(inc_path) $]@ -fo=$^@
 !endif
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
