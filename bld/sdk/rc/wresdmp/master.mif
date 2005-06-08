@@ -6,7 +6,7 @@ proj_name = wresdmp
 
 !include wres.mif
 
-inc_dirs = ../h;$(wres_dir)/h;$(trmem_dir)
+inc_dirs = -I"../h" -I"$(wres_dir)/h" -I"$(trmem_dir)"
 
 .c: ../c;$(trmem_dir)
 
