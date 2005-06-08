@@ -24,39 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  Lexical scanner interface, OS/2 specifics.
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#ifndef SCAN2_H_INCLUDED
+#define SCAN2_H_INCLUDED
+#include "varstr.h"
+#include "param.h"
 
-#pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
+extern void  ScanInitOS2( void );
+extern int   ScanOS2( ScanValue * value );
+extern void  ScanInitStaticsOS2( void );
 #endif
-
-int _dos_switch_char()
-{
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
-    return( '-' );
-#endif
-}

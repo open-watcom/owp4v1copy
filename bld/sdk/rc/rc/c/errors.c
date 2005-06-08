@@ -150,8 +150,9 @@ static void RcMsgV( unsigned errornum, OutputSeverity sev, va_list arglist )
     case ERR_TOO_MANY_ARGS:
     case ERR_UNKNOWN_MULT_OPTION:
     case ERR_UNKNOWN_OPTION:
-    case ERR_WIN_RES_TO_NT_EXE:
-    case ERR_NT_RES_TO_WIN_EXE:
+    case ERR_NONNT_RES_TO_NT_EXE:
+    case ERR_NONWIN_RES_TO_WIN_EXE:
+    case ERR_NONOS2_RES_TO_OS2_EXE:
     case ERR_OLD_RESOURCE_OBJECT:
     case ERR_READING_EXE:
     case ERR_READING_ICON:

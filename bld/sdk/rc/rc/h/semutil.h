@@ -24,39 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  Interface to semantic utility routines.
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#ifndef SEMUTIL_INCLUDED
+#define SEMUTIL_INCLUDED
 
-#pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
+#include "watcom.h"
+#include "rctypes.h"
+
+extern void             ReportCopyError( RcStatus status, int read_msg,
+                                char *filename, int err_code );
+extern RcStatus         CopyData( uint_32 offset, uint_32 length, int handle,
+                                void *buff, int buffsize, int *err_code );
+
 #endif
-
-int _dos_switch_char()
-{
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
-    return( '-' );
-#endif
-}

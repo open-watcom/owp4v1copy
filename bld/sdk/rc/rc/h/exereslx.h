@@ -24,39 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  LX resource manipulation routines interface.
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#ifndef EXERESLX_H_INCLUDED
+#define EXERESLX_H_INCLUDED
 
-#pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
+#include "watcom.h"
+#include "exeflat.h"
+#include "wresall.h"
+#include "rcstr.h"
+
+typedef struct LXResEntry {
+    flat_res_table  resource;
+    WResDirWindow   wind;       /* window into the current WResDir */
+    uint_16         mem_flags;
+    uint_16         assigned;
+} LXResEntry;
+
+typedef struct LXResTable {
+    LXResEntry      *resources;
+    uint_32         res_count;
+    uint_32         table_size;
+    uint_32         num_objects;
+    uint_32         num_pages;
+} LXResTable;
+
+struct ResFileInfo;     // ANSI/gcc
+struct ExeFileInfo;
+
+int BuildLXResourceObjects( struct ExeFileInfo *exeinfo,
+                            struct ResFileInfo *resinfo,
+                            object_record *res_obj, unsigned_32 rva,
+                            unsigned_32 offset, int writebyfile );
+int WriteLXResourceObjects( struct ExeFileInfo *exe,
+                            struct ResFileInfo *info );
+int RcBuildLXResourceObjects( void );
+int RcWriteLXResourceObjects( void );
+
 #endif
-
-int _dos_switch_char()
-{
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
-    return( '-' );
-#endif
-}

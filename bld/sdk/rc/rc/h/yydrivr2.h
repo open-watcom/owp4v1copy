@@ -24,39 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  Public interface to OS/2 specific yydriver module.
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#ifndef _YYDRIVR2_H
+#define _YYDRIVR2_H
 
-#pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
+extern void ParseInitOS2( void );
+extern void ParseFiniOS2( void );
+extern bool ParseOS2( void );
+extern void ParseInitStaticsOS2( void );
+
 #endif
-
-int _dos_switch_char()
-{
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
-    return( '-' );
-#endif
-}

@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource Compiler pass 2 structures and constants.
 *
 ****************************************************************************/
+
 
 #ifndef EXEFMT_INCLUDED
 #define EXEFMT_INCLUDED
@@ -37,7 +37,9 @@
 #include "wres.h"
 #include "exeos2.h"
 #include "exepe.h"
+#include "exeflat.h"
 #include "exerespe.h"
+#include "exereslx.h"
 #include "exeseg.h"
 #include "exeres.h"
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
@@ -47,7 +49,8 @@
 typedef enum {
     EXE_TYPE_UNKNOWN,
     EXE_TYPE_PE,
-    EXE_TYPE_NE
+    EXE_TYPE_NE,
+    EXE_TYPE_LX
 } ExeType;
 
 typedef struct ResFileInfo {
@@ -72,6 +75,15 @@ typedef struct PEExeInfo {
                                  // WinHead to get at it instead
 } PEExeInfo;
 
+typedef struct LXExeInfo {
+    os2_flat_header OS2Head;
+    object_record   *Objects;
+    lx_map_entry    *Pages;
+    LXResTable      Res;
+    uint_32         FirstResObj;
+    uint_32         FirstResPage;
+} LXExeInfo;
+
 typedef struct ExeFileInfo {
     int             IsOpen;
     int             Handle;
@@ -81,6 +93,7 @@ typedef struct ExeFileInfo {
     union {
         NEExeInfo   NEInfo;
         PEExeInfo   PEInfo;
+        LXExeInfo   LXInfo;
     } u;
     uint_32         DebugOffset;        /* wlink doesn't initialize this */
 } ExeFileInfo;
@@ -96,5 +109,6 @@ typedef struct RcPass2Info {
 
 extern int MergeResExeNE( void );
 extern int MergeResExePE( void );
+extern int MergeResExeLX( void );
 
 #endif

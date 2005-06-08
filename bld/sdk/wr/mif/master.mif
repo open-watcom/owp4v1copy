@@ -35,9 +35,9 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
             $(trmem_objs) &
             preproc.obj ppexpr.obj ppmacro.obj &
             rcerrprt.obj &
-            palette.obj ldstr.obj jdlg.obj &
+            palette.obj ldstr.obj jdlg.obj wrstubs.obj &
             pass2.obj exeseg.obj exeres.obj rcstr.obj ppalloc.obj &
-            exeutil.obj exeobj.obj exerespe.obj rcio.obj &
+            exeutil.obj exeobj.obj exerespe.obj rcio.obj semutil.obj &
             global.obj semstr.obj semsingl.obj semantic.obj semraw.obj &
             errors.obj tmpctl.obj autodep.obj layer0.obj param.obj &
             dbtable.obj swchar.obj sharedio.obj

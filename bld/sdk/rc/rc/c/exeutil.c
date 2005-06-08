@@ -267,7 +267,7 @@ RcStatus SeekRead( int handle, unsigned_32 newpos, void *buff,
 /* information starts before the end of the address of the os2_exe_header */
 /* so this is not a valid windows EXE file. */
 
-ExeType FindNEPEHeader( int handle, unsigned_32 *nh_offset )
+ExeType FindNEPELXHeader( int handle, unsigned_32 *nh_offset )
 /**********************************************************/
 /* get a pointer to the new exe header */
 {
@@ -297,6 +297,9 @@ ExeType FindNEPEHeader( int handle, unsigned_32 *nh_offset )
         break;
     case PE_SIGNATURE:
         return( EXE_TYPE_PE );
+        break;
+    case OSF_FLAT_LX_SIGNATURE:
+        return( EXE_TYPE_LX );
         break;
     default:
         return( EXE_TYPE_UNKNOWN );

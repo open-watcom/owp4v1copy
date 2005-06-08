@@ -11,7 +11,7 @@ pick(   STR_END_OF_FILE,
         "Unexpected end of file",
         "ファイルの終わりを検出しました" )
 pick(   STR_APP_NAME,
-        "Open Watcom Windows Resource Compiler Version 1.0\n",
+        "Open Watcom Resource Compiler Version 1.0\n",
         "Open Watcom ウィンドウズ リソ－ス コンパイラ バ－ジョン 1.0\n" )
 pick(   ERR_CANT_OPEN_FILE,
         "Unable to open file \"%s\": %s.",
@@ -28,12 +28,12 @@ pick(   ERR_NOT_CURSOR_FILE,
 pick(   ERR_NOT_BITMAP_FILE,
         "\"%s\" is not a valid bitmap file.",
         "\"%s\" は無効なビットマップファイルです." )
-pick(   ERR_WIN_RES_TO_NT_EXE,
-        "Trying to add a Windows RES file \"%s\" to an NT executable \"%s\".",
+pick(   ERR_NONNT_RES_TO_NT_EXE,
+        "Trying to add a Win16 or OS/2 RES file \"%s\" to a Win32 executable \"%s\".",
         "ウィンドウズ用 RESファイル \"%s\" をNT実行ファイル \"%s\" に追加しようとしています." )
-pick(   ERR_NT_RES_TO_WIN_EXE,
-        "Trying to add an NT RES file \"%s\" to a Windows executable \"%s\".",
-        "NT用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )
+pick(   ERR_NONWIN_RES_TO_WIN_EXE,
+        "Trying to add a Win32 or OS/2 RES file \"%s\" to a Win16 executable \"%s\".",
+        "Win32用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )
 pick(   ERR_PE_HEADER_SIZE_CHANGE,
         "Object alignment increase required.  Relink with larger object alignment.",
         "より大きなオブジェクト アラインメントが必要です. より大きなオブジェクト アラインメントを指定して再リンクしてください." )
@@ -185,8 +185,8 @@ pick(   ERR_TEXT_FROM_CPP,
         "%s",
         "%s" )
 pick(   ERR_NT_KEYWORD,
-        "Keyword \"%s\" is only valid for Windows NT",
-        "\"%s\" はWindows NTでのみ意味のあるキ－ワ－ドです" )
+        "Keyword \"%s\" is only valid for Win32",
+        "\"%s\" はWin32でのみ意味のあるキ－ワ－ドです" )
 pick(   ERR_UNSUPPORTED,
         "Keyword \"%s\" not currently supported",
         " \"%s\" は現在サポ－トされていないキ－ワ－ドです" )
@@ -210,8 +210,8 @@ pick(   ERR_WRONG_CHAR_FILE_VER,
         "Unable to read character translation file \"%s\": wrong version.",
         "\"%s\" 文字変換ファイルを読み込めません: バ－ジョンが異なります." )
 pick(   ERR_OPT_NOT_VALID_FOR_NT,
-        "Option '%s' not valid for an NT .res file.",
-        "'%s' オプションは NT用リソ－スファイルには無意味です." )
+        "Option '%s' not valid for a Win32 .res file.",
+        "'%s' オプションは Win32用リソ－スファイルには無意味です." )
 pick(   ERR_LSTRING_IGNORED_FOR_WINDOWS,
         "L\"...\" construct is not valid for Windows.",
         "L\"...\" 構成はWindowsでは無意味です." )
@@ -300,3 +300,6 @@ pick(   ERR_DUPLICATE_STR_TABLE_FILE,
 pick(   ERR_RCVARIABLE_RECURSIVE,
         "Can't expand environment variable '%s' recursively.",
         "Can't expand environment variable '%s' recursively." )
+pick(   ERR_NONOS2_RES_TO_OS2_EXE,
+        "Trying to add a Win16 or Win32 RES file \"%s\" to an OS/2 executable \"%s\".",
+        "Win32用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )

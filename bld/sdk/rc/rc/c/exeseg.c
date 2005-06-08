@@ -117,6 +117,53 @@ extern int AllocAndReadSegTables( int *err_code )
 
 } /* AllocAndReadSegTables */
 
+/* If resource segments already exist, we need to throw them away, otherwise
+ * the executable would keep growing. We assume that there is one segment per
+ * resource and that resource segments are always last.
+ */
+extern int AllocAndReadOS2SegTables( int *err_code )
+{
+    int                 error;
+    int                 oldhandle;
+    int                 oldres;
+    int                 newres;
+    uint_32             head_offset;
+    SegTable            *oldseg;
+    SegTable            *tmpseg;
+    os2_exe_header      *head;
+
+    oldres = Pass2Info.OldFile.u.NEInfo.WinHead.resource;
+    newres = Pass2Info.TmpFile.u.NEInfo.Res.Dir.NumResources;
+    oldseg = &(Pass2Info.OldFile.u.NEInfo.Seg);
+    oldhandle = Pass2Info.OldFile.Handle;
+    tmpseg = &(Pass2Info.TmpFile.u.NEInfo.Seg);
+
+    head = &(Pass2Info.OldFile.u.NEInfo.WinHead);
+    head_offset = Pass2Info.OldFile.WinHeadOffset;
+
+    if( (int_32)head->segments - oldres < 0 )
+        return RS_BAD_FILE_FMT;
+
+    oldseg->NumSegs = head->segments - oldres;
+    tmpseg->NumSegs = oldseg->NumSegs + newres;
+    error = allocSegTable( oldseg, err_code );
+    if( error != RS_OK ) return( error );
+    error = allocSegTable( tmpseg, err_code );
+    if( error != RS_OK ) return( error );
+
+    error = readSegTable( oldhandle, head_offset + head->segment_off,
+                                oldseg );
+    if( error != RS_OK ){
+        *err_code = errno;
+        return( error );
+    }
+    error = readSegTable( oldhandle, head_offset + head->segment_off,
+                                tmpseg );
+    *err_code = errno;
+    return( error );
+
+} /* AllocAndReadOS2SegTables */
+
 
 /********* WARNING *********/
 /* Hard coded constant. The value of sizeof(os2_reloc_item) is to hard */

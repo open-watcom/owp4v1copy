@@ -59,8 +59,11 @@ extern void InitResTable( void )
     if (CmdLineParms.NoResFile) {
         res->NumTypes = 0;
         res->NumResources = 0;
-        res->TableSize = 2 * sizeof(uint_16);
-        /* the 2 uint_16 are the resource shift count and the type 0 record */
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            res->TableSize = 0;
+        else /* Win16 */
+            res->TableSize = 2 * sizeof(uint_16);
+            /* the 2 uint_16 are the resource shift count and the type 0 record */
         res->Head = NULL;
         res->Tail = NULL;
 
@@ -72,10 +75,14 @@ extern void InitResTable( void )
     } else {
         res->NumTypes = WResGetNumTypes( dir );
         res->NumResources = WResGetNumResources( dir );
-        res->TableSize = res->NumTypes * sizeof(resource_type_record) +
-                            res->NumResources * sizeof(resource_record) +
-                            2 * sizeof(uint_16);
-        /* the 2 uint_16 are the resource shift count and the type 0 record */
+        if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+            res->TableSize = res->NumResources * sizeof(uint_16) * 2;
+            /* one resource type/id record per resource, 16-bit int each */
+        else /* Win16 */
+            res->TableSize = res->NumTypes * sizeof(resource_type_record) +
+                                res->NumResources * sizeof(resource_record) +
+                                2 * sizeof(uint_16);
+            /* the 2 uint_16 are the resource shift count and the type 0 record */
         res->Head = NULL;
         res->Tail = NULL;
 
@@ -319,6 +326,80 @@ extern int CopyResources( uint_16 sect2mask, uint_16 sect2bits, bool sect2 )
     return( error );
 } /* CopyResources */
 
+extern int CopyOS2Resources( void )
+{
+    WResDir             dir;
+    WResDirWindow       wind;
+    ResTable            *restab;
+    FullTypeRecord      *exe_type;
+    WResResInfo         *res;
+    WResLangInfo        *lang;
+    int                 tmphandle;
+    int                 reshandle;
+    RcStatus            error;
+    int                 err_code;
+    int                 shift_count;
+    int                 currseg;
+    segment_record      *tmpseg;
+
+    dir       = Pass2Info.ResFiles->Dir;
+    restab    = &(Pass2Info.TmpFile.u.NEInfo.Res);
+    tmphandle = Pass2Info.TmpFile.Handle;
+    reshandle = Pass2Info.ResFiles->Handle;
+    tmpseg    = Pass2Info.TmpFile.u.NEInfo.Seg.Segments;
+    currseg   = Pass2Info.OldFile.u.NEInfo.Seg.NumSegs;
+    error     = RS_OK;
+
+    tmpseg += currseg;
+    shift_count = Pass2Info.TmpFile.u.NEInfo.WinHead.align;
+
+    /* walk through the WRes directory */
+    wind = WResFirstResource( dir );
+    while (!WResIsEmptyWindow( wind )) {
+        if (WResIsFirstResOfType( wind )) {
+            exe_type = findExeTypeRecord( restab, WResGetTypeInfo( wind ) );
+        }
+
+        res  = WResGetResInfo( wind );
+        lang = WResGetLangInfo( wind );
+
+        /* Fill in segment structure */
+        tmpseg->address = RcTell( tmphandle ) >> shift_count;
+        tmpseg->size    = lang->Length;
+        tmpseg->min     = lang->Length;
+        tmpseg->info    = SEG_DATA | SEG_READ_ONLY | SEG_LEVEL_3;
+
+        /* Copy resource data */
+        error = copyOneResource( restab, exe_type, lang, res, reshandle,
+                                tmphandle, restab->Dir.ResShiftCount,
+                                &err_code );
+
+        if( error != RS_OK ) break;
+
+        CheckDebugOffset( &(Pass2Info.TmpFile) );
+
+        wind = WResNextResource( wind, dir );
+        tmpseg++;
+    }
+
+    switch( error ) {
+    case RS_WRITE_ERROR:
+        RcError( ERR_WRITTING_FILE, Pass2Info.TmpFile.name,
+                 strerror( err_code ) );
+        break;
+    case RS_READ_ERROR:
+        RcError( ERR_READING_RES, CmdLineParms.OutResFileName,
+                 strerror( err_code ) );
+        break;
+    case RS_READ_INCMPLT:
+        RcError( ERR_UNEXPECTED_EOF, CmdLineParms.OutResFileName );
+        break;
+    default:
+        break;
+    }
+    return( error );
+} /* CopyOS2Resources */
+
 /*
  * writeTypeRecord-
  * NB when an error occurs this function must return without altering errno
@@ -428,7 +509,7 @@ extern RcStatus WriteResTable( int handle, ResTable *restab, int *err_code )
         }
     }
 
-    if( error ==  RS_OK ) {
+    if( error == RS_OK ) {
         zero = 0;
         num_wrote = RcWrite( handle, &zero, sizeof(uint_16) );
         if( num_wrote != sizeof( uint_16 ) ) {
@@ -444,3 +525,54 @@ extern RcStatus WriteResTable( int handle, ResTable *restab, int *err_code )
 
     return( error );
 } /* WriteResTable */
+
+/*
+ * WriteOS2ResTable
+ * NB when an error occurs this function must return without altering errno
+ */
+extern RcStatus WriteOS2ResTable( int handle, ResTable *restab, int *err_code )
+/***************************************************************************/
+{
+    FullTypeRecord              *exe_type;
+    FullResourceRecord          *exe_res;
+    int                         num_wrote;
+    int                         error;
+    uint_16                     tmp;
+
+    /* IBM's OS/2 RC accepts string resource IDs/types but quietly replaces
+     * all strings with zeros when writing out the resources to NE modules.
+     * Strange thing to do, but we'll do the same.
+     */
+    error = RS_OK;
+    for (exe_type = restab->Dir.Head; exe_type != NULL && error == RS_OK;
+            exe_type = exe_type->Next) {
+        for( exe_res = exe_type->Head; exe_res != NULL && error == RS_OK;
+                exe_res = exe_res->Next ) {
+            tmp = exe_type->Info.type;
+            if( tmp & 0x8000 )
+                tmp &= 0x7FFF;
+            else
+                tmp = 0;
+            num_wrote = RcWrite( handle, &tmp, sizeof(uint_16) );
+            if( num_wrote != sizeof( uint_16 ) ) {
+                error = RS_WRITE_ERROR;
+            }
+            else {
+                tmp = exe_res->Info.name;
+                if( tmp & 0x8000 )
+                    tmp &= 0x7FFF;
+                else
+                    tmp = 0;
+                num_wrote = RcWrite( handle, &tmp, sizeof(uint_16) );
+                if( num_wrote != sizeof( uint_16 ) ) {
+                    error = RS_WRITE_ERROR;
+                }
+            }
+        }
+    }
+
+    *err_code = errno;
+    freeResTable( restab );
+
+    return( error );
+} /* WriteOS2ResTable */

@@ -24,39 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  Stub routines for GUI resource editors (those only support
+*               Win16 and Win32 resources, not OS/2 resources).
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#include "wresall.h"
+#include "global.h"
 
-#pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
-#endif
-
-int _dos_switch_char()
+void SemOS2WriteFontDir( void )
 {
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
-    return( '-' );
-#endif
+}
+
+void SemOS2WriteStringTable( FullStringTable *currtable, WResID *type )
+{
+}
+
+int RcBuildLXResourceObjects( void )
+{
+    return( TRUE );
+}
+
+int CopyLXExeObjects( void )
+{
+    return( TRUE );
+}
+
+int RcWriteLXResourceObjects( void )
+{
+    return( TRUE );
 }

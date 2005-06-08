@@ -297,6 +297,8 @@ static bool ScanOptionsArg( const char * arg )
                 CmdLineParms.TargetOS = RC_TARGET_OS_WIN16;
             } else if( stricmp( arg, "nt" ) == 0 ) {
                 CmdLineParms.TargetOS = RC_TARGET_OS_WIN32;
+            } else if( stricmp( arg, "os2" ) == 0 ) {
+                CmdLineParms.TargetOS = RC_TARGET_OS_OS2;
             } else {
                 RcError( ERR_UNKNOWN_TARGET_OS, arg );
                 contok = FALSE;
@@ -733,6 +735,8 @@ static void defaultParms( void )
         }
     #elif defined(__NT__)
         CmdLineParms.TargetOS = RC_TARGET_OS_WIN32;
+    #elif defined(__OS2__)
+        CmdLineParms.TargetOS = RC_TARGET_OS_OS2;
     #else
         CmdLineParms.TargetOS = RC_TARGET_OS_WIN16;
     #endif
