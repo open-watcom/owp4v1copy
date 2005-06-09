@@ -357,7 +357,11 @@ extern void SetStkSize( void )
 /****************************/
 {
     StackSegPtr = StackSegment();
-    if( StackSize < 0x200 ) StackSize = 0x200;
+    if( FmtData.dll ) {
+        StackSize = 0;  // DLLs don't have their own stack
+    } else if( StackSize < 0x200 ) {
+        StackSize = 0x200;
+    }
     if( StackSegPtr != NULL ) {
         if( LinkFlags & STK_SIZE_FLAG ) {
             if( !(FmtData.type & MK_NOVELL) ) {
