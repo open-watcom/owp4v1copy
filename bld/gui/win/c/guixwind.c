@@ -1093,16 +1093,17 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         wKey = LOWORD(wparam);
         // Scroll wheel upwards  gives  120
         //    "     "   downward   "   -120
-
-        if (gcWheelDelta > 0) {
+        if( wnd != GUICurrWnd ) // Send to child window with focus
+            wnd = GUICurrWnd;
+        if( gcWheelDelta > 0 ) {
             // positive - scroll up
-            if (wKey == MK_CONTROL || wKey == MK_SHIFT)
+            if( wKey == MK_CONTROL || wKey == MK_SHIFT )
                GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEUP, 0L );
             else
                GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEUP, 0L );
         } else {
             // negative - scroll down
-            if (wKey == MK_CONTROL || wKey == MK_SHIFT)
+            if( wKey == MK_CONTROL || wKey == MK_SHIFT )
                GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEDOWN, 0L );
             else
                GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEDOWN, 0L );

@@ -221,6 +221,12 @@ bool VComponent::keyDown( WKeyCode kc, WKeyState ks )
     }
 }
 
+// forward notification to the child control
+bool VComponent::scrollNotify( WScrollNotification sn, int diff )
+{
+    return( _vItems->scrollNotify( sn, diff ) );
+}
+
 void VComponent::resetPopups()
 {
     setPopup( _parent->targetPopup() );
