@@ -110,14 +110,14 @@ $(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !endif
 
 # ytab.c is renamed to ytabw.c to avoid filename conflict
-ytabw.c ytab.gh : rc.y $(wrc2_dir)/y/yydriver.c rcmem.h
+ytabw.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(byacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
         @cp ytab.c ytabw.c
         @rm -f ytab.c
         @cp ytab.h ytab.gh
         @rm -f ytab.h
 
-ytab2.c ytab2.gh : rcos2.y $(wrc2_dir)/y/yydrivr2.c rcmem.h
+ytab2.c ytab2.gh : rcos2.y $(wrc_dir)/y/yydrivr2.c rcmem.h
         $(byacc) -d -b $[@ $[:yydrivr2.c >$(nulldevice)
         @cp ytab.c ytab2.c
         @rm -f ytab.c

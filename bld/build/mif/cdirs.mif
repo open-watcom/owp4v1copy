@@ -68,9 +68,6 @@ wspy_dir        = $(sdk_dir)/spy
 !ifndef wrc_dir
 wrc_dir         = $(sdk_dir)/rc/rc
 !endif
-!ifndef wrc2_dir
-wrc2_dir        = $(sdk_dir)/rc/rcos2
-!endif
 !ifndef wr_dir
 wr_dir          = $(sdk_dir)/wr
 !endif
@@ -379,9 +376,6 @@ wspy_dir        = $(sdk_dir)\spy
 !endif
 !ifndef wrc_dir
 wrc_dir         = $(sdk_dir)\rc\rc
-!endif
-!ifndef wrc2_dir
-wrc2_dir        = $(sdk_dir)\rc\rcos2
 !endif
 !ifndef wr_dir
 wr_dir          = $(sdk_dir)\wr
