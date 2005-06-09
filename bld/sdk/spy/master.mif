@@ -68,11 +68,7 @@ extra_l_flags_nt  = option stack=64k option heapsize=2k &
 extra_l_flags     = option map
 !ifeq host_cpu  386
 # To maintain cross-version linkability
-!ifdef __LINUX__
-extra_l_flags    += alias "'_WinMain'='_WinMain@16'"
-!else
-extra_l_flags    += alias '_WinMain'='_WinMain@16'
-!endif
+extra_l_flags_nt  += alias '_WinMain'='_WinMain@16'
 !endif
 
 wspy_dll_lflags_wini86 = $(dll_debug_$(host_cpu)) &
@@ -108,14 +104,17 @@ all : $(wspy_to_build_$(host_os)) .SYMBOLIC
         @%null
 
 $(name).exe : $(objs) $(name).res $(dllname).lib
-        $(linker) $(lflags) name $^@ file { $(objs) }
+        %create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk file { $(objs) }
+        $(linker) name $^@ @$^&.lnk
 !ifeq host_cpu axp
 !ifeq release 0
         cvpack $(name).exe
         wstrip -q $(name).exe $(name).exe $(name).sym
 !endif
 !endif
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 !ifeq host_cpu axp
 !ifeq release 0
         wstrip -q -a wspy.exe . wspy.sym

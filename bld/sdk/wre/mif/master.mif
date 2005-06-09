@@ -122,7 +122,7 @@ $(name).exe: wremsgs.gh $(OBJS) $(name).res $(xlibs)
         @for %i in ($(OBJS)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 wremsgs.gh: wretemp.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
@@ -133,4 +133,4 @@ wretemp.gh: ../h/wre.msg
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@

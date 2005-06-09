@@ -25,7 +25,7 @@ WINDOWS=1
 
 resdir = $(wimgedit_dir)/objos2/res
 rcdeps = $(resdir)/$(name).rc
-resinc = -I "$(wimgedit_dir)/objos2/res"
+resinc = -I"$(wimgedit_dir)/objos2/res"
 objs =  imgedit.obj ieproc.obj ieclrpal.obj ieglob.obj pmcreate.obj &
         curclr.obj clrcntls.obj colours.obj imgdata.obj hinttext.obj &
         ienew.obj ieutil.obj drawproc.obj pmutils.obj xorand.obj &
@@ -140,11 +140,7 @@ extra_l_flags     = option map lib { $(libs) }
 extra_l_flags_win = option rwr option stack=16k option heapsize=2k lib ddeml.lib
 extra_l_flags_nt  = option stack=32k
 !ifeq host_CPU 386
-!ifdef __LINUX__
-extra_l_flags_nt += alias "'_WinMain'='_WinMain@16'"
-!else
 extra_l_flags_nt += alias '_WinMain'='_WinMain@16'
-!endif
 !endif
 extra_l_flags_os2 = option stack=12k option heapsize=2k &
                     option symfile=$(name).sym
@@ -156,20 +152,26 @@ inc_dirs += -I"$(wpi_dir)/h" -I"$(sdk_dir)/misc"
         @set include=
 
 !ifeq host_OS os2
-$(name).exe : $(objs) $(name).res $(libs)
-        $(linker) $(lflags) name $(name).exe file { $(objs) }
-        $(%toolkit)/os2bin/rc $(name).res $(name).exe
-        wstrip -a $(name).exe . $(name).sym
-#       $(RC) $(rc_flags) -k $(name).res
+
+$(name).exe : $(name).res $(objs) $(libs)
+        %create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk file { $(objs) }
+        $(linker)  name $^@ @$^&.lnk
+        $(rc) -k $^&.res $^@
 
 $(name).res : $(wimgedit_dir)/objos2/res/$(name).rc $(rcdeps)
         @$(%toolkit)/os2bin/rc -r -DBMP_DIR=$(sdk_dir)/wimgedit/res &
         -DMISC_DIR=$(sdk_dir)/misc $(inc_path) $(resinc) $[@ $^@
+
 !else
 
-$(name).exe : rcstr.gh $(objs) $(name).res $(libs)
-        $(linker) $(lflags) name $(name).exe file { $(objs) }
-        $(rc) $(rc_flags) -k $(name).res $^@
+$(name).exe : $(name).res $(objs) $(libs)
+        %create $^&.lnk
+        @%append $^&.lnk $(lflags)
+        @%append $^&.lnk file { $(objs) }
+        $(linker)  name $^@ @$^&.lnk
+        $(rc) -k $^&.res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -177,6 +179,8 @@ rcstr.gh : rcstrmsg.gh
 rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
         $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
 
+$(name).res : $(name).rc rcstr.gh
+
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 -I"$(wimgedit_dir)/res" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 -I"$(wimgedit_dir)/res" $(inc_path) $[@ -fo=$^@
 !endif

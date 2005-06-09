@@ -111,7 +111,7 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 
 $(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(wres_lib) $(name).res
         $(linker) $(lflags) name $^@ lib $(wres_lib) file {$(object)}
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 #---------- TEST
 test_system_win_i86= windows
@@ -138,4 +138,4 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         @rm -f ytab.c # ytab.c isn't used
 
 $(name).res: ../h/wr.rc .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad -DWR_COMPILED $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@

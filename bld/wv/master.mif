@@ -372,10 +372,8 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
-!else ifneq host_os os2
-        $(rc) -k $(rc_flags) $(resfile) $^@
 !else
-        $(brc) -q -k $(rc_flags) $(resfile) $^@
+        $(rc) -k $(resfile) $^@
 !endif
 !if 0
 !ifdef ovl_dos
@@ -548,19 +546,19 @@ wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvpmdll.res : $(hdir)/strings.rc litdef.gh .autodepend
-        $(brc) -q $(rc_flags) -r -ad -k -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
 
 wvpm.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(brc) -q $(rc_flags) -r -ad -k -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(brc) -q $(rc_flags) -DJAPANESE_MESSAGES -r -ad -k -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -DJAPANESE_MESSAGES -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 !ifneq sys_windowed 1
 .dlg : $(hdir)

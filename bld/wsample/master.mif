@@ -235,7 +235,7 @@ $(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
     @%append tmp.lnk lib $(wres_lib)
     $(linker) name $^@ @tmp.lnk
 !ifeq host_os win
-    $(rc) $(rc_flags) $(xname).res $^@
+    $(rc) $(xname).res $^@
 !else
     wstrip -q -a -r $^@ . $(xname).res
 !endif

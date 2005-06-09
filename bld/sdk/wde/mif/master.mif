@@ -181,7 +181,7 @@ $(name).exe: wdemsgs.gh $(OBJS) $(name).res $(xlibs)
         @for %i in ($(OBJS)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 # implicit rules
 #################

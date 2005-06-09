@@ -47,6 +47,7 @@ as_ppc          = *wasppc
 as_mps          = *wasmps
 
 rc              = *wrc
+rcaui           = *wrc
 
 
 !ifdef release_$(proj_name)
@@ -327,7 +328,7 @@ rc_flags_os2    = -bt=os2
 
 rc_flags_axp    = -D__AXP__
 
-rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
+rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu)) $(extra_rc_flags_$(host_os))
 
 !ifdef __UNIX__
 
@@ -416,9 +417,9 @@ librarian       = $(librarian_$(host_cpu))
 as              = $(as_$(host_cpu))
 vi              = vi -q -d -i
 !ifdef __UNIX__
-rc_aui          = $(rc) -bt=windows -I$(watcom_dir)/h -zk0 -r
+rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)/h -zk0 -r
 !else
-rc_aui          = $(rc) -bt=windows -I$(watcom_dir)\h -zk0 -r
+rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)\h -zk0 -r
 !endif
 
 !include bhost.mif

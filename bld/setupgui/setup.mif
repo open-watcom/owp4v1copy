@@ -117,12 +117,11 @@ extra_l_flags = op map op symfile
 # rc flags
 ###########
 extra_rc_flags_win = -30 -D_WIN
-extra_rc_flags_nt = -D_WINNT
-extra_rc_flags = -q -r $(extra_rc_flags_$(host_os))
+extra_rc_flags_nt  = -D_WINNT
 
 res_dir = ../res/$(host_os)
 
-rcx_out_os2 = $(brc) -q
+rcx_out_os2 = $(rc)
 rcx_out_win = $(rc) -30 -k
 rcx_out_nt  = $(rc) -k
 rc_out = $(rcx_out_$(host_os))
@@ -265,60 +264,28 @@ setupui.res : setupui.rc $(dep_res1)
     $(rc_aui) -I"$(gui_dir)/h" $(inc_dirs_sys_win) $[@ -fo=setupui.res
 
 csetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
 
 jcsetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DJCSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 
 f77setup.res : setup.rc $(dep_res1) ../res/f77.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DF77SETUP $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DF77SETUP $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DF77SETUP $(res_inc_dirs) $[@ -fo=$^@
 
 jfsetup.res : setup.rc $(dep_res1) ../res/f77.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 
 dbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 
 jdbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 
 sdbsetup.res : setup.rc $(dep_res1) ../res/sqlserv.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 
 setup.res : setup.rc $(dep_res1) ../res/generic.bmp
-!ifeq host_os os2
-    $(brc) $(rc_flags) $(extra_rc_flags) $(res_inc_dirs) $[@ -fo=$^@
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(res_inc_dirs) $[@ -fo=$^@
-!endif
+    $(rc) $(rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 
 dosstub.exe : ../stub/dosstub.c
     wcl -zq -l=dos -os -d0 -bt=dos ..\stub\dosstub

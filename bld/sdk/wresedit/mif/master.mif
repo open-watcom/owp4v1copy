@@ -87,10 +87,10 @@ $(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs)
         @for %i in ($(object)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
 
 wmsgfile.gh: msgtemp.gh
         $(vi) -s $(misc_dir)/msgtoh.vi -p"$^@" $[@

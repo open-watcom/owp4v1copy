@@ -42,7 +42,7 @@ $(name).exe : rcstr.gh $(objs) $(name).res
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -51,4 +51,4 @@ rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
         $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
 
 $(name).res : $(wddespy_dir)/$(name).rc .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 -I"$(wddespy_dir)/res" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 -I"$(wddespy_dir)/res" $(inc_path) $[@ -fo=$^@

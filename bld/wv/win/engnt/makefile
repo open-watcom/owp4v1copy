@@ -19,4 +19,4 @@ sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj
 
 dve.exe : $(resfile) stubdb.obj wd.lib $(__MAKEFILES__)
         $(linker) sys nt name $^@ debug all op symf,map file stubdb.obj lib wd.lib
-        $(rc) $(rc_flags) -k $(resfile) dve.exe
+        $(rc) -k $(resfile) dve.exe

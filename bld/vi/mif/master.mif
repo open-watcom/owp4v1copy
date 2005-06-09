@@ -64,10 +64,10 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
         wbind $(lname) -s $(lang_root)/binw/win386.ext -R -q $(proj_name).res
         rm $(lname)
 !else
-        $(rc) $(rc_flags) $(inc_path) -k -zk0 $(proj_name).res $^@
+        $(rc) -k -zk0 $(proj_name).res $^@
 !endif
 !else ifeq host_os nt
-        $(rc) $(rc_flags) $(inc_path) -zk0 $(proj_name).res $^@
+        $(rc) -k -zk0 $(proj_name).res $^@
 !endif
         # don't bind - it screws up everything - BBB
 !else

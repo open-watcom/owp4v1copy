@@ -82,16 +82,14 @@ $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(ma
     $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifneq sys_windowed 1
     wstrip -q -a -r  $^@ . $(resfile)
-!else ifneq host_os os2
-    $(rc) $(rc_flags) -k $(resfile) $^@
 !else
-    $(brc) -q $(rc_flags) $(resfile) $^@
+    $(rc) -k $(resfile) $^@
 !endif
 !endif
 
 !ifeq host_os os2
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(brc) -q $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $]@ -fo=$^@
 !else ifeq host_os nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@

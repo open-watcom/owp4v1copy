@@ -77,10 +77,9 @@ mem_flag = -of+
 extra_c_flags_dmem = $(mem_flag) -I"$(trmem_dir)"
 !endif
 
-rc_flags_nt  = -bt=nt -k
-rc_flags_win = -bt=windows -k
-rc_flags_os2 = -p
-rc_flags     = $(rc_flags_$(host_OS))
+extra_rc_flags_win = -k
+extra_rc_flags_nt  = -k
+extra_rc_flags_os2 = -p
 
 rc_file_nt  = ../res/wbrw.rc
 rc_file_win = ../res/wbrw.rc
@@ -129,11 +128,7 @@ all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
 $(name).exe : $(OBJECTS) $(LIBS)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
-!ifeq host_os os2
-    $(brc) -q $(rc_flags) $(rc_file) $^@
-!else
     $(rc) $(rc_flags) $(rc_file) $^@
-!endif
 !ifdef gen_browse_file
     @%create browser.wbr
     @for %i in ($(mbr_files)) do @%append browser.wbr file %i

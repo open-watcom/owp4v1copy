@@ -92,7 +92,7 @@ inc_dirs = -I. -I.. -I"$(common_dir)" -I"$(dig_dir)/h" -I"$(sdk_misc)" $(dis_inc
 
 $(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj)
         $(linker) @$(link_name)
-        $(rc) $(rc_flags) -k $(proj_name).res $^@
+        $(rc) -k $(proj_name).res $^@
 
 
 $(link_name) : $(__MAKEFILES__)
@@ -101,13 +101,13 @@ $(link_name) : $(__MAKEFILES__)
 
 !ifeq host_OS win
 $(proj_name).res : ../drwatcom.rc .AUTODEPEND
-        $(rc) $(rc_flags) $(inc_path) -r -ad -zk $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk $(inc_path) $[@ -fo=$^@
 !else
 $(proj_name).res : ../drnt.rc .AUTODEPEND
 !ifeq drwatcom_95 1
-        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 -DCHICAGO $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) -DCHICAGO $[@ -fo=$^@
 !else
-        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
 !endif
 !endif
 

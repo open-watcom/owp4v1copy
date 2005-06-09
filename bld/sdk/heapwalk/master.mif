@@ -45,7 +45,7 @@ msgfiles = $(sdk_dir)/misc/savelbox.msg &
 
 $(name).exe : rcstr.gh $(dis_prereq) $(objs) $(dis_objs) $(name).res
         $(linker) $(lflags) name $^@ file {$(objs) $(dis_objs)}
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@

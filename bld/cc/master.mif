@@ -134,7 +134,7 @@ dllname = wccd$(target_cpu)e
 cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
 
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
+build_rc_nt_386 = 1
 
 !ifdef bootstrap
 
@@ -251,7 +251,7 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps
 !endif
         $(linker) $(mode_lflags) @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_dirs_sys) cc.rc $^@
+        $(rc) $(rc_flags) $(inc_dirs_sys) cc.rc $^@
 !endif
 
 $(dllname).lib : $(dllname).dll

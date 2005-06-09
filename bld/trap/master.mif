@@ -252,7 +252,7 @@ $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__
         @%append $^&.lnk $(extra_linker)
         $(linker) @$^&.lnk 
 !ifdef resource_file
-        $(rc) -bt=$(targ) $(resource_file) $^@
+        $(rc) $(resource_file) $^@
 !endif
 !ifdef extra_cmds
         $(extra_cmds)
@@ -278,4 +278,4 @@ inc_dirs += -I"$(ow_nwoss_root)/nw$(nlm_ver)/src" -I"$(ow_nwoss_root)/common/h"
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) -r $(inc_path) -bt=$(targ) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -I"$(trap_dir)/common" $[@ -fo=$^@

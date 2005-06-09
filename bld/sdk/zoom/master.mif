@@ -27,11 +27,11 @@ inc_dirs = -I.. -I"$(sdk_dir)/misc"
 
 $(name).exe : rcstr.gh $(objs) $(name).res
         $(linker) $(lflags) name $(name).exe file { $(objs) }
-        $(rc) $(rc_flags) -k $(name).res $^@
+        $(rc) -k $(name).res $^@
 
 $(name)j.exe : $(name).exe $(name)j.res
         cp $(name).exe $(name)j.exe
-        $(rc) $(rc_flags) -k $(name)j.res $^@
+        $(rc) -k $(name)j.res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@

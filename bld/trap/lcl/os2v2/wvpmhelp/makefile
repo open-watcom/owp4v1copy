@@ -42,12 +42,12 @@ wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     @%append $(tmplnk) option modname=wdpmhelp
     @%append $(tmplnk) option description $(description)
     $(linker) @$(tmplnk)
-    $(brc) -q pmhelp.res $^@
+    $(rc) pmhelp.res $^@
 
 .c: ../c
 
 pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
-        $(brc) -q -bt=os2 -r -fo=./pmhelp.res $<
+        $(rc) $(rc_flags) -r $(inc_dirs_sys_os2) -fo=./pmhelp.res $[@
 
 _err.gh : ./mkstr.exe
         $[@ $^@
