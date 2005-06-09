@@ -46,18 +46,6 @@ as_axp          = *wasaxp
 as_ppc          = *wasppc
 as_mps          = *wasmps
 
-!ifndef %use_os2tk_stuff
-rc_os2_path = $(lang_root)\binp
-!else
-rc_os2_path = $(os2_toolkit)\bin
-!endif
-
-rc_os2      = $(rc_os2_path)\rc.exe
-
-!ifeq host_os os2
-%PATH = $+$(%PATH);$(%watcom)\binp$-
-# this extra line appears to be needed
-!endif
 rc              = *wrc
 
 

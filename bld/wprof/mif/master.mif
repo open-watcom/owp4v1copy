@@ -90,10 +90,8 @@ $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(ma
 !endif
 
 !ifeq host_os os2
-wprofgui.res : ../h/wprofgui.rc
-        $(cc) -bt=os2 -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wprof.i $]@
-        $(brc) -q $(rc_flags) -r $(inc_dirs_sys_os2) ../h/foros2pm.rc -fo=wprofgui.res
-        @rm -f wprof.i
+wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
+        $(brc) -q $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $]@ -fo=$^@
 !else ifeq host_os nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@
