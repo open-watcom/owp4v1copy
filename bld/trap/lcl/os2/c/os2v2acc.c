@@ -578,7 +578,7 @@ unsigned ReqGet_sys_config()
     ret->sys.os = OS_OS2;
     DosGetVersion( &version );
     ret->sys.osminor = version & 0xff;
-    ret->sys.osmajor = (version >> 16) & 0xff;
+    ret->sys.osmajor = version >> 8;
     ret->sys.cpu = X86CPUType();
     ret->sys.fpu = ret->sys.cpu & X86_CPU_MASK;
     WriteRegs( &Buff );
