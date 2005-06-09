@@ -980,7 +980,7 @@ static bool addToMenuBottom( char *fname, bool checkit )
     char        help[MAX_STR];
 
     MySprintf( name,"&%d %s", thisCount, fname );
-    MySprintf( data,"edit %s", fname );
+    MySprintf( data,"edit \"%s\"", fname );
     MySprintf( help,"Switches to the window containing %s", fname );
     citem = addItemToMenu( thisMenu, name, help, data, TRUE );
     if( checkit ) {

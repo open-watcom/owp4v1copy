@@ -35,7 +35,7 @@
 #include "linedlg.h"
 
 static char     lineStr[ 20 ];
-static char     lineLen = sizeof( lineStr - 1 );
+static char     lineLen = sizeof( lineStr ) - 1;
 static linenum  *lineVal;
 
 /*
