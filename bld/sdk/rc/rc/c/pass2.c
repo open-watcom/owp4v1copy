@@ -70,7 +70,7 @@ static RcStatus seekPastResTable( int *err_code )
 
     tmpexe = &(Pass2Info.TmpFile);
 
-    if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+    if( Pass2Info.OldFile.u.NEInfo.WinHead.target == TARGET_OS2 )
         res_tbl_size = tmpexe->u.NEInfo.OS2Res.table_size;
     else
         res_tbl_size = tmpexe->u.NEInfo.Res.Dir.TableSize;
@@ -617,80 +617,42 @@ extern int MergeResExeNE( void )
     RcStatus        error;
     int             err_code;
 
-    if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 ) {
-        error = copyStubFile( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    error = copyStubFile( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = InitOS2ResTable( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    error = AllocAndReadSegTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = AllocAndReadOS2SegTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    InitResTable();
 
-        error = seekPastResTable( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    error = seekPastResTable( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = copyOtherTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    error = findEndOfResources( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = copyOS2Body();
-        if( error ) return( FALSE );
-        if( StopInvoked ) goto STOP_ERROR;
+    error = copyOtherTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = copyDebugInfo();
-        if( error != RS_OK ) {
-            err_code = errno;
-            goto HANDLE_ERROR;
-        }
-        if( StopInvoked ) goto STOP_ERROR;
+    error = copyBody();
+    if( error ) return( FALSE );
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = writeOS2HeadAndTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    error = copyDebugInfo();
+    if( error != RS_OK ) {
+        err_code = errno;
+        goto HANDLE_ERROR;
     }
-    else {
-        error = copyStubFile( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
-        error = AllocAndReadSegTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-
-        InitResTable();
-
-        error = seekPastResTable( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = findEndOfResources( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = copyOtherTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = copyBody();
-        if( error ) return( FALSE );
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = copyDebugInfo();
-        if( error != RS_OK ) {
-            err_code = errno;
-            goto HANDLE_ERROR;
-        }
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = writeHeadAndTables( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-    }
+    error = writeHeadAndTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
 
     return( TRUE );
 
@@ -720,6 +682,75 @@ STOP_ERROR:
     return( FALSE );
 #endif
 } /* MergeResExeNE */
+
+
+extern int MergeResExeOS2NE( void )
+{
+    RcStatus        error;
+    int             err_code;
+
+    error = copyStubFile( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = InitOS2ResTable( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = AllocAndReadOS2SegTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = seekPastResTable( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = copyOtherTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = copyOS2Body();
+    if( error ) return( FALSE );
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = copyDebugInfo();
+    if( error != RS_OK ) {
+        err_code = errno;
+        goto HANDLE_ERROR;
+    }
+    if( StopInvoked ) goto STOP_ERROR;
+
+    error = writeOS2HeadAndTables( &err_code );
+    if( error != RS_OK ) goto HANDLE_ERROR;
+    if( StopInvoked ) goto STOP_ERROR;
+    return( TRUE );
+
+HANDLE_ERROR:
+    switch( error ) {
+    case RS_READ_ERROR:
+        RcError( ERR_READING_EXE, Pass2Info.OldFile.name,
+                 strerror( err_code ) );
+        break;
+    case RS_READ_INCMPLT:
+        RcError( ERR_UNEXPECTED_EOF, Pass2Info.OldFile.name );
+        break;
+    case RS_WRITE_ERROR:
+        RcError( ERR_WRITTING_TMP, Pass2Info.TmpFile.name,
+                 strerror( err_code ) );
+        break;
+    case RS_NO_MEM:
+        break;
+    default:
+       RcError( ERR_INTERNAL, INTERR_UNKNOWN_RCSTATUS );
+    }
+    return( FALSE );
+
+STOP_ERROR:
+    RcFatalError( ERR_STOP_REQUESTED );
+#if !defined( __WATCOMC__ )
+    return( FALSE );
+#endif
+} /* MergeResExeOS2NE */
 
 
 extern RcStatus updateDebugDirectory( void )

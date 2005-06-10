@@ -477,7 +477,8 @@ static int OpenResFileInfo( ExeType type )
     ExtraRes        *curfile;
 
 
-    if( type == EXE_TYPE_NE && CmdLineParms.ExtraResFiles != NULL ) {
+    if( (type == EXE_TYPE_NE_WIN || type == EXE_TYPE_NE_OS2)
+        && CmdLineParms.ExtraResFiles != NULL ) {
         RcError( ERR_FR_NOT_VALID_FOR_WIN );
         return( FALSE );
     }
@@ -524,7 +525,8 @@ static int openExeFileInfoRO( char * filename, ExeFileInfo * info )
     info->Type = FindNEPELXHeader( info->Handle, &info->WinHeadOffset );
     info->name = filename;
     switch( info->Type ) {
-    case EXE_TYPE_NE:
+    case EXE_TYPE_NE_WIN:
+    case EXE_TYPE_NE_OS2:
         status = SeekRead( info->Handle, info->WinHeadOffset,
                             &info->u.NEInfo.WinHead, sizeof(os2_exe_header) );
         if( status != RS_OK ) {
@@ -637,7 +639,8 @@ extern void ClosePass2FilesAndFreeMem( void )
         old->IsOpen = FALSE;
     }
     switch( old->Type ) {
-    case EXE_TYPE_NE:
+    case EXE_TYPE_NE_WIN:
+    case EXE_TYPE_NE_OS2:
         FreeNEFileInfoPtrs( &old->u.NEInfo );
         break;
     case EXE_TYPE_PE:
@@ -655,7 +658,8 @@ extern void ClosePass2FilesAndFreeMem( void )
         tmp->IsOpen = FALSE;
     }
     switch( tmp->Type ) {
-    case EXE_TYPE_NE:
+    case EXE_TYPE_NE_WIN:
+    case EXE_TYPE_NE_OS2:
         FreeNEFileInfoPtrs( &tmp->u.NEInfo );
         break;
     case EXE_TYPE_PE:
@@ -697,7 +701,8 @@ extern int RcPass2IoInit( void )
             *Pass2Info.TmpFile.u.PEInfo.WinHead =
                                         *Pass2Info.OldFile.u.PEInfo.WinHead;
         }
-        if( Pass2Info.OldFile.Type == EXE_TYPE_NE
+        if( (Pass2Info.OldFile.Type == EXE_TYPE_NE_WIN
+            || Pass2Info.OldFile.Type == EXE_TYPE_NE_OS2)
             && CmdLineParms.ExtraResFiles != NULL ) {
             RcError( ERR_FR_NOT_VALID_FOR_WIN );
             noerror = FALSE;

@@ -48,9 +48,10 @@
 
 typedef enum {
     EXE_TYPE_UNKNOWN,
-    EXE_TYPE_PE,
-    EXE_TYPE_NE,
-    EXE_TYPE_LX
+    EXE_TYPE_PE,        // PE format, Win32
+    EXE_TYPE_NE_WIN,    // NE format, Win16
+    EXE_TYPE_NE_OS2,    // NE format, 16-bit OS/2
+    EXE_TYPE_LX         // LX format, 32-bit OS/2
 } ExeType;
 
 typedef struct ResFileInfo {
@@ -111,5 +112,6 @@ typedef struct RcPass2Info {
 extern int MergeResExeNE( void );
 extern int MergeResExePE( void );
 extern int MergeResExeLX( void );
+extern int MergeResExeOS2NE( void );
 
 #endif

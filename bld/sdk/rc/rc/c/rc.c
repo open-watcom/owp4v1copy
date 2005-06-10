@@ -128,8 +128,11 @@ static int Pass2( void )
     noerror = RcPass2IoInit();
     if( noerror ) {
         switch( Pass2Info.OldFile.Type ) {
-        case EXE_TYPE_NE:
+        case EXE_TYPE_NE_WIN:
             noerror = MergeResExeNE();
+            break;
+        case EXE_TYPE_NE_OS2:
+            noerror = MergeResExeOS2NE();
             break;
         case EXE_TYPE_PE:
             noerror = MergeResExePE();

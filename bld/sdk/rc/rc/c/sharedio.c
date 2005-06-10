@@ -127,9 +127,15 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
 
         target = WResGetTargetOS( resfile->Dir );
         switch( type ) {
-        case EXE_TYPE_NE:
+        case EXE_TYPE_NE_WIN:
+            if( target != WRES_OS_WIN16 ) {
+                RcError( ERR_NONWIN_RES_TO_WIN_EXE, resfile->name, exename );
+                goto HANDLE_ERROR;
+            }
+            break;
+        case EXE_TYPE_NE_OS2:
             // No way to tell MS and IBM resource files apart, and I can't find
-            // a way to figure out if this is a Watcom .res file
+            // a good way to figure out if this is a Watcom .res file
             if( target != WRES_OS_WIN16 && target != WRES_OS_OS2 ) {
                 RcError( ERR_NONWIN_RES_TO_WIN_EXE, resfile->name, exename );
                 goto HANDLE_ERROR;
@@ -142,7 +148,7 @@ int OpenResFiles( ExtraRes *resnames, ResFileInfo **resinfo, int *allopen,
             }
             break;
         case EXE_TYPE_LX:
-            // Same problem as with EXE_TYPE_NE
+            // Same problem as with EXE_TYPE_NE_OS2
             if( target != WRES_OS_OS2 && target != WRES_OS_WIN16 ) {
                 RcError( ERR_NONOS2_RES_TO_OS2_EXE, resfile->name, exename );
                 goto HANDLE_ERROR;
