@@ -2,9 +2,9 @@ proj_name = wrc
 name = wrc
 
 !ifeq sys_dll 1
-xname = $(name).dll
+xname = $(name)e.dll
 !else
-xname = $(name).exe
+xname = $(name)e.exe
 !endif
 
 !ifndef wrc_autodepends
@@ -78,12 +78,12 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 extra_l_flags = option map
 
 !ifeq sys_dll 1
-!ifeq host_os nt
-extra_l_flags += option offset=0x69800000
-!endif
+extra_l_flags_nt += option offset=0x69800000
 !endif
 
 extra_l_flags_osi = option symfile
+extra_l_flags_os2 = option modname=$(name)
+extra_l_flags_nt  = option modname=$(name)
 
 # where to look for various files
 .c : .;$(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
@@ -99,13 +99,13 @@ $(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !ifeq host_os osi
         $(linker) $(lflags) name $^&.rex file { $(objs) } lib {$(wres_lib)}
         $(w32bind) $^&.rex $@ $(os2ldr)
-        @rm -f $^&.rex
+        @rm -f $^&e.rex
 !else	
         $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
 !endif
         wstrip -q -a -r $@ . $(name).res
 !ifeq sys_dll 1
-        $(librarian) -n $(name).lib +$(name).dll
+        $(librarian) -n $(name).lib +$(xname)
 !endif
 
 # ytab.c is renamed to ytabw.c to avoid filename conflict

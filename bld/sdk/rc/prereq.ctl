@@ -31,7 +31,7 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> wrc.exe <OWBINDIR>/bwrc.exe
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
@@ -41,7 +41,7 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
-    <CPCMD> wrc.exe <OWBINDIR>/bwrc.exe
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
@@ -51,7 +51,7 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
-    <CPCMD> wrc.exe <OWBINDIR>/bwrc.exe
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
@@ -61,7 +61,7 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
-    <CPCMD> wrc.exe <OWBINDIR>/bwrc.exe
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
