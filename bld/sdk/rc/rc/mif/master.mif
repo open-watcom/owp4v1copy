@@ -34,8 +34,6 @@ WRC_USE_TRMEM = 1
 !endif
 !endif
 
-splice_opts = -kDEBUG
-
 objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj                    &
         errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
         exereslx.obj exelxobj.obj exeseg.obj exeutil.obj global.obj     &
@@ -54,6 +52,7 @@ objs += rcdll.obj libmain.obj idemsgpr.obj
 !endif
 
 !ifeq release 0
+splice_opts = -kDEBUG
 !ifeq WRC_USE_TRMEM 1
 objs += trmem.obj
 !endif
