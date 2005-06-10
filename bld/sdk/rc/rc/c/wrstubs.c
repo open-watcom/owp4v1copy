@@ -55,3 +55,23 @@ int RcWriteLXResourceObjects( void )
 {
     return( TRUE );
 }
+
+int CopyOS2Resources( void )
+{
+    return( FALSE );
+}
+
+RcStatus InitOS2ResTable( int *err_code )
+{
+    return( RS_READ_ERROR );
+}
+
+RcStatus WriteOS2ResTable( int handle, OS2ResTable *restab, int *err_code )
+{
+    return( RS_READ_ERROR );
+}
+
+uint_32 ComputeOS2ResSegCount( WResDir dir )
+{
+    return( 0 );
+}
