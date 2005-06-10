@@ -34,6 +34,7 @@
 
 bool ParseOS2( void )
 {
+    return( 0 );
 }
 
 void ParseInitOS2( void )

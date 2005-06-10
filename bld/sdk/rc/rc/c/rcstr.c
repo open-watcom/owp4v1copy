@@ -213,7 +213,7 @@ static void ConstructStringBlock( StringBlock * str )
     for( i=0; i < cnt; i++ ) {
         currname = str->StringList[i];
         str->StringList[i] = nextstring;
-        CopyString( &nextstring, &currname, str->UseUnicode );
+        CopyString( (void **)&nextstring, &currname, str->UseUnicode );
     }
 #endif
 } /* ConstructStringBlock */
