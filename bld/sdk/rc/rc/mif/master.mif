@@ -34,8 +34,8 @@ WRC_USE_TRMEM = 1
 !endif
 !endif
 
-objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj                    &
-        errors.obj errprt.obj exeobj.obj exeres.obj exerespe.obj        &
+objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj errors.obj         &
+        errprt.obj exeobj.obj exeres.obj exeres2.obj exerespe.obj       &
         exereslx.obj exelxobj.obj exeseg.obj exeutil.obj global.obj     &
         layer0.obj param.obj pass2.obj rc.obj rcio.obj                  &
         rcmem.obj rcstr.obj ppalloc.obj scan.obj scan2.obj semaccel.obj &

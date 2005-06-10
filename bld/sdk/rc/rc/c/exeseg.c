@@ -117,10 +117,7 @@ extern int AllocAndReadSegTables( int *err_code )
 
 } /* AllocAndReadSegTables */
 
-/* If resource segments already exist, we need to throw them away, otherwise
- * the executable would keep growing. We assume that there is one segment per
- * resource and that resource segments are always last.
- */
+
 extern int AllocAndReadOS2SegTables( int *err_code )
 {
     int                 error;
@@ -133,35 +130,38 @@ extern int AllocAndReadOS2SegTables( int *err_code )
     os2_exe_header      *head;
 
     oldres = Pass2Info.OldFile.u.NEInfo.WinHead.resource;
-    newres = Pass2Info.TmpFile.u.NEInfo.Res.Dir.NumResources;
     oldseg = &(Pass2Info.OldFile.u.NEInfo.Seg);
     oldhandle = Pass2Info.OldFile.Handle;
     tmpseg = &(Pass2Info.TmpFile.u.NEInfo.Seg);
+    newres = ComputeOS2ResSegCount( Pass2Info.ResFiles->Dir );
 
     head = &(Pass2Info.OldFile.u.NEInfo.WinHead);
     head_offset = Pass2Info.OldFile.WinHeadOffset;
 
     if( (int_32)head->segments - oldres < 0 )
-        return RS_BAD_FILE_FMT;
+        return( RS_BAD_FILE_FMT );
 
-    oldseg->NumSegs = head->segments - oldres;
-    tmpseg->NumSegs = oldseg->NumSegs + newres;
+    oldseg->NumSegs = head->segments;
+    tmpseg->NumSegs = oldseg->NumSegs - oldres + newres;
+    oldseg->NumOS2ResSegs = oldres;
+    tmpseg->NumOS2ResSegs = newres;
+
     error = allocSegTable( oldseg, err_code );
-    if( error != RS_OK ) return( error );
-    error = allocSegTable( tmpseg, err_code );
-    if( error != RS_OK ) return( error );
+    if( error != RS_OK )
+        return( error );
 
-    error = readSegTable( oldhandle, head_offset + head->segment_off,
-                                oldseg );
-    if( error != RS_OK ){
+    error = allocSegTable( tmpseg, err_code );
+    if( error != RS_OK )
+        return( error );
+
+    error = readSegTable( oldhandle, head_offset + head->segment_off, oldseg );
+    if( error != RS_OK ) {
         *err_code = errno;
         return( error );
     }
-    error = readSegTable( oldhandle, head_offset + head->segment_off,
-                                tmpseg );
+    error = readSegTable( oldhandle, head_offset + head->segment_off, tmpseg );
     *err_code = errno;
     return( error );
-
 } /* AllocAndReadOS2SegTables */
 
 
@@ -344,8 +344,8 @@ static CpSegRc copyOneSegment( const segment_record * inseg,
     }
 
     return( ret );
-
 } /* copyOneSegment */
+
 
 extern CpSegRc CopySegments( uint_16 sect2mask, uint_16 sect2bits, bool sect2 )
 /*****************************************************************************/
@@ -416,3 +416,78 @@ extern CpSegRc CopySegments( uint_16 sect2mask, uint_16 sect2bits, bool sect2 )
     return( ret );
 
 } /* CopySegments */
+
+extern CpSegRc CopyOS2Segments( void )
+/*************************************
+ * Akin to CopySegments() only much, much simpler - just copies all segments
+ * without messing with them in any way. Only called once. Won't copy
+ * resource segments.
+ */
+{
+    segment_record      *oldseg;
+    segment_record      *tmpseg;
+    int                 num_segs;
+    SegTable            *old_seg_tbl;
+    ExeFileInfo         *old_exe_info;
+    ExeFileInfo         *tmp_exe_info;
+    int                 old_shift_count;
+    int                 new_shift_count;
+    int                 currseg;
+    CpSegRc             cponeret;
+    CpSegRc             ret;
+
+    old_seg_tbl = &Pass2Info.TmpFile.u.NEInfo.Seg;
+    oldseg = old_seg_tbl->Segments;
+    tmpseg = Pass2Info.TmpFile.u.NEInfo.Seg.Segments;
+    num_segs = old_seg_tbl->NumSegs - old_seg_tbl->NumOS2ResSegs;
+    old_exe_info = &Pass2Info.OldFile;
+    tmp_exe_info = &Pass2Info.TmpFile;
+    old_shift_count = Pass2Info.OldFile.u.NEInfo.WinHead.align;
+    new_shift_count = Pass2Info.TmpFile.u.NEInfo.WinHead.align;
+
+    ret = CPSEG_OK;
+    cponeret = CPSEG_OK;
+
+    currseg = 0;
+    while( currseg < num_segs ) {
+        cponeret = copyOneSegment( oldseg, tmpseg, old_exe_info,
+                                    tmp_exe_info, old_shift_count,
+                                    new_shift_count, FALSE );
+        if( cponeret == CPSEG_SEG_TOO_BIG ) {
+            ret = CPSEG_SEG_TOO_BIG;
+        }
+        CheckDebugOffset( &(Pass2Info.OldFile) );
+        CheckDebugOffset( &(Pass2Info.TmpFile) );
+        if( cponeret == CPSEG_ERROR ) {
+            break;
+        }
+        currseg++;
+        oldseg++;
+        tmpseg++;
+    }
+
+    if( cponeret == CPSEG_ERROR ) {
+        ret = CPSEG_ERROR;
+        Pass2Info.TmpFile.u.NEInfo.Seg.NumSegs = 0;
+    } else if( old_seg_tbl->NumOS2ResSegs ) {
+        uint_32     end_offset;
+        int         iorc;
+
+        /* Must seek past the last segment in old file */
+        oldseg += old_seg_tbl->NumOS2ResSegs - 1;
+        end_offset = (uint_32)oldseg->address << old_shift_count;
+        if( oldseg->size == 0 )
+            end_offset += 0x10000;
+        else
+            end_offset += oldseg->size;
+
+        iorc = RcSeek( old_exe_info->Handle, end_offset, SEEK_SET );
+        if( iorc == -1 ) {
+            ret = CPSEG_ERROR;
+            RcError( ERR_READING_EXE, old_exe_info->name, strerror( errno ) );
+        }
+        CheckDebugOffset( &(Pass2Info.OldFile) );
+    }
+
+    return( ret );
+} /* CopyOS2Segments */

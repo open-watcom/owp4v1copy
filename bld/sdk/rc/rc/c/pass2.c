@@ -65,13 +65,19 @@ static RcStatus seekPastResTable( int *err_code )
 {
     int             winheadoffset;
     int             seekamount;
-    ExeFileInfo *   tmpexe;
+    ExeFileInfo     *tmpexe;
+    uint_16         res_tbl_size;
 
     tmpexe = &(Pass2Info.TmpFile);
 
+    if( CmdLineParms.TargetOS == RC_TARGET_OS_OS2 )
+        res_tbl_size = tmpexe->u.NEInfo.OS2Res.table_size;
+    else
+        res_tbl_size = tmpexe->u.NEInfo.Res.Dir.TableSize;
+
     seekamount = sizeof(os2_exe_header) +
                     tmpexe->u.NEInfo.Seg.NumSegs * sizeof(segment_record) +
-                    tmpexe->u.NEInfo.Res.Dir.TableSize +
+                    res_tbl_size +
                     tmpexe->u.NEInfo.Res.Str.StringBlockSize;
     winheadoffset = RcSeek( tmpexe->Handle, seekamount, SEEK_CUR );
     if( winheadoffset == -1 ) {
@@ -261,28 +267,29 @@ static int copyBody( void )
 
 static int copyOS2Body( void )
 {
-    NEExeInfo *         tmp;
+    NEExeInfo           *tmp;
     CpSegRc             copy_segs_ret;
     int                 error;
+    unsigned_16         align;
 
     tmp = &Pass2Info.TmpFile.u.NEInfo;
 
-    Pass2Info.TmpFile.u.NEInfo.WinHead.align =
-                        Pass2Info.OldFile.u.NEInfo.WinHead.align;
-    tmp->Res.Dir.ResShiftCount = computeShiftCount();
+    /* OS/2 does not use separate alignment for resources */
+    align = Pass2Info.OldFile.u.NEInfo.WinHead.align;
+    Pass2Info.TmpFile.u.NEInfo.WinHead.align = align;
+    tmp->Res.Dir.ResShiftCount = align;
 
-    /* third arg to Copy???? is TRUE  --> copy section two */
-    copy_segs_ret = CopySegments( 0, 0, TRUE );
-    if( copy_segs_ret == CPSEG_ERROR) {
-        return( TRUE  );
+    copy_segs_ret = CopyOS2Segments();
+    if( copy_segs_ret == CPSEG_ERROR ) {
+        return( TRUE );
     }
     if( !CmdLineParms.NoResFile ) {
         error = CopyOS2Resources();
-        if( error) return( TRUE  );
+        if( error )
+            return( TRUE );
     }
 
     return( FALSE );
-
 } /* copyOS2Body */
 
 /*
@@ -412,7 +419,6 @@ static int writeOS2HeadAndTables( int *err_code )
     NEExeInfo *     tmpne;
     uint_16         tableshift;     /* amount the tables are shifted in the */
                                     /* tmp file */
-    uint_16         info;           /* os2_exe_header.info */
     long            seekrc;
     int             numwrote;
     int             error;
@@ -422,34 +428,28 @@ static int writeOS2HeadAndTables( int *err_code )
     tmpfile = &(Pass2Info.TmpFile);
     tmpne = &tmpfile->u.NEInfo;
 
-    /* set the info flag for the new executable from the one flag and */
-    /* the command line options given */
-    info = oldne->WinHead.info;
-    if( CmdLineParms.ProtModeOnly ) {
-        info |= OS2_PROT_MODE_ONLY;
-    }
-
     /* copy the fields in the os2_exe_header then change some of them */
     tmpfile->WinHeadOffset = oldfile->WinHeadOffset;
     /* copy the WinHead fields up to, but excluding, the segment_off field */
     memcpy( &(tmpne->WinHead), &(oldne->WinHead),
             offsetof(os2_exe_header, segment_off) );
-    tmpne->WinHead.info = info;
+    tmpne->WinHead.info = oldne->WinHead.info;
     tmpne->WinHead.segment_off = sizeof(os2_exe_header);
     tmpne->WinHead.resource_off = tmpne->WinHead.segment_off +
                                 tmpne->Seg.NumSegs * sizeof(segment_record);
-    tableshift = tmpne->Res.Dir.TableSize -
-                ( oldne->WinHead.resident_off - oldne->WinHead.resource_off ) +
-                ( tmpne->WinHead.resource_off - oldne->WinHead.resource_off );
+    tableshift = tmpne->OS2Res.table_size -
+                (oldne->WinHead.resident_off - oldne->WinHead.resource_off) +
+                (tmpne->WinHead.resource_off - oldne->WinHead.resource_off);
     tmpne->WinHead.entry_off = oldne->WinHead.entry_off + tableshift;
     tmpne->WinHead.resident_off = oldne->WinHead.resident_off + tableshift;
     tmpne->WinHead.module_off = oldne->WinHead.module_off + tableshift;
     tmpne->WinHead.import_off = oldne->WinHead.import_off + tableshift;
     tmpne->WinHead.nonres_off = oldne->WinHead.nonres_off + tableshift;
-    tmpne->WinHead.movable = oldne->WinHead.movable;
-    tmpne->WinHead.resource = tmpne->Res.Dir.NumResources;
-    tmpne->WinHead.target = oldne->WinHead.target;
-    tmpne->WinHead.segments = tmpne->Seg.NumSegs;
+    tmpne->WinHead.movable    = oldne->WinHead.movable;
+    tmpne->WinHead.resource   = tmpne->OS2Res.num_res_segs;
+    tmpne->WinHead.target     = oldne->WinHead.target;
+    tmpne->WinHead.otherflags = oldne->WinHead.otherflags;
+    tmpne->WinHead.segments   = tmpne->Seg.NumSegs;
 
     /* seek to the start of the os2_exe_header in tmpfile */
     seekrc = RcSeek( tmpfile->Handle, tmpfile->WinHeadOffset, SEEK_SET );
@@ -477,7 +477,7 @@ static int writeOS2HeadAndTables( int *err_code )
     }
 
     /* write the resource table */
-    error = WriteOS2ResTable( tmpfile->Handle, &(tmpne->Res), err_code );
+    error = WriteOS2ResTable( tmpfile->Handle, &(tmpne->OS2Res), err_code );
     return( error );
 
 } /* writeOS2HeadAndTables */
@@ -607,10 +607,10 @@ static RcStatus writePEHeadAndObjTable( void )
 } /* writePEHeadAndObjTable */
 
 /*
- * Windows NE files store resources in a special data structure. OS/2 NE modules
- * are quite different and store each resource in its own data segment. The OS/2
- * resource table is completely different as well and only contains resource
- * types/IDs.
+ * Windows NE files store resources in a special data structure. OS/2 NE
+ * modules are quite different and store each resource in its own data
+ * segment(s). The OS/2 resource table is completely different as well and
+ * only contains resource types/IDs.
  */
 extern int MergeResExeNE( void )
 {
@@ -622,17 +622,15 @@ extern int MergeResExeNE( void )
         if( error != RS_OK ) goto HANDLE_ERROR;
         if( StopInvoked ) goto STOP_ERROR;
 
-        InitResTable();
+        error = InitOS2ResTable( &err_code );
+        if( error != RS_OK ) goto HANDLE_ERROR;
+        if( StopInvoked ) goto STOP_ERROR;
 
         error = AllocAndReadOS2SegTables( &err_code );
         if( error != RS_OK ) goto HANDLE_ERROR;
         if( StopInvoked ) goto STOP_ERROR;
 
         error = seekPastResTable( &err_code );
-        if( error != RS_OK ) goto HANDLE_ERROR;
-        if( StopInvoked ) goto STOP_ERROR;
-
-        error = findEndOfResources( &err_code );
         if( error != RS_OK ) goto HANDLE_ERROR;
         if( StopInvoked ) goto STOP_ERROR;
 
@@ -723,8 +721,9 @@ STOP_ERROR:
 #endif
 } /* MergeResExeNE */
 
-extern RcStatus updateDebugDirectory( void ) {
 
+extern RcStatus updateDebugDirectory( void )
+{
     ExeFileInfo         *tmp;
     ExeFileInfo         *old;
     pe_va               old_rva;
@@ -776,6 +775,7 @@ extern RcStatus updateDebugDirectory( void ) {
     }
     return( RS_OK );
 } /* updateDebugDirectory */
+
 
 extern int MergeResExePE( void )
 {

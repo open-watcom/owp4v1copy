@@ -65,6 +65,7 @@ typedef struct NEExeInfo {
     os2_exe_header  WinHead;
     SegTable        Seg;
     ResTable        Res;
+    OS2ResTable     OS2Res;
 } NEExeInfo;
 
 typedef struct PEExeInfo {
