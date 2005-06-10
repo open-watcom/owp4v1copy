@@ -565,7 +565,7 @@ wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodep
 !else ifneq host_os os2
 .dlg : $(hdir)
 !else
-pmfont=-font=
+pmfont=-font=10.Helv
 pmfontj=-font=
 dlgayn.dlg : $(hdir)/dlgayn.dlg
         parsedlg $(pmfont) $[@ dlgayn.dlg

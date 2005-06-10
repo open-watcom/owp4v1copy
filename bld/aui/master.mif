@@ -111,23 +111,26 @@ aui.lib : $(objs) $(__makefiles__) $(aui_dir)/h/aui.rc
 
 .rc: ../h
 !ifdef pm
+pmfont=-font=10.Helv
+pmfontfj=
+
 dlgrx.dlg : ../h/dlgrx.dlg
-    parsedlg -font $[@ dlgrx.dlg
+    parsedlg $(pmfont) $[@ dlgrx.dlg
 
 dlgsrch.dlg : ../h/dlgsrch.dlg
-    parsedlg -font $[@ dlgsrch.dlg
+    parsedlg $(pmfont) $[@ dlgsrch.dlg
 
 dlgsrcha.dlg : ../h/dlgsrcha.dlg
-    parsedlg -font $[@ dlgsrcha.dlg
+    parsedlg $(pmfont) $[@ dlgsrcha.dlg
 
 japrx.dlg : ../h/japrx.dlg
-    parsedlg -font $[@ japrx.dlg
+    parsedlg $(pmfontj) $[@ japrx.dlg
 
 japsrch.dlg : ../h/japsrch.dlg
-    parsedlg -font $[@ japsrch.dlg
+    parsedlg $(pmfontj) $[@ japsrch.dlg
 
 japsrcha.dlg : ../h/japsrcha.dlg
-    parsedlg -font $[@ japsrcha.dlg
+    parsedlg $(pmfontj) $[@ japsrcha.dlg
 !else
 .dlg : ../h
 !endif
