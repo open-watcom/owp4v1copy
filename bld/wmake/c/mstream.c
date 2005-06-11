@@ -358,6 +358,11 @@ extern STRM_T GetCHR( void )
                 /* ignore \r in \r\n */
                 if( result == '\r' && head->data.file.cur[0] == EOL ) {
                     result = *(head->data.file.cur++);
+                } else if( Glob.microsoft && result == 0x1a ) {
+                    /* embedded ^Z terminates stream in MS mode */
+                    result = EOL;
+                    popSENT();
+                    flagEOF = 1;
                 } else {
                     PrtMsg( FTL | LOC | BARF_CHARACTER, result );
                 }

@@ -350,7 +350,7 @@ extern void AddCreator( const char *sufsuf )
 
     assert( src != NULL && dest != NULL );
 
-    if( src->id < dest->id ) {
+    if( !Glob.microsoft && src->id < dest->id ) {
         PrtMsg( ERR | LOC | EXTENSIONS_REVERSED );
     }
     cur = &dest->creator;

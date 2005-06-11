@@ -1926,6 +1926,10 @@ STATIC RET_T execLine( char *line )
 
     assert( !isws( *p ) );
 
+    // NMAKE quietly ignores empty commands
+    if( Glob.microsoft && *p == '\0' ) {
+        return( RET_SUCCESS );
+    }
     rc = shellSpawn( p, flags );
     if( OSCorrupted() ) {
         PrtMsg( FTL | OS_CORRUPTED );
