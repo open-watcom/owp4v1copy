@@ -1396,15 +1396,7 @@ fubar.bar: .existsonly
 .pc
 The first time this example runs, &maksname creates fubar.foo.
 This example always ensures that fubar.foo is a copy of fubar.bar.
-Note the implicit connection beween the two files. A more realistic example is
-.millust begin
-#
-# Implicit use of .extensions/.suffixes
-# (Use with -ms or -u command line options.)
-#
-
-hello.exe :
-.millust end
+Note the implicit connection beween the two files.
 .*
 .section Approximate Timestamp Matching (.FUZZY)
 .*
