@@ -9,13 +9,18 @@
 .begnote
 .note Syntax:
 .us on
+.* Screwing with formatting is extremely bad idea for online help!
+.if &e'&dohelp eq 0 .do begin
 .fo off
+.do end
 .sk -1 c
 .dm syntax end
 
 .dm esyntax begin
 .us off
+.if &e'&dohelp eq 0 .do begin
 .fo on
+.do end
 .endnote
 .dm esyntax end
 
