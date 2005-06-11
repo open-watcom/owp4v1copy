@@ -77,13 +77,13 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 ###############
 extra_l_flags = option map
 
-!ifeq sys_dll 1
-extra_l_flags_nt += option offset=0x69800000
-!endif
-
 extra_l_flags_osi = option symfile
 extra_l_flags_os2 = option modname=$(name)
 extra_l_flags_nt  = option modname=$(name)
+
+!ifeq sys_dll 1
+extra_l_flags_nt += option offset=0x69800000
+!endif
 
 # where to look for various files
 .c : .;$(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
