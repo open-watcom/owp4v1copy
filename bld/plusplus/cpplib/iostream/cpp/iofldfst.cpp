@@ -29,6 +29,9 @@
 *
 ****************************************************************************/
 
+#if 0
+#error This function has been folded into the only method to use it - ostream::__outfloat
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
@@ -37,6 +40,7 @@
 #endif
 #include "ioutil.h"
 #include "iofhdr.h"
+
 
 void __LDFloatToString( char *buf,
                         double const *f,
@@ -98,3 +102,5 @@ void __LDFloatToString( char *buf,
     i += cvt.nz2;
     buf[i] = '\0';
 }
+
+#endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Floating-point support declaration for iostreams
 *
 ****************************************************************************/
 
@@ -37,7 +36,9 @@
 #include "xfloat.h"
 
 extern std::ios::iostate __GetLDFloat( streambuf *, char *);
+#if 0
 extern void __LDFloatToString( char *, double const *, int, std::ios::fmtflags);
+#endif
 
 typedef void  (*_type_EFG_cnvs2d)( char *, double * );
 typedef int   (*_type_EFG_cnvd2f)( double *, float * );
