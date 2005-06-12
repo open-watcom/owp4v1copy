@@ -27,7 +27,7 @@ set ODIR=<PREOBJDIR>
 #================================
     mkdir <PROJDIR>/wres/<PREOBJDIR>
     cdsay <PROJDIR>/wres/<PREOBJDIR>
-    wmake -h -f ../dos386/ms_r/makefile prebuild=1
+    wmake -h -f ../small386/ms_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
@@ -37,7 +37,7 @@ set ODIR=<PREOBJDIR>
 #===============================
     mkdir <PROJDIR>/wres/<PREOBJDIR>
     cdsay <PROJDIR>/wres/<PREOBJDIR>
-    wmake -h -f ../nt386/mf_r/makefile prebuild=1
+    wmake -h -f ../flat386/mf_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
@@ -47,7 +47,7 @@ set ODIR=<PREOBJDIR>
 #================================
     mkdir <PROJDIR>/wres/<PREOBJDIR>
     cdsay <PROJDIR>/wres/<PREOBJDIR>
-    wmake -h -f ../nt386/mf_r/makefile prebuild=1
+    wmake -h -f ../flat386/mf_r/makefile prebuild=1
     mkdir <PROJDIR>/rc/<PREOBJDIR>
     cdsay <PROJDIR>/rc/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1

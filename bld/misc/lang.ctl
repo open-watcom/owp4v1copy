@@ -26,14 +26,14 @@ cdsay .
     <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binl/
 
 # NT, OS2 32-bit version
-    <CPCMD> <DEVDIR>/sdk/rc/wres/nt386/mf_r/wres.lib  <RELROOT>/rel2/lib386/wresf.lib
-    <CPCMD> <DEVDIR>/sdk/rc/wres/nt386/mf_s/wres.lib  <RELROOT>/rel2/lib386/wresfs.lib
+    <CPCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_r/wres.lib  <RELROOT>/rel2/lib386/wresf.lib
+    <CPCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_s/wres.lib  <RELROOT>/rel2/lib386/wresfs.lib
 # OSI 32-bit version
-#    <CPCMD> <DEVDIR>/sdk/rc/wres/dos386/ms_r/wres.lib <RELROOT>/rel2/lib386/osi/wresf.lib
-#    <CPCMD> <DEVDIR>/sdk/rc/wres/dos386/ms_s/wres.lib <RELROOT>/rel2/lib386/osi/wresfs.lib
+#    <CPCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/rel2/lib386/osi/wresf.lib
+#    <CPCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/rel2/lib386/osi/wresfs.lib
 # DOS 32-bit version
-    <CPCMD> <DEVDIR>/sdk/rc/wres/dos386/ms_r/wres.lib <RELROOT>/rel2/lib386/dos/wresf.lib
-    <CPCMD> <DEVDIR>/sdk/rc/wres/dos386/ms_s/wres.lib <RELROOT>/rel2/lib386/dos/wresfs.lib
+    <CPCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/rel2/lib386/dos/wresf.lib
+    <CPCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/rel2/lib386/dos/wresfs.lib
 # AXP version
 #    <CPCMD> <DEVDIR>/sdk/rc/wres/ntaxp/_s/wres.lib   <RELROOT>/rel2/libaxp/
 # LINUX version
