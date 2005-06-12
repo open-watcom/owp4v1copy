@@ -37,8 +37,9 @@
 #include "dos16.h"
 #pragma pack(__pop);
 #endif
+#include "wdebug.h"
 
-extern void __interrupt __int7();
+extern void __int7( void );
 #pragma aux __int7 "*";
 
 extern int __no87;
@@ -52,13 +53,16 @@ extern  int gorealmode();
         "mov ah,30h" \
         "int 21h";
 
-extern int int31( char *, short );
-#pragma aux int31 = \
+extern int DPMICheckVendorSpecificAPI( char __far * );
+#pragma aux DPMICheckVendorSpecificAPI = \
         "push es" \
+        "push ds" \
+        "mov ds,ecx" \
         "int 31h" \
         "sbb eax,eax" \
+        "pop ds" \
         "pop es" \
-        parm [esi] [ax] modify [ edi ];
+        parm [ cx esi ] modify [ edi ] value[ eax ];
 
 extern int getcr0();
 #pragma aux getcr0 = "mov eax,cr0" value [ eax ];
@@ -66,22 +70,13 @@ extern int getcr0();
 extern void putcr0(int);
 #pragma aux putcr0 = "mov cr0,eax" parm [ eax ];
 
-extern short getcs(void);
-#pragma aux getcs = "mov ax,cs" value [ ax ];
-
-extern short int2f( char, short, short, short );
-#pragma aux int2f = \
-        "mov ah,0fah" \
-        "int 2fh" \
-        parm [ al ] [ dx ] [ cx ] [ bx ] value [ ax ];
-
 extern char IsWindows( void );
 #pragma aux IsWindows = \
         "mov ax,1600h" \
         "int 2fh" \
         value [al];
 
-void __set_dos_vector(unsigned, void (__interrupt *)());
+void __set_dos_vector(unsigned, void __far *);
 #pragma aux __set_dos_vector = \
         "push ds" \
         "mov ds,cx" \
@@ -90,6 +85,14 @@ void __set_dos_vector(unsigned, void (__interrupt *)());
         "pop ds" \
         parm caller [al] [cx edx];
 
+extern int EMURegister2( _word, _dword );
+#pragma aux EMURegister2 = \
+        "mov ecx,ebx" \
+        "shr ecx,10h" \
+        "mov ax, 0fa20h" \
+        "int 2fh" \
+        parm[dx] [ebx] modify[ecx] value[eax];
+
 #define EMULATING_87 4
 
 static char hooked = 0;
@@ -97,7 +100,7 @@ static char has_wgod_emu = 0;
 
 static char FPArea[128];
 
-#pragma aux __hook387 "*" parm caller [EAX DX];
+#pragma aux __hook387 "*" parm caller [DX EAX];
 #if 0 /* the D16INFO typedef is so far, unknown */
 char __hook387( D16INFO __far *_d16infop )
 #else
@@ -109,18 +112,17 @@ char __hook387( void __far *_d16infop )
 
     iswin = IsWindows();
     if( iswin != 0 && iswin != 0x80 ) {
-        if( int2f( 0, 0, 0, 0 ) == 0x666 ) {    /* check version */
-            if( !int2f( 0x22, 0, 0, 0 ) ) {     /* fpu present */
+        if( CheckWin386Debug() == WGOD_VERSION ) {
+            if( !FPUPresent() ) {
                 has_wgod_emu = 1;
-                int2f( 0x1e, 0, 0, 0 );         /* emu init */
-                int2f( 0x20, getcs(),
-                        (unsigned long)&FPArea >> 16, (unsigned long)&FPArea );
+                EMUInit();
+                EMURegister2( CS(), (unsigned long)&FPArea );
                 return( 1 );
             }
         }
     }
     if( _d16infop != NULL ) {
-        if( int31( "RATIONAL DOS/4G", 0x0A00 ) == 0 ) {
+        if( DPMICheckVendorSpecificAPI( "RATIONAL DOS/4G" ) == 0 ) {
             __set_dos_vector( 7, &__int7 );
 #if 0
             _d16infop->has_87 = 1;              /* enable emulator */
@@ -134,7 +136,7 @@ char __hook387( void __far *_d16infop )
     return( 0 );
 }
 
-#pragma aux __unhook387 "*" parm caller [EAX DX];
+#pragma aux __unhook387 "*" parm caller [DX EAX];
 #if 0 /* the D16INFO typedef is so far, unknown */
 char __unhook387( D16INFO __far *_d16infop )
 #else
@@ -143,8 +145,8 @@ char __unhook387( void __far *_d16infop )
 /******************************************/
 {
     if( has_wgod_emu ) {
-        int2f( 0x21, getcs(), 0, 0 );   /* unregister */
-        int2f( 0x1f, 0, 0, 0 );         /* emu shutdown */
+        EMUUnRegister( CS() );
+        EMUShutdown();
         return( 1 );
     } else if( hooked ) {
 #if 0
