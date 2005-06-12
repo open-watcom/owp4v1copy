@@ -56,9 +56,10 @@ OBJS_vxd = wdebug.obj &
 
 # cflags stuff
 ###############
-extra_c_flags = -s-2
+extra_c_flags = -s
+extra_c_flags_wininit  = -3
 !ifeq fmt dll
-extra_c_flags_wininit  = -DDLL32 -zu
+extra_c_flags_wininit += -DDLL32 -zu
 extra_c_flags_libmain  = -DDLL32 -zu
 extra_c_flags_windpmi  = -DDLL32 -zu
 extra_c_flags_clib     = -DDLL32 -zu

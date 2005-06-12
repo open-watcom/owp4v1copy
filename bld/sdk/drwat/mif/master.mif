@@ -42,6 +42,10 @@ extra_c_flags_mem = -DWANT_MSGS -DNO_WPI
 extra_c_flags = -DNOUSE3D
 !endif
 
+!ifeq host_OS win
+extra_c_flags_log = -3
+!endif
+
 # lflags stuff
 ###############
 

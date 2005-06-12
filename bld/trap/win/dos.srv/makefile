@@ -9,4 +9,6 @@ which = SERVER
 
 extra_objs = $(remote_objs)
 
+extra_c_flags_winlink = -3
+
 !include $(trap_dir)/master.mif

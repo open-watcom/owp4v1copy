@@ -35,7 +35,7 @@ WINDOWS = 1
 description = 'Open Watcom IDE'
 
 !ifeq host_os win
-extra_c_flags_link      = -dSERVER
+extra_c_flags_link      = -3 -dSERVER
 !endif
 
 extra_cpp_flags_i86     = -zc -zm

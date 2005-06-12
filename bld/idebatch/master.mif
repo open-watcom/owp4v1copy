@@ -36,6 +36,9 @@ tst.exe : tst.obj batcli.obj batpipe.obj
 
 name = int
 
+extra_c_flags_link = -3
+extra_c_flags_int  = -3
+
 objs = $(name).obj link.obj int21.obj
 
 $(name).exe : $(OBJS) $(LNK)
