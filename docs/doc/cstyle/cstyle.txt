@@ -624,7 +624,8 @@ All C header files should be formatted in the following manner:
  * #define _STDLIB_H_INCLUDED
  * ...
  * #endif
- * There is no problem in using implementation names anywhere in Open Watcom
+ * Only system headers (ie. headers not intended to be built with any other
+ * compiler) should use reserved names.
  */
 
 #include <stdio.h>      /* Include any dependent include files */
@@ -812,8 +813,10 @@ All C++ header files should be formatted in the following manner:
 ****************************************************************************/
 
 
-#ifndef __HEADER_HPP      // Mandatory include guard. The #define name must
-#define __HEADER_HPP      // be the same as the header (ie: header.h here).
+#ifndef HEADER_HPP        // Mandatory include guard. The #define name must
+#define HEADER_HPP        // be the same as the header (ie: header.hpp here).
+                          // Implementation reserved names (prefixed with
+                          // an underscore) should be used where appropriate.
 
 #include <iostream>       // Include any dependant include files
 
