@@ -163,7 +163,7 @@ typedef unsigned short  sel_t;
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */
-typedef unsigned short mode_t;  /* file mode (attributes) */
+typedef int mode_t;             /* file mode (attributes) */
 :endsegment
 
 :include cplusepi.sp
