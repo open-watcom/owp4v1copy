@@ -20,12 +20,7 @@
 
 :include sizet.sp
 
-:segment LINUX | QNX
-#ifndef _SSIZE_T_DEFINED_
-#define _SSIZE_T_DEFINED_
-typedef signed ssize_t;
-#endif
-:endsegment
+:include ssizet.sp
 
 :segment LINUX
 #ifndef _LIMITS_H_INCLUDED
@@ -168,6 +163,7 @@ typedef unsigned short  sel_t;
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */
+typedef unsigned short mode_t;  /* file mode (attributes) */
 :endsegment
 
 :include cplusepi.sp

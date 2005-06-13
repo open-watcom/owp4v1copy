@@ -1,5 +1,6 @@
-:: the C++ compiler has knowledge of this type so if it changes from 'unsigned'
-:: inform the C++ compiler team and tell them to check their op new diagnostics
+:: The C++ compiler has knowledge of this type so if it changes from
+:: 'unsigned' please inform the C++ developers and tell them to check
+:: their op new diagnostics. Also don't forget ssize_t.
 :segment CNAME
 #ifndef _STDSIZE_T_DEFINED
   #define _STDSIZE_T_DEFINED
