@@ -189,10 +189,7 @@ _WCRTLINK int __sigfpe_handler( int fpe )
     sig_func *func;
 
     func = __GetSignalFunc(SIGFPE);
-    if( func == SIG_IGN ) {
-        return( 0 );
-    }
-    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
+    if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
         __SetSignalFunc(SIGFPE, SIG_DFL);
         (*func)( SIGFPE, fpe );
         return( 0 );
@@ -215,13 +212,13 @@ _WCRTLINK void (*signal( int sig, void (*func)(int) ))( int )
     if( (func != SIG_DFL) && (func != SIG_ERR) ) {
         if( __GetSignalOSCode(sig) != 0 ) {
             if( sig == SIGFPE ) {
-                #if defined(__AXP__) || defined(__PPC__)
-                    // __FIXME__
-                #else
-                    /* enable all interrupts, except precision exception */
-                    /* - precision exceptions are very common */
-                    _control87( 0, ( MCW_EM & ~EM_PRECISION ) | 0x80 );
-                #endif
+#if defined(__AXP__) || defined(__PPC__)
+                // __FIXME__
+#else
+                /* enable all interrupts, except precision exception */
+                /* - precision exceptions are very common */
+                _control87( 0, ( MCW_EM & ~EM_PRECISION ) | 0x80 );
+#endif
             }
         }
     } else {
