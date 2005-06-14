@@ -116,6 +116,7 @@ extra_l_flags = op map op symfile
 
 # rc flags
 ###########
+extra_rc_flags     = -r
 extra_rc_flags_win = -30 -D_WIN
 extra_rc_flags_nt  = -D_WINNT
 

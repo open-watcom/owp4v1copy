@@ -328,7 +328,7 @@ rc_flags_os2    = -bt=os2
 
 rc_flags_axp    = -D__AXP__
 
-rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu)) $(extra_rc_flags_$(host_os))
+rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu)) $(extra_rc_flags) $(extra_rc_flags_$(host_os))
 
 !ifdef __UNIX__
 
