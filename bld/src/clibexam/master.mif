@@ -395,6 +395,7 @@ gets.exe &
 open.exe &
 opendir.exe &
 mkdir.exe &
+mkstemp.exe &
 printf.exe &
 putc.exe &
 putch.exe &
