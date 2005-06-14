@@ -271,7 +271,7 @@ rem For remote debugging, don't put a full path name
 ::
 Tool WSAMPLE "Sampler"
   Family Sampler
-    CSwitch 0, ????s, "", "!Error Sampler cannot run under Win/OS2$", ON
+    CSwitch 0, ????s, "", "!Error Sampler cannot run under Win-OS/2$", ON
     CSwitch 0, w???o, "", "!Error Windows executable cannot be sampled under OS/2$", ON
     CSwitch 0, w???w, " app", "!Fullscreen $(%watcom)\\binw\\wsamplew", ON
     CSwitch 0, w???j, " app", "!Fullscreen $(%watcom)\\binw\\wsamplew", ON
