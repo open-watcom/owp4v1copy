@@ -2363,6 +2363,7 @@ header file for examples.
 .fd *fun="assert" test an assertion and output a string upon failure
 .fd *fun="_fullpath" return full path specification for file
 .fd *fun="_getmbcp" get current multibyte code page
+.fd *fun="getopt" a command-line parser that can be used by applications that follow guidelines outlined in the Single UNIX Specification
 .fd *fun="_harderr" critical error handler
 .fd *fun="_hardresume" critical error handler resume
 .fd *fun="localeconv" obtain locale specific conversion information

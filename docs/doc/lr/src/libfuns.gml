@@ -410,7 +410,7 @@
 .fnc getlogin                   getlogin.gml        QXO
 .fnm _getmbcp                   getmbcp.gml     DOS       WIN32
 .fnc getnid                     getnid.gml          QXO
-.fnc getopt                     getopt.gml          QXO
+.fnc getopt                     getopt.gml      DOS QXO   WIN32
 .fn7 _get_osfhandle             getosfha.gml    DOS       WIN32
 .fnc getpgrp                    getpgrp.gml         QXO
 .fnc _getphyscoord              gr_getpc.gml    DOS QNX W GRAPH
@@ -1591,6 +1591,7 @@
 .fnc Writemsgmx                 writemsx.gml        QXO
 .fnc Yield                      yield.gml           QXO
 .fnc zentohan                   zentohan.gml    NEC
+
 .*
 .* .ty End of build pass - count = &__idx
 .*

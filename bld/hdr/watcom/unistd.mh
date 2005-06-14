@@ -134,34 +134,24 @@ _WCRTLINK extern void   _WCNEAR *sbrk(int incr);
 :segment QNX
 #endif
 :endsegment
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    chdir( const char *__path );
-:endsegment
 _WCRTLINK extern int    close( int __fildes );
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    dup( int __fildes );
 _WCRTLINK extern char   *getcwd( char *__buf, size_t __size );
 _WCRTLINK extern char   *_getcwd( char *__buf, size_t __size );
 _WCRTLINK extern pid_t  getpid( void );
-:endsegment
 _WCRTLINK extern int    isatty( int __fildes );
 _WCRTLINK extern off_t  lseek( int __fildes, off_t __offset, int __whence );
 _WCRTLINK extern ssize_t read( int __fildes, void *__buffer, size_t __len );
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    rmdir( const char *__path );
-:endsegment
 :segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
 :endsegment
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    setmode( int __handle, int __mode );
-:endsegment
 :segment QNX | LINUX
 #endif
 :endsegment
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
-:endsegment
 _WCRTLINK extern int    unlink( const char *__path );
 _WCRTLINK extern ssize_t write( int __fildes, const void *__buf, size_t __len );
 :segment QNX | LINUX
@@ -227,9 +217,7 @@ _WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] )
 
 :include ext.sp
 
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    chsize( int __fildes, long __size );
-:endsegment
 _WCRTLINK extern int    eof( int __fildes );
 _WCRTLINK extern long   filelength( int __fildes );
 _WCRTLINK extern off_t  tell( int __fildes );
@@ -252,12 +240,16 @@ _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 
 :segment QNX | LINUX
 :include posix.sp
-_WCRTLINK extern int    getopt( int __argc, char * const* __argv, const char * __optstring );
+_WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
 _WCRTLINK extern char   *basename( const char * __fname );
 _WCRTLINK extern size_t confstr( int, char*, size_t );
 _WCRTLINK extern int    fnmatch( const char *__pattern, const char *__string, int __flag );
 _WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );
 _WCRTLINK extern int    putenv(const char * estring);
+
+/* Globals used and set by getopt() */
+_WCRTLINK extern char   *optarg;
+_WCRTLINK extern int    optind, opterr, optopt;
 #endif
 
 :endsegment
@@ -283,9 +275,13 @@ extern ssize_t __far_write(int __fildes,void __far *__buffer,size_t __len);
 :endsegment
 :segment DOS
 _WCRTLINK extern int    fsync( int __filedes );
+_WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
+
+/* Globals used and set by getopt() */
+_WCRTLINK extern char   *optarg;
+_WCRTLINK extern int    optind, opterr, optopt;
 :endsegment
 
 :include cplusepi.sp
 #endif
-

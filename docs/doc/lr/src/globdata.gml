@@ -5,7 +5,6 @@ Certain data items are used by the &company C/C++ run-time library and
 may be inspected (or changed in some cases) by a program.
 The defined items are:
 .dfbeg
-.if '&machsys' ne 'PP' .do begin
 .df _amblksiz
 .proto stdlib.h
 This
@@ -29,8 +28,6 @@ item contains a pointer to a vector containing the actual arguments
 passed to
 .kw main.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .df daylight
 .proto time.h
 This
@@ -43,8 +40,6 @@ function is called to set the value of the variable.
 The value will be determined from the value of the
 .mono TZ
 environment variable.
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _doserrno
 .proto stdlib.h
@@ -53,15 +48,12 @@ This
 item contains the actual error code returned when a DOS, Windows or
 OS/2 function fails.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .df environ
 .proto stdlib.h
 This
 .id char ** __near
 data item is a pointer to an array of character pointers to the
 environment strings.
-.do end
 .cp 10
 .df errno
 .proto errno.h
@@ -93,7 +85,6 @@ or
 as an argument to the
 .kw printf
 function).
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _fmode
 .proto stdlib.h
@@ -162,8 +153,6 @@ directly by setting it in your program.
 .do end
 .*
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _MaxThreads
 There is a limit to the number of threads an application can create
@@ -190,16 +179,44 @@ new threshold value will be set to 48.
 unsigned __MaxThreads = { 48 };
 .millust end
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df __minreal
 .proto stdlib.h
 This data item contains the minimum amount of real memory (below 640K)
 to reserve when running a 32-bit DOS extended application.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
+.df optarg
+.proto unistd.h
+This 
+.id char *
+variable contains a pointer to an option-argument parsed by the
+.kw getopt
+function.
+.df opterr
+.proto unistd.h
+This
+.id int
+variable controls whether the
+.kw getopt
+function will print error messages. The default value is non-zero and
+will cause the
+.kw getopt
+function to print error messages on the console.
+.df optind 
+.proto unistd.h
+This
+.id int
+variable holds the index of the argument array element currently
+processed by the
+.kw getopt
+function.
+.df optopt
+.proto unistd.h
+This
+.id int
+variable contains the unrecognized option character in case the
+.kw getopt
+function returns an error.
 .df _osmajor
 .proto stdlib.h
 .if '&machsys' eq 'QNX' .do begin
@@ -216,8 +233,6 @@ variable contains the major number for the version of DOS executing on
 the computer.
 If the current version is 3.20, then the value will be 3.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .df _osminor
 .proto stdlib.h
 .if '&machsys' eq 'QNX' .do begin
@@ -233,7 +248,6 @@ This
 variable contains the minor number for the version of DOS executing on
 the computer.
 If the current version is 3.20, then the value will be 20.
-.do end
 .do end
 .if '&machsys' ne 'QNX' .do begin
 .df _osbuild
@@ -276,7 +290,6 @@ function is the preferred method for obtaining operating system
 version number information.
 .do end
 .do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _osmode
 (16-bit only)
@@ -287,8 +300,6 @@ variable contains either the value DOS_MODE which indicates the program
 is running in real address mode, or it contains the value OS2_MODE
 which indicates the program is running in protected address mode.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _psp
 .proto stdlib.h
@@ -301,9 +312,7 @@ Prefix.
 Consult the technical documentation for your DOS system for the
 process information contained in the Program Segment Prefix.
 .do end
-.do end
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _stacksize
 On 16-bit 80x86 systems, this
@@ -319,9 +328,7 @@ unsigned int _stacksize = { 8 * 1024 };
 .millust end
 .do end
 .do end
-.do end
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df stdaux
 .proto stdio.h
@@ -331,16 +338,12 @@ indicates the standard auxiliary port
 (not available in some Windows platforms).
 .do end
 .do end
-.do end
 .if '&machsys' ne 'FOX' .do begin
 .df stderr
 .proto stdio.h
 This variable (with type
 .mono FILE *)
 indicates the standard error stream (set to the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console by default).
 .do end
 .if '&machsys' ne 'FOX' .do begin
@@ -349,9 +352,6 @@ console by default).
 This variable (with type
 .mono FILE *)
 indicates the standard input stream (set to the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console by default).
 .do end
 .if '&machsys' ne 'FOX' .do begin
@@ -360,13 +360,9 @@ console by default).
 This variable (with type
 .mono FILE *)
 indicates the standard output stream (set to the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console by default).
 .do end
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df stdprn
 .proto stdio.h
@@ -376,8 +372,6 @@ indicates the standard printer.
 (not available in some Windows platforms).
 .do end
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df sys_errlist
 .proto stdlib.h
@@ -386,8 +380,6 @@ error code defined in the
 .hdrfile errno.h
 header file.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df sys_nerr
 .proto stdlib.h
@@ -396,8 +388,6 @@ This
 variable contains the number of messages declared in
 .kw sys_errlist.
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _threadid
 .proto stddef.h
@@ -419,8 +409,6 @@ To obtain the current thread identifier, simply code:
 int tid = *_threadid;
 .millust end
 .do end
-.do end
-.if '&machsys' ne 'PP' .do begin
 .df timezone
 .proto time.h
 This
@@ -434,8 +422,6 @@ function is called to set the value of the variable.
 The value will be determined from the value of the
 .mono TZ
 environment variable.
-.do end
-.if '&machsys' ne 'PP' .do begin
 .df tzname
 .proto time.h
 This array of two pointers to character strings indicates the name of
@@ -447,8 +433,6 @@ function is called to set the values in the array.
 These values will be determined from the value of the
 .mono TZ
 environment variable.
-.do end
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .if &version ge 107 .do begin
 .df __wargc
@@ -483,7 +467,6 @@ This
 .id unsigned long int
 variable contains the flags to be used when reallocating memory in
 Windows.
-.do end
 .do end
 .if '&machsys' ne 'QNX' .do begin
 .if &version ge 110 .do begin

@@ -254,6 +254,7 @@ getdrive.exe &
 getfattr.exe &
 getftime.exe &
 getdate.exe &
+getopt.exe &
 getpid.exe &
 gettime.exe &
 locking.exe &

@@ -11,6 +11,7 @@
 !inject demangl.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject fullpath.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject fpathosi.obj                                                                        osi
+!inject getopt.obj   d16 d32             nt nta ntp                 o16 o32         w16 w32 osi l32 lpc lmp
 !inject hostwin.obj                      nt                                         w16 w32
 !inject kernel.obj                                                          q16 q32
 !inject locale.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp

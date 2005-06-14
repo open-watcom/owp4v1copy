@@ -1377,6 +1377,7 @@ $(docsrc_dir)\lr\src\getenv.gml &
 $(docsrc_dir)\lr\src\getfattr.gml &
 $(docsrc_dir)\lr\src\getftime.gml &
 $(docsrc_dir)\lr\src\getmbcp.gml &
+$(docsrc_dir)\lr\src\getopt.gml &
 $(docsrc_dir)\lr\src\getosfha.gml &
 $(docsrc_dir)\lr\src\getpid.gml &
 $(docsrc_dir)\lr\src\gets.gml &
