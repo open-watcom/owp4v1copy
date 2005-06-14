@@ -1607,6 +1607,7 @@ $(docsrc_dir)\lr\src\min.gml &
 $(docsrc_dir)\lr\src\mk_fp.gml &
 $(docsrc_dir)\lr\src\mkdir.gml &
 $(docsrc_dir)\lr\src\mkit.c &
+$(docsrc_dir)\lr\src\mkstemp.gml &
 $(docsrc_dir)\lr\src\mktemp.gml &
 $(docsrc_dir)\lr\src\mktime.gml &
 $(docsrc_dir)\lr\src\modf.gml &

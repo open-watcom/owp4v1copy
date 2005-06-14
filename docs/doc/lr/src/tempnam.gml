@@ -74,7 +74,7 @@ If the name cannot be created or if a file with that name already
 exists, &func returns NULL.
 .return end
 .see begin
-.seelist &function. fopen freopen _mktemp _tempnam tmpfile tmpnam
+.seelist &function. fopen freopen mkstemp _mktemp _tempnam tmpfile tmpnam
 .see end
 .exmp begin
 #include <stdio.h>

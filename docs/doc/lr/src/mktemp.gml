@@ -58,7 +58,7 @@ template.
 .error begin
 .error end
 .see begin
-.seelist &function. fopen freopen _mktemp _tempnam tmpfile tmpnam
+.seelist &function. fopen freopen mkstemp _mktemp _tempnam tmpfile tmpnam
 .see end
 .exmp begin
 #include <stdio.h>

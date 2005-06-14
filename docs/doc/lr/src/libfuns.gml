@@ -791,6 +791,7 @@
 .fnc mkfifo                     mkfifo.gml          QXO
 .fnc MK_FP                      mk_fp.gml       DOS QNX W WIN32
 .fnc mknod                      mknod.gml           QXO
+.fnc mkstemp                    mkstemp.gml     DOS QNX W WIN32
 .fn7 _mktemp                    mktemp.gml      DOS       WIN32
 .fnw _wmktemp                   mktemp.gml      DOS       WIN32
 .fnc mktime                     mktime.gml      DOS QNX W WIN32
