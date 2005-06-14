@@ -596,6 +596,9 @@ void VpeMain::onPopup0a( WPopupMenu* pop )
     case PVCS:
         pop->checkItem( TRUE, 2 );
         break;
+    case PERFORCE:
+        pop->checkItem( TRUE, 6 );
+        break;
     }
 }
 
