@@ -15,12 +15,14 @@ cdsay .
 #========================
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <DEVDIR>/editdll/epm/epmlink.dll  <RELROOT>/rel2/binp/dll/epmlink.dll
+    <CPCMD> <DEVDIR>/editdll/epm/epmlink.sym  <RELROOT>/rel2/binp/dll/epmlink.sym
     <CPCMD> <DEVDIR>/editdll/epm/wedit.lib <RELROOT>/rel2/src/editdll/os2/wedit.lib
     <CPCMD> <DEVDIR>/editdll/epm/wedit.dll <RELROOT>/rel2/src/editdll/os2/wedit.dll
 
   [ IFDEF (os_win "") <2*> ]
 
     <CPCMD> <DEVDIR>/editdll/viw/wini86/weditviw.dll <RELROOT>/rel2/binw/weditviw.dll
+    <CPCMD> <DEVDIR>/editdll/viw/wini86/weditviw.sym <RELROOT>/rel2/binw/weditviw.sym
     <CPCMD> <DEVDIR>/editdll/cw/wini86/weditcw.dll <RELROOT>/rel2/binw/weditcw.dll
     <CPCMD> <DEVDIR>/editdll/viw/wini86/wedit.lib <RELROOT>/rel2/src/editdll/win/wedit.lib
     <CPCMD> <DEVDIR>/editdll/cw/wini86/wedit.dll <RELROOT>/rel2/src/editdll/win/cw/wedit.dll
@@ -28,6 +30,7 @@ cdsay .
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/editdll/viw/nt386/weditviw.dll <RELROOT>/rel2/binnt/weditviw.dll
+    <CPCMD> <DEVDIR>/editdll/viw/nt386/weditviw.sym <RELROOT>/rel2/binnt/weditviw.sym
     <CPCMD> <DEVDIR>/editdll/cw/nt386/weditcw.dll <RELROOT>/rel2/binnt/weditcw.dll
     <CPCMD> <DEVDIR>/editdll/viw/nt386/wedit.lib <RELROOT>/rel2/src/editdll/nt/wedit.lib
     <CPCMD> <DEVDIR>/editdll/cw/nt386/wedit.dll <RELROOT>/rel2/src/editdll/nt/cw/wedit.dll

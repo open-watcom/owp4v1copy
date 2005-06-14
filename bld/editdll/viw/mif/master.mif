@@ -15,7 +15,7 @@ sys_dll = 1
 
 inc_dirs = -I.. -I"../.."
 
-extra_c_flags_win = -zc -zw
+extra_c_flags_win = -zc -zw -zu
 
 lflags_nt_axp += initinstance terminstance
 lflags_nt_386 += initinstance terminstance
