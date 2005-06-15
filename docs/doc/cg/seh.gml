@@ -684,7 +684,7 @@ char *NullP = NULL;
 int filter()
 {
   if( NullP == NULL ) {
-    NullP == malloc( 20 );
+    NullP = malloc( 20 );
     return( EXCEPTION_CONTINUE_EXECUTION )
   }
   return( EXCEPTION_EXECUTE_HANDLER )
