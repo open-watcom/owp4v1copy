@@ -266,6 +266,7 @@ _WCRTLINK extern unsigned long int wcstoul( const wchar_t *, wchar_t **, int );
 _WCRTLINK extern unsigned long long int wcstoull( const wchar_t *, wchar_t **, int );
 :segment CNAME
 }
+:endsegment
 _WCRTLINK extern wchar_t *_atouni( wchar_t *, const char * );
 _WCRTLINK extern wchar_t *_wfullpath( wchar_t *, const wchar_t *, _w_size_t );
 _WCRTLINK extern void     _wmakepath( wchar_t *__path, const wchar_t *__drive,
@@ -297,7 +298,6 @@ _WCRTLINK extern void       _wsplitpath( const wchar_t *__path,
                                          wchar_t *__drive, wchar_t *__dir,
                                          wchar_t *__fname, wchar_t *__ext );
 _WCRTLINK extern int        _wsystem( const wchar_t *__cmd );
-:endsegment
 :endsegment
 :endsegment
 
