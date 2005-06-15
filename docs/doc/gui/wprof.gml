@@ -8,7 +8,6 @@
 .*
 :set symbol='smpdosup'  value='WSAMPLE.EXE'
 :set symbol='smpos2up'  value='WSAMPLE.EXE'
-:set symbol='smpos21up' value='WSMPOS2.EXE'
 :set symbol='smpplsup'  value='WSAMPPLS.EXP'
 :set symbol='smprsiup'  value='WSAMPRSI.EXE'
 :set symbol='smpwinup'  value='WSAMPLEW.EXE'
@@ -320,9 +319,6 @@ the total time spent executing in DOS code may be determined.
 The following options are available under OS/2.
 .seesmpopt
 .begnote
-.note Note
-For OS/2 1.x, use &smpos21up instead of &smpos2up.
-.endnote
 .exam begin
 C>&smpos2 [wsample_options] program [arguments]
 .exam end

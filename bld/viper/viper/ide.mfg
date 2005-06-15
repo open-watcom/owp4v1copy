@@ -285,7 +285,7 @@ Tool WSAMPLE "Sampler"
     CSwitch 0, dp2e?, "", wsamppls, ON
     CSwitch 0, dt2e?, "", wsamppls, ON
     CSwitch 0, n????, "", wsample, ON
-    CSwitch 0, o????, "", wsmpos22, ON
+    CSwitch 0, o????, "", wsample, ON
     VSwitch 0, n????, "Sample buffer size(1-63):", -b, =, ONE, REQ, ""
     VSwitch 0, o????, "Sample buffer size(1-63):", -b, =, ONE, REQ, ""
     VSwitch 0, d????, "Sample buffer size(1-63):", -b, =, ONE, REQ, ""
