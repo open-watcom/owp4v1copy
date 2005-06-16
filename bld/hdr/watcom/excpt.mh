@@ -49,10 +49,6 @@ EXCEPTION_DISPOSITION __cdecl _except_handler (
 /*
  * Keywords and intrinsics for SEH
  */
-#define __try           _try
-#define __except        _except
-#define __finally       _finally
-#define __leave         _leave
 #define GetExceptionCode                _exception_code
 #define exception_code                  _exception_code
 #define GetExceptionInformation         (struct _EXCEPTION_POINTERS *)_exception_info
