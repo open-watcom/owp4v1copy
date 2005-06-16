@@ -1,5 +1,5 @@
 name=MaintainFinal
-condition=PreviousInstall UnInstall ! MakeDisks !
+condition=PreviousInstall UnInstall !
 static_text=\
         //1"@ will now copy all selected components"\
         //2"@ はすべての選択されたコンポーネントをコピーし, "\

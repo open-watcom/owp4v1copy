@@ -1,4 +1,3 @@
-NoDiskImages=1
 SrcIsCD=1
 dialog=templat1.inf
 supplimental=winsys
@@ -47,22 +46,15 @@ autoset=3r=true
 autoset=3s=true
 autoset=cplusplus=true
 Exe=..\supp\format.rsp
-dialogorder=DstDir,GetDiskSizesHere,MakeDisks,NewInstall,Maintain,Options,OptionsMakeDisks,Final,MaintainFinal,UnInstallFinal,MakeDisksFullFinal,MakeDisksSelFinal
+dialogorder=DstDir,GetDiskSizesHere,NewInstall,Maintain,Options,Final,MaintainFinal,UnInstallFinal
 dialog=disksize.dlg
 dialog=other.dlg
-dialog=othermd.dlg
 dialog=helpfile.dlg
 dialog=hother.dlg
-dialog=hothermd.dlg
 dialog=hhelpfil.dlg
-dialog=mkdskfin.dlg
-dialog=mkdslfin.dlg
 dialog=options.dlg
-dialog=optionmd.dlg
 dialog=hopt.dlg
-dialog=hoptmd.dlg
 dialog=dstdir.dlg
-dialog=makedisk.dlg
 dialog=host.dlg
 dialog=target.dlg
 dialog=32bit.dlg
@@ -72,7 +64,6 @@ dialog=maintain.dlg
 dialog=final.dlg
 dialog=maintfin.dlg
 dialog=unfinal.dlg
-dialog=hmakedsk.dlg
 dialog=h16bit.dlg
 dialog=h32bit.dlg
 dialog=hhi.dlg

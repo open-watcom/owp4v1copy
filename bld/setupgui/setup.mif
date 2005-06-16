@@ -18,10 +18,6 @@ additional_cleanup = *.i
 ##########
 objs = &
     setup.obj       &
-    decode.obj      &
-    qsort.obj       &
-    lookup.obj      &
-    common.obj      &
     setupfil.obj    &
     setupinf.obj    &
     guistat.obj     &
@@ -32,12 +28,17 @@ objs = &
     genvbl.obj      &
     dynarray.obj    &
     gendlg.obj      &
-    io.obj          &
     hash.obj        &
     nlmver.obj
 
 !ifdef patch
-objs += exetype.obj
+objs +=             &
+    common.obj      &
+    decode.obj      &
+    exetype.obj     &
+    io.obj          &
+    lookup.obj      &
+    qsort.obj
 !endif
 
 !ifeq host_os win

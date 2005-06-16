@@ -41,19 +41,15 @@
 #include "genvbl.h"
 #include "utils.h"
 
+#ifdef PATCH
 extern void InitIO( void );          /* fns. from wpack */
 extern void FiniIO( void );          /* fns. from wpack */
-extern void EvalRegNumber();
 extern void SetupTextTable( void );
-extern void SaveState(void);
-extern int CountDisks( bool * );
+#endif
 extern void DoSpawn( when_time );
 extern void SetupTitle();
 extern void DeleteObsoleteFiles();
 extern void ResetDiskInfo(void);
-extern void StampEvalFiles();
-extern void SelfRegisterDynamo();
-extern void MakeEmbedded();
 
 #ifdef PATCH
     int IsPatch = 0;
@@ -74,13 +70,6 @@ static bool SetupOperations()
     bool                uninstall;
 
     ok = ok;
-    if( GetVariableIntVal( "MakeDisks" ) == 1 ) {
-        if( MakeDisks() ) {
-            return( TRUE );
-        } else {
-            return( FALSE );
-        }
-    }
 
     // are we doing an UnInstall?
     uninstall = VarGetIntVal( UnInstall );
@@ -209,21 +198,6 @@ static bool CheckWin95Uninstall( int argc, char **argv )
 }
 #endif
 
-bool CheckValidDisketteDrive( char *dst_str )
-/***********************************/
-{
-#if defined( __UNIX__ )
-    return( TRUE );
-#else
-    if( !IsDiskette( dst_str[0] ) ) return( FALSE );
-    if( dst_str[1] == '\0' ) return( TRUE );
-    if( dst_str[1] != ':' ) return( FALSE );
-    if( dst_str[2] == '\0' ) return( TRUE );
-    if( dst_str[2] != '\\' && dst_str[2] != '/' ) return( FALSE );
-    if( dst_str[3] == '\0' ) return( TRUE );
-    return( FALSE );
-#endif
-}
 
 bool DirParamStack( char                **inf_name,
                     char                **tmp_path,
@@ -268,7 +242,6 @@ bool DirParamStack( char                **inf_name,
 extern bool DoMainLoop( dlg_state * state )
 /*****************************************/
 {
-    char                buff[20];
     char                *diag_list[MAX_DIAGS+1];
     char                *diags;
     char                *dstdir;
@@ -279,10 +252,12 @@ extern bool DoMainLoop( dlg_state * state )
     char                *next;
     bool                ret = FALSE;
 
-    // initialize decompression facility
     SetupTitle();
+#ifdef PATCH
+    // initialize decompression facility
     SetupTextTable();
 //    InitIO();
+#endif
     // display initial dialog
     diags = GetVariableStrVal( "DialogOrder" );
     if( stricmp( diags, "" ) == 0 ) diags = "Welcome";
@@ -302,13 +277,7 @@ extern bool DoMainLoop( dlg_state * state )
     for( ;; ) {
         if( i < 0 ) break;
         if( diag_list[i] == NULL ) {
-            if( GetVariableIntVal( "MakeDisks" ) == 1 ) {
-                char *dst_str = GetVariableStrVal( "MakeDiskDrive" );
-                if( !CheckValidDisketteDrive( dst_str ) ) {
-                    MsgBox( NULL, "IDS_INVALID_DISKETTE_SPEC", GUI_OK, dst_str );
-                    i = 0;
-                }
-            } else if( GetVariableIntVal( "DoCopyFiles" ) == 1 ) {
+            if( GetVariableIntVal( "DoCopyFiles" ) == 1 ) {
                 if( !CheckDrive( TRUE ) ) {
                     i = 0;
                 }
@@ -360,10 +329,7 @@ extern bool DoMainLoop( dlg_state * state )
             CancelSetup = TRUE;
             break;
         }
-        if( GetVariableIntVal( "MakeDisks" ) != 0 ) {
-            itoa( CountDisks( NULL ), buff, 10 );
-            SetVariableByName( "NumDisksNeeded", buff );
-        } else if( got_disk_sizes ) {
+        if( got_disk_sizes ) {
             if( !CheckDrive( FALSE ) ) {
                 break;
             }
@@ -421,7 +387,9 @@ extern void GUImain( void )
 
     if( !GetDirParams( argc, argv, &inf_name, &tmp_path ) ) return;
     if( !SetupInit() ) return;
+#ifdef PATCH
     InitIO();
+#endif
     InitGlobalVarList();
     strcpy( current_dir, tmp_path );
     while( InitInfo( inf_name, tmp_path ) ) {
@@ -478,7 +446,9 @@ extern void GUImain( void )
         ConfigModified = FALSE;
     } /* while */
 
+#ifdef PATCH
     FiniIO();
+#endif
     FreeGlobalVarList( TRUE );
     FreeDefaultDialogs();
     FreeAllStructs();

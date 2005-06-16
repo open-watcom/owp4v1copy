@@ -44,7 +44,6 @@ typedef enum {
     DOING_DEFAULTS,
     PRESCAN_FILE,
     FINAL_SCAN,
-    DOING_DISKETTE,
 } pass_type;
 
 extern void CheckStateVars();
@@ -66,7 +65,7 @@ extern bool SimFileSplit( int parm );
 extern bool SimFileLastSplit( int parm );
 extern char *NextToken(char *buf,char delim);
 extern void SaveState(void);
-extern long SimInit(char *buff,char*buff2);
+extern long SimInit( char *buff );
 extern void SimSetTargTempDisk( int parm, char disk );
 extern char *SimGetTargTempDisk( int parm );
 extern int SimGetTargNumFiles( int parm );
@@ -124,7 +123,6 @@ extern void CheckDLLCount( char * );
 extern void SimCalcAddRemove(void);
 extern void SimSetNeedGetDiskSizes();
 extern unsigned char PatchFiles(void );
-extern bool MakeDisks(void );
 extern void MsgPut(int resourceid,va_list arglist);
 extern void PatchError(int format,... );
 extern void FilePatchError(int format,... );

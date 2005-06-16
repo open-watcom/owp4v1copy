@@ -310,7 +310,6 @@ typedef enum {
 static read_state       State;
 static size_t           NoLineCount;
 static size_t           *LineCountPointer = &NoLineCount;
-static vhandle          hMakeDisks;
 static bool             NeedGetDiskSizes = FALSE;
 static bool             NeedInitAutoSetValues = TRUE;
 static char             *ReadBuf;
@@ -2156,23 +2155,6 @@ static bool ProcLine( char *line, pass_type pass )
 }
 
 
-static void ProcessDisketteInfo( char *disk_name )
-/***********************************************/
-{
-    char        buff[200];
-    FILE        *io;
-
-    io = fopen( disk_name, "r" );
-    if( io == NULL )
-        return;
-    while( fgets( buff, 200, io ) != NULL ) {
-        if( ProcLine( buff, DOING_DISKETTE ) == FALSE ) {
-            return;
-        }
-    }
-    fclose( io );
-}
-
 static void ZeroAutoSetValues();
 static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
 /*****************************************************************************/
@@ -2395,8 +2377,8 @@ extern bool CheckForceDLLInstall( char *name )
     return( FALSE );
 }
 
-extern long SimInit( char *inf_name, char *disk_name )
-/****************************************************/
+extern long SimInit( char *inf_name )
+/***********************************/
 {
     long        result;
     FILE        *io;
@@ -2410,7 +2392,6 @@ extern long SimInit( char *inf_name, char *disk_name )
 #define setvar( x, y ) x = AddVariable( #x );
     MAGICVARS( setvar, 0 )
     NONMAGICVARS( setvar, 0 )
-    hMakeDisks = AddVariable( "MakeDisks" );
     SetDefaultGlobalVarList();
     ReadBufSize = BUF_SIZE;
     ReadBuf = GUIMemAlloc( BUF_SIZE );
@@ -2423,7 +2404,6 @@ extern long SimInit( char *inf_name, char *disk_name )
         return( SIM_INIT_NOFILE );
     }
     SetVariableByName( "SetupInfFile", inf_name );
-    ProcessDisketteInfo( disk_name );
     result = PrepareSetupInfo( io, PRESCAN_FILE );
     fseek( io, 0, SEEK_SET );
     InitArray( &DiskInfo, sizeof( struct disk_info ), &SetupInfo.disks );
@@ -3219,7 +3199,6 @@ extern void SimCalcAddRemove()
     bool                remove;
     long                diskette;
     long                tmp_size;
-    bool                makedisks;
     vhandle             reinstall;
 #if defined( __NT__ )
     char                ext[ _MAX_EXT ];
@@ -3233,7 +3212,6 @@ extern void SimCalcAddRemove()
 
     previous = VarGetIntVal( PreviousInstall );
     uninstall = VarGetIntVal( UnInstall );
-    makedisks = VarGetIntVal( hMakeDisks );
     // look for existence of ReInstall variable - use this to decide
     // if we should remove unchecked components (wanted for SQL installs)
     reinstall = GetVariableByName( "ReInstall" );
@@ -3247,7 +3225,7 @@ extern void SimCalcAddRemove()
         targ_index = DirInfo[ dir_index ].target;
         add = EvalExprTree( FileInfo[ i ].condition.p->cond,
                              VarGetIntVal( MinimalInstall ) != 0 );
-        if( FileInfo[ i ].supplimental && !makedisks ) {
+        if( FileInfo[ i ].supplimental ) {
             remove = FALSE;
             if( uninstall ) {
                 add = FALSE;
@@ -3368,7 +3346,7 @@ extern bool SimCalcTargetSpaceNeeded()
 
     /* assume power of 2 */
 
-    if( NeedGetDiskSizes && VarGetIntVal( hMakeDisks ) == 0 ) {
+    if( NeedGetDiskSizes ) {
         if( !GetDiskSizes() )
             return( FALSE );
         NeedGetDiskSizes = FALSE;

@@ -1,5 +1,5 @@
 name=Final
-condition=PreviousInstall ! MakeDisks !
+condition=PreviousInstall !
 static_text=\
         //1"@ will now copy any selected files"\
         //2"@ 選択されたファイルをコピーします"\

@@ -1,5 +1,5 @@
 name=Options
-condition=SelectiveInstall MakeDisks !
+condition=SelectiveInstall
 include=options1.dlg
 static_text=
 other_button=\

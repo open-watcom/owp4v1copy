@@ -803,9 +803,6 @@ extern dlg_state GenericDialog( gui_window *parent, a_dialog_header *curr_dialog
         title = curr_dialog->title;
     } else {
         ReplaceVars( buff, GetVariableStrVal( "Appname" ) );
-        if( GetVariableIntVal( "MakeDisks" ) != 0 ) {
-            strcat( buff, GetVariableStrVal( "IDS_DISKING" ) );
-        }
         title = buff;
     }
     width = curr_dialog->cols;

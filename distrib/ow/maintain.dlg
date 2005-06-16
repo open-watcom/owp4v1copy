@@ -1,5 +1,5 @@
 name=Maintain
-condition=PreviousInstall MakeDisks !
+condition=PreviousInstall
 dynamic_text=maint_1,\
         //1"%AppName% was found in '%DstDir%'"\
         //2"%AppName% ‚ª '%DstDir%' ‚É‚ ‚è‚Ü‚·"\

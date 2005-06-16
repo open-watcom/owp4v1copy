@@ -1,5 +1,4 @@
 name=DstDir
-condition=MakeDisks !
 static_text=
 dynamic_text=dstdir_1,"%AppName% のインストール先を指定して下さい:",IsJapanese
 edit_control=DstDir,@WATCOM,\

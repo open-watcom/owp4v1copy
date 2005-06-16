@@ -21,60 +21,6 @@ push_button=^\
         //0
 
 [Dialog]
-name=InsertFormattedDisk
-static_text=
-dynamic_text=FormattedDiskInfo,""
-dynamic_text=ifd_1,\
-        //1"Please insert a diskette into '%MakeDiskDrive%'."\
-        //2"%FormatDisk?:フォーマットされた%ディスケットを '%MakeDiskDrive%' に入れて下さい。"\
-        //0
-static_text=
-dynamic_text=ifd_2,\
-        //1"Label the diskette as '%DiskDesc%'."\
-        //2"ディスケットに '%DiskDesc%' というラベルをつけてください。"\
-        //0
-static_text=\
-        //1"All existing data on the diskette will be destroyed."\
-        //2"ディスケットにあるデータは全てなくなります。"\
-        //0
-static_text=
-static_text=\
-        //1"If you have already made this diskette, press 'Skip'"\
-        //2"このディスケットを既に作っていれば、'スキップ' を押してください"\
-        //0
-static_text=
-push_button=+"&OK"
-push_button=>\
-        //1"&Skip"\
-        //2"スキップ(&S)"\
-        //0
-push_button=^\
-        //1"&Cancel"\
-        //2"キャンセル(&C)"\
-        //0
-
-[Dialog]
-name=InsertDisk1
-static_text=
-dynamic_text=FormattedDiskInfo,""
-static_text=
-static_text=\
-        //1"@ must write configuration information to the install diskette"\
-        //2"@ はコンフィギュレーション情報をインストール"\
-        //0
-static_text="ディスケットに書かなければなりません",IsJapanese
-dynamic_text=id1_1,\
-        //1"Please insert DISK01 into '%MakeDiskDrive%'."\
-        //2"DISK01 を '%MakeDiskDrive%' に入れてください。"\
-        //0
-static_text=
-push_button=+"&OK"
-push_button=^\
-        //1"&Cancel"\
-        //2"キャンセル(&C)"\
-        //0
-
-[Dialog]
 name=Modify
 static_text=
 dynamic_text=AutoText,""
@@ -672,18 +618,9 @@ IDS_ERASE_OK=\
         //1"All files on drive '%c' will be erased.\nProceed anyway?"\
         //2"ドライブ '%c' のすべてのファイルは削除されます。\n続けますか?"\
         //0
-
-IDS_FORMAT_OK=\
-        //1"This disk in drive '%c' will be formatted, destroying ALL files.\nProceed anyway?"\
-        //2"ドライブ '%c' のディスクはフォーマットされ、すべてのファイルは消滅します。\n続けますか?"\
-        //0
 IDS_ERASE_ARE_YOU_SURE=\
         //1"Are you sure you want to erase all files on drive '%c'?"\
         //2"ドライブ '%c' のすべてのファイルを削除してもよいですか?"\
-        //0
-IDS_FORMAT_ARE_YOU_SURE=\
-        //1"Are you sure you want format drive '%c' destroying all existing files?"\
-        //2"ドライブ '%c' をフォーマットして、すべてのファイルを消滅させてもよいですか?"\
         //0
 IDS_INVALID_DISKETTE_SPEC=\
         //1"'%s' is not a valid diskette drive name.\n"\
@@ -1023,17 +960,8 @@ IDS_QUERYFSERROR=\
         //1"DosQueryFSInfo error: return code = %ld"\
         //2"DosQueryFSInfo エラー: 戻り値 = %ld"\
         //0
-IDS_FORMATTING_FAILED=\
-        //1"Formatting Failed!"\
-        //2"フォーマット失敗!"\
-        //0
 
 [StatusLineMessage]
-IDS_DISKING=\
-        //1" - Creating Diskettes"\
-        //2" - ディスケット作成"\
-        //0
-	
 IDS_CHECKING=\
         //1"Checking directory for existing components ..."\
         //2"既存コンポーネントのためのディレクトリ・チェック..."\
@@ -1045,14 +973,6 @@ IDS_CREATEPROGRAMFOLDER=\
 IDS_CREATEDIRECTORY=\
         //1"Creating Directories..."\
         //2"ディレクトリ作成..."\
-        //0
-IDS_CREATING_DISKS=\
-        //1"Creating Diskettes..."\
-        //2"ディスケット作成..."\
-        //0
-IDS_ERASING_DISKETTE=\
-        //1"Erasing Diskette Contents..."\
-        //2"ディスケットの内容の消去..."\
         //0
 IDS_RELOCATING=\
         //1"Relocating Files..."\
@@ -1069,10 +989,6 @@ IDS_COPYINGFILE=\
 IDS_REMOVING=\
         //1"Removing Files..."\
         //2"ファイルの削除..."\
-        //0
-IDS_FORMATTING_DISK=\
-        //1"Formatting Diskette..."\
-        //2"ディスケットのフォーマット..."\
         //0
 IDS_CREATEFILE=\
         //1"Copying New File"\
