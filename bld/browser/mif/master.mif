@@ -100,12 +100,12 @@ LIBS    = $(LIBS_$(host_os)) $(dwarf_dr_lib) $(wclass_lib)
 lflags_win_i86  = sys windows font mem op stack=16k
 lflags_dos_386  = sys pharlap
 
-extra_l_flags   = op map
+extra_l_flags   = op map, eliminate
 !ifndef quick_link
 extra_l_flags   += op show,art,static
 !endif
 
-extra_l_flags_dos = op stub=$(pharlap)stub386.exe op eliminate
+extra_l_flags_dos = op stub=$(pharlap)stub386.exe
 extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
