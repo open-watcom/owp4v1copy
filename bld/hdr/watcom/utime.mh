@@ -1,5 +1,5 @@
 /*
- *  sys/utime.h utimbuf structure and prototypes
+ *  utime.h utimbuf structure and prototypes
  *
 :include crwatqnx.sp
  */

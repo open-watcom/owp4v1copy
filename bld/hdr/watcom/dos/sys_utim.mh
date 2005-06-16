@@ -1,0 +1,9 @@
+/*
+ *  sys/utime.h compatibility forwarder
+ *
+:include crwat.sp
+ */
+#ifndef _UTIME_H_INCLUDED
+#define _UTIME_H_INCLUDED
+#include <utime.h>
+#endif

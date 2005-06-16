@@ -250,11 +250,11 @@ sys/wait.h      : ../watcom/linux/wait.mh ../readonly.sp ../cplusepi.sp ../cplus
 !endif
 sys/timeb.h     : ../watcom/timeb.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../timet.sp
 sys/types.h     : ../watcom/types.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crqnx.sp ../crwat.sp ../sizet.sp ../timet.sp
-sys/utime.h     : ../watcom/utime.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../timet.sp
 tchar.h         : ../watcom/tchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../wchar_t.sp ../wctypet.sp
 time.h          : $(time_deps)
 typeinfo.h      : $(typeinfo_deps)
 unistd.h        : ../watcom/unistd.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../posix.sp ../sizet.sp ../ssizet.sp
+utime.h         : ../watcom/utime.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../timet.sp
 varargs.h       : ../watcom/varargs.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
 wcdefs.h        : ../watcom/wcdefs.mh ../readonly.sp ../crwat.sp ../sizet.sp
 wcexcept.h      : ../watcom/wcexcept.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp

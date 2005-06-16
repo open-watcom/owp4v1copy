@@ -178,7 +178,8 @@ DOS_files = &
         win/win16.h &
         win/windows.h &
         win/win386.h &
-        unistd.h
+        unistd.h &
+	utime.h
 
 QNX_files = &
       $(common) &
@@ -318,6 +319,13 @@ sys/time.h : ../quantum/sys_time.mh ../poppack.sp ../pshpackl.sp
 !endif
 !ifeq system LINUX
 sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../poppack.sp ../cplusepi.sp
+        $(splice)
+!endif
+#
+# Special case for sys/utime.h since there is also a utime.h
+#
+!ifeq system DOS
+sys/utime.h : dos/sys_utim.mh
         $(splice)
 !endif
 
