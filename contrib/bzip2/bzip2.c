@@ -164,7 +164,9 @@
 #   include <utime.h>
 #   include <unistd.h>
 #   include <sys/stat.h>
-#   include <sys/times.h>
+#   ifndef __WATCOMC__
+#   include <sys/times.h>*/
+#endif
 
 #   define PATH_SEP    '/'
 #   define MY_LSTAT    lstat
@@ -193,6 +195,16 @@
 #     undef MY_STAT
 #     define MY_LSTAT stat
 #     define MY_STAT stat
+#     undef SET_BINARY_MODE
+#     define SET_BINARY_MODE(fd)                        \
+        do {                                            \
+           int retVal = setmode ( fileno ( fd ),        \
+                                  O_BINARY );           \
+           ERROR_IF_MINUS_ONE ( retVal );               \
+        } while ( 0 )
+#   endif
+
+#   ifdef __WATCOMC__
 #     undef SET_BINARY_MODE
 #     define SET_BINARY_MODE(fd)                        \
         do {                                            \
@@ -1144,10 +1156,12 @@ void applySavedMetaInfoToOutputFile ( Char *dstName )
    retVal = utime ( dstName, &uTimBuf );
    ERROR_IF_NOT_ZERO ( retVal );
 
+#ifndef __WATCOMC__
    retVal = chown ( dstName, fileMetaInfo.st_uid, fileMetaInfo.st_gid );
    /* chown() will in many cases return with EPERM, which can
       be safely ignored.
    */
+#endif
 #  endif
 }
 
@@ -1880,7 +1894,7 @@ IntNative main ( IntNative argc, Char *argv[] )
    /*-- Set up signal handlers for mem access errors --*/
    signal (SIGSEGV, mySIGSEGVorSIGBUScatcher);
 #  if BZ_UNIX
-#  ifndef __DJGPP__
+#  if !defined __DJGPP__ && !defined __WATCOMC__
    signal (SIGBUS,  mySIGSEGVorSIGBUScatcher);
 #  endif
 #  endif
@@ -2024,7 +2038,7 @@ IntNative main ( IntNative argc, Char *argv[] )
    if (srcMode == SM_F2F) {
       signal (SIGINT,  mySignalCatcher);
       signal (SIGTERM, mySignalCatcher);
-#     if BZ_UNIX
+#     if BZ_UNIX && !defined __WATCOMC__
       signal (SIGHUP,  mySignalCatcher);
 #     endif
    }
