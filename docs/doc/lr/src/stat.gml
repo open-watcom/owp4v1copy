@@ -1,4 +1,4 @@
-.func stat _stat _stati64 _wstat _wstati64
+.func stat _stat _stati64 _wstat _wstati64 lstat
 #include <sys&pc.stat.h>
 int stat( const char *path, struct stat *buf );
 .ixfunc2 '&FileOp' &func
@@ -16,6 +16,8 @@ int _wstat( const wchar_t *path, struct _stat *buf );
 int _wstati64( const wchar_t *path, struct _stati64 *buf );
 .ixfunc2 '&FileOp' &wfunc.i64
 .ixfunc2 '&Wide' &wfunc.i64
+int lstat( const char *path, struct stat *buf );
+.ixfunc2 '&FileOp' l&func
 .funcend
 .desc begin
 The &func functions obtain information about the file or directory
@@ -43,10 +45,12 @@ and
 .kw _wfstati64
 functions deal with wide character strings.
 The differences in the structures are described above.
+The
+.kw lstat
+function is identical to &func on non-UNIX platforms.
 .desc end
 .im statrtn
 .error begin
-.if '&machsys' ne 'PP' .do begin
 .begterm 12
 .term EACCES
 Search permission is denied for a component of
@@ -69,25 +73,24 @@ A component of
 is not a directory.
 .do end
 .endterm
-.do end
 .error end
 .see begin
-.seelist stat fstat fsys_stat fsys_fstat lstat
+.seelist stat fstat fsys_stat fsys_fstat
 .see end
 .exmp begin
 #include <stdio.h>
 #include <sys&pc.stat.h>
 
 void main()
-  {
+{
     struct stat buf;
 .exmp break
     if( stat( "file", &buf ) != -1 ) {
-      printf( "File size = %d\n", buf.st_size );
+        printf( "File size = %d\n", buf.st_size );
     }
-  }
+}
 .exmp end
-.class POSIX 1003.1
+.class POSIX
 .if &'length(&_func.) ne 0 .do begin
 .np
 &_func conforms to ANSI/ISO naming conventions

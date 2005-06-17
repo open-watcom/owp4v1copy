@@ -294,6 +294,7 @@ _WCRTLINK extern int _wstati64( const wchar_t *, struct _stati64 * );
 
 _WCRTLINK extern int fstat( int, struct stat * );
 _WCRTLINK extern int stat( const char *, struct stat * );
+_WCRTLINK extern int lstat( const char *, struct stat * );
 :: end of extensions
 #endif
 

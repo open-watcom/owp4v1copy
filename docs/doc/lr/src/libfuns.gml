@@ -1200,6 +1200,7 @@
 .fn8 _stati64                   stat.gml        DOS       WIN32
 .fnw _wstat                     stat.gml        DOS       WIN32
 .fnw _wstati64                  stat.gml        DOS       WIN32
+.fnc lstat                      stat.gml        DOS       WIN32
 .fnc _status87                  _status8.gml    DOS QNX W WIN32
 .fnc strcat                     strcat.gml      DOS QNX W WIN32
 .fnf _fstrcat                   strcat.gml      DOS QNX W WIN32

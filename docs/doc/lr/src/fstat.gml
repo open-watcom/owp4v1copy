@@ -56,7 +56,7 @@ argument is not a valid file &handle..
 .error end
 .see begin
 .seelist fstat creat dup dup2 fcntl fsys_stat fsys_fstat
-.seelist fstat lstat open sopen stat pipe
+.seelist fstat open sopen stat pipe
 .see end
 .exmp begin
 #include <stdio.h>
@@ -66,20 +66,20 @@ argument is not a valid file &handle..
 #include <&iohdr>
 .exmp break
 void main()
-  {
+{
     int &fd, rc;
     struct stat buf;
 .exmp break
     &fd = open( "file", O_RDONLY );
     if( &fd != -1 ) {
-      rc = fstat( &fd, &buf );
-      if( rc != -1 )
-        printf( "File size = %d\n", buf.st_size );
-      close( &fd );
+        rc = fstat( &fd, &buf );
+        if( rc != -1 )
+            printf( "File size = %d\n", buf.st_size );
+        close( &fd );
     }
-  }
+}
 .exmp end
-.class POSIX 1003.1
+.class POSIX
 .if &'length(&_func.) ne 0 .do begin
 .np
 &_func conforms to ANSI/ISO naming conventions
