@@ -60,6 +60,7 @@
 #include "genctrl.h"
 #include "dlggen.h"
 #include "utils.h"
+#include "setupio.h"
 #if !defined( __UNIX__ )
     #include "bdiff.h"
 #endif

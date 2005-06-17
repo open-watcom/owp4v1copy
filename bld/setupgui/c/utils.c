@@ -55,11 +55,8 @@
 #include "gendlg.h"
 #include "guiutil.h"
 #include "utils.h"
-#include "disksize.h"
+#include "setupio.h"
 #include "wpack.h"
-#if defined( __WINDOWS__ ) || defined( __NT__ )
-    #include "wpi.h"
-#endif
 
 #include "errno.h"
 
@@ -1186,12 +1183,15 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
 {
     static char         lastchance[1024];
     size_t              buffer_size = 16 * 1024;
-    int                 src_files, dst_files;
+    void                *src_files;
+    int                 dst_files;
     int                 bytes_read, bytes_written, style;
     char                *pbuff;
 
-    src_files = open( src_path, O_RDONLY + O_BINARY );
-    if( src_files == -1 ) return( CFE_CANTOPENSRC );
+    src_files = FileOpen( src_path, O_RDONLY + O_BINARY );
+    if( src_files == NULL ) {
+        return( CFE_CANTOPENSRC );
+    }
 
     for( ;; ) {
         pbuff = GUIMemAlloc( buffer_size );
@@ -1211,7 +1211,7 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
     }
     dst_files = open( dst_path, style, S_IREAD + S_IWRITE );
     if( dst_files == -1 ) {
-        close( src_files );
+        FileClose( src_files );
         if( pbuff != lastchance ) GUIMemFree( pbuff );
         dst_files = open( dst_path, O_RDONLY );
         if( dst_files != -1 ) {
@@ -1226,12 +1226,12 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
     }
 
     do {
-        bytes_read = read( src_files, pbuff, buffer_size );
+        bytes_read = FileRead( src_files, pbuff, buffer_size );
         bytes_written = write( dst_files, pbuff, bytes_read );
         BumpStatus( bytes_written );
         if( bytes_written != bytes_read || StatusCancelled() ) {
             close( dst_files );
-            close( src_files );
+            FileClose( src_files );
             if( bytes_written == bytes_read ) {
                 // copy was aborted, delete destination file
                 DoDeleteFile( dst_path );
@@ -1249,7 +1249,7 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
 
     SameFileDate( src_path, dst_path );
     if( pbuff != lastchance ) GUIMemFree( pbuff );
-    close( src_files );
+    FileClose( src_files );
     return( CFE_NOERROR );
 }
 
