@@ -126,7 +126,7 @@ char *	ugets(char *buf, int siz, int f)
  * lstat() is a stat() which does not follow symbolic links.
  * If there are no symbolic links, just use stat().
  */
-int lstat(char * path, struct stat * buf)
+int lstat(const char * path, struct stat * buf)
 {
 	return (stat(path, buf));
 }
