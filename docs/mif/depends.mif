@@ -1291,18 +1291,11 @@ $(docsrc_dir)\lr\src\difftime.gml &
 $(docsrc_dir)\lr\src\dirent.gml &
 $(docsrc_dir)\lr\src\div.gml &
 $(docsrc_dir)\lr\src\dms2ieee.gml &
-$(docsrc_dir)\lr\src\dos16.lst &
-$(docsrc_dir)\lr\src\dos32.lst &
 $(docsrc_dir)\lr\src\dosattr.gml &
 $(docsrc_dir)\lr\src\doscommi.gml &
 $(docsrc_dir)\lr\src\dosexter.gml &
 $(docsrc_dir)\lr\src\dosfind.gml &
 $(docsrc_dir)\lr\src\dosfindn.gml &
-$(docsrc_dir)\lr\src\dospm.lst &
-$(docsrc_dir)\lr\src\dumplibs.ed2 &
-$(docsrc_dir)\lr\src\dumplibs.lst &
-$(docsrc_dir)\lr\src\dumplibs.prg &
-$(docsrc_dir)\lr\src\dumplibs.wfl &
 $(docsrc_dir)\lr\src\dup.gml &
 $(docsrc_dir)\lr\src\dup2.gml &
 $(docsrc_dir)\lr\src\ecvt.gml &
@@ -1388,7 +1381,6 @@ $(docsrc_dir)\lr\src\gfunmacs.gml &
 $(docsrc_dir)\lr\src\gfunrems.gml &
 $(docsrc_dir)\lr\src\globdata.gml &
 $(docsrc_dir)\lr\src\gmtime.gml &
-$(docsrc_dir)\lr\src\graph.lst &
 $(docsrc_dir)\lr\src\grmacs.gml &
 $(docsrc_dir)\lr\src\halloc.gml &
 $(docsrc_dir)\lr\src\hantozen.gml &
@@ -1525,7 +1517,6 @@ $(docsrc_dir)\lr\src\jtohira.gml &
 $(docsrc_dir)\lr\src\jtokata.gml &
 $(docsrc_dir)\lr\src\jtolower.gml &
 $(docsrc_dir)\lr\src\jtoupper.gml &
-$(docsrc_dir)\lr\src\kanji.lst &
 $(docsrc_dir)\lr\src\kbhit.gml &
 $(docsrc_dir)\lr\src\keep.gml &
 $(docsrc_dir)\lr\src\labs.gml &
@@ -1533,8 +1524,6 @@ $(docsrc_dir)\lr\src\ldexp.gml &
 $(docsrc_dir)\lr\src\ldiv.gml &
 $(docsrc_dir)\lr\src\lfind.gml &
 $(docsrc_dir)\lr\src\libfuns.gml &
-$(docsrc_dir)\lr\src\liblist.prg &
-$(docsrc_dir)\lr\src\liblist6.gml &
 $(docsrc_dir)\lr\src\liblist7.gml &
 $(docsrc_dir)\lr\src\libmacs.gml &
 $(docsrc_dir)\lr\src\libpref.gml &
@@ -1549,11 +1538,8 @@ $(docsrc_dir)\lr\src\longjmp.gml &
 $(docsrc_dir)\lr\src\lsearch.gml &
 $(docsrc_dir)\lr\src\lseek.gml &
 $(docsrc_dir)\lr\src\ltoa.gml &
-$(docsrc_dir)\lr\src\macro.lst &
-$(docsrc_dir)\lr\src\macro.sav &
 $(docsrc_dir)\lr\src\main.gml &
 $(docsrc_dir)\lr\src\malloc.gml &
-$(docsrc_dir)\lr\src\math.lst &
 $(docsrc_dir)\lr\src\matherr.gml &
 $(docsrc_dir)\lr\src\max.gml &
 $(docsrc_dir)\lr\src\mbbtombc.gml &
@@ -1667,7 +1653,6 @@ $(docsrc_dir)\lr\src\mupcklbw.gml &
 $(docsrc_dir)\lr\src\mupckldq.gml &
 $(docsrc_dir)\lr\src\mupcklwd.gml &
 $(docsrc_dir)\lr\src\necbios.doc &
-$(docsrc_dir)\lr\src\net32.lst &
 $(docsrc_dir)\lr\src\nosound.gml &
 $(docsrc_dir)\lr\src\nthctype.gml &
 $(docsrc_dir)\lr\src\offsetof.gml &
@@ -1678,10 +1663,6 @@ $(docsrc_dir)\lr\src\opendir.gml &
 $(docsrc_dir)\lr\src\openosfh.gml &
 $(docsrc_dir)\lr\src\openper.gml &
 $(docsrc_dir)\lr\src\openperv.gml &
-$(docsrc_dir)\lr\src\os216.lst &
-$(docsrc_dir)\lr\src\os216dl.lst &
-$(docsrc_dir)\lr\src\os216mt.lst &
-$(docsrc_dir)\lr\src\os232.lst &
 $(docsrc_dir)\lr\src\oshandle.gml &
 $(docsrc_dir)\lr\src\outp.gml &
 $(docsrc_dir)\lr\src\outpd.gml &
@@ -1698,8 +1679,6 @@ $(docsrc_dir)\lr\src\putchar.gml &
 $(docsrc_dir)\lr\src\putenv.gml &
 $(docsrc_dir)\lr\src\puts.gml &
 $(docsrc_dir)\lr\src\putw.gml &
-$(docsrc_dir)\lr\src\qnx16.lst &
-$(docsrc_dir)\lr\src\qnx32.lst &
 $(docsrc_dir)\lr\src\qsort.gml &
 $(docsrc_dir)\lr\src\raise.gml &
 $(docsrc_dir)\lr\src\rand.gml &
@@ -1869,9 +1848,6 @@ $(docsrc_dir)\lr\src\wctob.gml &
 $(docsrc_dir)\lr\src\wctomb.gml &
 $(docsrc_dir)\lr\src\wctype.gml &
 $(docsrc_dir)\lr\src\widefunc.gml &
-$(docsrc_dir)\lr\src\win16.lst &
-$(docsrc_dir)\lr\src\win32.lst &
-$(docsrc_dir)\lr\src\win386.lst &
 $(docsrc_dir)\lr\src\write.gml &
 $(docsrc_dir)\lr\src\zentohan.gml
 
