@@ -161,11 +161,17 @@ V_HALFWORDCONST2. This means that operand 2 (the constant) must fit into a
 16-bit halfword (yes, the terminology is inconsistent). Similarly the
 'R = C op ANY' constraint, V_SYMMETRIC, means that the operands may be
 swapped as long as the operator is symmetric (aka commutative, for instance
-addition or multiplication, but not subtraction or division). The 'gen'
-column determines the action to be taken for the specified combination of
-operands and result type. 
+addition or multiplication, but not subtraction or division).
 
- There are two basic classes, G_ for 'generate' and R_ for 'routine'. The
+ The 'eq' column further restricts when a reduction may be used. If it
+contains EQ_R1, the reduction is only applicable when the result is the same
+as operand op1. Similarly EQ_R2 restricts the reduction to a case where the
+second operand (op2) is the same as the result. The typical case where 'eq'
+is set to NONE does not place any such restrictions on the operands.
+
+ The 'gen' column determines the action to be taken for the specific
+combination of operands and result types which also satisfies all conditions.
+There are two basic classes, G_ for 'generate' and R_ for 'routine'. The
 G_ actions, for instance G_BINARY_IMM, will be described later. The R_
 actions are associated with specific routines via r.h header. For instance
 R_SWAPOPS will call a routine rSWAPOPS(), which is generic enough to be
