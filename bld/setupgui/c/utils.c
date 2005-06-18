@@ -668,24 +668,24 @@ extern bool GetRootFromPath( char * root, char * path )
 /*****************************************************/
 {
     char        *index;
-    char        drive[ _MAX_PATH ];
+    char        drive[_MAX_PATH];
     int         i;
     if( path == NULL || root == NULL ) {
     return( FALSE );
     }
 
-    if( isalpha( path[ 0 ] ) != 0 && path[ 1 ] == ':' ) {
+    if( isalpha( path[0] ) != 0 && path[1] == ':' ) {
         // turn a path like "c:\dir" into "c:\"
-        root[ 0 ] = path [ 0 ];
-        root[ 1 ] = ':';
-        root[ 2 ] = '\\';
-        root[ 3 ] = '\0';
+        root[0] = path [ 0 ];
+        root[1] = ':';
+        root[2] = '\\';
+        root[3] = '\0';
         return( TRUE );
-    } else if( path[ 0 ] == '\\' && path[ 1 ] == '\\' ) {
+    } else if( path[0] == '\\' && path[1] == '\\' ) {
         // turn a UNC name like "\\root\share\dir\subdir" into "\\root\share\"
         strcpy( root, path );
         i = 0;
-        if( root[ strlen( root ) - 1 ] != '\\' ) {
+        if( root[strlen( root ) - 1] != '\\' ) {
             strcat( root, "\\" );
         }
         index = root;
@@ -1586,13 +1586,13 @@ static bool DoCopyFiles()
         strcpy( src_path, GetVariableStrVal( "SrcDir" ) );
         p = GetVariableStrVal( "DstDir" );
         len = strlen( src_path );
-        if( len > 0 && src_path[ len - 1 ] != '\\' ) {
+        if( len > 0 && src_path[len - 1] != '\\' ) {
             strcat( src_path, "\\" );
         }
         len = strlen( p );
         if( strncmp( dir, p, len ) == 0 ) {
-            if( dir[len] == '\\' ) len++; // if 1st char to concat is a backslash, skip it
-            strcat( src_path, dir+len ); // get rid of the dest directory, just keep the subdir
+            if( dir[len] == '\\' ) len++;   // if 1st char to concat is a backslash, skip it
+            strcat( src_path, dir + len );  // get rid of the dest directory, just keep the subdir
         } else {
             // use the macro as the directory name   eg: cd_drive:\winsys\filename
             SimTargetDirName( SimDirTargNum( SimFileDirNum( filenum ) ), tmp_path );
@@ -1600,7 +1600,7 @@ static bool DoCopyFiles()
             strcat( src_path, tmp_path );
             strcat( src_path, dir + len );
         }
-        p = src_path + strlen(src_path);
+        p = src_path + strlen( src_path );
         strcat( src_path, file_desc );
 
         if( StatusCancelled() ) {
@@ -1614,7 +1614,7 @@ static bool DoCopyFiles()
                 var_handle = SimSubFileVar( filenum, subfilenum );
                 _makepath( tmp_path, NULL, dir, file_desc, NULL );
 
-                *p='\0'; // nuke name from end of src_path
+                *p = '\0';  // nuke name from end of src_path
                 strcat( src_path, file_desc );
                 StatusLines( STAT_COPYINGFILE, tmp_path );
                 UnPackHook( tmp_path );
@@ -2190,13 +2190,14 @@ static void DefineVars()
     }
 }
 
-extern bool GetDirParams( int                   argc,
-                          char **               argv,
-                          char **               inf_name,
-                          char **               tmp_path )
-/********************************************************/
+
+extern bool GetDirParams( int       argc,
+                          char      **argv,
+                          char      **inf_name,
+                          char      **tmp_path,
+                          char      **arc_name )
+/**********************************************/
 {
-    char                buff[ _MAX_PATH ];
     char                dir[ _MAX_DIR ];
     char                drive[ _MAX_DRIVE ];
     int                 i;
@@ -2212,6 +2213,12 @@ extern bool GetDirParams( int                   argc,
         return FALSE;
     }
 
+    *arc_name = GUIMemAlloc( _MAX_PATH );
+    if( *tmp_path == NULL ) {
+        GUIMemFree( *inf_name );
+        GUIMemFree( *tmp_path );
+        return FALSE;
+    }
 
     Invisible           = FALSE;
     SkipDialogs         = FALSE;
@@ -2220,20 +2227,18 @@ extern bool GetDirParams( int                   argc,
     i                   = 1;
 
     while( i < argc ) {
-        if( argv[ i ][ 0 ] == '-'
-            || argv[ i ][ 0 ] == '/' ) {
-            switch( argv[ i ][ 1 ] ) {
+        if( argv[i][0] == '-' || argv[i][0] == '/' ) {
+            switch( argv[i][1] ) {
             case 'f': // Process "script" file to override variables in setup.inf
             case 'F':
-                if( argv[ i ][ 2 ] == '='
-                    && argv[ i ][ 3 ] != '\0'
-                    && access( &argv[ i ][ 3 ], R_OK ) == 0 ) {
-                    VariablesFile = strdup( &argv[ i ][ 3 ] );
+                if( argv[i][2] == '=' && argv[i][3] != '\0'
+                    && access( &argv[i][3], R_OK ) == 0 ) {
+                    VariablesFile = strdup( &argv[i][3] );
                 }
                 break;
             case 'd':
             case 'D':
-                AddDefine( &argv[ i ][ 2 ] );
+                AddDefine( &argv[i][2] );
                 break;
             case 'i': // No screen output (requires SkipDialogs below as well)
             case 'I':
@@ -2251,17 +2256,33 @@ extern bool GetDirParams( int                   argc,
             break;
         }
     }
+
     if( i < argc ) {
-        strcpy( *inf_name, argv[ i ] );
+        strcpy( *arc_name, argv[i] );
         i++;
     } else {
-        _splitpath( argv[ 0 ], drive, dir, NULL, NULL );
-        _makepath( buff, drive, dir, "setup", "inf" );
-        _fullpath( *inf_name, buff, _MAX_PATH );
+        strcpy( *arc_name, "setup.zip" );
     }
 
     if( i < argc ) {
-        strcpy( *tmp_path, argv[ i ] );
+        strcpy( *inf_name, argv[i] );
+        i++;
+    } else {
+        char        buff[_MAX_PATH];
+
+        // If archive exists, expect setup.inf inside. Otherwise assume
+        // it's right next to the setup executable.
+        if( access( *arc_name, R_OK ) == 0 ) {
+            strcpy( *inf_name, "setup.inf" );
+        } else {
+            _splitpath( argv[0], drive, dir, NULL, NULL );
+            _makepath( buff, drive, dir, "setup", "inf" );
+            _fullpath( *inf_name, buff, _MAX_PATH );
+        }
+    }
+
+    if( i < argc ) {
+        strcpy( *tmp_path, argv[i] );
     } else {
         _splitpath( *inf_name, drive, dir, NULL, NULL );
         _makepath( *tmp_path, drive, dir, NULL, NULL );
@@ -2269,6 +2290,7 @@ extern bool GetDirParams( int                   argc,
 
     return TRUE;
 }
+
 
 extern bool FreeDirParams( char **inf_name, char **tmp_path )
 /***********************************************************/

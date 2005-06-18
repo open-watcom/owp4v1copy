@@ -2470,7 +2470,17 @@ extern long SimInit( char *inf_name )
     }
     SetVariableByName( "SetupInfFile", inf_name );
     result = PrepareSetupInfo( io, PRESCAN_FILE );
+#if 0
+    // Currently doesn't work for archives
     FileSeek( io, 0, SEEK_SET );
+#else
+    FileClose( io );
+    io = FileOpen( inf_name, O_RDONLY + O_BINARY );
+    if( io == NULL ) {
+        GUIMemFree( ReadBuf );
+        return( SIM_INIT_NOFILE );
+    }
+#endif
     InitArray( &DiskInfo, sizeof( struct disk_info ), &SetupInfo.disks );
     InitArray( &DirInfo, sizeof( struct dir_info ), &SetupInfo.dirs );
     InitArray( &FileInfo, sizeof( struct file_info ), &SetupInfo.files );

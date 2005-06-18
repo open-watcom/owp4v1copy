@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Header file for all extern functions in utils.c.
 *
 ****************************************************************************/
 
-
-/*
-*   COMMENTS: Header file for all extern functions in utils.c
-*/
 
 extern bool             ModifyEnvironment( bool );
 extern bool             ModifyStartup( bool );
@@ -42,7 +37,7 @@ extern bool             CopyAllFiles( void );
 extern gui_message_return MsgBox( gui_window *, char *, gui_message_type, ... );
 extern bool             CheckDrive( bool );
 extern bool             InitInfo( char *, char * );
-extern bool             GetDirParams( int, char **, char **, char ** );
+extern bool             GetDirParams( int, char **, char **, char **, char ** );
 extern bool             FreeDirParams( char **, char ** );
 extern void             CloseDownMessage( bool state );
 extern void             CloseDownProgram();

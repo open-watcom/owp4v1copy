@@ -37,6 +37,7 @@
 #include "gui.h"
 #include "setup.h"
 #include "setupinf.h"
+#include "setupio.h"
 #include "gendlg.h"
 #include "genvbl.h"
 #include "utils.h"
@@ -365,28 +366,30 @@ extern void GUImain( void )
 {
     int                 argc = 0;
     char                **argv = NULL;
-    char *              dir;
-    char *              drive;
-    char *              inf_name;
-    char *              tmp_path;
-    char *              new_inf;
+    char                *dir;
+    char                *drive;
+    char                *inf_name;
+    char                *tmp_path;
+    char                *arc_name;
+    char                *new_inf;
     char                current_dir[ _MAX_PATH ];
     bool                ret = FALSE;
     dlg_state           state;
 
     GUIMemOpen();
     GUIGetArgs( &argv, &argc );
-    #if defined( __NT__ )
-        if( CheckWin95Uninstall( argc, argv ) ) return;
-    #endif
-    #ifdef __WINDOWS__
-        if( CheckForSetup32( argc, argv ) ) return;
-    #endif
+#if defined( __NT__ )
+    if( CheckWin95Uninstall( argc, argv ) ) return;
+#endif
+#ifdef __WINDOWS__
+    if( CheckForSetup32( argc, argv ) ) return;
+#endif
 
     // initialize paths and env. vbls.
 
-    if( !GetDirParams( argc, argv, &inf_name, &tmp_path ) ) return;
+    if( !GetDirParams( argc, argv, &inf_name, &tmp_path, &arc_name ) ) return;
     if( !SetupInit() ) return;
+    FileInit( arc_name );
 #ifdef PATCH
     InitIO();
 #endif
@@ -449,6 +452,7 @@ extern void GUImain( void )
 #ifdef PATCH
     FiniIO();
 #endif
+    FileFini();
     FreeGlobalVarList( TRUE );
     FreeDefaultDialogs();
     FreeAllStructs();

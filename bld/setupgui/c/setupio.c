@@ -31,34 +31,92 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include "setupio.h"
+#include "zip.h"
+
 
 enum ds_type {
+    DS_INVALID,
     DS_FILE,
     DS_ZIP
 };
 
 typedef struct data_source_t {
-    enum ds_type    type;
+    enum ds_type            type;
     union {
-        int         fhandle;
+        int                 fhandle;
+        struct zip_file     *zf;
     };
 } data_source;
+
+static enum ds_type     srcType;
+static struct zip       *srcZip;
+
+
+extern int FileInit( const char *archive )
+{
+    int             zerr;
+
+    /* Attempt to open a ZIP archive */
+    srcZip = zip_open( archive, ZIP_CHECKCONS, &zerr );
+    if( srcZip != NULL ) {
+        srcType = DS_ZIP;
+    } else {
+        srcType = DS_FILE;
+    }
+    return( 0 );
+}
+
+
+extern int FileFini( void )
+{
+    if( srcType == DS_ZIP ) {
+        zip_close( srcZip );
+    }
+    return( 0 );
+}
 
 
 extern void *FileOpen( const char *path, int flags )
 {
     data_source     *ds;
+    char            *alt_path;
 
     ds = malloc( sizeof( *ds ) );
     if( ds == NULL )
         return( NULL );
 
-    ds->fhandle = open( path, flags );
-    ds->type = DS_FILE;
-    if( ds->fhandle == -1 ) {
+    ds->zf = NULL;
+    if( srcType == DS_ZIP ) {
+        /* First try opening the file inside a ZIP archive */
+        alt_path = strdup( path );
+        if( alt_path != NULL ) {
+            char        *s;
+
+            /* Need to flip slashes - at the moment they may be
+             * forward or backward, and ziplib requires forward
+             * slashes only.
+             */
+            s = alt_path;
+            while( *s ) {
+                if( *s == '\\' )
+                    *s = '/';
+                ++s;
+            }
+            ds->zf = zip_fopen( srcZip, alt_path, 0 );
+            ds->type = DS_ZIP;
+            free( alt_path );
+        }
+    }
+    if( ds->zf == NULL ) {
+        /* If that fails, try opening the file directly */
+        ds->fhandle = open( path, flags );
+        ds->type = DS_FILE;
+    }
+    if( ds->type == DS_FILE && ds->fhandle == -1 ) {
         free( ds );
         ds = NULL;
     }
@@ -76,6 +134,8 @@ extern int FileClose( void *handle )
         rc = close( ds->fhandle );
         break;
     case DS_ZIP:
+        rc = zip_fclose( ds->zf );
+        break;
     default:
         rc = -1;
     }
@@ -95,6 +155,7 @@ extern long FileSeek( void *handle, long offset, int origin )
         pos = lseek( ds->fhandle, offset, origin );
         break;
     case DS_ZIP:
+        /* I really want to be able to seek! */
     default:
         pos = -1;
     }
@@ -113,6 +174,8 @@ extern size_t FileRead( void *handle, void *buffer, size_t length )
         amt = read( ds->fhandle, buffer, length );
         break;
     case DS_ZIP:
+        amt = zip_fread( ds->zf, buffer, length );
+        break;
     default:
         amt = 0;
     }

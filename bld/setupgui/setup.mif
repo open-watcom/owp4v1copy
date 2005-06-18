@@ -93,7 +93,7 @@ $(wres_lib)
 
 !endif
 
-libs = $(libs_$(host_os))
+libs = $(libs_$(host_os)) $(libzip_dir)/wlib/libzip.lib $(zlib_dir)/zlib.lib
 
 gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 
@@ -154,7 +154,7 @@ res_inc_dirs = -I"$(res_dir)" -I"../res" -I"$(gui_dir)/h" $(inc_dirs_sys)
 
 inc_dirs  = -I"../h" -I"$(sdk_dir)/misc" -I"$(build_root)/wpack/h"
 inc_dirs += -I"$(uidir)/h" -I"$(wpi_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h"
-inc_dirs += -I"$(build_root)/bdiff/h" -I$(trmem_dir)
+inc_dirs += -I"$(build_root)/bdiff/h" -I$(trmem_dir) -I"$(libzip_dir)/lib"
 
 
 # explicit rules
