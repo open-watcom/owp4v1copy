@@ -315,6 +315,8 @@ static bool             NeedGetDiskSizes = FALSE;
 static bool             NeedInitAutoSetValues = TRUE;
 static char             *ReadBuf;
 static size_t           ReadBufSize;
+static char             *RawReadBuf;
+static char             *RawBufPos;
 extern gui_coord        GUIScale;
 static int              MaxWidthChars;
 static int              CharWidth;
@@ -2293,6 +2295,62 @@ static bool GetDiskSizes()
 }
 
 
+static char *readLine( void *handle, char *buffer, size_t length )
+/****************************************************************/
+{
+    static int      raw_buf_size;
+    char            *line_start;
+    size_t          len;
+    bool            done;
+
+    done = FALSE;
+    do {
+        // Read data into raw buffer if it's empty
+        if( RawBufPos == NULL ) {
+            raw_buf_size = FileRead( handle, RawReadBuf, BUF_SIZE );
+            if( raw_buf_size == -1 ) {
+                return( NULL );
+            }
+            RawBufPos = RawReadBuf;
+        }
+
+        line_start = RawBufPos;
+        // Look for a newline; check for end of source buffer and size
+        // of target buffer
+        while( (*RawBufPos != '\n') &&
+                (RawBufPos < RawReadBuf + raw_buf_size) &&
+                (RawBufPos - line_start < length) ) {
+            ++RawBufPos;
+        }
+
+        if( *RawBufPos == '\n' ) {
+            // Found a newline; increment past it
+            ++RawBufPos;
+            done = TRUE;
+        } else if( RawBufPos == RawReadBuf + raw_buf_size ) {
+            // We're at the end of the buffer; copy what we have to output buffer
+            len = RawBufPos - line_start;
+            memcpy( buffer, line_start, len );
+            length -= len;
+            buffer += len;
+
+            // Force read of more data into buffer
+            RawBufPos = NULL;
+        } else {
+            // No more space in output buffer
+            done = TRUE;
+        }
+    } while( !done );
+
+    len = RawBufPos - line_start;
+
+    memcpy( buffer, line_start, len );
+    buffer[len] = '\0';
+
+    return( buffer );
+}
+
+
 static int PrepareSetupInfo( FILE *io, pass_type pass )
 /*****************************************************/
 {
@@ -2314,7 +2372,7 @@ static int PrepareSetupInfo( FILE *io, pass_type pass )
     for( ;; ) {
         len = 0;
         for( ;; ) {
-            if( fgets( ReadBuf + len, ReadBufSize - len, io ) == NULL ) {
+            if( readLine( io, ReadBuf + len, ReadBufSize - len ) == NULL ) {
                 done = TRUE;
                 break;
             }
@@ -2328,16 +2386,16 @@ static int PrepareSetupInfo( FILE *io, pass_type pass )
             len = strlen( ReadBuf );
             if( len == 0 )
                 break;
-#ifdef __UNIX__
-            // Manually convert CRLF if needed
-            if( (len > 1) && (ReadBuf[len-1] == '\n') ) {
-                if( ReadBuf[len-2] == '\r' ) {
-                    ReadBuf[len-2] = '\n';
-                    ReadBuf[len-1] = '\0';
+
+            // Manually convert CR/LF if needed
+            if( (len > 1) && (ReadBuf[len - 1] == '\n') ) {
+                if( ReadBuf[len - 2] == '\r' ) {
+                    ReadBuf[len - 2] = '\n';
+                    ReadBuf[len - 1] = '\0';
                     --len;
                 }
             }
-#endif
+
             if( ReadBuf[len-1] == '\n' ) {
                 if( len == 1 )
                     break;
@@ -2382,7 +2440,7 @@ extern long SimInit( char *inf_name )
 /***********************************/
 {
     long        result;
-    FILE        *io;
+    void        *io;
     struct stat stat_buf;
     int         i;
     gui_text_metrics    metrics;
@@ -2399,14 +2457,20 @@ extern long SimInit( char *inf_name )
     if( ReadBuf == NULL ) {
         return( SIM_INIT_NOMEM );
     }
-    io = fopen( inf_name, "r" );
+    RawReadBuf = GUIMemAlloc( BUF_SIZE );
+    if( RawReadBuf == NULL ) {
+        return( SIM_INIT_NOMEM );
+    }
+    RawBufPos = NULL;       // reset buffer position
+
+    io = FileOpen( inf_name, O_RDONLY + O_BINARY );
     if( io == NULL ) {
         GUIMemFree( ReadBuf );
         return( SIM_INIT_NOFILE );
     }
     SetVariableByName( "SetupInfFile", inf_name );
     result = PrepareSetupInfo( io, PRESCAN_FILE );
-    fseek( io, 0, SEEK_SET );
+    FileSeek( io, 0, SEEK_SET );
     InitArray( &DiskInfo, sizeof( struct disk_info ), &SetupInfo.disks );
     InitArray( &DirInfo, sizeof( struct dir_info ), &SetupInfo.dirs );
     InitArray( &FileInfo, sizeof( struct file_info ), &SetupInfo.files );
@@ -2438,7 +2502,7 @@ extern long SimInit( char *inf_name )
         MaxWidthChars = MAX_WINDOW_WIDTH;
     }
     result = PrepareSetupInfo( io, FINAL_SCAN );
-    fclose( io );
+    FileClose( io );
     GUIMemFree( ReadBuf );
     for( i = 0; i < SetupInfo.files.num; ++i ) {
         FileInfo[i].condition.p = &FileCondInfo[ FileInfo[i].condition.i ];
