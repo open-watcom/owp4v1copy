@@ -174,7 +174,7 @@ usr="tchar.h"
 usr="unistd.h"
 usr="varargs.h"
 
-[ DEFAULT type="s" dir="lh" where="c jc f77 jf77 ac" cond="linxtarg cplusplus" ]
+[ DEFAULT type="s" dir="lh" where="c jc f77 jf77 ac" cond="lnxtarg cplusplus" ]
 #
 # C++ headers
 #
