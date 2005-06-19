@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines to modify registry and configuration files.
 *
 ****************************************************************************/
 
@@ -35,21 +34,21 @@
 #include <stdio.h>
 #include <unistd.h>
 #if !defined( __UNIX__ )
-  #include <dos.h>
+    #include <dos.h>
 #endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #if defined( __UNIX__ )
-  #include <time.h>
+    #include <time.h>
 #endif
 #if defined( __WINDOWS__ ) || defined( __NT__ )
-  #include <windows.h>
+    #include <windows.h>
 #endif
 #if defined( __OS2__ )
-  #define INCL_DOSMISC
-  #include <os2.h>
+    #define INCL_DOSMISC
+    #include <os2.h>
 #endif
 #include "gui.h"
 #include "guiutil.h"
@@ -71,9 +70,9 @@ static bool             ModConfig( char *, char * );
 
 // NT doesn't have an AUTOEXEC to modify (but we still need ReplaceVars)
 
-static char             new_var[ MAXENVVAR + 1 ];
-static char             new_val[ MAXENVVAR + 1 ];
-static char             envbuf[ MAXENVVAR + 1 ];
+static char             new_var[MAXENVVAR + 1];
+static char             new_val[MAXENVVAR + 1];
+static char             envbuf[MAXENVVAR + 1];
 extern vhandle          UnInstall;
 
 #if defined( __NT__ )
@@ -81,17 +80,17 @@ extern vhandle          UnInstall;
         HKEY    key;
         bool    key_is_open;
         bool    modify;
-    } RegLocation[ NUM_REG_LOCATIONS ];
+    } RegLocation[NUM_REG_LOCATIONS];
 #endif
 
 bool GetOldConfigFileDir( char *newauto, char *drive_path )
 /*********************************************************/
 {
-    char                        drive[ _MAX_DRIVE ];
+    char                        drive[_MAX_DRIVE];
 
     if( VarGetIntVal( UnInstall ) ) {
         _splitpath( drive_path, drive, NULL, NULL, NULL );
-        if( drive[ 0 ] == '\x0' ) {
+        if( drive[0] == '\x0' ) {
             _fullpath( newauto, drive_path, _MAX_PATH );
             _splitpath( newauto, drive, NULL, NULL, NULL );
         }
@@ -122,13 +121,13 @@ extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
         look = old_value;
         len = strlen( new_curr );
         while( ( dup = stristr( look, new_curr ) ) ) {
-            if( dup[ len ] == delim ) {
+            if( dup[len] == delim ) {
                 if( dup == old_value || dup[-1] == delim ) {
                     memmove( dup, dup + len + 1, strlen( dup + len + 1 ) + 1 );
                 } else {
                     look = dup + len;
                 }
-            } else if( dup[ len ] == '\0' || dup[ len ] == '\n' ) {
+            } else if( dup[len] == '\0' || dup[len] == '\n' ) {
                 if( dup == old_value ) {
                     dup[0] = dup[len];
                     dup[1] = '\0';
@@ -167,8 +166,8 @@ extern short GetBootDrive(void)
     unsigned long       drive;
     APIRET      rc;
 
-    rc = DosQuerySysInfo(QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, DataBuf, sizeof(DataBuf) );
-    if( rc != 0){
+    rc = DosQuerySysInfo( QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, DataBuf, sizeof(DataBuf) );
+    if( rc != 0 ) {
         printf("DosQuerySysInfo error: return code = %ld ",rc);
     }
     drive = *(unsigned long *)DataBuf;
@@ -180,7 +179,7 @@ extern short GetBootDrive(void)
     return 0;
 }
 #else
-extern short              GetBootDrive();
+extern short            GetBootDrive();
 #pragma aux             GetBootDrive =  \
                         "mov  ax,3305h" \
                         "sub  dx,dx"    \
@@ -193,15 +192,16 @@ char                    OrigConfig[] = "?:\\CONFIG.SYS";
 
 static void BackupName( char *filename );
 static void ReplaceExt( char *filename, char *new_ext );
+
 extern bool ModifyAutoExec( void )
 /********************************/
 {
     int                 num_auto, num_cfg;
     int                 boot_drive, mod_type;
 #ifndef __OS2__
-    char                newauto[ _MAX_PATH ];
+    char                newauto[_MAX_PATH];
 #endif
-    char                newcfg[ _MAX_PATH ];
+    char                newcfg[_MAX_PATH];
     FILE                *fp;
 
     num_auto = SimNumAutoExec();
@@ -210,15 +210,15 @@ extern bool ModifyAutoExec( void )
         return( TRUE );
     }
     ConfigModified = TRUE;
-    #ifdef __OS2__
-        SetVariableByName( "AutoText", GetVariableStrVal( "IDS_MODIFY_CONFIG" ) );
-    #else
-        SetVariableByName( "AutoText", GetVariableStrVal( "IDS_MODIFY_AUTOEXEC" ) );
-    #endif
+#ifdef __OS2__
+    SetVariableByName( "AutoText", GetVariableStrVal( "IDS_MODIFY_CONFIG" ) );
+#else
+    SetVariableByName( "AutoText", GetVariableStrVal( "IDS_MODIFY_AUTOEXEC" ) );
+#endif
     if( DoDialog( "Modify" ) == DLG_CAN ) {
         return( FALSE );
     }
-    if( GetVariableIntVal( "ModNow" ) == 1 ){
+    if( GetVariableIntVal( "ModNow" ) == 1 ) {
         mod_type = MOD_IN_PLACE;
     } else {
         mod_type = MOD_LATER;
@@ -230,23 +230,23 @@ extern bool ModifyAutoExec( void )
         boot_drive = GetBootDrive();
     }
     if( boot_drive == 0 ) {
-        #ifdef __NT__
+#ifdef __NT__
         if( GetDriveType( "C:\\" ) == DRIVE_FIXED ) {
-            OrigAutoExec[ 0 ] = 'C';   // assume C if it is a hard drive
+            OrigAutoExec[0] = 'C';   // assume C if it is a hard drive
         } else {
             // otherwise guess it is the same as the windows system directory
             char *sys_drv;
             sys_drv = GetVariableStrVal( "WinSystemDir" );
             boot_drive = toupper( sys_drv[0] ) - 'A' + 1;
-            OrigAutoExec[ 0 ] = 'A' + boot_drive - 1;
+            OrigAutoExec[0] = 'A' + boot_drive - 1;
         }
-        #else
-            OrigAutoExec[ 0 ] = 'C';   // assume C
-        #endif
+#else
+        OrigAutoExec[0] = 'C';   // assume C
+#endif
     } else {
-        OrigAutoExec[ 0 ] = 'A' + boot_drive - 1;
+        OrigAutoExec[0] = 'A' + boot_drive - 1;
     }
-    OrigConfig[ 0 ] = OrigAutoExec[ 0 ];
+    OrigConfig[0] = OrigAutoExec[0];
 
     SetVariableByName( "FileToFind", "CONFIG.SYS" );
     while( access( OrigConfig, F_OK ) != 0 ) {
@@ -264,8 +264,8 @@ extern bool ModifyAutoExec( void )
             fclose( fp );
         }
         strcpy( newcfg, GetVariableStrVal("CfgDir") );
-        OrigConfig[ 0 ] = newcfg[0];
-        OrigAutoExec[ 0 ] = OrigConfig[ 0 ];
+        OrigConfig[0] = newcfg[0];
+        OrigAutoExec[0] = OrigConfig[0];
     }
 #ifndef __OS2__
     SetVariableByName( "FileToFind", "AUTOEXEC.BAT" );
@@ -284,85 +284,86 @@ extern bool ModifyAutoExec( void )
             fclose( fp );
         }
         strcpy( newcfg, GetVariableStrVal("CfgDir") );
-        OrigAutoExec[ 0 ] = newcfg[0];
+        OrigAutoExec[0] = newcfg[0];
     }
 #endif
 
     if( mod_type == MOD_IN_PLACE ) {
         // copy current files to AUTOEXEC.BAK and CONFIG.BAK
 
-        #ifndef __OS2__
-            strcpy( newauto, OrigAutoExec );
-            BackupName( newauto );
-        #endif
+#ifndef __OS2__
+        strcpy( newauto, OrigAutoExec );
+        BackupName( newauto );
+#endif
         strcpy( newcfg, OrigConfig );
         BackupName( newcfg );
 
-        #ifdef __OS2__
-            MsgBox( NULL, "IDS_COPYCONFIGSYS", GUI_OK, newcfg );
-        #else
-            MsgBox( NULL, "IDS_COPYAUTOEXEC", GUI_OK, newauto, newcfg );
-        #endif
+#ifdef __OS2__
+        MsgBox( NULL, "IDS_COPYCONFIGSYS", GUI_OK, newcfg );
+#else
+        MsgBox( NULL, "IDS_COPYAUTOEXEC", GUI_OK, newauto, newcfg );
+#endif
 
-        #ifndef __OS2__
-            if( DoCopyFile( OrigAutoExec, newauto, FALSE ) != CFE_NOERROR ) {
-                MsgBox( NULL, "IDS_ERRORBACKAUTO", GUI_OK );
-            } else {
-                if( !ModAuto( newauto, OrigAutoExec ) ) {
-                    return( FALSE );
-                }
+#ifndef __OS2__
+        if( DoCopyFile( OrigAutoExec, newauto, FALSE ) != CFE_NOERROR ) {
+            MsgBox( NULL, "IDS_ERRORBACKAUTO", GUI_OK );
+        } else {
+            if( !ModAuto( newauto, OrigAutoExec ) ) {
+                return( FALSE );
             }
-            if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
-                MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
-            } else {
-                if( !ModConfig( newcfg, OrigConfig ) ) {
-                    return( FALSE );
-                }
+        }
+        if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
+            MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
+        } else {
+            if( !ModConfig( newcfg, OrigConfig ) ) {
+                return( FALSE );
             }
-        #else
-            if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
-                MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
-            } else {
-                if( !ModOS2Config( newcfg, OrigConfig ) ) {
-                    return( FALSE );
-                }
-                MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
+        }
+#else
+        if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
+            MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
+        } else {
+            if( !ModOS2Config( newcfg, OrigConfig ) ) {
+                return( FALSE );
             }
-        #endif
+            MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
+        }
+#endif
     } else {
         // place modifications in AUTOEXEC.NEW and CONFIG.NEW
-        #ifndef __OS2__
-            GetOldConfigFileDir( newauto, OrigAutoExec );
-            strcat( newauto, &OrigAutoExec[ 2 ] );
-            #if defined(__NT__)
-                ReplaceExt( newauto, "W95" );
-            #else
-                ReplaceExt( newauto, "DOS" );
-            #endif
+#ifndef __OS2__
+        GetOldConfigFileDir( newauto, OrigAutoExec );
+        strcat( newauto, &OrigAutoExec[2] );
+        #if defined(__NT__)
+            ReplaceExt( newauto, "W95" );
+        #else
+            ReplaceExt( newauto, "DOS" );
         #endif
+#endif
         GetOldConfigFileDir( newcfg, OrigConfig );
-        strcat( newcfg, &OrigConfig[ 2 ] );
-        #if defined(__OS2__)
-            ReplaceExt( newcfg, "OS2" );
-        #elif defined(__NT__)
-            ReplaceExt( newcfg, "W95" );
-        #else
-            ReplaceExt( newcfg, "DOS" );
-        #endif
-        #ifdef __OS2__
-            MsgBox( NULL, "IDS_NEWCONFIGSYS", GUI_OK, newcfg );
-            if( !ModOS2Config( OrigConfig, newcfg ) ) {
-                return( FALSE );
-            }
-        #else
-            MsgBox( NULL, "IDS_NEWAUTOEXEC", GUI_OK, newauto, newcfg );
-            if( !ModAuto( OrigAutoExec, newauto ) ) {
-                return( FALSE );
-            }
-            if( !ModConfig( OrigConfig, newcfg ) ) {
-                return( FALSE );
-            }
-        #endif
+        strcat( newcfg, &OrigConfig[2] );
+#if defined(__OS2__)
+        ReplaceExt( newcfg, "OS2" );
+#elif defined(__NT__)
+        ReplaceExt( newcfg, "W95" );
+#else
+        ReplaceExt( newcfg, "DOS" );
+#endif
+
+#ifdef __OS2__
+        MsgBox( NULL, "IDS_NEWCONFIGSYS", GUI_OK, newcfg );
+        if( !ModOS2Config( OrigConfig, newcfg ) ) {
+            return( FALSE );
+        }
+#else
+        MsgBox( NULL, "IDS_NEWAUTOEXEC", GUI_OK, newauto, newcfg );
+        if( !ModAuto( OrigAutoExec, newauto ) ) {
+            return( FALSE );
+        }
+        if( !ModConfig( OrigConfig, newcfg ) ) {
+            return( FALSE );
+        }
+#endif
     }
     return( TRUE );
 }
@@ -384,9 +385,9 @@ static void BackupName( char *filename )
 static void ReplaceExt( char *filename, char *new_ext )
 /*****************************************************/
 {
-    char                drive[ _MAX_DRIVE ];
-    char                dir[ _MAX_DIR ];
-    char                fname[ _MAX_FNAME ];
+    char                drive[_MAX_DRIVE];
+    char                dir[_MAX_DIR];
+    char                fname[_MAX_FNAME];
 
     _splitpath( filename, drive, dir, fname, NULL );
     _makepath( filename, drive, dir, fname, new_ext );
@@ -401,7 +402,7 @@ static char *StrNDup( char *str, size_t len )
     new = GUIMemAlloc( len + 1 );
     if( new != NULL ) {
         memcpy( new, str, len );
-        new[ len ] = '\0';
+        new[len] = '\0';
     }
     return( new );
 }
@@ -440,10 +441,10 @@ static bool ModFile( char *orig, char *new,
         if( strchr( envbuf, '\n' ) == 0 ) {
             strcat( envbuf, "\n" );
         }
-        for( line=envbuf; isspace(*line); ++line );
+        for( line = envbuf; isspace( *line ); ++line );
         // modify envbuf if necessary
         func( line, num );
-        if( line[ 0 ] != '\x0' ) {
+        if( line[0] != '\x0' ) {
             if( fputs( envbuf, fp2 ) < 0 ) {
                 MsgBox( NULL, "IDS_ERROR_WRITING", GUI_OK, new );
                 return( FALSE );
@@ -500,7 +501,7 @@ static void CheckConfigLine( char *buf, int num )
         }
 
         for( i = 0; i < num; ++i ) {
-            if( Found[ i ] ) continue;
+            if( Found[i] ) continue;
             if( VarGetIntVal( UnInstall ) ) {
                 add = FALSE;
             } else {
@@ -509,9 +510,9 @@ static void CheckConfigLine( char *buf, int num )
             }
             append = SimGetConfigStrings( i, new_var, new_val );
             if( stricmp( cfg_var, new_var ) == 0 ) {
-                Found[ i ] = TRUE;
+                Found[i] = TRUE;
                 // found an environment variable, replace its value
-                if( isdigit( cfg_val[ 0 ] ) ) { // for files=20, buffers=30 etc
+                if( isdigit( cfg_val[0] ) ) { // for files=20, buffers=30 etc
                     if( add && atoi( new_val ) > atoi( cfg_val ) ) {
                         sprintf( buf, "%s=%s\n", cfg_var, new_val );
                     }
@@ -520,7 +521,7 @@ static void CheckConfigLine( char *buf, int num )
                     if( memicmp( cfg_val, new_val, strlen( new_val ) ) == 0 ) { // nyi - do splitpath
                         sprintf( buf, "%sRUN=%s\n", add ? "" : "REM ", new_val );
                     } else {
-                        Found[ i ] = FALSE;
+                        Found[i] = FALSE;
                     }
                 } else if( append ) {
                     NoDupPaths( new_val, cfg_val, add, ';' );
@@ -532,13 +533,13 @@ static void CheckConfigLine( char *buf, int num )
                 } else {
                     if( !add ) new_val[0] = '\0';
                     if( VarGetIntVal( UnInstall ) ) {
-                        buf[ 0 ] = '\x0';
+                        buf[0] = '\x0';
                     } else {
                         sprintf( buf, "%s%s=%s\n", have_set ? "SET " : "", cfg_var, new_val );
                     }
                 }
             }
-            found = Found[ i ];
+            found = Found[i];
             if( found ) break;
         }
         GUIMemFree( cfg_var );
@@ -596,7 +597,7 @@ void CheckAutoLine( char *buf, int num )
         }
 
         for( i = 0; i < num; ++i ) {
-            if( Found[ i ] ) continue;
+            if( Found[i] ) continue;
             if( VarGetIntVal( UnInstall ) ) {
                 add = FALSE;
             } else {
@@ -605,7 +606,7 @@ void CheckAutoLine( char *buf, int num )
             }
             append = SimGetAutoExecStrings( i, new_var, new_val );
             if( stricmp( env_var, new_var ) == 0 ) {
-                Found[ i ] = TRUE;
+                Found[i] = TRUE;
                 // found an environment variable, replace its value
                 if( stricmp( env_var, "path" ) == 0 ) { // handle PATH specially
                     NoDupPaths( new_val, env_val, add, ';' );
@@ -624,12 +625,12 @@ void CheckAutoLine( char *buf, int num )
                 } else {
                     if( !add ) new_val[0] = '\0';
                     if( VarGetIntVal( UnInstall ) ) {
-                        buf[ 0 ] = '\x0';
+                        buf[0] = '\x0';
                     } else {
                         sprintf( buf, "SET %s=%s\n", env_var, new_val );
                     }
                 }
-                found = Found[ i ];
+                found = Found[i];
                 if( found ) break;
             }
         }
@@ -643,7 +644,7 @@ void FinishAutoLines( FILE *fp, char *buf, int num )
     int                 i;
 
     for( i = 0; i < num; ++i ) {
-        if( Found[ i ] ) continue;  // already done
+        if( Found[i] ) continue;  // already done
         if( !SimCheckAutoExecCondition( i ) ) continue;
         SimGetAutoExecStrings( i, new_var, new_val );
         if( stricmp( new_var, "path" ) == 0 ) {   // handle PATH
@@ -651,9 +652,9 @@ void FinishAutoLines( FILE *fp, char *buf, int num )
         } else {
             sprintf( buf, "SET %s=%s\n", new_var, new_val );
         }
-        Found[ i ] = TRUE;
+        Found[i] = TRUE;
         CheckAutoLine( buf, num );
-        if( buf[ 0 ] != '\x0' ) fputs( buf, fp );
+        if( buf[0] != '\x0' ) fputs( buf, fp );
     }
     if( WinDotCom != NULL ) {
         fputs( WinDotCom, fp );
@@ -686,13 +687,13 @@ void FinishConfigLines( FILE *fp, char *buf, int num )
     }
 
     for( i = 0; i < num; ++i ) {
-        if( Found[ i ] ) continue;  // already done
+        if( Found[i] ) continue;  // already done
         if( !SimCheckConfigCondition( i ) ) continue;
         SimGetConfigStrings( i, new_var, new_val );
         sprintf( buf, "%s=%s\n", new_var, new_val );
-        Found[ i ] = TRUE;
+        Found[i] = TRUE;
         CheckConfigLine( buf, num );
-        if( buf[ 0 ] != '\x0' ) fputs( buf, fp );
+        if( buf[0] != '\x0' ) fputs( buf, fp );
     }
 }
 
@@ -720,7 +721,7 @@ static void FinishOS2ConfigLines( FILE *fp, char *buf, int num )
     int                 i;
 
     for( i = 0; i < num; ++i ) {
-        if( Found[ i ] ) continue;  // already done
+        if( Found[i] ) continue;  // already done
         if( !SimCheckConfigCondition( i ) ) continue;
         SimGetConfigStrings( i, new_var, new_val );
 
@@ -731,9 +732,9 @@ static void FinishOS2ConfigLines( FILE *fp, char *buf, int num )
         } else {
             sprintf( buf, "SET %s=%s\n", new_var, new_val );
         }
-        Found[ i ] = TRUE;
+        Found[i] = TRUE;
         CheckConfigLine( buf, num );
-        if( buf[ 0 ] != '\x0' ) fputs( buf, fp );
+        if( buf[0] != '\x0' ) fputs( buf, fp );
     }
 }
 #ifdef __OS2__
@@ -744,7 +745,7 @@ static bool ModOS2Config( char *orig, char *new )
     int                 num_cfg;
 
     num_cfg = SimNumConfig();
-    if( num_cfg == 0 ){
+    if( num_cfg == 0 ) {
          return( TRUE );
     }
     return( ModFile( orig, new, CheckConfigLine, FinishOS2ConfigLines, num_cfg ) );
@@ -778,7 +779,7 @@ char *ReplaceVarsInplace( char *buff, bool dorealloc )
         e = strchr( p, '%' );
         if( e == NULL ) break;
         memcpy( varname, p, e-p );
-        varname[ e-p ] = '\0';
+        varname[e - p] = '\0';
         for( ;; ) {     // loop for multiple '?' operators
             quest = strchr( varname, '?' );
             if( quest != NULL ) {
@@ -851,17 +852,17 @@ static char *AdditionalPaths[] = { "drive:\\directory\\",
 static void secondarysearch( char *filename, char *buffer )
 /*********************************************************/
 {
-    char                drive[ _MAX_DRIVE ];
-    char                dir[ _MAX_DIR ];
-    char                ext[ _MAX_EXT ];
-    char                path[ _MAX_PATH ];
-    char                name[ _MAX_PATH ];
+    char                drive[_MAX_DRIVE];
+    char                dir[_MAX_DIR];
+    char                ext[_MAX_EXT];
+    char                path[_MAX_PATH];
+    char                name[_MAX_PATH];
     unsigned int        counter;
 
     strcpy( buffer, "" );
     _splitpath( filename, NULL, NULL, name, ext );
-    for( counter = 0; AdditionalPaths[ counter ]; counter++ ) {
-        _splitpath( AdditionalPaths[ counter ],
+    for( counter = 0; AdditionalPaths[counter]; counter++ ) {
+        _splitpath( AdditionalPaths[counter],
                     drive,
                     dir,
                     NULL,
@@ -884,16 +885,16 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
     char                drive[_MAX_DRIVE];
     char                dir[_MAX_DIR];
     char                fname[_MAX_FNAME];
-    char                ext[ _MAX_EXT ];
+    char                ext[_MAX_EXT];
     char                unpacked_as[_MAX_PATH];
     char                dll_name[_MAX_FNAME+_MAX_EXT];
-    char                path1[ _MAX_PATH + 100 ];
-    char                path2[ _MAX_PATH + 100 ];
+    char                path1[_MAX_PATH + 100];
+    char                path2[_MAX_PATH + 100];
 #if defined( __WINDOWS__ )
     OFSTRUCT            ofPrev;
     #define             prev_path ofPrev.szPathName
 #else
-    char                prev_path[ _MAX_PATH ];
+    char                prev_path[_MAX_PATH];
 #endif
 
     _splitpath( name, drive, dir, fname, ext );
@@ -906,35 +907,35 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
 #if defined( __WINDOWS__ )
     if( OpenFile( dll_name, &ofPrev, OF_EXIST ) == -1 ) {
         secondarysearch( dll_name, prev_path );
-        if( prev_path[ 0 ] == '\0' ) {
-            #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-                if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                    rename( unpacked_as, name );
-                } else {
-                    remove( unpacked_as );
-                    if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                        return( GUI_RET_CANCEL );
-                    }
+        if( prev_path[0] == '\0' ) {
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+            if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+                rename( unpacked_as, name );
+            } else {
+                remove( unpacked_as );
+                if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                    return( GUI_RET_CANCEL );
                 }
-            #endif
+            }
+#endif
             return( GUI_RET_OK );     // did not previously exist
         }
     }
 #else
     _searchenv( dll_name, "PATH", prev_path );
-    if( prev_path[ 0 ] == '\0' ) {
+    if( prev_path[0] == '\0' ) {
         secondarysearch( dll_name, prev_path );
-        if( prev_path[ 0 ] == '\0' ) {
-            #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-                if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                    rename( unpacked_as, name );
-                } else {
-                    remove( unpacked_as );
-                    if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                        return( GUI_RET_CANCEL );
-                    }
+        if( prev_path[0] == '\0' ) {
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+            if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+                rename( unpacked_as, name );
+            } else {
+                remove( unpacked_as );
+                if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                    return( GUI_RET_CANCEL );
                 }
-            #endif
+            }
+#endif
             return( GUI_RET_OK );     // did not previously exist
         }
     }
@@ -950,44 +951,28 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
     dst_len = strlen( dst );
     if( memicmp( path1, dst, dst_len ) == 0 && memicmp( path2, dst, dst_len ) == 0 ) {
         /* both files are going into the main installation sub-tree */
-        #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-            if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                rename( unpacked_as, name );
-            } else {
-                remove( unpacked_as );
-                if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                    return( GUI_RET_CANCEL );
-                }
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+        if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+            rename( unpacked_as, name );
+        } else {
+            remove( unpacked_as );
+            if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                return( GUI_RET_CANCEL );
             }
-        #endif
+        }
+#endif
         return( GUI_RET_OK );
     }
     if( stricmp( path1, path2 ) == 0 ) {
-        #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-            /* both files are going into the same directory */
-            struct stat         new, old;
-            stat( prev_path, &old );
-            stat( unpacked_as, &new );
-            if( new.st_mtime < old.st_mtime ) {
-                remove( unpacked_as );
-            } else {
-                if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                    rename( unpacked_as, name );
-                } else {
-                    remove( unpacked_as );
-                    if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                        return( GUI_RET_CANCEL );
-                    }
-                }
-            }
-            return( GUI_RET_OK );
-        #else
-            /* there is only one file & it's been zapped */
-            return( GUI_RET_OK );
-        #endif
-    }
-    if( CheckForceDLLInstall( dll_name ) ) {
-        #ifdef EXTRA_CAUTIOUS_FOR_DLLS
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+        /* both files are going into the same directory */
+        struct stat         new, old;
+
+        stat( prev_path, &old );
+        stat( unpacked_as, &new );
+        if( new.st_mtime < old.st_mtime ) {
+            remove( unpacked_as );
+        } else {
             if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
                 rename( unpacked_as, name );
             } else {
@@ -996,7 +981,24 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
                     return( GUI_RET_CANCEL );
                 }
             }
-        #endif
+        }
+        return( GUI_RET_OK );
+#else
+        /* there is only one file & it's been zapped */
+        return( GUI_RET_OK );
+#endif
+    }
+    if( CheckForceDLLInstall( dll_name ) ) {
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+        if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+            rename( unpacked_as, name );
+        } else {
+            remove( unpacked_as );
+            if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                return( GUI_RET_CANCEL );
+            }
+        }
+#endif
         return( GUI_RET_OK );
     }
 
@@ -1019,27 +1021,27 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
 
     if( GetVariableIntVal( "DLL_Delete_Old" ) == 1 ) {
         remove( prev_path );
-        #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-            if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                rename( unpacked_as, name );
-            } else {
-                remove( unpacked_as );
-                if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                    return( GUI_RET_CANCEL );
-                }
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+        if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+            rename( unpacked_as, name );
+        } else {
+            remove( unpacked_as );
+            if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                return( GUI_RET_CANCEL );
             }
-        #endif
+        }
+#endif
     } else if( GetVariableIntVal( "DLL_Keep_Both" ) == 1 ) {
-        #ifdef EXTRA_CAUTIOUS_FOR_DLLS
-            if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
-                rename( unpacked_as, name );
-            } else {
-                remove( unpacked_as );
-                if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
-                    return( GUI_RET_CANCEL );
-                }
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+        if( access( name, F_OK ) != 0 || remove( name ) == 0 ) {
+            rename( unpacked_as, name );
+        } else {
+            remove( unpacked_as );
+            if( MsgBox( NULL, "IDS_CANTREPLACE", GUI_YES_NO, name ) == GUI_RET_NO ) {
+                return( GUI_RET_CANCEL );
             }
-        #endif
+        }
+#endif
     } else if( GetVariableIntVal( "DLL_Replace_Old" ) == 1 ) {
         DoCopyFile( unpacked_as, prev_path, FALSE );
         SetVariableByHandle( var_handle, prev_path );
@@ -1060,11 +1062,11 @@ static void VersionStr( int fp, char *ver, int verlen, char *verbuf )
 /*******************************************************************/
 {
     #define BUFF_SIZE   2048
-    static char         Buffer[ BUFF_SIZE ];
+    static char         Buffer[BUFF_SIZE];
     int                 len, size;
     char                *p;
 
-    verbuf[ 0 ] = '\0';
+    verbuf[0] = '\0';
     for( ;; ) {
         len = read( fp, Buffer, BUFF_SIZE );
         if( len < BUFF_SIZE ) {
@@ -1150,13 +1152,13 @@ static void CheckVersion( char *path, char *drive, char *dir )
 
     // also concat version number if it exists
     VersionStr( fp, "VeRsIoN=", 8, buf );
-    if( buf[ 0 ] != '\0' ) {
+    if( buf[0] != '\0' ) {
         // Novell DLL
         strcat( path, buf );
     } else {
         lseek( fp, 0, SEEK_SET );
         VersionStr( fp, "FileVersion", 12, buf ); // includes '\0'
-        if( buf[ 0 ] != '\0' ) {
+        if( buf[0] != '\0' ) {
             // Windows DLL
             strcat( path, buf );
         }
@@ -1173,12 +1175,12 @@ extern bool ModifyConfiguration( void )
 {
     size_t              num_env;
     int                 mod_type;
-    char                changes[ _MAX_PATH ];
+    char                changes[_MAX_PATH];
     FILE                *fp;
     int                 i, j;
     bool                bRet;
-    char                env_var[ MAXENVVAR + 1 ];
-    char                env_val[ MAXENVVAR + 1 ];
+    char                env_var[MAXENVVAR + 1];
+    char                env_val[MAXENVVAR + 1];
     bool                *found;
     bool                append;
     int                 rc;
@@ -1189,23 +1191,23 @@ extern bool ModifyConfiguration( void )
     }
     ConfigModified = TRUE;
 
-    rc = RegOpenKey( HKEY_CURRENT_USER, "Environment", &RegLocation[ CURRENT_USER ].key );
+    rc = RegOpenKey( HKEY_CURRENT_USER, "Environment", &RegLocation[CURRENT_USER].key );
     if( rc == 0 ) {
-        RegLocation[ CURRENT_USER ].key_is_open = TRUE;
+        RegLocation[CURRENT_USER].key_is_open = TRUE;
     } else {
-        RegLocation[ CURRENT_USER ].key_is_open = FALSE;
+        RegLocation[CURRENT_USER].key_is_open = FALSE;
     }
 
     rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
               "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment",
-              NULL, KEY_ALL_ACCESS, &RegLocation[ LOCAL_MACHINE ].key );
+              NULL, KEY_ALL_ACCESS, &RegLocation[LOCAL_MACHINE].key );
     if( rc == 0 ) {
-        RegLocation[ LOCAL_MACHINE ].key_is_open = TRUE;
+        RegLocation[LOCAL_MACHINE].key_is_open = TRUE;
     } else {
-        RegLocation[ LOCAL_MACHINE ].key_is_open = FALSE;
+        RegLocation[LOCAL_MACHINE].key_is_open = FALSE;
     }
 
-    if( RegLocation[ LOCAL_MACHINE ].key_is_open
+    if( RegLocation[LOCAL_MACHINE].key_is_open
         && GetVariableIntVal( "UnInstall" ) == 0 ) {
         if( DoDialog( "ModifyEnvironment" ) == DLG_CAN ) {
             return( FALSE );
@@ -1223,14 +1225,14 @@ extern bool ModifyConfiguration( void )
     } else {
         mod_type = MOD_IN_PLACE;
         if( GetVariableIntVal( "UnInstall" ) == 1 ) { //Clean up everywhere
-            RegLocation[ LOCAL_MACHINE ].modify = TRUE;
-            RegLocation[ CURRENT_USER ].modify  = TRUE;
+            RegLocation[LOCAL_MACHINE].modify = TRUE;
+            RegLocation[CURRENT_USER].modify  = TRUE;
         } else if( GetVariableIntVal( "ModMachine" ) == 1 ) {
-            RegLocation[ LOCAL_MACHINE ].modify = TRUE;
-            RegLocation[ CURRENT_USER ].modify  = FALSE;
+            RegLocation[LOCAL_MACHINE].modify = TRUE;
+            RegLocation[CURRENT_USER].modify  = FALSE;
         } else { // ModNow == 1 or ModUser == 1
-            RegLocation[ LOCAL_MACHINE ].modify = FALSE;
-            RegLocation[ CURRENT_USER ].modify  = TRUE;
+            RegLocation[LOCAL_MACHINE].modify = FALSE;
+            RegLocation[CURRENT_USER].modify  = TRUE;
         }
     }
 
@@ -1246,7 +1248,7 @@ extern bool ModifyConfiguration( void )
         if( fp != NULL ) {
             fprintf( fp, "%s\n\n", GetVariableStrVal( "IDS_ENV_CHANGES" ) );
             for( i = 0; i < num_env; i ++ ) {
-                if( found[ i ] ) continue;
+                if( found[i] ) continue;
                 if( !SimCheckEnvironmentCondition( i ) ) continue;
                 append = SimGetEnvironmentStrings( i, new_var, new_val );
                 if( append ) {
@@ -1259,7 +1261,7 @@ extern bool ModifyConfiguration( void )
                     if( !SimCheckEnvironmentCondition( j ) ) continue;
                     append = SimGetEnvironmentStrings( j, env_var, env_val );
                     if( stricmp( env_var, new_var ) == 0 ) {
-                        found[ j ] = TRUE;
+                        found[j] = TRUE;
                         fprintf( fp, ";%s", env_val );
                     }
                 }
@@ -1271,11 +1273,11 @@ extern bool ModifyConfiguration( void )
         bRet = TRUE;
     }
 
-    if( RegLocation[ CURRENT_USER ].key_is_open ) {
-        RegCloseKey( RegLocation[ CURRENT_USER ].key );
+    if( RegLocation[CURRENT_USER].key_is_open ) {
+        RegCloseKey( RegLocation[CURRENT_USER].key );
     }
-    if( RegLocation[ LOCAL_MACHINE ].key_is_open ) {
-        RegCloseKey( RegLocation[ LOCAL_MACHINE ].key );
+    if( RegLocation[LOCAL_MACHINE].key_is_open ) {
+        RegCloseKey( RegLocation[LOCAL_MACHINE].key );
     }
 
     return( bRet );
@@ -1290,13 +1292,13 @@ static bool ModEnv( int num_env )
     DWORD               oldvar_len, oldval_len;
     DWORD               type, old_type;
     bool                add;
-    char                old_var[ MAXBUF ];
-    char                old_val[ MAXENVVAR ];
+    char                old_var[MAXBUF];
+    char                old_val[MAXENVVAR];
 
     for( i = 0; i < num_env; i ++ ) {
         for( j = CURRENT_USER; j < NUM_REG_LOCATIONS; j++ ) {
-            if( RegLocation[ j ].key_is_open == FALSE
-                || RegLocation[ j ].modify == FALSE ) {
+            if( RegLocation[j].key_is_open == FALSE
+                || RegLocation[j].modify == FALSE ) {
                 continue;
             }
             append = SimGetEnvironmentStrings( i, new_var, new_val );
@@ -1313,7 +1315,7 @@ static bool ModEnv( int num_env )
             for( k = 0; ; k ++ ) {
                 oldvar_len = MAXENVVAR;
                 oldval_len = MAXENVVAR;
-                rc = RegEnumValue( RegLocation[ j ].key, k, old_var, &oldvar_len,
+                rc = RegEnumValue( RegLocation[j].key, k, old_var, &oldvar_len,
                                    NULL, NULL, old_val, &oldval_len );
                 if( stricmp( old_var, new_var ) == 0 ) break;
                 if( rc != 0 ) break;
@@ -1322,14 +1324,14 @@ static bool ModEnv( int num_env )
                 // Found it and we are appending
                 NoDupPaths( new_val, old_val, add, ';' );
                 sprintf( envbuf, "%s%s", old_val, new_val );
-                rc = RegQueryValueEx( RegLocation[ j ].key, new_var, NULL, &old_type,
+                rc = RegQueryValueEx( RegLocation[j].key, new_var, NULL, &old_type,
                                       NULL, NULL );
                 if( rc == 0 ) {
                     type = old_type;
                 } else {
                     type = REG_SZ;
                 }
-                rc = RegSetValueEx( RegLocation[ j ].key, new_var, 0, type, envbuf,
+                rc = RegSetValueEx( RegLocation[j].key, new_var, 0, type, envbuf,
                                     strlen( envbuf ) + 1 );
                 if( rc != 0 ) {
                     err = TRUE;
@@ -1337,7 +1339,7 @@ static bool ModEnv( int num_env )
             } else if( rc == ERROR_NO_MORE_ITEMS ) {
                 // No existing value so add it
                 if( add ) {
-                    rc = RegSetValueEx( RegLocation[ j ].key, new_var, 0, REG_SZ, new_val,
+                    rc = RegSetValueEx( RegLocation[j].key, new_var, 0, REG_SZ, new_val,
                                         strlen( new_val ) + 1 );
                     if( rc != 0 ) {
                         err = TRUE;
@@ -1346,17 +1348,17 @@ static bool ModEnv( int num_env )
             } else if( rc == 0 ) {
                 // we have an existing value, so either change it or delete it
                 if( add ) {
-                    rc = RegQueryValueEx( RegLocation[ j ].key, new_var, NULL, &old_type,
+                    rc = RegQueryValueEx( RegLocation[j].key, new_var, NULL, &old_type,
                                           NULL, NULL );
                     if( rc == 0 ) {
                         type = old_type;
                     } else {
                         type = REG_SZ;
                     }
-                    rc = RegSetValueEx( RegLocation[ j ].key, new_var, 0, type, new_val,
+                    rc = RegSetValueEx( RegLocation[j].key, new_var, 0, type, new_val,
                                         strlen( new_val ) + 1 );
                 } else {
-                    rc = RegDeleteValue( RegLocation[ j ].key, new_var );
+                    rc = RegDeleteValue( RegLocation[j].key, new_var );
                 }
                 if( rc != 0 ) {
                     err = TRUE;

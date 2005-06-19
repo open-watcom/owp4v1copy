@@ -29,8 +29,7 @@ objs = &
     dynarray.obj    &
     gendlg.obj      &
     hash.obj        &
-    nlmver.obj      &
-    setupio.obj
+    nlmver.obj
 
 !ifdef patch
 objs +=             &
@@ -44,24 +43,29 @@ objs +=             &
 
 !ifeq host_os win
 objs += &
+    setupiod.obj    &
     utils.obj       &
     winutil.obj     &
     winddeml.obj
 !else ifeq host_os nt
 objs += &
+    setupio.obj     &
     utils.obj       &
     winutil.obj     &
     winddeml.obj
 !else ifeq host_os os2
 objs += &
+    setupio.obj     &
     utils.obj       &
     winutil.obj     &
     os2util.obj
 !else ifeq host_os linux
 objs += &
+    setupio.obj     &
     unixutil.obj
 !else
 objs += &
+    setupio.obj     &
     utils.obj
 !endif
 
@@ -93,7 +97,12 @@ $(wres_lib)
 
 !endif
 
-libs = $(libs_$(host_os)) $(libzip_dir)/wlib/libzip.lib $(zlib_dir)/zlib.lib
+libs_os2   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_nt    += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_dos   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_linux += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+
+libs = $(libs_$(host_os))
 
 gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 

@@ -1646,10 +1646,10 @@ extern void Log( char *start, ... )
 extern bool GetDirParams( int                   argc,
                           char **               argv,
                           char **               inf_name,
-                          char **               tmp_path )
+                          char **               tmp_path,
+                          char **               arc_name )
 /********************************************************/
 {
-    char                buff[ _MAX_PATH ];
     char                dir[ _MAX_DIR ];
     char                drive[ _MAX_DRIVE ];
 
@@ -1664,16 +1664,37 @@ extern bool GetDirParams( int                   argc,
         return FALSE;
     }
 
+    *arc_name = GUIMemAlloc( _MAX_PATH );
+    if( *tmp_path == NULL ) {
+        GUIMemFree( *inf_name );
+        GUIMemFree( *tmp_path );
+        return FALSE;
+    }
+
     if( argc > 1 ) {
-        strcpy( *inf_name, argv[ 1 ] );
+        strcpy( *arc_name, argv[1] );
     } else {
-        _splitpath( argv[ 0 ], drive, dir, NULL, NULL );
-        _makepath( buff, drive, dir, "setup", "inf" );
-        _fullpath( *inf_name, buff, _MAX_PATH );
+        strcpy( *arc_name, "setup.zip" );
     }
 
     if( argc > 2 ) {
-        strcpy( *tmp_path, argv[ 2 ] );
+        strcpy( *inf_name, argv[2] );
+    } else {
+        char        buff[_MAX_PATH];
+
+        // If archive exists, expect setup.inf inside. Otherwise assume
+        // it's right next to the setup executable.
+        if( access( *arc_name, R_OK ) == 0 ) {
+            strcpy( *inf_name, "setup.inf" );
+        } else {
+            _splitpath( argv[0], drive, dir, NULL, NULL );
+            _makepath( buff, drive, dir, "setup", "inf" );
+            _fullpath( *inf_name, buff, _MAX_PATH );
+        }
+    }
+
+    if( argc > 3 ) {
+        strcpy( *tmp_path, argv[3] );
     } else {
         _splitpath( *inf_name, drive, dir, NULL, NULL );
         _makepath( *tmp_path, drive, dir, NULL, NULL );
