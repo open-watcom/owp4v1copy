@@ -162,7 +162,7 @@ int                     EvalCondition( char *str );
 // Defines used by the SETUP program.
 #define MAXBUF          128
 #define MAXVALUE        256
-#define MAXENVVAR       1024
+#define MAXENVVAR       2048
 
 
 typedef enum{

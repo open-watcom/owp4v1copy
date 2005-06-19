@@ -149,8 +149,11 @@ extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
     if( add ) {
         if( *old_value != '\0' ) {
             len = strlen( old_value );
+            if( len > 1 && old_value[len - 1] == delim ) {
+                --len;  // don't duplicate delimiter
+            }
             old_value[len] = delim;
-            old_value[len+1] = '\0';
+            old_value[len + 1] = '\0';
         }
     } else {
         new_value[0] = '\0';
@@ -442,13 +445,13 @@ static bool ModFile( char *orig, char *new,
             strcat( envbuf, "\n" );
         }
         for( line = envbuf; isspace( *line ); ++line );
-        // modify envbuf if necessary
-        func( line, num );
+        // don't process empty lines but keep them in new file
         if( line[0] != '\x0' ) {
-            if( fputs( envbuf, fp2 ) < 0 ) {
-                MsgBox( NULL, "IDS_ERROR_WRITING", GUI_OK, new );
-                return( FALSE );
-            }
+            func( line, num );
+        }
+        if( fputs( envbuf, fp2 ) < 0 ) {
+            MsgBox( NULL, "IDS_ERROR_WRITING", GUI_OK, new );
+            return( FALSE );
         }
     }
     // handle any remaining variables
@@ -1146,7 +1149,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
              timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
 #else
-    sprintf( path + len, "  (%.2d-%.2d-%.2d %.2d:%.2d%cm)  ",
+    sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
              MONTH( date ), DAY( date ), YEAR( date ), hours, MINUTE( time ), am_pm );
 #endif
 
