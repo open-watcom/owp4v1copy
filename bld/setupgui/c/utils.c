@@ -1157,7 +1157,7 @@ static void SameFileDate( char *src_path, char *dst_path )
 {
     struct stat         statblk;
 
-    stat( src_path, &statblk );
+    FileStat( src_path, &statblk );
     SetFileDate( dst_path, statblk.st_mtime );
 }
 

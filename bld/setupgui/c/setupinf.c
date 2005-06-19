@@ -1866,7 +1866,7 @@ static bool ProcLine( char *line, pass_type pass )
             {
                 char    fext[_MAX_EXT];
                 _splitpath( file->name, NULL, NULL, NULL, fext );
-                file->is_nlm = stricmp( fext, ".NLM" ) == 0;
+                file->is_nlm = stricmp( fext, ".nlm" ) == 0;
             }
             line = p; p = NextToken( line, '!' );
             file->size = get36( line ) * 512UL;
@@ -2446,7 +2446,7 @@ extern long SimInit( char *inf_name )
     gui_text_metrics    metrics;
 
     memset( &SetupInfo, 0, sizeof( struct setup_info ) );
-    stat( inf_name, &stat_buf );
+    FileStat( inf_name, &stat_buf );
     SetupInfo.stamp = stat_buf.st_mtime;
 #define setvar( x, y ) x = AddVariable( #x );
     MAGICVARS( setvar, 0 )
@@ -3384,9 +3384,13 @@ extern void SimCalcAddRemove()
 
             if( add ) {
                 TargetInfo[ targ_index ].space_needed += RoundUp( file->size, cs );
+#if 0   // I don't think this logic is right...
                 if( !file->is_nlm ) {
                     TargetInfo[ targ_index ].space_needed -= RoundUp( file->disk_size, cs );
                 }
+#else
+                TargetInfo[ targ_index ].space_needed -= RoundUp( file->disk_size, cs );
+#endif
                 TargetInfo[ targ_index ].needs_update = TRUE;
             } else if( remove ) {
                 TargetInfo[ targ_index ].space_needed -= RoundUp( FileInfo[ i ].files[k].disk_size, cs );
@@ -3394,7 +3398,7 @@ extern void SimCalcAddRemove()
             }
         }
     }
-    /* estimate space used for directories. Be generous. */
+    /* Estimate space used for directories. Be generous. */
     if( !uninstall ) {
         for( i = 0; i < SetupInfo.target.num; ++i ) {
             cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );

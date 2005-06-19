@@ -56,6 +56,32 @@ static enum ds_type     srcType;
 static struct zip       *srcZip;
 
 
+/* At the moment the incoming path may have either forward or backward
+ * slashes as path separators. However, ziplib only likes forward slashes,
+ * so we must manually flip them.
+ */
+static char *flipBackSlashes( const char *old_path )
+{
+    char    *new_path;
+
+    new_path = strdup( old_path );
+    if( new_path != NULL ) {
+        char        *s;
+
+        /* Need to flip slashes - at the moment they may be
+         * forward or backward, and ziplib requires forward
+         * slashes only.
+         */
+        s = new_path;
+        while( *s ) {
+            if( *s == '\\' )
+                *s = '/';
+            ++s;
+        }
+    }
+    return( new_path );
+}
+
 extern int FileInit( const char *archive )
 {
     int             zerr;
@@ -80,6 +106,35 @@ extern int FileFini( void )
 }
 
 
+extern int FileStat( const char *path, struct stat *buf )
+{
+    int                 rc;
+    struct zip_stat     zs;
+
+    if( srcType == DS_ZIP ) {
+        char        *alt_path;
+
+        /* First try a file inside a ZIP archive */
+        alt_path = flipBackSlashes( path );
+        if( alt_path != NULL ) {
+            rc = zip_stat( srcZip, alt_path, 0, &zs );
+            if( rc == 0 ) {
+                memset( buf, 0, sizeof( *buf ) );
+                buf->st_ino   = zs.index;
+                buf->st_size  = zs.size;
+                buf->st_mtime = zs.mtime;
+            }
+            free( alt_path );
+        }
+    }
+    if( rc != 0 ) {
+        /* If that fails, try local file */
+        rc = stat( path, buf );
+    }
+    return( rc );
+}
+
+
 extern void *FileOpen( const char *path, int flags )
 {
     data_source     *ds;
@@ -92,20 +147,8 @@ extern void *FileOpen( const char *path, int flags )
     ds->zf = NULL;
     if( srcType == DS_ZIP ) {
         /* First try opening the file inside a ZIP archive */
-        alt_path = strdup( path );
+        alt_path = flipBackSlashes( path );
         if( alt_path != NULL ) {
-            char        *s;
-
-            /* Need to flip slashes - at the moment they may be
-             * forward or backward, and ziplib requires forward
-             * slashes only.
-             */
-            s = alt_path;
-            while( *s ) {
-                if( *s == '\\' )
-                    *s = '/';
-                ++s;
-            }
             ds->zf = zip_fopen( srcZip, alt_path, 0 );
             ds->type = DS_ZIP;
             free( alt_path );

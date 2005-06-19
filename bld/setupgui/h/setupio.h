@@ -34,6 +34,7 @@
 
 extern int FileInit( const char *archive );
 extern int FileFini( void );
+extern int FileStat( const char *path, struct stat *buf );
 extern void *FileOpen( const char *path, int flags );
 extern int FileClose( void *handle );
 extern long FileSeek( void *handle, long offset, int origin );

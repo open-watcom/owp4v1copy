@@ -1086,7 +1086,7 @@ static void VersionStr( int fp, char *ver, int verlen, char *verbuf )
 }
 
 
-#define YEAR( t )       (((t & 0xFE00) >> 9) + 80)
+#define YEAR( t )       (((t & 0xFE00) >> 9) + 1980)
 #define MONTH( t )      ((t & 0x01E0) >> 5)
 #define DAY( t )        (t & 0x001F)
 #define HOUR( t )       ((t & 0xF800 ) >> 11)
@@ -1097,7 +1097,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
 /************************************************************/
 {
     int                 fp, len, hours;
-    char                am_pm, buf[ 100 ];
+    char                am_pm, buf[100];
 #if defined( __UNIX__ )
     int                 check;
     struct stat *       statbuf;
@@ -1141,7 +1141,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
 #if defined( __UNIX__ )
-    sprintf( path + len, "  (%.2d-%.2d-%.2d %.2d:%.2d%cm)  ",
+    sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
              timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
 #else
     sprintf( path + len, "  (%.2d-%.2d-%.2d %.2d:%.2d%cm)  ",

@@ -99,7 +99,7 @@ gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 
 # cflags
 #########
-extra_c_flags = -DINSTALL_PROGRAM -DGUISETUP -s
+extra_c_flags = -s
 !ifneq sys_windowed 1
 extra_c_flags += -D_UI
 !endif
