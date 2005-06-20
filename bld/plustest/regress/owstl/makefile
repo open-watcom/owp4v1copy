@@ -43,6 +43,7 @@ tests = &
         iter01.$(exe)   &
         lim01.$(exe)    &
         list01.$(exe)   &
+        locale01.$(exe) &
         map01.$(exe)    &
         map02.$(exe)    &
         mem01.$(exe)    &
@@ -79,6 +80,8 @@ test : .symbolic test.lnk $(tests)
     $(run) lim01 >> test.out
     @echo ----------list01---------->> test.out
     $(run) list01 >> test.out
+    @echo ----------locale01---------->> test.out
+    $(run) locale01 >> test.out
     @echo ----------map01---------->> test.out
     $(run) map01 >> test.out
     @echo ----------map02---------->> test.out
