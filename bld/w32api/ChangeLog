@@ -1,3 +1,115 @@
+2005-06-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winldap.h (ldap_simple_bindW, ldap_simple_bind_sW,
+	ldap_bindW, ldap_bind_sW): Change PCHAR arg to PWCHAR.
+	Thanks to: Christian  <chhd at users dot sf dot net>
+
+2005-06-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/richedit.h (GETTEXTEX): Correct name of lpUsedDefChar
+	field.
+	Thanks to: Saulius Menkevicius  <bobas at users dot sf dot net>
+
+2005-06-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (GlobalDiscard): Define as macro.
+	Thanks to: David Golub  <david_golub  at users dot sf dot net>
+
+2005-05-13  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/winnetwk.h (WNetGetResourceParentA): Add missing declaration.
+	(WNetGetResourceParentW): Ditto.
+	* include/ddk/ntifs.h (FILE_ID_FULL_DIRECTORY_INFORMATION): Define.
+	(FILE_ID_BOTH_DIRECTORY_INFORMATION): Define.
+
+2005-04-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wininet.h (FtpGetFileSize): Add prototype.
+	(FtpCommand[AW]): Correct prototypes.
+	Reported by: <siger at users dot sf dot net>
+
+2005-04-25  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/vfw.h (capCreateCaptureWindow[AW]): Add prototypes.
+	(capGetDriverDescription[AW]): Likewise.
+
+2005-04-03  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/winnt.h (SE_UNDOCK_NAME TEXT): Define.
+	(SE_MANAGE_VOLUME_NAME TEXT): Ditto.
+	(SE_IMPERSONATE_NAME TEXT): Ditto.
+	(SE_ENABLE_DELEGATION_NAME TEXT): Ditto.
+	(SE_SYNC_AGENT_NAME TEXT): Ditto.
+
+2005-03-16  Christopher Faylor  <cgf@timesys.com>
+
+	* winclude/winnt.h (SYSTEM_LUID): Fix definitition invalidated by below
+	change.
+
+2005-03-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (_LUID): Add structure. Correct LUID typedef. 
+	Thanks to:
+	Paul-Christiaan Spruijtenburg <wakarimasu at users dot sf dot net>
+
+2005-03-07  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ws2tcpip.h (getaddrinfo, freeaddrinfo, getnameinfo):
+	Guard with _WIN32_WINNT >= 0x0501. Add FIXME comment.
+	(gai_strerror[AW]): Put into #if 0 block.
+
+2005-03-07  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/basetyps.h (__int16): Correct define.
+
+2005-02-10  Jiri Malak  <Jiri.Malak@iol.cz>
+            Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/directx/dinput_private.h (ATTRIBUTE_TEXT_SECTION): New
+	define for Open Watcom portability.
+	* lib/directx/(dinput_joy.c, dinput_joy2.c, dinput_kbd.c, 
+	dinput_mouse.c, dinput_mouse2.c): Use new macro in definition
+	of local c_rgodfDI* objects. Replace .rdata section attribute
+	with 'const' keyword in definition of global c_dfDI* objects.
+
+2005-02-07  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winioctl.h (IOCTL_VOLUME_BASE,
+	IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IOCTL_VOLUME_IS_CLUSTERED):
+	Copy defines from include/ddk/ntdddvol.h.
+	Bug reported to Debian by Anand Kumria  <wildfire@progsoc.org>
+
+2005-01-27  Oliver Stoeneberg  <oliverst@online.de>
+
+	* include/winbase.h (PWIN32_FIND_DATA): Add typedef.
+
+2005-01-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (SW_SMOOTHSCROLL): Add define. 
+	Reported by: Christian Ehrlicher  <chehrlic@users.sf.net>
+
+2005-01-21  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/commdlg.h (OFN_DONTADDTORECENT): Added definition.
+
+2005-01-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/user32.def (MonitorFromPoint): Correct suffix.
+
+2005-01-13  Benoit Blanchon  <bblanchon@users.sourceforge.net>
+
+	* include/wininet.h (InternetCheckConnectionA,
+	InternetCheckConnectionW) Add prototypes.
+	(INTERNET_RAS_INSTALLED, INTERNET_CONNECTION_OFFLINE,
+	INTERNET_CONNECTION_CONFIGURED): Add defines.
+
+2005-01-07  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/commctrl.h (ComboBox_SetMinVisible,
+	ComboBox_GetMinVisible): Added Macros.
+	* include/winuser.h (CB_SETMINVISIBLE, CB_GETMINVISIBLE):
+	Added definitions.
+
 2005-01-02  Jiri Malak  <Jiri.Malak@geac.cz>
 
 	* include/winnt.h (GetCurrentFiber, GetFiberData): Make inline

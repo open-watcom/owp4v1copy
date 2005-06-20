@@ -17,7 +17,7 @@
 #  define __int32 long
 # endif
 # ifndef __int16
-#  define __int16 int
+#  define __int16 short
 # endif
 # ifndef __int8
 #  define __int8 char
@@ -143,13 +143,24 @@ typedef unsigned long PROPID;
 #define _REFIID_DEFINED
 #define _REFCLSID_DEFINED
 #endif
+#ifndef GUID_SECTION
+#define GUID_SECTION ".text"
+#endif
+/* Explicit naming of .text section for readonly data is only
+   needed for older GGC (pre-2.95).
+   More recent (3.4) GCC puts readonly data in .rdata.  */
+#if defined (__GNUC__) && (__GNUC__ <= 2 && __GNUC_MINOR__ < 95) 
+#define GUID_SECT __attribute__ ((section (GUID_SECTION)))
+#else
+#define GUID_SECT
+#endif
 #if !defined(INITGUID) || (defined(INITGUID) && defined(__cplusplus))
 #define GUID_EXT EXTERN_C
 #else
 #define GUID_EXT
 #endif
 #ifdef INITGUID
-#define DEFINE_GUID(n,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) GUID_EXT const GUID n = {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
+#define DEFINE_GUID(n,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) GUID_EXT const GUID n GUID_SECT = {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 #define DEFINE_OLEGUID(n,l,w1,w2) DEFINE_GUID(n,l,w1,w2,0xC0,0,0,0,0,0,0,0x46)
 #else
 #define DEFINE_GUID(n,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) GUID_EXT const GUID n

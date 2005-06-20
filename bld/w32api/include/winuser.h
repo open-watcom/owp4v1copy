@@ -1533,6 +1533,10 @@ extern "C" {
 #define CB_SETLOCALE 345
 #define CB_SETTOPINDEX 348
 #define CB_SHOWDROPDOWN 335
+#if (_WIN32_WINNT >= 0x0501)
+#define CB_SETMINVISIBLE 0x1701
+#define CB_GETMINVISIBLE 0x1702
+#endif
 #define CBN_CLOSEUP 8
 #define CBN_DBLCLK 2
 #define CBN_DROPDOWN 7
@@ -2075,6 +2079,9 @@ extern "C" {
 #define SW_SCROLLCHILDREN 1
 #define SW_INVALIDATE 2
 #define SW_ERASE 4
+#if (_WIN32_WINDOWS >= 0x0410 || _WIN32_WINNT >= 0x0500)
+#define SW_SMOOTHSCROLL	0x0010
+#endif /* (_WIN32_WINDOWS >= 0x0410 || _WIN32_WINNT >= 0x0500) */
 #define SC_SIZE 0xF000
 #define SC_MOVE 0xF010
 #define SC_MINIMIZE 0xF020
@@ -3893,8 +3900,13 @@ WINUSERAPI BOOL WINAPI WinHelpA(HWND,LPCSTR,UINT,DWORD);
 WINUSERAPI BOOL WINAPI WinHelpW(HWND,LPCWSTR,UINT,DWORD);
 WINUSERAPI int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 WINUSERAPI int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
 WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
+#else
+WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);
+WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);
+#endif
 #if (_WIN32_WINNT >= 0x0500 || _WIN32_WINDOWS >= 0x0490)
 WINUSERAPI BOOL WINAPI AllowSetForegroundWindow(DWORD);
 WINUSERAPI BOOL WINAPI LockSetForegroundWindow(UINT);
@@ -4062,7 +4074,11 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExW
 #define WinHelp WinHelpW
 #define wsprintf wsprintfW
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfW
+#else
+#define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))
+#endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSW NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
@@ -4227,7 +4243,11 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExA
 #define WinHelp WinHelpA
 #define wsprintf wsprintfA
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfA
+#else
+#define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))
+#endif
 #ifndef NOGDI
 typedef ICONMETRICSA ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSA NONCLIENTMETRICS,*LPNONCLIENTMETRICS;

@@ -464,6 +464,11 @@ typedef DWORD FLONG;
 #define SE_CHANGE_NOTIFY_NAME	TEXT("SeChangeNotifyPrivilege")
 #define SE_REMOTE_SHUTDOWN_NAME	TEXT("SeRemoteShutdownPrivilege")
 #define SE_CREATE_GLOBAL_NAME TEXT("SeCreateGlobalPrivilege")
+#define SE_UNDOCK_NAME TEXT("SeUndockPrivilege")
+#define SE_MANAGE_VOLUME_NAME TEXT("SeManageVolumePrivilege")
+#define SE_IMPERSONATE_NAME TEXT("SeImpersonatePrivilege")
+#define SE_ENABLE_DELEGATION_NAME TEXT("SeEnableDelegationPrivilege")
+#define SE_SYNC_AGENT_NAME TEXT("SeSyncAgentPrivilege")
 #define SE_GROUP_MANDATORY 1
 #define SE_GROUP_ENABLED_BY_DEFAULT 2
 #define SE_GROUP_ENABLED 4
@@ -1349,7 +1354,7 @@ typedef struct _GUID {
 	unsigned short Data3;
 	unsigned char  Data4[8];
 } GUID, *REFGUID, *LPGUID;
-#define SYSTEM_LUID { QuadPart:999 }
+#define SYSTEM_LUID { 0x3e7, 0x0 }
 #endif /* GUID_DEFINED */
 typedef struct _GENERIC_MAPPING {
 	ACCESS_MASK GenericRead;
@@ -2002,7 +2007,10 @@ typedef union _ULARGE_INTEGER {
 #endif /* NONAMELESSUNION */
   ULONGLONG QuadPart;
 } ULARGE_INTEGER, *PULARGE_INTEGER;
-typedef LARGE_INTEGER LUID,*PLUID;
+typedef struct _LUID {
+  DWORD LowPart;
+  LONG HighPart;
+} LUID, *PLUID;
 #pragma pack(push,4)
 typedef struct _LUID_AND_ATTRIBUTES {
 	LUID   Luid;
