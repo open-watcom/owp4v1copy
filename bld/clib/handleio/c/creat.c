@@ -61,9 +61,6 @@ _WCRTLINK int __F_NAME(creat,_wcreat)( const CHAR_TYPE *name, mode_t pmode )
     } else if( !pmode ) {
         acc |= O_RDWR;
     }
-    if( __F_NAME(access,_waccess)( name, 0 ) ) { /* Delete the file if it exists so that the
-        __F_NAME(remove,_wremove)( name );       creation date and time will be reset. */
-    }
     return( __F_NAME(open,_wopen)( name, acc, pmode ) );
 #endif
 }
