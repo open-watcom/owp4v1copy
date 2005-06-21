@@ -175,5 +175,5 @@ NOTES
 
 6. If you add headers to the header project that need to be distributed
    as part of the official Open Watcom release, be sure to update the
-   manifest files in distrib\manifest. The files to update are
-   cm_clib_hdr for C headers and plib_hdr for C++ headers.
+   manifest file (files.dat) in bld/hdr. Don't forget to update both
+   "DOSish" and other platforms if a change affects all targets.
