@@ -25,4 +25,4 @@ Reference", both distributed with the IBM OS/2 Developer's Toolkit.
 
  Note: Building the C sample programs may produce compiler warnings (W100 or
 W104, inconsitent levels of indirection). The IBM VisualAge C++ compiler
-produces analoguous warnings.
+produces analogous warnings.

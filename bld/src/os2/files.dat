@@ -1,0 +1,36 @@
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2" ]
+usr="mthread.c"
+usr="shapes.c"
+usr="shapes.cpp"
+
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2/dll" ]
+usr="dllsamp.c"
+usr="dllsamp.lnk"
+usr="dlltest.c"
+
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2/som" ]
+usr="readme.txt"
+
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2/som/classes" ]
+usr="course.c"
+usr="course.csc"
+usr="graduate.c"
+usr="graduate.csc"
+usr="makefile"
+usr="student.c"
+usr="student.csc"
+usr="test.c"
+usr="undgrad.c"
+usr="undgrad.csc"
+
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2/som/helloc" ]
+usr="hello.c"
+usr="hello.idl"
+usr="main.c"
+usr="makefile"
+
+[ DEFAULT type="s" cond="samples" where="c jc ac" dir="samples/os2/som/hellocpp" ]
+usr="hello.cpp"
+usr="hello.idl"
+usr="main.cpp"
+usr="makefile"

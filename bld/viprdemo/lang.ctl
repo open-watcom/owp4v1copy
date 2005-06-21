@@ -73,18 +73,18 @@ cdsay .
     <CPCMD> threed/win/win_3d.dll   <RELROOT>/rel2/samples/ide/fortran/win/
     <CPCMD> threed/win/win_3d.dll   <RELROOT>/rel2/samples/ide/fortran/win386/
   [ ENDIF ]
-#    <CPCMD> src/os2/box.obj         <RELROOT>/rel2/samples/ide/fortran/os2/
-#    <CPCMD> src/os2/drawroom.obj    <RELROOT>/rel2/samples/ide/fortran/os2/
-#    <CPCMD> src/os2/furnitu.obj     <RELROOT>/rel2/samples/ide/fortran/os2/
-#    <CPCMD> src/win/box.obj         <RELROOT>/rel2/samples/ide/fortran/win/
-#    <CPCMD> src/win/drawroom.obj    <RELROOT>/rel2/samples/ide/fortran/win/
-#    <CPCMD> src/win/furnitu.obj     <RELROOT>/rel2/samples/ide/fortran/win/
-#    <CPCMD> src/win386/box.obj      <RELROOT>/rel2/samples/ide/fortran/win386/
-#    <CPCMD> src/win386/drawroom.obj <RELROOT>/rel2/samples/ide/fortran/win386/
-#    <CPCMD> src/win386/furnitu.obj  <RELROOT>/rel2/samples/ide/fortran/win386/
-#    <CPCMD> src/win32/box.obj       <RELROOT>/rel2/samples/ide/fortran/win32/
-#    <CPCMD> src/win32/drawroom.obj  <RELROOT>/rel2/samples/ide/fortran/win32/
-#    <CPCMD> src/win32/furnitu.obj   <RELROOT>/rel2/samples/ide/fortran/win32/
+    <CPCMD> src/os2/box.obj         <RELROOT>/rel2/samples/ide/fortran/os2/
+    <CPCMD> src/os2/drawroom.obj    <RELROOT>/rel2/samples/ide/fortran/os2/
+    <CPCMD> src/os2/furnitu.obj     <RELROOT>/rel2/samples/ide/fortran/os2/
+    <CPCMD> src/win/box.obj         <RELROOT>/rel2/samples/ide/fortran/win/
+    <CPCMD> src/win/drawroom.obj    <RELROOT>/rel2/samples/ide/fortran/win/
+    <CPCMD> src/win/furnitu.obj     <RELROOT>/rel2/samples/ide/fortran/win/
+    <CPCMD> src/win386/box.obj      <RELROOT>/rel2/samples/ide/fortran/win386/
+    <CPCMD> src/win386/drawroom.obj <RELROOT>/rel2/samples/ide/fortran/win386/
+    <CPCMD> src/win386/furnitu.obj  <RELROOT>/rel2/samples/ide/fortran/win386/
+    <CPCMD> src/win32/box.obj       <RELROOT>/rel2/samples/ide/fortran/win32/
+    <CPCMD> src/win32/drawroom.obj  <RELROOT>/rel2/samples/ide/fortran/win32/
+    <CPCMD> src/win32/furnitu.obj   <RELROOT>/rel2/samples/ide/fortran/win32/
     cd ..
 
 [ BLOCK <1> clean ]
