@@ -313,11 +313,9 @@ _WCRTLINK extern size_t   wcsxfrm( wchar_t *__s1, const wchar_t *__s2, size_t __
 
 _WCRTLINK extern int      wcscmpi( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t *wcserror( int );
-:segment !SNAP & !SNAPDRV
 #if defined(__NT__)
 _WCRTLINK extern wchar_t *_wdoserror( int __errnum );
 #endif
-:endsegment
 
 ::_WCRTLINK extern wchar_t *wcsnset( wchar_t *, int, _w_size_t );
 ::_WCRTLINK extern int      wcsnicmp( const wchar_t *, const wchar_t *, _w_size_t );
@@ -344,12 +342,10 @@ _WCRTLINK extern wchar_t   *_wcsset( wchar_t *, wchar_t );
 _WCRTLINK extern wchar_t   *_wcserror( const wchar_t * );
 :endsegment
 
-:segment LINUX
-/* Additional Linux Functions */
+/* Additional Functions (POSIX but non-standard in string.h) */
 
 _WCRTLINK extern int strcasecmp( const char *__s1, const char *__s2 );
 _WCRTLINK extern int strncasecmp( const char *__s1, const char *__s2, _w_size_t __n );
-:endsegment
 
 :segment QNX
 /* QNX's Additional Functions (non-ANSI, non-POSIX) */
@@ -359,12 +355,10 @@ extern void __strerror( int __max, int __errnum, char *__buf );
 #endif  /* EXTENSIONS */
 
 #ifdef  __INLINE_FUNCTIONS__
-:segment !SNAP & !SNAPDRV
 :include ext.sp
  #pragma intrinsic(movedata,_fmemchr,_fmemcmp,_fmemcpy,_fmemset)
  #pragma intrinsic(_fstrcat,_fstrcmp,_fstrcpy,_fstrlen)
 #endif
-:endsegment
 :segment CNAME
 namespace std {
   #pragma intrinsic(memchr,memcmp,memcpy,strcat,strcpy,strlen,strchr)

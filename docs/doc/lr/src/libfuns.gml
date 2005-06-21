@@ -271,6 +271,7 @@
 .fnc feof                       feof.gml        DOS QNX W WIN32
 .fnc ferror                     ferror.gml      DOS QNX W WIN32
 .fnc fflush                     fflush.gml      DOS QNX W WIN32
+.fnc ffs                        ffs.gml         DOS QNX W WIN32
 .fnc fgetc                      fgetc.gml       DOS QNX W WIN32
 .fnw fgetwc                     fgetc.gml       DOS QNX W WIN32
 .fnu _ufgetc                    fgetc.gml       DOS
@@ -1202,6 +1203,7 @@
 .fnw _wstati64                  stat.gml        DOS       WIN32
 .fnc lstat                      stat.gml        DOS       WIN32
 .fnc _status87                  _status8.gml    DOS QNX W WIN32
+.fnc strcasecmp                 strcase.gml     DOS QNX W WIN32
 .fnc strcat                     strcat.gml      DOS QNX W WIN32
 .fnf _fstrcat                   strcat.gml      DOS QNX W WIN32
 .fnw wcscat                     strcat.gml      DOS QNX W WIN32
@@ -1288,6 +1290,7 @@
 .fnm _mbslwr                    strlwr.gml      DOS       WIN32
 .fnn _fmbslwr                   strlwr.gml      DOS       WIN32
 .fnu _ustrlwr                   strlwr.gml      DOS       WIN32
+.fnc strncasecmp                strncase.gml    DOS QNX W WIN32
 .fnc strncat                    strncat.gml     DOS QNX W WIN32
 .fnf _fstrncat                  strncat.gml     DOS QNX W WIN32
 .fnw wcsncat                    strncat.gml     DOS QNX W WIN32

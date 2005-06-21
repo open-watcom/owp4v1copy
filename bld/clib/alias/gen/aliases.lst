@@ -121,8 +121,8 @@ strrev          strrev          _strrev         d16 d32 nt  nta ntp nvc nvl o16 
 strset          strset          _strset         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strspn          strspnp         _strspnp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strupr          strupr          _strupr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-strcc_          stricmp         strcasecmp                                                              l32
-strncc          strnicmp        strncasecmp                                                             l32
+strcc_          stricmp         strcasecmp      d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+strncc          strnicmp        strncasecmp     d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 tolowe          tolower         _tolower        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 touppe          toupper         _toupper        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 tzset_          tzset           _tzset          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32

@@ -1320,6 +1320,7 @@ $(docsrc_dir)\lr\src\ferror.gml &
 $(docsrc_dir)\lr\src\ffarfunc.gml &
 $(docsrc_dir)\lr\src\ffarparm.gml &
 $(docsrc_dir)\lr\src\fflush.gml &
+$(docsrc_dir)\lr\src\ffs.gml &
 $(docsrc_dir)\lr\src\fgetc.gml &
 $(docsrc_dir)\lr\src\fgetchar.gml &
 $(docsrc_dir)\lr\src\fgetpos.gml &
@@ -1759,6 +1760,7 @@ $(docsrc_dir)\lr\src\stackava.gml &
 $(docsrc_dir)\lr\src\stat.gml &
 $(docsrc_dir)\lr\src\statdesc.gml &
 $(docsrc_dir)\lr\src\statrtn.gml &
+$(docsrc_dir)\lr\src\strcase.gml &
 $(docsrc_dir)\lr\src\strcat.gml &
 $(docsrc_dir)\lr\src\strchr.gml &
 $(docsrc_dir)\lr\src\strcmp.gml &
@@ -1778,6 +1780,7 @@ $(docsrc_dir)\lr\src\stricoll.gml &
 $(docsrc_dir)\lr\src\strinc.gml &
 $(docsrc_dir)\lr\src\strlen.gml &
 $(docsrc_dir)\lr\src\strlwr.gml &
+$(docsrc_dir)\lr\src\strncase.gml &
 $(docsrc_dir)\lr\src\strncat.gml &
 $(docsrc_dir)\lr\src\strncmp.gml &
 $(docsrc_dir)\lr\src\strncnt.gml &

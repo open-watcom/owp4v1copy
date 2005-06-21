@@ -430,7 +430,9 @@ vsscanf.exe &
 write.exe
 
 # String Functions (all + NetWare)
-FN_STRING = strcat.exe &
+FN_STRING = &
+strcase.exe &
+strcat.exe &
 strchr.exe &
 strcmp.exe &
 strcmpi.exe &
@@ -443,6 +445,7 @@ strftime.exe &
 stricmp.exe &
 strlen.exe &
 strlwr.exe &
+strncase.exe &
 strncat.exe &
 strncmp.exe &
 strncpy.exe &
@@ -500,6 +503,7 @@ creat.exe &
 cscanf.exe &
 ctime.exe &
 exit.exe &
+ffs.exe &
 getcmd.exe &
 getenv.exe &
 getosfha.exe &

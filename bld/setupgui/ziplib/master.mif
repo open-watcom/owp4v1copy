@@ -10,8 +10,6 @@ orl_autodepends = .autodepend
 
 inc_dirs = -I"$(libzip_dir)/lib" -I"$(zlib_dir)"
 
-extra_c_flags = -Dstrcasecmp=stricmp
-
 objs = &
     zip_add.obj &
     zip_close.obj &
