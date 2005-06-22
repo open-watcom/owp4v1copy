@@ -1086,7 +1086,6 @@ static void CaseStmt( void )
         if( CurToken == T_RIGHT_BRACE ) {
             CErr1( ERR_STMT_REQUIRED_AFTER_CASE );
         }
-//      FlushScoreBoard();
     } else {
         CErr1( ERR_MISPLACED_CASE );
         ConstExprAndType( &val );        /* grab constant expression */
@@ -1336,5 +1335,4 @@ static void EndSwitch( void )
     }
     CMemFree( sw );
 #endif
-//    FlushScoreBoard();
 }

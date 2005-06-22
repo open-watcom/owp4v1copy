@@ -551,14 +551,6 @@ struct seg_info {
     unsigned allocated : 1; /* 1 => has been allocated */
 };
 
-/* scoreboard used to record statements like "i=5" */
-
-struct scoreboard {
-    struct scoreboard   *next;
-    SYM_HANDLE          sym_handle;
-    TREEPTR             const_leaf;
-};
-
 struct comp_flags {
     unsigned label_dropped          : 1;
     unsigned has_main               : 1;
