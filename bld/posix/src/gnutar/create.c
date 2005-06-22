@@ -81,8 +81,12 @@
 #ifdef USG
 #ifdef MSDOS
 /* DOS doesn't have minor device numbers */
-#define major(n)        n
-#define minor(n)        0
+#ifndef major
+    #define major(n)        n
+#endif
+#ifndef minor
+    #define minor(n)        0
+#endif
 #else
 #include <sys/sysmacros.h>              /* major() and minor() defined here */
 #endif

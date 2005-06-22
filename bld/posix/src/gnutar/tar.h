@@ -247,8 +247,12 @@ void anno();
  * Unix names/macros that aren't defined in MSC
  */
 #define O_NDELAY        0
-#define major(n)        n
-#define minor(n)        0
+#ifndef major
+    #define major(n)        n
+#endif
+#ifndef minor
+    #define minor(n)        0
+#endif
 
 /*
  * the following bits of a file's mode are forced reset in an archive file
