@@ -18,7 +18,7 @@ objtime = fcbems.obj fcbxms.obj fcbdisk.obj fcbxmem.obj &
         lang.obj sstyle.obj sstyle_f.obj sstyle_c.obj &
         sstyle_h.obj sstyle_g.obj sstyle_m.obj rcs.obj
 
-objinit = init.obj getopt.obj
+objinit = init.obj getopt.obj autoenv.obj
 
 objsizeroot = name.obj key.obj &
         globals.obj pdata.obj &

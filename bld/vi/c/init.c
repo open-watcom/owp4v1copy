@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <env.h>
 #ifdef _M_IX86
 #ifdef __WATCOMC__
 #include <i86.h>
@@ -56,8 +57,10 @@
 #include "windows.h"
 #endif
 #include "rcs.h"
+#include "autoenv.h"
 
 static char     nullFN[] = "no_name";
+static char     defaultEDPath[] = "\\EDDAT";
 static char     *cFN;
 static char     *cfgFN=NULL;
 static char     *cTag;
@@ -224,6 +227,32 @@ static void doInitializeEditor( int argc, char *argv[] )
     char        *parm;
     char        *startup[MAX_STARTUP];
     char        *startup_parms[MAX_STARTUP];
+
+    /*
+     * Make sure WATCOM is setup and if it is not, make a best guess.
+     */
+    watcom_setup_env();
+
+    /*
+     * If EDPATH is not set, use system default %WATCOM%\EDDAT.
+     */
+    if( getenv( "EDPATH" ) == NULL ) {
+        char *watcom;
+
+        watcom = getenv( "WATCOM" );
+        if( watcom != NULL ) {
+            char edpath[PATH_MAX];
+
+            strcpy( edpath, watcom );
+            strcat( edpath, defaultEDPath );
+
+            if( setenv( "EDPATH", edpath, 0 ) != 0 ) {
+                /*
+                 * Bail out silently on error, as we will get error message later on.
+                 */
+            }
+        }
+    }
 
     /*
      * misc. set up

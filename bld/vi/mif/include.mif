@@ -1,4 +1,4 @@
-inc_dirs = -I$(rcsdll_dir) -I"$(posix_dir)/h"
+inc_dirs = -I$(rcsdll_dir) -I"$(posix_dir)/h" -I"$(watcom_dir)/h"
 
 !ifeq vi_trmem 1
 inc_dirs += -I$(trmem_dir)
