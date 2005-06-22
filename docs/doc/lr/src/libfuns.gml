@@ -770,19 +770,24 @@
 .fnf _fmemccpy                  memccpy.gml     DOS QNX W WIN32
 .fnc memchr                     memchr.gml      DOS QNX W WIN32
 .fnf _fmemchr                   memchr.gml      DOS QNX W WIN32
+.fnw wmemchr                    memchr.gml      DOS QNX W WIN32
 .fnc memcmp                     memcmp.gml      DOS QNX W WIN32
 .fnf _fmemcmp                   memcmp.gml      DOS QNX W WIN32
+.fnw wmemcmp                    memcmp.gml      DOS QNX W WIN32
 .fnc memcpy                     memcpy.gml      DOS QNX W WIN32
 .fnf _fmemcpy                   memcpy.gml      DOS QNX W WIN32
+.fnw wmemcpy                    memcpy.gml      DOS QNX W WIN32
 .fnc memicmp                    memicmp.gml     DOS QNX W WIN32
 .fnc _memicmp                   memicmp.gml     DOS       WIN32
 .fnf _fmemicmp                  memicmp.gml     DOS QNX W WIN32
 .fnc _memmax                    _memmax.gml     DOS QNX W WIN32
 .fnc memmove                    memmove.gml     DOS QNX W WIN32
 .fnf _fmemmove                  memmove.gml     DOS QNX W WIN32
+.fnw wmemmove                   memmove.gml     DOS QNX W WIN32
 .fn7 _m_empty                   mempty.gml      DOS QXO   WIN32
 .fnc memset                     memset.gml      DOS QNX W WIN32
 .fnf _fmemset                   memset.gml      DOS QNX W WIN32
+.fnw wmemset                    memset.gml      DOS QNX W WIN32
 .fn7 _m_from_int                mfromint.gml    DOS QXO   WIN32
 .fnc min                        min.gml         DOS QNX W WIN32
 .fnc mkdir                      mkdir.gml       DOS QNX W WIN32

@@ -1,4 +1,4 @@
-.func memcpy _fmemcpy _umemcpy
+.func memcpy _fmemcpy wmemcpy _umemcpy
 #include <string.h>
 void *memcpy( void *dst,
               const void *src,
@@ -9,6 +9,13 @@ void __far *_fmemcpy( void __far *dst,
                       const void __far *src,
                       size_t length );
 .ixfunc2 '&Copy' &ffunc
+.do end
+.if &'length(&wfunc.) ne 0 .do begin
+#include <wchar.h>
+wchar_t *wmemcpy( wchar_t *dst,
+                  const wchar_t *src,
+                  size_t length );
+.ixfunc2 '&Copy' &wfunc
 .do end
 :cmt. .if &'length(&ufunc.) ne 0 .do begin
 :cmt. void *_umemcpy( void *dst,
@@ -29,6 +36,16 @@ See the
 .kw memmove
 function if you wish to copy objects that overlap.
 .im farfunc
+.if &'length(&wfunc.) ne 0 .do begin
+.np
+The &wfunc wide-character function is identical to &func except that it
+operates on characters of
+.kw wchar_t
+type.
+The argument
+.arg length
+is interpreted to mean the number of wide characters.
+.do end
 :cmt. .if &'length(&ufunc.) ne 0 .do begin
 :cmt. .np
 :cmt. The &ufunc Unicode function is identical to &func except that it
@@ -50,14 +67,14 @@ is returned.
 #include <stdio.h>
 #include <string.h>
 
-void main()
-  {
+void main( void )
+{
     auto char buffer[80];
 .exmp break
     memcpy( buffer, "Hello", 5 );
     buffer[5] = '\0';
     printf( "%s\n", buffer );
-  }
+}
 .exmp end
 .class ANSI
 .system

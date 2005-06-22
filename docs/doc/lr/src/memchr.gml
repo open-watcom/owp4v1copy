@@ -1,4 +1,4 @@
-.func memchr _fmemchr _umemchr
+.func memchr _fmemchr wmemchr _umemchr
 #include <string.h>
 void *memchr( const void *buf, int ch, size_t length );
 .ixfunc2 '&Search' &func
@@ -7,6 +7,11 @@ void __far *_fmemchr( const void __far *buf,
                       int ch,
                       size_t length );
 .ixfunc2 '&Search' &ffunc
+.do end
+.if &'length(&wfunc.) ne 0 .do begin
+#include <wchar.h>
+wchar_t *wmemchr( const wchar_t *buf, wchar_t ch, size_t length );
+.ixfunc2 '&Search' &wfunc
 .do end
 :cmt. .if &'length(&ufunc.) ne 0 .do begin
 :cmt. void *_umemchr( const void *buf, int ch, size_t length );
@@ -21,6 +26,16 @@ The &func function locates the first occurrence of
 characters of the object pointed to by
 .arg buf.
 .im farfunc
+.if &'length(&wfunc.) ne 0 .do begin
+.np
+The &wfunc wide-character function is identical to &func except that it
+operates on characters of
+.kw wchar_t
+type.
+The argument
+.arg length
+is interpreted to mean the number of wide characters.
+.do end
 :cmt. .if &'length(&ufunc.) ne 0 .do begin
 :cmt. .np
 :cmt. The &ufunc Unicode function is identical to &func except that it
@@ -42,23 +57,23 @@ if the character does not occur in the object.
 #include <stdio.h>
 #include <string.h>
 
-void main()
-  {
+void main( void )
+{
     char buffer[80];
     char *where;
 .exmp break
     strcpy( buffer, "video x-rays" );
-    where = (char *) memchr( buffer, 'x', 6 );
+    where = (char *)memchr( buffer, 'x', 6 );
     if( where == NULL )
-      printf( "'x' not found\n" );
+        printf( "'x' not found\n" );
     else
-      printf( "%s\n", where );
-    where = (char *) memchr( buffer, 'r', 9 );
+        printf( "%s\n", where );
+    where = (char *)memchr( buffer, 'r', 9 );
     if( where == NULL )
-      printf( "'r' not found\n" );
+        printf( "'r' not found\n" );
     else
-      printf( "%s\n", where );
-  }
+        printf( "%s\n", where );
+}
 .exmp end
 .class ANSI
 .system

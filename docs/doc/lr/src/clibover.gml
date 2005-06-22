@@ -551,11 +551,12 @@ regardless of which memory model your program has been compiled for.
 .fd *fun="movedata" copy memory block, with segment information
 .fd *fun="swab" swap bytes of a memory block
 .fd *fun="_wmemccpy" copy memory block up to a certain character
-.fd *fun="_wmemchr" search memory block for a character value
-.fd *fun="_wmemcmp" compare memory blocks
-.fd *fun="_wmemcpy" copy memory block, overlap not allowed
+.fd *fun="wmemchr" search memory block for a wide character value
+.fd *fun="wmemcmp" compare memory blocks
+.fd *fun="wmemcpy" copy memory block, overlap not allowed
 .fd *fun="_wmemicmp" compare memory, case insensitive
-.fd *fun="_wmemmove" copy memory block, overlap allowed
+.fd *fun="wmemmove" copy memory block, overlap allowed
+.fd *fun="wmemset" set memory block to a wide character
 .fdend
 .np
 See the section
