@@ -152,7 +152,7 @@ int main( int argc, char **argv )
             break;
         case 'o':
             ofile = optarg;
-            printf( "input filename is '%s'\n", ofile );
+            printf( "output filename is '%s'\n", ofile );
             break;
         case ':':
             printf( "-%c without filename\n", optopt );
@@ -167,7 +167,7 @@ int main( int argc, char **argv )
 .exmp output
 option a is set
 input filename is 'in'
-input filename is 'out'
+output filename is 'out'
 .blktext begin
 when the program is executed with the command
 .blktext end

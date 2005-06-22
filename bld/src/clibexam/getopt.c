@@ -21,7 +21,7 @@ int main( int argc, char **argv )
             break;
         case 'o':
             ofile = optarg;
-            printf( "input filename is '%s'\n", ofile );
+            printf( "output filename is '%s'\n", ofile );
             break;
         case ':':
             printf( "-%c without filename\n", optopt );
