@@ -24,50 +24,37 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of memset() and wmemset().
+* Description:  Implementation of wmemmove().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "widechar.h"
-#include <string.h>
 #include <wchar.h>
-#include "xstring.h"
 
 
-#if defined(__386__)
-extern  void    __STOSB( void *, int, unsigned );
-#pragma aux     __STOSB "*" parm [eax] [edx] [ecx];
-
-extern  void    *__set386( void *, int, unsigned );
-#pragma aux     __set386 =  \
-        "push   EAX"            /* save return value*/\
-        "mov    DH,DL"          /* duplicate byte value thru EDX */\
-        "shl    EDX,8"          /* ... */\
-        "mov    DL,DH"          /* ... */\
-        "shl    EDX,8"          /* ... */\
-        "mov    DL,DH"          /* ... */\
-        "call   __STOSB"        /* do store */\
-        "pop    EAX"            /* restore return value*/\
-        parm [eax] [edx] [ecx] \
-        value [eax];
-#endif
-
-_WCRTLINK VOID_WC_TYPE *__F_NAME(memset,wmemset)( VOID_WC_TYPE *dst, INT_WC_TYPE c, size_t len )
+_WCRTLINK wchar_t *wmemmove( wchar_t *toStart, const wchar_t *fromStart, size_t len )
 {
-#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
-    #if defined(__386__)
-        return( __set386( dst, c, len ) );
-    #else
-        return( _inline_memset( dst, c, len ) );
-    #endif
-#else
-    CHAR_TYPE   *p;
+    const wchar_t   *from = fromStart;
+    wchar_t         *to = toStart;
 
-    for( p = dst; len; --len ) {
-        *p++ = c;
+    if( from == to ) {
+        return( to );
     }
-    return( dst );
-#endif
+    if( (from < to) && (from + len > to) ) {    /* if buffers are overlapped */
+        to += len;
+        from += len;
+        while( len != 0 ) {
+            *--to = *--from;
+            --len;
+        }
+    } else {
+        while( len != 0 ) {
+            *to++ = *from++;
+            --len;
+        }
+    }
+
+    return( toStart );
 }

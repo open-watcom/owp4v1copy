@@ -86,6 +86,11 @@ using std::wcstoul;
 using std::wcstoull;
 using std::wcsxfrm;
 using std::wctob;
+using std::wmemchr;
+using std::wmemcmp;
+using std::wmemcpy;
+using std::wmemmove;
+using std::wmemset;
 using std::wprintf;
 using std::wscanf;
 
@@ -220,6 +225,11 @@ _WCRTLINK extern unsigned long int wcstoul( const wchar_t *, wchar_t **, int );
 _WCRTLINK extern unsigned long long int wcstoull( const wchar_t *, wchar_t **, int );
 _WCRTLINK extern size_t   wcsxfrm( wchar_t *__s1, const wchar_t *__s2, size_t __n );
 _WCRTLINK extern int      wctob( wint_t __wc );
+_WCRTLINK extern wchar_t *wmemchr( const wchar_t *__s, wchar_t __wc, size_t __n );
+_WCRTLINK extern int      wmemcmp( const wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t *wmemcpy( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t *wmemmove( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t *wmemset( wchar_t *__s, wchar_t __wc, size_t __n );
 _WCRTLINK extern int      wprintf( const wchar_t *__format, ... );
 _WCRTLINK extern int      wscanf( const wchar_t *__format, ... );
 :segment CNAME

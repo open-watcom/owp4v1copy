@@ -41,6 +41,8 @@
     #define CHAR_TYPE           wchar_t
     #define UCHAR_TYPE          wchar_t
     #define INTCHAR_TYPE        wint_t
+    #define INT_WC_TYPE         wchar_t
+    #define VOID_WC_TYPE        wchar_t
     #define NULLCHAR            0
     #define _AToUni(p1,p2)      _atouni(p1,p2)
     #define IS_ASCII(c)         ( (c & 0xff00) == 0 )
@@ -54,6 +56,8 @@
     #define CHAR_TYPE           char
     #define UCHAR_TYPE          unsigned char
     #define INTCHAR_TYPE        int
+    #define INT_WC_TYPE         int
+    #define VOID_WC_TYPE        void
     #define NULLCHAR            '\0'
     #define _AToUni(p1,p2)      (p2)
     #define IS_ASCII(c)         ( 1 )
