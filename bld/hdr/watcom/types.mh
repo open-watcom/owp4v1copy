@@ -22,6 +22,24 @@
 
 :include ssizet.sp
 
+:: The exact width integer types are shared with stdint.h
+#ifndef _EXACT_WIDTH_INTS
+#define _EXACT_WIDTH_INTS
+typedef signed char         int8_t;
+typedef unsigned char       uint8_t;
+typedef short               int16_t;
+typedef unsigned short      uint16_t;
+#if defined _M_I86
+typedef long                int32_t;
+typedef unsigned long       uint32_t;
+#else
+typedef int                 int32_t;
+typedef unsigned int        uint32_t;
+#endif
+typedef long long           int64_t;
+typedef unsigned long long  uint64_t;
+#endif /* _EXACT_WIDTH_INTS */
+
 :segment LINUX
 #ifndef _LIMITS_H_INCLUDED
  #include <limits.h>
@@ -31,17 +49,6 @@
 
 /* Define POSIX 1003.1 types */
 #include _ARCH_INCLUDE(sys/types.h)
-
-:: The exact width integer types are shared with stdint.h
-#ifndef _EXACT_WIDTH_INTS
-#define _EXACT_WIDTH_INTS
-typedef char            int8_t;
-typedef unsigned char   uint8_t;
-typedef short           int16_t;
-typedef unsigned short  uint16_t;
-typedef int             int32_t;
-typedef unsigned int    uint32_t;
-#endif
 
 typedef unsigned char   u_char;
 typedef unsigned short  u_short;
@@ -118,28 +125,12 @@ typedef unsigned short wchar_t;
 
 typedef char _WCI86FAR *caddr_t;
 
-:: The exact width integer types are shared with stdint.h
-#ifndef _EXACT_WIDTH_INTS
-#define _EXACT_WIDTH_INTS
-typedef char            int8_t;
-typedef unsigned char   uint8_t;
-typedef short           int16_t;
-typedef unsigned short  uint16_t;
-#if defined __386__
-typedef int             int32_t;
-typedef unsigned int    uint32_t;
-#else
-typedef long            int32_t;
-typedef unsigned long   uint32_t;
-#endif
-#endif /* _EXACT_WIDTH_INTS */
-
 typedef unsigned char   u_int8_t;
 typedef unsigned short  u_int16_t;
-#if defined __386__
-typedef unsigned int    u_int32_t;
-#else
+#if defined _M_I86
 typedef unsigned long   u_int32_t;
+#else
+typedef unsigned int    u_int32_t;
 #endif
 
 typedef char _WCFAR *   faddr_t;
@@ -170,6 +161,10 @@ typedef int             pid_t;  /* process identifier */
 typedef unsigned long   uid_t;  /* user identifier */
 typedef unsigned long   gid_t;  /* group identifier */
 typedef long long       id_t;   /* pid_t, uid_t or gid_t */
+
+#define major(device)           ((int)(((device) >> 8) & 0xFF))
+#define minor(device)           ((int)((device) & 0xff))
+#define makedev(major,minor)    ((dev_t) (((major) << 8) | (minor)))
 :endsegment
 
 :include cplusepi.sp
