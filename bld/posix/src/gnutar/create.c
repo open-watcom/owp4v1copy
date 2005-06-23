@@ -377,7 +377,7 @@ badfile:
                         abort();
                 }
 
-#ifdef S_IFLNK
+#if defined S_IFLNK && defined __UNIX__
         case S_IFLNK:                           /* Symbolic link */
                 {
                         int             size;

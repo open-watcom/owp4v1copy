@@ -266,7 +266,7 @@ again_link:
 #endif
                 break;
 
-#ifdef S_IFLNK
+#if defined S_IFLNK && defined __UNIX__
         case LF_SYMLINK:
 again_symlink:
                 check = symlink(head->header.linkname,
