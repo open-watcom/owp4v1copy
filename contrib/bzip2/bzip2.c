@@ -1056,7 +1056,7 @@ FILE* fopen_output_safely ( Char* name, const char* mode )
 #  if BZ_UNIX
    FILE*     fp;
    IntNative fh;
-   fh = open(name, O_WRONLY|O_CREAT|O_EXCL, S_IWUSR|S_IRUSR);
+   fh = open(name, O_WRONLY|O_CREAT|O_BINARY|O_EXCL, S_IWUSR|S_IRUSR);
    if (fh == -1) return NULL;
    fp = fdopen(fh, mode);
    if (fp == NULL) close(fh);

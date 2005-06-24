@@ -29,12 +29,12 @@ libbz2.lib: $(OBJS)
 
 test: bzip2.exe .symbolic
     type ..\words1
-    .\\bzip2 -1  < ..\sample1.ref > sample1.rb2
-    .\\bzip2 -2  < ..\sample2.ref > sample2.rb2
-    .\\bzip2 -3  < ..\sample3.ref > sample3.rb2
-    .\\bzip2 -d  < ..\sample1.bz2 > sample1.tst
-    .\\bzip2 -d  < ..\sample2.bz2 > sample2.tst
-    .\\bzip2 -ds < ..\sample3.bz2 > sample3.tst
+    .\bzip2 -1  < ..\sample1.ref > sample1.rb2
+    .\bzip2 -2  < ..\sample2.ref > sample2.rb2
+    .\bzip2 -3  < ..\sample3.ref > sample3.rb2
+    .\bzip2 -d  < ..\sample1.bz2 > sample1.tst
+    .\bzip2 -d  < ..\sample2.bz2 > sample2.tst
+    .\bzip2 -ds < ..\sample3.bz2 > sample3.tst
     comp ..\sample1.bz2 sample1.rb2 
     comp ..\sample2.bz2 sample2.rb2
     comp ..\sample3.bz2 sample3.rb2
