@@ -113,6 +113,7 @@ void __setenvp( void )
         char        _WCI86FAR *p;
     #endif
     char    *ep;
+    char    *my_env_mask;
     char    **my_environ;
     int     count;
     size_t  ep_size;
@@ -145,7 +146,7 @@ void __setenvp( void )
     count = 0;
     p = startp;
     while( *p ) {
-        while( *p ) ++p;
+        while( *++p );
         ++count;
         ++p;
     }
@@ -155,22 +156,21 @@ void __setenvp( void )
     }
     ep = (char *)allocate( ep_size );
     if( ep ) {
-        _free_ep = ep;
         env_size = (count + 1) * sizeof(char *) + count * sizeof(char);
         my_environ = (char **)allocate( env_size );
         if( my_environ ) {
             _RWD_environ = my_environ;
-            count = 0;
             p = startp;
+            _free_ep = ep;
             while( *p ) {
-                _RWD_environ[ count ] = ep;
+                *my_environ++ = ep;
                 while( *ep++ = *p++ )
                     ;
-                ++count;
             }
-            _RWD_environ[ count ] = NULL;
-            _RWD_env_mask = (char *) &_RWD_environ[ count + 1 ];   /* 06-mar-91 */
-            memset( _RWD_env_mask, 0, (count) * sizeof(char) );
+            *my_environ++ = NULL;
+            _RWD_env_mask = my_env_mask = (char *) my_environ;
+            for( ; count; count-- )
+                *my_env_mask++ = 0;
         } else {
             lib_free( ep );
         }
