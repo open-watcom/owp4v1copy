@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction conditions verification for Intel processors.
 *
 ****************************************************************************/
 
@@ -213,7 +212,10 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
         break;
     case V_GOOD_CLR:
         if( op1 == result ) return( TRUE );
-        if( !_CPULevel( CPU_486 ) ) break;
+        /* On P6 architecture, 'and' will cause a partial register stall with
+         * horrible performance implications. Always use movzx.
+         */
+        if( !_CPULevel( CPU_486 ) || _CPULevel( CPU_686 ) ) break;
         if( OptForSize > 50 ) break;
         if( result->n.class == N_REGISTER ) {
             if( HW_Ovlap( result->r.reg, HW_BP ) ) break;
