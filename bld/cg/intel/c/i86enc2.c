@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Intel instruction encoding, part II. Processes labels,
+*               jumps and the like.
 *
 ****************************************************************************/
 
@@ -166,10 +166,6 @@ extern unsigned DepthAlign( unsigned depth )
                     sizeof( AlignArray ) );
     }
     if( OptForSize ) return( 1 );
-    if( _CPULevel( CPU_586 ) ) {
-        if( depth == PROC_ALIGN ) return( 16 );
-        return( 1 );
-    }
     if( _CPULevel( CPU_486 ) ) {
         if( depth == PROC_ALIGN || depth == DEEP_LOOP_ALIGN ) return( 16 );
         return( 1 );
@@ -182,7 +178,9 @@ extern unsigned DepthAlign( unsigned depth )
         return( AlignArray[1] );
     }
     if( depth == 0 ) depth = 1;
-    if( depth >= AlignArray[0] ) depth = AlignArray[0] - 1;
+    if( depth >= AlignArray[0] ) {
+        depth = AlignArray[0] - 1;
+    }
     return( AlignArray[depth+1] );
 }
 
