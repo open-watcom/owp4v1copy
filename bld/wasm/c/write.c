@@ -366,21 +366,17 @@ static void write_seg( void )
         total_segs++;
     }
 
-    curr = Tables[TAB_SEG].head;
     for( seg_index = 1; seg_index <= total_segs; seg_index++ ) {
-        if( GetSegIdx( curr->sym.segment ) != seg_index ) {
-            /* segment is not in order ... so find it */
-            for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-                if( GetSegIdx( curr->sym.segment ) == seg_index ) {
-                    break;
-                }
+        /* find segment by index */
+        for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
+            if( GetSegIdx( curr->sym.segment ) == seg_index ) {
+                break;
             }
         }
         if( curr == NULL )
             continue;
         if( curr->sym.state != SYM_SEG ) {
             AsmErr( SEG_NOT_DEFINED, curr->sym.name );
-            curr = Tables[TAB_SEG].head;
             continue;
         }
         objr = curr->e.seginfo->segrec;
