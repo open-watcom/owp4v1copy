@@ -352,7 +352,11 @@ static dip_status LoadSymTable( dig_fhandle h, imp_image_handle *ii, int count,
     // The .sym file doesn't say how big a segment is. Since the symbols are
     // sorted by offset, just use the last offset as segment size. Should be
     // close enough.
-    ii->addr->len = sym.offset;
+    if( big_syms ) {
+        ii->addr->len = sym_32.offset;
+    } else {
+        ii->addr->len = sym.offset;
+    }
 
     ds = DS_OK;
 
