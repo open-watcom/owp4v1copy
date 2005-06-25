@@ -49,7 +49,7 @@ extern  int             IOMain(void);
 extern  void            SetIOFlags(bool);
 extern  bool            UndefData(char PGM *,int);
 extern  void            RTErr(int,...);
-#if _TARGET == _80386
+#if defined( __386__ )
 extern  void            ExecData(void PGM *,obj_ptr);
 #else
 extern  void            ExecData(void PGM *);
@@ -57,9 +57,9 @@ extern  void            ExecData(void PGM *);
 
 extern  const byte __FAR        SizeVars[];
 
-#if _TARGET == _8086
+#if defined( M_I86 )
 static  unsigned_16     DataSeg;
-#elif _TARGET == _80386
+#elif defined( __386__ )
 static  obj_ptr         DataBase;
 #endif
 static  obj_ptr         ItemPtr;
@@ -74,10 +74,10 @@ void    F77Data( void PGM **data_chain ) {
 
     data_stmt = *data_chain;
     while( data_stmt != NULL ) {
-#if _TARGET == _8086
+#if defined( M_I86 )
         ExCurr = MK_FP( FP_SEG( data_stmt ), data_stmt->tb_info );
         DataSeg = FP_SEG( data_stmt );
-#elif _TARGET == _80386
+#elif defined( __386__ )
         ExCurr = (void PGM *)CODE_REL( data_stmt->tb_info );
 #else
         ExCurr = (void PGM *)data_stmt->tb_info;
@@ -85,7 +85,7 @@ void    F77Data( void PGM **data_chain ) {
         ExLinePtr = FP_OFF( data_stmt ) + offsetof( data_prol, isn_ptr );
         ItemPtr = data_stmt->const_ptr;
         SetIOFlags( FALSE );
-#if _TARGET == _80386
+#if defined( __386__ )
         DataBase =
             ((epilog_sequence PGM *)CODE_REL(ExCurr->epilog_seq))->my_data_base;
         ExecData( &data_stmt->data_code, DataBase );
@@ -104,7 +104,7 @@ unsigned_16 GetDataU16() {
 
     unsigned_16 item;
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     item = *(unsigned_16 PGM *)MK_FP( DataSeg, ItemPtr );
 #else
     item = *(unsigned_16 PGM *)ItemPtr;
@@ -121,11 +121,11 @@ obj_ptr GetDataPtr() {
 
     obj_ptr     item;
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     item = *(obj_ptr PGM *)MK_FP( DataSeg, ItemPtr );
 #else
     item = *(obj_ptr PGM *)ItemPtr;
-#if _TARGET == _80386
+#if defined( __386__ )
     if( item != 0 ) {
         item += DataBase;
     }
@@ -141,7 +141,7 @@ intstar4        GetRepCount( obj_ptr curr ) {
 
 // Get repitition count.
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     return( *(intstar4 PGM *)MK_FP( DataSeg, curr ) );
 #else
     return( *(intstar4 PGM *)curr );
@@ -823,7 +823,7 @@ void    AsnVal( obj_ptr const_data, int const_type, int var_type ) {
     char        PGM *var_ptr;
     byte        const_buff[sizeof(ftn_type)];
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     const_ptr = MK_FP( DataSeg, const_data );
 #else
     const_ptr = (char PGM *)const_data;

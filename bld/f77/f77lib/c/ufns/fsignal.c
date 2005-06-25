@@ -39,7 +39,7 @@
 #include <stddef.h>
 #include <float.h>
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #pragma aux fsignal "^"
 #endif
 
@@ -49,7 +49,7 @@ extern  void                    __MaskDefaultFPE(void);
 void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
 //===========================================================
 
-#if (_OPSYS == _PCDOS) && !defined( __WINDOWS__ )
+#if defined( __DOS__ )
 
     // C library signal() doesn't handle SIGBREAK, SIGIOVFL, SIGIDIVZ
 
@@ -66,7 +66,9 @@ void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
     }
 #endif
 
-#if (_OPSYS == _PCDOS) && !defined( __WINDOWS_386__ )
+#if defined( __WINDOWS_386__ )
+
+#elif defined( __DOS__ ) || defined( __WINDOWS__ )
     if( xcpt == SIGIOVFL ) {
         {
             extern      void (* __UserIOvFlHandler)();

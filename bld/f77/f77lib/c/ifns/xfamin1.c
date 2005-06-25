@@ -39,7 +39,7 @@
 #include "ftnstd.h"
 #include "ifenv.h"
 
-#if _TARGET == _AXP || _TARGET == _PPC
+#if defined( __AXP__ ) || defined( __PPC__ )
   #define VAR_SINGLE    double          // required because according to ansi
                                         // we cannot pass singles using varargs
 #else

@@ -134,7 +134,7 @@ static  char    *GetSysName( ftnfile *fcb ) {
     char        buff[MAX_FILE];
     char        *p;
 
-#if ( _OPSYS == _PCDOS ) || (( _OPSYS == _OS2 ) && !defined( __386__ ))
+#if defined( __DOS__ ) || defined( __WINDOWS__ ) || (defined( __OS2__ ) && defined( M_I86 ))
     p = JmpBlanks( fcb->filename );
     if( IsDevice( fcb ) ) {
         strcpy( buff, p );
@@ -168,7 +168,7 @@ static  void    SysIOInfo( ftnfile *fcb ) {
     }
     fcb->device = 0;
     if( fcb->fileptr != NULL ) { // file is open
-#if _OPSYS == _NETWARE
+#if defined( __NETWARE__ )
         if( ( ((a_file *)(fcb->fileptr))->handle == STDIN_FILENO ) ||
             ( ((a_file *)(fcb->fileptr))->handle == STDOUT_FILENO ) ||
             ( ((a_file *)(fcb->fileptr))->handle == STDERR_FILENO ) ) {
@@ -184,12 +184,12 @@ static  void    SysIOInfo( ftnfile *fcb ) {
             }
             if( S_ISCHR( info.st_mode ) ) {
                 fcb->device |= INFO_DEV;
-#if _OPSYS == _PCDOS
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
             } else {
                 fcb->device |= INFO_VALID_DRIVE;
 #endif
             }
-#if _OPSYS == _NETWARE
+#if defined( __NETWARE__ )
         }
 #endif
     } else {
@@ -206,14 +206,14 @@ static  void    SysIOInfo( ftnfile *fcb ) {
             fcb->device |= INFO_DEV;
             // devices always exist
             fcb->flags |= FTN_FSEXIST;
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if !defined( __UNIX__ )
         } else {
             fcb->device |= INFO_VALID_DRIVE;
 #endif
         }
     }
     if( ( fcb->flags & FTN_FSEXIST ) && !IsDevice( fcb ) ) {
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if !defined( __UNIX__ )
         // Assume the two most significant bits contain no useful information
         fcb->device = INFO_DRIVE & info.st_dev; // save drive letter
 #endif
@@ -485,7 +485,7 @@ void    SysClearEOF( ftnfile *fcb ) {
 // Clear EOF on file with no EOF (SERIAL, TERMINAL).
 
     IOOk( fcb->fileptr );
-#if ( _OPSYS == _PCDOS ) && !defined( __WINDOWS__ )
+#if defined( __DOS__ )
     if( ( fcb->fileptr == FStdIn ) && IsDevice( fcb ) ) {
         // DOS bug: if a read from stdin causes eof, all subsequent reads
         // will also cause eof unless we write to stdout
@@ -500,7 +500,7 @@ bool    SameFile( char *fn1, char *fn2 ) {
 
 // Determine if file specifications are for the same file.
 
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
     return( strcmp( fn1, fn2 ) == 0 );
 #else
     return( stricmp( fn1, fn2 ) == 0 );

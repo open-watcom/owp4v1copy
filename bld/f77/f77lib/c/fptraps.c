@@ -37,7 +37,7 @@
 
 extern  void            RTErr(int,...);
 
-#if (defined( __386__ ) && (_OPSYS == _OS2)) || defined( __NT__ )
+#if (defined( __386__ ) && defined( __OS2__ )) || defined( __NT__ )
   extern        byte    __ExceptionHandled;
 #endif
 
@@ -65,7 +65,7 @@ static void     FPEHandler( int sig_num, int xcpt ) {
         RTErr( LI_ARG_GT_ZERO );
     } else if( xcpt == FPE_IOVERFLOW ) {
         RTErr( KO_IOVERFLOW );
-#if (defined( __386__ ) && (_OPSYS == _OS2)) || defined( __NT__ )
+#if (defined( __386__ ) && defined( __OS2__ )) || defined( __NT__ )
     } else {
         __ExceptionHandled = 0;
 #endif
@@ -75,8 +75,7 @@ static void     FPEHandler( int sig_num, int xcpt ) {
 
 void    __MaskDefaultFPE() {
 //==========================
-
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
     // By default we don't report the following exceptions;
     // the user has to make his own call to _control87.  This has to
     // be done in the "fpc" model as well in case there is an 80x87
@@ -94,7 +93,7 @@ void    FPTrapInit() {
 #ifndef __NETWARE__     /* FP Exceptions can't be trapped under Netware */
     if( __EnableF77RTExceptionHandling() ) {
         signal( SIGFPE, (void (*)(int))&FPEHandler );
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
     } else {
         // we still want to enable the floating point exceptions (just like
         // signal() does for SIGFPE

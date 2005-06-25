@@ -125,7 +125,7 @@ unsigned_16     GetTraceLine() {
 
 // Get traceback line number.
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     return( *(unsigned_16 PGM *)MK_FP( FP_SEG( ExCurr ), ExLinePtr ) );
 #else
     return( *(unsigned_16 *)ExLinePtr );
@@ -138,7 +138,7 @@ char            *GetTraceInfo() {
 
 // Get traceback information.
 
-#if _TARGET == _8086
+#if defined( M_I86 )
     return( MK_FP( FP_SEG( ExCurr ), ExCurr->name ) );
 #else
     return( ( char * )ExCurr->name );
@@ -315,7 +315,7 @@ void    ERR_HANDLER( int err, char *buff ) {
     if( RTFlags & DB_USED ) {
         if( ( RTFlags & DB_INSIDE ) == 0 ) {
             TraceCalls( buff );
-#if _TARGET == _80386
+#if defined( __386__ )
             DbugRet = DB_ERR_STUB*4;
 #else
             DbugRet = DB_ERR_STUB*2;
@@ -344,7 +344,7 @@ void    STOP_HANDLER() {
 //======================
 
     DEBUG_STOPPED();
-#if _TARGET == _80386
+#if defined( __386__ )
     DbugRet = DB_STOP_STUB*4;
 #else
     DbugRet = DB_STOP_STUB*2;

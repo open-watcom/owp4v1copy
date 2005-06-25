@@ -43,7 +43,7 @@
   #include <windows.h>
 #endif
 
-#if (_OPSYS == _QNX) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
 static  char            NLSequence[] = { "\n" };
 #else
 static  char            NLSequence[] = { "\r\n" };
@@ -115,7 +115,7 @@ void    StdWrite( char *buff, int len ) {
 #endif
         } else {
 #endif
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if !defined( __UNIX__ )
             setmode( fileno( stdout ), O_BINARY );
 #endif
             rc = write( fileno( stdout ), buff, len );
