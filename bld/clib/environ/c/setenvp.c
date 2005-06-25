@@ -60,11 +60,11 @@
 #if !defined(__NETWARE__) && !defined(__LINUX__)
 static char *_free_ep;
 
+#if defined(__REAL_MODE__) && defined(__BIG_DATA__)
 static void *(_WCI86NEAR allocate)( size_t amt )
 {
     void    *ptr;
 
-#if defined(__REAL_MODE__) && defined(__BIG_DATA__)
     #if defined(__OS2_286__)
         if( _osmode == DOS_MODE ) {
             ptr = lib_nmalloc( amt );
@@ -80,11 +80,11 @@ static void *(_WCI86NEAR allocate)( size_t amt )
             ptr = lib_malloc( amt );
         }
     #endif
-#else
-    ptr = lib_malloc( amt );
-#endif
     return( ptr );
 }
+#else
+#define allocate lib_malloc
+#endif
 #endif
 
 void __setenvp( void )
