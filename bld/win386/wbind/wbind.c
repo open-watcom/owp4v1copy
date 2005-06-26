@@ -50,9 +50,6 @@ typedef char FAR *LPSTR;
 #include "exedos.h"
 #include "exeos2.h"
 
-#ifdef _DOS
- #include <dos.h>
-#endif
 #undef _WBIND_VERSION_
 #define _WBIND_VERSION_ "2.3"
 
@@ -176,44 +173,6 @@ static void errPrintf( char *str, ... )
 
 static long CopyFile( int in, int out, char *infile, char *outfile )
 {
-#ifdef _DOS
-    unsigned    bufsize;
-    unsigned    size;
-    unsigned    len;
-    unsigned    rc;
-    unsigned short seg;
-    long        totalsize;
-    void __far  *buff;
-
-    bufsize = IO_BUFF;
-    if( _dos_allocmem( (bufsize+15) >> 4, &seg ) != 0 ) {
-        bufsize = seg << 4;
-        if( _dos_allocmem( bufsize >> 4, &seg ) != 0 ) {
-            doError("Out of memory!");
-        }
-    }
-    buff = MK_FP( seg, 0 );
-    totalsize = 0L;
-    for(;;) {
-        rc = _dos_read( in, buff, bufsize, &size );
-        if( size == 0 ) {
-            break;
-        }
-
-        if( rc != 0 ) {
-            doError( "Error reading file \"%s\"", infile );
-        }
-        rc = _dos_write( out, buff, size, &len );
-        if( len != size ) {
-            doError( "Error writing file \"%s\"", outfile );
-        }
-        totalsize += len;
-        if( (unsigned) size != bufsize ) {
-            break;
-        }
-    }
-    _dos_freemem( seg );
-#else
     unsigned    size;
     unsigned    len;
     unsigned    bufsize;
@@ -242,7 +201,6 @@ static long CopyFile( int in, int out, char *infile, char *outfile )
         }
     }
     free( buff );
-#endif
     return( totalsize );
 }
 
