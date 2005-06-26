@@ -2523,39 +2523,39 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
     }
     switch( cpu ) {
     case 0:
-        Code->info.cpu |= P_86;
+        Code->info.cpu = P_86;
         if( fpu )
             Code->info.cpu |= P_87;
         break;
     case 1:
-        Code->info.cpu |= P_186;
+        Code->info.cpu = P_186;
         if( fpu )
             Code->info.cpu |= P_87;
         break;
     case 2:
-        Code->info.cpu |= P_286p;
+        Code->info.cpu = P_286p;
         if( fpu )
             Code->info.cpu |= P_287;
         break;
     case 3:
-        Code->info.cpu |= P_386p;
+        Code->info.cpu = P_386p;
         if( fpu )
             Code->info.cpu |= P_387;
         break;
     case 4:
-        Code->info.cpu |= P_486p;
+        Code->info.cpu = P_486p;
         if( fpu )
             Code->info.cpu |= P_387;
         break;
     case 5:
-        Code->info.cpu |= P_586p;
+        Code->info.cpu = P_586p;
         if( fpu )
             Code->info.cpu |= P_387;
         if( extn )
             Code->info.cpu |= P_K3D | P_MMX;
         break;
     case 6:
-        Code->info.cpu |= P_686p;
+        Code->info.cpu = P_686p;
         if( fpu )
             Code->info.cpu |= P_387;
         if( extn )
