@@ -60,8 +60,7 @@ extra_linker = &
 extra_srcs += ;$(trap_dir)/lcl/dos/c;$(sdk_dir)/misc
 inc_dirs += -I"$(trap_dir)/lcl/dos/h" -I"$(sdk_dir)/misc"
 
-extra_c_flags_accgen = -3
-extra_c_flags_initfini = -3
+extra_c_flags_i86 = -3
 
 extra_a_flags_misc = -fpi87
 

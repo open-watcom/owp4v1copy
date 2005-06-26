@@ -14,8 +14,7 @@ objs =  intmain.obj ints.obj int32.obj
 !include deftarg.mif
 !include defrule.mif
 
-extra_c_flags      = -s -fpc -zu -zw
-extra_c_flags_ints = -3
+extra_c_flags = -s -fpc -zu -zw -3
 
 lflags_win_i86 += initinstance memory
 
