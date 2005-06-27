@@ -202,7 +202,7 @@ unsigned FullPathOpen( char const *name, char *ext, char *result, unsigned max_r
         trpfile[name_len] = '\0';
     } else {
         trpfile[ name_len++ ] = '.';
-        memcpy( (char near *)&trpfile[ name_len ], ext, strlen( ext ) + 1 );
+        memcpy( trpfile + name_len, ext, strlen( ext ) + 1 );
     }
     if( has_path ) {
         filehndl = open( trpfile, O_RDONLY );
@@ -245,7 +245,7 @@ unsigned PathOpen( char *name, unsigned name_len, char *exts )
         trpfile[name_len] = '\0';
     } else {
         trpfile[ name_len++ ] = '.';
-        memcpy( (char near *)&trpfile[ name_len ], exts, strlen( exts ) + 1 );
+        memcpy( trpfile + name_len, exts, strlen( exts ) + 1 );
     }
     if( has_path ) {
         filehndl = open( trpfile, O_RDONLY );

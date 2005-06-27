@@ -3,8 +3,6 @@
 host_os  = dos
 host_cpu = 386
 
-memory_model_386 = s
-
 os  = cw
 srv = cw
 cpu = x86

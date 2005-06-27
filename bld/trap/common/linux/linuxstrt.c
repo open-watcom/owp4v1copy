@@ -50,7 +50,7 @@ const trap_requests ImpInterface = { TrapInit, TrapRequest, TrapFini } ;
 
 #if !defined( BUILTIN_TRAP_FILE )
 
-void __near *_nmalloc( unsigned size )
+void *_nmalloc( unsigned size )
 {
     return( malloc( size ) );
 }
@@ -60,7 +60,7 @@ void *malloc( unsigned size )
     return( Client->malloc( size ) );
 }
 
-void __near *_nrealloc( void __near *ptr, unsigned size )
+void *_nrealloc( void *ptr, unsigned size )
 {
     return( realloc( ptr, size ) );
 }
@@ -70,7 +70,7 @@ void *realloc( void *ptr, unsigned size )
     return( Client->realloc( ptr, size ) );
 }
 
-void _nfree( void __near *ptr )
+void _nfree( void *ptr )
 {
     free( ptr );
 }
