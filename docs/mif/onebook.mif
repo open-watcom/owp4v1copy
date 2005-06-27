@@ -280,12 +280,12 @@ $(hbook).pdf : $(hbook).ps
 
 $(hbook).inf : $(hbook).ipf
     set IPFCARTWORK=$(book_incs)
-    $(hc_os2) $(hbook).ipf /inf
+    $(hc_os2) $(hbook).ipf /inf $@
 
 !ifdef book_os2_help
 $(hbook).hlp : $(hbook).ipf
     set IPFCARTWORK=$(book_incs)
-    $(hc_os2) $(hbook).ipf
+    $(hc_os2) $(hbook).ipf  $@
 !else
 $(hbook).hlp : .symbolic
 !endif
