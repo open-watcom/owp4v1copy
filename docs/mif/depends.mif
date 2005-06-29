@@ -2459,8 +2459,10 @@ $(docsrc_dir)\gml\lytchg.gml    &
 $(docsrc_dir)\gml\nb6x8lay.gml  &
 $(docsrc_dir)\gml\nb6x8ps.opt   &
 $(docsrc_dir)\gml\nb7x9lay.gml  &
+$(docsrc_dir)\gml\nb7x9lyn.gml  &
 $(docsrc_dir)\gml\nb7x9ps.opt   &
 $(docsrc_dir)\gml\nb7x9psc.opt  &
+$(docsrc_dir)\gml\nb7x9psn.opt  &
 $(docsrc_dir)\gml\nbhlp.opt     &
 $(docsrc_dir)\gml\nbhlplay.gml  &
 $(docsrc_dir)\gml\nbhlpos2.opt  &
@@ -2521,6 +2523,14 @@ $(docsrc_dir)\hlp\fmix.gml
 incs_cgdoc = $(bldsrc_dir)\cg\doc
 objs_cgdoc = &
 $(bldsrc_dir)\cg\doc\cgdoc.gml
+
+# wddoc sub-directory
+incs_wddoc = $(bldsrc_dir)\wv\doc
+objs_wddoc = &
+$(bldsrc_dir)\wv\doc\dbg.gml &
+$(bldsrc_dir)\wv\doc\ovl.gml &
+$(bldsrc_dir)\wv\doc\trap.gml &
+$(bldsrc_dir)\wv\doc\wddoc.gml
 
 # vi sub-directory
 incs_vi = $(bldsrc_dir)\vi\man;$(bldsrc_dir)\vi\man\pict;..\gml\help

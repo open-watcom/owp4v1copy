@@ -1,19 +1,4 @@
-.se maj_ver=1
-.se min_ver=3
-.se company=Open Watcom
-:GDOC.
-:INCLUDE file=extra.
-:FRONTM.
-:TITLEP.
-:TITLE.&company Debugger Trap File Interface
-:TITLE.Version &maj_ver..&min_ver
-:AUTHOR.Originally written by WATCOM International Corp.
-:AUTHOR.Revised by Open Watcom contributors
-:DATE.
-:eTITLEP.
-:TOC.
-:BODY.
-:H0.Introduction
+.chap *refid=Introd1 Introduction
 The &company debugger consists of a number of separate pieces of code. The
 main executable, WD.EXE (wd on UNIX systems), provides a debugging `engine'
 and user interface.
@@ -53,18 +38,20 @@ well as subsequent Open Watcom releases. It
 is expected to be modified in future releases. Where possible, notification
 of expected changes are given in the document, but all aspects are subject
 to revision.
-:H1.Some Definitions
-:H2.Byte Order
+.section Some Definitions
+Neco tady musi byt
+.beglevel
+.section Byte Order
 The trap file interface is defined to use little endian byte order. That is,
 the least significant byte is stored at the lowest address. Little endian
 byte order was chosen for compatibility with existing trap files and
 tools. Fixed byte order also eases network communication between
 debuggers and trap files running on machines with different byte order.
-:H2.Pointer Sizes
+.section Pointer Sizes
 In a 16-bit hosted environment such as DOS, all pointers used by the trap
 file are "far" 16:16 pointers. In a 32-bit environment such as Windows NT
 the pointers are "near" 0:32 pointers.
-:H2.Base Types
+.section Base Types
 A number of basic types are used in the interface. They are defined
 as follows:
 :DL.
@@ -119,8 +106,10 @@ handle is used to uniquely identify a debuggee process.
 main executable will be one module, and on systems which support DLLs or
 shared libraries, each library will be identified by a unique module handle.
 :eDL.
-:H0.The Request Interface
-:H1.Request Structure.
+.endlevel
+.chap The Request Interface
+N
+.section Request Structure.
 Each request is a composed of two sequences of bytes provided by the
 debugger called messages. The first set contains the actual request
 code and whatever
@@ -153,13 +142,14 @@ describes the return message.
 It is not legal to split a message into arbitrary pieces with mx_entries.
 Each request documents where an :F.mx_entry:eF. is allowed to start with a
 line of dashes.
-:H1.The Interface Routines
+.section The Interface Routines
 The trap file interface must provide three routines: :F.TrapInit:eF.,
 :F.TrapRequest:eF., and :F.TrapFini:eF.. How the debugger determines the
 address of these routines after loading a trap file, as well as the calling
 convention used, is system dependent and described later. These functions are
 prototyped in :F.trpimp.h:eF..
-:H2.TrapInit
+.beglevel
+.section TrapInit
 This function initializes the environment for proper operation of
 :F.TrapRequest:eF..
 :XMP.
@@ -199,13 +189,13 @@ the :F.minor:eF. field tells the minor version number of the trap file.
 that is not upwardly compatable with previous versions. :F.Minor:eF.
 increments by one whenever a change is made to the trap file that is upwardly
 compatible with previous versions.
-The current major verion is &maj_ver, the current minor version is &min_ver..
+The current major verion is &trp_majver, the current minor version is &trp_minver..
 The :F.remote:eF. field informs the
 debugger whether the trap file communicates with a remote machine.
 :P.
 :F.TrapInit:eF. must be called before using :F.TrapRequest:eF. to send a request.
 Failure to do so may result in unpredictable operation of :F.TrapRequest:eF..
-:H2.TrapRequest
+.section TrapRequest
 All requests between the server and the remote trap file are handled by
 TrapRequest.
 :XMP.
@@ -232,7 +222,8 @@ minimum size of a request message is one byte.
 Some requests do not require a return message. In this case, the program
 invoking TrapRequest :HP2.must:eHP2. pass zero for :F.num_out_mx:eF. and NULL for
 :F.mx_out:eF..
-:H3.Request Example
+.beglevel
+.section Request Example
 The request REQ_READ_MEM needs the memory address and length
 of memory to read as input and will return the memory block in the
 output message. To read 30 bytes of memory from address 0x0010:0x8000 into
@@ -266,7 +257,8 @@ a buffer, we can write:
 The program will print "OK" if it has transferred 30 bytes of data from the
 debuggee's address space to the :F.buffer:eF. variable. If less than 30
 bytes is transfered, an error message is printed out.
-:H2.TrapFini
+.endlevel
+.section TrapFini
 The function terminates the link between the debugger and the trap file.
 It should be called
 after finishing all access requests.
@@ -276,7 +268,8 @@ after finishing all access requests.
 :PC.
 After calling :F.TrapFini:eF., it is illegal to call :F.TrapRequest:eF.
 without calling :F.TrapInit:eF. again.
-:H0.The Requests
+.endlevel
+.chap The Requests
 This section descibes the individual requests, their parameters, and
 their return values. A line of dashes indicates where an :F.mx_entry:eF. is
 allowed (but not required) to start.
@@ -286,12 +279,13 @@ components to be implemented only on specific systems.
 :P.
 The numeric value of the request which is placed in the :F.req:eF. field
 follows the symbolic name in parentheses.
-:H1.Core Requests
+.section Core Requests
 These requests need to be implemented in all versions of the trap file,
 although some of them may only be stub implementations in some environments.
 Note that structures suitable for individual requests are declared in
 :F.trpcore.h:eF..
-:H2.REQ_CONNECT (0)
+.beglevel
+.section REQ_CONNECT (0)
 Request to connect to the remote machine. This must be the first request made.
 :P.
 Request message:
@@ -310,8 +304,8 @@ field tells the minor version number of the trap file. The :F.major:eF. is
 changed whenever there is a modification made to the trap file that is not
 upwardly compatable with previous versions. The :F.minor:eF. increments by one
 whenever a change is made to the trap file that is upwardly compatable with
-previous versions. The current major version is &maj_ver, the current minor version
-is &min_ver..
+previous versions. The current major version is &trp_majver, the current minor version
+is &trp_minver..
 The :F.remote:eF. field informs the trap file whether a
 remote server is between the &company debugger and the trap file.
 :P.
@@ -332,7 +326,7 @@ which would require more than the maximum number of bytes
 to transmit or receive must be broken up into multiple requests.
 The minimum acceptable value for this
 field is 256.
-:H2.REQ_DISCONNECT (1)
+.section REQ_DISCONNECT (1)
 Request to terminate the link between the local and remote machine.
 After this request, a REQ_CONNECT must be the next one made.
 :P.
@@ -347,7 +341,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_SUSPEND (2)
+.section REQ_SUSPEND (2)
 Request to suspend the link between the server and the remote trap file.
 The debugger issues this message just before it spawns a sub-shell (the
 "system" command). This allows a remote server to enter a state where
@@ -368,7 +362,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_RESUME (3)
+.section REQ_RESUME (3)
 Request to resume the link between the server and the remote trap file.
 The debugger issues this request when the spawned sub-shell exits.
 :P.
@@ -383,7 +377,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_GET_SUPPLEMENTARY_SERVICE (4)
+.section REQ_GET_SUPPLEMENTARY_SERVICE (4)
 Request to obtain a supplementary service id.
 :P.
 Request message:
@@ -414,7 +408,7 @@ integrated with the debugger. There would be two components, one to be
 added to the debugger and one to be added to the trap file. The two
 pieces could communicate with each other via the supplementary services
 mechanism.
-:H2.REQ_PERFORM_SUPPLEMENTARY_SERVICE (5)
+.section REQ_PERFORM_SUPPLEMENTARY_SERVICE (5)
 Request to perform a supplementary service.
 :P.
 Request message:
@@ -436,7 +430,7 @@ Return message:
 :PC.
 The return message is specified by the individual supplementary service
 provider.
-:H2.REQ_GET_SYS_CONFIG (6)
+.section REQ_GET_SYS_CONFIG (6)
 Request to get system information from the remote machine.
 :P.
 Request message:
@@ -523,7 +517,7 @@ arithmetic in that system. It stores the number of left shifts required in order
 to calculate the next segment correctly. It is 12 for real mode programs. The
 value in a protect mode environment must be obtained from the OS of the debuggee
 machine. This field is only relevant for 16-bit segmented architectures.
-:H2.REQ_MAP_ADDR (7)
+.section REQ_MAP_ADDR (7)
 Request to map the input address to the actual address of the remote machine.
 The addresses in the symbolic information provided by the linker do not
 reflect any relocation performed on the executable by the system loader. This
@@ -568,7 +562,7 @@ is the same as a previous request, and the input offset falls within the
 valid range identified by the return of that previous request, it can
 perform the mapping itself and not bother sending the request to the trap
 file.
-:H2.REQ_ADDR_INFO (8)
+.section REQ_ADDR_INFO (8)
 This request is x86 specific and obsolete; REQ_MACHINE_DATA should be used
 instead. It needs to be provided only for backwards compatibility.
 :P.
@@ -592,7 +586,7 @@ Return message:
 :eXMP.
 :PC.
 The field returns one if the address is a USE32 segment, zero otherwise.
-:H2.REQ_CHECKSUM_MEM (9)
+.section REQ_CHECKSUM_MEM (9)
 Request to calculate the checksum for a block of memory in the debuggee's
 address space.
 This is used by the debugger to determine if the contents of the memory block
@@ -617,7 +611,7 @@ Return message:
 :eXMP.
 :PC.
 The checksum will be returned in :F.result:eF..
-:H2.REQ_READ_MEM (10)
+.section REQ_READ_MEM (10)
 Request to read a block of memory.
 :P.
 Request message:
@@ -640,7 +634,7 @@ The :F.data:eF. field stores the memory block read in. The length of this memory
 block is given by the return value from TrapRequest. If error has occurred in reading
 memory, the length of the data returns will not be equal to the number of bytes
 requested.
-:H2.REQ_WRITE_MEM (11)
+.section REQ_WRITE_MEM (11)
 Request to write a block of memory.
 :P.
 Request message:
@@ -663,7 +657,7 @@ Return message:
 The :F.len:eF. field tells the length of memory block actually written to the
 debuggee machine. If error has occurred in writing the memory, the length
 returned will not be equal to the number of bytes requested.
-:H2.REQ_READ_IO (12)
+.section REQ_READ_IO (12)
 Request to read data from I/O address space of the debuggee.
 :P.
 Request message:
@@ -686,7 +680,7 @@ The :F.data:eF. field stores the memory block read in. The length of this memory
 block is given by the return value from TrapRequest. If an error has occurred in
 reading, the length returned will not be equal to the number of bytes
 requested.
-:H2.REQ_WRITE_IO (13)
+.section REQ_WRITE_IO (13)
 Request to write data to the I/O address space of the debuggee.
 :P.
 Request message:
@@ -709,7 +703,7 @@ Return message:
 The :F.len:eF. field tells the number of bytes actually written out. If an error
 has occurred in writing, the length returned will not be equal
 to the number of bytes requested.
-:H2.REQ_READ_CPU (14)
+.section REQ_READ_CPU (14)
 This request is x86 specific and obsolete; REQ_READ_REGS should be used
 instead. It needs to be provided only for backwards compatibility.
 :P.
@@ -751,7 +745,7 @@ structure:
         unsigned_16 GS;
         };
 :eXMP.
-:H2.REQ_READ_FPU (15)
+.section REQ_READ_FPU (15)
 This request is x86 specific and obsolete; REQ_READ_REGS should be used
 instead. It needs to be provided only for backwards compatibility.
 :P.
@@ -774,7 +768,7 @@ Implementations of trap files in 16-bit environments should expand the
 instruction pointer and operand pointer fields from 4 bytes to 8 (shuffling
 the data register fields down in memory) before returning the result to
 the debugger.
-:H2.REQ_WRITE_CPU (16)/REQ_WRITE_FPU (17)
+.section REQ_WRITE_CPU (16)/REQ_WRITE_FPU (17)
 These requests are x86 specific and obsolete; REQ_WRITE_REGS should be used
 instead. They needs to be provided only for backwards compatibility.
 :P.
@@ -801,7 +795,7 @@ Return message:
     NONE
 :eXMP.
 :PC.
-:H2.REQ_PROG_GO (18)/REQ_PROG_STEP (19)
+.section REQ_PROG_GO (18)/REQ_PROG_STEP (19)
 Requests to execute the debuggee. REQ_PROG_GO causes the debuggee to
 resume execution, while REQ_PROG_STEP requests only a single machine
 instruction to be executed before returning. In either case, this
@@ -853,7 +847,7 @@ When a bit is off, the debugger avoids having to make additional requests
 to determine the new state of the debuggee. If the trap file is not sure
 that a particular item has changed, or if it is expensive to find out, it
 should just turn the bit on.
-:H2.REQ_PROG_LOAD (20)
+.section REQ_PROG_LOAD (20)
 Request to load a program.
 :P.
 Request message:
@@ -896,7 +890,7 @@ information:
     Bit 5      :  LD_FLAG_DISPLAY_DAMAGED   - Debugger must repaint screen
     Bit 6 - 7  :  not used
 :eXMP.
-:H2.REQ_PROG_KILL (21)
+.section REQ_PROG_KILL (21)
 Request to kill the program.
 :P.
 Request message:
@@ -915,7 +909,7 @@ Return message:
 :PC.
 The :F.err:eF. field returns the error code of the OS kill program
 operation.
-:H2.REQ_SET_WATCH (22)
+.section REQ_SET_WATCH (22)
 Request to set a watchpoint at the address given.
 :P.
 Request message:
@@ -939,7 +933,7 @@ If the setting of the watchpoint worked, the 31 low order bits of
 placed into execution. The top bit of the field is set to one if a debug
 register is being used for the watchpoint, and zero if the watchpoint is
 being done by software.
-:H2.REQ_CLEAR_WATCH (23)
+.section REQ_CLEAR_WATCH (23)
 Request to clear a watchpoint at the address given. The trap file may
 assume all watch points are cleared at once.
 :P.
@@ -957,7 +951,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_SET_BREAK (24)
+.section REQ_SET_BREAK (24)
 Request to set a breakpoint at the address given.
 :P.
 Request message:
@@ -975,7 +969,7 @@ Return message:
 :PC.
 The :F.old:eF. field returns the original byte(s) at the address
 :F.break_addr:eF..
-:H2.REQ_CLEAR_BREAK (25)
+.section REQ_CLEAR_BREAK (25)
 Request to clear a breakpoint at the address given. The trap file may
 assume all breakpoints are cleared at once.
 :P.
@@ -994,7 +988,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_GET_NEXT_ALIAS (26)
+.section REQ_GET_NEXT_ALIAS (26)
 Request to get alias information for a segment. In some protect mode
 environments (typically 32-bit flat) two different selectors may refer
 to the same physical memory. Which selectors do this is important to
@@ -1020,7 +1014,7 @@ The :F.seg:eF. field contains the next segment where an alias appears. If this f
 returns zero, it implies no more aliases can be found. The :F.alias:eF. field
 returns the alias of the input segment. Zero indicates a previously set alias
 should be deleted.
-:H2.REQ_SET_USER_SCREEN (27)
+.section REQ_SET_USER_SCREEN (27)
 Request to make the debuggee's screen visible.
 :P.
 Request message:
@@ -1032,7 +1026,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_SET_DEBUG_SCREEN (28)
+.section REQ_SET_DEBUG_SCREEN (28)
 Request to make the debugger's screen visible.
 :P.
 Request message:
@@ -1044,7 +1038,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_READ_USER_KEYBOARD (29)
+.section REQ_READ_USER_KEYBOARD (29)
 Request to read the remote keyboard input.
 :P.
 Request message:
@@ -1063,7 +1057,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.key:eF. field returns the input character from remote machine.
-:H2.REQ_GET_LIB_NAME (30)
+.section REQ_GET_LIB_NAME (30)
 Request to get the name of a newly loaded library (DLL).
 :P.
 Request message:
@@ -1090,7 +1084,7 @@ just of the '\0' character), then this is a indication that the DLL indicated
 by the given handle has been unloaded, and the debugger should remove
 any symbolic information for the image. It is an error to attempt to remove
 a handle that has not been loaded in a previous REQ_GET_LIB_NAME request.
-:H2.REQ_GET_ERR_TEXT (31)
+.section REQ_GET_ERR_TEXT (31)
 Request to get the error message text for an error code.
 :P.
 Request message:
@@ -1108,7 +1102,7 @@ Return message:
 :eXMP.
 :PC.
 The error message text will be returned in :F.error_msg:eF. field.
-:H2.REQ_GET_MESSAGE_TEXT (32)
+.section REQ_GET_MESSAGE_TEXT (32)
 Request to retrieve generic message text. After a REQ_PROG_LOAD, REQ_PROG_GO
 or REQ_PROG_STEP has returned with COND_MESSAGE or COND_EXCEPTION,
 the debugger will make this request to obtain the message text. In the
@@ -1146,7 +1140,7 @@ and the debugger should make another REQ_GET_MESSAGE_TEXT.
 MSG_WARNING indicates that the message is a warning level message while
 MSG_ERROR is an error level message. If neither of these bits are on, the
 message is merely informational.
-:H2.REQ_REDIRECT_STDIN (33)/REQ_REDIRECT_STDOUT (34)
+.section REQ_REDIRECT_STDIN (33)/REQ_REDIRECT_STDOUT (34)
 Request to redirect the standard input (REQ_REDIRECT_STDIN) or
 standard output (REQ_REDIRECT_STDOUT) of the debuggee.
 :P.
@@ -1167,7 +1161,7 @@ Return message:
 :PC.
 When an error has occurred, the :F.err:eF. field contains an error code
 indicating the type of error that has been detected.
-:H2.REQ_SPLIT_CMD (35)
+.section REQ_SPLIT_CMD (35)
 Request to split the command line into the command name and
 parameters.
 :P.
@@ -1191,7 +1185,7 @@ Return message:
 The :F.cmd_end:eF. field tells the position in command line where the command
 name ends. The :F.parm_start:eF. field stores the position where the
 program arguments begin.
-:H2.REQ_READ_REGS (36)
+.section REQ_READ_REGS (36)
 Request to read CPU register contents. The data returned depends on
 the target architecture and is defined by the MAD file.
 :P.
@@ -1208,7 +1202,7 @@ Return message:
 :PC.
 The return message content is specific to the MAD in use and will contain
 a :F.mad_registers:eF. union (defined in :F.madtypes.h:eF.).
-:H2.REQ_WRITE_REGS (37)
+.section REQ_WRITE_REGS (37)
 Request to write CPU register contents. The data is target architecture
 specific.
 :P.
@@ -1227,7 +1221,7 @@ Return message:
     NONE
 :eXMP.
 :PC.
-:H2.REQ_MACHINE_DATA (38)
+.section REQ_MACHINE_DATA (38)
 Request to retrieve machine specific data.
 :P.
 Request message:
@@ -1252,10 +1246,11 @@ Return message:
 :eXMP.
 :PC.
 The return message content is specific to the MAD in use.
+.endlevel
 .*
 .*
 .*
-:H1.File I/O requests
+.section File I/O requests
 This section describes requests that deal with file input/output on the
 target (debuggee) machine.
 These requests are actually performed by the
@@ -1274,7 +1269,8 @@ described:
 :DT.trap_fhandle
 :DD.This is an :F.unsigned_32:eF. which holds a debuggee file handle.
 :eDL.
-:H2.REQ_FILE_GET_CONFIG (0)
+.beglevel
+.section REQ_FILE_GET_CONFIG (0)
 Request to retreive characteristics of the remote file system.
 :P.
 Request message:
@@ -1298,7 +1294,7 @@ a file name for the remote system.
 The new line control
 characters are stored in array :F.newline:eF.. If the operating system uses only
 a single character for newline, put a zero in the second element.
-:H2.REQ_FILE_OPEN (1)
+.section REQ_FILE_OPEN (1)
 Request to create/open a file.
 :P.
 Request message:
@@ -1334,7 +1330,7 @@ Return message:
 If successful, the :F.handle:eF. returns a handle for the file. When an error
 has occurred, the :F.err:eF. field contains a value indicating the type
 of error that has been detected.
-:H2.REQ_FILE_SEEK (2)
+.section REQ_FILE_SEEK (2)
 Request to seek to a particular file position.
 :P.
 Request message:
@@ -1364,7 +1360,7 @@ Return message:
 If an error has occurred, the :F.err:eF. field contains a value indicating
 the type of error that has been detected. The :F.pos:eF. field returns the current
 position of the file.
-:H2.REQ_FILE_READ (3)
+.section REQ_FILE_READ (3)
 Request to read a block of data from a file.
 :P.
 Request message:
@@ -1392,7 +1388,7 @@ field. If the end of file is encountered before the read completes, the return
 value will be less than the number of bytes requested. When an error has
 occurred, the :F.err:eF. field contains a value indicating the type of
 error that has been detected.
-:H2.REQ_FILE_WRITE (4)
+.section REQ_FILE_WRITE (4)
 Request to write a block of data to a file.
 :P.
 Request message:
@@ -1415,7 +1411,7 @@ Return message:
 If there is no error, :F.len:eF. will equal to that in the :F.data_len:eF.
 field. When an error has occurred, the :F.err:eF. field contains a value
 indicating the type of error that has been detected.
-:H2.REQ_FILE_WRITE_CONSOLE (5)
+.section REQ_FILE_WRITE_CONSOLE (5)
 Request to write a block of data to the debuggee's screen.
 :P.
 Request message:
@@ -1436,7 +1432,7 @@ Return message:
 If there is no error, :F.len:eF. will equal to the :F.data_len:eF.
 field. When an error has occurred, the :F.err:eF. field contains a value
 indicating the type of error that has been detected.
-:H2.REQ_FILE_CLOSE (6)
+.section REQ_FILE_CLOSE (6)
 Request to close a file.
 :P.
 Request message:
@@ -1454,7 +1450,7 @@ Return message:
 :PC.
 When an error has occurred, the :F.err:eF. field contains a value
 indicating the type of error that has been detected.
-:H2.REQ_FILE_ERASE (7)
+.section REQ_FILE_ERASE (7)
 Request to erase a file.
 :P.
 Request message:
@@ -1474,7 +1470,7 @@ Return message:
 :PC.
 If error has occurred when erasing the file, the :F.err:eF. field will
 return the error code number.
-:H2.REQ_FILE_STRING_TO_FULLPATH (8)
+.section REQ_FILE_STRING_TO_FULLPATH (8)
 Request to convert a file name to its full path name.
 :P.
 Request message:
@@ -1513,7 +1509,7 @@ If no error occurs the :F.err:eF. field returns a zero and the full path name
 will be stored in the :F.path_name:eF. field. When an error has occurred, the
 :F.err:eF. field contains an error code indicating the type of error
 that has been detected.
-:H2.REQ_FILE_RUN_CMD (9)
+.section REQ_FILE_RUN_CMD (9)
 Request to run a command on the target (debuggee's) system.
 :P.
 Request message:
@@ -1537,10 +1533,11 @@ Return message:
 :PC.
 If error has occurred when executing the command, the :F.err:eF. field
 will return the error code number.
+.endlevel
 .*
 .*
 .*
-:H1.Overlay requests
+.section Overlay requests
 This section describes requests that deal with overlays (supported
 only under 16-bit DOS).
 These requests are actually performed by the
@@ -1571,7 +1568,8 @@ The structure is defined as follows:
 The :F.segment:eF. field contains the segment of the address and the :F.offset:eF.
 field stores the offset of the address.
 :eDL.
-:H2.REQ_OVL_STATE_SIZE (0)
+.beglevel
+.section REQ_OVL_STATE_SIZE (0)
 Request to return the size of the overlay state information in bytes of the
 task program.
 This request maps onto the
@@ -1594,7 +1592,7 @@ Return message:
 The :F.size:eF. field returns the size in bytes. A value of zero indicates
 no overlays are present in the debuggee and none of the other requests
 dealing with overlays will ever be called.
-:H2.REQ_OVL_GET_DATA (1)
+.section REQ_OVL_GET_DATA (1)
 :P.
 Request to get the address and size of an overlay section.
 This request maps onto the
@@ -1621,7 +1619,7 @@ section is loaded (or would be loaded if it was brought into memory).
 The :F.size:eF. field gives the size, in bytes, of the overlay section.
 If there is no section for the given id, the :F.segment:eF. field will be
 zero.
-:H2.REQ_OVL_READ_STATE (2)
+.section REQ_OVL_READ_STATE (2)
 :P.
 Request to read the overlay table state.
 This request maps onto the
@@ -1642,7 +1640,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.data:eF. field contains the overlay state information requested.
-:H2.REQ_OVL_WRITE_STATE (3)
+.section REQ_OVL_WRITE_STATE (3)
 :P.
 Request to write the overlay table state.
 This request maps onto the
@@ -1663,7 +1661,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_OVL_TRANS_VECT_ADDR (4)
+.section REQ_OVL_TRANS_VECT_ADDR (4)
 Request to check if the input overlay address is actually an overlay
 vector.
 This request maps onto the
@@ -1697,7 +1695,7 @@ Return message:
 The translated address will be returned in the :F.ovl_addr:eF. field.
 If the address is not an overlay vector, then the input address will be
 returned and the :F.section_id:eF. field will be zero.
-:H2.REQ_OVL_TRANS_RET_ADDR (5)
+.section REQ_OVL_TRANS_RET_ADDR (5)
 Request to check if the address is the overlay manager parallel return
 code.
 This request maps onto the
@@ -1720,7 +1718,7 @@ The translated address will be returned in the :F.ovl_addr:eF. field.
 If the address is not an parallel return code, then the input address will be
 returned and the :F.section_id:eF. field in the structure :F.ovl_addr:eF. will
 be zero.
-:H2.REQ_OVL_GET_REMAP_ENTRY (6)
+.section REQ_OVL_GET_REMAP_ENTRY (6)
 Request to check if the overlay address needs to be remapped.
 This request maps onto the
 overlay manager's GET_MOVED_SECTION request. See the Overlay Manager
@@ -1744,10 +1742,11 @@ Return message:
 If the address gets remapped the :F.remapped:eF. field will return one.
 The remapped address will be returned in the :F.ovl_addr:eF. field.
 The input address will be unchanged if the address has not been remapped.
+.endlevel
 .*
 .*
 .*
-:H1.Thread requests
+.section Thread requests
 This section descibes requests that deal with threads.
 These requests are actually performed by the
 core request REQ_PERFORM_SUPPLEMENTARY_SERVICE and appropriate service ID.
@@ -1764,7 +1763,8 @@ described:
 :DT.trap_thandle
 :DD.This is an :F.unsigned_32:eF. which holds a thread handle.
 :eDL.
-:H2.REQ_THREAD_GET_NEXT (0)
+.beglevel
+.section REQ_THREAD_GET_NEXT (0)
 Request to get next thread.
 :P.
 Request message:
@@ -1790,7 +1790,7 @@ The :F.state:eF. field can have two values:
     THREAD_THAWED = 0
     THREAD_FROZEN = 1
 :eXMP.
-:H2.REQ_THREAD_SET (1)
+.section REQ_THREAD_SET (1)
 Request to set a given thread ID to be the current thread.
 :P.
 Request message:
@@ -1810,7 +1810,7 @@ Return message:
 :PC.
 The :F.old_thread:eF. field returns the previous thread ID. If the set fails, the
 :F.err:eF. field will be non-zero.
-:H2.REQ_THREAD_FREEZE (2)
+.section REQ_THREAD_FREEZE (2)
 Request to freeze a thread so that it will not be run next time when executing
 the task program.
 :P.
@@ -1827,7 +1827,7 @@ Return message:
     trap_error      err
 :eXMP.
 If the thread cannot be frozen, the :F.err:eF. field returns non-zero value.
-:H2.REQ_THREAD_THAW (3)
+.section REQ_THREAD_THAW (3)
 Request to allow a thread to run next time when executing the program.
 :P.
 Request message:
@@ -1843,7 +1843,7 @@ Return message:
     trap_error      err
 :eXMP.
 If the thread cannot be thawed, the :F.err:eF. field returns non zero value.
-:H2.REQ_THREAD_GET_EXTRA (4)
+.section REQ_THREAD_GET_EXTRA (4)
 Request to get extra information about a thread. This is arbitrary textual
 data which the debugger merely displays in its thread window. The trap
 file can place any information in the return message which it feels would
@@ -1865,7 +1865,8 @@ Return message:
 :eXMP.
 :PC.
 The extra information of the thread will be returned in :F.extra:eF. field.
-:H1.RFX requests
+.endlevel
+.section RFX requests
 This section deals with requests that are only used by the RFX (Remote
 File Xfer) program. These requests are actually performed by the
 core request REQ_PERFORM_SUPPLEMENTARY_SERVICE and appropriate service ID.
@@ -1873,7 +1874,8 @@ The following descriptions do not show that "prefix" to the request messages.
 :P.
 The service name to be used in the REQ_GET_SUPPLEMENTARY_SERVICE is
 "RFX".
-:H2.REQ_RFX_RENAME (0)
+.beglevel
+.section REQ_RFX_RENAME (0)
 Request to rename a file on the debuggee's system.
 :P.
 Request message:
@@ -1895,7 +1897,7 @@ Return message:
 :PC.
 If error has occurred, the :F.err:eF. field will return the error code
 number.
-:H2.REQ_RFX_MKDIR (1)
+.section REQ_RFX_MKDIR (1)
 Request to create a directory on the target (debuggee) system.
 :P.
 Request message:
@@ -1914,7 +1916,7 @@ Return message:
 :PC.
 If error has occurred when creating the directory, the :F.err:eF. field
 will return the error code number.
-:H2.REQ_RFX_RMDIR (2)
+.section REQ_RFX_RMDIR (2)
 Request to remove a directory on the target system.
 :P.
 Request message:
@@ -1933,7 +1935,7 @@ Return message:
 :PC.
 If error has occurred, the :F.err:eF. field will return the error code
 number.
-:H2.REQ_RFX_SETDRIVE (3)
+.section REQ_RFX_SETDRIVE (3)
 Request to set the current drive on the target system.
 :P.
 Request message:
@@ -1951,7 +1953,7 @@ Return message:
 :PC.
 If error has occurred, the :F.err:eF. field will return the error code
 number.
-:H2.REQ_RFX_GETDRIVE (4)
+.section REQ_RFX_GETDRIVE (4)
 Request to get the current drive on the target system.
 :P.
 Request message:
@@ -1967,7 +1969,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.drive:eF field returns the current drive number on the target system.
-:H2.REQ_RFX_SETCWD (5)
+.section REQ_RFX_SETCWD (5)
 Request to set a directory on the target system.
 :P.
 Request message:
@@ -1986,7 +1988,7 @@ Return message:
 :PC.
 If error has occurred, the :F.err:eF. field will return the error code
 number.
-:H2.REQ_RFX_GETCWD (6)
+.section REQ_RFX_GETCWD (6)
 Request to get the current directory name on the target system.
 :P.
 Request message:
@@ -2006,7 +2008,7 @@ Return message:
 :PC.
 The :F.dir_name:eF field contains the name of the directory to be set. If error
 has occurred, the :F.err:eF. field will return the error code number.
-:H2.REQ_RFX_SETDATETIME (7)
+.section REQ_RFX_SETDATETIME (7)
 Request to set a file's date and time information on the target system.
 :P.
 Request message:
@@ -2024,7 +2026,7 @@ Return message:
 :XMP.
     NONE
 :eXMP.
-:H2.REQ_RFX_GETDATETIME (8)
+.section REQ_RFX_GETDATETIME (8)
 Request to get the date and time information for a file on the target system.
 :P.
 Request message:
@@ -2042,7 +2044,7 @@ Return message:
 :PC.
 The :F.time:eF. field follows the UNIX time format. The :F.time:eF.
 represents the time since January 1, 1970 (UTC).
-:H2.REQ_RFX_GETFREESPACE (9)
+.section REQ_RFX_GETFREESPACE (9)
 Request to get the amount of free space left on the drive.
 :P.
 Request message:
@@ -2059,7 +2061,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.size:eF. field returns the number of bytes left on the drive.
-:H2.REQ_RFX_SETFILEATTR (10)
+.section REQ_RFX_SETFILEATTR (10)
 Request to set the file attribute of a file.
 :P.
 Request message:
@@ -2081,7 +2083,7 @@ Return message:
 :PC.
 If error has occurred, the :F.err:eF. field will return the error code
 number.
-:H2.REQ_RFX_GETFILEATTR (11)
+.section REQ_RFX_GETFILEATTR (11)
 Request to get the file attribute of a file.
 :P.
 Request message:
@@ -2099,7 +2101,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.attribute:eF. field returns the attribute of the file.
-:H2.REQ_RFX_NAMETOCANNONICAL (12)
+.section REQ_RFX_NAMETOCANNONICAL (12)
 Request to convert a file name to its canonical form.
 :P.
 Request message:
@@ -2123,7 +2125,7 @@ If there is no error, the :F.err:eF. field returns a zero and the full path name
 will be stored in the :F.path_name:eF. field. When an error has occurred, the
 :F.err:eF. field contains an error code indicating the type of error
 that has been detected.
-:H2.REQ_RFX_FINDFIRST (13)
+.section REQ_RFX_FINDFIRST (13)
 Request to find the first file in a directory.
 :P.
 Request message:
@@ -2162,7 +2164,7 @@ of the structure :F.dta:eF. is as follows:
         unsigned_8          name[14];
     } dta;
 :eXMP.
-:H2.REQ_RFX_FINDNEXT (14)
+.section REQ_RFX_FINDNEXT (14)
 Request to find the next file in the directory. This request should be used only after
 REQ_RFX_FINDFIRST.
 :P.
@@ -2184,7 +2186,7 @@ Return message:
 :eXMP.
 :PC.
 The :F.info:eF. field is the same as in REQ_FIND_FIRST.
-:H2.REQ_RFX_FINDCLOSE (15)
+.section REQ_RFX_FINDCLOSE (15)
 Request to end the directory search operation.
 :P.
 Request message:
@@ -2201,15 +2203,16 @@ Return message:
 :PC.
 If successful, the :F.err:eF. field will be zero, otherwise the
 system error code will be returned.
+.endlevel
 .*
 .*
 .*
-:H0.System Dependent Aspects
+.chap System Dependent Aspects
 Every environment has a different method of loading the code for the trap
 file and locating the TrapInit, TrapRequest, and TrapFini routines. This
 section descibes how the &company debugger performs these operations for
 the various systems.
-:H1.Trap Files Under DOS
+.section Trap Files Under DOS
 A trap file is an "EXE" format file with the extension ".TRP". The
 debugger searches the directories specified by the PATH environment variable.
 Once found, it is loaded into memory and has the normal EXE style relocations
@@ -2233,7 +2236,7 @@ TrapRequest, and TrapFini routines repectively.
 The starting address field of the EXE header should be set to point at
 some code which prints out a message about not being able to be run from
 the command line and then terminates.
-:H1.Trap Files Under OS/2
+.section Trap Files Under OS/2
 A trap file is a normal OS/2 DLL. The system automatically searches the
 directories specified by the LIBPATH command in the CONFIG.SYS file. Once
 loaded, the &company debugger uses export ordinal 1 from the DLL for TrapInit, export
@@ -2250,7 +2253,7 @@ Some example code follows:
     return( "incorrect version of trap file" );
     }
 :eXMP.
-:H1.Trap Files Under Windows.
+.section Trap Files Under Windows.
 A trap file is a normal Windows DLL. The system automatically searches the
 directories specified by the PATH environment variable.
 Once
@@ -2269,7 +2272,7 @@ Some example code follows:
         return( "incorrect version of trap file" );
     }
 :eXMP.
-:H1.Trap Files Under Windows NT.
+.section Trap Files Under Windows NT.
 A trap file is a normal Windows NT DLL. The system automatically searches the
 directories specified by the PATH environment variable.
 Once
@@ -2288,7 +2291,7 @@ Some example code follows:
         return( "incorrect version of trap file" );
     }
 :eXMP.
-:H1.Trap Files Under QNX
+.section Trap Files Under QNX
 A trap file is a QNX load module format file with the extension ".trp"
 and whose file permissions are not marked as executable. The
 debugger searches the directories specified by the WD_PATH environment variable
@@ -2314,7 +2317,6 @@ TrapRequest, and TrapFini routines repectively.
 The starting address field of the load image header should be set to point at
 some code which prints out a message about not being able to be run from
 the command line and then terminates.
-:H1.Trap Files Under Netware 386 or PenPoint
+.section Trap Files Under Netware 386 or PenPoint
 The trap file routines are linked directly into the remote server code and
 TrapInit, TrapRequest, TrapFini are directly called.
-:eGDOC

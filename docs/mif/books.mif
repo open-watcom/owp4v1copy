@@ -49,6 +49,7 @@
 !inject wbrw                   nt  os2           win
 !inject wccerrs     dos  html  nt  os2           win
 !inject wd          dos  html  nt  os2  pdf  ps  win
+!inject wddoc                                       
 !inject wfcerrs     dos        nt  os2           win
 !inject wjcerrs
 !inject wlnkerrs               nt                win
@@ -557,6 +558,13 @@ book_title=$(company) Code generator
 book_objs=$(objs_cgdoc)
 book_incs=$(incs_cgdoc)
 book_src=cgdoc
+
+!else ifeq hbook wddoc
+# wddoc
+book_title=$(company) Debugger
+book_objs=$(objs_wddoc)
+book_incs=$(incs_wddoc)
+book_src=wddoc
 
 !else ifeq hbook vi
 # vi
