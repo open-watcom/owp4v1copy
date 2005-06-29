@@ -538,6 +538,7 @@
 :H0.&*
 .do end
 .el .do begin
+:ZH0.&*
 .do end
 :set symbol="headtext$" value=" ".
 :set symbol="headtxt0$" value="&*".
