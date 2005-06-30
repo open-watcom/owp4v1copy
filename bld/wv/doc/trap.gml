@@ -39,7 +39,6 @@ is expected to be modified in future releases. Where possible, notification
 of expected changes are given in the document, but all aspects are subject
 to revision.
 .section Some Definitions
-Neco tady musi byt
 .beglevel
 .section Byte Order
 The trap file interface is defined to use little endian byte order. That is,
@@ -108,7 +107,6 @@ shared libraries, each library will be identified by a unique module handle.
 :eDL.
 .endlevel
 .chap The Request Interface
-N
 .section Request Structure.
 Each request is a composed of two sequences of bytes provided by the
 debugger called messages. The first set contains the actual request
