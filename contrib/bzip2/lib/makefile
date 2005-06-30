@@ -3,7 +3,7 @@
 .c : ..
 
 CC = wcl386
-CFLAGS = -oaxt -zq
+CFLAGS = -oaxt -zq -6r
 
 .c.obj: 
     $(CC) $(CFLAGS) -c $< -fo=$*.obj
