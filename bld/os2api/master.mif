@@ -18,6 +18,7 @@ components286 =      &
         os2sm.lbc    &
         pmgpi.lbc    &
         pmshapi.lbc  &
+        pmviop.lbc   &
         pmwin.lbc    &
         quecalls.lbc &
         sesmgr.lbc   &
