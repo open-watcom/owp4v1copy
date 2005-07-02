@@ -38,7 +38,6 @@
 
 /* ------------------------------------------------------------------
  * To do:
- *      * user allocator - low memory allocator
  *      * user comparator
  *      * other functions not yet implemented in map
  */
@@ -139,9 +138,9 @@ bool access_test( )
         std::map< int, int >::iterator it = m1.find( i );
         if( INSANE( m1 ) || m1.size() || !m1.empty() || it != m1.end() ) FAIL
     }
+    
     return( true );
 }
-
 /* ------------------------------------------------------------------
  * string_test( )
  * some quick tests with a more complicated type
@@ -263,8 +262,6 @@ bool clear_test( )
     }// let the destructor clear this one, and trip the leak detector if problem
     return true;
 }
-
-
 /* ------------------------------------------------------------------
  * iterator_test( )
  * Test the iterator functionality
@@ -364,6 +361,163 @@ bool copy_test( )
     
     return( true );
 }
+/* ------------------------------------------------------------------
+ * allocator_test
+ * test stateful allocators and exception handling
+ */
+bool allocator_test( )
+{
+    typedef std::map< int, int, std::less<int>, LowMemAllocator<int> > map_t;
+    LowMemAllocator<int> mem(100);
+    mem.SetTripOnAlloc();
+    map_t m( map_t::key_compare(), mem );
+    bool thrown = false;
+    
+    //LowMemAllocator is set to trip after 100 allocations
+    try{
+        for( int i=0; i<101; i++ ){
+            m[i];
+        }
+    }catch( std::bad_alloc const & ){
+        mem = m.get_allocator();
+        if( mem.GetNumAllocs() != 101 ) FAIL    //should have failed on 101st
+        if( INSANE(m) || m.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    
+    m.clear();
+    mem.Reset(100);
+    mem.SetTripOnConstruct();
+    thrown = false;
+    //LowMemAllocator is set to trip after 100 allocations
+    try{
+        for( int i=0; i<101; i++ ){
+            m[i];
+        }
+    }catch( std::bad_alloc const & ){
+        mem = m.get_allocator();
+        if( mem.GetNumConstructs() != 101 ) FAIL
+        //should have cleaned up last one and left only 100 allocated items
+        if( mem.GetNumAllocs() != 101 && mem.GetNumDeallocs() != 1 ) FAIL
+        if( INSANE(m) || m.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    //if container didn't deal with the exception and clean up the allocated 
+    //memory then the leak detector will also trip later
+
+    m.clear();
+    mem.Reset(100);
+    thrown = false;
+    for( int i = 0; i < 70; i++ ){
+        m[i];
+    }
+    //now reset the allocator so it trips at a lower threshold
+    //and test the copy mechanism works right
+    mem.Reset( 50 );
+    mem.SetTripOnAlloc();
+    try{
+        map_t m2(m);
+    }catch( std::bad_alloc ){
+        if( mem.GetNumConstructs() != 50 ) FAIL
+        if( mem.GetNumAllocs()     != 51 ) FAIL
+        if( mem.GetNumDestroys()   != 50 ) FAIL
+        if( mem.GetNumDeallocs()   != 50 ) FAIL
+        if( INSANE( m ) || m.size() != 70 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * bounds_test( )
+ */
+bool bounds_test( )
+{
+    typedef std::map<int, int> m_t;
+    m_t m;
+    int i;
+    
+    for( i = 0; i < 10; i++ ){
+        m.insert( m_t::value_type(i, i) );
+    }
+    m.erase( 5 );
+    
+    if( m.lower_bound( -1 ) != m.begin() ) FAIL
+    if( m.lower_bound( 0 )  != m.begin() ) FAIL
+    if( m.lower_bound( 2 )->first  != 2  ) FAIL
+    if( m.lower_bound( 4 )->first  != 4  ) FAIL
+    if( m.lower_bound( 5 )->first  != 6  ) FAIL
+    if( m.lower_bound( 6 )->first  != 6  ) FAIL
+    if( m.lower_bound( 9 )->first  != 9  ) FAIL
+    if( m.lower_bound( 10 ) != m.end()   ) FAIL
+    
+    if( m.upper_bound( -1 ) != m.begin() ) FAIL
+    if( m.upper_bound( 0 )->first  != 1  ) FAIL
+    if( m.upper_bound( 2 )->first  != 3  ) FAIL
+    if( m.upper_bound( 4 )->first  != 6  ) FAIL
+    if( m.upper_bound( 5 )->first  != 6  ) FAIL
+    if( m.upper_bound( 6 )->first  != 7  ) FAIL
+    if( m.upper_bound( 8 )->first  != 9  ) FAIL
+    if( m.upper_bound( 9 )  != m.end()   ) FAIL
+    if( m.upper_bound( 10 ) != m.end()   ) FAIL
+    
+    m_t const mc( m );
+    if( mc.lower_bound( -1 ) != mc.begin() ) FAIL
+    if( mc.lower_bound( 0 )  != mc.begin() ) FAIL
+    if( mc.lower_bound( 2 )->first  != 2   ) FAIL
+    if( mc.lower_bound( 4 )->first  != 4   ) FAIL
+    if( mc.lower_bound( 5 )->first  != 6   ) FAIL
+    if( mc.lower_bound( 6 )->first  != 6   ) FAIL
+    if( mc.lower_bound( 9 )->first  != 9   ) FAIL
+    if( mc.lower_bound( 10 ) != mc.end()   ) FAIL
+    
+    if( mc.upper_bound( -1 ) != mc.begin() ) FAIL
+    if( mc.upper_bound( 0 )->first  != 1   ) FAIL
+    if( mc.upper_bound( 2 )->first  != 3   ) FAIL
+    if( mc.upper_bound( 4 )->first  != 6   ) FAIL
+    if( mc.upper_bound( 5 )->first  != 6   ) FAIL
+    if( mc.upper_bound( 6 )->first  != 7   ) FAIL
+    if( mc.upper_bound( 8 )->first  != 9   ) FAIL
+    if( mc.upper_bound( 9 )  != mc.end()   ) FAIL
+    if( mc.upper_bound( 10 ) != mc.end()   ) FAIL
+    //m_t::iterator it = mc.upper_bound( 3 );       //illegal
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * hint_ins_test( )
+ * insert, find, erase, count
+ */
+bool hint_ins_test( )
+{
+    typedef std::map< int, int > mii_t;
+    typedef mii_t::iterator miter_t;
+    mii_t m1;
+    miter_t it;
+    
+    //hint insert tests
+    typedef std::map< int, int > m_t;
+    m1.insert( m1.end(),     m_t::value_type(4,4) );
+    m1.insert( m1.end(),     m_t::value_type(7,7) );
+    m1.insert( --m1.end(),   m_t::value_type(6,6) );
+    m1.insert( m1.end(),     m_t::value_type(8,8) );
+    m1.insert( m1.begin(),   m_t::value_type(2,2) );
+    m1.insert( ++m1.begin(), m_t::value_type(3,3) );
+    m1.insert( m1.find(6),   m_t::value_type(5,5) );
+    m1.insert( m1.end(),     m_t::value_type(0,0) ); //invalid hint
+    m1.insert( m1.find(0),   m_t::value_type(1,1) ); //invalid hint
+    m1.insert( ++m1.begin(), m_t::value_type(9,9) ); //invalid hint
+    for( int i = 0; i < 10; i++){
+        it = m1.find( i );
+        if( INSANE( m1 ) || m1.size() != 10 || m1.empty() ||
+            it == m1.end() || it->first != i || it->second != i) FAIL
+    }
+    
+    return( true );
+}
 
 int main( )
 {
@@ -378,7 +532,10 @@ int main( )
         if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
         if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
         if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
-        if( !copy_test( )       || !heap_ok( "t6" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t7" ) ) rc = 1;
+        if( !allocator_test( )  || !heap_ok( "t8" ) ) rc = 1;
+        if( !bounds_test( )     || !heap_ok( "t9" ) ) rc = 1;
+        if( !hint_ins_test( )   || !heap_ok( "tA" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

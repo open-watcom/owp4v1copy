@@ -119,7 +119,7 @@ bool access_test( )
         std::set< int >::iterator it = s1.find( i );
         if( INSANE( s1 ) || s1.size() || !s1.empty() || it != s1.end() ) FAIL
     }
-
+    
     return( true );
 }
 
@@ -342,6 +342,162 @@ bool copy_test( )
     
     return( true );
 }
+/* ------------------------------------------------------------------
+ * allocator_test
+ * test stateful allocators and exception handling
+ */
+bool allocator_test( )
+{
+    typedef std::set< int, std::less<int>, LowMemAllocator<int> > set_t;
+    LowMemAllocator<int> mem(100);
+    set_t s( set_t::key_compare(), mem );
+
+    mem.SetTripOnAlloc();
+    bool thrown = false;
+    //LowMemAllocator is set to trip after 100 allocations
+    try{
+        for( int i=0; i<101; i++ ){
+            s.insert(i);
+        }
+    }catch( std::bad_alloc const & ){
+        mem = s.get_allocator();
+        if( mem.GetNumAllocs() != 101 ) FAIL    //should have failed on 101st
+        if( INSANE(s) || s.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    
+    s.clear();
+    mem.Reset(100);
+    mem.SetTripOnConstruct();
+    thrown = false;
+    //LowMemAllocator is set to trip after 100 constructs
+    try{
+        for( int i=0; i<101; i++ ){
+            s.insert(i);
+        }
+    }catch( std::bad_alloc const & ){
+        mem = s.get_allocator();
+        if( mem.GetNumConstructs() != 101 ) FAIL
+        //should have cleaned up last one and left only 100 allocated items
+        if( mem.GetNumAllocs() != 101 && mem.GetNumDeallocs() != 1 ) FAIL
+        if( INSANE(s) || s.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    //if container didn't deal with the exception and clean up the allocated 
+    //memory then the leak detector will also trip later
+    
+    s.clear();
+    mem.Reset( 100 );
+    thrown = false;
+    for( int i = 0; i < 70; i++ ){
+        s.insert(i);
+    }
+    //now reset the allocator so it trips at a lower threshold
+    //and test the copy mechanism works right
+    mem.Reset( 50 );
+    mem.SetTripOnAlloc();
+    try{
+        set_t s2( s );
+    }catch( std::bad_alloc ){
+        if( mem.GetNumConstructs() != 50 ) FAIL
+        if( mem.GetNumAllocs()     != 51 ) FAIL
+        if( mem.GetNumDestroys()   != 50 ) FAIL
+        if( mem.GetNumDeallocs()   != 50 ) FAIL
+        if( INSANE( s ) || s.size() != 70 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * bounds_test( )
+ */
+bool bounds_test( )
+{
+    typedef std::set<int> s_t;
+    s_t s;
+    int i;
+    
+    for( i = 0; i < 10; i++ ){
+        s.insert( i );
+    }
+    s.erase( 5 );
+    
+    if( s.lower_bound( -1 ) != s.begin() ) FAIL
+    if( s.lower_bound( 0 )  != s.begin() ) FAIL
+    if( *s.lower_bound( 2 ) != 2         ) FAIL
+    if( *s.lower_bound( 4 ) != 4         ) FAIL
+    if( *s.lower_bound( 5 ) != 6         ) FAIL
+    if( *s.lower_bound( 6 ) != 6         ) FAIL
+    if( *s.lower_bound( 9 ) != 9         ) FAIL
+    if( s.lower_bound( 10 ) != s.end()   ) FAIL
+    
+    if( s.upper_bound( -1 ) != s.begin() ) FAIL
+    if( *s.upper_bound( 0 ) != 1         ) FAIL
+    if( *s.upper_bound( 2 ) != 3         ) FAIL
+    if( *s.upper_bound( 4 ) != 6         ) FAIL
+    if( *s.upper_bound( 5 ) != 6         ) FAIL
+    if( *s.upper_bound( 6 ) != 7         ) FAIL
+    if( *s.upper_bound( 8 ) != 9         ) FAIL
+    if( s.upper_bound( 9 )  != s.end()   ) FAIL
+    if( s.upper_bound( 10 ) != s.end()   ) FAIL
+    
+    s_t const sc( s );
+    if( sc.lower_bound( -1 ) != sc.begin() ) FAIL
+    if( sc.lower_bound( 0 )  != sc.begin() ) FAIL
+    if( *sc.lower_bound( 2 ) != 2          ) FAIL
+    if( *sc.lower_bound( 4 ) != 4          ) FAIL
+    if( *sc.lower_bound( 5 ) != 6          ) FAIL
+    if( *sc.lower_bound( 6 ) != 6          ) FAIL
+    if( *sc.lower_bound( 9 ) != 9          ) FAIL
+    if( sc.lower_bound( 10 ) != sc.end()   ) FAIL
+    
+    if( sc.upper_bound( -1 ) != sc.begin() ) FAIL
+    if( *sc.upper_bound( 0 ) != 1          ) FAIL
+    if( *sc.upper_bound( 2 ) != 3          ) FAIL
+    if( *sc.upper_bound( 4 ) != 6          ) FAIL
+    if( *sc.upper_bound( 5 ) != 6          ) FAIL
+    if( *sc.upper_bound( 6 ) != 7          ) FAIL
+    if( *sc.upper_bound( 8 ) != 9          ) FAIL
+    if( sc.upper_bound( 9 )  != sc.end()   ) FAIL
+    if( sc.upper_bound( 10 ) != sc.end()   ) FAIL
+    //m_t::iterator it = sc.upper_bound( 3 );       //illegal
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * hint_ins_test( )
+ * insert, find, erase, count
+ */
+bool hint_ins_test( )
+{
+    typedef std::multiset< int > s_t;
+    typedef s_t::iterator siter_t;
+    s_t s1;
+    siter_t it;
+    
+    //hint insert tests
+    s1.insert( s1.end(),     4 );
+    s1.insert( s1.end(),     7 );
+    s1.insert( --s1.end(),   6 );
+    s1.insert( s1.end(),     8 );
+    s1.insert( s1.begin(),   2 );
+    s1.insert( ++s1.begin(), 3 );
+    s1.insert( s1.find(6),   5 );
+    s1.insert( s1.end(),     0 ); //invalid hint
+    s1.insert( s1.find(0),   1 ); //invalid hint
+    s1.insert( ++s1.begin(), 9 ); //invalid hint
+    for( int i = 0; i < 10; i++){
+        it = s1.find( i );
+        if( INSANE( s1 ) || s1.size() != 10 || s1.empty() ||
+            it == s1.end() || *it != i ) FAIL
+    }
+    
+    return( true );
+}
 
 int main( )
 {
@@ -355,7 +511,10 @@ int main( )
         if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
         if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
         if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
-        if( !copy_test( )       || !heap_ok( "t6" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t7" ) ) rc = 1;
+        if( !allocator_test( )  || !heap_ok( "t8" ) ) rc = 1;
+        if( !bounds_test( )     || !heap_ok( "t9" ) ) rc = 1;
+        if( !hint_ins_test( )   || !heap_ok( "tA" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

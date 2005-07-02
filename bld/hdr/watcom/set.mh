@@ -15,6 +15,8 @@
 #error The header set requires C++
 #endif
 
+//#line 19 "set.mh"
+
 #ifndef __RBTREE_H_INCLUDED
   #include <_rbtree.h>
 #endif
@@ -74,8 +76,9 @@ public:
  */
 template< class Key, class Compare, class Allocator, class Implementation >
 explicit
-set< Key, Compare, Allocator, Implementation >::set( const Compare&,
-                                                     const Allocator& )
+set< Key, Compare, Allocator, Implementation >::set( 
+    const Compare& c,
+    const Allocator& a ) : Implementation( c, a )
 {
     //cout<<"explicit set::ctor\n";
 }
@@ -115,21 +118,25 @@ template<class Key, class Compare, class Allocator>
  * class multiset
  */
 template< class Key,
-          class Type,
           class Compare = less< Key >,
-          class Allocator = allocator< pair< const Key, Type > >,
+          class Allocator = allocator< Key >,
           class Implementation = _ow::MultiListRBTree< Key, Compare, Allocator,
-                                        _ow::ListTreeKeyWrapper<Key, Type> > >
+                                        _ow::ListTreeKeyWrapper<Key> > >
 class multiset : public Implementation{
 public:
     typedef Key                                     key_type;
-    typedef Type                                    mapped_type;
-    typedef pair<const Key, Type>                   value_type;
+    typedef Key                                     value_type;
+    typedef Compare                                 key_compare;
+    typedef Compare                                 value_compare;
     typedef Allocator                               allocator_type;
     typedef typename Allocator::reference           reference;
     typedef typename Allocator::const_reference     const_reference;
     typedef typename Allocator::pointer             pointer;
     typedef typename Allocator::const_pointer       const_pointer;
+
+    explicit multiset( const Compare& c = Compare(),
+                       const Allocator& a = Allocator() ) : Implementation( c, a ) {}
+
 
 };//class multiset
 

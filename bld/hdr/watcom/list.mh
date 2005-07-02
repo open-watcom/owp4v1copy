@@ -11,6 +11,8 @@
 
 :include readonly.sp
 
+//#line 15 "list.mh"
+
 #ifndef __cplusplus
 #error The header list requires C++
 #endif
@@ -18,7 +20,6 @@
 #ifndef _MEMORY_INCLUDED
     #include <memory>
 #endif
-
 
 namespace std {
 
@@ -31,6 +32,7 @@ public:
     typedef Type                            value_type;
     typedef unsigned int                    size_type;
     typedef typename Allocator::reference   reference;
+    typedef Allocator                       allocator_type;
 
 private:
     struct DoubleLink{
@@ -43,10 +45,16 @@ private:
     };
     DoubleLink sentinel;    //sentinel.fwd = first element in list
                             //sentinel.bwd = last element in list
+    Allocator::rebind< Node >::other mMem; //needs to be up here to stop crash
+    
 public:
-    list() : mSize(0) { sentinel.fwd = sentinel.bwd = &sentinel; }
+    explicit list( Allocator const & a = Allocator() ) : mSize(0), mMem(a)
+        { sentinel.fwd = sentinel.bwd = &sentinel; }
     list( list const& );
     ~list();
+    allocator_type get_allocator() const 
+        { allocator_type a(mMem); return( mMem ); }
+
     
     /* ------------------------------------------------------------------
      * iterators
@@ -74,9 +82,11 @@ public:
         iterator& operator++()      { return( (iterator&)iterator_base::operator++() ); }
         iterator& operator--()      { return( (iterator&)iterator_base::operator--() ); }
         iterator  operator++( int ) { iterator i( *this ); operator++(); return( i ); };
+        iterator  operator--( int ) { iterator i( *this ); operator--(); return( i ); };
     };
     class const_iterator : public iterator_base{
     public:
+        const_iterator( iterator const & i ) : iterator_base(i) {}
         const_iterator( DoubleLink* d ) : iterator_base(d) {}
         const_iterator() : iterator_base() {}
         const_iterator( const_iterator const & x ) : iterator_base(x) {}
@@ -84,7 +94,9 @@ public:
         value_type const* operator->() { return( &(self->value) ); }
         const_iterator& operator++() { return( (const_iterator&)iterator_base::operator++() ); }
         const_iterator& operator--() { return( (const_iterator&)iterator_base::operator--() ); }
-    };
+        const_iterator operator++( int ) { const_iterator i(*this); operator++(); return( i ); }
+        const_iterator operator--( int ) { const_iterator i(*this); operator--(); return( i ); }
+        };
     /*
      * end of iterators
      * ------------------------------------------------------------------ */
@@ -113,23 +125,49 @@ public:
 private:
     inline void pop( Node* );
     inline Node* push( Node*, value_type const & );
-    //next line is triggering that annoying crash in cgbkobin.c
-    //allocator< Node > m;      //need to rebind
+    //Allocator::rebind< Node >::other mem; //moved above constructors for the time being
+                                            //as this seems to stop compiler crashing !?
     int mSize;
 };
+/* ------------------------------------------------------------------
+ * ctor
+ */
+/* !!!!!!! doesn't work - has to be inline !!!!!!!!!!!
+template< class Type, class Allocator > 
+explicit list< Type, Allocator >::list( Allocator const & a ) : mSize(0), mem(a)
+{
+    sentinel.fwd = sentinel.bwd = &sentinel; 
+}
+*/
 /* ------------------------------------------------------------------
  * copy ctor
  */
 template< class Type, class Allocator > 
-list< Type, Allocator >::list( list const& that )
+list< Type, Allocator >::list( list const& that ) : mMem(that.mMem)
 {
-    allocator< Node > mem; //!!!!!!!!!!
-    
     DoubleLink const * o = &that.sentinel;
     DoubleLink* n = &sentinel;
+    mSize = 0;
     while( o->fwd != &that.sentinel ){
-        n->fwd = mem.allocate( 1 );
-        mem.construct( static_cast<Node*>(n->fwd), Node(static_cast<Node*>(o->fwd)->value) );
+        try{
+            n->fwd = mMem.allocate( 1 );
+            try{
+                mMem.construct( static_cast<Node*>(n->fwd), Node(static_cast<Node*>(o->fwd)->value) );
+            }catch(...){
+                mMem.deallocate( static_cast<Node*>(n->fwd), 1 );
+                throw;
+            }
+        }catch(...){
+            //unwind - can't finish copy construction so remove all elements
+            DoubleLink* delme;
+            while( n != &sentinel ){
+                delme = n;
+                n = n->bwd;
+                mMem.destroy( static_cast<Node*>(delme) );
+                mMem.deallocate( static_cast<Node*>(delme), 1 );
+            };
+            throw;
+        }
         n->fwd->bwd = n;
         n = n->fwd;
         o = o->fwd;
@@ -153,15 +191,14 @@ list< Type, Allocator >::~list()
 template< class Type, class Allocator >
 void list< Type, Allocator >::clear()
 {
-    allocator< Node > mem;  //fix me - what to do about this?
     Node* n;
     Node* delme;
     n = (Node*)sentinel.fwd;
     while( n != (Node*)&sentinel ){
         delme = n;
         n = (Node*)n->fwd;
-        mem.destroy( delme );
-        mem.deallocate( delme, 1 );
+        mMem.destroy( delme );
+        mMem.deallocate( delme, 1 );
     };
     sentinel.fwd = sentinel.bwd = &sentinel;
     mSize = 0;
@@ -185,9 +222,13 @@ template< class Type, class Allocator >
 list< Type, Allocator >::Node*
 list< Type, Allocator >::push( Node* o, Type const & x )
 {
-    allocator< Node > mem;          //fixme
-    Node* n = mem.allocate( 1 );    //need to catch exceptions
-    mem.construct( n, Node(x) );
+    Node* n = mMem.allocate( 1 );
+    try{
+        mMem.construct( n, Node(x) );
+    }catch( ... ){
+        mMem.deallocate( n, 1 );
+        throw;
+    }
     n->fwd = o;
     n->bwd = o->bwd;
     o->bwd->fwd = n;
@@ -202,11 +243,10 @@ list< Type, Allocator >::push( Node* o, Type const & x )
 template< class Type, class Allocator >
 void list< Type, Allocator >::pop( Node* n )
 {
-    allocator< Node > mem;  //fixme
     n->fwd->bwd = n->bwd;
     n->bwd->fwd = n->fwd;
-    mem.destroy( n );
-    mem.deallocate( n, 1 );
+    mMem.destroy( n );
+    mMem.deallocate( n, 1 );
     --mSize;
 }
 /* ------------------------------------------------------------------

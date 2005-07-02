@@ -31,7 +31,11 @@
 #include <iostream>
 #include <list>
 #include "sanity.cpp"
-
+#include "allocxtr.hpp"
+/* ------------------------------------------------------------------
+ * access_test
+ * test insert, push_front, push_back, erase, pop_front, pop_back 
+ */
 bool access_test( )
 {
     
@@ -93,7 +97,8 @@ bool access_test( )
     return( true );
 }
 /* ------------------------------------------------------------------
- * 
+ * clear_test
+ * test removal of elements, clear and destructor
  */
 bool clear_test()
 {
@@ -125,12 +130,149 @@ bool clear_test()
     //(leak detect will fire if destructor is wrong)
     return( true );
 }
-
+/* ------------------------------------------------------------------
+ * iterator_test( )
+ * Test the iterator functionality
+ */
+bool iterator_test( )
+{
+    typedef std::list< int > l_t;
+    l_t l;
+    l_t::iterator it;
+    l_t::const_iterator cit;
+    for( int i = 0; i < 20; i++ ){
+        l.push_back( i );
+    }
+    //test increment and dereferencing
+    it = l.begin();
+    int ans = *it;
+    for( int i = 0; i < 20 ; i++ ){
+        if( INSANE( l ) || ans != i || *it != i ) FAIL
+        if( i%2 ) ans = (*(it++)) + 1;
+        else ans = *(++it);
+    }
+    //and again with const iterator
+    cit = l.begin();
+    ans = *cit;
+    for( int i = 0; i < 20 ; i++ ){
+        if( INSANE( l ) || ans != i || *cit != i ) FAIL
+        if( i%2 ) ans = *(cit++) + 1;
+        else ans = *(++cit);
+    }
+    //test decrement
+    it = l.end();
+    for( int i = 19; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = *(--it);
+        else ans = *(it--) - 1;
+        if( INSANE( l ) || ans != i || *it != i ) FAIL
+    }
+    //and again with const iterator
+    cit = l.end();
+    for( int i = 19; i > 0 ; i-- ){
+        int ans;
+        if( i%2 ) ans = *(--cit);
+        else ans = *(cit--) - 1;
+        if( INSANE( l ) || ans != i || *cit != i ) FAIL
+    }
+    
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * copy_test
+ * test copy constructor
+ */
+bool copy_test()
+{
+    std::list<int> lst1;
+    for( int i = 0; i < 20; i++ ){
+        lst1.push_front( -i );
+    }
+    std::list<int> lst2(lst1);
+    if( INSANE( lst1 ) || lst1.size() != 20 ) FAIL
+    if( INSANE( lst2 ) || lst2.size() != 20 ) FAIL
+    for( int i = 0; i < 20; i++ ){
+        if( lst2.back() != -i ) FAIL
+        lst2.pop_back();
+    }
+    return( true );
+}
+/* ------------------------------------------------------------------
+ * allocator_test
+ * test stateful allocators and exception handling
+ */
+bool allocator_test( )
+{
+    typedef std::list< int, LowMemAllocator<int> > list_t;
+    LowMemAllocator<int> mem(100);
+    mem.SetTripOnAlloc();
+    list_t lst( mem );
+    bool thrown = false;
+    
+    //LowMemAllocator is set to trip after 100 allocations
+    try{
+        for( int i=0; i<101; i++ ){
+            lst.push_front( i );
+        }
+    }catch( std::bad_alloc const & ){
+        mem = lst.get_allocator();
+        if( mem.GetNumAllocs() != 101 ) FAIL    //should have failed on 101st
+        if( INSANE(lst) || lst.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    
+    lst.clear();
+    mem.Reset(100);
+    mem.SetTripOnConstruct();
+    thrown = false;
+    //LowMemAllocator is set to trip after 100 allocations
+    try{
+        for( int i=0; i<101; i++ ){
+            lst.push_back( i );
+        }
+    }catch( std::bad_alloc const & ){
+        mem = lst.get_allocator();
+        if( mem.GetNumConstructs() != 101 ) FAIL
+        //should have cleaned up last one and left only 100 allocated items
+        if( mem.GetNumAllocs() != 101 || mem.GetNumDeallocs() != 1 ) FAIL    
+        if( INSANE(lst) || lst.size() != 100 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL  //exception should have been thrown
+    //if container didn't deal with the exception and clean up the allocated 
+    //memory then the leak detector will also trip later
+    
+    lst.clear();
+    mem.Reset(100);
+    thrown = false;
+    for( int i = 0; i < 70; i++ ){
+        lst.push_back( i );
+    }
+    //now reset the allocator so it trips at a lower threshold
+    //and test the copy mechanism works right
+    mem.Reset( 50 );
+    mem.SetTripOnAlloc();
+    try{
+        list_t lst2( lst );
+    }catch( std::bad_alloc ){
+        if( mem.GetNumConstructs() != 50 ) FAIL
+        if( mem.GetNumAllocs()     != 51 ) FAIL
+        if( mem.GetNumDestroys()   != 50 ) FAIL
+        if( mem.GetNumDeallocs()   != 50 ) FAIL
+        if( INSANE( lst ) || lst.size() != 70 ) FAIL
+        thrown = true;
+    }
+    if( !thrown ) FAIL
+    
+    return( true );
+}
 
 int main( )
 {
     int rc = 0;
     int original_count = heap_count( );
+    //heap_dump();
 
     try {
         //if( !construct_test( )  || !heap_ok( "t1" ) ) rc = 1;
@@ -138,8 +280,9 @@ int main( )
         //if( !string_test( )     || !heap_ok( "t3" ) ) rc = 1;
         //if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
         if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
-        //if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
-        //if( !copy_test( )       || !heap_ok( "t6" ) ) rc = 1;
+        if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t7" ) ) rc = 1;
+        if( !allocator_test( )  || !heap_ok( "t8" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
@@ -148,6 +291,7 @@ int main( )
 
     if( heap_count( ) != original_count ) {
         std::cout << "Possible memory leak!\n";
+        heap_dump();
         rc = 1;
     }
     return( rc );

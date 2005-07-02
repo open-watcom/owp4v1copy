@@ -15,6 +15,8 @@
 #error The header map requires C++
 #endif
 
+//#line 19 "map.mh"
+
 #ifndef __RBTREE_H_INCLUDED
   #include <_rbtree.h>
 #endif
@@ -46,6 +48,7 @@ public:
     typedef Key                                     key_type;
     typedef Type                                    mapped_type;
     typedef pair<const Key, Type>                   value_type;
+    typedef Compare                                 key_compare;
     typedef Allocator                               allocator_type;
     typedef typename Allocator::reference           reference;
     typedef typename Allocator::const_reference     const_reference;
@@ -75,8 +78,6 @@ public:
     */
     ~map(){}
     map& operator=( map const & x ){Implementation::operator=( x ); return( *this );}
-
-    allocator_type get_allocator() const;
     
     //element access (not in common with set)
     Type& operator[](Key const &);
@@ -144,8 +145,8 @@ public:
 template <class Key, class Type, class Compare, class Allocator, class Implementation>
 explicit
 map<Key,Type,Compare,Allocator,Implementation>::map(
-    const Compare&,
-    const Allocator&)
+    const Compare& c,
+    const Allocator& a ) : Implementation( c, a )
 {
     //cout<<"explicit map::ctor\n";
 }
@@ -208,6 +209,7 @@ public:
     typedef Key                                     key_type;
     typedef Type                                    mapped_type;
     typedef pair<const Key, Type>                   value_type;
+    typedef Compare                                 key_compare;
     typedef Allocator                               allocator_type;
     typedef typename Allocator::reference           reference;
     typedef typename Allocator::const_reference     const_reference;
@@ -224,6 +226,14 @@ public:
                 return comp(x.first, y.first);
             }
     };
+    
+    explicit multimap( const Compare& c = Compare(),
+                       const Allocator& a = Allocator() ) : Implementation( c, a ) {}
+
+    multimap( multimap const & that ) : Implementation(that) {}
+    ~multimap() {}
+    multimap& operator=( multimap const & x ){Implementation::operator=( x ); return( *this );}
+        
 };//end class multiset
 
 };//end namespace std
