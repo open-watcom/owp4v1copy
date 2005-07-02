@@ -774,8 +774,8 @@
 :target. any
 :enumerate. opt_level
 :timestamp.
-:usage. equivalent to -obmilr -s
-:jusage. -obmilr -s‚Æ“¯“™
+:usage. equivalent to -obmiler -s
+:jusage. -obmiler -s‚Æ“¯“™
 
 :option. oz
 :target. any

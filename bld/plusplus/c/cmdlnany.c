@@ -928,13 +928,18 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
         break;
     }
     switch( data->opt_level ) {
-    case OPT_opt_level_ox:  /* -ox => -oilmr -s */
+    case OPT_opt_level_ox:  /* -ox => -obmiler -s */
         GenSwitches &= ~ NO_OPTIMIZATION;
         GenSwitches |= BRANCH_PREDICTION;       // -ob
         GenSwitches |= LOOP_OPTIMIZATION;       // -ol
         GenSwitches |= INS_SCHEDULING;          // -or
         CmdSysSetMaxOptimization();             // -om
         CompFlags.inline_intrinsics = 1;        // -oi
+        data->oe = 1;                           // -oe
+        if( data->oe_value == 0 ) {
+            // keep in sync with options.gml
+            data->oe_value = 100;
+        }
         PragToggle.check_stack = 0;             // -s
         break;
     case OPT_opt_level_od:
