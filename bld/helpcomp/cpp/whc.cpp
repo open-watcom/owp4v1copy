@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main module for Windows help compiler.
 *
 ****************************************************************************/
 
-
-/*
-WHC:  Main module for Windows .HLP compiler
-*/
 
 #include "hcmem.h"
 #include "hlpdir.h"
@@ -54,7 +49,7 @@ WHC:  Main module for Windows .HLP compiler
 
 
 // Extension of a .HLP file.
-static char const   HlpExt[] = ".HLP";
+static char const   HlpExt[] = ".hlp";
 
 
 //  Memory tracking (debug version only)
@@ -63,11 +58,11 @@ static Memory bogus;
 #endif
 
 
-int main(int argc, char *[])
+int main( int argc, char *[] )
 {
-    if( argc < 2 || argc >3 ){
-    HCWarning( USAGE );
-    return -1;
+    if( argc < 2 || argc > 3 ) {
+        HCWarning( USAGE );
+        return( -1 );
     }
 
     // Parse the command line.
@@ -78,51 +73,51 @@ int main(int argc, char *[])
     getcmd( cmdline );
     temp = cmdline;
     pfilename = NULL;
-    while( *temp != '\0' && isspace( *temp ) ){
-    temp++;
-    }
-    if( *temp == '-' || *temp == '/' ){
-    temp++;
-    if( (*temp != 'q' && *temp != 'Q') || !isspace(*(temp+1)) ){
-        HCWarning( USAGE );
-        return -1;
-    } else {
-        quiet = 1;
-        temp++;
-        while( *temp != '\0' && isspace( *temp ) ){
-        temp++;
-        }
-        if( *temp == '\0' ){
-        HCWarning( USAGE );
-        return -1;
-        } else {
-        pfilename = temp;
-        }
-    }
-    } else if( *temp != '\0' ){
-    pfilename = temp++;
-    while( *temp != '\0' && *temp != '/' && *temp != '-' ){
+    while( *temp != '\0' && isspace( *temp ) ) {
         temp++;
     }
-    if( *temp != '\0' ){
-        *temp = '\0';
+    if( *temp == '-' || *temp == '/' ) {
         temp++;
-        if( *temp != 'q' && *temp != 'Q' ){
-        HCWarning( USAGE );
-        return -1;
-        } else {
-        temp++;
-        while( *temp != '\0' && isspace( *temp ) ){
-            temp++;
-        }
-        if( *temp != '\0' ){
+        if( (*temp != 'q' && *temp != 'Q') || !isspace( *(temp+1) ) ) {
             HCWarning( USAGE );
-            return -1;
+            return( -1 );
         } else {
             quiet = 1;
+            temp++;
+            while( *temp != '\0' && isspace( *temp ) ) {
+                temp++;
+            }
+            if( *temp == '\0' ) {
+                HCWarning( USAGE );
+                return( -1 );
+            } else {
+                pfilename = temp;
+            }
         }
+    } else if( *temp != '\0' ) {
+        pfilename = temp++;
+        while( *temp != '\0' && *temp != '/' && *temp != '-' ) {
+            temp++;
         }
-    }
+        if( *temp != '\0' ) {
+            *temp = '\0';
+            temp++;
+            if( *temp != 'q' && *temp != 'Q' ) {
+                HCWarning( USAGE );
+                return( -1 );
+            } else {
+                temp++;
+                while( *temp != '\0' && isspace( *temp ) ) {
+                    temp++;
+                }
+                if( *temp != '\0' ){
+                    HCWarning( USAGE );
+                    return( -1 );
+                } else {
+                    quiet = 1;
+                }
+            }
+        }
     }
 
     SetQuiet( quiet );
@@ -139,68 +134,68 @@ int main(int argc, char *[])
     _fullpath( path, pfilename, _MAX_PATH );
     _splitpath( path, drive, dir, fname, ext );
 
-    if( stricmp( ext, PhExt ) == 0 || stricmp( ext, HlpExt ) == 0 ){
-    HCWarning( BAD_EXT );
-    return -1;
+    if( stricmp( ext, PhExt ) == 0 || stricmp( ext, HlpExt ) == 0 ) {
+        HCWarning( BAD_EXT );
+        return( -1 );
     }
     if( ext[0] == '\0' ){
-    _makepath( path, drive, dir, fname, HpjExt );
+        _makepath( path, drive, dir, fname, HpjExt );
     }
 
     char    destpath[_MAX_PATH];
     _makepath( destpath, drive, dir, fname, HlpExt );
 
     InFile  input( path );
-    if( input.bad() ){
-    HCWarning( FILE_ERR, pfilename );
-    return -1;
+    if( input.bad() ) {
+        HCWarning( FILE_ERR, pfilename );
+        return( -1 );
     }
 
 
     //  Set up and start the help compiler.
 
-    try{
-    HFSDirectory    helpfile( destpath );
-    HFFont      fontfile( &helpfile );
-    HFContext   contfile( &helpfile );
-    HFSystem    sysfile( &helpfile, &contfile );
-    HFCtxomap   ctxfile( &helpfile, &contfile );
-    HFTtlbtree  ttlfile( &helpfile );
-    HFKwbtree   keyfile( &helpfile );
-    HFBitmaps   bitfiles( &helpfile );
+    try {
+        HFSDirectory    helpfile( destpath );
+        HFFont          fontfile( &helpfile );
+        HFContext       contfile( &helpfile );
+        HFSystem        sysfile( &helpfile, &contfile );
+        HFCtxomap       ctxfile( &helpfile, &contfile );
+        HFTtlbtree      ttlfile( &helpfile );
+        HFKwbtree       keyfile( &helpfile );
+        HFBitmaps       bitfiles( &helpfile );
 
-    Pointers    my_files = {
-                        NULL,
-                    NULL,
-                    &sysfile,
-                    &fontfile,
-                    &contfile,
-                    &ctxfile,
-                    &keyfile,
-                    &ttlfile,
-                    &bitfiles,
-    };
+        Pointers        my_files = {
+                            NULL,
+                            NULL,
+                            &sysfile,
+                            &fontfile,
+                            &contfile,
+                            &ctxfile,
+                            &keyfile,
+                            &ttlfile,
+                            &bitfiles,
+        };
 
-    if( stricmp( ext, RtfExt ) == 0 ){
-        my_files._topFile = new HFTopic( &helpfile );
-        RTFparser   rtfhandler( &my_files, &input );
-        rtfhandler.Go();
-    } else {
-        HPJReader   projfile( &helpfile, &my_files, &input );
-        projfile.parseFile();
-    }
+        if( stricmp( ext, RtfExt ) == 0 ) {
+            my_files._topFile = new HFTopic( &helpfile );
+            RTFparser   rtfhandler( &my_files, &input );
+            rtfhandler.Go();
+        } else {
+            HPJReader   projfile( &helpfile, &my_files, &input );
+            projfile.parseFile();
+        }
 
-    helpfile.dump();
-    if( my_files._topFile != NULL ){
-        delete my_files._topFile;
+        helpfile.dump();
+        if( my_files._topFile != NULL ) {
+            delete my_files._topFile;
+        }
+        if( my_files._phrFile != NULL ) {
+            delete my_files._phrFile;
+        }
     }
-    if( my_files._phrFile != NULL ){
-        delete my_files._phrFile;
+    catch( HCException ) {
+        HCWarning( PROGRAM_STOPPED );
+        return( -1 );
     }
-    }
-    catch( HCException ){
-    HCWarning( PROGRAM_STOPPED );
-    return -1;
-    }
-    return 0;
+    return( 0 );
 }

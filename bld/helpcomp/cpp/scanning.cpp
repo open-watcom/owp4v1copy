@@ -54,11 +54,11 @@ Scanner::Scanner( InFile *src )
     tokens[2] = new Token;
     tokens[1] = new Token;
     tokens[0] = new Token;
-    if( !src->bad() ){
-    _maxBuf = src->readbuf( _buffer, BUF_SIZE );
-    _curPos = 0;
-    getToken( tokens[1] );
-    getToken( tokens[2] );
+    if( !src->bad() ) {
+        _maxBuf = src->readbuf( _buffer, BUF_SIZE );
+        _curPos = 0;
+        getToken( tokens[1] );
+        getToken( tokens[2] );
     }
 }
 
@@ -77,22 +77,22 @@ Scanner::~Scanner()
 
 inline char Scanner::nextch()
 {
-    if( _maxBuf == 0 ){
-    return S_ENDC;
+    if( _maxBuf == 0 ) {
+        return( S_ENDC );
     }
-    if( _curPos == _maxBuf ){
-    _maxBuf = _source->readbuf( &_buffer[0], BUF_SIZE );
-    if( _maxBuf == 0 ){
-        return S_ENDC;
-    } else {
+    if( _curPos == _maxBuf ) {
+        _maxBuf = _source->readbuf( &_buffer[0], BUF_SIZE );
+        if( _maxBuf == 0 ) {
+            return( S_ENDC );
+        } else {
+            _curPos = 0;
+        }
+    } else if( _curPos == _maxBuf-1 ) {
+        _buffer[0] = _buffer[_curPos];
+        _maxBuf = _source->readbuf( &_buffer[1], BUF_SIZE-1 ) + 1;
         _curPos = 0;
     }
-    } else if( _curPos == _maxBuf-1 ){
-    _buffer[0] = _buffer[_curPos];
-    _maxBuf = _source->readbuf( &_buffer[1], BUF_SIZE-1 ) + 1;
-    _curPos = 0;
-    }
-    return _buffer[_curPos++];
+    return( _buffer[_curPos++] );
 }
 
 
@@ -100,8 +100,8 @@ inline char Scanner::nextch()
 
 void Scanner::putback( char c )
 {
-    if( _maxBuf > 0 ){
-    _buffer[--_curPos] = c;
+    if( _maxBuf > 0 ) {
+        _buffer[--_curPos] = c;
     }
 }
 
@@ -113,54 +113,54 @@ TokenTypes Scanner::handleSlash( Token * tok )
     TokenTypes  result;
     char    current = nextch();
 
-    if( current == S_ENDC ){
-    HCWarning( RTF_BADEOF, _source->name() );
-    result = TOK_END;
-    } else if( current == '*' ){
+    if( current == S_ENDC ) {
+        HCWarning( RTF_BADEOF, _source->name() );
+        result = TOK_END;
+    } else if( current == '*' ) {
 
-    // Certain RTF commands begin with "\*\", not "\".
+        // Certain RTF commands begin with "\*\", not "\".
 
-    current = nextch( );
-    if( current != '\\' ){
-        HCWarning( RTF_BADCOMMAND, _lineNum, _source->name() );
-        if( current != S_ENDC ){
-        putback( current );
+        current = nextch( );
+        if( current != '\\' ) {
+            HCWarning( RTF_BADCOMMAND, _lineNum, _source->name() );
+            if( current != S_ENDC ) {
+                putback( current );
+            }
+            result = TOK_NONE;
+        } else {
+            result = handleSlash( tok );
         }
+    } else if( current == '\n' ) {
+
+        // A "\" just before a new-line is the same as "\par".
+
+        strncpy( tok->_text, "par", 4 );
+        result = TOK_COMMAND;
+        ++_lineNum;
+    } else if( isSpecial( current ) ) {
+
+        // Some characters are escaped, like "\{".
+
+        result = TOK_SPEC_CHAR;
+        tok->_value = current;
+    } else if( current == '\'' ) {
+
+        // "\'nnn" signifies the byte with value nnn.
+
+        result = TOK_SPEC_CHAR;
+        pullHex( tok );
+    } else if( islower( current ) ) {
+
+        // All RTF commands are in lower case.
+
+        putback( current );
+        result = TOK_COMMAND;
+        pullCommand( tok );
+    } else {
+        HCWarning( RTF_BADCOMMAND, _lineNum, _source->name() );
         result = TOK_NONE;
-    } else {
-        result = handleSlash( tok );
     }
-    } else if( current == '\n' ){
-
-    // A "\" just before a new-line is the same as "\par".
-
-    strncpy( tok->_text, "par", 4 );
-    result = TOK_COMMAND;
-    ++_lineNum;
-    } else if( isSpecial( current ) ){
-
-    // Some characters are escaped, like "\{".
-
-    result = TOK_SPEC_CHAR;
-    tok->_value = current;
-    } else if( current == '\'' ){
-
-    // "\'nnn" signifies the byte with value nnn.
-
-    result = TOK_SPEC_CHAR;
-    pullHex( tok );
-    } else if( islower( current ) ){
-
-    // All RTF commands are in lower case.
-
-    putback( current );
-    result = TOK_COMMAND;
-    pullCommand( tok );
-    } else {
-    HCWarning( RTF_BADCOMMAND, _lineNum, _source->name() );
-    result = TOK_NONE;
-    }
-    return result;
+    return( result );
 }
 
 
@@ -171,10 +171,12 @@ int Scanner::isSpecial( char c )
     static char const specials[] = "-:\\_{|}";
     int     i;
 
-    for( i=0; i<7; i++ ){
-    if( c == specials[i] ) break;
+    for( i = 0; i < sizeof( specials ) - 1; i++ ) {
+        if( c == specials[i] ) {
+            break;
+        }
     }
-    return specials[i] != '\0';
+    return( specials[i] != '\0' );
 }
 
 
@@ -184,16 +186,16 @@ int Scanner::isSpecial( char c )
 int Scanner::isFootnoteChar( char c )
 {
     int result = 0;
-    switch( c ){
+    switch( c ) {
     case '#':   // Context string
     case '$':   // Title
     case 'K':   // Keywords
     case '+':   // Macros
     case '!':   // Browse Sequence Identifiers
     case '*':   // Build Tags (not supported)
-    result = 1;
+        result = 1;
     }
-    return result;
+    return( result );
 }
 
 
@@ -205,30 +207,30 @@ void Scanner::pullCommand( Token * tok )
     char    num_string[7];
     int     i;
 
-    tok->_text[0] = (char) nextch( );
+    tok->_text[0] = (char)nextch();
 
-    for( i=1; i<BUF_SIZE-1; i++ ){
-    current = nextch( );
+    for( i=1; i<BUF_SIZE-1; i++ ) {
+        current = nextch( );
 
-    if( !islower( current ) ) break;
-    tok->_text[i] = (char) current;
+        if( !islower( current ) ) break;
+        tok->_text[i] = (char) current;
     }
     tok->_text[i] = '\0';
 
-    if( current == S_ENDC || (!isdigit(current) && current != '-') ){
-    tok->_hasValue = 0;
+    if( current == S_ENDC || (!isdigit(current) && current != '-') ) {
+        tok->_hasValue = 0;
     } else {
-    tok->_hasValue = 1;
-    for( i=0; i<6; i++ ){
-        num_string[i] = (char) current;
-        current = nextch( );
-        if( !isdigit(current) ) break;
+        tok->_hasValue = 1;
+        for( i=0; i<6; i++ ) {
+            num_string[i] = (char) current;
+            current = nextch( );
+            if( !isdigit(current) ) break;
+        }
+        num_string[i+1] = '\0';
+        tok->_value = atoi( num_string );
     }
-    num_string[i+1] = '\0';
-    tok->_value = atoi( num_string );
-    }
-    if( current != S_ENDC && current != ' ' ){
-    putback( current );
+    if( current != S_ENDC && current != ' ' ) {
+        putback( current );
     }
 }
 
@@ -243,32 +245,32 @@ void Scanner::pullText( Token * tok )
 
     int i=1;
     char current;
-    while( i<BUF_SIZE-1 ){
-    current = nextch( );
+    while( i<BUF_SIZE-1 ) {
+        current = nextch( );
 
-    if( current == S_ENDC  ||
-        current == '{'  ||
-        current == '}'  ||
-        isFootnoteChar( current ) ) break;
+        if( current == S_ENDC  ||
+            current == '{'  ||
+            current == '}'  ||
+            isFootnoteChar( current ) ) break;
 
-    if( current == '\\' ){
-        if( _curPos < _maxBuf && _buffer[_curPos] == '~' ){
-        nextch();
-        current = HARD_SPACE;
-        } else {
-        break;
+        if( current == '\\' ) {
+            if( _curPos < _maxBuf && _buffer[_curPos] == '~' ) {
+                nextch();
+                current = HARD_SPACE;
+            } else {
+                break;
+            }
         }
-    }
 
-    if( current == '\n' ){
-        ++_lineNum;
-        continue;
-    }
-    tok->_text[i++] = (char) current;
+        if( current == '\n' ) {
+            ++_lineNum;
+            continue;
+        }
+        tok->_text[i++] = (char) current;
     }
     tok->_text[i] = '\0';
     tok->_value = i;
-    if( current != S_ENDC && i<BUF_SIZE-1 ){
+    if( current != S_ENDC && i<BUF_SIZE-1 ) {
     putback( current );
     }
 }
@@ -283,21 +285,21 @@ void Scanner::pullHex( Token * tok )
     int     i;
 
     for( i=0; i<2; ++i ) {
-    current = nextch( );
-    if( !isxdigit( current ) ){
-        break;
-    }
-    result[i] = (char) current;
+        current = nextch( );
+        if( !isxdigit( current ) ) {
+            break;
+        }
+        result[i] = (char) current;
     }
     result[i] = '\0';
-    if( i<2 && current != S_ENDC ){
-    putback( current );
+    if( i<2 && current != S_ENDC ) {
+        putback( current );
     }
-    if( i==0 ){
-    tok->_type = TOK_NONE;
+    if( i==0 ) {
+        tok->_type = TOK_NONE;
     } else {
-    tok->_hasValue = 1;
-    tok->_value = strtol( result, NULL, 16 );
+        tok->_hasValue = 1;
+        tok->_value = strtol( result, NULL, 16 );
     }
 }
 
@@ -308,52 +310,52 @@ void Scanner::getToken( Token * tok )
 {
     char current;
 
-    for( ;; ){
-    current = nextch( );
-    if( current != '\n' ) break;
-    ++_lineNum;
+    for( ;; ) {
+        current = nextch( );
+        if( current != '\n' ) break;
+        ++_lineNum;
     }
 
     tok->_lineNum = _lineNum;
-    switch( current ){
+    switch( current ) {
     case S_ENDC:
-    tok->_type = TOK_END;
-    break;
+        tok->_type = TOK_END;
+        break;
 
     case '{':
-    tok->_type = TOK_PUSH_STATE;
-    break;
+        tok->_type = TOK_PUSH_STATE;
+        break;
 
     case '}':
-    tok->_type = TOK_POP_STATE;
-    break;
+        tok->_type = TOK_POP_STATE;
+        break;
 
     case '\\':
-    current = nextch();
-    if( current == '~' ){
-        tok->_type = TOK_TEXT;
-        putback( HARD_SPACE );
-        pullText( tok );
-    } else {
-        putback( current );
-        tok->_type = handleSlash( tok );
-    }
-    break;
+        current = nextch();
+        if( current == '~' ) {
+            tok->_type = TOK_TEXT;
+            putback( HARD_SPACE );
+            pullText( tok );
+        } else {
+            putback( current );
+            tok->_type = handleSlash( tok );
+        }
+        break;
 
     case '\t':
-    tok->_type = TOK_COMMAND;
-    strncpy( tok->_text, "tab", 4 );
-    break;
+        tok->_type = TOK_COMMAND;
+        strncpy( tok->_text, "tab", 4 );
+        break;
 
     default:
-    if( isFootnoteChar( current ) ){
-        tok->_type = TOK_SPEC_CHAR;
-        tok->_value = current;
-    } else {
-        tok->_type = TOK_TEXT;
-        putback( current );
-        pullText( tok );
-    }
+        if( isFootnoteChar( current ) ) {
+            tok->_type = TOK_SPEC_CHAR;
+            tok->_value = current;
+        } else {
+            tok->_type = TOK_TEXT;
+            putback( current );
+            pullText( tok );
+        }
     }
 }
 
@@ -369,5 +371,5 @@ Token   *Scanner::next()
     tokens[2] = temp;
 
     getToken( tokens[2] );
-    return tokens[0];
+    return( tokens[0] );
 }
