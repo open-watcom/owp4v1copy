@@ -168,7 +168,7 @@ TokenTypes Scanner::handleSlash( Token * tok )
 
 int Scanner::isSpecial( char c )
 {
-    static char const specials[] = "-:\\_{|}";
+    static char const specials[] = "-:\\_{|}\"";
     int     i;
 
     for( i = 0; i < sizeof( specials ) - 1; i++ ) {

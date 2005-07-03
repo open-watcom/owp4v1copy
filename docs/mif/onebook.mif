@@ -18,7 +18,7 @@ docs_verbose=0
 #
 # There are all dependencies and standard option
 #
-# setting for documantation building utility.
+# setting for documentation building utility.
 #
 #############################################################
 
@@ -34,7 +34,6 @@ gml_lib=..\gml\syslib
 #
 hc_nt = $(%WIN95HC)
 hc_wat = whc
-hc_win = $(%WIN31HC)
 hc_os2 = $(%OS2HC)
 hc_dos_dos386 = $(%DOC_ROOT)\cmds\hcdos
 hc_dos_nt386 = $(%DOC_ROOT)\cmds\hcdos32
@@ -161,13 +160,7 @@ $(guitools_dir)/win95/$(hbook).h: $(hbook).h
 .EXTENSIONS: .hlp .hpj .rtf
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
-!ifeq hbook cmix
-    $(hc_win) $(hbook).hpj
-!else ifeq hbook fmix
-    $(hc_win) $(hbook).hpj
-!else
     $(hc_wat) $(hbook).hpj
-!endif
     ren $@ $@
 
 $(hbook).hpj : $(proj_objs)

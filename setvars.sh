@@ -37,7 +37,6 @@ export DOC_BUILD=0      # Documentation building uses DOS programs.
 # Documentation related variables - none likely to work in Linux
 # set appropriate variables to blank for help compilers which you haven't installed
 # export WIN95HC=hcrtf
-# export WIN31HC=hc31
 # export OS2HC=ipfc
 
 # Set up default path information variable

@@ -37,7 +37,6 @@ set DOC_BUILD=1
 REM Documentation related variables
 REM set appropriate variables to blank for help compilers which you haven't installed
 set WIN95HC=
-set WIN31HC=hc31
 set OS2HC=ipfc
 
 REM Set up default path information variable
