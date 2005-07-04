@@ -411,6 +411,22 @@ namespace std {
   #include <stdexcept>
 #endif
 
+:: _memicmp is an alias to memicmp. Currently (2005-07-04) aliases don't
+:: work on the Linux host and as a result any program that includes <string>
+:: won't link because _memicmp is unresolved (this is also a consequence
+:: of OW instantiating templates that aren't used... the typedef in this
+:: file causes all of _watcom::istring to always be instantiated).
+::
+:: As an aside memicmp should probably be the alias, not _memicmp. Other-
+:: wise someone using -za can't define their own memicmp without breaking
+:: the _watcom::istring template. Swapping the alias would fix the
+:: immediate problem but it might cause other problems on the Linux host
+:: until aliases are working there.
+::
+:: For now I'm disabling _watcom::istring support. (PeterC)
+::
+#ifdef _NEVER
+
 namespace _watcom {
 
   // ============================================================
@@ -450,6 +466,8 @@ namespace _watcom {
   typedef std::basic_string< char, ichar_traits > istring;
 }
 :include namwat.sp
+
+#endif // _NEVER
 
 namespace std {
 
