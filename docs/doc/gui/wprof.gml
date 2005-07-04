@@ -318,7 +318,6 @@ the total time spent executing in DOS code may be determined.
 .ix 'sampler' 'OS/2'
 The following options are available under OS/2.
 .seesmpopt
-.begnote
 .exam begin
 C>&smpos2 [wsample_options] program [arguments]
 .exam end
