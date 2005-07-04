@@ -34,11 +34,11 @@
 .*
 :include file='dbg'
 .*
-.sepsect Debugger Trap File Interface VERSION &trp_majver.&trp_minver
+.sepsect Debugger Trap File Interface VERSION &trp_majver..&trp_minver.
 .*
 :include file='trap'
 .*
-.sepsect Overlay Manager Interface VERSION &ovl_majver.&ovl_minver
+.sepsect Overlay Manager Interface VERSION &ovl_majver..&ovl_minver.
 .*
 :include file='ovl'
 .*

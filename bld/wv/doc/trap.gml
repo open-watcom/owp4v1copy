@@ -39,6 +39,7 @@ is expected to be modified in future releases. Where possible, notification
 of expected changes are given in the document, but all aspects are subject
 to revision.
 .section Some Definitions
+Next follow some general trap definitions.
 .beglevel
 .section Byte Order
 The trap file interface is defined to use little endian byte order. That is,
@@ -107,6 +108,7 @@ shared libraries, each library will be identified by a unique module handle.
 :eDL.
 .endlevel
 .chap The Request Interface
+Next follow detailed description of interface elements.
 .section Request Structure.
 Each request is a composed of two sequences of bytes provided by the
 debugger called messages. The first set contains the actual request
@@ -187,7 +189,7 @@ the :F.minor:eF. field tells the minor version number of the trap file.
 that is not upwardly compatable with previous versions. :F.Minor:eF.
 increments by one whenever a change is made to the trap file that is upwardly
 compatible with previous versions.
-The current major verion is &trp_majver, the current minor version is &trp_minver..
+The current major verion is &trp_majver., the current minor version is &trp_minver..
 The :F.remote:eF. field informs the
 debugger whether the trap file communicates with a remote machine.
 :P.
@@ -302,7 +304,7 @@ field tells the minor version number of the trap file. The :F.major:eF. is
 changed whenever there is a modification made to the trap file that is not
 upwardly compatable with previous versions. The :F.minor:eF. increments by one
 whenever a change is made to the trap file that is upwardly compatable with
-previous versions. The current major version is &trp_majver, the current minor version
+previous versions. The current major version is &trp_majver., the current minor version
 is &trp_minver..
 The :F.remote:eF. field informs the trap file whether a
 remote server is between the &company debugger and the trap file.

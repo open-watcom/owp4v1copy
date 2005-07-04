@@ -239,7 +239,7 @@ typedef struct ovl_table {
 the overlay table structure. If an upwardly compatible change in the structures
 is made, the minor number will be incremented. If a non-upwardly compatible
 change to the structures is made, the major field will be incremented.
-The current major version is &ovl_majver, the current minor version is &ovl_minver.
+The current major version is &ovl_majver., the current minor version is &ovl_minver..
 The
 :F.start:eF. field contains a 32-bit far pointer to the "actual" starting
 address of the program. The overlay manager jumps to this address after it
@@ -284,7 +284,7 @@ the overlay section data and relocations (The segment value is the same as
 the overlay table). If the top bit of the offset is on, then the file is
 the original EXE file rather than a separate overlay file, and the overlay
 manager should use the program file name obtained from DOS (if the version
-is &ovl_majver.&ovl_minver or greater). The :F.disk_addr:eF. field gives
+is 3.0. or greater). The :F.disk_addr:eF. field gives
 the starting offset the overlay data in the overlay file. 
 The segment relocation
 items immediately follow the data.
