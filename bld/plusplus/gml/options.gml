@@ -756,12 +756,14 @@
 :option. os
 :target. any
 :enumerate. opt_size_time
+:timestamp.
 :usage. favor code size over execution time in optimizations
 :jusage. 実行時間よりコードサイズの最適化を優先します
 
 :option. ot
 :target. any
 :enumerate. opt_size_time
+:timestamp.
 :usage. favor execution time over code size in optimizations
 :jusage. コードサイズより実行時間の最適化を優先します
 
