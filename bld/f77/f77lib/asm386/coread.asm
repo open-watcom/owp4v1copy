@@ -42,7 +42,7 @@ include struct.inc
 include mdef.inc
 
         xref    "C",DoRead
-        xref    "C",__SetIOCB
+        xref    RT@SetIOCB
 
         dataseg
 
@@ -62,7 +62,7 @@ include mdef.inc
 
         xdefp   RT@IORead
         defp    RT@IORead
-        call    __SetIOCB               ; initialize i/o
+        call    RT@SetIOCB              ; initialize i/o
         mov     EAX,offset DoRead       ; indicate read
         jmp     RdWrCommon              ; start read operation
         endproc RT@IORead

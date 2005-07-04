@@ -49,16 +49,6 @@ extern  void            IOSysInit(void);
 extern  void            RTSysInit(void);
 
 
-void            __SetIOCB() {
-//===========================
-
-// Called from "coread.asm/cowrite.asm" (normal entry point is called
-// "RT@SetIOCB" but assembler won't allow a name with the '@' character).
-
-    SetIOCB();
-}
-
-
 void            SetIOCB() {
 //=========================
 

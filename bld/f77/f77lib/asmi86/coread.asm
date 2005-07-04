@@ -41,7 +41,7 @@ include struct.inc
 include mdef.inc
 
         xref    "C",DoRead
-        xref    "C",__SetIOCB
+        xref    RT@SetIOCB
 
         extrn   IOSwitch        : near
         extrn   IOChar          : near
@@ -62,7 +62,7 @@ include mdef.inc
 
         xdefp   RT@IORead
         defp    RT@IORead
-        call    __SetIOCB               ; initialize i/o
+        call    RT@SetIOCB              ; initialize i/o
         mov     AX,seg DoRead           ; indicate read operation
         push    AX                      ; ...
         mov     AX,offset DoRead        ; ...

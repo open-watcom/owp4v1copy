@@ -41,7 +41,7 @@
 
 // Runtime C routines
 .extern    DoWrite
-.extern    __SetIOCB
+.extern    __RT_SetIOCB
 
 // data buffer
 .extern    IORslt
@@ -59,7 +59,7 @@
 __RT_IOWrite:
         lda     sp, -0x10(sp)           // create stack frame
         stq     ra, (sp)                // save return address
-        bsr     ra, j^__SetIOCB         // ini i/o
+        bsr     ra, j^__RT_SetIOCB      // ini i/o
         ldah    a0, h^DoWrite(zero)     // load pointer to write procedue
         lda     a0, l^DoWrite(a0)       // ...
         ldq     ra, (sp)                // restore ra

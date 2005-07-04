@@ -41,7 +41,7 @@
 
 .extern IORslt
 .extern DoRead
-.extern __SetIOCB
+.extern __RT_SetIOCB
 
 .extern SwitchToRT
 .extern IOChar
@@ -56,7 +56,7 @@
 __RT_IORead:
         lda     sp, -0x10(sp)           // save ra context
         stq     ra, (sp)                // ...
-        bsr     ra, j^__SetIOCB         // initialize i/o
+        bsr     ra, j^__RT_SetIOCB      // initialize i/o
         ldq     ra, (sp)                // restore ra
         lda     sp, 0x10(sp)            // ...
         ldah    a0,h^DoRead(zero)       // indicate read

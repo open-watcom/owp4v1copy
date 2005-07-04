@@ -42,7 +42,7 @@ include struct.inc
 include mdef.inc
 
         xref    "C",DoWrite
-        xref    "C",__SetIOCB
+        xref    RT@SetIOCB
 
         dataseg
 
@@ -62,7 +62,7 @@ include mdef.inc
 
         xdefp   RT@IOWrite
         defp    RT@IOWrite
-        call    __SetIOCB               ; initialize i/o
+        call    RT@SetIOCB              ; initialize i/o
         mov     EAX,offset DoWrite      ; indicate write
         jmp     RdWrCommon              ; start write operation
         endproc RT@IOWrite

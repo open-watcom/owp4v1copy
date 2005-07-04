@@ -45,7 +45,7 @@ TLink:  .long   0       // temporary link storer (no recursion shall occur)
 
 .extern IORslt
 .extern DoRead
-.extern __SetIOCB
+.extern __RT_SetIOCB
 
 .extern SwitchToRT
 .extern IOChar
@@ -61,7 +61,7 @@ __RT_IORead:
         lis     t0, h^TLink             // prepare to save link
         mflr    t1                      // load link register
         stw     t1, l^TLink(t0)         // save link register
-        bl      j^__SetIOCB             // initialize i/o
+        bl      j^__RT_SetIOCB          // initialize i/o
         lis     t0, h^TLink             // ...
         lwz     t1, l^TLink(t0)         // load link register
         mtlr    t1                      // restore link register
