@@ -39,6 +39,9 @@
 #define _BSD_SIZE_T_    unsigned int
 #endif
 
+#if !defined(__ssize_t) && !defined(_SSIZE_T_DEFINED)
+#define __ssize_t
 #define _BSD_SSIZE_T_   int
+#endif
 
 #endif
