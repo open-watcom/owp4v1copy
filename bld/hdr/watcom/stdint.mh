@@ -21,11 +21,9 @@
  /* 64 bit : 8      16      32    64     64     No targets implemented.   */
 
 /* Exact-width types. */
-:: In Linux and QNX, some of these types are also defined in sys/types.h.
-:segment LINUX | QNX
+:: Some of these types are also defined in sys/types.h.
 #ifndef _EXACT_WIDTH_INTS
 #define _EXACT_WIDTH_INTS
-:endsegment
 typedef signed char         int8_t;
 typedef unsigned char       uint8_t;
 typedef short               int16_t;
@@ -39,9 +37,7 @@ typedef unsigned int        uint32_t;
 #endif
 typedef long long           int64_t;
 typedef unsigned long long  uint64_t;
-:segment LINUX | QNX
 #endif
-:endsegment
 
 /* Minimum-width types. */
 typedef signed   char      int_least8_t;
