@@ -201,17 +201,19 @@ int KwLookup( const char *buf )
 
     hash = KwHashValue;
 
-    if( hash == T_INLINE && !CompFlags.extensions_enabled && !CompFlags.c99_extensions )
-        hash = T_ID;
-
     if( !CompFlags.c99_extensions ) {
         switch( hash ) {
+        case T_INLINE:
+            if( !CompFlags.extensions_enabled )
+                hash = T_ID;
+            break;
         case T_RESTRICT:
         case T__COMPLEX:
         case T__IMAGINARY:
         case T__BOOL:
         case T___OW_IMAGINARY_UNIT:
             hash = T_ID;
+            break;
         }
     }
 
