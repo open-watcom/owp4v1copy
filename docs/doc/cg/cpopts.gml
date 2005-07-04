@@ -2615,22 +2615,21 @@ The following macros are defined.
 .ix '_self macro'
 .ix '_cdecl macro'
 .ix 'cdecl macro'
-.ix '_Cdecl macro'
 .ix 'SOMLINK macro'
 .ix '_pascal macro'
 .ix 'pascal macro'
-.ix '_Pascal macro'
+.ix '_fastcall macro'
 .ix '_fortran macro'
 .ix 'fortran macro'
+.ix '_inline macro'
 .ix '_interrupt macro'
 .ix 'interrupt macro'
 .ix '_export macro'
 .ix '_loadds macro'
 .ix '_saveregs macro'
+.ix '_stdcall macro'
 .ix '_syscall macro'
-.ix '_System macro'
 .ix '_far16 macro'
-.ix '_Far16 macro'
 .ix 'macros' '_near'
 .ix 'macros' 'near'
 .ix 'macros' '_far'
@@ -2643,22 +2642,21 @@ The following macros are defined.
 .ix 'macros' '_self'
 .ix 'macros' '_cdecl'
 .ix 'macros' 'cdecl'
-.ix 'macros' '_Cdecl'
 .ix 'macros' 'SOMLINK'
 .ix 'macros' '_pascal'
 .ix 'macros' 'pascal'
-.ix 'macros' '_Pascal'
+.ix 'macros' '_fastcall'
 .ix 'macros' '_fortran'
 .ix 'macros' 'fortran'
+.ix 'macros' '_inline'
 .ix 'macros' '_interrupt'
 .ix 'macros' 'interrupt'
 .ix 'macros' '_export'
 .ix 'macros' '_loadds'
 .ix 'macros' '_saveregs'
+.ix 'macros' '_stdcall'
 .ix 'macros' '_syscall'
-.ix 'macros' '_System'
 .ix 'macros' '_far16'
-.ix 'macros' '_Far16'
 .millust begin
 _near, near
 _far, far, SOMDLINK (16-bit)
@@ -2667,15 +2665,18 @@ _based
 _segment
 _segname
 _self
-_cdecl, cdecl, _Cdecl, SOMLINK (16-bit)
-_pascal, pascal, _Pascal
+_cdecl, cdecl, SOMLINK (16-bit)
+_pascal, pascal
+_fastcall
 _fortran, fortran
+_inline
 _interrupt, interrupt
 _export
 _loadds
 _saveregs
-_syscall, _System, SOMLINK (32-bit), SOMDLINK (32-bit)
-_far16, _Far16
+_stdcall
+_syscall, SOMLINK (32-bit), SOMDLINK (32-bit)
+_far16
 .millust end
 .endnote
 .np

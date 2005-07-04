@@ -1210,31 +1210,6 @@ macro to indicate that C++ exceptions supported.
 This macro is predefined if any of the &cmppname "xs", "xss" or "xst"
 compile options are specified and is not defined otherwise.
 .*
-.note _fastcall, __fastcall
-.ix 'macros' '_fastcall, __fastcall'
-&product predefines the
-.kwm _fastcall
-and
-.kwm __fastcall
-macros to an empty string so that source code containing this
-Microsoft keyword can be compiled without syntax errors.
-The
-.kwm _fastcall
-keyword refers to a Microsoft calling convention that is not supported
-by &product..
-&company's calling conventions are already "fast" to start with;
-hence, the keyword is not required.
-.*
-.note _inline, __inline
-.ix 'macros' '_inline, __inline'
-&cmppname predefines the
-.kwm _inline
-and
-.kwm __inline
-macros to be identical to the
-.kwm inline
-keyword.
-.*
 .note _INTEGRAL_MAX_BITS
 .ix 'macros' '_INTEGRAL_MAX_BITS'
 .ix '_INTEGRAL_MAX_BITS'
@@ -1288,9 +1263,7 @@ _export=__export              Yes     Yes     Yes     Yes
 _far16=__far16                Yes     Yes     Yes     Yes
 _far=__far                    Yes     Yes     Yes     Yes
 far=__far                     Yes     Yes     Yes     Yes
-__fastcall=                                   Yes     Yes
-_fastcall=                                    Yes     Yes
-_fastcall=__fastcall          Yes     Yes
+_fastcall=__fastcall          Yes     Yes     Yes     Yes
 __FLAT__=1                            Yes             Yes
 _fortran=__fortran            Yes     Yes     Yes     Yes
 fortran=__fortran             Yes     Yes     Yes     Yes
@@ -1298,9 +1271,7 @@ __FPI__=1                     Yes     Yes     Yes     Yes
 _huge=__huge                  Yes     Yes     Yes     Yes
 huge=__huge                   Yes     Yes     Yes     Yes
 __I86__=1                     Yes             Yes
-_inline=__inline              Yes     Yes
-__inline=inline                               Yes     Yes
-_inline=inline                                Yes     Yes
+_inline=__inline              Yes     Yes     Yes     Yes
 _INTEGRAL_MAX_BITS=64         Yes     Yes     Yes     Yes
 _interrupt=__interrupt        Yes     Yes     Yes     Yes
 interrupt=__interrupt         Yes     Yes     Yes     Yes
@@ -1344,8 +1315,8 @@ __SW_ZDP=1                    Yes     Yes     Yes     Yes
 __SW_ZFP=1                    Yes     Yes     Yes     Yes
 __SW_ZGF=1                            Yes             Yes
 __SW_ZGP=1                    Yes             Yes
-_syscall=_Syscall             Yes     Yes     Yes     Yes
-_System=_Syscall              Yes     Yes     Yes     Yes
+_stdcall=__stdcall            Yes     Yes     Yes     Yes
+_syscall=__syscall            Yes     Yes     Yes     Yes
 __WATCOM_CPLUSPLUS__=&vermacro                     Yes     Yes
 __WATCOMC__=&vermacro              Yes     Yes     Yes     Yes
 __X86__=1                     Yes     Yes     Yes     Yes
@@ -2705,7 +2676,7 @@ is used to declare functions which conform to the 32-bit Win32
 .exam begin
 #include <stdio.h>
 
-#define DLLFunc __declspec(dllimport _stdcall)
+#define DLLFunc __declspec(dllimport __stdcall)
 #define DLLData __declspec(dllimport)
 
 DLLFunc int  dll_func( int, int, int );

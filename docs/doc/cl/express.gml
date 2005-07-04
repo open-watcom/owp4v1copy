@@ -1131,8 +1131,8 @@ pointers are treated as
 .kwix &kwfar16_sp.
 .kwfont &kwfar16.
 and
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 pointers are also treated as
 .kw unsigned int
 ..ct ,

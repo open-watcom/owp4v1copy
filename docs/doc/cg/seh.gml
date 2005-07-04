@@ -681,7 +681,7 @@ pointer so that it is no longer NULL.
 
 char *NullP = NULL;
 .exam break
-int filter()
+int filter( void )
 {
   if( NullP == NULL ) {
     NullP = malloc( 20 );
@@ -751,7 +751,7 @@ All of this should become clear after studying the following example.
 #include <stdlib.h>
 #include <excpt.h>
 
-func_level4()
+void func_level4( void )
 {
   char *nullp = NULL;
 
@@ -766,7 +766,7 @@ func_level4()
   printf( "Normal return from func_level4\n" );
 }
 .tinyexam break
-func_level3()
+void func_level3( void )
 {
   _try {
     func_level4();
@@ -778,7 +778,7 @@ func_level3()
   printf( "Normal return from func_level3\n" );
 }
 .tinyexam break
-func_level2()
+void func_level2( void )
 {
   _try {
     _try {
@@ -795,7 +795,7 @@ func_level2()
   printf( "Normal return from func_level2\n" );
 }
 .tinyexam break
-func_level1()
+void func_level1( void )
 {
   _try {
     func_level2();
@@ -807,7 +807,7 @@ func_level1()
   printf( "Normal return from func_level1\n" );
 }
 .tinyexam break
-func_level0()
+void func_level0( void )
 {
   _try {
     _try {
@@ -1047,7 +1047,7 @@ function in our previous example.
 .tinyexam begin
 #include <windows.h>
 
-func_level0()
+void func_level0( void )
 {
   _try {
     _try {
@@ -1097,7 +1097,7 @@ int GetCode( LPEXCEPTION_POINTERS exceptptrs )
     return (exceptptrs->ExceptionRecord->ExceptionCode );
 }
 
-func_level0()
+void func_level0( void )
 {
   _try {
     _try {

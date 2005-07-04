@@ -91,8 +91,7 @@ Punctuators
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 :ITAL.keyword:eITAL.
 ››standard-keyword
-›or›&company.-&cboth.-keyword
-›or›&company.-&c386.-keyword
+›or›&company.-extended-keyword
 .keep break
 ..sk 1 c
 :ITAL.standard-keyword:eITAL.
@@ -110,11 +109,9 @@ Punctuators
 .*
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 ..sk 1 c
-:ITAL.&company.-&cboth.-keyword:eITAL.
+:ITAL.&company.-extended-keyword:eITAL.
+.sk 1
 .im kwwatcom
-..sk 1 c
-:ITAL.&company.-&c386.-keyword:eITAL.
-.im kw386
 ..do end
 .keep break
 .*
@@ -541,15 +538,12 @@ init-declarator}&SUPER0.
 ..sk 1 c
 :ITAL.type-qualifier:eITAL.
 ››:MONO.const | volatile:eMONO.
-›or›&company.-&cboth.-type-qualifier
-›or›&company.-&c386.-type-qualifier
+›or›&company.-type-qualifier
 .keep break
 ..sk 1 c
-:ITAL.&company.-&cboth.-type-qualifier:eITAL.
-.im kwwatcom
-..sk 1 c
-:ITAL.&company.-&c386.-type-qualifier:eITAL.
-.im kw386
+:ITAL.&company.-type-qualifier:eITAL.
+.im tqwatcom
+.sk 1
 ..do end
 ..el ..do begin
 .keep break

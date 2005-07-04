@@ -11,18 +11,15 @@ tags (names).
 .ix identifier
 .sk 1
 .im kwlist
+.sk 1
 .*
 .************************************************************************
 .*
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
-.shade begin
-The &wcboth. compilers also reserve the following keywords:
+The &company. compilers also reserve the following extended keywords:
+.sk 1
 .im kwwatcom
-.pc
-The &wc386. compiler also reserves the following keywords:
-..sk 1
-.im kw386
-.shade end
+.sk 1
 ..do end
 .*
 .************************************************************************

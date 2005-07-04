@@ -19,17 +19,14 @@ C language:
 .*
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .*
-.section &wcboth. Keywords
+.section &company. Extended Keywords
 .*
 .pp
-The &wcboth. compilers also reserve the following keywords:
-..sk 1
+The &company. compilers also reserve the following extended keywords:
+.sk 1
 .im kwwatcom
-.pc
-The &wc386. compiler also reserves the following keywords:
-..sk 1
-.im kw386
-.pc
+.sk 1
+.*
 The keywords
 .kwix &kwbased_sp.
 .kwfont &kwbased.
@@ -75,7 +72,8 @@ It may be used in place of
 .kwix &kwself_sp.
 .kwfont &kwself.
 ..ct ..li .
-.pp
+.sk 1
+.*
 The keywords
 .kwix &kwfar_sp.
 .kwfont &kwfar.
@@ -91,9 +89,6 @@ are described in the sections "&ptr86." and "&ptr386.".
 .mkw far
 and
 .mkw _far
-for convenience and compatibility with the Microsoft C compiler.
-&wc286. provides the predefined macro
-.mkw SOMDLINK
 for convenience and compatibility with the Microsoft C compiler.
 They may be used in place of
 .kwix &kwfar_sp.
@@ -123,15 +118,16 @@ They may be used in place of
 The keywords
 .kwix &kwfar16_sp.
 .kwfont &kwfar16.
+,
+.kwix &kwifa16_sp.
+.kwfont &kwifar16.
 and
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 are described in the section "&ptr386.".
 .*
-&wcboth. provide the predefined macros
+&wcboth. provide the predefined macro
 .mkw _far16
-and
-.mkw _Far16
 for convenience and compatibility with the Microsoft C compiler.
 It may be used in place of
 .kwix &kwfar16_sp.
@@ -139,15 +135,18 @@ It may be used in place of
 ..ct ..li .
 .pp
 The
-.kwix &kwpackd_sp.
-.kwfont &kwpacked.
+.kwix &kwipckd_sp.
+.kwfont &kwipacked.
 keyword is described in the section
 "&struct".
 .pp
 The
 .kwix &kwcdecl_sp.
 .kwfont &kwcdecl.
-keyword may be used with function definitions, and indicates that the
+and
+.kwix &kwicdec_sp.
+.kwfont &kwicdecl.
+keywords may be used with function definitions, and indicates that the
 calling convention for the function is the same as that used by
 Microsoft C.
 All parameters are pushed onto the stack, instead of being passed
@@ -157,17 +156,34 @@ This calling convention may be controlled by a
 directive.
 See the &userguide..
 &wcboth. provide the predefined macros
-.mkw cdecl,
-.mkw _cdecl
+.mkw cdecl
 and
-.mkw _Cdecl
-for convenience and compatibility with the Microsoft C compiler.
-&wc286. provides the predefined macro
-.mkw SOMLINK
+.mkw _cdecl
 for convenience and compatibility with the Microsoft C compiler.
 They may be used in place of
 .kwix &kwcdecl_sp.
 .kwfont &kwcdecl.
+..ct ..li .
+.pp
+.ix 'Win32 convention'
+The
+.kwix &kwfastc_sp.
+.kwfont &kwfastcall.
+and
+.kwix &kwifstc_sp.
+.kwfont &kwifastcal.
+keywords may be used with function definitions, and indicates that the
+calling convention used is compatible with Microsoft C compiler.
+This calling convention may be controlled by a
+.kwpp #pragma
+directive.
+&wcboth. provide the predefined macro
+.mkw _fastcall,
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwfastc_sp.
+.kwfont &kwfastcall.
+See the &userguide..
 ..ct ..li .
 .pp
 The
@@ -195,7 +211,10 @@ They may be used in place of
 The
 .kwix &kwpascl_sp.
 .kwfont &kwpascal.
-keyword
+and
+.kwix &kwipasc_sp.
+.kwfont &kwipascal.
+keywords
 may be used with function definitions, and indicates that the
 calling convention for the function is suitable for
 calling a function written in Pascal.
@@ -221,24 +240,23 @@ They may be used in place of
 The
 .kwix &kwsyscl_sp.
 .kwfont &kwsyscall.
-keyword may be used with function definitions, and indicates that the
+,
+.kwix &kwisysc_sp.
+.kwfont &kwisyscall.
+and
+.kwix &kwisyst_sp.
+.kwfont &kwisystem.
+keywords may be used with function definitions, and indicates that the
 calling convention used is compatible with OS/2 (version 2.0 or
 higher).
 This calling convention may be controlled by a
 .kwpp #pragma
 directive.
 See the &userguide..
-&wcboth. provide the predefined macros
-.mkw _syscall,
-and
-.mkw _System
+&wcboth. provide the predefined macro
+.mkw _syscall
 for convenience and compatibility with the Microsoft C compiler.
-&wc386. provides the predefined macros
-.mkw SOMLINK
-and
-.mkw SOMDLINK
-for convenience and compatibility with the Microsoft C compiler.
-They may be used in place of
+It may be used in place of
 .kwix &kwsyscl_sp.
 .kwfont &kwsyscall.
 ..ct ..li .
@@ -252,6 +270,22 @@ calling convention used is compatible with Win32.
 This calling convention may be controlled by a
 .kwpp #pragma
 directive.
+&wcboth. provide the predefined macro
+.mkw _stdcall,
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwstdcl_sp.
+.kwfont &kwstdcall.
+See the &userguide..
+.pp
+The
+.kwix &kwwatcl_sp.
+.kwfont &kwwatcall.
+keyword may be used with function definitions, and indicates that the
+&company default calling convention is used.
+This calling convention may be controlled by a
+.kwpp #pragma
+directive.
 See the &userguide..
 .pp
 .ix 'storage duration' 'static'
@@ -259,7 +293,10 @@ See the &userguide..
 The
 .kwix &kwexprt_sp.
 .kwfont &kwexport.
-keyword may be used with objects with static storage duration (global
+and
+.kwix &kwiexpr_sp.
+.kwfont &kwiexport.
+keywords may be used with objects with static storage duration (global
 objects) and with functions, and describes that object or function as
 being a known object or entry point within a Dynamic Link Library in
 OS/2 or Microsoft Windows.
@@ -348,6 +385,71 @@ It may be used in place of
 .kwix &kwsvreg_sp.
 .kwfont &kwsaveregs.
 ..ct ..li .
+.pp
+The
+.kwix &kwtry_sp.
+.kwfont &kwtry.
+,
+.kwix &kwitry_sp.
+.kwfont &kwitry.
+,
+.kwix &kwexcpt_sp.
+.kwfont &kwexcept.
+,
+.kwix &kwiexcp_sp.
+.kwfont &kwiexcept.
+,
+.kwix &kwfnly_sp.
+.kwfont &kwfinally.
+,
+.kwix &kwifnly_sp.
+.kwfont &kwifinally.
+,
+.kwix &kwleave_sp.
+.kwfont &kwleave.
+and
+.kwix &kwileav_sp.
+.kwfont &kwileave.
+keywords may be used for exception handling, See the
+"Structured Exception Handling" in &userguide..
+&wcboth. provide the predefined macro
+.mkw _try
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwtry_sp.
+.kwfont &kwtry.
+..ct ..li .
+&wcboth. provide the predefined macro
+.mkw _except
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwexcpt_sp.
+.kwfont &kwexcept.
+..ct ..li .
+&wcboth. provide the predefined macro
+.mkw _finally
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwfnly_sp.
+.kwfont &kwfinally.
+..ct ..li .
+&wcboth. provide the predefined macro
+.mkw _leave
+for convenience and compatibility with the Microsoft C compiler.
+It may be used in place of
+.kwix &kwleave_sp.
+.kwfont &kwleave.
+..ct ..li .
+.pp
+The
+.kwix &kwimagu_sp.
+.kwfont &kwimagunit.
+keyword may be used as _Imaginary constant 1.0.
+.pp
+The
+.kwix &kwbldif_sp.
+.kwfont &kwbldiflt.
+keyword may be used as function for testing symbol type.
 ..do end
 .*
 .************************************************************************

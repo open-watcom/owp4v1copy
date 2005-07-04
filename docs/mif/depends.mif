@@ -92,7 +92,6 @@ $(docsrc_dir)\cl\init.gml &
 $(docsrc_dir)\cl\integer.gml &
 $(docsrc_dir)\cl\intro.gml &
 $(docsrc_dir)\cl\keywords.gml &
-$(docsrc_dir)\cl\kw386.gml &
 $(docsrc_dir)\cl\kwlist.gml &
 $(docsrc_dir)\cl\kwwatcom.gml &
 $(docsrc_dir)\cl\macro.gml &
@@ -125,6 +124,7 @@ $(docsrc_dir)\cl\struct.gml &
 $(docsrc_dir)\cl\style.gml &
 $(docsrc_dir)\cl\sysmacro.gml &
 $(docsrc_dir)\cl\thanks.gml &
+$(docsrc_dir)\cl\tqwatcom.gml &
 $(docsrc_dir)\cl\trademrk.gml &
 $(docsrc_dir)\cl\translim.gml &
 $(docsrc_dir)\cl\trigraph.gml &

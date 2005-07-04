@@ -1657,6 +1657,28 @@ or
 .kwm cdecl
 .do end
 defines the calling convention used by Microsoft compilers.
+.note __fastcall
+.ix 'alias names' '__fastcall'
+.ix '__fastcall alias name'
+.kwm __fastcall
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+or
+.ix 'alias names' 'fastcall'
+.ix 'fastcall alias name'
+.kwm fastcall
+.do end
+defines the calling convention used by Microsoft compilers.
+.note __fortran
+.ix 'alias names' '__fortran'
+.ix '__fortran alias name'
+.kwm __fortran
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+or
+.ix 'alias names' 'fortran'
+.ix 'fortran alias name'
+.kwm fortran
+.do end
+defines the calling convention used by &company. FORTRAN compilers.
 .note __pascal
 .kwm __pascal
 .ix 'alias names' '__pascal'
@@ -1669,7 +1691,6 @@ or
 .do end
 defines the calling convention used by OS/2 1.x and Windows 3.x API
 functions.
-.if '&machine' eq '80386' .do begin
 .note __stdcall
 .ix 'alias names' '__stdcall'
 .ix '__stdcall alias name'
@@ -1680,7 +1701,11 @@ or
 .ix 'stdcall alias name'
 .kwm stdcall
 .do end
+.if '&machine' eq '80386' .do begin
 defines a special calling convention used by the Win32 API functions.
+.do end
+.el .do begin
+defines the calling convention used by Microsoft compilers.
 .do end
 .if '&machine' eq '80386' .do begin
 .note __syscall
@@ -1707,6 +1732,17 @@ or
 are identical to
 .kwm __syscall.
 .do end
+.note __watcall
+.ix 'alias names' '__watcall'
+.ix '__watcall alias name'
+.kwm __watcall
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+or
+.ix 'alias names' 'watcall'
+.ix 'watcall alias name'
+.kwm watcall
+.do end
+defines the default calling convention used by &company compilers.
 .endnote
 .pc
 The following describes the attributes of the above alias names.

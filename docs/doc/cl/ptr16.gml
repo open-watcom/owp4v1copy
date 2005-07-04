@@ -1,4 +1,4 @@
-.section The &kwfar16_sp. and &kwseg16_sp. Keywords
+.section The &kwfar16_sp. and &kwisg16_sp. Keywords
 .*
 .pp
 With the 80386 processor, a far pointer consists of a 16-bit
@@ -93,12 +93,12 @@ equivalent location in the 32-bit address space.
 .pp
 For compatibility with IBM C Set/2,
 &wc386. provides the
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 keyword.
 Note that
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 is
 .bd not
 interchangeable with
@@ -108,13 +108,13 @@ interchangeable with
 .pp
 A pointer declared as,
 .cillust begin
-type :MONO. * &kwseg16. :eMONO. name:MSEMI.
+type :MONO. * &kwiseg16. :eMONO. name:MSEMI.
 .cillust end
 .pc
 defines an object that is a far16 pointer.
 Note that the
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 appears on the opposite side of the
 .mono *
 than the
@@ -124,7 +124,7 @@ keyword described above.
 .pp
 For example,
 .millust begin
-char * &kwseg16. bufptr;
+char * &kwiseg16. bufptr;
 .millust end
 .pc
 declares the object
@@ -134,8 +134,8 @@ to be a far16 pointer to
 (the same as above).
 .pp
 The
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
+.kwix &kwisg16_sp.
+.kwfont &kwiseg16.
 keyword may not be used to describe a 16-bit function.
 A
 .kwpp #pragma
@@ -143,14 +143,14 @@ directive must be used.
 See the &userguide. for details.
 A function declared as,
 .cillust begin
-type :MONO.* &kwseg16.:eMONO. func:MONO.(:eMONO. parm-list :MONO.):eMONO.:MSEMI.
+type :MONO.* &kwiseg16.:eMONO. func:MONO.(:eMONO. parm-list :MONO.):eMONO.:MSEMI.
 .cillust end
 .pc
 declares a 32-bit function that returns a far16 pointer.
 .pp
 For example, the declaration,
 .code begin
-char * &kwseg16. Scan( char * buffer, int buflen, short err );
+char * &kwiseg16. Scan( char * buffer, int buflen, short err );
 .code end
 .pc
 declares the 32-bit function

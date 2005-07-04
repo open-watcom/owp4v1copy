@@ -434,55 +434,14 @@ and may also include the following
 .*
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .shade begin
-The &wcboth. compilers also provide the following
+The &company. compilers also provide the following extended
 .us type qualifiers
 ..ct :
 ..sk 1 c
-.im kwwatcom
-.pp
-The &wc386. compiler also provides the following type qualifiers:
-..sk 1
-.im kw386
-.pp
-The keywords
-.kwix &kwbased_sp.
-.kwfont &kwbased.
-..ct ,
-.kwix &kwsegm_sp.
-.kwfont &kwsegment.
-..ct ,
-.kwix &kwsegnm_sp.
-.kwfont &kwsegname.
-and
-.kwix &kwself_sp.
-.kwfont &kwself.
-are described in the section "&basedptr.".
-.pp
-The keywords
-.kwix &kwfar_sp.
-.kwfont &kwfar.
-..ct ,
-.kwix &kwhuge_sp.
-.kwfont &kwhuge.
-and
-.kwix &kwnear_sp.
-.kwfont &kwnear.
-are described in the sections "&ptr86." and "&ptr386.".
-.pp
-The keywords
-.kwix &kwfar16_sp.
-.kwfont &kwfar16.
-and
-.kwix &kwseg16_sp.
-.kwfont &kwseg16.
-are described in the section "&ptr386.".
-.pp
-The
-.kwix &kwpackd_sp.
-.kwfont &kwpacked.
-keyword is described in the section "&struct.".
-.pp
-For the remaining keywords, see the appendix "&appkw.".
+.im tqwatcom
+.sk 1
+.*
+For the extended type qualifiers, see the appendix "&appkw.".
 .shade end
 ..do end
 .* ..if '&target' eq 'PC 370' ..th ..do begin

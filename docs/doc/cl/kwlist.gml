@@ -3,13 +3,15 @@
 ..sr firsttab=&SYSIN.+3
 ..tb &firsttab. +13 +13 +13 +13
 .kwon
-›auto     ›double ›int      ›struct
-›break    ›else   ›long     ›switch
-›case     ›enum   ›register ›typedef
-›char     ›extern ›return   ›union
-›const    ›float  ›short    ›unsigned
-›continue ›for    ›signed   ›void
-›default  ›goto   ›sizeof   ›volatile
-›do       ›if     ›static   ›while
+›auto     ›double     ›inline   ›static   
+›_Bool    ›else       ›int      ›struct
+›break    ›enum       ›long     ›switch
+›case     ›extern     ›register ›typedef
+›char     ›float      ›restrict ›union
+›_Complex ›for        ›return   ›unsigned
+›const    ›goto       ›short    ›void
+›continue ›if         ›signed   ›volatile
+›default  ›_Imaginary ›sizeof   ›while
+›do       
 .kwoff
 ..tb
