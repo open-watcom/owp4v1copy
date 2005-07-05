@@ -287,6 +287,10 @@ _WCRTLINK extern char *strrev( char *__string );
 _WCRTLINK extern char *strset( char *__string, int __c );
 _WCRTLINK extern char *strupr( char *__string );
 
+/* BSD 'safe' string copy functions */
+_WCRTLINK extern size_t strlcat( char *__s1, const char *__s2, size_t __n );
+_WCRTLINK extern size_t strlcpy( char *__s1, const char *__s2, size_t __n );
+
 :segment !NO_WIDECHAR
 :segment CNAME
 namespace std {
@@ -340,6 +344,10 @@ _WCRTLINK extern int        _wcsnicoll( const wchar_t *__s1, const wchar_t *__s2
 _WCRTLINK extern wchar_t   *_wcsrev( wchar_t * );
 _WCRTLINK extern wchar_t   *_wcsset( wchar_t *, wchar_t );
 _WCRTLINK extern wchar_t   *_wcserror( const wchar_t * );
+
+/* BSD 'safe' wide string copy functions */
+_WCRTLINK extern size_t     wcslcat( wchar_t *__s1, const wchar_t *__s2, _w_size_t __n );
+_WCRTLINK extern size_t     wcslcpy( wchar_t *__s1, const wchar_t *__s2, _w_size_t __n );
 :endsegment
 
 /* Additional Functions (POSIX but non-standard in string.h) */

@@ -59,6 +59,8 @@
 !inject strdup.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject strerror.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32 lpc lmp
 !inject stricmp.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject strlcat.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject strlcpy.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject strlen.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject strlwr.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject strncat.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
@@ -106,6 +108,8 @@
 !inject ustrdup.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject ustrerro.obj d16 d32             nt nta ntp         o16 o32         w16 w32     l32 lpc lmp
 !inject ustricmp.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject ustrlcat.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
+!inject ustrlcpy.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject ustrlen.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject ustrlwr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject ustrncat.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
@@ -136,6 +140,8 @@ ustrcpy_postopts =-os
 ustrcspn_postopts=-os
 ustrdup_postopts =-os
 ustricmp_postopts=-os
+ustrlcat_postopts=-os
+ustrlcpy_postopts=-os
 ustrlen_postopts =-os
 ustrlwr_postopts =-os
 ustrncat_postopts=-os
