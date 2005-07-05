@@ -99,7 +99,7 @@ tcspnp          _mbsspnp        _tcsspnp        d16 d32 nt  nta ntp         o16 
 tcsstr          _mbsstr         _tcsstr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tcstok          _mbstok         _tcstok         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tcsupr          _mbsupr         _tcsupr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
-memicm          memicmp         _memicmp        d16 d32 nt  nta ntp         o16 o32         w16 w32
+memicm          memicmp         _memicmp        d16 d32 nt  nta ntp         o16 o32         w16 w32     l32
 mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 o32         w16 w32
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32
 putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
