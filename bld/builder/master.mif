@@ -9,7 +9,7 @@ rm_exe = rm.exe
 !endif
 
 all : langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe &
-        comstrip.exe $(rm_exe) builder.exe
+        comstrip.exe $(rm_exe) builder.exe wgrep.exe
 
 inc_dirs = -I"../../pmake" -I"../../posix/h"
 
