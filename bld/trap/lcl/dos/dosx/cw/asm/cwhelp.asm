@@ -937,15 +937,11 @@ Dispatcher      endp
 ;
 ;Convert the selector.
 ;
-        cmp     w[esi+1+4],-1
-        jnz     @@0addr
-        mov     w[esi+1+4],1
-@@0addr:        cmp     w[esi+1+4],-2
-        jnz     @@1addr
-        mov     w[esi+1+4],2
-
-@@1addr:
-        movzx   ebx,w[esi+1+4]
+        movsx   ebx,w[esi+1+4]
+        cmp     ebx,0
+        jge     @@NotFlat0
+        neg     ebx
+@@NotFlat0:
         dec     ebx
         shl     ebx,3
         add     bx,[edx+EPSP_SegBase]
@@ -954,7 +950,11 @@ Dispatcher      endp
 ;
 ;Convert the offset.
 ;
-        movzx   ebx,w[esi+1+4]
+        movsx   ebx,w[esi+1+4]
+        cmp     ebx,0
+        jge     @@NotFlat1
+        neg     ebx
+@@NotFlat1:
         dec     ebx
         shl     ebx,3
         add     ebx,DebugSegs   ;point to segment details.
@@ -964,8 +964,8 @@ Dispatcher      endp
 
 ; MED 1/23/2003
 ; horrible hackery to fix offset+code size passed for symbol offset in global vars
-        cmp     WORD PTR [esi+1+4],1
-        jbe     addrsetb        ; don't adjust a base code address
+        cmp     WORD PTR [esi+1+4],-1
+        jge     addrsetb        ; only adjust MAP_FLAT_DATA_SELECTOR
         mov     ecx,DebugSegs
         add     ecx,8
         mov     ecx,[ecx]       ; 2nd, hopefully DGROUP, segment base offset
