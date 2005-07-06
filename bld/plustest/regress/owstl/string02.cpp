@@ -321,12 +321,6 @@ bool dstring_test( )
   return( rc );
 }
 
-// This test is currently removed for reasons discussed in string.mh
-// regarding the lack of working alias support in the C library on the
-// Linux host.
-//
-#ifdef _NEVER
-
 bool istring_test( )
 {
   using watcom::istring;
@@ -369,8 +363,6 @@ bool istring_test( )
 
   return( rc );
 }
-
-#endif // _NEVER
 
 bool tstring_test( )
 {
@@ -444,7 +436,7 @@ int main( )
   try {
     if( !wstring_test( )    || !heap_ok( "t01" ) ) rc = 1;
     if( !dstring_test( )    || !heap_ok( "t02" ) ) rc = 1;
-    // if( !istring_test( )    || !heap_ok( "t03" ) ) rc = 1;
+    if( !istring_test( )    || !heap_ok( "t03" ) ) rc = 1;
     if( !tstring_test( )    || !heap_ok( "t04" ) ) rc = 1;
   }
   catch( ... ) {
