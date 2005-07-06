@@ -1,0 +1,38 @@
+proj_name = wdump
+wdmp_autodepends = .autodepend
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = -I"../h" -I"$(dip_dir)/watcom/h"
+
+.c: ../c
+
+objs =                  &
+        wdmp.obj        &
+	wdio.obj        &
+	wdprs.obj       &
+	wdata.obj       &
+	dosexe.obj      &
+	wdglb.obj       &
+	os2exe.obj      &
+	wdseg.obj       &
+	wdtab.obj       &
+	wdfix.obj       &
+	wdres.obj       &
+	peexe.obj       &
+	wpetbls.obj     &
+	wperes.obj      &
+	novexe.obj      &
+	pharexe.obj     &
+	qnxexe.obj      &
+	elfexe.obj      &
+	wdwarf.obj      &
+	wsect.obj       &
+	wline.obj       &
+	dumpwv.obj      &
+	typewv.obj      &
+	coff.obj
+
+!include exetarg.mif
