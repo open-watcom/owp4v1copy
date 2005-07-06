@@ -193,6 +193,7 @@ positive_tests = &
     asm06.$(ext) &
     asm07.$(ext) &
     asm08.$(ext) &
+    asm09.$(ext) &
     assert1.$(ext) &
     alttok1.$(ext) &
     based01.$(ext) &

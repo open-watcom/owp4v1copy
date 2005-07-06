@@ -162,7 +162,8 @@ static void CInclude( void )
     struct {
         unsigned in_macro : 1;
     } flags;
-    auto char buf[_MAX_PATH];
+
+    auto char   buf[_MAX_PATH];
 
     SrcFileGuardStateSig();
     InitialMacroFlag = 0;
@@ -196,7 +197,9 @@ static void CInclude( void )
     } else {
         CErr1( ERR_INVALID_INCLUDE );
     }
-    if( CurToken != T_EOF )  NextToken();
+    if( CurToken != T_EOF ) {
+        NextToken();
+    }
 }
 
 static void CDefine( void )
@@ -553,7 +556,7 @@ static void CIf( void )
 
 static void CElif( void )
 {
-    int value;
+    int         value;
 
     SrcFileGuardPpElse();
     PPState = PPS_EOL | PPS_NO_LEX_ERRORS;
@@ -650,8 +653,8 @@ static void CUnDef( void )
 
 static void CLine( void )
 {
-    int adjust;
-    LINE_NO line;
+    int         adjust;
+    LINE_NO     line;
 
     PPState = PPS_EOL | PPS_NO_LEX_ERRORS;
     NextToken();
@@ -748,7 +751,8 @@ static void preProcStmt( void )
 int ChkControl(                 // CHECK AND PROCESS DIRECTIVES
     int expanding )
 {
-    int lines_skipped;
+    int         lines_skipped;
+    ppstate_t   save_ppstate;
 
     while( CurrChar == '\n' ) {
         SrcFileCurrentLocation();
@@ -757,6 +761,7 @@ int ChkControl(                 // CHECK AND PROCESS DIRECTIVES
             CSuicide();
         }
         lines_skipped = 0;
+        save_ppstate = PPState;
         for(;;) {
             if( CompFlags.cpp_output )  PrtChar( '\n' );
             NextChar();
@@ -765,7 +770,6 @@ int ChkControl(                 // CHECK AND PROCESS DIRECTIVES
                 SkipAhead();
             }
             if( CurrChar == LCHR_EOF ) break;
-            PPState = PPS_EOL | PPS_NO_EXPAND | PPS_NO_LEX_ERRORS;
 
             if( CurrChar == '%' ) {
                 NextChar();
@@ -777,19 +781,20 @@ int ChkControl(                 // CHECK AND PROCESS DIRECTIVES
                     CurrChar = '%';
                 }
             }
+            PPState = PPS_EOL | PPS_NO_EXPAND | PPS_NO_LEX_ERRORS;
             if( CurrChar == PreProcChar ) {
                 preProcStmt();
             } else if( NestLevel != SkipLevel ) {
                 NextToken();
                 flush2EOL();
             }
+            PPState = save_ppstate;
             if( NestLevel == SkipLevel ) break;
             if( CurrChar == LCHR_EOF ) break;
             if( CurrChar == '\n' ) {
                 lines_skipped = 1;
             }
         }
-        PPState = PPS_NORMAL;
         if( CompFlags.cpp_output ) {
             if( lines_skipped ) {
                 EmitLine( SrcFileLine(), SrcFileNameCurrent() );

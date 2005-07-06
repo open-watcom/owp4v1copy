@@ -452,15 +452,16 @@ REWRITE *RewritePackageFunction( PTREE multi )
     asm_depth = 0;
     depth = 1;          /* we've seen one '{' */
     for(;;) {
-        if( CurToken == T_EOF ) break;
+        if( CurToken == T_EOF )
+            break;
         DbgAssert( depth != 0 );
         switch( CurToken ) {
         case T_NULL:
 #ifndef NDEBUG
             DbgAssert( asm_depth != 0 );
 #endif
+            PPState = save_pp;
             if( depth == asm_depth ) {
-                PPState = save_pp;
                 asm_depth = 0;
                 PPStateAsm = FALSE;
             }
@@ -492,8 +493,12 @@ REWRITE *RewritePackageFunction( PTREE multi )
             saveToken( r, plocn );
         }
         skip_first = FALSE;
-        if( depth == 0 ) break;
+        if( depth == 0 )
+            break;
         NextToken();
+        if( PPStateAsm ) {
+            PPState = PPS_EOL;
+        }
     }
     PPState = save_pp;
     return( r );
