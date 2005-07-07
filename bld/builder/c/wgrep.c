@@ -749,7 +749,7 @@ static void executeWgrep( void )
                     char tmp_path[_MAX_PATH+1];
                     strcpy( tmp_path, PathBuff );
                     extendPath( tmp_path, dp->d_name );
-                    if( stat( tmp_path, &sblk ) == 0  && (sblk.st_mode & _S_IFDIR) ) {
+                    if( stat( tmp_path, &sblk ) == 0  && S_ISDIR( sblk.st_mode ) ) {
                         continue;
                     }
                 }
@@ -848,7 +848,7 @@ static void nextWgrep( char **paths )
     Stack = (dirstack *) SafeMalloc( sizeof( dirstack ) );
 
     while( *paths != NULL ) {
-        if( stat( *paths, &sblk ) == 0  && (sblk.st_mode & _S_IFDIR) ) {
+        if( stat( *paths, &sblk ) == 0  && S_ISDIR( sblk.st_mode ) ) {
             strcpy( Stack->name, *paths );
             strcpy( CurrPattern, "*.*" );
         } else {
