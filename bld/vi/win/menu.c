@@ -934,7 +934,7 @@ static void purgeOldMenuBottom( menu *cmenu )
         }
         while( cnt < cmenu->num_items ) {
             nitem = citem->next;
-            DeleteMenu( cmenu->menu_handle, citem->id, MF_BYCOMMAND );
+            DeleteMenu( cmenu->menu_handle, cmenu->orig_num_items, MF_BYPOSITION );
             DeleteLLItem( &cmenu->item_head, &cmenu->item_tail, (ss*)citem );
             MemFree( citem );
             citem = nitem;

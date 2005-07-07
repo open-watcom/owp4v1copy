@@ -39,7 +39,17 @@
 
 static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
                           "C++ Files (*.cpp;*.hpp)\0*.cpp;*.hpp\0"
-                          "Fortran Files (*.for;*.fi)\0*.for;*.fi\0"
+                          "Fortran Files (*.for;*.fi;*.f;*.inc)\0*.for;*.fi;*.f;*.inc\0"
+                          "Java(Script) Files (*.java;*.js)\0*.java;*.js\0"
+                          "SQL Files (*.sql)\0*.sql\0"
+                          "Batch Files (*.bat;*.cmd)\0*.bat;*.cmd\0"
+                          "Basic (*.bas;*.frm;*.cls)\0*.bas;*.frm;*.cls\0"
+                          "Perl Files (*.pl;*.cgi)\0*.pl;*.cgi\0"
+                          "HTML Files (*.htm;*.html;*.xhtml)\0*.htm;*.html;*.xhtml\0"
+                          "WML Files (*.wml)\0*.wml\0"
+                          "GML Files (*.gml)\0*.gml\0"
+                          "DBTest (*.tst)\0*.tst\0"
+                          "Makefiles (makefile;*.mk;*.mif;*.mak)\0makefile;*.mk;*.mif;*.mak\0"
                           "Asm Files (*.asm)\0*.asm\0"
                           "All Files (*.*)\0*.*\0"
                           "\0";
@@ -68,7 +78,7 @@ BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
         case IDOK:
             len = SendDlgItemMessage( hwnd, edt1, WM_GETTEXTLENGTH, 0, 0 );
             if( len >= of->nMaxFile ) {
-                FileNameList = MemAlloc( len + 1 );         
+                FileNameList = MemAlloc( len + 1 );
                 len = SendDlgItemMessage( hwnd, edt1, WM_GETTEXT, len+1, (LPARAM)FileNameList );
             }
         }
@@ -179,7 +189,7 @@ int SelectFileSave( char *result )
     of.nMaxFile = _MAX_PATH;
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = CurrentFile->home;
-#ifdef __NT__    
+#ifdef __NT__
     if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
         of.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
@@ -190,7 +200,7 @@ int SelectFileSave( char *result )
 #else
     of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN;
-#endif                      
+#endif
     of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
                       InstanceHandle );
     doit = GetSaveFileName( &of );

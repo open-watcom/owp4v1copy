@@ -130,13 +130,13 @@ int MoveScreenUpPageML( void )
 int MoveScreenLeftPageML( void )
 {
     return MoveScreenLeftRightML
-        ( LeftColumn - WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) );
+        ( LeftColumn - WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) + 2 );
 }
 
 int MoveScreenRightPageML( void )
 {
     return MoveScreenLeftRightML
-        ( LeftColumn + WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) );
+        ( LeftColumn + WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) - 2 );
 }
 
 /*
