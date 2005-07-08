@@ -233,7 +233,8 @@ int GenerateConfiguration( char *fname, bool is_cmdline )
         strcpy( token, GetTokenString( SetTokens1, i ) );
         strlwr( token );
         res = GetASetVal( token );
-        if( i == SET1_T_STATUSSTRING || i == SET1_T_FILEENDSTRING ) {
+        if( i == SET1_T_STATUSSTRING || i == SET1_T_FILEENDSTRING ||
+            i == SET1_T_HISTORYFILE || i == SET1_T_TMPDIR) {    /* strings with possible spaces */
             fmt = "set %s = \"%s\"\n";
         } else {
             fmt = "set %s = %s\n";
