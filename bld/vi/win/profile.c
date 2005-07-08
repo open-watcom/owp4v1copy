@@ -34,7 +34,10 @@
 #include <string.h>
 #include <dos.h>
 #include <io.h>
-#include <shlobj.h>
+#ifdef __NT__
+    #include <shlobj.h>
+    typedef HRESULT (WINAPI *GetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR);
+#endif
 #include <direct.h>
 
 #define CONFIG_INI "weditor.ini"
@@ -60,7 +63,6 @@ static bool     saveConfig;
 #else
 #define STUPIDINT       int
 #endif
-typedef HRESULT (WINAPI *GetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR);
 
 /*
  * getInt - parse an int from a string
