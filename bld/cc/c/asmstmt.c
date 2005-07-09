@@ -100,8 +100,7 @@ void AsmStmt( void )
     CompFlags.inside_asm_stmt = 1;
 
     NextToken();
-    AsmSysInit();
-    AsmSysSetCodeBuffer( buff );
+    AsmSysInit( buff );
     AsmSysSetCodeAddr( 0 );
     too_many_bytes = 0;
     if( CurToken == T_LEFT_BRACE ) {

@@ -203,6 +203,12 @@ void AsmSysInit( void )
     AsmCodeAddress = 0;
 }
 
+void AsmSysFini( void )
+/*********************/
+{
+
+}
+
 char const *AsmSysDefineByte( void )
 /**********************************/
 {

@@ -37,23 +37,24 @@
 
 #define MAX_INSTR_SIZE  64
 
-extern PTREE AsmStmt( void );
+extern PTREE        AsmStmt( void );
 
 // from CPRAGxxx
 
-extern boolean AsmSysInsertFixups( VBUF *code );
-extern void *AsmSysCreateAux( char *name );
-extern void AsmSysUsesAuto( void );
-extern void AsmSysInit( void );
-extern void AsmSysDone( void );
-extern uint_32 AsmSysAddress( void );
-extern void AsmSysSetCodeBuffer( void * );
-extern void AsmSysParseLine( char * );
-extern char const *AsmSysDefineByte( void );
-extern void AsmSysCopyCode( void );
+extern boolean      AsmSysInsertFixups( VBUF *code );
+extern void         *AsmSysCreateAux( char *name );
+extern void         AsmSysUsesAuto( void );
+extern void         AsmSysInit( void );
+extern void         AsmSysFini( void );
+extern void         AsmSysDone( void );
+extern uint_32      AsmSysAddress( void );
+extern void         AsmSysSetCodeBuffer( void * );
+extern void         AsmSysParseLine( char * );
+extern char const   *AsmSysDefineByte( void );
+extern void         AsmSysCopyCode( void );
 
 // in ASMALLOC
-void *AsmAlloc( unsigned );
-void AsmFree( void * );
+void    *AsmAlloc( unsigned );
+void    AsmFree( void * );
 
 #endif

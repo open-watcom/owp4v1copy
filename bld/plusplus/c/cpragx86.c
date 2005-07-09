@@ -59,6 +59,8 @@ static  hw_reg_set      FastParms[] = { HW_D( HW_ECX ), HW_D( HW_EDX ), HW_D( HW
 
 #define WCPP_ASM     // enable assembler
 
+static unsigned long    asm_CPU;
+
 static void pragmaInitInfo(     // INITIALIZE INFO STRUCTURE
     AUX_INFO *info,             // - structure to be inited
     call_class info_class,      // - class information
@@ -1135,6 +1137,13 @@ void AsmSysInit( void )
 /*********************/
 {
     Address = 0;
+    asm_CPU = GetAsmCPUInfo();
+}
+
+void AsmSysFini( void )
+/*********************/
+{
+    SetAsmCPUInfo( asm_CPU );
 }
 
 static char *copyCodeLen( char *d, void *v, unsigned len )
@@ -1283,6 +1292,7 @@ static int GetByteSeq(
     auto VBUF code_buffer;
 
     VbufInit( &code_buffer );
+    AsmSysInit();
     NextToken();
     i = 0;
     for(;;) {
@@ -1357,6 +1367,7 @@ static int GetByteSeq(
         VbufUsed( &code_buffer, i );
     }
     uses_auto = AsmSysInsertFixups( &code_buffer );
+    AsmSysFini();
     VbufFree( &code_buffer );
     return( uses_auto );
 }

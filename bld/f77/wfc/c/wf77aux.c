@@ -1361,23 +1361,31 @@ static  void    AddAFix( unsigned i, char *name, unsigned type,
 #endif
 
 
-static  void            GetByteSeq() {
-//====================================
+static  void    GetByteSeq( void ) {
+//==================================
 
-    int         seq_len;
-    int         len;
-    char        *ptr;
-    char        buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
+    int             seq_len;
+    int             len;
+    char            *ptr;
+    char            buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
+#if ( _TARGET == _8086 || _TARGET == _80386 )
+    unsigned long   asm_CPU;
+#endif
 #if _TARGET == _8086
-    bool        float_specified;
+    bool            float_specified;
 
     float_specified = FALSE;
 #endif
     seq_len = 0;
+#if ( _TARGET == _8086 || _TARGET == _80386 )
+    asm_CPU = GetAsmCPUInfo();
+#endif
     for(;;) {
         if( *TokStart == '"' ) {
-            if( TokStart == TokEnd - sizeof( char ) ) Suicide();
-            if( *(TokEnd - sizeof( char )) != '"' ) Suicide();
+            if( TokStart == TokEnd - sizeof( char ) )
+                Suicide();
+            if( *(TokEnd - sizeof( char )) != '"' )
+                Suicide();
             *(char *)(TokEnd - sizeof( char )) = NULLCHAR;
             Address = seq_len;
             CodeBuffer = (ASM_CODE_BUFF_TYPE)&buff[0];
@@ -1395,7 +1403,8 @@ static  void            GetByteSeq() {
 #endif
         } else {
             ptr = TokStart;
-            if( ( *ptr != 'Z' ) && ( *ptr != 'z' ) ) break;
+            if( ( *ptr != 'Z' ) && ( *ptr != 'z' ) )
+                break;
             ++ptr;
             len = MkHexConst( ptr, ptr, TokEnd - TokStart - 1 );
             if( len == 0 ) {
@@ -1414,6 +1423,9 @@ static  void            GetByteSeq() {
     }
     InsertFixups( buff, seq_len );
     AsmSymFini();
+#if ( _TARGET == _8086 || _TARGET == _80386 )
+    SetAsmCPUInfo( asm_CPU );
+#endif
 }
 
 

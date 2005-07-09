@@ -38,7 +38,7 @@
 
 #define ASMCODESTART    "0ASM"          // must be a non-usable string
 
-uint_32                 *AsmCodeBuffer;
+unsigned char           *AsmCodeBuffer;
 uint_32                 AsmCodeAddress;
 uint_32                 AsmLastAddress;
 asmreloc                *AsmRelocs;
@@ -65,7 +65,7 @@ static owl_offset tellOffset( void ) {
 static void doEmitData( char *buffer, int size ) {
 //************************************************
 
-    memcpy( &((char *)AsmCodeBuffer)[AsmCodeAddress], buffer, size );
+    memcpy( &AsmCodeBuffer[AsmCodeAddress], buffer, size );
     AsmCodeAddress += size;
     if( AsmCodeAddress > AsmLastAddress ) {
         AsmLastAddress = AsmCodeAddress;
@@ -182,7 +182,7 @@ static void doReloc( asmreloc *reloc ) {
     sym = SymLookup( reloc->name );
     displacement = relocTargetDisp( reloc->offset, getSymOffset( sym ) );
     bit_mask = relocBitMask( reloc );
-    data = (uint_32 *)&(((char *)AsmCodeBuffer)[ reloc->offset ]);
+    data = (uint_32 *)&AsmCodeBuffer[ reloc->offset ];
     *data = (*data&~bit_mask)|(((displacement&bit_mask)+(*data&bit_mask))&bit_mask);
 }
 
@@ -314,7 +314,7 @@ extern void ObjEmitRelocAddend( owl_reloc_type type, uint_32 addend ) {
     uint_32     *pdata;
 
     bit_mask = relocMasks[ type ];
-    pdata = (uint_32 *)&(((char *)AsmCodeBuffer)[ AsmCodeAddress ]);
+    pdata = (uint_32 *)&AsmCodeBuffer[ AsmCodeAddress ];
     *pdata = (*pdata&~bit_mask)|(((addend&bit_mask)+(*pdata&bit_mask))&bit_mask);
 }
 

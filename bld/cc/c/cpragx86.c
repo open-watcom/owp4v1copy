@@ -62,6 +62,8 @@ static  hw_reg_set      STOSBParms[] = {
 };
 #endif
 
+static unsigned long    asm_CPU;
+
 void PragmaInit( void )
 /*********************/
 {
@@ -802,11 +804,11 @@ local int GetByteSeq( void )
     int                 uses_auto;
     char                too_many_bytes;
 
+    AsmSysInit( buff );
     CompFlags.pre_processing = 1;       /* enable macros */
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    AsmSysSetCodeBuffer( buff );
     code_length = 0;
     for(;;) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
@@ -1083,15 +1085,18 @@ local void GetSaveInfo( void )
     }
 }
 
-void AsmSysInit( void )
-/*********************/
+void AsmSysInit( unsigned char *buf )
+/**************************/
 {
+    CodeBuffer = buf;
+    asm_CPU = GetAsmCPUInfo();
 }
 
 void AsmSysFini( void )
 /*********************/
 {
     AsmSymFini();
+    SetAsmCPUInfo( asm_CPU );
 }
 
 uint_32 AsmSysGetCodeAddr( void )
@@ -1104,12 +1109,6 @@ void AsmSysSetCodeAddr( uint_32 len )
 /***********************************/
 {
     Address = len;
-}
-
-void AsmSysSetCodeBuffer( void *buf )
-/***********************************/
-{
-    CodeBuffer = buf;
 }
 
 void AsmSysParseLine( char *line )

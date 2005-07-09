@@ -226,12 +226,11 @@ local int GetByteSeq( void )
     int                 uses_auto;
     char                too_many_bytes;
 
-    AsmInit();
+    AsmSysInit( buff );
     CompFlags.pre_processing = 1;       /* enable macros */
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    AsmSysSetCodeBuffer( buff );
     code_length = 0;
     for(;;) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
@@ -269,14 +268,15 @@ local int GetByteSeq( void )
     }
     FreeAsmFixups();
     CompFlags.pre_processing = 2;
-    AsmFini();
+    AsmSysFini();
     return( uses_auto );
 }
 
-void AsmSysInit( void )
-/*********************/
+void AsmSysInit( unsigned char *buf )
+/***********************************/
 {
     AsmInit();
+    AsmCodeBuffer = buf;
 }
 
 void AsmSysFini( void )
@@ -295,12 +295,6 @@ void AsmSysSetCodeAddr( uint_32 len )
 /***********************************/
 {
     AsmCodeAddress = len;
-}
-
-void AsmSysSetCodeBuffer( void *buf )
-/***********************************/
-{
-    AsmCodeBuffer = buf;
 }
 
 void AsmSysParseLine( char *line )

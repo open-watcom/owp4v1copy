@@ -40,9 +40,6 @@
 
 #define MAX_NUM_INS     256
 
-extern uint_32  *AsmCodeBuffer;
-extern uint_32  AsmCodeAddress;
-
 static uint_32  buffer[MAX_NUM_INS];
 static int      curLine;
 
@@ -137,7 +134,7 @@ void main( void ) {
 
     AsmInit();
     curLine = 0;
-    AsmCodeBuffer = buffer;
+    AsmCodeBuffer = (unsigned char*)buffer;
     AsmCodeAddress = 0;
     printf( "AsmCodeAddress = %u.\n", (unsigned)AsmCodeAddress );
     gets( in_str );
@@ -152,13 +149,13 @@ void main( void ) {
     }
 
     printf( "Generated [before internal fixup]:\n" );
-    for( ctr = 0; ctr < AsmCodeAddress / sizeof( *AsmCodeBuffer ); ctr++ ) {
-        printf( " [%#010x]\n", AsmCodeBuffer[ctr] );
+    for( ctr = 0; ctr < AsmCodeAddress / sizeof( buffer[0] ); ctr++ ) {
+        printf( " [%#010x]\n", buffer[ctr] );
     }
     AsmFini();
     printf( "Generated [after internal fixup]:\n" );
-    for( ctr = 0; ctr < AsmCodeAddress / sizeof( *AsmCodeBuffer ); ctr++ ) {
-        printf( " [%#010x]\n", AsmCodeBuffer[ctr] );
+    for( ctr = 0; ctr < AsmCodeAddress / sizeof( buffer[0] ); ctr++ ) {
+        printf( " [%#010x]\n", buffer[ctr] );
     }
 
     for( reloc = AsmRelocs; reloc; reloc = next ) {

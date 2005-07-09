@@ -223,6 +223,7 @@ PTREE AsmStmt( void )
     } else {
         expr = NULL;
     }
+    AsmSysFini();
     VbufFree( &code_buffer );
     return( expr );
 }
