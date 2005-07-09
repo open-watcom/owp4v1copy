@@ -41,6 +41,8 @@ local   void    GetRetInfo( void );
 local   void    GetSTRetInfo( void );
 local   void    GetSaveInfo( void );
 local   int     GetByteSeq( void );
+local   void    AsmSysAddCodeByte( unsigned char );
+local   void    AsmSysAddCodeAddr( uint_32 );
 
 extern  TREEPTR     CurFuncNode;
 
@@ -797,7 +799,6 @@ local int GetByteSeq( void )
 /**************************/
 {
     auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
-    int                 code_length;
     char                *name;
     unsigned long       offset;
     unsigned            fixword;
@@ -809,18 +810,15 @@ local int GetByteSeq( void )
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    code_length = 0;
     for(;;) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            AsmSysSetCodeAddr( code_length );
             AsmSysParseLine( Buffer );
-            code_length = AsmSysGetCodeAddr();
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
             }
         } else if( CurToken == T_CONSTANT ) {
-            buff[ code_length++ ] = Constant;
+            AsmSysAddCodeByte( Constant );
             NextToken();
         } else {
             fixword = FixupKeyword();
@@ -829,7 +827,7 @@ local int GetByteSeq( void )
             if( fixword == FIXWORD_FLOAT ) {
 #if _CPU == 8086
                 if( GET_FPU_EMU( ProcRevision ) ) {
-                    AddAFix( code_length, NULL, FIX_SEG, 0 );
+                    AddAFix( AsmSysGetCodeAddr(), NULL, FIX_SEG, 0 );
                 }
 #endif
             } else { /* seg or offset */
@@ -856,45 +854,45 @@ local int GetByteSeq( void )
                 switch( fixword ) {
                 case FIXWORD_RELOFF:
 #if _CPU == 8086
-                    AddAFix( code_length, name, FIX_RELOFF16, offset );
-                    code_length += 2;
+                    AddAFix( AsmSysGetCodeAddr(), name, FIX_RELOFF16, offset );
+                    AsmSysAddCodeAddr( 2 );
 #else
-                    AddAFix( code_length, name, FIX_RELOFF32, offset );
-                    code_length += 4;
+                    AddAFix( AsmSysGetCodeAddr(), name, FIX_RELOFF32, offset );
+                    AsmSysAddCodeAddr( 4 );
 #endif
                     break;
                 case FIXWORD_OFFSET:
 #if _CPU == 8086
-                    AddAFix( code_length, name, FIX_OFF16, offset );
-                    code_length += 2;
+                    AddAFix( AsmSysGetCodeAddr(), name, FIX_OFF16, offset );
+                    AsmSysAddCodeAddr( 2 );
 #else
-                    AddAFix( code_length, name, FIX_OFF32, offset );
-                    code_length += 4;
+                    AddAFix( AsmSysGetCodeAddr(), name, FIX_OFF32, offset );
+                    AsmSysAddCodeAddr( 4 );
 #endif
                     break;
                 case FIXWORD_SEGMENT:
-                    AddAFix( code_length, name, FIX_SEG, 0 );
-                    code_length += 2;
+                    AddAFix( AsmSysGetCodeAddr(), name, FIX_SEG, 0 );
+                    AsmSysAddCodeAddr( 2 );
                     break;
                 }
             }
         }
-        if( code_length > MAXIMUM_BYTESEQ ) {
+        if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
             if( ! too_many_bytes ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
-            code_length = 0;          // reset index to we don't overrun buffer
+            AsmSysSetCodeAddr( 0 );          // reset index to we don't overrun buffer
         }
     }
     if( too_many_bytes ) {
         FreeAsmFixups();
         uses_auto = 0;
     } else {
-        uses_auto = InsertFixups( buff, code_length );
+        uses_auto = InsertFixups( buff, AsmSysGetCodeAddr() );
     }
     CompFlags.pre_processing = 2;
-    AsmSymFini();
+    AsmSysFini();
     return( uses_auto );
 }
 
@@ -1090,6 +1088,7 @@ void AsmSysInit( unsigned char *buf )
 {
     CodeBuffer = buf;
     asm_CPU = GetAsmCPUInfo();
+    Address = 0;
 }
 
 void AsmSysFini( void )
@@ -1109,6 +1108,18 @@ void AsmSysSetCodeAddr( uint_32 len )
 /***********************************/
 {
     Address = len;
+}
+
+local void AsmSysAddCodeAddr( uint_32 len )
+/*****************************************/
+{
+    Address += len;
+}
+
+local void AsmSysAddCodeByte( unsigned char byte )
+/************************************************/
+{
+    CodeBuffer[Address++] = byte;
 }
 
 void AsmSysParseLine( char *line )

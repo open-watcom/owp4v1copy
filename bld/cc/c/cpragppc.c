@@ -35,6 +35,8 @@
 #include "asinline.h"
 #include "asmstmt.h"
 
+local   void    AsmSysAddCodeByte( unsigned char );
+
 static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
@@ -222,7 +224,6 @@ local int GetByteSeq( void )
 /**************************/
 {
     auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
-    int                 code_length;
     int                 uses_auto;
     char                too_many_bytes;
 
@@ -231,39 +232,38 @@ local int GetByteSeq( void )
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    code_length = 0;
     for(;;) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            AsmSysSetCodeAddr( code_length );
             AsmSysParseLine( Buffer );
-            code_length = AsmSysGetCodeAddr();
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
             }
         } else if( CurToken == T_CONSTANT ) {
-            buff[ code_length++ ] = Constant;
+            AsmSysAddCodeByte( Constant );
             NextToken();
         } else {
             break;
         }
-        if( code_length > MAXIMUM_BYTESEQ ) {
+        if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
             if( ! too_many_bytes ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
-            code_length = 0;          // reset index to we don't overrun buffer
+            AsmSysSetCodeAddr( 0 ); // reset index to we don't overrun buffer
         }
     }
     if( too_many_bytes ) {
         uses_auto = 0;
     } else {
         risc_byte_seq *seq;
+        uint_32       len;
 
-        seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + code_length );
+        len = AsmSysGetCodeAddr();
+        seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + len );
         seq->relocs = GetFixups();
-        seq->length = code_length;
-        memcpy( &seq->data[0], buff, code_length );
+        seq->length = len;
+        memcpy( &seq->data[0], buff, len );
         CurrInfo->code = seq;
     }
     FreeAsmFixups();
@@ -277,6 +277,7 @@ void AsmSysInit( unsigned char *buf )
 {
     AsmInit();
     AsmCodeBuffer = buf;
+    AsmCodeAddress = 0;
 }
 
 void AsmSysFini( void )
@@ -286,7 +287,7 @@ void AsmSysFini( void )
 }
 
 uint_32 AsmSysGetCodeAddr( void )
-/******************************/
+/*******************************/
 {
     return( AsmCodeAddress );
 }
@@ -295,6 +296,12 @@ void AsmSysSetCodeAddr( uint_32 len )
 /***********************************/
 {
     AsmCodeAddress = len;
+}
+
+local void AsmSysAddCodeByte( unsigned char byte )
+/************************************************/
+{
+    AsmCodeBuffer[AsmCodeAddress++] = byte;
 }
 
 void AsmSysParseLine( char *line )

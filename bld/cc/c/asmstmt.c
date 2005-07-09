@@ -101,7 +101,6 @@ void AsmStmt( void )
 
     NextToken();
     AsmSysInit( buff );
-    AsmSysSetCodeAddr( 0 );
     too_many_bytes = 0;
     if( CurToken == T_LEFT_BRACE ) {
         NextToken();
