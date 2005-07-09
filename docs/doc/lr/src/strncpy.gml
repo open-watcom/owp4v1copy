@@ -83,21 +83,21 @@ The &func function returns the value of
 .arg dst.
 .return end
 .see begin
-.seelist strncpy strcpy strdup
+.seelist strncpy strlcpy strcpy strdup
 .see end
 .exmp begin
 #include <stdio.h>
 #include <string.h>
 
-void main()
-  {
+void main( void )
+{
     char buffer[15];
 .exmp break
     printf( "%s\n", strncpy( buffer, "abcdefg", 10 ) );
     printf( "%s\n", strncpy( buffer, "1234567",  6 ) );
     printf( "%s\n", strncpy( buffer, "abcdefg",  3 ) );
     printf( "%s\n", strncpy( buffer, "*******",  0 ) );
-  }
+}
 .exmp output
 abcdefg
 123456g

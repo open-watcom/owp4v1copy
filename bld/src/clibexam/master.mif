@@ -443,6 +443,8 @@ strdup.exe &
 strerror.exe &
 strftime.exe &
 stricmp.exe &
+strlcat.exe &
+strlcpy.exe &
 strlen.exe &
 strlwr.exe &
 strncase.exe &

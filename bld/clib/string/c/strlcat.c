@@ -34,8 +34,6 @@
 #include <string.h>
 
 
-/* concatenate t to the end of dst */
-
 _WCRTLINK size_t __F_NAME(strlcat,wcslcat)( CHAR_TYPE *dst, const CHAR_TYPE *t, size_t n )
 {
     CHAR_TYPE   *s;
@@ -50,15 +48,21 @@ _WCRTLINK size_t __F_NAME(strlcat,wcslcat)( CHAR_TYPE *dst, const CHAR_TYPE *t, 
     // If no null char was found in dst, the buffer is messed up; don't
     // touch it
     if( *s == NULLCHAR ) {
-        n = len;
-        while( n != 0 ) {
+        --len;      // Decrement len to leave space for terminating null
+        while( len != 0 ) {
             *s = *t;
-            if( *s == NULLCHAR ) break;
+            if( *s == NULLCHAR ) {
+                return( n - len - 1 );
+            }
             ++s;
             ++t;
-            --n;
+            --len;
         }
+        // Buffer not large enough. Terminate and figure out desired length
         *s = NULLCHAR;
+        while( *t++ != NULLCHAR )
+            ++n;
+        --n;
     }
     return( n );
 }

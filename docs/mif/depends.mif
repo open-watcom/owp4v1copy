@@ -1778,6 +1778,8 @@ $(docsrc_dir)\lr\src\strftime.gml &
 $(docsrc_dir)\lr\src\stricmp.gml &
 $(docsrc_dir)\lr\src\stricoll.gml &
 $(docsrc_dir)\lr\src\strinc.gml &
+$(docsrc_dir)\lr\src\strlcat.gml &
+$(docsrc_dir)\lr\src\strlcpy.gml &
 $(docsrc_dir)\lr\src\strlen.gml &
 $(docsrc_dir)\lr\src\strlwr.gml &
 $(docsrc_dir)\lr\src\strncase.gml &

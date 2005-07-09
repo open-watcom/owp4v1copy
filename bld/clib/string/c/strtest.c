@@ -57,6 +57,7 @@ void TestToken( void );
 void TestLocale( void );
 void TestError( void );
 void TestFormatted( void );
+void TestBounded( void );
 void Test__vbprintf( char *buf, char *format, ... );
 int  Test_vsscanf( char *buf, char *format, ... );
 void Test_vsprintf( char *buf, char *format, ... );
@@ -104,6 +105,7 @@ int main( int argc, char *argv[] )
     TestLocale();                               /* locale stuff */
     TestError();                                /* error string stuff */
     TestFormatted();                            /* formatted I/O stuff */
+    TestBounded();                              /* bounded string stuff */
     #if !defined(__AXP__)
         TestCompareF();
         TestMoveF();
@@ -268,6 +270,47 @@ void TestMove( void )
     newBuf = strdup( bufA );                    /* duplicate string */
     status = strcmp( bufA, newBuf );
     VERIFY( status == 0 );
+}
+
+
+/****
+***** Test strlcpy() and strlcat().
+****/
+
+void TestBounded( void )
+{
+    char            bufA[80] = "FoO baR gOoBeR bLaH";
+    char            bufB[80];
+    char            *bufPtr;
+    int             status;
+    size_t          len;
+
+    len = strlcpy( bufB, "FoO baR", sizeof( bufB ) ); /* copy string */
+    VERIFY( len == strlen( "FoO baR" ) );
+
+    len = strlcat( bufB, " gOoBeR bLaH", sizeof( bufB ) ); /* append rest */
+    VERIFY( len == strlen( bufA ) );
+
+    status = strcmp( bufA, bufB );              /* check result */
+    VERIFY( status == 0 );
+
+    bufPtr = strset( bufB, 0x00 );              /* zero out buffer */
+    VERIFY( bufPtr == bufB );
+
+    len = strlcpy( bufB, "ABCDEFGHIJ", 3 );     /* copy two chars */
+    VERIFY( len == strlen( "ABCDEFGHIJ" ) );
+
+    len = strlcat( bufB, "CDEFGHIJ", 6 );       /* copy three more */
+    VERIFY( len == strlen( "ABCDEFGHIJ" ) );
+
+    status = strcmp( bufB, "ABCDE" );           /* ensure only five chars */
+    VERIFY( status == 0 );
+
+    len = strlcat( bufB, "junk", 3 );           /* ensure no running off */
+    VERIFY( len == 3 );
+
+    bufPtr = strnset( bufB, 0x00, 10 );         /* blank string */
+    VERIFY( bufPtr == bufB );
 }
 
 

@@ -67,7 +67,7 @@ The &func function returns the value of
 .arg dst.
 .return end
 .see begin
-.seelist strncat strcat
+.seelist strncat strcat strlcat
 .see end
 .exmp begin
 #include <stdio.h>
@@ -75,14 +75,14 @@ The &func function returns the value of
 
 char buffer[80];
 
-void main()
-  {
+void main( void )
+{
     strcpy( buffer, "Hello " );
     strncat( buffer, "world", 8 );
     printf( "%s\n", buffer );
     strncat( buffer, "*************", 4 );
     printf( "%s\n", buffer );
-  }
+}
 .exmp output
 Hello world
 Hello world****

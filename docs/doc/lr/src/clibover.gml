@@ -128,12 +128,10 @@ These functions are concerned with allocating and deallocating memory.
 .do end
 .*
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .note Heap Functions
 .sk 0
 These functions provide the ability to shrink and grow the heap,
 as well as, find heap related problems.
-.do end
 .do end
 .*
 .note Math Functions
@@ -179,11 +177,7 @@ blocks of memory or under format control.
 .if '&machsys' ne 'FOX' .do begin
 .note Process Primitive Functions
 .sk 0
-.if '&machsys' eq 'PP' .do begin
-These functions deal with process execution, termination,
-and signal handling.
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 These functions deal with process creation, execution and termination,
 signal handling, and timer operations.
 .do end
@@ -196,14 +190,9 @@ signal handling, and timer operations.
 .note Process Environment
 .sk 0
 These functions deal with process identification,
-.if '&machsys' ne 'PP' .do begin
 user identification, process groups, system identification,
-.do end
 system time and process time, environment variables,
-.if '&machsys' ne 'PP' .do begin
-terminal identification,
-.do end
-and configurable system variables.
+terminal identification, and configurable system variables.
 .*
 .note Directory Functions
 .sk 0
@@ -211,7 +200,7 @@ These functions provide directory services.
 .*
 .note Operating System I/O Functions
 .sk 0
-.if '&machsys' eq 'QNX' or '&machsys' eq 'PP' .do begin
+.if '&machsys' eq 'QNX' .do begin
 These functions are described in the "IEEE Standard Portable Operating
 System Interface for Computer Environments" (POSIX 1003.1).
 The POSIX input/output functions provide the capability to perform I/O
@@ -251,21 +240,17 @@ filenames is also provided.
 .do end
 .*
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .note Console I/O Functions
 .sk 0
 These functions provide the capability to directly read and write
 characters from the console.
 .do end
-.do end
 .*
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .note Default Windowing Functions
 .sk 0
 These functions provide the capability to manipulate various dialog
 boxes in &company's default windowing system.
-.do end
 .do end
 .*
 .if '&machsys' eq 'QNX' .do begin
@@ -315,7 +300,6 @@ message passing.
 These functions provide access to low-level QNX facilities.
 .do end
 .*
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .if '&machsys' ne 'WIN32' .do begin
 .note BIOS Functions
@@ -323,14 +307,11 @@ These functions provide access to low-level QNX facilities.
 This set of functions allows access to services provided by the BIOS.
 .do end
 .do end
-.do end
 .*
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .note DOS-Specific Functions
 .sk 0
 This set of functions allows access to DOS-specific functions.
-.do end
 .do end
 .*
 .note Intel 80x86 Architecture-Specific Functions
@@ -635,6 +616,8 @@ which marks the end of the string.
 .fd *fun="strerror" get error message as string
 .fd *fun="_stricmp" compare two strings with case insensitivity
 .fd *fun="_strinc" return pointer to next character in string
+.fd *fun="strlcat" concatenate string into a bounded buffer
+.fd *fun="strlcpy" copy string into a bounded buffer
 .fd *fun="strlen" string length
 .fd *fun="_strlwr" convert string to lowercase
 .fd *fun="strncat" concatenate two strings, up to a maximum length
@@ -725,6 +708,8 @@ regardless of which memory model your program has been compiled for.
 .fd *fun="wcserror" get error message as string
 .fd *fun="_wcsicmp" compare two strings with case insensitivity
 .fd *fun="_wcsinc" return pointer to next character in string
+.fd *fun="wcslcat" concatenate string into a bounded buffer
+.fd *fun="wcslcpy" copy string into a bounded buffer
 .fd *fun="wcslen" string length
 .fd *fun="_wcslwr" convert string to lowercase
 .fd *fun="wcsncat" concatenate two strings, up to a maximum length
@@ -1268,7 +1253,6 @@ structure is returned.
 This pointer is used to reference the stream when other functions
 are subsequently invoked.
 .if '&machsys' ne 'QNX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .np
 There are two modes by which data can be transmitted:
 .begnote
@@ -1285,7 +1269,6 @@ These modes are required since text files are stored with the two
 characters delimiting a line of text, while the C convention is
 for only the linefeed character to delimit a text line.
 .do end
-.do end
 .np
 When a program begins execution, there are a number of streams
 already open for use:
@@ -1294,15 +1277,9 @@ already open for use:
 .ix '&KbIo' stdin
 .ix stdin
 Standard Input: input from the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console
 .note stdout
 Standard Output: output to the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console
 .ix '&KbIo' stdout
 .ix stdout
@@ -1310,11 +1287,7 @@ console
 .ix '&Errs' stderr
 .ix stderr
 Standard Error: output to the
-.if '&machsys' eq 'PP' .do begin
-debug
-.do end
 console (used for error messages)
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .note stdaux
 .ix stdaux
@@ -1324,7 +1297,6 @@ Standard Auxiliary: auxiliary port, available for use by a program
 .ix stdprn
 Standard Printer: available for use by a program
 (not available in some Windows platforms)
-.do end
 .do end
 .endnote
 .np
@@ -1476,11 +1448,7 @@ for functions which are related to directories.
 .*
 .np
 .ix '&Process'
-.if '&machsys' eq 'PP' .do begin
-These functions deal with process execution, termination,
-and signal handling.
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 These functions deal with process creation, execution and termination,
 signal handling, and timer operations.
 .do end
@@ -1789,7 +1757,6 @@ filenames is also provided.
 .fdend
 .*======================================================================
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .section Console I/O Functions
 .*
 .np
@@ -1812,11 +1779,9 @@ not opened or closed), since the functions operate at the hardware level.
 .fd *fun="ungetch" push back next character from console
 .fdend
 .do end
-.do end
 .*======================================================================
 .if '&machsys' ne 'QNX' .do begin
 .if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .section Default Windowing Functions
 .*
 .np
@@ -1833,7 +1798,6 @@ Microsoft Windows and IBM OS/2.
 .fd *fun="_dwShutDown" shut down default windowing system
 .fd *fun="_dwYield" yield control to other processes
 .fdend
-.do end
 .do end
 .do end
 .*======================================================================
@@ -2169,7 +2133,6 @@ directly from a program.
 .fdend
 .do end
 .*======================================================================
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .if '&machsys' ne 'WIN32' .do begin
 .section BIOS Functions
@@ -2188,9 +2151,7 @@ This set of functions allows access to services provided by the BIOS.
 .fdend
 .do end
 .do end
-.do end
 .*======================================================================
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .section DOS-Specific Functions
 .*
@@ -2234,7 +2195,6 @@ directly from a program.
 .fd *fun="_wdos_findfirst" find first file matching a specified pattern
 .fd *fun="_wdos_findnext" find the next file matching a specified pattern
 .fdend
-.do end
 .do end
 .*======================================================================
 .section Intel 80x86 Architecture-Specific Functions
@@ -2411,19 +2371,7 @@ The value of the variable is used by various time functions to compute
 times relative to Coordinated Universal Time (UTC) (formerly known as
 Greenwich Mean Time (GMT)).
 .np
-.if '&machsys' eq 'PP' .do begin
-The time on the computer should be set to the local time.
-.ix 'menu' 'Preferences'
-.ix 'Preferences menu'
-Use the
-.mono Time
-and the
-.mono Date
-entries of the
-.mono Preferences
-menu to set the local time.
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 The time on the computer should be set to UTC.
 Use the
 .qnxcmd date
@@ -2441,18 +2389,7 @@ if the time is not automatically maintained by the computer hardware.
 The
 .kw TZ
 environment variable can be set (before the program is executed) by
-.if '&machsys' eq 'PP' .do begin
-defining the
-.kw TZ
-variable in the
-.ix 'environ.ini'
-.mono environ.ini
-file as follows:
-.millust begin
-    TZ=PST8PDT
-.millust end
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 using the
 .qnxcmd export
 as follows:

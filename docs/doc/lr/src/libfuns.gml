@@ -1282,6 +1282,10 @@
 .fnw _wcsinc                    strinc.gml      DOS QNX W WIN32
 .fnm _mbsinc                    strinc.gml      DOS       WIN32
 .fnn _fmbsinc                   strinc.gml      DOS       WIN32
+.fnc strlcat                    strlcat.gml     DOS QNX W WIN32
+.fnw wcslcat                    strlcat.gml     DOS QNX W WIN32
+.fnc strlcpy                    strlcpy.gml     DOS QNX W WIN32
+.fnw wcslcpy                    strlcpy.gml     DOS QNX W WIN32
 .fnc strlen                     strlen.gml      DOS QNX W WIN32
 .fnf _fstrlen                   strlen.gml      DOS QNX W WIN32
 .fnw wcslen                     strlen.gml      DOS QNX W WIN32
