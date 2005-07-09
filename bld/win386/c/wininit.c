@@ -492,7 +492,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
 extern void RelocateDWORD( short, long, long );
 extern void RelocateWORD( short, long, short );
 
-#pragma aux RelocateDWORD = ".386p " \
+#pragma aux RelocateDWORD = \
         "mov     es,si" \
         "shl     edx,16" \
         "mov     dx,ax" \
