@@ -356,7 +356,7 @@ void warning(
     bool                line_num
 ) {
     if( line_num ) {
-        printf( "Error in input file on line %d.\n", Line_num );
+        printf( "Warning - in input file on line %d.\n", Line_num );
     }
     warning_str( Error_list[err] );
 }
@@ -859,13 +859,13 @@ bool read_line(
     for( ;; ) {
         ++Line_num;
         for( buf = Line_buf, len = 0;; ++buf ) {
-            #ifdef __QNX__
-                do {
-                    ch = fgetc( In_file );
-                } while( ch == '\r' );
-            #else
+#ifdef __QNX__
+            do {
                 ch = fgetc( In_file );
-            #endif
+            } while( ch == '\r' );
+#else
+            ch = fgetc( In_file );
+#endif
             if( ch == EOF ) {
                 return( FALSE );
             }
@@ -1346,7 +1346,7 @@ static void add_ctx(
             ptr = end + 1;
         }
     }
-    if( Do_topic_keyword ) {
+    if( Do_topic_keyword && ( keywords != NULL )) {
         add_ctx_keyword( ctx, ctx->title );
     }
 
@@ -1399,6 +1399,7 @@ static ctx_def *define_ctx(
     char                *browse_name;
     char                *ctx_name;
     ctx_def             *ctx;
+    ctx_def             *old_ctx;
     int                 title_fmt;
     int                 head_level;
     char                *ptr;
@@ -1418,14 +1419,16 @@ static ctx_def *define_ctx(
         title_fmt = TITLE_FMT_NOLINE;
         ++ctx_name;
     }
-
     ctx = find_ctx( ctx_name );
+    old_ctx = ctx;
     if( ctx != NULL && ctx->title != NULL ) {
-        printf( "topic already exists: %s\n", ctx_name );
-        warning( ERR_CTX_EXISTS, TRUE );
+        if(( head_level != 0 ) && ( ctx->head_level != 0 )) {
+            printf( "topic already exists: %s\n", ctx_name );
+            warning( ERR_CTX_EXISTS, TRUE );
+        }
         for( i = 0; i < strlen( ctx_name ); ++i ) {
             o_ch = ctx_name[i];
-            for( ch = 'A'; ch < 'Y'; ++ch ) {
+            for( ch = 'A'; ch < 'Z'; ++ch ) {
                 ctx_name[i] = ch;
                 if( find_ctx( ctx_name ) == NULL ) {
                     break;
@@ -1456,6 +1459,15 @@ static ctx_def *define_ctx(
     }
     ctx->title_fmt = title_fmt;
     add_ctx( ctx, title, keywords, browse_name, head_level );
+
+    if(( old_ctx != NULL )
+      && ( old_ctx != ctx )
+      && ( old_ctx->head_level == 0 )) {
+        ptr = old_ctx->ctx_name;
+        old_ctx->ctx_name = ctx->ctx_name;
+        ctx->ctx_name = ptr;
+    }
+
     return( ctx );
 }
 
