@@ -2581,3 +2581,21 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
         make_inst_hash_table();
     }
 }
+
+#ifndef _WASM_
+
+unsigned long GetAsmCPUInfo( void )
+{
+    return( Code->info.cpu );
+}
+
+unsigned long SetAsmCPUInfo( unsigned long new )
+{
+    unsigned long old;
+
+    old = Code->info.cpu;
+    Code->info.cpu = new;
+    return( old );
+}
+
+#endif

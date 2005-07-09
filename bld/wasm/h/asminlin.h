@@ -145,4 +145,11 @@ extern void                     AsmLine( char * );
 extern void                     AsmInit( int, int, int, int );
 extern void                     AsmSymFini( void );
 
+#ifndef _WASM_
+
+extern unsigned long            GetAsmCPUInfo( void );
+extern unsigned long            SetAsmCPUInfo( unsigned long );
+
+#endif
+
 #endif
