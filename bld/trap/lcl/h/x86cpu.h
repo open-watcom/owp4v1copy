@@ -35,11 +35,14 @@
 
 #ifdef __WATCOMC__
 
+#if _M_IX86 > 100
+
 #pragma aux GetMSW = \
-        ".286p"      \
         "smsw ax"    \
         value [ax];
 extern unsigned short GetMSW( void );
+
+#endif
 
 #define MSW_EM       0x04
 
