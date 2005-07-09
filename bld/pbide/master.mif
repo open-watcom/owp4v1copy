@@ -5,8 +5,8 @@ proj_name = pbide
 !include defrule.mif
 
 dlldbg.exe : dlldbg.obj dlldbg.res
-         $(linker) op map $(lflags) name $^. file dlldbg.obj
-         $(rc) -k dlldbg.res $^@
+        $(linker) op map $(lflags) name $^. file dlldbg.obj
+        $(rc) -k dlldbg.res $^@
 
 .c: ..
 
