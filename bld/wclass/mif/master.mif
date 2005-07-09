@@ -1,6 +1,8 @@
 proj_name = wclass
 name = wclass
 
+wclass_autodepends = .autodepend
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
