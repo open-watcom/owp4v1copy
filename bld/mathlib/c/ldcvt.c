@@ -222,7 +222,7 @@ static void _do_LDScale10x( long_double _WCNEAR *ld, int scale )
     if( scale != 0 ) {
         #if defined(_LONG_DOUBLE_) && defined(__FPI__)
             unsigned short _8087cw = __Get87CW();
-            __Set87CW( _8087cw | 0x0300 ); // make sure extended precision
+            __Set87CW( _8087cw | _PC_64 ); // make sure extended precision
         #endif
         factor.exponent  = 0x3FFF;              // set factor = 1.0
         factor.high_word = 0x80000000;
@@ -496,7 +496,7 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
     int         maxsize;
     #if defined(_LONG_DOUBLE_) && defined(__FPI__)
         unsigned short _8087cw = __Get87CW();
-        __Set87CW( _8087cw | 0x0300 );  // make sure extended precision
+        __Set87CW( _8087cw | _PC_64 );  // make sure extended precision
     #endif
 
     cvt->sign = 0;
