@@ -34,27 +34,36 @@
 #include <math.h>
 #include "rtdata.h"
 
-extern  void    __fclex(), __fstsw();
+extern  void    __fclex( void );
+extern  void    __fstsw( unsigned short * );
 
 #if defined(__386__)
-#pragma aux     __fclex = 0xdb 0xe2;
-#pragma aux     __fstsw = 0x36 0xdd 0x3f 0x9b parm caller [edi];
-                        /* fstsw ss:[edi] */
-                        /* fwait         */
+#pragma aux __fclex = \
+                ".387" \
+                "fclex";
+#pragma aux __fstsw = \
+                ".387" \
+                "fstsw ss:[edi]" \
+                "fwait" \
+                parm caller [edi];
 #else
-#pragma aux     __fclex = float 0x9b 0xdb 0xe2;
-#pragma aux     __fstsw = 0x95                  /* xchg ax,bp */\
-                          float 0x9b 0xdd 0x7e 0x00  /* fstsw 0[bp]*/\
-                          float 0x9b 0xd9 0xd0  /* fnop       */\
-                          0x95                  /* xchg ax,bp */\
-                          parm caller [ax];
+#pragma aux __fclex = \
+                ".8087" \
+                float "fclex";
+#pragma aux __fstsw = \
+                ".8087" \
+                "xchg ax,bp" \
+                float "fstsw 0[bp]" \
+                float "fnop" \
+                "xchg ax,bp" \
+                parm caller [ax];
 #endif
 
 
-_WMRTLINK unsigned _status87()
-/******************/
+_WMRTLINK unsigned _status87( void )
+/**********************************/
 {
-    auto int status;
+    auto unsigned short status;
 
     status = 0;
     if( _RWD_8087 ) {
@@ -64,8 +73,8 @@ _WMRTLINK unsigned _status87()
 }
 
 
-_WMRTLINK unsigned _clear87()
-/*****************/
+_WMRTLINK unsigned _clear87( void )
+/*********************************/
 {
     register int status;
 
