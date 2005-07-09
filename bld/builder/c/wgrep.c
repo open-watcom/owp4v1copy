@@ -78,7 +78,7 @@ typedef struct dirstack {
     char                 name[ _MAX_PATH ];
 } dirstack;
 
-// Default list of file extensions that we will not search when -i is specified.
+// Default list of file extensions that we will not search when -g is specified.
 
 char    *DefIgnoredExt = {
         ".aps"
@@ -213,11 +213,10 @@ char *Help[] = {
 "           - file may refer to an environment variable using % (e.g., %include)",
 "",
 "    option -a        Print each file name as it is searched",
-"           -c        Make search case sensitive",
+"           -c        Print only number of lines that contain matches",
 "           -d        Display command line arguments",
 "           -f        Don't print file names",
-"           -h        Display this usage message",
-"           -i[list]  Ignore files with specific extensions.",
+"           -g[list]  Ignore files with specific extensions.",
 "                     The default list of extensions includes:",
 "                       .aps .avi .bin .bmp .class .cur .db .dll .doc .exe .fts",
 "                       .gid .gif .hlp .ico .ilk .jar .jpg .lib .mch .mcp .mp3",
@@ -225,14 +224,15 @@ char *Help[] = {
 "                     The default list can be overridden using the WGREPIGNORE",
 "                     environment variable. The list of extensions are of the",
 "                     the form '.exe.obj.dll'. Additional extensions may be",
-"                     included after the -i (e.g., -i.prj.tmp.log).",
-"           -l        Suppress 'File:' and '1234:' on beginning of output lines",
-"           -m        Don't print matching lines",
-"           -n        Print number of lines that contain matches",
+"                     included after the -g (e.g., -g.prj.tmp.log).",
+"           -h        Display this usage message",
+"           -i        Make search case insensitive",
+"           -l        Print matching file names only",
+"           -n        Print 'File:' and '1234:' on beginning of output lines",
 "           -ofn(fmt) Create a list of files with matches in fn, using printf",
 "                     format string fmt - %s is replaced with the file name",
 "                                       - \\b is replaced with a blank",
-"                     fn defaults to TMP.BAT",
+"                     fn defaults to tmp.bat",
 "                     fmt defaults to (%s)",
 "           -p        Include full path specification",
 "           -q        Don't print anything (quiet)",
@@ -279,7 +279,7 @@ static void GetDefIgnoreList( char *extra ) {
     unsigned    pass;
 
     exts = 0;
-    extra += 2; // skip the -i
+    extra += 2; // skip the -g
     ptr = extra;
     if( *ptr != '\0' ) {
         ptr++;  // in case the string doesn't start with a "."
@@ -440,7 +440,7 @@ static wbool outputMatch( char *where, size_t read, wbool disp )
             while( --i >= 0 ) {
                 do { // find the end of record
                     ++endrec;
-                } while( *endrec != '\n' && endrec != ( Buff + read + 1 ) );
+                } while( *endrec != '\n' && endrec != (Buff + read + 1) );
             }
             if( PrtLines ) {
                 printf( "%.5u: ", Recs );
@@ -703,7 +703,9 @@ static void performSearch( char *fn )
     if( io != STDIN_FILENO ) {
         close( io );
     }
-    if( PrtCount && (MatchCount != 0) ) printf( "Lines: %d\n", MatchCount );
+    if( PrtCount && (MatchCount != 0) ) {
+        printf( "Lines: %d\r\n", MatchCount );
+    }
 }
 
 static void extendPath( char *path, char *ext )
@@ -1053,7 +1055,7 @@ static void printHelp( void )
     int         i;
 
     for( i = 0; Help[ i ]; ++i ) {
-        printf( "%s\r\n", Help[ i ] );
+        printf( "%s\n", Help[ i ] );
     }
 }
 
@@ -1073,8 +1075,6 @@ int main( int argc, char **argv ) {
     char        **currs;
     char        *allfiles[2];
 
-    CurOutMode = 0x1234;        /* it's a hack... */
-    OutMode( O_BINARY );
     argc = argc;
     ++argv;
     if( argv[0] == NULL || argv[0][0] == '?' ) {
@@ -1090,14 +1090,14 @@ int main( int argc, char **argv ) {
     }
     prtcmd = FALSE;
 #endif
-    ignore = TRUE;                      // initialize options
+    ignore = FALSE;                 // initialize options
     PrtAll = FALSE;
     PrtCount = FALSE;
     PrtPath = FALSE;
     QuitFirst = FALSE;
     OnePerFile = FALSE;
     PrtMatch = TRUE;
-    PrtLines = TRUE;
+    PrtLines = FALSE;
     PrtFiles = TRUE;
     Similar = FALSE;
     NoSubstring = FALSE;
@@ -1116,31 +1116,32 @@ int main( int argc, char **argv ) {
             PrtAll = TRUE;
             break;
         case 'c':
-            ignore = FALSE;
+            PrtCount = TRUE;
+            PrtMatch = FALSE;
             break;
 #if defined( __WATCOMC__ )
         case 'd':
             prtcmd = TRUE;
             break;
 #endif
+        case 'f':
+            PrtFiles = FALSE;
+            break;
+        case 'g':
+            GetDefIgnoreList( argv[0] );
+            break;
         case 'h':
         case '?':
             printHelp( );
             exit( 2 );
         case 'i':
-            GetDefIgnoreList( argv[0] );
-            break;
-        case 'f':
-            PrtFiles = FALSE;
+            ignore = TRUE;
             break;
         case 'l':
-            PrtLines = FALSE;
-            break;
-        case 'm':
             PrtMatch = FALSE;
             break;
         case 'n':
-            PrtCount = TRUE;
+            PrtLines = TRUE;
             break;
         case 'o':
             lf = *argv + 2;
@@ -1191,12 +1192,15 @@ int main( int argc, char **argv ) {
         printf( "Demarcated command line arguments: [%s]\n", cmdline );
     }
 #endif
+
     argv = parseSearchStrings( argv );
     if( SrchStrings[ 0 ] == NULL ) {
         printHelp();
     } else {
+        CurOutMode = 0x1234;        /* it's a hack... */
+        OutMode( O_BINARY );
         if( lf != NULL ) {
-            if( !*lf ) lf = "TMP.BAT(%s)";
+            if( !*lf ) lf = "tmp.bat(%s)";
             p = strchr( lf, '(' );
             if( p ) {
                 *p = '\0';
@@ -1210,7 +1214,7 @@ int main( int argc, char **argv ) {
             } else {
                 FOutFmt = "%s";
             }
-            if( !*lf ) lf = "TMP.BAT";
+            if( !*lf ) lf = "tmp.bat";
             FOut = fopen( lf, "w+" );
             if( FOut == NULL ) {
                 Error( "Cannot open output file", lf );
