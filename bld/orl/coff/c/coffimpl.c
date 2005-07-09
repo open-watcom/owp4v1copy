@@ -307,28 +307,41 @@ I got following information from Microsoft about name type and name conversion.
     IMPORT_OBJECT_NAME_UNDECORATE = 3,  // Import name == public symbol name skipping leading ?, @, or optionally _
                                         // and truncating at first @
 */
-    // this is stupid, probably it needs improvement
-    // there is no more information from Microsoft 
-    // about name undecorating.
+    // Note:
+    // IMPORT_OBJECT_NAME_NO_PREFIX is used for C symbols with underscore as prefix
+    // IMPORT_OBJECT_NAME_UNDECORATE is used for __stdcall and __fastcall name mangling
+    // __stdcall uses underscore as prefix and @nn as suffix
+    // __fastcall uses @ as prefix and @nn as suffix
 
-    switch (type) {
-    case IMPORT_OBJECT_ORDINAL:
-    case IMPORT_OBJECT_NAME:
-        break;
-    case IMPORT_OBJECT_NAME_NO_PREFIX:
-    case IMPORT_OBJECT_NAME_UNDECORATE:
-        while ((*src != 0) && ((*src == '?') || (*src == '@') || (*src == '_'))) {
-            src++;
+    // this solution is stupid, probably it needs improvement
+    // there is no more information from Microsoft 
+
+    if( *src != 0 ) {
+        switch (type) {
+        case IMPORT_OBJECT_ORDINAL:
+        case IMPORT_OBJECT_NAME:
+            break;
+        case IMPORT_OBJECT_NAME_UNDECORATE:
+            // remove suffix @nn or @ if any
+            end = src + strlen( src );
+            while( end != src ) {
+                --end;
+                if( *end < '0' || *end > '9' ) {
+                    if( *end == '@' ) {
+                        *end = 0;
+                    }
+                    break;
+                }
+            }
+            // fall through
+        case IMPORT_OBJECT_NAME_NO_PREFIX:
+            // remove prefix @ or _ if any
+            if(( *src == '@' ) || ( *src == '_' ))
+                src++;
+            break;
         }
-        if (type == IMPORT_OBJECT_NAME_NO_PREFIX) break;
-        end = src;
-        while ((*end != 0) && (*end != '@')) {
-            end++;
-        }
-        *end = 0;
-        break;
     }
-    return src;
+    return( src );
 }
 
 static int CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import )
