@@ -45,7 +45,6 @@ autoset=rtsource=false
 autoset=3r=true
 autoset=3s=true
 autoset=cplusplus=true
-Exe=..\supp\format.rsp
 dialogorder=DstDir,GetDiskSizesHere,NewInstall,Maintain,Options,Final,MaintainFinal,UnInstallFinal
 dialog=disksize.dlg
 dialog=other.dlg
