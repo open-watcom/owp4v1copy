@@ -7,8 +7,8 @@
 :SET symbol='kwbased'       value='__based'.
 :SET symbol='kwbased_sp'    value='_&SYSRB._based'.
 :CMT.
-:SET symbol='kwbldiflt'     value='__buildin_isfloat'.
-:SET symbol='kwbldif_sp'    value='_&SYSRB._buildin_isfloat'.
+:SET symbol='kwbldiflt'     value='__builtin_isfloat'.
+:SET symbol='kwbldif_sp'    value='_&SYSRB._builtin_isfloat'.
 :CMT.
 :SET symbol='kwicdecl'      value='_Cdecl'.
 :SET symbol='kwicdec_sp'    value='_Cdecl'.

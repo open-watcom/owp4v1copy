@@ -12,7 +12,7 @@ Microsoft compilers compatible
 ›&kwexport.  ›&kwintrpt.  ›&kwstdcall. 
 ›&kwfar.     ›&kwleave.   ›&kwsyscall.
 ›&kwfar16.   ›&kwloadds.  ›&kwtry.     
-›&kwfastcall.›&kwnear.    
+›&kwfastcall.›&kwnear.    ›&kwunalign.     
 .kwoff
 .sk 1
 IBM compilers compatible
@@ -26,7 +26,6 @@ IBM compilers compatible
 .sk 1
 &company specific
 .kwon
-›&kwbldiflt. ›&kwunalign.›&kwwatcall.
-›&kwimagunit.
+›&kwbldiflt. ›&kwwatcall. ›&kwimagunit.
 .kwoff
 ..tb
