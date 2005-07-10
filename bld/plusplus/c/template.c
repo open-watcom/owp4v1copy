@@ -1911,6 +1911,9 @@ static void injectTemplateParm( SCOPE scope, PTREE parm, char *name )
     DbgDefault( "template parms are corrupted" );
     }
     if( sym != NULL ) {
+        if( name == NULL ) {
+            name = NameDummy();
+        }
         sym = ScopeInsert( scope, sym, name );
     }
 }
