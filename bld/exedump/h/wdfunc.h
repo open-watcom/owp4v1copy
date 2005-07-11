@@ -34,7 +34,6 @@
  */
 extern bool Dmp_os2_head( void );
 extern bool Dmp_386_head( void );
-extern void dmp_mod_flag( unsigned_16 );
 
 /*
  * peexe.c

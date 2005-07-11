@@ -37,7 +37,7 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * os2_exe_msg[] = {
+char *os2_exe_msg[] = {
     "2link version                                         = ",
     "2offset of entry table                                = ",
     "2length of entry table                                = ",
@@ -53,16 +53,16 @@ char * os2_exe_msg[] = {
     "2number of entries in segment table                   = ",
     "2number of entries in module reference table          = ",
     "2number of bytes in nonresident names table           = ",
-    "2offset of beg of segment table( rel NH )             = ",
+    "2offset of beg of segment table (rel NH)              = ",
     "2offset of beg of resource table                      = ",
     "2offset of beg of resident names table                = ",
     "2offset of beg of module reference table              = ",
     "2offset of beg of imported names table                = ",
-    "4offset of nonresident names table ( rel file )       = ",
+    "4offset of nonresident names table (rel file)         = ",
     "2number of movable entry points listed in entry table = ",
-    "2alignment shift count( 0 => 9 )                      = ",
-    "2number of reserved segments                          = ",
-    "1target OS (1==OS2, 2==Windows, 3==DOS4, 4==Win386)   = ",
+    "2alignment shift count (0 => 9)                       = ",
+    "2number of resource segments (OS/2 only)              = ",
+    "1target OS (1==OS/2, 2==Windows, 3==DOS4, 4==Win386)  = ",
     "1other flags                                          = ",
     "2offset of gangload area  (Windows only)              = ",
     "2length of gangload area  (Windows only)              = ",
@@ -76,7 +76,7 @@ char *os2_386_msg[] = {
     "1word order       \"                \"               = ",
     "4linear EXE format level                           = ",
     "2cpu type                                          = ",
-    "2os type (1==OS2, 2==Windows, 3==DOS4, 4==Win386)  = ",
+    "2os type (1==OS/2, 2==Windows, 3==DOS4, 4==Win386) = ",
     "4module version                                    = ",
     "4module flags                                      = ",
     "4# module pages                                    = ",
@@ -117,6 +117,7 @@ char *os2_386_msg[] = {
     "4# of instance pages in the preload section        = ",
     "4# of instance pages in the demand load section    = ",
     "4size of heap (for 16-bit apps)                    = ",
+    "4size of stack                                     = ",
     NULL
 };
 
@@ -130,7 +131,144 @@ char *os2_obj_msg[] = {
     NULL
 };
 
-char *map_flgs[] = { "VALID", "ITERATED", "INVALID", "ZEROED", "RANGE" };
+char *map_flgs[] = {
+    "Valid", "Iterated", "Invalid", "Zeroed", "Range", "Compressed"
+};
+
+
+/*
+ * dump the NE module flag word
+ */
+void dmp_mod_flag_ne( unsigned_16 flag, unsigned_8 target )
+/*********************************************************/
+{
+    Wdputs( "Module Flag Word = " );
+    if( flag & OS2_IS_DLL ) {
+        Wdputs( "LIBRARY" );
+    } else {
+        Wdputs( "PROGRAM" );
+    }
+    if( target != TARGET_OS2 && flag & OS2_IS_DLL ) {
+        if( flag & WIN_PRIVATE_DLL ) {
+            Wdputs( " | PRIVATEDLL" );
+        }
+    }
+    if( flag & OS2_LINK_ERROR ) {
+        Wdputs( " | LINKERRORSDETECTED" );
+    }
+    switch( flag & OS2_COMPATIBILITY_MASK ) {
+    case OS2_NOT_PM_COMPATIBLE:
+        Wdputs( " | NOTWINDOWCOMPAT" );
+        break;
+    case OS2_PM_COMPATIBLE:
+        Wdputs( " | WINDOWCOMPAT" );
+        break;
+    case OS2_PM_APP:
+        Wdputs( " | WINDOWAPI" );
+        break;
+    }
+    if( flag & OS2_NEEDS_MATH_CO ) {
+        Wdputs( " | NEEDFPU" );
+    }
+    if( target == TARGET_OS2 && flag & OS2_NEEDS_80386 ) {
+        Wdputs( " | NEED386" );
+    }
+    if( target != TARGET_OS2 && flag & WIN_EMS_GLOBAL_MEM ) {
+        Wdputs( " | EMSGLOBAL" );
+    }
+    if( target == TARGET_OS2 && flag & OS2_NEEDS_80286 ) {
+        Wdputs( " | NEED286" );
+    }
+    if( target != TARGET_OS2 && flag & WIN_EMS_BANK_INSTANCE ) {
+        Wdputs( " | EMSBANK" );
+    }
+    if( target == TARGET_OS2 && flag & WIN_USES_EMS_DIRECT ) {
+        Wdputs( " | NONCONFORMING" );
+    }
+    if( target != TARGET_OS2 && flag & WIN_USES_EMS_DIRECT ) {
+        Wdputs( " | EMSDIRECT" );
+    }
+    if( flag & OS2_PROT_MODE_ONLY ) {
+        Wdputs( " | PROTMODEONLY" );
+    }
+    if( target == TARGET_OS2 && flag & OS2_INIT_INSTANCE ) {
+        Wdputs( " | INITINSTANCE" );
+    }
+    if( target != TARGET_OS2 && flag & OS2_INIT_INSTANCE ) {
+        Wdputs( " | REALMODE" );
+    }
+    if( target == TARGET_OS2 && flag & OS2_IS_DLL ) {
+        if( flag & WIN_PRIVATE_DLL ) {
+            Wdputs( " | PRIVATEDLL" );
+        }
+    }
+    if( flag & OS2_MULT_AUTO ) {
+        Wdputs( " | MULTIPLEDATA" );
+    }
+    if( flag & OS2_SINGLE_AUTO ) {
+        Wdputs( " | SINGLEDATA" );
+    }
+    Wdputslc( "\n" );
+    Wdputslc( "\n" );
+}
+
+
+#define OSF_MODTYPE_MASK    0x38000UL
+/*
+ * dump the LE/LX module flag word
+ */
+void dmp_mod_flag_lx( unsigned_32 flag, unsigned_16 ostype )
+/**********************************************************/
+{
+    Wdputs( "Module Flags = " );
+    if( (flag & OSF_MODTYPE_MASK) == OSF_VIRT_DEVICE ) {
+        Wdputs( "VIRTDEVICE" );
+    } else if( (flag & OSF_MODTYPE_MASK) == OSF_PHYS_DEVICE ) {
+        Wdputs( "PHYSDEVICE" );
+    } else if( (flag & OSF_MODTYPE_MASK) == OSF_IS_DLL ) {
+        Wdputs( "LIBRARY" );
+    } else {
+        Wdputs( "PROGRAM" );
+    }
+    if( flag & OSF_SINGLE_DATA ) {
+        Wdputs( " | SINGLEDATA" );
+    }
+    if( flag & OSF_INIT_INSTANCE ) {
+        Wdputs( " | INITINSTANCE" );
+    }
+    if( flag & OSF_TERM_INSTANCE ) {
+        Wdputs( " | TERMINSTANCE" );
+    }
+    if( flag & OSF_IS_PROT_DLL ) {
+        Wdputs( " | PROTDLL" );
+    }
+    if( flag & OSF_INTERNAL_FIXUPS_DONE ) {
+        Wdputs( " | NO_INT_FIXUPS" );
+    }
+    if( flag & OSF_EXTERNAL_FIXUPS_DONE ) {
+        Wdputs( " | NO_EXT_FIXUPS" );
+    }
+    if( flag & OSF_LINK_ERROR ) {
+        Wdputs( " | LINKERRORSDETECTED" );
+    }
+    switch( flag & OS2_COMPATIBILITY_MASK ) {
+    case OSF_NOT_PM_COMPATIBLE:
+        Wdputs( " | NOTWINDOWCOMPAT" );
+        break;
+    case OSF_PM_COMPATIBLE:
+        Wdputs( " | WINDOWCOMPAT" );
+        break;
+    case OSF_PM_APP:
+        Wdputs( " | WINDOWAPI" );
+        break;
+    }
+    if( flag & 0x80000 ) {
+        Wdputs( " | MPUNSAFE" );
+    }
+    Wdputslc( "\n" );
+    Wdputslc( "\n" );
+}
+
 
 /*
  * Dump the New Executable Header, if any.
@@ -152,7 +290,7 @@ bool Dmp_os2_head( void )
     Wdputslc( "H\n" );
     Wdputslc( "\n" );
     Dump_header( (char *)&Os2_head.version, os2_exe_msg );
-    dmp_mod_flag( Os2_head.info );
+    dmp_mod_flag_ne( Os2_head.info, Os2_head.target );
     Dmp_seg_tab();
     Dmp_resrc_tab();
     Dmp_ne_tbls();
@@ -175,10 +313,10 @@ bool Dmp_386_head( void )
     Wread( &Os2_386_head, sizeof( Os2_386_head ) );
     if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ) {
         Form = FORM_LE;
-        Banner( "Linear EXE Header (OS/2 V2.0) - LE" );
+        Banner( "Linear EXE Header (OS/2 V2.x) - LE" );
     } else if ( Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
         Form = FORM_LX;
-        Banner( "Linear EXE Header (OS/2 V2.0) - LX" );
+        Banner( "Linear EXE Header (OS/2 V2.x) - LX" );
     } else {
         return( 0 );
     }
@@ -187,7 +325,7 @@ bool Dmp_386_head( void )
     Wdputslc( "H\n" );
     Wdputslc( "\n" );
     Dump_header( (char *)&Os2_386_head.byte_order, os2_386_msg );
-    dmp_mod_flag( Os2_386_head.flags );
+    dmp_mod_flag_lx( Os2_386_head.flags, Os2_386_head.os_type );
     dmp_obj_table();
     Dmp_resrc2_tab();
     Dmp_le_lx_tbls();
@@ -195,62 +333,7 @@ bool Dmp_386_head( void )
 }
 
 /*
- * dump the module flag word
- */
-void dmp_mod_flag( unsigned_16 flag )
-/***********************************/
-{
-    Wdputs( "Module flag Word = " );
-    if( flag & OS2_IS_DLL ) {
-        Wdputs( "LIBRARYMODE" );
-    } else {
-        Wdputs( "PROGRAMMODE" );
-    }
-    if( flag & WIN_USES_EMS_DIRECT ) {
-        Wdputs( " | NONCONFORMING" );
-    }
-    if( flag & OS2_LINK_ERROR ) {
-        Wdputs( " | LINKERRORSDETECTED" );
-    }
-    switch( flag & OS2_COMPATIBILITY_MASK ) {
-    case OS2_NOT_PM_COMPATIBLE:
-        Wdputs( " | NOT_PM_COMPATABLE" );
-        break;
-    case OS2_PM_COMPATIBLE:
-        Wdputs( " | PM_COMPATABLE" );
-        break;
-    case OS2_PM_APP:
-        Wdputs( " | PM_APPLICATION" );
-        break;
-    }
-    if( flag & OS2_PROT_MODE_ONLY ) {
-        Wdputs( " | RUNSPROTECTMODE" );
-    }
-    if( flag & OS2_INIT_INSTANCE ) {
-        Wdputs( " | RUNSREALMODE" );
-    }
-    if( ( flag & OS2_MULT_AUTO ) && !( flag & OS2_IS_DLL ) ) {
-        Wdputs( " | MULTIPLEDATA" );
-    }
-    if( flag & OS2_IS_DLL ) {
-        if( flag & OS2_SINGLE_AUTO ) {
-            Wdputs( " | SINGLEDATA" );
-        } else {
-            Wdputs( " | NOAUTODATA" );
-        }
-    }
-    if( flag & OSF_INTERNAL_FIXUPS_DONE ) {
-        Wdputs( " | NO_INT_FIXUPS" );
-    }
-    if( flag & OSF_EXTERNAL_FIXUPS_DONE ) {
-        Wdputs( " | NO_EXT_FIXUPS" );
-    }
-    Wdputslc( "\n" );
-    Wdputslc( "\n" );
-}
-
-/*
- * dump the module flag word
+ * dump the LE/LX object table
  */
 static void dmp_obj_table( void )
 /*******************************/
@@ -356,19 +439,19 @@ static void dmp_obj_flags( unsigned_32 flags )
         strcat( name, "DISCARDABLE|" );
     }
     if( flags & OBJ_SHARABLE ) {
-        strcat( name, "SHARABLE|" );
+        strcat( name, "SHARED|" );
     }
     if( flags & OBJ_HAS_PRELOAD ) {
-        strcat( name, "HAS_PRELOAD|" );
+        strcat( name, "PRELOAD|" );
     }
     if( flags & OBJ_HAS_INVALID ) {
-        strcat( name, "HAS_INVALID|" );
+        strcat( name, "INVALID|" );
     }
     if( flags & OBJ_PERM_SWAPPABLE ) {
-        strcat( name, "PERM_SWAPPABLE|" );
+        strcat( name, "SWAPPABLE|" );
     }
     if( flags & OBJ_PERM_RESIDENT ) {
-        strcat( name, "PERM_RESIDENT|" );
+        strcat( name, "RESIDENT|" );
     }
     if( flags & OBJ_PERM_LOCKABLE ) {
         strcat( name, "PERM_LOCKABLE|" );

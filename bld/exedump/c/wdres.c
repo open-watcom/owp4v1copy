@@ -37,7 +37,12 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * resource_type[] = {
+typedef struct os2_res_entry {
+    unsigned_16         type_id;
+    unsigned_16         name_id;
+} os2_res_entry;
+
+char *resource_type[] = {
     "Unkown resource type\n",
     "Cursor\n",
     "Bitmap\n",
@@ -49,35 +54,57 @@ char * resource_type[] = {
     "Font\n",
     "Keyboard-accelerator table\n",
     "RC data resource\n",
-    "Error table\n",
+    "Error message table\n",
     "Cursor group header\n",
     "Unkown resource type\n",       /* #13 is not used - unlucky? */
     "Icon group header\n",
     "Nametable\n"
 };
 
+char *resource_type_os2[] = {
+    "Unkown resource type\n",
+    "Pointer\n",
+    "Bitmap\n",
+    "Menu template\n",
+    "Dialog template\n",
+    "String table\n",
+    "Font directory\n",
+    "Font\n",
+    "Accelerator table\n",
+    "RC data resource\n",
+    "Error message table\n",
+    "Dialog include file name\n",
+    "Key to virtual key translation table\n",
+    "Key to UGL translation table\n",
+    "Glyph to character translation table\n",
+    "Screen display information\n",
+    "Function key area (short form)\n",
+    "Function key area (long form)\n",
+    "Help table\n",
+    "Help subtable\n",
+    "DBCS font driver directory\n",
+    "DBCS font driver\n",
+    "Default icon\n"
+};
+
+
 /*
- * Dump The Resource Table
+ * Dump The Resource Table for Windows NE module
  */
-void Dmp_resrc_tab( void )
-/************************/
+static void dmp_resrc_tab_win( void )
+/***********************************/
 {
     unsigned_16                             res_type;
     auto struct resource_type_record        res_group;
     unsigned_32                             offset;
 
-    if( Os2_head.resource_off == Os2_head.resident_off ) {
-        return;
-    }
-    Banner( "Resource Table" );
-    Wlseek( New_exe_off + Os2_head.resource_off );
     Resrc_end = 0ul;
     Wread( &Resrc_shift_cnt, sizeof( unsigned_16 ) );
     offset = New_exe_off + Os2_head.resource_off + sizeof( unsigned_16 );
     Wdputs( "resource shift count: " );
     Putdec( Resrc_shift_cnt );
     Wdputslc( "\n" );
-    for( ; ; ) {
+    for( ;; ) {
         Wlseek( offset );
         Wread( &res_group, sizeof( resource_type_record ) );
         offset += sizeof( resource_type_record );
@@ -90,6 +117,59 @@ void Dmp_resrc_tab( void )
         offset += res_group.num_resources * sizeof( resource_record );
         Wdputslc( "\n" );
     }
+}
+
+
+/*
+ * Dump The Resource Table for OS/2 NE module
+ */
+static void dmp_resrc_tab_os2( void )
+/***********************************/
+{
+    unsigned_16     i;
+    unsigned_16     id;
+    os2_res_entry   res_tab;
+
+    id = 30;                /* if id > 22 a name won't be printed out */
+    Wdputslc( "    seg#   type id   name id\n" );
+    Wdputslc( "    ====   =======   =======\n" );
+    for( i = 0; i < Os2_head.resource; i++ ) {
+        Wread( &res_tab, sizeof( os2_res_entry ) );
+        if( res_tab.type_id != id ) {
+            id = res_tab.type_id;
+            if( id < 23 ) {
+                Wdputs( "type:  " );
+                Wdputslc( resource_type_os2[ res_tab.type_id ] );
+            }
+        }
+        Wdputs( "    " );
+        Puthex( i + Os2_head.segments - Os2_head.resource + 1, 4 );
+        Wdputs( "   " );
+        Puthex( res_tab.type_id, 4 );
+        Wdputs( "      " );
+        Puthex( res_tab.name_id, 4 );
+        Wdputs( "      " );
+        Wdputslc( "\n" );
+    }
+    Wdputslc( "\n" );
+}
+
+
+/*
+ * Dump The Resource Table for NE module
+ */
+void Dmp_resrc_tab( void )
+/************************/
+{
+    if( Os2_head.resource_off == Os2_head.resident_off ) {
+        return;
+    }
+    Banner( "Resource Table" );
+    Wlseek( New_exe_off + Os2_head.resource_off );
+    if( Os2_head.target == TARGET_OS2 )
+        dmp_resrc_tab_os2();
+    else
+        dmp_resrc_tab_win();
 }
 
 /*
@@ -240,7 +320,7 @@ char *get_resrc_nam( unsigned_16 offset )
 }
 
 /*
- * Dump The Resource Table
+ * Dump The Resource Table for OS/2 LX module
  */
 void Dmp_resrc2_tab( void )
 /*************************/
@@ -255,7 +335,7 @@ void Dmp_resrc2_tab( void )
     Banner( "Resource Table" );
     Wlseek( New_exe_off + Os2_386_head.rsrc_off );
     id = 20;                /* if id > 15 a name won't be printed out */
-    Wdputslc( "     type id   name id    res size     offset     object\n" );
+    Wdputslc( "     type id   name id    res size     object     offset\n" );
     Wdputslc( "     =======   =======    ========     ======     ======\n" );
     for( i = 0; i < Os2_386_head.num_rsrcs; i++ ) {
         Wread( &res_tab, sizeof( flat_res_table ) );
@@ -263,7 +343,7 @@ void Dmp_resrc2_tab( void )
             id = res_tab.type_id;
             if( id < 16 ) {
                 Wdputs( "type:  " );
-                Wdputslc( resource_type[ res_tab.type_id ] );
+                Wdputslc( resource_type_os2[ res_tab.type_id ] );
             }
         }
         Wdputs( "      " );

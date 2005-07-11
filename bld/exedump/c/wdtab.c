@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  LE/LX name tables processing.
+* Description:  NE/LE/LX name tables processing.
 *
 ****************************************************************************/
 
@@ -49,7 +49,8 @@ void Dmp_ne_tbls( void )
     Banner( "Resident Names Table" );
     dmp_res_nonres_tab( New_exe_off + Os2_head.resident_off );
     dmp_mod_ref_tab( New_exe_off + Os2_head.module_off, Os2_head.modrefs );
-    dmp_import_tab( New_exe_off + Os2_head.import_off );
+    if( Os2_head.import_off != Os2_head.entry_off )
+        dmp_import_tab( New_exe_off + Os2_head.import_off );
     dmp_entry_tab();
     Wdputslc( "\n" );
     Banner( "Nonresident Names Table" );

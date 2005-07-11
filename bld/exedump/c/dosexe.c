@@ -36,7 +36,7 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * dos_exe_msg[] = {
+char *dos_exe_msg[] = {
     "2length of load module mod 200H                       = ",
     "2number of 200H pages in load module                  = ",
     "2number of relocation items                           = ",
@@ -85,7 +85,7 @@ static void dmp_dos_head_info( void )
     struct { unsigned_16 offset;
              unsigned_16 segment; } reloc;
 
-    Banner( "Dos EXE Header" );
+    Banner( "DOS EXE Header" );
     Dump_header( (char *)&Dos_head.mod_size, dos_exe_msg );
     Load_len = (unsigned_32)Dos_head.file_size * 0x200 -
         ( ( -Dos_head.mod_size ) & 0x1ff ); /* Brian Stecher */

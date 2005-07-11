@@ -40,6 +40,7 @@
 
 #include "wdglb.h"
 #include "wdfunc.h"
+#include "banner.h"
 
 char *Exts[] = { ".exe", ".dll", ".exp", ".nlm", ".qnx", ".elf", ".lib", "obj",
                 NULL };
@@ -120,8 +121,8 @@ static int open_files( void )
 }
 
 /*
- * The Segmented .EXE File Header Dump Utility
- * for WLINK and WVIDEO
+ * The Increasingly More Misnamed Segmented .EXE File Header Dump Utility
+ * for WLINK and WD (nee WVIDEO)
  */
 int main( void )
 /**************/
@@ -169,9 +170,10 @@ int main( void )
 static void wbanner( void )
 /*************************/
 {
-    Wdputs(
-      "WATCOM Old and Segmented Image Dump Utitity Version 0.1\n"
-      "Copyright by WATCOM Systems Inc. 1988.  All rights reserved.\n\n" );
+    Wdputs( banner1w( "Executable Image Dump Utility", BAN_VER_STR ) "\n" );
+    Wdputs( banner2a() "\n" );
+    Wdputs( banner3 "\n" );
+    Wdputs( banner3a "\n\n" );
 }
 
 /*
@@ -180,7 +182,7 @@ static void wbanner( void )
 static void usage( void )
 /***********************/
 {
-    Wdputs( "Usage: wdmp [options] <pathname> [options]\n" );
+    Wdputs( "Usage: wdump [options] <pathname> [options]\n" );
     Wdputs( "  <pathname> is a DOS .EXE file," ); //or .COM file,"
     Wdputs( " a Windows application,\n" );
     Wdputs( "            or a new .EXE, .DLL, .EXP, .NLM, .QNX or .ELF file\n" ); //, .COM, or .SYS file\n"
@@ -206,7 +208,7 @@ static void usage( void )
     Wdputs( "           n : show line numbers (only if m specified)\n" );
     Wdputs( "           t : show types (only if m specified)\n" );
     Wdputs( "           x : show all information\n" );
-    Wdputs( "        -e causes executable infomation to be dumped as well\n" );
+    Wdputs( "        -e causes executable information to be dumped as well\n" );
 }
 
 /*
@@ -236,7 +238,13 @@ static void dmp_exe( void )
                 Wdputslc( "Invalid OS/2, PE header\n" );
             }
         } else if( !dos_dmp ) {
-            if( Dmp_dwarf() ) {
+            if( Dmp_os2_head() ) {
+                /* done */
+            } else if( Dmp_386_head() ) {
+                /* done */
+            } else if( Dmp_pe_head() ) {
+                /* done */
+            } else if( Dmp_dwarf() ) {
                 /* done */
             } else if( Dmp_qnx_head() ) {
                 /* done */
