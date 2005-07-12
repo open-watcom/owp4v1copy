@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* Top level functions for reading MPEG1 Layer III audio data.
+* Top level functions for reading MPEG 1 and 2 Layer III audio data.
 *
 ******************************************************************************/
 
@@ -8,32 +8,57 @@
 #include "internal.h"
 
 /*
- * Bitrate table for all three layers.
+ * Bitrate tables for all three layers, MPEG 1 and 2.
  *
  * Index 0 means free bitrate which is 0 > bitrate >= TBD bit/s
  */
-uint32_t g_mpeg1_bitrates[3 /* layer 1-3 */][15 /* header bitrate_index */] = {
-  {   /* Layer 1 */
+uint32_t g_mpeg_bitrates[2][3][15 /* header bitrate_index */] = {
+  {
+    {   /* MPEG2 Layer I */
+         0,  32000,  48000,  56000,  64000,  80000,  96000, 112000,
+    128000, 144000, 160000, 176000, 192000, 224000, 256000
+    },
+
+    {   /* MPEG2 Layer II */
+         0,   8000,  16000,  24000,  32000,  40000,  48000,  56000,
+     64000,  80000,  96000, 112000, 128000, 144000, 160000
+    },
+
+    {   /* MPEG2 Layer III (same as Layer II) */
+         0,   8000,  16000,  24000,  32000,  40000,  48000,  56000,
+     64000,  80000,  96000, 112000, 128000, 144000, 160000
+    }
+  },
+  {
+    {   /* MPEG1 Layer I */
          0,  32000,  64000,  96000, 128000, 160000, 192000, 224000,
     256000, 288000, 320000, 352000, 384000, 416000, 448000
-  },
+    },
 
-  {  /* Layer 2 */
+    {  /* MPEG1 Layer II */
          0,  32000,  48000,  56000,  64000,  80000,  96000, 112000,
     128000, 160000, 192000, 224000, 256000, 320000, 384000
-  },
+    },
 
-  {   /* Layer 3 */
+    {   /* MPEG1 Layer III */
          0,  32000,  40000,  48000,  56000,  64000,  80000,  96000,
     112000, 128000, 160000, 192000, 224000, 256000, 320000
+    }
   }
 };
 
-/* Sampling frequencies in hertz (valid for all layers) */
-uint32_t g_sampling_frequency[3] = {
+/* Sampling frequencies in Hertz (MPEG 1 and 2, all layers) */
+uint32_t g_sampling_frequency[2][3] = {
+  {
+    22050,
+    24000,
+    16000
+  },
+  {
     44100,
     48000,
     32000
+  }
 };
 
 /*
@@ -43,8 +68,7 @@ uint32_t g_sampling_frequency[3] = {
  * for the 12 short and 21 long scalefactor bands. The short indices
  * must be multiplied by 3 to get the actual index.
  */
-t_sf_band_indices g_sf_band_indices[3 /* Sampling freq. */] =
- {
+t_sf_band_indices g_sf_band_indices[3 /* Sampling freq. */] = {
     {
       { 0, 4, 8, 12, 16, 20, 24, 30, 36, 44, 52, 62, 74, 90, 110, 134, 162,
     196, 238, 288, 342, 418, 576 },
@@ -226,7 +250,7 @@ int MPG_Read_Header( void )
 
     /* Check for invalid values and impossible combinations */
     if( g_frame_header.id != 1 ) {
-        ERR( "ID must be 1\n" );
+        ERR( "MPEG-2 NIY!\n" );
         ERR( "Header word is 0x%08x at file pos %d\n", header, MPG_Get_Filepos() );
         return( ERROR );
     }
@@ -303,8 +327,8 @@ int MPG_Read_Audio_L3( void )
 
     /* Calculate header audio data size */
     framesize = (144 *
-        g_mpeg1_bitrates[g_frame_header.layer-1][g_frame_header.bitrate_index]) /
-        g_sampling_frequency[g_frame_header.sampling_frequency] +
+        g_mpeg_bitrates[g_frame_header.id][g_frame_header.layer-1][g_frame_header.bitrate_index]) /
+        g_sampling_frequency[g_frame_header.id][g_frame_header.sampling_frequency] +
         g_frame_header.padding_bit;
 
     if( framesize > 2000 ) {
@@ -413,8 +437,8 @@ int MPG_Read_Main_L3( void )
 
     /* Calculate header audio data size */
     framesize = (144 *
-        g_mpeg1_bitrates[g_frame_header.layer-1][g_frame_header.bitrate_index]) /
-        g_sampling_frequency[g_frame_header.sampling_frequency] +
+        g_mpeg_bitrates[g_frame_header.id][g_frame_header.layer-1][g_frame_header.bitrate_index]) /
+        g_sampling_frequency[g_frame_header.id][g_frame_header.sampling_frequency] +
         g_frame_header.padding_bit;
 
     if( framesize > 2000 ) {

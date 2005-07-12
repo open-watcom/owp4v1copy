@@ -141,9 +141,7 @@ void ProcessPlayback(int buf)
          if (MPG_Read_Frame () == MPG_OK) {
             /* Decode the compressed frame into 1152 mono/stereo PCM audio samples */
             MPG_Decode_L3 ();
-            freq = g_sampling_frequency[g_frame_header.sampling_frequency];
-      /*audio_write ((UINT32 *) &mp3_outdata, 2*576,
-                 g_sampling_frequency[g_frame_header.sampling_frequency]);*/
+            freq = g_sampling_frequency[g_frame_header.id][g_frame_header.sampling_frequency];
          }
          memcpy(ptr1 + i * 4, &mp3_outdata, SB_Block2 * 4);
       } else {

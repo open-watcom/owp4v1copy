@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
             /* Decode the compressed frame into 1152 mono/stereo PCM audio samples */
             MPG_Decode_L3( mp3_outdata );
             audio_write( (uint32_t *)&mp3_outdata, 2 * 576,
-                     g_sampling_frequency[g_frame_header.sampling_frequency] );
+                     g_sampling_frequency[g_frame_header.id][g_frame_header.sampling_frequency] );
         }
 
         /* Remote control handling would be here */

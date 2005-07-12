@@ -66,10 +66,10 @@ typedef enum {
 } t_mpeg1_mode;
 
 /* Bitrate table for all three layers.  */
-extern uint32_t g_mpeg1_bitrates[3 /* lay 1-3 */][15 /* header bitrate_index */];
+extern uint32_t g_mpeg_bitrates[2][3 /* layer 1-3 */][15 /* header bitrate_index */];
 
 /* Sampling frequencies in hertz (valid for all layers) */
-extern uint32_t g_sampling_frequency[3];
+extern uint32_t g_sampling_frequency[2][3];
 
 /* MPEG1 Layer 1-3 frame header */
 typedef struct {
