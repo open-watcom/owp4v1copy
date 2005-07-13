@@ -129,11 +129,6 @@ The &lnkname generates executable files that run under Phar Lap's
 programs running under PC DOS.
 Running in 32-bit protected mode allows your program to access all of
 the memory in your machine.
-:cmt. .np
-:cmt. Note that certain Phar Lap executable file formats can also run under
-:cmt. Ergo's OS/386.
-:cmt. See the section entitled :HDREF refid='&unique_lbl.form'. for
-:cmt. information on these executable file formats.
 .np
 .ix 'running in 32-bit protected mode'
 Essentially, what 386|DOS-Extender does is provide an interface between

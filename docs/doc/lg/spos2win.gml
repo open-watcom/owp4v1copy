@@ -362,12 +362,7 @@ memory utilization.
 To create a Dynamic Link Library, you must place the "DLL" keyword
 following the system name in the "SYSTEM" directive.
 .millust begin
-.if '&exeformat' eq 'win' .do begin
-system &syst_drctv._dll
-.do end
-.el .do begin
-system &syst_drctv dll
-.do end
+&sys_dr_dll.
 .millust end
 .pc
 In addition, you must specify which functions in the Dynamic Link

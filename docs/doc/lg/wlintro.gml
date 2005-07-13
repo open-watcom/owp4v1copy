@@ -45,7 +45,7 @@ operating systems.
 .point
 16-bit OS/2 1.x
 .point
-32-bit OS/2 2.x and 3.x (Warp)
+32-bit OS/2 2.x, 3.x (Warp) and 4.x
 .point
 Phar Lap's 286|DOS-Extender
 .endpoint
@@ -60,11 +60,10 @@ The OS/2 32-bit linear executable file format will run under the following
 operating systems.
 .autopoint
 .point
-OS/2 2.x (LX format only)
+OS/2 2.x and later (LX format only)
 .point
-OS/2 3.x (LX format only)
-.point
-Tenberry Software's DOS/4G and DOS/4GW DOS extenders (LE format only)
+CauseWay DOS extender, Tenberry Software's DOS/4G and DOS/4GW DOS 
+extenders, and compatible products (LE format only)
 .point
 FlashTek's DOS Extender (LX format only)
 .endpoint
@@ -72,15 +71,11 @@ FlashTek's DOS Extender (LX format only)
 .if '&exeformat' eq 'phar' .do begin
 .ix 'Phar Lap 386|Dos-Extender applications' 'creating'
 .ix 'applications' 'creating for Phar Lap 386|Dos-Extender'
-:cmt. .ix 'Ergo OS/386 applications' 'creating'
-:cmt. .ix 'applications' 'creating for Ergo OS/386'
 The Phar Lap executable file format will run under the following
 operating systems.
 .autopoint
 .point
 Phar Lap's 386|DOS-Extender
-:cmt. .point
-:cmt. Ergo's OS/386
 .point
 &company's 32-bit Windows supervisor (relocatable format only)
 .endpoint

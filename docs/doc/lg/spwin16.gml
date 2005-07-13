@@ -8,6 +8,7 @@
 :set symbol="exefmtup" value="WIN".
 :set symbol="form_drctv" value="form win".
 :set symbol="syst_drctv" value="system windows".
+:set symbol="sys_dr_dll" value="system windows_dll".
 :set symbol="exeextn" value="exe".
 :set symbol="dllextn" value="dll".
 :set symbol="libvarname" value="lib".
