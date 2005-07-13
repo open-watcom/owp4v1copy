@@ -29,7 +29,7 @@
 mathtest = $(new_mlib)\c\mathtest.c
 
 comp_opts = -ox -d2 -zq -fo=$^*.obj
-link_opts = NAME $^* OPTION quiet DEBUG all
+link_opts = NAME $^* OPTION quiet, map DEBUG all
 
 exes = &
     dos_fpi.exe dos_fpc.exe &
