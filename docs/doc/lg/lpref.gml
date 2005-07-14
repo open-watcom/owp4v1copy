@@ -6,9 +6,10 @@
 The
 .us &lnkname User's Guide
 describes how to use the &lnkname under
-DOS, OS/2, Windows 95, Windows NT and QNX.
+DOS, OS/2, Windows 9x, Windows NT and QNX.
 The &lnkname can generate executable files that run under
 DOS,
+CauseWay DOS extender,
 FlashTek's DOS extender,
 Phar Lap's 386|DOS-Extender and TNT DOS extender,
 Tenberry Software's DOS/4G,

@@ -7,13 +7,16 @@ The "SEGMENT" directive is used to describe the attributes of code and
 data segments.
 The format of the "SEGMENT" directive (short form "SEG") is as
 follows.
+.np
+:CMT. Force a page break; the table is too big and won't get properly
+:CMT. moved to the next page automatically.
+.pa
 .mbigbox
     SEGMENT seg_desc{,seg_desc}
 
     seg_desc ::= seg_id {seg_attrs}+
 
     seg_id ::= 'seg_name' | CLASS 'class_name' | TYPE [CODE | DATA]
-
 OS/2:
     seg_attrs ::= PRELOAD | LOADONCALL
                         | IOPL | NOIOPL

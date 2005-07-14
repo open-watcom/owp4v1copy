@@ -416,7 +416,6 @@ Library.
 .do end
 .*
 .im wlmemlay
-.im wlmem
 .*
 .if '&exeformat' ne 'win nt' and '&exeformat' ne 'win vxd' .do begin
 .im ms2wlink

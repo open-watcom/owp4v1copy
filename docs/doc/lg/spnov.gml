@@ -243,6 +243,5 @@ The &lnkname can generate all types of NLMs by utilising the numerical value
 of the module type.
 .*
 .im wlmemlay
-.im wlmem
 .*
 .helppref

@@ -2,13 +2,13 @@
 .*
 :set symbol="isbn" value="".
 .*
-:INCLUDE file='LYTCHG'.
+:INCLUDE file='lytchg'.
 .if &e'&dohelp eq 0 .do begin
-:INCLUDE file='WNOHELP'.
+:INCLUDE file='wnohelp'.
 .do end
-:INCLUDE file='FMTMACRO'.
-:INCLUDE file='GMLMACS'.
-:INCLUDE file='XDEFS'.
+:INCLUDE file='fmtmacro'.
+:INCLUDE file='gmlmacs'.
+:INCLUDE file='xdefs'.
 .*
 :GDOC.
 .*
@@ -17,14 +17,14 @@
 :TITLEP.
 :TITLE stitle="User's Guide".&lnkname
 :TITLE.User's Guide
-:INCLUDE file='DOCTITLE'.
+:INCLUDE file='doctitle'.
 :eTITLEP.
 :ABSTRACT.
-:INCLUDE file='COPYRITE'.
-:INCLUDE file='DISCLAIM'.
-:INCLUDE file='NEWSLETT'.
+:INCLUDE file='copyrite'.
+:INCLUDE file='disclaim'.
+:INCLUDE file='newslett'.
 :PREFACE.
-:INCLUDE file='LPREF'.
+:INCLUDE file='lpref'.
 .pa odd
 :TOC.
 .pa odd
@@ -39,20 +39,20 @@
 :include file='&book..kw'
 .do end
 .*
-.sepsect The WATCOM Linker
-:INCLUDE file='WLUSAGE'.
-:INCLUDE file='TUTMAIN'.
-:INCLUDE file='LNKMAIN'.
-:INCLUDE file='SPDOS'.
-:INCLUDE file='SPELF'.
-:INCLUDE file='SPNOV'.
-:INCLUDE file='SPOS2'.
-:INCLUDE file='SPPHAR'.
-:INCLUDE file='SPQNX'.
-:INCLUDE file='SPWIN16'.
-:INCLUDE file='SPWIVXD'.
-:INCLUDE file='SPWIN32'.
-:INCLUDE file='WLERROR'.
+.sepsect The &company Linker
+:INCLUDE file='wlusage'.
+:INCLUDE file='tutmain'.
+:INCLUDE file='lnkmain'.
+:INCLUDE file='spdos'.
+:INCLUDE file='spelf'.
+:INCLUDE file='spnov'.
+:INCLUDE file='spos2'.
+:INCLUDE file='spphar'.
+:INCLUDE file='spqnx'.
+:INCLUDE file='spwin16'.
+:INCLUDE file='spwivxd'.
+:INCLUDE file='spwin32'.
+:INCLUDE file='wlerror'.
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.

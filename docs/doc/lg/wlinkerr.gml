@@ -1,14 +1,14 @@
-:INCLUDE file='LYTCHG'.
+:INCLUDE file='lytchg'.
 .if &e'&dohelp eq 0 .do begin
-:INCLUDE file='WNOHELP'.
+:INCLUDE file='wnohelp'.
 .do end
-:INCLUDE file='FMTMACRO'.
-:INCLUDE file='GMLMACS'.
-:INCLUDE file='XDEFS'.
+:INCLUDE file='fmtmacro'.
+:INCLUDE file='gmlmacs'.
+:INCLUDE file='xdefs'.
 :set symbol="lang"      value="C/C++".
 :set symbol="optdoc"    value="Power++ On-line Help".
 :set symbol="lnkname"   value="Power++ Linker".
-:INCLUDE file='DEFS'.
+:INCLUDE file='defs'.
 .*
 :GDOC.
 .*
@@ -21,7 +21,7 @@
 :include file='&book..kw'
 .do end
 .*
-:INCLUDE file='WLERROR'.
+:INCLUDE file='wlerror'.
 .*
 .cntents end_of_book
 :eGDOC.

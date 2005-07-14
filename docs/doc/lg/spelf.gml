@@ -119,6 +119,5 @@ is any of the following:
 .im wlprompt
 .*
 .im wlmemlay
-.im wlmem
 .*
 .helppref
