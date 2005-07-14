@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Use this file as a template for creating new tests.
+* Description:  This file contains the functional tests for std::list.
 *
 ****************************************************************************/
 
@@ -32,13 +32,13 @@
 #include <list>
 #include "sanity.cpp"
 #include "allocxtr.hpp"
+
 /* ------------------------------------------------------------------
  * access_test
  * test insert, push_front, push_back, erase, pop_front, pop_back 
  */
 bool access_test( )
 {
-    
     std::list< int > lst;
     std::list< int >::iterator it;
     int i;
@@ -96,6 +96,7 @@ bool access_test( )
     }
     return( true );
 }
+
 /* ------------------------------------------------------------------
  * clear_test
  * test removal of elements, clear and destructor
@@ -130,6 +131,38 @@ bool clear_test()
     //(leak detect will fire if destructor is wrong)
     return( true );
 }
+
+/* ------------------------------------------------------------------
+ * remove_test( )
+ * Test the remove methods
+ */
+bool remove_test( )
+{
+    typedef std::list< int > l_t;
+    l_t l;
+    //prepare the list
+    l.push_back( 0 );
+    for( int i = 1; i <= 10; i++ ) {
+        l.push_back( i );
+    }
+    l.push_back( 0 );
+    l.push_back( 0 );
+    for( int i = 11; i <= 20; i++ ) {
+        l.push_back( i );
+    }
+    l.push_back( 0 );
+    //do the deed
+    l.remove( 0 );
+    //did it work?
+    if( INSANE( l ) || l.size( ) != 20 ) FAIL
+    l_t::iterator it( l.begin( ) );
+    for( int i = 1; i <= 20; i++ ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+    return( true );
+}
+
 /* ------------------------------------------------------------------
  * iterator_test( )
  * Test the iterator functionality
@@ -178,6 +211,7 @@ bool iterator_test( )
     
     return( true );
 }
+
 /* ------------------------------------------------------------------
  * copy_test
  * test copy constructor
@@ -197,6 +231,7 @@ bool copy_test()
     }
     return( true );
 }
+
 /* ------------------------------------------------------------------
  * allocator_test
  * test stateful allocators and exception handling
@@ -280,9 +315,10 @@ int main( )
         //if( !string_test( )     || !heap_ok( "t3" ) ) rc = 1;
         //if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
         if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
-        if( !iterator_test( )   || !heap_ok( "t6" ) ) rc = 1;
-        if( !copy_test( )       || !heap_ok( "t7" ) ) rc = 1;
-        if( !allocator_test( )  || !heap_ok( "t8" ) ) rc = 1;
+        if( !remove_test( )     || !heap_ok( "t6" ) ) rc = 1;
+        if( !iterator_test( )   || !heap_ok( "t7" ) ) rc = 1;
+        if( !copy_test( )       || !heap_ok( "t8" ) ) rc = 1;
+        if( !allocator_test( )  || !heap_ok( "t9" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
