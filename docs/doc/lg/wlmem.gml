@@ -15,7 +15,7 @@ file is to contain debugging information.
 For this reason, a temporary disk file is used when all available
 memory is used by the &lnkname..
 .np
-Normally, the temporary file is created in the &currdir directory.
+Normally, the temporary file is created in the current working directory.
 .ix '&tmpvarname. environment variable'
 .ix 'environment variables' '&tmpvarname.'
 However, by defining the "&tmpvarname." environment variable to be a

@@ -11,7 +11,6 @@
 :set symbol="exeextn" value="nlm".
 :set symbol="libvarname" value="lib".
 :set symbol="tmpvarname" value="tmp".
-:set symbol="currdir" value="default".
 .*
 .im dosfiles
 .*

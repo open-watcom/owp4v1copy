@@ -11,7 +11,6 @@
 :set symbol="exeextn" value="qnx".
 :set symbol="libvarname" value="LIB".
 :set symbol="tmpvarname" value="TMPDIR".
-:set symbol="currdir" value="current working".
 .*
 .im qnxfiles
 .*

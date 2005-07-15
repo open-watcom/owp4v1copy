@@ -12,8 +12,6 @@
 :set symbol="libvarname" value="lib".
 .* used by wlmem
 :set symbol="tmpvarname" value="tmp".
-.* used by wllibp (either "default" or "current working")
-:set symbol="currdir" value="default".
 .*
 .if '&target' eq 'QNX' .do begin
 .im qnxfiles

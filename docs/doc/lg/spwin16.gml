@@ -13,7 +13,6 @@
 :set symbol="dllextn" value="dll".
 :set symbol="libvarname" value="lib".
 :set symbol="tmpvarname" value="tmp".
-:set symbol="currdir" value="default".
 .*
 .chap *refid=winchap The Win16 Executable and DLL File Formats
 .*

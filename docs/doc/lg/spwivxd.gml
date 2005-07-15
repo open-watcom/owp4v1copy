@@ -12,7 +12,6 @@
 :set symbol="dllextn" value="".
 :set symbol="libvarname" value="lib".
 :set symbol="tmpvarname" value="tmp".
-:set symbol="currdir" value="default".
 .*
 .chap *refid=vxdchap The Windows Virtual Device Driver File Format
 .*

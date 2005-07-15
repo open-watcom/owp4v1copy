@@ -27,7 +27,7 @@ directive is as follows.
 .autopoint
 .point
 When searching for an object or library file specified in a "LIBFILE"
-directive, the &currdir directory will be searched first, followed by
+directive, the current working directory will be searched first, followed by
 the paths specified in the "LIBPATH" directive, and finally the paths
 specified in the "LIB" environment variable.
 Note that if the object or library file name contains a path, only the
