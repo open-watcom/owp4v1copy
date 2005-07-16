@@ -486,6 +486,28 @@ SYMBOL ClassTemplateLookup( SCOPE scope, char *name )
     return( NULL );
 }
 
+static boolean templateArgListsSame( DECL_INFO *args, TEMPLATE_INFO *tinfo )
+{
+    unsigned curr_count;
+    unsigned i;
+    DECL_INFO *curr;
+    TEMPLATE_SPECIALIZATION *tprimary;
+
+    tprimary = RingFirst( tinfo->specializations );
+    curr_count = getArgList( args, NULL, NULL, NULL );
+    if( curr_count != tprimary->num_args ) {
+        return( FALSE );
+    }
+    i = 0;
+    RingIterBeg( args, curr ) {
+        if( ! TypesIdentical( curr->type, tprimary->type_list[i] ) ) {
+            return( FALSE );
+        }
+        ++i;
+    } RingIterEnd( curr )
+    return( TRUE );
+}
+
 static boolean sameArgNames( DECL_INFO *args, char **names )
 {
     DECL_INFO *curr;
@@ -909,6 +931,14 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
     } else {
         tspec = RingFirst( tinfo->specializations );
         primary_specialization = TRUE;
+
+        if( data->nr_args != tspec->num_args ) {
+            CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, old_sym );
+            return NULL;
+        } else if( ! templateArgListsSame( args, tinfo ) ) {
+            CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, old_sym );
+            return NULL;
+        }
     }
     if( tspec->corrupted ) {
         return tspec;
@@ -972,7 +1002,6 @@ static void addClassTemplateMember( TEMPLATE_DATA *data, SYMBOL sym,
 
     arg_names = getUniqueArgNames( data->args, tspec );
     addMemberEntry( tspec, data->member_defn, arg_names );
-    /* CErr2p( ERR_CANT_OVERLOAD_CLASS_TEMPLATES, sym ); */
 }
 
 static TYPE doParseClassTemplate( TEMPLATE_SPECIALIZATION *tspec,
