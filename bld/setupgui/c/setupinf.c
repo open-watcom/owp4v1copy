@@ -113,10 +113,7 @@ typedef enum {
 } PATCHCOMMANDTYPE;
 
 typedef enum {
-    REG_EXE             = 0,
-    AUTH_EXE            = 1,
-    PARM_EXE            = 2,
-    LIC_EXE             = 4
+    REG_EXE             = 0
 } FILETYPE;
 
 struct patch_info {
@@ -3701,9 +3698,6 @@ extern bool PatchFiles( void )
     char                *appname;
     char                *msg;
     int                 Index;  // used in secondary search during patch
-    a_license           license;
-    a_db_parms          parm;
-    an_auth_block_tag   auth;
     unsigned_32         internal;
     unsigned_32         embeddedinfo;
     a_bool              go_ahead;
@@ -3771,125 +3765,7 @@ extern bool PatchFiles( void )
                             fprintf( logfp, msg, destfullpath );
                         }
 
-                        // get and remember current license, parm and auth info,
-                        // then unpack new file,
-                        // then reapply licence, parm & auth info (if applicable)
-                        if( embeddedinfo & LIC_EXE ) {
-                            if( !ReadBlock( destfullpath,
-                                            LICENSE_PREFIX,
-                                            &license,
-                                            sizeof( a_license ) ) ) {
-                                if( log ) {
-                                    fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_INVALID_EXE" ) );
-                                }
-                                if( !PatchErrorDialog( PATCH_CANT_READ, i ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                        CloseLogFile( logfp );
-                                    }
-                                    return( FALSE );
-                                }
-                                break;
-                            }
-                        }
-
-                        if( embeddedinfo & AUTH_EXE ) {
-                            if( !ReadBlock( destfullpath,
-                                            AUTH_BLOCK_TAG_STR,
-                                            &auth,
-                                            sizeof( an_auth_block_tag ) ) ) {
-                                if( log ) {
-                                    fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_INVALID_EXE" ) );
-                                }
-                                if( !PatchErrorDialog( PATCH_CANT_READ, i ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                        CloseLogFile( logfp );
-                                    }
-                                    return( FALSE );
-                                }
-                                break;
-                            }
-                        }
-
-                        if( embeddedinfo & PARM_EXE ) {
-                            if( !ReadBlock( destfullpath,
-                                            DBPARMS_TAG_STR,
-                                            &parm,
-                                            sizeof( a_db_parms ) ) ) {
-                                if( log ) {
-                                    fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_INVALID_EXE" ) );
-                                }
-                                if( !PatchErrorDialog( PATCH_CANT_READ, i ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                        CloseLogFile( logfp );
-                                    }
-                                    return( FALSE );
-                                }
-                                break;
-                            }
-                        }
-
                         if( PerformDecode( srcfullpath, destfullpath, internal ) == CFE_NOERROR ) {
-
-                            if( embeddedinfo & PARM_EXE ) {
-                                if( !WriteBlock( destfullpath,
-                                                 DBPARMS_TAG_STR,
-                                                 &parm,
-                                                 sizeof( a_db_parms ) ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_FAILED_PATCHING" ) );
-                                    }
-                                    if( !PatchErrorDialog( PATCH_CANT_WRITE, i ) ) {
-                                        if( log ) {
-                                            fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                            CloseLogFile( logfp );
-                                        }
-                                        return( FALSE );
-                                    }
-                                    break;
-                                }
-                            }
-
-                            if( embeddedinfo & AUTH_EXE ) {
-                                if( !WriteBlock( destfullpath,
-                                                 AUTH_BLOCK_TAG_STR,
-                                                 &auth,
-                                                 sizeof( an_auth_block_tag ) ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_FAILED_PATCHING" ) );
-                                    }
-                                    if( !PatchErrorDialog( PATCH_CANT_WRITE, i ) ) {
-                                        if( log ) {
-                                            fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                            CloseLogFile( logfp );
-                                        }
-                                        return( FALSE );
-                                    }
-                                    break;
-                                }
-                            }
-
-                            if( embeddedinfo & LIC_EXE ) {
-                                if( !WriteBlock( destfullpath,
-                                                 LICENSE_PREFIX,
-                                                 &license,
-                                                 sizeof( a_license ) ) ) {
-                                    if( log ) {
-                                        fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_FAILED_PATCHING" ) );
-                                    }
-                                    if( !PatchErrorDialog( PATCH_CANT_WRITE, i ) ) {
-                                        if( log ) {
-                                            fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_PATCHABORT" ) );
-                                            CloseLogFile( logfp );
-                                        }
-                                        return( FALSE );
-                                    }
-                                    break;
-                                }
-                            }
-
                             ++count;
                             if( log ) {
                                 fprintf( logfp, "%s\n", GetVariableStrVal( "IDS_SUCCESS" ) );
