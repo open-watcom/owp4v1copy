@@ -38,14 +38,14 @@
 #include "wdfunc.h"
 
 char *elf_exe_msg[] = {
-    "2file type (i.e. obj file, exe file)         = ",
+    "2file type (i.e. object, executable file)    = ",
     "2required architecture                       = ",
     "4version of the file                         = ",
     "4program entry point                         = ",
     "4program header offset                       = ",
     "4section header offset                       = ",
     "4processor specific flags                    = ",
-    "2elf header size                             = ",
+    "2ELF header size                             = ",
     "2program header entry size                   = ",
     "2number of program header entries            = ",
     "2section header entry size                   = ",
@@ -100,7 +100,7 @@ bool Dmp_elf_header( unsigned_32 start )
     if( memcmp( Elf_head.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN ) ) {
         return( 0 );
     }
-    Banner( "ELF EXE Header" );
+    Banner( "ELF Header" );
     if( start != 0 ){
         Wdputs("File Offset:");
         Puthex( start, 8 );
@@ -129,7 +129,7 @@ static void dmp_hdr_type( unsigned_16 type )
     Wdputs( "file type:                                  " );
     switch( type ) {
     case ET_NONE:
-        Wdputs( "no file type" );
+        Wdputs( "No file type" );
         break;
     case ET_REL:
         Wdputs( "Relocatable file" );
@@ -138,13 +138,13 @@ static void dmp_hdr_type( unsigned_16 type )
         Wdputs( "Executable file" );
         break;
     case ET_DYN:
-        Wdputs( "shared object file" );
+        Wdputs( "Shared object file" );
         break;
     case ET_CORE:
         Wdputs( "Core file" );
         break;
     case ET_LOPROC:
-        Wdputs( "processor specific" );
+        Wdputs( "Processor specific" );
         break;
     }
     Wdputslc( "\n" );
@@ -556,10 +556,10 @@ static void set_dwarf( unsigned_32 start )
     unsigned_32     sections[DR_DEBUG_NUM_SECTS];
 
     // grab the string table, if it exists
-    if( !Elf_head.e_shstrndx ){
+    if( !Elf_head.e_shstrndx ) {
         return; // no strings no dwarf
     }
-    if( Elf_head.e_shnum == 0 ){
+    if( Elf_head.e_shnum == 0 ) {
         return; // no sections no dwarf
     }
     memset( sections, 0, DR_DEBUG_NUM_SECTS * sizeof(unsigned_32) );

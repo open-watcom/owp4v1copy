@@ -183,16 +183,17 @@ static void usage( void )
 /***********************/
 {
     Wdputs( "Usage: wdump [options] <pathname> [options]\n" );
-    Wdputs( "  <pathname> is a DOS .EXE file," ); //or .COM file,"
-    Wdputs( " a Windows application,\n" );
-    Wdputs( "            or a new .EXE, .DLL, .EXP, .NLM, .QNX or .ELF file\n" ); //, .COM, or .SYS file\n"
+    Wdputs( "  <pathname> is a DOS .EXE file, a Windows or OS/2 executable or DLL,\n" );
+    Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
+    Wdputs( "            an ELF executable, shared library or object file,\n" );
+    Wdputs( "            or a COFF object.\n" );
     Wdputs( "  <pathname> has default extension of .EXE, .DLL, .EXP, .NLM, .QNX and .ELF\n" );
     Wdputs( "  options:\n" );
     Wdputs( "        -l[=<listfile>] information dumped in a listing file\n" );
     Wdputs( "        -p information dumped by page.  <enter>: next line,\n" );
     Wdputs( "            <esc> or 'q': quit, any other key: next page\n" );
     Wdputs( "        -q quiet dump - don't write banner\n" );
-//            "        -m causes Microsoft debugging information to be dumped\n" );
+//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
     Wdputs( "        -s[=<segnum>] the segments'( resp. that segment's )\n" );
     Wdputs( "            info is dumped\n" );
     Wdputs( "        -r causes more resource information to be dumped\n" );
@@ -264,8 +265,7 @@ static void dmp_exe( void )
                 /* done */
             } else {
                 Wdputs( Name );
-                Wdputslc( " is not a valid browser file.\n" );
-                Wdputslc( "Invalid DOS, NLM, PHAR, QNX, ELF, AR or COFF file.\n" );
+                Wdputslc( " does not have recognized format.\n" );
             }
         }
     }

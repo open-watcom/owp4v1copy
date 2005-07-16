@@ -135,7 +135,7 @@ void Wdputc( char c )
             Write_buff[WSize] = 0;
         }
     } else {
-        write( STDOUT, &c, 1 );
+        putchar( c );
     }
 }
 
@@ -145,10 +145,10 @@ void Wdputc( char c )
 void Wdputs( char *buf )
 /**********************/
 {
-    int     len, len2;
-
-    len = strlen( buf );
     if( Options_dmp & LST_REQD ) {
+        int     len, len2;
+
+        len = strlen( buf );
         if( WSize + strlen( buf ) >= BSIZE ) {
             len2 = BSIZE - WSize ;
             memcpy( &Write_buff[WSize], buf, len2 );
@@ -160,7 +160,7 @@ void Wdputs( char *buf )
             WSize += len;
         }
     } else {
-        write( STDOUT, buf, len );
+        fputs( buf, stdout );
     }
 }
 
@@ -172,10 +172,10 @@ int Ch = 0;
 void Wdputslc( char * buf )
 /*************************/
 {
-    int len, len2;
-
-    len = strlen( buf );
     if( Options_dmp & LST_REQD ) {
+        int len, len2;
+
+        len = strlen( buf );
         if( WSize + strlen( buf ) >= BSIZE ) {
             len2 = BSIZE - WSize ;
             memcpy( &Write_buff[WSize], buf, len2 );
@@ -187,7 +187,7 @@ void Wdputslc( char * buf )
             WSize += len;
         }
     } else {
-        write( STDOUT, buf, len );
+        fputs( buf, stdout );
         if( Options_dmp & PAGE_DMP ) {
             Line_count++;
             if( Line_count == NUMLINE || Ch == 13 ) {
