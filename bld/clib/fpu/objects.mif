@@ -24,6 +24,8 @@
 !inject ini87086.obj d16                                            o16     q16     w16
 !inject ini87386.obj     d32             nt         nvc ncl nvl nll     o32     q32     w32     l32
 !inject old87.obj    d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32     l32
+!inject dosinite.obj     d32
+!inject hook387.obj      d32
 
 !include ../../../../objlist.mif
 
@@ -54,3 +56,4 @@ fpe387_postopts=$(fpi87_postopts)
 fpeinth_postopts=$(fpi87_postopts)
 fenv_postopts=$(fpi87_postopts)
 cntrl87_postopts=$(fpi87_postopts)
+dosinite_postopts=$(fpi87_postopts)

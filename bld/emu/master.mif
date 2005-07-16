@@ -29,18 +29,15 @@ extra_a_flags_qnx = -ms -D_OS=_QNX -DSEGMENTED
 extra_a_flags_win = -mf -D_OS=_PLDT -D__WIN387__
 extra_a_flags_386inite = -I"$(comp_cfg_dir)/h"
 extra_a_flags_386stub = -ms -I"$(comp_cfg_dir)/h"
-extra_a_flags_dosinite = -fpi -I"$(lib_misc_dir)/h"
 
 extra_c_flags = -s -fpc
 extra_c_flags_dos = -zl -zls
 extra_c_flags_qnx = -oais-w3 -I"$(new_qnx_h)" -DQNX32
 
-extra_c_flags_hook387 = -I"$(lib_misc_dir)/h"
-
 !ifeq host_OS dos
 
-emu387.lib: emu387.obj 386inite.obj dosinite.obj hook387.obj
-    $(librarian) -s -t -n -b $@ +emu387.obj +386inite.obj +dosinite.obj +hook387.obj
+emu387.lib: emu387.obj 386inite.obj
+    $(librarian) -s -t -n -b $@ +emu387.obj +386inite.obj
 
 !else ifeq host_OS qnx
 

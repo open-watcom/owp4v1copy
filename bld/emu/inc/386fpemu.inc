@@ -41,9 +41,9 @@ endif
 ifndef __WIN387__
         extrn   __GETDS : near
 if _OS eq _QNX
-        extrn   "C",__FPE_handler : near
+        extrn   "C",__FPEhandler : near
 else
-        extrn   "C",__FPE_handler : dword
+        extrn   __FPE_exception_  : near
 endif
 endif
 
@@ -944,9 +944,9 @@ ifndef __WIN387__
           rep   movsd                   ; - copy it
           movzx EAX,AH                  ; - get exception code  21-jul-90
 if _OS eq _QNX
-          call  __FPE_handler           ; - jump to SIGFPE handler rtn
+          call  __FPEhandler            ; - jump to SIGFPE handler rtn
 else
-          call  ds:__FPE_handler        ; - jump to SIGFPE handler rtn
+          call  __FPE_exception_        ; - jump to SIGFPE handler rtn
 endif
           mov   CX,DS                   ; - set ES=DS
           mov   ES,CX                   ; - ...
