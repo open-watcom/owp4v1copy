@@ -94,9 +94,7 @@ static void checkTabWidth( unsigned *p )
 
 static void checkOENumber( unsigned *p )
 {
-    if( *p == 0 ) {
-        *p = 100;
-    }
+    p = p;
 }
 
 static void checkPrologSize( unsigned *p )
@@ -935,8 +933,8 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
         GenSwitches |= INS_SCHEDULING;          // -or
         CmdSysSetMaxOptimization();             // -om
         CompFlags.inline_intrinsics = 1;        // -oi
-        data->oe = 1;                           // -oe
-        if( data->oe_value == 0 ) {
+        if( ! data->oe ) {
+            data->oe = 1;                       // -oe
             // keep in sync with options.gml
             data->oe_value = 100;
         }
