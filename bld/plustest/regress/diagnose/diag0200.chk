@@ -3282,7 +3282,7 @@ File: source\diag0282.c
 File: source\diag0283.c
 (5,22): Error! E811: cannot cast to a function type
   target conversion type is 'void * ( void )'
-(12,10): Warning! W725: "<typeinfo.h> not included"
+(12,10): Warning! W725: "<typeinfo> not included"
 (12,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info'
 (13,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info'
 (14,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info'

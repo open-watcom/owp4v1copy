@@ -54,7 +54,7 @@ static TYPE type_infoGetType( PTREE expr )
     type_info = ClassPreDefined( CppSpecialName( SPECIAL_TYPE_INFO ), &locn );
     if( ! TypeDefined( type_info ) ) {
         PTreeSetErrLoc( expr );
-        CErr2p( WARN_USER_WARNING_MSG, "<typeinfo.h> not included" );
+        CErr2p( WARN_USER_WARNING_MSG, "<typeinfo> not included" );
     }
     type_info = MakeModifiedType( type_info, TF1_CONST );
     type_info = MakeReferenceTo( type_info );
