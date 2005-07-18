@@ -190,11 +190,14 @@ int __mbinit( int codepage )
     #elif defined __OSI__
     #elif defined __DOS__
         /*** Initialize the __MBCSIsTable values ***/
-        if( codepage != 0 )  return( 1 );       /* can only handle default */
+        if( codepage != 0 )
+            return( 1 );       /* can only handle default */
         leadBytes = dos_get_dbcs_lead_table();
-        if( leadBytes == NULL )  return( 0 );
+        if( leadBytes == NULL )
+            return( 0 );
         clear_dbcs_table();
-        if( leadBytes[0] )  __IsDBCS = 1;       /* set __IsDBCS if needed */
+        if( leadBytes[0] )
+            __IsDBCS = 1;       /* set __IsDBCS if needed */
         for( countRange=0; leadBytes[countRange]!=0x0000; countRange++ ) {
             lowerBound = (unsigned char) leadBytes[countRange];
             upperBound = (unsigned char) (leadBytes[countRange] >> 8);
@@ -229,31 +232,43 @@ int __mbinit( int codepage )
 #if defined(__DOS__) && !defined(__OSI__)
 #ifndef __386__
 
+// for some unknown reason NT DPMI returns for DOS service 6300h
+// Carry=0, odd SI value and DS stay unchanged
+// this case is also tested as wrong int 21h result
+#if 1
 #pragma aux             dos_get_dbcs_lead_table = \
         "push ds"       \
-        "mov ax,6300h"  /* get DBCS vector table */ \
-        "int 21h"       \
-        "jnc NoError"   \
-        "xor si,si"     /* error: set SI==DS==0 so DI:SI==NULL for return */ \
         "xor ax,ax"     \
         "mov ds,ax"     \
-        "NoError:"      \
-        "mov di,ds"     /* no error: leave table address in DI:SI */ \
+        "mov ah,63h"    /* get DBCS vector table */ \
+        "int 21h"       \
+        "mov di,ds"     \
+        "jnc label1"    \
+        "xor di,di"     \
+        "label1:"       \
+        "test di,di"    \
+        "jnz exit1"     \
+        "mov si,di"     \
+        "exit1:"        \
         "pop ds"        \
         value           [di si] \
         modify          [ax bx cx dx si di es];
+#else
+unsigned short _WCFAR *dos_get_dbcs_lead_table( void )
+/****************************************************/
+{
+    union REGS        regs;
+    struct SREGS      sregs;
 
-//unsigned short _WCFAR *dos_get_dbcs_lead_table( void )
-///****************************************************/
-//{
-//    union REGS                regs;
-//    struct SREGS      sregs;
-//
-//    regs.w.ax = 0x6300;                           /* get lead byte table code */
-//    intdosx( &regs, &regs, &sregs );      /* call DOS */
-//    if( regs.w.cflag )  return( NULL );           /* ensure function succeeded */
-//    return( MK_FP( sregs.ds, regs.w.si ) ); /* return pointer to table */
-//}
+    regs.w.ax = 0x6300;                     /* get lead byte table code */
+    sregs.ds = 0;
+    sregs.es = 0;
+    intdosx( &regs, &regs, &sregs );        /* call DOS */
+    if( regs.w.cflag || ( sregs.ds == 0 ))  /* ensure function succeeded */
+        return( NULL );
+    return( MK_FP( sregs.ds, regs.w.si ) ); /* return pointer to table */
+}
+#endif
 
 #if 0
 unsigned short dos_get_code_page( void )
@@ -274,7 +289,7 @@ unsigned short dos_get_code_page( void )
     if( regs.w.cflag )  return( 0 );        /* ensure function succeeded */
     return( * (unsigned short*)(buf+5) );   /* return code page */
 }
-#endif
+#else
 #pragma aux dos_get_code_page = \
         "push ds"       \
         "push bp"       \
@@ -299,6 +314,7 @@ unsigned short dos_get_code_page( void )
         "pop ds"        \
         value           [ax] \
         modify          [ax bx cx dx di es];
+#endif
 
 #else
 
