@@ -263,13 +263,13 @@ namespace std {
       const_iterator end( )   const   { return( buffer + str_length ); }
 
       reverse_iterator rbegin( )
-          { return( reverse_iterator( buffer ) ); }
-      const_reverse_iterator rbegin( ) const
-          { return( const_reverse_iterator( buffer ) ); }
-      reverse_iterator rend( )
           { return( reverse_iterator( buffer + str_length ) ); }
-      const_reverse_iterator rend( ) const
+      const_reverse_iterator rbegin( ) const
           { return( const_reverse_iterator( buffer + str_length ) ); }
+      reverse_iterator rend( )
+          { return( reverse_iterator( buffer ) ); }
+      const_reverse_iterator rend( ) const
+          { return( const_reverse_iterator( buffer ) ); }
 
       size_type size( )     const  { return( str_length ); }
       size_type length( )   const  { return( str_length ); }
