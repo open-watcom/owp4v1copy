@@ -744,6 +744,7 @@ positive_tests = &
     ret09.$(ext) &
     ret10.$(ext) &
     ret11.$(ext) &
+    ret12.$(ext) &
     risc01.$(ext) &
     rtti01.$(ext) &
     rtti02.$(ext) &
