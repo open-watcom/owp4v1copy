@@ -42,8 +42,13 @@ platform.
 ..sk 1
 ..im inlintab
 .pc
-This environment can be simply changed by appropriate directives and this
-change is valid for all remaining part of the source code.
+This environment can be simply changed by appropriate directives.
+.pc
+.us Note:
+.begnote
+This change is valid only for the block of assembly source code.
+After this block, default setting is restored.
+.endnote
 .*
 .section In-line Assembly Language Tutorial
 .*

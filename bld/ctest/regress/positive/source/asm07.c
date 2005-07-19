@@ -24,6 +24,8 @@ int main() {
     _asm    sse3
 
     _asm {
+        .686
+        .XMM3
         jmp l1
         addsubpd xmm1,xmm3
         l1:
