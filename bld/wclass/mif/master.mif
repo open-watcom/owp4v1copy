@@ -14,6 +14,7 @@ inc_dirs = -I"../hpp" -I"../../hpp" -I"$(gui_dir)/h"
 extra_c_flags = -s
 
 extra_c_flags_i86 = -zc -zm
+extra_c_flags_386 = -6
 
 WCLASS_OBJS = &
         wabout.obj &
