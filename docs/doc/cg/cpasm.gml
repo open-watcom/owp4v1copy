@@ -45,10 +45,9 @@ platform.
 This environment can be simply changed by appropriate directives.
 .pc
 .us Note:
-.begnote
+.pc
 This change is valid only for the block of assembly source code.
 After this block, default setting is restored.
-.endnote
 .*
 .section In-line Assembly Language Tutorial
 .*
