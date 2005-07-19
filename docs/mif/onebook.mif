@@ -35,10 +35,7 @@ gml_lib=..\gml\syslib
 hc_nt = $(%WIN95HC)
 hc_wat = whc
 hc_os2 = $(%OS2HC)
-hc_dos_dos386 = $(%DOC_ROOT)\cmds\hcdos
-hc_dos_nt386 = $(%DOC_ROOT)\cmds\hcdos32
-hc_dos_os2386 = $(%DOC_ROOT)\cmds\hcdosos2
-hc_dos = $(hc_dos_$(%build_platform))
+hc_dos = hcdos
 
 #
 # define what should be build
