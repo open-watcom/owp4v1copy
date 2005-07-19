@@ -372,7 +372,7 @@ cLockStart      label byte
 
 Copyright       db 13,10
         db 79 dup ("Ä"),13,10
-        db "CauseWay Trap helper v3.00.  Helper code is public domain.  No rights reserved.",13,10
+        db "CauseWay Trap helper v3.01.  Helper code is public domain.  No rights reserved.",13,10
         db 79 dup ("Ä"),13,10
         db 13,10,"$"
 
