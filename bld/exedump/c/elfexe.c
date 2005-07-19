@@ -312,6 +312,9 @@ static void dmp_sec_data( char *name,
     unsigned_32 type, unsigned_32 offset, unsigned_32 size )
 /**********************************************************/
 {
+    if( size == 0 ) {
+        return;
+    }
     switch( type ) {
     case SHT_NULL:
         Dmp_seg_data( offset, size );

@@ -125,6 +125,34 @@ static void set_sects( void )
     }
 }
 
+
+static bool os2_debug( void )
+/***************************/
+{
+    Wlseek( 0 );
+    Wread( &Dos_head, sizeof( Dos_head ) );
+    if( Dos_head.signature == DOS_SIGNATURE ) {
+        if( Dos_head.reloc_offset == OS2_EXE_HEADER_FOLLOWS ) {
+            Wlseek( OS2_NE_OFFSET );
+            Wread( &New_exe_off, sizeof( New_exe_off ) );
+            Wlseek( New_exe_off );
+        }
+    }
+    // MZ stub is optional
+    Wread( &Os2_386_head, sizeof( Os2_386_head ) );
+    if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ||
+        Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
+        if( Os2_386_head.debug_len ) {
+            Wlseek( Os2_386_head.debug_off );
+            return( Dmp_elf_header( Os2_386_head.debug_off ) );
+        } else {
+            Wdputslc( "No OS/2 LE or LX debugging info\n" );
+        }
+    }
+    return( FALSE );
+}
+
+
 /*
  * Dump the Debug Header, if any.
  */
@@ -149,7 +177,11 @@ bool Dmp_mdbg_head( void )
         Dump_section();
         return( 1 );
     } else {
-        os2_debug();
+        Wlseek( 0 );
+        // Handle ELF and NE/LX executables without TIS signature
+        if( Dmp_elf_header( 0 ) || os2_debug() ) {
+            return( 1 );    // Don't dump debug data twice
+        }
         while( 1 ) {
             Wlseek( Curr_sectoff -(int)sizeof( debug_header ) );
             Wread( &dbg, sizeof( debug_header ) );
@@ -166,7 +198,7 @@ bool Dmp_mdbg_head( void )
             Wdputslc( "\n" );
             Curr_sectoff -= dbg.info_size;
             Wlseek( Curr_sectoff );
-            if( !Dmp_elf_header( Curr_sectoff ) ){
+            if( !Dmp_elf_header( Curr_sectoff ) ) {
                 Banner( "Data" );
                 Dmp_seg_data( Curr_sectoff, dbg.info_size - sizeof( debug_header ) );
             }
@@ -213,28 +245,4 @@ static void dmp_master( master_dbg_header mdh )
         i += sizeof( unsigned_16);
     }
     Wdputslc( "\n" );
-}
-
-static void os2_debug( void )
-/***************************/
-{
-    Wlseek( 0 );
-    Wread( &Dos_head, sizeof( Dos_head ) );
-    if( Dos_head.signature == DOS_SIGNATURE ) {
-        if( Dos_head.reloc_offset == OS2_EXE_HEADER_FOLLOWS ) {
-            Wlseek( OS2_NE_OFFSET );
-            Wread( &New_exe_off, sizeof( New_exe_off ) );
-            Wlseek( New_exe_off );
-            Wread( &Os2_386_head, sizeof( Os2_386_head ) );
-            if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ||
-                Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
-                if( Os2_386_head.debug_len ) {
-                    Wlseek( Os2_386_head.debug_off );
-                    Dmp_elf_header( Os2_386_head.debug_off );
-                } else {
-                    Wdputslc( "no OS/2 LE or LX debugging info\n" );
-                }
-            }
-        }
-    }
 }
