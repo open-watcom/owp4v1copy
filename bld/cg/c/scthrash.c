@@ -115,6 +115,13 @@ static  bool    CanChange( instruction **pins,
             if( opnd == frm ) {
                 new_ins->operands[ i ] = to;
                 opnd = to;
+            } else if( opnd->n.class == N_REGISTER ) {
+                // If operand overlaps with but wasn't identical to 'from'
+                // register, leave this instruction alone! In specific cases
+                // it might be possible to do the FindPiece trick like above
+                // but not in general.
+                if( HW_Ovlap( frm->r.reg, opnd->r.reg ) )
+                    return( FALSE );
             }
             if( opnd->n.class == N_INDEXED ) {
                 if( opnd->i.index == frm ) {
@@ -345,4 +352,3 @@ extern  bool    RegThrash( block *blk ) {
     }
     return( FALSE );
 }
-
