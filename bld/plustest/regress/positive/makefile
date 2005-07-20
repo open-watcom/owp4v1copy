@@ -19,7 +19,7 @@ test_cflags_axp = -d1-xss-si
 opt_EH_yes = -xss
 alt_error = 02
 !else ifdef test3
-test_cflags_386 = -d2-xst-ms
+test_cflags_386 = -d2-xst-ms-zfp
 test_cflags_i86 = -d2-xst-ml
 test_cflags_axp = -d2-xst
 opt_EH_yes = -xst
@@ -43,7 +43,7 @@ test_cflags_axp = -d2-xds
 opt_EH_yes = -xss
 alt_error = 06
 !else ifdef test7
-test_cflags_386 = -d1-xdt-ms
+test_cflags_386 = -d1-xdt-ms-zfp
 test_cflags_i86 = -d1-xdt-ml
 test_cflags_axp = -d1-xdt
 opt_EH_yes = -xst
@@ -73,7 +73,7 @@ test_cflags_axp = -d2s-xs
 opt_EH_yes = -xs
 alt_error = 11
 !else
-test_cflags_386 = -ox-d1-xdt-ms
+test_cflags_386 = -ox-d1-xdt-ms-zfp
 test_cflags_i86 = -ox-d1-xdt-ms
 test_cflags_axp = -ox-d1-xdt
 opt_EH_yes = -xst
