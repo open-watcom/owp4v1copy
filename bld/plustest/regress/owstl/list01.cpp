@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+#include <algorithm>
 #include <iostream>
 #include <list>
 #include "sanity.cpp"
@@ -98,6 +99,35 @@ bool access_test( )
 }
 
 /* ------------------------------------------------------------------
+ * assign_test
+ * test list assignment methods
+ */
+bool assign_test( )
+{
+    std::list< int > lst1, lst2;
+    for( int i =  1; i <= 10; ++i ) lst1.push_back( i );
+    for( int i = 11; i <= 15; ++i ) lst2.push_back( i );
+    lst1 = lst2;
+    //check it
+    if( INSANE( lst1 ) || INSANE( lst2 ) ) FAIL
+    if( lst1.size( ) != 5 || lst2.size( ) != 5 ) FAIL
+    int i = 11;
+    std::list< int >::iterator it = lst1.begin( );
+    while( it != lst1.end( ) ) {
+        if( *it != i ) FAIL
+        ++i; ++it;
+    }
+    //try a different way
+    lst1.assign( 10, -1 );
+    //check it
+    if( INSANE( lst1 ) || lst1.size( ) != 10 ) FAIL
+    for( it = lst1.begin( ); it != lst1.end( ); ++it ) {
+        if( *it != -1 ) FAIL
+    }
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * clear_test
  * test removal of elements, clear and destructor
  */
@@ -133,8 +163,59 @@ bool clear_test()
 }
 
 /* ------------------------------------------------------------------
+ * erase_test
+ * test two argument form of erase
+ */
+bool erase_test( )
+{
+    using namespace std;  //try this for something different.
+    //build a list.
+    list< int > lst;
+    for( int i = 1; i <= 20; ++i ) lst.push_back( i );
+    list< int >::iterator it = find( lst.begin( ), lst.end( ), 11 );
+    //do the deed
+    lst.erase( lst.begin( ), it );
+    if( INSANE( lst ) || lst.size( ) != 10 ) FAIL
+    it = lst.begin( );
+    for( int i = 1; i <= 10; ++i ) {
+        if( *it != i + 10 ) FAIL
+        ++it;
+    }
+    //erase everything
+    lst.erase( lst.begin( ), lst.end( ) );
+    if( INSANE( lst ) || lst.size( ) != 0 ) FAIL
+    return( true );
+}
+
+/* ------------------------------------------------------------------
+ * swap_test
+ * test list swapping method
+ */
+bool swap_test( )
+{
+    std::list< int > lst_1, lst_2;
+    lst_1.push_back( 1 );
+    //try a swap and then check the result
+    lst_1.swap( lst_2 );
+    if( INSANE( lst_1 )    || INSANE( lst_2 ) ||
+        lst_1.size( ) != 0 || lst_2.size( ) != 1) FAIL
+    if( lst_2.front( ) != 1 ) FAIL
+    //add some things to lst_1 and swap again
+    lst_1.push_back( 10 );
+    lst_1.push_back( 11 );
+    lst_1.swap( lst_2 );
+    if( INSANE( lst_1 )    || INSANE( lst_2 ) ||
+        lst_1.size( ) != 1 || lst_2.size( ) != 2) FAIL
+    if( lst_1.front( ) != 1 ) FAIL
+    if( lst_2.front( ) != 10 ) FAIL
+    lst_2.pop_front( );
+    if( lst_2.front( ) != 11 ) FAIL
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * remove_test( )
- * Test the remove methods
+ * test the remove methods
  */
 bool remove_test( )
 {
@@ -213,6 +294,24 @@ bool iterator_test( )
 }
 
 /* ------------------------------------------------------------------
+ * reverse_iterator_test
+ * make sure reverse iterators do something reasonable
+ */
+bool reverse_iterator_test( )
+{
+    std::list< int > lst;
+    for( int i = 1; i <= 10; ++i ) lst.push_back( i );
+
+    std::list< int >::reverse_iterator rit = lst.rbegin( );
+    for( int i = 10; i >= 1; --i ) {
+      if( *rit != i ) FAIL
+      ++rit;
+    }
+    if( rit != lst.rend( ) ) FAIL
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * copy_test
  * test copy constructor
  */
@@ -251,8 +350,8 @@ bool allocator_test( )
         }
     }catch( std::bad_alloc const & ){
         mem = lst.get_allocator();
-        if( mem.GetNumAllocs() != 101 ) FAIL    //should have failed on 101st
-        if( INSANE(lst) || lst.size() != 100 ) FAIL
+        if( mem.GetNumAllocs() != 101 ) FAIL       //should fail on 101st
+        if( INSANE(lst) || lst.size() != 99 ) FAIL //one alloc for sentinel
         thrown = true;
     }
     if( !thrown ) FAIL  //exception should have been thrown
@@ -291,9 +390,9 @@ bool allocator_test( )
     try{
         list_t lst2( lst );
     }catch( std::bad_alloc ){
-        if( mem.GetNumConstructs() != 50 ) FAIL
+        if( mem.GetNumConstructs() != 49 ) FAIL  //sentinel not constructed
         if( mem.GetNumAllocs()     != 51 ) FAIL
-        if( mem.GetNumDestroys()   != 50 ) FAIL
+        if( mem.GetNumDestroys()   != 49 ) FAIL  //sentinel not destroyed
         if( mem.GetNumDeallocs()   != 50 ) FAIL
         if( INSANE( lst ) || lst.size() != 70 ) FAIL
         thrown = true;
@@ -310,15 +409,19 @@ int main( )
     //heap_dump();
 
     try {
-        //if( !construct_test( )  || !heap_ok( "t1" ) ) rc = 1;
-        if( !access_test( )     || !heap_ok( "t2" ) ) rc = 1;
-        //if( !string_test( )     || !heap_ok( "t3" ) ) rc = 1;
-        //if( !torture_test( )    || !heap_ok( "t4" ) ) rc = 1;
-        if( !clear_test( )      || !heap_ok( "t5" ) ) rc = 1;
-        if( !remove_test( )     || !heap_ok( "t6" ) ) rc = 1;
-        if( !iterator_test( )   || !heap_ok( "t7" ) ) rc = 1;
-        if( !copy_test( )       || !heap_ok( "t8" ) ) rc = 1;
-        if( !allocator_test( )  || !heap_ok( "t9" ) ) rc = 1;
+        //if( !construct_test( )        || !heap_ok( "t01" ) ) rc = 1;
+        if( !access_test( )           || !heap_ok( "t02" ) ) rc = 1;
+        //if( !string_test( )           || !heap_ok( "t03" ) ) rc = 1;
+        //if( !torture_test( )          || !heap_ok( "t04" ) ) rc = 1;
+        if( !assign_test( )           || !heap_ok( "t05" ) ) rc = 1;
+        if( !clear_test( )            || !heap_ok( "t06" ) ) rc = 1;
+        if( !erase_test( )            || !heap_ok( "t07" ) ) rc = 1;
+        if( !swap_test( )             || !heap_ok( "t08" ) ) rc = 1;
+        if( !remove_test( )           || !heap_ok( "t09" ) ) rc = 1;
+        if( !iterator_test( )         || !heap_ok( "t10" ) ) rc = 1;
+        if( !reverse_iterator_test( ) || !heap_ok( "t11" ) ) rc = 1;
+        if( !copy_test( )             || !heap_ok( "t12" ) ) rc = 1;
+        if( !allocator_test( )        || !heap_ok( "t13" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
