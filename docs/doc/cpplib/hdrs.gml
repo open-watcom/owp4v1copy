@@ -45,7 +45,7 @@ The header files are all located in the
 :MONO.\WATCOM\H
 directory.
 :DL termhi=2.
-:DT.algorithm
+:DT.algorithm (algorith)
 :DD.
 .ix 'header files' 'algorithm'
 This header file defines the standard algorithm templates.
@@ -67,14 +67,14 @@ complex arithmetic. The class defined in this header is not the Standard
 C++
 :MONO.std::~complex
 class template.
-:DT.exceptio/exceptio.h (exception/exception.h)
+:DT.exception/exception.h (exceptio/exceptio.h)
 :DD.
 .ix 'header files' 'exception'
 .ix 'exception handling'
 This header file defines components to be used with
 the exception handling mechanism. It defines the base class of the
 standard exception hierarchy.
-:DT.function (functional)
+:DT.functional (function)
 :DD.
 .ix 'header files' 'functional'
 This header file defines the standard functional templates. This
@@ -174,12 +174,21 @@ built-in types.
 Note that this header is not directly related to the header limits.h
 from the C standard library (or to the C++ form of that header,
 climits).
+:DT.list
+:DD.
+.ix 'header files' 'list'
+This header file defines the
+:MONO.std::list
+class template. It provides a way to make a sequence of objects with
+efficient insert and erase operations.
 :DT.map
 :DD.
 .ix 'header files' 'map'
 This header file defines the
 :MONO.std::~map
-class template. It provides a way to associate keys to values.
+and
+:MONO.std::multimap
+class templates. They provide ways to associate keys to values.
 :DT.memory
 :DD.
 .ix 'header files' 'memory'
@@ -219,7 +228,10 @@ It also defines its associated parameterless manipulators.
 .ix 'header files' 'set'
 This header file defines the
 :MONO.std::~set
-class template. It provides a way to make ordered collections of objects.
+and
+:MONO.std::multiset
+class templates. They provide ways to make ordered collections of
+objects with efficient insert, erase, and find operations.
 :DT.stdiobuf.h
 :DD.
 .ix 'header files' 'stdiobuf'
@@ -227,7 +239,7 @@ This header file defines the
 :MONO.stdiobuf
 class which provides the support for the C++ input and output operations to
 standard input, standard output, and standard error streams.
-:DT.streambu/streambu.h (streambuf/streambuf.h)
+:DT.streambuf/streambuf.h (streambu/streambu.h)
 :DD.
 .ix 'header files' 'streambuf'
 This header file defines the
@@ -240,7 +252,7 @@ header file.
 :DD.
 .ix 'header files' 'string'
 This header file defines the
-:MONO.std::~basic_string
+:MONO.std::basic_string
 class template. It also contains the type definitions for
 :MONO.std::~string
 and
@@ -262,7 +274,7 @@ extension is used to avoid colliding with the Standard C
 header file. The class defined in this header is not the Standard C++
 :MONO.std::~string
 class.
-:DT.strstrea/strstrea.h (strstream)
+:DT.strstream.h (strstrea.h)
 :DD.
 .ix 'header files' 'strstream'
 This header files defines the
