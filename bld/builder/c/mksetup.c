@@ -63,14 +63,13 @@ struct size_list {
 };
 
 typedef struct file_info {
-    char                *file;
+//    char                *file;
     char                *pack;
     char                *condition;
     int                 path;
     int                 old_path;
     int                 num_files;
     size_list           *sizes;
-    long                cmp_size;
     struct file_info    *next;
 } FILE_INFO;
 
@@ -91,7 +90,6 @@ static char                 *Product;
 static long                 DiskSize;
 static int                  BlockSize;
 static char                 *RelRoot;
-static char                 *PackDir;
 static char                 *Setup;
 static FILE_INFO            *FileList = NULL;
 static PATH_INFO            *PathList = NULL;
@@ -241,8 +239,8 @@ int CheckParms( int *pargc, char **pargv[] )
     }
     argc = *pargc;
     argv = *pargv;
-    if( argc != 5 ) {
-        printf( "Usage: mksetup [-options] <product> <file_list> <pack_dir> <rel_root>\n\n" );
+    if( argc != 4 ) {
+        printf( "Usage: mksetup [-options] <product> <file_list> <rel_root>\n\n" );
         printf( "Supported options (case insensitive):\n" );
         printf( "-v         verbose operation\n" );
         printf( "-i<path>   include path for setup scripts\n" );
@@ -256,12 +254,7 @@ int CheckParms( int *pargc, char **pargv[] )
     MaxDiskFiles = 215;
     BlockSize = 512;
 
-    PackDir  = argv[ 3 ];
-    if( stat( PackDir, &stat_buf ) != 0 ) {  // exists
-        printf( "\nDirectory '%s' does not exist\n", PackDir );
-        return( FALSE );
-    }
-    RelRoot  = argv[ 4 ];
+    RelRoot  = argv[ 3 ];
     if( stat( RelRoot, &stat_buf ) != 0 ) {  // exists
         printf( "\nDirectory '%s' does not exist\n", RelRoot );
         return( FALSE );
@@ -406,13 +399,13 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
 {
     int                 path_dir, old_path_dir, target;
     FILE_INFO           *new, *curr;
-    long                act_size, cmp_size;
+    long                act_size;
     long                time;
     struct stat         stat_buf;
     char                *p;
     char                *root_file;
     char                *archive;
-    char                src[ _MAX_PATH ], dst[ _MAX_PATH ];
+    char                src[ _MAX_PATH ];
     size_list           *ns,*sl;
     static char         archive_name[16] = "pck00000";
     static int          pack_num = 1;
@@ -443,7 +436,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         char    c;
 
         strcpy( src, RelRoot );
-    c = src[ strlen( src ) - 1 ];
+        c = src[ strlen( src ) - 1 ];
         if( (c != '\\') && (c != '/') ) {
             strcat( src, SYS_DIR_SEP_STR );
         }
@@ -465,28 +458,11 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         act_size = stat_buf.st_size;
         time = stat_buf.st_mtime;
     }
-    strcpy( dst, PackDir );
-    if( dst[ strlen( dst ) - 1 ] != '\\' ) {
-        strcat( dst, SYS_DIR_SEP_STR );
-    }
-    strcat( dst, archive );
-    // What's this 'patch' stuff good for?
-#if 0
-    if( stat( dst, &stat_buf ) != 0 ) {
-        printf( "\n'%s' does not exist\n", dst );
-        return( FALSE );
-    } else {
-        cmp_size = stat_buf.st_size;
-    }
-#else
-    cmp_size = 0;
-#endif
 #if 0
     printf( "\r%s                              \r", file );
     fflush( stdout );
 #endif
     act_size = RoundUp( act_size, 512 );
-    cmp_size = RoundUp( cmp_size, BlockSize );
 
     // strip target off front of path
     if( *path == '%' ) {
@@ -593,10 +569,9 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         printf( "Out of memory\n" );
         return( FALSE );
     } else {
-        new->file = strdup( file );
         new->pack = strdup( archive );
         new->condition = strdup( cond );
-        if( new->file == NULL || new->pack == NULL || new->condition == NULL ) {
+        if( new->pack == NULL || new->condition == NULL ) {
             printf( "Out of memory\n" );
             return( FALSE );
         }
@@ -615,7 +590,6 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         ns->redist = redist;
         ns->dst_var = dst_var;
         new->sizes = ns;
-        new->cmp_size = cmp_size;
         new->next = NULL;
         if( FileList == NULL ) {
             FileList = new;
@@ -1057,7 +1031,6 @@ int CreateScript( long init_size, unsigned padding )
 /**************************************************/
 {
     int                 disk;
-    long                curr_size, this_disk, extra;
     FILE                *fp;
     FILE_INFO           *curr;
     PATH_INFO           *path;
@@ -1096,69 +1069,21 @@ int CreateScript( long init_size, unsigned padding )
     }
 
     disk = 1;
-    this_disk = init_size;
     nfiles = 0;
-    if( !FillFirst ) this_disk = DiskSize;
     fprintf( fp, "\n[Files]\n" );
     for( curr = FileList; curr != NULL; curr = curr->next ) {
         if( ++nfiles > MaxDiskFiles ) {
             nfiles = 0;
             ++disk;
-            this_disk = 0;
         }
-        curr_size = RoundUp( curr->cmp_size, BlockSize );
-        if( this_disk == DiskSize ) {
-            this_disk = 0;
-            ++disk;
-        }
-        if( this_disk + curr_size > DiskSize ) {
-            // place what will fit onto the current disk
-            extra = DiskSize - this_disk;
-            fprintf( fp, "%s.1,0,", curr->pack );
-            fput36( fp, curr->path );
-            fprintf( fp, "," );
-            fput36( fp, curr->old_path );
-            fprintf( fp, "," );
-            fput36( fp, disk );
-            fprintf( fp, ",1,%s\n\n", curr->condition );
-            // place rest of current file on subsequent disks
-            curr_size -= extra;
-            for( i = 2; ; ++i ) {
-                ++disk;
-                if( curr_size <= DiskSize ) {
-                    fprintf( fp, "%s.%d,", curr->pack, i );
-                    DumpSizes( fp, curr );
-                    fput36( fp, curr->path );
-                    fprintf( fp, "," );
-                    fput36( fp, curr->old_path );
-                    fprintf( fp, "," );
-                    fput36( fp, disk );
-                    fprintf( fp, ",$,%s\n", curr->condition );
-                    break;
-                } else {
-                    fprintf( fp, "%s.%d,0,", curr->pack, i );
-                    fput36( fp, curr->path );
-                    fprintf( fp, "," );
-                    fput36( fp, curr->old_path );
-                    fprintf( fp, "," );
-                    fput36( fp, disk );
-                    fprintf( fp, ",M,%s\n\n", curr->condition );
-                }
-                curr_size -= DiskSize;
-            }
-            this_disk = curr_size;
-            nfiles = 1;
-        } else {
-            fprintf( fp, "%s,", curr->pack );
-            DumpSizes( fp, curr );
-            fput36( fp, curr->path );
-            fprintf( fp, "," );
-            fput36( fp, curr->old_path );
-            fprintf( fp, "," );
-            fput36( fp, disk );
-            fprintf( fp, ",.,%s\n", curr->condition );
-            this_disk += curr_size;
-        }
+        fprintf( fp, "%s,", curr->pack );
+        DumpSizes( fp, curr );
+        fput36( fp, curr->path );
+        fprintf( fp, "," );
+        fput36( fp, curr->old_path );
+        fprintf( fp, "," );
+        fput36( fp, disk );
+        fprintf( fp, ",.,%s\n", curr->condition );
     }
 
     if( DeleteList != NULL ) {
@@ -1301,19 +1226,16 @@ int MakeScript( void )
     FILE_INFO           *curr;
     size_list           *csize;
     long                act_size;
-    long                cmp_size;
     long                size, old_size, inf_size;
     LIST                *list;
 
     act_size = 0;
-    cmp_size = 0;
     for( curr = FileList; curr != NULL; curr = curr->next ) {
         for( csize = curr->sizes; csize != NULL; csize = csize->next ) {
             act_size += csize->size;
         }
-        cmp_size += curr->cmp_size;
     }
-    printf( "Installed size = %ld, Disk space = %ld\n", act_size, cmp_size );
+    printf( "Installed size = %ld\n", act_size );
 
 //  place SETUP.EXE, *.EXE on the 1st disk
     size = FileSize( Setup );
@@ -1370,9 +1292,6 @@ void CreateFileList( FILE *fp )
 
     for( curr = FileList; curr != NULL; curr = curr->next ) {
         path = GetPath( curr->path );
-        if( path != NULL )
-            fprintf( fp, "%s/", path );
-        fprintf( fp, "%s\n", curr->file );
         for( list = curr->sizes; list != NULL; list = list->next ) {
             if( path != NULL )
                 fprintf( fp, "%s/", path );

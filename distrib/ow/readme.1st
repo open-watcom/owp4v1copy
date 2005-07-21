@@ -1,12 +1,12 @@
 Sample commands to create setup.inf script for C/C++:
 
 langdat c
-mksetup -i..\include c filelist . %RELROOT%\rel2
+mksetup -i..\include c filelist %RELROOT%\rel2
 
 or, on Linux
 
 langdat.exe c
-mksetup -i../include c filelist . $RELROOT/rel2
+mksetup -i../include c filelist $RELROOT/rel2
 
 To create F77 install script, simply replace 'c' with 'f77'. These
 details are likely to change.
