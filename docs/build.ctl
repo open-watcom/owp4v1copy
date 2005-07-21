@@ -6,12 +6,14 @@
    
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DOC_ROOT>/dos/*.ihp <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/win/*.hlp <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/os2/*.inf <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/os2/*.hlp <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/nt/*.hlp  <RELROOT>/rel2/binnt/
-    <CPCMD> <DOC_ROOT>/nt/*.cnt  <RELROOT>/rel2/binnt/
+    <CPCMD> <DOC_ROOT>/dos/*.ihp    <RELROOT>/rel2/binw/
+    <CPCMD> <DOC_ROOT>/win/*.hlp    <RELROOT>/rel2/binw/
+    <CPCMD> <DOC_ROOT>/os2/*.inf    <RELROOT>/rel2/binp/help/
+    <CPCMD> <DOC_ROOT>/os2/*.hlp    <RELROOT>/rel2/binp/help/
+    <CPCMD> <DOC_ROOT>/nt/*.hlp     <RELROOT>/rel2/binnt/
+    <CPCMD> <DOC_ROOT>/nt/*.cnt     <RELROOT>/rel2/binnt/
+    <CPCMD> <DOC_ROOT>/readme.txt   <RELROOT>/rel2/readme.txt
+    <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/rel2/freadme.txt
    
 [ BLOCK <1> clean ]
 #==================

@@ -1,10 +1,10 @@
-Open Watcom C/C++ Version 1.4 - README
---------------------------------------
+Open Watcom FORTRAN Version 1.4 - README
+----------------------------------------
 
-Welcome to the Open Watcom C/C++ version 1.4 release! This README provides
-helpful hints to help you get the software package up and running. For more
-detailed information on installation and setup, please refer to online
-Getting Started Guide (c_readme.hlp/c_readme.inf).
+Welcome to the Open Watcom FORTRAN/77 version 1.4 release! This README
+provides helpful hints to help you get the software package up and
+running. For more detailed information on installation and setup, please
+refer to online Getting Started Guide (f_readme.hlp/f_readme.inf).
 
 ===========================================================
 Important
@@ -27,8 +27,8 @@ on the host platform (DOS, OS/2, Win32). The common variables are:
  - WATCOM   - points to the directory where Open Watcom is installed
               and is used by various Open Watcom tools to locate files
  - EDPATH   - points to VI/VIW configuration files
- - INCLUDE  - points to directories containing header files used by the
-              C/C++ compilers
+ - FINCLUDE - points to directories containing header files used by the
+              FORTRAN compilers
  - LIB      - points to directories containing library files; note that
               Open Watcom linker is able to locate Open Watcom runtime
               libraries without this variable
@@ -79,8 +79,6 @@ various host platforms. The WATCOM variable must naturally be adjusted
 according to where Open Watcom was installed on your system. The LIB
 environment variable isn't strictly necessary but you will probably need
 to set it for any libraries you use not supplied with Open Watcom compilers.
-Similarly you might need to adjust the INCLUDE variable for 3rd party
-library include files.
 
 DOS BAT file:
 ---------------------------------------------------------------------------
@@ -88,7 +86,6 @@ DOS BAT file:
 SET WATCOM=C:\WATCOM
 SET PATH=%WATCOM%\BINW;%PATH%
 SET EDPATH=%WATCOM%\EDDAT
-SET INCLUDE=%WATCOM%\H
 REM SET LIB=
 REM SET WWINHELP=D:\BINW
 ---------------------------------------------------------------------------
@@ -99,7 +96,6 @@ Win16 BAT file:
 SET WATCOM=C:\WATCOM
 SET PATH=%WATCOM%\BINW;%PATH%
 SET EDPATH=%WATCOM%\EDDAT
-SET INCLUDE=%WATCOM%\H;%WATCOM%\H\WIN
 REM SET LIB=
 REM SET WWINHELP=D:\BINW
 ---------------------------------------------------------------------------
@@ -110,7 +106,6 @@ Win32 BAT file:
 SET WATCOM=C:\WATCOM
 SET PATH=%WATCOM%\BINNT;%WATCOM%\BINW;%PATH%
 SET EDPATH=%WATCOM%\EDDAT
-SET INCLUDE=%WATCOM%\H;%WATCOM%\H\NT
 REM SET LIB=
 REM SET WWINHELP=D:\BINW
 ---------------------------------------------------------------------------
@@ -122,7 +117,6 @@ SET WATCOM=C:\WATCOM
 SET PATH=%WATCOM%\BINP;%WATCOM%\BINW;%PATH%
 SET BEGINLIBPATH=%WATCOM%\BINP\DLL
 SET EDPATH=%WATCOM%\EDDAT
-SET INCLUDE=%WATCOM%\H;%WATCOM%\H\OS2
 REM SET LIB=
 SET HELP=%WATCOM%\BINP\HELP;%HELP%
 SET BOOKSHELF=%WATCOM%\BINP\HELP;%BOOKSHELF%
