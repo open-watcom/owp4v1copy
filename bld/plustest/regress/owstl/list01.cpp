@@ -332,6 +332,80 @@ bool copy_test()
 }
 
 /* ------------------------------------------------------------------
+ * splice_test
+ * test list splicing operations
+ */
+bool splice_test( )
+{
+    std::list< int > lst1, lst2;
+    //two trivial (empty) lists
+    lst1.splice( lst1.begin( ), lst2 );
+    if( INSANE( lst1 )    || INSANE( lst2 )    ||
+        lst1.size( ) != 0 || lst2.size( ) != 0 ) FAIL
+    //non-trival list spliced into empty list
+    for( int i = 1; i <= 10; ++i ) lst2.push_back( i );
+    lst1.splice( lst1.begin( ), lst2 );
+    if( INSANE( lst1 )     || INSANE( lst2 )    ||
+        lst1.size( ) != 10 || lst2.size( ) != 0 ) FAIL
+    //two non-trivial lists
+    for( int i = 11; i <= 20; ++i ) lst2.push_back( i );
+    std::list< int >::iterator it = lst1.begin( );
+    ++it; ++it; ++it; ++it; ++it;
+    lst1.splice( it, lst2 );
+    if( INSANE( lst1 )     || INSANE( lst2 )    ||
+        lst1.size( ) != 20 || lst2.size( ) != 0 ) FAIL
+    it = lst1.begin( );
+    //check final list contents
+    for( int i = 1; i <= 5; ++i ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+    for( int i = 11; i <= 20; ++i ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+    for( int i = 6; i <= 10; ++i ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+
+    std::list< int > lst3, lst4;
+    for( int i = 1; i <= 5; ++i ) lst4.push_back( i );
+    it = lst4.begin( ); ++it; ++it;
+    lst3.splice( lst3.begin( ), lst4, it );
+    if( INSANE( lst3 )    || INSANE( lst4 )    ||
+        lst3.size( ) != 1 || lst4.size( ) != 4 ) FAIL
+    lst3.splice( lst3.end( ), lst4, lst4.begin( ) );
+    if( INSANE( lst3 )    || INSANE( lst4 )    ||
+        lst3.size( ) != 2 || lst4.size( ) != 3 ) FAIL
+    it = lst4.end( ); --it;
+    lst3.splice( ++lst3.begin( ), lst4, it );
+    if( INSANE( lst3 )    || INSANE( lst4 )    ||
+        lst3.size( ) != 3 || lst4.size( ) != 2 ) FAIL
+    lst3.splice( lst3.begin( ), lst3, --lst3.end( ) );
+    if( INSANE( lst3 ) || lst3.size( ) != 3 ) FAIL
+    //check final list contents
+    it = lst3.begin( );
+    if( *it != 1 ) FAIL; ++it;
+    if( *it != 3 ) FAIL; ++it;
+    if( *it != 5 ) FAIL;
+
+    std::list< int > lst5, lst6;
+    for( int i = 1; i <= 10; ++i ) lst6.push_back( i );
+    lst5.splice( lst5.begin( ), lst6, lst6.begin( ), lst6.end( ) );
+    if( INSANE( lst5 )     || INSANE( lst6 )    ||
+        lst5.size( ) != 10 || lst6.size( ) != 0 ) FAIL
+    //check final list contents
+    it = lst5.begin( );
+    for( int i = 1; i <= 10; ++i ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * allocator_test
  * test stateful allocators and exception handling
  */
@@ -421,7 +495,8 @@ int main( )
         if( !iterator_test( )         || !heap_ok( "t10" ) ) rc = 1;
         if( !reverse_iterator_test( ) || !heap_ok( "t11" ) ) rc = 1;
         if( !copy_test( )             || !heap_ok( "t12" ) ) rc = 1;
-        if( !allocator_test( )        || !heap_ok( "t13" ) ) rc = 1;
+        if( !splice_test( )           || !heap_ok( "t13" ) ) rc = 1;
+        if( !allocator_test( )        || !heap_ok( "t14" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

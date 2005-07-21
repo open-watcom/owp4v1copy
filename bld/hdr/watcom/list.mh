@@ -79,66 +79,60 @@ public:
     /* ------------------------------------------------------------------
      * iterators
      */
-    class iterator_base{
-        friend class list;
-    public:
-        iterator_base( DoubleLink* d ) : self( static_cast< Node* >( d ) ) {}
-        iterator_base( ) {}
-        iterator_base( iterator_base const & x ) : self( x.self ) {}
-        bool operator==( iterator_base i )
-            { return( i.self == self ); }
-        bool operator!=( iterator_base i )
-            { return( i.self != self ); }
-        iterator_base& operator++( )
-            { self = static_cast< Node* >( self->fwd ); return( *this ); }
-        iterator_base& operator--( )
-            { self = static_cast< Node* >( self->bwd ); return( *this ); }
-    protected:
-        Node* self;
-    };
-
     class iterator :
-        public iterator_base,
         public std::iterator< std::bidirectional_iterator_tag, value_type >{
+        friend class list;
+        //friend class const_iterator
     public:
-        iterator( DoubleLink* d ) : iterator_base( d ) {}
-        iterator( ) : iterator_base( ) {}
-        iterator( iterator const & x ) : iterator_base( x ) {}
+        iterator( ) { }
+        iterator( DoubleLink* d ) : self( d ) { }
         value_type& operator*( )
-            { return( self->value ); }
+            { return( static_cast< Node *>( self )->value ); }
         value_type* operator->( )
-            { return( &(self->value) ); }
+            { return( &( static_cast< Node * >( self )->value ) ); }
+        bool operator==( iterator const &it )
+            { return( it.self == self ); }
+        bool operator!=( iterator const &it )
+            { return( it.self != self ); }
         iterator& operator++( )
-            { return( (iterator&)iterator_base::operator++( ) ); }
+            { self = self->fwd; return( *this ); }
         iterator& operator--( )
-            { return( (iterator&)iterator_base::operator--( ) ); }
+            { self = self->bwd; return( *this ); }
         iterator  operator++( int )
-            { iterator i( *this ); operator++( ); return( i ); };
+            { iterator it( *this ); operator++( ); return( it ); };
         iterator  operator--( int )
-            { iterator i( *this ); operator--( ); return( i ); };
+            { iterator it( *this ); operator--( ); return( it ); };
+    public: //should be private
+        DoubleLink *self;
     };
 
     class const_iterator :
-        public iterator_base,
         public std::iterator< std::bidirectional_iterator_tag, const value_type >{
+        friend class list;
     public:
-        const_iterator( iterator const & i ) : iterator_base( i ) {}
-        const_iterator( DoubleLink* d ) : iterator_base( d ) {}
-        const_iterator( ) : iterator_base( ) {}
-        const_iterator( const_iterator const & x ) : iterator_base( x ) {}
-        value_type const& operator*( )
-            { return( self->value ); }
-        value_type const* operator->( )
-            { return( &(self->value) ); }
+        const_iterator( iterator const & it ) : self( it.self ) { }
+
+        const_iterator( ) { }
+        const_iterator( DoubleLink const* d ) : self( d ) { }
+        value_type& operator*( )
+            { return( static_cast< Node const *>( self )->value ); }
+        value_type* operator->( )
+            { return( &( static_cast< Node const * >( self )->value ) ); }
+        bool operator==( const_iterator const &it )
+            { return( it.self == self ); }
+        bool operator!=( const_iterator const &it )
+            { return( it.self != self ); }
         const_iterator& operator++( )
-            { return( (const_iterator&)iterator_base::operator++( ) ); }
+            { self = self->fwd; return( *this ); }
         const_iterator& operator--( )
-            { return( (const_iterator&)iterator_base::operator--( ) ); }
-        const_iterator operator++( int )
-            { const_iterator i(*this); operator++( ); return( i ); }
-        const_iterator operator--( int )
-            { const_iterator i(*this); operator--( ); return( i ); }
-        };
+            { self = self->bwd; return( *this ); }
+        const_iterator  operator++( int )
+            { const_iterator it( *this ); operator++( ); return( it ); };
+        const_iterator  operator--( int )
+            { const_iterator it( *this ); operator--( ); return( it ); };
+    private:
+        DoubleLink const *self;
+    };
 
     typedef std::reverse_iterator< iterator >       reverse_iterator;
     typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
@@ -185,12 +179,15 @@ public:
         { pop( static_cast< Node* >( sentinel->bwd ) ); }
 
     iterator insert( iterator, value_type const & );
-    iterator erase( iterator it )
-        { iterator temp( it ); ++temp; pop( it.self ); return( temp ); }
+    iterator erase( iterator it );
     iterator erase( iterator first, iterator last );
     void swap( list & );
     void clear( );
     void remove( value_type const & );
+
+    void splice( iterator it, list &other );
+    void splice( iterator it, list &other, iterator other_it );
+    void splice( iterator it, list &other, iterator first, iterator last );
 
     //ow extentions
     bool _Sane( );
@@ -322,6 +319,20 @@ list< Type, Allocator >::insert( iterator it, Type const & x )
 }
 
 /* ------------------------------------------------------------------
+ * erase( i )
+ * erase element identified by iterator i
+ */
+template< class Type, class Allocator >
+list< Type, Allocator >::iterator
+list< Type, Allocator >::erase( iterator it )
+{
+    iterator temp( it );
+    ++temp;
+    pop( static_cast< Node * >( it.self ) );
+    return( temp );
+}
+
+/* ------------------------------------------------------------------
  * erase( first, last )
  * erase all list items in range [first, last)
  */
@@ -391,6 +402,82 @@ void list< Type, Allocator >::remove( value_type const &v )
         if( *it == v ) it = erase( it );
         else ++it;
     }
+}
+
+/* ------------------------------------------------------------------
+ * splice( it, other )
+ * splices the entire contents of other before it
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::splice( iterator it, list &other )
+{
+    if( other.mSize == 0 ) return;
+    DoubleLink *head = other.sentinel->fwd;
+    DoubleLink *tail = other.sentinel->bwd;
+    //do the splice
+    head->bwd = it.self->bwd;
+    it.self->bwd->fwd = head;
+    tail->fwd = it.self;
+    it.self->bwd = tail;
+    //fix up other's sentinel
+    other.sentinel->fwd = other.sentinel;
+    other.sentinel->bwd = other.sentinel;
+    //fix up list sizes
+    mSize += other.mSize;
+    other.mSize = 0;
+}
+
+/* ------------------------------------------------------------------
+ * splice( it, other, other_it )
+ * splices *other_it before it
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::splice(
+    iterator it,
+    list    &other,
+    iterator other_it )
+{
+    if( it.self == other_it.self ||
+        it.self == other_it.self->fwd ) return;
+    //do the splice
+    DoubleLink *spliced_node = other_it.self;
+    spliced_node->bwd->fwd = spliced_node->fwd;
+    spliced_node->fwd->bwd = spliced_node->bwd;
+    spliced_node->bwd = it.self->bwd;
+    it.self->bwd->fwd = spliced_node;
+    spliced_node->fwd = it.self;
+    it.self->bwd = spliced_node;
+    //fix up list sizes
+    mSize++;
+    other.mSize--;
+}
+
+/* ------------------------------------------------------------------
+ * splice( it, other, first last )
+ * splices [first, last) before it
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::splice(
+    iterator it,
+    list    &other,
+    iterator first,
+    iterator last )
+{
+    size_type count = 0;
+    for( iterator i( first ); i != last; ++i ) ++count;
+    if( count == 0 ) return;
+    DoubleLink *head = first.self;
+    DoubleLink *tail = last.self->bwd;
+    //do the splice
+    head->bwd->fwd = tail->fwd;
+    tail->fwd->bwd = head->bwd;
+    head->bwd = it.self->bwd;
+    it.self->bwd->fwd = head;
+    tail->fwd = it.self;
+    it.self->bwd = tail;
+    //fix up list sizes
+    mSize += count;
+    other.mSize -= count;    
 }
 
 /* ------------------------------------------------------------------
