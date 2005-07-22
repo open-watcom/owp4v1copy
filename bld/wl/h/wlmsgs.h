@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message constants used with linkerr.msg and wlink.msg
 *
 ****************************************************************************/
 
@@ -201,7 +200,9 @@
 #define    MSG_MULT_START_ADDRS_BY              166 + MSG_BASE
 #define    MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE 167 + MSG_BASE
 #define    MSG_VXD_INCORRECT_EXPORT             168 + MSG_BASE
-#define    MSG_MAX_ERR_MSG_NUM                  168 + MSG_BASE
+#define    MSG_FIXED_LOC_BEFORE_CUR_LOC         169 + MSG_BASE
+#define    MSG_DUP_DIRECTIVE                    170 + MSG_BASE
+#define    MSG_MAX_ERR_MSG_NUM                  170 + MSG_BASE
 
 #define    MSG_FILE_REC_NAME_0                  227 + MSG_BASE
 #define    MSG_FILE_REC_NAME_1                  228 + MSG_BASE
