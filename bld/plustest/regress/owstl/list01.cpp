@@ -406,6 +406,35 @@ bool splice_test( )
 }
 
 /* ------------------------------------------------------------------
+ * reverse_test
+ * test list reverse method
+ */
+bool reverse_test( )
+{
+    std::list< int > lst;
+    //try a zero sized list
+    lst.reverse( );
+    if( INSANE( lst ) || lst.size( ) != 0 ) FAIL
+    //try a non-trivial list
+    for( int i = 1; i <= 10; ++i ) lst.push_back( i );
+    lst.reverse( );
+    if( INSANE( lst ) || lst.size( ) != 10 ) FAIL
+    //check final list contents
+    std::list< int >::iterator it( lst.begin( ) );
+    for( int i = 10; i >= 1; --i ) {
+        if( *it != i ) FAIL
+        ++it;
+    }
+    //let's try a reverse iteration too to check out the reverse links
+    std::list< int >::reverse_iterator rit( lst.rbegin( ) );
+    for( int i = 1; i <= 10; ++i ) {
+        if( *rit != i ) FAIL
+        ++rit;
+    }
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * allocator_test
  * test stateful allocators and exception handling
  */
@@ -496,7 +525,8 @@ int main( )
         if( !reverse_iterator_test( ) || !heap_ok( "t11" ) ) rc = 1;
         if( !copy_test( )             || !heap_ok( "t12" ) ) rc = 1;
         if( !splice_test( )           || !heap_ok( "t13" ) ) rc = 1;
-        if( !allocator_test( )        || !heap_ok( "t14" ) ) rc = 1;
+        if( !reverse_test( )          || !heap_ok( "t14" ) ) rc = 1;
+        if( !allocator_test( )        || !heap_ok( "t15" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

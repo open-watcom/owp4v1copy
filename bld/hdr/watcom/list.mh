@@ -79,21 +79,31 @@ public:
     /* ------------------------------------------------------------------
      * iterators
      */
+    class iterator_base {
+    public:
+        iterator_base( ) { }
+        iterator_base( DoubleLink *d ) : self( d ) { }
+        bool operator==( iterator_base it )
+            { return( it.self == self ); }
+        bool operator!=( iterator_base it )
+            { return( it.self != self ); }
+    protected:
+        DoubleLink *self;
+    };
+
     class iterator :
+        public iterator_base,
         public std::iterator< std::bidirectional_iterator_tag, value_type >{
         friend class list;
-        //friend class const_iterator
     public:
-        iterator( ) { }
-        iterator( DoubleLink* d ) : self( d ) { }
+        iterator( )
+            : iterator_base( ) { }
+        iterator( DoubleLink* d )
+            : iterator_base( d ) { }
         value_type& operator*( )
             { return( static_cast< Node *>( self )->value ); }
         value_type* operator->( )
             { return( &( static_cast< Node * >( self )->value ) ); }
-        bool operator==( iterator const &it )
-            { return( it.self == self ); }
-        bool operator!=( iterator const &it )
-            { return( it.self != self ); }
         iterator& operator++( )
             { self = self->fwd; return( *this ); }
         iterator& operator--( )
@@ -102,26 +112,24 @@ public:
             { iterator it( *this ); operator++( ); return( it ); };
         iterator  operator--( int )
             { iterator it( *this ); operator--( ); return( it ); };
-    public: //should be private
-        DoubleLink *self;
     };
 
     class const_iterator :
+        public iterator_base,
         public std::iterator< std::bidirectional_iterator_tag, const value_type >{
         friend class list;
     public:
-        const_iterator( iterator const & it ) : self( it.self ) { }
+        const_iterator( iterator_base it )
+            : iterator_base( it ) { }
 
-        const_iterator( ) { }
-        const_iterator( DoubleLink const* d ) : self( d ) { }
+        const_iterator( )
+            : iterator_base( ) { }
+        const_iterator( DoubleLink const* d )
+            : iterator_base( const_cast< DoubleLink *>( d ) ) { }
         value_type& operator*( )
             { return( static_cast< Node const *>( self )->value ); }
         value_type* operator->( )
             { return( &( static_cast< Node const * >( self )->value ) ); }
-        bool operator==( const_iterator const &it )
-            { return( it.self == self ); }
-        bool operator!=( const_iterator const &it )
-            { return( it.self != self ); }
         const_iterator& operator++( )
             { self = self->fwd; return( *this ); }
         const_iterator& operator--( )
@@ -130,8 +138,6 @@ public:
             { const_iterator it( *this ); operator++( ); return( it ); };
         const_iterator  operator--( int )
             { const_iterator it( *this ); operator--( ); return( it ); };
-    private:
-        DoubleLink const *self;
     };
 
     typedef std::reverse_iterator< iterator >       reverse_iterator;
@@ -188,6 +194,8 @@ public:
     void splice( iterator it, list &other );
     void splice( iterator it, list &other, iterator other_it );
     void splice( iterator it, list &other, iterator first, iterator last );
+
+    void reverse( );
 
     //ow extentions
     bool _Sane( );
@@ -478,6 +486,28 @@ void list< Type, Allocator >::splice(
     //fix up list sizes
     mSize += count;
     other.mSize -= count;    
+}
+
+/* ------------------------------------------------------------------
+ * reverse( )
+ * reverses the elements in the list
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::reverse( )
+{
+    DoubleLink *temp;
+    //(carefully) reverse pointers in each node
+    DoubleLink *current = sentinel->fwd;
+    while( current != sentinel ) {
+        temp = current->fwd;
+        current->fwd = current->bwd;
+        current->bwd = temp;
+        current = temp;
+    }
+    //reverse pointers in sentinel (to flip head and tail of list)
+    temp = sentinel->fwd;
+    sentinel->fwd = sentinel->bwd;
+    sentinel->bwd = temp;
 }
 
 /* ------------------------------------------------------------------
