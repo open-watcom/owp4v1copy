@@ -170,7 +170,7 @@ static unsigned long WriteDOSData()
     Root->outfile->file_loc = Root->u.file_loc;
     Root->sect_addr = Groups->grp_addr;
 
-/* write groups and relocations for overlays */
+/* write groups and relocations */
     group = Groups;
     while( group != NULL ) {
         sect = group->section;
@@ -354,8 +354,8 @@ extern void FiniDOSLoadFile( void )
     _HostU16toTarg( temp, exe_head.file_size );
     _HostU16toTarg( Root->relocs, exe_head.num_relocs );
 
-    min_size = MemorySize() - ( root_size - hdr_size ) + 15;
-    min_size >>= 4;
+    min_size = MemorySize() - ( root_size - hdr_size ) + FmtData.SegMask;
+    min_size >>= FmtData.SegShift;
     _HostU16toTarg( min_size, exe_head.min_16 );
     _HostU16toTarg( 0xffff, exe_head.max_16 );
     _HostU16toTarg( StartInfo.addr.off, exe_head.IP );

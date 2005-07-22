@@ -77,7 +77,7 @@ static void AutoGroupSect( section * sec )
 /****************************************/
 {
     class_entry *           class;
-
+    
     CurrGroup = NULL;
     for( class = sec->classlist; class != NULL; class = class->next_class ) {
         if( !( class->flags & CLASS_DEBUG_INFO ) ) {
@@ -231,9 +231,12 @@ static void PackSegs( seg_leader * seg, unsigned num_segs, offset size,
             group->segflags &= ~SEG_READ_ONLY;
         }
         group->section = seg->class->section;
+        if( class->flags & CLASS_COPY ) {  // If class is copied, mark group accordingly
+            group-> isdup = TRUE;
+        }
     }
     while( num_segs != 0 ) {
-        if( seg->group == NULL ) {
+        if( seg->group == NULL ) {  // if its not in a group add it to this one
             seg->group = group;
             if( !fakegroup ) {
                 Ring2Append( &group->leaders, seg );
@@ -255,6 +258,7 @@ static void InitGroup( group_entry *group )
     group->u.miscflags = 0;
     group->isfree = FALSE;
     group->isautogrp = FALSE;
+    group->isdup = FALSE;
     group->g.grp_relocs = NULL;
 }
 

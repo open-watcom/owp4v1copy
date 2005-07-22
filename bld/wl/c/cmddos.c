@@ -360,7 +360,7 @@ extern bool ProcArea( void )
 
     ret = GetLong( &value );
     if( ret ) {
-        AreaSize = (value + 15) >> 4;
+        AreaSize = (value + FmtData.SegMask) >> FmtData.SegShift;
     }
     return( ret );
 }

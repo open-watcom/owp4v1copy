@@ -1265,3 +1265,288 @@ extern bool ProcNoFarCalls( void )
     DEBUG(( DBG_OLD, "No Far Calls optimization" ));
     return( TRUE );
 }
+
+extern bool ProcOutput( void )
+/******************************/
+{
+   bool ret;
+
+   FmtData.output_offset = 0L;
+   FmtData.output_hshift = FALSE;
+   while( ProcOne( OutputOpts, SEP_NO, FALSE )) {
+      ret = TRUE;
+   }
+   return ret;      
+}
+
+extern bool ProcOutputRaw( void )
+/*********************************/
+{
+   FmtData.output_raw = TRUE;
+   return TRUE;
+}
+
+extern bool ProcOutputHex( void )
+/*********************************/
+{
+   FmtData.output_hex = TRUE;
+   return TRUE;
+}
+
+extern bool ProcOutputOfs( void )
+/*********************************/
+{
+    ord_state  retval;
+    unsigned_32 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    retval = getatol( &value );
+    if ( retval == ST_IS_ORDINAL && (value <= 0xFFFFL << FmtData.SegShift || HintFormat( ~(MK_DOS | MK_SEGMENTED)))) {
+        FmtData.output_offset = value;
+        return TRUE;
+    }
+    else {
+        LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
+        return FALSE;
+    }      
+}
+
+extern bool ProcOutputHshift( void )
+/************************************/
+{
+   ord_state  ret;
+   unsigned_16 value;
+
+   ret = getatoi( &value );
+   if ( ret == ST_IS_ORDINAL && value < 16) {
+      FmtData.HexSegShift = 16 - value;
+      FmtData.output_hshift = TRUE;
+      return TRUE;
+   }
+   else {
+      LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "Hex HSHIFT");
+      return FALSE;
+   }      
+}
+
+extern bool ProcHshift( void )
+/******************************/
+{
+    ord_state  ret;
+    unsigned_16 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    ret = getatoi( &value );
+    if ( ret == ST_IS_ORDINAL && value < 16) {
+        FmtData.Hshift = value;
+        SetSegMask();
+        return TRUE;
+    }
+    else {
+        LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "HSHIFT");
+        return FALSE;
+    }      
+}
+
+extern bool ProcFillchar( void )
+/********************************/
+{
+    ord_state  ret;
+    unsigned_16 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    ret = getatoi( &value );
+    if ( ret == ST_IS_ORDINAL && value < 256) {
+        FmtData.FillChar = value;
+        return TRUE;
+    }
+    else {
+        LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "FillChar");
+        return FALSE;
+    }      
+}
+
+static ORDER_CLASS *CurrOClass;
+static ORDER_SEGMENT *CurrOSeg;
+
+extern bool ProcOrder( void )
+/******************************/
+{
+   bool ret;
+
+   ret = FALSE;
+   CurrOClass = CurrSect->orderlist;
+   if ( CurrOClass != NULL) {
+      LnkMsg(LOC+LINE+WRN+MSG_DUP_DIRECTIVE, "s", "OPTION");
+   }
+   while( ProcOne( OrderOpts, SEP_NO, FALSE )) {
+      ret = TRUE;
+   }
+   return ret;      
+}
+
+extern bool ProcOrdClass( void )
+/**********************************/
+{
+   ORDER_CLASS *LastOClass;
+   
+   if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
+      return FALSE;
+   }
+   LastOClass = CurrOClass;
+   _ChkAlloc( CurrOClass, sizeof(ORDER_CLASS));
+   if (LastOClass == NULL) {
+      CurrSect->orderlist = CurrOClass;
+   }
+   else {
+      LastOClass->NextClass = CurrOClass;
+   }
+   CurrOClass->Name = tostring();
+   CurrOClass->NextClass = NULL;
+   CurrOClass->Ring = NULL;
+   CurrOClass->SegList = NULL;
+   CurrOSeg = NULL;
+   CurrOClass->FixedAddr = FALSE;
+   CurrOClass->Copy = FALSE;
+   CurrOClass->NoEmit = FALSE;
+   while( ProcOne( OrderClassOpts, SEP_NO, FALSE) ) {};
+   return TRUE;
+
+}
+
+extern bool ProcOrdSegAdr( void )
+/***********************************/
+{
+    ord_state  ret;
+    unsigned_16 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    ret = getatoi( &value );
+    if ( ret == ST_IS_ORDINAL ) {
+        CurrOClass->Base.seg = value;
+        CurrOClass->FixedAddr = TRUE;
+        return TRUE;
+    }
+    else {
+        CurrOClass->FixedAddr = FALSE;
+        LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
+        return FALSE;
+    }      
+}
+
+extern bool ProcOrdOfsAdr( void )
+/***********************************/
+{
+    ord_state  retval;
+    unsigned_32 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    retval = getatol( &value );
+    if ( retval == ST_IS_ORDINAL && (value <= 0xFFFFL || HintFormat( ~(MK_DOS | MK_SEGMENTED)))) {
+        CurrOClass->Base.off = value;
+        CurrOClass->FixedAddr = TRUE;
+        return TRUE;
+    }
+    else {
+        CurrOClass->FixedAddr = FALSE;
+        LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
+        return FALSE;
+    }      
+}
+
+extern bool ProcOrdCopy( void )
+/*********************************/
+{
+   if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
+      return FALSE;
+   }
+   CurrOClass->SrcName = tostring();
+   CurrOClass->Copy = TRUE;
+   return TRUE;
+}
+
+extern bool ProcOrdNoEmit( void )
+/*********************************/
+{
+   CurrOClass->NoEmit = TRUE;
+   return TRUE;
+}
+
+extern bool ProcOrdSeg( void )
+/**********************************/
+{
+   if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
+      return FALSE;
+   }
+   _ChkAlloc( CurrOSeg, sizeof(ORDER_SEGMENT));
+   CurrOSeg->NextSeg = CurrOClass->SegList;
+   CurrOClass->SegList = CurrOSeg;
+   CurrOSeg->Name = tostring();
+   CurrOSeg->FixedAddr = FALSE;
+   CurrOSeg->NoEmit = FALSE;
+   while( ProcOne( OrderSegOpts, SEP_NO, FALSE) ) {};
+   return TRUE;
+
+}
+
+extern bool ProcOrdSegSegAdr( void )
+/***********************************/
+{
+    ord_state  ret;
+    unsigned_16 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    ret = getatoi( &value );
+    if ( ret == ST_IS_ORDINAL ) {
+        CurrOSeg->Base.seg = value;
+        CurrOSeg->FixedAddr = TRUE;
+        return TRUE;
+    }
+    else {
+        CurrOSeg->FixedAddr = FALSE;
+        LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
+        return FALSE;
+    }      
+}
+
+extern bool ProcOrdSegOfsAdr( void )
+/***********************************/
+{
+    ord_state  retval;
+    unsigned_32 value;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
+    retval = getatol( &value );
+    if ( retval == ST_IS_ORDINAL && (value <= 0xFFFFL || HintFormat( ~(MK_DOS | MK_SEGMENTED)))) {
+        CurrOSeg->Base.off = value;
+        CurrOSeg->FixedAddr = TRUE;
+        return TRUE;
+    }
+    else {
+        CurrOSeg->FixedAddr = FALSE;
+        LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
+        return FALSE;
+   }      
+}
+
+extern bool ProcOrdSegNoEmit( void )
+/*********************************/
+{
+   CurrOSeg->NoEmit = TRUE;
+   return TRUE;
+}
+

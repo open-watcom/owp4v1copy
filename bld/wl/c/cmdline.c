@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command Line Parser
 *
 ****************************************************************************/
 
-
-/*
- *  CMDLINE : command line parser
- *
- */
 
 #include <malloc.h>
 #include <string.h>
@@ -119,9 +113,16 @@ static sysblock *       PrevCommand;
 #define INIT_FILE_NAME  "wlink.lnk"
 
 extern void InitCmdFile( void )
-/*****************************/
+/******************************/
 {
     PrevCommand = NULL;
+}
+
+extern void SetSegMask(void)
+/***************************/
+{
+   FmtData.SegShift = 16 - FmtData.Hshift;
+   FmtData.SegMask = (1 << FmtData.SegShift) - 1;
 }
 
 static void ResetCmdFile( void )
@@ -138,6 +139,11 @@ static void ResetCmdFile( void )
     FmtData.objalign = NO_BASE_SPEC;
     FmtData.type = MK_ALL;
     FmtData.def_seg_flags = SEG_LEVEL_3;
+    FmtData.output_raw = FALSE;
+    FmtData.output_hex = FALSE;
+    FmtData.Hshift = 12;   // May want different value for some 32 bit segmented modes
+    FmtData.FillChar = 0;  // Default fillchar for segment alignment
+    SetSegMask();
     CurrSect = Root;
     CurrFList = &Root->files;
     DBIFlag = 0;        /*  default is only global information */
@@ -615,6 +621,12 @@ extern void SetFormat( void )
     } else {
         int const len = (int) strlen(Name);
 
+        if ( FmtData.output_hex ) {  // override default extension if hex or raw (bin)
+            Extension = E_HEX;       //   has been specified
+        }
+        else if ( FmtData.output_raw ) {
+            Extension = E_BIN;
+        }
         fname = FileName( Name, len, Extension, CmdFlags & CF_UNNAMED);
         _LnkFree( Name );
     }

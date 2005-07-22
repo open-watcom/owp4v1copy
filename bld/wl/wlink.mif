@@ -80,6 +80,7 @@ loados2.obj &
 loadpe.obj &
 loadphar.obj &
 loadqnx.obj &
+loadraw.obj &
 mapio.obj &
 mixcache.obj &
 msg.obj &

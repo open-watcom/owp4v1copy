@@ -177,7 +177,9 @@ enum {
     E_SYM,
     E_LBC,
     E_ELF,
-    E_ILK
+    E_ILK,
+    E_HEX,
+    E_BIN
 };
 
 

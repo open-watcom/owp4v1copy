@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities to compute the starting address of segments
+*               includes rounding up to alignment and paragraph boundaries
 *
 ****************************************************************************/
 
@@ -57,12 +57,12 @@ extern void NormalizeAddr( void )
     DbgAssert( !(FmtData.type & MK_PROT_MODE) );
 
     if( CurrSect == NonSect || !FmtData.u.dos.ovl_short ) {
-        new_seg = (CurrLoc.off >> 4) + CurrLoc.seg;
+        new_seg = (CurrLoc.off >> FmtData.SegShift) + CurrLoc.seg;
         if( new_seg > 0xFFFF ) {
             LnkMsg( ERR+MSG_APP_TOO_BIG_FOR_DOS, NULL );
         }
         CurrLoc.seg = new_seg;
-        CurrLoc.off &= 0x0f;
+        CurrLoc.off &= FmtData.SegMask;
     }
 }
 
@@ -148,6 +148,25 @@ static targ_addr * GetIDLoc( group_entry *group )
     return retval;
 }
 
+extern void ChkLocated( targ_addr * segadr, bool fixed)
+/*******************************************************/
+// If segment has been given a fixed address, use it
+//  unless location counter is already past it
+{
+   if ( fixed ) {
+      if ( (CurrLoc.seg << FmtData.SegShift) + CurrLoc.off >
+           (segadr->seg << FmtData.SegShift) + segadr->off) {
+            LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", segadr);
+      }
+      else {
+         CurrLoc = *segadr;
+      }
+   }
+   else {
+      *segadr = CurrLoc;
+   }
+}
+
 extern void NewSegment( seg_leader *seg )
 /***************************************/
 {
@@ -160,7 +179,7 @@ extern void NewSegment( seg_leader *seg )
     if( seg->dbgtype != NOT_DEBUGGING_INFO ) {
         CurrentSeg = NULL;
         Align( seg->align );
-        seg->seg_addr = CurrLoc;
+        ChkLocated(&seg->seg_addr, seg->segflags & SEG_FIXED);
         AddSize( seg->size );
     } else if( FmtData.type & MK_REAL_MODE ) {
         if( group->isautogrp && Ring2First(group->leaders) != seg ) {
@@ -177,7 +196,7 @@ extern void NewSegment( seg_leader *seg )
         if( !auto_group ) {
             NormalizeAddr();    /*  to normalize address of segment */
         }
-        seg->seg_addr = CurrLoc;
+        ChkLocated(&(seg->seg_addr), seg->segflags & SEG_FIXED);
         AddSize( seg->size );
         group->totalsize += seg->size;
     } else if( FmtData.type & (MK_FLAT | MK_ID_SPLIT) ) {
@@ -188,7 +207,7 @@ extern void NewSegment( seg_leader *seg )
         off = CAlign( CurrLoc.off, seg->align );
         group->totalsize += off - CurrLoc.off;
         AddSize( off - CurrLoc.off );
-        seg->seg_addr = CurrLoc;
+        ChkLocated(&seg->seg_addr, seg->segflags & SEG_FIXED);
         AddSize( seg->size );
         group->totalsize += seg->size;
         if( FmtData.type & MK_ID_SPLIT ) {

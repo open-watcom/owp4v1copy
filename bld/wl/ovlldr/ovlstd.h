@@ -48,7 +48,7 @@ typedef struct {
 
 /* this definition used in the old overlay loader only */
 
-#define SUB_ADDR(l,r) ((long)(int)(FP_SEG(l)-FP_SEG(r))*16+(FP_OFF(l)-FP_OFF(r)))
+#define SUB_ADDR(l,r) (((long)(int)(FP_SEG(l)-FP_SEG(r))<<FmtData.SegShift)+(FP_OFF(l)-FP_OFF(r)))
 
 /* these are used in the whoosh overlay loader */
 enum {

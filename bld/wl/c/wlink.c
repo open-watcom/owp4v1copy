@@ -80,7 +80,6 @@ extern void     ResetObj2Supp( void );
 extern void     ResetObjIO( void );
 extern void     ResetObjOMF( void );
 extern void     ResetObjPass1( void );
-extern void     ResetDistrib( void );
 extern void     ResetObjStrip( void );
 extern void     ResetOMFReloc( void );
 extern void     ResetReloc( void );
@@ -212,7 +211,7 @@ extern void ResetSubSystems( void )
     ResetObjIO();
     ResetObjOMF();
     ResetObjPass1();
-    ResetDistrib();
+//    ResetDistrib(); // duplicate call
     ResetObjStrip();
     ResetOMFReloc();
     ResetReloc();

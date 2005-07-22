@@ -49,11 +49,12 @@ typedef struct member_list      MEMBER_LIST;
 typedef struct segdata          SEGDATA;
 typedef struct pubdeflist       PUBDEFLIST;
 typedef struct trace_info       TRACE_INFO;
-
 typedef struct ovl_area {
     OVL_AREA *  next_area;
     SECTION *   sections;
 } ovl_area;
+typedef struct order_class      ORDER_CLASS;
+typedef struct order_segment    ORDER_SEGMENT;
 
 #include "hash.h"
 
@@ -63,6 +64,7 @@ typedef struct section {
     pHTable             modFilesHashed;
     MOD_ENTRY *         mods;
     CLASS_ENTRY *       classlist;
+    ORDER_CLASS *       orderlist;  // Link to data for ordering, if used
     targ_addr           sect_addr;
     unsigned_16         ovl_num;
     OVL_AREA *          areas;
@@ -269,6 +271,9 @@ typedef enum {
     CLASS_READ_ONLY     = 0x00000040,
     CLASS_STACK         = 0x00000080,
     CLASS_IDATA         = 0x00000100,
+    CLASS_FIXED         = 0x00001000,   // Class should load at specified address
+    CLASS_COPY          = 0x00002000,   // Class should use data from DupClass
+    CLASS_NOEMIT        = 0x00004000,   // Class should not generate output
     CLASS_IS_FREE       = 0x80000000,   // not used, but guarantees 4 byte enum
 } class_status;
 
@@ -278,6 +283,8 @@ typedef struct class_entry {
     char *              name;
     class_status        flags;
     section *           section;
+    targ_addr           BaseAddr;   // Fixed location to of this class for loadfile
+    CLASS_ENTRY *       DupClass;   // Class to get data from for output
 } class_entry;
 
 typedef struct group_entry {
@@ -301,6 +308,7 @@ typedef struct group_entry {
     unsigned            num;
     unsigned            isfree : 1;
     unsigned            isautogrp : 1;
+    unsigned            isdup : 1;
 } group_entry;
 
 // this is a bit in the segflags field. This is also defined in exeos2.h
@@ -325,6 +333,7 @@ typedef struct seg_leader {
     group_entry *   group;
     class_entry *   class;
     offset          size;               // total size of segment
+    SEG_LEADER *    DupSeg;             // Segment to get data from for output
     unsigned_16     info;
     unsigned_16     align   : 5;        // alignment of seg (power of 2)
     unsigned_16     dbgtype : 3;        // debugging type of seg
@@ -343,15 +352,18 @@ typedef struct seg_leader {
  *
  *  b            l b b        b b              n b
  *  x x x x      x x x x      x x x x      x x x x
- *  |            | | |        | |              | |
- *  |            | | |        | |              | +---> seg. is absolute
- *  |            | | |        | |              +-----> seg. is comdat (ORL)
- *  |            | | |        | +--------------------> seg. in ovl. class
- *  |            | | |        +--(leader)------------> generate an addr_info.
- *  |            | | |        +--(node)--------------> segdef dead (terminated)
- *  |            | | +-------------------------------> seg. is code.
- *  |            | +---------------------------------> 32-bit segment.
- *  |            +-(leader)--------------------------> last segment in group
+ *  | | | |      | | |        | |              | |
+ *  | | | |      | | |        | |              | +---> seg. is absolute
+ *  | | | |      | | |        | |              +-----> seg. is comdat (ORL)
+ *  | | | |      | | |        | +--------------------> seg. in ovl. class
+ *  | | | |      | | |        +--(leader)------------> generate an addr_info.
+ *  | | | |      | | |        +--(node)--------------> segdef dead (terminated)
+ *  | | | |      | | +-------------------------------> seg. is code.
+ *  | | | |      | +---------------------------------> 32-bit segment.
+ *  | | | |      +-(leader)--------------------------> last segment in group
+ *  | | | +-(leader)---------------------------------> Segment should load at specified address
+ *  | | +---(leader)---------------------------------> Segment should use data copied from DupSeg
+ *  | +-----(leader)---------------------------------> Segment should not generate output
  *  +------------------------------------------------> LxDATA seen for this seg.
  ***********************************************************************/
 
@@ -371,6 +383,8 @@ enum {
     USE_32              = 0x0400,   /* segment uses 32 bit addresses      */
     LAST_SEGMENT        = 0x0800,   /* force last segment in a code group */
     SEG_LXDATA_SEEN     = 0x8000,   /* LxDATA rec. seen for this segment */
+    SEG_FIXED           = 0x1000,   // Segment should start at seg_addr, not next addr
+    SEG_NOEMIT          = 0x2000,   // Segment should not generate output
     SEG_BOTH_MASK       = 0x8641    /* flags common to both structures */
 };
 
@@ -521,3 +535,24 @@ typedef struct {
     size_t      len;
     char *      name;
 } length_name;
+
+typedef struct order_class {
+    ORDER_CLASS *       NextClass;
+    class_entry *       Ring; // Used for sorting
+    char *              Name;
+    char *              SrcName;
+    targ_addr           Base;
+    ORDER_SEGMENT *     SegList;
+    unsigned           FixedAddr :  1;
+    unsigned           NoEmit    :  1;
+    unsigned           Copy      :  1;
+} order_class;
+
+typedef struct order_segment {
+    ORDER_SEGMENT *     NextSeg;
+    char *              Name;
+    targ_addr           Base;
+    unsigned           FixedAddr :  1;
+    unsigned           NoEmit    :  1;
+} order_segment;
+

@@ -73,6 +73,8 @@ static void FreeSections( section *sec )
 /* Free sections & classes. */
 {
     section             *next;
+    ORDER_CLASS         *Class, *NextClass;
+    ORDER_SEGMENT       *Seg, *NextSeg;
 
     while( sec != NULL ) {
         FreeFiles( sec->files );
@@ -83,6 +85,27 @@ static void FreeSections( section *sec )
         DBISectCleanup( sec );
         FreeAreas( sec->areas );
         ZapHTable(sec->modFilesHashed, LFree);
+        Class = sec->orderlist;
+        while( Class != NULL ) {   // Free up any Order Class entries
+            if( Class->Name != NULL ) {   // Including members and sucessors
+                _LnkFree ( Class->Name );
+            }
+            if( Class->Copy ) {
+                _LnkFree ( Class->SrcName );
+            }
+            Seg = Class->SegList;
+            while ( Seg != NULL ) {  // Order Seg emtries can also have members and sucessors
+                if ( Seg->Name != NULL ) {
+                    _LnkFree( Seg->Name );
+                }
+                NextSeg = Seg->NextSeg;
+                _LnkFree ( Seg );
+                Seg = NextSeg;
+            }
+            NextClass = Class->NextClass;
+            _LnkFree ( Class );
+            Class = NextClass;
+        }
         next = sec->next_sect;
         _LnkFree( sec );
         sec = next;

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line parser enumerations, structures, constants and 
+*               prototypes, including CmdTble function call prototypes
 *
 ****************************************************************************/
 
@@ -83,7 +83,7 @@ typedef struct tok {
     unsigned_16 thumb : 1;
     unsigned_16 locked : 1;
     unsigned_16 quoted : 1;     /* set true if token parsed as a quoted string*/
-	unsigned_16	skipToNext : 1;	/* set true if we need to skip to next token without a separator */
+   unsigned_16 skipToNext : 1;   /* set true if we need to skip to next token without a separator */
 } tok;
 
 typedef enum commandflag {
@@ -176,6 +176,10 @@ extern parse_entry SegTypeDesc[];
 extern parse_entry SegModel[];
 extern parse_entry CommitKeywords[];
 extern parse_entry ELFFormatKeywords[];
+extern parse_entry OrderOpts[];
+extern parse_entry OrderClassOpts[];
+extern parse_entry OrderSegOpts[];
+extern parse_entry OutputOpts[];
 
 /* handy globals */
 

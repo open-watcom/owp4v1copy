@@ -105,6 +105,8 @@ extern parse_entry     Directives[] = {
     "LANGuage", &ProcLanguage,          MK_ALL, 0,
     "STARTLink",&ProcStartLink,         MK_ALL, 0,
     "OPTLIB",   &ProcOptLib,            MK_ALL, 0,
+    "ORDer",    &ProcOrder,             MK_ALL, 0,
+    "OUTput",   &ProcOutput,            MK_ALL, 0,
 #ifdef _OS2
     "RESource", &ProcResource,          MK_PE, 0,
     "COMmit",   &ProcCommit,            MK_PE, 0,
@@ -235,6 +237,8 @@ extern  parse_entry     MainOptions[] = {
     "LINKVersion",  &ProcLinkVersion,   MK_PE,  0,
     "OSVersion",    &ProcOsVersion,     MK_PE,  0,
     "CHECKSUM",     &ProcChecksum,      MK_PE,  0,
+    "HSHIFT",       &ProcHshift,        (MK_DOS | MK_ALLOW_16),  0,
+    "FILLchar",     &ProcFillchar,      MK_ALL,  0,
     NULL
 };
 
@@ -249,6 +253,8 @@ extern  parse_entry     SysDirectives[] = {
     "FORMat",   &ProcFormat,            MK_ALL, 0,
     "DISAble",  &ProcDisable,           MK_ALL, 0,
     "SOrt",     &ProcSort,              MK_ALL, 0,
+    "ORDer",    &ProcOrder,             MK_ALL, 0,
+    "OUTput",   &ProcOutput,            MK_ALL, 0,
 #if defined( _PHARLAP ) || defined( _OS2 )
     "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE), 0,
 #endif
@@ -497,3 +503,29 @@ extern parse_entry ELFFormatKeywords[] = {
         "DLl",          &ProcELFDLL,            MK_ELF, 0,
         NULL };
 #endif
+
+extern parse_entry OrderOpts[] = {
+        "CLName",       &ProcOrdClass,          MK_ALL, 0,
+        NULL };
+
+extern parse_entry OrderClassOpts[] = {
+        "SEGAddr",      &ProcOrdSegAdr,         MK_ALL, 0,
+        "OFFset",       &ProcOrdOfsAdr,         MK_ALL, 0,
+        "COpy",         &ProcOrdCopy,           MK_ALL, 0,
+        "NOEmit",       &ProcOrdNoEmit,         MK_ALL, 0,
+        "SEGMent",      &ProcOrdSeg,            MK_ALL, 0,
+        NULL };
+
+extern parse_entry OrderSegOpts[] = {
+        "SEGAddr",      &ProcOrdSegSegAdr,      MK_ALL, 0,
+        "OFFset",       &ProcOrdSegOfsAdr,      MK_ALL, 0,
+        "NOEmit",       &ProcOrdSegNoEmit,      MK_ALL, 0,
+        NULL };
+
+extern parse_entry OutputOpts[] = {
+        "RAW",          &ProcOutputRaw,         MK_ALL, 0,
+        "HEX",          &ProcOutputHex,         MK_ALL, 0,
+        "OFFset",       &ProcOutputOfs,         MK_ALL, 0,
+        "HSHIFT",       &ProcOutputHshift,      MK_ALL, 0,
+        NULL };
+

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Header file for salloc.c, objcalc.c and autogrp.c
 *
 ****************************************************************************/
 
@@ -45,6 +44,7 @@ extern offset   CAlign( offset, unsigned );
 extern void     Align( byte );
 extern void     MAlign( byte );
 extern void     StartMemMap( void );
+extern void     ChkLocated( targ_addr * segadr, bool fixed);
 extern void     NewSegment( seg_leader * );
 extern offset   GetLeaderDelta( seg_leader * );
 

@@ -57,6 +57,7 @@
 #include "loadnov.h"
 #include "loadqnx.h"
 #include "loadelf.h"
+#include "loadraw.h"
 #include "loadfile.h"
 #include "objstrip.h"
 #include "impexp.h"
@@ -119,7 +120,13 @@ extern void FiniLoadFile( void )
     FreeSavedRelocs();
     OpenOutFiles();
     SetupImpLib();
-    if( FmtData.type & MK_REAL_MODE ) {
+    if ( FmtData.output_raw ) {   // These must come first because they
+        BinOutput();              //   apply to all formats and override
+    }                             //   native output
+    else if ( FmtData.output_hex ) {
+        HexOutput();
+    }
+    else if( FmtData.type & MK_REAL_MODE ) {
         FiniDOSLoadFile();
 #ifdef _OS2
     } else if( IS_PPC_OS2 ) {
@@ -885,6 +892,19 @@ extern void WriteLeaderLoad( void *seg )
 static bool DoGroupLeader( void *seg, void *start )
 /*************************************************/
 {
+    // If class or sector should not be output, skip it
+    if ( !(((seg_leader *)seg)->class->flags & CLASS_NOEMIT ||
+           ((seg_leader *)seg)->segflags & SEG_NOEMIT) ) {
+        DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
+    }
+    return FALSE;
+}
+
+static bool DoDupGroupLeader( void *seg, void *start )
+/*************************************************/
+{
+    // Substitute groups generally are sourced from NO_EMIT classes,
+    // As copies, they need to be output, so ignore their MOEMIT flag here
     DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
     return FALSE;
 }
@@ -895,7 +915,13 @@ extern void WriteGroupLoad( group_entry *group )
     unsigned long       pos;
 
     pos = PosLoad();
-    Ring2Lookup( group->leaders, DoGroupLeader, &pos );
+    // If group is a copy group, substitute source group here
+    if (group->leaders->class->flags & CLASS_COPY ) {
+        Ring2Lookup( group->leaders->class->DupClass->segs->group->leaders, DoDupGroupLeader, &pos );
+    }
+    else {
+        Ring2Lookup( group->leaders, DoGroupLeader, &pos );
+    }
 }
 
 static void OpenOutFiles( void )
@@ -945,7 +971,7 @@ extern void FreeOutFiles( void )
 static void * SetToZero( void *dest, const void *dummy, unsigned size )
 /*********************************************************************/
 {
-    memset( dest, 0, size );
+    memset( dest, FmtData.FillChar, size );
     return (void *) dummy;
 }
 

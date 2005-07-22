@@ -198,7 +198,7 @@ static void AllocSections( section *first_sect )
     bool                area_specified;
 
     CurrSect = first_sect;    /* NormalizeAddr() needs to know the section */
-    MAlign( 4 );     /* as do some DBI routines. */
+    MAlign( FmtData.SegShift );     /* as do some DBI routines. */
     NormalizeAddr();
     if( first_sect == NonSect ) {
         if( FmtData.u.dos.dynamic ) {
@@ -218,13 +218,13 @@ static void AllocSections( section *first_sect )
                 AreaSize = min_size;
                 if( area_specified ) {
                     LnkMsg( WRN+MSG_AREA_TOO_SMALL, "l",
-                                                 (unsigned long)min_size *16 );
+                                                 (unsigned long)min_size << FmtData.SegShift );
                 }
             }
             result = CurrLoc.seg + (unsigned long) ( AreaSize - ovl_size );
             if( result > 0xFFFF ) {
                 LnkMsg( WRN+MSG_CANT_RESERVE_SPACE, "l",
-                                                 (unsigned long)AreaSize << 4 );
+                                                 (unsigned long)AreaSize << FmtData.SegShift );
             } else {
                 CurrLoc.seg = result;
             }
@@ -488,7 +488,7 @@ extern void GetVecAddr( int vecnum, targ_addr *addr )
     *addr = OvlvecAddr;
     if( FmtData.u.dos.ovl_short ) {
         /* short address -- fits into 16 bits */
-        addr->off += ( vecnum - 1 ) * sizeof( svector ) + ( addr->seg << 4 );
+        addr->off += ( vecnum - 1 ) * sizeof( svector ) + ( addr->seg << FmtData.SegShift );
         addr->seg = 0;
     } else {
         addr->off += ( vecnum - 1 ) * sizeof( lvector );
@@ -736,7 +736,7 @@ static unsigned EmitOvlEntry( unsigned off, section *sect )
         _HostU16toTarg( sect->outfile->ovlfnoff, entry.fname );
         _HostU16toTarg( sect->relocs, entry.relocs );
         _HostU16toTarg( flags_anc, entry.flags_anc );
-        start_para = sect->sect_addr.seg + ( sect->sect_addr.off >> 4 );
+        start_para = sect->sect_addr.seg + ( sect->sect_addr.off >> FmtData.SegShift );
         _HostU16toTarg( start_para, entry.start_para );
         len = sect->size + 15 >> 4;
         _HostU16toTarg( len, entry.num_paras );
@@ -817,7 +817,7 @@ extern void PadOvlFiles( void )
 
     fnode = OutFiles;
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
-        pad = 16 - ( fnode->file_loc & 0xF );
+        pad = FmtData.SegMask + 1 - ( fnode->file_loc & FmtData.SegMask );
         if( pad != 16 ) {
             if( fnode->handle == NIL_HANDLE ) {
                 OpenOvlFile( fnode );

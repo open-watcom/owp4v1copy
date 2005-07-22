@@ -331,3 +331,7 @@ pick(    MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE,  "The NLM internal name (%s) has 
                     "The NLM internal name (%s) has been truncated as it exceeds the maximum size." )
 pick(    MSG_VXD_INCORRECT_EXPORT,      "One export must exist for the VxD format." ,
                                         "One export must exist for the VxD format." )
+pick(    MSG_FIXED_LOC_BEFORE_CUR_LOC,  "Location counter is already beyond fixed Segment Address %a." ,
+                                        "Location counter is already beyond fixed Segment Address %a." )
+pick(    MSG_DUP_DIRECTIVE,      "Directive %s can only occur once." ,
+                                        "Directive %s can only occur once." )

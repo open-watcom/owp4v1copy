@@ -217,10 +217,19 @@ struct fmt_data {
     unsigned        minor;
     unsigned        def_seg_flags;
     unsigned        revision;
+    unsigned        Hshift;   // Corresponds to huge shift variable used by libr
+    unsigned        SegShift;   // 16 - HShift, used to convert a segment to an address
+    unsigned_32      SegMask;  // used to extract remainder for segment normalization
+    unsigned        HexSegShift; // shift to convert Intel Hex record segments to address
+    unsigned_32      output_offset;
+    char             FillChar;
     unsigned        dll          : 1;
     unsigned        ver_specified: 1;
     unsigned        make_implib  : 1;
     unsigned        make_impfile : 1;
     unsigned        res_name_only: 1;
     unsigned        toc_initialized: 1;
+    unsigned        output_raw   : 1;
+    unsigned        output_hex   : 1;
+    unsigned        output_hshift : 1; // Hexout uses HexSegShift (else uses SegShift)
 };

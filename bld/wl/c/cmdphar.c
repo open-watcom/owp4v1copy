@@ -161,7 +161,7 @@ extern bool ProcMinReal( void )
 
     ret = GetLong( &value );
     if( ret ) {
-        value >>= 4;       // value specified in paragraphs
+        value >>= FmtData.SegShift;       // value specified in paragraphs
         if( value > 0xffff ) {
             LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "minreal" );
         } else {
@@ -179,7 +179,7 @@ extern bool ProcMaxReal( void )
 
     ret = GetLong( &value );
     if( ret ) {
-        value >>= 4;       // value specified in paragraphs
+        value >>= FmtData.SegShift;       // value specified in paragraphs
         if( value > 0xffff ) {
             LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "maxreal" );
         } else {
