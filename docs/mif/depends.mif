@@ -1004,6 +1004,8 @@ $(docsrc_dir)\lg\ldnewseg.gml &
 $(docsrc_dir)\lg\ldnovect.gml &
 $(docsrc_dir)\lg\ldoption.gml &
 $(docsrc_dir)\lg\ldoptlib.gml &
+$(docsrc_dir)\lg\ldorder.gml &
+$(docsrc_dir)\lg\ldoutput.gml &
 $(docsrc_dir)\lg\ldoverla.gml &
 $(docsrc_dir)\lg\ldpath.gml &
 $(docsrc_dir)\lg\ldrefere.gml &
@@ -1039,8 +1041,10 @@ $(docsrc_dir)\lg\opdynami.gml &
 $(docsrc_dir)\lg\opelimin.gml &
 $(docsrc_dir)\lg\opexit.gml &
 $(docsrc_dir)\lg\opfarcal.gml &
+$(docsrc_dir)\lg\opfilchr.gml &
 $(docsrc_dir)\lg\opheap.gml &
 $(docsrc_dir)\lg\ophelp.gml &
+$(docsrc_dir)\lg\ophshift.gml &
 $(docsrc_dir)\lg\opimpfil.gml &
 $(docsrc_dir)\lg\opimplib.gml &
 $(docsrc_dir)\lg\opincrem.gml &

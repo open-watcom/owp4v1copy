@@ -129,6 +129,7 @@
 .dir export             ldexport.gml    elf netware os2 win16 win32
 .dir farcalls           opfarcal.gml    all
 .dir file               ldfile.gml      all
+.dir fillchar           opfilchr.gml    all
 .if '&overlay' eq 'yes' .do begin
 .dir fixedlib           ldfixedl.gml    dos
 .dir forcevector        ldforcev.gml    dos
@@ -136,6 +137,7 @@
 .dir format             ldformat.gml    all
 .dir heapsize           opheap.gml      os2 qnx win16 win32
 .dir help               ophelp.gml      netware
+.dir hshift             ophshift.gml    dos os2 qnx win16
 .dir impfile            opimpfil.gml    netware os2 win16 win32
 .dir implib             opimplib.gml    netware os2 win16 win32
 .dir import             ldimport.gml    elf netware os2 win16 win32
@@ -182,9 +184,11 @@
 .dir oneautodata        oponeaut.gml    os2 win16
 .dir option             ldoption.gml    all
 .dir optlib             ldoptlib.gml    all
+.dir order              ldorder.gml     all
 .dir osdomain           oposdoma.gml    netware
 .dir osname             oposname.gml    all
 .dir osversion          oposver.gml     win32
+.dir output             ldoutput.gml    all
 .if '&overlay' eq 'yes' .do begin
 .dir overlay            ldoverla.gml    dos
 .do end

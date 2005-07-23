@@ -60,6 +60,10 @@ QNX executable files
 16-bit Windows (Win16) executable files including Dynamic Link Libraries
 .bull
 32-bit Windows (Win32) executable files including Dynamic Link Libraries
+.bull
+raw binary images
+.bull
+Intel Hex files (Hex80, Hex86 and extended linear)
 .endbull
 .np
 .ix 'host operating system'
