@@ -751,6 +751,8 @@ File: source\diag0223.c
 (348,33): Error! E254: 'inner::f2' has not been declared as a member
   definition: 'void enclose::inner::f2( int )'
 (349,6): Error! E374: object (or object pointer) required to access non-static data member
+(350,15): Error! E499: object (or object pointer) required to access non-static member function
+  definition: 'int enclose::func( float )'
 (350,15): Error! E056: not expecting a return value
 (351,15): Warning! W013: unreachable code
 (351,15): Error! E148: access to private member 'enclose::private_si' is not allowed
@@ -758,6 +760,8 @@ File: source\diag0223.c
 (354,28): Error! E148: access to private member 'inner::private_inner_si' is not allowed
   definition: 'int enclose::inner::private_inner_si'
 (357,6): Error! E374: object (or object pointer) required to access non-static data member
+(358,15): Error! E499: object (or object pointer) required to access non-static member function
+  definition: 'int enclose::func( float )'
 (358,15): Error! E056: not expecting a return value
 (359,15): Warning! W013: unreachable code
 (359,15): Error! E148: access to private member 'enclose::private_si' is not allowed
@@ -765,6 +769,8 @@ File: source\diag0223.c
 (366,27): Error! E385: attempt to overload function 'inner_friend' with a different return type
   definition: 'int inner_friend( int )'
 (367,13): Error! E374: object (or object pointer) required to access non-static data member
+(368,24): Error! E499: object (or object pointer) required to access non-static member function
+  definition: 'int enclose::func( float )'
 (368,24): Error! E056: not expecting a return value
 (369,24): Warning! W013: unreachable code
 (369,13): Error! E148: access to private member 'enclose::private_si' is not allowed
@@ -1444,6 +1450,7 @@ File: source\diag0227.c
   definition: 'unsigned long const volatile __far * const volatile cvulifpcvf' in 'void main( void )'
 (159,1): Warning! W014: no reference to symbol 'k'
   definition: 'int k' in 'void main( void )'
+(164,13): Warning! W628: expression is not meaningful
 (164,13): Error! E056: not expecting a return value
 (171,13): Error! E191: expression must be a pointer or a zero constant
   expression type is 'int (lvalue)'
@@ -3192,6 +3199,7 @@ File: source\diag0272.c
   right operand type is 'char (lvalue)'
 (37,24): Error! E042: symbol 'i' already defined
   definition: 'int x::x21::N::i'
+(43,36): Error! E029: symbol 'a' has not been declared
 (43,35): Error! E056: not expecting a return value
 (46,26): Error! E385: attempt to overload function 'q' with a different return type
   definition: 'void x::x21::N::q( void )'

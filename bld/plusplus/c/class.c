@@ -805,6 +805,10 @@ TYPE ClassPreDefined( char *name, TOKEN_LOCN *locn )
             id->sym_name = sym_name;
         }
     }
+    if( id == NULL ) {
+        id = PTreeId( name );
+        id = PTreeSetLocn( id, locn );
+    }
     ClassName( id, CLASS_DECLARATION );
     class_type = data.type;
     ClassPop( &data );

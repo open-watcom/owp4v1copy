@@ -957,10 +957,7 @@ static void parseReturnStmt( SYMBOL func )
                 if( return_sym == NULL ) {
                     // see C++98 6.6.3 (3)
                     expr = AnalyseStmtExpr( expr );
-                    if( expr->type == NULL ) {
-                        PTreeFreeSubtrees( expr );
-                        expr = NULL;
-                    } else if( VoidType( expr->type ) ) {
+                    if( ( expr->type != NULL ) && VoidType( expr->type ) ) {
                         emitCodeExpr( expr );
                         expr = NULL;
                     }
