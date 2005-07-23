@@ -25,11 +25,16 @@ host_cpu = 386
 
 extra_l_flags = op map
 
-commands = mkdisk.exe splitfil.exe packsize.exe genmkfil.exe
+inc_dirs = -I"$(libzip_dir)/lib" -I"$(zlib_dir)"
+
+commands = mkdisk.exe mkexezip.exe splitfil.exe packsize.exe genmkfil.exe
 
 all : $(commands) .SYMBOLIC
 
 mkdisk.exe : mkdisk.obj
+    $(linker) $(lflags) name $@ file {$<}
+
+mkexezip.exe : mkexezip.obj
     $(linker) $(lflags) name $@ file {$<}
 
 packsize.exe : packsize.obj
