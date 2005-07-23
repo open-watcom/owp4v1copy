@@ -1674,7 +1674,7 @@ extern bool GetDirParams( int                   argc,
     if( argc > 1 ) {
         strcpy( *arc_name, argv[1] );
     } else {
-        strcpy( *arc_name, "setup.zip" );
+        strcpy( *arc_name, argv[0] );
     }
 
     if( argc > 2 ) {
