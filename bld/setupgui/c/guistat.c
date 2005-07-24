@@ -261,6 +261,7 @@ extern bool StatusCancelled( void )
             GUIProcessEvent( ev );
         }
         uipoplist();
+        UIData->busy_wait = FALSE;
     }
 #endif
     return( CancelSetup );
