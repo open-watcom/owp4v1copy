@@ -335,10 +335,13 @@ extern int BuildLXResourceObjects( ExeFileInfo *exeinfo, ResFileInfo *resinfo,
             curr_total -= OSF_DEF_PAGE_SIZE;
         }
 
+#ifndef NDEBUG
         printf( "    %d.%d (%d bytes)\n", entry->resource.name_id,
             entry->resource.type_id, entry->resource.res_size );
+#endif
 
-        /* FIXME: we cheat and stuff everything in a single resource object */
+        /* FIXME? - we cheat and stuff everything in a single resource object */
+        /* Maybe that's not a problem though. */
         entry->resource.object = 0;
         entry->resource.offset = curr_offset;
         entry->assigned = TRUE;
@@ -348,7 +351,9 @@ extern int BuildLXResourceObjects( ExeFileInfo *exeinfo, ResFileInfo *resinfo,
     if( curr_total )
         dir->num_pages++;
 
+#ifndef NDEBUG
     printf( "total size: %d bytes in %d page(s)\n", total, dir->num_pages );
+#endif
 
     return( FALSE );
 } /* BuildLXResourceObjects */
