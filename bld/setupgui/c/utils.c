@@ -143,7 +143,7 @@ extern bool ModifyStartup( bool uninstall )
 }
 
 typedef struct {
-    unsigned long       free_space;
+    unsigned long long  free_space;
     unsigned            cluster_size;
     unsigned            use_target_for_tmp_file : 1;
     unsigned            fixed : 1;
@@ -421,15 +421,15 @@ static unsigned GetDriveInfo( int drive, bool removable )
 #if defined( __OS2__ )
     {
         typedef struct {
-            BYTE cmdinfo;
-            BYTE drive;
+            BYTE    cmdinfo;
+            BYTE    drive;
         } parm;
 
         typedef struct {
-            BYTE bpb[31];
-            short cyl;
-            BYTE type;
-            short attrs;
+            BYTE    bpb[31];
+            short   cyl;
+            BYTE    type;
+            short   attrs;
         } ret;
 
         #define         BUF_SIZE 40
@@ -437,8 +437,8 @@ static unsigned GetDriveInfo( int drive, bool removable )
         UCHAR           fsinfobuf[BUF_SIZE];
         APIRET          rc;
 
-        ULONG           sectors_per_cluster;      /* sectors per allocation unit */
-        ULONG           free_clusters;      /* available units */
+        ULONG           sectors_per_cluster;    /* sectors per allocation unit */
+        ULONG           free_clusters;          /* available units */
         ULONG           bytes_per_sector;       /* bytes per sector */
         parm            p;
         ret             r;
@@ -462,7 +462,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
             free_clusters =  *(ULONG *)(fsinfobuf + (3*sizeof(ULONG)));
             bytes_per_sector  =  *(USHORT *)(fsinfobuf + (4*sizeof(ULONG)));
             info->cluster_size = sectors_per_cluster * bytes_per_sector;
-            info->free_space = free_clusters * (ULONG)info->cluster_size;
+            info->free_space = (unsigned long long)free_clusters * (ULONG)info->cluster_size;
         } else {
             info->free_space = -1;
         }
@@ -512,7 +512,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
         if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
                    &free_clusters, &total_clusters ) ) {
             info->cluster_size = bytes_per_sector * sectors_per_cluster;
-            info->free_space = free_clusters * (DWORD)info->cluster_size;
+            info->free_space = (unsigned long long)free_clusters * (DWORD)info->cluster_size;
         } else {
             info->free_space = -1;
         }
@@ -593,7 +593,12 @@ static unsigned GetDriveInfo( int drive, bool removable )
         if( _dos_getdiskfree( drive, &FreeSpace ) == 0 ) {
             info->cluster_size = FreeSpace.sectors_per_cluster
                         * FreeSpace.bytes_per_sector;
-            info->free_space = FreeSpace.avail_clusters * (long)info->cluster_size;
+            info->free_space = FreeSpace.avail_clusters * (unsigned long long)info->cluster_size;
+            /* If reported cluster size is ridiculously large, it's likely faked; assume the
+             * real cluster size is much smaller - 4096 should be a conservative estimate.
+             */
+            if( info->cluster_size > 64 * 1024 )
+                info->cluster_size = 4096;
         } else if( removable ) { // diskette not present
             info->cluster_size = 0;
             info->free_space = -1;
@@ -629,8 +634,8 @@ static unsigned GetDriveInfo( int drive, bool removable )
     return( drive );
 }
 
-extern unsigned long GetFreeDiskSpace( unsigned drive, bool removable )
-/*********************************************************************/
+extern unsigned long long GetFreeDiskSpace( unsigned drive, bool removable )
+/**************************************************************************/
 {
     return( Drives[ GetDriveInfo( drive, removable ) ].free_space );
 }
@@ -895,7 +900,10 @@ extern bool CreateDstDir( int i, char *dst_dir )
     return( FALSE );
 }
 
-static void catnum( char *buff, long num )
+#define KB  1024
+#define MB  (KB * KB)
+
+static void catnum( char *buff, long long num )
 {
 
     char        num_buff[128];
@@ -906,38 +914,40 @@ static void catnum( char *buff, long num )
         num = -num;
         ch = '-';
     }
-    if( num < 1000 ) {
+    if( num < KB ) {
         sprintf( num_buff, "%c%d bytes", ch, (int)num );
     } else {
-        num /= 1000;
-        if( num > 1000000 ) {
-            sprintf( num_buff, "%c%d,%3.3d,%3.3dK", ch, (int)((num/1000000)%1000), (int)((num/1000)%1000), (int)(num%1000) );
-        } else if( num > 1000 ) {
-            sprintf( num_buff, "%c%d,%3.3dK", ch, (int)((num/1000)%1000), (int)(num%1000) );
+        num /= KB;
+        if( num > MB ) {
+            num /= KB;
+            sprintf( num_buff, "%c%d,%3.3dMB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+        } else if( num > KB ) {
+            sprintf( num_buff, "%c%d,%3.3dKB", ch, (int)((num/1000)%1000), (int)(num%1000) );
         } else {
-            sprintf( num_buff, "%c%dK", ch, (int)num );
+            sprintf( num_buff, "%c%dKB", ch, (int)num );
         }
     }
     strcat( buff, num_buff );
 }
 
-static void ucatnum( char *buff, unsigned long num )
+static void ucatnum( char *buff, unsigned long long num )
 {
 
     char        num_buff[128];
     char        ch;
 
     ch = ' ';
-    if( num < 1000 ) {
+    if( num < KB ) {
         sprintf( num_buff, "%c%u bytes", ch, (int)num );
     } else {
-        num /= 1000;
-        if( num > 1000000 ) {
-            sprintf( num_buff, "%c%u,%3.3u,%3.3uK", ch, (int)((num/1000000)%1000), (int)((num/1000)%1000), (int)(num%1000) );
-        } else if( num > 1000 ) {
-            sprintf( num_buff, "%c%u,%3.3uK", ch, (int)((num/1000)%1000), (int)(num%1000) );
+        num /= KB;
+        if( num > MB ) {
+            num /= KB;
+            sprintf( num_buff, "%c%u,%3.3uMB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+        } else if( num > KB ) {
+            sprintf( num_buff, "%c%u,%3.3uKB", ch, (int)((num/1000)%1000), (int)(num%1000) );
         } else {
-            sprintf( num_buff, "%c%uK", ch, (int)num );
+            sprintf( num_buff, "%c%uKB", ch, (int)num );
         }
     }
     strcat( buff, num_buff );
@@ -1018,9 +1028,9 @@ extern bool CheckDrive( bool issue_message )
 //check if there is enough disk space
 {
     bool                ret;
-    unsigned long       free_disk_space;
-    long                disk_space_needed;
-    unsigned long       max_tmp_file;
+    unsigned long long  free_disk_space;
+    long long           disk_space_needed;
+    unsigned long long  max_tmp_file;
     int                 max_targs;
     int                 i, j, targ_num;
     char                *disks[ MAX_DRIVES ];
@@ -1030,11 +1040,11 @@ extern bool CheckDrive( bool issue_message )
     char                buff[_MAX_PATH];
     char                drive[20];
     struct {
-        char            *drive;
-        long            needed;
-        unsigned long   max_tmp;
-        unsigned long   free;
-        int             num_files;
+        char                *drive;
+        long long           needed;
+        unsigned long long  max_tmp;
+        unsigned long long  free;
+        int                 num_files;
     } space[ MAX_DRIVES ];
     char                root[ 2 ][ _MAX_PATH ];
 
@@ -1081,7 +1091,7 @@ extern bool CheckDrive( bool issue_message )
                 }
             }
             free_disk_space = GetFreeDiskSpace( *disks[i], FALSE );
-            if( free_disk_space == (unsigned long)-1 )
+            if( free_disk_space == (unsigned long long)-1 )
                 free_disk_space = 0;
             space[i].drive = disks[i];
             space[i].free = free_disk_space;
