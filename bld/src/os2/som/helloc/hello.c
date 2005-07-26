@@ -17,11 +17,10 @@
  * This method outputs the string "Hello, World!".
  */
 
-SOM_Scope void  SOMLINK sayHello(Hello *somSelf,  Environment *ev)
+SOM_Scope void  SOMLINK sayHello(Hello somSelf,  Environment *ev)
 {
     /* HelloData *somThis = HelloGetData(somSelf); */
     HelloMethodDebug("Hello","sayHello");
 
-    printf( "Hello, World from SOM (C version)\n" );
+    puts( "Hello, World from SOM (C version)" );
 }
-
