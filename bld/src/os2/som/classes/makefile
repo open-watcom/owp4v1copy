@@ -6,7 +6,7 @@
 #
 # Compiler and linker flags
 #
-CFLAGS = -zq
+CFLAGS = -zq -I.
 LFLAGS = op quiet
 !ifdef debug
 CFLAGS += -d2
@@ -38,16 +38,16 @@ test.obj : test.c student.h course.h graduate.h undgrad.h
     wcc386 $(CFLAGS) $[@
 
 student.dll : student.ih student.h student.obj
-    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib somtk export StudentCClassData,StudentClassData,StudentNewClass 
+    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib somtk export StudentCClassData,StudentClassData,StudentNewClass
 
 undgrad.dll : student.sc undgrad.ih undgrad.h undgrad.obj
-    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib student,somtk export UnderGraduateStudentCClassData,UnderGraduateStudentClassData,UnderGraduateStudentNewClass 
+    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib student,somtk export UnderGraduateStudentCClassData,UnderGraduateStudentClassData,UnderGraduateStudentNewClass
 
 graduate.dll : student.sc graduate.ih graduate.h graduate.obj
-    wlink op q,impl sys os2v2_dll file $]@ lib student,somtk export GraduateStudentCClassData,GraduateStudentClassData,GraduateStudentNewClass 
+    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib student,somtk export GraduateStudentCClassData,GraduateStudentClassData,GraduateStudentNewClass
 
 course.dll : course.ih course.h student.h course.obj
-    wlink op q,impl sys os2v2_dll file $]@ lib student,somtk export CourseCClassData,CourseClassData,CourseNewClass 
+    wlink $(LFLAGS) op impl sys os2v2_dll file $]@ lib student,somtk export CourseCClassData,CourseClassData,CourseNewClass
 
 #
 # Clean rule
