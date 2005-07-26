@@ -538,7 +538,8 @@
 :H0.&*
 .do end
 .el .do begin
-:ZH0.&*
+:cmt. This screws up OS/2 online help files; don't do it
+:cmt. :ZH0.&*
 .do end
 :set symbol="headtext$" value=" ".
 :set symbol="headtxt0$" value="&*".
