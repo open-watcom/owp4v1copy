@@ -17,7 +17,7 @@ is as follows.
 ~b
     class_options ::= [SEGADDR=n][OFFSET=n][copy_option][NOEMIT]{seglist} 
     copy_option ::= [COPY source_class_name]
-    seglist := {SEGMENT seg_name [SEGADDR=n1][OFFSET=n2][NOEMIT]}+ 
+    seglist := {SEGMENT seg_name [SEGADDR=n][OFFSET=n][NOEMIT]}+ 
 .embigbox
 .synote
 .*
@@ -88,7 +88,7 @@ Fix the program location
 .bull
 Separate code and data to different fixed parts of memory
 .bull
-Place a copy of initialized data in ROM (usually right after the code
+Place a copy of initialized data in ROM (usually right after the code)
 .bull
 Prevent the original of the initialized data from being written to the loadfile, since it resides in RAM and cannot be saved there.
 .endbull
@@ -117,8 +117,9 @@ order clname BEGDATA NOEMIT segaddr=0x80 segment _NULL segment _AFTERNULL
       clname ROMDATAE
 .millust end
 .*
-DGROUP consists of classes "BEGDATA", "DATA", "BSS" and "BSS2". Note that
-these are marked "NOEMIT" (except for the BSS classes which are not initialized,
+DGROUP consists of classes "BEGDATA", "DATA", "BSS", "BSS2" and "STACK". 
+Note that these are marked "NOEMIT" (except for the BSS classes and STACK
+which are not initialized,
 and therefore have no data in them anyway) to prevent data from being
 placed in the loadfile at 0x80:0. The first class of DGROUP is given the
 fixed starting segment address of 0x80 (offset is assumed to be 0). 

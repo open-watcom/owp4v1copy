@@ -23,7 +23,7 @@ of the code and data using the Intel standard hex file format. Default file
 extension is ".hex".
 .*
 .mnote OFFSET=n
-specifies that the linear address
+(short form "OFF") specifies that the linear address
 .sy n
 should be subtracted from all addresses being output to the executable image.
 .*
