@@ -29,12 +29,9 @@
 ****************************************************************************/
 
 
-#if defined( __UNIX__ )
-    #include <utime.h>
-#else
+#if !defined( __UNIX__ )
     #include <dos.h>
     #include <direct.h>
-    #include <sys/utime.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +39,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <malloc.h>
+#include <utime.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <setjmp.h>
@@ -1737,7 +1735,7 @@ extern  void DetermineSrcState( char *src_dir )
         src_dir[ len ] = '\\';
         src_dir[ len + 1 ] = '\0';
     }
-    strcat( src_dir, "diskimgs\\disk01" );
+    strcat( src_dir, "cd_source" );
     if( access( src_dir, F_OK ) == 0 ) {
         SetVariableByName( "SrcIsCD", "1" );
         SrcInstState = SRC_CD;

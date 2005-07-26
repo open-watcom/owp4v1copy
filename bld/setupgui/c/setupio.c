@@ -107,6 +107,18 @@ extern int FileFini( void )
 }
 
 
+extern int FileIsPlainFS( void )
+{
+    return( srcType == DS_FILE );
+}
+
+
+extern int FileIsArchive( void )
+{
+    return( srcType == DS_ZIP );
+}
+
+
 extern int FileStat( const char *path, struct stat *buf )
 {
     int                 rc;

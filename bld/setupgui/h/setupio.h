@@ -36,8 +36,10 @@ extern int FileInit( const char *archive );
 extern int FileFini( void );
 extern int FileStat( const char *path, struct stat *buf );
 extern void *FileOpen( const char *path, int flags );
+extern size_t FileRead( void *handle, void *buffer, size_t length );
 extern int FileClose( void *handle );
 extern long FileSeek( void *handle, long offset, int origin );
-extern size_t FileRead( void *handle, void *buffer, size_t length );
+extern int FileIsPlainFS( void );
+extern int FileIsArchive( void );
 
 #endif
