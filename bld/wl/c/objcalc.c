@@ -324,7 +324,7 @@ static void SortClasses( section *sec )
         *owner = NULL;
         // This has to happen after the class list is rebuilt, so it can be searched
         for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
-             if( MatchClass->Copy ) {   // If this is a duplicate destination, find the source
+             if( MatchClass->Copy && MatchClass->Ring != NULL ) {   // If this is a duplicate destination, find the source
                  for( currcl = sec->classlist; currcl != NULL; currcl = currcl->next_class ) {
                     if( stricmp( MatchClass->SrcName, currcl->name ) == 0 ) { 
                         MatchClass->Ring->DupClass = currcl;
