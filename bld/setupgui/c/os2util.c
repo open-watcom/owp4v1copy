@@ -24,15 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 specific utility routines.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
-#include <io.h>
-#include <dos.h>
 #include <stdlib.h>
 #include <string.h>
 #define INCL_DOSFILEMGR
@@ -41,6 +38,35 @@
 #include "setup.h"
 #include "setupwpi.h"
 #include "setupinf.h"
+
+
+static HOBJECT create_group( const char *group, const char *grp_filename )
+{
+    HOBJECT     hobj;
+    char        cmd[ 2 * _MAX_PATH ];
+    char        icon_file[ MAXBUF ];
+
+    sprintf( cmd, "OPEN=ICON;OBJECTID=%s;", grp_filename );   // add more parms here if necessary
+
+    SimGetPMGroupIcon( icon_file );
+    if( icon_file[0] != '\0' ) {
+        strcat( cmd, "ICONFILE=" );
+        ReplaceVars( &cmd[ strlen( cmd ) ], icon_file );
+        strcat( cmd, ";" );
+    }
+
+    hobj = WinCreateObject( "WPFolder", group, cmd, "<WP_DESKTOP>", CO_UPDATEIFEXISTS );
+    return( hobj );
+}
+
+
+static void remove_group( const char *group )
+{
+    HOBJECT     hobj;
+
+    hobj = WinQueryObject( group );
+    WinDestroyObject( hobj );
+}
 
 
 extern bool CreatePMInfo( bool uninstall )
@@ -58,35 +84,42 @@ extern bool CreatePMInfo( bool uninstall )
     char                *p;
     HOBJECT             obj;
 
+    // To uninstall, simply eliminate all folders
+    if( uninstall ) {
+        int     nPMGrp, nMaxPMGroups;
+
+        nMaxPMGroups = SimGetNumPMGroups();
+        for( nPMGrp = 0; nPMGrp < nMaxPMGroups; nPMGrp++ ) {
+            SimGetPMGroupFName( nPMGrp, t1 );
+            if( *t1 != '\0' ) {
+                sprintf( GroupFileName, "<%s>", t1 );
+                // Delete the PM Group box
+                remove_group( GroupFileName );
+            }
+        }
+        return( TRUE );
+    }
+
     SimGetPMGroup( t1 );
-    if( t1[ 0 ] == '\0' ) {
+    if( t1[0] == '\0' ) {
         return( TRUE );
     }
 
     SimGetPMGroupFileName( t2 );
-    if( t2[ 0 ] != '\0' ) {
+    if( t2[0] != '\0' ) {
         sprintf( GroupFileName, "<%s>", t2 );
     } else {
         sprintf( GroupFileName, "<SETUP_FOL>" );
     }
-    sprintf(Cmd, "OPEN=ICON;OBJECTID=%s;", GroupFileName );   // add more parms here if necessary
 
-    SimGetPMGroupIcon( t2 );
-    if( t2[0] != '\0' ) {
-        strcat( Cmd, "ICONFILE=" );
-        ReplaceVars( &Cmd[ strlen(Cmd) ], t2 );
-        strcat( Cmd, ";" );
-    }
-
-    obj = WinCreateObject( "WPFolder", t1,
-                           Cmd, "<WP_DESKTOP>", CO_UPDATEIFEXISTS);
+    obj = create_group( t1, GroupFileName );
 
     // Add the individual PM files to the Group box.
     nMaxPMProgs = SimGetNumPMProgs();
     StatusLines( STAT_CREATEPROGRAMFOLDER, "" );
     StatusAmount( 0, nMaxPMProgs );
 
-    for( nPMProg = 0; ( obj != 0 ) && ( nPMProg < nMaxPMProgs ); nPMProg++ ) {
+    for( nPMProg = 0; (obj != NULLHANDLE) && (nPMProg < nMaxPMProgs); nPMProg++ ) {
         StatusAmount( nPMProg, nMaxPMProgs );
         if( !SimCheckPMCondition( nPMProg ) ) {
             continue;
@@ -104,30 +137,20 @@ extern bool CreatePMInfo( bool uninstall )
         nDirIndex = SimGetPMProgName( nPMProg, PMProgName );
         if( strcmp( PMProgName, "GROUP" ) == 0 ) {
             SimGetPMParms( nPMProg, t1 );
-            if( t1[ 0 ] == '\0' ) {
+            if( t1[0] == '\0' ) {
                 return( TRUE );
             }
 
-            if( PMProgDesc[ 0 ] != '\0' ) {
+            if( PMProgDesc[0] != '\0' ) {
                 sprintf( GroupFileName, "<%s>", t1 );
             } else {
                 sprintf( GroupFileName, "<SETUP_FOL>" );
             }
-            sprintf(Cmd, "OPEN=ICON;OBJECTID=%s;", GroupFileName );   // add more parms here if necessary
 
-            SimGetPMGroupIcon( t2 );
-            if( t2[0] != '\0' ) {
-                strcat( Cmd, "ICONFILE=" );
-                ReplaceVars( &Cmd[ strlen(Cmd) ], t2 );
-                strcat( Cmd, ";" );
-            }
-
-            obj = WinCreateObject( "WPFolder", PMProgDesc,
-                                   Cmd, "<WP_DESKTOP>", CO_UPDATEIFEXISTS);
-
+            obj = create_group( PMProgDesc, GroupFileName );
         } else {
             if( nDirIndex == SIM_INIT_ERROR ) {
-                WorkingDir[ 0 ] = '\0';
+                WorkingDir[0] = '\0';
                 ReplaceVars( t2, PMProgName );
                 strcpy( PMProgName, t2 );
             } else {
@@ -137,15 +160,15 @@ extern bool CreatePMInfo( bool uninstall )
             // get parameters
             SimGetPMParms( nPMProg, t1 );
             ReplaceVars( PMParams, t1 );
-            if( PMParams[ 0 ] == '+' ) {
+            if( PMParams[0] == '+' ) {
                 // format is: +folder_name[+parameters]
-                p = strchr( &PMParams[ 1 ], '+' );
+                p = strchr( &PMParams[1], '+' );
                 if( p == NULL ) {
-                    strcpy( Folder, &PMParams[ 1 ] );
-                    PMParams[ 0 ] = '\0';
+                    strcpy( Folder, &PMParams[1] );
+                    PMParams[0] = '\0';
                 } else {
                     len = p - PMParams - 1;
-                    memcpy( Folder, &PMParams[ 1 ], len );
+                    memcpy( Folder, &PMParams[1], len );
                     Folder[ len ] = '\0';
                     ++p;
                     memmove( PMParams, p, strlen( p ) );
@@ -157,17 +180,19 @@ extern bool CreatePMInfo( bool uninstall )
 
             // Append the subdir where the icon file is and the icon file's name.
             dwTemp = SimGetPMIconInfo( nPMProg, PMIconFileName );
-            nDirIndex = (short) ( dwTemp & 0xFFFF );
-            icon_number = (short) ( dwTemp >> 16 );
-            if( icon_number == -1 ) icon_number = 0;
+            nDirIndex = (short)(dwTemp & 0xFFFF);
+            icon_number = (short)(dwTemp >> 16);
+            if( icon_number == -1 ) {
+                icon_number = 0;
+            }
             if( nDirIndex != -1 ) {
                 SimGetDir( nDirIndex, t1 );
                 strcat( t1, PMIconFileName );
                 strcpy( PMIconFileName, t1 );
             }
 
-            if( PMProgName[ 0 ] == '+' ) {
-                sprintf( Cmd, "SHADOWID=%s%s", WorkingDir, &PMProgName[ 1 ] );
+            if( PMProgName[0] == '+' ) {
+                sprintf( Cmd, "SHADOWID=%s%s", WorkingDir, &PMProgName[1] );
                 obj = WinCreateObject( "WPShadow", PMProgDesc,
                                    Cmd, Folder, CO_REPLACEIFEXISTS );
             } else {
@@ -177,10 +202,6 @@ extern bool CreatePMInfo( bool uninstall )
                 obj = WinCreateObject( "WPProgram", PMProgDesc,
                                    Cmd, Folder, CO_REPLACEIFEXISTS );
             }
-            if( uninstall && obj != NULLHANDLE ) {
-                // if uninstalling, have to create object to get handle
-                WinDestroyObject( obj );
-            }
         }
     }
     StatusAmount( nMaxPMProgs, nMaxPMProgs );
@@ -189,7 +210,7 @@ extern bool CreatePMInfo( bool uninstall )
 
 
 static bool SetEAttr( char *filename, char const *name, char const *val )
-//=======================================================================
+/***********************************************************************/
 {
     FEA2LIST            *fet;
     GEA2LIST            *get;
@@ -235,12 +256,10 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
 
 static char             dir_name[ _MAX_PATH ], label[ _MAX_PATH ], t1[ _MAX_PATH ];
 
-void LabelDirs()
-//==============
-
 // Process [Label] section - use extended attributes to add
 //                           long label to directories
-
+void LabelDirs( void )
+/********************/
 {
     int                 i, num;
 

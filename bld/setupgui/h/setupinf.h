@@ -101,6 +101,7 @@ extern void SimGetPMDesc(int parm,char *buff);
 extern long SimGetPMIconInfo(int parm,char *buff);
 extern unsigned char SimCheckPMCondition(int parm);
 extern void SimGetPMGroupName( int parm, char *buff );
+extern void SimGetPMGroupFName( int parm, char *buff );
 extern int SimGetNumPMGroups();
 extern int SimNumProfile(void);
 extern void SimProfInfo(int parm,char *app_name,char *key_name,char *value,char *file_name,char *hive_name);

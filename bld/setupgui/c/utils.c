@@ -102,13 +102,14 @@ extern bool ModifyEnvironment( bool uninstall )
     ret = CreatePMInfo( uninstall );
     if( !ret ) {                   // create folder and icons
         gui_message_return  gui_ret;
+
         if( VarGetIntVal( UnInstall ) != 0 ) {
-        gui_ret = MsgBox( NULL, "IDS_PMREMNOGOOD", GUI_YES_NO );
+            gui_ret = MsgBox( NULL, "IDS_PMREMNOGOOD", GUI_YES_NO );
         } else {
-        gui_ret = MsgBox( NULL, "IDS_PMADDNOGOOD", GUI_YES_NO );
+            gui_ret = MsgBox( NULL, "IDS_PMADDNOGOOD", GUI_YES_NO );
         }
         if( gui_ret == GUI_RET_YES ) {
-        ret = TRUE;
+            ret = TRUE;
         }
     }
 #endif
