@@ -113,9 +113,14 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
         pgm = arg_pgm;
     }
 
+    WFileName exename( pgm );
+    if( *exename.ext() == NULLCHAR ) {
+        exename.setExt( "exe" );
+    }
+
     // Try to determine full pathname; the process PATH may not be what
-    // we started with
-    _searchenv( pgm, "PATH", searchenv_buf );
+    // we started with.
+    _searchenv( (const char *)exename, "PATH", searchenv_buf );
     if( searchenv_buf[0] != '\0' )
         pgm = searchenv_buf;
 
@@ -179,11 +184,11 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
             break;
         }
     }
+
     WFileName fn( pgm );
     if( *fn.ext() == NULLCHAR ) {
         fn.setExt( "exe" );
     }
-
     if( pgm_starter == PGM_DOSEXECPGM ) {
         char    *exec_env;
 
@@ -195,7 +200,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
             cmdline = NULL;
         } else {
             cmdline = (char *)args.cString();
-            cmdline[ strlen( pgm ) ] = '\0';
+            cmdline[ strlen( args.stringAt( 0 ) ) ] = '\0';
         }
         exec_env = build_exec_env( environ );
         rc = DosExecPgm( (char *)NULL, 0, exec_state, (char const *)cmdline, (char const *)exec_env,

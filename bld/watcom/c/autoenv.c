@@ -66,6 +66,43 @@
     #define dbg_puts( a )
 #endif
 
+/* Add a single directory to an environment variable that contains a
+ * list of paths, such as PATH, INCLUDE, etc. Env var will be created
+ * if it didn't exist. New entries will be added at the front, in order
+ * to override potential conflicting files.
+ */
+static int add_path( const char *var_name, const char *new_dirs )
+{
+    char    *path;
+    char    *new_path;
+
+    /* Get env var contents */
+    path = getenv( var_name );
+    if( path == NULL ) {
+        /* The easy case - env var isn't set at all */
+        if( setenv( var_name, new_dirs, 0 ) != 0 ) {
+            return( -2 );
+        }
+    } else {
+        if( strstr( path, new_dirs ) == NULL ) {
+            /* Our path is not present */
+            new_path = malloc( strlen( path ) + strlen( new_dirs ) * 2 + 16 );
+            if( new_path == NULL ) {
+                return( -2 );
+            }
+            strcpy( new_path, new_dirs );
+            strcat( new_path, PATH_SEP_STR );
+            strcat( new_path, path );
+            if( setenv( var_name, new_path, 1 ) != 0 ) {
+                free( new_path );
+                return( -2 );
+            }
+            free( new_path );
+        }
+    }
+    return( 0 );
+}
+
 #if defined( __OS2__ )
 /* Set up BeginLIBPATH if required; this is not an environment variable
  * and requires OS/2 specific API calls.
@@ -88,6 +125,23 @@ static int setup_os_env( const char *watcom )
     APIRET      rc;
     APIRET      (APIENTRY *fnDosQueryExtLIBPATH)( PSZ, ULONG );
     APIRET      (APIENTRY *fnDosSetExtLIBPATH)( PSZ, ULONG );
+
+    /* Set up the HELP and BOOKSHELF env vars for online help; note that
+     * this may not have much effect since we aren't really updating the
+     * 'master' environment maintained by the OS.
+     */
+    buf = malloc( strlen( watcom ) + 16 );
+    strcpy( buf, watcom );
+    strcat( buf, "\\binp\\help;" );
+    if( add_path( "HELP", buf ) ) {
+        free( buf );
+        return( -6 );
+    }
+    if( add_path( "BOOKSHELF", buf ) ) {
+        free( buf );
+        return( -6 );
+    }
+    free( buf );
 
     /* Older versions of OS/2 did not support BEGIN/ENDLIBPATH. Dynamically
      * query the API entrypoints to prevent load failures.
@@ -150,9 +204,8 @@ static int setup_os_env( const char *watcom )
 int watcom_setup_env( void )
 {
     char        *watcom;
-    char        *path;
-    char        *newpath;
-    char        buf[PATH_MAX];
+    char        buf[PATH_MAX * 2];
+    int         rc;
 
     watcom = getenv( "WATCOM" );
     /* If WATCOM env var isn't set, try to construct it */
@@ -191,44 +244,24 @@ int watcom_setup_env( void )
         dbg_puts( watcom );
     }
     /* At this point, WATCOM is set; construct what we want in PATH */
-    if( sizeof( buf ) < (strlen( watcom ) + 16) ) {
+    if( sizeof( buf ) < (2 * strlen( watcom ) + 16) ) {
         return( -2 );
     }
     strcpy( buf, watcom );
     strcat( buf, DIR_SEP_STR );
     strcat( buf, PRIMARY_PATH );
-
-    /* Verify PATH */
-    path = getenv( "PATH" );
-    if( path == NULL ) {
-        /* The easy case - PATH isn't set at all */
-        if( setenv( "PATH", buf, 0 ) != 0 ) {
-            return( -2 );
-        }
-    } else {
-        if( strstr( path, buf ) == NULL ) {
-            /* Our path is not present */
-            newpath = malloc( strlen( path ) + strlen( buf ) * 2 + 16 );
-            if( newpath == NULL ) {
-                return( -2 );
-            }
-            strcpy( newpath, buf );
-            strcat( newpath, PATH_SEP_STR );
 #if defined( SECONDARY_PATH )
-            /* Add second path component on platforms that require it */
-            strcpy( buf, watcom );
-            strcat( buf, DIR_SEP_STR );
-            strcat( buf, SECONDARY_PATH );
-            strcat( newpath, buf );
-            strcat( newpath, PATH_SEP_STR );
+    /* Add second path component on platforms that require it */
+    strcat( buf, PATH_SEP_STR );
+    strcat( buf, watcom );
+    strcat( buf, DIR_SEP_STR );
+    strcat( buf, SECONDARY_PATH );
 #endif
-            strcat( newpath, path );
-            if( setenv( "PATH", newpath, 1 ) != 0 ) {
-                free( newpath );
-                return( -2 );
-            }
-            free( newpath );
-        }
+
+    /* Stick it in the PATH env var */
+    rc = add_path( "PATH", buf );
+    if( rc ) {
+        return( rc );
     }
 
     /* Finally set up platform specific stuff if applicable */
