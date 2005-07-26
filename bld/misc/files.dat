@@ -1,18 +1,13 @@
+# "Miscellaneous junk" component of install manifest
+
 [ DEFAULT desc="MISC" ]
 
-#cvpack is now built in \bld\cvpack
-#type="e"	redist="X"	dir="binw"	usr="cvpack.exe"	cond="doshost os2host winhost | |"	where="c jc f77 jf77"	desc="Codeview debugging information compactor"	old="bin"
-#type="e"	redist="X"	dir="binnt"	usr="cvpack.exe"	cond="wnthost"	where="c jc f77 jf77"	desc="Codeview debugging information compactor"
-#type="e"	redist="X"	dir="binp"	usr="cvpack.exe"	cond="os2host"	where="c jc f77 jf77"	desc="Codeview debugging information compactor"
-
 type="s"			dir="."		usr="watcom.ico"	cond="os2host"	where="c jc f77 jf77"	desc="Icon for program group/folder"
-#type="s"			dir="."		usr="dos4gw.doc"	cond="dostarg"	where="c    f77"	desc="Documentation for DOS/4GW"
-#type="s"			dir="."		usr="dos4gwj.doc"	cond="dostarg"			where="         jc jf77"	desc="Japanese Documentation for DOS/4GW"
 
 #type="s"			dir="."		usr="wf77.res"						where="f77      jf77"	desc="FORTRAN 77 run-time error message resource file"
 #type="s"			dir="."		usr="wf77386.prf"	cond="wkframe"			where="f77      jf77"	desc="FORTRAN 77 profile for WorkFrame/2"
-#type="s"			dir="."		usr="wcc386.prf"	cond="wkframe"			where="c jc"	desc="WATCOM C profile for WorkFrame/2"
-#type="s"			dir="."		usr="wpp386.prf"	cond="wkframe cplusplus"	where="c jc"	desc="WATCOM C++ profile for WorkFrame/2"
+#type="s"			dir="."		usr="wcc386.prf"	cond="wkframe"			where="c jc"	desc="Watcom C profile for WorkFrame/2"
+#type="s"			dir="."		usr="wpp386.prf"	cond="wkframe cplusplus"	where="c jc"	desc="Watcom C++ profile for WorkFrame/2"
 
 #type="e"			dir="binw"	usr="dbglib.rex"	cond="doshost winhost |"	where="c jc f77 jf77"	desc="Rational DOS extender debugging extension"	old="bin"
 type="s"			dir="binw"	usr="unicode.850"		where="c jc"		old="binb"
@@ -30,10 +25,7 @@ type="l"			dir="lib386"	usr="wresfs.lib"		where="f77      jf77"
 #type="l"			dir="lib386"	usr="wresm.lib"			where="f77      jf77"
 #type="l"			dir="lib386"	usr="wresl.lib"			where="f77      jf77"
 
-type="e"			dir="binw"	usr="dos4gw.exe"	cond="dostarg"			where="c    f77 jc jf77"	desc="DOS/4GW 32-bit DOS extender"	old="bin"
 #type="e"			dir="binw"	usr="cfig386.exe"	cond="doshost winhost |"	where="c jc f77 jf77"	desc="PharLap DOS extender configuration utility"	old="bin"
-type="e"			dir="binw"	usr="rminfo.exe"	cond="doshost winhost |"	where="c jc f77 jf77"		old="bin"
-type="e"			dir="binw"	usr="pminfo.exe"	cond="doshost winhost |"	where="c jc f77 jf77"		old="bin"
 #type="e"			dir="binw"	usr="privatxm.exe"	cond="doshost winhost |"	where="c jc f77 jf77"		old="bin"
 
 #type="e"			dir="binnt"	usr="api32wh.hlp"	cond="wnttarg helpfiles"	where="jc jf77"

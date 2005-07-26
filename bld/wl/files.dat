@@ -1,3 +1,10 @@
+# wlink component of install manifest
+
+# Note: fcenable is only useful on platforms where we may run into 16-bit
+# object files produced by non-Watcom compilers, ie. DOS only. Likewise the
+# ms2wlink tool only makes sense if link scripts for MS LINK need to be
+# processed.
+
 [ DEFAULT ]
 dir="binw"		usr="ms2wlink.exe"					where="c jc f77 jf77 ac"	old="binb"
 dir="binw"		usr="fcenable.exe"					where="c jc f77 jf77 ac"	old="binb"
@@ -13,8 +20,15 @@ dir="binw"		usr="wlink.exe"		cond="doshost winhost |"	where="c jc f77 jf77"		old
 dir="binp"		usr="wlink.exe"		cond="os2host"			where="c jc f77 jf77"
 dir="binp/dll"		usr="wlink.dll"		cond="os2host"			where="c jc f77 jf77"
 dir="binp"		usr="exe2bin.exe"	cond="os2host"			where="c jc f77 jf77"
+dir="binp"		usr="ms2wlink.exe"	cond="os2host"			where="c jc f77 jf77"
+
 dir="binnt"		usr="wlink.exe"		cond="wnthost"			where="c jc f77 jf77 ac"
 dir="binnt"		usr="exe2bin.exe"	cond="wnthost"			where="c jc f77 jf77 ac"
 dir="binnt"		usr="wlink.dll"		cond="wnthost"			where="c jc f77 jf77 ac"
+
 dir="axpnt"		usr="wlink.exe"		cond="alphahost"		where="ac"
+dir="axpnt"		usr="exe2bin.exe"	cond="alphahost"		where="ac"
 dir="axpnt"		usr="wlink.dll"		cond="alphahost"		where="ac"
+
+dir="binl"		usr="wlink"		cond="lnxhost"			where="c f77"
+dir="binl"		usr="exe2bin"		cond="lnxhost"			where="c f77"

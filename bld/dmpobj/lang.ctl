@@ -14,7 +14,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <PROJDIR>/dos386/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
+    <CPCMD> <PROJDIR>/dosi86/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/rel2/binp/dmpobj.exe
   [ IFDEF (os_nt "") <2*> ]

@@ -1,4 +1,4 @@
-# VI component of LANG.DAT
+# VI component of install manifest
 [ DEFAULT ]
     
 usr="vi.exe" 	dir="binnt" 	cond="wnthost" 				where="c f77 ac"
@@ -8,12 +8,18 @@ usr="viw.exe" 	dir="binw" 	cond="winhost" 				where="c f77"
 usr="vi.exe" 	dir="axpnt" 	cond="alphahost" 			where="ac"
 usr="viw.exe" 	dir="axpnt" 	cond="alphahost" 			where="ac"
 usr="vi.exe" 	dir="binp" 	cond="os2host" 				where="c f77"
+usr="vi" 	dir="binl" 	cond="lnxhost"				where="c f77"
 
 usr="ctags.exe" 	dir="binp" 	cond="os2host" 			where="c f77"
 usr="ctags.exe" 	dir="binw" 	cond="doshost winhost |" 	where="c f77"
 usr="ctags.exe" 	dir="binnt" 	cond="wnthost" 			where="c f77 ac"
 usr="ctags.exe" 	dir="axpnt" 	cond="alphahost"		where="ac"
-usr="edbind.exe" 	dir="binw" 		 			where="c f77 ac"
+usr="ctags"		dir="binl" 	cond="lnxhost"			where="c f77"
+usr="edbind.exe" 	dir="binp" 	cond="os2host" 			where="c f77"
+usr="edbind.exe" 	dir="binw" 	cond="doshost winhost |" 	where="c f77"
+usr="edbind.exe" 	dir="binnt" 	cond="wnthost" 			where="c f77 ac"
+usr="edbind.exe" 	dir="axpnt" 	cond="alphahost"		where="ac"
+usr="edbind"		dir="binl" 	cond="lnxhost"			where="c f77"
 
 #.VI scripts
 

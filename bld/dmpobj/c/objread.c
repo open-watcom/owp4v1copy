@@ -343,7 +343,7 @@ unsigned_32 GetVariable( void )
         size = GetUInt();
     } else if( index == COMDEF_LEAF_3 ) {
         lo = GetUInt();
-        size = lo + ( GetByte() << 16 );
+        size = lo + ( (unsigned_32)GetByte() << 16 );
     } else if( index == COMDEF_LEAF_4 ) {
         size = GetLInt();
     } else {

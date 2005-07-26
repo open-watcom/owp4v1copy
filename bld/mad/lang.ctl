@@ -22,8 +22,9 @@ cdsay .
 
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/wini86/madx86.dll   <RELROOT>/rel2/binw/
-#    <CPCMD> <DEVDIR>/mad/axp/wini86/madaxp.dll   <RELROOT>/rel2/binw/
-#    <CPCMD> <DEVDIR>/mad/ppc/wini86/madppc.dll   <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/mad/axp/wini86/madaxp.dll   <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/mad/ppc/wini86/madppc.dll   <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/mad/mips/wini86/madmips.dll <RELROOT>/rel2/binw/
 
   [ IFDEF (os_os2 "") <2*> ]
 #    <CPCMD> <DEVDIR>/mad/x86/os2i86/madx86.dll   <RELROOT>/rel2/binp/dll/

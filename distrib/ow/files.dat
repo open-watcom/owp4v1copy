@@ -41,6 +41,8 @@
 [ INCLUDE <DEVDIR>/online/files.dat ]
 [ INCLUDE <DEVDIR>/src/files.dat ]
 [ INCLUDE <DEVDIR>/mstools/files.dat ]
+[ INCLUDE <DEVDIR>/dmpobj/files.dat ]
+[ INCLUDE <DEVDIR>/exedump/files.dat ]
 [ INCLUDE <DEVDIR>/cvpack/files.dat ]
 [ INCLUDE <DEVDIR>/w32loadr/files.dat ]
 [ INCLUDE <DEVDIR>/f77/files.dat ]
@@ -53,6 +55,7 @@
 [ INCLUDE <DEVDIR>/os2api/files.dat ]
 [ INCLUDE <DEVDIR>/w16api/files.dat ]
 [ INCLUDE <DEVDIR>/w32api/files.dat ]
+[ INCLUDE <DEVDIR>/redist/files.dat ]
 [ INCLUDE readme.dat ]
 
 # Currently Missing:

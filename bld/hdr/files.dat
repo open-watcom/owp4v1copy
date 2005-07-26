@@ -1,3 +1,5 @@
+# Headers component of install manifest
+
 #
 # Headers for DOS, Windows, OS/2 and Netware
 #
@@ -64,6 +66,7 @@ usr="unistd.h"
 usr="utime.h"
 usr="varargs.h"
 usr="wdefwin.h"
+usr="wsample.h"
 
 [ DEFAULT type="s" dir="h" where="c jc f77 jf77 ac" cond="cplusplus" ]
 #

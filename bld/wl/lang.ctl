@@ -47,6 +47,7 @@ cdsay .
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux386/wl.exe                   <RELROOT>/rel2/binl/wlink
     <CPCMD> <PROJDIR>/linux386/wl.sym                   <RELROOT>/rel2/binl/wlink.sym
+    <CPCMD> <PROJDIR>/exe2bin/linux386/exe2bin.exe      <RELROOT>/rel2/binl/exe2bin
     <CPCMD> <PROJDIR>/wlbinl.lnk                        <RELROOT>/rel2/binl/wlink.lnk
 
   [ IFDEF (cpu_axp) <2*> ]

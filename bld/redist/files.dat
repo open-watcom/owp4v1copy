@@ -1,0 +1,34 @@
+# Redistributable binaries component of install manifest
+
+[ DEFAULT type="e" dir="binw" rel="." cond="dostarg" where="c jc f77 jf77" ]
+# CauseWay
+usr="cwc.exe"
+usr="cwdstub.exe"
+usr="cwstub.exe"
+
+# DOS/4GW
+usr="dos4gw.doc"
+usr="dos4gw.exe"
+usr="pminfo.exe"
+usr="rminfo.exe"
+
+# PMODE/W
+usr="pmodew.doc"
+usr="pmodew.exe"
+usr="pmodew.faq"
+usr="pmwbind.exe"
+usr="pmwlite.exe"
+usr="pmwsetup.exe"
+usr="pmwver.com"
+
+# DOS/32A"
+usr="dos32a.exe"
+usr="license.d32"
+usr="readme.d32"
+usr="sb.exe"
+usr="sc.exe"
+usr="sd.exe"
+usr="ss.exe"
+usr="stub32a.exe"
+usr="stub32c.exe"
+usr="sver.exe"
