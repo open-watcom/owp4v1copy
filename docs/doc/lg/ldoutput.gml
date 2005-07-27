@@ -7,7 +7,7 @@ The "OUTPUT" directive overrides the normal operating system specific
 executable format and creates either a raw binary image or an Intel Hex file.
  The format of the "OUTPUT" directive (short form "OUT") is as follows.
 .mbigbox
-    OUTPUT RAW|HEX [OFFSET=n][HSHIFT=n]
+    OUTPUT RAW|HEX [OFFSET=n][HSHIFT=n][STARTREC]
 .embigbox
 .synote
 .*
@@ -15,12 +15,12 @@ executable format and creates either a raw binary image or an Intel Hex file.
 .*
 .mnote RAW
 specifies the output file to be a raw binary and will contain an absolute
-image of the executable's code and data. Default file extension is ".bin".
+image of the executable's code and data. Default file extension is "bin".
 .*
 .mnote HEX
 specifies the output file to contain a representation of the absolute image
 of the code and data using the Intel standard hex file format. Default file
-extension is ".hex".
+extension is "hex".
 .*
 .mnote OFFSET=n
 (short form "OFF") specifies that the linear address
@@ -37,6 +37,10 @@ address. In more conventional terms, (16 -
 .sy n
 ) is the amount to shift a segment value left in order to convert it to
 part of a linear address.
+.*
+.mnote STARTREC
+specifies that a Starting Address record will be included in Intel Hex
+output.
 .esynote
 .*
 .*
@@ -84,3 +88,17 @@ industry standard compliance.
 If the address exceeds the range of type 02 records (1 MB for HSHIFT=12 and
 16 MB for HSHIFT=8), type 04 extended linear records are generated, again
 ensuring seamless compatibility and migration to large file sizes.
+.np
+If "STARTREC" is specified for "OUTPUT HEX", the penultimate record in the
+file (just before the end record) will be a start address record. The value
+of the start address will be determined by the module start record in an
+object file, typically the result of an "END start" assembler directive. 
+If the start address is less than 65536 (always for 16-bit applications, and
+where applicable for 32-bit applications), a type 03 record with segment and
+offset values will be emitted. If the start address is equal to or greater
+than 65536, then a type 05 linear starting address record will be generated.
+Note that neither of these cases depends directly on the "HSHIFT" or "OUTPUT
+HSIFT" settings. If HSHIFT=8, then the segment and offset values for the
+start symbol will be based on that number and used accordingly, but unlike
+other address information in a hex file, this is not derived from a linear
+address and hence not converted based on the HSHIFT value.
