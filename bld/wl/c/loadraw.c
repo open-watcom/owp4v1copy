@@ -236,6 +236,25 @@ static bool DoHexDupLeader( void *seg, void *addr )
     return FALSE;
 }
 
+void WriteStart( void )
+/***********************/
+{
+    unsigned char  StrBuf[22];
+
+    if( StartInfo.addr.off > 0xffff ) {
+        sprintf(StrBuf, ":04000005%08lx%02x\r\n", StartInfo.addr.off,
+                (-(9 + (StartInfo.addr.off >> 24) + ((StartInfo.addr.off >> 16) & 0xFF) +
+                ((StartInfo.addr.off >> 8) & 0xFF) + (StartInfo.addr.off & 0xFF) )) & 0xFF );
+    }
+    else {  
+        sprintf(StrBuf, ":04000003%04lx%04lx%02x\r\n", StartInfo.addr.seg, StartInfo.addr.off,
+                (-(7 + (StartInfo.addr.seg >> 8) + (StartInfo.addr.seg & 0xFF) +
+                (StartInfo.addr.off >> 8) + (StartInfo.addr.off & 0xFF) )) & 0xFF );
+    }
+    WriteLoad( StrBuf, 21);
+
+}
+
 extern void HexOutput( void ) 
 /****************************/
 {
@@ -279,6 +298,9 @@ extern void HexOutput( void )
                Ring2Lookup( wrkgrp->leaders, DoHexLeader, &addr );
            }
         }
+    }
+    if( FmtData.output_start ) {
+       WriteStart();
     }
     WriteLoad( HexEnd, 13);
     WriteDBI();

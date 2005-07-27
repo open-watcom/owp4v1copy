@@ -232,4 +232,5 @@ struct fmt_data {
     unsigned        output_raw   : 1;
     unsigned        output_hex   : 1;
     unsigned        output_hshift : 1; // Hexout uses HexSegShift (else uses SegShift)
+    unsigned        output_start : 1;  // If Hexout should provide a start record
 };

@@ -119,6 +119,7 @@ extern bool     ProcOutput( void );
 extern bool     ProcOutputRaw( void );
 extern bool     ProcOutputHex( void );
 extern bool     ProcOutputOfs( void );
+extern bool     ProcOutputStart( void );
 extern bool     ProcOutputHshift( void );
 extern bool     ProcHshift( void );
 extern bool     ProcFillchar( void );

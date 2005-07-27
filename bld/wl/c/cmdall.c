@@ -1273,6 +1273,7 @@ extern bool ProcOutput( void )
 
    FmtData.output_offset = 0L;
    FmtData.output_hshift = FALSE;
+   FmtData.output_start = FALSE;
    while( ProcOne( OutputOpts, SEP_NO, FALSE )) {
       ret = TRUE;
    }
@@ -1290,6 +1291,13 @@ extern bool ProcOutputHex( void )
 /*********************************/
 {
    FmtData.output_hex = TRUE;
+   return TRUE;
+}
+
+extern bool ProcOutputStart( void )
+/*********************************/
+{
+   FmtData.output_start = TRUE;
    return TRUE;
 }
 
