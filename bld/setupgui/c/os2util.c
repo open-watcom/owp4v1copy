@@ -84,7 +84,7 @@ extern bool CreatePMInfo( bool uninstall )
     char                *p;
     HOBJECT             obj;
 
-    // To uninstall, simply eliminate all folders
+    // To uninstall, simply nuke all folders
     if( uninstall ) {
         int     nPMGrp, nMaxPMGroups;
 
@@ -109,7 +109,7 @@ extern bool CreatePMInfo( bool uninstall )
     if( t2[0] != '\0' ) {
         sprintf( GroupFileName, "<%s>", t2 );
     } else {
-        sprintf( GroupFileName, "<SETUP_FOL>" );
+        sprintf( GroupFileName, "<WSETUP_FLDR>" );
     }
 
     obj = create_group( t1, GroupFileName );
@@ -125,7 +125,7 @@ extern bool CreatePMInfo( bool uninstall )
             continue;
         }
         SimGetPMDesc( nPMProg, PMProgDesc );
-        // replace '\n' in Description with LineFeed character
+        // Replace '\n' in Description with LineFeed character
         for( p = PMProgDesc; *p != '\0'; ++p ) {
             if( *p == '\\' && *(p+1) == 'n' ) {
                 *p = '\n';
@@ -136,6 +136,7 @@ extern bool CreatePMInfo( bool uninstall )
 
         nDirIndex = SimGetPMProgName( nPMProg, PMProgName );
         if( strcmp( PMProgName, "GROUP" ) == 0 ) {
+            // Process a group (ie. folder)
             SimGetPMParms( nPMProg, t1 );
             if( t1[0] == '\0' ) {
                 return( TRUE );
@@ -144,11 +145,12 @@ extern bool CreatePMInfo( bool uninstall )
             if( PMProgDesc[0] != '\0' ) {
                 sprintf( GroupFileName, "<%s>", t1 );
             } else {
-                sprintf( GroupFileName, "<SETUP_FOL>" );
+                sprintf( GroupFileName, "<WSETUP_FOL>" );
             }
 
             obj = create_group( PMProgDesc, GroupFileName );
         } else {
+            // Process a regular object
             if( nDirIndex == SIM_INIT_ERROR ) {
                 WorkingDir[0] = '\0';
                 ReplaceVars( t2, PMProgName );
@@ -157,11 +159,11 @@ extern bool CreatePMInfo( bool uninstall )
                 SimGetDir( nDirIndex, WorkingDir );
             }
 
-            // get parameters
+            // Get parameters
             SimGetPMParms( nPMProg, t1 );
             ReplaceVars( PMParams, t1 );
             if( PMParams[0] == '+' ) {
-                // format is: +folder_name[+parameters]
+                // Format is: +folder_name[+parameters]
                 p = strchr( &PMParams[1], '+' );
                 if( p == NULL ) {
                     strcpy( Folder, &PMParams[1] );
@@ -174,7 +176,7 @@ extern bool CreatePMInfo( bool uninstall )
                     memmove( PMParams, p, strlen( p ) );
                 }
             } else {
-                // use default folder
+                // Use default folder
                 strcpy( Folder, GroupFileName );
             }
 

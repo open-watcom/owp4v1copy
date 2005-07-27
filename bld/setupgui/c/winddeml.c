@@ -24,15 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions for adding groups/icons to the Windows shell.
+*               Supports both Windows 3.x/NT 3.x and Win9x/NT 4 shells.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
-#include <io.h>
-#include <dos.h>
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
@@ -45,9 +43,7 @@
 
 #define DDE_WAITTIME    3000
 
-// ********** Functions for adding files to the Program Manager **************
-
-static bool SendCommand( DWORD ddeinst, HCONV hconv, char * buff )
+static bool SendCommand( DWORD ddeinst, HCONV hconv, char *buff )
 /***************************************************************/
 {
     HDDEDATA    hData, hrc;
@@ -137,11 +133,11 @@ static bool UseDDE( bool uninstall )
         // re-Create the PM Group box.
         SimGetPMGroupFileName( t2 );
         if( t2[ 0 ] == '\0' ) {
-            #if defined( __NT__ )
-                sprintf( buff, "[CreateGroup(%s,0)]", t1 );  // create a personal group
-            #else
-                sprintf( buff, "[CreateGroup(%s)]", t1 );
-            #endif
+#if defined( __NT__ )
+            sprintf( buff, "[CreateGroup(%s,0)]", t1 );  // create a personal group
+#else
+            sprintf( buff, "[CreateGroup(%s)]", t1 );
+#endif
         } else {
             sprintf( buff, "[CreateGroup(%s,%s)]", t1, t2 );
         }
@@ -245,11 +241,10 @@ cleanup:
 }
 
 
-#if defined( __NT__ ) && !defined( __AXP__ )
+#if defined( __NT__ )
 
 #include <direct.h>
-//typedef void *                LPFNADDPROPSHEETPAGE;   // needed by shlobj.h
-#include "shlobj.h"
+#include <shlobj.h>
 
 // DDE method does not work reliably under Windows 95. Preferred
 // method is to use IShellLink interface
@@ -282,7 +277,7 @@ static void delete_dir( char * dir )
     struct dirent       *direntp;
     char                file[ _MAX_PATH ];
 
-    // delete contents of directory
+    // Delete contents of directory
     strcpy( file, dir );
     strcat( file, "\\*.*" );
     dirp = opendir( file );
@@ -314,7 +309,7 @@ static void remove_group( char *group )
 }
 
 static BOOL create_icon( char *group, char *pgm, char *desc,
-                        char *arg, char *work, char *icon, int icon_num )
+                         char *arg, char *work, char *icon, int icon_num )
 {
     HRESULT             hres;
     IShellLink          *m_link;
@@ -322,11 +317,11 @@ static BOOL create_icon( char *group, char *pgm, char *desc,
     WORD                w_link[ _MAX_PATH ];
     char                link[ _MAX_PATH ];
 
-    // determine names of link files
+    // Determine names of link files
     get_group_name( link, group );
     strcat( link, "\\" );
     strcat( link, desc );
-    strcat( link, ".LNK" );
+    strcat( link, ".lnk" );
 
     MultiByteToWideChar( CP_ACP, 0, link, -1, w_link, _MAX_PATH );
 
@@ -359,6 +354,7 @@ static BOOL create_icon( char *group, char *pgm, char *desc,
 }
 
 static bool UseIShellLink( bool uninstall )
+/*****************************************/
 {
     WORD                dir_index, icon_number;
     int                 i, num_icons, num_groups;
@@ -411,7 +407,7 @@ static bool UseIShellLink( bool uninstall )
             strcpy( group, prog_desc );
             create_group( group );
         } else {
-            /* adding item to group */
+            // Adding item to group
             if( dir_index == SIM_INIT_ERROR ) {
                 working_dir[ 0 ] = '\0';
                 ReplaceVars( tmp, prog_name );
@@ -420,7 +416,7 @@ static bool UseIShellLink( bool uninstall )
                 SimDirNoSlash( dir_index, working_dir );
             }
 
-            // get parameters
+            // Get parameters
             SimGetPMParms( i, tmp );
             ReplaceVars( prog_arg, tmp );
 
@@ -453,13 +449,13 @@ static bool UseIShellLink( bool uninstall )
 bool CreatePMInfo( bool uninstall )
 /*********************************/
 {
-    #if defined( __NT__ ) && !defined( __AXP__ )
-        if( GetVariableIntVal( "IsWin95" ) || GetVariableIntVal( "IsWinNT40" ) ) {
-            return( UseIShellLink( uninstall ) );
-        } else {
-            return( UseDDE( uninstall ) );
-        }
-    #else
+#if defined( __NT__ )
+    if( GetVariableIntVal( "IsWin95" ) || GetVariableIntVal( "IsWinNT40" ) ) {
+        return( UseIShellLink( uninstall ) );
+    } else {
         return( UseDDE( uninstall ) );
-    #endif
+    }
+#else
+    return( UseDDE( uninstall ) );
+#endif
 }
