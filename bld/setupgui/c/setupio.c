@@ -88,7 +88,7 @@ extern int FileInit( const char *archive )
     int             zerr;
 
     /* Attempt to open a ZIP archive */
-    srcZip = zip_open( archive, ZIP_CHECKCONS, &zerr );
+    srcZip = zip_open( archive, 0, &zerr );
     if( srcZip != NULL ) {
         srcType = DS_ZIP;
     } else {
