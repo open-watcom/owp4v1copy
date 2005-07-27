@@ -46,6 +46,7 @@ struct zip_entry *
 _zip_entry_new(struct zip *za)
 {
     struct zip_entry *ze;
+    int increment = 64;
     if (!za) {
 	ze = (struct zip_entry *)malloc(sizeof(struct zip_entry));
 	if (!ze) {
@@ -55,7 +56,8 @@ _zip_entry_new(struct zip *za)
     }
     else {
 	if (za->nentry >= za->nentry_alloc-1) {
-	    za->nentry_alloc += 16;
+	    za->nentry_alloc += increment;
+	    increment *= 2;
 	    za->entry = (struct zip_entry *)realloc(za->entry,
 						    sizeof(struct zip_entry)
 						    * za->nentry_alloc);
