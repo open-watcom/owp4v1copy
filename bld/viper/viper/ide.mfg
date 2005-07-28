@@ -1696,6 +1696,7 @@ Project
   Filter "C++ source (*.cpp)", *.cpp
   Filter "C source (*.c)", *.c
   Filter "Fortran source (*.for)", *.for
+  Filter "Assembly (*.asm)", *.asm
   Filter "Libraries (*.lib)", *.lib
   Filter "Resouce scripts (*.rc)", "*.rc"
   Filter "Dialogs (*.dlg)", "*.dlg"
