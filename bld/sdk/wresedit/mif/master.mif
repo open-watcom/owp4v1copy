@@ -25,7 +25,8 @@ object +=   wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
             wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
             widn2str.obj wclip.obj wisedit.obj weditsym.obj &
             preproc.obj ppexpr.obj ppmacro.obj &
-            toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
+            toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj &
+			inipath.obj
 
 msgfiles = ../../h/w.msg ../h/$(name).msg
 

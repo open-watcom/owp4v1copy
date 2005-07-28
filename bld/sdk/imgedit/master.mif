@@ -57,7 +57,7 @@ objs =  imgedit.obj ieproc.obj ieglob.obj ieclrpal.obj ienew.obj &
         iebmpdat.obj iedde.obj iemem.obj iectl3d.obj jdlg.obj $(extras)
 
 !ifeq host_OS nt
-extras = wincreat.obj desknt.obj title.obj winutils.obj
+extras = wincreat.obj desknt.obj title.obj winutils.obj inipath.obj
 !else
 extras = wincreat.obj title.obj winutils.obj
 !endif

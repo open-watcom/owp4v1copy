@@ -61,7 +61,7 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         wdefani.obj wdefupdn.obj wdeftrak.obj wdefprog.obj wdefhtky.obj &
         windlg.obj windlg32.obj &
         preproc.obj ppexpr.obj ppmacro.obj &
-        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
+        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj inipath.obj
 
 extra_c_flags_wde_wres= -fh
 extra_c_flags_wdealign= -fh

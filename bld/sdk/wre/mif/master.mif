@@ -47,7 +47,7 @@ OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wredlg.obj wreimg.obj wredde.obj wresvmlt.obj wreimage.obj &
         wreclip.obj wresym.obj &
         preproc.obj ppexpr.obj ppmacro.obj &
-        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
+        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj inipath.obj
 
 extra_c_flags_wremain= -fh
 extra_c_flags_wremem= -fh

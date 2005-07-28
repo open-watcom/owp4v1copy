@@ -36,12 +36,13 @@
 #include "ietoolbr.h"
 #include "ieclrpal.h"
 #include "watini.h"
+#include "inipath.h"
 
 extern int TBWidth;
 extern int TBHeight;
 
 static char imgedSection[] = "WATCOM Image Editor";
-static char dfltInitFile[] = WATCOM_INI;
+static char iniPath[_MAX_PATH] = WATCOM_INI;
 
 /*
  * setDefaultValues - sets the default values of ImgedConfigInfo structure.
@@ -121,34 +122,34 @@ static void loadPositionValues( HINI hini )
 
     /* position of main window */
     ImgedConfigInfo.x_pos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_xpos", ImgedConfigInfo.x_pos, dfltInitFile );
+                        "wnd_xpos", ImgedConfigInfo.x_pos, iniPath );
 
     ImgedConfigInfo.y_pos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_ypos", ImgedConfigInfo.y_pos, dfltInitFile );
+                        "wnd_ypos", ImgedConfigInfo.y_pos, iniPath );
     ImgedConfigInfo.width = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_width", ImgedConfigInfo.width, dfltInitFile );
+                        "wnd_width", ImgedConfigInfo.width, iniPath );
     ImgedConfigInfo.height = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_height", ImgedConfigInfo.height, dfltInitFile );
+                        "wnd_height", ImgedConfigInfo.height, iniPath );
     ImgedConfigInfo.ismaximized = _wpi_getprivateprofileint( hini,
-        imgedSection, "ismaximized", ImgedConfigInfo.ismaximized, dfltInitFile );
+        imgedSection, "ismaximized", ImgedConfigInfo.ismaximized, iniPath );
 
     /* location of the tool window */
     ImgedConfigInfo.tool_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                    "tool_xpos", ImgedConfigInfo.tool_xpos, dfltInitFile );
+                    "tool_xpos", ImgedConfigInfo.tool_xpos, iniPath );
     ImgedConfigInfo.tool_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                    "tool_ypos", ImgedConfigInfo.tool_ypos, dfltInitFile );
+                    "tool_ypos", ImgedConfigInfo.tool_ypos, iniPath );
 
     /* location of the colour palette */
     ImgedConfigInfo.pal_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "pal_xpos", ImgedConfigInfo.pal_xpos, dfltInitFile );
+                        "pal_xpos", ImgedConfigInfo.pal_xpos, iniPath );
     ImgedConfigInfo.pal_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "pal_ypos", ImgedConfigInfo.pal_ypos, dfltInitFile );
+                        "pal_ypos", ImgedConfigInfo.pal_ypos, iniPath );
 
     /* location of the view window */
     ImgedConfigInfo.view_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                "view_xpos", ImgedConfigInfo.view_xpos, dfltInitFile );
+                "view_xpos", ImgedConfigInfo.view_xpos, iniPath );
     ImgedConfigInfo.view_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                "view_ypos", ImgedConfigInfo.view_ypos, dfltInitFile );
+                "view_ypos", ImgedConfigInfo.view_ypos, iniPath );
     /*
      * now we want to make sure nothing is off the screen!
      */
@@ -186,30 +187,30 @@ static void loadPositionValues( HINI hini )
 static void loadSettings( settings_info *info, HINI hini )
 {
     ImgedConfigInfo.show_state = _wpi_getprivateprofileint( hini,
-        imgedSection, "show_state", ImgedConfigInfo.show_state, dfltInitFile);
+        imgedSection, "show_state", ImgedConfigInfo.show_state, iniPath);
 
     info->paste = _wpi_getprivateprofileint( hini, imgedSection, "paste",
-                                                info->paste, dfltInitFile );
+                                                info->paste, iniPath );
     info->rotate = _wpi_getprivateprofileint( hini, imgedSection, "rotate",
-                                info->rotate, dfltInitFile );
+                                info->rotate, iniPath );
     info->viewwnd = _wpi_getprivateprofileint( hini, imgedSection,
-                                "view_window", info->viewwnd, dfltInitFile );
+                                "view_window", info->viewwnd, iniPath );
     info->wrapshift = _wpi_getprivateprofileint( hini, imgedSection,
-                                "wrapshift", info->wrapshift, dfltInitFile );
+                                "wrapshift", info->wrapshift, iniPath );
     _wpi_getprivateprofilestring( hini, imgedSection, "open_dir",
-                    info->opendir, info->opendir, _MAX_PATH, dfltInitFile );
+                    info->opendir, info->opendir, _MAX_PATH, iniPath );
     _wpi_getprivateprofilestring( hini, imgedSection, "save_dir",
-                    info->savedir, info->savedir, _MAX_PATH, dfltInitFile );
+                    info->savedir, info->savedir, _MAX_PATH, iniPath );
     _wpi_getprivateprofilestring( hini, imgedSection, "screen_colour",
-                    info->colour, info->colour, 10, dfltInitFile );
+                    info->colour, info->colour, 10, iniPath );
     ImgedConfigInfo.shift = _wpi_getprivateprofileint( hini, imgedSection,
-                        "shift_amt", ImgedConfigInfo.shift, dfltInitFile );
+                        "shift_amt", ImgedConfigInfo.shift, iniPath );
     ImgedConfigInfo.square_grid = _wpi_getprivateprofileint( hini,
-        imgedSection,"square_grid", ImgedConfigInfo.square_grid, dfltInitFile );
+        imgedSection,"square_grid", ImgedConfigInfo.square_grid, iniPath );
     ImgedConfigInfo.brush_size = _wpi_getprivateprofileint( hini,
-        imgedSection, "brush_size", ImgedConfigInfo.brush_size, dfltInitFile);
+        imgedSection, "brush_size", ImgedConfigInfo.brush_size, iniPath);
     ImgedConfigInfo.grid_on = _wpi_getprivateprofileint( hini, imgedSection,
-                        "grid_on", ImgedConfigInfo.grid_on, dfltInitFile );
+                        "grid_on", ImgedConfigInfo.grid_on, iniPath );
     hini = hini;
 } /* loadSettings */
 
@@ -221,6 +222,10 @@ void LoadImgedConfig( void )
     settings_info       info;
     HINI                handle_inifile;
 
+#ifdef __NT__
+    GetConfigFilePath( iniPath, sizeof(iniPath) );
+    strcat( iniPath, "\\" WATCOM_INI );
+#endif    
     setDefaultValues( &info );
 
     /*
@@ -229,9 +234,9 @@ void LoadImgedConfig( void )
      * PM version opens the ini file and the win version stores the info
      * in some kind of cache
      */
-    handle_inifile = _wpi_openinifile( Instance, dfltInitFile );
+    handle_inifile = _wpi_openinifile( Instance, iniPath );
     info.settings = _wpi_getprivateprofileint( handle_inifile, imgedSection,
-                            "profile", info.settings, dfltInitFile );
+                            "profile", info.settings, iniPath );
 
     if (info.settings & SET_SAVE_POS) {
         loadPositionValues( handle_inifile );
@@ -256,35 +261,35 @@ static void savePositionValues( HINI hini )
     char        buf[10];
 
     itoa( ImgedConfigInfo.ismaximized, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "ismaximized", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "ismaximized", buf, iniPath );
     if ( !ImgedConfigInfo.ismaximized ) {
         itoa( ImgedConfigInfo.x_pos, buf, 10 );
-        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_xpos", buf, dfltInitFile );
+        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_xpos", buf, iniPath );
         itoa( ImgedConfigInfo.y_pos, buf, 10 );
-        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_ypos", buf, dfltInitFile );
+        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_ypos", buf, iniPath );
         itoa( ImgedConfigInfo.width, buf, 10 );
-        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_width", buf, dfltInitFile );
+        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_width", buf, iniPath );
         itoa( ImgedConfigInfo.height, buf, 10 );
-        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_height", buf, dfltInitFile );
+        _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_height", buf, iniPath );
     }
 
     /* tool window position */
     itoa( ImgedConfigInfo.tool_xpos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "tool_xpos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "tool_xpos", buf, iniPath );
     itoa( ImgedConfigInfo.tool_ypos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "tool_ypos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "tool_ypos", buf, iniPath );
 
     /* colour palette window position */
     itoa( ImgedConfigInfo.pal_xpos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "pal_xpos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "pal_xpos", buf, iniPath );
     itoa( ImgedConfigInfo.pal_ypos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "pal_ypos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "pal_ypos", buf, iniPath );
 
     /* view window position */
     itoa( ImgedConfigInfo.view_xpos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "view_xpos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "view_xpos", buf, iniPath );
     itoa( ImgedConfigInfo.view_ypos, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "view_ypos", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "view_ypos", buf, iniPath );
     hini = hini;
 } /* savePositionValues */
 
@@ -297,33 +302,33 @@ static void saveSettings( settings_info *info, HINI hini )
     char        buf[10];
 
     itoa( info->paste, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "paste", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "paste", buf, iniPath );
     itoa( info->rotate, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "rotate", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "rotate", buf, iniPath );
     itoa( info->viewwnd, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "view_window", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "view_window", buf, iniPath );
     itoa( ImgedConfigInfo.square_grid, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "square_grid", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "square_grid", buf, iniPath );
     itoa( ImgedConfigInfo.shift, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "shift_amt", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "shift_amt", buf, iniPath );
     itoa( ImgedConfigInfo.brush_size, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "brush_size", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "brush_size", buf, iniPath );
     itoa( info->wrapshift, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "wrapshift", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "wrapshift", buf, iniPath );
     itoa( ImgedConfigInfo.grid_on, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "grid_on", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "grid_on", buf, iniPath );
     _wpi_writeprivateprofilestring( hini, imgedSection, "screen_colour",
-                                                info->colour, dfltInitFile );
+                                                info->colour, iniPath );
     _wpi_writeprivateprofilestring( hini, imgedSection, "open_dir",
-                                                info->opendir, dfltInitFile );
+                                                info->opendir, iniPath );
     _wpi_writeprivateprofilestring( hini, imgedSection, "save_dir",
-                                                info->savedir, dfltInitFile );
+                                                info->savedir, iniPath );
 
     /*
      * save the show state of the tool window, colour palette, view window.
      */
     itoa( ImgedConfigInfo.show_state, buf, 10 );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "show_state", buf, dfltInitFile );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "show_state", buf, iniPath );
     hini = hini;
 } /* saveSettings */
 
@@ -341,10 +346,10 @@ void SaveImgedConfig( void )
     strcpy( info.opendir, GetInitOpenDir() );
     strcpy( info.savedir, GetInitSaveDir() );
 
-    handle_inifile = _wpi_openinifile( Instance, dfltInitFile );
+    handle_inifile = _wpi_openinifile( Instance, iniPath );
     itoa( info.settings, buf, 10 );
     _wpi_writeprivateprofilestring( handle_inifile, imgedSection, "profile",
-                                                        buf, dfltInitFile);
+                                                        buf, iniPath);
     if (info.settings & SET_SAVE_POS) {
         savePositionValues( handle_inifile );
     }

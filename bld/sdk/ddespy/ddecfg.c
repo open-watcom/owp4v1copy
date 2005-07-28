@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "wddespy.h"
+#include "inipath.h"
 #include "watini.h"
 
 #define         SECT_NAME       "WATCOM DDE Spy"
@@ -62,6 +63,8 @@
 #define         CFG_SCREEN      "screen_output"
 #define         CFG_SHOW_TB     "show_toolbar"
 #define         CFG_SHOW_HINTS  "show_hints"
+
+static char iniPath[_MAX_PATH];
 
 /*
  * SetGlobalDefault - set the ConfigInfo structure to its default values
@@ -95,19 +98,19 @@ static void WriteWindowInfo( WndConfigInfo *info, char *name_ext ) {
 
     MakeWndCfgName( name, TRK_XPOS, name_ext );
     itoa( info->xpos, buf, 10 );
-    WritePrivateProfileString( SECT_NAME, name, buf, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, name, buf, iniPath );
 
     MakeWndCfgName( name, TRK_YPOS, name_ext );
     itoa( info->ypos, buf, 10 );
-    WritePrivateProfileString( SECT_NAME, name, buf, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, name, buf, iniPath );
 
     MakeWndCfgName( name, TRK_XSIZE, name_ext );
     itoa( info->xsize, buf, 10 );
-    WritePrivateProfileString( SECT_NAME, name, buf, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, name, buf, iniPath );
 
     MakeWndCfgName( name, TRK_YSIZE, name_ext );
     itoa( info->ysize, buf, 10 );
-    WritePrivateProfileString( SECT_NAME, name, buf, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, name, buf, iniPath );
 }
 
 /*
@@ -119,23 +122,23 @@ static void ReadWindowInfo( WndConfigInfo *info, char *name_ext ) {
 
     MakeWndCfgName( name, TRKVIS, name_ext );
     info->visible = GetPrivateProfileInt( SECT_NAME, name,
-                                    info->visible, WATCOM_INI );
+                                    info->visible, iniPath );
 
     MakeWndCfgName( name, TRK_XPOS, name_ext );
     info->xpos = GetPrivateProfileInt( SECT_NAME, name,
-                                    info->xpos, WATCOM_INI );
+                                    info->xpos, iniPath );
 
     MakeWndCfgName( name, TRK_YPOS, name_ext );
     info->ypos = GetPrivateProfileInt( SECT_NAME, name,
-                                    info->ypos, WATCOM_INI );
+                                    info->ypos, iniPath );
 
     MakeWndCfgName( name, TRK_XSIZE, name_ext );
     info->xsize = GetPrivateProfileInt( SECT_NAME, name,
-                                    info->xsize, WATCOM_INI );
+                                    info->xsize, iniPath );
 
     MakeWndCfgName( name, TRK_YSIZE, name_ext );
     info->ysize = GetPrivateProfileInt( SECT_NAME, name,
-                                    info->ysize, WATCOM_INI );
+                                    info->ysize, iniPath );
 }
 
 /*
@@ -150,7 +153,7 @@ static void PutProfileBool( char *id, BOOL val ) {
     } else {
         itoa( FALSE, buf, 10 );
     }
-    WritePrivateProfileString( SECT_NAME, id, buf, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, id, buf, iniPath );
 } /* PutProfileBool */
 
 /*
@@ -163,37 +166,40 @@ void ReadConfig() {
     char        buf[10];
     WORD        i;
 
+    GetConfigFilePath( iniPath, sizeof(iniPath) );
+    strcat( iniPath, "\\" WATCOM_INI );
+
     SetGlobalDefault();
     SetTrackWndDefault();
     SetMainWndDefault();
 
     Monitoring[ MON_SENT_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONSENT, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONSENT, TRUE, iniPath );
     Monitoring[ MON_POST_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONPOST, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONPOST, TRUE, iniPath );
     Monitoring[ MON_CB_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONCB, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONCB, TRUE, iniPath );
     Monitoring[ MON_STR_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONSTR, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONSTR, TRUE, iniPath );
     Monitoring[ MON_ERR_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONERR, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONERR, TRUE, iniPath );
     Monitoring[ MON_LNK_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONLNK, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONLNK, TRUE, iniPath );
     Monitoring[ MON_CONV_IND ] =
-                GetPrivateProfileInt( SECT_NAME, MONCONV, TRUE, WATCOM_INI );
+                GetPrivateProfileInt( SECT_NAME, MONCONV, TRUE, iniPath );
 
     /* global settings */
 
     ConfigInfo.scroll = GetPrivateProfileInt( SECT_NAME, CFG_SCROLL,
-                                ConfigInfo.scroll, WATCOM_INI );
+                                ConfigInfo.scroll, iniPath );
     ConfigInfo.alias = GetPrivateProfileInt( SECT_NAME, CFG_ALIAS,
-                                ConfigInfo.alias, WATCOM_INI );
+                                ConfigInfo.alias, iniPath );
     ConfigInfo.screen_out = GetPrivateProfileInt( SECT_NAME, CFG_SCREEN,
-                                ConfigInfo.screen_out, WATCOM_INI );
+                                ConfigInfo.screen_out, iniPath );
     ConfigInfo.show_tb = GetPrivateProfileInt( SECT_NAME, CFG_SHOW_TB,
-                                ConfigInfo.show_tb, WATCOM_INI );
+                                ConfigInfo.show_tb, iniPath );
     ConfigInfo.show_hints = GetPrivateProfileInt( SECT_NAME, CFG_SHOW_HINTS,
-                                ConfigInfo.show_hints, WATCOM_INI );
+                                ConfigInfo.show_hints, iniPath );
 
     /* window size/pos info */
     for( i = 0; i < NO_TRK_WND; i++ ) {
@@ -208,14 +214,14 @@ void ReadConfig() {
     memset( cbfilter, '1', sizeof( cbfilter ) );
     cbfilter[ CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 1 ] = '\0';
     GetPrivateProfileString( SECT_NAME, MSGFLTER, msgfilter, msgfilter,
-                MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 2, WATCOM_INI );
+                MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 2, iniPath );
     GetPrivateProfileString( SECT_NAME, CBFLTER, cbfilter, cbfilter,
-                CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 2, WATCOM_INI );
+                CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 2, iniPath );
     SetFilter( msgfilter, cbfilter );
 
     /* logging info */
-    LoadLogConfig( WATCOM_INI, SECT_NAME );
-    InitMonoFont( SECT_NAME, WATCOM_INI, SYSTEM_FIXED_FONT, Instance );
+    LoadLogConfig( iniPath, SECT_NAME );
+    InitMonoFont( SECT_NAME, iniPath, SYSTEM_FIXED_FONT, Instance );
 }
 
 /*
@@ -254,8 +260,8 @@ void SaveConfigFile() {
 
     /* filter information */
     GetFilter( msgfilter, cbfilter );
-    WritePrivateProfileString( SECT_NAME, MSGFLTER, msgfilter, WATCOM_INI );
-    WritePrivateProfileString( SECT_NAME, CBFLTER, cbfilter, WATCOM_INI );
-    SaveLogConfig( WATCOM_INI, SECT_NAME );
-    SaveMonoFont( SECT_NAME, WATCOM_INI );
+    WritePrivateProfileString( SECT_NAME, MSGFLTER, msgfilter, iniPath );
+    WritePrivateProfileString( SECT_NAME, CBFLTER, cbfilter, iniPath );
+    SaveLogConfig( iniPath, SECT_NAME );
+    SaveMonoFont( SECT_NAME, iniPath );
 }

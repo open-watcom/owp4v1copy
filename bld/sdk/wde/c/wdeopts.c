@@ -50,6 +50,8 @@
 #include "wde_rc.h"
 #include "wdeopts.h"
 #include "jdlg.h"
+#include "watini.h"
+#include "inipath.h"
 
 /****************************************************************************/
 /* macro definitions                                                        */
@@ -93,7 +95,7 @@ void WdeResetOpts    ( void );
 /****************************************************************************/
 /* external variables                                                       */
 /****************************************************************************/
-char WdeProfileName[] = "watcom.ini";
+char WdeProfileName[_MAX_PATH] = WATCOM_INI;
 char WdeSectionName[] = "wde";
 
 /****************************************************************************/
@@ -269,6 +271,8 @@ void WdeOptsShutdown ( void )
 void WdeInitOpts ( void )
 {
     WdeCurrentState = WdeDefaultState;
+    GetConfigFilePath( WdeProfileName, sizeof(WdeProfileName) );
+    strcat( WdeProfileName, "\\" WATCOM_INI );
     WdeReadOpts( &WdeCurrentState );
     if ( WdeCurrentState.last_directory ) {
         WdeSetInitialDir ( WdeCurrentState.last_directory );

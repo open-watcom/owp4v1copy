@@ -37,9 +37,10 @@
 #include <malloc.h>
 #include "spy.h"
 #include "watini.h"
+#include "inipath.h"
 
 static char spyApp[] = "WATCOMSpy";
-static char dfltInitFile[] = WATCOM_INI;
+static char iniPath[_MAX_PATH] = WATCOM_INI;
 
 /*
  * LoadSpyConfig - get configuration from a profile file
@@ -55,7 +56,9 @@ void LoadSpyConfig( char *fname )
     str = alloca( MessageArraySize+1 );
     vals = alloca( MessageArraySize+1 );
     if( fname == NULL ) {
-        fname = dfltInitFile;
+        GetConfigFilePath( iniPath, sizeof(iniPath) );
+        strcat( iniPath, "\\" WATCOM_INI );
+        fname = iniPath;
         LoadLogConfig( fname, spyApp );
         InitMonoFont( spyApp, fname, SYSTEM_FIXED_FONT, Instance );
 
@@ -180,7 +183,7 @@ void SaveSpyConfig( char *fname )
 
     str = alloca( MessageArraySize+1 );
     if( fname == NULL ) {
-        fname = dfltInitFile;
+        fname = iniPath;
         SaveLogConfig( fname, spyApp );
         SaveMonoFont( spyApp, fname );
         itoa( SpyMainWndInfo.xpos, buf, 10 );
@@ -197,7 +200,7 @@ void SaveSpyConfig( char *fname )
         WritePrivateProfileString( spyApp, "show_hint", buf, fname );
     }
 
-    if( fname != dfltInitFile || AutoSaveConfig ) {
+    if( fname != iniPath || AutoSaveConfig ) {
         /*
          * what specific messages to watch
          */
