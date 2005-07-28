@@ -40,7 +40,7 @@ part of a linear address.
 .*
 .mnote STARTREC
 specifies that a Starting Address record will be included in Intel Hex
-output.
+output. This option is ignored if output type is not Intel hex.
 .esynote
 .*
 .*
