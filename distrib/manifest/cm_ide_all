@@ -20,6 +20,7 @@ eddat\clibhelp.vi
 eddat\cmd.hlp
 eddat\cmdme.vi
 eddat\cpp.dat
+eddat\dbtest.dat
 eddat\ddecb.vi
 eddat\ddesinit.vi
 eddat\dde.vi
@@ -32,6 +33,7 @@ eddat\err.vi
 eddat\fin.vi
 eddat\forceout.vi
 eddat\fortran.dat
+eddat\gml.dat
 eddat\html.dat
 eddat\ideact.vi
 eddat\java.dat
@@ -58,6 +60,7 @@ eddat\regexp.hlp
 eddat\script.hlp
 eddat\set.hlp
 eddat\skel.dat
+eddat\sql.dat
 eddat\start.hlp
 eddat\toggle.vi
 eddat\tryme.vi
@@ -67,6 +70,7 @@ eddat\user.vi
 eddat\weditor.ini
 eddat\winbind.dat
 eddat\winkeys.dat
+eddat\wml.dat
 eddat\wqh2.vi
 eddat\wqh.vi
 eddat\writeall.vi
