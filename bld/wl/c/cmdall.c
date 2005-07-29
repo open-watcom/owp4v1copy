@@ -1327,6 +1327,9 @@ extern bool ProcOutputHshift( void )
    ord_state  ret;
    unsigned_16 value;
 
+    if( !GetToken( SEP_EQUALS, 0 ) ) {
+        return( FALSE );
+    }
    ret = getatoi( &value );
    if ( ret == ST_IS_ORDINAL && value < 16) {
       FmtData.HexSegShift = 16 - value;

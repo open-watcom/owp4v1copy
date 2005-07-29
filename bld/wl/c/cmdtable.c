@@ -527,6 +527,6 @@ extern parse_entry OutputOpts[] = {
         "HEX",          &ProcOutputHex,         MK_ALL, 0,
         "OFFset",       &ProcOutputOfs,         MK_ALL, 0,
         "HSHIFT",       &ProcOutputHshift,      MK_ALL, 0,
-        "STARTREC",     &ProcOutputStart,       MK_ALL, 0,
+        "STartrec",     &ProcOutputStart,       MK_ALL, 0,
         NULL };
 
