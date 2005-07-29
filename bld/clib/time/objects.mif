@@ -1,10 +1,11 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==================================================================================================
 !inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject clock.obj    d16 d32                                        q16 q32 w16 w32     l32 lpc lmp
+!inject clock.obj                                                   q16 q32             l32 lpc lmp
+!inject clockdos.obj d16 d32
 !inject clocko16.obj                                        o16
 !inject clocko32.obj                                            o32
-!inject clockwnt.obj                     nt nta ntp
+!inject clockwin.obj                     nt nta ntp                         w16 w32
 !inject dyltptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ftime.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject ftimeqnx.obj                                                q16 q32

@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description: WindowsNT implementation of clock().
+* Description:  Windows implementation of clock().
 *
 ****************************************************************************/
+
 
 #include "variety.h"
 #include <time.h>
@@ -40,15 +41,15 @@
     #error OS returned time needs adjusting!
 #endif
 
-static DWORD init_milliseconds;
+static DWORD    init_milliseconds;
 
 /* The system millisecond counter will wrap after ~49 days. This
- * is is a) not considered a real problem and b) consistent with
- * the behaviour of IBM's C runtimes.
+ * is is not considered a real problem and consistent with
+ * the behaviour of other C runtimes.
  */
 _WCRTLINK clock_t clock( void )
 {
-    return (clock_t)( GetTickCount() - init_milliseconds );
+    return( (clock_t)(GetTickCount() - init_milliseconds) );
 }
 
 static void __clock_init( void )
