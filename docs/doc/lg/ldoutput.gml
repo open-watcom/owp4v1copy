@@ -39,8 +39,8 @@ address. In more conventional terms, (16 -
 part of a linear address.
 .*
 .mnote STARTREC
-specifies that a Starting Address record will be included in Intel Hex
-output. This option is ignored if output type is not Intel hex.
+(short form "ST") specifies that a Starting Address record will be included
+in Intel Hex output. This option is ignored if output type is not Intel hex.
 .esynote
 .*
 .*

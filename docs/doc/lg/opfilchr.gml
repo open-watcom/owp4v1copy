@@ -3,8 +3,8 @@
 .option FILLCHAR
 .*
 .np
-The "FILLCHAR" option specifies the byte value used to fill gaps in the
-output image.
+The "FILLCHAR" option (short form "FILL") specifies the byte value used to
+fill gaps in the output image.
 .mbigbox
     OPTION FILLCHAR=n
 .embigbox
