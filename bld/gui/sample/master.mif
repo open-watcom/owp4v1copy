@@ -8,9 +8,9 @@ LNK=sample.lnk
 source_dir = $(guidir)\sample\c
 name = sample
 !ifeq type win
-rcopt += -i=$(guidir)\$(type);$(guidir)\h;$(sdk_dir)\misc;$(inc_dirs_sys)
+rcopt += -I"$(guidir)/$(type)" -I"$(guidir)/h" -I"$(sdk_dir)/misc" $(inc_dirs_sys)
 !else
-rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win;$(guidir)\h;$(lang_root)\h\win
+rcopt += -I"$(guidir)/$(type)" -I"$(sdk_dir)/misc" -I"$(guidir)/win" -I"$(guidir)/h" -I"$(lang_root)/h/win"
 !endif
 
 inc_dirs = -I"$(guidir)/h" -I"$(guidir)/$(type)/h"
@@ -19,7 +19,6 @@ objs =                  &
         dlgstat.obj     &
         dlgdynam.obj    &
         dlgtest.obj     &
-        guimem.obj      &
         sampdef.obj     &
         sample.obj
 
@@ -103,13 +102,8 @@ sample.$(ext) : $(objs) $(guilib) $(uilib) $(sysdep) $(LNK)
 !ifeq type win
 !ifeq os w386
         wbind $* -s $(%watcom)\binw\win386.ext -R -k $(rcopt) $(sysdep)
-!else ifeq os pm
-        $(lang_root)\binp\rc -p -x $(rcname).res $(name).exe
 !else
-        $(rc) $(rcopt) -k $(sysdep)
-!endif
-!ifneq os w386
-        copy /b $(name).exe+$(name).sym
+        $(rc) $(rc_flags) $(rcopt) -k $(sysdep) $@
 !endif
 !else
 !ifeq sys pharlap
@@ -132,36 +126,20 @@ samp2.$(ext) : samp2.obj $(guilib) $(uilib) $(LNK)
         @%append $(LNK) file samp2.obj
         $(linker) @$(LNK)
 
-.CONTINUE
-.ERASE
-
 .c:     $(source_dir);$(os_source_dir);$(os_extra_dir)
 .h:     ..\h
 
-$(rcname).res : ../$(rcname).rc ../$(rcname).dlg _guimsgs.gh
-!ifeq os pm
-        @set oinc=$(%include)
-        #set include=$(watcom_dir)\os220_h;$(%include)
-        set include=$(inc_dirs_sys_os2);$(%include)
-        copy $(sdk_dir)\misc\closebmp.bmp
-        wcc -p -i..;..\h;..\..\h;$(guidir)\$(type) ..\$(rcname).rc -fo=tmp.rc
-        @%write $(rcname).rc $#include <os2.h>
-        copy $(rcname).rc+tmp.rc
-        del tmp.rc
-        set opath=$(%path)
-        set path=$(lang_root)\binp
-        #@$(lang_root)\binp\rc -r $(rcname).rc
-        rc -r $(rcname).rc
-        del closebmp.bmp
-        set path=$(%opath)
-        @set include=$(%oinc)
+!ifeq type win
+rcflags = $(rc_flags)
 !else
-        $(rc) $(rcopt) -r $[@ -fo=$^@
+rcflags = -bt=windows
 !endif
+
+$(rcname).res : ../$(rcname).rc ../$(rcname).dlg _guimsgs.gh
+        $(rc) $(rcflags) $(rcopt) -r $[@ -fo=$^@
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
         $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
-
