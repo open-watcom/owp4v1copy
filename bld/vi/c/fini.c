@@ -192,6 +192,7 @@ void ExitEditor( int rc )
         FiniFtPick();
         CursorOp( COP_FINI );
         SubclassGenericFini();
+		FiniProfile();
     #endif
     FiniFileStack();
     DeleteResidentScripts();

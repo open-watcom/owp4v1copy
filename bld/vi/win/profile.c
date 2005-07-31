@@ -323,7 +323,14 @@ void WriteProfile( void )
     writeToolBarSize();
     writeInitialPosition();
     writeConfigFile();
+} /* WriteProfile */
+
+/*
+ * FiniProfile - free the profile path strings
+ */
+void FiniProfile( void )
+{
     DeleteString( &cfgFile );
     DeleteString( &iniFile );
     DeleteString( &iniPath );
-} /* WriteProfile */
+} /* FiniProfile */

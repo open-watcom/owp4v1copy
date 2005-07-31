@@ -90,6 +90,7 @@ HWND GetToolbarWindow( void );
 char GetAutosaveResponse( void );
 void ReadProfile( void );
 void WriteProfile( void );
+void FiniProfile( void );
 void StatusDisplay( char * );
 
 // Cursor.c
