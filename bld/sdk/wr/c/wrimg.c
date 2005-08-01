@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource editor image manipulation.
 *
 ****************************************************************************/
 
@@ -128,14 +127,13 @@ int WRLoadIconFile( WRInfo *info )
     uint_32             data_size;
     ICONHEADER          *pih;
     uint_32             pihsize;
-    WRESICONHEADER      *rih;
+    RESICONHEADER       *rih;
     uint_32             rihsize;
     WResFileID          file;
     WResID              *tname;
     WResID              *rname;
     WResLangType        lang;
     char                fn[_MAX_FNAME];
-    int                 is32bit;
     int                 dup;
     int                 i;
     int                 ok;
@@ -148,7 +146,6 @@ int WRLoadIconFile( WRInfo *info )
     lang.sublang = DEF_SUBLANG;
     tname = NULL;
     rname = NULL;
-    is32bit = FALSE;
 
     ok = ( info && info->file_name );
 
@@ -164,8 +161,7 @@ int WRLoadIconFile( WRInfo *info )
         pih = (ICONHEADER *) data;
         pihsize = sizeof(ICONHEADER);
         pihsize += sizeof(ICONDIRENTRY)*(pih->idCount-1);
-        ok = WRCreateIconResHeader( &rih, &rihsize, data, data_size,
-                                    is32bit );
+        ok = WRCreateIconResHeader( &rih, &rihsize, data, data_size );
     }
 
     if( ok ) {
@@ -231,14 +227,13 @@ int WRLoadCursorFile( WRInfo *info )
     uint_32             data_size;
     CURSORHEADER        *ch;
     uint_32             chsize;
-    WRESCURSORHEADER    *rch;
+    RESCURSORHEADER     *rch;
     uint_32             rchsize;
     WResFileID          file;
     WResID              *tname;
     WResID              *rname;
     WResLangType        lang;
     char                fn[_MAX_FNAME];
-    int                 is32bit;
     int                 dup;
     int                 i;
     int                 ok;
@@ -252,7 +247,6 @@ int WRLoadCursorFile( WRInfo *info )
     lang.sublang = DEF_SUBLANG;
     tname = NULL;
     rname = NULL;
-    is32bit = FALSE;
 
     ok = ( info && info->file_name );
 
@@ -268,8 +262,7 @@ int WRLoadCursorFile( WRInfo *info )
         ch = (CURSORHEADER *) data;
         chsize = sizeof(CURSORHEADER);
         chsize += sizeof(CURSORDIRENTRY)*(ch->cdCount-1);
-        ok = WRCreateCursorResHeader( &rch, &rchsize, data, data_size,
-                                      is32bit );
+        ok = WRCreateCursorResHeader( &rch, &rchsize, data, data_size );
     }
 
     if( ok ) {

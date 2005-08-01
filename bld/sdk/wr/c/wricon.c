@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource editor icon/cursor manipulation.
 *
 ****************************************************************************/
 
@@ -147,9 +146,9 @@ int WR_EXPORT WRCreateIconHeader( BYTE *data, uint_32 size, WORD type,
     return( TRUE );
 }
 
-int WR_EXPORT WRCreateCursorResHeader( WRESCURSORHEADER **rch,
+int WR_EXPORT WRCreateCursorResHeader( RESCURSORHEADER **rch,
                                        uint_32 *rchsize, BYTE *data,
-                                       uint_32 data_size, int is32bit )
+                                       uint_32 data_size )
 {
     CURSORHEADER        *ch;
     uint_32             chsize;
@@ -173,35 +172,21 @@ int WR_EXPORT WRCreateCursorResHeader( WRESCURSORHEADER **rch,
     }
 
     if( ok ) {
-        if( is32bit ) {
-            *rchsize = sizeof(RESCURSORHEADER32);
-            *rchsize += sizeof(RESCURSORDIRENTRY32)*(ih->idCount-1);
-        } else {
-            *rchsize = sizeof(RESCURSORHEADER);
-            *rchsize += sizeof(RESCURSORDIRENTRY)*(ih->idCount-1);
-        }
-        *rch = (WRESCURSORHEADER *) WRMemAlloc( *rchsize );
+        *rchsize = sizeof(RESCURSORHEADER);
+        *rchsize += sizeof(RESCURSORDIRENTRY)*(ih->idCount-1);
+        *rch = (RESCURSORHEADER *)WRMemAlloc( *rchsize );
         ok = ( *rch != NULL );
     }
 
     if( ok ) {
         memcpy( *rch, ch, sizeof(WORD)*3 );
         for( i=0; i<ih->idCount ; i++ ) {
-            if( is32bit ) {
-                (*rch)->h32.cdEntries[i].bWidth = ih->idEntries[i].bWidth;
-                (*rch)->h32.cdEntries[i].bHeight = ih->idEntries[i].bHeight*2;
-                (*rch)->h32.cdEntries[i].wPlanes = ih->idEntries[i].wPlanes;
-                (*rch)->h32.cdEntries[i].wBitCount = ih->idEntries[i].wBitCount;
-                (*rch)->h32.cdEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
-                (*rch)->h32.cdEntries[i].wNameOrdinal = i + 1;
-            } else {
-                (*rch)->h16.cdEntries[i].bWidth = ih->idEntries[i].bWidth;
-                (*rch)->h16.cdEntries[i].bHeight = ih->idEntries[i].bHeight*2;
-                (*rch)->h16.cdEntries[i].wPlanes = ih->idEntries[i].wPlanes;
-                (*rch)->h16.cdEntries[i].wBitCount = ih->idEntries[i].wBitCount;
-                (*rch)->h16.cdEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
-                (*rch)->h16.cdEntries[i].wNameOrdinal = i + 1;
-            }
+            (*rch)->cdEntries[i].bWidth = ih->idEntries[i].bWidth;
+            (*rch)->cdEntries[i].bHeight = ih->idEntries[i].bHeight*2;
+            (*rch)->cdEntries[i].wPlanes = ih->idEntries[i].wPlanes;
+            (*rch)->cdEntries[i].wBitCount = ih->idEntries[i].wBitCount;
+            (*rch)->cdEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
+            (*rch)->cdEntries[i].wNameOrdinal = i + 1;
         }
     }
 
@@ -212,9 +197,8 @@ int WR_EXPORT WRCreateCursorResHeader( WRESCURSORHEADER **rch,
     return( ok );
 }
 
-int WR_EXPORT WRCreateIconResHeader( WRESICONHEADER **rih, uint_32 *rihsize,
-                                     BYTE *data, uint_32 data_size,
-                                     int is32bit )
+int WR_EXPORT WRCreateIconResHeader( RESICONHEADER **rih, uint_32 *rihsize,
+                                     BYTE *data, uint_32 data_size )
 {
     ICONHEADER          *pih;
     uint_32             pihsize;
@@ -236,39 +220,23 @@ int WR_EXPORT WRCreateIconResHeader( WRESICONHEADER **rih, uint_32 *rihsize,
     }
 
     if( ok ) {
-        if( is32bit ) {
-            *rihsize = sizeof(RESICONHEADER32);
-            *rihsize += sizeof(RESICONDIRENTRY32)*(ih->idCount-1);
-        } else {
-            *rihsize = sizeof(RESICONHEADER);
-            *rihsize += sizeof(RESICONDIRENTRY)*(ih->idCount-1);
-        }
-        *rih = (WRESICONHEADER *) WRMemAlloc( *rihsize );
+        *rihsize = sizeof(RESICONHEADER);
+        *rihsize += sizeof(RESICONDIRENTRY)*(ih->idCount-1);
+        *rih = (RESICONHEADER *)WRMemAlloc( *rihsize );
         ok = ( *rih != NULL );
     }
 
     if( ok ) {
         memcpy( *rih, pih, sizeof(WORD)*3 );
         for( i=0; i<ih->idCount ; i++ ) {
-            if( is32bit ) {
-                (*rih)->h32.idEntries[i].bWidth = ih->idEntries[i].bWidth;
-                (*rih)->h32.idEntries[i].bHeight = ih->idEntries[i].bHeight;
-                (*rih)->h32.idEntries[i].bColorCount = ih->idEntries[i].bColorCount;
-                (*rih)->h32.idEntries[i].bReserved = 0;
-                (*rih)->h32.idEntries[i].wPlanes = ih->idEntries[i].wPlanes;
-                (*rih)->h32.idEntries[i].wBitCount = ih->idEntries[i].wBitCount;
-                (*rih)->h32.idEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
-                (*rih)->h32.idEntries[i].wNameOrdinal = i + 1;
-            } else {
-                (*rih)->h16.idEntries[i].bWidth = ih->idEntries[i].bWidth;
-                (*rih)->h16.idEntries[i].bHeight = ih->idEntries[i].bHeight;
-                (*rih)->h16.idEntries[i].bColorCount = ih->idEntries[i].bColorCount;
-                (*rih)->h16.idEntries[i].bReserved = 0;
-                (*rih)->h16.idEntries[i].wPlanes = ih->idEntries[i].wPlanes;
-                (*rih)->h16.idEntries[i].wBitCount = ih->idEntries[i].wBitCount;
-                (*rih)->h16.idEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
-                (*rih)->h16.idEntries[i].wNameOrdinal = i + 1;
-            }
+            (*rih)->idEntries[i].bWidth = ih->idEntries[i].bWidth;
+            (*rih)->idEntries[i].bHeight = ih->idEntries[i].bHeight;
+            (*rih)->idEntries[i].bColorCount = ih->idEntries[i].bColorCount;
+            (*rih)->idEntries[i].bReserved = 0;
+            (*rih)->idEntries[i].wPlanes = ih->idEntries[i].wPlanes;
+            (*rih)->idEntries[i].wBitCount = ih->idEntries[i].wBitCount;
+            (*rih)->idEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
+            (*rih)->idEntries[i].wNameOrdinal = i + 1;
         }
     }
 
@@ -561,14 +529,13 @@ int WR_EXPORT WRCreateCursorData( WRInfo *info, WResLangNode *lnode,
 {
     WResLangNode        *ilnode;
     BYTE                *ldata;
-    WRESCURSORHEADER    *rch;
+    RESCURSORHEADER     *rch;
     CURSORHEADER        *ch;
     CURSORHOTSPOT       hotspot;
     WResLangType        lt;
     uint_16             ord;
     uint_32             osize;
     int                 i;
-    int                 is32bit;
     int                 ok;
 
     ok = ( info && lnode && data && size );
@@ -579,10 +546,9 @@ int WR_EXPORT WRCreateCursorData( WRInfo *info, WResLangNode *lnode,
     }
 
     if( ok ) {
-        is32bit = FALSE;
-        rch = (WRESCURSORHEADER *)ldata;
+        rch = (RESCURSORHEADER *)ldata;
         *size = sizeof( CURSORHEADER );
-        *size += sizeof(CURSORDIRENTRY)*(rch->h16.cwCount-1);
+        *size += sizeof(CURSORDIRENTRY)*(rch->cwCount-1);
         *data = (BYTE *)WRMemAlloc( *size );
         ch = (CURSORHEADER *)*data;
         ok = ( *data != NULL );
@@ -593,12 +559,8 @@ int WR_EXPORT WRCreateCursorData( WRInfo *info, WResLangNode *lnode,
     }
 
     if( ok ) {
-        for( i=0; ok && i<rch->h16.cwCount; i++ ) {
-            if( is32bit ) {
-                ord = (uint_16) rch->h32.cdEntries[i].wNameOrdinal;
-            } else {
-                ord = (uint_16) rch->h16.cdEntries[i].wNameOrdinal;
-            }
+        for( i=0; ok && i<rch->cwCount; i++ ) {
+            ord = (uint_16) rch->cdEntries[i].wNameOrdinal;
             lt = lnode->Info.lang;
             ok = WRFindImageId( info, NULL, NULL, &ilnode, (uint_16)RT_CURSOR, ord, &lt );
             if( ok ) {
@@ -606,13 +568,8 @@ int WR_EXPORT WRCreateCursorData( WRInfo *info, WResLangNode *lnode,
                 ok = WRAddCursorImageToData( info, ilnode, data, size, &hotspot );
                 if( ok ) {
                     ch = (CURSORHEADER *)*data;
-                    if( is32bit ) {
-                        ch->cdEntries[i].bWidth = rch->h32.cdEntries[i].bWidth;
-                        ch->cdEntries[i].bHeight = rch->h32.cdEntries[i].bHeight/2;
-                    } else {
-                        ch->cdEntries[i].bWidth = rch->h16.cdEntries[i].bWidth;
-                        ch->cdEntries[i].bHeight = rch->h16.cdEntries[i].bHeight/2;
-                    }
+                    ch->cdEntries[i].bWidth = rch->cdEntries[i].bWidth;
+                    ch->cdEntries[i].bHeight = rch->cdEntries[i].bHeight/2;
                     ch->cdEntries[i].bColorCount = 0;
                     ch->cdEntries[i].bReserved = 0;
                     ch->cdEntries[i].wXHotspot = hotspot.xHotspot;
@@ -640,13 +597,12 @@ int WR_EXPORT WRCreateIconData( WRInfo *info, WResLangNode *lnode,
 {
     WResLangNode        *ilnode;
     BYTE                *ldata;
-    WRESICONHEADER      *rih;
+    RESICONHEADER       *rih;
     ICONHEADER          *ih;
     WResLangType        lt;
     uint_16             ord;
     uint_32             osize;
     int                 i;
-    int                 is32bit;
     int                 ok;
 
     ok = ( info && lnode && data && size );
@@ -657,10 +613,9 @@ int WR_EXPORT WRCreateIconData( WRInfo *info, WResLangNode *lnode,
     }
 
     if( ok ) {
-        is32bit = FALSE;
-        rih = (WRESICONHEADER *)ldata;
+        rih = (RESICONHEADER *)ldata;
         *size = sizeof( ICONHEADER );
-        *size += sizeof(ICONDIRENTRY)*(rih->h16.cwCount-1);
+        *size += sizeof( ICONDIRENTRY )*(rih->cwCount-1);
         *data = (BYTE *)WRMemAlloc( *size );
         ih = (ICONHEADER *)*data;
         ok = ( *data != NULL );
@@ -671,12 +626,8 @@ int WR_EXPORT WRCreateIconData( WRInfo *info, WResLangNode *lnode,
     }
 
     if( ok ) {
-        for( i=0; ok && i<rih->h16.cwCount; i++ ) {
-            if( is32bit ) {
-                ord = (uint_16) rih->h32.idEntries[i].wNameOrdinal;
-            } else {
-                ord = (uint_16) rih->h16.idEntries[i].wNameOrdinal;
-            }
+        for( i=0; ok && i<rih->cwCount; i++ ) {
+            ord = (uint_16)rih->idEntries[i].wNameOrdinal;
             lt = lnode->Info.lang;
             ok = WRFindImageId( info, NULL, NULL, &ilnode, (uint_16)RT_ICON, ord, &lt );
             if( ok ) {
@@ -684,19 +635,11 @@ int WR_EXPORT WRCreateIconData( WRInfo *info, WResLangNode *lnode,
                 ok = WRAddIconImageToData( info, ilnode, data, size );
                 if( ok ) {
                     ih = (ICONHEADER *)*data;
-                    if( is32bit ) {
-                        ih->idEntries[i].bWidth = rih->h32.idEntries[i].bWidth;
-                        ih->idEntries[i].bHeight = rih->h32.idEntries[i].bHeight;
-                        ih->idEntries[i].bColorCount = rih->h32.idEntries[i].bColorCount;
-                        //ih->idEntries[i].wPlanes = rih->h32.idEntries[i].wPlanes;
-                        //ih->idEntries[i].wBitCount = rih->h32.idEntries[i].wBitCount;
-                    } else {
-                        ih->idEntries[i].bWidth = rih->h16.idEntries[i].bWidth;
-                        ih->idEntries[i].bHeight = rih->h16.idEntries[i].bHeight;
-                        ih->idEntries[i].bColorCount = rih->h16.idEntries[i].bColorCount;
-                        //ih->idEntries[i].wPlanes = rih->h16.idEntries[i].wPlanes;
-                        //ih->idEntries[i].wBitCount = rih->h16.idEntries[i].wBitCount;
-                    }
+                    ih->idEntries[i].bWidth = rih->idEntries[i].bWidth;
+                    ih->idEntries[i].bHeight = rih->idEntries[i].bHeight;
+                    ih->idEntries[i].bColorCount = rih->idEntries[i].bColorCount;
+                    //ih->idEntries[i].wPlanes = rih->idEntries[i].wPlanes;
+                    //ih->idEntries[i].wBitCount = rih->idEntries[i].wBitCount;
                     ih->idEntries[i].wPlanes = 0;
                     ih->idEntries[i].wBitCount = 0;
                     ih->idEntries[i].bReserved = 0;
@@ -761,15 +704,13 @@ uint_16 WR_EXPORT WRFindUnusedImageId( WRInfo *info, uint_16 start )
 int WR_EXPORT WRCreateCursorEntries( WRInfo *info, WResLangNode *lnode,
                                      void *data, uint_32 size )
 {
-    WRESCURSORHEADER    *rch;
+    RESCURSORHEADER     *rch;
     CURSORHEADER        *ch;
     uint_16             ord;
     uint_32             rchsize;
-    int                 is32bit;
     int                 i;
     int                 ok;
 
-    is32bit = FALSE;
     ok = ( info && lnode && data && size );
 
     if( ok ) {
@@ -778,7 +719,7 @@ int WR_EXPORT WRCreateCursorEntries( WRInfo *info, WResLangNode *lnode,
             lnode->data = NULL;
         }
         lnode->Info.Length = 0;
-        ok = WRCreateCursorResHeader( &rch, &rchsize, data, size, is32bit );
+        ok = WRCreateCursorResHeader( &rch, &rchsize, data, size );
     }
 
     if( ok ) {
@@ -786,15 +727,11 @@ int WR_EXPORT WRCreateCursorEntries( WRInfo *info, WResLangNode *lnode,
         lnode->Info.Length = rchsize;
         ord = 0;
         ch = (CURSORHEADER *) data;
-        for( i=0; ok && i<rch->h16.cwCount; i++ ) {
+        for( i=0; ok && i<rch->cwCount; i++ ) {
             ord = WRFindUnusedImageId( info, ord );
             ok = ( ord != 0 );
             if( ok ) {
-                if( is32bit ) {
-                    rch->h32.cdEntries[i].wNameOrdinal = ord;
-                } else {
-                    rch->h16.cdEntries[i].wNameOrdinal = ord;
-                }
+                rch->cdEntries[i].wNameOrdinal = ord;
                 ok = WRGetAndAddCursorImage( data, info->dir,
                                              &ch->cdEntries[i], ord );
             }
@@ -807,15 +744,13 @@ int WR_EXPORT WRCreateCursorEntries( WRInfo *info, WResLangNode *lnode,
 int WR_EXPORT WRCreateIconEntries( WRInfo *info, WResLangNode *lnode,
                                    void *data, uint_32 size )
 {
-    WRESICONHEADER      *rih;
+    RESICONHEADER       *rih;
     ICONHEADER          *ih;
     uint_16             ord;
     uint_32             rihsize;
-    int                 is32bit;
     int                 i;
     int                 ok;
 
-    is32bit = FALSE;
     ok = ( info && lnode && data && size );
 
     if( ok ) {
@@ -824,7 +759,7 @@ int WR_EXPORT WRCreateIconEntries( WRInfo *info, WResLangNode *lnode,
             lnode->data = NULL;
         }
         lnode->Info.Length = 0;
-        ok = WRCreateIconResHeader( &rih, &rihsize, data, size, is32bit );
+        ok = WRCreateIconResHeader( &rih, &rihsize, data, size );
     }
 
     if( ok ) {
@@ -832,15 +767,11 @@ int WR_EXPORT WRCreateIconEntries( WRInfo *info, WResLangNode *lnode,
         lnode->Info.Length = rihsize;
         ord = 0;
         ih = (ICONHEADER *) data;
-        for( i=0; ok && i<rih->h16.cwCount; i++ ) {
+        for( i=0; ok && i<rih->cwCount; i++ ) {
             ord = WRFindUnusedImageId( info, ord );
             ok = ( ord != 0 );
             if( ok ) {
-                if( is32bit ) {
-                    rih->h32.idEntries[i].wNameOrdinal = ord;
-                } else {
-                    rih->h16.idEntries[i].wNameOrdinal = ord;
-                }
+                rih->idEntries[i].wNameOrdinal = ord;
                 ok = WRGetAndAddIconImage( data, info->dir,
                                            &ih->idEntries[i], ord );
             }
@@ -858,10 +789,9 @@ int WR_EXPORT WRDeleteGroupImages( WRInfo *info, WResLangNode *lnode,
     WResResNode         *irnode;
     WResLangNode        *ilnode;
     void                *data;
-    WRESICONHEADER      *ih;
-    WRESCURSORHEADER    *ch;
+    RESICONHEADER       *ih;
+    RESCURSORHEADER     *ch;
     int                 i;
-    int                 is32bit;
     uint_16             ord;
     int                 ok;
 
@@ -875,15 +805,10 @@ int WR_EXPORT WRDeleteGroupImages( WRInfo *info, WResLangNode *lnode,
     }
 
     if( ok ) {
-        is32bit = FALSE;
         if( type == (uint_16)RT_GROUP_ICON ) {
-            ih = (WRESICONHEADER *)data;
-            for( i=0; ok && i<ih->h16.cwCount; i++ ) {
-                if( is32bit ) {
-                    ord = (uint_16) ih->h32.idEntries[i].wNameOrdinal;
-                } else {
-                    ord = (uint_16) ih->h16.idEntries[i].wNameOrdinal;
-                }
+            ih = (RESICONHEADER *)data;
+            for( i = 0; ok && i < ih->cwCount; i++ ) {
+                ord = (uint_16)ih->idEntries[i].wNameOrdinal;
                 lt = lnode->Info.lang;
                 if( WRFindImageId( info, &itnode, &irnode, &ilnode, (uint_16)RT_ICON, ord, &lt ) ) {
                     if( ilnode->data ) {
@@ -895,13 +820,9 @@ int WR_EXPORT WRDeleteGroupImages( WRInfo *info, WResLangNode *lnode,
                 }
             }
         } else {
-            ch = (WRESCURSORHEADER *)data;
-            for( i=0; ok && i<ch->h16.cwCount; i++ ) {
-                if( is32bit ) {
-                    ord = (uint_16) ch->h32.cdEntries[i].wNameOrdinal;
-                } else {
-                    ord = (uint_16) ch->h16.cdEntries[i].wNameOrdinal;
-                }
+            ch = (RESCURSORHEADER *)data;
+            for( i = 0; ok && i < ch->cwCount; i++ ) {
+                ord = (uint_16)ch->cdEntries[i].wNameOrdinal;
                 lt = lnode->Info.lang;
                 if( WRFindImageId( info, &itnode, &irnode, &ilnode, (uint_16)RT_CURSOR, ord, &lt ) ) {
                     if( ilnode->data ) {

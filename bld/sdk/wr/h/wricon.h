@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Icon/cursor group structures. Documented on MSDN but not
+*               declared in any public header.
 *
 ****************************************************************************/
 
@@ -100,44 +100,6 @@ typedef struct RESICONHEADER {
     RESICONDIRENTRY     idEntries[1];
 } RESICONHEADER;
 
-typedef struct RESICONDIRENTRY32 {
-    BYTE        bWidth;
-    BYTE        bHeight;
-    BYTE        bColorCount;
-    BYTE        bReserved;
-    WORD        wPlanes;
-    WORD        wBitCount;
-    DWORD       lBytesInRes;
-    WORD        wNameOrdinal;
-    WORD        pad;
-} RESICONDIRENTRY32;
-
-typedef struct RESICONHEADER32 {
-    WORD                wReserved;
-    WORD                wType;
-    WORD                cwCount;
-    WORD                pad;
-    RESICONDIRENTRY32   idEntries[1];
-} RESICONHEADER32;
-
-typedef struct RESCURSORDIRENTRY32 {
-    WORD        bWidth;
-    WORD        bHeight;
-    WORD        wPlanes;
-    WORD        wBitCount;
-    DWORD       lBytesInRes;
-    WORD        wNameOrdinal;
-    WORD        pad;
-} RESCURSORDIRENTRY32;
-
-typedef struct RESCURSORHEADER32 {
-    WORD                wReserved;
-    WORD                wType;
-    WORD                cwCount;
-    WORD                pad;
-    RESCURSORDIRENTRY32 cdEntries[1];
-} RESCURSORHEADER32;
-
 typedef struct RESCURSORDIRENTRY {
     WORD        bWidth;
     WORD        bHeight;
@@ -156,20 +118,6 @@ typedef struct RESCURSORHEADER {
     RESCURSORDIRENTRY   cdEntries[1];
 } RESCURSORHEADER;
 
-typedef struct WRESICONHEADER {
-    union {
-        RESICONHEADER   h16;
-        RESICONHEADER32 h32;
-    };
-} WRESICONHEADER;
-
-typedef struct WRESCURSORHEADER {
-    union {
-        RESCURSORHEADER         h16;
-        RESCURSORHEADER32       h32;
-    };
-} WRESCURSORHEADER;
-
 #pragma pack();
 
 /****************************************************************************/
@@ -180,16 +128,14 @@ extern WORD     WR_EXPORT WRCountIconImages     ( BYTE *data, uint_32 size );
 extern int      WR_EXPORT WRCreateIconHeader    ( BYTE *data, uint_32 size,
                                                   WORD type, ICONHEADER **ih,
                                                   uint_32 *ihsize );
-extern int      WR_EXPORT WRCreateCursorResHeader( WRESCURSORHEADER **rch,
+extern int      WR_EXPORT WRCreateCursorResHeader( RESCURSORHEADER **rch,
                                                   uint_32 *rchsize,
                                                   BYTE *data,
-                                                  uint_32 data_size,
-                                                  int is32bit );
-extern int      WR_EXPORT WRCreateIconResHeader ( WRESICONHEADER **rih,
+                                                  uint_32 data_size );
+extern int      WR_EXPORT WRCreateIconResHeader ( RESICONHEADER **rih,
                                                   uint_32 *rihsize,
                                                   BYTE *data,
-                                                  uint_32 data_size,
-                                                  int is32bit );
+                                                  uint_32 data_size );
 extern int      WR_EXPORT WRAddCursorHotspot    ( BYTE **cursor,
                                                   uint_32 *size,
                                                   CURSORHOTSPOT *hs );
@@ -220,4 +166,3 @@ extern int      WR_EXPORT WRCreateIconEntries   ( WRInfo *info,
 extern int      WR_EXPORT WRDeleteGroupImages   ( WRInfo *info, WResLangNode *lnode, uint_16 type );
 
 #endif
-
