@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Editor initialization.
 *
 ****************************************************************************/
 
@@ -34,11 +33,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <env.h>
-#ifdef _M_IX86
-#ifdef __WATCOMC__
-#include <i86.h>
-#endif
-#endif
 #include "vi.h"
 #include "rxsupp.h"
 #include "fcbmem.h"
