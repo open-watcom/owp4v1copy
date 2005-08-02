@@ -914,6 +914,15 @@ APIRET APIENTRY DosWrite(HFILE,PVOID,ULONG,PULONG);
 
 #if defined(INCL_DOSMEMMGR) || !defined(INCL_NOCOMMON)
 
+#define DosSubAlloc     DosSubAllocMem
+#define DOSSUBALLOC     DosSubAllocMem
+#define DosSubFree      DosSubFreeMem
+#define DOSSUBFREE      DosSubFreeMem
+#define DosSubSet       DosSubSetMem
+#define DOSSUBSET       DosSubSetMem
+#define DosSubUnset     DosSubUnsetMem
+#define DOSSUBUNSET     DosSubUnsetMem
+
 #define PAG_READ      0x00000001
 #define PAG_WRITE     0x00000002
 #define PAG_EXECUTE   0x00000004
