@@ -54,7 +54,7 @@
 #include "autoenv.h"
 
 static char     nullFN[] = "no_name";
-static char     defaultEDPath[] = "\\EDDAT";
+static char     defaultEDPath[] = DIR_SEP_STR "eddat";
 static char     *cFN;
 static char     *cfgFN=NULL;
 static char     *cTag;

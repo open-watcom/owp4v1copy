@@ -1,6 +1,6 @@
 include $(DEVDIR)/build/mif/master.mk
 
-vpath %.c c ui unix ../posix/misc ../ui/c ../ui/unix/c ../ncurses/c
+vpath %.c c ui unix ../posix/misc ../ui/c ../ui/unix/c ../ncurses/c ../watcom/c
 
 SOURCE := 
 SOURCE += c
@@ -183,10 +183,13 @@ NCURSOBJS =		\
 	lib_ttyf.o	\
 	read_ent.o
 
+WATCOMOBJS =		\
+	autoenv.o
+
 OBJS = $(OBJSIZE) $(OBJTIME) $(EXTRAOBJS) $(XTRAOBJS) $(UIOBJS)
 OBJSROOT = $(OBJSIZEROOT) $(OBJUNIXSIZEROOT) $(OBJTIMEROOT) $(OBJUNIXTIMEROOT) $(EXTRAOBJSROOT) $(UIOBJSROOT)
 
-OBJECTS = $(OBJS) $(OBJSROOT) $(NCURSOBJS) $(OBJINIT)
+OBJECTS = $(OBJS) $(OBJSROOT) $(NCURSOBJS) $(WATCOMOBJS) $(OBJINIT)
 
 OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 

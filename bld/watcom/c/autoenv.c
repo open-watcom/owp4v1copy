@@ -36,18 +36,6 @@
 #include <process.h>
 #include "autoenv.h"
 
-#ifdef __UNIX__
-    #define DIR_SEP_CHAR   '/'
-    #define DIR_SEP_STR    "/"
-    #define PATH_SEP_CHAR  ':'
-    #define PATH_SEP_STR   ":"
-#else
-    #define DIR_SEP_CHAR   '\\'
-    #define DIR_SEP_STR    "\\"
-    #define PATH_SEP_CHAR  ';'
-    #define PATH_SEP_STR   ";"
-#endif
-
 #if defined( __LINUX__ )
     #define PRIMARY_PATH    "binl"
 #elif defined( __OS2__ )
