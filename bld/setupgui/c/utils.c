@@ -143,7 +143,7 @@ extern bool ModifyStartup( bool uninstall )
 
 typedef struct {
     unsigned long long  free_space;
-    unsigned            cluster_size;
+    unsigned long       cluster_size;
     unsigned            use_target_for_tmp_file : 1;
     unsigned            fixed : 1;
     unsigned            diskette : 1;
@@ -590,13 +590,13 @@ static unsigned GetDriveInfo( int drive, bool removable )
             info->fixed = 0;
         }
         if( _dos_getdiskfree( drive, &FreeSpace ) == 0 ) {
-            info->cluster_size = FreeSpace.sectors_per_cluster
+            info->cluster_size = (unsigned long)FreeSpace.sectors_per_cluster
                         * FreeSpace.bytes_per_sector;
             info->free_space = FreeSpace.avail_clusters * (unsigned long long)info->cluster_size;
             /* If reported cluster size is ridiculously large, it's likely faked; assume the
              * real cluster size is much smaller - 4096 should be a conservative estimate.
              */
-            if( info->cluster_size > 64 * 1024 )
+            if( info->cluster_size > 64 * 1024UL )
                 info->cluster_size = 4096;
         } else if( removable ) { // diskette not present
             info->cluster_size = 0;
@@ -899,7 +899,7 @@ extern bool CreateDstDir( int i, char *dst_dir )
     return( FALSE );
 }
 
-#define KB  1024
+#define KB  1024UL
 #define MB  (KB * KB)
 
 static void catnum( char *buff, long long num )
