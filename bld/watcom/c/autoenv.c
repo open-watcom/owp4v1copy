@@ -204,7 +204,7 @@ static int setup_os_env( const char *watcom )
 int watcom_setup_env( void )
 {
     char        *watcom;
-    char        buf[PATH_MAX * 2];
+    char        buf[FILENAME_MAX * 2];
     int         rc;
 
     watcom = getenv( "WATCOM" );
