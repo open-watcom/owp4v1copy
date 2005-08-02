@@ -32,7 +32,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <env.h>
+#ifndef __UNIX__
+    // To be removed when OW 1.4 is in universal use
+    #include <env.h>
+#endif
 #include "vi.h"
 #include "rxsupp.h"
 #include "fcbmem.h"

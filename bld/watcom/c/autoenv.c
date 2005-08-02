@@ -32,8 +32,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <env.h>
-#include <process.h>
+#ifndef __UNIX__
+    #include <env.h>
+#endif
+#ifdef __WATCOMC__
+    #include <process.h>
+#else
+    #include "clibext.h"
+#endif
 #include "autoenv.h"
 
 #if defined( __LINUX__ )
