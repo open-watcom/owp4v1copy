@@ -469,6 +469,11 @@ bool GUIXCreateWindow( gui_window *wnd, gui_create_info *info,
     WPI_RECT            parent_client;
 #endif
 
+#ifdef __OS2_PM__
+// Get rid of the changable font style for PM GUI app's
+    info->style &= ~GUI_CHANGEABLE_FONT;
+#endif
+
     wnd->root_pinfo.force_count = NUMBER_OF_FORCED_REPAINTS;
     wnd->hwnd_pinfo.force_count = NUMBER_OF_FORCED_REPAINTS;
 

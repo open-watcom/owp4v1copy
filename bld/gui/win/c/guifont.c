@@ -43,13 +43,15 @@
 
 #define MAX_STR 256
 
-static void SetFont( gui_window *wnd, WPI_FONT font )
+#ifndef __OS2_PM__
+static void SetFont( gui_window *wnd, HFONT font )
 {
     wnd->font = font;
     GUISetRowCol( wnd, NULL );
     GUISetScroll( wnd );
     GUIEVENTWND( wnd, GUI_FONT_CHANGED, NULL );
 }
+#endif
 
 bool GUIChooseFont( HFONT font, LOGFONT *lf, HWND hwnd )
 {
@@ -230,7 +232,11 @@ bool GUISetFontInfo( gui_window *wnd, char *fontinfo )
 
 bool GUIFontsSupported( void )
 {
+#ifndef __OS2_PM__
     return( TRUE );
+#else
+    return( FALSE );
+#endif
 }
 
 bool GUISetSystemFont( gui_window *wnd, bool fixed )
@@ -249,13 +255,8 @@ bool GUISetSystemFont( gui_window *wnd, bool fixed )
     SetFont( wnd, font );
     return( TRUE );
 #else
-    WPI_FONT    font;
-
-    font = _wpi_getsystemfont();
-    if( wnd->font != NULL ) {
-        _wpi_deletefont( wnd->font );
-    }
-    SetFont( wnd, font );
-    return( TRUE );
+    wnd = wnd;
+    fixed = fixed;
+    return( FALSE );
 #endif
 }
