@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common code detection and optimization.
 *
 ****************************************************************************/
 
@@ -136,6 +135,14 @@ static  bool    CommonInstr( ins_entry *old, ins_entry *add ) {
     if( oc_add->class != oc_old->class ) optreturn( FALSE );
     if( oc_add->reclen != oc_old->reclen ) optreturn( FALSE );
     switch( _Class( old ) ) {
+    case OC_BDATA:
+        /* User may be doing stupid stuff like stringing together a bunch
+         * of '__asm _emit x' or '__asm db x' statements which aren't complete
+         * instructions. If we try to optimize and split them, things are
+         * going to go boom. So let's just not touch those - it's extremely
+         * unlikely that we'd be missing any real optimization opportunities.
+         */
+        /* fall through */
     case OC_DEAD:
         optreturn( FALSE );
     case OC_JMP:
