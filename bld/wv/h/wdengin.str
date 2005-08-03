@@ -326,7 +326,7 @@ wdpick( IO,
 // MAD errors
 
 wdpick( LMS_RECURSIVE_MAD_FAILURE,
-    "Rescursive MAD failure - exiting",
+    "Recursive MAD failure - exiting",
     "jRecursive MAD failure - exiting" )
 
 wdpick( LMS_UNREGISTERED_MAD,
