@@ -361,6 +361,9 @@ extern void HexOutput( void )
             }
         }
     }
+    if( bufOfs ) {              // If partial record in buffer, flush
+        WriteHexLine();
+    }
     if( FmtData.output_start ) {
        WriteStart();
     }
