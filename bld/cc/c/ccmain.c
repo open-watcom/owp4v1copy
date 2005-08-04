@@ -95,6 +95,8 @@
 extern  char    CharSet[];
 
 static char IsStdIn;
+
+#define MAX_INC_DEPTH   255
 static int IncFileDepth;
 
 int PrintWhiteSpace;     // also refered from cmac2.c
@@ -144,7 +146,7 @@ void ClearGlobals ( void )
     DepFile = NULL;
     SymLoc  = NULL;
     HFileList = NULL;
-    IncFileDepth = 255;
+    IncFileDepth = MAX_INC_DEPTH;
     SegmentNum = FIRST_PRIVATE_SEGMENT;
     BufSize = BUF_SIZE;
     Buffer = CMemAlloc( BufSize );
@@ -819,6 +821,13 @@ void CloseSrcFile( FCB *srcfcb )
 
 static int OpenFCB( FILE *fp, char *filename )
 {
+    if( CompFlags.track_includes ) {
+        // Don't track the top level file (any semi-intelligent user should
+        // have no trouble tracking *that* down)
+        if( IncFileDepth < MAX_INC_DEPTH )
+            CInfoMsg( INFO_INCLUDING_FILE, filename );
+    }
+
     if( FCB_Alloc( fp, filename ) == 0 ) {       /* split apart 19-sep-89 */
         CErr1( ERR_OUT_OF_MEMORY );
         return( FALSE );
@@ -856,7 +865,7 @@ static int TryOpen( char *prefix, char *separator, char *filename, char *suffix 
     auto char   buf[2*130];
 
     if( IncFileDepth == 0 ) {
-        CErr2( ERR_INCDEPTH, 255 );
+        CErr2( ERR_INCDEPTH, MAX_INC_DEPTH );
         CSuicide();
         return( 0 );
     }

@@ -419,6 +419,11 @@
 ~b~b~b~b~b~b
 .br
 .*
+:CMT. .note fti
+:hotlink refid='SWfti'.
+~b~b~b~b~b~b
+.br
+.*
 :CMT. .note fx
 :hotlink refid='SWfx'.
 ~b~b~b~b~b~b

@@ -493,6 +493,12 @@ set error file specification
 try truncated (8.3) header file specification
 :optref refid='SWft'.
 .*
+.note fti
+:CMT. .ix 'options' 'fti'
+(C only)
+track include file opens
+:optref refid='SWfti'.
+.*
 .note fx
 :CMT. .ix 'options' 'fx'
 (C++ only)

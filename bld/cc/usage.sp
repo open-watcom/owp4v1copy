@@ -105,6 +105,7 @@ Options:
 -fi=<file>    force <file> to be included
 -fo[=<file>]  set object or preprocessor output file name
 -fr[=<file>]  set error file name
+-fti          print informational message when opening include file
 :segment T386 | Ti86
 -fp2          generate 287 floating-point code
 -fp3          generate 387 floating-point code

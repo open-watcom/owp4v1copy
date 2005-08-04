@@ -2032,6 +2032,14 @@ preceding conversion diagnostic.
 :INFO.
 This informational message indicates the target type of the conversion,
 for the preceding conversion diagnostic.
+:MSGSYM. INFO_INCLUDING_FILE
+:MSGTXT. Including file '%s'
+:MSGJTXT.
+:INFO.
+This informational message indicates that the specified file was opened
+as a result of
+.id #include
+directive processing.
 :eMSGGRP. Info
 :cmt -------------------------------------------------------------------
 :MSGGRP. PCHDR

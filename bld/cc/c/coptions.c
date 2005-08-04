@@ -1100,6 +1100,11 @@ static void Set_FLD()
     CompFlags.use_long_double = 1;
 }
 
+static void SetTrackInc( void )
+{
+    CompFlags.track_includes = 1;
+}
+
 static void Set_FO()
 {
     CMemFree( ObjectFileName );
@@ -1648,6 +1653,7 @@ static struct option const CFE_Options[] = {
     { "fld",    0,              Set_FLD },
     { "fo=@",   0,              Set_FO },
     { "fr=@",   0,              Set_FR },
+    { "fti",    0,              SetTrackInc },
 #if _CPU == 8086 || _CPU == 386
     { "fp2",    SW_FPU0,        SetFPU },
     { "fp3",    SW_FPU3,        SetFPU },

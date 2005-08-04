@@ -509,6 +509,12 @@ set error file name
 try truncated (8.3) header file specification
 :optref refid='SWft'.
 .do end
+.if &e'&$SWfti eq 1 .do begin
+.note fti
+(C only)
+track include file opens
+:optref refid='SWfti'.
+.do end
 .if &e'&$SWfx eq 1 .do begin
 .note fx
 (C++ only)
@@ -3019,6 +3025,18 @@ For example, if the compiler cannot open the header file called
 .fi strstream.h,
 it will attempt to open a header file called
 .fi strstrea.h.
+.do end
+.*
+.if &e'&$SWfti eq 1 .do begin
+:OPT refid='SWfti' name='fti'.
+.ix 'options' 'fti'
+(C only)
+Whenever a file is open as a result of 
+.id #include
+directive processing, an informational message is printed. The message
+contains the file name and line number identifying where the
+.id #include
+directive was located.
 .do end
 .*
 .if &e'&$SWfx eq 1 .do begin
