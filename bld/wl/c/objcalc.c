@@ -581,7 +581,9 @@ extern void CalcAddresses( void )
         CalcGrpAddr( Groups );
         CalcGrpAddr( AbsGroups );
     } else if ( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
-        if( FmtData.type & MK_PE ) {
+        if( FmtData.output_raw || FmtData.output_hex ) {
+            flat = FmtData.base;
+        } else if( FmtData.type & MK_PE ) {
             flat = GetPEHeaderSize();
         } else if( FmtData.type & MK_ELF ) {
             flat = GetElfHeaderSize();
@@ -590,6 +592,12 @@ extern void CalcAddresses( void )
         }
         for( grp = Groups; grp != NULL; grp = grp->next_group ) {
             size = grp->totalsize;
+            if( grp->grp_addr.off > flat ) {
+               // ORDER CLNAME name OFFSET option sets grp_addr,
+               //   retrieve this information here and wrap into linear address
+               flat = grp->grp_addr.off;
+               grp->grp_addr.off = 0;
+            }
             grp->linear = flat;
             if( ( FmtData.type & MK_SPLIT_DATA ) && ( grp == DataGroup )
                 && ( StackSegPtr != NULL ) && ( FmtData.dgroupsplitseg != NULL ) ) {
@@ -846,8 +854,18 @@ extern void AllocClasses( class_entry *class )
             CurrSect->size = size;
             CurrLoc = save;
         } else {
-            save = class->BaseAddr;
-            ChkLocated(&save, class->flags & CLASS_FIXED ); // Process fixed locations if any
+            if( FmtData.type & (MK_PE | MK_QNX_FLAT | MK_OS2_FLAT | MK_ELF) ) {
+                // flat addresses
+                if (class->flags & CLASS_FIXED) {
+                    class->segs->group->grp_addr.off = class->BaseAddr.off;
+                    // Group inherits fixed address from class (only useful if it is first thing in group)
+                }
+            }
+            else {
+                // segmented
+                save = class->BaseAddr;
+                ChkLocated(&save, class->flags & CLASS_FIXED ); // Process fixed locations if any
+            }
             RingWalk( class->segs, AllocSeg );
         }
         class = class->next_class;

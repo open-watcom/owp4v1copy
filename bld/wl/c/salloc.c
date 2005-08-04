@@ -152,15 +152,16 @@ extern void ChkLocated( targ_addr * segadr, bool fixed)
 /*******************************************************/
 // If segment has been given a fixed address, use it
 //  unless location counter is already past it
+// This should only be called from real mode 
 {
-   if ( fixed ) {
-      if ( (CurrLoc.seg << FmtData.SegShift) + CurrLoc.off >
-           (segadr->seg << FmtData.SegShift) + segadr->off) {
-            LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", segadr);
-      }
-      else {
-         CurrLoc = *segadr;
-      }
+    if ( fixed ) {
+        if( (CurrLoc.seg << FmtData.SegShift) + CurrLoc.off >
+             (segadr->seg << FmtData.SegShift) + segadr->off) {
+              LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", segadr);
+        }
+        else {
+            CurrLoc = *segadr;
+        }
    }
    else {
       *segadr = CurrLoc;
@@ -207,7 +208,7 @@ extern void NewSegment( seg_leader *seg )
         off = CAlign( CurrLoc.off, seg->align );
         group->totalsize += off - CurrLoc.off;
         AddSize( off - CurrLoc.off );
-        ChkLocated(&seg->seg_addr, seg->segflags & SEG_FIXED);
+        seg->seg_addr = CurrLoc;
         AddSize( seg->size );
         group->totalsize += seg->size;
         if( FmtData.type & MK_ID_SPLIT ) {
