@@ -342,7 +342,7 @@ extern void SetDefaultGlobalVarList( void )
         if( version < 0x80000000 ) {
             SetVariableByName( "IsWinNT", "1" );
             SetVariableByName( "IsWin32", "1" );
-            if( LOBYTE( LOWORD( version ) ) == 4 ) {
+            if( LOBYTE( LOWORD( version ) ) >= 4 ) {
                 SetVariableByName( "IsWinNT40", "1" );
             } else {
                 SetVariableByName( "IsWinNT40", "0" );

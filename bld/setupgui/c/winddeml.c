@@ -249,6 +249,21 @@ cleanup:
 // DDE method does not work reliably under Windows 95. Preferred
 // method is to use IShellLink interface
 
+// Directory names cannot have forward slashes in them, and probably other
+// characters. This is a problem for "C/C++". Not all platforms are restricted
+// like this, so just munge the file name here.
+void munge_fname( char *buff )
+{
+    char    *s;
+
+    s = buff;
+    while( *s ) {
+        if( *s == '/' )
+            *s = '_';   // replace slash by underscore
+        ++s;
+    }
+}
+
 static void get_group_name( char *buff, char *group )
 {
     LPITEMIDLIST        ppidl;
@@ -261,14 +276,15 @@ static void get_group_name( char *buff, char *group )
     }
     strcat( buff, "\\" );
     strcat( buff, group );
+    munge_fname( buff );
 }
 
-static void create_group( char *group )
+static BOOL create_group( char *group )
 {
     char                buff[ _MAX_PATH ];
 
     get_group_name( buff, group );
-    mkdir( buff );
+    return( mkdir( buff ) != -1 );
 }
 
 static void delete_dir( char * dir )
@@ -322,13 +338,14 @@ static BOOL create_icon( char *group, char *pgm, char *desc,
     strcat( link, "\\" );
     strcat( link, desc );
     strcat( link, ".lnk" );
+    munge_fname( link );
 
     MultiByteToWideChar( CP_ACP, 0, link, -1, w_link, _MAX_PATH );
 
     // Create an IShellLink object and get a pointer to the IShellLink interface
     m_link = NULL;
     hres = CoCreateInstance( &CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
-                             &IID_IShellLink, (void **) &m_link );
+                             &IID_IShellLink, (void **)&m_link );
     if( SUCCEEDED( hres ) ) {
         // Query IShellLink for the IPersistFile interface for
         // saving the shortcut in persistent storage.
@@ -363,6 +380,7 @@ static bool UseIShellLink( bool uninstall )
     char                prog_name[ _MAX_PATH ], prog_desc[ _MAX_PATH ];
     char                icon_name[ _MAX_PATH ], working_dir[ _MAX_PATH ];
     char                group[ _MAX_PATH ], prog_arg[ _MAX_PATH ], tmp[ _MAX_PATH ];
+    BOOL                rc;
 
     if( uninstall ) {
         num_groups = SimGetNumPMGroups();
@@ -382,8 +400,12 @@ static bool UseIShellLink( bool uninstall )
     }
 
     CoInitialize( NULL );
+
     // Create the PM Group box.
-    create_group( group );
+    if( !create_group( group ) ) {
+        CoUninitialize();
+        return( FALSE );
+    }
 
     // Add the individual PM files to the Group box.
     num_icons = SimGetNumPMProgs();
@@ -405,7 +427,10 @@ static bool UseIShellLink( bool uninstall )
         if( strcmp( prog_name, "GROUP" ) == 0 ) {
             /* creating a new group */
             strcpy( group, prog_desc );
-            create_group( group );
+            if( !create_group( group ) ) {
+                CoUninitialize();
+                return( FALSE );
+            }
         } else {
             // Adding item to group
             if( dir_index == SIM_INIT_ERROR ) {
@@ -431,11 +456,16 @@ static bool UseIShellLink( bool uninstall )
                 strcpy( icon_name, tmp );
             }
             // Add the new file to the already created PM Group.
-            create_icon( group, prog_name, prog_desc, prog_arg, working_dir, icon_name, icon_number );
+            rc = create_icon( group, prog_name, prog_desc, prog_arg, working_dir, icon_name, icon_number );
+            if( rc == FALSE ) {
+                CoUninitialize();
+                return( FALSE );
+            }
         }
         ++num_installed;
         StatusAmount( num_installed, num_total_install );
-        if( StatusCancelled() ) break;
+        if( StatusCancelled() )
+            break;
     }
     StatusAmount( num_total_install, num_total_install );
 
