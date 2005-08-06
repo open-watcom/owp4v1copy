@@ -13,17 +13,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-#   <CPCMD> wcc386p.exe <RELROOT>/rel2/binw/wcc386p.exe
-#   <CPCMD> wfc386p.exe <RELROOT>/rel2/binw/wfc386p.exe
-#   <CPCMD> wccx.exe <RELROOT>/rel2/binw/wccp.exe
-#   <CPCMD> wfcp.exe <RELROOT>/rel2/binw/wfcp.exe
-#   <CPCMD> wlinkp.exe <RELROOT>/rel2/binw/wlinkp.exe
 
-#   <CPCMD> <DEVDIR>/misc/dos4gw.doc <RELROOT>/rel2/
-#   <CPCMD> <DEVDIR>/misc/dos4gwj.doc <RELROOT>/rel2/
-    <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binw/
-    <CPCMD> <DEVDIR>/misc/watcom.ico <RELROOT>/rel2/
-    <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/misc/watcom.ico   <RELROOT>/rel2/
+    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/rel2/binl/
+    <CPCMD> <OWROOT>/license.txt       <RELROOT>/rel2/license.txt
 
 # NT, OS2 32-bit version
     <CPCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_r/wres.lib  <RELROOT>/rel2/lib386/wresf.lib
