@@ -32,7 +32,7 @@ cdsay .
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/rc/os2386/wrce.exe        <RELROOT>/rel2/binp/wrc.exe
-#    <CPCMD> <PROJDIR>/rc/os2386.dll/wrce.dll    <RELROOT>/rel2/binp/dll/wrc.dll
+    <CPCMD> <PROJDIR>/rc/os2386.dll/wrce.dll    <RELROOT>/rel2/binp/dll/wrc.dll
     <CPCMD> <PROJDIR>/exedmp/os2386/exedmp.exe  <RELROOT>/rel2/binp/exedmp.exe
 
   [ IFDEF (os_nt "") <2*> ]
