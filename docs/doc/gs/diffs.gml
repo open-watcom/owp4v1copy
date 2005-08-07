@@ -10,15 +10,242 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
+:cmt. Reflects main Perforce branch as of 2005/08/07
+:cmt. Good way to get list of changes since certain date:
+:cmt. p4 changes -l @yyyy/mm/dd,#head
+.*
+.*
+.section Differences from Open Watcom Version 1.3
+.*
+.np
+Following is a list of changes made in &product 1.4:
+.begbull
+.bull
+Support for C99 designated initializers has been added to the C compiler, 
+for example "struct {int a, b;} c = {.a=0, .b=1};". This is also supported
+for arrays, for example "int a[4] = {[0]=5, [3]=2};".
+.bull
+Handling of enumerations has been fixed in the C compiler. In certain cases,
+the compiler chose the wrong type for operations on objects of enumerated
+types. Enumerated constants up to 64 bits wide are now also allowed (including
+in 16-bit compilers).
+.bull
+The C compiler will now warn if the right hand operand of a bitwise shift
+expression is a constant that is either negative or greater than or equal
+to the bit with of the promoted left operand. The result of such operation is
+not defined by ISO C. The warnings are 'W134: Shift amount negative' and
+'W135: Shift amount too large'.
+.bull
+The C compiler now warns in cases where an unsigned type is compared for <= 0.
+This is equivalent to 'unsigned == 0' and often indicates that a signed
+comparison was intended.
+.bull
+New __watcall keyword has been added to the C and C++ compilers to designate
+the default Watcom calling convention.
+.bull
+The 16-bit C compiler now defines _M_I86 macro for consistency with the C++
+compiler. The new macro should be used in preference to the existing M_I86.
+.bull
+A number of new keywords have been added to the C compiler; these were
+previously defined as macros: _Cdecl, _Export, _Far16, _Fastcall, _Pascal,
+__sycall, _System, __try, __except, __finally, __leave.
+.bull
+Analogous change has been made to the C++ compiler. The new keywords (and
+removed predefined macros) are: _Cdecl, _Export, _Far16, _Fastcall, __inline,
+_Pascal, __syscall, _System.
+.bull
+The C++ compiler now handles the "new" template specialization syntax, 
+and partial specialization is partially supported (no pun intended).
+.bull
+The C++ compiler now correctly handles the situation where control reaches
+the end of main() function without encountering a return statement. In that
+case, the effect is that of executing "return 0;".
+.bull
+The C++ compiler now properly allows return statements with a void expression
+in functions that return void.
+.bull
+386 C and C++ compilers now support the Microsoft fastcall calling convention,
+and recognize the __fastcall keyword.
+.bull
+The C compiler now recognizes #pragma data_seg and code_seg forms that
+specify segment and class names without enclosing them in parentheses. The
+new behaviour is consistent with other compilers.
+.bull
+New -fti switch has been added to the C compiler to track #include file
+opens. This helps diagnose include file problems in complex projects.
+.bull
+The code generator no longer emits debug information for unreferenced
+typedefs when -d1+ or -d2 switch is used. This produces slightly to
+significantly smaller debug information. Note that behaviour of -d3 is
+unchanged.
+.bull
+The 386 code generator will no longer select the 'and' instruction to perform
+zero extension when optimizing for time on the 686 architecture (-6r or -6s
+switch). The 'movzx' instruction will always be used instead, because it
+avoids partial register stalls and in certain cases significantly improves
+performance on P6 and newer class CPUs.
+.bull
+Support for long long based bitfields has been improved in the code generator.
+.bull
+The code generator now properly diagnoses attempts to emit symbol names
+that overflow the OMF limit (255 bytes).
+.bull
+Several problems related to loss of segment information in 386 non-flat
+models have been fixed in the code generator.
+.bull
+Command line processing has been changed in the Compile and Link utility
+(wcl). Forward slashes now may be used as path separators in file arguments,
+such that "foo/bar" is now interpreted as "foo\bar.c". Note that this does
+not affect options delimited with forward slashes.
+.bull
+Support for raw binary and Intel Hex output has been added to the linker,
+along with support for 24-bit segmented addressing architectures (HSHIFT
+option) and arbitrary class/segment reordering (OUTPUT and ORDER directives).
+See Linker Guide for details.
+.bull
+Support for overlays (16-bit DOS) has been reinstated in the linker.
+A related FARCALLS/NOFARCALLS option has been added to the linker. See
+Linker Guide for details.
+.bull
+The linker now correctly processes relocations to symbols in absolute
+segments.
+.bull
+The linker now checks for bitness conflicts (16 vs. 32-bit) when adding
+segments to a group.
+.bull
+The minimum accepted value for linker OBJALIGN option has been changed to
+16 bytes (previously 512).
+.bull
+The st_name member was removed from struct stat and related structures. This
+was done for consistency across platforms (UNIX has no such field), because
+the st_name field was almost entirely useless (being limited to 13
+characters), and for compatibility with Microsoft compilers; the latter
+because struct _wstat and struct _wstati64 are now obsolete and struct
+_stat/_stati64 can be used for wide character stat functions. NB: This change
+requires recompilation. New object files will not work with old libraries
+and vice versa.
+.bull
+The sleep() function is now declared in unistd.h and its return type has been
+changed to unsigned int, for compatibility with POSIX.
+.bull
+The clock() function now uses millisecond counters (where available) on DOS
+and Windows, and is no longer susceptible to problems related to TZ changes.
+.bull
+The DOS runtime has been tuned to produce smaller executables.
+.bull
+C99 functions wmemchr(), wmemcmp(), wmemcpy(), wmemmove(), and wmemset()
+have been added to the C runtime library.
+.bull
+A POSIX compatible getopt() function has been added to the C runtime library.
+.bull
+A POSIX compatible mkstemp() function has been added to the C runtime library.
+.bull
+BSD compatible safe string copy and concatenation functions, strlcpy()
+and strlcat(), have been added. Use of these functions is highly recommended
+over strncpy() and strncat(), because they are safer and much easier to use.
+.bull
+New strings.h header has been added for POSIX compatibility, although legacy
+functions index() and rindex() are not supported. Functions strcasecmp() and
+strncasecmp() are also declared in string.h for compatibility with other
+compilers.
+.bull
+The C runtime library no longer returns ESPIPE when calling write() on a pipe
+or device that was opened with O_APPEND flag. The old behaviour was not POSIX
+conforming.
+.bull
+Handling of pathnames that include spaces has been improved in the make
+utility (wmake).
+.bull
+The disassembler (wdis) now handles big endian object files on little
+endian host platforms, and vice versa.
+.bull
+Support for MIPS R4000 and SPARC V8 instruction sets has been added to the
+disassembler.
+.bull
+New -zz and -zzo option have been added to the assembler (wasm) for
+backwards compatibility. See Tools User's Guide for details.
+.bull
+Default behaviour of inline assembler has changed. The CPU optimization
+level (-4, -5, -6) now implies the available instruction set: -5 implies
+MMX and 3DNow!, -6 also implies SSE/SSE2/SSE3. Also note that any CPU
+setting override now reverts to default at the end of each inline assembly
+block.
+.bull
+The debugger has been changed to look for support files in directories
+relative to the debugger executable's location. This allows the debugger to
+be used when no debugger specific environment variables have been set.
+.bull
+A problem with stepping into code (F8) right after debuggee was loaded has
+been fixed in the debugger.
+.bull
+The debugger now looks for debug information in a .sym file when the /DOwnload
+option was specified. Previously it erroneously only looked at the executable 
+if the download option was used.
+.bull
+Support for Microsoft/IBM .sym files generated by the MAPSYM utility has
+been added to the debugger and profiler. This is helpful especially with
+symbol files provided by IBM for OS/2 system DLLs; disassembly now shows
+for instance "call DOS32EXIT" instead of "call 01C74634".
+.bull
+The CauseWay trap file no longer incorrectly maps symbol addresses in
+'large' executables (code segment > 64K).
+.bull
+Interoperability with GNU tools has been improved. The debugger (wd/wdw)
+should now be able to debug GNU-produced executables (with DWARF 2 debug
+information) and vice versa.
+.bull
+New -zld option has been added to the library manager (wlib) to strip
+autodependency information from OMF objects.
+.bull
+New exe2bin utility has been added. See Tools User's Guide for details.
+.bull
+Basic support for compiling OS/2 resource scripts and binding resources
+into OS/2 executables (both NE and LX formats) has been added to the resource
+compiler (wrc).
+.bull
+The include search order in the resource compiler has been changed
+to be more consistent with the C/C++ compilers, as well as with IBM's and
+Microsoft's resource compilers. System include files (enclosed in angle
+brackets) are no longer searched in current directory or in the dicrectory
+of the file containing the #include directive.
+.bull
+The Windows resource compiler has been made more compatible with
+scripts designed for Microsoft's RC in the way it treats string literals.
+.bull
+The MS LINK compatibility wrapper now supports a /RELEASE switch.
+.bull
+Syntax highlighting support for makefiles has been added to the editor.
+The default syntax highlighting scheme has also been made more colourful.
+.bull
+The editor and Windows GUI tools now store configuration files in more
+appropriate locations (notably on multi-user machines).
+.bull
+The CauseWay DOS extender now supports SSE instructions on plain DOS.
+.bull
+Several simple OS/2 SOM programming examples have been added.
+.endbull
+.*
+.section Changes in 1.4 that may Require Recompilation
+.*
+.begnote
+.note stat()
+The
+.kw stat
+function now uses a slightly different
+.kw struct stat
+argument.
+Source code that uses the
+.kw stat
+function or references
+.kw struct stat
+must be recompiled before linking the application with new libraries.
+.endnote
 .*
 .*
 .section Differences from Open Watcom Version 1.2
 .*
 .np
 Following is a list of changes made in &product 1.3:
-:cmt Reflects main Perforce branch as of 2004/06/25
-:cmt Good way to get list of changes since certain date:
-:cmt p4 changes -l @yyyy/mm/dd,#head
 .begbull
 .bull
 The C++ compiler now restricts the scope of variables declared in a for

@@ -22,11 +22,11 @@ Source code is available under the Sybase Open Watcom Public License.
 See http://www.openwatcom.org/ for details.
 .dm trdmrk end
 :set symbol="ver"       value="1".
-:set symbol="rev"       value="3".
+:set symbol="rev"       value="4".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="130".
-:set symbol="vermacro"  value="1230".
+:set symbol="version"   value="140".
+:set symbol="vermacro"  value="1240".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".
