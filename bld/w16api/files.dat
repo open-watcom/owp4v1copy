@@ -1,9 +1,10 @@
 #
 # Win16 headers
 #
-[ DEFAULT type="s" dir="h/win" where="c jc f77 jf77 ac" cond="wintarg" ]
+[ DEFAULT type="s" dir="h/win" where="c f77 ac" cond="wintarg" ]
 usr="cderr.h"
 usr="commdlg.h"
+usr="ctl3d.h"
 usr="custcntl.h"
 usr="dde.h"
 usr="ddeml.h"
@@ -18,7 +19,7 @@ usr="winsock.h"
 #
 # Win16 libraries
 #
-[ DEFAULT type="l" dir="lib286/win" where="c jc f77 jf77 ac" cond="wintarg" ]
+[ DEFAULT type="l" dir="lib286/win" where="c f77 ac" cond="wintarg" ]
 usr="commdlg.lib"
 usr="ctl3d.lib"
 usr="ctl3dv2.lib"

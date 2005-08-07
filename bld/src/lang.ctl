@@ -50,7 +50,6 @@ cdsay .
     <CPCMD> <DEVDIR>/watcom/h/mdef.inc                  <RELROOT>/rel2/src/startup/mdef.inc
 
     <CPCMD> <DEVDIR>/src/misc/*.*                       <RELROOT>/rel2/src/
-    <CPCMD> <DEVDIR>/src/os2/pdd/*.*                    <RELROOT>/rel2/src/os2/pdd/
 
     <CPCMD> <DEVDIR>/plusplus/cpplib/contain/cpp/*.*    <RELROOT>/rel2/src/cpplib/contain/
 
@@ -65,6 +64,7 @@ cdsay .
     <CPCMD> <DEVDIR>/src/goodies/*.*                    <RELROOT>/rel2/samples/goodies/
     <CPCMD> <DEVDIR>/src/os2/*.*                        <RELROOT>/rel2/samples/os2/
     <CPCMD> <DEVDIR>/src/os2/dll/*.*                    <RELROOT>/rel2/samples/os2/dll/
+    <CPCMD> <DEVDIR>/src/os2/pdd/*.*                    <RELROOT>/rel2/samples/os2/pdd/
     <CPCMD> <DEVDIR>/src/os2/som/*.*                    <RELROOT>/rel2/samples/os2/som/
     <CPCMD> <DEVDIR>/src/os2/som/classes/*.*            <RELROOT>/rel2/samples/os2/som/classes/
     <CPCMD> <DEVDIR>/src/os2/som/helloc/*.*             <RELROOT>/rel2/samples/os2/som/helloc/

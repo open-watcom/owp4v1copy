@@ -163,6 +163,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/trmem/lang.ctl ]
 #[ INCLUDE <DEVDIR>/version/lang.ctl ]
 [ INCLUDE <DEVDIR>/dmpobj/lang.ctl ]
+[ INCLUDE <DEVDIR>/exedump/lang.ctl ]
 [ INCLUDE <DEVDIR>/wpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]

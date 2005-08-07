@@ -7,12 +7,14 @@
 [ INCLUDE <DEVDIR>/src/startup/files.dat ]
 [ INCLUDE <DEVDIR>/src/misc/files.dat ]
 [ INCLUDE <DEVDIR>/src/os2/files.dat ]
+[ INCLUDE <DEVDIR>/src/directx/files.dat ]
 
 # CPPLIB/CONTAIN source code
-[ DEFAULT type="s" dir="src/cpplib/contain" cond="rtsource" where="c jc f77 jf77 ac" ]
+[ DEFAULT type="s" dir="src/cpplib/contain" cond="rtsource" where="c f77 ac" ]
 usr="wchash.cpp"
 usr="wclist.cpp"
 usr="wcskip.cpp"
 usr="wcexcept.cpp"
+
 #[ INCLUDE <DEVDIR>/src/cppexam/files.dat ] what is this
 #[ INCLUDE <DEVDIR>/src/p16/files.dat ]

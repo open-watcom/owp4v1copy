@@ -1,22 +1,20 @@
-# EditDLL component of lang.dat
+# EditDLL component of install manifest
+
 [ DEFAULT ]
-usr="weditviw.dll" 	dir="binw" 	cond="doshost winhost |" 	where="c f77"
-usr="weditviw.dll" 	dir="binnt" 	cond="wnthost" 			where="c jc f77 jf77 ac"
+usr="weditviw.dll" 	dir="binw" 	cond="doshost winhost |" 	where="c"
+usr="weditviw.dll" 	dir="binnt" 	cond="wnthost" 			where="c f77 ac"
 usr="weditviw.dll" 	dir="axpnt" 	cond="alphahost"		where="ac"
 
-usr="weditcw.dll" 	dir="binw" 	cond="doshost winhost |"	where="c jc f77 jf77"
-usr="weditcw.dll" 	dir="binnt" 	cond="wnthost" 			where="c jc f77 jf77 ac"
+usr="weditcw.dll" 	dir="binw" 	cond="doshost winhost |"	where="c f77"
+usr="weditcw.dll" 	dir="binnt" 	cond="wnthost" 			where="c f77 ac"
 
-usr="epmlink.dll"	dir="binp/dll"	cond="os2host"			where="c jc f77 jf77"	desc="EPM editor interface DLL for IDE and source browser"
+usr="epmlink.dll"	dir="binp/dll"	cond="os2host"			where="c f77"	desc="EPM editor interface DLL for IDE and source browser"
 
-# This needs redoing!
-#
-#[ DEFAULT type="s" dir="src/editdll" cond="samples" where="c jc f77 jf77" desc="codewright editor DLL source code" ]
-#
+[ DEFAULT type="s" dir="src/editdll" cond="samples" where="c f77" desc="CodeWright editor DLL source code" ]
+usr="wedit.doc"
+usr="wedit.h"
 #usr="weditcw.c"
-#usr="wedit.doc"
-#usr="wedit.h"
-#usr="makefile"
 #usr="weditcw.lnk"
 #usr="weditcwn.lnk"
 #usr="weditcw.h"
+#usr="makefile"
