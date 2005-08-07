@@ -980,6 +980,8 @@ static void putline( char *buffer, int line )
         start = i;
         while( buffer[i] && buffer[i] != HELP_ESCAPE &&
                helpScreen.col+i-start<=helpScreen.area.width ){
+            if( buffer[i] == 0xFF )
+                buffer[i] = 0x20;
             ++i;
         }
         if( i-start > 0 ){
