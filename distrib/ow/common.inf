@@ -12,9 +12,9 @@ DoModifyAuto=1
 DoCopyFiles=1
 ToolHelp=%CDDir%\binw\toolhelp.dll
 spawnbefore=%CDDir%\binp\nmpbind.exe q, SrcIsCD IsOS2
-spawnbefore=%CDDir%\binp\batserv.exe q, SrcIsCD IsOS2
+spawnbefore=%CDDir%\binp\batserv.exe q, SrcIsCD IsOS2DosBox
 spawnafter=cmd.exe /c detach %CDDir%\binp\nmpbind.exe, SrcIsCD IsOS2
-spawnafter=cmd.exe /c detach %CDDir%\binp\batserv.exe, SrcIsCD IsOS2
+spawnafter=cmd.exe /c detach %CDDir%\binp\batserv.exe, SrcIsCD IsOS2DosBox
 autoset=ms=true
 autoset=mm=true
 autoset=mc=true
@@ -88,7 +88,7 @@ cfg=+BOOKSHELF=%DstDir%\BINP\HELP,              IsOS2 IsOS2DosBox |
 cfg=+BOOKSHELF=%CDDir%\BINP\HELP,               IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
 cfg=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox |
 cfg=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox |
-cfg=RUN=%DstDir%\BINP\BATSERV.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\binp\batserv.exe
+cfg=RUN=%DstDir%\BINP\BATSERV.EXE,              IsOS2DosBox ?%DstDir%\binp\batserv.exe
 cfg=RUN=%DstDir%\BINP\NMPBIND.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\binp\nmpbind.exe
 cfg=FILES=20,                                   IsDOS IsWin |
 auto=+PATH=%DstDir%\BINNT,                      IsWin95
