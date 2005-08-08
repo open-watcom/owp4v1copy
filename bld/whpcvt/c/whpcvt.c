@@ -859,7 +859,7 @@ bool read_line(
     for( ;; ) {
         ++Line_num;
         for( buf = Line_buf, len = 0;; ++buf ) {
-#ifdef __QNX__
+#if defined __QNX__ || defined __UNIX__
             do {
                 ch = fgetc( In_file );
             } while( ch == '\r' );
@@ -2125,7 +2125,7 @@ int main(
 
     argc--;
     argv++;
-    
+
     start_arg = valid_args( argc, argv );
     if( start_arg < 0 ) {
         print_help();
