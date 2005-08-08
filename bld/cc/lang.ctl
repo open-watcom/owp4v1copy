@@ -88,6 +88,8 @@ cdsay .
     <CPCMD> linux386.i86/wcci86c.elf <RELROOT>/rel2/binl/wcc
     <CPCMD> linux386.i86/wcci86c.sym <RELROOT>/rel2/binl/wcc.sym
     <CPCMD> linux386.i86/wcci8601.int <RELROOT>/rel2/binl/wcci8601.int
+    <CPCMD> linux386.axp/wccaxpc.elf <RELROOT>/rel2/binl/wccaxp
+    <CPCMD> linux386.axp/wccaxpc.sym <RELROOT>/rel2/binl/wccaxp.sym
   [ ENDIF ]
 
   [ IFDEF (cpu_axp) <2*> ]          # AXP target from 386 hosts
