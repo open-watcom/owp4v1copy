@@ -96,6 +96,9 @@ option, the default trap file that supports local debugging is loaded.
 There are several exceptions.
 .autopoint
 .point
+To debug a CauseWay 32-bit application, you must use
+.us /TRAP=CW.
+.point
 To debug a Tenberry Software 32-bit DOS/4G(W) application, you must
 use
 .us /TRAP=RSI.

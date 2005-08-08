@@ -38,101 +38,11 @@ RFX trap_file[;trap_parm] [rfx_cmd]
 :cmt..ix 'remote file operations' 'trap file'
 The name of a trap file must be specified when running RFX.
 .refalso vidrem
-You are now ready to copy files back and forth between machines.
-.*
-.section *refid=rfxfile Specifying Files on Remote and Local Machines
-.*
 .np
-When using the remote file operations facility, a method for
-identifying files on either of the local or remote machines is
-required.
-In order to identify files on either the local or remote machine, two
-special prefixes are supported.
-.begnote
-.mnote @L
-.ix 'local file specifier prefix' '@L'
-.ix '@L'
-The "@L" prefix is used to indicate that the file resides on the local
-machine (the one on which RFX or the debugger is running).
-.millust begin
-@L[d:][path]filename[.ext]
-.millust end
-.pc
-When "[path]" is not specified, the current directory of the specified
-drive of the local machine is assumed.
-When "[d:]" is not specified, the current drive of the local machine is
-assumed.
-.exam begin
-@LOUTPUT.LOG
-@LD:\CMDS
-@LD:\CMDS\DATA.TMP
-.exam end
-.mnote @R
-.ix 'remote file specifier prefix' '@R'
-.ix '@R'
-The "@R" prefix is used to indicate that the file resides on the remote
-machine.
-.millust begin
-@R[d:][path]filename[.ext]
-.millust end
-.pc
-When "[path]" is not specified, the current directory of the specified
-drive of the remote machine is assumed.
-When "[d:]" is not specified, the current drive of the remote machine is
-assumed.
-.exam begin
-@RMYAPPL.DAT
-@RD:\PROGRAMS\EXE\MYAPPL.LNK
-@R\PROGRAMS\SRC
-@R\PROGRAMS\SRC\UILIB.C
-.exam end
-.endnote
-.pc
-Thus a file may be identified in three different ways.
-.millust begin
-[d:][path]filename[.ext]
-@L[d:][path]filename[.ext]
-@R[d:][path]filename[.ext]
-.millust end
-.pc
-A file of the first form resides on either the local or remote machine
-depending on whether the current drive is a local or remote drive.
-A file of the second form always resides on the local machine.
-A file of the third form always resides on the remote machine.
-.autonote Notes:
-.note
-In the each form, the omission of "[d:]" indicates the current drive.
-.millust begin
-[path]filename[.ext]
-@L[path]filename[.ext]
-@R[path]filename[.ext]
-.millust end
-.note
-In the each form, the omission of "[path]" indicates the current path
-of the specified drive.
-.millust begin
-[d:]filename[.ext]
-@L[d:]filename[.ext]
-@R[d:]filename[.ext]
-.millust end
-.pc
-Observe that if "[d:]" is omitted also then the following forms are
-obtained:
-.millust begin
-filename[.ext]
-@Lfilename[.ext]
-@Rfilename[.ext]
-.millust end
-.note
-The special drive prefixes "@L" and "@R" cannot be used in your own
-application to reference files on two different machines.
-These prefixes are recognized by RFX and the &dbgname only.
-Should the situation arise where one of your filenames begins with the
-same prefix ("@L", "@l", "@R" or "@r") then "@@" can be used.
-For example, if your wish to refer to the file on disk called "@link@"
-then you could specify "@@link@".
-Note that ".\@link@" would also suffice.
-.endnote
+See the section entitled :HDREF refid='rfxfile'. for an explanation of
+remote and local file names.
+.np
+You are now ready to copy files back and forth between machines.
 .*
 .section RFX Commands
 .*

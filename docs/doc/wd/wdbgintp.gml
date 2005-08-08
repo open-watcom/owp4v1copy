@@ -21,6 +21,11 @@ Press the Print Screen key. This will work if the program is stuck in
 a loop. If it has misbehaved in some other way, Print Screen may have
 no effect since a misbehaved application may overwrite code, data, the
 debugger, or operating system code.
+.ix 'CauseWay'
+.np
+When debugging with the CauseWay DOS extender, by default the running
+program can be interrupted by pressing CTRL-ALT. The key combination is
+configurable in the CWHELP.CFG file (located in "BINW" directory).
 .*
 .section Windows 3.x
 .*

@@ -10,13 +10,18 @@
 Remote debugging allows you to run the debugger on one side of a
 communication link and the application being debugged on the other.
 Remote debugging is required when there is not enough memory to run
-both the debugger and the application on the same machine.
+both the debugger and the application on the same machine. Remote
+debugging may also be required for debugging graphical applications.
 .np
 The DOS debugger runs in protected mode (above the 1M mark), with a
 small memory footprint in the first 640k. Newer operating systems such
 as OS/2 and Windows NT/9x have eliminated the 640k barrier, so there
-is little need for remote debugging. Remote debugging is also required
-to debug Novell NetWare applications.
+is little need for remote debugging due to memory limitations alone.
+However, remote debugging is often helpful when debugging graphical
+or interactive application where the debugger interferes with the user
+application.
+Remote debugging is also required to debug Novell NetWare applications,
+or specialized embedded systems that cannot run the entire debugger.
 .np
 There are many different communication links supported. Some
 communicate between two machines. In this case an external
@@ -421,9 +426,17 @@ B>&dbgcmd. /tr=par;3 app
 .np
 The "RSI" trap file is specified for DOS/4G(W) applications.
 You can specify other trap files for the other DOS extenders
-(e.g., "PLS" for Phar Lap).
+(e.g., "CW" for CauseWay).
 Do not forget to include other required files in the path.
 .begnote
+.*
+.note CW
+Both "CWSTUB.EXE" and the loader help file "CWHELP.EXE" must also be
+located in one of the directories listed in the DOS
+.ev PATH
+environment variable.
+See the section entitled :HDREF refid='vidcw'. for more information
+on debugging applications that use the CauseWay DOS extender.
 .*
 .note RSI
 Both "DOS4GW.EXE" and the loader help file "RSIHELP.EXP" must also be
@@ -522,9 +535,17 @@ B>&dbgcmd. /tr=ser;2.9600 app
 .np
 The "RSI" trap file is specified for DOS/4G(W) applications.
 You can specify other trap files for the other DOS extenders
-(e.g., "PLS" for Phar Lap).
+(e.g., "CW" for CauseWay).
 Do not forget to include other required files in the path.
 .begnote
+.*
+.note CW
+Both "CWSTUB.EXE" and the loader help file "CWHELP.EXE" must also be
+located in one of the directories listed in the DOS
+.ev PATH
+environment variable.
+See the section entitled :HDREF refid='vidcw'. for more information
+on debugging applications that use the CauseWay DOS extender.
 .*
 .note RSI
 Both "DOS4GW.EXE" and the loader help file "RSIHELP.EXP" must also be
@@ -589,9 +610,17 @@ B>&dbgcmd. /tr=win;whats_in_a_name app
 .np
 The "RSI" trap file is specified for DOS/4G(W) applications.
 You can specify other trap files for the other DOS extenders
-(e.g., "PLS" for Phar Lap).
+(e.g., "CW" for CauseWay).
 Do not forget to include other required files in the path.
 .begnote
+.*
+.note CW
+Both "CWSTUB.EXE" and the loader help file "CWHELP.EXE" must also be
+located in one of the directories listed in the DOS
+.ev PATH
+environment variable.
+See the section entitled :HDREF refid='vidcw'. for more information
+on debugging applications that use the CauseWay DOS extender.
 .*
 .note RSI
 Both "DOS4GW.EXE" and the loader help file "RSIHELP.EXP" must also be

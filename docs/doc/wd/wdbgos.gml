@@ -33,6 +33,14 @@ The &dbgname supports debugging of 32-bit applications developed with
 A DOS extender must be used to run the application.
 The following DOS extenders are supported.
 .begnote $break
+.*
+.note CauseWay DOS Extender
+.ix 'DOS extenders' 'CauseWay'
+.ix 'CauseWay'
+a public domain DOS extender included in the &watc32 and &watf32 packages.
+Note that this DOS extender is largely compatible with DOS/4GW and can often
+be used interchangeably.
+.*
 .note DOS/4GW
 .ix 'DOS extenders' 'DOS/4GW'
 .ix 'DOS/4GW'
@@ -42,6 +50,7 @@ a DOS extender from Tenberry Software, Inc.
 DOS/4GW is a subset of Tenberry Software's DOS/4G product.
 DOS/4GW is customized for use with &watc32 and &watf32 and is
 included in these packages.
+.*
 .note 386|DOS-Extender
 .ix 'DOS extenders' '386|DOS-Extender'
 .ix '386|DOS-Extender'
@@ -51,6 +60,43 @@ included in these packages.
 .endnote
 .*
 .beglevel
+.*
+.section *refid=vidcw Debugging CauseWay 32-bit DOS Extender Applications
+.*
+.np
+.ix 'CauseWay'
+.ix 'CWSTUB.EXE'
+.ix 'CW.TRP'
+.ix 'trap file' 'CW.TRP'
+When using the CauseWay DOS extender, the "CWSTUB.EXE" file must be located
+in one of the directories listed in the DOS
+.ev PATH
+environment variable.
+The "CWSTUB.EXE" file will usually be stored in the "BINW" directory
+of the &company compiler package.
+You must also use the
+.sy TRap=CW
+option.
+The "CW.TRP" file will usually be stored in the "BINW" directory of
+the &company compiler package.
+You should ensure that this "BINW" directory is included in the DOS
+.ev PATH
+environment variable.
+Otherwise, you must specify the full path name for the trap file.
+.np
+The help file "CWHELP.EXE" must also be located in one of the
+directories listed in the DOS
+.ev PATH
+environment variable.
+It will usually be stored in the "BINW" directory of the &company
+compiler package.
+.exam begin
+C>&dbgcmd /trap=cw hello
+  or
+C>set &dbgcmd=/trap#cw
+C>&dbgcmd hello
+.exam end
+.*
 .*
 .section *refid=vidrsi Debugging DOS/4G(W) 32-bit DOS Extender Applications
 .*

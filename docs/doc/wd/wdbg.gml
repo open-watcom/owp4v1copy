@@ -65,7 +65,7 @@
 :INCLUDE file='wdbgcmd.gml'.
 :INCLUDE file='wdbgsymb.gml'.
 :INCLUDE file='wdbgwire.gml'.
-:CMT. :INCLUDE file='wdbgrfx.gml'.
+:INCLUDE file='wdbgrfx.gml'.
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.

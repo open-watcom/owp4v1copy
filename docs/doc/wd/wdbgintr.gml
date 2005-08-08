@@ -18,6 +18,8 @@ run on the following platforms:
 .bull
 DOS
 .bull
+CauseWay DOS Extender
+.bull
 Tenberry Software DOS/4G Extender
 .bull
 Phar Lap DOS Extender

@@ -3,7 +3,9 @@
 .np
 .ix 'symbols' 'predefined'
 The &dbgname defines a number of symbols which have special meaning.
-Each of the registers is designated by a special name.
+Each of the registers is designated by a special name. Note that the
+registers listed here are applicable when the target is an x86 platorm.
+For other platforms, the register set is different.
 .begnote $compact
 .mnote eax
 32-bit EAX register (32-bit mode only)
@@ -465,8 +467,10 @@ QNX from QNX Software Systems Ltd.
 .ix 'DOS extenders' 'DOS/4GW'
 .ix 'DOS/4GW'
 .ix 'Tenberry Software, Inc.'
-DOS/4GW from Tenberry Software, Inc. (included in the &watc32 and
-&watf32 packages)
+.ix 'DOS extenders' 'CauseWay'
+.ix 'CauseWay'
+DOS/4GW from Tenberry Software, Inc., or CauseWay (both included in the
+&watc32 and &watf32 packages)
 .note 8
 .ix 'Windows 3.x'
 .ix 'Microsoft Corp.'
