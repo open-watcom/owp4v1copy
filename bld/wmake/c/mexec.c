@@ -213,7 +213,7 @@ STATIC const char * const   dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
-    "RMDIR",
+"RMDIR",
     "SET",
 #define COM_SET     30
     "SETLOCAL",
@@ -239,6 +239,7 @@ static const char * const   percentCmds[] = {
     "MAKE",
     "NULL",
     "QUIT",
+    "REN",
     "STOP",
     "WRITE",
 };
@@ -253,6 +254,7 @@ enum {
     PER_MAKE,
     PER_NULL,
     PER_QUIT,
+    PER_RENAME,
     PER_STOP,
     PER_WRITE
 };
@@ -813,6 +815,75 @@ STATIC RET_T percentErase( char *arg )
     return( RET_ERROR );
 }
 
+STATIC RET_T percentRename( char *arg )
+/************************************/
+{
+    char        *p;
+    char        *fn1, *fn2;
+
+    assert( arg != NULL );
+
+    if( Glob.noexec ) {
+        return( RET_SUCCESS );
+    }
+
+    /* Get first file name, must end in space but may be surrounded by double quotes */
+    p = SkipWS( arg );
+    fn1 = p;
+    if( *p != DOUBLEQUOTE ) {
+        while( isfilec( *p ) ) {
+            ++p;
+        }
+    } else {
+        ++p;    // Skip the first quote
+        ++fn1;
+        while( *p!= DOUBLEQUOTE && *p!= NULLCHAR ) {
+             ++p;
+        }
+        if( *p!= NULLCHAR ) {
+            *p = NULLCHAR;
+            p++;
+        }
+    }
+
+    if( *p == NULLCHAR || !isws( *p ) ) {
+        PrtMsg( ERR | SYNTAX_ERROR_IN, percentCmds[PER_RENAME] );
+        PrtMsg( INF | PRNTSTR, "First file" );
+        PrtMsg( INF | PRNTSTR, p );
+        return( RET_ERROR );
+    }
+    *p = '\0';              /* terminate first file name */
+    ++p;
+
+    /* Get second file name as well */
+    p = SkipWS( p );
+    fn2 = p;
+    if( *p != DOUBLEQUOTE ) {
+        while( isfilec( *p ) ) {
+            ++p;
+        }
+    } else {
+        ++p;    // Skip the first quote
+        ++fn2;
+        while( *p!= DOUBLEQUOTE && *p!= NULLCHAR ) {
+             ++p;
+        }
+        if( *p!= NULLCHAR ) {
+            *p = NULLCHAR;
+            p++;
+        }
+    }
+
+    if( *p != NULLCHAR && !isws( *p ) ) {
+        PrtMsg( ERR | SYNTAX_ERROR_IN, percentCmds[PER_RENAME] );
+        return( RET_ERROR );
+    }
+    *p = '\0';              /* terminate second file name */
+    if( rename( fn1, fn2 )  == 0)
+        return( RET_SUCCESS );
+    else
+        return( RET_ERROR );
+}
 
 STATIC RET_T percentCmd( const char *cmdname, char *arg )
 /********************************************************
@@ -864,6 +935,9 @@ STATIC RET_T percentCmd( const char *cmdname, char *arg )
     case PER_QUIT:
         closeCurrentFile();
         exit( ExitSafe( EXIT_OK ) );
+
+    case PER_RENAME:
+        return( percentRename( arg ) );
 
     case PER_STOP:
         closeCurrentFile();
