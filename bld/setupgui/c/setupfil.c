@@ -212,7 +212,6 @@ extern bool ModifyAutoExec( void )
     if( num_auto == 0 && num_cfg == 0 ) {
         return( TRUE );
     }
-    ConfigModified = TRUE;
 #ifdef __OS2__
     SetVariableByName( "AutoText", GetVariableStrVal( "IDS_MODIFY_CONFIG" ) );
 #else
@@ -332,6 +331,8 @@ extern bool ModifyAutoExec( void )
             MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
         }
 #endif
+        // indicate config files were modified if and only if we got this far
+        ConfigModified = TRUE;
     } else {
         // place modifications in AUTOEXEC.NEW and CONFIG.NEW
 #ifndef __OS2__
@@ -1192,7 +1193,6 @@ extern bool ModifyConfiguration( void )
     if( num_env == 0 ) {
         return( TRUE );
     }
-    ConfigModified = TRUE;
 
     rc = RegOpenKey( HKEY_CURRENT_USER, "Environment", &RegLocation[CURRENT_USER].key );
     if( rc == 0 ) {
@@ -1241,6 +1241,8 @@ extern bool ModifyConfiguration( void )
 
     if( mod_type == MOD_IN_PLACE ) {
         bRet = ModEnv( num_env );
+        // indicate config files were modified if and only if we got this far
+        ConfigModified = TRUE;
     } else {  // handle MOD_LATER case
         found = GUIMemAlloc( num_env * sizeof( bool ) );
         memset( found, FALSE, num_env * sizeof( bool ) );
