@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Configuration for OS/2 host, Alpha AXP target.
+* Description:  Configuration for Linux host, Alpha AXP target.
 *
 ****************************************************************************/
 
