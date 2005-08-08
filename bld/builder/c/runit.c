@@ -33,6 +33,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <utime.h>
 #ifdef __UNIX__
 #include <unistd.h>
 #include <dirent.h>
@@ -166,6 +167,8 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     FILE                *fp;
     unsigned            attr;
 #else
+    struct stat         statsrc, statdst;
+    int                 dstrc, srcrc;
     char                pattern[_MAX_PATH];
 #endif
 
@@ -192,8 +195,8 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             _fullpath( head->dst, dst, sizeof( head->dst ) );
             break;
         }
-#ifndef __UNIX__
         if( test_abit ) {
+#ifndef __UNIX__
             fp = fopen( head->dst, "rb" );
             if( fp != NULL )
                 fclose( fp );
@@ -203,8 +206,16 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
                 free( head );
                 head = NULL;
             }
-        }
+#else
+            /* Linux has (strangely) no 'archive' attribute, compare modification times */
+            dstrc = stat(head->dst, &statdst);
+            srcrc = stat(head->src, &statsrc);
+            if ((dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime)) {
+                free( head );
+                head = NULL;
+            }
 #endif
+        }
         return( head );
     }
 #ifdef __UNIX__
@@ -254,8 +265,8 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             break;
         }
         _fullpath( curr->dst, full, sizeof( curr->dst ) );
-#ifndef __UNIX__
         if( test_abit ) {
+#ifndef __UNIX__
             fp = fopen( curr->dst, "rb" );
             if( fp != NULL )
                 fclose( fp );
@@ -264,8 +275,16 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
                 free( curr );
                 continue;
             }
-        }
+#else
+            /* Linux has (strangely) no 'archive' attribute, compare modification times */
+            dstrc = stat(curr->dst, &statdst);
+            srcrc = stat(curr->src, &statsrc);
+            if ((dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime)) {
+                free( curr );
+                continue;
+            }
 #endif
+        }
         *owner = curr;
         owner = &curr->next;
     }
@@ -292,7 +311,7 @@ static int mkdir_nested( char *path )
     /* skip initial path separator if present */
     if( (p[0] == '/') || (p[0] == '\\') )
         ++p;
-	  
+
     /* find the next path component */
     while( p < end ) {
         while( (p < end) && (*p != '/') && (*p != '\\') )
@@ -331,6 +350,8 @@ static unsigned ProcOneCopy( char *src, char *dst )
     FILE        *dp;
     unsigned    len;
     unsigned    out;
+    struct stat    srcbuf;
+    struct utimbuf dstbuf;
     static char buff[32 * 1024];
 
     sp = fopen( src, "rb" );
@@ -390,18 +411,19 @@ static unsigned ProcOneCopy( char *src, char *dst )
             return( 1 );
         }
     }
-    /* set the date back? */
     fclose( sp );
     fclose( dp );
+
+    /* make real copy, set the date back */
+    stat( src, &srcbuf );
+    dstbuf.actime = srcbuf.st_atime;
+    dstbuf.modtime = srcbuf.st_mtime;
+    utime(dst, &dstbuf);
 #ifdef __UNIX__
-    {
-        /* copy permissions: mostly necessary for the "x" bit */
-        struct stat buf;
-        stat( src, &buf );
-        // some files is copied from the source tree with the read-only permission
-        // for next run we need the write permission for the current user as minimum
-        chmod( dst, buf.st_mode | S_IWUSR );
-    }
+    /* copy permissions: mostly necessary for the "x" bit */
+    // some files is copied from the source tree with the read-only permission
+    // for next run we need the write permission for the current user as minimum
+    chmod( dst, srcbuf.st_mode | S_IWUSR );
 #endif
     return( 0 );
 }

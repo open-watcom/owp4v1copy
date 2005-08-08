@@ -135,15 +135,18 @@ Set the environment variable "var" to "value".
 Copy the source file to the destination file. The src_file may have
 wild card characters in it. The destination file may only be a full pathname,
 or it may end in a '\' or '/' character, in which case the source file
-name is used in the destination.
+name is used in the destination. The destination file will have the same
+'access' and 'modified' times as the source file.
 BUILDER will attempt to create the destination path if it does not exist and the source file exists.
+
 
         ACOPY src_file dst_file
 
 Same as the COPY command, except that the file is only copied if dst_file
 does not exist or src_file has the archive bit turned on. At the _end_ of
 the control file, all src_file's copied by an ACOPY have their archive bits
-turned off.
+turned off. On Linux, where there is no archive bit, the 'modified' times
+of the two files are compared instead: if unequal, the file is copied.
 
         ECHO text
 
