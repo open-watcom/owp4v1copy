@@ -9,6 +9,9 @@ rm_exe = rm.exe
 !endif
 
 all : langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe &
+!ifdef __UNIX__
+        runasdos.exe &
+!endif
         comstrip.exe $(rm_exe) builder.exe wgrep.exe
 
 inc_dirs = -I"../../pmake" -I"../../posix/h"
@@ -24,13 +27,19 @@ extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 
 .obj.exe :
         $(cl) $(clflags) $<
-!ifndef __$(host_os)__
-                                        # No copy where systems differ
+!ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
 !else ifdef __UNIX__
         cp   $^. $(%OWBINDIR)/$^&       # Remove .exe from working name
 !else
         copy $^. $(%OWBINDIR)\ > nul    # MS-influenced command noisy
 !endif
+
+# runasdos will run itself under dosemu. Copy once for each program that still
+# exists only as dos version.
+runasdos.exe: runasdos.obj
+        $(cl) $(clflags) $<
+        cp   $^. $(%OWBINDIR)/parsedlg
+        cp   $^. $(%OWBINDIR)/wgml
 
 builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj
 langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
