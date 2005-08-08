@@ -1,36 +1,36 @@
 clean : .SYMBOLIC
- @if exist *.pdf erase *.pdf
- @if exist *.ps erase *.ps
- @if exist *.ihp erase *.ihp
- @if exist *.htm erase *.htm
- @if exist *.bmp erase *.bmp
- @if exist *.hlp erase *.hlp
- @if exist *.cnt erase *.cnt
- @if exist *.h erase *.h
- @if exist *.ipf erase *.ipf
- @if exist *.inf erase *.inf
- @if exist *.tmp erase *.tmp
+ @if exist *.pdf rm -f *.pdf
+ @if exist *.ps rm -f *.ps
+ @if exist *.ihp rm -f *.ihp
+ @if exist *.htm rm -f *.htm
+ @if exist *.bmp rm -f *.bmp
+ @if exist *.hlp rm -f *.hlp
+ @if exist *.cnt rm -f *.cnt
+ @if exist *.h rm -f *.h
+ @if exist *.ipf rm -f *.ipf
+ @if exist *.inf rm -f *.inf
+ @if exist *.tmp rm -f *.tmp
 
- @if exist *.ib erase *.ib
- @if exist *.blt erase *.blt
- @if exist *.rtf erase *.rtf
- @if exist *.hpj erase *.hpj
- @if exist *.blt erase *.blt
- @if exist *.ph erase *.ph
- @if exist *.hh erase *.hh
- @if exist *.err erase *.err
- @if exist *.ptf erase *.ptf
- @if exist *.idx erase *.idx
- @if exist *.tbl erase *.tbl
- @if exist *.kw erase *.kw
- @if exist *.mix erase *.mix
- @if exist *.cn1 erase *.cn1
- @if exist *.gml erase *.gml
- @if exist *.lay erase *.lay
- @if exist *.tim erase *.tim
- @if exist *.dat erase *.dat
+ @if exist *.ib rm -f *.ib
+ @if exist *.blt rm -f *.blt
+ @if exist *.rtf rm -f *.rtf
+ @if exist *.hpj rm -f *.hpj
+ @if exist *.blt rm -f *.blt
+ @if exist *.ph rm -f *.ph
+ @if exist *.hh rm -f *.hh
+ @if exist *.err rm -f *.err
+ @if exist *.ptf rm -f *.ptf
+ @if exist *.idx rm -f *.idx
+ @if exist *.tbl rm -f *.tbl
+ @if exist *.kw rm -f *.kw
+ @if exist *.mix rm -f *.mix
+ @if exist *.cn1 rm -f *.cn1
+ @if exist *.gml rm -f *.gml
+ @if exist *.lay rm -f *.lay
+ @if exist *.tim rm -f *.tim
+ @if exist *.dat rm -f *.dat
 
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
- @if exist *.gid erase *.gid
+ @if exist *.gid rm -f *.gid
 
