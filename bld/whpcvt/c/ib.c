@@ -240,15 +240,17 @@ static void str_out_ib(
 ) {
     int         esc;
 
-    while( *str != '\0' ) {
-        esc = map_char_ib( *str );
-        if( esc != MAP_REMOVE ) {
-            if( esc != MAP_NONE ) {
-                whp_fprintf( f, "%c", esc );
+    if( str != NULL ) {
+        while( *str != '\0' ) {
+            esc = map_char_ib( *str );
+            if( esc != MAP_REMOVE ) {
+                if( esc != MAP_NONE ) {
+                    whp_fprintf( f, "%c", esc );
+                }
+                whp_fwrite( str, 1, 1, f );
             }
-            whp_fwrite( str, 1, 1, f );
+            str++;
         }
-        str++;
     }
 }
 
