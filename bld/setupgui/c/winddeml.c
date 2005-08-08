@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <windows.h>
 #include <ddeml.h>
 
@@ -282,9 +283,15 @@ static void get_group_name( char *buff, char *group )
 static BOOL create_group( char *group )
 {
     char                buff[ _MAX_PATH ];
+    int                 rc;
 
     get_group_name( buff, group );
-    return( mkdir( buff ) != -1 );
+    rc = mkdir( buff );
+
+    if( rc == -1 && errno != EEXIST )
+        return( FALSE );
+    else
+        return( TRUE );
 }
 
 static void delete_dir( char * dir )
