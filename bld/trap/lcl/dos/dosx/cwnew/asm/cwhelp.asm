@@ -141,9 +141,9 @@ ReqTable        label dword
         dd 0    ;3
         dd 0    ;4
         dd 0    ;5
-        dd REQ_GET_SYS_CONFIG   ;6
+        dd 0;   REQ_GET_SYS_CONFIG   ;6
         dd REQ_MAP_ADDR         ;7
-        dd REQ_ADDR_INFO        ;8
+        dd 0;   REQ_ADDR_INFO        ;8
         dd REQ_CHECKSUM_MEM     ;9
         dd REQ_READ_MEM         ;10
         dd REQ_WRITE_MEM        ;11
@@ -174,7 +174,7 @@ ReqTable        label dword
 
         dd REQ_READ_REGS        ;36
         dd REQ_WRITE_REGS       ;37
-        dd REQ_MACHINE_DATA     ;38
+        dd 0;   REQ_MACHINE_DATA     ;38
 
         dd 0    ;39
         dd 0    ;40
@@ -367,123 +367,6 @@ cLockStart      label byte
 
 ;*******************************************************************************
 ;
-;Get system configuration info (processor type etc).
-;
-;On Entry:
-;
-;ECX    - remaining request bytes.
-;ESI    - current request data.
-;EDI    - result buffer position.
-;
-;Returns:
-;
-;ECX,ESI & EDI updated.
-;
-;*******************************************************************************
-        procs   REQ_GET_SYS_CONFIG
-        local   @@incount:DWORD,@@inaddr:DWORD,@@outaddr:DWORD
-
-;       pushads
-        pushad
-
-;
-        inc     esi             ;skip REQ_GET_SYS_CONFIG
-        dec     ecx
-;
-        mov     @@incount,ecx
-        mov     @@inaddr,esi
-        mov     @@outaddr,edi
-;
-;Get the main processor type.
-;
-        mov     edx,esp         ; save current stack
-        and     esp,not 3       ; align it to avoid faults
-        pushfd                  ; get EFLAGS
-        pop     eax             ; ...
-        mov     ecx,eax         ; save original
-        xor     eax,40000H      ; flip AC bit
-        push    eax             ; set new flags
-        popfd                   ; ...
-        pushfd                  ; get new flags
-        pop     eax             ; ...
-        xor     eax,ecx         ; see if AC bit has changed
-        shr     eax,18          ; EAX = 0 if 386, 1 otherwise
-        add     eax,3
-        push    ecx             ; restore EFLAGS
-        popfd                   ; ...
-        mov     esp,edx         ; restore stack pointer
-        mov     edi,@@outaddr
-        mov     [edi],al
-        inc     @@outaddr
-;
-;Get the math co-processor type.
-;
-        push    ebp             ; save bp
-        sub     eax,eax         ; set initial control word to 0
-        push    eax             ; push it on stack
-        mov     ebp,esp         ; point to control word
-        fninit                  ; initialize math coprocessor
-        fnstcw [ebp]            ; store control word in memory
-        mov     al,0            ; assume no coprocessor present
-        mov     ah,[ebp+1]      ; upper byte is 03h if
-        cmp     ah,03h          ; coprocessor is present
-        jne     @@0conf         ; exit if no coprocessor present
-        mov     al,1            ; assume it is an 8087
-        and     d[ebp],NOT 0080h        ; turn interrupts on (IEM=0)
-        fldcw   [ebp]           ; load control word
-        fdisi                   ; disable interrupts (IEM=1)
-        fstcw   [ebp]           ; store control word
-        test    d[ebp],080h     ; if IEM=1, then 8087
-        jnz     @@0conf
-        finit                   ; use default infinity mode
-        fld1                    ; generate infinity by
-        fldz                    ;   dividing 1 by 0
-        fdiv                    ; ...
-        fld     st              ; form negative infinity
-        fchs                    ; ...
-        fcompp                  ; compare +/- infinity
-        fstsw   [ebp]           ; equal for 87/287
-        fwait                   ; wait fstsw to complete
-        mov     eax,[ebp]       ; get NDP control word
-        mov     al,2            ; assume 80287
-        sahf                    ; store condition bits in flags
-        jz      @@0conf         ; it's 287 if infinities equal
-        mov     al,3            ; indicate 80387
-@@0conf:
-        pop     ebp
-        pop     ebp
-        mov     edi,@@outaddr
-        mov     [edi],al
-        inc     @@outaddr
-;
-;Set OS values.
-;
-        mov     ah,30h
-        int     21h                 ;Get DOS version.
-        mov     edi,@@outaddr
-        mov     [edi],al
-        mov     [edi+1],ah
-        mov     b[edi+2],7          ;OS_RATIONAL
-        add     @@outaddr,1+1+1
-;
-;Set huge shift value.
-;
-        mov     edi,@@outaddr
-        mov     b[edi],12           ;HUGE_SHIFT!
-        inc     @@outaddr
-;
-;Return results to caller.
-;
-        popad
-        mov     ecx,@@incount
-        mov     esi,@@inaddr
-        mov     edi,@@outaddr
-        ret
-        endps
-
-
-;*******************************************************************************
-;
 ;Convert selector number/offset into real address.
 ;
 ;On Entry:
@@ -596,61 +479,6 @@ addrsetb:
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
-        ret
-        endps
-
-
-;*******************************************************************************
-;
-;Work out if specified address has big bit set.
-;
-;On Entry:
-;
-;ECX    - remaining request bytes.
-;ESI    - current request data.
-;EDI    - result buffer position.
-;
-;Returns:
-;
-;ECX,ESI & EDI updated.
-;
-;*******************************************************************************
-; commented MED 1/20/2003
-        procs   REQ_ADDR_INFO
-        movzx   eax,w[esi+1+4]  ; addr_info_req.req + addr_info_req.in_addr.segment
-        lar     eax,eax
-        test    eax,00400000h
-        mov     eax,1
-        jnz     @@0info
-        xor     eax,eax
-@@0info:
-        mov     b[edi],al       ; addr_info_ret.is_32
-        inc     edi             ; size of (addr_info_ret)
-        add     esi,1+6         ; sizeof (addr_info_req)
-        sub     ecx,1+6
-        ret
-        endps
-
-
-;*******************************************************************************
-; REQ_MACHINE_DATA processing, follows REQ_ADDR_INFO, MED 1/20/2003
-;*******************************************************************************
-        procs   REQ_MACHINE_DATA
-        movzx   eax,w[esi+1+1+4]        ; machine_data_req.req + machine_data_req.info_type + machine_data_req.addr.segment
-        lar     eax,eax
-        test    eax,00400000h
-        mov     eax,1
-        jnz     @@0data
-        xor     eax,eax
-@@0data:
-        mov     b[edi+8],al             ; data, offset sizeof(machine_data_ret)
-        xor     eax,eax
-        mov     d[edi],eax              ; machine_data_ret.cache_start
-        dec     eax
-        mov     d[edi+4],eax            ; machine_data_ret.cache_end
-        add     edi,1+8                 ; sizeof(data) + sizeof(machine_data_ret)
-        add     esi,1+1+6               ; sizeof(machine_data_req)
-        sub     ecx,1+1+6
         ret
         endps
 

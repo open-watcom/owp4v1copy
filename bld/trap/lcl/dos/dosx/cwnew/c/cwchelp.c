@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "watcom.h"
+#include "trpimp.h"
 #include "dpmi.h"
 
 extern void ReadConfig( void );
@@ -133,18 +134,23 @@ struct req_header {
     unsigned_32     length;
 };
 
+/* C trap request handlers */
+extern unsigned (* const CoreRequests[])( void );
+
+/* Assembly trap request handlers */
 typedef unsigned_32 (req_fn)( void *req_in, void *req_out, unsigned_32 req_len );
 #pragma aux req_fn parm [esi] [edi] [ecx] value [ecx] modify [eax];
 
 typedef req_fn *preq_fn;
 
+extern preq_fn   ReqTable[128];
+#pragma aux ReqTable "*";
+
+
 static struct req_header    *ReqAddress;
 static char                 ReqBuffer[1024];
 static unsigned_32          ReqLength;
 static rm_call_struct       RealModeRegs;
-
-extern preq_fn   ReqTable[128];
-#pragma aux ReqTable "*";
 
 extern unsigned_32  DebugLevel;
 #pragma aux DebugLevel "*";
@@ -247,12 +253,32 @@ void Dispatcher( void )
             request &= 0x7f;
 
             DBG( "Processing request %d\r\n", request );
-            if( ReqTable[request] == NULL ) {
+            if( CoreRequests[request] != NULL ) {
+                unsigned    ret_len;
+                mx_entry    in_entry;
+                mx_entry    out_entry;
+
+                in_entry.ptr = (void *)&ReqBuffer;
+                in_entry.len = len;
+                In_Mx_Num = 1;
+                In_Mx_Ptr = &in_entry;
+                out_entry.ptr = out_ptr;
+                out_entry.len = 0;
+                Out_Mx_Num = 1;
+                Out_Mx_Ptr = &out_entry;
+
+                DBG( "Calling C trap request handler..." );
+                ret_len = CoreRequests[request]();
+                DBG( "...back from request\r\n" );
+                out_ptr = (char *)out_ptr + ret_len;
+                new_len = 0;
+
+            } else if( ReqTable[request] == NULL ) {
                 dos_printf( "Unimplemented request! (%d)\r\n", request );
                 // Display request buffer if we don't understand it
                 HexDumpBuffer( ReqBuffer, len );
             } else {
-                DBG( "Calling trap request handler..." );
+                DBG( "Calling assembly trap request handler..." );
                 // TODO: fix_es() and get_edi() need to go once all requests
                 // are handled in C
                 fix_es();

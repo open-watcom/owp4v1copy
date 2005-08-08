@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#define DEBUG_TRAP
+//#define DEBUG_TRAP
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -45,13 +45,14 @@
 extern  char        NPXType( void );
 
 #ifdef DEBUG_TRAP
-#define _DBG2( x ) printf x ; fflush( stdout )
-#define _DBG1( x ) printf x ; fflush( stdout )
-#define _DBG( x ) printf x ; fflush( stdout )
+extern void dos_printf( const char *format, ... );
+#define _DBG( ... )   dos_printf( __VA_ARGS__ )
+#define _DBG1( ... )   dos_printf( __VA_ARGS__ )
+#define _DBG2( ... )   dos_printf( __VA_ARGS__ )
 #else
-#define _DBG2( x )
-#define _DBG1( x )
-#define _DBG( x )
+#define _DBG( ... )
+#define _DBG1( ... )
+#define _DBG2( ... )
 #endif
 
 
@@ -63,7 +64,7 @@ NULL,//    ReqResume,
 NULL,//    ReqGet_supplementary_service,
 NULL,//    ReqPerform_supplementary_service,
     ReqGet_sys_config,
-    ReqMap_addr,
+NULL,//    ReqMap_addr,
     ReqAddr_info,   //obsolete
 NULL,//    ReqChecksum_mem,
 NULL,//    ReqRead_mem,
@@ -94,7 +95,7 @@ NULL,//    ReqRedirect_stdout,
 NULL,//    ReqSplit_cmd,
 NULL,//    ReqRead_regs,
 NULL,//    ReqWrite_regs,
-NULL,//    ReqMachine_data,
+    ReqMachine_data,
 };
 
 
@@ -118,9 +119,9 @@ unsigned ReqGet_sys_config( void )
     get_sys_config_ret  *ret;
     unsigned_16         dosver;
 
-    _DBG1(( "AccGetConfig\n" ));
+    _DBG( "AccGetConfig\r\n" );
 
-    ret = GetOutPtr(0);
+    ret = GetOutPtr( 0 );
     ret->sys.os = OS_RATIONAL;      // Pretend we're DOS/4G
     dosver = dos_getver();
     ret->sys.osmajor = dosver >> 8;
@@ -129,6 +130,9 @@ unsigned ReqGet_sys_config( void )
     ret->sys.huge_shift = 12;
     ret->sys.fpu = NPXType(); //RealNPXType;
     ret->sys.mad = MAD_X86;
+    _DBG( "os = %d, cpu=%d, fpu=%d, osmajor=%d, osminor=%d\r\n",
+          ret->sys.os, ret->sys.cpu, ret->sys.fpu,
+          ret->sys.osmajor, ret->sys.osminor );
     return( sizeof( *ret ) );
 }
 
@@ -142,7 +146,7 @@ unsigned ReqMap_addr( void )
     map_addr_ret        *ret;
     unsigned            i;
 
-    _DBG1(( "AccMapAddr\n" ));
+    _DBG1( "AccMapAddr\r\n" );
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -186,7 +190,7 @@ unsigned ReqAddr_info( void )
     addr_info_req       *acc;
     addr_info_ret       *ret;
 
-    _DBG1(( "AccAddrInfo\n" ));
+    _DBG( "AccAddrInfo\r\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     ret->is_32 = 0;
@@ -204,6 +208,7 @@ unsigned ReqMachine_data( void )
     machine_data_ret    *ret;
     unsigned_8          *data;
 
+    _DBG( "AccMachineData\r\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     data = GetOutPtr( sizeof( *ret ) );
@@ -215,6 +220,7 @@ unsigned ReqMachine_data( void )
             *data = X86AC_BIG;
         }
 //    }
+    _DBG( "address is %s\r\n", *data ? "32-bit" : "16-bit" );
     return( sizeof( *ret ) + sizeof( *data ) );
 }
 
@@ -264,15 +270,15 @@ static unsigned short ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsign
 
     unsigned short    len;
 
-    _DBG(("checking %4.4x:%8.8lx for 0x%x bytes -- ",
-            addr->segment, addr->offset, req ));
+    _DBG("checking %4.4x:%8.8lx for 0x%x bytes -- ",
+            addr->segment, addr->offset, req );
     if( D32AddressCheck( addr->segment, addr->offset, req, NULL ) &&
             r( addr->offset, addr->segment, 0, data, req ) == 0 ) {
-        _DBG(( "OK\n" ));
+        _DBG( "OK\n" );
         addr->offset += req;
         return( req );
     }
-    _DBG(( "Bad\n" ));
+    _DBG( "Bad\n" );
     len = 0;
     while( req > 0 ) {
         if( !D32AddressCheck( addr->segment, addr->offset, 1, NULL ) ) break;
@@ -303,7 +309,7 @@ unsigned ReqChecksum_mem( void )
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
-    _DBG1(( "AccChkSum\n" ));
+    _DBG1( "AccChkSum\n" );
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -335,7 +341,7 @@ unsigned ReqRead_mem( void )
     void far            *buff;
     unsigned short      len;
 
-    _DBG1(( "ReadMem\n" ));
+    _DBG1( "ReadMem\n" );
     acc = GetInPtr( 0 );
     buff = GetOutPtr( 0 );
     len = ReadMemory( (addr48_ptr *)&acc->mem_addr, buff, acc->len );
@@ -347,7 +353,7 @@ unsigned ReqWrite_mem( void )
     write_mem_req       *acc;
     write_mem_ret       *ret;
 
-    _DBG1(( "WriteMem\n" ));
+    _DBG1( "WriteMem\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     ret->len = WriteMemory( (addr48_ptr *)&acc->mem_addr,
@@ -582,7 +588,7 @@ unsigned ReqProg_load( void )
     prog_load_ret   *ret;
     unsigned        len;
 
-    _DBG1(( "AccLoadProg\r\n" ));
+    _DBG1( "AccLoadProg\r\n" );
     dst = UtilBuff;
     src = name = GetInPtr( sizeof( prog_load_req ) );
     ret = GetOutPtr( 0 );
@@ -601,16 +607,16 @@ unsigned ReqProg_load( void )
     if( dst > UtilBuff ) --dst;
 
     *dst = '\0';
-    _DBG1(( "about to debugload\r\n" ));
-    _DBG1(( "Name :" ));
-    _DBG1(( name ));
-    _DBG1(( "\r\n" ));
-    _DBG1(( "UtilBuff :" ));
-    _DBG1(( UtilBuff ));
-    _DBG1(( "\r\n" ));
+    _DBG1( "about to debugload\r\n" );
+    _DBG1( "Name :" );
+    _DBG1( name );
+    _DBG1( "\r\n" );
+    _DBG1( "UtilBuff :" );
+    _DBG1( UtilBuff );
+    _DBG1( "\r\n" );
     GetObjectInfo( name );
     ret->err = D32DebugLoad( name, UtilBuff, &Proc );
-    _DBG1(( "back from debugload - %d\r\n", ret->err ));
+    _DBG1( "back from debugload - %d\r\n", ret->err );
     ret->flags = LD_FLAG_IS_32 | LD_FLAG_IS_PROT | LD_FLAG_DISPLAY_DAMAGED;
     if( ret->err == 0 ) {
         ret->task_id = Proc.es;
@@ -619,7 +625,7 @@ unsigned ReqProg_load( void )
     }
     ret->mod_handle = 0;
     Proc.int_id = -1;
-    _DBG1(( "done AccLoadProg\r\n" ));
+    _DBG1( "done AccLoadProg\r\n" );
     return( sizeof( *ret ) );
 }
 
@@ -627,7 +633,7 @@ unsigned ReqProg_kill( void )
 {
     prog_kill_ret       *ret;
 
-    _DBG1(( "AccKillProg\n" ));
+    _DBG1( "AccKillProg\n" );
     ret = GetOutPtr( 0 );
     InitRedirect();
     ret->err = 0;
@@ -643,7 +649,7 @@ unsigned ReqSet_watch( void )
     int             i;
     int             needed;
 
-    _DBG1(( "AccSetWatch\n" ));
+    _DBG1( "AccSetWatch\n" );
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -671,7 +677,7 @@ unsigned ReqSet_watch( void )
 
 unsigned ReqClear_watch( void )
 {
-    _DBG1(( "AccRestoreWatch\n" ));
+    _DBG1( "AccRestoreWatch\n" );
     /* assume all watches removed at same time */
     WatchCount = 0;
     return( 0 );
@@ -682,8 +688,7 @@ unsigned ReqSet_break( void )
     set_break_req       *acc;
     set_break_ret       *ret;
 
-    _DBG1(( "AccSetBreak\n" ));
-
+    _DBG( "AccSetBreak\r\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     D32DebugSetBreak( acc->break_addr.offset, acc->break_addr.segment,
@@ -698,7 +703,7 @@ unsigned ReqClear_break( void )
     char        dummy;
 
     acc = GetInPtr( 0 );
-    _DBG1(( "AccRestoreBreak\n" ));
+    _DBG( "AccRestoreBreak\r\n" );
     /* assume all breaks removed at same time */
     D32DebugSetBreak( acc->break_addr.offset, acc->break_addr.segment,
                           FALSE, (byte *)&acc->old, &dummy );
@@ -770,15 +775,15 @@ static bool SetDebugRegs( void )
             wp->handle2 = -1;
         }
         for( i = WatchCount, wp = WatchPoints; i != 0; --i, ++wp ) {
-            _DBG2(( "Setting Watch On %8.8lx\r\n", wp->linear ));
+            _DBG2( "Setting Watch On %8.8lx\r\n", wp->linear );
             success = FALSE;
             rc = DPMISetWatch( wp->linear, wp->len, DPMI_WATCH_WRITE );
-            _DBG2(( "OK 1 = %d\r\n", rc >= 0 ));
+            _DBG2( "OK 1 = %d\r\n", rc >= 0 );
             if( rc < 0 ) break;
             wp->handle = rc;
             if( wp->dregs == 2 ) {
                 rc = DPMISetWatch( wp->linear+4, wp->len, DPMI_WATCH_WRITE );
-                _DBG2(( "OK 2 = %d\r\n", rc >= 0 ));
+                _DBG2( "OK 2 = %d\r\n", rc >= 0 );
                 if( rc <= 0 ) break;
                 wp->handle2 = rc;
             }
@@ -856,7 +861,7 @@ static unsigned ProgRun( bool step )
     byte        int_buff[3];
     addr48_ptr  addr;
 
-    _DBG1(( "AccRunProg\n" ));
+    _DBG1( "AccRunProg\n" );
 
     ret = GetOutPtr( 0 );
 
@@ -947,17 +952,17 @@ unsigned ReqGet_err_text( void )
 
     #define MAX_CODE (sizeof( DosErrMsgs ) / sizeof( char * ) - 1)
 
-    _DBG(("AccErrText\r\n"));
+    _DBG( "AccErrText\r\n" );
     acc = GetInPtr( 0 );
     err_txt = GetOutPtr( 0 );
     if( acc->err > MAX_CODE ) {
-        _DBG(( "After acc->error_code > MAX_CODE" ));
+        _DBG( "After acc->error_code > MAX_CODE" );
         strcpy( (char *)err_txt, TRP_ERR_unknown_system_error );
         ultoa( acc->err, (char *)err_txt + strlen( err_txt ), 16 );
-        _DBG(("After ultoa()\r\n"));
+        _DBG( "After ultoa()\r\n" );
     } else {
         strcpy( (char *)err_txt, DosErrMsgs[ acc->err ] );
-        _DBG(("After strcpy\r\n"));
+        _DBG( "After strcpy\r\n" );
     }
     return( strlen( err_txt ) + 1 );
 }
@@ -998,7 +1003,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     extern int          hotkey_int;
 
 
-    _DBG1(( "TrapInit\n" ));
+    _DBG1( "TrapInit\n" );
     remote = remote; parm = parm;
     err[0] = '\0'; /* all ok */
     ver.major = TRAP_MAJOR_VERSION;
@@ -1011,7 +1016,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     hotkey_int = 5;
     error_num = D32DebugInit( &Proc );
     if( error_num ) {
-        _DBG(("D32DebugInit() failed:\n"));
+        _DBG( "D32DebugInit() failed:\n" );
         exit(1);
     }
     Proc.int_id = -1;
@@ -1021,7 +1026,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 
 void TRAPENTRY TrapFini( void )
 {
-    _DBG1(( "TrapFini\n" ));
+    _DBG1( "TrapFini\n" );
     D32DebugTerm();
 }
 #endif
