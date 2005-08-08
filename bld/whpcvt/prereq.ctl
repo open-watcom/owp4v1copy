@@ -43,6 +43,13 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> whpcvt.exe <OWBINDIR>/whpcvt.exe
 
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#===============================
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../linux386/makefile prebuild=1
+    <CPCMD> whpcvt.exe <OWBINDIR>/whpcvt
+
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
