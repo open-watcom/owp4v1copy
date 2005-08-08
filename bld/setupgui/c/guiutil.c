@@ -119,33 +119,8 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
 
 gui_coord               GUIScale;
 
-#if defined(__NT__)
-/*
- * This is used to undo GUI toolkit's system colour override.
- */
-static unsigned long DOSColours[] = {
-//      B G R
-    0x00000000, /* GUI_BLACK          */
-    0x00800000, /* GUI_BLUE           IDE std back col */
-    0x00008000, /* GUI_GREEN          */
-    0x00808000, /* GUI_CYAN           */
-    0x00000080, /* GUI_RED            */
-    0x00800080, /* GUI_MAGENTA        */
-    0x00008080, /* GUI_BROWN          */
-    0x00c0c0c0, /* GUI_WHITE          IDE std fore col */
-    0x00808080, /* GUI_GREY           */
-    0x00ff0000, /* GUI_BRIGHT_BLUE    */
-    0x0000ff00, /* GUI_BRIGHT_GREEN   */
-    0x00ffff00, /* GUI_BRIGHT_CYAN    */
-    0x000000ff, /* GUI_BRIGHT_RED     */
-    0x00ff00ff, /* GUI_BRIGHT_MAGENTA */
-    0x0000ffff, /* GUI_BRIGHT_YELLOW  */
-    0x00ffffff  /* GUI_BRIGHT_WHITE   */
-};
-#endif
-
-extern bool SetupInit()
-/*********************/
+extern bool SetupInit( void )
+/***************************/
 {
     gui_rect            rect;
     gui_create_info     init;
@@ -192,20 +167,13 @@ extern bool SetupInit()
 
 #if defined(__NT__)
     /*
-     * GUI Toolkit was modified that default system colors would be used instead of real colors
-     * This hack undoes this effect, by using DOS Color table found from bld/gui/win/c/guicolors.c.
+     * GUI Toolkit now works such that default system colors are used instead of
+     * RGB colors. Since we really want nice blue background, we have to hack
+     * around that by specifying a specific RGB color and re-setting the background
+     * to use that color.
      */
-    {
-        int i;
-
-        for (i = 0; i < sizeof(DOSColours) / sizeof(DOSColours[0]); i++)
-        {
-            GUISetRGB(i, DOSColours[i]);
-        }
-    }
-
-    // Setup background color again, so we get new colors in use in background too.
-    GUISetWndColour(MainWnd, GUI_BACKGROUND, &MainColours[5]);
+    GUISetRGB( GUI_BRIGHT_BLUE, 0x00ff0000 );
+    GUISetWndColour( MainWnd, GUI_BACKGROUND, &MainColours[GUI_BACKGROUND] );
 #endif
 
     return( TRUE );
