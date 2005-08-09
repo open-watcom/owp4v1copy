@@ -50,10 +50,18 @@ model=$(modelos)
 memory_model_i86=$(model)
 memory_model_386=$(model)
 
+!ifdef __UNIX__
 !ifeq targos ntaxp
 posixlibdir=$(posix_dir)/misc/$(targos)/_s
 !else
 posixlibdir=$(posix_dir)/misc/$(targos)/m$(model)
+!endif
+!else
+!ifeq targos ntaxp
+posixlibdir=$(posix_dir)\misc\$(targos)\_s
+!else
+posixlibdir=$(posix_dir)\misc\$(targos)\m$(model)
+!endif
 !endif
 
 !include cproj.mif

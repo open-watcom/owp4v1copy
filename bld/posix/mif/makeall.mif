@@ -15,7 +15,11 @@ clean_build : .symbolic
 !include $(posix_dir)/mif/targos.mif
 !include $(posix_dir)/mif/common.mif
 
+!ifdef __UNIX__
 altposixlibdir=$(posix_dir)/misc/$(targos)/ms
+!else
+altposixlibdir=$(posix_dir)\misc\$(targos)\ms
+!endif
 
 all : lib $(commands) .symbolic
         @%null
