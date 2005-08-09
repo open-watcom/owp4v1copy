@@ -330,7 +330,7 @@ GetInf  proc    near
         fstp    st(0)           ; pop argument off stack (does fwait)
         test    BH,04h          ; check if single or double
         _if     ne              ; if double
-          fld   qword ptr F8Inf ; - load single precision infinity
+          fld   qword ptr F8Inf ; - load double precision infinity
         _else                   ; else
           fld   dword ptr F4Inf ; - load single precision infinity
         _endif                  ; endif
@@ -373,11 +373,11 @@ endproc Load
 ; Store the top element of the stack at ES:EDI.
 
 Store   proc    near
-        test    BL,04h
+        test    BH,04h
         _if     ne                      ; if double
-          fst   qword ptr ES:[EDI]      ; - store zero
+          fst   qword ptr ES:[EDI]      ; - store as double precision result
         _else                           ; else
-          fst   dword ptr ES:[EDI]      ; - store zero
+          fst   dword ptr ES:[EDI]      ; - store as single precision result
         _endif                          ; endif
         ret                             ; return
 endproc Store
