@@ -186,7 +186,7 @@ extern void _DBG_DumpStr( char far *str, uint_16 len, uint_16 fhandle );
                                   _DBG_Write16( (uint_16)(n) ); }
 #define _DBG_DumpBytes( p, n )  { uint_16       j;                      \
                                   for( j = 0; j < n; ++j ) {            \
-                                      _DBG_Write8( (uint_8 *)(p) + j ); \
+                                      _DBG_Write8( *((uint_8 *)(p) + j) ); \
                                       _DBG_Space();                     \
                                   }                                     \
                                   _DBG_NewLine();                       \
