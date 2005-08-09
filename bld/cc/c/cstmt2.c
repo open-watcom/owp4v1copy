@@ -1170,7 +1170,7 @@ static int EndTry( void )
         CompFlags.exception_filter_expr = 0;
         CompFlags.exception_handler = 1;
         typ = TypeOf( expr );
-        expr_type = DataTypeOf( typ->decl_type );
+        expr_type = DataTypeOf( typ );
         if( expr_type != TYPE_VOID ) {
             if( expr_type > TYPE_ULONG ) {
                 CErr1( ERR_EXPR_MUST_BE_INTEGRAL );

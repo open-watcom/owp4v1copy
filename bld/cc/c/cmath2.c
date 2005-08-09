@@ -429,11 +429,15 @@ TYPEPTR TypeOf( TREEPTR node )
     return( typ );
 }
 
-DATA_TYPE DataTypeOf( DATA_TYPE data_type )
+DATA_TYPE DataTypeOf( TYPEPTR typ )
 {
+    DATA_TYPE data_type;
+
+    data_type = typ->decl_type;
     switch( data_type ) {
-    case TYPE_FIELD:
     case TYPE_ENUM:
+        return( typ->object->decl_type );  /* true size of enum */
+    case TYPE_FIELD:
         return( TYPE_INT );
     case TYPE_UFIELD:
         return( TYPE_UINT );
@@ -777,8 +781,8 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         typ1 = TypeOf( op1 );
         typ2 = TypeOf( op2 );
     }
-    op1_type = DataTypeOf( typ1->decl_type );
-    op2_type = DataTypeOf( typ2->decl_type );
+    op1_type = DataTypeOf( typ1 );
+    op2_type = DataTypeOf( typ2 );
     cmp_type = typ1;
     result_type = op1_type;
 
@@ -1102,8 +1106,8 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
     }
     op1_tp = TypeOf( op1 );
     op2_tp = TypeOf( op2 );
-    op1_type = DataTypeOf( op1_tp->decl_type );
-    op2_type = DataTypeOf( op2_tp->decl_type );
+    op1_type = DataTypeOf( op1_tp );
+    op2_type = DataTypeOf( op2_tp );
     result = 0;
     if( op1_type == TYPE_UNION || op1_type == TYPE_STRUCT
     ||  op2_type == TYPE_UNION || op2_type == TYPE_STRUCT ) {
@@ -1121,25 +1125,11 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         case T_MINUS_MINUS:
         case T_PLUS_EQUAL:
         case T_MINUS_EQUAL:
-            switch( op1_tp->decl_type ) {
-            case TYPE_ENUM:
-                result_type = op1_tp->object->decl_type;
-                break;
-            default:
-                result_type = op1_type;
-                break;
-            }
-            if( op2_type == TYPE_UNION  ||  op2_type == TYPE_STRUCT ) {
-                result_type = ERR;
-            } else
             if( op1_type == TYPE_POINTER  &&  op2_type >= TYPE_FLOAT ) {
                 CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
             }
-            break;
-#if 0
             result_type = op1_type;
             break;
-#endif
         default:
             result_type = SubResult[ op1_type ][ op2_type ];
             if(( op1_type == PTR )&&( op2_type == PTR )) {
@@ -1220,7 +1210,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 
 TREEPTR BinOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 {
-    type_modifiers op1_type, op2_type, result_type;
+    DATA_TYPE      op1_type, op2_type, result_type;
     TREEPTR        tree;
     TYPEPTR        typ;
 
@@ -1234,8 +1224,8 @@ TREEPTR BinOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         return( op2 );
     }
     typ = TypeOf( op1 );
-    op1_type = DataTypeOf( typ->decl_type );
-    op2_type = DataTypeOf( TypeOf( op2 )->decl_type );
+    op1_type = DataTypeOf( typ );
+    op2_type = DataTypeOf( TypeOf( op2 ) );
     if( op1_type == TYPE_VOID  ||  op2_type == TYPE_VOID ) {
         result_type = TYPE_VOID;
     } else if( op1_type == TYPE_UNION  ||
@@ -1444,7 +1434,7 @@ void ChkConst( TREEPTR opnd )
 
 TREEPTR IntOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 {
-    type_modifiers  op1_type, op2_type, result_type;
+    DATA_TYPE  op1_type, op2_type, result_type;
 
     if( op1->op.opr == OPR_ERROR ) {
         FreeExprTree( op2 );
@@ -1456,8 +1446,8 @@ TREEPTR IntOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
     }
     op1 = RValue( op1 );
     op2 = RValue( op2 );
-    op1_type = DataTypeOf( TypeOf( op1 )->decl_type );
-    op2_type = DataTypeOf( TypeOf( op2 )->decl_type );
+    op1_type = DataTypeOf( TypeOf( op1 ) );
+    op2_type = DataTypeOf( TypeOf( op2 ) );
     if( op1_type == TYPE_VOID  ||  op2_type == TYPE_VOID ) {
         result_type = TYPE_VOID;
     } else if( op1_type == TYPE_UNION  ||  op2_type == TYPE_UNION ) {
@@ -1496,8 +1486,8 @@ TREEPTR ShiftOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
     }
     op1 = RValue( op1 );
     op2 = RValue( op2 );
-    op1_type = DataTypeOf( TypeOf( op1 )->decl_type );
-    op2_type = DataTypeOf( TypeOf( op2 )->decl_type );
+    op1_type = DataTypeOf( TypeOf( op1 ) );
+    op2_type = DataTypeOf( TypeOf( op2 ) );
     if( op1_type == TYPE_VOID  ||  op2_type == TYPE_VOID ) {
         result_type = TYPE_VOID;
     } else {
@@ -1584,8 +1574,8 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
         }
     } else if( typ->decl_type != TYPE_VOID ) {
 convert:                                /* moved here 30-aug-89 */
-        cnv = CnvTable[ DataTypeOf( typ->decl_type ) ]
-                      [ DataTypeOf( newtyp->decl_type ) ];
+        cnv = CnvTable[ DataTypeOf( typ ) ]
+                      [ DataTypeOf( newtyp ) ];
         if( cnv == CER ) {
             CErr1( ERR_INVALID_CONVERSION );
             return( ErrorNode( opnd ) );
@@ -1697,8 +1687,8 @@ TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp )
     opnd = BaseConv( newtyp, opnd );
     newtyp = SkipTypeFluff( newtyp );
     typ = SkipTypeFluff( opnd->expr_type );
-    decl1 = DataTypeOf( typ->decl_type );
-    decl2 = DataTypeOf( newtyp->decl_type );
+    decl1 = DataTypeOf( typ );
+    decl2 = DataTypeOf( newtyp );
     if( decl1 > TYPE_POINTER  || decl2 > TYPE_POINTER ) {
         return( opnd );
     }
@@ -1738,7 +1728,7 @@ TREEPTR UMinus( TREEPTR opnd )
 
     opnd = RValue( opnd );
     if( opnd->op.opr != OPR_ERROR ) {
-        t = DataTypeOf( TypeOf( opnd )->decl_type );
+        t = DataTypeOf( TypeOf( opnd ) );
         if( t != TYPE_VOID ) {
             if( t >= TYPE_POINTER ) {
                 CErr1( ERR_EXPR_MUST_BE_ARITHMETIC );
@@ -1790,7 +1780,7 @@ TREEPTR UMinus( TREEPTR opnd )
         }
         break;
     default:
-        t = DataTypeOf( TypeOf( opnd )->decl_type );
+        t = DataTypeOf( TypeOf( opnd ) );
         if( t == TYPE_VOID ) break;
         if( t >= TYPE_POINTER ) {
             CErr1( ERR_EXPR_MUST_BE_ARITHMETIC );
@@ -1816,7 +1806,7 @@ TREEPTR UComplement( TREEPTR opnd )
     if( opnd->op.opr != OPR_ERROR ) {
         typ = opnd->expr_type;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        t = DataTypeOf( typ->decl_type );
+        t = DataTypeOf( typ );
         if( t != TYPE_VOID ) {
             if( t >= TYPE_FLOAT ) {
                 CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
@@ -1857,7 +1847,7 @@ TREEPTR UComplement( TREEPTR opnd )
     default:
         typ = opnd->expr_type;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        t = DataTypeOf( typ->decl_type );
+        t = DataTypeOf( typ );
         if( t == TYPE_VOID ) break;
         if( t >= TYPE_FLOAT ) {
             CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
@@ -1912,7 +1902,7 @@ TYPEPTR TernType( TREEPTR true_part, TREEPTR false_part )
 {
     TYPEPTR          typ1;
     TYPEPTR          typ2;
-    type_modifiers   dtype1, dtype2;
+    DATA_TYPE        dtype1, dtype2;
 
     typ1 = true_part->expr_type;
     while( typ1->decl_type == TYPE_TYPEDEF ) typ1 = typ1->object;
@@ -1923,8 +1913,8 @@ TYPEPTR TernType( TREEPTR true_part, TREEPTR false_part )
     nb. structs, unions, and identical pointers are handled here
 */
     if( typ1 == typ2 ) return( typ1 );
-    dtype1 = DataTypeOf( typ1->decl_type );
-    dtype2 = DataTypeOf( typ2->decl_type );
+    dtype1 = DataTypeOf( typ1 );
+    dtype2 = DataTypeOf( typ2 );
     if( dtype1 == TYPE_POINTER && false_part->op.opr == OPR_PUSHINT ) {
         if( false_part->op.long_value != 0 ) {
             CWarn1( WARN_NONPORTABLE_PTR_CONV,

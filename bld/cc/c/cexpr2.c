@@ -1737,7 +1737,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
 //      return( ErrorNode( tree ) );
 //  }
     index_expr = RValue( index_expr );
-    if( DataTypeOf( TypeOf(index_expr)->decl_type ) > TYPE_ULONG64 ) {
+    if( DataTypeOf( TypeOf(index_expr) ) > TYPE_ULONG64 ) {
         CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
         FreeExprTree( tree );
         return( ErrorNode( index_expr ) );
@@ -1771,7 +1771,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         #endif
     } else {
         #if _CPU == 8086
-            if( DataTypeOf( TypeOf(index_expr)->decl_type ) == TYPE_UINT ) {
+            if( DataTypeOf( TypeOf(index_expr) ) == TYPE_UINT ) {
                 if(( tree_flags & OPFLAG_HUGEPTR ) ||
                    ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA &&
                     (tree_flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR))==0)) {
@@ -2434,7 +2434,7 @@ TREEPTR BoolExpr( TREEPTR tree )
             }
         }
         tree = RValue( tree );
-        if( DataTypeOf( TypeOf(tree)->decl_type ) > TYPE_POINTER ) {
+        if( DataTypeOf( TypeOf(tree) ) > TYPE_POINTER ) {
             CErr1( ERR_EXPR_MUST_BE_SCALAR );
         } else if( tree->op.opr == OPR_PUSHINT ) {
             if( tree->op.ulong_value != 0 ) {

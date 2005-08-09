@@ -704,7 +704,7 @@ extern  TYPEPTR TernType(TREEPTR,TREEPTR);
 extern  TYPEPTR TypeOf(TREEPTR);
 extern  TREEPTR UComplement(TREEPTR);
 extern  TREEPTR UMinus(TREEPTR);
-extern  DATA_TYPE DataTypeOf(DATA_TYPE);
+extern  DATA_TYPE DataTypeOf(TYPEPTR);
 extern  int     FuncPtr(TYPEPTR);
 extern  TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp );
 extern  pointer_class   ExprTypeClass( TYPEPTR typ );
