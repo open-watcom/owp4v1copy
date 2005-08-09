@@ -490,7 +490,7 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate)
         */
         return( RET_ERROR );
     }
-    if( deptarg->cmds_done || deptarg->backdated) {
+    if( ( !deptarg->attr.recheck && deptarg->cmds_done ) || deptarg->backdated) {
         *outofdate = TRUE;
     }
     return( RET_SUCCESS );

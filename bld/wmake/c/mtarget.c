@@ -720,6 +720,7 @@ void TargInitAttr( TATTR *attr )
     attr->always     = FALSE;
     attr->auto_dep   = FALSE;
     attr->existsonly = FALSE;
+    attr->recheck    = FALSE;
 }
 
 
@@ -733,6 +734,7 @@ void TargOrAttr( TARGET *targ, TATTR attr )
     targ->attr.always     |= attr.always;
     targ->attr.auto_dep   |= attr.auto_dep;
     targ->attr.existsonly |= attr.existsonly;
+    targ->attr.recheck    |= attr.recheck;
 }
 
 

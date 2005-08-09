@@ -1703,6 +1703,27 @@ proc: .procedure
     @echo Executing procedure "proc"
 .millust end
 .*
+.section Re-Checking Target Timestamp (.RECHECK)
+.*
+.ix '&makcmdup directives' '.RECHECK'
+.ix 'RECHECK' '&makcmdup directive'
+Make will re-check the target's timestamp, rather than assuming it was updated
+by its command list. This is useful if the target is built by another make-
+style tool, as in the following example:
+.millust begin
+#
+# .RECHECK example
+#
+foo.gz : foo
+        gzip foo
+
+foo : .ALWAYS .RECHECK
+        nant -buildfile:foo.build
+.millust end
+.pc
+foo's command list will always be run, but foo will only be compressed if the
+timestamp is actually changed.
+.*
 .section Suppressing Terminal Output (.SILENT)
 .*
 .np

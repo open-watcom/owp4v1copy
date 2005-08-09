@@ -294,6 +294,9 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
             case DOT_EXISTSONLY:
                 pattr->existsonly = TRUE;
                 break;
+            case DOT_RECHECK:
+                pattr->recheck = TRUE;
+                break;
             default:
                 ignoring( TOK_DOTNAME, TRUE );
                 break;

@@ -224,6 +224,7 @@ enum DotNames {                 /* must be in alpha order! */
     DOT_OPTIMIZE,                   /* ".OPTIMIZE"      */
     DOT_PRECIOUS,                   /* ".PRECIOUS"      */
     DOT_PROCEDURE,                  /* ".PROCEDURE"     */
+    DOT_RECHECK,                    /* ".RECHECK"       */
     DOT_SILENT,                     /* ".SILENT"        */
     DOT_SUFFIXES,                   /* ".SUFFIXES"      */
     DOT_SYMBOLIC,                   /* ".SYMBOLIC"      */
