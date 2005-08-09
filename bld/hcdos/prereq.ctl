@@ -28,8 +28,8 @@ set ODIR=<OBJDIR>
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../dos386/makefile prebuild=1
-    <CPCMD> yacc.exe <OWBINDIR>/hcdos.exe
+    wmake -h -f ../dosi86/makefile prebuild=1
+    <CPCMD> hcdos.exe <OWBINDIR>/hcdos.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
