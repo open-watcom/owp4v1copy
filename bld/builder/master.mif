@@ -25,6 +25,10 @@ sys_linux = sys.obj sysposix.obj
 
 extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 
+!ifdef __MSDOS__
+__DOS__=1
+!endif
+
 .obj.exe :
         $(cl) $(clflags) $<
 !ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
