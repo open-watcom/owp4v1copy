@@ -33,11 +33,12 @@
 #include <time.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <utime.h>
 #ifdef __UNIX__
+#include <utime.h>
 #include <unistd.h>
 #include <dirent.h>
 #else
+#include <sys/utime.h>
 #include <direct.h>
 #include <dos.h>
 #endif
