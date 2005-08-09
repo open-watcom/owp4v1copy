@@ -57,6 +57,24 @@
 #include <clibext.h>
 #endif
 
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+
+/* A few new defines, rather than hard numbers in source */
+/* Controls per line */
+#define MAX_CTRL_PER_LINE      4
+#define NORMAL_BUTTONS         MAX_CTRL_PER_LINE- 1
+#define NORMAL_CHECKMARKS      2
+
+/* Ends up close to vertical default size for button in dialogs */
+#define WIN_BW                 15
+
+#define WIN_BUTTON_POS( num, of, cols, bwidth ) \
+    ( of == 1 ? \
+        (cols - bwidth) / 2 : \
+        ( 1 + (num-1) * ( bwidth + BUTTON_GAP( cols, of, bwidth, 1 ) ) ) )
+
+#endif /* defined( __WINDOWS__ ) || defined( __NT__ ) */
+
 extern vhandle          FullInstall;
 extern vhandle          SelectiveInstall;
 
@@ -693,15 +711,25 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
         a_control_class = control->control_class;
         switch( a_control_class ) {
         case GUI_RADIO_BUTTON:
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+            /* Align left og control with left of leftmost Button */
+            but_pos = WIN_BUTTON_POS( 1, MAX_CTRL_PER_LINE, width, WIN_BW );
+            control->rect.x = DLG_COL( but_pos );
+#endif
             control->rect.width = DLG_COL( width-C0-1 );
             break;
         case GUI_CHECK_BOX:
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+            /* Align left og control with left of leftmost Button */
+            but_pos = WIN_BUTTON_POS( 1, MAX_CTRL_PER_LINE, width, WIN_BW );
+            control->rect.x = DLG_COL( but_pos );
+#endif
             // look for another control on this row
             control->rect.width = DLG_COL( width-C0-1 );
             if( i + 1 >= curr_dialog->num_controls ) break;
             next = &curr_dialog->controls[ i + 1 ];
             if( next->rect.y != control->rect.y ) break;
-            control->rect.width = DLG_COL( width/2-C0-1 );
+            control->rect.width = DLG_COL( width / 2-C0-1 );
             if( next->control_class != GUI_CHECK_BOX ) break;
             j = i;
             num_push_buttons = 1;
@@ -714,7 +742,13 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             curr_button = 0;
             while( i < j ) {
                 control->rect.width = DLG_COL( width/num_push_buttons-C0-1 );
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+                /* Align left og control with left of leftmost Button */
+                but_pos = WIN_BUTTON_POS( curr_button + 1, NORMAL_CHECKMARKS, width, WIN_BW );
+                control->rect.x = DLG_COL( but_pos );
+#else
                 control->rect.x = DLG_COL( C0 + ( width/num_push_buttons ) * curr_button );
+#endif
                 ++curr_button;
                 ++i;
                 ++control;
@@ -737,16 +771,31 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
                 }
             }
             if( j == curr_dialog->num_controls ) {
-                for( curr_button = 1; curr_button <= num_push_buttons; ++curr_button ) {
+                for( curr_button = 1; curr_button <= num_push_buttons; ++curr_button )
+                {
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+                    but_pos = WIN_BUTTON_POS( curr_button, num_push_buttons, width, WIN_BW );
+                    control->rect.x     = DLG_COL( but_pos );
+                    control->rect.width = DLG_COL( max( strlen( control->text ) + 2, WIN_BW ) );
+#else
                     but_pos = BUTTON_POS( curr_button, num_push_buttons, width, BW );
                     control->rect.x     = DLG_COL( but_pos );
                     control->rect.width = DLG_COL( max( strlen( control->text ) + 2, BW ) );
+#endif
                     ++control;
                 }
             } else {
-                but_pos = BUTTON_POS( 3, 4, width, BW );
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+                but_pos = WIN_BUTTON_POS( NORMAL_BUTTONS, NORMAL_BUTTONS, width, WIN_BW );
+                control->rect.x     = DLG_COL( but_pos );
+                /* The dynamic system does not handle buttons too wide for dialog. */
+                control->rect.width = DLG_COL( max( strlen( control->text ) + 2, WIN_BW ) );
+                /* control->rect.width = DLG_COL( WIN_BW ); */
+#else
+                but_pos = BUTTON_POS( NORMAL_BUTTONS, MAX_CTRL_PER_LINE, width, BW );
                 control->rect.x     = DLG_COL( but_pos );
                 control->rect.width = DLG_COL( max( strlen( control->text ) + 2, BW ) );
+#endif
             }
             break;
         case GUI_EDIT:
@@ -770,7 +819,13 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
                 && curr_dialog->pVisibilityConds[ i ] == NULL
                 && ( i <= 0 || ( curr_dialog->controls[ i - 1 ].control_class != GUI_EDIT
                                  && curr_dialog->controls[ i - 1 ].control_class != GUI_PUSH_BUTTON )
-                     || curr_dialog->controls[ i - 1 ].rect.y != curr_dialog->controls[ i ].rect.y ) ) {
+                     || curr_dialog->controls[ i - 1 ].rect.y != curr_dialog->controls[ i ].rect.y ) )
+            {
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+                /* Align left og control with left of leftmost Button */
+                but_pos = WIN_BUTTON_POS( 1, MAX_CTRL_PER_LINE, width, WIN_BW );
+                control->rect.x = DLG_COL( but_pos );
+#endif
                 control->rect.width = DLG_COL( width - 1 );
             } else {
                 control->rect.width = min( control->rect.width, DLG_COL(width) );
