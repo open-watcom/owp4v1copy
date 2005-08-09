@@ -1,5 +1,13 @@
 name=Help_Helpfile
 static_text=\
+        //1"Select online help file options:"
+static_text=
+static_text=\
+        //1"Choose help file formats you wish to install."
+static_text=\
+        //1"Online books contain all compiler documentation."
+static_text=
+static_text=\
         //1"Copy on-line help files to hard disk"\
         //2"オンライン・ヘルプファイルをハードディスクにコピーします"\
         //0,SrcIsCD

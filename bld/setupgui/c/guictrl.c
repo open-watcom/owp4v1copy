@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions to set dialog box controls.
 *
 ****************************************************************************/
 
-
-/*
-*   COMMENTS: Functions to set dialog box controls.
-*/
 
 #include <string.h>
 #include <stdlib.h>

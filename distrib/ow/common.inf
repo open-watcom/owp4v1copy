@@ -48,8 +48,6 @@ dialogorder=DstDir,GetDiskSizesHere,NewInstall,Maintain,Options,Final,MaintainFi
 dialog=disksize.dlg
 dialog=other.dlg
 dialog=helpfile.dlg
-dialog=hother.dlg
-dialog=hhelpfil.dlg
 dialog=options.dlg
 dialog=hopt.dlg
 dialog=dstdir.dlg
@@ -70,6 +68,8 @@ dialog=hhost.dlg
 dialog=hmaint.dlg
 dialog=hnewinst.dlg
 dialog=htarget.dlg
+dialog=hother.dlg
+dialog=hhelpfil.dlg
 cfg=+PATH=%DstDir%\BINP,                        IsOS2 IsOS2DosBox |
 cfg=+PATH=%DstDir%\BINW,                        IsOS2 IsOS2DosBox |
 cfg=+PATH=%CDDir%\BINP,                         IsOS2 IsOS2DosBox | MinimalInstall
