@@ -98,7 +98,7 @@ $(wres_lib)
 !endif
 
 libs_os2   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
-libs_nt    += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_nt    += ../zlib/osi$(host_cpu)/zlib.lib ../ziplib/osi$(host_cpu)/ziplib.lib
 libs_dos   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
 libs_linux += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
 
