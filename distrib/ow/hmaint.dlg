@@ -30,7 +30,7 @@ static_text=\
         //2"   - すべてのコンポーネントはハードディスクから削除されます."\
         //0
 dynamic_text=hmaint_2,\
-        //1"   - %AppName% will be removed from all configuration files."\
+        //1"   - Application settings will be removed from configuration files."\
         //2"   - %AppName% を全てのコンフィギュレーションから削除します."\
         //0
 static_text=

@@ -1,6 +1,6 @@
 name=Help_DstDir
 dynamic_text=hdd_1,\
-        //1"Choose the directory you want to install %AppName% in."\
+        //1"Choose the directory to install %AppName% in."\
         //2"%AppName% をインストールするディレクトリを選択してください."\
         //0
 dynamic_text=hdd_2,\
