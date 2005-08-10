@@ -1,4 +1,4 @@
-inc_dirs = -I$(rcsdll_dir) -I"$(posix_dir)/h" -I"$(watcom_dir)/h"
+inc_dirs = -I"$(vi_dir)/h" -I$(rcsdll_dir) -I"$(posix_dir)/h" -I"$(watcom_dir)/h"
 
 !ifeq vi_trmem 1
 inc_dirs += -I$(trmem_dir)
@@ -19,10 +19,10 @@ winstuff = -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h" -I"$(datactl_dir)"
 
 !ifdef sys_windowed
 inc_dirs_nt  = -I"$(vi_dir)/ctl" -I"$(vi_dir)/win" -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h"
-inc_dirs_win = -I"$(vi_dir)/ctl" -I"$(vi_dir)/win" -I"$(vi_dir)/h" $(winstuff)
-inc_dirs_os2 = -I"$(vi_dir)/ctl" -I"$(vi_dir)/pm" -I"$(vi_dir)/h" $(winstuff)
+inc_dirs_win = -I"$(vi_dir)/ctl" -I"$(vi_dir)/win" $(winstuff)
+inc_dirs_os2 = -I"$(vi_dir)/ctl" -I"$(vi_dir)/pm" $(winstuff)
 !else
-inc_dirs_win = -I"$(vi_dir)/win" -I"$(vi_dir)/h"
+inc_dirs_win = -I"$(vi_dir)/win"
 !endif
 
 !ifeq host_cpu axp
