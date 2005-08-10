@@ -159,8 +159,9 @@ __x386_zero_base_ptr            dd      0f0000000h
 
 ;the variables in the following list are from the module crwdata
         public  "C",__FPE_handler
+        public  "C",_Extender
         public  __LpPgmName,__LpCmdLine
-        public  __Envseg,__Envptr,__Extender,__no87,__cbyte2
+        public  __Envseg,__Envptr,__no87,__cbyte2
         public  __child,__cbyte,__STACKTOP,__STACKLOW
         public  __osminor,__osmajor,__psp,__curbrk
         public  __dynend,__x386_stacklow,__X32VM,__ASTACKSIZ,__ASTACKPTR
@@ -179,7 +180,7 @@ __cbyte         dd      0
 __cbyte2        dd      0
 __child         dd      0
 __no87          dw      0
-__Extender      db      3               ;pretend we are Pharlap version 3
+_Extender       db      3               ;pretend we are Pharlap version 3
                 db      0
 __Envptr        dd      0
 __Envseg        dw      0

@@ -1,6 +1,6 @@
         name    timer
 
-extrn __Extender : byte
+extrn "C",_Extender : byte
 
 _text segment byte public 'code'
 
@@ -42,7 +42,7 @@ BIOS_CLOCK      equ     46CH            ; 40:6C
 
 public  GetTickCount_
 GetTickCount_ proc near
-        cmp     ds:__Extender,1         ; rational?
+        cmp     ds:_Extender,1         ; rational?
         jne     pharlap
         mov     eax,BIOS_CLOCK
         mov     eax,[eax]               ; ds maps first meg directly

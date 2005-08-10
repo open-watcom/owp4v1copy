@@ -121,8 +121,8 @@ __cbyte    dd 0                 ; used by getch, getche
 __psp      dw 0                 ; program segment prefix
 __osmajor  db 4                 ; major DOS version number
 __osminor  db 0                 ; minor DOS version number
-__Extender db 0                 ; 10 => 386 windows
-__ExtenderSubtype db 0          ;
+_Extender  db 0                 ; 10 => 386 windows
+_ExtenderSubtype  db 0          ;
 __OS       db 0                 ; OS Identifier
 
 __FPE_handler dd __null_FPE_rtn ; FPE handler
@@ -144,8 +144,8 @@ __FPE_handler dd __null_FPE_rtn ; FPE handler
         public  __psp
         public  __osmajor
         public  __osminor
-        public  __Extender
-        public  __ExtenderSubtype
+        public  "C",_Extender
+        public  "C",_ExtenderSubtype
         public  __OS
         public  "C",__FPE_handler
 

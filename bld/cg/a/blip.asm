@@ -1,6 +1,6 @@
-                name            blip
+        name            blip
 
-extrn __Extender : byte
+extrn "C",_Extender : byte
 
 _data segment byte public 'data'
         screenmem       dd 0
@@ -19,7 +19,7 @@ assume cs:_text,ds:_data
 ;
         public BlipInit_
 BlipInit_ proc near
-        cmp     ds:__Extender,1         ; rational?
+        cmp     ds:_Extender,1         ; rational?
         je      okinit
         ret
 okinit:
@@ -43,7 +43,7 @@ BlipInit_ endp
 ;
         public Blip_
 Blip_   proc near
-        cmp     ds:__Extender,1         ; rational?
+        cmp     ds:_Extender,1         ; rational?
         jne     pharlap
         add     eax,eax                 ; double location (for attrib)
         add     eax,ds:screenmem        ; screen memory!

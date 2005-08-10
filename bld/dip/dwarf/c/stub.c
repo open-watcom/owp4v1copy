@@ -42,9 +42,14 @@ double _matherr( why, who, arg1, arg2, result )
 }
 #if defined(__X86__)
 void __set_ERANGE() {};
-void __FPE_exception() {};
 
-int __FPE_handler;
+#if defined(__386__)
+#pragma aux __FPE_exception "*_";
+void __FPE_exception() {};
+#else
+void far __null_FPE_handler() {};
+void (*__FPE_handler)() = &__null_FPE_handler;
+#endif
 
 /* WD looks for this symbol to determine module bitness */
 int __nullarea;

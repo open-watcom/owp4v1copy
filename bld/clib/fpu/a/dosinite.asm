@@ -12,13 +12,7 @@ extrn   __unhook387 : near
 _DATA segment dword public 'DATA'
     extrn   __8087     : byte
     extrn   __8087cw   : word
-ifdef __WASM__
     extrn   "C",_Extender : byte
-EXTENDER equ    _Extender
-else
-    extrn   __Extender : byte
-EXTENDER equ    __Extender
-endif
     extrn   __X32VM    : byte
     extrn   __D16Infoseg : word
     extrn   __x386_zero_base_selector : word
@@ -69,10 +63,6 @@ __sys_init_387_emulator proc near
     _endif              ; endif
     finit               ; initialize the '80387'
     fldcw   word ptr __8087cw   ; load control word
-    fldz                ; put 387 into 4 empty / 4 full state
-    fldz                ; ...
-    fldz                ; ...
-    fldz                ; ...
     pop edx         ; restore registers
     pop ebx         ; ...
     pop ecx         ; ...
@@ -99,7 +89,7 @@ hook_in_emulator proc near
       mov   es:4[ebx],ecx       ; - ...
       call  _set_EM_MP_bits     ; - set EM and MP bits
     _admit              ; guess: Ergo (OS/386)
-      cmp   byte ptr EXTENDER,X_ERGO; - quit if not Ergo
+      cmp   byte ptr _Extender,X_ERGO; - quit if not Ergo
       _quif ne          ; - ...
       mov   ax,2507h        ; - hook int7
       push  ds          ; - ...
@@ -112,7 +102,7 @@ hook_in_emulator proc near
       mov   ah,0f3H         ; - set EM bit in cr0 (turn off MP)
       int   21h         ; - ...
     _admit              ; guess: Intel Code Builder
-      cmp   byte ptr EXTENDER,X_INTEL ; - quit if not Intel
+      cmp   byte ptr _Extender,X_INTEL ; - quit if not Intel
       _quif ne          ; - ...
       call  create_IDT_entry    ; - create entry for IDT
       mov   [ebx],edx       ; - fill in entry
@@ -126,7 +116,7 @@ hook_in_emulator proc near
       mov   ecx,__GDAptr        ; - get address of GDA
       call  GDA_SERV[ecx]       ; - call extender service routine
     _admit              ; guess: Rational DOS/4G
-      cmp   byte ptr EXTENDER,X_RATIONAL     ; - quit if not DOS/4G
+      cmp   byte ptr _Extender,X_RATIONAL     ; - quit if not DOS/4G
       _quif ne          ; - ...
       mov   dx,__D16Infoseg     ; - get segment address of _d16info
       sub   eax,eax         ; - set offset to 0
@@ -157,7 +147,7 @@ create_IDT_entry endp
 hook_pharlap proc near
     _guess              ; guess: version 4
 if 0
-      cmp   byte ptr EXTENDER,X_PHARLAP_V4 ; - chk for v4 or higher
+      cmp   byte ptr _Extender,X_PHARLAP_V4 ; - chk for v4 or higher
       _quif l           ; - quit if not version 4 or higher
       mov   BL,7            ; - interrupt #7
       mov   ECX,0           ; - read IDT
@@ -183,7 +173,7 @@ endif
       int   21H         ; - ...
       mov   old7off,ebx     ; - save it
       mov   old7seg,es      ; - ...
-      cmp   byte ptr EXTENDER,X_PHARLAP_V3 ; - chk for v3 or higher
+      cmp   byte ptr _Extender,X_PHARLAP_V3 ; - chk for v3 or higher
       mov   cl,7            ; - set new int7 handler
       mov   ax,2504h        ; - ...
       push  ds          ; - ...
@@ -230,7 +220,7 @@ __sys_fini_387_emulator proc near
     push    ecx         ; save some regs
     push    ebx         ; ...
     push    edx         ; ...
-    mov al,EXTENDER     ; get extender setting
+    mov al,_Extender    ; get extender setting
     _guess              ; guess: X-32VM
       cmp   byte ptr __X32VM,0  ; - quit if not X-32VM
       _quif e           ; - ...
@@ -277,7 +267,7 @@ __sys_fini_387_emulator endp
 unhook_pharlap proc near
     _guess              ; guess: version 4
 if 0
-      cmp   byte ptr EXTENDER,X_PHARLAP_V4 ; - chk for v4 or higher
+      cmp   byte ptr _Extender,X_PHARLAP_V4 ; - chk for v4 or higher
       _quif l           ; - quit if not version 4 or higher
       mov   BL,7            ; - interrupt #7
       mov   ECX,1           ; - write IDT
@@ -295,7 +285,7 @@ endif
       mov   ds,old7seg      ; - ...
       int   21H         ; - ...
       pop   ds          ; - restore ds
-      cmp   byte ptr EXTENDER,X_PHARLAP_V3 ; - quit if version < 3
+      cmp   byte ptr _Extender,X_PHARLAP_V3 ; - quit if version < 3
       _quif l           ; - ...
       call  _reset_EM_MP_bits   ; - reset EM and MP bits
     _admit              ; admit: Pharlap V2
