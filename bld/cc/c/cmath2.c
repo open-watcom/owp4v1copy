@@ -58,7 +58,7 @@
 #define TIM     TYPE_LDIMAGINARY
 #define BOL     TYPE_BOOL
 
-#define ERR     255
+#define ERR     TYPE_LAST_ENTRY  /* no real type behind this value */
 
 /* define macros for promoted types */
 #if TARGET_INT == 4
