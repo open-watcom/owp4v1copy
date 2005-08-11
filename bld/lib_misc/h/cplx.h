@@ -127,14 +127,10 @@ _WMRTLINK extern dcomplex   _IF_CDSQRT( double r, double i );
 #if defined( __386__ )
   #pragma aux rt_rtn parm routine [eax ebx ecx edx 8087];
   #if defined( __SW_3S )
-    #if __WATCOMC__ < 900
-      #pragma aux (rt_rtn) rt_rtn modify [8087 fs gs];
+    #if defined( __FLAT__ )
+      #pragma aux (rt_rtn) rt_rtn modify [8087 gs];
     #else
-      #if defined( __FLAT__ )
-        #pragma aux (rt_rtn) rt_rtn modify [8087 gs];
-      #else
-        #pragma aux (rt_rtn) rt_rtn modify [8087 es fs gs];
-      #endif
+      #pragma aux (rt_rtn) rt_rtn modify [8087 es gs];
     #endif
     #if defined( __FPI__ )
       #pragma aux (rt_rtn) flt_rt_rtn value [8087];
