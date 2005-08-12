@@ -17,6 +17,7 @@ cdsay .
     rm -f <OWBINDIR>/wsplice
     rm -f <OWBINDIR>/wdiff
     rm -f <OWBINDIR>/comstrip
+    rm -f <OWBINDIR>/wgrep
     rm -f <OWBINDIR>/wtouch
     rm -f <OWBINDIR>/wmake
     rm -f <OWBINDIR>/langdat.exe
@@ -26,6 +27,7 @@ cdsay .
     rm -f <OWBINDIR>/wsplice.exe
     rm -f <OWBINDIR>/diff.exe
     rm -f <OWBINDIR>/comstrip.exe
+    rm -f <OWBINDIR>/wgrep.exe
     rm -f <OWBINDIR>/wtouch.exe
     rm -f <OWBINDIR>/wmake.exe
     rm -f <OWBINDIR>/rm.exe
