@@ -71,7 +71,7 @@ static void init_expr( expr_list *new )
     new->idx_reg  = EMPTY;
     new->indirect = FALSE;
     new->explicit = FALSE;
-    new->expr_type= EMPTY;
+    new->mem_type = MT_EMPTY;
     new->value    = 0;
     new->scale    = 1;
     new->string   = NULL;
@@ -91,7 +91,7 @@ static void TokenAssign( expr_list *t1, expr_list *t2 )
     t1->idx_reg  = t2->idx_reg;
     t1->indirect = t2->indirect;
     t1->explicit = t2->explicit;
-    t1->expr_type= t2->expr_type;
+    t1->mem_type = t2->mem_type;
     t1->value    = t2->value;
     t1->scale    = t2->scale;
     t1->string   = t2->string;
@@ -332,7 +332,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 break;
             } else if( new->sym->state == SYM_STRUCT_FIELD ) {
                 new->empty = FALSE;
-                new->expr_type = new->sym->mem_type;
+                new->mem_type = new->sym->mem_type;
                 new->value = new->sym->offset;
                 new->mbr = new->sym;
                 new->sym = NULL;
@@ -343,7 +343,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
 #else
         new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
 #endif
-        new->expr_type = new->sym->mem_type;
+        new->mem_type = new->sym->mem_type;
         new->empty = FALSE;
         new->type = EXPR_ADDR;
         new->label = i;
@@ -525,7 +525,7 @@ static void MakeConst( expr_list *token )
     token->type = EXPR_CONST;
     token->indirect = FALSE;
     token->explicit = FALSE;
-    token->expr_type = EMPTY;
+    token->mem_type = MT_EMPTY;
 }
 
 static void fix_struct_value( expr_list *token )
@@ -641,7 +641,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 token_2->indirect |= token_1->indirect;
                 if( token_1->explicit ) {
                     token_2->explicit |= token_1->explicit;
-                    token_2->expr_type = token_1->expr_type;
+                    token_2->mem_type = token_1->mem_type;
                 }
                 TokenAssign( token_1, token_2 );
             } else {
@@ -726,7 +726,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
             token_1->value += token_2->value;
             if( token_1->explicit == FALSE ) {
-                token_1->expr_type = token_2->expr_type;
+                token_1->mem_type = token_2->mem_type;
             }
 
         } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_ADDR ) ) {
@@ -862,7 +862,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                     token_1->indirect |= token_2->indirect;
                 }
                 token_1->explicit = FALSE;
-                token_1->expr_type = EMPTY;
+                token_1->mem_type = MT_EMPTY;
             }
 
         } else if( token_1->type == EXPR_REG &&
@@ -961,7 +961,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             token_2->type = EXPR_ADDR;
             if( token_1->explicit ) {
                 token_2->explicit = token_1->explicit;
-                token_2->expr_type = token_1->expr_type;
+                token_2->mem_type = token_1->mem_type;
             }
             TokenAssign( token_1, token_2 );
 
@@ -987,7 +987,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 token_2->indirect |= token_1->indirect;
                 if( token_1->explicit ) {
                     token_2->explicit = token_1->explicit;
-                    token_2->expr_type = token_1->expr_type;
+                    token_2->mem_type = token_1->mem_type;
                 }
                 TokenAssign( token_1, token_2 );
             } else if( Parse_Pass > PASS_1 ) {
@@ -1035,7 +1035,51 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
             TokenAssign( token_1, token_2 );
             token_1->explicit = TRUE;
-            token_1->expr_type = AsmBuffer[index]->value;
+            switch( AsmBuffer[index]->value ) {
+            case T_BYTE:
+                token_1->mem_type = MT_BYTE;
+                break;
+            case T_WORD:
+                token_1->mem_type = MT_WORD;
+                break;
+            case T_DWORD:
+                token_1->mem_type = MT_DWORD;
+                break;
+            case T_FWORD:
+                token_1->mem_type = MT_FWORD;
+                break;
+            case T_QWORD:
+                token_1->mem_type = MT_QWORD;
+                break;
+            case T_TBYTE:
+                token_1->mem_type = MT_TBYTE;
+                break;
+            case T_OWORD:
+                token_1->mem_type = MT_OWORD;
+                break;
+            case T_SHORT:
+                token_1->mem_type = MT_SHORT;
+                break;
+            case T_NEAR:
+                token_1->mem_type = MT_NEAR;
+                break;
+            case T_FAR:
+                token_1->mem_type = MT_FAR;
+                break;
+#ifdef _WASM_
+            case T_SBYTE:
+                token_1->mem_type = MT_SBYTE;
+                break;
+            case T_SWORD:
+                token_1->mem_type = MT_SWORD;
+                break;
+            case T_SDWORD:
+                token_1->mem_type = MT_SDWORD;
+                break;
+#endif
+            default:
+                break;
+            }
             break;
         case T_PTR:
             value = AsmBuffer[index - 1]->value;
@@ -1072,7 +1116,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         case T_SHORT:
             TokenAssign( token_1, token_2 );
             token_1->explicit = TRUE;
-            token_1->expr_type = AsmBuffer[index]->value;
+            token_1->mem_type = MT_SHORT;
             break;
         }
         break;
@@ -1166,7 +1210,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             switch( AsmBuffer[index]->value ) {
             case T_LENGTH:
                 token_1->value = sym->first_length;
-                if( sym->mem_type != T_STRUCT ) {
+                if( sym->mem_type != MT_STRUCT ) {
                     break;
                 }
             case T_LENGTHOF:
@@ -1174,7 +1218,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 break;
             case T_SIZE:
                 token_1->value = sym->first_size;
-                if( sym->mem_type != T_STRUCT ) {
+                if( sym->mem_type != MT_STRUCT ) {
                     break;
                 }
             case T_SIZEOF:
@@ -1190,7 +1234,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             token_1->type = EXPR_CONST;
             token_1->indirect = FALSE;
             token_1->explicit = FALSE;
-            token_1->expr_type = EMPTY;
+            token_1->mem_type = MT_EMPTY;
             break;
 #endif
         default:
@@ -1747,7 +1791,7 @@ static int fix( expr_list *res, int start, int end )
 
         if( res->instr != EMPTY ) {
             size++;
-        } else if( res->mbr != NULL && res->mbr->mem_type != EMPTY ) {
+        } else if( res->mbr != NULL && res->mbr->mem_type != MT_EMPTY ) {
             size += 2;
         }
 
@@ -1809,9 +1853,54 @@ static int fix( expr_list *res, int start, int end )
         if( res->instr != EMPTY ) {
             AsmBuffer[start]->token = T_UNARY_OPERATOR;
             AsmBuffer[start++]->value = res->instr;
-        } else if( res->mbr != NULL && res->mbr->mem_type != EMPTY ) {
+        } else if( res->mbr != NULL && res->mbr->mem_type != MT_EMPTY ) {
             AsmBuffer[start]->token = T_RES_ID;
-            AsmBuffer[start++]->value = res->mbr->mem_type;
+            switch( res->mbr->mem_type ) {
+            case MT_BYTE:
+                AsmBuffer[start++]->value = T_BYTE;
+                break;
+            case MT_WORD:
+                AsmBuffer[start++]->value = T_WORD;
+                break;
+            case MT_DWORD:
+                AsmBuffer[start++]->value = T_DWORD;
+                break;
+            case MT_FWORD:
+                AsmBuffer[start++]->value = T_FWORD;
+                break;
+            case MT_QWORD:
+                AsmBuffer[start++]->value = T_QWORD;
+                break;
+            case MT_TBYTE:
+                AsmBuffer[start++]->value = T_TBYTE;
+                break;
+            case MT_OWORD:
+                AsmBuffer[start++]->value = T_OWORD;
+                break;
+            case MT_SHORT:
+                AsmBuffer[start++]->value = T_SHORT;
+                break;
+            case MT_NEAR:
+                AsmBuffer[start++]->value = T_NEAR;
+                break;
+            case MT_FAR:
+                AsmBuffer[start++]->value = T_FAR;
+                break;
+#ifdef _WASM_
+            case MT_SBYTE:
+                AsmBuffer[start++]->value = T_SBYTE;
+                break;
+            case MT_SWORD:
+                AsmBuffer[start++]->value = T_SWORD;
+                break;
+            case MT_SDWORD:
+                AsmBuffer[start++]->value = T_SDWORD;
+                break;
+#endif
+            default:
+                break;
+            }
+//            AsmBuffer[start++]->value = res->mbr->mem_type;
             AsmBuffer[start]->token = T_RES_ID;
             AsmBuffer[start++]->value = T_PTR;
         }

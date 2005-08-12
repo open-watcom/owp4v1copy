@@ -5,7 +5,19 @@ read %1.asm
 #
 # convert each asm source line to c pragma aux line
 #
-%s/^.*$/extern void p\#( void );\n#pragma aux p\# = "&"\nvoid r\#( void ) { p\#(); }
+if ( %2 == "K3D" )
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".586p" ".K3D" ".387" "&"\nvoid r\#( void ) { p\#(); }
+elseif ( %2 == "MMX" )
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".586p" ".MMX" ".387" "&"\nvoid r\#( void ) { p\#(); }
+elseif ( %2 == "XMM" )
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".686p" ".XMM" ".387" "&"\nvoid r\#( void ) { p\#(); }
+elseif ( %2 == "XMM2" )
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".686p" ".XMM2" ".387" "&"\nvoid r\#( void ) { p\#(); }
+elseif ( %2 == "XMM3" )
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".686p" ".XMM3" ".387" "&"\nvoid r\#( void ) { p\#(); }
+else
+%s/^.*$/extern void p\#( void );\n#pragma aux p\# = ".486p" ".387" "&"\nvoid r\#( void ) { p\#(); }
+endif
 #
 # C++ open
 #
@@ -15,45 +27,6 @@ insert
 >#endif
 >int	x;
 .
-#
-# initialize procesor intruction set
-#
-if ( %2 == "K3D" )
-insert
->#pragma aux pinit0=".586p"
->#pragma aux pinit1=".K3D"
->#pragma aux pinit2=".387"
-.
-elseif ( %2 == "MMX" )
-insert
->#pragma aux pinit0=".586p"
->#pragma aux pinit1=".MMX"
->#pragma aux pinit2=".387"
-.
-elseif ( %2 == "XMM" )
-insert
->#pragma aux pinit0=".686p"
->#pragma aux pinit1=".XMM"
->#pragma aux pinit2=".387"
-.
-elseif ( %2 == "XMM2" )
-insert
->#pragma aux pinit0=".686p"
->#pragma aux pinit1=".XMM2"
->#pragma aux pinit2=".387"
-.
-elseif ( %2 == "XMM3" )
-insert
->#pragma aux pinit0=".686p"
->#pragma aux pinit1=".XMM3"
->#pragma aux pinit2=".387"
-.
-else
-insert
->#pragma aux pinit0=".486p"
->#pragma aux pinit1=".387"
-.
-endif
 #
 # C++ close
 #

@@ -53,18 +53,18 @@ static struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
 static struct asm_sym  *AsmSymHead;
 
 static unsigned short CvtTable[] = {
-    T_BYTE,   // INT1
-    T_WORD,   // INT2
-    T_DWORD,  // INT4
-    T_FWORD,  // INT6
-    T_QWORD,  // INT8
-    T_DWORD,  // FLOAT4
-    T_QWORD,  // FLOAT8
-    T_TBYTE,  // FLOAT10
-    T_NEAR,   // NEAR2
-    T_NEAR,   // NEAR4
-    T_FAR,    // FAR2
-    T_FAR,    // FAR4
+    MT_BYTE,   // INT1
+    MT_WORD,   // INT2
+    MT_DWORD,  // INT4
+    MT_FWORD,  // INT6
+    MT_QWORD,  // INT8
+    MT_DWORD,  // FLOAT4
+    MT_QWORD,  // FLOAT8
+    MT_TBYTE,  // FLOAT10
+    MT_NEAR,   // NEAR2
+    MT_NEAR,   // NEAR4
+    MT_FAR,    // FAR2
+    MT_FAR     // FAR4
 };
 
 #endif
@@ -88,12 +88,12 @@ static char *InitAsmSym( struct asm_sym *sym, char *name )
         sym->total_length = 0;
         sym->mangler = NULL;
         sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
+        sym->mem_type = MT_EMPTY;
 #else
         sym->addr = 0;
         sym->state = AsmQueryExternal( sym->name );
         if( sym->state == SYM_UNDEFINED ) {
-            sym->mem_type = EMPTY;
+            sym->mem_type = MT_EMPTY;
         } else {
             sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
         }
@@ -177,7 +177,7 @@ struct asm_sym *AsmLookup( char *name )
         if( IS_SYM_COUNTER( name ) ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
-            sym->mem_type = T_NEAR;
+            sym->mem_type = MT_NEAR;
             return( sym );
         }
 #else

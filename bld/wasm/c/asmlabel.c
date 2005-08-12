@@ -167,7 +167,7 @@ int LabelDirective( int i )
     }
     if( AsmBuffer[i+1]->token == T_ID ) {
         if( IsLabelStruct( AsmBuffer[i+1]->string_ptr ) ) {
-            return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_STRUCT ) );
+            return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_STRUCT ) );
         }
     }
     if( AsmBuffer[i+1]->token != T_RES_ID ) {
@@ -176,25 +176,25 @@ int LabelDirective( int i )
     }
     switch( AsmBuffer[i+1]->value ) {
     case T_NEAR:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_NEAR ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR ));
     case T_FAR:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FAR ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FAR ));
     case T_BYTE:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_BYTE ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_BYTE ));
     case T_WORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_WORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_WORD ));
     case T_DWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_DWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_DWORD ));
     case T_FWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FWORD ));
     case T_PWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FWORD ));
     case T_QWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_QWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_QWORD ));
     case T_TBYTE:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_TBYTE ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_TBYTE ));
     case T_OWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_OWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_OWORD ));
     default:
         AsmError( INVALID_LABEL_DEFINITION );
         return( ERROR );

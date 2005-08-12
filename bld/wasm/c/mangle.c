@@ -134,9 +134,9 @@ static char *WatcomCMangler( struct asm_sym *sym, char *buffer )
         changes |= USCORE_BACK;
     } else {
         switch( sym->mem_type ) {
-        case T_NEAR:
-        case T_FAR:
-        case EMPTY:
+        case MT_NEAR:
+        case MT_FAR:
+        case MT_EMPTY:
             changes |= USCORE_BACK;
             break;
         default:

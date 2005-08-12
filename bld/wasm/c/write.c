@@ -473,17 +473,17 @@ static int opsize( memtype mem_type )
 /************************************/
 {
     switch( mem_type ) {
-    case EMPTY:     return( 0 );
-    case T_SBYTE:
-    case T_BYTE:    return( 1 );
-    case T_SWORD:
-    case T_WORD:    return( 2 );
-    case T_SDWORD:
-    case T_DWORD:   return( 4 );
-    case T_FWORD:   return( 6 );
-    case T_QWORD:   return( 8 );
-    case T_TBYTE:   return( 10 );
-    case T_OWORD:   return( 16 );
+    case MT_EMPTY:  return( 0 );
+    case MT_SBYTE:
+    case MT_BYTE:   return( 1 );
+    case MT_SWORD:
+    case MT_WORD:   return( 2 );
+    case MT_SDWORD:
+    case MT_DWORD:  return( 4 );
+    case MT_FWORD:  return( 6 );
+    case MT_QWORD:  return( 8 );
+    case MT_TBYTE:  return( 10 );
+    case MT_OWORD:  return( 16 );
     default:        return( 0 );
     }
 }

@@ -372,23 +372,23 @@ int OperandSize( enum operand_type opnd )
     } else if( opnd == OP_M ) {
         /* fixme */
         switch( Code->mem_type ) {
-        case EMPTY:     return( 0 );
+        case MT_EMPTY:  return( 0 );
 #ifdef _WASM_
-        case T_SBYTE:
+        case MT_SBYTE:
 #endif
-        case T_BYTE:    return( 1 );
+        case MT_BYTE:    return( 1 );
 #ifdef _WASM_
-        case T_SWORD:
+        case MT_SWORD:
 #endif
-        case T_WORD:    return( 2 );
+        case MT_WORD:    return( 2 );
 #ifdef _WASM_
-        case T_SDWORD:
+        case MT_SDWORD:
 #endif
-        case T_DWORD:   return( 4 );
-        case T_FWORD:   return( 6 );
-        case T_QWORD:   return( 8 );
-        case T_TBYTE:   return( 10 );
-        case T_OWORD:   return( 16 );
+        case MT_DWORD:   return( 4 );
+        case MT_FWORD:   return( 6 );
+        case MT_QWORD:   return( 8 );
+        case MT_TBYTE:   return( 10 );
+        case MT_OWORD:   return( 16 );
         }
     } else if( opnd & ( OP_M8_R8 | OP_M_B | OP_I8 | OP_I_1 | OP_I_3 | OP_I8_U ) ) {
         return( 1 );
@@ -729,33 +729,33 @@ static int idata_float( long value )
 */
 {
     switch( Code->mem_type ) {
-    case EMPTY:
+    case MT_EMPTY:
         if( Code->info.token == T_PUSHW ) { // sigh. another special case
             // expect 32-bit code but get 16-bit
             AsmError( IMMEDIATE_DATA_OUT_OF_RANGE );
             return( ERROR );
         }
         break;
-    case T_FAR:
-    case T_NEAR:
-    case T_SHORT:
+    case MT_FAR:
+    case MT_NEAR:
+    case MT_SHORT:
 #ifdef _WASM_
-    case T_PROC:
+    case MT_PROC:
 #endif
         AsmError( SYNTAX_ERROR );
         return( ERROR );
 #ifdef _WASM_
-    case T_SBYTE:
-    case T_SWORD:
+    case MT_SBYTE:
+    case MT_SWORD:
 #endif
-    case T_BYTE:
-    case T_WORD:
+    case MT_BYTE:
+    case MT_WORD:
         AsmError( OPERANDS_MUST_BE_THE_SAME_SIZE );
         return( ERROR );
 #ifdef _WASM_
-    case T_SDWORD:
+    case MT_SDWORD:
 #endif
-    case T_DWORD:
+    case MT_DWORD:
         // set w-bit
         Code->info.opcode |= W_BIT;
         break;
@@ -832,16 +832,16 @@ static int process_jumps( expr_list *opndx )
     segm_override_jumps( opndx );
 
     flag = ( opndx->explicit ) ? TRUE : FALSE ;
-    if( ptr_operator( opndx->expr_type, flag ) == ERROR )
+    if( ptr_operator( opndx->mem_type, flag ) == ERROR )
         return( ERROR );
-    if( ptr_operator( T_PTR, flag ) == ERROR ) {
+    if( ptr_operator( MT_PTR, flag ) == ERROR ) {
         return( ERROR );
     }
     if( opndx->mbr != NULL ) {
         flag = FALSE;
         if( ptr_operator( opndx->mbr->mem_type, flag ) == ERROR )
             return( ERROR );
-        if( ptr_operator( T_PTR, flag ) == ERROR ) {
+        if( ptr_operator( MT_PTR, flag ) == ERROR ) {
             return( ERROR );
         }
     }
@@ -925,15 +925,15 @@ static int idata_nofixup( expr_list *opndx )
     Code->data[Opnd_Count] = value;
 
     switch( Code->mem_type ) {
-    case EMPTY:
+    case MT_EMPTY:
         if( Code->info.token == T_PUSH ) {
             if( opndx->explicit ) {
-                if( opndx->expr_type == MT_BYTE ) {
+                if( opndx->mem_type == MT_BYTE ) {
                     op_type = OP_I8;
-                } else if( opndx->expr_type == MT_WORD ) {
+                } else if( opndx->mem_type == MT_WORD ) {
                     op_type = OP_I16;
                     SET_OPSIZ_16( Code );
-                } else if( opndx->expr_type == MT_DWORD ) {
+                } else if( opndx->mem_type == MT_DWORD ) {
                     op_type = OP_I32;
                     SET_OPSIZ_32( Code );
                 } else {
@@ -986,7 +986,7 @@ static int idata_nofixup( expr_list *opndx )
             op_type = OP_I8;
         }
         break;
-    case T_FAR:
+    case MT_FAR:
         if( ( value > SHRT_MAX ) || ( value < SHRT_MIN ) ) {
             op_type = OP_I32;
         } else if( ( value > SCHAR_MAX ) || ( value < SCHAR_MIN ) ) {
@@ -995,14 +995,14 @@ static int idata_nofixup( expr_list *opndx )
             op_type = OP_I8;
         }
         break;
-    case T_NEAR:
+    case MT_NEAR:
         if( !Code->use32 ) {
             op_type = OP_I16;
         } else {
             op_type = OP_I32;
         }
         break;
-    case T_SHORT:
+    case MT_SHORT:
         if( ( value > SCHAR_MAX ) || ( value < SCHAR_MIN ) ) {
             // expect 8-bit but got 16 bit
             AsmError( JUMP_OUT_OF_RANGE );
@@ -1011,7 +1011,7 @@ static int idata_nofixup( expr_list *opndx )
             op_type = OP_I8;
         }
         break;
-    case T_BYTE:
+    case MT_BYTE:
         if( !InRange( value, 1 ) ) {
             // expect 8-bit but got 16 bit
             AsmError( IMMEDIATE_DATA_OUT_OF_RANGE );
@@ -1021,7 +1021,7 @@ static int idata_nofixup( expr_list *opndx )
         }
         break;
 #ifdef _WASM_
-    case T_SBYTE:
+    case MT_SBYTE:
         if( ( value > SCHAR_MAX ) || ( value < SCHAR_MIN ) ) {
             AsmError( IMMEDIATE_DATA_OUT_OF_RANGE );
             return( ERROR );
@@ -1029,7 +1029,7 @@ static int idata_nofixup( expr_list *opndx )
             op_type = OP_I8;
         }
         break;
-    case T_SWORD:
+    case MT_SWORD:
         if( ( value > SHRT_MAX ) || ( value < SHRT_MIN ) ) {
             AsmError( IMMEDIATE_DATA_OUT_OF_RANGE );
             return( ERROR );
@@ -1042,7 +1042,7 @@ static int idata_nofixup( expr_list *opndx )
         Code->info.opcode |= W_BIT;
         break;
 #endif
-    case T_WORD:
+    case MT_WORD:
 #ifdef _WASM_
         if( Options.sign_value ) {
             if( !InRange( value, 2 ) ) {
@@ -1072,7 +1072,7 @@ static int idata_nofixup( expr_list *opndx )
 #endif
         break;
 #ifdef _WASM_
-   case T_SDWORD:
+   case MT_SDWORD:
         if( ( value > SCHAR_MAX ) || ( value < SCHAR_MIN ) ) {
             op_type = OP_I32;
         } else {
@@ -1082,7 +1082,7 @@ static int idata_nofixup( expr_list *opndx )
         Code->info.opcode |= W_BIT;
         break;
 #endif
-    case T_DWORD:
+    case MT_DWORD:
 #ifdef _WASM_
         if( Options.sign_value ) {
             if( value > UCHAR_MAX ) {
@@ -1105,7 +1105,7 @@ static int idata_nofixup( expr_list *opndx )
         }
 #endif
         break;
-    case T_QWORD:
+    case MT_QWORD:
 #ifdef _WASM_
         if( Options.sign_value ) {
             if( value > UCHAR_MAX ) {
@@ -1185,40 +1185,40 @@ static int idata_fixup( expr_list *opndx )
         }
     }
     switch( Code->mem_type ) {
-    case EMPTY:
+    case MT_EMPTY:
         if( Opnd_Count > OPND1 ) {
             type = OperandSize( Code->info.opnd_type[OPND1] );
             if( type == 4 ) {
-                Code->mem_type = T_DWORD;
+                Code->mem_type = MT_DWORD;
                 Code->info.opnd_type[Opnd_Count] = OP_I32;
                 SET_OPSIZ_32( Code );
                 break;
             } else if( type == 2 ) {
-                Code->mem_type = T_WORD;
+                Code->mem_type = MT_WORD;
                 Code->info.opnd_type[Opnd_Count] = OP_I16;
                 SET_OPSIZ_16( Code );
                 break;
             }
         }
         if( ( Code->info.token == T_PUSHD ) || sym32 ) {
-            Code->mem_type = T_DWORD;
+            Code->mem_type = MT_DWORD;
             Code->info.opnd_type[Opnd_Count] = OP_I32;
             SET_OPSIZ_32( Code );
             break;
         }
-        Code->mem_type = T_WORD;
+        Code->mem_type = MT_WORD;
         // no break
 #ifdef _WASM_
-    case T_SWORD:
+    case MT_SWORD:
 #endif
-    case T_WORD:
+    case MT_WORD:
         Code->info.opnd_type[Opnd_Count] = OP_I16;
         SET_OPSIZ_16( Code );
         break;
 #ifdef _WASM_
-    case T_SDWORD:
+    case MT_SDWORD:
 #endif
-    case T_DWORD:
+    case MT_DWORD:
         Code->info.opnd_type[Opnd_Count] = OP_I32;
         SET_OPSIZ_32( Code );
         break;
@@ -1274,16 +1274,16 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
     segm_override_memory( opndx );
 
     flag = ( opndx->explicit ) ? TRUE : FALSE ;
-    if( ptr_operator( opndx->expr_type, flag ) == ERROR )
+    if( ptr_operator( opndx->mem_type, flag ) == ERROR )
         return( ERROR );
-    if( ptr_operator( T_PTR, flag ) == ERROR ) {
+    if( ptr_operator( MT_PTR, flag ) == ERROR ) {
         return( ERROR );
     }
     if( opndx->mbr != NULL ) {
         flag = FALSE;
         if( ptr_operator( opndx->mbr->mem_type, flag ) == ERROR )
             return( ERROR );
-        if( ptr_operator( T_PTR, flag ) == ERROR ) {
+        if( ptr_operator( MT_PTR, flag ) == ERROR ) {
             return( ERROR );
         }
     }
@@ -1426,10 +1426,10 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
             base_lock = TRUE;   // add lock
             /* fall through */
         default:
-            if( Code->mem_type == EMPTY ) {
+            if( Code->mem_type == MT_EMPTY ) {
                 if( ptr_operator( sym->mem_type, FALSE ) == ERROR )
                     return( ERROR );
-                if( ptr_operator( T_PTR, FALSE ) == ERROR ) {
+                if( ptr_operator( MT_PTR, FALSE ) == ERROR ) {
                     return( ERROR );
                 }
             }
@@ -1479,7 +1479,7 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
     }
     if( IS_JMPCALLN( Code->info.token ) ) {
-        if( Code->mem_type == T_DWORD ) {
+        if( Code->mem_type == MT_DWORD ) {
             if( !Code->use32 ) {
                 Code->info.token++;
             }
@@ -1494,7 +1494,7 @@ static int process_address( expr_list *opndx )
   parse the memory reference operand
 */
 {
-    int                 type;
+    memtype     mem_type;
 
     if( opndx->indirect ) {           // indirect operand
         if( opndx->sym == NULL ) {
@@ -1569,18 +1569,18 @@ static int process_address( expr_list *opndx )
 #endif
                 } else {
                     // CODE location is converted to OFFSET symbol
-                    type = ( opndx->explicit ) ? opndx->expr_type : opndx->sym->mem_type;
-                    switch( type ) {
+                    mem_type = ( opndx->explicit ) ? opndx->mem_type : opndx->sym->mem_type;
+                    switch( mem_type ) {
 #ifdef _WASM_
-                    case T_ABS:
+                    case MT_ABS:
                         return( idata_fixup( opndx ) );
                         break;
 #endif
-                    case T_FAR:
-                    case T_NEAR:
-                    case T_SHORT:
+                    case MT_FAR:
+                    case MT_NEAR:
+                    case MT_SHORT:
 #ifdef _WASM_
-                    case T_PROC:
+                    case MT_PROC:
 #endif
                         if( Code->info.token == T_LEA ) {
                             return( memory_operand( opndx, TRUE ) );
@@ -1778,7 +1778,7 @@ int AsmParse( void )
     rCode->prefix.seg   = EMPTY;
     rCode->prefix.adrsiz = FALSE;
     rCode->prefix.opsiz = FALSE;
-    rCode->mem_type     = EMPTY;
+    rCode->mem_type     = MT_EMPTY;
     rCode->mem_type_fixed = FALSE;
     rCode->extended_ins = EMPTY;
     rCode->sib          = 0;            // assume ss is *1
@@ -2056,7 +2056,7 @@ int AsmParse( void )
         case T_COLON:
             if ( last_opnd == OP_LABEL ) {
                 if( AsmBuffer[i+1]->token != T_RES_ID ) {
-                    if( MakeLabel( AsmBuffer[i-1]->string_ptr, T_NEAR )==ERROR ) {
+                    if( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR )==ERROR ) {
                          return( ERROR );
                     }
                 }
@@ -2106,18 +2106,18 @@ static void SizeString( unsigned op_size )
     /* size an string instruction based on it's operand's size */
     switch( op_size ) {
     case 1:
-        Code->mem_type = T_BYTE;
+        Code->mem_type = MT_BYTE;
         Code->info.opcode &= NOT_W_BIT;
         if( Code->use32 )
             Code->prefix.opsiz = FALSE;
         break;
     case 2:
-        Code->mem_type = T_WORD;
+        Code->mem_type = MT_WORD;
         Code->info.opcode |= W_BIT;
         Code->prefix.opsiz = Code->use32 ? TRUE : FALSE;
         break;
     case 4:
-        Code->mem_type = T_DWORD;
+        Code->mem_type = MT_DWORD;
         Code->info.opcode |= W_BIT;
         Code->prefix.opsiz = Code->use32 ? FALSE : TRUE;
         break;
@@ -2416,7 +2416,7 @@ static int check_size( void )
             if( op1_size == 0 ) {
                 if( ( op1 & OP_M_ANY ) && ( op2 & OP_I ) ) {
                     if( (unsigned long)Code->data[OPND2] > USHRT_MAX ) {
-                         Code->mem_type = T_DWORD;
+                         Code->mem_type = MT_DWORD;
                          Code->info.opcode |= W_BIT;
                          Code->info.opnd_type[OPND2] = OP_I32;
 #ifdef _WASM_
@@ -2425,7 +2425,7 @@ static int check_size( void )
                          }
 #endif
                     } else if( (unsigned long)Code->data[OPND2] > UCHAR_MAX ) {
-                         Code->mem_type = T_WORD;
+                         Code->mem_type = MT_WORD;
                          Code->info.opcode |= W_BIT;
                          Code->info.opnd_type[OPND2] = OP_I16;
 #ifdef _WASM_
@@ -2434,7 +2434,7 @@ static int check_size( void )
                          }
 #endif
                     } else {
-                         Code->mem_type = T_BYTE;
+                         Code->mem_type = MT_BYTE;
                          Code->info.opnd_type[OPND2] = OP_I8;
 #ifdef _WASM_
                          if( Parse_Pass == PASS_1 ) {
@@ -2458,7 +2458,7 @@ static int check_size( void )
 #endif
                     switch( op2_size ) {
                     case 1:
-                        Code->mem_type = T_BYTE;
+                        Code->mem_type = MT_BYTE;
 #ifdef _WASM_
                         if( ( Parse_Pass == PASS_1 ) && ( op2 & OP_I ) ) {
                             AsmWarn( 1, ASSUMING_BYTE );
@@ -2466,7 +2466,7 @@ static int check_size( void )
 #endif
                         break;
                     case 2:
-                        Code->mem_type = T_WORD;
+                        Code->mem_type = MT_WORD;
                         Code->info.opcode |= W_BIT;
 #ifdef _WASM_
                         if( ( Parse_Pass == PASS_1 ) && ( op2 & OP_I ) ) {
@@ -2477,7 +2477,7 @@ static int check_size( void )
                             Code->prefix.opsiz = TRUE;
                         break;
                     case 4:
-                        Code->mem_type = T_DWORD;
+                        Code->mem_type = MT_DWORD;
                         Code->info.opcode |= W_BIT;
 #ifdef _WASM_
                         if( ( Parse_Pass == PASS_1 ) && ( op2 & OP_I ) ) {

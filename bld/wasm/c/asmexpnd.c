@@ -30,6 +30,7 @@
 
 #include "asmglob.h"
 
+#include "asmins.h"
 #include "asmeval.h"
 #include "asmexpnd.h"
 #include "asmdefs.h"
@@ -37,7 +38,6 @@
 #ifdef _WASM_
 
 #include "asmalloc.h"
-#include "asmins.h"
 #include "asmsym.h"
 #include "directiv.h"
 

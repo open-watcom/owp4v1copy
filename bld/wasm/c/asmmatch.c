@@ -461,17 +461,17 @@ int match_phase_1( void )
                     cur_opnd = OP_M_W;
                 } else if( MEM_TYPE( Code->mem_type, DWORD ) ) {
                     cur_opnd = OP_M_DW;
-                } else if( Code->mem_type == T_FWORD ) {
+                } else if( Code->mem_type == MT_FWORD ) {
                     cur_opnd = OP_M_FW;
-                } else if( Code->mem_type == T_QWORD ) {
+                } else if( Code->mem_type == MT_QWORD ) {
                     cur_opnd = OP_M_QW;
-                } else if( Code->mem_type == T_TBYTE ) {
+                } else if( Code->mem_type == MT_TBYTE ) {
                     cur_opnd = OP_M_TB;
-                } else if( Code->mem_type == T_OWORD ) {
+                } else if( Code->mem_type == MT_OWORD ) {
                     cur_opnd = OP_M_OW;
-                } else if( Code->mem_type == T_FAR ) {
+                } else if( Code->mem_type == MT_FAR ) {
                     cur_opnd = ( Code->use32 ) ? OP_M_FW : OP_M_DW ;
-                } else if( Code->mem_type == T_NEAR ) {
+                } else if( Code->mem_type == MT_NEAR ) {
                     cur_opnd = ( Code->use32 ) ? OP_M_DW : OP_M_W ;
                 }
             }
@@ -835,7 +835,7 @@ static int match_phase_3( int *i, enum operand_type determinant )
         case OP_M16:
             if( cur_opnd & OP_M
                 && ( MEM_TYPE( Code->mem_type, WORD )
-                || Code->mem_type == EMPTY ) ) {
+                || Code->mem_type == MT_EMPTY ) ) {
                 if( output( *i ) == ERROR )
                     return( ERROR );
                 if( output_data( last_opnd, OPND1 ) == ERROR )

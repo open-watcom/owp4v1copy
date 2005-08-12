@@ -95,11 +95,11 @@
 
 #ifdef _WASM_
 
-#define MEM_TYPE( op, typ ) ( (op) == T_##typ || (op) == T_S##typ )
+#define MEM_TYPE( op, typ ) ( (op) == MT_##typ || (op) == MT_S##typ )
 
 #else
 
-#define MEM_TYPE( op, typ ) ( (op) == T_##typ )
+#define MEM_TYPE( op, typ ) ( (op) == MT_##typ )
 
 #endif
 
