@@ -20,3 +20,7 @@ Note that the programs here are compiled with the -d2 option. This
 inhibits optimization somewhat, but it is necessary to get good results
 in the profiler (an unfortunate, but probably inescapable, circum-
 stance).
+
+Note: the environment variable PROCESSOR_SPEED needs to be set to
+the processor speed in MHz (e.g. 3000 for 3GHz) or the times reported
+will not be correct.

@@ -3,22 +3,19 @@
 .cpp: $(bench_dir)\owstl
 .h: $(bench_dir)\owstl
 
-extra_w_opts = -xs -d2
+cflags_watcom = -zq -d0 -xs -oabehkmrt -ol+ -oi+ -ei -s -zp8 -6s -fpi87 -fp6
+#cflags_watcom = -5s -zq -d2 -xs -ox
+#cflags_watcom = -5s -zq -d0 -xs -ox
+#extra_w_opts = -xs -d2
+extra_m_opts = -GX
 extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
 
-exe_files = strcopyl.exe strcopys.exe strpass.exe
+exe_files = strcopyl.exe strcopys.exe strpass.exe mapins.exe mapfind.exe
 
 run: $(exe_files) .SYMBOLIC
-	echo Compilation complete. Run test programs individually.
-    
+    @echo Compilation complete. Run test programs individually.
+
 build: $(exe_files) .SYMBOLIC
 
-strcopyl.exe : strcopyl.obj
-	$(deflink)
-
-strcopys.exe : strcopys.obj
-        $(deflink)
-
-strpass.exe : strpass.obj
-        $(deflink)
-
+.obj.exe:
+    $(deflink)

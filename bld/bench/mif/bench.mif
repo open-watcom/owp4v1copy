@@ -39,10 +39,10 @@ cpp = wpp386
 #.before:
 #        @set include=$(lang_root)\h;$(lang_root)\h\nt
 
-.c.obj:
+.c.obj: .AUTODEPEND
         $(cc) $(cflags_watcom) $(extra_cflags) $(extra_defines) $[@
 
-.cpp.obj:
+.cpp.obj: .AUTODEPEND
         $(cpp) $(cflags_watcom) $(extra_cflags) $(extra_defines) $[@
 
 deflink = wlink $(lflags_watcom) name $^. file { $< } lib $(bench_dir)\support\watcom\support.lib
