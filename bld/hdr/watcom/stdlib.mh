@@ -24,7 +24,9 @@
 :: The following segment only appears in stdlib.h.
 :segment !CNAME
 #ifdef __cplusplus
+#define _INCLUDED_FROM_STDLIB_H
 #include <cstdlib>
+#undef  _INCLUDED_FROM_STDLIB_H
 
 // C99 types in stdlib.h.
 using std::div_t;
@@ -513,18 +515,23 @@ _WCRTLINK extern onexit_t onexit(onexit_t __func);
 :include cplusepi.sp
 :endsegment
 
-:segment CNAME
-:: For C++ provide the appropriate overloaded signatures. These signatures
-:: must not be extern "C" (which is why they are down here).
-namespace std {
-  inline long int abs( long int __x ) { return( labs( __x ) ); }
-  inline ldiv_t div( long int __n, long int __d )
-    { return( ldiv( __n, __d ) ); }
-}
-:endsegment
-
 :segment !CNAME
 #endif /* __cplusplus */
 :endsegment
 
 #endif
+
+:segment CNAME
+:: For C++ provide the appropriate overloaded signatures. These signatures
+:: must not be extern "C" (which is why they are down here).
+#ifndef _INCLUDED_FROM_STDLIB_H
+#ifndef _CSTDLIB_AUX_INCLUDED
+#define _CSTDLIB_AUX_INCLUDED
+namespace std {
+  inline long int abs( long int __x ) { return( labs( __x ) ); }
+  inline ldiv_t div( long int __n, long int __d )
+    { return( ldiv( __n, __d ) ); }
+}
+#endif
+#endif
+:endsegment

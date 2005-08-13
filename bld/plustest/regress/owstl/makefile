@@ -38,6 +38,7 @@ stack_axp=opt stack=16k
 tests = &
         alg01.$(exe)    &
         alg02.$(exe)    &
+        clib01.$(exe)   &
         cmplx01.$(exe)  &
         fun01.$(exe)    &
         iter01.$(exe)   &
@@ -70,6 +71,8 @@ test : .symbolic test.lnk $(tests)
     $(run) alg01 >> test.out
     @echo ----------alg02---------->> test.out
     $(run) alg02 >> test.out
+    @echo ----------clib01---------->> test.out
+    $(run) clib01 >> test.out
     @echo ----------cmplx01---------->> test.out
     $(run) cmplx01 >> test.out
     @echo ----------fun01---------->> test.out

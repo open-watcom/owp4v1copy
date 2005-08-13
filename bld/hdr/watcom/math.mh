@@ -23,7 +23,9 @@
 :: The following somewhat long segment only appears in math.h
 :segment !CNAME
 #ifdef __cplusplus
+#define _INCLUDED_FROM_MATH_H
 #include <cmath>
+#undef  _INCLUDED_FROM_MATH_H
 
 // C99 functions in math.h
 using std::acos;
@@ -207,9 +209,19 @@ namespace std {
 :include cplusepi.sp
 :endsegment
 
+:: This #endif closes the #ifdef __cplusplus in math.h
+:segment !CNAME
+#endif
+:endsegment
+
+#endif
+
 :segment CNAME
 :: For C++ provide the appropriate overloaded signatures. These signatures
 :: must not be extern "C" (which is why they are down here).
+#ifndef _INCLUDED_FROM_MATH_H
+#ifndef _CMATH_AUX_INCLUDED
+#define _CMATH_AUX_INCLUDED
 namespace std {
   // double
   inline double abs( double __x ) { return( fabs( __x ) ); }
@@ -292,11 +304,6 @@ namespace std {
   inline long double tan  ( long double __x ) { return( tan  ( (double)__x ) ); }
   inline long double tanh ( long double __x ) { return( tanh ( (double)__x ) ); }
 }
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in math.h
-:segment !CNAME
+#endif
 #endif
 :endsegment
-
-#endif
