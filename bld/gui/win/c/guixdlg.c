@@ -103,9 +103,9 @@ void GUIInitControl( control_item *item, gui_window *wnd, unsigned *focus_id )
         *focus_id = item->id;
     }
     /* will subclass if required */
-    item->call_back = GUIDoSubClass( ctrl, item->class );
+    item->call_back = GUIDoSubClass( ctrl, item->control_class );
     GUICtl3dSubclassCtl( ctrl );
-    switch( item->class ) {
+    switch( item->control_class ) {
     case GUI_CHECK_BOX :
     case GUI_RADIO_BUTTON :
         if( item->checked ) {
@@ -159,7 +159,7 @@ bool GUIProcessControlNotification( WORD id, WORD wNotify, gui_window *wnd )
     item = GUIGetControlByID( wnd, id );
 
     if( item != NULL ) {
-        switch( item->class ) {
+        switch( item->control_class ) {
         case GUI_EDIT :
         case GUI_EDIT_MLE :
             switch( wNotify ) {
@@ -178,7 +178,7 @@ bool GUIProcessControlNotification( WORD id, WORD wNotify, gui_window *wnd )
             // assume that the creator of said resource set up the
             // tab and cursor groups with a dialog editor
             if( ( wnd->flags & IS_RES_DIALOG ) == 0 ) {
-                if( item->class == GUI_RADIO_BUTTON ) {
+                if( item->control_class == GUI_RADIO_BUTTON ) {
                     GUICheckRadioButton( wnd, id );
                 } else {
                     cntl = _wpi_getdlgitem( wnd->hwnd, id );

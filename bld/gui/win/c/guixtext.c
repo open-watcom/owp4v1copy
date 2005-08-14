@@ -192,13 +192,13 @@ bool GUIClearList( gui_window *wnd, unsigned id )
 
 bool GUISetText( gui_window *wnd, unsigned control, char *text )
 {
-    char        *new_text;
-    gui_control_class   class;
+    char                *new_text;
+    gui_control_class   control_class;
 
-    if( !GUIGetControlClass( wnd, control, &class ) ) {
+    if( !GUIGetControlClass( wnd, control, &control_class ) ) {
         return( FALSE );
     }
-    if( class != GUI_EDIT ) {
+    if( control_class != GUI_EDIT ) {
         new_text = _wpi_menutext2pm( text );
         _wpi_setdlgitemtext( wnd->hwnd, control, new_text );
         if( new_text ) {
@@ -218,14 +218,14 @@ char *GUIGetText( gui_window *wnd, unsigned control )
 {
     LONG                length;
     char                *text;
-    gui_control_class   class;
+    gui_control_class   control_class;
     HWND                hwnd;
     int                 choice;
 
-    if( !GUIGetControlClass( wnd, control, &class ) ) {
+    if( !GUIGetControlClass( wnd, control, &control_class ) ) {
         return( NULL );
     }
-    switch( class ) {
+    switch( control_class ) {
     case GUI_LISTBOX :
         choice = GUIGetCurrSelect( wnd, control );
         if( choice == NO_SELECT ) {
@@ -242,7 +242,7 @@ char *GUIGetText( gui_window *wnd, unsigned control )
             text = (char *)GUIMemAlloc( length + 1 );
             if( text != NULL ) {
                 _wpi_getwindowtext( hwnd, (LPSTR)text, length + 1 );
-                switch( class ) {
+                switch( control_class ) {
                     case GUI_PUSH_BUTTON:
                     case GUI_DEFPUSH_BUTTON:
                     case GUI_RADIO_BUTTON:

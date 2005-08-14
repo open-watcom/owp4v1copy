@@ -149,7 +149,7 @@ gui_control *GUIInsertControl( gui_window *wnd, gui_control_info *info,
     }
     control = (gui_control *)GUIMemAlloc( sizeof( gui_control ) );
     if( control != NULL ) {
-        control->class = info->control_class;
+        control->control_class = info->control_class;
         control->id = info->id;
         control->parent = wnd;
         control->index = index;
@@ -276,7 +276,7 @@ bool GUIGetControlClass( gui_window *wnd, unsigned id,
     }
     control = GUIGetControl( wnd, id );
     if( control != NULL ) {
-        *control_class = control->class;
+        *control_class = control->control_class;
         return( TRUE );
     }
     return( FALSE );

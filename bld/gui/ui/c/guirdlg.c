@@ -319,7 +319,7 @@ static bool Template2Dlg( DialogBoxHeader **hdr, DialogBoxControl **cntls,
 }
 
 static gui_control_styles GetControlStyles( DialogBoxControl *ctl,
-                                            gui_control_class class )
+                                            gui_control_class control_class )
 {
     gui_control_styles  styles;
 
@@ -329,7 +329,7 @@ static gui_control_styles GetControlStyles( DialogBoxControl *ctl,
         styles |= GUI_TAB_GROUP;
     }
 
-    switch( class ) {
+    switch( control_class ) {
         case GUI_CHECK_BOX:
             styles |= GUI_GROUP;
             if( ( ctl->Style & 0xf ) == BS_3STATE ) {
@@ -392,53 +392,53 @@ static gui_control_styles GetControlStyles( DialogBoxControl *ctl,
 
 static gui_control_class GetControlClass( DialogBoxControl *ctl )
 {
-    gui_control_class   class;
+    gui_control_class   control_class;
 
-    class = -1;
+    control_class = GUI_BAD_CLASS;
 
     if( ctl && ctl->ClassID && ( ctl->ClassID->Class & 0x80 ) ) {
         switch( ctl->ClassID->Class ) {
             case CLASS_BUTTON:
-                class = GUI_PUSH_BUTTON;
+                control_class = GUI_PUSH_BUTTON;
                 if( CHK_BSTYLE( ctl->Style, BS_GROUPBOX ) ) {
-                    class = GUI_GROUPBOX;
+                    control_class = GUI_GROUPBOX;
                 } else if( CHK_BSTYLE( ctl->Style, BS_AUTORADIOBUTTON ) ||
                            CHK_BSTYLE( ctl->Style, BS_RADIOBUTTON ) ) {
-                    class = GUI_RADIO_BUTTON;
+                    control_class = GUI_RADIO_BUTTON;
                 } else if( CHK_BSTYLE( ctl->Style, BS_AUTOCHECKBOX ) ||
                            CHK_BSTYLE( ctl->Style, BS_CHECKBOX ) ||
                            CHK_BSTYLE( ctl->Style, BS_3STATE ) ||
                            CHK_BSTYLE( ctl->Style, BS_AUTO3STATE ) ) {
-                    class = GUI_CHECK_BOX;
+                    control_class = GUI_CHECK_BOX;
                 } else if( CHK_BSTYLE( ctl->Style, BS_DEFPUSHBUTTON ) ) {
-                    class = GUI_DEFPUSH_BUTTON;
+                    control_class = GUI_DEFPUSH_BUTTON;
                 }
                 break;
             case CLASS_EDIT:
-                class = GUI_EDIT;
+                control_class = GUI_EDIT;
                 if( ctl->Style & ES_MULTILINE ) {
-                    class = GUI_EDIT_MLE;
+                    control_class = GUI_EDIT_MLE;
                 }
                 break;
             case CLASS_STATIC:
-                class = GUI_STATIC;
+                control_class = GUI_STATIC;
                 break;
             case CLASS_LISTBOX:
-                class = GUI_LISTBOX;
+                control_class = GUI_LISTBOX;
                 break;
             case CLASS_SCROLLBAR:
-                class = GUI_SCROLLBAR;
+                control_class = GUI_SCROLLBAR;
                 break;
             case CLASS_COMBOBOX:
-                class = GUI_EDIT_COMBOBOX;
+                control_class = GUI_EDIT_COMBOBOX;
                 if( ctl->Style & CBS_DROPDOWNLIST ) {
-                    class = GUI_COMBOBOX;
+                    control_class = GUI_COMBOBOX;
                 }
                 break;
         }
     }
 
-    return( class );
+    return( control_class );
 }
 
 static bool DialogBoxControl2GUI( DialogBoxControl *ctl,
@@ -455,7 +455,7 @@ static bool DialogBoxControl2GUI( DialogBoxControl *ctl,
 
         // set the control class
         gci->control_class = GetControlClass( ctl );
-        ok = ( gci->control_class != -1 );
+        ok = ( gci->control_class != GUI_BAD_CLASS );
     }
 
     if( ok ) {

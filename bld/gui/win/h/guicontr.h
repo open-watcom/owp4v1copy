@@ -40,15 +40,13 @@ typedef struct control_item {
 #endif
     bool                checked;
     unsigned            id;
-    gui_control_class   class;
+    gui_control_class   control_class;
     WPI_PROC            call_back;
     HWND                hwnd;
     char                *text;
     gui_control_styles  style;
     struct control_item *next;
 };
-
-#define BAD_CLASS ( (gui_control_class)-1 )
 
 typedef struct {
     char                *classname;
@@ -68,7 +66,7 @@ typedef struct {
 
 extern control_item *GUIGetControlByID( gui_window *parent, unsigned id );
 extern control_item *GUIGetControlByHwnd( gui_window *parent, HWND control );
-extern control_item *GUIControlInsert( gui_window *parent_wnd, gui_control_class class,
+extern control_item *GUIControlInsert( gui_window *parent_wnd, gui_control_class control_class,
                               HWND control, gui_control_info *info,
                               WPI_PROC call_back );
 extern control_item *GUIControlInsertByHWND( HWND hwnd, gui_window *parent );

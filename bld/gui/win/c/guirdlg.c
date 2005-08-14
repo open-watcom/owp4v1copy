@@ -46,7 +46,7 @@ extern  WPI_DLGRESULT CALLBACK  GUIDialogFunc( HWND hwnd, WPI_MSG message,
 #endif
 
 typedef struct GetClassMap {
-    gui_control_class   class;
+    gui_control_class   control_class;
     char                *classname;
     DWORD               style;
     DWORD               mask;
@@ -69,7 +69,6 @@ static GetClassMap Map[] =
 ,   { GUI_EDIT_MLE,             "#10",  0xffff,                 0xffff          }
 ,   { GUI_LISTBOX,              "#7",   0xffff,                 0xffff          }
 ,   { GUI_SCROLLBAR,            "#8",   0xffff,                 0xffff          }
-,   { NULL,                     NULL,   NULL,                   NULL            }
 };
 #else
 // note: the order of entries this table is important
@@ -88,41 +87,41 @@ static GetClassMap Map[] =
 ,   { GUI_LISTBOX,              "listbox",      0xffff,                 0xffff                  }
 ,   { GUI_SCROLLBAR,            "scrollbar",    0xffff,                 0xffff                  }
 ,   { GUI_STATIC,               "static",       0xffff,                 0xffff                  }
-,   { (gui_control_class)0,     NULL,           0,                      0                       }
 };
 #endif
 
+#define MAP_SIZE ( sizeof( Map ) / sizeof( Map[0] ) )
+
 gui_control_class GUIGetControlClassFromHWND( HWND cntl )
 {
-    gui_control_class   class;
+    gui_control_class   control_class;
     char                classname[15];
     DWORD               style;
     int                 index;
 
     if( !_wpi_getclassname( cntl, classname, sizeof( classname ) ) ) {
-        return( BAD_CLASS );
+        return( GUI_BAD_CLASS );
     }
 
     style = _wpi_getwindowlong( cntl, GWL_STYLE );
-    class = BAD_CLASS;
+    control_class = GUI_BAD_CLASS;
 
-    for( index=0; Map[index].classname && ( class == BAD_CLASS ); index++ ) {
-        if( !stricmp( Map[index].classname, classname ) ) {
+    for( index=0; ( index < MAP_SIZE ) && ( control_class == GUI_BAD_CLASS ); index++ ) {
+        if(( Map[index].classname != NULL ) && !stricmp( Map[index].classname, classname ) ) {
             if( Map[index].mask == 0xffff ) {
-                class = Map[index].class;
+                control_class = Map[index].control_class;
             } else {
                 if( ( style & Map[index].mask ) == Map[index].style ) {
-                    class = Map[index].class;
+                    control_class = Map[index].control_class;
                 }
             }
         }
     }
-
-    return( class );
+    return( control_class );
 }
 
 gui_control_styles GUIGetControlStylesFromHWND( HWND cntl,
-                                                gui_control_class class )
+                                                gui_control_class control_class )
 {
     gui_control_styles  styles;
     DWORD               style;
@@ -134,7 +133,7 @@ gui_control_styles GUIGetControlStylesFromHWND( HWND cntl,
         styles |= GUI_TAB_GROUP;
     }
 
-    switch( class ) {
+    switch( control_class ) {
         case GUI_CHECK_BOX:
             if( ( style & BS_3STATE ) == BS_3STATE ) {
                 styles |= GUI_CONTROL_3STATE;

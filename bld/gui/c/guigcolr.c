@@ -58,7 +58,7 @@ static void InitColourNames( void )
     ColourNames[ 15 ] = LIT( BrightWhite );
 }
 
-static gui_attr InitAttr;
+static gui_colour InitColour;
 
 static void PickColour( gui_window *wnd, int list_ctrl )
 {
@@ -71,8 +71,8 @@ static void PickColour( gui_window *wnd, int list_ctrl )
     for( i = 0; i < GUI_NUM_COLOURS; i++ ) {
         GUIAddText( wnd, list_ctrl, ColourNames[i] );
     }
-    if( ( InitAttr >= 0 ) && ( InitAttr < GUI_NUM_COLOURS ) ) {
-        GUISetCurrSelect( wnd, list_ctrl, InitAttr );
+    if(( InitColour >= 0 ) && ( InitColour < GUI_NUM_COLOURS )) {
+        GUISetCurrSelect( wnd, list_ctrl, InitColour );
     }
 }
 
@@ -84,9 +84,9 @@ bool GUIGetColourFromUser( char *title, gui_colour *init, gui_colour *new_colour
         return( FALSE );
     }
     if( init != NULL ) {
-        InitAttr = *init;
+        InitColour = *init;
     } else {
-        InitAttr = -1;
+        InitColour = GUI_BAD_COLOUR;
     }
     result = GUIDlgPick( title, &PickColour );
     if( result != -1 ) {
