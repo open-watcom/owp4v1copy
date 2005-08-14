@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  enum statement processing
 *
 ****************************************************************************/
 
@@ -178,12 +177,7 @@ TYPEPTR EnumDecl( int flags )
         ENUM_HANDLE     *prev_lnk;
         ENUM_HANDLE     esym;
 
-        if( CompFlags.make_enums_an_int ) {
-            index = ENUM_INT;
-        } else {
-            index = ENUM_S8;
-        }
-        const_index = ENUM_INT;
+        const_index = ENUM_S8;
         NextToken();
         if( CurToken == T_RIGHT_BRACE ) {
             CErr1( ERR_EMPTY_ENUM_LIST );
@@ -210,8 +204,8 @@ TYPEPTR EnumDecl( int flags )
                     break;
                 default:
                     if( val.value.u.sign.v ) {
-                        if( !has_sign && ( index & 1 ) )
-                            index++;
+                        if( !has_sign && ( const_index & 1 ) )
+                            const_index++;
                         minus = TRUE;
                         has_sign = TRUE;
                     }
@@ -223,7 +217,7 @@ TYPEPTR EnumDecl( int flags )
                     minus = FALSE;
                 }
             }
-            for( ; index < ENUM_SIZE; index++ ) {
+            for( index = ENUM_S8; index < ENUM_SIZE; index++ ) {
                 if( minus ) {
                     if( I64Cmp( &n, &( RangeTable[ index ][LOW] ) ) >= 0 ) break;
                 } else {
@@ -235,30 +229,32 @@ TYPEPTR EnumDecl( int flags )
             }
             if( index >= ENUM_SIZE ) {
                 CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
-            }
-            EnumTable[ esym->hash ] = esym;             /* 08-nov-94 */
-            if( index > const_index ){ // change type of enum to fit const
-                if( CompFlags.extensions_enabled  ) {
-                    typ->object = GetType( ItypeTable[index].decl_type );
-                    tag->size   = ItypeTable[index].size;
-                } else {
+            } else {
+                if( !CompFlags.extensions_enabled && ( index > ENUM_INT )) {
                     CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
                 }
-                const_index = index;
-            }
-            esym->value = n;
-            if( CurToken == T_RIGHT_BRACE ) break;
-            U64Add( &n, &Inc, &n );
-            MustRecog( T_COMMA );
-            if( CurToken == T_RIGHT_BRACE ) {
-                if( !CompFlags.extensions_enabled ) {
-                    ExpectIdentifier();         /* 13-may-91 */
+                if( index > const_index ){
+                    const_index = index;
                 }
             }
+            esym->value = n;
+            EnumTable[ esym->hash ] = esym;             /* 08-nov-94 */
+            if( CurToken == T_RIGHT_BRACE )
+                break;
+            U64Add( &n, &Inc, &n );
+            MustRecog( T_COMMA );
+            if( !CompFlags.extensions_enabled
+              && !CompFlags.c99_extensions
+              && ( CurToken == T_RIGHT_BRACE )) {
+                ExpectIdentifier();         /* 13-may-91 */
+            }
+        }
+        if( CompFlags.make_enums_an_int && ( const_index < ENUM_INT )) {
+            const_index = ENUM_INT;
         }
         MustRecog( T_RIGHT_BRACE );
-        typ->object = GetType( ItypeTable[index].decl_type );
-        tag->size   = ItypeTable[index].size;
+        typ->object = GetType( ItypeTable[const_index].decl_type );
+        tag->size   = ItypeTable[const_index].size;
     }
     return( typ );
 }
@@ -275,12 +271,10 @@ int EnumLookup( int hash_value, char *name, struct enum_info *eip )
             eip->value = esym->value;
             eip->parent = esym->parent;
             eip->level = esym->parent->level;
-//          eip->enum_entry = esym;
             return( 1 );            /* indicate ENUM was found */
         }
         esym = esym->next_enum;
     }
-//  eip->enum_entry = NULL;
     eip->level = -1;                /* indicate not found */
     return( 0 );                    /* indicate this was not an ENUM */
 }
