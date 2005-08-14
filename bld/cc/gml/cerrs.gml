@@ -1597,14 +1597,11 @@ class.
 .np
 If the first parameter in a function definition or prototype is defined
 with a type, then all of the parameters must have a type specified.
-:MSGSYM. ERR_ENUM_CONSTANT_TOO_LARGE
-:MSGTXT. Enum constant too large
-:MSGJTXT. Enum’è”‚ª‘å‚«‚·‚¬‚Ü‚·
+:MSGSYM. ERR_ENUM_CONSTANT_OUT_OF_RANGE
+:MSGTXT. Enum constant is out of range %s
+:MSGJTXT.
 .np
-All of the constants must fit in either an
-.kw int
-or
-.kw unsigned.
+All of the constants must fit into appropriate value range.
 :MSGSYM. ERR_TYPE_DOES_NOT_AGREE
 :MSGTXT. Type does not agree with previous definition of '%s'
 :MSGJTXT. Œ^‚ª'%s'‚Ì‘O‚Ì’è‹`‚Æˆê’v‚µ‚Ü‚¹‚ñ

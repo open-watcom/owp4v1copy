@@ -130,6 +130,14 @@ struct { DATA_TYPE decl_type; int size; } ItypeTable[ENUM_SIZE] =
     { TYPE_ULONG64, TARGET_LONG64 },//U64
 };
 
+void get_msg_range( char *buff, enum enum_rng index )
+{
+    if( index & 1 ) {
+        sprintf( buff, "%llu to %llu", RangeTable[index][0], RangeTable[index][1] );
+    } else {
+        sprintf( buff, "%lld to %lld", RangeTable[index][0], RangeTable[index][1] );
+    }
+}
 
 TYPEPTR EnumDecl( int flags )
 {
@@ -170,12 +178,16 @@ TYPEPTR EnumDecl( int flags )
         const_val       val;
         enum enum_rng   index;
         enum enum_rng   const_index;
+        enum enum_rng   step;
         uint64          n;
         uint64          Inc;
         bool            minus;
         bool            has_sign;
         ENUM_HANDLE     *prev_lnk;
         ENUM_HANDLE     esym;
+        int             error_line;
+        char            buff[50];
+        int             error;
 
         const_index = ENUM_S8;
         NextToken();
@@ -184,58 +196,72 @@ TYPEPTR EnumDecl( int flags )
         }
         U32ToU64( 1, &Inc );
         U64Clear( n );
-        minus = FALSE;
+        minus = 0;
         has_sign = FALSE;
+        step = 1;
         prev_lnk = &esym;
         esym = NULL;
         while( CurToken == T_ID ) {
             esym = EnumLkAdd( tag );
             *prev_lnk = esym;
             prev_lnk = &esym->thread;
+            error_line = TokenLine;
             NextToken();
             if( CurToken == T_EQUAL ) {
                 NextToken();
+                error_line = TokenLine;
                 ConstExprAndType( &val );
-                minus = FALSE;
                 switch( val.type ){
                 case TYPE_ULONG:
                 case TYPE_UINT:
                 case TYPE_ULONG64:
+                    minus = 0;
                     break;
                 default:
-                    if( val.value.u.sign.v ) {
-                        if( !has_sign && ( const_index & 1 ) )
+                    minus = val.value.u.sign.v;
+                    if( minus ) {
+                        if( !has_sign && ( const_index & 1 ))
                             const_index++;
-                        minus = TRUE;
                         has_sign = TRUE;
+                        step = 2;
                     }
                     break;
                 }
                 n = val.value;
             } else if( minus ) {
-                if( n.u.sign.v == 0 ) {
-                    minus = FALSE;
-                }
+                minus = n.u.sign.v;
             }
-            for( index = ENUM_S8; index < ENUM_SIZE; index++ ) {
+            for( index = ENUM_S8; index < ENUM_SIZE; index += step ) {
                 if( minus ) {
                     if( I64Cmp( &n, &( RangeTable[ index ][LOW] ) ) >= 0 ) break;
                 } else {
                     if( U64Cmp( &n, &( RangeTable[ index ][HIGH]) ) <= 0 ) break;
                 }
-                if( has_sign ) {
-                    index++;
-                }
             }
-            if( index >= ENUM_SIZE ) {
-                CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
-            } else {
-                if( !CompFlags.extensions_enabled && ( index > ENUM_INT )) {
-                    CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
-                }
-                if( index > const_index ){
+            error = -1;
+            if( !CompFlags.extensions_enabled && ( index > ENUM_INT )) {
+                error = ENUM_INT;
+                if( index > const_index ) {
                     const_index = index;
                 }
+            }
+            if( const_index >= ENUM_SIZE ) {
+                if( error == -1 )
+                    error = ENUM_U64;
+                const_index = ENUM_U64;
+                has_sign = FALSE;
+                step = 1;
+            } else if( index >= ENUM_SIZE ) {
+                if( error == -1 ) {
+                    error = ENUM_S64;
+                }
+            } else if( index > const_index ) {
+                const_index = index;
+            }
+            if( error != -1 ) {
+                TokenLine = error_line;
+                get_msg_range( buff, error );
+                CErr( ERR_ENUM_CONSTANT_OUT_OF_RANGE, buff );
             }
             esym->value = n;
             EnumTable[ esym->hash ] = esym;             /* 08-nov-94 */
@@ -258,8 +284,6 @@ TYPEPTR EnumDecl( int flags )
     }
     return( typ );
 }
-
-
 
 
 int EnumLookup( int hash_value, char *name, struct enum_info *eip )
