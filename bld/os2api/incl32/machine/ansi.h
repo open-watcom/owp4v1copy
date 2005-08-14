@@ -35,12 +35,14 @@
 #define _MACHINE_ANSI_H_
 
 #if !defined(__size_t) && !defined(_SIZE_T_DEFINED)
+#define _SIZE_T_DEFINED
 #define __size_t
 #define _BSD_SIZE_T_    unsigned int
 #endif
 
-#if !defined(__ssize_t) && !defined(_SSIZE_T_DEFINED)
+#if !defined(__ssize_t) && !defined(_SSIZE_T_DEFINED_)
 #define __ssize_t
+#define _SSIZE_T_DEFINED_
 #define _BSD_SSIZE_T_   int
 #endif
 
