@@ -176,6 +176,7 @@ typedef enum BASED_KIND{
 /* matches CTypenames[] table in cgdump.c */
 /* matches AsmDataType[] table in cpragx86.c */
 typedef enum DATA_TYPE {
+    TYPE_UNDEFINED = -1,
     TYPE_CHAR  =    0,      /* signed char */
     TYPE_UCHAR,
     TYPE_SHORT,
@@ -212,7 +213,7 @@ typedef enum DATA_TYPE {
 
     TYPE_UNUSED,            /* an unused type (a unref'd function) */
 
-    TYPE_LAST_ENTRY         /* make sure this is always last */
+    TYPE_LAST_ENTRY,        /* make sure this is always last */
 } DATA_TYPE;
 
 // values for type->type_flags
