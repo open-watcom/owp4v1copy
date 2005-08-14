@@ -437,24 +437,22 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
 
     SymGet( sym, sym_handle );
 #if _CPU == 386
-    if( sym_handle == SymSTOSB || sym_handle == SymSTOSD ) {
+    if(( sym_handle == SymSTOSB ) || ( sym_handle == SymSTOSD )) {
         return( &STOSBInfo );
-    }
-    if( sym_handle == SymFinally ) {   /* 28-mar-94 */
-        static byte_seq FinallyCode = { 1, {0xc3} };
+    } else if( sym_handle == SymFinally ) {   /* 28-mar-94 */
+        static byte_seq FinallyCode = { 1, {0xc3} }; /* ret */
 
         InlineInfo = DefaultInfo;
         InlineInfo.code = &FinallyCode;
         return( &InlineInfo );
-    }
-    if( sym_handle == SymTryFini ) {
+    } else if( sym_handle == SymTryFini ) {
         static hw_reg_set TryFiniParms[] = {
             HW_D( HW_EAX ),
             HW_D( HW_EMPTY )
         };
         static byte_seq TryFiniCode = {
             6, {0x64, 0xA3, 0,0,0,0}
-        };  /* mov fs:0,eax */
+        };  /* mov fs:[0],eax */
 
         InlineInfo = DefaultInfo;
         InlineInfo.parms = TryFiniParms;
@@ -603,12 +601,8 @@ void GetCallClass( SYM_HANDLE sym_handle )
                 CallClass |= MAKE_CALL_INLINE;
             }
 #endif
-        }
-        if( VarFunc( &sym ) ) {               /* 19-dec-88*/
-            CallClass |= CALLER_POPS | HAS_VARARGS;
-            if( inf == &FastcallInfo ) {
-            } else if( inf == &StdcallInfo ) {
-            } else {
+            if( VarFunc( &sym ) ) {               /* 19-dec-88*/
+                CallClass |= CALLER_POPS | HAS_VARARGS;
             }
         }
     }
@@ -805,7 +799,7 @@ static int GetParmsSize( CGSYM_HANDLE sym_handle )
 }
 
 /*
-//    Return external name of symbol plus a pattern manipulator string
+//    Return name pattern manipulator string
 */
 static char *GetNamePattern( CGSYM_HANDLE sym_handle )
 {
@@ -824,7 +818,25 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
   #endif
         inf = LangInfo( sym.attrib, inf );
         if( inf->objname != NULL ) {
+  #if ( _CPU == 8086 ) || ( _CPU == 386 )
+            if( VarFunc( &sym ) ) {
+    #if 0
+                if( inf == &DefaultInfo )
+                    inf = DftCallConv;
+    #endif
+                if( inf == &StdcallInfo ) {
+                    pattern = CdeclInfo.objname;
+                } else if( inf == &FastcallInfo ) {
+                    pattern = CdeclInfo.objname;
+                } else {
+                    pattern = inf->objname;
+                }
+            } else {
+                pattern = inf->objname;
+            }
+  #else
             pattern = inf->objname;
+  #endif
         } else if( sym.flags & SYM_FUNCTION ) {
             pattern =  TS_CODE_MANGLE;
         } else {

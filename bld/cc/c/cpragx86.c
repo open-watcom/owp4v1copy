@@ -147,11 +147,15 @@ void PragmaInit( void )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
+#if _CPU == 386
     if( CompFlags.use_stdcall_at_number ) {
         StdcallInfo.objname = CStrSave( "_*#" );
     } else {
         StdcallInfo.objname = CStrSave( "_*" );
     }
+#else
+    StdcallInfo.objname = CStrSave( "_*" );
+#endif
     StdcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
     memcpy( StdcallInfo.parms, StackParms, sizeof( StackParms ) );
     HW_CAsgn( StdcallInfo.returns, HW_EMPTY );

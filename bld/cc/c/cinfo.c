@@ -158,9 +158,8 @@ static fe_attr FESymAttr( SYMPTR sym )
     }
     if( sym->flags & SYM_FUNCTION ) {
         attr |= FE_PROC | FE_STATIC;
-        #if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
-            if( VarFunc( sym ) ) attr |= FE_VARARGS;
-        #endif
+        if( VarFunc( sym ) )
+            attr |= FE_VARARGS;
         if( CompFlags.unique_functions ) {
             if( (attr & FE_GLOBAL) || (sym->flags & SYM_ADDR_TAKEN) ) {
                 attr |= FE_UNIQUE;
