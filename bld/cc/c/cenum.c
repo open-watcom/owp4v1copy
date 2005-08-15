@@ -76,6 +76,7 @@ local ENUM_HANDLE EnumLkAdd( TAGPTR tag )
 #   define i64val(h,l) { l, h }
 #endif
 enum enum_rng {
+    ENUM_UNDEF = -1,
     ENUM_S8,
     ENUM_U8,
     ENUM_S16,
@@ -133,9 +134,9 @@ struct { DATA_TYPE decl_type; int size; } ItypeTable[ENUM_SIZE] =
 void get_msg_range( char *buff, enum enum_rng index )
 {
     if( index & 1 ) {
-        sprintf( buff, "%llu to %llu", RangeTable[index][0], RangeTable[index][1] );
+        sprintf( buff, "%llu to %llu", RangeTable[index][LOW], RangeTable[index][HIGH] );
     } else {
-        sprintf( buff, "%lld to %lld", RangeTable[index][0], RangeTable[index][1] );
+        sprintf( buff, "%lld to %lld", RangeTable[index][LOW], RangeTable[index][HIGH] );
     }
 }
 
@@ -178,7 +179,9 @@ TYPEPTR EnumDecl( int flags )
         const_val       val;
         enum enum_rng   index;
         enum enum_rng   const_index;
+        enum enum_rng   start_index;
         enum enum_rng   step;
+        enum enum_rng   error;
         uint64          n;
         uint64          Inc;
         bool            minus;
@@ -187,16 +190,20 @@ TYPEPTR EnumDecl( int flags )
         ENUM_HANDLE     esym;
         int             error_line;
         char            buff[50];
-        int             error;
 
-        const_index = ENUM_S8;
+        if( CompFlags.make_enums_an_int ) {
+            start_index = ENUM_INT;
+        } else {
+            start_index = ENUM_S8;
+        }
+        const_index = ENUM_UNDEF;
         NextToken();
         if( CurToken == T_RIGHT_BRACE ) {
             CErr1( ERR_EMPTY_ENUM_LIST );
         }
         U32ToU64( 1, &Inc );
         U64Clear( n );
-        minus = 0;
+        minus = FALSE;
         has_sign = FALSE;
         step = 1;
         prev_lnk = &esym;
@@ -215,50 +222,61 @@ TYPEPTR EnumDecl( int flags )
                 case TYPE_ULONG:
                 case TYPE_UINT:
                 case TYPE_ULONG64:
-                    minus = 0;
+                    minus = FALSE;
                     break;
                 default:
-                    minus = val.value.u.sign.v;
-                    if( minus ) {
-                        if( !has_sign && ( const_index & 1 ))
-                            const_index++;
-                        has_sign = TRUE;
+                    if( val.value.u.sign.v ) {
+                        minus = TRUE;
                         step = 2;
+                    } else {
+                        minus = FALSE;
                     }
                     break;
                 }
                 n = val.value;
-            } else if( minus ) {
-                minus = n.u.sign.v;
+            } else if( has_sign ) {
+                if( n.u.sign.v ) {
+                    minus = TRUE;
+                } else {
+                    minus = FALSE;
+                }
             }
-            for( index = ENUM_S8; index < ENUM_SIZE; index += step ) {
+            for( index = start_index; index < ENUM_SIZE; index += step ) {
                 if( minus ) {
                     if( I64Cmp( &n, &( RangeTable[ index ][LOW] ) ) >= 0 ) break;
                 } else {
                     if( U64Cmp( &n, &( RangeTable[ index ][HIGH]) ) <= 0 ) break;
                 }
             }
-            error = -1;
+            error = ENUM_UNDEF;
             if( !CompFlags.extensions_enabled && ( index > ENUM_INT )) {
                 error = ENUM_INT;
+            }
+            if( index >= ENUM_SIZE ) {
+                // overflow signed maximum range
+                if( error == ENUM_UNDEF ) {
+                    error = const_index;
+                }
+            } else if(( const_index == ENUM_SIZE - 1 ) && minus ) {
+                // overflow unsigned maximum range by any negative signed value
+                if( error == ENUM_UNDEF )
+                    error = const_index;
+                step = 1;
+            } else {
+                if( !has_sign && minus) {
+                    has_sign = TRUE;
+                    if( index < const_index ) {
+                        // round up to signed
+                        index = ( const_index + 1 ) & ~1;
+                    }
+                }
                 if( index > const_index ) {
                     const_index = index;
+                    typ->object = GetType( ItypeTable[const_index].decl_type );
+                    tag->size   = ItypeTable[const_index].size;
                 }
             }
-            if( const_index >= ENUM_SIZE ) {
-                if( error == -1 )
-                    error = ENUM_U64;
-                const_index = ENUM_U64;
-                has_sign = FALSE;
-                step = 1;
-            } else if( index >= ENUM_SIZE ) {
-                if( error == -1 ) {
-                    error = ENUM_S64;
-                }
-            } else if( index > const_index ) {
-                const_index = index;
-            }
-            if( error != -1 ) {
+            if( error != ENUM_UNDEF ) {
                 TokenLine = error_line;
                 get_msg_range( buff, error );
                 CErr( ERR_ENUM_CONSTANT_OUT_OF_RANGE, buff );
@@ -275,12 +293,7 @@ TYPEPTR EnumDecl( int flags )
                 ExpectIdentifier();         /* 13-may-91 */
             }
         }
-        if( CompFlags.make_enums_an_int && ( const_index < ENUM_INT )) {
-            const_index = ENUM_INT;
-        }
         MustRecog( T_RIGHT_BRACE );
-        typ->object = GetType( ItypeTable[const_index].decl_type );
-        tag->size   = ItypeTable[const_index].size;
     }
     return( typ );
 }

@@ -49,6 +49,23 @@ typedef enum {
     en642_2 = 0x7FFFFFFFFFFFFFFF
 } enum_u64;
 
+typedef enum {
+    en1 = 0x40,
+    en2 = 0x80,
+    en3 = en1 | en2
+} enum_or1;
+
+typedef enum {
+    en4 = 0x4000,
+    en5 = 0x8000,
+    en6 = en4 | en5
+} enum_or2;
+
+typedef enum {
+    en7 = 0x40000000,
+    en8 = 0x80000000,
+    en9 = en7 | en8
+} enum_or3;
 
 #define const8 (1 << 6)
 #define const16 ((1 << 14) | const8 )
@@ -71,6 +88,28 @@ int main()
     enum_s64 test64s = const64;
     enum_u64 test64u = const64;
     long long test3;
+    int size;
+
+    size = sizeof(enum_or1);
+#ifdef __SW_EI
+    if( size != sizeof(int) ) fail(__LINE__);
+#else
+    if( size != sizeof(unsigned char) ) fail(__LINE__);
+#endif
+    test3 = en3;
+    if( test3 != 0xc0U ) fail(__LINE__);
+    size = sizeof(enum_or2);
+#ifdef __SW_EI
+    if( size != sizeof(int) ) fail(__LINE__);
+#else
+    if( size != sizeof(unsigned short) ) fail(__LINE__);
+#endif
+    test3 = en6;
+    if( test3 != 0xc000U ) fail(__LINE__);
+    size = sizeof(enum_or3);
+    if( size != sizeof(unsigned long) ) fail(__LINE__);
+    test3 = en9;
+    if( test3 != 0xc0000000UL ) fail(__LINE__);
 
     test3 = test8s + test8u;
     if( test3 != var8 * 2 ) fail(__LINE__);
