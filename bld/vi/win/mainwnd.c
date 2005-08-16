@@ -264,9 +264,9 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         if( WindowsKeyPush( wparam, HIWORD( lparam ) ) ) {
             return( FALSE );
         }
-        return( DefWindowProc( hwnd, msg, wparam, lparam ) );
+        return( DefFrameProc( hwnd, EditContainer, msg, wparam, lparam ) );
     case WM_SIZE:
-        DefWindowProc( hwnd, msg, wparam, lparam );
+        DefFrameProc( hwnd, EditContainer, msg, wparam, lparam );
         RootState = wparam;
         if( wparam != SIZE_MINIMIZED ) {
             ResizeRoot();
@@ -277,7 +277,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         }
         return( 0 );
     case WM_MOVE:
-        DefWindowProc( hwnd, msg, wparam, lparam );
+        DefFrameProc( hwnd, EditContainer, msg, wparam, lparam );
         if( RootState != SIZE_MINIMIZED ) {
             GetWindowRect( hwnd, &RootRect );
         }
