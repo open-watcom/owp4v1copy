@@ -259,6 +259,7 @@ static void SortClasses( section *sec )
                     if( MatchClass->FixedAddr) {     // and copy any flags or address from it
                         currcl->flags |= CLASS_FIXED;
                         currcl->BaseAddr = MatchClass->Base;
+			FmtData.base = 0;  // Otherwise PE will use default and blow up
                     }
                     if( MatchClass->NoEmit ) {
                         currcl->flags |= CLASS_NOEMIT;
@@ -582,7 +583,7 @@ extern void CalcAddresses( void )
         CalcGrpAddr( AbsGroups );
     } else if ( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
         if( FmtData.output_raw || FmtData.output_hex ) {
-            flat = FmtData.base;
+            flat = 0;
         } else if( FmtData.type & MK_PE ) {
             flat = GetPEHeaderSize();
         } else if( FmtData.type & MK_ELF ) {
@@ -592,10 +593,10 @@ extern void CalcAddresses( void )
         }
         for( grp = Groups; grp != NULL; grp = grp->next_group ) {
             size = grp->totalsize;
-            if( grp->grp_addr.off > flat ) {
+            if( grp->grp_addr.off > flat + FmtData.base) {
                // ORDER CLNAME name OFFSET option sets grp_addr,
                //   retrieve this information here and wrap into linear address
-               flat = grp->grp_addr.off;
+               flat = grp->grp_addr.off - FmtData.base;
                grp->grp_addr.off = 0;
             }
             grp->linear = flat;

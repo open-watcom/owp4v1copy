@@ -616,12 +616,7 @@ extern offset FindLinearAddr2( targ_addr *addr )
 
     group = FindGroup( addr->seg );
     if( group != NULL ) {
-        if( FmtData.output_raw || FmtData.output_hex ) {
-            return( addr->off + group->linear );
-        }
-        else {
-            return( addr->off + group->linear + FmtData.base );
-        }    
+        return( addr->off + group->linear + FmtData.base );
     }
     return( addr->off );
 }

@@ -114,9 +114,10 @@ extern void BinOutput( void )
                 size = CalcGroupSize( group );
             }
             if( size ) {
-                diff = (group->grp_addr.off + group->linear - FmtData.output_offset) - PosLoad();
+                diff = (FmtData.base + group->grp_addr.off + group->linear 
+                       - FmtData.output_offset) - PosLoad();
                 if( diff < 0 ) {
-                    LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", group->grp_addr);
+                    LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", &(group->grp_addr));
                 }
                 else if( diff > 0 ) {
                    PadLoad( diff );
