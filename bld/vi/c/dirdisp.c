@@ -290,7 +290,7 @@ void displayFiles( void )
     window      *w;
     RECT        rect;
     type_style  *style;
-    char        buffer[ _MAX_PATH ];
+    char        buffer[ FILENAME_MAX ];
 
     if( BAD_ID( dirWin ) ) return;
     w = WINDOW_FROM_ID( dirWin );

@@ -425,7 +425,7 @@ void DumpTRMEM( void )
 
 void InitTRMEM( void )
 {
-    char        file[ _MAX_PATH ];
+    char        file[ FILENAME_MAX ];
 
     strcpy( file, getenv( "EDPATH" ) );
     strcat( file, "\\trmem.out" );

@@ -102,8 +102,8 @@ void WinGetFullPath( char *filename, char *full ){
 
     // Allocate a chunk of Real mode memory
 
-    // handle  = DPMIAllocateDOSMemoryBlock( _MAX_PATH >>3 );
-    handle  = GlobalDosAlloc( _MAX_PATH * 2 );
+    // handle  = DPMIAllocateDOSMemoryBlock( FILENAME_MAX >>3 );
+    handle  = GlobalDosAlloc( FILENAME_MAX * 2 );
 
     // if( (handle == 8) || (handle == 7) ){
     if( handle == NULL ){
@@ -127,13 +127,13 @@ void WinGetFullPath( char *filename, char *full ){
     r.es = para;
     r.esi = 0;
     r.ds = para;
-    r.edi = _MAX_PATH;
+    r.edi = FILENAME_MAX;
 
     DPMISimulateRealModeInterrupt( 0x21, 0, 0, &r );
 
     // copy the return value from the second half of the block
 
-    str2 = MK_FP( sel, _MAX_PATH );
+    str2 = MK_FP( sel, FILENAME_MAX );
     _fstrcpy( full, str2 );
 
     // Free the allocated Real mode memory

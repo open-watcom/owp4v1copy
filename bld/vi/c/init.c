@@ -238,7 +238,7 @@ static void doInitializeEditor( int argc, char *argv[] )
 
         watcom = getenv( "WATCOM" );
         if( watcom != NULL ) {
-            char edpath[PATH_MAX];
+            char edpath[FILENAME_MAX];
 
             strcpy( edpath, watcom );
             strcat( edpath, defaultEDPath );

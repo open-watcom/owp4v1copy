@@ -319,7 +319,7 @@ void NewToolBar( RECT *rect )
  */
 int AddBitmapToToolBar( char *data )
 {
-    char                file[ _MAX_PATH ];
+    char                file[ FILENAME_MAX ];
     char                help[ MAX_STR ];
     char                dont_save[ MAX_STR ];
     tool_item           *item;

@@ -127,8 +127,8 @@ static int readOnlyCheck( void )
  */
 int SaveFileAs( void )
 {
-    char    fn[ _MAX_PATH ];
-    char    cmd[ 14 + _MAX_PATH ];
+    char    fn[ FILENAME_MAX ];
+    char    cmd[ 14 + FILENAME_MAX ];
     int     rc;
 
     rc = SelectFileSave( fn );

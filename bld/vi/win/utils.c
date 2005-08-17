@@ -411,7 +411,7 @@ void MyBeep( void )
     MessageBeep( -1 );
 }
 
-static char oldPath[_MAX_PATH];
+static char oldPath[FILENAME_MAX];
 static char oldDrive;
 /*
  * PushDirectory - save the current drive/directory
@@ -426,7 +426,7 @@ void PushDirectory( char *orig )
     if( orig[1] == ':' ) {
         ChangeDrive( orig[0] );
     }
-    GetCWD2( oldPath, _MAX_PATH );
+    GetCWD2( oldPath, FILENAME_MAX );
 
 } /* PushDirectory */
 

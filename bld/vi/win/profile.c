@@ -202,13 +202,13 @@ void writeInitialPosition( void )
  */
 static void getConfigFilePaths( void )
 {
-    char path[_MAX_PATH];
+    char path[FILENAME_MAX];
 #ifdef __NT__
     HINSTANCE library = LoadLibrary( "shfolder.dll" );
     if ( library ) {
         GetFolderPath getpath = (GetFolderPath)GetProcAddress(library, "SHGetFolderPathA");
         if( SUCCEEDED( getpath( NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path ) ) ) {
-            if( strlen( path ) + strlen( "\\" CONFIG_DIR ) + 12 < _MAX_PATH) {
+            if( strlen( path ) + strlen( "\\" CONFIG_DIR ) + 12 < FILENAME_MAX) {
                 strcat( path, "\\" CONFIG_DIR);
                 if( access(path, F_OK) )    /* make sure CONFIG_DIR diretory is present */
                     mkdir( path );          /* if not, create it */
@@ -217,9 +217,9 @@ static void getConfigFilePaths( void )
         FreeLibrary( library );
     }
     else                                    /* should only get here on old machines */
-        GetWindowsDirectory( path, _MAX_PATH );  /* that don't have shfolder.dll */
+        GetWindowsDirectory( path, FILENAME_MAX );  /* that don't have shfolder.dll */
 #else
-    GetWindowsDirectory( path, _MAX_PATH );
+    GetWindowsDirectory( path, FILENAME_MAX );
 #endif
     AddString2( &iniPath, path );           /* these freed in WriteProfile */
     VarAddGlobalStr( "IniPath", iniPath );  /* make accessable to scripts */
@@ -235,7 +235,7 @@ static void getConfigFilePaths( void )
  */
 static void readConfigFileName( void )
 {
-    char        cname[_MAX_PATH];
+    char        cname[FILENAME_MAX];
     //char      str[MAX_STR]; // not used if not prompting for new cfg files
     char        *cfgname;
     struct stat cfg;

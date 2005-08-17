@@ -71,9 +71,9 @@ int MySpawn( char *cmd )
     FARPROC             proc;
     HANDLE              inst;
     cmd_struct          cmds;
-    char                path[ _MAX_PATH ];
+    char                path[ FILENAME_MAX ];
 #ifndef __WINDOWS_386__
-    char                buffer[ _MAX_PATH ];
+    char                buffer[ FILENAME_MAX ];
 #endif
     int                 rc;
 
@@ -94,7 +94,7 @@ int MySpawn( char *cmd )
         #ifdef __WINDOWS_386__
             moduleHandle = GetModuleHandle( PASS_WORD_AS_POINTER( inst ) );
         #else
-            GetModuleFileName( inst, buffer, _MAX_PATH -1 );
+            GetModuleFileName( inst, buffer, FILENAME_MAX -1 );
             moduleHandle = GetModuleHandle( buffer );
         #endif
 

@@ -119,7 +119,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     of.lpstrDefExt = NULL;
     of.nFilterIndex = filemask;
     of.lpstrFile = *result;
-    of.nMaxFile = _MAX_PATH;
+    of.nMaxFile = FILENAME_MAX;
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = dir;
     #ifdef __NT__
@@ -186,7 +186,7 @@ int SelectFileSave( char *result )
     of.lpstrDefExt = NULL;
     of.nFilterIndex = 1L;
     of.lpstrFile = result;
-    of.nMaxFile = _MAX_PATH;
+    of.nMaxFile = FILENAME_MAX;
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = CurrentFile->home;
 #ifdef __NT__
@@ -222,7 +222,7 @@ int SelectFileSave( char *result )
  */
 char *GetInitialFileName( void )
 {
-    char        *path = MemAlloc( _MAX_PATH );
+    char        *path = MemAlloc( FILENAME_MAX );
     char        *ptr;
     int         rc;
 

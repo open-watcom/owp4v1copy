@@ -75,7 +75,7 @@ static void unlockFileRegion( int handle )
  */
 int HasShare( void )
 {
-    char        buff[_MAX_PATH];
+    char        buff[FILENAME_MAX];
     int         handle;
     int         has_share;
 

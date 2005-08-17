@@ -241,11 +241,11 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
     case WM_DROPFILES:
         hfileinfo = (HANDLE) wparam;
         cnt = DragQueryFile( hfileinfo, (UINT)-1, NULL, 0 );
-        buff = alloca( _MAX_PATH+2 );   /* we add a " at the beginning and at the end so we can handle path- and filenames with spaces */
+        buff = alloca( FILENAME_MAX+2 );   /* we add a " at the beginning and at the end so we can handle path- and filenames with spaces */
         if( buff != NULL ) {
             buff[0] = '"';      /* one " at the beginning of the filename */
             for( i=0;i<cnt;i++ ) {
-                if( DragQueryFile( hfileinfo, i, buff+1, _MAX_PATH ) == (UINT)-1 ) {
+                if( DragQueryFile( hfileinfo, i, buff+1, FILENAME_MAX ) == (UINT)-1 ) {
                     break;
                 }
                 strcat( buff, "\"" );
