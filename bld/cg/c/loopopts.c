@@ -2546,6 +2546,7 @@ static  name    *InitialValue( name *op ) {
             if( ( blk->class & IN_LOOP ) != EMPTY ) return( NULL );
             if( blk->inputs != 1 ) return( NULL );
             other = blk->input_edges->source->ins.hd.prev;
+            continue;  /* re-check in case of empty blocks */
         }
         if( ReDefinedBy( other, op ) ) break;
         other = other->head.prev;
