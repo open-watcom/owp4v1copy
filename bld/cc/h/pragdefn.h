@@ -36,7 +36,7 @@
 struct aux_entry {
     union {
         struct aux_info *info;
-        int             aux_info_index;         // for pre-compiled header
+        unsigned        aux_info_index;         // for pre-compiled header
     };
     struct aux_entry    *next;
 #if _CPU == 370
@@ -49,7 +49,7 @@ typedef int     aux_flags;
 #define AUX_FLAG_FAR16  1
 
 struct aux_info {
-        call_class      class;
+        call_class      cclass;
         union {
 #if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
             risc_byte_seq *code;
@@ -72,9 +72,9 @@ struct aux_info {
             char        *objname;
             int         objname_size;   // for pre-compiled header
         };
-        int             use;            // use count
+        unsigned        use;            // use count
         aux_flags       flags;
-        int             aux_info_index;
+        unsigned        index;
 #if _CPU == _AXP
         char           *except_rtn;
 #endif
@@ -104,9 +104,9 @@ global struct aux_info          WatcallInfo;
 global struct aux_info          CdeclInfo;
 global struct aux_info          PascalInfo;
 global struct aux_info          FortranInfo;
-global struct aux_info          SyscallInfo;            /* 04-jul-91 */
-global struct aux_info          OptlinkInfo;            /* 04-jul-91 */
-global struct aux_info          StdcallInfo;            /* 08-oct-92 */
+global struct aux_info          SyscallInfo;
+global struct aux_info          OptlinkInfo;
+global struct aux_info          StdcallInfo;
 global struct aux_info          FastcallInfo;
 #if _CPU == 386
 global struct aux_info          Far16CdeclInfo;
@@ -115,7 +115,7 @@ global struct aux_info          STOSBInfo;
 #endif
 global call_class               CallClass;
 
-#define MAX_POSSIBLE_REG   8
+#define MAX_POSSIBLE_REG        8
 
 #define MAXIMUM_BYTESEQ         4096
 #define MAXIMUM_PARMSETS        32

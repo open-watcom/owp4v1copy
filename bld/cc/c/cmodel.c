@@ -351,7 +351,7 @@ void InitModInfo( void )
 
     DftCallConv         = &WatcallInfo;
 
-    WatcallInfo.class   = 0;
+    WatcallInfo.cclass   = 0;
     WatcallInfo.code    = NULL;
     WatcallInfo.parms   = DefaultParms;
 #if _CPU == 370

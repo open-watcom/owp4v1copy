@@ -77,6 +77,11 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 #define PCH_VERSION_HOST ( ( 128L << 16 ) | PCH_VERSION )
 #endif
 
+enum pch_aux_info_index {
+    PCH_NULL_INDEX,
+    PCH_FIRST_INDEX
+};
+
 static  jmp_buf         PH_jmpbuf;
 static  int             PH_handle;
 static  char            *PH_Buffer;
@@ -705,7 +710,7 @@ static void OutPutPragmaInfo()
 {
     struct aux_entry    *ent;
     struct aux_info     *info;
-    int                 index;
+    unsigned            index;
     int                 rc;
     unsigned            len;
 
@@ -715,13 +720,13 @@ static void OutPutPragmaInfo()
     PH_PragmaCount = 0;
     for( ent = AuxList; ent; ent = ent->next ) {
         info = ent->info;
-        info->aux_info_index = -1;
+        info->index = PCH_NULL_INDEX;
     }
-    index = 0;
+    index = PCH_FIRST_INDEX;
     for( ent = AuxList; ent; ent = ent->next ) {
         info = ent->info;
-        if( info->aux_info_index == -1 ) {
-            info->aux_info_index = index;
+        if( info->index == PCH_NULL_INDEX ) {
+            info->index = index;
             index++;
             OutPutAuxInfo( info );      // write out the aux_info struct
             ++PH_PragmaCount;
@@ -729,7 +734,7 @@ static void OutPutPragmaInfo()
     }
     for( ent = AuxList; ent; ent = ent->next ) {
         info = ent->info;
-        ent->aux_info_index = info->aux_info_index;
+        ent->aux_info_index = info->index - PCH_FIRST_INDEX;
         // write out aux_entry
         len = sizeof( struct aux_entry ) + strlen( ent->name );
         len = (len + (sizeof(int) - 1)) & - sizeof(int);
@@ -1455,7 +1460,7 @@ static char *FixupPragmaInfo( char *p, unsigned pragma_count )
     struct aux_entry    *ent;
     struct aux_info     *info;
     struct aux_info     **info_array;
-    int                 index;
+    unsigned            index;
     unsigned            len;
 
     for( index = 0; (info = BuiltinInfos[index]); ++index ) {

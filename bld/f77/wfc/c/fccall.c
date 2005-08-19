@@ -613,7 +613,7 @@ void    FCCall() {
             scb = GetPtr();
             arg = SCBPointer( CGFEName( scb, T_CHAR ) );
 #if _TARGET == _80386
-            if( aux->call_info & FAR16_CALL ) {
+            if( aux->cclass & FAR16_CALL ) {
                 arg = CGUnary( O_PTR_TO_FORIEGN, arg, T_POINTER );
             }
 #endif
@@ -631,7 +631,7 @@ void    FCCall() {
             arg = XPop();
             cg_typ = T_CODE_PTR;
 #if _TARGET == _80386 || _TARGET == _8086
-            if( (aux->call_info & FAR16_CALL) &&
+            if( (aux->cclass & FAR16_CALL) &&
                 ((arg_info >> 8) & PC_PROC_FAR16) ) {
                 chk_foreign = FALSE;
             } else if( arg_aux != NULL ) {
@@ -670,7 +670,7 @@ void    FCCall() {
                 ++idx;
             }
 #if _TARGET == _80386
-            if( pass_scb && (aux->call_info & FAR16_CALL) ) {
+            if( pass_scb && (aux->cclass & FAR16_CALL) ) {
                 arg = MkSCB16( arg );
             }
 #endif
@@ -769,7 +769,7 @@ void    FCCall() {
             }
         }
 #if _TARGET == _80386 || _TARGET == 8086
-        if( (aux->call_info & FAR16_CALL) && chk_foreign ) {
+        if( (aux->cclass & FAR16_CALL) && chk_foreign ) {
             arg = CGUnary( O_PTR_TO_FORIEGN, arg, cg_typ );
         }
 #endif
@@ -794,7 +794,7 @@ void    FCCall() {
                 scb = GetPtr();
                 arg = CGFEName( scb, T_CHAR );
 #if _TARGET == _80386
-                if( aux->call_info & FAR16_CALL ) {
+                if( aux->cclass & FAR16_CALL ) {
                     arg = MkSCB16( arg );
                     arg = CGUnary( O_PTR_TO_FORIEGN, arg, T_GLOBAL_POINTER );
                 }

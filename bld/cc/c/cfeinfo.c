@@ -287,7 +287,7 @@ int ParmsToBeReversed( int flags, struct aux_info *inf )
 #ifdef REVERSE
     inf = LangInfo( flags, inf );
     if( inf != NULL ) {
-        if( inf->class & REVERSE_PARMS ) {
+        if( inf->cclass & REVERSE_PARMS ) {
             return( 1 );
         }
     }
@@ -338,7 +338,7 @@ struct aux_info *ModifyLookup( SYMPTR sym )
 
         if( strcmp( NoModifyFuncs[ hash ], p ) == 0 ) {
             inf = &InlineInfo;
-            inf->class = DefaultInfo.class | NO_MEMORY_READ | NO_MEMORY_CHANGED;
+            inf->cclass = DefaultInfo.cclass | NO_MEMORY_READ | NO_MEMORY_CHANGED;
             inf->code = NULL;
             inf->parms = DefaultInfo.parms;
             inf->returns = DefaultInfo.returns;
@@ -401,7 +401,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
                 }
             }
             inf = &InlineInfo;
-            inf->class = (DefaultInfo.class & FAR) | MODIFY_EXACT;
+            inf->cclass = (DefaultInfo.cclass & FAR) | MODIFY_EXACT;
             inf->code = ifunc->code;
             inf->parms = ifunc->parms;
             inf->returns = ifunc->returns;
@@ -412,7 +412,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
             if( !HW_CEqual( inf->returns, HW_EAX )
               && !HW_CEqual( inf->returns, HW_EMPTY ) ) {
   #endif
-                inf->class |= SPECIAL_RETURN;
+                inf->cclass |= SPECIAL_RETURN;
             }
             HW_CAsgn( inf->streturn, HW_EMPTY );
             inf->save = ifunc->save;
@@ -439,7 +439,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
 #if _CPU == 386
     if(( sym_handle == SymSTOSB ) || ( sym_handle == SymSTOSD )) {
         return( &STOSBInfo );
-    } else if( sym_handle == SymFinally ) {   /* 28-mar-94 */
+    } else if( sym_handle == SymFinally ) {
         static byte_seq FinallyCode = { 1, {0xc3} }; /* ret */
 
         InlineInfo = DefaultInfo;
@@ -483,7 +483,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
     if( ( inf->flags & AUX_FLAG_FAR16 )
       || ( sym->attrib & FLAG_FAR16 ) ) {
         if( ( (sym->attrib & FLAG_LANGUAGES) == LANG_PASCAL )
-          || ( inf->class & REVERSE_PARMS ) ) {
+          || ( inf->cclass & REVERSE_PARMS ) ) {
             return( &Far16PascalInfo );
         } else {
             return( &Far16CdeclInfo );
@@ -501,7 +501,7 @@ int FunctionAborts( SYM_ENTRY *sym, SYM_HANDLE sym_handle )  /* 09-apr-93 */
         SymGet( sym, sym_handle );
         ent = AuxLookup( SymName( sym, sym_handle ) );
         if( ent != NULL ) {
-            if( ent->info->class & SUICIDAL ) {
+            if( ent->info->cclass & SUICIDAL ) {
                 return( 1 );
             }
         }
@@ -514,19 +514,19 @@ void GetCallClass( SYM_HANDLE sym_handle )
     struct aux_info *inf;
     auto SYM_ENTRY sym;
 
-    CallClass = DefaultInfo.class;
+    CallClass = DefaultInfo.cclass;
     if( sym_handle != 0 ) {
         inf = FindInfo( &sym, sym_handle );
         if( sym.flags & SYM_FUNCTION ) {
             switch( sym.attrib & FLAG_LANGUAGES ) {
             case LANG_WATCALL:
-                CallClass = WatcallInfo.class;
+                CallClass = WatcallInfo.cclass;
                 break;
             case LANG_CDECL:
                 if( inf != &DefaultInfo ) {
-                    CallClass = inf->class;
+                    CallClass = inf->cclass;
                 } else {
-                    CallClass = CdeclInfo.class;
+                    CallClass = CdeclInfo.cclass;
                 }
 #if _CPU == 8086                        /* 18-nov-94 */
                 if( TargSys == TS_WINDOWS ) {
@@ -536,9 +536,9 @@ void GetCallClass( SYM_HANDLE sym_handle )
                 break;
             case LANG_PASCAL:
                 if( inf != &DefaultInfo ) {
-                    CallClass = inf->class;
+                    CallClass = inf->cclass;
                 } else {
-                    CallClass = PascalInfo.class;
+                    CallClass = PascalInfo.cclass;
                 }
 #if _CPU == 8086                        /* 21-jan-93 */
                 if( TargSys == TS_WINDOWS ) {       /* 01-mar-91 */
@@ -547,22 +547,22 @@ void GetCallClass( SYM_HANDLE sym_handle )
 #endif
                 break;
             case LANG_FORTRAN:
-                CallClass = FortranInfo.class;
+                CallClass = FortranInfo.cclass;
                 break;
             case LANG_SYSCALL:
-                CallClass = SyscallInfo.class;
+                CallClass = SyscallInfo.cclass;
                 break;
             case LANG_STDCALL:
-                CallClass = StdcallInfo.class;
+                CallClass = StdcallInfo.cclass;
                 break;
             case LANG_FASTCALL:
-                CallClass = FastcallInfo.class;
+                CallClass = FastcallInfo.cclass;
                 break;
             case LANG_OPTLINK:
-                CallClass = OptlinkInfo.class;
+                CallClass = OptlinkInfo.cclass;
                 break;
             default:
-                CallClass = inf->class;
+                CallClass = inf->cclass;
                 break;
             }
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
@@ -601,7 +601,7 @@ void GetCallClass( SYM_HANDLE sym_handle )
                 CallClass |= MAKE_CALL_INLINE;
             }
 #endif
-            if( VarFunc( &sym ) ) {               /* 19-dec-88*/
+            if( VarFunc( &sym ) ) {
                 CallClass |= CALLER_POPS | HAS_VARARGS;
             }
         }

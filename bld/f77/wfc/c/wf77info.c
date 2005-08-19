@@ -1222,7 +1222,7 @@ static char *GetNamePattern( sym_id sym )
 
     _UnShadow( sym );
     aux = AuxLookup( sym );
-    return( aux->object_name );
+    return( aux->objname );
 }
 
 static int GetParmsSize( sym_id sym )
@@ -1321,7 +1321,7 @@ cg_type FEParmType( sym_id fn, sym_id parm, cg_type tipe ) {
             aux_info    *aux;
             aux = AuxLookup( fn );
             if( aux != NULL ) {
-                if( aux->call_info & FAR16_CALL ) {
+                if( aux->cclass & FAR16_CALL ) {
                     return( T_INT_2 );
                 }
             }
@@ -1938,25 +1938,25 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 
     switch( request ) {
     case CALL_CLASS :
-        return( &((aux_info *)aux)->call_info );
+        return( &((aux_info *)aux)->cclass );
     case SAVE_REGS :
-        return( &((aux_info *)aux)->save_info );
+        return( &((aux_info *)aux)->save );
     case RETURN_REG :
-        return( &((aux_info *)aux)->return_info );
+        return( &((aux_info *)aux)->returns );
     case PARM_REGS :
-        return( ((aux_info *)aux)->parm_info );
+        return( ((aux_info *)aux)->parms );
     case CALL_BYTES :
 #if _TARGET == _AXP || _TARGET == _PPC
         return( NULL );
 #else
-        return( ((aux_info *)aux)->call_bytes );
+        return( ((aux_info *)aux)->code );
 #endif
 #if _TARGET == _8086 || _TARGET == _80386
     case CODE_GROUP :
     case DATA_GROUP :
         return( "" );
     case STRETURN_REG :
-        return( &((aux_info *)aux)->struct_info );
+        return( &((aux_info *)aux)->streturn );
 #endif
     case NEXT_IMPORT :
         switch( (int)aux ) {

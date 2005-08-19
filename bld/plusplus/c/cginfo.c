@@ -552,13 +552,13 @@ static AUX_INFO *IntrinsicAuxLookup(
         if( CgTypeSize( type ) != 4 )  return( inf );
     }
     inf = &InlineInfo;
-    inf->_class = (DefaultInfo._class & FAR) | MODIFY_EXACT;
+    inf->cclass = (DefaultInfo.cclass & FAR) | MODIFY_EXACT;
     inf->code = ifunc->code;
     inf->parms = ifunc->parms;
     inf->returns = ifunc->returns;
     if( !HW_CEqual( inf->returns, HW_AX )
      && !HW_CEqual( inf->returns, HW_EMPTY ) ) {
-        inf->_class |= SPECIAL_RETURN;
+        inf->cclass |= SPECIAL_RETURN;
     }
     HW_CAsgn( inf->streturn, HW_EMPTY );
     inf->save = ifunc->save;
@@ -598,7 +598,7 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
             }
             #if _CPU == 386
                 if(( mod_flags & TF1_FAR16 ) || ( inf->flags & AUX_FLAG_FAR16 )) {
-                    if( inf->_class & REVERSE_PARMS ) {
+                    if( inf->cclass & REVERSE_PARMS ) {
                         inf = &Far16PascalInfo;
                     } else {
                         inf = &Far16CdeclInfo;
@@ -757,7 +757,7 @@ static call_class getCallClass( // GET CLASS OF CALL
     call_class value;           // - call class
 
     inf = getLangInfo( sym );
-    value = inf->_class;
+    value = inf->cclass;
     if( sym != NULL ) {
         if( SymIsFunction( sym ) ) {
             #if _CPU == _AXP
@@ -1514,7 +1514,7 @@ void *FEAuxInfo(                // REQUEST AUXILLIARY INFORMATION
 boolean IsPragmaAborts(         // TEST IF FUNCTION NEVER RETURNS
     SYMBOL sym )                // - function symbol
 {
-    return(( getLangInfo( sym )->_class & SUICIDAL ) != 0 );
+    return(( getLangInfo( sym )->cclass & SUICIDAL ) != 0 );
 }
 
 

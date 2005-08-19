@@ -328,7 +328,7 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
         break;
     case OPT_mem_model_mm:
         model = 'm';
-        DefaultInfo._class |= FAR;
+        DefaultInfo.cclass |= FAR;
         DataPtrSize = TARGET_POINTER;
         CodePtrSize = TARGET_FAR_POINTER;
         PreDefineStringMacro( "M_" MM_ARCH "MM" );
@@ -343,7 +343,7 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
         PreDefineStringMacro( "M_" MM_ARCH "LM" );
         PreDefineStringMacro( "_M_" MM_ARCH "LM" );
         PreDefineStringMacro( "__LARGE__" );
-        DefaultInfo._class |= FAR;
+        DefaultInfo.cclass |= FAR;
         CodePtrSize = TARGET_FAR_POINTER;
         DataPtrSize = TARGET_FAR_POINTER;
         bit |= BIG_CODE | BIG_DATA | CHEAP_POINTER;
@@ -376,7 +376,7 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
         PreDefineStringMacro( "M_" MM_ARCH "HM" );
         PreDefineStringMacro( "_M_" MM_ARCH "HM" );
         PreDefineStringMacro( "__HUGE__" );
-        DefaultInfo._class |= FAR;
+        DefaultInfo.cclass |= FAR;
         CodePtrSize = TARGET_FAR_POINTER;
         DataPtrSize = TARGET_FAR_POINTER;
         bit |= BIG_CODE | BIG_DATA;
@@ -907,8 +907,8 @@ static  hw_reg_set      metaWareParms[] = { HW_D( HW_EMPTY ) };
 
 static void setStackConventions( void )    // SET 386 HARDWARE OPTIONS
 {
-    DefaultInfo._class &= ( GENERATE_STACK_FRAME | FAR );
-    DefaultInfo._class |= CALLER_POPS | NO_8087_RETURNS;
+    DefaultInfo.cclass &= ( GENERATE_STACK_FRAME | FAR );
+    DefaultInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
     DefaultInfo.parms = AuxParmDup( metaWareParms );
     HW_CTurnOff( DefaultInfo.save, HW_EAX );
     HW_CTurnOff( DefaultInfo.save, HW_EDX );
@@ -1166,7 +1166,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     }
     if( data->of_plus ) {
         TargetSwitches |= NEED_STACK_FRAME;
-        DefaultInfo._class |= GENERATE_STACK_FRAME;
+        DefaultInfo.cclass |= GENERATE_STACK_FRAME;
     }
     if( data->om ) {
         TargetSwitches |= I_MATH_INLINE;

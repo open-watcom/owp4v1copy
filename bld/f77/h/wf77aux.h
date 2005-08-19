@@ -63,23 +63,31 @@ typedef struct pass_by {
 
 typedef struct aux_info {
     struct aux_info     *link;
-    call_class          call_info;
-    hw_reg_set          save_info;
-    hw_reg_set          return_info;
-    hw_reg_set          *parm_info;
+    call_class          cclass;
+    hw_reg_set          save;
+    hw_reg_set          returns;
+    hw_reg_set          *parms;
 #if _TARGET == _80386 || _TARGET == _8086
-    byte_seq            *call_bytes;
+    byte_seq            *code;
 #elif _TARGET == _AXP || _TARGET == _PPC
-    risc_byte_seq       *call_bytes;
+    risc_byte_seq       *code;
 #else
   #error Unknown Target
 #endif
-    hw_reg_set          struct_info;
-    char                *object_name;
+    hw_reg_set          streturn;
+    char                *objname;
     pass_by             *arg_info;
     byte                sym_len;
     char                sym_name[1];
 } aux_info;
+
+typedef struct aux_entry {
+    struct aux_info     *info;
+    struct aux_entry    *next;
+    pass_by             *arg_info;
+    byte                sym_len;
+    char                sym_name[1];
+};
 
 typedef struct default_lib {
     struct default_lib  *link;

@@ -287,79 +287,78 @@ void            InitAuxInfo() {
     // the options used to compile the run-time routines
     if( CGOpts & CGOPT_M_LARGE ) {
         if( !(CGOpts & CGOPT_WINDOWS) ) {
-            HW_CTurnOff( IFXInfo.save_info, HW_DS );
-            HW_CTurnOff( RtRtnInfo.save_info, HW_DS );
-            HW_CTurnOff( RtStopInfo.save_info, HW_DS );
-            HW_CTurnOff( RtVarInfo.save_info, HW_DS );
-            HW_CTurnOff( CoRtnInfo.save_info, HW_DS );
-            HW_CTurnOff( IFInfo.save_info, HW_DS );
-            HW_CTurnOff( IFCharInfo.save_info, HW_DS );
-            HW_CTurnOff( IFChar2Info.save_info, HW_DS );
-            HW_CTurnOff( IFVarInfo.save_info, HW_DS );
+            HW_CTurnOff( IFXInfo.save, HW_DS );
+            HW_CTurnOff( RtRtnInfo.save, HW_DS );
+            HW_CTurnOff( RtStopInfo.save, HW_DS );
+            HW_CTurnOff( RtVarInfo.save, HW_DS );
+            HW_CTurnOff( CoRtnInfo.save, HW_DS );
+            HW_CTurnOff( IFInfo.save, HW_DS );
+            HW_CTurnOff( IFCharInfo.save, HW_DS );
+            HW_CTurnOff( IFChar2Info.save, HW_DS );
+            HW_CTurnOff( IFVarInfo.save, HW_DS );
         }
-        HW_CTurnOff( IFXInfo.save_info, HW_ES );
-        HW_CTurnOff( RtRtnInfo.save_info, HW_ES );
-        HW_CTurnOff( RtStopInfo.save_info, HW_ES );
-        HW_CTurnOff( RtVarInfo.save_info, HW_ES );
-        HW_CTurnOff( CoRtnInfo.save_info, HW_ES );
-        HW_CTurnOff( IFInfo.save_info, HW_ES );
-        HW_CTurnOff( IFCharInfo.save_info, HW_ES );
-        HW_CTurnOff( IFChar2Info.save_info, HW_ES );
-        HW_CTurnOff( IFVarInfo.save_info, HW_ES );
     }
+        HW_CTurnOff( IFXInfo.save, HW_ES );
+        HW_CTurnOff( RtRtnInfo.save, HW_ES );
+        HW_CTurnOff( RtStopInfo.save, HW_ES );
+        HW_CTurnOff( RtVarInfo.save, HW_ES );
+        HW_CTurnOff( CoRtnInfo.save, HW_ES );
+        HW_CTurnOff( IFInfo.save, HW_ES );
+        HW_CTurnOff( IFCharInfo.save, HW_ES );
+        HW_CTurnOff( IFChar2Info.save, HW_ES );
+        HW_CTurnOff( IFVarInfo.save, HW_ES );
 #endif
 
     if( !(CGOpts & CGOPT_SEG_REGS) ) {
         if( _FloatingDS( CGOpts ) ) {
-            HW_CTurnOff( DefaultInfo.save_info, HW_DS );
+            HW_CTurnOff( DefaultInfo.save, HW_DS );
         }
         if( _FloatingES( CGOpts ) ) {
-            HW_CTurnOff( DefaultInfo.save_info, HW_ES );
+            HW_CTurnOff( DefaultInfo.save, HW_ES );
         }
 #if _TARGET == _8086
-        if( CPUOpts & (CPUOPT_80386 | CPUOPT_80486 | CPUOPT_80586 | CPUOPT_80686) ) {
+        if( CPUOpts & (CPUOPT_80386 | CPUOPT_80486 | CPUOPT_80586 | CPUOPT_80686) )
 #endif
+        {
             if( _FloatingFS( CGOpts ) ) {
-                HW_CTurnOff( DefaultInfo.save_info, HW_FS );
+                HW_CTurnOff( DefaultInfo.save, HW_FS );
             }
             if( _FloatingGS( CGOpts ) ) {
-                HW_CTurnOff( DefaultInfo.save_info, HW_GS );
+                HW_CTurnOff( DefaultInfo.save, HW_GS );
             }
-#if _TARGET == _8086
         }
-#endif
     }
     if( OZOpts & OZOPT_O_FRAME ) {
-        DefaultInfo.call_info |= GENERATE_STACK_FRAME;
+        DefaultInfo.cclass |= GENERATE_STACK_FRAME;
     }
 #endif
 #if _TARGET == _80386
     if( CGOpts & CGOPT_STK_ARGS ) {
-        DefaultInfo.call_info |= CALLER_POPS | NO_8087_RETURNS;
-        DefaultInfo.parm_info = StackParms;
-        HW_CTurnOff( DefaultInfo.save_info, HW_EAX );
-        HW_CTurnOff( DefaultInfo.save_info, HW_EDX );
-        HW_CTurnOff( DefaultInfo.save_info, HW_ECX );
-        HW_CTurnOff( DefaultInfo.save_info, HW_FLTS );
+        DefaultInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
+        DefaultInfo.parms = StackParms;
+        HW_CTurnOff( DefaultInfo.save, HW_EAX );
+        HW_CTurnOff( DefaultInfo.save, HW_EDX );
+        HW_CTurnOff( DefaultInfo.save, HW_ECX );
+        HW_CTurnOff( DefaultInfo.save, HW_FLTS );
 
-        IFXInfo.call_info |= CALLER_POPS | NO_8087_RETURNS;
-        IFXInfo.parm_info = StackParms;
+        IFXInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
+        IFXInfo.parms = StackParms;
 
-        HW_CTurnOff( IFXInfo.save_info, HW_FLTS );
-        HW_CTurnOff( RtRtnInfo.save_info, HW_FLTS );
-        HW_CTurnOff( RtStopInfo.save_info, HW_FLTS );
-        HW_CTurnOff( RtVarInfo.save_info, HW_FLTS );
-        HW_CTurnOff( CoRtnInfo.save_info, HW_FLTS );
-        HW_CTurnOff( IFInfo.save_info, HW_FLTS );
-        HW_CTurnOff( IFCharInfo.save_info, HW_FLTS );
-        HW_CTurnOff( IFChar2Info.save_info, HW_FLTS );
-        HW_CTurnOff( IFVarInfo.save_info, HW_FLTS );
+        HW_CTurnOff( IFXInfo.save, HW_FLTS );
+        HW_CTurnOff( RtRtnInfo.save, HW_FLTS );
+        HW_CTurnOff( RtStopInfo.save, HW_FLTS );
+        HW_CTurnOff( RtVarInfo.save, HW_FLTS );
+        HW_CTurnOff( CoRtnInfo.save, HW_FLTS );
+        HW_CTurnOff( IFInfo.save, HW_FLTS );
+        HW_CTurnOff( IFCharInfo.save, HW_FLTS );
+        HW_CTurnOff( IFChar2Info.save, HW_FLTS );
+        HW_CTurnOff( IFVarInfo.save, HW_FLTS );
     }
 #endif
 #if _TARGET == _8086
     if( CGOpts & CGOPT_WINDOWS ) {
-        DefaultInfo.parm_info = WinParms;
-        IFXInfo.parm_info = WinParms;
+        DefaultInfo.parms = WinParms;
+        IFXInfo.parms = WinParms;
     }
 #endif
 
@@ -605,17 +604,17 @@ static  void    FreeAuxElements( aux_info *aux ) {
 //================================================
 
     FreeArgList( aux );
-    if( aux->parm_info != DefaultInfo.parm_info ) {
-        FMemFree( aux->parm_info );
-        aux->parm_info = DefaultInfo.parm_info;
+    if( aux->parms != DefaultInfo.parms ) {
+        FMemFree( aux->parms );
+        aux->parms = DefaultInfo.parms;
     }
-    if( aux->call_bytes != DefaultInfo.call_bytes ) {
-        FMemFree( aux->call_bytes );
-        aux->call_bytes = DefaultInfo.call_bytes;
+    if( aux->code != DefaultInfo.code ) {
+        FMemFree( aux->code );
+        aux->code = DefaultInfo.code;
     }
-    if( aux->object_name != DefaultInfo.object_name ) {
-        FMemFree( aux->object_name );
-        aux->object_name = DefaultInfo.object_name;
+    if( aux->objname != DefaultInfo.objname ) {
+        FMemFree( aux->objname );
+        aux->objname = DefaultInfo.objname;
     }
 }
 
@@ -637,9 +636,9 @@ aux_info        *NewAuxEntry( char *name, int name_len ) {
     memcpy( aux->sym_name, name, name_len );
     aux->sym_name[ name_len ] = NULLCHAR;
     aux->link = AuxInfo;
-    aux->parm_info = DefaultInfo.parm_info;
-    aux->call_bytes = DefaultInfo.call_bytes;
-    aux->object_name = DefaultInfo.object_name;
+    aux->parms = DefaultInfo.parms;
+    aux->code = DefaultInfo.code;
+    aux->objname = DefaultInfo.objname;
     aux->arg_info = NULL;
     AuxInfo = aux;
     return( aux );
@@ -773,22 +772,22 @@ void            Pragma() {
 #if ( _TARGET == _8086 || _TARGET == _80386 )
                     have.f_far = 1;
                 } else if( !have.f_far && RecToken( "FAR" ) ) {
-                    CurrAux->call_info |= FAR;
+                    CurrAux->cclass |= FAR;
                     have.f_far = 1;
 #if _TARGET == _80386
                 } else if( !have.f_far16 && RecToken( "FAR16" ) ) {
-                    CurrAux->call_info |= FAR16_CALL;
+                    CurrAux->cclass |= FAR16_CALL;
                     have.f_far16 = 1;
 #endif
                 } else if( !have.f_far && RecToken( "NEAR" ) ) {
-                    CurrAux->call_info &= ~FAR;
+                    CurrAux->cclass &= ~FAR;
                     have.f_far = 1;
                 } else if( !have.f_loadds && RecToken( "LOADDS" ) ) {
-                    CurrAux->call_info |= LOAD_DS_ON_ENTRY;
+                    CurrAux->cclass |= LOAD_DS_ON_ENTRY;
                     have.f_loadds = 1;
 #endif
                 } else if( !have.f_export && RecToken( "EXPORT" ) ) {
-                    CurrAux->call_info |= DLL_EXPORT;
+                    CurrAux->cclass |= DLL_EXPORT;
                     have.f_export = 1;
 #if ( _TARGET == _8086 || _TARGET == _80386 )
                 } else if( !have.f_value && RecToken( "VALUE" ) ) {
@@ -796,7 +795,7 @@ void            Pragma() {
                     have.f_value = 1;
 #endif
                 } else if( !have.f_value && RecToken( "ABORTS" ) ) {
-                    CurrAux->call_info |= SUICIDAL;
+                    CurrAux->cclass |= SUICIDAL;
                     have.f_value = 1;
 #if ( _TARGET == _8086 || _TARGET == _80386 )
                 } else if( !have.f_modify && RecToken( "MODIFY" ) ) {
@@ -1033,17 +1032,17 @@ void            CopyAuxInfo( aux_info *dst, aux_info *src ) {
 //===========================================================
 
     if( dst != src ) {
-        dst->call_info = src->call_info;
-        dst->save_info = src->save_info;
-        dst->return_info = src->return_info;
-        dst->struct_info = src->struct_info;
-        if( src->parm_info != DefaultInfo.parm_info ) {
+        dst->cclass = src->cclass;
+        dst->save = src->save;
+        dst->returns = src->returns;
+        dst->streturn = src->streturn;
+        if( src->parms != DefaultInfo.parms ) {
             DupParmInfo( dst, src );
         }
-        if( src->call_bytes != DefaultInfo.call_bytes ) {
+        if( src->code != DefaultInfo.code ) {
             DupCallBytes( dst, src );
         }
-        if( src->object_name != DefaultInfo.object_name ) {
+        if( src->objname != DefaultInfo.objname ) {
             DupObjectName( dst, src );
         }
         DupArgInfo( dst, src );
@@ -1057,11 +1056,11 @@ static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
 
     byte_seq    *new_seq;
     uint        seq_len;
-    seq_len = src->call_bytes->length & ~DO_FLOATING_FIXUPS;
+    seq_len = src->code->length & ~DO_FLOATING_FIXUPS;
     new_seq = FMemAlloc( sizeof( byte_seq ) + seq_len );
-    memcpy( new_seq->data, src->call_bytes->data, seq_len );
-    dst->call_bytes = new_seq;
-    dst->call_bytes->length = src->call_bytes->length;
+    memcpy( new_seq->data, src->code->data, seq_len );
+    dst->code = new_seq;
+    dst->code->length = src->code->length;
 
 #elif _TARGET == _AXP || _TARGET == _PPC
 
@@ -1072,15 +1071,15 @@ static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
     byte_seq_reloc      *head;
     byte_seq_reloc      *reloc;
 
-    seq_len = src->call_bytes->length;
+    seq_len = src->code->length;
     new_seq = FMemAlloc( sizeof( byte_seq ) + seq_len );
-    memcpy( new_seq->data, src->call_bytes->data, seq_len );
-    dst->call_bytes = new_seq;
-    dst->call_bytes->length = src->call_bytes->length;
+    memcpy( new_seq->data, src->code->data, seq_len );
+    dst->code = new_seq;
+    dst->code->length = src->code->length;
 
     head = NULL;
     lnk = &head;
-    for( reloc = src->call_bytes->relocs; reloc; reloc = reloc->next ) {
+    for( reloc = src->code->relocs; reloc; reloc = reloc->next ) {
         new = FMemAlloc( sizeof( byte_seq_reloc ) );
         new->off = reloc->off;
         new->type = reloc->type;
@@ -1089,7 +1088,7 @@ static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
         *lnk = new;
         lnk = &new->next;
     }
-    dst->call_bytes->relocs = head;
+    dst->code->relocs = head;
 
 #else
   #error Unknown Target
@@ -1104,7 +1103,7 @@ static  void    DupParmInfo( aux_info *dst, aux_info *src ) {
     hw_reg_set  *reg_set;
     int         size;
 
-    reg_set = src->parm_info;
+    reg_set = src->parms;
     size = 0;
     while( !HW_CEqual( reg_set[ size ], HW_EMPTY ) ) {
         ++size;
@@ -1112,7 +1111,7 @@ static  void    DupParmInfo( aux_info *dst, aux_info *src ) {
     ++size;
     new_reg_set = FMemAlloc( size * sizeof( hw_reg_set ) );
     memcpy( new_reg_set, reg_set, size * sizeof( hw_reg_set ) );
-    dst->parm_info = new_reg_set;
+    dst->parms = new_reg_set;
 }
 
 
@@ -1121,9 +1120,9 @@ static  void    DupObjectName( aux_info *dst, aux_info *src ) {
 
     char        *new_name;
 
-    new_name = FMemAlloc( strlen( src->object_name ) + sizeof( char ) );
-    strcpy( new_name, src->object_name );
-    dst->object_name = new_name;
+    new_name = FMemAlloc( strlen( src->objname ) + sizeof( char ) );
+    strcpy( new_name, src->objname );
+    dst->objname = new_name;
 }
 
 
@@ -1179,12 +1178,12 @@ static  void            ObjectName() {
     if( *(TokEnd - sizeof( char )) != '"' ) Suicide();
     obj_len = TokEnd - TokStart - 2*sizeof( char );
     name = FMemAlloc( obj_len + sizeof( char ) );
-    if( CurrAux->object_name != DefaultInfo.object_name ) {
-        FMemFree( CurrAux->object_name );
+    if( CurrAux->objname != DefaultInfo.objname ) {
+        FMemFree( CurrAux->objname );
     }
     memcpy( name, TokStart + sizeof( char ), obj_len );
     name[ obj_len ] = NULLCHAR;
-    CurrAux->object_name = name;
+    CurrAux->objname = name;
     ScanToken();
 }
 
@@ -1293,10 +1292,10 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
     seq = FMemAlloc( sizeof( byte_seq ) + i );
     seq->length = i | perform_fixups;
     memcpy( &seq->data, buff, i );
-    if( CurrAux->call_bytes != DefaultInfo.call_bytes ) {
-        FMemFree( CurrAux->call_bytes );
+    if( CurrAux->code != DefaultInfo.code ) {
+        FMemFree( CurrAux->code );
     }
-    CurrAux->call_bytes = seq;
+    CurrAux->code = seq;
 }
 
 #elif _TARGET == _AXP || _TARGET == _PPC
@@ -1333,10 +1332,10 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
     seq->relocs = head;
     seq->length = i;
     memcpy( &seq->data, buff, i );
-    if( CurrAux->call_bytes != DefaultInfo.call_bytes ) {
-        FMemFree( CurrAux->call_bytes );
+    if( CurrAux->code != DefaultInfo.code ) {
+        FMemFree( CurrAux->code );
     }
-    CurrAux->call_bytes = seq;
+    CurrAux->code = seq;
 }
 #endif
 
@@ -1502,26 +1501,26 @@ static  void            GetParmInfo() {
             have.f_args = 1;
 #if ( _TARGET == _8086 || _TARGET == _80386 )
         } else if( !have.f_pop && RecToken( "CALLER" ) ) {
-            CurrAux->call_info |= CALLER_POPS;
+            CurrAux->cclass |= CALLER_POPS;
             have.f_pop = 1;
         } else if( !have.f_pop && RecToken( "ROUTINE" ) ) {
-            CurrAux->call_info &= ~CALLER_POPS;
+            CurrAux->cclass &= ~CALLER_POPS;
             have.f_pop = 1;
         } else if( !have.f_reverse && RecToken( "REVERSE" ) ) {
             // arguments are processed in reverse order by default
-            CurrAux->call_info &= ~REVERSE_PARMS;
+            CurrAux->cclass &= ~REVERSE_PARMS;
             have.f_reverse = 1;
         } else if( !have.f_nomemory && RecToken( "NOMEMORY" ) ) {
-            CurrAux->call_info |= NO_MEMORY_READ;
+            CurrAux->cclass |= NO_MEMORY_READ;
             have.f_nomemory = 1;
         } else if( !have.f_loadds && RecToken( "LOADDS" ) ) {
-            CurrAux->call_info |= LOAD_DS_ON_CALL;
+            CurrAux->cclass |= LOAD_DS_ON_CALL;
             have.f_loadds = 1;
         } else if( !have.f_list && CurrToken( "[" ) ) {
-            if( CurrAux->parm_info != DefaultInfo.parm_info ) {
-                FMemFree( CurrAux->parm_info );
+            if( CurrAux->parms != DefaultInfo.parms ) {
+                FMemFree( CurrAux->parms );
             }
-            CurrAux->parm_info = RegSets();
+            CurrAux->parms = RegSets();
             have.f_list = 1;
 #endif
         } else {
@@ -1638,15 +1637,15 @@ static  void            GetRetInfo() {
     have.f_struct  = 0;
     // "3s" default is NO_8087_RETURNS - turn off NO_8087_RETURNS
     // flag so that "3s" model programs can use 387 pragmas
-    CurrAux->call_info &= ~NO_8087_RETURNS;
+    CurrAux->cclass &= ~NO_8087_RETURNS;
     for(;;) {
         if( !have.f_no8087 && RecToken( "NO8087" ) ) {
-            CurrAux->call_info |= NO_8087_RETURNS;
-            HW_CTurnOff( CurrAux->return_info, HW_FLTS );
+            CurrAux->cclass |= NO_8087_RETURNS;
+            HW_CTurnOff( CurrAux->returns, HW_FLTS );
             have.f_no8087 = 1;
         } else if( !have.f_list && RecToken( "[" ) ) {
-            CurrAux->call_info |= SPECIAL_RETURN;
-            CurrAux->return_info = RegSet();
+            CurrAux->cclass |= SPECIAL_RETURN;
+            CurrAux->returns = RegSet();
             have.f_list = 1;
         } else if( !have.f_struct && RecToken( "STRUCT" ) ) {
             GetSTRetInfo();
@@ -1674,20 +1673,20 @@ static  void    GetSTRetInfo() {
     have.f_list   = 0;
     for(;;) {
         if( !have.f_float && RecToken( "FLOAT" ) ) {
-            CurrAux->call_info |= NO_FLOAT_REG_RETURNS;
+            CurrAux->cclass |= NO_FLOAT_REG_RETURNS;
             have.f_float = 1;
         } else if( !have.f_struct && RecToken( "STRUCT" ) ) {
-            CurrAux->call_info |= NO_STRUCT_REG_RETURNS;
+            CurrAux->cclass |= NO_STRUCT_REG_RETURNS;
             have.f_struct = 1;
         } else if( !have.f_allocs && RecToken( "ROUTINE" ) ) {
-            CurrAux->call_info |= ROUTINE_RETURN;
+            CurrAux->cclass |= ROUTINE_RETURN;
             have.f_allocs = 1;
         } else if( !have.f_allocs && RecToken( "CALLER" ) ) {
-            CurrAux->call_info &= ~ROUTINE_RETURN;
+            CurrAux->cclass &= ~ROUTINE_RETURN;
             have.f_allocs = 1;
         } else if( !have.f_list && RecToken( "[" ) ) {
-            CurrAux->call_info |= SPECIAL_STRUCT_RETURN;
-            CurrAux->struct_info = RegSet();
+            CurrAux->cclass |= SPECIAL_STRUCT_RETURN;
+            CurrAux->streturn = RegSet();
             have.f_list = 1;
         } else {
             break;
@@ -1714,10 +1713,10 @@ static  void            GetSaveInfo() {
     have.f_list     = 0;
     for(;;) {
         if( !have.f_exact && RecToken( "EXACT" ) ) {
-            CurrAux->call_info |= MODIFY_EXACT;
+            CurrAux->cclass |= MODIFY_EXACT;
             have.f_exact = 1;
         } else if( !have.f_nomemory && RecToken( "NOMEMORY" ) ) {
-            CurrAux->call_info |= NO_MEMORY_CHANGED;
+            CurrAux->cclass |= NO_MEMORY_CHANGED;
             have.f_nomemory = 1;
         } else if( !have.f_list && RecToken( "[" ) ) {
             modlist = RegSet();
@@ -1727,16 +1726,16 @@ static  void            GetSaveInfo() {
         }
     }
     if( have.f_list ) {
-        HW_Asgn( default_flt_n_seg, DefaultInfo.save_info );
-        HW_CTurnOn( CurrAux->save_info, HW_FULL );
+        HW_Asgn( default_flt_n_seg, DefaultInfo.save );
+        HW_CTurnOn( CurrAux->save, HW_FULL );
         if( !have.f_exact && !(CGOpts & CGOPT_SEG_REGS) ) {
             HW_CAsgn( flt_n_seg, HW_FLTS );
             HW_CTurnOn( flt_n_seg, HW_SEGS );
-            HW_TurnOff( CurrAux->save_info, flt_n_seg );
+            HW_TurnOff( CurrAux->save, flt_n_seg );
             HW_OnlyOn( default_flt_n_seg, flt_n_seg );
-            HW_TurnOn( CurrAux->save_info, default_flt_n_seg );
+            HW_TurnOn( CurrAux->save, default_flt_n_seg );
         }
-        HW_TurnOff( CurrAux->save_info, modlist );
+        HW_TurnOff( CurrAux->save, modlist );
     }
 }
 #endif

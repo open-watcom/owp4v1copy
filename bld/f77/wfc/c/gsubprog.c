@@ -93,12 +93,12 @@ void    GBegCall( itnode *itptr ) {
         aux_info    *aux;
         aux = AuxLookupName( sp->ns.name, sp->ns.name_len );
         if( aux != NULL ) {
-            if( aux->call_info & FAR16_CALL ) {
+            if( aux->cclass & FAR16_CALL ) {
                 if( (SubProgId->ns.flags & SY_SUBPROG_TYPE) == SY_PROGRAM ) {
-                    ProgramInfo.call_info |= THUNK_PROLOG;
+                    ProgramInfo.cclass |= THUNK_PROLOG;
                 } else {
                     aux = AuxLookupAdd( SubProgId->ns.name, SubProgId->ns.name_len );
-                    aux->call_info |= THUNK_PROLOG;
+                    aux->cclass |= THUNK_PROLOG;
                 }
             }
         }
@@ -235,7 +235,7 @@ static  int     DumpArgInfo( itnode *node ) {
 #if _TARGET == _80386
                 if( (parm_code == PC_PROCEDURE) || (parm_code == PC_FN_OR_SUB) ) {
                     aux = AuxLookup( node->sym_ptr );
-                    if( aux->call_info & FAR16_CALL ) {
+                    if( aux->cclass & FAR16_CALL ) {
                         parm_code |= PC_PROC_FAR16;
                     }
                 }

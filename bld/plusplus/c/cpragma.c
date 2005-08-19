@@ -1032,7 +1032,7 @@ void CPragma()                  // PROCESS A PRAGMA
 void PragInitDefaultInfo(
     void )
 {
-    DefaultInfo._class = 0;
+    DefaultInfo.cclass = 0;
     DefaultInfo.code = NULL;
     DefaultInfo.parms = DefaultParms;
     HW_CAsgn( DefaultInfo.returns, HW_EMPTY );
@@ -1520,7 +1520,7 @@ boolean ReverseParms( void *pragma )
 {
     AUX_INFO *aux = pragma;
 
-    if( aux->_class & REVERSE_PARMS ) {
+    if( aux->cclass & REVERSE_PARMS ) {
         return( TRUE );
     }
     return( FALSE );

@@ -67,7 +67,7 @@ struct aux_info {
     hw_reg_set      streturn;
     hw_reg_set      save;
     aux_flags       flags;
-    call_class      _class;     // 'class' is a C++ keyword
+    call_class      cclass;     // 'class' is a C++ keyword
     int             : 0;
 };
 
@@ -94,7 +94,6 @@ global AUX_INFO         StdcallInfo;
 global AUX_INFO         FastcallInfo;
 global AUX_INFO         Far16CdeclInfo;
 global AUX_INFO         Far16PascalInfo;
-
 
 struct pragma_dbg_toggles  {
 #define toggle_pick( id )       unsigned id : 1;
