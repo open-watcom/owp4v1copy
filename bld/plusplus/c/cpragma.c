@@ -1054,6 +1054,7 @@ void PragInit(
     SyscallInfo = DefaultInfo;
     OptlinkInfo = DefaultInfo;
     StdcallInfo = DefaultInfo;
+    WatcallInfo = DefaultInfo;
 
     FastcallInfo.use = 2;
 
@@ -1091,6 +1092,7 @@ static MAGIC_WORD magicWords[] = {
     { "fastcall",   M_FASTCALL},
     { "syscall",    M_SYSCALL },
     { "system",     M_SYSCALL },
+    { "watcall",    M_WATCALL },
     { NULL,         M_UNKNOWN },
 };
 
@@ -1179,6 +1181,9 @@ static boolean setAuxInfo(          // SET CURRENT INFO. STRUCTURE
     case M_FASTCALL:
         CurrInfo = &FastcallInfo;
         break;
+    case M_WATCALL:
+        CurrInfo = &WatcallInfo;
+        break;
     default:
         if( create_new ) {
             CreateAux( Buffer );
@@ -1211,6 +1216,8 @@ boolean PragmaName( void *pragma, char **id )
         *id = retrieveName( M_STDCALL );
     } else if( pragma == &FastcallInfo ) {
         *id = retrieveName( M_FASTCALL );
+    } else if( pragma == &WatcallInfo ) {
+        *id = retrieveName( M_WATCALL );
     }
     if( *id != NULL ) {
         return( TRUE );
@@ -1261,6 +1268,9 @@ void PragCurrAlias(             // LOCATE ALIAS FOR PRAGMA
         break;
     case M_FASTCALL:
         CurrAlias = &FastcallInfo;
+        break;
+    case M_WATCALL:
+        CurrAlias = &WatcallInfo;
         break;
     default:
         search = AuxLookup( Buffer );

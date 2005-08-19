@@ -170,6 +170,7 @@ pch_status PCHReadPragmas( void )
     readAuxInfo( &FastcallInfo, RAUX_NULL );
     readAuxInfo( &Far16CdeclInfo, RAUX_NULL );
     readAuxInfo( &Far16PascalInfo, RAUX_NULL );
+    readAuxInfo( &WatcallInfo, RAUX_NULL );
     for(;;) {
         entry_len = PCHReadUInt();
         if( entry_len == 0 ) break;
@@ -204,6 +205,7 @@ pch_status PCHReadPragmas( void )
     infoTranslate[ FastcallInfo.index ] = &FastcallInfo;
     infoTranslate[ Far16CdeclInfo.index ] = &Far16CdeclInfo;
     infoTranslate[ Far16PascalInfo.index ] = &Far16PascalInfo;
+    infoTranslate[ WatcallInfo.index ] = &WatcallInfo;
     return( PCHCB_OK );
 }
 
@@ -267,6 +269,7 @@ pch_status PCHWritePragmas( void )
     writeAuxInfo( &FastcallInfo, &index );
     writeAuxInfo( &Far16CdeclInfo, &index );
     writeAuxInfo( &Far16PascalInfo, &index );
+    writeAuxInfo( &WatcallInfo, &index );
     for( e = AuxList; e != NULL; e = e->next ) {
         len = strlen( e->name );
         PCHWriteUInt( len );
@@ -346,6 +349,9 @@ void *PragmaMapIndex( void *pi )
         }
         if( i == Far16PascalInfo.index ) {
             return( &Far16PascalInfo );
+        }
+        if( i == WatcallInfo.index ) {
+            return( &WatcallInfo );
         }
 #ifndef NDEBUG
         CFatal( "invalid index passed to PragmaMapIndex" );

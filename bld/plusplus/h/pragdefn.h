@@ -94,6 +94,7 @@ global AUX_INFO         StdcallInfo;
 global AUX_INFO         FastcallInfo;
 global AUX_INFO         Far16CdeclInfo;
 global AUX_INFO         Far16PascalInfo;
+global AUX_INFO         WatcallInfo;
 
 struct pragma_dbg_toggles  {
 #define toggle_pick( id )       unsigned id : 1;

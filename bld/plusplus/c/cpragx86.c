@@ -304,6 +304,7 @@ static void pragmaFini(         // FINISH PRAGMAS
                    ( next->info == &FastcallInfo ) ||
                    ( next->info == &Far16CdeclInfo ) ||
                    ( next->info == &Far16PascalInfo ) ||
+                   ( next->info == &WatcallInfo ) ||
                    ( next->info == &FortranInfo ) ) {
                     CFatal( "freeing a static calling convention info" );
                 }
@@ -323,6 +324,7 @@ static void pragmaFini(         // FINISH PRAGMAS
     freeInfo( &FastcallInfo );
     freeInfo( &Far16CdeclInfo );
     freeInfo( &Far16PascalInfo );
+    freeInfo( &WatcallInfo );
     freeInfo( &FortranInfo );
     //CMemFreePtr( &FortranInfo.objname );
     AuxList = NULL;
