@@ -3,7 +3,7 @@
 
 void main()
 {
-    printf( "%s\n", strrchr( "abcdeaaedcb", 'a' ) );
-    if( strrchr( "abcdeaaedcb", 'x' ) == NULL )
+    printf( "%s\n", strrchr( "abcdeaklmn", 'a' ) );
+    if( strrchr( "abcdeaklmn", 'x' ) == NULL )
         printf( "NULL\n" );
 }
