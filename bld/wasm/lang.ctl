@@ -16,6 +16,8 @@ cdsay .
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> dos386/wasm.exe     <RELROOT>/rel2/binw/wasm.exe
     <CPCMD> dos386/wasm.sym     <RELROOT>/rel2/binw/wasm.sym
+    <CPCMD> dosi86/wasm.exe     <RELROOT>/rel2/binw/wasmr.exe
+    <CPCMD> dosi86/wasm.sym     <RELROOT>/rel2/binw/wasmr.sym
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> os2386/wasm.exe     <RELROOT>/rel2/binp/wasm.exe
