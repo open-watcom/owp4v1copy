@@ -29,38 +29,7 @@
 *
 ****************************************************************************/
 
-
-// Define character sets:
-// ======================
-
-#define _ASCII  0
-#define _EBCDIC 1
-#define _KANJI  2
-
-// Define CPU targets:
-// ====================
-
-#define _370   0
-#define _8086  1
-#define _VAX   2
-#define _80386 3
-#define _AXP   4
-#define _PPC   5
-
-// Define Operating Systems:
-// ==========================
-
-#define _VMCMS          0
-#define _PCDOS          1
-#define _VMS            2
-#define _QNX            3
-#define _MVS            4
-#define _HP             5
-#define _OS2            6
-#define _PENPOINT       7
-#define _NT             8
-#define _NETWARE        9
-#define _OSI            10
+#include "targdef.h"
 
 // Define feature switch settings:
 // ===============================
