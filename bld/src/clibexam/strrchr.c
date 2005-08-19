@@ -2,8 +2,8 @@
 #include <string.h>
 
 void main()
-  {
-    printf( "%s\n", strrchr( "abcdeabcde", 'a' ) );
-    if( strrchr( "abcdeabcde", 'x' ) == NULL )
+{
+    printf( "%s\n", strrchr( "abcdeaaedcb", 'a' ) );
+    if( strrchr( "abcdeaaedcb", 'x' ) == NULL )
         printf( "NULL\n" );
-  }
+}
