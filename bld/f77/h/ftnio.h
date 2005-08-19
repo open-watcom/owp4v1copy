@@ -40,7 +40,7 @@
     #define     _PartialReleaseFIO()
 #endif
 
-#if _TARGET == _8086
+#if _CPU == 8086
     #define _BadUnit( x )       ( ( x <  0 ) || ( x > 32727 ) )
     #define _BadRecl( x )       ( ( x <= 0 ) || ( x > 65535 ) )
     #define _BadBlockSize( x )  ( ( x <= 0 ) || ( x > 65535 ) )
@@ -275,7 +275,7 @@ typedef struct ftnfile {
 #define SHARE_DENYRD    4       // deny read access
 #define SHARE_DENYNO    5       // allow read and write access
 
-#if _TARGET == _370
+#if _CPU == 370
   #define PREC_MAX_UNIT 99      // largest allowed unit number
 #else
   #define PREC_MAX_UNIT 999     // largest allowed unit number

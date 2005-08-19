@@ -65,11 +65,11 @@ extern  void            DoPragma(char *);
 extern  aux_info        *AuxLookupName(char *,uint);
 
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
 
 extern  unsigned_8      CGFlags;
 
-#if _TARGET == _80386
+#if _CPU == 386
 
 // Space optimization pragmas (take an awful beating on a pentium)
 
@@ -132,7 +132,7 @@ static  char    __RTIStrBlastNe[] =  { "aux __RTIStrBlastNe             \
                                         \"rep   stosb\"                 \
                                 " };
 
-#elif _TARGET == _8086
+#elif _CPU == 8086
 
 // Space Optimization pragmas
 
@@ -361,7 +361,7 @@ static inline_rtn  __FAR OptSpaceInlineTab[] = {
         "__RTIStrBlastNe", __RTIStrBlastNeOS, T_INTEGER, NULL, NULL
 };
 
-#if _TARGET == _8086
+#if _CPU == 8086
 static inline_rtn  __FAR WinNormalInlineTab[] = {
         "__RTIStrBlastEq", __RTIStrBlastEqWin, T_INTEGER, NULL, NULL,
         "__RTIStrBlastNe", __RTIStrBlastNeWin, T_INTEGER, NULL, NULL
@@ -396,7 +396,7 @@ call_handle     InitInlineCall( int rtn_id ) {
 
 // Initialize a call to a runtime routine.
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     sym_id              sym;
     inline_rtn __FAR    *in_entry;
     int                 name_len;
@@ -429,13 +429,13 @@ call_handle     InitInlineCall( int rtn_id ) {
 void    InitInlinePragmas() {
 //===========================
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     int index;
 
     if( !CreatedPragmas ) {
         if( OZOpts & OZOPT_O_SPACE ) {
             InlineTab = OptSpaceInlineTab;
-#if _TARGET == _8086
+#if _CPU == 8086
             if( CGOpts & CGOPT_M_MEDIUM ) {
                 InlineTab = OptSpaceSmallModelInlineTab;
             } else {
@@ -472,7 +472,7 @@ void    FreeInlinePragmas() {
 
 // Free symbol table entries for run-time routines.
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     int         index;
     sym_id      sym;
 

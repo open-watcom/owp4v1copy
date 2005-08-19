@@ -36,7 +36,7 @@
 #define _EDITOR         _OFF    // editor interface available?
 #define _OBJECT         _OFF    // generate object files?
 #define _CSET           _ASCII  // character set?
-#define _TARGET         _8086   // target machine?
+#define _CPU            8086    // target machine?
 #define _OPSYS          _OSI    // operating system?
 #define BY_FORTRAN_FRONT_END    // identify yourself
 

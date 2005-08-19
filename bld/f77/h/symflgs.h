@@ -91,7 +91,7 @@
 #define SY_REFERENCED    0x0002U        // symbol referenced
 #define SY_SAVED         0x0001U        // appeared in SAVE statement
                                         // - for variables and common blocks
-#if _TARGET == _370
+#if _CPU == 370
 #define SY_WEAK_EXTRN    0x0040U        // weak extern reference
 #endif
 
@@ -132,7 +132,7 @@
 #define SY_RB_DEFINED    0x0004U        // remote block defined
 #define SY_RELAX_EXTERN  0x0004U        // don't force an external reference
 #define SY_IF_ARGUMENT   0x0004U        // intrinsic function used as argument
-#if _TARGET == _370
+#if _CPU == 370
 #define SY_INTERNAL      0x0004U        // internal subprogram (i.f)
 #endif
 #define SY_ADDR_ASSIGNED 0x0002U        // address assigned (for global symbols)
@@ -193,7 +193,7 @@
 #define _IsTypeLogical( typ )   (typ <= TY_LOGICAL)
 #define _IsTypeInteger( typ )   ((typ >= TY_INTEGER_1) && (typ <= TY_INTEGER))
 
-#if _TARGET == _8086
+#if _CPU == 8086
   #define TY_INTEGER_TARG      TY_INTEGER_2
 #else
   #define TY_INTEGER_TARG      TY_INTEGER

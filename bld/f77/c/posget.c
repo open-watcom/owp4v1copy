@@ -173,7 +173,7 @@ static  uint    GetTextRec( b_file *io, char *b, uint len ) {
             return( 0 );
         if( rs[0] == LF )
             return( len );
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ! defined( __UNIX__ )
         if( SysRead( io, &rs[1], sizeof( char ) ) == READ_ERROR ) {
             return( 0 );
         }
@@ -230,7 +230,7 @@ static  uint    GetTextRec( b_file *io, char *b, uint len ) {
                     if( read == 0 ) FSetEof( io );
                     break;
                 }
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ! defined( __UNIX__ )
                 if( ch == CR ) {
                     seen_cr = TRUE;
                 } else
@@ -241,7 +241,7 @@ static  uint    GetTextRec( b_file *io, char *b, uint len ) {
                 } else {
                     trunc = TRUE;
                 }
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ! defined( __UNIX__ )
             } else {
                 if( ch == LF )
                     break;
@@ -270,7 +270,7 @@ static  uint    GetTextRec( b_file *io, char *b, uint len ) {
         for(;;) {
             if( read == len )
                 break;
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _NETWARE ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ ) || defined( __NETWARE__ )
             if( *b == LF )
                 return( read );
 #else
@@ -375,7 +375,7 @@ char    GetStdChar() {
 #else
     if( read( STDIN_FILENO, &ch, 1 ) < 0 )
         return( NULLCHAR );
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ! defined( __UNIX__ )
     if( ch == CR ) {
         if( read( STDIN_FILENO, &ch, 1 ) < 0 ) {
             return( NULLCHAR );

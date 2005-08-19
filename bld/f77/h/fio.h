@@ -40,7 +40,7 @@ typedef struct a_file {                 // file with no buffered i/o
 } a_file;
 
 #define MIN_BUFFER    128
-#if _TARGET == _8086
+#if _CPU == 8086
 #define IO_BUFFER     4*1024
 #else
 #define IO_BUFFER     16*1024

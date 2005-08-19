@@ -39,10 +39,10 @@
 
 hw_reg_set              StackParms[] = { HW_D( HW_EMPTY ) };
 
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
   char                  IF_names[] = "IF@*";
   char                  IF_Xnames[] = "IF@X*";
-#elif _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == _AXP || _CPU == _PPC
   char                  IF_names[] = "_IF_*";
   char                  IF_Xnames[] = "_IF_X*";
 #else
@@ -54,7 +54,7 @@ hw_reg_set              StackParms[] = { HW_D( HW_EMPTY ) };
 static  pass_by         IFArgValue = { NULL, PASS_BY_VALUE };
 static  pass_by         IFArgDescriptor = { NULL, PASS_BY_DESCRIPTOR };
 
-#if _TARGET == _8086
+#if _CPU == 8086
 
 char    *RegNames[] = {
            "8087",
@@ -239,7 +239,7 @@ aux_info                DefaultInfo = {
         NULL,
         0 };
 
-#elif   _TARGET == _80386
+#elif   _CPU == 386
 
 char    *RegNames[] = {
             "8087",
@@ -441,7 +441,7 @@ aux_info                DefaultInfo = {
         NULL,
         0 };
 
-#elif _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == _AXP || _CPU == _PPC
 
 static  hw_reg_set      RtRtnParms[] =
     { HW_D( HW_EMPTY )};

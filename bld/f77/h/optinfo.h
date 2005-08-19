@@ -41,7 +41,7 @@ opt( "FM[=<fn>]",  0,                0,           NULL,       CL_GENERATE_MAP ),
 opt( "FE=<fn>",    0,                0,           NULL,       CL_NAME_EXECUTABLE ),
 opt( "FD[=<fn>]",  0,                0,           NULL,       CL_KEEP_DIRECTIVE ),
 opt( "FI=<fn>",    0,                0,           NULL,       CL_INCLUDE_DIRECTIVE ),
-#if !defined( _80386 )
+#if _CPU == 8086
 opt( "LP",         0,                0,           NULL,       CL_LINK_FOR_OS2 ),
 opt( "LR",         0,                0,           NULL,       CL_LINK_FOR_DOS ),
 #endif
@@ -77,7 +77,7 @@ opt( "HC",         CGOPT_DI_CV,      CMD|CG,      &CGOption,  MS_CGOPT_DI_CV ),
 opt( "HD",         CGOPT_DI_DWARF,   CMD|CG,      &CGOption,  MS_CGOPT_DI_DWARF ),
 opt( "HW",         CGOPT_DI_WATCOM,  CMD|CG,      &CGOption,  MS_CGOPT_DI_WATCOM ),
 //opt( "DB",       OPT_BROWSE,       CMD,         &BitOption, MS_OPT_BROWSE ),
-#if _TARGET== _8086 || _TARGET== _80386
+#if _CPU == 8086 || _CPU == 386
 //                      Floating-Point Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_FPUOPTS ),
 opt( "FPC",        CPUOPT_FPC,       CMD|CPU,     &CPUOption, MS_CPUOPT_FPC ),
@@ -92,14 +92,14 @@ opt( "FPD",        CPUOPT_FPD,       CMD|CPU,     &CPUOption, MS_CPUOPT_FPD ),
 #endif
 //                      Optimization Options
 opt( "",           0,                CTG,         NULL,       MS_CTG_OPTIMIZATIONS ),
-#if _TARGET == _80386
+#if _CPU == 386
 opt( "OB",         OZOPT_O_BASE_PTR, CMD|OZ,      &OZOption,  MS_OZOPT_O_BASE_PTR ),
 #endif
 opt( "OBP",        OZOPT_O_BRANCH_PREDICTION,
                                      CMD|OZ,      &OZOption,  MS_OZOPT_O_BRANCH_PREDICTION ),
 opt( "OC",         OZOPT_O_CALL_RET, CMD|OZ,      &OZOption,  MS_OZOPT_O_CALL_RET ),
 opt( "OD",         OZOPT_O_DISABLE,  CMD|OZ,      &OZOption,  MS_OZOPT_O_DISABLE ),
-#if _TARGET == _80386
+#if _CPU == 386
 opt( "OF",         OZOPT_O_FRAME,    CMD|OZ,      &OZOption,  MS_OZOPT_O_NEED_FRAME ),
 #endif
 opt( "OH",         OZOPT_O_SUPER_OPTIMAL,
@@ -122,14 +122,14 @@ opt( "OT",         OZOPT_O_TIME,     CMD|OZ,      &OZOption,  MS_OZOPT_O_TIME ),
 opt( "ODO",        OZOPT_O_FASTDO,   CMD|OZ,      &OZOption,  MS_OZOPT_O_FASTDO ),
 opt( "OX",         OZOPT_O_X,        CMD|OZ,      &OZOption,  MS_OZOPT_O_X ),
 //                      Memory Models
-#if _TARGET==_8086 || _TARGET==_80386
+#if _CPU == 8086 || _CPU == 386
 opt( "",           0,                CTG,         NULL,       MS_CTG_MEMORY_MODELS ),
-#if _TARGET == _8086
+#if _CPU == 8086
 opt( "MM",         CGOPT_M_MEDIUM,   CMD|CG,      &CGOption,  MS_CGOPT_M_MEDIUM ),
 opt( "ML",         CGOPT_M_LARGE,    CMD|CG,      &CGOption,  MS_CGOPT_M_LARGE ),
 opt( "MH",         CGOPT_M_HUGE,     CMD|CG,      &CGOption,  MS_CGOPT_M_HUGE ),
 #endif
-#if _TARGET == _80386
+#if _CPU == 386
 opt( "MF",         CGOPT_M_FLAT,     CMD|CG,      &CGOption,  MS_CGOPT_M_FLAT ),
 opt( "MS",         CGOPT_M_SMALL,    CMD|CG,      &CGOption,  MS_CGOPT_M_SMALL ),
 opt( "MC",         CGOPT_M_COMPACT,  CMD|CG,      &CGOption,  MS_CGOPT_M_COMPACT ),
@@ -138,7 +138,7 @@ opt( "ML",         CGOPT_M_LARGE,    CMD|CG,      &CGOption,  MS_CGOPT_M_LARGE )
 #endif
 //                      CPU Targets
 opt( "",           0,                CTG,         NULL,       MS_CTG_CPU ),
-#if _TARGET == _8086
+#if _CPU == 8086
 opt( "0",          CPUOPT_8086,      CMD|CPU,     &CPUOption, MS_CPUOPT_8086 ),
 opt( "1",          CPUOPT_80186,     CMD|CPU,     &CPUOption, MS_CPUOPT_80186 ),
 opt( "2",          CPUOPT_80286,     CMD|CPU,     &CPUOption, MS_CPUOPT_80286 ),
@@ -151,11 +151,11 @@ opt( "6",          CPUOPT_80686,     CMD|CPU,     &CPUOption, MS_CPUOPT_80686 ),
 //                      Application Types
 opt( "",           0,                CTG,         NULL,       MS_CTG_APPTYPE ),
 opt( "BW",         CGOPT_BW,         CMD|CG,      &CGOption,  MS_CGOPT_BW ),
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
 opt( "BM",         CGOPT_BM,         CMD|CG,      &CGOption,  MS_CGOPT_BM ),
 opt( "BD",         CGOPT_BD,         CMD|CG,      &CGOption,  MS_CGOPT_BD ),
 #endif
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
 opt( "WINdows",    CGOPT_WINDOWS,    CMD|CG,      &CGOption,  MS_CGOPT_WINDOWS ),
 #endif
 //                      Character Set Options
@@ -177,15 +177,15 @@ opt( "RESources",  OPT_RESOURCES,    CMD,         &BitOption, MS_OPT_RESOURCES )
 opt( "CC",         OPT_UNIT_6_CC,    CMD,         &BitOption, MS_OPT_UNIT_6_CC ),
 opt( "LFwithff",   OPT_LF_WITH_FF,   CMD,         &BitOption, MS_OPT_LF_WITH_FF ),
 opt( "DEPendency", OPT_DEPENDENCY,   CMD,         &BitOption, MS_OPT_DEPENDENCY ),
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
 opt( "SR",         CGOPT_SEG_REGS,   CMD|CG,      &CGOption,  MS_CGOPT_SEG_REGS ),
 opt( "FSfloats",   CGOPT_FS_FLOATS,  CMD|CG,      &CGOption,  MS_CGOPT_FS_FLOATS ),
 opt( "GSfloats",   CGOPT_GS_FLOATS,  CMD|CG,      &CGOption,  MS_CGOPT_GS_FLOATS ),
 #endif
-#if _TARGET == _8086
+#if _CPU == 8086
 opt( "SSfloats",   CGOPT_SS_FLOATS,  CMD|CG,      &CGOption,  MS_CGOPT_SS_FLOATS ),
 #endif
-#if _TARGET == _80386
+#if _CPU == 386
 opt( "SC",         CGOPT_STK_ARGS,   CMD|CG,      &CGOption,  MS_CGOPT_STK_ARGS ),
 opt( "EZ",         CGOPT_EZ_OMF,     CMD|CG,      &CGOption,  MS_CGOPT_EZ_OMF ),
 opt( "SG",         CGOPT_STACK_GROW, CMD|CG,      &CGOption,  MS_CGOPT_STACK_GROW ),
@@ -196,14 +196,14 @@ opt( "DT",         CGOPT_DATA_THRESH,CMD|VAL|CG,  &DTOption,  MS_CGOPT_DATA_THRE
 opt( "AUtomatic",  OPT_AUTOMATIC,    CMD,         &BitOption, MS_OPT_AUTOMATIC ),
 opt( "DEScriptor", OPT_DESCRIPTOR,   CMD,         &BitOption, MS_OPT_DESCRIPTOR ),
 opt( "SAve",       OPT_SAVE,         CMD,         &BitOption, MS_OPT_SAVE ),
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
 opt( "COde",       CGOPT_CONST_CODE, CMD|CG,      &CGOption,  MS_CGOPT_CONST_CODE ),
 #endif
 opt( "ALign",      CGOPT_ALIGN,      CMD|CG,      &CGOption,  MS_CGOPT_ALIGN ),
 opt( "MAngle",     CGOPT_MANGLE,     CMD|CG,      &CGOption,  MS_CGOPT_MANGLE ),
 opt( "IPromote",   OPT_PROMOTE,      CMD,         &BitOption, MS_OPT_PROMOTE ),
 opt( "SEpcomma",   OPT_COMMA_SEP,    CMD,         &BitOption, MS_OPT_COMMA_SEP ),
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
 opt( "LGA",        CGOPT_GENASM,      CMD|CG,      &CGOption,  0 ),
 opt( "LGO",        CGOPT_LOGOWL,      CMD|CG,      &CGOption,  0 ),
 #endif

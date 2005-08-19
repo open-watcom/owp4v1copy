@@ -46,6 +46,16 @@
   #error Unknown platform
 #endif
 
+#if defined( __386__ )
+#define _CPU 386
+#elif defined( M_I86 )
+#define _CPU 8086
+#elif defined( __AXP__ )
+#define _CPU _AXP
+#elif defined( __PPC__ )
+#define _CPU _PPC
+#endif
+
 #define __INCL_ERRMSGS__        // include error messages
 
 #define _SysMemAlloc    malloc  // define system memory manager

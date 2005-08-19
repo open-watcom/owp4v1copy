@@ -45,7 +45,7 @@ typedef    signed_32    intstar4;       // 32-bit integer
 typedef    real         single;         // single precision
 typedef    long double  extended;       // extended precision
 
-#if _TARGET == _8086
+#if _CPU == 8086
     typedef    intstar2     inttarg;    // target integer
 #else
     typedef    intstar4     inttarg;    // target integer

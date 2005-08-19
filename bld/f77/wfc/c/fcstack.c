@@ -96,13 +96,13 @@ cg_type ArrayPtrType( sym_id sym ) {
 //==================================
 
     if( sym->ns.si.va.dim_ext->dim_flags & DIM_EXTENDED ) {
-#if _TARGET == _8086
+#if _CPU == 8086
         if( CGOpts & CGOPT_M_LARGE ) {
             return( T_HUGE_POINTER );
         } else { // if( CGOpts & CGOPT_M_MEDIUM ) {
             return( T_LONG_POINTER );
         }
-#elif _TARGET == _80386
+#elif _CPU == 386
         return( T_LONG_POINTER );
 #endif
     }

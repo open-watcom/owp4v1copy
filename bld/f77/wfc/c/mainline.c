@@ -57,7 +57,7 @@ extern  void            (* __ErrorFini)(void);
 
 static  char            CmdBuff[2*128];
 
-#if _TARGET == _80386
+#if _CPU == 386
     #define _WFC "wfc386"
 #else
     #define _WFC "wfc"

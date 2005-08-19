@@ -182,7 +182,7 @@ void    FCChar1Move() {
     XPush( CGLVAssign( SCBPointer( dest ), GetChOp( typ ), typ ) );
 }
 
-#if _TARGET == _8086
+#if _CPU == 8086
  #define TAIL_MASK      1
  #define TAIL_SHIFT     1
 #else

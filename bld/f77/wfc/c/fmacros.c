@@ -87,23 +87,23 @@ void    FiniMacroProcessor() {
 void    InitPredefinedMacros() {
 //==============================
 
-#if _TARGET == _80386
+#if _CPU == 386
     MacroDEFINE( "__386__", 7 );
-#elif _TARGET == _8086
+#elif _CPU == 8086
     MacroDEFINE( "__i86__", 7 );
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
     MacroDEFINE( "__AXP__", 7 );
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
     MacroDEFINE( "__PPC__", 7 );
 #else
     #error Unknown platform/OS
 #endif
-#if _TARGET == _80386
+#if _CPU == 386
     if( CGOpts & CGOPT_STK_ARGS ) {
         MacroDEFINE( "__stack_conventions__", 21 );
     }
 #endif
-#if _TARGET == _8086  || _TARGET == _80386
+#if _CPU == 8086  || _CPU == 386
     if( CPUOpts & (CPUOPT_FPR | CPUOPT_FPI | CPUOPT_FPI87 |
                    CPUOPT_FP287 | CPUOPT_FP387 | CPUOPT_FP5) ) {
         MacroDEFINE( "__FPI__", 7 );

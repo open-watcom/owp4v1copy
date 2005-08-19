@@ -40,7 +40,7 @@
 
 extern  char            *SkipBlanks(char *);
 
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
   #define _IsSwitchChar( ch )     ( ch == '-' )
 #else
   #define _IsSwitchChar( ch )     ( ( ch == '/' ) || ( ch == '-' ) )

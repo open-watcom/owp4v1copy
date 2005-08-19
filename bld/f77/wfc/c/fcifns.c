@@ -305,7 +305,7 @@ void            FCLoc() {
             arg = TmpPtr( MkTmp( arg, cg_typ ), cg_typ );
         }
     }
-#if _TARGET == _8086
+#if _CPU == 8086
     arg = CGUnary( O_CONVERT, arg, T_LONG_POINTER );
 #endif
     XPush( CGUnary( O_CONVERT, arg, T_UINT_4 ) );

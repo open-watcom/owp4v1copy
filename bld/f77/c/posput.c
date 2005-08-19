@@ -122,7 +122,7 @@ static  void    PutTextRec( b_file *io, char *b, int len ) {
     }
     if( SysWrite( io, b, len ) == -1 ) return;
     if( ( io->attrs & CC_NOCR ) == 0 ) {
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
         tag[0] = LF;
         len = 1;
 #else

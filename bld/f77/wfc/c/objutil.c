@@ -334,9 +334,9 @@ void    OutInt( inttarg val ) {
 
 // Output target integer value to object memory.
 
-#if _TARGET == _8086
+#if _CPU == 8086
     OutU16( val );
-#else // _TARGET == _80386
+#else // _CPU == 386
     OutConst32( val );
 #endif
 }
@@ -489,9 +489,9 @@ inttarg GetInt() {
 
 // Get integer from object memory.
 
-#if _TARGET == _8086
+#if _CPU == 8086
     return( GetU16() );
-#else // _TARGET == _80386
+#else // _CPU == 386
     return( GetConst32() );
 #endif
 }

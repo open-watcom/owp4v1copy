@@ -79,7 +79,7 @@ sym_id  FindTempIndex( uint tmp_index, byte typ ) {
 
     sym_id      ml;
 
-#if _TARGET != _370
+#if _CPU != 370
     typ = typ;
 #endif
     ml = MList;
@@ -87,7 +87,7 @@ sym_id  FindTempIndex( uint tmp_index, byte typ ) {
         if( ml == NULL ) break;
         if( ( _MgcClass( ml ) == MAGIC_TEMP ) &&
             ( ml->ns.si.ms.tmp_info.tmp_index == tmp_index )
-#if _TARGET == _370
+#if _CPU == 370
          && ( ( typ != TY_COMPLEX ) || ( ml->ns.typ == TY_COMPLEX ) ) &&
             ( ( typ != TY_DCOMPLEX ) || ( ml->ns.typ == TY_DCOMPLEX ) ) &&
             ( ( typ == TY_COMPLEX ) || ( ml->ns.typ != TY_COMPLEX ) ) &&

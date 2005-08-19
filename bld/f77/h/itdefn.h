@@ -49,12 +49,12 @@ typedef struct itnode {
     char                chsize : 4;     // size of character operand (OPN_SS1)
     char                is_unsigned : 1;// integer constant is unsigned
     char                is_catparen : 1;// left paren matches right paren of
-#if _TARGET == _VAX                     // concatenation expression
+#if _CPU == _VAX                     // concatenation expression
     byte                pass_by;        // value, reference or descriptor
 #endif
 } itnode;
 
-#if _TARGET == _VAX
+#if _CPU == _VAX
 #define PASS_BY_VALUE   0x01    // pass argument by value
 #define PASS_BY_REF     0x02    // pass argument by reference
 #define PASS_BY_DESCR   0x04    // pass argument by descriptor

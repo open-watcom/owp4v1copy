@@ -133,7 +133,7 @@ static  bool    CheckSize( byte typ, intstar4 size, itnode *start ) {
         if( size == sizeof( dcomplex ) ) return( TRUE );
         if( size == sizeof( xcomplex ) ) return( TRUE );
     } else if( typ == TY_CHAR ) {
-#if _TARGET == _8086
+#if _CPU == 8086
         if( (size > 0) && (size <= USHRT_MAX) ) return( TRUE );
 #else
         if( size > 0 ) return( TRUE );

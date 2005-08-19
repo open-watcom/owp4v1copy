@@ -50,7 +50,7 @@ global_seg              *GlobalSeg;
 static  global_seg      *CurrGSeg;
 
 
-#if _TARGET == _8086
+#if _CPU == 8086
   #define MAX_SEG_SIZE  0x10000
 #else
   #define MAX_SEG_SIZE  0xffffffff
@@ -95,7 +95,7 @@ segment_id      AllocGlobal( unsigned_32 g_size, bool init ) {
     if( ( CurrGSeg != NULL ) && ( CurrGSeg->size + g_size <= MaxSegSize ) ) {
 
         // object will fit in current segment
-#if _TARGET == _8086  || _TARGET ==80386
+#if _CPU == 8086  || _CPU == 386
         if( ( init == CurrGSeg->initialized ) || !_SmallDataModel( CGOpts ) ) {
             CurrGSeg->size += g_size;
             return( CurrGSeg->segment );

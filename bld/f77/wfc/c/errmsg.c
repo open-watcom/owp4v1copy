@@ -32,9 +32,9 @@
 
 #include "macro.h"
 
-#if _TARGET == _8086
+#if _CPU == 8086
   #include "errmsgi.c"
-#elif _TARGET == _80386
+#elif _CPU == 386
   #include "errmsg3.c"
 #else
   #include "errmsgr.c"

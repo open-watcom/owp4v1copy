@@ -74,7 +74,7 @@ char            LstExtn[] = { "lst" };
 char            ErrExtn[] = { "err" };
 char            ForExtn[] = { "for" };
 char            BrowseExtn[] = { "mbr" };
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
   char          ObjExtn[] = { "o" };
 #else
   char          ObjExtn[] = { "obj" };

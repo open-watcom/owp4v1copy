@@ -33,7 +33,7 @@
 // Relocation definitions:
 // =======================
 
-#if _TARGET != _8086 && _TARGET != _80386
+#if _CPU != 8086 && _CPU != 386
 typedef struct sym_reloc {
     struct sym_reloc    *link;          // pointer to next relocation chain
     pointer             head;           // head of relocation chain
@@ -44,14 +44,14 @@ typedef struct com_reloc {
     struct com_reloc    *link;          // pointer to common relocation entry
     targ_addr           reloc_chain;    // relocation chain
     unsigned_32         offset;         // offset into common block
-#if _TARGET == _370
+#if _CPU == 370
     bool                in_data;        // data initialized
 #endif
 } com_reloc;
 
 typedef union reloc_head {
     targ_addr           gr;             // head of global relocation chain
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     obj_ptr             lr;             // head of local relocation chain
 #else
     struct sym_reloc    *lr;            // head of local relocation chain

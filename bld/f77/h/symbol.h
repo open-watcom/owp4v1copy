@@ -34,7 +34,7 @@
 #include "symacc.h"
 
 #define WF77_NULLSEGID  0       // NULL segment id
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
   #define WF77_LDATA    1       // local data segment for initialized data
   #define WF77_UDATA    2       // local data segment for uninitialized data
   #define WF77_CDATA    3       // constant and literal data segment
@@ -251,7 +251,7 @@ typedef struct stmtno {
 
 // 1. A negative value in "name_len" identifies the symbol as a magic symbol.
 // 2. The "name_len" field is used to identify the class of magic symbol.
-// 3. If _TARGET == _8086, the "size" field is a multiple of 16 and the
+// 3. If _CPU == 8086, the "size" field is a multiple of 16 and the
 //    "typ" field is the size modulo 16 for common blocks.
 // 4. If _OPT_CG == _ON, the "typ" field contains the segment id of the common
 //    block.

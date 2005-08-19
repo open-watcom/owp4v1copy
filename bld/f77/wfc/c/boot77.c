@@ -150,7 +150,7 @@ void    Compile( char *buffer ) {
 }
 
 
-#if _TARGET == _8086
+#if _CPU == 8086
   #define _CmpName "wfc"
 #else
   #define _CmpName "wfc386"

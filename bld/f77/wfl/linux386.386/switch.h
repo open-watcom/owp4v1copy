@@ -30,5 +30,5 @@
 ****************************************************************************/
 
 
-#define _TARGET         _80386  // target machine?
+#define _CPU            386     // target machine?
 #define _OBJECT         _OFF    // generate object files?

@@ -285,14 +285,14 @@ static  void    CGOption( opt_entry *optn, bool negated ) {
 
     opt_bit = optn->value;
     if( !negated ) {
-#if _TARGET == _8086
+#if _CPU == 8086
         _Excl( CGOPT_M_MEDIUM | CGOPT_M_LARGE | CGOPT_M_HUGE );
-#elif _TARGET == _80386
+#elif _CPU == 386
         _Excl( CGOPT_M_FLAT | CGOPT_M_SMALL | CGOPT_M_COMPACT |
                CGOPT_M_MEDIUM | CGOPT_M_LARGE );
         _Excl( CGOPT_BD | CGOPT_BM );
         _Excl( CGOPT_STACK_CHK | CGOPT_STACK_GROW );
-#elif _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == _AXP || _CPU == _PPC
         _Excl( CGOPT_BD | CGOPT_BM );
 #else
   #error Unknown platform
@@ -335,7 +335,7 @@ static  void    OZOption( opt_entry *optn, bool negated ) {
                                    CPUOpts &= ~( excl_bits );        \
                                }
 
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
 static  void    CPUOption( opt_entry *optn, bool negated ) {
 //==========================================================
 
@@ -345,7 +345,7 @@ static  void    CPUOption( opt_entry *optn, bool negated ) {
 
     opt_bit = optn->value;
     if( !negated ) {
-#if _TARGET == _8086
+#if _CPU == 8086
         _CPUExcl( CPUOPT_8086 | CPUOPT_80186 | CPUOPT_80286 |
                   CPUOPT_80386 | CPUOPT_80486 | CPUOPT_80586 );
 #else

@@ -96,7 +96,7 @@ typedef struct db_stmtno {
     obj_ptr     addr;   //  address of statement
 } db_stmtno;
 
-#if _TARGET != _8086 && _TARGET != _80386
+#if !_INTEL_CPU
 
 typedef struct src_line {
     unsigned_16 isn_offset;     //  offset to from start of struct to ISN

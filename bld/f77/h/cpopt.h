@@ -81,19 +81,19 @@ typedef unsigned_32     comp_options;
     #define     CGOPT_DB_LOCALS     0x00000002L
 
     #define     CGOPT_STACK_CHK     0x00000004L
-#if (_TARGET == _8086 || _TARGET == _80386)
+#if ( _CPU == 8086 || _CPU == 386 )
     #define     CGOPT_CONST_CODE    0x00000008L
     #define     CGOPT_STK_ARGS      0x00000010L
     #define     CGOPT_SEG_REGS      0x00000020L
     #define     CGOPT_FS_FLOATS     0x00000040L
     #define     CGOPT_GS_FLOATS     0x00000080L
-#if _TARGET == _8086
+#if _CPU == 8086
     #define     CGOPT_SS_FLOATS     0x00000100L
 #endif
 
     #define     CGOPT_M_LARGE       0x00000200L
     #define     CGOPT_M_MEDIUM      0x00000400L
-#if _TARGET == _8086
+#if _CPU == 8086
     #define     CGOPT_M_HUGE        0x00000800L
 #else
     #define     CGOPT_M_FLAT        0x00001000L
@@ -105,7 +105,7 @@ typedef unsigned_32     comp_options;
     #define     CGOPT_BM            0x00020000L
     #define     CGOPT_STACK_GROW    0x00040000L
 #endif
-#elif _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == _AXP || _CPU == _PPC
     #define     CGOPT_BD            0x00010000L
     #define     CGOPT_BM            0x00020000L
     #define     CGOPT_STACK_GROW    0x00040000L
@@ -117,7 +117,7 @@ typedef unsigned_32     comp_options;
     #define     CGOPT_DI_DWARF      0x00800000L
     #define     CGOPT_DI_WATCOM     0x01000000L
     #define     CGOPT_MANGLE        0x02000000L
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
     #define     CGOPT_GENASM        0x10000000L
     #define     CGOPT_LOGOWL        0x20000000L
 #endif
@@ -133,11 +133,11 @@ typedef unsigned_32     comp_options;
     #define     OZOPT_O_VOLATILE    0x00000010L
     #define     OZOPT_O_CALL_RET    0x00000020L
     #define     OZOPT_O_MATH        0x00000040L
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     #define     OZOPT_O_FRAME       0x00000080L
 #endif
     #define     OZOPT_O_INSSCHED    0x00000100L
-#if _TARGET == _80386
+#if _CPU == 386
     #define     OZOPT_O_BASE_PTR    0x00000200L
 #endif
     #define     OZOPT_O_INLINE      0x00000400L
@@ -155,7 +155,7 @@ typedef unsigned_32     comp_options;
 // CPU Options:
 // ------------
 
-#if (_TARGET == _8086 || _TARGET == _80386)
+#if ( _CPU == 8086 || _CPU == 386 )
 // Floating-point reverse compatibility:
     #define     CPUOPT_FPR          0x00000001L
 
@@ -174,7 +174,7 @@ typedef unsigned_32     comp_options;
     #define     CPUOPT_FP6          0x00000100L
 
 // CPU:
-#if _TARGET == _8086
+#if _CPU == 8086
     #define     CPUOPT_8086         0x00000200L
     #define     CPUOPT_80186        0x00000400L
     #define     CPUOPT_80286        0x00000800L
@@ -185,7 +185,7 @@ typedef unsigned_32     comp_options;
     #define     CPUOPT_80686        0x00008000L
 
 #endif
-#if _TARGET == _8086
+#if _CPU == 8086
 
 #define _SmallDataModel( opts ) ( opts & ( CGOPT_M_MEDIUM ) )
 #define _BigDataModel( opts )   ( opts & ( CGOPT_M_LARGE | CGOPT_M_HUGE ) )
@@ -211,7 +211,7 @@ typedef unsigned_32     comp_options;
                          OZOPT_O_INSSCHED | OZOPT_O_INLINE | OZOPT_O_FASTDO | \
                          OZOPT_O_BRANCH_PREDICTION | OZOPT_O_FLOW_REG_SAVES )
 
-#elif _TARGET == _80386
+#elif _CPU == 386
 
 #define _SmallDataModel( opts ) ( opts &                                       \
                                 ( CGOPT_M_FLAT|CGOPT_M_SMALL|CGOPT_M_MEDIUM ) )
@@ -243,7 +243,7 @@ typedef unsigned_32     comp_options;
                          OZOPT_O_BASE_PTR | OZOPT_O_FASTDO | \
                          OZOPT_O_BRANCH_PREDICTION | OZOPT_O_FLOW_REG_SAVES )
 
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
 #define CGOPT_NO_NO     (CGOPT_DB_LINE|CGOPT_DB_LOCALS| \
                          CGOPT_DI_CV|CGOPT_DI_DWARF|CGOPT_DI_WATCOM| \
                          CGOPT_BD|CGOPT_BM)
@@ -259,7 +259,7 @@ typedef unsigned_32     comp_options;
                          OZOPT_O_INSSCHED | OZOPT_O_INLINE | \
                          OZOPT_O_FASTDO | OZOPT_O_BRANCH_PREDICTION | \
                          OZOPT_O_FLOW_REG_SAVES )
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
 #define CGOPT_NO_NO     (CGOPT_DB_LINE|CGOPT_DB_LOCALS| \
                          CGOPT_DI_CV|CGOPT_DI_DWARF|CGOPT_DI_WATCOM| \
                          CGOPT_BD|CGOPT_BM)

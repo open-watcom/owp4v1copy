@@ -137,7 +137,7 @@ static const byte __FAR CharSet[] = {
      C_BC,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC, // CAN to US
 
 //   20 SP  21 !   22 "   23 &   24 $   25 %   26 &   27'
-#if _TARGET == _VAX
+#if _CPU == _VAX
      C_SP,  C_CM,  C_BC,  C_BC,  C_AL,  C_OP,  C_OP,  C_AP, // SP  to '
 #else
      C_SP,  C_CM,  C_BC,  C_BC,  C_AL,  C_OP,  C_BC,  C_AP, // SP  to '

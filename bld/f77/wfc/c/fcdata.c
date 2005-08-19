@@ -1549,7 +1549,7 @@ static  void    DoDataInit( int var_type ) {
             extern      void            *CFCnvSF(char *,char *);
             extern      void            CFCnvTarget(void *,byte *,unsigned);
             // fix to Brad's temporary fix (I doubt it will ever be changed)
-#if _TARGET == _8086
+#if _CPU == 8086
             extern      signed_16       TypeLength(cg_type);
 #else
             extern      signed_32       TypeLength(cg_type);

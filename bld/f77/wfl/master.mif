@@ -6,7 +6,7 @@ proj_name = f77
 
 !include wres.mif
 
-inc_dirs=-I"../h" -I"../../wfc/h" -I"../../h"
+inc_dirs=-I"../h" -I"../../wfc/h" -I"../../h" -I"$(comp_cfg_dir)/h"
 
 extra_c_flags = -d__WFL__ -d__RT__
 
@@ -31,4 +31,4 @@ $(target_exe).exe : $(files) $(wres_lib) errmsg.res
     wstrip -q -a -r $^@ . errmsg.res
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -I"../../h" $[@ -fo=$^@
+    $(rc_aui) -I"../../h" $[@ -fo=$^@ -I"$(comp_cfg_dir)/h"

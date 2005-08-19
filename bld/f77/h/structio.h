@@ -40,12 +40,12 @@
 // reference on the 8086, we simply put an offset.  Then SDEFN_REF_PGM
 // turns it into a PGM ptr.
 typedef obj_ptr sdefn_ref;
-#if _TARGET == _8086
+#if _CPU == 8086
     #include <i86.h>
     #define SDEFN_REF_PGM( seg, sd_ref )        MK_FP( (seg), (sd_ref) )
     #define PGM_SDEFN_REF( sd_ref )             FP_OFF( sd_ref )
 
-#elif _TARGET == _80386
+#elif _CPU == 386
     #define SDEFN_REF_PGM( seg, sd_ref )        (void PGM *)( sd_ref )
     #define PGM_SDEFN_REF( sd_ref )             (sdefn_ref)( sd_ref )
 

@@ -213,7 +213,7 @@ cg_type             PromoteToBaseType( cg_type typ ) {
 // if type is integer T_INT_1, T_INT_2 under the _AXP or _PPC, we must promote
 // it in order to make a call
 
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
     if( ( typ == T_INT_1 ) || ( typ == T_INT_2 )  ) {
         typ = T_INT_4;
     }

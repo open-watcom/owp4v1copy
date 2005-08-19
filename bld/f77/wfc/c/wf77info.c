@@ -47,11 +47,11 @@
 #include "csetinfo.h"
 
 #include "langenvd.h"
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
   #define __TGT_SYS     __TGT_SYS_X86
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
   #define __TGT_SYS     __TGT_SYS_AXP_NT
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
   #define __TGT_SYS     __TGT_SYS_PPC_NT
 #else
   #error Unknown platform
@@ -150,7 +150,7 @@ static  void            DefDbgStruct( sym_id sym );
 #define BLANK_COM_LEN           6
 
 static  char            GData[] = { "GDATA@" };
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
 static  char            *CSSuff = TS_SEG_CODE;
 static  BYTE_SEQ(2)     CodeAlignSeq = { 2, sizeof( inttarg ), 1 };
 static  BYTE_SEQ(1)     DefCodeAlignSeq = { 1, 1 };
@@ -200,7 +200,7 @@ segment_id              CurrCodeSegId;
 #define SYM_MANGLE_PRE_LEN      8
 #define SYM_MANGLE_POST_LEN     5
 #define SYM_MANGLE_LEN          (SYM_MANGLE_PRE_LEN + SYM_MANGLE_POST_LEN)
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
 static char                     MangleSymBuff[MAX_SYMLEN+4+SYM_MANGLE_LEN];
 #endif
 
@@ -262,7 +262,7 @@ void    InitSegs() {
 // Define segments.
 
     CurrSegId = WF77_FREE_SEG;
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
     BEDefSeg( WF77_TDATA, EXEC|GLOBAL|GIVEN_NAME, TS_SEG_CODE, ALIGN_DWORD );
     CurrCodeSegId = WF77_TDATA;
 #endif
@@ -304,13 +304,13 @@ void    SubCodeSeg() {
 //====================
 
 // Define a code segment for a subprogram.
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     DefCodeSeg();
 #endif
 }
 
 
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
 static  byte_seq        *AlignmentSeq() {
 //=======================================
 
@@ -352,7 +352,7 @@ static  void    BldCSName( char *buff ) {
 
 // Build code segment name.
 
-#if _TARGET == _8086
+#if _CPU == 8086
     strcpy( STGetName( SubProgId, buff ), CSSuff );
 #else
     strcpy( buff, CSSuff );
@@ -374,7 +374,7 @@ static  void    DefineCommonSegs() {
 
     char        cb_name[MAX_SYMLEN+4+SYM_MANGLE_LEN];
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     if( _SmallDataModel( CGOpts ) ) {
         private = INIT; // so segment doesn't get put in BSS class
     } else {
@@ -383,7 +383,7 @@ static  void    DefineCommonSegs() {
 #endif
     for( sym = GList; sym != NULL; sym = sym->ns.link ) {
         if( ( sym->ns.flags & SY_CLASS ) != SY_COMMON ) continue;
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
         if( sym->ns.flags & SY_COMMON_INIT ) {
             private = INIT | COMDAT;
         } else {
@@ -461,7 +461,7 @@ static  void    AllocComBlk( sym_id cb ) {
 static  void    SegBytes( unsigned_32 size ) {
 //============================================
 
-#if _TARGET == _80386
+#if _CPU == 386
     DGUBytes( size );
 #else
     if( size == MaxSegSize ) {
@@ -486,7 +486,7 @@ static  void            DefineGlobalSeg( global_seg *seg ) {
     memcpy( g_name, GData, G_DATA_LEN );
     itoa( seg->segment - GlobalSeg->segment, &g_name[ G_DATA_LEN ], 10 );
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     if( _SmallDataModel( CGOpts ) ) {
         if( seg->initialized ) {
             private = INIT; // so segment doesn't get put in BSS class
@@ -588,7 +588,7 @@ struct {
 static  void    InitBytes( unsigned long size, byte value ) {
 //===========================================================
 
-#if _TARGET == _80386
+#if _CPU == 386
     DGIBytes( size, value );
 #else
     if( size == MaxSegSize ) {
@@ -605,7 +605,7 @@ static  void    InitBytes( unsigned long size, byte value ) {
 static  void    UndefBytes( unsigned long size, byte *data ) {
 //============================================================
 
-#if _TARGET == _80386
+#if _CPU == 386
     DGBytes( size, data );
 #else
     if( size == MaxSegSize ) {
@@ -896,7 +896,7 @@ void    DefTypes() {
     int         adv_size;
     int         total_size;
 
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     if( _BigDataModel( CGOpts ) ) {
         BEAliasType( T_LOCAL_POINTER, T_LONG_POINTER );
         BEAliasType( T_GLOBAL_POINTER, T_LONG_POINTER );
@@ -917,7 +917,7 @@ void    DefTypes() {
     BEDefType( T_XCOMPLEX, ALIGN_BYTE, 2*BETypeLength( T_LONGDOUBLE ) );
     BEDefType( T_CHAR, ALIGN_BYTE,
                BETypeLength( T_UNSIGNED ) + BETypeLength( T_GLOBAL_POINTER ) );
-#if _TARGET == _80386
+#if _CPU == 386
     BEDefType( T_CHAR16, ALIGN_BYTE,
                BETypeLength( T_UINT_2 ) + BETypeLength( T_GLOBAL_POINTER ) );
 #endif
@@ -947,9 +947,9 @@ void    DefTypes() {
     BEDefType( T_ARR_ALLOCATABLE, ALIGN_BYTE,
                ( BETypeLength( T_UINT_2 ) + BETypeLength( T_POINTER ) ) );
 
-#if _TARGET == _80386
+#if _CPU == 386
     total_size = BETypeLength( T_LONG_POINTER );
-#elif _TARGET == _8086
+#elif _CPU == 8086
     if( CGOpts & CGOPT_M_LARGE ) {
         total_size = BETypeLength( T_HUGE_POINTER );
     } else { // if( CGOpts & CGOPT_M_MEDIUM ) {
@@ -1310,13 +1310,13 @@ cg_type FEParmType( sym_id fn, sym_id parm, cg_type tipe ) {
 
     parm = parm;
     switch( tipe ) {
-#if _TARGET == _80386
+#if _CPU == 386
     case T_UINT_2:
     case T_INT_2:
 #endif
     case T_INT_1:
     case T_UINT_1:
-#if _TARGET == _80386
+#if _CPU == 386
         {
             aux_info    *aux;
             aux = AuxLookup( fn );
@@ -1404,7 +1404,7 @@ void    FEMessage( msg_class tipe, void *x ) {
         /*  symbol too long, truncated (sym) */
         break;
     case MSG_CODE_SIZE :
-#if _TARGET == _8086
+#if _CPU == 8086
         CodeSize = (unsigned short)x;
 #else
         CodeSize = (unsigned long)x;
@@ -1551,9 +1551,9 @@ static  dbg_type        GetDBGSubProgType( sym_id sym ) {
 // Get debugging information type for subprograms.
 
     if( (sym->ns.flags & SY_SUBPROG_TYPE) == SY_SUBROUTINE ) {
-#if _TARGET == _8086
+#if _CPU == 8086
         return( DBGTypes[ PT_INT_2 ] );
-#elif _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == 386 || _CPU == _AXP || _CPU == _PPC
         return( DBGTypes[ PT_INT_4 ] );
 #else
         #error Unknown platform
@@ -1574,9 +1574,9 @@ static  dbg_type        GetDBGSubProgType( sym_id sym ) {
         //      end
         // We must assign a return type to bar, assume that it is a subroutine
         // Since we don't really know what it is.
-#if _TARGET == _8086
+#if _CPU == 8086
         return( DBGTypes[ PT_INT_2 ] );
-#elif _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == 386 || _CPU == _AXP || _CPU == _PPC
         return( DBGTypes[ PT_INT_4 ] );
 #else
         #error Unknown platform
@@ -1927,7 +1927,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 // Return specified auxiliary information for given auxiliary entry.
 
     unsigned_16 flags;
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     int         idx;
     unsigned_32 com_size;
 #endif
@@ -1946,12 +1946,12 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
     case PARM_REGS :
         return( ((aux_info *)aux)->parms );
     case CALL_BYTES :
-#if _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == _AXP || _CPU == _PPC
         return( NULL );
 #else
         return( ((aux_info *)aux)->code );
 #endif
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     case CODE_GROUP :
     case DATA_GROUP :
         return( "" );
@@ -1963,17 +1963,17 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         case 0:
             if( CGFlags & CG_HAS_PROGRAM )
                 return( (void *)1 );
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
             if( CGOpts & CGOPT_BD )
                 return( (void *)1 );
 #endif
         case 1:
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
             if(( CGFlags & CG_FP_MODEL_80x87 )
               && ( CGFlags & CG_USED_80x87 ))
                 return( (void *)2 );
         case 2:
-#if _TARGET == _80386
+#if _CPU == 386
             if( CPUOpts & CPUOPT_FPI )
                 return( (void *)3 );
         case 3:
@@ -1992,7 +1992,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
             if( Options & OPT_LF_WITH_FF )
                 return( (void *)8 );
         case 8:
-#if _TARGET == _80386 || _TARGET == _PPC || _TARGET == _AXP
+#if _CPU == 386 || _CPU == _PPC || _CPU == _AXP
             if( CGOpts & ( CGOPT_BM | CGOPT_BD ) )
                 return( (void *)9 );
         case 9:
@@ -2023,12 +2023,12 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
     case IMPORT_NAME :
         switch( (int)aux ) {
         case 1:
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
             if( CGOpts & CGOPT_BD )
                 return( "__DLLstart_" );
 #endif
             return( "_cstart_" );
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
         case 2:
             if( CPUOpts & CPUOPT_FPR ) {
                 return( "__old_8087" );
@@ -2036,7 +2036,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
                 return( "__8087" );
             }
 #endif
-#if _TARGET == _80386
+#if _CPU == 386
         case 3:
             return( "__init_387_emulator" );
         case 4:
@@ -2050,7 +2050,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
             return( "__unit_6_cc" );
         case 8:
             return( "__lf_with_ff" );
-#if _TARGET == _80386 || _TARGET == _PPC || _TARGET == _AXP
+#if _CPU == 386 || _CPU == _PPC || _CPU == _AXP
         case 9:
             return( "__fthread_init" );
 #endif
@@ -2102,7 +2102,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         return( 0 );
     case REVISION_NUMBER :
         return( (void *)II_REVISION );
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     case CLASS_NAME :
         for( sym = GList; sym != NULL; sym = sym->ns.link ) {
             if( ( sym->ns.flags & SY_CLASS ) != SY_COMMON )
@@ -2130,7 +2130,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         sym = (sym_id)aux;
         _Shadow( sym );
         return( sym );
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     case STACK_SIZE_8087 :
         // return the number of floating-point registers
         // that are NOT used as cache
@@ -2159,7 +2159,7 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
         return( ((dep_info *)aux)->fn );
     case SOURCE_LANGUAGE:
         return( "FORTRAN" );
-#if _TARGET == _8086 || _TARGET == 80386
+#if _CPU == 8086 || _CPU == 386
     case PEGGED_REGISTER:
         return( NULL );
 #endif

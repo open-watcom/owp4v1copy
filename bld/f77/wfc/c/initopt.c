@@ -43,10 +43,10 @@ extern  void            __UseEnglishCharSet(void);
 
 #define INITIAL_OPTS    (OPT_WARN | OPT_ERRFILE | OPT_TERM | OPT_DFLT_LIB | \
                          OPT_REFERENCE | OPT_DESCRIPTOR | OPT_DEPENDENCY)
-#if _TARGET == _8086
+#if _CPU == 8086
   #define INIT_CG_OPTS  (CGOPT_M_LARGE | CGOPT_ALIGN | CGOPT_DI_DWARF)
   #define INIT_CPU_OPTS (CPUOPT_8086 | CPUOPT_FPI)
-#elif _TARGET == _80386
+#elif _CPU == 386
   #define INIT_CG_OPTS  (CGOPT_M_FLAT | CGOPT_GS_FLOATS | CGOPT_ALIGN| \
                          CGOPT_DI_DWARF)
   #define INIT_CPU_OPTS (CPUOPT_80586 | CPUOPT_FPI | CPUOPT_FP387)

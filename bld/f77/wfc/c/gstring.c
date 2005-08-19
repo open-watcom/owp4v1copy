@@ -173,7 +173,7 @@ void    AsgnChar() {
             }
             CITNode = save_cit;
         } else {
-#if ( _TARGET == _80386 || _TARGET == _8086 )
+#if ( _CPU == 386 || _CPU == 8086 )
             if( j < i ) {
                 i = j;
             }

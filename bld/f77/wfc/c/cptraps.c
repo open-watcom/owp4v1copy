@@ -53,7 +53,7 @@ static void _FPEHandler( int fpe_type ) {
 }
 
 
-#if _OPSYS == _OSI
+#if defined( __OSI__ )
 
 extern void (*__FPE_handler)(int);
 
@@ -75,7 +75,7 @@ void    TrapInit() {
 //==================
 
     __XcptFlags = 0;
-#if _OPSYS == _OSI
+#if defined( __OSI__ )
     __FPE_handler = &_FPEHandler;
 #else
     signal( SIGFPE, (void (*)(int))&FPEHandler );

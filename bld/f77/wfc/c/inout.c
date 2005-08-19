@@ -81,7 +81,7 @@ extern  int             MakeName(char *,char *,char *);
 extern  bool            SDIsInternal(file_handle);
 extern  file_handle     EdOpenf(char *,int);
 #endif
-#if _TARGET == _VAX
+#if _CPU == _VAX
 extern  void            SDSetSpool(file_handle);
 extern  bool            GetCatFile(void);
 #endif
@@ -90,7 +90,7 @@ extern  char            FFCtrlSeq[];
 extern  char            SkipCtrlSeq[];
 extern  char            NormalCtrlSeq[];
 extern  char            SDTermOut[];
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ! defined( __UNIX__ )
 extern  char            SDPrtName[];
 #endif
 extern  char            ForExtn[];
@@ -101,7 +101,7 @@ extern  file_attr       PrtAttr;
 extern  file_attr       TrmAttr;
 extern  file_attr       ErrAttr;
 extern  file_handle     FStdOut;
-#if _TARGET == _VAX
+#if _CPU == _VAX
 extern  char            CatFileName[];
 #endif
 extern  character_set   CharSetInfo;
@@ -109,13 +109,13 @@ extern  character_set   CharSetInfo;
 #define _Copyright "1984"
 
 #define       VERSION _WFC_VERSION_
-#if _TARGET == _8086
+#if _CPU == 8086
     #define _Banner "FORTRAN 77/16 Optimizing Compiler"
-#elif _TARGET == _80386
+#elif _CPU == 386
     #define _Banner "FORTRAN 77/32 Optimizing Compiler"
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
     #define _Banner "FORTRAN 77 Alpha AXP Optimizing Compiler"
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
     #define _Banner "FORTRAN 77 PowerPC Optimizing Compiler"
 #else
     #error Unknown System
@@ -251,7 +251,7 @@ static  uint    SrcRead() {
 
     uint        len;
     file_handle fp;
-#if _TARGET == _VAX
+#if _CPU == _VAX
     source      *cat_file;
 #endif
     char        msg[81];
@@ -268,7 +268,7 @@ static  uint    SrcRead() {
     } else {
         len = SDRead( fp, SrcBuff, SRCLEN );
         if( SDEof( fp ) ) {
-#if _TARGET == _VAX
+#if _CPU == _VAX
             if( ( CurrFile->link == NULL ) && GetCatFile() ) {
                 Include( CatFileName );
                 if( CurrFile->link != NULL ) {
@@ -653,7 +653,7 @@ static  void    OpenListingFile( bool reopen ) {
         GetLstName( name );
         if( Options & OPT_TYPE ) {
             SDSetAttr( TrmAttr );
-#if _TARGET != _VAX
+#if _CPU != _VAX
         // On the VAX, /PRINT means to generate a disk file "xxx.LIS"
         // and set the spooling bit
         } else if( Options & OPT_PRINT ) {
@@ -670,7 +670,7 @@ static  void    OpenListingFile( bool reopen ) {
             if( ListBuff == NULL ) {
                 CloseLst();
                 InfoError( MO_DYNAMIC_OUT );
-#if _TARGET == _VAX
+#if _CPU == _VAX
             } else if( Options & OPT_PRINT ) {
                 SDSetSpool( ListFile );
 #endif
@@ -789,7 +789,7 @@ void    GetLstName( char *buffer ) {
 
     if( Options & OPT_TYPE ) {
         strcpy( buffer, SDTermOut );
-#if ( _TARGET != _VAX ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ( _CPU != _VAX ) && ! defined( __UNIX__ )
     // On the VAX, /PRINT means to generate a disk file "xxx.LIS"
     //             and set the spooling bit
     // On QNX, there is no /PRINT option

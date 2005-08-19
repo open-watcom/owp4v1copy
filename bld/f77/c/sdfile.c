@@ -34,7 +34,7 @@
 char    FFCtrlSeq[] = { "1" };
 char    SkipCtrlSeq[] = { "0" };
 char    NormalCtrlSeq[] = { " " };
-#if ( _OPSYS == _QNX ) || ( _OPSYS == _LINUX )
+#if defined( __UNIX__ )
 char    SDTermIn[] = { "/dev/tty" };
 char    SDTermOut[] = { "/dev/tty" };
 #else

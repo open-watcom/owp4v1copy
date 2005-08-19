@@ -46,7 +46,7 @@
 #define ARG_SIZE_4              0x4000
 #define ARG_SIZE_8              0x8000
 #define ARG_SIZE_16             0x0800
-#if _TARGET == _80386
+#if _CPU == 386
 #define ARG_NEAR                ARG_SIZE_4
 #define ARG_FAR                 ARG_SIZE_8
 #else
@@ -67,9 +67,9 @@ typedef struct aux_info {
     hw_reg_set          save;
     hw_reg_set          returns;
     hw_reg_set          *parms;
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
     byte_seq            *code;
-#elif _TARGET == _AXP || _TARGET == _PPC
+#elif _CPU == _AXP || _CPU == _PPC
     risc_byte_seq       *code;
 #else
   #error Unknown Target

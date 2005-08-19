@@ -111,7 +111,7 @@ static dw_handle        baseTypes[LAST_BASE_TYPE + 1];
 
 static  bool            BrInitialized;
 
-#if ( _TARGET == _8086 )
+#if ( _CPU == 8086 )
  #define ARCHITECTURE   sizeof( short )
 #else
  #define ARCHITECTURE   sizeof( long )

@@ -295,7 +295,7 @@ static  void    Phi() {
                         AltReturn();
                     }
                 }
-#if _TARGET == _VAX
+#if _CPU == _VAX
             } else if( ( opr2 == OPR_DIV ) ||     // pass arugment by value
                        ( opr2 == OPR_AMP ) ||     // pass argument by address
                        ( opr2 == OPR_FLD ) ) {    // pass arugment by descriptor
@@ -379,7 +379,7 @@ static  void    AltReturn() {
 }
 
 
-#if _TARGET == _VAX
+#if _CPU == _VAX
 
 static  void    PassBy( int opr) {
 //================================

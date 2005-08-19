@@ -54,22 +54,22 @@ extern  void                    (* __BldErrMsg)(uint,char *,va_list);
 extern  void                    (* __ErrorInit)(char *);
 extern  void                    (* __ErrorFini)(void);
 
-#if _TARGET == _80386
+#if _CPU == 386
   #define _CmpName        "wfc386"        // compiler name
   #define _CmpExeName     "wfc386.exe"    // compiler executable file name
   #define _LnkTmpFile     "@_WFL386_.LNK" // temporary linker directive file
   #define _WCLEnv         "WFL386"        // "wcl" environment variable
-#elif _TARGET == _8086
+#elif _CPU == 8086
   #define _CmpName        "wfc"           // copmiler name
   #define _CmpExeName     "wfc.exe"       // compiler exe file name
   #define _LnkTmpFile     "@__WFL__.LNK"  // temporary linker directive file
   #define _WCLEnv         "WFL"           // "wcl" environment variable
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
   #define _CmpName        "wfcaxp"         // copmiler name
   #define _CmpExeName     "wfcaxp.exe"     // compiler exe file name
   #define _LnkTmpFile     "@_WFLAXP_.LNK"// temporary linker directive file
   #define _WCLEnv         "WFLAXP"         // "wcl" environment variable
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
   #define _CmpName        "wfcppc"         // copmiler name
   #define _CmpExeName     "wfcppc.exe"     // compiler exe file name
   #define _LnkTmpFile     "@_WFLPPC_.LNK"// temporary linker directive file
@@ -137,7 +137,7 @@ static  struct flags {
     unsigned quiet        : 1;  // compile quietly
     unsigned no_link      : 1;  // compile only, no link step
     unsigned link_for_sys : 1;  // system specified
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
     unsigned default_win  : 1;  // OS/2 default windowed application
 #else
     unsigned windows      : 1;  // Windows application
@@ -147,13 +147,13 @@ static  struct flags {
     unsigned do_cvpack    : 1;  // do codeview cvpack
 } Flags;
 
-#if _TARGET == _80386
+#if _CPU == 386
     #define     _NAME_  "F77/32 "
-#elif _TARGET == _8086
+#elif _CPU == 8086
     #define     _NAME_  "F77/16 "
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
     #define     _NAME_  "F77 Alpha AXP "
-#elif _TARGET == _PPC
+#elif _CPU == _PPC
     #define     _NAME_  "F77 PowerPC "
 #else
     #error Unknown System
@@ -321,7 +321,7 @@ static  int     Parse( void ) {
     Flags.no_link = 0;
     Flags.link_for_sys = 0;
     Flags.quiet        = 0;
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
     Flags.default_win  = 0;
 #else
     Flags.windows      = 0;
@@ -456,7 +456,7 @@ static  int     Parse( void ) {
                         Flags.link_for_sys = 1;
                         SystemName = strdup( &Word[1] );
                         cmp_option = 0;
-#if _TARGET == _8086
+#if _CPU == 8086
                     } else if( stricmp( Word, "r" ) == 0 ) {
                         Flags.link_for_dos = 1;
                         Flags.link_for_os2 = 0;
@@ -476,7 +476,7 @@ static  int     Parse( void ) {
 
                 // compiler options that affect the linker
 
-#if _TARGET == _80386 || _TARGET == _AXP || _TARGET == _PPC
+#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
                 case 'b':
                     if( stricmp( Word, "w" ) ) {
                         Flags.default_win = 1;
@@ -513,7 +513,7 @@ static  int     Parse( void ) {
                         Flags.no_link = 1;
                     }
                     break;
-#if _TARGET == _8086
+#if _CPU == 8086
                 case 'w':
                     if( IsOption( Cmd, len + sizeof( char ), "WIndows" ) ) {
                         Flags.windows = 1;
@@ -639,7 +639,7 @@ static  int     CompLink( void ) {
     } else {
 #if defined( __QNX__ )
         Fputnl( "system qnx", Fp );
-#elif _TARGET == _80386
+#elif _CPU == 386
     #if defined( __OS2__ )
         Fputnl( "system os2v2", Fp );
     #elif defined( __NT__ )
@@ -647,7 +647,7 @@ static  int     CompLink( void ) {
     #else
         Fputnl( "system dos4g", Fp );
     #endif
-#elif _TARGET == _8086
+#elif _CPU == 8086
         if( Flags.windows ) {
             Fputnl( "system windows", Fp );
         } else if( Flags.link_for_dos ) {
@@ -661,7 +661,7 @@ static  int     CompLink( void ) {
             Fputnl( "system dos", Fp );
     #endif
         }
-#elif _TARGET == _AXP
+#elif _CPU == _AXP
         Fputnl( "system ntaxp", Fp );
 #else
     #error Unknown System

@@ -76,7 +76,7 @@ extern  cg_type         ArrayPtrType(sym_id);
 extern  cg_name         GetAdv(sym_id);
 
 
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
   #define FLAG_PARM_TYPE        T_UINT_2
 #else
   #define FLAG_PARM_TYPE        T_UINT_4

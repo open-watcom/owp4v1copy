@@ -161,7 +161,7 @@ static  back_handle     MakeStaticSCB( int len ) {
 static  void            CheckAutoSize( sym_id sym, cg_type typ ) {
 //================================================================
 
-#if _TARGET == _8086
+#if _CPU == 8086
 
     if( BETypeLength( typ ) <= 0x7fff ) return;
 
@@ -547,7 +547,7 @@ static  unsigned_32     DumpVariable( sym_id sym, unsigned_32 g_offset ) {
 
 static  void    SetConstDataSeg() {
 //=================================
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     if( ( CGOpts & CGOPT_CONST_CODE ) && ( _BigDataModel( CGOpts ) ) ) {
         BESetSeg( CurrCodeSegId );
     } else {
@@ -1557,7 +1557,7 @@ static  void    DefineArgs( entry_pt *ep ) {
     pass_by     *arg_aux;
 
     aux = AuxLookup( ep->id );
-    if( !(aux->call_info & REVERSE_PARMS) ) {
+    if( !(aux->cclass & REVERSE_PARMS) ) {
         ReverseList( &ep->parms );
         ReverseList( &aux->arg_info );
     }
@@ -1573,7 +1573,7 @@ static  void    DefineArgs( entry_pt *ep ) {
     if( !(Options & OPT_DESCRIPTOR) ) {
         DeclareShadowArgs( ep, aux );
     }
-    if( !(aux->call_info & REVERSE_PARMS) ) {
+    if( !(aux->cclass & REVERSE_PARMS) ) {
         ReverseList( &ep->parms );
         ReverseList( &aux->arg_info );
     }

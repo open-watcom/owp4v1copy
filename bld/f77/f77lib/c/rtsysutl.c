@@ -327,7 +327,7 @@ int     _FileAttrs( ftnfile *fcb ) {
 //
 
 
-#if _TARGET == _VAX
+#if _CPU == _VAX
 
 file_handle OpenRead( char *fn ) {
 //================================

@@ -370,7 +370,7 @@ void    FCMulCmplx() {
 //====================
 
 // Multiply one complex number by another.
-#if _TARGET == _8086 || _TARGET == _80386
+#if _CPU == 8086 || _CPU == 386
     if( CPUOpts & CPUOPT_FPC ) {
         // generate call to runtime complex multiply
         XCmplxOp( RT_C8MUL );

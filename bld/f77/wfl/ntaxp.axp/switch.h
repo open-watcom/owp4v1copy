@@ -30,5 +30,5 @@
 ****************************************************************************/
 
 
-#define _TARGET         _AXP    // target machine?
+#define _CPU            _AXP    // target machine?
 #define _OBJECT         _OFF    // generate object files?

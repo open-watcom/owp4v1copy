@@ -539,7 +539,7 @@ static  cg_type ArgPtrType( cg_name arg ) {
 }
 
 
-#if _TARGET == _80386
+#if _CPU == 386
 
 static  cg_name MkSCB16( cg_name src ) {
 //======================================
@@ -612,7 +612,7 @@ void    FCCall() {
         if( !(Options & OPT_DESCRIPTOR) && (sp->ns.typ == TY_CHAR) ) {
             scb = GetPtr();
             arg = SCBPointer( CGFEName( scb, T_CHAR ) );
-#if _TARGET == _80386
+#if _CPU == 386
             if( aux->cclass & FAR16_CALL ) {
                 arg = CGUnary( O_PTR_TO_FORIEGN, arg, T_POINTER );
             }
@@ -630,7 +630,7 @@ void    FCCall() {
         if( (arg_code == PC_PROCEDURE) || (arg_code == PC_FN_OR_SUB) ) {
             arg = XPop();
             cg_typ = T_CODE_PTR;
-#if _TARGET == _80386 || _TARGET == _8086
+#if _CPU == 386 || _CPU == 8086
             if( (aux->cclass & FAR16_CALL) &&
                 ((arg_info >> 8) & PC_PROC_FAR16) ) {
                 chk_foreign = FALSE;
@@ -669,7 +669,7 @@ void    FCCall() {
                 CloneCGName( arg, &arg, &arg_vec[idx] );
                 ++idx;
             }
-#if _TARGET == _80386
+#if _CPU == 386
             if( pass_scb && (aux->cclass & FAR16_CALL) ) {
                 arg = MkSCB16( arg );
             }
@@ -768,7 +768,7 @@ void    FCCall() {
                 chk_foreign = FALSE;
             }
         }
-#if _TARGET == _80386 || _TARGET == 8086
+#if _CPU == 386 || _CPU == 8086
         if( (aux->cclass & FAR16_CALL) && chk_foreign ) {
             arg = CGUnary( O_PTR_TO_FORIEGN, arg, cg_typ );
         }
@@ -793,7 +793,7 @@ void    FCCall() {
             if( (Options & OPT_DESCRIPTOR) || ( sp->ns.flags & SY_INTRINSIC) ) {
                 scb = GetPtr();
                 arg = CGFEName( scb, T_CHAR );
-#if _TARGET == _80386
+#if _CPU == 386
                 if( aux->cclass & FAR16_CALL ) {
                     arg = MkSCB16( arg );
                     arg = CGUnary( O_PTR_TO_FORIEGN, arg, T_GLOBAL_POINTER );
