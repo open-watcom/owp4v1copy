@@ -1029,34 +1029,20 @@ void CPragma()                  // PROCESS A PRAGMA
 }
 
 
-void PragInitDefaultInfo(
-    void )
-{
-    DefaultInfo.cclass = 0;
-    DefaultInfo.code = NULL;
-    DefaultInfo.parms = DefaultParms;
-    HW_CAsgn( DefaultInfo.returns, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.streturn, HW_EMPTY );
-    HW_CAsgn( DefaultInfo.save, HW_FULL );
-    DefaultInfo.use = 0;
-    DefaultInfo.objname = NULL;
-}
-
-
 void PragInit(
     void )
 {
-    DefaultInfo.use = 2;
+    WatcallInfo.use = 2;
 
-    CdeclInfo = DefaultInfo;
-    PascalInfo = DefaultInfo;
-    FortranInfo = DefaultInfo;
-    SyscallInfo = DefaultInfo;
-    OptlinkInfo = DefaultInfo;
-    StdcallInfo = DefaultInfo;
-    WatcallInfo = DefaultInfo;
+    CdeclInfo    = WatcallInfo;
+    PascalInfo   = WatcallInfo;
+    FortranInfo  = WatcallInfo;
+    SyscallInfo  = WatcallInfo;
+    OptlinkInfo  = WatcallInfo;
+    StdcallInfo  = WatcallInfo;
+    FastcallInfo = WatcallInfo;
 
-    FastcallInfo.use = 2;
+    DefaultInfo = *DftCallConv;
 
     CompInfo.init_priority = INIT_PRIORITY_PROGRAM;
 }

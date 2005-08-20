@@ -77,6 +77,8 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     HW_CTurnOff( asmRegsSaved, HW_DI );
     HW_CTurnOff( asmRegsSaved, HW_ES );
 #endif
+
+    DefaultInfo = *DftCallConv;
 }
 
 

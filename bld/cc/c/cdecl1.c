@@ -154,6 +154,7 @@ local void FuncDefn( SYMPTR sym )
     if( strcmp( CurFunc->name, "main" ) == 0  || strcmp( CurFunc->name, "wmain" ) == 0)
     {
         sym->attrib &= ~FLAG_LANGUAGES;  //Turn off any language flags
+        sym->attrib |= LANG_WATCALL;     //Turn on __watcall calling convention for main
     }
     SymReplace( sym, CurFuncHandle );
 }

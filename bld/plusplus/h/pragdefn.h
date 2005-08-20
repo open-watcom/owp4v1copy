@@ -65,6 +65,7 @@ global AUX_ENTRY        *AuxList;
 global AUX_ENTRY        *CurrEntry;
 global AUX_INFO         *CurrAlias;
 global AUX_INFO         *CurrInfo;
+global AUX_INFO         *DftCallConv;
 
 struct pragma_dbg_toggles  {
 #define toggle_pick( id )       unsigned id : 1;

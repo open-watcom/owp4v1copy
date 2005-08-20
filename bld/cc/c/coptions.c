@@ -963,7 +963,6 @@ static void SetErrorLimit()    { ErrLimit = OptValue; }
 
 #if _CPU == 8086 || _CPU == 386
 static void SetDftCallConv( void ){
-#if 0
     switch( OptValue ) {
     case 1:
         DftCallConv = &CdeclInfo;
@@ -991,7 +990,6 @@ static void SetDftCallConv( void ){
         DftCallConv = &WatcallInfo;
         break;
     }
-#endif
 }
 static void Set_EC()           { CompFlags.ec_switch_used = 1; }
 #endif

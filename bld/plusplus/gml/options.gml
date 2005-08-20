@@ -281,6 +281,54 @@
 :usage. same as #define name [text] before compilation
 :jusage. コンパイル前の #define name [text] と同じ
 
+:option. ecc
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __cdecl
+:jusage.
+
+:option. ecd
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __stdcall
+:jusage.
+
+:option. ecf
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __fastcall
+:jusage.
+
+:option. eco
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to _Optlink
+:jusage.
+
+:option. ecp
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __pascal
+:jusage.
+
+:option. ecr
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __fortran
+:jusage.
+
+:option. ecs
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to _Syscall
+:jusage.
+
+:option. ecw
+:target. i86 386
+:enumerate. intel_call_conv
+:usage. set default calling convention to __watcall (default)
+:jusage.
+
 :option. ee
 :target. any
 :usage. call epilogue hook routine
