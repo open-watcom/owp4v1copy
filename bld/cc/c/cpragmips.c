@@ -174,7 +174,6 @@ void PragmaInit( void )
 /*********************/
 {
     AsmFuncNum = 0;
-    PragInit();
 }
 
 

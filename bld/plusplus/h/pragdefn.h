@@ -50,26 +50,8 @@ struct aux_entry {
 typedef char aux_flags;
 #define AUX_FLAG_FAR16  0x01
 
-#if _INTEL_CPU
-typedef byte_seq        syscode_seq;
-#else
-typedef risc_byte_seq   syscode_seq;
-#endif
-
-struct aux_info {
-    AUX_INFO        *next;
-    unsigned        use;
-    unsigned        index;
-    syscode_seq     *code;
-    char            *objname;
-    hw_reg_set      *parms;
-    hw_reg_set      returns;
-    hw_reg_set      streturn;
-    hw_reg_set      save;
-    aux_flags       flags;
-    call_class      cclass;     // 'class' is a C++ keyword
-    int             : 0;
-};
+#include "memmgr.h"
+#include "callinfo.h"
 
 struct inline_funcs {
     char            *name;      /* func name */
@@ -84,18 +66,6 @@ global AUX_ENTRY        *CurrEntry;
 global AUX_INFO         *CurrAlias;
 global AUX_INFO         *CurrInfo;
 
-global AUX_INFO         DefaultInfo;
-global AUX_INFO         CdeclInfo;
-global AUX_INFO         PascalInfo;
-global AUX_INFO         FortranInfo;
-global AUX_INFO         SyscallInfo;
-global AUX_INFO         OptlinkInfo;
-global AUX_INFO         StdcallInfo;
-global AUX_INFO         FastcallInfo;
-global AUX_INFO         Far16CdeclInfo;
-global AUX_INFO         Far16PascalInfo;
-global AUX_INFO         WatcallInfo;
-
 struct pragma_dbg_toggles  {
 #define toggle_pick( id )       unsigned id : 1;
 #include "dbgtogg.h"
@@ -103,7 +73,7 @@ struct pragma_dbg_toggles  {
 global struct pragma_dbg_toggles  PragDbgToggle;
 
 
-#define MAX_POSSIBLE_REG   8
+#define MAX_POSSIBLE_REG        8
 
 #define MAXIMUM_PARMSETS        32
 
@@ -115,8 +85,8 @@ hw_reg_set *AuxParmDup(         // DUPLICATE AUX PARMS
 char *AuxObjnameDup(            // DUPLICATE AUX OBJNAME
     char *objname )
 ;
-syscode_seq *AuxCodeDup(        // DUPLICATE AUX CODE
-    syscode_seq *code )
+byte_seq *AuxCodeDup(           // DUPLICATE AUX CODE
+    byte_seq *code )
 ;
 void AuxCopy(                   // COPY AUX STRUCTURE
     AUX_INFO *to,               // - destination

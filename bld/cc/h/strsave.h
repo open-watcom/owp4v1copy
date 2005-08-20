@@ -24,26 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CStrSave modul function prototype
 *
 ****************************************************************************/
 
 
-#ifdef  __STDC__
-#include <string.h>
-#endif
-#include "strsave.h"
-#include "cmemmgr.h"
-
-char * CStrSave( buf )
-        register char * buf;
-    {
-        register char * new;
-
-        new = CMemAlloc( strlen(buf) + 1 );
-        if( new ) {
-            strcpy( new, buf );
-        }
-        return( new );
-    }
+extern  char    *CStrSave(char *);

@@ -169,7 +169,6 @@ void PragmaInit( void )
 /*********************/
 {
     AsmFuncNum = 0;
-    PragInit();
 }
 
 static int GetAliasInfo( void )

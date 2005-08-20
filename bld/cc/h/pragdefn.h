@@ -48,37 +48,9 @@ struct aux_entry {
 typedef int     aux_flags;
 #define AUX_FLAG_FAR16  1
 
-struct aux_info {
-        call_class      cclass;
-        union {
-#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
-            risc_byte_seq *code;
-#else
-            byte_seq    *code;
-#endif
-            int         code_size;      // for pre-compiled header
-        };
-        union {
-            hw_reg_set  *parms;
-            int         parms_size;     // for pre-compiled header
-        };
-#if _CPU == 370
-        linkage_regs    *linkage;
-#endif
-        hw_reg_set      returns;
-        hw_reg_set      streturn;
-        hw_reg_set      save;
-        union {
-            char        *objname;
-            int         objname_size;   // for pre-compiled header
-        };
-        unsigned        use;            // use count
-        aux_flags       flags;
-        unsigned        index;
-#if _CPU == _AXP
-        char           *except_rtn;
-#endif
-};
+#include "cmemmgr.h"
+#include "strsave.h"
+#include "callinfo.h"
 
 struct  inline_funcs {
         char       *name;       /* func name */
@@ -99,18 +71,7 @@ global struct aux_entry         *CurrEntry;
 global struct aux_info          *CurrInfo;
 global struct aux_info          *DftCallConv;
 
-global struct aux_info          DefaultInfo;
-global struct aux_info          WatcallInfo;
-global struct aux_info          CdeclInfo;
-global struct aux_info          PascalInfo;
-global struct aux_info          FortranInfo;
-global struct aux_info          SyscallInfo;
-global struct aux_info          OptlinkInfo;
-global struct aux_info          StdcallInfo;
-global struct aux_info          FastcallInfo;
 #if _CPU == 386
-global struct aux_info          Far16CdeclInfo;
-global struct aux_info          Far16PascalInfo;
 global struct aux_info          STOSBInfo;
 #endif
 global call_class               CallClass;

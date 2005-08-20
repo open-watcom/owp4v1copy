@@ -168,9 +168,11 @@ pch_status PCHReadPragmas( void )
     readAuxInfo( &OptlinkInfo, RAUX_NULL );
     readAuxInfo( &StdcallInfo, RAUX_NULL );
     readAuxInfo( &FastcallInfo, RAUX_NULL );
+    readAuxInfo( &WatcallInfo, RAUX_NULL );
+#if _CPU == 386
     readAuxInfo( &Far16CdeclInfo, RAUX_NULL );
     readAuxInfo( &Far16PascalInfo, RAUX_NULL );
-    readAuxInfo( &WatcallInfo, RAUX_NULL );
+#endif
     for(;;) {
         entry_len = PCHReadUInt();
         if( entry_len == 0 ) break;
@@ -203,9 +205,11 @@ pch_status PCHReadPragmas( void )
     infoTranslate[ OptlinkInfo.index ] = &OptlinkInfo;
     infoTranslate[ StdcallInfo.index ] = &StdcallInfo;
     infoTranslate[ FastcallInfo.index ] = &FastcallInfo;
+    infoTranslate[ WatcallInfo.index ] = &WatcallInfo;
+#if _CPU == 386
     infoTranslate[ Far16CdeclInfo.index ] = &Far16CdeclInfo;
     infoTranslate[ Far16PascalInfo.index ] = &Far16PascalInfo;
-    infoTranslate[ WatcallInfo.index ] = &WatcallInfo;
+#endif
     return( PCHCB_OK );
 }
 
@@ -267,9 +271,11 @@ pch_status PCHWritePragmas( void )
     writeAuxInfo( &OptlinkInfo, &index );
     writeAuxInfo( &StdcallInfo, &index );
     writeAuxInfo( &FastcallInfo, &index );
+    writeAuxInfo( &WatcallInfo, &index );
+#if _CPU == 386
     writeAuxInfo( &Far16CdeclInfo, &index );
     writeAuxInfo( &Far16PascalInfo, &index );
-    writeAuxInfo( &WatcallInfo, &index );
+#endif
     for( e = AuxList; e != NULL; e = e->next ) {
         len = strlen( e->name );
         PCHWriteUInt( len );
@@ -344,15 +350,17 @@ void *PragmaMapIndex( void *pi )
         if( i == FastcallInfo.index ) {
             return( &FastcallInfo );
         }
+        if( i == WatcallInfo.index ) {
+            return( &WatcallInfo );
+        }
+#if _CPU == 386
         if( i == Far16CdeclInfo.index ) {
             return( &Far16CdeclInfo );
         }
         if( i == Far16PascalInfo.index ) {
             return( &Far16PascalInfo );
         }
-        if( i == WatcallInfo.index ) {
-            return( &WatcallInfo );
-        }
+#endif
 #ifndef NDEBUG
         CFatal( "invalid index passed to PragmaMapIndex" );
 #endif

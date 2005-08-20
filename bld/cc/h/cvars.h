@@ -74,6 +74,8 @@ typedef void    *VOIDPTR;
 #include "cerrs.h"
 #include "toggle.h"
 #include "cmsg.h"
+#include "strsave.h"
+#include "cmemmgr.h"
 
 #ifndef local
  #define local
@@ -710,15 +712,6 @@ extern  TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp );
 extern  pointer_class   ExprTypeClass( TYPEPTR typ );
 extern  TREEPTR LCastAdj(  TREEPTR tree );
 
-extern  void    CMemInit(void);                 /* cmemmgr */
-extern  void    CMemFini(void);                 /* cmemmgr */
-extern  void    *CPermAlloc(unsigned);          /* cmemmgr */
-extern  void    *CMemAlloc(unsigned);           /* cmemmgr */
-extern  void    *CMemRealloc( void *loc, unsigned size ); /* cmemmgr */
-extern  void    CMemFree(void *);               /* cmemmgr */
-extern  void    *FEmalloc(unsigned);            /* cmemmgr */
-extern  void    FEfree(void *);                 /* cmemmgr */
-
 extern  char    *BadCmdLine(int,char *);        /* cmodel */
 extern  char    *Define_Macro(char *);          /* cmodel */
 extern  char    *Define_UserMacro(char *);      /* cmodel */
@@ -880,7 +873,6 @@ extern  void    InitBuildPreCompiledHeader( void );
 extern  void    BuildPreCompiledHeader(char *);
 extern  void    FreePreCompiledHeader( void );
 
-extern  char    *CStrSave(char *);               /* strsave */
 extern  unsigned char     _dos_switch_char(void);         /* swchar */
 extern  void    CBanner(void);                  /* watcom */
 extern  void    MyExit( int ret );              /* cintmain */

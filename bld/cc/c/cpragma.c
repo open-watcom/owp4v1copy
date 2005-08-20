@@ -86,7 +86,28 @@ void CPragmaInit( void ){
 // Init any general pragma things //
 //********************************//
     TextSegList = NULL;
-    PragmaInit(); // call target specific init
+    
+/* Pragma Pack init */
+    PackInfo = NULL;
+
+/* Pragma Enum init */
+    EnumInfo = NULL;
+
+/* Pragma Aux init */
+    WatcallInfo.use = 2;        /* so they don't get freed */
+
+    CdeclInfo   = WatcallInfo;
+    PascalInfo  = WatcallInfo;
+    SyscallInfo = WatcallInfo;
+    StdcallInfo = WatcallInfo;
+    OptlinkInfo = WatcallInfo;
+    FortranInfo = WatcallInfo;
+    FastcallInfo= WatcallInfo;
+
+    DefaultInfo = *DftCallConv;
+
+/* call target specific init */
+    PragmaInit();
 }
 
 void CPragma( void )
@@ -155,6 +176,7 @@ void CPragma( void )
 
 
 local void EndOfPragma( void )
+/*****************************/
 {
     if( CurToken == T_SEMI_COLON ) NextToken();
     if( CurToken != T_NULL ) ExpectEndOfLine();
@@ -162,29 +184,9 @@ local void EndOfPragma( void )
 }
 
 
-
-void PragInit( void )
-{
-    WatcallInfo.use = 2;        /* so they don't get freed */
-
-    CdeclInfo   = WatcallInfo;
-    PascalInfo  = WatcallInfo;
-    SyscallInfo = WatcallInfo;
-    StdcallInfo = WatcallInfo;
-    OptlinkInfo = WatcallInfo;
-    FortranInfo = WatcallInfo;
-    FastcallInfo= WatcallInfo;
-
-    DefaultInfo = *DftCallConv;
-
-    PackInfo = NULL;
-    EnumInfo = NULL;
-}
-
-
 extern int SetToggleFlag( char const *name, int const value )
+/**************************************************************/
 {
-/************************************************************/
     int     i;
     char   *pnt;
     int     ret;

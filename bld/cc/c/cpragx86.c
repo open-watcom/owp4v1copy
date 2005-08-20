@@ -48,16 +48,7 @@ extern  TREEPTR     CurFuncNode;
 
 static  int             AsmFuncNum;
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
-static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 #if _CPU == 386
-static  hw_reg_set      OptlinkParms[] = {
-    HW_D_4( HW_EAX, HW_ECX, HW_EDX, HW_FLTS ),
-    HW_D( HW_EMPTY )
-};
-static  hw_reg_set      FastcallParms[] = {
-    HW_D( HW_ECX ), HW_D( HW_EDX ),
-    HW_D( HW_EMPTY )
-};
 static  hw_reg_set      STOSBParms[] = {
     HW_D( HW_EAX ), HW_D( HW_EDX ), HW_D( HW_ECX ),
     HW_D( HW_EMPTY )
@@ -69,7 +60,6 @@ static unsigned long    asm_CPU;
 void PragmaInit( void )
 /*********************/
 {
-    call_class  call_type;
     int         cpu;
     int         fpu;
     int         use32;
@@ -98,145 +88,11 @@ void PragmaInit( void )
 
     AsmInit( cpu, fpu, use32, 1 );
 
-    PragInit();
-
     HeadLibs = NULL;
 
-    /* predefine "cdecl" and "pascal" pragmas  18-aug-90 */
-
-    call_type = ( WatcallInfo.cclass & FAR );
-    CdeclInfo.cclass =    call_type |
-#if _CPU == 8086
-                         LOAD_DS_ON_CALL |
-#endif
-                         //REVERSE_PARMS |
-                         CALLER_POPS |
-                         NO_FLOAT_REG_RETURNS |
-                         NO_STRUCT_REG_RETURNS |
-                         ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
-    CdeclInfo.objname = CStrSave( "_*" );
-    CdeclInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
-    memcpy( CdeclInfo.parms, StackParms, sizeof( StackParms ) );
-    HW_CAsgn( CdeclInfo.returns, HW_EMPTY );
-
-    PascalInfo.cclass =   call_type |
-                         REVERSE_PARMS |
-                         //CALLER_POPS |
-                         NO_FLOAT_REG_RETURNS |
-                         NO_STRUCT_REG_RETURNS |
-                         //ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
-    PascalInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
-    memcpy( PascalInfo.parms, StackParms, sizeof( StackParms ) );
-    PascalInfo.objname = CStrSave( "^" );
-    HW_CAsgn( PascalInfo.returns, HW_EMPTY );
-
-    FortranInfo.objname = CStrSave( "^" );
-
-    StdcallInfo.cclass =  call_type |
-                         //REVERSE_PARMS |
-                         //CALLER_POPS |
-                         //NO_FLOAT_REG_RETURNS |
-                         //NO_STRUCT_REG_RETURNS |
-                         //ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
+    PragmaAuxCallInfoInit( WatcallInfo.cclass & FAR, CompFlags.use_stdcall_at_number );
+    
 #if _CPU == 386
-    if( CompFlags.use_stdcall_at_number ) {
-        StdcallInfo.objname = CStrSave( "_*#" );
-    } else {
-        StdcallInfo.objname = CStrSave( "_*" );
-    }
-#else
-    StdcallInfo.objname = CStrSave( "_*" );
-#endif
-    StdcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
-    memcpy( StdcallInfo.parms, StackParms, sizeof( StackParms ) );
-    HW_CAsgn( StdcallInfo.returns, HW_EMPTY );
-
-#if _CPU == 386
-    FastcallInfo.cclass = call_type |
-                         //REVERSE_PARMS |
-                         //CALLER_POPS |
-                         //NO_FLOAT_REG_RETURNS |
-                         //NO_STRUCT_REG_RETURNS |
-                         //ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
-    FastcallInfo.objname = CStrSave( "@*#" );
-    FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastcallParms ) );
-    memcpy( FastcallInfo.parms, FastcallParms, sizeof( FastcallParms ) );
-#endif
-
-    OptlinkInfo.cclass =  call_type |
-#ifdef PARMS_STACK_RESERVE
-                         PARMS_STACK_RESERVE |
-#endif
-                         //REVERSE_PARMS |
-                         CALLER_POPS  |
-                         //NO_FLOAT_REG_RETURNS |
-                         NO_STRUCT_REG_RETURNS |
-                         //ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
-    OptlinkInfo.objname = CStrSave( "*" );
-#if _CPU == 386
-    OptlinkInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( OptlinkParms ) );
-    memcpy( OptlinkInfo.parms, OptlinkParms, sizeof( OptlinkParms ) );
-#else
-    OptlinkInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
-    memcpy( OptlinkInfo.parms, StackParms, sizeof( StackParms ) );
-#endif
-    HW_CAsgn( OptlinkInfo.returns, HW_FLTS );
-
-    SyscallInfo.cclass =  //REVERSE_PARMS |
-                         CALLER_POPS |
-                         //NO_FLOAT_REG_RETURNS |
-                         NO_STRUCT_REG_RETURNS |
-                         //ROUTINE_RETURN |
-                         //NO_8087_RETURNS |
-                         //SPECIAL_RETURN |
-                         SPECIAL_STRUCT_RETURN;
-    SyscallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
-    memcpy( SyscallInfo.parms, StackParms, sizeof( StackParms ) );
-    SyscallInfo.objname = CStrSave( "*" );
-
-#if _CPU == 386
-    HW_CAsgn( CdeclInfo.streturn, HW_EAX );
-    HW_CTurnOff( CdeclInfo.save, HW_EAX );
-    HW_CTurnOff( CdeclInfo.save, HW_ECX );
-    HW_CTurnOff( CdeclInfo.save, HW_EDX );
-
-    HW_CTurnOff( PascalInfo.save, HW_EAX );
-    HW_CTurnOff( PascalInfo.save, HW_EBX );
-    HW_CTurnOff( PascalInfo.save, HW_ECX );
-    HW_CTurnOff( PascalInfo.save, HW_EDX );
-
-    HW_CTurnOff( StdcallInfo.save, HW_EAX );
-    HW_CTurnOff( StdcallInfo.save, HW_ECX );
-    HW_CTurnOff( StdcallInfo.save, HW_EDX );
-
-    HW_CTurnOff( FastcallInfo.save, HW_EAX );
-    HW_CTurnOff( FastcallInfo.save, HW_ECX );
-    HW_CTurnOff( FastcallInfo.save, HW_EDX );
-
-    HW_CTurnOff( SyscallInfo.save, HW_EAX );
-    HW_CTurnOn ( SyscallInfo.save, HW_EBX );
-    HW_CTurnOff( SyscallInfo.save, HW_ECX );
-    HW_CTurnOff( SyscallInfo.save, HW_EDX );
-
-    HW_CTurnOff( OptlinkInfo.save, HW_EAX );
-    HW_CTurnOff( OptlinkInfo.save, HW_ECX );
-    HW_CTurnOff( OptlinkInfo.save, HW_EDX );
-
     HW_CTurnOff( AsmRegsSaved, HW_EAX );
     HW_CTurnOff( AsmRegsSaved, HW_EBX );
     HW_CTurnOff( AsmRegsSaved, HW_ECX );
@@ -244,25 +100,6 @@ void PragmaInit( void )
     HW_CTurnOff( AsmRegsSaved, HW_ESI );
     HW_CTurnOff( AsmRegsSaved, HW_EDI );
 #else
-    HW_CAsgn( CdeclInfo.streturn, HW_AX );
-    HW_CTurnOff( CdeclInfo.save, HW_ABCD );
-    HW_CTurnOff( CdeclInfo.save, HW_ES );
-
-    HW_CTurnOff( PascalInfo.save, HW_ABCD );
-    HW_CTurnOff( PascalInfo.save, HW_ES );
-
-    HW_CAsgn( StdcallInfo.streturn, HW_AX );
-    HW_CTurnOff( StdcallInfo.save, HW_ABCD );
-    HW_CTurnOff( StdcallInfo.save, HW_ES );
-
-    /* roughly like pascal */
-    HW_CTurnOff( SyscallInfo.save, HW_ABCD );
-    HW_CTurnOff( SyscallInfo.save, HW_ES );
-
-    /* roughly like pascal */
-    HW_CTurnOff( OptlinkInfo.save, HW_ABCD );
-    HW_CTurnOff( OptlinkInfo.save, HW_ES );
-
     HW_CTurnOff( AsmRegsSaved, HW_ABCD );
     HW_CTurnOff( AsmRegsSaved, HW_SI );
     HW_CTurnOff( AsmRegsSaved, HW_DI );
@@ -274,29 +111,12 @@ void PragmaInit( void )
        an aux_entry, so we don't have to worry about them
        or their fields being freed */
 
-    call_type = NO_FLOAT_REG_RETURNS |
-                NO_STRUCT_REG_RETURNS |
-                SPECIAL_STRUCT_RETURN;
-
     STOSBInfo = WatcallInfo;
-    STOSBInfo.cclass = call_type;
+    STOSBInfo.cclass = NO_FLOAT_REG_RETURNS |
+                       NO_STRUCT_REG_RETURNS |
+                       SPECIAL_STRUCT_RETURN;
     STOSBInfo.parms = STOSBParms;
     STOSBInfo.objname = "*";
-
-
-    /*
-     * These are not freed when we shut down so we can't just point at the
-     * CdeclInfo parms etc. Do not call FreeInfo on these. BBB
-     */
-
-    Far16CdeclInfo = CdeclInfo;
-    Far16CdeclInfo.cclass |= FAR16_CALL;
-    // __far16 __cdecl depends on EBX being trashed in __cdecl
-    // but NT 386 __cdecl preserves EBX
-    HW_CTurnOff( Far16CdeclInfo.save, HW_EBX );
-
-    Far16PascalInfo = PascalInfo;
-    Far16PascalInfo.cclass |= FAR16_CALL;
 #endif
 
     DefaultInfo = *DftCallConv;
