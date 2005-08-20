@@ -33,7 +33,7 @@
 #include "plusplus.h"
 #include "cgdata.h"
 #include "memmgr.h"
-#undef BY_C_FRONT_END
+#undef BY_CPP_FRONT_END
 #include "cg.h"
 #include "cgswitch.h"
 #include "xcgops.h"

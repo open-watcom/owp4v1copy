@@ -103,8 +103,7 @@ void CFatal( char *msg );
 typedef int boolean;                // - boolean: FALSE, ! FALSE
 typedef unsigned MSG_NUM;           // - message number
 
-#define BY_C_PLUS_PLUS              // - for use in code-generator
-#define BY_C_FRONT_END              // - for use in code-generator
+#define BY_CPP_FRONT_END            // - for use in code-generator
 
 #define NULL_CGLABEL    (-1)
 #define NULL_CGREFNO    (0)

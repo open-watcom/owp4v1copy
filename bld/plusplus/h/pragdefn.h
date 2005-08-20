@@ -33,7 +33,7 @@
 #ifndef __PRAGDEFN_H_
 #define __PRAGDEFN_H_
 
-#define BY_C_FRONT_END
+#define BY_CPP_FRONT_END
 #include "cgaux.h"
 
 typedef struct aux_entry AUX_ENTRY;

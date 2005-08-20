@@ -216,7 +216,7 @@ typedef enum {
         T_NEAR_CODE_PTR,
 
         T_SINGLE,
-#ifdef BY_C_FRONT_END
+#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
         TY_DOUBLE,
 #else
         T_DOUBLE,
@@ -225,14 +225,14 @@ typedef enum {
 
         T_UNKNOWN,
 
-#ifdef BY_C_FRONT_END
+#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
         TY_DEFAULT,     /*  11  Use defaults */
 #else
         T_DEFAULT,      /*  11  Use defaults */
 #endif
 
         T_INTEGER,      /*  Default integer */
-#ifdef BY_C_FRONT_END
+#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
         TY_UNSIGNED,    /*  Default unsigned */
 #else
         T_UNSIGNED,     /*  Default unsigned */

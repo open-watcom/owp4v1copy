@@ -74,7 +74,7 @@ typedef enum {
 
 typedef void *          cg_name;        /* retval for CGName(),CGUnary()*/
 typedef void *          call_handle;    /* retval for CGInitCall(), etc. */
-#ifdef BY_C_FRONT_END
+#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
   // this was only required when front-end and back-end were separate
   // executables compiled with mismatching data memory models
   #ifdef __LARGE__

@@ -419,20 +419,20 @@ void EchoAPI              // EchoAPI ROUTINE
                       case_str( T_LONG_CODE_PTR )
                       case_str( T_NEAR_CODE_PTR )
                       case_str( T_SINGLE )
-                #ifdef BY_C_FRONT_END
+                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
                       case_str( TY_DOUBLE )
                 #else
                       case_str( T_DOUBLE )
                 #endif
                       case_str( T_LONG_DOUBLE )
                       case_str( T_UNKNOWN )
-                #ifdef BY_C_FRONT_END
+                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
                       case_str( TY_DEFAULT )
                 #else
                       case_str( T_DEFAULT )
                 #endif
                       case_str( T_INTEGER )
-                #ifdef BY_C_FRONT_END
+                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
                       case_str( TY_UNSIGNED )
                 #else
                       case_str( T_UNSIGNED )
