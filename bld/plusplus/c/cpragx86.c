@@ -66,7 +66,7 @@ static void pragmaInitInfo(     // INITIALIZE INFO STRUCTURE
     call_class info_class,      // - class information
     const char *objname )       // - object-name pattern
 {
-    info->_class = info_class;
+    info->cclass = info_class;
     info->objname = strsave( objname );
     info->parms = (hw_reg_set *)vctsave( (char *)stackParms
                                        , sizeof( stackParms ) );
@@ -78,7 +78,7 @@ static void pragmaInitOptlink(  // INITIALIZE INFO STRUCTURE
     call_class info_class,      // - class information
     const char *objname )       // - object-name pattern
 {
-    info->_class = info_class;
+    info->cclass = info_class;
     info->objname = strsave( objname );
 #if _CPU == 386
     HW_CTurnOn( optlinkParms[0], HW_EAX );
@@ -101,7 +101,7 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
 
     defn = defn;
     PragInit();
-    call_type = DefaultInfo._class & FAR;
+    call_type = DefaultInfo.cclass & FAR;
     FortranInfo.objname = strsave( "^" );
     FortranInfo.parms = AuxParmDup( FortranInfo.parms );
     pragmaInitInfo( &CdeclInfo
@@ -139,6 +139,7 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
                    | SPECIAL_STRUCT_RETURN
                   , "*" );
 
+#if _CPU == 386
     if( CompFlags.use_stdcall_at_number ) {
         pragmaInitInfo( &StdcallInfo
                   , call_type
@@ -150,12 +151,20 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
                    | SPECIAL_STRUCT_RETURN
                   , "_*" );
     }
+#else
+    pragmaInitInfo( &StdcallInfo
+                  , call_type
+                   | SPECIAL_STRUCT_RETURN
+                  , "_*" );
+#endif
 
 #if _CPU == 386
-    FastcallInfo._class = call_type | SPECIAL_STRUCT_RETURN;
-    FastcallInfo.objname = strsave( "@*#" );
+    FastcallInfo.cclass = call_type | SPECIAL_STRUCT_RETURN;
     FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
     memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
+    FastcallInfo.objname = strsave( "@*#" );
+#else
+//    FastcallInfo.objname = strsave( "@*" );
 #endif
 
 #if _CPU == 386
@@ -436,19 +445,19 @@ static void GetParmInfo(
     have.f_list          = 0;
     for( ;; ) {
         if( !have.f_pop && PragRecog( "caller" ) ) {
-            CurrInfo->_class |= CALLER_POPS;
+            CurrInfo->cclass |= CALLER_POPS;
             have.f_pop = 1;
         } else if( !have.f_pop && PragRecog( "routine" ) ) {
-            CurrInfo->_class &= ~ CALLER_POPS;
+            CurrInfo->cclass &= ~ CALLER_POPS;
             have.f_pop = 1;
         } else if( !have.f_reverse && PragRecog( "reverse" ) ) {
-            CurrInfo->_class |= REVERSE_PARMS;
+            CurrInfo->cclass |= REVERSE_PARMS;
             have.f_reverse = 1;
         } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
-            CurrInfo->_class |= NO_MEMORY_READ;
+            CurrInfo->cclass |= NO_MEMORY_READ;
             have.f_nomemory = 1;
         } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
-            CurrInfo->_class |= LOAD_DS_ON_CALL;
+            CurrInfo->cclass |= LOAD_DS_ON_CALL;
             have.f_loadds = 1;
         } else if( !have.f_list && PragSet() != T_NULL ) {
             PragManyRegSets();
@@ -476,19 +485,19 @@ static void GetSTRetInfo(
     for( ;; ) {
         if( !have.f_float && PragRecog( "float" ) ) {
             have.f_float = 1;
-            CurrInfo->_class |= NO_FLOAT_REG_RETURNS;
+            CurrInfo->cclass |= NO_FLOAT_REG_RETURNS;
         } else if( !have.f_struct && PragRecog( "struct" ) ) {
             have.f_struct = 1;
-            CurrInfo->_class |= NO_STRUCT_REG_RETURNS;
+            CurrInfo->cclass |= NO_STRUCT_REG_RETURNS;
         } else if( !have.f_allocs && PragRecog( "routine" ) ) {
             have.f_allocs = 1;
-            CurrInfo->_class |= ROUTINE_RETURN;
+            CurrInfo->cclass |= ROUTINE_RETURN;
         } else if( !have.f_allocs && PragRecog( "caller" ) ) {
             have.f_allocs = 1;
-            CurrInfo->_class &= ~ROUTINE_RETURN;
+            CurrInfo->cclass &= ~ROUTINE_RETURN;
         } else if( !have.f_list && PragSet() != T_NULL ) {
             have.f_list = 1;
-            CurrInfo->_class |= SPECIAL_STRUCT_RETURN;
+            CurrInfo->cclass |= SPECIAL_STRUCT_RETURN;
             CurrInfo->streturn = PragRegList();
         } else {
             break;
@@ -508,15 +517,15 @@ static void GetRetInfo(
     have.f_no8087  = 0;
     have.f_list    = 0;
     have.f_struct  = 0;
-    CurrInfo->_class &= ~ NO_8087_RETURNS;
+    CurrInfo->cclass &= ~ NO_8087_RETURNS;
     for( ;; ) {
         if( !have.f_no8087 && PragRecog( "no8087" ) ) {
             have.f_no8087 = 1;
             HW_CTurnOff( CurrInfo->returns, HW_FLTS );
-            CurrInfo->_class |= NO_8087_RETURNS;
+            CurrInfo->cclass |= NO_8087_RETURNS;
         } else if( !have.f_list && PragSet() != T_NULL ) {
             have.f_list = 1;
-            CurrInfo->_class |= SPECIAL_RETURN;
+            CurrInfo->cclass |= SPECIAL_RETURN;
             CurrInfo->returns = PragRegList();
         } else if( !have.f_struct && PragRecog( "struct" ) ) {
             have.f_struct = 1;
@@ -545,10 +554,10 @@ static void GetSaveInfo(
     have.f_list     = 0;
     for( ;; ) {
         if( !have.f_exact && PragRecog( "exact" ) ) {
-            CurrInfo->_class |= MODIFY_EXACT;
+            CurrInfo->cclass |= MODIFY_EXACT;
             have.f_exact = 1;
         } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
-            CurrInfo->_class |= NO_MEMORY_CHANGED;
+            CurrInfo->cclass |= NO_MEMORY_CHANGED;
             have.f_nomemory = 1;
         } else if( !have.f_list && PragSet() != T_NULL ) {
             modlist = PragRegList();
@@ -605,16 +614,16 @@ static void doPragAux(                   // #PRAGMA AUX ...
             have.uses_auto = GetByteSeq();
             have.f_call = 1;
         } else if( !have.f_call && PragRecog( "far" ) ) {
-            CurrInfo->_class |= FAR;
+            CurrInfo->cclass |= FAR;
             have.f_call = 1;
         } else if( !have.f_call && PragRecog( "near" ) ) {
-            CurrInfo->_class &= ~FAR;
+            CurrInfo->cclass &= ~FAR;
             have.f_call = 1;
         } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
-            CurrInfo->_class |= LOAD_DS_ON_ENTRY;
+            CurrInfo->cclass |= LOAD_DS_ON_ENTRY;
             have.f_loadds = 1;
         } else if( !have.f_export && PragRecog( "export" ) ) {
-            CurrInfo->_class |= DLL_EXPORT;
+            CurrInfo->cclass |= DLL_EXPORT;
             have.f_export = 1;
         } else if( !have.f_parm && PragRecog( "parm" ) ) {
             GetParmInfo();
@@ -623,13 +632,13 @@ static void doPragAux(                   // #PRAGMA AUX ...
             GetRetInfo();
             have.f_value = 1;
         } else if( !have.f_value && PragRecog( "aborts" ) ) {
-            CurrInfo->_class |= SUICIDAL;
+            CurrInfo->cclass |= SUICIDAL;
             have.f_value = 1;
         } else if( !have.f_modify && PragRecog( "modify" ) ) {
             GetSaveInfo();
             have.f_modify = 1;
         } else if( !have.f_frame && PragRecog( "frame" ) ) {
-            CurrInfo->_class |= GENERATE_STACK_FRAME;
+            CurrInfo->cclass |= GENERATE_STACK_FRAME;
             have.f_frame = 1;
         } else {
             break;
@@ -1455,8 +1464,8 @@ boolean PragmasTypeEquivalent(  // TEST IF TWO PRAGMAS ARE TYPE-EQUIVALENT
         return TRUE;
     }
     return
-           ( ( inf1->_class & ~CALL_CLASS_IGNORE ) ==
-             ( inf2->_class & ~CALL_CLASS_IGNORE ) )
+           ( ( inf1->cclass & ~CALL_CLASS_IGNORE ) ==
+             ( inf2->cclass & ~CALL_CLASS_IGNORE ) )
         && parmSetsIdentical( inf1->parms, inf2->parms )
         && HW_Equal( inf1->returns, inf2->returns )
         && HW_Equal( inf1->streturn, inf2->streturn )
@@ -1490,7 +1499,7 @@ boolean PragmaOKForVariables(   // TEST IF PRAGMA IS SUITABLE FOR A VARIABLE
         return( TRUE );
     }
     def_info = &DefaultInfo;
-    if( datap->_class != def_info->_class ) {
+    if( datap->cclass != def_info->cclass ) {
         return( FALSE );
     }
     if( datap->code != def_info->code ) {
@@ -1568,7 +1577,7 @@ boolean PragmaChangeConsistent( // TEST IF PRAGMA CHANGE IS CONSISTENT
     if( oldp == newp ) {
         return TRUE;
     }
-    return ( ( oldp->_class & newp->_class ) == oldp->_class )
+    return ( ( oldp->cclass & newp->cclass ) == oldp->cclass )
         && ( ( oldp->flags & newp->flags ) == oldp->flags )
         && ( okParmChange( oldp->parms
                          , newp->parms
