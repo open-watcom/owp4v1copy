@@ -18,6 +18,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================
     echo rm -f -r <PROJDIR>/<PREOBJDIR>
     rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f <OWBINDIR>/whc
     rm -f <OWBINDIR>/whc.exe
     set BUILD_PLATFORM=
 

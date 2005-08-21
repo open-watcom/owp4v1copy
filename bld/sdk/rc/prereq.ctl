@@ -20,6 +20,7 @@ set ODIR=<PREOBJDIR>
     echo rm -f -r <PROJDIR>/rc/<ODIR>
     rm -f -r <PROJDIR>/rc/<ODIR>
     rm -f <OWBINDIR>/wrc
+    rm -f <OWBINDIR>/bwrc
     rm -f <OWBINDIR>/bwrc.exe
     set BUILD_PLATFORM=
 
