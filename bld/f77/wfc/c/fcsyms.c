@@ -1557,7 +1557,7 @@ static  void    DefineArgs( entry_pt *ep ) {
     pass_by     *arg_aux;
 
     aux = AuxLookup( ep->id );
-    if( !(aux->cclass & REVERSE_PARMS) ) {
+    if( (aux->cclass & REVERSE_PARMS) ) {
         ReverseList( &ep->parms );
         ReverseList( &aux->arg_info );
     }
@@ -1573,7 +1573,7 @@ static  void    DefineArgs( entry_pt *ep ) {
     if( !(Options & OPT_DESCRIPTOR) ) {
         DeclareShadowArgs( ep, aux );
     }
-    if( !(aux->cclass & REVERSE_PARMS) ) {
+    if( (aux->cclass & REVERSE_PARMS) ) {
         ReverseList( &ep->parms );
         ReverseList( &aux->arg_info );
     }

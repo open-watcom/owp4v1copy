@@ -1508,7 +1508,7 @@ static  void            GetParmInfo() {
             have.f_pop = 1;
         } else if( !have.f_reverse && RecToken( "REVERSE" ) ) {
             // arguments are processed in reverse order by default
-            CurrAux->cclass &= ~REVERSE_PARMS;
+            CurrAux->cclass |= REVERSE_PARMS;
             have.f_reverse = 1;
         } else if( !have.f_nomemory && RecToken( "NOMEMORY" ) ) {
             CurrAux->cclass |= NO_MEMORY_READ;

@@ -1938,7 +1938,12 @@ void    *FEAuxInfo( aux_handle aux, aux_class request ) {
 
     switch( request ) {
     case CALL_CLASS :
-        return( &((aux_info *)aux)->cclass );
+        {
+            static call_class CallClass;
+
+            CallClass = ((aux_info *)aux)->cclass ^ REVERSE_PARMS;
+            return( &CallClass );
+        }
     case SAVE_REGS :
         return( &((aux_info *)aux)->save );
     case RETURN_REG :
