@@ -120,7 +120,6 @@ extern  void    Wait8087( void ) {
     name        *last_fpres = NULL;
     bool        past_jump;
 
-    if( _CPULevel( CPU_386 ) ) return;
     blk = HeadBlock;
     while( blk != NULL ) {
         ins = blk->ins.hd.next;
