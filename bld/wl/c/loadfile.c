@@ -454,14 +454,14 @@ extern offset CalcGroupSize( group_entry *group )
 {
     offset size;
 
-    if( group == DataGroup && FmtData.dgroupsplitseg != NULL ) {
+    if(( group == DataGroup ) && ( FmtData.dgroupsplitseg != NULL )) {
         size = FmtData.dgroupsplitseg->seg_addr.off - group->grp_addr.off
                                                     - FmtData.bsspad;
         DbgAssert( size >= group->size );
     } else {
         size = group->totalsize;
     }
-    return size;
+    return( size );
 }
 
 extern offset CalcSplitSize( void )
@@ -470,12 +470,16 @@ extern offset CalcSplitSize( void )
 {
     offset size;
 
-    size = DataGroup->totalsize + PE_BSS_SHIFT
-           - (FmtData.dgroupsplitseg->seg_addr.off - DataGroup->grp_addr.off);
-    if( StackSegPtr != NULL ) {
-        size -= StackSize;
+    if( FmtData.dgroupsplitseg == NULL ) {
+        return( 0 );
+    } else {
+        size = DataGroup->totalsize -
+            (FmtData.dgroupsplitseg->seg_addr.off - DataGroup->grp_addr.off);
+        if( StackSegPtr != NULL ) {
+            size -= StackSize;
+        }
+        return( size );
     }
-    return size;
 }
 
 extern bool CompareDosSegments( targ_addr *left, targ_addr *right )

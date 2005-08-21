@@ -259,7 +259,7 @@ static void SortClasses( section *sec )
                     if( MatchClass->FixedAddr) {     // and copy any flags or address from it
                         currcl->flags |= CLASS_FIXED;
                         currcl->BaseAddr = MatchClass->Base;
-			FmtData.base = 0;  // Otherwise PE will use default and blow up
+                        FmtData.base = 0;  // Otherwise PE will use default and blow up
                     }
                     if( MatchClass->NoEmit ) {
                         currcl->flags |= CLASS_NOEMIT;
@@ -600,9 +600,10 @@ extern void CalcAddresses( void )
                grp->grp_addr.off = 0;
             }
             grp->linear = flat;
-            if( ( FmtData.type & MK_SPLIT_DATA ) && ( grp == DataGroup )
-                && ( StackSegPtr != NULL ) && ( FmtData.dgroupsplitseg != NULL ) ) {
-                size -= StackSize;
+            if(( grp == DataGroup ) && ( FmtData.dgroupsplitseg != NULL )) {
+                if( StackSegPtr != NULL ) {
+                    size -= StackSize;
+                }
             }
             flat = ROUND_UP( flat + size, FmtData.objalign );
         }

@@ -219,10 +219,10 @@ extern void NewSegment( seg_leader *seg )
         CurrLoc.seg = group->grp_addr.seg;
         seg->seg_addr.seg = CurrLoc.seg;
         CurrLoc.off = group->totalsize;
-        if( FmtData.type & MK_SPLIT_DATA && seg == FmtData.dgroupsplitseg ){
+        if( seg == FmtData.dgroupsplitseg ) {
             FmtData.bsspad = ROUND_UP(CurrLoc.off, FmtData.objalign)
                                         - CurrLoc.off;
-            AddSize( FmtData.bsspad + PE_BSS_SHIFT );
+            AddSize( FmtData.bsspad );
         }
         if( seg->size == 0  && group->isautogrp ) {
             seg->seg_addr.off = CurrLoc.off;

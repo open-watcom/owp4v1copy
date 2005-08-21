@@ -315,7 +315,8 @@ static void WriteDataPages( pe_header *header, pe_object *object )
     char *      name;
     pe_va       linear;
     seg_leader *leader;
-    unsigned_32 size;
+    unsigned_32 size_v;
+    unsigned_32 size_ph;
 
     header->code_base = 0xFFFFFFFFUL;
     header->data_base = 0xFFFFFFFFUL;
@@ -328,20 +329,27 @@ static void WriteDataPages( pe_header *header, pe_object *object )
             if( name == NULL ) name = "";
         }
         strncpy( object->name, name, PE_OBJ_NAME_LEN );
-        size = CalcGroupSize( group );
-        linear = ROUND_UP( size, header->object_align );
+        size_ph = CalcGroupSize( group );
+        if( group == DataGroup && FmtData.dgroupsplitseg != NULL ) {
+            size_v = group->totalsize;
+            if( StackSegPtr != NULL ) {
+                size_v -= StackSize;
+            }
+        } else {
+            size_v = size_ph;
+        }
+        linear = ROUND_UP( size_v, header->object_align );
         linear += group->linear;
         if( StartInfo.addr.seg == group->grp_addr.seg ) {
-           header->entry_rva = group->linear + StartInfo.addr.off;
+            header->entry_rva = group->linear + StartInfo.addr.off;
         }
         object->rva = group->linear;
-
         /*
         //  Why weren't we filling in this field? MS do!
         */
-        object->virtual_size = size;
-
-        object->physical_size = ROUND_UP( size, header->file_align );
+        object->virtual_size = size_v;
+        object->physical_size = ROUND_UP( size_ph, header->file_align );
+        
         object->flags = 0;
         /* segflags are in OS/2 V1.x format, we have to translate them
             into the appropriate PE bits */
@@ -370,28 +378,12 @@ static void WriteDataPages( pe_header *header, pe_object *object )
         if( group->segflags & SEG_PURE ) {
             object->flags |= PE_OBJ_SHARED;
         }
-        if( size != 0 ) {
+        if( size_ph != 0 ) {
             object->physical_offset = NullAlign( header->file_align );
             WriteGroupLoad( group );
-            PadLoad( size - group->size );
+            PadLoad( size_ph - group->size );
         }
         ++object;
-        if( group == DataGroup && FmtData.dgroupsplitseg != NULL ) {
-            strncpy( object->name, ".bss\0\0\0\0", PE_OBJ_NAME_LEN );
-            size = CalcSplitSize();
-            object->rva = linear;
-            linear += ROUND_UP( size, header->object_align );
-            object->physical_size = ROUND_UP( size, header->file_align );
-            object->flags = PE_OBJ_UNINIT_DATA | PE_OBJ_READABLE;
-            if( !(group->segflags & SEG_READ_ONLY) ) {
-                object->flags |= PE_OBJ_WRITABLE;
-            }
-            if( group->segflags & SEG_PURE ) {
-                object->flags |= PE_OBJ_SHARED;
-            }
-            header->uninit_data_size = object->physical_size;
-            ++object;
-        }
     }
     header->image_size = linear;
     if( header->code_base == 0xFFFFFFFFUL ) {
@@ -975,7 +967,6 @@ static unsigned FindNumObjects()
     num_objects = NumGroups;
     if( LinkState & MAKE_RELOCS ) ++num_objects;
     if( FmtData.u.os2.exports != NULL ) ++num_objects;
-    if( FmtData.dgroupsplitseg != NULL ) ++num_objects;
     if( LinkFlags & CV_DBI_FLAG ) ++num_objects;
     if( FmtData.u.os2.description != NULL ) ++num_objects;
     if( FmtData.resource != NULL || FmtData.u.pe.resources != NULL ) ++num_objects;
@@ -1125,9 +1116,6 @@ extern void FiniPELoadFile( void )
     SetMiscTableEntries( &exe_head );
     WriteDataPages( &exe_head, object );
     tbl_obj = &object[ NumGroups ];
-    if( FmtData.dgroupsplitseg != NULL ) {
-        ++tbl_obj;
-    }
     if( FmtData.u.os2.exports != NULL ) {
         WriteExportInfo( &exe_head, tbl_obj );
         ++tbl_obj;

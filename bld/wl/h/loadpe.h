@@ -32,7 +32,6 @@
 #include "exepe.h"
 
 #define PE_DEFAULT_BASE (0x400000UL)
-#define PE_BSS_SHIFT    16
 #define PE_DEF_STACK_COMMIT (0xFFFFFFFFUL)
 
 extern void             DoAddResource( char * );
