@@ -324,7 +324,7 @@ extern void HexOutput( void )
                 CurrSect = sect;
                 finfo = sect->outfile;
                 DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
-                    &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
+                    &group->grp_addr, sect->ovl_num, addr, finfo->fname ));
                 if( group->leaders->class->flags & CLASS_COPY ) {
                     Ring2Lookup( wrkgrp->leaders, DoHexDupLeader, &addr );
                } else {
@@ -353,7 +353,7 @@ extern void HexOutput( void )
                 finfo = sect->outfile;
                 addr = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
                 DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
-                    &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
+                    &group->grp_addr, sect->ovl_num, addr, finfo->fname ));
                 if( group->leaders->class->flags & CLASS_COPY ) {
                     Ring2Lookup( wrkgrp->leaders, DoHexDupLeader, &addr );
                } else {
