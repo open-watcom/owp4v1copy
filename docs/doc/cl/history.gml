@@ -23,8 +23,8 @@ in 1989.
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .pp
 The &wcboth. compiler has evolved from 8086 code generation technology
-developed and refined at &company and the University of Waterloo since
-1980.
+developed and refined at WATCOM International and the University of Waterloo
+since 1980.
 The first &wc286. compiler was released in 1988.
 The first &wc386. compiler was released in 1989.
 ..do end
