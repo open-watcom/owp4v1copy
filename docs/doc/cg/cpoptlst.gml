@@ -254,6 +254,46 @@
 ~b~b~b~b~b~b
 .br
 .*
+:CMT. .note ecc
+:hotlink refid='SWecc'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecd
+:hotlink refid='SWecd'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecf
+:hotlink refid='SWecf'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note eco
+:hotlink refid='SWeco'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecp
+:hotlink refid='SWecp'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecr
+:hotlink refid='SWecr'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecs
+:hotlink refid='SWecs'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note ecw
+:hotlink refid='SWecw'.
+~b~b~b~b~b~b
+.br
+.*
 :CMT. .note ee
 :hotlink refid='SWee'.
 ~b~b~b~b~b~b

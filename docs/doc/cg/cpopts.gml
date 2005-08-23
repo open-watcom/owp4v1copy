@@ -596,6 +596,46 @@ remove automatically generated symbols references
 assume short integers are aligned
 :optref refid='SWas'.
 .do end
+.if &e'&$SWecc eq 1 .do begin
+.note ecc
+set default calling convention to __cdecl
+:optref refid='SWecc'.
+.do end
+.if &e'&$SWecd eq 1 .do begin
+.note ecd
+set default calling convention to __stdcall
+:optref refid='SWecd'.
+.do end
+.if &e'&$SWecf eq 1 .do begin
+.note ecf
+set default calling convention to __fastcall
+:optref refid='SWecf'.
+.do end
+.if &e'&$SWeco eq 1 .do begin
+.note eco
+set default calling convention to _Optlink
+:optref refid='SWeco'.
+.do end
+.if &e'&$SWecp eq 1 .do begin
+.note ecp
+set default calling convention to __pascal
+:optref refid='SWecp'.
+.do end
+.if &e'&$SWecr eq 1 .do begin
+.note ecr
+set default calling convention to __fortran
+:optref refid='SWecr'.
+.do end
+.if &e'&$SWecs eq 1 .do begin
+.note ecs
+set default calling convention to _Syscall
+:optref refid='SWecs'.
+.do end
+.if &e'&$SWecw eq 1 .do begin
+.note ecw
+set default calling convention to __watcall (default)
+:optref refid='SWecw'.
+.do end
 .if &e'&$SWei eq 1 .do begin
 .note ei
 force enum base type to use at least an int
@@ -3262,6 +3302,54 @@ instructions to load short integers.
 The macro
 .kwm __SW_AS
 will be predefined if "as" is selected.
+.do end
+.*
+.if &e'&$SWecc eq 1 .do begin
+:OPT refid='SWecc' name='ecc'.
+.ix 'options' 'ecc'
+set default calling convention to __cdecl
+.do end
+.*
+.if &e'&$SWecd eq 1 .do begin
+:OPT refid='SWecd' name='ecd'.
+.ix 'options' 'ecd'
+set default calling convention to __stdcall
+.do end
+.*
+.if &e'&$SWecf eq 1 .do begin
+:OPT refid='SWecf' name='ecf'.
+.ix 'options' 'ecf'
+set default calling convention to __fastcall
+.do end
+.*
+.if &e'&$SWeco eq 1 .do begin
+:OPT refid='SWeco' name='eco'.
+.ix 'options' 'eco'
+set default calling convention to _Optlink
+.do end
+.*
+.if &e'&$SWecp eq 1 .do begin
+:OPT refid='SWecp' name='ecp'.
+.ix 'options' 'ecp'
+set default calling convention to __pascal
+.do end
+.*
+.if &e'&$SWecr eq 1 .do begin
+:OPT refid='SWecr' name='ecr'.
+.ix 'options' 'ecr'
+set default calling convention to __fortran
+.do end
+.*
+.if &e'&$SWecs eq 1 .do begin
+:OPT refid='SWecs' name='ecs'.
+.ix 'options' 'ecs'
+set default calling convention to _Syscall
+.do end
+.*
+.if &e'&$SWecw eq 1 .do begin
+:OPT refid='SWecw' name='ecw'.
+.ix 'options' 'ecw'
+set default calling convention to __watcall (default)
 .do end
 .*
 .if &e'&$SWei eq 1 .do begin

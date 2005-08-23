@@ -294,6 +294,46 @@ generate browsing information
 set error limit number (default is 20)
 :optref refid='SWe'.
 .*
+.note ecc
+:CMT. .ix 'options' 'ecc'
+set default calling convention to __cdecl
+:optref refid='SWecc'.
+.*
+.note ecd
+:CMT. .ix 'options' 'ecd'
+set default calling convention to __stdcall
+:optref refid='SWecd'.
+.*
+.note ecf
+:CMT. .ix 'options' 'ecf'
+set default calling convention to __fastcall
+:optref refid='SWecf'.
+.*
+.note eco
+:CMT. .ix 'options' 'eco'
+set default calling convention to _Optlink
+:optref refid='SWeco'.
+.*
+.note ecp
+:CMT. .ix 'options' 'ecp'
+set default calling convention to __pascal
+:optref refid='SWecp'.
+.*
+.note ecr
+:CMT. .ix 'options' 'ecr'
+set default calling convention to __fortran
+:optref refid='SWecr'.
+.*
+.note ecs
+:CMT. .ix 'options' 'ecs'
+set default calling convention to _Syscall
+:optref refid='SWecs'.
+.*
+.note ecw
+:CMT. .ix 'options' 'ecw'
+set default calling convention to __watcall (default)
+:optref refid='SWecw'.
+.*
 .note ee
 :CMT. .ix 'options' 'ee'
 &x86only.
