@@ -863,16 +863,16 @@ static void CheckNumRelocs( void )
 /********************************/
 // don't want to generate a .reloc section if we don't have any relocs
 {
-    group_entry *       group;
+    symbol *    sym;
 
-    if( !(LinkState & MAKE_RELOCS) ) return;
-    LinkState &= ~MAKE_RELOCS;
-    for( group = Groups; group != NULL; group = group->next_group ) {
-        if( group->g.grp_relocs != NULL ) {
-            LinkState |= MAKE_RELOCS;
-            break;
+    if( !(LinkState & MAKE_RELOCS) )
+        return;
+    WALK_IMPORT_SYMBOLS(sym) {
+        if( LinkState & ( HAVE_ALPHA_CODE | HAVE_I86_CODE ) ) {
+            return;
         }
     }
+    LinkState &= ~MAKE_RELOCS;
 }
 
 static seg_leader * SetLeaderTable( char *name, pe_hdr_table_entry *entry )
