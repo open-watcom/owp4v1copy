@@ -44,7 +44,8 @@ autoset=rtsource=false
 autoset=3r=true
 autoset=3s=true
 autoset=cplusplus=true
-dialogorder=DstDir,GetDiskSizesHere,NewInstall,Maintain,Options,Final,MaintainFinal,UnInstallFinal
+dialogorder=License,DstDir,GetDiskSizesHere,NewInstall,Maintain,Options,Final,MaintainFinal,UnInstallFinal
+dialog=license.dlg
 dialog=disksize.dlg
 dialog=other.dlg
 dialog=helpfile.dlg

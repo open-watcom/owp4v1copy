@@ -337,7 +337,7 @@ extern bool DoMainLoop( dlg_state * state )
         }
         if( *state == DLG_SAME ) {
             /* nothing */
-        } else if( *state == DLG_NEXT ) {
+        } else if( *state == DLG_NEXT || *state == DLG_SKIP ) {
             if( SkipDialogs ) {
                 ++i;
             } else {

@@ -1021,7 +1021,7 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
     char                *file_name;
     unsigned int        rows;
     bool                rc = TRUE;
-    FILE                *fp;
+    void                *io;
     struct stat         buf;
     char                dummy_var[ DUMMY_VAR_SIZE ];
     vhandle             var_handle;
@@ -1039,14 +1039,14 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
     } else {
         if( *line == '@' ) {
             GUIStrDup( line + 1, &file_name );
-            fp = fopen( file_name, "rb" );
-            if( fp != NULL ) {
-                stat( file_name, &buf );
+            io = FileOpen( file_name, O_RDONLY + O_BINARY );
+            if( io != NULL ) {
+                FileStat( file_name, &buf );
                 text = GUIMemAlloc( buf.st_size + 1 );  // 1 for terminating null
                 if( text != NULL ) {
-                    fread( text, sizeof( *text ), buf.st_size, fp );
+                    FileRead( io, text, buf.st_size );
                     text[ buf.st_size ] = '\0';
-                    fclose( fp );
+                    FileClose( io );
                 }
             }
             GUIMemFree( file_name );

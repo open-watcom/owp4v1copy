@@ -552,7 +552,6 @@ static void UpdateControlVisibility( gui_window *gui, a_dialog_header *curr_dial
     if( rect.height != last_height ) {
         GUIResizeWindow( gui, &rect );
     }
-
 }
 
 static GUICALLBACK GenericEventProc;
@@ -711,13 +710,13 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
 
     curr_dialog->adjusted = TRUE;
     width = curr_dialog->cols;
-    
+
     for( i = 0; i < curr_dialog->num_controls; i++ ) {
         control = &curr_dialog->controls[ i ];
         a_control_class = control->control_class;
-        
+
         switch( a_control_class ) {
-          
+
         case GUI_RADIO_BUTTON:
 #if !defined( _UI )
             /* Align left edge of control with left of leftmost Button */
@@ -726,7 +725,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
 #endif
             control->rect.width = DLG_COL( width-C0-1 );
             break;
-            
+
         case GUI_CHECK_BOX:
 #if !defined( _UI )
             /* Align left edge of control with left of leftmost Button */
@@ -737,15 +736,15 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             control->rect.width = DLG_COL( width-C0-1 );
             if( i + 1 >= curr_dialog->num_controls )
                 break;
-                
+
             next = &curr_dialog->controls[ i + 1 ];
             if( next->rect.y != control->rect.y )
                 break;
-                
+
             control->rect.width = DLG_COL( ( width / 2 ) - C0 - 1 );
             if( next->control_class != GUI_CHECK_BOX )
                 break;
-                
+
             j = i;
             num_push_buttons = 1;
             while( ++j < curr_dialog->num_controls ) {
@@ -775,7 +774,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             }
             --i;
             break;
-            
+
         case GUI_PUSH_BUTTON:
         case GUI_DEFPUSH_BUTTON:
             j = i;
@@ -831,7 +830,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
 #endif
             }
             break;
-            
+
         case GUI_EDIT:
             if( i > 0 ) {
                 prev = &curr_dialog->controls[ i - 1 ];
@@ -850,7 +849,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
                 control->rect.width = DLG_COL( width-C0-5 );
             }
             break;
-            
+
         case GUI_STATIC:
             if( control->id != -1
                 && curr_dialog->pVisibilityConds[ i ] == NULL
@@ -865,7 +864,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
 #endif
                 control->rect.width = DLG_COL( width - 1 );
             } else {
-                control->rect.width = min( control->rect.width, DLG_COL(width) );
+                control->rect.width  = min( control->rect.width, DLG_COL(width) );
             }
             break;
 

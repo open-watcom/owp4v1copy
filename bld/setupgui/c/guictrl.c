@@ -66,7 +66,7 @@ extern void set_dlg_textwindow( gui_control_info *gui_controls,
     DLG_SET_RECT( *control, x1, y1, x2, y1 + lines );
     control->parent = NULL;
     control->scroll = scroll;
-    control->style  = GUI_TAB_GROUP;
+    control->style  = GUI_TAB_GROUP | GUI_CONTROL_READONLY;
     control->id     = id;
 }
 
