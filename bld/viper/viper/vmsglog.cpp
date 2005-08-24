@@ -795,3 +795,10 @@ bool VMsgLog::keyDown( WKeyCode kc, WKeyState ks )
         return( TRUE );
     }
 }
+
+// forward notification to the child control
+bool VMsgLog::scrollNotify( WScrollNotification sn, int diff )
+{
+    return( _batcher->scrollNotify( sn, diff ) );
+}
+

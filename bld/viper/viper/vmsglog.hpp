@@ -62,6 +62,7 @@ WCLASS VMsgLog : public WMdiChild
         bool logExists() const { return _data.count() > 0; }
         bool saveLogAs();
         bool WEXPORT keyDown( WKeyCode, WKeyState );
+        bool WEXPORT scrollNotify( WScrollNotification, int );
     private:
         VpeMain*        _parent;
         WVList          _data;
