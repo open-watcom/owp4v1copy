@@ -175,6 +175,14 @@ gui_control_styles GUIGetControlStylesFromHWND( HWND cntl,
             if( style & ES_WANTRETURN ) {
                 styles |= GUI_CONTROL_WANTRETURN;
             }
+            if( style & ES_READONLY ) {
+                styles |= GUI_CONTROL_READONLY;
+            }
+#ifdef __OS2_PM__
+            if( style & MLS_READONLY ) {
+                styles |= GUI_CONTROL_READONLY;
+            }
+#endif
             break;
     }
 

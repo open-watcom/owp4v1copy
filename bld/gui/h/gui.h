@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Master GUI library include file.
 *
 ****************************************************************************/
 
@@ -311,7 +310,8 @@ typedef enum gui_control_styles {
     GUI_CONTROL_WANTRETURN              = 0x1000,
     GUI_EDIT_INVISIBLE                  = 0x2000,
     GUI_CONTROL_3STATE                  = 0x4000,
-    GUI_CONTROL_WANTKEYINPUT            = 0x8000
+    GUI_CONTROL_WANTKEYINPUT            = 0x8000,
+    GUI_CONTROL_READONLY                = 0x10000
 } gui_control_styles;
 
 typedef enum gui_line_styles {

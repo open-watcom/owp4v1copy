@@ -534,6 +534,25 @@ LONG GUISetControlStyle( gui_control_info *info )
             ret_style |= CBS_SORT;
         }
         break;
+#ifdef __OS2_PM__
+    case GUI_EDIT:
+        if( info->style & GUI_CONTROL_READONLY ) {
+            ret_style |= ES_READONLY;
+        }
+        break;
+    case GUI_EDIT_MLE:
+        if( info->style & GUI_CONTROL_READONLY ) {
+            ret_style |= MLS_READONLY;
+        }
+        break;
+#else
+    case GUI_EDIT:
+    case GUI_EDIT_MLE:
+        if( info->style & GUI_CONTROL_READONLY ) {
+            ret_style |= ES_READONLY;
+        }
+        break;
+#endif
     }
 
     return( ret_style );
@@ -594,7 +613,7 @@ static HWND CreateControl( gui_control_info *info, gui_window *parent,
 
     if( LOBYTE(LOWORD(GetVersion())) >= 4) {
         /* In W95 and later we don't want this crud any more... RR 2003.12.8 */
-        
+
         classname = GUIControls[info->control_class].classname;
         if( lstrcmpi( classname, "Edit" ) == 0 ||
             lstrcmpi( classname, "Listbox" ) == 0 ||
