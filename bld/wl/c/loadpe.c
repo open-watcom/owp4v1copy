@@ -219,7 +219,7 @@ static void XFerReloc( offset off, group_entry *group, unsigned type )
 static int GetTransferGlueSize( int lnk_state )
 /*********************************************/
 {
-    switch( lnk_state & (HAVE_ALPHA_CODE|HAVE_I86_CODE|HAVE_PPC_CODE) ) {
+    switch( lnk_state & HAVE_MACHTYPE_MASK ) {
     case HAVE_ALPHA_CODE:   return( ALPHA_TRANSFER_SIZE );
     case HAVE_I86_CODE:     return( I386_TRANSFER_SIZE );
     case HAVE_PPC_CODE:     return( PPC_TRANSFER_SIZE );
@@ -230,7 +230,7 @@ static int GetTransferGlueSize( int lnk_state )
 static void * GetTransferGlueCode( int lnk_state )
 /************************************************/
 {
-    switch( lnk_state & (HAVE_ALPHA_CODE|HAVE_I86_CODE|HAVE_PPC_CODE) ) {
+    switch( lnk_state & HAVE_MACHTYPE_MASK ) {
     case HAVE_ALPHA_CODE:   return( &AlphaJump );
     case HAVE_I86_CODE:     return( &I386Jump );
     case HAVE_PPC_CODE:     return( &PPCJump );
@@ -349,7 +349,7 @@ static void WriteDataPages( pe_header *header, pe_object *object )
         */
         object->virtual_size = size_v;
         object->physical_size = ROUND_UP( size_ph, header->file_align );
-        
+
         object->flags = 0;
         /* segflags are in OS/2 V1.x format, we have to translate them
             into the appropriate PE bits */
@@ -873,8 +873,8 @@ static void CheckNumRelocs( void )
             return;
         }
     }
-    WALK_IMPORT_SYMBOLS(sym) {
-        if( LinkState & ( HAVE_ALPHA_CODE | HAVE_I86_CODE ) ) {
+    WALK_IMPORT_SYMBOLS( sym ) {
+        if( LinkState & HAVE_MACHTYPE_MASK ) {
             return;
         }
     }
@@ -1030,7 +1030,7 @@ extern void FiniPELoadFile( void )
                                              - sizeof(exe_head.flags);
     exe_head.flags = PE_FLG_REVERSE_BYTE_LO | PE_FLG_32BIT_MACHINE;
     if( !(LinkState & MAKE_RELOCS) ) {
-        exe_head.flags |= PE_FLG_FIXED;
+        exe_head.flags |= PE_FLG_RELOCS_STRIPPED;
     }
     if( !(LinkState & LINK_ERROR) ) {
         exe_head.flags |= PE_FLG_IS_EXECUTABLE;
