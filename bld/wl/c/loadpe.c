@@ -863,10 +863,16 @@ static void CheckNumRelocs( void )
 /********************************/
 // don't want to generate a .reloc section if we don't have any relocs
 {
-    symbol *    sym;
+    group_entry *group;
+    symbol      *sym;
 
     if( !(LinkState & MAKE_RELOCS) )
         return;
+    for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->g.grp_relocs != NULL ) {
+            return;
+        }
+    }
     WALK_IMPORT_SYMBOLS(sym) {
         if( LinkState & ( HAVE_ALPHA_CODE | HAVE_I86_CODE ) ) {
             return;
