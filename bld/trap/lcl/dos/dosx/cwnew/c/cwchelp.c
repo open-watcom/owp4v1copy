@@ -38,8 +38,6 @@
 
 extern void ReadConfig( void );
 #pragma aux ReadConfig "*";
-extern void Int00Handler( void );
-#pragma aux Int00Handler "*";
 extern void Int01Handler( void );
 #pragma aux Int01Handler "*";
 extern void Int03Handler( void );
@@ -52,6 +50,8 @@ extern void EInt01Handler( void );
 #pragma aux EInt01Handler "*";
 extern void EInt03Handler( void );
 #pragma aux EInt03Handler "*";
+extern void Exc00Handler( void );
+#pragma aux Exc00Handler "*";
 extern void Exc12Handler( void );
 #pragma aux Exc12Handler "*";
 extern void Exc13Handler( void );
@@ -67,8 +67,6 @@ extern unsigned_16  PSPSegment;
 extern unsigned_16  cwMajorVersion;
 #pragma aux cwMajorVersion "*";
 
-extern void __far *OldInt00;
-#pragma aux OldInt00 "*";
 extern void __far *OldInt01;
 #pragma aux OldInt01 "*";
 extern void __far *OldInt03;
@@ -83,6 +81,8 @@ extern void __far *OldEInt01;
 #pragma aux OldEInt01 "*";
 extern void __far *OldEInt03;
 #pragma aux OldEInt03 "*";
+extern void __far *OldExc00;
+#pragma aux OldExc00 "*";
 extern void __far *OldExc12;
 #pragma aux OldExc12 "*";
 extern void __far *OldExc13;
@@ -340,10 +340,6 @@ int main( int argc, char **argv )
     if( DebugLevel )
         dos_delete( "cwhelp.log" );
 
-    // Install Interrupt 0 handler
-    OldInt00 = DPMIGetPMInterruptVector( 0 );
-    DPMISetPMInterruptVector( 0, Int00Handler );
-
     // Install debug interrupt (single step) handler
     OldInt01 = DPMIGetPMInterruptVector( 1 );
     DPMISetPMInterruptVector( 1, Int01Handler );
@@ -359,6 +355,10 @@ int main( int argc, char **argv )
     // Install debug breakpoint exception handler
     OldEInt03 = DPMIGetPMExceptionVector( 3 );
     DPMISetPMExceptionVector( 3, EInt03Handler );
+
+    // Install exception 0 (divide by zero) handler
+    OldExc00 = DPMIGetPMExceptionVector( 0 );
+    DPMISetPMExceptionVector( 0, Exc00Handler );
 
     // Install exception 12 (stack fault) handler
     OldExc12 = DPMIGetPMExceptionVector( 12 );
@@ -393,11 +393,11 @@ int main( int argc, char **argv )
     // Restore old interrupt/exception handlers
     DPMISetPMInterruptVector( 9, OldInt09 );
     DPMISetPMInterruptVector( 0x21, OldInt21h );
-    DPMISetPMInterruptVector( 0, OldInt00 );
     DPMISetPMInterruptVector( 1, OldInt01 );
     DPMISetPMInterruptVector( 3, OldInt03 );
     DPMISetPMExceptionVector( 1, OldEInt01 );
     DPMISetPMExceptionVector( 3, OldEInt03 );
+    DPMISetPMExceptionVector( 0, OldExc00 );
     DPMISetPMExceptionVector( 12, OldExc12 );
     DPMISetPMExceptionVector( 13, OldExc13 );
     DPMISetPMExceptionVector( 14, OldExc14 );

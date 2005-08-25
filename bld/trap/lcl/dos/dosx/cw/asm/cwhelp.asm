@@ -421,19 +421,7 @@ _ASMMain        proc    near    public
         mov     edx,offset LogFileName
         mov     ah,41h
         int     21h
-;
-;Patch exception 0 interupt.
-;
-@@0main:        mov     bl,0
-        sys     GetVect
-        assume ds:_TEXT
-        mov     d[OldInt00],edx
-        mov     w[OldInt00+4],cx
-        assume ds:DGROUP
-        mov     bl,0
-        mov     cx,cs
-        mov     edx,offset Int00Handler
-        sys     SetVect
+@@0main:
 ;
 ;Patch debug interupt.
 ;
@@ -485,6 +473,19 @@ _ASMMain        proc    near    public
         mov     bl,3
         mov     cx,cs
         mov     edx,offset EInt03Handler
+        sys     SetEVect
+;
+;Patch exception 0.
+;
+        mov     bl,0
+        sys     GetEVect
+        assume ds:_TEXT
+        mov     d[OldExc0],edx
+        mov     w[OldExc0+4],cx
+        assume ds:DGROUP
+        mov     bl,0
+        mov     cx,cs
+        mov     edx,offset Exc0Handler
         sys     SetEVect
 ;
 ;Patch exception 12.
@@ -587,15 +588,6 @@ _ASMMain        proc    near    public
         mov     bl,21h
         sys     SetVect
 ;
-;Restore int 0 handler.
-;
-        assume ds:_TEXT
-        mov     edx,d[OldInt00]
-        mov     cx,w[OldInt00+4]
-        assume ds:DGROUP
-        mov     bl,0
-        sys     SetVect
-;
 ;Restore debug interupt handler.
 ;
         assume ds:_TEXT
@@ -630,6 +622,15 @@ _ASMMain        proc    near    public
         mov     cx,w[OldEInt03+4]
         assume ds:DGROUP
         mov     bl,3
+        sys     SetEVect
+;
+;Restore exception 0 handler.
+;
+        assume ds:_TEXT
+        mov     edx,d[OldExc0]
+        mov     cx,w[OldExc0+4]
+        assume ds:DGROUP
+        mov     bl,0
         sys     SetEVect
 ;
 ;Restore exception 12 handler.
@@ -2313,15 +2314,18 @@ addrsetb:
 ;Set debuggee trap flag if it's a single instruction trace else clear it if
 ;not.
 ;
-@@7exec:        cmp     ExecuteFlags,0
+@@7exec:
+        cmp     ExecuteFlags,0
         jz      @@0exec
         or      DebugEFL,256
         jmp     @@11exec
-@@0exec:        and     DebugEFL,not 256
+@@0exec:
+        and     DebugEFL,not 256
 ;
 ;Set flags ready for execution.
 ;
-@@11exec:       mov     Executing,1
+@@11exec:
+        mov     Executing,1
         mov     ExceptionFlag,-1
         mov     BreakFlag,0
         mov     TraceFlag,0
@@ -2396,14 +2400,15 @@ addrsetb:
 ;
 ;Check it wasn't a single step anyway.
 ;
-        test    ExecuteFlags,1  ;single steping anyway?
+        test    ExecuteFlags,1          ;single steping anyway?
         jnz     @@8exec
         jmp     @@7exec
 
 ;
 ;Set vars to trigger COND_WATCH
 ;
-@@10exec:       mov     ExceptionFlag,1 ;force trace flag setting.
+@@10exec:
+        mov     ExceptionFlag,1         ;force trace flag setting.
         or      TraceFlag,-1
 ;
 ;Remove HBRK's
@@ -2444,30 +2449,35 @@ addrsetb:
         jz      @@1exec
         or      eax,1 shl 10            ;COND_TERMINATE
         jmp     @@9exec
-@@1exec:        cmp     BreakKeyFlag,0
+@@1exec:
+        cmp     BreakKeyFlag,0
         jz      @@20exec
         or      eax,1 shl 9             ;COND_USER
         jmp     @@9exec
-@@20exec:       cmp     BreakFlag,0             ;break point?
+@@20exec:
+        cmp     BreakFlag,0             ;break point?
         jz      @@2exec
         or      eax,1 shl 7             ;COND_BREAK
         jmp     @@9exec
-@@2exec:        cmp     TraceFlag,0             ;trace point?
+@@2exec:
+        cmp     TraceFlag,0             ;trace point?
         jz      @@3exec
-        cmp     ExceptionFlag,1 ;hardware break point?
+        cmp     ExceptionFlag,1         ;hardware break point?
         jnz     @@5exec
         or      eax,1 shl 8             ;COND_WATCH
         or      eax,1 shl 11            ;COND_EXCEPTION
         mov     ErrorNumber,12
         call    SetErrorText
         jmp     @@9exec
-@@5exec:        or      eax,1 shl 6             ;COND_TRACE
+@@5exec:
+        or      eax,1 shl 6             ;COND_TRACE
         jmp     @@9exec
-@@3exec:        cmp     ExceptionFlag,-1        ;exception?
+@@3exec:
+        cmp     ExceptionFlag,-1        ;exception?
         jz      @@4exec
         or      eax,1 shl 11            ;COND_EXCEPTION
         mov     ErrorNumber,7
-        cmp     ExceptionFlag,0 ;div zero?
+        cmp     ExceptionFlag,0         ;div zero?
         jz      @@12exec
         mov     ErrorNumber,8
         cmp     ExceptionFlag,12        ;stack?
@@ -2479,9 +2489,11 @@ addrsetb:
         cmp     ExceptionFlag,14        ;page?
         jz      @@12exec
         mov     ErrorNumber,11
-@@12exec:       call    SetErrorText
+@@12exec:
+        call    SetErrorText
         jmp     @@9exec
-@@4exec:        or      eax,1 shl 8             ;COND_WATCH = dunno!
+@@4exec:
+        or      eax,1 shl 8             ;COND_WATCH = dunno!
 ;
 ;Return to caller.
 ;
@@ -2523,82 +2535,6 @@ IsHardBreak     proc    near    private
         popad
         ret
 IsHardBreak     endp
-
-
-;*******************************************************************************
-;Catch INT 0's.
-;*******************************************************************************
-Int00Handler    proc    near    private
-        pushs   eax,ebp,ds,es
-        mov     ax,DGROUP               ;make our data addresable.
-        mov     ds,ax
-        cmp     Executing,0
-        jz      @@Oldi00
-        mov     Executing,0
-        mov     ebp,esp         ;make stack addresable.
-        ;
-        ;Need a stack alias for DPMI.
-        ;
-        mov     ax,ss
-        mov     es,ax
-        ;
-        ;Retrieve general registers.
-        ;
-        mov     eax,es:[ebp+4+4+4]
-        mov     DebugEAX,eax
-        mov     DebugEBX,ebx
-        mov     DebugECX,ecx
-        mov     DebugEDX,edx
-        mov     DebugESI,esi
-        mov     DebugEDI,edi
-        mov     eax,es:[ebp+4+4]
-        mov     DebugEBP,eax
-        mov     ax,es:[ebp+4]
-        mov     DebugDS,ax
-        mov     ax,es:[ebp+0]
-        mov     DebugES,ax
-        mov     DebugFS,fs
-        mov     DebugGS,gs
-        ;
-        ;Fetch origional Flags:CS:EIP,SS:ESP
-        ;
-        mov     eax,es:[ebp+(4+4+4+4)+(4+4)]
-        mov     DebugEFL,eax
-        mov     eax,es:[ebp+(4+4+4+4)+(4)]
-        mov     DebugCS,ax
-        mov     eax,es:[ebp+(4+4+4+4)+(0)]
-        mov     DebugEIP,eax
-        ;
-        mov     ExceptionFlag,0
-        ;
-        ;Now modify origional CS:EIP,SS:ESP values and return control
-        ;to this code via interupt structure to restore stacks.
-        ;
-        mov     eax,offset @@returni00
-        mov     es:[ebp+(4+4+4+4)+(0)],eax
-        mov     es:w[ebp+(4+4+4+4)+(4)],cs
-        pops    eax,ebp,ds,es
-        iretd
-        ;
-@@returni00:    ;Now return control to exec caller.
-        ;
-        mov     ax,DGROUP
-        mov     ds,ax
-        mov     es,ax
-        mov     fs,ax
-        mov     gs,ax
-        mov     DebugSS,ss
-        mov     DebugESP,esp
-        lss     esp,f[DebuggerESP]
-        ret
-;
-@@Oldi00:
-        pops    eax,ebp,ds,es
-        assume ds:nothing
-        jmp     cs:f[OldInt00]
-        assume ds:DGROUP
-OldInt00        df 0
-Int00Handler    endp
 
 
 ;*******************************************************************************
@@ -2939,6 +2875,80 @@ EInt03Handler   proc    near    private
         assume ds:DGROUP
 OldEInt03       df 0
 EInt03Handler   endp
+
+
+;*******************************************************************************
+;Catch divide by zero faults.
+;*******************************************************************************
+Exc0Handler     proc    near private
+        pushs   eax,ebp,ds,es
+        mov     ax,DGROUP               ;make our data addresable.
+        mov     ds,ax
+        cmp     Executing,0
+        jz      @@Olde0
+        mov     Executing,0
+        mov     ExceptionFlag,0
+        mov     ebp,esp                 ;make stack addresable.
+        mov     ax,ss
+        mov     es,ax
+        ;
+        ;Retrieve general registers.
+        ;
+        mov     eax,es:[ebp+4+4+4]
+        mov     DebugEAX,eax
+        mov     DebugEBX,ebx
+        mov     DebugECX,ecx
+        mov     DebugEDX,edx
+        mov     DebugESI,esi
+        mov     DebugEDI,edi
+        mov     eax,es:[ebp+4+4]
+        mov     DebugEBP,eax
+        mov     ax,es:[ebp+4]
+        mov     DebugDS,ax
+        mov     ax,es:[ebp+0]
+        mov     DebugES,ax
+        mov     DebugFS,fs
+        mov     DebugGS,gs
+        ;
+        ;Fetch origional Flags:CS:EIP
+        ;
+        mov     eax,es:[ebp+(4+4+4)+(4+4+4)+(4+4)+4]
+        and     eax,not 256
+        mov     DebugEFL,eax
+        mov     ax,es:[ebp+(4+4+4)+(4+4+4)+(4)+4]
+        mov     DebugCS,ax
+        mov     eax,es:[ebp+(4+4+4)+(4+4+4)+(0)+4]
+        mov     DebugEIP,eax
+        ;
+        ;Now modify origional CS:EIP,SS:ESP values and return control
+        ;to this code via interupt structure to restore stacks.
+        ;
+        mov     eax,offset @@returne0
+        mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
+        mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
+        and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
+        pops    eax,ebp,ds,es
+        retf
+        ;
+@@returne0:     ;Now return control to exec caller.
+        ;
+        mov     ax,DGROUP
+        mov     ds,ax
+        mov     es,ax
+        mov     fs,ax
+        mov     gs,ax
+        mov     DebugSS,ss
+        mov     DebugESP,esp
+        lss     esp,f[DebuggerESP]
+        ret
+        ;
+@@Olde0:
+        pops    eax,ebp,ds,es
+        assume ds:nothing
+        jmp     cs:f[OldExc0]
+        assume ds:DGROUP
+OldExc0         df 0
+Exc0Handler     endp
 
 
 ;*******************************************************************************

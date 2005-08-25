@@ -1990,83 +1990,6 @@ IsHardBreak     endp
 
 
 ;*******************************************************************************
-;Catch INT 0's.
-;*******************************************************************************
-Int00Handler    proc    near    public
-        pushs   eax,ebp,ds,es
-        mov     ax,DGROUP               ;make our data addresable.
-        mov     ds,ax
-        cmp     Executing,0
-        jz      @@Oldi00
-        mov     Executing,0
-        mov     ebp,esp         ;make stack addresable.
-        ;
-        ;Need a stack alias for DPMI.
-        ;
-        mov     ax,ss
-        mov     es,ax
-        ;
-        ;Retrieve general registers.
-        ;
-        mov     eax,es:[ebp+4+4+4]
-        mov     DebugEAX,eax
-        mov     DebugEBX,ebx
-        mov     DebugECX,ecx
-        mov     DebugEDX,edx
-        mov     DebugESI,esi
-        mov     DebugEDI,edi
-        mov     eax,es:[ebp+4+4]
-        mov     DebugEBP,eax
-        mov     ax,es:[ebp+4]
-        mov     DebugDS,ax
-        mov     ax,es:[ebp+0]
-        mov     DebugES,ax
-        mov     DebugFS,fs
-        mov     DebugGS,gs
-        ;
-        ;Fetch origional Flags:CS:EIP,SS:ESP
-        ;
-        mov     eax,es:[ebp+(4+4+4+4)+(4+4)]
-        mov     DebugEFL,eax
-        mov     eax,es:[ebp+(4+4+4+4)+(4)]
-        mov     DebugCS,ax
-        mov     eax,es:[ebp+(4+4+4+4)+(0)]
-        mov     DebugEIP,eax
-        ;
-        mov     ExceptionFlag,0
-        ;
-        ;Now modify origional CS:EIP,SS:ESP values and return control
-        ;to this code via interupt structure to restore stacks.
-        ;
-        mov     eax,offset @@returni00
-        mov     es:[ebp+(4+4+4+4)+(0)],eax
-        mov     es:w[ebp+(4+4+4+4)+(4)],cs
-        pops    eax,ebp,ds,es
-        iretd
-        ;
-@@returni00:    ;Now return control to exec caller.
-        ;
-        mov     ax,DGROUP
-        mov     ds,ax
-        mov     es,ax
-        mov     fs,ax
-        mov     gs,ax
-        mov     DebugSS,ss
-        mov     DebugESP,esp
-        lss     esp,f[DebuggerESP]
-        ret
-;
-@@Oldi00:
-        pops    eax,ebp,ds,es
-        assume ds:nothing
-        jmp     cs:f[OldInt00]
-        assume ds:DGROUP
-OldInt00        df 0
-Int00Handler    endp
-public OldInt00
-
-
-;*******************************************************************************
 ;Catch single instruction trace and debug register traps.
 ;*******************************************************************************
 Int01Handler    proc    near    public
@@ -2407,6 +2330,81 @@ EInt03Handler   proc    near    public
 OldEInt03       df 0
 EInt03Handler   endp
 public OldEInt03
+
+
+;*******************************************************************************
+;Catch divide by zero faults.
+;*******************************************************************************
+Exc00Handler    proc    near public
+        pushs   eax,ebp,ds,es
+        mov     ax,DGROUP               ;make our data addresable.
+        mov     ds,ax
+        cmp     Executing,0
+        jz      @@Olde00
+        mov     Executing,0
+        mov     ExceptionFlag,0
+        mov     ebp,esp                 ;make stack addresable.
+        mov     ax,ss
+        mov     es,ax
+        ;
+        ;Retrieve general registers.
+        ;
+        mov     eax,es:[ebp+4+4+4]
+        mov     DebugEAX,eax
+        mov     DebugEBX,ebx
+        mov     DebugECX,ecx
+        mov     DebugEDX,edx
+        mov     DebugESI,esi
+        mov     DebugEDI,edi
+        mov     eax,es:[ebp+4+4]
+        mov     DebugEBP,eax
+        mov     ax,es:[ebp+4]
+        mov     DebugDS,ax
+        mov     ax,es:[ebp+0]
+        mov     DebugES,ax
+        mov     DebugFS,fs
+        mov     DebugGS,gs
+        ;
+        ;Fetch origional Flags:CS:EIP
+        ;
+        mov     eax,es:[ebp+(4+4+4)+(4+4+4)+(4+4)+4]
+        and     eax,not 256
+        mov     DebugEFL,eax
+        mov     ax,es:[ebp+(4+4+4)+(4+4+4)+(4)+4]
+        mov     DebugCS,ax
+        mov     eax,es:[ebp+(4+4+4)+(4+4+4)+(0)+4]
+        mov     DebugEIP,eax
+        ;
+        ;Now modify origional CS:EIP,SS:ESP values and return control
+        ;to this code via interupt structure to restore stacks.
+        ;
+        mov     eax,offset @@returne00
+        mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
+        mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
+        and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
+        pops    eax,ebp,ds,es
+        retf
+        ;
+@@returne00:    ;Now return control to exec caller.
+        ;
+        mov     ax,DGROUP
+        mov     ds,ax
+        mov     es,ax
+        mov     fs,ax
+        mov     gs,ax
+        mov     DebugSS,ss
+        mov     DebugESP,esp
+        lss     esp,f[DebuggerESP]
+        ret
+        ;
+@@Olde00:
+        pops    eax,ebp,ds,es
+        assume ds:nothing
+        jmp     cs:f[OldExc00]
+        assume ds:DGROUP
+OldExc00        df 0
+Exc00Handler    endp
+public OldExc00
 
 
 ;*******************************************************************************
