@@ -913,18 +913,44 @@ static bool DoDupGroupLeader( void *seg, void *start )
     return FALSE;
 }
 
+typedef struct  {
+    unsigned_32 pos;
+    group_entry *lastgrp;  // used only for copy classes
+} grpwriteinfo;
+
+static bool WriteCopyGroups( void *_seg, void *_info )
+/************************************************/
+{
+    // This is called by the outer level iteration looking for classes
+    //  that have more than one group in them
+    seg_leader * seg = _seg;
+    grpwriteinfo *info = _info;
+
+    if( info->lastgrp != seg->group ) {   // Only interate new groups
+        info->lastgrp = seg->group;
+        // Check each initialized segment in group
+        Ring2Lookup( seg->group->leaders, DoDupGroupLeader, (&info->pos));
+        info->pos += seg->group->totalsize;
+    }
+    return FALSE;
+}
+
 extern void WriteGroupLoad( group_entry *group )
 /**********************************************/
 {
-    unsigned long       pos;
+    grpwriteinfo     info;
+    class_entry *    class;
 
-    pos = PosLoad();
-    // If group is a copy group, substitute source group here
-    if (group->leaders->class->flags & CLASS_COPY ) {
-        Ring2Lookup( group->leaders->class->DupClass->segs->group->leaders, DoDupGroupLeader, &pos );
+    class = group->leaders->class;
+    
+    info.pos = PosLoad();
+    // If group is a copy group, substitute source group(s) here
+    if (class->flags & CLASS_COPY ) {
+        info.lastgrp = NULL; // so it will use the first group
+        RingLookup( class->DupClass->segs->group->leaders, WriteCopyGroups, &info );
     }
     else {
-        Ring2Lookup( group->leaders, DoGroupLeader, &pos );
+        Ring2Lookup( group->leaders, DoGroupLeader, &(info.pos) );
     }
 }
 

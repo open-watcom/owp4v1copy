@@ -53,19 +53,13 @@ static bool WriteBinSegGroup( group_entry *group )
 {
     unsigned_32         loc;
     signed_32           diff;
-    group_entry         *wrkgrp;
     section             *sect;
     bool                repos;
     outfilelist         *finfo;
 
     repos = FALSE;
-    if( group->leaders->class->flags & CLASS_COPY ) {
-        wrkgrp = group->leaders->class->DupClass->segs->group;
-    } else {
-        wrkgrp = group;
-    }
-    if( wrkgrp->size != 0  ) {
-        sect = wrkgrp->section;
+    if( group->size != 0 || group->leaders->class->flags & CLASS_COPY ) {
+        sect = group->section;
         CurrSect = sect;
         finfo = sect->outfile;
         loc = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
@@ -86,7 +80,7 @@ static bool WriteBinSegGroup( group_entry *group )
             }
         }
     }
-    return( repos );
+    return repos;
 }
 
 
@@ -158,7 +152,7 @@ extern void BinOutput( void )
 // the routine outputs an extended linear address record, seamlessly switching
 // to a full 32 bit address range.  This approach provides full backward compatibility
 // for systems which cannot read the newer formats when creating files that don't
-// need the extra space.
+// need the extra range.
 
 #define HEXLEN 16   // number of bytes of data in a full record
 static unsigned_32      nextAddr;
@@ -288,16 +282,40 @@ void WriteStart( void )
     WriteLoad( str_buf, 21 );
 }
 
+typedef struct  {
+    unsigned_32 addr;
+    group_entry *lastgrp;  // used only for copy classes
+} grpwriteinfo;
+
+static bool WriteHexCopyGroups( void *_seg, void *_info )
+/************************************************/
+{
+    // This is called by the outer level iteration looking for classes
+    //  that have more than one group in them
+    seg_leader * seg = _seg;
+    grpwriteinfo *info = _info;
+
+    if( info->lastgrp != seg->group ) {   // Only interate new groups
+        info->lastgrp = seg->group;
+        // Check each initialized segment in group
+        Ring2Lookup( seg->group->leaders, DoHexDupLeader, &info->addr);
+        info->addr += seg->group->totalsize;
+    }
+    return FALSE;
+}
+
+
 extern void HexOutput( void )
 /***************************/
 {
     outfilelist         *fnode;
     group_entry         *group;
     group_entry         *wrkgrp;
-    unsigned_32         addr;
     section             *sect;
     outfilelist         *finfo;
     unsigned_32         size;
+    class_entry        *class;
+    grpwriteinfo        info;
 
     nextAddr = 0L;  // Start at absolute linear address 0
     linear   = 0;   //       in segmented mode
@@ -312,23 +330,24 @@ extern void HexOutput( void )
         Root->u.file_loc = Root->sect_addr.off - FmtData.output_offset;
         /* write groups */
         for( group = Groups; group != NULL; group = group->next_group ) {
-            if( group->leaders->class->flags & CLASS_COPY ) {
-                wrkgrp = group->leaders->class->DupClass->segs->group;
+            class = group->leaders->class;
+            if( class->flags & CLASS_COPY ) {
+                wrkgrp = class->DupClass->segs->group;
             } else {
                 wrkgrp = group;
             }
             size = CalcGroupSize( wrkgrp );
             if( size != 0 ) {
-                addr = (group->grp_addr.off + group->linear - FmtData.output_offset);
+                info.addr = (group->grp_addr.off + group->linear - FmtData.output_offset);
                 sect = wrkgrp->section;
                 CurrSect = sect;
                 finfo = sect->outfile;
                 DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
-                    &group->grp_addr, sect->ovl_num, addr, finfo->fname ));
+                    &group->grp_addr, sect->ovl_num, info.addr, finfo->fname ));
                 if( group->leaders->class->flags & CLASS_COPY ) {
-                    Ring2Lookup( wrkgrp->leaders, DoHexDupLeader, &addr );
+                    Ring2Lookup( wrkgrp->leaders, DoHexDupLeader, &info.addr );
                } else {
-                   Ring2Lookup( wrkgrp->leaders, DoHexLeader, &addr );
+                   Ring2Lookup( wrkgrp->leaders, DoHexLeader, &info.addr );
                }
             }
         }
@@ -342,22 +361,25 @@ extern void HexOutput( void )
         Root->u.file_loc = (Root->sect_addr.seg << FmtData.SegShift) + Root->sect_addr.off - FmtData.output_offset;
         /* write groups */
         for( group = Groups; group != NULL; group = group->next_group ) {
-            if( group->leaders->class->flags & CLASS_COPY ) {
-                wrkgrp = group->leaders->class->DupClass->segs->group;
-            } else {
-                wrkgrp = group;
-            }
-            if( wrkgrp->size != 0 ) {
-                sect = wrkgrp->section;
+            class = group->leaders->class;
+            if( class->flags & CLASS_COPY ) {
+                sect = group->section;
                 CurrSect = sect;
                 finfo = sect->outfile;
-                addr = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
+                info.addr = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
                 DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
-                    &group->grp_addr, sect->ovl_num, addr, finfo->fname ));
-                if( group->leaders->class->flags & CLASS_COPY ) {
-                    Ring2Lookup( wrkgrp->leaders, DoHexDupLeader, &addr );
-               } else {
-                   Ring2Lookup( wrkgrp->leaders, DoHexLeader, &addr );
+                    &group->grp_addr, sect->ovl_num, info.addr, finfo->fname ));
+                info.lastgrp = NULL;
+                RingLookup( class->DupClass->segs->group->leaders, WriteHexCopyGroups, &info);
+            } else {
+                if( group->size != 0 ) {
+                    sect = group->section;
+                    CurrSect = sect;
+                    finfo = sect->outfile;
+                    info.addr = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
+                    DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
+                        &group->grp_addr, sect->ovl_num, info.addr, finfo->fname ));
+                    Ring2Lookup( group->leaders, DoHexLeader, &info.addr );
                }
             }
         }
