@@ -508,8 +508,11 @@ char *ScanLine( char *string, int len )
 void AsmCodeByte( unsigned char byte )
 /************************************/
 {
-    if( CurrSeg->seg->e.seginfo->iscode == SEGTYPE_UNDEF )
-        CurrSeg->seg->e.seginfo->iscode = SEGTYPE_ISCODE;
+    if( CurrSeg != NULL ) {
+        if( CurrSeg->seg->e.seginfo->iscode == SEGTYPE_UNDEF ) {
+            CurrSeg->seg->e.seginfo->iscode = SEGTYPE_ISCODE;
+        }
+    }
     OutSelect( FALSE );
     AsmByte( byte );
 }
@@ -520,9 +523,7 @@ void AsmDataByte( unsigned char byte )
     OutSelect( TRUE );
     AsmByte( byte );
 }
-#endif
 
-#ifdef _WASM_
 static bool CheckHaveSeg()
 {
     if( CurrSeg != NULL )
@@ -542,14 +543,12 @@ void AsmByte( unsigned char byte )
 /* Write a byte to the object file */
 {
 #ifdef _WASM_
-    if( CurrSeg != NULL ) {
+    if( CheckHaveSeg() ) {
         (CurrSeg->seg->e.seginfo->current_loc)++;
         if( CurrSeg->seg->e.seginfo->current_loc >=
             CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length ) {
             CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length = CurrSeg->seg->e.seginfo->current_loc;
         }
-    }
-    if( CheckHaveSeg() ) {
         if( Parse_Pass != PASS_1 && write_to_file ) {
             CodeBuffer[BufSize] = byte;
             ++BufSize;
