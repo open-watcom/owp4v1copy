@@ -884,10 +884,12 @@ static  int PushAll( void ) {
         QuickSave( HW_AX, OP_PUSH );
         QuickSave( HW_AX, OP_PUSH );
     }
-        GenRegMove( HW_SP, HW_BP );
-        AllocStack();
-        Gcld();
+    GenRegMove( HW_SP, HW_BP );
+    AllocStack();
+    Gcld();
+    if( HW_COvlap( CurrProc->state.unalterable, HW_DS ) ) {
         DoLoadDS();
+    }
     return( ALL_REG_SIZE );
 }
 
