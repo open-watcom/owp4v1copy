@@ -43,7 +43,7 @@ WEXPORT WControl::WControl( WWindow* parent, gui_control_class control_class,
 
     gui_control_info    control_info;
     WRect               rr;
-    unsigned            gui_style;
+    unsigned long       gui_style;
 
     if( parent == NULL ) return;
     setAutosize( r );
