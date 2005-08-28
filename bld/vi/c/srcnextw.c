@@ -34,6 +34,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "vi.h"
+#include "rtns.h"
 #include "source.h"
 
 /*
@@ -62,7 +63,13 @@ int SrcNextWord( char *data, vlist *vl )
         return( ERR_SRC_INVALID_NEXTWORD );
     }
     v = VarFind( v1, vl );
-    NextWord1( v->value, str );
+    RemoveLeadingSpaces( v->value );
+    if( v->value[0] == '"' ) {
+        NextWord( v->value, str, "\"" );
+        EliminateFirstN( v->value, 1 );
+    } else {
+        NextWord1( v->value, str );
+    }
     VarAddStr( v2, str, vl );
     return( ERR_NO_ERR );
 
