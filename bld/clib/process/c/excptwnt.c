@@ -386,7 +386,9 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
             fpe = FPE_SQRTNEG;
         } else if( *(unsigned short *)eip == 0xf1d9 ) { // caused by "fyl2x"
             fpe = FPE_LOGERR;
-        } else if( *(unsigned short *)eip == 0xf1d9 ) { // caused by "fprem"
+        } else if( *(unsigned short *)eip == 0xf8d9 ) { // caused by "fprem"
+            fpe = FPE_MODERR;
+        } else if( *(unsigned short *)eip == 0xf5d9 ) { // caused by "fprem1"
             fpe = FPE_MODERR;
         } else {
             if(( eip[0] == 0xdb ) || ( eip[0] == 0xdf )) {
