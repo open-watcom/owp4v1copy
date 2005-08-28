@@ -171,10 +171,12 @@ typedef enum BASED_KIND{
     BASED_SEGNAME,       //__based( __segname( "name" )   use seg of segname
 } BASED_KIND;
 
-/* matches CTypeSizes[] table in ctype.c */
+/* matches CTypenames[] table in cdump.c */
 /* matches CGDataType[] table in cgen2.c */
-/* matches CTypenames[] table in cgdump.c */
+/* matches AddResult[],SubResult[],IntResult[],ShiftResult[],BinResult[],
+           CnvTable[] tables in cmath2.c */
 /* matches AsmDataType[] table in cpragx86.c */
+/* matches CTypeSizes[] table in ctype.c */
 typedef enum DATA_TYPE {
     TYPE_UNDEFINED = -1,
     TYPE_CHAR  =    0,      /* signed char */
@@ -210,8 +212,6 @@ typedef enum DATA_TYPE {
     TYPE_DIMAGINARY,
     TYPE_LDIMAGINARY,
     TYPE_BOOL,
-
-    TYPE_UNUSED,            /* an unused type (a unref'd function) */
 
     TYPE_LAST_ENTRY,        /* make sure this is always last */
 } DATA_TYPE;

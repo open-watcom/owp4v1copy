@@ -108,7 +108,7 @@ struct func_save {
 };
 
 /* matches table of type in ctypes.h */
-static  char    CGDataType[] = {
+static  char    CGDataType[TYPE_LAST_ENTRY] = {
         T_INT_1,        /* TYPE_CHAR */
         T_UINT_1,       /* TYPE_UCHAR */
         T_INT_2,        /* TYPE_SHORT */
@@ -133,16 +133,6 @@ static  char    CGDataType[] = {
         T_INTEGER,      /* TYPE_UFIELD unsigned bit field */
         T_INTEGER,      /* TYPE_DOT_DOT_DOT  for the ... in prototypes */
         T_INTEGER,      /* TYPE_PLAIN_CHAR */
-/*
-  I can't see how these were ever generated.  They're also not
-  in the same order as the table in ctypes.h, which is very important.
-*/
-#if 0
-        T_INTEGER,      /* TYPE_UNUSED (a unref'd function) */
-        T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
-        T_POINTER,      /* TYPE_REF C++ reference */
-        T_INTEGER       /* TYPE_CLASS  C++ class */
-#endif
         T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
         T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
         T_POINTER,      /* TYPE_FCOMPLEX */
@@ -152,7 +142,6 @@ static  char    CGDataType[] = {
         T_DOUBLE,       /* TYPE_DIMAGINARY */
         T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
         T_UINT_1,       /* TYPE_BOOL */
-        T_INTEGER,      /* TYPE_UNUSED */
   };
 
 static  char    CGOperator[] = {

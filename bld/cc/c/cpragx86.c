@@ -322,7 +322,7 @@ static int AsmPtrType( TYPEPTR typ, type_modifiers flags )
 }
 
 /* matches enum DataType in ctypes.h */
-static enum sym_type AsmDataType[] = {
+static enum sym_type AsmDataType[TYPE_LAST_ENTRY] = {
         SYM_INT1,       /* TYPE_CHAR,*/
         SYM_INT1,       /* TYPE_UCHAR,*/
         SYM_INT2,       /* TYPE_SHORT,*/
@@ -356,7 +356,6 @@ static enum sym_type AsmDataType[] = {
         SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
         SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
         SYM_INT1,       /* TYPE_BOOL, */
-        0,              /* TYPE_UNUSED,  */
 };
 
 local int AsmType( TYPEPTR typ, type_modifiers flags )

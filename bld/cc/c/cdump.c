@@ -35,7 +35,7 @@
 extern  char    *Tokens[];
 
 /* matches table of type in ctypes.h */
-static  char    *CTypeNames[] = {
+static  char    *CTypeNames[TYPE_LAST_ENTRY] = {
         "signed char",
         "unsigned char",
         "short",
