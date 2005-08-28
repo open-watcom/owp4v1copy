@@ -480,9 +480,8 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
         ExitProcess( -1 );
     } else if( rv == EXCEPTION_CONTINUE_EXECUTION ) {
         return( ExceptionContinueExecution );
-    } else {
-        return( ExceptionContinueSearch );
     }
+    return( ExceptionContinueSearch );
 
 } /* __ExceptionFilter */
 
