@@ -33,62 +33,119 @@ RES_SOURCE = res_comp.c res_data.c res_debu.c  res_init.c res_loc.c  &
 
 C_SOURCE   = $(KERNEL_SRC) $(BSD_SOURCE) $(RES_SOURCE)
 
-# OBJDIR includes the directory separator, for easy switch between Linux and DOS-type OSses.
-OBJS = $(OBJDIR)asmpkt.obj   $(OBJDIR)asmpkt4.obj   &
-       $(OBJDIR)chksum0.obj  $(OBJDIR)cpumodel.obj  &
-       $(OBJDIR)wdpmi.obj    $(OBJDIR)language.obj  &
-       $(OBJDIR)bsdname.obj  $(OBJDIR)tftp.obj      &
-       $(OBJDIR)btree.obj    $(OBJDIR)fragment.obj  &
-       $(OBJDIR)misc.obj     $(OBJDIR)netback.obj   &
-       $(OBJDIR)pcarp.obj    $(OBJDIR)pcrarp.obj    &
-       $(OBJDIR)pcbootp.obj  $(OBJDIR)pcdhcp.obj    &
-       $(OBJDIR)pcbsd.obj    $(OBJDIR)pcbuf.obj     &
-       $(OBJDIR)pcconfig.obj $(OBJDIR)pcdbug.obj    &
-       $(OBJDIR)pcicmp.obj   $(OBJDIR)pcigmp.obj    &
-       $(OBJDIR)pcintr.obj   $(OBJDIR)pcmulti.obj   &
-       $(OBJDIR)pcping.obj   $(OBJDIR)pcpkt.obj     &
-       $(OBJDIR)pcrecv.obj   $(OBJDIR)pcsed.obj     &
-       $(OBJDIR)pcslip.obj   $(OBJDIR)pcstat.obj    &
-       $(OBJDIR)pctcp.obj    $(OBJDIR)pc_cbrk.obj   &
-       $(OBJDIR)qmsg.obj     $(OBJDIR)sock_sel.obj  &
-       $(OBJDIR)sock_dbu.obj $(OBJDIR)sock_ini.obj  &
-       $(OBJDIR)sock_prn.obj $(OBJDIR)sock_scn.obj  &
-       $(OBJDIR)oldstuff.obj $(OBJDIR)sock_in.obj   &
-       $(OBJDIR)strings.obj  $(OBJDIR)udp_dom.obj   &
-       $(OBJDIR)udp_nds.obj  $(OBJDIR)version.obj   &
-       $(OBJDIR)gettod.obj   $(OBJDIR)getopt.obj    &
-       $(OBJDIR)crit.obj     $(OBJDIR)country.obj   &
-       $(OBJDIR)crc.obj      $(OBJDIR)pcpkt32.obj   &
-       $(OBJDIR)pcqueue.obj  $(OBJDIR)lookup.obj    &
-       $(OBJDIR)loopback.obj $(OBJDIR)wattcpd.obj   &
-       $(OBJDIR)fortify.obj  $(OBJDIR)w32pcap.obj   &
-       $(OBJDIR)accept.obj   $(OBJDIR)bind.obj      &
-       $(OBJDIR)close.obj    $(OBJDIR)connect.obj   &
-       $(OBJDIR)gethost.obj  $(OBJDIR)getname.obj   &
-       $(OBJDIR)getnet.obj   $(OBJDIR)getprot.obj   &
-       $(OBJDIR)getput.obj   $(OBJDIR)getserv.obj   &
-       $(OBJDIR)geteth.obj   $(OBJDIR)ioctl.obj     &
-       $(OBJDIR)fcntl.obj    $(OBJDIR)listen.obj    &
-       $(OBJDIR)netaddr.obj  $(OBJDIR)receive.obj   &
-       $(OBJDIR)select.obj   $(OBJDIR)bsddbug.obj   &
-       $(OBJDIR)socket.obj   $(OBJDIR)sockopt.obj   &
-       $(OBJDIR)transmit.obj $(OBJDIR)nsapaddr.obj  &
-       $(OBJDIR)presaddr.obj $(OBJDIR)neterr.obj    &
-       $(OBJDIR)signal.obj   $(OBJDIR)shutdown.obj  &
-       $(OBJDIR)stream.obj   $(OBJDIR)syslog.obj    &
-       $(OBJDIR)syslog2.obj  $(OBJDIR)printk.obj    &
-       $(OBJDIR)nettime.obj  $(OBJDIR)ip_out.obj    &
-       $(OBJDIR)tcp_fsm.obj  $(OBJDIR)poll.obj      &
-       $(OBJDIR)timer.obj    $(OBJDIR)chksum.obj    &
-       $(OBJDIR)adr2asc.obj  $(OBJDIR)linkaddr.obj  &
-       $(OBJDIR)ports.obj    $(OBJDIR)sock_io.obj   &
-       $(OBJDIR)echo.obj     $(OBJDIR)res_comp.obj  &
-       $(OBJDIR)res_data.obj $(OBJDIR)res_debu.obj  &
-       $(OBJDIR)res_init.obj $(OBJDIR)res_loc.obj   &
-       $(OBJDIR)res_mkqu.obj $(OBJDIR)res_quer.obj  &
-       $(OBJDIR)res_send.obj $(OBJDIR)asc2adr.obj   &
-       $(OBJDIR)profile.obj  $(OBJDIR)settod.obj    &
-       $(OBJDIR)pppoe.obj
+!ifdef __LINUX__
+OBJS = $(OBJDIR)/asmpkt.obj   $(OBJDIR)/asmpkt4.obj   &
+       $(OBJDIR)/chksum0.obj  $(OBJDIR)/cpumodel.obj  &
+       $(OBJDIR)/wdpmi.obj    $(OBJDIR)/language.obj  &
+       $(OBJDIR)/bsdname.obj  $(OBJDIR)/tftp.obj      &
+       $(OBJDIR)/btree.obj    $(OBJDIR)/fragment.obj  &
+       $(OBJDIR)/misc.obj     $(OBJDIR)/netback.obj   &
+       $(OBJDIR)/pcarp.obj    $(OBJDIR)/pcrarp.obj    &
+       $(OBJDIR)/pcbootp.obj  $(OBJDIR)/pcdhcp.obj    &
+       $(OBJDIR)/pcbsd.obj    $(OBJDIR)/pcbuf.obj     &
+       $(OBJDIR)/pcconfig.obj $(OBJDIR)/pcdbug.obj    &
+       $(OBJDIR)/pcicmp.obj   $(OBJDIR)/pcigmp.obj    &
+       $(OBJDIR)/pcintr.obj   $(OBJDIR)/pcmulti.obj   &
+       $(OBJDIR)/pcping.obj   $(OBJDIR)/pcpkt.obj     &
+       $(OBJDIR)/pcrecv.obj   $(OBJDIR)/pcsed.obj     &
+       $(OBJDIR)/pcslip.obj   $(OBJDIR)/pcstat.obj    &
+       $(OBJDIR)/pctcp.obj    $(OBJDIR)/pc_cbrk.obj   &
+       $(OBJDIR)/qmsg.obj     $(OBJDIR)/sock_sel.obj  &
+       $(OBJDIR)/sock_dbu.obj $(OBJDIR)/sock_ini.obj  &
+       $(OBJDIR)/sock_prn.obj $(OBJDIR)/sock_scn.obj  &
+       $(OBJDIR)/oldstuff.obj $(OBJDIR)/sock_in.obj   &
+       $(OBJDIR)/strings.obj  $(OBJDIR)/udp_dom.obj   &
+       $(OBJDIR)/udp_nds.obj  $(OBJDIR)/version.obj   &
+       $(OBJDIR)/gettod.obj   $(OBJDIR)/getopt.obj    &
+       $(OBJDIR)/crit.obj     $(OBJDIR)/country.obj   &
+       $(OBJDIR)/crc.obj      $(OBJDIR)/pcpkt32.obj   &
+       $(OBJDIR)/pcqueue.obj  $(OBJDIR)/lookup.obj    &
+       $(OBJDIR)/loopback.obj $(OBJDIR)/wattcpd.obj   &
+       $(OBJDIR)/fortify.obj  $(OBJDIR)/w32pcap.obj   &
+       $(OBJDIR)/accept.obj   $(OBJDIR)/bind.obj      &
+       $(OBJDIR)/close.obj    $(OBJDIR)/connect.obj   &
+       $(OBJDIR)/gethost.obj  $(OBJDIR)/getname.obj   &
+       $(OBJDIR)/getnet.obj   $(OBJDIR)/getprot.obj   &
+       $(OBJDIR)/getput.obj   $(OBJDIR)/getserv.obj   &
+       $(OBJDIR)/geteth.obj   $(OBJDIR)/ioctl.obj     &
+       $(OBJDIR)/fcntl.obj    $(OBJDIR)/listen.obj    &
+       $(OBJDIR)/netaddr.obj  $(OBJDIR)/receive.obj   &
+       $(OBJDIR)/select.obj   $(OBJDIR)/bsddbug.obj   &
+       $(OBJDIR)/socket.obj   $(OBJDIR)/sockopt.obj   &
+       $(OBJDIR)/transmit.obj $(OBJDIR)/nsapaddr.obj  &
+       $(OBJDIR)/presaddr.obj $(OBJDIR)/neterr.obj    &
+       $(OBJDIR)/signal.obj   $(OBJDIR)/shutdown.obj  &
+       $(OBJDIR)/stream.obj   $(OBJDIR)/syslog.obj    &
+       $(OBJDIR)/syslog2.obj  $(OBJDIR)/printk.obj    &
+       $(OBJDIR)/nettime.obj  $(OBJDIR)/ip_out.obj    &
+       $(OBJDIR)/tcp_fsm.obj  $(OBJDIR)/poll.obj      &
+       $(OBJDIR)/timer.obj    $(OBJDIR)/chksum.obj    &
+       $(OBJDIR)/adr2asc.obj  $(OBJDIR)/linkaddr.obj  &
+       $(OBJDIR)/ports.obj    $(OBJDIR)/sock_io.obj   &
+       $(OBJDIR)/echo.obj     $(OBJDIR)/res_comp.obj  &
+       $(OBJDIR)/res_data.obj $(OBJDIR)/res_debu.obj  &
+       $(OBJDIR)/res_init.obj $(OBJDIR)/res_loc.obj   &
+       $(OBJDIR)/res_mkqu.obj $(OBJDIR)/res_quer.obj  &
+       $(OBJDIR)/res_send.obj $(OBJDIR)/asc2adr.obj   &
+       $(OBJDIR)/profile.obj  $(OBJDIR)/settod.obj    &
+       $(OBJDIR)/pppoe.obj
+!else
+OBJS = $(OBJDIR)\asmpkt.obj   $(OBJDIR)\asmpkt4.obj   &
+       $(OBJDIR)\chksum0.obj  $(OBJDIR)\cpumodel.obj  &
+       $(OBJDIR)\wdpmi.obj    $(OBJDIR)\language.obj  &
+       $(OBJDIR)\bsdname.obj  $(OBJDIR)\tftp.obj      &
+       $(OBJDIR)\btree.obj    $(OBJDIR)\fragment.obj  &
+       $(OBJDIR)\misc.obj     $(OBJDIR)\netback.obj   &
+       $(OBJDIR)\pcarp.obj    $(OBJDIR)\pcrarp.obj    &
+       $(OBJDIR)\pcbootp.obj  $(OBJDIR)\pcdhcp.obj    &
+       $(OBJDIR)\pcbsd.obj    $(OBJDIR)\pcbuf.obj     &
+       $(OBJDIR)\pcconfig.obj $(OBJDIR)\pcdbug.obj    &
+       $(OBJDIR)\pcicmp.obj   $(OBJDIR)\pcigmp.obj    &
+       $(OBJDIR)\pcintr.obj   $(OBJDIR)\pcmulti.obj   &
+       $(OBJDIR)\pcping.obj   $(OBJDIR)\pcpkt.obj     &
+       $(OBJDIR)\pcrecv.obj   $(OBJDIR)\pcsed.obj     &
+       $(OBJDIR)\pcslip.obj   $(OBJDIR)\pcstat.obj    &
+       $(OBJDIR)\pctcp.obj    $(OBJDIR)\pc_cbrk.obj   &
+       $(OBJDIR)\qmsg.obj     $(OBJDIR)\sock_sel.obj  &
+       $(OBJDIR)\sock_dbu.obj $(OBJDIR)\sock_ini.obj  &
+       $(OBJDIR)\sock_prn.obj $(OBJDIR)\sock_scn.obj  &
+       $(OBJDIR)\oldstuff.obj $(OBJDIR)\sock_in.obj   &
+       $(OBJDIR)\strings.obj  $(OBJDIR)\udp_dom.obj   &
+       $(OBJDIR)\udp_nds.obj  $(OBJDIR)\version.obj   &
+       $(OBJDIR)\gettod.obj   $(OBJDIR)\getopt.obj    &
+       $(OBJDIR)\crit.obj     $(OBJDIR)\country.obj   &
+       $(OBJDIR)\crc.obj      $(OBJDIR)\pcpkt32.obj   &
+       $(OBJDIR)\pcqueue.obj  $(OBJDIR)\lookup.obj    &
+       $(OBJDIR)\loopback.obj $(OBJDIR)\wattcpd.obj   &
+       $(OBJDIR)\fortify.obj  $(OBJDIR)\w32pcap.obj   &
+       $(OBJDIR)\accept.obj   $(OBJDIR)\bind.obj      &
+       $(OBJDIR)\close.obj    $(OBJDIR)\connect.obj   &
+       $(OBJDIR)\gethost.obj  $(OBJDIR)\getname.obj   &
+       $(OBJDIR)\getnet.obj   $(OBJDIR)\getprot.obj   &
+       $(OBJDIR)\getput.obj   $(OBJDIR)\getserv.obj   &
+       $(OBJDIR)\geteth.obj   $(OBJDIR)\ioctl.obj     &
+       $(OBJDIR)\fcntl.obj    $(OBJDIR)\listen.obj    &
+       $(OBJDIR)\netaddr.obj  $(OBJDIR)\receive.obj   &
+       $(OBJDIR)\select.obj   $(OBJDIR)\bsddbug.obj   &
+       $(OBJDIR)\socket.obj   $(OBJDIR)\sockopt.obj   &
+       $(OBJDIR)\transmit.obj $(OBJDIR)\nsapaddr.obj  &
+       $(OBJDIR)\presaddr.obj $(OBJDIR)\neterr.obj    &
+       $(OBJDIR)\signal.obj   $(OBJDIR)\shutdown.obj  &
+       $(OBJDIR)\stream.obj   $(OBJDIR)\syslog.obj    &
+       $(OBJDIR)\syslog2.obj  $(OBJDIR)\printk.obj    &
+       $(OBJDIR)\nettime.obj  $(OBJDIR)\ip_out.obj    &
+       $(OBJDIR)\tcp_fsm.obj  $(OBJDIR)\poll.obj      &
+       $(OBJDIR)\timer.obj    $(OBJDIR)\chksum.obj    &
+       $(OBJDIR)\adr2asc.obj  $(OBJDIR)\linkaddr.obj  &
+       $(OBJDIR)\ports.obj    $(OBJDIR)\sock_io.obj   &
+       $(OBJDIR)\echo.obj     $(OBJDIR)\res_comp.obj  &
+       $(OBJDIR)\res_data.obj $(OBJDIR)\res_debu.obj  &
+       $(OBJDIR)\res_init.obj $(OBJDIR)\res_loc.obj   &
+       $(OBJDIR)\res_mkqu.obj $(OBJDIR)\res_quer.obj  &
+       $(OBJDIR)\res_send.obj $(OBJDIR)\asc2adr.obj   &
+       $(OBJDIR)\profile.obj  $(OBJDIR)\settod.obj    &
+       $(OBJDIR)\pppoe.obj
+!endif
 
 ########################################################################
 
@@ -103,15 +160,17 @@ AFLAGS = -0s
 !ifdef __LINUX__
 CFLAGS = -ml -6 -I../inc;$(%WATCOM)/h
 TARGET = ../lib/wattcpwl.lib
-OBJDIR = watcom/large/
+OBJDIR = watcom/large
+LIBARG = $(OBJDIR)/wlib.arg
+C_ARGS = $(OBJDIR)/cc.arg
 !else
 CFLAGS = -ml -6 -I..\inc;$(WATCOM)\h
 TARGET = ..\lib\wattcpwl.lib
-OBJDIR = watcom\large\
+OBJDIR = watcom\large
+LIBARG = $(OBJDIR)\wlib.arg
+C_ARGS = $(OBJDIR)\cc.arg
 !endif
 
-LIBARG = $(OBJDIR)wlib.arg
-C_ARGS = $(OBJDIR)cc.arg
 AFLAGS = $(AFLAGS) -zq -bt=dos -fr=nul -d1
 CFLAGS = $(CFLAGS) -zq -bt=dos -fr=nul -w4 -fpc -zm -s -oilrtfm
 
@@ -145,15 +204,15 @@ all: $(C_ARGS) $(TARGET)
 $(TARGET): $(OBJS) $(LIBARG)
       wlib -q -b -c $(TARGET) @$(LIBARG)
 
-
 !ifdef __LINUX__
 !include "watcom/depend.wat"
+$(OBJDIR)/asmpkt.obj:  asmpkt.asm
+$(OBJDIR)/asmpkt4.obj: asmpkt4.asm
 !else
 !include "watcom\depend.wat"
+$(OBJDIR)\asmpkt.obj:  asmpkt.asm
+$(OBJDIR)\asmpkt4.obj: asmpkt4.asm
 !endif
-
-$(OBJDIR)asmpkt.obj:  asmpkt.asm
-$(OBJDIR)asmpkt4.obj: asmpkt4.asm
 
 .ERASE
 .c{$(OBJDIR)}.obj:
@@ -178,9 +237,14 @@ check_arg: .SYMBOLIC
 #          flex -8 -o$@ $[@
 
 clean: .SYMBOLIC
-          @del $(OBJDIR)*.obj
-          @del $(C_ARGS)
-          @del $(LIBARG)
+!ifdef __LINUX__
+          rm -f $(OBJDIR)/*.obj
+!else
+          rm -f $(OBJDIR)\*.obj
+!endif
+          rm -f $(C_ARGS)
+          rm -f $(LIBARG)
+          rm -f $(TARGET)
           @echo Cleaning done
 
 $(LIBARG): $(__MAKEFILES__)
