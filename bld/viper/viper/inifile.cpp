@@ -28,107 +28,105 @@
 *
 ****************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <direct.h>
+#include <io.h>
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+    #include <windows.h>
+    #ifdef __NT__
+        #include <shlobj.h>
+        typedef HRESULT (WINAPI *GetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR);
+    #endif
+#endif
+#include "inifile.hpp"
+
+#define IDE_INI_FILENAME        "watcom.ini"
+#define IDE_INI_DIR             "Open Watcom"
+
 
 #if defined( __OS2__ )
-    #include <stdlib.h>
-    #include <string.h>
-
-    #define INCL_WINSHELLDATA
-    #include <os2.h>
-
     /* On OS/2, closing a profile is potentially expensive operation
      * (buffer flushes and whatnot). Therefore we cache the ini handle
      * to minimize the profile open/close operations.
      */
-    char ini_dir[_MAX_PATH] = "";
-    char ini_file[_MAX_PATH] = "";
-    HINI ini_handle = NULLHANDLE;
-
-    static HINI getIniFile(const char *dir, const char *filename)
+    IniFile::IniFile()
     {
-        char    buff[_MAX_PATH];
-        char    *p;
+        char    buff[FILENAME_MAX];
+        char    *p = getenv( "USER_INI" );
 
-        if( strcmp( ini_dir, dir ) || strcmp( ini_file, filename ) ) {
-            strcpy( ini_dir, dir );
-            strcpy( ini_file, filename );
+        strcpy( buff, p );
+        for( p = buff + strlen(buff) - 1; p >= buff; p-- ) {
+            if( *p == '\\' ) {
+                *p = 0;
+                break;
+            }
+        }
+        strcat( buff, "\\" IDE_INI_FILENAME);
+        _handle = PrfOpenProfile( NULL, (PSZ)buff );
+    }
+    
+    IniFile::~IniFile( )
+    {
+        PrfCloseProfile( _handle );
+    }
+    
+    int IniFile::read( const char *section, const char *key, const char *deflt,
+                  char *buffer, int len )
+    {
+        return( PrfQueryProfileString( _handle, (PSZ)section, (PSZ)key, (PSZ)deflt,
+                                       buffer, len ) );
+    }
+    
+    int IniFile::write( const char *section, const char *key, const char *string)
+    {
+        return( PrfWriteProfileString( _handle, (PSZ)section, (PSZ)key, (PSZ)string ) );
+    }
 
-            dir = getenv( "USER_INI" );
-            strcpy( buff, dir );
-            for( p=buff + strlen(buff) - 1; p >= buff; p-- ) {
-                if( *p == '\\' ) {
-                    *p = 0;
-                    break;
+#elif defined( __WINDOWS__ ) || defined( __NT__ )
+    /*
+     * shfolder.dll is loaded explicitly for compatability with Win98 -- calling
+     * SHGetFolderPathA directly doesn't work, probably due to order of linking
+    */
+    IniFile::IniFile()
+    {
+        char path[FILENAME_MAX];
+#ifdef __NT__
+        HINSTANCE library = LoadLibrary( "shfolder.dll" );
+        if ( library ) {
+            GetFolderPath getpath = (GetFolderPath)GetProcAddress(library, "SHGetFolderPathA");
+            if( SUCCEEDED( getpath( NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path ) ) ) {
+                if( strlen( path ) + strlen( "\\" IDE_INI_DIR ) + 12 < FILENAME_MAX) {
+                    strcat( path, "\\" IDE_INI_DIR);
+                    if( access(path, F_OK) )    // make sure CONFIG_DIR diretory is present
+                        mkdir( path );          // if not, create it
                 }
             }
-            strcat( buff, "\\" );
-            strcat( buff, filename );
-
-            if( ini_handle != NULLHANDLE )
-                PrfCloseProfile( ini_handle );
-
-            ini_handle = PrfOpenProfile( NULL, (PSZ)buff );
+            FreeLibrary( library );
         }
-        return ini_handle;
+        else                                    // should only get here on old machines
+            GetWindowsDirectory( path, FILENAME_MAX );  // that don't have shfolder.dll
+#else
+        GetWindowsDirectory( path, FILENAME_MAX );
+#endif
+        strcat( path, "\\" IDE_INI_FILENAME );
+        _path = path;
     }
-
-    int MyGetProfileString( const char *dir, const char *filename,
-                            const char *section, const char *key,
-                            const char *def, char *buffer, int len )
+    
+    IniFile::~IniFile( ) { }
+    
+    int IniFile::read( const char *section, const char *key, const char *deflt,
+                  char *buffer, int len )
     {
-        HINI    hini;
-        int     rc;
-
-        hini = getIniFile( dir, filename );
-
-        rc = PrfQueryProfileString( hini, (PSZ)section,
-                                    (PSZ)key, (PSZ)def,
-                                    buffer, len );
-        return( rc );
+        return( GetPrivateProfileString( section, key, deflt, buffer, len, _path) );
     }
-
-    int MyWriteProfileString( const char *dir, const char *filename,
-                              const char *section, const char *key,
-                              const char *string )
+    
+    int IniFile::write( const char *section, const char *key, const char *string)
     {
-        HINI hini;
-        int     rc;
-
-        hini = getIniFile( dir, filename );
-
-        rc = PrfWriteProfileString( hini, (PSZ)section,
-                                    (PSZ)key, (PSZ)string );
-        return( rc );
-    }
-
-    int MyCloseCurrentProfile( void )
-    {
-        int rc;
-
-        rc = PrfCloseProfile( ini_handle );
-        ini_handle = NULLHANDLE;
-        return rc;
-    }
-#elif defined( __WINDOWS__ ) || defined( __NT__ )
-    #include <windows.h>
-    int MyGetProfileString( const char *dir, const char *filename,
-                            const char *section, const char *key,
-                            const char *def, char *buffer, int len )
-    {
-        dir =dir; // ignored in this model
-        return(GetPrivateProfileString(section,key,def,buffer,len,filename));
-    }
-    int MyWriteProfileString( const char *dir, const char *filename,
-                              const char *section, const char *key,
-                              const char *string )
-    {
-        dir =dir; // ignored in this model
-        return(WritePrivateProfileString(section,key,string,filename));
-    }
-    int MyCloseCurrentProfile( void )
-    {
-        return 0;
+        return( WritePrivateProfileString( section, key, string, _path) );
     }
 #else
     #error UNSUPPORTED OS
 #endif
+
