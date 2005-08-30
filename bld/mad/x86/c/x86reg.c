@@ -491,26 +491,26 @@ walk_result DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void
     if( tk & (MTK_INTEGER|MTK_ADDRESS) ) {
         wr = wk( &RegSet[CPU_REG_SET], d );
         if( wr != WR_CONTINUE ) {
-			return( wr );
-		}
+            return( wr );
+        }
     }
     if( tk & MTK_FLOAT ) {
         wr = wk( &RegSet[FPU_REG_SET], d );
         if( wr != WR_CONTINUE ) {
-			return( wr );
-		}
+            return( wr );
+        }
     }
     if( (tk & MTK_CUSTOM) && (MCSystemConfig()->cpu & X86_MMX) ) {
         wr = wk( &RegSet[MMX_REG_SET], d );
         if( wr != WR_CONTINUE ) {
-			return( wr );
-		}
+            return( wr );
+        }
     }
     if( (tk & MTK_XMM) && (MCSystemConfig()->cpu & X86_XMM) ) {
         wr = wk( &RegSet[XMM_REG_SET], d );
         if( wr != WR_CONTINUE ) {
-			return( wr );
-		}
+            return( wr );
+        }
     }
     return( WR_CONTINUE );
 }
@@ -580,7 +580,7 @@ unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char
     if( max > 0 ) {
         --max;
         if( max > len )
-			max = len;
+            max = len;
         memcpy( buff, str, max );
         buff[max] = '\0';
     }
@@ -661,7 +661,7 @@ static mad_status CPUGetPiece(
         list_num = NUM_ELTS( list16 );
     }
     if( last_list == NULL )
-		last_list = list;
+        last_list = list;
     if( last_list != list ) {
         last_list = list;
         MCNotify( MNT_REDRAW_REG, (void *)&RegSet[CPU_REG_SET] );
@@ -671,14 +671,14 @@ static mad_status CPUGetPiece(
         if( piece >= list_num ) {
             piece -= list_num;
             if( piece >= NUM_ELTS( listOS ) )
-				return( MS_FAIL );
+                return( MS_FAIL );
             list = listOS;
         }
     } else {
         *max_descript_p = 3;
         if( piece >= list_num ) {
-			return( MS_FAIL );
-		}
+            return( MS_FAIL );
+        }
     }
     curr = list[ piece ];
     *max_value_p = 0;
@@ -782,8 +782,8 @@ static unsigned MaxModLen( const mad_modify_list *list, unsigned num )
         --num;
         len = MCString( list[num].name, 0, NULL );
         if( len > max ) {
-			max = len;
-		}
+            max = len;
+        }
     }
     return( max );
 }
@@ -807,9 +807,9 @@ static mad_status FPUGetPiece(
     const static x86_reg_info   FPU_nil;
     LIST( 0, st0,  st1,  st2,  st3,  st4,  st5,  st6,  st7 );
     LIST( 1, tag0, tag1, tag2, tag3, tag4, tag5, tag6, tag7 );
-    LIST( 2, ie,   de,   ze,   oe,   ue,   pe,   sf,   nil );
+    LIST( 2, ie,   de,   ze,   oe,   ue,   pe,   sf,   es  );
     LIST( 3, st,   c0,   c1,   c2,   c3,   nil,  nil,  nil );
-    LIST( 4, im,   dm,   zm,   om,   um,   pm,   iem,  es  );
+    LIST( 4, im,   dm,   zm,   om,   um,   pm,   iem,  nil );
     LIST( 5, sw,   cw,   pc,   rc,   ic,   iptr, optr, nil );
 
     unsigned            row;
@@ -827,7 +827,7 @@ static mad_status FPUGetPiece(
     *max_value_p = 0;
     row = piece / FPU_GROUPING;
     if( row > 7 )
-		return( MS_FAIL );
+        return( MS_FAIL );
     column = piece % FPU_GROUPING;
     switch( column ) {
     case 0: /* stack registers */
@@ -839,7 +839,7 @@ static mad_status FPUGetPiece(
         *p++ = ')';
         *p++ = '\0';
         if( MCSystemConfig()->fpu == X86_NO )
-			break;
+            break;
         *reg_p = &list0[row]->info;
         if( MADState->reg_state[FPU_REG_SET] & FT_HEX ) {
             *disp_type_p = X86T_HEXTENDED;
@@ -861,7 +861,7 @@ static mad_status FPUGetPiece(
         break;
     case 1: /* tag registers */
         if( MCSystemConfig()->fpu == X86_NO )
-			break;
+            break;
         *p++ = 'T';
         *p++ = 'A';
         *p++ = 'G';
@@ -875,7 +875,14 @@ static mad_status FPUGetPiece(
         break;
     case 2: /* status word bits 1 */
     case 3: /* status word bits 2 */
-        *reg_p = (column==2) ? &list2[row]->info : &list3[row]->info;
+    case 4: /* control word bits */
+        if( column == 2 ) {
+            *reg_p = &list2[row]->info;
+        } else if( column == 3 ) {
+            *reg_p = &list3[row]->info;
+        } else {
+            *reg_p = &list4[row]->info;
+        }
         if( (*reg_p)->name == NULL ) {
             *reg_p = NULL;
             break;
@@ -883,15 +890,7 @@ static mad_status FPUGetPiece(
         strcpy( p, (*reg_p)->name );
         *max_value_p = 1;
         if( MCSystemConfig()->fpu == X86_NO )
-			break;
-        *disp_type_p = X86T_BIT;
-        break;
-    case 4: /* control word bits */
-        *reg_p = &list4[row]->info;
-        strcpy( p, (*reg_p)->name );
-        *max_value_p = 1;
-        if( MCSystemConfig()->fpu == X86_NO )
-			break;
+            break;
         *disp_type_p = X86T_BIT;
         break;
     case 5: /* misc */
@@ -900,14 +899,14 @@ static mad_status FPUGetPiece(
         case 0:
             strcpy( p, "status" );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             *max_value_p = 0;
             *disp_type_p = X86T_WORD;
             break;
         case 1:
             strcpy( p, "control" );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             *max_value_p = 0;
             *disp_type_p = X86T_WORD;
             break;
@@ -915,28 +914,28 @@ static mad_status FPUGetPiece(
             strcpy( p, (*reg_p)->name );
             *max_value_p = MODLEN( ModFPUPc );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             *disp_type_p = X86T_PC;
             break;
         case 3:
             strcpy( p, (*reg_p)->name );
             *max_value_p = MODLEN( ModFPURc );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             *disp_type_p = X86T_RC;
             break;
         case 4:
             strcpy( p, (*reg_p)->name );
             *max_value_p = MODLEN( ModFPUIc );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             *disp_type_p = X86T_IC;
             break;
         case 5: /* iptr */
         case 6: /* optr */
             strcpy( p, (*reg_p)->name );
             if( MCSystemConfig()->fpu == X86_NO )
-				break;
+                break;
             switch( AddrCharacteristics( GetRegIP( mr ) ) ) {
             case X86AC_REAL:
                 *disp_type_p = X86T_FPPTR_REAL;
@@ -1073,7 +1072,7 @@ static mad_status MMXGetPiece(
     piece -= group;
 
     if( piece >= list_num )
-		return( MS_FAIL );
+        return( MS_FAIL );
     if( (piece % group) == 0 ) {
         /* first column */
         DescriptBuff[0] = 'M';
@@ -1238,7 +1237,7 @@ static mad_status XMMGetPiece(
     }
     row--;
     if( row > 7 )
-		return( MS_FAIL );
+        return( MS_FAIL );
     if( column == 0 ) {
         /* first column */
         DescriptBuff[0] = 'X';
@@ -1297,11 +1296,11 @@ mad_status DIGENTRY MIRegSetDisplayModify(
 {
     rsd = rsd;
     if( ri == &XXX_dummy.info )
-		return( MS_FAIL );
+        return( MS_FAIL );
     if( ri == &FPU_iptr.info )
-		return( MS_FAIL );
+        return( MS_FAIL );
     if( ri == &FPU_optr.info )
-		return( MS_FAIL );
+        return( MS_FAIL );
 
     if( ri == &FPU_pc.info ) {
         *possible_p = ModFPUPc;
@@ -1361,7 +1360,7 @@ static unsigned FmtPtr( addr_seg seg, addr_off off, unsigned off_digits,
     if( max > 0 ) {
         --max;
         if( len > max )
-			max = len;
+            max = len;
         memcpy( dst, buff, max );
         dst[max] = '\0';
     }
@@ -1383,7 +1382,7 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
         if( max > 0 ) {
             buff[0] = *(unsigned_8 *)d + '0';
             if( max > 1 )
-				max = 1;
+                max = 1;
             buff[max] = '\0';
         }
         return( 1 );
@@ -1421,7 +1420,7 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
         if( max > 0 ) {
             --max;
             if( max > 2 )
-				max = 2;
+                max = 2;
             memcpy( buff, title, max );
             buff[max] = '\0';
         }
@@ -1475,9 +1474,9 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
 static unsigned GetTag( const mad_registers *mr, int st )
 {
     if( st >= 8 )
-		st -= 8;
+        st -= 8;
     if( st <  0 )
-		st += 8;
+        st += 8;
     return( (mr->x86.fpu.tag >> (st*2)) & 0x03 );
 }
 
@@ -1503,7 +1502,7 @@ mad_status DIGENTRY MIRegModified(
 
     rsd = rsd;
     if( old == cur )
-		return( MS_OK );
+        return( MS_OK );
     cur_start = ri->bit_start;
     if( cur_start >= offsetof( mad_registers, x86.cpu.eip )*8
      && cur_start <  offsetof( mad_registers, x86.cpu.eip )*8 + 32 ) {
@@ -1511,9 +1510,9 @@ mad_status DIGENTRY MIRegModified(
         addr = GetRegIP( old );
         DecodeIns( &addr, &dd, BIG_SEG( addr ) );
         if( addr.mach.offset != cur->x86.cpu.eip )
-			return( MS_MODIFIED_SIGNIFICANTLY );
+            return( MS_MODIFIED_SIGNIFICANTLY );
         if( old->x86.cpu.eip != cur->x86.cpu.eip )
-			return( MS_MODIFIED );
+            return( MS_MODIFIED );
         return( MS_OK );
     }
     unchanged = MS_OK;
@@ -1537,8 +1536,8 @@ mad_status DIGENTRY MIRegModified(
                     }
                 }
                 if( cur_tag != TAG_EMPTY ) {
-					unchanged = MS_MODIFIED;
-				}
+                    unchanged = MS_MODIFIED;
+                }
             } else if( cur_tag == TAG_EMPTY ) {
                 return( MS_MODIFIED );
             } else {
@@ -1559,8 +1558,8 @@ mad_status DIGENTRY MIRegModified(
                 old_tag = GetTag( old, st );
                 cur_tag = GetTag( cur, st );
                 if( old_tag != cur_tag ) {
-					unchanged = MS_MODIFIED;
-				}
+                    unchanged = MS_MODIFIED;
+                }
             }
         }
     }
@@ -1697,7 +1696,7 @@ walk_result DIGENTRY MIRegWalk(
 
     list = ( ri == NULL ) ? rsd->reglist : ((const x86_reg_info *)ri)->sublist;
     if( list == NULL )
-		return( WR_CONTINUE );
+        return( WR_CONTINUE );
     level = MCSystemConfig()->cpu & X86_CPU_MASK;
     if( level >= X86_686 ) {
         cpulevel = L6;
@@ -1723,12 +1722,12 @@ walk_result DIGENTRY MIRegWalk(
     for( ;; ) {
         reg = *list;
         if( reg == NULL )
-			break;
+            break;
         if( reg->cpulevel <= cpulevel || reg->fpulevel <= fpulevel ) {
             wr = wk( &reg->info, reg->sublist != NULL, d );
             if( wr != WR_CONTINUE ) {
-				return( wr );
-			}
+                return( wr );
+            }
         }
         ++list;
     }
@@ -1834,12 +1833,12 @@ unsigned DIGENTRY MIRegSpecialName(
     len = 0;
     left = max;
     if( left > 0 )
-		--left;
+        --left;
     if( af == MAF_FULL ) {
         len = strlen( seg );
         amount = len;
         if( amount > left )
-			amount = left;
+            amount = left;
         memcpy( buff, seg, amount );
         buff += amount;
         left -= amount;
@@ -1852,12 +1851,12 @@ unsigned DIGENTRY MIRegSpecialName(
     amount = strlen( offset );
     len += amount;
     if( amount > left )
-		amount = left;
+        amount = left;
     memcpy( buff, offset, amount );
     buff += amount;
     left -= amount;
     if( max > 0 )
-		*buff = '\0';
+        *buff = '\0';
     return( len );
 }
 
@@ -1908,13 +1907,13 @@ void DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_st
 {
     bit_size = bit_size;
     if( flags & RF_GPREG )
-		MCNotify( MNT_MODIFY_REG, (void *)&RegSet[CPU_REG_SET] );
+        MCNotify( MNT_MODIFY_REG, (void *)&RegSet[CPU_REG_SET] );
     if( flags & (RF_FPREG|RF_MMREG) ) {
         MCNotify( MNT_MODIFY_REG, (void *)&RegSet[FPU_REG_SET] );
         MCNotify( MNT_MODIFY_REG, (void *)&RegSet[MMX_REG_SET] );
     }
     if( flags & RF_XMMREG )
-		MCNotify( MNT_MODIFY_REG, (void *)&RegSet[XMM_REG_SET] );
+        MCNotify( MNT_MODIFY_REG, (void *)&RegSet[XMM_REG_SET] );
     switch( bit_start ) {
     case offsetof( mad_registers, x86.cpu.eip ) * 8:
     case offsetof( mad_registers, x86.cpu.cs  ) * 8:
