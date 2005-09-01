@@ -47,7 +47,7 @@ endif
 
         datasegment
 
-        extrn   "C",__FPE_handler: dword
+        extrn   __FPE_exception_: proc
         extrn   "C",_STACKLOW   : dword
 
 TInf    db 00h,00h,00h,00h,00h,00h,00h,80h,0ffh,7fh
@@ -177,7 +177,7 @@ opcode: mov     BX,ES:[EDI]             ; get opcode
           lea   EAX,FPEStk-512          ; - set stack low variable
           mov   _STACKLOW,EAX           ; - set stack low variable
           movzx EAX,CL                  ; - set floating point status
-          call  __FPE_handler           ; - call user's handler
+          call  __FPE_exception_        ; - call user's handler
           mov   SS,SaveSS               ; - restore stack pointer
           mov   ESP,SaveESP             ; - ...
           pop   _STACKLOW               ; - restore old stacklow
