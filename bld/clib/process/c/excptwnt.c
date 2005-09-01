@@ -42,8 +42,8 @@
 #include "fpusig.h"
 #include "excptwnt.h"
 
-void *(*__oscode_check_func)(int, long) = NULL;
-int   (*__raise_func)(int)              = NULL;
+void *(*__oscode_check_func)( int, long ) = NULL;
+int   (*__raise_func)( int )              = NULL;
 unsigned char   __ExceptionHandled;
 unsigned char   __ReportInvoked;
 
@@ -103,12 +103,11 @@ static void fmt_hex( char *buf, char *fmt, void *hex ) {
     }
 }
 
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
 void *GetFromSS( DWORD *sp );
 #pragma aux GetFromSS = \
     "mov ebx,ss:[ecx]" \
-    parm [ecx] \
-    value [ebx]
+    parm [ecx] value [ebx]
 #endif
 
 
@@ -119,7 +118,7 @@ void *GetFromSS( DWORD *sp );
 LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
 {
     EXCEPTION_RECORD  *ex = rec->ExceptionRecord;
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
     CONTEXT           *context = rec->ContextRecord;
     DWORD             *sp;
     int               i;
@@ -148,10 +147,10 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
     /*
      * Lets see what caused the exception.
      */
-    switch (ex->ExceptionCode) {
-#if defined(_M_IX86)
+    switch( ex->ExceptionCode ) {
+#if defined( _M_IX86 )
     case STATUS_FLOAT_STACK_CHECK:
-        if (context->FloatSave.StatusWord & SW_C1) {
+        if( context->FloatSave.StatusWord & SW_C1 ) {
             fmt_hex( buff, "The instruction at 0x00000000 caused a "
                 "stack overflow floating point\nexception.\n",
                 ex->ExceptionAddress );
@@ -161,9 +160,9 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
                 ex->ExceptionAddress );
         }
         break;
-#elif defined(__AXP__)
+#elif defined( __AXP__ )
         // no alpha specific floating point exceptions
-#elif defined(__PPC__)
+#elif defined( __PPC__ )
         // no ppc specific floating point exceptions
 #endif
     case STATUS_FLOAT_DENORMAL_OPERAND:
@@ -196,7 +195,7 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
             "operation floating point\nexception.\n",
             ex->ExceptionAddress );
         break;
-#if defined(__AXP__)
+#if defined( __AXP__ )
     case STATUS_DATATYPE_MISALIGNMENT:
         fmt_hex( buff, "The instruction at 0x00000000 tried to reference ",
             ex->ExceptionAddress );
@@ -209,7 +208,7 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
             ex->ExceptionAddress );
         fmt_hex( buff, "at 0x00000000.\nThe memory could not be ",
             (void *)(ex->ExceptionInformation[1]) );
-        if ( ex->ExceptionInformation[0] == 0 ) {
+        if( ex->ExceptionInformation[0] == 0 ) {
             fmt_hex( buff, "read.\n", 0 );
         } else {
             fmt_hex( buff, "written.\n", 0 );
@@ -233,7 +232,7 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
         break;
     default:
         fmt_hex( buff, "The program encountered exception 0x00000000 at ",
-            (void *)ex->ExceptionCode);
+            (void *)ex->ExceptionCode );
         fmt_hex( buff, "address 0x00000000 and\ncannot continue.\n",
             ex->ExceptionAddress );
         break;
@@ -241,7 +240,7 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
 
     WriteFile( NT_STDERR_FILENO, buff, strlen( buff ), &written, NULL );
 
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
     buff[0] = '\0';
     fmt_hex( buff, "Exception fielded by 0x00000000\n", __ReportException );
     WriteFile( NT_STDERR_FILENO, buff, strlen(buff), &written, NULL );
@@ -289,14 +288,13 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
             sp++;
         }
     }
-
 #endif
 
     return( EXCEPTION_EXECUTE_HANDLER );
-} /* ReportException() */
+}
 
 
-void __DefaultExceptionHandler()
+void __DefaultExceptionHandler( void )
 {
     LPTOP_LEVEL_EXCEPTION_FILTER top_filter;
 
@@ -322,7 +320,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
 {
     int          sig;
     int          fpe;
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
     char        *eip;
     status_word  sw;
     DWORD        tw;
@@ -346,7 +344,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
      * Lets see what caused the exception.
      */
     switch( ex->ExceptionCode ) {
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
     case STATUS_FLOAT_STACK_CHECK:
         if( context->FloatSave.StatusWord & SW_C1 ) {
             fpe = FPE_STACKOVERFLOW;
@@ -354,14 +352,14 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
             fpe = FPE_STACKUNDERFLOW;
         }
         break;
-#elif defined(__AXP__)
+#elif defined( __AXP__ )
         // no alpha specific floating point exceptions
-#elif defined(__PPC__)
+#elif defined( __PPC__ )
         // no ppc specific floating point exceptions
 #else
 #error *** Platform Not Supported ***
 #endif
-        
+
     case STATUS_FLOAT_DENORMAL_OPERAND:
         fpe = FPE_DENORMAL;
         break;
@@ -379,9 +377,9 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
         break;
     case STATUS_FLOAT_INVALID_OPERATION:
         fpe = FPE_INVALID;
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
         eip = (unsigned char *)context->FloatSave.ErrorOffset;
-        
+
         if( *(unsigned short *)eip == 0xfad9 ) {        // caused by "fsqrt"
             fpe = FPE_SQRTNEG;
         } else if( *(unsigned short *)eip == 0xf1d9 ) { // caused by "fyl2x"
@@ -400,7 +398,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
                 if(( eip[1] & 0x30 ) == 0x30 ) {        // "fdiv" or "fidiv"
                     tw    = context->FloatSave.TagWord & 0x0000ffff;
                     sw.sw = context->FloatSave.StatusWord & 0x0000ffff;
-                    
+
                     if((( tw >> (sw.b.st << 1) ) & 0x01 ) == 0x01 ) {
                         fpe = FPE_ZERODIVIDE;
                     }
@@ -424,13 +422,13 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
 
         if( __sigfpe_handler( fpe ) != -1 ) {
             if( __ExceptionHandled ) {
-#if defined(_M_IX86)
+#if defined( _M_IX86 )
                 context->FloatSave.StatusWord &=
-                                    ~( SW_BUSY | SW_XCPT_FLAGS | SW_IREQ );
-#elif defined(__AXP__)
+                    ~( SW_BUSY | SW_XCPT_FLAGS | SW_IREQ );
+#elif defined( __AXP__ )
                 ((unsigned long *)&context->Fpcr)[1] &=
-                                    ~(FPCR_SUMMARY_BIT | FPCR_XCPT_FLAGS);
-#elif defined(__PPC__)
+                    ~(FPCR_SUMMARY_BIT | FPCR_XCPT_FLAGS);
+#elif defined( __PPC__ )
                 // Can we do something here?
 #else
 #error *** Platform Not Supported ***
@@ -443,16 +441,16 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
          * If the signal handling code is linked in then we need to see if the
          * user has installed a signal handler.
          */
-        void (*func)(int);
+        void (*func)( int );
 
         for( sig = 1; sig <= __SIGLAST; sig++ ) {
-            func = __oscode_check_func(sig, ex->ExceptionCode);
+            func = __oscode_check_func( sig, ex->ExceptionCode );
             if( func != NULL ) {
                 if(( func == SIG_IGN ) || ( func == SIG_DFL ) || ( func == SIG_ERR )) {
                     break;
                 }
                 __ExceptionHandled = 1;
-                (*__raise_func)(sig);
+                (*__raise_func)( sig );
                 if( __ExceptionHandled ) { // User has fixed up state
                     return( ExceptionContinueExecution );
                 }
@@ -482,8 +480,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
         return( ExceptionContinueExecution );
     }
     return( ExceptionContinueSearch );
-
-} /* __ExceptionFilter */
+}
 
 
 void __NewExceptionFilter( REGISTRATION_RECORD *rr )
@@ -491,13 +488,13 @@ void __NewExceptionFilter( REGISTRATION_RECORD *rr )
     // This routine is called whenever a new process/thread begins.
 
     __XCPTHANDLER = rr;
-#if defined(__386__)
-    rr->RegistrationRecordPrev = (LPVOID) GetFromFS( 0 );
+#if defined( __386__ )
+    rr->RegistrationRecordPrev = (LPVOID)GetFromFS( 0 );
     rr->RegistrationRecordFilter = __ExceptionFilter;
-    PutToFS( (DWORD) rr, 0 );
-#elif defined (__AXP__)
+    PutToFS( (DWORD)rr, 0 );
+#elif defined( __AXP__ )
     // __ExceptionFilter() installed in __NTMain()'s pdata
-#elif defined (__PPC__)
+#elif defined( __PPC__ )
     // No idea yet.
 #endif
 
@@ -505,15 +502,15 @@ void __NewExceptionFilter( REGISTRATION_RECORD *rr )
 
 void __DoneExceptionFilter( void )
 {
-#if defined(__386__)
+#if defined( __386__ )
     REGISTRATION_RECORD *rr;
     rr = __XCPTHANDLER;
     if( rr ) {
-        PutToFS( (DWORD) rr->RegistrationRecordPrev, 0 );
+        PutToFS( (DWORD)rr->RegistrationRecordPrev, 0 );
     }
-#elif defined(__AXP__)
+#elif defined( __AXP__ )
     // Nothing to do
-#elif defined(__PPC__)
+#elif defined( __PPC__ )
     // No idea yet.
 #endif
 

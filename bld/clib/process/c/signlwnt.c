@@ -49,134 +49,127 @@
 #include "signlwnt.h"
 #include "rtinit.h"
 
-_WCRTLINK extern void (*__sig_init_rtn)(void);
-_WCRTLINK extern void (*__sig_fini_rtn)(void);
+_WCRTLINK extern void (*__sig_init_rtn)( void );
+_WCRTLINK extern void (*__sig_fini_rtn)( void );
 
 typedef void sig_func();
 
 //#define       XCPT_FPE        -1      /* trap all floating-point exceptions */
 sigtab  SignalTable[] = {
-        { SIG_IGN, -1 },                                /* unused  */
-        { SIG_DFL, -1 },                                /* SIGABRT */
-        { SIG_IGN, -1 },                                /* SIGFPE  */
-        { SIG_DFL, STATUS_ILLEGAL_INSTRUCTION },        /* SIGILL  */
-        { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGINT  */
-        { SIG_DFL, STATUS_ACCESS_VIOLATION },           /* SIGSEGV */
-        { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGTERM */
-        { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGBREAK */
-        { SIG_IGN, -1 },                                /* SIGUSR1 */
-        { SIG_IGN, -1 },                                /* SIGUSR2 */
-        { SIG_IGN, -1 },                                /* SIGUSR3 */
-        { SIG_DFL, STATUS_INTEGER_DIVIDE_BY_ZERO },     /* SIGIDIVZ */
-        { SIG_IGN, STATUS_INTEGER_OVERFLOW }            /* SIGIOVFL */
+    { SIG_IGN, -1 },                                /* unused  */
+    { SIG_DFL, -1 },                                /* SIGABRT */
+    { SIG_IGN, -1 },                                /* SIGFPE  */
+    { SIG_DFL, STATUS_ILLEGAL_INSTRUCTION },        /* SIGILL  */
+    { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGINT  */
+    { SIG_DFL, STATUS_ACCESS_VIOLATION },           /* SIGSEGV */
+    { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGTERM */
+    { SIG_DFL, STATUS_CONTROL_C_EXIT },             /* SIGBREAK */
+    { SIG_IGN, -1 },                                /* SIGUSR1 */
+    { SIG_IGN, -1 },                                /* SIGUSR2 */
+    { SIG_IGN, -1 },                                /* SIGUSR3 */
+    { SIG_DFL, STATUS_INTEGER_DIVIDE_BY_ZERO },     /* SIGIDIVZ */
+    { SIG_IGN, STATUS_INTEGER_OVERFLOW }            /* SIGIOVFL */
 };
 
 static char CtrlHandlerRunning = FALSE;
 
 
-void *__SetSignalFunc(int sig, void (*new_func)(int))
+void *__SetSignalFunc( int sig, void (*new_func)( int ) )
 {
-    void (*prev_func)(int) = NULL;
+    void (*prev_func)( int ) = NULL;
 
-    if ((sig == SIGBREAK) || (sig == SIGINT))
-    {
-        prev_func = SignalTable[sig].func;
-        SignalTable[sig].func = new_func;
+    if(( sig == SIGBREAK ) || ( sig == SIGINT )) {
+        prev_func = SignalTable[ sig ].func;
+        SignalTable[ sig ].func = new_func;
+    } else {
+        prev_func = _RWD_sigtab[ sig ].func;
+        _RWD_sigtab[ sig ].func = new_func;
     }
-    else
-    {
-        prev_func = _RWD_sigtab[sig].func;
-        _RWD_sigtab[sig].func = new_func;
-    }
-
-    return prev_func;
-} /* __SetSignalFunc() */
+    return( prev_func );
+}
 
 
-void *__GetSignalFunc(int sig)
+void *__GetSignalFunc( int sig )
 {
-    if ((sig == SIGBREAK) || (sig == SIGINT))
-        return SignalTable[sig].func;
+    if(( sig == SIGBREAK ) || ( sig == SIGINT ))
+        return( SignalTable[ sig ].func );
 
-    return _RWD_sigtab[sig].func;
-} /* __GetSignalFunc() */
+    return( _RWD_sigtab[ sig ].func );
+}
 
 
-long __GetSignalOSCode(int sig)
+long __GetSignalOSCode( int sig )
 {
-    if ((sig == SIGBREAK) || (sig == SIGINT))
-        return SignalTable[sig].os_sig_code;
+    if(( sig == SIGBREAK ) || ( sig == SIGINT ))
+        return( SignalTable[ sig ].os_sig_code );
 
-    return _RWD_sigtab[sig].os_sig_code;
-} /* __GetSignalOSCode() */
+    return( _RWD_sigtab[ sig ].os_sig_code );
+}
 
 
-void *__CheckSignalExCode(int sig, long code)
+void *__CheckSignalExCode( int sig, long code )
 {
-    if (code == __GetSignalOSCode(sig))
-        return __GetSignalFunc(sig);
+    if( code == __GetSignalOSCode( sig ) )
+        return( __GetSignalFunc( sig ) );
 
-    return NULL;
-} /* __CheckSignalExCode() */
+    return( NULL );
+}
 
 
-static BOOL WINAPI CtrlSignalHandler(IN ULONG Event)
+static BOOL WINAPI CtrlSignalHandler( IN ULONG Event )
 {
     sig_func *func;
 
-    switch (Event)
-    {
-        case CTRL_C_EVENT:
-            func = __GetSignalFunc(SIGINT);
-            if (!func)
-                return FALSE;
-            raise(SIGINT);
-            break;
-
-        case CTRL_BREAK_EVENT:
-            func = __GetSignalFunc(SIGBREAK);
-            if (!func)
-                return FALSE;
-            raise(SIGBREAK);
-            break;
-
-        default:
-            return FALSE;
+    switch( Event ) {
+    case CTRL_C_EVENT:
+        func = __GetSignalFunc( SIGINT );
+        if( !func )
+            return( FALSE );
+        raise( SIGINT );
+        break;
+    case CTRL_BREAK_EVENT:
+        func = __GetSignalFunc( SIGBREAK );
+        if( !func )
+            return( FALSE );
+        raise( SIGBREAK );
+        break;
+    default:
+        return( FALSE );
     }
 
-    if ((func == SIG_DFL) || (func == SIG_ERR))
-        return FALSE;
+    if(( func == SIG_DFL ) || ( func == SIG_ERR ))
+        return( FALSE );
 
-    return TRUE;
-} /* CtrlSignalHandler() */
+    return( TRUE );
+}
 
 
-static BOOL CtrlHandlerIsNeeded(void)
+static BOOL CtrlHandlerIsNeeded( void )
 {
-    void *int_func = __GetSignalFunc(SIGINT);
-    void *brk_func = __GetSignalFunc(SIGBREAK);
+    void *int_func = __GetSignalFunc( SIGINT );
+    void *brk_func = __GetSignalFunc( SIGBREAK );
 
-    return (((int_func != SIG_DFL) && (int_func != SIG_ERR))
-                    || ((brk_func != SIG_DFL) && (brk_func != SIG_ERR)));
-} /* CtrlHandlerIsNeeded() */
+    return((( int_func != SIG_DFL ) && ( int_func != SIG_ERR ))
+        || (( brk_func != SIG_DFL ) && ( brk_func != SIG_ERR )));
+}
 
 
-static BOOL StartCtrlHandler(void)
+static BOOL StartCtrlHandler( void )
 {
-    if (!CtrlHandlerRunning && SetConsoleCtrlHandler(CtrlSignalHandler, TRUE))
+    if( !CtrlHandlerRunning && SetConsoleCtrlHandler( CtrlSignalHandler, TRUE ) )
         CtrlHandlerRunning = TRUE;
 
-    return (BOOL)CtrlHandlerRunning;
-} /* StartCtrlHandler() */
+    return( (BOOL)CtrlHandlerRunning );
+}
 
 
-static BOOL KillCtrlHandler(void)
+static BOOL KillCtrlHandler( void )
 {
-    if (CtrlHandlerRunning && SetConsoleCtrlHandler(CtrlSignalHandler, FALSE))
+    if( CtrlHandlerRunning && SetConsoleCtrlHandler( CtrlSignalHandler, FALSE ) )
         CtrlHandlerRunning = FALSE;
 
-    return !(BOOL)CtrlHandlerRunning;
-} /* KillCtrlHandler() */
+    return( !(BOOL)CtrlHandlerRunning );
+}
 
 
 void __sigabort( void )
@@ -188,9 +181,9 @@ _WCRTLINK int __sigfpe_handler( int fpe )
 {
     sig_func *func;
 
-    func = __GetSignalFunc(SIGFPE);
-    if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
-        __SetSignalFunc(SIGFPE, SIG_DFL);
+    func = __GetSignalFunc( SIGFPE );
+    if(( func != SIG_IGN ) && ( func != SIG_DFL ) && ( func != SIG_ERR )) {
+        __SetSignalFunc( SIGFPE, SIG_DFL );
         (*func)( SIGFPE, fpe );
         return( 0 );
     }
@@ -198,21 +191,21 @@ _WCRTLINK int __sigfpe_handler( int fpe )
 }
 
 
-_WCRTLINK void (*signal( int sig, void (*func)(int) ))( int )
+_WCRTLINK void (*signal( int sig, void (*func)( int ) ))( int )
 {
-    void (*prev_func)(int);
+    void (*prev_func)( int );
 
-    if( ( sig < 1 ) || ( sig > __SIGLAST ) ) {
+    if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
         return( SIG_ERR );
     }
 
     __abort = __sigabort;               /* change the abort rtn address */
 
-    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
-        if( __GetSignalOSCode(sig) != 0 ) {
+    if(( func != SIG_DFL ) && ( func != SIG_ERR )) {
+        if( __GetSignalOSCode( sig ) != 0 ) {
             if( sig == SIGFPE ) {
-#if defined(__AXP__) || defined(__PPC__)
+#if defined( __AXP__ ) || defined( __PPC__ )
                 // __FIXME__
 #else
                 /* enable all interrupts, except precision exception */
@@ -224,11 +217,11 @@ _WCRTLINK void (*signal( int sig, void (*func)(int) ))( int )
     } else {
     }
 
+    
+    prev_func = __GetSignalFunc( sig );
+    __SetSignalFunc( sig, func );
 
-    prev_func = __GetSignalFunc(sig);
-    __SetSignalFunc(sig, func);
-
-    if (CtrlHandlerIsNeeded())
+    if( CtrlHandlerIsNeeded() )
         StartCtrlHandler();
     else
         KillCtrlHandler();
@@ -241,7 +234,7 @@ _WCRTLINK int raise( int sig )
 {
     sig_func *func;
 
-    func = __GetSignalFunc(sig);
+    func = __GetSignalFunc( sig );
     switch( sig ) {
     case SIGFPE:
         __sigfpe_handler( FPE_EXPLICITGEN );
@@ -260,27 +253,27 @@ _WCRTLINK int raise( int sig )
     case SIGUSR3:
     case SIGIDIVZ:
     case SIGIOVFL:
-        if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
-            __SetSignalFunc(sig, SIG_DFL);
+        if(( func != SIG_IGN ) && ( func != SIG_DFL ) && ( func != SIG_ERR )) {
+            __SetSignalFunc( sig, SIG_DFL );
             (*func)( sig );
         }
         /*
-         * If the CtrlSignalHandler was needed before we processed the
-         * signal but is not needed NOW then we need to remove it since it
-         * has just now become unnecessary.
-         *
-         * NOTE: This MAY be a bad thing to do since raise() might have been
-         *       called from within CtrlSignalHandler() in which case we are
-         *       removing the handler from within the handler.  Does NT care?
-         */
-        if (!CtrlHandlerIsNeeded())
-                KillCtrlHandler();
+        * If the CtrlSignalHandler was needed before we processed the
+        * signal but is not needed NOW then we need to remove it since it
+        * has just now become unnecessary.
+        *
+        * NOTE: This MAY be a bad thing to do since raise() might have been
+        *       called from within CtrlSignalHandler() in which case we are
+        *       removing the handler from within the handler.  Does NT care?
+        */
+        if( !CtrlHandlerIsNeeded() )
+            KillCtrlHandler();
         break;
     default:
         return( -1 );
     }
     return( 0 );
-} /* raise() */
+}
 
 
 void __SigInit( void )
@@ -295,7 +288,7 @@ void __SigInit( void )
 
     __oscode_check_func = __CheckSignalExCode;
     __raise_func        = raise;
-} /* __SigInit() */
+}
 
 
 void __SigFini( void )
@@ -305,21 +298,21 @@ void __SigFini( void )
      * then the CtrlSignalHandler is still loaded and we want to get
      * rid of it.
      */
-    if (CtrlHandlerIsNeeded())
+    if( CtrlHandlerIsNeeded() )
     {
         KillCtrlHandler();
-        __SetSignalFunc(SIGINT, SIG_DFL);
-        __SetSignalFunc(SIGBREAK, SIG_DFL);
+        __SetSignalFunc( SIGINT, SIG_DFL );
+        __SetSignalFunc( SIGBREAK, SIG_DFL );
     }
-} /* __SigFini() */
+}
 
 
 
-void __sig_init(void)
+void __sig_init( void )
 {
     __sig_init_rtn = __SigInit;
     __sig_fini_rtn = __SigFini;
-} /* __sig_init() */
+}
 
 
 AXI(__sig_init, INIT_PRIORITY_LIBRARY)
