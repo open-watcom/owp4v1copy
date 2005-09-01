@@ -106,39 +106,39 @@ cdsay .
     <CPCMD> <DEVDIR>/src/win/alarm/win16/*.*            <RELROOT>/rel2/samples/win/alarm/win16/
     <CPCMD> <DEVDIR>/src/win/alarm/win32/*.*            <RELROOT>/rel2/samples/win/alarm/win32/
     <CPCMD> <DEVDIR>/src/win/alarm/win386/*.*           <RELROOT>/rel2/samples/win/alarm/win386/
-#    <CPCMD> <DEVDIR>/src/win/alarm/winaxp/*.*           <RELROOT>/rel2/samples/win/alarm/winaxp/
+    <CPCMD> <DEVDIR>/src/win/alarm/winaxp/*.*           <RELROOT>/rel2/samples/win/alarm/winaxp/
     <CPCMD> <DEVDIR>/src/win/datactl/win16/*.*          <RELROOT>/rel2/samples/win/datactl/win16/
     <CPCMD> <DEVDIR>/src/win/datactl/win32/*.*          <RELROOT>/rel2/samples/win/datactl/win32/
     <CPCMD> <DEVDIR>/src/win/datactl/win386/*.*         <RELROOT>/rel2/samples/win/datactl/win386/
-#    <CPCMD> <DEVDIR>/src/win/datactl/winaxp/*.*         <RELROOT>/rel2/samples/win/datactl/winaxp/
+    <CPCMD> <DEVDIR>/src/win/datactl/winaxp/*.*         <RELROOT>/rel2/samples/win/datactl/winaxp/
     <CPCMD> <DEVDIR>/src/win/edit/win16/*.*             <RELROOT>/rel2/samples/win/edit/win16/
     <CPCMD> <DEVDIR>/src/win/edit/win32/*.*             <RELROOT>/rel2/samples/win/edit/win32/
     <CPCMD> <DEVDIR>/src/win/edit/win386/*.*            <RELROOT>/rel2/samples/win/edit/win386/
-#    <CPCMD> <DEVDIR>/src/win/edit/winaxp/*.*            <RELROOT>/rel2/samples/win/edit/winaxp/
+    <CPCMD> <DEVDIR>/src/win/edit/winaxp/*.*            <RELROOT>/rel2/samples/win/edit/winaxp/
     <CPCMD> <DEVDIR>/src/win/generic/win16/*.*          <RELROOT>/rel2/samples/win/generic/win16/
     <CPCMD> <DEVDIR>/src/win/generic/win32/*.*          <RELROOT>/rel2/samples/win/generic/win32/
     <CPCMD> <DEVDIR>/src/win/generic/win386/*.*         <RELROOT>/rel2/samples/win/generic/win386/
-#    <CPCMD> <DEVDIR>/src/win/generic/winaxp/*.*         <RELROOT>/rel2/samples/win/generic/winaxp/
+    <CPCMD> <DEVDIR>/src/win/generic/winaxp/*.*         <RELROOT>/rel2/samples/win/generic/winaxp/
     <CPCMD> <DEVDIR>/src/win/helpex/win16/*.*           <RELROOT>/rel2/samples/win/helpex/win16/
     <CPCMD> <DEVDIR>/src/win/helpex/win32/*.*           <RELROOT>/rel2/samples/win/helpex/win32/
     <CPCMD> <DEVDIR>/src/win/helpex/win386/*.*          <RELROOT>/rel2/samples/win/helpex/win386/
-#    <CPCMD> <DEVDIR>/src/win/helpex/winaxp/*.*          <RELROOT>/rel2/samples/win/helpex/winaxp/
+    <CPCMD> <DEVDIR>/src/win/helpex/winaxp/*.*          <RELROOT>/rel2/samples/win/helpex/winaxp/
     <CPCMD> <DEVDIR>/src/win/iconview/win16/*.*         <RELROOT>/rel2/samples/win/iconview/win16/
     <CPCMD> <DEVDIR>/src/win/iconview/win32/*.*         <RELROOT>/rel2/samples/win/iconview/win32/
     <CPCMD> <DEVDIR>/src/win/iconview/win386/*.*        <RELROOT>/rel2/samples/win/iconview/win386/
-#    <CPCMD> <DEVDIR>/src/win/iconview/winaxp/*.*        <RELROOT>/rel2/samples/win/iconview/winaxp/
+    <CPCMD> <DEVDIR>/src/win/iconview/winaxp/*.*        <RELROOT>/rel2/samples/win/iconview/winaxp/
     <CPCMD> <DEVDIR>/src/win/life/win16/*.*             <RELROOT>/rel2/samples/win/life/win16/
     <CPCMD> <DEVDIR>/src/win/life/win32/*.*             <RELROOT>/rel2/samples/win/life/win32/
     <CPCMD> <DEVDIR>/src/win/life/win386/*.*            <RELROOT>/rel2/samples/win/life/win386/
-#    <CPCMD> <DEVDIR>/src/win/life/winaxp/*.*            <RELROOT>/rel2/samples/win/life/winaxp/
+    <CPCMD> <DEVDIR>/src/win/life/winaxp/*.*            <RELROOT>/rel2/samples/win/life/winaxp/
     <CPCMD> <DEVDIR>/src/win/shootgal/win16/*.*         <RELROOT>/rel2/samples/win/shootgal/win16/
     <CPCMD> <DEVDIR>/src/win/shootgal/win32/*.*         <RELROOT>/rel2/samples/win/shootgal/win32/
     <CPCMD> <DEVDIR>/src/win/shootgal/win386/*.*        <RELROOT>/rel2/samples/win/shootgal/win386/
-#    <CPCMD> <DEVDIR>/src/win/shootgal/winaxp/*.*        <RELROOT>/rel2/samples/win/shootgal/winaxp/
+    <CPCMD> <DEVDIR>/src/win/shootgal/winaxp/*.*        <RELROOT>/rel2/samples/win/shootgal/winaxp/
     <CPCMD> <DEVDIR>/src/win/watzee/win16/*.*           <RELROOT>/rel2/samples/win/watzee/win16/
     <CPCMD> <DEVDIR>/src/win/watzee/win32/*.*           <RELROOT>/rel2/samples/win/watzee/win32/
     <CPCMD> <DEVDIR>/src/win/watzee/win386/*.*          <RELROOT>/rel2/samples/win/watzee/win386/
-#    <CPCMD> <DEVDIR>/src/win/watzee/winaxp/*.*          <RELROOT>/rel2/samples/win/watzee/winaxp/
+    <CPCMD> <DEVDIR>/src/win/watzee/winaxp/*.*          <RELROOT>/rel2/samples/win/watzee/winaxp/
 
     <CPCMD> <DEVDIR>/src/directx/c/d3d/*.*              <RELROOT>/rel2/samples/directx/c/d3d/
     <CPCMD> <DEVDIR>/src/directx/c/dinput/*.*           <RELROOT>/rel2/samples/directx/c/dinput/

@@ -69,7 +69,11 @@ static void DoCmdLine( LPSTR cmdline )
     HWND        hwnd;
     FILE        *fp;
 
+#ifdef M_I86
     _fstrcpy( command, cmdline );
+#else
+    strcpy( command, cmdline );
+#endif
     for( p = command; *p; p++ ) {
         if( !isspace( *p ) ) {
             if( *p == '-' || *p == '/' ) {

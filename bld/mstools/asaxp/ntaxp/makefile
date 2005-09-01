@@ -1,6 +1,6 @@
 #pmake: asaxp nt axp os_nt cpu_axp
 
-host_OS     = nt
-host_CPU    = axp
+host_os     = nt
+host_cpu    = axp
 
 !include ../asaxp.mif
