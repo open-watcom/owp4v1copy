@@ -50,6 +50,8 @@
 
 extern  int     GetAliasInfo();
 
+static byte_seq *AuxCodeDup( byte_seq *code );
+
 static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 
 #define WCPP_ASM     // enable assembler
@@ -195,6 +197,17 @@ static void assemblerInit(      // INITIALIZATION OF ASSEMBLER
 
 INITDEFN( assembler, assemblerInit, InitFiniStub )
 
+
+static void AuxCopy(           // COPY AUX STRUCTURE
+    AUX_INFO *to,               // - destination
+    AUX_INFO *from )            // - source
+{
+    freeAuxInfo( to );
+    *to = *from;
+    to->parms = AuxParmDup( from->parms );
+    to->objname = AuxObjnameDup( from->objname );
+    to->code = AuxCodeDup( from->code );
+}
 
 static boolean GetAliasInfo(
     void )
@@ -865,7 +878,7 @@ static void AddAFix(
     FixupHead = fix;
 }
 
-byte_seq *AuxCodeDup(        // DUPLICATE AUX CODE
+static byte_seq *AuxCodeDup(        // DUPLICATE AUX CODE
     byte_seq *code )
 {
     byte_seq *new_code;

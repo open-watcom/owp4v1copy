@@ -43,6 +43,8 @@
 #include "carve.h"
 #include "pcheader.h"
 
+static risc_byte_seq *AuxCodeDup( risc_byte_seq *code );
+
 static void pragmaInit(         // INIT PRAGMAS
     INITFINI* defn )            // - definition
 {
@@ -106,7 +108,7 @@ boolean PragmaOKForVariables(   // TEST IF PRAGMA IS SUITABLE FOR A VARIABLE
         return( TRUE );
     }
     def_info = &DefaultInfo;
-    if( datap->_class != def_info->_class ) {
+    if( datap->cclass != def_info->cclass ) {
         return( FALSE );
     }
     if( datap->code != def_info->code ) {
@@ -117,7 +119,6 @@ boolean PragmaOKForVariables(   // TEST IF PRAGMA IS SUITABLE FOR A VARIABLE
     }
     return( TRUE );
 }
-
 
 // The following defines which flags are to be ignored when checking
 // a pragma call classes for equivalence.
@@ -141,8 +142,8 @@ boolean PragmasTypeEquivalent(  // TEST IF TWO PRAGMAS ARE TYPE-EQUIVALENT
         return TRUE;
     }
     return
-           ( ( inf1->_class & ~CALL_CLASS_IGNORE ) ==
-             ( inf2->_class & ~CALL_CLASS_IGNORE ) )
+           ( ( inf1->cclass & ~CALL_CLASS_IGNORE ) ==
+             ( inf2->cclass & ~CALL_CLASS_IGNORE ) )
         && ( inf1->flags == inf2->flags );
 }
 
@@ -179,6 +180,17 @@ boolean AsmSysInsertFixups( VBUF *code )
     seq->relocs = cg_relocs;
     CurrInfo->code = seq;
     return( uses_auto );
+}
+
+static void AuxCopy(           // COPY AUX STRUCTURE
+    AUX_INFO *to,               // - destination
+    AUX_INFO *from )            // - source
+{
+    freeAuxInfo( to );
+    *to = *from;
+    to->parms = AuxParmDup( from->parms );
+    to->objname = AuxObjnameDup( from->objname );
+    to->code = AuxCodeDup( from->code );
 }
 
 void *AsmSysCreateAux( char *name )
@@ -316,8 +328,8 @@ void AsmSysPCHReadCode( AUX_INFO *info )
     }
 }
 
-syscode_seq *AuxCodeDup(        // DUPLICATE AUX CODE
-    syscode_seq *code )
+static risc_byte_seq *AuxCodeDup(        // DUPLICATE AUX CODE
+    risc_byte_seq *code )
 {
     byte_seq_len code_length;
     byte_seq_len size;

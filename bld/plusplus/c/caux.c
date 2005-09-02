@@ -79,24 +79,13 @@ char *AuxObjnameDup(            // DUPLICATE AUX OBJNAME
     return( strsave( objname ) );
 }
 
-static void freeAuxInfo( AUX_INFO *i )
+void freeAuxInfo( AUX_INFO *i ) // FREE ALL AUX INFO MEM
 {
     if( i->parms != DefaultParms ) {
         CMemFree( i->parms );
     }
     CMemFree( i->objname );
     CMemFree( i->code );
-}
-
-void AuxCopy(                   // COPY AUX STRUCTURE
-    AUX_INFO *to,               // - destination
-    AUX_INFO *from )            // - source
-{
-    freeAuxInfo( to );
-    *to = *from;
-    to->parms = AuxParmDup( from->parms );
-    to->objname = AuxObjnameDup( from->objname );
-    to->code = AuxCodeDup( from->code );
 }
 
 AUX_ENTRY *AuxLookup( char *name )

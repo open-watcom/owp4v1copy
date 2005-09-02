@@ -86,12 +86,8 @@ hw_reg_set *AuxParmDup(         // DUPLICATE AUX PARMS
 char *AuxObjnameDup(            // DUPLICATE AUX OBJNAME
     char *objname )
 ;
-byte_seq *AuxCodeDup(           // DUPLICATE AUX CODE
-    byte_seq *code )
-;
-void AuxCopy(                   // COPY AUX STRUCTURE
-    AUX_INFO *to,               // - destination
-    AUX_INFO *from )            // - source
+void freeAuxInfo(               // FREE ALL AUX INFO MEM
+    AUX_INFO *i )
 ;
 struct aux_entry *AuxLookup(    // LOOK UP AUX ENTRY
     char *name )
