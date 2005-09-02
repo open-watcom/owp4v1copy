@@ -51,35 +51,36 @@ typedef void sig_func();
     #pragma aux (__outside_CLIB) sig_func;
 #endif
 
-extern  void            __terminate();
+extern  void            __terminate( void );
 
-extern  void            (*__abort)();
-extern  void            __null_int23_exit();
-extern  void            (*__int23_exit)();
+extern  void            (*__abort)( void );
+extern  void            __null_int23_exit( void );
+extern  void            (*__int23_exit)( void );
 
 unsigned        char    __ExceptionHandled;
 
 #define XCPT_FPE        -1      /* trap all floating-point exceptions */
 
 sigtab  SignalTable[] = {
-        { SIG_IGN, 0 },                                 /* unused  */
-        { SIG_DFL, 0 },                                 /* SIGABRT */
-        { SIG_IGN, XCPT_FPE },                          /* SIGFPE  */
-        { SIG_DFL, XCPT_ILLEGAL_INSTRUCTION },          /* SIGILL  */
-        { SIG_DFL, XCPT_SIGNAL },                       /* SIGINT  */
-        { SIG_DFL, XCPT_ACCESS_VIOLATION },             /* SIGSEGV */
-        { SIG_DFL, XCPT_SIGNAL },                       /* SIGTERM */
-        { SIG_DFL, XCPT_SIGNAL },                       /* SIGBREAK */
-        { SIG_IGN, 0 },                                 /* SIGUSR1 */
-        { SIG_IGN, 0 },                                 /* SIGUSR2 */
-        { SIG_IGN, 0 },                                 /* SIGUSR3 */
-        { SIG_DFL, XCPT_INTEGER_DIVIDE_BY_ZERO },       /* SIGIDIVZ */
-        { SIG_DFL, XCPT_INTEGER_OVERFLOW }              /* SIGIOVFL */
+    { SIG_IGN, 0 },                                 /* unused  */
+    { SIG_DFL, 0 },                                 /* SIGABRT */
+    { SIG_IGN, XCPT_FPE },                          /* SIGFPE  */
+    { SIG_DFL, XCPT_ILLEGAL_INSTRUCTION },          /* SIGILL  */
+    { SIG_DFL, XCPT_SIGNAL },                       /* SIGINT  */
+    { SIG_DFL, XCPT_ACCESS_VIOLATION },             /* SIGSEGV */
+    { SIG_DFL, XCPT_SIGNAL },                       /* SIGTERM */
+    { SIG_DFL, XCPT_SIGNAL },                       /* SIGBREAK */
+    { SIG_IGN, 0 },                                 /* SIGUSR1 */
+    { SIG_IGN, 0 },                                 /* SIGUSR2 */
+    { SIG_IGN, 0 },                                 /* SIGUSR3 */
+    { SIG_DFL, XCPT_INTEGER_DIVIDE_BY_ZERO },       /* SIGIDIVZ */
+    { SIG_DFL, XCPT_INTEGER_OVERFLOW }              /* SIGIOVFL */
 };
 
 
-_WCRTLINK int   __sigfpe_handler( int fpe ) {
-/***********************************/
+_WCRTLINK int   __sigfpe_handler( int fpe )
+/******************************************/
+{
 
     sig_func *func;
 
@@ -87,7 +88,7 @@ _WCRTLINK int   __sigfpe_handler( int fpe ) {
     if( func == SIG_IGN ) {
         return( 0 );
     }
-    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
+    if(( func != SIG_DFL ) && ( func != SIG_ERR )) {
         _RWD_sigtab[ SIGFPE ].func = SIG_DFL;
         (*func)( SIGFPE, fpe );
         return( 0 );
@@ -111,8 +112,8 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
     registration = registration;
     unknown = unknown;
 
-    if( ( pxcpt->ExceptionNum >= XCPT_FLOAT_DENORMAL_OPERAND ) &&
-        ( pxcpt->ExceptionNum <= XCPT_FLOAT_UNDERFLOW ) ) {
+    if(( pxcpt->ExceptionNum >= XCPT_FLOAT_DENORMAL_OPERAND ) &&
+       ( pxcpt->ExceptionNum <= XCPT_FLOAT_UNDERFLOW )) {
         switch( pxcpt->ExceptionNum ) {
         case XCPT_FLOAT_DENORMAL_OPERAND :
             fpe = FPE_DENORMAL;
@@ -170,7 +171,7 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
         }
         _fpreset();
         __ExceptionHandled = 1;
-        if( ( __sigfpe_handler( fpe ) == 0 ) && ( __ExceptionHandled ) ) {
+        if(( __sigfpe_handler( fpe ) == 0 ) && ( __ExceptionHandled )) {
             context->ctx_env[1] &= ~( SW_BUSY | SW_XCPT_FLAGS | SW_IREQ );
             return( XCPT_CONTINUE_EXECUTION );
         }
@@ -188,10 +189,10 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
                     pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_BREAK ) {
                     continue;
                 }
-        if( sig == SIGTERM &&
-            pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_KILLPROC ) {
-            continue;
-        }
+                if( sig == SIGTERM &&
+                    pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_KILLPROC ) {
+                    continue;
+                }
                 if( (_RWD_sigtab[sig].func == SIG_IGN) ) {
                     return( XCPT_CONTINUE_EXECUTION );
                 }
@@ -213,8 +214,8 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
 }
 
 
-void    __SigInit() {
-/*******************/
+void    __SigInit( void ) {
+/**************************/
 
 #if defined( __SW_BM )
     int         i;
@@ -228,8 +229,8 @@ void    __SigInit() {
 }
 
 
-void    __SigFini() {
-/*******************/
+void    __SigFini( void ) {
+/**************************/
 
 #if defined( __SW_BM )
     ULONG               nesting;
@@ -247,15 +248,15 @@ void    __SigFini() {
 }
 
 
-void    __sigabort() {
-/********************/
+void    __sigabort( void ) {
+/***************************/
 
     raise( SIGABRT );
 }
 
 
-static  void    restore_handler() {
-/*********************************/
+static  void    restore_handler( void ) {
+/*****************************************/
 
     __SigFini();
     __int23_exit = __null_int23_exit;
@@ -263,17 +264,17 @@ static  void    restore_handler() {
 
 
 _WCRTLINK void (*signal( int sig, void (*func)(int) ))( int ) {
-/************************************************************/
+/***************************************************************/
 
     void        (*prev_func)(int);
     ULONG       nesting;
 
-    if( ( sig < 1 ) || ( sig > __SIGLAST ) ) {
+    if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
         return( SIG_ERR );
     }
     __abort = __sigabort;               /* change the abort rtn address */
-    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
+    if(( func != SIG_DFL ) && ( func != SIG_ERR )) {
         if( _RWD_sigtab[sig].os_sig_code != 0 ) {
             if( sig == SIGFPE ) {
                 /* enable all interrupts, except precision exception */
@@ -326,7 +327,7 @@ _WCRTLINK int raise( int sig ) {
     case SIGUSR3:
     case SIGIDIVZ:
     case SIGIOVFL:
-        if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
+        if(( func != SIG_IGN ) && ( func != SIG_DFL ) && ( func != SIG_ERR )) {
             _RWD_sigtab[ sig ].func = SIG_DFL;
             if( func ) {
                 (*func)( sig );
@@ -340,8 +341,8 @@ _WCRTLINK int raise( int sig ) {
 }
 
 
-_WCRTLINK extern  void  (*__sig_init_rtn)(void);
-_WCRTLINK extern  void  (*__sig_fini_rtn)(void);
+_WCRTLINK extern  void  (*__sig_init_rtn)( void );
+_WCRTLINK extern  void  (*__sig_fini_rtn)( void );
 
 static void __SetSigInit( void ) {
     __sig_init_rtn = &__SigInit;
@@ -349,3 +350,4 @@ static void __SetSigInit( void ) {
 }
 
 AXI( __SetSigInit, INIT_PRIORITY_LIBRARY )
+
