@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Performance sampling core for Alpha AXP.
 *
 ****************************************************************************/
 
@@ -50,7 +49,6 @@
 
 extern void REPORT_TYPE report();
 extern void             StopAndSave();
-extern unsigned         SampWrite( int, void FAR_PTR *, unsigned );
 extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
 extern void             WriteAddrMap( seg, seg, off );
 extern void             WriteMark( char FAR_PTR *str, seg_offset where );

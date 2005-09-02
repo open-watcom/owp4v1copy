@@ -21,6 +21,8 @@ cdsay .
     <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/rel2/binnt/dmpobj.exe
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/rel2/binl/dmpobj
+  [ IFDEF cpu_axp <2*> ]
+    <CPCMD> <PROJDIR>/ntaxp/dmpobj.exe     <RELROOT>/rel2/axpnt/dmpobj.exe
 
 [ BLOCK <1> clean ]
 #==================

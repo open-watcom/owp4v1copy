@@ -53,6 +53,7 @@ cdsay .
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/ntaxp.dll/wlstub.exe              <RELROOT>/rel2/axpnt/wlink.exe
     <CPCMD> <PROJDIR>/ntaxp.dll/wl.dll                  <RELROOT>/rel2/axpnt/wlink.dll
+    <CPCMD> <PROJDIR>/exe2bin/ntaxp/exe2bin.exe         <RELROOT>/rel2/axpnt/exe2bin.exe
     <CPCMD> <PROJDIR>/wlaxpnt.lnk                       <RELROOT>/rel2/axpnt/wlink.lnk
 
   [ IFDEF (os_qnx) <2*> ]

@@ -42,8 +42,9 @@ cdsay .
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/ntaxp/vi.exe              <RELROOT>/rel2/axpnt/vi.exe
-    <CPCMD> <PROJDIR>/ntaxp.win/viaxpw.exe      <RELROOT>/rel2/axpnt/viw.exe
+    <CPCMD> <PROJDIR>/ntaxp.win/vi.exe          <RELROOT>/rel2/axpnt/viw.exe
     <CPCMD> <PROJDIR>/ctags/ntaxp/ctags.exe     <RELROOT>/rel2/axpnt/ctags.exe
+    <CPCMD> <PROJDIR>/bind/ntaxp/edbind.exe     <RELROOT>/rel2/axpnt/edbind.exe
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386/vi.exe             <RELROOT>/rel2/binp/vi.exe

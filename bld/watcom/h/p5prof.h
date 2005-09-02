@@ -24,23 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Pentium profiling support (RDTSC based).
 *
 ****************************************************************************/
 
 
 typedef unsigned long reg_32;
-
-#if defined(__WATCOMC__) && __WATCOMC__ < 1100
-typedef struct __int64 {
-    long                lo;
-    unsigned long       hi;
-} __int64;
-#ifndef _WCRTLINK
-#define _WCRTLINK
-#endif
-#endif
 
 #pragma pack(push,1)
 typedef struct P5_timing_info {
@@ -88,7 +77,7 @@ _WCRTLINK extern __int64 __P5_overhead( void );
 
 extern void *__ProfAlloc( unsigned long size );
 
-#ifdef __WATCOMC__
+#if defined( __WATCOMC__ ) && defined( __386__ )
 #pragma aux __ProfProlog "__PON" parm routine [] modify []
 _WCRTLINK extern void __ProfProlog( new_P5_timing_info *block );
 

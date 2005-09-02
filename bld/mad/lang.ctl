@@ -48,10 +48,12 @@ cdsay .
     <CPCMD> <DEVDIR>/mad/ppc/nt386/madppc.sym    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/mips/nt386/madmips.dll  <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/mad/mips/nt386/madmips.sym  <RELROOT>/rel2/binnt/
-#    <CPCMD> <DEVDIR>/mad/x86/ntaxp/madx86.dll    <RELROOT>/rel2/axpnt/
-#    <CPCMD> <DEVDIR>/mad/axp/ntaxp/madaxp.dll    <RELROOT>/rel2/axpnt/
-#    <CPCMD> <DEVDIR>/mad/ppc/ntaxp/madppc.dll    <RELROOT>/rel2/axpnt/
-#    <CPCMD> <DEVDIR>/mad/mips/ntaxp/madmips.dll  <RELROOT>/rel2/axpnt/
+
+  [ IFDEF (cpu_axp "") <2*> ]
+    <CPCMD> <DEVDIR>/mad/x86/ntaxp/madx86.dll    <RELROOT>/rel2/axpnt/
+    <CPCMD> <DEVDIR>/mad/axp/ntaxp/madaxp.dll    <RELROOT>/rel2/axpnt/
+    <CPCMD> <DEVDIR>/mad/ppc/ntaxp/madppc.dll    <RELROOT>/rel2/axpnt/
+    <CPCMD> <DEVDIR>/mad/mips/ntaxp/madmips.dll  <RELROOT>/rel2/axpnt/
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <DEVDIR>/mad/x86/qnx386/madx86.mad   <RELROOT>/rel2/qnx/watcom/wd/

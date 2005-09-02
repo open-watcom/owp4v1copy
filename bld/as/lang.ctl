@@ -27,6 +27,10 @@ cdsay .
     <CPCMD> <PROJDIR>/alpha/nt386/wasaxp.exe     <RELROOT>/rel2/binnt/wasaxp.exe
     <CPCMD> <PROJDIR>/ppc/nt386/wasppc.exe       <RELROOT>/rel2/binnt/wasppc.exe
 
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> <PROJDIR>/alpha/ntaxp/wasaxp.exe     <RELROOT>/rel2/axpnt/wasaxp.exe
+    <CPCMD> <PROJDIR>/ppc/ntaxp/wasppc.exe       <RELROOT>/rel2/axpnt/wasppc.exe
+
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/alpha/linux386/wasaxp.exe  <RELROOT>/rel2/binl/wasaxp
     <CPCMD> <PROJDIR>/ppc/linux386/wasppc.exe    <RELROOT>/rel2/binl/wasppc

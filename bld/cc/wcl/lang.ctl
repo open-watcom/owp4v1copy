@@ -46,9 +46,9 @@ cdsay .
     <CPCMD> <PROJDIR>/linux386.mps/wclmps.exe   <RELROOT>/rel2/binl/wclmps
 
   [ IFDEF (cpu_axp) <2*> ]
-#    <CPCMD> <PROJDIR>/ntaxp.i86/wcl.exe         <RELROOT>/rel2/axpnt/wcl.exe
-#    <CPCMD> <PROJDIR>/ntaxp.386/wcl386.exe      <RELROOT>/rel2/axpnt/wcl386.exe
-#    <CPCMD> <PROJDIR>/ntaxp.axp/wclaxp.exe      <RELROOT>/rel2/axpnt/wclaxp.exe
+    <CPCMD> <PROJDIR>/ntaxp.i86/wcl.exe         <RELROOT>/rel2/axpnt/wcl.exe
+    <CPCMD> <PROJDIR>/ntaxp.386/wcl386.exe      <RELROOT>/rel2/axpnt/wcl386.exe
+    <CPCMD> <PROJDIR>/ntaxp.axp/wclaxp.exe      <RELROOT>/rel2/axpnt/wclaxp.exe
 
 [ BLOCK <1> clean ]
 #==================

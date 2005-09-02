@@ -746,9 +746,9 @@ BOOL WdeCustomDefine ( WdeCustomObject *obj, POINT *pnt, void *p2 )
     lpcci = &(obj->cust_lib->lpcci[obj->cust_index]);
 
     ccs.flStyle    = GETCTL_STYLE( info );
-    ccs.flExtStyle = NULL;
-    ccs.lgid       = NULL;
-    ccs.wReserved1 = NULL;
+    ccs.flExtStyle = 0L;
+    ccs.lgid       = 0;
+    ccs.wReserved1 = 0;
 
     if( text = WdeResNameOrOrdinalToStr( GETCTL_TEXT( info ), 10 ) ) {
         tlen = strlen ( text );

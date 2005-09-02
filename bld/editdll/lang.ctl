@@ -35,6 +35,10 @@ cdsay .
     <CPCMD> <DEVDIR>/editdll/viw/nt386/wedit.lib <RELROOT>/rel2/src/editdll/nt/wedit.lib
     <CPCMD> <DEVDIR>/editdll/cw/nt386/wedit.dll <RELROOT>/rel2/src/editdll/nt/cw/wedit.dll
     <CPCMD> <DEVDIR>/editdll/viw/nt386/wedit.dll <RELROOT>/rel2/src/editdll/nt/viw/wedit.dll
+
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> <DEVDIR>/editdll/viw/ntaxp/weditviw.dll <RELROOT>/rel2/axpnt/weditviw.dll
+    <CPCMD> <DEVDIR>/editdll/viw/ntaxp/weditviw.sym <RELROOT>/rel2/axpnt/weditviw.sym
   [ ENDIF ]
 
     <CPCMD> <DEVDIR>/editdll/wedit.h <RELROOT>/rel2/src/editdll/wedit.h

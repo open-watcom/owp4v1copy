@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <windows.h>
 #include <win1632.h>
 #include <string.h>
@@ -118,13 +119,13 @@ static LIST                     *WdeCustClassList = NULL;
 static char                     WdeClassName[MAX_NAME];
 
 static DISPATCH_ITEM WdeCustomActions[] = {
-    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDestroy             }
-,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomCopyObject          }
-,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomValidateAction      }
-,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomIdentify            }
-,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWindowClass      }
-,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDefine              }
-,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWndProc          }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDestroy        }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomCopyObject     }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomValidateAction }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomIdentify       }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWindowClass }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDefine         }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWndProc     }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeCustomActions)/sizeof (DISPATCH_ITEM))

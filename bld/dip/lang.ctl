@@ -82,15 +82,17 @@ cdsay .
         <CPCMD> <DEVDIR>/dip/mapsym/linux386/mapsym.dip     <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/mapsym/linux386/mapsym.sym     <RELROOT>/rel2/binl/
 
-  [ IFDEF axp <2*> ]
-#        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.dll          <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.sym          <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/codeview/ntaxp/codeview.dll    <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/codeview/ntaxp/codeview.sym    <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/export/ntaxp/export.dll        <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/export/ntaxp/export.sym        <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/watcom/ntaxp/watcom.dll        <RELROOT>/rel2/axpnt/
-#        <CPCMD> <DEVDIR>/dip/watcom/ntaxp/watcom.sym        <RELROOT>/rel2/axpnt/
+  [ IFDEF cpu_axp <2*> ]
+        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.dll          <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.sym          <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/codeview/ntaxp/codeview.dll    <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/codeview/ntaxp/codeview.sym    <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/export/ntaxp/export.dll        <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/export/ntaxp/export.sym        <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/watcom/ntaxp/watcom.dll        <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/watcom/ntaxp/watcom.sym        <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/mapsym/ntaxp/mapsym.dll        <RELROOT>/rel2/axpnt/
+        <CPCMD> <DEVDIR>/dip/mapsym/ntaxp/mapsym.sym        <RELROOT>/rel2/axpnt/
 
   [ IFDEF os_qnx <2*> ]
 #        <CPCMD> <DEVDIR>/dip/dwarf/qnx386/dwarf.dip         <RELROOT>/rel2/qnx/watcom/wd/

@@ -92,22 +92,11 @@ cdsay .
     <CPCMD> linux386.axp/wccaxpc.sym <RELROOT>/rel2/binl/wccaxp.sym
   [ ENDIF ]
 
-  [ IFDEF (cpu_axp) <2*> ]          # AXP target from 386 hosts
-    <CPCMD> nt386.axp/wccaxpe.exe   <RELROOT>/rel2/binnt/wccaxp.exe
-    <CPCMD> nt386.axp/wccaxpe.sym   <RELROOT>/rel2/binnt/wccaxp.sym
-    <CPCMD> nt386.axp/wccdaxpe.dll  <RELROOT>/rel2/binnt/wccdaxp.dll
-    <CPCMD> nt386.axp/wccdaxpe.sym  <RELROOT>/rel2/binnt/wccdaxp.sym
-    <CPCMD> nt386.axp/wccaxp01.int  <RELROOT>/rel2/binnt/wccaxp01.int
-    <CPCMD> os2386.axp/wccaxpe.exe  <RELROOT>/rel2/binp/wccaxp.exe
-    <CPCMD> os2386.axp/wccaxpe.sym  <RELROOT>/rel2/binp/wccaxp.sym
-    <CPCMD> os2386.axp/wccdaxpe.dll <RELROOT>/rel2/binp/dll/wccdaxp.dll
-    <CPCMD> os2386.axp/wccdaxpe.sym <RELROOT>/rel2/binp/dll/wccdaxp.sym
-    <CPCMD> os2386.axp/wccaxp01.int <RELROOT>/rel2/binp/wccaxp01.int
-#    <CPCMD> ntaxp.axp/wccaxpc.exe  <RELROOT>/rel2/axpnt/wccaxp.exe
-#    <CPCMD> ntaxp.axp/wccaxpc.exe  <RELROOT>/rel2/axpnt/wccaxp.sym
-#    <CPCMD> ntaxp.axp/wccaxpe.exe  <RELROOT>/rel2/axpnt/wccaxp.exe
-#    <CPCMD> ntaxp.axp/wccdaxpe.dll <RELROOT>/rel2/axpnt/wccdaxp.dll
-#    <CPCMD> ntaxp.axp/wccaxp01.int <RELROOT>/rel2/axpnt/wccaxp01.int
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> ntaxp.axp/wccaxpc.exe   <RELROOT>/rel2/axpnt/wccaxp.exe
+    <CPCMD> ntaxp.axp/wccaxp01.int  <RELROOT>/rel2/axpnt/wccaxp01.int
+    <CPCMD> ntaxp.386/wcc386c.exe   <RELROOT>/rel2/axpnt/wcc386.exe
+    <CPCMD> ntaxp.386/wcc38601.int  <RELROOT>/rel2/axpnt/wcc38601.int
 
   [ IFDEF (cpu_ppc) <2*> ]          # PPC target from 386 hosts
     <CPCMD> nt386.ppc/wccppce.exe   <RELROOT>/rel2/binnt/wccppc.exe
