@@ -29,6 +29,11 @@ cdsay .
     <CPCMD> <PROJDIR>/nt386.386/wppd386.dll   <RELROOT>/rel2/binnt/wppd386.dll
     <CPCMD> <PROJDIR>/nt386.386/wppd386.sym   <RELROOT>/rel2/binnt/wppd386.sym
     <CPCMD> <PROJDIR>/nt386.386/wpp38601.int  <RELROOT>/rel2/binnt/wpp38601.int
+#  AXP target
+    <CPCMD> <PROJDIR>/nt386.axp/wcppaxp.exe   <RELROOT>/rel2/binnt/wppaxp.exe
+    <CPCMD> <PROJDIR>/nt386.axp/wppdaxp.dll   <RELROOT>/rel2/binnt/wppdaxp.dll
+    <CPCMD> <PROJDIR>/nt386.axp/wppdaxp.sym   <RELROOT>/rel2/binnt/wppdaxp.sym
+    <CPCMD> <PROJDIR>/nt386.axp/wppaxp01.int  <RELROOT>/rel2/binnt/wppaxp01.int
 
 #  Optima 386 target (with -br switch)
     <CPCMD> <PROJDIR>/nt386dll.386/wcpp386.exe   <RELROOT>/rel2/binnt/rtdll/wpp386.exe
@@ -50,6 +55,11 @@ cdsay .
     <CPCMD> <PROJDIR>/os2386.386/wppd386.dll   <RELROOT>/rel2/binp/dll/wppd386.dll
     <CPCMD> <PROJDIR>/os2386.386/wppd386.sym   <RELROOT>/rel2/binp/dll/wppd386.sym
     <CPCMD> <PROJDIR>/os2386.386/wpp38601.int  <RELROOT>/rel2/binp/dll/wpp38601.int
+#  386 target
+    <CPCMD> <PROJDIR>/os2386.axp/wcppaxp.exe   <RELROOT>/rel2/binp/wppaxp.exe
+    <CPCMD> <PROJDIR>/os2386.axp/wppdaxp.dll   <RELROOT>/rel2/binp/dll/wppdaxp.dll
+    <CPCMD> <PROJDIR>/os2386.axp/wppdaxp.sym   <RELROOT>/rel2/binp/dll/wppdaxp.sym
+    <CPCMD> <PROJDIR>/os2386.axp/wppaxp01.int  <RELROOT>/rel2/binp/dll/wppaxp01.int
   [ ENDIF ]
 #
 # 386 OSI hosted compilers

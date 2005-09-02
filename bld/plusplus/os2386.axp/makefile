@@ -1,4 +1,4 @@
-#pmake: flat cpu_386 target_axp os_os2
+#pmake: build buildwpp flat cpu_386 target_axp os_os2
 
 host_os    = os2
 host_cpu   = 386

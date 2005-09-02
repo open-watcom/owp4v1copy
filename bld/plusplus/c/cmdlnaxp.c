@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line processing for Alpha AXP targets.
 *
 ****************************************************************************/
 
@@ -326,6 +325,9 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     if( data->zm ) {
         CompFlags.zm_switch_used = 1;
     }
+
+    DftCallConv = &WatcallInfo;
+
     // frees 'target_name' memory
     setFinalTargetSystem( data, target_name );
     miscAnalysis( data );
