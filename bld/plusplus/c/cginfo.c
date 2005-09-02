@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Callback functions invoked from cg - communicate
+*               auxiliary information to the backend.
 *
 ****************************************************************************/
 
@@ -342,7 +342,7 @@ fe_attr FEAttr(                 // GET SYMBOL ATTRIBUTES
         if( SymIsInitialized( sym ) ) {
             attr |= FE_STATIC;
             /* only set FE_GLOBAL if it's not an in-class
-	     * initialization of a const static member */
+         * initialization of a const static member */
             if( ! ( sym->flag & SF_IN_CLASS_INIT ) ) {
                 attr |= FE_GLOBAL;
             }
@@ -886,7 +886,7 @@ static time_t *getFileDepTimeStamp( SRCFILE h )
 {
     static time_t            stamp;
 
-#if COMP_CFG_COFF == 0
+#if ( ( _CPU == 8086 ) || ( _CPU == 386 ) ) && ( COMP_CFG_COFF == 0 )
     stamp = _timet2dos( SrcFileTimeStamp( h ) );
 #else
     stamp = SrcFileTimeStamp( h );
