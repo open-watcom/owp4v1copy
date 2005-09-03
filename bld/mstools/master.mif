@@ -8,11 +8,11 @@ mstools_autodepends = .AUTODEPEND
 !endif
 
 !ifeq host_cpu axp
-extra_c_flags = -D__TARGET_AXP__
+targdef = -D__TARGET_AXP__
 !else ifeq host_cpu ppc
-extra_c_flags = -D__TARGET_PPC__
+targdef = -D__TARGET_PPC__
 !else
-extra_c_flags = -D__TARGET_$(host_cpu)__
+targdef = -D__TARGET_$(host_cpu)__
 !endif
 
 #

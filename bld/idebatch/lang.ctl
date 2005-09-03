@@ -22,6 +22,8 @@ cdsay .
 # there is no makefile in the wini86 dir
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/rel2/binw/batchbox.pif
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> <DEVDIR>/idebatch/nt/axp/batserv.exe  <RELROOT>/rel2/axpnt/batserv.exe
 
 [ BLOCK <1> clean ]
 #==================

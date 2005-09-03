@@ -38,8 +38,8 @@ cdsay .
     <CPCMD> <DEVDIR>/browser/brg/nt386/wbrg.exe     <RELROOT>/rel2/binnt/wbrg.exe
 
   [ IFDEF (cpu_axp) <2*> ]
-#   <CPCMD> <DEVDIR>/browser/axpnt/wbrw.exe         <RELROOT>/rel2/axpnt/wbrw.exe
-#   <CPCMD> <DEVDIR>/browser/brg/ntaxp/wbrg.exe     <RELROOT>/rel2/axpnt/wbrg.exe
+    <CPCMD> <DEVDIR>/browser/axpnt/wbrw.exe         <RELROOT>/rel2/axpnt/wbrw.exe
+    <CPCMD> <DEVDIR>/browser/brg/ntaxp/wbrg.exe     <RELROOT>/rel2/axpnt/wbrg.exe
 
 [ BLOCK <1> clean ]
 #==================

@@ -28,7 +28,7 @@ cdsay .
 #    <CPCMD> viper/idemfc16.cfg   <RELROOT>/rel2/binw/idemfc16.cfg
 #    <CPCMD> viper/idemfc32.cfg   <RELROOT>/rel2/binw/idemfc32.cfg
 #    <CPCMD> viper/idemfca.cfg    <RELROOT>/rel2/binw/idemfca.cfg
-#    <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
+    <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
 
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> viper/wini86/ide.exe <RELROOT>/rel2/binw/ide.exe
@@ -45,9 +45,10 @@ cdsay .
     <CPCMD> viper/nt386/ide.exe  <RELROOT>/rel2/binnt/ide.exe
     <CPCMD> viper/nt/idex.cfg    <RELROOT>/rel2/binnt/idex.cfg
     <CPCMD> vpdll/nt386/vpdll.dll  <RELROOT>/rel2/binnt/vpdll.dll
-  [ ENDIF ]
-#    <CPCMD> viper/axp/ide.exe    <RELROOT>/rel2/axpnt/ide.exe
-#    <CPCMD> viper/axp/idex.cfg   <RELROOT>/rel2/axpnt/idex.cfg
+
+  [ IFDEF (cpu_axp) <2*> ] 
+    <CPCMD> viper/ntaxp/ide.exe  <RELROOT>/rel2/axpnt/ide.exe
+    <CPCMD> viper/axp/idex.cfg   <RELROOT>/rel2/axpnt/idex.cfg
 
 [ BLOCK <1> clean ]
 #==================

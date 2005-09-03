@@ -111,6 +111,17 @@ cdsay .
     <CPCMD> <PROJDIR>/linux386.386/wcpp386.sym   <RELROOT>/rel2/binl/wpp386.sym
     <CPCMD> <PROJDIR>/linux386.386/wpp38601.int  <RELROOT>/rel2/binl/wpp38601.int
 
+#
+# AXP NT hosted compilers
+#
+  [ IFDEF (cpu_axp) <2*> ]
+#  AXP target
+    <CPCMD> <PROJDIR>/ntaxp.axp/wcppaxp.exe   <RELROOT>/rel2/axpnt/wppaxp.exe
+    <CPCMD> <PROJDIR>/ntaxp.axp/wcppaxp.sym   <RELROOT>/rel2/axpnt/wppaxp.sym
+#  386 target
+    <CPCMD> <PROJDIR>/ntaxp.386/wcpp386.exe   <RELROOT>/rel2/axpnt/wpp386.exe
+    <CPCMD> <PROJDIR>/ntaxp.386/wcpp386.sym   <RELROOT>/rel2/axpnt/wpp386.sym
+
 [ BLOCK <1> clean ]
 #==================
     pmake -d buildwpp <2> <3> <4> <5> <6> <7> <8> <9> -h clean
