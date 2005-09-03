@@ -37,8 +37,8 @@
 #define INCL_DOSSIGNALS
 #include <wos2.h>
 
-extern  void    __null_int23_exit();
-extern  void    (*__int23_exit)();
+extern  void    __null_int23_exit( void );
+extern  void    (*__int23_exit)( void );
 
 static PFNSIGHANDLER handler = 0;
 static USHORT        action;
@@ -46,24 +46,27 @@ static USHORT        action;
 //#pragma off(unreferenced);
 static void _WCFAR pascal break_handler( USHORT sigarg, USHORT signum )
 //#pragma on(unreferenced);
-    {
-        if( __int23_exit != __null_int23_exit ) raise( SIGINT );
+{
+    if( __int23_exit != __null_int23_exit ) {
+        raise( SIGINT );
     }
+}
 
-static void restore_handler()
-    {
-        DosSetSigHandler( handler, &handler, &action, action, SIG_CTRLC );
-        handler = 0;
-        __int23_exit = __null_int23_exit;
-    }
+static void restore_handler( void )
+{
+    DosSetSigHandler( handler, &handler, &action, action, SIG_CTRLC );
+    handler = 0;
+    __int23_exit = __null_int23_exit;
+}
 
 
-void __grab_int23()
-    {
-        USHORT          action;
+void __grab_int23( void )
+{
+    USHORT          action;
 
-        if( handler != 0 ) return;
-        DosSetSigHandler( (PFNSIGHANDLER)break_handler, &handler, &action, 2, SIG_CTRLC );
-        __int23_exit = restore_handler;
-    }
+    if( handler != 0 )
+        return;
+    DosSetSigHandler( (PFNSIGHANDLER)break_handler, &handler, &action, 2, SIG_CTRLC );
+    __int23_exit = restore_handler;
+}
 
