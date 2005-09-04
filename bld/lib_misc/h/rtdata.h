@@ -119,7 +119,7 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
 #define _RWD_env_mask           __env_mask
 #define _RWD_abort              __abort
 #define _RWD_sigtab             __SIGNALTABLE
-#define _RWD_FPE_hl_exit        __FPE_handler_exit
+#define _RWD_FPE_handler_exit   __FPE_handler_exit
 #define _RWD_FPE_handler        __FPE_handler
 #define _RWD_fmode              _fmode
 #if !defined(__NETWARE__)

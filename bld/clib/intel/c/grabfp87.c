@@ -52,7 +52,7 @@ extern int __DPMI_hosted(void);
 void __GrabFP87()
     {
 #ifndef __WINDOWS__
-        if( _RWD_FPE_hl_exit != __Fini_FPE_handler ) {
+        if( _RWD_FPE_handler_exit != __Fini_FPE_handler ) {
 #ifdef __DOS_386__
             if (!_IsPharLap() && (__DPMI_hosted() == 1))
             {
@@ -62,7 +62,7 @@ void __GrabFP87()
 #endif
             _RWD_FPE_handler = __sigfpe_handler;
             __Init_FPE_handler();
-            _RWD_FPE_hl_exit = __Fini_FPE_handler;
+            _RWD_FPE_handler_exit = __Fini_FPE_handler;
         }
 #if !defined(__WARP__)
         __Enable_FPE();
