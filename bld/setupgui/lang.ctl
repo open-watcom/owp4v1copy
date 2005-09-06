@@ -23,8 +23,8 @@ cdsay .
   [ IFDEF (os_os2) <2*> ]
     <CPCMD> <PROJDIR>/os2386.gui/csetup.exe <distroot>/ow/os2386.gui/csetup/install.exe
     <CPCMD> <PROJDIR>/os2386.gui/virgin.sym <distroot>/ow/os2386.gui/csetup/install.sym
-    <CPCMD> <PROJDIR>/os2386.gui/f77setup.exe <distroot>/os/os2386.gui/f77setup/install.exe
-    <CPCMD> <PROJDIR>/os2386.gui/virgin.sym <distroot>/os/os2386.gui/f77setup/install.sym
+    <CPCMD> <PROJDIR>/os2386.gui/f77setup.exe <distroot>/ow/os2386.gui/f77setup/install.exe
+    <CPCMD> <PROJDIR>/os2386.gui/virgin.sym <distroot>/ow/os2386.gui/f77setup/install.sym
   [ IFDEF (os_nt) <2*> ]
     <CPCMD> <PROJDIR>/nt386/csetup.exe <distroot>/ow/nt386/csetup/setup32.exe
     <CPCMD> <PROJDIR>/nt386/virgin.sym <distroot>/ow/nt386/csetup/setup32.sym
