@@ -1266,15 +1266,15 @@ Tool WRC2 "Resource Compiler (pass 2)"
 ::
 :segment !C_FOR_PB
 ::
-rem Tool ORC "OS/2 Resource Compiler"
-rem   Family Resource
-rem     CSwitch 0, ?????, "", rc, ON
-rem     VSwitch 0, ?????, "Include directories:", -i, " ", MULTI, REQ, "$[: $(%watcom)\\h $(%watcom)\\h\\os2"
+Tool ORC "OS/2 Resource Compiler"
+  Family Resource
+    CSwitch 0, ?????, "", rc, ON
+    VSwitch 0, ?????, "Include directories:", -i, " ", MULTI, REQ, "$[: $(%watcom)\\h $(%watcom)\\h\\os2"
 
-rem Tool ORC2 "OS/2 Resource Compiler (pass 2)"
-rem   Family Resource
-rem     CSwitch 0, ?????, "", rc, ON
-rem     VSwitch 0, ?????, "Include directories:", -i, " ", MULTI, REQ, "$[: $(%watcom)\\h $(%watcom)\\h\\os2"
+Tool ORC2 "OS/2 Resource Compiler (pass 2)"
+  Family Resource
+    CSwitch 0, ?????, "", rc, ON
+    VSwitch 0, ?????, "Include directories:", -i, " ", MULTI, REQ, "$[: $(%watcom)\\h $(%watcom)\\h\\os2"
 
 Tool ESQL "Embedded SQL compiler"
   Family Processor
@@ -1399,11 +1399,12 @@ Rule ESQLOBJP, ESQLP, ?????
   Command " $<#ESQL>"
   Command " *$<#ESQLWPP>"
 
-Rule ORESC, WRC, o????
+Rule ORESC, ORC, o????
   Source *.rc
   Target *.res
   Autodepend
-  Command " *$<#> -r -fo=$&.res"
+  Command " *$<#> -r $*.rc $&.res"
+rem  Command " *$<#> -r -fo=$&.res"
 ::
 :endsegment
 ::
@@ -1439,7 +1440,7 @@ Rule SBROWSEABLE
 rem --OS/2 Executables--
 Tool OS2LINK "OS/2 Linking"
   IncludeTool WLINK
-  IncludeTool WRC2
+  IncludeTool ORC2
 
 Rule OEXE, OS2LINK, o??e?
   Target *.exe
@@ -1456,7 +1457,7 @@ Rule OEXE, OS2LINK, o??e?
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " $<#WRC2> $<RES!> $@"
+  Command " $<#ORC2> $<RES!> $@"
   Command "!endif"
 
 Rule OHLP, OIPF, o??h?
@@ -1683,7 +1684,7 @@ Rule ODLL, WLINK, o??d?
   Command "!endif"
   Command " *$<#> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " $<#WRC2> $<RES!> $@"
+  Command " $<#ORC2> $<RES!> $@"
   Command "!endif"
   Command " wlib -q -n -b $*.lib +$*.dll"
 
