@@ -509,7 +509,6 @@ Tool WCG "Code Generator"
         RSwitch, 1, ?????, "Default rounding", , ON
         RSwitch, 1, ?????, "Omit rounding", -zro, OFF
         RSwitch, 1, ??2??, "Inline rounding", -zri, OFF
-rem    CSwitch 1, ?????, "Compability with V9.0", -fpr, OFF
 :segment !C_FOR_PB
   Family "Register Usage"
     RGroup "DS Register"
@@ -535,7 +534,7 @@ rem    CSwitch 1, ?????, "Compability with V9.0", -fpr, OFF
     CSwitch 1, ?????, "Don't gen default library info", -zl, OFF
     CSwitch 1, ?????, "No file dependency information", -zld, OFF
     CSwitch 1, ??2??, "Generate Easy OMF object files", -ez, OFF
-rem    CSwitch 1, ?????, "Save/Restore segment registers", -r, OFF
+    CSwitch 1, ?????, "Save/Restore segment registers", -r, OFF
 :endsegment
 :segment !C_FOR_PB_NT
     CSwitch 1, ??6d?, "", -zu, ON
