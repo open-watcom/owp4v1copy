@@ -44,6 +44,7 @@
 #define B_proftarg      1011
 #define B_return        1012
 #define B_powerbuilder  1013
+#define B_rdbgtarg      1014
 
 #define B_sourceOpen    1030
 #define B_sourceClosed  1031

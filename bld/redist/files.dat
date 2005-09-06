@@ -5,6 +5,11 @@
 usr="cwc.exe"
 usr="cwdstub.exe"
 usr="cwstub.exe"
+usr="cwdllr.lib"             dir="lib386/dos"
+usr="cwdlls.lib"             dir="lib386/dos"
+usr="dllstrts.obj"  type="s" dir="lib386/dos"
+usr="dllstrtr.obj"  type="s" dir="lib386/dos"
+usr="cwdllfnc.h"    type="s" dir="h"
 
 # DOS/4GW
 usr="dos4gw.doc"
@@ -32,3 +37,5 @@ usr="ss.exe"
 usr="stub32a.exe"
 usr="stub32c.exe"
 usr="sver.exe"
+
+

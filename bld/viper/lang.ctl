@@ -29,6 +29,7 @@ cdsay .
 #    <CPCMD> viper/idemfc32.cfg   <RELROOT>/rel2/binw/idemfc32.cfg
 #    <CPCMD> viper/idemfca.cfg    <RELROOT>/rel2/binw/idemfca.cfg
     <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
+    <CPCMD> viper/idelnx.cfg     <RELROOT>/rel2/binw/idelnx.cfg
 
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> viper/wini86/ide.exe <RELROOT>/rel2/binw/ide.exe

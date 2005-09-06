@@ -13,6 +13,7 @@ BITMAP  B_proftarg      "../proftarg.bmp"
 BITMAP  B_runtarg       "../runtarg.bmp"
 BITMAP  B_edititem      "../edititem.bmp"
 BITMAP  B_makeitem      "../makeitem.bmp"
+BITMAP  B_rdbgtarg		"../rdbgtarg.bmp"
 
 BITMAP  B_sourceOpen    "../srcopen.bmp"
 BITMAP  B_sourceClosed  "../srcclos.bmp"

@@ -3,11 +3,18 @@ IncludeFile idew32.cfg
 IncludeFile ideaxp.cfg
 IncludeFile idewin.cfg
 IncludeFile idew386.cfg
+rem IncludeFile idemfc16.cfg
+rem IncludeFile idemfc32.cfg
+rem IncludeFile idemfca.cfg
 IncludeFile idedos.cfg
 IncludeFile idedos32.cfg
 IncludeFile idenlm.cfg
 IncludeFile ideos2.cfg
 IncludeFile ideos232.cfg
+rem IncludeFile ideads.cfg
+rem IncludeFile ideqnx16.cfg
+rem IncludeFile ideqnx32.cfg
+IncludeFile idelnx.cfg
 :endsegment
 :segment C_FOR_PB
 IncludeFile idepbnt.cfg
