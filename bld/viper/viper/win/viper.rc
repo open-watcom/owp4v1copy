@@ -14,7 +14,7 @@ B_proftarg      BITMAP  proftarg.bmp
 B_runtarg       BITMAP  runtarg.bmp
 B_edititem      BITMAP  edititem.bmp
 B_makeitem      BITMAP  makeitem.bmp
-B_rdbgtarg		BITMAP  rdbgtarg.bmp
+B_rdbgtarg      BITMAP  rdbgtarg.bmp
 
 B_sourceOpen    BITMAP  srcopen.bmp
 B_sourceClosed  BITMAP  srcclos.bmp
