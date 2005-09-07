@@ -43,10 +43,14 @@ enum {
         PE_TBL_SECURITY,
         PE_TBL_FIXUP,
         PE_TBL_DEBUG,
-        PE_TBL_DESCRIPTION,
-        PE_TBL_MACHINE,
+        PE_TBL_ARCHITECTURE,
+        PE_TBL_GLOB_PTR,
         PE_TBL_THREAD,
-        PE_TBL_CALLBACKS,
+        PE_TBL_LOAD_CONF,
+        PE_TBL_BOUND_IMPORT,
+        PE_TBL_IAT,
+        PE_TBL_DELAY_IMP,
+        PE_TBL_COMPLUS_RTHDR,
         PE_TBL_NUMBER = 16
 };
 
