@@ -1,9 +1,9 @@
-#pmake: build os_nt cpu_386
+#pmake: os_nt cpu_axp
 
 host_os  = nt
-host_cpu = 386
+host_cpu = axp
 
-proj_name = directx
+proj_name = base
 
 inc_dirs = -I"../../include"
 

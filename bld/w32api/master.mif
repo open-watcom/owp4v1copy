@@ -2,12 +2,6 @@ base_autodepends    = .autodepend
 ddk_autodepends     = .autodepend
 directx_autodepends = .autodepend
 
-base_cleanup    = ../include/*.h ../include/GL/*.h
-ddk_cleanup     = ../include/ddk/*.h
-directx_cleanup = ../include/directx/*.h
-
-additional_cleanup = $($(proj_name)_cleanup)
-
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -152,32 +146,36 @@ ddk_libs = &
 
 libs = $($(proj_name)_libs)
 
+lib_flags = -b -c -p=16
+!ifeq host_cpu axp
+arch_lib_flags = -ic -ia
+!else ifeq host_cpu ppc
+arch_lib_flags = -ic -ip
+!else
+arch_lib_flags = -io -ii
+!endif
+
 .def: ../../lib;../../lib/directx;../../lib/ddk;
 
 .c: ../../lib;../../lib/directx;../../lib/ddk;
 
 .def.lbc:
+!ifeq host_cpu 386
         $(vi) -s ../../def2lbc.vi -p"$[@ $*"
+!else
+        $(vi) -s ../../def2lbcs.vi -p"$[@ $*"
+!endif
 
 .lbc.lib:
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$<
 
 .obj.lib:
-        $(librarian) -b -c -p=16 -n $@ $<
+        $(librarian) $(lib_flags) -n $@ $<
 
-all: $(libs) .SYMBOLIC
-!ifeq proj_name base
-        @for %i in (../../include/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-        @for %i in (../../include/GL/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-!else ifeq proj_name ddk
-        @for %i in (../../include/ddk/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-!else ifeq proj_name directx
-        @for %i in (../../include/directx/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-!endif
-        $(vi) -s ../../fix/fix_h.vi
+all: $(libs) .symbolic
 
 kernel32.lib: kernel32.lbc
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$<
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
@@ -185,30 +183,30 @@ dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
 dinput8.lib: dinput8.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ @tmp.lbc
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
+        $(librarian) $(lib_flags) $@ @tmp.lbc
 
 dinput.lib: dinput.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ @tmp.lbc
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
+        $(librarian) $(lib_flags) $@ @tmp.lbc
 
 dxerr8.lib: dxerr8.obj dxerr8w.obj
-        $(librarian) -b -c -p=16 -n $@ +$[@ +$]@
+        $(librarian) $(lib_flags) -n $@ +$[@ +$]@
 
 dxerr9.lib: dxerr9.obj dxerr9w.obj
-        $(librarian) -b -c -p=16 -n $@ +$[@ +$]@
+        $(librarian) $(lib_flags) -n $@ +$[@ +$]@
 
 ksuser.lib: ksuser.lbc ksuser.obj
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ +$]@
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
+        $(librarian) $(lib_flags) $@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
-        $(librarian) -b -c -p=16 -n -io -ii $@ @$[@
-        $(librarian) -b -c -p=16 $@ +$]@
+        $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
+        $(librarian) $(lib_flags) $@ +$]@
 
-vfw32.lbc : $(vfw32_libs)
+vfw32.lbc: $(vfw32_libs)
         @%create $@
         @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
