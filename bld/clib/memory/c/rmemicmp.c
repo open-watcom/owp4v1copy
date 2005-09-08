@@ -42,7 +42,7 @@ int memicmp( const void *s1, const void *s2, size_t n )
     int                 tmpchar, shr1, shr2, shl1, shl2;
     INT                 char1, char2;
 
-    if( (int)n <= 0 )  return( 0 );
+    if( n == 0 )  return( 0 );
 
     /*** Initialize locals ***/
     shr1 = OFFSET(s1) << 3;             /* shift right = offset * 8 */

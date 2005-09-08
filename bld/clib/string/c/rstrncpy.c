@@ -51,7 +51,7 @@ CHAR_TYPE *__F_NAME(strncpy,wcsncpy)( CHAR_TYPE *dest, const CHAR_TYPE *src,
         }
     #endif
 
-    if( (int)n <= 0 )  return( destStart );
+    if( n == 0 )  return( destStart );
 
     /*** Copy any unaligned bytes at the start (align dest pointer) ***/
     while( offset != 0  &&  n >= 1 ) {

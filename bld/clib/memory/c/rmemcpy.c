@@ -45,7 +45,7 @@ void *memcpy( void *dest, const void *src, size_t n )
     char *              destP = (char*)dest;
     char *              srcP = (char*)src;
 
-    if( (int)n <= 0 )  return( destStart );
+    if( n == 0 )  return( destStart );
 
     /*** Copy any unaligned bytes at the start ***/
     while( offset != 0  &&  n >= 1 ) {
