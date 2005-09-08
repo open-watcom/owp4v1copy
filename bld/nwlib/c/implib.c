@@ -30,27 +30,19 @@
 
 
 #include <wlib.h>
+
 // must correspond to defines in implib.h
-char *procname[5] = {"", "AXP", "PPC", "X86",""};
+static char *procname[5] = { "", "AXP", "PPC", "X86","" };
 
 static void coffAddImportOverhead( arch_header *arch, char *DLLName, short processor );
 
-long charToLong( char *in )
-{
-    return( (in[0]) | (in[1] << 8) | (in[2] << 16) | (in[3] << 24) );
-}
-
-short charToShort( char *in )
-{
-    return( (in[0]) | (in[1] << 8) );
-}
-
-void fillInShort( unsigned short value, char *out )
+static void fillInShort( unsigned_16 value, char *out )
 {
     out[0] = value & 255;
     out[1] = (value >> 8) & 255;
 }
-void fillInLong( unsigned long value, char *out )
+
+static void fillInLong( unsigned_32 value, char *out )
 {
     out[0] = value & 255;
     out[1] = (value >> 8) & 255;
@@ -69,10 +61,10 @@ static orl_return FindHelper( orl_sec_handle sec )
 
 
 static unsigned long  export_table_rva;
-static orl_return FindExportTableHelper(orl_sec_handle sec)
+static orl_return FindExportTableHelper( orl_sec_handle sec )
 {
     if( found_sec_handle == 0 ) {
-        unsigned long base = ORLSecGetBase(sec);
+        unsigned long   base = ORLSecGetBase(sec);
 
         if( (base <= export_table_rva)
             && ((base + ORLSecGetSize(sec)) > export_table_rva) ) {
@@ -80,7 +72,7 @@ static orl_return FindExportTableHelper(orl_sec_handle sec)
         }
     }
 
-    return ORL_OKAY;
+    return( ORL_OKAY );
 } /* FindExportTableHelper() */
 
 static orl_sec_handle FindSec( obj_file *file, char *name )
@@ -159,10 +151,10 @@ static bool elfAddImport( arch_header *arch, libfile io )
 
     export_sec = FindSec( file, ".exports" );
     ORLSecGetContents( export_sec, (char **)&export_table );
-    export_size = (Elf32_Word) ORLSecGetSize( export_sec ) / sizeof(Elf32_Export);
+    export_size = (Elf32_Word) ORLSecGetSize( export_sec ) / sizeof( Elf32_Export );
     sym_sec = ORLSecGetSymbolTable( export_sec );
     ORLSecGetContents( sym_sec, (char **)&sym_table );
-    sym_size = (Elf32_Word) ORLSecGetSize( sym_sec ) / sizeof(Elf32_Sym);
+    sym_size = (Elf32_Word) ORLSecGetSize( sym_sec ) / sizeof( Elf32_Sym );
     string_sec = ORLSecGetStringTable( sym_sec );
     ORLSecGetContents( string_sec, (char **)&strings );
 
@@ -216,7 +208,7 @@ static void importOs2Table( libfile io, arch_header *arch, char *dll_name, bool 
            an export but more exports could follow */
         if( ordinal == 0 )
             continue;
-        if( coff_obj == TRUE) {
+        if( coff_obj == TRUE ) {
             CoffMKImport( arch, ORDINAL, ordinal, dll_name, symbol, NULL, WL_PROC_X86 );
         } else {
             OmfMKImport( arch, ordinal, dll_name, symbol, NULL, type );
@@ -285,7 +277,7 @@ static void os2FlatAddImport( arch_header *arch, libfile io )
     }
 }
 
-bool nlmAddImport( arch_header *arch, libfile io )
+static bool nlmAddImport( arch_header *arch, libfile io )
 {
     nlm_header  nlm;
     unsigned_8  name_len;
@@ -352,7 +344,7 @@ static void peAddImport( arch_header *arch, libfile io )
     if( Options.libtype == WL_TYPE_MLIB ) {
         FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
     }
-    if( Options.coff_found || ( Options.libtype == WL_TYPE_AR && !Options.omf_found ) ) {
+    if( Options.coff_found || (Options.libtype == WL_TYPE_AR && !Options.omf_found) ) {
         coff_obj = TRUE;
     } else {
         coff_obj = FALSE;
@@ -393,7 +385,7 @@ static void peAddImport( arch_header *arch, libfile io )
         adjust = 0;
     }
 
-    export_header = (Coff32_Export *) edata;
+    export_header = (Coff32_Export *)edata;
     name_table = (Coff32_EName *)(edata + export_header->NamePointerTableRVA -
     export_base + adjust);
     ord_table = (Coff32_EOrd *)(edata + export_header->OrdTableRVA -
@@ -411,11 +403,11 @@ static void peAddImport( arch_header *arch, libfile io )
         }
         coffAddImportOverhead( arch, DLLName, processor );
     }
-    for( i=0; i<export_header->numNamePointer; i++ ) {
+    for( i = 0; i < export_header->numNamePointer; i++ ) {
         currname = &(edata[name_table[i] - export_base + adjust]);
         // allocate the space for the current symbol name and
         // add enough room for the following strcpy/strcat pairs.
-        buffer = MemAlloc( 1+strlen( currname ) + 8 );
+        buffer = MemAlloc( 1 + strlen( currname ) + 8 );
         if( coff_obj == TRUE ) {
             CoffMKImport( arch, ORDINAL, ord_table[ i ] + ordinal_base,
             DLLName, currname, NULL, processor );
@@ -744,7 +736,7 @@ static void coffAddImportOverhead( arch_header *arch, char *DLLName, short proce
 
 int ElfImportSize( import_sym *import )
 {
-    int         len;
+    int             len;
     elf_import_sym  *temp;
 
     len = ELFBASEIMPORTSIZE + strlen( import->DLLName ) + 1;
@@ -779,13 +771,13 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
 
     len = strlen( DLLName );
 
-    switch( type ){
+    switch( type ) {
     case IMPORT_DESCRIPTOR:
-        return ( COFF_FILE_HEADER_SIZE + 0xe0           //header
-        + 2 * COFF_SECTION_HEADER_SIZE +                //section table (headers)
-        + 0x14 + 3 * COFF_RELOC_SIZE + (len | 1) + 5    //section data
-        + 7 * COFF_SYM_SIZE                             //symbol table
-        + 4 + len + 21 + 25 + len + 18 );               //string table
+        return( COFF_FILE_HEADER_SIZE + 0xe0            // header
+        + 2 * COFF_SECTION_HEADER_SIZE +                // section table (headers)
+        + 0x14 + 3 * COFF_RELOC_SIZE + (len | 1) + 5    // section data
+        + 7 * COFF_SYM_SIZE                             // symbol table
+        + 4 + len + 21 + 25 + len + 18 );               // string table
     case NULL_IMPORT_DESCRIPTOR:
         return( COFF_FILE_HEADER_SIZE
         + COFF_SECTION_HEADER_SIZE
@@ -808,11 +800,11 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
         switch( processor ) {
         case WL_PROC_AXP:
             if( sym_len > 8 ) {
-            ret += sym_len + 1 + sym_len + 7;
+                ret += sym_len + 1 + sym_len + 7;
             } else if( sym_len > 2 ) {
-            ret += 7 + sym_len;
+                ret += 7 + sym_len;
             }
-            ret += 0xc + 3 * COFF_RELOC_SIZE; //.text
+            ret += 0xc + 3 * COFF_RELOC_SIZE; // .text
             break;
         case WL_PROC_PPC:
             if( sym_len > 8 ) {
@@ -834,27 +826,30 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
             } else if( sym_len > 2 ) {
                 ret += 7 + sym_len;
             }
-            ret += COFF_RELOC_SIZE + 6;     //text data
+            ret += COFF_RELOC_SIZE + 6;     // text data
             break;
         }
-        return ret;
+        return( ret );
     case NAMED:
         sym_len = strlen( impName );
         ret = COFF_FILE_HEADER_SIZE
         + 4 * COFF_SECTION_HEADER_SIZE
-        + 4 + COFF_RELOC_SIZE       //idata$5
-        + 4 + COFF_RELOC_SIZE       //idata$4
-        + ( sym_len | 1 ) + 3       //idata$6
+        + 4 + COFF_RELOC_SIZE       // idata$5
+        + 4 + COFF_RELOC_SIZE       // idata$4
+        + ( sym_len | 1 ) + 3       // idata$6
         + COFF_SYM_SIZE * 0xb
-        + 4 + len + 21;
+        + 4 + len + 21;             // 21 = strlen("__IMPORT_DESCRIPTOR_") + 1
         switch( processor ) {
         case WL_PROC_AXP:
             if( sym_len > 8 ) {
+                // Everything goes to symbol table
                 ret += sym_len + 1 + sym_len + 7;
             } else if( sym_len > 2 ) {
+                // Undecorated symbol can be stored directly, but the
+                // version with "__imp_" prepended goes to symbol table
                 ret += 7 + sym_len;
             }
-            ret += 0xc + COFF_RELOC_SIZE * 3; //.text
+            ret += 0xc + COFF_RELOC_SIZE * 3;   // .text
             break;
         case WL_PROC_PPC:
             if( sym_len > 8 ) {
@@ -867,26 +862,27 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
             ret  += COFF_SYM_SIZE * 6
             + 2 * COFF_SECTION_HEADER_SIZE
             + 0x18 + COFF_RELOC_SIZE
-            + 0X14 + COFF_RELOC_SIZE * 4 //pdata
-            + 0x8 + COFF_RELOC_SIZE * 2; //reldata
+            + 0X14 + COFF_RELOC_SIZE * 4    // .pdata
+            + 0x8 + COFF_RELOC_SIZE * 2;    // .reldata
             break;
         case WL_PROC_X86:
+            // See comment for AXP above
             if( sym_len > 8 ) {
                 ret += sym_len + 1 + sym_len + 7;
             } else if( sym_len > 2 ) {
                 ret += 7 + sym_len;
             }
-            ret += 6 + COFF_RELOC_SIZE; //.text
+            ret += 6 + COFF_RELOC_SIZE;     // .text
             break;
         }
-        return ret;
+        return( ret );
     default:
         break;
     }
-    return 0;
+    return( 0 );
 }
 
-short ElfProcessors[4] = {0, EM_ALPHA, EM_PPC, 0};
+static short    ElfProcessors[4] = { 0, EM_ALPHA, EM_PPC, 0 };
 
 void ElfWriteImport( libfile io, sym_file *file )
 {
@@ -926,7 +922,7 @@ void ElfWriteImport( libfile io, sym_file *file )
     fillInLong( 0x10 * numsyms, &(ElfBase[0xec]) );
     LibWrite( io, &ElfBase, ElfBase_SIZE );
     LibWrite( io, import->DLLName, strlen( import->DLLName ) + 1);
-    for( temp=import->symlist; temp != NULL; temp = temp->next ) {
+    for( temp = import->symlist; temp != NULL; temp = temp->next ) {
         LibWrite( io, temp->name, temp->len + 1 );
     }
     if( parity ) {
@@ -936,20 +932,20 @@ void ElfWriteImport( libfile io, sym_file *file )
 
     offset = 0;
     strtabsize = ELFBASESTRTABSIZE + strlen( import->DLLName ) + 1;
-    for( temp=import->symlist; temp != NULL; temp = temp->next ) {
+    for( temp = import->symlist; temp != NULL; temp = temp->next ) {
         LibWrite( io, &strtabsize, 4 );
         LibWrite( io, &offset, 4 );
         more = 0x10;
         LibWrite( io, &more, 4 );
         more = 0x00040010;
-        if( temp->ordinal==-1 ) {
+        if( temp->ordinal == -1 ) {
             more |= 0x5;
         }
         LibWrite( io, &more, 4 );
 
         offset += 0x10;
         strtabsize += temp->len + 1;
-        if( offset >= (numsyms*0x10) ) {
+        if( offset >= (numsyms * 0x10) ) {
             break;
         }
     }
@@ -957,7 +953,7 @@ void ElfWriteImport( libfile io, sym_file *file )
     strtabsize = ELFBASESTRTABSIZE + strlen( import->DLLName ) + 1;
     switch( import->type ) {
     case ELF:
-        for( temp=import->symlist; temp != NULL; temp = temp->next ) {
+        for( temp = import->symlist; temp != NULL; temp = temp->next ) {
             LibWrite( io, &temp->ordinal, 4 );
             LibWrite( io, &strtabsize, 4 );
             more = 0x01000022;
@@ -991,7 +987,7 @@ bool AddImport( arch_header *arch, libfile io )
 
 
     LibSeek( io, 0x00, SEEK_SET );
-    if( LibRead( io, &dos_sig, sizeof( dos_sig ) ) == sizeof( dos_sig )) {
+    if( LibRead( io, &dos_sig, sizeof( dos_sig ) ) == sizeof( dos_sig ) ) {
         if( dos_sig == DOS_SIGNATURE ) {
             LibSeek( io, OS2_NE_OFFSET, SEEK_SET );
             if( LibRead( io, &offset, sizeof( offset ) ) == sizeof( offset ) ) {
@@ -1013,7 +1009,7 @@ bool AddImport( arch_header *arch, libfile io )
                     }
                 }
             }
-        } else if ( elfAddImport( arch, io ) ) {
+        } else if( elfAddImport( arch, io ) ) {
             return( TRUE );
         } else {
             return( nlmAddImport( arch, io ) );
