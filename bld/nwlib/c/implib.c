@@ -768,6 +768,7 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
     int len;
     int ret;
     int sym_len;
+    int exp_len;
 
     len = strlen( DLLName );
 
@@ -832,6 +833,7 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
         return( ret );
     case NAMED:
         sym_len = strlen( impName );
+        exp_len = strlen( exportedName );
         ret = COFF_FILE_HEADER_SIZE
         + 4 * COFF_SECTION_HEADER_SIZE
         + 4 + COFF_RELOC_SIZE       // idata$5
@@ -841,23 +843,23 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
         + 4 + len + 21;             // 21 = strlen("__IMPORT_DESCRIPTOR_") + 1
         switch( processor ) {
         case WL_PROC_AXP:
-            if( sym_len > 8 ) {
+            if( exp_len > 8 ) {
                 // Everything goes to symbol table
-                ret += sym_len + 1 + sym_len + 7;
-            } else if( sym_len > 2 ) {
+                ret += exp_len + 1 + exp_len + 7;
+            } else if( exp_len > 2 ) {
                 // Undecorated symbol can be stored directly, but the
                 // version with "__imp_" prepended goes to symbol table
-                ret += 7 + sym_len;
+                ret += 7 + exp_len;
             }
             ret += 0xc + COFF_RELOC_SIZE * 3;   // .text
             break;
         case WL_PROC_PPC:
-            if( sym_len > 8 ) {
-                ret += sym_len + 1 + sym_len + 3 + sym_len + 7;
-            } else if( sym_len > 6 ) {
-                ret += sym_len + 3 + sym_len + 7;
-            } else if( sym_len > 2 ) {
-                ret += sym_len + 7;
+            if( exp_len > 8 ) {
+                ret += exp_len + 1 + exp_len + 3 + exp_len + 7;
+            } else if( exp_len > 6 ) {
+                ret += exp_len + 3 + exp_len + 7;
+            } else if( exp_len > 2 ) {
+                ret += exp_len + 7;
             }
             ret  += COFF_SYM_SIZE * 6
             + 2 * COFF_SECTION_HEADER_SIZE
@@ -867,10 +869,10 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
             break;
         case WL_PROC_X86:
             // See comment for AXP above
-            if( sym_len > 8 ) {
-                ret += sym_len + 1 + sym_len + 7;
-            } else if( sym_len > 2 ) {
-                ret += 7 + sym_len;
+            if( exp_len > 8 ) {
+                ret += exp_len + 1 + exp_len + 7;
+            } else if( exp_len > 2 ) {
+                ret += 7 + exp_len;
             }
             ret += 6 + COFF_RELOC_SIZE;     // .text
             break;
