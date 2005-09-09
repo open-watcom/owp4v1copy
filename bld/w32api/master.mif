@@ -176,6 +176,9 @@ all: $(libs) .symbolic
 
 kernel32.lib: kernel32.lbc
         $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$<
+!ifeq host_cpu axp
+        $(librarian) $(lib_flags) $(arch_lib_flags) $@ @kernel32.axp
+!endif
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
@@ -184,7 +187,7 @@ dinput8.lib: dinput8.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
         $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
-        $(librarian) $(lib_flags) $@ @tmp.lbc
+        $(librarian) $(lib_flags) $(arch_lib_flags) $@ @tmp.lbc
 
 dinput.lib: dinput.lbc $(dinput_objs)
         @%create tmp.lbc
@@ -204,7 +207,7 @@ ksuser.lib: ksuser.lbc ksuser.obj
 
 shell32.lib: shell32.lbc shell32.obj
         $(librarian) $(lib_flags) -n $(arch_lib_flags) $@ @$[@
-        $(librarian) $(lib_flags) $@ +$]@
+        $(librarian) $(lib_flags) $(arch_lib_flags) $@ +$]@
 
 vfw32.lbc: $(vfw32_libs)
         @%create $@
