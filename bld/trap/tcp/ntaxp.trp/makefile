@@ -1,10 +1,11 @@
-#pmake: trap remote os_nt cpu_386 tcp axp
-host_CPU = axp
-host_OS = nt
+#pmake: trap remote os_nt cpu_axp tcp axp
 
-os = nt
-srv = tcp
-cpu = axp
+host_os  = nt
+host_cpu = axp
+
+os    = nt
+srv   = tcp
+cpu   = axp
 which = TRAP
 
 extra_objs = $(remote_objs)

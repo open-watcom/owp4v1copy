@@ -21,7 +21,7 @@
     dir="binnt"	usr="wspy.exe"		cond="wnthost"
     dir="binnt"	usr="ntspyhk.dll"	cond="wnthost"
     dir="axpnt"	usr="wspy.exe"		cond="alphahost" where="ac"
-    dir="axpnt"	usr="wspyhk.dll"	cond="alphahost" where="ac"
+    dir="axpnt"	usr="ntspyhk.dll"	cond="alphahost" where="ac"
 
 # Dr. Watcom
     dir="binw"	usr="drwatcom.exe"	cond="winhost" where="c f77"

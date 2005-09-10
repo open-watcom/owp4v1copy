@@ -14,6 +14,7 @@
     <CPCMD> <DOC_ROOT>/nt/*.cnt     <RELROOT>/rel2/binnt/
     <CPCMD> <DOC_ROOT>/readme.txt   <RELROOT>/rel2/readme.txt
     <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/rel2/freadme.txt
+    <CPCMD> <DOC_ROOT>/areadme.txt  <RELROOT>/rel2/areadme.txt
    
 [ BLOCK <1> clean ]
 #==================

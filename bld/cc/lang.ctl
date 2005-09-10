@@ -94,8 +94,10 @@ cdsay .
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> ntaxp.axp/wccaxpc.exe   <RELROOT>/rel2/axpnt/wccaxp.exe
+    <CPCMD> ntaxp.axp/wccaxpc.sym   <RELROOT>/rel2/axpnt/wccaxp.sym
     <CPCMD> ntaxp.axp/wccaxp01.int  <RELROOT>/rel2/axpnt/wccaxp01.int
     <CPCMD> ntaxp.386/wcc386c.exe   <RELROOT>/rel2/axpnt/wcc386.exe
+    <CPCMD> ntaxp.386/wcc386c.sym   <RELROOT>/rel2/axpnt/wcc386.sym
     <CPCMD> ntaxp.386/wcc38601.int  <RELROOT>/rel2/axpnt/wcc38601.int
 
   [ IFDEF (cpu_ppc) <2*> ]          # PPC target from 386 hosts

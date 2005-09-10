@@ -1,2 +1,4 @@
+++'__imp_RtlCaptureContext'.'KERNEL32.DLL'.'RtlCaptureContext'.'RtlCaptureContext'
 ++'__imp_RtlLookupFunctionEntry'.'KERNEL32.DLL'.'RtlLookupFunctionEntry'.'RtlLookupFunctionEntry'
 ++'__imp_RtlUnwindRfp'.'KERNEL32.DLL'.'RtlUnwindRfp'.'RtlUnwindRfp'
+++'__imp_RtlVirtualUnwind'.'KERNEL32.DLL'.'RtlVirtualUnwind'.'RtlVirtualUnwind'

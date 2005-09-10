@@ -19,4 +19,5 @@ include=fcommon.inf
 
 [ac]
 include=alpha.inf
+alphahost=1
 alphatarg=1

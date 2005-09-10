@@ -24,7 +24,7 @@ cdsay .
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/sdk/spy/ntaxp/wspy.exe <RELROOT>/rel2/axpnt/wspy.exe
-    <CPCMD> <DEVDIR>/sdk/spy/ntaxp/ntspyhk.dll <RELROOT>/rel2/axpnt/wspyhk.dll
+    <CPCMD> <DEVDIR>/sdk/spy/ntaxp/ntspyhk.dll <RELROOT>/rel2/axpnt/ntspyhk.dll
 
 [ BLOCK <1> clean ]
 #==================
