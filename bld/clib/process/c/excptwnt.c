@@ -38,12 +38,12 @@
 #include "iomode.h"
 #include "rtdata.h"
 #include "sigtab.h"
-#include "extfunc.h"
+#include "sigfunc.h"
 #include "fpusig.h"
 #include "excptwnt.h"
 
-void *(*__oscode_check_func)( int, long ) = NULL;
-int   (*__raise_func)( int )              = NULL;
+sig_func    (*__oscode_check_func)( int, long ) = NULL;
+int         (*__raise_func)( int )              = NULL;
 unsigned char   __ExceptionHandled;
 unsigned char   __ReportInvoked;
 
@@ -102,14 +102,6 @@ static void fmt_hex( char *buf, char *fmt, void *hex ) {
         }
     }
 }
-
-#if defined( _M_IX86 )
-void *GetFromSS( DWORD *sp );
-#pragma aux GetFromSS = \
-    "mov ebx,ss:[ecx]" \
-    parm [ecx] value [ebx]
-#endif
-
 
 /*
  * Make function external so we can set it manually
@@ -441,7 +433,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
          * If the signal handling code is linked in then we need to see if the
          * user has installed a signal handler.
          */
-        void (*func)( int );
+        sig_func func;
 
         for( sig = 1; sig <= __SIGLAST; sig++ ) {
             func = __oscode_check_func( sig, ex->ExceptionCode );

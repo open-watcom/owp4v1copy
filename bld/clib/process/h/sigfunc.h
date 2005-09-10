@@ -24,48 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  prototypes for routines used in exception filter ( Windows NT )
+* Description:  typedef for external signal routines
 *
 ****************************************************************************/
 
+#include "extfunc.h"
 
-extern int      __sigfpe_handler(int);
-extern void     _ClearFPE(void);
-
-/*
- * MICROSOFT, as usual, refuses to document stuff that other compiler
- * vendors need, so this had to be reverse engineered
- */
-#define UNWINDING       0x6
-
-
-#define APP_ERR "Application Error: "
-
-#if defined(__PPC__)
-    #define FMT_STRING wsprintf
-#elif defined(__AXP__)
-    #define FMT_STRING wsprintf
-
-    extern unsigned long _GetFPCR(void);
-    extern void          _SetFPCR(unsigned long);
-#elif defined( _M_IX86 )
-    unsigned int sw;
-    #define FMT_STRING wsprintf
-
-    extern DWORD GetFromFS(DWORD off);
-    extern void  PutToFS(DWORD value, DWORD off);
-    extern void  *GetFromSS( DWORD *sp );
-
-    #pragma aux GetFromFS = \
-            "mov        eax,fs:[eax]" \
-            parm[eax] value[eax];
-
-    #pragma aux PutToFS = \
-            "mov        fs:[edx], eax" \
-            parm[eax] [edx];
-
-    #pragma aux GetFromSS = \
-            "mov eax,ss:[eax]" \
-            parm [eax] value [eax]
-
+typedef void (*sig_func)( int );
+typedef void (*sigfpe_func)( int, int );
+#ifdef _M_IX86
+    #pragma aux (__outside_CLIB) sig_func;
+    #pragma aux (__outside_CLIB) sigfpe_func;
 #endif
