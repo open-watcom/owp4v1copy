@@ -34,18 +34,6 @@
 #define _MEMTRACK       _OFF    // memory tracking during development?
 #define _CSET           _ASCII  // character set?
 
-#if defined( _M_IX86 )
-  #if defined( __FPI__ )                // 8087 present?
-    #define _8087               _ON
-  #else
-    #define _8087               _OFF
-  #endif
-#elif defined( __AXP__ )
-#elif defined( __PPC__ )
-#else
-  #error Unknown platform
-#endif
-
 #if defined( __386__ )
 #define _CPU 386
 #elif defined( M_I86 )
@@ -54,6 +42,8 @@
 #define _CPU _AXP
 #elif defined( __PPC__ )
 #define _CPU _PPC
+#else
+  #error Unknown platform
 #endif
 
 #define __INCL_ERRMSGS__        // include error messages

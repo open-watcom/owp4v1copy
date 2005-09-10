@@ -63,13 +63,9 @@ static  char            CmdBuff[2*128];
     #define _WFC "wfc"
 #endif
 
-#if defined( M_I86) || defined( __386__ )
-    #undef _8087 // there's already a macro called _8087
-    #define _TurnOffFPU()   _real87 =_8087 = 0
-    extern  unsigned char   _8087;
-    extern  unsigned char   _real87;
-#else
-    #define _TurnOffFPU()
+#if defined( _M_IX86 )
+    unsigned char   _8087   = 0;
+    unsigned char   _real87 = 0;
 #endif
 
 
@@ -98,7 +94,9 @@ int     main( int argc, char *argv[] ) {
         __ErrorInit( argv[0] );
     }
 #endif
-    _TurnOffFPU();
+#if defined( _M_IX86 )
+    _real87 = _8087 = 0;
+#endif
     p = getenv( _WFC );
     if( p != NULL ) {
         strcpy( CmdBuff, p );

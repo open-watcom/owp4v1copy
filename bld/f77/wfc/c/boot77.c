@@ -59,10 +59,6 @@ extern  void            FMemFini(void);
 extern  void            SetDefaultOpts(void);
 extern  void            MsgBuffer(uint,char *,...);
 extern  void            ShowOptions(char *);
-#if _8087 == _ON
-extern  void            InitMath(void);
-extern  void            FiniMath(void);
-#endif
 
 extern  char            *UsageLines[];
 
@@ -123,9 +119,6 @@ void    Compile( char *buffer ) {
 //===============================
 
     InitCompile();
-#if _8087 == _ON
-    InitMath();
-#endif
     if( ProcCmd( buffer ) != FALSE ) {
         // initialize permanent i/o buffers after memory has been
         // initialized
@@ -143,9 +136,6 @@ void    Compile( char *buffer ) {
     }
     FiniComIO();
     FiniProcCmd();
-#if _8087 == _ON
-    FiniMath();
-#endif
     FiniCompile();
 }
 
