@@ -74,9 +74,9 @@ extern  proc_def        *CurrProc;
 extern  type_length     MaxStack;
 extern  type_def        *TypeNone;
 
-extern  an      BGCall( cn call, bool use_return, bool in_line ) {
-/****************************************************************/
-
+extern  an      BGCall( cn call, bool use_return, bool in_line )
+/**************************************************************/
+{
     instruction         *call_ins;
     instruction         *conv_ins;
     call_state          *state;
@@ -114,10 +114,10 @@ extern  an      BGCall( cn call, bool use_return, bool in_line ) {
     AssgnParms( call, in_line );
     AddCallIns( call_ins, call );
     if( use_return ) {
-        if( call_ins->type_class != XX ){
+        if( call_ins->type_class != XX ) {
             conv_ins = MakeConvert( call_ins->result, result, TypeClass( call->tipe ), ReturnClass( call->tipe, call->state->attr ) );
             AddIns( conv_ins );
-        }else{
+        } else {
             // conv_ins = MakeMove( call_result, result, XX );
         }
     }
@@ -127,9 +127,9 @@ extern  an      BGCall( cn call, bool use_return, bool in_line ) {
 }
 
 
-extern  void    BGProcDecl( sym_handle sym, type_def *tipe ) {
-/************************************************************/
-
+extern  void    BGProcDecl( sym_handle sym, type_def *tipe )
+/**********************************************************/
+{
     type_class_def      class;
     name                *temp;
     hw_reg_set          reg;
@@ -150,9 +150,9 @@ extern  void    BGProcDecl( sym_handle sym, type_def *tipe ) {
 }
 
 
-extern  type_def        *PassParmType( sym_handle func, type_def* tipe, call_class class ) {
-/******************************************************************************************/
-
+extern  type_def        *PassParmType( sym_handle func, type_def *tipe, call_class class )
+/****************************************************************************************/
+{
     type_class_def      cl;
 
     cl = cl;
@@ -161,12 +161,12 @@ extern  type_def        *PassParmType( sym_handle func, type_def* tipe, call_cla
     return( tipe );
 }
 
-extern  instruction *   PushOneParm( instruction *ins, name *curr,
+extern  instruction    *PushOneParm( instruction *ins, name *curr,
                                      type_class_def class,
                                      type_length offset,
-                                     call_state *state ) {
-/**************************************************************/
-
+                                     call_state *state )
+/****************************************************************/
+{
     instruction *new;
     name        *dst;
     name        *stack_reg;
@@ -179,9 +179,9 @@ extern  instruction *   PushOneParm( instruction *ins, name *curr,
     return( new );
 }
 
-extern  name    *StReturn( an retval, type_def *tipe, instruction **pins ) {
-/**************************************************************************/
-
+extern  name    *StReturn( an retval, type_def *tipe, instruction **pins )
+/************************************************************************/
+{
     name        *index;
 
     retval = retval;
@@ -190,29 +190,30 @@ extern  name    *StReturn( an retval, type_def *tipe, instruction **pins ) {
     return( index );
 }
 
-extern  void    InitTargProc() {
-/******************************/
+extern  void    InitTargProc( void )
+/**********************************/
+{
     CurrProc->targ.debug = NULL;
     CurrProc->targ.base_is_fp = FALSE;
 }
 
 
-extern  void    SaveToTargProc() {
-/********************************/
-
+extern  void    SaveToTargProc( void )
+/************************************/
+{
     CurrProc->targ.max_stack = MaxStack;
 }
 
 
-extern  void    RestoreFromTargProc() {
-/*************************************/
-
+extern  void    RestoreFromTargProc( void )
+/*****************************************/
+{
     MaxStack = CurrProc->targ.max_stack;
 }
 
-extern  reg_set_index   CallIPossible( instruction *ins ) {
-/*********************************************************/
-
+extern  reg_set_index   CallIPossible( instruction *ins )
+/*******************************************************/
+{
      ins = ins;
      return( RL_DWORD );
 }
