@@ -495,11 +495,15 @@ static  void    SetupVarargsReg( stack_map *map )
         type_length     offset;
 
         offset = map->varargs.start + 6 * REG_SIZE;
+        // Skip hidden parameter in first register
+        if( CurrProc->targ.return_points != NULL ) {
+            offset += REG_SIZE;
+        }
         if( offset > AXP_MAX_OFFSET ) {
             GenLOADS32( offset, VARARGS_PTR );
             GenOPINS( 0x10, 0x00, AXP_STACK_REG, VARARGS_PTR, VARARGS_PTR );
         } else {
-            genLea( AXP_STACK_REG, map->varargs.start + 6 * REG_SIZE, VARARGS_PTR );
+            genLea( AXP_STACK_REG, offset, VARARGS_PTR );
         }
     }
 }
