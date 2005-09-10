@@ -96,5 +96,5 @@ static void fini( void )
 
 #endif
 
-AXI( init, INIT_PRIORITY_RUNTIME )
-AYI( fini, INIT_PRIORITY_RUNTIME )
+AXI( init, INIT_PRIORITY_FPU )
+AYI( fini, INIT_PRIORITY_FPU )

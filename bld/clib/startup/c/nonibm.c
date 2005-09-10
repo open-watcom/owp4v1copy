@@ -116,4 +116,4 @@ static void init_on_startup( void )
 }
 
 
-AXI( init_on_startup, INIT_PRIORITY_LIBRARY )
+AXI( init_on_startup, INIT_PRIORITY_FPU + 1 )

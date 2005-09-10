@@ -26,7 +26,7 @@ __fini_387_emulator endp
 
     endmod
 
-    xinit   __init_387_emulator,1
-    xfini   __fini_387_emulator,1
+    xinit   __init_387_emulator,INIT_PRIORITY_FPU
+    xfini   __fini_387_emulator,INIT_PRIORITY_FPU
 
     end

@@ -53,8 +53,8 @@ FICRQQ  equ             0000H
 public  FIARQQ
 FIARQQ  equ             0000H
 
-        xinit   __init_87_emulator,1
-        xfini   __fini_87_emulator,1
+        xinit   __init_87_emulator,INIT_PRIORITY_FPU
+        xfini   __fini_87_emulator,INIT_PRIORITY_FPU
 
 DGROUP  group   _DATA
         assume  ds:DGROUP

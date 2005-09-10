@@ -56,6 +56,6 @@ endif
 _DATA   ends
 
 
-        xinit   __chk8087,2
+        xinit   __chk8087,INIT_PRIORITY_FPU + 2
 
         end

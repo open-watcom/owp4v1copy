@@ -84,7 +84,8 @@ YI      ends
         endm
 
 INIT_PRIORITY_THREAD   equ 1    ; priority for thread data init
-INIT_PRIORITY_RUNTIME  equ 10   ; priority for run/time initialization
+INIT_PRIORITY_FPU      equ 2    ; priority for FPU/EMU init
+INIT_PRIORITY_RUNTIME  equ 10   ; priority for run-time initialization
 INIT_PRIORITY_IOSTREAM equ 20   ; priority for IOSTREAM
 INIT_PRIORITY_LIBRARY  equ 32   ; default library-initialization priority
 DEF_PRIORITY           equ 32   ; ...

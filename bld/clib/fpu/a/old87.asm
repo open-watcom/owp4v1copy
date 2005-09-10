@@ -66,6 +66,6 @@ endif
 
 include xinit.inc
 
-        xinit   __old_8087,3
+        xinit   __old_8087,INIT_PRIORITY_FPU + 3
 
         end
