@@ -943,8 +943,8 @@ Tool WASM "Assembler"
         RSwitch 1, ?????, "Floating-point calls", -fpc, OFF
   Family Debugging
     RGroup "Debugging Style"
-        RSwitch 0, ?????, "No debugging information", , ON
-        RSwitch 0, ?????, "Line number information", -d1, OFF
+        RSwitch 0, ?????, "No debugging information", , ON, OFF
+        RSwitch 0, ?????, "Line number information", -d1, OFF, ON
   Family Diagnostics
     RGroup "Warning level"
         RSwitch 0, ?????, "Warning level 0", -w0, OFF
@@ -968,7 +968,7 @@ Tool WLINK "Linker"
     CSwitch  0, ?????, "", "wlink", ON
     CSwitch  0, ?????, " name", "name $'", ON
     RGroup "Debugging Information"
-        RSwitch  0, ?????, "No debug information", , ON
+        RSwitch  0, ?????, "No debug information", , ON, OFF
         RSwitch  0, ?????, "Debug CodeView", "d codeview op cvp", OFF
         RSwitch  0, ?????, "Debug Dwarf", "d dwarf", OFF
         RSwitch  0, l?2e?, "Netware symbols", "d novell", OFF
@@ -976,7 +976,7 @@ Tool WLINK "Linker"
         RSwitch  0, ?????, "Debug line numbers", "d lines", OFF
         RSwitch  0, ?????, "Debug types", "d types", OFF
         RSwitch  0, ?????, "Debug locals", "d locals", OFF
-        RSwitch  0, ?????, "Debug All", "d all", OFF
+        RSwitch  0, ?????, "Debug All", "d all", OFF, ON
     VSwitch  1, w?6d?, "System:", SYS, " ", ONE, REQ, windows_dll
     VSwitch  1, w?6??, "System:", SYS, " ", ONE, REQ, windows
     VSwitch  1, d?6??, "System:", SYS, " ", ONE, REQ, dos
@@ -1338,8 +1338,8 @@ Tool WINHC "Windows Help Compiler"
     RGroup "Help Compiler"
 rem These must be in the user's path
         RSwitch 0, ?????, "HTMLHelp", hhw , OFF
-        RSwitch 0, ?????, "Version 4.0", hcw , ON
-        RSwitch 0, ?????, "Version 3.1", hc31 , OFF
+        RSwitch 0, ?????, "Version 4.0", hcw , OFF
+        RSwitch 0, ?????, "Version 3.1", hc31 , ON
         RSwitch 0, ?????, "Version 3.0", hc30 , OFF
 
 Tool OIPF "OS/2 Help Compiler"
@@ -1399,12 +1399,19 @@ Rule ESQLOBJP, ESQLP, ?????
   Command " $<#ESQL>"
   Command " *$<#ESQLWPP>"
 
-Rule ORESC, ORC, o????
+rem Change the next rule when wrc.exe is mature
+Rule ORESC, ORC, o???o
   Source *.rc
   Target *.res
   Autodepend
   Command " *$<#> -r $*.rc $&.res"
 rem  Command " *$<#> -r -fo=$&.res"
+
+Rule ORESC, WRC, o????
+  Source *.rc
+  Target *.res
+  Autodepend
+  Command " *$<#> -r -fo=$&.res"
 ::
 :endsegment
 ::
@@ -1438,11 +1445,12 @@ Rule SBROWSEABLE
     Hint "Invoke the program browser on the source file"
 
 rem --OS/2 Executables--
+rem Change the next two when wrc.exe is mature
 Tool OS2LINK "OS/2 Linking"
   IncludeTool WLINK
   IncludeTool ORC2
 
-Rule OEXE, OS2LINK, o??e?
+Rule OEXE, OS2LINK, o??eo
   Target *.exe
   Autodepend
   Symbol FIL, *.obj
@@ -1458,6 +1466,28 @@ Rule OEXE, OS2LINK, o??e?
   Command " *$<#WLINK> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
   Command " $<#ORC2> $<RES!> $@"
+  Command "!endif"
+
+Tool OS2LINK2 "OS/2 Linking"
+  IncludeTool WLINK
+  IncludeTool WRC2
+
+Rule OEXE, OS2LINK2, o??e?
+  Target *.exe
+  Autodepend
+  Symbol FIL, *.obj
+  Symbol LIBR, *.lib
+  Symbol DLL, *.dll
+  Symbol RES, *.res
+  Command " @%write $*.lk1 $<FIL,>"
+  Command " @%append $*.lk1 $<LIBR,>"
+  Command "!ifneq BLANK \"$<DLL!>\""
+  Command " *wlib -q -n -b $*.imp $<DLL!>"
+  Command " @%append $*.lk1 LIBR $'.imp"
+  Command "!endif"
+  Command " *$<#WLINK> @$'.lk1"
+  Command "!ifneq BLANK \"$<RES!>\""
+  Command " $<#WRC2> $<RES!> $@"
   Command "!endif"
 
 Rule OHLP, OIPF, o??h?
@@ -1595,7 +1625,7 @@ Rule LNX, WLINK, x?2e?
   Symbol LIBR, *.lib
   Command " @%write $*.lk1 $<FIL,>"
   Command " @%append $*.lk1 $<LIBR,>"
-  Command " *$<#WLINK> @$'.lk1"
+  Command " *$<#> @$'.lk1"
 
 rem --All Other Executables--
 Rule EXE, WLINK, ???e?
@@ -1669,7 +1699,8 @@ Rule WDLL, WLINK, w??d?
   Command "!endif"
   Command " wlib -q -n -b $*.lib +$*.dll",         ??6??
 
-Rule ODLL, WLINK, o??d?
+rem Change this when wrc is mature
+Rule ODLL, WLINK, o??do
   Target *.dll
   Autodepend
   Symbol FIL, *.obj
@@ -1685,6 +1716,25 @@ Rule ODLL, WLINK, o??d?
   Command " *$<#> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
   Command " $<#ORC2> $<RES!> $@"
+  Command "!endif"
+  Command " wlib -q -n -b $*.lib +$*.dll"
+
+Rule ODLL, WLINK, o??d?
+  Target *.dll
+  Autodepend
+  Symbol FIL, *.obj
+  Symbol LIBR, *.lib
+  Symbol RES, *.res
+  Symbol DLL, *.dll
+  Command " @%write $*.lk1 $<FIL,>"
+  Command " @%append $*.lk1 $<LIBR,>"
+  Command "!ifneq BLANK \"$<DLL!>\""
+  Command " *wlib -q -n -b $*.imp $<DLL!>"
+  Command " @%append $*.lk1 LIBR $'.imp"
+  Command "!endif"
+  Command " *$<#> @$'.lk1"
+  Command "!ifneq BLANK \"$<RES!>\""
+  Command " $<#WRC2> $<RES!> $@"
   Command "!endif"
   Command " wlib -q -n -b $*.lib +$*.dll"
 
