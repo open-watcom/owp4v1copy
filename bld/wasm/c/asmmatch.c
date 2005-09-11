@@ -48,7 +48,11 @@ extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool 
 
 #endif
 
+#if __WASM__ > 1230
 static int match_phase_3( int *i, enum operand_type determinant );
+#else
+static int match_phase_3( int *i, unsigned long determinant );
+#endif
 
 static int output_3DNow( int i )
 /************************/
@@ -323,7 +327,11 @@ static int output( int i )
     return( NOT_ERROR );
 }
 
+#if __WASM__ > 1230
 static int output_data( enum operand_type determinant, int index )
+#else
+static int output_data( unsigned long determinant, int index )
+#endif
 /************************************************************/
 /*
   output address displacement and immediate data;
@@ -407,8 +415,13 @@ int match_phase_1( void )
     int                 i;
     int                 retcode;
     signed char         temp_opsiz = 0;
+#if __WASM__ > 1230
     enum operand_type   cur_opnd;
     enum operand_type   asm_op1;
+#else
+    unsigned long   cur_opnd;
+    unsigned long   asm_op1;
+#endif
 
     // if nothing inside, no need to output anything
     if( Code->info.token == T_NULL ) {
@@ -617,7 +630,11 @@ static int match_phase_2( int *i )
 
 static int check_3rd_operand( int i )
 {
+#if __WASM__ > 1230
     enum operand_type   cur_opnd;
+#else
+    unsigned long   cur_opnd;
+#endif
 
     cur_opnd = Code->info.opnd_type[OPND3];
     if( ( AsmOpTable[i].opnd_type_3rd == OP3_NONE )
@@ -652,7 +669,11 @@ static int output_3rd_operand( int i )
     }
 }
 
+#if __WASM__ > 1230
 static int match_phase_3( int *i, enum operand_type determinant )
+#else
+static int match_phase_3( int *i, unsigned long determinant )
+#endif
 /*
 - this routine will look up the assembler opcode table and try to match
   the second operand with what we get;
@@ -661,9 +682,15 @@ static int match_phase_3( int *i, enum operand_type determinant )
 - call by match_phase_2() only;
 */
 {
+#if __WASM__ > 1230
     enum operand_type   cur_opnd;
     enum operand_type   last_opnd;
     enum operand_type   asm_op2;
+#else
+    unsigned long   cur_opnd;
+    unsigned long   last_opnd;
+    unsigned long   asm_op2;
+#endif
     unsigned            instruction;
 
     instruction = AsmOpTable[*i].token;

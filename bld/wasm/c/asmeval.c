@@ -1654,6 +1654,9 @@ static bool is_expr2( int i )
         case T_PTR:
         case T_SHORT:
             return( TRUE );
+        default:
+            AsmBuffer[i]->token = T_ID;
+            return( TRUE );
         }
         break;
     case T_REG:
