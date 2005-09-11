@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  verify Pentium processor divide bug
 *
 ****************************************************************************/
 
@@ -56,4 +55,4 @@ _WCRTLINK void __verify_pentium_fdiv_bug()
     }
 }
 
-AXI( __verify_pentium_fdiv_bug, INIT_PRIORITY_FPU + 3 );
+AXI( __verify_pentium_fdiv_bug, INIT_PRIORITY_FPU + 4 );

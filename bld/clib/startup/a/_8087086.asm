@@ -33,29 +33,25 @@
 include mdef.inc
 include xinit.inc
 
-        name    _8087
+        modstart    _8087
 
         xref    "C",__chk8087
 
-DGROUP GROUP _DATA
-        assume DS:DGROUP
-
-_DATA   segment word public 'DATA'
-
+datasegment
         public  __8087
         public  __real87
-
-__8087  db      0               ; 0 => no 8087, otherwise 8087 present
-__real87 db     0               ; 0 => no 8087, otherwise 8087 present
-
 ifdef __DOS__
-public  __old_8087_emu
-__old_8087_emu dw 0
+        public  __old_8087_emu
 endif
 
-_DATA   ends
+__8087          db  0   ; 0 => no real 80x87 and no EMU, otherwise real 80x87 or EMU present
+__real87        db  0   ; 0 => no real 80x87 is used, otherwise real 80x87 is used
+ifdef __DOS__
+__old_8087_emu  dw  0
+endif
+enddata
 
+        xinit   __chk8087,INIT_PRIORITY_FPU + 3
 
-        xinit   __chk8087,INIT_PRIORITY_FPU + 2
-
+        endmod
         end

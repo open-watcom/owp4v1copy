@@ -32,19 +32,21 @@
 
 include mdef.inc
 
-        xref    __8087
 ifdef __DOS__
 ifndef __386__
-DGROUP GROUP _DATA
-        assume DS:DGROUP
-
-_DATA segment 'DATA'
-        xred    __old_8087_emu, word
-_DATA ends
+__DOS_086__ = 1
 endif
 endif
 
         modstart _old8087
+
+datasegment
+        xref    __8087
+
+ifdef __DOS_086__
+        xred    __old_8087_emu, word
+endif
+enddata
 
         xdefp    __old_8087
         defp     __old_8087
@@ -52,13 +54,11 @@ endif
         fldz
         fldz
         fldz
-ifdef __DOS__
-ifndef __386__
+ifdef __DOS_086__
         cmp     word ptr __old_8087_emu,0
         jz      l1
         call    __old_8087_emu
 l1:
-endif
 endif
         ret
         endproc __old_8087
@@ -66,6 +66,6 @@ endif
 
 include xinit.inc
 
-        xinit   __old_8087,INIT_PRIORITY_FPU + 3
+        xinit   __old_8087,INIT_PRIORITY_FPU + 4
 
         end
