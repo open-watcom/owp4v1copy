@@ -364,7 +364,7 @@ static int Reg386( int reg_token )
     return( 0 );
 }
 
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 int OperandSize( enum operand_type opnd )
 #else
 int OperandSize( unsigned long opnd )
@@ -919,7 +919,7 @@ static int segm_override_memory( expr_list *opndx )
 static int idata_nofixup( expr_list *opndx )
 /******************************************/
 {
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   op_type;
 #else
     unsigned long   op_type;
@@ -1763,7 +1763,7 @@ int AsmParse( void )
 */
 {
     int                 i;
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   cur_opnd = OP_NONE;
     enum operand_type   last_opnd = OP_NONE;
 #else
@@ -2141,7 +2141,7 @@ static int check_size( void )
 - optimize MOV instruction;
 */
 {
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   op1 = Code->info.opnd_type[OPND1];
     enum operand_type   op2 = Code->info.opnd_type[OPND2];
 #else

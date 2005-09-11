@@ -271,7 +271,7 @@ int BackPatch( struct asm_sym *sym )
     return( NOT_ERROR );
 }
 
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 void mark_fixupp( enum operand_type determinant, int index )
 #else
 void mark_fixupp( unsigned long determinant, int index )

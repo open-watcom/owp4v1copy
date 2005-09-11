@@ -66,7 +66,7 @@ enum prefix_reg {
         unsigned            opnd_type_3rd   : 4;    /* info on 3rd operand */
         unsigned            opnd_dir        : 1;    /* operand direction */
         enum asm_cpu        cpu;                    /* CPU type */
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
         enum operand_type   opnd_type[2];           /* asm_opnds */
 #else
         unsigned long   opnd_type[2];           /* asm_opnds */
@@ -83,7 +83,7 @@ enum prefix_reg {
         unsigned            opnd_type_3rd   : 4;    /* info on 3rd operand */
         unsigned            opnd_dir        : 1;    /* operand direction */
         enum asm_cpu        cpu;                    /* CPU type */
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
         enum operand_type   opnd_type[2];           /* asm_opnds */
 #else
         unsigned long   opnd_type[2];           /* asm_opnds */
@@ -106,7 +106,7 @@ struct asm_code {
 #ifdef _WASM_
         unsigned short      token;
         enum asm_cpu        cpu;
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
         enum operand_type   opnd_type[3];
 #else
         unsigned long   opnd_type[3];
@@ -116,7 +116,7 @@ struct asm_code {
 #else
         unsigned            token           : 10;
         enum asm_cpu        cpu;
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
         enum operand_type   opnd_type[3];
 #else
         unsigned long   opnd_type[3];
@@ -184,7 +184,7 @@ extern struct AsmCodeName AsmOpcode[];
 extern char AsmChars[];
 
 int check_override( int *i );
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 int OperandSize( enum operand_type opnd );
 #else
 int OperandSize( unsigned long opnd );

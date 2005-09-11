@@ -48,7 +48,7 @@ extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool 
 
 #endif
 
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 static int match_phase_3( int *i, enum operand_type determinant );
 #else
 static int match_phase_3( int *i, unsigned long determinant );
@@ -327,7 +327,7 @@ static int output( int i )
     return( NOT_ERROR );
 }
 
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 static int output_data( enum operand_type determinant, int index )
 #else
 static int output_data( unsigned long determinant, int index )
@@ -415,7 +415,7 @@ int match_phase_1( void )
     int                 i;
     int                 retcode;
     signed char         temp_opsiz = 0;
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   cur_opnd;
     enum operand_type   asm_op1;
 #else
@@ -630,7 +630,7 @@ static int match_phase_2( int *i )
 
 static int check_3rd_operand( int i )
 {
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   cur_opnd;
 #else
     unsigned long   cur_opnd;
@@ -669,7 +669,7 @@ static int output_3rd_operand( int i )
     }
 }
 
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
 static int match_phase_3( int *i, enum operand_type determinant )
 #else
 static int match_phase_3( int *i, unsigned long determinant )
@@ -682,7 +682,7 @@ static int match_phase_3( int *i, unsigned long determinant )
 - call by match_phase_2() only;
 */
 {
-#if __WASM__ > 1230
+#if __WATCOMC__ > 1230
     enum operand_type   cur_opnd;
     enum operand_type   last_opnd;
     enum operand_type   asm_op2;
