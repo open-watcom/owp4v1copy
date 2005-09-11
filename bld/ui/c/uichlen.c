@@ -71,11 +71,11 @@ int global uiisdbcs()
         return( 0 );
     }
 #else
-    extern int __is_nonIBM();
+    extern int __NonIBM;
 
     int global uionnec()
     {
-        return( __is_nonIBM() );
+        return( __NonIBM );
     }
 #endif
 
