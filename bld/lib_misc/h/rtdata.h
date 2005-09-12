@@ -77,8 +77,8 @@ typedef struct __stream_link {
 extern __stream_link        *__OpenStreams;
 extern __stream_link        *__ClosedStreams;
 extern      char            * _WCNEAR __env_mask;  /* ptr to char array of flags */
-extern      void            (_WCI86FAR *__FPE_handler)();
-extern      void            (*__FPE_handler_exit)();
+extern      void            (_WCI86FAR *__FPE_handler)( int );
+extern      void            (*__FPE_handler_exit)( void );
 #if !defined(__NETWARE__)
     extern  int             _cbyte;
     extern  int             _cbyte2;
