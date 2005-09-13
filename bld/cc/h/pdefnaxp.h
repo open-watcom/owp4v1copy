@@ -24,25 +24,96 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP specific definitions for #pragma aux.
 *
 ****************************************************************************/
 
 
 hw_reg_set DefaultParms[] = {
-        HW_D( HW_EMPTY )
+    HW_D( HW_EMPTY )
 };
 
 hw_reg_set DefaultVarParms[] = {
-        HW_D( HW_EMPTY )
+    HW_D( HW_EMPTY )
 };
 
 hw_reg_set DefaultLinkage[] = {
-        HW_D( HW_R16 ),
-        HW_D( HW_R17 ),
-        HW_D( HW_R18 ),
-        HW_D( HW_R19 ),
-        HW_D( HW_R20 ),
-        HW_D( HW_R21 ),
+    HW_D( HW_R16 ),
+    HW_D( HW_R17 ),
+    HW_D( HW_R18 ),
+    HW_D( HW_R19 ),
+    HW_D( HW_R20 ),
+    HW_D( HW_R21 ),
+};
+
+#define NC '\0'
+char Registers[] = {            /* table for TableLookup*/
+        'r','0',NC,
+        'r','1',NC,
+        'r','2',NC,
+        'r','3',NC,
+        'r','4',NC,
+        'r','5',NC,
+        'r','6',NC,
+        'r','7',NC,
+        'r','8',NC,
+        'r','9',NC,
+    'r','1','0',NC,
+    'r','1','1',NC,
+    'r','1','2',NC,
+    'r','1','3',NC,
+    'r','1','4',NC,
+    'r','1','5',NC,
+    'r','1','6',NC,
+    'r','1','7',NC,
+    'r','1','8',NC,
+    'r','1','9',NC,
+    'r','2','0',NC,
+    'r','2','1',NC,
+    'r','2','2',NC,
+    'r','2','3',NC,
+    'r','2','4',NC,
+    'r','2','5',NC,
+    'r','2','6',NC,
+    'r','2','7',NC,
+    'r','2','8',NC,
+    'r','2','9',NC,
+    'r','3','0',NC,
+    'r','3','1',NC,
+    NC
+};
+
+hw_reg_set RegBits[] ={
+    HW_D( HW_R0 ),
+    HW_D( HW_R1 ),
+    HW_D( HW_R2 ),
+    HW_D( HW_R3 ),
+    HW_D( HW_R4 ),
+    HW_D( HW_R5 ),
+    HW_D( HW_R6 ),
+    HW_D( HW_R7 ),
+    HW_D( HW_R8 ),
+    HW_D( HW_R9 ),
+    HW_D( HW_R10 ),
+    HW_D( HW_R11 ),
+    HW_D( HW_R12 ),
+    HW_D( HW_R13 ),
+    HW_D( HW_R14 ),
+    HW_D( HW_R15 ),
+    HW_D( HW_R16 ),
+    HW_D( HW_R17 ),
+    HW_D( HW_R18 ),
+    HW_D( HW_R19 ),
+    HW_D( HW_R20 ),
+    HW_D( HW_R21 ),
+    HW_D( HW_R22 ),
+    HW_D( HW_R23 ),
+    HW_D( HW_R24 ),
+    HW_D( HW_R25 ),
+    HW_D( HW_R26 ),
+    HW_D( HW_R27 ),
+    HW_D( HW_R28 ),
+    HW_D( HW_R29 ),
+    HW_D( HW_R30 ),
+    HW_D( HW_R31 ),
 };

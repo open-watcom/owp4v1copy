@@ -39,13 +39,13 @@
 
 local   void    AsmSysAddCodeByte( unsigned char );
 
-static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
 
 extern void *AsmAlloc( unsigned amount );
 extern void AsmFree( void *ptr );
 
+extern  TREEPTR     CurFuncNode;
 
 void AsmWarning( char *msg )
 /**************************/
@@ -53,12 +53,14 @@ void AsmWarning( char *msg )
     CWarn( WARN_ASSEMBLER_WARNING, ERR_ASSEMBLER_WARNING, msg );
 }
 
+
 uint_32 AsmQuerySPOffsetOf( char *name )
 /**************************************/
 {
 // CC provides this
     return( 0 );
 }
+
 
 enum sym_state AsmQueryExternal( char *name )
 /*******************************************/
@@ -77,6 +79,7 @@ enum sym_state AsmQueryExternal( char *name )
     return( SYM_EXTERNAL );
 }
 
+
 local void FreeAsmFixups( void )
 /******************************/
 {
@@ -89,19 +92,37 @@ local void FreeAsmFixups( void )
 //  AsmRelocs = NULL;
 }
 
+
 static byte_seq_reloc *GetFixups( void )
 /**************************************/
 {
-    asmreloc       *reloc;
-    byte_seq_reloc  *head,*new;
-    byte_seq_reloc **lnk;
-    SYM_HANDLE     sym_handle;
+    asmreloc            *reloc;
+    byte_seq_reloc      *head;
+    byte_seq_reloc      *new;
+    byte_seq_reloc      **lnk;
+    SYM_HANDLE          sym_handle;
+    SYM_ENTRY           sym;
 
     head = NULL;
     lnk = &head;
     for( reloc = AsmRelocs; reloc; reloc = reloc->next ) {
         new = CMemAlloc( sizeof( byte_seq_reloc ) );
         sym_handle = SymLook( CalcHash( reloc->name, strlen( reloc->name ) ), reloc->name );
+        if( sym_handle == 0 ) {
+            CErr2p( ERR_UNDECLARED_SYM, reloc->name );
+            return( 0 );
+        }
+        SymGet( &sym, sym_handle );
+        sym.flags |= SYM_REFERENCED | SYM_ADDR_TAKEN;
+        switch( sym.stg_class ) {
+        case SC_REGISTER:
+        case SC_AUTO:
+            sym.flags |= SYM_USED_IN_PRAGMA;
+            CurFuncNode->op.func.flags &= ~FUNC_OK_TO_INLINE;
+//            uses_auto = 1;
+            break;
+        }
+        SymReplace( &sym, sym_handle );
         new->off = reloc->offset;
         new->type = reloc->type;
         new->sym = (void *)sym_handle;
@@ -112,10 +133,11 @@ static byte_seq_reloc *GetFixups( void )
     return( head );
 }
 
+
 local int GetByteSeq( void )
 /**************************/
 {
-    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
+    unsigned char       buff[MAXIMUM_BYTESEQ + 32];
     int                 uses_auto;
     char                too_many_bytes;
 
@@ -124,7 +146,7 @@ local int GetByteSeq( void )
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    for(;;) {
+    for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
             AsmSysParseLine( Buffer );
             NextToken();
@@ -138,7 +160,7 @@ local int GetByteSeq( void )
             break;
         }
         if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
-            if( ! too_many_bytes ) {
+            if( !too_many_bytes ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
@@ -152,7 +174,7 @@ local int GetByteSeq( void )
         uint_32       len;
 
         len = AsmSysGetCodeAddr();
-        seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + len );
+        seq = (risc_byte_seq *)CMemAlloc( sizeof( risc_byte_seq ) + len );
         seq->relocs = GetFixups();
         seq->length = len;
         memcpy( &seq->data[0], buff, len );
@@ -170,6 +192,7 @@ void PragmaInit( void )
 {
     AsmFuncNum = 0;
 }
+
 
 static int GetAliasInfo( void )
 /*****************************/
@@ -203,6 +226,7 @@ static int GetAliasInfo( void )
     }
 }
 
+
 static void GetPdata( void )
 /**************************/
 {
@@ -216,6 +240,33 @@ static void GetPdata( void )
         NextToken();
     }
 }
+
+
+static void GetParmInfo( void )
+/*****************************/
+{
+    if( PragSet() != T_NULL ) {
+        PragManyRegSets();
+    }
+}
+
+
+static void GetSaveInfo( void )
+/*****************************/
+{
+    hw_reg_set      reg;
+
+    reg = PragRegList();
+    HW_TurnOff( CurrInfo->save, reg );
+}
+
+
+static void GetRetInfo( void )
+/****************************/
+{
+    CurrInfo->returns = PragRegList();
+}
+
 
 void PragAux( void )
 /******************/
@@ -251,16 +302,16 @@ void PragAux( void )
             CurrInfo->cclass |= DLL_EXPORT;
             have.f_export = 1;
         } else if( !have.f_parm && PragRecog( "parm" ) ) {
-//          GetParmInfo();
+            GetParmInfo();
             have.f_parm = 1;
         } else if( !have.f_value && PragRecog( "value" ) ) {
-//          GetRetInfo();
+            GetRetInfo();
             have.f_value = 1;
         } else if( !have.f_value && PragRecog( "aborts" ) ) {
             CurrInfo->cclass |= SUICIDAL;
             have.f_value = 1;
         } else if( !have.f_modify && PragRecog( "modify" ) ) {
-//          GetSaveInfo();
+            GetSaveInfo();
             have.f_modify = 1;
         } else if( !have.f_frame && PragRecog( "frame" ) ) {
 //          CurrInfo->cclass |= GENERATE_STACK_FRAME;
@@ -287,8 +338,29 @@ void PragAux( void )
 hw_reg_set PragRegName( char *str )
 /*********************************/
 {
-    return( StackParms[ 0 ] );
+    int         i;
+    char        *p;
+    hw_reg_set  name;
+
+    if( *str == '_' ) {
+        ++str;
+        if( *str == '_' ) {
+            ++str;
+        }
+    }
+    i = 0;
+    p = Registers;
+    while( *p != '\0' ) {
+        if( stricmp( p, str ) == 0 )
+            return( RegBits[ i ] );
+        i++;
+        while( *p++ != '\0' )
+            ;
+    }
+    HW_CAsgn( name, HW_EMPTY );
+    return( name );
 }
+
 
 void AsmSysInit( unsigned char *buf )
 /***********************************/
@@ -298,11 +370,13 @@ void AsmSysInit( unsigned char *buf )
     AsmCodeAddress = 0;
 }
 
+
 void AsmSysFini( void )
 /*********************/
 {
     AsmFini();
 }
+
 
 uint_32 AsmSysGetCodeAddr( void )
 /*******************************/
@@ -310,11 +384,13 @@ uint_32 AsmSysGetCodeAddr( void )
     return( AsmCodeAddress );
 }
 
+
 void AsmSysSetCodeAddr( uint_32 len )
 /***********************************/
 {
     AsmCodeAddress = len;
 }
+
 
 local void AsmSysAddCodeByte( unsigned char byte )
 /************************************************/
@@ -322,11 +398,13 @@ local void AsmSysAddCodeByte( unsigned char byte )
     AsmCodeBuffer[AsmCodeAddress++] = byte;
 }
 
+
 void AsmSysParseLine( char *line )
 /********************************/
 {
     AsmLine( line );
 }
+
 
 void AsmSysMakeInlineAsmFunc( int too_many_bytes )
 /************************************************/
@@ -349,9 +427,9 @@ void AsmSysMakeInlineAsmFunc( int too_many_bytes )
         if( too_many_bytes ) {
             uses_auto = 0;
         } else {
-            risc_byte_seq *seq;
+            risc_byte_seq   *seq;
 
-            seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + code_length );
+            seq = (risc_byte_seq *)CMemAlloc( sizeof( risc_byte_seq ) + code_length );
             seq->relocs = GetFixups();
             seq->length = code_length;
             memcpy( &seq->data[0], AsmCodeBuffer, code_length );
@@ -379,6 +457,7 @@ void AsmSysMakeInlineAsmFunc( int too_many_bytes )
         AddStmt( tree );
     }
 }
+
 
 char const *AsmSysDefineByte( void )
 /**********************************/

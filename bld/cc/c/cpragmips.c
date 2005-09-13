@@ -45,6 +45,7 @@ static  int             AsmFuncNum;
 extern void *AsmAlloc( unsigned amount );
 extern void AsmFree( void *ptr );
 
+extern  TREEPTR     CurFuncNode;
 
 void AsmWarning( char *msg )
 /**************************/
@@ -95,17 +96,33 @@ local void FreeAsmFixups( void )
 static byte_seq_reloc *GetFixups( void )
 /**************************************/
 {
-    asmreloc        *reloc;
-    byte_seq_reloc  *head;
-    byte_seq_reloc  *new;
-    byte_seq_reloc  **lnk;
-    SYM_HANDLE      sym_handle;
+    asmreloc            *reloc;
+    byte_seq_reloc      *head;
+    byte_seq_reloc      *new;
+    byte_seq_reloc      **lnk;
+    SYM_HANDLE          sym_handle;
+    SYM_ENTRY           sym;
 
     head = NULL;
     lnk = &head;
     for( reloc = AsmRelocs; reloc; reloc = reloc->next ) {
         new = CMemAlloc( sizeof( byte_seq_reloc ) );
         sym_handle = SymLook( CalcHash( reloc->name, strlen( reloc->name ) ), reloc->name );
+        if( sym_handle == 0 ) {
+            CErr2p( ERR_UNDECLARED_SYM, reloc->name );
+            return( 0 );
+        }
+        SymGet( &sym, sym_handle );
+        sym.flags |= SYM_REFERENCED | SYM_ADDR_TAKEN;
+        switch( sym.stg_class ) {
+        case SC_REGISTER:
+        case SC_AUTO:
+            sym.flags |= SYM_USED_IN_PRAGMA;
+            CurFuncNode->op.func.flags &= ~FUNC_OK_TO_INLINE;
+//            uses_auto = 1;
+            break;
+        }
+        SymReplace( &sym, sym_handle );
         new->off = reloc->offset;
         new->type = reloc->type;
         new->sym = (void *)sym_handle;
@@ -143,7 +160,7 @@ local int GetByteSeq( void )
             break;
         }
         if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
-            if( ! too_many_bytes ) {
+            if( !too_many_bytes ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
@@ -157,7 +174,7 @@ local int GetByteSeq( void )
         uint_32       len;
 
         len = AsmSysGetCodeAddr();
-        seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + len );
+        seq = (risc_byte_seq *)CMemAlloc( sizeof( risc_byte_seq ) + len );
         seq->relocs = GetFixups();
         seq->length = len;
         memcpy( &seq->data[0], buff, len );
