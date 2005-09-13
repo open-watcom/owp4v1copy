@@ -14,8 +14,10 @@ commdef &
 datamix1 &
 datamix2 &
 dgroup &
+diag01 &
 dsxfork &
 dsxhdlr &
+expr01 &
 extprocf &
 extprocn &
 float &

@@ -806,11 +806,14 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
 
             fix_struct_value( token_1 );
             fix_struct_value( token_2 );
+            if( token_2->base_reg != EMPTY || token_2->idx_reg != EMPTY ) {
+                if( error_msg )
+                    AsmError( ILLEGAL_USE_OF_REGISTER );
+                token_1->type = EXPR_UNDEF;
+                return( ERROR );
+            }
             if( token_2->label == EMPTY ) {
                 token_1->value -= token_2->value;
-                token_1->base_reg = token_2->base_reg;
-                token_1->idx_reg = token_2->idx_reg;
-                token_1->scale = token_2->scale;
                 token_1->indirect |= token_2->indirect;
             } else {
                 if( token_1->label == EMPTY ) {
@@ -851,9 +854,6 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 token_1->value -= token_2->value;
                 token_1->label = EMPTY;
                 token_1->sym = NULL;
-                token_1->base_reg = token_2->base_reg;
-                token_1->idx_reg = token_2->idx_reg;
-                token_1->scale = token_2->scale;
                 if( token_1->base_reg == EMPTY && token_1->idx_reg == EMPTY ) {
                     token_1->type = EXPR_CONST;
                     token_1->indirect = FALSE;
