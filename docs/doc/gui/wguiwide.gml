@@ -42,7 +42,7 @@ Each project component is referred to as a
 .us Target.
 An &ide target is made up of the source files, include files,
 libraries, and MAKE instructions to create the target file (for
-example ".exe", ".dll", ".lib", or ".hlp"). A project often has more
+example, ".exe", ".dll", ".lib", or ".hlp"). A project often has more
 than one target. Each target can be set to create the associated
 target file for a specific destination platform.
 .np
@@ -63,7 +63,7 @@ The sub-window represents the target for this project,
 .fi target.exe.
 The source file for the target is listed within the target window. In
 this project, there is only a single target with a single source file.
-.figure *depth='3.72' *scale=100 *file='ide1' The &company &vip window displays project and target windows.
+.figure *depth='3.18' *scale=50 *file='ide1' The &company &vip window displays project and target windows.
 .np
 The language tools are available on the toolbar and the drop-down
 menus. For example, on the Sources menu, you can work with the source
@@ -188,13 +188,13 @@ Access on-line help information
 .ix 'status bar' '&ide'
 The Status Bar appears along the bottom of the &company &vip Project
 window. This bar displays hint text for the toolbar button and menu
-option over which your cursor is positioned. Statuses, such as Saving,
-Adding, and Executing Log, appear in this bar so you are aware of what
-action the &vip is performing. A check mark beside the Show Status Bar
-menu option in the File menu indicates that this feature is enabled.
-To disable this feature, choose the option again from the File menu
-and the status bar disappears from the window.
-.figure *depth='3.82' *scale=100 *file='ide2' The &vip Status Bar can be toggled from the File menu.
+option over which your cursor is positioned. Status messages, such as
+Saving, Adding, and Executing Log, appear in this bar so you are aware
+of what action the &vip is performing. A check mark beside the Show
+Status Bar menu option in the File menu indicates that this feature is
+enabled. To disable this feature, choose the option again from the File
+menu and the status bar disappears from the window.
+.figure *depth='3.18' *scale=50 *file='ide2' The &vip Status Bar can be toggled from the File menu.
 .*
 .section The &vip Toolbar
 .*
@@ -206,7 +206,7 @@ menu bar when the Show Tool Bar option in the File menu is activated
 (default). A check mark beside the menu option indicates that it is
 enabled. To disable this feature, choose the option again from the
 File menu and the toolbar disappears.
-.figure *depth='0.47' *scale=100 *file='ide3' You can access twelve &vip functions from the toolbar.
+.figure *depth='0.42' *scale=100 *file='ide3' You can access thirteen &vip functions from the toolbar.
 .np
 The following explains the function each icon performs, as well as the
 equivalent function on the menu bar.
@@ -251,6 +251,11 @@ Targets menu.
 .ix 'debug target'
 Debug the current target. This is equivalent to the option Debug in
 the Targets menu.
+.point Remote Debug
+:HBMP 'rdbgtarg.bmp' i
+.ix 'remote debug target'
+Debug the current target on a remote machine. This is equivalent to 
+the option Remote Debug in the Targets menu.
 .point Browse
 :HBMP 'browtarg.bmp' i
 .ix 'browse target'
@@ -320,7 +325,7 @@ The Enter Project Filename dialog appears. The default project name is
 .step Enter the filename
 .fi \project\first
 in the File Name field and click on OK.
-.figure *depth='2.50' *scale=100 *file='ide4' Enter the filename in the Enter Project Filename dialog.
+.figure *depth='1.85' *scale=50 *file='ide4' Enter the filename in the Enter Project Filename dialog.
 .result
 This is the name of the project you are creating. If you enter a
 directory that doesn't exist (in this case,
@@ -347,7 +352,7 @@ in the Target Name field (we suggest
 Next, select the appropriate Target Environment (we suggest
 "Win32") and Image Type (we suggest "Character-mode Executable").
 Click on OK when completed.
-.figure *depth='2.79' *scale=100 *file='ide5' Select target name, target environment and image type
+.figure *depth='2.55' *scale=50 *file='ide5' Select target name, target environment and image type
 .result
 The New Target dialog closes and the &vip creates a target window
 entitled
@@ -376,7 +381,7 @@ from the file list, you can add it to the list of source files to be
 included by clicking the Add button. All files in the file list can be
 added by clicking the Add All button. Individual names can be removed
 from the "add" list by selecting them and clicking the Remove button.
-.figure *depth='3.95' *scale=100 *file='ide6' Select source file names in the Add File(s) dialog
+.figure *depth='2.72' *scale=50 *file='ide6' Select source file names in the Add File(s) dialog
 .step Enter the following source file names.
 .millust begin
 source1.c   (or source1.for)
@@ -391,7 +396,7 @@ For all other systems, enter one name at a time into the File Name
 field, pressing Enter or clicking on Add after each one has been
 entered.
 Click on Close when done.
-.figure *depth='3.95' *scale=100 *file='ide7' Enter one or several source files in the Add File(s) dialog.
+.figure *depth='2.72' *scale=50 *file='ide7' Enter one or several source files in the Add File(s) dialog.
 .result
 The &vip adds the new source files to the target window, followed by
 the characters [n/a]. This indicates that the source files are not
@@ -591,12 +596,12 @@ Since you entered
 instead of
 .us i,
 the MAKE fails.
-.figure *depth='3.81' *scale=100 *file='ide8' Use the &vip Log window to monitor the make procedure.
+.figure *depth='3.18' *scale=50 *file='ide8' Use the &vip Log window to monitor the make procedure.
 .step Highlight the error message
 in the &vip Log window and choose Help on Message from the Log menu.
 .result
 Help information regarding the error message appears on the screen.
-.figure *depth='1.46' *scale=100 *file='ide9' Help for error messages is available
+.figure *depth='1.13' *scale=50 *file='ide9' Help for error messages is available
 .np
 Close the Help window and edit the source file as follows.
 .step Highlight the error message
@@ -617,7 +622,7 @@ from the Targets menu.
 .result
 The &vip executes the program
 .fi target1.exe.
-.figure *depth='3.60' *scale=100 *file='ide10' Run from the Targets menu runs the target.
+.figure *depth='2.49' *scale=50 *file='ide10' Run from the Targets menu runs the target.
 The program you wrote is a character mode application and its output
 appears in a separate console window.
 You are now ready to debug your target program. You probably do not need
@@ -748,7 +753,7 @@ enter the name of the project you are creating.
 in the File Name field and choose the desired directory.
 .result
 All projects must have the extension ".wpj".
-.figure *depth='2.50' *scale=100 *file='ide11' Use the Enter Project Filename dialog to create a new project.
+.figure *depth='1.85' *scale=50 *file='ide11' Use the Enter Project Filename dialog to create a new project.
 .step Click on OK
 when completed.
 .result
@@ -764,7 +769,7 @@ from the File menu.
 .result
 The Open dialog appears on the screen where you select the project you
 want to open.
-.figure *depth='2.50' *scale=100 *file='ide12' Use the Open dialog to open an existing project.
+.figure *depth='1.85' *scale=50 *file='ide12' Use the Open dialog to open an existing project.
 .step Choose the desired project.
 .result
 All projects have the extension ".wpj".
@@ -896,7 +901,7 @@ from the Targets menu.
 .result
 The New Target dialog appears on the screen where you enter the
 details of the target you are adding.
-.figure *depth='2.79' *scale=100 *file='ide13' Enter the new target details in the New Target dialog.
+.figure *depth='2.55' *scale=50 *file='ide13' Enter the new target details in the New Target dialog.
 .step Enter the target name
 in the Target Name field.
 .result
@@ -931,7 +936,7 @@ Development mode. The letter R indicates that the target is placed in
 Release mode. The rest of the window displays the source files for the
 target.
 .endstep
-.figure *depth='2.82' *scale=100 *file='ide14' A project may have multiple targets.
+.figure *depth='3.17' *scale=50 *file='ide14' A project may have multiple targets.
 .begstep To add an existing target to a current project:
 .step Choose New Target
 from the Targets menu.
@@ -942,7 +947,7 @@ The New Target dialog appears on the screen.
 The Enter Target Filename dialog appears on the screen. This dialog
 allows you to browse the directories and files and select the ".tgt"
 file for the target you want to add.
-.figure *depth='2.50' *scale=100 *file='ide15' Choose an existing target from the Pick Target Filename dialog for the current project.
+.figure *depth='1.85' *scale=50 *file='ide15' Choose an existing target from the Pick Target Filename dialog for the current project.
 .step Click on the desired target
 to select it.
 .result
@@ -990,7 +995,7 @@ on or under the icon.
 .step Double-click on the icon
 to open the target window again.
 .endstep
-.figure *depth='3.36' *scale=100 *file='ide16' Minimize targets to reduce clutter in the project window.
+.figure *depth='3.17' *scale=50 *file='ide16' Minimize targets to reduce clutter in the project window.
 .*
 .section Removing a Target
 .*
@@ -1041,7 +1046,7 @@ from the Targets menu.
 The Rename Target dialog appears.
 The Target Name, Target Environment, and Image Type of the selected
 target appear in the appropriate fields.
-.figure *depth='2.79' *scale=100 *file='ide17' Change a target's name using the Rename Target dialog.
+.figure *depth='2.55' *scale=50 *file='ide17' Change a target's name using the Rename Target dialog.
 .step Enter the new target name
 in the Target Name field.
 .orstep Click on the Browse button
@@ -1121,7 +1126,7 @@ appears in the &vip Log window when the make is completed on the
 selected target. If the make is successful an executable file for the
 selected target can be found in the directory associated with the
 target window.
-.figure *depth='3.36' *scale=100 *file='ide18' Use the &vip Log window to monitor the make procedure.
+.figure *depth='3.18' *scale=50 *file='ide18' Use the &vip Log window to monitor the make procedure.
 .endstep
 .begstep To make all targets for the current project:
 .step Choose Make All
@@ -1161,7 +1166,7 @@ from the Target Options submenu.
 .result
 The Target Command dialog appears on the screen. This dialog
 displays the makefile commands for the selected target.
-.figure *depth='2.92' *scale=100 *file='ide19' The Target Command dialog displays the makefile commands for the selected target.
+.figure *depth='1.51' *scale=50 *file='ide19' The Target Command dialog displays the makefile commands for the selected target.
 .step Click on OK
 to close the dialog.
 .endstep
@@ -1184,7 +1189,7 @@ The title bar of the selected target window is highlighted.
 from the Targets menu.
 .result
 The &vip executes the target program.
-.figure *depth='3.60' *scale=100 *file='ide20' Run from the Targets menu runs the target.
+.figure *depth='2.50' *scale=50 *file='ide20' Run from the Targets menu runs the target.
 .endstep
 .*
 .beglevel
@@ -1207,7 +1212,7 @@ from the Actions menu.
 .result
 A Run or Run Batch dialog appears on the screen. These dialogs are
 identical.
-.figure *depth='1.15' *scale=100 *file='ide21' Use the Run (or Run Batch) dialog to run other programs in the &vip..
+.figure *depth='0.63' *scale=50 *file='ide21' Use the Run (or Run Batch) dialog to run other programs in the &vip..
 .step Enter the name of the program
 you want to run in the Command field.
 .step Click on OK
@@ -1332,7 +1337,7 @@ typed a name in the File Name field, you can add it to the list of
 source files to be included by clicking the Add button. Individual
 names can be removed from the "add" list by selecting them and
 clicking the Remove button.
-.figure *depth='3.95' *scale=100 *file='ide22' Add one or several source files to a target using the Add File(s) dialog.
+.figure *depth='2.72' *scale=50 *file='ide22' Add one or several source files to a target using the Add File(s) dialog.
 .step Enter the source file name(s).
 .np
 For the OS/2 &vip, enter all the names into the field separating each
@@ -1450,7 +1455,7 @@ to the right of the folder icon of the source files group you want to
 remove from the target.
 .result
 The selected header appears highlighted in the target window.
-.figure *depth='3.36' *scale=100 *file='ide23' Click on the header to remove all source files with a common file extension.
+.figure *depth='3.18' *scale=50 *file='ide23' Click on the header to remove all source files with a common file extension.
 .step Choose Remove Source
 from the Sources menu.
 .result
@@ -1483,7 +1488,7 @@ from the Sources menu.
 The Rename File dialog appears where you enter the new name of the
 selected source file.
 .np
-.figure *depth='3.36' *scale=100 *file='ide24' Use the Rename File dialog to rename the selected source file.
+.figure *depth='3.18' *scale=50 *file='ide24' Use the Rename File dialog to rename the selected source file.
 .step Enter the new source file name
 in the field.
 .orstep Click on the Browse button
@@ -1603,7 +1608,7 @@ from the Source Options submenu.
 The Source Command dialog appears on the screen. This dialog
 displays the makefile commands for the selected source file or source
 file header.
-.figure *depth='1.36' *scale=100 *file='ide25' The &vip Source Command dialog displays the makefile commands for the selected source file(s).
+.figure *depth='0.83' *scale=50 *file='ide25' The &vip Source Command dialog displays the makefile commands for the selected source file(s).
 .step Click on OK
 to close the dialog.
 .endstep
@@ -1887,6 +1892,8 @@ you to set the following types of switches:
 .bull
 Basic
 .bull
+Import, Export and Library
+.bull
 Advanced
 .bull
 Special
@@ -1896,7 +1903,7 @@ Resource
 .np
 You can use the forward (>>) and backward (<<) buttons or the
 drop-down list to choose the set of switches you want to set.
-.figure *depth='2.18' *scale=100 *file='ide26' Use the Windows Linking Switches dialog to set command-line compiler and linker options.
+.figure *depth='2.80' *scale=50 *file='ide26' Use the Windows Linking Switches dialog to set command-line compiler and linker options.
 .np
 The first dialog allows you to choose the debugging information you
 want to see. Remember, if the option Use Development Switches is
@@ -2002,7 +2009,7 @@ Miscellaneous Switches
 .np
 You can use the forward (>>) and backward (<<) buttons or the
 drop-down list to choose the set of switches you want to set.
-.figure *depth='2.39' *scale=100 *file='ide27' Use the C Compiler Switches dialog to set switches for the compiler associated with the selected source file(s).
+.figure *depth='2.73' *scale=50 *file='ide27' Use the C Compiler Switches dialog to set switches for the compiler associated with the selected source file(s).
 .np
 The first of several compiler switch dialogs appears. Of note is the
 sixth screen, Debugging Switches, which allows you to choose the
@@ -2108,7 +2115,7 @@ Miscellaneous Switches
 .np
 You can use the forward (>>) and backward (<<) buttons or the
 drop-down list to choose the set of switches you want to set.
-.figure *depth='2.39' *scale=100 *file='ide28' Use the C Compiler Switches dialog to set switches for the compiler associated with the selected source file(s).
+.figure *depth='2.73' *scale=50 *file='ide28' Use the C Compiler Switches dialog to set switches for the compiler associated with the selected source file(s).
 .np
 The first of several compiler switch dialogs appears. Of note is the
 sixth screen, Debugging Switches, which allows you to choose the
@@ -2366,6 +2373,9 @@ No revision control system
 .note Object Cycle
 .ix 'Object Cycle'
 Powersoft's Object Cycle
+.note Perforce
+.ix 'Perforce'
+Perforce
 .endnote
 .endstep
 .np
@@ -2479,7 +2489,7 @@ menu.
 .endnote
 .step Enter the command
 you want to execute before or after the selected target is made.
-.figure *depth='2.67' *scale=100 *file='ide29' Enter execute commands in the Target Before or Target After dialogs.
+.figure *depth='1.77' *scale=50 *file='ide29' Enter execute commands in the Target Before or Target After dialogs.
 .step Click on OK
 to continue.
 .result
@@ -2676,9 +2686,26 @@ The target is a 16-bit DOS .lib file.
 .ix 'targets' 'DOS 32-bit'
 .ix 'DOS 32-bit targets'
 .begnote
+.note CauseWay Executable [.exe]
+.br
+The target is a 32-bit CauseWay .exe file.
+.note CauseWay DLL (register based) [.dll]
+.br
+The target is a 32-bit CauseWay dll using register-based calling
+conventions.
+.note CauseWay DLL (stack based) [.dll]
+.br
+The target is a 32-bit CauseWay dll using stack-based calling
+conventions.
 .note DOS4GW Executable [.exe]
 .br
 The target is a 32-bit DOS/4GW .exe file.
+.note PMODW/W Executable [.exe]
+.br
+The target is a 32-bit PMODE/W .exe file.
+.note DOS32/A Executable [.exe]
+.br
+The target is a 32-bit DOS32/A .exe file.
 .note Pharlap Executable [.exp]
 .br
 The target is a 32-bit PharLap "RUN386" .exe file.
@@ -2755,6 +2782,22 @@ The target is an OS/2 help file (HLP format).
 .note INF File [.inf]
 .br
 The target is an OS/2 help file (INF format).
+.endnote
+.*
+.section Linux Targets
+.*
+.ix 'targets' 'Linux'
+.ix 'Linux targets'
+.begnote
+.note Executable [.exe]
+.br
+The target is a Linux application.
+.note Shared Library [.dll]
+.br
+Shared libraries are not yet supported.
+.note Library [.lib]
+.br
+The target is a Linux static library file.
 .endnote
 .*
 .endlevel
