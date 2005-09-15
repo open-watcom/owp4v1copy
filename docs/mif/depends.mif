@@ -743,6 +743,7 @@ $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)res6.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)res7.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)res8.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)res9.bmp &
+$(docsrc_dir)$(SL)gui$(SL)snaps$(SL)rdbgtarg.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)runtarg.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)samptarg.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)save.bmp &
