@@ -24,78 +24,63 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  routine for checking FPU type
 ;*
 ;*****************************************************************************
 
-
-include struct.inc
 include mdef.inc
-
-        xred    __real87, byte
-
-        xdefp   __init_8087_emu
-        xdefp   __init_80x87
-
-ifdef __DOS__
-
-        xdefp   __init_emu
-
-DGROUP group _DATA
-_DATA segment 'DATA'
-        __init_emu dw 0
-_DATA ends
-
-endif
 
         modstart init8087
 
+datasegment
+        xred    __8087cw, word
+ifdef __DOS__
+        xred    __dos87emucall, word
+endif
+enddata
+
         xref    __init_8087_            ; in chk8087.c
+
+        xdefp   __init_8087_emu
+        xdefp   __x87id
 
 __init_8087_emu proc near
         call    __init_8087_
         ret
 __init_8087_emu endp
 
-        defpe   __init_80x87            ; called from chk8087.c
+__x87id proc near
         push    BP                      ; save BP
         mov     BP,SP                   ; get access to stack
-        push    AX                      ; save initial control word value
-ifdef __DOS__
-assume DS:DGROUP
-        push    ds
-if _MODEL and _BIG_DATA
-        mov     ax,DGROUP
-        mov     ds,ax
-endif
-        cmp     word ptr __init_emu,0
-        jz      l1
-        mov     ax,word ptr [BP-2]
-        call    __init_emu
-l1:     pop     ds
-endif
+        sub     AX,AX
         push    AX                      ; allocate space for status word
         finit                           ; use default infinity mode
+        fstcw   word ptr [BP-2]         ; save control word
+        fwait
+        pop     AX
+        mov     AL,0
+        cmp     AH,3
+        jnz     nox87
+        push    AX                      ; allocate space for status word
         fld1                            ; generate infinity by
         fldz                            ;   dividing 1 by 0
         fdiv                            ; ...
         fld     st                      ; form negative infinity
         fchs                            ; ...
         fcompp                          ; compare +/- infinity
-        fstsw   word ptr [BP-4]         ; equal for 87/287
+        fstsw   word ptr [BP-2]         ; equal for 87/287
         fwait                           ; wait fstsw to complete
-        mov     AX,[BP-4]               ; get NDP status word
+        pop     AX                      ; get NDP status word
         mov     AL,2                    ; assume 80287
         sahf                            ; store condition bits in flags
         jz      not387                  ; it's 287 if infinities equal
         mov     AL,3                    ; indicate 80387
 not387: finit                           ; re-initialize the 8087
-        fldcw   word ptr [BP-2]         ; .(affine,round nearest,64-bit prec)
+nox87:  mov     AH,0
         mov     SP,BP                   ; clean up stack
         pop     BP                      ; restore BP
         ret                             ; return
-        endproc __init_80x87
+__x87id endp
 
         endmod
         end

@@ -58,12 +58,25 @@ unsigned int __win87em_fstcw(void);
         "pop    bx"                                     \
         value [ax]
 
-#elif defined( __DOS__ ) && !defined( __386__ )
+#elif defined( __DOS_086__ )
 
-void _WCI86NEAR (*__dos_emu_fldcw)( unsigned short * ) = NULL;
-#pragma aux __dos_emu_fldcw "*";
-void _WCI86NEAR (*__dos_emu_fstcw)( unsigned short * ) = NULL;
-#pragma aux __dos_emu_fstcw "*";
+extern unsigned char __dos87real;
+#pragma aux __dos87real "*";
+
+extern unsigned short __dos87emucall;
+#pragma aux __dos87emucall "*";
+
+void _WCI86NEAR __dos_emu_fldcw( unsigned short * );
+#pragma aux __dos_emu_fldcw "*" = \
+        "mov    ax,3" \
+        "call   __dos87emucall" \
+        parm [bx];
+        
+void _WCI86NEAR __dos_emu_fstcw( unsigned short * );
+#pragma aux __dos_emu_fstcw "*" = \
+        "mov    ax,4" \
+        "call   __dos87emucall" \
+        parm [bx];
 
 #endif
 
@@ -105,16 +118,16 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
             __fstcw( &control_word );               /* 17-sep-91 */
             __win87em_fldcw(control_word);
         }
-#elif defined( __DOS__ ) && !defined( __386__ )
-        if( _RWD_real87 ) {
+#elif defined( __DOS_086__ )
+        if( __dos87real ) {
             __fstcw( &control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
                 __fldcw( &control_word );
-                __fstcw( &control_word );               /* 17-sep-91 */
+                __fstcw( &control_word );
             }
         }
-        if( ( __dos_emu_fstcw != NULL ) && ( __dos_emu_fldcw != NULL ) ) {
+        if( __dos87emucall ) {
             __dos_emu_fstcw( &control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);

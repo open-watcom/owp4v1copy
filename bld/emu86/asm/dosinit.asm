@@ -30,6 +30,15 @@
 
 ; !!!!! must be compiled with -fpi option !!!!!
 
+;
+;  interface to 16-bit DOS emulator for FPU functions required by clib
+;
+;    function                    used in  
+;  1  init emulator       clib/startup/c/chk8087.c
+;  2  init old stack      clib/fpu/a/old87.asm
+;  3  read control word   clib/fpu/c/cntrl87.c
+;  4  write control word  clib/fpu/c/cntrl87.c
+
 include mdef.inc
 
 DGROUP  group   _DATA
@@ -37,72 +46,43 @@ DGROUP  group   _DATA
 
 _DATA   segment word public 'DATA'
         extrn   __8087cw        : word
-        extrn   __init_emu      : word         ; in clib/fpu/a/ini87086.asm
-        extrn   __old_8087_emu  : word         ; in clib/fpu/a/old87.asm
-        extrn   __dos_emu_fstcw : word         ; in clib/fpu/c/cntrl87.asm
-        extrn   __dos_emu_fldcw : word         ; in clib/fpu/c/cntrl87.asm
 _DATA   ends
-
 
 _TEXT segment word public 'CODE'
 
-        xdefp   __dos_init_emu
-        xdefp   __dos_fini_emu
+        xdefp   ___dos87emucall
 
-___init_emu proc near
-        push    bp
-        mov     bp,sp
-        push    ax
-        finit                         ; initialize the '8087' emulator
-        fldcw   word ptr [bp - 2]     ; load control word
-        mov     sp,bp
-        mov     ax,3
-        pop     bp
+___dos87emucall proc near
+        cmp     ax,1
+        jnz     l1
+        finit                         ; initialize the 8087 EMU
+        fldcw   word ptr __8087cw     ; load default control word
         ret
-___init_emu endp
-
-___init_old_emu proc near
-        fldz                          ; put 8087 into 4 empty / 4 full state
+        
+l1:     cmp     ax,2
+        jnz     l2
+        fldz                          ; put 8087 EMU into 4 empty / 4 full state
         fldz                          ; ...
         fldz                          ; ...
         fldz                          ; ...
         ret
-___init_old_emu endp
 
-___emu_fstcw proc near
-        xchg   ax,bp
-        fstcw  word ptr [bp]
-        fwait
-        xchg   ax,bp
+l2:     cmp     ax,3
+        jnz     l3
+        xchg    bx,bp                 ; read 8087 EMU control word
+        fstcw   word ptr [bp]         ; ...
+        fwait                         ; ...
+        xchg    bx,bp                 ; ...
         ret
-___emu_fstcw endp
+        
+l3:     cmp     ax,4
+        jnz     return
+        xchg    bx,bp                 ; set 8087 EMU control word
+        fldcw   word ptr [bp]         ; ...
+        xchg    bx,bp                 ; ...
+return: ret
+___dos87emucall endp
 
-___emu_fldcw proc near
-        xchg   ax,bp
-        fldcw  word ptr [bp]
-        xchg   ax,bp
-        ret
-___emu_fldcw endp
-
-__dos_init_emu proc near
-        mov   ax,__8087cw
-        call  ___init_emu
-        mov   word ptr __init_emu, ___init_emu
-        mov   word ptr __old_8087_emu, ___init_old_emu
-        mov   word ptr __dos_emu_fstcw, ___emu_fstcw
-        mov   word ptr __dos_emu_fldcw, ___emu_fldcw
-        ret
-__dos_init_emu endp
-
-__dos_fini_emu proc near
-        xor     ax,ax
-        mov     word ptr __init_emu, ax
-        mov     word ptr __old_8087_emu, ax
-        mov     word ptr __dos_emu_fstcw, ax
-        mov     word ptr __dos_emu_fldcw, ax
-        ret
-__dos_fini_emu endp
-
-_TEXT ends
+_TEXT   ends
 
         end

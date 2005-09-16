@@ -42,23 +42,28 @@ endif
 
 datasegment
         xref    __8087
-
 ifdef __DOS_086__
-        xred    __old_8087_emu, word
+        xred    __dos87emucall, word
+        xred    __dos87real, byte
 endif
 enddata
 
         xdefp    __old_8087
         defp     __old_8087
+ifdef __DOS_086__
+        cmp     __dos87real,0
+        jz      l1
+endif
         fldz
         fldz
         fldz
         fldz
 ifdef __DOS_086__
-        cmp     word ptr __old_8087_emu,0
-        jz      l1
-        call    __old_8087_emu
-l1:
+l1:     cmp     __dos87emucall,0
+        jz      l2
+        mov     ax,2
+        call    __dos87emucall
+l2:
 endif
         ret
         endproc __old_8087

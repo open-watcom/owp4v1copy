@@ -64,12 +64,13 @@ _DATA segment word public 'DATA'
         extrn   __real87 : byte
 _DATA ends
 
+_TEXT segment word public 'CODE'
+
         extrn   __FPMATH        : far
         extrn   GETWINFLAGS     : far
         extrn   __init_8087_emu : near
+        extrn   __x87id         : near
         extrn   __raise_fpe_    : near
-
-_TEXT segment word public 'CODE'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
@@ -90,8 +91,10 @@ __init_87_emulator proc
         mov     bx,3                    ; ...
         call    __FPMATH                ; ...
 
+        call    __x87id                 ; get the 80x87 type
+        mov     byte ptr __8087,al      ; 
         call    __init_8087_emu         ; initialize the 80x87
-        mov     byte ptr __8087,al      ; at this point we can't tell the real
+                                        ; at this point we can't tell the real
                                         ; thing from the fake since emulator is
                                         ; hooked in, ask windows if there is
                                         ; a coprocessor

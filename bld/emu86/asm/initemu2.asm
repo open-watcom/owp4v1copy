@@ -64,12 +64,13 @@ _DATA segment word public 'DATA'
         extrn   __real87 : byte
 _DATA ends
 
-        extrn   __init_8087_emu : near
-
 _TEXT segment word public 'CODE'
 
-        extrn   __hook8087   : near
-        extrn   __unhook8087 : near
+        extrn   __init_8087_emu : near
+        extrn   __x87id         : near
+
+        extrn   __hook8087      : near
+        extrn   __unhook8087    : near
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
@@ -79,8 +80,10 @@ public  __init_87_emulator
 __init_87_emulator proc
         call    __hook8087              ; hook into int7 if 80x87 not present
         mov     byte ptr __real87,al    ; set whether real 80x87 present
+        call    __x87id                 ;
+        mov     byte ptr __8087,al      ;
         call    __init_8087_emu         ; initialize the 80x87
-        mov     byte ptr __8087,al      ; at this point we can't tell the real
+                                        ; at this point we can't tell the real
                                         ; thing from the fake since emulator is
                                         ; hooked in
         ret                             ; return to caller

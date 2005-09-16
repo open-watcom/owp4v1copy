@@ -63,9 +63,10 @@ _DATA segment word public 'DATA'
         extrn   __8087 : byte
 _DATA ends
 
-        extrn   __init_8087_emu : near
-
 _TEXT segment word public 'CODE'
+
+        extrn   __init_8087_emu : near
+        extrn   __x87id         : near
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
@@ -73,8 +74,9 @@ _TEXT segment word public 'CODE'
 
 public  __init_87_emulator
 __init_87_emulator proc
-        call    __init_8087_emu         ; initialize the 80x87
+        call    __x87id                 ; get the 80x87 type
         mov     byte ptr __8087,al      ; pretend we have a 387 if emulating
+        call    __init_8087_emu         ; initialize the 80x87
         ret                             ; return to caller
 __init_87_emulator endp
 

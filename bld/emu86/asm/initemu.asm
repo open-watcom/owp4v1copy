@@ -65,6 +65,8 @@ _DATA   segment word public 'DATA'
         extrn   __8087          : byte
         extrn   __real87        : byte
         extrn   __no87          : word
+        extrn   __dos87emucall  : word
+        extrn   __dos87real     : byte
 
 i34off  dw      0
 i34seg  dw      0
@@ -88,14 +90,14 @@ i3doff  dw      0
 i3dseg  dw      0
 _DATA   ends
 
-        extrn   __init_8087_emu : near
-
 _TEXT segment word public 'CODE'
+
+        extrn   __init_8087_emu : near
 
         extrn   __int34         : near
         extrn   __int3c         : near
-        extrn   __dos_init_emu  : near
-        extrn   __dos_fini_emu  : near
+        extrn   __x87id         : near
+        extrn   ___dos87emucall : near
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
@@ -142,18 +144,20 @@ xchg_vects      endp
 public  __init_87_emulator
 __init_87_emulator proc
         push    bx                      ; save bx
-        fninit                          ; initialize math coprocessor
-        push    ax                      ; ...
-        mov     bx,sp                   ; ...
-        fnstcw  ss:[bx]                 ; store control word in memory
-        pop     ax                      ; get CW into ax
+        call    __x87id
+        mov     __dos87real,al          ; set installed 80x87
+        mov     __real87,al             ; set real 80x87 used
+        mov     __8087,al               ; set 80x87
         mov     bx,__no87               ; get state of NO87 environment var
-        cmp     ah,03h                  ; coprocessor is present
-        _if     ne                      ; if no coprocessor
+        cmp     al,0                    ; coprocessor is present
+        _if     e                       ; if no coprocessor
           inc   bx                      ; - pretend NO87 was set
         _endif                          ; endif
         test    bx,bx                   ; if no 80x87 or no87 set
         _if     ne                      ; then
+          mov   __dos87emucall, ___dos87emucall ; set pointer for DOS EMU control
+          mov   __real87,ah             ; - no real 80x87
+          mov   __8087,3                ; - set 80387
           mov   ax,offset __int34       ; - emulate instructions
           mov   i3coff,offset __int3c   ; - ...
           mov   i3doff,offset __int3d   ; - ...
@@ -181,15 +185,7 @@ __init_87_emulator proc
         mov     i3cseg,cs               ; ...
         mov     i3dseg,cs               ; ...
         call    xchg_vects              ; set up vectors
-        call    __init_8087_emu         ; initialize the 8087
-        mov     byte ptr __8087,al      ; pretend we have a 387 if emulating
-        test    bx,bx                   ; if no 80x87 or no87 set
-        _if     ne                      ; then
-          mov   byte ptr __real87,0     ; - say we do not have a real 80x87
-          call  __dos_init_emu          ; initialize the '8087' emulator
-        _else                           ; else
-          mov   byte ptr __real87,al    ; - we have a real 80x87 of type AL
-        _endif                          ; endif
+        call    __init_8087_emu         ; initialize real 80x87 and 80x87 EMU
         pop     bx                      ; restore bx
         ret                             ; return to caller
 __init_87_emulator endp
@@ -200,8 +196,8 @@ __init_87_emulator endp
 
 public __fini_87_emulator
 __fini_87_emulator proc
+        mov     word ptr __dos87emucall,0
         call    xchg_vects
-        call    __dos_fini_emu
         ret
 __fini_87_emulator endp
 
