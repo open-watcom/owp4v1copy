@@ -39,7 +39,7 @@ __x87id proc
         sub     EAX,EAX
         push    EAX                     ; allocate space for status word
         finit                           ; use default infinity mode
-        fstcw   word ptr [ESP-4]        ; save control word
+        fstcw   word ptr [ESP]          ; save control word
         fwait
         pop     EAX
         mov     AL,0
@@ -52,7 +52,7 @@ __x87id proc
         fld     st                      ; form negative infinity
         fchs                            ; ...
         fcompp                          ; compare +/- infinity
-        fstsw   word ptr [ESP-4]        ; equal for 87/287
+        fstsw   word ptr [ESP]          ; equal for 87/287
         fwait                           ; wait fstsw to complete
         pop     EAX                     ; get NDP status word
         mov     AL,2                    ; assume 80287
