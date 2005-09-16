@@ -22,7 +22,7 @@
 
 void threadfunc_dll( void* private_data )
 {
-    static counter = 0;
+    static int counter = 0;
 
     ++counter;
     printf( "DLL threadfunc entered %2d time. This time during %s\n",

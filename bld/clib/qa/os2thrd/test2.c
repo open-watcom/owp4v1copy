@@ -13,7 +13,7 @@
  * quickly after each other, this test should detect them.
  */
 
-static counter = 0;
+static int counter = 0;
 
 static void exe_threadfunc1( void* private_data )
 {
