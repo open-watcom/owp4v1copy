@@ -205,7 +205,7 @@ _Bin(    C,    C,    R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      
 _Bin(    C,    ANY,  R,    NONE ), V_SYMMETRIC,    R_SWAPOPS,    RG_##reg,      FU_NO,  \
 _Bin(    C,    ANY,  R,    NONE ), V_NO,           R_MOVOP1TEMP, RG_##reg,      FU_NO,  \
 _Bin(    M,    ANY,  ANY,  NONE ), V_NO,           R_MOVOP1REG,  RG_##reg,      FU_NO,  \
-_Bin(    ANY,  M,    ANY,  NONE ), V_NO,           R_MOVOP2TEMP, RG_##reg,      FU_NO,  \
+_Bin(    ANY,  M,    ANY,  NONE ), V_NO,           R_MOVOP2REG,  RG_##reg,      FU_NO,  \
 _Bin(    ANY,  ANY,  M,    NONE ), V_NO,           R_MOVRESTEMP, RG_##reg,      FU_NO,  \
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_##reg##_NEED, FU_NO,\
 };
@@ -312,8 +312,8 @@ opcode_entry    FloatBinary[] = {
 _Bin(    R,    R,    R,    NONE ), V_NO,      G_BINARY_FP,  RG_FLOAT,      FU_ALU,
 _Bin(    C,    ANY,  ANY,  NONE ), V_NO,      R_FORCEOP1CMEM,RG_FLOAT,     FU_NO,
 _Bin(    ANY,  C,    ANY,  NONE ), V_NO,      R_FORCEOP2CMEM,RG_FLOAT,     FU_NO,
-_Bin(    M,    ANY,  ANY,  NONE ), V_NO,      R_MOVOP1TEMP, RG_FLOAT,      FU_NO,
-_Bin(    ANY,  M,    ANY,  NONE ), V_NO,      R_MOVOP2TEMP, RG_FLOAT,      FU_NO,
+_Bin(    M,    ANY,  ANY,  NONE ), V_NO,      R_MOVOP1REG,  RG_FLOAT,      FU_NO,
+_Bin(    ANY,  M,    ANY,  NONE ), V_NO,      R_MOVOP2REG,  RG_FLOAT,      FU_NO,
 _Bin(    ANY,  ANY,  M,    NONE ), V_NO,      R_MOVRESTEMP, RG_FLOAT,      FU_NO,
 _Bin(    ANY,  ANY,  ANY,  NONE ), V_NO,      G_UNKNOWN,    RG_FLOAT_NEED, FU_NO,
 };
@@ -350,8 +350,8 @@ _Side(  R,    C ),      V_MIPSBRANCH,   R_MOVOP2TEMP,   RG_DWORD,       FU_NO,
 _Side(  R,    C ),      V_NO,           R_M_SIMPCMP,    RG_DWORD,       FU_NO,
 _Side(  C,    C ),      V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,
 _Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_DWORD,       FU_NO,
-_Side(  M,    ANY ),    V_NO,           R_MOVOP1TEMP,   RG_DWORD,       FU_NO,
-_Side(  ANY,  M ),      V_NO,           R_MOVOP2TEMP,   RG_DWORD,       FU_NO,
+_Side(  M,    ANY ),    V_NO,           R_MOVOP1REG,    RG_DWORD,       FU_NO,
+_Side(  ANY,  M ),      V_NO,           R_MOVOP2REG,   RG_DWORD,       FU_NO,
 _Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_DWORD_NEED,  FU_NO,
 };
 
@@ -369,8 +369,8 @@ _Side(  R,    C ),      V_OP2ZERO,      G_CONDBR,       RG_FLOAT,       FU_NO,
 _Side(  R,    C ),      V_NO,           R_FORCEOP2CMEM, RG_FLOAT,       FU_NO,
 _Side(  C,    R ),      V_NO,           R_SWAPCMP,      RG_FLOAT,       FU_NO,
 _Side(  C,    C ),      V_NO,           R_FORCEOP1CMEM, RG_FLOAT,       FU_NO,
-_Side(  M,    ANY ),    V_NO,           R_MOVOP1TEMP,   RG_FLOAT,       FU_NO,
-_Side(  ANY,  M ),      V_NO,           R_MOVOP2TEMP,   RG_FLOAT,       FU_NO,
+_Side(  M,    ANY ),    V_NO,           R_MOVOP1REG,    RG_FLOAT,       FU_NO,
+_Side(  ANY,  M ),      V_NO,           R_MOVOP2REG,    RG_FLOAT,       FU_NO,
 _Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_FLOAT_NEED,  FU_NO,
 };
 
