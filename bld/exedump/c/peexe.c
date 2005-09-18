@@ -317,11 +317,14 @@ extern void dmp_objects( unsigned num_objects )
         if( pe_obj->physical_size != 0 ) {
             if( IN_RANGE( PE_TBL_EXPORT, *pe_obj ) ) {
                 Exp_off = PHYS_OFFSET( PE_TBL_EXPORT, *pe_obj );
-            } else if( IN_RANGE( PE_TBL_IMPORT, *pe_obj ) ) {
+            }
+            if( IN_RANGE( PE_TBL_IMPORT, *pe_obj ) ) {
                 Imp_off = PHYS_OFFSET( PE_TBL_IMPORT, *pe_obj );
-            } else if( IN_RANGE( PE_TBL_RESOURCE, *pe_obj ) ) {
+            }
+            if( IN_RANGE( PE_TBL_RESOURCE, *pe_obj ) ) {
                 Res_off = PHYS_OFFSET( PE_TBL_RESOURCE, *pe_obj );
-            } else if( IN_RANGE( PE_TBL_FIXUP, *pe_obj ) ) {
+            }
+            if( IN_RANGE( PE_TBL_FIXUP, *pe_obj ) ) {
                 Fix_off = PHYS_OFFSET( PE_TBL_FIXUP, *pe_obj );
             }
         }
