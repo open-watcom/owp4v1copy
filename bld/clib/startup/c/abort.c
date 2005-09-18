@@ -70,7 +70,9 @@ _WCRTLINK void abort(void)
 
 _WCRTLINK void abort()
 {
-    (*_RWD_abort)();
+    if( _RWD_abort != __terminate ) {
+        (*_RWD_abort)();
+    }
     __terminate();                          /* 23-may-90 */
 }
 
