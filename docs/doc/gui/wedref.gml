@@ -7,7 +7,7 @@ contains a toolbar and menu items which you can use to make your
 choices. It can use proportional fonts. It also contains drag and drop
 toolbars or palettes that allow you to make choices and then simply
 drag them to the elements to which you want to apply them.
-.figure *depth='2.47' *scale=100 *file='VI0' The &edname
+.figure *depth='2.47' *scale=63 *file='VI0' The &edname
 .*
 .section Startup Options
 .*
@@ -220,7 +220,7 @@ when the Toggle Toolbar in the Options menu is selected (default). A
 check mark beside the menu option indicates that it is enabled. To
 disable this feature, choose the option again from the Options menu
 and the toolbar disappears.
-.figure *depth='2.47' *scale=100 *file='VI1' You can access up to 15 &editor functions from the toolbar.
+.figure *depth='2.47' *scale=63 *file='VI1' You can access up to 15 &editor functions from the toolbar.
 .np
 The following explains the function each icon performs, as well as the
 equivalent function on the menu bar.
@@ -310,7 +310,7 @@ The &editor has a powerful search function that you can use to locate
 strings of text, including regular expressions. For more information
 on regular expressions, refer to the
 chapter entitled :HDREF refid='regexp'..
-.figure *depth='2.53' *scale=100 *file='VI2' The Find Dialog
+.figure *depth='2.53' *scale=63 *file='VI2' The Find Dialog
 .np
 To search for a string of text:
 .begstep
@@ -376,7 +376,7 @@ The &editor has a powerful search and replace function that you can
 use to replace strings of text, including regular expressions. For
 more information on regular expressions, refer to the
 chapter entitled :HDREF refid='regexp'..
-.figure *depth='3.20' *scale=100 *file='VI3' The Replace Dialog
+.figure *depth='3.20' *scale=61 *file='VI3' The Replace Dialog
 .np
 To search and replace a string of text:
 .begstep
@@ -446,7 +446,7 @@ all syntax elements in the edit buffers.
 Within the edit buffer, all fonts must be the same typeface and point
 size. Other areas, such as message or status windows, can have
 any typeface or point size.
-.figure *depth='2.75' *scale=100 *file='VI4' The Font Settings Dialog
+.figure *depth='2.75' *scale=63 *file='VI4' The Font Settings Dialog
 .np
 You can use the drag and drop feature with the Font dialog.
 To use drag and drop:
@@ -472,7 +472,7 @@ affected when you change one.
 Use the Colors drag and drop palette to set the &colour of your windows
 and code. You can define the &colour of the toolbar, message window,
 status window, and all syntax elements in the edit buffers.
-.figure *depth='2.72' *scale=100 *file='VI5' The Colors Palette
+.figure *depth='2.72' *scale=63 *file='VI5' The Colors Palette
 .np
 To change the &colour of an element in your file:
 .begstep
@@ -508,7 +508,7 @@ Fgrep stands for
 .us File Global Regular Expression and Print.
 It is a powerful tool that allows you to search through a number
 of files to find all occurrences of a regular expression.
-.figure *depth='2.10' *scale=100 *file='VI6' The Fgrep Dialog permits you to search files containing a certain string.
+.figure *depth='2.10' *scale=64 *file='VI6' The Fgrep Dialog permits you to search files containing a certain string.
 .np
 To perform an fgrep:
 .begstep
@@ -530,7 +530,7 @@ The
 .us Files Containing
 dialog shows the name of all files that contain the string as well as
 the beginning of the line that contains the string.
-.figure *depth='3.20' *scale=100 *file='VI7' The Files Containing Dialog shows you all files with occurrences of a string.
+.figure *depth='3.20' *scale=52 *file='VI7' The Files Containing Dialog shows you all files with occurrences of a string.
 .np
 From the Fgrep dialog you can:
 .begpoint $break
@@ -566,7 +566,7 @@ the current file. A description of each of the dialogs follows.
 .ix 'status bar' 'editor'
 Use the Status Bar Contents dialog to set the contents of the status
 bar.
-.figure *depth='3.15' *scale=100 *file='VI8' The Status Bar Contents dialog
+.figure *depth='3.15' *scale=62 *file='VI8' The Status Bar Contents dialog
 .np
 The options in the Status Bar Contents dialog are divided into three
 areas:
@@ -608,7 +608,7 @@ contents of that window.
 For example, you can drag the "Date" item into the status bar window
 displaying the current line number and the current date will be
 displayed in its place.
-.figure *depth='2.47' *scale=100 *file='VI9' The Status Bar consists of several small windows
+.figure *depth='2.47' *scale=63 *file='VI9' The Status Bar consists of several small windows
 .*
 .section Status Bar Contents : Alignment
 .*
@@ -663,7 +663,7 @@ the default settings for the status bar are re-established.
 .ix 'editor' 'general options'
 Use the General Options dialog to set the general features of the &editor
 including save, search, and word definitions.
-.figure *depth='2.85' *scale=100 *file='VI10' The General Options Dialog
+.figure *depth='2.85' *scale=54 *file='VI10' The General Options Dialog
 .np
 The options in the General Options dialog are divided into six categories:
 .begbull $compact
@@ -809,7 +809,7 @@ the open files when you close the current file.
 .ix 'file specific options'
 The File Specific Options dialog contains settings that control your file
 including tabs, tags, line numbers, and default file extensions.
-.figure *depth='3.20' *scale=100 *file='VI11' The File Specific Options Dialog
+.figure *depth='3.20' *scale=50 *file='VI11' The File Specific Options Dialog
 The settings are divided into five categories:
 .begbull $compact
 .bull
@@ -949,7 +949,7 @@ type the closing brace.
 .ix '&editor' 'screen/window options'
 Use the Screen and Window Options dialog to define how you move around
 your screen and what appears on it.
-.figure *depth='2.51' *scale=100 *file='VI12' The Screen/Window Options Dialog
+.figure *depth='2.51' *scale=63 *file='VI12' The Screen/Window Options Dialog
 .*
 .beglevel
 .*

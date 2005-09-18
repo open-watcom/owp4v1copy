@@ -94,7 +94,7 @@ Every time you open the Image Editor, the &company Image Editor window
 appears. The toolbar, toolbox, and &colour palette you use to edit your
 images appear on top of this window.
 :CMT. .figure *depth='3.87' *scale=140 *file='IMG1' The &company Image Editor window
-.figure *depth='3.20' *scale=100 *file='IMG1' The &company Image Editor window
+.figure *depth='3.20' *scale=51 *file='IMG1' The &company Image Editor window
 .np
 You cannot draw or copy images onto the screen itself.
 Instead, you must first create a design grid, a work area on which you
@@ -144,7 +144,7 @@ access most of the items in the toolbar, the toolbox, and the &colour
 palette. It also provides you with other items that you cannot access
 anywhere else except on the menu bar.
 :CMT. .figure *depth='1.94' *scale=150 *file='IMG2' The &company Image Editor menu bar
-.figure *depth='2.53' *scale=100 *file='IMG2' The &company Image Editor menu bar
+.figure *depth='2.53' *scale=40 *file='IMG2' The &company Image Editor menu bar
 .np
 To see what an item does, position your cursor over the item and hold
 the mouse button. A description of the item appears in the status
@@ -173,7 +173,7 @@ Press F2 (the accelerator for starting a new image).
 The toolbar allows you quick and easy access to the most used items in
 the menus.
 :CMT. .figure *depth='1.94' *scale=150 *file='IMG3' The &company Image Editor tool bar
-.figure *depth='2.53' *scale=100 *file='IMG3' The &company Image Editor tool bar
+.figure *depth='0.24' *scale=64 *file='IMG3' The &company Image Editor tool bar
 .np
 To find out what a button does, position your cursor over the
 button and hold the mouse button. A description of the button's
@@ -226,7 +226,7 @@ The toolbox allows you to conveniently select and change the tool you
 are using to edit your image, without having to hunt through the menus
 for the tool you want.
 :CMT. .figure *depth='2.06' *scale=150 *file='IMG4' The &company Image Editor toolbox
-.figure *depth='1.63' *scale=100 *file='IMG4' The &company Image Editor toolbox
+.figure *depth='1.63' *scale=64 *file='IMG4' The &company Image Editor toolbox
 .np
 Here is a list of the tools and what they do.
 .begpoint $break
@@ -259,7 +259,7 @@ If you want to draw or fill a new visual in different &colour.s, or
 change the &colour.s of an existing bitmap, icon, or cursor, the &colour.
 palette allows you to select the &colour.s you want.
 :CMT. .figure *depth='1.05' *scale=150 *file='IMG5' The &company Image Editor &colour palette
-.figure *depth='0.81' *scale=100 *file='IMG5' The &company Image Editor &colour palette
+.figure *depth='1.02' *scale=90 *file='IMG5' The &company Image Editor &colour palette
 .begstep To select a &colour:
 .step Click either the left or right mouse button on the &colour
 in the &colour palette that you wish to assign to that button.
@@ -386,7 +386,7 @@ provide information on the current image. The fifth section displays
 hint text for the items in the menus, toolbar, and toolbox when you
 position your cursor over an item and hold down the mouse button.
 :CMT. .figure *depth='2.93' *scale=140 *file='IMG6' The &company Image Editor status line
-.figure *depth='3.20' *scale=100 *file='IMG6' The &company Image Editor status line
+.figure *depth='3.96' *scale=63 *file='IMG6' The &company Image Editor status line
 :cmt.The status line also lets you know if there is a
 :cmt.problem with the Image Editor.
 :cmt..np
@@ -477,7 +477,7 @@ tool called
 This tool allows you to select the exact pixel to which you want to
 assign the hotspot. The default hotspot is 0,0 (at the top left corner
 of the design grid).
-.figure *depth='1.63' *scale=100 *file='IMG7' The Set Hotspot tool allows you to select the hotspot
+.figure *depth='1.63' *scale=64 *file='IMG7' The Set Hotspot tool allows you to select the hotspot
 .begstep To create a new cursor:
 .step Choose New
 from the File menu.

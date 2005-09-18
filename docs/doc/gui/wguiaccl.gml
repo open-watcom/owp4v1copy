@@ -62,7 +62,7 @@ How you proceed depends on whether you are
 opening a new (empty) accelerator table or an existing accelerator
 table.
 :CMT. This is a new screen snap shot
-.figure *depth='3.20' *scale=100 *file='ACC1' The Accelerator Editor window
+.figure *depth='3.20' *scale=56 *file='ACC1' The Accelerator Editor window
 .*
 .beglevel
 .*
@@ -149,7 +149,7 @@ Accelerator Editor more convenient and efficient to use.
 .section The Accelerator Editor Menu Bar
 .*
 :CMT. This is a new screen snap shot
-.figure *depth='3.20' *scale=100 *file='ACC2' The Accelerator Editor menu bar
+.figure *depth='3.20' *scale=56 *file='ACC2' The Accelerator Editor menu bar
 .np
 .ix 'Accelerator Editor' 'menu bar'
 .ix 'menu bar' 'Accelerator Editor'
@@ -236,7 +236,7 @@ Accelerator Item List
 Action Buttons
 .endbull
 :CMT. .figure *depth='4.86' *scale=180 *file='ACC3' The Accelerator Editor window contains a menu bar, toolbar, status line, and workspace.
-.figure *depth='3.20' *scale=100 *file='ACC4' The Accelerator Editor window contains a menu bar, toolbar, status line, and workspace.
+.figure *depth='3.20' *scale=56 *file='ACC4' The Accelerator Editor window contains a menu bar, toolbar, status line, and workspace.
 .*
 .beglevel
 .*
@@ -267,7 +267,7 @@ The attributes area provides information about the currently selected
 accelerator item. You can edit accelerator items using only the fields
 in this area.
 :CMT. This is a new screen snap shot
-.figure *depth='2.13' *scale=100 *file='ACC5' The Accelerator Editor attributes area
+.figure *depth='2.13' *scale=70 *file='ACC5' The Accelerator Editor attributes area
 .np
 Accelerator item attributes are displayed in four sections. Following
 is an explanation of each section.
@@ -314,7 +314,7 @@ accelerator items. Select an accelerator item from the list by
 clicking on it. Details of the selected accelerator item appear in the
 attributes area of the window.
 :CMT. This is a new screen snap shot
-.figure *depth='1.76' *scale=100 *file='ACC6' The Accelerator Editor item list
+.figure *depth='1.76' *scale=57 *file='ACC6' The Accelerator Editor item list
 .*
 .section Accelerator Editor: Action Buttons
 .*
@@ -332,7 +332,7 @@ attributes area and reset them to those of the current entry in the table.
 The Insert button is the default button when the ENTER key is pressed
 and no other button has the focus.
 :CMT. This is a new screen snap shot
-.figure *depth='0.43' *scale=100 *file='ACC7' The Accelerator Editor action buttons
+.figure *depth='0.43' *scale=67 *file='ACC7' The Accelerator Editor action buttons
 .*
 .endlevel
 .*
@@ -575,7 +575,7 @@ Choosing Yes removes all accelerator items from the current
 accelerator table. The accelerator item list is empty. Choosing
 No cancels the operation.
 .endstep
-.figure *depth='1.46' *scale=100 *file='ACC8' As a safety feature, a message box appears when you choose the Clear function.
+.figure *depth='1.46' *scale=88 *file='ACC8' As a safety feature, a message box appears when you choose the Clear function.
 .*
 .endlevel
 .*
@@ -599,7 +599,7 @@ Old Name
 .bull
 New Name
 .endbull
-.figure *depth='1.31' *scale=100 *file='ACC9' In the Rename Resource dialog, you enter the new name of the accelerator table.
+.figure *depth='1.31' *scale=72 *file='ACC9' In the Rename Resource dialog, you enter the new name of the accelerator table.
 .step Enter the desired accelerator table name
 in the New Name field.
 .step Click on OK
@@ -653,12 +653,12 @@ save the current accelerator table to another resource file.
 If you added any new symbol names (Item ID's), a Save Symbol Header
 File dialog  appears which allows you to create a new header file which
 includes the newly added symbol names.
-.figure *depth='2.24' *scale=100 *file='ACC10' On the Save Symbol Header File dialog, specify the header file to which you want to save symbol ID's.
+.figure *depth='2.24' *scale=66 *file='ACC10' On the Save Symbol Header File dialog, specify the header file to which you want to save symbol ID's.
 .np
 Afterwards, a Save Accelerator Table dialog appears where you specify
 the resource file to which you want to save the current accelerator
 table.
-.figure *depth='2.24' *scale=100 *file='ACC11' On the Save Accelerator Table dialog, specify the resource file to which you want to save the accelerator table.
+.figure *depth='2.24' *scale=66 *file='ACC11' On the Save Accelerator Table dialog, specify the resource file to which you want to save the accelerator table.
 .begnote
 .note Important:
 If the resource file to which you are saving the accelerator table already
@@ -675,14 +675,14 @@ to copy the current accelerator table into an existing resource file.
 If you added any new symbol names (Item ID's), a Save Symbol Header
 File dialog  appears which allows you to create a new header file which
 includes the newly added symbol names.
-.figure *depth='2.24' *scale=100 *file='ACC10' On the Save Symbol Header File dialog, specify the header file to which you want to save symbol ID's.
+.figure *depth='2.24' *scale=66 *file='ACC10' On the Save Symbol Header File dialog, specify the header file to which you want to save symbol ID's.
 .np
 Afterwards, a Copy To dialog appears where you specify the resource
 file to which you want to copy the current accelerator table. Unlike
 the Save As function, copying an accelerator table to a resource file
 adds an entry to the list of resources rather than replacing the
 existing resources with the new entry.
-.figure *depth='2.24' *scale=100 *file='ACC12' On the Copy To dialog, specify the resource file to which you want to copy the accelerator table.
+.figure *depth='2.24' *scale=66 *file='ACC12' On the Copy To dialog, specify the resource file to which you want to copy the accelerator table.
 .*
 .endlevel
 .*
@@ -735,7 +735,7 @@ of the &company Accelerator Editor window.
 .result
 The Memory Options dialog opens displaying either the current or
 default memory options.
-.figure *depth='1.89' *scale=100 *file='ACC13' On the Memory Options dialog, you change the memory options for the accelerator table.
+.figure *depth='1.89' *scale=67 *file='ACC13' On the Memory Options dialog, you change the memory options for the accelerator table.
 .step Select the required flags
 in the Memory Options and Load Options sections of the dialog by
 clicking on the check box beside the field. Following is a description

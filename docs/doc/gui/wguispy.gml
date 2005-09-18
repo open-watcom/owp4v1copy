@@ -67,7 +67,7 @@ To start &spy, double click on the &spy icon.
 This opens the &spy window.
 When you start the application, the &spy window is always empty.
 This window displays the menu bar, message list and a toolbar.
-.figure *depth='3.32' *scale=150 *file='SPY1' The &spy window contains the menu bar, message list and toolbar.
+.figure *depth='3.32' *scale=79 *file='SPY1' The &spy window contains the menu bar, message list and toolbar.
 .*
 .section Quitting &spy
 .*
@@ -95,7 +95,7 @@ Select the messages you want to monitor or stop on.
 .point Help
 Gain access to on-line help information
 .endpoint
-.figure *depth='0.83' *scale=150 *file='SPY1' The &spy menu bar.
+.figure *depth='0.77' *scale=79 *file='SPY1A' The &spy menu bar.
 .*
 .section The &spy Toolbar
 .*
@@ -132,7 +132,7 @@ the Messages to Watch item in the Messages menu.
 Specify the messages you want &spy to stop on when it encounters them.
 This is equivalent to the Messages to Stop on item in the Messages menu.
 .endnote
-.figure *depth='0.83' *scale=150 *file='SPY1' The &spy toolbar.
+.figure *depth='0.77' *scale=79 *file='SPY1A' The &spy toolbar.
 .np
 Only one of the following three toolbar buttons appears at a time.
 .begnote
@@ -162,7 +162,7 @@ menu.
 The &spy window contains the menu bar and the toolbar discussed above.
 However, most of the &spy window is occupied by the message list.  This
 is where &spy logs the messages it monitors.
-.figure *depth='3.32' *scale=150 *file='SPY2' Once you start spying, the message list displays the messages selected for monitoring.
+.figure *depth='3.32' *scale=79 *file='SPY2' Once you start spying, the message list displays the messages selected for monitoring.
 .np
 For the messages it monitors &spy displays the following information in
 the message list:
@@ -326,14 +326,14 @@ from the Messages Menu.
 .result
 This opens a Message Class dialog box.  The caption of
 the dialog box reflects the menu item selected.
-.figure *depth='3.23' *scale=150 *file='SPY5' In the Message Class dialog, select change button.
+.figure *depth='3.23' *scale=80 *file='SPY5' In the Message Class dialog, select change button.
 .step Click on the Change button
 next to the alphabetic range into
 which your first message selection falls.
 .result
 This opens a dialog that contains a check box for each message
 that falls into that alphabetic range.
-.figure *depth='2.55' *file='SPY6' In the Message Range dialog, you select the individual messages you want &spy to watch or stop on.
+.figure *depth='2.55' *scale=52 *file='SPY6' In the Message Range dialog, you select the individual messages you want &spy to watch or stop on.
 .step Add or remove messages from the list of messages.
 .result
 A message appears on the selected list if it is checked.
@@ -398,7 +398,7 @@ This opens a Message Class dialog box.  The caption of
 the dialog box reflects the menu item selected.
 .ix 'messages' 'watching'
 .ix 'messages' 'stopping on'
-.figure *depth='3.23' *scale=150 *file='SPY5' In the Message class dialog, choose the message classes you want &spy to monitor.
+.figure *depth='3.23' *scale=80 *file='SPY5' In the Message class dialog, choose the message classes you want &spy to monitor.
 .step Click on the check box
 beside the message classes you want to monitor.
 .result
@@ -758,7 +758,7 @@ from the Spy menu.
 .result
 This minimizes the &spy window and opens the Select Window dialog
 which prompts you to choose a window to monitor.
-.figure *depth='2.46' *scale=200 *file='SPY8' The Select Window dialog displays information for the window on which the cursor rests.
+.figure *depth='2.46' *scale=100 *file='SPY8' The Select Window dialog displays information for the window on which the cursor rests.
 .step Position the cursor on the window you want to monitor.
 .result
 As you move the cursor across the screen, the window on which the
@@ -842,7 +842,7 @@ Information dialog box which contains additional information about the
 selected message. This dialog displays the message, the number of
 times it has been issued, and the window that received the selected
 instance of the message.
-.figure *depth='3.62' *scale=200 *file='SPY9' The Message Information dialog box displays additional information about the selected message.
+.figure *depth='3.62' *scale=100 *file='SPY9' The Message Information dialog box displays additional information about the selected message.
 .ix 'Message Information dialog'
 .ix '&spy' 'Message Information dialog'
 .np
@@ -994,7 +994,7 @@ window handles
 .bull
 window captions
 .endbull
-.figure *depth='3.20' *scale=175 *file='SPY13' The Window Selection dialog displays a list of all windows currently open on the desktop.
+.figure *depth='3.20' *scale=87 *file='SPY13' The Window Selection dialog displays a list of all windows currently open on the desktop.
 .np
 The information appears in a hierarchical manner. Windows with a parent
 are listed, indented, directly below their parent. Windows currently

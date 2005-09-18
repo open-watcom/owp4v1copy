@@ -616,6 +616,7 @@ $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)browtarg.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)copy.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)cut.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)dde1.bmp &
+$(docsrc_dir)$(SL)gui$(SL)snaps$(SL)dde1a.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)dde10.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)dde11.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)dde12.bmp &
@@ -749,6 +750,7 @@ $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)samptarg.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)save.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)saveproj.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)spy1.bmp &
+$(docsrc_dir)$(SL)gui$(SL)snaps$(SL)spy1a.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)spy10.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)spy11.bmp &
 $(docsrc_dir)$(SL)gui$(SL)snaps$(SL)spy13.bmp &
@@ -823,6 +825,7 @@ brow7.ps &
 brow8.ps &
 brow9.ps &
 dde1.ps &
+dde1a.ps &
 dde10.ps &
 dde11.ps &
 dde12.ps &
@@ -932,6 +935,7 @@ res7.ps &
 res8.ps &
 res9.ps &
 spy1.ps &
+spy1a.ps &
 spy10.ps &
 spy11.ps &
 spy13.ps &

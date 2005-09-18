@@ -108,7 +108,7 @@ Some examples of events are errors, debugging messages
 (under the debug kernel of Windows only), the starting and ending of
 programs, and the loading and unloading of DLLs.
 .keep 16
-.figure *depth='2.38' *scale=125 *file='DRW1' The &drwc window contains the event list which records and displays events occurring under Windows.
+.figure *depth='2.24' *scale=64 *file='DRW1' The &drwc window contains the event list which records and displays events occurring under Windows.
 .np
 When a debug message is issued, the &drwc icon alerts you that an
 entry has been made on the event list. The &drwc icon changes from
@@ -224,7 +224,7 @@ to read a different type of debugging information. Choosing the Show
 DIP Status item from the File menu displays the Debugging Information
 Processor Status dialog.
 .keep 17
-.figure *depth='2.14' *scale=125 *file='DRW4' The Debugging Information Processor Status dialog shows the DIP's &drwc has loaded.
+.figure *depth='2.14' *scale=68 *file='DRW4' The Debugging Information Processor Status dialog shows the DIP's &drwc has loaded.
 .np
 This dialog contains a list of all the DIP's that &drwc attempted
 to load at startup and the results of those loads. If &drwc was unable
@@ -267,7 +267,7 @@ The &drwc exception dialog box appears on your screen when an
 exception occurs in any program in the system. This indicates that a
 fatal error has occurred.
 .keep 24
-.figure *depth='2.30' *scale=120 *file='DRW5' The exception dialog appears when a fatal error occurs in a program.
+.figure *depth='2.30' *scale=64 *file='DRW5' The exception dialog appears when a fatal error occurs in a program.
 .np
 Instead of terminating the program, &drwc suspends it and leaves its
 state intact. Because the state is undisturbed you can view the
@@ -346,7 +346,7 @@ explained in the section entitled :HDREF refid='drwccu'..
 The Task Status dialog appears when you choose the Registers button on
 the exception dialog.
 .keep 24
-.figure *depth='3.88' *scale=125 *file='DRW6' The Task Status dialog provides additional information on the program state when the exception occurred.
+.figure *depth='3.88' *scale=64 *file='DRW6' The Task Status dialog provides additional information on the program state when the exception occurred.
 .np
 This dialog displays information in four sections:
 .begbull $compact
@@ -414,13 +414,13 @@ Choosing Segment Map from the Task Status dialog opens a Segment Map
 dialog box which indicates the selectors to which your map segments
 were mapped. There is one entry for every segment in the program.
 .keep 19
-.figure *depth='2.96' *scale=200 *file='DRW7' The Segment Map dialog lists the selectors to which the segments were mapped.
+.figure *depth='2.96' *scale=100 *file='DRW7' The Segment Map dialog lists the selectors to which the segments were mapped.
 .np
 This dialog allows you to view the data contained in each of your
 program's segments. To view this memory, double click on the desired
 segment. This opens a Memory Display window for the selected segment.
 .keep 8
-.figure *depth='1.05' *scale=125 *file='DRW8' The Memory Display window displays the memory stored in the selected segment.
+.figure *depth='0.84' *scale=63 *file='DRW8' The Memory Display window displays the memory stored in the selected segment.
 .np
 The Memory Display window displays all of the data stored in the
 selected segment. This information appears in hexadecimal form. This
@@ -514,7 +514,7 @@ from the menu bar on the Memory Display window.
 .result
 This opens a Goto Offset dialog box.
 .keep 15
-.figure *depth='2.26' *scale=200 *file='DRW9' In the Goto Offset dialog, enter the offset you want to appears at the top of the Memory Display window.
+.figure *depth='2.26' *scale=100 *file='DRW9' In the Goto Offset dialog, enter the offset you want to appears at the top of the Memory Display window.
 .step Enter the desired offset
 that you want to position at the top of the Memory Display window.
 You can enter the offset in decimal or hexadecimal form. However, you
@@ -544,7 +544,7 @@ Lock Count
 Page Lock Count
 .endbull
 .keep 8
-.figure *depth='1.05' *scale=125 *file='DRW10' The Handle Information dialog box displays information about the memory object displayed in the Memory Display Window.
+.figure *depth='1.05' *scale=83 *file='DRW10' The Handle Information dialog box displays information about the memory object displayed in the Memory Display Window.
 .np
 This box stays with the window when the Auto Position Info item under
 the File menu is checked. Deactivate this function by selecting the
@@ -579,7 +579,7 @@ where it will return to. To perform a stack trace, click on the Stack
 Trace button in the Task Status dialog to reveal the Stack Trace
 dialog.
 .keep 16
-.figure *depth='2.48' *scale=125 *file='DRW11' The Stack Trace dialog allows you to walk the call chain.
+.figure *depth='2.34' *scale=63 *file='DRW11' The Stack Trace dialog allows you to walk the call chain.
 .np
 When the Stack Trace dialog opens, it contains information from the
 stack frame for the function that was executing at the time of the
@@ -676,7 +676,7 @@ dialog where you indicate to &drwc the information you want to appear
 in log file entries. The Log Options item is also available from the
 system menu.
 .keep 23
-.figure *depth='3.73' *scale=125 *file='DRW12' In the Log Options dialog, you customize the log file to which you write information.
+.figure *depth='3.73' *scale=64 *file='DRW12' In the Log Options dialog, you customize the log file to which you write information.
 .np
 The following sections describe the options that make up the Log
 Options dialog.
@@ -737,7 +737,7 @@ Annotate Log dialog whenever a log file entry is made. This dialog
 lets you enter some explanatory text that will be included in
 the log file entry.
 .keep 19
-.figure *depth='3.00' *scale=200 *file='DRW13' In the Annotate Log dialog box, enter text you want to include in the log file entry.
+.figure *depth='3.00' *scale=100 *file='DRW13' In the Annotate Log dialog box, enter text you want to include in the log file entry.
 .np
 Enter any text you want to include in the space provided. Press the OK
 button to include this text in the log file. If you press the Cancel
@@ -769,7 +769,7 @@ The Max Log File Size field allows you to set the maximum size in bytes
 for a log file. When the log file exceeds this size, &drwc prompts you
 with a message box when you start the application.
 .keep 14
-.figure *depth='2.02' *scale=200 *file='DRW14' A message box prompts you to erase the log file when it becomes larger than the maximum log file size specified on the Log File Options dialog.
+.figure *depth='2.02' *scale=100 *file='DRW14' A message box prompts you to erase the log file when it becomes larger than the maximum log file size specified on the Log File Options dialog.
 .np
 This message box offers you the opportunity to delete your log file
 before it becomes uncontrollably large.
@@ -818,7 +818,7 @@ from the Task menu.
 This opens the Task Control dialog containing a list of all tasks
 currently running in the system.
 .keep 19
-.figure *depth='2.96' *scale=150 *file='DRW15' In the Task Control dialog, you can terminate a task selected from the Task List.
+.figure *depth='2.96' *scale=80 *file='DRW15' In the Task Control dialog, you can terminate a task selected from the Task List.
 .step Select the task you want to terminate
 by clicking on its entry in the task list.
 .step Select the Kill Task button.
@@ -846,7 +846,7 @@ by clicking on its entry in the task list.
 .result
 This opens the Debugger Options dialog box.
 .keep 17
-.figure *depth='2.56' *scale=200 *file='DRW16' In the Debugger Option dialog, you enter the command line options to pass to the debugger.
+.figure *depth='2.56' *scale=100 *file='DRW16' In the Debugger Option dialog, you enter the command line options to pass to the debugger.
 .step Enter the command line options
 you want &drwc to pass to the debugger.
 .step Click on OK.

@@ -175,7 +175,7 @@ This opens the
 .us New Browser File
 dialog where you enter the name of the Browser database file you are
 creating.
-.figure *depth='1.32' *scale=100 *file='brow1' Use the New Browser File dialog to create a new Browser database file.
+.figure *depth='1.32' *scale=56 *file='brow1' Use the New Browser File dialog to create a new Browser database file.
 .step Type the name and path
 of the new Browser database file.
 .orstep Click on the
@@ -218,7 +218,7 @@ When added, this check box is marked with an X, indicating that the
 module file is enabled.
 .step Continue with steps 4 and 5
 until you have added all desired module files to the component list.
-.figure *depth='2.32' *scale=100 *file='brow2' The Modules dialog displays the selected module files.
+.figure *depth='2.32' *scale=52 *file='brow2' The Modules dialog displays the selected module files.
 .step Click on
 .us OK
 on the
@@ -366,7 +366,7 @@ Disable
 .bull
 Enable
 .endbull
-.figure *depth='2.32' *scale=100 *file='brow3' On the Modules dialog, you can add, remove, disable, and enable module files.
+.figure *depth='2.32' *scale=52 *file='brow3' On the Modules dialog, you can add, remove, disable, and enable module files.
 .*
 .beglevel
 .*
@@ -624,7 +624,7 @@ moved.
 Click below the vertical scroll thumb to view the next page of symbols
 and above the vertical scroll thumb to view the previous page of
 symbols.
-.figure *depth='2.66' *scale=100 *file='brow4' The List window displays all symbols in the current browser database file.
+.figure *depth='2.66' *scale=51 *file='brow4' The List window displays all symbols in the current browser database file.
 .np
 Each symbol has a icon to its left.
 A letter marking each icon indicates the symbol type in the source
@@ -683,7 +683,7 @@ your program using a tree.
 This allows you to see the relationships between base classes and
 derived classes.
 In the inheritance hierarchy, each node represents a class.
-.figure *depth='2.66' *scale=100 *file='brow5' The Inheritance view displays the hierarchy of all C++ classes in your program (graph view shown).
+.figure *depth='2.66' *scale=51 *file='brow5' The Inheritance view displays the hierarchy of all C++ classes in your program (graph view shown).
 .np
 There are two different tree views you can choose from to display the
 class hierarchy:
@@ -723,7 +723,7 @@ program.
 This allows you to see all the functions that a given function calls
 and conversely all functions that call a certain function.
 In the call tree, each node represents a function.
-.figure *depth='2.66' *scale=100 *file='brow6' The Call view displays a call tree for all functions in your program (outline view shown).
+.figure *depth='2.66' *scale=52 *file='brow6' The Call view displays a call tree for all functions in your program (outline view shown).
 .np
 There are two different tree views you can choose from to display the
 function call tree:
@@ -819,7 +819,7 @@ dialog has a check box.
 When enabled, this check box is marked with an
 X, indicating that the symbol will appear as a root node in the
 display.
-.figure *depth='2.32' *scale=100 *file='brow7' On the Select Root Nodes dialog, choose the symbols you want to appear as root nodes.
+.figure *depth='2.32' *scale=52 *file='brow7' On the Select Root Nodes dialog, choose the symbols you want to appear as root nodes.
 .*
 .beglevel
 .*
@@ -1039,7 +1039,7 @@ Performing any of these actions reveals a detail view window for the
 selected symbol.
 The same information appears in this window regardless of the method
 used to access it.
-.figure *depth='4.20' *scale=100 *file='brow8' The detail view displays detailed information for the selected symbol.
+.figure *depth='4.20' *scale=50 *file='brow8' The detail view displays detailed information for the selected symbol.
 .np
 The detail view window displays the source file where the symbol is
 defined or declared and it shows you what the symbol looks like in
@@ -1128,7 +1128,7 @@ window for the selected symbol.
 This window displays the filename, line number, and column number of
 each occurrence of the selected symbol in the source code.
 .endstep
-.figure *depth='4.20' *scale=100 *file='brow9' Use the Source References window to view all the occurrences of the selected symbol in the source code.
+.figure *depth='4.20' *scale=50 *file='brow9' Use the Source References window to view all the occurrences of the selected symbol in the source code.
 .*
 .section Symbol References
 .*
@@ -1158,7 +1158,7 @@ This window displays a list of all symbols that use the selected
 symbol.
 The display is the same as the list view of symbols.
 Each symbol has a icon indicating its symbol type.
-.figure *depth='4.20' *scale=100 *file='brow10' Use the Symbols window to view a list of all symbols that use the selected symbol.
+.figure *depth='4.20' *scale=50 *file='brow10' Use the Symbols window to view a list of all symbols that use the selected symbol.
 .np
 You can perform the same actions in this window as from the
 .us List
@@ -1215,7 +1215,7 @@ dialog.
 Use this dialog to specify the criteria to be used to locate a symbol.
 For example, you can search for a particular symbol or a set of
 symbols with common characteristics.
-.figure *depth='1.52' *scale=100 *file='brow11' Use the Find dialog to locate one symbol or a set of symbols.
+.figure *depth='1.52' *scale=55 *file='brow11' Use the Find dialog to locate one symbol or a set of symbols.
 .*
 .beglevel
 .*
@@ -1270,7 +1270,7 @@ dialog opens the
 dialog.
 This dialog allows you to specify the characteristics of the symbol(s)
 to be located.
-.figure *depth='2.47' *scale=100 *file='brow12' Use the Find Filters dialog to specify characteristics of the symbol(s) you want to locate.
+.figure *depth='2.47' *scale=52 *file='brow12' Use the Find Filters dialog to specify characteristics of the symbol(s) you want to locate.
 .np
 In the
 .us Symbol Type
@@ -1314,7 +1314,7 @@ To re-enable the source file,
 click in the check box again.
 This places an X in the box indicating that the source file will be
 searched.
-.figure *depth='2.89' *scale=100 *file='brow13' Choose the source files to be searched using the Source Files dialog.
+.figure *depth='2.89' *scale=52 *file='brow13' Choose the source files to be searched using the Source Files dialog.
 .np
 The
 .us Pattern
@@ -1431,7 +1431,7 @@ in the
 .us Options
 menu allows you to configure the regular expression used to find a
 symbol and specify a query.
-.figure *depth='2.37' *scale=100 *file='brow14' Use the Regular Expressions Options dialog to configure a regular expression for Find and Query.
+.figure *depth='2.37' *scale=52 *file='brow14' Use the Regular Expressions Options dialog to configure a regular expression for Find and Query.
 .np
 Choose
 .us Regular Expressions
@@ -1492,7 +1492,7 @@ menu to open the
 dialog.
 Use this dialog to specify the criteria to be used to display symbols
 in a global view.
-.figure *depth='1.52' *scale=100 *file='brow15' Use the Query dialog to configure global view symbol queries.
+.figure *depth='1.52' *scale=55 *file='brow15' Use the Query dialog to configure global view symbol queries.
 .*
 .beglevel
 .*
@@ -1668,7 +1668,7 @@ menu displays the
 dialog.
 This dialog allows you to specify the format for displaying enumeration
 constants in the detail views for enumeration constants.
-.figure *depth='1.37' *scale=100 *file='brow16' Specify enumerator styles for detail views of enumerator constants using the Enumeration Styles dialog.
+.figure *depth='1.37' *scale=56 *file='brow16' Specify enumerator styles for detail views of enumerator constants using the Enumeration Styles dialog.
 .*
 .section Member Filters for Classes
 .*
@@ -1695,7 +1695,7 @@ This opens the
 .us Member Filters
 dialog where you specify the information you want
 to appear in detail views for classes.
-.figure *depth='2.30' *scale=100 *file='brow17' Use the Member Filters dialog to select the information to appear in detail views for classes.
+.figure *depth='2.30' *scale=52 *file='brow17' Use the Member Filters dialog to select the information to appear in detail views for classes.
 .step Choose the inheritance level
 from the
 .us Inherited Members
@@ -1802,7 +1802,7 @@ vertical and horizontal lines).
 A check mark beside the menu item indicates this method of drawing
 lines is enabled.
 To disable this option, select it again.
-.figure *depth='2.83' *scale=100 *file='brow18' The Graph Square Lines option changes the connecting lines from diagonal to square.
+.figure *depth='2.83' *scale=51 *file='brow18' The Graph Square Lines option changes the connecting lines from diagonal to square.
 .*
 .section Changing the Graph Orientation
 .*
@@ -1830,7 +1830,7 @@ in the
 menu.
 Select this menu item to change the graph orientation back to
 vertical.
-.figure *depth='2.83' *scale=100 *file='brow19' The Graph Horizontal option displays the graph with the root node at the left.
+.figure *depth='2.83' *scale=51 *file='brow19' The Graph Horizontal option displays the graph with the root node at the left.
 .*
 .section Defining Graph View Legends
 .*

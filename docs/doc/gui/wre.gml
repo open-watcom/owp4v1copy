@@ -88,7 +88,7 @@ To start the Resource Editor, double click on the Resource Editor icon
 in your Windows Program Manager. The &company Resource Editor window
 opens.
 .keep 16
-.figure *depth='3.20' *scale=100 *file='RES1' The &company Resource Editor window acts as a workspace where you work with resources.
+.figure *depth='3.20' *scale=56 *file='RES1' The &company Resource Editor window acts as a workspace where you work with resources.
 .*
 .section Quitting the Resource Editor
 .*
@@ -103,7 +103,7 @@ Yes to save the file and exit the Resource Editor, No to exit the
 Resource editor without saving the file, or Cancel to return to the
 Resource editor.
 .keep 15
-.figure *depth='1.49' *scale=100 *file='RES2' As a safety feature, a message box appears when you select Exit from the File menu without saving a modified resource file.
+.figure *depth='1.49' *scale=67 *file='RES2' As a safety feature, a message box appears when you select Exit from the File menu without saving a modified resource file.
 .*
 .section The Resource Editor Menu Bar
 .*
@@ -201,7 +201,7 @@ collection of resources. You can create the resources and add them to
 the new file or you can copy existing resources from another file and
 place them in the new file.
 .keep 19
-.figure *depth='3.20' *scale=100 *file='RES4' Choosing New opens an untitled and empty Resource window into which you can store resources.
+.figure *depth='3.20' *scale=56 *file='RES4' Choosing New opens an untitled and empty Resource window into which you can store resources.
 .np
 To create a new resource file, choose New from the File menu in the
 &company Resource Editor window. An untitled and empty Resource dialog
@@ -218,7 +218,7 @@ until you save it and assign it a file name.
 .np
 Open an existing resource file to view the resources for that file or
 perform functions on the file's resources.
-.figure *depth='3.20' *scale=100 *file='RES5' Choosing Open permits you to access resources in an existing file.
+.figure *depth='3.20' *scale=56 *file='RES5' Choosing Open permits you to access resources in an existing file.
 .begstep To open an existing resource file:
 .step Choose Open from the File menu
 in the &company Resource Editor window.
@@ -301,7 +301,7 @@ name of a new file.
 .step Click on OK
 when completed.
 .keep 17
-.figure *depth='1.65' *scale=100 *file='RES6' A Save File message box appears when you attempt to save the current resource file to an existing file.
+.figure *depth='1.65' *scale=67 *file='RES6' A Save File message box appears when you attempt to save the current resource file to an existing file.
 .result
 The dialog closes and the Resource Editor saves the resource file,
 returning you to the Resource Editor window.
@@ -405,7 +405,7 @@ by selecting on the appropriate line in the type listbox.
 A list of all resources of the selected type for this resource file
 appears in the Resource listbox.
 .keep 19
-.figure *depth='3.20' *scale=100 *file='RES7' Each resource type contained in the resource file appears in the Types listbox.
+.figure *depth='3.20' *scale=56 *file='RES7' Each resource type contained in the resource file appears in the Types listbox.
 .step Double click on the resource you want to edit
 .orstep Select the desired resource,
 then
@@ -472,7 +472,7 @@ Resource message box appears on the screen. This message box informs
 you that the selected file already exists and asks if you want to
 replace the existing file.
 .keep 17
-.figure *depth='1.65' *scale=100 *file='RES8' A Save File As message box appears when you attempt to save the current resource file to an existing file.
+.figure *depth='1.65' *scale=67 *file='RES8' A Save File As message box appears when you attempt to save the current resource file to an existing file.
 .begstep To cancel the save:
 .step Choose No
 .result
@@ -512,7 +512,7 @@ resource does not remove it from its current resource file.
 A Copy Resource Into File dialog appears where you select an existing
 resource file to which you want to copy the selected resource.
 .keep 15
-.figure *depth='2.69' *scale=100 *file='RES9' In the Copy Resource Into File dialog, select the resource file to which you want to copy the selected resource.
+.figure *depth='2.69' *scale=65 *file='RES9' In the Copy Resource Into File dialog, select the resource file to which you want to copy the selected resource.
 .step Double click on the desired resource file
 .orstep Click on the desired resource file
 to select it, then
@@ -616,7 +616,7 @@ on the keyboard.
 A Delete Resource dialog box appears displaying the name of the
 resource chosen to delete.
 .keep 14
-.figure *depth='1.35' *scale=100 *file='RES10' The Delete Resource dialog prompts you to verify that you want to delete the resource indicated.
+.figure *depth='1.35' *scale=70 *file='RES10' The Delete Resource dialog prompts you to verify that you want to delete the resource indicated.
 .step Click on OK
 to delete the selected resource.
 .result
@@ -648,7 +648,7 @@ Old Name
 New Name
 .endbull
 .keep 16
-.figure *depth='1.49' *scale=110 *file='RES11' In the Rename Resource dialog, you enter the new name of the selected resource.
+.figure *depth='1.49' *scale=68 *file='RES11' In the Rename Resource dialog, you enter the new name of the selected resource.
 .step Enter the new name for the resource
 in the New Name field.
 .step Click on OK
@@ -677,7 +677,7 @@ from the Resource menu in the &company Resource Editor window.
 The Memory Options dialog opens displaying the current memory options
 for the selected resource.
 .keep 20
-.figure *depth='2.20' *scale=100 *file='RES12' In the Memory Options dialog, you change the memory options for the selected resource.
+.figure *depth='2.20' *scale=65 *file='RES12' In the Memory Options dialog, you change the memory options for the selected resource.
 .step Select the required flags
 in the Memory Options and Load Options sections of the dialog by
 clicking on the check box or radio button beside the appropriate
