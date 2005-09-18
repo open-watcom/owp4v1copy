@@ -102,6 +102,10 @@ void PragmaFini()
     FreeInfo( &FortranInfo );
     FreeInfo( &StdcallInfo );
     FreeInfo( &FastcallInfo );
+#if _CPU == 386
+    FreeInfo( &Far16CdeclInfo );
+    FreeInfo( &Far16PascalInfo );
+#endif
     AuxList = NULL;
     while( HeadLibs != NULL ) {
         junk = HeadLibs;

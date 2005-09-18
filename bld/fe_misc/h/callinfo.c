@@ -310,18 +310,22 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
  ****************************************************/
     /* these are internal, and will never be pointed to by
      * an aux_entry, so we don't have to worry about them
-     * These are not freed when we shut down so we can't just point at the
-     * CdeclInfo parms etc. Do not call FreeInfo on these. BBB
      */
 
     Far16CdeclInfo = CdeclInfo;
     Far16CdeclInfo.cclass |= FAR16_CALL;
+    Far16CdeclInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
+    memcpy( Far16CdeclInfo.parms, StackParms, sizeof( StackParms ) );
+    Far16CdeclInfo.objname = STRALLOC( CdeclInfo.objname );
     // __far16 __cdecl depends on EBX being trashed in __cdecl
     // but NT 386 __cdecl preserves EBX
     HW_CTurnOff( Far16CdeclInfo.save, HW_EBX );
 
     Far16PascalInfo = PascalInfo;
     Far16PascalInfo.cclass |= FAR16_CALL;
+    Far16PascalInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
+    memcpy( Far16PascalInfo.parms, StackParms, sizeof( StackParms ) );
+    Far16PascalInfo.objname = STRALLOC( PascalInfo.objname );
 #endif
 }
 

@@ -37,7 +37,6 @@ extern  void    CMemFree();
 extern  void    CClose();
 extern  void    FreeFNames(void);
 extern  void    FreeRDir( void );
-extern  void    PragmaFini();
 extern  void    SymsPurge();
 extern  void    QuadFini();
 extern  void    FreeDataQuads();
@@ -77,7 +76,6 @@ void PurgeMemory()
 {
 //  MacroPurge();
     SymsPurge();        /* calls TypesPurge */
-    PragmaFini();
     FreeDataQuads();
     FreeFNames();
     FreeRDir();
