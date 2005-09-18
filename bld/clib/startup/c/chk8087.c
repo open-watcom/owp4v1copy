@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 #include "variety.h"
+#include <stdlib.h>
 #if defined( __OS2__ )
   #define INCL_DOSEXCEPTIONS
   #define INCL_DOSDEVICES
@@ -40,6 +41,9 @@
 #endif
 
 #include "rtdata.h"
+#include "exitwmsg.h"
+
+extern void __GrabFP87( void );
 
 extern unsigned short __8087cw;
 #pragma aux __8087cw "*";
@@ -176,6 +180,14 @@ void __init_8087( void )
     _fpreset();
 }
 
+#if defined( __DOS__ ) || defined( __OS2_286__ )
+
+void _WCI86FAR __default_sigfpe_handler( int fpe_sig )
+{
+    __fatal_runtime_error( "Floating point exception\r\n", EXIT_FAILURE );
+}
+#endif
+
 #if defined( __OS2__ )
 
 void __chk8087( void )
@@ -201,6 +213,12 @@ void __chk8087( void )
             _RWD_real87 = __x87id();
         }
         _RWD_8087 = _RWD_real87;
+    }
+    if( _RWD_real87 ) {
+        __GrabFP87();
+    }
+    if( _RWD_8087 ) {
+        _RWD_FPE_handler = __default_sigfpe_handler;
     }
 #endif
     _fpreset();
@@ -271,9 +289,14 @@ void __chk8087( void )
 void __chk8087( void )
 /*********************/
 {
-    if( _RWD_8087 != 0 )            /* if we already know we have an 80x87 */
+    if( _RWD_8087 != 0 ) {          /* if we already know we have an 80x87 */
+#if !defined( __386__ )    
+        if( __dos87real )
+            __GrabFP87();
+#endif    
+        _RWD_FPE_handler = __default_sigfpe_handler;
         return;                    /* this prevents real87 from being set */
-                                    /* when we have an emulator */
+    }                               /* when we have an emulator */
     _RWD_real87 = __x87id();        /* if a coprocessor is present then we */
     _RWD_8087 = _RWD_real87;        /* initialize even when NO87 is defined */
 #if !defined( __386__ )    
@@ -283,6 +306,12 @@ void __chk8087( void )
     if( _RWD_no87 != 0 ) {          /* if NO87 environment var is defined */
         _RWD_8087 = 0;              /* then we want to pretend that the */
         _RWD_real87 = 0;            /* coprocessor doesn't exist */
+    }
+    if( _RWD_real87 ) {
+        __GrabFP87();
+    }
+    if( _RWD_8087 ) {
+        _RWD_FPE_handler = __default_sigfpe_handler;
     }
 }
 
@@ -322,4 +351,3 @@ void __chk8087( void )
 }
 
 #endif
-

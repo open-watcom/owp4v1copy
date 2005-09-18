@@ -39,9 +39,12 @@
 
 extern  void    __null_int23_exit( void );
 extern  void    (*__int23_exit)( void );
+extern  void    _WCI86FAR __sigfpe_handler( int );
+extern  void    (_WCI86FAR *__FPE_handler)( int );
 
 static PFNSIGHANDLER handler = 0;
 static USHORT        action;
+static void (_WCI86FAR *__old_FPE_handler)( int ) = NULL;
 
 //#pragma off(unreferenced);
 static void _WCFAR pascal break_handler( USHORT sigarg, USHORT signum )
@@ -70,3 +73,19 @@ void __grab_int23( void )
     __int23_exit = restore_handler;
 }
 
+void __restore_FPE_handler( void )
+{
+    if( __old_FPE_handler == NULL ) {
+        return;
+    }
+    __FPE_handler = __old_FPE_handler;
+    __old_FPE_handler = NULL;
+}
+
+void __grab_FPE_handler( void )
+{
+    if( __old_FPE_handler == NULL ) {
+        __old_FPE_handler = __FPE_handler;
+        __FPE_handler = __sigfpe_handler;
+    }
+}

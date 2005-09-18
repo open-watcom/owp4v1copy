@@ -75,33 +75,15 @@ SaveSS  dw      1 dup(?)
 SaveSP  dw      1 dup(?)
         endbss
 
-CW_MASK equ      CW_IM+CW_ZM+CW_OM
-
 ifndef  __OS2__
 Save87  dw      0
         dw      0
 endif
 
-        xdefp   "C",__Enable_FPE
         ifndef  __OS2__
             xdefp       "C",__Init_FPE_handler
             xdefp       "C",__Fini_FPE_handler
         endif
-
-defp    __Enable_FPE
-        push    BP                      ; save BP
-        sub     SP,2                    ; allocate space for control word
-        mov     BP,SP                   ; point to space for control word
-        fstcw   word ptr [BP]           ; get control word
-        fwait                           ; ...
-        and     word ptr [BP],not CW_MASK; set new control word
-        fldcw   word ptr [BP]           ; ...
-        fwait                           ; ...
-        add     SP,2                    ; remove temporary
-        pop     BP                      ; restore BP
-        ret                             ; return
-endproc __Enable_FPE
-
 
 ifndef  __OS2__
 
@@ -128,7 +110,6 @@ defp    __Init_FPE_handler
           pop   DS                      ; - ...
           mov   DX,offset __FPEHandler  ; - ...
           int   21h                     ; - ...
-          lcall __Enable_FPE            ; - enable floating-point exceptions
           pop   ES                      ; - restore registers
           pop   DS                      ; - ...
           pop   DX                      ; - ...

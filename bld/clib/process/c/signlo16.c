@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 16-bit signal handling (based on OS provided exception
+*               handling).
 *
 ****************************************************************************/
 
@@ -40,26 +40,21 @@
 #include <wos2.h>
 #include "rtdata.h"
 #include "sigtab.h"
-#include "extfunc.h"
+#include "sigfunc.h"
 #include "seterrno.h"
 
-typedef void sig_func();
-#if defined(_M_IX86)
-    #pragma aux (__outside_CLIB) sig_func;
-#endif
-
-extern  void    __grab_fpe( void );
 extern  void    __terminate( void );
-
 extern  void    (*__abort)( void );
 extern  void    __null_int23_exit( void );
 extern  void    (*__int23_exit)( void );
+extern  void    __grab_FPE_handler( void );
+extern  void    __restore_FPE_handler( void );
 
 
 static struct sigtab SignalTable[] = {
     { SIG_IGN, NULL, 0, 0 },                /* unused  */
     { SIG_DFL, NULL, 0, 0 },                /* SIGABRT */
-    { SIG_IGN, NULL, 0, 0 },                /* SIGFPE  */
+    { SIG_DFL, NULL, 0, 0 },                /* SIGFPE  */
     { SIG_DFL, NULL, 0, 0 },                /* SIGILL  */
     { SIG_DFL, NULL, 0, SIG_CTRLC },        /* SIGINT  */
     { SIG_DFL, NULL, 0, 0 },                /* SIGSEGV */
@@ -80,12 +75,12 @@ void __sigabort( void )
 
 _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
 {
-    sig_func *func;
+    sig_func func;
 
     func = _RWD_sigtab[ SIGFPE ].func;
     if( func != SIG_IGN  &&  func != SIG_DFL  &&  func != SIG_ERR ) {
         _RWD_sigtab[ SIGFPE ].func = SIG_DFL;      /* 09-nov-87 FWC */
-        (*func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
+        (*(sigfpe_func)func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
     }
 }
 
@@ -121,27 +116,31 @@ static void restore_handler( void )
 }
 
 
-_WCRTLINK void (*signal( int sig, void (*func)(int) ))(int)
+_WCRTLINK sig_func signal( int sig, sig_func func )
 {
-    void (*prev_func)(int);
+    sig_func prev_func;
 
     if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
         return( SIG_ERR );
     }
     __abort = __sigabort;           /* change the abort rtn address */
-    if( func != SIG_DFL  &&  func != SIG_ERR ) {
-        if( _RWD_sigtab[ sig ].os_sig_code != 0 ) {
+    if( _RWD_sigtab[ sig ].os_sig_code != 0 ) {
+        if( func != SIG_DFL  &&  func != SIG_ERR ) {
             if( _RWD_sigtab[ sig ].os_func == NULL ) {
                 DosSetSigHandler( (PFNSIGHANDLER)break_handler,
-                                  &_RWD_sigtab[ sig ].os_func,
-                                  &_RWD_sigtab[ sig ].prev_action,
-                                  2,
-                                  _RWD_sigtab[ sig ].os_sig_code );
+                    &_RWD_sigtab[ sig ].os_func,
+                    &_RWD_sigtab[ sig ].prev_action,
+                    2,
+                    _RWD_sigtab[ sig ].os_sig_code );
                 __int23_exit = restore_handler;
             }
-        } else if( sig == SIGFPE ) {
-            __grab_fpe();
+        }
+    } else if( sig == SIGFPE ) {
+        if( func == SIG_DFL ) {
+            __restore_FPE_handler();
+        } else if( func != SIG_ERR ) {
+            __grab_FPE_handler();
         }
     }
     prev_func = _RWD_sigtab[ sig ].func;
@@ -151,7 +150,7 @@ _WCRTLINK void (*signal( int sig, void (*func)(int) ))(int)
 
 _WCRTLINK int raise( int sig )
 {
-    sig_func *func;
+    sig_func func;
 
     func = _RWD_sigtab[ sig ].func;
     switch( sig ) {

@@ -56,13 +56,11 @@
 !inject floor.obj    d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject fmod.obj     d16c      d32c      n32c      wnc     axp ntp op
 !inject fmod387.obj       d16i      d32i      n32i     wni
-!inject fpestub.obj  d16c      d32c                wnc
 !inject fpremaxp.obj                                       axp ntp op
 !inject frexp.obj    d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject fsld086.obj  d16c                          wnc
 !inject fsld386.obj            d32c      n32c
 !inject gcvt.obj     d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
-!inject grabfpe.obj       d16i      d32i               wni
 !inject hypot.obj    d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject i4ld086.obj  d16c                          wnc
 !inject i4ld386.obj            d32c      n32c

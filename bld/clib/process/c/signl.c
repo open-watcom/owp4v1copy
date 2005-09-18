@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  signal handling ( for DOS, Windows 3.x and ? Netware )
 *
 ****************************************************************************/
 
@@ -38,13 +37,8 @@
 #include <float.h>
 #include "rtdata.h"
 #include "sigtab.h"
-#include "extfunc.h"
+#include "sigfunc.h"
 #include "seterrno.h"
-
-typedef void sig_func();
-#ifdef _M_IX86
-  #pragma aux (__outside_CLIB) sig_func;
-#endif
 
 #ifndef __WINDOWS_386__
 #ifndef __NETWARE__
@@ -52,20 +46,24 @@ extern      void    __grab_int23( void );
 extern      void    __restore_int23( void );
 extern      void    __grab_int_ctrl_break( void );
 extern      void    __restore_int_ctrl_break( void );
-extern      void    __grab_fpe( void );
 #endif
 
 extern  void    __terminate( void );
+#endif
+
+#if defined( __DOS__ )
+extern      void    __grab_FPE_handler( void );
+extern      void    __restore_FPE_handler( void );
 #endif
 
 extern  void    (*__abort)( void );
 
 #define __SIGLAST       SIGIOVFL
 
-static void (* _HUGEDATA SignalTable[])( int ) = {
+static sig_func _HUGEDATA SignalTable[] = {
     SIG_IGN,        /* unused  */
     SIG_DFL,        /* SIGABRT */
-    SIG_IGN,        /* SIGFPE  */
+    SIG_DFL,        /* SIGFPE  */
     SIG_DFL,        /* SIGILL  */
     SIG_DFL,        /* SIGINT  */
     SIG_DFL,        /* SIGSEGV */
@@ -84,13 +82,6 @@ void __sigabort( void )
 }
 
 #ifndef __WINDOWS_386__
-/* arguments always passed in registers, even if stack calling convention */
-
-#if defined( __386__ )
-  #pragma aux __sigfpe_handler parm [eax];
-#else
-  #pragma aux __sigfpe_handler parm [ax];
-#endif
 
 #if defined( __WINDOWS__ )
 
@@ -113,7 +104,7 @@ unsigned int win87em_get_sw( void );
 
 _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
 {
-    sig_func     *func;
+    sig_func     func;
     
   #if defined( __WINDOWS__ )
     unsigned int  sw;
@@ -134,17 +125,17 @@ _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
     }
   #endif
     
-    func = (sig_func *)SignalTable[ SIGFPE ];
+    func = SignalTable[ SIGFPE ];
     if( func != SIG_IGN  &&  func != SIG_DFL  &&  func != SIG_ERR ) {
         SignalTable[ SIGFPE ] = SIG_DFL;      /* 09-nov-87 FWC */
-        (*func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
+        (*(sigfpe_func)func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
     }
 }
 #endif
 
-_WCRTLINK void (*signal( int sig, void (*func)( int ) ))( int )
+_WCRTLINK sig_func signal( int sig, sig_func func )
 {
-    void (*prev_func)( int );
+    sig_func prev_func;
     
     if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
@@ -164,22 +155,14 @@ _WCRTLINK void (*signal( int sig, void (*func)( int ) ))( int )
         } else if( func != SIG_ERR ) {
             __grab_int_ctrl_break();
         }
+  #if defined( __DOS__ )
     } else if( sig == SIGFPE ) {
-        if( func == SIG_DFL ) { // Turn exceptions on
-            /*
-             * Mask all exceptions.
-             */
-            _control87(~0, 0x002F);
-        } else if( func != SIG_ERR ) { // Turn exceptions off
-            /*
-             * Unmask the default exceptions.
-             */
-            _control87(0, EM_INVALID | EM_ZERODIVIDE | EM_OVERFLOW
-                | EM_UNDERFLOW);
-  #ifndef __WINDOWS__
-            __grab_fpe();
-  #endif
+        if( func == SIG_DFL ) {
+            __restore_FPE_handler();
+        } else if( func != SIG_ERR ) {
+            __grab_FPE_handler();
         }
+  #endif
     }
 #endif
     prev_func = _RWD_sigtab[ sig ];
@@ -190,7 +173,7 @@ _WCRTLINK void (*signal( int sig, void (*func)( int ) ))( int )
 
 _WCRTLINK int raise( int sig )
 {
-    sig_func *func;
+    sig_func func;
     
     func = _RWD_sigtab[ sig ];
     switch( sig ) {

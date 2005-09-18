@@ -59,20 +59,6 @@ SaveSS  dw      0
 SaveESP dd      0
         enddata
 
-CW_MASK equ      CW_IM+CW_ZM+CW_OM
-
-
-        xdefp   "C",__Enable_FPE
-defp    __Enable_FPE
-        sub     ESP,4                   ; allocate space for control word
-        fstcw   word ptr [ESP]          ; get control word
-        fwait                           ; ...
-        and     word ptr [ESP],not CW_MASK; set new control word
-        fldcw   word ptr [ESP]          ; ...
-        fwait                           ; ...
-        add     ESP,4                   ; remove temporary
-        ret                             ; return
-endproc __Enable_FPE
 
 ; Interrupt handler for 80x87 exceptions.
 

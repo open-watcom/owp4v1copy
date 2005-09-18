@@ -36,7 +36,6 @@ include struct.inc
 include mdef.inc
 include extender.inc
 
-        xref    "C",__Enable_FPE        ; enable exceptions
         xref    __Phar_hook_init_       ; setup interupts for Pharlap
         xref    __Phar_hook_fini_       ; restore interupts for Pharlap
         xref    __DOS4G_hook_init_      ; setup interupts for Rational
@@ -82,7 +81,6 @@ defp    __Init_FPE_handler
           call __Phar_hook_init_        ; - setup interupt vector
         _endguess                       ; endguess
         pop     DS                      ; restore DS
-        call    __Enable_FPE            ; enable exceptions
         pop     ES                      ; restore registers
         pop     EDX                     ; ...
         pop     ECX                     ; ...
