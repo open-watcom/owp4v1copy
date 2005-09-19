@@ -57,6 +57,7 @@ extern int DPMICheckVendorSpecificAPI( char __far * );
 #pragma aux DPMICheckVendorSpecificAPI = \
         "push es" \
         "push ds" \
+        "mov ax,0a00h" \
         "mov ds,ecx" \
         "int 31h" \
         "sbb eax,eax" \
