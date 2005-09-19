@@ -38,6 +38,10 @@
 #define DBL_DIG         15
 #define LDBL_DIG        15
 
+:: If 80-bit long double was supported, DECIMAL_DIG would be 21
+/* decimal digits needed accurately represent any floating-point value */
+#define DECIMAL_DIG     17
+
 /* minimum negative integer such that FLT_RADIX raised to that power minus 1
  is a normalized floating-point number */
 #define FLT_MIN_EXP     (-125)
