@@ -56,3 +56,4 @@ _WCRTLINK unsigned int   _osver;        // operating system build number
 _WCRTLINK unsigned int   _winmajor;     // operating system major version number
 _WCRTLINK unsigned int   _winminor;     // operating system minor version number
 _WCRTLINK unsigned int   _winver;       // operating system version number
+_WCRTLINK void (*__FPE_handler)( int ); // f-p exception handler
