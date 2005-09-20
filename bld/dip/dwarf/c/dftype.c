@@ -424,12 +424,15 @@ extern void MapImpTypeInfo( dr_typeinfo *typeinfo, type_info *ti )
     }
     ti->kind = kind;
     ti->size = typeinfo->size;
+    ti->modifier = TM_NONE;
     switch( typeinfo->mclass ){
     case DR_MOD_BASE:
-        if( typeinfo->modifier.sign ){
-            ti->modifier = TM_SIGNED;
-        }else{
-            ti->modifier = TM_UNSIGNED;
+        if( (ti->kind == TK_INTEGER) || (ti->kind == TK_CHAR)) {
+            if( typeinfo->modifier.sign ) {
+                ti->modifier = TM_SIGNED;
+            } else {
+                ti->modifier = TM_UNSIGNED;
+            }
         }
         break;
     case DR_MOD_ADDR:
@@ -452,9 +455,6 @@ extern void MapImpTypeInfo( dr_typeinfo *typeinfo, type_info *ti )
         if( typeinfo->kind == DR_TYPEK_REF ){
             ti->modifier |= TM_FLAG_DEREF;
         }
-        break;
-    case DR_MOD_NONE:
-        ti->modifier = TM_NONE;
         break;
     }
 }
