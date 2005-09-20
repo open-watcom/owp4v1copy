@@ -24,14 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Non-exhaustive test of _bios functions.
 *
 ****************************************************************************/
 
 
 /*
- *  BIOSTEST.C
  *  Currently, this program only tests the _bios functions.
  *  They now decide at run-time whether or not they're on an IBM or a NEC
  *  machine; this program is to ensure they still work.
@@ -71,7 +69,11 @@ struct EquipBits {
 };
 
 
+#if defined( __X86__ )
 extern int      __NonIBM;
+#else
+int __NonIBM = 0;
+#endif
 
 char    ProgramName[128];                       /* executable filename */
 int     NumErrors = 0;                          /* number of errors */

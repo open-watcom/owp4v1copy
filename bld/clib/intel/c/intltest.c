@@ -24,14 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Non-exhaustive test of x86 specific functions.
 *
 ****************************************************************************/
 
 
 /*
- *  INTLTEST.C
  *  Currently, this program only tests the sound() and nosound() functions.
  *  They now decide at run-time whether or not they're on an IBM or a NEC
  *  machine; this program is to ensure they still work.
@@ -39,7 +37,9 @@
  */
 
 #include <conio.h>
+#ifdef __X86__
 #include <i86.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 
@@ -47,7 +47,11 @@
     #define TEST_SOUND
 #endif
 
+#ifdef __X86__
 extern int      __NonIBM;
+#else
+int __NonIBM = 0;
+#endif
 
 
 char ProgramName[128];                          /* executable filename */
@@ -86,11 +90,11 @@ void main( int argc, char *argv[] )
     printf( "%s: Machine type is %s.\n", ProgramName,
             __NonIBM ? "NEC" : "IBM" );
 
-    #ifdef TEST_SOUND
-        TestSound();
-    #else
-        printf( "%s: Skipping sound() and nosound() tests.\n", ProgramName );
-    #endif
+#ifdef TEST_SOUND
+    TestSound();
+#else
+    printf( "%s: Skipping sound() and nosound() tests.\n", ProgramName );
+#endif
 
     printf( "%s: Done\n", ProgramName );
 }
