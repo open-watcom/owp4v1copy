@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Module to init multi-threading
+* Description:  Module to init multi-threading initialization.
 *
 ****************************************************************************/
+
 
 #include "variety.h"
 #include "rtinit.h"
@@ -66,4 +67,3 @@
 #if defined(_M_IX86)
   #pragma aux __imthread "*";
 #endif
-

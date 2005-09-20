@@ -31,8 +31,6 @@
 
 #include "variety.h"
 #include "rtdata.h"
-//#include "stacklow.h"
-//#include "exitwmsg.h"
 
 _WCRTLINK unsigned stackavail( void )
 {

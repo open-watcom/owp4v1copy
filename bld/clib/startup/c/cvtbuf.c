@@ -43,7 +43,7 @@
     static MAX_CHAR_TYPE    cvt_buffer[20];
 #endif
 
-_WCRTLINK CHAR_TYPE *__CVTBuffer()
+_WCRTLINK CHAR_TYPE *__CVTBuffer( void )
 {
     return( (CHAR_TYPE *)_RWD_cvtbuf );
 }

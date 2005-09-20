@@ -30,6 +30,7 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -390,4 +391,3 @@ void SetLastError(int error)
 extern void __WATCOM_Prelude( void )
 {
 }
-

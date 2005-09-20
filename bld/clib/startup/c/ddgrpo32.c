@@ -29,6 +29,11 @@
 ****************************************************************************/
 
 
+/* Note: All the complex junk is here to make sure the clib does not
+ * statically link against Presentation Manager DLLs, so that we can load
+ * without PM installed.
+ */
+
 #include "variety.h"
 #define INCL_WIN
 #define INCL_DOSFILEMGR
@@ -46,7 +51,7 @@
     "attaching multiple processes to a DLL with shared DGROUP.\n"
 
 static char dllname[_MAX_PATH];
-static char buf[sizeof(message)+sizeof(dllname)+6];
+static char buf[sizeof( message ) + sizeof( dllname ) + 6];
 
 static char *my_strcat( char *p, char *msg )
 {
@@ -63,14 +68,14 @@ static char *my_strcat( char *p, char *msg )
     return( p );
 }
 
-static HAB     (APIENTRY *pfnWinInitialize)(ULONG);
-static HMQ     (APIENTRY *pfnWinCreateMsgQueue)(HAB, ULONG);
-static ULONG   (APIENTRY *pfnWinGetLastError)(HAB);
-static ERRORID (APIENTRY *pfnWinGetLastError)(HAB);
-static BOOL    (APIENTRY *pfnWinDestroyMsgQueue)(HMQ);
-static BOOL    (APIENTRY *pfnWinTerminate)(HAB);
-static BOOL    (APIENTRY *pfnWinTerminate)(HAB);
-static ULONG   (APIENTRY *pfnWinMessageBox)(HWND,HWND,PCSZ,PCSZ,ULONG,ULONG);
+static HAB     (APIENTRY *pfnWinInitialize)( ULONG );
+static HMQ     (APIENTRY *pfnWinCreateMsgQueue)( HAB, ULONG );
+static ULONG   (APIENTRY *pfnWinGetLastError)( HAB );
+static ERRORID (APIENTRY *pfnWinGetLastError)( HAB );
+static BOOL    (APIENTRY *pfnWinDestroyMsgQueue)( HMQ );
+static BOOL    (APIENTRY *pfnWinTerminate)( HAB );
+static BOOL    (APIENTRY *pfnWinTerminate)( HAB );
+static ULONG   (APIENTRY *pfnWinMessageBox)( HWND, HWND, PCSZ, PCSZ, ULONG, ULONG );
 
 int __disallow_single_dgroup( unsigned hmod )
 {
@@ -112,10 +117,11 @@ int __disallow_single_dgroup( unsigned hmod )
     if( use_pm ) {
         pfnWinMessageBox( HWND_DESKTOP, 0, message, dllname, 0, MB_NOICON | MB_OK );
     } else {
-        HFILE file;
-        ULONG written;
-        ULONG action;
-        char *p = buf;
+        HFILE   file;
+        ULONG   written;
+        ULONG   action;
+        char    *p = buf;
+
         p = my_strcat( p, dllname );
         p = my_strcat( p, "\n" );
         p = my_strcat( p, message );

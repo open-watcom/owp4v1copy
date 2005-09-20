@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of onexit().
 *
 ****************************************************************************/
 
@@ -39,7 +38,7 @@ typedef void (*onexit_t)();
 #endif
 
 _WCRTLINK onexit_t onexit( onexit_t func )
-    {
-        if( atexit( func ) == 0 )  return( func );
-        return( NULL );
-    }
+{
+    if( atexit( func ) == 0 )  return( func );
+    return( NULL );
+}

@@ -42,11 +42,12 @@
     "attaching more than one process to a Dynamic Link Library "\
     "that does not have a separate data space for each attached process.\n"
 
-static char buf[sizeof(message_prefix)+_MAX_PATH+sizeof(message_suffix)];
+static char buf[sizeof( message_prefix ) + _MAX_PATH + sizeof( message_suffix )];
 static char dllname[_MAX_PATH];
 static char pgmname[_MAX_PATH];
 
-BOOL __disallow_single_dgroup( HANDLE hdll ) {
+BOOL __disallow_single_dgroup( HANDLE hdll )
+{
     GetModuleFileName( 0, pgmname, sizeof( pgmname ) );
     GetModuleFileName( hdll, dllname, sizeof( dllname ) );
     buf[0] = '\0';
@@ -54,5 +55,5 @@ BOOL __disallow_single_dgroup( HANDLE hdll ) {
     strcat( buf, pgmname );
     strcat( buf, message_suffix );
     MessageBox( NULL, buf, dllname, MB_OK );
-    return 1;
+    return( 1 );
 }

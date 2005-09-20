@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fatal runtime error handler for 32-bit OS/2.
 *
 ****************************************************************************/
 
@@ -44,7 +43,8 @@ _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
     ULONG       written;
 
     end = msg;
-    for( len = 0; *end++ != '\0'; len++ );
+    for( len = 0; *end++ != '\0'; len++ )
+        ;
     DosWrite( STDERR_FILENO, msg, len, &written );
     __exit( retcode );
 }

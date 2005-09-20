@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of __NTMain().
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@
 extern void __InitThreadData( thread_data * );
 
 #ifdef __SW_BR
-    _WCRTLINK extern    void    (*__process_fini)(unsigned,unsigned);
+    _WCRTLINK extern    void    (*__process_fini)( unsigned, unsigned );
     _WCRTLINK extern    int     ___Argc;        /* argument count */
     _WCRTLINK extern    int     ___wArgc;       /* argument count */
     _WCRTLINK extern    char    **___Argv;      /* argument vector */

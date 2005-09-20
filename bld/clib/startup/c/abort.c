@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +37,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-void __terminate();
+void __terminate( void );
 
 void    (*_RWD_abort)() = __terminate;
 
@@ -48,27 +49,27 @@ void    (*_RWD_abort)() = __terminate;
  */
 #include "initfini.h"
 
-_WCRTLINK void abort(void)
+_WCRTLINK void abort( void )
 {
     struct sigaction    oact;
     sigset_t            mask;
 
-    sigaction(SIGABRT,NULL,&oact);
+    sigaction( SIGABRT, NULL, &oact );
     if( oact.sa_handler == SIG_DFL ) {
                                 /* '0' is not the right value here */
         __FiniRtns( 0, 255 );   /* get the I/O system shut down */
     }
-    sigfillset(&mask);
-    sigdelset(&mask,SIGABRT);
-    sigprocmask(SIG_SETMASK,&mask,(sigset_t *)NULL);
-    raise(SIGABRT);
-    signal(SIGABRT,SIG_DFL);
-    raise(SIGABRT);
+    sigfillset( &mask );
+    sigdelset( &mask, SIGABRT );
+    sigprocmask( SIG_SETMASK, &mask, (sigset_t *)NULL );
+    raise( SIGABRT );
+    signal( SIGABRT,SIG_DFL );
+    raise( SIGABRT );
     __terminate();
 }
 #else
 
-_WCRTLINK void abort()
+_WCRTLINK void abort( void )
 {
     if( _RWD_abort != __terminate ) {
         (*_RWD_abort)();
@@ -78,8 +79,7 @@ _WCRTLINK void abort()
 
 #endif
 
-void __terminate()
+void __terminate( void )
 {
     __fatal_runtime_error( "ABNORMAL TERMINATION\r\n", EXIT_FAILURE );
 }
-

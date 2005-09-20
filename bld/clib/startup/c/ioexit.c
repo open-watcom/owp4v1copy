@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  I/O streams shutdown.
 *
 ****************************************************************************/
 
@@ -37,13 +36,13 @@
 extern void     __purgefp(void);
 extern int      __shutdown_stream( FILE *fp, int );
 
-void __full_io_exit()
+void __full_io_exit( void )
 {
     docloseall( 0 );
     __purgefp();
 }
 
-_WCRTLINK int fcloseall()
+_WCRTLINK int fcloseall( void )
 {
     return( docloseall( NUM_STD_STREAMS ) );
 }

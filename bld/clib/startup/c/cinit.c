@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common clib initialization code.
 *
 ****************************************************************************/
 
@@ -58,8 +57,8 @@
     extern int __DPMI_hosted(void);
 #endif
 
-void    __CommonInit()
-/********************/
+void    __CommonInit( void )
+/**************************/
 {
 #if !defined(__NETWARE__) && !defined(__NT__)
     _amblksiz = 32 * 1024;      /* set minimum memory block allocation */

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS query routine for QNX.
 *
 ****************************************************************************/
 
@@ -49,8 +48,8 @@ void __DetOSInfo()
     struct _osinfo osdata;
 
     qnx_osinfo( 0, &osdata );
-    _osmajor = osdata.version/100;
-    _osminor = osdata.version%100;
+    _osmajor = osdata.version / 100;
+    _osminor = osdata.version % 100;
 #if !defined(__386__)
     if( (osdata.sflags & _PSF_PROTECTED) != 0 ) {
         _HShift = 3;

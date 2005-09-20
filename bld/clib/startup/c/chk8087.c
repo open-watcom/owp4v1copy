@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include <stdlib.h>
 #if defined( __OS2__ )
@@ -191,9 +192,8 @@ void _WCI86FAR __default_sigfpe_handler( int fpe_sig )
 #if defined( __OS2__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
-
     char    devinfo;
 
 #if defined( __386__ )
@@ -227,7 +227,7 @@ void __chk8087( void )
 #elif defined( __QNX__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
     extern      char    __87;
     extern      char    __r87;
@@ -240,7 +240,7 @@ void __chk8087( void )
 #elif defined( __LINUX__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
     // TODO: We really need to call Linux and determine if the machine
     //       has a real FPU or not, so we can properly work with an FPU
@@ -277,7 +277,7 @@ extern void __chk8087( void )
 #elif defined( __NT__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
     _RWD_real87 = __x87id();
     _RWD_8087 = _RWD_real87;
@@ -287,21 +287,21 @@ void __chk8087( void )
 #elif defined( __DOS__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
     if( _RWD_8087 != 0 ) {          /* if we already know we have an 80x87 */
-#if !defined( __386__ )    
+#if !defined( __386__ )
         if( __dos87real )
             __GrabFP87();
-#endif    
+#endif
         _RWD_FPE_handler = __default_sigfpe_handler;
         return;                    /* this prevents real87 from being set */
     }                               /* when we have an emulator */
     _RWD_real87 = __x87id();        /* if a coprocessor is present then we */
     _RWD_8087 = _RWD_real87;        /* initialize even when NO87 is defined */
-#if !defined( __386__ )    
+#if !defined( __386__ )
     __dos87real = _RWD_real87;
-#endif    
+#endif
     __init_8087();                  /* this handles the fpi87 and NO87 case */
     if( _RWD_no87 != 0 ) {          /* if NO87 environment var is defined */
         _RWD_8087 = 0;              /* then we want to pretend that the */
@@ -318,10 +318,10 @@ void __chk8087( void )
 #elif defined( __WINDOWS__ )
 
 void __chk8087( void )
-/*********************/
+/********************/
 {
     if( _RWD_8087 != 0 )             /* if we already know we have an 80x87 */
-        return;                      /* this prevents real87 from being set */        
+        return;                      /* this prevents real87 from being set */
                                      /* when we have an emulator */
     if( GetWinFlags() & WF_80x87 ) { /* if a coprocessor is present then we */
   #if defined( __386__ )
@@ -330,7 +330,7 @@ void __chk8087( void )
   #endif
         _RWD_real87 = __x87id();     /* initialize even when NO87 is defined */
         _RWD_8087 = _RWD_real87;     /* this handles the fpi87 and NO87 case */
-        __init_8087(); 
+        __init_8087();
     } else {
   #if defined( __386__ )
         // check to see if emulator is loaded

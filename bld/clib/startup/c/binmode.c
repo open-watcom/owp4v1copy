@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Special object file to force binary mode when linked in.
 *
 ****************************************************************************/
+
 
 #include "variety.h"
 #include <fcntl.h>
@@ -41,4 +41,3 @@ static void do_it( void )
 }
 
 AXI( do_it, INIT_PRIORITY_LIBRARY )
-

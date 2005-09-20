@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fatal runtime error handler for NetWare.
 *
 ****************************************************************************/
 
@@ -54,7 +53,7 @@ _WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
 
 _WCRTLINK void __fatal_runtime_error( char *msg, unsigned retcode )
 {
-    if( !__EnterWVIDEO( msg ) ) 
+    if( !__EnterWVIDEO( msg ) )
     {
         __exit_with_msg( msg, retcode );
     }

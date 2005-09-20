@@ -60,7 +60,7 @@ extern  char            __Is_DLL;
 
 #if defined(__NT__) || defined(__WARP__)
 extern  char            __Is_DLL;
-_WCRTLINK extern void (*__process_fini)(unsigned,unsigned);
+_WCRTLINK extern void (*__process_fini)( unsigned, unsigned );
 #endif
 
 
@@ -72,58 +72,57 @@ void    (*__FPE_handler_exit)() = _null_exit_rtn;
 #endif
 
 _WCRTLINK void exit( int status )
-    {
+{
 #ifdef DEFAULT_WINDOWING
-        if( _WindowsExitRtn != NULL ) {      // JBS 27-JUL-98
-            _WindowsExitRtn();
-        }
+    if( _WindowsExitRtn != NULL ) {      // JBS 27-JUL-98
+        _WindowsExitRtn();
+    }
 #endif
 #if !defined(__UNIX__) && !defined(__WINDOWS_386__)
-        (*__int23_exit)();
+    (*__int23_exit)();
 #endif
 #if defined(__UNIX__)
-        __FiniRtns( 0, 255 );
+    __FiniRtns( 0, 255 );
 #elif defined(__WINDOWS_386__)
-        if( !__Is_DLL ) {
-            __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-        }
-#elif defined(__NT__) || defined(__WARP__)
-        if( __Is_DLL ) {
-            if( __process_fini != 0 ) {
-                (*__process_fini)( FINI_PRIORITY_EXIT, 255 );
-            }
-        } else {
-            __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-        }
-#else
+    if( !__Is_DLL ) {
         __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-#endif
-        _exit( status );
     }
+#elif defined(__NT__) || defined(__WARP__)
+    if( __Is_DLL ) {
+        if( __process_fini != 0 ) {
+            (*__process_fini)( FINI_PRIORITY_EXIT, 255 );
+        }
+    } else {
+        __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+    }
+#else
+    __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+#endif
+    _exit( status );
+}
 
 
 #if defined(__OS2_286__) && defined(__SW_BD)
 _WCRTLINK void _UnloadCLib( void )
-    {
-        (*__int23_exit)();
-        __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-        (*__int23_exit)();
-        (*__FPE_handler_exit)();
-        __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
-    }
+{
+    (*__int23_exit)();
+    __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+    (*__int23_exit)();
+    (*__FPE_handler_exit)();
+    __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+}
 #endif
 
 
 #ifndef __NETWARE__
 
 _WCRTLINK void _exit( int status )
-    {
+{
 #if !defined(__UNIX__) && !defined(__WINDOWS_386__)
-        (*__int23_exit)();
-        (*__FPE_handler_exit)();
+    (*__int23_exit)();
+    (*__FPE_handler_exit)();
 #endif
-        __exit( status );
-    }
+    __exit( status );
+}
 
 #endif
-

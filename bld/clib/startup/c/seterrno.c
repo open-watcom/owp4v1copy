@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  __set_errno() implementation.
+* Description:  Implementation of __set_errno().
 *
 ****************************************************************************/
+
 
 #ifdef __WATCOMC__
 
@@ -37,40 +38,39 @@
 #include "seterrno.h"
 
 _WCRTLINK void __set_errno( unsigned int err )
-    {
-        _RWD_errno = err;
-    }
+{
+    _RWD_errno = err;
+}
 
 _WCRTLINK void __set_EDOM()
-    {
-        __set_errno( EDOM );
-    }
+{
+    __set_errno( EDOM );
+}
 
 _WCRTLINK void __set_ERANGE()
-    {
-        __set_errno( ERANGE );
-    }
+{
+    __set_errno( ERANGE );
+}
 
 _WCRTLINK int __set_EINVAL()
-    {
-        __set_errno( EINVAL );
-        return( -1 );
-    }
+{
+    __set_errno( EINVAL );
+    return( -1 );
+}
 
 #if !defined(__UNIX__) && !defined(__NETWARE__)
 _WCRTLINK void __set_doserrno( unsigned int err )
-    {
-        _RWD_doserrno = err;
-    }
+{
+    _RWD_doserrno = err;
+}
 #endif
 
 #else
 
 #include <errno.h>
 void __set_errno( unsigned int err )
-    {
-        errno = err;
-    }
+{
+    errno = err;
+}
 
 #endif
-

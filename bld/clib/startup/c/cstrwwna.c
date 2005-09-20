@@ -30,9 +30,12 @@
 
 
 extern void __wNTMain( void );
-void wmainCRTStartup( void ) {
+
+void wmainCRTStartup( void )
+{
     __wNTMain();
 }
+
 const char _cstartw_CopyRight[] =
         "Open Watcom C/C++ Alpha Run-Time system. "
         "Portions Copyright (c) Sybase, Inc. 1995-2002.";

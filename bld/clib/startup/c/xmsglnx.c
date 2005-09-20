@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fatal runtime error handler for Linux.
 *
 ****************************************************************************/
 
@@ -38,7 +37,7 @@
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
-    write(1,msg,strlen(msg));
+    write( 1, msg, strlen( msg ) );
     sys_exit( retcode );
 }
 
@@ -48,4 +47,3 @@ _WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
         __exit_with_msg( msg, retcode );
     }
 }
-

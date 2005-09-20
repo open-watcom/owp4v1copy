@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default implementation of __dll_initialize()
+*               for 16-bit OS/2.
 *
 ****************************************************************************/
 
@@ -34,9 +34,9 @@
 
 extern          int     main();
 
-unsigned        __dll_initialize() {
-/**********************************/
-
+unsigned __dll_initialize( void )
+/*******************************/
+{
     return( main() );
 }
 #endif

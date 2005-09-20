@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 // these appear ahead of the include files to avoid collisions
 // between the _STACKLOW variable and the _STACKLOW macro
 
@@ -44,10 +45,10 @@ extern void __InitThreadData( thread_data * );
 
 int *__threadid( void )
 {
-    return( (int *) &(__THREADDATAPTR->thread_id) );
+    return( (int *)&(__THREADDATAPTR->thread_id) );
 }
 
-static struct thread_data *__SingleThread()
+static struct thread_data *__SingleThread( void )
 {
     return( __FirstThreadData );
 }
@@ -70,9 +71,9 @@ void                    (*_AccessTDList)(void)   = &__NullAccTDListRtn;
 void                    (*_ReleaseTDList)(void)  = &__NullAccTDListRtn;
 
 void __LinuxInit( void *ptr )
-/*************************/
+/***************************/
 {
-    unsigned *tmp;
+    unsigned    *tmp;
 
     __InitThreadData( ptr );
     __FirstThreadData = ptr;
@@ -83,9 +84,8 @@ void __LinuxInit( void *ptr )
     *tmp = _STACKLOW;
 }
 
-_WCRTLINK void __exit(unsigned ret_code)
+_WCRTLINK void __exit( unsigned ret_code )
 {
-    __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
-    sys_exit(ret_code);
+    __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
+    sys_exit( ret_code );
 }
-

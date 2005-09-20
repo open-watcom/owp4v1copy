@@ -30,13 +30,19 @@
 
 
 extern int _LibMain( void );
-int DllMainCRTStartup( void ) {
+
+int DllMainCRTStartup( void )
+{
     return( _LibMain() );
 }
-int _DllMainCRTStartup( void ) {
+
+int _DllMainCRTStartup( void )
+{
     return( _LibMain() );
 }
-int wDllMainCRTStartup( void ) {
+
+int wDllMainCRTStartup( void )
+{
     return( _LibMain() );
 }
 const char  _DLLstart_CopyRight[] =

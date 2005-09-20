@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main entrypoint for 16-bit OS/2.
 *
 ****************************************************************************/
 
@@ -60,8 +59,8 @@ ULONG                   __iosemaphore[_NFILES];
 int                     __iosemcount[_NFILES];
 TID                     __iothreadid[_NFILES];
 
-extern  void            *__InitThreadProcessing(void);
-extern  void            __SetupThreadProcessing(int);
+extern  void            *__InitThreadProcessing( void );
+extern  void            __SetupThreadProcessing( int );
 
 extern  unsigned        __MaxThreads;
 
@@ -101,8 +100,8 @@ int                     _nothread;
 extern char             end;
 
 void __far __null_FPE_handler()
-    {
-    }
+{
+}
 
 void    (__far *__FPE_handler)() = __null_FPE_handler;
 
@@ -112,10 +111,9 @@ extern  int _CMain();
 
 
 int _OS2Main( char far *stklow, char far * stktop,
-               unsigned envseg, unsigned cmdoff ) {
+               unsigned envseg, unsigned cmdoff )
 /*************************************************/
-
-
+{
     cmdoff = cmdoff;    /* supress warnings */
     envseg = envseg;
     stktop = stktop;
@@ -212,9 +210,9 @@ int _OS2Main( char far *stklow, char far * stktop,
 }
 
 
-_WCRTLINK void  __exit( unsigned ret_code ) {
-/*******************************************/
-
+_WCRTLINK void  __exit( unsigned ret_code )
+/*****************************************/
+{
     __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
 #ifdef __SW_BD
     RetCode = ret_code;

@@ -44,13 +44,13 @@
 
 #ifdef __SW_BR
     _WCRTLINK extern    unsigned    __hmodule;
-    _WCRTLINK extern    void        (*__process_fini)(unsigned,unsigned);
+    _WCRTLINK extern    void        (*__process_fini)( unsigned, unsigned );
     _WCRTLINK extern    int         ___Argc;    /* argument count */
     _WCRTLINK extern    char        **___Argv;  /* argument vector */
     _WCRTLINK extern    int         ___wArgc;   /* argument count */
     _WCRTLINK extern    wchar_t     **___wArgv; /* argument vector */
-    _WCRTLINK extern    void        (*__sig_init_rtn)(void);
-    
+    _WCRTLINK extern    void        (*__sig_init_rtn)( void );
+
     extern      void    __CommonInit( void );
     extern      int     main( int, char ** );
     extern      int     wmain( int, wchar_t ** );
@@ -74,18 +74,19 @@
 #endif
 
 void __F_NAME(__OS2Main,__wOS2Main)( unsigned hmod, unsigned reserved,
+                                     char *env, char *cmd )
 /********************************************************************/
-    char *env, char *cmd )
 {
     EXCEPTIONREGISTRATIONRECORD xcpt;
+
     reserved = reserved;
     #ifdef __SW_BR
         __hmodule = hmod;
         env = env;
         cmd = cmd;
-	// Even though the exception handler and all that is
-	// in the runtime DLL, it must be registered from here since
-	// the registration record needs to live on stack
+    // Even though the exception handler and all that is
+    // in the runtime DLL, it must be registered from here since
+    // the registration record needs to live on stack
         __XCPTHANDLER = &xcpt;
         __process_fini = &__FiniRtns;
         __InitRtns( 255 );
