@@ -113,6 +113,8 @@ int main( int argc, char **argv )
     double          dbl_var = 3.14;
     int             i, j;
     int             *p_i = &i;
+    signed char     sc = -1;
+    unsigned char   uc = 255;
 
     i = 42;
     s1_var = S_glob.struc_fld;
@@ -120,5 +122,6 @@ int main( int argc, char **argv )
     j = foo( p_i );
     dbl_var += flt_var;
     j += flt_var;
+    sc += uc;
     return( j );
 }
