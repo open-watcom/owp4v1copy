@@ -107,7 +107,7 @@ pick( PROC_MUST_HAVE_A_NAME,
                                 "Procedure must have a name" ,
                                 "プロシージャには名前がなければなりません" )
 pick( PROC_ALREADY_DEFINED,
-                                "Procedure is alreadly defined" ,
+                                "Procedure is already defined" ,
                                 "プロシージャは既に定義されています" )
 pick( LANG_MUST_BE_SPECIFIED,
                                 "Language type must be specified" ,
