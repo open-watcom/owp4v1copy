@@ -25,6 +25,12 @@
     cdsay ..\nt386.386
     wmake -h -k reference
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    echo Building Win32 AXP C++ reference compilers
+    cdsay <PROJDIR>\..\ntaxp.axp
+    wmake -h -k reference
+
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     echo Building Linux 386 C++ reference compilers

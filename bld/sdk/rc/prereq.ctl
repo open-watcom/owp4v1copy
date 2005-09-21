@@ -44,6 +44,16 @@ set ODIR=<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
 
+[ BLOCK <BUILD_PLATFORM> ntaxp ]
+#===============================
+    mkdir <PROJDIR>/wres/<PREOBJDIR>
+    cdsay <PROJDIR>/wres/<PREOBJDIR>
+    wmake -h -f ../ntaxp/_s/makefile prebuild=1
+    mkdir <PROJDIR>/rc/<PREOBJDIR>
+    cdsay <PROJDIR>/rc/<PREOBJDIR>
+    wmake -h -f ../ntaxp/makefile prebuild=1
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc.exe
+
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/wres/<PREOBJDIR>
