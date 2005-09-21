@@ -40,7 +40,7 @@
 
 // Maximum number of significant digits; This is akin to DECIMAL_DIG
 // but defined here since DECIMAL_DIG might be larger.
-#define MAX_DIGITS      17
+#define MAX_DIGITS      20
 
 // this is defined in float.h
 #if LDBL_DIG == 15
