@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _EFG_Format(). This routine is the
+*               interface between clib and mathlib.
 *
 ****************************************************************************/
 
@@ -198,7 +198,7 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
     }
     if( digits == -1 ) digits = 6;
     cvt.ndigits = digits;
-    cvt.expwidth = 0;
+    cvt.expwidth = 2;   // Only relevant for E format
     __LDcvt( &ld, &cvt, buffer + 1 );
     specs->_n1  = cvt.n1;
     specs->_nz1 = cvt.nz1;
