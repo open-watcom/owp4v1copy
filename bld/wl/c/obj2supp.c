@@ -414,11 +414,21 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
      * it is necessary to copy also two bytes before reloc position to addbuf
      * because these two bytes can be changed during FAR CALL optimization
      */
-    addbuf[0] = 0;
-    addbuf[1] = 0;
-    shift = ( save->off < 2 ) ? save->off : 2;
-    datasize = CalcFixupSize( fix.type ) + shift;
-    fix.data = addbuf + 2;
+    shift = 0;
+    fix.data = addbuf;
+    datasize = CalcFixupSize( fix.type );
+    if( LinkFlags & FAR_CALLS_FLAG ) {
+        /*
+         * Only do this stuff when actually doing far call opts. The two extra bytes
+         * royally screw up alignment on RISC platforms when we're processing 32-bit
+         * fixups.
+         */
+        addbuf[0] = 0;
+        addbuf[1] = 0;
+        shift = ( save->off < 2 ) ? save->off : 2;
+        datasize += shift;
+        fix.data = addbuf + 2;
+    }
     ReadInfo( CurrRec.seg->data + save->off - shift, fix.data - shift, datasize );
     Relocate( &fix, targ );
     PutInfo( CurrRec.seg->data + save->off - shift, fix.data - shift, datasize );
