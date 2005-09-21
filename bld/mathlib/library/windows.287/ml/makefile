@@ -1,4 +1,4 @@
-#pmake:all large 16bit inline windows iX86 static build os_win os_windows cpu_i86 os_os2
+#pmake: build large 16bit inline windows iX86 static os_win os_windows cpu_i86
 processor=287
 model=ml
 subdir=ml
