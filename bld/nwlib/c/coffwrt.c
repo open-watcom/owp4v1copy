@@ -142,8 +142,8 @@ static void AddCoffSection( coff_lib_file *c_file, char *name, unsigned_32 size,
 static void AddCoffSymbol( coff_lib_file *c_file, char *name, unsigned_32 value,
     signed_16 sec_num,  unsigned_16 type, unsigned_8 class, unsigned_8 num_aux )
 {
-    coff_symbol *sym;
-    int         len;
+    coff_symbol _WCUNALIGNED    *sym;
+    int                         len;
 
     sym = c_file->symbol + c_file->header.num_symbols;
     len = strlen( name );
@@ -165,9 +165,9 @@ static void AddCoffSymbol( coff_lib_file *c_file, char *name, unsigned_32 value,
 
 static void AddCoffSymSec( coff_lib_file *c_file, unsigned_8 selection )
 {
-    coff_sym_section    *sym;
-    char                name[9];
-    coff_section_header *section;
+    coff_sym_section _WCUNALIGNED   *sym;
+    char                            name[9];
+    coff_section_header             *section;
 
     section = c_file->section + c_file->header.num_sections - 1;
     memcpy( name, section->name, 8 );
