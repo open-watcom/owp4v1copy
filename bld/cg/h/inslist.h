@@ -111,7 +111,6 @@ typedef struct instruction {
         type_class_def          type_class;
         type_class_def          base_type_class;
         unsigned_16             sequence;
-#include "cgnoalgn.h"
         union {
                 byte            byte;
                 bool            bool;
@@ -125,13 +124,12 @@ typedef struct instruction {
         } t;
         byte                    stk_entry;
         byte                    num_operands;
-        instruction_flags       ins_flags;
         byte                    stk_exit;
         union {
             byte                stk_extra;
             byte                stk_depth;
         }                       s;
-#include "cgrealgn.h"
+        instruction_flags       ins_flags;
         union name               *operands[ 1 ]; /*  operands */
 } instruction;
 
