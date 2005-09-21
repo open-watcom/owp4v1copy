@@ -1,4 +1,4 @@
-#pmake: build1 flat 32bit register calls winnt iX86 dynamic os_nt cpu_386
+#pmake: build flat 32bit register calls winnt iX86 dynamic os_nt cpu_386
 processor=386
 model=mf
 subdir=mf_rdll

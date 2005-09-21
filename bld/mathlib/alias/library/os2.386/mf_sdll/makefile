@@ -1,4 +1,4 @@
-#pmake: build1 flat 32bit stack calls os2 iX86 dynamic os_os2 cpu_386 alias
+#pmake: build flat 32bit stack calls os2 iX86 dynamic os_os2 cpu_386 alias
 processor=386
 model=mf
 system=os2

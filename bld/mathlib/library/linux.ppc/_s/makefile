@@ -1,4 +1,4 @@
-#pmake: 32bit linux inline ppc static os_linux cpu_ppc
+#pmake: no_build 32bit linux inline ppc static os_linux cpu_ppc
 
 processor = ppc
 model     =

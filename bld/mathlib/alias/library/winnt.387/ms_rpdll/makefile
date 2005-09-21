@@ -1,4 +1,4 @@
-#pmake:all build2 small 32bit register inline winnt iX86 dynamic os_nt cpu_386 alias profile
+#pmake: no_build small 32bit register inline winnt iX86 dynamic os_nt cpu_386 alias profile
 processor=387
 model=ms
 system=winnt

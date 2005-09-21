@@ -1,4 +1,4 @@
-#pmake: build2 small 32bit register calls winnt iX86 dynamic os_nt cpu_386
+#pmake: no_build small 32bit register calls winnt iX86 dynamic os_nt cpu_386
 processor=386
 model=ms
 subdir=ms_rdll

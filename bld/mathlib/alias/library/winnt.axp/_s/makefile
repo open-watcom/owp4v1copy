@@ -1,4 +1,4 @@
-#pmake:32bit winnt inline axp static static os_nt cpu_axp alias
+#pmake: no_build 32bit winnt inline axp static static os_nt cpu_axp alias
 processor=axp
 model=
 system=winnt

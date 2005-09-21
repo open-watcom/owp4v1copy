@@ -1,4 +1,4 @@
-#pmake:32bit winnt inline ppc static os_nt cpu_ppc
+#pmake: no_build 32bit winnt inline ppc static os_nt cpu_ppc
 processor=ppc
 model=
 subdir=s

@@ -1,4 +1,4 @@
-#pmake: build2 small 32bit register inline winnt iX86 dynamic os_nt cpu_386 profile
+#pmake: no_build small 32bit register inline winnt iX86 dynamic os_nt cpu_386 profile
 processor=387
 model=ms
 subdir=ms_rpdll

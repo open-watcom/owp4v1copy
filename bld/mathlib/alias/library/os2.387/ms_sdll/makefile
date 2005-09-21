@@ -1,4 +1,4 @@
-#pmake: build2 small 32bit stack inline os2 iX86 dynamic os_os2 cpu_386 alias
+#pmake: no_build small 32bit stack inline os2 iX86 dynamic os_os2 cpu_386 alias
 processor=387
 model=ms
 system=os2
