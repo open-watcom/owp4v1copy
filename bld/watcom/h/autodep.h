@@ -43,7 +43,7 @@ typedef struct {
     uint_32     time;           /* file's time taken from stat */
     uint_16     len;            /* sizeof the name array */
     char        name[1];        /* dynamic array */
-} DepInfo;
+} _WCUNALIGNED DepInfo;
 
 #pragma pack(pop)
 
