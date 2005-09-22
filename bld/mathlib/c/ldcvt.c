@@ -62,6 +62,7 @@
 #define __local_glue( __x, __y ) __x ## __y
 #define local_glue( __x, __y ) __local_glue( __x, __y )
 #define ONE_TO_DBL_MAX_10_EXP local_glue( 1e, DBL_MAX_10_EXP )
+#define ONE_TO_DBL_MIN_10_EXP 1e307
 
 char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
 
@@ -275,11 +276,12 @@ void _LDScale10x( long_double *ld, int scale )
         if( scale < 0 ) n = -n;
         if( n > DBL_MAX_10_EXP ) {
             if( scale < 0 ) {
-                ld->value /= ONE_TO_DBL_MAX_10_EXP;
+                ld->value /= ONE_TO_DBL_MIN_10_EXP;
+                n += DBL_MIN_10_EXP;
             } else {
                 ld->value *= ONE_TO_DBL_MAX_10_EXP;
+                n -= DBL_MAX_10_EXP;
             }
-            n -= DBL_MAX_10_EXP;
         }
         factor = 1.0;
         for( pow = Pow10Table; n > 0; n >>= 1, ++pow ) {
