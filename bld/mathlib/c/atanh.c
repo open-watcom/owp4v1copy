@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hyperbolic arctangent routine.
 *
 ****************************************************************************/
 
@@ -42,20 +41,20 @@
 #endif
 
 _WMRTLINK double __atanh( double x )
-    {
-        return( atanh( x ) );
-    }
+{
+    return( atanh( x ) );
+}
 
 _WMRTLINK double atanh( double x )
-/**********************/
-    {
-        double  z;
+/********************************/
+{
+    double  z;
 
-        if( fabs(x) >= 1.0 ) {
+    if( fabs(x) >= 1.0 ) {
 //            z = _matherr( DOMAIN, "atanh", &x, &x, -HUGE_VAL );
-            z = __math1err( FUNC_ATANH | M_DOMAIN | V_NEG_HUGEVAL, &x );
-        } else {
-            z = log( PDIV( (1.0 + x) , (1.0 - x) ) ) / 2.0;
-        }
-        return( z );
+        z = __math1err( FUNC_ATANH | M_DOMAIN | V_NEG_HUGEVAL, &x );
+    } else {
+        z = log( PDIV( (1.0 + x), (1.0 - x) ) ) / 2.0;
     }
+    return( z );
+}

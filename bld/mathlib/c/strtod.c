@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  String to double conversion.
 *
 ****************************************************************************/
 
@@ -92,24 +91,25 @@ void __ZBuf2LD( char _WCNEAR *buf, long_double _WCNEAR *ld )
 #endif
 
 _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
-                                    long_double *pld,
-                                    CHAR_TYPE **endptr )
-/*******************************************************/
+                                              long_double *pld,
+                                              CHAR_TYPE **endptr )
+/********************************************************************/
 {
-    CHAR_TYPE   chr;
-    int         sigdigits;
-    int         fdigits;
-    int         exponent;
-    const CHAR_TYPE *oldptr;
-    long_double ld;
-    CHAR_TYPE   digitflag;
-    char        flags;
-    CHAR_TYPE   buffer[20];
+    CHAR_TYPE           chr;
+    int                 sigdigits;
+    int                 fdigits;
+    int                 exponent;
+    const CHAR_TYPE     *oldptr;
+    long_double         ld;
+    CHAR_TYPE           digitflag;
+    char                flags;
+    CHAR_TYPE           buffer[20];
 
     oldptr = bufptr;
-    for(;;) {
+    for( ;; ) {
         chr = *bufptr;
-        if( chr != ' ' && ( chr < '\t' || chr > '\r' ) ) break;
+        if( chr != ' ' && ( chr < '\t' || chr > '\r' ) )
+            break;
         ++bufptr;
     }
     flags = 0;
@@ -129,7 +129,9 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
             flags |= DOT_FOUND;
         } else {
             if( chr < '0' || chr > '9' ) break;
-            if( flags & DOT_FOUND ) ++fdigits;
+            if( flags & DOT_FOUND ) {
+                ++fdigits;
+            }
             digitflag |= chr;
             if( digitflag != '0' ) {        /* if a significant digit */
                 if( sigdigits < MAX_DIGITS ) {
@@ -154,7 +156,7 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
             flags &= ~ DIGITS_PRESENT;
             for( ;; ) {
                 chr = *bufptr;              /* don't increment bufptr yet */
-                if( chr < '0' || chr > '9' )  break;
+                if( chr < '0' || chr > '9' ) break;
                 if( exponent < 1000 ) {
                     exponent = exponent * 10 + chr - '0';
                 }
@@ -172,14 +174,16 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
         }
         oldptr = bufptr;
     }
-    if( endptr != NULL ) *endptr = (CHAR_TYPE *)oldptr;
+    if( endptr != NULL ) {
+        *endptr = (CHAR_TYPE *)oldptr;
+    }
     exponent -= fdigits;
     if( sigdigits > MAX_DIGITS ) {
         exponent += sigdigits - MAX_DIGITS;
         sigdigits = MAX_DIGITS;
     }
     while( sigdigits > 0 ) {
-        if( buffer[ sigdigits - 1 ] != '0' )  break;
+        if( buffer[ sigdigits - 1 ] != '0' ) break;
         ++exponent;
         --sigdigits;
     }
@@ -199,7 +203,7 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
         {
             // convert wide string of digits to skinny string of digits
             char tmp[20];
-            wcstombs( tmp, buffer, sigdigits+1 );
+            wcstombs( tmp, buffer, sigdigits + 1 );
             __ZBuf2LD( (char _WCNEAR *)tmp, (long_double _WCNEAR *)&ld );
         }
         #else
@@ -226,7 +230,7 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
 #endif
     if( (exponent+sigdigits-1) > 308 ) {          /* overflow */
         return( _OVERFLOW );
-    } else if( (exponent+sigdigits-1) < -308 ) {  /* underflow */
+    } else if( (exponent + sigdigits - 1) < -308 ) {  /* underflow */
         return( _UNDERFLOW );
     }
     return( _NONZERO );                 // indicate number is non-zero
@@ -245,7 +249,8 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
         x = 0.0;
     } else {
 #ifdef _LONG_DOUBLE_
-        int exponent;
+        int     exponent;
+
         exponent = ld.exponent & 0x7FFF;
         if( exponent >= 0x3FFF + 0x400 ) {      // if exponent too large
             __set_ERANGE();                     // - overflow
@@ -263,6 +268,7 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
                     double          value;      // - double value
                     unsigned long   word[2];    // - so we can access bits
                 } d;
+
                 // not sure if it's really going to give back zero
                 __iLDFD( (long_double _WCNEAR *)&ld, (double _WCNEAR *)&x );
                 // retest for underflow given that we are really
@@ -283,6 +289,7 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
                     double          value;      // - double value
                     unsigned long   word[2];    // - so we can access bits
                 } d;
+
                 d.value = x;
                 // if exponent is all zeros (denormal)
                 if( (d.word[1] & 0x7FF00000) == 0 ) {
@@ -313,4 +320,3 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
     }
     return( x );
 }
-

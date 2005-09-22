@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Floating-point modulo routine.
 *
 ****************************************************************************/
 
@@ -52,24 +51,23 @@ _WMRTLINK extern double _IF_dfmod( double, double );
 #endif
 
 _WMRTLINK float _IF_fmod( float x, float y )
-/********************************/
-    {
-        return( _IF_dfmod( x, y ) );
-    }
+/******************************************/
+{
+    return( _IF_dfmod( x, y ) );
+}
 
 _WMRTLINK double (fmod)( double x, double y )
-/*********************************/
-    {
-        return( _IF_dfmod( x, y ) );
-    }
+/*******************************************/
+{
+    return( _IF_dfmod( x, y ) );
+}
 
 _WMRTLINK double _IF_dfmod( double x, double y )
-/***********************************/
-    {
-        auto int quot;
-        auto double rem;
+/**********************************************/
+{
+    int     quot;
+    double  rem;
 
-        __fprem( x, y, &quot, &rem );
-        return( rem );
-    }
-
+    __fprem( x, y, &quot, &rem );
+    return( rem );
+}

@@ -34,7 +34,7 @@
 
 _WMRTLINK int matherr( struct _exception *x )
 /*******************************************/
-    {
-        x = x;
-        return( 0 );    /* 0 => take default action on error */
-    }
+{
+    x = x;
+    return( 0 );    /* 0 => take default action on error */
+}

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Logarithm routine.
 *
 ****************************************************************************/
 
@@ -44,13 +43,13 @@ _WMRTLINK extern double _IF_dlog( double );
 #endif
 
 _WMRTLINK float _IF_log( float x )
-/*********************/
+/********************************/
 {
     return( _IF_dlog( x ) );
 }
 
 _WMRTLINK double (log)( double x )
-/**********************/
+/********************************/
 {
     return( _IF_dlog( x ) );
 }
@@ -71,20 +70,21 @@ extern  double  _EvalPoly( double, const double *, int );
 #define C2              (-2.121944400546905827679e-4)
 
 
-static const double             APoly[] = {
-        -0.78956112887491257267,
-         0.16383943563021534222e+2,
-        -0.64124943423745581147e+2
+static const double     APoly[] = {
+    -0.78956112887491257267,
+     0.16383943563021534222e+2,
+    -0.64124943423745581147e+2
 };
-static const double             BPoly[] = {
-         1.0,
-        -0.35667977739034646171e+2,
-         0.31203222091924532844e+3,
-        -0.76949932108494879777e+3
+
+static const double     BPoly[] = {
+     1.0,
+    -0.35667977739034646171e+2,
+     0.31203222091924532844e+3,
+    -0.76949932108494879777e+3
 };
 
 _WMRTLINK double _IF_dlog( double x )
-/********************/
+/***********************************/
 {
     int     exp;
     double  z;

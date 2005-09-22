@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hyperbolic sine routine.
 *
 ****************************************************************************/
 
@@ -44,41 +43,41 @@ _WMRTLINK extern double _IF_dsinh( double );
 #endif
 
 _WMRTLINK float _IF_sinh( float x )
-/*********************/
-    {
-        return( _IF_dsinh( x ) );
-    }
+/*********************************/
+{
+    return( _IF_dsinh( x ) );
+}
 
 _WMRTLINK double (sinh)( double x )
-/***********************/
-    {
-        return( _IF_dsinh( x ) );
-    }
+/*********************************/
+{
+    return( _IF_dsinh( x ) );
+}
 
 _WMRTLINK double _IF_dsinh( double x )
-/*************************/
-    {
-        unsigned int err_code;
-        double z;
+/************************************/
+{
+    unsigned int    err_code;
+    double          z;
 
-        z = fabs( x );
-        if( z > 709.782712893384 ) {            /* if argument is too large */
+    z = fabs( x );
+    if( z > 709.782712893384 ) {            /* if argument is too large */
 //            z = ( x < 0.0 ) ? - HUGE_VAL : HUGE_VAL;
 //            z = _matherr( OVERFLOW, "sinh", &x, &x, z );
-            if( x < 0.0 ) {
-                err_code = FUNC_SINH | M_OVERFLOW | V_NEG_HUGEVAL;
-            } else {
-                err_code = FUNC_SINH | M_OVERFLOW | V_HUGEVAL;
-            }
-            z = __math1err( err_code, &x );
+        if( x < 0.0 ) {
+            err_code = FUNC_SINH | M_OVERFLOW | V_NEG_HUGEVAL;
         } else {
-/*          if( z <= ldexp( 1.0, -26 ) ) { */
-            if( z <= 1.49011611938476580e-008 ) { /* if x is small */
-                z = x;
-            } else {
-                z = exp( x );
-                z = (z - PDIV( 1.0 , z )) / 2.0;
-            }
+            err_code = FUNC_SINH | M_OVERFLOW | V_HUGEVAL;
         }
-        return( z );
+        z = __math1err( err_code, &x );
+    } else {
+/*          if( z <= ldexp( 1.0, -26 ) ) { */
+        if( z <= 1.49011611938476580e-008 ) { /* if x is small */
+            z = x;
+        } else {
+            z = exp( x );
+            z = (z - PDIV( 1.0, z )) / 2.0;
+        }
     }
+    return( z );
+}

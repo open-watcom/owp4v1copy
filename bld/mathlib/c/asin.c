@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Arcsine routine.
 *
 ****************************************************************************/
 
@@ -46,34 +45,34 @@ _WMRTLINK extern double _IF_dasin( double );
 #endif
 
 _WMRTLINK float _IF_asin( float x )
-/*********************/
-    {
-        return( _IF_dasin( x ) );
-    }
+/*********************************/
+{
+    return( _IF_dasin( x ) );
+}
 
 _WMRTLINK double (asin)( double x )
-/***********************/
-    {
-        return( _IF_dasin( x ) );
-    }
+/*********************************/
+{
+    return( _IF_dasin( x ) );
+}
 
 _WMRTLINK double _IF_dasin( double x )
-/*************************/
-    {
-        auto double     z;
+/************************************/
+{
+    double  z;
 
-        z =  1.0 - x * x;
-        if( z < 0.0 ) {
+    z =  1.0 - x * x;
+    if( z < 0.0 ) {
 //            z = _matherr( DOMAIN, "asin", &x, &x, 0.0 );
-            z = __math1err( FUNC_ASIN | M_DOMAIN | V_ZERO, &x );
-        } else if( z == 0.0 ) {
-            if( x < 0.0 ) {
-                z = -Piby2;
-            } else {
-                z = Piby2;
-            }
+        z = __math1err( FUNC_ASIN | M_DOMAIN | V_ZERO, &x );
+    } else if( z == 0.0 ) {
+        if( x < 0.0 ) {
+            z = -Piby2;
         } else {
-            z = atan( PDIV( x , sqrt( z ) ) );
+            z = Piby2;
         }
-        return( z );
+    } else {
+        z = atan( PDIV( x, sqrt( z ) ) );
     }
+    return( z );
+}

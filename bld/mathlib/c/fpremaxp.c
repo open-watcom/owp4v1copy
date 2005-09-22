@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Floating-point quotient/remainder routine.
 *
 ****************************************************************************/
 
@@ -37,7 +36,8 @@
 #include "variety.h"
 #include "xfloat.h"
 
-void __fprem( double x, double y, int *quot, double *rem ) {
+void __fprem( double x, double y, int *quot, double *rem )
+{
     int sign_x;
     int sign_y;
     int q;
@@ -60,16 +60,16 @@ void __fprem( double x, double y, int *quot, double *rem ) {
     }
     q = 0;
     while( x >= y ) {
-        int ex;
-        double mx = frexp( x, &ex );
-        int ey;
-        double my = frexp( y, &ey );
-        double ny;
+        int     ex;
+        double  mx = frexp( x, &ex );
+        int     ey;
+        double  my = frexp( y, &ey );
+        double  ny;
 
-        #if 0   // use this code when modf doesn't call __fprem
+#if 0   // use this code when modf doesn't call __fprem
         if( ( ex - ey ) <= DBL_MAX_EXP ) {
-            double d;
-            double ipart;
+            double  d;
+            double  ipart;
 
             d = x / y;
             modf( d, &ipart );
@@ -77,7 +77,7 @@ void __fprem( double x, double y, int *quot, double *rem ) {
             x -= ipart * y;
             break;
         }
-        #endif
+#endif
         if( mx >= my ) {
             ny = ldexp( my, ex );
         } else {

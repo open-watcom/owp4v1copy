@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sine, cosine and tangent routines.
 *
 ****************************************************************************/
 
@@ -64,27 +63,27 @@ extern  double  _OddPoly( double, const double *, int );
 
 
 static const double _sinpoly[] = {
-         1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17),
-        -1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15),
-         1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13),
-        -1.0 / (2.*3*4*5*6*7*8*9*10*11),
-         1.0 / (2.*3*4*5*6*7*8*9),
-        -1.0 / (2.*3*4*5*6*7),
-         1.0 / (2.*3*4*5),
-        -1.0 / (2.*3),
-         1.0
+     1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17),
+    -1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15),
+     1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13),
+    -1.0 / (2.*3*4*5*6*7*8*9*10*11),
+     1.0 / (2.*3*4*5*6*7*8*9),
+    -1.0 / (2.*3*4*5*6*7),
+     1.0 / (2.*3*4*5),
+    -1.0 / (2.*3),
+     1.0
 };
 
 static const double _cospoly[] = {
-         1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15*16),
-        -1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14),
-         1.0 / (2.*3*4*5*6*7*8*9*10*11*12),
-        -1.0 / (2.*3*4*5*6*7*8*9*10),
-         1.0 / (2.*3*4*5*6*7*8),
-        -1.0 / (2.*3*4*5*6),
-         1.0 / (2.*3*4),
-        -1.0 / 2.,
-        1.0
+     1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14*15*16),
+    -1.0 / (2.*3*4*5*6*7*8*9*10*11*12*13*14),
+     1.0 / (2.*3*4*5*6*7*8*9*10*11*12),
+    -1.0 / (2.*3*4*5*6*7*8*9*10),
+     1.0 / (2.*3*4*5*6*7*8),
+    -1.0 / (2.*3*4*5*6),
+     1.0 / (2.*3*4),
+    -1.0 / 2.,
+    1.0
 };
 
 static const int Degree[]    = { 0, 1, 2, 3, 4, 4, 5, 5, 6 };
@@ -92,16 +91,16 @@ static const int Degree[]    = { 0, 1, 2, 3, 4, 4, 5, 5, 6 };
 
 double __sincos( double x, int flag )
 {
-    int i;
-    auto int exponent;
-    auto int index;
-    auto double y;
-    double siny, cosy;
-    double sinx, cosx;
+    int     i;
+    int     exponent;
+    int     index;
+    double  y;
+    double  siny, cosy;
+    double  sinx, cosx;
     static const int func_name[] = {
-            FUNC_SIN,
-            FUNC_TAN,
-            FUNC_COS
+        FUNC_SIN,
+        FUNC_TAN,
+        FUNC_COS
     };
 
     frexp( x, &exponent );
@@ -121,15 +120,19 @@ double __sincos( double x, int flag )
         siny = y;
         cosy = 1.0;
     } else {
-        if( index > 0 ) index = 0;
+        if( index > 0 ) {
+            index = 0;
+        }
         index = - index;
-        if( index > 8 ) index = 8;
+        if( index > 8 ) {
+            index = 8;
+        }
         index = Degree[ index ];
         /* only calculate the necessary polynomials */
-        if( ((i+1) & 2) || flag == 1 ) {
-            cosy = _EvalPoly( y*y, &_cospoly[index], 8 - index );
+        if( ((i + 1) & 2) || flag == 1 ) {
+            cosy = _EvalPoly( y * y, &_cospoly[index], 8 - index );
         }
-        if( (((i+1) & 2) == 0) || flag == 1 ) {
+        if( (((i + 1) & 2) == 0) || flag == 1 ) {
             siny = _OddPoly( y, &_sinpoly[index], 8 - index );
         }
     }
@@ -145,29 +148,33 @@ double __sincos( double x, int flag )
     case 7: sinx = - siny;  cosx =   cosy;  break;
     }
 #endif
-    if( (i+1) & 2 ) {       /* if octants 1,2,5,6 */
+    if( (i + 1) & 2 ) {     /* if octants 1,2,5,6 */
         sinx = cosy;
     } else {                /* octants 0,3,4,7 */
         sinx = siny;
     }
-    if( i & 4 )     sinx = - sinx;  /* octants 4,5,6,7 */
-    if( flag == 1 ) {               /* if "tan" */
+    if( i & 4 ) {
+        sinx = - sinx;      /* octants 4,5,6,7 */
+    }
+    if( flag == 1 ) {           /* if "tan" */
 
         /* cos is out of phase with sin by 2 octants */
 
         i += 2;
-        if( (i+1) & 2 ) {       /* if octants 1,2,5,6 */
+        if( (i + 1) & 2 ) {     /* if octants 1,2,5,6 */
             cosx = cosy;
         } else {                /* octants 0,3,4,7 */
             cosx = siny;
         }
-        if( i & 4 )     cosx = - cosx;  /* octants 4,5,6,7 */
+        if( i & 4 ) {
+            cosx = - cosx;      /* octants 4,5,6,7 */
+        }
         if( cosx == 0.0 ) {
             __set_ERANGE();
-            if( sinx > 0.0 )  return( HUGE_VAL );
-            return( - HUGE_VAL );
+            if( sinx > 0.0 ) return( HUGE_VAL );
+            return( -HUGE_VAL );
         }
-        sinx = sinx/cosx;           /* calculate value of tan function */
+        sinx = sinx / cosx;         /* calculate value of tan function */
     }
     if( exponent >= 28 ) {
 //      return( _matherr( PLOSS, func_name[flag], &x, &x, sinx ) );
@@ -185,13 +192,13 @@ _WMRTLINK extern double _IF_dsin( double );
 #endif
 
 _WMRTLINK float _IF_sin( float x )
-/*********************/
+/********************************/
 {
     return( _IF_dsin( x ) );
 }
 
 _WMRTLINK double (sin)( double x )
-/**********************/
+/********************************/
 {
     return( _IF_dsin( x ) );
 }
@@ -199,10 +206,10 @@ _WMRTLINK double (sin)( double x )
 _WMRTLINK double _IF_dsin( double x )
 /************************/
 {
-    #if defined(_M_IX86)
-        if( _RWD_real87 ) return( _sin87(x) );
-    #endif
-    return __sincos( x, 0 );
+#if defined(_M_IX86)
+    if( _RWD_real87 ) return( _sin87(x) );
+#endif
+    return( __sincos( x, 0 ) );
 }
 
 
@@ -215,24 +222,24 @@ _WMRTLINK extern double _IF_dcos( double );
 #endif
 
 _WMRTLINK float _IF_cos( float x )
-/*********************/
+/********************************/
 {
     return( _IF_dcos( x ) );
 }
 
 _WMRTLINK double (cos)( double x )
-/**********************/
+/********************************/
 {
     return( _IF_dcos( x ) );
 }
 
 _WMRTLINK double _IF_dcos( double x )
-/************************/
+/***********************************/
 {
-    #if defined(_M_IX86)
-        if( _RWD_real87 ) return( _cos87(x) );
-    #endif
-    return __sincos( x, 2 );
+#if defined(_M_IX86)
+    if( _RWD_real87 ) return( _cos87(x) );
+#endif
+    return( __sincos( x, 2 ) );
 }
 
 
@@ -245,22 +252,22 @@ _WMRTLINK extern double _IF_dtan( double );
 #endif
 
 _WMRTLINK float _IF_tan( float x )
-/*********************/
+/********************************/
 {
     return( _IF_dtan( x ) );
 }
 
 _WMRTLINK double (tan)( double x )
-/**********************/
+/********************************/
 {
     return( _IF_dtan( x ) );
 }
 
 _WMRTLINK double _IF_dtan( double x )
-/************************/
+/***********************************/
 {
-    #if defined(_M_IX86)
-        if( _RWD_real87 ) return( _tan87(x) );
-    #endif
-    return __sincos( x, 1 );
+#if defined(_M_IX86)
+    if( _RWD_real87 ) return( _tan87(x) );
+#endif
+    return( __sincos( x, 1 ) );
 }

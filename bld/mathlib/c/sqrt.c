@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Square root routine.
 *
 ****************************************************************************/
 
@@ -82,9 +81,9 @@ _WMRTLINK double _IF_dsqrt( double x )
 #if defined(_M_IX86)
         x = __sqrtd( x );
 #else
-        register int        i;
-        auto int    exp;
-        auto double e;
+        int         i;
+        int         exp;
+        double      e;
 
         x = frexp( x, &exp );
         if( exp & 1 ) {     /* if odd */

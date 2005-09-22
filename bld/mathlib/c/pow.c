@@ -48,25 +48,25 @@ _WMRTLINK extern double _IF_dpow( double, double );
 #endif
 
 _WMRTLINK float _IF_pow( float x, float y )
-/********************************/
-    {
-        return( _IF_dpow( x, y ) );
-    }
+/*****************************************/
+{
+    return( _IF_dpow( x, y ) );
+}
 
 _WMRTLINK double (pow)( double x, double y )
-/********************************/
-    {
-        return( _IF_dpow( x, y ) );
-    }
+/******************************************/
+{
+    return( _IF_dpow( x, y ) );
+}
 
 _WMRTLINK double _IF_dpow( double x, double y )
-/**********************************/
+/*********************************************/
 {
-        unsigned int    err_code;
-        register int    sign;
-        double          z;
-        double          fraction;
-        long            exponent;
+    unsigned int    err_code;
+    int             sign;
+    double          z;
+    double          fraction;
+    long            exponent;
 
     sign = __sgn( x );
     if( sign == 0 ) {

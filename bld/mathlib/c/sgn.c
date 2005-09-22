@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sign determination routine.
 *
 ****************************************************************************/
 
@@ -35,9 +34,11 @@
 
 
 _WMRTLINK int __sgn( double x )
-/******************/
-    {
-        if( x == 0.0 ) return( 0 );
-        if( x < 0.0  ) return( -1 );
-        return( 1 );
-    }
+/*****************************/
+{
+    if( x == 0.0 )
+        return( 0 );
+    if( x < 0.0  )
+        return( -1 );
+    return( 1 );
+}

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Base 10 logarithm routine.
 *
 ****************************************************************************/
 
@@ -44,19 +43,19 @@ _WMRTLINK extern double _IF_dlog10( double );
 #endif
 
 _WMRTLINK float _IF_log10( float x )
-/*********************/
-    {
-        return( _IF_dlog10( x ) );
-    }
+/**********************************/
+{
+    return( _IF_dlog10( x ) );
+}
 
 _WMRTLINK double (log10)( double x )
-/************************/
-    {
-        return( _IF_dlog10( x ) );
-    }
+/**********************************/
+{
+    return( _IF_dlog10( x ) );
+}
 
 _WMRTLINK double _IF_dlog10( double x )
-/**************************/
+/*************************************/
 {
     if( x <= 0.0 ) {
 //        x = _matherr( x == 0.0 ? SING : DOMAIN, "log10", &x, &x, -HUGE_VAL );

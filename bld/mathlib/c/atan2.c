@@ -65,77 +65,77 @@ _WMRTLINK extern double _IF_datan2( double, double );
 #endif
 
 _WMRTLINK float _IF_atan2( float y, float x )
-/********************************/
-    {
-        return( _IF_datan2( y, x ) );
-    }
+/*******************************************/
+{
+    return( _IF_datan2( y, x ) );
+}
 
 _WMRTLINK double (atan2)( double y, double x )
-/**********************************/
-    {
-        return( _IF_datan2( y, x ) );
-    }
+/********************************************/
+{
+    return( _IF_datan2( y, x ) );
+}
 
 _WMRTLINK double _IF_datan2( double y, double x )
-/************************************/
-    {
-        register int    sgnx;   /* sgn(x) */
-        register int    sgny;   /* sgn(y) */
-        register int    sgnz;   /* sgn(z) */
+/***********************************************/
+{
+    int     sgnx;   /* sgn(x) */
+    int     sgny;   /* sgn(y) */
+    int     sgnz;   /* sgn(z) */
 
-        sgny = __sgn( y );
-        sgnx = __sgn( x );
-        if( sgny == 0 ) {               /* case 1 */
-            if( sgnx == 0 ) {
+    sgny = __sgn( y );
+    sgnx = __sgn( x );
+    if( sgny == 0 ) {               /* case 1 */
+        if( sgnx == 0 ) {
 //                x = _matherr( DOMAIN, "atan2", &y, &x, 0.0 );
-                x = __math2err( FUNC_ATAN2 | M_DOMAIN | V_ZERO, &y, &x );
-            } else if( sgnx < 0 ) {
-                x = Pi;
+            x = __math2err( FUNC_ATAN2 | M_DOMAIN | V_ZERO, &y, &x );
+        } else if( sgnx < 0 ) {
+            x = Pi;
+        } else {
+            x = 0.0;
+        }
+    } else if( sgnx == 0 ) {        /* case 2 */
+        if( sgny < 0 ) {
+            x = -Piby2;
+        } else {
+            x = Piby2;
+        }
+    } else {
+        int exp_x;
+        int exp_y;
+        int diff_exp_y_x;
+
+        frexp( y, &exp_y );
+        frexp( x, &exp_x );
+
+        diff_exp_y_x = exp_y - exp_x;
+
+        if( diff_exp_y_x > DBL_MAX_EXP ) {
+            if( sgnx == sgny ) {
+                x = +DBL_MAX;
             } else {
-                x = 0.0;
+                x = -DBL_MAX;
             }
-        } else if( sgnx == 0 ) {        /* case 2 */
-            if( sgny < 0 ) {
-                x = -Piby2;
+        } else if( diff_exp_y_x < DBL_MIN_EXP ) {
+            if( sgnx == sgny ) {
+                x = +DBL_MIN;
             } else {
-                x = Piby2;
+                x = -DBL_MIN;
             }
         } else {
-            int exp_x;
-            int exp_y;
-            int diff_exp_y_x;
-
-            frexp( y, &exp_y );
-            frexp( x, &exp_x );
-
-            diff_exp_y_x = exp_y - exp_x;
-
-            if( diff_exp_y_x > DBL_MAX_EXP ) {
-                if( sgnx == sgny ) {
-                    x = +DBL_MAX;
-                } else {
-                    x = -DBL_MAX;
-                }
-            } else if( diff_exp_y_x < DBL_MIN_EXP ) {
-                if( sgnx == sgny ) {
-                    x = +DBL_MIN;
-                } else {
-                    x = -DBL_MIN;
-                }
-            } else {
-                x = PDIV( y, x );
+            x = PDIV( y, x );
+        }
+        x = atan( x );
+        sgnz = __sgn( x );
+        if( sgny >= 0 ) {
+            if( sgnz < 0 ) {
+                x += Pi;
             }
-            x = atan( x );
-            sgnz = __sgn( x );
-            if( sgny >= 0 ) {
-                if( sgnz < 0 ) {
-                    x += Pi;
-                }
-            } else {
-                if( sgnz > 0 ) {
-                    x -= Pi;
-                }
+        } else {
+            if( sgnz > 0 ) {
+                x -= Pi;
             }
         }
-        return( x );
     }
+    return( x );
+}

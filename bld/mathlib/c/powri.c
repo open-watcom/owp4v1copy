@@ -47,13 +47,13 @@ _WMRTLINK extern double _IF_dpowi( double, long );
 #endif
 
 _WMRTLINK float _IF_powi( float base, long power )
-/***********************************************/
+/************************************************/
 {
     return( _IF_dpowi( base, power ) );
 }
 
 _WMRTLINK double _IF_dpowi( double base, long power )
-/**************************************************/
+/***************************************************/
 {
     double    result;
 
@@ -88,8 +88,8 @@ _WMRTLINK double _IF_dpowi( double base, long power )
     return( result );
 }
 
-_WMRTLINK double        _IF_PowRI( double base, intstar4 power )
-/******************************************************/
-    {
-        return( _IF_dpowi( base, power ) );
-    }
+_WMRTLINK double _IF_PowRI( double base, intstar4 power )
+/*******************************************************/
+{
+    return( _IF_dpowi( base, power ) );
+}

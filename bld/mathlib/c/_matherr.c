@@ -42,20 +42,20 @@
 #endif
 
 static const char * const Msgs[] = {
-        0,
-        "Domain error",
-        "Argument singularity",
-        "Overflow range error",
-        "Underflow range error",
-        "Total loss of significance",
-        "Partial loss of significance"
-   };
+    0,
+    "Domain error",
+    "Argument singularity",
+    "Overflow range error",
+    "Underflow range error",
+    "Total loss of significance",
+    "Partial loss of significance"
+};
 
 int   (*_RWD_matherr)( struct _exception * ) =
 #if defined(__AXP__) || defined(__PPC__)
-  matherr;
+    matherr;
 #elif defined(_M_IX86)
-  __matherr;
+    __matherr;
 #endif
 
 _WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) )
@@ -65,7 +65,8 @@ _WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) )
 
 void __rterrmsg( const int errcode, const char *funcname )
 {
-    FILE *fp;
+    FILE    *fp;
+
     fp = __get_std_stream( STDERR_FILENO );
     fputs( Msgs[errcode], fp );
     fputs( " in ", fp );
@@ -75,10 +76,10 @@ void __rterrmsg( const int errcode, const char *funcname )
 
 _WMRTLINK double _matherr( struct _exception *excp )
 /**************************************************/
-    {
-        if( (*_RWD_matherr)( excp ) == 0 ) {
-            __rterrmsg( excp->type, excp->name );
-            excp->type == DOMAIN ? __set_EDOM() : __set_ERANGE();
-        }
-        return( excp->retval );
+{
+    if( (*_RWD_matherr)( excp ) == 0 ) {
+        __rterrmsg( excp->type, excp->name );
+        excp->type == DOMAIN ? __set_EDOM() : __set_ERANGE();
     }
+    return( excp->retval );
+}

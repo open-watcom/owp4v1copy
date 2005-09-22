@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  String to long double conversion helper routine.
 *
 ****************************************************************************/
 
@@ -37,12 +36,13 @@
 /* This routine is called from C++ iostream class */
 
 _WMRTLINK void __cnvd2ld( double _WCNEAR *src, long_double _WCNEAR *dst )
-    {
-        __iFDLD( src, dst );
-    }
+{
+    __iFDLD( src, dst );
+}
 
 #ifdef __MAKE_DLL_MATHLIB
-_WMRTLINK void (*__get__cnvd2ld())() {
-    return &__cnvd2ld;
+_WMRTLINK void (*__get__cnvd2ld())( void )
+{
+    return( &__cnvd2ld );
 }
 #endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Floating-point absolute value routine.
 *
 ****************************************************************************/
 
@@ -42,22 +41,26 @@ _WMRTLINK extern double _IF_dfabs( double );
 #endif
 
 _WMRTLINK float _IF_fabs( float x )
-/*********************/
-    {
-        if( x < 0.0f ) x = - x;
-        return( x );
+/*********************************/
+{
+    if( x < 0.0f ) {
+        x = - x;
     }
+    return( x );
+}
 
 _WMRTLINK double (fabs)( double x )
-/***********************/
-    {
-        return( _IF_dfabs( x ) );
-    }
+/*********************************/
+{
+    return( _IF_dfabs( x ) );
+}
 
 
 _WMRTLINK double _IF_dfabs( double x )
-/*********************/
-    {
-        if( x < 0.0 ) x = - x;
-        return( x );
+/************************************/
+{
+    if( x < 0.0 ) {
+        x = - x;
     }
+    return( x );
+}

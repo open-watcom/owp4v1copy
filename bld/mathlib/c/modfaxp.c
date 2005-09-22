@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Floating-point modulo routine.
 *
 ****************************************************************************/
 
@@ -36,7 +35,8 @@
 
 extern void __fprem( double x, double y, int *quot, double *rem );
 
-_WMRTLINK double modf( double x, double *iptr ) {
+_WMRTLINK double modf( double x, double *iptr )
+{
     double      frac;
     long_double ld;
     int         exp;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _status87() and _clear87().
 *
 ****************************************************************************/
 
@@ -63,7 +62,7 @@ extern  void    __fstsw( unsigned short * );
 _WMRTLINK unsigned _status87( void )
 /**********************************/
 {
-    auto unsigned short status;
+    unsigned short  status;
 
     status = 0;
     if( _RWD_8087 ) {
@@ -76,7 +75,7 @@ _WMRTLINK unsigned _status87( void )
 _WMRTLINK unsigned _clear87( void )
 /*********************************/
 {
-    register int status;
+    int status;
 
     status = 0;
     if( _RWD_8087 ) {

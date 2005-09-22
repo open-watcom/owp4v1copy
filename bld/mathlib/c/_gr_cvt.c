@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Wrapper routines for graph library.
 *
 ****************************************************************************/
 
@@ -70,4 +69,3 @@ _WMRTLINK void _WCI86FAR _GR_fcvt( float _WCI86FAR *value,
     *far_dec  = dec;
     *far_sign = sign;
 }
-

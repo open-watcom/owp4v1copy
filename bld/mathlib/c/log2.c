@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Base 2 logarithm routine.
 *
 ****************************************************************************/
 
@@ -41,12 +40,12 @@
 #endif
 
 _WMRTLINK double __log2( double x )
-    {
-        return( log2( x ) );
-    }
+{
+    return( log2( x ) );
+}
 
 _WMRTLINK double log2( double x )
-/*********************/
+/*******************************/
 {
     if( x <= 0.0 ) {
 //        x = _matherr( x == 0.0 ? SING : DOMAIN, "log2", &x, &x, -HUGE_VAL );
