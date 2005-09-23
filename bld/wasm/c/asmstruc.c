@@ -91,8 +91,8 @@ int StructDef( int i )
     return( NOT_ERROR );
 }
 
-int InitializeStructure( asm_sym *sym, int i )
-/********************************************/
+int InitializeStructure( asm_sym *sym, asm_sym *struct_symbol, int i )
+/********************************************************************/
 {
     /* input: a line that looks like : sym_name struct_name { init. values }
      * where i marks the struct_name
@@ -102,27 +102,24 @@ int InitializeStructure( asm_sym *sym, int i )
     char            *ptr;
     char            *ptr1;
     int             count = 0;
-    struct asm_sym  *struct_symbol;
     dir_node        *dir;
     field_list      *f;
-
-    struct_symbol = AsmGetSymbol( AsmBuffer[ i ]->string_ptr );
 
     dir = (dir_node *)struct_symbol;
 
     PushLineQueue();
-    if( AsmBuffer[i+1]->token != T_STRING ) {
+    if( AsmBuffer[i]->token != T_STRING ) {
         AsmError( SYNTAX_ERROR ); // fixme
         return( ERROR );
     }
     if( sym != NULL ) {
-        sym->total_size = struct_symbol->total_size;
-        sym->total_length       = struct_symbol->total_length;
-        sym->first_size = struct_symbol->first_size;
-        sym->first_length       = struct_symbol->first_length;
+        sym->total_size   = struct_symbol->total_size;
+        sym->total_length = struct_symbol->total_length;
+        sym->first_size   = struct_symbol->first_size;
+        sym->first_length = struct_symbol->first_length;
     }
 
-    ptr = AsmBuffer[i+1]->string_ptr;
+    ptr = AsmBuffer[i]->string_ptr;
     for( f = dir->e.structinfo->head; f != NULL; f = f->next ) {
         /* put the lines to define the fields of the structure in,
          * using the values specified ( if any ) or the default ones otherwise
@@ -219,12 +216,8 @@ int AddFieldToStruct( int loc )
     return( offset );
 }
 
-int GetStructSize( int loc )
-/**************************/
+int GetStructSize( asm_sym *struct_sym )
+/**************************************/
 {
-    dir_node *dir;
-
-    dir = (dir_node *)(AsmGetSymbol( AsmBuffer[loc]->string_ptr ) );
-
-    return( dir->e.structinfo->size );
+    return( ((dir_node *)struct_sym)->e.structinfo->size );
 }
