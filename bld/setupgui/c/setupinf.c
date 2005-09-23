@@ -2309,7 +2309,7 @@ static char *readLine( void *handle, char *buffer, size_t length )
         // Read data into raw buffer if it's empty
         if( RawBufPos == NULL ) {
             raw_buf_size = FileRead( handle, RawReadBuf, BUF_SIZE );
-            if( raw_buf_size == -1 ) {
+            if( raw_buf_size <= 0 ) {
                 return( NULL );
             }
             RawBufPos = RawReadBuf;
