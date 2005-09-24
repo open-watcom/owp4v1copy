@@ -337,7 +337,7 @@ static  hw_reg_set        *ParmSets[] = {
         QuadReg,               /* FL*/
         Empty };               /* XX*/
 
-static  hw_reg_set        *Parm8087[] = {
+static  hw_reg_set        *ParmSets8087[] = {
         ByteRegs,              /* U1*/
         ByteRegs,              /* I1*/
         WordRegs,              /* U2*/
@@ -556,7 +556,7 @@ extern  hw_reg_set        *ParmChoices( type_class_def class ) {
     hw_reg_set  *list;
 
     if( _FPULevel( FPU_87 ) ) {
-        list = Parm8087[  class  ];
+        list = ParmSets8087[  class  ];
     } else {
         list = ParmSets[  class  ];
     }

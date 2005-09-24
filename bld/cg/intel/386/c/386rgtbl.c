@@ -388,7 +388,7 @@ static  reg_list        *ParmSets[] = {
         &Empty,                 /* FL*/
         &Empty };               /* XX*/
 
-static  reg_list        *Parm8087[] = {
+static  reg_list        *ParmSets8087[] = {
 /**************************************
     define the set of register that a parameter of a given class could use
     when generating 8087 code
@@ -644,7 +644,7 @@ extern  reg_list        *ParmChoices( type_class_def class ) {
     hw_reg_set  *list;
 
     if( _FPULevel( FPU_87 ) ) {
-        list = Parm8087[  class  ];
+        list = ParmSets8087[  class  ];
     } else {
         list = ParmSets[  class  ];
     }
