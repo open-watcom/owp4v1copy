@@ -346,9 +346,13 @@ WPI_DLGRESULT CALLBACK GUIDialogFunc( HWND hwnd, WPI_MSG message, WPI_PARAM1 wpa
     //case WM_CTLCOLORLISTBOX :
     case WM_CTLCOLORSTATIC :
     //case WM_CTLCOLOREDIT :
-        SetBkColor( (HDC)wparam, GetNearestColor( (HDC)wparam,
-                    GUIGetBack( wnd, GUI_BACKGROUND ) ) );
-        return( (long)wnd->bk_brush );
+        // May come along before WM_INITDIALOG
+        if( wnd != NULL ) {
+            SetBkColor( (HDC)wparam, GetNearestColor( (HDC)wparam,
+                        GUIGetBack( wnd, GUI_BACKGROUND ) ) );
+            return( (long)wnd->bk_brush );
+        }
+        break;
 #endif
     case WM_SYSCOLORCHANGE:
         GUICtl3dColorChange();
