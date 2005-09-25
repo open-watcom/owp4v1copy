@@ -672,7 +672,6 @@ extern  instruction     *rINTCOMP( instruction *ins ) {
 extern  instruction     *rCDQ( instruction *ins ) {
 /*************************************************/
 
-    instruction *ins1;
     instruction *ins2;
     name        *high;
 
@@ -682,12 +681,9 @@ extern  instruction     *rCDQ( instruction *ins ) {
     ins->type_class = WD;
     ins->base_type_class = WD;
     ins->table = NULL;
-    ins1 = MakeMove( ins->operands[0], high, WD );
-    DupSeg( ins, ins1 );
-    SuffixIns( ins, ins1 );
-    ins2 = MakeBinary( OP_RSHIFT, high, AllocIntConst( 31 ), high, SW );
+    ins2 = MakeBinary( OP_RSHIFT, ins->operands[0], AllocIntConst( 31 ), high, SW );
     DupSeg( ins, ins2 );
-    SuffixIns( ins1, ins2 );
+    SuffixIns( ins, ins2 );
     return( ins );
 }
 
@@ -702,17 +698,17 @@ extern  instruction     *rCONVERT_UP( instruction *ins ) {
     // change a CNV I8 I1 op -> res into a pair of instructions
     //          CNV I4 I1 op -> temp and CNV I8 I4 temp -> res
     //
-    // 2004-10-31 RomanT
-    // Optimization: if source operand is unsigned (U1/U2),
-    // use unsigned temporary variable (U4):
-    // U1->U4->I8 generates better code then U1->I4->I8.
+    // 2005-09-25 RomanT
+    // Fixed wrong type of temp.variable (must have sign of source operand).
+    // Now it goes: U1/2->U4->U8/I8, I1/2->I4->U8/I8.
     //
-    tipe = HalfClass[ ins->type_class ];
     if ( Unsigned[ ins->base_type_class ] == ins->base_type_class )
-        tipe = Unsigned[ tipe ];
+        tipe = U4;
+    else
+        tipe = I4;
     temp = AllocTemp( tipe );
     ins1 = MakeConvert( ins->operands[ 0 ], temp, tipe, ins->base_type_class );
-    DupSeg( ins, ins1 );         // 2004-10-31 RomanT (bug #341)
+    DupSegOp( ins, ins1, 0 );    // 2005-09-25 RomanT (bug #341)
     PrefixIns( ins, ins1 );
     ins2 = MakeConvert( temp, ins->result, ins->type_class, tipe );
     DupSegRes( ins, ins2 );      // 2004-11-01 RomanT (same as bug #341, *pInt64=char)

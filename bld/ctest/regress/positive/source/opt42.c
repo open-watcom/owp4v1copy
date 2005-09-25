@@ -34,9 +34,11 @@ void restore_ds(void);
 #pragma aux clear_ds    = "push ds" "push 0" "pop ds";
 #pragma aux restore_ds  = "pop  ds";
 
-#define testdata(type, d1, d2)                                                   \
+#define testdata(type, d1, d2, d3, d4)                                           \
 signed   type far __based(__segname("FARAWAY")) s_##type = d1;                   \
 unsigned type far __based(__segname("FARAWAY")) u_##type = d2;                   \
+signed   type far __based(__segname("FARAWAY")) sneg_##type = d3;                \
+unsigned type far __based(__segname("FARAWAY")) ubig_##type = d4;                \
 signed   long long  s_expand_##type(signed   type far *p)  { return *p; }        \
 unsigned long long  u_expand_##type(unsigned type far *p)  { return *p; }        \
 void store_s_s_##type(signed   long long far *p, signed   type n) { *p = n; }    \
@@ -49,6 +51,8 @@ int  verify_expand_##type(void)                                                 
         clear_ds();                                                              \
         errors  = s_expand_##type(&s_##type) != d1;                              \
         errors += u_expand_##type(&u_##type) != d2;                              \
+        errors += s_expand_##type(&sneg_##type) != d3;                           \
+        errors += u_expand_##type(&ubig_##type) != d4;                           \
         restore_ds();                                                            \
         return errors;                                                           \
 }                                                                                \
@@ -78,11 +82,15 @@ int  verify_store_##type(void)                                                  
 
 #pragma off(check_stack);   /* I zeroed DS, do not call __STK  */
 
-testdata(char,   'C', 'D')
-testdata(short,  'S', 'T')
-testdata(int,    'I', 'J')
-testdata(long,   'L', 'M')
-testdata(__int64, 'I', 'J')
+testdata(char,   'C', 'D', -123, 0xFE)
+testdata(short,  'S', 'T', -12345, 0xFEED)
+#ifdef __386__
+testdata(int,    'I', 'J', -1234567, 0xDEADBEEF)
+#else
+testdata(int,    'I', 'J', -23456, 0xFEEE)
+#endif
+testdata(long,   'L', 'M', -12345678, 0x0C0FFEE0)
+testdata(__int64, 'I', 'J', -1, 0xDEADC0FFEEFEED)
 
 #define expand(type)  if (verify_expand_##type()) _fail
 #define store(type)   if (verify_store_##type())  _fail
