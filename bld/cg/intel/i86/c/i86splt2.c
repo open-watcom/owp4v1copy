@@ -650,28 +650,39 @@ extern  instruction     *rCDQ( instruction *ins ) {
 
     eight_byte_name     result;
     instruction         *shift;
-    instruction         *move;
+    instruction         *move1, *move2;
     instruction         *lo_ins;
     instruction         *mid_lo_ins;
+    name                *temp;
+    name                *high;
 
     if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
     Split8Name( ins, ins->result, &result );
+    /*
+     * 2005-09-26 RomanT
+     * Use temp name to avoid creation of instruction where both
+     * operand and result have segment prefix (cg cannot handle this)
+     */
+    temp = AllocTemp( I2 );
+    high = HighPart( ins->operands[0], U2 );
     lo_ins = MakeMove( LowPart( ins->operands[0], U2 ), result.low, U2 );
-    mid_lo_ins = MakeMove( HighPart( ins->operands[0], U2 ), result.mid_low, U2 );
-    shift = MakeBinary( OP_RSHIFT, result.mid_low, AllocIntConst( 15 ),
-                        result.mid_high, I2 );
-    move = MakeMove( result.mid_high, result.high, U2 );
+    mid_lo_ins = MakeMove( high, result.mid_low, U2 );
+    shift = MakeBinary( OP_RSHIFT, high, AllocIntConst( 15 ), temp, I2 );
+    move1 = MakeMove( temp, result.mid_high, U2 );
+    move2 = MakeMove( temp, result.high, U2 );
     DupSeg( ins, lo_ins );
     DupSeg( ins, mid_lo_ins );
-    DupSegRes( ins, shift );
-    DupSegRes( ins, move );
+    DupSeg( ins, shift );
+    DupSegRes( ins, move1 );
+    DupSegRes( ins, move2 );
     PrefixIns( ins, lo_ins );
     PrefixIns( ins, mid_lo_ins );
     PrefixIns( ins, shift );
-    ReplIns( ins, move );
-    UpdateLive( lo_ins, move );
+    PrefixIns( ins, move1 );
+    ReplIns( ins, move2 );
+    UpdateLive( lo_ins, move2 );
     return( lo_ins );
 }
 
