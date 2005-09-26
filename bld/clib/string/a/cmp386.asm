@@ -28,6 +28,8 @@
 ;*
 ;*****************************************************************************
 
+
+include langenv.inc
 include mdef.inc
 include struct.inc
 

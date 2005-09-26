@@ -38,6 +38,8 @@
 ;==                     SS:ESI  pointer to result structure            ==
 ;==     Volatile:       none                                           ==
 ;========================================================================
+
+include langenv.inc
 include mdef.inc
 include struct.inc
 
