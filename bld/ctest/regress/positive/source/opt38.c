@@ -7,13 +7,14 @@ typedef struct _STABLE {
 
 void Dummy(unsigned long hTable)
 {
-	PSTABLE pSTable = (PSTABLE)hTable; 
+    PSTABLE pSTable;
 
-	if (0x12345678 == hTable)
-	   return;
-	
-	pSTable->size = 100;
-} 
+    if (0x12345678 == hTable)
+       return;
+    
+    pSTable = (PSTABLE)hTable;
+    pSTable->size = 100;
+}
 
 int main()
 {
