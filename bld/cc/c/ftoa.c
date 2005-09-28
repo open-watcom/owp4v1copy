@@ -39,6 +39,7 @@ static char     buf[80];
 
 char *ftoa( FLOATVAL *flt )
 {
+#ifdef __WATCOM_C__
     CVT_INFO    cvt;
     char        mant[MAX_DIGIT + 1];
 
@@ -57,5 +58,16 @@ char *ftoa( FLOATVAL *flt )
         --cvt.decimal_place;
     sprintf( buf, "%c%c.%sE%+1d", 
         ( cvt.sign ) ? '-' : '+', *mant, mant + 1, cvt.decimal_place );
+#else
+  #ifdef _LONG_DOUBLE_
+    double      dbl;
+    long_double ld;
+    ld = flt->ld;
+    __LDFD( (long_double near *)&ld, (double near *)&dbl );
+    sprintf( buf, "%.19e", dbl );
+  #else
+    sprintf( buf, "%.19e", flt->ld );
+  #endif
+#endif
     return( buf );
 }
