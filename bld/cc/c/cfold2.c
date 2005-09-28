@@ -579,6 +579,10 @@ void MakeBinaryFloat( TREEPTR opnd )
     FLOATVAL    *flt;
     char        *endptr;
     long_double ld;
+#ifdef _LONG_DOUBLE_
+    double      doubleval;
+    float       floatval;
+#endif
 
     if( opnd->op.opr == OPR_PUSHINT ) {
         CastFloatValue( opnd, TYPE_DOUBLE );
@@ -586,6 +590,19 @@ void MakeBinaryFloat( TREEPTR opnd )
     flt = opnd->op.float_value;
     if( flt->len != 0 ) {
         __Strtold( flt->string, &ld, &endptr );
+        if( flt->type == TYPE_FLOAT ) {
+#ifdef _LONG_DOUBLE_
+            __LDFS( (long_double near *)&ld, (float near *)&floatval );
+            __FSLD( (float near *)&floatval, (long_double near *)&ld );
+#else
+            ld.value = (float)ld.value;
+#endif
+        } else if( flt->type == TYPE_DOUBLE ) {
+#ifdef _LONG_DOUBLE_
+        __LDFD( (long_double near *)&ld, (double near *)&doubleval );
+        __FDLD( (double near *)&doubleval, (long_double near *)&ld );
+#endif
+        }
         flt->ld = ld;
         flt->len = 0;
         flt->string[0] = '\0';

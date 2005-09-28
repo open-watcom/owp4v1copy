@@ -692,11 +692,7 @@ static cg_name PushConstant( OPNODE *node )
     cg_name     name;
     cg_type     dtype;
     FLOATVAL    *flt;
-#ifdef _LONG_DOUBLE_
-    double      doubleval;
-    long_double ld;
-#endif
-    auto char   buffer[32];
+    char        *flt_string;
 
     dtype = CGDataType[ node->const_type ];
     switch( node->const_type ) {
@@ -723,17 +719,11 @@ static cg_name PushConstant( OPNODE *node )
     case TYPE_LDIMAGINARY:
         flt = node->float_value;
         if( flt->len != 0 ) {                   // if still in string form
-            name = CGFloat( flt->string, dtype );
+            flt_string = flt->string;
         } else {                                // else in binary form
-#ifdef _LONG_DOUBLE_
-            ld = flt->ld;
-            __LDFD( (long_double near *)&ld, (double near *)&doubleval );
-            ftoa( doubleval, buffer );
-#else
-            ftoa( flt->ld.value, buffer );
-#endif
-            name = CGFloat( buffer, dtype );
+            flt_string = ftoa( flt );
         }
+        name = CGFloat( flt_string, dtype );
         break;
     }
     return( name );

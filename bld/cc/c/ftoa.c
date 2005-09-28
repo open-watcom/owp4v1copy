@@ -24,17 +24,38 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  convert float binary format to string representation
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
+#include <ctype.h>
+#include "cvars.h"
 
-void ftoa( value, buf )
-        double value;
-        char *buf;
-    {
-        sprintf( buf, "%.19e", value );
+#define MAX_DIGIT 21
+
+static char     buf[80];
+
+char *ftoa( FLOATVAL *flt )
+{
+    CVT_INFO    cvt;
+    char        mant[MAX_DIGIT + 1];
+
+    cvt.flags = G_FMT + F_CVT + NO_TRUNC + LONG_DOUBLE;
+    cvt.scale = 1;
+    cvt.ndigits = MAX_DIGIT;
+    cvt.expwidth = 0;
+    cvt.expchar  = 0;
+    __LDcvt( &flt->ld, &cvt, mant );
+    if( !isdigit( *mant ) ) {
+        /* special magical thingy (nan, inf, ...) */
+        strcpy( buf, mant );
+        return( buf );
     }
+    if( *mant != '0' )
+        --cvt.decimal_place;
+    sprintf( buf, "%c%c.%sE%+1d", 
+        ( cvt.sign ) ? '-' : '+', *mant, mant + 1, cvt.decimal_place );
+    return( buf );
+}

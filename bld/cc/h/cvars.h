@@ -864,7 +864,7 @@ extern  void    MustRecog(TOKEN);               /* cutil */
 extern  SYM_NAMEPTR SymName(SYMPTR,SYM_HANDLE); /* cutil */
 
 extern  void    DwarfBrowseEmit(void);          /* dwarf */
-extern  void    ftoa(double,char *);            /* ftoa */
+extern  char    *ftoa(FLOATVAL *);              /* ftoa */
 extern  unsigned int JIS2Unicode(unsigned);     /* jis2unic */
 
 // pchdr.c

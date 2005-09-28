@@ -1,12 +1,6 @@
 #include "fail.h"
 
 /*
- * Open Watcom on x86 "correctly" compiles the following on x86,
- * because it internally uses long double (80-bit) accuracy. Most
- * if not all other x86 compilers fail this test. Open Watcom on
- * non-x86 platforms such as Alpha or MIPS only has 64-bit doubles
- * available, hence we need to decrease the number of significant
- * digits.
  * NB: It should be possible to use two more digits on non-x86,
  * since DEC/MS compiler on Alpha can do it.
  */
@@ -16,20 +10,6 @@ double c[] = {
     .9 + .1,
     .3 * 10,
     3 / .2,
-#ifdef __X86__
-    .1111111111111111111 <
-    .1111111111111111112,
-    .1111111111111111111 <=
-    .1111111111111111112,
-    .1111111111111111111 >
-    .1111111111111111112,
-    .1111111111111111111 >=
-    .1111111111111111112,
-    .1111111111111111111 ==
-    .1111111111111111112,
-    .1111111111111111111 !=
-    .1111111111111111112,
-#else
     .1111111111111111 <
     .1111111111111112,
     .1111111111111111 <=
@@ -42,7 +22,6 @@ double c[] = {
     .1111111111111112,
     .1111111111111111 !=
     .1111111111111112,
-#endif
 #ifdef __WATCOMC__
     /* This isn't standard C! */
     ( .23 , 1.25 )

@@ -217,8 +217,6 @@ typedef struct  string_literal {
         char           *literal;        /* actual literal string */
 } STRING_LITERAL;
 
-#include "xfloat.h"
-
 // if we end up converting the string to binary to store in long_double
 // then at the same time, we should set string[0] to '\0' to indicate
 // that the string has been invalidated.
