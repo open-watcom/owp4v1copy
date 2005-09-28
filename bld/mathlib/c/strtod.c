@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  String to double conversion.
+* Description:  String to double/long_double conversion.
 *
 ****************************************************************************/
 
@@ -224,15 +224,20 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
     pld->exponent  = ld.exponent;
     pld->high_word = ld.high_word;
     pld->low_word  = ld.low_word;
+    if(( exponent + sigdigits - 1 ) > 4932 ) {          /* overflow */
+        return( _OVERFLOW );
+    } else if(( exponent + sigdigits - 1 ) < -4932 ) {  /* underflow */
+        return( _UNDERFLOW );
+    }
 #else
     pld->word[0] = ld.word[0];
     pld->word[1] = ld.word[1];
-#endif
-    if( (exponent+sigdigits-1) > 308 ) {          /* overflow */
+    if(( exponent + sigdigits - 1 ) > 308 ) {          /* overflow */
         return( _OVERFLOW );
-    } else if( (exponent + sigdigits - 1) < -308 ) {  /* underflow */
+    } else if(( exponent + sigdigits - 1 ) < -308 ) {  /* underflow */
         return( _UNDERFLOW );
     }
+#endif
     return( _NONZERO );                 // indicate number is non-zero
 }
 

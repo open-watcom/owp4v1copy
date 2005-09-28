@@ -52,6 +52,7 @@
 
 #include "variety.h"
 #include <time.h>
+#include "xfloat.h"
 
 #include "widechar.h"
 #if defined(__NETWARE__)
@@ -151,8 +152,7 @@ typedef struct thread_data {
         sigtab                  signal_table[__SIGLAST+1];
     #endif
     char _WCFAR                 *__nextftokP;
-    // LDBL_DIG => 15 + 1 for decimal point + 1 for "e" + 3 for exponent => 20
-    MAX_CHAR_TYPE               __cvt_buffer[20];
+    MAX_CHAR_TYPE               __cvt_buffer[ __FPCVT_BUFFERLEN + 1 ];
     #if defined(__NT__) || defined(_NETWARE_LIBC)
         unsigned long           thread_id;
     #elif defined(__UNIX__)

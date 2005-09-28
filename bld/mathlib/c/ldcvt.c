@@ -33,22 +33,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <float.h>
 #include "xfloat.h"
 
 #define NDIG            8
-
-// Maximum number of significant digits; This is akin to DECIMAL_DIG
-// but defined here since DECIMAL_DIG might be larger.
-#define MAX_DIGITS      20
-
-// this is defined in float.h
-#if LDBL_DIG == 15
-#undef LDBL_DIG
-#define LDBL_DIG        20
-#else
-#error LDBL_DIG has changed from 15
-#endif
 
 // this is defined in float.h
 #if LDBL_MAX_10_EXP == 308
@@ -637,7 +624,7 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
         n = cvt->ndigits + 3 + NDIG / 2;
     }
 
-    maxsize = MAX_DIGITS;
+    maxsize = DBL_DIG;
 #ifdef _LONG_DOUBLE_
     if( cvt->flags & LONG_DOUBLE ) {        // number is long double
         maxsize = LDBL_DIG;
@@ -717,10 +704,10 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
             nsig = n;
         }
 
-        maxsize = MAX_DIGITS;
+        maxsize = DBL_DIG;
 #ifdef _LONG_DOUBLE_
         if( cvt->flags & LONG_DOUBLE ) {    // number is long double
-            maxsize = LDBL_DIG + 1;
+            maxsize = LDBL_DIG;
         }
 #endif
         if( cvt->flags & NO_TRUNC ) {

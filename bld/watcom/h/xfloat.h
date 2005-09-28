@@ -35,6 +35,7 @@
 #define _XFLOAT_H_INCLUDED
 
 #include <stddef.h>     // for wchar_t
+#include <float.h>      // for LDBL_DIG
 
 #ifndef _WCNEAR
   #if defined(_M_IX86)
@@ -449,6 +450,26 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #define __LDFD __iLDFD
   #define __LDFS __iLDFS
 #endif
+
+// define number of significant digits for long double numbers (80-bit)
+// it will be defined in float.h as soon as OW support long double
+// used in mathlib/c/ldcvt.c
+
+#ifdef _LONG_DOUBLE_
+#if LDBL_DIG == 15
+#undef LDBL_DIG
+#define LDBL_DIG        19
+#else
+#error LDBL_DIG has changed from 15
+#endif
+#endif
+
+// floating point conversion buffer length definition
+// used by various floating point conversion routines
+// used in clib/startup/c/cvtbuf.c and lib_misc/h/thread.h
+// it must be equal maximum FP precision ( LDBL_DIG )
+
+#define __FPCVT_BUFFERLEN  19
 
 #ifdef __cplusplus
 };

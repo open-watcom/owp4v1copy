@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include "xfloat.h"
 #define FALSE   0
 #define TRUE    1
 
@@ -255,7 +256,7 @@ void _FtoS( userbuffer, realnum, digs, plus,
         int     dec;            /* decimal place */
         int     sign;           /* 0 => +ve, -1 => -ve */
         double  x;
-        auto    char buf[20];
+        auto    char buf[ __FPCVT_BUFFERLEN + 1 ];
 
         if( __Nan_Inf( *realnum, buf ) ) {              /* 05-mar-91 */
             for( len = 0; buf[len]; len++ ) {

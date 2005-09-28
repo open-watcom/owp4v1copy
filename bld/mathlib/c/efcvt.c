@@ -36,13 +36,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <float.h>
+#include "xfloat.h"
 
 extern  CHAR_TYPE *__CVTBuffer();
 extern  char *__cvt( double, int, int *, int *, int, char * );
 
-// LDBL_DIG + decimal point + 'e' + exponent (what about '\0'?)
-#define MAX_PRECISION   (LDBL_DIG+1+1+3)
+#define MAX_PRECISION __FPCVT_BUFFERLEN
 
 static char *fixup( char *p, int n )
 {
