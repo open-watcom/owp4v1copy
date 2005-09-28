@@ -34,11 +34,13 @@
 #include <limits.h>
 #include <float.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stddef.h>
 #include <i64.h>
 #include "mad.h"
 #include "madimp.h"
 #include "madcli.h"
+#include "xfloat.h"
 
 #if defined( __386__ ) || defined( __I86__ ) || defined( __ALPHA__ ) || defined( __PPC__ ) || defined( __MIPS__ )
    #define MNR_HOST_SIGNED      MNR_TWOS_COMP
@@ -1270,61 +1272,69 @@ static mad_status AddrTypeToString( unsigned radix, mad_type_info const *mti,
 
 #if !defined(MAD_OMIT_FLOAT_CVT)
 
-extern  void            _FtoS( char *buff,
-                                double *val,
-                                unsigned digs,
-                                unsigned want_plus,
-                                unsigned max_width,
-                                unsigned scale,
-                                unsigned exp_width,
-                                char format,
-                                char exp_char );
+#define LOG10B2( v )    (((v) * 30103L ) / 100000L )
+#define MAX_DIGITS      21
 
-#define REST            5                               /* +x.xxxE+x\0 */
+static char *fixup( char *p, int n )
+{
+    char    *start = p;
 
-#define LOG10B2( v )    (((v) * 3) / 10)
+    if( n < MAX_DIGITS && isdigit( *p ) ) {
+        while( *p ) {
+            p++;
+            n--;
+        }
+        while( n > 0 ) {
+            *p++ = '0';
+            n--;
+        }
+        *p = '\0';
+    }
+    return( start );
+}
 
-static char *DoStrLReal( lreal *value, char *p, mad_type_info const *mti )
+static char *__xcvt( long_double *value,
+             int    ndigits,
+             int    *dec,
+             int    *sign,
+             char   *buf )
+{
+    CVT_INFO    cvt;
+
+    cvt.flags = G_FMT + F_CVT + NO_TRUNC + LONG_DOUBLE;
+    cvt.scale = 1;
+    cvt.ndigits = ndigits;
+    cvt.expwidth = 0;
+    cvt.expchar  = 0;
+    __LDcvt( value, &cvt, buf );
+    *dec = cvt.decimal_place;
+    *sign = cvt.sign;
+    fixup( buf, ndigits );
+    return( buf );
+}
+
+static char *DoStrReal( long_double *value, char *p, mad_type_info const *mti )
 {
     unsigned    mant_digs;
     unsigned    exp_digs;
     char        *mant;
     int         sign;
     int         exp;
-    unsigned    len;
+    char        buff[80];
 
     exp_digs = LOG10B2( mti->f.exp.data.b.bits * (mti->f.exp.base / 2) );
     mant_digs = LOG10B2( mti->b.bits + mti->f.exp.hidden
                         - ( mti->f.exp.data.b.bits + 1 ) );
-    mant = ecvt( *(double *)value, mant_digs, &exp, &sign );
+    mant = __xcvt( value, mant_digs, &exp, &sign, buff );
     if( !isdigit( *mant ) ) {
         /* special magical thingy (nan, inf, ...) */
         strcpy( p, mant );
         return( p );
     }
-    *p++ = sign ? '-' : '+';
-    *p++ = *mant;
-    *p++ = '.';
-    if( *mant != '0' ) --exp;
-    ++mant;
-    len = strlen( mant );
-    memcpy( p, mant, len );
-    p += len;
-    *p++ = 'E';
-    if( exp >= 0 ) {
-        *p++ = '+';
-    } else {
-        *p++ = '-';
-        exp = -exp;
-    }
-    len = exp_digs;
-    do {
-        --len;
-        p[len] = (exp % 10) + '0';
-        exp /= 10;
-    } while( len != 0 );
-    p += exp_digs;
-    *p = '\0';
+    if( *mant != '0' )
+        --exp;
+    sprintf( p, "%c%c.%sE%+4.4d", 
+        ( sign ) ? '-' : '+', *mant, mant + 1, exp );
     return( p );
 }
 
@@ -1332,11 +1342,15 @@ static mad_status FloatTypeToString( unsigned radix, mad_type_info const *mti,
                         const void *d, unsigned *maxp, char *res )
 {
     unsigned            max;
-    lreal               val;
     mad_type_info       host;
     unsigned_8    const *p;
     unsigned            len;
     mad_status          ms;
+#if defined( _LONG_DOUBLE_ )
+    xreal               val;
+#else
+    lreal               val;
+#endif
 
     max = *maxp;
     switch( radix ) {
@@ -1357,20 +1371,22 @@ static mad_status FloatTypeToString( unsigned radix, mad_type_info const *mti,
             ++p;
 #endif
         }
-        if( max > 0 ) res[ min( len, max ) ] = '\0';
+        if( max > 0 )
+            res[ min( len, max ) ] = '\0';
         *maxp = len;
         return( MS_OK );
     case 10:
         MADTypeInfoForHost( MTK_FLOAT, sizeof( val ), &host );
         ms = MADTypeConvert( mti, d, &host, &val, 0 );
-        if( ms != MS_OK ) return( ms );
-        //NYI: should use long double
-        DoStrLReal( &val, res, mti );
+        if( ms != MS_OK )
+            return( ms );
+        DoStrReal( (long_double *)&val, res, mti );
         *maxp = strlen( res );
         return( MS_OK );
     }
     return( MS_UNSUPPORTED );
 }
+
 #endif
 
 mad_status MADTypeToString( unsigned radix, const mad_type_info *mti, const void *d, unsigned *max, char *buff )

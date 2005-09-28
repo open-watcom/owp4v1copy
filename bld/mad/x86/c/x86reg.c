@@ -789,11 +789,28 @@ static unsigned MaxModLen( const mad_modify_list *list, unsigned num )
 }
 
 #define LIST( num, r1, r2, r3, r4, r5, r6, r7, r8 )     \
-    static const x86_reg_info * const list##num[]               \
+    static const x86_reg_info * const list##num[]       \
     = { &FPU_##r1, &FPU_##r2, &FPU_##r3, &FPU_##r4,     \
         &FPU_##r5, &FPU_##r6, &FPU_##r7, &FPU_##r8 }
 
 static x86_reg_info     XXX_dummy;
+
+static unsigned GetTag( const mad_registers *mr, int st )
+{
+    int shft;
+
+    shft = ( st & 0x07 ) << 1;
+    return(( mr->x86.fpu.tag >> shft ) & 0x03 );
+}
+
+static void SetTag( mad_registers *mr, int st, int val )
+{
+    int shft;
+
+    shft = ( st & 0x07 ) << 1;
+    mr->x86.fpu.tag &= ~( 3 << shft );
+    mr->x86.fpu.tag |= ( val & 0x03 ) << shft;
+}
 
 static mad_status FPUGetPiece(
     const mad_registers *mr,
@@ -805,6 +822,7 @@ static mad_status FPUGetPiece(
     unsigned *max_value_p )
 {
     const static x86_reg_info   FPU_nil;
+
     LIST( 0, st0,  st1,  st2,  st3,  st4,  st5,  st6,  st7 );
     LIST( 1, tag0, tag1, tag2, tag3, tag4, tag5, tag6, tag7 );
     LIST( 2, ie,   de,   ze,   oe,   ue,   pe,   sf,   es  );
@@ -844,7 +862,7 @@ static mad_status FPUGetPiece(
         if( MADState->reg_state[FPU_REG_SET] & FT_HEX ) {
             *disp_type_p = X86T_HEXTENDED;
         } else {
-            tag = ((unsigned)mr->x86.fpu.tag >> (row*2)) & 0x3;
+            tag = GetTag( mr, row );
             switch( tag ) {
             case 0: /* valid */
             case 1: /* zero */
@@ -1321,7 +1339,8 @@ mad_status DIGENTRY MIRegSetDisplayModify(
         *possible_p = ModFPUStack;
         *num_possible_p = NUM_ELTS( ModFPUStack );
     } else if( ri->bit_start >= offsetof( mad_registers, x86.fpu.tag )*8
-            && ri->bit_start <  offsetof( mad_registers, x86.fpu.tag )*8+16 ) {
+            && ri->bit_start <  offsetof( mad_registers, x86.fpu.tag )*8+16
+            && ri->bit_size == 2 ) {
         *possible_p = ModFPUTag;
         *num_possible_p = NUM_ELTS( ModFPUTag );
     } else if( ri->bit_size == 1 ) {
@@ -1469,15 +1488,6 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
         return( 3 );
     }
     return( MCString( p[*(unsigned_8 *)d].name, max, buff ) );
-}
-
-static unsigned GetTag( const mad_registers *mr, int st )
-{
-    if( st >= 8 )
-        st -= 8;
-    if( st <  0 )
-        st += 8;
-    return( (mr->x86.fpu.tag >> (st*2)) & 0x03 );
 }
 
 mad_status DIGENTRY MIRegModified(
@@ -1949,16 +1959,10 @@ void DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_st
     case offsetof( mad_registers, x86.fpu.reg[7] ) * 8:
         if( flags & RF_FPREG ) {
             unsigned    index;
-            word        shift;
-            word        mask;
 
             index = bit_start - (offsetof( mad_registers, x86.fpu.reg[0] ) * 8);
             index /= sizeof( mr->x86.fpu.reg[0] ) * 8;
-            shift = index << 1;
-            mask = 3;
-            mask <<= shift;
-            mr->x86.fpu.tag &= ~mask;
-            mr->x86.fpu.tag |= TAG_VALID << shift;
+            SetTag( mr, index, TAG_VALID );
         }
         break;
     }
