@@ -41,7 +41,7 @@ _WMRTLINK void __cnvd2ld( double _WCNEAR *src, long_double _WCNEAR *dst )
 }
 
 #ifdef __MAKE_DLL_MATHLIB
-_WMRTLINK void (*__get__cnvd2ld())( void )
+_WMRTLINK void (*__get__cnvd2ld( void ))( double _WCNEAR *, long_double _WCNEAR * )
 {
     return( &__cnvd2ld );
 }
