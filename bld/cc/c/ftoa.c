@@ -39,7 +39,7 @@ static char     buf[80];
 
 char *ftoa( FLOATVAL *flt )
 {
-#ifdef __WATCOM_C__
+#ifdef __WATCOMC__
     CVT_INFO    cvt;
     char        mant[MAX_DIGIT + 1];
 
