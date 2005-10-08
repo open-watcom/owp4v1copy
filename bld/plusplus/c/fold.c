@@ -44,10 +44,13 @@
 
 //-------------- Temporary Stubs -------------------------------
 
+#define TWOTO32_STRING "4294967296"
+
 static float_handle TwoTo32
     ( void )
 {
-    return BFCnvSF( "4294967296", "0" );
+    char *p = { TWOTO32_STRING };
+    return( BFCnvSF( p, p + sizeof( TWOTO32_STRING ) - 1 ) );
 }
 
 static
