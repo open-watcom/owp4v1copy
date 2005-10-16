@@ -175,7 +175,8 @@ char *CmdScanString( void )
 
 /*
  * Scan a filename.  No leading whitespace is allowed.  Returns a pointer
- * to newly allocated memory containing the filename string.  If leading
+ * to newly allocated memory containing the filename string.  If filename
+ * contained a quote character, returned string contains quotes. If leading
  * whitespace is found, returns NULL.
  */
 char *CmdScanFileName( void )
@@ -187,6 +188,27 @@ char *CmdScanFileName( void )
     str = CmdScanString();
     if( str != NULL ) {
         newstr = PathConvert( str, '"' );
+        FreeMem( str );
+    } else {
+        newstr = NULL;
+    }
+    return( newstr );
+}
+
+/*
+ * Scan a filename without quotes.  No leading whitespace is allowed.  Returns a pointer
+ * to newly allocated memory containing the filename string.  If leading
+ * whitespace is found, returns NULL.
+ */
+char *CmdScanFileNameWithoutQuotes( void )
+/***************************/
+{
+    char *              str;
+    char *              newstr;
+
+    str = CmdScanString();
+    if( str != NULL ) {
+        newstr = PathConvertWithoutQuotes( str );
         FreeMem( str );
     } else {
         newstr = NULL;

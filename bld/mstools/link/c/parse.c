@@ -89,7 +89,7 @@ void CmdStringParse( OPT_STORAGE *cmdOpts, int *itemsParsed )
                 cmd_line_error();
             }
         } else if( ch == '@' ) {                /* command file */
-            filename = CmdScanFileName();
+            filename = CmdScanFileNameWithoutQuotes();
             PushContext();
             if( OpenFileContext( filename ) ) {
                 FatalError( "Cannot open '%s'.", filename );

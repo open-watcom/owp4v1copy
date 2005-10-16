@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  String utilities to convert filenames to more usable format.
+*               
 *
 ****************************************************************************/
 
@@ -100,6 +100,60 @@ char *PathConvert( const char *path, char quote )
         path = _mbsinc( path );
     }
     if( quoteends )  *p++ = quote;
+    *p++ = '\0';
+
+    return( out );
+}
+
+/*
+ * Translate  foo/dir1\\dir2" \\"bar"grok  -->  foo\\dir1\\dir2 \\"bargrok.
+ */
+char *PathConvertWithoutQuotes( const char *path )
+/***********************************************/
+{
+    char *              out;
+    char *              p;
+    int                 backslash = 0;  /* true if last char was a '\\' */
+    int                 inquote = 0;    /* true if inside a quoted string */
+
+    /*** Allocate a buffer for the new string (should be big enough) ***/
+    out = AllocMem( 2 * ( strlen(path) + 1 + 2 ) );
+    p = out;
+
+    /*** Convert the path one character at a time ***/
+    while( *path != '\0' ) {
+        if( *path == '"' ) {
+            if( inquote ) {
+                if( backslash ) {
+                    *p++ = '"';         /* handle \" within a string */
+                    backslash = 0;
+                } else {
+                    inquote = 0;
+                }
+            } else {
+                inquote = 1;
+            }
+        } else if( *path == '\\' ) {
+            *p++ = '\\';
+            if( backslash ) {
+                backslash = 0;
+            } else {
+                backslash = 1;
+            }
+        } else if( *path == '/' ) {
+            if( inquote ) {
+                *p++ = '/';
+            } else {
+                *p++ = '\\';
+            }
+            backslash = 0;
+        } else {
+            _mbccpy( p, path );         /* copy an ordinary character */
+            p = _mbsinc( p );
+            backslash = 0;
+        }
+        path = _mbsinc( path );
+    }
     *p++ = '\0';
 
     return( out );
