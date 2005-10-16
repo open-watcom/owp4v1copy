@@ -645,10 +645,11 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
     p = &stkbuf[1];
     i = 0;
     while( n > 0 ) {
-#ifdef _LONG_DOUBLE_
         n -= NDIG;
         if( value == 0 ) {
-            if( (ld.exponent & 0x7FFF) == 0 ) break;
+#ifdef _LONG_DOUBLE_
+            if( (ld.exponent & 0x7FFF) == 0 )
+                break;
             value = __LDI4( (long_double _WCNEAR *)&ld );
             if( n > 0 ) {
                 long_double     tmp;
@@ -664,17 +665,15 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
                         (long_double _WCNEAR *)&tmp,
                         (long_double _WCNEAR *)&ld );
             }
-        }
 #else
-        n -= NDIG;
-        if( value == 0 ) {
-            if( (ld.word[1] & 0x7FF00000) == 0 ) break;
+            if( (ld.word[1] & 0x7FF00000) == 0 )
+                break;
             value = ld.value;
             if( n > 0 ) {
                 ld.value = (ld.value - (double)value) * 1e8;
             }
-        }
 #endif
+        }
         p = Fmt8Digits( value, p );
         i += 8;
         value = 0;
@@ -743,8 +742,8 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
     }
     if( (cvt->flags & F_FMT) || ((cvt->flags & G_FMT) &&
         ((xexp >= -4 && xexp < cvt->ndigits) || (cvt->flags & F_CVT)) ) ) {
-        DoFFormat( cvt, p, nsig, xexp, buf );   // 'F' format
-    } else {                            // 'E' format
+        DoFFormat( cvt, p, nsig, xexp, buf );
+    } else {
         DoEFormat( cvt, p, nsig, xexp, buf );
     }
 end_cvt:;
