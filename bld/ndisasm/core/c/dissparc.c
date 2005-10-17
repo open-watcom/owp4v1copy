@@ -81,7 +81,11 @@ dis_handler_return SPARCCall( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = _SparcIns( ins->opcode );
     ins->op[0].type  = DO_RELATIVE;
-    ins->op[0].value = ( SEX( code.call.disp, 29 ) + 1) * sizeof( ins->opcode );
+    // BartoszP 16.10.2005
+    // SPARC Architecture Manual says:
+    // CALL saves self address not next instruction into the %o7 register
+    //ins->op[0].value = ( SEX( code.call.disp, 29 ) + 1) * sizeof( ins->opcode );
+    ins->op[0].value = ( SEX( code.call.disp, 29 ) ) * sizeof( ins->opcode );
     ins->num_ops     = 1;
     return( DHR_DONE );
 }
@@ -166,6 +170,43 @@ static const dis_ref_type floatRefTypes[] = {
     DRT_SPARC_DFLOAT,
     DRT_SPARC_DFLOAT,
 };
+
+dis_handler_return SPARCFPop2( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    sparc_ins   code;
+
+    code.full = _SparcIns( ins->opcode );
+    if( code.op3opf.opcode_3 == 0x35 ) {
+        // fcmp 
+        ins->op[ 0 ].type = DO_REG;
+        ins->op[ 0 ].base = _SparcFReg( code.op3opf.rs1 );
+        ins->op[ 1 ].type = DO_REG;
+        ins->op[ 1 ].base = _SparcFReg( code.op3opf.rs2 );
+    } else {
+        ins->op[ 0 ].type = DO_REG;
+        ins->op[ 0 ].base = _SparcFReg( code.op3opf.rs2 );
+        ins->op[ 1 ].type = DO_REG;
+        ins->op[ 1 ].base = _SparcFReg( code.op3opf.rd );
+    }
+    ins->num_ops = 2;
+    return( DHR_DONE );
+}
+
+dis_handler_return SPARCFPop3( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    sparc_ins   code;
+
+    code.full = _SparcIns( ins->opcode );
+    ins->op[ 0 ].type = DO_REG;
+    ins->op[ 0 ].base = _SparcFReg( code.op3opf.rs1 );
+    ins->op[ 1 ].type = DO_REG;
+    ins->op[ 1 ].base = _SparcFReg( code.op3opf.rs2 );
+    ins->op[ 2 ].type = DO_REG;
+    ins->op[ 2 ].base = _SparcFReg( code.op3opf.rd );
+    ins->num_ops = 3;
+    return( DHR_DONE );
+}
+
 
 dis_handler_return SPARCMemF( dis_handle *h, void *d, dis_dec_ins *ins )
 {
