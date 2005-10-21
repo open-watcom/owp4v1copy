@@ -102,37 +102,37 @@ dis_return DisInit( dis_cpu cpu, dis_handle *h, bool swap_bytes )
     h->cpu = cpu;
     switch( cpu ) {
 #if DISCPU & DISCPU_axp
-        case DISCPU_axp:
-            h->d = &AXPData;
-            break;
+    case DISCPU_axp:
+        h->d = &AXPData;
+        break;
 #endif
 #if DISCPU & DISCPU_ppc
-        case DISCPU_ppc:
-            h->d = &PPCData;
-            break;
+    case DISCPU_ppc:
+        h->d = &PPCData;
+        break;
 #endif
 #if DISCPU & DISCPU_x86
-        case DISCPU_x86:
-            h->d = &X86Data;
-            break;
+    case DISCPU_x86:
+        h->d = &X86Data;
+        break;
 #endif
 #if DISCPU & DISCPU_jvm
-        case DISCPU_jvm:
-            h->d = &JVMData;
-            break;
+    case DISCPU_jvm:
+        h->d = &JVMData;
+        break;
 #endif
 #if DISCPU & DISCPU_sparc
-        case DISCPU_sparc:
-            h->d = &SPARCData;
-            break;
+    case DISCPU_sparc:
+        h->d = &SPARCData;
+        break;
 #endif
 #if DISCPU & DISCPU_mips
-        case DISCPU_mips:
-            h->d = &MIPSData;
-            break;
+    case DISCPU_mips:
+        h->d = &MIPSData;
+        break;
 #endif
-        default:
-            return( DR_FAIL );
+    default:
+        return( DR_FAIL );
     }
     if( h->d->range == NULL ) return( DR_FAIL );
     h->need_bswap = swap_bytes;
@@ -151,12 +151,12 @@ void DisDecodeInit( dis_handle *h, dis_dec_ins *ins )
     memset( ins, 0, sizeof( *ins ) );
     ins->num_ops = MAX_NUM_OPERANDS + 1;
     switch( h->cpu ) {
-        case DISCPU_axp:
-        case DISCPU_ppc:
-        case DISCPU_sparc:
-        case DISCPU_mips:
-            ins->size = sizeof( unsigned_32 );
-            break;
+    case DISCPU_axp:
+    case DISCPU_ppc:
+    case DISCPU_sparc:
+    case DISCPU_mips:
+        ins->size = sizeof( unsigned_32 );
+        break;
     }
 }
 
@@ -244,27 +244,27 @@ char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags fl
 
     p += DisCliValueString( d, ins, i, p );
     switch( ins->op[i].type & DO_MASK ) {
-        case DO_REG:
+    case DO_REG:
+        p = DisAddReg( ins->op[i].base, p, flags );
+        break;
+    case DO_ABSOLUTE:
+    case DO_RELATIVE:
+    case DO_MEMORY_ABS:
+    case DO_MEMORY_REL:
+        if( ins->op[i].base != DR_NONE || ins->op[i].index != DR_NONE ) {
+            *p++ = chLbrac;
             p = DisAddReg( ins->op[i].base, p, flags );
-            break;
-        case DO_ABSOLUTE:
-        case DO_RELATIVE:
-        case DO_MEMORY_ABS:
-        case DO_MEMORY_REL:
-            if( ins->op[i].base != DR_NONE || ins->op[i].index != DR_NONE ) {
-                *p++ = chLbrac;
-                p = DisAddReg( ins->op[i].base, p, flags );
-                if( ins->op[i].index != DR_NONE ) {
+            if( ins->op[i].index != DR_NONE ) {
+                *p++ = ',';
+                p = DisAddReg( ins->op[i].index, p, flags );
+                if( ins->op[i].scale != 1 ) {
                     *p++ = ',';
-                    p = DisAddReg( ins->op[i].index, p, flags );
-                    if( ins->op[i].scale != 1 ) {
-                        *p++ = ',';
-                        *p++ = '0' + ins->op[i].scale;
-                    }
+                    *p++ = '0' + ins->op[i].scale;
                 }
-                *p++ = chRbrac;
             }
-            break;
+            *p++ = chRbrac;
+        }
+        break;
     }
     return( p );
 }
