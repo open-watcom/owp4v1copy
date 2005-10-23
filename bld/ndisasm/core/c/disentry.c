@@ -171,15 +171,15 @@ static void BadOpcode( dis_handle *h, dis_dec_ins *ins )
 dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
 // Decode an instruction
 {
-    int                         curr;
-    const dis_range             *table;
-    dis_return                  dr;
-    unsigned                    idx;
-    unsigned                    start;
-    dis_handler_return          hr;
-    int                         page;
-    int const                   *pos;
-    int                         offs;
+    int                     curr;
+    const dis_range        *table;
+    dis_return              dr;
+    unsigned                idx;
+    unsigned                start;
+    dis_handler_return      hr;
+    int                     page;
+    int const              *pos;
+    int                     offs;
 
     start = 0;
     curr  = 0;
@@ -239,28 +239,57 @@ char *DisAddReg( dis_register reg, char *dst, dis_format_flags flags )
 char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags flags,
                         unsigned i, char *p )
 {
-    const char chLbrac = h->cpu == DISCPU_sparc ? '[' : '(';
-    const char chRbrac = h->cpu == DISCPU_sparc ? ']' : ')';
+    const char chLbrac = ( h->cpu == DISCPU_sparc ) ? '[' : '(';
+    const char chRbrac = ( h->cpu == DISCPU_sparc ) ? ']' : ')';
 
-    p += DisCliValueString( d, ins, i, p );
+    
+    // BartoszP 23.10.2005
+    // for SPARC architecture DO_IMMED value could not be emited before
+    // other arguments (registers) so we should dissassembly like:
+    //   [ %reg + offset ]
+    // not like x86:
+    //   offset[reg]
+    if( h->cpu != DISCPU_sparc ) {
+        p += DisCliValueString( d, ins, i, p );
+    }
     switch( ins->op[i].type & DO_MASK ) {
+    case DO_IMMED:
+        if( h->cpu == DISCPU_sparc ) {
+            p += DisCliValueString( d, ins, i, p );
+        }
+        break;
     case DO_REG:
         p = DisAddReg( ins->op[i].base, p, flags );
         break;
     case DO_ABSOLUTE:
     case DO_RELATIVE:
+        if( h->cpu == DISCPU_sparc ) {
+            p += DisCliValueString( d, ins, i, p );
+            break;
+        }
     case DO_MEMORY_ABS:
     case DO_MEMORY_REL:
-        if( ins->op[i].base != DR_NONE || ins->op[i].index != DR_NONE ) {
             *p++ = chLbrac;
             p = DisAddReg( ins->op[i].base, p, flags );
-            if( ins->op[i].index != DR_NONE ) {
-                *p++ = ',';
-                p = DisAddReg( ins->op[i].index, p, flags );
-                if( ins->op[i].scale != 1 ) {
                     *p++ = ',';
-                    *p++ = '0' + ins->op[i].scale;
                 }
+            } else {
+                // SPARC stuff
+                if( ins->op[i].index != DR_NONE 
+                     && ( DO_MEMORY_ABS == (ins->op[i].type & DO_MASK ) ) ) {
+                    // ASI stuff
+                } else if( ins->op[i].index == DR_NONE
+                            && ins->op[i].value != 0 ) {
+                    // always add offset to base reg
+                    // offset > 0 dissassembles like %reg + offset
+                    // offset < 0 dissassembles like %reg + -offset
+                    *p++ = ' '; *p++ = '+'; *p++ = ' ';
+                    p += DisCliValueString( d, ins, i, p );
+                } else {
+                    // who knows ??
+                    *p++ = '/'; *p++ = '*';
+                    *p++ = '?'; *p++ = '?'; *p++ = '?';
+                    *p++ = '*'; *p++ = '/';
             }
             *p++ = chRbrac;
         }
