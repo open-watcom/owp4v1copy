@@ -269,9 +269,17 @@ char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags fl
         }
     case DO_MEMORY_ABS:
     case DO_MEMORY_REL:
+        if( ins->op[i].base != DR_NONE || ins->op[i].index != DR_NONE ) {
             *p++ = chLbrac;
             p = DisAddReg( ins->op[i].base, p, flags );
+            if( h->cpu != DISCPU_sparc ) {
+                if( ins->op[i].index != DR_NONE ) {
                     *p++ = ',';
+                    p = DisAddReg( ins->op[i].index, p, flags );
+                    if( ins->op[i].scale != 1 ) {
+                        *p++ = ',';
+                        *p++ = '0' + ins->op[i].scale;
+                    }
                 }
             } else {
                 // SPARC stuff
@@ -290,6 +298,7 @@ char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags fl
                     *p++ = '/'; *p++ = '*';
                     *p++ = '?'; *p++ = '?'; *p++ = '?';
                     *p++ = '*'; *p++ = '/';
+                }
             }
             *p++ = chRbrac;
         }
