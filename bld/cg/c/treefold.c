@@ -661,22 +661,36 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe ) {
         rv = rite->u.name->c.value;
         ri = CFConvertByType( rv, tipe );
         if( left->class == TN_CONS ) {
-            lv = left->u.name->c.value;
-            if( CFIs32( lv ) && CFIs32( rv ) ) {
-                li = CFConvertByType( lv, tipe );
-                if( tipe->attr & TYPE_SIGNED ) {
-                    shft = li >> ri;
+            bool    done = FALSE;
+
+            if( ri >= (tipe->length * 8) ) {
+                if (tipe->attr & TYPE_SIGNED) {
+                    // For signed shifts, reduce the shift amount and
+                    // then do the math
+                    ri = (tipe->length * 8) - 1;
                 } else {
-                    shft = (unsigned_32)li >> (unsigned_32)ri;
+                    fold = IntToType( 0, tipe );
+                    done = TRUE;
                 }
-                fold = IntToType( shft, tipe );
-                BurnTree( left );
-                BurnTree( rite );
             }
+            if (!done) {
+                lv = left->u.name->c.value;
+                if( CFIs32( lv ) && CFIs32( rv ) ) {
+                    li = CFConvertByType( lv, tipe );
+                    if( tipe->attr & TYPE_SIGNED ) {
+                        shft = li >> ri;
+                    } else {
+                        shft = (unsigned_32)li >> (unsigned_32)ri;
+                    }
+                    fold = IntToType( shft, tipe );
+                }
+            }
+            BurnTree( left );
+            BurnTree( rite );
         } else if( ri == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
-        } else if( ri >= ( tipe->length * 8 ) && ( tipe->attr & TYPE_SIGNED ) == 0 ) {
+        } else if( ri >= (tipe->length * 8) && (tipe->attr & TYPE_SIGNED) == 0 ) {
             fold = TGBinary( O_COMMA, TGTrash( left ), IntToType( 0, tipe ), tipe );
             BurnTree( rite );
         }
@@ -703,29 +717,31 @@ extern  tn      FoldLShift( tn left, tn rite, type_def *tipe ) {
             ri = 0xffff;
         }
         if( left->class == TN_CONS ) {
-            lv = left->u.name->c.value;
-            if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
-                signed_32       li;
+            if( ri >= (tipe->length * 8) ) {
+                fold = IntToType( 0, tipe );
+            } else {
+                lv = left->u.name->c.value;
+                if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+                    signed_32       li;
 
-                li = CFConvertByType( lv, tipe );
-                fold = IntToType( li << ri, tipe );
-                BurnTree( left );
-                BurnTree( rite );
-            } else if( CFIs64( lv ) && CFIs64( rv ) ) {
-                signed_64       lsh;
-                signed_64       li;
+                    li = CFConvertByType( lv, tipe );
+                    fold = IntToType( li << ri, tipe );
+                } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+                    signed_64       lsh;
+                    signed_64       li;
 
-                li = CFGetInteger64Value( lv );
+                    li = CFGetInteger64Value( lv );
 
-                U64ShiftL( &li, ri, &lsh );
-                fold = Int64ToType( lsh, tipe );
-                BurnTree( left );
-                BurnTree( rite );
+                    U64ShiftL( &li, ri, &lsh );
+                    fold = Int64ToType( lsh, tipe );
+                }
             }
+            BurnTree( left );
+            BurnTree( rite );
         } else if( ri == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
-        } else if( ri >= ( tipe->length * 8 ) ) {
+        } else if( ri >= (tipe->length * 8) ) {
             fold = TGBinary( O_COMMA, TGTrash( left ), IntToType( 0, tipe ), tipe );
             BurnTree( rite );
         }
