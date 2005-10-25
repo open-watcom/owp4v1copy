@@ -46,8 +46,11 @@ test_cflags += -ei -w0 -zq -i.. -d__OS2__
 
 test_cflags_i86 = -ml
 
+# Required to keep code size under 64KB
+test_cflags_i86_map = -zm -oxs
+
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) $(test_cflags_$(arch)_$^*) 
     
 test : .symbolic ..\base.lib
     %make global
