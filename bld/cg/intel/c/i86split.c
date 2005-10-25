@@ -104,6 +104,7 @@ extern  instruction     *SplitLoadAddr(instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 
 extern  instruction             *rCHANGESHIFT(instruction*);
+extern  instruction             *rFIXSHIFT(instruction *);
 extern  instruction             *rCLRHI_BW(instruction*);
 extern  instruction             *rCONVERT_LOW(instruction*);
 extern  instruction             *rCYPHIGH(instruction*);

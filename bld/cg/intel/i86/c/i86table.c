@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Table of possible instructions and reductions for each
+*               opcode.
 *
 ****************************************************************************/
 
@@ -607,6 +607,7 @@ static  opcode_entry    Shft1[] = {
 
 {_Bin(   ANY,  C,    ANY,  NONE  ),V_OP2NEG,  R_CHANGESHIFT,RG_BYTE_SHIFT,FU_NO},
 {_Bin(   ANY,  C,    ANY,  NONE  ),NVI(V_OP2ZERO),R_MAKEMOVE,RG_BYTE,FU_NO},
+{_Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_BYTE_SHIFT,FU_NO},
 
 /* instructions we can generate*/
 
@@ -646,6 +647,7 @@ static  opcode_entry    Shft2[] = {
 
 {_Bin(   ANY,  C,    ANY,  NONE  ),V_OP2NEG,  R_CHANGESHIFT,RG_WORD_SHIFT,FU_NO},
 {_Bin(   ANY,  C,    ANY,  NONE  ),NVI(V_OP2ZERO),R_MAKEMOVE,RG_WORD,FU_NO},
+{_Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_WORD_SHIFT,FU_NO},
 {_Bin(   R,    C,    R,    NONE  ),NVI(V_CYP2SHIFT),R_CYPSHIFT,RG_TWOBYTE,FU_NO},
 {_Bin(   M|U,  C,    M|U,  NONE  ),NVI(V_CYP2SHIFT),R_CYPSHIFT,RG_WORD,FU_NO},
 
@@ -1224,7 +1226,7 @@ static  opcode_entry    Call[] = {
 static  opcode_entry    CallI[] = {
 /*************************/
 /*       op1   op2   res   eq    verify          gen             reg fu*/
-{_Bin(   ANY,  ANY,  ANY,  NONE ), V_NO,         G_ICALL,        RG_,FU_CALL}    
+{_Bin(   ANY,  ANY,  ANY,  NONE ), V_NO,         G_ICALL,        RG_,FU_CALL}
 };
 
 

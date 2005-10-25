@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic instruction operand verification routines.
 *
 ****************************************************************************/
 
@@ -280,6 +279,11 @@ extern  bool    OtherVerify( vertype kind, instruction *ins,
         if( ins->head.opcode == OP_CMP_EQUAL
          || ins->head.opcode == OP_CMP_NOT_EQUAL
          || ins->type_class == U4 ) return( TRUE );
+        break;
+    case V_SHIFT2BIG:
+        /* check if shift amount is equal to or greater than register width */
+        if( op2->c.const_type == CONS_ABSOLUTE
+         && op2->c.int_value >= REG_SIZE * 8 ) return( TRUE );
         break;
     default:
         _Zoiks( ZOIKS_053 );

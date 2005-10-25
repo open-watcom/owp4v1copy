@@ -733,6 +733,7 @@ static  opcode_entry    Shft1[] = {
 
 _Bin(   ANY,  C,    ANY,  NONE  ),V_OP2NEG,  R_CHANGESHIFT,RG_BYTE_SHIFT,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE  ),NVI(V_OP2ZERO),R_MAKEMOVE,RG_BYTE,FU_NO,
+_Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_BYTE_SHIFT,FU_NO,
 
 /* instructions we can generate*/
 
@@ -765,6 +766,7 @@ static  opcode_entry    Shft2[] = {
 
 _Bin(   ANY,  C,    ANY,  NONE  ),V_OP2NEG,  R_CHANGESHIFT,RG_WORD_SHIFT,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE  ),NVI(V_OP2ZERO),R_MAKEMOVE,RG_WORD,FU_NO,
+_Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_WORD_SHIFT,FU_NO,
 
 /* instructions we can generate*/
 
@@ -796,6 +798,7 @@ static  opcode_entry    Shft4[] = {
 
 _Bin(   ANY,  C,    ANY,  NONE  ),V_OP2NEG,  R_CHANGESHIFT,RG_DBL_SHIFT,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE  ),NVI(V_OP2ZERO),R_MAKEMOVE,RG_DBL,FU_NO,
+_Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_DBL_SHIFT,FU_NO,
 
 /* instructions we can generate*/
 

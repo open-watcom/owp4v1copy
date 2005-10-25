@@ -454,9 +454,36 @@ extern instruction      *rCHANGESHIFT( instruction *ins ) {
     signed_32   shift_count;
 
     shift_count = ins->operands[ 1 ]->c.int_value;
-    assert( shift_count < 0 );
+    assert( shift_count >= 0 );
     ins->operands[ 1 ] = AllocS32Const( shift_count & ( ( WORD_SIZE * 8 ) - 1 ) );
     return( ins );
+}
+
+
+extern instruction      *rFIXSHIFT( instruction *ins )
+/****************************************************/
+{
+    signed_32           shift_count;
+    instruction         *new_ins;
+
+    /* Fix up shift instructions that try to shift by too large amounts. This
+     * can happen when optimizer merges adjacent shift instructions. Arithmetic
+     * rights shifts must never exceed (REGISTER_BITS - 1), logical shifts can
+     * be replaced with loads of zero constant.
+     */
+    assert( ins->operands[ 1 ]->n.class == N_CONSTANT );
+    shift_count = ins->operands[ 1 ]->c.int_value;
+    assert( shift_count >= REG_SIZE * 8 );
+    if( ins->head.opcode == OP_RSHIFT
+        && Signed[ ins->type_class ] == ins->type_class ) {
+        ins->operands[ 1 ] = AllocS32Const( REG_SIZE * 8 - 1 );
+        return( ins );
+    } else {
+        new_ins = MoveConst( 0, ins->result, ins->type_class );
+        DupSeg( ins, new_ins );
+        ReplIns( ins, new_ins );
+        return( new_ins );
+    }
 }
 
 
