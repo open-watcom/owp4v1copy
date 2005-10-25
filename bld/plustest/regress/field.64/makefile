@@ -3,7 +3,7 @@ plustest_name = field64
 
 !ifdef test1
 test_cflags_386 = -d2-fpd
-test_cflags_i86 = -d2-fpd
+test_cflags_i86 = -d2-fpd-zm
 test_cflags_axp = -d2
 !else ifdef test2
 test_cflags_386 = -os-d1-3s-xds
