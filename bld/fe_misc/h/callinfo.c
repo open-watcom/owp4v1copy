@@ -68,6 +68,11 @@ static  hw_reg_set  FastcallParms[] = {
 
 void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 {
+    hw_reg_set  full_no_segs;
+
+    HW_CAsgn( full_no_segs, HW_FULL );
+    HW_CTurnOff( full_no_segs, HW_SEGS );
+
 
 /*************************************************
  *  __fortran calling convention
@@ -96,7 +101,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( CdeclInfo.returns, HW_EMPTY );
     HW_CAsgn( CdeclInfo.streturn, HW_EMPTY );
-    HW_CAsgn( CdeclInfo.save, HW_FULL );
+    HW_TurnOn( CdeclInfo.save, full_no_segs );
     HW_CTurnOff( CdeclInfo.save, HW_FLTS );
 #if _CPU == 386
     HW_CAsgn( CdeclInfo.streturn, HW_EAX );
@@ -129,7 +134,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( PascalInfo.returns, HW_EMPTY );
     HW_CAsgn( PascalInfo.streturn, HW_EMPTY );
-    HW_CAsgn( PascalInfo.save, HW_FULL );
+    HW_TurnOn( PascalInfo.save, full_no_segs );
     HW_CTurnOff( PascalInfo.save, HW_FLTS );
 #if _CPU == 386
     HW_CTurnOff( PascalInfo.save, HW_EAX );
@@ -169,7 +174,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( StdcallInfo.returns, HW_EMPTY );
     HW_CAsgn( StdcallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( StdcallInfo.save, HW_FULL );
+    HW_TurnOn( StdcallInfo.save, full_no_segs );
     HW_CTurnOff( StdcallInfo.save, HW_FLTS );
 #if _CPU == 386
 //    HW_CAsgn( StdcallInfo.streturn, HW_EAX );
@@ -204,7 +209,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( FastcallInfo.returns, HW_EMPTY );
     HW_CAsgn( FastcallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( FastcallInfo.save, HW_FULL );
+    HW_TurnOn( FastcallInfo.save, full_no_segs );
     HW_CTurnOff( FastcallInfo.save, HW_FLTS );
     HW_CTurnOff( FastcallInfo.save, HW_EAX );
 //    HW_CTurnOff( FastcallInfo.save, HW_EBX );
@@ -227,7 +232,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( FastcallInfo.returns, HW_EMPTY );
     HW_CAsgn( FastcallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( FastcallInfo.save, HW_FULL );
+    HW_TurnOn( FastcallInfo.save, full_no_segs );
     HW_CTurnOff( FastcallInfo.save, HW_FLTS );
     HW_CTurnOff( StdcallInfo.save, HW_ABCD );
     HW_CTurnOff( StdcallInfo.save, HW_ES );
@@ -261,7 +266,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
     HW_CAsgn( OptlinkInfo.returns, HW_EMPTY );
 //    HW_CAsgn( OptlinkInfo.returns, HW_FLTS );
     HW_CAsgn( OptlinkInfo.streturn, HW_EMPTY );
-    HW_CAsgn( OptlinkInfo.save, HW_FULL );
+    HW_TurnOn( OptlinkInfo.save, full_no_segs );
     HW_CTurnOff( OptlinkInfo.save, HW_FLTS );
 #if _CPU == 386
     HW_CTurnOff( OptlinkInfo.save, HW_EAX );
@@ -292,7 +297,7 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     HW_CAsgn( SyscallInfo.returns, HW_EMPTY );
     HW_CAsgn( SyscallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( SyscallInfo.save, HW_FULL );
+    HW_TurnOn( SyscallInfo.save, full_no_segs );
     HW_CTurnOff( SyscallInfo.save, HW_FLTS );
 #if _CPU == 386
     HW_CTurnOff( SyscallInfo.save, HW_EAX );
