@@ -41,7 +41,7 @@ _WMRTLINK void __cnvs2d( char *buf, double *value )
 }
 
 #ifdef __MAKE_DLL_MATHLIB
-_WMRTLINK void (*__get__cnvs2d())( void )
+_WMRTLINK void (*__get__cnvs2d( void ))( char *, double * )
 {
     return( &__cnvs2d );
 }
