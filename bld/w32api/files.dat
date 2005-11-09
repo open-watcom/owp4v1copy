@@ -269,6 +269,7 @@ usr="dxerr9.h"
 usr="gl.h"
 usr="glext.h"
 usr="glu.h"
+usr="wglext.h"
 
 #
 # Win32 libraries
