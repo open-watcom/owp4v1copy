@@ -1,5 +1,6 @@
 IsFortranInstall=1
 AppName=Open Watcom FORTRAN
+InstallerName=Setup
 Setup=f77setup\setup.exe
 Exe=f77setup\dossetup.exe
 Exe=f77setup\setup32.exe
