@@ -1868,8 +1868,8 @@ extern char *GetInstallName()
 
     if( name[0] == '\0' ) {
         if( GetVariableByName( "InstallerName" ) != NO_VAR ) {
-            strcpy( name, GetVariableStrVal( "InstallerName" ) );
-            return name;
+            strlcpy( name, GetVariableStrVal( "InstallerName" ), sizeof( name ) );
+            return( name );
         }
 
         GUIGetArgs( &argv, &argc );
