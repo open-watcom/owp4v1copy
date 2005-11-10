@@ -236,6 +236,7 @@ usr="search.h"
 usr="share.h"
 usr="strings.h"
 usr="tchar.h"
+usr="termios.h"
 usr="unistd.h"
 usr="varargs.h"
 
