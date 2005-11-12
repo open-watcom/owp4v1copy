@@ -905,24 +905,6 @@ void AsmSysCopyCode( void )
     }
 }
 
-void AsmSysParseLine( char *line )
-/********************************/
-{
-    AsmLine( line );
-}
-
-void AsmSysSetCodeBuffer( void *buff )
-/************************************/
-{
-    CodeBuffer = buff;
-}
-
-uint_32 AsmSysAddress( void )
-/***************************/
-{
-    return Address;
-}
-
 boolean AsmSysInsertFixups( VBUF *code )
 /**************************************/
 {
@@ -975,7 +957,7 @@ void AsmSysDone( void )
 void AsmSysInit( void )
 /*********************/
 {
-    Address = 0;
+    AsmCodeAddress = 0;
     asm_CPU = GetAsmCPUInfo();
 }
 
@@ -1138,10 +1120,10 @@ static int GetByteSeq(
         /* reserve at least ASM_BLOCK bytes in the buffer */
         VbufReqd( &code_buffer, ( (i+ASM_BLOCK) + (ASM_BLOCK-1) ) & ~(ASM_BLOCK-1) );
         if( CurToken == T_STRING ) {
-            Address = i;
-            CodeBuffer = code_buffer.buf;
+            AsmCodeAddress = i;
+            AsmCodeBuffer = code_buffer.buf;
             AsmLine( Buffer );
-            i = Address;
+            i = AsmCodeAddress;
             NextToken();
             if( CurToken == T_COMMA )  NextToken();
         } else if( CurToken == T_CONSTANT ) {

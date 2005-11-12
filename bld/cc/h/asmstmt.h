@@ -34,9 +34,6 @@
 
 extern  void        AsmSysInit( unsigned char * );
 extern  void        AsmSysFini( void );
-extern  uint_32     AsmSysGetCodeAddr( void );
-extern  void        AsmSysSetCodeAddr( uint_32 );
-extern  void        AsmSysParseLine( char * );
 extern  char const  *AsmSysDefineByte( void );
 extern  void        AsmSysMakeInlineAsmFunc( int );
 

@@ -148,7 +148,7 @@ int MakeLabel( char *symbol_name, memtype mem_type )
         return( ERROR );
     }
     sym->state = SYM_INTERNAL;
-    sym->addr = Address;
+    sym->addr = AsmCodeAddress;
 //  it should define label type ?????
     sym->mem_type = mem_type;  // fixme ??
 #endif

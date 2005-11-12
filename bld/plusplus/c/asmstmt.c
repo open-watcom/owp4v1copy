@@ -42,6 +42,12 @@
 #include "scan.h"
 #include "asmstmt.h"
 
+#if _INTEL_CPU
+#include "asminlin.h"
+#else
+#include "asinline.h"
+#endif
+
 #ifdef DISABLE_ASM_STMT
 
 PTREE AsmStmt( void )
@@ -112,8 +118,8 @@ static void getAsmLine( VBUF *buff )
     if( endOfAsmStmt() )
         return;
     /* reserve at least MAX_INSTR_SIZE bytes in the buffer */
-    VbufReqd( buff, (( AsmSysAddress()+MAX_INSTR_SIZE) + (MAX_INSTR_SIZE-1) ) & ~(MAX_INSTR_SIZE-1) );
-    AsmSysSetCodeBuffer( buff->buf );
+    VbufReqd( buff, ((AsmCodeAddress+MAX_INSTR_SIZE) + (MAX_INSTR_SIZE-1)) & ~(MAX_INSTR_SIZE-1) );
+    AsmCodeBuffer = buff->buf;
     ensureBufferReflectsCurToken();
     if( isId( CurToken ) && strcmp( Buffer, "__emit" ) == 0 ) {
         strcpy( line, AsmSysDefineByte() );
@@ -142,9 +148,9 @@ static void getAsmLine( VBUF *buff )
         ensureBufferReflectsCurToken();
     }
     if( line[0] != '\0' ) {
-        AsmSysParseLine( line );
+        AsmLine( line );
     }
-    VbufUsed( buff, AsmSysAddress() );
+    VbufUsed( buff, AsmCodeAddress );
     if( CurToken == T_SEMI_COLON ) {
         // ; .ASM comment
         for(;;) {
@@ -205,7 +211,7 @@ PTREE AsmStmt( void )
     if( ( CurToken == skip_token ) || ( CurToken == skip_alt_token ) ) {
         NextToken();
     }
-    if( AsmSysAddress() != 0 ) {
+    if( AsmCodeAddress != 0 ) {
         fn_name = NameDummy();
         aux_info = AsmSysCreateAux( fn_name );
         uses_auto = AsmSysInsertFixups( &code_buffer );

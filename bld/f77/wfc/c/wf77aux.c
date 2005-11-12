@@ -43,7 +43,7 @@
 #include "progsw.h"
 #include "fio.h"
 #include "sdfile.h"
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
   #include "asminlin.h"
 #elif ( _CPU == _AXP || _CPU == _PPC )
   #include "asinline.h"
@@ -198,12 +198,8 @@ static  char            _wresppc[] = { "wresppc" };
 #define MAXIMUM_BYTESEQ 127
 
 #if ( _CPU == 8086 || _CPU == 386 )
-  #define ASM_CODE_BUFF_TYPE    char*
 #elif _CPU == _AXP || _CPU == _PPC
   #define AsmSymFini    AsmFini
-  #define CodeBuffer    AsmCodeBuffer
-  #define Address       AsmCodeAddress
-  #define ASM_CODE_BUFF_TYPE    uint_32*
 #else
   #error Unknown Target
 #endif
@@ -1386,11 +1382,11 @@ static  void    GetByteSeq( void ) {
             if( *(TokEnd - sizeof( char )) != '"' )
                 Suicide();
             *(char *)(TokEnd - sizeof( char )) = NULLCHAR;
-            Address = seq_len;
-            CodeBuffer = (ASM_CODE_BUFF_TYPE)&buff[0];
+            AsmCodeAddress = seq_len;
+            AsmCodeBuffer = buff;
             AsmLine( &TokStart[1] );
-            if( Address <= MAXIMUM_BYTESEQ ) {
-                seq_len = Address;
+            if( AsmCodeAddress <= MAXIMUM_BYTESEQ ) {
+                seq_len = AsmCodeAddress;
             } else {
                 Error( PR_BYTE_SEQ_LIMIT );
                 Suicide();

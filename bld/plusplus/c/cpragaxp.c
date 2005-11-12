@@ -233,24 +233,6 @@ void AsmSysDone( void )
     PragEnding( FALSE );
 }
 
-uint_32 AsmSysAddress( void )
-/***************************/
-{
-    return AsmCodeAddress;
-}
-
-void AsmSysSetCodeBuffer( void *buff )
-/************************************/
-{
-    AsmCodeBuffer = buff;
-}
-
-void AsmSysParseLine( char *line )
-/********************************/
-{
-    AsmLine( line );
-}
-
 enum sym_state AsmQueryExternal( char *name )
 /*******************************************/
 {

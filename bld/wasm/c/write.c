@@ -813,7 +813,7 @@ static void write_ledata( void )
 
     if( BufSize > 0 ) {
         objr = ObjNewRec( CMD_LEDATA );
-        ObjAttachData( objr, CodeBuffer, BufSize );
+        ObjAttachData( objr, AsmCodeBuffer, BufSize );
         objr->d.ledata.idx = CurrSeg->seg->e.seginfo->segrec->d.segdef.idx;
         objr->d.ledata.offset = CurrSeg->seg->e.seginfo->start_loc;
         if( objr->d.ledata.offset > 0xffffUL )
@@ -1075,7 +1075,7 @@ void WriteObjModule( void )
     unsigned long       prev_total;
     unsigned long       curr_total;
 
-    CodeBuffer = codebuf;
+    AsmCodeBuffer = codebuf;
 
     write_init();
 

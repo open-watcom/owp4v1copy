@@ -37,8 +37,6 @@
 #include "asmstmt.h"
 #include "scan.h"
 
-local   void    AsmSysAddCodeByte( unsigned char );
-
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
 
@@ -148,23 +146,23 @@ local int GetByteSeq( void )
     uses_auto = 0;
     for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            AsmSysParseLine( Buffer );
+            AsmLine( Buffer );
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
             }
         } else if( CurToken == T_CONSTANT ) {
-            AsmSysAddCodeByte( Constant );
+            AsmCodeBuffer[AsmCodeAddress++] = Constant;
             NextToken();
         } else {
             break;
         }
-        if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
+        if( AsmCodeAddress > MAXIMUM_BYTESEQ ) {
             if( !too_many_bytes ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 too_many_bytes = 1;
             }
-            AsmSysSetCodeAddr( 0 ); // reset index to we don't overrun buffer
+            AsmCodeAddress = 0; // reset index to we don't overrun buffer
         }
     }
     if( too_many_bytes ) {
@@ -173,7 +171,7 @@ local int GetByteSeq( void )
         risc_byte_seq *seq;
         uint_32       len;
 
-        len = AsmSysGetCodeAddr();
+        len = AsmCodeAddress;
         seq = (risc_byte_seq *)CMemAlloc( sizeof( risc_byte_seq ) + len );
         seq->relocs = GetFixups();
         seq->length = len;
@@ -378,34 +376,6 @@ void AsmSysFini( void )
 }
 
 
-uint_32 AsmSysGetCodeAddr( void )
-/*******************************/
-{
-    return( AsmCodeAddress );
-}
-
-
-void AsmSysSetCodeAddr( uint_32 len )
-/***********************************/
-{
-    AsmCodeAddress = len;
-}
-
-
-local void AsmSysAddCodeByte( unsigned char byte )
-/************************************************/
-{
-    AsmCodeBuffer[AsmCodeAddress++] = byte;
-}
-
-
-void AsmSysParseLine( char *line )
-/********************************/
-{
-    AsmLine( line );
-}
-
-
 void AsmSysMakeInlineAsmFunc( int too_many_bytes )
 /************************************************/
 {
@@ -416,7 +386,7 @@ void AsmSysMakeInlineAsmFunc( int too_many_bytes )
     auto char           name[8];
 
     uses_auto = 0;
-    code_length = AsmSysGetCodeAddr();
+    code_length = AsmCodeAddress;
     if( code_length != 0 ) {
         sprintf( name, "F.%d", AsmFuncNum );
         ++AsmFuncNum;

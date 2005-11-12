@@ -32,6 +32,12 @@
 #include "pragdefn.h"
 #include "asmstmt.h"
 
+#if _INTEL_CPU
+#include "asminlin.h"
+#else
+#include "asinline.h"
+#endif
+
 static int EndOfAsmStmt( void )
 /*****************************/
 {
@@ -83,7 +89,7 @@ static void GetAsmLine( void )
     }
     TokenLine = AsmLineNo;
     if( *buf != '\0' ) {
-        AsmSysParseLine( buf );
+        AsmLine( buf );
     }
     CompFlags.pre_processing = 0;
 }
@@ -106,13 +112,13 @@ void AsmStmt( void )
         NextToken();
         for(;;) {               // grab assembler lines
             GetAsmLine();
-            if( AsmSysGetCodeAddr() > MAXIMUM_BYTESEQ ) {
+            if( AsmCodeAddress > MAXIMUM_BYTESEQ ) {
                 if( ! too_many_bytes ) {
                     CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                     too_many_bytes = 1;
                 }
                 // reset index to we don't overrun buffer
-                AsmSysSetCodeAddr( 0 );
+                AsmCodeAddress = 0;
             }
             if( CurToken == T_RIGHT_BRACE )
                 break;

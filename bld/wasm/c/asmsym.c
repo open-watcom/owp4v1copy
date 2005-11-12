@@ -181,7 +181,7 @@ struct asm_sym *AsmLookup( char *name )
             return( sym );
         }
 #else
-        sym->addr = Address;
+        sym->addr = AsmCodeAddress;
 #endif
     } else {
         AsmError( NO_MEMORY );

@@ -47,9 +47,6 @@ extern void         AsmSysUsesAuto( void );
 extern void         AsmSysInit( void );
 extern void         AsmSysFini( void );
 extern void         AsmSysDone( void );
-extern uint_32      AsmSysAddress( void );
-extern void         AsmSysSetCodeBuffer( void * );
-extern void         AsmSysParseLine( char * );
 extern char const   *AsmSysDefineByte( void );
 extern void         AsmSysCopyCode( void );
 

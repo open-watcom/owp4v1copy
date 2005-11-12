@@ -260,7 +260,7 @@ int jmp( expr_list *opndx )
 #else
             addr = sym->addr;
 #endif
-            addr -= ( Address + 2 );  // calculate the displacement
+            addr -= ( AsmCodeAddress + 2 );  // calculate the displacement
             addr += Code->data[Opnd_Count];
             switch( Code->info.token ) {
             case T_JCXZ:

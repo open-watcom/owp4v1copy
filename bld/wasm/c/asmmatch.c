@@ -922,7 +922,7 @@ static void AddLinnumDataRef( void )
     if( LineNumber < 0x8000 )  {
         curr = AsmAlloc( sizeof( struct linnum_data ) );
         curr->number = LineNumber;
-        curr->offset = Address;
+        curr->offset = AsmCodeAddress;
 
         AddLinnumData( curr );
     }

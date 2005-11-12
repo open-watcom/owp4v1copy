@@ -132,8 +132,8 @@ static void PatchCodeBuffer( struct asmfixup *fixup, unsigned size )
     long    disp;
     char    *dst;
 
-    dst = fixup->fixup_loc + CodeBuffer;
-    disp = fixup->offset + Address - fixup->fixup_loc - size;
+    dst = fixup->fixup_loc + AsmCodeBuffer;
+    disp = fixup->offset + AsmCodeAddress - fixup->fixup_loc - size;
     for( ; size > 0; size-- ) {
         *(dst++) = disp;
         disp >>= 8;
@@ -192,7 +192,7 @@ static int DoPatch( struct asm_sym *sym, struct asmfixup *fixup )
     case FIX_RELOFF8:
         size++;
         // calculate the displacement
-        disp = fixup->offset + Address - fixup->fixup_loc - size;
+        disp = fixup->offset + AsmCodeAddress - fixup->fixup_loc - size;
         max_disp = (1UL << ((size * 8)-1)) - 1;
         if( disp > max_disp || disp < (-max_disp-1) ) {
 #ifndef _WASM_
@@ -286,7 +286,7 @@ void mark_fixupp( unsigned long determinant, int index )
     
     fixup = InsFixups[index];
     if( fixup != NULL ) {
-        fixup->fixup_loc = Address;
+        fixup->fixup_loc = AsmCodeAddress;
 #ifdef _WASM_
         // fixup->offset = Code->data[index];
         // Code->data[index] = 0; // fixme
@@ -395,7 +395,7 @@ struct fixup *CreateFixupRec( int index )
     
     fixnode->loader_resolved = FALSE;
     
-    fixnode->loc_offset = Address - GetCurrSegStart();
+    fixnode->loc_offset = AsmCodeAddress - GetCurrSegStart();
     
     /*------------------------------------*/
     /* Determine the Target and the Frame */
