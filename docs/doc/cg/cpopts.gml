@@ -5255,12 +5255,12 @@ will be predefined if "ou" is selected.
 .ix 'fastest code'
 .ix 'execution' 'fastest'
 &x86only.
-The "obiklmr" and "s" (no stack overflow checking) options are
+The "obmiler" and "s" (no stack overflow checking) options are
 selected.
 .if '&alpha' eq 'AXP' .do begin
 .np
 &AXPonly.
-The "oilr" and "s" (no stack overflow checking) options are selected.
+The "obiler" and "s" (no stack overflow checking) options are selected.
 .do end
 .do end
 .*

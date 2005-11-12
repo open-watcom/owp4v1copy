@@ -80,14 +80,14 @@ the code.
 The default is to select code sequences which strike a balance between
 size and speed.
 .np
-Option "ox" is equivalent to "obiklmr" and "s" which causes the
+Option "ox" is equivalent to "obmiler" and "s" which causes the
 compiler/code generator to
 do branch prediction ("ob"),
-expand intrinsic functions in-line ("oi"),
-enable control flow prologues and epilogues ("ok"),
-perform loop optimizations ("ol"),
 generate 387 instructions in-line for math functions such as sin, cos,
 sqrt ("om"),
+expand intrinsic functions in-line ("oi"),
+perform loop optimizations ("ol"),
+expand small user functions in-line ("oe"),
 reorder instructions to avoid pipeline stalls ("or"),
 and to not generate any stack overflow checking ("s").
 Option "or" is very important for generating fast code for the Pentium
