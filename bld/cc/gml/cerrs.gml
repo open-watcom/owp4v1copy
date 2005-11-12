@@ -1968,6 +1968,11 @@ The tokens displayed in the message should help you to determine the problem.
 A syntax error has been detected.
 The compiler is still expecting more input when it reached the
 end of the source program.
+:MSGSYM. ERR_BAD_REGISTER_NAME
+:MSGTXT. Invalid register name '%s' in #pragma
+:MSGJTXT. Invalid register name '%s' in #pragma
+.np
+The register name is invalid/unknown.
 :eMSGGRP. Errs
 :cmt -------------------------------------------------------------------
 :MSGGRP. Info

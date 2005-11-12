@@ -232,7 +232,7 @@ local void GetLinkInfo()
 
 local void GetParmInfo()
     {
-        if( PragSet() != T_NULL ) {
+        if( PragRegSet() != T_NULL ) {
             PragManyRegSets();
         }
     }

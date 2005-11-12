@@ -1197,26 +1197,34 @@ static int GetByteSeq(
 hw_reg_set PragRegName(         // GET REGISTER NAME
     char *str )                 // - register
 {
-    register int i;
+    register int index;
     register char *p;
     hw_reg_set      name;
 
-    if( *str == '_' ) {
-        ++str;
+    if( *str == '\0' ) {
+        HW_CAsgn( name, HW_EMPTY );
+        return( name );
     }
     if( *str == '_' ) {
         ++str;
+        if( *str == '_' ) {
+            ++str;
+        }
     }
-    i = 0;
+    index = 0;
     p = Registers;
     while( *p != '\0' ) {
-        if( stricmp( p, str ) == 0 ) return( RegBits[ i ] );
-        i++;
-        while( *p++ != '\0' );
+        if( stricmp( p, str ) == 0 )
+            return( RegBits[ index ] );
+        index++;
+        while( *p++ != '\0' ) {
+            ;
+        }
     }
     if( strcmp( str, "8087" ) == 0 ) {
         HW_CAsgn( name, HW_FLTS );
     } else {
+        CErr2p( ERR_BAD_REGISTER_NAME, str );
         HW_CAsgn( name, HW_EMPTY );
     }
     return( name );

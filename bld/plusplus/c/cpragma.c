@@ -1418,13 +1418,13 @@ int PragSet(                    // GET ENDING PRAGMA DELIMITER
     int retn;                   // - delimiter
 
     switch( CurToken ) {
-      case  T_LEFT_BRACKET :
+    case  T_LEFT_BRACKET :
         retn = T_RIGHT_BRACKET;
         break;
-      case T_LEFT_BRACE :
+    case T_LEFT_BRACE :
         retn = T_RIGHT_BRACE;
         break;
-      default :
+    default :
         retn = T_NULL;
         break;
     }
@@ -1442,14 +1442,12 @@ hw_reg_set PragRegList(         // GET PRAGMA REGISTER SET
     int close;                  // - ending delimiter
 
     HW_CAsgn( res, HW_EMPTY );
-    HW_CAsgn( reg, HW_EMPTY );
     close = PragSet();
     if( close != T_NULL ) {
         PPState = PPS_EOL;
         NextToken();
-        for(;;) {
+        for( ; CurToken != close; ) {
             reg = PragRegName( Buffer );
-            if( HW_CEqual( reg, HW_EMPTY ) ) break;
             HW_TurnOn( res, reg );
             NextToken();
         }

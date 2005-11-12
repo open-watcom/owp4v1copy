@@ -36,6 +36,7 @@
 #include "asinline.h"
 #include "asmstmt.h"
 #include "scan.h"
+#include <ctype.h>
 
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
@@ -243,7 +244,7 @@ static void GetPdata( void )
 static void GetParmInfo( void )
 /*****************************/
 {
-    if( PragSet() != T_NULL ) {
+    if( PragRegSet() != T_NULL ) {
         PragManyRegSets();
     }
 }
@@ -336,25 +337,56 @@ void PragAux( void )
 hw_reg_set PragRegName( char *str )
 /*********************************/
 {
-    int         i;
+    int         index;
     char        *p;
     hw_reg_set  name;
 
+    if( *str == '\0' ) {
+        HW_CAsgn( name, HW_EMPTY );
+        return( name );
+    }
     if( *str == '_' ) {
         ++str;
         if( *str == '_' ) {
             ++str;
         }
     }
-    i = 0;
-    p = Registers;
-    while( *p != '\0' ) {
-        if( stricmp( p, str ) == 0 )
-            return( RegBits[ i ] );
-        i++;
-        while( *p++ != '\0' )
-            ;
+    if( *str == '$' ) {
+        ++str;
+        // search alias name
+        p = Registers;
+        index = *(p++);
+        while( *p != '\0' ) {
+            if( strcmp( p, str ) == 0 )
+                return( RegBits[ index ] );
+            while( *(p++) != '\0' )
+                ;
+            index = *(p++);
+        }
+        // decode regular register name
+        if( *str == 'r' )
+            ++str;
+        // decode regular register index
+        if( isdigit( *str ) ) {
+            index = atoi( str );
+            if( str[ 1 ] == '\0' ) {
+                //  0....9
+                if(( index > 0 )
+                  || ( index == 0 ) && ( str[ 0 ] == '0' )) {
+                    return( RegBits[ index ] );
+                }
+            } else if( str[ 2 ] == '\0' ) {
+                // 10....31
+                if(( index > 9 ) && ( index < 32 )) {
+                    return( RegBits[ index ] );
+                }
+            }
+        }
+        if( *(str - 1) == 'r' )
+            --str;
+        --str;
     }
+    CErr2p( ERR_BAD_REGISTER_NAME, str );
     HW_CAsgn( name, HW_EMPTY );
     return( name );
 }

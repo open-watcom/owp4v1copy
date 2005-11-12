@@ -46,3 +46,46 @@ hw_reg_set DefaultLinkage[] = {
         HW_D( HW_R20 ),
         HW_D( HW_R21 ),
 };
+
+#define NC '\0'
+
+char Registers[] = {
+     1,        's','p',NC,
+     2,        'r','t','o','c',NC,
+     0,        NC
+};
+
+hw_reg_set RegBits[] ={
+    HW_D( HW_R0 ),
+    HW_D( HW_R1 ),
+    HW_D( HW_R2 ),
+    HW_D( HW_R3 ),
+    HW_D( HW_R4 ),
+    HW_D( HW_R5 ),
+    HW_D( HW_R6 ),
+    HW_D( HW_R7 ),
+    HW_D( HW_R8 ),
+    HW_D( HW_R9 ),
+    HW_D( HW_R10 ),
+    HW_D( HW_R11 ),
+    HW_D( HW_R12 ),
+    HW_D( HW_R13 ),
+    HW_D( HW_R14 ),
+    HW_D( HW_R15 ),
+    HW_D( HW_R16 ),
+    HW_D( HW_R17 ),
+    HW_D( HW_R18 ),
+    HW_D( HW_R19 ),
+    HW_D( HW_R20 ),
+    HW_D( HW_R21 ),
+    HW_D( HW_R22 ),
+    HW_D( HW_R23 ),
+    HW_D( HW_R24 ),
+    HW_D( HW_R25 ),
+    HW_D( HW_R26 ),
+    HW_D( HW_R27 ),
+    HW_D( HW_R28 ),
+    HW_D( HW_R29 ),
+    HW_D( HW_R30 ),
+    HW_D( HW_R31 ),
+};

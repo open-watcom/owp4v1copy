@@ -721,26 +721,34 @@ local int GetByteSeq( void )
 hw_reg_set PragRegName( char *str )
 /*********************************/
 {
-    int         i;
+    int         index;
     char        *p;
     hw_reg_set  name;
 
+    if( *str == '\0' ) {
+        HW_CAsgn( name, HW_EMPTY );
+        return( name );
+    }
     if( *str == '_' ) {
         ++str;
         if( *str == '_' ) {
             ++str;
         }
     }
-    i = 0;
+    index = 0;
     p = Registers;
     while( *p != '\0' ) {
-        if( stricmp( p, str ) == 0 ) return( RegBits[ i ] );
-        i++;
-        while( *p++ != '\0' ) {;}
+        if( stricmp( p, str ) == 0 )
+            return( RegBits[ index ] );
+        index++;
+        while( *p++ != '\0' ) {
+            ;
+        }
     }
     if( strcmp( str, "8087" ) == 0 ) {
         HW_CAsgn( name, HW_FLTS );
     } else {
+        CErr2p( ERR_BAD_REGISTER_NAME, str );
         HW_CAsgn( name, HW_EMPTY );
     }
     return( name );
@@ -780,7 +788,7 @@ local void GetParmInfo( void )
         } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
             CurrInfo->cclass |= LOAD_DS_ON_CALL;
             have.f_loadds = 1;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
+        } else if( !have.f_list && PragRegSet() != T_NULL ) {
             PragManyRegSets();
             have.f_list = 1;
         } else {
@@ -808,7 +816,7 @@ local void GetRetInfo( void )
             have.f_no8087 = 1;
             HW_CTurnOff( CurrInfo->returns, HW_FLTS );
             CurrInfo->cclass |= NO_8087_RETURNS;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
+        } else if( !have.f_list && PragRegSet() != T_NULL ) {
             have.f_list = 1;
             CurrInfo->cclass |= SPECIAL_RETURN;
             CurrInfo->returns = PragRegList();
@@ -849,7 +857,7 @@ local void GetSTRetInfo( void )
         } else if( !have.f_allocs && PragRecog( "caller" ) ) {
             have.f_allocs = 1;
             CurrInfo->cclass &= ~ROUTINE_RETURN;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
+        } else if( !have.f_list && PragRegSet() != T_NULL ) {
             have.f_list = 1;
             CurrInfo->cclass |= SPECIAL_STRUCT_RETURN;
             CurrInfo->streturn = PragRegList();
@@ -883,7 +891,7 @@ local void GetSaveInfo( void )
         } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
             CurrInfo->cclass |= NO_MEMORY_CHANGED;
             have.f_nomemory = 1;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
+        } else if( !have.f_list && PragRegSet() != T_NULL ) {
             modlist = PragRegList();
             have.f_list = 1;
         } else {

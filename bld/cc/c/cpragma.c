@@ -595,10 +595,12 @@ void PragObjNameInfo( void )
     }
 }
 
-int PragSet( void )
+TOKEN PragRegSet( void )
 {
-    if( CurToken == T_LEFT_BRACKET ) return( T_RIGHT_BRACKET );
-    if( CurToken == T_LEFT_BRACE ) return( T_RIGHT_BRACE );
+    if( CurToken == T_LEFT_BRACKET )
+        return( T_RIGHT_BRACKET );
+    if( CurToken == T_LEFT_BRACE )
+        return( T_RIGHT_BRACE );
     return( T_NULL );
 }
 
@@ -606,18 +608,23 @@ int PragSet( void )
 hw_reg_set PragRegList( void )
 {
     hw_reg_set  res, reg;
-    int         close;
+    TOKEN       close;
+    char        buf[80];
 
     HW_CAsgn( res, HW_EMPTY );
     HW_CAsgn( reg, HW_EMPTY );
-    close = PragSet();
+    close = PragRegSet();
     if( close != T_NULL ) {
         CompFlags.pre_processing = 1;       /* enable macros */
         NextToken();
-        for(;;) {
-            reg = PragRegName( Buffer );
-            if( HW_CEqual( reg, HW_EMPTY ) ) break;
-            HW_TurnOn( res, reg );
+        *buf = '\0';
+        for( ; CurToken != close; ) {
+            strcat( buf, Buffer );
+            if( CurToken != T_BAD_CHAR ) {
+                reg = PragRegName( buf );
+                HW_TurnOn( res, reg );
+                *buf = '\0';
+            }
             NextToken();
         }
         CompFlags.pre_processing = 2;

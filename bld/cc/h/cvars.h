@@ -100,7 +100,7 @@ global  SYMPTR  *PCH_SymArray;  // array of symbol table pointers from PCH
 global  int     PCH_MaxSymHandle;// number of symbols in PCH_SymArray
 global  char    *ScanCharPtr;   // used by character scanning routines
 global  int     DebugFlag;
-global  enum TOKEN  CurToken;
+global  TOKEN   CurToken;
 global  int     BadTokenInfo;
 global  int     TokenLen;
 global  int     MTokenLen;      /* macro token length */
@@ -152,7 +152,7 @@ global  int     NestLevel;      /* pre-processing level of #if */
 global  int     SkipLevel;      /* pre-processing level of #if to skip to */
 global  int     SymLevel;       /* current lex level (# of nested {) */
 global  int     HashValue;      /* hash value for identifier */
-global enum TOKEN KwHashValue;    /* hash value for keyword */
+global  TOKEN   KwHashValue;    /* hash value for keyword */
 global  int     MacHashValue;   /* hash value for macro name */
 global  char    *SavedId;       /* saved id when doing look ahead */
 global  int     SavedHash;      /* hash value for saved id */
@@ -694,7 +694,7 @@ extern  SYM_HASHPTR SymHashAlloc(unsigned);
 
 //cmath2.c
 extern  TREEPTR AddOp(TREEPTR,TOKEN,TREEPTR);
-extern   TREEPTR InitAsgn( TYPEPTR,TREEPTR );
+extern  TREEPTR InitAsgn( TYPEPTR,TREEPTR );
 extern  TREEPTR AsgnOp(TREEPTR,TOKEN,TREEPTR);
 extern  TREEPTR BinOp(TREEPTR,TOKEN,TREEPTR);
 extern  TREEPTR CnvOp(TREEPTR,TYPEPTR,int);
@@ -748,7 +748,7 @@ extern  int     PragRecog(char *);              /* cpragma */
 extern  hw_reg_set PragRegList(void);           /* cpragma */
 extern  void    PragManyRegSets(void);          /* cpragma */
 extern  void    PragCurrAlias(void);            /* cpragma */
-extern  int     PragSet(void);                  /* cpragma */
+extern  TOKEN   PragRegSet(void);               /* cpragma */
 extern  void    ChkPragmas(void);               /* cpragma */
 extern  void    CreateAux(char *);              /* cpragma */
 extern  void    SetCurrInfo(void);              /* cpragma */

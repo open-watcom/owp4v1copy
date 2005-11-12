@@ -44,8 +44,8 @@ int sys_pipe( u_long func, u_long r_4 );
     "syscall"                                   \
     "sw     $v0,0($s0)"                         \
     "sw     $v1,4($s0)"                         \
-    parm [r2] [r4]                              \
-    value [r2];
+    parm [$v0] [$a0]                            \
+    value [$v0];
 
 _WCRTLINK int pipe( int __fildes[2] )
 {

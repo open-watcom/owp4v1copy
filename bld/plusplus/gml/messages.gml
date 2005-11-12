@@ -11922,3 +11922,9 @@ struct A {
 :MSGTXT. candidate defined %L
 :MSGJTXT.
 :INFO.
+
+:MSGSYM. ERR_BAD_REGISTER_NAME
+:MSGTXT. Invalid register name '%s' in #pragma
+:MSGJTXT.
+The register name is invalid/unknown.
+

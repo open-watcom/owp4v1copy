@@ -45,7 +45,7 @@
 u_long get_a3( void );
 #pragma aux get_a3 =                            \
     "move   $v0,$a3"                            \
-    value [r2];
+    value [$v0];
 
 
 #define __syscall_return( type, res )                   \
@@ -317,35 +317,35 @@ u_long get_a3( void );
 u_long sys_call0( u_long func );
 #pragma aux sys_call0 =                         \
     "syscall"                                   \
-    parm [r2]                                   \
-    value [r2];
+    parm [$v0]                                  \
+    value [$v0];
 
 u_long sys_call1( u_long func, u_long r_4 );
 #pragma aux sys_call1 =                         \
     "syscall"                                   \
-    parm [r2] [r4]                              \
-    value [r2];
+    parm [$v0] [$a0]                            \
+    value [$v0];
 
 u_long sys_call2( u_long func, u_long r_4, u_long r_5 );
 #pragma aux sys_call2 =                         \
     "syscall"                                   \
-    parm [r2] [r4] [r5]                         \
-    value [r2];
+    parm [$v0] [$a0] [$a1]                      \
+    value [$v0];
 
 u_long sys_call3( u_long func, u_long r_4, u_long r_5, u_long r_6 );
 #pragma aux sys_call3 =                         \
     "syscall"                                   \
-    parm [r2] [r4] [r5] [r6]                    \
-    value [r2];
+    parm [$v0] [$a0] [$a1] [$a2]                \
+    value [$v0];
 
 u_long sys_call4( u_long func, u_long r_4, u_long r_5, u_long r_6, u_long r_7 );
 #pragma aux sys_call4 =                         \
     "syscall"                                   \
-    parm [r2] [r4] [r5] [r6] [r7]               \
-    value [r2];
+    parm [$v0] [$a0] [$a1] [$a2] [$a3]          \
+    value [$v0];
 
 u_long sys_call5( u_long func, u_long r_4, u_long r_5, u_long r_6, u_long r_7, u_long arg5 );
 #pragma aux sys_call5 =                         \
     "syscall"                                   \
-    parm [r2] [r4] [r5] [r6] [r7]               \
-    value [r2];
+    parm [$v0] [$a0] [$a1] [$a2] [$a3]          \
+    value [$v0];
