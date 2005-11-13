@@ -31,6 +31,9 @@
 
 
 #include "plusplus.h"
+
+#include "compcfg.h"
+
 #include "cgfront.h"
 #include "codegen.h"
 #include "rtfuncod.h"
@@ -40,7 +43,6 @@
 #include "vstk.h"
 #include "name.h"
 #include "pcheader.h"
-#include "langenv.h"
 
 
 static SYMBOL module_init_func; // function to perform module-initialization

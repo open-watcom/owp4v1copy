@@ -31,6 +31,9 @@
 
 
 #include "plusplus.h"
+
+#include "compcfg.h"
+
 #include "cgfront.h"
 #include "ring.h"
 #include "codegen.h"

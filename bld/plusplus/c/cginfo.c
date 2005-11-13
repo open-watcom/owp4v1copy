@@ -32,6 +32,9 @@
 
 #include "plusplus.h"
 
+#include "compcfg.h"
+#include "tgtenv.h"
+
 #include <process.h>
 #include <limits.h>
 
@@ -64,7 +67,6 @@
 #include "cginmisc.h"
 #include "pragdefn.h"
 #include "specfuns.h"
-#include "compcfg.h"
 #include "autodept.h"
 
 #if _CPU == 386

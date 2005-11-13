@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <watcom.h>
 #include <bool.h>
-#ifndef __RT__
+#if !defined( __RT__ ) && !defined( __WFL__ )
   #include <cgstd.h>
 #endif
 

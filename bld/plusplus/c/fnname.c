@@ -36,7 +36,6 @@
 #include <stddef.h>
 #include <ctype.h>
 
-#include "tgtenv.h"
 #include "ppintnam.h"
 #include "errdefns.h"
 #include "memmgr.h"

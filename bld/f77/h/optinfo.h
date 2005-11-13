@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+#include "compcfg.h"
 
 opt_entry       CompOptns[] = {
 #if defined( __WFL__ )
@@ -208,4 +209,5 @@ opt( "LGA",        CGOPT_GENASM,      CMD|CG,      &CGOption,  0 ),
 opt( "LGO",        CGOPT_LOGOWL,      CMD|CG,      &CGOption,  0 ),
 #endif
 opt( "LGC",        CGOPT_ECHOAPI,     CMD|CG,      &CGOption,  0 ),
-opt( NULL,         0,                0,           NULL,       0 ) };
+opt( NULL,         0,                0,           NULL,       0 )
+};

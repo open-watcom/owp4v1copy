@@ -38,7 +38,6 @@
 #include "bglobal.h"
 #include "intcnv.h"
 #include "csetinfo.h"
-#include "compcfg.h"
 #include "fmemmgr.h"
 
 #include <stdlib.h>

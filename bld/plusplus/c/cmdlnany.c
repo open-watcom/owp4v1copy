@@ -31,6 +31,8 @@
 
 #include "plusplus.h"
 
+#include "compcfg.h"
+
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -54,7 +56,6 @@
 #include "pdefn2.h"
 #include "initdefs.h"
 #include "brinfo.h"
-#include "langenv.h"
 
 #include "cmdlnpr1.gh"
 #include "cmdlnsys.h"

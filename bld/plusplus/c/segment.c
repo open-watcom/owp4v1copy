@@ -31,6 +31,10 @@
 
 
 #include "plusplus.h"
+
+#include "compcfg.h"
+#include "tgtenv.h"
+
 #include "cgfront.h"
 #include "cgback.h"
 #include "cgdata.h"
@@ -43,7 +47,6 @@
 #include "cginfo.h"
 #include "pcheader.h"
 #include "dbgsupp.h"
-#include "tgtenv.h"
 #include "initdefs.h"
 
 

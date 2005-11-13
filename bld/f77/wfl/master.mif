@@ -1,4 +1,8 @@
-proj_name = f77
+proj_name = wfl
+
+!ifndef wfl_autodepends
+wfl_autodepends = .AUTODEPEND
+!endif
 
 !include cproj.mif
 !include deftarg.mif
