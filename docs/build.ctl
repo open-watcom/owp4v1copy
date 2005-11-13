@@ -15,6 +15,7 @@
     <CPCMD> <DOC_ROOT>/readme.txt   <RELROOT>/rel2/readme.txt
     <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/rel2/freadme.txt
     <CPCMD> <DOC_ROOT>/areadme.txt  <RELROOT>/rel2/areadme.txt
+    <CPCMD> <DOC_ROOT>/instlic.txt  <RELROOT>/rel2/instlic.txt
    
 [ BLOCK <1> clean ]
 #==================
