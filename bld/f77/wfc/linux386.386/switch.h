@@ -30,16 +30,6 @@
 ****************************************************************************/
 
 
-#define _DEVELOPMENT    _OFF    // are we developing?
-#define _MEMTRACK       _OFF    // memory tracking during development?
 #define _EDITOR         _OFF    // editor interface available?
-#define _OBJECT         _OFF    // generate object files?
-#define _CSET           _ASCII  // character set?
 #define _CPU            386     // target machine?
-#define _OPSYS          _LINUX  // operating system?
 #define BY_FORTRAN_FRONT_END    // identify yourself
-
-#define _SysMemAlloc    malloc  // define system memory manager
-#define _SysMemFree     free
-#define _SysMemInit     SysMemInit
-#define _SysMemFini     SysMemFini

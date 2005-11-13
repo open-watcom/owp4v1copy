@@ -24,15 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compile SUBROUTINE, (type)FUNCTION, and related statements
 *
 ****************************************************************************/
 
 
-//
-// CPSUBPGM  : compile SUBROUTINE, (type)FUNCTION, and related statements
-//
 //      Note : "type{*n} FUNCTION" statement handled by PR_type
 
 #include "ftnstd.h"
@@ -43,8 +39,8 @@
 #include "namecod.h"
 #include "global.h"
 #include "cpopt.h"
+#include "fmemmgr.h"
 
-extern  void            *FMemAlloc(int);
 extern  void            AdvanceITPtr(void);
 extern  void            IntSubExpr(void);
 extern  bool            BitOn(unsigned_16);

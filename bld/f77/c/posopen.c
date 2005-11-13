@@ -33,13 +33,25 @@
 #include "fio.h"
 #include "posio.h"
 
+#if defined( __RT__ )
+#include "rmemmgr.h"
+
+#define MEM_ALLOC       RMemAlloc
+#define MEM_FREE        RMemFree
+
+#else
+#include "fmemmgr.h"
+
+#define MEM_ALLOC       FMemAlloc
+#define MEM_FREE        FMemFree
+
+#endif
+
 extern  void            FSetErr(int,b_file *);
 extern  void            FSetSysErr(b_file *);
 extern  void            IOOk(b_file *);
 extern  int             FSetCC(b_file *,char,char **);
 extern  int             SysWrite(b_file *,char *,uint);
-extern  void            *_SysMemAlloc(int);
-extern  void            _SysMemFree(void *);
 extern  int             FlushBuffer(b_file *);
 extern  bool            __DevicesCC(void);
 
@@ -125,7 +137,7 @@ b_file  *_AllocFile( int h, f_attrs attrs, long int fpos ) {
     }
     attrs &= ~CREATION_MASK;
     if( S_ISCHR( info.st_mode ) ) {
-        io = _SysMemAlloc( sizeof( a_file ) );
+        io = MEM_ALLOC( sizeof( a_file ) );
         // Turn off truncate just in case we turned it on by accident due to
         // a buggy NT dos box.  We NEVER want to truncate a device.
         attrs &= ~TRUNC_ON_WRITE;
@@ -133,11 +145,11 @@ b_file  *_AllocFile( int h, f_attrs attrs, long int fpos ) {
     } else {
         attrs |= BUFFERED;
         buff_size = IOBufferSize;
-        io = _SysMemAlloc( sizeof( b_file ) + IOBufferSize - MIN_BUFFER );
+        io = MEM_ALLOC( sizeof( b_file ) + IOBufferSize - MIN_BUFFER );
         if( ( io == NULL ) && ( IOBufferSize > MIN_BUFFER ) ) {
             // buffer is too big (low on memory) so use small buffer
             buff_size = MIN_BUFFER;
-            io = _SysMemAlloc( sizeof( b_file ) );
+            io = MEM_ALLOC( sizeof( b_file ) );
         }
     }
     if( io == NULL ) {
@@ -227,6 +239,6 @@ void    Closef( b_file *io ) {
         FSetSysErr( io );
         return;
     }
-    _SysMemFree( io );
+    MEM_FREE( io );
     IOOk( NULL );
 }

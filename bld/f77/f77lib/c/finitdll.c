@@ -24,20 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DLL initialization
 *
 ****************************************************************************/
 
 
-//
-// FINITDLL     : DLL initialization
-//
-
 #include "ftnstd.h"
 #include "fthread.h"
+#include "rmemmgr.h"
 
-extern  void            *RMemAlloc(uint);
 extern  int             __InitFThreadProcessing(void);
 
 extern  void            (*_ExceptionInit)();

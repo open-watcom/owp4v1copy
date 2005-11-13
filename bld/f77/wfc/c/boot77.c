@@ -35,6 +35,7 @@
 #include "bglobal.h"
 #include "errcod.h"
 #include "cpopt.h"
+#include "fmemmgr.h"
 
 extern  void            SDInitIO(void);
 extern  void            InitComIO(void);
@@ -54,8 +55,6 @@ extern  void            GetTrademark(char *);
 extern  void            GetMoreInfo(char *);
 extern  void            InitMacroProcessor(void);
 extern  void            FiniMacroProcessor(void);
-extern  void            FMemInit(void);
-extern  void            FMemFini(void);
 extern  void            SetDefaultOpts(void);
 extern  void            MsgBuffer(uint,char *,...);
 extern  void            ShowOptions(char *);

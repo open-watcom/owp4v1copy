@@ -24,26 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  resident symbol table utilities
 *
 ****************************************************************************/
 
-
-//
-// RSTUTILS     : resident symbol table utilities
-//
 
 #include "ftnstd.h"
 #include "global.h"
 #include "segsw.h"
 #include "cpopt.h"
 #include "errcod.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  void            FreeChain(void **);
 extern  void            *FreeLink(void *);
 extern  void            NameErr(int,sym_id);

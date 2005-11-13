@@ -24,21 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  temporary, label manager
 *
 ****************************************************************************/
 
 
-//
-// CGMAGIC   : temporary, label manager
-//
-
 #include "ftnstd.h"
 #include "fcgbls.h"
 #include "global.h"
-
-extern  void                    *FMemAlloc(int);
+#include "fmemmgr.h"
 
 
 label_id        NextLabel() {

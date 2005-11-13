@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compile EQUIVALENCE statement
 *
 ****************************************************************************/
 
-
-//
-// EQUIV     : compile EQUIVALENCE statement
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -40,6 +35,7 @@
 #include "errcod.h"
 #include "segsw.h"
 #include "namecod.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
@@ -61,8 +57,6 @@ extern  void            AdvanceITPtr(void);
 extern  bool            CIntExpr(void);
 extern  sym_id          LkSym(void);
 extern  com_eq          *STComEq(void);
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  intstar4        ITIntValue(itnode *);
 
 

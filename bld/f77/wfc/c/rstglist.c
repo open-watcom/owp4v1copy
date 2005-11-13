@@ -29,10 +29,6 @@
 ****************************************************************************/
 
 
-//
-// RSTGLIST  : global symbol table routines
-//
-
 #include "ftnstd.h"
 #include "ecflags.h"
 #include "errcod.h"
@@ -41,7 +37,7 @@
 #include "global.h"
 #include "progsw.h"
 #include "cpopt.h"
-
+#include "fmemmgr.h"
 
 #include <string.h>
 
@@ -56,7 +52,6 @@ extern  char            *STGetName(sym_id,char *);
 extern  int             AllocName(int);
 extern  intstar4        GetComBlkSize(sym_id);
 extern  void            SetComBlkSize(sym_id,intstar4);
-extern  pointer         FMemAlloc(int);
 extern  void            HashInsert(hash_entry *,unsigned,sym_id *,sym_id);
 extern  int             CalcHash(char *,int);
 

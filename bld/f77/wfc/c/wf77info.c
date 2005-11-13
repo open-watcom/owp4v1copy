@@ -104,8 +104,6 @@ extern  int             MakeName(char *,char *,char *);
 extern  char            *SDExtn(char *,char *);
 extern  cg_type         F772CGType(sym_id);
 extern  char            *SDFName(char *);
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  char            *STGetName(sym_id,char *);
 extern  char            *STExtractName(sym_id,char *);
 extern  void            Suicide(void);

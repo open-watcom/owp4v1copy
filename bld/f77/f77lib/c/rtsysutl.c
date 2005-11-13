@@ -37,6 +37,7 @@
 #include "fio.h"
 #include "posio.h"
 #include "fapptype.h"
+#include "rmemmgr.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -55,8 +56,6 @@ extern  void            ChkIOErr(ftnfile *);
 extern  bool            GetIOErr(ftnfile *);
 extern  void            SetEOF(void);
 extern  char            *JmpBlanks(char *);
-extern  void            *RMemAlloc(int);
-extern  void            RMemFree(void *);
 extern  void            IOErr(int,...);
 extern  file_handle     Openf(char *,int);
 extern  void            Closef(file_handle);

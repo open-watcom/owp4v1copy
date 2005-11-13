@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CG routines for assigning a cg_name to a temporary
 *
 ****************************************************************************/
 
-
-//
-// FCTEMP       : CG routines for assigning a cg_name to a temporary.
-//
 
 #include "ftnstd.h"
 #include "cg.h"
@@ -42,11 +37,10 @@
 #include "fcdata.h"
 #include "model.h"
 #include "cgprotos.h"
+#include "fmemmgr.h"
 
 //=========================================================================
 
-extern  void            FMemFree(void *);
-extern  void            *FMemAlloc(uint);
 extern  void            FreeChain(void **);
 
 static  tmp_handle      TmpList;

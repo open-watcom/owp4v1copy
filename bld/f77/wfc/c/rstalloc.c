@@ -32,11 +32,10 @@
 #include "ftnstd.h"
 #include "errcod.h"
 #include "global.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  void            FreeSFHeader(sym_id);
 extern  sym_id          STFree(sym_id);
 extern  void            FreeChain(void **);

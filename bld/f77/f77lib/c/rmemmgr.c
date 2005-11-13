@@ -29,23 +29,20 @@
 ****************************************************************************/
 
 
-#include "ftnstd.h"
+#include "rmemmgr.h"
 
-extern  void            *_SysMemAlloc(size_t);
-extern  void            _SysMemFree(void *);
+void            *RMemAlloc( size_t size ) {
+//===========================================
 
-void            *RMemAlloc( int size ) {
-//======================================
+    void     *ptr;
 
-    pointer     ptr;
-
-    ptr = _SysMemAlloc( size );
+    ptr = malloc( size );
     return( ptr );
 }
 
 
-void            RMemFree( pointer ptr ) {
+void            RMemFree( void *ptr ) {
 //=======================================
 
-    _SysMemFree( ptr );
+    free( ptr );
 }

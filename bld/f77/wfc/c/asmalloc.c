@@ -24,19 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  memory allocator for in-line assembler
 *
 ****************************************************************************/
 
 
-//
-// ASMALLOC     : memory allocator for in-line assembler
-//
-
-extern  void            *FMemAlloc(unsigned);
-extern  void            FMemFree(void *);
-
+#include "fmemmgr.h"
 
 void    *AsmAlloc( unsigned amount ) {
 //====================================

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  subprogram call F-Code processor
 *
 ****************************************************************************/
 
-
-//
-// FCCALL    : subprogram call F-Code processor
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -45,6 +40,7 @@
 #include "ifargs.h"
 #include "fcodes.h"
 #include "parmtype.h"
+#include "fmemmgr.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -94,7 +90,6 @@ extern  void            XPush(cg_name);
 extern  cg_name         XPop(void);
 extern  void            XPopCmplx(cg_cmplx *,cg_type);
 extern  cg_name         GetTypedValue(void);
-extern  void            FMemFree(pointer);
 extern  label_handle    GetLabel(int);
 extern  label_handle    GetStmtLabel(sym_id);
 extern  void            MakeSCB(sym_id,cg_name);
@@ -127,8 +122,6 @@ extern  bool            IntType(int);
 extern  void            FiniTmps(void);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  sym_id          FindArgShadow(sym_id);
-extern  void            *FMemAlloc(uint);
-extern  void            FMemFree(void *);
 extern  bool            ForceStatic(unsigned_16);
 extern  bool            SCBRequired(sym_id);
 extern  cg_type         PromoteToBaseType(cg_type);

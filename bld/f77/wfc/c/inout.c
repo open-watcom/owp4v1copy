@@ -38,6 +38,7 @@
 #include "omodes.h"
 #include "cioconst.h"
 #include "csetinfo.h"
+#include "fmemmgr.h"
 
 #include "banner.h"
 #ifdef _BANEXTRA
@@ -51,8 +52,6 @@
 
 extern  void            BISetSrcFile();
 extern  void            Suicide(void);
-extern  pointer         FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  void            InfoError(int,...);
 extern  void            Warning(int,...);
 extern  void            ComRead(void);

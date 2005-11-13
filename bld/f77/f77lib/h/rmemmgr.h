@@ -24,21 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  run-time library global macro definition
+* Description:  FORTRAN run-time memory manager routine prototypes
 *
 ****************************************************************************/
 
+#include <stdlib.h>
 
-#if defined( __386__ )
-#define _CPU 386
-#elif defined( M_I86 )
-#define _CPU 8086
-#elif defined( __AXP__ )
-#define _CPU _AXP
-#elif defined( __PPC__ )
-#define _CPU _PPC
-#else
-  #error Unknown platform
-#endif
-
-#define __INCL_ERRMSGS__        // include error messages
+extern void     *RMemAlloc( size_t size );
+extern void     RMemFree( void *ptr );

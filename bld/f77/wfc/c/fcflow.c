@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  simple control structure F-Code processor
 *
 ****************************************************************************/
 
-
-//
-// FCFLOW       : simple control structure F-Code processor
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -44,6 +39,7 @@
 #include "cgflags.h"
 #include "fcodes.h"
 #include "cpopt.h"
+#include "fmemmgr.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -80,8 +76,6 @@ extern  cg_name         SymAddr(sym_id);
 extern  cg_name         ImagPtr(cg_name,cg_type);
 extern  unsigned_16     GetU16(void);
 extern  pointer         GetPtr(void);
-extern  pointer         FMemAlloc(int);
-extern  void            FMemFree(pointer);
 extern  cg_type         F772CGType(sym_id);
 extern  cg_name         Concat(uint,cg_name);
 extern  bool            TypeCmplx(int);

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Process PARAMETER statement
 *
 ****************************************************************************/
 
-
-//
-// PARMETER  : Process PARAMETER statement.
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -41,6 +36,7 @@
 #include "global.h"
 #include "segsw.h"
 #include "cpopt.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
@@ -64,8 +60,6 @@ extern  void            CnvTo(itnode *,int,int);
 extern  void            IllName(sym_id);
 extern  void            IllType(sym_id);
 extern  void            NameErr(int,sym_id);
-extern  void            *FMemAlloc(uint);
-extern  void            FMemFree(void *);
 extern  void            CkSymDeclared(sym_id);
 
 

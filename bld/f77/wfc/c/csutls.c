@@ -24,26 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  utilities for processing control structures
 *
 ****************************************************************************/
 
-
-//
-// CSUTLS    : utilities for processing control structures
-//
 
 #include "ftnstd.h"
 #include "global.h"
 #include "errcod.h"
 #include "opr.h"
 #include "prdefn.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
-extern  void            *FMemAlloc(uint);
-extern  void            FMemFree(void *);
 extern  void            Error(int,...);
 extern  void            StmtExtension(uint);
 extern  void            StmtErr(int);

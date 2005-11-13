@@ -24,18 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DLL termination
 *
 ****************************************************************************/
 
 
-//
-// FTERMDLL     : DLL termination
-//
-
 #include "ftnstd.h"
 #include "fthread.h"
+#include "rmemmgr.h"
 
 extern  void            __FiniFThreadProcessing(void);
 

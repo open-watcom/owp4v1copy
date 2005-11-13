@@ -24,21 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  macro processor
 *
 ****************************************************************************/
 
-
-//
-// FMACROS      : macro processor
-//
 
 #include "ftnstd.h"
 #include "global.h"
 #include "progsw.h"
 #include "errcod.h"
 #include "cpopt.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
@@ -49,8 +45,6 @@ typedef struct macro_entry {
     char                name[1];
 } macro_entry;
 
-extern  void            *FMemAlloc(uint);
-extern  void            FMemFree(void *);
 extern  void            InfoError(uint,...);
 
 static  macro_entry     *MacroList;

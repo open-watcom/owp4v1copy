@@ -24,23 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Literal list
 *
 ****************************************************************************/
 
 
-//
-// RSTLit    : Literal list
-//
-
 #include "ftnstd.h"
 #include "global.h"
 #include "stmtsw.h"
+#include "fmemmgr.h"
 
 #include <string.h>
-
-extern  void            *FMemAlloc(int);
 
 
 sym_id  STLit( byte *string, int len ) {

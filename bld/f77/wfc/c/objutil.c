@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  emit object code
 *
 ****************************************************************************/
 
-
-//
-// OBJUTIL   : emit object code
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -44,6 +39,7 @@
 #include "cioconst.h"
 #include "fcodes.h"
 #include "fio.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 #include <process.h>
@@ -71,8 +67,6 @@ static  char            *ObjPtr;
 static  char            *ObjCode;
 static  char            *ObjEnd;
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  file_handle     SDOpen(char *,int);
 extern  void            SDClose(file_handle);
 extern  void            SDSeek(file_handle,int,int);

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  auxiliary information processing
 *
 ****************************************************************************/
 
-
-//
-// WF77AUX  : auxiliary information processing
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -43,6 +38,7 @@
 #include "progsw.h"
 #include "fio.h"
 #include "sdfile.h"
+#include "fmemmgr.h"
 #if _INTEL_CPU
   #include "asminlin.h"
 #elif ( _CPU == _AXP || _CPU == _PPC )
@@ -56,8 +52,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  int             KwLookUp(char **,int,char *,int,int);
 extern  int             MkHexConst(char *,char *,int);
 extern  void            Error(int,...);

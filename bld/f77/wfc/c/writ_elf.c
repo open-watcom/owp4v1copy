@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  code to generate ELF output
 *
 ****************************************************************************/
 
@@ -46,8 +45,6 @@
 
 #include <unistd.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree( void *p );
 extern  void            Suicide();
 extern  void            Error(int,...);
 extern  void            SDWrite(file_handle,byte *,int);

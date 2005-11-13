@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time utilities
 *
 ****************************************************************************/
 
-
-//
-// RTUTLS       : Run-time utilities
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -41,13 +36,12 @@
 #include "flagdefn.h"
 #include "units.h"
 #include "deffname.h"
+#include "rmemmgr.h"
 
 #include <string.h>
 
 extern  int             Spawn(void (*)());
 extern  void            Suicide(void);
-extern  pointer         RMemAlloc(int);
-extern  void            RMemFree(void *);
 extern  void            RTErr(int,...);
 extern  void            IOErr(int,...);
 extern  bool            Errf(ftnfile *);

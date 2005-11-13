@@ -24,21 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  thread proccessing functions
 *
 ****************************************************************************/
 
-
-//
-// FTHREAD      : thread proccessing functions
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
 #include "xfflags.h"
 #include "trcback.h"
 #include "fthread.h"
+#include "rmemmgr.h"
 
 #include <process.h>
 #include <stdlib.h>
@@ -49,8 +45,6 @@ extern  void            Suicide(void);
 extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
 extern  unsigned        RTSysInit(void);
-extern  void            *RMemAlloc(unsigned);
-extern  void            RMemFree(void *);
 extern  void            __InitFThreadData(fthread_data *);
 extern  unsigned        __InitFThreadProcessing(void);
 extern  void            __FiniFThreadProcessing(void);

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common/Equivalence resolution
 *
 ****************************************************************************/
 
-
-//
-// STRESOLV  : Common/Equivalence resolution
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -40,12 +35,12 @@
 #include "errcod.h"
 #include "progsw.h"
 #include "prdefn.h"
+#include "fmemmgr.h"
 
 extern  void            NameErr(int,sym_id);
 extern  void            NameStmtErr(int,sym_id,int);
 extern  void            NameTypeErr(int,sym_id);
 extern  void            NamNamErr(int,sym_id,sym_id);
-extern  void            FMemFree(void *);
 extern  void            STComDump(void);
 extern  bool            DoSubstring(intstar4,intstar4,int);
 extern  bool            DoSubscript(act_dim_list *,intstar4 *,intstar4 *);

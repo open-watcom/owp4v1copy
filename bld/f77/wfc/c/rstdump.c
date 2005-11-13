@@ -52,8 +52,6 @@ extern  bool            IsIntrinsic(unsigned_16);
 extern  sym_id          AddSP2GList(sym_id);
 extern  sym_id          AddCB2GList(sym_id);
 extern  unsigned_32     GetStmtNum(sym_id);
-extern  pointer         FMemAlloc(int);
-extern  void            FMemFree(pointer);
 extern  char            *STGetName(sym_id,char *);
 extern  char            *STNmListName(sym_id,char *);
 extern  sym_id          STFree(sym_id);

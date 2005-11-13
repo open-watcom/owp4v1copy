@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compile a program
 *
 ****************************************************************************/
 
-
-//
-// COMPPROG  : compile a program
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -48,7 +43,6 @@ extern  void            BIEnd();
 extern  void            BIStartSubProg();
 extern  void            BIResolveUndefTypes();
 extern  void            BIEndSubProg();
-extern  void            FMemFree(void *);
 extern  void            FrlInit(void **);
 extern  void            FrlFini(void **);
 extern  void            TrapInit(void);

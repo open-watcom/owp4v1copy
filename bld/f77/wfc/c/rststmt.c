@@ -24,20 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Statement number list
 *
 ****************************************************************************/
 
 
-//
-// RSTSTMT  : Statement number list
-//
-
 #include "ftnstd.h"
 #include "global.h"
+#include "fmemmgr.h"
 
-extern  void                    *FMemAlloc(int);
 extern  label_id                NextLabel(void);
 
 

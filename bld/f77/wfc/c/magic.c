@@ -24,20 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  temporary, static temporary manager
 *
 ****************************************************************************/
 
 
-//
-// MAGIC     : temporary, static temporary manager
-//
-
 #include "ftnstd.h"
 #include "global.h"
-
-extern  void            *FMemAlloc(int);
+#include "fmemmgr.h"
 
 #define TEMP_FLAGS      (SY_TYPE | SY_USAGE | SY_VARIABLE);
 

@@ -24,22 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Constant list
 *
 ****************************************************************************/
 
 
-//
-// RSTCONST  : Constant list
-//
-
 #include "ftnstd.h"
 #include "global.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
-extern  void            *FMemAlloc(int);
 extern  uint            TypeSize(uint);
 extern  unsigned        CalcHash(void *,int);
 extern  void            HashInsert(hash_entry *,unsigned,sym_id *,sym_id);

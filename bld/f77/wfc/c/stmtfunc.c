@@ -24,21 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  process statement functions
 *
 ****************************************************************************/
 
-
-//
-// STMTFUNC  : process statement functions.
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
 #include "namecod.h"
 #include "global.h"
 #include "stmtsw.h"
+#include "fmemmgr.h"
 
 extern  void            BIEndSF( sym_id ste_ptr );
 extern  void            GStartSF(void);
@@ -56,7 +52,6 @@ extern  bool            RecNOpn(void);
 extern  bool            RecComma(void);
 extern  bool            ReqName(int);
 extern  void            Error(int,...);
-extern  void            *FMemAlloc(uint);
 
 
 void    SFPrologue() {

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  processing for all looping structures
 *
 ****************************************************************************/
 
-
-//
-// CSLOOPS   : processing for all looping structures
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -40,8 +35,8 @@
 #include "opn.h"
 #include "global.h"
 #include "stmtsw.h"
+#include "fmemmgr.h"
 
-extern  void            *FMemAlloc(int);
 extern  void            Error(int,...);
 extern  void            Extension(int,...);
 extern  void            CkTypeDeclared(void);

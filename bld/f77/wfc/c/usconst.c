@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  upscan constant folding routines
 *
 ****************************************************************************/
 
-
-//
-// USCONST   : upscan constant folding routines
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -40,11 +35,10 @@
 #include "astype.h"
 #include "opn.h"
 #include "global.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
 extern  void            FreeITNodes(itnode *);
 extern  void            BadEqual(void);
 extern  void            AddConst(itnode *);

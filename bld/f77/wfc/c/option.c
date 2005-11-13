@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  command and source line option processing
 *
 ****************************************************************************/
 
-
-//
-// OPTION    : command and source line option processing
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -44,13 +39,12 @@
 #include "intcnv.h"
 #include "csetinfo.h"
 #include "compcfg.h"
+#include "fmemmgr.h"
 
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree( void *p );
 extern  bool            SetLst(bool);
 extern  void            LFNewPage(void);
 extern  void            ComPrint(void);

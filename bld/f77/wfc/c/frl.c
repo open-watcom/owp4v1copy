@@ -24,20 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  code to manage free lists for a given entity
 *
 ****************************************************************************/
 
 
-//
-// FRL       : code to manage free lists for a given entity
-//
-
 #include "ftnstd.h"
-
-extern  void            *FMemAlloc(int);
-extern  void            FMemFree(void *);
+#include "fmemmgr.h"
 
 
 void    *FrlAlloc( void ***head, int size ) {

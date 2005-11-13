@@ -24,23 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  resident symbol table manager
 *
 ****************************************************************************/
 
 
-//
-// RSTNLIST     : resident symbol table manager
-//
-
 #include "ftnstd.h"
 #include "global.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
 extern  uint                    AllocName(uint);
-extern  void                    *FMemAlloc(uint);
 extern  label_id                NextLabel(void);
 
 

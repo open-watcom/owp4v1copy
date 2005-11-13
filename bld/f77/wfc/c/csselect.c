@@ -24,24 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  processing for SELECT, CASE, OTHERWISE, and ENDSELECT
 *
 ****************************************************************************/
 
-
-//
-// CSSELECT     : processing for SELECT, CASE, OTHERWISE, and ENDSELECT
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
 #include "global.h"
 #include "opr.h"
+#include "fmemmgr.h"
 
 #include <limits.h>
 
-extern  void            *FMemAlloc(int);
 extern  void            Error(int,...);
 extern  void            Warning(int,...);
 extern  void            AddCSNode(byte);

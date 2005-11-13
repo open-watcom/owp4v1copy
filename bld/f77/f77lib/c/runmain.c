@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for run-time system
 *
 ****************************************************************************/
 
-
-//
-// RUNMAIN      : Mainline for run-time system
-//
 
 #include "ftnstd.h"
 #include "units.h"
@@ -41,11 +36,11 @@
 #include "errcod.h"
 #include "xfflags.h"
 #include "iotype.h"
+#include "rmemmgr.h"
 
 #include <string.h>
 
 extern  int             Spawn(void (*)());
-extern  void            RMemFree(void *);
 extern  void            DiscoFile(ftnfile *);
 extern  bool            Scrtched(ftnfile *);
 extern  void            CloseFile(ftnfile *);

@@ -31,4 +31,3 @@
 
 
 #define _CPU            8086    // target machine?
-#define _OBJECT         _OFF    // generate object files?

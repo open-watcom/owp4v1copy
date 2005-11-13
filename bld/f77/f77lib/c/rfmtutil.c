@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time formatted I/O utility routines
 *
 ****************************************************************************/
 
-
-//
-// RFMTUTIL     : Run-time formatted I/O utility routines
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -45,6 +40,7 @@
 #include "undefrtn.h"
 #include "fltcnv.h"
 #include "fmath.h"
+#include "rmemmgr.h"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -62,7 +58,6 @@ extern  void            R_F2E(extended,char *,int,int,bool,int,int,char);
 extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 extern  int             FmtS2F(char *,int,int,bool,int,int,extended *,bool,int *,bool);
 extern  void            *RChkAlloc(uint);
-extern  void            RMemFree(void *);
 extern  void            SetMaxPrec(int);
 extern  void            BToHS(char *,int,char *);
 extern  byte            Hex(byte);

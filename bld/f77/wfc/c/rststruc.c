@@ -34,11 +34,11 @@
 #include "segsw.h"
 #include "stmtsw.h"
 #include "errcod.h"
+#include "fmemmgr.h"
 
 #include <string.h>
 
 extern  uint                    AllocName(uint);
-extern  void                    *FMemAlloc(uint);
 extern  void                    FieldErr(uint,sym_id);
 extern  void                    StructErr(uint,sym_id);
 

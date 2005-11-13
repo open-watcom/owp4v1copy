@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compiler command line options related definition
 *
 ****************************************************************************/
 
@@ -294,7 +293,3 @@ typedef struct opt_entry {
     void        (*proc_rtn)();  // option processing routine
 #endif
 } opt_entry;
-
-#if _OBJECT == _ON
-  #define       _GenObjectFile()        (Options & (OPT_OBJECT | OPT_LINK))
-#endif
