@@ -122,6 +122,7 @@ void *_trmem_alloc( size_t, _trmem_who, _trmem_hdl );
 void _trmem_free( void *, _trmem_who, _trmem_hdl );
 void *_trmem_realloc( void *, size_t, _trmem_who, _trmem_hdl );
 void *_trmem_expand( void *, size_t, _trmem_who, _trmem_hdl );
+char *_trmem_strdup( const char *str, _trmem_who who, _trmem_hdl hdl );
 size_t _trmem_msize( void *, _trmem_hdl );
 
 

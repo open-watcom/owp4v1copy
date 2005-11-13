@@ -40,10 +40,10 @@ The assumptions that these routines make are:
             tracker (i.e. same memory handle)
 
 To use these routines compile trmemcvr.c into your program with the following
-compile options:  /dTRMEM /of+
+compile options:  -DTRMEM -of+
 
-If you leave off these options ,trmemcvr will use malloc, free, and realloc
-directly.
+If you leave off these options, trmemcvr will use malloc, free, realloc
+and strdup directly.
 
 No special options are required for routines that call the routine in trmemcvr.
 
@@ -60,10 +60,11 @@ extern void     TRMemOpen( void );
 extern void     TRMemRedirect( int );
 extern void     TRMemClose( void );
 
-/* change all calls to malloc, free, and realloc with calls to these */
+/* change all calls to malloc, free, realloc and strdup with calls to these */
 extern void *   TRMemAlloc( size_t size );
 extern void     TRMemFree( void * ptr );
 extern void *   TRMemRealloc( void * ptr, size_t size );
+extern char *   TRMemStrdup( const char * str );
 
 
 /* the rest of these functions are only available if trmemcvr was compiled */

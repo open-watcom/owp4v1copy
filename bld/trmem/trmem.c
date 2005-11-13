@@ -665,6 +665,19 @@ void *_trmem_expand( void *old, size_t size, _trmem_who who, _trmem_hdl hdl )
     return( ChangeAlloc( old, size, who, hdl, hdl->expand, "Expand" ) );
 }
 
+char *_trmem_strdup( const char *str, _trmem_who who, _trmem_hdl hdl )
+/********************************************************************/
+{
+    char    *mem;
+    size_t  len;
+
+    len = strlen( str ) + 1;
+    mem = _trmem_alloc( len, who, hdl );
+    if( mem )
+        memcpy( mem, str, len );
+    return( mem );
+}
+
 int _trmem_chk_range( void *start, size_t len,
                 _trmem_who who, _trmem_hdl hdl )
 /**********************************************/

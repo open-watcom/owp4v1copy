@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory tracker cover routines.
 *
 ****************************************************************************/
 
@@ -35,6 +34,7 @@
 #else
 #include <io.h>
 #endif
+#include <string.h>
 #include <malloc.h>
 #include "trmem.h"
 
@@ -109,6 +109,16 @@ extern void * TRMemRealloc( void * ptr, size_t size )
     return( _trmem_realloc( ptr, size, _trmem_guess_who(), TRMemHandle ) );
 #else
     return( realloc( ptr, size ) );
+#endif
+}
+
+extern char * TRMemStrdup( const char * str )
+/*******************************************/
+{
+#ifdef TRMEM
+    return( _trmem_strdup( str, _trmem_guess_who(), TRMemHandle ) );
+#else
+    return( strdup( str ) );
 #endif
 }
 
