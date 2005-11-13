@@ -37,8 +37,6 @@
 #include "targdef.h"
 #include "langenvd.h"
 
-#define VERSION         PRODUCTION
-
 #define _CPU            _AXP
 
 #define __TGT_SYS       __TGT_SYS_AXP_NT

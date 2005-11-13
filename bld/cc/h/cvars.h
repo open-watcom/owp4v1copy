@@ -51,9 +51,6 @@
 #ifndef _CPU
  #error _CPU macro not defined
 #endif
-#ifndef VERSION
- #error VERSION macro not defined
-#endif
 
 #if _CPU != 8086
  /* enable Structured Exception Handling for all 32-bit targets */

@@ -37,8 +37,6 @@
 #include "targdef.h"
 #include "langenvd.h"
 
-#define VERSION         PRODUCTION
-
 #define _CPU            _PPC
 
 #define __TGT_SYS       __TGT_SYS_PPC_NT
