@@ -40,21 +40,21 @@
 #include "rtinit.h"
 #include "iofhdr.h"
 
-static void __setiofEFGfmt() {
-    #ifndef IN_SLIB
-        __EFG_cnvs2d = __cnvs2d;
-        __EFG_cnvd2f = __cnvd2f;
-        __EFG_LDcvt  = __LDcvt;
-        __EFG_fcvt   = _fcvt;
-#ifdef _LONG_DOUBLE_
-        __EFG__FDLD   = __cnvd2ld;
+static void __setiofEFGfmt( void ) {
+#ifndef IN_SLIB
+    __EFG_cnvs2d = __cnvs2d;
+    __EFG_cnvd2f = __cnvd2f;
+    __EFG_LDcvt  = __LDcvt;
+    __EFG_fcvt   = _fcvt;
+  #ifdef _LONG_DOUBLE_
+    __EFG__FDLD  = __cnvd2ld;
+  #endif
 #endif
-    #endif
 }
 
 extern "C" {
     XI( __ppfltused_, __setiofEFGfmt, INIT_PRIORITY_LIBRARY )
-    #if !defined(__AXP__)
-        #pragma aux __ppfltused_ "*";
-    #endif
+#if !defined(__AXP__)
+    #pragma aux __ppfltused_ "*";
+#endif
 }

@@ -36,14 +36,11 @@
 #include "xfloat.h"
 
 extern std::ios::iostate __GetLDFloat( streambuf *, char *);
-#if 0
-extern void __LDFloatToString( char *, double const *, int, std::ios::fmtflags);
-#endif
 
 typedef void  (*_type_EFG_cnvs2d)( char *, double * );
 typedef int   (*_type_EFG_cnvd2f)( double *, float * );
 typedef void  (*_type_EFG_LDcvt)( long_double *, CVT_INFO *, char * );
-typedef char *(*_type_EFG_fcvt)( double, int, int *, int * );
+typedef char  *(*_type_EFG_fcvt)( double, int, int *, int * );
 #ifdef _LONG_DOUBLE_
 typedef void  (*_type_EFG__FDLD)( double _WCNEAR *, long_double _WCNEAR * );
 #endif
@@ -53,7 +50,7 @@ _WPRTLINK extern _type_EFG_cnvd2f __EFG_cnvd2f;
 _WPRTLINK extern _type_EFG_LDcvt  __EFG_LDcvt;
 _WPRTLINK extern _type_EFG_fcvt   __EFG_fcvt;
 #ifdef _LONG_DOUBLE_
-_WPRTLINK extern _type_EFG__FDLD   __EFG__FDLD;
+_WPRTLINK extern _type_EFG__FDLD  __EFG__FDLD;
 #endif
 
 // from math library
