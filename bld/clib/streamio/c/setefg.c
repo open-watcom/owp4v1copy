@@ -37,15 +37,15 @@
 
 /* This routine will be called by cstart if "_fltused" is referenced. */
 
-void __setEFGfmt()
-    {
+void __setEFGfmt( void )
+{
 #ifndef IN_SLIB
-    #ifdef __SW_BR
-        __EFG_printf = __get_EFG_Format();
-        __EFG_scanf  = __get__cnvs2d();                 /* 27-mar-90 */
-    #else
-        __EFG_printf = _EFG_Format;
-        __EFG_scanf  = __cnvs2d;                        /* 27-mar-90 */
-    #endif
+  #ifdef __SW_BR
+    __EFG_printf = __get_EFG_Format();
+    __EFG_scanf  = __get__cnvs2d();                 /* 27-mar-90 */
+  #else
+    __EFG_printf = _EFG_Format;
+    __EFG_scanf  = __cnvs2d;                        /* 27-mar-90 */
+  #endif
 #endif
-    }
+}

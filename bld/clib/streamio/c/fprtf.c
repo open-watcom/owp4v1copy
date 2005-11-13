@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  printf -- CLIB formatted output
 *
 ****************************************************************************/
 
-
-/*
- * printf -- CLIB formatted output
- */
 
 #include "variety.h"
 #include "widechar.h"
@@ -59,36 +54,36 @@ static void __SLIB_CALLBACK file_putc( SPECS __SLIB *specs, int op_char )
 
 _WCRTLINK int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg )
 {
-    int         not_buffered;
-    int         amount_written;
-    unsigned    oflag;
+    int             not_buffered;
+    int             amount_written;
+    unsigned        oflag;
     slib_callback_t *tmp;
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-    #ifndef __NETWARE__
-        #ifdef __WIDECHAR__
-            if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
-                if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-                    _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-                } else {
-                    _ReleaseFile( fp );
-                    return( 0 );                /* error return */
-                }
-            }
-        #else
-            if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
-                if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-                    _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-                } else {
-                    _ReleaseFile( fp );
-                    return( 0 );                /* error return */
-                }
-            }
-        #endif
-    #endif
+#ifndef __NETWARE__
+  #ifdef __WIDECHAR__
+    if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
+        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
+            _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
+        } else {
+            _ReleaseFile( fp );
+            return( 0 );                /* error return */
+        }
+    }
+  #else
+    if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
+        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
+            _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
+        } else {
+            _ReleaseFile( fp );
+            return( 0 );                /* error return */
+        }
+    }
+  #endif
+#endif
 
     oflag = fp->_flag & (_SFERR|_EOF);                  /* 06-sep-91 */
     fp->_flag &= ~(_SFERR|_EOF);
@@ -102,11 +97,11 @@ _WCRTLINK int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_
         fp->_flag &= ~_IONBF;
         fp->_flag |= _IOFBF;
     }
-#if defined(__386__) && defined(__QNX__)
-        /* avoid some segment relocations for 32-bit QNX */
-        tmp = (void (*)())file_putc;
+#if defined( __386__ ) && defined( __QNX__ )
+    /* avoid some segment relocations for 32-bit QNX */
+    tmp = (void (*)())file_putc;
 #else
-        tmp = file_putc;
+    tmp = file_putc;
 #endif
     amount_written = __F_NAME(__prtf,__wprtf)( fp, format, arg, tmp );
     if( not_buffered ) {
@@ -114,7 +109,8 @@ _WCRTLINK int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_
         fp->_flag |= _IONBF;
         __flush( fp );
     }
-    if( ferror( fp ) ) amount_written = -1;             /* 06-sep-91 */
+    if( ferror( fp ) )
+        amount_written = -1;             /* 06-sep-91 */
     fp->_flag |= oflag;
 
     _ReleaseFile( fp );

@@ -31,7 +31,7 @@
 
 #define __LONG_LONG_SUPPORT__
 
-#if !defined(__NETWARE__) && !defined(__UNIX__)
+#if !defined( __NETWARE__ ) && !defined( __UNIX__ )
     #define USE_MBCS_TRANSLATION
 #endif
 
@@ -49,12 +49,12 @@
 #include "scanf.h"
 #include "fixpoint.h"
 #include "ftos.h"
-#if defined(__LONG_LONG_SUPPORT__)
+#if defined( __LONG_LONG_SUPPORT__ )
     #include "clibi64.h"
 #endif
 #include "farsupp.h"
 #include "myvalist.h"
-#if defined(__WIDECHAR__) || defined(USE_MBCS_TRANSLATION)
+#if defined( __WIDECHAR__ ) || defined( USE_MBCS_TRANSLATION )
     #include <mbstring.h>
 #endif
 
@@ -67,56 +67,56 @@
 
 /* internal file/string get, unget routines */
 #ifdef __WINDOWS_386__
-    #ifdef __SW_3S
-        #pragma aux cget modify [eax edx ecx fs gs]
-        #pragma aux uncget modify [eax edx ecx fs gs]
-    #else
-        #pragma aux cget modify [fs gs]
-        #pragma aux uncget modify [fs gs]
-    #endif
+  #ifdef __SW_3S
+    #pragma aux cget modify [eax edx ecx fs gs]
+    #pragma aux uncget modify [eax edx ecx fs gs]
+  #else
+    #pragma aux cget modify [fs gs]
+    #pragma aux uncget modify [fs gs]
+  #endif
 #endif
 
-static int cget(PTR_SCNF_SPECS specs)
+static int cget( PTR_SCNF_SPECS specs )
 {
     return( (*((specs)->cget_rtn))(specs) );
 }
 
-static void uncget(int c, PTR_SCNF_SPECS specs)
+static void uncget( int c, PTR_SCNF_SPECS specs )
 {
     ((*((specs)->uncget_rtn))(c, specs));
 }
 
-#if defined(__HUGE__)
+#if defined( __HUGE__ )
     #define SCNF_FAR    _WCFAR
 #else
     #define SCNF_FAR
 #endif
 
 /* non-int static routines */
-static const CHAR_TYPE *get_opt();
-static void report_scan();
+static const CHAR_TYPE *get_opt( void );
+static void report_scan( void );
 static long cgetw( PTR_SCNF_SPECS );
 
 
 int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_list args )
 {
-    int char_match;
-    int item_match;
-    int match_len;
-    int c;
-    int fmt_chr;
-    my_va_list margs;
+    int         char_match;
+    int         item_match;
+    int         match_len;
+    int         c;
+    int         fmt_chr;
+    my_va_list  margs;
 
     margs = MY_VA_LIST( args );
 
     char_match = item_match = 0;
     specs->eoinp = 0;
 
-    while( (fmt_chr = *format++) != NULLCHAR ) {
+    while(( fmt_chr = *format++ ) != NULLCHAR ) {
         if( __F_NAME(isspace,iswspace)( fmt_chr ) ) {
             char_match += scan_white( specs );
         } else if( fmt_chr != '%' ) {
-            if( (c = cget( specs )) != fmt_chr ) {
+            if(( c = cget( specs ) ) != fmt_chr ) {
                 if( !specs->eoinp )
                     uncget( c, specs );
                 break;
@@ -124,7 +124,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
             ++char_match;                           /* 27-oct-88 */
         } else {            /* fmt_chr == '%' */
             format = get_opt( format, specs );
-            if( (fmt_chr = *format) != NULLCHAR )
+            if(( fmt_chr = *format ) != NULLCHAR )
                 ++format;
             switch( fmt_chr ) {
             case 'd':
@@ -140,7 +140,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
                 match_len = scan_int( specs, &margs, 10, TRUE );
                 goto check_match;
             case 'p':
-#if defined(__BIG_DATA__)
+#if defined( __BIG_DATA__ )
                 specs->long_var = 1;    /* indicate far pointer */
                 specs->p_format = 1;    /* ... */
 #endif
@@ -156,7 +156,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
             case 'G':
                 match_len = scan_float( specs, &margs );
                 goto check_match;
-#if !defined(__WIDECHAR__) && !defined(__NETWARE__)
+#if !defined( __WIDECHAR__ ) && !defined( __NETWARE__ )
             case 'S':
                 specs->long_var = 1;
                 /* fall through to %s handler */
@@ -167,7 +167,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
             case '[':
                 match_len = scan_arb( specs, &margs, &format );
                 goto check_match;
-#if !defined(__WIDECHAR__) && !defined(__NETWARE__)
+#if !defined( __WIDECHAR__ ) && !defined( __NETWARE__ )
             case 'C':
                 specs->long_var = 1;
                 /* fall through to %c handler */
@@ -188,7 +188,7 @@ check_match:
                 report_scan( specs, &margs, char_match );
                 break;
             case '%':
-                if( (c = cget( specs )) != '%' ) {
+                if(( c = cget( specs ) ) != '%' ) {
                     if( !specs->eoinp )
                         uncget( c, specs );
                     goto fail;
@@ -211,7 +211,7 @@ check_match:
     }
 
 fail:
-    if( item_match == 0 && specs->eoinp )
+    if(( item_match == 0 ) && specs->eoinp )
         return( EOF );
     return( item_match );
 }
@@ -223,7 +223,7 @@ fail:
  */
 static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs )
 {
-    register int c, width;
+    register int    c, width;
 
     specs->assign = TRUE;
     specs->far_ptr = 0;
@@ -262,8 +262,8 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
         ++opt_str;
         break;
     case 'l':
-#if defined(__LONG_LONG_SUPPORT__)
-        if ( opt_str[1] == 'l' ) {
+#if defined( __LONG_LONG_SUPPORT__ )
+        if( opt_str[1] == 'l' ) {
             specs->long_double_var = 1;
             opt_str += 2;
             break;
@@ -278,9 +278,9 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
         specs->long_double_var = 1;
         ++opt_str;
         break;
-#if defined(__LONG_LONG_SUPPORT__)
+#if defined( __LONG_LONG_SUPPORT__ )
     case 'I':
-        if( opt_str[1] == '6' && opt_str[2] == '4' ) {
+        if(( opt_str[1] == '6' ) && ( opt_str[2] == '4' )) {
             specs->long_double_var = 1;
             opt_str += 3;
         }
@@ -295,7 +295,7 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
  */
 static int scan_white( PTR_SCNF_SPECS specs )
 {
-    register int c, len;
+    register int    c, len;
 
     len = 0;
     for( ; ; ) {
@@ -314,10 +314,10 @@ static int scan_white( PTR_SCNF_SPECS specs )
  */
 static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
 {
-    int             len;
-    int             width;
-    FAR_STRING      str;
-    int             c;
+    int         len;
+    int         width;
+    FAR_STRING  str;
+    int         c;
 
     if( specs->assign ) {
 #if defined( __FAR_SUPPORT__ )
@@ -333,7 +333,7 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
 #endif
     }
     len = 0;
-    if( (width = specs->width) == -1 )
+    if(( width = specs->width ) == -1 )
         width = 1;
     while( width > 0 ) {
         c = cget( specs );
@@ -342,16 +342,16 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
         ++len;
         --width;
         if( specs->assign ) {
-#if defined(__WIDECHAR__) && defined(USE_MBCS_TRANSLATION)
+#if defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
             if( specs->short_var ) {
-                char        mbBuf[MB_CUR_MAX];
+                char    mbBuf[MB_CUR_MAX];
 
                 if( wctomb( mbBuf, c ) != -1 ) {
                     *(FAR_ASCII_STRING)str = mbBuf[0];
-                    str = (FAR_STRING) ( (FAR_ASCII_STRING)str + 1 );
+                    str = (FAR_STRING)( (FAR_ASCII_STRING)str + 1 );
                     if( _ismbblead( mbBuf[0] ) )  {
                         *(FAR_ASCII_STRING)str = mbBuf[1];
-                        str = (FAR_STRING) ( (FAR_ASCII_STRING)str + 1 );
+                        str = (FAR_STRING)( (FAR_ASCII_STRING)str + 1 );
                     }
                 } else {
                     return( 0 );
@@ -359,17 +359,17 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
             } else {
                 *str++ = c;
             }
-#elif defined(USE_MBCS_TRANSLATION)
+#elif defined( USE_MBCS_TRANSLATION )
             if( specs->long_var ) {
-                wchar_t     wc;
-                char        mbBuf[MB_CUR_MAX];
+                wchar_t wc;
+                char    mbBuf[MB_CUR_MAX];
 
                 mbBuf[0] = c;
                 if( _ismbblead( mbBuf[0] ) )
                     mbBuf[1] = cget( specs );
                 if( mbtowc( &wc, mbBuf, MB_CUR_MAX ) != -1 ) {
                     *(FAR_UNI_STRING)str = wc;
-                    str = (FAR_STRING) ( (FAR_UNI_STRING)str + 1 );
+                    str = (FAR_STRING)( (FAR_UNI_STRING)str + 1 );
                 } else {
                     return( 0 );
                 }
@@ -388,10 +388,10 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
  */
 static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
 {
-    int                     c;
-    int                     len;
-    FAR_ASCII_STRING        str;
-    char                    chsize;
+    int                 c;
+    int                 len;
+    FAR_ASCII_STRING    str;
+    char                chsize;
 
     if( specs->long_var ) {         /* %ls or %ws */
         chsize = sizeof( wchar_t );
@@ -430,8 +430,8 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
         ++len;
         if( specs->assign ) {
             if( chsize == 1 ) {
-#if defined(__WIDECHAR__) && defined(USE_MBCS_TRANSLATION)
-                char        mbBuf[MB_CUR_MAX];
+#if defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
+                char    mbBuf[MB_CUR_MAX];
 
                 if( wctomb( mbBuf, c ) != -1 ) {
                     *(FAR_ASCII_STRING)str = mbBuf[0];
@@ -446,9 +446,9 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
                 *str = c;
 #endif
             } else {
-#if !defined(__WIDECHAR__) && defined(USE_MBCS_TRANSLATION)
-                wchar_t     wc;
-                char        mbBuf[MB_CUR_MAX];
+#if !defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
+                wchar_t wc;
+                char    mbBuf[MB_CUR_MAX];
 
                 mbBuf[0] = c;
                 if( _ismbblead( mbBuf[0] ) )
@@ -464,14 +464,14 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
             }
             str += chsize;
         }
-        if( (c = cgetw( specs )) == STOP_CHR ) {
+        if(( c = cgetw( specs ) ) == STOP_CHR ) {
             goto done;
         }
     } while( !__F_NAME(isspace,iswspace)( c ) );
 ugdone:
     uncget( c, specs );
 done:
-    if( specs->assign && len > 0 ) {
+    if( specs->assign && ( len > 0 )) {
         if( chsize == 1 ) {
             *str = '\0';
         } else {
@@ -486,7 +486,7 @@ done:
  */
 static void report_scan( PTR_SCNF_SPECS specs, my_va_list *arg, int match )
 {
-    FAR_INT         iptr;
+    FAR_INT iptr;
 
     if( specs->assign ) {
 #if defined( __FAR_SUPPORT__ )
@@ -501,16 +501,16 @@ static void report_scan( PTR_SCNF_SPECS specs, my_va_list *arg, int match )
         iptr = va_arg( arg->v, int * );
 #endif
         if( specs->short_var ) {
-            *((FAR_SHORT) iptr) = match;
+            *((FAR_SHORT)iptr) = match;
         } else if( specs->long_var ) {
-            *((FAR_LONG) iptr) = match;
+            *((FAR_LONG)iptr) = match;
         } else {
             *iptr = match;
         }
     }
 }
 
-#if !defined(__WIDECHAR__)
+#if !defined( __WIDECHAR__ )
 #define SCANSET_LENGTH  (256 / 8)
 
 static const char lst_mask[8] = {
@@ -523,14 +523,14 @@ static const char lst_mask[8] = {
  */
 static const char *makelist( const char *format, char *scanset )
 {
-    register int lst_chr;
+    register int    lst_chr;
 
     memset( scanset, 0, SCANSET_LENGTH );
-    if( (lst_chr = *format++) == '\0' )
+    if(( lst_chr = *format++ ) == '\0' )
         return( format );
     do {
         scanset[lst_chr >> 3] |= lst_mask[lst_chr & 0x07];
-        if( (lst_chr = *format) == '\0' )
+        if(( lst_chr = *format ) == '\0' )
             break;
         ++format;
     } while( lst_chr != ']' );
@@ -543,21 +543,21 @@ static const char *makelist( const char *format, char *scanset )
  */
 static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **format )
 {
-    unsigned width;
-    FAR_STRING str;
-    int len, c, not_flag;
-#if defined(__WIDECHAR__)
+    unsigned        width;
+    FAR_STRING      str;
+    int             len, c, not_flag;
+#if defined( __WIDECHAR__ )
     const CHAR_TYPE *list;
-    CHAR_TYPE   ch;
-    char        in_list;
+    CHAR_TYPE       ch;
+    char            in_list;
 #else
-    char scanset[SCANSET_LENGTH];
+    char            scanset[SCANSET_LENGTH];
 #endif
 
-    if( not_flag = (**format == '^') ) {
+    if( not_flag = ( **format == '^' )) {
         ++(*format);
     }
-#if !defined(__WIDECHAR__)
+#if !defined( __WIDECHAR__ )
     *format = makelist( *format, scanset );
 #endif
     if( specs->assign ) {
@@ -579,7 +579,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
         c = cget( specs );
         if( specs->eoinp )
             break;
-#if defined(__WIDECHAR__)
+#if defined( __WIDECHAR__ )
         list = *format;
         ch = *list;
         in_list = TRUE;
@@ -596,7 +596,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
             break;
         }
 #else
-        if( ((scanset[c >> 3] & lst_mask[c & 0x07]) == 0) != not_flag ) {
+        if(( (scanset[c >> 3] & lst_mask[c & 0x07]) == 0 ) != not_flag ) {
             uncget( c, specs );
             break;
         }
@@ -607,7 +607,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
             *str++ = c;
         }
     }
-    if( specs->assign && len > 0 )
+    if( specs->assign && ( len > 0 ))
         *str = '\0';
     return( len );
 }
@@ -619,15 +619,15 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
 static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
 {
     auto double value;
-    char *num_str, buf[80];
-    int len;
-    int pref_len;
-    long c;
-    int digit_found;
-    FAR_FLOAT fptr;
-    char    *p;
-    T32     at;
-    T32     ft;
+    char        *num_str, buf[80];
+    int         len;
+    int         pref_len;
+    long        c;
+    int         digit_found;
+    FAR_FLOAT   fptr;
+    char        *p;
+    T32         at;
+    T32         ft;
 
     num_str = buf;
     pref_len = len = 0;
@@ -641,14 +641,14 @@ static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
         goto done;
     if( specs->width-- == 0 )
         goto ugdone;
-    if( c == '+' || c == '-' ) {
+    if(( c == '+' ) || ( c == '-' )) {
         *num_str++ = c;
         ++pref_len;
-        if( (c = cgetw( specs )) == STOP_CHR ) {
+        if(( c = cgetw( specs ) ) == STOP_CHR ) {
             goto done;
         }
     }
-    if( !__F_NAME(isdigit,iswdigit)( c ) && c != '.' )
+    if( !__F_NAME(isdigit,iswdigit)( c ) && ( c != '.' ))
         goto ugdone;
     at.uWhole = 0;
     digit_found = FALSE;
@@ -659,7 +659,7 @@ static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
             if( specs->short_var )
                 at.wd.hi = at.wd.hi * 10 + c - '0';
             ++len;
-            if( (c = cgetw( specs )) == STOP_CHR ) {
+            if(( c = cgetw( specs ) ) == STOP_CHR ) {
                 goto done;
             }
         } while( __F_NAME(isdigit,iswdigit)( c ) );
@@ -667,14 +667,14 @@ static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
     if( c == '.' ) {
         *num_str++ = c;
         ++len;              /* account for the '.' */
-        if( (c = cgetw( specs )) == STOP_CHR )
+        if(( c = cgetw( specs ) ) == STOP_CHR )
             goto done;
         if( !digit_found && !__F_NAME(isdigit,iswdigit)(c) )
             goto ugdone;
         while( __F_NAME(isdigit,iswdigit)( c ) ) {
             *num_str++ = c;
             ++len;
-            if( (c = cgetw( specs )) == STOP_CHR ) {
+            if(( c = cgetw( specs ) ) == STOP_CHR ) {
                 break;
             }
         }
@@ -694,15 +694,15 @@ static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
             goto done;
         }
     }
-    if( specs->short_var == 0  &&  (c == 'e' || c == 'E') ) {
+    if(( specs->short_var == 0 ) && (( c == 'e' ) || ( c == 'E' ))) {
         *num_str++ = c;
         ++len;
-        if( (c = cgetw( specs )) == STOP_CHR )
+        if(( c = cgetw( specs ) ) == STOP_CHR )
             goto done;
-        if( c == '+' || c == '-' ) {
+        if(( c == '+' ) || ( c == '-' )) {
             *num_str++ = c;
             ++len;
-            if( (c = cgetw( specs )) == STOP_CHR ) {
+            if(( c = cgetw( specs ) ) == STOP_CHR ) {
                 goto done;
             }
         }
@@ -712,7 +712,7 @@ static int scan_float( PTR_SCNF_SPECS specs, my_va_list *arg )
             do {
                 *num_str++ = c;
                 ++len;
-                if( (c = cgetw( specs )) == STOP_CHR ) {
+                if(( c = cgetw( specs ) ) == STOP_CHR ) {
                     goto done;
                 }
             } while( __F_NAME(isdigit,iswdigit)( c ) );
@@ -744,9 +744,9 @@ done:
             fptr = va_arg( arg->v, float * );
 #endif
             if( specs->short_var ) {                        /* 05-feb-92 */
-                *((FAR_LONG) fptr) = at.uWhole;
+                *((FAR_LONG)fptr) = at.uWhole;
             } else if( specs->long_var || specs->long_double_var ) {
-                *((FAR_DOUBLE) fptr) = value;
+                *((FAR_DOUBLE)fptr) = value;
             } else {
                 *fptr = value;
             }
@@ -760,16 +760,16 @@ done:
  */
 static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_flag )
 {
-    long int value;
-    int len;
-    int pref_len;
-    int c;
-    int sign;
-    int digit;
-    FAR_INT iptr;
-#if defined(__LONG_LONG_SUPPORT__)
-    unsigned __int64 long_value;
-    FAR_INT64 llptr;
+    long int            value;
+    int                 len;
+    int                 pref_len;
+    int                 c;
+    int                 sign;
+    int                 digit;
+    FAR_INT             iptr;
+#if defined( __LONG_LONG_SUPPORT__ )
+    unsigned __int64    long_value;
+    FAR_INT64           llptr;
     long_value = 0;
 #endif
 
@@ -786,23 +786,23 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
     if( specs->width-- == 0 )
         goto ugdone;
     sign = '+';
-    if( sign_flag && (c == '+' || c == '-') ) {
+    if( sign_flag && (( c == '+' ) || ( c == '-' ))) {
         sign = c;
         ++pref_len;
-        if( (c = cgetw( specs )) == STOP_CHR ) {
+        if(( c = cgetw( specs ) ) == STOP_CHR ) {
             goto done;
         }
     }
     if( base == 0 ) {
         if( c == '0' ) {
             len = 1;
-            if( (c = cgetw( specs )) == STOP_CHR )
+            if(( c = cgetw( specs ) ) == STOP_CHR )
                 goto done;
-            if( c == 'x' || c == 'X' ) {
+            if(( c == 'x' ) || ( c == 'X' )) {
                 len = 0;
                 ++pref_len;         /* for the '0' */
                 ++pref_len;         /* for the 'x' */
-                if( (c = cgetw( specs )) == STOP_CHR )
+                if(( c = cgetw( specs ) ) == STOP_CHR )
                     goto done;
                 base = 16;
             } else {
@@ -814,19 +814,19 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
     } else if( base == 16 ) {
         if( c == '0' ) {
             len = 1;
-            if( (c = cgetw( specs )) == STOP_CHR )
+            if(( c = cgetw( specs ) ) == STOP_CHR )
                 goto done;
-            if( c == 'x'  ||  c == 'X' ) {
+            if(( c == 'x' ) || ( c == 'X' )) {
                 len = 0;
                 ++pref_len;         /* for the '0' */
                 ++pref_len;         /* for the 'x' */
-                if( (c = cgetw( specs )) == STOP_CHR ) {
+                if(( c = cgetw( specs ) ) == STOP_CHR ) {
                     goto done;
                 }
             }
         }
     }
-#if defined(__LONG_LONG_SUPPORT__)
+#if defined( __LONG_LONG_SUPPORT__ )
     if( specs->long_double_var ) {
         for( ; ; ) {
             digit = radix_value( c );
@@ -834,14 +834,14 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
                 break;
             long_value = long_value * base + digit;
             ++len;
-            if( (c = cgetw( specs )) == STOP_CHR ) {
+            if(( c = cgetw( specs ) ) == STOP_CHR ) {
                 goto done;
             }
         }
-        if( c == ':'  &&  specs->p_format ) {
+        if(( c == ':' ) && specs->p_format ) {
             for( ; ; ) {
                 ++len;
-                if( (c = cgetw( specs )) == STOP_CHR )
+                if(( c = cgetw( specs ) ) == STOP_CHR )
                     goto done;
                 digit = radix_value( c );
                 if( digit >= base )
@@ -858,14 +858,14 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
                 break;
             value = value * base + digit;
             ++len;
-            if( (c = cgetw( specs )) == STOP_CHR ) {
+            if(( c = cgetw( specs ) ) == STOP_CHR ) {
                 goto done;
             }
         }
-        if( c == ':'  &&  specs->p_format ) {
+        if(( c == ':' ) && specs->p_format ) {
             for( ; ; ) {
                 ++len;
-                if( (c = cgetw( specs )) == STOP_CHR )
+                if(( c = cgetw( specs ) ) == STOP_CHR )
                     goto done;
                 digit = radix_value( c );
                 if( digit >= base )
@@ -877,7 +877,7 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
 ugdone:
     uncget( c, specs );
 done:
-#if defined(__LONG_LONG_SUPPORT__)
+#if defined( __LONG_LONG_SUPPORT__ )
     if( specs->long_double_var ) {
         if( sign == '-' ) {
             long_value =- long_value;
@@ -920,9 +920,9 @@ done:
                 iptr = va_arg( arg->v, int * );
 #endif
                 if( specs->short_var ) {
-                    *((FAR_SHORT) iptr) = value;
+                    *((FAR_SHORT)iptr) = value;
                 } else if( specs->long_var ) {
-                    *((FAR_LONG) iptr) = value;
+                    *((FAR_LONG)iptr) = value;
                 } else {
                     *iptr = value;
                 }
@@ -934,10 +934,10 @@ done:
 
 static int radix_value( register int c )
 {
-    if( c >= '0' && c <= '9' )
+    if(( c >= '0' ) && ( c <= '9' ))
         return( c - '0' );
     c = __F_NAME(tolower,towlower)( c );
-    if( c >= 'a' && c <= 'f' )
+    if(( c >= 'a' ) && ( c <= 'f' ))
         return( c - 'a' + 10 );
     return( 16 );
 }
@@ -949,7 +949,7 @@ static int radix_value( register int c )
  */
 static long cgetw( PTR_SCNF_SPECS specs )
 {
-    register int c;
+    register int    c;
 
     if( specs->width-- == 0 )
         return ( STOP_CHR );

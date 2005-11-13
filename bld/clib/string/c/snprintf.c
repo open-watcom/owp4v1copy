@@ -35,9 +35,9 @@
 #include <stdarg.h>
 #include "printf.h"
 
-struct  buf_limit {
-        CHAR_TYPE       *bufptr;
-        size_t          bufsize;
+struct buf_limit {
+    CHAR_TYPE   *bufptr;
+    size_t      bufsize;
 };
 
 /*
@@ -46,7 +46,7 @@ struct  buf_limit {
 static slib_callback_t buf_putc; // setup calling convention
 static void __SLIB_CALLBACK buf_putc( SPECS __SLIB *specs, int op_char )
 {
-    struct buf_limit *bufinfo;
+    struct buf_limit    *bufinfo;
 
     bufinfo = (struct buf_limit *)specs->_o._dest;
     if( specs->_o._output_count < bufinfo->bufsize ) {
@@ -65,20 +65,19 @@ static void __SLIB_CALLBACK buf_count_putc( SPECS __SLIB *specs, int op_char )
 }
 
 
-
 _WCRTLINK int __F_NAME(vsnprintf,vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
                 const CHAR_TYPE *format, va_list arg)
 {
-    register int len;
-    auto    struct buf_limit bufinfo;
+    register int            len;
+    auto struct buf_limit   bufinfo;
 
     bufinfo.bufptr  = s;
     bufinfo.bufsize = bufsize - 1;
-    if (bufsize == 0)
+    if( bufsize == 0 )
         len = __F_NAME(__prtf,__wprtf)( &bufinfo, format, arg, buf_count_putc );
     else {
         len = __F_NAME(__prtf,__wprtf)( &bufinfo, format, arg, buf_putc );
-        s[len >= 0 && len < bufsize ? len : bufsize - 1] = '\0';
+        s[(( len >= 0 ) && ( len < bufsize )) ? len : bufsize - 1] = '\0';
     }
     return( len );
 }
@@ -87,7 +86,7 @@ _WCRTLINK int __F_NAME(vsnprintf,vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
 _WCRTLINK int __F_NAME(snprintf,snwprintf) ( CHAR_TYPE *dest, size_t bufsize,
                 const CHAR_TYPE *format, ... )
 {
-    auto    va_list         args;
+    auto va_list    args;
 
     va_start( args, format );
     return( __F_NAME(vsnprintf,vsnwprintf)( dest, bufsize, format, args ) );
