@@ -51,6 +51,8 @@
   #define   __TGT_SYS   __TGT_SYS_AXP_PPC
 #elif _TARGET & _TARG_AXP
   #define   __TGT_SYS   __TGT_SYS_AXP_NT
+#elif _TARGET & _TARG_MIPS
+  #define   __TGT_SYS   __TGT_SYS_MIPS
 #else
   #define   __TGT_SYS   __TGT_SYS_X86
 #endif

@@ -63,6 +63,8 @@ char *defaultDLLName =
 "cgaxp.dll"
 #elif _TARGET & _TARG_PPC
 "cgppc.dll"
+#elif _TARGET & _TARG_MIPS
+"cgmps.dll"
 #else
 #error Unknown target.
 #endif
