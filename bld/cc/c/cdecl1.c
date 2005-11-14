@@ -613,8 +613,10 @@ local void ChkParms()
                 parm->sym.name = ".J";
                 parm->sym.flags |= SYM_REFERENCED;
             }
-            if( parm->sym.name[0] == '\0' )
+            if( parm->sym.name[0] == '\0' ) {
+                parm->sym.name = ".I";
                 InvDecl();
+            }
             if( parm->sym.sym_type == NULL )
             {
                 parm->sym.sym_type = TypeDefault();
