@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run and compile-time consts indicating parameter type
+*               and attributes
 *
 ****************************************************************************/
 
@@ -79,3 +79,5 @@ enum {
   PC_STATEMENT,         //  Alternate return specifier.
   PC_RESULT             //  Expected result type of subprogram.
 };
+
+extern int     ParmType( int typ, int size );

@@ -37,10 +37,10 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "fcodes.h"
+#include "parmtype.h"
 
 extern  void            EmitOp(unsigned_16);
 extern  void            OutU16(unsigned_16);
-extern  int             ParmType(int,int);
 
 
 void    GILCnvTo( uint typ, uint size ) {

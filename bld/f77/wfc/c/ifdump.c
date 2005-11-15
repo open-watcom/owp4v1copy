@@ -37,12 +37,12 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "fcodes.h"
+#include "parmtype.h"
 
 extern  void            AdvanceITPtr(void);
 extern  int             TypeSize(uint);
 extern  void            EmitOp(int);
 extern  void            OutU16(unsigned_16);
-extern  int             ParmType(int,int);
 extern  void            GenTypes(itnode *,itnode *);
 extern  void            GenType(itnode *);
 extern  void            PushOpn(itnode *);

@@ -49,7 +49,6 @@ extern  void            EmitOp(unsigned_16);
 extern  bool            NotFormatted(void);
 extern  uint            IOIndex(void);
 extern  void            PushOpn(itnode *);
-extern  byte            ParmType(int,int);
 extern  void            OutPtr(pointer);
 extern  void            OutU16(unsigned_16);
 extern  obj_ptr         ObjTell(void);

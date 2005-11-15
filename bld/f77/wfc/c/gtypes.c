@@ -37,8 +37,8 @@
 #include "ftnstd.h"
 #include "symflgs.h"
 #include "itdefn.h"
+#include "parmtype.h"
 
-extern  int             ParmType(int,int);
 extern  void            OutU16(unsigned_16);
 
 

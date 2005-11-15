@@ -39,6 +39,7 @@
 #include "opn.h"
 #include "fcodes.h"
 #include "global.h"
+#include "parmtype.h"
 
 extern  void            EmitOp(unsigned_16);
 extern  void            OutU16(unsigned_16);
@@ -47,7 +48,6 @@ extern  void            GenType(itnode *);
 extern  void            GenTypes(itnode *,itnode *);
 extern  void            PushOpn(itnode *);
 extern  bool            TypeCmplx(int);
-extern  int             ParmType(int,int);
 extern  intstar4        ITIntValue(itnode *);
 
 

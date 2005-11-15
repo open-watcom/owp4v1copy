@@ -47,7 +47,6 @@
 extern  void            FixTrcBack(sym_id);
 extern  void            FixSFTrcBack(sym_id);
 extern  void            FixLListHead(void);
-extern  int             ParmType(int,int);
 extern  int             GetSrcName(char *);
 
 extern  obj_ptr         ObjPtr;

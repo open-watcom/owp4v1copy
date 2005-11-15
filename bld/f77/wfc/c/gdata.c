@@ -41,7 +41,6 @@
 #include "fcgbls.h"
 
 extern  sym_id          STConst(void *,int,int);
-extern  byte            ParmType(int,int);
 extern  void            EmitOp(unsigned_16);
 extern  void            OutPtr(pointer);
 extern  void            OutU16(unsigned_16);

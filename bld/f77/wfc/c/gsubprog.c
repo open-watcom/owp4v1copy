@@ -69,7 +69,6 @@ extern  void            SetOpn(itnode *,int);
 extern  void            GenType(itnode *);
 extern  void            DumpType(int,int);
 extern  int             TypeSize(int);
-extern  int             ParmType(int,int);
 extern  int             ParmClass(itnode *);
 extern  aux_info        *AuxLookup(sym_id);
 extern  aux_info        *AuxLookupName(char *,int);

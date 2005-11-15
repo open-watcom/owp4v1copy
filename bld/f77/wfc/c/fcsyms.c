@@ -42,6 +42,7 @@
 #include "falloc.h"
 #include "nmlinfo.h"
 #include "fmemmgr.h"
+#include "parmtype.h"
 
 #include <string.h>
 
@@ -105,7 +106,6 @@ extern  label_handle    GetStmtLabel(sym_id);
 extern  void            FiniLabels(uint);
 extern  void            DumpFormats(void);
 extern  void            FreeSFHeader(sym_id);
-extern  uint            ParmType(uint,uint);
 extern  void            MakeName(char *,char *,char *);
 extern  char            *SDFName(char *);
 extern  cg_type         F772CGType(sym_id);

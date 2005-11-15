@@ -39,8 +39,6 @@
 #include "wf77defs.h"
 #include "symbol.h"
 
-extern  int             ParmType(int,int);
-
 #define NUM_TYPES       12
 #define L1              T_UINT_1
 #define L4              T_UINT_4

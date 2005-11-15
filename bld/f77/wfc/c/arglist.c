@@ -38,7 +38,6 @@
 
 extern  byte            ImplType(char);
 extern  unsigned_16     ImplSize(char);
-extern  byte            ParmType(int,int);
 extern  void            GArgList(entry_pt *,uint,uint);
 extern  void            GArgInfo(sym_id,uint,uint);
 extern  sym_id          FindShadow(sym_id);

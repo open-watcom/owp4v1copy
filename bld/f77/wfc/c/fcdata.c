@@ -63,7 +63,6 @@ extern  obj_ptr         FCodeSeek(obj_ptr);
 extern  pointer         GetPtr(void);
 extern  unsigned_16     GetU16(void);
 extern  inttarg         GetInt(void);
-extern  byte            ParmType(int,int);
 extern  void            Error(int,...);
 extern  void            TypeNameTypeErr(int,int,sym_id,int);
 extern  void            DtInit(segment_id,seg_offset);

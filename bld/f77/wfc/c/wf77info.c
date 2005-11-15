@@ -112,7 +112,6 @@ extern  aux_info        *AuxLookup(sym_id);
 extern  void            Error(uint,...);
 extern  void            Warning(uint,...);
 extern  cg_type         MkCGType(uint);
-extern  int             ParmType(int,int);
 extern  void            SendBlip(void);
 extern  void            SendStd(char *);
 extern  char            *STFieldName(sym_id,char *);
