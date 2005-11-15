@@ -56,12 +56,6 @@
 #define ALIGN_QWORD     8       // align segment on quad word boundary
 #define ALIGN_SEGMENT   16      // align segment on segment boundary
 
-#define HASH_PRIME 211
-
-typedef struct hash_entry {
-    sym_id      h_head;
-    sym_id      h_tail;
-} hash_entry;
 
 typedef void            *obj_addr;              // back handle
 

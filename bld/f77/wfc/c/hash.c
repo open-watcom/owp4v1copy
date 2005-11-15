@@ -24,22 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  symbol table hash function
 *
 ****************************************************************************/
 
 
-//
-// HASH         : symbol table hash function
-//
-
 #include "ftnstd.h"
-#include "symbol.h"
+#include "fhash.h"
 
 
-unsigned int    CalcHash( char *p, int len ) {
-//============================================
+unsigned int    CalcHash( char *p, unsigned len ) {
+//=================================================
 
     unsigned long       h;
     unsigned long       g;

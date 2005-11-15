@@ -24,56 +24,24 @@
 *
 *  ========================================================================
 *
-* Description:  Constant list
+* Description:  FORTRAN symbol hash tables related declaration
 *
 ****************************************************************************/
 
 
-#include "ftnstd.h"
-#include "global.h"
-#include "fmemmgr.h"
-#include "fhash.h"
+#define HASH_PRIME 211
 
-#include <string.h>
+typedef struct hash_entry {
+    sym_id      h_head;
+    sym_id      h_tail;
+} hash_entry;
 
-extern  uint            TypeSize(uint);
+extern unsigned     CalcHash( char *, unsigned );
+extern void         HashInsert( hash_entry *, unsigned, sym_id *, sym_id );
+  
+extern unsigned     HashValue;
+extern hash_entry   HashTable[];
+extern hash_entry   GHashTable[];
+extern hash_entry   ConstHashTable[];
 
-hash_entry              ConstHashTable[HASH_PRIME];
 
-
-sym_id  STConst( void *ptr, int typ, unsigned size ) {
-//=====================================================
-
-// Search the symbol table for a constant. If the constant is not in the
-// symbol table, add it to the symbol table.
-
-    unsigned    hash_value;
-    sym_id      head;
-    sym_id      tail;
-    ftn_type    *c_ptr = ptr;
-
-    if( _IsTypeLogical( typ ) ) {
-        c_ptr->logstar4 = c_ptr->logstar1;
-    }
-    hash_value = CalcHash( ptr, size );
-    head = ConstHashTable[ hash_value ].h_head;
-    if( head != NULL ) {
-        tail = ConstHashTable[ hash_value ].h_tail;
-        for(;;) {
-            if( head->cn.typ == typ ) {
-                if( memcmp( c_ptr, &head->cn.value, size ) == 0 ) {
-                    return( head );
-                }
-            }
-            if( head == tail ) break;
-            head = head->cn.link;
-        }
-    }
-    head = FMemAlloc( sizeof( constant ) - sizeof( ftn_type ) + size );
-    memcpy( &head->cn.value, c_ptr, size );
-    head->cn.typ = typ;
-    head->cn.size = size;
-    head->cn.address = NULL;
-    HashInsert( ConstHashTable, hash_value, &CList, head );
-    return( head );
-}

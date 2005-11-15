@@ -24,24 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  symbol table search
 *
 ****************************************************************************/
 
 
-//
-// RSTSRCH   : symbol table search
-//
-
 #include "ftnstd.h"
 #include "symbol.h"
+#include "fhash.h"
 
 #include <string.h>
 
-extern  int             CalcHash(char *,int);
-
-int                     HashValue;
+unsigned                HashValue;
 hash_entry              HashTable[HASH_PRIME];
 
 
