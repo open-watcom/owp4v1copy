@@ -414,7 +414,14 @@ build : .symbolic $(exe_bld_name).exe
 $(exe_ref_name).exe : $(depends_exe) pexebld.lnk
     $(linker) $(lflags) NAME $^* @pexebld
 
+!ifeq release 1
 plusplus_dll = 1
+!else
+
+$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
+    $(linker) $(lflags) name $@ @pexedbg
+
+!endif
 
 
 !else ifeq host_os osi
