@@ -563,7 +563,11 @@ extern dr_handle DWRLookupAbbrev( dr_handle entry, dr_handle abbr )
     compunit_info   *cu;
 
     cu = DWRFindCompileInfo( entry );
-    abbrev = cu->abbrevs[abbr];
+    if( abbr >= cu->numabbrevs ) {
+        DWREXCEPT( DREXCEP_BAD_DBG_INFO );
+        abbrev = 0;
+    } else
+        abbrev = cu->abbrevs[abbr];
     return( abbrev );
 }
 
