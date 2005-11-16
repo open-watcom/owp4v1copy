@@ -29,6 +29,8 @@
 *
 ****************************************************************************/
 
+#if !defined(_F77_DATTYP_H_)
+#define _F77_DATTYP_H_ 1
 
 typedef struct adv_entry {
     signed_32   lo_bound;
@@ -111,3 +113,4 @@ typedef union ftn_type {
 
     typedef     unsigned int    label_id;
     typedef     obj_ptr         warp_label;
+#endif

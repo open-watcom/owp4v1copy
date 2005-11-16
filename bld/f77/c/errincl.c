@@ -24,25 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  for error messages included in executable file
 *
 ****************************************************************************/
 
-
-//
-// ERRINCL      :  for error messages included in executable file
-//
-
 #include "ftnstd.h"
-
-#include <stdarg.h>
+#include "errrtns.h"
 
 extern  void            Substitute(char *,char *,va_list args);
-
-extern  void            (* __ErrorInit)(char *);
-extern  void            (* __ErrorFini)(void);
-extern  void            (* __BldErrMsg)(uint,char *,va_list);
 
 extern  char            __FAR * __FAR GroupTable[];
 extern  char            __FAR ErrWord[];

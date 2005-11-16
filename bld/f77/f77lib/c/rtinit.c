@@ -24,15 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  run-time system initialization
 *
 ****************************************************************************/
 
 
-//
-// RTINIT       : run-time system initialization
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -42,14 +38,13 @@
 #include "fapptype.h"
 #include "fthread.h"
 #include "rtinit.h"
+#include "errrtns.h"
 
 #include <stdlib.h>
 
 extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
 
-extern  void            (* __ErrorInit)(char *);
-extern  void            (* __ErrorFini)(void);
 extern  char            *_LpPgmName;
 
 #if defined( __WINDOWS__ )

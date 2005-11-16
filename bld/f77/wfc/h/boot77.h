@@ -24,11 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for WATFOR-77 
 *
 ****************************************************************************/
 
-#include "macro.h"
-#include "standard.h"
-#include "dattyp.h"
+extern  void    InitCompMain();
+extern  void    FiniCompMain();
+extern  int     CompMain( char *parm );
+extern  void    Compile( char *buffer );
+extern  void    ShowUsage();
+extern  char    *SkipBlanks( char *ptr );
+extern  void    InitCompile();
+extern  void    FiniCompile();
+extern  void    ProcOpts( char **opt_array );

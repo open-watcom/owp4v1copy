@@ -24,19 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  error message processing routines
 *
 ****************************************************************************/
 
 
-//
-// ERRRTNS      : error message processing routines
-//
-
-#include "ftnstd.h"
-
-#include <stdarg.h>
+#include "errrtns.h"
 
 void            (* __BldErrMsg)(uint,char *,va_list);
 void            (* __ErrorInit)(char *);

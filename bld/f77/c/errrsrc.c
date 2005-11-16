@@ -32,8 +32,8 @@
 #include "ftnstd.h"
 #include "cioconst.h"
 #include "wressetr.h"
+#include "errrtns.h"
 
-#include <stdarg.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <malloc.h>
@@ -48,10 +48,6 @@ static  unsigned        MsgShift;
 #define RF_INITIALIZED  0x02            // Resource system initialized
 
 extern  long            FileShift;
-extern  void            (* __BldErrMsg)(uint,char *,va_list);
-extern  void            (* __ErrorInit)(char *);
-extern  void            (* __ErrorFini)(void);
-
 
 static  long    res_seek( int handle, long position, int where ) {
 //================================================================

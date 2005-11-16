@@ -34,6 +34,7 @@
 #include "optflags.h"
 #include "cioconst.h"
 #include "banner.h"
+#include "errrtns.h"
 
 #include <sys/types.h>
 #include <stdlib.h>
@@ -45,14 +46,10 @@
 #endif
 #include <process.h>
 #include <malloc.h>
-#include <stdarg.h>
 
 extern  void                    MsgBuffer(uint,char *,...);
 extern  void                    ShowOptions(char *);
 extern  void                    __InitResource(void);
-extern  void                    (* __BldErrMsg)(uint,char *,va_list);
-extern  void                    (* __ErrorInit)(char *);
-extern  void                    (* __ErrorFini)(void);
 
 #if _CPU == 386
   #define _CmpName        "wfc386"        // compiler name

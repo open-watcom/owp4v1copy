@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  error message processing routines
 *
 ****************************************************************************/
 
-#include "macro.h"
-#include "standard.h"
-#include "dattyp.h"
+void            (* __BldErrMsg)(uint,char *,va_list);
+void            (* __ErrorInit)(char *);
+void            (* __ErrorFini)(void);

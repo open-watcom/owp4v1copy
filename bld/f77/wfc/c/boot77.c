@@ -30,12 +30,14 @@
 
 
 #include "ftnstd.h"
-#include "progsw.h"
 #include "global.h"
-#include "bglobal.h"
-#include "errcod.h"
 #include "cpopt.h"
+#include "progsw.h"
+#include "errcod.h"
 #include "fmemmgr.h"
+#include "bglobal.h"
+
+#include "boot77.h"
 
 extern  void            SDInitIO(void);
 extern  void            InitComIO(void);
