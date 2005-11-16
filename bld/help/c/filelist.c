@@ -173,7 +173,7 @@ static void scanDirectory( char *buf, FileList *list ) {
     dirent = readdir( dirhdl );
     while( dirent != NULL ) {
         len = strlen( dirent->d_name );
-        if ( len < 5 || strcmp ( &dirent->d_name[len - 4], ".ihp" ) != 0 ) {
+        if ( len < 5 || stricmp ( &dirent->d_name[len - 4], DEF_EXT ) != 0 ) {
             dirent = readdir( dirhdl );
             continue;
         }
