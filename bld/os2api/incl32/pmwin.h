@@ -1009,6 +1009,23 @@ MRESULT APIENTRY WinDdeRespond(HWND,HWND,PCSZ,PCSZ,PCONVCONTEXT);
 
 #if defined(INCL_WINDIALOGS) || !defined(INCL_NOCOMMON)
 
+#define MAX_MBDTEXT     70
+typedef struct _MB2D {
+    CHAR   achText[MAX_MBDTEXT + 1];
+    CHAR   packbyte;
+    ULONG  idButton;
+    LONG   flStyle;
+} MB2D, *PMB2D;
+
+typedef struct _MB2INFO {
+    ULONG    cb;
+    HPOINTER hIcon;
+    ULONG    cButtons;
+    ULONG    flStyle;
+    HWND     hwndNotify;
+    MB2D     mb2d[1];
+} MB2INFO, *PMB2INFO;
+
 #define MB_OK               0x0000
 #define MB_OKCANCEL         0x0001
 #define MB_RETRYCANCEL      0x0002
@@ -1027,6 +1044,7 @@ MRESULT APIENTRY WinDdeRespond(HWND,HWND,PCSZ,PCSZ,PCONVCONTEXT);
 #define MB_ICONASTERISK     0x0030
 #define MB_ICONHAND         0x0040
 #define MB_CUACRITICAL      0x0040
+#define MB_CUSTOMICON       0x0080
 #define MB_QUERY            MB_ICONQUESTION
 #define MB_WARNING          MB_CUAWARNING
 #define MB_INFORMATION      MB_ICONASTERISK
@@ -1041,6 +1059,7 @@ MRESULT APIENTRY WinDdeRespond(HWND,HWND,PCSZ,PCSZ,PCONVCONTEXT);
 #define MB_SYSTEMMODAL      0x1000
 #define MB_HELP             0x2000
 #define MB_MOVEABLE         0x4000
+#define MB_NONMODAL         0x8000
 
 #define MBID_OK             1
 #define MBID_CANCEL         2
@@ -1076,6 +1095,7 @@ MRESULT APIENTRY WinDdeRespond(HWND,HWND,PCSZ,PCSZ,PCONVCONTEXT);
 BOOL    APIENTRY WinAlarm(HWND,ULONG);
 MRESULT APIENTRY WinDefDlgProc(HWND,ULONG,MPARAM,MPARAM);
 ULONG   APIENTRY WinMessageBox(HWND,HWND,PCSZ,PCSZ,ULONG,ULONG);
+ULONG   APIENTRY WinMessageBox2(HWND,HWND,PCSZ,PCSZ,ULONG,PMB2INFO);
 BOOL    APIENTRY WinDismissDlg(HWND,ULONG);
 ULONG   APIENTRY WinDlgBox(HWND,HWND,PFNWP,HMODULE,ULONG,PVOID);
 HWND    APIENTRY WinLoadDlg(HWND,HWND,PFNWP,HMODULE,ULONG,PVOID);
