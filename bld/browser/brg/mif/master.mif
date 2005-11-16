@@ -6,7 +6,7 @@ name = wbrg
 !include deftarg.mif
 
 .c: ../cpp;$(trmem_dir)
-.cpp: ../cpp;$(browse_dir)/cpp
+.cpp: ../cpp;$(browse_dir)/cpp;$(trmem_dir)
 
 OBJECTS = &
     blip.obj     &
@@ -37,7 +37,7 @@ OBJECTS = &
     wtime.obj
 
 !ifeq browse_trmem 1
-OBJECTS += dmem.obj trmem.obj
+OBJECTS += dmem.obj trmem.obj trmemcpp.obj
 !else
 OBJECTS += mem.obj
 !endif
@@ -55,9 +55,10 @@ OBJECTS += debuglog.obj
 !else
 extra_cpp_flags     = -xs-ew-DSTANDALONE_MERGER -DDEBUG=0 -DINSTRUMENTS=0
 !endif
-extra_c_flags       = -DSTANDALONE_RX=1
-extra_c_flags_trmem = -I"$(trmem_dir)"
-extra_c_flags_dmem  = $(mem_flags) -I"$(trmem_dir)"
+extra_c_flags          = -DSTANDALONE_RX=1
+extra_c_flags_trmem    = -I"$(trmem_dir)"
+extra_c_flags_trmemcpp = -I"$(trmem_dir)" -DTRACKER $(mem_flags)
+extra_c_flags_dmem     = $(mem_flags) -I"$(trmem_dir)"
 
 # linker
 extra_l_flags        = op stack=16k, map
