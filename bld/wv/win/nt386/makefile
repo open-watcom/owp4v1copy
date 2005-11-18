@@ -7,6 +7,7 @@ host_OS=nt
 host_CPU=386
 
 sysobjs =   &
+    autoenv.obj &
     ntinit.obj &
     ntscrn.obj &
     ntfilio.obj &

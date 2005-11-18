@@ -45,6 +45,7 @@
 #include "dbgtoggl.h"
 #include "dbgmem.h"
 #include "win1632.h"
+#include "autoenv.h"
 
 extern int _8087;
 
@@ -71,6 +72,9 @@ void GUImain( void )
 {
     char        *buff;
     int         len;
+
+    // fix up env vars if necessary
+    watcom_setup_env();
 
     SetErrorMode( ERR_MODE );
 #if defined(__386__)

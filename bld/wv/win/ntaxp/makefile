@@ -7,6 +7,7 @@ host_CPU=axp
 host_OS=nt
 
 sysobjs =   &
+    autoenv.obj &
     ntinit.obj &
     ntscrn.obj &
     ntfilio.obj &

@@ -9,6 +9,7 @@ host_CPU=i86
 sys_windowed = 1
 
 sysobjs =   &
+    autoenv.obj &
     wininit.obj &
     winchk.obj &
     wincmd.obj &

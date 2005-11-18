@@ -48,6 +48,7 @@
 #include "windows.h"
 #include "win1632.h"
 #include "dbgmem.h"
+#include "autoenv.h"
 
 extern int _8087;
 
@@ -83,6 +84,9 @@ void TellWinHandle()
 void GUImain( void )
 {
     char buff[256];
+
+    // fix up env vars if necessary
+    watcom_setup_env();
 
     SetErrorMode( SEM_FAILCRITICALERRORS );
     SetHandleCount( 60 );

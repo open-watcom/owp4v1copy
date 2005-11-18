@@ -9,6 +9,7 @@ host_OS=nt
 sys_windowed = 1
 
 sysobjs =   &
+    autoenv.obj &
     ntinit.obj &
     ntguiscn.obj &
     ntfilio.obj &
