@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Back-end control for C++.
 *
 ****************************************************************************/
 
@@ -122,7 +121,6 @@
 
 static VSTK_CTL stack_labs_cs;      // stack: labels (control)
 static VSTK_CTL stack_goto_near;    // stack: gotos (near)
-static VSTK_CTL stack_object_init;  // stack: array initializations
 
 static unsigned max_inline_depth;   // maximum depth of inlining
 static unsigned depth_inline;       // depth of inlining
@@ -3306,7 +3304,6 @@ static void cgbackInit(         // INITIALIZATION FOR MODULE
 #endif
     VstkOpen( &stack_labs_cs, sizeof( label_handle ), 8 );
     VstkOpen( &stack_goto_near, sizeof( label_handle ), 16 );
-    VstkOpen( &stack_object_init, sizeof( OBJ_INIT ), 4 );
     carveTRY_IMPL = CarveCreate( sizeof( TRY_IMPL ), 4 );
     carveSTAB_OBJ = CarveCreate( sizeof( STAB_OBJ ), 4 );
     CompFlags.has_longjmp = FALSE;
@@ -3322,7 +3319,6 @@ static void cgbackFini(         // COMPLETION FOR MODULE
     defn = defn;
     VstkClose( &stack_labs_cs );
     VstkClose( &stack_goto_near );
-    VstkClose( &stack_object_init );
     CarveDestroy( carveTRY_IMPL );
     CarveDestroy( carveSTAB_OBJ );
 }
