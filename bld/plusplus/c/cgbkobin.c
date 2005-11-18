@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Operations on OBJ_INIT and DTREG_OBJ.
 *
 ****************************************************************************/
 
@@ -246,6 +245,7 @@ OBJ_INIT* ObjInitPop(           // POP INITIALIZATION OBJECT (HAS COMPONENTS)
     OBJ_INIT* init;             // - new object
 
     init = VstkPop( &stack_object_init );
+    DbgVerify( init != NULL, "ObjInitPop -- init object stack empty" );
     dtregObjFree( init->reg );
     return init;
 }
