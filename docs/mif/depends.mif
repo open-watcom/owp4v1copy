@@ -2190,6 +2190,18 @@ $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grpref.gml &
 $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grsyms.gml &
 $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grtitle.gml
 
+# owstl
+#bmroot_owstldev = $(docsrc_dir)$(SL)owstl
+incs_owstldev = $(docsrc_dir)$(SL)owstl
+objs_owstldev = &
+$(docsrc_dir)$(SL)owstl$(SL)owstl.gml &
+$(docsrc_dir)$(SL)owstl$(SL)owgml.gml &
+$(docsrc_dir)$(SL)owstl$(SL)intro.gml &
+$(docsrc_dir)$(SL)owstl$(SL)rbtree.gml &
+$(docsrc_dir)$(SL)owstl$(SL)list.gml &
+$(docsrc_dir)$(SL)owstl$(SL)string.gml &
+$(docsrc_dir)$(SL)owstl$(SL)copy.gml
+
 # pg sub-directory
 bmroot_pg = $(docsrc_dir)$(SL)pg
 incs_pg = $(docsrc_dir)$(SL)pg

@@ -372,6 +372,14 @@ book_incs=$(incs_lg)
 book_src=lguide
 book_multi_chapter=1
 
+!else ifeq hbook owstl
+# owstldg
+book_title=$(company) OWSTL developer guide
+book_objs=$(objs_owstldev)
+book_incs=$(incs_owstldev)
+book_src=owstl
+#book_bmroot=$(bmroot_owstldev)
+
 !else ifeq hbook pguide
 # pguide
 book_title=$(company) C/C++ Programmer's Guide
