@@ -37,8 +37,7 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "csetinfo.h"
-
-extern  int             StorageSize(int);
+#include "types.h"
 
 extern  character_set   CharSetInfo;
 
@@ -62,30 +61,32 @@ static  unsigned char   CharIndex( char chr ) {
 }
 
 
-uint            ImplType( char chr ) {
-//====================================
+TYPE    ImplType( char chr ) {
+//============================
 
 // Determine the implicit type of a symbol starting with the given
 // character.
 
-    if( CharSetInfo.is_foreign( chr ) ) return( TY_REAL );
+    if( CharSetInfo.is_foreign( chr ) )
+        return( TY_REAL );
     return( ImplicitTab[ CharIndex( chr ) ].typ );
 }
 
 
-uint                    ImplSize( char chr ) {
-//============================================
+uint    ImplSize( char chr ) {
+//============================
 
 // Determine the size of a storage unit a symbol starting with the
 // given character.
 
-    if( CharSetInfo.is_foreign( chr ) ) return( StorageSize( TY_REAL ) );
+    if( CharSetInfo.is_foreign( chr ) )
+        return( StorageSize( TY_REAL ) );
     return( ImplicitTab[ CharIndex( chr ) ].size );
 }
 
 
-bool            SetImplType( char chr1, char chr2, uint typ, uint size ) {
-//========================================================================
+bool    SetImplType( char chr1, char chr2, TYPE typ, uint size ) {
+//================================================================
 
 // Set the implicit type of the given range of characters to the
 // given type.
@@ -106,12 +107,12 @@ bool            SetImplType( char chr1, char chr2, uint typ, uint size ) {
 }
 
 
-void            InitImplTab() {
-//=============================
+void    InitImplTab( void ) {
+//===========================
 
 // Set default types in implicit table.
 
-    uint        typ;
+    TYPE        typ;
     int         i;
 
     for( i = 0; i <= IMPL_SIZE; ++i ) {

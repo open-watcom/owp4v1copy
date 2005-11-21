@@ -39,13 +39,9 @@
 #include "fcodes.h"
 #include "stmtsw.h"
 #include "opn.h"
+#include "emitobj.h"
 
-extern  void            EmitOp(unsigned_16);
-extern  void            OutPtr(pointer);
-extern  sym_id          GTempString(int);
-extern  void            SetOpn(itnode *,int);
-extern  void            GenType(itnode *);
-extern  void            PushOpn(itnode *);
+extern  sym_id          GTempString(uint);
 
 
 void    GBegSubScr( itnode *array_node ) {
@@ -73,7 +69,7 @@ void    GEndSubScr( itnode *arr ) {
     itnode      *arg;
     int         dims;
 
-    if( arr->opn & OPN_FLD ) {
+    if( arr->opn.us & USOPN_FLD ) {
         PushOpn( arr );
         EmitOp( FIELD_SUBSCRIPT );
         OutPtr( arr->sym_ptr );
@@ -89,12 +85,12 @@ void    GEndSubScr( itnode *arr ) {
         arg = arg->link;
         --dims;
     }
-    if( ( arr->opn & OPN_FLD ) == 0 ) {
+    if( ( arr->opn.us & USOPN_FLD ) == 0 ) {
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
             if( arr->sym_ptr->ns.typ == TY_CHAR ) {
                 OutPtr( GTempString( 0 ) );
             }
         }
     }
-    SetOpn( arr, OPN_SAFE );
+    SetOpn( arr, USOPN_SAFE );
 }

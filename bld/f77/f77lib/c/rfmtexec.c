@@ -32,7 +32,6 @@
 #include "ftnstd.h"
 #include "rundat.h"
 #include "errcod.h"
-#include "parmtype.h"
 #include "fmtdef.h"
 #include "format.h"
 #include "iotype.h"
@@ -49,7 +48,7 @@ extern  void            R_FIInt(void);
 extern  void            R_FOInt(void);
 extern  void            R_FIHex(void);
 extern  void            R_FOHex(void);
-extern  void            R_ChkType(byte,byte);
+extern  void            R_ChkType(PTYPE,PTYPE);
 extern  void            R_ChkFType(void);
 extern  void            R_ChkIType(void);
 extern  void            R_ChkRecLen(void);

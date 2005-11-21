@@ -31,10 +31,10 @@
 
 
 #include <stddef.h>
-#include <watcom.h>
-#include <bool.h>
+#include "watcom.h"
+#include "bool.h"
 #if !defined( __RT__ ) && !defined( __WFL__ )
-  #include <cgstd.h>
+  #include "cgstd.h"
 #endif
 
 #define NULLCHAR        '\0'

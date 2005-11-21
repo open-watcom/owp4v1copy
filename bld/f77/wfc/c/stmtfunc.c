@@ -35,6 +35,7 @@
 #include "global.h"
 #include "stmtsw.h"
 #include "fmemmgr.h"
+#include "recog.h"
 
 extern  void            BIEndSF( sym_id ste_ptr );
 extern  void            GStartSF(void);
@@ -45,12 +46,6 @@ extern  sym_id          LkSym(void);
 extern  sym_id          STShadow(sym_id);
 extern  void            STUnShadow(sym_id);
 extern  void            CkTypeDeclared(void);
-extern  bool            ReqNOpn(void);
-extern  bool            ReqOpenParen(void);
-extern  bool            ReqCloseParen(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecComma(void);
-extern  bool            ReqName(int);
 extern  void            Error(int,...);
 
 

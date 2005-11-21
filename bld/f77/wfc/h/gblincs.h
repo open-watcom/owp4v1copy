@@ -33,14 +33,16 @@
 // The following include files are required by GLOBAL.INC to define global
 // data.
 
-#include <source.h>
-#include <itdefn.h>
-#include <csdefn.h>
-#include <stmtno.h>
-#include <rememb.h>
-#include <argument.h>
-#include <impl.h>
-#include <lex.h>
-#include <token.h>
-#include <scan.h>
-#include <symbol.h>
+#include "source.h"
+#include "itdefn.h"
+#include "csdefn.h"
+#include "stmtno.h"
+#include "rememb.h"
+#include "argument.h"
+#include "impl.h"
+#include "lex.h"
+#include "token.h"
+#include "scan.h"
+#include "symbol.h"
+#include "prdefn.h"
+#include "progsw.h"

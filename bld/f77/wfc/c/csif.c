@@ -40,6 +40,7 @@
 #include "opn.h"
 #include "opr.h"
 #include "global.h"
+#include "recog.h"
 
 extern  void            Error(int,...);
 extern  void            AddCSNode(byte);
@@ -53,10 +54,6 @@ extern  void            GLabel(label_id);
 extern  void            GBranch(label_id);
 extern  void            AdvanceITPtr(void);
 extern  label_id        NextLabel(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            ReqEOS(void);
-extern  bool            RecKeyWord(char *);
 extern  void            FreeLabel(label_id);
 
 
@@ -74,7 +71,7 @@ void    CpLogIf() {
         AddCSNode( CS_IF );
         CSHead->branch = if_skip;
         CSHead->bottom = NextLabel();
-        CITNode->opn = OPN_PHI;       // not part of the block label
+        CITNode->opn.ds = DSOPN_PHI;       // not part of the block label
         BlockLabel();
         CtrlFlgs |= CF_BAD_DO_ENDING;
     } else {

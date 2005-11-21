@@ -35,13 +35,16 @@
 //
 
 #include "ftnstd.h"
+#include "symtypes.h"
+#include "optr.h"
+#include "opr.h"
 
-extern  void            LogOp(int,int,int);
-extern  void            AsgnOp(int,int,int);
-extern  void            RelOp(int,int,int);
-extern  void            BinOp(int,int,int);
-extern  void            ExpOp(int,int,int);
-extern  void            FieldOp(int,int,int);
+extern  void            LogOp(TYPE,TYPE,OPTR);
+extern  void            AsgnOp(TYPE,TYPE,OPTR);
+extern  void            RelOp(TYPE,TYPE,OPTR);
+extern  void            BinOp(TYPE,TYPE,OPTR);
+extern  void            ExpOp(TYPE,TYPE,OPTR);
+extern  void            FieldOp(TYPE,TYPE,OPTR);
 
 void    (* const __FAR GenOprTable[])() = {
         &LogOp,            // 0    .EQV.

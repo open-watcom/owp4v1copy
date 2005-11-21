@@ -37,6 +37,7 @@
 #include "progsw.h"
 #include "segsw.h"
 #include "cpopt.h"
+#include "iflookup.h"
 
 
 extern  void            Error(int,...);
@@ -47,8 +48,7 @@ extern  void            NameExt(int,sym_id);
 extern  void            Warning(int,...);
 extern  void            Extension(int,...);
 extern  sym_id          STFreeName(sym_id);
-extern  bool            IsIFUsed(int);
-extern  bool            IsIntrinsic(unsigned_16);
+extern  bool            IsIFUsed(IFF);
 extern  sym_id          AddSP2GList(sym_id);
 extern  sym_id          AddCB2GList(sym_id);
 extern  unsigned_32     GetStmtNum(sym_id);

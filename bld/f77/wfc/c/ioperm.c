@@ -37,7 +37,6 @@
 #include "ftnstd.h"
 #include "errcod.h"
 #include "iodefn.h"
-#include "prdefn.h"
 #include "global.h"
 
 #define NO      0
@@ -126,10 +125,10 @@ bool    Permission( int kw ) {
         if( perm ) {
             KWRememb( kw );
             if( ExtnTest( kw ) == YES ) {
-                Extension( IL_SPECIFIER_NOT_STANDARD, IOKeywords[ kw - 1 ] );
+                Extension( IL_SPECIFIER_NOT_STANDARD, IOKeywords[ kw ] );
             }
         } else {
-            StmtPtrErr( IL_BAD_LIST, IOKeywords[ kw - 1 ] );
+            StmtPtrErr( IL_BAD_LIST, IOKeywords[ kw ] );
         }
     }
     return( perm );

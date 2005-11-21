@@ -36,13 +36,11 @@
 
 #include <string.h>
 
-extern  uint            TypeSize(uint);
-
 hash_entry              ConstHashTable[HASH_PRIME];
 
 
-sym_id  STConst( void *ptr, int typ, unsigned size ) {
-//=====================================================
+sym_id  STConst( void *ptr, TYPE typ, uint size ) {
+//=================================================
 
 // Search the symbol table for a constant. If the constant is not in the
 // symbol table, add it to the symbol table.

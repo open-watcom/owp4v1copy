@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 #include <stdarg.h>
-#include "ftnstd.h"
 
 extern  void    (* __BldErrMsg)(uint,char *,va_list);
 extern  void    (* __ErrorInit)(char *);

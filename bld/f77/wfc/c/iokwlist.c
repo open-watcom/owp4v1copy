@@ -37,6 +37,7 @@
 #include "ftnstd.h"
 
 char    *IOKeywords[] = {
+        "",
         "ACCESS",
         "ACTION",
         "BLANK",

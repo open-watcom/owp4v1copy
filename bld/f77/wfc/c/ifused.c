@@ -53,7 +53,7 @@ void    IFInit() {
 }
 
 
-void    MarkIFUsed( int function ) {
+void    MarkIFUsed( IFF function ) {
 //==================================
 
 // Turn on bit ( function mod 8 ) of IFUsed[ function/8 ].
@@ -62,7 +62,7 @@ void    MarkIFUsed( int function ) {
 }
 
 
-bool    IsIFUsed( int function ) {
+bool    IsIFUsed( IFF function ) {
 //================================
 
 // Return TRUE if bit ( function mod 8 ) of IFUsed[ function/8 ] is on.

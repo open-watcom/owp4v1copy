@@ -13,12 +13,10 @@ comroot = &
     fmemmgr.obj &
     fmeminit.obj &
     mkname.obj &
-    parmtype.obj &
     rstutils.obj &
     subscr.obj &
     substr.obj &
-    types.obj &
-    ifargtyp.obj
+    types.obj
 
 comovl1 = &
     aentry.obj &
@@ -59,12 +57,7 @@ comovl1 = &
     fmterr.obj &
     fmtinit.obj &
     frl.obj &
-    ifflags.obj &
     iflookup.obj &
-    ifnames.obj &
-    ifparmct.obj &
-    ifargct.obj &
-    ifselect.obj &
     ifused.obj &
     impltab.obj &
     include.obj &
@@ -140,7 +133,6 @@ comovl1 += &
     fmtcnvt.obj &
     fmtscan.obj &
     hexcnv.obj &
-    insertxt.obj &
     japanese.obj &
     korean.obj &
     lexcmp.obj

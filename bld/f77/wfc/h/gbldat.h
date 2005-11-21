@@ -39,7 +39,7 @@ gbl_defn itnode         *ITHead;        // head of stmt internal text
 gbl_defn itnode         *CITNode;       // current internal text node
 gbl_defn itnode         *SPtr1;         // 1st LZ right bracket
 gbl_defn itnode         *SPtr2;         // 2nd LZ right bracket
-gbl_defn int            StmtProc;       // statement processor code
+gbl_defn stmtproc       StmtProc;       // statement processor code
 gbl_defn unsigned_16    CtrlFlgs;       // statement control flags
 gbl_defn int            SrcRecNum;      // record # of initial line of statement
 gbl_defn unsigned_16    BlockNum;       // for controlling unstructured branches
@@ -59,9 +59,9 @@ gbl_defn sym_id         SubProgId;      // SymId of subprogram being compiled
 gbl_defn impl_entry     ImplicitTab[IMPL_SIZE+1];
 gbl_defn byte           IFUsed[24];     // indicates intrinsic functions used
 gbl_defn unsigned_16    SgmtSw;         // program segment switches
-gbl_defn unsigned_16    ProgSw;         // program switches
+gbl_defn PSWT           ProgSw;         // program switches
 gbl_defn unsigned_16    ExtnSw;         // extension switches
-gbl_defn byte           ResultType;     // result type of operation in upscan
+gbl_defn TYPE           ResultType;     // result type of operation in upscan
 gbl_defn unsigned_16    StmtSw;         // statement switches
 gbl_defn rememb         Remember;       // info about the last executable stmt
 gbl_defn char           *SrcName;       // name of source file

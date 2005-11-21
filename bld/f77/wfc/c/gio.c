@@ -37,26 +37,19 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "fcodes.h"
-#include "parmtype.h"
-#include "prdefn.h"
+#include "types.h"
 #include "iodefn.h"
 #include "fcgbls.h"
 #include "stmtsw.h"
 #include "opn.h"
 #include "cpopt.h"
+#include "emitobj.h"
 
-extern  void            EmitOp(unsigned_16);
 extern  bool            NotFormatted(void);
 extern  uint            IOIndex(void);
-extern  void            PushOpn(itnode *);
-extern  void            OutPtr(pointer);
-extern  void            OutU16(unsigned_16);
-extern  obj_ptr         ObjTell(void);
-extern  obj_ptr         ObjSeek(obj_ptr);
-extern  sym_id          GTempString(int);
+extern  sym_id          GTempString(uint);
 extern  bool            AuxIOStmt(void);
 extern  void            GStmtAddr(sym_id);
-extern  void            GenType(itnode *);
 extern  bool            Already(int);
 
 
@@ -103,6 +96,20 @@ void    GIOStruct( sym_id sd ) {
 }
 
 
+static  void    GIORoutine( TYPE typ, uint size ) {
+//=================================================
+
+    unsigned_16 op_code;
+
+    op_code = ParmType( typ, size ) - PT_LOG_1;
+    if( StmtProc == PR_READ ) {
+        EmitOp( op_code + RT_INP_LOG1 );
+    } else {
+        EmitOp( op_code + RT_OUT_LOG1 );
+    }
+}
+
+
 void    GIOItem() {
 //=================
 
@@ -110,18 +117,6 @@ void    GIOItem() {
 
     PushOpn( CITNode );
     GIORoutine( CITNode->typ, CITNode->size );
-}
-
-
-static  void    GIORoutine( uint typ, uint size ) {
-//=================================================
-
-    typ = ParmType( typ, size );
-    if( StmtProc == PR_READ ) {
-        EmitOp( typ - PT_LOG_1 + RT_INP_LOG1 );
-    } else {
-        EmitOp( typ - PT_LOG_1 + RT_OUT_LOG1 );
-    }
 }
 
 
@@ -136,7 +131,7 @@ void    GIOArray() {
         EmitOp( PRT_ARRAY );
     }
     OutPtr( CITNode->sym_ptr );
-    if( CITNode->opn & OPN_FLD ) {
+    if( CITNode->opn.us & USOPN_FLD ) {
         OutPtr( CITNode->value.st.field_id );
     } else {
         OutPtr( NULL );

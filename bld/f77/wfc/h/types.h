@@ -24,18 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  auxiliary routines for symbol type related info
 *
 ****************************************************************************/
 
 
-#define ONE_OR_TWO      0x00
-#define ONE_ARG         0x01
-#define TWO_ARG         0x02
-#define TWO_OR_MORE     0x03
-#define IF_COUNT_MASK   0x03
+#include "itdefn.h"
 
-#define IF_EXTENSION    0x04
-
-#define IF_IN_LINE      0x10
+extern uint         TypeSize( TYPE typ );
+extern uint         StorageSize( TYPE typ );
+extern intstar4     ITIntValue( itnode *it );
+extern char         *TypeKW( TYPE typ );
+extern PTYPE        ParmType( TYPE typ, uint size );

@@ -39,7 +39,6 @@
 #include "fmtdef.h"
 #include "fmtdat.h"
 #include "format.h"
-#include "prdefn.h"
 #include "global.h"
 
 extern  void            GFEmEnd(void);

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  jump table of statement processor routines
 *
 ****************************************************************************/
 
-
-//
-// PROCTBL      : jump table of statement processor routines
-//
 
 #include "ftnstd.h"
 
@@ -124,89 +119,14 @@ extern  void            CpAllocate();
 extern  void            CpDeAllocate();
 extern  void            CpVolatile();
 
+#ifdef pick
+#undef pick
+#endif
+
+#define pick(id,text,proc,flags) proc,
+
 void    (* const __FAR ProcTable[])() = {
-    &BadStmt,                   // Unknown Statement
-    &CpAdmit,                   // ADMIT
-    &CpAllocate,                // ALLOCATE
-    &CpAssign,                  // ASSIGN
-    &CpAtEnd,                   // ATEND
-    &CpBackSp,                  // BACKSPACE
-    &CpBlockData,               // BLOCKDATA
-    &CpCall,                    // CALL
-    &CpCase,                    // CASE
-    &CpCharVar,                 // CHARACTER
-    &CpClose,                   // CLOSE
-    &CpCommon,                  // COMMON
-    &CpCmplxVar,                // COMPLEX
-    &CpContinue,                // CONTINUE
-    &CpCycle,                   // CYCLE
-    &CpData,                    // DATA
-    &CpDeAllocate,              // DEALLOCATE
-    &CpDimension,               // DIMENSION
-    &CpDoWhile,                 // DO WHILE
-    &CpDCmplxVar,               // DOUBLECOMPLEX
-    &CpDbleVar,                 // DOUBLEPRECISION
-    &CpElse,                    // ELSE
-    &CpElseIf,                  // ELSEIF
-    &CpEnd,                     // END
-    &CpEndAtEnd,                // ENDATEND
-    &CpEndBlock,                // ENDBLOCK
-    &CpEndDo,                   // ENDDO
-    &CpEndfile,                 // ENDFILE
-    &CpEndGuess,                // ENDGUESS
-    &CpEndif,                   // ENDIF
-    &CpEndLoop,                 // ENDLOOP
-    &CpEndMap,                  // ENDMAP
-    &CpEndSelect,               // ENDSELECT
-    &CpEndStructure,            // ENDSTRUCTURE
-    &CpEndUnion,                // ENDUNION
-    &CpEndWhile,                // ENDWHILE
-    &CpEntry,                   // ENTRY
-    &CpEquivalence,             // EQUIVALENCE
-    &CpExecute,                 // EXECUTE
-    &CpExit,                    // EXIT
-    &CpXCmplxVar,               // EXTENDEDCOMPLEX
-    &CpXDbleVar,                // EXTENDEDPRECISION
-    &CpExternal,                // EXTERNAL
-    &CpFormat,                  // FORMAT
-    &CpFunction,                // FUNCTION
-    &CpGoto,                    // GOTO
-    &CpGuess,                   // GUESS
-    &CpLogIf,                   // IF
-    &CpImplicit,                // IMPLICIT
-    &CpInclude,                 // INCLUDE
-    &CpInquire,                 // INQUIRE
-    &CpIntVar,                  // INTEGER
-    &CpIntrinsic,               // INTRINSIC
-    &CpLogVar,                  // LOGICAL
-    &CpLoop,                    // LOOP
-    &CpMap,                     // MAP
-    &CpNameList,                // NAMELIST
-    &CpOpen,                    // OPEN
-    &CpOtherwise,               // OTHERWISE
-    &CpParameter,               // PARAMETER
-    &CpPause,                   // PAUSE
-    &CpPrint,                   // PRINT
-    &CpProgram,                 // PROGRAM
-    &CpQuit,                    // QUIT
-    &CpRead,                    // READ
-    &CpRealVar,                 // REAL
-    &CpRecord,                  // RECORD
-    &CpRemBlock,                // REMOTEBLOCK
-    &CpReturn,                  // RETURN
-    &CpRewind,                  // REWIND
-    &CpSave,                    // SAVE
-    &CpSelect,                  // SELECT
-    &CpStop,                    // STOP
-    &CpStructure,               // STRUCTURE
-    &CpSubroutine,              // SUBROUTINE
-    &CpUnion,                   // UNION
-    &CpUntil,                   // UNTIL
-    &CpVolatile,                // VOLATILE
-    &CpWhile,                   // WHILE
-    &CpWrite,                   // WRITE
-    &CpDo,                      // DO
-    &CpAsgnmt,                  // = (assignment statement)
-    &CpArithIf,                 // IF( expr ) 10, 20, 30
-    &CpStmtFunc                 // statement function
+
+#include "stmtdefn.h"
+
 };

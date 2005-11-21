@@ -40,7 +40,8 @@
 #include "fcodes.h"
 #include "global.h"
 #include "cpopt.h"
-#include "parmtype.h"
+#include "types.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -65,7 +66,6 @@ extern  cg_type         GetType1(unsigned_16);
 extern  cg_type         GetType2(unsigned_16);
 extern  cg_type         GetType(unsigned_16);
 extern  cg_type         ResCGType(cg_type,cg_type);
-extern  unsigned_16     GetU16(void);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  bool            TypeCGInteger(cg_type);
 
@@ -252,13 +252,14 @@ void    FCPow() {
 void    FCDoneParenExpr() {
 //=========================
 
-    unsigned_16 typ_info;
+    PTYPE       typ_info;
     cg_name     val;
     cg_cmplx    z;
 
     typ_info = GetU16();
-    if( (typ_info == PT_CPLX_8) || (typ_info == PT_CPLX_16) ||
-                                                (typ_info == PT_CPLX_32) ) {
+    if( (typ_info == PT_CPLX_8)
+      || (typ_info == PT_CPLX_16)
+      || (typ_info == PT_CPLX_32) ) {
         XPopCmplx( &z, GetType( typ_info ) );
         val = z.imagpart;
         XPush( CGUnary( O_PARENTHESIS, z.imagpart, CGType( val ) ) );

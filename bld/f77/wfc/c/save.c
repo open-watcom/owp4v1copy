@@ -41,16 +41,10 @@
 #include "segsw.h"
 #include "namecod.h"
 #include "global.h"
+#include "recog.h"
 
 extern  void                    Error(int,...);
 extern  void                    IllName(sym_id);
-extern  bool                    ReqName(int);
-extern  bool                    ReqEOS(void);
-extern  bool                    RecComma(void);
-extern  bool                    RecNOpn(void);
-extern  bool                    ReqNOpn(void);
-extern  bool                    RecNextOpr(byte);
-extern  bool                    ReqDiv(void);
 extern  void                    AdvanceITPtr(void);
 extern  sym_id                  LkCommon(void);
 extern  sym_id                  LkSym(void);

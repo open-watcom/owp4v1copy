@@ -24,53 +24,63 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Typing information
 *
 ****************************************************************************/
 
 
-//
-// TYPES        : Typing information
-//
-
 #include "ftnstd.h"
 #include "global.h"
-#include "symflgs.h"
+#include "symtypes.h"
 #include "cpopt.h"
+#include "types.h"
 
-const byte __FAR        Sizes[] = { 1, 4,               // LOGICAL
-                                    1, 2, 4,            // INTEGER
-                                    4, 8, 16,           // REAL
-                                    8, 16, 32,          // COMPLEX
-                                    1,                  // CHARACTER
-                                    0, };               // STRUCTURE
+typedef struct type_info {
+    char    *text;
+    uint    size;
+    PTYPE   ptyp;
+} type_info;
 
+#ifdef pick
+#undef pick
+#endif
 
-uint            TypeSize( uint typ ) {
+#define pick(id,text,size,ptype) {text,size,ptype},
+
+static type_info TypeInfo[] = {
+#include "symdefn.h"
+};
+
+uint            TypeSize( TYPE typ ) {
 //====================================
 
 // Get the size of the storage unit for the given data type.
 
-    return( Sizes[ typ ] );
+    return( TypeInfo[ typ ].size );
 }
 
 
-uint            StorageSize( uint typ ) {
+uint            StorageSize( TYPE typ ) {
 //=======================================
 
 // Get the size of the storage unit for a the given data type.
 // This function is sensitive to the "short" option.
 
     if( Options & OPT_SHORT ) {
-        if( typ == TY_INTEGER ) return( sizeof( intstar2 ) );
-        if( typ == TY_LOGICAL ) return( sizeof( logstar1 ) );
+        if( typ == TY_INTEGER )
+            return( sizeof( intstar2 ) );
+        if( typ == TY_LOGICAL ) {
+            return( sizeof( logstar1 ) );
+        }
     }
     if( Options & OPT_EXTEND_REAL ) {
-        if( typ == TY_REAL ) return( sizeof( double ) );
-        if( typ == TY_DOUBLE ) return( Sizes[ TY_EXTENDED ] );
+        if( typ == TY_REAL )
+            return( sizeof( double ) );
+        if( typ == TY_DOUBLE ) {
+            return( TypeInfo[ TY_EXTENDED ].size );
+        }
     }
-    return( Sizes[ typ ] );
+    return( TypeInfo[ typ ].size );
 }
 
 
@@ -95,4 +105,20 @@ intstar4        ITIntValue( itnode *it ) {
     }
     // must be sizeof( intstar4 )
     return( it->value.intstar4 );
+}
+
+
+char    *TypeKW( TYPE typ ) {
+//===========================
+
+// Get the keyword string for the given data type.
+
+    return( TypeInfo[ typ ].text );
+}
+
+PTYPE   ParmType( TYPE typ, uint size ) {
+//=======================================
+
+    size = size;
+    return( TypeInfo[ typ ].ptyp );
 }

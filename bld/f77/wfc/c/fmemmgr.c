@@ -31,7 +31,6 @@
 
 #include "ftnstd.h"
 #include "errcod.h"
-#include "progsw.h"
 #include "stmtsw.h"
 #include "global.h"
 #include "bglobal.h"

@@ -24,24 +24,43 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compile-time constants define symbols type
 *
 ****************************************************************************/
 
+#ifndef _SYMTYPES_H_INCLUDED
+#define _SYMTYPES_H_INCLUDED
 
-//
-// IFARGTYP     : get argument type of intrinsic function
-//
+// TYPES
+// =====
 
-#include "ftnstd.h"
-#include "ifflags.h"
+#ifdef pick
+#undef pick
+#endif
 
-extern  const unsigned_16 __FAR IFFlags[];
+#define pick(id,text,size,ptype) id,
 
+enum SYM_TYPES {
+#include "symdefn.h"
+};
 
-byte    IFArgType( byte func ) {
-//==============================
+typedef enum SYM_TYPES TYPE;
 
-    return( IFFlags[ func ] & IF_VAR_TYPE );
-}
+#define TY_FIRST    TY_LOGICAL_1
+
+#define TY_EXTENDED TY_DOUBLE
+#define TY_XCOMPLEX TY_DCOMPLEX
+
+#define FIRST_BASE_TYPE TY_LOGICAL_1
+#define LAST_BASE_TYPE  TY_TRUE_XCOMPLEX
+
+#if _CPU == 8086
+ #define TY_INTEGER_TARG TY_INTEGER_2
+#else
+ #define TY_INTEGER_TARG TY_INTEGER
+#endif
+
+#define _IsTypeLogical( typ )   ((typ >= TY_LOGICAL_1) && (typ <= TY_LOGICAL))
+#define _IsTypeInteger( typ )   ((typ >= TY_INTEGER_1) && (typ <= TY_INTEGER))
+
+#endif

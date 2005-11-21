@@ -40,28 +40,15 @@
 #include "fcgbls.h"
 #include "opn.h"
 #include "cpopt.h"
+#include "recog.h"
+#include "emitobj.h"
 
 extern  void            GSPProlog(void);
-extern  void            EmitOp(unsigned_16);
-extern  void            OutPtr(pointer);
-extern  void            OutConst32(signed_32);
-extern  void            OutU16(unsigned_16);
-extern  obj_ptr         ObjTell(void);
-extern  obj_ptr         ObjSeek(obj_ptr);
-extern  void            PushOpn(itnode *);
 extern  void            IfExpr(void);
-extern  sym_id          StaticAlloc(int,int);
+extern  sym_id          StaticAlloc(uint,TYPE);
 extern  label_id        NextLabel(void);
-extern  int             TypeSize(uint);
-extern  bool            RecNOpn(void);
 extern  bool            TypeCmplx(int typ);
-extern  void            GenType(itnode *);
-extern  void            DumpType(uint,uint);
-extern  void            DumpTypes(uint,uint,uint,uint);
-extern  obj_ptr         ObjTell(void);
-extern  void            OutObjPtr(obj_ptr);
-extern  void            PushSym(sym_id);
-extern  uint            MapTypes(uint,uint);
+extern  TYPE            MapTypes(TYPE,uint);
 
 
 void    GLabel( int label ) {
@@ -137,8 +124,7 @@ void    InitSelect() {
     sym_id      sel_expr;
 
     if( !AError ) {
-        if( ( ( CITNode->opn & OPN_WHERE ) == 0 ) &&
-            ( ( CITNode->opn & OPN_WHAT ) == OPN_NAM ) ) {
+        if( CITNode->opn.ds == DSOPN_NAM ) {
             // must be a variable name
             CSHead->cs_info.cases->sel_expr = CITNode->sym_ptr;
         } else {
@@ -259,8 +245,8 @@ void    GAssign( sym_id label ) {
 }
 
 
-void    GBreak( int routine ) {
-//=============================
+void    GBreak( unsigned_16 routine ) {
+//=====================================
 
 // Generate a STOP or a PAUSE.
 

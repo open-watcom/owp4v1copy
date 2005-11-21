@@ -35,7 +35,6 @@
 //
 
 #include "ftnstd.h"
-#include "parmtype.h"
 #include "rundat.h"
 #include "pgmacc.h"
 #include "errcod.h"
@@ -69,7 +68,7 @@ extern  void            (* const __FAR OutRtn[])();
 extern  const byte __FAR        SizeVars[];
 
 static  unsigned_32     NmlInCount;
-static  int             NmlInType;
+static  PTYPE           NmlInType;
 static  void            PGM *NmlInAddr;
 
 
@@ -237,7 +236,7 @@ static  void    NmlOut() {
     byte        PGM *nml;
     byte        len;
     byte        info;
-    uint        typ;
+    PTYPE       typ;
     unsigned_32 num_elts;
     byte        PGM *data;
     string      scb;
@@ -385,7 +384,7 @@ static  byte PGM *FindNmlEntry( char *name, uint len ) {
 
 static  io_type_rtn     NmlIOType;
 
-static  int     NmlIOType() {
+static PTYPE    NmlIOType() {
 //===========================
 
 // Get the type of an input item.

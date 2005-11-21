@@ -39,16 +39,9 @@
 #include "opn.h"
 #include "fcodes.h"
 #include "stmtsw.h"
+#include "emitobj.h"
 
-extern  void            PushOpn(itnode *);
-extern  void            SymRef(itnode *);
-extern  void            EmitOp(unsigned_16);
-extern  sym_id          GTempString(int);
-extern  void            OutPtr(pointer);
-extern  void            GenTypes(itnode *,itnode *);
-extern  void            OutInt(inttarg);
-extern  void            OutU16(unsigned_16);
-extern  void            SetOpn(itnode *,int);
+extern  sym_id          GTempString(uint);
 
 
 void    GBegSSStr() {
@@ -100,33 +93,33 @@ void    GFiniSS( itnode *sym_node, itnode *ss_node ) {
 
 // Finish a substring operation.
 
-    if( sym_node->opn & OPN_FLD ) {
+    if( sym_node->opn.us & USOPN_FLD ) {
         PushOpn( sym_node );
         EmitOp( FIELD_SUBSTRING );
         OutPtr( sym_node->sym_ptr );
-        if( sym_node->opn & OPN_SS1 ) { // length known at compile-time
+        if( sym_node->opn.us & USOPN_SS1 ) { // length known at compile-time
             OutInt( sym_node->value.st.ss_size );
         } else {
             OutInt( 0 ); // we don't know the length
         }
     } else {
         EmitOp( RT_SUBSTRING );
-        if( sym_node->opn & OPN_SS1 ) { // length known at compile-time
+        if( sym_node->opn.us & USOPN_SS1 ) { // length known at compile-time
             OutPtr( NULL );
         } else {
             SymRef( sym_node ); // in case we need the length of SCB if
         }                       // character*(*) and no upper bound specified
     }
     GenTypes( ss_node, ss_node->link );
-    if( !( sym_node->opn & OPN_FLD ) ) {
-        if( sym_node->opn & OPN_SS1 ) { // length known at compile-time
+    if( !( sym_node->opn.us & USOPN_FLD ) ) {
+        if( sym_node->opn.us & USOPN_SS1 ) { // length known at compile-time
             OutInt( sym_node->value.st.ss_size );
         }
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
             sym_node->value.st.ss_id = sym_node->sym_ptr;
             sym_node->sym_ptr = GTempString( 0 );
             OutPtr( sym_node->sym_ptr );
-            sym_node->opn |= OPN_ASY;
+            sym_node->opn.us |= USOPN_ASY;
         }
     }
 }

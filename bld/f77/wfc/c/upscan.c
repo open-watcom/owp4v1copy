@@ -31,23 +31,22 @@
 
 #include "ftnstd.h"
 #include "opr.h"
+#include "optr.h"
 #include "opn.h"
 #include "errcod.h"
-#include "prdefn.h"
 #include "astype.h"
-#include "ifflags.h"
-#include "ifnames.h"
+#include "iflookup.h"
 #include "global.h"
 #include "cpopt.h"
-#include "parmtype.h"
+#include "prmcodes.h"
+#include "recog.h"
+#include "emitobj.h"
+#include "types.h"
 
 extern  void            DetSubList(void);
 extern  void            DetCallList(void);
 extern  void            DetSStr(void);
-extern  byte            IFSpecific(byte);
-extern  byte            IFArgType(byte);
-extern  bool            IFIsGeneric(byte);
-extern  void            MarkIFUsed(int);
+extern  void            MarkIFUsed(IFF);
 extern  void            GMakeCplx(void);
 extern  void            GMakeDCplx(void);
 extern  void            GMakeXCplx(void);
@@ -58,17 +57,9 @@ extern  void            AdvanceITPtr(void);
 extern  bool            BitOn(unsigned_16);
 extern  bool            ClassIs(unsigned_16);
 extern  void            GArg(void);
-extern  int             TypeSize(uint);
-extern  void            GILCnvTo(uint,uint);
-extern  void            CnvTo(itnode*,uint,uint);
+extern  void            GILCnvTo(TYPE,uint);
+extern  void            CnvTo(itnode*,TYPE,uint);
 extern  void            UpdateNode(itnode *,itnode *);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecNOpn(void);
-extern  bool            RecColon(void);
-extern  bool            RecCloseParen(void);
-extern  bool            ReqNOpn(void);
-extern  bool            RecOpenParen(void);
-extern  bool            ReqCloseParen(void);
 extern  void            BackTrack(void);
 extern  void            MoveDown(void);
 extern  void            KillOpnOpr(void);
@@ -76,16 +67,14 @@ extern  void            AdvError(int);
 extern  void            Error(int,...);
 extern  void            Extension(int,...);
 extern  void            ClassErr(int,sym_id);
-extern  void            TypeTypeErr(int,uint,uint);
-extern  void            TypeErr(int,uint);
+extern  void            TypeTypeErr(int,TYPE,TYPE);
+extern  void            TypeErr(int,TYPE);
 extern  void            OpndErr(int);
 extern  void            PrmCodeErr(int,uint);
 extern  void            EndExpr(void);
-extern  sym_id          STConst(void *,int,int);
+extern  sym_id          STConst(void *,TYPE,uint);
 extern  sym_id          STLit(byte *,int);
 extern  byte            ParmCode(itnode *);
-extern  void            IFCntPrms(uint,byte);
-extern  void            SetOpn(itnode *,byte);
 extern  void            FiniCat(void);
 extern  void            CatBack(void);
 extern  void            CatAxeParens(void);
@@ -93,11 +82,7 @@ extern  void            CatOpn(void);
 extern  void            ChkCatOpn(void);
 extern  void            CatParen(void);
 extern  void            ParenCat(void);
-extern  intstar4        ITIntValue(itnode *);
-extern  void            PushOpn(itnode *);
 extern  void            ProcList(itnode *);
-extern  bool            IsIFMax(uint);
-extern  bool            IsIFMin(uint);
 extern  void            GIChar(void);
 extern  void            GModulus(void);
 extern  void            GCharLen(void);
@@ -134,50 +119,53 @@ extern  void            GCosh(void);
 extern  void            GTanh(void);
 extern  void            GSqrt(void);
 extern  void            GExp(void);
-extern  void            GParenExpr(void);
 extern  void            GVolatile(void);
 extern  void            GLoc(void);
 extern  void            GAllocated(void);
 extern  sym_id          FindStruct(char *,int);
 extern  void            SetDefinedStatus(void);
-extern  bool            TypeIs(int);
+extern  bool            TypeIs(TYPE);
 
-extern  const unsigned_16 __FAR IFFlags[];
-extern  char            *IFNames[];
 extern  void            (* const __FAR GenOprTable[])();
 extern  void            (* const __FAR ConstTable[])();
 
-static  const byte __FAR        OprIndex[] = {
-//     row/column         CITNode->opr
-         0,              // 0x00 phi
-         1,              // 0x01 start/terminate
-         2,              // 0x02 fn/array bracket
-         3,              // 0x03 (
-         4,              // 0x04 comma
-         5,              // 0x05 :
-         6,              // 0x06 =
-         16,             // 0x07 )
-         17,             // 0x08 . field selection
-         0,              // 0x09 * (statement number alternate return)
-         11,             // 0x0A .EQ.
-         11,             // 0x0B .NE.
-         11,             // 0x0C .LT.
-         11,             // 0x0D .GE.
-         11,             // 0x0E .LE.
-         11,             // 0x0F .GT.
-         7,              // 0x10 .EQV.
-         7,              // 0x11 .NEQV.
-         8,              // 0x12 .OR.
-         9,              // 0x13 .AND.
-         10,             // 0x14 .NOT.
-         17,             // 0x15 % (field selection)
-         0,0,0,0,        // 0x16-0x19 empty spot in OPR codes
-         12,             // 0x1A +
-         12,             // 0x1B -
-         13,             // 0x1C *
-         13,             // 0x1D /
-         14,             // 0x1E **
-         15              // 0x1F //
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,opr_index,proc_index) proc_index,
+
+static const OPTR __FAR OprNum[] = {
+#include "oprdefn.h"
+};
+
+// Constants below used in UPSCAN for operator sequence table and are
+// modified (along with UPSCAN) if operators are added/deleted/modified
+
+//  dimensions of operator sequence table
+
+#define OPR_CLASSES             18
+#define OPR_SEQ_MAT_SIZE        (OPR_CLASSES*OPR_CLASSES-1)     //  base 0
+#define OPR_SEQ_MAT_COLS        OPR_CLASSES
+
+enum {
+    OPRI_PHI,         //  null operator
+    OPRI_TRM,         //  start/terminate symbol
+    OPRI_FBR,         //  function/array bracket
+    OPRI_LBR,         //  (
+    OPRI_COM,         //  ,
+    OPRI_COL,         //  :
+    OPRI_EQU,         //  =
+    OPRI_EQV_NEQV,    //  .EQV., .NEQV.
+    OPRI_OR,          //  .OR.
+    OPRI_AND,         //  .AND.
+    OPRI_NOT,         //  .NOT.
+    OPRI_REL,         //  .EQ.,.NE.,.LT.,.GE.,.LE.,.GT.
+    OPRI_PLS_MIN,     //  +,-
+    OPRI_MUL_DIV,     //  *,/
+    OPRI_EXP,         //  **
+    OPRI_CAT,         //  //
+    OPRI_RBR,         //  )
+    OPRI_FLD          //  %,.
 };
 
 typedef enum {
@@ -250,40 +238,60 @@ static  const move    __FAR OprSeqMat[] = {
 #define FLDEQ   0x0160          // field selection, .EQ.
 
 #define LEGALOPR_TAB_ROWS       13
-#define LEGALOPR_TAB_COLS       14
-#define LEGALOPR_TAB_SIZE       182
+#define LEGALOPR_TAB_COLS       13
+#define LEGALOPR_TAB_SIZE       169
 
-static  const unsigned_16     __FAR LegalOprs[] = {                                            // opnd1 /
-//                                                                                             //     /
-//null  log1 log4  int1   int2   int4   real   dble   xtnd   cmplx  dcmplx xcmplex char struct //   /
-// (unary)                                                                                     // /  opnd2
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                                                                                               //
-NOT,   LOG,  LOG,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDOP, // log*1
-NOT,   LOG,  LOG,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDOP, // log*4
-IPLMIN,NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*1
-IPLMIN,NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*2
-IPLMIN,NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*4
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // real
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // double
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // extend
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // complex
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // dcomplex
-PLMIN, NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // xcomplex
-NONE,  NONE, NONE, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  CHAR, FLDOP, // character
-NONE,  NONE, NONE, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDEQ  // structure
+static  const unsigned_16     __FAR LegalOprsB[] = { /*                                |
+                                                                                       |
+ opnd1  (binary)                                                                       | opnd2
+                                                                                       |
+log1 log4  int1   int2   int4   real   dble   xtnd   cmplx  dcmplx xcmplex char struct |
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+                                                                                               
+LOG,  LOG,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDOP, // log*1
+LOG,  LOG,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDOP, // log*4
+NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*1
+NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*2
+NONE, NONE, INUMOP,INUMOP,INUMOP,NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // int*4
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // real
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // double
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // extend
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // complex
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // dcomplex
+NONE, NONE, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NUMOP, NONE, FLDOP, // xcomplex
+NONE, NONE, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  CHAR, FLDOP, // character
+NONE, NONE, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE, FLDEQ  // structure
 };
 
+
+static  const unsigned_16     __FAR LegalOprsU[] = { /*
+
+ opnd2 (unary)
+
+log1 log4  int1   int2   int4   real   dble   xtnd   cmplx  dcmplx xcmplex char struct
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+NOT, NOT, IPLMIN,IPLMIN,IPLMIN, PLMIN, PLMIN, PLMIN, PLMIN, PLMIN, PLMIN,  NONE,  NONE
+};
+
+
+#undef pick
+#define pick(id,opr_index,proc_index) opr_index,
+
+static const byte __FAR OprIndex[] = {
+#include "oprdefn.h"
+};
 
 
 static  bool    SimpleScript( itnode *op ) {
 //==========================================
 
-    if( ( op->opn & OPN_WHERE ) != 0 ) return( FALSE );
-    switch( op->opn & OPN_WHAT ) {
-    case OPN_NNL:
-    case OPN_CON:
-    case OPN_PHI:
+    if( ( op->opn.us & USOPN_WHERE ) != 0 )
+        return( FALSE );
+    switch( op->opn.us & USOPN_WHAT ) {
+    case USOPN_NNL:
+    case USOPN_CON:
+    case USOPN_NONE:
         return( TRUE );
     }
     return( FALSE );
@@ -294,21 +302,21 @@ static  int     SameScripts( itnode *op1, itnode *op2 ) {
 //=======================================================
 
     if( !SimpleScript( op1 ) ) return( 0 );
-    if( ( op1->opn & OPN_WHAT ) == OPN_PHI ) {
-        if( ( op2->opn & OPN_WHAT ) == OPN_CON ) {
+    if( ( op1->opn.us & USOPN_WHAT ) == USOPN_NONE ) {
+        if( ( op2->opn.us & USOPN_WHAT ) == USOPN_CON ) {
             return( ITIntValue( op2 ) );
         } else {
             return( 0 );
         }
     }
-    if( ( op1->opn & OPN_WHAT ) != ( op2->opn & OPN_WHAT ) ) {
+    if( ( op1->opn.us & USOPN_WHAT ) != ( op2->opn.us & USOPN_WHAT ) ) {
         return( 0 );
     }
-    if( ( op1->opn & OPN_WHAT ) == OPN_NNL ) {
+    if( ( op1->opn.us & USOPN_WHAT ) == USOPN_NNL ) {
         if( op1->sym_ptr == op2->sym_ptr ) {
             return( 1 );
         }
-    } else if( ( op1->opn & OPN_WHAT ) == OPN_CON ) {
+    } else if( ( op1->opn.us & USOPN_WHAT ) == USOPN_CON ) {
         return( ITIntValue( op2 ) - ITIntValue( op1 ) + 1 );
     }
     return( 0 );
@@ -322,37 +330,37 @@ bool    OptimalChSize( uint size ) {
 }
 
 
-static  void    EvalOpn() {
-//=========================
+static  void    EvalOpn( void ) {
+//===============================
 
 // Evaluate operand.
 
-    if( CITNode->opn == OPN_CON ) {
+    if( CITNode->opn.us == USOPN_CON ) {
         AddConst( CITNode );
     }
     PushOpn( CITNode );
 }
 
 
-static  void    ParenExpr() {
-//===========================
+static  void    ParenExpr( void ) {
+//=================================
 
 // Finish off evaluation of a parenthesized expression.
 
     // don't evaluate constants enclosed in parentheses
     // so that they can be folded. Consider: (3+4)+5
-    if( CITNode->opn != OPN_CON ) {
+    if( CITNode->opn.us != USOPN_CON ) {
         // Consider: CHARACTER A
         //           IF( ('9') .NE. (A) ) CONTINUE
         // make sure that we can optimize the character operation
-        if( CITNode->opn == OPN_NNL ) {
+        if( CITNode->opn.us == USOPN_NNL ) {
             if( CITNode->typ == TY_CHAR ) {
                 int     ch_size;
 
                 ch_size = CITNode->size;
                 if( OptimalChSize( ch_size ) ) {
                     CITNode->value.st.ss_size = ch_size;
-                    CITNode->opn |= OPN_SS1;
+                    CITNode->opn.us |= USOPN_SS1;
                 }
             }
         }
@@ -363,8 +371,8 @@ static  void    ParenExpr() {
 }
 
 
-static  void    ProcOpn() {
-//=========================
+static  void    ProcOpn( void ) {
+//===============================
 
 // Process operand and then scan backwards.
 // Currently called for = -| sequence, and most % opr sequences.
@@ -374,8 +382,8 @@ static  void    ProcOpn() {
 }
 
 
-static  void    RemoveParen() {
-//=============================
+static  void    RemoveParen( void ) {
+//===================================
 
 // Upscan routine when second operator is '('.
 //
@@ -394,17 +402,17 @@ static  void    RemoveParen() {
 
     itnode      *cit;
 
-    if( CITNode->opn != OPN_PHI ) {
+    if( CITNode->opn.ds != DSOPN_PHI ) {
         AdvError( SX_NO_OPR );
     }
     MoveDown();
     KillOpnOpr();
     cit = CITNode;
-    if( CITNode->opn == OPN_PHI ) {
+    if( CITNode->opn.ds == DSOPN_PHI ) {
         Error( PC_SURP_PAREN );
     }
     CITNode = CITNode->link;
-    if( CITNode->opn != OPN_PHI ) {
+    if( CITNode->opn.ds != DSOPN_PHI ) {
         Error( SX_NO_OPR );
     }
     cit->link = CITNode->link;
@@ -413,8 +421,8 @@ static  void    RemoveParen() {
 }
 
 
-static  void    GrabColon() {
-//===========================
+static  void    GrabColon( void ) {
+//=================================
 
 // Upscan routine for handling substring indexing expression.
 // The operator sequence is OPR_LBR - OPR_COL.
@@ -431,7 +439,7 @@ static  void    GrabColon() {
 // variable name, DSName() would be called and the OPR_LBR would be
 // changed to OPR_FBR and we won't get here.
 
-    if( BkLink->opn != OPN_PHI ) {
+    if( BkLink->opn.ds != DSOPN_PHI ) {
         Error( SS_ONLY_IF_CHAR );
     } else {
         KillOpnOpr();
@@ -446,25 +454,25 @@ static  void    GrabColon() {
 }
 
 
-static  void    LowColon() {
-//==========================
+static  void    LowColon( void ) {
+//================================
 
     // we are looking at the low bound
-    if( CITNode->opn == OPN_PHI ) {
+    if( CITNode->opn.ds == DSOPN_PHI ) {
         AddSS( 1 );
     }
     PrepArg();
 }
 
 
-static  void    HighColon() {
-//===========================
+static  void    HighColon( void ) {
+//=================================
 
     // must be high bound
-    if( CITNode->opn == OPN_PHI ) {
+    if( CITNode->opn.ds == DSOPN_PHI ) {
         // we don't know have access to the symbol table
         // entry so we can't compute the size
-        CITNode->opn = OPN_SSR;
+        CITNode->opn.us = USOPN_SSR;
         CITNode->typ = TY_INTEGER;
         CITNode->size = TypeSize( TY_INTEGER );
     } else if( SimpleScript( CITNode ) &&
@@ -474,7 +482,7 @@ static  void    HighColon() {
         ch_size = SameScripts( BkLink, CITNode );
         if( ch_size > 0 ) { // The size no longer has to be optimal, only constant
             CITNode->value.st.ss_size = ch_size;
-            CITNode->opn |= OPN_SS1;
+            CITNode->opn.us |= USOPN_SS1;
         }
     }
     PrepArg();
@@ -487,7 +495,7 @@ static  void    MkConst( intstar4 number ) {
     CITNode->value.intstar4 = number;
     CITNode->typ  = TY_INTEGER;
     CITNode->size = TypeSize( TY_INTEGER );
-    CITNode->opn  = OPN_CON;
+    CITNode->opn.us  = USOPN_CON;
 }
 
 
@@ -499,8 +507,8 @@ static  void    AddSS( int number ) {
 }
 
 
-static  void    BadSequence() {
-//=============================
+static  void    BadSequence( void ) {
+//===================================
 
 // Upscan routine for bad sequence of operators.
 
@@ -508,8 +516,8 @@ static  void    BadSequence() {
 }
 
 
-static  void    Missing() {
-//=========================
+static  void    Missing( void ) {
+//===============================
 
 // Upscan routine for missing operator.
 
@@ -517,8 +525,8 @@ static  void    Missing() {
 }
 
 
-static  void    BadBracket() {
-//============================
+static  void    BadBracket( void ) {
+//==================================
 
 // Upscan routine for odd/unexpected parenthesis sequence.
 
@@ -526,8 +534,8 @@ static  void    BadBracket() {
 }
 
 
-void    BadEqual() {
-//==================
+void    BadEqual( void ) {
+//========================
 
 // Upscan routine for illegal quantity on left side of equal sign
 
@@ -535,8 +543,8 @@ void    BadEqual() {
 }
 
 
-static  void    BadRelOpn() {
-//===========================
+static  void    BadRelOpn( void ) {
+//=================================
 
 // Upscan routine for relop with log opnd (relop,relop).
 
@@ -544,8 +552,8 @@ static  void    BadRelOpn() {
 }
 
 
-static  void    BadColonOpn() {
-//=============================
+static  void    BadColonOpn( void ) {
+//===================================
 
 // Upscan routine for ":" operator with invalid operand(s).
 
@@ -553,18 +561,18 @@ static  void    BadColonOpn() {
 }
 
 
-sym_id    CkAssignOk() {
-//======================
+sym_id    CkAssignOk( void ) {
+//============================
 
 // Check if operand is allowed to be assigned a value.
 
     sym_id      sym;
 
-    switch( CITNode->opn & OPN_WHAT ) {
-    case OPN_NNL:
-    case OPN_ASS:
-    case OPN_NWL:
-    case OPN_ARR:
+    switch( CITNode->opn.us & USOPN_WHAT ) {
+    case USOPN_NNL:
+    case USOPN_ASS:
+    case USOPN_NWL:
+    case USOPN_ARR:
         if( ClassIs( SY_VARIABLE ) ) {
             if( BitOn( SY_DO_PARM ) ) {
                 Error( DO_PARM_REDEFINED );
@@ -575,7 +583,7 @@ sym_id    CkAssignOk() {
             // GFiniSS() sets the symbol table entry in the I.T. node
             // to the temporary SCB so we need to get the actual symbol
             // we are substringing elsewhere
-            if( CITNode->opn & OPN_ASY ) {
+            if( CITNode->opn.us & USOPN_ASY ) {
                 sym = CITNode->value.st.ss_id;
             }
             sym->ns.xflags |= SY_DEFINED;
@@ -592,8 +600,8 @@ sym_id    CkAssignOk() {
 }
 
 
-static  void    USCleanUp() {
-//===========================
+static  void    USCleanUp( void ) {
+//=================================
 
 // Clean up text list after expression error has occurred
 // releasing all nodes on the way, leaving:
@@ -611,9 +619,9 @@ static  void    USCleanUp() {
         BackTrack();
     }
     first = CITNode;
-    switch( first->opn & OPN_WHAT ) {
-    case OPN_NWL:
-    case OPN_ASS:
+    switch( first->opn.us & USOPN_WHAT ) {
+    case USOPN_NWL:
+    case USOPN_ASS:
         if( first->list != NULL ) {
             FreeITNodes( first->list );
         }
@@ -627,11 +635,11 @@ static  void    USCleanUp() {
     first->link = CITNode;
     CITNode = first;
     CITNode->typ = TY_NO_TYPE;
-    CITNode->opn = OPN_PHI;
+    CITNode->opn.ds = DSOPN_PHI;
 }
 
 
-static  bool    DoGenerate( int typ1, int typ2, uint *res_size ) {
+static  bool    DoGenerate( TYPE typ1, TYPE typ2, uint *res_size ) {
 //================================================================
 
     if( CITNode->link->opr == OPR_EQU ) {
@@ -652,7 +660,7 @@ static  bool    DoGenerate( int typ1, int typ2, uint *res_size ) {
             ResultType = TY_XCOMPLEX;
             *res_size = TypeSize( TY_XCOMPLEX );
             Extension( MD_DBLE_WITH_CMPLX );
-        } else if( ( typ2 > typ1 ) || ( typ1 == TY_STRUCTURE ) ) {
+        } else if( ( typ2 > typ1 ) || ( typ1 == TY_STRUCTURE ) || ( typ1 == TY_NO_TYPE ) ) {
             ResultType = typ2;
             *res_size = TypeSize( typ2 );
         } else {
@@ -669,19 +677,6 @@ static  bool    DoGenerate( int typ1, int typ2, uint *res_size ) {
     }
 }
 
-
-static  byte    OprNum( byte opr ) {
-//==================================
-
-    if( ( opr >= FIRST_RELOP ) && ( opr <= LAST_RELOP ) ) {
-        opr = 0x09;
-    } else {
-        opr &= 0x0F;
-    }
-    return( opr );
-}
-
-
 static  void    FixFldNode( void ) {
 //==================================
 
@@ -690,16 +685,16 @@ static  void    FixFldNode( void ) {
     itnode      *next;
 
     next = CITNode->link;
-    if( CITNode->opn & OPN_FLD ) { // sub-field
+    if( CITNode->opn.us & USOPN_FLD ) { // sub-field
         CITNode->sym_ptr = next->sym_ptr;
         CITNode->opn = next->opn;
-        if( next->opn & OPN_SS1 ) {
+        if( next->opn.us & USOPN_SS1 ) {
             CITNode->value.st.ss_size = next->value.st.ss_size;
         }
     } else {
-        if( ( next->opn & OPN_WHAT ) == OPN_ARR ) {
-            CITNode->opn &= ~OPN_WHAT;
-            CITNode->opn |= OPN_ARR;
+        if( ( next->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
+            CITNode->opn.us &= ~USOPN_WHAT;
+            CITNode->opn.us |= USOPN_ARR;
             // pass on structure name
             // Consider:        PRINT *, X.Y
             // where Y is an array. We need the field name of
@@ -712,52 +707,56 @@ static  void    FixFldNode( void ) {
             // want to display is for Y, not X.
             CITNode->value.st.field_id = next->sym_ptr;
         }
-        if( next->opn & OPN_SS1 ) {
-            CITNode->opn |= OPN_SS1;
+        if( next->opn.us & USOPN_SS1 ) {
+            CITNode->opn.us |= USOPN_SS1;
             CITNode->value.st.ss_size = next->value.st.ss_size;
         }
         // so we can tell the difference between an array of
         // structures and a field of a structure that is an
         // array
-        CITNode->opn |= OPN_FLD;
+        CITNode->opn.us |= USOPN_FLD;
     }
 }
 
 
-static  void    Generate() {
-//==========================
+static  void    Generate( void ) {
+//================================
 
 // Generate code.
 
-    int         typ1;
-    int         typ2;
-    byte        op;
-    byte        opr;
+    TYPE        typ1;
+    TYPE        typ2;
+    OPTR        op;
+    OPR         opr;
     itnode      *next;
     unsigned_16 mask;
     uint        res_size;
 
     next = CITNode->link;
-    if( next->opn == OPN_PHI ) {
+    if( next->opn.ds == DSOPN_PHI ) {
         BadSequence();
     } else {
         typ1 = CITNode->typ;
         typ2 = next->typ;
         opr = next->opr;
         if( RecNOpn() ) {
-            typ1 = -1;
+            typ1 = TY_NO_TYPE;
             CITNode->size = next->size;
             if( (opr != OPR_PLS) && (opr != OPR_MIN) && (opr != OPR_NOT) ) {
                 BadSequence();
                 return;
             }
         }
-        op = OprNum( opr );
-        mask = LegalOprs[ typ2 * LEGALOPR_TAB_COLS + typ1 + 1 ];
+        op = OprNum[ opr ];
+        if( typ1 == TY_NO_TYPE ) {
+            mask = LegalOprsU[ typ2 - TY_FIRST ];
+        } else {
+            mask = LegalOprsB[ ( typ2 - TY_FIRST ) * LEGALOPR_TAB_COLS + typ1 - TY_FIRST ];
+        }
         if( ( ( mask >> op ) & 1 ) == 0 ) {
             // illegal combination
             MoveDown();
-            if( typ1 == -1 ) {
+            if( typ1 == TY_NO_TYPE ) {
                 TypeErr( MD_UNARY_OP, typ2 );
             } else if( typ1 == typ2 ) {
                 TypeErr( MD_ILL_OPR, typ1 );
@@ -773,15 +772,15 @@ static  void    Generate() {
                 // can only compare complex with .EQ. and .NE.
                 Error( MD_RELOP_OPND_COMPLEX );
             } else {
-                if( ( next->opn == OPN_CON ) &&
-                    ( ( CITNode->opn == OPN_CON ) || ( typ1 == -1 ) ) ) {
+                if( ( next->opn.us == USOPN_CON ) &&
+                    ( ( CITNode->opn.us == USOPN_CON ) || ( typ1 == TY_NO_TYPE ) ) ) {
                     // we can do some constant folding
                     ConstTable[ op ]( typ1, typ2, op );
                 } else {
                     // we have to generate code
-                    if( CITNode->opn == OPN_CON ) {
+                    if( CITNode->opn.us == USOPN_CON ) {
                         AddConst( CITNode );
-                    } else if( next->opn == OPN_CON ) {
+                    } else if( next->opn.us == USOPN_CON ) {
                         AddConst( next );
                     }
                     GenOprTable[ op ]( typ1, typ2, op );
@@ -840,7 +839,7 @@ void    AddConst( itnode *node ) {
 }
 
 
-static  byte    IFPromote( byte typ ) {
+static  TYPE    IFPromote( TYPE typ ) {
 //=====================================
 // if the promote switch is activated we promote certain integer intrinsics
 // arguments
@@ -852,28 +851,28 @@ static  byte    IFPromote( byte typ ) {
 }
 
 
-static  void    Call() {
-//======================
+static  void    Call( void ) {
+//============================
 
 // Upscan routine for either (1) calling a function or subroutine
 //                           (2) detaching a subscript list
 //                           (3) detaching a substring expression
 //
 
-    int         ifunc;
+    IFF     func;
 
     if( Subscripted() ) {
         DetSubList();
         EvalList();
     } else if( ClassIs( SY_SUBPROGRAM ) ) {
         if( BitOn( SY_INTRINSIC ) ) {
-            if( CITNode->link->opn != OPN_PHI ) {  // consider IFIX()
+            if( CITNode->link->opn.ds != DSOPN_PHI ) {  // consider IFIX()
                 if( IFSpecific( IFPromote( CITNode->link->typ ) ) == MAGIC ) {
                     DetCallList();
                     IFPrmChk();     // must do before InLineCnvt and ...
                                     // ... after IFSpecific, DetCallList
-                    ifunc = CITNode->sym_ptr->ns.si.fi.index;
-                    if( ( IsIFMax( ifunc ) || IsIFMin( ifunc ) ) &&
+                    func = CITNode->sym_ptr->ns.si.fi.index;
+                    if( ( IsIFMax( func ) || IsIFMin( func ) ) &&
                         ( CITNode->sym_ptr->ns.si.fi.num_args > 2 ) )
                         EvalList();
                     else
@@ -897,11 +896,11 @@ static  void    Call() {
 }
 
 
-static  void    EvalList() {
-//==========================
+static  void    EvalList( void ) {
+//================================
 
     if( !AError ) {
-        if( RecNextOpr( OPR_EQU ) && !( CITNode->opn & OPN_FLD ) ) {
+        if( RecNextOpr( OPR_EQU ) && !( CITNode->opn.us & USOPN_FLD ) ) {
             SetDefinedStatus();
         }
         ProcList( CITNode );
@@ -909,8 +908,8 @@ static  void    EvalList() {
 }
 
 
-static  void    IFPrmChk() {
-//==========================
+static  void    IFPrmChk( void ) {
+//================================
 
 // Check that argument types agree with those intrinsic func expects.
 //     (1) check that argument codes are acceptable ( e.g. ~ array )
@@ -919,27 +918,30 @@ static  void    IFPrmChk() {
 
     sym_id      sym;
     itnode      *oldcit;
-    int         ifn;
-    byte        prm_cnt;
-    byte        typ;
-    byte        code;
+    IFF         func;
+    int         parm_cnt;
+    TYPE        parm_typ;
+    PCODE       parm_code;
 
     sym = CITNode->sym_ptr;
-    ifn = sym->ns.si.fi.index;
-    typ = IFArgType( ifn );
+    func = sym->ns.si.fi.index;
+    parm_typ = IFArgType( func );
     oldcit = CITNode;
     CITNode = oldcit->list;
-    prm_cnt = 0;
+    parm_cnt = 0;
     for(;;) {
-        if( RecColon() ) break;         // substring the i.f.
-        if( RecCloseParen() ) break;    // end of list
-        code = ParmCode( CITNode );
-        switch( ifn ) {
+        if( RecColon() )         // substring the i.f.
+            break;
+        if( RecCloseParen() )    // end of list
+            break;
+        parm_code = ParmCode( CITNode );
+        switch( func ) {
         case IF_ALLOCATED: {
             sym_id      sym = CITNode->sym_ptr;
 
-            if( (code == PC_ARRAY_NAME) && _Allocatable( sym ) ) break;
-            if( (code == PC_VARIABLE) && (sym->ns.typ == TY_CHAR) &&
+            if( (parm_code == PC_ARRAY_NAME) && _Allocatable( sym ) )
+                break;
+            if( (parm_code == PC_VARIABLE) && (sym->ns.typ == TY_CHAR) &&
                 (sym->ns.xt.size == 0) && !(sym->ns.flags & SY_SUB_PARM) ) {
                 sym->ns.xflags |= SY_ALLOCATABLE;
                 break;
@@ -948,11 +950,11 @@ static  void    IFPrmChk() {
             break;
         }
         case IF_ISIZEOF:
-            switch( CITNode->opn ) {
-            case OPN_NNL:
+            switch( CITNode->opn.us ) {
+            case USOPN_NNL:
                 MkConst( _SymSize( CITNode->sym_ptr ) );
                 break;
-            case OPN_CON:
+            case USOPN_CON:
                 if( CITNode->typ == TY_CHAR ) {
                     MkConst( CITNode->value.cstring.len );
                 } else if( CITNode->typ == TY_STRUCTURE ) {
@@ -961,7 +963,7 @@ static  void    IFPrmChk() {
                     MkConst( CITNode->size );
                 }
                 break;
-            case OPN_ARR:
+            case USOPN_ARR:
                 MkConst( CITNode->sym_ptr->ns.si.va.dim_ext->num_elts *
                          _SymSize( CITNode->sym_ptr ) );
                 break;
@@ -974,15 +976,15 @@ static  void    IFPrmChk() {
         case IF_VOLATILE:
             break;
         default:
-            if( CITNode->typ != typ ) {
-                if( ( (CITNode->opn & OPN_WHAT) == OPN_CON) && TypeIs( typ ) ) {
+            if( CITNode->typ != parm_typ ) {
+                if( ( (CITNode->opn.us & USOPN_WHAT) == USOPN_CON) && TypeIs( parm_typ ) ) {
                     // we don't want an error in the following case:
                     //          INTEGER*2 I
                     //          PRINT *, MOD( I, 3 )
                     // I is INTEGER*2 and 3 is INTEGER*4
-                    CnvTo( CITNode, typ, TypeSize( typ ) );
-                } else if( ( Options & OPT_PROMOTE ) && ( typ == TY_INTEGER ) &&
-                           TypeIs( typ ) ) {
+                    CnvTo( CITNode, parm_typ, TypeSize( parm_typ ) );
+                } else if( ( Options & OPT_PROMOTE ) && ( parm_typ == TY_INTEGER ) &&
+                           TypeIs( parm_typ ) ) {
                     // check if we should allow
                     //  INTEGER*1 I
                     //  I = 13
@@ -990,7 +992,7 @@ static  void    IFPrmChk() {
                     // if the users turns on the switch we allow it
                     break;
                 } else {
-                    switch( ifn ) {
+                    switch( func ) {
                     case IF_INT:
                     case IF_REAL:
                     case IF_DBLE:
@@ -1002,7 +1004,7 @@ static  void    IFPrmChk() {
                     case IF_FLOAT:
                     case IF_DFLOAT:
                     case IF_CHAR:
-                        if( TypeIs( typ ) ) {
+                        if( TypeIs( parm_typ ) ) {
                             break;
                         }
                         // else drop through to error
@@ -1012,40 +1014,43 @@ static  void    IFPrmChk() {
                         //          PRINT *, ANINT(I)
                         // we don't want to issue 2 error msgs
                         if( !AError ) {
-                            TypeTypeErr( LI_PT_MISMATCH, typ, CITNode->typ );
+                            TypeTypeErr( LI_PT_MISMATCH, parm_typ, CITNode->typ );
                         }
                         break;
                     }
                 }
             }
-            switch( code ) {
+            switch( parm_code ) {
             case PC_CONST:
             case PC_VARIABLE:
             case PC_ARRAY_ELT:
             case PC_SS_ARRAY:
                 break;
             default:
-                PrmCodeErr( LI_ILL_PARM_CODE, code );
+                PrmCodeErr( LI_ILL_PARM_CODE, parm_code );
                 break;
             }
             break;
         }
         AdvanceITPtr();
-        ++prm_cnt;
+        ++parm_cnt;
     }
     // for intrinsic functions that take variable # of args (e.g. MAX, MIN)
-    sym->ns.si.fi.num_args = prm_cnt;
+    sym->ns.si.fi.num_args = parm_cnt;
     CITNode = oldcit;
-    IFCntPrms( ifn, prm_cnt );
+    IFCntPrms( func, parm_cnt );
 }
 
 
-static  bool    IFAsOperator() {
-//==============================
+static  bool    IFAsOperator( void ) {
+//====================================
 
-    if( CITNode->opr != OPR_FBR ) return( FALSE );
-    if( ( BkLink->flags & SY_CLASS ) != SY_SUBPROGRAM ) return( FALSE );
-    if( !(BkLink->flags & SY_INTRINSIC) ) return( FALSE );
+    if( CITNode->opr != OPR_FBR )
+        return( FALSE );
+    if( ( BkLink->flags & SY_CLASS ) != SY_SUBPROGRAM )
+        return( FALSE );
+    if( !(BkLink->flags & SY_INTRINSIC) )
+        return( FALSE );
     switch( BkLink->sym_ptr->ns.si.fi.index ) {
     case IF_ISIZEOF:
     case IF_ALLOCATED:
@@ -1057,17 +1062,17 @@ static  bool    IFAsOperator() {
 }
 
 
-static  void    PrepArg() {
-//=========================
+static  void    PrepArg( void ) {
+//===============================
 
 // Upscan routine to prepare an item in a function or subscript list.
 
-    int         if_index;
+    IFF         if_index;
 
     if( ClassIs( SY_SUBPROGRAM ) && BitOn( SY_INTRINSIC ) ) {
-        if( CITNode->opn == OPN_NNL ) {
+        if( CITNode->opn.us == USOPN_NNL ) {
             if_index = CITNode->sym_ptr->ns.si.fi.index;
-            if( ( IFFlags[ if_index ] & IF_ARG_OK ) == 0 ) {
+            if( IFAsArg( if_index ) == 0 ) {
                 Error( LI_NOT_PARM );
             } else {
                 MarkIFUsed( if_index );
@@ -1075,16 +1080,16 @@ static  void    PrepArg() {
             }
         }
     }
-    if( ( CITNode->opn & OPN_WHAT ) == OPN_STN ) {
+    if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_STN ) {
         if( !(ASType & AST_ALT) ) {
             PrmCodeErr( SR_ILL_PARM, PC_STATEMENT );
         }
     } else {
         if( !IFAsOperator() ) {
-            if( CITNode->opn == OPN_CON ) {
+            if( CITNode->opn.us == USOPN_CON ) {
                 AddConst( CITNode );
             }
-            if( ( CITNode->opn & OPN_SS1 ) == 0 )
+            if( ( CITNode->opn.us & USOPN_SS1 ) == 0 )
             GArg();
         }
     }
@@ -1092,8 +1097,8 @@ static  void    PrepArg() {
 }
 
 
-static  void    FixList() {
-//=========================
+static  void    FixList( void ) {
+//===============================
 
 // Remove the second operand itnode after code generation
 // and update variable type or result.
@@ -1106,30 +1111,30 @@ static  void    FixList() {
 }
 
 
-static  void    InlineCnvt() {
-//============================
+static  void    InlineCnvt( void ) {
+//==================================
 
 // Do conversion routines inline (no function call).
 
     itnode      *cit;
-    int         ifn;
-    byte        typ;
-    byte        func_type;
+    IFF         func;
+    TYPE        typ;
+    TYPE        func_type;
 
     cit = CITNode;
-    ifn = CITNode->sym_ptr->ns.si.fi.index;
+    func = CITNode->sym_ptr->ns.si.fi.index;
     func_type = CITNode->typ;
     CITNode = CITNode->list;
     typ = CITNode->typ;
-    if( ifn == IF_ALLOCATED ) {
+    if( func == IF_ALLOCATED ) {
         GAllocated();
-    } else if( ifn == IF_LOC ) {
+    } else if( func == IF_LOC ) {
         GLoc();
-    } else if( ifn == IF_VOLATILE ) {
+    } else if( func == IF_VOLATILE ) {
         func_type = typ;
         GVolatile();
-    } else if( ifn == IF_CHAR ) {
-        if( CITNode->opn == OPN_CON ) {
+    } else if( func == IF_CHAR ) {
+        if( CITNode->opn.us == USOPN_CON ) {
             intstar4    arg;
 
             arg = ITIntValue( CITNode );
@@ -1141,7 +1146,7 @@ static  void    InlineCnvt() {
             cit->value.cstring.data = arg;
             cit->value.cstring.strptr = &cit->value.cstring.data;
             cit->value.cstring.len = 1;
-            cit->opn = OPN_CON;
+            cit->opn.us = USOPN_CON;
             cit->flags = 0;
         } else {
             GArg();
@@ -1151,21 +1156,21 @@ static  void    InlineCnvt() {
             CITNode = cit;
             return;
         }
-    } else if( ifn == IF_ISIZEOF ) {
+    } else if( func == IF_ISIZEOF ) {
         cit->value.intstar4 = CITNode->value.intstar4;
-        cit->opn = OPN_CON;
+        cit->opn.us = USOPN_CON;
         cit->flags = 0;
     } else if( ( typ >= TY_INTEGER_1 ) && ( typ <= TY_XCOMPLEX ) ) {
         // this switch statement replaces a huge if() statement for speed
-        switch( ifn ) {
+        switch( func ) {
         case IF_CMPLX:
             switch( typ ) {
             case( TY_DOUBLE ):
-                ifn = IF_DCMPLX;
+                func = IF_DCMPLX;
                 func_type = TY_DCOMPLEX;
                 break;
             case( TY_TRUE_EXTENDED ):
-                ifn = IF_QCMPLX;
+                func = IF_QCMPLX;
                 func_type = TY_XCOMPLEX;
                 break;
             }
@@ -1174,19 +1179,19 @@ static  void    InlineCnvt() {
             if( RecNextOpr( OPR_COM ) ) {
                 if( CITNode->link->typ == typ ) {
                     if( typ <= TY_EXTENDED ) {
-                        if( ifn == IF_CMPLX ) {
+                        if( func == IF_CMPLX ) {
                             GMakeCplx();
-                        } else if ( ifn == IF_DCMPLX ) {
+                        } else if ( func == IF_DCMPLX ) {
                             GMakeDCplx();
                         } else {
                             GMakeXCplx();
                         }
                     } else {
-                        Error( LI_2_CMPLX, IFNames[ ifn ] );
+                        Error( LI_2_CMPLX, IFName( func ) );
                         AdvanceITPtr();
                     }
                 } else {
-                    Error( LI_CMPLX_TYPES, IFNames[ ifn ] );
+                    Error( LI_CMPLX_TYPES, IFName( func ) );
                     AdvanceITPtr();
                 }
             } else {
@@ -1326,9 +1331,9 @@ static  void    InlineCnvt() {
             GILCnvTo( func_type, TypeSize( func_type ) );
             break;
         }
-    } else if( IFIsGeneric( ifn ) ) {
+    } else if( IFIsGeneric( func ) ) {
         TypeErr( LI_EXP_CNV_TYPE, typ );      // typ is what we got
-    } else if( ifn == IF_LEN ) {
+    } else if( func == IF_LEN ) {
         GCharLen();
     } else { // ichar
         GIChar();
@@ -1339,7 +1344,7 @@ static  void    InlineCnvt() {
     cit = CITNode->list;
     CITNode->typ = func_type;
     CITNode->size = TypeSize( func_type );
-    SetOpn( CITNode, cit->opn & OPN_WHERE );
+    SetOpn( CITNode, cit->opn.us & USOPN_WHERE );
     CITNode->list = NULL;
     UpdateNode( CITNode, cit );
     FreeITNodes( cit );
@@ -1366,7 +1371,7 @@ static  const void (* const __FAR RtnTable[])() = {
          &CatOpn,               // concatenation operand
          &CatParen,             // check if ) is for a substring operand
          &ProcOpn,              // process operand and then scan backwards
-         &HighColon,            // check for OPN_PHI on : ) sequence
+         &HighColon,            // check for DSOPN_PHI on : ) sequence
          &LowColon,             // handle [ : and called from GrabColon
          &ParenCat,             // check if ) is for a substring operand
          &ParenExpr,            // done evaluating parenthesized expression
@@ -1374,8 +1379,8 @@ static  const void (* const __FAR RtnTable[])() = {
 };
 
 
-void    UpScan() {
-//================
+void    UpScan( void ) {
+//======================
 
 // Upscan phase of expression processor.
 // On entry, CITNode is OPR_TRM at end of expression
@@ -1390,9 +1395,10 @@ void    UpScan() {
             break;
         }
         if( ( CITNode->opr == OPR_TRM ) &&
-            ( CITNode->link->opr == OPR_TRM ) ) break;
-        index = OprIndex[ CITNode->opr ];
-        index = index * OPR_SEQ_MAT_COLS + OprIndex[ CITNode->link->opr ];
+            ( CITNode->link->opr == OPR_TRM ) )
+            break;
+        index = OprIndex[ CITNode->link->opr ];
+        index += OprIndex[ CITNode->opr ] * OPR_SEQ_MAT_COLS;
         RtnTable[ OprSeqMat[ index ] ]();
     }
     EndExpr();

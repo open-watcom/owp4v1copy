@@ -37,6 +37,7 @@
 #include "cpopt.h"
 #include "global.h"
 #include "fmemmgr.h"
+#include "recog.h"
 
 #include <string.h>
 
@@ -44,14 +45,10 @@ extern  void            FrlFree(void *,void *);
 extern  void            FrlFini(void **);
 extern  void            Error(int,...);
 extern  void            Extension(int,...);
-extern  void            TypeErr(int,uint);
-extern  bool            RecNOpn(void);
-extern  bool            RecCloseParen(void);
-extern  bool            RecMin(void);
+extern  void            TypeErr(int,TYPE);
 extern  void            GetConst(void);
 extern  void            GetIntConst(void);
 extern  void            EatExpr(void);
-        bool            TypeIs( int typ );
 
 
 void    AdvanceITPtr() {
@@ -59,6 +56,27 @@ void    AdvanceITPtr() {
 
     if( CITNode->link != NULL ) {
         CITNode = CITNode->link;
+    }
+}
+
+
+void    FreeITNodes( itnode *head ) {
+//===================================
+
+// Free the internal text list until null link reached.
+
+    itnode      *next;
+
+    while( head != NULL ) {
+        if( ( ( head->opn.us & USOPN_WHAT ) == USOPN_NWL ) ||
+            ( ( head->opn.us & USOPN_WHAT ) == USOPN_ASS ) ) {
+            if( head->list != NULL ) {
+                FreeITNodes( head->list );
+            }
+        }
+        next = head->link;
+        FrlFree( &ITPool, head );
+        head = next;
     }
 }
 
@@ -71,27 +89,6 @@ void    ITPurge() {
     FreeITNodes( ITHead );
     ITHead = NULL;
     FrlFini( &ITPool );
-}
-
-
-void    FreeITNodes( itnode *head ) {
-//===================================
-
-// Free the internal text list until null link reached.
-
-    itnode      *next;
-
-    while( head != NULL ) {
-        if( ( ( head->opn & OPN_WHAT ) == OPN_NWL ) ||
-            ( ( head->opn & OPN_WHAT ) == OPN_ASS ) ) {
-            if( head->list != NULL ) {
-                FreeITNodes( head->list );
-            }
-        }
-        next = head->link;
-        FrlFree( &ITPool, head );
-        head = next;
-    }
 }
 
 
@@ -153,7 +150,29 @@ void    ProcExpr() {
 }
 
 
-bool    ConstExpr( int typ ) {
+bool TypeIs( TYPE typ ) {
+//======================
+
+// Return TRUE if current itnode has specified variable type.
+
+    switch( CITNode->typ ) {
+    case( TY_INTEGER ):
+    case( TY_INTEGER_2 ):
+    case( TY_INTEGER_1 ):
+        return( ( typ == TY_INTEGER ) ||
+                ( typ == TY_INTEGER_2 ) ||
+                ( typ == TY_INTEGER_1 ) );
+    case( TY_LOGICAL ):
+    case( TY_LOGICAL_1 ):
+        return( ( typ == TY_LOGICAL ) ||
+                ( typ == TY_LOGICAL_1 ) );
+    default:
+        return( CITNode->typ == typ );
+    }
+}
+
+
+bool    ConstExpr( TYPE typ ) {
 //============================
 
 // Process a constant expression.
@@ -161,7 +180,7 @@ bool    ConstExpr( int typ ) {
     ASType = AST_CEX;
     EatExpr();
     if( AError ) return( FALSE );
-    if( CITNode->opn != OPN_CON ) {
+    if( CITNode->opn.us != USOPN_CON ) {
         Error( SX_NOT_CONST_EXPR );
         return( FALSE );
     } else if( !TypeIs( typ ) && (typ != TY_NO_TYPE) ) {
@@ -169,6 +188,15 @@ bool    ConstExpr( int typ ) {
         return( FALSE );
     }
     return( TRUE );
+}
+
+
+void    ChkType( TYPE typ ) {
+//==========================
+
+    if( !TypeIs( typ ) ) {
+        TypeErr( SX_WRONG_TYPE, typ );
+    }
 }
 
 
@@ -331,6 +359,18 @@ void    IntSubExpr() {
 }
 
 
+static  void    EatNumb( int ast ) {
+//==================================
+
+    ASType = ast;
+    EatExpr();
+    if( AError ) return;
+    if( ( CITNode->typ < TY_INTEGER_1 ) || ( CITNode->typ > TY_EXTENDED ) ) {
+        Error( SX_NOT_SIMPLE_NUMBER );
+    }
+}
+
+
 void    EatDoParm() {
 //===================
 
@@ -351,18 +391,6 @@ void    IfExpr() {
 }
 
 
-static  void    EatNumb( int ast ) {
-//==================================
-
-    ASType = ast;
-    EatExpr();
-    if( AError ) return;
-    if( ( CITNode->typ < TY_INTEGER_1 ) || ( CITNode->typ > TY_EXTENDED ) ) {
-        Error( SX_NOT_SIMPLE_NUMBER );
-    }
-}
-
-
 void    CharSubExpr() {
 //=====================
 
@@ -370,15 +398,6 @@ void    CharSubExpr() {
 
     ProcSubExpr();
     ChkType( TY_CHAR );
-}
-
-
-void    ChkType( int typ ) {
-//==========================
-
-    if( !TypeIs( typ ) ) {
-        TypeErr( SX_WRONG_TYPE, typ );
-    }
 }
 
 
@@ -391,7 +410,7 @@ bool    BitOn( unsigned_16 bits ) {
 }
 
 
-int    Map2BaseType( int typ ) {
+int    Map2BaseType( TYPE typ ) {
 //==============================
 
 // Due to the three different integer sizes we use this function
@@ -407,28 +426,6 @@ int    Map2BaseType( int typ ) {
         return( TY_LOGICAL );
     default:
         return( typ );
-    }
-}
-
-
-bool TypeIs( int typ ) {
-//======================
-
-// Return TRUE if current itnode has specified variable type.
-
-    switch( CITNode->typ ) {
-    case( TY_INTEGER ):
-    case( TY_INTEGER_2 ):
-    case( TY_INTEGER_1 ):
-        return( ( typ == TY_INTEGER ) ||
-                ( typ == TY_INTEGER_2 ) ||
-                ( typ == TY_INTEGER_1 ) );
-    case( TY_LOGICAL ):
-    case( TY_LOGICAL_1 ):
-        return( ( typ == TY_LOGICAL ) ||
-                ( typ == TY_LOGICAL_1 ) );
-    default:
-        return( CITNode->typ == typ );
     }
 }
 

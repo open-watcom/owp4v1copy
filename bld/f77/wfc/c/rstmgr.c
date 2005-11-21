@@ -35,14 +35,14 @@
 #include "global.h"
 #include "stmtsw.h"
 #include "fhash.h"
+#include "types.h"
 
 #include <string.h>
 
 extern  sym_id          STSearch(char *,int,sym_id);
 extern  sym_id          STNameSearch(char *,int);
-extern  sym_id          TmpVar(byte,int);
-extern  sym_id          StaticAlloc(int,byte);
-extern  int             TypeSize(uint);
+extern  sym_id          TmpVar(TYPE,uint);
+extern  sym_id          StaticAlloc(uint,TYPE);
 extern  sym_id          STAdd(char *,int);
 
 

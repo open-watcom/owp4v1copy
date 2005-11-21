@@ -57,6 +57,7 @@ static  pass_by         IFArgDescriptor = { NULL, PASS_BY_DESCRIPTOR };
 #if _CPU == 8086
 
 char    *RegNames[] = {
+           "",
            "8087",
            "AH",
            "AL",
@@ -84,6 +85,7 @@ char    *RegNames[] = {
 byte            MaxReg = { 20 };
 
 hw_reg_set  RegValue[] = {
+           HW_D( HW_EMPTY ),
            HW_D( HW_FLTS ),
            HW_D( HW_AH ),
            HW_D( HW_AL ),
@@ -242,6 +244,7 @@ aux_info                DefaultInfo = {
 #elif   _CPU == 386
 
 char    *RegNames[] = {
+            "",
             "8087",
             "AH",
             "AL",
@@ -279,6 +282,7 @@ char    *RegNames[] = {
 byte            MaxReg = { 30 };
 
 hw_reg_set  RegValue[] = {
+            HW_D( HW_EMPTY ),
             HW_D( HW_FLTS ),
             HW_D( HW_AH ),
             HW_D( HW_AL ),

@@ -36,8 +36,7 @@
 
 #include "ftnstd.h"
 #include "fcodes.h"
-
-extern  void            OutU16(unsigned_16);
+#include "emitobj.h"
 
 
 void    EmitOp( unsigned_16 value ) {

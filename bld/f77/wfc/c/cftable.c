@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  control flags table - attributes of each statement processor
 *
 ****************************************************************************/
 
-
-//
-// CFTABLE      : control flags table - attributes of each statement processor
-//
 
 // Note: If you wish to add a new statement processor, there are four files
 //       that need changing: PRDEFN.H, KWLIST.C, PROCTBL.C, CFTABLE.C
@@ -91,91 +86,17 @@
 // NOT_IN_MAP        - used to flag those specification statements which cannot
 //                     appear in a map definition
 
+#ifdef pick
+#undef pick
+#endif
+
+#define pick(id,text,proc,flags) flags,
+
 const unsigned_16 __FAR CFTable[] = {
-    0,                                          // null - no statement
-    BD | NS | BB,                               // ADMIT
-    SL | DB,                                    // ALLOCATE
-    SL | DB,                                    // ASSIGN
-    NS | BB | SL | DB,                          // ATEND
-    SL | DB,                                    // BACKSPACE
-    BD | NS | NE | BB | SP,                     // BLOCKDATA
-    SL | DB,                                    // CALL
-    BD | NS | BB,                               // CASE
-    BD | NS | NE | BB | SS | SP | BL | UN,      // CHARACTER
-    SL | DB,                                    // CLOSE
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // COMMON
-    BD | NS | NE | BB | SS | SP | BL | UN,      // COMPLEX
-    DB,                                         // CONTINUE
-    SL | DB,                                    // CYCLE
-    BD | NS | NE | BB | BL | SS,                // DATA
-    SL | DB,                                    // DEALLOCATE
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // DIMENSION
-    BD | NS,                                    // DO WHILE
-    BD | NS | NE | BB | SS | SP | BL | UN,      // DOUBLECOMPLEX
-    BD | NS | NE | BB | SS | SP | BL | UN,      // DOUBLEPRECISION
-    BD | NS | BB,                               // ELSE
-    BD | NS | BB,                               // ELSEIF
-    BD | NS | BL | DB | SL,                     // END
-    BD | NS | BB | IL,                          // ENDATEND
-    BD | NS | BB | DB,                          // ENDBLOCK
-    NS | BB | DB,                               // ENDDO
-    SL | DB,                                    // ENDFILE
-    BD | NS | IL,                               // ENDGUESS
-    BD | NS | IL,                               // ENDIF
-    BD | NS | BB | SL | DB,                     // ENDLOOP
-    BD | NS | NE | BB | SS | BL,                // ENDMAP
-    BD | NS | BB | IL,                          // ENDSELECT
-    BD | NS | NE | BB | SS | BL | UN | MA,      // ENDSTRUCTURE
-    BD | NS | NE | BB | SS | BL | MA,           // ENDUNION
-    BD | NS | BB | DB,                          // ENDWHILE
-    BD | NS | BB | SS | ST | UN | MA,           // ENTRY
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // EQUIVALENCE
-    SL | DB,                                    // EXECUTE
-    SL | DB,                                    // EXIT
-    BD | NS | NE | BB | SS | SP | BL | UN,      // EXTENDEDCOMPLEX
-    BD | NS | NE | BB | SS | SP | BL | UN,      // EXTENDEDPRECISION
-    BD | NS | NE | BB | SS | ST | UN | MA,      // EXTERNAL
-    BD | NS | NE | BB,                          // FORMAT
-    BD | NS | NE | BB | SP,                     // FUNCTION
-    BD | SL | DB,                               // GOTO
-    BD | NS | DB,                               // GUESS
-    NS | SL | DB,                               // IF
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // IMPLICIT
-    BD | NS | NE | BB | BL,                     // INCLUDE
-    SL | DB,                                    // INQUIRE
-    BD | NS | NE | BB | SS | SP | BL | UN,      // INTEGER
-    BD | NS | NE | BB | SS | ST | UN | MA,      // INTRINSIC
-    BD | NS | NE | BB | SS | SP | BL | UN,      // LOGICAL
-    BD | NS,                                    // LOOP
-    BD | NS | NE | BB | SS | BL | ST | MA,      // MAP
-    NS | NE | BB | SS | BL | ST | UN | MA,      // NAMELIST
-    SL | DB,                                    // OPEN
-    BD | NS | BB,                               // OTHERWISE
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // PARAMETER
-    SL | DB,                                    // PAUSE
-    SL | DB,                                    // PRINT
-    BD | NS | NE | BB | SP,                     // PROGRAM
-    SL | DB,                                    // QUIT
-    SL | DB,                                    // READ
-    BD | NS | NE | BB | SS | SP | BL | UN,      // REAL
-    BD | NS | NE | BB | SS | SP | BL | UN,      // RECORD
-    BD | NS | NE | BB,                          // REMOTEBLOCK
-    BD | DB | SL,                               // RETURN
-    SL | DB,                                    // REWIND
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // SAVE
-    BD | NS | SL | DB,                          // SELECT
-    BD | SL | DB,                               // STOP
-    BD | NS | NE | BB | SS | BL | ST,           // STRUCTURE
-    BD | NS | NE | BB | SP,                     // SUBROUTINE
-    BD | NS | NE | BB | SS | BL | MA,           // UNION
-    BD | NS | BB | SL | DB,                     // UNTIL
-    BD | NS | NE | BB | SS | BL | ST | UN | MA, // VOLATILE
-    BD | NS,                                    // WHILE
-    SL | DB,                                    // WRITE
-    BD | NS | SL | DB,                          // DO
-    SL | DB,                                    // assignment
-    BD | SL | DB,                               // arithmetic if
-    NS | BB | NE | BD };                        // statement function
+
+#include "stmtdefn.h"
+
+};
 
 
 //

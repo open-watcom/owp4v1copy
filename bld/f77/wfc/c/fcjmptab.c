@@ -35,6 +35,7 @@
 //
 
 #include "ftnstd.h"
+#include "emitobj.h"
 
 extern  void            FCPause(void);
 extern  void            FCStop(void);
@@ -129,7 +130,6 @@ extern  void            FCCmpGT(void);
 extern  void            FCJmpAlways(void);
 extern  void            FCJmpFalse(void);
 extern  void            FCDefineLabel(void);
-extern  void            FCSeek(void);
 extern  void            FCSelect(void);
 extern  void            FCPushLit(void);
 extern  void            FCAssign(void);

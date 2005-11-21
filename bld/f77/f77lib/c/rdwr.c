@@ -36,7 +36,6 @@
 
 #include "ftnstd.h"
 #include "rundat.h"
-#include "parmtype.h"
 #include "errcod.h"
 
 #include <string.h>

@@ -50,7 +50,7 @@ gbl_defn sym_id                 EPValue;        // entry point identifier
 gbl_defn sym_id                 ReturnValue;    // function return value
 gbl_defn void         (* __FAR *FCTablePtr)();  // pointer to F-Code jump table
 gbl_defn obj_ptr                DtConstList;    // DATA statement constants
-gbl_defn int                    DtConstType;    // type of DATA constant
+gbl_defn PTYPE                  DtConstType;    // type of DATA constant
 gbl_defn intstar4               DtRepCount;     // repitition count
 gbl_defn sym_id                 DtConst;        // DATA constant
 gbl_defn int                    DtSegment;      // DATA initialization segment

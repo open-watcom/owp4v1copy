@@ -24,14 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definition of "flags" field of symbol table entry
 *
 ****************************************************************************/
 
 
-//
-// Definition of "flags" field of symbol table entry.
 //
 //+===================================================================+
 //|15              |14              |13              |12              |
@@ -164,37 +161,3 @@
                                         // specifiers
 #define SY_ALLOCATABLE          0x08    // symbol is allocatable
 
-// TYPES
-// =====
-
-#define TY_LOGICAL_1            0       // LOGICAL*1
-#define TY_LOGICAL              1       // LOGICAL*4
-#define TY_INTEGER_1            2       // INTEGER*1
-#define TY_INTEGER_2            3       // INTEGER*2
-#define TY_INTEGER              4       // INTEGER*4
-#define TY_REAL                 5       // REAL
-#define TY_DOUBLE               6       // DOUBLE PRECISION
-// Until long double is implemented in the code generator, we will map
-// TY_EXTENDED and TY_XCOMPLEX to TY_DOUBLE and TY_DCOMPLEX.
-// TY_TRUE_EXTENDED and TY_TRUE_XCOMPLEX are temporarily defined since switch
-// statements must have unique values. //UNCOMMENT_TOKEN
-#define TY_TRUE_EXTENDED        7       // EXTENDED PRECISION
-#define TY_EXTENDED             TY_DOUBLE
-#define TY_COMPLEX              8       // COMPLEX
-#define TY_DCOMPLEX             9       // DOUBLE COMPLEX
-#define TY_TRUE_XCOMPLEX        10      // EXTENDED COMPLEX
-#define TY_XCOMPLEX             TY_DCOMPLEX
-#define TY_CHAR                 11      // CHARACTER
-#define TY_STRUCTURE            12      // structure
-#define TY_UNION                13      // union
-#define TY_HEX                  14      // z constants in DATA statements
-#define TY_NO_TYPE              15      // no type specified
-
-#define _IsTypeLogical( typ )   (typ <= TY_LOGICAL)
-#define _IsTypeInteger( typ )   ((typ >= TY_INTEGER_1) && (typ <= TY_INTEGER))
-
-#if _CPU == 8086
-  #define TY_INTEGER_TARG      TY_INTEGER_2
-#else
-  #define TY_INTEGER_TARG      TY_INTEGER
-#endif

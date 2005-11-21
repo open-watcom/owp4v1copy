@@ -39,14 +39,11 @@
 #include "opn.h"
 #include "fcodes.h"
 #include "stmtsw.h"
+#include "optr.h"
+#include "emitobj.h"
+#include "types.h"
 
-extern  void            EmitOp(unsigned_16);
-extern  void            PushOpn(itnode *);
-extern  void            DumpTypes(uint,uint,uint,uint);
-extern  uint            TypeSize(uint);
 extern  sym_id          GTempString(uint);
-extern  void            OutPtr(void *);
-extern  void            PushConst(intstar4);
 
 
 void    GFieldSCB( inttarg size ) {
@@ -59,15 +56,15 @@ void    GFieldSCB( inttarg size ) {
 }
 
 
-void    FieldOp( int typ1, int typ2, int op ) {
-//=============================================
+void    FieldOp( TYPE typ1, TYPE typ2, OPTR op ) {
+//================================================
 
 // Generate code for a field selection operator.
 
     typ1 = typ1; op = op;
     PushOpn( CITNode->link );
     PushOpn( CITNode );
-    if( CITNode->opn & OPN_FLD ) {
+    if( CITNode->opn.us & USOPN_FLD ) {
         // sub-field reference
         EmitOp( ADD );
         DumpTypes( TY_INTEGER, TypeSize( TY_INTEGER ),
@@ -77,9 +74,9 @@ void    FieldOp( int typ1, int typ2, int op ) {
         OutPtr( CITNode->sym_ptr );
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
             if( typ2 == TY_CHAR ) {
-                if( ( CITNode->link->opn & OPN_WHAT ) != OPN_ARR ) {
-                    if( ( ( CITNode->link->opn & OPN_WHAT ) != OPN_NWL ) &&
-                        ( ( CITNode->link->opn & OPN_WHAT ) != OPN_ASS ) ) {
+                if( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_ARR ) {
+                    if( ( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_NWL ) &&
+                        ( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_ASS ) ) {
                         GFieldSCB( CITNode->link->size );
                     }
                     EmitOp( MAKE_SCB );

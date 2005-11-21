@@ -30,6 +30,13 @@
 ****************************************************************************/
 
 
+#ifndef _ITDEFN_H_INCLUDED
+#define _ITDEFN_H_INCLUDED
+
+#include "symtypes.h"
+#include "opr.h"
+#include "opn.h"
+
 // Definition of an INTERNAL TEXT NODE:
 // ====================================
 typedef struct itnode {
@@ -37,15 +44,18 @@ typedef struct itnode {
     struct itnode       *list;          // link to argument list
     unsigned_16         oprpos;         // position of opr in statement
     unsigned_16         opnpos;         // position of opn in statement
-    byte                opr;            // delimiter field
-    byte                opn;            // operand code value
+    OPR                 opr;            // delimiter field
+    union {
+        DSOPN           ds;
+        USOPN           us;
+    }                   opn;            // operand code value
     unsigned_16         flags;          // flags
     uint                size;           // size of operand
     sym_id              sym_ptr;        // addr of data area (common block)
     ftn_type            value;          // value of constants, parameters
     int                 opnd_size;      // size of operand field
     char                *opnd;          // operand field
-    byte                typ;            // type of symbol
+    TYPE                typ;            // type of symbol
     char                chsize : 4;     // size of character operand (OPN_SS1)
     char                is_unsigned : 1;// integer constant is unsigned
     char                is_catparen : 1;// left paren matches right paren of
@@ -58,4 +68,6 @@ typedef struct itnode {
 #define PASS_BY_VALUE   0x01    // pass argument by value
 #define PASS_BY_REF     0x02    // pass argument by reference
 #define PASS_BY_DESCR   0x04    // pass argument by descriptor
+#endif
+
 #endif

@@ -33,7 +33,7 @@
 #ifndef _IOTYPE_H_INCLUDED
 #define _IOTYPE_H_INCLUDED
 
-typedef int (io_type_rtn)(void);
+typedef PTYPE (io_type_rtn)(void);
 
 #if !defined( __AXP__ ) && !defined(__PPC__)
 #ifdef __386__

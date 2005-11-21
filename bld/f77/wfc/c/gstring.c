@@ -38,19 +38,15 @@
 #include "global.h"
 #include "fcodes.h"
 #include "opn.h"
+#include "emitobj.h"
 
 extern  void            AdvanceITPtr(void);
 extern  int             AsgnCat(void);
 extern  void            CatArgs(int);
-extern  void            PushOpn(itnode *);
-extern  void            EmitOp(unsigned_16);
-extern  void            OutU16(unsigned_16);
-extern  void            OutInt(inttarg);
-extern  sym_id          StaticAlloc(int,byte);
+extern  sym_id          StaticAlloc(uint,TYPE);
 extern  bool            OptimalChSize(uint);
-extern  void            DumpType(uint,uint);
 extern  void            GenChar1Op(itnode *);
-extern  uint            MapTypes(uint,uint);
+extern  TYPE            MapTypes(TYPE,uint);
 
 
 sym_id  GStartCat( int num_args, int size ) {
@@ -63,7 +59,7 @@ sym_id  GStartCat( int num_args, int size ) {
 }
 
 
-sym_id  GTempString( int size ) {
+sym_id  GTempString( uint size ) {
 //===============================
 
 // Generate a static temporary string.
@@ -83,7 +79,7 @@ void    GStopCat( int num_args, sym_id result ) {
 
     result = result;
     CITNode->sym_ptr = GTempString( CITNode->size );
-    CITNode->opn = OPN_VAL;
+    CITNode->opn.us = USOPN_VAL;
     // Push the address of a static SCB so that we can modify its
     // length to correspond to the length concatenated so that
     //      CHARACTER*5 WORD
@@ -110,11 +106,11 @@ void    GCatArg( itnode *itptr ) {
 static  uint    SrcChar( itnode *op ) {
 //=====================================
 
-    if( op->opn & OPN_SS1 ) return( op->value.st.ss_size );
-    if( ( op->opn & OPN_WHAT ) == OPN_CON ) { // character constant
+    if( op->opn.us & USOPN_SS1 ) return( op->value.st.ss_size );
+    if( ( op->opn.us & USOPN_WHAT ) == USOPN_CON ) { // character constant
         return( op->sym_ptr->lt.length );
     }
-    if( ( op->opn & OPN_WHAT ) == OPN_NNL ) { // character variable
+    if( ( op->opn.us & USOPN_WHAT ) == USOPN_NNL ) { // character variable
         if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
@@ -128,15 +124,15 @@ static  uint    SrcChar( itnode *op ) {
 static  uint    TargChar( itnode *op ) {
 //======================================
 
-    if( op->opn & OPN_SS1 ) return( op->value.st.ss_size );
-    if( ( op->opn & OPN_WHAT ) == OPN_NNL ) { // character variable
+    if( op->opn.us & USOPN_SS1 ) return( op->value.st.ss_size );
+    if( ( op->opn.us & USOPN_WHAT ) == USOPN_NNL ) { // character variable
         if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
             return( op->sym_ptr->ns.xt.size );
         }
     }
-    if( ( op->opn & OPN_WHAT ) == OPN_NWL ) { // character array
+    if( ( op->opn.us & USOPN_WHAT ) == USOPN_NWL ) { // character array
         if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
@@ -168,7 +164,7 @@ void    AsgnChar() {
             EmitOp( CHAR_1_MOVE );
             DumpType( MapTypes( TY_INTEGER, i ), i );
             GenChar1Op( CITNode );
-            if( ( CITNode->opn & OPN_WHAT ) == OPN_CON ) {
+            if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_CON ) {
                 CITNode->sym_ptr->lt.flags &= ~LT_SCB_TMP_REFERENCE;
             }
             CITNode = save_cit;

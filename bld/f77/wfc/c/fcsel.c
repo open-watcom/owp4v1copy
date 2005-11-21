@@ -39,6 +39,7 @@
 #include "cgdefs.h"
 #include "cg.h"
 #include "fcodes.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -52,12 +53,7 @@ extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
 
 extern  label_handle    GetLabel(int);
 extern  label_handle    GetStmtLabel(sym_id);
-extern  pointer         GetPtr(void);
-extern  unsigned_16     GetU16(void);
-extern  signed_32       GetConst32(void);
 extern  void            RefStmtLabel(sym_id);
-extern  obj_ptr         FCodeTell(int);
-extern  obj_ptr         FCodeSeek(obj_ptr);
 extern  cg_name         SymValue(sym_id);
 extern  cg_name         SymAddr(sym_id);
 extern  cg_name         SCBPointer(cg_name);

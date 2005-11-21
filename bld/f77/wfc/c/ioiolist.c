@@ -34,22 +34,10 @@
 #include "opr.h"
 #include "opn.h"
 #include "iodefn.h"
-#include "prdefn.h"
 #include "global.h"
 #include "stmtsw.h"
+#include "recog.h"
 
-extern  bool            RecComma(void);
-extern  bool            ReqComma(void);
-extern  bool            RecOpenParen(void);
-extern  bool            RecCloseParen(void);
-extern  bool            ReqCloseParen(void);
-extern  bool            RecEquSign(void);
-extern  bool            RecTrmOpr(void);
-extern  bool            RecNOpn(void);
-extern  bool            ReqNOpn(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecArrName(void);
-extern  bool            RecEOS(void);
 extern  void            Error(int,...);
 extern  void            ChkAssumed(void);
 extern  void            TermDo(void);
@@ -215,7 +203,7 @@ void    ListItem() {
         }
     } else if( CITNode->typ == TY_STRUCTURE ) {
         CITNode->sym_ptr->ns.xflags |= SY_DEFINED;
-        if( CITNode->opn & OPN_FLD ) {
+        if( CITNode->opn.us & USOPN_FLD ) {
             sd = CITNode->value.st.field_id->fd.xt.sym_record;
         } else {
             sd = CITNode->sym_ptr->ns.xt.sym_record;

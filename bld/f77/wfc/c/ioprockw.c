@@ -35,7 +35,6 @@
 //
 
 #include "ftnstd.h"
-#include "prdefn.h"
 #include "iodefn.h"
 #include "errcod.h"
 #include "opr.h"
@@ -43,21 +42,9 @@
 #include "rtconst.h"
 #include "units.h"
 #include "global.h"
+#include "recog.h"
+#include "types.h"
 
-extern  bool            RecComma(void);
-extern  bool            ReqComma(void);
-extern  bool            ReqEquSign(void);
-extern  bool            RecOpenParen(void);
-extern  bool            RecCloseParen(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecTrmOpr(void);
-extern  bool            ReqNOpn(void);
-extern  bool            RecNumber(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecIntVar(void);
-extern  bool            RecArrName(void);
-extern  bool            RecName(void);
-extern  bool            RecEOS(void);
 extern  bool            ClassIs(unsigned_16);
 extern  int             RecIOKW(void);
 extern  void            Error(int,...);
@@ -93,7 +80,6 @@ extern  void            FreeLabel(label_id);
 extern  sym_id          NameListFind(void);
 extern  void            GSetNameList(uint);
 extern  void            CkVarRef(void);
-extern  intstar4        ITIntValue(itnode *);
 extern  void            BIOutNameList(sym_id);
 
 
@@ -386,7 +372,7 @@ void    FormatIdd() {
     } else if( RecNumber() ) {
         GPassStmtNo( LkUpFormat(), RT_SET_FMT );
     } else if( RecNOpn() && RecNextOpr( OPR_MUL ) ) {
-        if( CITNode->link->opn == OPN_PHI ) {
+        if( CITNode->link->opn.ds == DSOPN_PHI ) {
             AdvanceITPtr();   // nothing needs to be loaded for default
             KWRememb( IO_LIST_DIR );
         }
@@ -407,7 +393,7 @@ void    FormatIdd() {
                 GFmtArrSet();
             } else if( CITNode->typ != TY_CHAR ) {
                 Error( IL_BAD_FMT_SPEC );
-            } else if( ( CITNode->opn == OPN_CON ) ) {
+            } else if( ( CITNode->opn.us == USOPN_CON ) ) {
                 AddConst( CITNode ); // in case single constant
                 fmt_label.g_label = NextLabel();
                 FScan( CITNode->sym_ptr->lt.length,
@@ -464,7 +450,7 @@ void    ChkAssumed() {
 
     sym_id      sym;
 
-    if( CITNode->opn & OPN_FLD ) return;
+    if( CITNode->opn.us & USOPN_FLD ) return;
     sym = CITNode->sym_ptr;
     if( sym->ns.si.va.dim_ext->dim_flags & DIM_ASSUMED ) {
         NameErr( SV_CANT_USE_ASSUMED, sym );

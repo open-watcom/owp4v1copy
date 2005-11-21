@@ -37,6 +37,7 @@
 #include "ftnstd.h"
 #include "cgdefs.h"
 #include "cg.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -51,7 +52,6 @@ extern  cg_name         XPop(void);
 extern  cg_name         XPopValue(cg_type);
 extern  cg_name         GetTypedValue(void);
 extern  void            XPush(cg_name);
-extern  unsigned_16     GetU16(void);
 extern  cg_type         GetType(int);
 extern  cg_type         GetType1(int);
 extern  cg_type         GetType2(int);

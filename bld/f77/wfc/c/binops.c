@@ -39,32 +39,32 @@
 #include "opn.h"
 #include "fcodes.h"
 #include "global.h"
-#include "parmtype.h"
+#include "types.h"
+#include "emitobj.h"
+#include "types.h"
 
-extern  void            EmitOp(unsigned_16);
-extern  void            OutU16(unsigned_16);
-extern  void            SetOpn(itnode *,int);
-extern  void            GenType(itnode *);
-extern  void            GenTypes(itnode *,itnode *);
-extern  void            PushOpn(itnode *);
 extern  bool            TypeCmplx(int);
-extern  intstar4        ITIntValue(itnode *);
 
 
-static  bool    UnaryMul( int typ1, int typ2 ) {
-//==============================================
+static bool UnaryMul( TYPE typ1, TYPE typ2 ) {
+//============================================
 
-    if( typ1 > TY_EXTENDED ) return( FALSE );
-    if( !_IsTypeInteger( typ2 ) ) return( FALSE );
-    if( CITNode->link->opn != OPN_CON ) return( FALSE );
-    if( ITIntValue( CITNode->link ) < 0 ) return( FALSE );
-    if( ITIntValue( CITNode->link ) > 8 ) return( FALSE );
+    if( typ1 > TY_EXTENDED )
+        return( FALSE );
+    if( !_IsTypeInteger( typ2 ) )
+        return( FALSE );
+    if( CITNode->link->opn.us != USOPN_CON )
+        return( FALSE );
+    if( ITIntValue( CITNode->link ) < 0 )
+        return( FALSE );
+    if( ITIntValue( CITNode->link ) > 8 )
+        return( FALSE );
     return( TRUE );
 }
 
 
-void            ExpOp( int typ1, int typ2, int opr ) {
-//====================================================
+void    ExpOp( TYPE typ1, TYPE typ2, OPTR opr ) {
+//===============================================
 
 // Generate code to perform exponentiation.
 
@@ -73,19 +73,19 @@ void            ExpOp( int typ1, int typ2, int opr ) {
         EmitOp( UNARY_MUL );
         GenType( CITNode );
         OutU16( ITIntValue( CITNode->link ) );
-        SetOpn( CITNode, OPN_SAFE );
+        SetOpn( CITNode, USOPN_SAFE );
     } else {
         BinOp( typ1, typ2, opr );
     }
 }
 
 
-void            BinOp( int typ1, int typ2, int opr ) {
-//====================================================
+void    BinOp( TYPE typ1, TYPE typ2, OPTR opr ) {
+//===============================================
 
 // Generate code to perform a binary operation.
 
-    if( typ1 != -1 ) {                        // binary operator
+    if( typ1 != TY_NO_TYPE ) {                // binary operator
         Binary( typ1, typ2, opr );
     } else {                                  // unary operator.
         Unary( typ2, opr );
@@ -93,8 +93,8 @@ void            BinOp( int typ1, int typ2, int opr ) {
 }
 
 
-static  void    Unary( int typ, uint opr ) {
-//==========================================
+static void Unary( TYPE typ, OPTR opr ) {
+//=======================================
 
 // Generate code for unary plus or unary minus.
 
@@ -110,66 +110,67 @@ static  void    Unary( int typ, uint opr ) {
                ( CITNode->link->size < sizeof( intstar4 ) ) ) {
         // convert INTEGER*1 or INTEGER*2 to INTEGER*4
         EmitOp( CONVERT );
-        OutU16( ( ParmType( CITNode->link->typ, CITNode->link->size ) << 8 ) |
-                  ParmType( TY_INTEGER, sizeof( intstar4 ) ) );
+        DumpTypes( CITNode->link->typ, CITNode->link->size,
+                             TY_INTEGER, sizeof( intstar4 ) );
     }
-    SetOpn( CITNode, OPN_SAFE );
+    SetOpn( CITNode, USOPN_SAFE );
 }
 
 
-static  void    Binary( int typ1, int typ2, uint opr ) {
-//======================================================
+static void Binary( TYPE typ1, TYPE typ2, OPTR opr ) {
+//====================================================
 
 // Generate code for binary operations.
 
     bool        flip;
     bool        associative;
+    unsigned_16 op_code;
 
     associative = FALSE;
     if( ( opr == OPTR_ADD ) || ( opr == OPTR_MUL ) ) {
         associative = TRUE;
     }
     flip = FALSE;
-    if( ( ( CITNode->opn & OPN_WHERE ) == OPN_SAFE ) &&
-        ( ( CITNode->link->opn & OPN_WHERE ) != OPN_SAFE ) ) {
+    if( ( ( CITNode->opn.us & USOPN_WHERE ) == USOPN_SAFE ) &&
+        ( ( CITNode->link->opn.us & USOPN_WHERE ) != USOPN_SAFE ) ) {
         flip = TRUE;
     }
-    opr = BINOPS + ( opr - OPTR_ADD );
+    op_code = BINOPS + ( opr - OPTR_ADD );
     PushOpn( CITNode->link );
     PushOpn( CITNode );
     if( TypeCmplx( typ1 ) && TypeCmplx( typ2 ) ) {
-        opr += CMPLX_OPS;
+        op_code += CMPLX_OPS;
         if( flip && !associative ) {
             EmitOp( CMPLX_FLIP );
         }
     } else if( TypeCmplx( typ1 ) ) {
         if( flip ) {
             if( associative ) {
-                opr += XC_MIXED;
+                op_code += XC_MIXED;
             } else {
                 EmitOp( XC_FLIP );
-                opr += CX_MIXED;
+                op_code += CX_MIXED;
             }
         } else {
-            opr += CX_MIXED;
+            op_code += CX_MIXED;
         }
     } else if( TypeCmplx( typ2 ) ) {
         if( flip ) {
             if( associative ) {
-                opr += CX_MIXED;
+                op_code += CX_MIXED;
             } else {
                 EmitOp( CX_FLIP );
-                opr += XC_MIXED;
+                op_code += XC_MIXED;
             }
         } else {
-            opr += XC_MIXED;
+            op_code += XC_MIXED;
         }
     } else {
         if( flip && !associative ) {
             EmitOp( FLIP );
         }
     }
-    EmitOp( opr );
+    EmitOp( op_code );
     if( flip && associative ) {
         GenTypes( CITNode->link, CITNode );
     } else {

@@ -30,18 +30,13 @@
 ****************************************************************************/
 
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(tok_id,dsopn_id,opn_proc) tok_id,
+
 typedef enum {
-    TO_OPR,
-    TO_NAM,
-    TO_LIT,
-    TO_LGL,
-    TO_INT,
-    TO_REA,
-    TO_DBL,
-    TO_EXT,
-    TO_OCT,
-    TO_HEX,
-    TO_FMT
+#include "tokdsopn.h"
 } token_class;
 
 typedef struct token {

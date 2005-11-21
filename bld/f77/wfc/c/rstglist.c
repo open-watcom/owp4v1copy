@@ -39,6 +39,7 @@
 #include "cpopt.h"
 #include "fmemmgr.h"
 #include "fhash.h"
+#include "iflookup.h"
 
 #include <string.h>
 
@@ -48,7 +49,6 @@ extern  void            PrevDef(sym_id);
 extern  void            NameErr(int,sym_id);
 extern  void            NameWarn(int,sym_id);
 extern  void            Warning(int,...);
-extern  bool            IsIntrinsic(unsigned_16);
 extern  char            *STGetName(sym_id,char *);
 extern  int             AllocName(int);
 extern  intstar4        GetComBlkSize(sym_id);

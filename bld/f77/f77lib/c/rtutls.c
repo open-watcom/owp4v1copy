@@ -32,7 +32,6 @@
 #include "ftnstd.h"
 #include "rundat.h"
 #include "errcod.h"
-#include "parmtype.h"
 #include "flagdefn.h"
 #include "units.h"
 #include "deffname.h"

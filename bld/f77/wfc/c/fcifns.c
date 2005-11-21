@@ -38,7 +38,7 @@
 #include "wf77defs.h"
 #include "cg.h"
 #include "tmpdefs.h"
-#include "parmtype.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -59,14 +59,13 @@ extern  cg_name         XPopValue(cg_type);
 extern  cg_type         GetType(unsigned_16);
 extern  cg_type         GetType1(unsigned_16);
 extern  cg_type         GetType2(unsigned_16);
-extern  unsigned_16     GetU16(void);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  tmp_handle      MkTmp(cg_name,cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  bool            TypePointer(cg_type);
 extern  cg_name         SCBPointer(cg_name);
 extern  cg_type         ResCGType(cg_type,cg_type);
-extern  bool            IntType(int);
+extern  bool            IntType(PTYPE);
 
 
 void    FCCharLen() {
@@ -291,7 +290,7 @@ static  void    GBinaryMath( uint ifn ) {
 void            FCLoc() {
 //=======================
 
-    unsigned_16 typ_info;
+    PTYPE       typ_info;
     cg_type     cg_typ;
     cg_name     arg;
 

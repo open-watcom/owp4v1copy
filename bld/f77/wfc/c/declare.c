@@ -43,8 +43,9 @@
 #include "ctrlflgs.h"
 #include "namecod.h"
 #include "global.h"
-#include "prdefn.h"
 #include "stmtsw.h"
+#include "recog.h"
+#include "types.h"
 
 #include <string.h>
 
@@ -57,31 +58,10 @@ extern  void            NameExt(int,sym_id);
 extern  void            AdvanceITPtr(void);
 extern  void            DimExpr(void);
 extern  bool            CIntExpr(void);
-extern  bool            RecComma(void);
-extern  bool            RecColon(void);
-extern  bool            ReqMul(void);
-extern  bool            RecDiv(void);
-extern  bool            RecCat(void);
-extern  bool            ReqName(int);
-extern  bool            RecName(void);
-extern  bool            ReqEOS(void);
-extern  bool            RecOpenParen(void);
-extern  bool            ReqOpenParen(void);
-extern  bool            ReqCloseParen(void);
-extern  bool            RecCloseParen(void);
-extern  bool            ReqComma(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecTrmOpr(void);
-extern  bool            ReqNOpn(void);
-extern  bool            ReqColon(void);
-extern  bool            RecNOpr(void);
-extern  bool            RecNOpn(void);
 extern  void            Function(int,uint,bool);
 extern  act_dim_list    *STSubsList(act_dim_list *);
 extern  sym_id          LkSym(void);
-extern  uint            TypeSize(uint);
-extern  int             StorageSize(uint);
-extern  bool            LenSpec(byte,int *);
+extern  bool            LenSpec(TYPE,uint *);
 extern  warp_label      GBegSList(void);
 extern  void            GSLoBound(int,sym_id);
 extern  void            GSHiBound(int,sym_id);
@@ -95,7 +75,6 @@ extern  void            NameTypeErr(int,sym_id);
 extern  void            FreeWarpLabel(warp_label);
 extern  sym_id          STField(char *,uint);
 extern  void            FieldErr(uint,sym_id);
-extern  intstar4        ITIntValue(itnode *);
 
 extern  char            *StmtKeywords[];
 
@@ -103,6 +82,206 @@ extern  char            *StmtKeywords[];
 #define SSB_CONSTANT            0    // lo/hi subscript bound is constant
 #define SSB_NOT_CONSTANT        1    // lo/hi subscript bound not constant
 #define SSB_ERROR               2    // lo/hi subscript bound error
+
+
+bool    IsFunctionDefn() {
+//========================
+
+// Check to see if type declaration is a function definition.
+
+    if( !RecName() ) return( FALSE );
+    if( memcmp( StmtKeywords[ PR_FUNC ], CITNode->opnd, 8 ) ) return( FALSE );
+    // allow INTEGER FUNCTION(10)
+    if( CITNode->opnd_size == 8 ) return( FALSE );
+    // allow "INTEGER FUNCTIONA"
+    if( RecNextOpr( OPR_TRM ) ) return( FALSE );
+    // We now have INTEGER[*lenspec] FUNCTION name ...
+    // allow INTEGER FUNCTIONA,
+    if( StmtSw & SS_COMMA_FOUND ) return( FALSE );
+    RemKeyword( CITNode, 8 );
+    return( TRUE );
+}
+
+
+sym_id  VarDecl( TYPE typ ) {
+//===========================
+
+// Process variable declaration statement according to type parameter.
+
+    unsigned_16 flags;
+    unsigned_16 sp_type;
+    unsigned_16 class;
+    sym_id      sym;
+
+    sym = LkSym();
+    flags = sym->ns.flags;
+    if( flags & SY_TYPE ) {
+        NameTypeErr( TY_TYP_PREV_DEF, sym );
+    } else {
+        class = flags & SY_CLASS;
+        if( ( class == SY_COMMON ) || ( class == SY_PARAMETER ) ) {
+            IllName( sym );
+        } else {
+            if( class == SY_SUBPROGRAM ) {
+                sp_type = flags & SY_SUBPROG_TYPE;
+                if( sp_type != 0 ) {
+                    if( sp_type != SY_FUNCTION ) {
+                        IllName( sym );
+                        AdvanceITPtr();
+                        return( sym );
+                    } else if( flags & SY_INTRINSIC ) {
+                        if( sym->ns.typ != typ ) {
+                            NameTypeErr( TY_TYP_PREV_DEF, sym );
+                            AdvanceITPtr();
+                            return( sym );
+                        }
+                    }
+                } else {
+                    flags |= SY_FUNCTION;
+                }
+            } else if( flags & SY_IN_DIMEXPR ) {
+                if( !_IsTypeInteger( typ ) ) {
+                    NameTypeErr( TY_TYP_PREV_DEF, sym );
+                    AdvanceITPtr();
+                    return( sym );
+                }
+            }
+            sym->ns.flags = flags | SY_TYPE;
+            sym->ns.typ = typ;
+            sym->ns.xt.size = TypeSize( typ );
+        }
+    }
+    AdvanceITPtr();
+    return( sym );
+}
+
+
+sym_id  FieldDecl() {
+//===================
+
+// Define a field in a structure.
+
+    sym_id      sym;
+
+    sym = STField( CITNode->opnd, CITNode->opnd_size );
+    AdvanceITPtr();
+    return( sym );
+}
+
+
+TYPE    MapTypes( TYPE typ, uint size ) {
+//======================================
+
+// Given a type and size, return an equivalent type.
+// For example REAL*8 is equivalent to DOUBLE PRECISION.
+
+    if( typ == TY_REAL ) {
+        switch( size ) {
+        case( sizeof( double ) ):       return( TY_DOUBLE );
+        // kludge until long doubles are implemented.
+        case( 16 ):                     return( TY_EXTENDED );
+        default:        return( typ );
+        }
+    }
+    if( typ == TY_COMPLEX ) {
+        switch( size ) {
+        case( sizeof( dcomplex ) ):     return( TY_DCOMPLEX );
+        // cludge until long doubles are implemented.
+        case( 32 ):                     return( TY_XCOMPLEX );
+        default:        return( typ );
+        }
+    }
+    if( typ == TY_INTEGER ) {
+        switch( size ) {
+        case( sizeof( intstar2 ) ):     return( TY_INTEGER_2 );
+        case( sizeof( intstar1 ) ):     return( TY_INTEGER_1 );
+        default:        return( typ );
+        }
+    }
+    if( typ == TY_LOGICAL ) {
+        switch( size ) {
+        case( sizeof( logstar1 ) ):     return( TY_LOGICAL_1 );
+        default:        return( typ );
+        }
+    }
+    return( typ );
+}
+
+
+static  void    TypeDecl( TYPE typ ) {
+//====================================
+
+// Process a type declaration statement.
+
+    uint        default_size;
+    itnode      *var_node;
+    bool        len_spec;
+    sym_id      sym;
+    uint        size = ~0;
+
+    default_size = StorageSize( typ );
+    if( RecNOpn() ) {
+        AdvanceITPtr();
+        ReqMul();
+    }
+    len_spec = LenSpec( typ, &size );
+    if( IsFunctionDefn() ) {
+        Function( typ, size, len_spec );
+    } else {
+        MustBeTypeDecl();
+        if( len_spec ) { // if TYPE*LEN
+            default_size = size;
+            if( !RecNOpr() && !RecCloseParen() ) {
+                ReqComma();
+            }
+        }
+        for(;;) {
+            size = ~0;
+            if( ReqName( NAME_VAR_OR_ARR ) ) {
+                var_node = CITNode;
+                if( SgmtSw & SG_DEFINING_STRUCTURE ) {
+                    sym = FieldDecl();
+                } else {
+                    sym = VarDecl( MapTypes( typ, default_size ) );
+                }
+                len_spec = LenSpec( typ, &size );
+                if( RecOpenParen() ) {
+                    if( len_spec && ( typ == TY_CHAR ) ) {
+                        Extension( TY_CHAR_BEFORE_PAREN );
+                    }
+                    ArrayDecl( sym );
+                    if( !len_spec ) {
+                        len_spec = LenSpec( typ, &size );
+                    }
+                }
+                if( !len_spec ) {
+                    size = default_size;
+                }
+                if( SgmtSw & SG_DEFINING_STRUCTURE ) {
+                    sym->fd.typ = MapTypes( typ, size );
+                    sym->fd.xt.size = size;
+                    if( sym->fd.dim_ext != NULL ) {
+                        size *= sym->fd.dim_ext->num_elts;
+                    }
+                    if( (typ == TY_CHAR) && (size == 0) ) {
+                        NameErr( CV_CHARSTAR_ILLEGAL, sym );
+                    }
+                } else {
+                    sym->ns.typ = MapTypes( typ, size );
+                    sym->ns.xt.size = size;
+                    if( RecDiv() || RecCat() ) {
+                        StmtExtension( DA_IN_TYPE_STMT );
+                        DataInit( var_node );
+                    }
+                }
+            } else {
+                AdvanceITPtr();
+            }
+            if( !RecComma() ) break;
+        }
+        ReqEOS();
+    }
+}
 
 
 void    CpCharVar() {
@@ -183,206 +362,6 @@ void    CpLogVar() {
 // Process LOGICAL variable declaration statement.
 
     TypeDecl( TY_LOGICAL );
-}
-
-
-bool    IsFunctionDefn() {
-//========================
-
-// Check to see if type declaration is a function definition.
-
-    if( !RecName() ) return( FALSE );
-    if( memcmp( StmtKeywords[ PR_FUNC-1 ], CITNode->opnd, 8 ) ) return( FALSE );
-    // allow INTEGER FUNCTION(10)
-    if( CITNode->opnd_size == 8 ) return( FALSE );
-    // allow "INTEGER FUNCTIONA"
-    if( RecNextOpr( OPR_TRM ) ) return( FALSE );
-    // We now have INTEGER[*lenspec] FUNCTION name ...
-    // allow INTEGER FUNCTIONA,
-    if( StmtSw & SS_COMMA_FOUND ) return( FALSE );
-    RemKeyword( CITNode, 8 );
-    return( TRUE );
-}
-
-
-sym_id  VarDecl( uint typ ) {
-//===========================
-
-// Process variable declaration statement according to type parameter.
-
-    unsigned_16 flags;
-    unsigned_16 sp_type;
-    unsigned_16 class;
-    sym_id      sym;
-
-    sym = LkSym();
-    flags = sym->ns.flags;
-    if( flags & SY_TYPE ) {
-        NameTypeErr( TY_TYP_PREV_DEF, sym );
-    } else {
-        class = flags & SY_CLASS;
-        if( ( class == SY_COMMON ) || ( class == SY_PARAMETER ) ) {
-            IllName( sym );
-        } else {
-            if( class == SY_SUBPROGRAM ) {
-                sp_type = flags & SY_SUBPROG_TYPE;
-                if( sp_type != 0 ) {
-                    if( sp_type != SY_FUNCTION ) {
-                        IllName( sym );
-                        AdvanceITPtr();
-                        return( sym );
-                    } else if( flags & SY_INTRINSIC ) {
-                        if( sym->ns.typ != typ ) {
-                            NameTypeErr( TY_TYP_PREV_DEF, sym );
-                            AdvanceITPtr();
-                            return( sym );
-                        }
-                    }
-                } else {
-                    flags |= SY_FUNCTION;
-                }
-            } else if( flags & SY_IN_DIMEXPR ) {
-                if( !_IsTypeInteger( typ ) ) {
-                    NameTypeErr( TY_TYP_PREV_DEF, sym );
-                    AdvanceITPtr();
-                    return( sym );
-                }
-            }
-            sym->ns.flags = flags | SY_TYPE;
-            sym->ns.typ = typ;
-            sym->ns.xt.size = TypeSize( typ );
-        }
-    }
-    AdvanceITPtr();
-    return( sym );
-}
-
-
-sym_id  FieldDecl() {
-//===================
-
-// Define a field in a structure.
-
-    sym_id      sym;
-
-    sym = STField( CITNode->opnd, CITNode->opnd_size );
-    AdvanceITPtr();
-    return( sym );
-}
-
-
-uint    MapTypes( uint typ, int size ) {
-//======================================
-
-// Given a type and size, return an equivalent type.
-// For example REAL*8 is equivalent to DOUBLE PRECISION.
-
-    if( typ == TY_REAL ) {
-        switch( size ) {
-        case( sizeof( double ) ):       return( TY_DOUBLE );
-        // kludge until long doubles are implemented.
-        case( 16 ):                     return( TY_EXTENDED );
-        default:        return( typ );
-        }
-    }
-    if( typ == TY_COMPLEX ) {
-        switch( size ) {
-        case( sizeof( dcomplex ) ):     return( TY_DCOMPLEX );
-        // cludge until long doubles are implemented.
-        case( 32 ):                     return( TY_XCOMPLEX );
-        default:        return( typ );
-        }
-    }
-    if( typ == TY_INTEGER ) {
-        switch( size ) {
-        case( sizeof( intstar2 ) ):     return( TY_INTEGER_2 );
-        case( sizeof( intstar1 ) ):     return( TY_INTEGER_1 );
-        default:        return( typ );
-        }
-    }
-    if( typ == TY_LOGICAL ) {
-        switch( size ) {
-        case( sizeof( logstar1 ) ):     return( TY_LOGICAL_1 );
-        default:        return( typ );
-        }
-    }
-    return( typ );
-}
-
-
-static  void    TypeDecl( uint typ ) {
-//====================================
-
-// Process a type declaration statement.
-
-    uint        default_size;
-    itnode      *var_node;
-    bool        len_spec;
-    sym_id      sym;
-    int         size = -1;
-
-    default_size = StorageSize( typ );
-    if( RecNOpn() ) {
-        AdvanceITPtr();
-        ReqMul();
-    }
-    len_spec = LenSpec( typ, &size );
-    if( IsFunctionDefn() ) {
-        Function( typ, size, len_spec );
-    } else {
-        MustBeTypeDecl();
-        if( len_spec ) { // if TYPE*LEN
-            default_size = size;
-            if( !RecNOpr() && !RecCloseParen() ) {
-                ReqComma();
-            }
-        }
-        for(;;) {
-            size = -1;
-            if( ReqName( NAME_VAR_OR_ARR ) ) {
-                var_node = CITNode;
-                if( SgmtSw & SG_DEFINING_STRUCTURE ) {
-                    sym = FieldDecl();
-                } else {
-                    sym = VarDecl( MapTypes( typ, default_size ) );
-                }
-                len_spec = LenSpec( typ, &size );
-                if( RecOpenParen() ) {
-                    if( len_spec && ( typ == TY_CHAR ) ) {
-                        Extension( TY_CHAR_BEFORE_PAREN );
-                    }
-                    ArrayDecl( sym );
-                    if( !len_spec ) {
-                        len_spec = LenSpec( typ, &size );
-                    }
-                }
-                if( !len_spec ) {
-                    size = default_size;
-                }
-                if( SgmtSw & SG_DEFINING_STRUCTURE ) {
-                    sym->fd.typ = MapTypes( typ, size );
-                    sym->fd.xt.size = size;
-                    if( sym->fd.dim_ext != NULL ) {
-                        size *= sym->fd.dim_ext->num_elts;
-                    }
-                    if( (typ == TY_CHAR) && (size == 0) ) {
-                        NameErr( CV_CHARSTAR_ILLEGAL, sym );
-                    }
-                } else {
-                    sym->ns.typ = MapTypes( typ, size );
-                    sym->ns.xt.size = size;
-                    if( RecDiv() || RecCat() ) {
-                        StmtExtension( DA_IN_TYPE_STMT );
-                        DataInit( var_node );
-                    }
-                }
-            } else {
-                AdvanceITPtr();
-            }
-            if( !RecComma() ) break;
-        }
-        ReqEOS();
-    }
 }
 
 
@@ -481,7 +460,7 @@ void    ArrayDecl( sym_id sym ) {
             DimExpr();
             if( AError ) {
                 const_lo = SSB_ERROR;
-            } else if( CITNode->opn == OPN_CON ) {
+            } else if( CITNode->opn.us == USOPN_CON ) {
                 lo_bound = ITIntValue( CITNode );
                 hi_bound = lo_bound - 1;
                 const_lo = SSB_CONSTANT;
@@ -503,7 +482,7 @@ void    ArrayDecl( sym_id sym ) {
                 } else {
                     DimExpr();
                     if( !AError ) {
-                        if( CITNode->opn == OPN_CON ) {
+                        if( CITNode->opn.us == USOPN_CON ) {
                             hi_bound = ITIntValue( CITNode );
                             if( const_lo == SSB_NOT_CONSTANT ) {
                                 lo_bound = hi_bound + 1;

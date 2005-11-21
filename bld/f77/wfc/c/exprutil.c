@@ -38,8 +38,7 @@
 #include "global.h"
 #include "astype.h"
 #include "fcodes.h"
-
-extern  void            PushOpn(itnode *);
+#include "emitobj.h"
 
 
 void    EmExprDone() {

@@ -39,10 +39,8 @@
 #include "errcod.h"
 #include "namecod.h"
 #include "cpopt.h"
+#include "recog.h"
 
-extern  bool            ReqName(int);
-extern  bool            RecComma(void);
-extern  bool            ReqEOS(void);
 extern  sym_id          LkSym(void);
 extern  void            AdvanceITPtr(void);
 extern  void            Error(int,...);

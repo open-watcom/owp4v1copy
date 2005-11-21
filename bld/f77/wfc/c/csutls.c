@@ -33,8 +33,8 @@
 #include "global.h"
 #include "errcod.h"
 #include "opr.h"
-#include "prdefn.h"
 #include "fmemmgr.h"
+#include "recog.h"
 
 #include <string.h>
 
@@ -44,13 +44,6 @@ extern  void            StmtErr(int);
 extern  void            StmtPtrErr(int,void *);
 extern  void            AdvanceITPtr(void);
 extern  void            FreeITNodes(itnode *);
-extern  bool            ReqOpenParen(void);
-extern  bool            ReqCloseParen(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecColon(void);
-extern  bool            RecName(void);
-extern  bool            ReqEOS(void);
-extern  bool            RecEOS(void);
 extern  void            GBoolExpr(void);
 extern  void            GBrFalse(label_id);
 extern  void            FreeLabel(label_id);
@@ -59,21 +52,21 @@ extern  char            *StmtKeywords[];
 
 static  const stmtproc __FAR    CSWords[] = {
         0,
-        PR_IF - 1,
-        PR_ELSEIF - 1,
-        PR_ELSE - 1,
-        PR_GUESS - 1,
-        PR_ADMIT - 1,
-        PR_SELECT - 1,
-        PR_CASE - 1,
-        PR_OTHERWISE - 1,
-        PR_ATEND - 1,
-        PR_REMBLK - 1,
-        PR_LOOP - 1,
-        PR_WHILE - 1,
-        PR_DO - 1,
-        PR_GOTO - 1,
-        PR_DO - 1       // DO WHILE
+        PR_IF,
+        PR_ELSEIF,
+        PR_ELSE,
+        PR_GUESS,
+        PR_ADMIT,
+        PR_SELECT,
+        PR_CASE,
+        PR_OTHERWISE,
+        PR_ATEND,
+        PR_REMBLK,
+        PR_LOOP,
+        PR_WHILE,
+        PR_DO,
+        PR_GOTO,
+        PR_DO       // DO WHILE
 };
 
 

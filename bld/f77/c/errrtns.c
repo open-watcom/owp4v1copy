@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "ftnstd.h"
 #include "errrtns.h"
 
 void            (* __BldErrMsg)(uint,char *,va_list);

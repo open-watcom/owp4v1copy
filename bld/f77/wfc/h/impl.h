@@ -34,8 +34,8 @@
 
 typedef struct impl_entry {
     bool        impl_ed;        //  true if letter has been implicitted
-    byte        typ;            //  data type
-    int         size;           //  size of storage unit
+    TYPE        typ;            //  data type
+    uint        size;           //  size of storage unit
 } impl_entry;
 
 #define IMPL_SIZE       27      //  1 for each letter + '0x' + '_'

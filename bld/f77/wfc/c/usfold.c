@@ -47,6 +47,7 @@ extern  bool            MulIOFlo(intstar4 *,intstar4 *);
 #if _CPU == _VAX
 extern  void            SetFUBit(void);
 #endif
+extern  void            ExpOp(TYPE,TYPE,OPTR);
 
 
 static void    MulIOFlow ( ftn_type *arg1, ftn_type *arg2 ) {
@@ -760,19 +761,20 @@ void    XChCmp( ftn_type *opnd1, ftn_type *opnd2, const logstar1 __FAR *res ) {
 //-------------------------------------------- exponentiation
 
 
-void    GenExp( byte typ ) {
+void    GenExp( TYPE typ ) {
 //==========================
 
-    byte        op;
+//    OPTR    op;
 
     AddConst( CITNode );
     AddConst( CITNode->link );
-    op = OPTR_EXP;
-    GenOprTable[ op ]( typ, typ, op );
+//    op = OPTR_EXP;
+//    GenOprTable[ op ]( typ, typ, op );
+    ExpOp( typ, typ, OPTR_EXP );
 }
 
 
-static  void    InitOne( byte typ, ftn_type *one ) {
+static  void    InitOne( TYPE typ, ftn_type *one ) {
 //==================================================
 
     switch( typ ) {
@@ -804,7 +806,7 @@ static  void    InitOne( byte typ, ftn_type *one ) {
 }
 
 
-static  bool    ZeroBase( byte typ, ftn_type *base ) {
+static  bool    ZeroBase( TYPE typ, ftn_type *base ) {
 //====================================================
 
     switch( typ ) {
@@ -841,7 +843,7 @@ static  void            (* const __FAR Div[])() =
                                       &DivC, &DivQ, &DivX };
 
 
-void    ExpI( byte typ, ftn_type *base, intstar4 exponent ) {
+void    ExpI( TYPE typ, ftn_type *base, intstar4 exponent ) {
 //===========================================================
 
     bool        odd;

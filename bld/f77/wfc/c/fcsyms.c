@@ -42,7 +42,7 @@
 #include "falloc.h"
 #include "nmlinfo.h"
 #include "fmemmgr.h"
-#include "parmtype.h"
+#include "types.h"
 
 #include <string.h>
 
@@ -387,7 +387,7 @@ static  unsigned_32     DumpVariable( sym_id sym, unsigned_32 g_offset ) {
     unsigned_16 flags;
     uint        size;
     segment_id  old_seg;
-    byte        typ;
+    TYPE        typ;
     sym_id      leader;
     signed_32   offset;
     com_eq      *ce_ext;

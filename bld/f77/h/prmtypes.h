@@ -24,55 +24,35 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run and compile-time constants indicating parameter type
+*               and attributes
 *
 ****************************************************************************/
 
+/**************** IMPORTANT NOTE *******************************
+
+  data in files:  ptypes.inc, ptypes.h and ptypdefn.h 
+  
+  must corespond each to other
+
+****************************************************************/
 
 //
-// IFPARMCT  : intrinsic function argument count table
+// Run and compile-time consts indicating parameter type and attributes
+// NOTE: These constants should stay in the following order.
+//       ( routines rely on them being sequential )
 //
 
-#include "ftnstd.h"
-#include "errcod.h"
-#include "ifargs.h"
+#ifdef pick
+#undef pick
+#endif
 
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
+#define pick(id,typ) id,
 
-extern  char            *IFNames[];
-extern  const byte __FAR    IFArgCt[];
+enum PARAM_TYPES {
+#include "ptypdefn.h"
 
+  VAR_LEN_CHAR = 0x80
+};
 
-void    IFChkExtension( uint func ) {
-//===================================
-
-    if( IFArgCt[ func ] & IF_EXTENSION ) {
-        Extension( LI_IF_NOT_STANDARD, IFNames[ func ] );
-    }
-}
-
-
-void    IFCntPrms( uint func, byte actual_cnt ) {
-//===============================================
-
-    int         need;
-
-    need = IFArgCt[ func ] & IF_COUNT_MASK;
-    if( need == TWO_OR_MORE ) {
-        if( actual_cnt >= 2 ) return;
-    } else if( need == ONE_OR_TWO ) {
-        if( actual_cnt <= 2 ) return;
-    } else {
-        if( need == actual_cnt ) return;
-    }
-    Error( AR_BAD_COUNT, IFNames[ func ] );
-}
-
-
-bool    IFGenInLine( uint func ) {
-//================================
-
-    return( ( IFArgCt[ func ] & IF_IN_LINE ) != 0 );
-}
+typedef enum PARAM_TYPES PTYPE;

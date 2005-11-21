@@ -42,7 +42,7 @@
 #include "cpopt.h"
 #include "cgflags.h"
 #include "wf77segs.h"
-#include "parmtype.h"
+#include "types.h"
 #include "errcod.h"
 #include "csetinfo.h"
 
@@ -1458,7 +1458,7 @@ void    FEMessage( msg_class tipe, void *x ) {
 }
 
 
-static  dbg_type        BaseDbgType( uint typ, uint size ) {
+static  dbg_type        BaseDbgType( TYPE typ, uint size ) {
 //==========================================================
 
     if( typ == TY_CHAR ) {

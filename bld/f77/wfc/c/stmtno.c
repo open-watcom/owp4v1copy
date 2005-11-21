@@ -36,7 +36,6 @@
 
 #include "ftnstd.h"
 #include "errcod.h"
-#include "prdefn.h"
 #include "ctrlflgs.h"
 #include "global.h"
 #include "intcnv.h"

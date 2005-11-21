@@ -37,7 +37,6 @@
 #include "ftnstd.h"
 #include "rundat.h"
 #include "errcod.h"
-#include "parmtype.h"
 #include "intcnv.h"
 #include "fltcnv.h"
 #include "target.h"

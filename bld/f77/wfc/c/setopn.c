@@ -37,14 +37,14 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "opn.h"
+#include "emitobj.h"
 
 
-
-void    SetOpn( itnode *itptr, byte opn ) {
+void    SetOpn( itnode *itptr, USOPN opn ) {
 //=========================================
 
 // Set the operand field to indicate where it is.
 
-    itptr->opn &= ~OPN_WHERE;
-    itptr->opn |= opn;
+    itptr->opn.us &= ~USOPN_WHERE;
+    itptr->opn.us |= opn;
 }

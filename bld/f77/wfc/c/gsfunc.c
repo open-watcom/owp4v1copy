@@ -38,11 +38,9 @@
 #include "global.h"
 #include "fcodes.h"
 #include "opn.h"
+#include "emitobj.h"
 
-extern  void            EmitOp(unsigned_16);
-extern  void            OutPtr(void *);
-extern  void            SetOpn(itnode *,int);
-extern  sym_id          GTempString(int);
+extern  sym_id          GTempString(uint);
 
 
 void    GSFArg( sym_id sym ) {
@@ -72,7 +70,7 @@ void    GSFCall( itnode *sfunc ) {
     if( sfunc->typ == TY_CHAR ) {
         OutPtr( GTempString( sfunc->size ) );
     }
-    SetOpn( sfunc, OPN_SAFE );
+    SetOpn( sfunc, USOPN_SAFE );
 }
 
 

@@ -30,6 +30,9 @@
 ****************************************************************************/
 
 
+#ifndef _OPN_H_INCLUDED
+#define _OPN_H_INCLUDED
+
 //
 // Flags for 'opn' field of 'itnode'
 //
@@ -37,37 +40,48 @@
 // DownScan codes:
 // ================
 
-#define OPN_PHI 0       // null operand
-#define OPN_NAM 1       // name
-#define OPN_LIT 2       // literal
-#define OPN_LGL 3       // logical
-#define OPN_INT 4       // integer
-#define OPN_REA 5       // real
-#define OPN_DBL 6       // double
-#define OPN_EXT 7       // extended
-#define OPN_OCT 8       // octal constant
-#define OPN_HEX 9       // hexadecimal constant
-#define OPN_FMT 10      // FORMAT string
+#ifdef pick
+#undef pick
+#endif
+#define pick(tok_id,dsopn_id,opn_proc) dsopn_id,
+
+enum DS_CODES {
+
+#include "tokdsopn.h"
+
+};
 
 // UpScan codes:
 // =============
 
-#define OPN_SS1         0x80    // chr(i:i)
-#define OPN_ASY         0x40    // symbol table entry is alternate
-#define OPN_FLD         0x08    // field name of structure
+enum US_CODES {
+
+    USOPN_NONE,        // no operand
+    USOPN_NNL,         // - name, no argument list
+    USOPN_NWL,         // - name, with argument list
+    USOPN_ARR,         // - array name, without subscript list
+    USOPN_STN,         // - statement number
+    USOPN_CON,         // - constant
+    USOPN_ASS,         // - array name subscripted and substrung
+    USOPN_SSR,         // - high bound in a(n:)
+
+    USOPN_FLD  = 0x08, // field name of structure
+
+    USOPN_SAFE = 0x10, // - value in a register
+    USOPN_TMP  = 0x20, // - value in a temporary
+    USOPN_VAL  = 0x30, // - static temporary SCB
+
+    USOPN_ASY  = 0x40, // symbol table entry is alternate
+    USOPN_SS1  = 0x80, // chr(i:i)
+};
 
 #define WHAT_SHIFT      0       // bits to shift to make OPN_WHAT origin 0
-#define OPN_WHAT        0x07    // what type of operand is it?
-#define OPN_NNL         0x01    // - name, no argument list
-#define OPN_NWL         0x02    // - name, with argument list
-#define OPN_ARR         0x03    // - array name, without subscript list
-#define OPN_STN         0x04    // - statement number
-#define OPN_CON         0x05    // - constant
-#define OPN_ASS         0x06    // - array name subscripted and substrung
-#define OPN_SSR         0x07    // - high bound in a(n:)
+#define USOPN_WHAT      0x07    // what type of operand is it?
 
 #define WHERE_SHIFT     4       // bits to shift to make OPN_WHERE origin 0
-#define OPN_WHERE       0x30    // where is the operand?
-#define OPN_SAFE        0x10    // - value in a register
-#define OPN_TMP         0x20    // - value in a temporary
-#define OPN_VAL         0x30    // - static temporary SCB
+#define USOPN_WHERE     0x30    // where is the operand?
+
+typedef enum DS_CODES DSOPN;
+typedef enum US_CODES USOPN;
+
+#endif

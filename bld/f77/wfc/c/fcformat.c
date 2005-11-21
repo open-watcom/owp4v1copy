@@ -38,6 +38,7 @@
 #include "fcgbls.h"
 #include "fmthdr.h"
 #include "cg.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -46,11 +47,6 @@ extern  void            DGIBytes(unsigned long, byte);
 
 //=========================================================================
 
-extern  obj_ptr         FCodeTell(int offset);
-extern  obj_ptr         FCodeSeek(obj_ptr new_obj);
-extern  unsigned_16     GetU16();
-extern  byte            GetByte();
-extern  obj_ptr         GetObjPtr();
 extern  back_handle     GetFmtLabel(label_id);
 
 

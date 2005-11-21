@@ -24,16 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  operator index for expression generate routines
 *
 ****************************************************************************/
 
 
-// If constants in "OPR INC" change, these must change.
-// These are just OprNum( corresponding constants in OPR INC ).
-
-enum {
+enum OPERATIONS {
    OPTR_EQV,            //  .eqv. operation
    OPTR_NEQV,           //  .neqv. operation
    OPTR_OR,             //  .or. operation
@@ -51,3 +47,5 @@ enum {
    OPTR_EXP,            //  exponentiation
    OPTR_CAT             //  concatenation
 };
+
+typedef enum OPERATIONS OPTR;

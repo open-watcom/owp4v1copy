@@ -48,7 +48,7 @@ label_id        NextLabel() {
 }
 
 
-sym_id  TmpVar( byte typ, int size ) {
+sym_id  TmpVar( TYPE typ, uint size ) {
 //====================================
 
 // Allocate a temporary symbol table entry that can be freed at the end
@@ -70,7 +70,7 @@ sym_id  TmpVar( byte typ, int size ) {
 }
 
 
-sym_id  StaticAlloc( int size, byte typ ) {
+sym_id  StaticAlloc( uint size, TYPE typ ) {
 //=========================================
 
 // Allocate a static temporary symbol table entry.

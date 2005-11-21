@@ -35,29 +35,15 @@
 #include "opn.h"
 #include "progsw.h"
 #include "stmtsw.h"
-#include "prdefn.h"
 #include "namecod.h"
 #include "global.h"
 #include "segsw.h"
+#include "recog.h"
+#include "types.h"
 
 #include <ctype.h>
 #include <string.h>
 
-extern  bool            RecDiv(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecEOS(void);
-extern  bool            RecOpenParen(void);
-extern  bool            RecCloseParen(void);
-extern  bool            RecCat(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecComma(void);
-extern  bool            RecName(void);
-extern  bool            RecTrmOpr(void);
-extern  bool            RecNumber(void);
-extern  bool            ReqComma(void);
-extern  bool            ReqName(int);
-extern  bool            ReqDiv(void);
-extern  bool            ReqNOpn(void);
 extern  label_id        GDataProlog(void);
 extern  void            GBegDList(void);
 extern  void            GDataItem(itnode *);
@@ -82,7 +68,6 @@ extern  sym_id          SymFind(char *,int);
 extern  void            TermDo(void);
 extern  int             HSToB(char *,uint,char *);
 extern  void            IllName(sym_id);
-extern  intstar4        ITIntValue(itnode *);
 extern  void            ProcDataIExpr(void);
 extern  void            ProcDataRepExpr(void);
 extern  bool            CalcStructSize(sym_id);
@@ -188,14 +173,14 @@ static  void    DoData() {
 }
 
 
-static  byte    FindSlash( itnode **itptr_ptr ) {
+static  OPR    FindSlash( itnode **itptr_ptr ) {
 //===============================================
 
 // Scan ahead for an OPN_DIV and replace it with OPN_TRM.
 
     int         level;
     itnode      *cit;
-    byte        opr;
+    OPR         opr;
 
     cit = CITNode;
     level = 0;
@@ -221,8 +206,8 @@ static  void    VarList() {
 
 // Process one variable list in a DATA statement.
 
-    byte        last_opr;
-    byte        opr;
+    OPR         last_opr;
+    OPR         opr;
     int         do_level;
     itnode      *last_node;
 
@@ -280,7 +265,7 @@ static  bool    HexConst() {
 
     hex_data = CITNode->opnd;
     hex_len = CITNode->opnd_size;
-    if( CITNode->opn != OPN_HEX ) {
+    if( CITNode->opn.ds != DSOPN_HEX ) {
         if( !RecName() ) return( FALSE );
         if( *hex_data != 'Z' ) return( FALSE );
         sym = SymFind( hex_data, hex_len );
@@ -293,7 +278,7 @@ static  bool    HexConst() {
     hex_len = MkHexConst( hex_data, CITNode->opnd, hex_len );
     if( hex_len == 0 ) return( FALSE );
     CITNode->opnd_size = hex_len;
-    CITNode->opn = OPN_LIT;
+    CITNode->opn.ds = DSOPN_LIT;
     GetConst();
     AddConst( CITNode );
     CITNode->typ = TY_HEX;
@@ -307,7 +292,7 @@ static  void    ConList() {
 
 // Collect constants for data initialization.
 
-    byte        opr;
+    OPR         opr;
     itnode      *last_node;
 
     opr = FindSlash( &last_node );
@@ -381,7 +366,7 @@ static  void    GetSConst() {
         if( RecNextOpr( OPR_MIN ) ) {
             sign = -1;
         } else if( !RecNextOpr( OPR_PLS ) ||
-                   ( CITNode->link->opn < OPN_INT ) ) {
+                   ( CITNode->link->opn.ds < DSOPN_INT ) ) {
             ProcDataIExpr();
             return;
         }

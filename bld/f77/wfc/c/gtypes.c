@@ -37,12 +37,12 @@
 #include "ftnstd.h"
 #include "symflgs.h"
 #include "itdefn.h"
-#include "parmtype.h"
+#include "symtypes.h"
+#include "types.h"
+#include "emitobj.h"
 
-extern  void            OutU16(unsigned_16);
 
-
-void            DumpType( uint typ, uint size ) {
+void            DumpType( TYPE typ, uint size ) {
 //===============================================
 
 // Emit a single type.
@@ -51,7 +51,7 @@ void            DumpType( uint typ, uint size ) {
 }
 
 
-void            DumpTypes( uint typ1, uint size1, uint typ2, uint size2 ) {
+void            DumpTypes( TYPE typ1, uint size1, TYPE typ2, uint size2 ) {
 //=========================================================================
 
 // Emit 2 types.

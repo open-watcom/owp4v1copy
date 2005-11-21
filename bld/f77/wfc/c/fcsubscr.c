@@ -40,6 +40,7 @@
 #include "wf77defs.h"
 #include "cg.h"
 #include "cpopt.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -63,8 +64,6 @@ extern  cg_name         XPop(void);
 extern  void            XPush(cg_name);
 extern  cg_name         GetTypedValue(void);
 extern  cg_name         SymIndex(sym_id,cg_name);
-extern  pointer         GetPtr(void);
-extern  unsigned_16     GetU16(void);
 extern  cg_name         CharItemLen(sym_id);
 extern  cg_name         SCBPtrAddr(cg_name);
 extern  cg_name         SCBLenAddr(cg_name);

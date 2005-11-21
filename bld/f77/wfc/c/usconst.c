@@ -36,6 +36,7 @@
 #include "opn.h"
 #include "global.h"
 #include "fmemmgr.h"
+#include "types.h"
 
 #include <string.h>
 
@@ -70,7 +71,7 @@ extern  void            AddX(xcomplex *,xcomplex *);
 extern  void            SubX(xcomplex *,xcomplex *);
 extern  void            DivX(xcomplex *,xcomplex *);
 extern  void            MulX(xcomplex *,xcomplex *);
-extern  void            GenExp(byte);
+extern  void            GenExp(TYPE);
 extern  void            ExpI(byte,ftn_type *,intstar4);
 extern  void            XINeg(ftn_type *,ftn_type *);
 extern  void            XRNeg(ftn_type *,ftn_type *);
@@ -104,7 +105,7 @@ extern  void            XCCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
 extern  void            XQCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
 extern  void            XXCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
 extern  void            XChCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            CnvTo(itnode *,int,int);
+extern  void            CnvTo(itnode *,TYPE,uint);
 extern  void            CnI2R(void *);
 extern  void            CnI2D(void *);
 extern  void            CnI2C(void *);
@@ -115,8 +116,6 @@ extern  void            CnR2Q(void *);
 extern  void            CnD2C(void *);
 extern  void            CnD2Q(void *);
 extern  void            CnC2Q(void *);
-extern  int             TypeSize(int);
-extern  intstar4        ITIntValue(itnode *);
 
 #define UAR_TAB_ROWS    9
 #define UAR_TAB_COLS    2
@@ -205,7 +204,7 @@ static  void    Convert() {
 }
 
 
-static  void    LogOp( byte typ1, byte typ2, byte op ) {
+static  void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
     typ1 = typ1;
@@ -215,26 +214,25 @@ static  void    LogOp( byte typ1, byte typ2, byte op ) {
     } else {
         XLogicalTab[ op ]( &CITNode->value, &CITNode->link->value );
     }
-    CITNode->opn = OPN_CON; // this is required for .not. operator
+    CITNode->opn.us = USOPN_CON; // this is required for .not. operator
 }
 
 
-static  void    RelOp( byte typ1, byte typ2, byte op ) {
+static  void    RelOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
-    typ1 = typ1; typ2 = typ2;
-    op = CITNode->link->opr;
+    typ1 = typ1; typ2 = typ2; op = op;
     if( ResultType != TY_CHAR ) {
         Convert();
     }
     XCmpTab[ ResultType - TY_INTEGER_1 ]( &CITNode->value,
                                         &CITNode->link->value,
-                               &CmpValue[ ( op - FIRST_RELOP ) * 3 ] );
+          &CmpValue[ ( CITNode->link->opr - FIRST_RELOP ) * 3 ] );
     ResultType = TY_LOGICAL;
 }
 
 
-static  void    BinOp( int typ1, int typ2, int op ) {
+static  void    BinOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //===================================================
 
     byte        index;
@@ -242,7 +240,7 @@ static  void    BinOp( int typ1, int typ2, int op ) {
     typ2 = typ2;
     op -= OPTR_ADD;
     index = ResultType - TY_INTEGER_1;
-    if( typ1 != -1 ) {
+    if( typ1 != TY_NO_TYPE ) {
         Convert();
         XArithTab[ index * AR_TAB_COLS + op ]
                  ( &CITNode->value, &CITNode->link->value );
@@ -250,12 +248,12 @@ static  void    BinOp( int typ1, int typ2, int op ) {
         CnvTo( CITNode->link , ResultType, TypeSize( ResultType ) );
         XUArithTab[ index * UAR_TAB_COLS + op ]
                   ( &CITNode->value, &CITNode->link->value );
-        CITNode->opn = OPN_CON;
+        CITNode->opn.us = USOPN_CON;
     }
 }
 
 
-static  void    ExpOp( byte typ1, byte typ2, byte op ) {
+static  void    ExpOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
     op = op;

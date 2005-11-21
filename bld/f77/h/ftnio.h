@@ -113,7 +113,7 @@ typedef struct iocb {                   // global iocb structure
     int                 status;         // status indicator
     unsigned_32         elmts;          // number of records in internal file
     byte                iostmt;         // indicates the current io operation
-    byte                typ;            // type to be formatted
+    PTYPE               typ;            // type to be formatted
     unsigned_32         flags;          // i/o flags
     char                buffer[IO_FIELD_BUFF+1]; // buffer for formatting
     arr_desc            arr_desc;       // descriptor for array i/o

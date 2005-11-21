@@ -36,10 +36,9 @@
 
 #include "ftnstd.h"
 #include "rundat.h"
-#include "parmtype.h"
 #include "iotype.h"
 
-extern  void            IOItemResult(char PGM *,int);
+extern  void            IOItemResult(char PGM *,PTYPE);
 
 extern  const byte      __FAR SizeVars[];
 

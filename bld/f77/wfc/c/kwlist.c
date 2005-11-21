@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  list of FORTRAN statement keywords
 *
 ****************************************************************************/
 
-
-//
-// KWLIST       : list of FORTRAN statement keywords
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -43,89 +38,14 @@
 // Note: The keyword DO is contained in DOUBLEPRECISION; any time this is
 //       the case, the smaller keyword must come first to enforce a match.
 
+#ifdef pick
+#undef pick
+#endif
+
+#define pick(id,text,proc,flags) text,
+
 char    *StmtKeywords[] = {
-    "ADMIT",
-    "ALLOCATE",
-    "ASSIGN",
-    "ATEND",
-    "BACKSPACE",
-    "BLOCKDATA",
-    "CALL",
-    "CASE",
-    "CHARACTER",
-    "CLOSE",
-    "COMMON",
-    "COMPLEX",
-    "CONTINUE",
-    "CYCLE",
-    "DATA",
-    "DEALLOCATE",
-    "DIMENSION",
-    "DO",       // DO WHILE statement, not the standard FORTRAN DO-loop
-    "DOUBLECOMPLEX",
-    "DOUBLEPRECISION",
-    "ELSE",
-    "ELSEIF",
-    "END",
-    "ENDATEND",
-    "ENDBLOCK",
-    "ENDDO",
-    "ENDFILE",
-    "ENDGUESS",
-    "ENDIF",
-    "ENDLOOP",
-    "ENDMAP",
-    "ENDSELECT",
-    "ENDSTRUCTURE",
-    "ENDUNION",
-    "ENDWHILE",
-    "ENTRY",
-    "EQUIVALENCE",
-    "EXECUTE",
-    "EXIT",
-    "EXTENDEDCOMPLEX",
-    "EXTENDEDPRECISION",
-    "EXTERNAL",
-    "FORMAT",
-    "FUNCTION",
-    "GOTO",
-    "GUESS",
-    "IF",
-    "IMPLICIT",
-    "INCLUDE",
-    "INQUIRE",
-    "INTEGER",
-    "INTRINSIC",
-    "LOGICAL",
-    "LOOP",
-    "MAP",
-    "NAMELIST",
-    "OPEN",
-    "OTHERWISE",
-    "PARAMETER",
-    "PAUSE",
-    "PRINT",
-    "PROGRAM",
-    "QUIT",
-    "READ",
-    "REAL",
-    "RECORD",
-    "REMOTEBLOCK",
-    "RETURN",
-    "REWIND",
-    "SAVE",
-    "SELECT",
-    "STOP",
-    "STRUCTURE",
-    "SUBROUTINE",
-    "UNION",
-    "UNTIL",
-    "VOLATILE",
-    "WHILE",
-    "WRITE",
-    "DO",
-    // the final three keyword entries are for error messages
-    (char *)MS_ASSIGN,          // assignment
-    (char *)MS_ARITH_IF,        // arithmetic IF
-    (char *)MS_STMT_FUNC_DEFN   // statement function definition
+
+#include "stmtdefn.h"
+
 };

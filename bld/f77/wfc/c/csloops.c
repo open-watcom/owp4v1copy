@@ -36,6 +36,7 @@
 #include "global.h"
 #include "stmtsw.h"
 #include "fmemmgr.h"
+#include "recog.h"
 
 extern  void            Error(int,...);
 extern  void            Extension(int,...);
@@ -50,16 +51,6 @@ extern  void            Match(void);
 extern  void            CSCond(label_id);
 extern  void            EatDoParm(void);
 extern  void            AdvanceITPtr(void);
-extern  bool            RecNOpn(void);
-extern  bool            RecNumber(void);
-extern  bool            RecNOpr(void);
-extern  bool            RecNextOpr(byte);
-extern  bool            RecComma(void);
-extern  bool            RecName(void);
-extern  bool            ReqDoVar(void);
-extern  bool            ReqNextOpr(byte,int);
-extern  bool            ReqNOpn(void);
-extern  bool            RecKeyWord(char *);
 extern  void            GLabel(label_id);
 extern  void            GBranch(label_id);
 extern  label_id        NextLabel(void);
@@ -67,7 +58,7 @@ extern  unsigned_32     LkUpDoTerm(void);
 extern  sym_id          STShadow(sym_id);
 extern  void            STUnShadow(sym_id);
 extern  void            Recurse(void);
-extern  void            GDoInit(int);
+extern  void            GDoInit(TYPE);
 extern  void            GDoEnd(void);
 extern  void            NameErr(int,sym_id);
 extern  void            FreeLabel(label_id);
@@ -139,7 +130,7 @@ void    CpWhile() {
         BlockLabel();
     } else if( RecKeyWord( "DO" ) &&
                ( RecNextOpr( OPR_TRM ) || RecNextOpr( OPR_COL ) ) ) {
-        CITNode->opn = OPN_PHI;
+        CITNode->opn.ds = DSOPN_PHI;
         BlockLabel();
     } else {
         Recurse();

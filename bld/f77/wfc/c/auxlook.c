@@ -37,8 +37,7 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "wf77aux.h"
-#include "ifnames.h"
-#include "ifargs.h"
+#include "iflookup.h"
 #include "rtentry.h"
 #include "cpopt.h"
 
@@ -46,9 +45,7 @@
 
 extern  void            CopyAuxInfo(aux_info *,aux_info *);
 extern  aux_info        *NewAuxEntry(char *,int);
-extern  byte            IFArgType(int);
 
-extern  byte            __FAR IFArgCt[];
 extern  aux_info        DefaultInfo;
 extern  rt_rtn          __FAR RtnTab[];
 extern  aux_info        IFVarInfo;
@@ -115,8 +112,7 @@ aux_info    *AuxLookup( sym_id sym ) {
     if( sym == NULL ) return( &FortranInfo );
     if( ( sym->ns.flags & SY_CLASS ) == SY_SUBPROGRAM ) {
         if( sym->ns.flags & SY_INTRINSIC ) {
-            if( ( IFArgCt[ sym->ns.si.fi.index ] & IF_COUNT_MASK ) ==
-                TWO_OR_MORE ) {
+            if( IFVarArgs( sym->ns.si.fi.index ) ) {
                 return( &IFVarInfo );
             // check for character arguments must come first so that
             // IF@xxx gets generated for intrinsic functions with character

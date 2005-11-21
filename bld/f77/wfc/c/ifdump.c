@@ -37,15 +37,10 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "fcodes.h"
-#include "parmtype.h"
+#include "emitobj.h"
+#include "types.h"
 
 extern  void            AdvanceITPtr(void);
-extern  int             TypeSize(uint);
-extern  void            EmitOp(int);
-extern  void            OutU16(unsigned_16);
-extern  void            GenTypes(itnode *,itnode *);
-extern  void            GenType(itnode *);
-extern  void            PushOpn(itnode *);
 
 
 void    GMakeCplx() {
@@ -81,12 +76,12 @@ void    GMakeXCplx() {
 }
 
 
-static  void    MakeComplex( int if_type ) {
+static  void    MakeComplex( TYPE if_type ) {
 //==========================================
 
 // Common routines for above 2 routines.
 
-    OutU16( ParmType( CITNode->typ, CITNode->size ) );
+    GenType( CITNode );
     CITNode->typ = if_type;
     CITNode->size = TypeSize( if_type );
     AdvanceITPtr();
@@ -154,22 +149,22 @@ void    GXProd() {
 }
 
 
-void    GMin( int func_type ) {
+void    GMin( TYPE func_type ) {
 //=============================
 
     EmitOp( MIN );
     GenTypes( CITNode, CITNode->link );
-    OutU16( ParmType( func_type, TypeSize( func_type ) ) );
+    DumpType( func_type, TypeSize( func_type ) );
     AdvanceITPtr();
 }
 
 
-void    GMax( int func_type ) {
+void    GMax( TYPE func_type ) {
 //=============================
 
     EmitOp( MAX );
     GenTypes( CITNode, CITNode->link );
-    OutU16( ParmType( func_type, TypeSize( func_type ) ) );
+    DumpType( func_type, TypeSize( func_type ) );
     AdvanceITPtr();
 }
 

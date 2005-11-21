@@ -37,11 +37,11 @@
 #include "ftnstd.h"
 #include "opr.h"
 #include "opn.h"
-#include "prdefn.h"
 #include "astype.h"
 #include "errcod.h"
 #include "namecod.h"
 #include "global.h"
+#include "recog.h"
 
 extern  void            DownScan(void);
 extern  void            UpScan(void);
@@ -55,9 +55,6 @@ extern  void            AdvanceITPtr(void);
 extern  bool            ClassIs(unsigned_16);
 extern  bool            Subscripted(void);
 extern  bool            BitOn(unsigned_16);
-extern  bool            ReqNextOpr(byte,int);
-extern  bool            RecName(void);
-extern  bool            ReqName(int);
 extern  void            SFPrologue(void);
 
 #define SF_MASK (SY_SUB_PARM|SY_IN_EC|SY_DATA_INIT|SY_SAVED)
@@ -78,7 +75,7 @@ void    EatExpr() {
 
 // Scan ahead, get an expression, and send it to expression handler.
 
-    byte        opr;
+    OPR         opr;
     itnode      *cit;
 
     cit = CITNode;
@@ -129,9 +126,9 @@ void    CpCall() {
     if( next->opr == OPR_TRM ) {
         ASType = AST_CNA;       // call with no parameter list
     } else if( ( next->opr == OPR_LBR ) &&
-               ( next->opn == OPN_PHI ) &&
+               ( next->opn.ds == DSOPN_PHI ) &&
                ( next->link->opr == OPR_RBR ) &&
-               ( next->link->opn == OPN_PHI ) &&
+               ( next->link->opn.ds == DSOPN_PHI ) &&
                ( next->link->link->opr == OPR_TRM ) ) {
         next->opr = OPR_TRM;    // make CALL SAM() same as CALL SAM
         ASType = AST_CNA;       // call with no parameter list

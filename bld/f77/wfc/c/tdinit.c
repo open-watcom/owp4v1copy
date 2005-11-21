@@ -38,17 +38,14 @@
 #include "global.h"
 #include "fcgbls.h"
 #include "fcodes.h"
-#include "prdefn.h"
 #include "progsw.h"
 #include "stmtsw.h"
 #include "cpopt.h"
 #include "cgflags.h"
+#include "emitobj.h"
 
 extern  void            FreeNameList(sym_id);
 extern  void            FreeLocalLists(void);
-extern  void            InitObj(void);
-extern  void            FiniObj(void);
-extern  void            EmitOp(unsigned_16);
 extern  void            FiniFormatList(void);
 extern  void            InitFormatList(void);
 extern  bool            TypeCmplx(int);

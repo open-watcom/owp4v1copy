@@ -24,18 +24,18 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Run and compile-time constants indicating parameter type
+;*               and attributes
 ;*
 ;*****************************************************************************
 
-;/**************** IMPORTANT NOTE ************************
+;/**************** IMPORTANT NOTE *******************************
 ;
-;  data in files:  ptypes.inc, ptypes.h and  parmtype.h
+;  data in files:  ptypes.inc, ptypes.h and ptypdefn.h 
 ;  
 ;  must corespond each to other
 ;
-;********************************************************/
+;****************************************************************/
 
 
 PT_NOTYPE       equ 0            ; no type

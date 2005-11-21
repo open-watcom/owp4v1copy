@@ -55,17 +55,21 @@ int     KwLookUp( void **table, int high, char *id, int id_len, bool exact ) {
     low = 0;
     while( low <= high ) {
         mid = (low + high) / 2;    // find mid point
-        key = table[ mid ];
+        key = table[ mid + 1 ];
         ident = id;
         for(;;) {
-            if( ident == id + id_len ) break;
-            if( *ident != *key ) break;
-            if( *key == NULLCHAR ) break;
+            if( ident == id + id_len )
+                break;
+            if( *ident != *key )
+                break;
+            if( *key == NULLCHAR )
+                break;
             ++ident;
             ++key;
         }
         // quit if perfect match
-        if( ( ident == id + id_len ) && ( *key == NULLCHAR ) ) return( mid+1 );
+        if( ( ident == id + id_len ) && ( *key == NULLCHAR ) )
+            return( mid+1 );
         if( ( ident != id + id_len ) && ( *ident >= *key ) ) {
             // guess string is in 2nd half of subtable
             low = mid + 1;
@@ -74,15 +78,19 @@ int     KwLookUp( void **table, int high, char *id, int id_len, bool exact ) {
             high = mid - 1;
         }
     }
-    if( exact ) return( 0 );
+    if( exact )
+        return( 0 );
     // Look sequentially through table (going backwards).
     mid = high;
     while( mid >= 0 ) {
-        key = table[ mid ];
-        if( *id > *key ) break;
+        key = table[ mid + 1 ];
+        if( *id > *key )
+            break;
         kw_len = strlen( key );
         if( kw_len <= id_len ) {
-            if( memcmp( id, key, kw_len ) == 0 ) return( mid + 1 );
+            if( memcmp( id, key, kw_len ) == 0 ) {
+                return( mid + 1 );
+            }
         }
         mid--;
     }

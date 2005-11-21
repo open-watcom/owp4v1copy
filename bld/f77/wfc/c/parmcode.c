@@ -37,7 +37,7 @@
 #include "ftnstd.h"
 #include "opn.h"
 #include "global.h"
-#include "parmtype.h"
+#include "prmcodes.h"
 
 extern  bool            Subscripted(void);
 
@@ -46,22 +46,22 @@ int     ParmCode( itnode *arg ) {
 //===============================
 
 // Return the argument code.
-// We cannot assume that OPN_SAFE is PC_CONST otherwise we will not be able
+// We cannot assume that USOPN_SAFE is PC_CONST otherwise we will not be able
 // to diagnose an error in the following case (optimizing compiler only).
 //      external f
 //      print *, sin( f )
-// "f" will be OPN_SAFE by the time ParmCode() is called but we want to return
+// "f" will be USOPN_SAFE by the time ParmCode() is called but we want to return
 // PC_FN_OR_SUB.
 
-    int         opn;
+    USOPN   opn;
 
-    opn = arg->opn & OPN_WHERE;
-    if( ( arg->opn & OPN_WHAT ) == OPN_ARR ) {
+    opn = arg->opn.us & USOPN_WHERE;
+    if( ( arg->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
         // an array name can't be part of an expression so check it first
         // so that we can detect whether an array has been passed to an
         // intrinsic function
         return( PC_ARRAY_NAME );
-    } else if( opn == OPN_VAL ) {
+    } else if( opn == USOPN_VAL ) {
         return( PC_CONST );
     } else {
         return( ParmClass( arg ) );
@@ -74,14 +74,14 @@ int     ParmClass( itnode *arg ) {
 
 // Return the argument class.
 
-    int         opn;
+    USOPN       opn;
     unsigned_16 sp_typ;
     unsigned_16 flags;
 
     flags = arg->flags;
-    opn = arg->opn & OPN_WHAT;
+    opn = arg->opn.us & USOPN_WHAT;
     switch( opn ) {
-        case OPN_NNL:
+        case USOPN_NNL:
             if( ( flags & SY_CLASS ) == SY_SUBPROGRAM ) {
                 sp_typ = flags & SY_SUBPROG_TYPE;
                 if( sp_typ == SY_FN_OR_SUB ) {
@@ -97,23 +97,23 @@ int     ParmClass( itnode *arg ) {
                 return( PC_VARIABLE );
             }
             break;
-        case OPN_NWL:
+        case USOPN_NWL:
             if( Subscripted() ) {
                 return( PC_ARRAY_ELT );
             } else {
                 return( PC_CONST );
             }
             break;
-        case OPN_ARR:
+        case USOPN_ARR:
             return( PC_ARRAY_NAME );
             break;
-        case OPN_STN:
+        case USOPN_STN:
             return( PC_STATEMENT );
             break;
-        case OPN_CON:
+        case USOPN_CON:
             return( PC_CONST );
             break;
-        case OPN_ASS:
+        case USOPN_ASS:
             return( PC_SS_ARRAY );
             break;
         default:

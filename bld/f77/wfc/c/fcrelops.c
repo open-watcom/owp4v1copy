@@ -39,6 +39,7 @@
 #include "wf77defs.h"
 #include "cg.h"
 #include "fcodes.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -58,9 +59,7 @@ extern  cg_type         ResCGType(cg_type,cg_type);
 extern  cg_type         GetType(int);
 extern  cg_type         GetType1(int);
 extern  cg_type         GetType2(int);
-extern  unsigned_16     GetU16(void);
 extern  call_handle     InitCall(int);
-extern  void            *GetPtr(void);
 extern  cg_name         SCBPointer(cg_name);
 extern  cg_name         IntegerConstant(ftn_type *,uint);
 

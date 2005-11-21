@@ -38,16 +38,10 @@
 #include "global.h"
 #include "errcod.h"
 #include "namecod.h"
+#include "recog.h"
 
 extern  void            StmtExtension(uint);
 extern  void            NameErr(uint,sym_id);
-extern  void            ReqNOpn(void);
-extern  bool            RecNOpn(void);
-extern  void            ReqDiv(void);
-extern  bool            RecDiv(void);
-extern  void            ReqEOS(void);
-extern  bool            ReqName(uint);
-extern  bool            RecComma(void);
 extern  sym_id          LkSym(void);
 extern  sym_id          LkNameList(void);
 extern  grp_entry       *STGroupEntry(void);

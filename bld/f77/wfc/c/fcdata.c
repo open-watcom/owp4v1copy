@@ -33,9 +33,9 @@
 #include "global.h"
 #include "fcgbls.h"
 #include "errcod.h"
-#include "parmtype.h"
+#include "types.h"
 #include "cg.h"
-#include "prdefn.h"
+#include "emitobj.h"
 
 // The following are to support a temporary fix so that constants dumped by
 // DATA statements provide the same precision for constants dumped by the code
@@ -58,13 +58,8 @@ extern  void            BEFreeBack(back_handle);
 
 //=========================================================================
 
-extern  obj_ptr         FCodeTell(int);
-extern  obj_ptr         FCodeSeek(obj_ptr);
-extern  pointer         GetPtr(void);
-extern  unsigned_16     GetU16(void);
-extern  inttarg         GetInt(void);
 extern  void            Error(int,...);
-extern  void            TypeNameTypeErr(int,int,sym_id,int);
+extern  void            TypeNameTypeErr(int,TYPE,sym_id,TYPE);
 extern  void            DtInit(segment_id,seg_offset);
 extern  void            DtBytes(byte *,int);
 extern  void            DtIBytes(byte,int);
@@ -89,20 +84,15 @@ static  void            StructInit( sym_id fd );
 
 #define CONST_TYPES     9
 
-static  char    MapType[] = {
-        0,
-        TY_LOGICAL_1,
-        TY_LOGICAL,
-        TY_INTEGER_1, // one of the 9 CONST_TYPES
-        TY_INTEGER_2, // one of the 9 CONST_TYPES
-        TY_INTEGER,   // one of the 9 CONST_TYPES
-        TY_REAL,      // one of the 9 CONST_TYPES
-        TY_DOUBLE,    // one of the 9 CONST_TYPES
-        TY_EXTENDED,  // one of the 9 CONST_TYPES
-        TY_COMPLEX,   // one of the 9 CONST_TYPES
-        TY_DCOMPLEX,  // one of the 9 CONST_TYPES
-        TY_XCOMPLEX,  // one of the 9 CONST_TYPES
-        TY_CHAR };
+#ifdef pick
+#undef pick
+#endif
+
+#define pick(id,typ) typ,
+
+static  TYPE    MapType[] = {
+#include "ptypdefn.h"
+};
 
 #define DT_NO_MORE_CONSTS       0x01
 #define DT_SS_NO_HIGH           0x02
@@ -793,6 +783,180 @@ static  void            (*DataCnvTab[])() = {
 };
 
 
+static  bool    Numeric( PTYPE typ ) {
+//==================================
+
+// Is given type numeric?
+
+    return( ( typ >= PT_INT_1 ) && ( typ <= PT_CPLX_32 ) );
+}
+
+
+bool    IntType( PTYPE typ ) {
+//==========================
+
+// Is given type integer?
+
+    return( ( typ >= PT_INT_1 ) && ( typ <= PT_INT_4 ) );
+}
+
+
+static  void    DoDataInit( PTYPE var_type ) {
+//==========================================
+
+// Do data initialization.
+
+    int         const_size;
+    int         var_size;
+    int         size;
+    byte        *const_ptr;
+    segment_id  seg;
+    seg_offset  offset;
+    byte        const_buff[sizeof(ftn_type)];
+
+    if( ( DtConstType == PT_CHAR ) || ( DtConstType == PT_NOTYPE ) ) {
+        const_size = DtConst->lt.length;
+        const_ptr = &DtConst->lt.value;
+    } else {
+        const_size = DtConst->cn.size;
+        const_ptr = (byte *)(&DtConst->cn.value);
+    }
+    var_size = DtItemSize;
+    seg = GetDataSegId( InitVar );
+    offset = GetDataOffset( InitVar );
+    DtInit( seg, offset );
+    if( DtConstType == PT_CHAR ) {
+        if( const_size >= var_size ) {
+            DtBytes( const_ptr, var_size );
+        } else {
+            DtBytes( const_ptr, const_size );
+            DtIBytes( ' ', var_size - const_size );
+        }
+    } else if( ( var_type == PT_CHAR ) && IntType( DtConstType ) ) {
+        DtBytes( const_ptr, sizeof( char ) );
+        if( var_size > sizeof( char ) ) {
+            DtIBytes( ' ', var_size - sizeof( char ) );
+        }
+    } else if( DtConstType == PT_NOTYPE ) {
+        if( var_type != PT_CHAR ) {
+            size = var_size;
+            while( size > const_size ) {
+                size--;
+                const_buff[ size ] = 0;
+            }
+            while( size > 0 ) {
+                size--;
+                const_buff[ size ] = *const_ptr;
+                const_ptr++;
+            }
+            const_ptr = const_buff;
+            const_size = var_size;
+        }
+        if( const_size < var_size ) {
+            DtIBytes( 0, var_size - const_size );
+            var_size = const_size;
+        } else {
+            const_ptr += const_size - var_size;
+        }
+        DtBytes( const_ptr, var_size );
+    } else if( DtConstType <= PT_LOG_4 ) {
+        DtBytes( const_ptr, var_size );
+    } else {        // numeric to numeric
+        if( DtConstType != var_type ) {
+            DataCnvTab[ ( var_type - PT_INT_1 ) * CONST_TYPES +
+                        ( DtConstType - PT_INT_1 ) ]( const_ptr, &const_buff );
+            const_ptr = const_buff;
+        }
+
+// Temporary fix for identical precision between front end and code generator.
+        {
+            extern      void            *CFCnvSF(char *,char *);
+            extern      void            CFCnvTarget(void *,byte *,unsigned);
+            // fix to Brad's temporary fix (I doubt it will ever be changed)
+#if _CPU == 8086
+            extern      signed_16       TypeLength(cg_type);
+#else
+            extern      signed_32       TypeLength(cg_type);
+#endif
+            extern      void            CFFree(void *);
+
+            extern      void            CnvS2S(float *,char *);
+            extern      void            CnvD2S(double *,char *);
+            extern      void            CnvX2S(extended *,char *);
+
+            char        fmt_buff[CONVERSION_BUFFER+1];
+            void        *cf;
+
+            if( (var_type == PT_REAL_4) || (var_type == PT_CPLX_8) ) {
+                CnvS2S( (single *)const_ptr, fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff, TypeLength( T_SINGLE ) );
+                CFFree( cf );
+            } else if( (var_type == PT_REAL_8) || (var_type == PT_CPLX_16) ) {
+                CnvD2S( (double *)const_ptr, fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff, TypeLength( T_DOUBLE ) );
+                CFFree( cf );
+            } else if( (var_type == PT_REAL_16) || (var_type == PT_CPLX_32) ) {
+                CnvX2S( (extended *)const_ptr, fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff, TypeLength( T_LONGDOUBLE ) );
+                CFFree( cf );
+            }
+            if( var_type == PT_CPLX_8 ) {
+                CnvS2S( (single *)(const_ptr + sizeof( single )), fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff + sizeof( single ), TypeLength( T_SINGLE ) );
+                CFFree( cf );
+            } else if( var_type == PT_CPLX_16 ) {
+                CnvD2S( (double *)(const_ptr + sizeof( double )), fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff + sizeof( double ), TypeLength( T_DOUBLE ) );
+                CFFree( cf );
+            } else if( var_type == PT_CPLX_32 ) {
+                CnvX2S( (extended *)(const_ptr + sizeof( extended )), fmt_buff );
+                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
+                CFCnvTarget( cf, const_buff + sizeof( extended ), TypeLength( T_LONGDOUBLE ) );
+                CFFree( cf );
+            }
+            if( (var_type >= PT_REAL_4) && (var_type <= PT_CPLX_32) ) {
+                const_ptr = const_buff;
+            }
+        }
+// End of temporary fix.
+
+        DtBytes( const_ptr, var_size );
+    }
+    DtItemSize = 0;
+}
+
+
+static  void    AsnVal( PTYPE var_type ) {
+//======================================
+
+// Do data initialization.
+
+    bool        issue_err;
+
+    issue_err = ( DtFlags & DT_NO_MORE_CONSTS ) == 0;
+    GetDataConst();
+    if( DtFlags & DT_NO_MORE_CONSTS ) {
+        if( issue_err ) {
+            Error( DA_NOT_ENOUGH );
+        }
+    } else if( ( DtConstType == PT_NOTYPE ) ||
+        ( ( var_type <= PT_LOG_4 ) && ( DtConstType <= PT_LOG_4 ) ) ||
+        ( DtConstType == PT_CHAR ) ||
+        ( ( var_type == PT_CHAR ) && IntType( DtConstType ) ) ||
+        ( Numeric( var_type ) && Numeric( DtConstType ) ) ) {
+        DoDataInit( var_type );
+    } else {
+        TypeNameTypeErr( DA_TYPE_MISMATCH, MapType[ var_type ], InitVar,
+                                       MapType[ DtConstType ] );
+    }
+}
+
+
 void    FCStartDataStmt() {
 //=========================
 
@@ -1231,7 +1395,7 @@ void    DtFieldSubscript() {
         DXPush( base + offset );
     } else {
         STFieldName( fd, name );
-        Error( EV_SSCR_INVALID, name, StmtKeywords[ PR_DATA-1 ] );
+        Error( EV_SSCR_INVALID, name, StmtKeywords[ PR_DATA ] );
     }
 }
 
@@ -1262,12 +1426,12 @@ void    DtFieldSubstring() {
         DtItemSize = last - first + 1;
     } else {
         STFieldName( fd, name );
-        Error( EV_SSTR_INVALID, name, StmtKeywords[ PR_DATA-1 ] );
+        Error( EV_SSTR_INVALID, name, StmtKeywords[ PR_DATA ] );
     }
 }
 
 
-static  void    InitArr( act_dim_list *dim, uint typ, uint size ) {
+static  void    InitArr( act_dim_list *dim, TYPE typ, uint size ) {
 //=================================================================
 
 // Data initialize an array.
@@ -1395,50 +1559,6 @@ static  void    StructInitItem( sym_id fd ) {
 }
 
 
-static  bool    Numeric( int typ ) {
-//==================================
-
-// Is given type numeric?
-
-    return( ( typ >= PT_INT_1 ) && ( typ <= PT_CPLX_32 ) );
-}
-
-
-bool    IntType( int typ ) {
-//==========================
-
-// Is given type integer?
-
-    return( ( typ >= PT_INT_1 ) && ( typ <= PT_INT_4 ) );
-}
-
-
-static  void    AsnVal( int var_type ) {
-//======================================
-
-// Do data initialization.
-
-    bool        issue_err;
-
-    issue_err = ( DtFlags & DT_NO_MORE_CONSTS ) == 0;
-    GetDataConst();
-    if( DtFlags & DT_NO_MORE_CONSTS ) {
-        if( issue_err ) {
-            Error( DA_NOT_ENOUGH );
-        }
-    } else if( ( DtConstType == PT_NOTYPE ) ||
-        ( ( var_type <= PT_LOG_4 ) && ( DtConstType <= PT_LOG_4 ) ) ||
-        ( DtConstType == PT_CHAR ) ||
-        ( ( var_type == PT_CHAR ) && IntType( DtConstType ) ) ||
-        ( Numeric( var_type ) && Numeric( DtConstType ) ) ) {
-        DoDataInit( var_type );
-    } else {
-        TypeNameTypeErr( DA_TYPE_MISMATCH, MapType[ var_type ], InitVar,
-                                       MapType[ DtConstType ] );
-    }
-}
-
-
 static  void    GetDataConst() {
 //==============================
 
@@ -1473,134 +1593,4 @@ static  void    FlushConsts() {
     while( ( DtFlags & DT_NO_MORE_CONSTS ) == 0 ) {
         GetDataConst();
     }
-}
-
-
-static  void    DoDataInit( int var_type ) {
-//==========================================
-
-// Do data initialization.
-
-    int         const_size;
-    int         var_size;
-    int         size;
-    byte        *const_ptr;
-    segment_id  seg;
-    seg_offset  offset;
-    byte        const_buff[sizeof(ftn_type)];
-
-    if( ( DtConstType == PT_CHAR ) || ( DtConstType == PT_NOTYPE ) ) {
-        const_size = DtConst->lt.length;
-        const_ptr = &DtConst->lt.value;
-    } else {
-        const_size = DtConst->cn.size;
-        const_ptr = (byte *)(&DtConst->cn.value);
-    }
-    var_size = DtItemSize;
-    seg = GetDataSegId( InitVar );
-    offset = GetDataOffset( InitVar );
-    DtInit( seg, offset );
-    if( DtConstType == PT_CHAR ) {
-        if( const_size >= var_size ) {
-            DtBytes( const_ptr, var_size );
-        } else {
-            DtBytes( const_ptr, const_size );
-            DtIBytes( ' ', var_size - const_size );
-        }
-    } else if( ( var_type == PT_CHAR ) && IntType( DtConstType ) ) {
-        DtBytes( const_ptr, sizeof( char ) );
-        if( var_size > sizeof( char ) ) {
-            DtIBytes( ' ', var_size - sizeof( char ) );
-        }
-    } else if( DtConstType == PT_NOTYPE ) {
-        if( var_type != PT_CHAR ) {
-            size = var_size;
-            while( size > const_size ) {
-                size--;
-                const_buff[ size ] = 0;
-            }
-            while( size > 0 ) {
-                size--;
-                const_buff[ size ] = *const_ptr;
-                const_ptr++;
-            }
-            const_ptr = const_buff;
-            const_size = var_size;
-        }
-        if( const_size < var_size ) {
-            DtIBytes( 0, var_size - const_size );
-            var_size = const_size;
-        } else {
-            const_ptr += const_size - var_size;
-        }
-        DtBytes( const_ptr, var_size );
-    } else if( DtConstType <= PT_LOG_4 ) {
-        DtBytes( const_ptr, var_size );
-    } else {        // numeric to numeric
-        if( DtConstType != var_type ) {
-            DataCnvTab[ ( var_type - PT_INT_1 ) * CONST_TYPES +
-                        ( DtConstType - PT_INT_1 ) ]( const_ptr, &const_buff );
-            const_ptr = const_buff;
-        }
-
-// Temporary fix for identical precision between front end and code generator.
-        {
-            extern      void            *CFCnvSF(char *,char *);
-            extern      void            CFCnvTarget(void *,byte *,unsigned);
-            // fix to Brad's temporary fix (I doubt it will ever be changed)
-#if _CPU == 8086
-            extern      signed_16       TypeLength(cg_type);
-#else
-            extern      signed_32       TypeLength(cg_type);
-#endif
-            extern      void            CFFree(void *);
-
-            extern      void            CnvS2S(float *,char *);
-            extern      void            CnvD2S(double *,char *);
-            extern      void            CnvX2S(extended *,char *);
-
-            char        fmt_buff[CONVERSION_BUFFER+1];
-            void        *cf;
-
-            if( (var_type == PT_REAL_4) || (var_type == PT_CPLX_8) ) {
-                CnvS2S( (single *)const_ptr, fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_SINGLE ) );
-                CFFree( cf );
-            } else if( (var_type == PT_REAL_8) || (var_type == PT_CPLX_16) ) {
-                CnvD2S( (double *)const_ptr, fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_DOUBLE ) );
-                CFFree( cf );
-            } else if( (var_type == PT_REAL_16) || (var_type == PT_CPLX_32) ) {
-                CnvX2S( (extended *)const_ptr, fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_LONGDOUBLE ) );
-                CFFree( cf );
-            }
-            if( var_type == PT_CPLX_8 ) {
-                CnvS2S( (single *)(const_ptr + sizeof( single )), fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( single ), TypeLength( T_SINGLE ) );
-                CFFree( cf );
-            } else if( var_type == PT_CPLX_16 ) {
-                CnvD2S( (double *)(const_ptr + sizeof( double )), fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( double ), TypeLength( T_DOUBLE ) );
-                CFFree( cf );
-            } else if( var_type == PT_CPLX_32 ) {
-                CnvX2S( (extended *)(const_ptr + sizeof( extended )), fmt_buff );
-                cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( extended ), TypeLength( T_LONGDOUBLE ) );
-                CFFree( cf );
-            }
-            if( (var_type >= PT_REAL_4) && (var_type <= PT_CPLX_32) ) {
-                const_ptr = const_buff;
-            }
-        }
-// End of temporary fix.
-
-        DtBytes( const_ptr, var_size );
-    }
-    DtItemSize = 0;
 }

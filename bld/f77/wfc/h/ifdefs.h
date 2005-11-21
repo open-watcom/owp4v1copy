@@ -24,53 +24,30 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  constants indicating function's index in tables
 *
 ****************************************************************************/
 
 
-//
-// INSERTXT  : text inserted into compile- and run-time error messages
-//
+#ifndef _IFDEFS_H_INCLUDED
+#define _IFDEFS_H_INCLUDED
 
-#include "ftnstd.h"
+#ifdef pick
+#undef pick
+#endif
 
-extern  char    MsExpression[];
-extern  char    MsSimpVar[];
-extern  char    MsArrElt[];
-extern  char    MsSubStrAElt[];
-extern  char    MsArrName[];
-extern  char    MsSpName[];
-extern  char    MsAltRet[];
-extern  char    MsGeneric[];
+#define pick(id,text,next,res,arg,flags) id,
 
-char    *PrmCodTab[] = {
-    "expression",
-    "simple variable",
-    "array element",
-    "substrung array element",
-    "array name",
-    "subprogram name",
-    "subprogram name",
-    "alternate return specifier" };
+enum INTRINSIC_FUNCTIONS {
 
-// This table is used for generated:
-//      1. error messages
-//      2. names for types used by browser
+#include "ifdefn.h"
 
-char    *TypeKW[] = {
-    "LOGICAL*1",
-    "LOGICAL",
-    "INTEGER*1",
-    "INTEGER*2",
-    "INTEGER",
-    "REAL",
-    "DOUBLEPRECISION",
-    "EXTENDEDPRECISION",
-    "COMPLEX",
-    "DOUBLECOMPLEX",
-    "EXTENDEDCOMPLEX",
-    "CHARACTER",
-    "STRUCTURE",
-    "generic" };
+    IF_MAX_NAME,
+
+    IF_NO_MORE = 0xfe,
+    MAGIC      = 0xff
+};
+
+typedef enum INTRINSIC_FUNCTIONS IFF;
+
+#endif

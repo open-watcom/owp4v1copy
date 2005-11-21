@@ -39,6 +39,7 @@
 #include "fcodes.h"
 #include "wf77cg.h"
 #include "wf77defs.h"
+#include "emitobj.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -50,7 +51,6 @@ extern  void            CGAddParm(call_handle,cg_name,cg_type);
 
 //=========================================================================
 
-extern  unsigned_16     GetU16();
 extern  call_handle     InitCall(int);
 
 
